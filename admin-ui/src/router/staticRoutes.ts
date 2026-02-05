@@ -20,10 +20,4 @@ export const staticRoutes: RouteRecordRaw[] = [
       },
     ],
   },
-  {
-    path: '/:pathMatch(.*)*',
-    name: 'NotFound',
-    component: () => import('@/views/error/404.vue'),
-    meta: { public: true, titleKey: 'route.notFound' },
-  },
 ]

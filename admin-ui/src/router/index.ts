@@ -24,6 +24,12 @@ router.beforeEach(async (to) => {
   if (!dynamicAdded) {
     const dyn = buildRoutesFromMenus(auth.menus)
     dyn.forEach((r) => router.addRoute('Layout', r))
+    router.addRoute({
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: () => import('@/views/error/404.vue'),
+      meta: { public: true, titleKey: 'route.notFound' },
+    })
     dynamicAdded = true
     return { ...to, replace: true }
   }
