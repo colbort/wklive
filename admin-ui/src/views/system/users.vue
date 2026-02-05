@@ -17,6 +17,7 @@ import {
   type SysUserItem,
 } from '@/api/system/users'
 import { apiRoleList, type RoleItem } from '@/api/system/roles'
+import { ArrowDown } from '@element-plus/icons-vue'
 
 const { t } = useI18n()
 
@@ -28,12 +29,12 @@ const query = reactive({
   keyword: '',
   status: undefined as number | undefined,
   page: 1,
-  pageSize: 10,
+  size: 10,
 })
 
 const statusOptions = [
   { label: t('common.enabled'), value: 1 },
-  { label: t('common.disabled'), value: 0 },
+  { label: t('common.disabled'), value: 2 },
 ]
 
 async function fetchList() {
@@ -43,7 +44,7 @@ async function fetchList() {
       keyword: query.keyword || undefined,
       status: query.status,
       page: query.page,
-      pageSize: query.pageSize,
+      size: query.size,
     })
     // 兼容 code=0 / 200
     if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'list failed')
@@ -73,7 +74,7 @@ const roles = ref<RoleItem[]>([])
 async function fetchRoles() {
   roleLoading.value = true
   try {
-    const res = await apiRoleList({ page: 1, pageSize: 9999, status: 1 })
+    const res = await apiRoleList({ page: 1, size: 9999, status: 1 })
     if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'role list failed')
     roles.value = res.list || []
   } catch (e: any) {
@@ -293,6 +294,7 @@ async function doG2Reset() {
   }
 }
 
+
 const roleNameMap = computed(() => {
   const m = new Map<number, string>()
   roles.value.forEach((r) => m.set(r.id, r.name))
@@ -367,33 +369,49 @@ onMounted(async () => {
         </template>
       </el-table-column>
 
-      <el-table-column :label="t('common.actions')" width="420" fixed="right">
-        <template #default="{ row }">
-          <el-button size="small" v-perm="'sys:user:update'" @click="openEdit(row)">
+      <el-table-column :label="t('common.actions')" width="140" fixed="right">
+  <template #default="{ row }">
+    <el-dropdown trigger="click">
+      <el-button size="small">
+        {{ t('common.actions') }}
+        <el-icon class="el-icon--right">
+          <ArrowDown />
+        </el-icon>
+      </el-button>
+
+      <template #dropdown>
+        <el-dropdown-menu>
+          <el-dropdown-item v-perm="'sys:user:update'" @click="openEdit(row)">
             {{ t('perms.sys:user:update') }}
-          </el-button>
+          </el-dropdown-item>
 
-          <el-button size="small" v-perm="'sys:user:resetpwd'" @click="openResetPwd(row)">
+          <el-dropdown-item v-perm="'sys:user:resetpwd'" @click="openResetPwd(row)">
             {{ t('perms.sys:user:resetpwd') }}
-          </el-button>
+          </el-dropdown-item>
 
-          <el-button size="small" v-perm="'sys:user:assignrole'" @click="openAssignRoles(row)">
+          <el-dropdown-item v-perm="'sys:user:assignrole'" @click="openAssignRoles(row)">
             {{ t('perms.sys:user:assignrole') }}
-          </el-button>
+          </el-dropdown-item>
 
-          <el-button size="small" v-perm="'sys:user:google2fa'" @click="openGoogle2fa(row)">
+          <el-dropdown-item v-perm="'sys:user:google2fa'" @click="openGoogle2fa(row)">
             {{ t('perms.sys:user:google2fa') }}
-          </el-button>
+          </el-dropdown-item>
 
-          <el-button size="small" v-perm="'sys:user:update'" @click="onToggleStatus(row)">
+          <el-dropdown-item divided v-perm="'sys:user:update'" @click="onToggleStatus(row)">
             {{ row.status === 1 ? '禁用' : '启用' }}
-          </el-button>
+          </el-dropdown-item>
 
-          <el-button size="small" type="danger" v-perm="'sys:user:delete'" @click="onDelete(row)">
-            {{ t('perms.sys:user:delete') }}
-          </el-button>
-        </template>
-      </el-table-column>
+          <el-dropdown-item v-perm="'sys:user:delete'" @click="onDelete(row)">
+            <span style="color: var(--el-color-danger);">
+              {{ t('perms.sys:user:delete') }}
+            </span>
+          </el-dropdown-item>
+        </el-dropdown-menu>
+      </template>
+    </el-dropdown>
+  </template>
+</el-table-column>
+
     </el-table>
 
     <div style="display:flex; justify-content:flex-end; margin-top: 12px;">
@@ -401,10 +419,10 @@ onMounted(async () => {
         background
         layout="total, prev, pager, next, sizes"
         :total="total"
-        :page-size="query.pageSize"
+        :page-size="query.size"
         :current-page="query.page"
         @update:current-page="(p:number)=>{query.page=p; fetchList()}"
-        @update:page-size="(s:number)=>{query.pageSize=s; query.page=1; fetchList()}"
+        @update:page-size="(s:number)=>{query.size=s; query.page=1; fetchList()}"
       />
     </div>
   </el-card>

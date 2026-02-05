@@ -2,6 +2,8 @@ package models
 
 import (
 	"context"
+	"fmt"
+	"strings"
 )
 
 type UserRoleModel interface {
@@ -26,14 +28,26 @@ func (m *defaultSysUserRoleModel) FindRoleIdsByUserIds(
 		return map[int64][]int64{}, nil
 	}
 
+	placeholders := make([]string, 0, len(userIds))
+	args := make([]any, 0, len(userIds))
+	for _, id := range userIds {
+		placeholders = append(placeholders, "?")
+		args = append(args, id)
+	}
+
+	query := fmt.Sprintf(
+		"SELECT user_id, role_id FROM %s WHERE user_id IN (%s)",
+		m.table,
+		strings.Join(placeholders, ","),
+	)
+
 	type row struct {
 		UserId int64
 		RoleId int64
 	}
 
 	var rows []row
-	query := "select user_id, role_id from " + m.table + " where user_id IN (?)"
-	err := m.conn.QueryRowsCtx(ctx, &rows, query, userIds)
+	err := m.conn.QueryRowsCtx(ctx, &rows, query, args...)
 	if err != nil {
 		return nil, err
 	}
