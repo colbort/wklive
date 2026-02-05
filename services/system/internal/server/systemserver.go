@@ -36,7 +36,7 @@ func (s *SystemServer) GetProfile(ctx context.Context, in *system.ProfileReq) (*
 }
 
 // 获取菜单树
-func (s *SystemServer) GetMenuTree(ctx context.Context, in *system.Empty) (*system.MenuTreeResp, error) {
+func (s *SystemServer) GetMenuTree(ctx context.Context, in *system.Empty) (*system.SysMenuTreeResp, error) {
 	l := logic.NewGetMenuTreeLogic(ctx, s.svcCtx)
 	return l.GetMenuTree(in)
 }
@@ -120,51 +120,51 @@ func (s *SystemServer) AssignUserRoles(ctx context.Context, in *system.AssignUse
 }
 
 // 角色
-func (s *SystemServer) RoleList(ctx context.Context, in *system.RoleListReq) (*system.RoleListResp, error) {
-	l := logic.NewRoleListLogic(ctx, s.svcCtx)
-	return l.RoleList(in)
+func (s *SystemServer) SysRoleList(ctx context.Context, in *system.SysRoleListReq) (*system.SysRoleListResp, error) {
+	l := logic.NewSysRoleListLogic(ctx, s.svcCtx)
+	return l.SysRoleList(in)
 }
 
 // 创建角色
-func (s *SystemServer) RoleCreate(ctx context.Context, in *system.RoleCreateReq) (*system.SimpleResp, error) {
-	l := logic.NewRoleCreateLogic(ctx, s.svcCtx)
-	return l.RoleCreate(in)
+func (s *SystemServer) SysRoleCreate(ctx context.Context, in *system.SysRoleCreateReq) (*system.SimpleResp, error) {
+	l := logic.NewSysRoleCreateLogic(ctx, s.svcCtx)
+	return l.SysRoleCreate(in)
 }
 
 // 更新角色
-func (s *SystemServer) RoleUpdate(ctx context.Context, in *system.RoleUpdateReq) (*system.SimpleResp, error) {
-	l := logic.NewRoleUpdateLogic(ctx, s.svcCtx)
-	return l.RoleUpdate(in)
+func (s *SystemServer) SysRoleUpdate(ctx context.Context, in *system.SysRoleUpdateReq) (*system.SimpleResp, error) {
+	l := logic.NewSysRoleUpdateLogic(ctx, s.svcCtx)
+	return l.SysRoleUpdate(in)
 }
 
 // 删除角色
-func (s *SystemServer) RoleDelete(ctx context.Context, in *system.RoleDeleteReq) (*system.SimpleResp, error) {
-	l := logic.NewRoleDeleteLogic(ctx, s.svcCtx)
-	return l.RoleDelete(in)
+func (s *SystemServer) SysRoleDelete(ctx context.Context, in *system.SysRoleDeleteReq) (*system.SimpleResp, error) {
+	l := logic.NewSysRoleDeleteLogic(ctx, s.svcCtx)
+	return l.SysRoleDelete(in)
 }
 
 // 角色授权
-func (s *SystemServer) RoleGrant(ctx context.Context, in *system.RoleGrantReq) (*system.SimpleResp, error) {
-	l := logic.NewRoleGrantLogic(ctx, s.svcCtx)
-	return l.RoleGrant(in)
+func (s *SystemServer) SysRoleGrant(ctx context.Context, in *system.SysRoleGrantReq) (*system.SimpleResp, error) {
+	l := logic.NewSysRoleGrantLogic(ctx, s.svcCtx)
+	return l.SysRoleGrant(in)
 }
 
 // 菜单
-func (s *SystemServer) MenuCreate(ctx context.Context, in *system.MenuCreateReq) (*system.SimpleResp, error) {
-	l := logic.NewMenuCreateLogic(ctx, s.svcCtx)
-	return l.MenuCreate(in)
+func (s *SystemServer) SysMenuCreate(ctx context.Context, in *system.SysMenuCreateReq) (*system.SimpleResp, error) {
+	l := logic.NewSysMenuCreateLogic(ctx, s.svcCtx)
+	return l.SysMenuCreate(in)
 }
 
 // 更新菜单
-func (s *SystemServer) MenuUpdate(ctx context.Context, in *system.MenuUpdateReq) (*system.SimpleResp, error) {
-	l := logic.NewMenuUpdateLogic(ctx, s.svcCtx)
-	return l.MenuUpdate(in)
+func (s *SystemServer) SysMenuUpdate(ctx context.Context, in *system.SysMenuUpdateReq) (*system.SimpleResp, error) {
+	l := logic.NewSysMenuUpdateLogic(ctx, s.svcCtx)
+	return l.SysMenuUpdate(in)
 }
 
 // 删除菜单
-func (s *SystemServer) MenuDelete(ctx context.Context, in *system.MenuDeleteReq) (*system.SimpleResp, error) {
-	l := logic.NewMenuDeleteLogic(ctx, s.svcCtx)
-	return l.MenuDelete(in)
+func (s *SystemServer) SysMenuDelete(ctx context.Context, in *system.SysMenuDeleteReq) (*system.SimpleResp, error) {
+	l := logic.NewSysMenuDeleteLogic(ctx, s.svcCtx)
+	return l.SysMenuDelete(in)
 }
 
 // 日志

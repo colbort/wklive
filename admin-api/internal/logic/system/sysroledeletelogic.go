@@ -12,21 +12,21 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type RoleDeleteLogic struct {
+type SysRoleDeleteLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewRoleDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RoleDeleteLogic {
-	return &RoleDeleteLogic{
+func NewRoleDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysRoleDeleteLogic {
+	return &SysRoleDeleteLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *RoleDeleteLogic) RoleDelete() (resp *types.SimpleResp, err error) {
+func (l *SysRoleDeleteLogic) RoleDelete() (resp *types.SimpleResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return

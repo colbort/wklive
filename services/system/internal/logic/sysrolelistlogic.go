@@ -9,14 +9,14 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type RoleListLogic struct {
+type SysRoleListLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewRoleListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RoleListLogic {
-	return &RoleListLogic{
+func NewSysRoleListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysRoleListLogic {
+	return &SysRoleListLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
@@ -24,8 +24,8 @@ func NewRoleListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RoleList
 }
 
 // 角色
-func (l *RoleListLogic) RoleList(in *system.RoleListReq) (*system.RoleListResp, error) {
+func (l *SysRoleListLogic) SysRoleList(in *system.SysRoleListReq) (*system.SysRoleListResp, error) {
 	// todo: add your logic here and delete this line
 
-	return &system.RoleListResp{}, nil
+	return &system.SysRoleListResp{}, nil
 }

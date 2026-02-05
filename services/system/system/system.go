@@ -27,12 +27,6 @@ type (
 	LoginLogItem        = system.LoginLogItem
 	LoginLogListReq     = system.LoginLogListReq
 	LoginLogListResp    = system.LoginLogListResp
-	MenuCreateReq       = system.SysMenuCreateReq
-	MenuDeleteReq       = system.SysMenuDeleteReq
-	MenuItem            = system.SysMenuItem
-	MenuNode            = system.SysMenuNode
-	MenuTreeResp        = system.SysMenuTreeResp
-	MenuUpdateReq       = system.SysMenuUpdateReq
 	OpLogItem           = system.OpLogItem
 	OpLogListReq        = system.OpLogListReq
 	OpLogListResp       = system.OpLogListResp
@@ -42,14 +36,20 @@ type (
 	ProfileResp         = system.ProfileResp
 	ProfileUser         = system.ProfileUser
 	ResetUserPwdReq     = system.ResetUserPwdReq
-	RoleCreateReq       = system.SysRoleCreateReq
-	RoleDeleteReq       = system.SysRoleDeleteReq
-	RoleGrantReq        = system.SysRoleGrantReq
-	RoleItem            = system.SysRoleItem
-	RoleListReq         = system.SysRoleListReq
-	RoleListResp        = system.SysRoleListResp
-	RoleUpdateReq       = system.SysRoleUpdateReq
 	SimpleResp          = system.SimpleResp
+	SysMenuCreateReq    = system.SysMenuCreateReq
+	SysMenuDeleteReq    = system.SysMenuDeleteReq
+	SysMenuItem         = system.SysMenuItem
+	SysMenuNode         = system.SysMenuNode
+	SysMenuTreeResp     = system.SysMenuTreeResp
+	SysMenuUpdateReq    = system.SysMenuUpdateReq
+	SysRoleCreateReq    = system.SysRoleCreateReq
+	SysRoleDeleteReq    = system.SysRoleDeleteReq
+	SysRoleGrantReq     = system.SysRoleGrantReq
+	SysRoleItem         = system.SysRoleItem
+	SysRoleListReq      = system.SysRoleListReq
+	SysRoleListResp     = system.SysRoleListResp
+	SysRoleUpdateReq    = system.SysRoleUpdateReq
 	SysUserCreateReq    = system.SysUserCreateReq
 	SysUserDeleteReq    = system.SysUserDeleteReq
 	SysUserDetailReq    = system.SysUserDetailReq
@@ -65,7 +65,7 @@ type (
 		// 获取当前用户信息
 		GetProfile(ctx context.Context, in *ProfileReq, opts ...grpc.CallOption) (*ProfileResp, error)
 		// 获取菜单树
-		GetMenuTree(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*MenuTreeResp, error)
+		GetMenuTree(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysMenuTreeResp, error)
 		// 获取权限列表
 		GetPerms(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PermsResp, error)
 		// 2FA
@@ -93,21 +93,21 @@ type (
 		// 分配用户角色
 		AssignUserRoles(ctx context.Context, in *AssignUserRolesReq, opts ...grpc.CallOption) (*SimpleResp, error)
 		// 角色
-		RoleList(ctx context.Context, in *RoleListReq, opts ...grpc.CallOption) (*RoleListResp, error)
+		SysRoleList(ctx context.Context, in *SysRoleListReq, opts ...grpc.CallOption) (*SysRoleListResp, error)
 		// 创建角色
-		RoleCreate(ctx context.Context, in *RoleCreateReq, opts ...grpc.CallOption) (*SimpleResp, error)
+		SysRoleCreate(ctx context.Context, in *SysRoleCreateReq, opts ...grpc.CallOption) (*SimpleResp, error)
 		// 更新角色
-		RoleUpdate(ctx context.Context, in *RoleUpdateReq, opts ...grpc.CallOption) (*SimpleResp, error)
+		SysRoleUpdate(ctx context.Context, in *SysRoleUpdateReq, opts ...grpc.CallOption) (*SimpleResp, error)
 		// 删除角色
-		RoleDelete(ctx context.Context, in *RoleDeleteReq, opts ...grpc.CallOption) (*SimpleResp, error)
+		SysRoleDelete(ctx context.Context, in *SysRoleDeleteReq, opts ...grpc.CallOption) (*SimpleResp, error)
 		// 角色授权
-		RoleGrant(ctx context.Context, in *RoleGrantReq, opts ...grpc.CallOption) (*SimpleResp, error)
+		SysRoleGrant(ctx context.Context, in *SysRoleGrantReq, opts ...grpc.CallOption) (*SimpleResp, error)
 		// 菜单
-		MenuCreate(ctx context.Context, in *MenuCreateReq, opts ...grpc.CallOption) (*SimpleResp, error)
+		SysMenuCreate(ctx context.Context, in *SysMenuCreateReq, opts ...grpc.CallOption) (*SimpleResp, error)
 		// 更新菜单
-		MenuUpdate(ctx context.Context, in *MenuUpdateReq, opts ...grpc.CallOption) (*SimpleResp, error)
+		SysMenuUpdate(ctx context.Context, in *SysMenuUpdateReq, opts ...grpc.CallOption) (*SimpleResp, error)
 		// 删除菜单
-		MenuDelete(ctx context.Context, in *MenuDeleteReq, opts ...grpc.CallOption) (*SimpleResp, error)
+		SysMenuDelete(ctx context.Context, in *SysMenuDeleteReq, opts ...grpc.CallOption) (*SimpleResp, error)
 		// 日志
 		LoginLogList(ctx context.Context, in *LoginLogListReq, opts ...grpc.CallOption) (*LoginLogListResp, error)
 		// 操作日志
@@ -138,7 +138,7 @@ func (m *defaultSystem) GetProfile(ctx context.Context, in *ProfileReq, opts ...
 }
 
 // 获取菜单树
-func (m *defaultSystem) GetMenuTree(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*MenuTreeResp, error) {
+func (m *defaultSystem) GetMenuTree(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysMenuTreeResp, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.GetMenuTree(ctx, in, opts...)
 }
@@ -222,7 +222,7 @@ func (m *defaultSystem) AssignUserRoles(ctx context.Context, in *AssignUserRoles
 }
 
 // 角色
-func (m *defaultSystem) SysRoleList(ctx context.Context, in *SysRoleListReq, opts ...grpc.CallOption) (*RoleListResp, error) {
+func (m *defaultSystem) SysRoleList(ctx context.Context, in *SysRoleListReq, opts ...grpc.CallOption) (*SysRoleListResp, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.SysRoleList(ctx, in, opts...)
 }

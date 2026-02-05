@@ -9,21 +9,21 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type MenuUpdateLogic struct {
+type SysMenuUpdateLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewSysMenuUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *MenuUpdateLogic {
-	return &MenuUpdateLogic{
+func NewSysMenuUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysMenuUpdateLogic {
+	return &SysMenuUpdateLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *MenuUpdateLogic) SysMenuUpdate(in *system.SysMenuUpdateReq) (*system.SimpleResp, error) {
+func (l *SysMenuUpdateLogic) SysMenuUpdate(in *system.SysMenuUpdateReq) (*system.SimpleResp, error) {
 	// todo: add your logic here and delete this line
 
 	return &system.SimpleResp{}, nil

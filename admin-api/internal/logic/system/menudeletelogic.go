@@ -12,21 +12,21 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type MenuDeleteLogic struct {
+type SysMenuDeleteLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewMenuDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *MenuDeleteLogic {
-	return &MenuDeleteLogic{
+func NewMenuDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysMenuDeleteLogic {
+	return &SysMenuDeleteLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *MenuDeleteLogic) MenuDelete() (resp *types.SimpleResp, err error) {
+func (l *SysMenuDeleteLogic) MenuDelete() (resp *types.SimpleResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return

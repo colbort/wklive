@@ -23,7 +23,7 @@ func NewSysRoleCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 	}
 }
 
-func (l *SysRoleCreateLogic) RoleCreate(in *system.SysRoleCreateReq) (*system.SimpleResp, error) {
+func (l *SysRoleCreateLogic) SysRoleCreate(in *system.SysRoleCreateReq) (*system.SimpleResp, error) {
 	// todo: add your logic here and delete this line
 
 	return &system.SimpleResp{}, nil

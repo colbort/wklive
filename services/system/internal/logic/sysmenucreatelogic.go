@@ -9,14 +9,14 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type MenuCreateLogic struct {
+type SysMenuCreateLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewSysMenuCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *MenuCreateLogic {
-	return &MenuCreateLogic{
+func NewSysMenuCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysMenuCreateLogic {
+	return &SysMenuCreateLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
@@ -24,7 +24,7 @@ func NewSysMenuCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Men
 }
 
 // 菜单
-func (l *MenuCreateLogic) SysMenuCreate(in *system.SysMenuCreateReq) (*system.SimpleResp, error) {
+func (l *SysMenuCreateLogic) SysMenuCreate(in *system.SysMenuCreateReq) (*system.SimpleResp, error) {
 	// todo: add your logic here and delete this line
 
 	return &system.SimpleResp{}, nil

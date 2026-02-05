@@ -12,21 +12,21 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type RoleUpdateLogic struct {
+type SysRoleUpdateLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewRoleUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RoleUpdateLogic {
-	return &RoleUpdateLogic{
+func NewRoleUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysRoleUpdateLogic {
+	return &SysRoleUpdateLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *RoleUpdateLogic) RoleUpdate(req *types.SysRoleUpdateReq) (resp *types.SimpleResp, err error) {
+func (l *SysRoleUpdateLogic) RoleUpdate(req *types.SysRoleUpdateReq) (resp *types.SimpleResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return

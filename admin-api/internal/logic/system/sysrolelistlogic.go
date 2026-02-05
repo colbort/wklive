@@ -13,21 +13,21 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type RoleListLogic struct {
+type SysRoleListLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewRoleListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RoleListLogic {
-	return &RoleListLogic{
+func NewRoleListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysRoleListLogic {
+	return &SysRoleListLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *RoleListLogic) RoleList(req *types.SysRoleListReq) (resp *types.SysRoleListResp, err error) {
+func (l *SysRoleListLogic) RoleList(req *types.SysRoleListReq) (resp *types.SysRoleListResp, err error) {
 	response, err := l.svcCtx.SystemCli.SysRoleList(l.ctx, &system.SysRoleListReq{
 		Page: &system.PageReq{
 			Page: int64(req.Page),
