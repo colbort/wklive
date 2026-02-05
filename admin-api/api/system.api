@@ -175,6 +175,19 @@ type SysMenuUpdateReq {
   perms     string `json:"perms,optional"`
 }
 
+type SysMenuListReq {
+  keyword string `form:"keyword,optional"` // 按 name/perms 模糊
+  status  int32  `form:"status,optional"`  // 0/1
+  visible int32  `form:"visible,optional"` // 0/1
+  menuType int32 `form:"menuType,optional"`// 1/2/3
+}
+
+type SysMenuListResp {
+  code int          `json:"code"`
+  msg  string       `json:"msg"`
+  list []SysMenuItem `json:"list"`
+}
+
 // ===== system: 日志 =====
 type LoginLogItem {
   id        int64  `json:"id"`
@@ -292,7 +305,7 @@ service admin {
 
   // --- 菜单 ---
   @handler SysMenuTree
-  get /menus/tree returns (MenuTreeResp)
+  get /menus/tree returns (SysMenuTreeResp)
 
   @handler SysMenuCreate
   post /menus (SysMenuCreateReq) returns (SimpleResp)
@@ -302,6 +315,9 @@ service admin {
 
   @handler SysMenuDelete
   delete /menus/:id returns (SimpleResp)
+
+  @handler SysMenuList
+  get /menus (SysMenuListReq) returns (SysMenuListResp)
 
   // --- 日志 ---
   @handler LoginLogList

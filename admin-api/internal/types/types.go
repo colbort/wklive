@@ -81,34 +81,7 @@ type LoginResp struct {
 	Exp   int64  `json:"exp"`
 }
 
-type SysMenuCreateReq struct {
-	ParentId  int64  `json:"parentId,optional"`
-	Name      string `json:"name"`
-	MenuType  int32  `json:"menuType"`
-	Path      string `json:"path,optional"`
-	Component string `json:"component,optional"`
-	Icon      string `json:"icon,optional"`
-	Sort      int32  `json:"sort,optional"`
-	Visible   int32  `json:"visible,optional"`
-	Status    int32  `json:"status,optional"`
-	Perms     string `json:"perms,optional"`
-}
-
-type SysMenuItem struct {
-	Id        int64  `json:"id"`
-	ParentId  int64  `json:"parentId"`
-	Name      string `json:"name"`
-	MenuType  int32  `json:"menuType"` // 1目录 2菜单 3按钮
-	Path      string `json:"path,optional"`
-	Component string `json:"component,optional"`
-	Icon      string `json:"icon,optional"`
-	Sort      int32  `json:"sort"`
-	Visible   int32  `json:"visible"`
-	Status    int32  `json:"status"`
-	Perms     string `json:"perms,optional"`
-}
-
-type SysMenuNode struct {
+type MenuNode struct {
 	Id        int64      `json:"id"`
 	ParentId  int64      `json:"parentId"`
 	Name      string     `json:"name"`
@@ -120,27 +93,7 @@ type SysMenuNode struct {
 	Visible   int32      `json:"visible"`
 	Status    int32      `json:"status"`
 	Perms     string     `json:"perms,optional"`
-	Children  []SysMenuNode `json:"children,optional"`
-}
-
-type SysMenuTreeResp struct {
-	Code int        `json:"code"`
-	Msg  string     `json:"msg"`
-	List []SysMenuItem `json:"list"`
-}
-
-type SysMenuUpdateReq struct {
-	Id        int64  `json:"id"`
-	ParentId  int64  `json:"parentId,optional"`
-	Name      string `json:"name,optional"`
-	MenuType  int32  `json:"menuType,optional"`
-	Path      string `json:"path,optional"`
-	Component string `json:"component,optional"`
-	Icon      string `json:"icon,optional"`
-	Sort      int32  `json:"sort,optional"`
-	Visible   int32  `json:"visible,optional"`
-	Status    int32  `json:"status,optional"`
-	Perms     string `json:"perms,optional"`
+	Children  []MenuNode `json:"children,optional"`
 }
 
 type OpLogItem struct {
@@ -206,7 +159,7 @@ type ProfileResp struct {
 	Code  int         `json:"code"`
 	Msg   string      `json:"msg"`
 	User  ProfileUser `json:"user"`
-	Menus []SysMenuNode  `json:"menus"`
+	Menus []MenuNode  `json:"menus"`
 	Perms []string    `json:"perms"`
 }
 
@@ -220,6 +173,71 @@ type ProfileUser struct {
 type ResetUserPwdReq struct {
 	Id       int64  `json:"id"`
 	Password string `json:"password"`
+}
+
+type SimpleResp struct {
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
+}
+
+type SysMenuCreateReq struct {
+	ParentId  int64  `json:"parentId,optional"`
+	Name      string `json:"name"`
+	MenuType  int32  `json:"menuType"`
+	Path      string `json:"path,optional"`
+	Component string `json:"component,optional"`
+	Icon      string `json:"icon,optional"`
+	Sort      int32  `json:"sort,optional"`
+	Visible   int32  `json:"visible,optional"`
+	Status    int32  `json:"status,optional"`
+	Perms     string `json:"perms,optional"`
+}
+
+type SysMenuItem struct {
+	Id        int64  `json:"id"`
+	ParentId  int64  `json:"parentId"`
+	Name      string `json:"name"`
+	MenuType  int32  `json:"menuType"` // 1目录 2菜单 3按钮
+	Path      string `json:"path,optional"`
+	Component string `json:"component,optional"`
+	Icon      string `json:"icon,optional"`
+	Sort      int32  `json:"sort"`
+	Visible   int32  `json:"visible"`
+	Status    int32  `json:"status"`
+	Perms     string `json:"perms,optional"`
+}
+
+type SysMenuListReq struct {
+	Keyword  string `form:"keyword,optional"`  // 按 name/perms 模糊
+	Status   int32  `form:"status,optional"`   // 0/1
+	Visible  int32  `form:"visible,optional"`  // 0/1
+	MenuType int32  `form:"menuType,optional"` // 1/2/3
+}
+
+type SysMenuListResp struct {
+	Code int           `json:"code"`
+	Msg  string        `json:"msg"`
+	List []SysMenuItem `json:"list"`
+}
+
+type SysMenuTreeResp struct {
+	Code int           `json:"code"`
+	Msg  string        `json:"msg"`
+	List []SysMenuItem `json:"list"`
+}
+
+type SysMenuUpdateReq struct {
+	Id        int64  `json:"id"`
+	ParentId  int64  `json:"parentId,optional"`
+	Name      string `json:"name,optional"`
+	MenuType  int32  `json:"menuType,optional"`
+	Path      string `json:"path,optional"`
+	Component string `json:"component,optional"`
+	Icon      string `json:"icon,optional"`
+	Sort      int32  `json:"sort,optional"`
+	Visible   int32  `json:"visible,optional"`
+	Status    int32  `json:"status,optional"`
+	Perms     string `json:"perms,optional"`
 }
 
 type SysRoleCreateReq struct {
@@ -250,9 +268,9 @@ type SysRoleListReq struct {
 }
 
 type SysRoleListResp struct {
-	Code  int        `json:"code"`
-	Msg   string     `json:"msg"`
-	Total int64      `json:"total"`
+	Code  int           `json:"code"`
+	Msg   string        `json:"msg"`
+	Total int64         `json:"total"`
 	List  []SysRoleItem `json:"list"`
 }
 
@@ -261,11 +279,6 @@ type SysRoleUpdateReq struct {
 	Name   string `json:"name,optional"`
 	Status int32  `json:"status,optional"`
 	Remark string `json:"remark,optional"`
-}
-
-type SimpleResp struct {
-	Code int    `json:"code"`
-	Msg  string `json:"msg"`
 }
 
 type SysUserCreateReq struct {

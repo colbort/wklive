@@ -18,7 +18,7 @@ type SysRoleDeleteLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
-func NewRoleDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysRoleDeleteLogic {
+func NewSysRoleDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysRoleDeleteLogic {
 	return &SysRoleDeleteLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
@@ -26,7 +26,7 @@ func NewRoleDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysRol
 	}
 }
 
-func (l *SysRoleDeleteLogic) RoleDelete() (resp *types.SimpleResp, err error) {
+func (l *SysRoleDeleteLogic) SysRoleDelete() (resp *types.SimpleResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return

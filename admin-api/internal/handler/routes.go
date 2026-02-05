@@ -59,47 +59,52 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				Method:  http.MethodPost,
 				Path:    "/menus",
-				Handler: system.MenuCreateHandler(serverCtx),
+				Handler: system.SysMenuCreateHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPut,
 				Path:    "/menus",
-				Handler: system.MenuUpdateHandler(serverCtx),
+				Handler: system.SysMenuUpdateHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/menus",
+				Handler: system.SysMenuListHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodDelete,
 				Path:    "/menus/:id",
-				Handler: system.MenuDeleteHandler(serverCtx),
+				Handler: system.SysMenuDeleteHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/menus/tree",
-				Handler: system.MenuTreeHandler(serverCtx),
+				Handler: system.SysMenuTreeHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/roles",
-				Handler: system.RoleListHandler(serverCtx),
+				Handler: system.SysRoleListHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/roles",
-				Handler: system.RoleCreateHandler(serverCtx),
+				Handler: system.SysRoleCreateHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPut,
 				Path:    "/roles",
-				Handler: system.RoleUpdateHandler(serverCtx),
+				Handler: system.SysRoleUpdateHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodDelete,
 				Path:    "/roles/:id",
-				Handler: system.RoleDeleteHandler(serverCtx),
+				Handler: system.SysRoleDeleteHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/roles/grant",
-				Handler: system.RoleGrantHandler(serverCtx),
+				Handler: system.SysRoleGrantHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,

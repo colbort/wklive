@@ -18,7 +18,7 @@ type SysRoleUpdateLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
-func NewRoleUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysRoleUpdateLogic {
+func NewSysRoleUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysRoleUpdateLogic {
 	return &SysRoleUpdateLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
@@ -26,7 +26,7 @@ func NewRoleUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysRol
 	}
 }
 
-func (l *SysRoleUpdateLogic) RoleUpdate(req *types.SysRoleUpdateReq) (resp *types.SimpleResp, err error) {
+func (l *SysRoleUpdateLogic) SysRoleUpdate(req *types.SysRoleUpdateReq) (resp *types.SimpleResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return

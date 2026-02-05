@@ -18,7 +18,7 @@ type SysRoleGrantLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
-func NewRoleGrantLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysRoleGrantLogic {
+func NewSysRoleGrantLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysRoleGrantLogic {
 	return &SysRoleGrantLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
@@ -26,7 +26,7 @@ func NewRoleGrantLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysRole
 	}
 }
 
-func (l *SysRoleGrantLogic) RoleGrant(req *types.SysRoleGrantReq) (resp *types.SimpleResp, err error) {
+func (l *SysRoleGrantLogic) SysRoleGrant(req *types.SysRoleGrantReq) (resp *types.SimpleResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return

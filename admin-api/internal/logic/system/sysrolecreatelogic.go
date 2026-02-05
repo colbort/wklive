@@ -18,7 +18,7 @@ type SysRoleCreateLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
-func NewRoleCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysRoleCreateLogic {
+func NewSysRoleCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysRoleCreateLogic {
 	return &SysRoleCreateLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
@@ -26,7 +26,7 @@ func NewRoleCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysRol
 	}
 }
 
-func (l *SysRoleCreateLogic) RoleCreate(req *types.SysRoleCreateReq) (resp *types.SimpleResp, err error) {
+func (l *SysRoleCreateLogic) SysRoleCreate(req *types.SysRoleCreateReq) (resp *types.SimpleResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return
