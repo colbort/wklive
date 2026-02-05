@@ -1,0 +1,30 @@
+package logic
+
+import (
+	"context"
+
+	"wklive/rpc/system"
+	"wklive/services/system/internal/svc"
+
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+type Google2FADisableLogic struct {
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+	logx.Logger
+}
+
+func NewGoogle2FADisableLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Google2FADisableLogic {
+	return &Google2FADisableLogic{
+		ctx:    ctx,
+		svcCtx: svcCtx,
+		Logger: logx.WithContext(ctx),
+	}
+}
+
+func (l *Google2FADisableLogic) Google2FADisable(in *system.Google2FADisableReq) (*system.SimpleResp, error) {
+	// todo: add your logic here and delete this line
+
+	return &system.SimpleResp{}, nil
+}

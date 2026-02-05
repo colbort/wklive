@@ -1,0 +1,300 @@
+syntax = "proto3";
+
+package system;
+option go_package = "wklive/rpc/system;system";
+
+message Empty {}
+
+//////////////////////
+// Auth / 登录
+//////////////////////
+message AdminLoginReq {
+  string username = 1;
+  string password = 2;
+  string google_code = 3; // optional
+  string ip = 4;
+  string ua = 5;
+}
+
+message AdminLoginResp {
+  int32  code = 1;
+  string msg = 2;
+  string token = 3;
+  int64  exp = 4;
+
+  int64  uid = 5;
+  string nickname = 6;
+  repeated int64 role_ids = 7;
+  int32 google2fa_enabled = 8;
+  int64 perms_ver = 9;
+}
+
+message ProfileReq {
+  int64 uid = 1;
+}
+
+message ProfileUser {
+  int64 id = 1;
+  string username = 2;
+  string nickname = 3;
+  string avatar = 4;
+}
+
+message SysMenuNode {
+  int64 id = 1;
+  int64 parent_id = 2;
+  string name = 3;
+  int32 menu_type = 4; // 1目录 2菜单 3按钮
+  string path = 5;
+  string component = 6;
+  string icon = 7;
+  int32 sort = 8;
+  int32 visible = 9;
+  int32 status = 10;
+  string perms = 11;
+  repeated SysMenuNode children = 12;
+}
+
+message ProfileResp {
+  ProfileUser user = 1;
+  repeated SysMenuNode menus = 2;
+  repeated string perms = 3;
+}
+
+//////////////////////
+// Menu / Perms
+//////////////////////
+message SysMenuItem {
+  int64 id = 1;
+  int64 parent_id = 2;
+  string name = 3;
+  int32 menu_type = 4; // 1目录 2菜单 3按钮
+  string path = 5;
+  string component = 6;
+  string icon = 7;
+  int32 sort = 8;
+  int32 visible = 9;
+  int32 status = 10;
+  string perms = 11; // 按钮必须有，例如 sys:user:add
+}
+
+message SysMenuTreeResp {
+  int32 code = 1;
+  string msg = 2;
+  repeated SysMenuItem list = 3;
+}
+
+message PermsResp {
+  int32 code = 1;
+  string msg = 2;
+  repeated string perms = 3;
+}
+
+//////////////////////
+// Google 2FA
+//////////////////////
+message Google2FAInitReq { int64 user_id = 1; }
+message Google2FAInitResp {
+  int32 code = 1;
+  string msg = 2;
+  string secret = 3;
+  string otpauth_url = 4;
+}
+
+message Google2FAEnableReq { int64 user_id = 1; string code = 2; }
+message Google2FADisableReq { int64 user_id = 1; string code = 2; } // 可选强校验
+message Google2FAResetReq { int64 user_id = 1; }
+
+message SimpleResp { int32 code = 1; string msg = 2; }
+
+//////////////////////
+// RBAC - 用户
+//////////////////////
+message PageReq { int64 page = 1; int64 size = 2; }
+
+message SysUserItem {
+  int64 id = 1;
+  string username = 2;
+  string nickname = 3;
+  int64 status = 4;
+  repeated int64 role_ids = 5;
+  int64 created_at = 6;
+  int64 google2fa_enabled = 7;
+}
+
+message SysUserListReq {
+  PageReq page = 1;
+  string keyword = 2;
+  int32 status = 3;
+}
+message SysUserListResp {
+  int32 code = 1;
+  string msg = 2;
+  int64 total = 3;
+  repeated SysUserItem list = 4;
+}
+
+message SysUserDetailReq { int64 id = 1; }
+message SysUserDetailResp { int32 code = 1; string msg = 2; SysUserItem data = 3; }
+
+message SysUserCreateReq {
+  string username = 1;
+  string password = 2;
+  string nickname = 3;
+  int32 status = 4;
+  repeated int64 role_ids = 5;
+}
+message SysUserUpdateReq {
+  int64 id = 1;
+  string nickname = 2;
+  int32 status = 3;
+  repeated int64 role_ids = 4;
+}
+message SysUserDeleteReq { int64 id = 1; }
+message ChangeUserStatusReq { int64 id = 1; int32 status = 2; }
+message ResetUserPwdReq { int64 id = 1; string password = 2; }
+message AssignUserRolesReq { int64 user_id = 1; repeated int64 role_ids = 2; }
+
+//////////////////////
+// RBAC - 角色
+//////////////////////
+message SysRoleItem {
+  int64 id = 1;
+  string name = 2;
+  string code = 3;
+  int32 status = 4;
+  string remark = 5;
+  int64 created_at = 6;
+}
+message SysRoleListReq { PageReq page = 1; string keyword = 2; int32 status = 3; }
+message SysRoleListResp { int32 code = 1; string msg = 2; int64 total = 3; repeated SysRoleItem list = 4; }
+
+message SysRoleCreateReq { string name = 1; string code = 2; int32 status = 3; string remark = 4; }
+message SysRoleUpdateReq { int64 id = 1; string name = 2; int32 status = 3; string remark = 4; }
+message SysRoleDeleteReq { int64 id = 1; }
+message SysRoleGrantReq { int64 role_id = 1; repeated int64 menu_ids = 2; }
+
+//////////////////////
+// RBAC - 菜单
+//////////////////////
+message SysMenuCreateReq {
+  int64 parent_id = 1;
+  string name = 2;
+  int32 menu_type = 3;
+  string path = 4;
+  string component = 5;
+  string icon = 6;
+  int32 sort = 7;
+  int32 visible = 8;
+  int32 status = 9;
+  string perms = 10;
+}
+message SysMenuUpdateReq {
+  int64 id = 1;
+  int64 parent_id = 2;
+  string name = 3;
+  int32 menu_type = 4;
+  string path = 5;
+  string component = 6;
+  string icon = 7;
+  int32 sort = 8;
+  int32 visible = 9;
+  int32 status = 10;
+  string perms = 11;
+}
+message SysMenuDeleteReq { int64 id = 1; }
+
+//////////////////////
+// Logs
+//////////////////////
+message LoginLogItem {
+  int64 id = 1;
+  int64 user_id = 2;
+  string username = 3;
+  string ip = 4;
+  string ua = 5;
+  int32 result = 6;
+  string reason = 7;
+  int64 created_at = 8;
+}
+message LoginLogListReq { PageReq page = 1; string username = 2; int32 result = 3; }
+message LoginLogListResp { int32 code = 1; string msg = 2; int64 total = 3; repeated LoginLogItem list = 4; }
+
+message OpLogItem {
+  int64 id = 1;
+  int64 user_id = 2;
+  string username = 3;
+  string module = 4;
+  string action = 5;
+  string method = 6;
+  string path = 7;
+  string ip = 8;
+  string ua = 9;
+  int32 resp_code = 10;
+  int64 duration_ms = 11;
+  int64 created_at = 12;
+}
+message OpLogListReq { PageReq page = 1; string username = 2; string module = 3; string action = 4; }
+message OpLogListResp { int32 code = 1; string msg = 2; int64 total = 3; repeated OpLogItem list = 4; }
+
+//////////////////////
+// Service
+//////////////////////
+service System {
+  // P0
+  rpc AdminLogin(AdminLoginReq) returns (AdminLoginResp);
+  // 获取当前用户信息
+  rpc GetProfile(ProfileReq) returns (ProfileResp);
+  // 获取菜单树
+  rpc GetMenuTree(Empty) returns (SysMenuTreeResp);
+  // 获取权限列表
+  rpc GetPerms(Empty) returns (PermsResp);
+
+  // 2FA
+  rpc Google2FAInit(Google2FAInitReq) returns (Google2FAInitResp);
+  // 启用Google 2FA
+  rpc Google2FAEnable(Google2FAEnableReq) returns (SimpleResp);
+  // 禁用Google 2FA
+  rpc Google2FADisable(Google2FADisableReq) returns (SimpleResp);
+  // 重置Google 2FA
+  rpc Google2FAReset(Google2FAResetReq) returns (SimpleResp);
+
+  // 用户
+  rpc SysUserList(SysUserListReq) returns (SysUserListResp);
+  // 获取用户详情
+  rpc SysUserDetail(SysUserDetailReq) returns (SysUserDetailResp);
+  // 创建系统用户
+  rpc SysUserCreate(SysUserCreateReq) returns (SimpleResp);
+  // 更新系统用户
+  rpc SysUserUpdate(SysUserUpdateReq) returns (SimpleResp);
+  // 删除系统用户
+  rpc SysUserDelete(SysUserDeleteReq) returns (SimpleResp);
+  // 修改用户状态
+  rpc ChangeUserStatus(ChangeUserStatusReq) returns (SimpleResp);
+  // 重置用户密码
+  rpc ResetUserPwd(ResetUserPwdReq) returns (SimpleResp);
+  // 分配用户角色
+  rpc AssignUserRoles(AssignUserRolesReq) returns (SimpleResp);
+
+  // 角色
+  rpc SysRoleList(SysRoleListReq) returns (SysRoleListResp);
+  // 创建角色
+  rpc SysRoleCreate(SysRoleCreateReq) returns (SimpleResp);
+  // 更新角色
+  rpc SysRoleUpdate(SysRoleUpdateReq) returns (SimpleResp);
+  // 删除角色
+  rpc SysRoleDelete(SysRoleDeleteReq) returns (SimpleResp);
+  // 角色授权
+  rpc SysRoleGrant(SysRoleGrantReq) returns (SimpleResp);
+  // 菜单
+  rpc SysMenuCreate(SysMenuCreateReq) returns (SimpleResp);
+  // 更新菜单
+  rpc SysMenuUpdate(SysMenuUpdateReq) returns (SimpleResp);
+  // 删除菜单
+  rpc SysMenuDelete(SysMenuDeleteReq) returns (SimpleResp);
+  // 日志
+  rpc LoginLogList(LoginLogListReq) returns (LoginLogListResp);
+  // 操作日志
+  rpc OpLogList(OpLogListReq) returns (OpLogListResp);
+}
+

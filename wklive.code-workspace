@@ -1,0 +1,94 @@
+{
+  "folders": [
+    {
+      "path": "admin-api",
+      "name": "admin"
+    },
+    {
+      "path": "admin-ui",
+      "name": "admin-ui"
+    },
+    {
+      "path": "app-api",
+      "name": "app"
+    },
+    {
+      "path": "services",
+      "name": "services"
+    },
+    {
+      "path": "common",
+      "name": "common"
+    },
+    {
+      "path": "rpc",
+      "name": "rpc"
+    },
+    {
+      "path": ".",
+      "name":"root"
+    }
+  ],
+  "settings": {
+    "go.goroot": "~/.gvm/gos/go.1.25.4",
+    "go.gopath": "~/local/go",
+    "go.useLanguageServer": true, // 启用 Go 语言服务器
+    "go.formatTool": "goimports", // 使用 goimports 工具格式化代码
+    "go.toolsManagement.autoUpdate": true,
+    "gopls": {
+      "ui.semanticTokens": true,
+      "ui.navigation.symbolStyle": "Dynamic",
+      "build.experimentalWorkspaceModule": true
+    },
+    "[go]": {
+      "editor.formatOnSave": true,
+      "editor.defaultFormatter": "golang.go"
+    },
+    "go.toolsEnvVars": {
+      "GO111MODULE": "on"
+    },
+    "editor.fontSize": 10,
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "admin",
+        "type": "go",
+        "request": "launch",
+        "mode": "auto",
+        "env": {
+            "DEBUG": "true",
+            "VSCODE": "true",
+            "test": "test"
+        },
+        "program": "${workspaceFolder:admin}/"
+      },
+      {
+          "name": "app",
+          "type": "go",
+          "request": "launch",
+          "mode": "auto",
+          "env": {
+              "DEBUG": "true",
+              "VSCODE": "true",
+              "test": "test"
+          },
+          "program": "${workspaceFolder:app}/"
+      },
+      {
+          "name": "system",
+          "type": "go",
+          "request": "launch",
+          "mode": "auto",
+          "env": {
+              "DEBUG": "true",
+              "VSCODE": "true",
+              "test": "test"
+          },
+          "program": "${workspaceFolder:services}/system/"
+      }
+    ],
+    "compounds": []
+  }
+}

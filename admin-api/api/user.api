@@ -1,0 +1,31 @@
+// ===== user =====
+type UserListReq {
+  PageReq
+  keyword string `form:"keyword,optional"`
+  status  int32  `form:"status,optional"`
+}
+
+type UserItem {
+  id        int64  `json:"id"`
+  username  string `json:"username"`
+  nickname  string `json:"nickname"`
+  status    int32  `json:"status"`
+  createdAt int64  `json:"createdAt"`
+}
+
+type UserListResp {
+  code  int        `json:"code"`
+  msg   string     `json:"msg"`
+  total int64      `json:"total"`
+  list  []UserItem `json:"list"`
+}
+
+@server(
+  prefix: /business
+  group: user
+  jwt: Auth
+)
+service admin {
+  @handler ListUsers
+  get /users (UserListReq) returns (UserListResp)
+}

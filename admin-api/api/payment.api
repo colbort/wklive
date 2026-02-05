@@ -1,0 +1,32 @@
+// ===== payment =====
+type OrderListReq {
+  PageReq
+  uid     int64  `form:"uid,optional"`
+  status  int32  `form:"status,optional"`
+  orderNo string `form:"orderNo,optional"`
+}
+
+type OrderItem {
+  orderNo   string `json:"orderNo"`
+  uid       int64  `json:"uid"`
+  amount    int64  `json:"amount"`
+  status    int32  `json:"status"`
+  createdAt int64  `json:"createdAt"`
+}
+
+type OrderListResp {
+  code  int         `json:"code"`
+  msg   string      `json:"msg"`
+  total int64       `json:"total"`
+  list  []OrderItem `json:"list"`
+}
+
+@server(
+  prefix: /admin
+  group: payment
+  jwt: Auth
+)
+service admin {
+  @handler ListOrders
+  get /payment/orders (OrderListReq) returns (OrderListResp)
+}

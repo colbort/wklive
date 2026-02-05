@@ -1,0 +1,14 @@
+Name: admin
+Host: 0.0.0.0
+Port: 8888
+
+auth:
+  AccessSecret: "your_access_secret"
+  AccessExpire: 3600
+
+systemRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts: 
+    - "192.168.10.116:2379"
+    Key: system.rpc

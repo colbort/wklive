@@ -1,0 +1,24 @@
+syntax = "v1"
+
+info(
+  title: "admin-api"
+  desc: "Admin BFF"
+  author: "you"
+  version: "1.0"
+)
+
+// go-zero jwt 必须定义这个类型名
+type Auth {
+  AccessSecret string
+  AccessExpire int64
+}
+
+type SimpleResp {
+  code int    `json:"code"`
+  msg  string `json:"msg"`
+}
+
+type PageReq {
+  page int `form:"page,optional"`
+  size int `form:"size,optional"`
+}

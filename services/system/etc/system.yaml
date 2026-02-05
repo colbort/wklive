@@ -1,0 +1,14 @@
+Name: system.rpc
+ListenOn: 0.0.0.0:8080
+Mode: dev
+Etcd:
+  Hosts:
+  - 192.168.10.116:2379
+  Key: system.rpc
+
+Mysql:
+  DataSource: root:12345678@tcp(192.168.10.116:3306)/wklive?charset=utf8mb4&parseTime=true&loc=Local
+
+Jwt:
+  AccessSecret: "your_access_secret"
+  AccessExpire: 3600

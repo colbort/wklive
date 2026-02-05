@@ -1,0 +1,42 @@
+import type { RouteRecordRaw } from 'vue-router'
+import type { MenuNode } from '@/stores/auth'
+
+const viewModules = import.meta.glob('@/views/**/*.vue')
+
+function resolveView(component?: string) {
+  if (!component) return null
+  const key = `/src/views/${component}.vue`
+  return viewModules[key] ? viewModules[key] : null
+}
+
+function sortChildren(nodes: MenuNode[]) {
+  return [...(nodes || [])].sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0))
+}
+
+export function buildRoutesFromMenus(menus: MenuNode[]): RouteRecordRaw[] {
+  const routes: RouteRecordRaw[] = []
+
+  const dfs = (nodes: MenuNode[]) => {
+    for (const n of sortChildren(nodes)) {
+      if (n.status === 0 || n.visible === 0) continue
+      if (n.menuType === 2 && n.path) {
+        const comp = resolveView(n.component)
+        routes.push({
+          path: n.path,
+          name: `Menu_${n.id}`,
+          component: (comp as any) || (() => import('@/views/error/missing-view.vue')),
+          meta: {
+            title: n.name,
+            titleKey: `menu.${n.id}`, // ✅ 方便后期做 i18n：有 key 用 key，否则回退 name
+            icon: n.icon,
+            menuId: n.id,
+          },
+        })
+      }
+      if (n.children?.length) dfs(n.children)
+    }
+  }
+
+  dfs(menus || [])
+  return routes
+}
