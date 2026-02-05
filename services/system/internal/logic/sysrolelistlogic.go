@@ -25,7 +25,39 @@ func NewSysRoleListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysRo
 
 // 角色
 func (l *SysRoleListLogic) SysRoleList(in *system.SysRoleListReq) (*system.SysRoleListResp, error) {
-	// todo: add your logic here and delete this line
+	// 1) 分页兜底
+	page := in.Page.Page
+	if page <= 0 {
+		page = 1
+	}
+	pageSize := in.Page.Size
+	if pageSize <= 0 || pageSize > 100 {
+		pageSize = 10
+	}
 
-	return &system.SysRoleListResp{}, nil
+	// 2) 查分页
+	rows, total, err := l.svcCtx.RoleModel.FindPage(l.ctx, in.Keyword, in.Status, page, pageSize)
+	if err != nil {
+		return nil, err
+	}
+
+	// 3) 组装返回
+	list := make([]*system.SysRoleItem, 0, len(rows))
+	for _, r := range rows {
+		list = append(list, &system.SysRoleItem{
+			Id:        r.Id,
+			Name:      r.Name,
+			Code:      r.Code,
+			Status:    int32(r.Status),
+			Remark:    r.Remark,
+			CreatedAt: r.CreatedAt.UnixMilli(),
+		})
+	}
+
+	return &system.SysRoleListResp{
+		Code:  200,
+		Msg:   "ok",
+		Total: total,
+		List:  list,
+	}, nil
 }
