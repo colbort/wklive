@@ -48,6 +48,9 @@
       "GO111MODULE": "on"
     },
     "editor.fontSize": 10,
+    "i18n-ally.localesPaths": [
+      ""
+    ],
   },
   "launch": {
     "version": "0.2.0",
