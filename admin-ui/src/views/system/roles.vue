@@ -1,17 +1,321 @@
 <script setup lang="ts">
+import { computed, reactive, ref } from 'vue'
+import { ElMessage, ElMessageBox, type FormInstance, type TreeInstance } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import type { SysRole } from '@/api/system/roles'
+import { apiRoleList, apiRoleUpdate, apiRoleDelete, apiRoleGrant, apiRoleCreate } from '@/api/system/roles'
+import type { MenuNode, PermItem } from '@/api/system/menus'
+import { apiMenuTree, apiPermList, apiRoleGrantDetail } from '@/api/system/menus'
+
+
+// ===== i18n =====
 const { t } = useI18n()
+
+
+
+// ===== 你需要有：菜单树 + 按钮权限列表（按你的后端接口替换）=====
+
+
+// ===== helpers =====
+function isSuperRole(r: SysRole | null | undefined) {
+  if (!r) return false
+  return r.isSuper === true || r.code === 'super_admin' || r.id === 1
+}
+
+// ===== state =====
+const loading = ref(false)
+const tableData = ref<SysRole[]>([])
+const total = ref(0)
+
+const query = reactive({
+  keyword: '',
+  page: 1,
+  pageSize: 20,
+})
+
+// ===== list =====
+async function fetchList() {
+  loading.value = true
+  try {
+    const resp = await apiRoleList(query)
+    tableData.value = resp.list || []
+    total.value = resp.total || 0
+  } finally {
+    loading.value = false
+  }
+}
+
+// ===== create/update dialog =====
+const editVisible = ref(false)
+const editFormRef = ref<FormInstance>()
+const editForm = reactive({
+  id: 0,
+  name: '',
+  code: '',
+  remark: '',
+})
+const editIsUpdate = computed(() => editForm.id > 0)
+
+function openCreate() {
+  Object.assign(editForm, { id: 0, name: '', code: '', remark: '' })
+  editVisible.value = true
+}
+function openUpdate(row: SysRole) {
+  if (isSuperRole(row)) return
+  Object.assign(editForm, { id: row.id, name: row.name, code: row.code, remark: row.remark || '' })
+  editVisible.value = true
+}
+
+async function submitEdit() {
+  await editFormRef.value?.validate?.()
+  const payload = { ...editForm }
+  const resp = editIsUpdate.value ? await apiRoleUpdate(payload) : await apiRoleCreate(payload)
+  if (resp.code === 0) {
+    ElMessage.success(resp.msg || t('common.success'))
+    editVisible.value = false
+    fetchList()
+  } else {
+    ElMessage.error(resp.msg || t('common.failed'))
+  }
+}
+
+async function onDelete(row: SysRole) {
+  if (isSuperRole(row)) return
+  await ElMessageBox.confirm(t('common.confirmDelete'), t('common.tip'), { type: 'warning' })
+  const resp = await apiRoleDelete(row.id)
+  if (resp.code === 0) {
+    ElMessage.success(resp.msg || t('common.success'))
+    fetchList()
+  } else {
+    ElMessage.error(resp.msg || t('common.failed'))
+  }
+}
+
+// ===== grant dialog =====
+const grantVisible = ref(false)
+const currentRole = ref<SysRole | null>(null)
+
+const grantLoading = ref(false)
+const menuTree = ref<MenuNode[]>([])
+const permList = ref<PermItem[]>([])
+
+const menuTreeRef = ref<TreeInstance>()
+const checkedPermKeys = ref<string[]>([])
+
+const grantReadonly = computed(() => isSuperRole(currentRole.value))
+
+function openGrant(row: SysRole) {
+  currentRole.value = row
+  grantVisible.value = true
+  initGrant(row.id)
+}
+
+async function initGrant(roleId: number) {
+  grantLoading.value = true
+  try {
+    const [menus, perms, detail] = await Promise.all([
+      apiMenuTree(),
+      apiPermList(),
+      apiRoleGrantDetail(roleId),
+    ])
+    menuTree.value = menus
+    permList.value = perms
+
+    // 菜单 tree 勾选
+    await nextTick()
+    menuTreeRef.value?.setCheckedKeys(detail.menuIds || [])
+    checkedPermKeys.value = detail.permKeys || []
+  } finally {
+    grantLoading.value = false
+  }
+}
+
+function collectCheckedMenuIds(): number[] {
+  const tree = menuTreeRef.value
+  if (!tree) return []
+  // Element Plus tree：getCheckedKeys + getHalfCheckedKeys
+  const full = (tree.getCheckedKeys?.() || []) as number[]
+  const half = (tree.getHalfCheckedKeys?.() || []) as number[]
+  return Array.from(new Set([...full, ...half]))
+}
+
+async function submitGrant() {
+  if (!currentRole.value) return
+  if (grantReadonly.value) {
+    ElMessage.warning(t('system.superAdminNoGrant'))
+    return
+  }
+
+  const payload = {
+    roleId: currentRole.value.id,
+    menuIds: collectCheckedMenuIds(),
+    permKeys: checkedPermKeys.value,
+  }
+  const resp = await apiRoleGrant(payload)
+  if (resp.code === 0) {
+    ElMessage.success(resp.msg || t('common.success'))
+    grantVisible.value = false
+  } else {
+    ElMessage.error(resp.msg || t('common.failed'))
+  }
+}
+
+// ===== init =====
+import { onMounted, nextTick } from 'vue'
+onMounted(fetchList)
+
+// ===== mock request (你项目里删掉) =====
+const request = {
+  get: async (url: string, opts?: any) => { throw new Error('replace request.get') },
+  post: async (url: string, data?: any) => { throw new Error('replace request.post') },
+  put: async (url: string, data?: any) => { throw new Error('replace request.put') },
+  delete: async (url: string) => { throw new Error('replace request.delete') },
+}
 </script>
 
 <template>
   <el-card>
-    <template #header>{{ t('system.roles') }}</template>
+    <template #header>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+        <div>{{ t('system.roles') }}</div>
+        <div style="display:flex; gap: 8px; flex-wrap: wrap;">
+          <el-button type="primary" v-perm="'sys:role:add'" @click="openCreate">
+            {{ t('perms.sys:role:add') }}
+          </el-button>
+        </div>
+      </div>
+    </template>
 
-    <div style="display:flex; gap: 8px; flex-wrap: wrap;">
-      <el-button type="primary" v-perm="'sys:role:add'">{{ t('perms.sys:role:add') }}</el-button>
-      <el-button v-perm="'sys:role:update'">{{ t('perms.sys:role:update') }}</el-button>
-      <el-button type="danger" v-perm="'sys:role:delete'">{{ t('perms.sys:role:delete') }}</el-button>
-      <el-button v-perm="'sys:role:grant'">{{ t('perms.sys:role:grant') }}</el-button>
+    <!-- 查询区 -->
+    <div style="display:flex; gap:8px; align-items:center; margin-bottom:12px;">
+      <el-input v-model="query.keyword" :placeholder="t('common.keyword')" clearable style="max-width:260px;" />
+      <el-button @click="fetchList">{{ t('common.search') }}</el-button>
+    </div>
+
+    <!-- 表格 -->
+    <el-table :data="tableData" v-loading="loading" style="width:100%;">
+      <el-table-column prop="id" label="ID" width="90" />
+      <el-table-column prop="name" :label="t('system.roleName')" min-width="160" />
+      <el-table-column prop="code" :label="t('system.roleCode')" min-width="160" />
+      <el-table-column prop="remark" :label="t('common.remark')" min-width="200" />
+      <el-table-column :label="t('common.actions')" width="320" fixed="right">
+        <template #default="{ row }">
+          <el-button
+            size="small"
+            v-perm="'sys:role:update'"
+            :disabled="isSuperRole(row)"
+            @click="openUpdate(row)"
+          >
+            {{ t('common.edit') }}
+          </el-button>
+
+          <el-button
+            size="small"
+            v-perm="'sys:role:grant'"
+            :disabled="isSuperRole(row)"
+            @click="openGrant(row)"
+          >
+            {{ t('system.grant') }}
+          </el-button>
+
+          <el-button
+            size="small"
+            type="danger"
+            v-perm="'sys:role:delete'"
+            :disabled="isSuperRole(row)"
+            @click="onDelete(row)"
+          >
+            {{ t('common.delete') }}
+          </el-button>
+
+          <el-tag v-if="isSuperRole(row)" type="warning" style="margin-left:8px;">
+            {{ t('system.superAdmin') }}
+          </el-tag>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <div style="display:flex; justify-content:flex-end; margin-top:12px;">
+      <el-pagination
+        v-model:current-page="query.page"
+        v-model:page-size="query.pageSize"
+        :total="total"
+        background
+        layout="total, prev, pager, next, sizes"
+        @current-change="fetchList"
+        @size-change="fetchList"
+      />
     </div>
   </el-card>
+
+  <!-- 新增/编辑弹窗 -->
+  <el-dialog v-model="editVisible" :title="editIsUpdate ? t('system.roleEdit') : t('system.roleAdd')" width="520px">
+    <el-form ref="editFormRef" :model="editForm" label-width="110px">
+      <el-form-item :label="t('system.roleName')" prop="name" :rules="[{ required: true, message: t('common.required') }]">
+        <el-input v-model="editForm.name" />
+      </el-form-item>
+
+      <el-form-item :label="t('system.roleCode')" prop="code" :rules="[{ required: true, message: t('common.required') }]">
+        <el-input v-model="editForm.code" :disabled="editIsUpdate" />
+      </el-form-item>
+
+      <el-form-item :label="t('common.remark')" prop="remark">
+        <el-input v-model="editForm.remark" type="textarea" :rows="3" />
+      </el-form-item>
+    </el-form>
+
+    <template #footer>
+      <el-button @click="editVisible = false">{{ t('common.cancel') }}</el-button>
+      <el-button type="primary" @click="submitEdit">{{ t('common.confirm') }}</el-button>
+    </template>
+  </el-dialog>
+
+  <!-- 授权弹窗：菜单 + 按钮权限 -->
+  <el-dialog v-model="grantVisible" :title="t('system.grantTitle', { role: currentRole?.name || '' })" width="900px">
+    <el-alert
+      v-if="grantReadonly"
+      type="warning"
+      :closable="false"
+      :title="t('system.superAdminAllPerms')"
+      style="margin-bottom:12px;"
+    />
+
+    <el-tabs v-loading="grantLoading">
+      <el-tab-pane :label="t('system.grantMenu')">
+        <el-tree
+          ref="menuTreeRef"
+          :data="menuTree"
+          node-key="id"
+          show-checkbox
+          :props="{ label: 'name', children: 'children' }"
+          :check-strictly="false"
+          :disabled="grantReadonly"
+          default-expand-all
+          style="max-height:520px; overflow:auto;"
+        />
+      </el-tab-pane>
+
+      <el-tab-pane :label="t('system.grantPerms')">
+        <el-checkbox-group v-model="checkedPermKeys" :disabled="grantReadonly" style="display:block;">
+          <div style="display:flex; flex-wrap:wrap; gap:10px;">
+            <el-checkbox
+              v-for="p in permList"
+              :key="p.key"
+              :label="p.key"
+              border
+            >
+              {{ p.name }} ({{ p.key }})
+            </el-checkbox>
+          </div>
+        </el-checkbox-group>
+      </el-tab-pane>
+    </el-tabs>
+
+    <template #footer>
+      <el-button @click="grantVisible = false">{{ t('common.cancel') }}</el-button>
+      <el-button type="primary" :disabled="grantReadonly" @click="submitGrant">
+        {{ t('common.save') }}
+      </el-button>
+    </template>
+  </el-dialog>
 </template>

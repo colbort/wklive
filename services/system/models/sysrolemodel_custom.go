@@ -28,7 +28,7 @@ func (m *defaultSysRoleModel) FindPage(ctx context.Context, keyword string, stat
 		args = append(args, like, like)
 	}
 
-	if status == 0 || status == 1 {
+	if status != 0 {
 		where += " AND status = ?"
 		args = append(args, status)
 	}

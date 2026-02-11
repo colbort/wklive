@@ -122,6 +122,10 @@ type SysRoleUpdateReq {
   remark string `json:"remark,optional"`
 }
 
+type SysRoleDeleteReq {
+    id int64 `path:"id"`
+}
+
 type SysRoleGrantReq {
   roleId  int64   `json:"roleId"`
   menuIds []int64 `json:"menuIds"`
@@ -298,7 +302,7 @@ service admin {
   put /roles (SysRoleUpdateReq) returns (SimpleResp)
 
   @handler SysRoleDelete
-  delete /roles/:id returns (SimpleResp)
+  delete /roles/:id (SysRoleDeleteReq) returns (SimpleResp)
 
   @handler SysRoleGrant
   post /roles/grant (SysRoleGrantReq) returns (SimpleResp)

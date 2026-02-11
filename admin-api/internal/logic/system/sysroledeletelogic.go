@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/rpc/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,11 @@ func NewSysRoleDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 }
 
 func (l *SysRoleDeleteLogic) SysRoleDelete() (resp *types.SimpleResp, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	result, err := l.svcCtx.SystemCli.SysRoleDelete(l.ctx, &system.SysRoleDeleteReq{
+		Id: resp.Id,
+	})
+	return &types.SimpleResp{
+		Code: int(result.Code),
+		Msg:  result.Msg,
+	}, err
 }

@@ -2,9 +2,11 @@ package logic
 
 import (
 	"context"
+	"errors"
 
 	"wklive/rpc/system"
 	"wklive/services/system/internal/svc"
+	"wklive/services/system/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -24,7 +26,24 @@ func NewSysRoleCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 }
 
 func (l *SysRoleCreateLogic) SysRoleCreate(in *system.SysRoleCreateReq) (*system.SimpleResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &system.SimpleResp{}, nil
+	result, err := l.svcCtx.RoleModel.FindOneByCode(l.ctx, in.Code)
+	if err == nil {
+		return nil, err
+	}
+	if result != nil {
+		return nil, errors.New("角色编码已存在")
+	}
+	_, err = l.svcCtx.RoleModel.Insert(l.ctx, &models.SysRole{
+		Name:   in.Name,
+		Code:   in.Code,
+		Status: int64(in.Status),
+		Remark: in.Remark,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &system.SimpleResp{
+		Code: 200,
+		Msg:  "创建成功",
+	}, nil
 }
