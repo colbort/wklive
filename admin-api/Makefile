@@ -1,7 +1,7 @@
 API_DIR := api
 TMP_DIR := .gen-tmp
 
-MODULES := auth user payment system
+MODULES := auth_public auth_private user payment system
 COMMON  := $(API_DIR)/common.api
 
 GOCTL ?= goctl
