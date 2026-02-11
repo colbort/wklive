@@ -15,8 +15,8 @@ type RoleMenuModel interface {
 	FindMenuIdsByRoleIds(ctx context.Context, roleIds []int64) ([]int64, error)
 	DeleteByRoleId(ctx context.Context, roleId int64) error
 	InsertBatch(ctx context.Context, data []*SysRoleMenu) error
-
 	TransactCtx(ctx context.Context, fn func(context.Context, g.Session) error) error
+	ListByRoleId(ctx context.Context, roleId int64) ([]*SysRoleMenu, error)
 }
 
 func (m *defaultSysRoleMenuModel) FindMenuIdsByRoleIds(ctx context.Context, roleIds []int64) ([]int64, error) {
@@ -55,12 +55,17 @@ func (m *defaultSysRoleMenuModel) InsertBatch(ctx context.Context, data []*SysRo
 		strings.Join(valueStrings, ","),
 	)
 
-	stmt = sqlx.Rebind(sqlx.DOLLAR, stmt)
-
 	_, err := m.conn.ExecCtx(ctx, stmt, valueArgs...)
 	return err
 }
 
 func (m *defaultSysRoleMenuModel) TransactCtx(ctx context.Context, fn func(context.Context, g.Session) error) error {
 	return m.conn.TransactCtx(ctx, fn)
+}
+
+func (m *defaultSysRoleMenuModel) ListByRoleId(ctx context.Context, roleId int64) ([]*SysRoleMenu, error) {
+	var list []*SysRoleMenu
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE role_id = ?", sysRoleMenuRows, m.table)
+	err := m.conn.QueryRowsCtx(ctx, &list, query, roleId)
+	return list, err
 }

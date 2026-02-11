@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/rpc/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,20 @@ func NewSysRoleGrantDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *SysRoleGrantDetailLogic) SysRoleGrantDetail(req *types.SysRoleGrantDetailReq) (resp *types.SysRoleGrantDetailResp, err error) {
-	// todo: add your logic here and delete this line
-
+	reuslt, err := l.svcCtx.SystemCli.SysRoleGrantDetail(l.ctx, &system.SysRoleGrantDetailReq{
+		RoleId: req.Id,
+	})
+	if err != nil {
+		return nil, err
+	}
+	resp = &types.SysRoleGrantDetailResp{
+		Code: reuslt.Code,
+		Msg:  reuslt.Msg,
+		Data: types.SysRoleGrantDetail{
+			RoleId:   reuslt.RoleId,
+			MenuIds:  reuslt.MenuIds,
+			PermKeys: reuslt.PermKeys,
+		},
+	}
 	return
 }

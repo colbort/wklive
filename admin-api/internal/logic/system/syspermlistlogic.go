@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/rpc/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,20 @@ func NewSysPermListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysPe
 }
 
 func (l *SysPermListLogic) SysPermList() (resp *types.SysPermListResp, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	result, err := l.svcCtx.SystemCli.SysPermList(l.ctx, &system.Empty{})
+	if err != nil {
+		return nil, err
+	}
+	data := make([]types.SysPermItem, 0)
+	for _, item := range result.Data {
+		data = append(data, types.SysPermItem{
+			Key:  item.PermKey,
+			Name: item.Name,
+		})
+	}
+	return &types.SysPermListResp{
+		Code: result.Code,
+		Msg:  result.Msg,
+		Data: data,
+	}, nil
 }

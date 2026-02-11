@@ -24,7 +24,32 @@ func NewGetMenuTreeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetMe
 }
 
 func (l *GetMenuTreeLogic) GetMenuTree(in *system.Empty) (*system.SysMenuTreeResp, error) {
-	// todo: add your logic here and delete this line
+	menus, err := l.svcCtx.MenuModel.ListAll(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 
-	return &system.SysMenuTreeResp{}, nil
+	list := make([]*system.SysMenuItem, 0, len(menus))
+	for _, m := range menus {
+		item := &system.SysMenuItem{
+			Id:        m.Id,
+			ParentId:  m.ParentId,
+			Name:      m.Name,
+			MenuType:  int32(m.MenuType),
+			Path:      m.Path,
+			Component: m.Component,
+			Icon:      m.Icon,
+			Sort:      int32(m.Sort),
+			Visible:   int32(m.Visible),
+			Status:    int32(m.Status),
+			Perms:     m.Perms,
+		}
+		list = append(list, item)
+	}
+
+	return &system.SysMenuTreeResp{
+		Code: 200,
+		Msg:  "ok",
+		List: list,
+	}, nil
 }

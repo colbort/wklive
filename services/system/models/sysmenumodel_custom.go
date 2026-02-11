@@ -10,6 +10,7 @@ type MenuModel interface {
 	sysMenuModel
 	FindByIds(ctx context.Context, ids []int64) ([]*SysMenu, error)
 	FindIdsByIds(ctx context.Context, ids []int64) ([]int64, error)
+	ListAll(ctx context.Context) ([]*SysMenu, error)
 }
 
 func (m *defaultSysMenuModel) FindByIds(ctx context.Context, ids []int64) ([]*SysMenu, error) {
@@ -32,4 +33,11 @@ func (m *defaultSysMenuModel) FindIdsByIds(ctx context.Context, ids []int64) ([]
 	}
 	err = m.conn.QueryRowsCtx(ctx, &existIds, query, args...)
 	return existIds, err
+}
+
+func (m *defaultSysMenuModel) ListAll(ctx context.Context) ([]*SysMenu, error) {
+	var menus []*SysMenu
+	query := "select " + sysMenuRows + " from " + m.table + " order by `sort` asc"
+	err := m.conn.QueryRowsCtx(ctx, &menus, query)
+	return menus, err
 }

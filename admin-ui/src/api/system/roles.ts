@@ -1,24 +1,8 @@
 import { http } from '@/utils/request'
 import { ApiResp } from '../types'
+import type { SimpleResp } from '../../types/system/role'
 
 // ===== types =====
-export type SysRole = {
-  id: number
-  name: string
-  code: string
-  remark?: string
-  status?: number
-  isSuper?: boolean // 可选：如果后端有的话
-}
-
-export type RoleListResp = {
-  list: SysRole[]
-  total: number
-}
-
-export type SimpleResp = { code: number; msg: string }
-
-export type RoleItem = { id: number; name: string; code: string; status: number; remark?: string }
 
 export function apiRoleList(params: { keyword?: string; status?: number; page?: number; size?: number }): Promise<ApiResp> {
   return http.get('/admin/roles', { params })
@@ -39,4 +23,7 @@ export async function apiRoleDelete(id: number): Promise<SimpleResp> {
 export async function apiRoleGrant(data: any): Promise<SimpleResp> {
   // POST /roles/grant
   return await http.post('/admin/roles/grant', data)
+}
+export async function apiRoleGrantDetail(roleId: number): Promise<{ menuIds: number[]; permKeys: string[] }> {
+  return await http.get(`/admin/roles/${roleId}/grant`)
 }

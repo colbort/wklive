@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/rpc/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,30 @@ func NewSysMenuTreeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysMe
 }
 
 func (l *SysMenuTreeLogic) SysMenuTree() (resp *types.SysMenuTreeResp, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	reuslt, err := l.svcCtx.SystemCli.GetMenuTree(l.ctx, &system.Empty{})
+	if err != nil {
+		return nil, err
+	}
+	data := make([]types.SysMenuItem, 0)
+	for _, item := range reuslt.List {
+		data = append(data, types.SysMenuItem{
+			Id:        item.Id,
+			ParentId:  item.ParentId,
+			Name:      item.Name,
+			MenuType:  item.MenuType,
+			Icon:      item.Icon,
+			Path:      item.Path,
+			Component: item.Component,
+			Sort:      item.Sort,
+			Visible:   item.Visible,
+			Status:    item.Status,
+			Perms:     item.Perms,
+		})
+	}
+	resp = &types.SysMenuTreeResp{
+		Code: reuslt.Code,
+		Msg:  reuslt.Msg,
+		List: data,
+	}
+	return resp, nil
 }

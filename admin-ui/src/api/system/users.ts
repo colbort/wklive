@@ -1,16 +1,5 @@
 import { http } from '@/utils/request'
 
-export type PageReq = { page?: number; size?: number } // 你的后端如果是 page/size 或 pageNo/pageSize，自行对齐
-
-export type SysUserItem = {
-  id: number
-  username: string
-  nickname?: string
-  status: number
-  roleIds?: number[]
-  createdAt?: number
-  google2faEnabled?: number
-}
 
 export function apiUserList(params: { keyword?: string; status?: number; page?: number; size?: number }) {
   return http.get('/admin/users', { params })

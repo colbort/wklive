@@ -301,7 +301,7 @@ service System {
   rpc SysRoleGrantDetail(SysRoleGrantDetailReq) returns (SysRoleGrantDetailResp);
   // 获取权限列表
   rpc SysPermList(Empty) returns (SysPermListResp);
-    // 获取菜单树
+  // 获取菜单树
   rpc GetMenuTree(Empty) returns (SysMenuTreeResp);
   // 菜单
   rpc SysMenuCreate(SysMenuCreateReq) returns (SimpleResp);

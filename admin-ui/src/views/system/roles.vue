@@ -2,10 +2,12 @@
 import { computed, reactive, ref, onMounted, nextTick } from 'vue'
 import { ElMessage, ElMessageBox, type FormInstance, type TreeInstance } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import type { SysRole } from '@/api/system/roles'
-import { apiRoleList, apiRoleUpdate, apiRoleDelete, apiRoleGrant, apiRoleCreate } from '@/api/system/roles'
-import type { MenuNode, PermItem } from '@/api/system/menus'
-import { apiMenuTree, apiPermList, apiRoleGrantDetail } from '@/api/system/menus'
+import type { SysRole } from '../../types/system/role'
+import type { MenuNode, PermItem } from '../../types/system/menus'
+
+// ===== API =====
+import { apiRoleList, apiRoleUpdate, apiRoleDelete, apiRoleGrant, apiRoleCreate, apiRoleGrantDetail } from '@/api/system/roles'
+import { apiMenuTree, apiPermList } from '@/api/system/menus'
 
 // ===== i18n =====
 const { t } = useI18n()
@@ -32,20 +34,70 @@ const query = reactive({
 async function fetchList() {
   loading.value = true
   try {
-    // 如果后端不接受 status=0（全部），可以改成：
-    // const q = { ...query, status: query.status === 0 ? undefined : query.status }
-    // const resp = await apiRoleList(q)
-    const resp = await apiRoleList(query)
+    // ✅ 兼容：后端不接受 status=0（全部）时，不传 status
+    const q: any = { ...query }
+    if (q.status === 0) delete q.status
+
+    const resp = await apiRoleList(q)
     tableData.value = resp.list || []
     total.value = resp.total || 0
+  } catch (e: any) {
+    ElMessage.error(e?.message || t('common.failed'))
   } finally {
     loading.value = false
   }
 }
 
+function unwrapList(resp: any): any[] {
+  // 兼容 data / list / rows / result 之类
+  if (!resp) return []
+  if (Array.isArray(resp)) return resp
+  return resp.data || resp.list || resp.rows || resp.result || []
+}
+
+function unwrapData(resp: any): any {
+  if (!resp) return null
+  // detail 这种通常在 data 里
+  return resp.data ?? resp
+}
+
+// 把扁平菜单转成树（并过滤掉 menuType=3 的按钮项，树里只放目录/菜单）
+function buildMenuTree(flat: any[]): any[] {
+  const list = (flat || []).filter((x) => x && x.menuType !== 3)
+
+  const map = new Map<number, any>()
+  list.forEach((n) => map.set(n.id, { ...n, children: [] }))
+
+  const roots: any[] = []
+  map.forEach((node) => {
+    const pid = node.parentId
+    if (pid && map.has(pid)) {
+      map.get(pid).children.push(node)
+    } else {
+      roots.push(node)
+    }
+  })
+
+  // 可选：按 sort 排序
+  const sortRec = (arr: any[]) => {
+    arr.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0))
+    arr.forEach((x) => x.children?.length && sortRec(x.children))
+  }
+  sortRec(roots)
+
+  return roots
+}
+
+
 function onSearch() {
   query.page = 1
   fetchList()
+}
+
+function onReset() {
+  query.keyword = ''
+  query.status = 0
+  onSearch()
 }
 
 // ===== create/update dialog =====
@@ -71,33 +123,41 @@ function openUpdate(row: SysRole) {
     name: row.name,
     code: row.code,
     remark: row.remark || '',
-    status: (row as any).status === 2 ? 2 : 1,
+    status: row.status === 2 ? 2 : 1,
   })
   editVisible.value = true
 }
 
 async function submitEdit() {
   await editFormRef.value?.validate?.()
-  const payload = { ...editForm }
-  const resp = editIsUpdate.value ? await apiRoleUpdate(payload) : await apiRoleCreate(payload)
-  if (resp.code === 0) {
-    ElMessage.success(resp.msg || t('common.success'))
-    editVisible.value = false
-    fetchList()
-  } else {
-    ElMessage.error(resp.msg || t('common.failed'))
+  try {
+    const payload = { ...editForm }
+    const resp = editIsUpdate.value ? await apiRoleUpdate(payload) : await apiRoleCreate(payload)
+    if (resp.code === 200) {
+      ElMessage.success(resp.msg || t('common.success'))
+      editVisible.value = false
+      fetchList()
+    } else {
+      ElMessage.error(resp.msg || t('common.failed'))
+    }
+  } catch (e: any) {
+    ElMessage.error(e?.message || t('common.failed'))
   }
 }
 
 async function onDelete(row: SysRole) {
   if (isSuperRole(row)) return
   await ElMessageBox.confirm(t('common.confirmDelete'), t('common.tip'), { type: 'warning' })
-  const resp = await apiRoleDelete(row.id)
-  if (resp.code === 0) {
-    ElMessage.success(resp.msg || t('common.success'))
-    fetchList()
-  } else {
-    ElMessage.error(resp.msg || t('common.failed'))
+  try {
+    const resp = await apiRoleDelete(row.id)
+    if (resp.code === 200) {
+      ElMessage.success(resp.msg || t('common.success'))
+      fetchList()
+    } else {
+      ElMessage.error(resp.msg || t('common.failed'))
+    }
+  } catch (e: any) {
+    ElMessage.error(e?.message || t('common.failed'))
   }
 }
 
@@ -123,18 +183,31 @@ function openGrant(row: SysRole) {
 async function initGrant(roleId: number) {
   grantLoading.value = true
   try {
-    const [menus, perms, detail] = await Promise.all([
+    // ✅ 每次打开先清理（避免切角色残留）
+    menuTree.value = []
+    permList.value = []
+    checkedPermKeys.value = []
+    await nextTick()
+    menuTreeRef.value?.setCheckedKeys?.([])
+
+    const [menusResp, permsResp, detailResp] = await Promise.all([
       apiMenuTree(),
       apiPermList(),
       apiRoleGrantDetail(roleId),
     ])
-    menuTree.value = menus
+
+    const menusFlat = unwrapList(menusResp)
+    const perms = unwrapList(permsResp)
+    const detail = unwrapData(detailResp) || {}
+
+    menuTree.value = buildMenuTree(menusFlat)
     permList.value = perms
 
-    // 菜单 tree 勾选
     await nextTick()
-    menuTreeRef.value?.setCheckedKeys(detail.menuIds || [])
-    checkedPermKeys.value = detail.permKeys || []
+    menuTreeRef.value?.setCheckedKeys((detail.menuIds || []) as any)
+    checkedPermKeys.value = (detail.permKeys || []) as any
+  } catch (e: any) {
+    ElMessage.error(e?.message || t('common.failed'))
   } finally {
     grantLoading.value = false
   }
@@ -156,18 +229,33 @@ async function submitGrant() {
     return
   }
 
-  const payload = {
-    roleId: currentRole.value.id,
-    menuIds: collectCheckedMenuIds(),
-    permKeys: checkedPermKeys.value,
+  try {
+    const payload = {
+      roleId: currentRole.value.id,
+      menuIds: collectCheckedMenuIds(),
+      permKeys: checkedPermKeys.value,
+    }
+    const resp = await apiRoleGrant(payload)
+    if (resp.code === 200) {
+      ElMessage.success(resp.msg || t('common.success'))
+      grantVisible.value = false
+      // ✅ 可选：保存后刷新列表（比如你要展示更新时间/状态）
+      fetchList()
+    } else {
+      ElMessage.error(resp.msg || t('common.failed'))
+    }
+  } catch (e: any) {
+    ElMessage.error(e?.message || t('common.failed'))
   }
-  const resp = await apiRoleGrant(payload)
-  if (resp.code === 0) {
-    ElMessage.success(resp.msg || t('common.success'))
-    grantVisible.value = false
-  } else {
-    ElMessage.error(resp.msg || t('common.failed'))
-  }
+}
+
+function onGrantClosed() {
+  currentRole.value = null
+  grantLoading.value = false
+  menuTree.value = []
+  permList.value = []
+  checkedPermKeys.value = []
+  menuTreeRef.value?.setCheckedKeys?.([])
 }
 
 // ===== init =====
@@ -198,9 +286,7 @@ onMounted(fetchList)
       </el-select>
 
       <el-button @click="onSearch">{{ t('common.search') }}</el-button>
-      <el-button @click="() => { query.keyword = ''; query.status = 0; onSearch() }">
-        {{ t('common.reset') }}
-      </el-button>
+      <el-button @click="onReset">{{ t('common.reset') }}</el-button>
     </div>
 
     <!-- 表格 -->
@@ -209,7 +295,7 @@ onMounted(fetchList)
       <el-table-column prop="name" :label="t('system.roleName')" min-width="160" />
       <el-table-column prop="code" :label="t('system.roleCode')" min-width="160" />
 
-      <!-- ✅ 新增：状态 -->
+      <!-- 状态 -->
       <el-table-column :label="t('common.status')" width="110">
         <template #default="{ row }">
           <el-tag v-if="(row as any).status === 1" type="success">{{ t('common.enabled') }}</el-tag>
@@ -280,7 +366,6 @@ onMounted(fetchList)
         <el-input v-model="editForm.code" :disabled="editIsUpdate" />
       </el-form-item>
 
-      <!-- ✅ 新增：状态 -->
       <el-form-item :label="t('common.status')" prop="status" :rules="[{ required: true, message: t('common.required') }]">
         <el-radio-group v-model="editForm.status">
           <el-radio :label="1">{{ t('common.enabled') }}</el-radio>
@@ -300,7 +385,12 @@ onMounted(fetchList)
   </el-dialog>
 
   <!-- 授权弹窗：菜单 + 按钮权限 -->
-  <el-dialog v-model="grantVisible" :title="t('system.grantTitle', { role: currentRole?.name || '' })" width="900px">
+  <el-dialog
+    v-model="grantVisible"
+    :title="t('system.grantTitle', { role: currentRole?.name || '' })"
+    width="900px"
+    @closed="onGrantClosed"
+  >
     <el-alert
       v-if="grantReadonly"
       type="warning"
@@ -311,7 +401,11 @@ onMounted(fetchList)
 
     <el-tabs v-loading="grantLoading">
       <el-tab-pane :label="t('system.grantMenu')">
+        <div v-if="!menuTree || menuTree.length === 0" style="padding:24px; text-align:center; color:#999;">
+          {{ t('common.noData') }}
+        </div>
         <el-tree
+          v-else
           ref="menuTreeRef"
           :data="menuTree"
           node-key="id"
@@ -325,7 +419,11 @@ onMounted(fetchList)
       </el-tab-pane>
 
       <el-tab-pane :label="t('system.grantPerms')">
-        <el-checkbox-group v-model="checkedPermKeys" :disabled="grantReadonly" style="display:block;">
+        <div v-if="!permList || permList.length === 0" style="padding:24px; text-align:center; color:#999;">
+          {{ t('common.noData') }}
+        </div>
+
+        <el-checkbox-group v-else v-model="checkedPermKeys" :disabled="grantReadonly" style="display:block;">
           <div style="display:flex; flex-wrap:wrap; gap:10px;">
             <el-checkbox
               v-for="p in permList"
