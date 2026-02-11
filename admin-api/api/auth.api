@@ -38,7 +38,7 @@ type MenuNode {
 }
 
 type ProfileResp {
-  code  int       `json:"code"`
+  code  int32       `json:"code"`
   msg   string    `json:"msg"`
   user  ProfileUser `json:"user"`
   menus []MenuNode  `json:"menus"`

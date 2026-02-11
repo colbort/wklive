@@ -9,21 +9,21 @@ type SysUserItem {
   id               int64   `json:"id"`
   username         string  `json:"username"`
   nickname         string  `json:"nickname"`
-  status           int64   `json:"status"`
+  status           int32   `json:"status"`
   roleIds          []int64 `json:"roleIds"`
   createdAt        int64   `json:"createdAt"`
-  google2faEnabled int64   `json:"google2faEnabled"`
+  google2faEnabled int32   `json:"google2faEnabled"`
 }
 
 type SysUserListResp {
-  code  int          `json:"code"`
+  code  int32          `json:"code"`
   msg   string       `json:"msg"`
   total int64        `json:"total"`
   list  []SysUserItem `json:"list"`
 }
 
 type SysUserDetailResp {
-  code int        `json:"code"`
+  code int32        `json:"code"`
   msg  string     `json:"msg"`
   data SysUserItem `json:"data"`
 }
@@ -64,7 +64,7 @@ type Google2FABindInitReq {
 }
 
 type Google2FABindInitResp {
-  code       int    `json:"code"`
+  code       int32    `json:"code"`
   msg        string `json:"msg"`
   secret     string `json:"secret"`
   otpauthUrl string `json:"otpauthUrl"`
@@ -102,7 +102,7 @@ type SysRoleListReq {
 }
 
 type SysRoleListResp {
-  code  int        `json:"code"`
+  code  int32        `json:"code"`
   msg   string     `json:"msg"`
   total int64      `json:"total"`
   list  []SysRoleItem `json:"list"`
@@ -147,7 +147,7 @@ type SysMenuItem {
 }
 
 type SysMenuTreeResp {
-  code int        `json:"code"`
+  code int32        `json:"code"`
   msg  string     `json:"msg"`
   list []SysMenuItem `json:"list"`
 }
@@ -187,7 +187,7 @@ type SysMenuListReq {
 }
 
 type SysMenuListResp {
-  code int          `json:"code"`
+  code int32          `json:"code"`
   msg  string       `json:"msg"`
   list []SysMenuItem `json:"list"`
 }
@@ -211,7 +211,7 @@ type LoginLogListReq {
 }
 
 type LoginLogListResp {
-  code  int            `json:"code"`
+  code  int32            `json:"code"`
   msg   string         `json:"msg"`
   total int64          `json:"total"`
   list  []LoginLogItem `json:"list"`
@@ -240,7 +240,7 @@ type OpLogListReq {
 }
 
 type OpLogListResp {
-  code  int         `json:"code"`
+  code  int32         `json:"code"`
   msg   string      `json:"msg"`
   total int64       `json:"total"`
   list  []OpLogItem `json:"list"`

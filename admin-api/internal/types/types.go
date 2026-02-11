@@ -247,6 +247,10 @@ type SysRoleCreateReq struct {
 	Remark string `json:"remark,optional"`
 }
 
+type SysRoleDeleteReq struct {
+	Id int64 `path:"id"`
+}
+
 type SysRoleGrantReq struct {
 	RoleId  int64   `json:"roleId"`
 	MenuIds []int64 `json:"menuIds"`

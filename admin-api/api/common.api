@@ -14,11 +14,11 @@ type Auth {
 }
 
 type SimpleResp {
-  code int    `json:"code"`
+  code int32    `json:"code"`
   msg  string `json:"msg"`
 }
 
 type PageReq {
-  page int `form:"page,optional"`
-  size int `form:"size,optional"`
+  page int32 `form:"page,optional"`
+  size int32 `form:"size,optional"`
 }

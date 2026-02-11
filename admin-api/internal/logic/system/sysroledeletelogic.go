@@ -27,9 +27,9 @@ func NewSysRoleDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 	}
 }
 
-func (l *SysRoleDeleteLogic) SysRoleDelete() (resp *types.SimpleResp, err error) {
+func (l *SysRoleDeleteLogic) SysRoleDelete(req *types.SysRoleDeleteReq) (resp *types.SimpleResp, err error) {
 	result, err := l.svcCtx.SystemCli.SysRoleDelete(l.ctx, &system.SysRoleDeleteReq{
-		Id: resp.Id,
+		Id: req.Id,
 	})
 	return &types.SimpleResp{
 		Code: int(result.Code),
