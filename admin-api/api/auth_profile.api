@@ -1,16 +1,3 @@
-// ===== auth =====
-type LoginReq {
-  username   string `json:"username"`
-  password   string `json:"password"`
-  googleCode string `json:"googleCode,optional"`
-}
-
-type LoginResp {
-  code  int    `json:"code"`
-  msg   string `json:"msg"`
-  token string `json:"token"`
-  exp   int64  `json:"exp"`
-}
 
 type ProfileReq {
 }
@@ -45,16 +32,15 @@ type ProfileResp {
   perms []string    `json:"perms"`
 }
 
+
+
 @server(
   prefix: /admin
   group: auth
+  jwt: Auth
 )
 service admin {
-  @handler Login
-  post /auth/login (LoginReq) returns (LoginResp)
-
-  
   @handler Profile
-  @jwt
   get /auth/profile (ProfileReq) returns (ProfileResp)
 }
+

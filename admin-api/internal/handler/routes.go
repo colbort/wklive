@@ -23,12 +23,19 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/auth/login",
 				Handler: auth.LoginHandler(serverCtx),
 			},
+		},
+		rest.WithPrefix("/admin"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
 			{
 				Method:  http.MethodGet,
 				Path:    "/auth/profile",
 				Handler: auth.ProfileHandler(serverCtx),
 			},
 		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 		rest.WithPrefix("/admin"),
 	)
 
