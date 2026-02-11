@@ -23,7 +23,7 @@ type UserListResp {
 @server(
   prefix: /business
   group: user
-  jwt: Auth
+  jwt: Jwt
 )
 service admin {
   @handler ListUsers

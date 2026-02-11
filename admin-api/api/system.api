@@ -276,7 +276,7 @@ type OpLogListResp {
 @server(
   prefix: /admin
   group: system
-  jwt: Auth
+  jwt: Jwt
 )
 service admin {
 

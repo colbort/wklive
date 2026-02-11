@@ -7,7 +7,7 @@ Etcd:
   Key: system.rpc
 
 Mysql:
-  DataSource: root:12345678@tcp(192.168.10.116:3306)/wklive?charset=utf8mb4&parseTime=true&loc=Local
+  DataSource: root:123456@tcp(192.168.10.116:3306)/wklive?charset=utf8mb4&parseTime=true&loc=Local
 
 Jwt:
   AccessSecret: "your_access_secret"

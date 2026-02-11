@@ -24,7 +24,7 @@ type OrderListResp {
 @server(
   prefix: /admin
   group: payment
-  jwt: Auth
+  jwt: Jwt
 )
 service admin {
   @handler ListOrders

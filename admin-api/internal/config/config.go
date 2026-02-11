@@ -10,9 +10,9 @@ import (
 
 type Config struct {
 	rest.RestConf
-	Auth struct {
+	Jwt struct {
 		AccessSecret string
 		AccessExpire int64
-	}
+	} `json:"Jwt" yaml:"Jwt"`
 	SystemRpc zrpc.RpcClientConf
 }

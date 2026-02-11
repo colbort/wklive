@@ -8,17 +8,17 @@ import (
 	"github.com/zeromicro/go-zero/core/conf"
 	configurator "github.com/zeromicro/go-zero/core/configcenter"
 	"github.com/zeromicro/go-zero/core/configcenter/subscriber"
+	"github.com/zeromicro/go-zero/core/logx"
 	v3 "go.etcd.io/etcd/client/v3"
+	"gopkg.in/yaml.v2"
 )
 
-func LoadFromEtcdAndMerge(hosts []string, key string, c any) {
-	// 1) 这里的 etcd 地址你也可以写到本地 yaml 里，例如 c.EtcdConf.Hosts
+func LoadFromEtcdAndMerge(hosts []string, keys []string, c any) {
 	cli, err := v3.New(v3.Config{
 		Endpoints:   hosts,
 		DialTimeout: 3 * time.Second,
 	})
 	if err != nil {
-		// etcd 不可用就降级用本地配置
 		return
 	}
 	defer cli.Close()
@@ -26,15 +26,44 @@ func LoadFromEtcdAndMerge(hosts []string, key string, c any) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	resp, err := cli.Get(ctx, key)
-	if err != nil || len(resp.Kvs) == 0 {
-		return
+	merged := make(map[string]any)
+
+	for _, key := range keys {
+		resp, err := cli.Get(ctx, key)
+		if err != nil || len(resp.Kvs) == 0 {
+			continue
+		}
+
+		data := resp.Kvs[0].Value
+
+		var m map[string]any
+		if err := yaml.Unmarshal(data, &m); err != nil {
+			logx.Errorf("yaml parse failed key=%s err=%v", key, err)
+			continue
+		}
+
+		deepMerge(merged, m)
 	}
 
-	// 2) value 里放的是 yaml（推荐），直接用 conf.LoadFromYamlBytes 覆盖到 c
-	data := resp.Kvs[0].Value
-	// 注意：go-zero core/conf 有 LoadFromYamlBytes（不同版本函数名可能略有差异）
-	_ = conf.LoadFromYamlBytes(data, c) // 覆盖/合并到结构体
+	// 最后一次性 decode 到 struct
+	bs, _ := yaml.Marshal(merged)
+	if err := conf.LoadFromYamlBytes(bs, c); err != nil {
+		logx.Errorf("load merged yaml failed err=%v yaml=%s", err, string(bs))
+	}
+}
+
+func deepMerge(dst, src map[string]any) {
+	for k, v := range src {
+		if vMap, ok := v.(map[string]any); ok {
+			if dstMap, ok2 := dst[k].(map[string]any); ok2 {
+				deepMerge(dstMap, vMap)
+			} else {
+				dst[k] = vMap
+			}
+		} else {
+			dst[k] = v
+		}
+	}
 }
 
 func WatcherConfig[T any](hosts []string, key string) {

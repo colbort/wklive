@@ -6,9 +6,9 @@ type Config struct {
 	zrpc.RpcServerConf
 	Mysql struct {
 		DataSource string
-	}
+	} `json:"Mysql" yaml:"Mysql"`
 	Jwt struct {
 		AccessSecret string
 		AccessExpire int64
-	}
+	} `json:"Jwt" yaml:"Jwt"`
 }

@@ -37,7 +37,7 @@ type ProfileResp {
 @server(
   prefix: /admin
   group: auth_private
-  jwt: Auth
+  jwt: Jwt
 )
 service admin {
   @handler Profile
