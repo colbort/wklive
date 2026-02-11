@@ -7,7 +7,6 @@ info(
   version: "1.0"
 )
 
-// go-zero jwt 必须定义这个类型名
 type Auth {
   AccessSecret string
   AccessExpire int64
