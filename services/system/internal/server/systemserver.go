@@ -35,18 +35,6 @@ func (s *SystemServer) GetProfile(ctx context.Context, in *system.ProfileReq) (*
 	return l.GetProfile(in)
 }
 
-// 获取菜单树
-func (s *SystemServer) GetMenuTree(ctx context.Context, in *system.Empty) (*system.SysMenuTreeResp, error) {
-	l := logic.NewGetMenuTreeLogic(ctx, s.svcCtx)
-	return l.GetMenuTree(in)
-}
-
-// 获取权限列表
-func (s *SystemServer) GetPerms(ctx context.Context, in *system.Empty) (*system.PermsResp, error) {
-	l := logic.NewGetPermsLogic(ctx, s.svcCtx)
-	return l.GetPerms(in)
-}
-
 // 2FA
 func (s *SystemServer) Google2FAInit(ctx context.Context, in *system.Google2FAInitReq) (*system.Google2FAInitResp, error) {
 	l := logic.NewGoogle2FAInitLogic(ctx, s.svcCtx)
@@ -147,6 +135,24 @@ func (s *SystemServer) SysRoleDelete(ctx context.Context, in *system.SysRoleDele
 func (s *SystemServer) SysRoleGrant(ctx context.Context, in *system.SysRoleGrantReq) (*system.SimpleResp, error) {
 	l := logic.NewSysRoleGrantLogic(ctx, s.svcCtx)
 	return l.SysRoleGrant(in)
+}
+
+// 获取角色授权详情
+func (s *SystemServer) SysRoleGrantDetail(ctx context.Context, in *system.SysRoleGrantDetailReq) (*system.SysRoleGrantDetailResp, error) {
+	l := logic.NewSysRoleGrantDetailLogic(ctx, s.svcCtx)
+	return l.SysRoleGrantDetail(in)
+}
+
+// 获取权限列表
+func (s *SystemServer) SysPermList(ctx context.Context, in *system.Empty) (*system.SysPermListResp, error) {
+	l := logic.NewSysPermListLogic(ctx, s.svcCtx)
+	return l.SysPermList(in)
+}
+
+// 获取菜单树
+func (s *SystemServer) GetMenuTree(ctx context.Context, in *system.Empty) (*system.SysMenuTreeResp, error) {
+	l := logic.NewGetMenuTreeLogic(ctx, s.svcCtx)
+	return l.GetMenuTree(in)
 }
 
 // 菜单

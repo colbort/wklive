@@ -84,12 +84,6 @@ message SysMenuTreeResp {
   repeated SysMenuItem list = 3;
 }
 
-message PermsResp {
-  int32 code = 1;
-  string msg = 2;
-  repeated string perms = 3;
-}
-
 //////////////////////
 // Google 2FA
 //////////////////////
@@ -174,6 +168,27 @@ message SysRoleUpdateReq { int64 id = 1; string name = 2; int32 status = 3; stri
 message SysRoleDeleteReq { int64 id = 1; }
 message SysRoleGrantReq { int64 role_id = 1; repeated int64 menu_ids = 2; }
 
+message SysRoleGrantDetailReq { int64 role_id = 1; }
+message SysRoleGrantDetailResp {
+  int32 code = 1;
+  string msg = 2;
+  int64 role_id = 3;
+  repeated int64 menu_ids = 4;
+  repeated string perm_keys = 5;
+}
+
+message SysPermItem {
+  string perm_key = 1;
+  string name = 2;
+  
+}
+
+message SysPermListResp {
+  int32 code = 1;
+  string msg = 2;
+  repeated SysPermItem data = 3;
+}
+
 //////////////////////
 // RBAC - 菜单
 //////////////////////
@@ -245,10 +260,6 @@ service System {
   rpc AdminLogin(AdminLoginReq) returns (AdminLoginResp);
   // 获取当前用户信息
   rpc GetProfile(ProfileReq) returns (ProfileResp);
-  // 获取菜单树
-  rpc GetMenuTree(Empty) returns (SysMenuTreeResp);
-  // 获取权限列表
-  rpc GetPerms(Empty) returns (PermsResp);
 
   // 2FA
   rpc Google2FAInit(Google2FAInitReq) returns (Google2FAInitResp);
@@ -286,6 +297,12 @@ service System {
   rpc SysRoleDelete(SysRoleDeleteReq) returns (SimpleResp);
   // 角色授权
   rpc SysRoleGrant(SysRoleGrantReq) returns (SimpleResp);
+  // 获取角色授权详情
+  rpc SysRoleGrantDetail(SysRoleGrantDetailReq) returns (SysRoleGrantDetailResp);
+  // 获取权限列表
+  rpc SysPermList(Empty) returns (SysPermListResp);
+    // 获取菜单树
+  rpc GetMenuTree(Empty) returns (SysMenuTreeResp);
   // 菜单
   rpc SysMenuCreate(SysMenuCreateReq) returns (SimpleResp);
   // 更新菜单

@@ -91,6 +91,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
+				Path:    "/perms",
+				Handler: system.SysPermListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
 				Path:    "/roles",
 				Handler: system.SysRoleListHandler(serverCtx),
 			},
@@ -108,6 +113,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodDelete,
 				Path:    "/roles/:id",
 				Handler: system.SysRoleDeleteHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/roles/:id/grant",
+				Handler: system.SysRoleGrantDetailHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,

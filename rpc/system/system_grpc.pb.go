@@ -19,32 +19,33 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	System_AdminLogin_FullMethodName       = "/system.System/AdminLogin"
-	System_GetProfile_FullMethodName       = "/system.System/GetProfile"
-	System_GetMenuTree_FullMethodName      = "/system.System/GetMenuTree"
-	System_GetPerms_FullMethodName         = "/system.System/GetPerms"
-	System_Google2FAInit_FullMethodName    = "/system.System/Google2FAInit"
-	System_Google2FAEnable_FullMethodName  = "/system.System/Google2FAEnable"
-	System_Google2FADisable_FullMethodName = "/system.System/Google2FADisable"
-	System_Google2FAReset_FullMethodName   = "/system.System/Google2FAReset"
-	System_SysUserList_FullMethodName      = "/system.System/SysUserList"
-	System_SysUserDetail_FullMethodName    = "/system.System/SysUserDetail"
-	System_SysUserCreate_FullMethodName    = "/system.System/SysUserCreate"
-	System_SysUserUpdate_FullMethodName    = "/system.System/SysUserUpdate"
-	System_SysUserDelete_FullMethodName    = "/system.System/SysUserDelete"
-	System_ChangeUserStatus_FullMethodName = "/system.System/ChangeUserStatus"
-	System_ResetUserPwd_FullMethodName     = "/system.System/ResetUserPwd"
-	System_AssignUserRoles_FullMethodName  = "/system.System/AssignUserRoles"
-	System_SysRoleList_FullMethodName      = "/system.System/SysRoleList"
-	System_SysRoleCreate_FullMethodName    = "/system.System/SysRoleCreate"
-	System_SysRoleUpdate_FullMethodName    = "/system.System/SysRoleUpdate"
-	System_SysRoleDelete_FullMethodName    = "/system.System/SysRoleDelete"
-	System_SysRoleGrant_FullMethodName     = "/system.System/SysRoleGrant"
-	System_SysMenuCreate_FullMethodName    = "/system.System/SysMenuCreate"
-	System_SysMenuUpdate_FullMethodName    = "/system.System/SysMenuUpdate"
-	System_SysMenuDelete_FullMethodName    = "/system.System/SysMenuDelete"
-	System_LoginLogList_FullMethodName     = "/system.System/LoginLogList"
-	System_OpLogList_FullMethodName        = "/system.System/OpLogList"
+	System_AdminLogin_FullMethodName         = "/system.System/AdminLogin"
+	System_GetProfile_FullMethodName         = "/system.System/GetProfile"
+	System_Google2FAInit_FullMethodName      = "/system.System/Google2FAInit"
+	System_Google2FAEnable_FullMethodName    = "/system.System/Google2FAEnable"
+	System_Google2FADisable_FullMethodName   = "/system.System/Google2FADisable"
+	System_Google2FAReset_FullMethodName     = "/system.System/Google2FAReset"
+	System_SysUserList_FullMethodName        = "/system.System/SysUserList"
+	System_SysUserDetail_FullMethodName      = "/system.System/SysUserDetail"
+	System_SysUserCreate_FullMethodName      = "/system.System/SysUserCreate"
+	System_SysUserUpdate_FullMethodName      = "/system.System/SysUserUpdate"
+	System_SysUserDelete_FullMethodName      = "/system.System/SysUserDelete"
+	System_ChangeUserStatus_FullMethodName   = "/system.System/ChangeUserStatus"
+	System_ResetUserPwd_FullMethodName       = "/system.System/ResetUserPwd"
+	System_AssignUserRoles_FullMethodName    = "/system.System/AssignUserRoles"
+	System_SysRoleList_FullMethodName        = "/system.System/SysRoleList"
+	System_SysRoleCreate_FullMethodName      = "/system.System/SysRoleCreate"
+	System_SysRoleUpdate_FullMethodName      = "/system.System/SysRoleUpdate"
+	System_SysRoleDelete_FullMethodName      = "/system.System/SysRoleDelete"
+	System_SysRoleGrant_FullMethodName       = "/system.System/SysRoleGrant"
+	System_SysRoleGrantDetail_FullMethodName = "/system.System/SysRoleGrantDetail"
+	System_SysPermList_FullMethodName        = "/system.System/SysPermList"
+	System_GetMenuTree_FullMethodName        = "/system.System/GetMenuTree"
+	System_SysMenuCreate_FullMethodName      = "/system.System/SysMenuCreate"
+	System_SysMenuUpdate_FullMethodName      = "/system.System/SysMenuUpdate"
+	System_SysMenuDelete_FullMethodName      = "/system.System/SysMenuDelete"
+	System_LoginLogList_FullMethodName       = "/system.System/LoginLogList"
+	System_OpLogList_FullMethodName          = "/system.System/OpLogList"
 )
 
 // SystemClient is the client API for System service.
@@ -59,10 +60,6 @@ type SystemClient interface {
 	AdminLogin(ctx context.Context, in *AdminLoginReq, opts ...grpc.CallOption) (*AdminLoginResp, error)
 	// 获取当前用户信息
 	GetProfile(ctx context.Context, in *ProfileReq, opts ...grpc.CallOption) (*ProfileResp, error)
-	// 获取菜单树
-	GetMenuTree(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysMenuTreeResp, error)
-	// 获取权限列表
-	GetPerms(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PermsResp, error)
 	// 2FA
 	Google2FAInit(ctx context.Context, in *Google2FAInitReq, opts ...grpc.CallOption) (*Google2FAInitResp, error)
 	// 启用Google 2FA
@@ -97,6 +94,12 @@ type SystemClient interface {
 	SysRoleDelete(ctx context.Context, in *SysRoleDeleteReq, opts ...grpc.CallOption) (*SimpleResp, error)
 	// 角色授权
 	SysRoleGrant(ctx context.Context, in *SysRoleGrantReq, opts ...grpc.CallOption) (*SimpleResp, error)
+	// 获取角色授权详情
+	SysRoleGrantDetail(ctx context.Context, in *SysRoleGrantDetailReq, opts ...grpc.CallOption) (*SysRoleGrantDetailResp, error)
+	// 获取权限列表
+	SysPermList(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysPermListResp, error)
+	// 获取菜单树
+	GetMenuTree(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysMenuTreeResp, error)
 	// 菜单
 	SysMenuCreate(ctx context.Context, in *SysMenuCreateReq, opts ...grpc.CallOption) (*SimpleResp, error)
 	// 更新菜单
@@ -131,26 +134,6 @@ func (c *systemClient) GetProfile(ctx context.Context, in *ProfileReq, opts ...g
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ProfileResp)
 	err := c.cc.Invoke(ctx, System_GetProfile_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *systemClient) GetMenuTree(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysMenuTreeResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SysMenuTreeResp)
-	err := c.cc.Invoke(ctx, System_GetMenuTree_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *systemClient) GetPerms(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PermsResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(PermsResp)
-	err := c.cc.Invoke(ctx, System_GetPerms_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -327,6 +310,36 @@ func (c *systemClient) SysRoleGrant(ctx context.Context, in *SysRoleGrantReq, op
 	return out, nil
 }
 
+func (c *systemClient) SysRoleGrantDetail(ctx context.Context, in *SysRoleGrantDetailReq, opts ...grpc.CallOption) (*SysRoleGrantDetailResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SysRoleGrantDetailResp)
+	err := c.cc.Invoke(ctx, System_SysRoleGrantDetail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) SysPermList(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysPermListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SysPermListResp)
+	err := c.cc.Invoke(ctx, System_SysPermList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) GetMenuTree(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysMenuTreeResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SysMenuTreeResp)
+	err := c.cc.Invoke(ctx, System_GetMenuTree_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *systemClient) SysMenuCreate(ctx context.Context, in *SysMenuCreateReq, opts ...grpc.CallOption) (*SimpleResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SimpleResp)
@@ -389,10 +402,6 @@ type SystemServer interface {
 	AdminLogin(context.Context, *AdminLoginReq) (*AdminLoginResp, error)
 	// 获取当前用户信息
 	GetProfile(context.Context, *ProfileReq) (*ProfileResp, error)
-	// 获取菜单树
-	GetMenuTree(context.Context, *Empty) (*SysMenuTreeResp, error)
-	// 获取权限列表
-	GetPerms(context.Context, *Empty) (*PermsResp, error)
 	// 2FA
 	Google2FAInit(context.Context, *Google2FAInitReq) (*Google2FAInitResp, error)
 	// 启用Google 2FA
@@ -427,6 +436,12 @@ type SystemServer interface {
 	SysRoleDelete(context.Context, *SysRoleDeleteReq) (*SimpleResp, error)
 	// 角色授权
 	SysRoleGrant(context.Context, *SysRoleGrantReq) (*SimpleResp, error)
+	// 获取角色授权详情
+	SysRoleGrantDetail(context.Context, *SysRoleGrantDetailReq) (*SysRoleGrantDetailResp, error)
+	// 获取权限列表
+	SysPermList(context.Context, *Empty) (*SysPermListResp, error)
+	// 获取菜单树
+	GetMenuTree(context.Context, *Empty) (*SysMenuTreeResp, error)
 	// 菜单
 	SysMenuCreate(context.Context, *SysMenuCreateReq) (*SimpleResp, error)
 	// 更新菜单
@@ -452,12 +467,6 @@ func (UnimplementedSystemServer) AdminLogin(context.Context, *AdminLoginReq) (*A
 }
 func (UnimplementedSystemServer) GetProfile(context.Context, *ProfileReq) (*ProfileResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProfile not implemented")
-}
-func (UnimplementedSystemServer) GetMenuTree(context.Context, *Empty) (*SysMenuTreeResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetMenuTree not implemented")
-}
-func (UnimplementedSystemServer) GetPerms(context.Context, *Empty) (*PermsResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPerms not implemented")
 }
 func (UnimplementedSystemServer) Google2FAInit(context.Context, *Google2FAInitReq) (*Google2FAInitResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Google2FAInit not implemented")
@@ -509,6 +518,15 @@ func (UnimplementedSystemServer) SysRoleDelete(context.Context, *SysRoleDeleteRe
 }
 func (UnimplementedSystemServer) SysRoleGrant(context.Context, *SysRoleGrantReq) (*SimpleResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SysRoleGrant not implemented")
+}
+func (UnimplementedSystemServer) SysRoleGrantDetail(context.Context, *SysRoleGrantDetailReq) (*SysRoleGrantDetailResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SysRoleGrantDetail not implemented")
+}
+func (UnimplementedSystemServer) SysPermList(context.Context, *Empty) (*SysPermListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SysPermList not implemented")
+}
+func (UnimplementedSystemServer) GetMenuTree(context.Context, *Empty) (*SysMenuTreeResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMenuTree not implemented")
 }
 func (UnimplementedSystemServer) SysMenuCreate(context.Context, *SysMenuCreateReq) (*SimpleResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SysMenuCreate not implemented")
@@ -578,42 +596,6 @@ func _System_GetProfile_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SystemServer).GetProfile(ctx, req.(*ProfileReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _System_GetMenuTree_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SystemServer).GetMenuTree(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: System_GetMenuTree_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).GetMenuTree(ctx, req.(*Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _System_GetPerms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SystemServer).GetPerms(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: System_GetPerms_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).GetPerms(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -924,6 +906,60 @@ func _System_SysRoleGrant_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _System_SysRoleGrantDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysRoleGrantDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysRoleGrantDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysRoleGrantDetail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysRoleGrantDetail(ctx, req.(*SysRoleGrantDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_SysPermList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysPermList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysPermList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysPermList(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_GetMenuTree_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).GetMenuTree(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_GetMenuTree_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).GetMenuTree(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _System_SysMenuCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysMenuCreateReq)
 	if err := dec(in); err != nil {
@@ -1030,14 +1066,6 @@ var System_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _System_GetProfile_Handler,
 		},
 		{
-			MethodName: "GetMenuTree",
-			Handler:    _System_GetMenuTree_Handler,
-		},
-		{
-			MethodName: "GetPerms",
-			Handler:    _System_GetPerms_Handler,
-		},
-		{
 			MethodName: "Google2FAInit",
 			Handler:    _System_Google2FAInit_Handler,
 		},
@@ -1104,6 +1132,18 @@ var System_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SysRoleGrant",
 			Handler:    _System_SysRoleGrant_Handler,
+		},
+		{
+			MethodName: "SysRoleGrantDetail",
+			Handler:    _System_SysRoleGrantDetail_Handler,
+		},
+		{
+			MethodName: "SysPermList",
+			Handler:    _System_SysPermList_Handler,
+		},
+		{
+			MethodName: "GetMenuTree",
+			Handler:    _System_GetMenuTree_Handler,
 		},
 		{
 			MethodName: "SysMenuCreate",

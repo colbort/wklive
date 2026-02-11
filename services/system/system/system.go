@@ -14,60 +14,59 @@ import (
 )
 
 type (
-	AdminLoginReq       = system.AdminLoginReq
-	AdminLoginResp      = system.AdminLoginResp
-	AssignUserRolesReq  = system.AssignUserRolesReq
-	ChangeUserStatusReq = system.ChangeUserStatusReq
-	Empty               = system.Empty
-	Google2FADisableReq = system.Google2FADisableReq
-	Google2FAEnableReq  = system.Google2FAEnableReq
-	Google2FAInitReq    = system.Google2FAInitReq
-	Google2FAInitResp   = system.Google2FAInitResp
-	Google2FAResetReq   = system.Google2FAResetReq
-	LoginLogItem        = system.LoginLogItem
-	LoginLogListReq     = system.LoginLogListReq
-	LoginLogListResp    = system.LoginLogListResp
-	OpLogItem           = system.OpLogItem
-	OpLogListReq        = system.OpLogListReq
-	OpLogListResp       = system.OpLogListResp
-	PageReq             = system.PageReq
-	PermsResp           = system.PermsResp
-	ProfileReq          = system.ProfileReq
-	ProfileResp         = system.ProfileResp
-	ProfileUser         = system.ProfileUser
-	ResetUserPwdReq     = system.ResetUserPwdReq
-	SimpleResp          = system.SimpleResp
-	SysMenuCreateReq    = system.SysMenuCreateReq
-	SysMenuDeleteReq    = system.SysMenuDeleteReq
-	SysMenuItem         = system.SysMenuItem
-	SysMenuNode         = system.SysMenuNode
-	SysMenuTreeResp     = system.SysMenuTreeResp
-	SysMenuUpdateReq    = system.SysMenuUpdateReq
-	SysRoleCreateReq    = system.SysRoleCreateReq
-	SysRoleDeleteReq    = system.SysRoleDeleteReq
-	SysRoleGrantReq     = system.SysRoleGrantReq
-	SysRoleItem         = system.SysRoleItem
-	SysRoleListReq      = system.SysRoleListReq
-	SysRoleListResp     = system.SysRoleListResp
-	SysRoleUpdateReq    = system.SysRoleUpdateReq
-	SysUserCreateReq    = system.SysUserCreateReq
-	SysUserDeleteReq    = system.SysUserDeleteReq
-	SysUserDetailReq    = system.SysUserDetailReq
-	SysUserDetailResp   = system.SysUserDetailResp
-	SysUserItem         = system.SysUserItem
-	SysUserListReq      = system.SysUserListReq
-	SysUserListResp     = system.SysUserListResp
-	SysUserUpdateReq    = system.SysUserUpdateReq
+	AdminLoginReq          = system.AdminLoginReq
+	AdminLoginResp         = system.AdminLoginResp
+	AssignUserRolesReq     = system.AssignUserRolesReq
+	ChangeUserStatusReq    = system.ChangeUserStatusReq
+	Empty                  = system.Empty
+	Google2FADisableReq    = system.Google2FADisableReq
+	Google2FAEnableReq     = system.Google2FAEnableReq
+	Google2FAInitReq       = system.Google2FAInitReq
+	Google2FAInitResp      = system.Google2FAInitResp
+	Google2FAResetReq      = system.Google2FAResetReq
+	LoginLogItem           = system.LoginLogItem
+	LoginLogListReq        = system.LoginLogListReq
+	LoginLogListResp       = system.LoginLogListResp
+	OpLogItem              = system.OpLogItem
+	OpLogListReq           = system.OpLogListReq
+	OpLogListResp          = system.OpLogListResp
+	PageReq                = system.PageReq
+	ProfileReq             = system.ProfileReq
+	ProfileResp            = system.ProfileResp
+	ProfileUser            = system.ProfileUser
+	ResetUserPwdReq        = system.ResetUserPwdReq
+	SimpleResp             = system.SimpleResp
+	SysMenuCreateReq       = system.SysMenuCreateReq
+	SysMenuDeleteReq       = system.SysMenuDeleteReq
+	SysMenuItem            = system.SysMenuItem
+	SysMenuNode            = system.SysMenuNode
+	SysMenuTreeResp        = system.SysMenuTreeResp
+	SysMenuUpdateReq       = system.SysMenuUpdateReq
+	SysPermItem            = system.SysPermItem
+	SysPermListResp        = system.SysPermListResp
+	SysRoleCreateReq       = system.SysRoleCreateReq
+	SysRoleDeleteReq       = system.SysRoleDeleteReq
+	SysRoleGrantDetailReq  = system.SysRoleGrantDetailReq
+	SysRoleGrantDetailResp = system.SysRoleGrantDetailResp
+	SysRoleGrantReq        = system.SysRoleGrantReq
+	SysRoleItem            = system.SysRoleItem
+	SysRoleListReq         = system.SysRoleListReq
+	SysRoleListResp        = system.SysRoleListResp
+	SysRoleUpdateReq       = system.SysRoleUpdateReq
+	SysUserCreateReq       = system.SysUserCreateReq
+	SysUserDeleteReq       = system.SysUserDeleteReq
+	SysUserDetailReq       = system.SysUserDetailReq
+	SysUserDetailResp      = system.SysUserDetailResp
+	SysUserItem            = system.SysUserItem
+	SysUserListReq         = system.SysUserListReq
+	SysUserListResp        = system.SysUserListResp
+	SysUserUpdateReq       = system.SysUserUpdateReq
 
 	System interface {
 		// P0
 		AdminLogin(ctx context.Context, in *AdminLoginReq, opts ...grpc.CallOption) (*AdminLoginResp, error)
 		// 获取当前用户信息
 		GetProfile(ctx context.Context, in *ProfileReq, opts ...grpc.CallOption) (*ProfileResp, error)
-		// 获取菜单树
-		GetMenuTree(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysMenuTreeResp, error)
-		// 获取权限列表
-		GetPerms(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PermsResp, error)
 		// 2FA
 		Google2FAInit(ctx context.Context, in *Google2FAInitReq, opts ...grpc.CallOption) (*Google2FAInitResp, error)
 		// 启用Google 2FA
@@ -102,6 +101,12 @@ type (
 		SysRoleDelete(ctx context.Context, in *SysRoleDeleteReq, opts ...grpc.CallOption) (*SimpleResp, error)
 		// 角色授权
 		SysRoleGrant(ctx context.Context, in *SysRoleGrantReq, opts ...grpc.CallOption) (*SimpleResp, error)
+		// 获取角色授权详情
+		SysRoleGrantDetail(ctx context.Context, in *SysRoleGrantDetailReq, opts ...grpc.CallOption) (*SysRoleGrantDetailResp, error)
+		// 获取权限列表
+		SysPermList(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysPermListResp, error)
+		// 获取菜单树
+		GetMenuTree(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysMenuTreeResp, error)
 		// 菜单
 		SysMenuCreate(ctx context.Context, in *SysMenuCreateReq, opts ...grpc.CallOption) (*SimpleResp, error)
 		// 更新菜单
@@ -135,18 +140,6 @@ func (m *defaultSystem) AdminLogin(ctx context.Context, in *AdminLoginReq, opts 
 func (m *defaultSystem) GetProfile(ctx context.Context, in *ProfileReq, opts ...grpc.CallOption) (*ProfileResp, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.GetProfile(ctx, in, opts...)
-}
-
-// 获取菜单树
-func (m *defaultSystem) GetMenuTree(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysMenuTreeResp, error) {
-	client := system.NewSystemClient(m.cli.Conn())
-	return client.GetMenuTree(ctx, in, opts...)
-}
-
-// 获取权限列表
-func (m *defaultSystem) GetPerms(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PermsResp, error) {
-	client := system.NewSystemClient(m.cli.Conn())
-	return client.GetPerms(ctx, in, opts...)
 }
 
 // 2FA
@@ -249,6 +242,24 @@ func (m *defaultSystem) SysRoleDelete(ctx context.Context, in *SysRoleDeleteReq,
 func (m *defaultSystem) SysRoleGrant(ctx context.Context, in *SysRoleGrantReq, opts ...grpc.CallOption) (*SimpleResp, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.SysRoleGrant(ctx, in, opts...)
+}
+
+// 获取角色授权详情
+func (m *defaultSystem) SysRoleGrantDetail(ctx context.Context, in *SysRoleGrantDetailReq, opts ...grpc.CallOption) (*SysRoleGrantDetailResp, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysRoleGrantDetail(ctx, in, opts...)
+}
+
+// 获取权限列表
+func (m *defaultSystem) SysPermList(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysPermListResp, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysPermList(ctx, in, opts...)
+}
+
+// 获取菜单树
+func (m *defaultSystem) GetMenuTree(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysMenuTreeResp, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.GetMenuTree(ctx, in, opts...)
 }
 
 // 菜单

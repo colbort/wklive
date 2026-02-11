@@ -9,22 +9,23 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type GetPermsLogic struct {
+type SysPermListLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewGetPermsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetPermsLogic {
-	return &GetPermsLogic{
+func NewSysPermListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysPermListLogic {
+	return &SysPermListLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
 }
 
-func (l *GetPermsLogic) GetPerms(in *system.Empty) (*system.PermsResp, error) {
+// 获取权限列表
+func (l *SysPermListLogic) SysPermList(in *system.Empty) (*system.SysPermListResp, error) {
 	// todo: add your logic here and delete this line
 
-	return &system.PermsResp{}, nil
+	return &system.SysPermListResp{}, nil
 }

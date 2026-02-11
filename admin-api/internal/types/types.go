@@ -240,6 +240,17 @@ type SysMenuUpdateReq struct {
 	Perms     string `json:"perms,optional"`
 }
 
+type SysPermItem struct {
+	Key  string `json:"key"`  // 唯一权限标识（如 sys:role:add）
+	Name string `json:"name"` // 展示名称（如 新增角色）
+}
+
+type SysPermListResp struct {
+	Code int32         `json:"code"`
+	Msg  string        `json:"msg"`
+	Data []SysPermItem `json:"data"`
+}
+
 type SysRoleCreateReq struct {
 	Name   string `json:"name"`
 	Code   string `json:"code"`
@@ -249,6 +260,22 @@ type SysRoleCreateReq struct {
 
 type SysRoleDeleteReq struct {
 	Id int64 `path:"id"`
+}
+
+type SysRoleGrantDetail struct {
+	RoleId   int64    `json:"roleId"`
+	MenuIds  []int64  `json:"menuIds"`
+	PermKeys []string `json:"permKeys"`
+}
+
+type SysRoleGrantDetailReq struct {
+	Id int64 `path:"id"`
+}
+
+type SysRoleGrantDetailResp struct {
+	Code int32              `json:"code"`
+	Msg  string             `json:"msg"`
+	Data SysRoleGrantDetail `json:"data"`
 }
 
 type SysRoleGrantReq struct {

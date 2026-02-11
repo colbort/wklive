@@ -131,6 +131,33 @@ type SysRoleGrantReq {
   menuIds []int64 `json:"menuIds"`
 }
 
+type SysRoleGrantDetailReq {
+  id int64 `path:"id"`
+}
+
+type SysRoleGrantDetailResp {
+  Code int32    `json:"code"`
+  Msg  string `json:"msg"`
+  Data SysRoleGrantDetail `json:"data"`
+}
+
+type SysRoleGrantDetail {
+	RoleId   int64    `json:"roleId"`
+	MenuIds  []int64  `json:"menuIds"`
+	PermKeys []string `json:"permKeys"`
+}
+
+type SysPermItem {
+  Key  string `json:"key"`   // 唯一权限标识（如 sys:role:add）
+  Name string `json:"name"`  // 展示名称（如 新增角色）
+}
+
+type SysPermListResp {
+  Code int32      `json:"code"`
+  Msg  string     `json:"msg"`
+  Data []SysPermItem `json:"data"`
+}
+
 // ===== system: 菜单/按钮 =====
 type SysMenuItem {
   id        int64  `json:"id"`
@@ -306,6 +333,13 @@ service admin {
 
   @handler SysRoleGrant
   post /roles/grant (SysRoleGrantReq) returns (SimpleResp)
+
+  @handler SysRoleGrantDetail
+  get /roles/:id/grant (SysRoleGrantDetailReq) returns (SysRoleGrantDetailResp)
+
+  // 按钮权限列表
+  @handler SysPermList
+  get /perms returns (SysPermListResp)
 
   // --- 菜单 ---
   @handler SysMenuTree
