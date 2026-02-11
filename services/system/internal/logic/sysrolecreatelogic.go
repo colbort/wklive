@@ -36,7 +36,7 @@ func (l *SysRoleCreateLogic) SysRoleCreate(in *system.SysRoleCreateReq) (*system
 	_, err = l.svcCtx.RoleModel.Insert(l.ctx, &models.SysRole{
 		Name:   in.Name,
 		Code:   in.Code,
-		Status: int64(in.Status),
+		Status: in.Status,
 		Remark: in.Remark,
 	})
 	if err != nil {

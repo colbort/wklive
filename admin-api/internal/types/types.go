@@ -23,7 +23,7 @@ type Google2FABindInitReq struct {
 }
 
 type Google2FABindInitResp struct {
-	Code       int    `json:"code"`
+	Code       int32  `json:"code"`
 	Msg        string `json:"msg"`
 	Secret     string `json:"secret"`
 	OtpauthUrl string `json:"otpauthUrl"`
@@ -62,7 +62,7 @@ type LoginLogListReq struct {
 }
 
 type LoginLogListResp struct {
-	Code  int            `json:"code"`
+	Code  int32          `json:"code"`
 	Msg   string         `json:"msg"`
 	Total int64          `json:"total"`
 	List  []LoginLogItem `json:"list"`
@@ -119,7 +119,7 @@ type OpLogListReq struct {
 }
 
 type OpLogListResp struct {
-	Code  int         `json:"code"`
+	Code  int32       `json:"code"`
 	Msg   string      `json:"msg"`
 	Total int64       `json:"total"`
 	List  []OpLogItem `json:"list"`
@@ -148,15 +148,15 @@ type OrderListResp struct {
 }
 
 type PageReq struct {
-	Page int `form:"page,optional"`
-	Size int `form:"size,optional"`
+	Page int32 `form:"page,optional"`
+	Size int32 `form:"size,optional"`
 }
 
 type ProfileReq struct {
 }
 
 type ProfileResp struct {
-	Code  int         `json:"code"`
+	Code  int32       `json:"code"`
 	Msg   string      `json:"msg"`
 	User  ProfileUser `json:"user"`
 	Menus []MenuNode  `json:"menus"`
@@ -176,7 +176,7 @@ type ResetUserPwdReq struct {
 }
 
 type SimpleResp struct {
-	Code int    `json:"code"`
+	Code int32  `json:"code"`
 	Msg  string `json:"msg"`
 }
 
@@ -215,13 +215,13 @@ type SysMenuListReq struct {
 }
 
 type SysMenuListResp struct {
-	Code int           `json:"code"`
+	Code int32         `json:"code"`
 	Msg  string        `json:"msg"`
 	List []SysMenuItem `json:"list"`
 }
 
 type SysMenuTreeResp struct {
-	Code int           `json:"code"`
+	Code int32         `json:"code"`
 	Msg  string        `json:"msg"`
 	List []SysMenuItem `json:"list"`
 }
@@ -272,7 +272,7 @@ type SysRoleListReq struct {
 }
 
 type SysRoleListResp struct {
-	Code  int           `json:"code"`
+	Code  int32         `json:"code"`
 	Msg   string        `json:"msg"`
 	Total int64         `json:"total"`
 	List  []SysRoleItem `json:"list"`
@@ -294,7 +294,7 @@ type SysUserCreateReq struct {
 }
 
 type SysUserDetailResp struct {
-	Code int         `json:"code"`
+	Code int32       `json:"code"`
 	Msg  string      `json:"msg"`
 	Data SysUserItem `json:"data"`
 }
@@ -303,10 +303,10 @@ type SysUserItem struct {
 	Id               int64   `json:"id"`
 	Username         string  `json:"username"`
 	Nickname         string  `json:"nickname"`
-	Status           int64   `json:"status"`
+	Status           int32   `json:"status"`
 	RoleIds          []int64 `json:"roleIds"`
 	CreatedAt        int64   `json:"createdAt"`
-	Google2faEnabled int64   `json:"google2faEnabled"`
+	Google2faEnabled int32   `json:"google2faEnabled"`
 }
 
 type SysUserListReq struct {
@@ -316,7 +316,7 @@ type SysUserListReq struct {
 }
 
 type SysUserListResp struct {
-	Code  int           `json:"code"`
+	Code  int32         `json:"code"`
 	Msg   string        `json:"msg"`
 	Total int64         `json:"total"`
 	List  []SysUserItem `json:"list"`

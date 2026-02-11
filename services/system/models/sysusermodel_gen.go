@@ -43,9 +43,9 @@ type (
 		Password      string         `db:"password"`       // bcrypt密码
 		Nickname      string         `db:"nickname"`       // 昵称
 		Avatar        string         `db:"avatar"`         // 头像
-		Status        int64          `db:"status"`         // 状态 1正常 2禁用
+		Status        int32          `db:"status"`         // 状态 1正常 2禁用
 		GoogleSecret  string         `db:"google_secret"`  // 2FA secret(加密存储)
-		GoogleEnabled int64          `db:"google_enabled"` // 是否开启2FA
+		GoogleEnabled int32          `db:"google_enabled"` // 是否开启2FA
 		PermsVer      int64          `db:"perms_ver"`      // 权限版本(角色变化强制token失效)
 		LastLoginIp   sql.NullString `db:"last_login_ip"`
 		LastLoginAt   sql.NullTime   `db:"last_login_at"`

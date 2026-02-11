@@ -116,10 +116,10 @@ message SysUserItem {
   int64 id = 1;
   string username = 2;
   string nickname = 3;
-  int64 status = 4;
+  int32 status = 4;
   repeated int64 role_ids = 5;
   int64 created_at = 6;
-  int64 google2fa_enabled = 7;
+  int32 google2fa_enabled = 7;
 }
 
 message SysUserListReq {

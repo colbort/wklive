@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, onMounted, nextTick } from 'vue'
 import { ElMessage, ElMessageBox, type FormInstance, type TreeInstance } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import type { SysRole } from '@/api/system/roles'
@@ -7,14 +7,8 @@ import { apiRoleList, apiRoleUpdate, apiRoleDelete, apiRoleGrant, apiRoleCreate 
 import type { MenuNode, PermItem } from '@/api/system/menus'
 import { apiMenuTree, apiPermList, apiRoleGrantDetail } from '@/api/system/menus'
 
-
 // ===== i18n =====
 const { t } = useI18n()
-
-
-
-// ===== 你需要有：菜单树 + 按钮权限列表（按你的后端接口替换）=====
-
 
 // ===== helpers =====
 function isSuperRole(r: SysRole | null | undefined) {
@@ -29,6 +23,7 @@ const total = ref(0)
 
 const query = reactive({
   keyword: '',
+  status: 0 as 0 | 1 | 2, // 0=全部, 1=启用, 2=禁用
   page: 1,
   pageSize: 20,
 })
@@ -37,12 +32,20 @@ const query = reactive({
 async function fetchList() {
   loading.value = true
   try {
+    // 如果后端不接受 status=0（全部），可以改成：
+    // const q = { ...query, status: query.status === 0 ? undefined : query.status }
+    // const resp = await apiRoleList(q)
     const resp = await apiRoleList(query)
     tableData.value = resp.list || []
     total.value = resp.total || 0
   } finally {
     loading.value = false
   }
+}
+
+function onSearch() {
+  query.page = 1
+  fetchList()
 }
 
 // ===== create/update dialog =====
@@ -53,16 +56,23 @@ const editForm = reactive({
   name: '',
   code: '',
   remark: '',
+  status: 1 as 1 | 2, // 1启用 2禁用
 })
 const editIsUpdate = computed(() => editForm.id > 0)
 
 function openCreate() {
-  Object.assign(editForm, { id: 0, name: '', code: '', remark: '' })
+  Object.assign(editForm, { id: 0, name: '', code: '', remark: '', status: 1 })
   editVisible.value = true
 }
 function openUpdate(row: SysRole) {
   if (isSuperRole(row)) return
-  Object.assign(editForm, { id: row.id, name: row.name, code: row.code, remark: row.remark || '' })
+  Object.assign(editForm, {
+    id: row.id,
+    name: row.name,
+    code: row.code,
+    remark: row.remark || '',
+    status: (row as any).status === 2 ? 2 : 1,
+  })
   editVisible.value = true
 }
 
@@ -161,16 +171,7 @@ async function submitGrant() {
 }
 
 // ===== init =====
-import { onMounted, nextTick } from 'vue'
 onMounted(fetchList)
-
-// ===== mock request (你项目里删掉) =====
-const request = {
-  get: async (url: string, opts?: any) => { throw new Error('replace request.get') },
-  post: async (url: string, data?: any) => { throw new Error('replace request.post') },
-  put: async (url: string, data?: any) => { throw new Error('replace request.put') },
-  delete: async (url: string) => { throw new Error('replace request.delete') },
-}
 </script>
 
 <template>
@@ -187,9 +188,19 @@ const request = {
     </template>
 
     <!-- 查询区 -->
-    <div style="display:flex; gap:8px; align-items:center; margin-bottom:12px;">
+    <div style="display:flex; gap:8px; align-items:center; margin-bottom:12px; flex-wrap: wrap;">
       <el-input v-model="query.keyword" :placeholder="t('common.keyword')" clearable style="max-width:260px;" />
-      <el-button @click="fetchList">{{ t('common.search') }}</el-button>
+
+      <el-select v-model="query.status" style="width:140px;" :placeholder="t('common.status')" @change="onSearch">
+        <el-option :label="t('common.all')" :value="0" />
+        <el-option :label="t('common.enabled')" :value="1" />
+        <el-option :label="t('common.disabled')" :value="2" />
+      </el-select>
+
+      <el-button @click="onSearch">{{ t('common.search') }}</el-button>
+      <el-button @click="() => { query.keyword = ''; query.status = 0; onSearch() }">
+        {{ t('common.reset') }}
+      </el-button>
     </div>
 
     <!-- 表格 -->
@@ -197,7 +208,17 @@ const request = {
       <el-table-column prop="id" label="ID" width="90" />
       <el-table-column prop="name" :label="t('system.roleName')" min-width="160" />
       <el-table-column prop="code" :label="t('system.roleCode')" min-width="160" />
+
+      <!-- ✅ 新增：状态 -->
+      <el-table-column :label="t('common.status')" width="110">
+        <template #default="{ row }">
+          <el-tag v-if="(row as any).status === 1" type="success">{{ t('common.enabled') }}</el-tag>
+          <el-tag v-else type="info">{{ t('common.disabled') }}</el-tag>
+        </template>
+      </el-table-column>
+
       <el-table-column prop="remark" :label="t('common.remark')" min-width="200" />
+
       <el-table-column :label="t('common.actions')" width="320" fixed="right">
         <template #default="{ row }">
           <el-button
@@ -243,7 +264,7 @@ const request = {
         background
         layout="total, prev, pager, next, sizes"
         @current-change="fetchList"
-        @size-change="fetchList"
+        @size-change="() => { query.page = 1; fetchList() }"
       />
     </div>
   </el-card>
@@ -257,6 +278,14 @@ const request = {
 
       <el-form-item :label="t('system.roleCode')" prop="code" :rules="[{ required: true, message: t('common.required') }]">
         <el-input v-model="editForm.code" :disabled="editIsUpdate" />
+      </el-form-item>
+
+      <!-- ✅ 新增：状态 -->
+      <el-form-item :label="t('common.status')" prop="status" :rules="[{ required: true, message: t('common.required') }]">
+        <el-radio-group v-model="editForm.status">
+          <el-radio :label="1">{{ t('common.enabled') }}</el-radio>
+          <el-radio :label="2">{{ t('common.disabled') }}</el-radio>
+        </el-radio-group>
       </el-form-item>
 
       <el-form-item :label="t('common.remark')" prop="remark">

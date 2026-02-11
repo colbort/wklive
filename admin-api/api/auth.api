@@ -52,6 +52,9 @@ type ProfileResp {
 service admin {
   @handler Login
   post /auth/login (LoginReq) returns (LoginResp)
+
+  
   @handler Profile
+  @jwt
   get /auth/profile (ProfileReq) returns (ProfileResp)
 }

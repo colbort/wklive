@@ -42,7 +42,7 @@ type (
 		Id        int64     `db:"id"`
 		Name      string    `db:"name"`   // 角色名称
 		Code      string    `db:"code"`   // 角色标识(如admin)
-		Status    int64     `db:"status"` // 1启用 2禁用
+		Status    int32     `db:"status"` // 1启用 2禁用
 		Remark    string    `db:"remark"`
 		CreatedAt time.Time `db:"created_at"`
 		UpdatedAt time.Time `db:"updated_at"`

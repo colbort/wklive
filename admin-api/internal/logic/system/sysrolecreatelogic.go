@@ -35,7 +35,7 @@ func (l *SysRoleCreateLogic) SysRoleCreate(req *types.SysRoleCreateReq) (resp *t
 		Remark: req.Remark,
 	})
 	return &types.SimpleResp{
-		Code: int(result.Code),
+		Code: result.Code,
 		Msg:  result.Msg,
 	}, err
 }

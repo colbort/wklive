@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/rpc/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,18 @@ func NewSysRoleUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 }
 
 func (l *SysRoleUpdateLogic) SysRoleUpdate(req *types.SysRoleUpdateReq) (resp *types.SimpleResp, err error) {
-	// todo: add your logic here and delete this line
-
+	result, err := l.svcCtx.SystemCli.SysRoleUpdate(l.ctx, &system.SysRoleUpdateReq{
+		Id:     req.Id,
+		Name:   req.Name,
+		Status: req.Status,
+		Remark: req.Remark,
+	})
+	if err != nil {
+		return nil, err
+	}
+	resp = &types.SimpleResp{
+		Code: result.Code,
+		Msg:  result.Msg,
+	}
 	return
 }

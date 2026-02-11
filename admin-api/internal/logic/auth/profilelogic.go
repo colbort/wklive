@@ -29,7 +29,7 @@ func NewProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ProfileLo
 }
 
 func (l *ProfileLogic) Profile(req *types.ProfileReq) (resp *types.ProfileResp, err error) {
-	// uidAny := l.ctx.Value("uid")
+	// uidAny := l.ctx.Value("jwtUserId")
 	// uid, ok := uidAny.(int64)
 	// if !ok || uid <= 0 {
 	// 	return nil, errorx.Wrap(nil, "未登录或登录已失效")

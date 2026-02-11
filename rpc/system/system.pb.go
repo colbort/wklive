@@ -1170,10 +1170,10 @@ type SysUserItem struct {
 	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Username         string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
 	Nickname         string                 `protobuf:"bytes,3,opt,name=nickname,proto3" json:"nickname,omitempty"`
-	Status           int64                  `protobuf:"varint,4,opt,name=status,proto3" json:"status,omitempty"`
+	Status           int32                  `protobuf:"varint,4,opt,name=status,proto3" json:"status,omitempty"`
 	RoleIds          []int64                `protobuf:"varint,5,rep,packed,name=role_ids,json=roleIds,proto3" json:"role_ids,omitempty"`
 	CreatedAt        int64                  `protobuf:"varint,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	Google2FaEnabled int64                  `protobuf:"varint,7,opt,name=google2fa_enabled,json=google2faEnabled,proto3" json:"google2fa_enabled,omitempty"`
+	Google2FaEnabled int32                  `protobuf:"varint,7,opt,name=google2fa_enabled,json=google2faEnabled,proto3" json:"google2fa_enabled,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -1229,7 +1229,7 @@ func (x *SysUserItem) GetNickname() string {
 	return ""
 }
 
-func (x *SysUserItem) GetStatus() int64 {
+func (x *SysUserItem) GetStatus() int32 {
 	if x != nil {
 		return x.Status
 	}
@@ -1250,7 +1250,7 @@ func (x *SysUserItem) GetCreatedAt() int64 {
 	return 0
 }
 
-func (x *SysUserItem) GetGoogle2FaEnabled() int64 {
+func (x *SysUserItem) GetGoogle2FaEnabled() int32 {
 	if x != nil {
 		return x.Google2FaEnabled
 	}
@@ -3163,11 +3163,11 @@ const file_system_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x12\x1a\n" +
 	"\bnickname\x18\x03 \x01(\tR\bnickname\x12\x16\n" +
-	"\x06status\x18\x04 \x01(\x03R\x06status\x12\x19\n" +
+	"\x06status\x18\x04 \x01(\x05R\x06status\x12\x19\n" +
 	"\brole_ids\x18\x05 \x03(\x03R\aroleIds\x12\x1d\n" +
 	"\n" +
 	"created_at\x18\x06 \x01(\x03R\tcreatedAt\x12+\n" +
-	"\x11google2fa_enabled\x18\a \x01(\x03R\x10google2faEnabled\"g\n" +
+	"\x11google2fa_enabled\x18\a \x01(\x05R\x10google2faEnabled\"g\n" +
 	"\x0eSysUserListReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.system.PageReqR\x04page\x12\x18\n" +
 	"\akeyword\x18\x02 \x01(\tR\akeyword\x12\x16\n" +

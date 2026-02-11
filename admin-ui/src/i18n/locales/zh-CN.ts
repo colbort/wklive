@@ -1,3 +1,5 @@
+import { all } from "node_modules/axios/index.cjs";
+
 export default {
   app: {
     title: '后台管理',
@@ -34,7 +36,8 @@ export default {
     required: '必填项',
     confirmDelete: '确定要删除吗？',
     success: '操作成功',
-    failed: '操作失败'
+    failed: '操作失败',
+    all: '全部'
   },
   system: {
     mgmt: '系统管理',

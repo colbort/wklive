@@ -2,13 +2,21 @@ package models
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
 	"github.com/jmoiron/sqlx"
+
+	g "github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type RoleMenuModel interface {
 	sysRoleMenuModel
 	FindMenuIdsByRoleIds(ctx context.Context, roleIds []int64) ([]int64, error)
+	DeleteByRoleId(ctx context.Context, roleId int64) error
+	InsertBatch(ctx context.Context, data []*SysRoleMenu) error
+
+	TransactCtx(ctx context.Context, fn func(context.Context, g.Session) error) error
 }
 
 func (m *defaultSysRoleMenuModel) FindMenuIdsByRoleIds(ctx context.Context, roleIds []int64) ([]int64, error) {
@@ -20,4 +28,39 @@ func (m *defaultSysRoleMenuModel) FindMenuIdsByRoleIds(ctx context.Context, role
 	}
 	err = m.conn.QueryRowsCtx(ctx, &ids, query, args...)
 	return ids, err
+}
+
+func (m *defaultSysRoleMenuModel) DeleteByRoleId(ctx context.Context, roleId int64) error {
+	query := fmt.Sprintf("DELETE FROM %s WHERE role_id = ?", m.table)
+	_, err := m.conn.ExecCtx(ctx, query, roleId)
+	return err
+}
+
+func (m *defaultSysRoleMenuModel) InsertBatch(ctx context.Context, data []*SysRoleMenu) error {
+	if len(data) == 0 {
+		return nil
+	}
+
+	valueStrings := make([]string, 0, len(data))
+	valueArgs := make([]interface{}, 0, len(data)*2)
+
+	for _, d := range data {
+		valueStrings = append(valueStrings, "(?, ?)")
+		valueArgs = append(valueArgs, d.RoleId, d.MenuId)
+	}
+
+	stmt := fmt.Sprintf(
+		"INSERT INTO %s (role_id, menu_id) VALUES %s",
+		m.table,
+		strings.Join(valueStrings, ","),
+	)
+
+	stmt = sqlx.Rebind(sqlx.DOLLAR, stmt)
+
+	_, err := m.conn.ExecCtx(ctx, stmt, valueArgs...)
+	return err
+}
+
+func (m *defaultSysRoleMenuModel) TransactCtx(ctx context.Context, fn func(context.Context, g.Session) error) error {
+	return m.conn.TransactCtx(ctx, fn)
 }

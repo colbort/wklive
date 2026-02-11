@@ -6,22 +6,28 @@ package main
 import (
 	"flag"
 	"fmt"
+	"strings"
 
 	"wklive/admin-api/internal/config"
 	"wklive/admin-api/internal/handler"
 	"wklive/admin-api/internal/svc"
 
-	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/rest"
+
+	"wklive/common/etcd"
 )
 
-var configFile = flag.String("f", "etc/admin.yaml", "the config file")
+var (
+	endpoints = flag.String("etcd", "192.168.10.116:2379", "etcd endpoints")
+	configKey = flag.String("config", "/wklive/admin-api/config", "etcd config key")
+)
 
 func main() {
 	flag.Parse()
 
 	var c config.Config
-	conf.MustLoad(*configFile, &c)
+	// 用 etcd 配置中心
+	etcd.LoadFromEtcdAndMerge(strings.Split(*endpoints, ","), *configKey, &c)
 
 	server := rest.MustNewServer(c.RestConf, rest.WithCors("*"))
 	defer server.Stop()

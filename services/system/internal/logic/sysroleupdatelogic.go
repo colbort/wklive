@@ -2,9 +2,11 @@ package logic
 
 import (
 	"context"
+	"time"
 
 	"wklive/rpc/system"
 	"wklive/services/system/internal/svc"
+	"wklive/services/system/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -24,7 +26,18 @@ func NewSysRoleUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 }
 
 func (l *SysRoleUpdateLogic) SysRoleUpdate(in *system.SysRoleUpdateReq) (*system.SimpleResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &system.SimpleResp{}, nil
+	err := l.svcCtx.RoleModel.Update(l.ctx, &models.SysRole{
+		Id:        in.Id,
+		Name:      in.Name,
+		Status:    in.Status,
+		Remark:    in.Remark,
+		UpdatedAt: time.Now(),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &system.SimpleResp{
+		Code: 200,
+		Msg:  "更新成功",
+	}, nil
 }
