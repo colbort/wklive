@@ -32,8 +32,8 @@ clean-gen:
 # 生成全量 all.api：用于更新 routes/types/config/svc/admin.go（这些覆盖是安全的）
 gen-all:
 	@cat $(COMMON) \
-		$(API_DIR)/auth_login.api \
-		$(API_DIR)/auth_profile.api \
+		$(API_DIR)/auth_public.api \
+		$(API_DIR)/auth_private.api \
 		$(API_DIR)/user.api \
 		$(API_DIR)/payment.api \
 		$(API_DIR)/system.api \
