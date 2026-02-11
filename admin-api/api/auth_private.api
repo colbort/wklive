@@ -36,7 +36,7 @@ type ProfileResp {
 
 @server(
   prefix: /admin
-  group: auth
+  group: auth_private
   jwt: Auth
 )
 service admin {

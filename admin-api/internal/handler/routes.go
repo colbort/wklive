@@ -6,7 +6,8 @@ package handler
 import (
 	"net/http"
 
-	auth "wklive/admin-api/internal/handler/auth"
+	auth_private "wklive/admin-api/internal/handler/auth_private"
+	auth_public "wklive/admin-api/internal/handler/auth_public"
 	payment "wklive/admin-api/internal/handler/payment"
 	system "wklive/admin-api/internal/handler/system"
 	user "wklive/admin-api/internal/handler/user"
@@ -19,23 +20,23 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
-				Method:  http.MethodPost,
-				Path:    "/auth/login",
-				Handler: auth.LoginHandler(serverCtx),
+				Method:  http.MethodGet,
+				Path:    "/auth/profile",
+				Handler: auth_private.ProfileHandler(serverCtx),
 			},
 		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 		rest.WithPrefix("/admin"),
 	)
 
 	server.AddRoutes(
 		[]rest.Route{
 			{
-				Method:  http.MethodGet,
-				Path:    "/auth/profile",
-				Handler: auth.ProfileHandler(serverCtx),
+				Method:  http.MethodPost,
+				Path:    "/auth/login",
+				Handler: auth_public.LoginHandler(serverCtx),
 			},
 		},
-		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 		rest.WithPrefix("/admin"),
 	)
 

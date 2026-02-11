@@ -14,7 +14,7 @@ type LoginResp {
 
 @server(
   prefix: /admin
-  group: auth
+  group: auth_public
 )
 service admin {
   @handler Login
