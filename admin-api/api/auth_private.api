@@ -1,0 +1,46 @@
+
+type ProfileReq {
+}
+
+type ProfileUser {
+  id       int64  `json:"id"`
+  username string `json:"username"`
+  nickname string `json:"nickname,optional"`
+  avatar   string `json:"avatar,optional"`
+}
+
+type MenuNode {
+  id        int64    `json:"id"`
+  parentId  int64    `json:"parentId"`
+  name      string   `json:"name"`
+  menuType  int32    `json:"menuType"` // 1目录 2菜单 3按钮
+  path      string   `json:"path,optional"`
+  component string   `json:"component,optional"`
+  icon      string   `json:"icon,optional"`
+  sort      int32    `json:"sort"`
+  visible   int32    `json:"visible"`
+  status    int32    `json:"status"`
+  perms     string   `json:"perms,optional"`
+  children  []MenuNode `json:"children,optional"`
+}
+
+type ProfileResp {
+  code  int32       `json:"code"`
+  msg   string    `json:"msg"`
+  user  ProfileUser `json:"user"`
+  menus []MenuNode  `json:"menus"`
+  perms []string    `json:"perms"`
+}
+
+
+
+@server(
+  prefix: /admin
+  group: auth
+  jwt: Auth
+)
+service admin {
+  @handler Profile
+  get /auth/profile (ProfileReq) returns (ProfileResp)
+}
+
