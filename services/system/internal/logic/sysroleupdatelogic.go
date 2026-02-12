@@ -2,11 +2,12 @@ package logic
 
 import (
 	"context"
-	"time"
 
 	"wklive/rpc/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
+
+	"github.com/jinzhu/copier"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,13 +27,22 @@ func NewSysRoleUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 }
 
 func (l *SysRoleUpdateLogic) SysRoleUpdate(in *system.SysRoleUpdateReq) (*system.RespBase, error) {
-	err := l.svcCtx.RoleModel.Update(l.ctx, &models.SysRole{
-		Id:        in.Id,
-		Name:      in.Name,
-		Status:    in.Status,
-		Remark:    in.Remark,
-		UpdatedAt: time.Now(),
-	})
+	one, err := l.svcCtx.RoleModel.FindOne(l.ctx, in.Id)
+	if err != nil {
+		return nil, err
+	}
+	if one == nil {
+		return &system.RespBase{
+			Code: 400,
+			Msg:  "角色不存在",
+		}, nil
+	}
+
+	var data models.SysRole
+	_ = copier.Copy(&data, one)
+	_ = copier.Copy(&data, in)
+
+	err = l.svcCtx.RoleModel.Update(l.ctx, &data)
 	if err != nil {
 		return nil, err
 	}

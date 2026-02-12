@@ -24,7 +24,12 @@ func NewSysUserDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 }
 
 func (l *SysUserDeleteLogic) SysUserDelete(in *system.SysUserDeleteReq) (*system.RespBase, error) {
-	// todo: add your logic here and delete this line
-
-	return &system.RespBase{}, nil
+	err := l.svcCtx.UserModel.Delete(l.ctx, in.Id)
+	if err != nil {
+		return nil, err
+	}
+	return &system.RespBase{
+		Code: 200,
+		Msg:  "删除成功",
+	}, nil
 }
