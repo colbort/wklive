@@ -1,7 +1,7 @@
 API_DIR := api
 TMP_DIR := .gen-tmp
 
-MODULES := auth_public auth_private user payment system
+MODULES := auth_public auth_private system user payment
 COMMON  := $(API_DIR)/common.api
 
 GOCTL ?= goctl
@@ -31,14 +31,19 @@ clean-gen:
 
 # 生成全量 all.api：用于更新 routes/types/config/svc/admin.go（这些覆盖是安全的）
 gen-all:
-	@cat $(COMMON) \
-		$(API_DIR)/auth_public.api \
-		$(API_DIR)/auth_private.api \
-		$(API_DIR)/user.api \
-		$(API_DIR)/payment.api \
-		$(API_DIR)/system.api \
-		> $(TMP_DIR)/all.api
+	@{ \
+		set -e; \
+		out="$(TMP_DIR)/all.api"; \
+		: > "$$out"; \
+		cat "$(COMMON)" >> "$$out"; \
+		for m in $(MODULES); do \
+			f="$(API_DIR)/$$m.api"; \
+			test -f "$$f" || { echo "❌ missing api file: $$f"; exit 1; }; \
+			cat "$$f" >> "$$out"; \
+		done; \
+	}
 	@$(GOCTL) api go -api $(TMP_DIR)/all.api -dir $(TMP_DIR)/all
+
 
 # 合并全量产物（覆盖更新：routes/types/config/svc/admin.go）
 merge-all:
