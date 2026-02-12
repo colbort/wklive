@@ -35,7 +35,7 @@ type (
 	ProfileResp            = system.ProfileResp
 	ProfileUser            = system.ProfileUser
 	ResetUserPwdReq        = system.ResetUserPwdReq
-	RespBase             = system.RespBase
+	RespBase               = system.RespBase
 	SysMenuCreateReq       = system.SysMenuCreateReq
 	SysMenuDeleteReq       = system.SysMenuDeleteReq
 	SysMenuItem            = system.SysMenuItem

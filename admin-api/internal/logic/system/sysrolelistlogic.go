@@ -39,9 +39,9 @@ func (l *SysRoleListLogic) SysRoleList(req *types.SysRoleListReq) (resp *types.S
 		return nil, err
 	}
 
-	var list []types.SysRoleItem
-	for _, item := range response.List {
-		list = append(list, types.SysRoleItem{
+	var data []types.SysRoleItem
+	for _, item := range response.Data {
+		data = append(data, types.SysRoleItem{
 			Id:        item.Id,
 			Name:      item.Name,
 			Code:      item.Code,
@@ -53,10 +53,10 @@ func (l *SysRoleListLogic) SysRoleList(req *types.SysRoleListReq) (resp *types.S
 
 	resp = &types.SysRoleListResp{
 		RespBase: types.RespBase{
-			Code: response.Code,
-			Msg:  response.Msg,
+			Code: response.Base.Code,
+			Msg:  response.Base.Msg,
 		},
-		Data: list,
+		Data: data,
 	}
 	return
 }

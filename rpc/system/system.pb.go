@@ -138,8 +138,7 @@ func (x *AdminLoginReq) GetUa() string {
 
 type AdminLoginResp struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	Code             int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
-	Msg              string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
+	Base             *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Token            string                 `protobuf:"bytes,3,opt,name=token,proto3" json:"token,omitempty"`
 	Exp              int64                  `protobuf:"varint,4,opt,name=exp,proto3" json:"exp,omitempty"`
 	Uid              int64                  `protobuf:"varint,5,opt,name=uid,proto3" json:"uid,omitempty"`
@@ -181,18 +180,11 @@ func (*AdminLoginResp) Descriptor() ([]byte, []int) {
 	return file_system_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *AdminLoginResp) GetCode() int32 {
+func (x *AdminLoginResp) GetBase() *RespBase {
 	if x != nil {
-		return x.Code
+		return x.Base
 	}
-	return 0
-}
-
-func (x *AdminLoginResp) GetMsg() string {
-	if x != nil {
-		return x.Msg
-	}
-	return ""
+	return nil
 }
 
 func (x *AdminLoginResp) GetToken() string {
@@ -677,9 +669,8 @@ func (x *SysMenuItem) GetPerms() string {
 
 type SysMenuTreeResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
-	Msg           string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
-	List          []*SysMenuItem         `protobuf:"bytes,3,rep,name=list,proto3" json:"list,omitempty"`
+	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          []*SysMenuItem         `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -714,23 +705,16 @@ func (*SysMenuTreeResp) Descriptor() ([]byte, []int) {
 	return file_system_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *SysMenuTreeResp) GetCode() int32 {
+func (x *SysMenuTreeResp) GetBase() *RespBase {
 	if x != nil {
-		return x.Code
+		return x.Base
 	}
-	return 0
+	return nil
 }
 
-func (x *SysMenuTreeResp) GetMsg() string {
+func (x *SysMenuTreeResp) GetData() []*SysMenuItem {
 	if x != nil {
-		return x.Msg
-	}
-	return ""
-}
-
-func (x *SysMenuTreeResp) GetList() []*SysMenuItem {
-	if x != nil {
-		return x.List
+		return x.Data
 	}
 	return nil
 }
@@ -784,8 +768,7 @@ func (x *Google2FAInitReq) GetUserId() int64 {
 
 type Google2FAInitResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
-	Msg           string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
+	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Secret        string                 `protobuf:"bytes,3,opt,name=secret,proto3" json:"secret,omitempty"`
 	OtpauthUrl    string                 `protobuf:"bytes,4,opt,name=otpauth_url,json=otpauthUrl,proto3" json:"otpauth_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -822,18 +805,11 @@ func (*Google2FAInitResp) Descriptor() ([]byte, []int) {
 	return file_system_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *Google2FAInitResp) GetCode() int32 {
+func (x *Google2FAInitResp) GetBase() *RespBase {
 	if x != nil {
-		return x.Code
+		return x.Base
 	}
-	return 0
-}
-
-func (x *Google2FAInitResp) GetMsg() string {
-	if x != nil {
-		return x.Msg
-	}
-	return ""
+	return nil
 }
 
 func (x *Google2FAInitResp) GetSecret() string {
@@ -1002,6 +978,7 @@ type RespBase struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
 	Msg           string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
+	Total         int64                  `protobuf:"varint,3,opt,name=total,proto3" json:"total,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1048,6 +1025,13 @@ func (x *RespBase) GetMsg() string {
 		return x.Msg
 	}
 	return ""
+}
+
+func (x *RespBase) GetTotal() int64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
 }
 
 // ////////////////////
@@ -1259,10 +1243,8 @@ func (x *SysUserListReq) GetStatus() int32 {
 
 type SysUserListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
-	Msg           string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
-	Total         int64                  `protobuf:"varint,3,opt,name=total,proto3" json:"total,omitempty"`
-	List          []*SysUserItem         `protobuf:"bytes,4,rep,name=list,proto3" json:"list,omitempty"`
+	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          []*SysUserItem         `protobuf:"bytes,4,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1297,30 +1279,16 @@ func (*SysUserListResp) Descriptor() ([]byte, []int) {
 	return file_system_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *SysUserListResp) GetCode() int32 {
+func (x *SysUserListResp) GetBase() *RespBase {
 	if x != nil {
-		return x.Code
+		return x.Base
 	}
-	return 0
+	return nil
 }
 
-func (x *SysUserListResp) GetMsg() string {
+func (x *SysUserListResp) GetData() []*SysUserItem {
 	if x != nil {
-		return x.Msg
-	}
-	return ""
-}
-
-func (x *SysUserListResp) GetTotal() int64 {
-	if x != nil {
-		return x.Total
-	}
-	return 0
-}
-
-func (x *SysUserListResp) GetList() []*SysUserItem {
-	if x != nil {
-		return x.List
+		return x.Data
 	}
 	return nil
 }
@@ -1371,8 +1339,7 @@ func (x *SysUserDetailReq) GetId() int64 {
 
 type SysUserDetailResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
-	Msg           string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
+	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          *SysUserItem           `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1408,18 +1375,11 @@ func (*SysUserDetailResp) Descriptor() ([]byte, []int) {
 	return file_system_proto_rawDescGZIP(), []int{20}
 }
 
-func (x *SysUserDetailResp) GetCode() int32 {
+func (x *SysUserDetailResp) GetBase() *RespBase {
 	if x != nil {
-		return x.Code
+		return x.Base
 	}
-	return 0
-}
-
-func (x *SysUserDetailResp) GetMsg() string {
-	if x != nil {
-		return x.Msg
-	}
-	return ""
+	return nil
 }
 
 func (x *SysUserDetailResp) GetData() *SysUserItem {
@@ -1922,10 +1882,8 @@ func (x *SysRoleListReq) GetStatus() int32 {
 
 type SysRoleListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
-	Msg           string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
-	Total         int64                  `protobuf:"varint,3,opt,name=total,proto3" json:"total,omitempty"`
-	List          []*SysRoleItem         `protobuf:"bytes,4,rep,name=list,proto3" json:"list,omitempty"`
+	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          []*SysRoleItem         `protobuf:"bytes,4,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1960,30 +1918,16 @@ func (*SysRoleListResp) Descriptor() ([]byte, []int) {
 	return file_system_proto_rawDescGZIP(), []int{29}
 }
 
-func (x *SysRoleListResp) GetCode() int32 {
+func (x *SysRoleListResp) GetBase() *RespBase {
 	if x != nil {
-		return x.Code
+		return x.Base
 	}
-	return 0
+	return nil
 }
 
-func (x *SysRoleListResp) GetMsg() string {
+func (x *SysRoleListResp) GetData() []*SysRoleItem {
 	if x != nil {
-		return x.Msg
-	}
-	return ""
-}
-
-func (x *SysRoleListResp) GetTotal() int64 {
-	if x != nil {
-		return x.Total
-	}
-	return 0
-}
-
-func (x *SysRoleListResp) GetList() []*SysRoleItem {
-	if x != nil {
-		return x.List
+		return x.Data
 	}
 	return nil
 }
@@ -2266,8 +2210,7 @@ func (x *SysRoleGrantDetailReq) GetRoleId() int64 {
 
 type SysRoleGrantDetailResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
-	Msg           string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
+	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	RoleId        int64                  `protobuf:"varint,3,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
 	MenuIds       []int64                `protobuf:"varint,4,rep,packed,name=menu_ids,json=menuIds,proto3" json:"menu_ids,omitempty"`
 	PermKeys      []string               `protobuf:"bytes,5,rep,name=perm_keys,json=permKeys,proto3" json:"perm_keys,omitempty"`
@@ -2305,18 +2248,11 @@ func (*SysRoleGrantDetailResp) Descriptor() ([]byte, []int) {
 	return file_system_proto_rawDescGZIP(), []int{35}
 }
 
-func (x *SysRoleGrantDetailResp) GetCode() int32 {
+func (x *SysRoleGrantDetailResp) GetBase() *RespBase {
 	if x != nil {
-		return x.Code
+		return x.Base
 	}
-	return 0
-}
-
-func (x *SysRoleGrantDetailResp) GetMsg() string {
-	if x != nil {
-		return x.Msg
-	}
-	return ""
+	return nil
 }
 
 func (x *SysRoleGrantDetailResp) GetRoleId() int64 {
@@ -2394,8 +2330,7 @@ func (x *SysPermItem) GetName() string {
 
 type SysPermListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
-	Msg           string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
+	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*SysPermItem         `protobuf:"bytes,3,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2431,18 +2366,11 @@ func (*SysPermListResp) Descriptor() ([]byte, []int) {
 	return file_system_proto_rawDescGZIP(), []int{37}
 }
 
-func (x *SysPermListResp) GetCode() int32 {
+func (x *SysPermListResp) GetBase() *RespBase {
 	if x != nil {
-		return x.Code
+		return x.Base
 	}
-	return 0
-}
-
-func (x *SysPermListResp) GetMsg() string {
-	if x != nil {
-		return x.Msg
-	}
-	return ""
+	return nil
 }
 
 func (x *SysPermListResp) GetData() []*SysPermItem {
@@ -2904,10 +2832,8 @@ func (x *LoginLogListReq) GetResult() int32 {
 
 type LoginLogListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
-	Msg           string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
-	Total         int64                  `protobuf:"varint,3,opt,name=total,proto3" json:"total,omitempty"`
-	List          []*LoginLogItem        `protobuf:"bytes,4,rep,name=list,proto3" json:"list,omitempty"`
+	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          []*LoginLogItem        `protobuf:"bytes,4,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2942,30 +2868,16 @@ func (*LoginLogListResp) Descriptor() ([]byte, []int) {
 	return file_system_proto_rawDescGZIP(), []int{43}
 }
 
-func (x *LoginLogListResp) GetCode() int32 {
+func (x *LoginLogListResp) GetBase() *RespBase {
 	if x != nil {
-		return x.Code
+		return x.Base
 	}
-	return 0
+	return nil
 }
 
-func (x *LoginLogListResp) GetMsg() string {
+func (x *LoginLogListResp) GetData() []*LoginLogItem {
 	if x != nil {
-		return x.Msg
-	}
-	return ""
-}
-
-func (x *LoginLogListResp) GetTotal() int64 {
-	if x != nil {
-		return x.Total
-	}
-	return 0
-}
-
-func (x *LoginLogListResp) GetList() []*LoginLogItem {
-	if x != nil {
-		return x.List
+		return x.Data
 	}
 	return nil
 }
@@ -3172,10 +3084,8 @@ func (x *OpLogListReq) GetAction() string {
 
 type OpLogListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
-	Msg           string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
-	Total         int64                  `protobuf:"varint,3,opt,name=total,proto3" json:"total,omitempty"`
-	List          []*OpLogItem           `protobuf:"bytes,4,rep,name=list,proto3" json:"list,omitempty"`
+	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          []*OpLogItem           `protobuf:"bytes,4,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3210,30 +3120,16 @@ func (*OpLogListResp) Descriptor() ([]byte, []int) {
 	return file_system_proto_rawDescGZIP(), []int{46}
 }
 
-func (x *OpLogListResp) GetCode() int32 {
+func (x *OpLogListResp) GetBase() *RespBase {
 	if x != nil {
-		return x.Code
+		return x.Base
 	}
-	return 0
+	return nil
 }
 
-func (x *OpLogListResp) GetMsg() string {
+func (x *OpLogListResp) GetData() []*OpLogItem {
 	if x != nil {
-		return x.Msg
-	}
-	return ""
-}
-
-func (x *OpLogListResp) GetTotal() int64 {
-	if x != nil {
-		return x.Total
-	}
-	return 0
-}
-
-func (x *OpLogListResp) GetList() []*OpLogItem {
-	if x != nil {
-		return x.List
+		return x.Data
 	}
 	return nil
 }
@@ -3251,9 +3147,8 @@ const file_system_proto_rawDesc = "" +
 	"googleCode\x12\x0e\n" +
 	"\x02ip\x18\x04 \x01(\tR\x02ip\x12\x0e\n" +
 	"\x02ua\x18\x05 \x01(\tR\x02ua\"\xf1\x01\n" +
-	"\x0eAdminLoginResp\x12\x12\n" +
-	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x10\n" +
-	"\x03msg\x18\x02 \x01(\tR\x03msg\x12\x14\n" +
+	"\x0eAdminLoginResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12\x14\n" +
 	"\x05token\x18\x03 \x01(\tR\x05token\x12\x10\n" +
 	"\x03exp\x18\x04 \x01(\x03R\x03exp\x12\x10\n" +
 	"\x03uid\x18\x05 \x01(\x03R\x03uid\x12\x1a\n" +
@@ -3300,15 +3195,13 @@ const file_system_proto_rawDesc = "" +
 	"\x06status\x18\n" +
 	" \x01(\x05R\x06status\x12\x14\n" +
 	"\x05perms\x18\v \x01(\tR\x05perms\"`\n" +
-	"\x0fSysMenuTreeResp\x12\x12\n" +
-	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x10\n" +
-	"\x03msg\x18\x02 \x01(\tR\x03msg\x12'\n" +
-	"\x04list\x18\x03 \x03(\v2\x13.system.SysMenuItemR\x04list\"+\n" +
+	"\x0fSysMenuTreeResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12'\n" +
+	"\x04data\x18\x02 \x03(\v2\x13.system.SysMenuItemR\x04data\"+\n" +
 	"\x10Google2FAInitReq\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\"r\n" +
-	"\x11Google2FAInitResp\x12\x12\n" +
-	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x10\n" +
-	"\x03msg\x18\x02 \x01(\tR\x03msg\x12\x16\n" +
+	"\x11Google2FAInitResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12\x16\n" +
 	"\x06secret\x18\x03 \x01(\tR\x06secret\x12\x1f\n" +
 	"\votpauth_url\x18\x04 \x01(\tR\n" +
 	"otpauthUrl\"A\n" +
@@ -3319,11 +3212,11 @@ const file_system_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\",\n" +
 	"\x11Google2FAResetReq\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"2\n" +
-	"\n" +
-	"RespBase\x12\x12\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"F\n" +
+	"\bRespBase\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x10\n" +
-	"\x03msg\x18\x02 \x01(\tR\x03msg\"1\n" +
+	"\x03msg\x18\x02 \x01(\tR\x03msg\x12\x14\n" +
+	"\x05total\x18\x03 \x01(\x03R\x05total\"1\n" +
 	"\aPageReq\x12\x12\n" +
 	"\x04page\x18\x01 \x01(\x03R\x04page\x12\x12\n" +
 	"\x04size\x18\x02 \x01(\x03R\x04size\"\xd4\x01\n" +
@@ -3339,17 +3232,14 @@ const file_system_proto_rawDesc = "" +
 	"\x0eSysUserListReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.system.PageReqR\x04page\x12\x18\n" +
 	"\akeyword\x18\x02 \x01(\tR\akeyword\x12\x16\n" +
-	"\x06status\x18\x03 \x01(\x05R\x06status\"v\n" +
-	"\x0fSysUserListResp\x12\x12\n" +
-	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x10\n" +
-	"\x03msg\x18\x02 \x01(\tR\x03msg\x12\x14\n" +
-	"\x05total\x18\x03 \x01(\x03R\x05total\x12'\n" +
-	"\x04list\x18\x04 \x03(\v2\x13.system.SysUserItemR\x04list\"\"\n" +
+	"\x06status\x18\x03 \x01(\x05R\x06status\"`\n" +
+	"\x0fSysUserListResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12'\n" +
+	"\x04data\x18\x04 \x03(\v2\x13.system.SysUserItemR\x04data\"\"\n" +
 	"\x10SysUserDetailReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"b\n" +
-	"\x11SysUserDetailResp\x12\x12\n" +
-	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x10\n" +
-	"\x03msg\x18\x02 \x01(\tR\x03msg\x12'\n" +
+	"\x11SysUserDetailResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12'\n" +
 	"\x04data\x18\x03 \x01(\v2\x13.system.SysUserItemR\x04data\"\x99\x01\n" +
 	"\x10SysUserCreateReq\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
@@ -3384,12 +3274,10 @@ const file_system_proto_rawDesc = "" +
 	"\x0eSysRoleListReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.system.PageReqR\x04page\x12\x18\n" +
 	"\akeyword\x18\x02 \x01(\tR\akeyword\x12\x16\n" +
-	"\x06status\x18\x03 \x01(\x05R\x06status\"v\n" +
-	"\x0fSysRoleListResp\x12\x12\n" +
-	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x10\n" +
-	"\x03msg\x18\x02 \x01(\tR\x03msg\x12\x14\n" +
-	"\x05total\x18\x03 \x01(\x03R\x05total\x12'\n" +
-	"\x04list\x18\x04 \x03(\v2\x13.system.SysRoleItemR\x04list\"j\n" +
+	"\x06status\x18\x03 \x01(\x05R\x06status\"`\n" +
+	"\x0fSysRoleListResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12'\n" +
+	"\x04data\x18\x04 \x03(\v2\x13.system.SysRoleItemR\x04data\"j\n" +
 	"\x10SysRoleCreateReq\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\x12\x16\n" +
@@ -3407,18 +3295,16 @@ const file_system_proto_rawDesc = "" +
 	"\bmenu_ids\x18\x02 \x03(\x03R\amenuIds\"0\n" +
 	"\x15SysRoleGrantDetailReq\x12\x17\n" +
 	"\arole_id\x18\x01 \x01(\x03R\x06roleId\"\x8f\x01\n" +
-	"\x16SysRoleGrantDetailResp\x12\x12\n" +
-	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x10\n" +
-	"\x03msg\x18\x02 \x01(\tR\x03msg\x12\x17\n" +
+	"\x16SysRoleGrantDetailResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12\x17\n" +
 	"\arole_id\x18\x03 \x01(\x03R\x06roleId\x12\x19\n" +
 	"\bmenu_ids\x18\x04 \x03(\x03R\amenuIds\x12\x1b\n" +
 	"\tperm_keys\x18\x05 \x03(\tR\bpermKeys\"<\n" +
 	"\vSysPermItem\x12\x19\n" +
 	"\bperm_key\x18\x01 \x01(\tR\apermKey\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\"`\n" +
-	"\x0fSysPermListResp\x12\x12\n" +
-	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x10\n" +
-	"\x03msg\x18\x02 \x01(\tR\x03msg\x12'\n" +
+	"\x0fSysPermListResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12'\n" +
 	"\x04data\x18\x03 \x03(\v2\x13.system.SysPermItemR\x04data\"\x82\x02\n" +
 	"\x10SysMenuCreateReq\x12\x1b\n" +
 	"\tparent_id\x18\x01 \x01(\x03R\bparentId\x12\x12\n" +
@@ -3460,12 +3346,10 @@ const file_system_proto_rawDesc = "" +
 	"\x0fLoginLogListReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.system.PageReqR\x04page\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x12\x16\n" +
-	"\x06result\x18\x03 \x01(\x05R\x06result\"x\n" +
-	"\x10LoginLogListResp\x12\x12\n" +
-	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x10\n" +
-	"\x03msg\x18\x02 \x01(\tR\x03msg\x12\x14\n" +
-	"\x05total\x18\x03 \x01(\x03R\x05total\x12(\n" +
-	"\x04list\x18\x04 \x03(\v2\x14.system.LoginLogItemR\x04list\"\xa9\x02\n" +
+	"\x06result\x18\x03 \x01(\x05R\x06result\"b\n" +
+	"\x10LoginLogListResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12(\n" +
+	"\x04data\x18\x04 \x03(\v2\x14.system.LoginLogItemR\x04data\"\xa9\x02\n" +
 	"\tOpLogItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1a\n" +
@@ -3486,40 +3370,38 @@ const file_system_proto_rawDesc = "" +
 	"\x04page\x18\x01 \x01(\v2\x0f.system.PageReqR\x04page\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x12\x16\n" +
 	"\x06module\x18\x03 \x01(\tR\x06module\x12\x16\n" +
-	"\x06action\x18\x04 \x01(\tR\x06action\"r\n" +
-	"\rOpLogListResp\x12\x12\n" +
-	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x10\n" +
-	"\x03msg\x18\x02 \x01(\tR\x03msg\x12\x14\n" +
-	"\x05total\x18\x03 \x01(\x03R\x05total\x12%\n" +
-	"\x04list\x18\x04 \x03(\v2\x11.system.OpLogItemR\x04list2\xca\r\n" +
+	"\x06action\x18\x04 \x01(\tR\x06action\"\\\n" +
+	"\rOpLogListResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12%\n" +
+	"\x04data\x18\x04 \x03(\v2\x11.system.OpLogItemR\x04data2\xaa\r\n" +
 	"\x06System\x12;\n" +
 	"\n" +
 	"AdminLogin\x12\x15.system.AdminLoginReq\x1a\x16.system.AdminLoginResp\x125\n" +
 	"\n" +
 	"GetProfile\x12\x12.system.ProfileReq\x1a\x13.system.ProfileResp\x12D\n" +
-	"\rGoogle2FAInit\x12\x18.system.Google2FAInitReq\x1a\x19.system.Google2FAInitResp\x12A\n" +
-	"\x0fGoogle2FAEnable\x12\x1a.system.Google2FAEnableReq\x1a\x12.system.RespBase\x12C\n" +
-	"\x10Google2FADisable\x12\x1b.system.Google2FADisableReq\x1a\x12.system.RespBase\x12?\n" +
-	"\x0eGoogle2FAReset\x12\x19.system.Google2FAResetReq\x1a\x12.system.RespBase\x12>\n" +
+	"\rGoogle2FAInit\x12\x18.system.Google2FAInitReq\x1a\x19.system.Google2FAInitResp\x12?\n" +
+	"\x0fGoogle2FAEnable\x12\x1a.system.Google2FAEnableReq\x1a\x10.system.RespBase\x12A\n" +
+	"\x10Google2FADisable\x12\x1b.system.Google2FADisableReq\x1a\x10.system.RespBase\x12=\n" +
+	"\x0eGoogle2FAReset\x12\x19.system.Google2FAResetReq\x1a\x10.system.RespBase\x12>\n" +
 	"\vSysUserList\x12\x16.system.SysUserListReq\x1a\x17.system.SysUserListResp\x12D\n" +
-	"\rSysUserDetail\x12\x18.system.SysUserDetailReq\x1a\x19.system.SysUserDetailResp\x12=\n" +
-	"\rSysUserCreate\x12\x18.system.SysUserCreateReq\x1a\x12.system.RespBase\x12=\n" +
-	"\rSysUserUpdate\x12\x18.system.SysUserUpdateReq\x1a\x12.system.RespBase\x12=\n" +
-	"\rSysUserDelete\x12\x18.system.SysUserDeleteReq\x1a\x12.system.RespBase\x12C\n" +
-	"\x10ChangeUserStatus\x12\x1b.system.ChangeUserStatusReq\x1a\x12.system.RespBase\x12;\n" +
-	"\fResetUserPwd\x12\x17.system.ResetUserPwdReq\x1a\x12.system.RespBase\x12A\n" +
-	"\x0fAssignUserRoles\x12\x1a.system.AssignUserRolesReq\x1a\x12.system.RespBase\x12>\n" +
-	"\vSysRoleList\x12\x16.system.SysRoleListReq\x1a\x17.system.SysRoleListResp\x12=\n" +
-	"\rSysRoleCreate\x12\x18.system.SysRoleCreateReq\x1a\x12.system.RespBase\x12=\n" +
-	"\rSysRoleUpdate\x12\x18.system.SysRoleUpdateReq\x1a\x12.system.RespBase\x12=\n" +
-	"\rSysRoleDelete\x12\x18.system.SysRoleDeleteReq\x1a\x12.system.RespBase\x12;\n" +
-	"\fSysRoleGrant\x12\x17.system.SysRoleGrantReq\x1a\x12.system.RespBase\x12S\n" +
+	"\rSysUserDetail\x12\x18.system.SysUserDetailReq\x1a\x19.system.SysUserDetailResp\x12;\n" +
+	"\rSysUserCreate\x12\x18.system.SysUserCreateReq\x1a\x10.system.RespBase\x12;\n" +
+	"\rSysUserUpdate\x12\x18.system.SysUserUpdateReq\x1a\x10.system.RespBase\x12;\n" +
+	"\rSysUserDelete\x12\x18.system.SysUserDeleteReq\x1a\x10.system.RespBase\x12A\n" +
+	"\x10ChangeUserStatus\x12\x1b.system.ChangeUserStatusReq\x1a\x10.system.RespBase\x129\n" +
+	"\fResetUserPwd\x12\x17.system.ResetUserPwdReq\x1a\x10.system.RespBase\x12?\n" +
+	"\x0fAssignUserRoles\x12\x1a.system.AssignUserRolesReq\x1a\x10.system.RespBase\x12>\n" +
+	"\vSysRoleList\x12\x16.system.SysRoleListReq\x1a\x17.system.SysRoleListResp\x12;\n" +
+	"\rSysRoleCreate\x12\x18.system.SysRoleCreateReq\x1a\x10.system.RespBase\x12;\n" +
+	"\rSysRoleUpdate\x12\x18.system.SysRoleUpdateReq\x1a\x10.system.RespBase\x12;\n" +
+	"\rSysRoleDelete\x12\x18.system.SysRoleDeleteReq\x1a\x10.system.RespBase\x129\n" +
+	"\fSysRoleGrant\x12\x17.system.SysRoleGrantReq\x1a\x10.system.RespBase\x12S\n" +
 	"\x12SysRoleGrantDetail\x12\x1d.system.SysRoleGrantDetailReq\x1a\x1e.system.SysRoleGrantDetailResp\x125\n" +
 	"\vSysPermList\x12\r.system.Empty\x1a\x17.system.SysPermListResp\x125\n" +
-	"\vGetMenuTree\x12\r.system.Empty\x1a\x17.system.SysMenuTreeResp\x12=\n" +
-	"\rSysMenuCreate\x12\x18.system.SysMenuCreateReq\x1a\x12.system.RespBase\x12=\n" +
-	"\rSysMenuUpdate\x12\x18.system.SysMenuUpdateReq\x1a\x12.system.RespBase\x12=\n" +
-	"\rSysMenuDelete\x12\x18.system.SysMenuDeleteReq\x1a\x12.system.RespBase\x12A\n" +
+	"\vGetMenuTree\x12\r.system.Empty\x1a\x17.system.SysMenuTreeResp\x12;\n" +
+	"\rSysMenuCreate\x12\x18.system.SysMenuCreateReq\x1a\x10.system.RespBase\x12;\n" +
+	"\rSysMenuUpdate\x12\x18.system.SysMenuUpdateReq\x1a\x10.system.RespBase\x12;\n" +
+	"\rSysMenuDelete\x12\x18.system.SysMenuDeleteReq\x1a\x10.system.RespBase\x12A\n" +
 	"\fLoginLogList\x12\x17.system.LoginLogListReq\x1a\x18.system.LoginLogListResp\x128\n" +
 	"\tOpLogList\x12\x14.system.OpLogListReq\x1a\x15.system.OpLogListRespB\x1aZ\x18wklive/rpc/system;systemb\x06proto3"
 
@@ -3551,7 +3433,7 @@ var file_system_proto_goTypes = []any{
 	(*Google2FAEnableReq)(nil),     // 11: system.Google2FAEnableReq
 	(*Google2FADisableReq)(nil),    // 12: system.Google2FADisableReq
 	(*Google2FAResetReq)(nil),      // 13: system.Google2FAResetReq
-	(*RespBase)(nil),             // 14: system.RespBase
+	(*RespBase)(nil),               // 14: system.RespBase
 	(*PageReq)(nil),                // 15: system.PageReq
 	(*SysUserItem)(nil),            // 16: system.SysUserItem
 	(*SysUserListReq)(nil),         // 17: system.SysUserListReq
@@ -3586,79 +3468,89 @@ var file_system_proto_goTypes = []any{
 	(*OpLogListResp)(nil),          // 46: system.OpLogListResp
 }
 var file_system_proto_depIdxs = []int32{
-	5,  // 0: system.SysMenuNode.children:type_name -> system.SysMenuNode
-	4,  // 1: system.ProfileResp.user:type_name -> system.ProfileUser
-	5,  // 2: system.ProfileResp.menus:type_name -> system.SysMenuNode
-	7,  // 3: system.SysMenuTreeResp.list:type_name -> system.SysMenuItem
-	15, // 4: system.SysUserListReq.page:type_name -> system.PageReq
-	16, // 5: system.SysUserListResp.list:type_name -> system.SysUserItem
-	16, // 6: system.SysUserDetailResp.data:type_name -> system.SysUserItem
-	15, // 7: system.SysRoleListReq.page:type_name -> system.PageReq
-	27, // 8: system.SysRoleListResp.list:type_name -> system.SysRoleItem
-	36, // 9: system.SysPermListResp.data:type_name -> system.SysPermItem
-	15, // 10: system.LoginLogListReq.page:type_name -> system.PageReq
-	41, // 11: system.LoginLogListResp.list:type_name -> system.LoginLogItem
-	15, // 12: system.OpLogListReq.page:type_name -> system.PageReq
-	44, // 13: system.OpLogListResp.list:type_name -> system.OpLogItem
-	1,  // 14: system.System.AdminLogin:input_type -> system.AdminLoginReq
-	3,  // 15: system.System.GetProfile:input_type -> system.ProfileReq
-	9,  // 16: system.System.Google2FAInit:input_type -> system.Google2FAInitReq
-	11, // 17: system.System.Google2FAEnable:input_type -> system.Google2FAEnableReq
-	12, // 18: system.System.Google2FADisable:input_type -> system.Google2FADisableReq
-	13, // 19: system.System.Google2FAReset:input_type -> system.Google2FAResetReq
-	17, // 20: system.System.SysUserList:input_type -> system.SysUserListReq
-	19, // 21: system.System.SysUserDetail:input_type -> system.SysUserDetailReq
-	21, // 22: system.System.SysUserCreate:input_type -> system.SysUserCreateReq
-	22, // 23: system.System.SysUserUpdate:input_type -> system.SysUserUpdateReq
-	23, // 24: system.System.SysUserDelete:input_type -> system.SysUserDeleteReq
-	24, // 25: system.System.ChangeUserStatus:input_type -> system.ChangeUserStatusReq
-	25, // 26: system.System.ResetUserPwd:input_type -> system.ResetUserPwdReq
-	26, // 27: system.System.AssignUserRoles:input_type -> system.AssignUserRolesReq
-	28, // 28: system.System.SysRoleList:input_type -> system.SysRoleListReq
-	30, // 29: system.System.SysRoleCreate:input_type -> system.SysRoleCreateReq
-	31, // 30: system.System.SysRoleUpdate:input_type -> system.SysRoleUpdateReq
-	32, // 31: system.System.SysRoleDelete:input_type -> system.SysRoleDeleteReq
-	33, // 32: system.System.SysRoleGrant:input_type -> system.SysRoleGrantReq
-	34, // 33: system.System.SysRoleGrantDetail:input_type -> system.SysRoleGrantDetailReq
-	0,  // 34: system.System.SysPermList:input_type -> system.Empty
-	0,  // 35: system.System.GetMenuTree:input_type -> system.Empty
-	38, // 36: system.System.SysMenuCreate:input_type -> system.SysMenuCreateReq
-	39, // 37: system.System.SysMenuUpdate:input_type -> system.SysMenuUpdateReq
-	40, // 38: system.System.SysMenuDelete:input_type -> system.SysMenuDeleteReq
-	42, // 39: system.System.LoginLogList:input_type -> system.LoginLogListReq
-	45, // 40: system.System.OpLogList:input_type -> system.OpLogListReq
-	2,  // 41: system.System.AdminLogin:output_type -> system.AdminLoginResp
-	6,  // 42: system.System.GetProfile:output_type -> system.ProfileResp
-	10, // 43: system.System.Google2FAInit:output_type -> system.Google2FAInitResp
-	14, // 44: system.System.Google2FAEnable:output_type -> system.RespBase
-	14, // 45: system.System.Google2FADisable:output_type -> system.RespBase
-	14, // 46: system.System.Google2FAReset:output_type -> system.RespBase
-	18, // 47: system.System.SysUserList:output_type -> system.SysUserListResp
-	20, // 48: system.System.SysUserDetail:output_type -> system.SysUserDetailResp
-	14, // 49: system.System.SysUserCreate:output_type -> system.RespBase
-	14, // 50: system.System.SysUserUpdate:output_type -> system.RespBase
-	14, // 51: system.System.SysUserDelete:output_type -> system.RespBase
-	14, // 52: system.System.ChangeUserStatus:output_type -> system.RespBase
-	14, // 53: system.System.ResetUserPwd:output_type -> system.RespBase
-	14, // 54: system.System.AssignUserRoles:output_type -> system.RespBase
-	29, // 55: system.System.SysRoleList:output_type -> system.SysRoleListResp
-	14, // 56: system.System.SysRoleCreate:output_type -> system.RespBase
-	14, // 57: system.System.SysRoleUpdate:output_type -> system.RespBase
-	14, // 58: system.System.SysRoleDelete:output_type -> system.RespBase
-	14, // 59: system.System.SysRoleGrant:output_type -> system.RespBase
-	35, // 60: system.System.SysRoleGrantDetail:output_type -> system.SysRoleGrantDetailResp
-	37, // 61: system.System.SysPermList:output_type -> system.SysPermListResp
-	8,  // 62: system.System.GetMenuTree:output_type -> system.SysMenuTreeResp
-	14, // 63: system.System.SysMenuCreate:output_type -> system.RespBase
-	14, // 64: system.System.SysMenuUpdate:output_type -> system.RespBase
-	14, // 65: system.System.SysMenuDelete:output_type -> system.RespBase
-	43, // 66: system.System.LoginLogList:output_type -> system.LoginLogListResp
-	46, // 67: system.System.OpLogList:output_type -> system.OpLogListResp
-	41, // [41:68] is the sub-list for method output_type
-	14, // [14:41] is the sub-list for method input_type
-	14, // [14:14] is the sub-list for extension type_name
-	14, // [14:14] is the sub-list for extension extendee
-	0,  // [0:14] is the sub-list for field type_name
+	14, // 0: system.AdminLoginResp.base:type_name -> system.RespBase
+	5,  // 1: system.SysMenuNode.children:type_name -> system.SysMenuNode
+	4,  // 2: system.ProfileResp.user:type_name -> system.ProfileUser
+	5,  // 3: system.ProfileResp.menus:type_name -> system.SysMenuNode
+	14, // 4: system.SysMenuTreeResp.base:type_name -> system.RespBase
+	7,  // 5: system.SysMenuTreeResp.data:type_name -> system.SysMenuItem
+	14, // 6: system.Google2FAInitResp.base:type_name -> system.RespBase
+	15, // 7: system.SysUserListReq.page:type_name -> system.PageReq
+	14, // 8: system.SysUserListResp.base:type_name -> system.RespBase
+	16, // 9: system.SysUserListResp.data:type_name -> system.SysUserItem
+	14, // 10: system.SysUserDetailResp.base:type_name -> system.RespBase
+	16, // 11: system.SysUserDetailResp.data:type_name -> system.SysUserItem
+	15, // 12: system.SysRoleListReq.page:type_name -> system.PageReq
+	14, // 13: system.SysRoleListResp.base:type_name -> system.RespBase
+	27, // 14: system.SysRoleListResp.data:type_name -> system.SysRoleItem
+	14, // 15: system.SysRoleGrantDetailResp.base:type_name -> system.RespBase
+	14, // 16: system.SysPermListResp.base:type_name -> system.RespBase
+	36, // 17: system.SysPermListResp.data:type_name -> system.SysPermItem
+	15, // 18: system.LoginLogListReq.page:type_name -> system.PageReq
+	14, // 19: system.LoginLogListResp.base:type_name -> system.RespBase
+	41, // 20: system.LoginLogListResp.data:type_name -> system.LoginLogItem
+	15, // 21: system.OpLogListReq.page:type_name -> system.PageReq
+	14, // 22: system.OpLogListResp.base:type_name -> system.RespBase
+	44, // 23: system.OpLogListResp.data:type_name -> system.OpLogItem
+	1,  // 24: system.System.AdminLogin:input_type -> system.AdminLoginReq
+	3,  // 25: system.System.GetProfile:input_type -> system.ProfileReq
+	9,  // 26: system.System.Google2FAInit:input_type -> system.Google2FAInitReq
+	11, // 27: system.System.Google2FAEnable:input_type -> system.Google2FAEnableReq
+	12, // 28: system.System.Google2FADisable:input_type -> system.Google2FADisableReq
+	13, // 29: system.System.Google2FAReset:input_type -> system.Google2FAResetReq
+	17, // 30: system.System.SysUserList:input_type -> system.SysUserListReq
+	19, // 31: system.System.SysUserDetail:input_type -> system.SysUserDetailReq
+	21, // 32: system.System.SysUserCreate:input_type -> system.SysUserCreateReq
+	22, // 33: system.System.SysUserUpdate:input_type -> system.SysUserUpdateReq
+	23, // 34: system.System.SysUserDelete:input_type -> system.SysUserDeleteReq
+	24, // 35: system.System.ChangeUserStatus:input_type -> system.ChangeUserStatusReq
+	25, // 36: system.System.ResetUserPwd:input_type -> system.ResetUserPwdReq
+	26, // 37: system.System.AssignUserRoles:input_type -> system.AssignUserRolesReq
+	28, // 38: system.System.SysRoleList:input_type -> system.SysRoleListReq
+	30, // 39: system.System.SysRoleCreate:input_type -> system.SysRoleCreateReq
+	31, // 40: system.System.SysRoleUpdate:input_type -> system.SysRoleUpdateReq
+	32, // 41: system.System.SysRoleDelete:input_type -> system.SysRoleDeleteReq
+	33, // 42: system.System.SysRoleGrant:input_type -> system.SysRoleGrantReq
+	34, // 43: system.System.SysRoleGrantDetail:input_type -> system.SysRoleGrantDetailReq
+	0,  // 44: system.System.SysPermList:input_type -> system.Empty
+	0,  // 45: system.System.GetMenuTree:input_type -> system.Empty
+	38, // 46: system.System.SysMenuCreate:input_type -> system.SysMenuCreateReq
+	39, // 47: system.System.SysMenuUpdate:input_type -> system.SysMenuUpdateReq
+	40, // 48: system.System.SysMenuDelete:input_type -> system.SysMenuDeleteReq
+	42, // 49: system.System.LoginLogList:input_type -> system.LoginLogListReq
+	45, // 50: system.System.OpLogList:input_type -> system.OpLogListReq
+	2,  // 51: system.System.AdminLogin:output_type -> system.AdminLoginResp
+	6,  // 52: system.System.GetProfile:output_type -> system.ProfileResp
+	10, // 53: system.System.Google2FAInit:output_type -> system.Google2FAInitResp
+	14, // 54: system.System.Google2FAEnable:output_type -> system.RespBase
+	14, // 55: system.System.Google2FADisable:output_type -> system.RespBase
+	14, // 56: system.System.Google2FAReset:output_type -> system.RespBase
+	18, // 57: system.System.SysUserList:output_type -> system.SysUserListResp
+	20, // 58: system.System.SysUserDetail:output_type -> system.SysUserDetailResp
+	14, // 59: system.System.SysUserCreate:output_type -> system.RespBase
+	14, // 60: system.System.SysUserUpdate:output_type -> system.RespBase
+	14, // 61: system.System.SysUserDelete:output_type -> system.RespBase
+	14, // 62: system.System.ChangeUserStatus:output_type -> system.RespBase
+	14, // 63: system.System.ResetUserPwd:output_type -> system.RespBase
+	14, // 64: system.System.AssignUserRoles:output_type -> system.RespBase
+	29, // 65: system.System.SysRoleList:output_type -> system.SysRoleListResp
+	14, // 66: system.System.SysRoleCreate:output_type -> system.RespBase
+	14, // 67: system.System.SysRoleUpdate:output_type -> system.RespBase
+	14, // 68: system.System.SysRoleDelete:output_type -> system.RespBase
+	14, // 69: system.System.SysRoleGrant:output_type -> system.RespBase
+	35, // 70: system.System.SysRoleGrantDetail:output_type -> system.SysRoleGrantDetailResp
+	37, // 71: system.System.SysPermList:output_type -> system.SysPermListResp
+	8,  // 72: system.System.GetMenuTree:output_type -> system.SysMenuTreeResp
+	14, // 73: system.System.SysMenuCreate:output_type -> system.RespBase
+	14, // 74: system.System.SysMenuUpdate:output_type -> system.RespBase
+	14, // 75: system.System.SysMenuDelete:output_type -> system.RespBase
+	43, // 76: system.System.LoginLogList:output_type -> system.LoginLogListResp
+	46, // 77: system.System.OpLogList:output_type -> system.OpLogListResp
+	51, // [51:78] is the sub-list for method output_type
+	24, // [24:51] is the sub-list for method input_type
+	24, // [24:24] is the sub-list for extension type_name
+	24, // [24:24] is the sub-list for extension extendee
+	0,  // [0:24] is the sub-list for field type_name
 }
 
 func init() { file_system_proto_init() }

@@ -39,9 +39,9 @@ func (l *SysUserListLogic) SysUserList(req *types.SysUserListReq) (resp *types.S
 		return nil, err
 	}
 
-	var list []types.SysUserItem
-	for _, item := range response.List {
-		list = append(list, types.SysUserItem{
+	var data []types.SysUserItem
+	for _, item := range response.Data {
+		data = append(data, types.SysUserItem{
 			Id:               item.Id,
 			Username:         item.Username,
 			Nickname:         item.Nickname,
@@ -54,10 +54,11 @@ func (l *SysUserListLogic) SysUserList(req *types.SysUserListReq) (resp *types.S
 
 	resp = &types.SysUserListResp{
 		RespBase: types.RespBase{
-			Code: response.Code,
-			Msg:  response.Msg,
+			Code:  response.Base.Code,
+			Msg:   response.Base.Msg,
+			Total: response.Base.Total,
 		},
-		Data: list,
+		Data: data,
 	}
 	return
 }

@@ -42,8 +42,10 @@ func (l *SysRoleGrantDetailLogic) SysRoleGrantDetail(in *system.SysRoleGrantDeta
 	}
 
 	return &system.SysRoleGrantDetailResp{
-		Code:     200,
-		Msg:      "ok",
+		Base: &system.RespBase{
+			Code: 200,
+			Msg:  "success",
+		},
 		RoleId:   in.RoleId,
 		MenuIds:  menuIds,
 		PermKeys: permKeys,

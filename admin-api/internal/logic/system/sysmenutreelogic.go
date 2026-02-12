@@ -33,7 +33,7 @@ func (l *SysMenuTreeLogic) SysMenuTree() (resp *types.SysMenuTreeResp, err error
 		return nil, err
 	}
 	data := make([]types.SysMenuItem, 0)
-	for _, item := range reuslt.List {
+	for _, item := range reuslt.Data {
 		data = append(data, types.SysMenuItem{
 			Id:        item.Id,
 			ParentId:  item.ParentId,
@@ -50,8 +50,8 @@ func (l *SysMenuTreeLogic) SysMenuTree() (resp *types.SysMenuTreeResp, err error
 	}
 	resp = &types.SysMenuTreeResp{
 		RespBase: types.RespBase{
-			Code: reuslt.Code,
-			Msg:  reuslt.Msg,
+			Code: reuslt.Base.Code,
+			Msg:  reuslt.Base.Msg,
 		},
 		Data: data,
 	}

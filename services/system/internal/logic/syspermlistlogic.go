@@ -68,8 +68,10 @@ func (l *SysPermListLogic) SysPermList(in *system.Empty) (*system.SysPermListRes
 	})
 
 	return &system.SysPermListResp{
-		Code: 200,
-		Msg:  "ok",
+		Base: &system.RespBase{
+			Code: 200,
+			Msg:  "success",
+		},
 		Data: data,
 	}, nil
 }

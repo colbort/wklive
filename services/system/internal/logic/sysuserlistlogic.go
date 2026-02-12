@@ -49,8 +49,12 @@ func (l *SysUserListLogic) SysUserList(in *system.SysUserListReq) (*system.SysUs
 
 	if len(users) == 0 {
 		return &system.SysUserListResp{
-			Total: total,
-			List:  []*system.SysUserItem{},
+			Base: &system.RespBase{
+				Code:  200,
+				Msg:   "success",
+				Total: total,
+			},
+			Data: []*system.SysUserItem{},
 		}, nil
 	}
 
@@ -68,9 +72,9 @@ func (l *SysUserListLogic) SysUserList(in *system.SysUserListReq) (*system.SysUs
 	// roleMap: map[userId][]roleId
 
 	// 5️⃣ 组装返回
-	list := make([]*system.SysUserItem, 0, len(users))
+	data := make([]*system.SysUserItem, 0, len(users))
 	for _, u := range users {
-		list = append(list, &system.SysUserItem{
+		data = append(data, &system.SysUserItem{
 			Id:               u.Id,
 			Username:         u.Username,
 			Nickname:         u.Nickname,
@@ -82,7 +86,11 @@ func (l *SysUserListLogic) SysUserList(in *system.SysUserListReq) (*system.SysUs
 	}
 
 	return &system.SysUserListResp{
-		Total: total,
-		List:  list,
+		Base: &system.RespBase{
+			Code:  200,
+			Msg:   "success",
+			Total: total,
+		},
+		Data: data,
 	}, nil
 }

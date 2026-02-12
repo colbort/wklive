@@ -42,9 +42,9 @@ func (l *SysRoleListLogic) SysRoleList(in *system.SysRoleListReq) (*system.SysRo
 	}
 
 	// 3) 组装返回
-	list := make([]*system.SysRoleItem, 0, len(rows))
+	data := make([]*system.SysRoleItem, 0, len(rows))
 	for _, r := range rows {
-		list = append(list, &system.SysRoleItem{
+		data = append(data, &system.SysRoleItem{
 			Id:        r.Id,
 			Name:      r.Name,
 			Code:      r.Code,
@@ -55,9 +55,11 @@ func (l *SysRoleListLogic) SysRoleList(in *system.SysRoleListReq) (*system.SysRo
 	}
 
 	return &system.SysRoleListResp{
-		Code:  200,
-		Msg:   "ok",
-		Total: total,
-		List:  list,
+		Base: &system.RespBase{
+			Code:  200,
+			Msg:   "success",
+			Total: total,
+		},
+		Data: data,
 	}, nil
 }

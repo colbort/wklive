@@ -29,7 +29,7 @@ func (l *GetMenuTreeLogic) GetMenuTree(in *system.Empty) (*system.SysMenuTreeRes
 		return nil, err
 	}
 
-	list := make([]*system.SysMenuItem, 0, len(menus))
+	data := make([]*system.SysMenuItem, 0, len(menus))
 	for _, m := range menus {
 		item := &system.SysMenuItem{
 			Id:        m.Id,
@@ -44,12 +44,14 @@ func (l *GetMenuTreeLogic) GetMenuTree(in *system.Empty) (*system.SysMenuTreeRes
 			Status:    int32(m.Status),
 			Perms:     m.Perms,
 		}
-		list = append(list, item)
+		data = append(data, item)
 	}
 
 	return &system.SysMenuTreeResp{
-		Code: 200,
-		Msg:  "ok",
-		List: list,
+		Base: &system.RespBase{
+			Code: 200,
+			Msg:  "success",
+		},
+		Data: data,
 	}, nil
 }
