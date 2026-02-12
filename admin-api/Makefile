@@ -46,9 +46,9 @@ merge-all:
 	@mkdir -p internal/handler internal/types internal/config internal/svc etc
 	@cp -f $(TMP_DIR)/all/internal/handler/routes.go internal/handler/routes.go
 	@cp -f $(TMP_DIR)/all/internal/types/types.go internal/types/types.go
-	@cp -f $(TMP_DIR)/all/internal/config/config.go internal/config/config.go
-	@rsync -a $(TMP_DIR)/all/internal/svc/ internal/svc/
-	@cp -f $(TMP_DIR)/all/admin.go admin.go
+	@cp -n $(TMP_DIR)/all/internal/config/config.go internal/config/config.go 2>/dev/null || true
+	@rsync -a --ignore-existing $(TMP_DIR)/all/internal/svc/ internal/svc/
+	@cp -n $(TMP_DIR)/all/admin.go admin.go 2>/dev/null || true
 	@cp -n $(TMP_DIR)/all/etc/*.yaml etc/ 2>/dev/null || true
 	@cp -n $(TMP_DIR)/all/go.mod go.mod 2>/dev/null || true
 	@cp -n $(TMP_DIR)/all/go.sum go.sum 2>/dev/null || true
