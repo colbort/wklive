@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/rpc/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,17 @@ func NewSysUserUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 }
 
 func (l *SysUserUpdateLogic) SysUserUpdate(req *types.SysUserUpdateReq) (resp *types.RespBase, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	result, err := l.svcCtx.SystemCli.SysUserUpdate(l.ctx, &system.SysUserUpdateReq{
+		Id:       req.Id,
+		Nickname: req.Nickname,
+		Status:   req.Status,
+		RoleIds:  req.RoleIds,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &types.RespBase{
+		Code: result.Code,
+		Msg:  result.Msg,
+	}, nil
 }

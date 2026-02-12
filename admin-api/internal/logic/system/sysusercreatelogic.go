@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/rpc/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,18 @@ func NewSysUserCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 }
 
 func (l *SysUserCreateLogic) SysUserCreate(req *types.SysUserCreateReq) (resp *types.RespBase, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	result, err := l.svcCtx.SystemCli.SysUserCreate(l.ctx, &system.SysUserCreateReq{
+		Username: req.Username,
+		Nickname: req.Nickname,
+		Password: req.Password,
+		Status:   req.Status,
+		RoleIds:  req.RoleIds,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &types.RespBase{
+		Code: result.Code,
+		Msg:  result.Msg,
+	}, nil
 }

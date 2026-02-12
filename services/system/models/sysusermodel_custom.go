@@ -2,12 +2,17 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
+
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type UserModel interface {
 	sysUserModel
 	FindPage(ctx context.Context, keyword string, status int32, page, pageSize int64) ([]*SysUser, int64, error)
+	TransCtx(ctx context.Context, fn func(context context.Context, session sqlx.Session) error) error
+	InsertCtx(ctx context.Context, session sqlx.Session, data *SysUser) (sql.Result, error)
 }
 
 func (m *defaultSysUserModel) FindPage(
@@ -58,4 +63,16 @@ func (m *defaultSysUserModel) FindPage(
 	}
 
 	return list, total, nil
+}
+
+func (m *defaultSysUserModel) TransCtx(ctx context.Context, fn func(context context.Context, session sqlx.Session) error) error {
+	return m.conn.TransactCtx(ctx, func(ctx context.Context, session sqlx.Session) error {
+		return fn(ctx, session)
+	})
+}
+
+func (m *defaultSysUserModel) InsertCtx(ctx context.Context, session sqlx.Session, data *SysUser) (sql.Result, error) {
+	query := fmt.Sprintf("insert into %s (`username`, `nickname`, `password`, `status`) values (?, ?, ?, ?)", m.table)
+	ret, err := session.ExecCtx(ctx, query, data.Username, data.Nickname, data.Password, data.Status)
+	return ret, err
 }

@@ -2,14 +2,18 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"strings"
+
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type UserRoleModel interface {
 	sysUserRoleModel
 	FindRoleIdsByUserId(ctx context.Context, uid int64) ([]int64, error)
 	FindRoleIdsByUserIds(ctx context.Context, userIds []int64) (map[int64][]int64, error)
+	InsertCtx(ctx context.Context, session sqlx.Session, data *SysUserRole) (sql.Result, error)
 }
 
 func (m *defaultSysUserRoleModel) FindRoleIdsByUserId(ctx context.Context, uid int64) ([]int64, error) {
@@ -58,4 +62,10 @@ func (m *defaultSysUserRoleModel) FindRoleIdsByUserIds(
 	}
 
 	return mapping, nil
+}
+
+func (m *defaultSysUserRoleModel) InsertCtx(ctx context.Context, session sqlx.Session, data *SysUserRole) (sql.Result, error) {
+	query := fmt.Sprintf("insert into %s (`user_id`, `role_id`) values (?, ?)", m.table)
+	ret, err := session.ExecCtx(ctx, query, data.UserId, data.RoleId)
+	return ret, err
 }
