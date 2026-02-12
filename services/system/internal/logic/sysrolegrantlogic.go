@@ -27,7 +27,7 @@ func NewSysRoleGrantLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysR
 	}
 }
 
-func (l *SysRoleGrantLogic) SysRoleGrant(in *system.SysRoleGrantReq) (*system.SimpleResp, error) {
+func (l *SysRoleGrantLogic) SysRoleGrant(in *system.SysRoleGrantReq) (*system.RespBase, error) {
 	menuIds := make([]int64, 0, len(in.MenuIds))
 	seen := make(map[int64]struct{}, len(in.MenuIds))
 	for _, id := range in.MenuIds {
@@ -89,7 +89,7 @@ func (l *SysRoleGrantLogic) SysRoleGrant(in *system.SysRoleGrantReq) (*system.Si
 		return nil, err
 	}
 
-	return &system.SimpleResp{
+	return &system.RespBase{
 		Code: 200,
 		Msg:  "授权成功",
 	}, nil

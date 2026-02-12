@@ -2,7 +2,7 @@
 import { computed, reactive, ref, onMounted, nextTick } from 'vue'
 import { ElMessage, ElMessageBox, type FormInstance, type TreeInstance } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import type { SysRole } from '../../types/system/role'
+import type { SysRole } from '../../types/system/roles'
 import type { MenuNode, PermItem } from '../../types/system/menus'
 
 // ===== API =====
@@ -39,7 +39,7 @@ async function fetchList() {
     if (q.status === 0) delete q.status
 
     const resp = await apiRoleList(q)
-    tableData.value = resp.list || []
+    tableData.value = resp.data || []
     total.value = resp.total || 0
   } catch (e: any) {
     ElMessage.error(e?.message || t('common.failed'))

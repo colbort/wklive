@@ -25,7 +25,7 @@ func NewSysRoleCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 	}
 }
 
-func (l *SysRoleCreateLogic) SysRoleCreate(in *system.SysRoleCreateReq) (*system.SimpleResp, error) {
+func (l *SysRoleCreateLogic) SysRoleCreate(in *system.SysRoleCreateReq) (*system.RespBase, error) {
 	result, err := l.svcCtx.RoleModel.FindOneByCode(l.ctx, in.Code)
 	if err == nil {
 		return nil, err
@@ -42,7 +42,7 @@ func (l *SysRoleCreateLogic) SysRoleCreate(in *system.SysRoleCreateReq) (*system
 	if err != nil {
 		return nil, err
 	}
-	return &system.SimpleResp{
+	return &system.RespBase{
 		Code: 200,
 		Msg:  "创建成功",
 	}, nil

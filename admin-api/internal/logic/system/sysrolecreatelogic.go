@@ -27,14 +27,14 @@ func NewSysRoleCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 	}
 }
 
-func (l *SysRoleCreateLogic) SysRoleCreate(req *types.SysRoleCreateReq) (resp *types.SimpleResp, err error) {
+func (l *SysRoleCreateLogic) SysRoleCreate(req *types.SysRoleCreateReq) (resp *types.RespBase, err error) {
 	result, err := l.svcCtx.SystemCli.SysRoleCreate(l.ctx, &system.SysRoleCreateReq{
 		Name:   req.Name,
 		Code:   req.Code,
 		Status: req.Status,
 		Remark: req.Remark,
 	})
-	return &types.SimpleResp{
+	return &types.RespBase{
 		Code: result.Code,
 		Msg:  result.Msg,
 	}, err

@@ -23,8 +23,8 @@ func NewSysMenuUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 	}
 }
 
-func (l *SysMenuUpdateLogic) SysMenuUpdate(in *system.SysMenuUpdateReq) (*system.SimpleResp, error) {
+func (l *SysMenuUpdateLogic) SysMenuUpdate(in *system.SysMenuUpdateReq) (*system.RespBase, error) {
 	// todo: add your logic here and delete this line
 
-	return &system.SimpleResp{}, nil
+	return &system.RespBase{}, nil
 }

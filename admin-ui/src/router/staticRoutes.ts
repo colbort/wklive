@@ -13,7 +13,7 @@ export const staticRoutes: RouteRecordRaw[] = [
     component: () => import('@/layout/index.vue'),
     children: [
       {
-        path: '',
+        path: '/home',
         name: 'Home',
         component: () => import('@/views/home/index.vue'),
         meta: { titleKey: 'route.home', affix: true },

@@ -23,8 +23,8 @@ func NewSysUserCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 	}
 }
 
-func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system.SimpleResp, error) {
+func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system.RespBase, error) {
 	// todo: add your logic here and delete this line
 
-	return &system.SimpleResp{}, nil
+	return &system.RespBase{}, nil
 }

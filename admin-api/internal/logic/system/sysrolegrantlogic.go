@@ -27,7 +27,7 @@ func NewSysRoleGrantLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysR
 	}
 }
 
-func (l *SysRoleGrantLogic) SysRoleGrant(req *types.SysRoleGrantReq) (resp *types.SimpleResp, err error) {
+func (l *SysRoleGrantLogic) SysRoleGrant(req *types.SysRoleGrantReq) (resp *types.RespBase, err error) {
 	result, err := l.svcCtx.SystemCli.SysRoleGrant(l.ctx, &system.SysRoleGrantReq{
 		RoleId:  req.RoleId,
 		MenuIds: req.MenuIds,
@@ -35,7 +35,7 @@ func (l *SysRoleGrantLogic) SysRoleGrant(req *types.SysRoleGrantReq) (resp *type
 	if err != nil {
 		return nil, err
 	}
-	resp = &types.SimpleResp{
+	resp = &types.RespBase{
 		Code: result.Code,
 		Msg:  result.Msg,
 	}

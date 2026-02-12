@@ -26,7 +26,7 @@ func NewSysMenuCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 	}
 }
 
-func (l *SysMenuCreateLogic) SysMenuCreate(req *types.SysMenuCreateReq) (resp *types.SimpleResp, err error) {
+func (l *SysMenuCreateLogic) SysMenuCreate(req *types.SysMenuCreateReq) (resp *types.RespBase, err error) {
 	// todo: add your logic here and delete this line
 
 	return

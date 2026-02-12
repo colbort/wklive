@@ -17,11 +17,9 @@ message AdminLoginReq {
 }
 
 message AdminLoginResp {
-  int32  code = 1;
-  string msg = 2;
+  RespBase base = 1;
   string token = 3;
   int64  exp = 4;
-
   int64  uid = 5;
   string nickname = 6;
   repeated int64 role_ids = 7;
@@ -79,9 +77,8 @@ message SysMenuItem {
 }
 
 message SysMenuTreeResp {
-  int32 code = 1;
-  string msg = 2;
-  repeated SysMenuItem list = 3;
+  RespBase base = 1;
+  repeated SysMenuItem list = 2;
 }
 
 //////////////////////
@@ -89,8 +86,7 @@ message SysMenuTreeResp {
 //////////////////////
 message Google2FAInitReq { int64 user_id = 1; }
 message Google2FAInitResp {
-  int32 code = 1;
-  string msg = 2;
+  RespBase base = 1;
   string secret = 3;
   string otpauth_url = 4;
 }
@@ -99,7 +95,7 @@ message Google2FAEnableReq { int64 user_id = 1; string code = 2; }
 message Google2FADisableReq { int64 user_id = 1; string code = 2; } // 可选强校验
 message Google2FAResetReq { int64 user_id = 1; }
 
-message SimpleResp { int32 code = 1; string msg = 2; }
+message RespBase { int32 code = 1; string msg = 2; int64 total = 3; }
 
 //////////////////////
 // RBAC - 用户
@@ -122,14 +118,12 @@ message SysUserListReq {
   int32 status = 3;
 }
 message SysUserListResp {
-  int32 code = 1;
-  string msg = 2;
-  int64 total = 3;
+  RespBase base = 1;
   repeated SysUserItem list = 4;
 }
 
 message SysUserDetailReq { int64 id = 1; }
-message SysUserDetailResp { int32 code = 1; string msg = 2; SysUserItem data = 3; }
+message SysUserDetailResp { RespBase base = 1; SysUserItem data = 3; }
 
 message SysUserCreateReq {
   string username = 1;
@@ -161,7 +155,7 @@ message SysRoleItem {
   int64 created_at = 6;
 }
 message SysRoleListReq { PageReq page = 1; string keyword = 2; int32 status = 3; }
-message SysRoleListResp { int32 code = 1; string msg = 2; int64 total = 3; repeated SysRoleItem list = 4; }
+message SysRoleListResp { RespBase base = 1; repeated SysRoleItem list = 4; }
 
 message SysRoleCreateReq { string name = 1; string code = 2; int32 status = 3; string remark = 4; }
 message SysRoleUpdateReq { int64 id = 1; string name = 2; int32 status = 3; string remark = 4; }
@@ -170,8 +164,7 @@ message SysRoleGrantReq { int64 role_id = 1; repeated int64 menu_ids = 2; }
 
 message SysRoleGrantDetailReq { int64 role_id = 1; }
 message SysRoleGrantDetailResp {
-  int32 code = 1;
-  string msg = 2;
+  RespBase base = 1;
   int64 role_id = 3;
   repeated int64 menu_ids = 4;
   repeated string perm_keys = 5;
@@ -184,8 +177,7 @@ message SysPermItem {
 }
 
 message SysPermListResp {
-  int32 code = 1;
-  string msg = 2;
+  RespBase base = 1;
   repeated SysPermItem data = 3;
 }
 
@@ -233,7 +225,10 @@ message LoginLogItem {
   int64 created_at = 8;
 }
 message LoginLogListReq { PageReq page = 1; string username = 2; int32 result = 3; }
-message LoginLogListResp { int32 code = 1; string msg = 2; int64 total = 3; repeated LoginLogItem list = 4; }
+message LoginLogListResp { 
+  RespBase base = 1;
+  repeated LoginLogItem list = 4; 
+}
 
 message OpLogItem {
   int64 id = 1;
@@ -250,7 +245,10 @@ message OpLogItem {
   int64 created_at = 12;
 }
 message OpLogListReq { PageReq page = 1; string username = 2; string module = 3; string action = 4; }
-message OpLogListResp { int32 code = 1; string msg = 2; int64 total = 3; repeated OpLogItem list = 4; }
+message OpLogListResp { 
+  RespBase base = 1;
+  repeated OpLogItem list = 4; 
+}
 
 //////////////////////
 // Service
@@ -264,39 +262,39 @@ service System {
   // 2FA
   rpc Google2FAInit(Google2FAInitReq) returns (Google2FAInitResp);
   // 启用Google 2FA
-  rpc Google2FAEnable(Google2FAEnableReq) returns (SimpleResp);
+  rpc Google2FAEnable(Google2FAEnableReq) returns (RespBase);
   // 禁用Google 2FA
-  rpc Google2FADisable(Google2FADisableReq) returns (SimpleResp);
+  rpc Google2FADisable(Google2FADisableReq) returns (RespBase);
   // 重置Google 2FA
-  rpc Google2FAReset(Google2FAResetReq) returns (SimpleResp);
+  rpc Google2FAReset(Google2FAResetReq) returns (RespBase);
 
   // 用户
   rpc SysUserList(SysUserListReq) returns (SysUserListResp);
   // 获取用户详情
   rpc SysUserDetail(SysUserDetailReq) returns (SysUserDetailResp);
   // 创建系统用户
-  rpc SysUserCreate(SysUserCreateReq) returns (SimpleResp);
+  rpc SysUserCreate(SysUserCreateReq) returns (RespBase);
   // 更新系统用户
-  rpc SysUserUpdate(SysUserUpdateReq) returns (SimpleResp);
+  rpc SysUserUpdate(SysUserUpdateReq) returns (RespBase);
   // 删除系统用户
-  rpc SysUserDelete(SysUserDeleteReq) returns (SimpleResp);
+  rpc SysUserDelete(SysUserDeleteReq) returns (RespBase);
   // 修改用户状态
-  rpc ChangeUserStatus(ChangeUserStatusReq) returns (SimpleResp);
+  rpc ChangeUserStatus(ChangeUserStatusReq) returns (RespBase);
   // 重置用户密码
-  rpc ResetUserPwd(ResetUserPwdReq) returns (SimpleResp);
+  rpc ResetUserPwd(ResetUserPwdReq) returns (RespBase);
   // 分配用户角色
-  rpc AssignUserRoles(AssignUserRolesReq) returns (SimpleResp);
+  rpc AssignUserRoles(AssignUserRolesReq) returns (RespBase);
 
   // 角色
   rpc SysRoleList(SysRoleListReq) returns (SysRoleListResp);
   // 创建角色
-  rpc SysRoleCreate(SysRoleCreateReq) returns (SimpleResp);
+  rpc SysRoleCreate(SysRoleCreateReq) returns (RespBase);
   // 更新角色
-  rpc SysRoleUpdate(SysRoleUpdateReq) returns (SimpleResp);
+  rpc SysRoleUpdate(SysRoleUpdateReq) returns (RespBase);
   // 删除角色
-  rpc SysRoleDelete(SysRoleDeleteReq) returns (SimpleResp);
+  rpc SysRoleDelete(SysRoleDeleteReq) returns (RespBase);
   // 角色授权
-  rpc SysRoleGrant(SysRoleGrantReq) returns (SimpleResp);
+  rpc SysRoleGrant(SysRoleGrantReq) returns (RespBase);
   // 获取角色授权详情
   rpc SysRoleGrantDetail(SysRoleGrantDetailReq) returns (SysRoleGrantDetailResp);
   // 获取权限列表
@@ -304,11 +302,11 @@ service System {
   // 获取菜单树
   rpc GetMenuTree(Empty) returns (SysMenuTreeResp);
   // 菜单
-  rpc SysMenuCreate(SysMenuCreateReq) returns (SimpleResp);
+  rpc SysMenuCreate(SysMenuCreateReq) returns (RespBase);
   // 更新菜单
-  rpc SysMenuUpdate(SysMenuUpdateReq) returns (SimpleResp);
+  rpc SysMenuUpdate(SysMenuUpdateReq) returns (RespBase);
   // 删除菜单
-  rpc SysMenuDelete(SysMenuDeleteReq) returns (SimpleResp);
+  rpc SysMenuDelete(SysMenuDeleteReq) returns (RespBase);
   // 日志
   rpc LoginLogList(LoginLogListReq) returns (LoginLogListResp);
   // 操作日志

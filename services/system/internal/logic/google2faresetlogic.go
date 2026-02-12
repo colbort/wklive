@@ -23,8 +23,8 @@ func NewGoogle2FAResetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Go
 	}
 }
 
-func (l *Google2FAResetLogic) Google2FAReset(in *system.Google2FAResetReq) (*system.SimpleResp, error) {
+func (l *Google2FAResetLogic) Google2FAReset(in *system.Google2FAResetReq) (*system.RespBase, error) {
 	// todo: add your logic here and delete this line
 
-	return &system.SimpleResp{}, nil
+	return &system.RespBase{}, nil
 }

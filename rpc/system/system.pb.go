@@ -998,7 +998,7 @@ func (x *Google2FAResetReq) GetUserId() int64 {
 	return 0
 }
 
-type SimpleResp struct {
+type RespBase struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
 	Msg           string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
@@ -1006,20 +1006,20 @@ type SimpleResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SimpleResp) Reset() {
-	*x = SimpleResp{}
+func (x *RespBase) Reset() {
+	*x = RespBase{}
 	mi := &file_system_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SimpleResp) String() string {
+func (x *RespBase) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SimpleResp) ProtoMessage() {}
+func (*RespBase) ProtoMessage() {}
 
-func (x *SimpleResp) ProtoReflect() protoreflect.Message {
+func (x *RespBase) ProtoReflect() protoreflect.Message {
 	mi := &file_system_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1031,19 +1031,19 @@ func (x *SimpleResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SimpleResp.ProtoReflect.Descriptor instead.
-func (*SimpleResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use RespBase.ProtoReflect.Descriptor instead.
+func (*RespBase) Descriptor() ([]byte, []int) {
 	return file_system_proto_rawDescGZIP(), []int{14}
 }
 
-func (x *SimpleResp) GetCode() int32 {
+func (x *RespBase) GetCode() int32 {
 	if x != nil {
 		return x.Code
 	}
 	return 0
 }
 
-func (x *SimpleResp) GetMsg() string {
+func (x *RespBase) GetMsg() string {
 	if x != nil {
 		return x.Msg
 	}
@@ -3321,7 +3321,7 @@ const file_system_proto_rawDesc = "" +
 	"\x11Google2FAResetReq\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\"2\n" +
 	"\n" +
-	"SimpleResp\x12\x12\n" +
+	"RespBase\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x10\n" +
 	"\x03msg\x18\x02 \x01(\tR\x03msg\"1\n" +
 	"\aPageReq\x12\x12\n" +
@@ -3498,28 +3498,28 @@ const file_system_proto_rawDesc = "" +
 	"\n" +
 	"GetProfile\x12\x12.system.ProfileReq\x1a\x13.system.ProfileResp\x12D\n" +
 	"\rGoogle2FAInit\x12\x18.system.Google2FAInitReq\x1a\x19.system.Google2FAInitResp\x12A\n" +
-	"\x0fGoogle2FAEnable\x12\x1a.system.Google2FAEnableReq\x1a\x12.system.SimpleResp\x12C\n" +
-	"\x10Google2FADisable\x12\x1b.system.Google2FADisableReq\x1a\x12.system.SimpleResp\x12?\n" +
-	"\x0eGoogle2FAReset\x12\x19.system.Google2FAResetReq\x1a\x12.system.SimpleResp\x12>\n" +
+	"\x0fGoogle2FAEnable\x12\x1a.system.Google2FAEnableReq\x1a\x12.system.RespBase\x12C\n" +
+	"\x10Google2FADisable\x12\x1b.system.Google2FADisableReq\x1a\x12.system.RespBase\x12?\n" +
+	"\x0eGoogle2FAReset\x12\x19.system.Google2FAResetReq\x1a\x12.system.RespBase\x12>\n" +
 	"\vSysUserList\x12\x16.system.SysUserListReq\x1a\x17.system.SysUserListResp\x12D\n" +
 	"\rSysUserDetail\x12\x18.system.SysUserDetailReq\x1a\x19.system.SysUserDetailResp\x12=\n" +
-	"\rSysUserCreate\x12\x18.system.SysUserCreateReq\x1a\x12.system.SimpleResp\x12=\n" +
-	"\rSysUserUpdate\x12\x18.system.SysUserUpdateReq\x1a\x12.system.SimpleResp\x12=\n" +
-	"\rSysUserDelete\x12\x18.system.SysUserDeleteReq\x1a\x12.system.SimpleResp\x12C\n" +
-	"\x10ChangeUserStatus\x12\x1b.system.ChangeUserStatusReq\x1a\x12.system.SimpleResp\x12;\n" +
-	"\fResetUserPwd\x12\x17.system.ResetUserPwdReq\x1a\x12.system.SimpleResp\x12A\n" +
-	"\x0fAssignUserRoles\x12\x1a.system.AssignUserRolesReq\x1a\x12.system.SimpleResp\x12>\n" +
+	"\rSysUserCreate\x12\x18.system.SysUserCreateReq\x1a\x12.system.RespBase\x12=\n" +
+	"\rSysUserUpdate\x12\x18.system.SysUserUpdateReq\x1a\x12.system.RespBase\x12=\n" +
+	"\rSysUserDelete\x12\x18.system.SysUserDeleteReq\x1a\x12.system.RespBase\x12C\n" +
+	"\x10ChangeUserStatus\x12\x1b.system.ChangeUserStatusReq\x1a\x12.system.RespBase\x12;\n" +
+	"\fResetUserPwd\x12\x17.system.ResetUserPwdReq\x1a\x12.system.RespBase\x12A\n" +
+	"\x0fAssignUserRoles\x12\x1a.system.AssignUserRolesReq\x1a\x12.system.RespBase\x12>\n" +
 	"\vSysRoleList\x12\x16.system.SysRoleListReq\x1a\x17.system.SysRoleListResp\x12=\n" +
-	"\rSysRoleCreate\x12\x18.system.SysRoleCreateReq\x1a\x12.system.SimpleResp\x12=\n" +
-	"\rSysRoleUpdate\x12\x18.system.SysRoleUpdateReq\x1a\x12.system.SimpleResp\x12=\n" +
-	"\rSysRoleDelete\x12\x18.system.SysRoleDeleteReq\x1a\x12.system.SimpleResp\x12;\n" +
-	"\fSysRoleGrant\x12\x17.system.SysRoleGrantReq\x1a\x12.system.SimpleResp\x12S\n" +
+	"\rSysRoleCreate\x12\x18.system.SysRoleCreateReq\x1a\x12.system.RespBase\x12=\n" +
+	"\rSysRoleUpdate\x12\x18.system.SysRoleUpdateReq\x1a\x12.system.RespBase\x12=\n" +
+	"\rSysRoleDelete\x12\x18.system.SysRoleDeleteReq\x1a\x12.system.RespBase\x12;\n" +
+	"\fSysRoleGrant\x12\x17.system.SysRoleGrantReq\x1a\x12.system.RespBase\x12S\n" +
 	"\x12SysRoleGrantDetail\x12\x1d.system.SysRoleGrantDetailReq\x1a\x1e.system.SysRoleGrantDetailResp\x125\n" +
 	"\vSysPermList\x12\r.system.Empty\x1a\x17.system.SysPermListResp\x125\n" +
 	"\vGetMenuTree\x12\r.system.Empty\x1a\x17.system.SysMenuTreeResp\x12=\n" +
-	"\rSysMenuCreate\x12\x18.system.SysMenuCreateReq\x1a\x12.system.SimpleResp\x12=\n" +
-	"\rSysMenuUpdate\x12\x18.system.SysMenuUpdateReq\x1a\x12.system.SimpleResp\x12=\n" +
-	"\rSysMenuDelete\x12\x18.system.SysMenuDeleteReq\x1a\x12.system.SimpleResp\x12A\n" +
+	"\rSysMenuCreate\x12\x18.system.SysMenuCreateReq\x1a\x12.system.RespBase\x12=\n" +
+	"\rSysMenuUpdate\x12\x18.system.SysMenuUpdateReq\x1a\x12.system.RespBase\x12=\n" +
+	"\rSysMenuDelete\x12\x18.system.SysMenuDeleteReq\x1a\x12.system.RespBase\x12A\n" +
 	"\fLoginLogList\x12\x17.system.LoginLogListReq\x1a\x18.system.LoginLogListResp\x128\n" +
 	"\tOpLogList\x12\x14.system.OpLogListReq\x1a\x15.system.OpLogListRespB\x1aZ\x18wklive/rpc/system;systemb\x06proto3"
 
@@ -3551,7 +3551,7 @@ var file_system_proto_goTypes = []any{
 	(*Google2FAEnableReq)(nil),     // 11: system.Google2FAEnableReq
 	(*Google2FADisableReq)(nil),    // 12: system.Google2FADisableReq
 	(*Google2FAResetReq)(nil),      // 13: system.Google2FAResetReq
-	(*SimpleResp)(nil),             // 14: system.SimpleResp
+	(*RespBase)(nil),             // 14: system.RespBase
 	(*PageReq)(nil),                // 15: system.PageReq
 	(*SysUserItem)(nil),            // 16: system.SysUserItem
 	(*SysUserListReq)(nil),         // 17: system.SysUserListReq
@@ -3630,28 +3630,28 @@ var file_system_proto_depIdxs = []int32{
 	2,  // 41: system.System.AdminLogin:output_type -> system.AdminLoginResp
 	6,  // 42: system.System.GetProfile:output_type -> system.ProfileResp
 	10, // 43: system.System.Google2FAInit:output_type -> system.Google2FAInitResp
-	14, // 44: system.System.Google2FAEnable:output_type -> system.SimpleResp
-	14, // 45: system.System.Google2FADisable:output_type -> system.SimpleResp
-	14, // 46: system.System.Google2FAReset:output_type -> system.SimpleResp
+	14, // 44: system.System.Google2FAEnable:output_type -> system.RespBase
+	14, // 45: system.System.Google2FADisable:output_type -> system.RespBase
+	14, // 46: system.System.Google2FAReset:output_type -> system.RespBase
 	18, // 47: system.System.SysUserList:output_type -> system.SysUserListResp
 	20, // 48: system.System.SysUserDetail:output_type -> system.SysUserDetailResp
-	14, // 49: system.System.SysUserCreate:output_type -> system.SimpleResp
-	14, // 50: system.System.SysUserUpdate:output_type -> system.SimpleResp
-	14, // 51: system.System.SysUserDelete:output_type -> system.SimpleResp
-	14, // 52: system.System.ChangeUserStatus:output_type -> system.SimpleResp
-	14, // 53: system.System.ResetUserPwd:output_type -> system.SimpleResp
-	14, // 54: system.System.AssignUserRoles:output_type -> system.SimpleResp
+	14, // 49: system.System.SysUserCreate:output_type -> system.RespBase
+	14, // 50: system.System.SysUserUpdate:output_type -> system.RespBase
+	14, // 51: system.System.SysUserDelete:output_type -> system.RespBase
+	14, // 52: system.System.ChangeUserStatus:output_type -> system.RespBase
+	14, // 53: system.System.ResetUserPwd:output_type -> system.RespBase
+	14, // 54: system.System.AssignUserRoles:output_type -> system.RespBase
 	29, // 55: system.System.SysRoleList:output_type -> system.SysRoleListResp
-	14, // 56: system.System.SysRoleCreate:output_type -> system.SimpleResp
-	14, // 57: system.System.SysRoleUpdate:output_type -> system.SimpleResp
-	14, // 58: system.System.SysRoleDelete:output_type -> system.SimpleResp
-	14, // 59: system.System.SysRoleGrant:output_type -> system.SimpleResp
+	14, // 56: system.System.SysRoleCreate:output_type -> system.RespBase
+	14, // 57: system.System.SysRoleUpdate:output_type -> system.RespBase
+	14, // 58: system.System.SysRoleDelete:output_type -> system.RespBase
+	14, // 59: system.System.SysRoleGrant:output_type -> system.RespBase
 	35, // 60: system.System.SysRoleGrantDetail:output_type -> system.SysRoleGrantDetailResp
 	37, // 61: system.System.SysPermList:output_type -> system.SysPermListResp
 	8,  // 62: system.System.GetMenuTree:output_type -> system.SysMenuTreeResp
-	14, // 63: system.System.SysMenuCreate:output_type -> system.SimpleResp
-	14, // 64: system.System.SysMenuUpdate:output_type -> system.SimpleResp
-	14, // 65: system.System.SysMenuDelete:output_type -> system.SimpleResp
+	14, // 63: system.System.SysMenuCreate:output_type -> system.RespBase
+	14, // 64: system.System.SysMenuUpdate:output_type -> system.RespBase
+	14, // 65: system.System.SysMenuDelete:output_type -> system.RespBase
 	43, // 66: system.System.LoginLogList:output_type -> system.LoginLogListResp
 	46, // 67: system.System.OpLogList:output_type -> system.OpLogListResp
 	41, // [41:68] is the sub-list for method output_type

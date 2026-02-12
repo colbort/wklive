@@ -69,7 +69,7 @@ function iconComp(icon?: string) {
     :collapse-transition="false"
   >
     <!-- ✅ 首页固定显示 -->
-    <el-menu-item index="/" @click="go('/')">
+    <el-menu-item index="/" @click="go('/home')">
       <el-icon><House /></el-icon>
       <template #title>{{ t('route.home') }}</template>
     </el-menu-item>

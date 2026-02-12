@@ -52,9 +52,11 @@ func (l *SysRoleListLogic) SysRoleList(req *types.SysRoleListReq) (resp *types.S
 	}
 
 	resp = &types.SysRoleListResp{
-		Code: 200,
-		Msg:  "查询成功",
-		List: list,
+		RespBase: types.RespBase{
+			Code: response.Code,
+			Msg:  response.Msg,
+		},
+		Data: list,
 	}
 	return
 }

@@ -23,12 +23,12 @@ func NewSysRoleDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 	}
 }
 
-func (l *SysRoleDeleteLogic) SysRoleDelete(in *system.SysRoleDeleteReq) (*system.SimpleResp, error) {
+func (l *SysRoleDeleteLogic) SysRoleDelete(in *system.SysRoleDeleteReq) (*system.RespBase, error) {
 	err := l.svcCtx.RoleModel.Delete(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
 	}
-	return &system.SimpleResp{
+	return &system.RespBase{
 		Code: 200,
 		Msg:  "删除成功",
 	}, nil

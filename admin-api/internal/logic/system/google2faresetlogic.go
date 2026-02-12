@@ -26,7 +26,7 @@ func NewGoogle2FAResetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Go
 	}
 }
 
-func (l *Google2FAResetLogic) Google2FAReset(req *types.Google2FAResetReq) (resp *types.SimpleResp, err error) {
+func (l *Google2FAResetLogic) Google2FAReset(req *types.Google2FAResetReq) (resp *types.RespBase, err error) {
 	// todo: add your logic here and delete this line
 
 	return

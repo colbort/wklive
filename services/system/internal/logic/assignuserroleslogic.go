@@ -23,8 +23,8 @@ func NewAssignUserRolesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *A
 	}
 }
 
-func (l *AssignUserRolesLogic) AssignUserRoles(in *system.AssignUserRolesReq) (*system.SimpleResp, error) {
+func (l *AssignUserRolesLogic) AssignUserRoles(in *system.AssignUserRolesReq) (*system.RespBase, error) {
 	// todo: add your logic here and delete this line
 
-	return &system.SimpleResp{}, nil
+	return &system.RespBase{}, nil
 }

@@ -49,9 +49,11 @@ func (l *SysMenuTreeLogic) SysMenuTree() (resp *types.SysMenuTreeResp, err error
 		})
 	}
 	resp = &types.SysMenuTreeResp{
-		Code: reuslt.Code,
-		Msg:  reuslt.Msg,
-		List: data,
+		RespBase: types.RespBase{
+			Code: reuslt.Code,
+			Msg:  reuslt.Msg,
+		},
+		Data: data,
 	}
 	return resp, nil
 }

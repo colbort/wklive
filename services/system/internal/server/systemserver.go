@@ -42,19 +42,19 @@ func (s *SystemServer) Google2FAInit(ctx context.Context, in *system.Google2FAIn
 }
 
 // 启用Google 2FA
-func (s *SystemServer) Google2FAEnable(ctx context.Context, in *system.Google2FAEnableReq) (*system.SimpleResp, error) {
+func (s *SystemServer) Google2FAEnable(ctx context.Context, in *system.Google2FAEnableReq) (*system.RespBase, error) {
 	l := logic.NewGoogle2FAEnableLogic(ctx, s.svcCtx)
 	return l.Google2FAEnable(in)
 }
 
 // 禁用Google 2FA
-func (s *SystemServer) Google2FADisable(ctx context.Context, in *system.Google2FADisableReq) (*system.SimpleResp, error) {
+func (s *SystemServer) Google2FADisable(ctx context.Context, in *system.Google2FADisableReq) (*system.RespBase, error) {
 	l := logic.NewGoogle2FADisableLogic(ctx, s.svcCtx)
 	return l.Google2FADisable(in)
 }
 
 // 重置Google 2FA
-func (s *SystemServer) Google2FAReset(ctx context.Context, in *system.Google2FAResetReq) (*system.SimpleResp, error) {
+func (s *SystemServer) Google2FAReset(ctx context.Context, in *system.Google2FAResetReq) (*system.RespBase, error) {
 	l := logic.NewGoogle2FAResetLogic(ctx, s.svcCtx)
 	return l.Google2FAReset(in)
 }
@@ -72,37 +72,37 @@ func (s *SystemServer) SysUserDetail(ctx context.Context, in *system.SysUserDeta
 }
 
 // 创建系统用户
-func (s *SystemServer) SysUserCreate(ctx context.Context, in *system.SysUserCreateReq) (*system.SimpleResp, error) {
+func (s *SystemServer) SysUserCreate(ctx context.Context, in *system.SysUserCreateReq) (*system.RespBase, error) {
 	l := logic.NewSysUserCreateLogic(ctx, s.svcCtx)
 	return l.SysUserCreate(in)
 }
 
 // 更新系统用户
-func (s *SystemServer) SysUserUpdate(ctx context.Context, in *system.SysUserUpdateReq) (*system.SimpleResp, error) {
+func (s *SystemServer) SysUserUpdate(ctx context.Context, in *system.SysUserUpdateReq) (*system.RespBase, error) {
 	l := logic.NewSysUserUpdateLogic(ctx, s.svcCtx)
 	return l.SysUserUpdate(in)
 }
 
 // 删除系统用户
-func (s *SystemServer) SysUserDelete(ctx context.Context, in *system.SysUserDeleteReq) (*system.SimpleResp, error) {
+func (s *SystemServer) SysUserDelete(ctx context.Context, in *system.SysUserDeleteReq) (*system.RespBase, error) {
 	l := logic.NewSysUserDeleteLogic(ctx, s.svcCtx)
 	return l.SysUserDelete(in)
 }
 
 // 修改用户状态
-func (s *SystemServer) ChangeUserStatus(ctx context.Context, in *system.ChangeUserStatusReq) (*system.SimpleResp, error) {
+func (s *SystemServer) ChangeUserStatus(ctx context.Context, in *system.ChangeUserStatusReq) (*system.RespBase, error) {
 	l := logic.NewChangeUserStatusLogic(ctx, s.svcCtx)
 	return l.ChangeUserStatus(in)
 }
 
 // 重置用户密码
-func (s *SystemServer) ResetUserPwd(ctx context.Context, in *system.ResetUserPwdReq) (*system.SimpleResp, error) {
+func (s *SystemServer) ResetUserPwd(ctx context.Context, in *system.ResetUserPwdReq) (*system.RespBase, error) {
 	l := logic.NewResetUserPwdLogic(ctx, s.svcCtx)
 	return l.ResetUserPwd(in)
 }
 
 // 分配用户角色
-func (s *SystemServer) AssignUserRoles(ctx context.Context, in *system.AssignUserRolesReq) (*system.SimpleResp, error) {
+func (s *SystemServer) AssignUserRoles(ctx context.Context, in *system.AssignUserRolesReq) (*system.RespBase, error) {
 	l := logic.NewAssignUserRolesLogic(ctx, s.svcCtx)
 	return l.AssignUserRoles(in)
 }
@@ -114,25 +114,25 @@ func (s *SystemServer) SysRoleList(ctx context.Context, in *system.SysRoleListRe
 }
 
 // 创建角色
-func (s *SystemServer) SysRoleCreate(ctx context.Context, in *system.SysRoleCreateReq) (*system.SimpleResp, error) {
+func (s *SystemServer) SysRoleCreate(ctx context.Context, in *system.SysRoleCreateReq) (*system.RespBase, error) {
 	l := logic.NewSysRoleCreateLogic(ctx, s.svcCtx)
 	return l.SysRoleCreate(in)
 }
 
 // 更新角色
-func (s *SystemServer) SysRoleUpdate(ctx context.Context, in *system.SysRoleUpdateReq) (*system.SimpleResp, error) {
+func (s *SystemServer) SysRoleUpdate(ctx context.Context, in *system.SysRoleUpdateReq) (*system.RespBase, error) {
 	l := logic.NewSysRoleUpdateLogic(ctx, s.svcCtx)
 	return l.SysRoleUpdate(in)
 }
 
 // 删除角色
-func (s *SystemServer) SysRoleDelete(ctx context.Context, in *system.SysRoleDeleteReq) (*system.SimpleResp, error) {
+func (s *SystemServer) SysRoleDelete(ctx context.Context, in *system.SysRoleDeleteReq) (*system.RespBase, error) {
 	l := logic.NewSysRoleDeleteLogic(ctx, s.svcCtx)
 	return l.SysRoleDelete(in)
 }
 
 // 角色授权
-func (s *SystemServer) SysRoleGrant(ctx context.Context, in *system.SysRoleGrantReq) (*system.SimpleResp, error) {
+func (s *SystemServer) SysRoleGrant(ctx context.Context, in *system.SysRoleGrantReq) (*system.RespBase, error) {
 	l := logic.NewSysRoleGrantLogic(ctx, s.svcCtx)
 	return l.SysRoleGrant(in)
 }
@@ -156,19 +156,19 @@ func (s *SystemServer) GetMenuTree(ctx context.Context, in *system.Empty) (*syst
 }
 
 // 菜单
-func (s *SystemServer) SysMenuCreate(ctx context.Context, in *system.SysMenuCreateReq) (*system.SimpleResp, error) {
+func (s *SystemServer) SysMenuCreate(ctx context.Context, in *system.SysMenuCreateReq) (*system.RespBase, error) {
 	l := logic.NewSysMenuCreateLogic(ctx, s.svcCtx)
 	return l.SysMenuCreate(in)
 }
 
 // 更新菜单
-func (s *SystemServer) SysMenuUpdate(ctx context.Context, in *system.SysMenuUpdateReq) (*system.SimpleResp, error) {
+func (s *SystemServer) SysMenuUpdate(ctx context.Context, in *system.SysMenuUpdateReq) (*system.RespBase, error) {
 	l := logic.NewSysMenuUpdateLogic(ctx, s.svcCtx)
 	return l.SysMenuUpdate(in)
 }
 
 // 删除菜单
-func (s *SystemServer) SysMenuDelete(ctx context.Context, in *system.SysMenuDeleteReq) (*system.SimpleResp, error) {
+func (s *SystemServer) SysMenuDelete(ctx context.Context, in *system.SysMenuDeleteReq) (*system.RespBase, error) {
 	l := logic.NewSysMenuDeleteLogic(ctx, s.svcCtx)
 	return l.SysMenuDelete(in)
 }

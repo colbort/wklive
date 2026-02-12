@@ -23,8 +23,7 @@ type Google2FABindInitReq struct {
 }
 
 type Google2FABindInitResp struct {
-	Code       int32  `json:"code"`
-	Msg        string `json:"msg"`
+	RespBase
 	Secret     string `json:"secret"`
 	OtpauthUrl string `json:"otpauthUrl"`
 	QrCode     string `json:"qrCode,optional"`
@@ -62,10 +61,8 @@ type LoginLogListReq struct {
 }
 
 type LoginLogListResp struct {
-	Code  int32          `json:"code"`
-	Msg   string         `json:"msg"`
-	Total int64          `json:"total"`
-	List  []LoginLogItem `json:"list"`
+	RespBase
+	Data []LoginLogItem `json:"data"`
 }
 
 type LoginReq struct {
@@ -119,10 +116,8 @@ type OpLogListReq struct {
 }
 
 type OpLogListResp struct {
-	Code  int32       `json:"code"`
-	Msg   string      `json:"msg"`
-	Total int64       `json:"total"`
-	List  []OpLogItem `json:"list"`
+	RespBase
+	Data []OpLogItem `json:"data"`
 }
 
 type OrderItem struct {
@@ -141,10 +136,8 @@ type OrderListReq struct {
 }
 
 type OrderListResp struct {
-	Code  int         `json:"code"`
-	Msg   string      `json:"msg"`
-	Total int64       `json:"total"`
-	List  []OrderItem `json:"list"`
+	RespBase
+	Data []OrderItem `json:"data"`
 }
 
 type PageReq struct {
@@ -156,8 +149,7 @@ type ProfileReq struct {
 }
 
 type ProfileResp struct {
-	Code  int32       `json:"code"`
-	Msg   string      `json:"msg"`
+	RespBase
 	User  ProfileUser `json:"user"`
 	Menus []MenuNode  `json:"menus"`
 	Perms []string    `json:"perms"`
@@ -175,9 +167,10 @@ type ResetUserPwdReq struct {
 	Password string `json:"password"`
 }
 
-type SimpleResp struct {
-	Code int32  `json:"code"`
-	Msg  string `json:"msg"`
+type RespBase struct {
+	Code  int32  `json:"code"`
+	Msg   string `json:"msg"`
+	Total int64  `json:"total,optional"`
 }
 
 type SysMenuCreateReq struct {
@@ -215,15 +208,13 @@ type SysMenuListReq struct {
 }
 
 type SysMenuListResp struct {
-	Code int32         `json:"code"`
-	Msg  string        `json:"msg"`
-	List []SysMenuItem `json:"list"`
+	RespBase
+	Data []SysMenuItem `json:"data"`
 }
 
 type SysMenuTreeResp struct {
-	Code int32         `json:"code"`
-	Msg  string        `json:"msg"`
-	List []SysMenuItem `json:"list"`
+	RespBase
+	Data []SysMenuItem `json:"data"`
 }
 
 type SysMenuUpdateReq struct {
@@ -246,8 +237,7 @@ type SysPermItem struct {
 }
 
 type SysPermListResp struct {
-	Code int32         `json:"code"`
-	Msg  string        `json:"msg"`
+	RespBase
 	Data []SysPermItem `json:"data"`
 }
 
@@ -273,8 +263,7 @@ type SysRoleGrantDetailReq struct {
 }
 
 type SysRoleGrantDetailResp struct {
-	Code int32              `json:"code"`
-	Msg  string             `json:"msg"`
+	RespBase
 	Data SysRoleGrantDetail `json:"data"`
 }
 
@@ -299,10 +288,8 @@ type SysRoleListReq struct {
 }
 
 type SysRoleListResp struct {
-	Code  int32         `json:"code"`
-	Msg   string        `json:"msg"`
-	Total int64         `json:"total"`
-	List  []SysRoleItem `json:"list"`
+	RespBase
+	Data []SysRoleItem `json:"data"`
 }
 
 type SysRoleUpdateReq struct {
@@ -321,8 +308,7 @@ type SysUserCreateReq struct {
 }
 
 type SysUserDetailResp struct {
-	Code int32       `json:"code"`
-	Msg  string      `json:"msg"`
+	RespBase
 	Data SysUserItem `json:"data"`
 }
 
@@ -343,10 +329,8 @@ type SysUserListReq struct {
 }
 
 type SysUserListResp struct {
-	Code  int32         `json:"code"`
-	Msg   string        `json:"msg"`
-	Total int64         `json:"total"`
-	List  []SysUserItem `json:"list"`
+	RespBase
+	Data []SysUserItem `json:"data"`
 }
 
 type SysUserUpdateReq struct {
@@ -371,8 +355,6 @@ type UserListReq struct {
 }
 
 type UserListResp struct {
-	Code  int        `json:"code"`
-	Msg   string     `json:"msg"`
-	Total int64      `json:"total"`
-	List  []UserItem `json:"list"`
+	RespBase
+	Data []UserItem `json:"data"`
 }

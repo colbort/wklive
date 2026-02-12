@@ -16,15 +16,12 @@ type SysUserItem {
 }
 
 type SysUserListResp {
-  code  int32          `json:"code"`
-  msg   string       `json:"msg"`
-  total int64        `json:"total"`
-  list  []SysUserItem `json:"list"`
+  RespBase
+  data  []SysUserItem `json:"data"`
 }
 
 type SysUserDetailResp {
-  code int32        `json:"code"`
-  msg  string     `json:"msg"`
+  RespBase
   data SysUserItem `json:"data"`
 }
 
@@ -64,8 +61,7 @@ type Google2FABindInitReq {
 }
 
 type Google2FABindInitResp {
-  code       int32    `json:"code"`
-  msg        string `json:"msg"`
+  RespBase
   secret     string `json:"secret"`
   otpauthUrl string `json:"otpauthUrl"`
   qrCode     string `json:"qrCode,optional"`
@@ -102,10 +98,8 @@ type SysRoleListReq {
 }
 
 type SysRoleListResp {
-  code  int32        `json:"code"`
-  msg   string     `json:"msg"`
-  total int64      `json:"total"`
-  list  []SysRoleItem `json:"list"`
+  RespBase
+  data  []SysRoleItem `json:"data"`
 }
 
 type SysRoleCreateReq {
@@ -136,9 +130,8 @@ type SysRoleGrantDetailReq {
 }
 
 type SysRoleGrantDetailResp {
-  Code int32    `json:"code"`
-  Msg  string `json:"msg"`
-  Data SysRoleGrantDetail `json:"data"`
+  RespBase
+  data SysRoleGrantDetail `json:"data"`
 }
 
 type SysRoleGrantDetail {
@@ -153,9 +146,8 @@ type SysPermItem {
 }
 
 type SysPermListResp {
-  Code int32      `json:"code"`
-  Msg  string     `json:"msg"`
-  Data []SysPermItem `json:"data"`
+  RespBase
+  data []SysPermItem `json:"data"`
 }
 
 // ===== system: 菜单/按钮 =====
@@ -174,9 +166,8 @@ type SysMenuItem {
 }
 
 type SysMenuTreeResp {
-  code int32        `json:"code"`
-  msg  string     `json:"msg"`
-  list []SysMenuItem `json:"list"`
+  RespBase
+  data []SysMenuItem `json:"data"`
 }
 
 type SysMenuCreateReq {
@@ -214,9 +205,8 @@ type SysMenuListReq {
 }
 
 type SysMenuListResp {
-  code int32          `json:"code"`
-  msg  string       `json:"msg"`
-  list []SysMenuItem `json:"list"`
+  RespBase
+  data []SysMenuItem `json:"data"`
 }
 
 // ===== system: 日志 =====
@@ -238,10 +228,8 @@ type LoginLogListReq {
 }
 
 type LoginLogListResp {
-  code  int32            `json:"code"`
-  msg   string         `json:"msg"`
-  total int64          `json:"total"`
-  list  []LoginLogItem `json:"list"`
+  RespBase
+  data  []LoginLogItem `json:"data"`
 }
 
 type OpLogItem {
@@ -267,10 +255,8 @@ type OpLogListReq {
 }
 
 type OpLogListResp {
-  code  int32         `json:"code"`
-  msg   string      `json:"msg"`
-  total int64       `json:"total"`
-  list  []OpLogItem `json:"list"`
+  RespBase
+  data  []OpLogItem `json:"data"`
 }
 
 @server(
@@ -288,51 +274,51 @@ service admin {
   get /users/:id returns (SysUserDetailResp)
 
   @handler SysUserCreate
-  post /users (SysUserCreateReq) returns (SimpleResp)
+  post /users (SysUserCreateReq) returns (RespBase)
 
   @handler SysUserUpdate
-  put /users (SysUserUpdateReq) returns (SimpleResp)
+  put /users (SysUserUpdateReq) returns (RespBase)
 
   @handler SysUserDelete
-  delete /users/:id returns (SimpleResp)
+  delete /users/:id returns (RespBase)
 
   @handler ChangeUserStatus
-  post /users/status (ChangeUserStatusReq) returns (SimpleResp)
+  post /users/status (ChangeUserStatusReq) returns (RespBase)
 
   @handler ResetUserPwd
-  post /users/resetPwd (ResetUserPwdReq) returns (SimpleResp)
+  post /users/resetPwd (ResetUserPwdReq) returns (RespBase)
 
   @handler AssignUserRoles
-  post /users/assignRoles (AssignUserRolesReq) returns (SimpleResp)
+  post /users/assignRoles (AssignUserRolesReq) returns (RespBase)
 
   // --- Google 2FA ---
   @handler Google2FABindInit
   post /users/google2fa/init (Google2FABindInitReq) returns (Google2FABindInitResp)
 
   @handler Google2FAEnable
-  post /users/google2fa/enable (Google2FAEnableReq) returns (SimpleResp)
+  post /users/google2fa/enable (Google2FAEnableReq) returns (RespBase)
 
   @handler Google2FADisable
-  post /users/google2fa/disable (Google2FADisableReq) returns (SimpleResp)
+  post /users/google2fa/disable (Google2FADisableReq) returns (RespBase)
 
   @handler Google2FAReset
-  post /users/google2fa/reset (Google2FAResetReq) returns (SimpleResp)
+  post /users/google2fa/reset (Google2FAResetReq) returns (RespBase)
 
   // --- 角色 ---
   @handler SysRoleList
   get /roles (SysRoleListReq) returns (SysRoleListResp)
 
   @handler SysRoleCreate
-  post /roles (SysRoleCreateReq) returns (SimpleResp)
+  post /roles (SysRoleCreateReq) returns (RespBase)
 
   @handler SysRoleUpdate
-  put /roles (SysRoleUpdateReq) returns (SimpleResp)
+  put /roles (SysRoleUpdateReq) returns (RespBase)
 
   @handler SysRoleDelete
-  delete /roles/:id (SysRoleDeleteReq) returns (SimpleResp)
+  delete /roles/:id (SysRoleDeleteReq) returns (RespBase)
 
   @handler SysRoleGrant
-  post /roles/grant (SysRoleGrantReq) returns (SimpleResp)
+  post /roles/grant (SysRoleGrantReq) returns (RespBase)
 
   @handler SysRoleGrantDetail
   get /roles/:id/grant (SysRoleGrantDetailReq) returns (SysRoleGrantDetailResp)
@@ -346,13 +332,13 @@ service admin {
   get /menus/tree returns (SysMenuTreeResp)
 
   @handler SysMenuCreate
-  post /menus (SysMenuCreateReq) returns (SimpleResp)
+  post /menus (SysMenuCreateReq) returns (RespBase)
 
   @handler SysMenuUpdate
-  put /menus (SysMenuUpdateReq) returns (SimpleResp)
+  put /menus (SysMenuUpdateReq) returns (RespBase)
 
   @handler SysMenuDelete
-  delete /menus/:id returns (SimpleResp)
+  delete /menus/:id returns (RespBase)
 
   @handler SysMenuList
   get /menus (SysMenuListReq) returns (SysMenuListResp)

@@ -12,6 +12,6 @@ export type RoleListResp = {
   total: number
 }
 
-export type SimpleResp = { code: number; msg: string }
+export type RespBase = { code: number; msg: string }
 
 export type RoleItem = { id: number; name: string; code: string; status: number; remark?: string }

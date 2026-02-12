@@ -12,12 +12,15 @@ type Auth {
   AccessExpire int64
 }
 
-type SimpleResp {
-  code int32    `json:"code"`
+type RespBase {
+  code int32  `json:"code"`
   msg  string `json:"msg"`
+  total int64  `json:"total,optional"`
 }
 
 type PageReq {
   page int32 `form:"page,optional"`
   size int32 `form:"size,optional"`
 }
+
+

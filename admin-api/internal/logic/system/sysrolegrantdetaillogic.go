@@ -35,8 +35,10 @@ func (l *SysRoleGrantDetailLogic) SysRoleGrantDetail(req *types.SysRoleGrantDeta
 		return nil, err
 	}
 	resp = &types.SysRoleGrantDetailResp{
-		Code: reuslt.Code,
-		Msg:  reuslt.Msg,
+		RespBase: types.RespBase{
+			Code: reuslt.Code,
+			Msg:  reuslt.Msg,
+		},
 		Data: types.SysRoleGrantDetail{
 			RoleId:   reuslt.RoleId,
 			MenuIds:  reuslt.MenuIds,

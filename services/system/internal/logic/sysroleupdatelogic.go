@@ -25,7 +25,7 @@ func NewSysRoleUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 	}
 }
 
-func (l *SysRoleUpdateLogic) SysRoleUpdate(in *system.SysRoleUpdateReq) (*system.SimpleResp, error) {
+func (l *SysRoleUpdateLogic) SysRoleUpdate(in *system.SysRoleUpdateReq) (*system.RespBase, error) {
 	err := l.svcCtx.RoleModel.Update(l.ctx, &models.SysRole{
 		Id:        in.Id,
 		Name:      in.Name,
@@ -36,7 +36,7 @@ func (l *SysRoleUpdateLogic) SysRoleUpdate(in *system.SysRoleUpdateReq) (*system
 	if err != nil {
 		return nil, err
 	}
-	return &system.SimpleResp{
+	return &system.RespBase{
 		Code: 200,
 		Msg:  "更新成功",
 	}, nil

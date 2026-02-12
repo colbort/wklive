@@ -63,37 +63,37 @@ type SystemClient interface {
 	// 2FA
 	Google2FAInit(ctx context.Context, in *Google2FAInitReq, opts ...grpc.CallOption) (*Google2FAInitResp, error)
 	// 启用Google 2FA
-	Google2FAEnable(ctx context.Context, in *Google2FAEnableReq, opts ...grpc.CallOption) (*SimpleResp, error)
+	Google2FAEnable(ctx context.Context, in *Google2FAEnableReq, opts ...grpc.CallOption) (*RespBase, error)
 	// 禁用Google 2FA
-	Google2FADisable(ctx context.Context, in *Google2FADisableReq, opts ...grpc.CallOption) (*SimpleResp, error)
+	Google2FADisable(ctx context.Context, in *Google2FADisableReq, opts ...grpc.CallOption) (*RespBase, error)
 	// 重置Google 2FA
-	Google2FAReset(ctx context.Context, in *Google2FAResetReq, opts ...grpc.CallOption) (*SimpleResp, error)
+	Google2FAReset(ctx context.Context, in *Google2FAResetReq, opts ...grpc.CallOption) (*RespBase, error)
 	// 用户
 	SysUserList(ctx context.Context, in *SysUserListReq, opts ...grpc.CallOption) (*SysUserListResp, error)
 	// 获取用户详情
 	SysUserDetail(ctx context.Context, in *SysUserDetailReq, opts ...grpc.CallOption) (*SysUserDetailResp, error)
 	// 创建系统用户
-	SysUserCreate(ctx context.Context, in *SysUserCreateReq, opts ...grpc.CallOption) (*SimpleResp, error)
+	SysUserCreate(ctx context.Context, in *SysUserCreateReq, opts ...grpc.CallOption) (*RespBase, error)
 	// 更新系统用户
-	SysUserUpdate(ctx context.Context, in *SysUserUpdateReq, opts ...grpc.CallOption) (*SimpleResp, error)
+	SysUserUpdate(ctx context.Context, in *SysUserUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
 	// 删除系统用户
-	SysUserDelete(ctx context.Context, in *SysUserDeleteReq, opts ...grpc.CallOption) (*SimpleResp, error)
+	SysUserDelete(ctx context.Context, in *SysUserDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
 	// 修改用户状态
-	ChangeUserStatus(ctx context.Context, in *ChangeUserStatusReq, opts ...grpc.CallOption) (*SimpleResp, error)
+	ChangeUserStatus(ctx context.Context, in *ChangeUserStatusReq, opts ...grpc.CallOption) (*RespBase, error)
 	// 重置用户密码
-	ResetUserPwd(ctx context.Context, in *ResetUserPwdReq, opts ...grpc.CallOption) (*SimpleResp, error)
+	ResetUserPwd(ctx context.Context, in *ResetUserPwdReq, opts ...grpc.CallOption) (*RespBase, error)
 	// 分配用户角色
-	AssignUserRoles(ctx context.Context, in *AssignUserRolesReq, opts ...grpc.CallOption) (*SimpleResp, error)
+	AssignUserRoles(ctx context.Context, in *AssignUserRolesReq, opts ...grpc.CallOption) (*RespBase, error)
 	// 角色
 	SysRoleList(ctx context.Context, in *SysRoleListReq, opts ...grpc.CallOption) (*SysRoleListResp, error)
 	// 创建角色
-	SysRoleCreate(ctx context.Context, in *SysRoleCreateReq, opts ...grpc.CallOption) (*SimpleResp, error)
+	SysRoleCreate(ctx context.Context, in *SysRoleCreateReq, opts ...grpc.CallOption) (*RespBase, error)
 	// 更新角色
-	SysRoleUpdate(ctx context.Context, in *SysRoleUpdateReq, opts ...grpc.CallOption) (*SimpleResp, error)
+	SysRoleUpdate(ctx context.Context, in *SysRoleUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
 	// 删除角色
-	SysRoleDelete(ctx context.Context, in *SysRoleDeleteReq, opts ...grpc.CallOption) (*SimpleResp, error)
+	SysRoleDelete(ctx context.Context, in *SysRoleDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
 	// 角色授权
-	SysRoleGrant(ctx context.Context, in *SysRoleGrantReq, opts ...grpc.CallOption) (*SimpleResp, error)
+	SysRoleGrant(ctx context.Context, in *SysRoleGrantReq, opts ...grpc.CallOption) (*RespBase, error)
 	// 获取角色授权详情
 	SysRoleGrantDetail(ctx context.Context, in *SysRoleGrantDetailReq, opts ...grpc.CallOption) (*SysRoleGrantDetailResp, error)
 	// 获取权限列表
@@ -101,11 +101,11 @@ type SystemClient interface {
 	// 获取菜单树
 	GetMenuTree(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysMenuTreeResp, error)
 	// 菜单
-	SysMenuCreate(ctx context.Context, in *SysMenuCreateReq, opts ...grpc.CallOption) (*SimpleResp, error)
+	SysMenuCreate(ctx context.Context, in *SysMenuCreateReq, opts ...grpc.CallOption) (*RespBase, error)
 	// 更新菜单
-	SysMenuUpdate(ctx context.Context, in *SysMenuUpdateReq, opts ...grpc.CallOption) (*SimpleResp, error)
+	SysMenuUpdate(ctx context.Context, in *SysMenuUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
 	// 删除菜单
-	SysMenuDelete(ctx context.Context, in *SysMenuDeleteReq, opts ...grpc.CallOption) (*SimpleResp, error)
+	SysMenuDelete(ctx context.Context, in *SysMenuDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
 	// 日志
 	LoginLogList(ctx context.Context, in *LoginLogListReq, opts ...grpc.CallOption) (*LoginLogListResp, error)
 	// 操作日志
@@ -150,9 +150,9 @@ func (c *systemClient) Google2FAInit(ctx context.Context, in *Google2FAInitReq, 
 	return out, nil
 }
 
-func (c *systemClient) Google2FAEnable(ctx context.Context, in *Google2FAEnableReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (c *systemClient) Google2FAEnable(ctx context.Context, in *Google2FAEnableReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SimpleResp)
+	out := new(RespBase)
 	err := c.cc.Invoke(ctx, System_Google2FAEnable_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -160,9 +160,9 @@ func (c *systemClient) Google2FAEnable(ctx context.Context, in *Google2FAEnableR
 	return out, nil
 }
 
-func (c *systemClient) Google2FADisable(ctx context.Context, in *Google2FADisableReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (c *systemClient) Google2FADisable(ctx context.Context, in *Google2FADisableReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SimpleResp)
+	out := new(RespBase)
 	err := c.cc.Invoke(ctx, System_Google2FADisable_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -170,9 +170,9 @@ func (c *systemClient) Google2FADisable(ctx context.Context, in *Google2FADisabl
 	return out, nil
 }
 
-func (c *systemClient) Google2FAReset(ctx context.Context, in *Google2FAResetReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (c *systemClient) Google2FAReset(ctx context.Context, in *Google2FAResetReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SimpleResp)
+	out := new(RespBase)
 	err := c.cc.Invoke(ctx, System_Google2FAReset_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -200,9 +200,9 @@ func (c *systemClient) SysUserDetail(ctx context.Context, in *SysUserDetailReq, 
 	return out, nil
 }
 
-func (c *systemClient) SysUserCreate(ctx context.Context, in *SysUserCreateReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (c *systemClient) SysUserCreate(ctx context.Context, in *SysUserCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SimpleResp)
+	out := new(RespBase)
 	err := c.cc.Invoke(ctx, System_SysUserCreate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -210,9 +210,9 @@ func (c *systemClient) SysUserCreate(ctx context.Context, in *SysUserCreateReq, 
 	return out, nil
 }
 
-func (c *systemClient) SysUserUpdate(ctx context.Context, in *SysUserUpdateReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (c *systemClient) SysUserUpdate(ctx context.Context, in *SysUserUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SimpleResp)
+	out := new(RespBase)
 	err := c.cc.Invoke(ctx, System_SysUserUpdate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -220,9 +220,9 @@ func (c *systemClient) SysUserUpdate(ctx context.Context, in *SysUserUpdateReq, 
 	return out, nil
 }
 
-func (c *systemClient) SysUserDelete(ctx context.Context, in *SysUserDeleteReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (c *systemClient) SysUserDelete(ctx context.Context, in *SysUserDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SimpleResp)
+	out := new(RespBase)
 	err := c.cc.Invoke(ctx, System_SysUserDelete_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -230,9 +230,9 @@ func (c *systemClient) SysUserDelete(ctx context.Context, in *SysUserDeleteReq, 
 	return out, nil
 }
 
-func (c *systemClient) ChangeUserStatus(ctx context.Context, in *ChangeUserStatusReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (c *systemClient) ChangeUserStatus(ctx context.Context, in *ChangeUserStatusReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SimpleResp)
+	out := new(RespBase)
 	err := c.cc.Invoke(ctx, System_ChangeUserStatus_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -240,9 +240,9 @@ func (c *systemClient) ChangeUserStatus(ctx context.Context, in *ChangeUserStatu
 	return out, nil
 }
 
-func (c *systemClient) ResetUserPwd(ctx context.Context, in *ResetUserPwdReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (c *systemClient) ResetUserPwd(ctx context.Context, in *ResetUserPwdReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SimpleResp)
+	out := new(RespBase)
 	err := c.cc.Invoke(ctx, System_ResetUserPwd_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -250,9 +250,9 @@ func (c *systemClient) ResetUserPwd(ctx context.Context, in *ResetUserPwdReq, op
 	return out, nil
 }
 
-func (c *systemClient) AssignUserRoles(ctx context.Context, in *AssignUserRolesReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (c *systemClient) AssignUserRoles(ctx context.Context, in *AssignUserRolesReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SimpleResp)
+	out := new(RespBase)
 	err := c.cc.Invoke(ctx, System_AssignUserRoles_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -270,9 +270,9 @@ func (c *systemClient) SysRoleList(ctx context.Context, in *SysRoleListReq, opts
 	return out, nil
 }
 
-func (c *systemClient) SysRoleCreate(ctx context.Context, in *SysRoleCreateReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (c *systemClient) SysRoleCreate(ctx context.Context, in *SysRoleCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SimpleResp)
+	out := new(RespBase)
 	err := c.cc.Invoke(ctx, System_SysRoleCreate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -280,9 +280,9 @@ func (c *systemClient) SysRoleCreate(ctx context.Context, in *SysRoleCreateReq, 
 	return out, nil
 }
 
-func (c *systemClient) SysRoleUpdate(ctx context.Context, in *SysRoleUpdateReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (c *systemClient) SysRoleUpdate(ctx context.Context, in *SysRoleUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SimpleResp)
+	out := new(RespBase)
 	err := c.cc.Invoke(ctx, System_SysRoleUpdate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -290,9 +290,9 @@ func (c *systemClient) SysRoleUpdate(ctx context.Context, in *SysRoleUpdateReq, 
 	return out, nil
 }
 
-func (c *systemClient) SysRoleDelete(ctx context.Context, in *SysRoleDeleteReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (c *systemClient) SysRoleDelete(ctx context.Context, in *SysRoleDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SimpleResp)
+	out := new(RespBase)
 	err := c.cc.Invoke(ctx, System_SysRoleDelete_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -300,9 +300,9 @@ func (c *systemClient) SysRoleDelete(ctx context.Context, in *SysRoleDeleteReq, 
 	return out, nil
 }
 
-func (c *systemClient) SysRoleGrant(ctx context.Context, in *SysRoleGrantReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (c *systemClient) SysRoleGrant(ctx context.Context, in *SysRoleGrantReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SimpleResp)
+	out := new(RespBase)
 	err := c.cc.Invoke(ctx, System_SysRoleGrant_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -340,9 +340,9 @@ func (c *systemClient) GetMenuTree(ctx context.Context, in *Empty, opts ...grpc.
 	return out, nil
 }
 
-func (c *systemClient) SysMenuCreate(ctx context.Context, in *SysMenuCreateReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (c *systemClient) SysMenuCreate(ctx context.Context, in *SysMenuCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SimpleResp)
+	out := new(RespBase)
 	err := c.cc.Invoke(ctx, System_SysMenuCreate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -350,9 +350,9 @@ func (c *systemClient) SysMenuCreate(ctx context.Context, in *SysMenuCreateReq, 
 	return out, nil
 }
 
-func (c *systemClient) SysMenuUpdate(ctx context.Context, in *SysMenuUpdateReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (c *systemClient) SysMenuUpdate(ctx context.Context, in *SysMenuUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SimpleResp)
+	out := new(RespBase)
 	err := c.cc.Invoke(ctx, System_SysMenuUpdate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -360,9 +360,9 @@ func (c *systemClient) SysMenuUpdate(ctx context.Context, in *SysMenuUpdateReq, 
 	return out, nil
 }
 
-func (c *systemClient) SysMenuDelete(ctx context.Context, in *SysMenuDeleteReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (c *systemClient) SysMenuDelete(ctx context.Context, in *SysMenuDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SimpleResp)
+	out := new(RespBase)
 	err := c.cc.Invoke(ctx, System_SysMenuDelete_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -405,37 +405,37 @@ type SystemServer interface {
 	// 2FA
 	Google2FAInit(context.Context, *Google2FAInitReq) (*Google2FAInitResp, error)
 	// 启用Google 2FA
-	Google2FAEnable(context.Context, *Google2FAEnableReq) (*SimpleResp, error)
+	Google2FAEnable(context.Context, *Google2FAEnableReq) (*RespBase, error)
 	// 禁用Google 2FA
-	Google2FADisable(context.Context, *Google2FADisableReq) (*SimpleResp, error)
+	Google2FADisable(context.Context, *Google2FADisableReq) (*RespBase, error)
 	// 重置Google 2FA
-	Google2FAReset(context.Context, *Google2FAResetReq) (*SimpleResp, error)
+	Google2FAReset(context.Context, *Google2FAResetReq) (*RespBase, error)
 	// 用户
 	SysUserList(context.Context, *SysUserListReq) (*SysUserListResp, error)
 	// 获取用户详情
 	SysUserDetail(context.Context, *SysUserDetailReq) (*SysUserDetailResp, error)
 	// 创建系统用户
-	SysUserCreate(context.Context, *SysUserCreateReq) (*SimpleResp, error)
+	SysUserCreate(context.Context, *SysUserCreateReq) (*RespBase, error)
 	// 更新系统用户
-	SysUserUpdate(context.Context, *SysUserUpdateReq) (*SimpleResp, error)
+	SysUserUpdate(context.Context, *SysUserUpdateReq) (*RespBase, error)
 	// 删除系统用户
-	SysUserDelete(context.Context, *SysUserDeleteReq) (*SimpleResp, error)
+	SysUserDelete(context.Context, *SysUserDeleteReq) (*RespBase, error)
 	// 修改用户状态
-	ChangeUserStatus(context.Context, *ChangeUserStatusReq) (*SimpleResp, error)
+	ChangeUserStatus(context.Context, *ChangeUserStatusReq) (*RespBase, error)
 	// 重置用户密码
-	ResetUserPwd(context.Context, *ResetUserPwdReq) (*SimpleResp, error)
+	ResetUserPwd(context.Context, *ResetUserPwdReq) (*RespBase, error)
 	// 分配用户角色
-	AssignUserRoles(context.Context, *AssignUserRolesReq) (*SimpleResp, error)
+	AssignUserRoles(context.Context, *AssignUserRolesReq) (*RespBase, error)
 	// 角色
 	SysRoleList(context.Context, *SysRoleListReq) (*SysRoleListResp, error)
 	// 创建角色
-	SysRoleCreate(context.Context, *SysRoleCreateReq) (*SimpleResp, error)
+	SysRoleCreate(context.Context, *SysRoleCreateReq) (*RespBase, error)
 	// 更新角色
-	SysRoleUpdate(context.Context, *SysRoleUpdateReq) (*SimpleResp, error)
+	SysRoleUpdate(context.Context, *SysRoleUpdateReq) (*RespBase, error)
 	// 删除角色
-	SysRoleDelete(context.Context, *SysRoleDeleteReq) (*SimpleResp, error)
+	SysRoleDelete(context.Context, *SysRoleDeleteReq) (*RespBase, error)
 	// 角色授权
-	SysRoleGrant(context.Context, *SysRoleGrantReq) (*SimpleResp, error)
+	SysRoleGrant(context.Context, *SysRoleGrantReq) (*RespBase, error)
 	// 获取角色授权详情
 	SysRoleGrantDetail(context.Context, *SysRoleGrantDetailReq) (*SysRoleGrantDetailResp, error)
 	// 获取权限列表
@@ -443,11 +443,11 @@ type SystemServer interface {
 	// 获取菜单树
 	GetMenuTree(context.Context, *Empty) (*SysMenuTreeResp, error)
 	// 菜单
-	SysMenuCreate(context.Context, *SysMenuCreateReq) (*SimpleResp, error)
+	SysMenuCreate(context.Context, *SysMenuCreateReq) (*RespBase, error)
 	// 更新菜单
-	SysMenuUpdate(context.Context, *SysMenuUpdateReq) (*SimpleResp, error)
+	SysMenuUpdate(context.Context, *SysMenuUpdateReq) (*RespBase, error)
 	// 删除菜单
-	SysMenuDelete(context.Context, *SysMenuDeleteReq) (*SimpleResp, error)
+	SysMenuDelete(context.Context, *SysMenuDeleteReq) (*RespBase, error)
 	// 日志
 	LoginLogList(context.Context, *LoginLogListReq) (*LoginLogListResp, error)
 	// 操作日志
@@ -471,13 +471,13 @@ func (UnimplementedSystemServer) GetProfile(context.Context, *ProfileReq) (*Prof
 func (UnimplementedSystemServer) Google2FAInit(context.Context, *Google2FAInitReq) (*Google2FAInitResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Google2FAInit not implemented")
 }
-func (UnimplementedSystemServer) Google2FAEnable(context.Context, *Google2FAEnableReq) (*SimpleResp, error) {
+func (UnimplementedSystemServer) Google2FAEnable(context.Context, *Google2FAEnableReq) (*RespBase, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Google2FAEnable not implemented")
 }
-func (UnimplementedSystemServer) Google2FADisable(context.Context, *Google2FADisableReq) (*SimpleResp, error) {
+func (UnimplementedSystemServer) Google2FADisable(context.Context, *Google2FADisableReq) (*RespBase, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Google2FADisable not implemented")
 }
-func (UnimplementedSystemServer) Google2FAReset(context.Context, *Google2FAResetReq) (*SimpleResp, error) {
+func (UnimplementedSystemServer) Google2FAReset(context.Context, *Google2FAResetReq) (*RespBase, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Google2FAReset not implemented")
 }
 func (UnimplementedSystemServer) SysUserList(context.Context, *SysUserListReq) (*SysUserListResp, error) {
@@ -486,37 +486,37 @@ func (UnimplementedSystemServer) SysUserList(context.Context, *SysUserListReq) (
 func (UnimplementedSystemServer) SysUserDetail(context.Context, *SysUserDetailReq) (*SysUserDetailResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SysUserDetail not implemented")
 }
-func (UnimplementedSystemServer) SysUserCreate(context.Context, *SysUserCreateReq) (*SimpleResp, error) {
+func (UnimplementedSystemServer) SysUserCreate(context.Context, *SysUserCreateReq) (*RespBase, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SysUserCreate not implemented")
 }
-func (UnimplementedSystemServer) SysUserUpdate(context.Context, *SysUserUpdateReq) (*SimpleResp, error) {
+func (UnimplementedSystemServer) SysUserUpdate(context.Context, *SysUserUpdateReq) (*RespBase, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SysUserUpdate not implemented")
 }
-func (UnimplementedSystemServer) SysUserDelete(context.Context, *SysUserDeleteReq) (*SimpleResp, error) {
+func (UnimplementedSystemServer) SysUserDelete(context.Context, *SysUserDeleteReq) (*RespBase, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SysUserDelete not implemented")
 }
-func (UnimplementedSystemServer) ChangeUserStatus(context.Context, *ChangeUserStatusReq) (*SimpleResp, error) {
+func (UnimplementedSystemServer) ChangeUserStatus(context.Context, *ChangeUserStatusReq) (*RespBase, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangeUserStatus not implemented")
 }
-func (UnimplementedSystemServer) ResetUserPwd(context.Context, *ResetUserPwdReq) (*SimpleResp, error) {
+func (UnimplementedSystemServer) ResetUserPwd(context.Context, *ResetUserPwdReq) (*RespBase, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ResetUserPwd not implemented")
 }
-func (UnimplementedSystemServer) AssignUserRoles(context.Context, *AssignUserRolesReq) (*SimpleResp, error) {
+func (UnimplementedSystemServer) AssignUserRoles(context.Context, *AssignUserRolesReq) (*RespBase, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AssignUserRoles not implemented")
 }
 func (UnimplementedSystemServer) SysRoleList(context.Context, *SysRoleListReq) (*SysRoleListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SysRoleList not implemented")
 }
-func (UnimplementedSystemServer) SysRoleCreate(context.Context, *SysRoleCreateReq) (*SimpleResp, error) {
+func (UnimplementedSystemServer) SysRoleCreate(context.Context, *SysRoleCreateReq) (*RespBase, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SysRoleCreate not implemented")
 }
-func (UnimplementedSystemServer) SysRoleUpdate(context.Context, *SysRoleUpdateReq) (*SimpleResp, error) {
+func (UnimplementedSystemServer) SysRoleUpdate(context.Context, *SysRoleUpdateReq) (*RespBase, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SysRoleUpdate not implemented")
 }
-func (UnimplementedSystemServer) SysRoleDelete(context.Context, *SysRoleDeleteReq) (*SimpleResp, error) {
+func (UnimplementedSystemServer) SysRoleDelete(context.Context, *SysRoleDeleteReq) (*RespBase, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SysRoleDelete not implemented")
 }
-func (UnimplementedSystemServer) SysRoleGrant(context.Context, *SysRoleGrantReq) (*SimpleResp, error) {
+func (UnimplementedSystemServer) SysRoleGrant(context.Context, *SysRoleGrantReq) (*RespBase, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SysRoleGrant not implemented")
 }
 func (UnimplementedSystemServer) SysRoleGrantDetail(context.Context, *SysRoleGrantDetailReq) (*SysRoleGrantDetailResp, error) {
@@ -528,13 +528,13 @@ func (UnimplementedSystemServer) SysPermList(context.Context, *Empty) (*SysPermL
 func (UnimplementedSystemServer) GetMenuTree(context.Context, *Empty) (*SysMenuTreeResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMenuTree not implemented")
 }
-func (UnimplementedSystemServer) SysMenuCreate(context.Context, *SysMenuCreateReq) (*SimpleResp, error) {
+func (UnimplementedSystemServer) SysMenuCreate(context.Context, *SysMenuCreateReq) (*RespBase, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SysMenuCreate not implemented")
 }
-func (UnimplementedSystemServer) SysMenuUpdate(context.Context, *SysMenuUpdateReq) (*SimpleResp, error) {
+func (UnimplementedSystemServer) SysMenuUpdate(context.Context, *SysMenuUpdateReq) (*RespBase, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SysMenuUpdate not implemented")
 }
-func (UnimplementedSystemServer) SysMenuDelete(context.Context, *SysMenuDeleteReq) (*SimpleResp, error) {
+func (UnimplementedSystemServer) SysMenuDelete(context.Context, *SysMenuDeleteReq) (*RespBase, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SysMenuDelete not implemented")
 }
 func (UnimplementedSystemServer) LoginLogList(context.Context, *LoginLogListReq) (*LoginLogListResp, error) {

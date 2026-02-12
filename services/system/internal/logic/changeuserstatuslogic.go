@@ -23,8 +23,8 @@ func NewChangeUserStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-func (l *ChangeUserStatusLogic) ChangeUserStatus(in *system.ChangeUserStatusReq) (*system.SimpleResp, error) {
+func (l *ChangeUserStatusLogic) ChangeUserStatus(in *system.ChangeUserStatusReq) (*system.RespBase, error) {
 	// todo: add your logic here and delete this line
 
-	return &system.SimpleResp{}, nil
+	return &system.RespBase{}, nil
 }

@@ -23,8 +23,8 @@ func NewGoogle2FAEnableLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 	}
 }
 
-func (l *Google2FAEnableLogic) Google2FAEnable(in *system.Google2FAEnableReq) (*system.SimpleResp, error) {
+func (l *Google2FAEnableLogic) Google2FAEnable(in *system.Google2FAEnableReq) (*system.RespBase, error) {
 	// todo: add your logic here and delete this line
 
-	return &system.SimpleResp{}, nil
+	return &system.RespBase{}, nil
 }

@@ -14,10 +14,12 @@ import {
   apiGoogle2faEnable,
   apiGoogle2faDisable,
   apiGoogle2faReset,
-  type SysUserItem,
 } from '@/api/system/users'
-import { apiRoleList, type RoleItem } from '@/api/system/roles'
+import { apiRoleList} from '@/api/system/roles'
 import { ArrowDown } from '@element-plus/icons-vue'
+import { SysUserItem } from '@/types/system/users'
+import { SysRole } from '@/types/system/roles'
+
 
 const { t } = useI18n()
 
@@ -48,7 +50,7 @@ async function fetchList() {
     })
     // 兼容 code=0 / 200
     if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'list failed')
-    list.value = res.list || []
+    list.value = res.data || []
     total.value = res.total || 0
   } catch (e: any) {
     ElMessage.error(e?.message || '加载失败')
@@ -70,13 +72,13 @@ function onReset() {
 
 // ---------- 角色缓存（分配角色用） ----------
 const roleLoading = ref(false)
-const roles = ref<RoleItem[]>([])
+const roles = ref<SysRole[]>([])
 async function fetchRoles() {
   roleLoading.value = true
   try {
     const res = await apiRoleList({ page: 1, size: 9999, status: 1 })
     if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'role list failed')
-    roles.value = res.list || []
+    roles.value = res.data || []
   } catch (e: any) {
     ElMessage.error(e?.message || '角色加载失败')
   } finally {
@@ -244,10 +246,10 @@ function openGoogle2fa(row: SysUserItem) {
 async function doG2Init() {
   try {
     const res = await apiGoogle2faInit({ userId: g2User.userId })
-    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'init failed')
-    g2Init.secret = res.secret || ''
-    g2Init.otpauthUrl = res.otpauthUrl || ''
-    g2Init.qrCode = res.qrCode || ''
+    if (res.code !== 200) throw new Error(res.msg || 'init failed')
+    g2Init.secret = res.data?.secret || ''
+    g2Init.otpauthUrl = res.data?.otpauthUrl || ''
+    g2Init.qrCode = res.data?.qrCode || ''
     ElMessage.success('已生成绑定信息')
   } catch (e: any) {
     ElMessage.error(e?.message || '初始化失败')

@@ -24,8 +24,8 @@ func NewSysMenuDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 }
 
 // Delete a menu
-func (l *SysMenuDeleteLogic) SysMenuDelete(in *system.SysMenuDeleteReq) (*system.SimpleResp, error) {
+func (l *SysMenuDeleteLogic) SysMenuDelete(in *system.SysMenuDeleteReq) (*system.RespBase, error) {
 	// todo: add your logic here and delete this line
 
-	return &system.SimpleResp{}, nil
+	return &system.RespBase{}, nil
 }

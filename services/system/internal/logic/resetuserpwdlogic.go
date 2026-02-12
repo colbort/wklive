@@ -23,8 +23,8 @@ func NewResetUserPwdLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Rese
 	}
 }
 
-func (l *ResetUserPwdLogic) ResetUserPwd(in *system.ResetUserPwdReq) (*system.SimpleResp, error) {
+func (l *ResetUserPwdLogic) ResetUserPwd(in *system.ResetUserPwdReq) (*system.RespBase, error) {
 	// todo: add your logic here and delete this line
 
-	return &system.SimpleResp{}, nil
+	return &system.RespBase{}, nil
 }

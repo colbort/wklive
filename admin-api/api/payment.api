@@ -15,10 +15,8 @@ type OrderItem {
 }
 
 type OrderListResp {
-  code  int         `json:"code"`
-  msg   string      `json:"msg"`
-  total int64       `json:"total"`
-  list  []OrderItem `json:"list"`
+  RespBase
+  data  []OrderItem `json:"data"`
 }
 
 @server(

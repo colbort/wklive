@@ -14,10 +14,8 @@ type UserItem {
 }
 
 type UserListResp {
-  code  int        `json:"code"`
-  msg   string     `json:"msg"`
-  total int64      `json:"total"`
-  list  []UserItem `json:"list"`
+  RespBase
+  data  []UserItem `json:"data"`
 }
 
 @server(

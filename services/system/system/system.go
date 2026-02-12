@@ -35,7 +35,7 @@ type (
 	ProfileResp            = system.ProfileResp
 	ProfileUser            = system.ProfileUser
 	ResetUserPwdReq        = system.ResetUserPwdReq
-	SimpleResp             = system.SimpleResp
+	RespBase             = system.RespBase
 	SysMenuCreateReq       = system.SysMenuCreateReq
 	SysMenuDeleteReq       = system.SysMenuDeleteReq
 	SysMenuItem            = system.SysMenuItem
@@ -70,37 +70,37 @@ type (
 		// 2FA
 		Google2FAInit(ctx context.Context, in *Google2FAInitReq, opts ...grpc.CallOption) (*Google2FAInitResp, error)
 		// 启用Google 2FA
-		Google2FAEnable(ctx context.Context, in *Google2FAEnableReq, opts ...grpc.CallOption) (*SimpleResp, error)
+		Google2FAEnable(ctx context.Context, in *Google2FAEnableReq, opts ...grpc.CallOption) (*RespBase, error)
 		// 禁用Google 2FA
-		Google2FADisable(ctx context.Context, in *Google2FADisableReq, opts ...grpc.CallOption) (*SimpleResp, error)
+		Google2FADisable(ctx context.Context, in *Google2FADisableReq, opts ...grpc.CallOption) (*RespBase, error)
 		// 重置Google 2FA
-		Google2FAReset(ctx context.Context, in *Google2FAResetReq, opts ...grpc.CallOption) (*SimpleResp, error)
+		Google2FAReset(ctx context.Context, in *Google2FAResetReq, opts ...grpc.CallOption) (*RespBase, error)
 		// 用户
 		SysUserList(ctx context.Context, in *SysUserListReq, opts ...grpc.CallOption) (*SysUserListResp, error)
 		// 获取用户详情
 		SysUserDetail(ctx context.Context, in *SysUserDetailReq, opts ...grpc.CallOption) (*SysUserDetailResp, error)
 		// 创建系统用户
-		SysUserCreate(ctx context.Context, in *SysUserCreateReq, opts ...grpc.CallOption) (*SimpleResp, error)
+		SysUserCreate(ctx context.Context, in *SysUserCreateReq, opts ...grpc.CallOption) (*RespBase, error)
 		// 更新系统用户
-		SysUserUpdate(ctx context.Context, in *SysUserUpdateReq, opts ...grpc.CallOption) (*SimpleResp, error)
+		SysUserUpdate(ctx context.Context, in *SysUserUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
 		// 删除系统用户
-		SysUserDelete(ctx context.Context, in *SysUserDeleteReq, opts ...grpc.CallOption) (*SimpleResp, error)
+		SysUserDelete(ctx context.Context, in *SysUserDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
 		// 修改用户状态
-		ChangeUserStatus(ctx context.Context, in *ChangeUserStatusReq, opts ...grpc.CallOption) (*SimpleResp, error)
+		ChangeUserStatus(ctx context.Context, in *ChangeUserStatusReq, opts ...grpc.CallOption) (*RespBase, error)
 		// 重置用户密码
-		ResetUserPwd(ctx context.Context, in *ResetUserPwdReq, opts ...grpc.CallOption) (*SimpleResp, error)
+		ResetUserPwd(ctx context.Context, in *ResetUserPwdReq, opts ...grpc.CallOption) (*RespBase, error)
 		// 分配用户角色
-		AssignUserRoles(ctx context.Context, in *AssignUserRolesReq, opts ...grpc.CallOption) (*SimpleResp, error)
+		AssignUserRoles(ctx context.Context, in *AssignUserRolesReq, opts ...grpc.CallOption) (*RespBase, error)
 		// 角色
 		SysRoleList(ctx context.Context, in *SysRoleListReq, opts ...grpc.CallOption) (*SysRoleListResp, error)
 		// 创建角色
-		SysRoleCreate(ctx context.Context, in *SysRoleCreateReq, opts ...grpc.CallOption) (*SimpleResp, error)
+		SysRoleCreate(ctx context.Context, in *SysRoleCreateReq, opts ...grpc.CallOption) (*RespBase, error)
 		// 更新角色
-		SysRoleUpdate(ctx context.Context, in *SysRoleUpdateReq, opts ...grpc.CallOption) (*SimpleResp, error)
+		SysRoleUpdate(ctx context.Context, in *SysRoleUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
 		// 删除角色
-		SysRoleDelete(ctx context.Context, in *SysRoleDeleteReq, opts ...grpc.CallOption) (*SimpleResp, error)
+		SysRoleDelete(ctx context.Context, in *SysRoleDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
 		// 角色授权
-		SysRoleGrant(ctx context.Context, in *SysRoleGrantReq, opts ...grpc.CallOption) (*SimpleResp, error)
+		SysRoleGrant(ctx context.Context, in *SysRoleGrantReq, opts ...grpc.CallOption) (*RespBase, error)
 		// 获取角色授权详情
 		SysRoleGrantDetail(ctx context.Context, in *SysRoleGrantDetailReq, opts ...grpc.CallOption) (*SysRoleGrantDetailResp, error)
 		// 获取权限列表
@@ -108,11 +108,11 @@ type (
 		// 获取菜单树
 		GetMenuTree(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysMenuTreeResp, error)
 		// 菜单
-		SysMenuCreate(ctx context.Context, in *SysMenuCreateReq, opts ...grpc.CallOption) (*SimpleResp, error)
+		SysMenuCreate(ctx context.Context, in *SysMenuCreateReq, opts ...grpc.CallOption) (*RespBase, error)
 		// 更新菜单
-		SysMenuUpdate(ctx context.Context, in *SysMenuUpdateReq, opts ...grpc.CallOption) (*SimpleResp, error)
+		SysMenuUpdate(ctx context.Context, in *SysMenuUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
 		// 删除菜单
-		SysMenuDelete(ctx context.Context, in *SysMenuDeleteReq, opts ...grpc.CallOption) (*SimpleResp, error)
+		SysMenuDelete(ctx context.Context, in *SysMenuDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
 		// 日志
 		LoginLogList(ctx context.Context, in *LoginLogListReq, opts ...grpc.CallOption) (*LoginLogListResp, error)
 		// 操作日志
@@ -149,19 +149,19 @@ func (m *defaultSystem) Google2FAInit(ctx context.Context, in *Google2FAInitReq,
 }
 
 // 启用Google 2FA
-func (m *defaultSystem) Google2FAEnable(ctx context.Context, in *Google2FAEnableReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (m *defaultSystem) Google2FAEnable(ctx context.Context, in *Google2FAEnableReq, opts ...grpc.CallOption) (*RespBase, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.Google2FAEnable(ctx, in, opts...)
 }
 
 // 禁用Google 2FA
-func (m *defaultSystem) Google2FADisable(ctx context.Context, in *Google2FADisableReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (m *defaultSystem) Google2FADisable(ctx context.Context, in *Google2FADisableReq, opts ...grpc.CallOption) (*RespBase, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.Google2FADisable(ctx, in, opts...)
 }
 
 // 重置Google 2FA
-func (m *defaultSystem) Google2FAReset(ctx context.Context, in *Google2FAResetReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (m *defaultSystem) Google2FAReset(ctx context.Context, in *Google2FAResetReq, opts ...grpc.CallOption) (*RespBase, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.Google2FAReset(ctx, in, opts...)
 }
@@ -179,37 +179,37 @@ func (m *defaultSystem) SysUserDetail(ctx context.Context, in *SysUserDetailReq,
 }
 
 // 创建系统用户
-func (m *defaultSystem) SysUserCreate(ctx context.Context, in *SysUserCreateReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (m *defaultSystem) SysUserCreate(ctx context.Context, in *SysUserCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.SysUserCreate(ctx, in, opts...)
 }
 
 // 更新系统用户
-func (m *defaultSystem) SysUserUpdate(ctx context.Context, in *SysUserUpdateReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (m *defaultSystem) SysUserUpdate(ctx context.Context, in *SysUserUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.SysUserUpdate(ctx, in, opts...)
 }
 
 // 删除系统用户
-func (m *defaultSystem) SysUserDelete(ctx context.Context, in *SysUserDeleteReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (m *defaultSystem) SysUserDelete(ctx context.Context, in *SysUserDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.SysUserDelete(ctx, in, opts...)
 }
 
 // 修改用户状态
-func (m *defaultSystem) ChangeUserStatus(ctx context.Context, in *ChangeUserStatusReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (m *defaultSystem) ChangeUserStatus(ctx context.Context, in *ChangeUserStatusReq, opts ...grpc.CallOption) (*RespBase, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.ChangeUserStatus(ctx, in, opts...)
 }
 
 // 重置用户密码
-func (m *defaultSystem) ResetUserPwd(ctx context.Context, in *ResetUserPwdReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (m *defaultSystem) ResetUserPwd(ctx context.Context, in *ResetUserPwdReq, opts ...grpc.CallOption) (*RespBase, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.ResetUserPwd(ctx, in, opts...)
 }
 
 // 分配用户角色
-func (m *defaultSystem) AssignUserRoles(ctx context.Context, in *AssignUserRolesReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (m *defaultSystem) AssignUserRoles(ctx context.Context, in *AssignUserRolesReq, opts ...grpc.CallOption) (*RespBase, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.AssignUserRoles(ctx, in, opts...)
 }
@@ -221,25 +221,25 @@ func (m *defaultSystem) SysRoleList(ctx context.Context, in *SysRoleListReq, opt
 }
 
 // 创建角色
-func (m *defaultSystem) SysRoleCreate(ctx context.Context, in *SysRoleCreateReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (m *defaultSystem) SysRoleCreate(ctx context.Context, in *SysRoleCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.SysRoleCreate(ctx, in, opts...)
 }
 
 // 更新角色
-func (m *defaultSystem) SysRoleUpdate(ctx context.Context, in *SysRoleUpdateReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (m *defaultSystem) SysRoleUpdate(ctx context.Context, in *SysRoleUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.SysRoleUpdate(ctx, in, opts...)
 }
 
 // 删除角色
-func (m *defaultSystem) SysRoleDelete(ctx context.Context, in *SysRoleDeleteReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (m *defaultSystem) SysRoleDelete(ctx context.Context, in *SysRoleDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.SysRoleDelete(ctx, in, opts...)
 }
 
 // 角色授权
-func (m *defaultSystem) SysRoleGrant(ctx context.Context, in *SysRoleGrantReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (m *defaultSystem) SysRoleGrant(ctx context.Context, in *SysRoleGrantReq, opts ...grpc.CallOption) (*RespBase, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.SysRoleGrant(ctx, in, opts...)
 }
@@ -263,19 +263,19 @@ func (m *defaultSystem) GetMenuTree(ctx context.Context, in *Empty, opts ...grpc
 }
 
 // 菜单
-func (m *defaultSystem) SysMenuCreate(ctx context.Context, in *SysMenuCreateReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (m *defaultSystem) SysMenuCreate(ctx context.Context, in *SysMenuCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.SysMenuCreate(ctx, in, opts...)
 }
 
 // 更新菜单
-func (m *defaultSystem) SysMenuUpdate(ctx context.Context, in *SysMenuUpdateReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (m *defaultSystem) SysMenuUpdate(ctx context.Context, in *SysMenuUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.SysMenuUpdate(ctx, in, opts...)
 }
 
 // 删除菜单
-func (m *defaultSystem) SysMenuDelete(ctx context.Context, in *SysMenuDeleteReq, opts ...grpc.CallOption) (*SimpleResp, error) {
+func (m *defaultSystem) SysMenuDelete(ctx context.Context, in *SysMenuDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.SysMenuDelete(ctx, in, opts...)
 }

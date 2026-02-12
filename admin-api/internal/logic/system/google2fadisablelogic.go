@@ -26,7 +26,7 @@ func NewGoogle2FADisableLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-func (l *Google2FADisableLogic) Google2FADisable(req *types.Google2FADisableReq) (resp *types.SimpleResp, err error) {
+func (l *Google2FADisableLogic) Google2FADisable(req *types.Google2FADisableReq) (resp *types.RespBase, err error) {
 	// todo: add your logic here and delete this line
 
 	return

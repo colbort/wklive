@@ -23,8 +23,8 @@ func NewSysUserDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 	}
 }
 
-func (l *SysUserDeleteLogic) SysUserDelete(in *system.SysUserDeleteReq) (*system.SimpleResp, error) {
+func (l *SysUserDeleteLogic) SysUserDelete(in *system.SysUserDeleteReq) (*system.RespBase, error) {
 	// todo: add your logic here and delete this line
 
-	return &system.SimpleResp{}, nil
+	return &system.RespBase{}, nil
 }

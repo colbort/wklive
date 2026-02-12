@@ -40,8 +40,10 @@ func (l *SysPermListLogic) SysPermList() (resp *types.SysPermListResp, err error
 		})
 	}
 	return &types.SysPermListResp{
-		Code: result.Code,
-		Msg:  result.Msg,
+		RespBase: types.RespBase{
+			Code: result.Code,
+			Msg:  result.Msg,
+		},
 		Data: data,
 	}, nil
 }

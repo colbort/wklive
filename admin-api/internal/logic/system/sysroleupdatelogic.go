@@ -27,7 +27,7 @@ func NewSysRoleUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 	}
 }
 
-func (l *SysRoleUpdateLogic) SysRoleUpdate(req *types.SysRoleUpdateReq) (resp *types.SimpleResp, err error) {
+func (l *SysRoleUpdateLogic) SysRoleUpdate(req *types.SysRoleUpdateReq) (resp *types.RespBase, err error) {
 	result, err := l.svcCtx.SystemCli.SysRoleUpdate(l.ctx, &system.SysRoleUpdateReq{
 		Id:     req.Id,
 		Name:   req.Name,
@@ -37,7 +37,7 @@ func (l *SysRoleUpdateLogic) SysRoleUpdate(req *types.SysRoleUpdateReq) (resp *t
 	if err != nil {
 		return nil, err
 	}
-	resp = &types.SimpleResp{
+	resp = &types.RespBase{
 		Code: result.Code,
 		Msg:  result.Msg,
 	}

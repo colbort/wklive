@@ -24,8 +24,8 @@ func NewSysMenuCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 }
 
 // 菜单
-func (l *SysMenuCreateLogic) SysMenuCreate(in *system.SysMenuCreateReq) (*system.SimpleResp, error) {
+func (l *SysMenuCreateLogic) SysMenuCreate(in *system.SysMenuCreateReq) (*system.RespBase, error) {
 	// todo: add your logic here and delete this line
 
-	return &system.SimpleResp{}, nil
+	return &system.RespBase{}, nil
 }

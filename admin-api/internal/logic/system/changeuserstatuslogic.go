@@ -26,7 +26,7 @@ func NewChangeUserStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-func (l *ChangeUserStatusLogic) ChangeUserStatus(req *types.ChangeUserStatusReq) (resp *types.SimpleResp, err error) {
+func (l *ChangeUserStatusLogic) ChangeUserStatus(req *types.ChangeUserStatusReq) (resp *types.RespBase, err error) {
 	// todo: add your logic here and delete this line
 
 	return

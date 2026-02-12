@@ -25,8 +25,7 @@ type MenuNode {
 }
 
 type ProfileResp {
-  code  int32       `json:"code"`
-  msg   string    `json:"msg"`
+  RespBase
   user  ProfileUser `json:"user"`
   menus []MenuNode  `json:"menus"`
   perms []string    `json:"perms"`

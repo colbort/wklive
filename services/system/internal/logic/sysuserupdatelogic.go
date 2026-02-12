@@ -23,8 +23,8 @@ func NewSysUserUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 	}
 }
 
-func (l *SysUserUpdateLogic) SysUserUpdate(in *system.SysUserUpdateReq) (*system.SimpleResp, error) {
+func (l *SysUserUpdateLogic) SysUserUpdate(in *system.SysUserUpdateReq) (*system.RespBase, error) {
 	// todo: add your logic here and delete this line
 
-	return &system.SimpleResp{}, nil
+	return &system.RespBase{}, nil
 }
