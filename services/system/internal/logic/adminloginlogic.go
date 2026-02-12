@@ -40,6 +40,14 @@ func (l *AdminLoginLogic) AdminLogin(in *system.AdminLoginReq) (*system.AdminLog
 		return nil, err
 	}
 
+	if user == nil {
+		return nil, errors.New("用户不存在")
+	}
+
+	if user.Status != 1 {
+		return nil, errors.New("用户已被禁用")
+	}
+
 	// 2️⃣ 校验密码（bcrypt）
 	if bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(in.Password)) != nil {
 		return nil, errors.New("密码错误")

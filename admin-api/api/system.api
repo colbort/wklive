@@ -198,6 +198,7 @@ type SysMenuUpdateReq {
 }
 
 type SysMenuListReq {
+  PageReq
   keyword string `form:"keyword,optional"` // 按 name/perms 模糊
   status  int32  `form:"status,optional"`  // 0/1
   visible int32  `form:"visible,optional"` // 0/1

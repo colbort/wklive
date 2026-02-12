@@ -211,6 +211,12 @@ message SysMenuUpdateReq {
 }
 message SysMenuDeleteReq { int64 id = 1; }
 
+message SysMenuListReq { PageReq page = 1; string keyword = 2; int32 menu_type = 3; int32 status = 4; int32 visible = 5; }
+message SysMenuListResp { 
+  RespBase base = 1;
+  repeated SysMenuItem data = 4; 
+}
+
 //////////////////////
 // Logs
 //////////////////////
@@ -307,6 +313,8 @@ service System {
   rpc SysMenuUpdate(SysMenuUpdateReq) returns (RespBase);
   // 删除菜单
   rpc SysMenuDelete(SysMenuDeleteReq) returns (RespBase);
+  // 获取菜单列表
+  rpc SysMenuList(SysMenuListReq) returns (SysMenuListResp);
   // 日志
   rpc LoginLogList(LoginLogListReq) returns (LoginLogListResp);
   // 操作日志

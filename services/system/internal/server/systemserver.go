@@ -173,6 +173,12 @@ func (s *SystemServer) SysMenuDelete(ctx context.Context, in *system.SysMenuDele
 	return l.SysMenuDelete(in)
 }
 
+// 获取菜单列表
+func (s *SystemServer) SysMenuList(ctx context.Context, in *system.SysMenuListReq) (*system.SysMenuListResp, error) {
+	l := logic.NewSysMenuListLogic(ctx, s.svcCtx)
+	return l.SysMenuList(in)
+}
+
 // 日志
 func (s *SystemServer) LoginLogList(ctx context.Context, in *system.LoginLogListReq) (*system.LoginLogListResp, error) {
 	l := logic.NewLoginLogListLogic(ctx, s.svcCtx)

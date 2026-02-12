@@ -19,8 +19,8 @@ type RespBase {
 }
 
 type PageReq {
-  page int32 `form:"page,optional"`
-  size int32 `form:"size,optional"`
+  page int64 `form:"page,optional"`
+  size int64 `form:"size,optional"`
 }
 
 

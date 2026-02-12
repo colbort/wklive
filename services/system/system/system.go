@@ -39,6 +39,8 @@ type (
 	SysMenuCreateReq       = system.SysMenuCreateReq
 	SysMenuDeleteReq       = system.SysMenuDeleteReq
 	SysMenuItem            = system.SysMenuItem
+	SysMenuListReq         = system.SysMenuListReq
+	SysMenuListResp        = system.SysMenuListResp
 	SysMenuNode            = system.SysMenuNode
 	SysMenuTreeResp        = system.SysMenuTreeResp
 	SysMenuUpdateReq       = system.SysMenuUpdateReq
@@ -113,6 +115,8 @@ type (
 		SysMenuUpdate(ctx context.Context, in *SysMenuUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
 		// 删除菜单
 		SysMenuDelete(ctx context.Context, in *SysMenuDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
+		// 获取菜单列表
+		SysMenuList(ctx context.Context, in *SysMenuListReq, opts ...grpc.CallOption) (*SysMenuListResp, error)
 		// 日志
 		LoginLogList(ctx context.Context, in *LoginLogListReq, opts ...grpc.CallOption) (*LoginLogListResp, error)
 		// 操作日志
@@ -278,6 +282,12 @@ func (m *defaultSystem) SysMenuUpdate(ctx context.Context, in *SysMenuUpdateReq,
 func (m *defaultSystem) SysMenuDelete(ctx context.Context, in *SysMenuDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.SysMenuDelete(ctx, in, opts...)
+}
+
+// 获取菜单列表
+func (m *defaultSystem) SysMenuList(ctx context.Context, in *SysMenuListReq, opts ...grpc.CallOption) (*SysMenuListResp, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysMenuList(ctx, in, opts...)
 }
 
 // 日志

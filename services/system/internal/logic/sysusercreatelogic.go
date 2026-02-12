@@ -33,7 +33,7 @@ func NewSysUserCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 
 func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system.RespBase, error) {
 	one, err := l.svcCtx.UserModel.FindOneByUsername(l.ctx, in.Username)
-	if err != nil {
+	if err != nil && err != sqlx.ErrNotFound {
 		return nil, err
 	}
 	if one != nil {

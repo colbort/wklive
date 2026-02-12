@@ -141,8 +141,8 @@ type OrderListResp struct {
 }
 
 type PageReq struct {
-	Page int32 `form:"page,optional"`
-	Size int32 `form:"size,optional"`
+	Page int64 `form:"page,optional"`
+	Size int64 `form:"size,optional"`
 }
 
 type ProfileReq struct {
@@ -201,6 +201,7 @@ type SysMenuItem struct {
 }
 
 type SysMenuListReq struct {
+	PageReq
 	Keyword  string `form:"keyword,optional"`  // 按 name/perms 模糊
 	Status   int32  `form:"status,optional"`   // 0/1
 	Visible  int32  `form:"visible,optional"`  // 0/1

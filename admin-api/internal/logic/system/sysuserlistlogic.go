@@ -30,8 +30,8 @@ func NewSysUserListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysUs
 func (l *SysUserListLogic) SysUserList(req *types.SysUserListReq) (resp *types.SysUserListResp, err error) {
 	response, err := l.svcCtx.SystemCli.SysUserList(l.ctx, &system.SysUserListReq{
 		Page: &system.PageReq{
-			Page: int64(req.Page),
-			Size: int64(req.Size),
+			Page: req.Page,
+			Size: req.Size,
 		},
 		Status: req.Status,
 	})

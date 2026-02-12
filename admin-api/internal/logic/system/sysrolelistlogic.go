@@ -30,8 +30,8 @@ func NewSysRoleListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysRo
 func (l *SysRoleListLogic) SysRoleList(req *types.SysRoleListReq) (resp *types.SysRoleListResp, err error) {
 	response, err := l.svcCtx.SystemCli.SysRoleList(l.ctx, &system.SysRoleListReq{
 		Page: &system.PageReq{
-			Page: int64(req.Page),
-			Size: int64(req.Size),
+			Page: req.Page,
+			Size: req.Size,
 		},
 		Status: req.Status,
 	})

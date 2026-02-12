@@ -44,6 +44,7 @@ const (
 	System_SysMenuCreate_FullMethodName      = "/system.System/SysMenuCreate"
 	System_SysMenuUpdate_FullMethodName      = "/system.System/SysMenuUpdate"
 	System_SysMenuDelete_FullMethodName      = "/system.System/SysMenuDelete"
+	System_SysMenuList_FullMethodName        = "/system.System/SysMenuList"
 	System_LoginLogList_FullMethodName       = "/system.System/LoginLogList"
 	System_OpLogList_FullMethodName          = "/system.System/OpLogList"
 )
@@ -106,6 +107,8 @@ type SystemClient interface {
 	SysMenuUpdate(ctx context.Context, in *SysMenuUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
 	// 删除菜单
 	SysMenuDelete(ctx context.Context, in *SysMenuDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
+	// 获取菜单列表
+	SysMenuList(ctx context.Context, in *SysMenuListReq, opts ...grpc.CallOption) (*SysMenuListResp, error)
 	// 日志
 	LoginLogList(ctx context.Context, in *LoginLogListReq, opts ...grpc.CallOption) (*LoginLogListResp, error)
 	// 操作日志
@@ -370,6 +373,16 @@ func (c *systemClient) SysMenuDelete(ctx context.Context, in *SysMenuDeleteReq, 
 	return out, nil
 }
 
+func (c *systemClient) SysMenuList(ctx context.Context, in *SysMenuListReq, opts ...grpc.CallOption) (*SysMenuListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SysMenuListResp)
+	err := c.cc.Invoke(ctx, System_SysMenuList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *systemClient) LoginLogList(ctx context.Context, in *LoginLogListReq, opts ...grpc.CallOption) (*LoginLogListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(LoginLogListResp)
@@ -448,6 +461,8 @@ type SystemServer interface {
 	SysMenuUpdate(context.Context, *SysMenuUpdateReq) (*RespBase, error)
 	// 删除菜单
 	SysMenuDelete(context.Context, *SysMenuDeleteReq) (*RespBase, error)
+	// 获取菜单列表
+	SysMenuList(context.Context, *SysMenuListReq) (*SysMenuListResp, error)
 	// 日志
 	LoginLogList(context.Context, *LoginLogListReq) (*LoginLogListResp, error)
 	// 操作日志
@@ -536,6 +551,9 @@ func (UnimplementedSystemServer) SysMenuUpdate(context.Context, *SysMenuUpdateRe
 }
 func (UnimplementedSystemServer) SysMenuDelete(context.Context, *SysMenuDeleteReq) (*RespBase, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SysMenuDelete not implemented")
+}
+func (UnimplementedSystemServer) SysMenuList(context.Context, *SysMenuListReq) (*SysMenuListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SysMenuList not implemented")
 }
 func (UnimplementedSystemServer) LoginLogList(context.Context, *LoginLogListReq) (*LoginLogListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoginLogList not implemented")
@@ -1014,6 +1032,24 @@ func _System_SysMenuDelete_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _System_SysMenuList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysMenuListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysMenuList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysMenuList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysMenuList(ctx, req.(*SysMenuListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _System_LoginLogList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LoginLogListReq)
 	if err := dec(in); err != nil {
@@ -1156,6 +1192,10 @@ var System_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SysMenuDelete",
 			Handler:    _System_SysMenuDelete_Handler,
+		},
+		{
+			MethodName: "SysMenuList",
+			Handler:    _System_SysMenuList_Handler,
 		},
 		{
 			MethodName: "LoginLogList",
