@@ -2,17 +2,17 @@
 type SysUserListReq {
   PageReq
   keyword string `form:"keyword,optional"`
-  status  int32  `form:"status,optional"`
+  status  int64  `form:"status,optional"`
 }
 
 type SysUserItem {
   id               int64   `json:"id"`
   username         string  `json:"username"`
   nickname         string  `json:"nickname"`
-  status           int32   `json:"status"`
+  status           int64   `json:"status"`
   roleIds          []int64 `json:"roleIds"`
   createdAt        int64   `json:"createdAt"`
-  google2faEnabled int32   `json:"google2faEnabled"`
+  google2faEnabled int64   `json:"google2faEnabled"`
 }
 
 type SysUserListResp {
@@ -29,14 +29,14 @@ type SysUserCreateReq {
   username string  `json:"username"`
   password string  `json:"password"`
   nickname string  `json:"nickname,optional"`
-  status   int32   `json:"status,optional"` // 1启用 0禁用
+  status   int64   `json:"status,optional"` // 1启用 0禁用
   roleIds  []int64 `json:"roleIds,optional"`
 }
 
 type SysUserUpdateReq {
   id       int64   `json:"id"`
   nickname string  `json:"nickname,optional"`
-  status   int32   `json:"status,optional"`
+  status   int64   `json:"status,optional"`
   roleIds  []int64 `json:"roleIds,optional"`
 }
 
@@ -47,7 +47,7 @@ type AssignUserRolesReq {
 
 type ChangeUserStatusReq {
   id     int64 `json:"id"`
-  status int32 `json:"status"` // 1启用 0禁用
+  status int64 `json:"status"` // 1启用 0禁用
 }
 
 type ResetUserPwdReq {
@@ -86,7 +86,7 @@ type SysRoleItem {
   id        int64  `json:"id"`
   name      string `json:"name"`
   code      string `json:"code"`
-  status    int32  `json:"status"`
+  status    int64  `json:"status"`
   remark    string `json:"remark,optional"`
   createdAt int64  `json:"createdAt"`
 }
@@ -94,7 +94,7 @@ type SysRoleItem {
 type SysRoleListReq {
   PageReq
   keyword string `form:"keyword,optional"`
-  status  int32  `form:"status,optional"`
+  status  int64  `form:"status,optional"`
 }
 
 type SysRoleListResp {
@@ -105,14 +105,14 @@ type SysRoleListResp {
 type SysRoleCreateReq {
   name   string `json:"name"`
   code   string `json:"code"`
-  status int32  `json:"status,optional"`
+  status int64  `json:"status,optional"`
   remark string `json:"remark,optional"`
 }
 
 type SysRoleUpdateReq {
   id     int64  `json:"id"`
   name   string `json:"name,optional"`
-  status int32  `json:"status,optional"`
+  status int64  `json:"status,optional"`
   remark string `json:"remark,optional"`
 }
 
@@ -155,13 +155,13 @@ type SysMenuItem {
   id        int64  `json:"id"`
   parentId  int64  `json:"parentId"`
   name      string `json:"name"`
-  menuType  int32  `json:"menuType"` // 1目录 2菜单 3按钮
+  menuType  int64  `json:"menuType"` // 1目录 2菜单 3按钮
   path      string `json:"path,optional"`
   component string `json:"component,optional"`
   icon      string `json:"icon,optional"`
-  sort      int32  `json:"sort"`
-  visible   int32  `json:"visible"`
-  status    int32  `json:"status"`
+  sort      int64  `json:"sort"`
+  visible   int64  `json:"visible"`
+  status    int64  `json:"status"`
   perms     string `json:"perms,optional"`
 }
 
@@ -173,13 +173,13 @@ type SysMenuTreeResp {
 type SysMenuCreateReq {
   parentId  int64  `json:"parentId,optional"`
   name      string `json:"name"`
-  menuType  int32  `json:"menuType"`
+  menuType  int64  `json:"menuType"`
   path      string `json:"path,optional"`
   component string `json:"component,optional"`
   icon      string `json:"icon,optional"`
-  sort      int32  `json:"sort,optional"`
-  visible   int32  `json:"visible,optional"`
-  status    int32  `json:"status,optional"`
+  sort      int64  `json:"sort,optional"`
+  visible   int64  `json:"visible,optional"`
+  status    int64  `json:"status,optional"`
   perms     string `json:"perms,optional"`
 }
 
@@ -187,22 +187,22 @@ type SysMenuUpdateReq {
   id        int64  `json:"id"`
   parentId  int64  `json:"parentId,optional"`
   name      string `json:"name,optional"`
-  menuType  int32  `json:"menuType,optional"`
+  menuType  int64  `json:"menuType,optional"`
   path      string `json:"path,optional"`
   component string `json:"component,optional"`
   icon      string `json:"icon,optional"`
-  sort      int32  `json:"sort,optional"`
-  visible   int32  `json:"visible,optional"`
-  status    int32  `json:"status,optional"`
+  sort      int64  `json:"sort,optional"`
+  visible   int64  `json:"visible,optional"`
+  status    int64  `json:"status,optional"`
   perms     string `json:"perms,optional"`
 }
 
 type SysMenuListReq {
   PageReq
   keyword string `form:"keyword,optional"` // 按 name/perms 模糊
-  status  int32  `form:"status,optional"`  // 0/1
-  visible int32  `form:"visible,optional"` // 0/1
-  menuType int32 `form:"menuType,optional"`// 1/2/3
+  status  int64  `form:"status,optional"`  // 0/1
+  visible int64  `form:"visible,optional"` // 0/1
+  menuType int64 `form:"menuType,optional"`// 1/2/3
 }
 
 type SysMenuListResp {
@@ -217,7 +217,7 @@ type LoginLogItem {
   username  string `json:"username"`
   ip        string `json:"ip"`
   ua        string `json:"ua"`
-  result    int32  `json:"result"`
+  result    int64  `json:"result"`
   reason    string `json:"reason,optional"`
   createdAt int64  `json:"createdAt"`
 }
@@ -225,7 +225,7 @@ type LoginLogItem {
 type LoginLogListReq {
   PageReq
   username string `form:"username,optional"`
-  result   int32  `form:"result,optional"`
+  result   int64  `form:"result,optional"`
 }
 
 type LoginLogListResp {
@@ -243,7 +243,7 @@ type OpLogItem {
   path       string `json:"path"`
   ip         string `json:"ip"`
   ua         string `json:"ua"`
-  respCode   int32  `json:"respCode"`
+  respCode   int64  `json:"respCode"`
   durationMs int64  `json:"durationMs"`
   createdAt  int64  `json:"createdAt"`
 }

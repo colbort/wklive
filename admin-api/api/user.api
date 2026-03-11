@@ -2,14 +2,14 @@
 type UserListReq {
   PageReq
   keyword string `form:"keyword,optional"`
-  status  int32  `form:"status,optional"`
+  status  int64  `form:"status,optional"`
 }
 
 type UserItem {
   id        int64  `json:"id"`
   username  string `json:"username"`
   nickname  string `json:"nickname"`
-  status    int32  `json:"status"`
+  status    int64  `json:"status"`
   createdAt int64  `json:"createdAt"`
 }
 

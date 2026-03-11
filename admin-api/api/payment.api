@@ -2,7 +2,7 @@
 type OrderListReq {
   PageReq
   uid     int64  `form:"uid,optional"`
-  status  int32  `form:"status,optional"`
+  status  int64  `form:"status,optional"`
   orderNo string `form:"orderNo,optional"`
 }
 
@@ -10,7 +10,7 @@ type OrderItem {
   orderNo   string `json:"orderNo"`
   uid       int64  `json:"uid"`
   amount    int64  `json:"amount"`
-  status    int32  `json:"status"`
+  status    int64  `json:"status"`
   createdAt int64  `json:"createdAt"`
 }
 

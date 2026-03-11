@@ -10,7 +10,7 @@ import (
 
 type UserModel interface {
 	sysUserModel
-	FindPage(ctx context.Context, keyword string, status int32, page, pageSize int64) ([]*SysUser, int64, error)
+	FindPage(ctx context.Context, keyword string, status, page, pageSize int64) ([]*SysUser, int64, error)
 	TransCtx(ctx context.Context, fn func(context context.Context, session sqlx.Session) error) error
 	InsertCtx(ctx context.Context, session sqlx.Session, data *SysUser) (sql.Result, error)
 }
@@ -18,8 +18,7 @@ type UserModel interface {
 func (m *defaultSysUserModel) FindPage(
 	ctx context.Context,
 	keyword string,
-	status int32,
-	page, pageSize int64,
+	status, page, pageSize int64,
 ) ([]*SysUser, int64, error) {
 
 	if page <= 0 {

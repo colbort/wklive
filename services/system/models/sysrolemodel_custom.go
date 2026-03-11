@@ -7,10 +7,10 @@ import (
 
 type RoleModel interface {
 	sysRoleModel
-	FindPage(ctx context.Context, keyword string, status int32, page, pageSize int64) ([]*SysRole, int64, error)
+	FindPage(ctx context.Context, keyword string, status, page, pageSize int64) ([]*SysRole, int64, error)
 }
 
-func (m *defaultSysRoleModel) FindPage(ctx context.Context, keyword string, status int32, page, pageSize int64) ([]*SysRole, int64, error) {
+func (m *defaultSysRoleModel) FindPage(ctx context.Context, keyword string, status, page, pageSize int64) ([]*SysRole, int64, error) {
 
 	if page <= 0 {
 		page = 1

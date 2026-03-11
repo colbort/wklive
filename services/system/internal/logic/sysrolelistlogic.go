@@ -48,7 +48,7 @@ func (l *SysRoleListLogic) SysRoleList(in *system.SysRoleListReq) (*system.SysRo
 			Id:        r.Id,
 			Name:      r.Name,
 			Code:      r.Code,
-			Status:    int32(r.Status),
+			Status:    r.Status,
 			Remark:    r.Remark,
 			CreatedAt: r.CreatedAt.UnixMilli(),
 		})

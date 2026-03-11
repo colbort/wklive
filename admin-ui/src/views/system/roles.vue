@@ -27,7 +27,7 @@ const query = reactive({
   keyword: '',
   status: 0 as 0 | 1 | 2, // 0=全部, 1=启用, 2=禁用
   page: 1,
-  pageSize: 20,
+  size: 20,
 })
 
 // ===== list =====
@@ -345,7 +345,7 @@ onMounted(fetchList)
     <div style="display:flex; justify-content:flex-end; margin-top:12px;">
       <el-pagination
         v-model:current-page="query.page"
-        v-model:page-size="query.pageSize"
+        v-model:page-size="query.size"
         :total="total"
         background
         layout="total, prev, pager, next, sizes"

@@ -144,7 +144,7 @@ type AdminLoginResp struct {
 	Uid              int64                  `protobuf:"varint,5,opt,name=uid,proto3" json:"uid,omitempty"`
 	Nickname         string                 `protobuf:"bytes,6,opt,name=nickname,proto3" json:"nickname,omitempty"`
 	RoleIds          []int64                `protobuf:"varint,7,rep,packed,name=role_ids,json=roleIds,proto3" json:"role_ids,omitempty"`
-	Google2FaEnabled int32                  `protobuf:"varint,8,opt,name=google2fa_enabled,json=google2faEnabled,proto3" json:"google2fa_enabled,omitempty"`
+	Google2FaEnabled int64                  `protobuf:"varint,8,opt,name=google2fa_enabled,json=google2faEnabled,proto3" json:"google2fa_enabled,omitempty"`
 	PermsVer         int64                  `protobuf:"varint,9,opt,name=perms_ver,json=permsVer,proto3" json:"perms_ver,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
@@ -222,7 +222,7 @@ func (x *AdminLoginResp) GetRoleIds() []int64 {
 	return nil
 }
 
-func (x *AdminLoginResp) GetGoogle2FaEnabled() int32 {
+func (x *AdminLoginResp) GetGoogle2FaEnabled() int64 {
 	if x != nil {
 		return x.Google2FaEnabled
 	}
@@ -353,13 +353,13 @@ type SysMenuNode struct {
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	ParentId      int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
 	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	MenuType      int32                  `protobuf:"varint,4,opt,name=menu_type,json=menuType,proto3" json:"menu_type,omitempty"` // 1目录 2菜单 3按钮
+	MenuType      int64                  `protobuf:"varint,4,opt,name=menu_type,json=menuType,proto3" json:"menu_type,omitempty"` // 1目录 2菜单 3按钮
 	Path          string                 `protobuf:"bytes,5,opt,name=path,proto3" json:"path,omitempty"`
 	Component     string                 `protobuf:"bytes,6,opt,name=component,proto3" json:"component,omitempty"`
 	Icon          string                 `protobuf:"bytes,7,opt,name=icon,proto3" json:"icon,omitempty"`
-	Sort          int32                  `protobuf:"varint,8,opt,name=sort,proto3" json:"sort,omitempty"`
-	Visible       int32                  `protobuf:"varint,9,opt,name=visible,proto3" json:"visible,omitempty"`
-	Status        int32                  `protobuf:"varint,10,opt,name=status,proto3" json:"status,omitempty"`
+	Sort          int64                  `protobuf:"varint,8,opt,name=sort,proto3" json:"sort,omitempty"`
+	Visible       int64                  `protobuf:"varint,9,opt,name=visible,proto3" json:"visible,omitempty"`
+	Status        int64                  `protobuf:"varint,10,opt,name=status,proto3" json:"status,omitempty"`
 	Perms         string                 `protobuf:"bytes,11,opt,name=perms,proto3" json:"perms,omitempty"`
 	Children      []*SysMenuNode         `protobuf:"bytes,12,rep,name=children,proto3" json:"children,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -417,7 +417,7 @@ func (x *SysMenuNode) GetName() string {
 	return ""
 }
 
-func (x *SysMenuNode) GetMenuType() int32 {
+func (x *SysMenuNode) GetMenuType() int64 {
 	if x != nil {
 		return x.MenuType
 	}
@@ -445,21 +445,21 @@ func (x *SysMenuNode) GetIcon() string {
 	return ""
 }
 
-func (x *SysMenuNode) GetSort() int32 {
+func (x *SysMenuNode) GetSort() int64 {
 	if x != nil {
 		return x.Sort
 	}
 	return 0
 }
 
-func (x *SysMenuNode) GetVisible() int32 {
+func (x *SysMenuNode) GetVisible() int64 {
 	if x != nil {
 		return x.Visible
 	}
 	return 0
 }
 
-func (x *SysMenuNode) GetStatus() int32 {
+func (x *SysMenuNode) GetStatus() int64 {
 	if x != nil {
 		return x.Status
 	}
@@ -548,13 +548,13 @@ type SysMenuItem struct {
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	ParentId      int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
 	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	MenuType      int32                  `protobuf:"varint,4,opt,name=menu_type,json=menuType,proto3" json:"menu_type,omitempty"` // 1目录 2菜单 3按钮
+	MenuType      int64                  `protobuf:"varint,4,opt,name=menu_type,json=menuType,proto3" json:"menu_type,omitempty"` // 1目录 2菜单 3按钮
 	Path          string                 `protobuf:"bytes,5,opt,name=path,proto3" json:"path,omitempty"`
 	Component     string                 `protobuf:"bytes,6,opt,name=component,proto3" json:"component,omitempty"`
 	Icon          string                 `protobuf:"bytes,7,opt,name=icon,proto3" json:"icon,omitempty"`
-	Sort          int32                  `protobuf:"varint,8,opt,name=sort,proto3" json:"sort,omitempty"`
-	Visible       int32                  `protobuf:"varint,9,opt,name=visible,proto3" json:"visible,omitempty"`
-	Status        int32                  `protobuf:"varint,10,opt,name=status,proto3" json:"status,omitempty"`
+	Sort          int64                  `protobuf:"varint,8,opt,name=sort,proto3" json:"sort,omitempty"`
+	Visible       int64                  `protobuf:"varint,9,opt,name=visible,proto3" json:"visible,omitempty"`
+	Status        int64                  `protobuf:"varint,10,opt,name=status,proto3" json:"status,omitempty"`
 	Perms         string                 `protobuf:"bytes,11,opt,name=perms,proto3" json:"perms,omitempty"` // 按钮必须有，例如 sys:user:add
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -611,7 +611,7 @@ func (x *SysMenuItem) GetName() string {
 	return ""
 }
 
-func (x *SysMenuItem) GetMenuType() int32 {
+func (x *SysMenuItem) GetMenuType() int64 {
 	if x != nil {
 		return x.MenuType
 	}
@@ -639,21 +639,21 @@ func (x *SysMenuItem) GetIcon() string {
 	return ""
 }
 
-func (x *SysMenuItem) GetSort() int32 {
+func (x *SysMenuItem) GetSort() int64 {
 	if x != nil {
 		return x.Sort
 	}
 	return 0
 }
 
-func (x *SysMenuItem) GetVisible() int32 {
+func (x *SysMenuItem) GetVisible() int64 {
 	if x != nil {
 		return x.Visible
 	}
 	return 0
 }
 
-func (x *SysMenuItem) GetStatus() int32 {
+func (x *SysMenuItem) GetStatus() int64 {
 	if x != nil {
 		return x.Status
 	}
@@ -1094,10 +1094,10 @@ type SysUserItem struct {
 	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Username         string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
 	Nickname         string                 `protobuf:"bytes,3,opt,name=nickname,proto3" json:"nickname,omitempty"`
-	Status           int32                  `protobuf:"varint,4,opt,name=status,proto3" json:"status,omitempty"`
+	Status           int64                  `protobuf:"varint,4,opt,name=status,proto3" json:"status,omitempty"`
 	RoleIds          []int64                `protobuf:"varint,5,rep,packed,name=role_ids,json=roleIds,proto3" json:"role_ids,omitempty"`
 	CreatedAt        int64                  `protobuf:"varint,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	Google2FaEnabled int32                  `protobuf:"varint,7,opt,name=google2fa_enabled,json=google2faEnabled,proto3" json:"google2fa_enabled,omitempty"`
+	Google2FaEnabled int64                  `protobuf:"varint,7,opt,name=google2fa_enabled,json=google2faEnabled,proto3" json:"google2fa_enabled,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -1153,7 +1153,7 @@ func (x *SysUserItem) GetNickname() string {
 	return ""
 }
 
-func (x *SysUserItem) GetStatus() int32 {
+func (x *SysUserItem) GetStatus() int64 {
 	if x != nil {
 		return x.Status
 	}
@@ -1174,7 +1174,7 @@ func (x *SysUserItem) GetCreatedAt() int64 {
 	return 0
 }
 
-func (x *SysUserItem) GetGoogle2FaEnabled() int32 {
+func (x *SysUserItem) GetGoogle2FaEnabled() int64 {
 	if x != nil {
 		return x.Google2FaEnabled
 	}
@@ -1185,7 +1185,7 @@ type SysUserListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	Keyword       string                 `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"`
-	Status        int32                  `protobuf:"varint,3,opt,name=status,proto3" json:"status,omitempty"`
+	Status        int64                  `protobuf:"varint,3,opt,name=status,proto3" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1234,7 +1234,7 @@ func (x *SysUserListReq) GetKeyword() string {
 	return ""
 }
 
-func (x *SysUserListReq) GetStatus() int32 {
+func (x *SysUserListReq) GetStatus() int64 {
 	if x != nil {
 		return x.Status
 	}
@@ -1394,7 +1394,7 @@ type SysUserCreateReq struct {
 	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
 	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
 	Nickname      string                 `protobuf:"bytes,3,opt,name=nickname,proto3" json:"nickname,omitempty"`
-	Status        int32                  `protobuf:"varint,4,opt,name=status,proto3" json:"status,omitempty"`
+	Status        int64                  `protobuf:"varint,4,opt,name=status,proto3" json:"status,omitempty"`
 	RoleIds       []int64                `protobuf:"varint,5,rep,packed,name=role_ids,json=roleIds,proto3" json:"role_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1451,7 +1451,7 @@ func (x *SysUserCreateReq) GetNickname() string {
 	return ""
 }
 
-func (x *SysUserCreateReq) GetStatus() int32 {
+func (x *SysUserCreateReq) GetStatus() int64 {
 	if x != nil {
 		return x.Status
 	}
@@ -1469,7 +1469,7 @@ type SysUserUpdateReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Nickname      string                 `protobuf:"bytes,2,opt,name=nickname,proto3" json:"nickname,omitempty"`
-	Status        int32                  `protobuf:"varint,3,opt,name=status,proto3" json:"status,omitempty"`
+	Status        int64                  `protobuf:"varint,3,opt,name=status,proto3" json:"status,omitempty"`
 	RoleIds       []int64                `protobuf:"varint,4,rep,packed,name=role_ids,json=roleIds,proto3" json:"role_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1519,7 +1519,7 @@ func (x *SysUserUpdateReq) GetNickname() string {
 	return ""
 }
 
-func (x *SysUserUpdateReq) GetStatus() int32 {
+func (x *SysUserUpdateReq) GetStatus() int64 {
 	if x != nil {
 		return x.Status
 	}
@@ -1580,7 +1580,7 @@ func (x *SysUserDeleteReq) GetId() int64 {
 type ChangeUserStatusReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Status        int32                  `protobuf:"varint,2,opt,name=status,proto3" json:"status,omitempty"`
+	Status        int64                  `protobuf:"varint,2,opt,name=status,proto3" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1622,7 +1622,7 @@ func (x *ChangeUserStatusReq) GetId() int64 {
 	return 0
 }
 
-func (x *ChangeUserStatusReq) GetStatus() int32 {
+func (x *ChangeUserStatusReq) GetStatus() int64 {
 	if x != nil {
 		return x.Status
 	}
@@ -1741,7 +1741,7 @@ type SysRoleItem struct {
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Code          string                 `protobuf:"bytes,3,opt,name=code,proto3" json:"code,omitempty"`
-	Status        int32                  `protobuf:"varint,4,opt,name=status,proto3" json:"status,omitempty"`
+	Status        int64                  `protobuf:"varint,4,opt,name=status,proto3" json:"status,omitempty"`
 	Remark        string                 `protobuf:"bytes,5,opt,name=remark,proto3" json:"remark,omitempty"`
 	CreatedAt     int64                  `protobuf:"varint,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1799,7 +1799,7 @@ func (x *SysRoleItem) GetCode() string {
 	return ""
 }
 
-func (x *SysRoleItem) GetStatus() int32 {
+func (x *SysRoleItem) GetStatus() int64 {
 	if x != nil {
 		return x.Status
 	}
@@ -1824,7 +1824,7 @@ type SysRoleListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	Keyword       string                 `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"`
-	Status        int32                  `protobuf:"varint,3,opt,name=status,proto3" json:"status,omitempty"`
+	Status        int64                  `protobuf:"varint,3,opt,name=status,proto3" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1873,7 +1873,7 @@ func (x *SysRoleListReq) GetKeyword() string {
 	return ""
 }
 
-func (x *SysRoleListReq) GetStatus() int32 {
+func (x *SysRoleListReq) GetStatus() int64 {
 	if x != nil {
 		return x.Status
 	}
@@ -1936,7 +1936,7 @@ type SysRoleCreateReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Code          string                 `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
-	Status        int32                  `protobuf:"varint,3,opt,name=status,proto3" json:"status,omitempty"`
+	Status        int64                  `protobuf:"varint,3,opt,name=status,proto3" json:"status,omitempty"`
 	Remark        string                 `protobuf:"bytes,4,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1986,7 +1986,7 @@ func (x *SysRoleCreateReq) GetCode() string {
 	return ""
 }
 
-func (x *SysRoleCreateReq) GetStatus() int32 {
+func (x *SysRoleCreateReq) GetStatus() int64 {
 	if x != nil {
 		return x.Status
 	}
@@ -2004,7 +2004,7 @@ type SysRoleUpdateReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Status        int32                  `protobuf:"varint,3,opt,name=status,proto3" json:"status,omitempty"`
+	Status        int64                  `protobuf:"varint,3,opt,name=status,proto3" json:"status,omitempty"`
 	Remark        string                 `protobuf:"bytes,4,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2054,7 +2054,7 @@ func (x *SysRoleUpdateReq) GetName() string {
 	return ""
 }
 
-func (x *SysRoleUpdateReq) GetStatus() int32 {
+func (x *SysRoleUpdateReq) GetStatus() int64 {
 	if x != nil {
 		return x.Status
 	}
@@ -2387,13 +2387,13 @@ type SysMenuCreateReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ParentId      int64                  `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	MenuType      int32                  `protobuf:"varint,3,opt,name=menu_type,json=menuType,proto3" json:"menu_type,omitempty"`
+	MenuType      int64                  `protobuf:"varint,3,opt,name=menu_type,json=menuType,proto3" json:"menu_type,omitempty"`
 	Path          string                 `protobuf:"bytes,4,opt,name=path,proto3" json:"path,omitempty"`
 	Component     string                 `protobuf:"bytes,5,opt,name=component,proto3" json:"component,omitempty"`
 	Icon          string                 `protobuf:"bytes,6,opt,name=icon,proto3" json:"icon,omitempty"`
-	Sort          int32                  `protobuf:"varint,7,opt,name=sort,proto3" json:"sort,omitempty"`
-	Visible       int32                  `protobuf:"varint,8,opt,name=visible,proto3" json:"visible,omitempty"`
-	Status        int32                  `protobuf:"varint,9,opt,name=status,proto3" json:"status,omitempty"`
+	Sort          int64                  `protobuf:"varint,7,opt,name=sort,proto3" json:"sort,omitempty"`
+	Visible       int64                  `protobuf:"varint,8,opt,name=visible,proto3" json:"visible,omitempty"`
+	Status        int64                  `protobuf:"varint,9,opt,name=status,proto3" json:"status,omitempty"`
 	Perms         string                 `protobuf:"bytes,10,opt,name=perms,proto3" json:"perms,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2443,7 +2443,7 @@ func (x *SysMenuCreateReq) GetName() string {
 	return ""
 }
 
-func (x *SysMenuCreateReq) GetMenuType() int32 {
+func (x *SysMenuCreateReq) GetMenuType() int64 {
 	if x != nil {
 		return x.MenuType
 	}
@@ -2471,21 +2471,21 @@ func (x *SysMenuCreateReq) GetIcon() string {
 	return ""
 }
 
-func (x *SysMenuCreateReq) GetSort() int32 {
+func (x *SysMenuCreateReq) GetSort() int64 {
 	if x != nil {
 		return x.Sort
 	}
 	return 0
 }
 
-func (x *SysMenuCreateReq) GetVisible() int32 {
+func (x *SysMenuCreateReq) GetVisible() int64 {
 	if x != nil {
 		return x.Visible
 	}
 	return 0
 }
 
-func (x *SysMenuCreateReq) GetStatus() int32 {
+func (x *SysMenuCreateReq) GetStatus() int64 {
 	if x != nil {
 		return x.Status
 	}
@@ -2504,13 +2504,13 @@ type SysMenuUpdateReq struct {
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	ParentId      int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
 	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	MenuType      int32                  `protobuf:"varint,4,opt,name=menu_type,json=menuType,proto3" json:"menu_type,omitempty"`
+	MenuType      int64                  `protobuf:"varint,4,opt,name=menu_type,json=menuType,proto3" json:"menu_type,omitempty"`
 	Path          string                 `protobuf:"bytes,5,opt,name=path,proto3" json:"path,omitempty"`
 	Component     string                 `protobuf:"bytes,6,opt,name=component,proto3" json:"component,omitempty"`
 	Icon          string                 `protobuf:"bytes,7,opt,name=icon,proto3" json:"icon,omitempty"`
-	Sort          int32                  `protobuf:"varint,8,opt,name=sort,proto3" json:"sort,omitempty"`
-	Visible       int32                  `protobuf:"varint,9,opt,name=visible,proto3" json:"visible,omitempty"`
-	Status        int32                  `protobuf:"varint,10,opt,name=status,proto3" json:"status,omitempty"`
+	Sort          int64                  `protobuf:"varint,8,opt,name=sort,proto3" json:"sort,omitempty"`
+	Visible       int64                  `protobuf:"varint,9,opt,name=visible,proto3" json:"visible,omitempty"`
+	Status        int64                  `protobuf:"varint,10,opt,name=status,proto3" json:"status,omitempty"`
 	Perms         string                 `protobuf:"bytes,11,opt,name=perms,proto3" json:"perms,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2567,7 +2567,7 @@ func (x *SysMenuUpdateReq) GetName() string {
 	return ""
 }
 
-func (x *SysMenuUpdateReq) GetMenuType() int32 {
+func (x *SysMenuUpdateReq) GetMenuType() int64 {
 	if x != nil {
 		return x.MenuType
 	}
@@ -2595,21 +2595,21 @@ func (x *SysMenuUpdateReq) GetIcon() string {
 	return ""
 }
 
-func (x *SysMenuUpdateReq) GetSort() int32 {
+func (x *SysMenuUpdateReq) GetSort() int64 {
 	if x != nil {
 		return x.Sort
 	}
 	return 0
 }
 
-func (x *SysMenuUpdateReq) GetVisible() int32 {
+func (x *SysMenuUpdateReq) GetVisible() int64 {
 	if x != nil {
 		return x.Visible
 	}
 	return 0
 }
 
-func (x *SysMenuUpdateReq) GetStatus() int32 {
+func (x *SysMenuUpdateReq) GetStatus() int64 {
 	if x != nil {
 		return x.Status
 	}
@@ -2671,9 +2671,9 @@ type SysMenuListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	Keyword       string                 `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"`
-	MenuType      int32                  `protobuf:"varint,3,opt,name=menu_type,json=menuType,proto3" json:"menu_type,omitempty"`
-	Status        int32                  `protobuf:"varint,4,opt,name=status,proto3" json:"status,omitempty"`
-	Visible       int32                  `protobuf:"varint,5,opt,name=visible,proto3" json:"visible,omitempty"`
+	MenuType      int64                  `protobuf:"varint,3,opt,name=menu_type,json=menuType,proto3" json:"menu_type,omitempty"`
+	Status        int64                  `protobuf:"varint,4,opt,name=status,proto3" json:"status,omitempty"`
+	Visible       int64                  `protobuf:"varint,5,opt,name=visible,proto3" json:"visible,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2722,21 +2722,21 @@ func (x *SysMenuListReq) GetKeyword() string {
 	return ""
 }
 
-func (x *SysMenuListReq) GetMenuType() int32 {
+func (x *SysMenuListReq) GetMenuType() int64 {
 	if x != nil {
 		return x.MenuType
 	}
 	return 0
 }
 
-func (x *SysMenuListReq) GetStatus() int32 {
+func (x *SysMenuListReq) GetStatus() int64 {
 	if x != nil {
 		return x.Status
 	}
 	return 0
 }
 
-func (x *SysMenuListReq) GetVisible() int32 {
+func (x *SysMenuListReq) GetVisible() int64 {
 	if x != nil {
 		return x.Visible
 	}
@@ -2805,7 +2805,7 @@ type LoginLogItem struct {
 	Username      string                 `protobuf:"bytes,3,opt,name=username,proto3" json:"username,omitempty"`
 	Ip            string                 `protobuf:"bytes,4,opt,name=ip,proto3" json:"ip,omitempty"`
 	Ua            string                 `protobuf:"bytes,5,opt,name=ua,proto3" json:"ua,omitempty"`
-	Result        int32                  `protobuf:"varint,6,opt,name=result,proto3" json:"result,omitempty"`
+	Result        int64                  `protobuf:"varint,6,opt,name=result,proto3" json:"result,omitempty"`
 	Reason        string                 `protobuf:"bytes,7,opt,name=reason,proto3" json:"reason,omitempty"`
 	CreatedAt     int64                  `protobuf:"varint,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -2877,7 +2877,7 @@ func (x *LoginLogItem) GetUa() string {
 	return ""
 }
 
-func (x *LoginLogItem) GetResult() int32 {
+func (x *LoginLogItem) GetResult() int64 {
 	if x != nil {
 		return x.Result
 	}
@@ -2902,7 +2902,7 @@ type LoginLogListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	Username      string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
-	Result        int32                  `protobuf:"varint,3,opt,name=result,proto3" json:"result,omitempty"`
+	Result        int64                  `protobuf:"varint,3,opt,name=result,proto3" json:"result,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2951,7 +2951,7 @@ func (x *LoginLogListReq) GetUsername() string {
 	return ""
 }
 
-func (x *LoginLogListReq) GetResult() int32 {
+func (x *LoginLogListReq) GetResult() int64 {
 	if x != nil {
 		return x.Result
 	}
@@ -3021,7 +3021,7 @@ type OpLogItem struct {
 	Path          string                 `protobuf:"bytes,7,opt,name=path,proto3" json:"path,omitempty"`
 	Ip            string                 `protobuf:"bytes,8,opt,name=ip,proto3" json:"ip,omitempty"`
 	Ua            string                 `protobuf:"bytes,9,opt,name=ua,proto3" json:"ua,omitempty"`
-	RespCode      int32                  `protobuf:"varint,10,opt,name=resp_code,json=respCode,proto3" json:"resp_code,omitempty"`
+	RespCode      int64                  `protobuf:"varint,10,opt,name=resp_code,json=respCode,proto3" json:"resp_code,omitempty"`
 	DurationMs    int64                  `protobuf:"varint,11,opt,name=duration_ms,json=durationMs,proto3" json:"duration_ms,omitempty"`
 	CreatedAt     int64                  `protobuf:"varint,12,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -3121,7 +3121,7 @@ func (x *OpLogItem) GetUa() string {
 	return ""
 }
 
-func (x *OpLogItem) GetRespCode() int32 {
+func (x *OpLogItem) GetRespCode() int64 {
 	if x != nil {
 		return x.RespCode
 	}
@@ -3282,7 +3282,7 @@ const file_system_proto_rawDesc = "" +
 	"\x03uid\x18\x05 \x01(\x03R\x03uid\x12\x1a\n" +
 	"\bnickname\x18\x06 \x01(\tR\bnickname\x12\x19\n" +
 	"\brole_ids\x18\a \x03(\x03R\aroleIds\x12+\n" +
-	"\x11google2fa_enabled\x18\b \x01(\x05R\x10google2faEnabled\x12\x1b\n" +
+	"\x11google2fa_enabled\x18\b \x01(\x03R\x10google2faEnabled\x12\x1b\n" +
 	"\tperms_ver\x18\t \x01(\x03R\bpermsVer\"\x1e\n" +
 	"\n" +
 	"ProfileReq\x12\x10\n" +
@@ -3296,14 +3296,14 @@ const file_system_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x1b\n" +
-	"\tmenu_type\x18\x04 \x01(\x05R\bmenuType\x12\x12\n" +
+	"\tmenu_type\x18\x04 \x01(\x03R\bmenuType\x12\x12\n" +
 	"\x04path\x18\x05 \x01(\tR\x04path\x12\x1c\n" +
 	"\tcomponent\x18\x06 \x01(\tR\tcomponent\x12\x12\n" +
 	"\x04icon\x18\a \x01(\tR\x04icon\x12\x12\n" +
-	"\x04sort\x18\b \x01(\x05R\x04sort\x12\x18\n" +
-	"\avisible\x18\t \x01(\x05R\avisible\x12\x16\n" +
+	"\x04sort\x18\b \x01(\x03R\x04sort\x12\x18\n" +
+	"\avisible\x18\t \x01(\x03R\avisible\x12\x16\n" +
 	"\x06status\x18\n" +
-	" \x01(\x05R\x06status\x12\x14\n" +
+	" \x01(\x03R\x06status\x12\x14\n" +
 	"\x05perms\x18\v \x01(\tR\x05perms\x12/\n" +
 	"\bchildren\x18\f \x03(\v2\x13.system.SysMenuNodeR\bchildren\"w\n" +
 	"\vProfileResp\x12'\n" +
@@ -3314,14 +3314,14 @@ const file_system_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x1b\n" +
-	"\tmenu_type\x18\x04 \x01(\x05R\bmenuType\x12\x12\n" +
+	"\tmenu_type\x18\x04 \x01(\x03R\bmenuType\x12\x12\n" +
 	"\x04path\x18\x05 \x01(\tR\x04path\x12\x1c\n" +
 	"\tcomponent\x18\x06 \x01(\tR\tcomponent\x12\x12\n" +
 	"\x04icon\x18\a \x01(\tR\x04icon\x12\x12\n" +
-	"\x04sort\x18\b \x01(\x05R\x04sort\x12\x18\n" +
-	"\avisible\x18\t \x01(\x05R\avisible\x12\x16\n" +
+	"\x04sort\x18\b \x01(\x03R\x04sort\x12\x18\n" +
+	"\avisible\x18\t \x01(\x03R\avisible\x12\x16\n" +
 	"\x06status\x18\n" +
-	" \x01(\x05R\x06status\x12\x14\n" +
+	" \x01(\x03R\x06status\x12\x14\n" +
 	"\x05perms\x18\v \x01(\tR\x05perms\"`\n" +
 	"\x0fSysMenuTreeResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12'\n" +
@@ -3352,15 +3352,15 @@ const file_system_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x12\x1a\n" +
 	"\bnickname\x18\x03 \x01(\tR\bnickname\x12\x16\n" +
-	"\x06status\x18\x04 \x01(\x05R\x06status\x12\x19\n" +
+	"\x06status\x18\x04 \x01(\x03R\x06status\x12\x19\n" +
 	"\brole_ids\x18\x05 \x03(\x03R\aroleIds\x12\x1d\n" +
 	"\n" +
 	"created_at\x18\x06 \x01(\x03R\tcreatedAt\x12+\n" +
-	"\x11google2fa_enabled\x18\a \x01(\x05R\x10google2faEnabled\"g\n" +
+	"\x11google2fa_enabled\x18\a \x01(\x03R\x10google2faEnabled\"g\n" +
 	"\x0eSysUserListReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.system.PageReqR\x04page\x12\x18\n" +
 	"\akeyword\x18\x02 \x01(\tR\akeyword\x12\x16\n" +
-	"\x06status\x18\x03 \x01(\x05R\x06status\"`\n" +
+	"\x06status\x18\x03 \x01(\x03R\x06status\"`\n" +
 	"\x0fSysUserListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12'\n" +
 	"\x04data\x18\x04 \x03(\v2\x13.system.SysUserItemR\x04data\"\"\n" +
@@ -3373,18 +3373,18 @@ const file_system_proto_rawDesc = "" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1a\n" +
 	"\bnickname\x18\x03 \x01(\tR\bnickname\x12\x16\n" +
-	"\x06status\x18\x04 \x01(\x05R\x06status\x12\x19\n" +
+	"\x06status\x18\x04 \x01(\x03R\x06status\x12\x19\n" +
 	"\brole_ids\x18\x05 \x03(\x03R\aroleIds\"q\n" +
 	"\x10SysUserUpdateReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1a\n" +
 	"\bnickname\x18\x02 \x01(\tR\bnickname\x12\x16\n" +
-	"\x06status\x18\x03 \x01(\x05R\x06status\x12\x19\n" +
+	"\x06status\x18\x03 \x01(\x03R\x06status\x12\x19\n" +
 	"\brole_ids\x18\x04 \x03(\x03R\aroleIds\"\"\n" +
 	"\x10SysUserDeleteReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"=\n" +
 	"\x13ChangeUserStatusReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x16\n" +
-	"\x06status\x18\x02 \x01(\x05R\x06status\"=\n" +
+	"\x06status\x18\x02 \x01(\x03R\x06status\"=\n" +
 	"\x0fResetUserPwdReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"H\n" +
@@ -3395,26 +3395,26 @@ const file_system_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
 	"\x04code\x18\x03 \x01(\tR\x04code\x12\x16\n" +
-	"\x06status\x18\x04 \x01(\x05R\x06status\x12\x16\n" +
+	"\x06status\x18\x04 \x01(\x03R\x06status\x12\x16\n" +
 	"\x06remark\x18\x05 \x01(\tR\x06remark\x12\x1d\n" +
 	"\n" +
 	"created_at\x18\x06 \x01(\x03R\tcreatedAt\"g\n" +
 	"\x0eSysRoleListReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.system.PageReqR\x04page\x12\x18\n" +
 	"\akeyword\x18\x02 \x01(\tR\akeyword\x12\x16\n" +
-	"\x06status\x18\x03 \x01(\x05R\x06status\"`\n" +
+	"\x06status\x18\x03 \x01(\x03R\x06status\"`\n" +
 	"\x0fSysRoleListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12'\n" +
 	"\x04data\x18\x04 \x03(\v2\x13.system.SysRoleItemR\x04data\"j\n" +
 	"\x10SysRoleCreateReq\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\x12\x16\n" +
-	"\x06status\x18\x03 \x01(\x05R\x06status\x12\x16\n" +
+	"\x06status\x18\x03 \x01(\x03R\x06status\x12\x16\n" +
 	"\x06remark\x18\x04 \x01(\tR\x06remark\"f\n" +
 	"\x10SysRoleUpdateReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
-	"\x06status\x18\x03 \x01(\x05R\x06status\x12\x16\n" +
+	"\x06status\x18\x03 \x01(\x03R\x06status\x12\x16\n" +
 	"\x06remark\x18\x04 \x01(\tR\x06remark\"\"\n" +
 	"\x10SysRoleDeleteReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"E\n" +
@@ -3437,36 +3437,36 @@ const file_system_proto_rawDesc = "" +
 	"\x10SysMenuCreateReq\x12\x1b\n" +
 	"\tparent_id\x18\x01 \x01(\x03R\bparentId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1b\n" +
-	"\tmenu_type\x18\x03 \x01(\x05R\bmenuType\x12\x12\n" +
+	"\tmenu_type\x18\x03 \x01(\x03R\bmenuType\x12\x12\n" +
 	"\x04path\x18\x04 \x01(\tR\x04path\x12\x1c\n" +
 	"\tcomponent\x18\x05 \x01(\tR\tcomponent\x12\x12\n" +
 	"\x04icon\x18\x06 \x01(\tR\x04icon\x12\x12\n" +
-	"\x04sort\x18\a \x01(\x05R\x04sort\x12\x18\n" +
-	"\avisible\x18\b \x01(\x05R\avisible\x12\x16\n" +
-	"\x06status\x18\t \x01(\x05R\x06status\x12\x14\n" +
+	"\x04sort\x18\a \x01(\x03R\x04sort\x12\x18\n" +
+	"\avisible\x18\b \x01(\x03R\avisible\x12\x16\n" +
+	"\x06status\x18\t \x01(\x03R\x06status\x12\x14\n" +
 	"\x05perms\x18\n" +
 	" \x01(\tR\x05perms\"\x92\x02\n" +
 	"\x10SysMenuUpdateReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x1b\n" +
-	"\tmenu_type\x18\x04 \x01(\x05R\bmenuType\x12\x12\n" +
+	"\tmenu_type\x18\x04 \x01(\x03R\bmenuType\x12\x12\n" +
 	"\x04path\x18\x05 \x01(\tR\x04path\x12\x1c\n" +
 	"\tcomponent\x18\x06 \x01(\tR\tcomponent\x12\x12\n" +
 	"\x04icon\x18\a \x01(\tR\x04icon\x12\x12\n" +
-	"\x04sort\x18\b \x01(\x05R\x04sort\x12\x18\n" +
-	"\avisible\x18\t \x01(\x05R\avisible\x12\x16\n" +
+	"\x04sort\x18\b \x01(\x03R\x04sort\x12\x18\n" +
+	"\avisible\x18\t \x01(\x03R\avisible\x12\x16\n" +
 	"\x06status\x18\n" +
-	" \x01(\x05R\x06status\x12\x14\n" +
+	" \x01(\x03R\x06status\x12\x14\n" +
 	"\x05perms\x18\v \x01(\tR\x05perms\"\"\n" +
 	"\x10SysMenuDeleteReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x9e\x01\n" +
 	"\x0eSysMenuListReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.system.PageReqR\x04page\x12\x18\n" +
 	"\akeyword\x18\x02 \x01(\tR\akeyword\x12\x1b\n" +
-	"\tmenu_type\x18\x03 \x01(\x05R\bmenuType\x12\x16\n" +
-	"\x06status\x18\x04 \x01(\x05R\x06status\x12\x18\n" +
-	"\avisible\x18\x05 \x01(\x05R\avisible\"`\n" +
+	"\tmenu_type\x18\x03 \x01(\x03R\bmenuType\x12\x16\n" +
+	"\x06status\x18\x04 \x01(\x03R\x06status\x12\x18\n" +
+	"\avisible\x18\x05 \x01(\x03R\avisible\"`\n" +
 	"\x0fSysMenuListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12'\n" +
 	"\x04data\x18\x04 \x03(\v2\x13.system.SysMenuItemR\x04data\"\xc2\x01\n" +
@@ -3476,14 +3476,14 @@ const file_system_proto_rawDesc = "" +
 	"\busername\x18\x03 \x01(\tR\busername\x12\x0e\n" +
 	"\x02ip\x18\x04 \x01(\tR\x02ip\x12\x0e\n" +
 	"\x02ua\x18\x05 \x01(\tR\x02ua\x12\x16\n" +
-	"\x06result\x18\x06 \x01(\x05R\x06result\x12\x16\n" +
+	"\x06result\x18\x06 \x01(\x03R\x06result\x12\x16\n" +
 	"\x06reason\x18\a \x01(\tR\x06reason\x12\x1d\n" +
 	"\n" +
 	"created_at\x18\b \x01(\x03R\tcreatedAt\"j\n" +
 	"\x0fLoginLogListReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.system.PageReqR\x04page\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x12\x16\n" +
-	"\x06result\x18\x03 \x01(\x05R\x06result\"b\n" +
+	"\x06result\x18\x03 \x01(\x03R\x06result\"b\n" +
 	"\x10LoginLogListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12(\n" +
 	"\x04data\x18\x04 \x03(\v2\x14.system.LoginLogItemR\x04data\"\xa9\x02\n" +
@@ -3498,7 +3498,7 @@ const file_system_proto_rawDesc = "" +
 	"\x02ip\x18\b \x01(\tR\x02ip\x12\x0e\n" +
 	"\x02ua\x18\t \x01(\tR\x02ua\x12\x1b\n" +
 	"\tresp_code\x18\n" +
-	" \x01(\x05R\brespCode\x12\x1f\n" +
+	" \x01(\x03R\brespCode\x12\x1f\n" +
 	"\vduration_ms\x18\v \x01(\x03R\n" +
 	"durationMs\x12\x1d\n" +
 	"\n" +

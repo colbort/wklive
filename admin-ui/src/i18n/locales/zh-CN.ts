@@ -1,5 +1,3 @@
-import { all } from "node_modules/axios/index.cjs";
-
 export default {
   app: {
     title: '后台管理',
@@ -37,7 +35,12 @@ export default {
     confirmDelete: '确定要删除吗？',
     success: '操作成功',
     failed: '操作失败',
-    all: '全部'
+    all: '全部',
+    add: '新增',
+    refresh: '刷新',
+    visible: '显示',
+    hidden: '隐藏',
+    clear: '清空',
   },
   system: {
     mgmt: '系统管理',
@@ -56,7 +59,38 @@ export default {
     grantPerms: '按钮权限',
     superAdmin: '超级管理员',
     superAdminAllPerms: '超级管理员默认拥有全部权限，不允许修改',
-    superAdminNoGrant: '超级管理员权限不可修改'
+    superAdminNoGrant: '超级管理员权限不可修改',
+
+    menuName: '菜单名称',
+    menuType: '菜单类型',
+    parentMenu: '上级菜单',
+    path: '路由路径',
+    component: '组件路径',
+    icon: '图标',
+    sort: '排序',
+    perms: '权限标识',
+    addMenu: '新增菜单',
+    editMenu: '编辑菜单',
+    addChild: '新增下级',
+    topMenu: '顶级菜单',
+    directory: '目录',
+    menu: '菜单',
+    button: '按钮',
+    pleaseInputMenuName: '请输入菜单名称',
+    pleaseSelect: '请选择',
+    pleaseSelectParentMenu: '请选择上级菜单',
+    pleaseSelectMenuType: '请选择菜单类型',
+    pleaseInputPath: '请输入路由路径',
+    pleaseInputComponent: '请输入组件路径',
+    pleaseInputIcon: '请输入图标',
+    pleaseInputPerms: '请输入权限标识',
+    pleaseInputSort: '请输入排序',
+    confirmDeleteMenu: '确认删除菜单【{name}】吗？',
+    name: '名称',
+
+    selectIcon: '选择图标',
+    iconPreview: '图标预览',
+    noIcon: '未选择图标',
   },
   perms: {
     'sys:user:add': '新增用户',
@@ -77,7 +111,6 @@ export default {
     'sys:menu:update': '编辑菜单',
     'sys:menu:delete': '删除菜单',
   },
-  // menu.id -> i18n key（可选）：如果未来你要把后端菜单中文替换成 key，也能直接用
   menu: {
     '1': '系统管理',
     '100': '用户管理',

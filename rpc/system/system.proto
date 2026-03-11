@@ -23,7 +23,7 @@ message AdminLoginResp {
   int64  uid = 5;
   string nickname = 6;
   repeated int64 role_ids = 7;
-  int32 google2fa_enabled = 8;
+  int64 google2fa_enabled = 8;
   int64 perms_ver = 9;
 }
 
@@ -42,13 +42,13 @@ message SysMenuNode {
   int64 id = 1;
   int64 parent_id = 2;
   string name = 3;
-  int32 menu_type = 4; // 1目录 2菜单 3按钮
+  int64 menu_type = 4; // 1目录 2菜单 3按钮
   string path = 5;
   string component = 6;
   string icon = 7;
-  int32 sort = 8;
-  int32 visible = 9;
-  int32 status = 10;
+  int64 sort = 8;
+  int64 visible = 9;
+  int64 status = 10;
   string perms = 11;
   repeated SysMenuNode children = 12;
 }
@@ -66,13 +66,13 @@ message SysMenuItem {
   int64 id = 1;
   int64 parent_id = 2;
   string name = 3;
-  int32 menu_type = 4; // 1目录 2菜单 3按钮
+  int64 menu_type = 4; // 1目录 2菜单 3按钮
   string path = 5;
   string component = 6;
   string icon = 7;
-  int32 sort = 8;
-  int32 visible = 9;
-  int32 status = 10;
+  int64 sort = 8;
+  int64 visible = 9;
+  int64 status = 10;
   string perms = 11; // 按钮必须有，例如 sys:user:add
 }
 
@@ -106,16 +106,16 @@ message SysUserItem {
   int64 id = 1;
   string username = 2;
   string nickname = 3;
-  int32 status = 4;
+  int64 status = 4;
   repeated int64 role_ids = 5;
   int64 created_at = 6;
-  int32 google2fa_enabled = 7;
+  int64 google2fa_enabled = 7;
 }
 
 message SysUserListReq {
   PageReq page = 1;
   string keyword = 2;
-  int32 status = 3;
+  int64 status = 3;
 }
 message SysUserListResp {
   RespBase base = 1;
@@ -129,17 +129,17 @@ message SysUserCreateReq {
   string username = 1;
   string password = 2;
   string nickname = 3;
-  int32 status = 4;
+  int64 status = 4;
   repeated int64 role_ids = 5;
 }
 message SysUserUpdateReq {
   int64 id = 1;
   string nickname = 2;
-  int32 status = 3;
+  int64 status = 3;
   repeated int64 role_ids = 4;
 }
 message SysUserDeleteReq { int64 id = 1; }
-message ChangeUserStatusReq { int64 id = 1; int32 status = 2; }
+message ChangeUserStatusReq { int64 id = 1; int64 status = 2; }
 message ResetUserPwdReq { int64 id = 1; string password = 2; }
 message AssignUserRolesReq { int64 user_id = 1; repeated int64 role_ids = 2; }
 
@@ -150,15 +150,15 @@ message SysRoleItem {
   int64 id = 1;
   string name = 2;
   string code = 3;
-  int32 status = 4;
+  int64 status = 4;
   string remark = 5;
   int64 created_at = 6;
 }
-message SysRoleListReq { PageReq page = 1; string keyword = 2; int32 status = 3; }
+message SysRoleListReq { PageReq page = 1; string keyword = 2; int64 status = 3; }
 message SysRoleListResp { RespBase base = 1; repeated SysRoleItem data = 4; }
 
-message SysRoleCreateReq { string name = 1; string code = 2; int32 status = 3; string remark = 4; }
-message SysRoleUpdateReq { int64 id = 1; string name = 2; int32 status = 3; string remark = 4; }
+message SysRoleCreateReq { string name = 1; string code = 2; int64 status = 3; string remark = 4; }
+message SysRoleUpdateReq { int64 id = 1; string name = 2; int64 status = 3; string remark = 4; }
 message SysRoleDeleteReq { int64 id = 1; }
 message SysRoleGrantReq { int64 role_id = 1; repeated int64 menu_ids = 2; }
 
@@ -187,31 +187,31 @@ message SysPermListResp {
 message SysMenuCreateReq {
   int64 parent_id = 1;
   string name = 2;
-  int32 menu_type = 3;
+  int64 menu_type = 3;
   string path = 4;
   string component = 5;
   string icon = 6;
-  int32 sort = 7;
-  int32 visible = 8;
-  int32 status = 9;
+  int64 sort = 7;
+  int64 visible = 8;
+  int64 status = 9;
   string perms = 10;
 }
 message SysMenuUpdateReq {
   int64 id = 1;
   int64 parent_id = 2;
   string name = 3;
-  int32 menu_type = 4;
+  int64 menu_type = 4;
   string path = 5;
   string component = 6;
   string icon = 7;
-  int32 sort = 8;
-  int32 visible = 9;
-  int32 status = 10;
+  int64 sort = 8;
+  int64 visible = 9;
+  int64 status = 10;
   string perms = 11;
 }
 message SysMenuDeleteReq { int64 id = 1; }
 
-message SysMenuListReq { PageReq page = 1; string keyword = 2; int32 menu_type = 3; int32 status = 4; int32 visible = 5; }
+message SysMenuListReq { PageReq page = 1; string keyword = 2; int64 menu_type = 3; int64 status = 4; int64 visible = 5; }
 message SysMenuListResp { 
   RespBase base = 1;
   repeated SysMenuItem data = 4; 
@@ -226,11 +226,11 @@ message LoginLogItem {
   string username = 3;
   string ip = 4;
   string ua = 5;
-  int32 result = 6;
+  int64 result = 6;
   string reason = 7;
   int64 created_at = 8;
 }
-message LoginLogListReq { PageReq page = 1; string username = 2; int32 result = 3; }
+message LoginLogListReq { PageReq page = 1; string username = 2; int64 result = 3; }
 message LoginLogListResp { 
   RespBase base = 1;
   repeated LoginLogItem data = 4; 
@@ -246,7 +246,7 @@ message OpLogItem {
   string path = 7;
   string ip = 8;
   string ua = 9;
-  int32 resp_code = 10;
+  int64 resp_code = 10;
   int64 duration_ms = 11;
   int64 created_at = 12;
 }

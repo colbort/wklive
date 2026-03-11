@@ -3,16 +3,7 @@ import { computed } from 'vue'
 import { useAuthStore, type MenuNode } from '@/stores/auth'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-
-import {
-  House,
-  Setting,
-  Menu as MenuIcon,
-  User,
-  List,
-  Operation,
-  Tickets,
-} from '@element-plus/icons-vue'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 const props = defineProps<{
   collapsed: boolean
@@ -23,7 +14,14 @@ const router = useRouter()
 const route = useRoute()
 const { t, te } = useI18n()
 
-const menuTree = computed(() => (auth.menus || []).slice().sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0)))
+const iconMap = ElementPlusIconsVue as Record<string, any>
+
+const menuTree = computed(() =>
+  (auth.menus || [])
+    .filter((a) => a.visible !== 0 && a.status !== 0)
+    .slice()
+    .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0))
+)
 
 function labelById(id: number, fallback: string) {
   const key = `menu.${id}`
@@ -41,22 +39,9 @@ function childrenMenus(n: MenuNode) {
     .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0))
 }
 
-// ✅ icon 映射：后端 sys_menu.icon -> ElementPlus Icon
 function iconComp(icon?: string) {
-  switch (icon) {
-    case 'Setting':
-      return Setting
-    case 'User':
-      return User
-    case 'List':
-      return List
-    case 'Operation':
-      return Operation
-    case 'Tickets':
-      return Tickets
-    default:
-      return MenuIcon
-  }
+  if (!icon) return iconMap.Menu
+  return iconMap[icon] || iconMap.Menu
 }
 </script>
 
@@ -68,16 +53,19 @@ function iconComp(icon?: string) {
     :collapse="props.collapsed"
     :collapse-transition="false"
   >
-    <!-- ✅ 首页固定显示 -->
-    <el-menu-item index="/" @click="go('/home')">
-      <el-icon><House /></el-icon>
+    <el-menu-item index="/home" @click="go('/home')">
+      <el-icon>
+        <component :is="iconComp('House')" />
+      </el-icon>
       <template #title>{{ t('route.home') }}</template>
     </el-menu-item>
 
     <template v-for="m in menuTree" :key="m.id">
       <el-sub-menu v-if="m.menuType === 1" :index="String(m.id)">
         <template #title>
-          <el-icon><component :is="iconComp(m.icon)" /></el-icon>
+          <el-icon>
+            <component :is="iconComp(m.icon)" />
+          </el-icon>
           <span>{{ labelById(m.id, m.name) }}</span>
         </template>
 
@@ -87,7 +75,9 @@ function iconComp(icon?: string) {
           :index="c.path"
           @click="go(c.path)"
         >
-          <el-icon><component :is="iconComp(c.icon)" /></el-icon>
+          <el-icon>
+            <component :is="iconComp(c.icon)" />
+          </el-icon>
           <template #title>{{ labelById(c.id, c.name) }}</template>
         </el-menu-item>
       </el-sub-menu>
@@ -97,7 +87,9 @@ function iconComp(icon?: string) {
         :index="m.path"
         @click="go(m.path)"
       >
-        <el-icon><component :is="iconComp(m.icon)" /></el-icon>
+        <el-icon>
+          <component :is="iconComp(m.icon)" />
+        </el-icon>
         <template #title>{{ labelById(m.id, m.name) }}</template>
       </el-menu-item>
     </template>
@@ -105,13 +97,11 @@ function iconComp(icon?: string) {
 </template>
 
 <style scoped>
-/* ✅ 不要横向滚动 */
 .aside-menu {
   border-right: none;
   overflow-x: hidden;
 }
 
-/* ✅ 修复折叠后图标居中更舒服 */
 :deep(.el-menu--collapse) {
   width: 100%;
 }

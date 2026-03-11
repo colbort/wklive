@@ -86,7 +86,7 @@ func (l *AdminLoginLogic) AdminLogin(in *system.AdminLoginReq) (*system.AdminLog
 		Token:            token,
 		Uid:              user.Id,
 		Nickname:         user.Nickname,
-		Google2FaEnabled: int32(user.GoogleEnabled),
+		Google2FaEnabled: user.GoogleEnabled,
 		PermsVer:         user.PermsVer,
 	}, nil
 }

@@ -49,7 +49,7 @@
     },
     "editor.fontSize": 10,
     "i18n-ally.localesPaths": [
-      ""
+      "./admin-ui/src/i18n/locales",
     ],
   },
   "launch": {

@@ -15,7 +15,7 @@ type Auth struct {
 
 type ChangeUserStatusReq struct {
 	Id     int64 `json:"id"`
-	Status int32 `json:"status"` // 1启用 0禁用
+	Status int64 `json:"status"` // 1启用 0禁用
 }
 
 type Google2FABindInitReq struct {
@@ -49,7 +49,7 @@ type LoginLogItem struct {
 	Username  string `json:"username"`
 	Ip        string `json:"ip"`
 	Ua        string `json:"ua"`
-	Result    int32  `json:"result"`
+	Result    int64  `json:"result"`
 	Reason    string `json:"reason,optional"`
 	CreatedAt int64  `json:"createdAt"`
 }
@@ -57,7 +57,7 @@ type LoginLogItem struct {
 type LoginLogListReq struct {
 	PageReq
 	Username string `form:"username,optional"`
-	Result   int32  `form:"result,optional"`
+	Result   int64  `form:"result,optional"`
 }
 
 type LoginLogListResp struct {
@@ -82,13 +82,13 @@ type MenuNode struct {
 	Id        int64      `json:"id"`
 	ParentId  int64      `json:"parentId"`
 	Name      string     `json:"name"`
-	MenuType  int32      `json:"menuType"` // 1目录 2菜单 3按钮
+	MenuType  int64      `json:"menuType"` // 1目录 2菜单 3按钮
 	Path      string     `json:"path,optional"`
 	Component string     `json:"component,optional"`
 	Icon      string     `json:"icon,optional"`
-	Sort      int32      `json:"sort"`
-	Visible   int32      `json:"visible"`
-	Status    int32      `json:"status"`
+	Sort      int64      `json:"sort"`
+	Visible   int64      `json:"visible"`
+	Status    int64      `json:"status"`
 	Perms     string     `json:"perms,optional"`
 	Children  []MenuNode `json:"children,optional"`
 }
@@ -103,7 +103,7 @@ type OpLogItem struct {
 	Path       string `json:"path"`
 	Ip         string `json:"ip"`
 	Ua         string `json:"ua"`
-	RespCode   int32  `json:"respCode"`
+	RespCode   int64  `json:"respCode"`
 	DurationMs int64  `json:"durationMs"`
 	CreatedAt  int64  `json:"createdAt"`
 }
@@ -124,14 +124,14 @@ type OrderItem struct {
 	OrderNo   string `json:"orderNo"`
 	Uid       int64  `json:"uid"`
 	Amount    int64  `json:"amount"`
-	Status    int32  `json:"status"`
+	Status    int64  `json:"status"`
 	CreatedAt int64  `json:"createdAt"`
 }
 
 type OrderListReq struct {
 	PageReq
 	Uid     int64  `form:"uid,optional"`
-	Status  int32  `form:"status,optional"`
+	Status  int64  `form:"status,optional"`
 	OrderNo string `form:"orderNo,optional"`
 }
 
@@ -176,13 +176,13 @@ type RespBase struct {
 type SysMenuCreateReq struct {
 	ParentId  int64  `json:"parentId,optional"`
 	Name      string `json:"name"`
-	MenuType  int32  `json:"menuType"`
+	MenuType  int64  `json:"menuType"`
 	Path      string `json:"path,optional"`
 	Component string `json:"component,optional"`
 	Icon      string `json:"icon,optional"`
-	Sort      int32  `json:"sort,optional"`
-	Visible   int32  `json:"visible,optional"`
-	Status    int32  `json:"status,optional"`
+	Sort      int64  `json:"sort,optional"`
+	Visible   int64  `json:"visible,optional"`
+	Status    int64  `json:"status,optional"`
 	Perms     string `json:"perms,optional"`
 }
 
@@ -190,22 +190,22 @@ type SysMenuItem struct {
 	Id        int64  `json:"id"`
 	ParentId  int64  `json:"parentId"`
 	Name      string `json:"name"`
-	MenuType  int32  `json:"menuType"` // 1目录 2菜单 3按钮
+	MenuType  int64  `json:"menuType"` // 1目录 2菜单 3按钮
 	Path      string `json:"path,optional"`
 	Component string `json:"component,optional"`
 	Icon      string `json:"icon,optional"`
-	Sort      int32  `json:"sort"`
-	Visible   int32  `json:"visible"`
-	Status    int32  `json:"status"`
+	Sort      int64  `json:"sort"`
+	Visible   int64  `json:"visible"`
+	Status    int64  `json:"status"`
 	Perms     string `json:"perms,optional"`
 }
 
 type SysMenuListReq struct {
 	PageReq
 	Keyword  string `form:"keyword,optional"`  // 按 name/perms 模糊
-	Status   int32  `form:"status,optional"`   // 0/1
-	Visible  int32  `form:"visible,optional"`  // 0/1
-	MenuType int32  `form:"menuType,optional"` // 1/2/3
+	Status   int64  `form:"status,optional"`   // 0/1
+	Visible  int64  `form:"visible,optional"`  // 0/1
+	MenuType int64  `form:"menuType,optional"` // 1/2/3
 }
 
 type SysMenuListResp struct {
@@ -222,13 +222,13 @@ type SysMenuUpdateReq struct {
 	Id        int64  `json:"id"`
 	ParentId  int64  `json:"parentId,optional"`
 	Name      string `json:"name,optional"`
-	MenuType  int32  `json:"menuType,optional"`
+	MenuType  int64  `json:"menuType,optional"`
 	Path      string `json:"path,optional"`
 	Component string `json:"component,optional"`
 	Icon      string `json:"icon,optional"`
-	Sort      int32  `json:"sort,optional"`
-	Visible   int32  `json:"visible,optional"`
-	Status    int32  `json:"status,optional"`
+	Sort      int64  `json:"sort,optional"`
+	Visible   int64  `json:"visible,optional"`
+	Status    int64  `json:"status,optional"`
 	Perms     string `json:"perms,optional"`
 }
 
@@ -245,7 +245,7 @@ type SysPermListResp struct {
 type SysRoleCreateReq struct {
 	Name   string `json:"name"`
 	Code   string `json:"code"`
-	Status int32  `json:"status,optional"`
+	Status int64  `json:"status,optional"`
 	Remark string `json:"remark,optional"`
 }
 
@@ -277,7 +277,7 @@ type SysRoleItem struct {
 	Id        int64  `json:"id"`
 	Name      string `json:"name"`
 	Code      string `json:"code"`
-	Status    int32  `json:"status"`
+	Status    int64  `json:"status"`
 	Remark    string `json:"remark,optional"`
 	CreatedAt int64  `json:"createdAt"`
 }
@@ -285,7 +285,7 @@ type SysRoleItem struct {
 type SysRoleListReq struct {
 	PageReq
 	Keyword string `form:"keyword,optional"`
-	Status  int32  `form:"status,optional"`
+	Status  int64  `form:"status,optional"`
 }
 
 type SysRoleListResp struct {
@@ -296,7 +296,7 @@ type SysRoleListResp struct {
 type SysRoleUpdateReq struct {
 	Id     int64  `json:"id"`
 	Name   string `json:"name,optional"`
-	Status int32  `json:"status,optional"`
+	Status int64  `json:"status,optional"`
 	Remark string `json:"remark,optional"`
 }
 
@@ -304,7 +304,7 @@ type SysUserCreateReq struct {
 	Username string  `json:"username"`
 	Password string  `json:"password"`
 	Nickname string  `json:"nickname,optional"`
-	Status   int32   `json:"status,optional"` // 1启用 0禁用
+	Status   int64   `json:"status,optional"` // 1启用 0禁用
 	RoleIds  []int64 `json:"roleIds,optional"`
 }
 
@@ -317,16 +317,16 @@ type SysUserItem struct {
 	Id               int64   `json:"id"`
 	Username         string  `json:"username"`
 	Nickname         string  `json:"nickname"`
-	Status           int32   `json:"status"`
+	Status           int64   `json:"status"`
 	RoleIds          []int64 `json:"roleIds"`
 	CreatedAt        int64   `json:"createdAt"`
-	Google2faEnabled int32   `json:"google2faEnabled"`
+	Google2faEnabled int64   `json:"google2faEnabled"`
 }
 
 type SysUserListReq struct {
 	PageReq
 	Keyword string `form:"keyword,optional"`
-	Status  int32  `form:"status,optional"`
+	Status  int64  `form:"status,optional"`
 }
 
 type SysUserListResp struct {
@@ -337,7 +337,7 @@ type SysUserListResp struct {
 type SysUserUpdateReq struct {
 	Id       int64   `json:"id"`
 	Nickname string  `json:"nickname,optional"`
-	Status   int32   `json:"status,optional"`
+	Status   int64   `json:"status,optional"`
 	RoleIds  []int64 `json:"roleIds,optional"`
 }
 
@@ -345,14 +345,14 @@ type UserItem struct {
 	Id        int64  `json:"id"`
 	Username  string `json:"username"`
 	Nickname  string `json:"nickname"`
-	Status    int32  `json:"status"`
+	Status    int64  `json:"status"`
 	CreatedAt int64  `json:"createdAt"`
 }
 
 type UserListReq struct {
 	PageReq
 	Keyword string `form:"keyword,optional"`
-	Status  int32  `form:"status,optional"`
+	Status  int64  `form:"status,optional"`
 }
 
 type UserListResp struct {
