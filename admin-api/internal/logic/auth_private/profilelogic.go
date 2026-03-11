@@ -42,6 +42,8 @@ func (l *ProfileLogic) Profile(req *types.ProfileReq) (resp *types.ProfileResp, 
 	resp = new(types.ProfileResp)
 	resp.Code = 200
 	resp.Msg = "获取成功"
-	_ = copier.Copy(resp, out)
+	_ = copier.Copy(resp.Data.User, out.User)
+	_ = copier.Copy(&resp.Data.Menus, &out.Menus)
+	_ = copier.Copy(&resp.Data.Perms, &out.Perms)
 	return resp, nil
 }

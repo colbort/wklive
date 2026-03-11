@@ -72,10 +72,11 @@ type LoginReq struct {
 }
 
 type LoginResp struct {
-	Code  int    `json:"code"`
-	Msg   string `json:"msg"`
-	Token string `json:"token"`
-	Exp   int64  `json:"exp"`
+	RespBase
+	Data struct {
+		Token string `json:"token"`
+		Exp   int64  `json:"exp"`
+	} `json:"data"`
 }
 
 type MenuNode struct {
@@ -150,9 +151,11 @@ type ProfileReq struct {
 
 type ProfileResp struct {
 	RespBase
-	User  ProfileUser `json:"user"`
-	Menus []MenuNode  `json:"menus"`
-	Perms []string    `json:"perms"`
+	Data struct {
+		User  ProfileUser `json:"user"`
+		Menus []MenuNode  `json:"menus"`
+		Perms []string    `json:"perms"`
+	} `json:"data"`
 }
 
 type ProfileUser struct {

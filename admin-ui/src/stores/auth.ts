@@ -1,5 +1,11 @@
 import { defineStore } from 'pinia'
-import { http } from '@/utils/request'
+import { get, post } from '@/utils/request'
+
+// response payload returned by login endpoint
+export type LoginResp = {
+  token: string
+  exp: number
+}
 
 export type ProfileUser = {
   id: number
@@ -23,6 +29,12 @@ export type MenuNode = {
   children?: MenuNode[]
 }
 
+export type ProfileResp = {
+  user: ProfileUser
+  menus: MenuNode[]
+  perms: string[]
+}
+
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     token: localStorage.getItem('token') || '',
@@ -37,19 +49,20 @@ export const useAuthStore = defineStore('auth', {
   },
   actions: {
     async login(payload: { username: string; password: string; googleCode?: string }) {
-      const res = await http.post('/admin/auth/login', payload)
+      const res = await post<LoginResp>('/admin/auth/login', payload)
       if (res.code !== 200) throw new Error(res.msg || 'login failed')
-      this.token = res.token
-      this.exp = res.exp
-      localStorage.setItem('token', res.token)
-      localStorage.setItem('exp', String(res.exp))
+      // payload is stored at top level since ApiResp strips `data`
+      this.token = res.data!.token
+      this.exp = res.data!.exp
+      localStorage.setItem('token', res.data!.token)
+      localStorage.setItem('exp', String(res.data!.exp))
     },
     async fetchProfile() {
-      const res = await http.get('/admin/auth/profile')
+      const res = await get<ProfileResp>('/admin/auth/profile')
       if (res.code !== 200) throw new Error(res.msg || 'profile failed')
-      this.user = res.user
-      this.menus = res.menus || []
-      this.perms = res.perms || []
+      this.user = res.data!.user
+      this.menus = res.data!.menus || []
+      this.perms = res.data!.perms || []
       this.isProfileLoaded = true
     },
     logout() {

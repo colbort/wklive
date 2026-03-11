@@ -39,10 +39,10 @@ func (l *LoginLogic) Login(req *types.LoginReq, ip string) (resp *types.LoginRes
 		return nil, err
 	}
 
-	resp = &types.LoginResp{
-		Code:  200,
-		Msg:   "登录成功",
-		Token: response.Token,
-	}
+	resp = new(types.LoginResp)
+	resp.Code = 200
+	resp.Msg = "登录成功"
+	resp.Data.Token = response.Token
+	resp.Data.Exp = response.Exp
 	return
 }

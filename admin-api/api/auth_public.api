@@ -6,10 +6,11 @@ type LoginReq {
 }
 
 type LoginResp {
-  code  int    `json:"code"`
-  msg   string `json:"msg"`
-  token string `json:"token"`
-  exp   int64  `json:"exp"`
+  RespBase
+  data { 
+    token string `json:"token"`
+    exp   int64  `json:"exp"`
+  } `json:"data"`
 }
 
 @server(

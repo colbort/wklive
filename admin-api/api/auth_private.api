@@ -26,9 +26,11 @@ type MenuNode {
 
 type ProfileResp {
   RespBase
-  user  ProfileUser `json:"user"`
-  menus []MenuNode  `json:"menus"`
-  perms []string    `json:"perms"`
+  data {
+    user  ProfileUser `json:"user"`
+    menus []MenuNode  `json:"menus"`
+    perms []string    `json:"perms"`
+  } `json:"data"`
 }
 
 
