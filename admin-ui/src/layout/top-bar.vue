@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { setLocale, type Locale } from '@/i18n'
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '@/stores'
 import { useRouter } from 'vue-router'
 import { Expand, Fold } from '@element-plus/icons-vue'
 

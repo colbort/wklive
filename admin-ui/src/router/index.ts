@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { staticRoutes } from './staticRoutes'
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '@/stores'
 import { buildRoutesFromMenus } from './dynamic'
 
 export const router = createRouter({

@@ -1,5 +1,5 @@
 import type { App, DirectiveBinding } from 'vue'
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '@/stores'
 
 export function setupPermDirective(app: App) {
   app.directive('perm', {

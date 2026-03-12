@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { computed, onMounted, ref } from 'vue'
+import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import {
   apiUserList,
@@ -19,19 +19,25 @@ import { apiRoleList} from '@/api/system/roles'
 import { ArrowDown } from '@element-plus/icons-vue'
 import { SysUserItem } from '@/types/system/users'
 import { SysRole } from '@/types/system/roles'
+import { usePagination } from '@/composables/usePagination'
+import { useLoading } from '@/composables/useLoading'
+import { useForm } from '@/composables/useForm'
+import { useConfirm } from '@/composables/useConfirm'
 
 
 const { t } = useI18n()
 
-const loading = ref(false)
+// Pagination and main list
+const { pagination, updateTotal } = usePagination(10)
 const list = ref<SysUserItem[]>([])
-const total = ref(0)
+const { loading, withLoading: withMainLoading } = useLoading()
 
-const query = reactive({
-  keyword: '',
-  status: undefined as number | undefined,
-  page: 1,
-  size: 10,
+// Query form
+const { form: queryForm } = useForm({ 
+  initialData: { 
+    keyword: '', 
+    status: undefined as number | undefined 
+  } 
 })
 
 const statusOptions = [
@@ -40,63 +46,64 @@ const statusOptions = [
 ]
 
 async function fetchList() {
-  loading.value = true
-  try {
-    const res = await apiUserList({
-      keyword: query.keyword || undefined,
-      status: query.status,
-      page: query.page,
-      size: query.size,
-    })
-    // 兼容 code=0 / 200
-    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'list failed')
-    list.value = res.data || []
-    total.value = res.total || 0
-  } catch (e: any) {
-    ElMessage.error(e?.message || '加载失败')
-  } finally {
-    loading.value = false
-  }
+  await withMainLoading(async () => {
+    try {
+      const res = await apiUserList({
+        keyword: queryForm.keyword || undefined,
+        status: queryForm.status,
+        page: pagination.page,
+        size: pagination.pageSize,
+      })
+      // 兼容 code=0 / 200
+      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'list failed')
+      list.value = res.data || []
+      updateTotal(res.total || 0)
+    } catch (e: any) {
+      ElMessage.error(e?.message || '加载失败')
+    }
+  })
 }
 
 function onSearch() {
-  query.page = 1
+  pagination.page = 1
   fetchList()
 }
 function onReset() {
-  query.keyword = ''
-  query.status = undefined
-  query.page = 1
+  queryForm.keyword = ''
+  queryForm.status = undefined
+  pagination.page = 1
   fetchList()
 }
 
 // ---------- 角色缓存（分配角色用） ----------
-const roleLoading = ref(false)
+const { loading: roleLoading, withLoading: withRoleLoading } = useLoading()
 const roles = ref<SysRole[]>([])
 async function fetchRoles() {
-  roleLoading.value = true
-  try {
-    const res = await apiRoleList({ page: 1, size: 9999, status: 1 })
-    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'role list failed')
-    roles.value = res.data || []
-  } catch (e: any) {
-    ElMessage.error(e?.message || '角色加载失败')
-  } finally {
-    roleLoading.value = false
-  }
+  await withRoleLoading(async () => {
+    try {
+      const res = await apiRoleList({ page: 1, size: 9999, status: 1 })
+      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'role list failed')
+      roles.value = res.data || []
+    } catch (e: any) {
+      ElMessage.error(e?.message || '角色加载失败')
+    }
+  })
 }
 
 // ---------- 新增/编辑 ----------
 const editVisible = ref(false)
 const editMode = ref<'create' | 'update'>('create')
-const editForm = reactive({
-  id: 0,
-  username: '',
-  password: '',
-  nickname: '',
-  status: 1,
-  roleIds: [] as number[],
+const { form: editForm } = useForm({ 
+  initialData: {
+    id: 0,
+    username: '',
+    password: '',
+    nickname: '',
+    status: 1,
+    roleIds: [] as number[],
+  } 
 })
+const { loading: editFormLoading, withLoading: withEditLoading } = useLoading()
 
 function openCreate() {
   editMode.value = 'create'
@@ -121,42 +128,46 @@ function openEdit(row: SysUserItem) {
 }
 
 async function submitEdit() {
-  try {
-    if (editMode.value === 'create') {
-      if (!editForm.username || !editForm.password) {
-        ElMessage.warning('请输入账号和密码')
-        return
+  await withEditLoading(async () => {
+    try {
+      if (editMode.value === 'create') {
+        if (!editForm.username || !editForm.password) {
+          ElMessage.warning('请输入账号和密码')
+          return
+        }
+        const res = await apiUserCreate({
+          username: editForm.username,
+          password: editForm.password,
+          nickname: editForm.nickname || undefined,
+          status: editForm.status,
+          roleIds: editForm.roleIds,
+        })
+        if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'create failed')
+        ElMessage.success('创建成功')
+      } else {
+        const res = await apiUserUpdate({
+          id: editForm.id,
+          nickname: editForm.nickname || undefined,
+          status: editForm.status,
+          roleIds: editForm.roleIds,
+        })
+        if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'update failed')
+        ElMessage.success('更新成功')
       }
-      const res = await apiUserCreate({
-        username: editForm.username,
-        password: editForm.password,
-        nickname: editForm.nickname || undefined,
-        status: editForm.status,
-        roleIds: editForm.roleIds,
-      })
-      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'create failed')
-      ElMessage.success('创建成功')
-    } else {
-      const res = await apiUserUpdate({
-        id: editForm.id,
-        nickname: editForm.nickname || undefined,
-        status: editForm.status,
-        roleIds: editForm.roleIds,
-      })
-      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'update failed')
-      ElMessage.success('更新成功')
+      editVisible.value = false
+      fetchList()
+    } catch (e: any) {
+      ElMessage.error(e?.message || '提交失败')
     }
-    editVisible.value = false
-    fetchList()
-  } catch (e: any) {
-    ElMessage.error(e?.message || '提交失败')
-  }
+  })
 }
 
 // ---------- 删除 ----------
+const { confirm } = useConfirm()
+
 async function onDelete(row: SysUserItem) {
   try {
-    await ElMessageBox.confirm(`确定删除用户「${row.username}」？`, '提示', { type: 'warning' })
+    await confirm(`确定删除用户「${row.username}」？`, { type: 'warning' })
     const res = await apiUserDelete(row.id)
     if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'delete failed')
     ElMessage.success('删除成功')
@@ -182,7 +193,10 @@ async function onToggleStatus(row: SysUserItem) {
 
 // ---------- 重置密码 ----------
 const pwdVisible = ref(false)
-const pwdForm = reactive({ id: 0, username: '', password: '' })
+const { form: pwdForm } = useForm({ 
+  initialData: { id: 0, username: '', password: '' } 
+})
+const { loading: pwdSubmitLoading, withLoading: withPwdLoading } = useLoading()
 
 function openResetPwd(row: SysUserItem) {
   pwdForm.id = row.id
@@ -190,24 +204,30 @@ function openResetPwd(row: SysUserItem) {
   pwdForm.password = ''
   pwdVisible.value = true
 }
+
 async function submitResetPwd() {
-  try {
-    if (!pwdForm.password) {
-      ElMessage.warning('请输入新密码')
-      return
+  await withPwdLoading(async () => {
+    try {
+      if (!pwdForm.password) {
+        ElMessage.warning('请输入新密码')
+        return
+      }
+      const res = await apiResetUserPwd({ id: pwdForm.id, password: pwdForm.password })
+      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'reset pwd failed')
+      ElMessage.success('密码已重置')
+      pwdVisible.value = false
+    } catch (e: any) {
+      ElMessage.error(e?.message || '重置失败')
     }
-    const res = await apiResetUserPwd({ id: pwdForm.id, password: pwdForm.password })
-    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'reset pwd failed')
-    ElMessage.success('密码已重置')
-    pwdVisible.value = false
-  } catch (e: any) {
-    ElMessage.error(e?.message || '重置失败')
-  }
+  })
 }
 
 // ---------- 分配角色 ----------
 const roleVisible = ref(false)
-const roleForm = reactive({ userId: 0, username: '', roleIds: [] as number[] })
+const { form: roleForm } = useForm({ 
+  initialData: { userId: 0, username: '', roleIds: [] as number[] } 
+})
+const { loading: roleAssignLoading, withLoading: withRoleAssignLoading } = useLoading()
 
 function openAssignRoles(row: SysUserItem) {
   roleForm.userId = row.id
@@ -215,23 +235,35 @@ function openAssignRoles(row: SysUserItem) {
   roleForm.roleIds = (row.roleIds || []).slice()
   roleVisible.value = true
 }
+
 async function submitAssignRoles() {
-  try {
-    const res = await apiAssignUserRoles({ userId: roleForm.userId, roleIds: roleForm.roleIds })
-    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'assign roles failed')
-    ElMessage.success('角色已更新')
-    roleVisible.value = false
-    fetchList()
-  } catch (e: any) {
-    ElMessage.error(e?.message || '更新失败')
-  }
+  await withRoleAssignLoading(async () => {
+    try {
+      const res = await apiAssignUserRoles({ userId: roleForm.userId, roleIds: roleForm.roleIds })
+      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'assign roles failed')
+      ElMessage.success('角色已更新')
+      roleVisible.value = false
+      fetchList()
+    } catch (e: any) {
+      ElMessage.error(e?.message || '更新失败')
+    }
+  })
 }
 
 // ---------- Google 2FA ----------
 const g2Visible = ref(false)
-const g2User = reactive({ userId: 0, username: '' })
-const g2Init = reactive({ secret: '', otpauthUrl: '', qrCode: '' })
-const g2Code = ref('')
+const { form: g2User } = useForm({ 
+  initialData: { userId: 0, username: '' } 
+})
+const { form: g2Init } = useForm({ 
+  initialData: { secret: '', otpauthUrl: '', qrCode: '' } 
+})
+const { form: g2Form } = useForm({ 
+  initialData: { code: '' } 
+})
+const { loading: g2InitLoading, withLoading: withG2InitLoading } = useLoading()
+const { loading: g2EnableLoading, withLoading: withG2EnableLoading } = useLoading()
+const { loading: g2DisableLoading, withLoading: withG2DisableLoading } = useLoading()
 
 function openGoogle2fa(row: SysUserItem) {
   g2User.userId = row.id
@@ -239,53 +271,58 @@ function openGoogle2fa(row: SysUserItem) {
   g2Init.secret = ''
   g2Init.otpauthUrl = ''
   g2Init.qrCode = ''
-  g2Code.value = ''
+  g2Form.code = ''
   g2Visible.value = true
 }
 
 async function doG2Init() {
-  try {
-    const res = await apiGoogle2faInit({ userId: g2User.userId })
-    if (res.code !== 200) throw new Error(res.msg || 'init failed')
-    g2Init.secret = res.data?.secret || ''
-    g2Init.otpauthUrl = res.data?.otpauthUrl || ''
-    g2Init.qrCode = res.data?.qrCode || ''
-    ElMessage.success('已生成绑定信息')
-  } catch (e: any) {
-    ElMessage.error(e?.message || '初始化失败')
-  }
+  await withG2InitLoading(async () => {
+    try {
+      const res = await apiGoogle2faInit({ userId: g2User.userId })
+      if (res.code !== 200) throw new Error(res.msg || 'init failed')
+      g2Init.secret = res.data?.secret || ''
+      g2Init.otpauthUrl = res.data?.otpauthUrl || ''
+      g2Init.qrCode = res.data?.qrCode || ''
+      ElMessage.success('已生成绑定信息')
+    } catch (e: any) {
+      ElMessage.error(e?.message || '初始化失败')
+    }
+  })
 }
 
 async function doG2Enable() {
-  try {
-    if (!g2Code.value) {
-      ElMessage.warning('请输入验证码')
-      return
+  await withG2EnableLoading(async () => {
+    try {
+      if (!g2Form.code) {
+        ElMessage.warning('请输入验证码')
+        return
+      }
+      const res = await apiGoogle2faEnable({ userId: g2User.userId, code: g2Form.code })
+      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'enable failed')
+      ElMessage.success('已启用 2FA')
+      fetchList()
+    } catch (e: any) {
+      ElMessage.error(e?.message || '启用失败')
     }
-    const res = await apiGoogle2faEnable({ userId: g2User.userId, code: g2Code.value })
-    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'enable failed')
-    ElMessage.success('已启用 2FA')
-    fetchList()
-  } catch (e: any) {
-    ElMessage.error(e?.message || '启用失败')
-  }
+  })
 }
 
 async function doG2Disable() {
-  try {
-    // 你接口里 code optional，按你后端规则：如果强制需要就要求输入
-    const res = await apiGoogle2faDisable({ userId: g2User.userId, code: g2Code.value || undefined })
-    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'disable failed')
-    ElMessage.success('已禁用 2FA')
-    fetchList()
-  } catch (e: any) {
-    ElMessage.error(e?.message || '禁用失败')
-  }
+  await withG2DisableLoading(async () => {
+    try {
+      const res = await apiGoogle2faDisable({ userId: g2User.userId, code: g2Form.code || undefined })
+      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'disable failed')
+      ElMessage.success('已禁用 2FA')
+      fetchList()
+    } catch (e: any) {
+      ElMessage.error(e?.message || '禁用失败')
+    }
+  })
 }
 
 async function doG2Reset() {
   try {
-    await ElMessageBox.confirm('确定重置该用户的 2FA？重置后需要重新绑定。', '提示', { type: 'warning' })
+    await confirm('确定重置该用户的 2FA？重置后需要重新绑定。', { type: 'warning' })
     const res = await apiGoogle2faReset({ userId: g2User.userId })
     if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'reset failed')
     ElMessage.success('已重置 2FA')
@@ -316,13 +353,13 @@ onMounted(async () => {
 
         <div style="display:flex; gap:8px;">
           <el-input
-            v-model="query.keyword"
+            v-model="queryForm.keyword"
             style="width: 220px"
             clearable
             placeholder="账号/昵称关键字"
             @keyup.enter="onSearch"
           />
-          <el-select v-model="query.status" style="width: 140px" clearable placeholder="状态">
+          <el-select v-model="queryForm.status" style="width: 140px" clearable placeholder="状态">
             <el-option v-for="o in statusOptions" :key="o.value" :label="o.label" :value="o.value" />
           </el-select>
 
@@ -420,11 +457,11 @@ onMounted(async () => {
       <el-pagination
         background
         layout="total, prev, pager, next, sizes"
-        :total="total"
-        :page-size="query.size"
-        :current-page="query.page"
-        @update:current-page="(p:number)=>{query.page=p; fetchList()}"
-        @update:page-size="(s:number)=>{query.size=s; query.page=1; fetchList()}"
+        :total="pagination.total"
+        :page-size="pagination.pageSize"
+        :current-page="pagination.page"
+        @update:current-page="(p:number)=>{pagination.page=p; fetchList()}"
+        @update:page-size="(s:number)=>{pagination.pageSize=s; pagination.page=1; fetchList()}"
       />
     </div>
   </el-card>
@@ -453,7 +490,7 @@ onMounted(async () => {
 
     <template #footer>
       <el-button @click="editVisible=false">{{ t('common.cancel') }}</el-button>
-      <el-button type="primary" @click="submitEdit">{{ t('common.confirm') }}</el-button>
+      <el-button type="primary" :loading="editFormLoading" @click="submitEdit">{{ t('common.confirm') }}</el-button>
     </template>
   </el-dialog>
 
@@ -470,7 +507,7 @@ onMounted(async () => {
 
     <template #footer>
       <el-button @click="pwdVisible=false">{{ t('common.cancel') }}</el-button>
-      <el-button type="primary" @click="submitResetPwd">{{ t('common.confirm') }}</el-button>
+      <el-button type="primary" :loading="pwdSubmitLoading" @click="submitResetPwd">{{ t('common.confirm') }}</el-button>
     </template>
   </el-dialog>
 
@@ -489,7 +526,7 @@ onMounted(async () => {
 
     <template #footer>
       <el-button @click="roleVisible=false">{{ t('common.cancel') }}</el-button>
-      <el-button type="primary" @click="submitAssignRoles">{{ t('common.confirm') }}</el-button>
+      <el-button type="primary" :loading="roleAssignLoading" @click="submitAssignRoles">{{ t('common.confirm') }}</el-button>
     </template>
   </el-dialog>
 
@@ -500,15 +537,15 @@ onMounted(async () => {
         <div style="margin-bottom: 8px; color:#666;">用户：{{ g2User.username }}（ID: {{ g2User.userId }}）</div>
 
         <div style="display:flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
-          <el-button v-perm="'sys:user:2fa:init'" @click="doG2Init">{{ t('perms.sys:user:2fa:init') }}</el-button>
-          <el-button type="success" v-perm="'sys:user:2fa:enable'" @click="doG2Enable">{{ t('perms.sys:user:2fa:enable') }}</el-button>
-          <el-button type="warning" v-perm="'sys:user:2fa:disable'" @click="doG2Disable">{{ t('perms.sys:user:2fa:disable') }}</el-button>
+          <el-button v-perm="'sys:user:2fa:init'" :loading="g2InitLoading" @click="doG2Init">{{ t('perms.sys:user:2fa:init') }}</el-button>
+          <el-button type="success" v-perm="'sys:user:2fa:enable'" :loading="g2EnableLoading" @click="doG2Enable">{{ t('perms.sys:user:2fa:enable') }}</el-button>
+          <el-button type="warning" v-perm="'sys:user:2fa:disable'" :loading="g2DisableLoading" @click="doG2Disable">{{ t('perms.sys:user:2fa:disable') }}</el-button>
           <el-button type="danger" v-perm="'sys:user:2fa:reset'" @click="doG2Reset">{{ t('perms.sys:user:2fa:reset') }}</el-button>
         </div>
 
         <el-form label-width="100px">
           <el-form-item label="验证码">
-            <el-input v-model="g2Code" placeholder="需要时输入 Google Authenticator 6 位码" />
+            <el-input v-model="g2Form.code" placeholder="需要时输入 Google Authenticator 6 位码" />
           </el-form-item>
 
           <el-form-item label="secret">

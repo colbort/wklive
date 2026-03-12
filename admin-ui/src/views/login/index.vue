@@ -1,31 +1,36 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '@/stores'
 import { useI18n } from 'vue-i18n'
+import { useForm, useLoading } from '@/composables'
 
 const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
 const auth = useAuthStore()
 
-const loading = ref(false)
-const form = reactive({
-  username: '',
-  password: '',
-  googleCode: '',
+const { loading, withLoading } = useLoading()
+
+// 初始化表单
+const { form } = useForm({
+  initialData: {
+    username: '',
+    password: '',
+    googleCode: '',
+  },
 })
 
 async function submit() {
-  loading.value = true
-  try {
-    await auth.login({ username: form.username, password: form.password, googleCode: form.googleCode || undefined })
+  await withLoading(async () => {
+    await auth.login({
+      username: form.username,
+      password: form.password,
+      googleCode: form.googleCode || undefined,
+    })
     await auth.fetchProfile()
     const redirect = (route.query.redirect as string) || '/home'
     router.replace(redirect)
-  } finally {
-    loading.value = false
-  }
+  })
 }
 </script>
 

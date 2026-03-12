@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { computed, reactive, ref, onMounted, nextTick } from 'vue'
-import { ElMessage, ElMessageBox, type FormInstance, type TreeInstance } from 'element-plus'
+import { ElMessage, type FormInstance, type TreeInstance } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import type { SysRole } from '../../types/system/roles'
 import type { MenuNode, PermItem } from '../../types/system/menus'
+import { usePagination, useLoading, useConfirm, useForm } from '@/composables'
 
 // ===== API =====
 import { apiRoleList, apiRoleUpdate, apiRoleDelete, apiRoleGrant, apiRoleCreate, apiRoleGrantDetail } from '@/api/system/roles'
@@ -19,33 +20,34 @@ function isSuperRole(r: SysRole | null | undefined) {
 }
 
 // ===== state =====
-const loading = ref(false)
-const tableData = ref<SysRole[]>([])
-const total = ref(0)
-
-const query = reactive({
-  keyword: '',
-  status: 0 as 0 | 1 | 2, // 0=全部, 1=启用, 2=禁用
-  page: 1,
-  size: 20,
+const { pagination, updateTotal } = usePagination(20)
+const { loading, withLoading } = useLoading()
+const { confirm } = useConfirm()
+const { form: queryForm } = useForm({
+  initialData: { keyword: '', status: 0 as 0 | 1 | 2 },
 })
+
+const tableData = ref<SysRole[]>([])
 
 // ===== list =====
 async function fetchList() {
-  loading.value = true
-  try {
-    // ✅ 兼容：后端不接受 status=0（全部）时，不传 status
-    const q: any = { ...query }
-    if (q.status === 0) delete q.status
+  await withLoading(async () => {
+    try {
+      const q: any = {
+        keyword: queryForm.keyword,
+        status: queryForm.status,
+        page: pagination.page,
+        size: pagination.pageSize,
+      }
+      if (q.status === 0) delete q.status
 
-    const resp = await apiRoleList(q)
-    tableData.value = resp.data || []
-    total.value = resp.total || 0
-  } catch (e: any) {
-    ElMessage.error(e?.message || t('common.failed'))
-  } finally {
-    loading.value = false
-  }
+      const resp = await apiRoleList(q)
+      tableData.value = resp.data || []
+      updateTotal(resp.total || 0)
+    } catch (e: any) {
+      ElMessage.error(e?.message || t('common.failed'))
+    }
+  })
 }
 
 function unwrapList(resp: any): any[] {
@@ -88,67 +90,73 @@ function buildMenuTree(flat: any[]): any[] {
   return roots
 }
 
-
 function onSearch() {
-  query.page = 1
+  pagination.page = 1
   fetchList()
 }
 
 function onReset() {
-  query.keyword = ''
-  query.status = 0
+  queryForm.keyword = ''
+  queryForm.status = 0
   onSearch()
 }
 
 // ===== create/update dialog =====
 const editVisible = ref(false)
 const editFormRef = ref<FormInstance>()
-const editForm = reactive({
-  id: 0,
-  name: '',
-  code: '',
-  remark: '',
-  status: 1 as 1 | 2, // 1启用 2禁用
+const { form: editForm } = useForm({
+  initialData: {
+    id: 0,
+    name: '',
+    code: '',
+    remark: '',
+    status: 1 as 1 | 2,
+  },
 })
 const editIsUpdate = computed(() => editForm.id > 0)
+const { loading: editLoading, withLoading: withEditLoading } = useLoading()
 
 function openCreate() {
-  Object.assign(editForm, { id: 0, name: '', code: '', remark: '', status: 1 })
+  editForm.id = 0
+  editForm.name = ''
+  editForm.code = ''
+  editForm.remark = ''
+  editForm.status = 1
   editVisible.value = true
 }
 function openUpdate(row: SysRole) {
   if (isSuperRole(row)) return
-  Object.assign(editForm, {
-    id: row.id,
-    name: row.name,
-    code: row.code,
-    remark: row.remark || '',
-    status: row.status === 2 ? 2 : 1,
-  })
+  editForm.id = row.id
+  editForm.name = row.name
+  editForm.code = row.code
+  editForm.remark = row.remark || ''
+  editForm.status = row.status === 2 ? 2 : 1
   editVisible.value = true
 }
 
 async function submitEdit() {
   await editFormRef.value?.validate?.()
-  try {
-    const payload = { ...editForm }
-    const resp = editIsUpdate.value ? await apiRoleUpdate(payload) : await apiRoleCreate(payload)
-    if (resp.code === 200) {
-      ElMessage.success(resp.msg || t('common.success'))
-      editVisible.value = false
-      fetchList()
-    } else {
-      ElMessage.error(resp.msg || t('common.failed'))
+  await withEditLoading(async () => {
+    try {
+      const payload = { ...editForm }
+      const resp = editIsUpdate.value ? await apiRoleUpdate(payload) : await apiRoleCreate(payload)
+      if (resp.code === 200) {
+        ElMessage.success(resp.msg || t('common.success'))
+        editVisible.value = false
+        fetchList()
+      } else {
+        ElMessage.error(resp.msg || t('common.failed'))
+      }
+    } catch (e: any) {
+      ElMessage.error(e?.message || t('common.failed'))
     }
-  } catch (e: any) {
-    ElMessage.error(e?.message || t('common.failed'))
-  }
+  })
 }
 
 async function onDelete(row: SysRole) {
   if (isSuperRole(row)) return
-  await ElMessageBox.confirm(t('common.confirmDelete'), t('common.tip'), { type: 'warning' })
   try {
+    await confirm(t('common.confirmDelete'), { type: 'warning' })
     const resp = await apiRoleDelete(row.id)
     if (resp.code === 200) {
       ElMessage.success(resp.msg || t('common.success'))
@@ -157,6 +165,7 @@ async function onDelete(row: SysRole) {
       ElMessage.error(resp.msg || t('common.failed'))
     }
   } catch (e: any) {
+    if (e === 'cancel') return
     ElMessage.error(e?.message || t('common.failed'))
   }
 }
@@ -165,7 +174,7 @@ async function onDelete(row: SysRole) {
 const grantVisible = ref(false)
 const currentRole = ref<SysRole | null>(null)
 
-const grantLoading = ref(false)
+const { loading: grantLoading, withLoading: withGrantLoading } = useLoading()
 const menuTree = ref<MenuNode[]>([])
 const permList = ref<PermItem[]>([])
 
@@ -181,36 +190,35 @@ function openGrant(row: SysRole) {
 }
 
 async function initGrant(roleId: number) {
-  grantLoading.value = true
-  try {
-    // ✅ 每次打开先清理（避免切角色残留）
-    menuTree.value = []
-    permList.value = []
-    checkedPermKeys.value = []
-    await nextTick()
-    menuTreeRef.value?.setCheckedKeys?.([])
+  await withGrantLoading(async () => {
+    try {
+      // ✅ 每次打开先清理（避免切角色残留）
+      menuTree.value = []
+      permList.value = []
+      checkedPermKeys.value = []
+      await nextTick()
+      menuTreeRef.value?.setCheckedKeys?.([])
 
-    const [menusResp, permsResp, detailResp] = await Promise.all([
-      apiMenuTree(),
-      apiPermList(),
-      apiRoleGrantDetail(roleId),
-    ])
+      const [menusResp, permsResp, detailResp] = await Promise.all([
+        apiMenuTree(),
+        apiPermList(),
+        apiRoleGrantDetail(roleId),
+      ])
 
-    const menusFlat = unwrapList(menusResp)
-    const perms = unwrapList(permsResp)
-    const detail = unwrapData(detailResp) || {}
+      const menusFlat = unwrapList(menusResp)
+      const perms = unwrapList(permsResp)
+      const detail = unwrapData(detailResp) || {}
 
-    menuTree.value = buildMenuTree(menusFlat)
-    permList.value = perms
+      menuTree.value = buildMenuTree(menusFlat)
+      permList.value = perms
 
-    await nextTick()
-    menuTreeRef.value?.setCheckedKeys((detail.menuIds || []) as any)
-    checkedPermKeys.value = (detail.permKeys || []) as any
-  } catch (e: any) {
-    ElMessage.error(e?.message || t('common.failed'))
-  } finally {
-    grantLoading.value = false
-  }
+      await nextTick()
+      menuTreeRef.value?.setCheckedKeys((detail.menuIds || []) as any)
+      checkedPermKeys.value = (detail.permKeys || []) as any
+    } catch (e: any) {
+      ElMessage.error(e?.message || t('common.failed'))
+    }
+  })
 }
 
 function collectCheckedMenuIds(): number[] {
@@ -251,7 +259,6 @@ async function submitGrant() {
 
 function onGrantClosed() {
   currentRole.value = null
-  grantLoading.value = false
   menuTree.value = []
   permList.value = []
   checkedPermKeys.value = []
@@ -277,9 +284,9 @@ onMounted(fetchList)
 
     <!-- 查询区 -->
     <div style="display:flex; gap:8px; align-items:center; margin-bottom:12px; flex-wrap: wrap;">
-      <el-input v-model="query.keyword" :placeholder="t('common.keyword')" clearable style="max-width:260px;" />
+      <el-input v-model="queryForm.keyword" :placeholder="t('common.keyword')" clearable style="max-width:260px;" />
 
-      <el-select v-model="query.status" style="width:140px;" :placeholder="t('common.status')" @change="onSearch">
+      <el-select v-model="queryForm.status" style="width:140px;" :placeholder="t('common.status')" @change="onSearch">
         <el-option :label="t('common.all')" :value="0" />
         <el-option :label="t('common.enabled')" :value="1" />
         <el-option :label="t('common.disabled')" :value="2" />
@@ -344,13 +351,13 @@ onMounted(fetchList)
 
     <div style="display:flex; justify-content:flex-end; margin-top:12px;">
       <el-pagination
-        v-model:current-page="query.page"
-        v-model:page-size="query.size"
-        :total="total"
+        v-model:current-page="pagination.page"
+        v-model:page-size="pagination.pageSize"
+        :total="pagination.total"
         background
         layout="total, prev, pager, next, sizes"
         @current-change="fetchList"
-        @size-change="() => { query.page = 1; fetchList() }"
+        @size-change="() => { pagination.page = 1; fetchList() }"
       />
     </div>
   </el-card>
@@ -380,7 +387,7 @@ onMounted(fetchList)
 
     <template #footer>
       <el-button @click="editVisible = false">{{ t('common.cancel') }}</el-button>
-      <el-button type="primary" @click="submitEdit">{{ t('common.confirm') }}</el-button>
+      <el-button type="primary" :loading="editLoading" @click="submitEdit">{{ t('common.confirm') }}</el-button>
     </template>
   </el-dialog>
 

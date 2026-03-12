@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
     <el-card shadow="never" class="mb-16">
-      <el-form :model="queryParams" inline label-width="80px">
+      <el-form :model="queryForm" inline label-width="80px">
         <el-form-item :label="t('common.keyword')">
           <el-input
-            v-model="queryParams.keyword"
+            v-model="queryForm.keyword"
             :placeholder="t('system.pleaseInputMenuName')"
             clearable
             style="width: 220px"
@@ -14,7 +14,7 @@
 
         <el-form-item :label="t('system.menuType')">
           <el-select
-            v-model="queryParams.menuType"
+            v-model="queryForm.menuType"
             clearable
             :placeholder="t('common.all')"
             style="width: 140px"
@@ -27,7 +27,7 @@
 
         <el-form-item :label="t('common.status')">
           <el-select
-            v-model="queryParams.status"
+            v-model="queryForm.status"
             clearable
             :placeholder="t('common.all')"
             style="width: 140px"
@@ -39,7 +39,7 @@
 
         <el-form-item :label="t('common.visible')">
           <el-select
-            v-model="queryParams.visible"
+            v-model="queryForm.visible"
             clearable
             :placeholder="t('common.all')"
             style="width: 140px"
@@ -340,9 +340,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, reactive, ref } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
+import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import {
   sysMenuCreate,
@@ -350,6 +350,9 @@ import {
   sysMenuList,
   sysMenuUpdate,
 } from '@/api/system/menus'
+import { useLoading } from '@/composables/useLoading'
+import { useForm } from '@/composables/useForm'
+import { useConfirm } from '@/composables/useConfirm'
 import type { SysMenuCreateReq, SysMenuItem, SysMenuTreeItem, SysMenuUpdateReq } from '@/types/system/menus'
 
 const { t, te } = useI18n()
@@ -370,6 +373,13 @@ type MenuFormData = {
   perms: string
 }
 
+type QueryFormData = {
+  keyword: string
+  menuType: number | undefined
+  status: number | undefined
+  visible: number | undefined
+}
+
 type RespBase = {
   code?: number
   msg?: string
@@ -385,23 +395,28 @@ type ApiResp<T = any> = {
 const iconMap = ElementPlusIconsVue as Record<string, any>
 const iconNames = Object.keys(iconMap).sort()
 
-const loading = ref(false)
-const submitLoading = ref(false)
+// Composables
+const { loading, withLoading: withMainLoading } = useLoading()
+const { loading: submitLoading, withLoading: withSubmitLoading } = useLoading()
+const { form: queryForm } = useForm<QueryFormData>({
+  initialData: {
+    keyword: '',
+    menuType: undefined,
+    status: undefined,
+    visible: undefined,
+  }
+})
+const { confirm } = useConfirm()
+
+// Dialog state
 const dialogVisible = ref(false)
 const dialogType = ref<DialogType>('add')
 const formRef = ref<FormInstance>()
 
-const queryParams = reactive({
-  page: {
-    page: 1,
-    size: 1000,
-  },
-  keyword: '',
-  menuType: undefined as number | undefined,
-  status: undefined as number | undefined,
-  visible: undefined as number | undefined,
-})
+// Query pagination
+const queryPage = { page: 1, size: 1000 }
 
+// Menu tree data
 const rawList = ref<SysMenuItem[]>([])
 const tableData = ref<SysMenuTreeItem[]>([])
 
@@ -419,7 +434,9 @@ const createDefaultForm = (): MenuFormData => ({
   perms: '',
 })
 
-const formData = reactive<MenuFormData>(createDefaultForm())
+const { form: formData } = useForm<MenuFormData>({
+  initialData: createDefaultForm()
+})
 
 const currentEditId = computed(() => formData.id ?? 0)
 
@@ -642,53 +659,59 @@ function showError(error: unknown) {
 }
 
 async function getList() {
-  loading.value = true
-  try {
-    const res = await sysMenuList({
-      page: queryParams.page.page,
-      size: queryParams.page.size,
-      keyword: queryParams.keyword || '',
-      menuType: queryParams.menuType ?? 0,
-      status: queryParams.status ?? 0,
-      visible: queryParams.visible ?? 0,
-    }) as ApiResp<SysMenuItem[]>
+  await withMainLoading(async () => {
+    try {
+      const res = await sysMenuList({
+        page: queryPage.page,
+        size: queryPage.size,
+        keyword: queryForm.keyword || '',
+        menuType: queryForm.menuType ?? 0,
+        status: queryForm.status ?? 0,
+        visible: queryForm.visible ?? 0,
+      }) as ApiResp<SysMenuItem[]>
 
-    const list = assertApiSuccess<SysMenuItem[]>(res, t('common.failed'))
-    rawList.value = Array.isArray(list) ? list : []
-    tableData.value = buildTree(rawList.value)
-  } catch (error) {
-    rawList.value = []
-    tableData.value = []
-    showError(error)
-  } finally {
-    loading.value = false
-  }
+      const list = assertApiSuccess<SysMenuItem[]>(res, t('common.failed'))
+      rawList.value = Array.isArray(list) ? list : []
+      tableData.value = buildTree(rawList.value)
+    } catch (error) {
+      rawList.value = []
+      tableData.value = []
+      showError(error)
+    }
+  })
 }
 
 function handleSearch() {
-  queryParams.page.page = 1
+  queryPage.page = 1
   getList()
 }
 
 function handleReset() {
-  queryParams.keyword = ''
-  queryParams.menuType = undefined
-  queryParams.status = undefined
-  queryParams.visible = undefined
-  queryParams.page.page = 1
-  queryParams.page.size = 20
+  queryForm.keyword = ''
+  queryForm.menuType = undefined
+  queryForm.status = undefined
+  queryForm.visible = undefined
+  queryPage.page = 1
+  queryPage.size = 20
   getList()
 }
 
+function resetFormData() {
+  Object.assign(formData, createDefaultForm())
+  nextTick(() => {
+    formRef.value?.clearValidate()
+  })
+}
+
 function handleAdd(parentId = 0) {
-  resetForm()
+  resetFormData()
   dialogType.value = 'add'
   formData.parentId = parentId
   dialogVisible.value = true
 }
 
 function handleEdit(row: SysMenuItem) {
-  resetForm()
+  resetFormData()
   dialogType.value = 'edit'
 
   Object.assign(formData, {
@@ -714,9 +737,8 @@ function handleEdit(row: SysMenuItem) {
 
 async function handleDelete(row: SysMenuItem) {
   try {
-    await ElMessageBox.confirm(
+    await confirm(
       t('system.confirmDeleteMenu', { name: getMenuTitle(row) }),
-      t('common.tip'),
       { type: 'warning' }
     )
 
@@ -726,7 +748,7 @@ async function handleDelete(row: SysMenuItem) {
     ElMessage.success(t('common.success'))
     await getList()
   } catch (error: any) {
-    if (error === 'cancel' || error === 'close') {
+    if (error === 'cancel') {
       return
     }
     showError(error)
@@ -737,51 +759,50 @@ async function handleSubmit() {
   normalizeFormByType()
   await formRef.value?.validate()
 
-  submitLoading.value = true
-  try {
-    if (dialogType.value === 'add') {
-      const payload: SysMenuCreateReq = {
-        parentId: formData.parentId,
-        name: formData.name.trim(),
-        menuType: formData.menuType,
-        path: formData.path.trim(),
-        component: formData.component.trim(),
-        icon: formData.icon.trim(),
-        sort: formData.sort,
-        visible: formData.visible,
-        status: formData.status,
-        perms: formData.perms.trim(),
+  await withSubmitLoading(async () => {
+    try {
+      if (dialogType.value === 'add') {
+        const payload: SysMenuCreateReq = {
+          parentId: formData.parentId,
+          name: formData.name.trim(),
+          menuType: formData.menuType,
+          path: formData.path.trim(),
+          component: formData.component.trim(),
+          icon: formData.icon.trim(),
+          sort: formData.sort,
+          visible: formData.visible,
+          status: formData.status,
+          perms: formData.perms.trim(),
+        }
+
+        const res = await sysMenuCreate(payload) as ApiResp
+        assertApiSuccess(res, t('common.failed'))
+      } else {
+        const payload: SysMenuUpdateReq = {
+          id: formData.id as number,
+          parentId: formData.parentId,
+          name: formData.name.trim(),
+          menuType: formData.menuType,
+          path: formData.path.trim(),
+          component: formData.component.trim(),
+          icon: formData.icon.trim(),
+          sort: formData.sort,
+          visible: formData.visible,
+          status: formData.status,
+          perms: formData.perms.trim(),
+        }
+
+        const res = await sysMenuUpdate(payload) as ApiResp
+        assertApiSuccess(res, t('common.failed'))
       }
 
-      const res = await sysMenuCreate(payload) as ApiResp
-      assertApiSuccess(res, t('common.failed'))
-    } else {
-      const payload: SysMenuUpdateReq = {
-        id: formData.id as number,
-        parentId: formData.parentId,
-        name: formData.name.trim(),
-        menuType: formData.menuType,
-        path: formData.path.trim(),
-        component: formData.component.trim(),
-        icon: formData.icon.trim(),
-        sort: formData.sort,
-        visible: formData.visible,
-        status: formData.status,
-        perms: formData.perms.trim(),
-      }
-
-      const res = await sysMenuUpdate(payload) as ApiResp
-      assertApiSuccess(res, t('common.failed'))
+      ElMessage.success(t('common.success'))
+      dialogVisible.value = false
+      await getList()
+    } catch (error) {
+      showError(error)
     }
-
-    ElMessage.success(t('common.success'))
-    dialogVisible.value = false
-    await getList()
-  } catch (error) {
-    showError(error)
-  } finally {
-    submitLoading.value = false
-  }
+  })
 }
 
 onMounted(() => {
