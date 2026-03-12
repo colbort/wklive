@@ -6,8 +6,8 @@ MODULE := wklive/services/system
 # 仓库根目录（从 services/system 往上两级）
 REPO_ROOT := ../..
 
-# proto 所在位置（属于 rpc/system 模块）
-PROTO := $(REPO_ROOT)/rpc/system/system.proto
+# proto 所在位置（属于 proto/system 模块）
+PROTO := $(REPO_ROOT)/proto/system/system.proto
 
 .PHONY: gen gen-rpc fix-imports tidy fmt clean-gen
 

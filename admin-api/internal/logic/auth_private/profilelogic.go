@@ -9,7 +9,7 @@ import (
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
 	"wklive/common/utils"
-	"wklive/rpc/system"
+	"wklive/proto/system"
 
 	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/errorx"

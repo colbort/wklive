@@ -8,7 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/rpc/system"
+	"wklive/proto/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

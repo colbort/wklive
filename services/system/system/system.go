@@ -7,7 +7,7 @@ package system
 import (
 	"context"
 
-	"wklive/rpc/system"
+	"wklive/proto/system"
 
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"

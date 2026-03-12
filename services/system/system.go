@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"wklive/rpc/system"
+	"wklive/proto/system"
 	"wklive/services/system/internal/config"
 	"wklive/services/system/internal/server"
 	"wklive/services/system/internal/svc"

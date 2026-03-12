@@ -7,7 +7,7 @@ package server
 import (
 	"context"
 
-	"wklive/rpc/system"
+	"wklive/proto/system"
 	"wklive/services/system/internal/logic"
 	"wklive/services/system/internal/svc"
 )

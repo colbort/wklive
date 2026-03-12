@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 
-	"wklive/rpc/system"
+	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
 

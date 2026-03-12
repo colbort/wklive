@@ -3531,7 +3531,7 @@ const file_system_proto_rawDesc = "" +
 	"\rSysMenuDelete\x12\x18.system.SysMenuDeleteReq\x1a\x10.system.RespBase\x12>\n" +
 	"\vSysMenuList\x12\x16.system.SysMenuListReq\x1a\x17.system.SysMenuListResp\x12A\n" +
 	"\fLoginLogList\x12\x17.system.LoginLogListReq\x1a\x18.system.LoginLogListResp\x128\n" +
-	"\tOpLogList\x12\x14.system.OpLogListReq\x1a\x15.system.OpLogListRespB\x1aZ\x18wklive/rpc/system;systemb\x06proto3"
+	"\tOpLogList\x12\x14.system.OpLogListReq\x1a\x15.system.OpLogListRespB\x1cZ\x1awklive/proto/system;systemb\x06proto3"
 
 var (
 	file_system_proto_rawDescOnce sync.Once
