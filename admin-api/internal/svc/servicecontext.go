@@ -5,7 +5,7 @@ package svc
 
 import (
 	"wklive/admin-api/internal/config"
-	"wklive/rpc/system"
+	"wklive/proto/system"
 
 	"github.com/zeromicro/go-zero/zrpc"
 )

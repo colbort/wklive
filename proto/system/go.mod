@@ -1,4 +1,4 @@
-module wklive/rpc/system
+module wklive/proto/system
 
 go 1.25.4
 

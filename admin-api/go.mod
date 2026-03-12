@@ -96,9 +96,9 @@ require (
 	google.golang.org/protobuf v1.36.11 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	wklive/common v0.0.0
-	wklive/rpc/system v0.0.0
+	wklive/proto/system v0.0.0
 )
 
 replace wklive/common => ../common
 
-replace wklive/rpc/system => ../rpc/system
+replace wklive/proto/system => ../proto/system

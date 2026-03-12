@@ -31,12 +31,12 @@ gen-rpc:
 # 修复 goctl 可能生成的错误 import 路径/别名
 fix-imports:
 	@echo "🔧 [services/system] fixing imports..."
-	@# 1) 把任何形如 ".../wklive/rpc/system" 的错误前缀统一改成 "wklive/rpc/system"
-	@# 常见错误：wklive/services/system/wklive/rpc/system
+	@# 1) 把任何形如 ".../wklive/proto/system" 的错误前缀统一改成 "wklive/proto/system"
+	@# 常见错误：wklive/services/system/wklive/proto/system
 	@find . -name "*.go" -type f -print0 | xargs -0 sed -i \
-		's#"$(MODULE)/wklive/rpc/system"#"wklive/rpc/system"#g'
+		's#"$(MODULE)/wklive/proto/system"#"wklive/proto/system"#g'
 	@find . -name "*.go" -type f -print0 | xargs -0 sed -i \
-		's#"wklive/services/system/wklive/rpc/system"#"wklive/rpc/system"#g'
+		's#"wklive/services/system/wklive/proto/system"#"wklive/proto/system"#g'
 	@# 2) 修复 goctl 生成的包别名 system_system.xxx -> system.xxx（如果有）
 	@find . -name "*.go" -type f -print0 | xargs -0 sed -i \
 		's/system_system\./system\./g'

@@ -21,8 +21,8 @@
       "name": "common"
     },
     {
-      "path": "rpc",
-      "name": "rpc"
+      "path": "proto",
+      "name": "proto"
     },
     {
       "path": ".",

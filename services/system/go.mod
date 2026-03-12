@@ -9,7 +9,7 @@ require (
 	golang.org/x/crypto v0.44.0
 	google.golang.org/grpc v1.78.0
 	wklive/common v0.0.0-00010101000000-000000000000
-	wklive/rpc/system v0.0.0-00010101000000-000000000000
+	wklive/proto/system v0.0.0-00010101000000-000000000000
 )
 
 require (
@@ -100,6 +100,6 @@ require (
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
 
-replace wklive/rpc/system => ../../rpc/system
+replace wklive/proto/system => ../../proto/system
 
 replace wklive/common => ../../common

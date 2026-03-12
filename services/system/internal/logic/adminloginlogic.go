@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"wklive/common/utils"
-	"wklive/rpc/system"
+	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
 

@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package system;
-option go_package = "wklive/rpc/system;system";
+option go_package = "wklive/proto/system;system";
 
 message Empty {}
 
