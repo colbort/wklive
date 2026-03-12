@@ -34,7 +34,7 @@ func (l *LoginLogListLogic) LoginLogList(req *types.LoginLogListReq) (resp *type
 			Size: req.Size,
 		},
 		Username: req.Username,
-		Result:   req.Result,
+		Success:  req.Success,
 	})
 	if err != nil {
 		return nil, err
@@ -42,14 +42,14 @@ func (l *LoginLogListLogic) LoginLogList(req *types.LoginLogListReq) (resp *type
 	data := make([]types.LoginLogItem, 0)
 	for _, item := range result.Data {
 		data = append(data, types.LoginLogItem{
-			Id:        item.Id,
-			UserId:    item.UserId,
-			Username:  item.Username,
-			Ip:        item.Ip,
-			Ua:        item.Ua,
-			Result:    item.Result,
-			Reason:    item.Reason,
-			CreatedAt: item.CreatedAt,
+			Id:       item.Id,
+			UserId:   item.UserId,
+			Username: item.Username,
+			Ip:       item.Ip,
+			Ua:       item.Ua,
+			Success:  item.Success,
+			Msg:      item.Msg,
+			LoginAt:  item.LoginAt,
 		})
 	}
 	return &types.LoginLogListResp{

@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 const route = useRoute()
+const { t } = useI18n()
 </script>
 
 <template>
-  <el-result icon="error" title="缺少页面组件" sub-title="后端返回的 component 在前端不存在">
+  <el-result icon="error" :title="t('error.missingComponent')" :sub-title="t('error.missingComponentSubtitle')">
     <template #extra>
       <div style="color:#666;">missing: {{ (route.meta as any).missing }}</div>
-      <el-button style="margin-top: 12px" @click="$router.push('/')">回到首页</el-button>
+      <el-button style="margin-top: 12px" @click="$router.push('/')">{{ t('common.goHome') }}</el-button>
     </template>
   </el-result>
 </template>

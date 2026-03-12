@@ -298,7 +298,7 @@ onMounted(fetchList)
 
     <!-- 表格 -->
     <el-table :data="tableData" v-loading="loading" style="width:100%;">
-      <el-table-column prop="id" label="ID" width="90" />
+      <el-table-column prop="id" :label="t('common.id')" width="90" />
       <el-table-column prop="name" :label="t('system.roleName')" min-width="160" />
       <el-table-column prop="code" :label="t('system.roleCode')" min-width="160" />
 

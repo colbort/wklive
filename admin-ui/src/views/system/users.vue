@@ -59,7 +59,7 @@ async function fetchList() {
       list.value = res.data || []
       updateTotal(res.total || 0)
     } catch (e: any) {
-      ElMessage.error(e?.message || '加载失败')
+      ElMessage.error(e?.message || t('common.loadFailed'))
     }
   })
 }
@@ -85,7 +85,7 @@ async function fetchRoles() {
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'role list failed')
       roles.value = res.data || []
     } catch (e: any) {
-      ElMessage.error(e?.message || '角色加载失败')
+      ElMessage.error(e?.message || t('common.loadFailed'))
     }
   })
 }
@@ -132,7 +132,7 @@ async function submitEdit() {
     try {
       if (editMode.value === 'create') {
         if (!editForm.username || !editForm.password) {
-          ElMessage.warning('请输入账号和密码')
+          ElMessage.warning(t('common.pleaseInputAccountAndPassword'))
           return
         }
         const res = await apiUserCreate({
@@ -143,7 +143,7 @@ async function submitEdit() {
           roleIds: editForm.roleIds,
         })
         if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'create failed')
-        ElMessage.success('创建成功')
+        ElMessage.success(t('common.success'))
       } else {
         const res = await apiUserUpdate({
           id: editForm.id,
@@ -152,12 +152,12 @@ async function submitEdit() {
           roleIds: editForm.roleIds,
         })
         if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'update failed')
-        ElMessage.success('更新成功')
+        ElMessage.success(t('common.success'))
       }
       editVisible.value = false
       fetchList()
     } catch (e: any) {
-      ElMessage.error(e?.message || '提交失败')
+      ElMessage.error(e?.message || t('common.failed'))
     }
   })
 }
@@ -167,14 +167,14 @@ const { confirm } = useConfirm()
 
 async function onDelete(row: SysUserItem) {
   try {
-    await confirm(`确定删除用户「${row.username}」？`, { type: 'warning' })
+    await confirm(t('common.confirmDeleteUser', { username: row.username }), { type: 'warning' })
     const res = await apiUserDelete(row.id)
     if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'delete failed')
-    ElMessage.success('删除成功')
+    ElMessage.success(t('common.success'))
     fetchList()
   } catch (e: any) {
     if (e === 'cancel') return
-    ElMessage.error(e?.message || '删除失败')
+    ElMessage.error(e?.message || t('common.failed'))
   }
 }
 
@@ -184,10 +184,10 @@ async function onToggleStatus(row: SysUserItem) {
     const next = row.status === 1 ? 0 : 1
     const res = await apiChangeUserStatus({ id: row.id, status: next })
     if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'status failed')
-    ElMessage.success('操作成功')
+    ElMessage.success(t('common.success'))
     fetchList()
   } catch (e: any) {
-    ElMessage.error(e?.message || '操作失败')
+    ElMessage.error(e?.message || t('common.failed'))
   }
 }
 
@@ -209,15 +209,15 @@ async function submitResetPwd() {
   await withPwdLoading(async () => {
     try {
       if (!pwdForm.password) {
-        ElMessage.warning('请输入新密码')
+        ElMessage.warning(t('common.pleaseInputNewPassword'))
         return
       }
       const res = await apiResetUserPwd({ id: pwdForm.id, password: pwdForm.password })
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'reset pwd failed')
-      ElMessage.success('密码已重置')
+      ElMessage.success(t('common.success'))
       pwdVisible.value = false
     } catch (e: any) {
-      ElMessage.error(e?.message || '重置失败')
+      ElMessage.error(e?.message || t('common.failed'))
     }
   })
 }
@@ -241,11 +241,11 @@ async function submitAssignRoles() {
     try {
       const res = await apiAssignUserRoles({ userId: roleForm.userId, roleIds: roleForm.roleIds })
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'assign roles failed')
-      ElMessage.success('角色已更新')
+      ElMessage.success(t('common.success'))
       roleVisible.value = false
       fetchList()
     } catch (e: any) {
-      ElMessage.error(e?.message || '更新失败')
+      ElMessage.error(e?.message || t('common.failed'))
     }
   })
 }
@@ -283,9 +283,9 @@ async function doG2Init() {
       g2Init.secret = res.data?.secret || ''
       g2Init.otpauthUrl = res.data?.otpauthUrl || ''
       g2Init.qrCode = res.data?.qrCode || ''
-      ElMessage.success('已生成绑定信息')
+      ElMessage.success(t('common.success'))
     } catch (e: any) {
-      ElMessage.error(e?.message || '初始化失败')
+      ElMessage.error(e?.message || t('common.failed'))
     }
   })
 }
@@ -294,15 +294,15 @@ async function doG2Enable() {
   await withG2EnableLoading(async () => {
     try {
       if (!g2Form.code) {
-        ElMessage.warning('请输入验证码')
+        ElMessage.warning(t('common.pleaseInputCode'))
         return
       }
       const res = await apiGoogle2faEnable({ userId: g2User.userId, code: g2Form.code })
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'enable failed')
-      ElMessage.success('已启用 2FA')
+      ElMessage.success(t('common.success'))
       fetchList()
     } catch (e: any) {
-      ElMessage.error(e?.message || '启用失败')
+      ElMessage.error(e?.message || t('common.failed'))
     }
   })
 }
@@ -312,24 +312,24 @@ async function doG2Disable() {
     try {
       const res = await apiGoogle2faDisable({ userId: g2User.userId, code: g2Form.code || undefined })
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'disable failed')
-      ElMessage.success('已禁用 2FA')
+      ElMessage.success(t('common.success'))
       fetchList()
     } catch (e: any) {
-      ElMessage.error(e?.message || '禁用失败')
+      ElMessage.error(e?.message || t('common.failed'))
     }
   })
 }
 
 async function doG2Reset() {
   try {
-    await confirm('确定重置该用户的 2FA？重置后需要重新绑定。', { type: 'warning' })
+    await confirm(t('common.confirmReset2fa'), { type: 'warning' })
     const res = await apiGoogle2faReset({ userId: g2User.userId })
     if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'reset failed')
-    ElMessage.success('已重置 2FA')
+    ElMessage.success(t('common.success'))
     fetchList()
   } catch (e: any) {
     if (e === 'cancel') return
-    ElMessage.error(e?.message || '重置失败')
+    ElMessage.error(e?.message || t('common.failed'))
   }
 }
 
@@ -356,10 +356,10 @@ onMounted(async () => {
             v-model="queryForm.keyword"
             style="width: 220px"
             clearable
-            placeholder="账号/昵称关键字"
+            :placeholder="t('common.accountNicknameKeyword')"
             @keyup.enter="onSearch"
           />
-          <el-select v-model="queryForm.status" style="width: 140px" clearable placeholder="状态">
+          <el-select v-model="queryForm.status" style="width: 140px" clearable :placeholder="t('common.status')">
             <el-option v-for="o in statusOptions" :key="o.value" :label="o.label" :value="o.value" />
           </el-select>
 
@@ -374,10 +374,10 @@ onMounted(async () => {
     </template>
 
     <el-table :data="list" v-loading="loading" row-key="id">
-      <el-table-column prop="id" label="ID" width="80" />
-      <el-table-column prop="username" label="账号" min-width="140" />
-      <el-table-column prop="nickname" label="昵称" min-width="160" />
-      <el-table-column label="角色" min-width="180">
+      <el-table-column prop="id" :label="t('common.id')" width="80" />
+      <el-table-column prop="username" :label="t('common.username')" min-width="140" />
+      <el-table-column prop="nickname" :label="t('common.nickname')" min-width="160" />
+      <el-table-column :label="t('common.role')" min-width="180">
         <template #default="{ row }">
           <el-tag v-for="rid in (row.roleIds || [])" :key="rid" style="margin-right:6px;">
             {{ roleNameMap.get(rid) || ('#' + rid) }}
@@ -386,15 +386,15 @@ onMounted(async () => {
         </template>
       </el-table-column>
 
-      <el-table-column label="2FA" width="110">
+      <el-table-column :label="t('common.google2fa')" width="110">
         <template #default="{ row }">
           <el-tag :type="row.google2faEnabled === 1 ? 'success' : 'info'">
-            {{ row.google2faEnabled === 1 ? '已启用' : '未启用' }}
+            {{ row.google2faEnabled === 1 ? t('common.enabled') : t('common.disabled') }}
           </el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column label="状态" width="110">
+      <el-table-column :label="t('common.status')" width="110">
         <template #default="{ row }">
           <el-tag :type="row.status === 1 ? 'success' : 'danger'">
             {{ row.status === 1 ? t('common.enabled') : t('common.disabled') }}
@@ -402,7 +402,7 @@ onMounted(async () => {
         </template>
       </el-table-column>
 
-      <el-table-column label="创建时间" min-width="170">
+      <el-table-column :label="t('common.createdAt')" min-width="170">
         <template #default="{ row }">
           <span style="color:#666;">{{ row.createdAt ? new Date(row.createdAt * 1000).toLocaleString() : '-' }}</span>
         </template>
@@ -437,7 +437,7 @@ onMounted(async () => {
           </el-dropdown-item>
 
           <el-dropdown-item divided v-perm="'sys:user:update'" @click="onToggleStatus(row)">
-            {{ row.status === 1 ? '禁用' : '启用' }}
+            {{ row.status === 1 ? t('common.disable') : t('common.enable') }}
           </el-dropdown-item>
 
           <el-dropdown-item v-perm="'sys:user:delete'" @click="onDelete(row)">
@@ -467,21 +467,21 @@ onMounted(async () => {
   </el-card>
 
   <!-- 新增/编辑 -->
-  <el-dialog v-model="editVisible" :title="editMode==='create' ? '新增用户' : '编辑用户'" width="520px">
+  <el-dialog v-model="editVisible" :title="editMode==='create' ? t('common.addUser') : t('common.editUser')" width="520px">
     <el-form label-width="90px">
-      <el-form-item label="账号" v-if="editMode==='create'">
+      <el-form-item :label="t('common.username')" v-if="editMode==='create'">
         <el-input v-model="editForm.username" />
       </el-form-item>
-      <el-form-item label="密码" v-if="editMode==='create'">
+      <el-form-item :label="t('common.password')" v-if="editMode==='create'">
         <el-input v-model="editForm.password" type="password" show-password />
       </el-form-item>
-      <el-form-item label="昵称">
+      <el-form-item :label="t('common.nickname')">
         <el-input v-model="editForm.nickname" />
       </el-form-item>
-      <el-form-item label="状态">
+      <el-form-item :label="t('common.status')">
         <el-switch v-model="editForm.status" :active-value="1" :inactive-value="0" />
       </el-form-item>
-      <el-form-item label="角色">
+      <el-form-item :label="t('common.role')">
         <el-select v-model="editForm.roleIds" multiple filterable style="width: 100%;" :loading="roleLoading">
           <el-option v-for="r in roles" :key="r.id" :label="r.name" :value="r.id" />
         </el-select>
@@ -495,12 +495,12 @@ onMounted(async () => {
   </el-dialog>
 
   <!-- 重置密码 -->
-  <el-dialog v-model="pwdVisible" title="重置密码" width="420px">
+  <el-dialog v-model="pwdVisible" :title="t('common.resetPassword')" width="420px">
     <el-form label-width="90px">
-      <el-form-item label="账号">
+      <el-form-item :label="t('common.username')">
         <el-input :model-value="pwdForm.username" disabled />
       </el-form-item>
-      <el-form-item label="新密码">
+      <el-form-item :label="t('common.newPassword')">
         <el-input v-model="pwdForm.password" type="password" show-password />
       </el-form-item>
     </el-form>
@@ -512,12 +512,12 @@ onMounted(async () => {
   </el-dialog>
 
   <!-- 分配角色 -->
-  <el-dialog v-model="roleVisible" title="分配角色" width="520px">
+  <el-dialog v-model="roleVisible" :title="t('common.assignRoles')" width="520px">
     <el-form label-width="90px">
-      <el-form-item label="账号">
+      <el-form-item :label="t('common.username')">
         <el-input :model-value="roleForm.username" disabled />
       </el-form-item>
-      <el-form-item label="角色">
+      <el-form-item :label="t('common.role')">
         <el-select v-model="roleForm.roleIds" multiple filterable style="width: 100%;" :loading="roleLoading">
           <el-option v-for="r in roles" :key="r.id" :label="r.name" :value="r.id" />
         </el-select>
@@ -531,10 +531,10 @@ onMounted(async () => {
   </el-dialog>
 
   <!-- Google 2FA -->
-  <el-dialog v-model="g2Visible" title="Google 2FA 管理" width="680px">
+  <el-dialog v-model="g2Visible" :title="t('common.google2faManage')" width="680px">
     <div style="display:flex; gap: 16px;">
       <div style="flex: 1;">
-        <div style="margin-bottom: 8px; color:#666;">用户：{{ g2User.username }}（ID: {{ g2User.userId }}）</div>
+        <div style="margin-bottom: 8px; color:#666;">{{ t('common.user') }}：{{ g2User.username }}（ID: {{ g2User.userId }}）</div>
 
         <div style="display:flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
           <el-button v-perm="'sys:user:2fa:init'" :loading="g2InitLoading" @click="doG2Init">{{ t('perms.sys:user:2fa:init') }}</el-button>
@@ -544,8 +544,8 @@ onMounted(async () => {
         </div>
 
         <el-form label-width="100px">
-          <el-form-item label="验证码">
-            <el-input v-model="g2Form.code" placeholder="需要时输入 Google Authenticator 6 位码" />
+          <el-form-item :label="t('common.code')">
+            <el-input v-model="g2Form.code" :placeholder="t('common.enterGoogleCode')" />
           </el-form-item>
 
           <el-form-item label="secret">
@@ -559,10 +559,10 @@ onMounted(async () => {
       </div>
 
       <div style="width: 260px;">
-        <div style="margin-bottom: 8px; color:#666;">二维码</div>
+        <div style="margin-bottom: 8px; color:#666;">{{ t('common.qrCode') }}</div>
         <div style="background:#f7f8fa; border:1px solid #eee; border-radius:8px; padding:12px; min-height: 240px;">
           <img v-if="g2Init.qrCode" :src="g2Init.qrCode" style="width:100%; height:auto;" />
-          <div v-else style="color:#999;">点击“2FA绑定”生成二维码</div>
+          <div v-else style="color:#999;">{{ t('common.click2faBindGenerateQrCode') }}</div>
         </div>
       </div>
     </div>

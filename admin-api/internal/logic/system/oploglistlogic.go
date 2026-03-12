@@ -34,8 +34,8 @@ func (l *OpLogListLogic) OpLogList(req *types.OpLogListReq) (resp *types.OpLogLi
 			Size: req.Size,
 		},
 		Username: req.Username,
-		Module:   req.Module,
-		Action:   req.Action,
+		Method:   req.Method,
+		Path:     req.Path,
 	})
 	if err != nil {
 		return nil, err
@@ -43,18 +43,17 @@ func (l *OpLogListLogic) OpLogList(req *types.OpLogListReq) (resp *types.OpLogLi
 	data := make([]types.OpLogItem, 0)
 	for _, item := range result.Data {
 		data = append(data, types.OpLogItem{
-			Id:         item.Id,
-			UserId:     item.UserId,
-			Username:   item.Username,
-			Module:     item.Module,
-			Action:     item.Action,
-			Method:     item.Module,
-			Path:       item.Path,
-			Ip:         item.Ip,
-			Ua:         item.Ua,
-			RespCode:   item.RespCode,
-			DurationMs: item.DurationMs,
-			CreatedAt:  item.CreatedAt,
+			Id:        item.Id,
+			UserId:    item.UserId,
+			Username:  item.Username,
+			Method:    item.Method,
+			Path:      item.Path,
+			Req:       item.Req,
+			Resp:      item.Resp,
+			Ip:        item.Ip,
+			CostMs:    item.CostMs,
+			CreatedAt: item.CreatedAt,
+			UpdatedAt: item.UpdatedAt,
 		})
 	}
 	return &types.OpLogListResp{

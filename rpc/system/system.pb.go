@@ -2805,9 +2805,9 @@ type LoginLogItem struct {
 	Username      string                 `protobuf:"bytes,3,opt,name=username,proto3" json:"username,omitempty"`
 	Ip            string                 `protobuf:"bytes,4,opt,name=ip,proto3" json:"ip,omitempty"`
 	Ua            string                 `protobuf:"bytes,5,opt,name=ua,proto3" json:"ua,omitempty"`
-	Result        int64                  `protobuf:"varint,6,opt,name=result,proto3" json:"result,omitempty"`
-	Reason        string                 `protobuf:"bytes,7,opt,name=reason,proto3" json:"reason,omitempty"`
-	CreatedAt     int64                  `protobuf:"varint,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	Success       int64                  `protobuf:"varint,6,opt,name=success,proto3" json:"success,omitempty"`
+	Msg           string                 `protobuf:"bytes,7,opt,name=msg,proto3" json:"msg,omitempty"`
+	LoginAt       int64                  `protobuf:"varint,8,opt,name=login_at,json=loginAt,proto3" json:"login_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2877,23 +2877,23 @@ func (x *LoginLogItem) GetUa() string {
 	return ""
 }
 
-func (x *LoginLogItem) GetResult() int64 {
+func (x *LoginLogItem) GetSuccess() int64 {
 	if x != nil {
-		return x.Result
+		return x.Success
 	}
 	return 0
 }
 
-func (x *LoginLogItem) GetReason() string {
+func (x *LoginLogItem) GetMsg() string {
 	if x != nil {
-		return x.Reason
+		return x.Msg
 	}
 	return ""
 }
 
-func (x *LoginLogItem) GetCreatedAt() int64 {
+func (x *LoginLogItem) GetLoginAt() int64 {
 	if x != nil {
-		return x.CreatedAt
+		return x.LoginAt
 	}
 	return 0
 }
@@ -2902,7 +2902,7 @@ type LoginLogListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	Username      string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
-	Result        int64                  `protobuf:"varint,3,opt,name=result,proto3" json:"result,omitempty"`
+	Success       int64                  `protobuf:"varint,3,opt,name=success,proto3" json:"success,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2951,9 +2951,9 @@ func (x *LoginLogListReq) GetUsername() string {
 	return ""
 }
 
-func (x *LoginLogListReq) GetResult() int64 {
+func (x *LoginLogListReq) GetSuccess() int64 {
 	if x != nil {
-		return x.Result
+		return x.Success
 	}
 	return 0
 }
@@ -3015,15 +3015,14 @@ type OpLogItem struct {
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Username      string                 `protobuf:"bytes,3,opt,name=username,proto3" json:"username,omitempty"`
-	Module        string                 `protobuf:"bytes,4,opt,name=module,proto3" json:"module,omitempty"`
-	Action        string                 `protobuf:"bytes,5,opt,name=action,proto3" json:"action,omitempty"`
-	Method        string                 `protobuf:"bytes,6,opt,name=method,proto3" json:"method,omitempty"`
-	Path          string                 `protobuf:"bytes,7,opt,name=path,proto3" json:"path,omitempty"`
+	Method        string                 `protobuf:"bytes,4,opt,name=method,proto3" json:"method,omitempty"`
+	Path          string                 `protobuf:"bytes,5,opt,name=path,proto3" json:"path,omitempty"`
+	Req           string                 `protobuf:"bytes,6,opt,name=req,proto3" json:"req,omitempty"`
+	Resp          string                 `protobuf:"bytes,7,opt,name=resp,proto3" json:"resp,omitempty"`
 	Ip            string                 `protobuf:"bytes,8,opt,name=ip,proto3" json:"ip,omitempty"`
-	Ua            string                 `protobuf:"bytes,9,opt,name=ua,proto3" json:"ua,omitempty"`
-	RespCode      int64                  `protobuf:"varint,10,opt,name=resp_code,json=respCode,proto3" json:"resp_code,omitempty"`
-	DurationMs    int64                  `protobuf:"varint,11,opt,name=duration_ms,json=durationMs,proto3" json:"duration_ms,omitempty"`
-	CreatedAt     int64                  `protobuf:"varint,12,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	CostMs        int64                  `protobuf:"varint,9,opt,name=cost_ms,json=costMs,proto3" json:"cost_ms,omitempty"`
+	CreatedAt     int64                  `protobuf:"varint,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     int64                  `protobuf:"varint,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3079,20 +3078,6 @@ func (x *OpLogItem) GetUsername() string {
 	return ""
 }
 
-func (x *OpLogItem) GetModule() string {
-	if x != nil {
-		return x.Module
-	}
-	return ""
-}
-
-func (x *OpLogItem) GetAction() string {
-	if x != nil {
-		return x.Action
-	}
-	return ""
-}
-
 func (x *OpLogItem) GetMethod() string {
 	if x != nil {
 		return x.Method
@@ -3107,6 +3092,20 @@ func (x *OpLogItem) GetPath() string {
 	return ""
 }
 
+func (x *OpLogItem) GetReq() string {
+	if x != nil {
+		return x.Req
+	}
+	return ""
+}
+
+func (x *OpLogItem) GetResp() string {
+	if x != nil {
+		return x.Resp
+	}
+	return ""
+}
+
 func (x *OpLogItem) GetIp() string {
 	if x != nil {
 		return x.Ip
@@ -3114,23 +3113,9 @@ func (x *OpLogItem) GetIp() string {
 	return ""
 }
 
-func (x *OpLogItem) GetUa() string {
+func (x *OpLogItem) GetCostMs() int64 {
 	if x != nil {
-		return x.Ua
-	}
-	return ""
-}
-
-func (x *OpLogItem) GetRespCode() int64 {
-	if x != nil {
-		return x.RespCode
-	}
-	return 0
-}
-
-func (x *OpLogItem) GetDurationMs() int64 {
-	if x != nil {
-		return x.DurationMs
+		return x.CostMs
 	}
 	return 0
 }
@@ -3142,12 +3127,19 @@ func (x *OpLogItem) GetCreatedAt() int64 {
 	return 0
 }
 
+func (x *OpLogItem) GetUpdatedAt() int64 {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return 0
+}
+
 type OpLogListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	Username      string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
-	Module        string                 `protobuf:"bytes,3,opt,name=module,proto3" json:"module,omitempty"`
-	Action        string                 `protobuf:"bytes,4,opt,name=action,proto3" json:"action,omitempty"`
+	Method        string                 `protobuf:"bytes,3,opt,name=method,proto3" json:"method,omitempty"`
+	Path          string                 `protobuf:"bytes,4,opt,name=path,proto3" json:"path,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3196,16 +3188,16 @@ func (x *OpLogListReq) GetUsername() string {
 	return ""
 }
 
-func (x *OpLogListReq) GetModule() string {
+func (x *OpLogListReq) GetMethod() string {
 	if x != nil {
-		return x.Module
+		return x.Method
 	}
 	return ""
 }
 
-func (x *OpLogListReq) GetAction() string {
+func (x *OpLogListReq) GetPath() string {
 	if x != nil {
-		return x.Action
+		return x.Path
 	}
 	return ""
 }
@@ -3469,45 +3461,43 @@ const file_system_proto_rawDesc = "" +
 	"\avisible\x18\x05 \x01(\x03R\avisible\"`\n" +
 	"\x0fSysMenuListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12'\n" +
-	"\x04data\x18\x04 \x03(\v2\x13.system.SysMenuItemR\x04data\"\xc2\x01\n" +
+	"\x04data\x18\x04 \x03(\v2\x13.system.SysMenuItemR\x04data\"\xba\x01\n" +
 	"\fLoginLogItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1a\n" +
 	"\busername\x18\x03 \x01(\tR\busername\x12\x0e\n" +
 	"\x02ip\x18\x04 \x01(\tR\x02ip\x12\x0e\n" +
-	"\x02ua\x18\x05 \x01(\tR\x02ua\x12\x16\n" +
-	"\x06result\x18\x06 \x01(\x03R\x06result\x12\x16\n" +
-	"\x06reason\x18\a \x01(\tR\x06reason\x12\x1d\n" +
-	"\n" +
-	"created_at\x18\b \x01(\x03R\tcreatedAt\"j\n" +
+	"\x02ua\x18\x05 \x01(\tR\x02ua\x12\x18\n" +
+	"\asuccess\x18\x06 \x01(\x03R\asuccess\x12\x10\n" +
+	"\x03msg\x18\a \x01(\tR\x03msg\x12\x19\n" +
+	"\blogin_at\x18\b \x01(\x03R\aloginAt\"l\n" +
 	"\x0fLoginLogListReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.system.PageReqR\x04page\x12\x1a\n" +
-	"\busername\x18\x02 \x01(\tR\busername\x12\x16\n" +
-	"\x06result\x18\x03 \x01(\x03R\x06result\"b\n" +
+	"\busername\x18\x02 \x01(\tR\busername\x12\x18\n" +
+	"\asuccess\x18\x03 \x01(\x03R\asuccess\"b\n" +
 	"\x10LoginLogListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12(\n" +
-	"\x04data\x18\x04 \x03(\v2\x14.system.LoginLogItemR\x04data\"\xa9\x02\n" +
+	"\x04data\x18\x04 \x03(\v2\x14.system.LoginLogItemR\x04data\"\x89\x02\n" +
 	"\tOpLogItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1a\n" +
 	"\busername\x18\x03 \x01(\tR\busername\x12\x16\n" +
-	"\x06module\x18\x04 \x01(\tR\x06module\x12\x16\n" +
-	"\x06action\x18\x05 \x01(\tR\x06action\x12\x16\n" +
-	"\x06method\x18\x06 \x01(\tR\x06method\x12\x12\n" +
-	"\x04path\x18\a \x01(\tR\x04path\x12\x0e\n" +
-	"\x02ip\x18\b \x01(\tR\x02ip\x12\x0e\n" +
-	"\x02ua\x18\t \x01(\tR\x02ua\x12\x1b\n" +
-	"\tresp_code\x18\n" +
-	" \x01(\x03R\brespCode\x12\x1f\n" +
-	"\vduration_ms\x18\v \x01(\x03R\n" +
-	"durationMs\x12\x1d\n" +
+	"\x06method\x18\x04 \x01(\tR\x06method\x12\x12\n" +
+	"\x04path\x18\x05 \x01(\tR\x04path\x12\x10\n" +
+	"\x03req\x18\x06 \x01(\tR\x03req\x12\x12\n" +
+	"\x04resp\x18\a \x01(\tR\x04resp\x12\x0e\n" +
+	"\x02ip\x18\b \x01(\tR\x02ip\x12\x17\n" +
+	"\acost_ms\x18\t \x01(\x03R\x06costMs\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\f \x01(\x03R\tcreatedAt\"\x7f\n" +
+	"created_at\x18\n" +
+	" \x01(\x03R\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\v \x01(\x03R\tupdatedAt\"{\n" +
 	"\fOpLogListReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.system.PageReqR\x04page\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x12\x16\n" +
-	"\x06module\x18\x03 \x01(\tR\x06module\x12\x16\n" +
-	"\x06action\x18\x04 \x01(\tR\x06action\"\\\n" +
+	"\x06method\x18\x03 \x01(\tR\x06method\x12\x12\n" +
+	"\x04path\x18\x04 \x01(\tR\x04path\"\\\n" +
 	"\rOpLogListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12%\n" +
 	"\x04data\x18\x04 \x03(\v2\x11.system.OpLogItemR\x04data2\xea\r\n" +

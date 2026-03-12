@@ -217,15 +217,15 @@ type LoginLogItem {
   username  string `json:"username"`
   ip        string `json:"ip"`
   ua        string `json:"ua"`
-  result    int64  `json:"result"`
-  reason    string `json:"reason,optional"`
-  createdAt int64  `json:"createdAt"`
+  success   int64  `json:"success"`
+  msg    string `json:"msg,optional"`
+  loginAt int64  `json:"loginAt"`
 }
 
 type LoginLogListReq {
   PageReq
   username string `form:"username,optional"`
-  result   int64  `form:"result,optional"`
+  success   int64  `form:"success,optional"`
 }
 
 type LoginLogListResp {
@@ -237,22 +237,21 @@ type OpLogItem {
   id         int64  `json:"id"`
   userId     int64  `json:"userId"`
   username   string `json:"username"`
-  module     string `json:"module"`
-  action     string `json:"action"`
   method     string `json:"method"`
   path       string `json:"path"`
+  req        string `json:"req,optional"`
+  resp       string `json:"resp,optional"`
   ip         string `json:"ip"`
-  ua         string `json:"ua"`
-  respCode   int64  `json:"respCode"`
-  durationMs int64  `json:"durationMs"`
+  costMs     int64  `json:"costMs"`
   createdAt  int64  `json:"createdAt"`
+  updatedAt  int64  `json:"updatedAt"`
 }
 
 type OpLogListReq {
   PageReq
   username string `form:"username,optional"`
-  module   string `form:"module,optional"`
-  action   string `form:"action,optional"`
+  method   string `form:"method,optional"`
+  path     string `form:"path,optional"`
 }
 
 type OpLogListResp {

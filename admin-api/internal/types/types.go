@@ -44,20 +44,20 @@ type Google2FAResetReq struct {
 }
 
 type LoginLogItem struct {
-	Id        int64  `json:"id"`
-	UserId    int64  `json:"userId"`
-	Username  string `json:"username"`
-	Ip        string `json:"ip"`
-	Ua        string `json:"ua"`
-	Result    int64  `json:"result"`
-	Reason    string `json:"reason,optional"`
-	CreatedAt int64  `json:"createdAt"`
+	Id       int64  `json:"id"`
+	UserId   int64  `json:"userId"`
+	Username string `json:"username"`
+	Ip       string `json:"ip"`
+	Ua       string `json:"ua"`
+	Success  int64  `json:"success"`
+	Msg      string `json:"msg,optional"`
+	LoginAt  int64  `json:"loginAt"`
 }
 
 type LoginLogListReq struct {
 	PageReq
 	Username string `form:"username,optional"`
-	Result   int64  `form:"result,optional"`
+	Success  int64  `form:"success,optional"`
 }
 
 type LoginLogListResp struct {
@@ -95,25 +95,24 @@ type MenuNode struct {
 }
 
 type OpLogItem struct {
-	Id         int64  `json:"id"`
-	UserId     int64  `json:"userId"`
-	Username   string `json:"username"`
-	Module     string `json:"module"`
-	Action     string `json:"action"`
-	Method     string `json:"method"`
-	Path       string `json:"path"`
-	Ip         string `json:"ip"`
-	Ua         string `json:"ua"`
-	RespCode   int64  `json:"respCode"`
-	DurationMs int64  `json:"durationMs"`
-	CreatedAt  int64  `json:"createdAt"`
+	Id        int64  `json:"id"`
+	UserId    int64  `json:"userId"`
+	Username  string `json:"username"`
+	Method    string `json:"method"`
+	Path      string `json:"path"`
+	Req       string `json:"req,optional"`
+	Resp      string `json:"resp,optional"`
+	Ip        string `json:"ip"`
+	CostMs    int64  `json:"costMs"`
+	CreatedAt int64  `json:"createdAt"`
+	UpdatedAt int64  `json:"updatedAt"`
 }
 
 type OpLogListReq struct {
 	PageReq
 	Username string `form:"username,optional"`
-	Module   string `form:"module,optional"`
-	Action   string `form:"action,optional"`
+	Method   string `form:"method,optional"`
+	Path     string `form:"path,optional"`
 }
 
 type OpLogListResp struct {
