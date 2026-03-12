@@ -3,6 +3,12 @@ export default {
         title: 'Admin Console',
         logout: 'Logout',
         language: 'Language',
+        chinese: 'Chinese',
+        english: 'English',
+        changePassword: 'Change Password',
+        settings: 'Settings',
+        newPasswordPrompt: 'Please input new password',
+        newNicknamePrompt: 'Please input new nickname',
     },
     route: {
         home: 'Home',

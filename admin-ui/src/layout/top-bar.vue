@@ -4,7 +4,8 @@ import { useI18n } from 'vue-i18n'
 import { setLocale, type Locale } from '@/i18n'
 import { useAuthStore } from '@/stores'
 import { useRouter } from 'vue-router'
-import { Expand, Fold } from '@element-plus/icons-vue'
+import { Expand, Fold, User, Setting, Lock } from '@element-plus/icons-vue'
+import { ElMessageBox } from 'element-plus'
 
 const props = defineProps<{
   collapsed: boolean
@@ -22,6 +23,51 @@ const current = computed(() => locale.value as Locale)
 
 function change(val: Locale) {
   setLocale(val)
+}
+
+function changePassword() {
+  // TODO: 实现修改密码逻辑，可以打开一个对话框
+  ElMessageBox.prompt(t('app.newPasswordPrompt'), t('app.changePassword'), {
+    confirmButtonText: t('common.confirm'),
+    cancelButtonText: t('common.cancel'),
+    inputPattern: /^.{6,}$/,
+    inputErrorMessage: t('app.passwordMinLength'),
+  }).then(({ value }) => {
+    // 调用API修改密码
+    console.log('新密码:', value)
+    // auth.changePassword(value)
+  }).catch(() => {
+    console.log('取消修改密码')
+  })
+}
+
+function openSettings() {
+  // TODO: 实现设置逻辑，可以打开一个对话框修改昵称等
+  ElMessageBox.prompt(t('app.newNicknamePrompt'), t('app.settings'), {
+    confirmButtonText: t('common.confirm'),
+    cancelButtonText: t('common.cancel'),
+    inputValue: auth.user?.nickname || '',
+  }).then(({ value }) => {
+    // 调用API修改昵称
+    console.log('新昵称:', value)
+    // auth.updateProfile({ nickname: value })
+  }).catch(() => {
+    console.log('取消设置')
+  })
+}
+
+function handleCommand(command: string) {
+  switch (command) {
+    case 'changePassword':
+      changePassword()
+      break
+    case 'settings':
+      openSettings()
+      break
+    case 'logout':
+      logout()
+      break
+  }
 }
 
 function logout() {
@@ -48,13 +94,25 @@ function logout() {
         <el-option label="English" value="en-US" />
       </el-select>
 
-      <el-dropdown>
-        <span class="user">
-          {{ auth.user?.nickname || auth.user?.username || '-' }}
-        </span>
+      <el-dropdown trigger="contextmenu" @command="handleCommand">
+        <div class="avatar-container">
+          <el-avatar :size="32" :src="auth.user?.avatar" :alt="auth.user?.nickname || auth.user?.username">
+            <el-icon><User /></el-icon>
+          </el-avatar>
+        </div>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item @click="logout">{{ t('app.logout') }}</el-dropdown-item>
+            <el-dropdown-item command="changePassword">
+              <el-icon><Lock /></el-icon>
+              {{ t('app.changePassword') }}
+            </el-dropdown-item>
+            <el-dropdown-item command="settings">
+              <el-icon><Setting /></el-icon>
+              {{ t('app.settings') }}
+            </el-dropdown-item>
+            <el-dropdown-item command="logout" divided>
+              {{ t('app.logout') }}
+            </el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -67,6 +125,6 @@ function logout() {
 .left { display:flex; align-items:center; gap: 8px; min-width: 0; }
 .title { font-weight: 700; }
 .right { display:flex; gap: 12px; align-items:center; }
-.user { cursor: pointer; }
+.avatar-container { cursor: pointer; }
 .collapse-btn { padding: 6px; }
 </style>

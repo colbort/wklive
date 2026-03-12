@@ -3,6 +3,12 @@ export default {
         title: '后台管理',
         logout: '退出登录',
         language: '语言',
+        chinese: '中文',
+        english: '英文',
+        changePassword: '修改密码',
+        settings: '设置',
+        newPasswordPrompt: '请输入新密码',
+        newNicknamePrompt: '请输入新昵称',
     },
     route: {
         home: '首页',
