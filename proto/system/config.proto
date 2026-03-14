@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package system;
+
+option go_package = "wklive/proto/system;system";
+
+enum SysConfigType {
+  UNKNOWN = 0;
+  OBJECT_STORAGE = 1; // 对象存储配置
+}
+
+// 阿里云 OSS配置
+message AliyunOssConfig {
+  string endpoint = 1;
+  string access_key_id = 2;
+  string access_key_secret = 3;
+  string bucket_name = 4;
+  string bucket_url = 5;
+}
+
+// 腾讯云 COS配置
+message TencentCosConfig {
+  string region = 1;
+  string secret_id = 2;
+  string secret_key = 3;
+  string bucket_name = 4;
+  string bucket_url = 5;
+}
+
+// MINIO配置
+message MinioConfig {
+  string endpoint = 1;
+  string access_key_id = 2;
+  string access_key_secret = 3;
+  string bucket_name = 4;
+  string bucket_url = 5;
+}
+
+// 对象存储配置
+message ObjectStorageConfig {
+    AliyunOssConfig aliyun_oss = 1;
+    TencentCosConfig tencent_cos = 2;
+    MinioConfig minio = 3;  
+    int64 oss_type = 4; // 1阿里云OSS 2腾讯云COS 3MINIO
+    string oss_domain = 5; // 对象存储访问域名（可选，优先使用bucket_url）
+}
+

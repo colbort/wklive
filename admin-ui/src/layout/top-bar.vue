@@ -56,6 +56,31 @@ function openSettings() {
   })
 }
 
+// Avatar upload handling
+function onAvatarClick() {
+  // trigger hidden file input
+  const input = document.createElement('input')
+  input.type = 'file'
+  input.accept = 'image/*'
+  input.onchange = async (e: Event) => {
+    const file = (e.target as HTMLInputElement).files?.[0]
+    if (!file) return
+    // TODO: upload file to server and get URL
+    const reader = new FileReader()
+    reader.onload = () => {
+      const url = reader.result as string
+      console.log('selected avatar base64', url)
+      // directly mutate store user so avatar updates immediately
+      if (auth.user) {
+        auth.user.avatar = url
+      }
+      // TODO: upload file to server and replace with real URL if necessary
+    }
+    reader.readAsDataURL(file)
+  }
+  input.click()
+}
+
 function handleCommand(command: string) {
   switch (command) {
     case 'changePassword':
@@ -95,7 +120,7 @@ function logout() {
       </el-select>
 
       <el-dropdown trigger="contextmenu" @command="handleCommand">
-        <div class="avatar-container">
+        <div class="avatar-container" :title="t('app.uploadAvatar')" @click.stop.prevent="onAvatarClick">
           <el-avatar :size="32" :src="auth.user?.avatar" :alt="auth.user?.nickname || auth.user?.username">
             <el-icon><User /></el-icon>
           </el-avatar>

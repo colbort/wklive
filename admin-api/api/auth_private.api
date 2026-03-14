@@ -33,6 +33,14 @@ type ProfileResp {
   } `json:"data"`
 }
 
+type UploadFileReq {}
+
+type UploadFileResp {
+    RespBase
+    Data {
+        Url string `json:"url"`
+    } `json:"data"`
+}
 
 
 @server(
@@ -43,5 +51,10 @@ type ProfileResp {
 service admin {
   @handler Profile
   get /auth/profile (ProfileReq) returns (ProfileResp)
+  // 下面的两个文件上传接口，之生成一次，之后不再生成所以需要注释掉
+  // @handler UploadAvatar
+  // post /upload/avatar (UploadFileReq) returns (UploadFileResp)
+  // @handler UploadFile
+  // post /upload/file (UploadFileReq) returns (UploadFileResp)
 }
 

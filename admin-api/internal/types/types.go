@@ -343,6 +343,16 @@ type SysUserUpdateReq struct {
 	RoleIds  []int64 `json:"roleIds,optional"`
 }
 
+type UploadFileReq struct {
+}
+
+type UploadFileResp struct {
+	RespBase
+	Data struct {
+		Url string `json:"url"`
+	} `json:"data"`
+}
+
 type UserItem struct {
 	Id        int64  `json:"id"`
 	Username  string `json:"username"`

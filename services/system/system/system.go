@@ -36,6 +36,16 @@ type (
 	ProfileUser            = system.ProfileUser
 	ResetUserPwdReq        = system.ResetUserPwdReq
 	RespBase               = system.RespBase
+	SysConfigByKeysReq     = system.SysConfigByKeysReq
+	SysConfigByKeysResp    = system.SysConfigByKeysResp
+	SysConfigCreateReq     = system.SysConfigCreateReq
+	SysConfigDeleteReq     = system.SysConfigDeleteReq
+	SysConfigDetailReq     = system.SysConfigDetailReq
+	SysConfigDetailResp    = system.SysConfigDetailResp
+	SysConfigItem          = system.SysConfigItem
+	SysConfigListReq       = system.SysConfigListReq
+	SysConfigListResp      = system.SysConfigListResp
+	SysConfigUpdateReq     = system.SysConfigUpdateReq
 	SysMenuCreateReq       = system.SysMenuCreateReq
 	SysMenuDeleteReq       = system.SysMenuDeleteReq
 	SysMenuItem            = system.SysMenuItem
@@ -121,6 +131,18 @@ type (
 		LoginLogList(ctx context.Context, in *LoginLogListReq, opts ...grpc.CallOption) (*LoginLogListResp, error)
 		// 操作日志
 		OpLogList(ctx context.Context, in *OpLogListReq, opts ...grpc.CallOption) (*OpLogListResp, error)
+		// 新增系统配置
+		SysConfigCreate(ctx context.Context, in *SysConfigCreateReq, opts ...grpc.CallOption) (*RespBase, error)
+		// 更新系统配置
+		SysConfigUpdate(ctx context.Context, in *SysConfigUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
+		// 删除系统配置
+		SysConfigDelete(ctx context.Context, in *SysConfigDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
+		// 获取系统配置列表
+		SysConfigList(ctx context.Context, in *SysConfigListReq, opts ...grpc.CallOption) (*SysConfigListResp, error)
+		// 获取系统配置详情
+		SysConfigDetail(ctx context.Context, in *SysConfigDetailReq, opts ...grpc.CallOption) (*SysConfigDetailResp, error)
+		// 获取系统配置根据keys
+		SysConfigByKeys(ctx context.Context, in *SysConfigByKeysReq, opts ...grpc.CallOption) (*SysConfigByKeysResp, error)
 	}
 
 	defaultSystem struct {
@@ -300,4 +322,40 @@ func (m *defaultSystem) LoginLogList(ctx context.Context, in *LoginLogListReq, o
 func (m *defaultSystem) OpLogList(ctx context.Context, in *OpLogListReq, opts ...grpc.CallOption) (*OpLogListResp, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.OpLogList(ctx, in, opts...)
+}
+
+// 新增系统配置
+func (m *defaultSystem) SysConfigCreate(ctx context.Context, in *SysConfigCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysConfigCreate(ctx, in, opts...)
+}
+
+// 更新系统配置
+func (m *defaultSystem) SysConfigUpdate(ctx context.Context, in *SysConfigUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysConfigUpdate(ctx, in, opts...)
+}
+
+// 删除系统配置
+func (m *defaultSystem) SysConfigDelete(ctx context.Context, in *SysConfigDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysConfigDelete(ctx, in, opts...)
+}
+
+// 获取系统配置列表
+func (m *defaultSystem) SysConfigList(ctx context.Context, in *SysConfigListReq, opts ...grpc.CallOption) (*SysConfigListResp, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysConfigList(ctx, in, opts...)
+}
+
+// 获取系统配置详情
+func (m *defaultSystem) SysConfigDetail(ctx context.Context, in *SysConfigDetailReq, opts ...grpc.CallOption) (*SysConfigDetailResp, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysConfigDetail(ctx, in, opts...)
+}
+
+// 获取系统配置根据keys
+func (m *defaultSystem) SysConfigByKeys(ctx context.Context, in *SysConfigByKeysReq, opts ...grpc.CallOption) (*SysConfigByKeysResp, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysConfigByKeys(ctx, in, opts...)
 }

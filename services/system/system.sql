@@ -175,7 +175,7 @@ CREATE TABLE sys_config (
   id BIGINT AUTO_INCREMENT,
 
   config_key VARCHAR(64) UNIQUE,
-  config_value TEXT,
+  config_value JSON,
   remark VARCHAR(255),
 
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,

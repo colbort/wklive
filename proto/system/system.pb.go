@@ -9,6 +9,7 @@ package system
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	structpb "google.golang.org/protobuf/types/known/structpb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -3254,11 +3255,563 @@ func (x *OpLogListResp) GetData() []*OpLogItem {
 	return nil
 }
 
+type SysConfigCreateReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ConfigKey     string                 `protobuf:"bytes,1,opt,name=config_key,json=configKey,proto3" json:"config_key,omitempty"`
+	ConfigValue   *structpb.Struct       `protobuf:"bytes,2,opt,name=config_value,json=configValue,proto3" json:"config_value,omitempty"`
+	Remark        string                 `protobuf:"bytes,3,opt,name=remark,proto3" json:"remark,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SysConfigCreateReq) Reset() {
+	*x = SysConfigCreateReq{}
+	mi := &file_system_proto_msgTypes[49]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SysConfigCreateReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SysConfigCreateReq) ProtoMessage() {}
+
+func (x *SysConfigCreateReq) ProtoReflect() protoreflect.Message {
+	mi := &file_system_proto_msgTypes[49]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SysConfigCreateReq.ProtoReflect.Descriptor instead.
+func (*SysConfigCreateReq) Descriptor() ([]byte, []int) {
+	return file_system_proto_rawDescGZIP(), []int{49}
+}
+
+func (x *SysConfigCreateReq) GetConfigKey() string {
+	if x != nil {
+		return x.ConfigKey
+	}
+	return ""
+}
+
+func (x *SysConfigCreateReq) GetConfigValue() *structpb.Struct {
+	if x != nil {
+		return x.ConfigValue
+	}
+	return nil
+}
+
+func (x *SysConfigCreateReq) GetRemark() string {
+	if x != nil {
+		return x.Remark
+	}
+	return ""
+}
+
+type SysConfigUpdateReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	ConfigKey     string                 `protobuf:"bytes,2,opt,name=config_key,json=configKey,proto3" json:"config_key,omitempty"`
+	ConfigValue   *structpb.Struct       `protobuf:"bytes,3,opt,name=config_value,json=configValue,proto3" json:"config_value,omitempty"`
+	Remark        string                 `protobuf:"bytes,4,opt,name=remark,proto3" json:"remark,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SysConfigUpdateReq) Reset() {
+	*x = SysConfigUpdateReq{}
+	mi := &file_system_proto_msgTypes[50]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SysConfigUpdateReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SysConfigUpdateReq) ProtoMessage() {}
+
+func (x *SysConfigUpdateReq) ProtoReflect() protoreflect.Message {
+	mi := &file_system_proto_msgTypes[50]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SysConfigUpdateReq.ProtoReflect.Descriptor instead.
+func (*SysConfigUpdateReq) Descriptor() ([]byte, []int) {
+	return file_system_proto_rawDescGZIP(), []int{50}
+}
+
+func (x *SysConfigUpdateReq) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *SysConfigUpdateReq) GetConfigKey() string {
+	if x != nil {
+		return x.ConfigKey
+	}
+	return ""
+}
+
+func (x *SysConfigUpdateReq) GetConfigValue() *structpb.Struct {
+	if x != nil {
+		return x.ConfigValue
+	}
+	return nil
+}
+
+func (x *SysConfigUpdateReq) GetRemark() string {
+	if x != nil {
+		return x.Remark
+	}
+	return ""
+}
+
+type SysConfigDeleteReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SysConfigDeleteReq) Reset() {
+	*x = SysConfigDeleteReq{}
+	mi := &file_system_proto_msgTypes[51]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SysConfigDeleteReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SysConfigDeleteReq) ProtoMessage() {}
+
+func (x *SysConfigDeleteReq) ProtoReflect() protoreflect.Message {
+	mi := &file_system_proto_msgTypes[51]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SysConfigDeleteReq.ProtoReflect.Descriptor instead.
+func (*SysConfigDeleteReq) Descriptor() ([]byte, []int) {
+	return file_system_proto_rawDescGZIP(), []int{51}
+}
+
+func (x *SysConfigDeleteReq) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type SysConfigItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	ConfigKey     string                 `protobuf:"bytes,2,opt,name=config_key,json=configKey,proto3" json:"config_key,omitempty"`
+	ConfigValue   *structpb.Struct       `protobuf:"bytes,3,opt,name=config_value,json=configValue,proto3" json:"config_value,omitempty"`
+	Remark        string                 `protobuf:"bytes,4,opt,name=remark,proto3" json:"remark,omitempty"`
+	CreatedAt     int64                  `protobuf:"varint,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SysConfigItem) Reset() {
+	*x = SysConfigItem{}
+	mi := &file_system_proto_msgTypes[52]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SysConfigItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SysConfigItem) ProtoMessage() {}
+
+func (x *SysConfigItem) ProtoReflect() protoreflect.Message {
+	mi := &file_system_proto_msgTypes[52]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SysConfigItem.ProtoReflect.Descriptor instead.
+func (*SysConfigItem) Descriptor() ([]byte, []int) {
+	return file_system_proto_rawDescGZIP(), []int{52}
+}
+
+func (x *SysConfigItem) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *SysConfigItem) GetConfigKey() string {
+	if x != nil {
+		return x.ConfigKey
+	}
+	return ""
+}
+
+func (x *SysConfigItem) GetConfigValue() *structpb.Struct {
+	if x != nil {
+		return x.ConfigValue
+	}
+	return nil
+}
+
+func (x *SysConfigItem) GetRemark() string {
+	if x != nil {
+		return x.Remark
+	}
+	return ""
+}
+
+func (x *SysConfigItem) GetCreatedAt() int64 {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return 0
+}
+
+type SysConfigListReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	Keyword       string                 `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SysConfigListReq) Reset() {
+	*x = SysConfigListReq{}
+	mi := &file_system_proto_msgTypes[53]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SysConfigListReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SysConfigListReq) ProtoMessage() {}
+
+func (x *SysConfigListReq) ProtoReflect() protoreflect.Message {
+	mi := &file_system_proto_msgTypes[53]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SysConfigListReq.ProtoReflect.Descriptor instead.
+func (*SysConfigListReq) Descriptor() ([]byte, []int) {
+	return file_system_proto_rawDescGZIP(), []int{53}
+}
+
+func (x *SysConfigListReq) GetPage() *PageReq {
+	if x != nil {
+		return x.Page
+	}
+	return nil
+}
+
+func (x *SysConfigListReq) GetKeyword() string {
+	if x != nil {
+		return x.Keyword
+	}
+	return ""
+}
+
+type SysConfigListResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          []*SysConfigItem       `protobuf:"bytes,4,rep,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SysConfigListResp) Reset() {
+	*x = SysConfigListResp{}
+	mi := &file_system_proto_msgTypes[54]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SysConfigListResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SysConfigListResp) ProtoMessage() {}
+
+func (x *SysConfigListResp) ProtoReflect() protoreflect.Message {
+	mi := &file_system_proto_msgTypes[54]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SysConfigListResp.ProtoReflect.Descriptor instead.
+func (*SysConfigListResp) Descriptor() ([]byte, []int) {
+	return file_system_proto_rawDescGZIP(), []int{54}
+}
+
+func (x *SysConfigListResp) GetBase() *RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *SysConfigListResp) GetData() []*SysConfigItem {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type SysConfigDetailReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
+	ConfigKey     *string                `protobuf:"bytes,2,opt,name=config_key,json=configKey,proto3,oneof" json:"config_key,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SysConfigDetailReq) Reset() {
+	*x = SysConfigDetailReq{}
+	mi := &file_system_proto_msgTypes[55]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SysConfigDetailReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SysConfigDetailReq) ProtoMessage() {}
+
+func (x *SysConfigDetailReq) ProtoReflect() protoreflect.Message {
+	mi := &file_system_proto_msgTypes[55]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SysConfigDetailReq.ProtoReflect.Descriptor instead.
+func (*SysConfigDetailReq) Descriptor() ([]byte, []int) {
+	return file_system_proto_rawDescGZIP(), []int{55}
+}
+
+func (x *SysConfigDetailReq) GetId() int64 {
+	if x != nil && x.Id != nil {
+		return *x.Id
+	}
+	return 0
+}
+
+func (x *SysConfigDetailReq) GetConfigKey() string {
+	if x != nil && x.ConfigKey != nil {
+		return *x.ConfigKey
+	}
+	return ""
+}
+
+type SysConfigDetailResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          *SysConfigItem         `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SysConfigDetailResp) Reset() {
+	*x = SysConfigDetailResp{}
+	mi := &file_system_proto_msgTypes[56]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SysConfigDetailResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SysConfigDetailResp) ProtoMessage() {}
+
+func (x *SysConfigDetailResp) ProtoReflect() protoreflect.Message {
+	mi := &file_system_proto_msgTypes[56]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SysConfigDetailResp.ProtoReflect.Descriptor instead.
+func (*SysConfigDetailResp) Descriptor() ([]byte, []int) {
+	return file_system_proto_rawDescGZIP(), []int{56}
+}
+
+func (x *SysConfigDetailResp) GetBase() *RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *SysConfigDetailResp) GetData() *SysConfigItem {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type SysConfigByKeysReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ConfigKeys    []string               `protobuf:"bytes,1,rep,name=config_keys,json=configKeys,proto3" json:"config_keys,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SysConfigByKeysReq) Reset() {
+	*x = SysConfigByKeysReq{}
+	mi := &file_system_proto_msgTypes[57]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SysConfigByKeysReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SysConfigByKeysReq) ProtoMessage() {}
+
+func (x *SysConfigByKeysReq) ProtoReflect() protoreflect.Message {
+	mi := &file_system_proto_msgTypes[57]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SysConfigByKeysReq.ProtoReflect.Descriptor instead.
+func (*SysConfigByKeysReq) Descriptor() ([]byte, []int) {
+	return file_system_proto_rawDescGZIP(), []int{57}
+}
+
+func (x *SysConfigByKeysReq) GetConfigKeys() []string {
+	if x != nil {
+		return x.ConfigKeys
+	}
+	return nil
+}
+
+type SysConfigByKeysResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          []*SysConfigItem       `protobuf:"bytes,3,rep,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SysConfigByKeysResp) Reset() {
+	*x = SysConfigByKeysResp{}
+	mi := &file_system_proto_msgTypes[58]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SysConfigByKeysResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SysConfigByKeysResp) ProtoMessage() {}
+
+func (x *SysConfigByKeysResp) ProtoReflect() protoreflect.Message {
+	mi := &file_system_proto_msgTypes[58]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SysConfigByKeysResp.ProtoReflect.Descriptor instead.
+func (*SysConfigByKeysResp) Descriptor() ([]byte, []int) {
+	return file_system_proto_rawDescGZIP(), []int{58}
+}
+
+func (x *SysConfigByKeysResp) GetBase() *RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *SysConfigByKeysResp) GetData() []*SysConfigItem {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
 var File_system_proto protoreflect.FileDescriptor
 
 const file_system_proto_rawDesc = "" +
 	"\n" +
-	"\fsystem.proto\x12\x06system\"\a\n" +
+	"\fsystem.proto\x12\x06system\x1a\x1cgoogle/protobuf/struct.proto\"\a\n" +
 	"\x05Empty\"\x88\x01\n" +
 	"\rAdminLoginReq\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
@@ -3500,7 +4053,49 @@ const file_system_proto_rawDesc = "" +
 	"\x04path\x18\x04 \x01(\tR\x04path\"\\\n" +
 	"\rOpLogListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12%\n" +
-	"\x04data\x18\x04 \x03(\v2\x11.system.OpLogItemR\x04data2\xea\r\n" +
+	"\x04data\x18\x04 \x03(\v2\x11.system.OpLogItemR\x04data\"\x87\x01\n" +
+	"\x12SysConfigCreateReq\x12\x1d\n" +
+	"\n" +
+	"config_key\x18\x01 \x01(\tR\tconfigKey\x12:\n" +
+	"\fconfig_value\x18\x02 \x01(\v2\x17.google.protobuf.StructR\vconfigValue\x12\x16\n" +
+	"\x06remark\x18\x03 \x01(\tR\x06remark\"\x97\x01\n" +
+	"\x12SysConfigUpdateReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
+	"\n" +
+	"config_key\x18\x02 \x01(\tR\tconfigKey\x12:\n" +
+	"\fconfig_value\x18\x03 \x01(\v2\x17.google.protobuf.StructR\vconfigValue\x12\x16\n" +
+	"\x06remark\x18\x04 \x01(\tR\x06remark\"$\n" +
+	"\x12SysConfigDeleteReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xb1\x01\n" +
+	"\rSysConfigItem\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
+	"\n" +
+	"config_key\x18\x02 \x01(\tR\tconfigKey\x12:\n" +
+	"\fconfig_value\x18\x03 \x01(\v2\x17.google.protobuf.StructR\vconfigValue\x12\x16\n" +
+	"\x06remark\x18\x04 \x01(\tR\x06remark\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\x05 \x01(\x03R\tcreatedAt\"Q\n" +
+	"\x10SysConfigListReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.system.PageReqR\x04page\x12\x18\n" +
+	"\akeyword\x18\x02 \x01(\tR\akeyword\"d\n" +
+	"\x11SysConfigListResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12)\n" +
+	"\x04data\x18\x04 \x03(\v2\x15.system.SysConfigItemR\x04data\"c\n" +
+	"\x12SysConfigDetailReq\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"config_key\x18\x02 \x01(\tH\x01R\tconfigKey\x88\x01\x01B\x05\n" +
+	"\x03_idB\r\n" +
+	"\v_config_key\"f\n" +
+	"\x13SysConfigDetailResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12)\n" +
+	"\x04data\x18\x03 \x01(\v2\x15.system.SysConfigItemR\x04data\"5\n" +
+	"\x12SysConfigByKeysReq\x12\x1f\n" +
+	"\vconfig_keys\x18\x01 \x03(\tR\n" +
+	"configKeys\"f\n" +
+	"\x13SysConfigByKeysResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12)\n" +
+	"\x04data\x18\x03 \x03(\v2\x15.system.SysConfigItemR\x04data2\x8b\x11\n" +
 	"\x06System\x12;\n" +
 	"\n" +
 	"AdminLogin\x12\x15.system.AdminLoginReq\x1a\x16.system.AdminLoginResp\x125\n" +
@@ -3531,7 +4126,13 @@ const file_system_proto_rawDesc = "" +
 	"\rSysMenuDelete\x12\x18.system.SysMenuDeleteReq\x1a\x10.system.RespBase\x12>\n" +
 	"\vSysMenuList\x12\x16.system.SysMenuListReq\x1a\x17.system.SysMenuListResp\x12A\n" +
 	"\fLoginLogList\x12\x17.system.LoginLogListReq\x1a\x18.system.LoginLogListResp\x128\n" +
-	"\tOpLogList\x12\x14.system.OpLogListReq\x1a\x15.system.OpLogListRespB\x1cZ\x1awklive/proto/system;systemb\x06proto3"
+	"\tOpLogList\x12\x14.system.OpLogListReq\x1a\x15.system.OpLogListResp\x12?\n" +
+	"\x0fSysConfigCreate\x12\x1a.system.SysConfigCreateReq\x1a\x10.system.RespBase\x12?\n" +
+	"\x0fSysConfigUpdate\x12\x1a.system.SysConfigUpdateReq\x1a\x10.system.RespBase\x12?\n" +
+	"\x0fSysConfigDelete\x12\x1a.system.SysConfigDeleteReq\x1a\x10.system.RespBase\x12D\n" +
+	"\rSysConfigList\x12\x18.system.SysConfigListReq\x1a\x19.system.SysConfigListResp\x12J\n" +
+	"\x0fSysConfigDetail\x12\x1a.system.SysConfigDetailReq\x1a\x1b.system.SysConfigDetailResp\x12J\n" +
+	"\x0fSysConfigByKeys\x12\x1a.system.SysConfigByKeysReq\x1a\x1b.system.SysConfigByKeysRespB\x1cZ\x1awklive/proto/system;systemb\x06proto3"
 
 var (
 	file_system_proto_rawDescOnce sync.Once
@@ -3545,7 +4146,7 @@ func file_system_proto_rawDescGZIP() []byte {
 	return file_system_proto_rawDescData
 }
 
-var file_system_proto_msgTypes = make([]protoimpl.MessageInfo, 49)
+var file_system_proto_msgTypes = make([]protoimpl.MessageInfo, 59)
 var file_system_proto_goTypes = []any{
 	(*Empty)(nil),                  // 0: system.Empty
 	(*AdminLoginReq)(nil),          // 1: system.AdminLoginReq
@@ -3596,6 +4197,17 @@ var file_system_proto_goTypes = []any{
 	(*OpLogItem)(nil),              // 46: system.OpLogItem
 	(*OpLogListReq)(nil),           // 47: system.OpLogListReq
 	(*OpLogListResp)(nil),          // 48: system.OpLogListResp
+	(*SysConfigCreateReq)(nil),     // 49: system.SysConfigCreateReq
+	(*SysConfigUpdateReq)(nil),     // 50: system.SysConfigUpdateReq
+	(*SysConfigDeleteReq)(nil),     // 51: system.SysConfigDeleteReq
+	(*SysConfigItem)(nil),          // 52: system.SysConfigItem
+	(*SysConfigListReq)(nil),       // 53: system.SysConfigListReq
+	(*SysConfigListResp)(nil),      // 54: system.SysConfigListResp
+	(*SysConfigDetailReq)(nil),     // 55: system.SysConfigDetailReq
+	(*SysConfigDetailResp)(nil),    // 56: system.SysConfigDetailResp
+	(*SysConfigByKeysReq)(nil),     // 57: system.SysConfigByKeysReq
+	(*SysConfigByKeysResp)(nil),    // 58: system.SysConfigByKeysResp
+	(*structpb.Struct)(nil),        // 59: google.protobuf.Struct
 }
 var file_system_proto_depIdxs = []int32{
 	14, // 0: system.AdminLoginResp.base:type_name -> system.RespBase
@@ -3625,67 +4237,89 @@ var file_system_proto_depIdxs = []int32{
 	15, // 24: system.OpLogListReq.page:type_name -> system.PageReq
 	14, // 25: system.OpLogListResp.base:type_name -> system.RespBase
 	46, // 26: system.OpLogListResp.data:type_name -> system.OpLogItem
-	1,  // 27: system.System.AdminLogin:input_type -> system.AdminLoginReq
-	3,  // 28: system.System.GetProfile:input_type -> system.ProfileReq
-	9,  // 29: system.System.Google2FAInit:input_type -> system.Google2FAInitReq
-	11, // 30: system.System.Google2FAEnable:input_type -> system.Google2FAEnableReq
-	12, // 31: system.System.Google2FADisable:input_type -> system.Google2FADisableReq
-	13, // 32: system.System.Google2FAReset:input_type -> system.Google2FAResetReq
-	17, // 33: system.System.SysUserList:input_type -> system.SysUserListReq
-	19, // 34: system.System.SysUserDetail:input_type -> system.SysUserDetailReq
-	21, // 35: system.System.SysUserCreate:input_type -> system.SysUserCreateReq
-	22, // 36: system.System.SysUserUpdate:input_type -> system.SysUserUpdateReq
-	23, // 37: system.System.SysUserDelete:input_type -> system.SysUserDeleteReq
-	24, // 38: system.System.ChangeUserStatus:input_type -> system.ChangeUserStatusReq
-	25, // 39: system.System.ResetUserPwd:input_type -> system.ResetUserPwdReq
-	26, // 40: system.System.AssignUserRoles:input_type -> system.AssignUserRolesReq
-	28, // 41: system.System.SysRoleList:input_type -> system.SysRoleListReq
-	30, // 42: system.System.SysRoleCreate:input_type -> system.SysRoleCreateReq
-	31, // 43: system.System.SysRoleUpdate:input_type -> system.SysRoleUpdateReq
-	32, // 44: system.System.SysRoleDelete:input_type -> system.SysRoleDeleteReq
-	33, // 45: system.System.SysRoleGrant:input_type -> system.SysRoleGrantReq
-	34, // 46: system.System.SysRoleGrantDetail:input_type -> system.SysRoleGrantDetailReq
-	0,  // 47: system.System.SysPermList:input_type -> system.Empty
-	0,  // 48: system.System.GetMenuTree:input_type -> system.Empty
-	38, // 49: system.System.SysMenuCreate:input_type -> system.SysMenuCreateReq
-	39, // 50: system.System.SysMenuUpdate:input_type -> system.SysMenuUpdateReq
-	40, // 51: system.System.SysMenuDelete:input_type -> system.SysMenuDeleteReq
-	41, // 52: system.System.SysMenuList:input_type -> system.SysMenuListReq
-	44, // 53: system.System.LoginLogList:input_type -> system.LoginLogListReq
-	47, // 54: system.System.OpLogList:input_type -> system.OpLogListReq
-	2,  // 55: system.System.AdminLogin:output_type -> system.AdminLoginResp
-	6,  // 56: system.System.GetProfile:output_type -> system.ProfileResp
-	10, // 57: system.System.Google2FAInit:output_type -> system.Google2FAInitResp
-	14, // 58: system.System.Google2FAEnable:output_type -> system.RespBase
-	14, // 59: system.System.Google2FADisable:output_type -> system.RespBase
-	14, // 60: system.System.Google2FAReset:output_type -> system.RespBase
-	18, // 61: system.System.SysUserList:output_type -> system.SysUserListResp
-	20, // 62: system.System.SysUserDetail:output_type -> system.SysUserDetailResp
-	14, // 63: system.System.SysUserCreate:output_type -> system.RespBase
-	14, // 64: system.System.SysUserUpdate:output_type -> system.RespBase
-	14, // 65: system.System.SysUserDelete:output_type -> system.RespBase
-	14, // 66: system.System.ChangeUserStatus:output_type -> system.RespBase
-	14, // 67: system.System.ResetUserPwd:output_type -> system.RespBase
-	14, // 68: system.System.AssignUserRoles:output_type -> system.RespBase
-	29, // 69: system.System.SysRoleList:output_type -> system.SysRoleListResp
-	14, // 70: system.System.SysRoleCreate:output_type -> system.RespBase
-	14, // 71: system.System.SysRoleUpdate:output_type -> system.RespBase
-	14, // 72: system.System.SysRoleDelete:output_type -> system.RespBase
-	14, // 73: system.System.SysRoleGrant:output_type -> system.RespBase
-	35, // 74: system.System.SysRoleGrantDetail:output_type -> system.SysRoleGrantDetailResp
-	37, // 75: system.System.SysPermList:output_type -> system.SysPermListResp
-	8,  // 76: system.System.GetMenuTree:output_type -> system.SysMenuTreeResp
-	14, // 77: system.System.SysMenuCreate:output_type -> system.RespBase
-	14, // 78: system.System.SysMenuUpdate:output_type -> system.RespBase
-	14, // 79: system.System.SysMenuDelete:output_type -> system.RespBase
-	42, // 80: system.System.SysMenuList:output_type -> system.SysMenuListResp
-	45, // 81: system.System.LoginLogList:output_type -> system.LoginLogListResp
-	48, // 82: system.System.OpLogList:output_type -> system.OpLogListResp
-	55, // [55:83] is the sub-list for method output_type
-	27, // [27:55] is the sub-list for method input_type
-	27, // [27:27] is the sub-list for extension type_name
-	27, // [27:27] is the sub-list for extension extendee
-	0,  // [0:27] is the sub-list for field type_name
+	59, // 27: system.SysConfigCreateReq.config_value:type_name -> google.protobuf.Struct
+	59, // 28: system.SysConfigUpdateReq.config_value:type_name -> google.protobuf.Struct
+	59, // 29: system.SysConfigItem.config_value:type_name -> google.protobuf.Struct
+	15, // 30: system.SysConfigListReq.page:type_name -> system.PageReq
+	14, // 31: system.SysConfigListResp.base:type_name -> system.RespBase
+	52, // 32: system.SysConfigListResp.data:type_name -> system.SysConfigItem
+	14, // 33: system.SysConfigDetailResp.base:type_name -> system.RespBase
+	52, // 34: system.SysConfigDetailResp.data:type_name -> system.SysConfigItem
+	14, // 35: system.SysConfigByKeysResp.base:type_name -> system.RespBase
+	52, // 36: system.SysConfigByKeysResp.data:type_name -> system.SysConfigItem
+	1,  // 37: system.System.AdminLogin:input_type -> system.AdminLoginReq
+	3,  // 38: system.System.GetProfile:input_type -> system.ProfileReq
+	9,  // 39: system.System.Google2FAInit:input_type -> system.Google2FAInitReq
+	11, // 40: system.System.Google2FAEnable:input_type -> system.Google2FAEnableReq
+	12, // 41: system.System.Google2FADisable:input_type -> system.Google2FADisableReq
+	13, // 42: system.System.Google2FAReset:input_type -> system.Google2FAResetReq
+	17, // 43: system.System.SysUserList:input_type -> system.SysUserListReq
+	19, // 44: system.System.SysUserDetail:input_type -> system.SysUserDetailReq
+	21, // 45: system.System.SysUserCreate:input_type -> system.SysUserCreateReq
+	22, // 46: system.System.SysUserUpdate:input_type -> system.SysUserUpdateReq
+	23, // 47: system.System.SysUserDelete:input_type -> system.SysUserDeleteReq
+	24, // 48: system.System.ChangeUserStatus:input_type -> system.ChangeUserStatusReq
+	25, // 49: system.System.ResetUserPwd:input_type -> system.ResetUserPwdReq
+	26, // 50: system.System.AssignUserRoles:input_type -> system.AssignUserRolesReq
+	28, // 51: system.System.SysRoleList:input_type -> system.SysRoleListReq
+	30, // 52: system.System.SysRoleCreate:input_type -> system.SysRoleCreateReq
+	31, // 53: system.System.SysRoleUpdate:input_type -> system.SysRoleUpdateReq
+	32, // 54: system.System.SysRoleDelete:input_type -> system.SysRoleDeleteReq
+	33, // 55: system.System.SysRoleGrant:input_type -> system.SysRoleGrantReq
+	34, // 56: system.System.SysRoleGrantDetail:input_type -> system.SysRoleGrantDetailReq
+	0,  // 57: system.System.SysPermList:input_type -> system.Empty
+	0,  // 58: system.System.GetMenuTree:input_type -> system.Empty
+	38, // 59: system.System.SysMenuCreate:input_type -> system.SysMenuCreateReq
+	39, // 60: system.System.SysMenuUpdate:input_type -> system.SysMenuUpdateReq
+	40, // 61: system.System.SysMenuDelete:input_type -> system.SysMenuDeleteReq
+	41, // 62: system.System.SysMenuList:input_type -> system.SysMenuListReq
+	44, // 63: system.System.LoginLogList:input_type -> system.LoginLogListReq
+	47, // 64: system.System.OpLogList:input_type -> system.OpLogListReq
+	49, // 65: system.System.SysConfigCreate:input_type -> system.SysConfigCreateReq
+	50, // 66: system.System.SysConfigUpdate:input_type -> system.SysConfigUpdateReq
+	51, // 67: system.System.SysConfigDelete:input_type -> system.SysConfigDeleteReq
+	53, // 68: system.System.SysConfigList:input_type -> system.SysConfigListReq
+	55, // 69: system.System.SysConfigDetail:input_type -> system.SysConfigDetailReq
+	57, // 70: system.System.SysConfigByKeys:input_type -> system.SysConfigByKeysReq
+	2,  // 71: system.System.AdminLogin:output_type -> system.AdminLoginResp
+	6,  // 72: system.System.GetProfile:output_type -> system.ProfileResp
+	10, // 73: system.System.Google2FAInit:output_type -> system.Google2FAInitResp
+	14, // 74: system.System.Google2FAEnable:output_type -> system.RespBase
+	14, // 75: system.System.Google2FADisable:output_type -> system.RespBase
+	14, // 76: system.System.Google2FAReset:output_type -> system.RespBase
+	18, // 77: system.System.SysUserList:output_type -> system.SysUserListResp
+	20, // 78: system.System.SysUserDetail:output_type -> system.SysUserDetailResp
+	14, // 79: system.System.SysUserCreate:output_type -> system.RespBase
+	14, // 80: system.System.SysUserUpdate:output_type -> system.RespBase
+	14, // 81: system.System.SysUserDelete:output_type -> system.RespBase
+	14, // 82: system.System.ChangeUserStatus:output_type -> system.RespBase
+	14, // 83: system.System.ResetUserPwd:output_type -> system.RespBase
+	14, // 84: system.System.AssignUserRoles:output_type -> system.RespBase
+	29, // 85: system.System.SysRoleList:output_type -> system.SysRoleListResp
+	14, // 86: system.System.SysRoleCreate:output_type -> system.RespBase
+	14, // 87: system.System.SysRoleUpdate:output_type -> system.RespBase
+	14, // 88: system.System.SysRoleDelete:output_type -> system.RespBase
+	14, // 89: system.System.SysRoleGrant:output_type -> system.RespBase
+	35, // 90: system.System.SysRoleGrantDetail:output_type -> system.SysRoleGrantDetailResp
+	37, // 91: system.System.SysPermList:output_type -> system.SysPermListResp
+	8,  // 92: system.System.GetMenuTree:output_type -> system.SysMenuTreeResp
+	14, // 93: system.System.SysMenuCreate:output_type -> system.RespBase
+	14, // 94: system.System.SysMenuUpdate:output_type -> system.RespBase
+	14, // 95: system.System.SysMenuDelete:output_type -> system.RespBase
+	42, // 96: system.System.SysMenuList:output_type -> system.SysMenuListResp
+	45, // 97: system.System.LoginLogList:output_type -> system.LoginLogListResp
+	48, // 98: system.System.OpLogList:output_type -> system.OpLogListResp
+	14, // 99: system.System.SysConfigCreate:output_type -> system.RespBase
+	14, // 100: system.System.SysConfigUpdate:output_type -> system.RespBase
+	14, // 101: system.System.SysConfigDelete:output_type -> system.RespBase
+	54, // 102: system.System.SysConfigList:output_type -> system.SysConfigListResp
+	56, // 103: system.System.SysConfigDetail:output_type -> system.SysConfigDetailResp
+	58, // 104: system.System.SysConfigByKeys:output_type -> system.SysConfigByKeysResp
+	71, // [71:105] is the sub-list for method output_type
+	37, // [37:71] is the sub-list for method input_type
+	37, // [37:37] is the sub-list for extension type_name
+	37, // [37:37] is the sub-list for extension extendee
+	0,  // [0:37] is the sub-list for field type_name
 }
 
 func init() { file_system_proto_init() }
@@ -3693,13 +4327,14 @@ func file_system_proto_init() {
 	if File_system_proto != nil {
 		return
 	}
+	file_system_proto_msgTypes[55].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_system_proto_rawDesc), len(file_system_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   49,
+			NumMessages:   59,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

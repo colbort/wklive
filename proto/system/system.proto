@@ -1,6 +1,9 @@
 syntax = "proto3";
 
 package system;
+
+import "google/protobuf/struct.proto";
+
 option go_package = "wklive/proto/system;system";
 
 message Empty {}
@@ -255,6 +258,39 @@ message OpLogListResp {
   repeated OpLogItem data = 4; 
 }
 
+message SysConfigCreateReq {
+  string config_key = 1;
+  google.protobuf.Struct config_value = 2;
+  string remark = 3;
+}
+
+message SysConfigUpdateReq {
+  int64 id = 1;
+  string config_key = 2;
+  google.protobuf.Struct config_value = 3;
+  string remark = 4;
+}
+
+message SysConfigDeleteReq { int64 id = 1; }
+
+message SysConfigItem {
+  int64 id = 1;
+  string config_key = 2;
+  google.protobuf.Struct config_value = 3;
+  string remark = 4;
+  int64 created_at = 5;
+}
+
+message SysConfigListReq { PageReq page = 1; string keyword = 2; }
+message SysConfigListResp { RespBase base = 1; repeated SysConfigItem data = 4; }
+
+message SysConfigDetailReq { optional int64 id = 1; optional string config_key = 2; }
+
+message SysConfigDetailResp { RespBase base = 1; SysConfigItem data = 3; }
+
+message SysConfigByKeysReq { repeated string config_keys = 1; }
+message SysConfigByKeysResp { RespBase base = 1; repeated SysConfigItem data = 3; }
+
 //////////////////////
 // Service
 //////////////////////
@@ -318,5 +354,17 @@ service System {
   rpc LoginLogList(LoginLogListReq) returns (LoginLogListResp);
   // 操作日志
   rpc OpLogList(OpLogListReq) returns (OpLogListResp);
+  // 新增系统配置
+  rpc SysConfigCreate(SysConfigCreateReq) returns (RespBase);
+  // 更新系统配置
+  rpc SysConfigUpdate(SysConfigUpdateReq) returns (RespBase);
+  // 删除系统配置
+  rpc SysConfigDelete(SysConfigDeleteReq) returns (RespBase);
+  // 获取系统配置列表
+  rpc SysConfigList(SysConfigListReq) returns (SysConfigListResp);
+  // 获取系统配置详情
+  rpc SysConfigDetail(SysConfigDetailReq) returns (SysConfigDetailResp);
+  // 获取系统配置根据keys
+  rpc SysConfigByKeys(SysConfigByKeysReq) returns (SysConfigByKeysResp);
 }
 

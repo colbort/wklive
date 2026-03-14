@@ -9,6 +9,7 @@ export default {
         settings: 'Settings',
         newPasswordPrompt: 'Please input new password',
         newNicknamePrompt: 'Please input new nickname',
+        uploadAvatar: 'Upload Avatar',
     },
   route: {
     home: 'Home',

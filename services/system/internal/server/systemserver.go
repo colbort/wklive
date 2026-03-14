@@ -190,3 +190,39 @@ func (s *SystemServer) OpLogList(ctx context.Context, in *system.OpLogListReq) (
 	l := logic.NewOpLogListLogic(ctx, s.svcCtx)
 	return l.OpLogList(in)
 }
+
+// 新增系统配置
+func (s *SystemServer) SysConfigCreate(ctx context.Context, in *system.SysConfigCreateReq) (*system.RespBase, error) {
+	l := logic.NewSysConfigCreateLogic(ctx, s.svcCtx)
+	return l.SysConfigCreate(in)
+}
+
+// 更新系统配置
+func (s *SystemServer) SysConfigUpdate(ctx context.Context, in *system.SysConfigUpdateReq) (*system.RespBase, error) {
+	l := logic.NewSysConfigUpdateLogic(ctx, s.svcCtx)
+	return l.SysConfigUpdate(in)
+}
+
+// 删除系统配置
+func (s *SystemServer) SysConfigDelete(ctx context.Context, in *system.SysConfigDeleteReq) (*system.RespBase, error) {
+	l := logic.NewSysConfigDeleteLogic(ctx, s.svcCtx)
+	return l.SysConfigDelete(in)
+}
+
+// 获取系统配置列表
+func (s *SystemServer) SysConfigList(ctx context.Context, in *system.SysConfigListReq) (*system.SysConfigListResp, error) {
+	l := logic.NewSysConfigListLogic(ctx, s.svcCtx)
+	return l.SysConfigList(in)
+}
+
+// 获取系统配置详情
+func (s *SystemServer) SysConfigDetail(ctx context.Context, in *system.SysConfigDetailReq) (*system.SysConfigDetailResp, error) {
+	l := logic.NewSysConfigDetailLogic(ctx, s.svcCtx)
+	return l.SysConfigDetail(in)
+}
+
+// 获取系统配置根据keys
+func (s *SystemServer) SysConfigByKeys(ctx context.Context, in *system.SysConfigByKeysReq) (*system.SysConfigByKeysResp, error) {
+	l := logic.NewSysConfigByKeysLogic(ctx, s.svcCtx)
+	return l.SysConfigByKeys(in)
+}

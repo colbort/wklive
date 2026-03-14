@@ -6,6 +6,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"net/http"
+	"path/filepath"
 	"strings"
 
 	"wklive/admin-api/internal/config"
@@ -32,6 +34,20 @@ func main() {
 
 	server := rest.MustNewServer(c.RestConf, rest.WithCors("*"))
 	defer server.Stop()
+
+	// 添加静态文件路由，提供头像访问
+	server.AddRoute(rest.Route{
+		Method: http.MethodGet,
+		Path:   "/avatars/*filepath",
+		Handler: func(w http.ResponseWriter, r *http.Request) {
+			// 提取文件名（去掉 /avatars/ 前缀）
+			fname := strings.TrimPrefix(r.URL.Path, "/avatars/")
+			// 构建本地路径
+			path := filepath.Join("/var/www/avatars", fname)
+			// 服务文件
+			http.ServeFile(w, r, path)
+		},
+	})
 
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)

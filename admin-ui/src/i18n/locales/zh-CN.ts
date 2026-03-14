@@ -9,6 +9,7 @@ export default {
     settings: '设置',
     newPasswordPrompt: '请输入新密码',
     newNicknamePrompt: '请输入新昵称',
+    uploadAvatar: '上传头像',
   },
   route: {
     home: '首页',

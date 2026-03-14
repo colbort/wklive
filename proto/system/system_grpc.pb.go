@@ -47,6 +47,12 @@ const (
 	System_SysMenuList_FullMethodName        = "/system.System/SysMenuList"
 	System_LoginLogList_FullMethodName       = "/system.System/LoginLogList"
 	System_OpLogList_FullMethodName          = "/system.System/OpLogList"
+	System_SysConfigCreate_FullMethodName    = "/system.System/SysConfigCreate"
+	System_SysConfigUpdate_FullMethodName    = "/system.System/SysConfigUpdate"
+	System_SysConfigDelete_FullMethodName    = "/system.System/SysConfigDelete"
+	System_SysConfigList_FullMethodName      = "/system.System/SysConfigList"
+	System_SysConfigDetail_FullMethodName    = "/system.System/SysConfigDetail"
+	System_SysConfigByKeys_FullMethodName    = "/system.System/SysConfigByKeys"
 )
 
 // SystemClient is the client API for System service.
@@ -113,6 +119,18 @@ type SystemClient interface {
 	LoginLogList(ctx context.Context, in *LoginLogListReq, opts ...grpc.CallOption) (*LoginLogListResp, error)
 	// 操作日志
 	OpLogList(ctx context.Context, in *OpLogListReq, opts ...grpc.CallOption) (*OpLogListResp, error)
+	// 新增系统配置
+	SysConfigCreate(ctx context.Context, in *SysConfigCreateReq, opts ...grpc.CallOption) (*RespBase, error)
+	// 更新系统配置
+	SysConfigUpdate(ctx context.Context, in *SysConfigUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
+	// 删除系统配置
+	SysConfigDelete(ctx context.Context, in *SysConfigDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
+	// 获取系统配置列表
+	SysConfigList(ctx context.Context, in *SysConfigListReq, opts ...grpc.CallOption) (*SysConfigListResp, error)
+	// 获取系统配置详情
+	SysConfigDetail(ctx context.Context, in *SysConfigDetailReq, opts ...grpc.CallOption) (*SysConfigDetailResp, error)
+	// 获取系统配置根据keys
+	SysConfigByKeys(ctx context.Context, in *SysConfigByKeysReq, opts ...grpc.CallOption) (*SysConfigByKeysResp, error)
 }
 
 type systemClient struct {
@@ -403,6 +421,66 @@ func (c *systemClient) OpLogList(ctx context.Context, in *OpLogListReq, opts ...
 	return out, nil
 }
 
+func (c *systemClient) SysConfigCreate(ctx context.Context, in *SysConfigCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespBase)
+	err := c.cc.Invoke(ctx, System_SysConfigCreate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) SysConfigUpdate(ctx context.Context, in *SysConfigUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespBase)
+	err := c.cc.Invoke(ctx, System_SysConfigUpdate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) SysConfigDelete(ctx context.Context, in *SysConfigDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespBase)
+	err := c.cc.Invoke(ctx, System_SysConfigDelete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) SysConfigList(ctx context.Context, in *SysConfigListReq, opts ...grpc.CallOption) (*SysConfigListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SysConfigListResp)
+	err := c.cc.Invoke(ctx, System_SysConfigList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) SysConfigDetail(ctx context.Context, in *SysConfigDetailReq, opts ...grpc.CallOption) (*SysConfigDetailResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SysConfigDetailResp)
+	err := c.cc.Invoke(ctx, System_SysConfigDetail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) SysConfigByKeys(ctx context.Context, in *SysConfigByKeysReq, opts ...grpc.CallOption) (*SysConfigByKeysResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SysConfigByKeysResp)
+	err := c.cc.Invoke(ctx, System_SysConfigByKeys_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SystemServer is the server API for System service.
 // All implementations must embed UnimplementedSystemServer
 // for forward compatibility.
@@ -467,6 +545,18 @@ type SystemServer interface {
 	LoginLogList(context.Context, *LoginLogListReq) (*LoginLogListResp, error)
 	// 操作日志
 	OpLogList(context.Context, *OpLogListReq) (*OpLogListResp, error)
+	// 新增系统配置
+	SysConfigCreate(context.Context, *SysConfigCreateReq) (*RespBase, error)
+	// 更新系统配置
+	SysConfigUpdate(context.Context, *SysConfigUpdateReq) (*RespBase, error)
+	// 删除系统配置
+	SysConfigDelete(context.Context, *SysConfigDeleteReq) (*RespBase, error)
+	// 获取系统配置列表
+	SysConfigList(context.Context, *SysConfigListReq) (*SysConfigListResp, error)
+	// 获取系统配置详情
+	SysConfigDetail(context.Context, *SysConfigDetailReq) (*SysConfigDetailResp, error)
+	// 获取系统配置根据keys
+	SysConfigByKeys(context.Context, *SysConfigByKeysReq) (*SysConfigByKeysResp, error)
 	mustEmbedUnimplementedSystemServer()
 }
 
@@ -560,6 +650,24 @@ func (UnimplementedSystemServer) LoginLogList(context.Context, *LoginLogListReq)
 }
 func (UnimplementedSystemServer) OpLogList(context.Context, *OpLogListReq) (*OpLogListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OpLogList not implemented")
+}
+func (UnimplementedSystemServer) SysConfigCreate(context.Context, *SysConfigCreateReq) (*RespBase, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SysConfigCreate not implemented")
+}
+func (UnimplementedSystemServer) SysConfigUpdate(context.Context, *SysConfigUpdateReq) (*RespBase, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SysConfigUpdate not implemented")
+}
+func (UnimplementedSystemServer) SysConfigDelete(context.Context, *SysConfigDeleteReq) (*RespBase, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SysConfigDelete not implemented")
+}
+func (UnimplementedSystemServer) SysConfigList(context.Context, *SysConfigListReq) (*SysConfigListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SysConfigList not implemented")
+}
+func (UnimplementedSystemServer) SysConfigDetail(context.Context, *SysConfigDetailReq) (*SysConfigDetailResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SysConfigDetail not implemented")
+}
+func (UnimplementedSystemServer) SysConfigByKeys(context.Context, *SysConfigByKeysReq) (*SysConfigByKeysResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SysConfigByKeys not implemented")
 }
 func (UnimplementedSystemServer) mustEmbedUnimplementedSystemServer() {}
 func (UnimplementedSystemServer) testEmbeddedByValue()                {}
@@ -1086,6 +1194,114 @@ func _System_OpLogList_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _System_SysConfigCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysConfigCreateReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysConfigCreate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysConfigCreate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysConfigCreate(ctx, req.(*SysConfigCreateReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_SysConfigUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysConfigUpdateReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysConfigUpdate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysConfigUpdate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysConfigUpdate(ctx, req.(*SysConfigUpdateReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_SysConfigDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysConfigDeleteReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysConfigDelete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysConfigDelete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysConfigDelete(ctx, req.(*SysConfigDeleteReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_SysConfigList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysConfigListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysConfigList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysConfigList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysConfigList(ctx, req.(*SysConfigListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_SysConfigDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysConfigDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysConfigDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysConfigDetail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysConfigDetail(ctx, req.(*SysConfigDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_SysConfigByKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysConfigByKeysReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysConfigByKeys(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysConfigByKeys_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysConfigByKeys(ctx, req.(*SysConfigByKeysReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // System_ServiceDesc is the grpc.ServiceDesc for System service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1204,6 +1420,30 @@ var System_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "OpLogList",
 			Handler:    _System_OpLogList_Handler,
+		},
+		{
+			MethodName: "SysConfigCreate",
+			Handler:    _System_SysConfigCreate_Handler,
+		},
+		{
+			MethodName: "SysConfigUpdate",
+			Handler:    _System_SysConfigUpdate_Handler,
+		},
+		{
+			MethodName: "SysConfigDelete",
+			Handler:    _System_SysConfigDelete_Handler,
+		},
+		{
+			MethodName: "SysConfigList",
+			Handler:    _System_SysConfigList_Handler,
+		},
+		{
+			MethodName: "SysConfigDetail",
+			Handler:    _System_SysConfigDetail_Handler,
+		},
+		{
+			MethodName: "SysConfigByKeys",
+			Handler:    _System_SysConfigByKeys_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
