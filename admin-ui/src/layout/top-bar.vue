@@ -42,6 +42,14 @@ function changePassword() {
     inputErrorMessage: t('app.passwordMinLength'),
   })
     .then((data: any) => {
+      apiUpdateProfile({ password: data.value })
+        .then(() => {
+          ElMessage.success(t('app.passwordUpdated'))
+        })
+        .catch((err) => {
+          console.error('更新密码失败:', err)
+          ElMessage.error(t('app.updatePasswordFailed'))
+        })
       console.log(t('app.newPasswordPrompt'), data.value)
     })
     .catch(() => {})
@@ -54,6 +62,17 @@ function openSettings() {
     inputValue: auth.user?.nickname || '',
   })
     .then((data: any) => {
+      apiUpdateProfile({ nickname: data.value })
+        .then(() => {
+          if (auth.user) {
+            auth.user.nickname = data.value
+          }
+          ElMessage.success(t('app.nicknameUpdated'))
+        })
+        .catch((err) => {
+          console.error('更新昵称失败:', err)
+          ElMessage.error(t('app.updateNicknameFailed'))
+        })
       console.log(t('app.newNicknamePrompt'), data.value)
     })
     .catch(() => {})

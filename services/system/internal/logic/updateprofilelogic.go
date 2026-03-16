@@ -8,6 +8,7 @@ import (
 	"wklive/services/system/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UpdateProfileLogic struct {
@@ -34,14 +35,18 @@ func (l *UpdateProfileLogic) UpdateProfile(in *system.UpdateProfileReq) (*system
 	if user == nil {
 		return nil, errors.New("user not found")
 	}
-	if in.Avatar != nil {
+	if in.Avatar != nil && *in.Avatar != "" {
 		user.Avatar = *in.Avatar
 	}
-	if in.Nickname != nil {
+	if in.Nickname != nil && *in.Nickname != "" {
 		user.Nickname = *in.Nickname
 	}
-	if in.Password != nil {
-		user.Password = *in.Password
+	if in.Password != nil && *in.Password != "" {
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(*in.Password), bcrypt.DefaultCost)
+		if err != nil {
+			return nil, err
+		}
+		user.Password = string(hashedPassword)
 	}
 	err = l.svcCtx.UserModel.Update(l.ctx, user)
 	if err != nil {
