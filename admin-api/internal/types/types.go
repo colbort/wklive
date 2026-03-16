@@ -343,6 +343,12 @@ type SysUserUpdateReq struct {
 	RoleIds  []int64 `json:"roleIds,optional"`
 }
 
+type UpdateProfileReq struct {
+	Nickname string `json:"nickname,optional"`
+	Avatar   string `json:"avatar,optional"`
+	Password string `json:"password,optional"`
+}
+
 type UploadFileReq struct {
 }
 

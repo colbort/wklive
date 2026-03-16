@@ -64,7 +64,12 @@ func (l *GetProfileLogic) GetProfile(in *system.ProfileReq) (*system.ProfileResp
 	}
 	if len(menuIds) == 0 {
 		return &system.ProfileResp{
-			User:  &system.ProfileUser{Id: u.Id, Username: u.Username, Nickname: u.Nickname, Avatar: u.Avatar},
+			User: &system.ProfileUser{
+				Id:       u.Id,
+				Username: u.Username,
+				Nickname: u.Nickname,
+				Avatar:   u.Avatar,
+			},
 			Menus: []*system.SysMenuNode{},
 			Perms: []string{},
 		}, nil

@@ -42,6 +42,12 @@ type UploadFileResp {
     } `json:"data"`
 }
 
+type UpdateProfileReq {
+  nickname string `json:"nickname,optional"`
+  avatar   string `json:"avatar,optional"`
+  password string `json:"password,optional"`
+}
+
 
 @server(
   prefix: /admin
@@ -56,5 +62,8 @@ service admin {
   // post /upload/avatar (UploadFileReq) returns (UploadFileResp)
   // @handler UploadFile
   // post /upload/file (UploadFileReq) returns (UploadFileResp)
+  // 修改头像，密码，昵称
+  @handler UpdateProfile
+  post /auth/profile (UpdateProfileReq) returns (RespBase)
 }
 

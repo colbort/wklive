@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	System_AdminLogin_FullMethodName         = "/system.System/AdminLogin"
 	System_GetProfile_FullMethodName         = "/system.System/GetProfile"
+	System_UpdateProfile_FullMethodName      = "/system.System/UpdateProfile"
 	System_Google2FAInit_FullMethodName      = "/system.System/Google2FAInit"
 	System_Google2FAEnable_FullMethodName    = "/system.System/Google2FAEnable"
 	System_Google2FADisable_FullMethodName   = "/system.System/Google2FADisable"
@@ -67,6 +68,8 @@ type SystemClient interface {
 	AdminLogin(ctx context.Context, in *AdminLoginReq, opts ...grpc.CallOption) (*AdminLoginResp, error)
 	// 获取当前用户信息
 	GetProfile(ctx context.Context, in *ProfileReq, opts ...grpc.CallOption) (*ProfileResp, error)
+	// 修改头像，密码，昵称
+	UpdateProfile(ctx context.Context, in *UpdateProfileReq, opts ...grpc.CallOption) (*RespBase, error)
 	// 2FA
 	Google2FAInit(ctx context.Context, in *Google2FAInitReq, opts ...grpc.CallOption) (*Google2FAInitResp, error)
 	// 启用Google 2FA
@@ -155,6 +158,16 @@ func (c *systemClient) GetProfile(ctx context.Context, in *ProfileReq, opts ...g
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ProfileResp)
 	err := c.cc.Invoke(ctx, System_GetProfile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) UpdateProfile(ctx context.Context, in *UpdateProfileReq, opts ...grpc.CallOption) (*RespBase, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespBase)
+	err := c.cc.Invoke(ctx, System_UpdateProfile_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -493,6 +506,8 @@ type SystemServer interface {
 	AdminLogin(context.Context, *AdminLoginReq) (*AdminLoginResp, error)
 	// 获取当前用户信息
 	GetProfile(context.Context, *ProfileReq) (*ProfileResp, error)
+	// 修改头像，密码，昵称
+	UpdateProfile(context.Context, *UpdateProfileReq) (*RespBase, error)
 	// 2FA
 	Google2FAInit(context.Context, *Google2FAInitReq) (*Google2FAInitResp, error)
 	// 启用Google 2FA
@@ -572,6 +587,9 @@ func (UnimplementedSystemServer) AdminLogin(context.Context, *AdminLoginReq) (*A
 }
 func (UnimplementedSystemServer) GetProfile(context.Context, *ProfileReq) (*ProfileResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProfile not implemented")
+}
+func (UnimplementedSystemServer) UpdateProfile(context.Context, *UpdateProfileReq) (*RespBase, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateProfile not implemented")
 }
 func (UnimplementedSystemServer) Google2FAInit(context.Context, *Google2FAInitReq) (*Google2FAInitResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Google2FAInit not implemented")
@@ -722,6 +740,24 @@ func _System_GetProfile_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SystemServer).GetProfile(ctx, req.(*ProfileReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_UpdateProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateProfileReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).UpdateProfile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_UpdateProfile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).UpdateProfile(ctx, req.(*UpdateProfileReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1316,6 +1352,10 @@ var System_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetProfile",
 			Handler:    _System_GetProfile_Handler,
+		},
+		{
+			MethodName: "UpdateProfile",
+			Handler:    _System_UpdateProfile_Handler,
 		},
 		{
 			MethodName: "Google2FAInit",

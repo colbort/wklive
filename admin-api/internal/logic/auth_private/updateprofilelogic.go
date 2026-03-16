@@ -11,39 +11,40 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/system"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/errorx"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type ProfileLogic struct {
+type UpdateProfileLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ProfileLogic {
-	return &ProfileLogic{
+func NewUpdateProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateProfileLogic {
+	return &UpdateProfileLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *ProfileLogic) Profile(req *types.ProfileReq) (resp *types.ProfileResp, err error) {
+func (l *UpdateProfileLogic) UpdateProfile(req *types.UpdateProfileReq) (resp *types.RespBase, err error) {
 	uid, err := utils.GetUidFromCtx(l.ctx)
 	if err != nil {
 		return nil, errorx.Wrap(err, "获取用户信息失败")
 	}
-	out, err := l.svcCtx.SystemCli.GetProfile(l.ctx, &system.ProfileReq{Uid: uid})
+	out, err := l.svcCtx.SystemCli.UpdateProfile(l.ctx, &system.UpdateProfileReq{
+		Id:       uid,
+		Avatar:   &req.Avatar,
+		Nickname: &req.Nickname,
+		Password: &req.Password,
+	})
 	if err != nil {
 		return nil, err
 	}
-	resp = new(types.ProfileResp)
-	resp.Code = 200
-	resp.Msg = "获取成功"
-	_ = copier.Copy(&resp.Data.User, &out.User)
-	_ = copier.Copy(&resp.Data.Menus, &out.Menus)
-	_ = copier.Copy(&resp.Data.Perms, &out.Perms)
-	return resp, nil
+	return &types.RespBase{
+		Code: out.Code,
+		Msg:  out.Msg,
+	}, nil
 }

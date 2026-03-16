@@ -43,4 +43,8 @@ export const useAuthStore = defineStore('auth', {
             localStorage.removeItem('exp');
         },
     },
-});
+}); 
+
+export function apiUpdateProfile(params) {
+    return post('/admin/auth/profile', params);
+}

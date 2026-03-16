@@ -73,12 +73,15 @@ type (
 	SysUserListReq         = system.SysUserListReq
 	SysUserListResp        = system.SysUserListResp
 	SysUserUpdateReq       = system.SysUserUpdateReq
+	UpdateProfileReq       = system.UpdateProfileReq
 
 	System interface {
 		// P0
 		AdminLogin(ctx context.Context, in *AdminLoginReq, opts ...grpc.CallOption) (*AdminLoginResp, error)
 		// 获取当前用户信息
 		GetProfile(ctx context.Context, in *ProfileReq, opts ...grpc.CallOption) (*ProfileResp, error)
+		// 修改头像，密码，昵称
+		UpdateProfile(ctx context.Context, in *UpdateProfileReq, opts ...grpc.CallOption) (*RespBase, error)
 		// 2FA
 		Google2FAInit(ctx context.Context, in *Google2FAInitReq, opts ...grpc.CallOption) (*Google2FAInitResp, error)
 		// 启用Google 2FA
@@ -166,6 +169,12 @@ func (m *defaultSystem) AdminLogin(ctx context.Context, in *AdminLoginReq, opts 
 func (m *defaultSystem) GetProfile(ctx context.Context, in *ProfileReq, opts ...grpc.CallOption) (*ProfileResp, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.GetProfile(ctx, in, opts...)
+}
+
+// 修改头像，密码，昵称
+func (m *defaultSystem) UpdateProfile(ctx context.Context, in *UpdateProfileReq, opts ...grpc.CallOption) (*RespBase, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.UpdateProfile(ctx, in, opts...)
 }
 
 // 2FA

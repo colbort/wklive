@@ -35,6 +35,12 @@ func (s *SystemServer) GetProfile(ctx context.Context, in *system.ProfileReq) (*
 	return l.GetProfile(in)
 }
 
+// 修改头像，密码，昵称
+func (s *SystemServer) UpdateProfile(ctx context.Context, in *system.UpdateProfileReq) (*system.RespBase, error) {
+	l := logic.NewUpdateProfileLogic(ctx, s.svcCtx)
+	return l.UpdateProfile(in)
+}
+
 // 2FA
 func (s *SystemServer) Google2FAInit(ctx context.Context, in *system.Google2FAInitReq) (*system.Google2FAInitResp, error) {
 	l := logic.NewGoogle2FAInitLogic(ctx, s.svcCtx)

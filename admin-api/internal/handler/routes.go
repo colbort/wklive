@@ -24,6 +24,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/auth/profile",
 				Handler: auth_private.ProfileHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/auth/profile",
+				Handler: auth_private.UpdateProfileHandler(serverCtx),
+			},
 		},
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
 		rest.WithPrefix("/admin"),
