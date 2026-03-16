@@ -10,6 +10,10 @@ export default {
         newPasswordPrompt: 'Please input new password',
         newNicknamePrompt: 'Please input new nickname',
         uploadAvatar: 'Upload Avatar',
+        avatarSizeLimit: 'Avatar file size cannot exceed 5MB',
+        avatarUpdated: 'Avatar updated successfully',
+        avatarUploadFailed: 'Avatar upload failed',
+        passwordMinLength: 'Password must be at least 6 characters',
     },
   route: {
     home: 'Home',
@@ -61,6 +65,7 @@ export default {
     confirmDelete: 'Are you sure to delete?',
     success: 'Success',
     failed: 'Failed',
+    error: 'Error',
     all: 'All',
     add: 'Add',
     refresh: 'Refresh',

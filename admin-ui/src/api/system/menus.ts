@@ -1,5 +1,5 @@
 import { del, get, post, put } from '@/utils/request'
-import type { PermItem, MenuNode, SysMenuCreateReq, SysMenuUpdateReq, SysMenuDeleteReq, SysMenuListReq, SysMenuListResp } from '../../types/system/menus'
+import type { PermItem, MenuNode, SysMenuCreateReq, SysMenuUpdateReq, SysMenuListReq, SysMenuListResp } from '../../types/system/menus'
 import { ApiResp } from '../types'
 import { RespBase } from '@/types/common'
 

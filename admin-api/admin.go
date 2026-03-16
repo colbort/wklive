@@ -7,7 +7,6 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
-	"path/filepath"
 	"strings"
 
 	"wklive/admin-api/internal/config"
@@ -32,25 +31,18 @@ func main() {
 	// 用 etcd 配置中心
 	etcd.LoadFromEtcdAndMerge(strings.Split(*endpoints, ","), []string{*commonKey, *configKey}, &c)
 
-	server := rest.MustNewServer(c.RestConf, rest.WithCors("*"))
+	server := rest.MustNewServer(
+		c.RestConf, rest.WithCors("*"),
+		rest.WithFileServer(
+			"/avatars",
+			http.Dir("./avatars"),
+		),
+	)
 	defer server.Stop()
-
-	// 添加静态文件路由，提供头像访问
-	server.AddRoute(rest.Route{
-		Method: http.MethodGet,
-		Path:   "/avatars/*filepath",
-		Handler: func(w http.ResponseWriter, r *http.Request) {
-			// 提取文件名（去掉 /avatars/ 前缀）
-			fname := strings.TrimPrefix(r.URL.Path, "/avatars/")
-			// 构建本地路径
-			path := filepath.Join("/var/www/avatars", fname)
-			// 服务文件
-			http.ServeFile(w, r, path)
-		},
-	})
 
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
+	handler.RegisterCustomHandlers(server, ctx)
 
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()

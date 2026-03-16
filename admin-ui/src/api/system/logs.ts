@@ -1,6 +1,6 @@
 import { get } from '@/utils/request'
 import { ApiResp } from '../types'
-import { LoginLogItem, LoginLogListReq, LoginLogListResp, OpLogItem, OpLogListReq, OpLogListResp } from '@/types/system/logs'
+import { LoginLogItem, LoginLogListReq, OpLogItem, OpLogListReq } from '@/types/system/logs'
 
 // ===== 登录日志 =====
 export function apiLoginLogList(params: LoginLogListReq): Promise<ApiResp<LoginLogItem[]>> {

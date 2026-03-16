@@ -5,7 +5,9 @@ import { setLocale, type Locale } from '@/i18n'
 import { useAuthStore } from '@/stores'
 import { useRouter } from 'vue-router'
 import { Expand, Fold, User, Setting, Lock } from '@element-plus/icons-vue'
-import { ElMessageBox } from 'element-plus'
+import { ElMessageBox, ElMessage } from 'element-plus'
+import { apiUploadAvatar } from '@/api/system/upload'
+import { http } from '@/utils/request'
 
 const props = defineProps<{
   collapsed: boolean
@@ -57,7 +59,7 @@ function openSettings() {
 }
 
 // Avatar upload handling
-function onAvatarClick() {
+async function onAvatarClick() {
   // trigger hidden file input
   const input = document.createElement('input')
   input.type = 'file'
@@ -65,18 +67,36 @@ function onAvatarClick() {
   input.onchange = async (e: Event) => {
     const file = (e.target as HTMLInputElement).files?.[0]
     if (!file) return
-    // TODO: upload file to server and get URL
-    const reader = new FileReader()
-    reader.onload = () => {
-      const url = reader.result as string
-      console.log('selected avatar base64', url)
-      // directly mutate store user so avatar updates immediately
-      if (auth.user) {
-        auth.user.avatar = url
-      }
-      // TODO: upload file to server and replace with real URL if necessary
+
+    // Validate file size (e.g., max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      ElMessage.error(t('app.avatarSizeLimit'))
+      return
     }
-    reader.readAsDataURL(file)
+
+    try {
+      // Upload to server using API function
+      const result = await apiUploadAvatar(file)
+
+      // Check if upload was successful
+      if (result.code !== 200) {
+        throw new Error(result.msg || 'Upload failed')
+      }
+
+      // Update user avatar with the returned URL
+      if (auth.user && result.data?.url) {
+        // Convert relative URL to full URL
+        const fullUrl = result.data.url.startsWith('http')
+          ? result.data.url
+          : `${http.defaults.baseURL}${result.data.url}`
+        console.log('Setting avatar URL:', fullUrl)
+        auth.user.avatar = fullUrl
+        ElMessage.success(t('app.avatarUpdated'))
+      }
+    } catch (error) {
+      console.error('Avatar upload error:', error)
+      ElMessage.error(t('app.avatarUploadFailed'))
+    }
   }
   input.click()
 }
