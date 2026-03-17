@@ -4,7 +4,7 @@ import { ElMessage } from 'element-plus';
 import { usePagination } from '@/composables/usePagination';
 import { useLoading } from '@/composables/useLoading';
 import { useForm } from '@/composables/useForm';
-import { apiOpLogList } from '@/api/system/logs';
+import { logService } from '@/services';
 const { t } = useI18n();
 // Pagination and list
 const { pagination, updateTotal } = usePagination(10);
@@ -21,7 +21,7 @@ const list_ref = ref([]);
 async function fetchList() {
     await withLoading(async () => {
         try {
-            const res = await apiOpLogList({
+            const res = await logService.getOperationLogs({
                 username: queryForm.username || undefined,
                 method: queryForm.method || undefined,
                 path: queryForm.path || undefined,

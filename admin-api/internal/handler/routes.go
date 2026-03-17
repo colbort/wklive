@@ -61,6 +61,26 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodGet,
+				Path:    "/configs",
+				Handler: system.SysConfigListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/configs",
+				Handler: system.SysConfigCreateHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/configs",
+				Handler: system.SysConfigUpdateHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodDelete,
+				Path:    "/configs/:id",
+				Handler: system.SysConfigDeleteHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
 				Path:    "/logs/login",
 				Handler: system.LoginLogListHandler(serverCtx),
 			},

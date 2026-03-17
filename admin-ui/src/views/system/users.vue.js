@@ -1,8 +1,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useI18n } from 'vue-i18n';
-import { apiUserList, apiUserCreate, apiUserUpdate, apiUserDelete, apiChangeUserStatus, apiResetUserPwd, apiAssignUserRoles, apiGoogle2faInit, apiGoogle2faEnable, apiGoogle2faDisable, apiGoogle2faReset, } from '@/api/system/users';
-import { apiRoleList } from '@/api/system/roles';
+import { userService, roleService } from '@/services';
 import { ArrowDown } from '@element-plus/icons-vue';
 import { usePagination } from '@/composables/usePagination';
 import { useLoading } from '@/composables/useLoading';
@@ -27,7 +26,7 @@ const statusOptions = [
 async function fetchList() {
     await withMainLoading(async () => {
         try {
-            const res = await apiUserList({
+            const res = await userService.getList({
                 keyword: queryForm.keyword || undefined,
                 status: queryForm.status,
                 page: pagination.page,
@@ -60,7 +59,7 @@ const roles = ref([]);
 async function fetchRoles() {
     await withRoleLoading(async () => {
         try {
-            const res = await apiRoleList({ page: 1, size: 9999, status: 1 });
+            const res = await roleService.getList({ page: 1, size: 9999, status: 1 });
             if (res.code !== 0 && res.code !== 200)
                 throw new Error(res.msg || 'role list failed');
             roles.value = res.data || [];
@@ -112,7 +111,7 @@ async function submitEdit() {
                     ElMessage.warning(t('common.pleaseInputAccountAndPassword'));
                     return;
                 }
-                const res = await apiUserCreate({
+                const res = await userService.create({
                     username: editForm.username,
                     password: editForm.password,
                     nickname: editForm.nickname || undefined,
@@ -124,8 +123,7 @@ async function submitEdit() {
                 ElMessage.success(t('common.success'));
             }
             else {
-                const res = await apiUserUpdate({
-                    id: editForm.id,
+                const res = await userService.update(editForm.id, {
                     nickname: editForm.nickname || undefined,
                     status: editForm.status,
                     roleIds: editForm.roleIds,
@@ -147,7 +145,7 @@ const { confirm } = useConfirm();
 async function onDelete(row) {
     try {
         await confirm(t('common.confirmDeleteUser', { username: row.username }), { type: 'warning' });
-        const res = await apiUserDelete(row.id);
+        const res = await userService.delete(row.id);
         if (res.code !== 0 && res.code !== 200)
             throw new Error(res.msg || 'delete failed');
         ElMessage.success(t('common.success'));
@@ -163,7 +161,7 @@ async function onDelete(row) {
 async function onToggleStatus(row) {
     try {
         const next = row.status === 1 ? 0 : 1;
-        const res = await apiChangeUserStatus({ id: row.id, status: next });
+        const res = await userService.updateUserStatus(row.id, next);
         if (res.code !== 0 && res.code !== 200)
             throw new Error(res.msg || 'status failed');
         ElMessage.success(t('common.success'));
@@ -192,7 +190,7 @@ async function submitResetPwd() {
                 ElMessage.warning(t('common.pleaseInputNewPassword'));
                 return;
             }
-            const res = await apiResetUserPwd({ id: pwdForm.id, password: pwdForm.password });
+            const res = await userService.resetPassword(pwdForm.id, pwdForm.password);
             if (res.code !== 0 && res.code !== 200)
                 throw new Error(res.msg || 'reset pwd failed');
             ElMessage.success(t('common.success'));
@@ -218,7 +216,7 @@ function openAssignRoles(row) {
 async function submitAssignRoles() {
     await withRoleAssignLoading(async () => {
         try {
-            const res = await apiAssignUserRoles({ userId: roleForm.userId, roleIds: roleForm.roleIds });
+            const res = await userService.assignUserRoles(roleForm.userId, roleForm.roleIds);
             if (res.code !== 0 && res.code !== 200)
                 throw new Error(res.msg || 'assign roles failed');
             ElMessage.success(t('common.success'));
@@ -256,7 +254,7 @@ function openGoogle2fa(row) {
 async function doG2Init() {
     await withG2InitLoading(async () => {
         try {
-            const res = await apiGoogle2faInit({ userId: g2User.userId });
+            const res = await userService.initGoogle2FA(g2User.userId);
             if (res.code !== 200)
                 throw new Error(res.msg || 'init failed');
             g2Init.secret = res.data?.secret || '';
@@ -276,7 +274,7 @@ async function doG2Enable() {
                 ElMessage.warning(t('common.pleaseInputCode'));
                 return;
             }
-            const res = await apiGoogle2faEnable({ userId: g2User.userId, code: g2Form.code });
+            const res = await userService.enableGoogle2FA(g2User.userId, g2Form.code);
             if (res.code !== 0 && res.code !== 200)
                 throw new Error(res.msg || 'enable failed');
             ElMessage.success(t('common.success'));
@@ -290,7 +288,7 @@ async function doG2Enable() {
 async function doG2Disable() {
     await withG2DisableLoading(async () => {
         try {
-            const res = await apiGoogle2faDisable({ userId: g2User.userId, code: g2Form.code || undefined });
+            const res = await userService.disableGoogle2FA(g2User.userId, g2Form.code || undefined);
             if (res.code !== 0 && res.code !== 200)
                 throw new Error(res.msg || 'disable failed');
             ElMessage.success(t('common.success'));
@@ -304,7 +302,7 @@ async function doG2Disable() {
 async function doG2Reset() {
     try {
         await confirm(t('common.confirmReset2fa'), { type: 'warning' });
-        const res = await apiGoogle2faReset({ userId: g2User.userId });
+        const res = await userService.resetGoogle2FA(g2User.userId);
         if (res.code !== 0 && res.code !== 200)
             throw new Error(res.msg || 'reset failed');
         ElMessage.success(t('common.success'));

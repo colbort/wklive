@@ -3678,7 +3678,7 @@ func (x *SysConfigListResp) GetData() []*SysConfigItem {
 type SysConfigDetailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
-	ConfigKey     *string                `protobuf:"bytes,2,opt,name=config_key,json=configKey,proto3,oneof" json:"config_key,omitempty"`
+	ConfigKey     *SysConfigType         `protobuf:"varint,2,opt,name=config_key,json=configKey,proto3,enum=system.SysConfigType,oneof" json:"config_key,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3720,11 +3720,11 @@ func (x *SysConfigDetailReq) GetId() int64 {
 	return 0
 }
 
-func (x *SysConfigDetailReq) GetConfigKey() string {
+func (x *SysConfigDetailReq) GetConfigKey() SysConfigType {
 	if x != nil && x.ConfigKey != nil {
 		return *x.ConfigKey
 	}
-	return ""
+	return SysConfigType_UNKNOWN
 }
 
 type SysConfigDetailResp struct {
@@ -3879,7 +3879,7 @@ var File_system_proto protoreflect.FileDescriptor
 
 const file_system_proto_rawDesc = "" +
 	"\n" +
-	"\fsystem.proto\x12\x06system\x1a\x1cgoogle/protobuf/struct.proto\"\a\n" +
+	"\fsystem.proto\x12\x06system\x1a\x1cgoogle/protobuf/struct.proto\x1a\fconfig.proto\"\a\n" +
 	"\x05Empty\"\x88\x01\n" +
 	"\rAdminLoginReq\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
@@ -4156,11 +4156,11 @@ const file_system_proto_rawDesc = "" +
 	"\akeyword\x18\x02 \x01(\tR\akeyword\"d\n" +
 	"\x11SysConfigListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12)\n" +
-	"\x04data\x18\x04 \x03(\v2\x15.system.SysConfigItemR\x04data\"c\n" +
+	"\x04data\x18\x04 \x03(\v2\x15.system.SysConfigItemR\x04data\"z\n" +
 	"\x12SysConfigDetailReq\x12\x13\n" +
-	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x88\x01\x01\x12\"\n" +
+	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x88\x01\x01\x129\n" +
 	"\n" +
-	"config_key\x18\x02 \x01(\tH\x01R\tconfigKey\x88\x01\x01B\x05\n" +
+	"config_key\x18\x02 \x01(\x0e2\x15.system.SysConfigTypeH\x01R\tconfigKey\x88\x01\x01B\x05\n" +
 	"\x03_idB\r\n" +
 	"\v_config_key\"f\n" +
 	"\x13SysConfigDetailResp\x12$\n" +
@@ -4286,6 +4286,7 @@ var file_system_proto_goTypes = []any{
 	(*SysConfigByKeysReq)(nil),     // 58: system.SysConfigByKeysReq
 	(*SysConfigByKeysResp)(nil),    // 59: system.SysConfigByKeysResp
 	(*structpb.Struct)(nil),        // 60: google.protobuf.Struct
+	(SysConfigType)(0),             // 61: system.SysConfigType
 }
 var file_system_proto_depIdxs = []int32{
 	15, // 0: system.AdminLoginResp.base:type_name -> system.RespBase
@@ -4321,85 +4322,86 @@ var file_system_proto_depIdxs = []int32{
 	16, // 30: system.SysConfigListReq.page:type_name -> system.PageReq
 	15, // 31: system.SysConfigListResp.base:type_name -> system.RespBase
 	53, // 32: system.SysConfigListResp.data:type_name -> system.SysConfigItem
-	15, // 33: system.SysConfigDetailResp.base:type_name -> system.RespBase
-	53, // 34: system.SysConfigDetailResp.data:type_name -> system.SysConfigItem
-	15, // 35: system.SysConfigByKeysResp.base:type_name -> system.RespBase
-	53, // 36: system.SysConfigByKeysResp.data:type_name -> system.SysConfigItem
-	1,  // 37: system.System.AdminLogin:input_type -> system.AdminLoginReq
-	3,  // 38: system.System.GetProfile:input_type -> system.ProfileReq
-	7,  // 39: system.System.UpdateProfile:input_type -> system.UpdateProfileReq
-	10, // 40: system.System.Google2FAInit:input_type -> system.Google2FAInitReq
-	12, // 41: system.System.Google2FAEnable:input_type -> system.Google2FAEnableReq
-	13, // 42: system.System.Google2FADisable:input_type -> system.Google2FADisableReq
-	14, // 43: system.System.Google2FAReset:input_type -> system.Google2FAResetReq
-	18, // 44: system.System.SysUserList:input_type -> system.SysUserListReq
-	20, // 45: system.System.SysUserDetail:input_type -> system.SysUserDetailReq
-	22, // 46: system.System.SysUserCreate:input_type -> system.SysUserCreateReq
-	23, // 47: system.System.SysUserUpdate:input_type -> system.SysUserUpdateReq
-	24, // 48: system.System.SysUserDelete:input_type -> system.SysUserDeleteReq
-	25, // 49: system.System.ChangeUserStatus:input_type -> system.ChangeUserStatusReq
-	26, // 50: system.System.ResetUserPwd:input_type -> system.ResetUserPwdReq
-	27, // 51: system.System.AssignUserRoles:input_type -> system.AssignUserRolesReq
-	29, // 52: system.System.SysRoleList:input_type -> system.SysRoleListReq
-	31, // 53: system.System.SysRoleCreate:input_type -> system.SysRoleCreateReq
-	32, // 54: system.System.SysRoleUpdate:input_type -> system.SysRoleUpdateReq
-	33, // 55: system.System.SysRoleDelete:input_type -> system.SysRoleDeleteReq
-	34, // 56: system.System.SysRoleGrant:input_type -> system.SysRoleGrantReq
-	35, // 57: system.System.SysRoleGrantDetail:input_type -> system.SysRoleGrantDetailReq
-	0,  // 58: system.System.SysPermList:input_type -> system.Empty
-	0,  // 59: system.System.GetMenuTree:input_type -> system.Empty
-	39, // 60: system.System.SysMenuCreate:input_type -> system.SysMenuCreateReq
-	40, // 61: system.System.SysMenuUpdate:input_type -> system.SysMenuUpdateReq
-	41, // 62: system.System.SysMenuDelete:input_type -> system.SysMenuDeleteReq
-	42, // 63: system.System.SysMenuList:input_type -> system.SysMenuListReq
-	45, // 64: system.System.LoginLogList:input_type -> system.LoginLogListReq
-	48, // 65: system.System.OpLogList:input_type -> system.OpLogListReq
-	50, // 66: system.System.SysConfigCreate:input_type -> system.SysConfigCreateReq
-	51, // 67: system.System.SysConfigUpdate:input_type -> system.SysConfigUpdateReq
-	52, // 68: system.System.SysConfigDelete:input_type -> system.SysConfigDeleteReq
-	54, // 69: system.System.SysConfigList:input_type -> system.SysConfigListReq
-	56, // 70: system.System.SysConfigDetail:input_type -> system.SysConfigDetailReq
-	58, // 71: system.System.SysConfigByKeys:input_type -> system.SysConfigByKeysReq
-	2,  // 72: system.System.AdminLogin:output_type -> system.AdminLoginResp
-	6,  // 73: system.System.GetProfile:output_type -> system.ProfileResp
-	15, // 74: system.System.UpdateProfile:output_type -> system.RespBase
-	11, // 75: system.System.Google2FAInit:output_type -> system.Google2FAInitResp
-	15, // 76: system.System.Google2FAEnable:output_type -> system.RespBase
-	15, // 77: system.System.Google2FADisable:output_type -> system.RespBase
-	15, // 78: system.System.Google2FAReset:output_type -> system.RespBase
-	19, // 79: system.System.SysUserList:output_type -> system.SysUserListResp
-	21, // 80: system.System.SysUserDetail:output_type -> system.SysUserDetailResp
-	15, // 81: system.System.SysUserCreate:output_type -> system.RespBase
-	15, // 82: system.System.SysUserUpdate:output_type -> system.RespBase
-	15, // 83: system.System.SysUserDelete:output_type -> system.RespBase
-	15, // 84: system.System.ChangeUserStatus:output_type -> system.RespBase
-	15, // 85: system.System.ResetUserPwd:output_type -> system.RespBase
-	15, // 86: system.System.AssignUserRoles:output_type -> system.RespBase
-	30, // 87: system.System.SysRoleList:output_type -> system.SysRoleListResp
-	15, // 88: system.System.SysRoleCreate:output_type -> system.RespBase
-	15, // 89: system.System.SysRoleUpdate:output_type -> system.RespBase
-	15, // 90: system.System.SysRoleDelete:output_type -> system.RespBase
-	15, // 91: system.System.SysRoleGrant:output_type -> system.RespBase
-	36, // 92: system.System.SysRoleGrantDetail:output_type -> system.SysRoleGrantDetailResp
-	38, // 93: system.System.SysPermList:output_type -> system.SysPermListResp
-	9,  // 94: system.System.GetMenuTree:output_type -> system.SysMenuTreeResp
-	15, // 95: system.System.SysMenuCreate:output_type -> system.RespBase
-	15, // 96: system.System.SysMenuUpdate:output_type -> system.RespBase
-	15, // 97: system.System.SysMenuDelete:output_type -> system.RespBase
-	43, // 98: system.System.SysMenuList:output_type -> system.SysMenuListResp
-	46, // 99: system.System.LoginLogList:output_type -> system.LoginLogListResp
-	49, // 100: system.System.OpLogList:output_type -> system.OpLogListResp
-	15, // 101: system.System.SysConfigCreate:output_type -> system.RespBase
-	15, // 102: system.System.SysConfigUpdate:output_type -> system.RespBase
-	15, // 103: system.System.SysConfigDelete:output_type -> system.RespBase
-	55, // 104: system.System.SysConfigList:output_type -> system.SysConfigListResp
-	57, // 105: system.System.SysConfigDetail:output_type -> system.SysConfigDetailResp
-	59, // 106: system.System.SysConfigByKeys:output_type -> system.SysConfigByKeysResp
-	72, // [72:107] is the sub-list for method output_type
-	37, // [37:72] is the sub-list for method input_type
-	37, // [37:37] is the sub-list for extension type_name
-	37, // [37:37] is the sub-list for extension extendee
-	0,  // [0:37] is the sub-list for field type_name
+	61, // 33: system.SysConfigDetailReq.config_key:type_name -> system.SysConfigType
+	15, // 34: system.SysConfigDetailResp.base:type_name -> system.RespBase
+	53, // 35: system.SysConfigDetailResp.data:type_name -> system.SysConfigItem
+	15, // 36: system.SysConfigByKeysResp.base:type_name -> system.RespBase
+	53, // 37: system.SysConfigByKeysResp.data:type_name -> system.SysConfigItem
+	1,  // 38: system.System.AdminLogin:input_type -> system.AdminLoginReq
+	3,  // 39: system.System.GetProfile:input_type -> system.ProfileReq
+	7,  // 40: system.System.UpdateProfile:input_type -> system.UpdateProfileReq
+	10, // 41: system.System.Google2FAInit:input_type -> system.Google2FAInitReq
+	12, // 42: system.System.Google2FAEnable:input_type -> system.Google2FAEnableReq
+	13, // 43: system.System.Google2FADisable:input_type -> system.Google2FADisableReq
+	14, // 44: system.System.Google2FAReset:input_type -> system.Google2FAResetReq
+	18, // 45: system.System.SysUserList:input_type -> system.SysUserListReq
+	20, // 46: system.System.SysUserDetail:input_type -> system.SysUserDetailReq
+	22, // 47: system.System.SysUserCreate:input_type -> system.SysUserCreateReq
+	23, // 48: system.System.SysUserUpdate:input_type -> system.SysUserUpdateReq
+	24, // 49: system.System.SysUserDelete:input_type -> system.SysUserDeleteReq
+	25, // 50: system.System.ChangeUserStatus:input_type -> system.ChangeUserStatusReq
+	26, // 51: system.System.ResetUserPwd:input_type -> system.ResetUserPwdReq
+	27, // 52: system.System.AssignUserRoles:input_type -> system.AssignUserRolesReq
+	29, // 53: system.System.SysRoleList:input_type -> system.SysRoleListReq
+	31, // 54: system.System.SysRoleCreate:input_type -> system.SysRoleCreateReq
+	32, // 55: system.System.SysRoleUpdate:input_type -> system.SysRoleUpdateReq
+	33, // 56: system.System.SysRoleDelete:input_type -> system.SysRoleDeleteReq
+	34, // 57: system.System.SysRoleGrant:input_type -> system.SysRoleGrantReq
+	35, // 58: system.System.SysRoleGrantDetail:input_type -> system.SysRoleGrantDetailReq
+	0,  // 59: system.System.SysPermList:input_type -> system.Empty
+	0,  // 60: system.System.GetMenuTree:input_type -> system.Empty
+	39, // 61: system.System.SysMenuCreate:input_type -> system.SysMenuCreateReq
+	40, // 62: system.System.SysMenuUpdate:input_type -> system.SysMenuUpdateReq
+	41, // 63: system.System.SysMenuDelete:input_type -> system.SysMenuDeleteReq
+	42, // 64: system.System.SysMenuList:input_type -> system.SysMenuListReq
+	45, // 65: system.System.LoginLogList:input_type -> system.LoginLogListReq
+	48, // 66: system.System.OpLogList:input_type -> system.OpLogListReq
+	50, // 67: system.System.SysConfigCreate:input_type -> system.SysConfigCreateReq
+	51, // 68: system.System.SysConfigUpdate:input_type -> system.SysConfigUpdateReq
+	52, // 69: system.System.SysConfigDelete:input_type -> system.SysConfigDeleteReq
+	54, // 70: system.System.SysConfigList:input_type -> system.SysConfigListReq
+	56, // 71: system.System.SysConfigDetail:input_type -> system.SysConfigDetailReq
+	58, // 72: system.System.SysConfigByKeys:input_type -> system.SysConfigByKeysReq
+	2,  // 73: system.System.AdminLogin:output_type -> system.AdminLoginResp
+	6,  // 74: system.System.GetProfile:output_type -> system.ProfileResp
+	15, // 75: system.System.UpdateProfile:output_type -> system.RespBase
+	11, // 76: system.System.Google2FAInit:output_type -> system.Google2FAInitResp
+	15, // 77: system.System.Google2FAEnable:output_type -> system.RespBase
+	15, // 78: system.System.Google2FADisable:output_type -> system.RespBase
+	15, // 79: system.System.Google2FAReset:output_type -> system.RespBase
+	19, // 80: system.System.SysUserList:output_type -> system.SysUserListResp
+	21, // 81: system.System.SysUserDetail:output_type -> system.SysUserDetailResp
+	15, // 82: system.System.SysUserCreate:output_type -> system.RespBase
+	15, // 83: system.System.SysUserUpdate:output_type -> system.RespBase
+	15, // 84: system.System.SysUserDelete:output_type -> system.RespBase
+	15, // 85: system.System.ChangeUserStatus:output_type -> system.RespBase
+	15, // 86: system.System.ResetUserPwd:output_type -> system.RespBase
+	15, // 87: system.System.AssignUserRoles:output_type -> system.RespBase
+	30, // 88: system.System.SysRoleList:output_type -> system.SysRoleListResp
+	15, // 89: system.System.SysRoleCreate:output_type -> system.RespBase
+	15, // 90: system.System.SysRoleUpdate:output_type -> system.RespBase
+	15, // 91: system.System.SysRoleDelete:output_type -> system.RespBase
+	15, // 92: system.System.SysRoleGrant:output_type -> system.RespBase
+	36, // 93: system.System.SysRoleGrantDetail:output_type -> system.SysRoleGrantDetailResp
+	38, // 94: system.System.SysPermList:output_type -> system.SysPermListResp
+	9,  // 95: system.System.GetMenuTree:output_type -> system.SysMenuTreeResp
+	15, // 96: system.System.SysMenuCreate:output_type -> system.RespBase
+	15, // 97: system.System.SysMenuUpdate:output_type -> system.RespBase
+	15, // 98: system.System.SysMenuDelete:output_type -> system.RespBase
+	43, // 99: system.System.SysMenuList:output_type -> system.SysMenuListResp
+	46, // 100: system.System.LoginLogList:output_type -> system.LoginLogListResp
+	49, // 101: system.System.OpLogList:output_type -> system.OpLogListResp
+	15, // 102: system.System.SysConfigCreate:output_type -> system.RespBase
+	15, // 103: system.System.SysConfigUpdate:output_type -> system.RespBase
+	15, // 104: system.System.SysConfigDelete:output_type -> system.RespBase
+	55, // 105: system.System.SysConfigList:output_type -> system.SysConfigListResp
+	57, // 106: system.System.SysConfigDetail:output_type -> system.SysConfigDetailResp
+	59, // 107: system.System.SysConfigByKeys:output_type -> system.SysConfigByKeysResp
+	73, // [73:108] is the sub-list for method output_type
+	38, // [38:73] is the sub-list for method input_type
+	38, // [38:38] is the sub-list for extension type_name
+	38, // [38:38] is the sub-list for extension extendee
+	0,  // [0:38] is the sub-list for field type_name
 }
 
 func init() { file_system_proto_init() }
@@ -4407,6 +4409,7 @@ func file_system_proto_init() {
 	if File_system_proto != nil {
 		return
 	}
+	file_config_proto_init()
 	file_system_proto_msgTypes[7].OneofWrappers = []any{}
 	file_system_proto_msgTypes[56].OneofWrappers = []any{}
 	type x struct{}

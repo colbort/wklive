@@ -47,6 +47,7 @@ export default {
     pleaseInputUsername: '请输入用户名',
     pleaseInputModule: '请输入模块',
     pleaseInputAction: '请输入操作',
+    pleaseEnter: '请输入',
     pleaseSelectResult: '请选择结果',
     loadFailed: '加载失败',
     search: '搜索',
@@ -156,6 +157,10 @@ export default {
     selectIcon: '选择图标',
     iconPreview: '图标预览',
     noIcon: '未选择图标',
+
+    config: '系统配置',
+    configKey: '配置键',
+    configValue: '配置值',
   },
   perms: {
     'sys:user:add': '新增用户',
@@ -175,6 +180,9 @@ export default {
     'sys:menu:add': '新增菜单',
     'sys:menu:update': '编辑菜单',
     'sys:menu:delete': '删除菜单',
+    'sys:config:add': '新增配置',
+    'sys:config:update': '编辑配置',
+    'sys:config:delete': '删除配置',
   },
   menu: {
     '1': '系统管理',

@@ -175,6 +175,41 @@ type RespBase struct {
 	Total int64  `json:"total,optional"`
 }
 
+type SysConfigCreateReq struct {
+	ConfigKey   string `json:"config_key" validate:"required"`
+	ConfigValue string `json:"config_value"`
+	Remark      string `json:"remark,optional"`
+}
+
+type SysConfigDeleteReq struct {
+	Id int64 `path:"id" validate:"required"`
+}
+
+type SysConfigItem struct {
+	Id          int64  `json:"id"`
+	ConfigKey   string `json:"config_key"`
+	ConfigValue string `json:"config_value"`
+	Remark      string `json:"remark,optional"`
+	CreatedAt   int64  `json:"created_at"`
+}
+
+type SysConfigListReq struct {
+	PageReq
+	Keyword string `form:"keyword,optional"`
+}
+
+type SysConfigListResp struct {
+	RespBase
+	Data []SysConfigItem `json:"data"`
+}
+
+type SysConfigUpdateReq struct {
+	Id          int64  `json:"id" validate:"required"`
+	ConfigKey   string `json:"config_key,optional"`
+	ConfigValue string `json:"config_value,optional"`
+	Remark      string `json:"remark,optional"`
+}
+
 type SysMenuCreateReq struct {
 	ParentId  int64  `json:"parentId,optional"`
 	Name      string `json:"name"`

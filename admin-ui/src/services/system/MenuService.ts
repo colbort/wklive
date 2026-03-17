@@ -116,21 +116,21 @@ export class MenuService implements BaseService {
   /**
    * 创建菜单
    */
-  async create(data: CreateMenuRequest): Promise<RespBase<RespBase>> {
+  async create(data: CreateMenuRequest): Promise<RespBase> {
     return sysMenuCreate(data)
   }
 
   /**
    * 更新菜单
    */
-  async update(id: string | number, data: UpdateMenuRequest): Promise<RespBase<RespBase>> {
+  async update(id: string | number, data: UpdateMenuRequest): Promise<RespBase> {
     return sysMenuUpdate({ ...data, id: Number(id) })
   }
 
   /**
    * 删除菜单
    */
-  async delete(id: string | number): Promise<RespBase<RespBase>> {
+  async delete(id: string | number): Promise<RespBase> {
     return sysMenuDelete(Number(id))
   }
 }

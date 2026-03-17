@@ -53,7 +53,7 @@ func (l *UploadFileLogic) UploadFile(file multipart.File, header *multipart.File
 		}, nil
 	}
 
-	key := system.SysConfigType_OBJECT_STORAGE.String()
+	key := system.SysConfigType_OBJECT_STORAGE
 	cd, err := l.svcCtx.SystemCli.SysConfigDetail(l.ctx, &system.SysConfigDetailReq{
 		ConfigKey: &key,
 	})

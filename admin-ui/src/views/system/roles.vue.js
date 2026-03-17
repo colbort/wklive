@@ -2,9 +2,7 @@ import { computed, ref, onMounted, nextTick } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useI18n } from 'vue-i18n';
 import { usePagination, useLoading, useConfirm, useForm } from '@/composables';
-// ===== API =====
-import { apiRoleList, apiRoleUpdate, apiRoleDelete, apiRoleGrant, apiRoleCreate, apiRoleGrantDetail } from '@/api/system/roles';
-import { apiMenuTree, apiPermList } from '@/api/system/menus';
+import { roleService, menuService } from '@/services';
 // ===== i18n =====
 const { t } = useI18n();
 // ===== helpers =====
@@ -33,7 +31,7 @@ async function fetchList() {
             };
             if (q.status === 0)
                 delete q.status;
-            const resp = await apiRoleList(q);
+            const resp = await roleService.getList(q);
             tableData.value = resp.data || [];
             updateTotal(resp.total || 0);
         }
@@ -125,7 +123,9 @@ async function submitEdit() {
     await withEditLoading(async () => {
         try {
             const payload = { ...editForm };
-            const resp = editIsUpdate.value ? await apiRoleUpdate(payload) : await apiRoleCreate(payload);
+            const resp = editIsUpdate.value
+                ? await roleService.update(editForm.id, payload)
+                : await roleService.create(payload);
             if (resp.code === 200) {
                 ElMessage.success(resp.msg || t('common.success'));
                 editVisible.value = false;
@@ -145,7 +145,7 @@ async function onDelete(row) {
         return;
     try {
         await confirm(t('common.confirmDelete'), { type: 'warning' });
-        const resp = await apiRoleDelete(row.id);
+        const resp = await roleService.delete(row.id);
         if (resp.code === 200) {
             ElMessage.success(resp.msg || t('common.success'));
             fetchList();
@@ -184,9 +184,9 @@ async function initGrant(roleId) {
             await nextTick();
             menuTreeRef.value?.setCheckedKeys?.([]);
             const [menusResp, permsResp, detailResp] = await Promise.all([
-                apiMenuTree(),
-                apiPermList(),
-                apiRoleGrantDetail(roleId),
+                menuService.getMenuTree(),
+                menuService.getPermissionList(),
+                roleService.getRoleGrantDetail(roleId),
             ]);
             const menusFlat = unwrapList(menusResp);
             const perms = unwrapList(permsResp);
@@ -224,7 +224,7 @@ async function submitGrant() {
             menuIds: collectCheckedMenuIds(),
             permKeys: checkedPermKeys.value,
         };
-        const resp = await apiRoleGrant(payload);
+        const resp = await roleService.grantRole(payload);
         if (resp.code === 200) {
             ElMessage.success(resp.msg || t('common.success'));
             grantVisible.value = false;

@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"database/sql"
 
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
@@ -25,7 +26,27 @@ func NewSysConfigUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 
 // 更新系统配置
 func (l *SysConfigUpdateLogic) SysConfigUpdate(in *system.SysConfigUpdateReq) (*system.RespBase, error) {
-	// todo: add your logic here and delete this line
+	config, err := l.svcCtx.ConfigModel.FindOne(l.ctx, in.Id)
+	if err != nil {
+		return nil, err
+	}
 
-	return &system.RespBase{}, nil
+	if in.ConfigKey != "" {
+		config.ConfigKey = sql.NullString{String: in.ConfigKey, Valid: true}
+	}
+	if in.ConfigValue != nil {
+		config.ConfigValue = sql.NullString{String: in.ConfigValue.String(), Valid: true}
+	}
+	if in.Remark != "" {
+		config.Remark = sql.NullString{String: in.Remark, Valid: true}
+	}
+	err = l.svcCtx.ConfigModel.Update(l.ctx, config)
+	if err != nil {
+		return nil, err
+	}
+
+	return &system.RespBase{
+		Code: 200,
+		Msg:  "更新成功",
+	}, nil
 }

@@ -17,7 +17,7 @@ export const useAuthStore = defineStore('auth', {
             const res = await post('/admin/auth/login', payload);
             if (res.code !== 200)
                 throw new Error(res.msg || 'login failed');
-            // payload is stored at top level since ApiResp strips `data`
+            // payload is stored at top level since RespBase strips `data`
             this.token = res.data.token;
             this.exp = res.data.exp;
             localStorage.setItem('token', res.data.token);
@@ -43,8 +43,7 @@ export const useAuthStore = defineStore('auth', {
             localStorage.removeItem('exp');
         },
     },
-}); 
-
-export function apiUpdateProfile(params) {
-    return post('/admin/auth/profile', params);
+});
+export function apiUpdateProfile(data) {
+    return post('/admin/auth/profile', data);
 }

@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/common/utils"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -25,7 +26,31 @@ func NewSysConfigByKeysLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 
 // 获取系统配置根据keys
 func (l *SysConfigByKeysLogic) SysConfigByKeys(in *system.SysConfigByKeysReq) (*system.SysConfigByKeysResp, error) {
-	// todo: add your logic here and delete this line
+	configs, err := l.svcCtx.ConfigModel.FindByKeys(l.ctx, in.ConfigKeys)
+	if err != nil {
+		return nil, err
+	}
 
-	return &system.SysConfigByKeysResp{}, nil
+	var data []*system.SysConfigItem
+	for _, config := range configs {
+		value, err := utils.StringToStruct(config.ConfigValue.String)
+		if err != nil {
+			return nil, err
+		}
+		data = append(data, &system.SysConfigItem{
+			Id:          config.Id,
+			ConfigKey:   config.ConfigKey.String,
+			ConfigValue: value,
+			Remark:      config.Remark.String,
+			CreatedAt:   config.CreatedAt.Unix(),
+		})
+	}
+
+	return &system.SysConfigByKeysResp{
+		Base: &system.RespBase{
+			Code: 200,
+			Msg:  "查询成功",
+		},
+		Data: data,
+	}, nil
 }

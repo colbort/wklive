@@ -259,6 +259,40 @@ type OpLogListResp {
   data  []OpLogItem `json:"data"`
 }
 
+type SysConfigCreateReq {
+  configKey string `json:"config_key" validate:"required"`
+  configValue string `json:"config_value"`
+  remark string `json:"remark,optional"`
+}
+
+type SysConfigUpdateReq {
+  id int64 `json:"id" validate:"required"`
+  configKey string `json:"config_key,optional"`
+  configValue string `json:"config_value,optional"`
+  remark string `json:"remark,optional"`
+}
+
+type SysConfigDeleteReq {
+  id int64 `path:"id" validate:"required"`
+}
+
+type SysConfigItem {
+  id int64 `json:"id"`
+  configKey string `json:"config_key"`
+  configValue string `json:"config_value"`
+  remark string `json:"remark,optional"`
+  createdAt int64 `json:"created_at"`
+}
+
+type SysConfigListReq {
+  PageReq
+  keyword string `form:"keyword,optional"`
+}
+type SysConfigListResp {
+  RespBase
+  data []SysConfigItem `json:"data"`
+}
+
 @server(
   prefix: /admin
   group: system
@@ -349,4 +383,17 @@ service admin {
 
   @handler OpLogList
   get /logs/op (OpLogListReq) returns (OpLogListResp)
+
+  // --- 系统配置 ---
+  @handler SysConfigList
+  get /configs (SysConfigListReq) returns (SysConfigListResp)
+
+  @handler SysConfigCreate
+  post /configs (SysConfigCreateReq) returns (RespBase)
+
+  @handler SysConfigUpdate
+  put /configs (SysConfigUpdateReq) returns (RespBase)
+
+  @handler SysConfigDelete
+  delete /configs/:id (SysConfigDeleteReq) returns (RespBase)
 }

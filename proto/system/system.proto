@@ -3,6 +3,7 @@ syntax = "proto3";
 package system;
 
 import "google/protobuf/struct.proto";
+import "config.proto";
 
 option go_package = "wklive/proto/system;system";
 
@@ -291,7 +292,7 @@ message SysConfigItem {
 message SysConfigListReq { PageReq page = 1; string keyword = 2; }
 message SysConfigListResp { RespBase base = 1; repeated SysConfigItem data = 4; }
 
-message SysConfigDetailReq { optional int64 id = 1; optional string config_key = 2; }
+message SysConfigDetailReq { optional int64 id = 1; optional SysConfigType config_key = 2; }
 
 message SysConfigDetailResp { RespBase base = 1; SysConfigItem data = 3; }
 

@@ -2,7 +2,7 @@ import { computed, nextTick, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { ElMessage } from 'element-plus';
 import * as ElementPlusIconsVue from '@element-plus/icons-vue';
-import { sysMenuCreate, sysMenuDelete, sysMenuList, sysMenuUpdate, } from '@/api/system/menus';
+import { menuService } from '@/services';
 import { useLoading } from '@/composables/useLoading';
 import { useForm } from '@/composables/useForm';
 import { useConfirm } from '@/composables/useConfirm';
@@ -243,7 +243,7 @@ function showError(error) {
 async function getList() {
     await withMainLoading(async () => {
         try {
-            const res = await sysMenuList({
+            const res = await menuService.getList({
                 page: queryPage.page,
                 size: queryPage.size,
                 keyword: queryForm.keyword || '',
@@ -311,7 +311,7 @@ function handleEdit(row) {
 async function handleDelete(row) {
     try {
         await confirm(t('system.confirmDeleteMenu', { name: getMenuTitle(row) }), { type: 'warning' });
-        const res = await sysMenuDelete(row.id);
+        const res = await menuService.delete(row.id);
         assertApiSuccess(res, t('common.failed'));
         ElMessage.success(t('common.success'));
         await getList();
@@ -341,7 +341,7 @@ async function handleSubmit() {
                     status: formData.status,
                     perms: formData.perms.trim(),
                 };
-                const res = await sysMenuCreate(payload);
+                const res = await menuService.create(payload);
                 assertApiSuccess(res, t('common.failed'));
             }
             else {
@@ -358,7 +358,7 @@ async function handleSubmit() {
                     status: formData.status,
                     perms: formData.perms.trim(),
                 };
-                const res = await sysMenuUpdate(payload);
+                const res = await menuService.update(formData.id, payload);
                 assertApiSuccess(res, t('common.failed'));
             }
             ElMessage.success(t('common.success'));

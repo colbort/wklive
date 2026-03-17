@@ -6,6 +6,7 @@ export { RoleService, roleService } from './system/RoleService'
 export { MenuService, menuService } from './system/MenuService'
 export { LogService, logService } from './system/LogService'
 export { UploadService, uploadService } from './system/UploadService'
+export { ConfigService, configService } from './system/ConfigService'
 
 // 类型导出
 export type { RespBase } from './BaseService'
@@ -55,3 +56,9 @@ export type {
   OpLogListResp
 } from './system/LogService'
 export type { UploadFileResp } from './system/UploadService'
+export type {
+  SysConfigItem,
+  SysConfigListReq,
+  SysConfigCreateReq,
+  SysConfigUpdateReq
+} from './system/ConfigService'

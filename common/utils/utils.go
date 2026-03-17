@@ -40,3 +40,15 @@ func StructToGoStruct(pbStruct *structpb.Struct, out interface{}) error {
 
 	return json.Unmarshal(b, out)
 }
+
+func StringToStruct(data string) (*structpb.Struct, error) {
+	var m map[string]interface{}
+
+	// 1. JSON字符串 → map
+	if err := json.Unmarshal([]byte(data), &m); err != nil {
+		return nil, err
+	}
+
+	// 2. map → structpb.Struct
+	return structpb.NewStruct(m)
+}

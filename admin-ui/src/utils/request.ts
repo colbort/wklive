@@ -5,7 +5,7 @@
 
 import axios, { AxiosRequestConfig, AxiosInstance, Method } from 'axios'
 import { useAuthStore } from '@/stores'
-import { ApiResp } from '@/api/types'
+import { RespBase } from '@/services'
 import { logger } from '@/utils/logger'
 
 export const http: AxiosInstance = axios.create({
@@ -60,7 +60,7 @@ function request<T = any>(
     data?: any
     config?: AxiosRequestConfig
   },
-): Promise<ApiResp<T>> {
+): Promise<RespBase<T>> {
   const { params, data, config } = options ?? {}
   return http.request({
     method,
@@ -77,7 +77,7 @@ export function get<T = any>(
   url: string,
   params?: any,
   config?: AxiosRequestConfig,
-): Promise<ApiResp<T>> {
+): Promise<RespBase<T>> {
   return request<T>('GET', url, { params, config })
 }
 
@@ -85,7 +85,7 @@ export function post<T = any>(
   url: string,
   data?: any,
   config?: AxiosRequestConfig,
-): Promise<ApiResp<T>> {
+): Promise<RespBase<T>> {
   return request<T>('POST', url, { data, config })
 }
 
@@ -93,7 +93,7 @@ export function put<T = any>(
   url: string,
   data?: any,
   config?: AxiosRequestConfig,
-): Promise<ApiResp<T>> {
+): Promise<RespBase<T>> {
   return request<T>('PUT', url, { data, config })
 }
 
@@ -101,7 +101,7 @@ export function del<T = any>(
   url: string,
   params?: any,
   config?: AxiosRequestConfig,
-): Promise<ApiResp<T>> {
+): Promise<RespBase<T>> {
   return request<T>('DELETE', url, { params, config })
 }
 
@@ -109,7 +109,7 @@ export function patch<T = any>(
   url: string,
   data?: any,
   config?: AxiosRequestConfig,
-): Promise<ApiResp<T>> {
+): Promise<RespBase<T>> {
   return request<T>('PATCH', url, { data, config })
 }
 

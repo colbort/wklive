@@ -47,6 +47,7 @@ export default {
     pleaseInputUsername: 'Please input username',
     pleaseInputModule: 'Please input module',
     pleaseInputAction: 'Please input action',
+    pleaseEnter: 'Please enter',
     pleaseSelectResult: 'Please select result',
     loadFailed: 'Load failed',
     search: 'Search',
@@ -156,6 +157,10 @@ export default {
     selectIcon: 'Select Icon',
     iconPreview: 'Icon Preview',
     noIcon: 'No icon selected',
+
+    config: 'System Config',
+    configKey: 'Config Key',
+    configValue: 'Config Value',
   },
   perms: {
     'sys:user:add': 'Add User',
@@ -175,6 +180,9 @@ export default {
     'sys:menu:add': 'Add Menu',
     'sys:menu:update': 'Edit Menu',
     'sys:menu:delete': 'Delete Menu',
+    'sys:config:add': 'Add Config',
+    'sys:config:update': 'Edit Config',
+    'sys:config:delete': 'Delete Config',
   },
   menu: {
     '1': 'System Management',
