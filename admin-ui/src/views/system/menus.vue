@@ -344,16 +344,11 @@ import { computed, nextTick, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
-import {
-  sysMenuCreate,
-  sysMenuDelete,
-  sysMenuList,
-  sysMenuUpdate,
-} from '@/api/system/menus'
+import { menuService } from '@/services'
 import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
 import { useConfirm } from '@/composables/useConfirm'
-import type { SysMenuCreateReq, SysMenuItem, SysMenuTreeItem, SysMenuUpdateReq } from '@/types/system/menus'
+import type { SysMenuCreateReq, SysMenuItem, SysMenuTreeItem, SysMenuUpdateReq } from '@/services/system/MenuService'
 
 const { t, te } = useI18n()
 
@@ -661,7 +656,7 @@ function showError(error: unknown) {
 async function getList() {
   await withMainLoading(async () => {
     try {
-      const res = await sysMenuList({
+      const res = await menuService.getList({
         page: queryPage.page,
         size: queryPage.size,
         keyword: queryForm.keyword || '',
@@ -742,7 +737,7 @@ async function handleDelete(row: SysMenuItem) {
       { type: 'warning' }
     )
 
-    const res = await sysMenuDelete(row.id) as ApiResp
+    const res = await menuService.delete(row.id)
     assertApiSuccess(res, t('common.failed'))
 
     ElMessage.success(t('common.success'))
@@ -775,7 +770,7 @@ async function handleSubmit() {
           perms: formData.perms.trim(),
         }
 
-        const res = await sysMenuCreate(payload) as ApiResp
+        const res = await menuService.create(payload)
         assertApiSuccess(res, t('common.failed'))
       } else {
         const payload: SysMenuUpdateReq = {
@@ -792,7 +787,7 @@ async function handleSubmit() {
           perms: formData.perms.trim(),
         }
 
-        const res = await sysMenuUpdate(payload) as ApiResp
+        const res = await menuService.update(formData.id!, payload)
         assertApiSuccess(res, t('common.failed'))
       }
 

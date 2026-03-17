@@ -196,48 +196,85 @@ INSERT INTO `sys_user_role` (`user_id`, `role_id`)
 VALUES
 	('1', '1');
 
+INSERT INTO `sys_role_menu` (`id`, `role_id`, `menu_id`)
+VALUES
+	('1', '1', '1'),
+	('2', '1', '100'),
+	('3', '1', '200'),
+	('4', '1', '300'),
+	('5', '1', '400'),
+	('6', '1', '500'),
+  ('7', '1', '600')
+	('8', '1', '101'),
+	('9', '1', '102'),
+	('10', '1', '103'),
+	('11', '1', '104'),
+	('12', '1', '105'),
+	('13', '1', '106'),
+	('14', '1', '107'),
+	('15', '1', '108'),
+	('16', '1', '109'),
+	('17', '1', '110'),
+	('18', '1', '201'),
+	('19', '1', '202'),
+	('20', '1', '203'),
+	('21', '1', '204'),
+	('22', '1', '301'),
+	('23', '1', '302'),
+	('24', '1', '303'),
+  ('25', '1', '401'),
+  ('26', '1', '402'),
+  ('27', '1', '403');
+
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, icon, sort)
 VALUES (1, 0, '系统管理', 1, 'Setting', 1);
 
-INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, sort)
-VALUES (100, 1, '用户管理', 2, '/users', 'system/users', 1);
+INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, icon, sort)
+VALUES (100, 1, '用户管理', 2, '/users', 'system/users', 'User', 100);
 
-INSERT INTO sys_menu (parent_id, name, menu_type, perms)
+INSERT INTO sys_menu (parent_id, name, menu_type, perms, sort)
 VALUES
-(100, '新增用户', 3, 'sys:user:add'),
-(100, '编辑用户', 3, 'sys:user:update'),
-(100, '删除用户', 3, 'sys:user:delete'),
-(100, '重置密码', 3, 'sys:user:resetpwd'),
-(100, '分配角色', 3, 'sys:user:assignrole'),
-(100, 'Google2FA管理', 3, 'sys:user:google2fa');
-INSERT INTO sys_menu (parent_id, name, menu_type, perms)
+(100, '新增用户', 3, 'sys:user:add', 101),
+(100, '编辑用户', 3, 'sys:user:update', 102),
+(100, '删除用户', 3, 'sys:user:delete', 103),
+(100, '重置密码', 3, 'sys:user:resetpwd', 104),
+(100, '分配角色', 3, 'sys:user:assignrole', 105),
+(100, 'Google2FA管理', 3, 'sys:user:google2fa', 106),
+(100, '2FA绑定', 3, 'sys:user:2fa:init', 107),
+(100, '2FA启用', 3, 'sys:user:2fa:enable', 108),
+(100, '2FA禁用', 3, 'sys:user:2fa:disable', 109),
+(100, '2FA重置', 3, 'sys:user:2fa:reset', 110);
+
+INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, icon, sort)
+VALUES (200, 1, '角色管理', 2, '/roles', 'system/roles', 'Guide', 200);
+
+INSERT INTO sys_menu (parent_id, name, menu_type, perms, sort)
 VALUES
-(100, '2FA绑定', 3, 'sys:user:2fa:init'),
-(100, '2FA启用', 3, 'sys:user:2fa:enable'),
-(100, '2FA禁用', 3, 'sys:user:2fa:disable'),
-(100, '2FA重置', 3, 'sys:user:2fa:reset');
+(200, '新增角色', 3, 'sys:role:add', 201),
+(200, '编辑角色', 3, 'sys:role:update', 202),
+(200, '删除角色', 3, 'sys:role:delete', 203),
+(200, '菜单授权', 3, 'sys:role:grant', 204);
 
-INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, sort)
-VALUES (200, 1, '角色管理', 2, '/roles', 'system/roles', 2);
+INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, icon, sort)
+VALUES (300, 1, '菜单管理', 2, '/menus', 'system/menus', 'Menu', 300);
 
-INSERT INTO sys_menu (parent_id, name, menu_type, perms)
+INSERT INTO sys_menu (parent_id, name, menu_type, perms, sort)
 VALUES
-(200, '新增角色', 3, 'sys:role:add'),
-(200, '编辑角色', 3, 'sys:role:update'),
-(200, '删除角色', 3, 'sys:role:delete'),
-(200, '菜单授权', 3, 'sys:role:grant');
+(300, '新增菜单', 3, 'sys:menu:add', 301),
+(300, '编辑菜单', 3, 'sys:menu:update', 302),
+(300, '删除菜单', 3, 'sys:menu:delete', 303);
 
-INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, sort)
-VALUES (300, 1, '菜单管理', 2, '/menus', 'system/menus', 3);
-
-INSERT INTO sys_menu (parent_id, name, menu_type, perms)
+INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, icon, sort)
+VALUES (400, 1, '系统配置', 2, '/configs', 'system/configs', 'Cpu', 400);
+INSERT INTO sys_menu (parent_id, name, menu_type, perms, sort)
 VALUES
-(300, '新增菜单', 3, 'sys:menu:add'),
-(300, '编辑菜单', 3, 'sys:menu:update'),
-(300, '删除菜单', 3, 'sys:menu:delete');
+(400, '新增配置', 3, 'sys:config:add', 401),
+(400, '编辑配置', 3, 'sys:config:update', 402),
+(400, '删除配置', 3, 'sys:config:delete', 403);
 
-INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, sort)
-VALUES (400, 1, '登录日志', 2, '/logs/login', 'system/login-log', 4);
-INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, sort)
-VALUES (500, 1, '操作日志', 2, '/logs/op', 'system/op-log', 5);
+INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, icon, sort)
+VALUES (500, 1, '登录日志', 2, '/logs/login', 'system/login-log', 'Reading', 500);
+
+INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, icon, sort)
+VALUES (600, 1, '操作日志', 2, '/logs/op', 'system/op-log', 'Document', 600);

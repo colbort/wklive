@@ -5,8 +5,8 @@ import { ElMessage } from 'element-plus'
 import { usePagination } from '@/composables/usePagination'
 import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
-import { apiLoginLogList } from '@/api/system/logs'
-import type { LoginLogItem } from '@/types/system/logs'
+import { logService } from '@/services'
+import type { LoginLogItem } from '@/services/system/LogService'
 
 const { t } = useI18n()
 
@@ -27,7 +27,7 @@ const list_ref = ref<LoginLogItem[]>([])
 async function fetchList() {
   await withLoading(async () => {
     try {
-      const res = await apiLoginLogList({
+      const res = await logService.getLoginLogs({
         username: queryForm.username || undefined,
         success: queryForm.success,
       // note: backend field named success        page: pagination.page,

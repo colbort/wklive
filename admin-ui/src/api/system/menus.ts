@@ -1,32 +1,38 @@
 import { del, get, post, put } from '@/utils/request'
-import type { PermItem, MenuNode, SysMenuCreateReq, SysMenuUpdateReq, SysMenuListReq, SysMenuListResp } from '../../types/system/menus'
-import { ApiResp } from '../types'
-import { RespBase } from '@/types/common'
+import type {
+  RespBase,
+  MenuNode,
+  PermItem,
+  SysMenuCreateReq,
+  SysMenuUpdateReq,
+  SysMenuListReq,
+  SysMenuListResp
+} from '@/services'
 
 
-export async function apiMenuTree(): Promise<ApiResp<MenuNode[]>> {
+export async function apiMenuTree(): Promise<RespBase<MenuNode[]>> {
   return await get('/admin/menus/tree')
 }
-export async function apiPermList(): Promise<ApiResp<PermItem[]>> {
+export async function apiPermList(): Promise<RespBase<PermItem[]>> {
   return await get('/admin/perms')
 }
 
 /** 新增菜单 */
-export async function sysMenuCreate(data: SysMenuCreateReq) : Promise<ApiResp<RespBase>> {
+export async function sysMenuCreate(data: SysMenuCreateReq) : Promise<RespBase> {
   return await post('/admin/menus', data)
 }
 
 /** 更新菜单 */
-export async function sysMenuUpdate(data: SysMenuUpdateReq) : Promise<ApiResp<RespBase>> {
+export async function sysMenuUpdate(data: SysMenuUpdateReq) : Promise<RespBase> {
   return await put('/admin/menus', data)
 }
 
 /** 删除菜单 */
-export async function sysMenuDelete(id: number) : Promise<ApiResp<RespBase>> {
+export async function sysMenuDelete(id: number) : Promise<RespBase> {
   return await del(`/admin/menus/${id}`)
 }
 
 /** 菜单列表 */
-export async function sysMenuList(data: SysMenuListReq) : Promise<ApiResp<SysMenuListResp>> {
+export async function sysMenuList(data: SysMenuListReq) : Promise<RespBase<SysMenuListResp>> {
   return await get('/admin/menus', data)
 }

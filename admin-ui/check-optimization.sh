@@ -62,7 +62,12 @@ echo ""
 
 echo "🎁 服务层"
 check_file "src/services/BaseService.ts" "BaseService.ts 基础服务"
-check_file "src/services/UserService.ts" "UserService.ts 用户服务示例"
+check_file "src/services/system/UserService.ts" "UserService.ts 用户服务"
+check_file "src/services/system/RoleService.ts" "RoleService.ts 角色服务"
+check_file "src/services/system/MenuService.ts" "MenuService.ts 菜单服务"
+check_file "src/services/system/LogService.ts" "LogService.ts 日志服务"
+check_file "src/services/system/UploadService.ts" "UploadService.ts 上传服务"
+check_file "src/services/index.ts" "index.ts 服务统一导出"
 echo ""
 
 echo "🪝 Composables"

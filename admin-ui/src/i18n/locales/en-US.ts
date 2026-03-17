@@ -181,8 +181,9 @@ export default {
     '100': 'User Management',
     '200': 'Role Management',
     '300': 'Menu Management',
-    '400': 'Login Logs',
-    '500': 'Operation Logs',
+    '400': 'System Configuration',
+    '500': 'Login Logs',
+    '600': 'Operation Logs',
   },
   home: {
     welcome: 'Welcome, {name}',

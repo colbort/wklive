@@ -1,11 +1,7 @@
 import { post } from '@/utils/request'
-import { ApiResp } from '../types'
+import type { RespBase, UploadFileResp } from '@/services'
 
-export interface UploadFileResp {
-  url: string
-}
-
-export function apiUploadAvatar(file: File): Promise<ApiResp<UploadFileResp>> {
+export function apiUploadAvatar(file: File): Promise<RespBase<UploadFileResp>> {
   const formData = new FormData()
   formData.append('file', file)
 

@@ -6,7 +6,7 @@ import { useAuthStore, apiUpdateProfile } from '@/stores'
 import { useRouter } from 'vue-router'
 import { Expand, Fold, User, Setting, Lock } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import { apiUploadAvatar } from '@/api/system/upload'
+import { uploadService } from '@/services'
 import { http } from '@/utils/request'
 import Cropper from 'cropperjs'
 
@@ -310,7 +310,7 @@ async function confirmCrop() {
           ElMessage.error(t('app.cropFailed'))
     }
 
-    const canvas = await selection.$toCanvas({
+    const canvas = await selection!.$toCanvas({
       width: 200,
       height: 200,
     })
@@ -339,7 +339,7 @@ async function confirmCrop() {
             type: 'image/jpeg',
           })
 
-          const result = await apiUploadAvatar(file)
+          const result = await uploadService.uploadAvatar(file)
 
           if (result.code !== 200) {
             throw new Error(result.msg || 'upload failed')

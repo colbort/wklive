@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { get, post } from '@/utils/request'
+import type { RespBase } from '@/services'
 
 // response payload returned by login endpoint
 export type LoginResp = {
@@ -51,7 +52,7 @@ export const useAuthStore = defineStore('auth', {
     async login(payload: { username: string; password: string; googleCode?: string }) {
       const res = await post<LoginResp>('/admin/auth/login', payload)
       if (res.code !== 200) throw new Error(res.msg || 'login failed')
-      // payload is stored at top level since ApiResp strips `data`
+      // payload is stored at top level since RespBase strips `data`
       this.token = res.data!.token
       this.exp = res.data!.exp
       localStorage.setItem('token', res.data!.token)
@@ -79,6 +80,6 @@ export const useAuthStore = defineStore('auth', {
 })
 
 
-export function apiUpdateProfile(data: { nickname?: string; avatar?: string; password?: string }): Promise<ApiResp> {
-  return post<ApiResp>('/admin/auth/profile', data)
+export function apiUpdateProfile(data: { nickname?: string; avatar?: string; password?: string }): Promise<RespBase> {
+  return post<RespBase>('/admin/auth/profile', data)
 }

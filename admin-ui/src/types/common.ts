@@ -1,1 +1,0 @@
-export type RespBase = { code: number; msg: string }

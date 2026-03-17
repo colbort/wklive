@@ -5,8 +5,8 @@ import { ElMessage } from 'element-plus'
 import { usePagination } from '@/composables/usePagination'
 import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
-import { apiOpLogList } from '@/api/system/logs'
-import type { OpLogItem } from '@/types/system/logs'
+import { logService } from '@/services'
+import type { OpLogItem } from '@/services/system/LogService'
 
 const { t } = useI18n()
 
@@ -28,7 +28,7 @@ const list_ref = ref<OpLogItem[]>([])
 async function fetchList() {
   await withLoading(async () => {
     try {
-      const res = await apiOpLogList({
+      const res = await logService.getOperationLogs({
         username: queryForm.username || undefined,
         method: queryForm.method || undefined,
         path: queryForm.path || undefined,
