@@ -2,7 +2,7 @@
   <div class="sys-config">
     <div class="page-header">
       <h2>{{ t('system.config') }}</h2>
-      <el-button type="primary" @click="handleCreate">
+      <el-button type="primary" v-perm="'system:config:add'" @click="handleCreate">
         <el-icon><Plus /></el-icon>
         {{ t('common.add') }}
       </el-button>
@@ -186,7 +186,7 @@
           @click="handleSubmit"
         >
           {{ t('common.confirm') }}
-        </el-button>
+        </el-button> 
       </template>
     </el-dialog>
   </div>
@@ -251,7 +251,8 @@ const formRules = {
 async function loadKeys() {
   try {
     const res = await configService.getKeys()
-    keys.value = res.data || res || []
+    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'Failed to load keys')
+    keys.value = res.data || []
   } catch (e: any) {
     ElMessage.error(e?.message || 'Failed to load keys')
   }
@@ -352,7 +353,7 @@ async function handleSubmit() {
     if (isEdit.value) {
       const { id, ...updateData } = formData
       const res = await configService.update(id, updateData)
-      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'update failed')
+      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || t('common.updateFailed'))
       ElMessage.success(t('common.updateSuccess'))
     } else {
       const data: SysConfigCreateReq = {
@@ -361,7 +362,7 @@ async function handleSubmit() {
         remark: formData.remark || undefined
       }
       const res = await configService.create(data)
-      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'create failed')
+      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || t('common.createFailed'))
       ElMessage.success(t('common.createSuccess'))
     }
 

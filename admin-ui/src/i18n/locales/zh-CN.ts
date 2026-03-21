@@ -107,6 +107,10 @@ export default {
     newPassword: '新密码',
     account: '账号',
     noData: '暂无数据',
+    createSuccess: '创建成功',
+    createFailed: '创建失败',
+    updateSuccess: '更新成功',
+    updateFailed: '更新失败',
   },
   system: {
     mgmt: '系统管理',

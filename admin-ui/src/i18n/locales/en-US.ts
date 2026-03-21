@@ -107,6 +107,10 @@ export default {
     newPassword: 'New Password',
     account: 'Account',
     noData: 'No data',
+    createSuccess: 'Create success',
+    createFailed: 'Create failed',
+    updateSuccess: 'Update success',
+    updateFailed: 'Update failed',
   },
   system: {
     mgmt: 'System',
