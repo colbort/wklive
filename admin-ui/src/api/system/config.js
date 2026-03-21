@@ -12,3 +12,6 @@ export function apiSysConfigUpdate(data) {
 export function apiSysConfigDelete(id) {
     return del(`/admin/configs/${id}`);
 }
+export function apiSysConfigKeys() {
+    return get('/admin/configs/keys');
+}

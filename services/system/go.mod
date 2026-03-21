@@ -9,7 +9,7 @@ require (
 	golang.org/x/crypto v0.46.0
 	google.golang.org/grpc v1.78.0
 	wklive/common v0.0.0-00010101000000-000000000000
-	wklive/proto/system v0.0.0-00010101000000-000000000000
+	wklive/proto/system v0.0.0-20251105000000-000000000000
 )
 
 require (

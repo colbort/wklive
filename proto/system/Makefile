@@ -1,12 +1,16 @@
 .PHONY: gen clean
 
+REPO_ROOT := ../..
+
 gen:
 	@echo "🔧 [proto/system] generating system pb..."
-	protoc \
+	cd $(REPO_ROOT) && protoc \
+		-I . \
 		--go_out=. --go_opt=paths=source_relative \
 		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
-		*.proto
-	@echo "✅ [proto/system] generated: system.pb.go / system_grpc.pb.go"
+		proto/system/config.proto \
+		proto/system/system.proto
+	@echo "✅ [proto/system] generated"
 
 clean:
 	rm -f *.pb.go

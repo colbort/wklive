@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strings"
 
+	"wklive/proto/system"
+
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -51,4 +53,25 @@ func StringToStruct(data string) (*structpb.Struct, error) {
 
 	// 2. map → structpb.Struct
 	return structpb.NewStruct(m)
+}
+
+func StructToString(pbStruct *structpb.Struct) (string, error) {
+	if pbStruct == nil {
+		return "{}", nil
+	}
+	b, err := json.Marshal(pbStruct)
+	if err != nil {
+		return "", err
+	}
+
+	return string(b), nil
+}
+
+func CheckConfig(key string, value string) error {
+	if key == system.SysConfigType_OBJECT_STORAGE.String() {
+		var objectStorageConfig system.ObjectStorageConfig
+		return json.Unmarshal([]byte(value), &objectStorageConfig)
+	}
+
+	return nil
 }

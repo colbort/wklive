@@ -176,8 +176,8 @@ type RespBase struct {
 }
 
 type SysConfigCreateReq struct {
-	ConfigKey   string `json:"config_key" validate:"required"`
-	ConfigValue string `json:"config_value"`
+	ConfigKey   string `json:"configKey" validate:"required"`
+	ConfigValue string `json:"configValue"`
 	Remark      string `json:"remark,optional"`
 }
 
@@ -187,10 +187,15 @@ type SysConfigDeleteReq struct {
 
 type SysConfigItem struct {
 	Id          int64  `json:"id"`
-	ConfigKey   string `json:"config_key"`
-	ConfigValue string `json:"config_value"`
+	ConfigKey   string `json:"configKey"`
+	ConfigValue string `json:"configValue"`
 	Remark      string `json:"remark,optional"`
-	CreatedAt   int64  `json:"created_at"`
+	CreatedAt   int64  `json:"createdAt"`
+}
+
+type SysConfigKeysResp struct {
+	RespBase
+	Data []string `json:"data"`
 }
 
 type SysConfigListReq struct {
@@ -205,8 +210,8 @@ type SysConfigListResp struct {
 
 type SysConfigUpdateReq struct {
 	Id          int64  `json:"id" validate:"required"`
-	ConfigKey   string `json:"config_key,optional"`
-	ConfigValue string `json:"config_value,optional"`
+	ConfigKey   string `json:"configKey,optional"`
+	ConfigValue string `json:"configValue,optional"`
 	Remark      string `json:"remark,optional"`
 }
 

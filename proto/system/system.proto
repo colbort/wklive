@@ -3,7 +3,7 @@ syntax = "proto3";
 package system;
 
 import "google/protobuf/struct.proto";
-import "config.proto";
+import "proto/system/config.proto";
 
 option go_package = "wklive/proto/system;system";
 
@@ -297,7 +297,12 @@ message SysConfigDetailReq { optional int64 id = 1; optional SysConfigType confi
 message SysConfigDetailResp { RespBase base = 1; SysConfigItem data = 3; }
 
 message SysConfigByKeysReq { repeated string config_keys = 1; }
-message SysConfigByKeysResp { RespBase base = 1; repeated SysConfigItem data = 3; }
+message SysConfigByKeysResp { RespBase base = 1; repeated system.SysConfigItem data = 3; }
+
+message SysConfigKeysResp {
+  RespBase base = 1;
+  repeated string data = 3;
+}
 
 //////////////////////
 // Service
@@ -376,5 +381,7 @@ service System {
   rpc SysConfigDetail(SysConfigDetailReq) returns (SysConfigDetailResp);
   // 获取系统配置根据keys
   rpc SysConfigByKeys(SysConfigByKeysReq) returns (SysConfigByKeysResp);
+  // 获取系统配置所有的key
+  rpc SysConfigKeys(Empty) returns (SysConfigKeysResp);
 }
 

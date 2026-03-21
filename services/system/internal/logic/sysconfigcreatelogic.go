@@ -3,7 +3,6 @@ package logic
 import (
 	"context"
 	"database/sql"
-	"errors"
 
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
@@ -29,19 +28,35 @@ func NewSysConfigCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 // 新增系统配置
 func (l *SysConfigCreateLogic) SysConfigCreate(in *system.SysConfigCreateReq) (*system.RespBase, error) {
 	config, err := l.svcCtx.ConfigModel.FindOneByConfigKey(l.ctx, sql.NullString{String: in.ConfigKey, Valid: true})
-	if err != nil {
-		return nil, err
+	if err != nil && err != models.ErrNotFound {
+		return &system.RespBase{
+			Code: 500,
+			Msg:  err.Error(),
+		}, nil
 	}
 	if config != nil {
-		return nil, errors.New("配置已存在")
+		return &system.RespBase{
+			Code: 400,
+			Msg:  "配置项已存在",
+		}, nil
+	}
+	jsonValue, err := in.ConfigValue.MarshalJSON()
+	if err != nil {
+		return &system.RespBase{
+			Code: 500,
+			Msg:  err.Error(),
+		}, nil
 	}
 	_, err = l.svcCtx.ConfigModel.Insert(l.ctx, &models.SysConfig{
 		ConfigKey:   sql.NullString{String: in.ConfigKey, Valid: true},
-		ConfigValue: sql.NullString{String: in.ConfigValue.String(), Valid: true},
+		ConfigValue: sql.NullString{String: string(jsonValue), Valid: true},
 		Remark:      sql.NullString{String: in.Remark, Valid: true},
 	})
 	if err != nil {
-		return nil, err
+		return &system.RespBase{
+			Code: 500,
+			Msg:  err.Error(),
+		}, nil
 	}
 
 	return &system.RespBase{

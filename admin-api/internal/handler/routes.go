@@ -81,6 +81,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
+				Path:    "/configs/keys",
+				Handler: system.SysConfigKeysHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
 				Path:    "/logs/login",
 				Handler: system.LoginLogListHandler(serverCtx),
 			},

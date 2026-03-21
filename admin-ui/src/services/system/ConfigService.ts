@@ -4,6 +4,7 @@ import {
   apiSysConfigCreate,
   apiSysConfigUpdate,
   apiSysConfigDelete,
+  apiSysConfigKeys,
 } from '@/api/system/config'
 
 // ===== 系统配置类型定义 =====
@@ -58,6 +59,10 @@ class ConfigService implements BaseService {
 
   async delete(id: string | number): Promise<RespBase> {
     return apiSysConfigDelete(Number(id))
+  }
+
+  async getKeys(): Promise<RespBase<string[]>> {
+    return apiSysConfigKeys()
   }
 }
 

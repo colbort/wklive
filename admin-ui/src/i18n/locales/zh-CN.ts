@@ -161,6 +161,8 @@ export default {
     config: '系统配置',
     configKey: '配置键',
     configValue: '配置值',
+
+    OBJECT_STORAGE: '对象存储',
   },
   perms: {
     'sys:user:add': '新增用户',

@@ -14,6 +14,7 @@ require (
 	google.golang.org/protobuf v1.36.11
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.1
+	wklive/proto/system v0.0.0-20251105000000-000000000000
 )
 
 require (
@@ -70,3 +71,5 @@ require (
 	gopkg.in/ini.v1 v1.42.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 )
+
+replace wklive/proto/system => ../proto/system

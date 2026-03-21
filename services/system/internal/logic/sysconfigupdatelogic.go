@@ -35,7 +35,11 @@ func (l *SysConfigUpdateLogic) SysConfigUpdate(in *system.SysConfigUpdateReq) (*
 		config.ConfigKey = sql.NullString{String: in.ConfigKey, Valid: true}
 	}
 	if in.ConfigValue != nil {
-		config.ConfigValue = sql.NullString{String: in.ConfigValue.String(), Valid: true}
+		jsonValue, err := in.ConfigValue.MarshalJSON()
+		if err != nil {
+			return nil, err
+		}
+		config.ConfigValue = sql.NullString{String: string(jsonValue), Valid: true}
 	}
 	if in.Remark != "" {
 		config.Remark = sql.NullString{String: in.Remark, Valid: true}

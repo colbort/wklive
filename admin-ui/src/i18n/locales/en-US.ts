@@ -161,6 +161,8 @@ export default {
     config: 'System Config',
     configKey: 'Config Key',
     configValue: 'Config Value',
+
+    OBJECT_STORAGE: 'Object Storage',
   },
   perms: {
     'sys:user:add': 'Add User',

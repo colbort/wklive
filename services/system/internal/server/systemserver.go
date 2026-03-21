@@ -232,3 +232,9 @@ func (s *SystemServer) SysConfigByKeys(ctx context.Context, in *system.SysConfig
 	l := logic.NewSysConfigByKeysLogic(ctx, s.svcCtx)
 	return l.SysConfigByKeys(in)
 }
+
+// 获取系统配置所有的key
+func (s *SystemServer) SysConfigKeys(ctx context.Context, in *system.Empty) (*system.SysConfigKeysResp, error) {
+	l := logic.NewSysConfigKeysLogic(ctx, s.svcCtx)
+	return l.SysConfigKeys(in)
+}

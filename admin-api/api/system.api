@@ -260,15 +260,15 @@ type OpLogListResp {
 }
 
 type SysConfigCreateReq {
-  configKey string `json:"config_key" validate:"required"`
-  configValue string `json:"config_value"`
+  configKey string `json:"configKey" validate:"required"`
+  configValue string `json:"configValue"`
   remark string `json:"remark,optional"`
 }
 
 type SysConfigUpdateReq {
   id int64 `json:"id" validate:"required"`
-  configKey string `json:"config_key,optional"`
-  configValue string `json:"config_value,optional"`
+  configKey string `json:"configKey,optional"`
+  configValue string `json:"configValue,optional"`
   remark string `json:"remark,optional"`
 }
 
@@ -278,10 +278,10 @@ type SysConfigDeleteReq {
 
 type SysConfigItem {
   id int64 `json:"id"`
-  configKey string `json:"config_key"`
-  configValue string `json:"config_value"`
+  configKey string `json:"configKey"`
+  configValue string `json:"configValue"`
   remark string `json:"remark,optional"`
-  createdAt int64 `json:"created_at"`
+  createdAt int64 `json:"createdAt"`
 }
 
 type SysConfigListReq {
@@ -291,6 +291,11 @@ type SysConfigListReq {
 type SysConfigListResp {
   RespBase
   data []SysConfigItem `json:"data"`
+}
+
+type SysConfigKeysResp {
+  RespBase
+  data []string `json:"data"`
 }
 
 @server(
@@ -396,4 +401,7 @@ service admin {
 
   @handler SysConfigDelete
   delete /configs/:id (SysConfigDeleteReq) returns (RespBase)
+
+  @handler SysConfigKeys
+  get /configs/keys returns (SysConfigKeysResp)
 }

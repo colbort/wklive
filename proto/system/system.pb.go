@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.6
 // 	protoc        v3.21.12
-// source: system.proto
+// source: proto/system/system.proto
 
 package system
 
@@ -30,7 +30,7 @@ type Empty struct {
 
 func (x *Empty) Reset() {
 	*x = Empty{}
-	mi := &file_system_proto_msgTypes[0]
+	mi := &file_proto_system_system_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -42,7 +42,7 @@ func (x *Empty) String() string {
 func (*Empty) ProtoMessage() {}
 
 func (x *Empty) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[0]
+	mi := &file_proto_system_system_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -55,7 +55,7 @@ func (x *Empty) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Empty.ProtoReflect.Descriptor instead.
 func (*Empty) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{0}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{0}
 }
 
 // ////////////////////
@@ -74,7 +74,7 @@ type AdminLoginReq struct {
 
 func (x *AdminLoginReq) Reset() {
 	*x = AdminLoginReq{}
-	mi := &file_system_proto_msgTypes[1]
+	mi := &file_proto_system_system_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -86,7 +86,7 @@ func (x *AdminLoginReq) String() string {
 func (*AdminLoginReq) ProtoMessage() {}
 
 func (x *AdminLoginReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[1]
+	mi := &file_proto_system_system_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -99,7 +99,7 @@ func (x *AdminLoginReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminLoginReq.ProtoReflect.Descriptor instead.
 func (*AdminLoginReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{1}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *AdminLoginReq) GetUsername() string {
@@ -153,7 +153,7 @@ type AdminLoginResp struct {
 
 func (x *AdminLoginResp) Reset() {
 	*x = AdminLoginResp{}
-	mi := &file_system_proto_msgTypes[2]
+	mi := &file_proto_system_system_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -165,7 +165,7 @@ func (x *AdminLoginResp) String() string {
 func (*AdminLoginResp) ProtoMessage() {}
 
 func (x *AdminLoginResp) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[2]
+	mi := &file_proto_system_system_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -178,7 +178,7 @@ func (x *AdminLoginResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminLoginResp.ProtoReflect.Descriptor instead.
 func (*AdminLoginResp) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{2}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *AdminLoginResp) GetBase() *RespBase {
@@ -246,7 +246,7 @@ type ProfileReq struct {
 
 func (x *ProfileReq) Reset() {
 	*x = ProfileReq{}
-	mi := &file_system_proto_msgTypes[3]
+	mi := &file_proto_system_system_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -258,7 +258,7 @@ func (x *ProfileReq) String() string {
 func (*ProfileReq) ProtoMessage() {}
 
 func (x *ProfileReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[3]
+	mi := &file_proto_system_system_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -271,7 +271,7 @@ func (x *ProfileReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProfileReq.ProtoReflect.Descriptor instead.
 func (*ProfileReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{3}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *ProfileReq) GetUid() int64 {
@@ -293,7 +293,7 @@ type ProfileUser struct {
 
 func (x *ProfileUser) Reset() {
 	*x = ProfileUser{}
-	mi := &file_system_proto_msgTypes[4]
+	mi := &file_proto_system_system_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -305,7 +305,7 @@ func (x *ProfileUser) String() string {
 func (*ProfileUser) ProtoMessage() {}
 
 func (x *ProfileUser) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[4]
+	mi := &file_proto_system_system_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -318,7 +318,7 @@ func (x *ProfileUser) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProfileUser.ProtoReflect.Descriptor instead.
 func (*ProfileUser) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{4}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ProfileUser) GetId() int64 {
@@ -369,7 +369,7 @@ type SysMenuNode struct {
 
 func (x *SysMenuNode) Reset() {
 	*x = SysMenuNode{}
-	mi := &file_system_proto_msgTypes[5]
+	mi := &file_proto_system_system_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -381,7 +381,7 @@ func (x *SysMenuNode) String() string {
 func (*SysMenuNode) ProtoMessage() {}
 
 func (x *SysMenuNode) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[5]
+	mi := &file_proto_system_system_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -394,7 +394,7 @@ func (x *SysMenuNode) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysMenuNode.ProtoReflect.Descriptor instead.
 func (*SysMenuNode) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{5}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *SysMenuNode) GetId() int64 {
@@ -492,7 +492,7 @@ type ProfileResp struct {
 
 func (x *ProfileResp) Reset() {
 	*x = ProfileResp{}
-	mi := &file_system_proto_msgTypes[6]
+	mi := &file_proto_system_system_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -504,7 +504,7 @@ func (x *ProfileResp) String() string {
 func (*ProfileResp) ProtoMessage() {}
 
 func (x *ProfileResp) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[6]
+	mi := &file_proto_system_system_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -517,7 +517,7 @@ func (x *ProfileResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProfileResp.ProtoReflect.Descriptor instead.
 func (*ProfileResp) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{6}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ProfileResp) GetUser() *ProfileUser {
@@ -553,7 +553,7 @@ type UpdateProfileReq struct {
 
 func (x *UpdateProfileReq) Reset() {
 	*x = UpdateProfileReq{}
-	mi := &file_system_proto_msgTypes[7]
+	mi := &file_proto_system_system_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -565,7 +565,7 @@ func (x *UpdateProfileReq) String() string {
 func (*UpdateProfileReq) ProtoMessage() {}
 
 func (x *UpdateProfileReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[7]
+	mi := &file_proto_system_system_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -578,7 +578,7 @@ func (x *UpdateProfileReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateProfileReq.ProtoReflect.Descriptor instead.
 func (*UpdateProfileReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{7}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *UpdateProfileReq) GetId() int64 {
@@ -631,7 +631,7 @@ type SysMenuItem struct {
 
 func (x *SysMenuItem) Reset() {
 	*x = SysMenuItem{}
-	mi := &file_system_proto_msgTypes[8]
+	mi := &file_proto_system_system_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -643,7 +643,7 @@ func (x *SysMenuItem) String() string {
 func (*SysMenuItem) ProtoMessage() {}
 
 func (x *SysMenuItem) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[8]
+	mi := &file_proto_system_system_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -656,7 +656,7 @@ func (x *SysMenuItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysMenuItem.ProtoReflect.Descriptor instead.
 func (*SysMenuItem) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{8}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *SysMenuItem) GetId() int64 {
@@ -746,7 +746,7 @@ type SysMenuTreeResp struct {
 
 func (x *SysMenuTreeResp) Reset() {
 	*x = SysMenuTreeResp{}
-	mi := &file_system_proto_msgTypes[9]
+	mi := &file_proto_system_system_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -758,7 +758,7 @@ func (x *SysMenuTreeResp) String() string {
 func (*SysMenuTreeResp) ProtoMessage() {}
 
 func (x *SysMenuTreeResp) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[9]
+	mi := &file_proto_system_system_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -771,7 +771,7 @@ func (x *SysMenuTreeResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysMenuTreeResp.ProtoReflect.Descriptor instead.
 func (*SysMenuTreeResp) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{9}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *SysMenuTreeResp) GetBase() *RespBase {
@@ -800,7 +800,7 @@ type Google2FAInitReq struct {
 
 func (x *Google2FAInitReq) Reset() {
 	*x = Google2FAInitReq{}
-	mi := &file_system_proto_msgTypes[10]
+	mi := &file_proto_system_system_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -812,7 +812,7 @@ func (x *Google2FAInitReq) String() string {
 func (*Google2FAInitReq) ProtoMessage() {}
 
 func (x *Google2FAInitReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[10]
+	mi := &file_proto_system_system_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -825,7 +825,7 @@ func (x *Google2FAInitReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Google2FAInitReq.ProtoReflect.Descriptor instead.
 func (*Google2FAInitReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{10}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *Google2FAInitReq) GetUserId() int64 {
@@ -846,7 +846,7 @@ type Google2FAInitResp struct {
 
 func (x *Google2FAInitResp) Reset() {
 	*x = Google2FAInitResp{}
-	mi := &file_system_proto_msgTypes[11]
+	mi := &file_proto_system_system_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -858,7 +858,7 @@ func (x *Google2FAInitResp) String() string {
 func (*Google2FAInitResp) ProtoMessage() {}
 
 func (x *Google2FAInitResp) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[11]
+	mi := &file_proto_system_system_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -871,7 +871,7 @@ func (x *Google2FAInitResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Google2FAInitResp.ProtoReflect.Descriptor instead.
 func (*Google2FAInitResp) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{11}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *Google2FAInitResp) GetBase() *RespBase {
@@ -905,7 +905,7 @@ type Google2FAEnableReq struct {
 
 func (x *Google2FAEnableReq) Reset() {
 	*x = Google2FAEnableReq{}
-	mi := &file_system_proto_msgTypes[12]
+	mi := &file_proto_system_system_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -917,7 +917,7 @@ func (x *Google2FAEnableReq) String() string {
 func (*Google2FAEnableReq) ProtoMessage() {}
 
 func (x *Google2FAEnableReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[12]
+	mi := &file_proto_system_system_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -930,7 +930,7 @@ func (x *Google2FAEnableReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Google2FAEnableReq.ProtoReflect.Descriptor instead.
 func (*Google2FAEnableReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{12}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *Google2FAEnableReq) GetUserId() int64 {
@@ -957,7 +957,7 @@ type Google2FADisableReq struct {
 
 func (x *Google2FADisableReq) Reset() {
 	*x = Google2FADisableReq{}
-	mi := &file_system_proto_msgTypes[13]
+	mi := &file_proto_system_system_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -969,7 +969,7 @@ func (x *Google2FADisableReq) String() string {
 func (*Google2FADisableReq) ProtoMessage() {}
 
 func (x *Google2FADisableReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[13]
+	mi := &file_proto_system_system_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -982,7 +982,7 @@ func (x *Google2FADisableReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Google2FADisableReq.ProtoReflect.Descriptor instead.
 func (*Google2FADisableReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{13}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *Google2FADisableReq) GetUserId() int64 {
@@ -1008,7 +1008,7 @@ type Google2FAResetReq struct {
 
 func (x *Google2FAResetReq) Reset() {
 	*x = Google2FAResetReq{}
-	mi := &file_system_proto_msgTypes[14]
+	mi := &file_proto_system_system_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1020,7 +1020,7 @@ func (x *Google2FAResetReq) String() string {
 func (*Google2FAResetReq) ProtoMessage() {}
 
 func (x *Google2FAResetReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[14]
+	mi := &file_proto_system_system_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1033,7 +1033,7 @@ func (x *Google2FAResetReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Google2FAResetReq.ProtoReflect.Descriptor instead.
 func (*Google2FAResetReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{14}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *Google2FAResetReq) GetUserId() int64 {
@@ -1054,7 +1054,7 @@ type RespBase struct {
 
 func (x *RespBase) Reset() {
 	*x = RespBase{}
-	mi := &file_system_proto_msgTypes[15]
+	mi := &file_proto_system_system_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1066,7 +1066,7 @@ func (x *RespBase) String() string {
 func (*RespBase) ProtoMessage() {}
 
 func (x *RespBase) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[15]
+	mi := &file_proto_system_system_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1079,7 +1079,7 @@ func (x *RespBase) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RespBase.ProtoReflect.Descriptor instead.
 func (*RespBase) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{15}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *RespBase) GetCode() int32 {
@@ -1116,7 +1116,7 @@ type PageReq struct {
 
 func (x *PageReq) Reset() {
 	*x = PageReq{}
-	mi := &file_system_proto_msgTypes[16]
+	mi := &file_proto_system_system_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1128,7 +1128,7 @@ func (x *PageReq) String() string {
 func (*PageReq) ProtoMessage() {}
 
 func (x *PageReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[16]
+	mi := &file_proto_system_system_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1141,7 +1141,7 @@ func (x *PageReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PageReq.ProtoReflect.Descriptor instead.
 func (*PageReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{16}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *PageReq) GetPage() int64 {
@@ -1173,7 +1173,7 @@ type SysUserItem struct {
 
 func (x *SysUserItem) Reset() {
 	*x = SysUserItem{}
-	mi := &file_system_proto_msgTypes[17]
+	mi := &file_proto_system_system_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1185,7 +1185,7 @@ func (x *SysUserItem) String() string {
 func (*SysUserItem) ProtoMessage() {}
 
 func (x *SysUserItem) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[17]
+	mi := &file_proto_system_system_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1198,7 +1198,7 @@ func (x *SysUserItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysUserItem.ProtoReflect.Descriptor instead.
 func (*SysUserItem) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{17}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *SysUserItem) GetId() int64 {
@@ -1261,7 +1261,7 @@ type SysUserListReq struct {
 
 func (x *SysUserListReq) Reset() {
 	*x = SysUserListReq{}
-	mi := &file_system_proto_msgTypes[18]
+	mi := &file_proto_system_system_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1273,7 +1273,7 @@ func (x *SysUserListReq) String() string {
 func (*SysUserListReq) ProtoMessage() {}
 
 func (x *SysUserListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[18]
+	mi := &file_proto_system_system_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1286,7 +1286,7 @@ func (x *SysUserListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysUserListReq.ProtoReflect.Descriptor instead.
 func (*SysUserListReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{18}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *SysUserListReq) GetPage() *PageReq {
@@ -1320,7 +1320,7 @@ type SysUserListResp struct {
 
 func (x *SysUserListResp) Reset() {
 	*x = SysUserListResp{}
-	mi := &file_system_proto_msgTypes[19]
+	mi := &file_proto_system_system_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1332,7 +1332,7 @@ func (x *SysUserListResp) String() string {
 func (*SysUserListResp) ProtoMessage() {}
 
 func (x *SysUserListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[19]
+	mi := &file_proto_system_system_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1345,7 +1345,7 @@ func (x *SysUserListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysUserListResp.ProtoReflect.Descriptor instead.
 func (*SysUserListResp) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{19}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *SysUserListResp) GetBase() *RespBase {
@@ -1371,7 +1371,7 @@ type SysUserDetailReq struct {
 
 func (x *SysUserDetailReq) Reset() {
 	*x = SysUserDetailReq{}
-	mi := &file_system_proto_msgTypes[20]
+	mi := &file_proto_system_system_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1383,7 +1383,7 @@ func (x *SysUserDetailReq) String() string {
 func (*SysUserDetailReq) ProtoMessage() {}
 
 func (x *SysUserDetailReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[20]
+	mi := &file_proto_system_system_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1396,7 +1396,7 @@ func (x *SysUserDetailReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysUserDetailReq.ProtoReflect.Descriptor instead.
 func (*SysUserDetailReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{20}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *SysUserDetailReq) GetId() int64 {
@@ -1416,7 +1416,7 @@ type SysUserDetailResp struct {
 
 func (x *SysUserDetailResp) Reset() {
 	*x = SysUserDetailResp{}
-	mi := &file_system_proto_msgTypes[21]
+	mi := &file_proto_system_system_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1428,7 +1428,7 @@ func (x *SysUserDetailResp) String() string {
 func (*SysUserDetailResp) ProtoMessage() {}
 
 func (x *SysUserDetailResp) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[21]
+	mi := &file_proto_system_system_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1441,7 +1441,7 @@ func (x *SysUserDetailResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysUserDetailResp.ProtoReflect.Descriptor instead.
 func (*SysUserDetailResp) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{21}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *SysUserDetailResp) GetBase() *RespBase {
@@ -1471,7 +1471,7 @@ type SysUserCreateReq struct {
 
 func (x *SysUserCreateReq) Reset() {
 	*x = SysUserCreateReq{}
-	mi := &file_system_proto_msgTypes[22]
+	mi := &file_proto_system_system_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1483,7 +1483,7 @@ func (x *SysUserCreateReq) String() string {
 func (*SysUserCreateReq) ProtoMessage() {}
 
 func (x *SysUserCreateReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[22]
+	mi := &file_proto_system_system_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1496,7 +1496,7 @@ func (x *SysUserCreateReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysUserCreateReq.ProtoReflect.Descriptor instead.
 func (*SysUserCreateReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{22}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *SysUserCreateReq) GetUsername() string {
@@ -1546,7 +1546,7 @@ type SysUserUpdateReq struct {
 
 func (x *SysUserUpdateReq) Reset() {
 	*x = SysUserUpdateReq{}
-	mi := &file_system_proto_msgTypes[23]
+	mi := &file_proto_system_system_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1558,7 +1558,7 @@ func (x *SysUserUpdateReq) String() string {
 func (*SysUserUpdateReq) ProtoMessage() {}
 
 func (x *SysUserUpdateReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[23]
+	mi := &file_proto_system_system_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1571,7 +1571,7 @@ func (x *SysUserUpdateReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysUserUpdateReq.ProtoReflect.Descriptor instead.
 func (*SysUserUpdateReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{23}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *SysUserUpdateReq) GetId() int64 {
@@ -1611,7 +1611,7 @@ type SysUserDeleteReq struct {
 
 func (x *SysUserDeleteReq) Reset() {
 	*x = SysUserDeleteReq{}
-	mi := &file_system_proto_msgTypes[24]
+	mi := &file_proto_system_system_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1623,7 +1623,7 @@ func (x *SysUserDeleteReq) String() string {
 func (*SysUserDeleteReq) ProtoMessage() {}
 
 func (x *SysUserDeleteReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[24]
+	mi := &file_proto_system_system_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1636,7 +1636,7 @@ func (x *SysUserDeleteReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysUserDeleteReq.ProtoReflect.Descriptor instead.
 func (*SysUserDeleteReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{24}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *SysUserDeleteReq) GetId() int64 {
@@ -1656,7 +1656,7 @@ type ChangeUserStatusReq struct {
 
 func (x *ChangeUserStatusReq) Reset() {
 	*x = ChangeUserStatusReq{}
-	mi := &file_system_proto_msgTypes[25]
+	mi := &file_proto_system_system_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1668,7 +1668,7 @@ func (x *ChangeUserStatusReq) String() string {
 func (*ChangeUserStatusReq) ProtoMessage() {}
 
 func (x *ChangeUserStatusReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[25]
+	mi := &file_proto_system_system_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1681,7 +1681,7 @@ func (x *ChangeUserStatusReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChangeUserStatusReq.ProtoReflect.Descriptor instead.
 func (*ChangeUserStatusReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{25}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *ChangeUserStatusReq) GetId() int64 {
@@ -1708,7 +1708,7 @@ type ResetUserPwdReq struct {
 
 func (x *ResetUserPwdReq) Reset() {
 	*x = ResetUserPwdReq{}
-	mi := &file_system_proto_msgTypes[26]
+	mi := &file_proto_system_system_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1720,7 +1720,7 @@ func (x *ResetUserPwdReq) String() string {
 func (*ResetUserPwdReq) ProtoMessage() {}
 
 func (x *ResetUserPwdReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[26]
+	mi := &file_proto_system_system_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1733,7 +1733,7 @@ func (x *ResetUserPwdReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResetUserPwdReq.ProtoReflect.Descriptor instead.
 func (*ResetUserPwdReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{26}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *ResetUserPwdReq) GetId() int64 {
@@ -1760,7 +1760,7 @@ type AssignUserRolesReq struct {
 
 func (x *AssignUserRolesReq) Reset() {
 	*x = AssignUserRolesReq{}
-	mi := &file_system_proto_msgTypes[27]
+	mi := &file_proto_system_system_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1772,7 +1772,7 @@ func (x *AssignUserRolesReq) String() string {
 func (*AssignUserRolesReq) ProtoMessage() {}
 
 func (x *AssignUserRolesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[27]
+	mi := &file_proto_system_system_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1785,7 +1785,7 @@ func (x *AssignUserRolesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AssignUserRolesReq.ProtoReflect.Descriptor instead.
 func (*AssignUserRolesReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{27}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *AssignUserRolesReq) GetUserId() int64 {
@@ -1819,7 +1819,7 @@ type SysRoleItem struct {
 
 func (x *SysRoleItem) Reset() {
 	*x = SysRoleItem{}
-	mi := &file_system_proto_msgTypes[28]
+	mi := &file_proto_system_system_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1831,7 +1831,7 @@ func (x *SysRoleItem) String() string {
 func (*SysRoleItem) ProtoMessage() {}
 
 func (x *SysRoleItem) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[28]
+	mi := &file_proto_system_system_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1844,7 +1844,7 @@ func (x *SysRoleItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysRoleItem.ProtoReflect.Descriptor instead.
 func (*SysRoleItem) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{28}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *SysRoleItem) GetId() int64 {
@@ -1900,7 +1900,7 @@ type SysRoleListReq struct {
 
 func (x *SysRoleListReq) Reset() {
 	*x = SysRoleListReq{}
-	mi := &file_system_proto_msgTypes[29]
+	mi := &file_proto_system_system_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1912,7 +1912,7 @@ func (x *SysRoleListReq) String() string {
 func (*SysRoleListReq) ProtoMessage() {}
 
 func (x *SysRoleListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[29]
+	mi := &file_proto_system_system_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1925,7 +1925,7 @@ func (x *SysRoleListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysRoleListReq.ProtoReflect.Descriptor instead.
 func (*SysRoleListReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{29}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *SysRoleListReq) GetPage() *PageReq {
@@ -1959,7 +1959,7 @@ type SysRoleListResp struct {
 
 func (x *SysRoleListResp) Reset() {
 	*x = SysRoleListResp{}
-	mi := &file_system_proto_msgTypes[30]
+	mi := &file_proto_system_system_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1971,7 +1971,7 @@ func (x *SysRoleListResp) String() string {
 func (*SysRoleListResp) ProtoMessage() {}
 
 func (x *SysRoleListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[30]
+	mi := &file_proto_system_system_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1984,7 +1984,7 @@ func (x *SysRoleListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysRoleListResp.ProtoReflect.Descriptor instead.
 func (*SysRoleListResp) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{30}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *SysRoleListResp) GetBase() *RespBase {
@@ -2013,7 +2013,7 @@ type SysRoleCreateReq struct {
 
 func (x *SysRoleCreateReq) Reset() {
 	*x = SysRoleCreateReq{}
-	mi := &file_system_proto_msgTypes[31]
+	mi := &file_proto_system_system_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2025,7 +2025,7 @@ func (x *SysRoleCreateReq) String() string {
 func (*SysRoleCreateReq) ProtoMessage() {}
 
 func (x *SysRoleCreateReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[31]
+	mi := &file_proto_system_system_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2038,7 +2038,7 @@ func (x *SysRoleCreateReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysRoleCreateReq.ProtoReflect.Descriptor instead.
 func (*SysRoleCreateReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{31}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *SysRoleCreateReq) GetName() string {
@@ -2081,7 +2081,7 @@ type SysRoleUpdateReq struct {
 
 func (x *SysRoleUpdateReq) Reset() {
 	*x = SysRoleUpdateReq{}
-	mi := &file_system_proto_msgTypes[32]
+	mi := &file_proto_system_system_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2093,7 +2093,7 @@ func (x *SysRoleUpdateReq) String() string {
 func (*SysRoleUpdateReq) ProtoMessage() {}
 
 func (x *SysRoleUpdateReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[32]
+	mi := &file_proto_system_system_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2106,7 +2106,7 @@ func (x *SysRoleUpdateReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysRoleUpdateReq.ProtoReflect.Descriptor instead.
 func (*SysRoleUpdateReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{32}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *SysRoleUpdateReq) GetId() int64 {
@@ -2146,7 +2146,7 @@ type SysRoleDeleteReq struct {
 
 func (x *SysRoleDeleteReq) Reset() {
 	*x = SysRoleDeleteReq{}
-	mi := &file_system_proto_msgTypes[33]
+	mi := &file_proto_system_system_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2158,7 +2158,7 @@ func (x *SysRoleDeleteReq) String() string {
 func (*SysRoleDeleteReq) ProtoMessage() {}
 
 func (x *SysRoleDeleteReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[33]
+	mi := &file_proto_system_system_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2171,7 +2171,7 @@ func (x *SysRoleDeleteReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysRoleDeleteReq.ProtoReflect.Descriptor instead.
 func (*SysRoleDeleteReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{33}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *SysRoleDeleteReq) GetId() int64 {
@@ -2191,7 +2191,7 @@ type SysRoleGrantReq struct {
 
 func (x *SysRoleGrantReq) Reset() {
 	*x = SysRoleGrantReq{}
-	mi := &file_system_proto_msgTypes[34]
+	mi := &file_proto_system_system_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2203,7 +2203,7 @@ func (x *SysRoleGrantReq) String() string {
 func (*SysRoleGrantReq) ProtoMessage() {}
 
 func (x *SysRoleGrantReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[34]
+	mi := &file_proto_system_system_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2216,7 +2216,7 @@ func (x *SysRoleGrantReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysRoleGrantReq.ProtoReflect.Descriptor instead.
 func (*SysRoleGrantReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{34}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *SysRoleGrantReq) GetRoleId() int64 {
@@ -2242,7 +2242,7 @@ type SysRoleGrantDetailReq struct {
 
 func (x *SysRoleGrantDetailReq) Reset() {
 	*x = SysRoleGrantDetailReq{}
-	mi := &file_system_proto_msgTypes[35]
+	mi := &file_proto_system_system_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2254,7 +2254,7 @@ func (x *SysRoleGrantDetailReq) String() string {
 func (*SysRoleGrantDetailReq) ProtoMessage() {}
 
 func (x *SysRoleGrantDetailReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[35]
+	mi := &file_proto_system_system_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2267,7 +2267,7 @@ func (x *SysRoleGrantDetailReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysRoleGrantDetailReq.ProtoReflect.Descriptor instead.
 func (*SysRoleGrantDetailReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{35}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *SysRoleGrantDetailReq) GetRoleId() int64 {
@@ -2289,7 +2289,7 @@ type SysRoleGrantDetailResp struct {
 
 func (x *SysRoleGrantDetailResp) Reset() {
 	*x = SysRoleGrantDetailResp{}
-	mi := &file_system_proto_msgTypes[36]
+	mi := &file_proto_system_system_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2301,7 +2301,7 @@ func (x *SysRoleGrantDetailResp) String() string {
 func (*SysRoleGrantDetailResp) ProtoMessage() {}
 
 func (x *SysRoleGrantDetailResp) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[36]
+	mi := &file_proto_system_system_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2314,7 +2314,7 @@ func (x *SysRoleGrantDetailResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysRoleGrantDetailResp.ProtoReflect.Descriptor instead.
 func (*SysRoleGrantDetailResp) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{36}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *SysRoleGrantDetailResp) GetBase() *RespBase {
@@ -2355,7 +2355,7 @@ type SysPermItem struct {
 
 func (x *SysPermItem) Reset() {
 	*x = SysPermItem{}
-	mi := &file_system_proto_msgTypes[37]
+	mi := &file_proto_system_system_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2367,7 +2367,7 @@ func (x *SysPermItem) String() string {
 func (*SysPermItem) ProtoMessage() {}
 
 func (x *SysPermItem) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[37]
+	mi := &file_proto_system_system_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2380,7 +2380,7 @@ func (x *SysPermItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysPermItem.ProtoReflect.Descriptor instead.
 func (*SysPermItem) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{37}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *SysPermItem) GetPermKey() string {
@@ -2407,7 +2407,7 @@ type SysPermListResp struct {
 
 func (x *SysPermListResp) Reset() {
 	*x = SysPermListResp{}
-	mi := &file_system_proto_msgTypes[38]
+	mi := &file_proto_system_system_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2419,7 +2419,7 @@ func (x *SysPermListResp) String() string {
 func (*SysPermListResp) ProtoMessage() {}
 
 func (x *SysPermListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[38]
+	mi := &file_proto_system_system_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2432,7 +2432,7 @@ func (x *SysPermListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysPermListResp.ProtoReflect.Descriptor instead.
 func (*SysPermListResp) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{38}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *SysPermListResp) GetBase() *RespBase {
@@ -2470,7 +2470,7 @@ type SysMenuCreateReq struct {
 
 func (x *SysMenuCreateReq) Reset() {
 	*x = SysMenuCreateReq{}
-	mi := &file_system_proto_msgTypes[39]
+	mi := &file_proto_system_system_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2482,7 +2482,7 @@ func (x *SysMenuCreateReq) String() string {
 func (*SysMenuCreateReq) ProtoMessage() {}
 
 func (x *SysMenuCreateReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[39]
+	mi := &file_proto_system_system_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2495,7 +2495,7 @@ func (x *SysMenuCreateReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysMenuCreateReq.ProtoReflect.Descriptor instead.
 func (*SysMenuCreateReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{39}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *SysMenuCreateReq) GetParentId() int64 {
@@ -2587,7 +2587,7 @@ type SysMenuUpdateReq struct {
 
 func (x *SysMenuUpdateReq) Reset() {
 	*x = SysMenuUpdateReq{}
-	mi := &file_system_proto_msgTypes[40]
+	mi := &file_proto_system_system_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2599,7 +2599,7 @@ func (x *SysMenuUpdateReq) String() string {
 func (*SysMenuUpdateReq) ProtoMessage() {}
 
 func (x *SysMenuUpdateReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[40]
+	mi := &file_proto_system_system_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2612,7 +2612,7 @@ func (x *SysMenuUpdateReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysMenuUpdateReq.ProtoReflect.Descriptor instead.
 func (*SysMenuUpdateReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{40}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *SysMenuUpdateReq) GetId() int64 {
@@ -2701,7 +2701,7 @@ type SysMenuDeleteReq struct {
 
 func (x *SysMenuDeleteReq) Reset() {
 	*x = SysMenuDeleteReq{}
-	mi := &file_system_proto_msgTypes[41]
+	mi := &file_proto_system_system_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2713,7 +2713,7 @@ func (x *SysMenuDeleteReq) String() string {
 func (*SysMenuDeleteReq) ProtoMessage() {}
 
 func (x *SysMenuDeleteReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[41]
+	mi := &file_proto_system_system_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2726,7 +2726,7 @@ func (x *SysMenuDeleteReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysMenuDeleteReq.ProtoReflect.Descriptor instead.
 func (*SysMenuDeleteReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{41}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *SysMenuDeleteReq) GetId() int64 {
@@ -2749,7 +2749,7 @@ type SysMenuListReq struct {
 
 func (x *SysMenuListReq) Reset() {
 	*x = SysMenuListReq{}
-	mi := &file_system_proto_msgTypes[42]
+	mi := &file_proto_system_system_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2761,7 +2761,7 @@ func (x *SysMenuListReq) String() string {
 func (*SysMenuListReq) ProtoMessage() {}
 
 func (x *SysMenuListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[42]
+	mi := &file_proto_system_system_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2774,7 +2774,7 @@ func (x *SysMenuListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysMenuListReq.ProtoReflect.Descriptor instead.
 func (*SysMenuListReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{42}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *SysMenuListReq) GetPage() *PageReq {
@@ -2822,7 +2822,7 @@ type SysMenuListResp struct {
 
 func (x *SysMenuListResp) Reset() {
 	*x = SysMenuListResp{}
-	mi := &file_system_proto_msgTypes[43]
+	mi := &file_proto_system_system_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2834,7 +2834,7 @@ func (x *SysMenuListResp) String() string {
 func (*SysMenuListResp) ProtoMessage() {}
 
 func (x *SysMenuListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[43]
+	mi := &file_proto_system_system_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2847,7 +2847,7 @@ func (x *SysMenuListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysMenuListResp.ProtoReflect.Descriptor instead.
 func (*SysMenuListResp) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{43}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *SysMenuListResp) GetBase() *RespBase {
@@ -2883,7 +2883,7 @@ type LoginLogItem struct {
 
 func (x *LoginLogItem) Reset() {
 	*x = LoginLogItem{}
-	mi := &file_system_proto_msgTypes[44]
+	mi := &file_proto_system_system_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2895,7 +2895,7 @@ func (x *LoginLogItem) String() string {
 func (*LoginLogItem) ProtoMessage() {}
 
 func (x *LoginLogItem) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[44]
+	mi := &file_proto_system_system_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2908,7 +2908,7 @@ func (x *LoginLogItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoginLogItem.ProtoReflect.Descriptor instead.
 func (*LoginLogItem) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{44}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *LoginLogItem) GetId() int64 {
@@ -2978,7 +2978,7 @@ type LoginLogListReq struct {
 
 func (x *LoginLogListReq) Reset() {
 	*x = LoginLogListReq{}
-	mi := &file_system_proto_msgTypes[45]
+	mi := &file_proto_system_system_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2990,7 +2990,7 @@ func (x *LoginLogListReq) String() string {
 func (*LoginLogListReq) ProtoMessage() {}
 
 func (x *LoginLogListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[45]
+	mi := &file_proto_system_system_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3003,7 +3003,7 @@ func (x *LoginLogListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoginLogListReq.ProtoReflect.Descriptor instead.
 func (*LoginLogListReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{45}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *LoginLogListReq) GetPage() *PageReq {
@@ -3037,7 +3037,7 @@ type LoginLogListResp struct {
 
 func (x *LoginLogListResp) Reset() {
 	*x = LoginLogListResp{}
-	mi := &file_system_proto_msgTypes[46]
+	mi := &file_proto_system_system_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3049,7 +3049,7 @@ func (x *LoginLogListResp) String() string {
 func (*LoginLogListResp) ProtoMessage() {}
 
 func (x *LoginLogListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[46]
+	mi := &file_proto_system_system_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3062,7 +3062,7 @@ func (x *LoginLogListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoginLogListResp.ProtoReflect.Descriptor instead.
 func (*LoginLogListResp) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{46}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *LoginLogListResp) GetBase() *RespBase {
@@ -3098,7 +3098,7 @@ type OpLogItem struct {
 
 func (x *OpLogItem) Reset() {
 	*x = OpLogItem{}
-	mi := &file_system_proto_msgTypes[47]
+	mi := &file_proto_system_system_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3110,7 +3110,7 @@ func (x *OpLogItem) String() string {
 func (*OpLogItem) ProtoMessage() {}
 
 func (x *OpLogItem) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[47]
+	mi := &file_proto_system_system_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3123,7 +3123,7 @@ func (x *OpLogItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OpLogItem.ProtoReflect.Descriptor instead.
 func (*OpLogItem) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{47}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *OpLogItem) GetId() int64 {
@@ -3215,7 +3215,7 @@ type OpLogListReq struct {
 
 func (x *OpLogListReq) Reset() {
 	*x = OpLogListReq{}
-	mi := &file_system_proto_msgTypes[48]
+	mi := &file_proto_system_system_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3227,7 +3227,7 @@ func (x *OpLogListReq) String() string {
 func (*OpLogListReq) ProtoMessage() {}
 
 func (x *OpLogListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[48]
+	mi := &file_proto_system_system_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3240,7 +3240,7 @@ func (x *OpLogListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OpLogListReq.ProtoReflect.Descriptor instead.
 func (*OpLogListReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{48}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *OpLogListReq) GetPage() *PageReq {
@@ -3281,7 +3281,7 @@ type OpLogListResp struct {
 
 func (x *OpLogListResp) Reset() {
 	*x = OpLogListResp{}
-	mi := &file_system_proto_msgTypes[49]
+	mi := &file_proto_system_system_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3293,7 +3293,7 @@ func (x *OpLogListResp) String() string {
 func (*OpLogListResp) ProtoMessage() {}
 
 func (x *OpLogListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[49]
+	mi := &file_proto_system_system_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3306,7 +3306,7 @@ func (x *OpLogListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OpLogListResp.ProtoReflect.Descriptor instead.
 func (*OpLogListResp) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{49}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *OpLogListResp) GetBase() *RespBase {
@@ -3334,7 +3334,7 @@ type SysConfigCreateReq struct {
 
 func (x *SysConfigCreateReq) Reset() {
 	*x = SysConfigCreateReq{}
-	mi := &file_system_proto_msgTypes[50]
+	mi := &file_proto_system_system_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3346,7 +3346,7 @@ func (x *SysConfigCreateReq) String() string {
 func (*SysConfigCreateReq) ProtoMessage() {}
 
 func (x *SysConfigCreateReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[50]
+	mi := &file_proto_system_system_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3359,7 +3359,7 @@ func (x *SysConfigCreateReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysConfigCreateReq.ProtoReflect.Descriptor instead.
 func (*SysConfigCreateReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{50}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *SysConfigCreateReq) GetConfigKey() string {
@@ -3395,7 +3395,7 @@ type SysConfigUpdateReq struct {
 
 func (x *SysConfigUpdateReq) Reset() {
 	*x = SysConfigUpdateReq{}
-	mi := &file_system_proto_msgTypes[51]
+	mi := &file_proto_system_system_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3407,7 +3407,7 @@ func (x *SysConfigUpdateReq) String() string {
 func (*SysConfigUpdateReq) ProtoMessage() {}
 
 func (x *SysConfigUpdateReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[51]
+	mi := &file_proto_system_system_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3420,7 +3420,7 @@ func (x *SysConfigUpdateReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysConfigUpdateReq.ProtoReflect.Descriptor instead.
 func (*SysConfigUpdateReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{51}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *SysConfigUpdateReq) GetId() int64 {
@@ -3460,7 +3460,7 @@ type SysConfigDeleteReq struct {
 
 func (x *SysConfigDeleteReq) Reset() {
 	*x = SysConfigDeleteReq{}
-	mi := &file_system_proto_msgTypes[52]
+	mi := &file_proto_system_system_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3472,7 +3472,7 @@ func (x *SysConfigDeleteReq) String() string {
 func (*SysConfigDeleteReq) ProtoMessage() {}
 
 func (x *SysConfigDeleteReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[52]
+	mi := &file_proto_system_system_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3485,7 +3485,7 @@ func (x *SysConfigDeleteReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysConfigDeleteReq.ProtoReflect.Descriptor instead.
 func (*SysConfigDeleteReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{52}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *SysConfigDeleteReq) GetId() int64 {
@@ -3508,7 +3508,7 @@ type SysConfigItem struct {
 
 func (x *SysConfigItem) Reset() {
 	*x = SysConfigItem{}
-	mi := &file_system_proto_msgTypes[53]
+	mi := &file_proto_system_system_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3520,7 +3520,7 @@ func (x *SysConfigItem) String() string {
 func (*SysConfigItem) ProtoMessage() {}
 
 func (x *SysConfigItem) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[53]
+	mi := &file_proto_system_system_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3533,7 +3533,7 @@ func (x *SysConfigItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysConfigItem.ProtoReflect.Descriptor instead.
 func (*SysConfigItem) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{53}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *SysConfigItem) GetId() int64 {
@@ -3581,7 +3581,7 @@ type SysConfigListReq struct {
 
 func (x *SysConfigListReq) Reset() {
 	*x = SysConfigListReq{}
-	mi := &file_system_proto_msgTypes[54]
+	mi := &file_proto_system_system_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3593,7 +3593,7 @@ func (x *SysConfigListReq) String() string {
 func (*SysConfigListReq) ProtoMessage() {}
 
 func (x *SysConfigListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[54]
+	mi := &file_proto_system_system_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3606,7 +3606,7 @@ func (x *SysConfigListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysConfigListReq.ProtoReflect.Descriptor instead.
 func (*SysConfigListReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{54}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *SysConfigListReq) GetPage() *PageReq {
@@ -3633,7 +3633,7 @@ type SysConfigListResp struct {
 
 func (x *SysConfigListResp) Reset() {
 	*x = SysConfigListResp{}
-	mi := &file_system_proto_msgTypes[55]
+	mi := &file_proto_system_system_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3645,7 +3645,7 @@ func (x *SysConfigListResp) String() string {
 func (*SysConfigListResp) ProtoMessage() {}
 
 func (x *SysConfigListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[55]
+	mi := &file_proto_system_system_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3658,7 +3658,7 @@ func (x *SysConfigListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysConfigListResp.ProtoReflect.Descriptor instead.
 func (*SysConfigListResp) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{55}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *SysConfigListResp) GetBase() *RespBase {
@@ -3685,7 +3685,7 @@ type SysConfigDetailReq struct {
 
 func (x *SysConfigDetailReq) Reset() {
 	*x = SysConfigDetailReq{}
-	mi := &file_system_proto_msgTypes[56]
+	mi := &file_proto_system_system_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3697,7 +3697,7 @@ func (x *SysConfigDetailReq) String() string {
 func (*SysConfigDetailReq) ProtoMessage() {}
 
 func (x *SysConfigDetailReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[56]
+	mi := &file_proto_system_system_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3710,7 +3710,7 @@ func (x *SysConfigDetailReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysConfigDetailReq.ProtoReflect.Descriptor instead.
 func (*SysConfigDetailReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{56}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *SysConfigDetailReq) GetId() int64 {
@@ -3737,7 +3737,7 @@ type SysConfigDetailResp struct {
 
 func (x *SysConfigDetailResp) Reset() {
 	*x = SysConfigDetailResp{}
-	mi := &file_system_proto_msgTypes[57]
+	mi := &file_proto_system_system_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3749,7 +3749,7 @@ func (x *SysConfigDetailResp) String() string {
 func (*SysConfigDetailResp) ProtoMessage() {}
 
 func (x *SysConfigDetailResp) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[57]
+	mi := &file_proto_system_system_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3762,7 +3762,7 @@ func (x *SysConfigDetailResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysConfigDetailResp.ProtoReflect.Descriptor instead.
 func (*SysConfigDetailResp) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{57}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *SysConfigDetailResp) GetBase() *RespBase {
@@ -3788,7 +3788,7 @@ type SysConfigByKeysReq struct {
 
 func (x *SysConfigByKeysReq) Reset() {
 	*x = SysConfigByKeysReq{}
-	mi := &file_system_proto_msgTypes[58]
+	mi := &file_proto_system_system_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3800,7 +3800,7 @@ func (x *SysConfigByKeysReq) String() string {
 func (*SysConfigByKeysReq) ProtoMessage() {}
 
 func (x *SysConfigByKeysReq) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[58]
+	mi := &file_proto_system_system_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3813,7 +3813,7 @@ func (x *SysConfigByKeysReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysConfigByKeysReq.ProtoReflect.Descriptor instead.
 func (*SysConfigByKeysReq) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{58}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *SysConfigByKeysReq) GetConfigKeys() []string {
@@ -3833,7 +3833,7 @@ type SysConfigByKeysResp struct {
 
 func (x *SysConfigByKeysResp) Reset() {
 	*x = SysConfigByKeysResp{}
-	mi := &file_system_proto_msgTypes[59]
+	mi := &file_proto_system_system_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3845,7 +3845,7 @@ func (x *SysConfigByKeysResp) String() string {
 func (*SysConfigByKeysResp) ProtoMessage() {}
 
 func (x *SysConfigByKeysResp) ProtoReflect() protoreflect.Message {
-	mi := &file_system_proto_msgTypes[59]
+	mi := &file_proto_system_system_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3858,7 +3858,7 @@ func (x *SysConfigByKeysResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysConfigByKeysResp.ProtoReflect.Descriptor instead.
 func (*SysConfigByKeysResp) Descriptor() ([]byte, []int) {
-	return file_system_proto_rawDescGZIP(), []int{59}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{59}
 }
 
 func (x *SysConfigByKeysResp) GetBase() *RespBase {
@@ -3875,11 +3875,63 @@ func (x *SysConfigByKeysResp) GetData() []*SysConfigItem {
 	return nil
 }
 
-var File_system_proto protoreflect.FileDescriptor
+type SysConfigKeysResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          []string               `protobuf:"bytes,3,rep,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
 
-const file_system_proto_rawDesc = "" +
+func (x *SysConfigKeysResp) Reset() {
+	*x = SysConfigKeysResp{}
+	mi := &file_proto_system_system_proto_msgTypes[60]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SysConfigKeysResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SysConfigKeysResp) ProtoMessage() {}
+
+func (x *SysConfigKeysResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_system_system_proto_msgTypes[60]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SysConfigKeysResp.ProtoReflect.Descriptor instead.
+func (*SysConfigKeysResp) Descriptor() ([]byte, []int) {
+	return file_proto_system_system_proto_rawDescGZIP(), []int{60}
+}
+
+func (x *SysConfigKeysResp) GetBase() *RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *SysConfigKeysResp) GetData() []string {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+var File_proto_system_system_proto protoreflect.FileDescriptor
+
+const file_proto_system_system_proto_rawDesc = "" +
 	"\n" +
-	"\fsystem.proto\x12\x06system\x1a\x1cgoogle/protobuf/struct.proto\x1a\fconfig.proto\"\a\n" +
+	"\x19proto/system/system.proto\x12\x06system\x1a\x1cgoogle/protobuf/struct.proto\x1a\x19proto/system/config.proto\"\a\n" +
 	"\x05Empty\"\x88\x01\n" +
 	"\rAdminLoginReq\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
@@ -4171,7 +4223,10 @@ const file_system_proto_rawDesc = "" +
 	"configKeys\"f\n" +
 	"\x13SysConfigByKeysResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12)\n" +
-	"\x04data\x18\x03 \x03(\v2\x15.system.SysConfigItemR\x04data2\xc8\x11\n" +
+	"\x04data\x18\x03 \x03(\v2\x15.system.SysConfigItemR\x04data\"M\n" +
+	"\x11SysConfigKeysResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12\x12\n" +
+	"\x04data\x18\x03 \x03(\tR\x04data2\x83\x12\n" +
 	"\x06System\x12;\n" +
 	"\n" +
 	"AdminLogin\x12\x15.system.AdminLoginReq\x1a\x16.system.AdminLoginResp\x125\n" +
@@ -4209,22 +4264,23 @@ const file_system_proto_rawDesc = "" +
 	"\x0fSysConfigDelete\x12\x1a.system.SysConfigDeleteReq\x1a\x10.system.RespBase\x12D\n" +
 	"\rSysConfigList\x12\x18.system.SysConfigListReq\x1a\x19.system.SysConfigListResp\x12J\n" +
 	"\x0fSysConfigDetail\x12\x1a.system.SysConfigDetailReq\x1a\x1b.system.SysConfigDetailResp\x12J\n" +
-	"\x0fSysConfigByKeys\x12\x1a.system.SysConfigByKeysReq\x1a\x1b.system.SysConfigByKeysRespB\x1cZ\x1awklive/proto/system;systemb\x06proto3"
+	"\x0fSysConfigByKeys\x12\x1a.system.SysConfigByKeysReq\x1a\x1b.system.SysConfigByKeysResp\x129\n" +
+	"\rSysConfigKeys\x12\r.system.Empty\x1a\x19.system.SysConfigKeysRespB\x1cZ\x1awklive/proto/system;systemb\x06proto3"
 
 var (
-	file_system_proto_rawDescOnce sync.Once
-	file_system_proto_rawDescData []byte
+	file_proto_system_system_proto_rawDescOnce sync.Once
+	file_proto_system_system_proto_rawDescData []byte
 )
 
-func file_system_proto_rawDescGZIP() []byte {
-	file_system_proto_rawDescOnce.Do(func() {
-		file_system_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_system_proto_rawDesc), len(file_system_proto_rawDesc)))
+func file_proto_system_system_proto_rawDescGZIP() []byte {
+	file_proto_system_system_proto_rawDescOnce.Do(func() {
+		file_proto_system_system_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_system_system_proto_rawDesc), len(file_proto_system_system_proto_rawDesc)))
 	})
-	return file_system_proto_rawDescData
+	return file_proto_system_system_proto_rawDescData
 }
 
-var file_system_proto_msgTypes = make([]protoimpl.MessageInfo, 60)
-var file_system_proto_goTypes = []any{
+var file_proto_system_system_proto_msgTypes = make([]protoimpl.MessageInfo, 61)
+var file_proto_system_system_proto_goTypes = []any{
 	(*Empty)(nil),                  // 0: system.Empty
 	(*AdminLoginReq)(nil),          // 1: system.AdminLoginReq
 	(*AdminLoginResp)(nil),         // 2: system.AdminLoginResp
@@ -4285,10 +4341,11 @@ var file_system_proto_goTypes = []any{
 	(*SysConfigDetailResp)(nil),    // 57: system.SysConfigDetailResp
 	(*SysConfigByKeysReq)(nil),     // 58: system.SysConfigByKeysReq
 	(*SysConfigByKeysResp)(nil),    // 59: system.SysConfigByKeysResp
-	(*structpb.Struct)(nil),        // 60: google.protobuf.Struct
-	(SysConfigType)(0),             // 61: system.SysConfigType
+	(*SysConfigKeysResp)(nil),      // 60: system.SysConfigKeysResp
+	(*structpb.Struct)(nil),        // 61: google.protobuf.Struct
+	(SysConfigType)(0),             // 62: system.SysConfigType
 }
-var file_system_proto_depIdxs = []int32{
+var file_proto_system_system_proto_depIdxs = []int32{
 	15, // 0: system.AdminLoginResp.base:type_name -> system.RespBase
 	5,  // 1: system.SysMenuNode.children:type_name -> system.SysMenuNode
 	4,  // 2: system.ProfileResp.user:type_name -> system.ProfileUser
@@ -4316,117 +4373,120 @@ var file_system_proto_depIdxs = []int32{
 	16, // 24: system.OpLogListReq.page:type_name -> system.PageReq
 	15, // 25: system.OpLogListResp.base:type_name -> system.RespBase
 	47, // 26: system.OpLogListResp.data:type_name -> system.OpLogItem
-	60, // 27: system.SysConfigCreateReq.config_value:type_name -> google.protobuf.Struct
-	60, // 28: system.SysConfigUpdateReq.config_value:type_name -> google.protobuf.Struct
-	60, // 29: system.SysConfigItem.config_value:type_name -> google.protobuf.Struct
+	61, // 27: system.SysConfigCreateReq.config_value:type_name -> google.protobuf.Struct
+	61, // 28: system.SysConfigUpdateReq.config_value:type_name -> google.protobuf.Struct
+	61, // 29: system.SysConfigItem.config_value:type_name -> google.protobuf.Struct
 	16, // 30: system.SysConfigListReq.page:type_name -> system.PageReq
 	15, // 31: system.SysConfigListResp.base:type_name -> system.RespBase
 	53, // 32: system.SysConfigListResp.data:type_name -> system.SysConfigItem
-	61, // 33: system.SysConfigDetailReq.config_key:type_name -> system.SysConfigType
+	62, // 33: system.SysConfigDetailReq.config_key:type_name -> system.SysConfigType
 	15, // 34: system.SysConfigDetailResp.base:type_name -> system.RespBase
 	53, // 35: system.SysConfigDetailResp.data:type_name -> system.SysConfigItem
 	15, // 36: system.SysConfigByKeysResp.base:type_name -> system.RespBase
 	53, // 37: system.SysConfigByKeysResp.data:type_name -> system.SysConfigItem
-	1,  // 38: system.System.AdminLogin:input_type -> system.AdminLoginReq
-	3,  // 39: system.System.GetProfile:input_type -> system.ProfileReq
-	7,  // 40: system.System.UpdateProfile:input_type -> system.UpdateProfileReq
-	10, // 41: system.System.Google2FAInit:input_type -> system.Google2FAInitReq
-	12, // 42: system.System.Google2FAEnable:input_type -> system.Google2FAEnableReq
-	13, // 43: system.System.Google2FADisable:input_type -> system.Google2FADisableReq
-	14, // 44: system.System.Google2FAReset:input_type -> system.Google2FAResetReq
-	18, // 45: system.System.SysUserList:input_type -> system.SysUserListReq
-	20, // 46: system.System.SysUserDetail:input_type -> system.SysUserDetailReq
-	22, // 47: system.System.SysUserCreate:input_type -> system.SysUserCreateReq
-	23, // 48: system.System.SysUserUpdate:input_type -> system.SysUserUpdateReq
-	24, // 49: system.System.SysUserDelete:input_type -> system.SysUserDeleteReq
-	25, // 50: system.System.ChangeUserStatus:input_type -> system.ChangeUserStatusReq
-	26, // 51: system.System.ResetUserPwd:input_type -> system.ResetUserPwdReq
-	27, // 52: system.System.AssignUserRoles:input_type -> system.AssignUserRolesReq
-	29, // 53: system.System.SysRoleList:input_type -> system.SysRoleListReq
-	31, // 54: system.System.SysRoleCreate:input_type -> system.SysRoleCreateReq
-	32, // 55: system.System.SysRoleUpdate:input_type -> system.SysRoleUpdateReq
-	33, // 56: system.System.SysRoleDelete:input_type -> system.SysRoleDeleteReq
-	34, // 57: system.System.SysRoleGrant:input_type -> system.SysRoleGrantReq
-	35, // 58: system.System.SysRoleGrantDetail:input_type -> system.SysRoleGrantDetailReq
-	0,  // 59: system.System.SysPermList:input_type -> system.Empty
-	0,  // 60: system.System.GetMenuTree:input_type -> system.Empty
-	39, // 61: system.System.SysMenuCreate:input_type -> system.SysMenuCreateReq
-	40, // 62: system.System.SysMenuUpdate:input_type -> system.SysMenuUpdateReq
-	41, // 63: system.System.SysMenuDelete:input_type -> system.SysMenuDeleteReq
-	42, // 64: system.System.SysMenuList:input_type -> system.SysMenuListReq
-	45, // 65: system.System.LoginLogList:input_type -> system.LoginLogListReq
-	48, // 66: system.System.OpLogList:input_type -> system.OpLogListReq
-	50, // 67: system.System.SysConfigCreate:input_type -> system.SysConfigCreateReq
-	51, // 68: system.System.SysConfigUpdate:input_type -> system.SysConfigUpdateReq
-	52, // 69: system.System.SysConfigDelete:input_type -> system.SysConfigDeleteReq
-	54, // 70: system.System.SysConfigList:input_type -> system.SysConfigListReq
-	56, // 71: system.System.SysConfigDetail:input_type -> system.SysConfigDetailReq
-	58, // 72: system.System.SysConfigByKeys:input_type -> system.SysConfigByKeysReq
-	2,  // 73: system.System.AdminLogin:output_type -> system.AdminLoginResp
-	6,  // 74: system.System.GetProfile:output_type -> system.ProfileResp
-	15, // 75: system.System.UpdateProfile:output_type -> system.RespBase
-	11, // 76: system.System.Google2FAInit:output_type -> system.Google2FAInitResp
-	15, // 77: system.System.Google2FAEnable:output_type -> system.RespBase
-	15, // 78: system.System.Google2FADisable:output_type -> system.RespBase
-	15, // 79: system.System.Google2FAReset:output_type -> system.RespBase
-	19, // 80: system.System.SysUserList:output_type -> system.SysUserListResp
-	21, // 81: system.System.SysUserDetail:output_type -> system.SysUserDetailResp
-	15, // 82: system.System.SysUserCreate:output_type -> system.RespBase
-	15, // 83: system.System.SysUserUpdate:output_type -> system.RespBase
-	15, // 84: system.System.SysUserDelete:output_type -> system.RespBase
-	15, // 85: system.System.ChangeUserStatus:output_type -> system.RespBase
-	15, // 86: system.System.ResetUserPwd:output_type -> system.RespBase
-	15, // 87: system.System.AssignUserRoles:output_type -> system.RespBase
-	30, // 88: system.System.SysRoleList:output_type -> system.SysRoleListResp
-	15, // 89: system.System.SysRoleCreate:output_type -> system.RespBase
-	15, // 90: system.System.SysRoleUpdate:output_type -> system.RespBase
-	15, // 91: system.System.SysRoleDelete:output_type -> system.RespBase
-	15, // 92: system.System.SysRoleGrant:output_type -> system.RespBase
-	36, // 93: system.System.SysRoleGrantDetail:output_type -> system.SysRoleGrantDetailResp
-	38, // 94: system.System.SysPermList:output_type -> system.SysPermListResp
-	9,  // 95: system.System.GetMenuTree:output_type -> system.SysMenuTreeResp
-	15, // 96: system.System.SysMenuCreate:output_type -> system.RespBase
-	15, // 97: system.System.SysMenuUpdate:output_type -> system.RespBase
-	15, // 98: system.System.SysMenuDelete:output_type -> system.RespBase
-	43, // 99: system.System.SysMenuList:output_type -> system.SysMenuListResp
-	46, // 100: system.System.LoginLogList:output_type -> system.LoginLogListResp
-	49, // 101: system.System.OpLogList:output_type -> system.OpLogListResp
-	15, // 102: system.System.SysConfigCreate:output_type -> system.RespBase
-	15, // 103: system.System.SysConfigUpdate:output_type -> system.RespBase
-	15, // 104: system.System.SysConfigDelete:output_type -> system.RespBase
-	55, // 105: system.System.SysConfigList:output_type -> system.SysConfigListResp
-	57, // 106: system.System.SysConfigDetail:output_type -> system.SysConfigDetailResp
-	59, // 107: system.System.SysConfigByKeys:output_type -> system.SysConfigByKeysResp
-	73, // [73:108] is the sub-list for method output_type
-	38, // [38:73] is the sub-list for method input_type
-	38, // [38:38] is the sub-list for extension type_name
-	38, // [38:38] is the sub-list for extension extendee
-	0,  // [0:38] is the sub-list for field type_name
+	15, // 38: system.SysConfigKeysResp.base:type_name -> system.RespBase
+	1,  // 39: system.System.AdminLogin:input_type -> system.AdminLoginReq
+	3,  // 40: system.System.GetProfile:input_type -> system.ProfileReq
+	7,  // 41: system.System.UpdateProfile:input_type -> system.UpdateProfileReq
+	10, // 42: system.System.Google2FAInit:input_type -> system.Google2FAInitReq
+	12, // 43: system.System.Google2FAEnable:input_type -> system.Google2FAEnableReq
+	13, // 44: system.System.Google2FADisable:input_type -> system.Google2FADisableReq
+	14, // 45: system.System.Google2FAReset:input_type -> system.Google2FAResetReq
+	18, // 46: system.System.SysUserList:input_type -> system.SysUserListReq
+	20, // 47: system.System.SysUserDetail:input_type -> system.SysUserDetailReq
+	22, // 48: system.System.SysUserCreate:input_type -> system.SysUserCreateReq
+	23, // 49: system.System.SysUserUpdate:input_type -> system.SysUserUpdateReq
+	24, // 50: system.System.SysUserDelete:input_type -> system.SysUserDeleteReq
+	25, // 51: system.System.ChangeUserStatus:input_type -> system.ChangeUserStatusReq
+	26, // 52: system.System.ResetUserPwd:input_type -> system.ResetUserPwdReq
+	27, // 53: system.System.AssignUserRoles:input_type -> system.AssignUserRolesReq
+	29, // 54: system.System.SysRoleList:input_type -> system.SysRoleListReq
+	31, // 55: system.System.SysRoleCreate:input_type -> system.SysRoleCreateReq
+	32, // 56: system.System.SysRoleUpdate:input_type -> system.SysRoleUpdateReq
+	33, // 57: system.System.SysRoleDelete:input_type -> system.SysRoleDeleteReq
+	34, // 58: system.System.SysRoleGrant:input_type -> system.SysRoleGrantReq
+	35, // 59: system.System.SysRoleGrantDetail:input_type -> system.SysRoleGrantDetailReq
+	0,  // 60: system.System.SysPermList:input_type -> system.Empty
+	0,  // 61: system.System.GetMenuTree:input_type -> system.Empty
+	39, // 62: system.System.SysMenuCreate:input_type -> system.SysMenuCreateReq
+	40, // 63: system.System.SysMenuUpdate:input_type -> system.SysMenuUpdateReq
+	41, // 64: system.System.SysMenuDelete:input_type -> system.SysMenuDeleteReq
+	42, // 65: system.System.SysMenuList:input_type -> system.SysMenuListReq
+	45, // 66: system.System.LoginLogList:input_type -> system.LoginLogListReq
+	48, // 67: system.System.OpLogList:input_type -> system.OpLogListReq
+	50, // 68: system.System.SysConfigCreate:input_type -> system.SysConfigCreateReq
+	51, // 69: system.System.SysConfigUpdate:input_type -> system.SysConfigUpdateReq
+	52, // 70: system.System.SysConfigDelete:input_type -> system.SysConfigDeleteReq
+	54, // 71: system.System.SysConfigList:input_type -> system.SysConfigListReq
+	56, // 72: system.System.SysConfigDetail:input_type -> system.SysConfigDetailReq
+	58, // 73: system.System.SysConfigByKeys:input_type -> system.SysConfigByKeysReq
+	0,  // 74: system.System.SysConfigKeys:input_type -> system.Empty
+	2,  // 75: system.System.AdminLogin:output_type -> system.AdminLoginResp
+	6,  // 76: system.System.GetProfile:output_type -> system.ProfileResp
+	15, // 77: system.System.UpdateProfile:output_type -> system.RespBase
+	11, // 78: system.System.Google2FAInit:output_type -> system.Google2FAInitResp
+	15, // 79: system.System.Google2FAEnable:output_type -> system.RespBase
+	15, // 80: system.System.Google2FADisable:output_type -> system.RespBase
+	15, // 81: system.System.Google2FAReset:output_type -> system.RespBase
+	19, // 82: system.System.SysUserList:output_type -> system.SysUserListResp
+	21, // 83: system.System.SysUserDetail:output_type -> system.SysUserDetailResp
+	15, // 84: system.System.SysUserCreate:output_type -> system.RespBase
+	15, // 85: system.System.SysUserUpdate:output_type -> system.RespBase
+	15, // 86: system.System.SysUserDelete:output_type -> system.RespBase
+	15, // 87: system.System.ChangeUserStatus:output_type -> system.RespBase
+	15, // 88: system.System.ResetUserPwd:output_type -> system.RespBase
+	15, // 89: system.System.AssignUserRoles:output_type -> system.RespBase
+	30, // 90: system.System.SysRoleList:output_type -> system.SysRoleListResp
+	15, // 91: system.System.SysRoleCreate:output_type -> system.RespBase
+	15, // 92: system.System.SysRoleUpdate:output_type -> system.RespBase
+	15, // 93: system.System.SysRoleDelete:output_type -> system.RespBase
+	15, // 94: system.System.SysRoleGrant:output_type -> system.RespBase
+	36, // 95: system.System.SysRoleGrantDetail:output_type -> system.SysRoleGrantDetailResp
+	38, // 96: system.System.SysPermList:output_type -> system.SysPermListResp
+	9,  // 97: system.System.GetMenuTree:output_type -> system.SysMenuTreeResp
+	15, // 98: system.System.SysMenuCreate:output_type -> system.RespBase
+	15, // 99: system.System.SysMenuUpdate:output_type -> system.RespBase
+	15, // 100: system.System.SysMenuDelete:output_type -> system.RespBase
+	43, // 101: system.System.SysMenuList:output_type -> system.SysMenuListResp
+	46, // 102: system.System.LoginLogList:output_type -> system.LoginLogListResp
+	49, // 103: system.System.OpLogList:output_type -> system.OpLogListResp
+	15, // 104: system.System.SysConfigCreate:output_type -> system.RespBase
+	15, // 105: system.System.SysConfigUpdate:output_type -> system.RespBase
+	15, // 106: system.System.SysConfigDelete:output_type -> system.RespBase
+	55, // 107: system.System.SysConfigList:output_type -> system.SysConfigListResp
+	57, // 108: system.System.SysConfigDetail:output_type -> system.SysConfigDetailResp
+	59, // 109: system.System.SysConfigByKeys:output_type -> system.SysConfigByKeysResp
+	60, // 110: system.System.SysConfigKeys:output_type -> system.SysConfigKeysResp
+	75, // [75:111] is the sub-list for method output_type
+	39, // [39:75] is the sub-list for method input_type
+	39, // [39:39] is the sub-list for extension type_name
+	39, // [39:39] is the sub-list for extension extendee
+	0,  // [0:39] is the sub-list for field type_name
 }
 
-func init() { file_system_proto_init() }
-func file_system_proto_init() {
-	if File_system_proto != nil {
+func init() { file_proto_system_system_proto_init() }
+func file_proto_system_system_proto_init() {
+	if File_proto_system_system_proto != nil {
 		return
 	}
-	file_config_proto_init()
-	file_system_proto_msgTypes[7].OneofWrappers = []any{}
-	file_system_proto_msgTypes[56].OneofWrappers = []any{}
+	file_proto_system_config_proto_init()
+	file_proto_system_system_proto_msgTypes[7].OneofWrappers = []any{}
+	file_proto_system_system_proto_msgTypes[56].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_system_proto_rawDesc), len(file_system_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_system_system_proto_rawDesc), len(file_proto_system_system_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   60,
+			NumMessages:   61,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_system_proto_goTypes,
-		DependencyIndexes: file_system_proto_depIdxs,
-		MessageInfos:      file_system_proto_msgTypes,
+		GoTypes:           file_proto_system_system_proto_goTypes,
+		DependencyIndexes: file_proto_system_system_proto_depIdxs,
+		MessageInfos:      file_proto_system_system_proto_msgTypes,
 	}.Build()
-	File_system_proto = out.File
-	file_system_proto_goTypes = nil
-	file_system_proto_depIdxs = nil
+	File_proto_system_system_proto = out.File
+	file_proto_system_system_proto_goTypes = nil
+	file_proto_system_system_proto_depIdxs = nil
 }

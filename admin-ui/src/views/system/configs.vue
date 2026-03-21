@@ -133,10 +133,25 @@
           :label="t('system.configKey')"
           prop="configKey"
         >
+          <el-select
+            v-if="!isEdit"
+            v-model="formData.configKey"
+            :placeholder="t('system.pleaseSelect')"
+            filterable
+            clearable
+          >
+            <el-option
+              v-for="key in keys"
+              :key="key"
+              :label="t('system.' + key) || key"
+              :value="key"
+            />
+          </el-select>
           <el-input
+            v-else
             v-model="formData.configKey"
             :placeholder="t('common.pleaseEnter')"
-            :disabled="isEdit"
+            disabled
           />
         </el-form-item>
         <el-form-item
@@ -219,6 +234,9 @@ const { form: formData, reset: resetForm } = useForm({
   }
 })
 
+// Keys for configKey selection
+const keys = ref<string[]>([])
+
 // Form validation rules
 const formRules = {
   configKey: [
@@ -227,6 +245,16 @@ const formRules = {
   configValue: [
     { required: true, message: t('validation.required'), trigger: 'blur' }
   ]
+}
+
+// Load available keys
+async function loadKeys() {
+  try {
+    const res = await configService.getKeys()
+    keys.value = res.data || res || []
+  } catch (e: any) {
+    ElMessage.error(e?.message || 'Failed to load keys')
+  }
 }
 
 // Fetch list
@@ -270,6 +298,7 @@ function handleReset() {
 function handleCreate() {
   isEdit.value = false
   resetForm()
+  loadKeys()
   dialogVisible.value = true
 }
 
@@ -347,6 +376,7 @@ async function handleSubmit() {
 
 // Initialize
 onMounted(() => {
+  loadKeys()
   fetchList()
 })
 </script>
