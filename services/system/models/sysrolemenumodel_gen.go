@@ -11,6 +11,8 @@ import (
 	"strings"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
+	"github.com/zeromicro/go-zero/core/stores/cache"
+	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
 )
@@ -20,6 +22,9 @@ var (
 	sysRoleMenuRows                = strings.Join(sysRoleMenuFieldNames, ",")
 	sysRoleMenuRowsExpectAutoSet   = strings.Join(stringx.Remove(sysRoleMenuFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	sysRoleMenuRowsWithPlaceHolder = strings.Join(stringx.Remove(sysRoleMenuFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+
+	cacheSysRoleMenuIdPrefix           = "cache:sysRoleMenu:id:"
+	cacheSysRoleMenuRoleIdMenuIdPrefix = "cache:sysRoleMenu:roleId:menuId:"
 )
 
 type (
@@ -32,7 +37,7 @@ type (
 	}
 
 	defaultSysRoleMenuModel struct {
-		conn  sqlx.SqlConn
+		sqlc.CachedConn
 		table string
 	}
 
@@ -43,27 +48,39 @@ type (
 	}
 )
 
-func newSysRoleMenuModel(conn sqlx.SqlConn) *defaultSysRoleMenuModel {
+func newSysRoleMenuModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultSysRoleMenuModel {
 	return &defaultSysRoleMenuModel{
-		conn:  conn,
-		table: "`sys_role_menu`",
+		CachedConn: sqlc.NewConn(conn, c, opts...),
+		table:      "`sys_role_menu`",
 	}
 }
 
 func (m *defaultSysRoleMenuModel) Delete(ctx context.Context, id int64) error {
-	query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
-	_, err := m.conn.ExecCtx(ctx, query, id)
+	data, err := m.FindOne(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	sysRoleMenuIdKey := fmt.Sprintf("%s%v", cacheSysRoleMenuIdPrefix, id)
+	sysRoleMenuRoleIdMenuIdKey := fmt.Sprintf("%s%v:%v", cacheSysRoleMenuRoleIdMenuIdPrefix, data.RoleId, data.MenuId)
+	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
+		return conn.ExecCtx(ctx, query, id)
+	}, sysRoleMenuIdKey, sysRoleMenuRoleIdMenuIdKey)
 	return err
 }
 
 func (m *defaultSysRoleMenuModel) FindOne(ctx context.Context, id int64) (*SysRoleMenu, error) {
-	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", sysRoleMenuRows, m.table)
+	sysRoleMenuIdKey := fmt.Sprintf("%s%v", cacheSysRoleMenuIdPrefix, id)
 	var resp SysRoleMenu
-	err := m.conn.QueryRowCtx(ctx, &resp, query, id)
+	err := m.QueryRowCtx(ctx, &resp, sysRoleMenuIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
+		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", sysRoleMenuRows, m.table)
+		return conn.QueryRowCtx(ctx, v, query, id)
+	})
 	switch err {
 	case nil:
 		return &resp, nil
-	case sqlx.ErrNotFound:
+	case sqlc.ErrNotFound:
 		return nil, ErrNotFound
 	default:
 		return nil, err
@@ -71,13 +88,19 @@ func (m *defaultSysRoleMenuModel) FindOne(ctx context.Context, id int64) (*SysRo
 }
 
 func (m *defaultSysRoleMenuModel) FindOneByRoleIdMenuId(ctx context.Context, roleId int64, menuId int64) (*SysRoleMenu, error) {
+	sysRoleMenuRoleIdMenuIdKey := fmt.Sprintf("%s%v:%v", cacheSysRoleMenuRoleIdMenuIdPrefix, roleId, menuId)
 	var resp SysRoleMenu
-	query := fmt.Sprintf("select %s from %s where `role_id` = ? and `menu_id` = ? limit 1", sysRoleMenuRows, m.table)
-	err := m.conn.QueryRowCtx(ctx, &resp, query, roleId, menuId)
+	err := m.QueryRowIndexCtx(ctx, &resp, sysRoleMenuRoleIdMenuIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `role_id` = ? and `menu_id` = ? limit 1", sysRoleMenuRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, roleId, menuId); err != nil {
+			return nil, err
+		}
+		return resp.Id, nil
+	}, m.queryPrimary)
 	switch err {
 	case nil:
 		return &resp, nil
-	case sqlx.ErrNotFound:
+	case sqlc.ErrNotFound:
 		return nil, ErrNotFound
 	default:
 		return nil, err
@@ -85,15 +108,37 @@ func (m *defaultSysRoleMenuModel) FindOneByRoleIdMenuId(ctx context.Context, rol
 }
 
 func (m *defaultSysRoleMenuModel) Insert(ctx context.Context, data *SysRoleMenu) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?)", m.table, sysRoleMenuRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.RoleId, data.MenuId)
+	sysRoleMenuIdKey := fmt.Sprintf("%s%v", cacheSysRoleMenuIdPrefix, data.Id)
+	sysRoleMenuRoleIdMenuIdKey := fmt.Sprintf("%s%v:%v", cacheSysRoleMenuRoleIdMenuIdPrefix, data.RoleId, data.MenuId)
+	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?)", m.table, sysRoleMenuRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.RoleId, data.MenuId)
+	}, sysRoleMenuIdKey, sysRoleMenuRoleIdMenuIdKey)
 	return ret, err
 }
 
 func (m *defaultSysRoleMenuModel) Update(ctx context.Context, newData *SysRoleMenu) error {
-	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysRoleMenuRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, newData.RoleId, newData.MenuId, newData.Id)
+	data, err := m.FindOne(ctx, newData.Id)
+	if err != nil {
+		return err
+	}
+
+	sysRoleMenuIdKey := fmt.Sprintf("%s%v", cacheSysRoleMenuIdPrefix, data.Id)
+	sysRoleMenuRoleIdMenuIdKey := fmt.Sprintf("%s%v:%v", cacheSysRoleMenuRoleIdMenuIdPrefix, data.RoleId, data.MenuId)
+	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysRoleMenuRowsWithPlaceHolder)
+		return conn.ExecCtx(ctx, query, newData.RoleId, newData.MenuId, newData.Id)
+	}, sysRoleMenuIdKey, sysRoleMenuRoleIdMenuIdKey)
 	return err
+}
+
+func (m *defaultSysRoleMenuModel) formatPrimary(primary any) string {
+	return fmt.Sprintf("%s%v", cacheSysRoleMenuIdPrefix, primary)
+}
+
+func (m *defaultSysRoleMenuModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
+	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", sysRoleMenuRows, m.table)
+	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 
 func (m *defaultSysRoleMenuModel) tableName() string {

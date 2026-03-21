@@ -11,6 +11,8 @@ import (
 	"strings"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
+	"github.com/zeromicro/go-zero/core/stores/cache"
+	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
 )
@@ -20,6 +22,9 @@ var (
 	sysUserRoleRows                = strings.Join(sysUserRoleFieldNames, ",")
 	sysUserRoleRowsExpectAutoSet   = strings.Join(stringx.Remove(sysUserRoleFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	sysUserRoleRowsWithPlaceHolder = strings.Join(stringx.Remove(sysUserRoleFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+
+	cacheSysUserRoleIdPrefix           = "cache:sysUserRole:id:"
+	cacheSysUserRoleUserIdRoleIdPrefix = "cache:sysUserRole:userId:roleId:"
 )
 
 type (
@@ -32,7 +37,7 @@ type (
 	}
 
 	defaultSysUserRoleModel struct {
-		conn  sqlx.SqlConn
+		sqlc.CachedConn
 		table string
 	}
 
@@ -43,27 +48,39 @@ type (
 	}
 )
 
-func newSysUserRoleModel(conn sqlx.SqlConn) *defaultSysUserRoleModel {
+func newSysUserRoleModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultSysUserRoleModel {
 	return &defaultSysUserRoleModel{
-		conn:  conn,
-		table: "`sys_user_role`",
+		CachedConn: sqlc.NewConn(conn, c, opts...),
+		table:      "`sys_user_role`",
 	}
 }
 
 func (m *defaultSysUserRoleModel) Delete(ctx context.Context, id int64) error {
-	query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
-	_, err := m.conn.ExecCtx(ctx, query, id)
+	data, err := m.FindOne(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	sysUserRoleIdKey := fmt.Sprintf("%s%v", cacheSysUserRoleIdPrefix, id)
+	sysUserRoleUserIdRoleIdKey := fmt.Sprintf("%s%v:%v", cacheSysUserRoleUserIdRoleIdPrefix, data.UserId, data.RoleId)
+	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
+		return conn.ExecCtx(ctx, query, id)
+	}, sysUserRoleIdKey, sysUserRoleUserIdRoleIdKey)
 	return err
 }
 
 func (m *defaultSysUserRoleModel) FindOne(ctx context.Context, id int64) (*SysUserRole, error) {
-	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", sysUserRoleRows, m.table)
+	sysUserRoleIdKey := fmt.Sprintf("%s%v", cacheSysUserRoleIdPrefix, id)
 	var resp SysUserRole
-	err := m.conn.QueryRowCtx(ctx, &resp, query, id)
+	err := m.QueryRowCtx(ctx, &resp, sysUserRoleIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
+		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", sysUserRoleRows, m.table)
+		return conn.QueryRowCtx(ctx, v, query, id)
+	})
 	switch err {
 	case nil:
 		return &resp, nil
-	case sqlx.ErrNotFound:
+	case sqlc.ErrNotFound:
 		return nil, ErrNotFound
 	default:
 		return nil, err
@@ -71,13 +88,19 @@ func (m *defaultSysUserRoleModel) FindOne(ctx context.Context, id int64) (*SysUs
 }
 
 func (m *defaultSysUserRoleModel) FindOneByUserIdRoleId(ctx context.Context, userId int64, roleId int64) (*SysUserRole, error) {
+	sysUserRoleUserIdRoleIdKey := fmt.Sprintf("%s%v:%v", cacheSysUserRoleUserIdRoleIdPrefix, userId, roleId)
 	var resp SysUserRole
-	query := fmt.Sprintf("select %s from %s where `user_id` = ? and `role_id` = ? limit 1", sysUserRoleRows, m.table)
-	err := m.conn.QueryRowCtx(ctx, &resp, query, userId, roleId)
+	err := m.QueryRowIndexCtx(ctx, &resp, sysUserRoleUserIdRoleIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `user_id` = ? and `role_id` = ? limit 1", sysUserRoleRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, userId, roleId); err != nil {
+			return nil, err
+		}
+		return resp.Id, nil
+	}, m.queryPrimary)
 	switch err {
 	case nil:
 		return &resp, nil
-	case sqlx.ErrNotFound:
+	case sqlc.ErrNotFound:
 		return nil, ErrNotFound
 	default:
 		return nil, err
@@ -85,15 +108,37 @@ func (m *defaultSysUserRoleModel) FindOneByUserIdRoleId(ctx context.Context, use
 }
 
 func (m *defaultSysUserRoleModel) Insert(ctx context.Context, data *SysUserRole) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?)", m.table, sysUserRoleRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.UserId, data.RoleId)
+	sysUserRoleIdKey := fmt.Sprintf("%s%v", cacheSysUserRoleIdPrefix, data.Id)
+	sysUserRoleUserIdRoleIdKey := fmt.Sprintf("%s%v:%v", cacheSysUserRoleUserIdRoleIdPrefix, data.UserId, data.RoleId)
+	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?)", m.table, sysUserRoleRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.UserId, data.RoleId)
+	}, sysUserRoleIdKey, sysUserRoleUserIdRoleIdKey)
 	return ret, err
 }
 
 func (m *defaultSysUserRoleModel) Update(ctx context.Context, newData *SysUserRole) error {
-	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysUserRoleRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, newData.UserId, newData.RoleId, newData.Id)
+	data, err := m.FindOne(ctx, newData.Id)
+	if err != nil {
+		return err
+	}
+
+	sysUserRoleIdKey := fmt.Sprintf("%s%v", cacheSysUserRoleIdPrefix, data.Id)
+	sysUserRoleUserIdRoleIdKey := fmt.Sprintf("%s%v:%v", cacheSysUserRoleUserIdRoleIdPrefix, data.UserId, data.RoleId)
+	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysUserRoleRowsWithPlaceHolder)
+		return conn.ExecCtx(ctx, query, newData.UserId, newData.RoleId, newData.Id)
+	}, sysUserRoleIdKey, sysUserRoleUserIdRoleIdKey)
 	return err
+}
+
+func (m *defaultSysUserRoleModel) formatPrimary(primary any) string {
+	return fmt.Sprintf("%s%v", cacheSysUserRoleIdPrefix, primary)
+}
+
+func (m *defaultSysUserRoleModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
+	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", sysUserRoleRows, m.table)
+	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 
 func (m *defaultSysUserRoleModel) tableName() string {

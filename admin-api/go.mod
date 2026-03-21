@@ -3,12 +3,15 @@ module wklive/admin-api
 go 1.25.4
 
 require (
+	github.com/casbin/casbin/v2 v2.135.0
 	github.com/jinzhu/copier v0.4.0
 	github.com/zeromicro/go-zero v1.9.4
 )
 
 require (
 	github.com/aliyun/aliyun-oss-go-sdk v3.0.2+incompatible // indirect
+	github.com/bmatcuk/doublestar/v4 v4.6.1 // indirect
+	github.com/casbin/govaluate v1.3.0 // indirect
 	github.com/clbanning/mxj v1.8.4 // indirect
 	github.com/coreos/go-semver v0.3.1 // indirect
 	github.com/coreos/go-systemd/v22 v22.5.0 // indirect

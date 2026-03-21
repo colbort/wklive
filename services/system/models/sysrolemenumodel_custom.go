@@ -2,10 +2,13 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
+
+	zero "github.com/zeromicro/go-zero/core/stores/sqlx"
 
 	g "github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -26,13 +29,15 @@ func (m *defaultSysRoleMenuModel) FindMenuIdsByRoleIds(ctx context.Context, role
 	if err != nil {
 		return nil, err
 	}
-	err = m.conn.QueryRowsCtx(ctx, &ids, query, args...)
+	err = m.QueryRowsNoCacheCtx(ctx, &ids, query, args...)
 	return ids, err
 }
 
 func (m *defaultSysRoleMenuModel) DeleteByRoleId(ctx context.Context, roleId int64) error {
 	query := fmt.Sprintf("DELETE FROM %s WHERE role_id = ?", m.table)
-	_, err := m.conn.ExecCtx(ctx, query, roleId)
+	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn zero.SqlConn) (sql.Result, error) {
+		return conn.ExecCtx(ctx, query, roleId)
+	})
 	return err
 }
 
@@ -55,17 +60,19 @@ func (m *defaultSysRoleMenuModel) InsertBatch(ctx context.Context, data []*SysRo
 		strings.Join(valueStrings, ","),
 	)
 
-	_, err := m.conn.ExecCtx(ctx, stmt, valueArgs...)
+	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn zero.SqlConn) (result sql.Result, err error) {
+		return conn.ExecCtx(ctx, stmt, valueArgs...)
+	})
 	return err
 }
 
 func (m *defaultSysRoleMenuModel) TransactCtx(ctx context.Context, fn func(context.Context, g.Session) error) error {
-	return m.conn.TransactCtx(ctx, fn)
+	return m.TransactCtx(ctx, fn)
 }
 
 func (m *defaultSysRoleMenuModel) ListByRoleId(ctx context.Context, roleId int64) ([]*SysRoleMenu, error) {
 	var list []*SysRoleMenu
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE role_id = ?", sysRoleMenuRows, m.table)
-	err := m.conn.QueryRowsCtx(ctx, &list, query, roleId)
+	err := m.QueryRowsNoCacheCtx(ctx, &list, query, roleId)
 	return list, err
 }

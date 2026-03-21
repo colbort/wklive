@@ -7,21 +7,21 @@ import (
 
 type LoginLogModel interface {
 	sysLoginLogModel
-	FindPage(ctx context.Context, username string, success int64, page, pageSize int64) ([]*SysLoginLog, int64, error)
+	FindPage(ctx context.Context, username string, success int64, cursor, pageSize int64) ([]*SysLoginLog, int64, error)
 }
 
 func (m *defaultSysLoginLogModel) FindPage(
 	ctx context.Context,
 	username string,
 	success int64,
-	page, pageSize int64,
+	cursor, pageSize int64,
 ) ([]*SysLoginLog, int64, error) {
 
-	if page <= 0 {
-		page = 1
-	}
-	if pageSize <= 0 || pageSize > 100 {
+	if pageSize <= 0 {
 		pageSize = 10
+	}
+	if pageSize > 100 {
+		pageSize = 100
 	}
 
 	where := "1=1"
@@ -32,6 +32,8 @@ func (m *defaultSysLoginLogModel) FindPage(
 		args = append(args, "%"+username+"%")
 	}
 
+	// 假设 success=0 表示全部，不筛选
+	// 如果 0 是有效值，这里要改
 	if success != 0 {
 		where += " AND success = ?"
 		args = append(args, success)
@@ -40,18 +42,40 @@ func (m *defaultSysLoginLogModel) FindPage(
 	// ---- total ----
 	var total int64
 	countSql := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
-	if err := m.conn.QueryRowCtx(ctx, &total, countSql, args...); err != nil {
+	if err := m.QueryRowNoCacheCtx(ctx, &total, countSql, args...); err != nil {
 		return nil, 0, err
 	}
 
 	// ---- list ----
-	offset := (page - 1) * pageSize
-	listSql := fmt.Sprintf(`SELECT %s FROM %s WHERE %s ORDER BY id DESC LIMIT ? OFFSET ?`, sysLoginLogRows, m.table, where)
+	listArgs := append([]any{}, args...)
+	var listSql string
 
-	listArgs := append(args, pageSize, offset)
+	if cursor <= 0 {
+		// 第一页
+		listSql = fmt.Sprintf(
+			`SELECT %s
+			FROM %s
+			WHERE %s
+			ORDER BY id DESC
+			LIMIT ?`,
+			sysLoginLogRows, m.table, where,
+		)
+		listArgs = append(listArgs, pageSize)
+	} else {
+		// 后续页
+		listSql = fmt.Sprintf(
+			`SELECT %s
+			FROM %s
+			WHERE %s AND id < ?
+			ORDER BY id DESC
+			LIMIT ?`,
+			sysLoginLogRows, m.table, where,
+		)
+		listArgs = append(listArgs, cursor, pageSize)
+	}
 
 	var list []*SysLoginLog
-	if err := m.conn.QueryRowsCtx(ctx, &list, listSql, listArgs...); err != nil {
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, listSql, listArgs...); err != nil {
 		return nil, 0, err
 	}
 

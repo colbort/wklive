@@ -1,6 +1,9 @@
 package models
 
-import "github.com/zeromicro/go-zero/core/stores/sqlx"
+import (
+	"github.com/zeromicro/go-zero/core/stores/cache"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
+)
 
 var _ SysLoginLogModel = (*customSysLoginLogModel)(nil)
 
@@ -9,7 +12,6 @@ type (
 	// and implement the added methods in customSysLoginLogModel.
 	SysLoginLogModel interface {
 		sysLoginLogModel
-		withSession(session sqlx.Session) SysLoginLogModel
 	}
 
 	customSysLoginLogModel struct {
@@ -18,12 +20,8 @@ type (
 )
 
 // NewSysLoginLogModel returns a model for the database table.
-func NewSysLoginLogModel(conn sqlx.SqlConn) SysLoginLogModel {
+func NewSysLoginLogModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) SysLoginLogModel {
 	return &customSysLoginLogModel{
-		defaultSysLoginLogModel: newSysLoginLogModel(conn),
+		defaultSysLoginLogModel: newSysLoginLogModel(conn, c, opts...),
 	}
-}
-
-func (m *customSysLoginLogModel) withSession(session sqlx.Session) SysLoginLogModel {
-	return NewSysLoginLogModel(sqlx.NewSqlConnFromSession(session))
 }

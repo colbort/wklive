@@ -12,6 +12,8 @@ import (
 	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
+	"github.com/zeromicro/go-zero/core/stores/cache"
+	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
 )
@@ -21,6 +23,8 @@ var (
 	sysMenuRows                = strings.Join(sysMenuFieldNames, ",")
 	sysMenuRowsExpectAutoSet   = strings.Join(stringx.Remove(sysMenuFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	sysMenuRowsWithPlaceHolder = strings.Join(stringx.Remove(sysMenuFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+
+	cacheSysMenuIdPrefix = "cache:sysMenu:id:"
 )
 
 type (
@@ -32,7 +36,7 @@ type (
 	}
 
 	defaultSysMenuModel struct {
-		conn  sqlx.SqlConn
+		sqlc.CachedConn
 		table string
 	}
 
@@ -53,27 +57,33 @@ type (
 	}
 )
 
-func newSysMenuModel(conn sqlx.SqlConn) *defaultSysMenuModel {
+func newSysMenuModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultSysMenuModel {
 	return &defaultSysMenuModel{
-		conn:  conn,
-		table: "`sys_menu`",
+		CachedConn: sqlc.NewConn(conn, c, opts...),
+		table:      "`sys_menu`",
 	}
 }
 
 func (m *defaultSysMenuModel) Delete(ctx context.Context, id int64) error {
-	query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
-	_, err := m.conn.ExecCtx(ctx, query, id)
+	sysMenuIdKey := fmt.Sprintf("%s%v", cacheSysMenuIdPrefix, id)
+	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
+		return conn.ExecCtx(ctx, query, id)
+	}, sysMenuIdKey)
 	return err
 }
 
 func (m *defaultSysMenuModel) FindOne(ctx context.Context, id int64) (*SysMenu, error) {
-	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", sysMenuRows, m.table)
+	sysMenuIdKey := fmt.Sprintf("%s%v", cacheSysMenuIdPrefix, id)
 	var resp SysMenu
-	err := m.conn.QueryRowCtx(ctx, &resp, query, id)
+	err := m.QueryRowCtx(ctx, &resp, sysMenuIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
+		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", sysMenuRows, m.table)
+		return conn.QueryRowCtx(ctx, v, query, id)
+	})
 	switch err {
 	case nil:
 		return &resp, nil
-	case sqlx.ErrNotFound:
+	case sqlc.ErrNotFound:
 		return nil, ErrNotFound
 	default:
 		return nil, err
@@ -81,15 +91,30 @@ func (m *defaultSysMenuModel) FindOne(ctx context.Context, id int64) (*SysMenu, 
 }
 
 func (m *defaultSysMenuModel) Insert(ctx context.Context, data *SysMenu) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysMenuRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.ParentId, data.Name, data.MenuType, data.Path, data.Component, data.Perms, data.Icon, data.Sort, data.Visible, data.Status)
+	sysMenuIdKey := fmt.Sprintf("%s%v", cacheSysMenuIdPrefix, data.Id)
+	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysMenuRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.ParentId, data.Name, data.MenuType, data.Path, data.Component, data.Perms, data.Icon, data.Sort, data.Visible, data.Status)
+	}, sysMenuIdKey)
 	return ret, err
 }
 
 func (m *defaultSysMenuModel) Update(ctx context.Context, data *SysMenu) error {
-	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysMenuRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.ParentId, data.Name, data.MenuType, data.Path, data.Component, data.Perms, data.Icon, data.Sort, data.Visible, data.Status, data.Id)
+	sysMenuIdKey := fmt.Sprintf("%s%v", cacheSysMenuIdPrefix, data.Id)
+	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysMenuRowsWithPlaceHolder)
+		return conn.ExecCtx(ctx, query, data.ParentId, data.Name, data.MenuType, data.Path, data.Component, data.Perms, data.Icon, data.Sort, data.Visible, data.Status, data.Id)
+	}, sysMenuIdKey)
 	return err
+}
+
+func (m *defaultSysMenuModel) formatPrimary(primary any) string {
+	return fmt.Sprintf("%s%v", cacheSysMenuIdPrefix, primary)
+}
+
+func (m *defaultSysMenuModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
+	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", sysMenuRows, m.table)
+	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 
 func (m *defaultSysMenuModel) tableName() string {

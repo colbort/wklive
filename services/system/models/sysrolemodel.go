@@ -1,6 +1,9 @@
 package models
 
-import "github.com/zeromicro/go-zero/core/stores/sqlx"
+import (
+	"github.com/zeromicro/go-zero/core/stores/cache"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
+)
 
 var _ SysRoleModel = (*customSysRoleModel)(nil)
 
@@ -9,7 +12,6 @@ type (
 	// and implement the added methods in customSysRoleModel.
 	SysRoleModel interface {
 		sysRoleModel
-		withSession(session sqlx.Session) SysRoleModel
 	}
 
 	customSysRoleModel struct {
@@ -18,12 +20,8 @@ type (
 )
 
 // NewSysRoleModel returns a model for the database table.
-func NewSysRoleModel(conn sqlx.SqlConn) SysRoleModel {
+func NewSysRoleModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) SysRoleModel {
 	return &customSysRoleModel{
-		defaultSysRoleModel: newSysRoleModel(conn),
+		defaultSysRoleModel: newSysRoleModel(conn, c, opts...),
 	}
-}
-
-func (m *customSysRoleModel) withSession(session sqlx.Session) SysRoleModel {
-	return NewSysRoleModel(sqlx.NewSqlConnFromSession(session))
 }

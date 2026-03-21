@@ -61,6 +61,7 @@ message ProfileResp {
   ProfileUser user = 1;
   repeated SysMenuNode menus = 2;
   repeated string perms = 3;
+  repeated int64 role_ids = 4;
 }
 
 message UpdateProfileReq {

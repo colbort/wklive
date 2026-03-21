@@ -1,6 +1,9 @@
 package models
 
-import "github.com/zeromicro/go-zero/core/stores/sqlx"
+import (
+	"github.com/zeromicro/go-zero/core/stores/cache"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
+)
 
 var _ SysMenuModel = (*customSysMenuModel)(nil)
 
@@ -9,7 +12,6 @@ type (
 	// and implement the added methods in customSysMenuModel.
 	SysMenuModel interface {
 		sysMenuModel
-		withSession(session sqlx.Session) SysMenuModel
 	}
 
 	customSysMenuModel struct {
@@ -18,12 +20,8 @@ type (
 )
 
 // NewSysMenuModel returns a model for the database table.
-func NewSysMenuModel(conn sqlx.SqlConn) SysMenuModel {
+func NewSysMenuModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) SysMenuModel {
 	return &customSysMenuModel{
-		defaultSysMenuModel: newSysMenuModel(conn),
+		defaultSysMenuModel: newSysMenuModel(conn, c, opts...),
 	}
-}
-
-func (m *customSysMenuModel) withSession(session sqlx.Session) SysMenuModel {
-	return NewSysMenuModel(sqlx.NewSqlConnFromSession(session))
 }

@@ -12,7 +12,7 @@ type MenuModel interface {
 	FindByIds(ctx context.Context, ids []int64) ([]*SysMenu, error)
 	FindIdsByIds(ctx context.Context, ids []int64) ([]int64, error)
 	ListAll(ctx context.Context) ([]*SysMenu, error)
-	FindPage(ctx context.Context, keyword string, menuType, status, visible, page, pageSize int64) ([]*SysMenu, int64, error)
+	FindPage(ctx context.Context, keyword string, menuType, status, visible, cursor, pageSize int64) ([]*SysMenu, int64, error)
 }
 
 func (m *defaultSysMenuModel) FindByIds(ctx context.Context, ids []int64) ([]*SysMenu, error) {
@@ -22,7 +22,7 @@ func (m *defaultSysMenuModel) FindByIds(ctx context.Context, ids []int64) ([]*Sy
 	if err != nil {
 		return nil, err
 	}
-	err = m.conn.QueryRowsCtx(ctx, &menus, query, args...)
+	err = m.QueryRowsNoCacheCtx(ctx, &menus, query, args...)
 	return menus, err
 }
 
@@ -33,28 +33,33 @@ func (m *defaultSysMenuModel) FindIdsByIds(ctx context.Context, ids []int64) ([]
 	if err != nil {
 		return nil, err
 	}
-	err = m.conn.QueryRowsCtx(ctx, &existIds, query, args...)
+	err = m.QueryRowsNoCacheCtx(ctx, &existIds, query, args...)
 	return existIds, err
 }
 
 func (m *defaultSysMenuModel) ListAll(ctx context.Context) ([]*SysMenu, error) {
 	var menus []*SysMenu
 	query := "select " + sysMenuRows + " from " + m.table + " order by `sort` asc"
-	err := m.conn.QueryRowsCtx(ctx, &menus, query)
+	err := m.QueryRowsNoCacheCtx(ctx, &menus, query)
 	return menus, err
 }
 
-func (m *defaultSysMenuModel) FindPage(ctx context.Context, keyword string, menuType, status, visible, page, pageSize int64) ([]*SysMenu, int64, error) {
+func (m *defaultSysMenuModel) FindPage(
+	ctx context.Context,
+	keyword string,
+	menuType, status, visible int64,
+	cursor, pageSize int64,
+) ([]*SysMenu, int64, error) {
 
-	if page <= 0 {
-		page = 1
+	if pageSize <= 0 {
+		pageSize = 100
 	}
-	if pageSize <= 0 || pageSize > 10000 {
+	if pageSize > 10000 {
 		pageSize = 10000
 	}
 
 	where := "1=1"
-	args := make([]any, 0, 4)
+	args := make([]any, 0, 6)
 
 	if keyword != "" {
 		like := "%" + keyword + "%"
@@ -62,6 +67,7 @@ func (m *defaultSysMenuModel) FindPage(ctx context.Context, keyword string, menu
 		args = append(args, like, like)
 	}
 
+	// 假设 0 表示全部，不筛选
 	if menuType != 0 {
 		where += " AND menu_type = ?"
 		args = append(args, menuType)
@@ -80,23 +86,40 @@ func (m *defaultSysMenuModel) FindPage(ctx context.Context, keyword string, menu
 	// total
 	var total int64
 	countSql := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
-	if err := m.conn.QueryRowCtx(ctx, &total, countSql, args...); err != nil {
+	if err := m.QueryRowNoCacheCtx(ctx, &total, countSql, args...); err != nil {
 		return nil, 0, err
 	}
 
 	// list
-	offset := (page - 1) * pageSize
-	listSql := fmt.Sprintf(`
-SELECT %s
-FROM %s
-WHERE %s
-ORDER BY id DESC
-LIMIT ? OFFSET ?`, sysMenuRows, m.table, where)
+	listArgs := append([]any{}, args...)
+	var listSql string
 
-	listArgs := append(args, pageSize, offset)
+	if cursor <= 0 {
+		// 第一页
+		listSql = fmt.Sprintf(
+			`SELECT %s
+			FROM %s
+			WHERE %s
+			ORDER BY id DESC
+			LIMIT ?`,
+			sysMenuRows, m.table, where,
+		)
+		listArgs = append(listArgs, pageSize)
+	} else {
+		// 后续页
+		listSql = fmt.Sprintf(
+			`SELECT %s
+			FROM %s
+			WHERE %s AND id < ?
+			ORDER BY id DESC
+			LIMIT ?`,
+			sysMenuRows, m.table, where,
+		)
+		listArgs = append(listArgs, cursor, pageSize)
+	}
 
 	var list []*SysMenu
-	if err := m.conn.QueryRowsCtx(ctx, &list, listSql, listArgs...); err != nil {
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, listSql, listArgs...); err != nil {
 		return nil, 0, err
 	}
 

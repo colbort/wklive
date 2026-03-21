@@ -11,6 +11,7 @@ import (
 
 	"wklive/admin-api/internal/config"
 	"wklive/admin-api/internal/handler"
+	"wklive/admin-api/internal/middleware"
 	"wklive/admin-api/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
@@ -43,6 +44,10 @@ func main() {
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
 	handler.RegisterCustomHandlers(server, ctx)
+
+	// Add RBAC middleware
+	rbacMiddleware := middleware.NewRbacMiddleware(ctx)
+	server.Use(rbacMiddleware.Handle)
 
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()

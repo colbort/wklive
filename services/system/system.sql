@@ -80,6 +80,7 @@ CREATE TABLE sys_menu (
 
   menu_type TINYINT NOT NULL COMMENT '1目录 2菜单 3按钮',
 
+  method VARCHAR(16) DEFAULT '' COMMENT '请求方法 GET POST PUT DELETE',
   path VARCHAR(255) DEFAULT '' COMMENT '路由路径',
   component VARCHAR(255) DEFAULT '' COMMENT '前端组件',
 
@@ -204,7 +205,7 @@ VALUES
 	('4', '1', '300'),
 	('5', '1', '400'),
 	('6', '1', '500'),
-  ('7', '1', '600')
+  ('7', '1', '600'),
 	('8', '1', '101'),
 	('9', '1', '102'),
 	('10', '1', '103'),
@@ -233,45 +234,45 @@ VALUES (1, 0, '系统管理', 1, 'Setting', 1);
 INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, icon, sort)
 VALUES (100, 1, '用户管理', 2, '/users', 'system/users', 'User', 100);
 
-INSERT INTO sys_menu (parent_id, name, menu_type, perms, sort)
+INSERT INTO sys_menu (parent_id, name, menu_type, method, perms, sort)
 VALUES
-(100, '新增用户', 3, 'sys:user:add', 101),
-(100, '编辑用户', 3, 'sys:user:update', 102),
-(100, '删除用户', 3, 'sys:user:delete', 103),
-(100, '重置密码', 3, 'sys:user:resetpwd', 104),
-(100, '分配角色', 3, 'sys:user:assignrole', 105),
-(100, 'Google2FA管理', 3, 'sys:user:google2fa', 106),
-(100, '2FA绑定', 3, 'sys:user:2fa:init', 107),
-(100, '2FA启用', 3, 'sys:user:2fa:enable', 108),
-(100, '2FA禁用', 3, 'sys:user:2fa:disable', 109),
-(100, '2FA重置', 3, 'sys:user:2fa:reset', 110);
+(100, '新增用户', 3, 'POST', 'sys:user:add', 101),
+(100, '编辑用户', 3, 'PUT', 'sys:user:update', 102),
+(100, '删除用户', 3, 'DELETE', 'sys:user:delete', 103),
+(100, '重置密码', 3, 'POST', 'sys:user:resetpwd', 104),
+(100, '分配角色', 3, 'POST', 'sys:user:assignrole', 105),
+(100, 'Google2FA管理', 3, 'GET', 'sys:user:google2fa', 106),
+(100, '2FA绑定', 3, 'POST', 'sys:user:2fa:init', 107),
+(100, '2FA启用', 3, 'POST', 'sys:user:2fa:enable', 108),
+(100, '2FA禁用', 3, 'POST', 'sys:user:2fa:disable', 109),
+(100, '2FA重置', 3, 'POST', 'sys:user:2fa:reset', 110);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, icon, sort)
 VALUES (200, 1, '角色管理', 2, '/roles', 'system/roles', 'Guide', 200);
 
-INSERT INTO sys_menu (parent_id, name, menu_type, perms, sort)
+INSERT INTO sys_menu (parent_id, name, menu_type, method, perms, sort)
 VALUES
-(200, '新增角色', 3, 'sys:role:add', 201),
-(200, '编辑角色', 3, 'sys:role:update', 202),
-(200, '删除角色', 3, 'sys:role:delete', 203),
-(200, '菜单授权', 3, 'sys:role:grant', 204);
+(200, '新增角色', 3, 'POST', 'sys:role:add', 201),
+(200, '编辑角色', 3, 'PUT', 'sys:role:update', 202),
+(200, '删除角色', 3, 'DELETE', 'sys:role:delete', 203),
+(200, '菜单授权', 3, 'POST', 'sys:role:grant', 204);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, icon, sort)
 VALUES (300, 1, '菜单管理', 2, '/menus', 'system/menus', 'Menu', 300);
 
-INSERT INTO sys_menu (parent_id, name, menu_type, perms, sort)
+INSERT INTO sys_menu (parent_id, name, menu_type, method, perms, sort)
 VALUES
-(300, '新增菜单', 3, 'sys:menu:add', 301),
-(300, '编辑菜单', 3, 'sys:menu:update', 302),
-(300, '删除菜单', 3, 'sys:menu:delete', 303);
+(300, '新增菜单', 3, 'POST', 'sys:menu:add', 301),
+(300, '编辑菜单', 3, 'PUT', 'sys:menu:update', 302),
+(300, '删除菜单', 3, 'DELETE', 'sys:menu:delete', 303);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, icon, sort)
 VALUES (400, 1, '系统配置', 2, '/configs', 'system/configs', 'Cpu', 400);
-INSERT INTO sys_menu (parent_id, name, menu_type, perms, sort)
+INSERT INTO sys_menu (parent_id, name, menu_type, method, perms, sort)
 VALUES
-(400, '新增配置', 3, 'sys:config:add', 401),
-(400, '编辑配置', 3, 'sys:config:update', 402),
-(400, '删除配置', 3, 'sys:config:delete', 403);
+(400, '新增配置', 3, 'POST', 'sys:config:add', 401),
+(400, '编辑配置', 3, 'PUT', 'sys:config:update', 402),
+(400, '删除配置', 3, 'DELETE', 'sys:config:delete', 403);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, icon, sort)
 VALUES (500, 1, '登录日志', 2, '/logs/login', 'system/login-log', 'Reading', 500);

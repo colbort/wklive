@@ -486,6 +486,7 @@ type ProfileResp struct {
 	User          *ProfileUser           `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
 	Menus         []*SysMenuNode         `protobuf:"bytes,2,rep,name=menus,proto3" json:"menus,omitempty"`
 	Perms         []string               `protobuf:"bytes,3,rep,name=perms,proto3" json:"perms,omitempty"`
+	RoleIds       []int64                `protobuf:"varint,4,rep,packed,name=role_ids,json=roleIds,proto3" json:"role_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -537,6 +538,13 @@ func (x *ProfileResp) GetMenus() []*SysMenuNode {
 func (x *ProfileResp) GetPerms() []string {
 	if x != nil {
 		return x.Perms
+	}
+	return nil
+}
+
+func (x *ProfileResp) GetRoleIds() []int64 {
+	if x != nil {
+		return x.RoleIds
 	}
 	return nil
 }
@@ -3970,11 +3978,12 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x06status\x18\n" +
 	" \x01(\x03R\x06status\x12\x14\n" +
 	"\x05perms\x18\v \x01(\tR\x05perms\x12/\n" +
-	"\bchildren\x18\f \x03(\v2\x13.system.SysMenuNodeR\bchildren\"w\n" +
+	"\bchildren\x18\f \x03(\v2\x13.system.SysMenuNodeR\bchildren\"\x92\x01\n" +
 	"\vProfileResp\x12'\n" +
 	"\x04user\x18\x01 \x01(\v2\x13.system.ProfileUserR\x04user\x12)\n" +
 	"\x05menus\x18\x02 \x03(\v2\x13.system.SysMenuNodeR\x05menus\x12\x14\n" +
-	"\x05perms\x18\x03 \x03(\tR\x05perms\"\xa6\x01\n" +
+	"\x05perms\x18\x03 \x03(\tR\x05perms\x12\x19\n" +
+	"\brole_ids\x18\x04 \x03(\x03R\aroleIds\"\xa6\x01\n" +
 	"\x10UpdateProfileReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\bnickname\x18\x02 \x01(\tH\x00R\bnickname\x88\x01\x01\x12\x1b\n" +

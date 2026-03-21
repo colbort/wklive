@@ -68,4 +68,4 @@ clean-gen:
 
 .PHONY: gen-model
 gen-model:
-	goctl model mysql ddl --src system.sql --dir ./models
+	goctl model mysql ddl --src system.sql --dir ./models -c

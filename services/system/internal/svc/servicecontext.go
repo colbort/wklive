@@ -25,13 +25,13 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config: c,
 
-		UserModel:     models.NewSysUserModel(conn).(models.UserModel),
-		RoleModel:     models.NewSysRoleModel(conn).(models.RoleModel),
-		MenuModel:     models.NewSysMenuModel(conn).(models.MenuModel),
-		UserRoleModel: models.NewSysUserRoleModel(conn).(models.UserRoleModel),
-		RoleMenuModel: models.NewSysRoleMenuModel(conn).(models.RoleMenuModel),
-		LoginLogModel: models.NewSysLoginLogModel(conn).(models.LoginLogModel),
-		OpLogModel:    models.NewSysOpLogModel(conn).(models.OpLogModel),
-		ConfigModel:   models.NewSysConfigModel(conn).(models.ConfigModel),
+		UserModel:     models.NewSysUserModel(conn, c.CacheRedis).(models.UserModel),
+		RoleModel:     models.NewSysRoleModel(conn, c.CacheRedis).(models.RoleModel),
+		MenuModel:     models.NewSysMenuModel(conn, c.CacheRedis).(models.MenuModel),
+		UserRoleModel: models.NewSysUserRoleModel(conn, c.CacheRedis).(models.UserRoleModel),
+		RoleMenuModel: models.NewSysRoleMenuModel(conn, c.CacheRedis).(models.RoleMenuModel),
+		LoginLogModel: models.NewSysLoginLogModel(conn, c.CacheRedis).(models.LoginLogModel),
+		OpLogModel:    models.NewSysOpLogModel(conn, c.CacheRedis).(models.OpLogModel),
+		ConfigModel:   models.NewSysConfigModel(conn, c.CacheRedis).(models.ConfigModel),
 	}
 }

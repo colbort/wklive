@@ -1,10 +1,12 @@
 package models
 
-import "context"
+import (
+	"context"
+)
 
 type OpLogModel interface {
 	sysOpLogModel
-	FindPage(ctx context.Context, username string, method string, path string, page, pageSize int64) ([]*SysOpLog, int64, error)
+	FindPage(ctx context.Context, username string, method string, path string, cursor, pageSize int64) ([]*SysOpLog, int64, error)
 }
 
 func (m *defaultSysOpLogModel) FindPage(
@@ -12,16 +14,17 @@ func (m *defaultSysOpLogModel) FindPage(
 	username string,
 	method string,
 	path string,
-	page, pageSize int64,
+	cursor, pageSize int64,
 ) ([]*SysOpLog, int64, error) {
 
-	if page <= 0 {
-		page = 1
-	}
-	if pageSize <= 0 || pageSize > 100 {
+	if pageSize <= 0 {
 		pageSize = 10
 	}
+	if pageSize > 100 {
+		pageSize = 100
+	}
 
+	// ---- WHERE 条件 ----
 	where := "1=1"
 	args := make([]any, 0, 4)
 
@@ -43,18 +46,32 @@ func (m *defaultSysOpLogModel) FindPage(
 	// ---- total ----
 	var total int64
 	countSql := "SELECT COUNT(1) FROM " + m.table + " WHERE " + where
-	if err := m.conn.QueryRowCtx(ctx, &total, countSql, args...); err != nil {
+	if err := m.QueryRowNoCacheCtx(ctx, &total, countSql, args...); err != nil {
 		return nil, 0, err
 	}
 
 	// ---- list ----
-	offset := (page - 1) * pageSize
-	listSql := "SELECT " + sysOpLogRows + " FROM " + m.table + " WHERE " + where + " ORDER BY id DESC LIMIT ? OFFSET ?"
+	listArgs := append([]any{}, args...)
+	var listSql string
 
-	listArgs := append(args, pageSize, offset)
+	if cursor <= 0 {
+		// 第一页
+		listSql = "SELECT " + sysOpLogRows +
+			" FROM " + m.table +
+			" WHERE " + where +
+			" ORDER BY id DESC LIMIT ?"
+		listArgs = append(listArgs, pageSize)
+	} else {
+		// 后续页
+		listSql = "SELECT " + sysOpLogRows +
+			" FROM " + m.table +
+			" WHERE " + where +
+			" AND id < ? ORDER BY id DESC LIMIT ?"
+		listArgs = append(listArgs, cursor, pageSize)
+	}
 
 	var list []*SysOpLog
-	if err := m.conn.QueryRowsCtx(ctx, &list, listSql, listArgs...); err != nil {
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, listSql, listArgs...); err != nil {
 		return nil, 0, err
 	}
 

@@ -52,8 +52,9 @@ func (l *GetProfileLogic) GetProfile(in *system.ProfileReq) (*system.ProfileResp
 				Nickname: u.Nickname,
 				Avatar:   u.Avatar,
 			},
-			Menus: []*system.SysMenuNode{},
-			Perms: []string{},
+			Menus:   []*system.SysMenuNode{},
+			Perms:   []string{},
+			RoleIds: []int64{},
 		}, nil
 	}
 
@@ -70,8 +71,9 @@ func (l *GetProfileLogic) GetProfile(in *system.ProfileReq) (*system.ProfileResp
 				Nickname: u.Nickname,
 				Avatar:   u.Avatar,
 			},
-			Menus: []*system.SysMenuNode{},
-			Perms: []string{},
+			Menus:   []*system.SysMenuNode{},
+			Perms:   []string{},
+			RoleIds: roleIds,
 		}, nil
 	}
 
@@ -91,8 +93,9 @@ func (l *GetProfileLogic) GetProfile(in *system.ProfileReq) (*system.ProfileResp
 			Nickname: u.Nickname,
 			Avatar:   u.Avatar,
 		},
-		Menus: tree,
-		Perms: perms,
+		Menus:   tree,
+		Perms:   perms,
+		RoleIds: roleIds,
 	}, nil
 }
 

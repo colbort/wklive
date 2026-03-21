@@ -1,6 +1,9 @@
 package models
 
-import "github.com/zeromicro/go-zero/core/stores/sqlx"
+import (
+	"github.com/zeromicro/go-zero/core/stores/cache"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
+)
 
 var _ SysConfigModel = (*customSysConfigModel)(nil)
 
@@ -9,7 +12,6 @@ type (
 	// and implement the added methods in customSysConfigModel.
 	SysConfigModel interface {
 		sysConfigModel
-		withSession(session sqlx.Session) SysConfigModel
 	}
 
 	customSysConfigModel struct {
@@ -18,12 +20,8 @@ type (
 )
 
 // NewSysConfigModel returns a model for the database table.
-func NewSysConfigModel(conn sqlx.SqlConn) SysConfigModel {
+func NewSysConfigModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) SysConfigModel {
 	return &customSysConfigModel{
-		defaultSysConfigModel: newSysConfigModel(conn),
+		defaultSysConfigModel: newSysConfigModel(conn, c, opts...),
 	}
-}
-
-func (m *customSysConfigModel) withSession(session sqlx.Session) SysConfigModel {
-	return NewSysConfigModel(sqlx.NewSqlConnFromSession(session))
 }

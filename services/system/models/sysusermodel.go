@@ -1,6 +1,9 @@
 package models
 
-import "github.com/zeromicro/go-zero/core/stores/sqlx"
+import (
+	"github.com/zeromicro/go-zero/core/stores/cache"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
+)
 
 var _ SysUserModel = (*customSysUserModel)(nil)
 
@@ -9,7 +12,6 @@ type (
 	// and implement the added methods in customSysUserModel.
 	SysUserModel interface {
 		sysUserModel
-		withSession(session sqlx.Session) SysUserModel
 	}
 
 	customSysUserModel struct {
@@ -18,12 +20,8 @@ type (
 )
 
 // NewSysUserModel returns a model for the database table.
-func NewSysUserModel(conn sqlx.SqlConn) SysUserModel {
+func NewSysUserModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) SysUserModel {
 	return &customSysUserModel{
-		defaultSysUserModel: newSysUserModel(conn),
+		defaultSysUserModel: newSysUserModel(conn, c, opts...),
 	}
-}
-
-func (m *customSysUserModel) withSession(session sqlx.Session) SysUserModel {
-	return NewSysUserModel(sqlx.NewSqlConnFromSession(session))
 }

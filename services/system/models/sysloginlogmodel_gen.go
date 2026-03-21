@@ -12,6 +12,8 @@ import (
 	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
+	"github.com/zeromicro/go-zero/core/stores/cache"
+	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
 )
@@ -21,6 +23,8 @@ var (
 	sysLoginLogRows                = strings.Join(sysLoginLogFieldNames, ",")
 	sysLoginLogRowsExpectAutoSet   = strings.Join(stringx.Remove(sysLoginLogFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	sysLoginLogRowsWithPlaceHolder = strings.Join(stringx.Remove(sysLoginLogFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+
+	cacheSysLoginLogIdPrefix = "cache:sysLoginLog:id:"
 )
 
 type (
@@ -32,7 +36,7 @@ type (
 	}
 
 	defaultSysLoginLogModel struct {
-		conn  sqlx.SqlConn
+		sqlc.CachedConn
 		table string
 	}
 
@@ -48,27 +52,33 @@ type (
 	}
 )
 
-func newSysLoginLogModel(conn sqlx.SqlConn) *defaultSysLoginLogModel {
+func newSysLoginLogModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultSysLoginLogModel {
 	return &defaultSysLoginLogModel{
-		conn:  conn,
-		table: "`sys_login_log`",
+		CachedConn: sqlc.NewConn(conn, c, opts...),
+		table:      "`sys_login_log`",
 	}
 }
 
 func (m *defaultSysLoginLogModel) Delete(ctx context.Context, id int64) error {
-	query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
-	_, err := m.conn.ExecCtx(ctx, query, id)
+	sysLoginLogIdKey := fmt.Sprintf("%s%v", cacheSysLoginLogIdPrefix, id)
+	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
+		return conn.ExecCtx(ctx, query, id)
+	}, sysLoginLogIdKey)
 	return err
 }
 
 func (m *defaultSysLoginLogModel) FindOne(ctx context.Context, id int64) (*SysLoginLog, error) {
-	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", sysLoginLogRows, m.table)
+	sysLoginLogIdKey := fmt.Sprintf("%s%v", cacheSysLoginLogIdPrefix, id)
 	var resp SysLoginLog
-	err := m.conn.QueryRowCtx(ctx, &resp, query, id)
+	err := m.QueryRowCtx(ctx, &resp, sysLoginLogIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
+		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", sysLoginLogRows, m.table)
+		return conn.QueryRowCtx(ctx, v, query, id)
+	})
 	switch err {
 	case nil:
 		return &resp, nil
-	case sqlx.ErrNotFound:
+	case sqlc.ErrNotFound:
 		return nil, ErrNotFound
 	default:
 		return nil, err
@@ -76,15 +86,30 @@ func (m *defaultSysLoginLogModel) FindOne(ctx context.Context, id int64) (*SysLo
 }
 
 func (m *defaultSysLoginLogModel) Insert(ctx context.Context, data *SysLoginLog) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, sysLoginLogRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.UserId, data.Username, data.Ip, data.Ua, data.Success, data.Msg, data.LoginAt)
+	sysLoginLogIdKey := fmt.Sprintf("%s%v", cacheSysLoginLogIdPrefix, data.Id)
+	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, sysLoginLogRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.UserId, data.Username, data.Ip, data.Ua, data.Success, data.Msg, data.LoginAt)
+	}, sysLoginLogIdKey)
 	return ret, err
 }
 
 func (m *defaultSysLoginLogModel) Update(ctx context.Context, data *SysLoginLog) error {
-	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysLoginLogRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.UserId, data.Username, data.Ip, data.Ua, data.Success, data.Msg, data.LoginAt, data.Id)
+	sysLoginLogIdKey := fmt.Sprintf("%s%v", cacheSysLoginLogIdPrefix, data.Id)
+	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysLoginLogRowsWithPlaceHolder)
+		return conn.ExecCtx(ctx, query, data.UserId, data.Username, data.Ip, data.Ua, data.Success, data.Msg, data.LoginAt, data.Id)
+	}, sysLoginLogIdKey)
 	return err
+}
+
+func (m *defaultSysLoginLogModel) formatPrimary(primary any) string {
+	return fmt.Sprintf("%s%v", cacheSysLoginLogIdPrefix, primary)
+}
+
+func (m *defaultSysLoginLogModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
+	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", sysLoginLogRows, m.table)
+	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 
 func (m *defaultSysLoginLogModel) tableName() string {

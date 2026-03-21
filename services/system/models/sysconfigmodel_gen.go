@@ -12,6 +12,8 @@ import (
 	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
+	"github.com/zeromicro/go-zero/core/stores/cache"
+	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
 )
@@ -21,6 +23,9 @@ var (
 	sysConfigRows                = strings.Join(sysConfigFieldNames, ",")
 	sysConfigRowsExpectAutoSet   = strings.Join(stringx.Remove(sysConfigFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	sysConfigRowsWithPlaceHolder = strings.Join(stringx.Remove(sysConfigFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+
+	cacheSysConfigIdPrefix        = "cache:sysConfig:id:"
+	cacheSysConfigConfigKeyPrefix = "cache:sysConfig:configKey:"
 )
 
 type (
@@ -33,7 +38,7 @@ type (
 	}
 
 	defaultSysConfigModel struct {
-		conn  sqlx.SqlConn
+		sqlc.CachedConn
 		table string
 	}
 
@@ -47,27 +52,39 @@ type (
 	}
 )
 
-func newSysConfigModel(conn sqlx.SqlConn) *defaultSysConfigModel {
+func newSysConfigModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultSysConfigModel {
 	return &defaultSysConfigModel{
-		conn:  conn,
-		table: "`sys_config`",
+		CachedConn: sqlc.NewConn(conn, c, opts...),
+		table:      "`sys_config`",
 	}
 }
 
 func (m *defaultSysConfigModel) Delete(ctx context.Context, id int64) error {
-	query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
-	_, err := m.conn.ExecCtx(ctx, query, id)
+	data, err := m.FindOne(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	sysConfigConfigKeyKey := fmt.Sprintf("%s%v", cacheSysConfigConfigKeyPrefix, data.ConfigKey)
+	sysConfigIdKey := fmt.Sprintf("%s%v", cacheSysConfigIdPrefix, id)
+	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
+		return conn.ExecCtx(ctx, query, id)
+	}, sysConfigConfigKeyKey, sysConfigIdKey)
 	return err
 }
 
 func (m *defaultSysConfigModel) FindOne(ctx context.Context, id int64) (*SysConfig, error) {
-	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", sysConfigRows, m.table)
+	sysConfigIdKey := fmt.Sprintf("%s%v", cacheSysConfigIdPrefix, id)
 	var resp SysConfig
-	err := m.conn.QueryRowCtx(ctx, &resp, query, id)
+	err := m.QueryRowCtx(ctx, &resp, sysConfigIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
+		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", sysConfigRows, m.table)
+		return conn.QueryRowCtx(ctx, v, query, id)
+	})
 	switch err {
 	case nil:
 		return &resp, nil
-	case sqlx.ErrNotFound:
+	case sqlc.ErrNotFound:
 		return nil, ErrNotFound
 	default:
 		return nil, err
@@ -75,13 +92,19 @@ func (m *defaultSysConfigModel) FindOne(ctx context.Context, id int64) (*SysConf
 }
 
 func (m *defaultSysConfigModel) FindOneByConfigKey(ctx context.Context, configKey sql.NullString) (*SysConfig, error) {
+	sysConfigConfigKeyKey := fmt.Sprintf("%s%v", cacheSysConfigConfigKeyPrefix, configKey)
 	var resp SysConfig
-	query := fmt.Sprintf("select %s from %s where `config_key` = ? limit 1", sysConfigRows, m.table)
-	err := m.conn.QueryRowCtx(ctx, &resp, query, configKey)
+	err := m.QueryRowIndexCtx(ctx, &resp, sysConfigConfigKeyKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `config_key` = ? limit 1", sysConfigRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, configKey); err != nil {
+			return nil, err
+		}
+		return resp.Id, nil
+	}, m.queryPrimary)
 	switch err {
 	case nil:
 		return &resp, nil
-	case sqlx.ErrNotFound:
+	case sqlc.ErrNotFound:
 		return nil, ErrNotFound
 	default:
 		return nil, err
@@ -89,15 +112,37 @@ func (m *defaultSysConfigModel) FindOneByConfigKey(ctx context.Context, configKe
 }
 
 func (m *defaultSysConfigModel) Insert(ctx context.Context, data *SysConfig) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?)", m.table, sysConfigRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.ConfigKey, data.ConfigValue, data.Remark)
+	sysConfigConfigKeyKey := fmt.Sprintf("%s%v", cacheSysConfigConfigKeyPrefix, data.ConfigKey)
+	sysConfigIdKey := fmt.Sprintf("%s%v", cacheSysConfigIdPrefix, data.Id)
+	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?)", m.table, sysConfigRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.ConfigKey, data.ConfigValue, data.Remark)
+	}, sysConfigConfigKeyKey, sysConfigIdKey)
 	return ret, err
 }
 
 func (m *defaultSysConfigModel) Update(ctx context.Context, newData *SysConfig) error {
-	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysConfigRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, newData.ConfigKey, newData.ConfigValue, newData.Remark, newData.Id)
+	data, err := m.FindOne(ctx, newData.Id)
+	if err != nil {
+		return err
+	}
+
+	sysConfigConfigKeyKey := fmt.Sprintf("%s%v", cacheSysConfigConfigKeyPrefix, data.ConfigKey)
+	sysConfigIdKey := fmt.Sprintf("%s%v", cacheSysConfigIdPrefix, data.Id)
+	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysConfigRowsWithPlaceHolder)
+		return conn.ExecCtx(ctx, query, newData.ConfigKey, newData.ConfigValue, newData.Remark, newData.Id)
+	}, sysConfigConfigKeyKey, sysConfigIdKey)
 	return err
+}
+
+func (m *defaultSysConfigModel) formatPrimary(primary any) string {
+	return fmt.Sprintf("%s%v", cacheSysConfigIdPrefix, primary)
+}
+
+func (m *defaultSysConfigModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
+	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", sysConfigRows, m.table)
+	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 
 func (m *defaultSysConfigModel) tableName() string {

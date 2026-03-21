@@ -6,6 +6,11 @@ Etcd:
   - 192.168.10.116:2379
   Key: system.rpc
 
+CacheRedis:
+  - Host: redis:6379
+    Type: node
+    Pass:
+
 Mysql:
   DataSource: root:123456@tcp(192.168.10.116:3306)/wklive?charset=utf8mb4&parseTime=true&loc=Local
 

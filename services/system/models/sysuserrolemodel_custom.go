@@ -19,8 +19,11 @@ type UserRoleModel interface {
 func (m *defaultSysUserRoleModel) FindRoleIdsByUserId(ctx context.Context, uid int64) ([]int64, error) {
 	var ids []int64
 	query := "select role_id from " + m.table + " where user_id = ?"
-	err := m.conn.QueryRowsCtx(ctx, &ids, query, uid)
-	return ids, err
+	err := m.QueryRowsNoCacheCtx(ctx, &ids, query, uid)
+	if err != nil {
+		return nil, err
+	}
+	return ids, nil
 }
 
 func (m *defaultSysUserRoleModel) FindRoleIdsByUserIds(
@@ -51,7 +54,8 @@ func (m *defaultSysUserRoleModel) FindRoleIdsByUserIds(
 	}
 
 	var rows []row
-	err := m.conn.QueryRowsCtx(ctx, &rows, query, args...)
+
+	err := m.QueryRowsNoCacheCtx(ctx, &rows, query, args...)
 	if err != nil {
 		return nil, err
 	}

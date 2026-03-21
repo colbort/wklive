@@ -11,20 +11,25 @@ import (
 
 type ConfigModel interface {
 	SysConfigModel
-	FindPage(ctx context.Context, configKey string, page, pageSize int64) ([]*SysConfig, int64, error)
+	FindPage(ctx context.Context, configKey string, cursor, pageSize int64) ([]*SysConfig, int64, error)
 	FindByKeys(ctx context.Context, configKeys []string) ([]*SysConfig, error)
 }
 
-func (m *customSysConfigModel) FindPage(ctx context.Context, configKey string, page, pageSize int64) ([]*SysConfig, int64, error) {
-	if page <= 0 {
-		page = 1
-	}
-	if pageSize <= 0 || pageSize > 100 {
+func (m *customSysConfigModel) FindPage(
+	ctx context.Context,
+	configKey string,
+	cursor, pageSize int64,
+) ([]*SysConfig, int64, error) {
+
+	if pageSize <= 0 {
 		pageSize = 10
+	}
+	if pageSize > 100 {
+		pageSize = 100
 	}
 
 	where := "1=1"
-	args := make([]any, 0, 4)
+	args := make([]any, 0, 2)
 
 	if configKey != "" {
 		where += " AND config_key LIKE ?"
@@ -34,18 +39,40 @@ func (m *customSysConfigModel) FindPage(ctx context.Context, configKey string, p
 	// ---- total ----
 	var total int64
 	countSql := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
-	if err := m.conn.QueryRowCtx(ctx, &total, countSql, args...); err != nil {
+	if err := m.QueryRowNoCacheCtx(ctx, &total, countSql, args...); err != nil {
 		return nil, 0, err
 	}
 
 	// ---- list ----
-	offset := (page - 1) * pageSize
-	listSql := fmt.Sprintf(`SELECT %s FROM %s WHERE %s ORDER BY id DESC LIMIT ? OFFSET ?`, sysConfigRows, m.table, where)
+	listArgs := append([]any{}, args...)
+	var listSql string
 
-	listArgs := append(args, pageSize, offset)
+	if cursor <= 0 {
+		// 第一页
+		listSql = fmt.Sprintf(
+			`SELECT %s
+			FROM %s
+			WHERE %s
+			ORDER BY id DESC
+			LIMIT ?`,
+			sysConfigRows, m.table, where,
+		)
+		listArgs = append(listArgs, pageSize)
+	} else {
+		// 后续页
+		listSql = fmt.Sprintf(
+			`SELECT %s
+			FROM %s
+			WHERE %s AND id < ?
+			ORDER BY id DESC
+			LIMIT ?`,
+			sysConfigRows, m.table, where,
+		)
+		listArgs = append(listArgs, cursor, pageSize)
+	}
 
 	var list []*SysConfig
-	if err := m.conn.QueryRowsCtx(ctx, &list, listSql, listArgs...); err != nil {
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, listSql, listArgs...); err != nil {
 		return nil, 0, err
 	}
 
@@ -59,7 +86,8 @@ func (m *customSysConfigModel) FindByKeys(ctx context.Context, configKeys []stri
 	}
 	query := fmt.Sprintf(`SELECT %s FROM %s WHERE config_key IN (?)`, sysConfigRows, m.table)
 	var configs []*SysConfig
-	if err := m.conn.QueryRowsCtx(ctx, &configs, query, args...); err != nil {
+	err := m.QueryRowsNoCacheCtx(ctx, &configs, query, args...)
+	if err != nil {
 		return nil, err
 	}
 	return configs, nil

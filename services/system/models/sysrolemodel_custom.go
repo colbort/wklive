@@ -7,18 +7,24 @@ import (
 
 type RoleModel interface {
 	sysRoleModel
-	FindPage(ctx context.Context, keyword string, status, page, pageSize int64) ([]*SysRole, int64, error)
+	FindPage(ctx context.Context, keyword string, status, cursor, pageSize int64) ([]*SysRole, int64, error)
 }
 
-func (m *defaultSysRoleModel) FindPage(ctx context.Context, keyword string, status, page, pageSize int64) ([]*SysRole, int64, error) {
+func (m *defaultSysRoleModel) FindPage(
+	ctx context.Context,
+	keyword string,
+	status int64,
+	cursor, pageSize int64,
+) ([]*SysRole, int64, error) {
 
-	if page <= 0 {
-		page = 1
-	}
-	if pageSize <= 0 || pageSize > 100 {
+	if pageSize <= 0 {
 		pageSize = 10
 	}
+	if pageSize > 100 {
+		pageSize = 100
+	}
 
+	// ---- WHERE 条件 ----
 	where := "1=1"
 	args := make([]any, 0, 4)
 
@@ -28,31 +34,49 @@ func (m *defaultSysRoleModel) FindPage(ctx context.Context, keyword string, stat
 		args = append(args, like, like)
 	}
 
-	if status != 0 {
+	// 假设 status < 0 表示全部
+	if status >= 0 {
 		where += " AND status = ?"
 		args = append(args, status)
 	}
 
-	// total
+	// ---- total ----
 	var total int64
 	countSql := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
-	if err := m.conn.QueryRowCtx(ctx, &total, countSql, args...); err != nil {
+	if err := m.QueryRowNoCacheCtx(ctx, &total, countSql, args...); err != nil {
 		return nil, 0, err
 	}
 
-	// list
-	offset := (page - 1) * pageSize
-	listSql := fmt.Sprintf(`
-SELECT %s
-FROM %s
-WHERE %s
-ORDER BY id DESC
-LIMIT ? OFFSET ?`, sysRoleRows, m.table, where)
+	// ---- list ----
+	var listSql string
+	listArgs := append([]any{}, args...)
 
-	listArgs := append(args, pageSize, offset)
+	if cursor <= 0 {
+		// 第一页
+		listSql = fmt.Sprintf(
+			`SELECT %s
+			FROM %s
+			WHERE %s
+			ORDER BY id DESC
+			LIMIT ?`,
+			sysRoleRows, m.table, where,
+		)
+		listArgs = append(listArgs, pageSize)
+	} else {
+		// 后续页
+		listSql = fmt.Sprintf(
+			`SELECT %s
+			FROM %s
+			WHERE %s AND id < ?
+			ORDER BY id DESC
+			LIMIT ?`,
+			sysRoleRows, m.table, where,
+		)
+		listArgs = append(listArgs, cursor, pageSize)
+	}
 
 	var list []*SysRole
-	if err := m.conn.QueryRowsCtx(ctx, &list, listSql, listArgs...); err != nil {
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, listSql, listArgs...); err != nil {
 		return nil, 0, err
 	}
 
