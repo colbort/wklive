@@ -14,28 +14,28 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type Google2FABindInitLogic struct {
+type Google2FAInitLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewGoogle2FABindInitLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Google2FABindInitLogic {
-	return &Google2FABindInitLogic{
+func NewGoogle2FAInitLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Google2FAInitLogic {
+	return &Google2FAInitLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *Google2FABindInitLogic) Google2FABindInit(req *types.Google2FABindInitReq) (resp *types.Google2FABindInitResp, err error) {
+func (l *Google2FAInitLogic) Google2FAInit(req *types.Google2FAInitReq) (resp *types.Google2FAInitResp, err error) {
 	result, err := l.svcCtx.SystemCli.Google2FAInit(l.ctx, &system.Google2FAInitReq{UserId: req.UserId})
 	if err != nil {
 		return nil, err
 	}
 	qrCode, _ := utils.GenerateGoogle2FAQRCodeDataURL(result.OtpauthUrl, 220)
 
-	return &types.Google2FABindInitResp{
+	return &types.Google2FAInitResp{
 		RespBase: types.RespBase{
 			Code: result.Base.Code,
 			Msg:  result.Base.Msg,

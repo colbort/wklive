@@ -288,6 +288,32 @@ async function doG2Init() {
   })
 }
 
+async function copySecret() {
+  if (!g2Init.secret) {
+    ElMessage.warning(t('common.noData'))
+    return
+  }
+  try {
+    await navigator.clipboard.writeText(g2Init.secret)
+    ElMessage.success(t('common.copied'))
+  } catch (e) {
+    ElMessage.error(t('common.copyFailed'))
+  }
+}
+
+async function copyOtpauthUrl() {
+  if (!g2Init.otpauthUrl) {
+    ElMessage.warning(t('common.noData'))
+    return
+  }
+  try {
+    await navigator.clipboard.writeText(g2Init.otpauthUrl)
+    ElMessage.success(t('common.copied'))
+  } catch (e) {
+    ElMessage.error(t('common.copyFailed'))
+  }
+}
+
 async function doG2Enable() {
   await withG2EnableLoading(async () => {
     try {
@@ -546,11 +572,17 @@ onMounted(async () => {
           </el-form-item>
 
           <el-form-item label="secret">
-            <el-input :model-value="g2Init.secret" readonly />
+            <div style="display: flex; gap: 8px;">
+              <el-input :model-value="g2Init.secret" readonly style="flex: 1;" />
+              <el-button @click="copySecret" :disabled="!g2Init.secret">{{ t('common.copy') }}</el-button>
+            </div>
           </el-form-item>
 
           <el-form-item label="otpauthUrl">
-            <el-input :model-value="g2Init.otpauthUrl" readonly />
+            <div style="display: flex; gap: 8px;">
+              <el-input :model-value="g2Init.otpauthUrl" readonly style="flex: 1;" />
+              <el-button @click="copyOtpauthUrl" :disabled="!g2Init.otpauthUrl">{{ t('common.copy') }}</el-button>
+            </div>
           </el-form-item>
         </el-form>
       </div>
@@ -560,6 +592,9 @@ onMounted(async () => {
         <div style="background:#f7f8fa; border:1px solid #eee; border-radius:8px; padding:12px; min-height: 240px;">
           <img v-if="g2Init.qrCode" :src="g2Init.qrCode" style="width:100%; height:auto;" />
           <div v-else style="color:#999;">{{ t('common.click2faBindGenerateQrCode') }}</div>
+        </div>
+        <div v-if="g2Init.qrCode" style="margin-top: 8px; font-size: 12px; color: #666;">
+          {{ t('common.scanQrCodeWithGoogleAuthenticator') }}
         </div>
       </div>
     </div>

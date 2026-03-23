@@ -72,6 +72,12 @@ export class UserService {
         return apiGoogle2faInit({ userId });
     }
     /**
+     * 绑定 Google 2FA
+     */
+    async bindGoogle2FA(userId, secret, code) {
+        return apiGoogle2faBind({ userId, secret, code });
+    }
+    /**
      * 启用 Google 2FA
      */
     async enableGoogle2FA(userId, code) {

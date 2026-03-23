@@ -8,11 +8,18 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
+var (
+	google2FASecretCachePrefix = "cache:google2FASecret:userId:"
+)
+
 type UserModel interface {
 	sysUserModel
 	FindPage(ctx context.Context, keyword string, status, cursor, limit int64) ([]*SysUser, int64, error)
 	TransCtx(ctx context.Context, fn func(context context.Context, session sqlx.Session) error) error
 	InsertCtx(ctx context.Context, session sqlx.Session, data *SysUser) (sql.Result, error)
+	InsertGoogle2FASecret(ctx context.Context, userId int64, secret string) error
+	GetGoogle2FASecret(ctx context.Context, userId int64) (string, error)
+	DeleteGoogle2FASecret(ctx context.Context, userId int64) error
 }
 
 func (m *defaultSysUserModel) FindPage(
@@ -88,4 +95,21 @@ func (m *defaultSysUserModel) InsertCtx(ctx context.Context, session sqlx.Sessio
 	query := fmt.Sprintf("insert into %s (`username`, `nickname`, `password`, `status`) values (?, ?, ?, ?)", m.table)
 	ret, err := session.ExecCtx(ctx, query, data.Username, data.Nickname, data.Password, data.Status)
 	return ret, err
+}
+
+func (m *defaultSysUserModel) InsertGoogle2FASecret(ctx context.Context, userId int64, secret string) error {
+	key := fmt.Sprintf("%s%v", google2FASecretCachePrefix, userId)
+	return m.SetCacheWithExpireCtx(ctx, key, secret, 10*60)
+}
+
+func (m *defaultSysUserModel) GetGoogle2FASecret(ctx context.Context, userId int64) (string, error) {
+	key := fmt.Sprintf("%s%v", google2FASecretCachePrefix, userId)
+	var secret string
+	err := m.GetCacheCtx(ctx, key, &secret)
+	return secret, err
+}
+
+func (m *defaultSysUserModel) DeleteGoogle2FASecret(ctx context.Context, userId int64) error {
+	key := fmt.Sprintf("%s%v", google2FASecretCachePrefix, userId)
+	return m.DelCache(key)
 }

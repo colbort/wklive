@@ -49,11 +49,15 @@ func (l *Google2FAInitLogic) Google2FAInit(in *system.Google2FAInitReq) (*system
 		}, err
 	}
 
-	user.GoogleSecret = secret
-	if err = l.svcCtx.UserModel.Update(l.ctx, user); err != nil {
-		return nil, err
+	// 将 secret 存储到 redis，设置过期时间，例如 10 分钟
+	if err := l.svcCtx.UserModel.InsertGoogle2FASecret(l.ctx, in.UserId, secret); err != nil {
+		return &system.Google2FAInitResp{
+			Base: &system.RespBase{
+				Code: 1,
+				Msg:  "存储2FA secret失败: " + err.Error(),
+			},
+		}, err
 	}
-
 	return &system.Google2FAInitResp{
 		Base: &system.RespBase{
 			Code: 200,

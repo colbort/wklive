@@ -12,16 +12,16 @@ import (
 	"wklive/admin-api/internal/types"
 )
 
-func Google2FABindInitHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func Google2FAInitHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.Google2FABindInitReq
+		var req types.Google2FAInitReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
 
-		l := system.NewGoogle2FABindInitLogic(r.Context(), svcCtx)
-		resp, err := l.Google2FABindInit(&req)
+		l := system.NewGoogle2FAInitLogic(r.Context(), svcCtx)
+		resp, err := l.Google2FAInit(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

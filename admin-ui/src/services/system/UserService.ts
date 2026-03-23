@@ -11,7 +11,8 @@ import {
   apiGoogle2faInit,
   apiGoogle2faEnable,
   apiGoogle2faDisable,
-  apiGoogle2faReset
+  apiGoogle2faReset,
+  apiGoogle2faBind
 } from '@/api/system/users'
 
 // ===== 用户相关类型定义 =====
@@ -137,6 +138,13 @@ export class UserService implements BaseService {
    */
   async initGoogle2FA(userId: number): Promise<RespBase<Google2FABindInitResp>> {
     return apiGoogle2faInit({ userId })
+  }
+
+  /**
+   * 绑定 Google 2FA
+   */
+  async bindGoogle2FA(userId: number, secret: string, code: string): Promise<RespBase<null>> {
+    return apiGoogle2faBind({ userId, secret, code })
   }
 
   /**

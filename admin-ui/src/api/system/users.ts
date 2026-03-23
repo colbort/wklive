@@ -39,6 +39,10 @@ export function apiGoogle2faInit(data: { userId: number }): Promise<RespBase<Goo
   return post<Google2FABindInitResp>('/admin/users/google2fa/init', data)
 }
 
+export function apiGoogle2faBind(data: { userId: number; secret: string; code: string }): Promise<RespBase> {
+  return post<RespBase>('/admin/users/google2fa/bind', data)
+}
+
 export function apiGoogle2faEnable(data: { userId: number; code: string }): Promise<RespBase> {
   return post<RespBase>('/admin/users/google2fa/enable', data)
 }

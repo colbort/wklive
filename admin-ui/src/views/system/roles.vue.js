@@ -54,9 +54,9 @@ function unwrapData(resp) {
     // detail 这种通常在 data 里
     return resp.data ?? resp;
 }
-// 把扁平菜单转成树（并过滤掉 menuType=3 的按钮项，树里只放目录/菜单）
+// 把扁平菜单转成树（包含按钮权限 menuType=3，以树状方式展示）
 function buildMenuTree(flat) {
-    const list = (flat || []).filter((x) => x && x.menuType !== 3);
+    const list = (flat || []).filter((x) => x);
     const map = new Map();
     list.forEach((n) => map.set(n.id, { ...n, children: [] }));
     const roots = [];
@@ -174,10 +174,39 @@ const grantVisible = ref(false);
 const currentRole = ref(null);
 const { loading: grantLoading, withLoading: withGrantLoading } = useLoading();
 const menuTree = ref([]);
+const menuNodeMap = ref(new Map());
 const permList = ref([]);
 const menuTreeRef = ref();
 const checkedPermKeys = ref([]);
 const grantReadonly = computed(() => isSuperRole(currentRole.value));
+function flattenMenuTree(nodes, result = []) {
+    for (const node of nodes || []) {
+        result.push(node);
+        if (node.children?.length) {
+            flattenMenuTree(node.children, result);
+        }
+    }
+    return result;
+}
+function updateMenuNodeMap(nodes) {
+    const map = new Map();
+    flattenMenuTree(nodes).forEach((node) => {
+        if (node && node.id != null) {
+            map.set(node.id, node);
+        }
+    });
+    menuNodeMap.value = map;
+}
+function getCheckedButtonPermKeys() {
+    const checkedNodes = (menuTreeRef.value?.getCheckedNodes?.() || []);
+    return checkedNodes
+        .filter((node) => node.menuType === 3 && node.perms)
+        .map((node) => node.perms)
+        .filter(Boolean);
+}
+function onMenuTreeCheck() {
+    checkedPermKeys.value = getCheckedButtonPermKeys();
+}
 function openGrant(row) {
     currentRole.value = row;
     grantVisible.value = true;
@@ -202,9 +231,22 @@ async function initGrant(roleId) {
             const detail = unwrapData(detailResp) || {};
             menuTree.value = buildMenuTree(menusFlat);
             permList.value = perms;
+            updateMenuNodeMap(menuTree.value);
+            // 角色原有菜单 + 按钮权限需要转成对应 node id
+            const menuIds = Array.isArray(detail.menuIds) ? detail.menuIds : [];
+            const permKeys = Array.isArray(detail.permKeys) ? detail.permKeys : [];
+            const permKeyToId = new Map();
+            flattenMenuTree(menuTree.value).forEach((node) => {
+                if (node.menuType === 3 && node.perms) {
+                    permKeyToId.set(node.perms, node.id);
+                }
+            });
+            const buttonIds = permKeys
+                .map((k) => permKeyToId.get(k))
+                .filter((id) => id != null);
             await nextTick();
-            menuTreeRef.value?.setCheckedKeys((detail.menuIds || []));
-            checkedPermKeys.value = (detail.permKeys || []);
+            menuTreeRef.value?.setCheckedKeys([...menuIds, ...buttonIds]);
+            checkedPermKeys.value = permKeys;
         }
         catch (e) {
             ElMessage.error(e?.message || t('common.failed'));
@@ -218,7 +260,11 @@ function collectCheckedMenuIds() {
     // Element Plus tree：getCheckedKeys + getHalfCheckedKeys
     const full = (tree.getCheckedKeys?.() || []);
     const half = (tree.getHalfCheckedKeys?.() || []);
-    return Array.from(new Set([...full, ...half]));
+    const allIds = Array.from(new Set([...full, ...half]));
+    return allIds.filter((id) => {
+        const node = menuNodeMap.value.get(Number(id));
+        return node && node.menuType !== 3;
+    });
 }
 async function submitGrant() {
     if (!currentRole.value)
@@ -942,13 +988,15 @@ const __VLS_219 = __VLS_asFunctionalComponent(__VLS_218, new __VLS_218({
     ...{ 'onClosed': {} },
     modelValue: (__VLS_ctx.grantVisible),
     title: (__VLS_ctx.t('system.grantTitle', { role: __VLS_ctx.currentRole?.name || '' })),
-    width: "900px",
+    width: "400px",
+    ...{ style: ({ maxWidth: '460px' }) },
 }));
 const __VLS_220 = __VLS_219({
     ...{ 'onClosed': {} },
     modelValue: (__VLS_ctx.grantVisible),
     title: (__VLS_ctx.t('system.grantTitle', { role: __VLS_ctx.currentRole?.name || '' })),
-    width: "900px",
+    width: "400px",
+    ...{ style: ({ maxWidth: '460px' }) },
 }, ...__VLS_functionalComponentArgsRest(__VLS_219));
 let __VLS_222;
 let __VLS_223;
@@ -974,23 +1022,8 @@ if (__VLS_ctx.grantReadonly) {
         ...{ style: {} },
     }, ...__VLS_functionalComponentArgsRest(__VLS_227));
 }
-const __VLS_230 = {}.ElTabs;
-/** @type {[typeof __VLS_components.ElTabs, typeof __VLS_components.elTabs, typeof __VLS_components.ElTabs, typeof __VLS_components.elTabs, ]} */ ;
-// @ts-ignore
-const __VLS_231 = __VLS_asFunctionalComponent(__VLS_230, new __VLS_230({}));
-const __VLS_232 = __VLS_231({}, ...__VLS_functionalComponentArgsRest(__VLS_231));
+__VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({});
 __VLS_asFunctionalDirective(__VLS_directives.vLoading)(null, { ...__VLS_directiveBindingRestFields, value: (__VLS_ctx.grantLoading) }, null, null);
-__VLS_233.slots.default;
-const __VLS_234 = {}.ElTabPane;
-/** @type {[typeof __VLS_components.ElTabPane, typeof __VLS_components.elTabPane, typeof __VLS_components.ElTabPane, typeof __VLS_components.elTabPane, ]} */ ;
-// @ts-ignore
-const __VLS_235 = __VLS_asFunctionalComponent(__VLS_234, new __VLS_234({
-    label: (__VLS_ctx.t('system.grantMenu')),
-}));
-const __VLS_236 = __VLS_235({
-    label: (__VLS_ctx.t('system.grantMenu')),
-}, ...__VLS_functionalComponentArgsRest(__VLS_235));
-__VLS_237.slots.default;
 if (!__VLS_ctx.menuTree || __VLS_ctx.menuTree.length === 0) {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ style: {} },
@@ -998,10 +1031,11 @@ if (!__VLS_ctx.menuTree || __VLS_ctx.menuTree.length === 0) {
     (__VLS_ctx.t('common.noData'));
 }
 else {
-    const __VLS_238 = {}.ElTree;
+    const __VLS_230 = {}.ElTree;
     /** @type {[typeof __VLS_components.ElTree, typeof __VLS_components.elTree, ]} */ ;
     // @ts-ignore
-    const __VLS_239 = __VLS_asFunctionalComponent(__VLS_238, new __VLS_238({
+    const __VLS_231 = __VLS_asFunctionalComponent(__VLS_230, new __VLS_230({
+        ...{ 'onCheck': {} },
         ref: "menuTreeRef",
         data: (__VLS_ctx.menuTree),
         nodeKey: "id",
@@ -1009,10 +1043,11 @@ else {
         props: ({ label: 'name', children: 'children' }),
         checkStrictly: (false),
         disabled: (__VLS_ctx.grantReadonly),
-        defaultExpandAll: true,
+        defaultExpandAll: (false),
         ...{ style: {} },
     }));
-    const __VLS_240 = __VLS_239({
+    const __VLS_232 = __VLS_231({
+        ...{ 'onCheck': {} },
         ref: "menuTreeRef",
         data: (__VLS_ctx.menuTree),
         nodeKey: "id",
@@ -1020,119 +1055,67 @@ else {
         props: ({ label: 'name', children: 'children' }),
         checkStrictly: (false),
         disabled: (__VLS_ctx.grantReadonly),
-        defaultExpandAll: true,
+        defaultExpandAll: (false),
         ...{ style: {} },
-    }, ...__VLS_functionalComponentArgsRest(__VLS_239));
+    }, ...__VLS_functionalComponentArgsRest(__VLS_231));
+    let __VLS_234;
+    let __VLS_235;
+    let __VLS_236;
+    const __VLS_237 = {
+        onCheck: (__VLS_ctx.onMenuTreeCheck)
+    };
     /** @type {typeof __VLS_ctx.menuTreeRef} */ ;
-    var __VLS_242 = {};
-    var __VLS_241;
+    var __VLS_238 = {};
+    var __VLS_233;
 }
-var __VLS_237;
-const __VLS_244 = {}.ElTabPane;
-/** @type {[typeof __VLS_components.ElTabPane, typeof __VLS_components.elTabPane, typeof __VLS_components.ElTabPane, typeof __VLS_components.elTabPane, ]} */ ;
-// @ts-ignore
-const __VLS_245 = __VLS_asFunctionalComponent(__VLS_244, new __VLS_244({
-    label: (__VLS_ctx.t('system.grantPerms')),
-}));
-const __VLS_246 = __VLS_245({
-    label: (__VLS_ctx.t('system.grantPerms')),
-}, ...__VLS_functionalComponentArgsRest(__VLS_245));
-__VLS_247.slots.default;
-if (!__VLS_ctx.permList || __VLS_ctx.permList.length === 0) {
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-        ...{ style: {} },
-    });
-    (__VLS_ctx.t('common.noData'));
-}
-else {
-    const __VLS_248 = {}.ElCheckboxGroup;
-    /** @type {[typeof __VLS_components.ElCheckboxGroup, typeof __VLS_components.elCheckboxGroup, typeof __VLS_components.ElCheckboxGroup, typeof __VLS_components.elCheckboxGroup, ]} */ ;
-    // @ts-ignore
-    const __VLS_249 = __VLS_asFunctionalComponent(__VLS_248, new __VLS_248({
-        modelValue: (__VLS_ctx.checkedPermKeys),
-        disabled: (__VLS_ctx.grantReadonly),
-        ...{ style: {} },
-    }));
-    const __VLS_250 = __VLS_249({
-        modelValue: (__VLS_ctx.checkedPermKeys),
-        disabled: (__VLS_ctx.grantReadonly),
-        ...{ style: {} },
-    }, ...__VLS_functionalComponentArgsRest(__VLS_249));
-    __VLS_251.slots.default;
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-        ...{ style: {} },
-    });
-    for (const [p] of __VLS_getVForSourceType((__VLS_ctx.permList))) {
-        const __VLS_252 = {}.ElCheckbox;
-        /** @type {[typeof __VLS_components.ElCheckbox, typeof __VLS_components.elCheckbox, typeof __VLS_components.ElCheckbox, typeof __VLS_components.elCheckbox, ]} */ ;
-        // @ts-ignore
-        const __VLS_253 = __VLS_asFunctionalComponent(__VLS_252, new __VLS_252({
-            key: (p.key),
-            label: (p.key),
-            border: true,
-        }));
-        const __VLS_254 = __VLS_253({
-            key: (p.key),
-            label: (p.key),
-            border: true,
-        }, ...__VLS_functionalComponentArgsRest(__VLS_253));
-        __VLS_255.slots.default;
-        (p.name);
-        (p.key);
-        var __VLS_255;
-    }
-    var __VLS_251;
-}
-var __VLS_247;
-var __VLS_233;
 {
     const { footer: __VLS_thisSlot } = __VLS_221.slots;
-    const __VLS_256 = {}.ElButton;
+    const __VLS_240 = {}.ElButton;
     /** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
     // @ts-ignore
-    const __VLS_257 = __VLS_asFunctionalComponent(__VLS_256, new __VLS_256({
+    const __VLS_241 = __VLS_asFunctionalComponent(__VLS_240, new __VLS_240({
         ...{ 'onClick': {} },
     }));
-    const __VLS_258 = __VLS_257({
+    const __VLS_242 = __VLS_241({
         ...{ 'onClick': {} },
-    }, ...__VLS_functionalComponentArgsRest(__VLS_257));
-    let __VLS_260;
-    let __VLS_261;
-    let __VLS_262;
-    const __VLS_263 = {
+    }, ...__VLS_functionalComponentArgsRest(__VLS_241));
+    let __VLS_244;
+    let __VLS_245;
+    let __VLS_246;
+    const __VLS_247 = {
         onClick: (...[$event]) => {
             __VLS_ctx.grantVisible = false;
         }
     };
-    __VLS_259.slots.default;
+    __VLS_243.slots.default;
     (__VLS_ctx.t('common.cancel'));
-    var __VLS_259;
-    const __VLS_264 = {}.ElButton;
+    var __VLS_243;
+    const __VLS_248 = {}.ElButton;
     /** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
     // @ts-ignore
-    const __VLS_265 = __VLS_asFunctionalComponent(__VLS_264, new __VLS_264({
+    const __VLS_249 = __VLS_asFunctionalComponent(__VLS_248, new __VLS_248({
         ...{ 'onClick': {} },
         type: "primary",
         disabled: (__VLS_ctx.grantReadonly),
     }));
-    const __VLS_266 = __VLS_265({
+    const __VLS_250 = __VLS_249({
         ...{ 'onClick': {} },
         type: "primary",
         disabled: (__VLS_ctx.grantReadonly),
-    }, ...__VLS_functionalComponentArgsRest(__VLS_265));
-    let __VLS_268;
-    let __VLS_269;
-    let __VLS_270;
-    const __VLS_271 = {
+    }, ...__VLS_functionalComponentArgsRest(__VLS_249));
+    let __VLS_252;
+    let __VLS_253;
+    let __VLS_254;
+    const __VLS_255 = {
         onClick: (__VLS_ctx.submitGrant)
     };
-    __VLS_267.slots.default;
+    __VLS_251.slots.default;
     (__VLS_ctx.t('common.save'));
-    var __VLS_267;
+    var __VLS_251;
 }
 var __VLS_221;
 // @ts-ignore
-var __VLS_161 = __VLS_160, __VLS_243 = __VLS_242;
+var __VLS_161 = __VLS_160, __VLS_239 = __VLS_238;
 var __VLS_dollars;
 const __VLS_self = (await import('vue')).defineComponent({
     setup() {
@@ -1161,10 +1144,9 @@ const __VLS_self = (await import('vue')).defineComponent({
             currentRole: currentRole,
             grantLoading: grantLoading,
             menuTree: menuTree,
-            permList: permList,
             menuTreeRef: menuTreeRef,
-            checkedPermKeys: checkedPermKeys,
             grantReadonly: grantReadonly,
+            onMenuTreeCheck: onMenuTreeCheck,
             openGrant: openGrant,
             submitGrant: submitGrant,
             onGrantClosed: onGrantClosed,

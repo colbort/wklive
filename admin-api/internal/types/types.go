@@ -18,15 +18,10 @@ type ChangeUserStatusReq struct {
 	Status int64 `json:"status"` // 1启用 0禁用
 }
 
-type Google2FABindInitReq struct {
-	UserId int64 `json:"userId"`
-}
-
-type Google2FABindInitResp struct {
-	RespBase
-	Secret     string `json:"secret"`
-	OtpauthUrl string `json:"otpauthUrl"`
-	QrCode     string `json:"qrCode,optional"`
+type Google2FABindReq struct {
+	UserId int64  `json:"userId"`
+	Secret string `json:"secret"`
+	Code   string `json:"code"`
 }
 
 type Google2FADisableReq struct {
@@ -37,6 +32,17 @@ type Google2FADisableReq struct {
 type Google2FAEnableReq struct {
 	UserId int64  `json:"userId"`
 	Code   string `json:"code"`
+}
+
+type Google2FAInitReq struct {
+	UserId int64 `json:"userId"`
+}
+
+type Google2FAInitResp struct {
+	RespBase
+	Secret     string `json:"secret"`
+	OtpauthUrl string `json:"otpauthUrl"`
+	QrCode     string `json:"qrCode,optional"`
 }
 
 type Google2FAResetReq struct {

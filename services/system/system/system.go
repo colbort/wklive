@@ -19,6 +19,7 @@ type (
 	AssignUserRolesReq     = system.AssignUserRolesReq
 	ChangeUserStatusReq    = system.ChangeUserStatusReq
 	Empty                  = system.Empty
+	Google2FABindReq       = system.Google2FABindReq
 	Google2FADisableReq    = system.Google2FADisableReq
 	Google2FAEnableReq     = system.Google2FAEnableReq
 	Google2FAInitReq       = system.Google2FAInitReq
@@ -87,6 +88,8 @@ type (
 		UpdateProfile(ctx context.Context, in *UpdateProfileReq, opts ...grpc.CallOption) (*RespBase, error)
 		// 2FA
 		Google2FAInit(ctx context.Context, in *Google2FAInitReq, opts ...grpc.CallOption) (*Google2FAInitResp, error)
+		// 绑定Google 2FA
+		Google2FABind(ctx context.Context, in *Google2FABindReq, opts ...grpc.CallOption) (*RespBase, error)
 		// 启用Google 2FA
 		Google2FAEnable(ctx context.Context, in *Google2FAEnableReq, opts ...grpc.CallOption) (*RespBase, error)
 		// 禁用Google 2FA
@@ -188,6 +191,12 @@ func (m *defaultSystem) UpdateProfile(ctx context.Context, in *UpdateProfileReq,
 func (m *defaultSystem) Google2FAInit(ctx context.Context, in *Google2FAInitReq, opts ...grpc.CallOption) (*Google2FAInitResp, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.Google2FAInit(ctx, in, opts...)
+}
+
+// 绑定Google 2FA
+func (m *defaultSystem) Google2FABind(ctx context.Context, in *Google2FABindReq, opts ...grpc.CallOption) (*RespBase, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.Google2FABind(ctx, in, opts...)
 }
 
 // 启用Google 2FA

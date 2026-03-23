@@ -27,6 +27,9 @@ export function apiAssignUserRoles(data) {
 export function apiGoogle2faInit(data) {
     return post('/admin/users/google2fa/init', data);
 }
+export function apiGoogle2faBind(data) {
+    return post('/admin/users/google2fa/bind', data);
+}
 export function apiGoogle2faEnable(data) {
     return post('/admin/users/google2fa/enable', data);
 }

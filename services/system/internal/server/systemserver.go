@@ -47,6 +47,12 @@ func (s *SystemServer) Google2FAInit(ctx context.Context, in *system.Google2FAIn
 	return l.Google2FAInit(in)
 }
 
+// 绑定Google 2FA
+func (s *SystemServer) Google2FABind(ctx context.Context, in *system.Google2FABindReq) (*system.RespBase, error) {
+	l := logic.NewGoogle2FABindLogic(ctx, s.svcCtx)
+	return l.Google2FABind(in)
+}
+
 // 启用Google 2FA
 func (s *SystemServer) Google2FAEnable(ctx context.Context, in *system.Google2FAEnableReq) (*system.RespBase, error) {
 	l := logic.NewGoogle2FAEnableLogic(ctx, s.svcCtx)

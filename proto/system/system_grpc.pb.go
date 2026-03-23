@@ -23,6 +23,7 @@ const (
 	System_GetProfile_FullMethodName         = "/system.System/GetProfile"
 	System_UpdateProfile_FullMethodName      = "/system.System/UpdateProfile"
 	System_Google2FAInit_FullMethodName      = "/system.System/Google2FAInit"
+	System_Google2FABind_FullMethodName      = "/system.System/Google2FABind"
 	System_Google2FAEnable_FullMethodName    = "/system.System/Google2FAEnable"
 	System_Google2FADisable_FullMethodName   = "/system.System/Google2FADisable"
 	System_Google2FAReset_FullMethodName     = "/system.System/Google2FAReset"
@@ -74,6 +75,8 @@ type SystemClient interface {
 	UpdateProfile(ctx context.Context, in *UpdateProfileReq, opts ...grpc.CallOption) (*RespBase, error)
 	// 2FA
 	Google2FAInit(ctx context.Context, in *Google2FAInitReq, opts ...grpc.CallOption) (*Google2FAInitResp, error)
+	// 绑定Google 2FA
+	Google2FABind(ctx context.Context, in *Google2FABindReq, opts ...grpc.CallOption) (*RespBase, error)
 	// 启用Google 2FA
 	Google2FAEnable(ctx context.Context, in *Google2FAEnableReq, opts ...grpc.CallOption) (*RespBase, error)
 	// 禁用Google 2FA
@@ -184,6 +187,16 @@ func (c *systemClient) Google2FAInit(ctx context.Context, in *Google2FAInitReq, 
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Google2FAInitResp)
 	err := c.cc.Invoke(ctx, System_Google2FAInit_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) Google2FABind(ctx context.Context, in *Google2FABindReq, opts ...grpc.CallOption) (*RespBase, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespBase)
+	err := c.cc.Invoke(ctx, System_Google2FABind_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -536,6 +549,8 @@ type SystemServer interface {
 	UpdateProfile(context.Context, *UpdateProfileReq) (*RespBase, error)
 	// 2FA
 	Google2FAInit(context.Context, *Google2FAInitReq) (*Google2FAInitResp, error)
+	// 绑定Google 2FA
+	Google2FABind(context.Context, *Google2FABindReq) (*RespBase, error)
 	// 启用Google 2FA
 	Google2FAEnable(context.Context, *Google2FAEnableReq) (*RespBase, error)
 	// 禁用Google 2FA
@@ -623,6 +638,9 @@ func (UnimplementedSystemServer) UpdateProfile(context.Context, *UpdateProfileRe
 }
 func (UnimplementedSystemServer) Google2FAInit(context.Context, *Google2FAInitReq) (*Google2FAInitResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Google2FAInit not implemented")
+}
+func (UnimplementedSystemServer) Google2FABind(context.Context, *Google2FABindReq) (*RespBase, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Google2FABind not implemented")
 }
 func (UnimplementedSystemServer) Google2FAEnable(context.Context, *Google2FAEnableReq) (*RespBase, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Google2FAEnable not implemented")
@@ -812,6 +830,24 @@ func _System_Google2FAInit_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SystemServer).Google2FAInit(ctx, req.(*Google2FAInitReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_Google2FABind_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Google2FABindReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).Google2FABind(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_Google2FABind_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).Google2FABind(ctx, req.(*Google2FABindReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1432,6 +1468,10 @@ var System_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Google2FAInit",
 			Handler:    _System_Google2FAInit_Handler,
+		},
+		{
+			MethodName: "Google2FABind",
+			Handler:    _System_Google2FABind_Handler,
 		},
 		{
 			MethodName: "Google2FAEnable",

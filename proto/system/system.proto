@@ -103,6 +103,12 @@ message Google2FAInitResp {
   string otpauth_url = 4;
 }
 
+message Google2FABindReq {
+  int64 user_id = 1;
+  string secret = 2;
+  string code = 3;
+}
+
 message Google2FAEnableReq { int64 user_id = 1; string code = 2; }
 message Google2FADisableReq { int64 user_id = 1; string code = 2; } // 可选强校验
 message Google2FAResetReq { int64 user_id = 1; }
@@ -331,6 +337,8 @@ service System {
 
   // 2FA
   rpc Google2FAInit(Google2FAInitReq) returns (Google2FAInitResp);
+  // 绑定Google 2FA
+  rpc Google2FABind(Google2FABindReq) returns (RespBase);
   // 启用Google 2FA
   rpc Google2FAEnable(Google2FAEnableReq) returns (RespBase);
   // 禁用Google 2FA
