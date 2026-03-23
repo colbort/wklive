@@ -34,15 +34,19 @@ type Google2FAEnableReq struct {
 	Code   string `json:"code"`
 }
 
+type Google2FAInit struct {
+	Secret     string `json:"secret"`
+	OtpauthUrl string `json:"otpauthUrl"`
+	QrCode     string `json:"qrCode,optional"`
+}
+
 type Google2FAInitReq struct {
 	UserId int64 `json:"userId"`
 }
 
 type Google2FAInitResp struct {
 	RespBase
-	Secret     string `json:"secret"`
-	OtpauthUrl string `json:"otpauthUrl"`
-	QrCode     string `json:"qrCode,optional"`
+	Data Google2FAInit `json:"data"`
 }
 
 type Google2FAResetReq struct {

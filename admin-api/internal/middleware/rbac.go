@@ -208,10 +208,11 @@ func getRequiredPermission(path, method string) string {
 		"POST /users/status":            "sys:user:update",
 		"POST /users/resetPwd":          "sys:user:resetPwd",
 		"POST /users/assignRoles":       "sys:user:assignRoles",
+		"POST /users/google2fa/init":    "sys:user:2fa:init",
+		"POST /users/google2fa/bind":    "sys:user:2fa:bind",
 		"POST /users/google2fa/reset":   "sys:user:2fa:reset",
 		"POST /users/google2fa/enable":  "sys:user:2fa:enable",
 		"POST /users/google2fa/disable": "sys:user:2fa:disable",
-		"POST /users/google2fa/init":    "sys:user:2fa:init",
 
 		// roles
 		"POST /roles":       "sys:role:add",

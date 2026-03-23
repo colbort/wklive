@@ -64,11 +64,15 @@ type Google2FAInitReq {
   userId int64 `json:"userId"`
 }
 
-type Google2FAInitResp {
-  RespBase
+type Google2FAInit {
   secret     string `json:"secret"`
   otpauthUrl string `json:"otpauthUrl"`
   qrCode     string `json:"qrCode,optional"`
+}
+
+type Google2FAInitResp {
+  RespBase
+  data Google2FAInit `json:"data"`
 }
 
 type Google2FABindReq {

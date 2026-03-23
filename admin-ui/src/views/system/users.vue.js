@@ -265,17 +265,34 @@ async function doG2Init() {
     await withG2InitLoading(async () => {
         try {
             const res = await userService.initGoogle2FA(g2User.userId);
-            if (res.code !== 200)
+            if (res.code !== 0 && res.code !== 200)
                 throw new Error(res.msg || 'init failed');
             g2Init.secret = res.data?.secret || '';
             g2Init.otpauthUrl = res.data?.otpauthUrl || '';
             g2Init.qrCode = res.data?.qrCode || '';
+            console.log('QR Code data:', g2Init.qrCode); // 调试信息
             ElMessage.success(t('common.success'));
         }
         catch (e) {
             ElMessage.error(e?.message || t('common.failed'));
         }
     });
+}
+async function doG2Bind() {
+    try {
+        if (!g2Form.code) {
+            ElMessage.warning(t('common.pleaseInputCode'));
+            return;
+        }
+        const res = await userService.bindGoogle2FA(g2User.userId, g2Init.secret, g2Form.code);
+        if (res.code !== 0 && res.code !== 200)
+            throw new Error(res.msg || 'bind failed');
+        ElMessage.success(t('common.success'));
+        fetchList();
+    }
+    catch (e) {
+        ElMessage.error(e?.message || t('common.failed'));
+    }
 }
 async function copySecret() {
     if (!g2Init.secret) {
@@ -1561,112 +1578,135 @@ const __VLS_390 = __VLS_389({
     label: (__VLS_ctx.t('common.code')),
 }, ...__VLS_functionalComponentArgsRest(__VLS_389));
 __VLS_391.slots.default;
+__VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
+    ...{ style: {} },
+});
 const __VLS_392 = {}.ElInput;
 /** @type {[typeof __VLS_components.ElInput, typeof __VLS_components.elInput, ]} */ ;
 // @ts-ignore
 const __VLS_393 = __VLS_asFunctionalComponent(__VLS_392, new __VLS_392({
     modelValue: (__VLS_ctx.g2Form.code),
     placeholder: (__VLS_ctx.t('common.enterGoogleCode')),
+    ...{ style: {} },
 }));
 const __VLS_394 = __VLS_393({
     modelValue: (__VLS_ctx.g2Form.code),
     placeholder: (__VLS_ctx.t('common.enterGoogleCode')),
+    ...{ style: {} },
 }, ...__VLS_functionalComponentArgsRest(__VLS_393));
-var __VLS_391;
-const __VLS_396 = {}.ElFormItem;
-/** @type {[typeof __VLS_components.ElFormItem, typeof __VLS_components.elFormItem, typeof __VLS_components.ElFormItem, typeof __VLS_components.elFormItem, ]} */ ;
+const __VLS_396 = {}.ElButton;
+/** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
 // @ts-ignore
 const __VLS_397 = __VLS_asFunctionalComponent(__VLS_396, new __VLS_396({
-    label: "secret",
+    ...{ 'onClick': {} },
 }));
 const __VLS_398 = __VLS_397({
-    label: "secret",
+    ...{ 'onClick': {} },
 }, ...__VLS_functionalComponentArgsRest(__VLS_397));
-__VLS_399.slots.default;
-__VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ style: {} },
-});
-const __VLS_400 = {}.ElInput;
-/** @type {[typeof __VLS_components.ElInput, typeof __VLS_components.elInput, ]} */ ;
-// @ts-ignore
-const __VLS_401 = __VLS_asFunctionalComponent(__VLS_400, new __VLS_400({
-    modelValue: (__VLS_ctx.g2Init.secret),
-    readonly: true,
-    ...{ style: {} },
-}));
-const __VLS_402 = __VLS_401({
-    modelValue: (__VLS_ctx.g2Init.secret),
-    readonly: true,
-    ...{ style: {} },
-}, ...__VLS_functionalComponentArgsRest(__VLS_401));
-const __VLS_404 = {}.ElButton;
-/** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
-// @ts-ignore
-const __VLS_405 = __VLS_asFunctionalComponent(__VLS_404, new __VLS_404({
-    ...{ 'onClick': {} },
-    disabled: (!__VLS_ctx.g2Init.secret),
-}));
-const __VLS_406 = __VLS_405({
-    ...{ 'onClick': {} },
-    disabled: (!__VLS_ctx.g2Init.secret),
-}, ...__VLS_functionalComponentArgsRest(__VLS_405));
-let __VLS_408;
-let __VLS_409;
-let __VLS_410;
-const __VLS_411 = {
-    onClick: (__VLS_ctx.copySecret)
+let __VLS_400;
+let __VLS_401;
+let __VLS_402;
+const __VLS_403 = {
+    onClick: (__VLS_ctx.doG2Bind)
 };
-__VLS_407.slots.default;
-(__VLS_ctx.t('common.copy'));
-var __VLS_407;
+__VLS_399.slots.default;
+(__VLS_ctx.t('perms.sys:user:2fa:bind'));
 var __VLS_399;
-const __VLS_412 = {}.ElFormItem;
+var __VLS_391;
+const __VLS_404 = {}.ElFormItem;
 /** @type {[typeof __VLS_components.ElFormItem, typeof __VLS_components.elFormItem, typeof __VLS_components.ElFormItem, typeof __VLS_components.elFormItem, ]} */ ;
 // @ts-ignore
-const __VLS_413 = __VLS_asFunctionalComponent(__VLS_412, new __VLS_412({
-    label: "otpauthUrl",
+const __VLS_405 = __VLS_asFunctionalComponent(__VLS_404, new __VLS_404({
+    label: (__VLS_ctx.t('common.secret')),
 }));
-const __VLS_414 = __VLS_413({
-    label: "otpauthUrl",
-}, ...__VLS_functionalComponentArgsRest(__VLS_413));
-__VLS_415.slots.default;
+const __VLS_406 = __VLS_405({
+    label: (__VLS_ctx.t('common.secret')),
+}, ...__VLS_functionalComponentArgsRest(__VLS_405));
+__VLS_407.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ style: {} },
 });
-const __VLS_416 = {}.ElInput;
+const __VLS_408 = {}.ElInput;
 /** @type {[typeof __VLS_components.ElInput, typeof __VLS_components.elInput, ]} */ ;
 // @ts-ignore
-const __VLS_417 = __VLS_asFunctionalComponent(__VLS_416, new __VLS_416({
-    modelValue: (__VLS_ctx.g2Init.otpauthUrl),
+const __VLS_409 = __VLS_asFunctionalComponent(__VLS_408, new __VLS_408({
+    modelValue: (__VLS_ctx.g2Init.secret),
     readonly: true,
     ...{ style: {} },
 }));
-const __VLS_418 = __VLS_417({
-    modelValue: (__VLS_ctx.g2Init.otpauthUrl),
+const __VLS_410 = __VLS_409({
+    modelValue: (__VLS_ctx.g2Init.secret),
     readonly: true,
     ...{ style: {} },
-}, ...__VLS_functionalComponentArgsRest(__VLS_417));
-const __VLS_420 = {}.ElButton;
+}, ...__VLS_functionalComponentArgsRest(__VLS_409));
+const __VLS_412 = {}.ElButton;
 /** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
 // @ts-ignore
+const __VLS_413 = __VLS_asFunctionalComponent(__VLS_412, new __VLS_412({
+    ...{ 'onClick': {} },
+    disabled: (!__VLS_ctx.g2Init.secret),
+}));
+const __VLS_414 = __VLS_413({
+    ...{ 'onClick': {} },
+    disabled: (!__VLS_ctx.g2Init.secret),
+}, ...__VLS_functionalComponentArgsRest(__VLS_413));
+let __VLS_416;
+let __VLS_417;
+let __VLS_418;
+const __VLS_419 = {
+    onClick: (__VLS_ctx.copySecret)
+};
+__VLS_415.slots.default;
+(__VLS_ctx.t('common.copy'));
+var __VLS_415;
+var __VLS_407;
+const __VLS_420 = {}.ElFormItem;
+/** @type {[typeof __VLS_components.ElFormItem, typeof __VLS_components.elFormItem, typeof __VLS_components.ElFormItem, typeof __VLS_components.elFormItem, ]} */ ;
+// @ts-ignore
 const __VLS_421 = __VLS_asFunctionalComponent(__VLS_420, new __VLS_420({
+    label: (__VLS_ctx.t('common.otpauthUrl')),
+}));
+const __VLS_422 = __VLS_421({
+    label: (__VLS_ctx.t('common.otpauthUrl')),
+}, ...__VLS_functionalComponentArgsRest(__VLS_421));
+__VLS_423.slots.default;
+__VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
+    ...{ style: {} },
+});
+const __VLS_424 = {}.ElInput;
+/** @type {[typeof __VLS_components.ElInput, typeof __VLS_components.elInput, ]} */ ;
+// @ts-ignore
+const __VLS_425 = __VLS_asFunctionalComponent(__VLS_424, new __VLS_424({
+    modelValue: (__VLS_ctx.g2Init.otpauthUrl),
+    readonly: true,
+    ...{ style: {} },
+}));
+const __VLS_426 = __VLS_425({
+    modelValue: (__VLS_ctx.g2Init.otpauthUrl),
+    readonly: true,
+    ...{ style: {} },
+}, ...__VLS_functionalComponentArgsRest(__VLS_425));
+const __VLS_428 = {}.ElButton;
+/** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
+// @ts-ignore
+const __VLS_429 = __VLS_asFunctionalComponent(__VLS_428, new __VLS_428({
     ...{ 'onClick': {} },
     disabled: (!__VLS_ctx.g2Init.otpauthUrl),
 }));
-const __VLS_422 = __VLS_421({
+const __VLS_430 = __VLS_429({
     ...{ 'onClick': {} },
     disabled: (!__VLS_ctx.g2Init.otpauthUrl),
-}, ...__VLS_functionalComponentArgsRest(__VLS_421));
-let __VLS_424;
-let __VLS_425;
-let __VLS_426;
-const __VLS_427 = {
+}, ...__VLS_functionalComponentArgsRest(__VLS_429));
+let __VLS_432;
+let __VLS_433;
+let __VLS_434;
+const __VLS_435 = {
     onClick: (__VLS_ctx.copyOtpauthUrl)
 };
-__VLS_423.slots.default;
+__VLS_431.slots.default;
 (__VLS_ctx.t('common.copy'));
+var __VLS_431;
 var __VLS_423;
-var __VLS_415;
 var __VLS_387;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ style: {} },
@@ -1698,26 +1738,26 @@ if (__VLS_ctx.g2Init.qrCode) {
 }
 {
     const { footer: __VLS_thisSlot } = __VLS_351.slots;
-    const __VLS_428 = {}.ElButton;
+    const __VLS_436 = {}.ElButton;
     /** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
     // @ts-ignore
-    const __VLS_429 = __VLS_asFunctionalComponent(__VLS_428, new __VLS_428({
+    const __VLS_437 = __VLS_asFunctionalComponent(__VLS_436, new __VLS_436({
         ...{ 'onClick': {} },
     }));
-    const __VLS_430 = __VLS_429({
+    const __VLS_438 = __VLS_437({
         ...{ 'onClick': {} },
-    }, ...__VLS_functionalComponentArgsRest(__VLS_429));
-    let __VLS_432;
-    let __VLS_433;
-    let __VLS_434;
-    const __VLS_435 = {
+    }, ...__VLS_functionalComponentArgsRest(__VLS_437));
+    let __VLS_440;
+    let __VLS_441;
+    let __VLS_442;
+    const __VLS_443 = {
         onClick: (...[$event]) => {
             __VLS_ctx.g2Visible = false;
         }
     };
-    __VLS_431.slots.default;
+    __VLS_439.slots.default;
     (__VLS_ctx.t('common.cancel'));
-    var __VLS_431;
+    var __VLS_439;
 }
 var __VLS_351;
 /** @type {__VLS_StyleScopedClasses['el-icon--right']} */ ;
@@ -1767,6 +1807,7 @@ const __VLS_self = (await import('vue')).defineComponent({
             g2DisableLoading: g2DisableLoading,
             openGoogle2fa: openGoogle2fa,
             doG2Init: doG2Init,
+            doG2Bind: doG2Bind,
             copySecret: copySecret,
             copyOtpauthUrl: copyOtpauthUrl,
             doG2Enable: doG2Enable,

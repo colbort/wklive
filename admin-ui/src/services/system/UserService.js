@@ -1,4 +1,4 @@
-import { apiUserList, apiUserDetail, apiUserCreate, apiUserUpdate, apiUserDelete, apiChangeUserStatus, apiResetUserPwd, apiAssignUserRoles, apiGoogle2faInit, apiGoogle2faEnable, apiGoogle2faDisable, apiGoogle2faReset } from '@/api/system/users';
+import { apiUserList, apiUserDetail, apiUserCreate, apiUserUpdate, apiUserDelete, apiChangeUserStatus, apiResetUserPwd, apiAssignUserRoles, apiGoogle2faInit, apiGoogle2faEnable, apiGoogle2faDisable, apiGoogle2faReset, apiGoogle2faBind } from '@/api/system/users';
 /**
  * 用户服务类
  * 实现 BaseService 接口，使用现有的 API 函数

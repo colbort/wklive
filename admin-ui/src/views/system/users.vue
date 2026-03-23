@@ -277,15 +277,31 @@ async function doG2Init() {
   await withG2InitLoading(async () => {
     try {
       const res = await userService.initGoogle2FA(g2User.userId)
-      if (res.code !== 200) throw new Error(res.msg || 'init failed')
+      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'init failed')
       g2Init.secret = res.data?.secret || ''
       g2Init.otpauthUrl = res.data?.otpauthUrl || ''
       g2Init.qrCode = res.data?.qrCode || ''
+      console.log('QR Code data:', g2Init.qrCode) // 调试信息
       ElMessage.success(t('common.success'))
     } catch (e: any) {
       ElMessage.error(e?.message || t('common.failed'))
     }
   })
+}
+
+async function doG2Bind() {
+  try {
+    if (!g2Form.code) {
+      ElMessage.warning(t('common.pleaseInputCode'))
+      return
+    }
+    const res = await userService.bindGoogle2FA(g2User.userId, g2Init.secret, g2Form.code)
+    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'bind failed')
+    ElMessage.success(t('common.success'))
+    fetchList()
+  } catch (e: any) {
+    ElMessage.error(e?.message || t('common.failed'))
+  }
 }
 
 async function copySecret() {
@@ -568,17 +584,20 @@ onMounted(async () => {
 
         <el-form label-width="100px">
           <el-form-item :label="t('common.code')">
-            <el-input v-model="g2Form.code" :placeholder="t('common.enterGoogleCode')" />
+            <div style="display: flex; gap: 8px;">
+              <el-input v-model="g2Form.code" :placeholder="t('common.enterGoogleCode')" style="flex: 1;" />
+              <el-button @click="doG2Bind">{{ t('perms.sys:user:2fa:bind') }}</el-button>
+            </div>
           </el-form-item>
 
-          <el-form-item label="secret">
+          <el-form-item :label="t('common.secret')">
             <div style="display: flex; gap: 8px;">
               <el-input :model-value="g2Init.secret" readonly style="flex: 1;" />
               <el-button @click="copySecret" :disabled="!g2Init.secret">{{ t('common.copy') }}</el-button>
             </div>
           </el-form-item>
 
-          <el-form-item label="otpauthUrl">
+          <el-form-item :label="t('common.otpauthUrl')">
             <div style="display: flex; gap: 8px;">
               <el-input :model-value="g2Init.otpauthUrl" readonly style="flex: 1;" />
               <el-button @click="copyOtpauthUrl" :disabled="!g2Init.otpauthUrl">{{ t('common.copy') }}</el-button>

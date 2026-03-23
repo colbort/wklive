@@ -216,16 +216,17 @@ VALUES
 	('15', '1', '108'),
 	('16', '1', '109'),
 	('17', '1', '110'),
-	('18', '1', '201'),
-	('19', '1', '202'),
-	('20', '1', '203'),
-	('21', '1', '204'),
-	('22', '1', '301'),
-	('23', '1', '302'),
-	('24', '1', '303'),
-  ('25', '1', '401'),
-  ('26', '1', '402'),
-  ('27', '1', '403');
+  ('18', '1', '111'),
+	('19', '1', '201'),
+	('20', '1', '202'),
+	('21', '1', '203'),
+	('22', '1', '204'),
+	('23', '1', '301'),
+	('24', '1', '302'),
+	('25', '1', '303'),
+  ('26', '1', '401'),
+  ('27', '1', '402'),
+  ('28', '1', '403');
 
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, icon, sort)
@@ -242,10 +243,12 @@ VALUES
 (100, '重置密码', 3, 'POST', 'sys:user:resetpwd', 104),
 (100, '分配角色', 3, 'POST', 'sys:user:assignrole', 105),
 (100, 'Google2FA管理', 3, 'GET', 'sys:user:google2fa', 106),
-(100, '2FA绑定', 3, 'POST', 'sys:user:2fa:init', 107),
-(100, '2FA启用', 3, 'POST', 'sys:user:2fa:enable', 108),
-(100, '2FA禁用', 3, 'POST', 'sys:user:2fa:disable', 109),
-(100, '2FA重置', 3, 'POST', 'sys:user:2fa:reset', 110);
+(100, '2FA初始化', 3, 'POST', 'sys:user:2fa:init', 107),
+(100, '2FA绑定', 3, 'POST', 'sys:user:2fa:bind', 108),
+(100, '2FA启用', 3, 'POST', 'sys:user:2fa:enable', 109),
+(100, '2FA禁用', 3, 'POST', 'sys:user:2fa:disable', 110),
+(100, '2FA重置', 3, 'POST', 'sys:user:2fa:reset', 111);
+
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, icon, sort)
 VALUES (200, 1, '角色管理', 2, '/roles', 'system/roles', 'Guide', 200);

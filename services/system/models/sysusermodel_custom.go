@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -99,7 +100,7 @@ func (m *defaultSysUserModel) InsertCtx(ctx context.Context, session sqlx.Sessio
 
 func (m *defaultSysUserModel) InsertGoogle2FASecret(ctx context.Context, userId int64, secret string) error {
 	key := fmt.Sprintf("%s%v", google2FASecretCachePrefix, userId)
-	return m.SetCacheWithExpireCtx(ctx, key, secret, 10*60)
+	return m.SetCacheWithExpireCtx(ctx, key, secret, 10*time.Minute)
 }
 
 func (m *defaultSysUserModel) GetGoogle2FASecret(ctx context.Context, userId int64) (string, error) {

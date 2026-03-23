@@ -40,8 +40,10 @@ func (l *Google2FAInitLogic) Google2FAInit(req *types.Google2FAInitReq) (resp *t
 			Code: result.Base.Code,
 			Msg:  result.Base.Msg,
 		},
-		Secret:     result.Secret,
-		OtpauthUrl: result.OtpauthUrl,
-		QrCode:     qrCode,
+		Data: types.Google2FAInit{
+			Secret:     result.Secret,
+			OtpauthUrl: result.OtpauthUrl,
+			QrCode:     qrCode,
+		},
 	}, nil
 }
