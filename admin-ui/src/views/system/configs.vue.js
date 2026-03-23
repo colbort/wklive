@@ -8,6 +8,7 @@ import { useLoading } from '@/composables/useLoading';
 import { useForm } from '@/composables/useForm';
 import { formatDate } from '@/utils';
 import SystemCoreConfig from './components/SystemCoreConfig.vue';
+import ObjectStorageConfigComponent from './components/ObjectStorageConfig.vue';
 const { t } = useI18n();
 // Pagination and main list
 const { pagination, updatePagination, nextPage: paginationNextPage, prevPage: paginationPrevPage } = usePagination(10);
@@ -184,7 +185,6 @@ function handleConfigKeyChange(value) {
             oss_type: 1,
             oss_domain: '',
         };
-        activeTab.value = 'aliyun';
         formData.configValue = '';
     }
 }
@@ -335,14 +335,6 @@ const __VLS_ctx = {};
 let __VLS_components;
 let __VLS_directives;
 /** @type {__VLS_StyleScopedClasses['page-header']} */ ;
-/** @type {__VLS_StyleScopedClasses['config-tabs']} */ ;
-/** @type {__VLS_StyleScopedClasses['config-tabs']} */ ;
-/** @type {__VLS_StyleScopedClasses['config-tabs']} */ ;
-/** @type {__VLS_StyleScopedClasses['config-tabs']} */ ;
-/** @type {__VLS_StyleScopedClasses['el-tabs__item']} */ ;
-/** @type {__VLS_StyleScopedClasses['config-tabs']} */ ;
-/** @type {__VLS_StyleScopedClasses['el-tabs__item']} */ ;
-/** @type {__VLS_StyleScopedClasses['config-tabs']} */ ;
 // CSS variable injection 
 // CSS variable injection end 
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
@@ -945,9 +937,9 @@ if (__VLS_ctx.formData.configKey === 'SYSTEM_CORE') {
     }, ...__VLS_functionalComponentArgsRest(__VLS_194));
 }
 else if (__VLS_ctx.formData.configKey === 'OBJECT_STORAGE') {
-    /** @type {[typeof ObjectStorageConfig, ]} */ ;
+    /** @type {[typeof ObjectStorageConfigComponent, ]} */ ;
     // @ts-ignore
-    const __VLS_197 = __VLS_asFunctionalComponent(ObjectStorageConfig, new ObjectStorageConfig({
+    const __VLS_197 = __VLS_asFunctionalComponent(ObjectStorageConfigComponent, new ObjectStorageConfigComponent({
         modelValue: (__VLS_ctx.objectStorageForm),
     }));
     const __VLS_198 = __VLS_197({
@@ -1047,7 +1039,7 @@ const __VLS_self = (await import('vue')).defineComponent({
             Refresh: Refresh,
             formatDate: formatDate,
             SystemCoreConfig: SystemCoreConfig,
-            ObjectStorageConfig: ObjectStorageConfig,
+            ObjectStorageConfigComponent: ObjectStorageConfigComponent,
             t: t,
             pagination: pagination,
             list: list,

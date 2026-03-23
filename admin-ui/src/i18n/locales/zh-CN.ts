@@ -118,6 +118,11 @@ export default {
     copy: '复制',
     copied: '已复制',
     copyFailed: '复制失败',
+    upload: '上传',
+    uploading: '上传中',
+    uploadFailed: '上传失败',
+    uploadSuccess: '上传成功',
+    uploadImageTip: '点击上传图片，或将图片拖拽到此处',
   },
   system: {
     mgmt: '系统管理',

@@ -123,6 +123,11 @@ export default {
     copy: 'Copy',
     copied: 'Copied',
     copyFailed: 'Copy failed',
+    upload: 'Upload',
+    uploading: 'Uploading',
+    uploadFailed: 'Upload failed',
+    uploadSuccess: 'Upload success',
+    uploadImageTip: 'Click to upload image, or drag and drop image here',
   },
   system: {
     mgmt: 'System',
