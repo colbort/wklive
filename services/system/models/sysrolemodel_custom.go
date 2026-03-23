@@ -3,11 +3,13 @@ package models
 import (
 	"context"
 	"fmt"
+	"strings"
 )
 
 type RoleModel interface {
 	sysRoleModel
 	FindPage(ctx context.Context, keyword string, status, cursor, limit int64) ([]*SysRole, int64, error)
+	FindIdsByIds(ctx context.Context, ids []int64) ([]int64, error)
 }
 
 func (m *defaultSysRoleModel) FindPage(
@@ -81,4 +83,30 @@ func (m *defaultSysRoleModel) FindPage(
 	}
 
 	return list, total, nil
+}
+
+func (m *defaultSysRoleModel) FindIdsByIds(ctx context.Context, ids []int64) ([]int64, error) {
+	if len(ids) == 0 {
+		return []int64{}, nil
+	}
+
+	placeholders := make([]string, 0, len(ids))
+	args := make([]any, 0, len(ids))
+	for _, id := range ids {
+		placeholders = append(placeholders, "?")
+		args = append(args, id)
+	}
+
+	query := fmt.Sprintf(
+		"SELECT id FROM %s WHERE id IN (%s)",
+		m.table,
+		strings.Join(placeholders, ","),
+	)
+
+	var existIds []int64
+	err := m.QueryRowsNoCacheCtx(ctx, &existIds, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	return existIds, nil
 }

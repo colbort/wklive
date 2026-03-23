@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,15 @@ func NewGoogle2FAEnableLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 }
 
 func (l *Google2FAEnableLogic) Google2FAEnable(req *types.Google2FAEnableReq) (resp *types.RespBase, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	result, err := l.svcCtx.SystemCli.Google2FAEnable(l.ctx, &system.Google2FAEnableReq{
+		UserId: req.UserId,
+		Code:   req.Code,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &types.RespBase{
+		Code: result.Code,
+		Msg:  result.Msg,
+	}, nil
 }

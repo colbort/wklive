@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,15 @@ func NewGoogle2FADisableLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *Google2FADisableLogic) Google2FADisable(req *types.Google2FADisableReq) (resp *types.RespBase, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	result, err := l.svcCtx.SystemCli.Google2FADisable(l.ctx, &system.Google2FADisableReq{
+		UserId: req.UserId,
+		Code:   req.Code,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &types.RespBase{
+		Code: result.Code,
+		Msg:  result.Msg,
+	}, nil
 }

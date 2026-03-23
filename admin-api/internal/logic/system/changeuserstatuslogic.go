@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,15 @@ func NewChangeUserStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *ChangeUserStatusLogic) ChangeUserStatus(req *types.ChangeUserStatusReq) (resp *types.RespBase, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	result, err := l.svcCtx.SystemCli.ChangeUserStatus(l.ctx, &system.ChangeUserStatusReq{
+		Id:     req.Id,
+		Status: req.Status,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &types.RespBase{
+		Code: result.Code,
+		Msg:  result.Msg,
+	}, nil
 }

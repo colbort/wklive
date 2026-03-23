@@ -24,7 +24,23 @@ func NewGoogle2FAResetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Go
 }
 
 func (l *Google2FAResetLogic) Google2FAReset(in *system.Google2FAResetReq) (*system.RespBase, error) {
-	// todo: add your logic here and delete this line
+	user, err := l.svcCtx.UserModel.FindOne(l.ctx, in.UserId)
+	if err != nil {
+		return nil, err
+	}
+	if user == nil {
+		return &system.RespBase{
+			Code: 1,
+			Msg:  "用户不存在",
+		}, nil
+	}
+	user.GoogleSecret = ""
+	if err = l.svcCtx.UserModel.Update(l.ctx, user); err != nil {
+		return nil, err
+	}
 
-	return &system.RespBase{}, nil
+	return &system.RespBase{
+		Code: 200,
+		Msg:  "重置成功",
+	}, nil
 }

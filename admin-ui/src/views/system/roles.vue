@@ -61,9 +61,9 @@ function unwrapData(resp: any): any {
   return resp.data ?? resp
 }
 
-// 把扁平菜单转成树（并过滤掉 menuType=3 的按钮项，树里只放目录/菜单）
+// 把扁平菜单转成树（包含按钮权限 menuType=3，以树状方式展示）
 function buildMenuTree(flat: any[]): any[] {
-  const list = (flat || []).filter((x) => x && x.menuType !== 3)
+  const list = (flat || []).filter((x) => x)
 
   const map = new Map<number, any>()
   list.forEach((n) => map.set(n.id, { ...n, children: [] }))
@@ -187,12 +187,45 @@ const currentRole = ref<SysRole | null>(null)
 
 const { loading: grantLoading, withLoading: withGrantLoading } = useLoading()
 const menuTree = ref<MenuNode[]>([])
+const menuNodeMap = ref<Map<number, any>>(new Map())
 const permList = ref<PermItem[]>([])
 
 const menuTreeRef = ref<TreeInstance>()
 const checkedPermKeys = ref<string[]>([])
 
 const grantReadonly = computed(() => isSuperRole(currentRole.value))
+
+function flattenMenuTree(nodes: any[], result: any[] = []): any[] {
+  for (const node of nodes || []) {
+    result.push(node)
+    if (node.children?.length) {
+      flattenMenuTree(node.children, result)
+    }
+  }
+  return result
+}
+
+function updateMenuNodeMap(nodes: any[]) {
+  const map = new Map<number, any>()
+  flattenMenuTree(nodes).forEach((node) => {
+    if (node && node.id != null) {
+      map.set(node.id, node)
+    }
+  })
+  menuNodeMap.value = map
+}
+
+function getCheckedButtonPermKeys(): string[] {
+  const checkedNodes = (menuTreeRef.value?.getCheckedNodes?.() || []) as any[]
+  return checkedNodes
+    .filter((node) => node.menuType === 3 && node.perms)
+    .map((node) => node.perms as string)
+    .filter(Boolean)
+}
+
+function onMenuTreeCheck() {
+  checkedPermKeys.value = getCheckedButtonPermKeys()
+}
 
 function openGrant(row: SysRole) {
   currentRole.value = row
@@ -222,10 +255,24 @@ async function initGrant(roleId: number) {
 
       menuTree.value = buildMenuTree(menusFlat)
       permList.value = perms
+      updateMenuNodeMap(menuTree.value)
+
+      // 角色原有菜单 + 按钮权限需要转成对应 node id
+      const menuIds = Array.isArray(detail.menuIds) ? detail.menuIds : []
+      const permKeys = Array.isArray(detail.permKeys) ? detail.permKeys : []
+      const permKeyToId = new Map<string, number>()
+      flattenMenuTree(menuTree.value).forEach((node) => {
+        if (node.menuType === 3 && node.perms) {
+          permKeyToId.set(node.perms, node.id)
+        }
+      })
+      const buttonIds = permKeys
+        .map((k: string) => permKeyToId.get(k))
+        .filter((id: number | undefined): id is number => id != null)
 
       await nextTick()
-      menuTreeRef.value?.setCheckedKeys((detail.menuIds || []) as any)
-      checkedPermKeys.value = (detail.permKeys || []) as any
+      menuTreeRef.value?.setCheckedKeys([...menuIds, ...buttonIds] as any)
+      checkedPermKeys.value = permKeys as string[]
     } catch (e: any) {
       ElMessage.error(e?.message || t('common.failed'))
     }
@@ -238,7 +285,12 @@ function collectCheckedMenuIds(): number[] {
   // Element Plus tree：getCheckedKeys + getHalfCheckedKeys
   const full = (tree.getCheckedKeys?.() || []) as number[]
   const half = (tree.getHalfCheckedKeys?.() || []) as number[]
-  return Array.from(new Set([...full, ...half]))
+  const allIds = Array.from(new Set([...full, ...half]))
+
+  return allIds.filter((id) => {
+    const node = menuNodeMap.value.get(Number(id))
+    return node && node.menuType !== 3
+  })
 }
 
 async function submitGrant() {
@@ -405,7 +457,8 @@ onMounted(fetchList)
   <el-dialog
     v-model="grantVisible"
     :title="t('system.grantTitle', { role: currentRole?.name || '' })"
-    width="900px"
+    width="400px"
+    :style="{ maxWidth: '460px' }"
     @closed="onGrantClosed"
   >
     <el-alert
@@ -416,44 +469,25 @@ onMounted(fetchList)
       style="margin-bottom:12px;"
     />
 
-    <el-tabs v-loading="grantLoading">
-      <el-tab-pane :label="t('system.grantMenu')">
-        <div v-if="!menuTree || menuTree.length === 0" style="padding:24px; text-align:center; color:#999;">
-          {{ t('common.noData') }}
-        </div>
-        <el-tree
-          v-else
-          ref="menuTreeRef"
-          :data="menuTree"
-          node-key="id"
-          show-checkbox
-          :props="{ label: 'name', children: 'children' }"
-          :check-strictly="false"
-          :disabled="grantReadonly"
-          default-expand-all
-          style="max-height:520px; overflow:auto;"
-        />
-      </el-tab-pane>
+    <div v-loading="grantLoading">
+      <div v-if="!menuTree || menuTree.length === 0" style="padding:24px; text-align:center; color:#999;">
+        {{ t('common.noData') }}
+      </div>
 
-      <el-tab-pane :label="t('system.grantPerms')">
-        <div v-if="!permList || permList.length === 0" style="padding:24px; text-align:center; color:#999;">
-          {{ t('common.noData') }}
-        </div>
-
-        <el-checkbox-group v-else v-model="checkedPermKeys" :disabled="grantReadonly" style="display:block;">
-          <div style="display:flex; flex-wrap:wrap; gap:10px;">
-            <el-checkbox
-              v-for="p in permList"
-              :key="p.key"
-              :label="p.key"
-              border
-            >
-              {{ p.name }} ({{ p.key }})
-            </el-checkbox>
-          </div>
-        </el-checkbox-group>
-      </el-tab-pane>
-    </el-tabs>
+      <el-tree
+        v-else
+        ref="menuTreeRef"
+        :data="menuTree"
+        node-key="id"
+        show-checkbox
+        :props="{ label: 'name', children: 'children' }"
+        :check-strictly="false"
+        :disabled="grantReadonly"
+        :default-expand-all="false"
+        @check="onMenuTreeCheck"
+        style="max-height:420px; overflow:auto;"
+      />
+    </div>
 
     <template #footer>
       <el-button @click="grantVisible = false">{{ t('common.cancel') }}</el-button>

@@ -15,6 +15,7 @@ type UserRoleModel interface {
 	FindRoleIdsByUserIds(ctx context.Context, userIds []int64) (map[int64][]int64, error)
 	InsertCtx(ctx context.Context, session sqlx.Session, data *SysUserRole) (sql.Result, error)
 	FindLoginUserPerms(ctx context.Context, uid int64) ([]string, error)
+	FindByIds(ctx context.Context, userId int64, roleIds []int64) ([]int64, error)
 }
 
 func (m *defaultSysUserRoleModel) FindRoleIdsByUserId(ctx context.Context, uid int64) ([]int64, error) {
@@ -90,4 +91,31 @@ func (m *defaultSysUserRoleModel) FindLoginUserPerms(ctx context.Context, uid in
 		return nil, err
 	}
 	return perms, nil
+}
+
+func (m *defaultSysUserRoleModel) FindByIds(ctx context.Context, userId int64, roleIds []int64) ([]int64, error) {
+	if len(roleIds) == 0 {
+		return []int64{}, nil
+	}
+
+	placeholders := make([]string, 0, len(roleIds))
+	args := make([]any, 0, len(roleIds)+1)
+	for _, id := range roleIds {
+		placeholders = append(placeholders, "?")
+		args = append(args, id)
+	}
+	args = append(args, userId)
+
+	query := fmt.Sprintf(
+		"SELECT id FROM %s WHERE user_id = ? AND role_id IN (%s)",
+		m.table,
+		strings.Join(placeholders, ","),
+	)
+
+	var ids []int64
+	err := m.QueryRowsNoCacheCtx(ctx, &ids, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	return ids, nil
 }

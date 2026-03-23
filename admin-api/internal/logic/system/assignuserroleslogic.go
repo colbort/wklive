@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,15 @@ func NewAssignUserRolesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *A
 }
 
 func (l *AssignUserRolesLogic) AssignUserRoles(req *types.AssignUserRolesReq) (resp *types.RespBase, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	result, err := l.svcCtx.SystemCli.AssignUserRoles(l.ctx, &system.AssignUserRolesReq{
+		UserId:  req.UserId,
+		RoleIds: req.RoleIds,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &types.RespBase{
+		Code: result.Code,
+		Msg:  result.Msg,
+	}, nil
 }

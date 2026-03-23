@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,14 @@ func NewGoogle2FAResetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Go
 }
 
 func (l *Google2FAResetLogic) Google2FAReset(req *types.Google2FAResetReq) (resp *types.RespBase, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	result, err := l.svcCtx.SystemCli.Google2FAReset(l.ctx, &system.Google2FAResetReq{
+		UserId: req.UserId,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &types.RespBase{
+		Code: result.Code,
+		Msg:  result.Msg,
+	}, nil
 }

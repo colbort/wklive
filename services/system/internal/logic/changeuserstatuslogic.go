@@ -24,7 +24,24 @@ func NewChangeUserStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *ChangeUserStatusLogic) ChangeUserStatus(in *system.ChangeUserStatusReq) (*system.RespBase, error) {
-	// todo: add your logic here and delete this line
+	user, err := l.svcCtx.UserModel.FindOne(l.ctx, in.Id)
+	if err != nil {
+		return nil, err
+	}
+	if user == nil {
+		return &system.RespBase{Code: 1, Msg: "用户不存在"}, nil
+	}
 
-	return &system.RespBase{}, nil
+	if user.Status == in.Status {
+		return &system.RespBase{Code: 1, Msg: "用户状态未改变"}, nil
+	}
+	user.Status = in.Status
+	if err = l.svcCtx.UserModel.Update(l.ctx, user); err != nil {
+		return nil, err
+	}
+
+	return &system.RespBase{
+		Code: 200,
+		Msg:  "用户状态修改成功",
+	}, nil
 }

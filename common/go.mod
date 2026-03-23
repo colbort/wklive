@@ -7,6 +7,8 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/minio/minio-go/v7 v7.0.99
 	github.com/nacos-group/nacos-sdk-go v1.1.6
+	github.com/pquerna/otp v1.5.0
+	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.72
 	github.com/zeromicro/go-zero v1.9.4
 	go.etcd.io/etcd/client/v3 v3.5.15
@@ -19,6 +21,7 @@ require (
 
 require (
 	github.com/aliyun/alibaba-cloud-sdk-go v1.61.18 // indirect
+	github.com/boombuler/barcode v1.0.1-0.20190219062509-6c824513bacc // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
 	github.com/clbanning/mxj v1.8.4 // indirect
 	github.com/coreos/go-semver v0.3.1 // indirect

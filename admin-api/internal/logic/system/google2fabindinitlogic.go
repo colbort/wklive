@@ -8,6 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/common/utils"
+	"wklive/proto/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +29,19 @@ func NewGoogle2FABindInitLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *Google2FABindInitLogic) Google2FABindInit(req *types.Google2FABindInitReq) (resp *types.Google2FABindInitResp, err error) {
-	// todo: add your logic here and delete this line
+	result, err := l.svcCtx.SystemCli.Google2FAInit(l.ctx, &system.Google2FAInitReq{UserId: req.UserId})
+	if err != nil {
+		return nil, err
+	}
+	qrCode, _ := utils.GenerateGoogle2FAQRCodeDataURL(result.OtpauthUrl, 220)
 
-	return
+	return &types.Google2FABindInitResp{
+		RespBase: types.RespBase{
+			Code: result.Base.Code,
+			Msg:  result.Base.Msg,
+		},
+		Secret:     result.Secret,
+		OtpauthUrl: result.OtpauthUrl,
+		QrCode:     qrCode,
+	}, nil
 }

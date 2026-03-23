@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/common/utils"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -24,7 +25,36 @@ func NewGoogle2FAEnableLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 }
 
 func (l *Google2FAEnableLogic) Google2FAEnable(in *system.Google2FAEnableReq) (*system.RespBase, error) {
-	// todo: add your logic here and delete this line
+	user, err := l.svcCtx.UserModel.FindOne(l.ctx, in.UserId)
+	if err != nil {
+		return nil, err
+	}
+	if user == nil {
+		return &system.RespBase{
+			Code: 1,
+			Msg:  "用户不存在",
+		}, nil
+	}
+	if user.GoogleSecret == "" {
+		return &system.RespBase{
+			Code: 1,
+			Msg:  "Google 2FA 尚未初始化",
+		}, nil
+	}
+	if !utils.VerifyGoogle2FACode(user.GoogleSecret, in.Code) {
+		return &system.RespBase{
+			Code: 1,
+			Msg:  "验证码错误",
+		}, nil
+	}
 
-	return &system.RespBase{}, nil
+	user.GoogleEnabled = 1
+	if err = l.svcCtx.UserModel.Update(l.ctx, user); err != nil {
+		return nil, err
+	}
+
+	return &system.RespBase{
+		Code: 200,
+		Msg:  "启用成功",
+	}, nil
 }

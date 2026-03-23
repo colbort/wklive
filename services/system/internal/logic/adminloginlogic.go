@@ -48,6 +48,15 @@ func (l *AdminLoginLogic) AdminLogin(in *system.AdminLoginReq) (*system.AdminLog
 		return nil, errors.New("用户已被禁用")
 	}
 
+	if user.GoogleEnabled == 1 {
+		if in.GoogleCode == "" {
+			return nil, errors.New("请输入 Google 2FA 验证码")
+		}
+		if user.GoogleSecret == "" || !utils.VerifyGoogle2FACode(user.GoogleSecret, in.GoogleCode) {
+			return nil, errors.New("Google 2FA 验证码错误")
+		}
+	}
+
 	// 2️⃣ 校验密码（bcrypt）
 	if bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(in.Password)) != nil {
 		return nil, errors.New("密码错误")
