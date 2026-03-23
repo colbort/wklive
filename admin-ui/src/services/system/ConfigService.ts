@@ -19,8 +19,8 @@ export type SysConfigItem = {
 
 export type SysConfigListReq = {
   keyword?: string
-  page?: number
-  size?: number
+  cursor?: string | null
+  limit?: number
 }
 
 export type SysConfigListResp = RespBase<SysConfigItem[]>

@@ -1,4 +1,4 @@
-import { apiSysConfigList, apiSysConfigCreate, apiSysConfigUpdate, apiSysConfigDelete, apiSysConfigKeys } from '@/api/system/config';
+import { apiSysConfigList, apiSysConfigCreate, apiSysConfigUpdate, apiSysConfigDelete, apiSysConfigKeys, } from '@/api/system/config';
 // ===== 系统配置服务 =====
 class ConfigService {
     async getList(params) {

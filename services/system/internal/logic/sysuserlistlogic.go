@@ -25,29 +25,19 @@ func NewSysUserListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysUs
 
 // 用户
 func (l *SysUserListLogic) SysUserList(in *system.SysUserListReq) (*system.SysUserListResp, error) {
-	// 1️⃣ 参数兜底
-	page := in.Page.Page
-	if page <= 0 {
-		page = 1
-	}
-	pageSize := in.Page.Size
-	if pageSize <= 0 || pageSize > 100 {
-		pageSize = 10
-	}
-
 	// 2️⃣ 查询用户分页
-	users, total, err := l.svcCtx.UserModel.FindPage(
+	items, total, err := l.svcCtx.UserModel.FindPage(
 		l.ctx,
 		in.Keyword,
 		in.Status,
-		page,
-		pageSize,
+		in.Page.Cursor,
+		in.Page.Limit,
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	if len(users) == 0 {
+	if len(items) == 0 {
 		return &system.SysUserListResp{
 			Base: &system.RespBase{
 				Code:  200,
@@ -59,8 +49,8 @@ func (l *SysUserListLogic) SysUserList(in *system.SysUserListReq) (*system.SysUs
 	}
 
 	// 3️⃣ 收集 userIds
-	userIds := make([]int64, 0, len(users))
-	for _, u := range users {
+	userIds := make([]int64, 0, len(items))
+	for _, u := range items {
 		userIds = append(userIds, u.Id)
 	}
 
@@ -69,11 +59,18 @@ func (l *SysUserListLogic) SysUserList(in *system.SysUserListReq) (*system.SysUs
 	if err != nil {
 		return nil, err
 	}
-	// roleMap: map[userId][]roleId
+
+	prevCursor := in.Page.Cursor
+	if prevCursor < 0 {
+		prevCursor = 0
+	}
+	nextCursor := items[len(items)-1].Id
+	hasPrev := prevCursor > 0
+	hasNext := int64(len(items)) == in.Page.Limit
 
 	// 5️⃣ 组装返回
-	data := make([]*system.SysUserItem, 0, len(users))
-	for _, u := range users {
+	data := make([]*system.SysUserItem, 0, len(items))
+	for _, u := range items {
 		data = append(data, &system.SysUserItem{
 			Id:               u.Id,
 			Username:         u.Username,
@@ -87,9 +84,13 @@ func (l *SysUserListLogic) SysUserList(in *system.SysUserListReq) (*system.SysUs
 
 	return &system.SysUserListResp{
 		Base: &system.RespBase{
-			Code:  200,
-			Msg:   "success",
-			Total: total,
+			Code:       200,
+			Msg:        "success",
+			Total:      total,
+			HasNext:    hasNext,
+			HasPrev:    hasPrev,
+			NextCursor: nextCursor,
+			PrevCursor: prevCursor,
 		},
 		Data: data,
 	}, nil

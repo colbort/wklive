@@ -7,21 +7,21 @@ import (
 
 type LoginLogModel interface {
 	sysLoginLogModel
-	FindPage(ctx context.Context, username string, success int64, cursor, pageSize int64) ([]*SysLoginLog, int64, error)
+	FindPage(ctx context.Context, username string, success int64, cursor, limit int64) ([]*SysLoginLog, int64, error)
 }
 
 func (m *defaultSysLoginLogModel) FindPage(
 	ctx context.Context,
 	username string,
 	success int64,
-	cursor, pageSize int64,
+	cursor, limit int64,
 ) ([]*SysLoginLog, int64, error) {
 
-	if pageSize <= 0 {
-		pageSize = 10
+	if limit <= 0 {
+		limit = 10
 	}
-	if pageSize > 100 {
-		pageSize = 100
+	if limit > 100 {
+		limit = 100
 	}
 
 	where := "1=1"
@@ -60,7 +60,7 @@ func (m *defaultSysLoginLogModel) FindPage(
 			LIMIT ?`,
 			sysLoginLogRows, m.table, where,
 		)
-		listArgs = append(listArgs, pageSize)
+		listArgs = append(listArgs, limit)
 	} else {
 		// 后续页
 		listSql = fmt.Sprintf(
@@ -71,7 +71,7 @@ func (m *defaultSysLoginLogModel) FindPage(
 			LIMIT ?`,
 			sysLoginLogRows, m.table, where,
 		)
-		listArgs = append(listArgs, cursor, pageSize)
+		listArgs = append(listArgs, cursor, limit)
 	}
 
 	var list []*SysLoginLog

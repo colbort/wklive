@@ -28,10 +28,10 @@ func NewSysUserListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysUs
 }
 
 func (l *SysUserListLogic) SysUserList(req *types.SysUserListReq) (resp *types.SysUserListResp, err error) {
-	response, err := l.svcCtx.SystemCli.SysUserList(l.ctx, &system.SysUserListReq{
+	result, err := l.svcCtx.SystemCli.SysUserList(l.ctx, &system.SysUserListReq{
 		Page: &system.PageReq{
-			Page: req.Page,
-			Size: req.Size,
+			Cursor: req.Cursor,
+			Limit:  req.Limit,
 		},
 		Status: req.Status,
 	})
@@ -40,7 +40,7 @@ func (l *SysUserListLogic) SysUserList(req *types.SysUserListReq) (resp *types.S
 	}
 
 	var data []types.SysUserItem
-	for _, item := range response.Data {
+	for _, item := range result.Data {
 		data = append(data, types.SysUserItem{
 			Id:               item.Id,
 			Username:         item.Username,
@@ -54,9 +54,13 @@ func (l *SysUserListLogic) SysUserList(req *types.SysUserListReq) (resp *types.S
 
 	resp = &types.SysUserListResp{
 		RespBase: types.RespBase{
-			Code:  response.Base.Code,
-			Msg:   response.Base.Msg,
-			Total: response.Base.Total,
+			Code:       result.Base.Code,
+			Msg:        result.Base.Msg,
+			Total:      result.Base.Total,
+			HasNext:    result.Base.HasNext,
+			HasPrev:    result.Base.HasPrev,
+			NextCursor: result.Base.NextCursor,
+			PrevCursor: result.Base.PrevCursor,
 		},
 		Data: data,
 	}

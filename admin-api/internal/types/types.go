@@ -141,8 +141,8 @@ type OrderListResp struct {
 }
 
 type PageReq struct {
-	Page int64 `form:"page,optional"`
-	Size int64 `form:"size,optional"`
+	Cursor int64 `form:"cursor,optional"`
+	Limit  int64 `form:"limit,optional"`
 }
 
 type ProfileReq struct {
@@ -170,9 +170,13 @@ type ResetUserPwdReq struct {
 }
 
 type RespBase struct {
-	Code  int32  `json:"code"`
-	Msg   string `json:"msg"`
-	Total int64  `json:"total,optional"`
+	Code       int32  `json:"code"`
+	Msg        string `json:"msg"`
+	Total      int64  `json:"total,optional"`
+	HasNext    bool   `json:"hasNext,optional"`
+	HasPrev    bool   `json:"hasPrev,optional"`
+	NextCursor int64  `json:"nextCursor,optional"`
+	PrevCursor int64  `json:"prevCursor,optional"`
 }
 
 type SysConfigCreateReq struct {

@@ -30,8 +30,8 @@ func NewLoginLogListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Logi
 func (l *LoginLogListLogic) LoginLogList(req *types.LoginLogListReq) (resp *types.LoginLogListResp, err error) {
 	result, err := l.svcCtx.SystemCli.LoginLogList(l.ctx, &system.LoginLogListReq{
 		Page: &system.PageReq{
-			Page: req.Page,
-			Size: req.Size,
+			Cursor: req.Cursor,
+			Limit:  req.Limit,
 		},
 		Username: req.Username,
 		Success:  req.Success,
@@ -54,9 +54,13 @@ func (l *LoginLogListLogic) LoginLogList(req *types.LoginLogListReq) (resp *type
 	}
 	return &types.LoginLogListResp{
 		RespBase: types.RespBase{
-			Code:  result.Base.Code,
-			Msg:   result.Base.Msg,
-			Total: result.Base.Total,
+			Code:       result.Base.Code,
+			Msg:        result.Base.Msg,
+			Total:      result.Base.Total,
+			HasNext:    result.Base.HasNext,
+			HasPrev:    result.Base.HasPrev,
+			NextCursor: result.Base.NextCursor,
+			PrevCursor: result.Base.PrevCursor,
 		},
 		Data: data,
 	}, nil

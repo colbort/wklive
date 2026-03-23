@@ -52,8 +52,8 @@ export interface UpdateUserRequest {
 export interface UserQueryParams {
   keyword?: string
   status?: number
-  page?: number
-  size?: number
+  cursor?: string | null
+  limit?: number
 }
 
 /**

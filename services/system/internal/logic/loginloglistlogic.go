@@ -25,25 +25,24 @@ func NewLoginLogListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Logi
 
 // 日志
 func (l *LoginLogListLogic) LoginLogList(in *system.LoginLogListReq) (*system.LoginLogListResp, error) {
-	page := in.Page.Page
-	if page <= 0 {
-		page = 1
-	}
-	pageSize := in.Page.Size
-	if pageSize <= 0 || pageSize > 100 {
-		pageSize = 10
-	}
-
 	items, total, err := l.svcCtx.LoginLogModel.FindPage(
 		l.ctx,
 		in.Username,
 		in.Success,
-		page,
-		pageSize,
+		in.Page.Cursor,
+		in.Page.Limit,
 	)
 	if err != nil {
 		return nil, err
 	}
+
+	prevCursor := in.Page.Cursor
+	if prevCursor < 0 {
+		prevCursor = 0
+	}
+	nextCursor := items[len(items)-1].Id
+	hasPrev := prevCursor > 0
+	hasNext := int64(len(items)) == in.Page.Limit
 
 	data := make([]*system.LoginLogItem, 0, len(items))
 	for _, item := range items {
@@ -61,9 +60,13 @@ func (l *LoginLogListLogic) LoginLogList(in *system.LoginLogListReq) (*system.Lo
 
 	return &system.LoginLogListResp{
 		Base: &system.RespBase{
-			Code:  200,
-			Msg:   "success",
-			Total: total,
+			Code:    200,
+			Msg:     "success",
+			Total:   total,
+			HasNext: hasNext,
+			HasPrev: hasPrev,
+			NextCursor: nextCursor,
+			PrevCursor: prevCursor,
 		},
 		Data: data,
 	}, nil

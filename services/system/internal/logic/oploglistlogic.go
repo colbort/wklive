@@ -24,26 +24,25 @@ func NewOpLogListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OpLogLi
 }
 
 func (l *OpLogListLogic) OpLogList(in *system.OpLogListReq) (*system.OpLogListResp, error) {
-	page := in.Page.Page
-	if page <= 0 {
-		page = 1
-	}
-	pageSize := in.Page.Size
-	if pageSize <= 0 || pageSize > 100 {
-		pageSize = 10
-	}
-
 	items, total, err := l.svcCtx.OpLogModel.FindPage(
 		l.ctx,
 		in.Username,
 		in.Method,
 		in.Path,
-		page,
-		pageSize,
+		in.Page.Cursor,
+		in.Page.Limit,
 	)
 	if err != nil {
 		return nil, err
 	}
+
+	prevCursor := in.Page.Cursor
+	if prevCursor < 0 {
+		prevCursor = 0
+	}
+	nextCursor := items[len(items)-1].Id
+	hasPrev := prevCursor > 0
+	hasNext := int64(len(items)) == in.Page.Limit
 
 	data := make([]*system.OpLogItem, 0, len(items))
 	for _, item := range items {
@@ -67,6 +66,10 @@ func (l *OpLogListLogic) OpLogList(in *system.OpLogListReq) (*system.OpLogListRe
 			Code:  200,
 			Msg:   "success",
 			Total: total,
+			HasNext: hasNext,
+			HasPrev: hasPrev,
+			NextCursor: nextCursor,
+			PrevCursor: prevCursor,
 		},
 		Data: data,
 	}, nil

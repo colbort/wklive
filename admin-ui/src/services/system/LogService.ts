@@ -20,8 +20,8 @@ export type LoginLogItem = {
 
 // 登录日志列表请求
 export interface LoginLogListReq {
-  page?: number
-  size?: number
+  cursor?: string | null
+  limit?: number
   username?: string
   success?: number
 }
@@ -51,8 +51,8 @@ export type OpLogItem = {
 
 // 操作日志列表请求
 export interface OpLogListReq {
-  page?: number
-  size?: number
+  cursor?: string | null
+  limit?: number
   username?: string
   path?: string
   method?: string

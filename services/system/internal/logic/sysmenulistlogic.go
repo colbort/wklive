@@ -25,25 +25,23 @@ func NewSysMenuListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysMe
 
 // 获取菜单列表
 func (l *SysMenuListLogic) SysMenuList(in *system.SysMenuListReq) (*system.SysMenuListResp, error) {
-	// 1) 分页兜底
-	page := in.Page.Page
-	if page <= 0 {
-		page = 1
-	}
-	pageSize := in.Page.Size
-	if pageSize <= 0 || pageSize > 10000 {
-		pageSize = 10000
-	}
-
 	// 2) 查分页
-	rows, total, err := l.svcCtx.MenuModel.FindPage(l.ctx, in.Keyword, in.MenuType, in.Status, in.Visible, page, pageSize)
+	items, total, err := l.svcCtx.MenuModel.FindPage(l.ctx, in.Keyword, in.MenuType, in.Status, in.Visible, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}
 
+	prevCursor := in.Page.Cursor
+	if prevCursor < 0 {
+		prevCursor = 0
+	}
+	nextCursor := items[len(items)-1].Id
+	hasPrev := prevCursor > 0
+	hasNext := int64(len(items)) == in.Page.Limit
+
 	// 3) 组装返回
-	data := make([]*system.SysMenuItem, 0, len(rows))
-	for _, r := range rows {
+	data := make([]*system.SysMenuItem, 0, len(items))
+	for _, r := range items {
 		data = append(data, &system.SysMenuItem{
 			Id:        r.Id,
 			ParentId:  r.ParentId,
@@ -60,9 +58,13 @@ func (l *SysMenuListLogic) SysMenuList(in *system.SysMenuListReq) (*system.SysMe
 	}
 	return &system.SysMenuListResp{
 		Base: &system.RespBase{
-			Code:  200,
-			Msg:   "success",
-			Total: total,
+			Code:       200,
+			Msg:        "success",
+			Total:      total,
+			HasNext:    hasNext,
+			HasPrev:    hasPrev,
+			NextCursor: nextCursor,
+			PrevCursor: prevCursor,
 		},
 		Data: data,
 	}, nil

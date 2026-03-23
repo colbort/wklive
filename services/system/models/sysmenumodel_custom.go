@@ -12,7 +12,7 @@ type MenuModel interface {
 	FindByIds(ctx context.Context, ids []int64) ([]*SysMenu, error)
 	FindIdsByIds(ctx context.Context, ids []int64) ([]int64, error)
 	ListAll(ctx context.Context) ([]*SysMenu, error)
-	FindPage(ctx context.Context, keyword string, menuType, status, visible, cursor, pageSize int64) ([]*SysMenu, int64, error)
+	FindPage(ctx context.Context, keyword string, menuType, status, visible, cursor, limit int64) ([]*SysMenu, int64, error)
 }
 
 func (m *defaultSysMenuModel) FindByIds(ctx context.Context, ids []int64) ([]*SysMenu, error) {
@@ -48,14 +48,14 @@ func (m *defaultSysMenuModel) FindPage(
 	ctx context.Context,
 	keyword string,
 	menuType, status, visible int64,
-	cursor, pageSize int64,
+	cursor, limit int64,
 ) ([]*SysMenu, int64, error) {
 
-	if pageSize <= 0 {
-		pageSize = 100
+	if limit <= 0 {
+		limit = 100
 	}
-	if pageSize > 10000 {
-		pageSize = 10000
+	if limit > 10000 {
+		limit = 10000
 	}
 
 	where := "1=1"
@@ -104,7 +104,7 @@ func (m *defaultSysMenuModel) FindPage(
 			LIMIT ?`,
 			sysMenuRows, m.table, where,
 		)
-		listArgs = append(listArgs, pageSize)
+		listArgs = append(listArgs, limit)
 	} else {
 		// 后续页
 		listSql = fmt.Sprintf(
@@ -115,7 +115,7 @@ func (m *defaultSysMenuModel) FindPage(
 			LIMIT ?`,
 			sysMenuRows, m.table, where,
 		)
-		listArgs = append(listArgs, cursor, pageSize)
+		listArgs = append(listArgs, cursor, limit)
 	}
 
 	var list []*SysMenu

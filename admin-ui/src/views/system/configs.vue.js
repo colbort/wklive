@@ -9,7 +9,7 @@ import { useForm } from '@/composables/useForm';
 import { formatDate } from '@/utils';
 const { t } = useI18n();
 // Pagination and main list
-const { pagination, updateTotal } = usePagination(10);
+const { pagination, updatePagination, nextPage: paginationNextPage, prevPage: paginationPrevPage } = usePagination(10);
 const list = ref([]);
 const { loading, withLoading } = useLoading();
 // Query form
@@ -31,6 +31,8 @@ const { form: formData, reset: resetForm } = useForm({
         remark: ''
     }
 });
+// Keys for configKey selection
+const keys = ref([]);
 // Form validation rules
 const formRules = {
     configKey: [
@@ -40,19 +42,31 @@ const formRules = {
         { required: true, message: t('validation.required'), trigger: 'blur' }
     ]
 };
+// Load available keys
+async function loadKeys() {
+    try {
+        const res = await configService.getKeys();
+        if (res.code !== 0 && res.code !== 200)
+            throw new Error(res.msg || 'Failed to load keys');
+        keys.value = res.data || [];
+    }
+    catch (e) {
+        ElMessage.error(e?.message || 'Failed to load keys');
+    }
+}
 // Fetch list
 async function fetchList() {
     await withLoading(async () => {
         try {
             const res = await configService.getList({
                 keyword: queryForm.keyword || undefined,
-                page: pagination.page,
-                size: pagination.pageSize,
+                cursor: pagination.cursor,
+                limit: pagination.limit,
             });
             if (res.code !== 0 && res.code !== 200)
                 throw new Error(res.msg || 'list failed');
             list.value = res.data || [];
-            updateTotal(res.total || 0);
+            updatePagination(res.total || 0, res.hasNext || false, res.hasPrev || false, res.nextCursor || null, res.prevCursor || null);
         }
         catch (e) {
             ElMessage.error(e?.message || t('common.loadFailed'));
@@ -61,24 +75,31 @@ async function fetchList() {
 }
 // Handle pagination
 function handleSizeChange(size) {
-    pagination.pageSize = size;
-    pagination.page = 1;
-    fetchList();
-}
-function handleCurrentChange(page) {
-    pagination.page = page;
+    pagination.limit = size;
+    pagination.cursor = null;
+    pagination.hasPrev = false;
     fetchList();
 }
 // Handle reset
 function handleReset() {
     queryForm.keyword = '';
-    pagination.page = 1;
+    pagination.cursor = null;
+    pagination.hasPrev = false;
+    fetchList();
+}
+function nextPage() {
+    paginationNextPage();
+    fetchList();
+}
+function prevPage() {
+    paginationPrevPage();
     fetchList();
 }
 // Handle create
 function handleCreate() {
     isEdit.value = false;
     resetForm();
+    loadKeys();
     dialogVisible.value = true;
 }
 // Handle edit
@@ -124,7 +145,7 @@ async function handleSubmit() {
             const { id, ...updateData } = formData;
             const res = await configService.update(id, updateData);
             if (res.code !== 0 && res.code !== 200)
-                throw new Error(res.msg || 'update failed');
+                throw new Error(res.msg || t('common.updateFailed'));
             ElMessage.success(t('common.updateSuccess'));
         }
         else {
@@ -135,7 +156,7 @@ async function handleSubmit() {
             };
             const res = await configService.create(data);
             if (res.code !== 0 && res.code !== 200)
-                throw new Error(res.msg || 'create failed');
+                throw new Error(res.msg || t('common.createFailed'));
             ElMessage.success(t('common.createSuccess'));
         }
         dialogVisible.value = false;
@@ -150,6 +171,7 @@ async function handleSubmit() {
 }
 // Initialize
 onMounted(() => {
+    loadKeys();
     fetchList();
 });
 debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
@@ -184,6 +206,7 @@ let __VLS_6;
 const __VLS_7 = {
     onClick: (__VLS_ctx.handleCreate)
 };
+__VLS_asFunctionalDirective(__VLS_directives.vPerm)(null, { ...__VLS_directiveBindingRestFields, value: ('system:config:add') }, null, null);
 __VLS_3.slots.default;
 const __VLS_8 = {}.ElIcon;
 /** @type {[typeof __VLS_components.ElIcon, typeof __VLS_components.elIcon, typeof __VLS_components.ElIcon, typeof __VLS_components.elIcon, ]} */ ;
@@ -227,10 +250,10 @@ const __VLS_24 = {}.ElFormItem;
 /** @type {[typeof __VLS_components.ElFormItem, typeof __VLS_components.elFormItem, typeof __VLS_components.ElFormItem, typeof __VLS_components.elFormItem, ]} */ ;
 // @ts-ignore
 const __VLS_25 = __VLS_asFunctionalComponent(__VLS_24, new __VLS_24({
-    label: (__VLS_ctx.t('system.config.configKey')),
+    label: (__VLS_ctx.t('system.configKey')),
 }));
 const __VLS_26 = __VLS_25({
-    label: (__VLS_ctx.t('system.config.configKey')),
+    label: (__VLS_ctx.t('system.configKey')),
 }, ...__VLS_functionalComponentArgsRest(__VLS_25));
 __VLS_27.slots.default;
 const __VLS_28 = {}.ElInput;
@@ -374,12 +397,12 @@ const __VLS_84 = {}.ElTableColumn;
 // @ts-ignore
 const __VLS_85 = __VLS_asFunctionalComponent(__VLS_84, new __VLS_84({
     prop: "configKey",
-    label: (__VLS_ctx.t('system.config.configKey')),
+    label: (__VLS_ctx.t('system.configKey')),
     minWidth: "150",
 }));
 const __VLS_86 = __VLS_85({
     prop: "configKey",
-    label: (__VLS_ctx.t('system.config.configKey')),
+    label: (__VLS_ctx.t('system.configKey')),
     minWidth: "150",
 }, ...__VLS_functionalComponentArgsRest(__VLS_85));
 const __VLS_88 = {}.ElTableColumn;
@@ -387,12 +410,12 @@ const __VLS_88 = {}.ElTableColumn;
 // @ts-ignore
 const __VLS_89 = __VLS_asFunctionalComponent(__VLS_88, new __VLS_88({
     prop: "configValue",
-    label: (__VLS_ctx.t('system.config.configValue')),
+    label: (__VLS_ctx.t('system.configValue')),
     minWidth: "200",
 }));
 const __VLS_90 = __VLS_89({
     prop: "configValue",
-    label: (__VLS_ctx.t('system.config.configValue')),
+    label: (__VLS_ctx.t('system.configValue')),
     minWidth: "200",
 }, ...__VLS_functionalComponentArgsRest(__VLS_89));
 __VLS_91.slots.default;
@@ -524,207 +547,305 @@ __VLS_107.slots.default;
 var __VLS_107;
 var __VLS_79;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-    ...{ class: "pagination" },
+    ...{ style: {} },
 });
-const __VLS_124 = {}.ElPagination;
-/** @type {[typeof __VLS_components.ElPagination, typeof __VLS_components.elPagination, ]} */ ;
+__VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({});
+(__VLS_ctx.pagination.total);
+const __VLS_124 = {}.ElButton;
+/** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
 // @ts-ignore
 const __VLS_125 = __VLS_asFunctionalComponent(__VLS_124, new __VLS_124({
-    ...{ 'onSizeChange': {} },
-    ...{ 'onCurrentChange': {} },
-    currentPage: (__VLS_ctx.pagination.page),
-    pageSize: (__VLS_ctx.pagination.pageSize),
-    total: (__VLS_ctx.pagination.total),
-    pageSizes: ([10, 20, 50, 100]),
-    layout: "total, sizes, prev, pager, next, jumper",
+    ...{ 'onClick': {} },
+    disabled: (!__VLS_ctx.pagination.hasPrev),
 }));
 const __VLS_126 = __VLS_125({
-    ...{ 'onSizeChange': {} },
-    ...{ 'onCurrentChange': {} },
-    currentPage: (__VLS_ctx.pagination.page),
-    pageSize: (__VLS_ctx.pagination.pageSize),
-    total: (__VLS_ctx.pagination.total),
-    pageSizes: ([10, 20, 50, 100]),
-    layout: "total, sizes, prev, pager, next, jumper",
+    ...{ 'onClick': {} },
+    disabled: (!__VLS_ctx.pagination.hasPrev),
 }, ...__VLS_functionalComponentArgsRest(__VLS_125));
 let __VLS_128;
 let __VLS_129;
 let __VLS_130;
 const __VLS_131 = {
-    onSizeChange: (__VLS_ctx.handleSizeChange)
+    onClick: (__VLS_ctx.prevPage)
 };
-const __VLS_132 = {
-    onCurrentChange: (__VLS_ctx.handleCurrentChange)
-};
+__VLS_127.slots.default;
 var __VLS_127;
+const __VLS_132 = {}.ElButton;
+/** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
+// @ts-ignore
+const __VLS_133 = __VLS_asFunctionalComponent(__VLS_132, new __VLS_132({
+    ...{ 'onClick': {} },
+    disabled: (!__VLS_ctx.pagination.hasNext),
+}));
+const __VLS_134 = __VLS_133({
+    ...{ 'onClick': {} },
+    disabled: (!__VLS_ctx.pagination.hasNext),
+}, ...__VLS_functionalComponentArgsRest(__VLS_133));
+let __VLS_136;
+let __VLS_137;
+let __VLS_138;
+const __VLS_139 = {
+    onClick: (__VLS_ctx.nextPage)
+};
+__VLS_135.slots.default;
+var __VLS_135;
+const __VLS_140 = {}.ElSelect;
+/** @type {[typeof __VLS_components.ElSelect, typeof __VLS_components.elSelect, typeof __VLS_components.ElSelect, typeof __VLS_components.elSelect, ]} */ ;
+// @ts-ignore
+const __VLS_141 = __VLS_asFunctionalComponent(__VLS_140, new __VLS_140({
+    ...{ 'onChange': {} },
+    modelValue: (__VLS_ctx.pagination.limit),
+    ...{ style: {} },
+}));
+const __VLS_142 = __VLS_141({
+    ...{ 'onChange': {} },
+    modelValue: (__VLS_ctx.pagination.limit),
+    ...{ style: {} },
+}, ...__VLS_functionalComponentArgsRest(__VLS_141));
+let __VLS_144;
+let __VLS_145;
+let __VLS_146;
+const __VLS_147 = {
+    onChange: (() => { __VLS_ctx.pagination.cursor = null; __VLS_ctx.pagination.hasPrev = false; __VLS_ctx.fetchList(); })
+};
+__VLS_143.slots.default;
+const __VLS_148 = {}.ElOption;
+/** @type {[typeof __VLS_components.ElOption, typeof __VLS_components.elOption, ]} */ ;
+// @ts-ignore
+const __VLS_149 = __VLS_asFunctionalComponent(__VLS_148, new __VLS_148({
+    label: "10",
+    value: (10),
+}));
+const __VLS_150 = __VLS_149({
+    label: "10",
+    value: (10),
+}, ...__VLS_functionalComponentArgsRest(__VLS_149));
+const __VLS_152 = {}.ElOption;
+/** @type {[typeof __VLS_components.ElOption, typeof __VLS_components.elOption, ]} */ ;
+// @ts-ignore
+const __VLS_153 = __VLS_asFunctionalComponent(__VLS_152, new __VLS_152({
+    label: "20",
+    value: (20),
+}));
+const __VLS_154 = __VLS_153({
+    label: "20",
+    value: (20),
+}, ...__VLS_functionalComponentArgsRest(__VLS_153));
+const __VLS_156 = {}.ElOption;
+/** @type {[typeof __VLS_components.ElOption, typeof __VLS_components.elOption, ]} */ ;
+// @ts-ignore
+const __VLS_157 = __VLS_asFunctionalComponent(__VLS_156, new __VLS_156({
+    label: "50",
+    value: (50),
+}));
+const __VLS_158 = __VLS_157({
+    label: "50",
+    value: (50),
+}, ...__VLS_functionalComponentArgsRest(__VLS_157));
+var __VLS_143;
 var __VLS_75;
-const __VLS_133 = {}.ElDialog;
+const __VLS_160 = {}.ElDialog;
 /** @type {[typeof __VLS_components.ElDialog, typeof __VLS_components.elDialog, typeof __VLS_components.ElDialog, typeof __VLS_components.elDialog, ]} */ ;
 // @ts-ignore
-const __VLS_134 = __VLS_asFunctionalComponent(__VLS_133, new __VLS_133({
+const __VLS_161 = __VLS_asFunctionalComponent(__VLS_160, new __VLS_160({
     modelValue: (__VLS_ctx.dialogVisible),
     title: (__VLS_ctx.isEdit ? __VLS_ctx.t('common.edit') : __VLS_ctx.t('common.add')),
     width: "600px",
     closeOnClickModal: (false),
 }));
-const __VLS_135 = __VLS_134({
+const __VLS_162 = __VLS_161({
     modelValue: (__VLS_ctx.dialogVisible),
     title: (__VLS_ctx.isEdit ? __VLS_ctx.t('common.edit') : __VLS_ctx.t('common.add')),
     width: "600px",
     closeOnClickModal: (false),
-}, ...__VLS_functionalComponentArgsRest(__VLS_134));
-__VLS_136.slots.default;
-const __VLS_137 = {}.ElForm;
+}, ...__VLS_functionalComponentArgsRest(__VLS_161));
+__VLS_163.slots.default;
+const __VLS_164 = {}.ElForm;
 /** @type {[typeof __VLS_components.ElForm, typeof __VLS_components.elForm, typeof __VLS_components.ElForm, typeof __VLS_components.elForm, ]} */ ;
 // @ts-ignore
-const __VLS_138 = __VLS_asFunctionalComponent(__VLS_137, new __VLS_137({
+const __VLS_165 = __VLS_asFunctionalComponent(__VLS_164, new __VLS_164({
     ref: "formRef",
     model: (__VLS_ctx.formData),
     rules: (__VLS_ctx.formRules),
     labelWidth: "100px",
 }));
-const __VLS_139 = __VLS_138({
+const __VLS_166 = __VLS_165({
     ref: "formRef",
     model: (__VLS_ctx.formData),
     rules: (__VLS_ctx.formRules),
     labelWidth: "100px",
-}, ...__VLS_functionalComponentArgsRest(__VLS_138));
+}, ...__VLS_functionalComponentArgsRest(__VLS_165));
 /** @type {typeof __VLS_ctx.formRef} */ ;
-var __VLS_141 = {};
-__VLS_140.slots.default;
-const __VLS_143 = {}.ElFormItem;
+var __VLS_168 = {};
+__VLS_167.slots.default;
+const __VLS_170 = {}.ElFormItem;
 /** @type {[typeof __VLS_components.ElFormItem, typeof __VLS_components.elFormItem, typeof __VLS_components.ElFormItem, typeof __VLS_components.elFormItem, ]} */ ;
 // @ts-ignore
-const __VLS_144 = __VLS_asFunctionalComponent(__VLS_143, new __VLS_143({
-    label: (__VLS_ctx.t('system.config.configKey')),
+const __VLS_171 = __VLS_asFunctionalComponent(__VLS_170, new __VLS_170({
+    label: (__VLS_ctx.t('system.configKey')),
     prop: "configKey",
 }));
-const __VLS_145 = __VLS_144({
-    label: (__VLS_ctx.t('system.config.configKey')),
+const __VLS_172 = __VLS_171({
+    label: (__VLS_ctx.t('system.configKey')),
     prop: "configKey",
-}, ...__VLS_functionalComponentArgsRest(__VLS_144));
-__VLS_146.slots.default;
-const __VLS_147 = {}.ElInput;
-/** @type {[typeof __VLS_components.ElInput, typeof __VLS_components.elInput, ]} */ ;
-// @ts-ignore
-const __VLS_148 = __VLS_asFunctionalComponent(__VLS_147, new __VLS_147({
-    modelValue: (__VLS_ctx.formData.configKey),
-    placeholder: (__VLS_ctx.t('common.pleaseEnter')),
-    disabled: (__VLS_ctx.isEdit),
-}));
-const __VLS_149 = __VLS_148({
-    modelValue: (__VLS_ctx.formData.configKey),
-    placeholder: (__VLS_ctx.t('common.pleaseEnter')),
-    disabled: (__VLS_ctx.isEdit),
-}, ...__VLS_functionalComponentArgsRest(__VLS_148));
-var __VLS_146;
-const __VLS_151 = {}.ElFormItem;
+}, ...__VLS_functionalComponentArgsRest(__VLS_171));
+__VLS_173.slots.default;
+if (!__VLS_ctx.isEdit) {
+    const __VLS_174 = {}.ElSelect;
+    /** @type {[typeof __VLS_components.ElSelect, typeof __VLS_components.elSelect, typeof __VLS_components.ElSelect, typeof __VLS_components.elSelect, ]} */ ;
+    // @ts-ignore
+    const __VLS_175 = __VLS_asFunctionalComponent(__VLS_174, new __VLS_174({
+        modelValue: (__VLS_ctx.formData.configKey),
+        placeholder: (__VLS_ctx.t('system.pleaseSelect')),
+        filterable: true,
+        clearable: true,
+    }));
+    const __VLS_176 = __VLS_175({
+        modelValue: (__VLS_ctx.formData.configKey),
+        placeholder: (__VLS_ctx.t('system.pleaseSelect')),
+        filterable: true,
+        clearable: true,
+    }, ...__VLS_functionalComponentArgsRest(__VLS_175));
+    __VLS_177.slots.default;
+    for (const [key] of __VLS_getVForSourceType((__VLS_ctx.keys))) {
+        const __VLS_178 = {}.ElOption;
+        /** @type {[typeof __VLS_components.ElOption, typeof __VLS_components.elOption, ]} */ ;
+        // @ts-ignore
+        const __VLS_179 = __VLS_asFunctionalComponent(__VLS_178, new __VLS_178({
+            key: (key),
+            label: (__VLS_ctx.t('system.' + key) || key),
+            value: (key),
+        }));
+        const __VLS_180 = __VLS_179({
+            key: (key),
+            label: (__VLS_ctx.t('system.' + key) || key),
+            value: (key),
+        }, ...__VLS_functionalComponentArgsRest(__VLS_179));
+    }
+    var __VLS_177;
+}
+else {
+    const __VLS_182 = {}.ElInput;
+    /** @type {[typeof __VLS_components.ElInput, typeof __VLS_components.elInput, ]} */ ;
+    // @ts-ignore
+    const __VLS_183 = __VLS_asFunctionalComponent(__VLS_182, new __VLS_182({
+        modelValue: (__VLS_ctx.formData.configKey),
+        placeholder: (__VLS_ctx.t('common.pleaseEnter')),
+        disabled: true,
+    }));
+    const __VLS_184 = __VLS_183({
+        modelValue: (__VLS_ctx.formData.configKey),
+        placeholder: (__VLS_ctx.t('common.pleaseEnter')),
+        disabled: true,
+    }, ...__VLS_functionalComponentArgsRest(__VLS_183));
+}
+var __VLS_173;
+const __VLS_186 = {}.ElFormItem;
 /** @type {[typeof __VLS_components.ElFormItem, typeof __VLS_components.elFormItem, typeof __VLS_components.ElFormItem, typeof __VLS_components.elFormItem, ]} */ ;
 // @ts-ignore
-const __VLS_152 = __VLS_asFunctionalComponent(__VLS_151, new __VLS_151({
-    label: (__VLS_ctx.t('system.config.configValue')),
+const __VLS_187 = __VLS_asFunctionalComponent(__VLS_186, new __VLS_186({
+    label: (__VLS_ctx.t('system.configValue')),
     prop: "configValue",
 }));
-const __VLS_153 = __VLS_152({
-    label: (__VLS_ctx.t('system.config.configValue')),
+const __VLS_188 = __VLS_187({
+    label: (__VLS_ctx.t('system.configValue')),
     prop: "configValue",
-}, ...__VLS_functionalComponentArgsRest(__VLS_152));
-__VLS_154.slots.default;
-const __VLS_155 = {}.ElInput;
+}, ...__VLS_functionalComponentArgsRest(__VLS_187));
+__VLS_189.slots.default;
+const __VLS_190 = {}.ElInput;
 /** @type {[typeof __VLS_components.ElInput, typeof __VLS_components.elInput, ]} */ ;
 // @ts-ignore
-const __VLS_156 = __VLS_asFunctionalComponent(__VLS_155, new __VLS_155({
+const __VLS_191 = __VLS_asFunctionalComponent(__VLS_190, new __VLS_190({
     modelValue: (__VLS_ctx.formData.configValue),
     type: "textarea",
     rows: (4),
     placeholder: (__VLS_ctx.t('common.pleaseEnter')),
 }));
-const __VLS_157 = __VLS_156({
+const __VLS_192 = __VLS_191({
     modelValue: (__VLS_ctx.formData.configValue),
     type: "textarea",
     rows: (4),
     placeholder: (__VLS_ctx.t('common.pleaseEnter')),
-}, ...__VLS_functionalComponentArgsRest(__VLS_156));
-var __VLS_154;
-const __VLS_159 = {}.ElFormItem;
+}, ...__VLS_functionalComponentArgsRest(__VLS_191));
+var __VLS_189;
+const __VLS_194 = {}.ElFormItem;
 /** @type {[typeof __VLS_components.ElFormItem, typeof __VLS_components.elFormItem, typeof __VLS_components.ElFormItem, typeof __VLS_components.elFormItem, ]} */ ;
 // @ts-ignore
-const __VLS_160 = __VLS_asFunctionalComponent(__VLS_159, new __VLS_159({
+const __VLS_195 = __VLS_asFunctionalComponent(__VLS_194, new __VLS_194({
     label: (__VLS_ctx.t('common.remark')),
     prop: "remark",
 }));
-const __VLS_161 = __VLS_160({
+const __VLS_196 = __VLS_195({
     label: (__VLS_ctx.t('common.remark')),
     prop: "remark",
-}, ...__VLS_functionalComponentArgsRest(__VLS_160));
-__VLS_162.slots.default;
-const __VLS_163 = {}.ElInput;
+}, ...__VLS_functionalComponentArgsRest(__VLS_195));
+__VLS_197.slots.default;
+const __VLS_198 = {}.ElInput;
 /** @type {[typeof __VLS_components.ElInput, typeof __VLS_components.elInput, ]} */ ;
 // @ts-ignore
-const __VLS_164 = __VLS_asFunctionalComponent(__VLS_163, new __VLS_163({
+const __VLS_199 = __VLS_asFunctionalComponent(__VLS_198, new __VLS_198({
     modelValue: (__VLS_ctx.formData.remark),
     placeholder: (__VLS_ctx.t('common.pleaseEnter')),
 }));
-const __VLS_165 = __VLS_164({
+const __VLS_200 = __VLS_199({
     modelValue: (__VLS_ctx.formData.remark),
     placeholder: (__VLS_ctx.t('common.pleaseEnter')),
-}, ...__VLS_functionalComponentArgsRest(__VLS_164));
-var __VLS_162;
-var __VLS_140;
+}, ...__VLS_functionalComponentArgsRest(__VLS_199));
+var __VLS_197;
+var __VLS_167;
 {
-    const { footer: __VLS_thisSlot } = __VLS_136.slots;
-    const __VLS_167 = {}.ElButton;
+    const { footer: __VLS_thisSlot } = __VLS_163.slots;
+    const __VLS_202 = {}.ElButton;
     /** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
     // @ts-ignore
-    const __VLS_168 = __VLS_asFunctionalComponent(__VLS_167, new __VLS_167({
+    const __VLS_203 = __VLS_asFunctionalComponent(__VLS_202, new __VLS_202({
         ...{ 'onClick': {} },
     }));
-    const __VLS_169 = __VLS_168({
+    const __VLS_204 = __VLS_203({
         ...{ 'onClick': {} },
-    }, ...__VLS_functionalComponentArgsRest(__VLS_168));
-    let __VLS_171;
-    let __VLS_172;
-    let __VLS_173;
-    const __VLS_174 = {
+    }, ...__VLS_functionalComponentArgsRest(__VLS_203));
+    let __VLS_206;
+    let __VLS_207;
+    let __VLS_208;
+    const __VLS_209 = {
         onClick: (...[$event]) => {
             __VLS_ctx.dialogVisible = false;
         }
     };
-    __VLS_170.slots.default;
+    __VLS_205.slots.default;
     (__VLS_ctx.t('common.cancel'));
-    var __VLS_170;
-    const __VLS_175 = {}.ElButton;
+    var __VLS_205;
+    const __VLS_210 = {}.ElButton;
     /** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
     // @ts-ignore
-    const __VLS_176 = __VLS_asFunctionalComponent(__VLS_175, new __VLS_175({
+    const __VLS_211 = __VLS_asFunctionalComponent(__VLS_210, new __VLS_210({
         ...{ 'onClick': {} },
         type: "primary",
         loading: (__VLS_ctx.submitLoading),
     }));
-    const __VLS_177 = __VLS_176({
+    const __VLS_212 = __VLS_211({
         ...{ 'onClick': {} },
         type: "primary",
         loading: (__VLS_ctx.submitLoading),
-    }, ...__VLS_functionalComponentArgsRest(__VLS_176));
-    let __VLS_179;
-    let __VLS_180;
-    let __VLS_181;
-    const __VLS_182 = {
+    }, ...__VLS_functionalComponentArgsRest(__VLS_211));
+    let __VLS_214;
+    let __VLS_215;
+    let __VLS_216;
+    const __VLS_217 = {
         onClick: (__VLS_ctx.handleSubmit)
     };
-    __VLS_178.slots.default;
+    __VLS_213.slots.default;
     (__VLS_ctx.t('common.confirm'));
-    var __VLS_178;
+    var __VLS_213;
 }
-var __VLS_136;
+var __VLS_163;
 /** @type {__VLS_StyleScopedClasses['sys-config']} */ ;
 /** @type {__VLS_StyleScopedClasses['page-header']} */ ;
 /** @type {__VLS_StyleScopedClasses['query-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['table-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['config-value']} */ ;
-/** @type {__VLS_StyleScopedClasses['pagination']} */ ;
 // @ts-ignore
-var __VLS_142 = __VLS_141;
+var __VLS_169 = __VLS_168;
 var __VLS_dollars;
 const __VLS_self = (await import('vue')).defineComponent({
     setup() {
@@ -743,11 +864,12 @@ const __VLS_self = (await import('vue')).defineComponent({
             submitLoading: submitLoading,
             formRef: formRef,
             formData: formData,
+            keys: keys,
             formRules: formRules,
             fetchList: fetchList,
-            handleSizeChange: handleSizeChange,
-            handleCurrentChange: handleCurrentChange,
             handleReset: handleReset,
+            nextPage: nextPage,
+            prevPage: prevPage,
             handleCreate: handleCreate,
             handleEdit: handleEdit,
             handleDelete: handleDelete,

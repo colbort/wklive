@@ -15,7 +15,7 @@ import { useConfirm } from '@/composables/useConfirm'
 const { t } = useI18n()
 
 // Pagination and main list
-const { pagination, updateTotal } = usePagination(10)
+const { pagination, updatePagination, nextPage: paginationNextPage, prevPage: paginationPrevPage } = usePagination(10)
 const list = ref<SysUserItem[]>([])
 const { loading, withLoading: withMainLoading } = useLoading()
 
@@ -38,13 +38,13 @@ async function fetchList() {
       const res = await userService.getList({
         keyword: queryForm.keyword || undefined,
         status: queryForm.status,
-        page: pagination.page,
-        size: pagination.pageSize,
+        cursor: pagination.cursor,
+        limit: pagination.limit,
       })
       // 兼容 code=0 / 200
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'list failed')
       list.value = res.data || []
-      updateTotal(res.total || 0)
+      updatePagination(res.total || 0, res.hasNext || false, res.hasPrev || false, res.nextCursor || null, res.prevCursor || null)
     } catch (e: any) {
       ElMessage.error(e?.message || t('common.loadFailed'))
     }
@@ -52,13 +52,25 @@ async function fetchList() {
 }
 
 function onSearch() {
-  pagination.page = 1
+  pagination.cursor = null
+  pagination.hasPrev = false
   fetchList()
 }
 function onReset() {
   queryForm.keyword = ''
   queryForm.status = undefined
-  pagination.page = 1
+  pagination.cursor = null
+  pagination.hasPrev = false
+  fetchList()
+}
+
+function nextPage() {
+  paginationNextPage()
+  fetchList()
+}
+
+function prevPage() {
+  paginationPrevPage()
   fetchList()
 }
 
@@ -68,7 +80,7 @@ const roles = ref<SysRole[]>([])
 async function fetchRoles() {
   await withRoleLoading(async () => {
     try {
-      const res = await roleService.getList({ page: 1, size: 9999, status: 1 })
+      const res = await roleService.getList({ cursor: null, limit: 9999, status: 1 })
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'role list failed')
       roles.value = res.data || []
     } catch (e: any) {
@@ -439,16 +451,15 @@ onMounted(async () => {
 
     </el-table>
 
-    <div style="display:flex; justify-content:flex-end; margin-top: 12px;">
-      <el-pagination
-        background
-        layout="total, prev, pager, next, sizes"
-        :total="pagination.total"
-        :page-size="pagination.pageSize"
-        :current-page="pagination.page"
-        @update:current-page="(p:number)=>{pagination.page=p; fetchList()}"
-        @update:page-size="(s:number)=>{pagination.pageSize=s; pagination.page=1; fetchList()}"
-      />
+    <div style="display:flex; justify-content:flex-end; gap: 10px; align-items: center; margin-top: 12px;">
+      <span>总共：{{ pagination.total }} 条</span>
+      <el-button @click="prevPage" :disabled="!pagination.hasPrev">上一页</el-button>
+      <el-button @click="nextPage" :disabled="!pagination.hasNext">下一页</el-button>
+      <el-select v-model="pagination.limit" style="width: 100px" @change="() => { pagination.cursor = null; pagination.hasPrev = false; fetchList() }">
+        <el-option label="10" :value="10" />
+        <el-option label="20" :value="20" />
+        <el-option label="50" :value="50" />
+      </el-select>
     </div>
   </el-card>
 

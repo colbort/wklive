@@ -28,10 +28,10 @@ func NewSysRoleListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysRo
 }
 
 func (l *SysRoleListLogic) SysRoleList(req *types.SysRoleListReq) (resp *types.SysRoleListResp, err error) {
-	response, err := l.svcCtx.SystemCli.SysRoleList(l.ctx, &system.SysRoleListReq{
+	result, err := l.svcCtx.SystemCli.SysRoleList(l.ctx, &system.SysRoleListReq{
 		Page: &system.PageReq{
-			Page: req.Page,
-			Size: req.Size,
+			Cursor: req.Cursor,
+			Limit:  req.Limit,
 		},
 		Status: req.Status,
 	})
@@ -40,7 +40,7 @@ func (l *SysRoleListLogic) SysRoleList(req *types.SysRoleListReq) (resp *types.S
 	}
 
 	var data []types.SysRoleItem
-	for _, item := range response.Data {
+	for _, item := range result.Data {
 		data = append(data, types.SysRoleItem{
 			Id:        item.Id,
 			Name:      item.Name,
@@ -53,8 +53,13 @@ func (l *SysRoleListLogic) SysRoleList(req *types.SysRoleListReq) (resp *types.S
 
 	resp = &types.SysRoleListResp{
 		RespBase: types.RespBase{
-			Code: response.Base.Code,
-			Msg:  response.Base.Msg,
+			Code:    result.Base.Code,
+			Msg:     result.Base.Msg,
+			Total:   result.Base.Total,
+			HasNext: result.Base.HasNext,
+			HasPrev: result.Base.HasPrev,
+			NextCursor: result.Base.NextCursor,
+			PrevCursor: result.Base.PrevCursor,
 		},
 		Data: data,
 	}

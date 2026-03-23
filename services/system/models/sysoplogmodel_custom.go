@@ -6,7 +6,7 @@ import (
 
 type OpLogModel interface {
 	sysOpLogModel
-	FindPage(ctx context.Context, username string, method string, path string, cursor, pageSize int64) ([]*SysOpLog, int64, error)
+	FindPage(ctx context.Context, username string, method string, path string, cursor, limit int64) ([]*SysOpLog, int64, error)
 }
 
 func (m *defaultSysOpLogModel) FindPage(
@@ -14,14 +14,14 @@ func (m *defaultSysOpLogModel) FindPage(
 	username string,
 	method string,
 	path string,
-	cursor, pageSize int64,
+	cursor, limit int64,
 ) ([]*SysOpLog, int64, error) {
 
-	if pageSize <= 0 {
-		pageSize = 10
+	if limit <= 0 {
+		limit = 10
 	}
-	if pageSize > 100 {
-		pageSize = 100
+	if limit > 100 {
+		limit = 100
 	}
 
 	// ---- WHERE 条件 ----
@@ -60,14 +60,14 @@ func (m *defaultSysOpLogModel) FindPage(
 			" FROM " + m.table +
 			" WHERE " + where +
 			" ORDER BY id DESC LIMIT ?"
-		listArgs = append(listArgs, pageSize)
+		listArgs = append(listArgs, limit)
 	} else {
 		// 后续页
 		listSql = "SELECT " + sysOpLogRows +
 			" FROM " + m.table +
 			" WHERE " + where +
 			" AND id < ? ORDER BY id DESC LIMIT ?"
-		listArgs = append(listArgs, cursor, pageSize)
+		listArgs = append(listArgs, cursor, limit)
 	}
 
 	var list []*SysOpLog

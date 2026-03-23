@@ -51,8 +51,8 @@ export interface UpdateRoleRequest {
 export interface RoleQueryParams {
   keyword?: string
   status?: number
-  page?: number
-  size?: number
+  cursor?: string | null
+  limit?: number
 }
 
 export interface RoleGrantRequest {

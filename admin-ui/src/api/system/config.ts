@@ -5,7 +5,7 @@ import type { RespBase, SysConfigListReq, SysConfigItem, SysConfigCreateReq, Sys
 // ===== API 函数 =====
 
 export function apiSysConfigList(params: SysConfigListReq): Promise<RespBase<SysConfigItem[]>> {
-  return get<SysConfigItem[]>('/admin/configs', { params })
+  return get<SysConfigItem[]>('/admin/configs', params)
 }
 
 export function apiSysConfigCreate(data: SysConfigCreateReq): Promise<RespBase> {

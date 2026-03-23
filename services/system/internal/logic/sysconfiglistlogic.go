@@ -26,12 +26,21 @@ func NewSysConfigListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 
 // 获取系统配置列表
 func (l *SysConfigListLogic) SysConfigList(in *system.SysConfigListReq) (*system.SysConfigListResp, error) {
-	configs, count, err := l.svcCtx.ConfigModel.FindPage(l.ctx, "", in.Page.Page, in.Page.Size)
+	items, count, err := l.svcCtx.ConfigModel.FindPage(l.ctx, "", in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}
+
+	prevCursor := in.Page.Cursor
+	if prevCursor < 0 {
+		prevCursor = 0
+	}
+	nextCursor := items[len(items)-1].Id
+	hasPrev := prevCursor > 0
+	hasNext := int64(len(items)) == in.Page.Limit
+
 	var data []*system.SysConfigItem
-	for _, config := range configs {
+	for _, config := range items {
 		value, err := utils.StringToStruct(config.ConfigValue.String)
 		if err != nil {
 			return nil, err
@@ -50,6 +59,10 @@ func (l *SysConfigListLogic) SysConfigList(in *system.SysConfigListReq) (*system
 			Code:  200,
 			Msg:   "查询成功",
 			Total: count,
+			HasNext: hasNext,
+			HasPrev: hasPrev,
+			NextCursor: nextCursor,
+			PrevCursor: prevCursor,
 		},
 		Data: data,
 	}, nil

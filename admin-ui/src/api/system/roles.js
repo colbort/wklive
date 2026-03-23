@@ -1,7 +1,7 @@
 import { get, post, put, del } from '@/utils/request';
 // ===== types =====
 export function apiRoleList(params) {
-    return get('/admin/roles', { params });
+    return get('/admin/roles', params);
 }
 export async function apiRoleCreate(data) {
     // POST /roles

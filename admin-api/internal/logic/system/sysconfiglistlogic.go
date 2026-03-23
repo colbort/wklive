@@ -29,10 +29,10 @@ func NewSysConfigListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 }
 
 func (l *SysConfigListLogic) SysConfigList(req *types.SysConfigListReq) (resp *types.SysConfigListResp, err error) {
-	out, err := l.svcCtx.SystemCli.SysConfigList(l.ctx, &system.SysConfigListReq{
+	result, err := l.svcCtx.SystemCli.SysConfigList(l.ctx, &system.SysConfigListReq{
 		Page: &system.PageReq{
-			Page: req.Page,
-			Size: req.Size,
+			Cursor: req.Cursor,
+			Limit:  req.Limit,
 		},
 		Keyword: req.Keyword,
 	})
@@ -41,12 +41,17 @@ func (l *SysConfigListLogic) SysConfigList(req *types.SysConfigListReq) (resp *t
 	}
 	resp = &types.SysConfigListResp{
 		RespBase: types.RespBase{
-			Code: out.Base.Code,
-			Msg:  out.Base.Msg,
+			Code:    result.Base.Code,
+			Msg:     result.Base.Msg,
+			Total:   result.Base.Total,
+			HasNext: result.Base.HasNext,
+			HasPrev: result.Base.HasPrev,
+			NextCursor: result.Base.NextCursor,
+			PrevCursor: result.Base.PrevCursor,
 		},
-		Data: make([]types.SysConfigItem, len(out.Data)),
+		Data: make([]types.SysConfigItem, len(result.Data)),
 	}
-	for i, v := range out.Data {
+	for i, v := range result.Data {
 		jsonValue, err := utils.StructToString(v.ConfigValue)
 		if err != nil {
 			return nil, err

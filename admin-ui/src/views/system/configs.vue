@@ -103,16 +103,15 @@
       </el-table>
 
       <!-- 分页 -->
-      <div class="pagination">
-        <el-pagination
-          v-model:current-page="pagination.page"
-          v-model:page-size="pagination.pageSize"
-          :total="pagination.total"
-          :page-sizes="[10, 20, 50, 100]"
-          layout="total, sizes, prev, pager, next, jumper"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
+      <div style="display:flex; justify-content:flex-end; gap: 10px; align-items: center; margin-top: 12px;">
+        <span>总共：{{ pagination.total }} 条</span>
+      <el-button @click="prevPage" :disabled="!pagination.hasPrev">上一页</el-button>
+      <el-button @click="nextPage" :disabled="!pagination.hasNext">下一页</el-button>
+        <el-select v-model="pagination.limit" style="width: 100px" @change="() => { pagination.cursor = null; pagination.hasPrev = false; fetchList() }">
+          <el-option label="10" :value="10" />
+          <el-option label="20" :value="20" />
+          <el-option label="50" :value="50" />
+        </el-select>
       </div>
     </el-card>
 
@@ -208,7 +207,7 @@ import { formatDate } from '@/utils'
 const { t } = useI18n()
 
 // Pagination and main list
-const { pagination, updateTotal } = usePagination(10)
+const { pagination, updatePagination, nextPage: paginationNextPage, prevPage: paginationPrevPage } = usePagination(10)
 const list = ref<SysConfigItem[]>([])
 const { loading, withLoading } = useLoading()
 
@@ -264,12 +263,12 @@ async function fetchList() {
     try {
       const res = await configService.getList({
         keyword: queryForm.keyword || undefined,
-        page: pagination.page,
-        size: pagination.pageSize,
+        cursor: pagination.cursor,
+        limit: pagination.limit,
       })
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'list failed')
       list.value = res.data || []
-      updateTotal(res.total || 0)
+      updatePagination(res.total || 0, res.hasNext || false, res.hasPrev || false, res.nextCursor || null, res.prevCursor || null)
     } catch (e: any) {
       ElMessage.error(e?.message || t('common.loadFailed'))
     }
@@ -278,20 +277,27 @@ async function fetchList() {
 
 // Handle pagination
 function handleSizeChange(size: number) {
-  pagination.pageSize = size
-  pagination.page = 1
-  fetchList()
-}
-
-function handleCurrentChange(page: number) {
-  pagination.page = page
+  pagination.limit = size
+  pagination.cursor = null
+  pagination.hasPrev = false
   fetchList()
 }
 
 // Handle reset
 function handleReset() {
   queryForm.keyword = ''
-  pagination.page = 1
+  pagination.cursor = null
+  pagination.hasPrev = false
+  fetchList()
+}
+
+function nextPage() {
+  paginationNextPage()
+  fetchList()
+}
+
+function prevPage() {
+  paginationPrevPage()
   fetchList()
 }
 

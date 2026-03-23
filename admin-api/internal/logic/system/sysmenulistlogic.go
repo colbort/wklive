@@ -30,8 +30,8 @@ func NewSysMenuListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysMe
 func (l *SysMenuListLogic) SysMenuList(req *types.SysMenuListReq) (resp *types.SysMenuListResp, err error) {
 	result, err := l.svcCtx.SystemCli.SysMenuList(l.ctx, &system.SysMenuListReq{
 		Page: &system.PageReq{
-			Page: req.Page,
-			Size: req.Size,
+			Cursor: req.Cursor,
+			Limit:  req.Limit,
 		},
 		Keyword:  req.Keyword,
 		Status:   req.Status,
@@ -62,6 +62,10 @@ func (l *SysMenuListLogic) SysMenuList(req *types.SysMenuListReq) (resp *types.S
 			Code:  result.Base.Code,
 			Msg:   result.Base.Msg,
 			Total: result.Base.Total,
+			HasNext: result.Base.HasNext,
+			HasPrev: result.Base.HasPrev,
+			NextCursor: result.Base.NextCursor,
+			PrevCursor: result.Base.PrevCursor,
 		},
 		Data: data,
 	}, nil

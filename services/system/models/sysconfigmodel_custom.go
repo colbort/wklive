@@ -11,21 +11,21 @@ import (
 
 type ConfigModel interface {
 	SysConfigModel
-	FindPage(ctx context.Context, configKey string, cursor, pageSize int64) ([]*SysConfig, int64, error)
+	FindPage(ctx context.Context, configKey string, cursor, limit int64) ([]*SysConfig, int64, error)
 	FindByKeys(ctx context.Context, configKeys []string) ([]*SysConfig, error)
 }
 
 func (m *customSysConfigModel) FindPage(
 	ctx context.Context,
 	configKey string,
-	cursor, pageSize int64,
+	cursor, limit int64,
 ) ([]*SysConfig, int64, error) {
 
-	if pageSize <= 0 {
-		pageSize = 10
+	if limit <= 0 {
+		limit = 10
 	}
-	if pageSize > 100 {
-		pageSize = 100
+	if limit > 100 {
+		limit = 100
 	}
 
 	where := "1=1"
@@ -57,7 +57,7 @@ func (m *customSysConfigModel) FindPage(
 			LIMIT ?`,
 			sysConfigRows, m.table, where,
 		)
-		listArgs = append(listArgs, pageSize)
+		listArgs = append(listArgs, limit)
 	} else {
 		// 后续页
 		listSql = fmt.Sprintf(
@@ -68,7 +68,7 @@ func (m *customSysConfigModel) FindPage(
 			LIMIT ?`,
 			sysConfigRows, m.table, where,
 		)
-		listArgs = append(listArgs, cursor, pageSize)
+		listArgs = append(listArgs, cursor, limit)
 	}
 
 	var list []*SysConfig

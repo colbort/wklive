@@ -30,8 +30,8 @@ func NewOpLogListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OpLogLi
 func (l *OpLogListLogic) OpLogList(req *types.OpLogListReq) (resp *types.OpLogListResp, err error) {
 	result, err := l.svcCtx.SystemCli.OpLogList(l.ctx, &system.OpLogListReq{
 		Page: &system.PageReq{
-			Page: req.Page,
-			Size: req.Size,
+			Cursor: req.Cursor,
+			Limit:  req.Limit,
 		},
 		Username: req.Username,
 		Method:   req.Method,
@@ -58,9 +58,13 @@ func (l *OpLogListLogic) OpLogList(req *types.OpLogListReq) (resp *types.OpLogLi
 	}
 	return &types.OpLogListResp{
 		RespBase: types.RespBase{
-			Code:  result.Base.Code,
-			Msg:   result.Base.Msg,
-			Total: result.Base.Total,
+			Code:       result.Base.Code,
+			Msg:        result.Base.Msg,
+			Total:      result.Base.Total,
+			HasNext:    result.Base.HasNext,
+			HasPrev:    result.Base.HasPrev,
+			NextCursor: result.Base.NextCursor,
+			PrevCursor: result.Base.PrevCursor,
 		},
 		Data: data,
 	}, nil

@@ -45,8 +45,8 @@ export type SysMenuUpdateReq = {
 }
 
 export type SysMenuListReq = {
-  page: number
-  size: number
+  cursor?: string | null
+  limit?: number
   keyword: string
   menuType: number
   status: number

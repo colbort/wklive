@@ -3,8 +3,8 @@ import type { RespBase, SysRole } from '@/services'
 
 // ===== types =====
 
-export function apiRoleList(params: { keyword?: string; status?: number; page?: number; size?: number }): Promise<RespBase<SysRole[]>> {
-  return get('/admin/roles', { params })
+export function apiRoleList(params: { keyword?: string; status?: number; cursor?: string | null; limit?: number }): Promise<RespBase<SysRole[]>> {
+  return get('/admin/roles', params)
 }
 
 export async function apiRoleCreate(data: any): Promise<RespBase> {

@@ -5,58 +5,67 @@
 import { ref, reactive, computed } from 'vue'
 
 export interface PaginationState {
-  page: number
-  pageSize: number
+  cursor: string | null
+  nextCursor: string | null
+  prevCursor: string | null
+  limit: number
   total: number
-  totalPages: number
+  hasNext: boolean
+  hasPrev: boolean
 }
 
-export function usePagination(initialPageSize = 10) {
+export function usePagination(initialLimit = 10) {
   const pagination = reactive<PaginationState>({
-    page: 1,
-    pageSize: initialPageSize,
+    cursor: null,
+    nextCursor: null,
+    prevCursor: null,
+    limit: initialLimit,
     total: 0,
-    totalPages: 0,
+    hasNext: false,
+    hasPrev: false,
   })
 
-  const isLastPage = computed(() => pagination.page >= pagination.totalPages)
-
-  const updateTotal = (total: number) => {
+  const updatePagination = (
+    total: number,
+    hasNext: boolean,
+    hasPrev: boolean,
+    nextCursor: string | null = null,
+    prevCursor: string | null = null,
+  ) => {
     pagination.total = total
-    pagination.totalPages = Math.ceil(total / pagination.pageSize)
+    pagination.hasNext = hasNext
+    pagination.hasPrev = hasPrev
+    pagination.nextCursor = nextCursor
+    pagination.prevCursor = prevCursor
   }
 
   const reset = () => {
-    pagination.page = 1
+    pagination.cursor = null
+    pagination.nextCursor = null
+    pagination.prevCursor = null
     pagination.total = 0
-    pagination.totalPages = 0
+    pagination.hasNext = false
+    pagination.hasPrev = false
   }
 
   const nextPage = () => {
-    if (!isLastPage.value) {
-      pagination.page++
+    if (pagination.hasNext && pagination.nextCursor) {
+      pagination.cursor = pagination.nextCursor
     }
   }
 
   const prevPage = () => {
-    if (pagination.page > 1) {
-      pagination.page--
-    }
-  }
-
-  const goPage = (page: number) => {
-    if (page > 0 && page <= pagination.totalPages) {
-      pagination.page = page
+    if (pagination.hasPrev && pagination.prevCursor) {
+      pagination.cursor = pagination.prevCursor
     }
   }
 
   return {
     pagination,
-    isLastPage,
-    updateTotal,
+    updatePagination,
     reset,
     nextPage,
     prevPage,
-    goPage,
   }
 }
+

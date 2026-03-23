@@ -107,12 +107,20 @@ message Google2FAEnableReq { int64 user_id = 1; string code = 2; }
 message Google2FADisableReq { int64 user_id = 1; string code = 2; } // 可选强校验
 message Google2FAResetReq { int64 user_id = 1; }
 
-message RespBase { int32 code = 1; string msg = 2; int64 total = 3; }
+message RespBase { 
+  int32 code = 1; 
+  string msg = 2; 
+  int64 total = 3; 
+  bool has_next = 4;
+  bool has_prev = 5;
+  int64 next_cursor = 6;
+  int64 prev_cursor = 7;
+}
 
 //////////////////////
 // RBAC - 用户
 //////////////////////
-message PageReq { int64 page = 1; int64 size = 2; }
+message PageReq { int64 cursor = 1; int64 limit = 2; }
 
 message SysUserItem {
   int64 id = 1;

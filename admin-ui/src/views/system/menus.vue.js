@@ -26,7 +26,7 @@ const dialogVisible = ref(false);
 const dialogType = ref('add');
 const formRef = ref();
 // Query pagination
-const queryPage = { page: 1, size: 1000 };
+const queryPage = { cursor: null, limit: 1000 };
 // Menu tree data
 const rawList = ref([]);
 const tableData = ref([]);
@@ -244,8 +244,8 @@ async function getList() {
     await withMainLoading(async () => {
         try {
             const res = await menuService.getList({
-                page: queryPage.page,
-                size: queryPage.size,
+                cursor: queryPage.cursor,
+                limit: queryPage.limit,
                 keyword: queryForm.keyword || '',
                 menuType: queryForm.menuType ?? 0,
                 status: queryForm.status ?? 0,
@@ -263,7 +263,7 @@ async function getList() {
     });
 }
 function handleSearch() {
-    queryPage.page = 1;
+    queryPage.cursor = null;
     getList();
 }
 function handleReset() {
@@ -271,8 +271,8 @@ function handleReset() {
     queryForm.menuType = undefined;
     queryForm.status = undefined;
     queryForm.visible = undefined;
-    queryPage.page = 1;
-    queryPage.size = 20;
+    queryPage.cursor = null;
+    queryPage.limit = 20;
     getList();
 }
 function resetFormData() {

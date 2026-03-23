@@ -1,6 +1,6 @@
 import { get, post, put, del } from '@/utils/request';
 export function apiUserList(params) {
-    return get('/admin/users', { params });
+    return get('/admin/users', params);
 }
 export function apiUserDetail(id) {
     return get(`/admin/users/${id}`);

@@ -1056,6 +1056,10 @@ type RespBase struct {
 	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
 	Msg           string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
 	Total         int64                  `protobuf:"varint,3,opt,name=total,proto3" json:"total,omitempty"`
+	HasNext       bool                   `protobuf:"varint,4,opt,name=has_next,json=hasNext,proto3" json:"has_next,omitempty"`
+	HasPrev       bool                   `protobuf:"varint,5,opt,name=has_prev,json=hasPrev,proto3" json:"has_prev,omitempty"`
+	NextCursor    int64                  `protobuf:"varint,6,opt,name=next_cursor,json=nextCursor,proto3" json:"next_cursor,omitempty"`
+	PrevCursor    int64                  `protobuf:"varint,7,opt,name=prev_cursor,json=prevCursor,proto3" json:"prev_cursor,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1111,13 +1115,41 @@ func (x *RespBase) GetTotal() int64 {
 	return 0
 }
 
+func (x *RespBase) GetHasNext() bool {
+	if x != nil {
+		return x.HasNext
+	}
+	return false
+}
+
+func (x *RespBase) GetHasPrev() bool {
+	if x != nil {
+		return x.HasPrev
+	}
+	return false
+}
+
+func (x *RespBase) GetNextCursor() int64 {
+	if x != nil {
+		return x.NextCursor
+	}
+	return 0
+}
+
+func (x *RespBase) GetPrevCursor() int64 {
+	if x != nil {
+		return x.PrevCursor
+	}
+	return 0
+}
+
 // ////////////////////
 // RBAC - 用户
 // ////////////////////
 type PageReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Page          int64                  `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
-	Size          int64                  `protobuf:"varint,2,opt,name=size,proto3" json:"size,omitempty"`
+	Cursor        int64                  `protobuf:"varint,1,opt,name=cursor,proto3" json:"cursor,omitempty"`
+	Limit         int64                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1152,16 +1184,16 @@ func (*PageReq) Descriptor() ([]byte, []int) {
 	return file_proto_system_system_proto_rawDescGZIP(), []int{16}
 }
 
-func (x *PageReq) GetPage() int64 {
+func (x *PageReq) GetCursor() int64 {
 	if x != nil {
-		return x.Page
+		return x.Cursor
 	}
 	return 0
 }
 
-func (x *PageReq) GetSize() int64 {
+func (x *PageReq) GetLimit() int64 {
 	if x != nil {
-		return x.Size
+		return x.Limit
 	}
 	return 0
 }
@@ -4022,14 +4054,20 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\",\n" +
 	"\x11Google2FAResetReq\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"F\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"\xbe\x01\n" +
 	"\bRespBase\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x10\n" +
 	"\x03msg\x18\x02 \x01(\tR\x03msg\x12\x14\n" +
-	"\x05total\x18\x03 \x01(\x03R\x05total\"1\n" +
-	"\aPageReq\x12\x12\n" +
-	"\x04page\x18\x01 \x01(\x03R\x04page\x12\x12\n" +
-	"\x04size\x18\x02 \x01(\x03R\x04size\"\xd4\x01\n" +
+	"\x05total\x18\x03 \x01(\x03R\x05total\x12\x19\n" +
+	"\bhas_next\x18\x04 \x01(\bR\ahasNext\x12\x19\n" +
+	"\bhas_prev\x18\x05 \x01(\bR\ahasPrev\x12\x1f\n" +
+	"\vnext_cursor\x18\x06 \x01(\x03R\n" +
+	"nextCursor\x12\x1f\n" +
+	"\vprev_cursor\x18\a \x01(\x03R\n" +
+	"prevCursor\"7\n" +
+	"\aPageReq\x12\x16\n" +
+	"\x06cursor\x18\x01 \x01(\x03R\x06cursor\x12\x14\n" +
+	"\x05limit\x18\x02 \x01(\x03R\x05limit\"\xd4\x01\n" +
 	"\vSysUserItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x12\x1a\n" +

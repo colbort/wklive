@@ -3,10 +3,10 @@ import type { RespBase, LoginLogItem, LoginLogListReq, OpLogItem, OpLogListReq }
 
 // ===== 登录日志 =====
 export function apiLoginLogList(params: LoginLogListReq): Promise<RespBase<LoginLogItem[]>> {
-  return get<LoginLogItem[]>('/admin/logs/login', { params })
+  return get<LoginLogItem[]>('/admin/logs/login', params)
 }
 
 // ===== 操作日志 =====
 export function apiOpLogList(params: OpLogListReq): Promise<RespBase<OpLogItem[]>> {
-  return get<OpLogItem[]>('/admin/logs/op', { params })
+  return get<OpLogItem[]>('/admin/logs/op', params)
 }

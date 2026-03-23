@@ -2,8 +2,8 @@ import { get, post, put, del } from '@/utils/request'
 import type { RespBase, SysUserItem, Google2FABindInitResp } from '@/services';
 
 
-export function apiUserList(params: { keyword?: string; status?: number; page?: number; size?: number }): Promise<RespBase<SysUserItem[]>> {
-  return get<SysUserItem[]>('/admin/users', { params })
+export function apiUserList(params: { keyword?: string; status?: number; cursor?: string | null; limit?: number }): Promise<RespBase<SysUserItem[]>> {
+  return get<SysUserItem[]>('/admin/users', params)
 }
 
 export function apiUserDetail(id: number) : Promise<RespBase<SysUserItem>> {

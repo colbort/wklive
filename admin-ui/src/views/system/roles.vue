@@ -18,7 +18,7 @@ function isSuperRole(r: SysRole | null | undefined) {
 }
 
 // ===== state =====
-const { pagination, updateTotal } = usePagination(20)
+const { pagination, updatePagination, nextPage: paginationNextPage, prevPage: paginationPrevPage } = usePagination(20)
 const { loading, withLoading } = useLoading()
 const { confirm } = useConfirm()
 const { form: queryForm } = useForm({
@@ -34,14 +34,14 @@ async function fetchList() {
       const q: any = {
         keyword: queryForm.keyword,
         status: queryForm.status,
-        page: pagination.page,
-        size: pagination.pageSize,
+        cursor: pagination.cursor,
+        limit: pagination.limit,
       }
       if (q.status === 0) delete q.status
 
       const resp = await roleService.getList(q)
       tableData.value = resp.data || []
-      updateTotal(resp.total || 0)
+      updatePagination(resp.total || 0, resp.hasNext || false, resp.hasPrev || false, resp.nextCursor || null, resp.prevCursor || null)
     } catch (e: any) {
       ElMessage.error(e?.message || t('common.failed'))
     }
@@ -89,7 +89,8 @@ function buildMenuTree(flat: any[]): any[] {
 }
 
 function onSearch() {
-  pagination.page = 1
+  pagination.cursor = null
+  pagination.hasPrev = false
   fetchList()
 }
 
@@ -97,6 +98,16 @@ function onReset() {
   queryForm.keyword = ''
   queryForm.status = 0
   onSearch()
+}
+
+function nextPage() {
+  paginationNextPage()
+  fetchList()
+}
+
+function prevPage() {
+  paginationPrevPage()
+  fetchList()
 }
 
 // ===== create/update dialog =====
@@ -349,16 +360,15 @@ onMounted(fetchList)
       </el-table-column>
     </el-table>
 
-    <div style="display:flex; justify-content:flex-end; margin-top:12px;">
-      <el-pagination
-        v-model:current-page="pagination.page"
-        v-model:page-size="pagination.pageSize"
-        :total="pagination.total"
-        background
-        layout="total, prev, pager, next, sizes"
-        @current-change="fetchList"
-        @size-change="() => { pagination.page = 1; fetchList() }"
-      />
+    <div style="display:flex; justify-content:flex-end; gap: 10px; align-items: center; margin-top:12px;">
+      <span>总共：{{ pagination.total }} 条</span>
+      <el-button @click="prevPage" :disabled="!pagination.hasPrev">上一页</el-button>
+      <el-button @click="nextPage" :disabled="!pagination.hasNext">下一页</el-button>
+      <el-select v-model="pagination.limit" style="width: 100px" @change="() => { pagination.cursor = null; pagination.hasPrev = false; fetchList() }">
+        <el-option label="10" :value="10" />
+        <el-option label="20" :value="20" />
+        <el-option label="50" :value="50" />
+      </el-select>
     </div>
   </el-card>
 

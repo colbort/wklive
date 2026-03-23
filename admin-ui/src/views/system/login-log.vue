@@ -11,7 +11,7 @@ import type { LoginLogItem } from '@/services/system/LogService'
 const { t } = useI18n()
 
 // Pagination and list
-const { pagination, updateTotal } = usePagination(10)
+const { pagination, updatePagination, nextPage: paginationNextPage, prevPage: paginationPrevPage } = usePagination(10)
 const { loading, withLoading } = useLoading()
 
 // Query form
@@ -30,12 +30,22 @@ async function fetchList() {
       const res = await logService.getLoginLogs({
         username: queryForm.username || undefined,
         success: queryForm.success,
-      // note: backend field named success        page: pagination.page,
-        size: pagination.pageSize,
+        cursor: pagination.cursor,
+        limit: pagination.limit,
       })
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
       list_ref.value = res.data || []
-      updateTotal(res.total || 0)
+      updatePagination(
+        res.total || 0,
+        res.hasNext || false,
+        res.hasPrev || false,
+        res.nextCursor || null,
+        res.prevCursor || null,
+      )
+      console.log('res.hasPrev', res.hasPrev)
+      console.log('res.hasNext', res.hasNext)
+      console.log('pagination.hasPrev', pagination.hasPrev)
+      console.log('pagination.hasNext', pagination.hasNext)
     } catch (e: any) {
       ElMessage.error(e?.message || t('common.loadFailed'))
     }
@@ -43,14 +53,26 @@ async function fetchList() {
 }
 
 function onSearch() {
-  pagination.page = 1
+  pagination.cursor = null
+  pagination.hasPrev = false
   fetchList()
 }
 
 function onReset() {
   queryForm.username = ''
   queryForm.success = undefined
-  pagination.page = 1
+  pagination.cursor = null
+  pagination.hasPrev = false
+  fetchList()
+}
+
+function nextPage() {
+  paginationNextPage()
+  fetchList()
+}
+
+function prevPage() {
+  paginationPrevPage()
   fetchList()
 }
 
@@ -110,16 +132,15 @@ onMounted(() => {
     </el-table>
 
     <!-- Pagination -->
-    <div style="display:flex; justify-content:flex-end;">
-      <el-pagination
-        background
-        layout="total, prev, pager, next, sizes"
-        :total="pagination.total"
-        :page-size="pagination.pageSize"
-        :current-page="pagination.page"
-        @update:current-page="(p:number)=>{pagination.page=p; fetchList()}"
-        @update:page-size="(s:number)=>{pagination.pageSize=s; pagination.page=1; fetchList()}"
-      />
+    <div style="display:flex; justify-content:flex-end; gap: 10px; align-items: center;">
+      <span>总共：{{ pagination.total }} 条</span>
+      <el-button @click="prevPage" :disabled="!pagination.hasPrev">上一页</el-button>
+      <el-button @click="nextPage" :disabled="!pagination.hasNext">下一页</el-button>
+      <el-select v-model="pagination.limit" style="width: 100px" @change="() => { pagination.cursor = null; pagination.hasPrev = false; pagination.nextCursor = null; pagination.prevCursor = null; fetchList() }">
+        <el-option label="10" :value="10" />
+        <el-option label="20" :value="20" />
+        <el-option label="50" :value="50" />
+      </el-select>
     </div>
   </el-card>
 </template>

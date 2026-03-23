@@ -25,25 +25,23 @@ func NewSysRoleListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysRo
 
 // 角色
 func (l *SysRoleListLogic) SysRoleList(in *system.SysRoleListReq) (*system.SysRoleListResp, error) {
-	// 1) 分页兜底
-	page := in.Page.Page
-	if page <= 0 {
-		page = 1
-	}
-	pageSize := in.Page.Size
-	if pageSize <= 0 || pageSize > 100 {
-		pageSize = 10
-	}
-
 	// 2) 查分页
-	rows, total, err := l.svcCtx.RoleModel.FindPage(l.ctx, in.Keyword, in.Status, page, pageSize)
+	items, total, err := l.svcCtx.RoleModel.FindPage(l.ctx, in.Keyword, in.Status, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}
 
+	prevCursor := in.Page.Cursor
+	if prevCursor < 0 {
+		prevCursor = 0
+	}
+	nextCursor := items[len(items)-1].Id
+	hasPrev := prevCursor > 0
+	hasNext := int64(len(items)) == in.Page.Limit
+
 	// 3) 组装返回
-	data := make([]*system.SysRoleItem, 0, len(rows))
-	for _, r := range rows {
+	data := make([]*system.SysRoleItem, 0, len(items))
+	for _, r := range items {
 		data = append(data, &system.SysRoleItem{
 			Id:        r.Id,
 			Name:      r.Name,
@@ -56,9 +54,13 @@ func (l *SysRoleListLogic) SysRoleList(in *system.SysRoleListReq) (*system.SysRo
 
 	return &system.SysRoleListResp{
 		Base: &system.RespBase{
-			Code:  200,
-			Msg:   "success",
-			Total: total,
+			Code:       200,
+			Msg:        "success",
+			Total:      total,
+			HasNext:    hasNext,
+			HasPrev:    hasPrev,
+			NextCursor: nextCursor,
+			PrevCursor: prevCursor,
 		},
 		Data: data,
 	}, nil

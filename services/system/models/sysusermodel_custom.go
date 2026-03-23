@@ -10,7 +10,7 @@ import (
 
 type UserModel interface {
 	sysUserModel
-	FindPage(ctx context.Context, keyword string, status, cursor, pageSize int64) ([]*SysUser, int64, error)
+	FindPage(ctx context.Context, keyword string, status, cursor, limit int64) ([]*SysUser, int64, error)
 	TransCtx(ctx context.Context, fn func(context context.Context, session sqlx.Session) error) error
 	InsertCtx(ctx context.Context, session sqlx.Session, data *SysUser) (sql.Result, error)
 }
@@ -19,14 +19,14 @@ func (m *defaultSysUserModel) FindPage(
 	ctx context.Context,
 	keyword string,
 	status int64,
-	cursor, pageSize int64,
+	cursor, limit int64,
 ) ([]*SysUser, int64, error) {
 
-	if pageSize <= 0 {
-		pageSize = 10
+	if limit <= 0 {
+		limit = 10
 	}
-	if pageSize > 100 {
-		pageSize = 100
+	if limit > 100 {
+		limit = 100
 	}
 
 	// ---- WHERE 条件 ----
@@ -40,7 +40,7 @@ func (m *defaultSysUserModel) FindPage(
 	}
 
 	// 假设 status < 0 表示全部
-	if status >= 0 {
+	if status > 0 {
 		where += " AND status = ?"
 		args = append(args, status)
 	}
@@ -62,14 +62,14 @@ func (m *defaultSysUserModel) FindPage(
 			"SELECT %s FROM %s WHERE %s ORDER BY id DESC LIMIT ?",
 			sysUserRows, m.table, where,
 		)
-		listArgs = append(listArgs, pageSize)
+		listArgs = append(listArgs, limit)
 	} else {
 		// 后续页
 		listSql = fmt.Sprintf(
 			"SELECT %s FROM %s WHERE %s AND id < ? ORDER BY id DESC LIMIT ?",
 			sysUserRows, m.table, where,
 		)
-		listArgs = append(listArgs, cursor, pageSize)
+		listArgs = append(listArgs, cursor, limit)
 	}
 
 	var list []*SysUser

@@ -7,21 +7,21 @@ import (
 
 type RoleModel interface {
 	sysRoleModel
-	FindPage(ctx context.Context, keyword string, status, cursor, pageSize int64) ([]*SysRole, int64, error)
+	FindPage(ctx context.Context, keyword string, status, cursor, limit int64) ([]*SysRole, int64, error)
 }
 
 func (m *defaultSysRoleModel) FindPage(
 	ctx context.Context,
 	keyword string,
 	status int64,
-	cursor, pageSize int64,
+	cursor, limit int64,
 ) ([]*SysRole, int64, error) {
 
-	if pageSize <= 0 {
-		pageSize = 10
+	if limit <= 0 {
+		limit = 10
 	}
-	if pageSize > 100 {
-		pageSize = 100
+	if limit > 100 {
+		limit = 100
 	}
 
 	// ---- WHERE 条件 ----
@@ -35,7 +35,7 @@ func (m *defaultSysRoleModel) FindPage(
 	}
 
 	// 假设 status < 0 表示全部
-	if status >= 0 {
+	if status > 0 {
 		where += " AND status = ?"
 		args = append(args, status)
 	}
@@ -61,7 +61,7 @@ func (m *defaultSysRoleModel) FindPage(
 			LIMIT ?`,
 			sysRoleRows, m.table, where,
 		)
-		listArgs = append(listArgs, pageSize)
+		listArgs = append(listArgs, limit)
 	} else {
 		// 后续页
 		listSql = fmt.Sprintf(
@@ -72,7 +72,7 @@ func (m *defaultSysRoleModel) FindPage(
 			LIMIT ?`,
 			sysRoleRows, m.table, where,
 		)
-		listArgs = append(listArgs, cursor, pageSize)
+		listArgs = append(listArgs, cursor, limit)
 	}
 
 	var list []*SysRole

@@ -7,7 +7,7 @@ import { useForm } from '@/composables/useForm';
 import { logService } from '@/services';
 const { t } = useI18n();
 // Pagination and list
-const { pagination, updateTotal } = usePagination(10);
+const { pagination, updatePagination, nextPage: paginationNextPage, prevPage: paginationPrevPage } = usePagination(10);
 const { loading, withLoading } = useLoading();
 // Query form
 const { form: queryForm } = useForm({
@@ -23,13 +23,13 @@ async function fetchList() {
             const res = await logService.getLoginLogs({
                 username: queryForm.username || undefined,
                 success: queryForm.success,
-                // note: backend field named success        page: pagination.page,
-                size: pagination.pageSize,
+                cursor: pagination.cursor,
+                limit: pagination.limit,
             });
             if (res.code !== 0 && res.code !== 200)
                 throw new Error(res.msg);
             list_ref.value = res.data || [];
-            updateTotal(res.total || 0);
+            updatePagination(res.total || 0, res.hasNext || false, res.hasPrev || false, res.nextCursor || null, res.prevCursor || null);
         }
         catch (e) {
             ElMessage.error(e?.message || t('common.loadFailed'));
@@ -37,13 +37,23 @@ async function fetchList() {
     });
 }
 function onSearch() {
-    pagination.page = 1;
+    pagination.cursor = null;
+    pagination.hasPrev = false;
     fetchList();
 }
 function onReset() {
     queryForm.username = '';
     queryForm.success = undefined;
-    pagination.page = 1;
+    pagination.cursor = null;
+    pagination.hasPrev = false;
+    fetchList();
+}
+function nextPage() {
+    paginationNextPage();
+    fetchList();
+}
+function prevPage() {
+    paginationPrevPage();
     fetchList();
 }
 onMounted(() => {
@@ -357,37 +367,100 @@ var __VLS_56;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ style: {} },
 });
-const __VLS_89 = {}.ElPagination;
-/** @type {[typeof __VLS_components.ElPagination, typeof __VLS_components.elPagination, ]} */ ;
+__VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({});
+(__VLS_ctx.pagination.total);
+const __VLS_89 = {}.ElButton;
+/** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
 // @ts-ignore
 const __VLS_90 = __VLS_asFunctionalComponent(__VLS_89, new __VLS_89({
-    ...{ 'onUpdate:currentPage': {} },
-    ...{ 'onUpdate:pageSize': {} },
-    background: true,
-    layout: "total, prev, pager, next, sizes",
-    total: (__VLS_ctx.pagination.total),
-    pageSize: (__VLS_ctx.pagination.pageSize),
-    currentPage: (__VLS_ctx.pagination.page),
+    ...{ 'onClick': {} },
+    disabled: (!__VLS_ctx.pagination.hasPrev),
 }));
 const __VLS_91 = __VLS_90({
-    ...{ 'onUpdate:currentPage': {} },
-    ...{ 'onUpdate:pageSize': {} },
-    background: true,
-    layout: "total, prev, pager, next, sizes",
-    total: (__VLS_ctx.pagination.total),
-    pageSize: (__VLS_ctx.pagination.pageSize),
-    currentPage: (__VLS_ctx.pagination.page),
+    ...{ 'onClick': {} },
+    disabled: (!__VLS_ctx.pagination.hasPrev),
 }, ...__VLS_functionalComponentArgsRest(__VLS_90));
 let __VLS_93;
 let __VLS_94;
 let __VLS_95;
 const __VLS_96 = {
-    'onUpdate:currentPage': ((p) => { __VLS_ctx.pagination.page = p; __VLS_ctx.fetchList(); })
+    onClick: (__VLS_ctx.prevPage)
 };
-const __VLS_97 = {
-    'onUpdate:pageSize': ((s) => { __VLS_ctx.pagination.pageSize = s; __VLS_ctx.pagination.page = 1; __VLS_ctx.fetchList(); })
-};
+__VLS_92.slots.default;
 var __VLS_92;
+const __VLS_97 = {}.ElButton;
+/** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
+// @ts-ignore
+const __VLS_98 = __VLS_asFunctionalComponent(__VLS_97, new __VLS_97({
+    ...{ 'onClick': {} },
+    disabled: (!__VLS_ctx.pagination.hasNext),
+}));
+const __VLS_99 = __VLS_98({
+    ...{ 'onClick': {} },
+    disabled: (!__VLS_ctx.pagination.hasNext),
+}, ...__VLS_functionalComponentArgsRest(__VLS_98));
+let __VLS_101;
+let __VLS_102;
+let __VLS_103;
+const __VLS_104 = {
+    onClick: (__VLS_ctx.nextPage)
+};
+__VLS_100.slots.default;
+var __VLS_100;
+const __VLS_105 = {}.ElSelect;
+/** @type {[typeof __VLS_components.ElSelect, typeof __VLS_components.elSelect, typeof __VLS_components.ElSelect, typeof __VLS_components.elSelect, ]} */ ;
+// @ts-ignore
+const __VLS_106 = __VLS_asFunctionalComponent(__VLS_105, new __VLS_105({
+    ...{ 'onChange': {} },
+    modelValue: (__VLS_ctx.pagination.limit),
+    ...{ style: {} },
+}));
+const __VLS_107 = __VLS_106({
+    ...{ 'onChange': {} },
+    modelValue: (__VLS_ctx.pagination.limit),
+    ...{ style: {} },
+}, ...__VLS_functionalComponentArgsRest(__VLS_106));
+let __VLS_109;
+let __VLS_110;
+let __VLS_111;
+const __VLS_112 = {
+    onChange: (() => { __VLS_ctx.pagination.cursor = null; __VLS_ctx.pagination.hasPrev = false; __VLS_ctx.pagination.nextCursor = null; __VLS_ctx.pagination.prevCursor = null; __VLS_ctx.fetchList(); })
+};
+__VLS_108.slots.default;
+const __VLS_113 = {}.ElOption;
+/** @type {[typeof __VLS_components.ElOption, typeof __VLS_components.elOption, ]} */ ;
+// @ts-ignore
+const __VLS_114 = __VLS_asFunctionalComponent(__VLS_113, new __VLS_113({
+    label: "10",
+    value: (10),
+}));
+const __VLS_115 = __VLS_114({
+    label: "10",
+    value: (10),
+}, ...__VLS_functionalComponentArgsRest(__VLS_114));
+const __VLS_117 = {}.ElOption;
+/** @type {[typeof __VLS_components.ElOption, typeof __VLS_components.elOption, ]} */ ;
+// @ts-ignore
+const __VLS_118 = __VLS_asFunctionalComponent(__VLS_117, new __VLS_117({
+    label: "20",
+    value: (20),
+}));
+const __VLS_119 = __VLS_118({
+    label: "20",
+    value: (20),
+}, ...__VLS_functionalComponentArgsRest(__VLS_118));
+const __VLS_121 = {}.ElOption;
+/** @type {[typeof __VLS_components.ElOption, typeof __VLS_components.elOption, ]} */ ;
+// @ts-ignore
+const __VLS_122 = __VLS_asFunctionalComponent(__VLS_121, new __VLS_121({
+    label: "50",
+    value: (50),
+}));
+const __VLS_123 = __VLS_122({
+    label: "50",
+    value: (50),
+}, ...__VLS_functionalComponentArgsRest(__VLS_122));
+var __VLS_108;
 var __VLS_3;
 var __VLS_dollars;
 const __VLS_self = (await import('vue')).defineComponent({
@@ -401,6 +474,8 @@ const __VLS_self = (await import('vue')).defineComponent({
             fetchList: fetchList,
             onSearch: onSearch,
             onReset: onReset,
+            nextPage: nextPage,
+            prevPage: prevPage,
         };
     },
 });
