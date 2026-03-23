@@ -162,6 +162,7 @@ func parsePerm(perm string) (obj string, act string, ok bool) {
 // isWhitePath 白名单接口
 func isWhitePath(path string) bool {
 	whiteList := map[string]struct{}{
+		"/admin/system/core":  {},
 		"/admin/auth/login":   {},
 		"/admin/auth/captcha": {},
 		"/health":             {},
@@ -191,6 +192,7 @@ func getRequiredPermission(path, method string) string {
 
 	permMap := map[string]string{
 		// auth
+		"GET /system/core":   "",
 		"GET /auth/profile":  "",
 		"POST /auth/profile": "", // 修改个人资料接口，暂不区分修改和查看权限
 		// 白名单接口

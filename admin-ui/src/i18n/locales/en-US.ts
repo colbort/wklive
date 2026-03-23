@@ -178,6 +178,7 @@ export default {
     configKey: 'Config Key',
     configValue: 'Config Value',
 
+    SYSTEM_CORE: 'System Config',
     OBJECT_STORAGE: 'Object Storage',
   },
   perms: {

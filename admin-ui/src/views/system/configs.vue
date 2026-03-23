@@ -2,7 +2,7 @@
   <div class="sys-config">
     <div class="page-header">
       <h2>{{ t('system.config') }}</h2>
-      <el-button type="primary" v-perm="'system:config:add'" @click="handleCreate">
+      <el-button type="primary" v-perm="'sys:config:add'" @click="handleCreate">
         <el-icon><Plus /></el-icon>
         {{ t('common.add') }}
       </el-button>
@@ -12,12 +12,20 @@
     <el-card class="query-card" shadow="never">
       <el-form :model="queryForm" inline>
         <el-form-item :label="t('system.configKey')">
-          <el-input
+          <el-select
             v-model="queryForm.keyword"
-            :placeholder="t('common.pleaseEnter')"
+            :placeholder="t('system.pleaseSelect')"
+            filterable
             clearable
-            @keyup.enter="fetchList"
-          />
+            @change="fetchList"
+          >
+            <el-option
+              v-for="key in keys"
+              :key="key"
+              :label="t('system.' + key) || key"
+              :value="key"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="fetchList">
@@ -87,6 +95,7 @@
             <el-button
               type="primary"
               size="small"
+              v-perm="'sys:config:update'"
               @click="handleEdit(row)"
             >
               {{ t('common.edit') }}
@@ -94,6 +103,7 @@
             <el-button
               type="danger"
               size="small"
+              v-perm="'sys:config:delete'"
               @click="handleDelete(row)"
             >
               {{ t('common.delete') }}

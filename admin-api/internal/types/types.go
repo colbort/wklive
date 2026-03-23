@@ -18,6 +18,16 @@ type ChangeUserStatusReq struct {
 	Status int64 `json:"status"` // 1启用 0禁用
 }
 
+type GetSystemCore struct {
+	SiteName string `json:"siteName"`
+	SiteLogo string `json:"siteLogo"`
+}
+
+type GetSystemCoreResp struct {
+	RespBase
+	Data GetSystemCore `json:"data"`
+}
+
 type Google2FABindReq struct {
 	UserId int64  `json:"userId"`
 	Secret string `json:"secret"`

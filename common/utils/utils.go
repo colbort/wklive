@@ -68,10 +68,14 @@ func StructToString(pbStruct *structpb.Struct) (string, error) {
 }
 
 func CheckConfig(key string, value string) error {
-	if key == system.SysConfigType_OBJECT_STORAGE.String() {
+	switch key {
+	case system.SysConfigType_OBJECT_STORAGE.String():
 		var objectStorageConfig system.ObjectStorageConfig
 		return json.Unmarshal([]byte(value), &objectStorageConfig)
+	case system.SysConfigType_SYSTEM_CORE.String():
+		var systemCore system.SystemCore
+		return json.Unmarshal([]byte(value), &systemCore)
+	default:
+		return nil
 	}
-
-	return nil
 }

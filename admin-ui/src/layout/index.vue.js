@@ -1,7 +1,27 @@
-import { computed, onBeforeUnmount, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import SideMenu from './side-menu.vue';
 import TopBar from './top-bar.vue';
+import { getSystemCore } from '@/stores/core';
+import { http } from '@/utils/request';
 const collapsed = ref(false);
+const systemCore = ref({
+    siteName: 'Admin UI',
+    siteLogo: '',
+});
+onMounted(async () => {
+    try {
+        const res = await getSystemCore();
+        if (res && res.code === 200 && res.data) {
+            if (res.data.siteName)
+                systemCore.value.siteName = res.data.siteName;
+            if (res.data.siteLogo)
+                systemCore.value.siteLogo = res.data.siteLogo;
+        }
+    }
+    catch (err) {
+        console.error('getSystemCore failed', err);
+    }
+});
 // 展开态宽度
 const asideWidth = ref(240);
 const MIN_W = 200;
@@ -41,6 +61,15 @@ onBeforeUnmount(() => {
     document.removeEventListener('mousemove', onDragMove);
     document.removeEventListener('mouseup', onDragEnd);
 });
+function formatUrl(url) {
+    console.log('formatUrl', url);
+    if (!url)
+        return '';
+    const fullUrl = url.startsWith('http')
+        ? url
+        : `${http.defaults.baseURL}${url}`;
+    return `${fullUrl}${fullUrl.includes('?') ? '&' : '?'}t=${Date.now()}`;
+}
 debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
 const __VLS_ctx = {};
 let __VLS_components;
@@ -58,15 +87,24 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.aside, __VLS_intrinsicElements
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "brand" },
 });
+if (__VLS_ctx.systemCore.siteLogo) {
+    __VLS_asFunctionalElement(__VLS_intrinsicElements.img)({
+        src: (__VLS_ctx.formatUrl(__VLS_ctx.systemCore.siteLogo)),
+        alt: "logo",
+        ...{ class: "brand-logo" },
+    });
+}
 if (!__VLS_ctx.collapsed) {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({
         ...{ class: "brand-text" },
     });
+    (__VLS_ctx.systemCore.siteName);
 }
 else {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({
         ...{ class: "brand-text" },
     });
+    (__VLS_ctx.systemCore.siteName ? __VLS_ctx.systemCore.siteName.slice(0, 2).toUpperCase() : 'AI');
 }
 /** @type {[typeof SideMenu, ]} */ ;
 // @ts-ignore
@@ -113,6 +151,7 @@ const __VLS_12 = __VLS_11({}, ...__VLS_functionalComponentArgsRest(__VLS_11));
 /** @type {__VLS_StyleScopedClasses['layout']} */ ;
 /** @type {__VLS_StyleScopedClasses['sider']} */ ;
 /** @type {__VLS_StyleScopedClasses['brand']} */ ;
+/** @type {__VLS_StyleScopedClasses['brand-logo']} */ ;
 /** @type {__VLS_StyleScopedClasses['brand-text']} */ ;
 /** @type {__VLS_StyleScopedClasses['brand-text']} */ ;
 /** @type {__VLS_StyleScopedClasses['resizer']} */ ;
@@ -125,9 +164,11 @@ const __VLS_self = (await import('vue')).defineComponent({
             SideMenu: SideMenu,
             TopBar: TopBar,
             collapsed: collapsed,
+            systemCore: systemCore,
             realAsideWidth: realAsideWidth,
             toggleSider: toggleSider,
             onDragStart: onDragStart,
+            formatUrl: formatUrl,
         };
     },
 });

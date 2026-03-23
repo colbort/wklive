@@ -1,3 +1,13 @@
+// System config
+type GetSystemCore {
+  siteName string `json:"siteName"`
+  siteLogo string `json:"siteLogo"`
+}
+type GetSystemCoreResp {
+  RespBase
+  data GetSystemCore `json:"data"`
+}
+
 // ===== auth =====
 type LoginReq {
   username   string `json:"username"`
@@ -18,6 +28,8 @@ type LoginResp {
   group: auth_public
 )
 service admin {
+  @handler GetSystemCore
+  get /system/core returns (GetSystemCoreResp)
   @handler Login
   post /auth/login (LoginReq) returns (LoginResp)
 }

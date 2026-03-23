@@ -41,6 +41,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/auth/login",
 				Handler: auth_public.LoginHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/system/core",
+				Handler: auth_public.GetSystemCoreHandler(serverCtx),
+			},
 		},
 		rest.WithPrefix("/admin"),
 	)
