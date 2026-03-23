@@ -125,7 +125,7 @@
       </div>
     </el-card>
 
-    <!-- 新增/编辑对话框 -->
+    <!-- 新增/编辑对话框 --> 
     <el-dialog
       v-model="dialogVisible"
       :title="isEdit ? t('common.edit') : t('common.add')"
@@ -148,6 +148,7 @@
             :placeholder="t('system.pleaseSelect')"
             filterable
             clearable
+            @change="handleConfigKeyChange"
           >
             <el-option
               v-for="key in keys"
@@ -163,26 +164,24 @@
             disabled
           />
         </el-form-item>
-        <el-form-item
-          :label="t('system.configValue')"
-          prop="configValue"
-        >
-          <el-input
-            v-model="formData.configValue"
-            type="textarea"
-            :rows="4"
-            :placeholder="t('common.pleaseEnter')"
-          />
-        </el-form-item>
-        <el-form-item
-          :label="t('common.remark')"
-          prop="remark"
-        >
-          <el-input
-            v-model="formData.remark"
-            :placeholder="t('common.pleaseEnter')"
-          />
-        </el-form-item>
+        <template v-if="formData.configKey === 'SYSTEM_CORE'">
+          <SystemCoreConfig v-model="systemCoreForm" />
+        </template>
+
+        <template v-else-if="formData.configKey === 'OBJECT_STORAGE'">
+          <ObjectStorageConfigComponent v-model="objectStorageForm" />
+        </template>
+
+        <template v-else>
+          <el-form-item :label="t('system.configValue')" prop="configValue">
+            <el-input
+              v-model="formData.configValue"
+              type="textarea"
+              :rows="4"
+              :placeholder="t('common.pleaseEnter')"
+            />
+          </el-form-item>
+        </template>
       </el-form>
 
       <template #footer>
@@ -208,11 +207,14 @@ import { useI18n } from 'vue-i18n'
 import { Plus, Search, Refresh } from '@element-plus/icons-vue'
 import { configService } from '@/services'
 import type { SysConfigItem, SysConfigCreateReq, SysConfigUpdateReq } from '@/services'
+import type { SystemCore, ObjectStorageConfig } from '@/services/system/ConfigService'
 import { usePagination } from '@/composables/usePagination'
 import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
 import { useConfirm } from '@/composables/useConfirm'
 import { formatDate } from '@/utils'
+import SystemCoreConfig from './components/SystemCoreConfig.vue'
+import ObjectStorageConfigComponent from './components/ObjectStorageConfig.vue'
 
 const { t } = useI18n()
 
@@ -245,6 +247,40 @@ const { form: formData, reset: resetForm } = useForm({
 
 // Keys for configKey selection
 const keys = ref<string[]>([])
+
+// Config type special forms
+const systemCoreForm = ref<SystemCore>({
+  site_name: '',
+  site_logo: '',
+})
+
+const activeTab = ref('aliyun')
+
+const objectStorageForm = ref<ObjectStorageConfig>({
+  aliyun_oss: {
+    endpoint: '',
+    access_key_id: '',
+    access_key_secret: '',
+    bucket_name: '',
+    bucket_url: '',
+  },
+  tencent_cos: {
+    region: '',
+    secret_id: '',
+    secret_key: '',
+    bucket_name: '',
+    bucket_url: '',
+  },
+  minio: {
+    endpoint: '',
+    access_key_id: '',
+    access_key_secret: '',
+    bucket_name: '',
+    bucket_url: '',
+  },
+  oss_type: 1,
+  oss_domain: '',
+})
 
 // Form validation rules
 const formRules = {
@@ -301,6 +337,83 @@ function handleReset() {
   fetchList()
 }
 
+function resetTypeForms() {
+  systemCoreForm.value = {
+    site_name: '',
+    site_logo: '',
+  }
+  objectStorageForm.value = {
+    aliyun_oss: {
+      endpoint: '',
+      access_key_id: '',
+      access_key_secret: '',
+      bucket_name: '',
+      bucket_url: '',
+    },
+    tencent_cos: {
+      region: '',
+      secret_id: '',
+      secret_key: '',
+      bucket_name: '',
+      bucket_url: '',
+    },
+    minio: {
+      endpoint: '',
+      access_key_id: '',
+      access_key_secret: '',
+      bucket_name: '',
+      bucket_url: '',
+    },
+    oss_type: 1,
+    oss_domain: '',
+  }
+}
+
+function handleConfigKeyChange(value: string) {
+  if (value === 'SYSTEM_CORE') {
+    systemCoreForm.value = {
+      site_name: '',
+      site_logo: '',
+    }
+    formData.configValue = ''
+  } else if (value === 'OBJECT_STORAGE') {
+    objectStorageForm.value = {
+      aliyun_oss: {
+        endpoint: '',
+        access_key_id: '',
+        access_key_secret: '',
+        bucket_name: '',
+        bucket_url: '',
+      },
+      tencent_cos: {
+        region: '',
+        secret_id: '',
+        secret_key: '',
+        bucket_name: '',
+        bucket_url: '',
+      },
+      minio: {
+        endpoint: '',
+        access_key_id: '',
+        access_key_secret: '',
+        bucket_name: '',
+        bucket_url: '',
+      },
+      oss_type: 1,
+      oss_domain: '',
+    }
+    formData.configValue = ''
+  }
+}
+
+function handleTabClick(_tab: any) {
+  // 仅切换视图选项卡，不修改 oss_type
+}
+
+function handleOssTypeChange(_value: number) {
+  // 仅修改 oss_type，不切换选项卡
+}
+
 function nextPage() {
   paginationNextPage()
   fetchList()
@@ -315,6 +428,7 @@ function prevPage() {
 function handleCreate() {
   isEdit.value = false
   resetForm()
+  resetTypeForms()
   loadKeys()
   dialogVisible.value = true
 }
@@ -323,12 +437,43 @@ function handleCreate() {
 function handleEdit(row: SysConfigItem) {
   isEdit.value = true
   resetForm()
+  resetTypeForms()
   Object.assign(formData, {
     id: row.id,
     configKey: row.configKey,
-    configValue: row.configValue,
     remark: row.remark || ''
   })
+
+  if (row.configKey === 'SYSTEM_CORE') {
+    try {
+      const parsed = JSON.parse(row.configValue || '{}')
+      systemCoreForm.value = {
+        site_name: parsed.site_name || '',
+        site_logo: parsed.site_logo || '',
+      }
+    } catch {
+      systemCoreForm.value = { site_name: '', site_logo: '' }
+    }
+  } else if (row.configKey === 'OBJECT_STORAGE') {
+    try {
+      const parsed = JSON.parse(row.configValue || '{}')
+      objectStorageForm.value = {
+        aliyun_oss: parsed.aliyun_oss || objectStorageForm.value.aliyun_oss,
+        tencent_cos: parsed.tencent_cos || objectStorageForm.value.tencent_cos,
+        minio: parsed.minio || objectStorageForm.value.minio,
+        oss_type: parsed.oss_type || 1,
+        oss_domain: parsed.oss_domain || '',
+      }
+      if (parsed.oss_type === 1) activeTab.value = 'aliyun'
+      else if (parsed.oss_type === 2) activeTab.value = 'tencent'
+      else activeTab.value = 'minio'
+    } catch {
+      resetTypeForms()
+    }
+  } else {
+    formData.configValue = row.configValue
+  }
+
   dialogVisible.value = true
 }
 
@@ -365,6 +510,18 @@ async function handleSubmit() {
     await formRef.value.validate()
 
     submitLoading.value = true
+
+    if (formData.configKey === 'SYSTEM_CORE') {
+      if (!systemCoreForm.value.site_name) {
+        throw new Error(t('validation.required'))
+      }
+      formData.configValue = JSON.stringify(systemCoreForm.value)
+    } else if (formData.configKey === 'OBJECT_STORAGE') {
+      if (!objectStorageForm.value.oss_domain) {
+        throw new Error(t('validation.required'))
+      }
+      formData.configValue = JSON.stringify(objectStorageForm.value)
+    }
 
     if (isEdit.value) {
       const { id, ...updateData } = formData
