@@ -55,6 +55,7 @@ const (
 	System_SysConfigDetail_FullMethodName    = "/system.System/SysConfigDetail"
 	System_SysConfigByKeys_FullMethodName    = "/system.System/SysConfigByKeys"
 	System_SysConfigKeys_FullMethodName      = "/system.System/SysConfigKeys"
+	System_LoginUserPerms_FullMethodName     = "/system.System/LoginUserPerms"
 )
 
 // SystemClient is the client API for System service.
@@ -137,6 +138,8 @@ type SystemClient interface {
 	SysConfigByKeys(ctx context.Context, in *SysConfigByKeysReq, opts ...grpc.CallOption) (*SysConfigByKeysResp, error)
 	// 获取系统配置所有的key
 	SysConfigKeys(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysConfigKeysResp, error)
+	// 获取登录用户的权限列表
+	LoginUserPerms(ctx context.Context, in *LoginUserPermsReq, opts ...grpc.CallOption) (*LoginUserPermsResp, error)
 }
 
 type systemClient struct {
@@ -507,6 +510,16 @@ func (c *systemClient) SysConfigKeys(ctx context.Context, in *Empty, opts ...grp
 	return out, nil
 }
 
+func (c *systemClient) LoginUserPerms(ctx context.Context, in *LoginUserPermsReq, opts ...grpc.CallOption) (*LoginUserPermsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LoginUserPermsResp)
+	err := c.cc.Invoke(ctx, System_LoginUserPerms_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SystemServer is the server API for System service.
 // All implementations must embed UnimplementedSystemServer
 // for forward compatibility.
@@ -587,6 +600,8 @@ type SystemServer interface {
 	SysConfigByKeys(context.Context, *SysConfigByKeysReq) (*SysConfigByKeysResp, error)
 	// 获取系统配置所有的key
 	SysConfigKeys(context.Context, *Empty) (*SysConfigKeysResp, error)
+	// 获取登录用户的权限列表
+	LoginUserPerms(context.Context, *LoginUserPermsReq) (*LoginUserPermsResp, error)
 	mustEmbedUnimplementedSystemServer()
 }
 
@@ -704,6 +719,9 @@ func (UnimplementedSystemServer) SysConfigByKeys(context.Context, *SysConfigByKe
 }
 func (UnimplementedSystemServer) SysConfigKeys(context.Context, *Empty) (*SysConfigKeysResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SysConfigKeys not implemented")
+}
+func (UnimplementedSystemServer) LoginUserPerms(context.Context, *LoginUserPermsReq) (*LoginUserPermsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoginUserPerms not implemented")
 }
 func (UnimplementedSystemServer) mustEmbedUnimplementedSystemServer() {}
 func (UnimplementedSystemServer) testEmbeddedByValue()                {}
@@ -1374,6 +1392,24 @@ func _System_SysConfigKeys_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _System_LoginUserPerms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginUserPermsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).LoginUserPerms(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_LoginUserPerms_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).LoginUserPerms(ctx, req.(*LoginUserPermsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // System_ServiceDesc is the grpc.ServiceDesc for System service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1524,6 +1560,10 @@ var System_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SysConfigKeys",
 			Handler:    _System_SysConfigKeys_Handler,
+		},
+		{
+			MethodName: "LoginUserPerms",
+			Handler:    _System_LoginUserPerms_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

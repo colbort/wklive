@@ -550,7 +550,7 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.d
     ...{ style: {} },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({});
-(__VLS_ctx.pagination.total);
+(__VLS_ctx.t('common.totalItems', { count: __VLS_ctx.pagination.total }));
 const __VLS_124 = {}.ElButton;
 /** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
 // @ts-ignore
@@ -569,6 +569,7 @@ const __VLS_131 = {
     onClick: (__VLS_ctx.prevPage)
 };
 __VLS_127.slots.default;
+(__VLS_ctx.t('common.prevPage'));
 var __VLS_127;
 const __VLS_132 = {}.ElButton;
 /** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
@@ -588,6 +589,7 @@ const __VLS_139 = {
     onClick: (__VLS_ctx.nextPage)
 };
 __VLS_135.slots.default;
+(__VLS_ctx.t('common.nextPage'));
 var __VLS_135;
 const __VLS_140 = {}.ElSelect;
 /** @type {[typeof __VLS_components.ElSelect, typeof __VLS_components.elSelect, typeof __VLS_components.ElSelect, typeof __VLS_components.elSelect, ]} */ ;

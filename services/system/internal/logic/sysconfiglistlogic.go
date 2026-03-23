@@ -35,7 +35,11 @@ func (l *SysConfigListLogic) SysConfigList(in *system.SysConfigListReq) (*system
 	if prevCursor < 0 {
 		prevCursor = 0
 	}
-	nextCursor := items[len(items)-1].Id
+	nextCursor := int64(0)
+	if int64(len(items)) == in.Page.Limit {
+		lastItem := items[len(items)-1]
+		nextCursor = lastItem.Id
+	}
 	hasPrev := prevCursor > 0
 	hasNext := int64(len(items)) == in.Page.Limit
 
@@ -56,11 +60,11 @@ func (l *SysConfigListLogic) SysConfigList(in *system.SysConfigListReq) (*system
 
 	return &system.SysConfigListResp{
 		Base: &system.RespBase{
-			Code:  200,
-			Msg:   "查询成功",
-			Total: count,
-			HasNext: hasNext,
-			HasPrev: hasPrev,
+			Code:       200,
+			Msg:        "查询成功",
+			Total:      count,
+			HasNext:    hasNext,
+			HasPrev:    hasPrev,
 			NextCursor: nextCursor,
 			PrevCursor: prevCursor,
 		},

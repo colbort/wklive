@@ -40,7 +40,11 @@ func (l *OpLogListLogic) OpLogList(in *system.OpLogListReq) (*system.OpLogListRe
 	if prevCursor < 0 {
 		prevCursor = 0
 	}
-	nextCursor := items[len(items)-1].Id
+	nextCursor := int64(0)
+	if int64(len(items)) == in.Page.Limit {
+		lastItem := items[len(items)-1]
+		nextCursor = lastItem.Id
+	}
 	hasPrev := prevCursor > 0
 	hasNext := int64(len(items)) == in.Page.Limit
 
@@ -63,11 +67,11 @@ func (l *OpLogListLogic) OpLogList(in *system.OpLogListReq) (*system.OpLogListRe
 
 	return &system.OpLogListResp{
 		Base: &system.RespBase{
-			Code:  200,
-			Msg:   "success",
-			Total: total,
-			HasNext: hasNext,
-			HasPrev: hasPrev,
+			Code:       200,
+			Msg:        "success",
+			Total:      total,
+			HasNext:    hasNext,
+			HasPrev:    hasPrev,
 			NextCursor: nextCursor,
 			PrevCursor: prevCursor,
 		},

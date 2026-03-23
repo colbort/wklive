@@ -9,12 +9,19 @@ import (
 	"github.com/zeromicro/go-zero/rest/httpx"
 	"wklive/admin-api/internal/logic/system"
 	"wklive/admin-api/internal/svc"
+	"wklive/admin-api/internal/types"
 )
 
 func SysUserDeleteHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var req types.SysUserDeleteReq
+		if err := httpx.Parse(r, &req); err != nil {
+			httpx.ErrorCtx(r.Context(), w, err)
+			return
+		}
+
 		l := system.NewSysUserDeleteLogic(r.Context(), svcCtx)
-		resp, err := l.SysUserDelete()
+		resp, err := l.SysUserDelete(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

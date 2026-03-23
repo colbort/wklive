@@ -17,6 +17,11 @@ export default {
         avatarUpdated: 'Avatar updated successfully',
         avatarUploadFailed: 'Avatar upload failed',
         passwordMinLength: 'Password must be at least 6 characters',
+        passwordUpdated: 'Password updated successfully',
+        updatePasswordFailed: 'Password update failed',
+        nicknameUpdated: 'Nickname updated successfully',
+        updateNicknameFailed: 'Nickname update failed',
+        updateAvatarFailed: 'Avatar update failed',
     },
   route: {
     home: 'Home',
@@ -111,6 +116,9 @@ export default {
     createFailed: 'Create failed',
     updateSuccess: 'Update success',
     updateFailed: 'Update failed',
+    prevPage: 'Previous Page',
+    nextPage: 'Next Page',
+    totalItems: 'Total: {count} items',
   },
   system: {
     mgmt: 'System',

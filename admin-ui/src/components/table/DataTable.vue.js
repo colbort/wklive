@@ -1,4 +1,6 @@
+import { useI18n } from 'vue-i18n';
 export default ((__VLS_props, __VLS_ctx, __VLS_expose, __VLS_setup = (async () => {
+    const { t } = useI18n();
     const __VLS_props = withDefaults(defineProps(), {
         showActions: true,
         pageSizes: () => [10, 20, 50, 100],
@@ -68,7 +70,7 @@ export default ((__VLS_props, __VLS_ctx, __VLS_expose, __VLS_setup = (async () =
             ...{ style: {} },
         });
         __VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({});
-        (__VLS_ctx.pagination.total);
+        (__VLS_ctx.t('common.totalItems', { count: __VLS_ctx.pagination.total }));
         const __VLS_12 = {}.ElButton;
         /** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
         // @ts-ignore
@@ -91,6 +93,7 @@ export default ((__VLS_props, __VLS_ctx, __VLS_expose, __VLS_setup = (async () =
             }
         };
         __VLS_15.slots.default;
+        (__VLS_ctx.t('common.prevPage'));
         var __VLS_15;
         const __VLS_20 = {}.ElButton;
         /** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
@@ -114,6 +117,7 @@ export default ((__VLS_props, __VLS_ctx, __VLS_expose, __VLS_setup = (async () =
             }
         };
         __VLS_23.slots.default;
+        (__VLS_ctx.t('common.nextPage'));
         var __VLS_23;
         const __VLS_28 = {}.ElSelect;
         /** @type {[typeof __VLS_components.ElSelect, typeof __VLS_components.elSelect, typeof __VLS_components.ElSelect, typeof __VLS_components.elSelect, ]} */ ;
@@ -178,7 +182,9 @@ export default ((__VLS_props, __VLS_ctx, __VLS_expose, __VLS_setup = (async () =
     var __VLS_dollars;
     const __VLS_self = (await import('vue')).defineComponent({
         setup() {
-            return {};
+            return {
+                t: t,
+            };
         },
         __typeProps: {},
         props: {},

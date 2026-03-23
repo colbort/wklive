@@ -24,9 +24,9 @@
     
     <!-- 分页器 -->
     <div v-if="pagination" style="display:flex; justify-content:flex-end; gap: 10px; align-items: center; margin-top: 12px;">
-      <span>总共：{{ pagination.total }} 条</span>
-      <el-button @click="$emit('prev')" :disabled="!pagination.hasPrev">上一页</el-button>
-      <el-button @click="$emit('next')" :disabled="!pagination.hasNext">下一页</el-button>
+      <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
+      <el-button @click="$emit('prev')" :disabled="!pagination.hasPrev">{{ t('common.prevPage') }}</el-button>
+      <el-button @click="$emit('next')" :disabled="!pagination.hasNext">{{ t('common.nextPage') }}</el-button>
       <el-select v-model="pagination.limit" style="width: 100px" @change="() => $emit('change-limit')">
         <el-option label="10" :value="10" />
         <el-option label="20" :value="20" />
@@ -38,6 +38,9 @@
 
 <script setup lang="ts" generic="T extends Record<string, any>">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 interface Props<T> {
   data: T[]

@@ -14,6 +14,7 @@ type UserRoleModel interface {
 	FindRoleIdsByUserId(ctx context.Context, uid int64) ([]int64, error)
 	FindRoleIdsByUserIds(ctx context.Context, userIds []int64) (map[int64][]int64, error)
 	InsertCtx(ctx context.Context, session sqlx.Session, data *SysUserRole) (sql.Result, error)
+	FindLoginUserPerms(ctx context.Context, uid int64) ([]string, error)
 }
 
 func (m *defaultSysUserRoleModel) FindRoleIdsByUserId(ctx context.Context, uid int64) ([]int64, error) {
@@ -72,4 +73,21 @@ func (m *defaultSysUserRoleModel) InsertCtx(ctx context.Context, session sqlx.Se
 	query := fmt.Sprintf("insert into %s (`user_id`, `role_id`) values (?, ?)", m.table)
 	ret, err := session.ExecCtx(ctx, query, data.UserId, data.RoleId)
 	return ret, err
+}
+
+func (m *defaultSysUserRoleModel) FindLoginUserPerms(ctx context.Context, uid int64) ([]string, error) {
+	query := fmt.Sprintf(`
+		SELECT DISTINCT m.perms
+		FROM %s ur
+		INNER JOIN sys_role_menu rm ON ur.role_id = rm.role_id
+		INNER JOIN sys_menu m ON rm.menu_id = m.id
+		WHERE ur.user_id = ? AND m.perms != ''
+	`, m.table)
+
+	var perms []string
+	err := m.QueryRowsNoCacheCtx(ctx, &perms, query, uid)
+	if err != nil {
+		return nil, err
+	}
+	return perms, nil
 }

@@ -472,6 +472,10 @@ const __VLS_49 = __VLS_asFunctionalComponent(__VLS_48, new __VLS_48({}));
 const __VLS_50 = __VLS_49({}, ...__VLS_functionalComponentArgsRest(__VLS_49));
 var __VLS_47;
 var __VLS_43;
+__VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({
+    ...{ class: "user-nickname" },
+});
+(__VLS_ctx.auth.user?.nickname || __VLS_ctx.auth.user?.username);
 {
     const { dropdown: __VLS_thisSlot } = __VLS_35.slots;
     const __VLS_52 = {}.ElDropdownMenu;
@@ -630,6 +634,7 @@ var __VLS_87;
 /** @type {__VLS_StyleScopedClasses['title']} */ ;
 /** @type {__VLS_StyleScopedClasses['right']} */ ;
 /** @type {__VLS_StyleScopedClasses['avatar-container']} */ ;
+/** @type {__VLS_StyleScopedClasses['user-nickname']} */ ;
 /** @type {__VLS_StyleScopedClasses['cropper-dialog-body']} */ ;
 /** @type {__VLS_StyleScopedClasses['cropper-stage']} */ ;
 /** @type {__VLS_StyleScopedClasses['dialog-footer']} */ ;

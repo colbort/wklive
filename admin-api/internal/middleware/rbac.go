@@ -40,9 +40,9 @@ func (m *RbacMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		// 3. 查询当前用户资料和最终权限列表
-		profileResp, err := m.svcCtx.SystemCli.GetProfile(r.Context(), &system.ProfileReq{
-			Uid: uid,
+		// 3. 查询当前用户权限列表
+		resp, err := m.svcCtx.SystemCli.LoginUserPerms(r.Context(), &system.LoginUserPermsReq{
+			UserId: uid,
 		})
 		if err != nil {
 			logx.Errorf("get profile failed, uid=%d err=%v", uid, err)
@@ -61,7 +61,7 @@ func (m *RbacMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		// 5. 创建当前请求专属的 Casbin Enforcer
-		enforcer, err := newUserPermEnforcer(fmt.Sprintf("%d", uid), profileResp.Perms)
+		enforcer, err := newUserPermEnforcer(fmt.Sprintf("%d", uid), resp.Perms)
 		if err != nil {
 			logx.Errorf("create casbin enforcer failed: %v", err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -86,7 +86,7 @@ func (m *RbacMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 
 		if !allowed {
 			logx.Errorf("forbidden, uid=%d method=%s path=%s required=%s userPerms=%v",
-				uid, r.Method, r.URL.Path, requiredPerm, profileResp.Perms)
+				uid, r.Method, r.URL.Path, requiredPerm, resp.Perms)
 			http.Error(w, "Forbidden", http.StatusForbidden)
 			return
 		}
@@ -192,7 +192,7 @@ func getRequiredPermission(path, method string) string {
 	permMap := map[string]string{
 		// auth
 		"GET /auth/profile":  "",
-		"POST /auth/profile": "",
+		"POST /auth/profile": "", // 修改个人资料接口，暂不区分修改和查看权限
 		// 白名单接口
 		"GET /users":      "",
 		"GET /roles":      "",
@@ -203,10 +203,9 @@ func getRequiredPermission(path, method string) string {
 
 		// users
 		"POST /users":                   "sys:user:add",
-		"PUT /users":                    "sys:user:edit",
+		"PUT /users":                    "sys:user:update",
 		"DELETE /users":                 "sys:user:delete",
-		"GET /users/{id}":               "sys:user:view",
-		"POST /users/status":            "sys:user:edit",
+		"POST /users/status":            "sys:user:update",
 		"POST /users/resetPwd":          "sys:user:resetPwd",
 		"POST /users/assignRoles":       "sys:user:assignRoles",
 		"POST /users/google2fa/reset":   "sys:user:2fa:reset",
@@ -216,25 +215,22 @@ func getRequiredPermission(path, method string) string {
 
 		// roles
 		"POST /roles":       "sys:role:add",
-		"PUT /roles":        "sys:role:edit",
+		"PUT /roles":        "sys:role:update",
 		"DELETE /roles":     "sys:role:delete",
-		"GET /roles/grant":  "sys:role:grant",
 		"POST /roles/grant": "sys:role:grant",
 
-		// perms
-		"GET /perms": "sys:perm:list",
-
 		// menus
-		"POST /menus":     "sys:menu:add",
-		"PUT /menus":      "sys:menu:edit",
-		"DELETE /menus":   "sys:menu:delete",
-		"GET /menus/tree": "sys:menu:list",
+		"POST /menus":   "sys:menu:add",
+		"PUT /menus":    "sys:menu:update",
+		"DELETE /menus": "sys:menu:delete",
 
 		// logs
+		"DELETE /logs/login": "sys:log:delete",
+		"DELETE /logs/op":    "sys:log:delete",
 
 		// configs
 		"POST /configs":   "sys:config:add",
-		"PUT /configs":    "sys:config:edit",
+		"PUT /configs":    "sys:config:update",
 		"DELETE /configs": "sys:config:delete",
 	}
 

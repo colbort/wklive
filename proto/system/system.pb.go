@@ -3967,6 +3967,94 @@ func (x *SysConfigKeysResp) GetData() []string {
 	return nil
 }
 
+type LoginUserPermsReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LoginUserPermsReq) Reset() {
+	*x = LoginUserPermsReq{}
+	mi := &file_proto_system_system_proto_msgTypes[61]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LoginUserPermsReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LoginUserPermsReq) ProtoMessage() {}
+
+func (x *LoginUserPermsReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_system_system_proto_msgTypes[61]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LoginUserPermsReq.ProtoReflect.Descriptor instead.
+func (*LoginUserPermsReq) Descriptor() ([]byte, []int) {
+	return file_proto_system_system_proto_rawDescGZIP(), []int{61}
+}
+
+func (x *LoginUserPermsReq) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+type LoginUserPermsResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Perms         []string               `protobuf:"bytes,1,rep,name=perms,proto3" json:"perms,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LoginUserPermsResp) Reset() {
+	*x = LoginUserPermsResp{}
+	mi := &file_proto_system_system_proto_msgTypes[62]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LoginUserPermsResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LoginUserPermsResp) ProtoMessage() {}
+
+func (x *LoginUserPermsResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_system_system_proto_msgTypes[62]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LoginUserPermsResp.ProtoReflect.Descriptor instead.
+func (*LoginUserPermsResp) Descriptor() ([]byte, []int) {
+	return file_proto_system_system_proto_rawDescGZIP(), []int{62}
+}
+
+func (x *LoginUserPermsResp) GetPerms() []string {
+	if x != nil {
+		return x.Perms
+	}
+	return nil
+}
+
 var File_proto_system_system_proto protoreflect.FileDescriptor
 
 const file_proto_system_system_proto_rawDesc = "" +
@@ -4273,7 +4361,11 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x04data\x18\x03 \x03(\v2\x15.system.SysConfigItemR\x04data\"M\n" +
 	"\x11SysConfigKeysResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12\x12\n" +
-	"\x04data\x18\x03 \x03(\tR\x04data2\x83\x12\n" +
+	"\x04data\x18\x03 \x03(\tR\x04data\",\n" +
+	"\x11LoginUserPermsReq\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"*\n" +
+	"\x12LoginUserPermsResp\x12\x14\n" +
+	"\x05perms\x18\x01 \x03(\tR\x05perms2\xcc\x12\n" +
 	"\x06System\x12;\n" +
 	"\n" +
 	"AdminLogin\x12\x15.system.AdminLoginReq\x1a\x16.system.AdminLoginResp\x125\n" +
@@ -4312,7 +4404,8 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\rSysConfigList\x12\x18.system.SysConfigListReq\x1a\x19.system.SysConfigListResp\x12J\n" +
 	"\x0fSysConfigDetail\x12\x1a.system.SysConfigDetailReq\x1a\x1b.system.SysConfigDetailResp\x12J\n" +
 	"\x0fSysConfigByKeys\x12\x1a.system.SysConfigByKeysReq\x1a\x1b.system.SysConfigByKeysResp\x129\n" +
-	"\rSysConfigKeys\x12\r.system.Empty\x1a\x19.system.SysConfigKeysRespB\x1cZ\x1awklive/proto/system;systemb\x06proto3"
+	"\rSysConfigKeys\x12\r.system.Empty\x1a\x19.system.SysConfigKeysResp\x12G\n" +
+	"\x0eLoginUserPerms\x12\x19.system.LoginUserPermsReq\x1a\x1a.system.LoginUserPermsRespB\x1cZ\x1awklive/proto/system;systemb\x06proto3"
 
 var (
 	file_proto_system_system_proto_rawDescOnce sync.Once
@@ -4326,7 +4419,7 @@ func file_proto_system_system_proto_rawDescGZIP() []byte {
 	return file_proto_system_system_proto_rawDescData
 }
 
-var file_proto_system_system_proto_msgTypes = make([]protoimpl.MessageInfo, 61)
+var file_proto_system_system_proto_msgTypes = make([]protoimpl.MessageInfo, 63)
 var file_proto_system_system_proto_goTypes = []any{
 	(*Empty)(nil),                  // 0: system.Empty
 	(*AdminLoginReq)(nil),          // 1: system.AdminLoginReq
@@ -4389,8 +4482,10 @@ var file_proto_system_system_proto_goTypes = []any{
 	(*SysConfigByKeysReq)(nil),     // 58: system.SysConfigByKeysReq
 	(*SysConfigByKeysResp)(nil),    // 59: system.SysConfigByKeysResp
 	(*SysConfigKeysResp)(nil),      // 60: system.SysConfigKeysResp
-	(*structpb.Struct)(nil),        // 61: google.protobuf.Struct
-	(SysConfigType)(0),             // 62: system.SysConfigType
+	(*LoginUserPermsReq)(nil),      // 61: system.LoginUserPermsReq
+	(*LoginUserPermsResp)(nil),     // 62: system.LoginUserPermsResp
+	(*structpb.Struct)(nil),        // 63: google.protobuf.Struct
+	(SysConfigType)(0),             // 64: system.SysConfigType
 }
 var file_proto_system_system_proto_depIdxs = []int32{
 	15, // 0: system.AdminLoginResp.base:type_name -> system.RespBase
@@ -4420,13 +4515,13 @@ var file_proto_system_system_proto_depIdxs = []int32{
 	16, // 24: system.OpLogListReq.page:type_name -> system.PageReq
 	15, // 25: system.OpLogListResp.base:type_name -> system.RespBase
 	47, // 26: system.OpLogListResp.data:type_name -> system.OpLogItem
-	61, // 27: system.SysConfigCreateReq.config_value:type_name -> google.protobuf.Struct
-	61, // 28: system.SysConfigUpdateReq.config_value:type_name -> google.protobuf.Struct
-	61, // 29: system.SysConfigItem.config_value:type_name -> google.protobuf.Struct
+	63, // 27: system.SysConfigCreateReq.config_value:type_name -> google.protobuf.Struct
+	63, // 28: system.SysConfigUpdateReq.config_value:type_name -> google.protobuf.Struct
+	63, // 29: system.SysConfigItem.config_value:type_name -> google.protobuf.Struct
 	16, // 30: system.SysConfigListReq.page:type_name -> system.PageReq
 	15, // 31: system.SysConfigListResp.base:type_name -> system.RespBase
 	53, // 32: system.SysConfigListResp.data:type_name -> system.SysConfigItem
-	62, // 33: system.SysConfigDetailReq.config_key:type_name -> system.SysConfigType
+	64, // 33: system.SysConfigDetailReq.config_key:type_name -> system.SysConfigType
 	15, // 34: system.SysConfigDetailResp.base:type_name -> system.RespBase
 	53, // 35: system.SysConfigDetailResp.data:type_name -> system.SysConfigItem
 	15, // 36: system.SysConfigByKeysResp.base:type_name -> system.RespBase
@@ -4468,44 +4563,46 @@ var file_proto_system_system_proto_depIdxs = []int32{
 	56, // 72: system.System.SysConfigDetail:input_type -> system.SysConfigDetailReq
 	58, // 73: system.System.SysConfigByKeys:input_type -> system.SysConfigByKeysReq
 	0,  // 74: system.System.SysConfigKeys:input_type -> system.Empty
-	2,  // 75: system.System.AdminLogin:output_type -> system.AdminLoginResp
-	6,  // 76: system.System.GetProfile:output_type -> system.ProfileResp
-	15, // 77: system.System.UpdateProfile:output_type -> system.RespBase
-	11, // 78: system.System.Google2FAInit:output_type -> system.Google2FAInitResp
-	15, // 79: system.System.Google2FAEnable:output_type -> system.RespBase
-	15, // 80: system.System.Google2FADisable:output_type -> system.RespBase
-	15, // 81: system.System.Google2FAReset:output_type -> system.RespBase
-	19, // 82: system.System.SysUserList:output_type -> system.SysUserListResp
-	21, // 83: system.System.SysUserDetail:output_type -> system.SysUserDetailResp
-	15, // 84: system.System.SysUserCreate:output_type -> system.RespBase
-	15, // 85: system.System.SysUserUpdate:output_type -> system.RespBase
-	15, // 86: system.System.SysUserDelete:output_type -> system.RespBase
-	15, // 87: system.System.ChangeUserStatus:output_type -> system.RespBase
-	15, // 88: system.System.ResetUserPwd:output_type -> system.RespBase
-	15, // 89: system.System.AssignUserRoles:output_type -> system.RespBase
-	30, // 90: system.System.SysRoleList:output_type -> system.SysRoleListResp
-	15, // 91: system.System.SysRoleCreate:output_type -> system.RespBase
-	15, // 92: system.System.SysRoleUpdate:output_type -> system.RespBase
-	15, // 93: system.System.SysRoleDelete:output_type -> system.RespBase
-	15, // 94: system.System.SysRoleGrant:output_type -> system.RespBase
-	36, // 95: system.System.SysRoleGrantDetail:output_type -> system.SysRoleGrantDetailResp
-	38, // 96: system.System.SysPermList:output_type -> system.SysPermListResp
-	9,  // 97: system.System.GetMenuTree:output_type -> system.SysMenuTreeResp
-	15, // 98: system.System.SysMenuCreate:output_type -> system.RespBase
-	15, // 99: system.System.SysMenuUpdate:output_type -> system.RespBase
-	15, // 100: system.System.SysMenuDelete:output_type -> system.RespBase
-	43, // 101: system.System.SysMenuList:output_type -> system.SysMenuListResp
-	46, // 102: system.System.LoginLogList:output_type -> system.LoginLogListResp
-	49, // 103: system.System.OpLogList:output_type -> system.OpLogListResp
-	15, // 104: system.System.SysConfigCreate:output_type -> system.RespBase
-	15, // 105: system.System.SysConfigUpdate:output_type -> system.RespBase
-	15, // 106: system.System.SysConfigDelete:output_type -> system.RespBase
-	55, // 107: system.System.SysConfigList:output_type -> system.SysConfigListResp
-	57, // 108: system.System.SysConfigDetail:output_type -> system.SysConfigDetailResp
-	59, // 109: system.System.SysConfigByKeys:output_type -> system.SysConfigByKeysResp
-	60, // 110: system.System.SysConfigKeys:output_type -> system.SysConfigKeysResp
-	75, // [75:111] is the sub-list for method output_type
-	39, // [39:75] is the sub-list for method input_type
+	61, // 75: system.System.LoginUserPerms:input_type -> system.LoginUserPermsReq
+	2,  // 76: system.System.AdminLogin:output_type -> system.AdminLoginResp
+	6,  // 77: system.System.GetProfile:output_type -> system.ProfileResp
+	15, // 78: system.System.UpdateProfile:output_type -> system.RespBase
+	11, // 79: system.System.Google2FAInit:output_type -> system.Google2FAInitResp
+	15, // 80: system.System.Google2FAEnable:output_type -> system.RespBase
+	15, // 81: system.System.Google2FADisable:output_type -> system.RespBase
+	15, // 82: system.System.Google2FAReset:output_type -> system.RespBase
+	19, // 83: system.System.SysUserList:output_type -> system.SysUserListResp
+	21, // 84: system.System.SysUserDetail:output_type -> system.SysUserDetailResp
+	15, // 85: system.System.SysUserCreate:output_type -> system.RespBase
+	15, // 86: system.System.SysUserUpdate:output_type -> system.RespBase
+	15, // 87: system.System.SysUserDelete:output_type -> system.RespBase
+	15, // 88: system.System.ChangeUserStatus:output_type -> system.RespBase
+	15, // 89: system.System.ResetUserPwd:output_type -> system.RespBase
+	15, // 90: system.System.AssignUserRoles:output_type -> system.RespBase
+	30, // 91: system.System.SysRoleList:output_type -> system.SysRoleListResp
+	15, // 92: system.System.SysRoleCreate:output_type -> system.RespBase
+	15, // 93: system.System.SysRoleUpdate:output_type -> system.RespBase
+	15, // 94: system.System.SysRoleDelete:output_type -> system.RespBase
+	15, // 95: system.System.SysRoleGrant:output_type -> system.RespBase
+	36, // 96: system.System.SysRoleGrantDetail:output_type -> system.SysRoleGrantDetailResp
+	38, // 97: system.System.SysPermList:output_type -> system.SysPermListResp
+	9,  // 98: system.System.GetMenuTree:output_type -> system.SysMenuTreeResp
+	15, // 99: system.System.SysMenuCreate:output_type -> system.RespBase
+	15, // 100: system.System.SysMenuUpdate:output_type -> system.RespBase
+	15, // 101: system.System.SysMenuDelete:output_type -> system.RespBase
+	43, // 102: system.System.SysMenuList:output_type -> system.SysMenuListResp
+	46, // 103: system.System.LoginLogList:output_type -> system.LoginLogListResp
+	49, // 104: system.System.OpLogList:output_type -> system.OpLogListResp
+	15, // 105: system.System.SysConfigCreate:output_type -> system.RespBase
+	15, // 106: system.System.SysConfigUpdate:output_type -> system.RespBase
+	15, // 107: system.System.SysConfigDelete:output_type -> system.RespBase
+	55, // 108: system.System.SysConfigList:output_type -> system.SysConfigListResp
+	57, // 109: system.System.SysConfigDetail:output_type -> system.SysConfigDetailResp
+	59, // 110: system.System.SysConfigByKeys:output_type -> system.SysConfigByKeysResp
+	60, // 111: system.System.SysConfigKeys:output_type -> system.SysConfigKeysResp
+	62, // 112: system.System.LoginUserPerms:output_type -> system.LoginUserPermsResp
+	76, // [76:113] is the sub-list for method output_type
+	39, // [39:76] is the sub-list for method input_type
 	39, // [39:39] is the sub-list for extension type_name
 	39, // [39:39] is the sub-list for extension extendee
 	0,  // [0:39] is the sub-list for field type_name
@@ -4525,7 +4622,7 @@ func file_proto_system_system_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_system_system_proto_rawDesc), len(file_proto_system_system_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   61,
+			NumMessages:   63,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

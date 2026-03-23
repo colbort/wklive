@@ -27,6 +27,8 @@ type (
 	LoginLogItem           = system.LoginLogItem
 	LoginLogListReq        = system.LoginLogListReq
 	LoginLogListResp       = system.LoginLogListResp
+	LoginUserPermsReq      = system.LoginUserPermsReq
+	LoginUserPermsResp     = system.LoginUserPermsResp
 	OpLogItem              = system.OpLogItem
 	OpLogListReq           = system.OpLogListReq
 	OpLogListResp          = system.OpLogListResp
@@ -149,6 +151,8 @@ type (
 		SysConfigByKeys(ctx context.Context, in *SysConfigByKeysReq, opts ...grpc.CallOption) (*SysConfigByKeysResp, error)
 		// 获取系统配置所有的key
 		SysConfigKeys(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysConfigKeysResp, error)
+		// 获取登录用户的权限列表
+		LoginUserPerms(ctx context.Context, in *LoginUserPermsReq, opts ...grpc.CallOption) (*LoginUserPermsResp, error)
 	}
 
 	defaultSystem struct {
@@ -376,4 +380,10 @@ func (m *defaultSystem) SysConfigByKeys(ctx context.Context, in *SysConfigByKeys
 func (m *defaultSystem) SysConfigKeys(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysConfigKeysResp, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.SysConfigKeys(ctx, in, opts...)
+}
+
+// 获取登录用户的权限列表
+func (m *defaultSystem) LoginUserPerms(ctx context.Context, in *LoginUserPermsReq, opts ...grpc.CallOption) (*LoginUserPermsResp, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.LoginUserPerms(ctx, in, opts...)
 }

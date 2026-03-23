@@ -35,7 +35,11 @@ func (l *SysRoleListLogic) SysRoleList(in *system.SysRoleListReq) (*system.SysRo
 	if prevCursor < 0 {
 		prevCursor = 0
 	}
-	nextCursor := items[len(items)-1].Id
+	nextCursor := int64(0)
+	if int64(len(items)) == in.Page.Limit {
+		lastItem := items[len(items)-1]
+		nextCursor = lastItem.Id
+	}
 	hasPrev := prevCursor > 0
 	hasNext := int64(len(items)) == in.Page.Limit
 

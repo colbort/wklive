@@ -27,9 +27,9 @@ func NewSysUserDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 	}
 }
 
-func (l *SysUserDeleteLogic) SysUserDelete() (resp *types.RespBase, err error) {
+func (l *SysUserDeleteLogic) SysUserDelete(req *types.SysUserDeleteReq) (resp *types.RespBase, err error) {
 	result, err := l.svcCtx.SystemCli.SysUserDelete(l.ctx, &system.SysUserDeleteReq{
-		Id: 0,
+		Id: req.Id,
 	})
 	if err != nil {
 		return nil, err

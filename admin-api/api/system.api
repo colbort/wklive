@@ -40,6 +40,10 @@ type SysUserUpdateReq {
   roleIds  []int64 `json:"roleIds,optional"`
 }
 
+type SysUserDeleteReq {
+  id int64 `path:"id"`
+}
+
 type AssignUserRolesReq {
   userId  int64   `json:"userId"`
   roleIds []int64 `json:"roleIds"`
@@ -197,6 +201,10 @@ type SysMenuUpdateReq {
   perms     string `json:"perms,optional"`
 }
 
+type SysMenuDeleteReq {
+  id int64 `path:"id"`
+}
+
 type SysMenuListReq {
   PageReq
   keyword string `form:"keyword,optional"` // 按 name/perms 模糊
@@ -319,7 +327,7 @@ service admin {
   put /users (SysUserUpdateReq) returns (RespBase)
 
   @handler SysUserDelete
-  delete /users/:id returns (RespBase)
+  delete /users/:id (SysUserDeleteReq) returns (RespBase)
 
   @handler ChangeUserStatus
   post /users/status (ChangeUserStatusReq) returns (RespBase)
@@ -377,7 +385,7 @@ service admin {
   put /menus (SysMenuUpdateReq) returns (RespBase)
 
   @handler SysMenuDelete
-  delete /menus/:id returns (RespBase)
+  delete /menus/:id (SysMenuDeleteReq) returns (RespBase)
 
   @handler SysMenuList
   get /menus (SysMenuListReq) returns (SysMenuListResp)

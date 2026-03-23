@@ -232,6 +232,10 @@ type SysMenuCreateReq struct {
 	Perms     string `json:"perms,optional"`
 }
 
+type SysMenuDeleteReq struct {
+	Id int64 `path:"id"`
+}
+
 type SysMenuItem struct {
 	Id        int64  `json:"id"`
 	ParentId  int64  `json:"parentId"`
@@ -352,6 +356,10 @@ type SysUserCreateReq struct {
 	Nickname string  `json:"nickname,optional"`
 	Status   int64   `json:"status,optional"` // 1启用 0禁用
 	RoleIds  []int64 `json:"roleIds,optional"`
+}
+
+type SysUserDeleteReq struct {
+	Id int64 `path:"id"`
 }
 
 type SysUserDetailResp struct {

@@ -30,6 +30,10 @@ async function fetchList() {
                 throw new Error(res.msg);
             list_ref.value = res.data || [];
             updatePagination(res.total || 0, res.hasNext || false, res.hasPrev || false, res.nextCursor || null, res.prevCursor || null);
+            console.log('res.hasPrev', res.hasPrev);
+            console.log('res.hasNext', res.hasNext);
+            console.log('pagination.hasPrev', pagination.hasPrev);
+            console.log('pagination.hasNext', pagination.hasNext);
         }
         catch (e) {
             ElMessage.error(e?.message || t('common.loadFailed'));
@@ -368,7 +372,7 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.d
     ...{ style: {} },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({});
-(__VLS_ctx.pagination.total);
+(__VLS_ctx.t('common.totalItems', { count: __VLS_ctx.pagination.total }));
 const __VLS_89 = {}.ElButton;
 /** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
 // @ts-ignore
@@ -387,6 +391,7 @@ const __VLS_96 = {
     onClick: (__VLS_ctx.prevPage)
 };
 __VLS_92.slots.default;
+(__VLS_ctx.t('common.prevPage'));
 var __VLS_92;
 const __VLS_97 = {}.ElButton;
 /** @type {[typeof __VLS_components.ElButton, typeof __VLS_components.elButton, typeof __VLS_components.ElButton, typeof __VLS_components.elButton, ]} */ ;
@@ -406,6 +411,7 @@ const __VLS_104 = {
     onClick: (__VLS_ctx.nextPage)
 };
 __VLS_100.slots.default;
+(__VLS_ctx.t('common.nextPage'));
 var __VLS_100;
 const __VLS_105 = {}.ElSelect;
 /** @type {[typeof __VLS_components.ElSelect, typeof __VLS_components.elSelect, typeof __VLS_components.ElSelect, typeof __VLS_components.elSelect, ]} */ ;

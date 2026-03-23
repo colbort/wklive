@@ -111,6 +111,9 @@ export default {
     createFailed: '创建失败',
     updateSuccess: '更新成功',
     updateFailed: '更新失败',
+    prevPage: '上一页',
+    nextPage: '下一页',
+    totalItems: '总共：{count} 条',
   },
   system: {
     mgmt: '系统管理',

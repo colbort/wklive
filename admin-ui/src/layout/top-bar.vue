@@ -430,6 +430,7 @@ onBeforeUnmount(() => {
           <el-avatar :size="32" :src="formatAvatar(auth.user?.avatar)" :alt="auth.user?.nickname || auth.user?.username">
             <el-icon><User /></el-icon>
           </el-avatar>
+          <span class="user-nickname">{{ auth.user?.nickname || auth.user?.username }}</span>
         </div>
 
         <template #dropdown>
@@ -504,6 +505,19 @@ onBeforeUnmount(() => {
 
 .avatar-container {
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-nickname {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .collapse-btn {

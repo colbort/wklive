@@ -133,9 +133,9 @@ onMounted(() => {
 
     <!-- Pagination -->
     <div style="display:flex; justify-content:flex-end; gap: 10px; align-items: center;">
-      <span>总共：{{ pagination.total }} 条</span>
-      <el-button @click="prevPage" :disabled="!pagination.hasPrev">上一页</el-button>
-      <el-button @click="nextPage" :disabled="!pagination.hasNext">下一页</el-button>
+      <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
+      <el-button @click="prevPage" :disabled="!pagination.hasPrev">{{ t('common.prevPage') }}</el-button>
+      <el-button @click="nextPage" :disabled="!pagination.hasNext">{{ t('common.nextPage') }}</el-button>
       <el-select v-model="pagination.limit" style="width: 100px" @change="() => { pagination.cursor = null; pagination.hasPrev = false; pagination.nextCursor = null; pagination.prevCursor = null; fetchList() }">
         <el-option label="10" :value="10" />
         <el-option label="20" :value="20" />

@@ -313,6 +313,11 @@ message SysConfigKeysResp {
   repeated string data = 3;
 }
 
+message LoginUserPermsReq { int64 user_id = 1; }
+message LoginUserPermsResp {
+  repeated string perms = 1;
+}
+
 //////////////////////
 // Service
 //////////////////////
@@ -392,5 +397,7 @@ service System {
   rpc SysConfigByKeys(SysConfigByKeysReq) returns (SysConfigByKeysResp);
   // 获取系统配置所有的key
   rpc SysConfigKeys(Empty) returns (SysConfigKeysResp);
+  // 获取登录用户的权限列表
+  rpc LoginUserPerms(LoginUserPermsReq) returns (LoginUserPermsResp);
 }
 
