@@ -11,20 +11,24 @@ import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
 import { useConfirm } from '@/composables/useConfirm'
 
-
 const { t } = useI18n()
 
 // Pagination and main list
-const { pagination, updatePagination, nextPage: paginationNextPage, prevPage: paginationPrevPage } = usePagination(10)
+const {
+  pagination,
+  updatePagination,
+  nextPage: paginationNextPage,
+  prevPage: paginationPrevPage,
+} = usePagination(10)
 const list = ref<SysUserItem[]>([])
 const { loading, withLoading: withMainLoading } = useLoading()
 
 // Query form
-const { form: queryForm } = useForm({ 
-  initialData: { 
-    keyword: '', 
-    status: undefined as number | undefined 
-  } 
+const { form: queryForm } = useForm({
+  initialData: {
+    keyword: '',
+    status: undefined as number | undefined,
+  },
 })
 
 const statusOptions = [
@@ -44,7 +48,13 @@ async function fetchList() {
       // 兼容 code=0 / 200
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'list failed')
       list.value = res.data || []
-      updatePagination(res.total || 0, res.hasNext || false, res.hasPrev || false, res.nextCursor || null, res.prevCursor || null)
+      updatePagination(
+        res.total || 0,
+        res.hasNext || false,
+        res.hasPrev || false,
+        res.nextCursor || null,
+        res.prevCursor || null,
+      )
     } catch (e: any) {
       ElMessage.error(e?.message || t('common.loadFailed'))
     }
@@ -92,7 +102,7 @@ async function fetchRoles() {
 // ---------- 新增/编辑 ----------
 const editVisible = ref(false)
 const editMode = ref<'create' | 'update'>('create')
-const { form: editForm } = useForm({ 
+const { form: editForm } = useForm({
   initialData: {
     id: 0,
     username: '',
@@ -100,7 +110,7 @@ const { form: editForm } = useForm({
     nickname: '',
     status: 1,
     roleIds: [] as number[],
-  } 
+  },
 })
 const { loading: editFormLoading, withLoading: withEditLoading } = useLoading()
 
@@ -191,8 +201,8 @@ async function onToggleStatus(row: SysUserItem) {
 
 // ---------- 重置密码 ----------
 const pwdVisible = ref(false)
-const { form: pwdForm } = useForm({ 
-  initialData: { id: 0, username: '', password: '' } 
+const { form: pwdForm } = useForm({
+  initialData: { id: 0, username: '', password: '' },
 })
 const { loading: pwdSubmitLoading, withLoading: withPwdLoading } = useLoading()
 
@@ -222,8 +232,8 @@ async function submitResetPwd() {
 
 // ---------- 分配角色 ----------
 const roleVisible = ref(false)
-const { form: roleForm } = useForm({ 
-  initialData: { userId: 0, username: '', roleIds: [] as number[] } 
+const { form: roleForm } = useForm({
+  initialData: { userId: 0, username: '', roleIds: [] as number[] },
 })
 const { loading: roleAssignLoading, withLoading: withRoleAssignLoading } = useLoading()
 
@@ -250,14 +260,14 @@ async function submitAssignRoles() {
 
 // ---------- Google 2FA ----------
 const g2Visible = ref(false)
-const { form: g2User } = useForm({ 
-  initialData: { userId: 0, username: '' } 
+const { form: g2User } = useForm({
+  initialData: { userId: 0, username: '' },
 })
-const { form: g2Init } = useForm({ 
-  initialData: { secret: '', otpauthUrl: '', qrCode: '' } 
+const { form: g2Init } = useForm({
+  initialData: { secret: '', otpauthUrl: '', qrCode: '' },
 })
-const { form: g2Form } = useForm({ 
-  initialData: { code: '' } 
+const { form: g2Form } = useForm({
+  initialData: { code: '' },
 })
 const { loading: g2InitLoading, withLoading: withG2InitLoading } = useLoading()
 const { loading: g2EnableLoading, withLoading: withG2EnableLoading } = useLoading()
@@ -373,7 +383,6 @@ async function doG2Reset() {
   }
 }
 
-
 const roleNameMap = computed(() => {
   const m = new Map<number, string>()
   roles.value.forEach((r) => m.set(r.id, r.name))
@@ -388,10 +397,10 @@ onMounted(async () => {
 <template>
   <el-card>
     <template #header>
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
         <div>{{ t('system.users') }}</div>
 
-        <div style="display:flex; gap:8px;">
+        <div style="display: flex; gap: 8px">
           <el-input
             v-model="queryForm.keyword"
             style="width: 220px"
@@ -399,8 +408,18 @@ onMounted(async () => {
             :placeholder="t('common.accountNicknameKeyword')"
             @keyup.enter="onSearch"
           />
-          <el-select v-model="queryForm.status" style="width: 140px" clearable :placeholder="t('common.status')">
-            <el-option v-for="o in statusOptions" :key="o.value" :label="o.label" :value="o.value" />
+          <el-select
+            v-model="queryForm.status"
+            style="width: 140px"
+            clearable
+            :placeholder="t('common.status')"
+          >
+            <el-option
+              v-for="o in statusOptions"
+              :key="o.value"
+              :label="o.label"
+              :value="o.value"
+            />
           </el-select>
 
           <el-button @click="onSearch">{{ t('common.search') }}</el-button>
@@ -419,10 +438,10 @@ onMounted(async () => {
       <el-table-column prop="nickname" :label="t('common.nickname')" min-width="160" />
       <el-table-column :label="t('common.role')" min-width="180">
         <template #default="{ row }">
-          <el-tag v-for="rid in (row.roleIds || [])" :key="rid" style="margin-right:6px;">
-            {{ roleNameMap.get(rid) || ('#' + rid) }}
+          <el-tag v-for="rid in row.roleIds || []" :key="rid" style="margin-right: 6px">
+            {{ roleNameMap.get(rid) || '#' + rid }}
           </el-tag>
-          <span v-if="!(row.roleIds && row.roleIds.length)" style="color:#999;">-</span>
+          <span v-if="!(row.roleIds && row.roleIds.length)" style="color: #999">-</span>
         </template>
       </el-table-column>
 
@@ -444,60 +463,83 @@ onMounted(async () => {
 
       <el-table-column :label="t('common.createdAt')" min-width="170">
         <template #default="{ row }">
-          <span style="color:#666;">{{ row.createdAt ? new Date(row.createdAt * 1000).toLocaleString() : '-' }}</span>
+          <span style="color: #666">{{
+            row.createdAt ? new Date(row.createdAt * 1000).toLocaleString() : '-'
+          }}</span>
         </template>
       </el-table-column>
 
       <el-table-column :label="t('common.actions')" width="140" fixed="right">
-  <template #default="{ row }">
-    <el-dropdown trigger="click">
-      <el-button size="small">
-        {{ t('common.actions') }}
-        <el-icon class="el-icon--right">
-          <ArrowDown />
-        </el-icon>
-      </el-button>
+        <template #default="{ row }">
+          <el-dropdown trigger="click">
+            <el-button size="small">
+              {{ t('common.actions') }}
+              <el-icon class="el-icon--right">
+                <ArrowDown />
+              </el-icon>
+            </el-button>
 
-      <template #dropdown>
-        <el-dropdown-menu>
-          <el-dropdown-item v-perm="'sys:user:update'" @click="openEdit(row)">
-            {{ t('perms.sys:user:update') }}
-          </el-dropdown-item>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item v-perm="'sys:user:update'" @click="openEdit(row)">
+                  {{ t('perms.sys:user:update') }}
+                </el-dropdown-item>
 
-          <el-dropdown-item v-perm="'sys:user:resetpwd'" @click="openResetPwd(row)">
-            {{ t('perms.sys:user:resetpwd') }}
-          </el-dropdown-item>
+                <el-dropdown-item v-perm="'sys:user:resetpwd'" @click="openResetPwd(row)">
+                  {{ t('perms.sys:user:resetpwd') }}
+                </el-dropdown-item>
 
-          <el-dropdown-item v-perm="'sys:user:assignrole'" @click="openAssignRoles(row)">
-            {{ t('perms.sys:user:assignrole') }}
-          </el-dropdown-item>
+                <el-dropdown-item v-perm="'sys:user:assignrole'" @click="openAssignRoles(row)">
+                  {{ t('perms.sys:user:assignrole') }}
+                </el-dropdown-item>
 
-          <el-dropdown-item v-perm="'sys:user:google2fa'" @click="openGoogle2fa(row)">
-            {{ t('perms.sys:user:google2fa') }}
-          </el-dropdown-item>
+                <el-dropdown-item v-perm="'sys:user:google2fa'" @click="openGoogle2fa(row)">
+                  {{ t('perms.sys:user:google2fa') }}
+                </el-dropdown-item>
 
-          <el-dropdown-item divided v-perm="'sys:user:update'" @click="onToggleStatus(row)">
-            {{ row.status === 1 ? t('common.disable') : t('common.enable') }}
-          </el-dropdown-item>
+                <el-dropdown-item divided v-perm="'sys:user:update'" @click="onToggleStatus(row)">
+                  {{ row.status === 1 ? t('common.disable') : t('common.enable') }}
+                </el-dropdown-item>
 
-          <el-dropdown-item v-perm="'sys:user:delete'" @click="onDelete(row)">
-            <span style="color: var(--el-color-danger);">
-              {{ t('perms.sys:user:delete') }}
-            </span>
-          </el-dropdown-item>
-        </el-dropdown-menu>
-      </template>
-    </el-dropdown>
-  </template>
-</el-table-column>
-
+                <el-dropdown-item v-perm="'sys:user:delete'" @click="onDelete(row)">
+                  <span style="color: var(--el-color-danger)">
+                    {{ t('perms.sys:user:delete') }}
+                  </span>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </template>
+      </el-table-column>
     </el-table>
 
-    <div style="display:flex; justify-content:flex-end; gap: 10px; align-items: center; margin-top: 12px;">
+    <div
+      style="
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        align-items: center;
+        margin-top: 12px;
+      "
+    >
       <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
-      <el-button @click="prevPage" :disabled="!pagination.hasPrev">{{ t('common.prevPage') }}</el-button>
-      <el-button @click="nextPage" :disabled="!pagination.hasNext">{{ t('common.nextPage') }}</el-button>
-      <el-select v-model="pagination.limit" style="width: 100px" @change="() => { pagination.cursor = null; pagination.hasPrev = false; fetchList() }">
+      <el-button @click="prevPage" :disabled="!pagination.hasPrev">{{
+        t('common.prevPage')
+      }}</el-button>
+      <el-button @click="nextPage" :disabled="!pagination.hasNext">{{
+        t('common.nextPage')
+      }}</el-button>
+      <el-select
+        v-model="pagination.limit"
+        style="width: 100px"
+        @change="
+          () => {
+            pagination.cursor = null
+            pagination.hasPrev = false
+            fetchList()
+          }
+        "
+      >
         <el-option label="10" :value="10" />
         <el-option label="20" :value="20" />
         <el-option label="50" :value="50" />
@@ -506,12 +548,16 @@ onMounted(async () => {
   </el-card>
 
   <!-- 新增/编辑 -->
-  <el-dialog v-model="editVisible" :title="editMode==='create' ? t('common.addUser') : t('common.editUser')" width="520px">
+  <el-dialog
+    v-model="editVisible"
+    :title="editMode === 'create' ? t('common.addUser') : t('common.editUser')"
+    width="520px"
+  >
     <el-form label-width="90px">
-      <el-form-item :label="t('common.username')" v-if="editMode==='create'">
+      <el-form-item :label="t('common.username')" v-if="editMode === 'create'">
         <el-input v-model="editForm.username" />
       </el-form-item>
-      <el-form-item :label="t('common.password')" v-if="editMode==='create'">
+      <el-form-item :label="t('common.password')" v-if="editMode === 'create'">
         <el-input v-model="editForm.password" type="password" show-password />
       </el-form-item>
       <el-form-item :label="t('common.nickname')">
@@ -521,15 +567,23 @@ onMounted(async () => {
         <el-switch v-model="editForm.status" :active-value="1" :inactive-value="0" />
       </el-form-item>
       <el-form-item :label="t('common.role')">
-        <el-select v-model="editForm.roleIds" multiple filterable style="width: 100%;" :loading="roleLoading">
+        <el-select
+          v-model="editForm.roleIds"
+          multiple
+          filterable
+          style="width: 100%"
+          :loading="roleLoading"
+        >
           <el-option v-for="r in roles" :key="r.id" :label="r.name" :value="r.id" />
         </el-select>
       </el-form-item>
     </el-form>
 
     <template #footer>
-      <el-button @click="editVisible=false">{{ t('common.cancel') }}</el-button>
-      <el-button type="primary" :loading="editFormLoading" @click="submitEdit">{{ t('common.confirm') }}</el-button>
+      <el-button @click="editVisible = false">{{ t('common.cancel') }}</el-button>
+      <el-button type="primary" :loading="editFormLoading" @click="submitEdit">{{
+        t('common.confirm')
+      }}</el-button>
     </template>
   </el-dialog>
 
@@ -545,8 +599,10 @@ onMounted(async () => {
     </el-form>
 
     <template #footer>
-      <el-button @click="pwdVisible=false">{{ t('common.cancel') }}</el-button>
-      <el-button type="primary" :loading="pwdSubmitLoading" @click="submitResetPwd">{{ t('common.confirm') }}</el-button>
+      <el-button @click="pwdVisible = false">{{ t('common.cancel') }}</el-button>
+      <el-button type="primary" :loading="pwdSubmitLoading" @click="submitResetPwd">{{
+        t('common.confirm')
+      }}</el-button>
     </template>
   </el-dialog>
 
@@ -557,70 +613,111 @@ onMounted(async () => {
         <el-input :model-value="roleForm.username" disabled />
       </el-form-item>
       <el-form-item :label="t('common.role')">
-        <el-select v-model="roleForm.roleIds" multiple filterable style="width: 100%;" :loading="roleLoading">
+        <el-select
+          v-model="roleForm.roleIds"
+          multiple
+          filterable
+          style="width: 100%"
+          :loading="roleLoading"
+        >
           <el-option v-for="r in roles" :key="r.id" :label="r.name" :value="r.id" />
         </el-select>
       </el-form-item>
     </el-form>
 
     <template #footer>
-      <el-button @click="roleVisible=false">{{ t('common.cancel') }}</el-button>
-      <el-button type="primary" :loading="roleAssignLoading" @click="submitAssignRoles">{{ t('common.confirm') }}</el-button>
+      <el-button @click="roleVisible = false">{{ t('common.cancel') }}</el-button>
+      <el-button type="primary" :loading="roleAssignLoading" @click="submitAssignRoles">{{
+        t('common.confirm')
+      }}</el-button>
     </template>
   </el-dialog>
 
   <!-- Google 2FA -->
   <el-dialog v-model="g2Visible" :title="t('common.google2faManage')" width="680px">
-    <div style="display:flex; gap: 16px;">
-      <div style="flex: 1;">
-        <div style="margin-bottom: 8px; color:#666;">{{ t('common.user') }}：{{ g2User.username }}（ID: {{ g2User.userId }}）</div>
+    <div style="display: flex; gap: 16px">
+      <div style="flex: 1">
+        <div style="margin-bottom: 8px; color: #666">
+          {{ t('common.user') }}：{{ g2User.username }}（ID: {{ g2User.userId }}）
+        </div>
 
-        <div style="display:flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
-          <el-button v-perm="'sys:user:2fa:init'" :loading="g2InitLoading" @click="doG2Init">{{ t('perms.sys:user:2fa:init') }}</el-button>
-          <el-button type="success" v-perm="'sys:user:2fa:enable'" :loading="g2EnableLoading" @click="doG2Enable">{{ t('perms.sys:user:2fa:enable') }}</el-button>
-          <el-button type="warning" v-perm="'sys:user:2fa:disable'" :loading="g2DisableLoading" @click="doG2Disable">{{ t('perms.sys:user:2fa:disable') }}</el-button>
-          <el-button type="danger" v-perm="'sys:user:2fa:reset'" @click="doG2Reset">{{ t('perms.sys:user:2fa:reset') }}</el-button>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px">
+          <el-button v-perm="'sys:user:2fa:init'" :loading="g2InitLoading" @click="doG2Init">{{
+            t('perms.sys:user:2fa:init')
+          }}</el-button>
+          <el-button
+            type="success"
+            v-perm="'sys:user:2fa:enable'"
+            :loading="g2EnableLoading"
+            @click="doG2Enable"
+            >{{ t('perms.sys:user:2fa:enable') }}</el-button
+          >
+          <el-button
+            type="warning"
+            v-perm="'sys:user:2fa:disable'"
+            :loading="g2DisableLoading"
+            @click="doG2Disable"
+            >{{ t('perms.sys:user:2fa:disable') }}</el-button
+          >
+          <el-button type="danger" v-perm="'sys:user:2fa:reset'" @click="doG2Reset">{{
+            t('perms.sys:user:2fa:reset')
+          }}</el-button>
         </div>
 
         <el-form label-width="100px">
           <el-form-item :label="t('common.code')">
-            <div style="display: flex; gap: 8px;">
-              <el-input v-model="g2Form.code" :placeholder="t('common.enterGoogleCode')" style="flex: 1;" />
+            <div style="display: flex; gap: 8px">
+              <el-input
+                v-model="g2Form.code"
+                :placeholder="t('common.enterGoogleCode')"
+                style="flex: 1"
+              />
               <el-button @click="doG2Bind">{{ t('perms.sys:user:2fa:bind') }}</el-button>
             </div>
           </el-form-item>
 
           <el-form-item :label="t('common.secret')">
-            <div style="display: flex; gap: 8px;">
-              <el-input :model-value="g2Init.secret" readonly style="flex: 1;" />
-              <el-button @click="copySecret" :disabled="!g2Init.secret">{{ t('common.copy') }}</el-button>
+            <div style="display: flex; gap: 8px">
+              <el-input :model-value="g2Init.secret" readonly style="flex: 1" />
+              <el-button @click="copySecret" :disabled="!g2Init.secret">{{
+                t('common.copy')
+              }}</el-button>
             </div>
           </el-form-item>
 
           <el-form-item :label="t('common.otpauthUrl')">
-            <div style="display: flex; gap: 8px;">
-              <el-input :model-value="g2Init.otpauthUrl" readonly style="flex: 1;" />
-              <el-button @click="copyOtpauthUrl" :disabled="!g2Init.otpauthUrl">{{ t('common.copy') }}</el-button>
+            <div style="display: flex; gap: 8px">
+              <el-input :model-value="g2Init.otpauthUrl" readonly style="flex: 1" />
+              <el-button @click="copyOtpauthUrl" :disabled="!g2Init.otpauthUrl">{{
+                t('common.copy')
+              }}</el-button>
             </div>
           </el-form-item>
         </el-form>
       </div>
 
-      <div style="width: 260px;">
-        <div style="margin-bottom: 8px; color:#666;">{{ t('common.qrCode') }}</div>
-        <div style="background:#f7f8fa; border:1px solid #eee; border-radius:8px; padding:12px; min-height: 240px;">
-          <img v-if="g2Init.qrCode" :src="g2Init.qrCode" style="width:100%; height:auto;" />
-          <div v-else style="color:#999;">{{ t('common.click2faBindGenerateQrCode') }}</div>
+      <div style="width: 260px">
+        <div style="margin-bottom: 8px; color: #666">{{ t('common.qrCode') }}</div>
+        <div
+          style="
+            background: #f7f8fa;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 12px;
+            min-height: 240px;
+          "
+        >
+          <img v-if="g2Init.qrCode" :src="g2Init.qrCode" style="width: 100%; height: auto" />
+          <div v-else style="color: #999">{{ t('common.click2faBindGenerateQrCode') }}</div>
         </div>
-        <div v-if="g2Init.qrCode" style="margin-top: 8px; font-size: 12px; color: #666;">
+        <div v-if="g2Init.qrCode" style="margin-top: 8px; font-size: 12px; color: #666">
           {{ t('common.scanQrCodeWithGoogleAuthenticator') }}
         </div>
       </div>
     </div>
 
     <template #footer>
-      <el-button @click="g2Visible=false">{{ t('common.cancel') }}</el-button>
+      <el-button @click="g2Visible = false">{{ t('common.cancel') }}</el-button>
     </template>
   </el-dialog>
 </template>
-

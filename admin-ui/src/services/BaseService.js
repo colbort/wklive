@@ -4,10 +4,10 @@
  * 提供一些通用功能
  */
 export class BaseServiceImpl {
-    baseURL;
-    timeout;
-    constructor(baseURL, options = {}) {
-        this.baseURL = baseURL;
-        this.timeout = options.timeout || 10000;
-    }
+  baseURL
+  timeout
+  constructor(baseURL, options = {}) {
+    this.baseURL = baseURL
+    this.timeout = options.timeout || 10000
+  }
 }

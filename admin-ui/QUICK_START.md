@@ -38,21 +38,23 @@ npm run type-check
 
 ## 五、查看文档
 
-| 文档 | 内容 |
-|------|------|
-| [OPTIMIZATION.md](./OPTIMIZATION.md) | 📋 优化详情和代码示例 |
-| [OPTIMIZATION_REPORT.md](./OPTIMIZATION_REPORT.md) | 📊 优化总结报告 |
-| [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md) | 📖 完整开发者指南 |
+| 文档                                               | 内容                  |
+| -------------------------------------------------- | --------------------- |
+| [OPTIMIZATION.md](./OPTIMIZATION.md)               | 📋 优化详情和代码示例 |
+| [OPTIMIZATION_REPORT.md](./OPTIMIZATION_REPORT.md) | 📊 优化总结报告       |
+| [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md)         | 📖 完整开发者指南     |
 
 ## 六、核心改进一览
 
 ### ✨ 环境变量配置
+
 ```typescript
 import { ENV } from '@/config/environment'
-console.log(ENV.API_BASE_URL)  // 自动适配环境
+console.log(ENV.API_BASE_URL) // 自动适配环境
 ```
 
 ### ✨ 增强的请求工具
+
 ```typescript
 import { get, post } from '@/utils/request-enhanced'
 
@@ -61,17 +63,19 @@ const data = await get('/api/users', { retry: 3 })
 ```
 
 ### ✨ 统一错误处理
+
 ```typescript
 import { errorHandler } from '@/utils/error'
 
 try {
   await fetch()
 } catch (error) {
-  errorHandler.handle(error)  // 自动显示提示
+  errorHandler.handle(error) // 自动显示提示
 }
 ```
 
 ### ✨ 服务层架构
+
 ```typescript
 import { userService } from '@/services/UserService'
 
@@ -81,6 +85,7 @@ const user = await userService.getUser(1)
 ```
 
 ### ✨ Composables (Vue 3 Hooks)
+
 ```typescript
 import { usePagination, useLoading, useForm } from '@/composables'
 

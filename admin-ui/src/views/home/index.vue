@@ -9,7 +9,7 @@ const { t } = useI18n()
   <el-card>
     <template #header>{{ t('route.home') }}</template>
     <div>{{ t('home.welcome', { name: auth.user?.nickname || auth.user?.username || '-' }) }}</div>
-    <div style="margin-top: 8px; color: #666;">
+    <div style="margin-top: 8px; color: #666">
       {{ t('home.multiLangDesc') }}
     </div>
   </el-card>

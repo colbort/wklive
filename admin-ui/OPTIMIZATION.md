@@ -82,6 +82,7 @@ src/
 ## ✨ 主要优化
 
 ### 1. 环境变量管理
+
 - ✅ 创建 `.env`, `.env.development`, `.env.production`
 - ✅ 创建 `config/environment.ts` 统一管理
 - ✅ 支持多环境配置
@@ -89,11 +90,12 @@ src/
 ```typescript
 import { ENV } from '@/config/environment'
 
-console.log(ENV.API_BASE_URL)    // 自动适配环境
-console.log(ENV.IS_DEV)           // 是否开发环境
+console.log(ENV.API_BASE_URL) // 自动适配环境
+console.log(ENV.IS_DEV) // 是否开发环境
 ```
 
 ### 2. 增强的请求工具
+
 - ✅ 支持请求/响应拦截
 - ✅ 自动令牌注入
 - ✅ 请求取消机制
@@ -115,6 +117,7 @@ cancelRequest('GET', '/admin/users')
 ```
 
 ### 3. 日志系统
+
 - ✅ 彩色标记日志
 - ✅ 支持多种日志级别
 - ✅ 环境敏感输出
@@ -129,6 +132,7 @@ logger.error('Error message')
 ```
 
 ### 4. 错误处理
+
 - ✅ 统一的错误解析
 - ✅ 用户友好的提示
 - ✅ 错误日志记录
@@ -139,11 +143,12 @@ import { errorHandler } from '@/utils/error'
 try {
   await fetchData()
 } catch (error) {
-  errorHandler.handle(error)  // 自动显示提示
+  errorHandler.handle(error) // 自动显示提示
 }
 ```
 
 ### 5. 服务层架构
+
 - ✅ 基础服务类 (`BaseService`)
 - ✅ 统一的 CRUD 操作
 - ✅ 分页响应类型
@@ -155,13 +160,14 @@ class UserService extends BaseService {
   constructor() {
     super('/admin/users')
   }
-  
+
   // 继承所有 CRUD 方法
   // getList, getDetail, create, update, delete, patch
 }
 ```
 
 ### 6. 可组合式函数 (Composables)
+
 提供常用的业务逻辑 Hook：
 
 ```typescript
@@ -176,7 +182,7 @@ await withLoading(() => fetchData())
 
 // 表单
 const { form, formRef, submit } = useForm({
-  initialData: { name: '', email: '' }
+  initialData: { name: '', email: '' },
 })
 
 // 确认框
@@ -185,10 +191,12 @@ await confirmDelete('某个项目')
 ```
 
 ### 7. 通用组件库
+
 - ✅ `ConfirmDialog.vue` - 确认对话框
 - ✅ `DataTable.vue` - 数据表格（支持分页）
 
 ### 8. 代码质量工具
+
 - ✅ **ESLint** - 代码检查
 - ✅ **Prettier** - 代码格式化
 - ✅ **TypeScript** - 类型检查
@@ -200,6 +208,7 @@ npm run type-check  # 类型检查
 ```
 
 ### 9. 增强的 Vite 配置
+
 - ✅ 支持多环境加载
 - ✅ 自动分包（chunk）优化
 - ✅ 开发/生产模式差异化配置
@@ -209,21 +218,25 @@ npm run type-check  # 类型检查
 ## 🚀 快速开始
 
 ### 安装依赖
+
 ```bash
 npm install
 ```
 
 ### 开发模式
+
 ```bash
 npm run dev
 ```
 
 ### 构建生产
+
 ```bash
 npm run build
 ```
 
 ### 代码质量
+
 ```bash
 npm run lint      # 检查并修复
 npm run format    # 格式化
@@ -243,27 +256,27 @@ export class UserService extends BaseService {
   constructor() {
     super('/admin/users')
   }
-  
+
   // 获取列表
   async list(query: any) {
     return this.getList<User>(query)
   }
-  
+
   // 获取详情
   async detail(id: number) {
     return this.getDetail<User>(id)
   }
-  
+
   // 创建
   async add(data: Partial<User>) {
     return this.create<User>(data)
   }
-  
+
   // 更新
   async edit(id: number, data: Partial<User>) {
     return this.update<User>(id, data)
   }
-  
+
   // 删除
   async remove(id: number) {
     return this.delete(id)
@@ -276,11 +289,7 @@ export class UserService extends BaseService {
 ```vue
 <template>
   <div>
-    <DataTable
-      v-loading="loading"
-      :data="users"
-      :pagination="pagination"
-    >
+    <DataTable v-loading="loading" :data="users" :pagination="pagination">
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="username" label="Username" />
       <el-table-column prop="email" label="Email" />
@@ -290,11 +299,7 @@ export class UserService extends BaseService {
       </template>
     </DataTable>
 
-    <ConfirmDialog
-      v-model="dialogVisible"
-      title="Add User"
-      @confirm="handleConfirm"
-    >
+    <ConfirmDialog v-model="dialogVisible" title="Add User" @confirm="handleConfirm">
       <!-- form content -->
     </ConfirmDialog>
   </div>

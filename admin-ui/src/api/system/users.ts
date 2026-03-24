@@ -1,20 +1,35 @@
 import { get, post, put, del } from '@/utils/request'
-import type { RespBase, SysUserItem, Google2FABindInitResp } from '@/services';
+import type { RespBase, SysUserItem, Google2FABindInitResp } from '@/services'
 
-
-export function apiUserList(params: { keyword?: string; status?: number; cursor?: string | null; limit?: number }): Promise<RespBase<SysUserItem[]>> {
+export function apiUserList(params: {
+  keyword?: string
+  status?: number
+  cursor?: string | null
+  limit?: number
+}): Promise<RespBase<SysUserItem[]>> {
   return get<SysUserItem[]>('/admin/users', params)
 }
 
-export function apiUserDetail(id: number) : Promise<RespBase<SysUserItem>> {
+export function apiUserDetail(id: number): Promise<RespBase<SysUserItem>> {
   return get<SysUserItem>(`/admin/users/${id}`)
 }
 
-export function apiUserCreate(data: { username: string; password: string; nickname?: string; status?: number; roleIds?: number[] }): Promise<RespBase> {
+export function apiUserCreate(data: {
+  username: string
+  password: string
+  nickname?: string
+  status?: number
+  roleIds?: number[]
+}): Promise<RespBase> {
   return post<RespBase>('/admin/users', data)
 }
 
-export function apiUserUpdate(data: { id: number; nickname?: string; status?: number; roleIds?: number[] }): Promise<RespBase> {
+export function apiUserUpdate(data: {
+  id: number
+  nickname?: string
+  status?: number
+  roleIds?: number[]
+}): Promise<RespBase> {
   return put<RespBase>('/admin/users', data)
 }
 
@@ -35,11 +50,17 @@ export function apiAssignUserRoles(data: { userId: number; roleIds: number[] }):
 }
 
 // ---- Google 2FA ----
-export function apiGoogle2faInit(data: { userId: number }): Promise<RespBase<Google2FABindInitResp>> {
+export function apiGoogle2faInit(data: {
+  userId: number
+}): Promise<RespBase<Google2FABindInitResp>> {
   return post<Google2FABindInitResp>('/admin/users/google2fa/init', data)
 }
 
-export function apiGoogle2faBind(data: { userId: number; secret: string; code: string }): Promise<RespBase> {
+export function apiGoogle2faBind(data: {
+  userId: number
+  secret: string
+  code: string
+}): Promise<RespBase> {
   return post<RespBase>('/admin/users/google2fa/bind', data)
 }
 

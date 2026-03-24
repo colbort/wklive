@@ -12,18 +12,14 @@ export function useConfirm() {
       confirmButtonText?: string
       cancelButtonText?: string
       type?: 'warning' | 'info' | 'success' | 'error'
-    }
+    },
   ): Promise<void> => {
     try {
-      await ElMessageBox.confirm(
-        message,
-        options?.title || 'Confirm',
-        {
-          confirmButtonText: options?.confirmButtonText || 'OK',
-          cancelButtonText: options?.cancelButtonText || 'Cancel',
-          type: options?.type || 'warning',
-        }
-      )
+      await ElMessageBox.confirm(message, options?.title || 'Confirm', {
+        confirmButtonText: options?.confirmButtonText || 'OK',
+        cancelButtonText: options?.cancelButtonText || 'Cancel',
+        type: options?.type || 'warning',
+      })
     } catch (error) {
       // 捕获取消动作，当用户点击取消时会抛出错误
       if (error !== 'cancel') {
@@ -35,13 +31,10 @@ export function useConfirm() {
   }
 
   const confirmDelete = (name?: string): Promise<void> => {
-    return confirm(
-      `Are you sure to delete${name ? ` "${name}"` : ''} permanently?`,
-      {
-        title: 'Delete Confirmation',
-        type: 'warning',
-      }
-    )
+    return confirm(`Are you sure to delete${name ? ` "${name}"` : ''} permanently?`, {
+      title: 'Delete Confirmation',
+      type: 'warning',
+    })
   }
 
   return {

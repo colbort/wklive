@@ -13,16 +13,8 @@ export interface UseAsyncOptions<T> {
   onError?: (error: any) => void
 }
 
-export function useAsync<T = any>(
-  asyncFn: () => Promise<T>,
-  options?: UseAsyncOptions<T>
-) {
-  const {
-    initialData,
-    immediate = true,
-    onSuccess,
-    onError,
-  } = options ?? {}
+export function useAsync<T = any>(asyncFn: () => Promise<T>, options?: UseAsyncOptions<T>) {
+  const { initialData, immediate = true, onSuccess, onError } = options ?? {}
 
   const data = ref<T | undefined>(initialData)
   const loading = ref(false)

@@ -12,16 +12,12 @@ import { setupPermDirective } from './directives/perm'
 import { getSystemCore } from '@/stores/core'
 import { http } from './utils/request'
 
-
 const app = createApp(App)
 
-
 function formatUrl(url: string | undefined) {
-   console.log('formatUrl', url)
+  console.log('formatUrl', url)
   if (!url) return ''
-  const fullUrl = url.startsWith('http')
-              ? url
-              : `${http.defaults.baseURL}${url}`
+  const fullUrl = url.startsWith('http') ? url : `${http.defaults.baseURL}${url}`
   return `${fullUrl}${fullUrl.includes('?') ? '&' : '?'}t=${Date.now()}`
 }
 

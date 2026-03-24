@@ -68,4 +68,3 @@ export function usePagination(initialLimit = 10) {
     prevPage,
   }
 }
-

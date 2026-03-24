@@ -1,8 +1,5 @@
 import type { RespBase } from '@/services'
-import {
-  apiLoginLogList,
-  apiOpLogList
-} from '@/api/system/logs'
+import { apiLoginLogList, apiOpLogList } from '@/api/system/logs'
 
 // ===== 日志相关类型定义 =====
 

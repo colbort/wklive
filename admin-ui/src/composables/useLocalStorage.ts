@@ -4,11 +4,7 @@
 
 import { ref, watch } from 'vue'
 
-export function useLocalStorage<T>(
-  key: string,
-  initialValue?: T,
-  parse = true
-) {
+export function useLocalStorage<T>(key: string, initialValue?: T, parse = true) {
   const data = ref<T | undefined>(initialValue)
 
   // 初始化：从本地存储读取
@@ -31,7 +27,7 @@ export function useLocalStorage<T>(
         localStorage.setItem(key, parse ? JSON.stringify(newValue) : (newValue as any))
       }
     },
-    { deep: true }
+    { deep: true },
   )
 
   const remove = () => {

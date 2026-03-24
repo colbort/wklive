@@ -12,8 +12,6 @@ export interface UploadFileResp {
  * 使用现有的 API 函数
  */
 export class UploadService {
-
-
   /**
    * 上传头像
    */

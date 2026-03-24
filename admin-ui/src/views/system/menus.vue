@@ -98,8 +98,18 @@
           </template>
         </el-table-column>
 
-        <el-table-column :label="t('system.path')" prop="path" min-width="150" show-overflow-tooltip />
-        <el-table-column :label="t('system.component')" prop="component" min-width="180" show-overflow-tooltip />
+        <el-table-column
+          :label="t('system.path')"
+          prop="path"
+          min-width="150"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          :label="t('system.component')"
+          prop="component"
+          min-width="180"
+          show-overflow-tooltip
+        />
 
         <el-table-column :label="t('system.icon')" width="160">
           <template #default="{ row }">
@@ -113,7 +123,12 @@
           </template>
         </el-table-column>
 
-        <el-table-column :label="t('system.perms')" prop="perms" min-width="180" show-overflow-tooltip />
+        <el-table-column
+          :label="t('system.perms')"
+          prop="perms"
+          min-width="180"
+          show-overflow-tooltip
+        />
         <el-table-column :label="t('system.sort')" prop="sort" width="80" align="center" />
 
         <el-table-column :label="t('common.visible')" width="90" align="center">
@@ -134,12 +149,7 @@
 
         <el-table-column :label="t('common.actions')" width="180" fixed="right" align="center">
           <template #default="{ row }" align="right">
-            <el-button
-              v-if="row.menuType !== 3"
-              link
-              type="primary"
-              @click="handleAdd(row.id)"
-            >
+            <el-button v-if="row.menuType !== 3" link type="primary" @click="handleAdd(row.id)">
               {{ t('system.addChild') }}
             </el-button>
             <el-button link type="primary" @click="handleEdit(row)">
@@ -159,12 +169,7 @@
       width="760px"
       destroy-on-close
     >
-      <el-form
-        ref="formRef"
-        :model="formData"
-        :rules="rules"
-        label-width="100px"
-      >
+      <el-form ref="formRef" :model="formData" :rules="rules" label-width="100px">
         <el-form-item :label="t('system.parentMenu')" prop="parentId">
           <el-tree-select
             v-model="formData.parentId"
@@ -179,10 +184,7 @@
         </el-form-item>
 
         <el-form-item :label="t('system.menuName')" prop="name">
-          <el-input
-            v-model="formData.name"
-            :placeholder="t('system.pleaseInputMenuName')"
-          />
+          <el-input v-model="formData.name" :placeholder="t('system.pleaseInputMenuName')" />
         </el-form-item>
 
         <el-form-item :label="t('system.menuType')" prop="menuType">
@@ -196,10 +198,7 @@
         <el-row :gutter="16" v-if="formData.menuType !== 3">
           <el-col :span="12">
             <el-form-item :label="t('system.path')" prop="path">
-              <el-input
-                v-model="formData.path"
-                :placeholder="t('system.pleaseInputPath')"
-              />
+              <el-input v-model="formData.path" :placeholder="t('system.pleaseInputPath')" />
             </el-form-item>
           </el-col>
 
@@ -230,11 +229,7 @@
                   </template>
                 </el-input>
 
-                <el-popover
-                  placement="bottom-start"
-                  :width="520"
-                  trigger="click"
-                >
+                <el-popover placement="bottom-start" :width="520" trigger="click">
                   <template #reference>
                     <el-button>{{ t('system.selectIcon') }}</el-button>
                   </template>
@@ -276,12 +271,7 @@
         <el-row :gutter="16" v-if="formData.menuType !== 3">
           <el-col :span="12">
             <el-form-item :label="t('system.sort')" prop="sort">
-              <el-input-number
-                v-model="formData.sort"
-                :min="0"
-                :max="9999"
-                style="width: 100%"
-              />
+              <el-input-number v-model="formData.sort" :min="0" :max="9999" style="width: 100%" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -289,21 +279,13 @@
         <el-row :gutter="16" v-if="formData.menuType === 3">
           <el-col :span="12">
             <el-form-item :label="t('system.sort')" prop="sort">
-              <el-input-number
-                v-model="formData.sort"
-                :min="0"
-                :max="9999"
-                style="width: 100%"
-              />
+              <el-input-number v-model="formData.sort" :min="0" :max="9999" style="width: 100%" />
             </el-form-item>
           </el-col>
         </el-row>
 
         <el-form-item v-if="formData.menuType === 3" :label="t('system.perms')" prop="perms">
-          <el-input
-            v-model="formData.perms"
-            :placeholder="t('system.pleaseInputPerms')"
-          />
+          <el-input v-model="formData.perms" :placeholder="t('system.pleaseInputPerms')" />
         </el-form-item>
 
         <el-row :gutter="16">
@@ -348,7 +330,12 @@ import { menuService } from '@/services'
 import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
 import { useConfirm } from '@/composables/useConfirm'
-import type { SysMenuCreateReq, SysMenuItem, SysMenuTreeItem, SysMenuUpdateReq } from '@/services/system/MenuService'
+import type {
+  SysMenuCreateReq,
+  SysMenuItem,
+  SysMenuTreeItem,
+  SysMenuUpdateReq,
+} from '@/services/system/MenuService'
 
 const { t, te } = useI18n()
 
@@ -399,7 +386,7 @@ const { form: queryForm } = useForm<QueryFormData>({
     menuType: undefined,
     status: undefined,
     visible: undefined,
-  }
+  },
 })
 const { confirm } = useConfirm()
 
@@ -430,7 +417,7 @@ const createDefaultForm = (): MenuFormData => ({
 })
 
 const { form: formData } = useForm<MenuFormData>({
-  initialData: createDefaultForm()
+  initialData: createDefaultForm(),
 })
 
 const currentEditId = computed(() => formData.id ?? 0)
@@ -465,13 +452,13 @@ const parentTreeOptions = computed(() => {
   if (dialogType.value === 'edit' && currentEditId.value) {
     excludeIds.add(currentEditId.value)
     const childIds = childrenIdMap.value.get(currentEditId.value) || []
-    childIds.forEach(id => excludeIds.add(id))
+    childIds.forEach((id) => excludeIds.add(id))
   }
 
   const filterNodes = (nodes: SysMenuTreeItem[]): SysMenuTreeItem[] => {
     return nodes
-      .filter(node => node.menuType !== 3 && !excludeIds.has(node.id))
-      .map(node => ({
+      .filter((node) => node.menuType !== 3 && !excludeIds.has(node.id))
+      .map((node) => ({
         ...node,
         children: filterNodes(node.children || []),
       }))
@@ -487,15 +474,9 @@ const parentTreeOptions = computed(() => {
 })
 
 const rules = computed<FormRules>(() => ({
-  parentId: [
-    { required: true, message: t('system.pleaseSelectParentMenu'), trigger: 'change' },
-  ],
-  name: [
-    { required: true, message: t('system.pleaseInputMenuName'), trigger: 'blur' },
-  ],
-  menuType: [
-    { required: true, message: t('system.pleaseSelectMenuType'), trigger: 'change' },
-  ],
+  parentId: [{ required: true, message: t('system.pleaseSelectParentMenu'), trigger: 'change' }],
+  name: [{ required: true, message: t('system.pleaseInputMenuName'), trigger: 'blur' }],
+  menuType: [{ required: true, message: t('system.pleaseSelectMenuType'), trigger: 'change' }],
   path: [
     {
       validator: (_rule, value, callback) => {
@@ -532,9 +513,7 @@ const rules = computed<FormRules>(() => ({
       trigger: 'blur',
     },
   ],
-  sort: [
-    { required: true, message: t('system.pleaseInputSort'), trigger: 'blur' },
-  ],
+  sort: [{ required: true, message: t('system.pleaseInputSort'), trigger: 'blur' }],
 }))
 
 function resolveIconComponent(iconName?: string) {
@@ -560,14 +539,14 @@ function buildTree(list: SysMenuItem[]): SysMenuTreeItem[] {
   const map = new Map<number, SysMenuTreeItem>()
   const roots: SysMenuTreeItem[] = []
 
-  list.forEach(item => {
+  list.forEach((item) => {
     map.set(item.id, {
       ...item,
       children: [],
     })
   })
 
-  map.forEach(item => {
+  map.forEach((item) => {
     if (item.parentId === 0) {
       roots.push(item)
       return
@@ -584,7 +563,7 @@ function buildTree(list: SysMenuItem[]): SysMenuTreeItem[] {
 
   const sortTree = (nodes: SysMenuTreeItem[]) => {
     nodes.sort((a, b) => a.sort - b.sort)
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
       if (node.children?.length) {
         sortTree(node.children)
       }
@@ -644,11 +623,7 @@ function assertApiSuccess<T = any>(res: ApiResp<T>, defaultMsg?: string): T {
 
 function showError(error: unknown) {
   const msg =
-    error instanceof Error
-      ? error.message
-      : typeof error === 'string'
-        ? error
-        : t('common.failed')
+    error instanceof Error ? error.message : typeof error === 'string' ? error : t('common.failed')
 
   ElMessage.error(msg || t('common.failed'))
 }
@@ -656,14 +631,14 @@ function showError(error: unknown) {
 async function getList() {
   await withMainLoading(async () => {
     try {
-      const res = await menuService.getList({
+      const res = (await menuService.getList({
         cursor: queryPage.cursor,
         limit: queryPage.limit,
         keyword: queryForm.keyword || '',
         menuType: queryForm.menuType ?? 0,
         status: queryForm.status ?? 0,
         visible: queryForm.visible ?? 0,
-      }) as ApiResp<SysMenuItem[]>
+      })) as ApiResp<SysMenuItem[]>
 
       const list = assertApiSuccess<SysMenuItem[]>(res, t('common.failed'))
       rawList.value = Array.isArray(list) ? list : []
@@ -732,10 +707,7 @@ function handleEdit(row: SysMenuItem) {
 
 async function handleDelete(row: SysMenuItem) {
   try {
-    await confirm(
-      t('system.confirmDeleteMenu', { name: getMenuTitle(row) }),
-      { type: 'warning' }
-    )
+    await confirm(t('system.confirmDeleteMenu', { name: getMenuTitle(row) }), { type: 'warning' })
 
     const res = await menuService.delete(row.id)
     assertApiSuccess(res, t('common.failed'))

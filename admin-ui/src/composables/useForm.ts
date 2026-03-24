@@ -10,9 +10,7 @@ export interface FormOptions<T> {
   validate?: (data: T) => boolean | Promise<boolean>
 }
 
-export function useForm<T extends Record<string, any>>(
-  options: FormOptions<T>
-) {
+export function useForm<T extends Record<string, any>>(options: FormOptions<T>) {
   const { initialData, validate } = options
   const form = reactive<T>({ ...initialData })
   const formRef = ref()
@@ -20,10 +18,10 @@ export function useForm<T extends Record<string, any>>(
 
   const reset = () => {
     Object.keys(form).forEach((key) => {
-      (form as any)[key] = initialData[key]
+      ;(form as any)[key] = initialData[key]
     })
     // Clear errors
-    Object.keys(errors).forEach(key => {
+    Object.keys(errors).forEach((key) => {
       delete errors[key]
     })
   }
@@ -38,7 +36,7 @@ export function useForm<T extends Record<string, any>>(
 
   const clear = () => {
     Object.keys(form).forEach((key) => {
-      (form as any)[key] = undefined
+      ;(form as any)[key] = undefined
     })
   }
 

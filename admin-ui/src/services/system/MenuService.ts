@@ -5,7 +5,7 @@ import {
   sysMenuCreate,
   sysMenuUpdate,
   sysMenuDelete,
-  sysMenuList
+  sysMenuList,
 } from '@/api/system/menus'
 
 // ===== 菜单相关类型定义 =====
@@ -91,7 +91,6 @@ export interface UpdateMenuRequest extends SysMenuUpdateReq {}
  * 实现 BaseService 接口，使用现有的 API 函数
  */
 export class MenuService implements BaseService {
-
   /**
    * 获取菜单树
    */
@@ -110,7 +109,7 @@ export class MenuService implements BaseService {
    * 获取菜单列表
    */
   async getList(params?: MenuQueryParams): Promise<RespBase<SysMenuListResp>> {
-    return sysMenuList(params || {} as SysMenuListReq)
+    return sysMenuList(params || ({} as SysMenuListReq))
   }
 
   /**

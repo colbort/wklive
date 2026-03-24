@@ -176,12 +176,7 @@ function ensureImageCoversSelection(imageEl: any, selectionEl: any, canvasEl: an
   }
 }
 
-function canTransformKeepCover(
-  imageEl: any,
-  selectionEl: any,
-  canvasEl: any,
-  matrix: number[]
-) {
+function canTransformKeepCover(imageEl: any, selectionEl: any, canvasEl: any, matrix: number[]) {
   const clone = imageEl.cloneNode() as HTMLElement
   clone.style.position = 'absolute'
   clone.style.visibility = 'hidden'
@@ -307,7 +302,7 @@ async function confirmCrop() {
   try {
     const selection = cropper.getCropperSelection()
     if (!selection) {
-          ElMessage.error(t('app.cropFailed'))
+      ElMessage.error(t('app.cropFailed'))
     }
 
     const canvas = await selection!.$toCanvas({
@@ -346,10 +341,10 @@ async function confirmCrop() {
           }
 
           if (auth.user && result.data?.url) {
-              apiUpdateProfile({ avatar: result.data.url }).catch((err) => {
-                console.error('更新头像失败:', err)
-                ElMessage.error(t('app.updateAvatarFailed'))
-              })  
+            apiUpdateProfile({ avatar: result.data.url }).catch((err) => {
+              console.error('更新头像失败:', err)
+              ElMessage.error(t('app.updateAvatarFailed'))
+            })
             auth.user.avatar = result.data.url
           }
 
@@ -362,7 +357,7 @@ async function confirmCrop() {
         }
       },
       'image/jpeg',
-      0.9
+      0.9,
     )
   } catch (error) {
     console.error(t('app.cropFailed'), error)
@@ -372,9 +367,7 @@ async function confirmCrop() {
 
 function formatAvatar(avatar: string | undefined) {
   if (!avatar) return ''
-  const fullUrl = avatar.startsWith('http')
-              ? avatar
-              : `${http.defaults.baseURL}${avatar}`
+  const fullUrl = avatar.startsWith('http') ? avatar : `${http.defaults.baseURL}${avatar}`
   return `${fullUrl}${fullUrl.includes('?') ? '&' : '?'}t=${Date.now()}`
 }
 
@@ -426,8 +419,16 @@ onBeforeUnmount(() => {
       </el-select>
 
       <el-dropdown trigger="contextmenu" @command="handleCommand">
-        <div class="avatar-container" :title="t('app.uploadAvatar')" @click.stop.prevent="onAvatarClick">
-          <el-avatar :size="32" :src="formatAvatar(auth.user?.avatar)" :alt="auth.user?.nickname || auth.user?.username">
+        <div
+          class="avatar-container"
+          :title="t('app.uploadAvatar')"
+          @click.stop.prevent="onAvatarClick"
+        >
+          <el-avatar
+            :size="32"
+            :src="formatAvatar(auth.user?.avatar)"
+            :alt="auth.user?.nickname || auth.user?.username"
+          >
             <el-icon><User /></el-icon>
           </el-avatar>
           <span class="user-nickname">{{ auth.user?.nickname || auth.user?.username }}</span>

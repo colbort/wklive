@@ -4,10 +4,9 @@
  * @returns 格式化后的日期字符串
  */
 export function formatDate(timestamp) {
-    if (!timestamp)
-        return '-';
-    const date = new Date(timestamp * 1000);
-    return date.toLocaleString();
+  if (!timestamp) return '-'
+  const date = new Date(timestamp * 1000)
+  return date.toLocaleString()
 }
 /**
  * 格式化日期（日期部分）
@@ -15,10 +14,9 @@ export function formatDate(timestamp) {
  * @returns 格式化后的日期字符串
  */
 export function formatDateOnly(timestamp) {
-    if (!timestamp)
-        return '-';
-    const date = new Date(timestamp * 1000);
-    return date.toLocaleDateString();
+  if (!timestamp) return '-'
+  const date = new Date(timestamp * 1000)
+  return date.toLocaleDateString()
 }
 /**
  * 格式化时间（时间部分）
@@ -26,8 +24,7 @@ export function formatDateOnly(timestamp) {
  * @returns 格式化后的时间字符串
  */
 export function formatTimeOnly(timestamp) {
-    if (!timestamp)
-        return '-';
-    const date = new Date(timestamp * 1000);
-    return date.toLocaleTimeString();
+  if (!timestamp) return '-'
+  const date = new Date(timestamp * 1000)
+  return date.toLocaleTimeString()
 }

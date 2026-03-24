@@ -6,6 +6,6 @@ type SystemCore = {
   siteLogo: string
 }
 
-export function getSystemCore() :Promise<RespBase<SystemCore>> {
+export function getSystemCore(): Promise<RespBase<SystemCore>> {
   return get<SystemCore>('/admin/system/core')
 }

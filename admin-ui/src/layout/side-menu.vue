@@ -20,7 +20,7 @@ const menuTree = computed(() =>
   (auth.menus || [])
     .filter((a) => a.visible !== 0 && a.status !== 0)
     .slice()
-    .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0))
+    .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0)),
 )
 
 function labelById(id: number, fallback: string) {
@@ -69,12 +69,7 @@ function iconComp(icon?: string) {
           <span>{{ labelById(m.id, m.name) }}</span>
         </template>
 
-        <el-menu-item
-          v-for="c in childrenMenus(m)"
-          :key="c.id"
-          :index="c.path"
-          @click="go(c.path)"
-        >
+        <el-menu-item v-for="c in childrenMenus(m)" :key="c.id" :index="c.path" @click="go(c.path)">
           <el-icon>
             <component :is="iconComp(c.icon)" />
           </el-icon>
@@ -82,11 +77,7 @@ function iconComp(icon?: string) {
         </el-menu-item>
       </el-sub-menu>
 
-      <el-menu-item
-        v-else-if="m.menuType === 2"
-        :index="m.path"
-        @click="go(m.path)"
-      >
+      <el-menu-item v-else-if="m.menuType === 2" :index="m.path" @click="go(m.path)">
         <el-icon>
           <component :is="iconComp(m.icon)" />
         </el-icon>

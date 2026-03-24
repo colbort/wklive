@@ -1,55 +1,50 @@
-import { createApp } from 'vue';
-import { createPinia } from 'pinia';
-import ElementPlus from 'element-plus';
-import 'element-plus/dist/index.css';
-import App from './App.vue';
-import { router } from './router';
-import { i18n, elLocaleMap } from './i18n';
-import { setupPermDirective } from './directives/perm';
-import { getSystemCore } from '@/stores/core';
-import { http } from './utils/request';
-const app = createApp(App);
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+import App from './App.vue'
+import { router } from './router'
+import { i18n, elLocaleMap } from './i18n'
+import { setupPermDirective } from './directives/perm'
+import { getSystemCore } from '@/stores/core'
+import { http } from './utils/request'
+const app = createApp(App)
 function formatUrl(url) {
-    console.log('formatUrl', url);
-    if (!url)
-        return '';
-    const fullUrl = url.startsWith('http')
-        ? url
-        : `${http.defaults.baseURL}${url}`;
-    return `${fullUrl}${fullUrl.includes('?') ? '&' : '?'}t=${Date.now()}`;
+  console.log('formatUrl', url)
+  if (!url) return ''
+  const fullUrl = url.startsWith('http') ? url : `${http.defaults.baseURL}${url}`
+  return `${fullUrl}${fullUrl.includes('?') ? '&' : '?'}t=${Date.now()}`
 }
 function setFavicon(href) {
-    let icon = document.querySelector("link[rel~='icon']");
-    if (!icon) {
-        icon = document.createElement('link');
-        icon.rel = 'icon';
-        document.head.appendChild(icon);
-    }
-    icon.href = href;
+  let icon = document.querySelector("link[rel~='icon']")
+  if (!icon) {
+    icon = document.createElement('link')
+    icon.rel = 'icon'
+    document.head.appendChild(icon)
+  }
+  icon.href = href
 }
-;
-(async () => {
-    try {
-        const res = await getSystemCore();
-        if (res?.code === 200 && res.data) {
-            if (res.data.siteName) {
-                document.title = res.data.siteName;
-            }
-            if (res.data.siteLogo) {
-                setFavicon(formatUrl(res.data.siteLogo));
-            }
-        }
+;(async () => {
+  try {
+    const res = await getSystemCore()
+    if (res?.code === 200 && res.data) {
+      if (res.data.siteName) {
+        document.title = res.data.siteName
+      }
+      if (res.data.siteLogo) {
+        setFavicon(formatUrl(res.data.siteLogo))
+      }
     }
-    catch (e) {
-        console.warn('getSystemCore failed', e);
-    }
-})();
+  } catch (e) {
+    console.warn('getSystemCore failed', e)
+  }
+})()
 // Get initial locale from i18n
-const initialLocale = i18n.global.locale.value;
-const epLocale = elLocaleMap[initialLocale] || elLocaleMap['zh-CN'];
-app.use(createPinia());
-app.use(i18n);
-app.use(router);
-app.use(ElementPlus, { locale: epLocale });
-setupPermDirective(app);
-app.mount('#app');
+const initialLocale = i18n.global.locale.value
+const epLocale = elLocaleMap[initialLocale] || elLocaleMap['zh-CN']
+app.use(createPinia())
+app.use(i18n)
+app.use(router)
+app.use(ElementPlus, { locale: epLocale })
+setupPermDirective(app)
+app.mount('#app')

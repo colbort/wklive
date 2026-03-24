@@ -1,6 +1,15 @@
 // ===== 通用类型定义 =====
 
-export type RespBase<T = any> = { code: number; msg: string; data?: T; total?: number; nextCursor?: string | null; prevCursor?: string | null; hasNext?: boolean; hasPrev?: boolean }
+export type RespBase<T = any> = {
+  code: number
+  msg: string
+  data?: T
+  total?: number
+  nextCursor?: string | null
+  prevCursor?: string | null
+  hasNext?: boolean
+  hasPrev?: boolean
+}
 
 export interface BaseServiceOptions {
   baseURL?: string

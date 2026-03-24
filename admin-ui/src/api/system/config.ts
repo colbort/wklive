@@ -1,6 +1,11 @@
 import { get, post, put, del } from '@/utils/request'
-import type { RespBase, SysConfigListReq, SysConfigItem, SysConfigCreateReq, SysConfigUpdateReq } from '@/services'
-
+import type {
+  RespBase,
+  SysConfigListReq,
+  SysConfigItem,
+  SysConfigCreateReq,
+  SysConfigUpdateReq,
+} from '@/services'
 
 // ===== API 函数 =====
 

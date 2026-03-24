@@ -6,31 +6,46 @@
           <el-row :gutter="20">
             <el-col :span="12">
               <el-form-item :label="t('system.endpoint')">
-                <el-input v-model="form.aliyun_oss.endpoint" :placeholder="t('system.endpointPlaceholder')" />
+                <el-input
+                  v-model="form.aliyun_oss.endpoint"
+                  :placeholder="t('system.endpointPlaceholder')"
+                />
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item :label="t('system.accessKeyId')">
-                <el-input v-model="form.aliyun_oss.access_key_id" :placeholder="t('system.accessKeyIdPlaceholder')" />
+                <el-input
+                  v-model="form.aliyun_oss.access_key_id"
+                  :placeholder="t('system.accessKeyIdPlaceholder')"
+                />
               </el-form-item>
             </el-col>
           </el-row>
           <el-row :gutter="20">
             <el-col :span="12">
               <el-form-item :label="t('system.accessKeySecret')">
-                <el-input v-model="form.aliyun_oss.access_key_secret" :placeholder="t('system.accessKeySecretPlaceholder')" />
+                <el-input
+                  v-model="form.aliyun_oss.access_key_secret"
+                  :placeholder="t('system.accessKeySecretPlaceholder')"
+                />
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item :label="t('system.bucketName')">
-                <el-input v-model="form.aliyun_oss.bucket_name" :placeholder="t('system.bucketNamePlaceholder')" />
+                <el-input
+                  v-model="form.aliyun_oss.bucket_name"
+                  :placeholder="t('system.bucketNamePlaceholder')"
+                />
               </el-form-item>
             </el-col>
           </el-row>
           <el-row :gutter="20">
             <el-col :span="12">
               <el-form-item :label="t('system.bucketUrl')">
-                <el-input v-model="form.aliyun_oss.bucket_url" :placeholder="t('system.bucketUrlPlaceholder')" />
+                <el-input
+                  v-model="form.aliyun_oss.bucket_url"
+                  :placeholder="t('system.bucketUrlPlaceholder')"
+                />
               </el-form-item>
             </el-col>
           </el-row>
@@ -41,31 +56,46 @@
           <el-row :gutter="20">
             <el-col :span="12">
               <el-form-item :label="t('system.region')">
-                <el-input v-model="form.tencent_cos.region" :placeholder="t('system.regionPlaceholder')" />
+                <el-input
+                  v-model="form.tencent_cos.region"
+                  :placeholder="t('system.regionPlaceholder')"
+                />
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item :label="t('system.secretId')">
-                <el-input v-model="form.tencent_cos.secret_id" :placeholder="t('system.secretIdPlaceholder')" />
+                <el-input
+                  v-model="form.tencent_cos.secret_id"
+                  :placeholder="t('system.secretIdPlaceholder')"
+                />
               </el-form-item>
             </el-col>
           </el-row>
           <el-row :gutter="20">
             <el-col :span="12">
               <el-form-item :label="t('system.secretKey')">
-                <el-input v-model="form.tencent_cos.secret_key" :placeholder="t('system.secretKeyPlaceholder')" />
+                <el-input
+                  v-model="form.tencent_cos.secret_key"
+                  :placeholder="t('system.secretKeyPlaceholder')"
+                />
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item :label="t('system.bucketName')">
-                <el-input v-model="form.tencent_cos.bucket_name" :placeholder="t('system.bucketNamePlaceholder')" />
+                <el-input
+                  v-model="form.tencent_cos.bucket_name"
+                  :placeholder="t('system.bucketNamePlaceholder')"
+                />
               </el-form-item>
             </el-col>
           </el-row>
           <el-row :gutter="20">
             <el-col :span="12">
               <el-form-item :label="t('system.bucketUrl')">
-                <el-input v-model="form.tencent_cos.bucket_url" :placeholder="t('system.bucketUrlPlaceholder')" />
+                <el-input
+                  v-model="form.tencent_cos.bucket_url"
+                  :placeholder="t('system.bucketUrlPlaceholder')"
+                />
               </el-form-item>
             </el-col>
           </el-row>
@@ -76,31 +106,46 @@
           <el-row :gutter="20">
             <el-col :span="12">
               <el-form-item :label="t('system.endpoint')">
-                <el-input v-model="form.minio.endpoint" :placeholder="t('system.endpointPlaceholder')" />
+                <el-input
+                  v-model="form.minio.endpoint"
+                  :placeholder="t('system.endpointPlaceholder')"
+                />
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item :label="t('system.accessKeyId')">
-                <el-input v-model="form.minio.access_key_id" :placeholder="t('system.accessKeyIdPlaceholder')" />
+                <el-input
+                  v-model="form.minio.access_key_id"
+                  :placeholder="t('system.accessKeyIdPlaceholder')"
+                />
               </el-form-item>
             </el-col>
           </el-row>
           <el-row :gutter="20">
             <el-col :span="12">
               <el-form-item :label="t('system.accessKeySecret')">
-                <el-input v-model="form.minio.access_key_secret" :placeholder="t('system.accessKeySecretPlaceholder')" />
+                <el-input
+                  v-model="form.minio.access_key_secret"
+                  :placeholder="t('system.accessKeySecretPlaceholder')"
+                />
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item :label="t('system.bucketName')">
-                <el-input v-model="form.minio.bucket_name" :placeholder="t('system.bucketNamePlaceholder')" />
+                <el-input
+                  v-model="form.minio.bucket_name"
+                  :placeholder="t('system.bucketNamePlaceholder')"
+                />
               </el-form-item>
             </el-col>
           </el-row>
           <el-row :gutter="20">
             <el-col :span="12">
               <el-form-item :label="t('system.bucketUrl')">
-                <el-input v-model="form.minio.bucket_url" :placeholder="t('system.bucketUrlPlaceholder')" />
+                <el-input
+                  v-model="form.minio.bucket_url"
+                  :placeholder="t('system.bucketUrlPlaceholder')"
+                />
               </el-form-item>
             </el-col>
           </el-row>
@@ -119,10 +164,7 @@
       </el-select>
     </el-form-item>
     <el-form-item :label="t('system.ossDomain')" prop="oss_domain">
-      <el-input
-        v-model="form.oss_domain"
-        :placeholder="t('common.pleaseEnter')"
-      />
+      <el-input v-model="form.oss_domain" :placeholder="t('common.pleaseEnter')" />
     </el-form-item>
   </div>
 </template>
@@ -148,7 +190,7 @@ const activeTab = ref('aliyun')
 
 const form = computed({
   get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value)
+  set: (value) => emit('update:modelValue', value),
 })
 
 function handleTabClick(_tab: any) {

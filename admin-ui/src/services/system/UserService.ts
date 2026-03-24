@@ -12,7 +12,7 @@ import {
   apiGoogle2faEnable,
   apiGoogle2faDisable,
   apiGoogle2faReset,
-  apiGoogle2faBind
+  apiGoogle2faBind,
 } from '@/api/system/users'
 
 // ===== 用户相关类型定义 =====
@@ -62,7 +62,6 @@ export interface UserQueryParams {
  * 实现 BaseService 接口，使用现有的 API 函数
  */
 export class UserService implements BaseService {
-
   /**
    * 获取用户列表（支持分页和筛选）
    */

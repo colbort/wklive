@@ -1,12 +1,6 @@
 <template>
   <div class="table-wrapper">
-    <el-table
-      v-bind="$attrs"
-      :data="data"
-      stripe
-      border
-      class="table-content"
-    >
+    <el-table v-bind="$attrs" :data="data" stripe border class="table-content">
       <slot />
       <el-table-column
         v-if="showActions"
@@ -21,13 +15,30 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <!-- 分页器 -->
-    <div v-if="pagination" style="display:flex; justify-content:flex-end; gap: 10px; align-items: center; margin-top: 12px;">
+    <div
+      v-if="pagination"
+      style="
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        align-items: center;
+        margin-top: 12px;
+      "
+    >
       <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
-      <el-button @click="$emit('prev')" :disabled="!pagination.hasPrev">{{ t('common.prevPage') }}</el-button>
-      <el-button @click="$emit('next')" :disabled="!pagination.hasNext">{{ t('common.nextPage') }}</el-button>
-      <el-select v-model="pagination.limit" style="width: 100px" @change="() => $emit('change-limit')">
+      <el-button @click="$emit('prev')" :disabled="!pagination.hasPrev">{{
+        t('common.prevPage')
+      }}</el-button>
+      <el-button @click="$emit('next')" :disabled="!pagination.hasNext">{{
+        t('common.nextPage')
+      }}</el-button>
+      <el-select
+        v-model="pagination.limit"
+        style="width: 100px"
+        @change="() => $emit('change-limit')"
+      >
         <el-option label="10" :value="10" />
         <el-option label="20" :value="20" />
         <el-option label="50" :value="50" />

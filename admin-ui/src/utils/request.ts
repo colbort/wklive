@@ -29,7 +29,7 @@ http.interceptors.request.use(
   (error) => {
     logger.error('Request error:', error)
     return Promise.reject(error)
-  }
+  },
 )
 
 // ==================== 响应拦截器 ====================
@@ -51,7 +51,7 @@ http.interceptors.response.use(
   },
 )
 
-// ==================== 通用 request ================== 
+// ==================== 通用 request ==================
 function request<T = any>(
   method: Method,
   url: string,

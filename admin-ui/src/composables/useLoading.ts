@@ -19,9 +19,7 @@ export function useLoading(initialState = false) {
     loading.value = false
   }
 
-  const withLoading = async <T>(
-    callback: () => Promise<T>
-  ): Promise<T> => {
+  const withLoading = async <T>(callback: () => Promise<T>): Promise<T> => {
     startLoading()
     try {
       return await callback()

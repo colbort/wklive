@@ -18,7 +18,12 @@ function isSuperRole(r: SysRole | null | undefined) {
 }
 
 // ===== state =====
-const { pagination, updatePagination, nextPage: paginationNextPage, prevPage: paginationPrevPage } = usePagination(20)
+const {
+  pagination,
+  updatePagination,
+  nextPage: paginationNextPage,
+  prevPage: paginationPrevPage,
+} = usePagination(20)
 const { loading, withLoading } = useLoading()
 const { confirm } = useConfirm()
 const { form: queryForm } = useForm({
@@ -41,7 +46,13 @@ async function fetchList() {
 
       const resp = await roleService.getList(q)
       tableData.value = resp.data || []
-      updatePagination(resp.total || 0, resp.hasNext || false, resp.hasPrev || false, resp.nextCursor || null, resp.prevCursor || null)
+      updatePagination(
+        resp.total || 0,
+        resp.hasNext || false,
+        resp.hasPrev || false,
+        resp.nextCursor || null,
+        resp.prevCursor || null,
+      )
     } catch (e: any) {
       ElMessage.error(e?.message || t('common.failed'))
     }
@@ -335,9 +346,9 @@ onMounted(fetchList)
 <template>
   <el-card>
     <template #header>
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
         <div>{{ t('system.roles') }}</div>
-        <div style="display:flex; gap: 8px; flex-wrap: wrap;">
+        <div style="display: flex; gap: 8px; flex-wrap: wrap">
           <el-button type="primary" v-perm="'sys:role:add'" @click="openCreate">
             {{ t('perms.sys:role:add') }}
           </el-button>
@@ -346,10 +357,20 @@ onMounted(fetchList)
     </template>
 
     <!-- 查询区 -->
-    <div style="display:flex; gap:8px; align-items:center; margin-bottom:12px; flex-wrap: wrap;">
-      <el-input v-model="queryForm.keyword" :placeholder="t('common.keyword')" clearable style="max-width:260px;" />
+    <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap">
+      <el-input
+        v-model="queryForm.keyword"
+        :placeholder="t('common.keyword')"
+        clearable
+        style="max-width: 260px"
+      />
 
-      <el-select v-model="queryForm.status" style="width:140px;" :placeholder="t('common.status')" @change="onSearch">
+      <el-select
+        v-model="queryForm.status"
+        style="width: 140px"
+        :placeholder="t('common.status')"
+        @change="onSearch"
+      >
         <el-option :label="t('common.all')" :value="0" />
         <el-option :label="t('common.enabled')" :value="1" />
         <el-option :label="t('common.disabled')" :value="2" />
@@ -360,7 +381,7 @@ onMounted(fetchList)
     </div>
 
     <!-- 表格 -->
-    <el-table :data="tableData" v-loading="loading" style="width:100%;">
+    <el-table :data="tableData" v-loading="loading" style="width: 100%">
       <el-table-column prop="id" :label="t('common.id')" width="90" />
       <el-table-column prop="name" :label="t('system.roleName')" min-width="160" />
       <el-table-column prop="code" :label="t('system.roleCode')" min-width="160" />
@@ -405,18 +426,40 @@ onMounted(fetchList)
             {{ t('common.delete') }}
           </el-button>
 
-          <el-tag v-if="isSuperRole(row)" type="warning" style="margin-left:8px;">
+          <el-tag v-if="isSuperRole(row)" type="warning" style="margin-left: 8px">
             {{ t('system.superAdmin') }}
           </el-tag>
         </template>
       </el-table-column>
     </el-table>
 
-    <div style="display:flex; justify-content:flex-end; gap: 10px; align-items: center; margin-top:12px;">
+    <div
+      style="
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        align-items: center;
+        margin-top: 12px;
+      "
+    >
       <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
-      <el-button @click="prevPage" :disabled="!pagination.hasPrev">{{ t('common.prevPage') }}</el-button>
-      <el-button @click="nextPage" :disabled="!pagination.hasNext">{{ t('common.nextPage') }}</el-button>
-      <el-select v-model="pagination.limit" style="width: 100px" @change="() => { pagination.cursor = null; pagination.hasPrev = false; fetchList() }">
+      <el-button @click="prevPage" :disabled="!pagination.hasPrev">{{
+        t('common.prevPage')
+      }}</el-button>
+      <el-button @click="nextPage" :disabled="!pagination.hasNext">{{
+        t('common.nextPage')
+      }}</el-button>
+      <el-select
+        v-model="pagination.limit"
+        style="width: 100px"
+        @change="
+          () => {
+            pagination.cursor = null
+            pagination.hasPrev = false
+            fetchList()
+          }
+        "
+      >
         <el-option label="10" :value="10" />
         <el-option label="20" :value="20" />
         <el-option label="50" :value="50" />
@@ -425,17 +468,33 @@ onMounted(fetchList)
   </el-card>
 
   <!-- 新增/编辑弹窗 -->
-  <el-dialog v-model="editVisible" :title="editIsUpdate ? t('system.roleEdit') : t('system.roleAdd')" width="520px">
+  <el-dialog
+    v-model="editVisible"
+    :title="editIsUpdate ? t('system.roleEdit') : t('system.roleAdd')"
+    width="520px"
+  >
     <el-form ref="editFormRef" :model="editForm" label-width="110px">
-      <el-form-item :label="t('system.roleName')" prop="name" :rules="[{ required: true, message: t('common.required') }]">
+      <el-form-item
+        :label="t('system.roleName')"
+        prop="name"
+        :rules="[{ required: true, message: t('common.required') }]"
+      >
         <el-input v-model="editForm.name" />
       </el-form-item>
 
-      <el-form-item :label="t('system.roleCode')" prop="code" :rules="[{ required: true, message: t('common.required') }]">
+      <el-form-item
+        :label="t('system.roleCode')"
+        prop="code"
+        :rules="[{ required: true, message: t('common.required') }]"
+      >
         <el-input v-model="editForm.code" :disabled="editIsUpdate" />
       </el-form-item>
 
-      <el-form-item :label="t('common.status')" prop="status" :rules="[{ required: true, message: t('common.required') }]">
+      <el-form-item
+        :label="t('common.status')"
+        prop="status"
+        :rules="[{ required: true, message: t('common.required') }]"
+      >
         <el-radio-group v-model="editForm.status">
           <el-radio :label="1">{{ t('common.enabled') }}</el-radio>
           <el-radio :label="2">{{ t('common.disabled') }}</el-radio>
@@ -449,7 +508,9 @@ onMounted(fetchList)
 
     <template #footer>
       <el-button @click="editVisible = false">{{ t('common.cancel') }}</el-button>
-      <el-button type="primary" :loading="editLoading" @click="submitEdit">{{ t('common.confirm') }}</el-button>
+      <el-button type="primary" :loading="editLoading" @click="submitEdit">{{
+        t('common.confirm')
+      }}</el-button>
     </template>
   </el-dialog>
 
@@ -466,11 +527,14 @@ onMounted(fetchList)
       type="warning"
       :closable="false"
       :title="t('system.superAdminAllPerms')"
-      style="margin-bottom:12px;"
+      style="margin-bottom: 12px"
     />
 
     <div v-loading="grantLoading">
-      <div v-if="!menuTree || menuTree.length === 0" style="padding:24px; text-align:center; color:#999;">
+      <div
+        v-if="!menuTree || menuTree.length === 0"
+        style="padding: 24px; text-align: center; color: #999"
+      >
         {{ t('common.noData') }}
       </div>
 
@@ -485,7 +549,7 @@ onMounted(fetchList)
         :disabled="grantReadonly"
         :default-expand-all="false"
         @check="onMenuTreeCheck"
-        style="max-height:420px; overflow:auto;"
+        style="max-height: 420px; overflow: auto"
       />
     </div>
 

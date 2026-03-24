@@ -6,9 +6,8 @@ import type {
   SysMenuCreateReq,
   SysMenuUpdateReq,
   SysMenuListReq,
-  SysMenuListResp
+  SysMenuListResp,
 } from '@/services'
-
 
 export async function apiMenuTree(): Promise<RespBase<MenuNode[]>> {
   return await get('/admin/menus/tree')
@@ -18,21 +17,21 @@ export async function apiPermList(): Promise<RespBase<PermItem[]>> {
 }
 
 /** 新增菜单 */
-export async function sysMenuCreate(data: SysMenuCreateReq) : Promise<RespBase> {
+export async function sysMenuCreate(data: SysMenuCreateReq): Promise<RespBase> {
   return await post('/admin/menus', data)
 }
 
 /** 更新菜单 */
-export async function sysMenuUpdate(data: SysMenuUpdateReq) : Promise<RespBase> {
+export async function sysMenuUpdate(data: SysMenuUpdateReq): Promise<RespBase> {
   return await put('/admin/menus', data)
 }
 
 /** 删除菜单 */
-export async function sysMenuDelete(id: number) : Promise<RespBase> {
+export async function sysMenuDelete(id: number): Promise<RespBase> {
   return await del(`/admin/menus/${id}`)
 }
 
 /** 菜单列表 */
-export async function sysMenuList(data: SysMenuListReq) : Promise<RespBase<SysMenuListResp>> {
+export async function sysMenuList(data: SysMenuListReq): Promise<RespBase<SysMenuListResp>> {
   return await get('/admin/menus', data)
 }

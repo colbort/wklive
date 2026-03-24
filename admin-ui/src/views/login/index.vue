@@ -45,14 +45,19 @@ async function submit() {
         </el-form-item>
 
         <el-form-item :label="t('auth.password')">
-          <el-input v-model="form.password" type="password" autocomplete="current-password" show-password />
+          <el-input
+            v-model="form.password"
+            type="password"
+            autocomplete="current-password"
+            show-password
+          />
         </el-form-item>
 
         <el-form-item :label="t('auth.googleCode')">
           <el-input v-model="form.googleCode" />
         </el-form-item>
 
-        <el-button type="primary" :loading="loading" style="width: 100%;" @click="submit">
+        <el-button type="primary" :loading="loading" style="width: 100%" @click="submit">
           {{ t('auth.submit') }}
         </el-button>
       </el-form>
@@ -61,6 +66,14 @@ async function submit() {
 </template>
 
 <style scoped>
-.wrap { height: 100vh; display:flex; align-items:center; justify-content:center; background:#f7f8fa; }
-.card { width: 380px; }
+.wrap {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f7f8fa;
+}
+.card {
+  width: 380px;
+}
 </style>

@@ -74,11 +74,9 @@ onBeforeUnmount(() => {
 })
 
 function formatUrl(url: string | undefined) {
-   console.log('formatUrl', url)
+  console.log('formatUrl', url)
   if (!url) return ''
-  const fullUrl = url.startsWith('http')
-              ? url
-              : `${http.defaults.baseURL}${url}`
+  const fullUrl = url.startsWith('http') ? url : `${http.defaults.baseURL}${url}`
   return `${fullUrl}${fullUrl.includes('?') ? '&' : '?'}t=${Date.now()}`
 }
 </script>
@@ -94,7 +92,9 @@ function formatUrl(url: string | undefined) {
           class="brand-logo"
         />
         <span class="brand-text" v-if="!collapsed">{{ systemCore.siteName }}</span>
-        <span class="brand-text" v-else>{{ systemCore.siteName ? systemCore.siteName.slice(0, 2).toUpperCase() : 'AI' }}</span>
+        <span class="brand-text" v-else>{{
+          systemCore.siteName ? systemCore.siteName.slice(0, 2).toUpperCase() : 'AI'
+        }}</span>
       </div>
 
       <!-- 关键：把 collapsed 传给侧边菜单，让 el-menu collapse -->
@@ -116,7 +116,10 @@ function formatUrl(url: string | undefined) {
 </template>
 
 <style scoped>
-.layout { display: flex; height: 100vh; }
+.layout {
+  display: flex;
+  height: 100vh;
+}
 
 /* ✅ 禁止左右滑动的关键：overflow-x hidden */
 .sider {
@@ -132,8 +135,8 @@ function formatUrl(url: string | undefined) {
 /* brand 不要撑出横向滚动 */
 .brand {
   height: 56px;
-  display:flex;
-  align-items:center;
+  display: flex;
+  align-items: center;
   padding: 0 16px;
   font-weight: 700;
   white-space: nowrap;
@@ -149,8 +152,19 @@ function formatUrl(url: string | undefined) {
   object-fit: contain;
 }
 
-.main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
-.content { padding: 16px; overflow: auto; flex: 1; background: #f7f8fa; min-width: 0; }
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.content {
+  padding: 16px;
+  overflow: auto;
+  flex: 1;
+  background: #f7f8fa;
+  min-width: 0;
+}
 
 /* ✅ 拖拽条 */
 .resizer {
@@ -161,5 +175,7 @@ function formatUrl(url: string | undefined) {
   height: 100%;
   cursor: col-resize;
 }
-.resizer:hover { background: rgba(0,0,0,0.06); }
+.resizer:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
 </style>

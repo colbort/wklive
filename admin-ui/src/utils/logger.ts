@@ -30,11 +30,7 @@ class Logger {
     }
 
     if (data !== undefined) {
-      console.log(
-        `%c${prefix} ${message}`,
-        styles[level],
-        data
-      )
+      console.log(`%c${prefix} ${message}`, styles[level], data)
     } else {
       console.log(`%c${prefix} ${message}`, styles[level])
     }

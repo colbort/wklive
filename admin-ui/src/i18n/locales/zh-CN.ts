@@ -94,7 +94,9 @@ export default {
     google2fa: '2FA',
     enterGoogleCode: '需要时输入 Google Authenticator 6 位码',
     qrCode: '二维码',
-    click2faBindGenerateQrCode: '点击“2FA绑定”生成二维码',    scanQrCodeWithGoogleAuthenticator: '请使用 Google Authenticator 扫描二维码',    goHome: '回到首页',
+    click2faBindGenerateQrCode: '点击“2FA绑定”生成二维码',
+    scanQrCodeWithGoogleAuthenticator: '请使用 Google Authenticator 扫描二维码',
+    goHome: '回到首页',
     user: '用户',
     pleaseInputMethod: '请输入方法',
     pleaseInputPath: '请输入路径',
@@ -123,6 +125,9 @@ export default {
     uploadFailed: '上传失败',
     uploadSuccess: '上传成功',
     uploadImageTip: '点击上传图片，或将图片拖拽到此处',
+    cropImage: '裁剪图片',
+    cropAndUpload: '裁剪并上传',
+    cropFailed: '裁剪失败',
   },
   system: {
     mgmt: '系统管理',
@@ -204,7 +209,6 @@ export default {
 
     SYSTEM_CORE: '系统配置',
     OBJECT_STORAGE: '对象存储',
-
   },
   perms: {
     'sys:user:add': '新增用户',
@@ -240,7 +244,8 @@ export default {
   },
   home: {
     welcome: '欢迎，{name}',
-    multiLangDesc: '本项目已内置多语言（vue-i18n），当前默认中文；后期你只需要补充 /src/i18n/locales/*.ts 即可。',
+    multiLangDesc:
+      '本项目已内置多语言（vue-i18n），当前默认中文；后期你只需要补充 /src/i18n/locales/*.ts 即可。',
   },
   error: {
     notFound: '页面不存在',

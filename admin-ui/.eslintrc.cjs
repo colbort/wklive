@@ -33,8 +33,8 @@ module.exports = {
 
     // 通用规则
     'no-console': ['warn', { allow: ['warn', 'error'] }],
-    'semi': ['error', 'never'],
-    'quotes': ['error', 'single', { avoidEscape: true }],
+    semi: ['error', 'never'],
+    quotes: ['error', 'single', { avoidEscape: true }],
     'comma-dangle': ['error', 'always-multiline'],
     'no-trailing-spaces': 'error',
     'eol-last': ['error', 'always'],

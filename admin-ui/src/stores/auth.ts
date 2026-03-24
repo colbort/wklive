@@ -79,7 +79,10 @@ export const useAuthStore = defineStore('auth', {
   },
 })
 
-
-export function apiUpdateProfile(data: { nickname?: string; avatar?: string; password?: string }): Promise<RespBase> {
+export function apiUpdateProfile(data: {
+  nickname?: string
+  avatar?: string
+  password?: string
+}): Promise<RespBase> {
   return post<RespBase>('/admin/auth/profile', data)
 }

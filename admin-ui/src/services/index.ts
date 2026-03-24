@@ -16,7 +16,7 @@ export type {
   UpdateUserRequest,
   UserQueryParams,
   SysUserItem,
-  Google2FABindInitResp
+  Google2FABindInitResp,
 } from './system/UserService'
 export type {
   Role,
@@ -26,7 +26,7 @@ export type {
   RoleGrantRequest,
   SysRole,
   RoleListResp,
-  RoleItem
+  RoleItem,
 } from './system/RoleService'
 export type {
   Menu,
@@ -41,7 +41,7 @@ export type {
   SysMenuListReq,
   SysMenuListResp,
   SysMenuItem,
-  SysMenuTreeItem
+  SysMenuTreeItem,
 } from './system/MenuService'
 export type {
   LoginLog,
@@ -53,12 +53,12 @@ export type {
   LoginLogListResp,
   OpLogItem,
   OpLogListReq,
-  OpLogListResp
+  OpLogListResp,
 } from './system/LogService'
 export type { UploadFileResp } from './system/UploadService'
 export type {
   SysConfigItem,
   SysConfigListReq,
   SysConfigCreateReq,
-  SysConfigUpdateReq
+  SysConfigUpdateReq,
 } from './system/ConfigService'

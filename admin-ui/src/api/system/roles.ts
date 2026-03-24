@@ -3,7 +3,12 @@ import type { RespBase, SysRole } from '@/services'
 
 // ===== types =====
 
-export function apiRoleList(params: { keyword?: string; status?: number; cursor?: string | null; limit?: number }): Promise<RespBase<SysRole[]>> {
+export function apiRoleList(params: {
+  keyword?: string
+  status?: number
+  cursor?: string | null
+  limit?: number
+}): Promise<RespBase<SysRole[]>> {
   return get('/admin/roles', params)
 }
 

@@ -8,11 +8,13 @@ Admin UI 是一个现代化的 Vue 3 + TypeScript + Element Plus 后台管理系
 ## 🚀 快速上手
 
 ### 1. 安装依赖
+
 ```bash
 npm install
 ```
 
 ### 2. 启动开发服务器
+
 ```bash
 npm run dev
 ```
@@ -20,6 +22,7 @@ npm run dev
 打开 http://localhost:5173，应该会自动跳转到登录页面。
 
 ### 3. 构建生产包
+
 ```bash
 npm run build
 ```
@@ -41,6 +44,7 @@ const user = await userService.getUser(1)
 ```
 
 **好处**：
+
 - 集中管理 API 逻辑
 - 便于维护和测试
 - 代码重用性更高
@@ -71,7 +75,7 @@ export default {
     onMounted(() => fetchUsers())
 
     return { users, pagination, loading, fetchUsers }
-  }
+  },
 }
 ```
 
@@ -107,14 +111,14 @@ logger.error('Failed to fetch user', error)
 
 ### 命名规范
 
-| 类型 | 规范 | 示例 |
-|------|------|------|
-| 组件 | PascalCase | `UserForm.vue`, `DataTable.vue` |
-| 文件 | kebab-case | `user-form.vue`, `data-table.vue` |
-| 函数/变量 | camelCase | `getUserData()`, `userName` |
-| 常量 | UPPER_SNAKE_CASE | `API_BASE_URL`, `MAX_RETRY_COUNT` |
-| 类 | PascalCase | `UserService`, `BaseService` |
-| 接口 | PascalCase + I 前缀或省略 | `UserQuery`, `User` |
+| 类型      | 规范                      | 示例                              |
+| --------- | ------------------------- | --------------------------------- |
+| 组件      | PascalCase                | `UserForm.vue`, `DataTable.vue`   |
+| 文件      | kebab-case                | `user-form.vue`, `data-table.vue` |
+| 函数/变量 | camelCase                 | `getUserData()`, `userName`       |
+| 常量      | UPPER_SNAKE_CASE          | `API_BASE_URL`, `MAX_RETRY_COUNT` |
+| 类        | PascalCase                | `UserService`, `BaseService`      |
+| 接口      | PascalCase + I 前缀或省略 | `UserQuery`, `User`               |
 
 ### 文件组织
 
@@ -171,7 +175,7 @@ const config = {
 } as const
 
 // ❌ 避免使用 any
-function handleResponse(data: any) { }
+function handleResponse(data: any) {}
 
 // ✅ 即使不确定，也使用 unknown
 function handleResponse(data: unknown) {
@@ -275,6 +279,7 @@ logger.debug('当前用户:', authStore.user)
 ### Vue DevTools
 
 安装 Vue DevTools 浏览器扩展：
+
 - 检查组件状态
 - 查看 Pinia store 变化
 - 追踪事件发射
@@ -282,6 +287,7 @@ logger.debug('当前用户:', authStore.user)
 ### 时间旅行调试
 
 使用 Pinia DevTools 中的操作历史：
+
 ```typescript
 // 在 DevTools 中回溯状态变化
 ```
@@ -352,16 +358,15 @@ console.log(ENV.CUSTOM_VAR)
 ## 🚨 常见问题
 
 ### Q: 如何处理异步数据加载
+
 A: 使用 `useAsync` composable
 
 ```typescript
-const { data, loading, error } = useAsync(
-  () => userService.getUser(id),
-  { immediate: true }
-)
+const { data, loading, error } = useAsync(() => userService.getUser(id), { immediate: true })
 ```
 
 ### Q: 如何保存用户偏好设置
+
 A: 使用 `useLocalStorage` composable
 
 ```typescript
@@ -369,6 +374,7 @@ const { data: theme } = useLocalStorage('theme', 'light')
 ```
 
 ### Q: 如何实现权限控制
+
 A: 使用 `v-perm` 指令或在路由中检查
 
 ```vue
@@ -380,11 +386,12 @@ A: 使用 `v-perm` 指令或在路由中检查
 ```
 
 ### Q: 如何处理表单验证
+
 A: 使用 `useForm` composable 和 Element Plus 的验证
 
 ```typescript
 const { form, formRef, submit } = useForm({
-  initialData: { username: '', email: '' }
+  initialData: { username: '', email: '' },
 })
 
 const handleSubmit = async () => {

@@ -42,47 +42,46 @@ export type SysConfigDeleteReq = {
   id: number
 }
 
-
 // 系统配置
 export type SystemCore = {
-  site_name: string; // 网站名称
-  site_logo: string; // 网站LOGO
+  site_name: string // 网站名称
+  site_logo: string // 网站LOGO
 }
 
 // 阿里云 OSS配置
 export type AliyunOssConfig = {
-  endpoint: string;
-  access_key_id: string;
-  access_key_secret: string;
-  bucket_name: string;
-  bucket_url: string;
+  endpoint: string
+  access_key_id: string
+  access_key_secret: string
+  bucket_name: string
+  bucket_url: string
 }
 
 // 腾讯云 COS配置
 export type TencentCosConfig = {
-  region: string;
-  secret_id: string;
-  secret_key: string;
-  bucket_name: string;
-  bucket_url: string;
+  region: string
+  secret_id: string
+  secret_key: string
+  bucket_name: string
+  bucket_url: string
 }
 
 // MINIO配置
 export type MinioConfig = {
-  endpoint: string;
-  access_key_id: string;
-  access_key_secret: string;
-  bucket_name: string;
-  bucket_url: string;
+  endpoint: string
+  access_key_id: string
+  access_key_secret: string
+  bucket_name: string
+  bucket_url: string
 }
 
 // 对象存储配置
 export type ObjectStorageConfig = {
-    aliyun_oss: AliyunOssConfig;
-    tencent_cos: TencentCosConfig;
-    minio: MinioConfig;  
-    oss_type: number; // 1阿里云OSS 2腾讯云COS 3MINIO
-    oss_domain: string; // 对象存储访问域名（可选，优先使用bucket_url）
+  aliyun_oss: AliyunOssConfig
+  tencent_cos: TencentCosConfig
+  minio: MinioConfig
+  oss_type: number // 1阿里云OSS 2腾讯云COS 3MINIO
+  oss_domain: string // 对象存储访问域名（可选，优先使用bucket_url）
 }
 
 // ===== 系统配置服务 =====

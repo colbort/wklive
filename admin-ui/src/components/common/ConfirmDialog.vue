@@ -49,7 +49,7 @@ watch(
   () => props.modelValue,
   (val) => {
     visible.value = val
-  }
+  },
 )
 
 watch(visible, (val) => {

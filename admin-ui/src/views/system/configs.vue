@@ -42,55 +42,23 @@
 
     <!-- 数据表格 -->
     <el-card class="table-card" shadow="never">
-      <el-table
-        :data="list"
-        v-loading="loading"
-        :empty-text="t('common.noData')"
-        stripe
-      >
-        <el-table-column
-          prop="id"
-          :label="t('common.id')"
-          width="80"
-          align="center"
-        />
-        <el-table-column
-          prop="configKey"
-          :label="t('system.configKey')"
-          min-width="150"
-        />
-        <el-table-column
-          prop="configValue"
-          :label="t('system.configValue')"
-          min-width="200"
-        >
+      <el-table :data="list" v-loading="loading" :empty-text="t('common.noData')" stripe>
+        <el-table-column prop="id" :label="t('common.id')" width="80" align="center" />
+        <el-table-column prop="configKey" :label="t('system.configKey')" min-width="150" />
+        <el-table-column prop="configValue" :label="t('system.configValue')" min-width="200">
           <template #default="{ row }">
-            <el-tooltip :content="row.configValue" placement="top">
+            <el-tooltip :content="row.configValue" placement="top" popper-class="config-tip">
               <span class="config-value">{{ row.configValue }}</span>
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="remark"
-          :label="t('common.remark')"
-          min-width="150"
-        />
-        <el-table-column
-          prop="createdAt"
-          :label="t('common.createdAt')"
-          width="160"
-          align="center"
-        >
+        <el-table-column prop="remark" :label="t('common.remark')" min-width="150" />
+        <el-table-column prop="createdAt" :label="t('common.createdAt')" width="160" align="center">
           <template #default="{ row }">
             {{ formatDate(row.createdAt) }}
           </template>
         </el-table-column>
-        <el-table-column
-          :label="t('common.actions')"
-          width="150"
-          align="center"
-          fixed="right"
-        >
+        <el-table-column :label="t('common.actions')" width="150" align="center" fixed="right">
           <template #default="{ row }">
             <el-button
               type="primary"
@@ -113,11 +81,33 @@
       </el-table>
 
       <!-- 分页 -->
-      <div style="display:flex; justify-content:flex-end; gap: 10px; align-items: center; margin-top: 12px;">
+      <div
+        style="
+          display: flex;
+          justify-content: flex-end;
+          gap: 10px;
+          align-items: center;
+          margin-top: 12px;
+        "
+      >
         <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
-      <el-button @click="prevPage" :disabled="!pagination.hasPrev">{{ t('common.prevPage') }}</el-button>
-      <el-button @click="nextPage" :disabled="!pagination.hasNext">{{ t('common.nextPage') }}</el-button>
-        <el-select v-model="pagination.limit" style="width: 100px" @change="() => { pagination.cursor = null; pagination.hasPrev = false; fetchList() }">
+        <el-button @click="prevPage" :disabled="!pagination.hasPrev">{{
+          t('common.prevPage')
+        }}</el-button>
+        <el-button @click="nextPage" :disabled="!pagination.hasNext">{{
+          t('common.nextPage')
+        }}</el-button>
+        <el-select
+          v-model="pagination.limit"
+          style="width: 100px"
+          @change="
+            () => {
+              pagination.cursor = null
+              pagination.hasPrev = false
+              fetchList()
+            }
+          "
+        >
           <el-option label="10" :value="10" />
           <el-option label="20" :value="20" />
           <el-option label="50" :value="50" />
@@ -125,23 +115,15 @@
       </div>
     </el-card>
 
-    <!-- 新增/编辑对话框 --> 
+    <!-- 新增/编辑对话框 -->
     <el-dialog
       v-model="dialogVisible"
       :title="isEdit ? t('common.edit') : t('common.add')"
       width="600px"
       :close-on-click-modal="false"
     >
-      <el-form
-        ref="formRef"
-        :model="formData"
-        :rules="formRules"
-        label-width="100px"
-      >
-        <el-form-item
-          :label="t('system.configKey')"
-          prop="configKey"
-        >
+      <el-form ref="formRef" :model="formData" :rules="formRules" label-width="100px">
+        <el-form-item :label="t('system.configKey')" prop="configKey">
           <el-select
             v-if="!isEdit"
             v-model="formData.configKey"
@@ -188,13 +170,9 @@
         <el-button @click="dialogVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button
-          type="primary"
-          :loading="submitLoading"
-          @click="handleSubmit"
-        >
+        <el-button type="primary" :loading="submitLoading" @click="handleSubmit">
           {{ t('common.confirm') }}
-        </el-button> 
+        </el-button>
       </template>
     </el-dialog>
   </div>
@@ -219,15 +197,20 @@ import ObjectStorageConfigComponent from './components/ObjectStorageConfig.vue'
 const { t } = useI18n()
 
 // Pagination and main list
-const { pagination, updatePagination, nextPage: paginationNextPage, prevPage: paginationPrevPage } = usePagination(10)
+const {
+  pagination,
+  updatePagination,
+  nextPage: paginationNextPage,
+  prevPage: paginationPrevPage,
+} = usePagination(10)
 const list = ref<SysConfigItem[]>([])
 const { loading, withLoading } = useLoading()
 
 // Query form
 const { form: queryForm } = useForm({
   initialData: {
-    keyword: ''
-  }
+    keyword: '',
+  },
 })
 
 // Dialog and form
@@ -241,8 +224,8 @@ const { form: formData, reset: resetForm } = useForm({
     id: 0,
     configKey: '',
     configValue: '',
-    remark: ''
-  }
+    remark: '',
+  },
 })
 
 // Keys for configKey selection
@@ -284,12 +267,8 @@ const objectStorageForm = ref<ObjectStorageConfig>({
 
 // Form validation rules
 const formRules = {
-  configKey: [
-    { required: true, message: t('validation.required'), trigger: 'blur' }
-  ],
-  configValue: [
-    { required: true, message: t('validation.required'), trigger: 'blur' }
-  ]
+  configKey: [{ required: true, message: t('validation.required'), trigger: 'blur' }],
+  configValue: [{ required: true, message: t('validation.required'), trigger: 'blur' }],
 }
 
 // Load available keys
@@ -314,7 +293,13 @@ async function fetchList() {
       })
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'list failed')
       list.value = res.data || []
-      updatePagination(res.total || 0, res.hasNext || false, res.hasPrev || false, res.nextCursor || null, res.prevCursor || null)
+      updatePagination(
+        res.total || 0,
+        res.hasNext || false,
+        res.hasPrev || false,
+        res.nextCursor || null,
+        res.prevCursor || null,
+      )
     } catch (e: any) {
       ElMessage.error(e?.message || t('common.loadFailed'))
     }
@@ -441,7 +426,7 @@ function handleEdit(row: SysConfigItem) {
   Object.assign(formData, {
     id: row.id,
     configKey: row.configKey,
-    remark: row.remark || ''
+    remark: row.remark || '',
   })
 
   if (row.configKey === 'SYSTEM_CORE') {
@@ -480,15 +465,11 @@ function handleEdit(row: SysConfigItem) {
 // Handle delete
 async function handleDelete(row: SysConfigItem) {
   try {
-    await ElMessageBox.confirm(
-      t('common.confirmDelete'),
-      t('common.warning'),
-      {
-        confirmButtonText: t('common.confirm'),
-        cancelButtonText: t('common.cancel'),
-        type: 'warning',
-      }
-    )
+    await ElMessageBox.confirm(t('common.confirmDelete'), t('common.warning'), {
+      confirmButtonText: t('common.confirm'),
+      cancelButtonText: t('common.cancel'),
+      type: 'warning',
+    })
 
     const res = await configService.delete(row.id)
     if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'delete failed')
@@ -532,7 +513,7 @@ async function handleSubmit() {
       const data: SysConfigCreateReq = {
         configKey: formData.configKey,
         configValue: formData.configValue,
-        remark: formData.remark || undefined
+        remark: formData.remark || undefined,
       }
       const res = await configService.create(data)
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || t('common.createFailed'))
@@ -592,5 +573,15 @@ onMounted(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+</style>
+
+<style>
+.config-tip {
+  max-width: 520px !important;
+  white-space: normal !important;
+  word-break: break-all !important;
+  overflow-wrap: anywhere !important;
+  line-height: 1.5;
 }
 </style>

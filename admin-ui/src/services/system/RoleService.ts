@@ -5,7 +5,7 @@ import {
   apiRoleUpdate,
   apiRoleDelete,
   apiRoleGrant,
-  apiRoleGrantDetail
+  apiRoleGrantDetail,
 } from '@/api/system/roles'
 
 // ===== 角色相关类型定义 =====
@@ -66,7 +66,6 @@ export interface RoleGrantRequest {
  * 实现 BaseService 接口，使用现有的 API 函数
  */
 export class RoleService implements BaseService {
-
   /**
    * 获取角色列表（支持分页和筛选）
    */
