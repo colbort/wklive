@@ -239,6 +239,95 @@ type SysConfigUpdateReq struct {
 	Remark      string `json:"remark,optional"`
 }
 
+type SysCronJobCreateReq struct {
+	JobName        string `json:"jobName"`
+	JobGroup       string `json:"jobGroup"`
+	InvokeTarget   string `json:"invokeTarget"`
+	CronExpression string `json:"cronExpression"`
+	Status         int64  `json:"status"`
+	Remark         string `json:"remark,optional"`
+}
+
+type SysCronJobDeleteReq struct {
+	Id int64 `path:"id" validate:"required"`
+}
+
+type SysCronJobItem struct {
+	Id             int64  `json:"id"`
+	JobName        string `json:"jobName"`
+	JobGroup       string `json:"jobGroup"`
+	InvokeTarget   string `json:"invokeTarget"`
+	CronExpression string `json:"cronExpression"`
+	Status         int64  `json:"status"`
+	Remark         string `json:"remark,optional"`
+	CreateBy       string `json:"createBy"`
+	CreateTime     int64  `json:"createTime"`
+	UpdateBy       string `json:"updateBy"`
+	UpdateTime     int64  `json:"updateTime"`
+}
+
+type SysCronJobListReq struct {
+	PageReq
+	Keyword  string `form:"keyword,optional"` // 按 job_name/invoke_target 模糊
+	JobName  string `form:"jobName,optional"`
+	JobGroup string `form:"jobGroup,optional"`
+	Status   int64  `form:"status,optional"` // 0/1
+}
+
+type SysCronJobListResp struct {
+	RespBase
+	Data []SysCronJobItem `json:"data"`
+}
+
+type SysCronJobLogItem struct {
+	Id             int64  `json:"id"`
+	JobId          int64  `json:"jobId"`
+	JobName        string `json:"jobName"`
+	InvokeTarget   string `json:"invokeTarget"`
+	CronExpression string `json:"cronExpression"`
+	Status         int64  `json:"status"`
+	Message        string `json:"message,optional"`
+	ExceptionInfo  string `json:"exceptionInfo,optional"`
+	StartTime      int64  `json:"startTime"`
+	EndTime        int64  `json:"endTime"`
+	CreateTime     int64  `json:"createTime"`
+}
+
+type SysCronJobLogListReq struct {
+	PageReq
+	JobId        int64  `form:"jobId,optional"`
+	JobName      string `form:"jobName,optional"`
+	InvokeTarget string `form:"invokeTarget,optional"`
+	Status       int64  `form:"status,optional"` // 0/1
+}
+
+type SysCronJobLogListResp struct {
+	RespBase
+	Data []SysCronJobLogItem `json:"data"`
+}
+
+type SysCronJobRunReq struct {
+	Id int64 `path:"id" validate:"required"`
+}
+
+type SysCronJobStartReq struct {
+	Id int64 `path:"id" validate:"required"`
+}
+
+type SysCronJobStopReq struct {
+	Id int64 `path:"id" validate:"required"`
+}
+
+type SysCronJobUpdateReq struct {
+	Id             int64  `json:"id" validate:"required"`
+	JobName        string `json:"jobName,optional"`
+	JobGroup       string `json:"jobGroup,optional"`
+	InvokeTarget   string `json:"invokeTarget,optional"`
+	CronExpression string `json:"cronExpression,optional"`
+	Status         int64  `json:"status,optional"`
+	Remark         string `json:"remark,optional"`
+}
+
 type SysMenuCreateReq struct {
 	ParentId  int64  `json:"parentId,optional"`
 	Name      string `json:"name"`

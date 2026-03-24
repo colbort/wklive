@@ -324,6 +324,86 @@ message LoginUserPermsResp {
   repeated string perms = 1;
 }
 
+// 系统定时任务
+message SysCronJobItem {
+  int64 id = 1;
+  string job_name = 2;
+  string job_group = 3;
+  string invoke_target = 4;
+  string cron_expression = 5;
+  int64 status = 6;
+  string remark = 7;
+  string create_by = 8;
+  int64 create_time = 9;
+  string update_by = 10;
+  int64 update_time = 11;
+}
+
+message SysCronJobListReq { 
+  PageReq page = 1; 
+  optional string keyword = 2; 
+  optional string job_name = 3;
+  optional string job_group = 4;
+  optional int64 status = 5; 
+}
+message SysCronJobListResp { RespBase base = 1; repeated SysCronJobItem data = 4; }
+
+message SysCronJobCreateReq {
+  string job_name = 1;
+  string job_group = 2;
+  string invoke_target = 3;
+  string cron_expression = 4;
+  int64 status = 5;
+  string remark = 6;
+} 
+
+message SysCronJobUpdateReq {
+  int64 id = 1;
+  string job_name = 2;
+  string job_group = 3;
+  string invoke_target = 4;
+  string cron_expression = 5;
+  int64 status = 6;
+  string remark = 7;
+}
+
+message SysCronJobDeleteReq { int64 id = 1; }
+
+message SysCronJobRunReq { int64 id = 1; }
+
+message SysCronJobStartReq {
+  int64 id = 1;
+}
+
+message SysCronJobStopReq {
+  int64 id = 1;
+}
+
+message SysCronJobLogItem {
+  int64 id = 1;
+  int64 job_id = 2;
+  string job_name = 3;
+  string invoke_target = 4;
+  string cron_expression = 5;
+  int64 status = 6;
+  string message = 7;
+  string exception_info = 8;
+  int64 start_time = 9;
+  int64 end_time = 10;
+  int64 create_time = 11;
+}
+
+message SysCronJobLogListReq { 
+  PageReq page = 1; 
+  optional int64 job_id = 2; 
+  optional string job_name = 3;
+  optional string invoke_target = 4;
+  optional int64 status = 5; 
+} 
+
+message SysCronJobLogListResp { RespBase base = 1; repeated SysCronJobLogItem data = 4; }
+
+
 //////////////////////
 // Service
 //////////////////////
@@ -407,5 +487,21 @@ service System {
   rpc SysConfigKeys(Empty) returns (SysConfigKeysResp);
   // 获取登录用户的权限列表
   rpc LoginUserPerms(LoginUserPermsReq) returns (LoginUserPermsResp);
+  // 系统定时任务列表
+  rpc SysCronJobList(SysCronJobListReq) returns (SysCronJobListResp);
+  // 创建系统定时任务
+  rpc SysCronJobCreate(SysCronJobCreateReq) returns (RespBase);
+  // 更新系统定时任务
+  rpc SysCronJobUpdate(SysCronJobUpdateReq) returns (RespBase);
+  // 删除系统定时任务
+  rpc SysCronJobDelete(SysCronJobDeleteReq) returns (RespBase);
+  // 执行一次系统定时任务
+  rpc SysCronJobRun(SysCronJobRunReq) returns (RespBase);
+  // 开始系统定时任务
+  rpc SysCronJobStart(SysCronJobStartReq) returns (RespBase);
+  // 停止系统定时任务
+  rpc SysCronJobStop(SysCronJobStopReq) returns (RespBase);
+  // 系统定时任务日志列表
+  rpc SysCronJobLogList(SysCronJobLogListReq) returns (SysCronJobLogListResp);
 }
 

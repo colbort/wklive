@@ -45,6 +45,7 @@ type (
 		ParentId  int64     `db:"parent_id"` // 父级ID
 		Name      string    `db:"name"`      // 名称
 		MenuType  int64     `db:"menu_type"` // 1目录 2菜单 3按钮
+		Method    string    `db:"method"`    // 请求方法 GET POST PUT DELETE
 		Path      string    `db:"path"`      // 路由路径
 		Component string    `db:"component"` // 前端组件
 		Perms     string    `db:"perms"`     // 按钮权限标识 sys:user:add
@@ -93,8 +94,8 @@ func (m *defaultSysMenuModel) FindOne(ctx context.Context, id int64) (*SysMenu, 
 func (m *defaultSysMenuModel) Insert(ctx context.Context, data *SysMenu) (sql.Result, error) {
 	sysMenuIdKey := fmt.Sprintf("%s%v", cacheSysMenuIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysMenuRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.ParentId, data.Name, data.MenuType, data.Path, data.Component, data.Perms, data.Icon, data.Sort, data.Visible, data.Status)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysMenuRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.ParentId, data.Name, data.MenuType, data.Method, data.Path, data.Component, data.Perms, data.Icon, data.Sort, data.Visible, data.Status)
 	}, sysMenuIdKey)
 	return ret, err
 }
@@ -103,7 +104,7 @@ func (m *defaultSysMenuModel) Update(ctx context.Context, data *SysMenu) error {
 	sysMenuIdKey := fmt.Sprintf("%s%v", cacheSysMenuIdPrefix, data.Id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysMenuRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.ParentId, data.Name, data.MenuType, data.Path, data.Component, data.Perms, data.Icon, data.Sort, data.Visible, data.Status, data.Id)
+		return conn.ExecCtx(ctx, query, data.ParentId, data.Name, data.MenuType, data.Method, data.Path, data.Component, data.Perms, data.Icon, data.Sort, data.Visible, data.Status, data.Id)
 	}, sysMenuIdKey)
 	return err
 }

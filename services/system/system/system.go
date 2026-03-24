@@ -50,6 +50,18 @@ type (
 	SysConfigListReq       = system.SysConfigListReq
 	SysConfigListResp      = system.SysConfigListResp
 	SysConfigUpdateReq     = system.SysConfigUpdateReq
+	SysCronJobCreateReq    = system.SysCronJobCreateReq
+	SysCronJobDeleteReq    = system.SysCronJobDeleteReq
+	SysCronJobItem         = system.SysCronJobItem
+	SysCronJobListReq      = system.SysCronJobListReq
+	SysCronJobListResp     = system.SysCronJobListResp
+	SysCronJobLogItem      = system.SysCronJobLogItem
+	SysCronJobLogListReq   = system.SysCronJobLogListReq
+	SysCronJobLogListResp  = system.SysCronJobLogListResp
+	SysCronJobRunReq       = system.SysCronJobRunReq
+	SysCronJobStartReq     = system.SysCronJobStartReq
+	SysCronJobStopReq      = system.SysCronJobStopReq
+	SysCronJobUpdateReq    = system.SysCronJobUpdateReq
 	SysMenuCreateReq       = system.SysMenuCreateReq
 	SysMenuDeleteReq       = system.SysMenuDeleteReq
 	SysMenuItem            = system.SysMenuItem
@@ -156,6 +168,22 @@ type (
 		SysConfigKeys(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysConfigKeysResp, error)
 		// 获取登录用户的权限列表
 		LoginUserPerms(ctx context.Context, in *LoginUserPermsReq, opts ...grpc.CallOption) (*LoginUserPermsResp, error)
+		// 系统定时任务列表
+		SysCronJobList(ctx context.Context, in *SysCronJobListReq, opts ...grpc.CallOption) (*SysCronJobListResp, error)
+		// 创建系统定时任务
+		SysCronJobCreate(ctx context.Context, in *SysCronJobCreateReq, opts ...grpc.CallOption) (*RespBase, error)
+		// 更新系统定时任务
+		SysCronJobUpdate(ctx context.Context, in *SysCronJobUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
+		// 删除系统定时任务
+		SysCronJobDelete(ctx context.Context, in *SysCronJobDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
+		// 执行一次系统定时任务
+		SysCronJobRun(ctx context.Context, in *SysCronJobRunReq, opts ...grpc.CallOption) (*RespBase, error)
+		// 开始系统定时任务
+		SysCronJobStart(ctx context.Context, in *SysCronJobStartReq, opts ...grpc.CallOption) (*RespBase, error)
+		// 停止系统定时任务
+		SysCronJobStop(ctx context.Context, in *SysCronJobStopReq, opts ...grpc.CallOption) (*RespBase, error)
+		// 系统定时任务日志列表
+		SysCronJobLogList(ctx context.Context, in *SysCronJobLogListReq, opts ...grpc.CallOption) (*SysCronJobLogListResp, error)
 	}
 
 	defaultSystem struct {
@@ -395,4 +423,52 @@ func (m *defaultSystem) SysConfigKeys(ctx context.Context, in *Empty, opts ...gr
 func (m *defaultSystem) LoginUserPerms(ctx context.Context, in *LoginUserPermsReq, opts ...grpc.CallOption) (*LoginUserPermsResp, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.LoginUserPerms(ctx, in, opts...)
+}
+
+// 系统定时任务列表
+func (m *defaultSystem) SysCronJobList(ctx context.Context, in *SysCronJobListReq, opts ...grpc.CallOption) (*SysCronJobListResp, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysCronJobList(ctx, in, opts...)
+}
+
+// 创建系统定时任务
+func (m *defaultSystem) SysCronJobCreate(ctx context.Context, in *SysCronJobCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysCronJobCreate(ctx, in, opts...)
+}
+
+// 更新系统定时任务
+func (m *defaultSystem) SysCronJobUpdate(ctx context.Context, in *SysCronJobUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysCronJobUpdate(ctx, in, opts...)
+}
+
+// 删除系统定时任务
+func (m *defaultSystem) SysCronJobDelete(ctx context.Context, in *SysCronJobDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysCronJobDelete(ctx, in, opts...)
+}
+
+// 执行一次系统定时任务
+func (m *defaultSystem) SysCronJobRun(ctx context.Context, in *SysCronJobRunReq, opts ...grpc.CallOption) (*RespBase, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysCronJobRun(ctx, in, opts...)
+}
+
+// 开始系统定时任务
+func (m *defaultSystem) SysCronJobStart(ctx context.Context, in *SysCronJobStartReq, opts ...grpc.CallOption) (*RespBase, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysCronJobStart(ctx, in, opts...)
+}
+
+// 停止系统定时任务
+func (m *defaultSystem) SysCronJobStop(ctx context.Context, in *SysCronJobStopReq, opts ...grpc.CallOption) (*RespBase, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysCronJobStop(ctx, in, opts...)
+}
+
+// 系统定时任务日志列表
+func (m *defaultSystem) SysCronJobLogList(ctx context.Context, in *SysCronJobLogListReq, opts ...grpc.CallOption) (*SysCronJobLogListResp, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysCronJobLogList(ctx, in, opts...)
 }

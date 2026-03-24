@@ -316,6 +316,95 @@ type SysConfigKeysResp {
   data []string `json:"data"`
 }
 
+// 系统定时任务
+type SysCronJobItem {
+  id int64 `json:"id"`
+  jobName string `json:"jobName"`
+  jobGroup string `json:"jobGroup"`
+  invokeTarget string `json:"invokeTarget"`
+  cronExpression string `json:"cronExpression"`
+  status int64 `json:"status"`
+  remark string `json:"remark,optional"`
+  createBy string `json:"createBy"`
+  createTime int64 `json:"createTime"`
+  updateBy string `json:"updateBy"`
+  updateTime int64 `json:"updateTime"`
+}
+
+type SysCronJobListReq { 
+  PageReq
+  keyword string `form:"keyword,optional"` // 按 job_name/invoke_target 模糊
+  jobName string `form:"jobName,optional"`
+  jobGroup string `form:"jobGroup,optional"`
+  status int64 `form:"status,optional"` // 0/1
+}
+type SysCronJobListResp { 
+  RespBase
+  data []SysCronJobItem `json:"data"`
+}
+
+type SysCronJobCreateReq {
+  jobName string `json:"jobName"`
+  jobGroup string `json:"jobGroup"`
+  invokeTarget string `json:"invokeTarget"`
+  cronExpression string `json:"cronExpression"`
+  status int64 `json:"status"`
+  remark string `json:"remark,optional"`
+} 
+
+type SysCronJobUpdateReq {
+  id int64 `json:"id" validate:"required"`
+  jobName string `json:"jobName,optional"`
+  jobGroup string `json:"jobGroup,optional"`
+  invokeTarget string `json:"invokeTarget,optional"`
+  cronExpression string `json:"cronExpression,optional"`
+  status int64 `json:"status,optional"`
+  remark string `json:"remark,optional"`
+}
+
+type SysCronJobDeleteReq { 
+  id int64 `path:"id" validate:"required"`
+}
+
+type SysCronJobRunReq { 
+  id int64 `path:"id" validate:"required"`
+}
+
+type SysCronJobStartReq {
+  id int64 `path:"id" validate:"required"`
+}
+
+type SysCronJobStopReq {
+  id int64 `path:"id" validate:"required"`
+}
+
+type SysCronJobLogItem {
+  id int64 `json:"id"`
+  jobId int64 `json:"jobId"`
+  jobName string `json:"jobName"`
+  invokeTarget string `json:"invokeTarget"`
+  cronExpression string `json:"cronExpression"`
+  status int64 `json:"status"`
+  message string `json:"message,optional"`
+  exceptionInfo string `json:"exceptionInfo,optional"`
+  startTime int64 `json:"startTime"`
+  endTime int64 `json:"endTime"`
+  createTime int64 `json:"createTime"`
+}
+
+type SysCronJobLogListReq { 
+  PageReq
+  jobId int64 `form:"jobId,optional"`
+  jobName string `form:"jobName,optional"`
+  invokeTarget string `form:"invokeTarget,optional"`
+  status int64 `form:"status,optional"` // 0/1
+} 
+
+type SysCronJobLogListResp {
+  RespBase
+  data []SysCronJobLogItem `json:"data"`
+}
+
 @server(
   prefix: /admin
   group: system
@@ -425,4 +514,29 @@ service admin {
 
   @handler SysConfigKeys
   get /configs/keys returns (SysConfigKeysResp)
+
+  // 系统定时任务列表
+  @handler SysCronJobList
+  get /jobs (SysCronJobListReq) returns (SysCronJobListResp)
+  // 创建系统定时任务
+  @handler SysCronJobCreate
+  post /jobs (SysCronJobCreateReq) returns (RespBase)
+  // 更新系统定时任务
+  @handler SysCronJobUpdate
+  put /jobs (SysCronJobUpdateReq) returns (RespBase)
+  // 删除系统定时任务
+  @handler SysCronJobDelete
+  delete /jobs/:id (SysCronJobDeleteReq) returns (RespBase)
+  // 执行一次系统定时任务
+  @handler SysCronJobRun
+  post /jobs/:id/run (SysCronJobRunReq) returns (RespBase)
+  // 开始系统定时任务
+  @handler SysCronJobStart
+  post /jobs/:id/start (SysCronJobStartReq) returns (RespBase)
+  // 停止系统定时任务
+  @handler SysCronJobStop
+  post /jobs/:id/stop (SysCronJobStopReq) returns (RespBase)
+  // 系统定时任务日志列表
+  @handler SysCronJobLogList
+  get /logs/job (SysCronJobLogListReq) returns (SysCronJobLogListResp)
 }

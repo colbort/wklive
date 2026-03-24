@@ -91,6 +91,46 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
+				Path:    "/jobs",
+				Handler: system.SysCronJobListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/jobs",
+				Handler: system.SysCronJobCreateHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/jobs",
+				Handler: system.SysCronJobUpdateHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodDelete,
+				Path:    "/jobs/:id",
+				Handler: system.SysCronJobDeleteHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/jobs/:id/run",
+				Handler: system.SysCronJobRunHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/jobs/:id/start",
+				Handler: system.SysCronJobStartHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/jobs/:id/stop",
+				Handler: system.SysCronJobStopHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/logs/job",
+				Handler: system.SysCronJobLogListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
 				Path:    "/logs/login",
 				Handler: system.LoginLogListHandler(serverCtx),
 			},

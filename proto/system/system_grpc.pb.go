@@ -57,6 +57,14 @@ const (
 	System_SysConfigByKeys_FullMethodName    = "/system.System/SysConfigByKeys"
 	System_SysConfigKeys_FullMethodName      = "/system.System/SysConfigKeys"
 	System_LoginUserPerms_FullMethodName     = "/system.System/LoginUserPerms"
+	System_SysCronJobList_FullMethodName     = "/system.System/SysCronJobList"
+	System_SysCronJobCreate_FullMethodName   = "/system.System/SysCronJobCreate"
+	System_SysCronJobUpdate_FullMethodName   = "/system.System/SysCronJobUpdate"
+	System_SysCronJobDelete_FullMethodName   = "/system.System/SysCronJobDelete"
+	System_SysCronJobRun_FullMethodName      = "/system.System/SysCronJobRun"
+	System_SysCronJobStart_FullMethodName    = "/system.System/SysCronJobStart"
+	System_SysCronJobStop_FullMethodName     = "/system.System/SysCronJobStop"
+	System_SysCronJobLogList_FullMethodName  = "/system.System/SysCronJobLogList"
 )
 
 // SystemClient is the client API for System service.
@@ -143,6 +151,22 @@ type SystemClient interface {
 	SysConfigKeys(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysConfigKeysResp, error)
 	// 获取登录用户的权限列表
 	LoginUserPerms(ctx context.Context, in *LoginUserPermsReq, opts ...grpc.CallOption) (*LoginUserPermsResp, error)
+	// 系统定时任务列表
+	SysCronJobList(ctx context.Context, in *SysCronJobListReq, opts ...grpc.CallOption) (*SysCronJobListResp, error)
+	// 创建系统定时任务
+	SysCronJobCreate(ctx context.Context, in *SysCronJobCreateReq, opts ...grpc.CallOption) (*RespBase, error)
+	// 更新系统定时任务
+	SysCronJobUpdate(ctx context.Context, in *SysCronJobUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
+	// 删除系统定时任务
+	SysCronJobDelete(ctx context.Context, in *SysCronJobDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
+	// 执行一次系统定时任务
+	SysCronJobRun(ctx context.Context, in *SysCronJobRunReq, opts ...grpc.CallOption) (*RespBase, error)
+	// 开始系统定时任务
+	SysCronJobStart(ctx context.Context, in *SysCronJobStartReq, opts ...grpc.CallOption) (*RespBase, error)
+	// 停止系统定时任务
+	SysCronJobStop(ctx context.Context, in *SysCronJobStopReq, opts ...grpc.CallOption) (*RespBase, error)
+	// 系统定时任务日志列表
+	SysCronJobLogList(ctx context.Context, in *SysCronJobLogListReq, opts ...grpc.CallOption) (*SysCronJobLogListResp, error)
 }
 
 type systemClient struct {
@@ -533,6 +557,86 @@ func (c *systemClient) LoginUserPerms(ctx context.Context, in *LoginUserPermsReq
 	return out, nil
 }
 
+func (c *systemClient) SysCronJobList(ctx context.Context, in *SysCronJobListReq, opts ...grpc.CallOption) (*SysCronJobListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SysCronJobListResp)
+	err := c.cc.Invoke(ctx, System_SysCronJobList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) SysCronJobCreate(ctx context.Context, in *SysCronJobCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespBase)
+	err := c.cc.Invoke(ctx, System_SysCronJobCreate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) SysCronJobUpdate(ctx context.Context, in *SysCronJobUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespBase)
+	err := c.cc.Invoke(ctx, System_SysCronJobUpdate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) SysCronJobDelete(ctx context.Context, in *SysCronJobDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespBase)
+	err := c.cc.Invoke(ctx, System_SysCronJobDelete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) SysCronJobRun(ctx context.Context, in *SysCronJobRunReq, opts ...grpc.CallOption) (*RespBase, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespBase)
+	err := c.cc.Invoke(ctx, System_SysCronJobRun_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) SysCronJobStart(ctx context.Context, in *SysCronJobStartReq, opts ...grpc.CallOption) (*RespBase, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespBase)
+	err := c.cc.Invoke(ctx, System_SysCronJobStart_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) SysCronJobStop(ctx context.Context, in *SysCronJobStopReq, opts ...grpc.CallOption) (*RespBase, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespBase)
+	err := c.cc.Invoke(ctx, System_SysCronJobStop_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) SysCronJobLogList(ctx context.Context, in *SysCronJobLogListReq, opts ...grpc.CallOption) (*SysCronJobLogListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SysCronJobLogListResp)
+	err := c.cc.Invoke(ctx, System_SysCronJobLogList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SystemServer is the server API for System service.
 // All implementations must embed UnimplementedSystemServer
 // for forward compatibility.
@@ -617,6 +721,22 @@ type SystemServer interface {
 	SysConfigKeys(context.Context, *Empty) (*SysConfigKeysResp, error)
 	// 获取登录用户的权限列表
 	LoginUserPerms(context.Context, *LoginUserPermsReq) (*LoginUserPermsResp, error)
+	// 系统定时任务列表
+	SysCronJobList(context.Context, *SysCronJobListReq) (*SysCronJobListResp, error)
+	// 创建系统定时任务
+	SysCronJobCreate(context.Context, *SysCronJobCreateReq) (*RespBase, error)
+	// 更新系统定时任务
+	SysCronJobUpdate(context.Context, *SysCronJobUpdateReq) (*RespBase, error)
+	// 删除系统定时任务
+	SysCronJobDelete(context.Context, *SysCronJobDeleteReq) (*RespBase, error)
+	// 执行一次系统定时任务
+	SysCronJobRun(context.Context, *SysCronJobRunReq) (*RespBase, error)
+	// 开始系统定时任务
+	SysCronJobStart(context.Context, *SysCronJobStartReq) (*RespBase, error)
+	// 停止系统定时任务
+	SysCronJobStop(context.Context, *SysCronJobStopReq) (*RespBase, error)
+	// 系统定时任务日志列表
+	SysCronJobLogList(context.Context, *SysCronJobLogListReq) (*SysCronJobLogListResp, error)
 	mustEmbedUnimplementedSystemServer()
 }
 
@@ -740,6 +860,30 @@ func (UnimplementedSystemServer) SysConfigKeys(context.Context, *Empty) (*SysCon
 }
 func (UnimplementedSystemServer) LoginUserPerms(context.Context, *LoginUserPermsReq) (*LoginUserPermsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoginUserPerms not implemented")
+}
+func (UnimplementedSystemServer) SysCronJobList(context.Context, *SysCronJobListReq) (*SysCronJobListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SysCronJobList not implemented")
+}
+func (UnimplementedSystemServer) SysCronJobCreate(context.Context, *SysCronJobCreateReq) (*RespBase, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SysCronJobCreate not implemented")
+}
+func (UnimplementedSystemServer) SysCronJobUpdate(context.Context, *SysCronJobUpdateReq) (*RespBase, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SysCronJobUpdate not implemented")
+}
+func (UnimplementedSystemServer) SysCronJobDelete(context.Context, *SysCronJobDeleteReq) (*RespBase, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SysCronJobDelete not implemented")
+}
+func (UnimplementedSystemServer) SysCronJobRun(context.Context, *SysCronJobRunReq) (*RespBase, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SysCronJobRun not implemented")
+}
+func (UnimplementedSystemServer) SysCronJobStart(context.Context, *SysCronJobStartReq) (*RespBase, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SysCronJobStart not implemented")
+}
+func (UnimplementedSystemServer) SysCronJobStop(context.Context, *SysCronJobStopReq) (*RespBase, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SysCronJobStop not implemented")
+}
+func (UnimplementedSystemServer) SysCronJobLogList(context.Context, *SysCronJobLogListReq) (*SysCronJobLogListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SysCronJobLogList not implemented")
 }
 func (UnimplementedSystemServer) mustEmbedUnimplementedSystemServer() {}
 func (UnimplementedSystemServer) testEmbeddedByValue()                {}
@@ -1446,6 +1590,150 @@ func _System_LoginUserPerms_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _System_SysCronJobList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysCronJobListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysCronJobList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysCronJobList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysCronJobList(ctx, req.(*SysCronJobListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_SysCronJobCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysCronJobCreateReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysCronJobCreate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysCronJobCreate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysCronJobCreate(ctx, req.(*SysCronJobCreateReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_SysCronJobUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysCronJobUpdateReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysCronJobUpdate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysCronJobUpdate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysCronJobUpdate(ctx, req.(*SysCronJobUpdateReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_SysCronJobDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysCronJobDeleteReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysCronJobDelete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysCronJobDelete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysCronJobDelete(ctx, req.(*SysCronJobDeleteReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_SysCronJobRun_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysCronJobRunReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysCronJobRun(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysCronJobRun_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysCronJobRun(ctx, req.(*SysCronJobRunReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_SysCronJobStart_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysCronJobStartReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysCronJobStart(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysCronJobStart_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysCronJobStart(ctx, req.(*SysCronJobStartReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_SysCronJobStop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysCronJobStopReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysCronJobStop(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysCronJobStop_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysCronJobStop(ctx, req.(*SysCronJobStopReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_SysCronJobLogList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysCronJobLogListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysCronJobLogList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysCronJobLogList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysCronJobLogList(ctx, req.(*SysCronJobLogListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // System_ServiceDesc is the grpc.ServiceDesc for System service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1604,6 +1892,38 @@ var System_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "LoginUserPerms",
 			Handler:    _System_LoginUserPerms_Handler,
+		},
+		{
+			MethodName: "SysCronJobList",
+			Handler:    _System_SysCronJobList_Handler,
+		},
+		{
+			MethodName: "SysCronJobCreate",
+			Handler:    _System_SysCronJobCreate_Handler,
+		},
+		{
+			MethodName: "SysCronJobUpdate",
+			Handler:    _System_SysCronJobUpdate_Handler,
+		},
+		{
+			MethodName: "SysCronJobDelete",
+			Handler:    _System_SysCronJobDelete_Handler,
+		},
+		{
+			MethodName: "SysCronJobRun",
+			Handler:    _System_SysCronJobRun_Handler,
+		},
+		{
+			MethodName: "SysCronJobStart",
+			Handler:    _System_SysCronJobStart_Handler,
+		},
+		{
+			MethodName: "SysCronJobStop",
+			Handler:    _System_SysCronJobStop_Handler,
+		},
+		{
+			MethodName: "SysCronJobLogList",
+			Handler:    _System_SysCronJobLogList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

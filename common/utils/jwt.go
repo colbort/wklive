@@ -67,3 +67,12 @@ func GetUidFromCtx(ctx context.Context) (int64, error) {
 	}
 	return uid, nil
 }
+
+func GetUsernameFromCtx(ctx context.Context) (string, error) {
+	username, ok := ctx.Value("username").(string)
+	if !ok {
+		logx.WithContext(ctx).Errorf("GetUsernameFromCtx err : not found username in context")
+		return "", errors.New("username not found in context")
+	}
+	return username, nil
+}

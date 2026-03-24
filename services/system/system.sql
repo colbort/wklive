@@ -278,7 +278,54 @@ VALUES
 (400, '删除配置', 3, 'DELETE', 'sys:config:delete', 403);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, icon, sort)
-VALUES (500, 1, '登录日志', 2, '/logs/login', 'system/login-log', 'Reading', 500);
+VALUES (500, 1, '定时任务', 1, '', '', 'Cpu', 500);
+INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, icon, sort)
+VALUES (600, 500, '定时任务列表', 2, '/jobs', 'system/jobs', 'Cpu', 600);
+INSERT INTO sys_menu (parent_id, name, menu_type, method, perms, sort)
+VALUES
+(600, '新增任务', 3, 'POST', 'sys:job:add', 601),
+(600, '编辑任务', 3, 'PUT', 'sys:job:update', 602),
+(600, '删除任务', 3, 'DELETE', 'sys:job:delete', 603);
+INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, icon, sort)
+VALUES (700, 500, '定时任务日志', 2, '/jobs-log', 'system/jobs-log', 'Cpu', 700);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, icon, sort)
-VALUES (600, 1, '操作日志', 2, '/logs/op', 'system/op-log', 'Document', 600);
+VALUES (800, 1, '登录日志', 2, '/logs/login', 'system/login-log', 'Reading', 800);
+
+INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, icon, sort)
+VALUES (900, 1, '操作日志', 2, '/logs/op', 'system/op-log', 'Document', 900);
+
+
+CREATE TABLE `sys_job` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `job_name` varchar(100) NOT NULL COMMENT '任务名称',
+  `job_group` varchar(50) DEFAULT 'DEFAULT' COMMENT '任务分组',
+  `invoke_target` varchar(500) NOT NULL COMMENT '调用目标',
+  `cron_expression` varchar(100) NOT NULL COMMENT 'cron表达式',
+  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：0停用 1启用',
+  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+  `create_by` varchar(64) DEFAULT NULL COMMENT '创建人',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_by` varchar(64) DEFAULT NULL COMMENT '更新人',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='定时任务表';
+
+
+CREATE TABLE `sys_job_log` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `job_id` bigint NOT NULL COMMENT '任务ID',
+  `job_name` varchar(100) NOT NULL COMMENT '任务名称',
+  `invoke_target` varchar(500) NOT NULL COMMENT '调用目标',
+  `cron_expression` varchar(100) DEFAULT NULL COMMENT 'cron表达式',
+  `status` tinyint NOT NULL COMMENT '执行状态：0失败 1成功',
+  `message` varchar(2000) DEFAULT NULL COMMENT '执行信息',
+  `exception_info` text COMMENT '异常信息',
+  `start_time` datetime DEFAULT NULL COMMENT '开始时间',
+  `end_time` datetime DEFAULT NULL COMMENT '结束时间',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_job_id` (`job_id`),
+  KEY `idx_create_time` (`create_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='定时任务日志表';

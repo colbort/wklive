@@ -6,12 +6,14 @@ import (
 	"strings"
 
 	"wklive/proto/system"
+	"wklive/services/system/internal/bootstrap"
 	"wklive/services/system/internal/config"
 	"wklive/services/system/internal/server"
 	"wklive/services/system/internal/svc"
 
 	"wklive/common/etcd"
 
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
@@ -33,16 +35,20 @@ func main() {
 	etcd.LoadFromEtcdAndMerge(strings.Split(*endpoints, ","), []string{*commonKey, *configKey}, &c)
 
 	ctx := svc.NewServiceContext(c)
+	if err := bootstrap.LoadJobs(ctx); err != nil {
+		logx.Errorf("load cron jobs failed: %v", err)
+	}
 
-	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
+	server := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		system.RegisterSystemServer(grpcServer, server.NewSystemServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)
 		}
 	})
-	defer s.Stop()
+
+	defer server.Stop()
 
 	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
-	s.Start()
+	server.Start()
 }

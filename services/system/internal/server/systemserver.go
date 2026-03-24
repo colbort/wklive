@@ -250,3 +250,51 @@ func (s *SystemServer) LoginUserPerms(ctx context.Context, in *system.LoginUserP
 	l := logic.NewLoginUserPermsLogic(ctx, s.svcCtx)
 	return l.LoginUserPerms(in)
 }
+
+// 系统定时任务列表
+func (s *SystemServer) SysCronJobList(ctx context.Context, in *system.SysCronJobListReq) (*system.SysCronJobListResp, error) {
+	l := logic.NewSysCronJobListLogic(ctx, s.svcCtx)
+	return l.SysCronJobList(in)
+}
+
+// 创建系统定时任务
+func (s *SystemServer) SysCronJobCreate(ctx context.Context, in *system.SysCronJobCreateReq) (*system.RespBase, error) {
+	l := logic.NewSysCronJobCreateLogic(ctx, s.svcCtx)
+	return l.SysCronJobCreate(in)
+}
+
+// 更新系统定时任务
+func (s *SystemServer) SysCronJobUpdate(ctx context.Context, in *system.SysCronJobUpdateReq) (*system.RespBase, error) {
+	l := logic.NewSysCronJobUpdateLogic(ctx, s.svcCtx)
+	return l.SysCronJobUpdate(in)
+}
+
+// 删除系统定时任务
+func (s *SystemServer) SysCronJobDelete(ctx context.Context, in *system.SysCronJobDeleteReq) (*system.RespBase, error) {
+	l := logic.NewSysCronJobDeleteLogic(ctx, s.svcCtx)
+	return l.SysCronJobDelete(in)
+}
+
+// 执行一次系统定时任务
+func (s *SystemServer) SysCronJobRun(ctx context.Context, in *system.SysCronJobRunReq) (*system.RespBase, error) {
+	l := logic.NewSysCronJobRunLogic(ctx, s.svcCtx)
+	return l.SysCronJobRun(in)
+}
+
+// 开始系统定时任务
+func (s *SystemServer) SysCronJobStart(ctx context.Context, in *system.SysCronJobStartReq) (*system.RespBase, error) {
+	l := logic.NewSysCronJobStartLogic(ctx, s.svcCtx)
+	return l.SysCronJobStart(in)
+}
+
+// 停止系统定时任务
+func (s *SystemServer) SysCronJobStop(ctx context.Context, in *system.SysCronJobStopReq) (*system.RespBase, error) {
+	l := logic.NewSysCronJobStopLogic(ctx, s.svcCtx)
+	return l.SysCronJobStop(in)
+}
+
+// 系统定时任务日志列表
+func (s *SystemServer) SysCronJobLogList(ctx context.Context, in *system.SysCronJobLogListReq) (*system.SysCronJobLogListResp, error) {
+	l := logic.NewSysCronJobLogListLogic(ctx, s.svcCtx)
+	return l.SysCronJobLogList(in)
+}
