@@ -126,6 +126,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
+				Path:    "/jobs/handlers",
+				Handler: system.SysCronJobHandlersHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
 				Path:    "/logs/job",
 				Handler: system.SysCronJobLogListHandler(serverCtx),
 			},

@@ -2,7 +2,7 @@ package svc
 
 import (
 	"wklive/services/system/internal/config"
-	"wklive/services/system/internal/plugins"
+	"wklive/services/system/internal/plugins/cronx"
 	"wklive/services/system/models"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
@@ -10,7 +10,7 @@ import (
 
 type ServiceContext struct {
 	Config        config.Config
-	Cron          *plugins.CronManager
+	Cron          *cronx.CronManager
 	UserModel     models.UserModel
 	RoleModel     models.RoleModel
 	MenuModel     models.MenuModel
@@ -25,9 +25,9 @@ type ServiceContext struct {
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
-	jobLogModel:=models.NewSysJobLogModel(conn, c.CacheRedis).(models.JobLogModel)
-	cron := plugins.NewCronManager(jobLogModel)
-	plugins.RegisterDefaultHandlers(cron)
+	jobLogModel := models.NewSysJobLogModel(conn, c.CacheRedis).(models.JobLogModel)
+	cron := cronx.NewCronManager(jobLogModel)
+	cron.LoadRegisteredHandlers()
 	cron.StartScheduler()
 	return &ServiceContext{
 		Config:        c,

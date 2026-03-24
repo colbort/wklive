@@ -401,6 +401,16 @@ message SysCronJobLogListReq {
   optional int64 status = 5; 
 } 
 
+message SysCronJobHander {
+  string invoke_target = 1;
+  string job_name = 2;
+}
+
+message SysCronJobHandlersResp {
+  RespBase base = 1;
+  repeated SysCronJobHander data = 3;
+}
+
 message SysCronJobLogListResp { RespBase base = 1; repeated SysCronJobLogItem data = 4; }
 
 
@@ -501,6 +511,8 @@ service System {
   rpc SysCronJobStart(SysCronJobStartReq) returns (RespBase);
   // 停止系统定时任务
   rpc SysCronJobStop(SysCronJobStopReq) returns (RespBase);
+  // 获取系统支持的定时任务处理器列表
+  rpc SysCronJobHandlers(Empty) returns (SysCronJobHandlersResp);
   // 系统定时任务日志列表
   rpc SysCronJobLogList(SysCronJobLogListReq) returns (SysCronJobLogListResp);
 }

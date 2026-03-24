@@ -52,6 +52,8 @@ type (
 	SysConfigUpdateReq     = system.SysConfigUpdateReq
 	SysCronJobCreateReq    = system.SysCronJobCreateReq
 	SysCronJobDeleteReq    = system.SysCronJobDeleteReq
+	SysCronJobHander       = system.SysCronJobHander
+	SysCronJobHandlersResp = system.SysCronJobHandlersResp
 	SysCronJobItem         = system.SysCronJobItem
 	SysCronJobListReq      = system.SysCronJobListReq
 	SysCronJobListResp     = system.SysCronJobListResp
@@ -182,6 +184,8 @@ type (
 		SysCronJobStart(ctx context.Context, in *SysCronJobStartReq, opts ...grpc.CallOption) (*RespBase, error)
 		// 停止系统定时任务
 		SysCronJobStop(ctx context.Context, in *SysCronJobStopReq, opts ...grpc.CallOption) (*RespBase, error)
+		// 获取系统支持的定时任务处理器列表
+		SysCronJobHandlers(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysCronJobHandlersResp, error)
 		// 系统定时任务日志列表
 		SysCronJobLogList(ctx context.Context, in *SysCronJobLogListReq, opts ...grpc.CallOption) (*SysCronJobLogListResp, error)
 	}
@@ -465,6 +469,12 @@ func (m *defaultSystem) SysCronJobStart(ctx context.Context, in *SysCronJobStart
 func (m *defaultSystem) SysCronJobStop(ctx context.Context, in *SysCronJobStopReq, opts ...grpc.CallOption) (*RespBase, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.SysCronJobStop(ctx, in, opts...)
+}
+
+// 获取系统支持的定时任务处理器列表
+func (m *defaultSystem) SysCronJobHandlers(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysCronJobHandlersResp, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysCronJobHandlers(ctx, in, opts...)
 }
 
 // 系统定时任务日志列表

@@ -64,6 +64,7 @@ const (
 	System_SysCronJobRun_FullMethodName      = "/system.System/SysCronJobRun"
 	System_SysCronJobStart_FullMethodName    = "/system.System/SysCronJobStart"
 	System_SysCronJobStop_FullMethodName     = "/system.System/SysCronJobStop"
+	System_SysCronJobHandlers_FullMethodName = "/system.System/SysCronJobHandlers"
 	System_SysCronJobLogList_FullMethodName  = "/system.System/SysCronJobLogList"
 )
 
@@ -165,6 +166,8 @@ type SystemClient interface {
 	SysCronJobStart(ctx context.Context, in *SysCronJobStartReq, opts ...grpc.CallOption) (*RespBase, error)
 	// 停止系统定时任务
 	SysCronJobStop(ctx context.Context, in *SysCronJobStopReq, opts ...grpc.CallOption) (*RespBase, error)
+	// 获取系统支持的定时任务处理器列表
+	SysCronJobHandlers(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysCronJobHandlersResp, error)
 	// 系统定时任务日志列表
 	SysCronJobLogList(ctx context.Context, in *SysCronJobLogListReq, opts ...grpc.CallOption) (*SysCronJobLogListResp, error)
 }
@@ -627,6 +630,16 @@ func (c *systemClient) SysCronJobStop(ctx context.Context, in *SysCronJobStopReq
 	return out, nil
 }
 
+func (c *systemClient) SysCronJobHandlers(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysCronJobHandlersResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SysCronJobHandlersResp)
+	err := c.cc.Invoke(ctx, System_SysCronJobHandlers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *systemClient) SysCronJobLogList(ctx context.Context, in *SysCronJobLogListReq, opts ...grpc.CallOption) (*SysCronJobLogListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SysCronJobLogListResp)
@@ -735,6 +748,8 @@ type SystemServer interface {
 	SysCronJobStart(context.Context, *SysCronJobStartReq) (*RespBase, error)
 	// 停止系统定时任务
 	SysCronJobStop(context.Context, *SysCronJobStopReq) (*RespBase, error)
+	// 获取系统支持的定时任务处理器列表
+	SysCronJobHandlers(context.Context, *Empty) (*SysCronJobHandlersResp, error)
 	// 系统定时任务日志列表
 	SysCronJobLogList(context.Context, *SysCronJobLogListReq) (*SysCronJobLogListResp, error)
 	mustEmbedUnimplementedSystemServer()
@@ -881,6 +896,9 @@ func (UnimplementedSystemServer) SysCronJobStart(context.Context, *SysCronJobSta
 }
 func (UnimplementedSystemServer) SysCronJobStop(context.Context, *SysCronJobStopReq) (*RespBase, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SysCronJobStop not implemented")
+}
+func (UnimplementedSystemServer) SysCronJobHandlers(context.Context, *Empty) (*SysCronJobHandlersResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SysCronJobHandlers not implemented")
 }
 func (UnimplementedSystemServer) SysCronJobLogList(context.Context, *SysCronJobLogListReq) (*SysCronJobLogListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SysCronJobLogList not implemented")
@@ -1716,6 +1734,24 @@ func _System_SysCronJobStop_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _System_SysCronJobHandlers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysCronJobHandlers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysCronJobHandlers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysCronJobHandlers(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _System_SysCronJobLogList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysCronJobLogListReq)
 	if err := dec(in); err != nil {
@@ -1920,6 +1956,10 @@ var System_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SysCronJobStop",
 			Handler:    _System_SysCronJobStop_Handler,
+		},
+		{
+			MethodName: "SysCronJobHandlers",
+			Handler:    _System_SysCronJobHandlers_Handler,
 		},
 		{
 			MethodName: "SysCronJobLogList",

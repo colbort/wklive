@@ -378,6 +378,16 @@ type SysCronJobStopReq {
   id int64 `path:"id" validate:"required"`
 }
 
+type  SysCronJobHandler {
+  invokeTarget string `json:"invokeTarget"` // 定时任务处理器唯一标识（如 sys:demo:handler）
+  jobName string `json:"jobName"` // 定时任务处理器名称（如 sys:demo:handler）
+}
+
+type SysCronJobHandlersResp {
+  RespBase
+  data []SysCronJobHandler `json:"data"`
+}
+
 type SysCronJobLogItem {
   id int64 `json:"id"`
   jobId int64 `json:"jobId"`
@@ -536,6 +546,9 @@ service admin {
   // 停止系统定时任务
   @handler SysCronJobStop
   post /jobs/:id/stop (SysCronJobStopReq) returns (RespBase)
+  // 系统定时任务处理器列表
+  @handler SysCronJobHandlers
+  get /jobs/handlers returns (SysCronJobHandlersResp)
   // 系统定时任务日志列表
   @handler SysCronJobLogList
   get /logs/job (SysCronJobLogListReq) returns (SysCronJobLogListResp)

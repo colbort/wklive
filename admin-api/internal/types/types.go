@@ -252,6 +252,16 @@ type SysCronJobDeleteReq struct {
 	Id int64 `path:"id" validate:"required"`
 }
 
+type SysCronJobHandler struct {
+	InvokeTarget string `json:"invokeTarget"` // 定时任务处理器唯一标识（如 sys:demo:handler）
+	JobName      string `json:"jobName"`      // 定时任务处理器名称（如 sys:demo:handler）
+}
+
+type SysCronJobHandlersResp struct {
+	RespBase
+	Data []SysCronJobHandler `json:"data"`
+}
+
 type SysCronJobItem struct {
 	Id             int64  `json:"id"`
 	JobName        string `json:"jobName"`

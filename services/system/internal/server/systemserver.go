@@ -293,6 +293,12 @@ func (s *SystemServer) SysCronJobStop(ctx context.Context, in *system.SysCronJob
 	return l.SysCronJobStop(in)
 }
 
+// 获取系统支持的定时任务处理器列表
+func (s *SystemServer) SysCronJobHandlers(ctx context.Context, in *system.Empty) (*system.SysCronJobHandlersResp, error) {
+	l := logic.NewSysCronJobHandlersLogic(ctx, s.svcCtx)
+	return l.SysCronJobHandlers(in)
+}
+
 // 系统定时任务日志列表
 func (s *SystemServer) SysCronJobLogList(ctx context.Context, in *system.SysCronJobLogListReq) (*system.SysCronJobLogListResp, error) {
 	l := logic.NewSysCronJobLogListLogic(ctx, s.svcCtx)

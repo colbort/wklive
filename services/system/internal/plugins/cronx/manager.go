@@ -1,4 +1,4 @@
-package plugins
+package cronx
 
 import (
 	"context"
@@ -270,4 +270,11 @@ func (m *CronManager) execute(job *models.SysJob, handler JobHandler) error {
 		CreateTime:     time.Now(),
 	})
 	return err
+}
+
+func (m *CronManager) LoadRegisteredHandlers() {
+	handlers := GetRegisteredHandlers()
+	for name, handler := range handlers {
+		m.RegisterHandler(name, handler)
+	}
 }

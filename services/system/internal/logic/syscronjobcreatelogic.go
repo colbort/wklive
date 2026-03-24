@@ -10,6 +10,7 @@ import (
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
 
+	"github.com/robfig/cron/v3"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -29,6 +30,13 @@ func NewSysCronJobCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 创建系统定时任务
 func (l *SysCronJobCreateLogic) SysCronJobCreate(in *system.SysCronJobCreateReq) (*system.RespBase, error) {
+	_, err := cron.ParseStandard(in.CronExpression)
+	if err != nil {
+		return &system.RespBase{
+			Code: 400,
+			Msg:  "无效的 Cron 表达式",
+		}, nil
+	}
 	job, err := l.svcCtx.JobModel.FindByInvokeTarget(l.ctx, in.InvokeTarget)
 	if err != nil {
 		return &system.RespBase{

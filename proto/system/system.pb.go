@@ -4920,6 +4920,110 @@ func (x *SysCronJobLogListReq) GetStatus() int64 {
 	return 0
 }
 
+type SysCronJobHander struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	InvokeTarget  string                 `protobuf:"bytes,1,opt,name=invoke_target,json=invokeTarget,proto3" json:"invoke_target,omitempty"`
+	JobName       string                 `protobuf:"bytes,2,opt,name=job_name,json=jobName,proto3" json:"job_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SysCronJobHander) Reset() {
+	*x = SysCronJobHander{}
+	mi := &file_proto_system_system_proto_msgTypes[75]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SysCronJobHander) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SysCronJobHander) ProtoMessage() {}
+
+func (x *SysCronJobHander) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_system_system_proto_msgTypes[75]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SysCronJobHander.ProtoReflect.Descriptor instead.
+func (*SysCronJobHander) Descriptor() ([]byte, []int) {
+	return file_proto_system_system_proto_rawDescGZIP(), []int{75}
+}
+
+func (x *SysCronJobHander) GetInvokeTarget() string {
+	if x != nil {
+		return x.InvokeTarget
+	}
+	return ""
+}
+
+func (x *SysCronJobHander) GetJobName() string {
+	if x != nil {
+		return x.JobName
+	}
+	return ""
+}
+
+type SysCronJobHandlersResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          []*SysCronJobHander    `protobuf:"bytes,3,rep,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SysCronJobHandlersResp) Reset() {
+	*x = SysCronJobHandlersResp{}
+	mi := &file_proto_system_system_proto_msgTypes[76]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SysCronJobHandlersResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SysCronJobHandlersResp) ProtoMessage() {}
+
+func (x *SysCronJobHandlersResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_system_system_proto_msgTypes[76]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SysCronJobHandlersResp.ProtoReflect.Descriptor instead.
+func (*SysCronJobHandlersResp) Descriptor() ([]byte, []int) {
+	return file_proto_system_system_proto_rawDescGZIP(), []int{76}
+}
+
+func (x *SysCronJobHandlersResp) GetBase() *RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *SysCronJobHandlersResp) GetData() []*SysCronJobHander {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
 type SysCronJobLogListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
@@ -4930,7 +5034,7 @@ type SysCronJobLogListResp struct {
 
 func (x *SysCronJobLogListResp) Reset() {
 	*x = SysCronJobLogListResp{}
-	mi := &file_proto_system_system_proto_msgTypes[75]
+	mi := &file_proto_system_system_proto_msgTypes[77]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4942,7 +5046,7 @@ func (x *SysCronJobLogListResp) String() string {
 func (*SysCronJobLogListResp) ProtoMessage() {}
 
 func (x *SysCronJobLogListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[75]
+	mi := &file_proto_system_system_proto_msgTypes[77]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4955,7 +5059,7 @@ func (x *SysCronJobLogListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysCronJobLogListResp.ProtoReflect.Descriptor instead.
 func (*SysCronJobLogListResp) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{75}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{77}
 }
 
 func (x *SysCronJobLogListResp) GetBase() *RespBase {
@@ -5364,10 +5468,16 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\a_job_idB\v\n" +
 	"\t_job_nameB\x10\n" +
 	"\x0e_invoke_targetB\t\n" +
-	"\a_status\"l\n" +
+	"\a_status\"R\n" +
+	"\x10SysCronJobHander\x12#\n" +
+	"\rinvoke_target\x18\x01 \x01(\tR\finvokeTarget\x12\x19\n" +
+	"\bjob_name\x18\x02 \x01(\tR\ajobName\"l\n" +
+	"\x16SysCronJobHandlersResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12,\n" +
+	"\x04data\x18\x03 \x03(\v2\x18.system.SysCronJobHanderR\x04data\"l\n" +
 	"\x15SysCronJobLogListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x04 \x03(\v2\x19.system.SysCronJobLogItemR\x04data2\xaa\x17\n" +
+	"\x04data\x18\x04 \x03(\v2\x19.system.SysCronJobLogItemR\x04data2\xef\x17\n" +
 	"\x06System\x12;\n" +
 	"\n" +
 	"AdminLogin\x12\x15.system.AdminLoginReq\x1a\x16.system.AdminLoginResp\x125\n" +
@@ -5415,7 +5525,8 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x10SysCronJobDelete\x12\x1b.system.SysCronJobDeleteReq\x1a\x10.system.RespBase\x12;\n" +
 	"\rSysCronJobRun\x12\x18.system.SysCronJobRunReq\x1a\x10.system.RespBase\x12?\n" +
 	"\x0fSysCronJobStart\x12\x1a.system.SysCronJobStartReq\x1a\x10.system.RespBase\x12=\n" +
-	"\x0eSysCronJobStop\x12\x19.system.SysCronJobStopReq\x1a\x10.system.RespBase\x12P\n" +
+	"\x0eSysCronJobStop\x12\x19.system.SysCronJobStopReq\x1a\x10.system.RespBase\x12C\n" +
+	"\x12SysCronJobHandlers\x12\r.system.Empty\x1a\x1e.system.SysCronJobHandlersResp\x12P\n" +
 	"\x11SysCronJobLogList\x12\x1c.system.SysCronJobLogListReq\x1a\x1d.system.SysCronJobLogListRespB\x1cZ\x1awklive/proto/system;systemb\x06proto3"
 
 var (
@@ -5430,7 +5541,7 @@ func file_proto_system_system_proto_rawDescGZIP() []byte {
 	return file_proto_system_system_proto_rawDescData
 }
 
-var file_proto_system_system_proto_msgTypes = make([]protoimpl.MessageInfo, 76)
+var file_proto_system_system_proto_msgTypes = make([]protoimpl.MessageInfo, 78)
 var file_proto_system_system_proto_goTypes = []any{
 	(*Empty)(nil),                  // 0: system.Empty
 	(*AdminLoginReq)(nil),          // 1: system.AdminLoginReq
@@ -5507,9 +5618,11 @@ var file_proto_system_system_proto_goTypes = []any{
 	(*SysCronJobStopReq)(nil),      // 72: system.SysCronJobStopReq
 	(*SysCronJobLogItem)(nil),      // 73: system.SysCronJobLogItem
 	(*SysCronJobLogListReq)(nil),   // 74: system.SysCronJobLogListReq
-	(*SysCronJobLogListResp)(nil),  // 75: system.SysCronJobLogListResp
-	(*structpb.Struct)(nil),        // 76: google.protobuf.Struct
-	(SysConfigType)(0),             // 77: system.SysConfigType
+	(*SysCronJobHander)(nil),       // 75: system.SysCronJobHander
+	(*SysCronJobHandlersResp)(nil), // 76: system.SysCronJobHandlersResp
+	(*SysCronJobLogListResp)(nil),  // 77: system.SysCronJobLogListResp
+	(*structpb.Struct)(nil),        // 78: google.protobuf.Struct
+	(SysConfigType)(0),             // 79: system.SysConfigType
 }
 var file_proto_system_system_proto_depIdxs = []int32{
 	16, // 0: system.AdminLoginResp.base:type_name -> system.RespBase
@@ -5539,13 +5652,13 @@ var file_proto_system_system_proto_depIdxs = []int32{
 	17, // 24: system.OpLogListReq.page:type_name -> system.PageReq
 	16, // 25: system.OpLogListResp.base:type_name -> system.RespBase
 	48, // 26: system.OpLogListResp.data:type_name -> system.OpLogItem
-	76, // 27: system.SysConfigCreateReq.config_value:type_name -> google.protobuf.Struct
-	76, // 28: system.SysConfigUpdateReq.config_value:type_name -> google.protobuf.Struct
-	76, // 29: system.SysConfigItem.config_value:type_name -> google.protobuf.Struct
+	78, // 27: system.SysConfigCreateReq.config_value:type_name -> google.protobuf.Struct
+	78, // 28: system.SysConfigUpdateReq.config_value:type_name -> google.protobuf.Struct
+	78, // 29: system.SysConfigItem.config_value:type_name -> google.protobuf.Struct
 	17, // 30: system.SysConfigListReq.page:type_name -> system.PageReq
 	16, // 31: system.SysConfigListResp.base:type_name -> system.RespBase
 	54, // 32: system.SysConfigListResp.data:type_name -> system.SysConfigItem
-	77, // 33: system.SysConfigDetailReq.config_key:type_name -> system.SysConfigType
+	79, // 33: system.SysConfigDetailReq.config_key:type_name -> system.SysConfigType
 	16, // 34: system.SysConfigDetailResp.base:type_name -> system.RespBase
 	54, // 35: system.SysConfigDetailResp.data:type_name -> system.SysConfigItem
 	16, // 36: system.SysConfigByKeysResp.base:type_name -> system.RespBase
@@ -5555,105 +5668,109 @@ var file_proto_system_system_proto_depIdxs = []int32{
 	16, // 40: system.SysCronJobListResp.base:type_name -> system.RespBase
 	64, // 41: system.SysCronJobListResp.data:type_name -> system.SysCronJobItem
 	17, // 42: system.SysCronJobLogListReq.page:type_name -> system.PageReq
-	16, // 43: system.SysCronJobLogListResp.base:type_name -> system.RespBase
-	73, // 44: system.SysCronJobLogListResp.data:type_name -> system.SysCronJobLogItem
-	1,  // 45: system.System.AdminLogin:input_type -> system.AdminLoginReq
-	3,  // 46: system.System.GetProfile:input_type -> system.ProfileReq
-	7,  // 47: system.System.UpdateProfile:input_type -> system.UpdateProfileReq
-	10, // 48: system.System.Google2FAInit:input_type -> system.Google2FAInitReq
-	12, // 49: system.System.Google2FABind:input_type -> system.Google2FABindReq
-	13, // 50: system.System.Google2FAEnable:input_type -> system.Google2FAEnableReq
-	14, // 51: system.System.Google2FADisable:input_type -> system.Google2FADisableReq
-	15, // 52: system.System.Google2FAReset:input_type -> system.Google2FAResetReq
-	19, // 53: system.System.SysUserList:input_type -> system.SysUserListReq
-	21, // 54: system.System.SysUserDetail:input_type -> system.SysUserDetailReq
-	23, // 55: system.System.SysUserCreate:input_type -> system.SysUserCreateReq
-	24, // 56: system.System.SysUserUpdate:input_type -> system.SysUserUpdateReq
-	25, // 57: system.System.SysUserDelete:input_type -> system.SysUserDeleteReq
-	26, // 58: system.System.ChangeUserStatus:input_type -> system.ChangeUserStatusReq
-	27, // 59: system.System.ResetUserPwd:input_type -> system.ResetUserPwdReq
-	28, // 60: system.System.AssignUserRoles:input_type -> system.AssignUserRolesReq
-	30, // 61: system.System.SysRoleList:input_type -> system.SysRoleListReq
-	32, // 62: system.System.SysRoleCreate:input_type -> system.SysRoleCreateReq
-	33, // 63: system.System.SysRoleUpdate:input_type -> system.SysRoleUpdateReq
-	34, // 64: system.System.SysRoleDelete:input_type -> system.SysRoleDeleteReq
-	35, // 65: system.System.SysRoleGrant:input_type -> system.SysRoleGrantReq
-	36, // 66: system.System.SysRoleGrantDetail:input_type -> system.SysRoleGrantDetailReq
-	0,  // 67: system.System.SysPermList:input_type -> system.Empty
-	0,  // 68: system.System.GetMenuTree:input_type -> system.Empty
-	40, // 69: system.System.SysMenuCreate:input_type -> system.SysMenuCreateReq
-	41, // 70: system.System.SysMenuUpdate:input_type -> system.SysMenuUpdateReq
-	42, // 71: system.System.SysMenuDelete:input_type -> system.SysMenuDeleteReq
-	43, // 72: system.System.SysMenuList:input_type -> system.SysMenuListReq
-	46, // 73: system.System.LoginLogList:input_type -> system.LoginLogListReq
-	49, // 74: system.System.OpLogList:input_type -> system.OpLogListReq
-	51, // 75: system.System.SysConfigCreate:input_type -> system.SysConfigCreateReq
-	52, // 76: system.System.SysConfigUpdate:input_type -> system.SysConfigUpdateReq
-	53, // 77: system.System.SysConfigDelete:input_type -> system.SysConfigDeleteReq
-	55, // 78: system.System.SysConfigList:input_type -> system.SysConfigListReq
-	57, // 79: system.System.SysConfigDetail:input_type -> system.SysConfigDetailReq
-	59, // 80: system.System.SysConfigByKeys:input_type -> system.SysConfigByKeysReq
-	0,  // 81: system.System.SysConfigKeys:input_type -> system.Empty
-	62, // 82: system.System.LoginUserPerms:input_type -> system.LoginUserPermsReq
-	65, // 83: system.System.SysCronJobList:input_type -> system.SysCronJobListReq
-	67, // 84: system.System.SysCronJobCreate:input_type -> system.SysCronJobCreateReq
-	68, // 85: system.System.SysCronJobUpdate:input_type -> system.SysCronJobUpdateReq
-	69, // 86: system.System.SysCronJobDelete:input_type -> system.SysCronJobDeleteReq
-	70, // 87: system.System.SysCronJobRun:input_type -> system.SysCronJobRunReq
-	71, // 88: system.System.SysCronJobStart:input_type -> system.SysCronJobStartReq
-	72, // 89: system.System.SysCronJobStop:input_type -> system.SysCronJobStopReq
-	74, // 90: system.System.SysCronJobLogList:input_type -> system.SysCronJobLogListReq
-	2,  // 91: system.System.AdminLogin:output_type -> system.AdminLoginResp
-	6,  // 92: system.System.GetProfile:output_type -> system.ProfileResp
-	16, // 93: system.System.UpdateProfile:output_type -> system.RespBase
-	11, // 94: system.System.Google2FAInit:output_type -> system.Google2FAInitResp
-	16, // 95: system.System.Google2FABind:output_type -> system.RespBase
-	16, // 96: system.System.Google2FAEnable:output_type -> system.RespBase
-	16, // 97: system.System.Google2FADisable:output_type -> system.RespBase
-	16, // 98: system.System.Google2FAReset:output_type -> system.RespBase
-	20, // 99: system.System.SysUserList:output_type -> system.SysUserListResp
-	22, // 100: system.System.SysUserDetail:output_type -> system.SysUserDetailResp
-	16, // 101: system.System.SysUserCreate:output_type -> system.RespBase
-	16, // 102: system.System.SysUserUpdate:output_type -> system.RespBase
-	16, // 103: system.System.SysUserDelete:output_type -> system.RespBase
-	16, // 104: system.System.ChangeUserStatus:output_type -> system.RespBase
-	16, // 105: system.System.ResetUserPwd:output_type -> system.RespBase
-	16, // 106: system.System.AssignUserRoles:output_type -> system.RespBase
-	31, // 107: system.System.SysRoleList:output_type -> system.SysRoleListResp
-	16, // 108: system.System.SysRoleCreate:output_type -> system.RespBase
-	16, // 109: system.System.SysRoleUpdate:output_type -> system.RespBase
-	16, // 110: system.System.SysRoleDelete:output_type -> system.RespBase
-	16, // 111: system.System.SysRoleGrant:output_type -> system.RespBase
-	37, // 112: system.System.SysRoleGrantDetail:output_type -> system.SysRoleGrantDetailResp
-	39, // 113: system.System.SysPermList:output_type -> system.SysPermListResp
-	9,  // 114: system.System.GetMenuTree:output_type -> system.SysMenuTreeResp
-	16, // 115: system.System.SysMenuCreate:output_type -> system.RespBase
-	16, // 116: system.System.SysMenuUpdate:output_type -> system.RespBase
-	16, // 117: system.System.SysMenuDelete:output_type -> system.RespBase
-	44, // 118: system.System.SysMenuList:output_type -> system.SysMenuListResp
-	47, // 119: system.System.LoginLogList:output_type -> system.LoginLogListResp
-	50, // 120: system.System.OpLogList:output_type -> system.OpLogListResp
-	16, // 121: system.System.SysConfigCreate:output_type -> system.RespBase
-	16, // 122: system.System.SysConfigUpdate:output_type -> system.RespBase
-	16, // 123: system.System.SysConfigDelete:output_type -> system.RespBase
-	56, // 124: system.System.SysConfigList:output_type -> system.SysConfigListResp
-	58, // 125: system.System.SysConfigDetail:output_type -> system.SysConfigDetailResp
-	60, // 126: system.System.SysConfigByKeys:output_type -> system.SysConfigByKeysResp
-	61, // 127: system.System.SysConfigKeys:output_type -> system.SysConfigKeysResp
-	63, // 128: system.System.LoginUserPerms:output_type -> system.LoginUserPermsResp
-	66, // 129: system.System.SysCronJobList:output_type -> system.SysCronJobListResp
-	16, // 130: system.System.SysCronJobCreate:output_type -> system.RespBase
-	16, // 131: system.System.SysCronJobUpdate:output_type -> system.RespBase
-	16, // 132: system.System.SysCronJobDelete:output_type -> system.RespBase
-	16, // 133: system.System.SysCronJobRun:output_type -> system.RespBase
-	16, // 134: system.System.SysCronJobStart:output_type -> system.RespBase
-	16, // 135: system.System.SysCronJobStop:output_type -> system.RespBase
-	75, // 136: system.System.SysCronJobLogList:output_type -> system.SysCronJobLogListResp
-	91, // [91:137] is the sub-list for method output_type
-	45, // [45:91] is the sub-list for method input_type
-	45, // [45:45] is the sub-list for extension type_name
-	45, // [45:45] is the sub-list for extension extendee
-	0,  // [0:45] is the sub-list for field type_name
+	16, // 43: system.SysCronJobHandlersResp.base:type_name -> system.RespBase
+	75, // 44: system.SysCronJobHandlersResp.data:type_name -> system.SysCronJobHander
+	16, // 45: system.SysCronJobLogListResp.base:type_name -> system.RespBase
+	73, // 46: system.SysCronJobLogListResp.data:type_name -> system.SysCronJobLogItem
+	1,  // 47: system.System.AdminLogin:input_type -> system.AdminLoginReq
+	3,  // 48: system.System.GetProfile:input_type -> system.ProfileReq
+	7,  // 49: system.System.UpdateProfile:input_type -> system.UpdateProfileReq
+	10, // 50: system.System.Google2FAInit:input_type -> system.Google2FAInitReq
+	12, // 51: system.System.Google2FABind:input_type -> system.Google2FABindReq
+	13, // 52: system.System.Google2FAEnable:input_type -> system.Google2FAEnableReq
+	14, // 53: system.System.Google2FADisable:input_type -> system.Google2FADisableReq
+	15, // 54: system.System.Google2FAReset:input_type -> system.Google2FAResetReq
+	19, // 55: system.System.SysUserList:input_type -> system.SysUserListReq
+	21, // 56: system.System.SysUserDetail:input_type -> system.SysUserDetailReq
+	23, // 57: system.System.SysUserCreate:input_type -> system.SysUserCreateReq
+	24, // 58: system.System.SysUserUpdate:input_type -> system.SysUserUpdateReq
+	25, // 59: system.System.SysUserDelete:input_type -> system.SysUserDeleteReq
+	26, // 60: system.System.ChangeUserStatus:input_type -> system.ChangeUserStatusReq
+	27, // 61: system.System.ResetUserPwd:input_type -> system.ResetUserPwdReq
+	28, // 62: system.System.AssignUserRoles:input_type -> system.AssignUserRolesReq
+	30, // 63: system.System.SysRoleList:input_type -> system.SysRoleListReq
+	32, // 64: system.System.SysRoleCreate:input_type -> system.SysRoleCreateReq
+	33, // 65: system.System.SysRoleUpdate:input_type -> system.SysRoleUpdateReq
+	34, // 66: system.System.SysRoleDelete:input_type -> system.SysRoleDeleteReq
+	35, // 67: system.System.SysRoleGrant:input_type -> system.SysRoleGrantReq
+	36, // 68: system.System.SysRoleGrantDetail:input_type -> system.SysRoleGrantDetailReq
+	0,  // 69: system.System.SysPermList:input_type -> system.Empty
+	0,  // 70: system.System.GetMenuTree:input_type -> system.Empty
+	40, // 71: system.System.SysMenuCreate:input_type -> system.SysMenuCreateReq
+	41, // 72: system.System.SysMenuUpdate:input_type -> system.SysMenuUpdateReq
+	42, // 73: system.System.SysMenuDelete:input_type -> system.SysMenuDeleteReq
+	43, // 74: system.System.SysMenuList:input_type -> system.SysMenuListReq
+	46, // 75: system.System.LoginLogList:input_type -> system.LoginLogListReq
+	49, // 76: system.System.OpLogList:input_type -> system.OpLogListReq
+	51, // 77: system.System.SysConfigCreate:input_type -> system.SysConfigCreateReq
+	52, // 78: system.System.SysConfigUpdate:input_type -> system.SysConfigUpdateReq
+	53, // 79: system.System.SysConfigDelete:input_type -> system.SysConfigDeleteReq
+	55, // 80: system.System.SysConfigList:input_type -> system.SysConfigListReq
+	57, // 81: system.System.SysConfigDetail:input_type -> system.SysConfigDetailReq
+	59, // 82: system.System.SysConfigByKeys:input_type -> system.SysConfigByKeysReq
+	0,  // 83: system.System.SysConfigKeys:input_type -> system.Empty
+	62, // 84: system.System.LoginUserPerms:input_type -> system.LoginUserPermsReq
+	65, // 85: system.System.SysCronJobList:input_type -> system.SysCronJobListReq
+	67, // 86: system.System.SysCronJobCreate:input_type -> system.SysCronJobCreateReq
+	68, // 87: system.System.SysCronJobUpdate:input_type -> system.SysCronJobUpdateReq
+	69, // 88: system.System.SysCronJobDelete:input_type -> system.SysCronJobDeleteReq
+	70, // 89: system.System.SysCronJobRun:input_type -> system.SysCronJobRunReq
+	71, // 90: system.System.SysCronJobStart:input_type -> system.SysCronJobStartReq
+	72, // 91: system.System.SysCronJobStop:input_type -> system.SysCronJobStopReq
+	0,  // 92: system.System.SysCronJobHandlers:input_type -> system.Empty
+	74, // 93: system.System.SysCronJobLogList:input_type -> system.SysCronJobLogListReq
+	2,  // 94: system.System.AdminLogin:output_type -> system.AdminLoginResp
+	6,  // 95: system.System.GetProfile:output_type -> system.ProfileResp
+	16, // 96: system.System.UpdateProfile:output_type -> system.RespBase
+	11, // 97: system.System.Google2FAInit:output_type -> system.Google2FAInitResp
+	16, // 98: system.System.Google2FABind:output_type -> system.RespBase
+	16, // 99: system.System.Google2FAEnable:output_type -> system.RespBase
+	16, // 100: system.System.Google2FADisable:output_type -> system.RespBase
+	16, // 101: system.System.Google2FAReset:output_type -> system.RespBase
+	20, // 102: system.System.SysUserList:output_type -> system.SysUserListResp
+	22, // 103: system.System.SysUserDetail:output_type -> system.SysUserDetailResp
+	16, // 104: system.System.SysUserCreate:output_type -> system.RespBase
+	16, // 105: system.System.SysUserUpdate:output_type -> system.RespBase
+	16, // 106: system.System.SysUserDelete:output_type -> system.RespBase
+	16, // 107: system.System.ChangeUserStatus:output_type -> system.RespBase
+	16, // 108: system.System.ResetUserPwd:output_type -> system.RespBase
+	16, // 109: system.System.AssignUserRoles:output_type -> system.RespBase
+	31, // 110: system.System.SysRoleList:output_type -> system.SysRoleListResp
+	16, // 111: system.System.SysRoleCreate:output_type -> system.RespBase
+	16, // 112: system.System.SysRoleUpdate:output_type -> system.RespBase
+	16, // 113: system.System.SysRoleDelete:output_type -> system.RespBase
+	16, // 114: system.System.SysRoleGrant:output_type -> system.RespBase
+	37, // 115: system.System.SysRoleGrantDetail:output_type -> system.SysRoleGrantDetailResp
+	39, // 116: system.System.SysPermList:output_type -> system.SysPermListResp
+	9,  // 117: system.System.GetMenuTree:output_type -> system.SysMenuTreeResp
+	16, // 118: system.System.SysMenuCreate:output_type -> system.RespBase
+	16, // 119: system.System.SysMenuUpdate:output_type -> system.RespBase
+	16, // 120: system.System.SysMenuDelete:output_type -> system.RespBase
+	44, // 121: system.System.SysMenuList:output_type -> system.SysMenuListResp
+	47, // 122: system.System.LoginLogList:output_type -> system.LoginLogListResp
+	50, // 123: system.System.OpLogList:output_type -> system.OpLogListResp
+	16, // 124: system.System.SysConfigCreate:output_type -> system.RespBase
+	16, // 125: system.System.SysConfigUpdate:output_type -> system.RespBase
+	16, // 126: system.System.SysConfigDelete:output_type -> system.RespBase
+	56, // 127: system.System.SysConfigList:output_type -> system.SysConfigListResp
+	58, // 128: system.System.SysConfigDetail:output_type -> system.SysConfigDetailResp
+	60, // 129: system.System.SysConfigByKeys:output_type -> system.SysConfigByKeysResp
+	61, // 130: system.System.SysConfigKeys:output_type -> system.SysConfigKeysResp
+	63, // 131: system.System.LoginUserPerms:output_type -> system.LoginUserPermsResp
+	66, // 132: system.System.SysCronJobList:output_type -> system.SysCronJobListResp
+	16, // 133: system.System.SysCronJobCreate:output_type -> system.RespBase
+	16, // 134: system.System.SysCronJobUpdate:output_type -> system.RespBase
+	16, // 135: system.System.SysCronJobDelete:output_type -> system.RespBase
+	16, // 136: system.System.SysCronJobRun:output_type -> system.RespBase
+	16, // 137: system.System.SysCronJobStart:output_type -> system.RespBase
+	16, // 138: system.System.SysCronJobStop:output_type -> system.RespBase
+	76, // 139: system.System.SysCronJobHandlers:output_type -> system.SysCronJobHandlersResp
+	77, // 140: system.System.SysCronJobLogList:output_type -> system.SysCronJobLogListResp
+	94, // [94:141] is the sub-list for method output_type
+	47, // [47:94] is the sub-list for method input_type
+	47, // [47:47] is the sub-list for extension type_name
+	47, // [47:47] is the sub-list for extension extendee
+	0,  // [0:47] is the sub-list for field type_name
 }
 
 func init() { file_proto_system_system_proto_init() }
@@ -5672,7 +5789,7 @@ func file_proto_system_system_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_system_system_proto_rawDesc), len(file_proto_system_system_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   76,
+			NumMessages:   78,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
