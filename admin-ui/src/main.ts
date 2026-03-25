@@ -11,6 +11,7 @@ import { i18n, elLocaleMap } from '@/i18n'
 import { setupPermDirective } from '@/directives/perm'
 import { getSystemCore } from '@/stores/core'
 import { http } from '@/utils/request'
+import { buildAssetUrl } from '@/utils/file-url'
 
 const app = createApp(App)
 
@@ -32,7 +33,7 @@ function setFavicon(href: string) {
         document.title = res.data.siteName
       }
       if (res.data.siteLogo) {
-        setFavicon(formatUrl(res.data.siteLogo))
+        setFavicon(buildAssetUrl(res.data.siteLogo))
       }
     }
   } catch (e) {

@@ -13,6 +13,9 @@ type MenuModel interface {
 	FindIdsByIds(ctx context.Context, ids []int64) ([]int64, error)
 	ListAll(ctx context.Context) ([]*SysMenu, error)
 	FindPage(ctx context.Context, keyword string, menuType, status, visible, cursor, limit int64) ([]*SysMenu, int64, error)
+	FindOneByName(ctx context.Context, name string) (*SysMenu, error)
+	FindOneByPath(ctx context.Context, path string) (*SysMenu, error)
+	FindOneByPerms(ctx context.Context, perms string) (*SysMenu, error)
 }
 
 func (m *defaultSysMenuModel) FindByIds(ctx context.Context, ids []int64, visible int64, status int64) ([]*SysMenu, error) {
@@ -144,4 +147,34 @@ func (m *defaultSysMenuModel) FindPage(
 	}
 
 	return list, total, nil
+}
+
+func (m *defaultSysMenuModel) FindOneByName(ctx context.Context, name string) (*SysMenu, error) {
+	var menu SysMenu
+	query := "select " + sysMenuRows + " from " + m.table + " where name = ? limit 1"
+	err := m.QueryRowNoCacheCtx(ctx, &menu, query, name)
+	if err != nil {
+		return nil, err
+	}
+	return &menu, nil
+}
+
+func (m *defaultSysMenuModel) FindOneByPath(ctx context.Context, path string) (*SysMenu, error) {
+	var menu SysMenu
+	query := "select " + sysMenuRows + " from " + m.table + " where path = ? limit 1"
+	err := m.QueryRowNoCacheCtx(ctx, &menu, query, path)
+	if err != nil {
+		return nil, err
+	}
+	return &menu, nil
+}
+
+func (m *defaultSysMenuModel) FindOneByPerms(ctx context.Context, perms string) (*SysMenu, error) {
+	var menu SysMenu
+	query := "select " + sysMenuRows + " from " + m.table + " where perms = ? limit 1"
+	err := m.QueryRowNoCacheCtx(ctx, &menu, query, perms)
+	if err != nil {
+		return nil, err
+	}
+	return &menu, nil
 }

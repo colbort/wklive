@@ -48,6 +48,7 @@ func (l *SysMenuListLogic) SysMenuList(req *types.SysMenuListReq) (resp *types.S
 			ParentId:  v.ParentId,
 			Name:      v.Name,
 			MenuType:  v.MenuType,
+			Method:    v.Method,
 			Path:      v.Path,
 			Component: v.Component,
 			Icon:      v.Icon,
@@ -59,11 +60,11 @@ func (l *SysMenuListLogic) SysMenuList(req *types.SysMenuListReq) (resp *types.S
 	}
 	return &types.SysMenuListResp{
 		RespBase: types.RespBase{
-			Code:  result.Base.Code,
-			Msg:   result.Base.Msg,
-			Total: result.Base.Total,
-			HasNext: result.Base.HasNext,
-			HasPrev: result.Base.HasPrev,
+			Code:       result.Base.Code,
+			Msg:        result.Base.Msg,
+			Total:      result.Base.Total,
+			HasNext:    result.Base.HasNext,
+			HasPrev:    result.Base.HasPrev,
 			NextCursor: result.Base.NextCursor,
 			PrevCursor: result.Base.PrevCursor,
 		},

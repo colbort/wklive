@@ -288,9 +288,9 @@ VALUES
 (400, '删除配置', 3, 'DELETE', 'sys:config:delete', 403);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, icon, sort)
-VALUES (500, 1, '定时任务', 1, '', '', 'Cpu', 500);
+VALUES (500, 1, '定时任务', 1, '', '', 'AlarmClock', 500);
 INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, icon, sort)
-VALUES (600, 500, '定时任务列表', 2, '/cronjobs', 'system/cronjobs', 'Cpu', 600);
+VALUES (600, 500, '定时任务列表', 2, '/cronjobs', 'system/cronjobs', 'Clock', 600);
 INSERT INTO sys_menu (parent_id, name, menu_type, method, perms, sort)
 VALUES
 (600, '新增任务', 3, 'POST', 'sys:job:add', 601),
@@ -301,7 +301,7 @@ VALUES
 (600, '停止任务', 3, 'POST', 'sys:job:stop', 606),
 (600, '任务处理器', 3, 'GET', 'sys:job:handlers', 607);
 INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, icon, sort)
-VALUES (700, 500, '定时任务日志', 2, '/cronjobs-log', 'system/cronjobs-log', 'Cpu', 700);
+VALUES (700, 500, '定时任务日志', 2, '/cronjobs-log', 'system/cronjobs-log', 'Paperclip', 700);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, icon, sort)
 VALUES (800, 1, '登录日志', 2, '/logs/login', 'system/login-log', 'Reading', 800);

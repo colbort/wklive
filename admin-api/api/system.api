@@ -170,6 +170,7 @@ type SysMenuItem {
   parentId  int64  `json:"parentId"`
   name      string `json:"name"`
   menuType  int64  `json:"menuType"` // 1目录 2菜单 3按钮
+  method    string `json:"method,optional"` // GET POST PUT DELETE
   path      string `json:"path,optional"`
   component string `json:"component,optional"`
   icon      string `json:"icon,optional"`
@@ -188,6 +189,7 @@ type SysMenuCreateReq {
   parentId  int64  `json:"parentId,optional"`
   name      string `json:"name"`
   menuType  int64  `json:"menuType"`
+  method    string `json:"method,optional"` // GET POST PUT DELETE
   path      string `json:"path,optional"`
   component string `json:"component,optional"`
   icon      string `json:"icon,optional"`
@@ -202,6 +204,7 @@ type SysMenuUpdateReq {
   parentId  int64  `json:"parentId,optional"`
   name      string `json:"name,optional"`
   menuType  int64  `json:"menuType,optional"`
+  method    string `json:"method,optional"` // GET POST PUT DELETE
   path      string `json:"path,optional"`
   component string `json:"component,optional"`
   icon      string `json:"icon,optional"`

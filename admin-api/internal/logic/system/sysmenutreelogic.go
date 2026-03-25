@@ -39,6 +39,7 @@ func (l *SysMenuTreeLogic) SysMenuTree() (resp *types.SysMenuTreeResp, err error
 			ParentId:  item.ParentId,
 			Name:      item.Name,
 			MenuType:  item.MenuType,
+			Method:    item.Method,
 			Icon:      item.Icon,
 			Path:      item.Path,
 			Component: item.Component,

@@ -10,7 +10,7 @@
       <div class="logo-upload-container">
         <el-image
           v-if="form.site_logo"
-          :src="formatUrl(form.site_logo)"
+          :src="buildAssetUrl(form.site_logo)"
           style="
             width: 100px;
             height: 100px;
@@ -75,7 +75,7 @@ import Cropper from 'cropperjs'
 import type { UploadFile } from 'element-plus'
 import type { SystemCore } from '@/services/system/ConfigService'
 import { apiUploadAvatar } from '@/api/system/upload'
-import { formatUrl } from '@/utils/file-url'
+import { buildAssetUrl } from '@/utils/file-url'
 
 const { t } = useI18n()
 

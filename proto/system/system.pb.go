@@ -626,13 +626,14 @@ type SysMenuItem struct {
 	ParentId      int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
 	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	MenuType      int64                  `protobuf:"varint,4,opt,name=menu_type,json=menuType,proto3" json:"menu_type,omitempty"` // 1目录 2菜单 3按钮
-	Path          string                 `protobuf:"bytes,5,opt,name=path,proto3" json:"path,omitempty"`
-	Component     string                 `protobuf:"bytes,6,opt,name=component,proto3" json:"component,omitempty"`
-	Icon          string                 `protobuf:"bytes,7,opt,name=icon,proto3" json:"icon,omitempty"`
-	Sort          int64                  `protobuf:"varint,8,opt,name=sort,proto3" json:"sort,omitempty"`
-	Visible       int64                  `protobuf:"varint,9,opt,name=visible,proto3" json:"visible,omitempty"`
-	Status        int64                  `protobuf:"varint,10,opt,name=status,proto3" json:"status,omitempty"`
-	Perms         string                 `protobuf:"bytes,11,opt,name=perms,proto3" json:"perms,omitempty"` // 按钮必须有，例如 sys:user:add
+	Method        string                 `protobuf:"bytes,5,opt,name=method,proto3" json:"method,omitempty"`                      // GET POST PUT DELETE
+	Path          string                 `protobuf:"bytes,6,opt,name=path,proto3" json:"path,omitempty"`
+	Component     string                 `protobuf:"bytes,7,opt,name=component,proto3" json:"component,omitempty"`
+	Icon          string                 `protobuf:"bytes,8,opt,name=icon,proto3" json:"icon,omitempty"`
+	Sort          int64                  `protobuf:"varint,9,opt,name=sort,proto3" json:"sort,omitempty"`
+	Visible       int64                  `protobuf:"varint,10,opt,name=visible,proto3" json:"visible,omitempty"`
+	Status        int64                  `protobuf:"varint,11,opt,name=status,proto3" json:"status,omitempty"`
+	Perms         string                 `protobuf:"bytes,12,opt,name=perms,proto3" json:"perms,omitempty"` // 按钮必须有，例如 sys:user:add
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -693,6 +694,13 @@ func (x *SysMenuItem) GetMenuType() int64 {
 		return x.MenuType
 	}
 	return 0
+}
+
+func (x *SysMenuItem) GetMethod() string {
+	if x != nil {
+		return x.Method
+	}
+	return ""
 }
 
 func (x *SysMenuItem) GetPath() string {
@@ -2557,13 +2565,14 @@ type SysMenuCreateReq struct {
 	ParentId      int64                  `protobuf:"varint,1,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	MenuType      int64                  `protobuf:"varint,3,opt,name=menu_type,json=menuType,proto3" json:"menu_type,omitempty"`
-	Path          string                 `protobuf:"bytes,4,opt,name=path,proto3" json:"path,omitempty"`
-	Component     string                 `protobuf:"bytes,5,opt,name=component,proto3" json:"component,omitempty"`
-	Icon          string                 `protobuf:"bytes,6,opt,name=icon,proto3" json:"icon,omitempty"`
-	Sort          int64                  `protobuf:"varint,7,opt,name=sort,proto3" json:"sort,omitempty"`
-	Visible       int64                  `protobuf:"varint,8,opt,name=visible,proto3" json:"visible,omitempty"`
-	Status        int64                  `protobuf:"varint,9,opt,name=status,proto3" json:"status,omitempty"`
-	Perms         string                 `protobuf:"bytes,10,opt,name=perms,proto3" json:"perms,omitempty"`
+	Method        string                 `protobuf:"bytes,4,opt,name=method,proto3" json:"method,omitempty"`
+	Path          string                 `protobuf:"bytes,5,opt,name=path,proto3" json:"path,omitempty"`
+	Component     string                 `protobuf:"bytes,6,opt,name=component,proto3" json:"component,omitempty"`
+	Icon          string                 `protobuf:"bytes,7,opt,name=icon,proto3" json:"icon,omitempty"`
+	Sort          int64                  `protobuf:"varint,8,opt,name=sort,proto3" json:"sort,omitempty"`
+	Visible       int64                  `protobuf:"varint,9,opt,name=visible,proto3" json:"visible,omitempty"`
+	Status        int64                  `protobuf:"varint,10,opt,name=status,proto3" json:"status,omitempty"`
+	Perms         string                 `protobuf:"bytes,12,opt,name=perms,proto3" json:"perms,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2617,6 +2626,13 @@ func (x *SysMenuCreateReq) GetMenuType() int64 {
 		return x.MenuType
 	}
 	return 0
+}
+
+func (x *SysMenuCreateReq) GetMethod() string {
+	if x != nil {
+		return x.Method
+	}
+	return ""
 }
 
 func (x *SysMenuCreateReq) GetPath() string {
@@ -2674,13 +2690,14 @@ type SysMenuUpdateReq struct {
 	ParentId      int64                  `protobuf:"varint,2,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
 	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	MenuType      int64                  `protobuf:"varint,4,opt,name=menu_type,json=menuType,proto3" json:"menu_type,omitempty"`
-	Path          string                 `protobuf:"bytes,5,opt,name=path,proto3" json:"path,omitempty"`
-	Component     string                 `protobuf:"bytes,6,opt,name=component,proto3" json:"component,omitempty"`
-	Icon          string                 `protobuf:"bytes,7,opt,name=icon,proto3" json:"icon,omitempty"`
-	Sort          int64                  `protobuf:"varint,8,opt,name=sort,proto3" json:"sort,omitempty"`
-	Visible       int64                  `protobuf:"varint,9,opt,name=visible,proto3" json:"visible,omitempty"`
-	Status        int64                  `protobuf:"varint,10,opt,name=status,proto3" json:"status,omitempty"`
-	Perms         string                 `protobuf:"bytes,11,opt,name=perms,proto3" json:"perms,omitempty"`
+	Method        string                 `protobuf:"bytes,5,opt,name=method,proto3" json:"method,omitempty"`
+	Path          string                 `protobuf:"bytes,6,opt,name=path,proto3" json:"path,omitempty"`
+	Component     string                 `protobuf:"bytes,7,opt,name=component,proto3" json:"component,omitempty"`
+	Icon          string                 `protobuf:"bytes,8,opt,name=icon,proto3" json:"icon,omitempty"`
+	Sort          int64                  `protobuf:"varint,9,opt,name=sort,proto3" json:"sort,omitempty"`
+	Visible       int64                  `protobuf:"varint,10,opt,name=visible,proto3" json:"visible,omitempty"`
+	Status        int64                  `protobuf:"varint,11,opt,name=status,proto3" json:"status,omitempty"`
+	Perms         string                 `protobuf:"bytes,12,opt,name=perms,proto3" json:"perms,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2741,6 +2758,13 @@ func (x *SysMenuUpdateReq) GetMenuType() int64 {
 		return x.MenuType
 	}
 	return 0
+}
+
+func (x *SysMenuUpdateReq) GetMethod() string {
+	if x != nil {
+		return x.Method
+	}
+	return ""
 }
 
 func (x *SysMenuUpdateReq) GetPath() string {
@@ -5132,20 +5156,21 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\bpassword\x18\x04 \x01(\tH\x02R\bpassword\x88\x01\x01B\v\n" +
 	"\t_nicknameB\t\n" +
 	"\a_avatarB\v\n" +
-	"\t_password\"\x8d\x02\n" +
+	"\t_password\"\xa5\x02\n" +
 	"\vSysMenuItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x1b\n" +
-	"\tmenu_type\x18\x04 \x01(\x03R\bmenuType\x12\x12\n" +
-	"\x04path\x18\x05 \x01(\tR\x04path\x12\x1c\n" +
-	"\tcomponent\x18\x06 \x01(\tR\tcomponent\x12\x12\n" +
-	"\x04icon\x18\a \x01(\tR\x04icon\x12\x12\n" +
-	"\x04sort\x18\b \x01(\x03R\x04sort\x12\x18\n" +
-	"\avisible\x18\t \x01(\x03R\avisible\x12\x16\n" +
-	"\x06status\x18\n" +
-	" \x01(\x03R\x06status\x12\x14\n" +
-	"\x05perms\x18\v \x01(\tR\x05perms\"`\n" +
+	"\tmenu_type\x18\x04 \x01(\x03R\bmenuType\x12\x16\n" +
+	"\x06method\x18\x05 \x01(\tR\x06method\x12\x12\n" +
+	"\x04path\x18\x06 \x01(\tR\x04path\x12\x1c\n" +
+	"\tcomponent\x18\a \x01(\tR\tcomponent\x12\x12\n" +
+	"\x04icon\x18\b \x01(\tR\x04icon\x12\x12\n" +
+	"\x04sort\x18\t \x01(\x03R\x04sort\x12\x18\n" +
+	"\avisible\x18\n" +
+	" \x01(\x03R\avisible\x12\x16\n" +
+	"\x06status\x18\v \x01(\x03R\x06status\x12\x14\n" +
+	"\x05perms\x18\f \x01(\tR\x05perms\"`\n" +
 	"\x0fSysMenuTreeResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12'\n" +
 	"\x04data\x18\x02 \x03(\v2\x13.system.SysMenuItemR\x04data\"+\n" +
@@ -5266,24 +5291,12 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\"`\n" +
 	"\x0fSysPermListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12'\n" +
-	"\x04data\x18\x03 \x03(\v2\x13.system.SysPermItemR\x04data\"\x82\x02\n" +
+	"\x04data\x18\x03 \x03(\v2\x13.system.SysPermItemR\x04data\"\x9a\x02\n" +
 	"\x10SysMenuCreateReq\x12\x1b\n" +
 	"\tparent_id\x18\x01 \x01(\x03R\bparentId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1b\n" +
-	"\tmenu_type\x18\x03 \x01(\x03R\bmenuType\x12\x12\n" +
-	"\x04path\x18\x04 \x01(\tR\x04path\x12\x1c\n" +
-	"\tcomponent\x18\x05 \x01(\tR\tcomponent\x12\x12\n" +
-	"\x04icon\x18\x06 \x01(\tR\x04icon\x12\x12\n" +
-	"\x04sort\x18\a \x01(\x03R\x04sort\x12\x18\n" +
-	"\avisible\x18\b \x01(\x03R\avisible\x12\x16\n" +
-	"\x06status\x18\t \x01(\x03R\x06status\x12\x14\n" +
-	"\x05perms\x18\n" +
-	" \x01(\tR\x05perms\"\x92\x02\n" +
-	"\x10SysMenuUpdateReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
-	"\x04name\x18\x03 \x01(\tR\x04name\x12\x1b\n" +
-	"\tmenu_type\x18\x04 \x01(\x03R\bmenuType\x12\x12\n" +
+	"\tmenu_type\x18\x03 \x01(\x03R\bmenuType\x12\x16\n" +
+	"\x06method\x18\x04 \x01(\tR\x06method\x12\x12\n" +
 	"\x04path\x18\x05 \x01(\tR\x04path\x12\x1c\n" +
 	"\tcomponent\x18\x06 \x01(\tR\tcomponent\x12\x12\n" +
 	"\x04icon\x18\a \x01(\tR\x04icon\x12\x12\n" +
@@ -5291,7 +5304,21 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\avisible\x18\t \x01(\x03R\avisible\x12\x16\n" +
 	"\x06status\x18\n" +
 	" \x01(\x03R\x06status\x12\x14\n" +
-	"\x05perms\x18\v \x01(\tR\x05perms\"\"\n" +
+	"\x05perms\x18\f \x01(\tR\x05perms\"\xaa\x02\n" +
+	"\x10SysMenuUpdateReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12\x1b\n" +
+	"\tmenu_type\x18\x04 \x01(\x03R\bmenuType\x12\x16\n" +
+	"\x06method\x18\x05 \x01(\tR\x06method\x12\x12\n" +
+	"\x04path\x18\x06 \x01(\tR\x04path\x12\x1c\n" +
+	"\tcomponent\x18\a \x01(\tR\tcomponent\x12\x12\n" +
+	"\x04icon\x18\b \x01(\tR\x04icon\x12\x12\n" +
+	"\x04sort\x18\t \x01(\x03R\x04sort\x12\x18\n" +
+	"\avisible\x18\n" +
+	" \x01(\x03R\avisible\x12\x16\n" +
+	"\x06status\x18\v \x01(\x03R\x06status\x12\x14\n" +
+	"\x05perms\x18\f \x01(\tR\x05perms\"\"\n" +
 	"\x10SysMenuDeleteReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x9e\x01\n" +
 	"\x0eSysMenuListReq\x12#\n" +

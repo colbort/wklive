@@ -2,9 +2,11 @@ package logic
 
 import (
 	"context"
+	"time"
 
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
+	"wklive/services/system/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +27,51 @@ func NewSysMenuCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 
 // 菜单
 func (l *SysMenuCreateLogic) SysMenuCreate(in *system.SysMenuCreateReq) (*system.RespBase, error) {
-	// todo: add your logic here and delete this line
+	var menu *models.SysMenu
+	var err error
+	switch in.MenuType {
+	case 1:
+		menu, err = l.svcCtx.MenuModel.FindOneByName(l.ctx, in.Name)
+	case 2:
+		menu, err = l.svcCtx.MenuModel.FindOneByPath(l.ctx, in.Path)
+	case 3:
+		menu, err = l.svcCtx.MenuModel.FindOneByPerms(l.ctx, in.Perms)
+	default:
+		return &system.RespBase{
+			Code: 400,
+			Msg:  "Invalid menu type",
+		}, nil
+	}
+	if err != nil && err != models.ErrNotFound {
+		return nil, err
+	}
+	if menu != nil {
+		return &system.RespBase{
+			Code: 400,
+			Msg:  "Menu already exists",
+		}, nil
+	}
+	_, err = l.svcCtx.MenuModel.Insert(l.ctx, &models.SysMenu{
+		ParentId:  in.ParentId,
+		Name:      in.Name,
+		MenuType:  in.MenuType,
+		Method:    in.Method,
+		Path:      in.Path,
+		Component: in.Component,
+		Perms:     in.Perms,
+		Icon:      in.Icon,
+		Sort:      in.Sort,
+		Visible:   in.Visible,
+		Status:    in.Status,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	})
+	if err != nil {
+		return nil, err
+	}
 
-	return &system.RespBase{}, nil
+	return &system.RespBase{
+		Code: 200,
+		Msg:  "Menu created successfully",
+	}, nil
 }
