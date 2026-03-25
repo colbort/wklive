@@ -37,7 +37,8 @@ message CreateUserResp {
 }
 
 message GetUserDetailReq {
-  int64 user_id = 1;
+  int64 tenant_id = 1;
+  int64 user_id = 2;
 }
 
 message GetUserDetailResp {
@@ -47,19 +48,21 @@ message GetUserDetailResp {
 
 message ListUsersReq {
   user.PageReq page = 1;
-  string keyword = 2;
-  int64 user_id = 3;
-  string user_no = 4;
-  string username = 5;
-  string phone = 6;
-  string email = 7;
-  user.UserStatus status = 8;
-  int32 member_level = 9;
-  user.VerifyStatus verify_status = 10;
-  user.KycLevel kyc_level = 11;
-  string invite_code = 12;
-  int64 register_time_start = 13;
-  int64 register_time_end = 14;
+  int64 tenant_id = 2;
+  string tenant_code = 3;
+  string keyword = 4;
+  int64 user_id = 5;
+  string user_no = 6;
+  string username = 7;
+  string phone = 8;
+  string email = 9;
+  user.UserStatus status = 10;
+  int32 member_level = 11;
+  user.VerifyStatus verify_status = 12;
+  user.KycLevel kyc_level = 13;
+  string invite_code = 14;
+  int64 register_time_start = 15;
+  int64 register_time_end = 16;
 }
 
 message ListUsersResp {
@@ -68,18 +71,19 @@ message ListUsersResp {
 }
 
 message UpdateUserBaseReq {
-  int64 user_id = 1;
-  string username = 2;
-  string nickname = 3;
-  string avatar = 4;
-  string language = 5;
-  string timezone = 6;
-  string signature = 7;
-  string source = 8;
-  int64 referrer_user_id = 9;
-  string remark = 10;
-  string phone = 11;
-  string email = 12;
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  string username = 3;
+  string nickname = 4;
+  string avatar = 5;
+  string language = 6;
+  string timezone = 7;
+  string signature = 8;
+  string source = 9;
+  int64 referrer_user_id = 10;
+  string remark = 11;
+  string phone = 12;
+  string email = 13;
 }
 
 message UpdateUserBaseResp {
@@ -88,41 +92,49 @@ message UpdateUserBaseResp {
 }
 
 message UpdateUserStatusReq {
-  int64 user_id = 1;
-  user.UserStatus status = 2;
-  string remark = 3;
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  user.UserStatus status = 3;
+  string remark = 4;
 }
 
 message UpdateUserLevelReq {
-  int64 user_id = 1;
-  int32 member_level = 2;
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  int32 member_level = 3;
 }
 
 message ResetLoginPasswordReq {
-  int64 user_id = 1;
-  string new_password = 2;
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  string new_password = 3;
 }
 
 message ResetPayPasswordReq {
-  int64 user_id = 1;
-  string new_pay_password = 2;
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  string new_pay_password = 3;
 }
 
 message UnlockUserReq {
-  int64 user_id = 1;
+  int64 tenant_id = 1;
+  int64 user_id = 2;
 }
 
 message UpdateRiskLevelReq {
-  int64 user_id = 1;
-  user.RiskLevel risk_level = 2;
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  user.RiskLevel risk_level = 3;
 }
 
 message DeleteUserReq {
-  int64 user_id = 1;
+  int64 tenant_id = 1;
+  int64 user_id = 2;
 }
 
 message GetUserSecurityReq {
-  int64 user_id = 1;
+  int64 tenant_id = 1;
+  int64 user_id = 2;
 }
 
 message GetUserSecurityResp {
@@ -131,21 +143,24 @@ message GetUserSecurityResp {
 }
 
 message ResetUserGoogle2FAReq {
-  int64 user_id = 1;
+  int64 tenant_id = 1;
+  int64 user_id = 2;
 }
 
 message ListUserIdentitiesReq {
   user.PageReq page = 1;
-  string keyword = 2;
-  int64 user_id = 3;
-  string user_no = 4;
-  string username = 5;
-  string phone = 6;
-  string email = 7;
-  string real_name = 8;
-  user.VerifyStatus verify_status = 9;
-  user.KycLevel kyc_level = 10;
-  user.IdType id_type = 11;
+  int64 tenant_id = 2;
+  string tenant_code = 3;
+  string keyword = 4;
+  int64 user_id = 5;
+  string user_no = 6;
+  string username = 7;
+  string phone = 8;
+  string email = 9;
+  string real_name = 10;
+  user.VerifyStatus verify_status = 11;
+  user.KycLevel kyc_level = 12;
+  user.IdType id_type = 13;
 }
 
 message ListUserIdentitiesResp {
@@ -154,10 +169,11 @@ message ListUserIdentitiesResp {
 }
 
 message ReviewUserIdentityReq {
-  int64 user_id = 1;
-  user.VerifyStatus verify_status = 2;
-  string reject_reason = 3;
-  int64 verify_by = 4;
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  user.VerifyStatus verify_status = 3;
+  string reject_reason = 4;
+  int64 verify_by = 5;
 }
 
 message ReviewUserIdentityResp {
@@ -167,9 +183,10 @@ message ReviewUserIdentityResp {
 
 message ListUserBanksReq {
   user.PageReq page = 1;
-  int64 user_id = 2;
-  string keyword = 3;
-  user.BankStatus status = 4;
+  int64 tenant_id = 2;
+  int64 user_id = 3;
+  string keyword = 4;
+  user.BankStatus status = 5;
 }
 
 message ListUserBanksResp {
@@ -178,7 +195,8 @@ message ListUserBanksResp {
 }
 
 message GetUserBankReq {
-  int64 id = 1;
+  int64 tenant_id = 1;
+  int64 id = 2;
 }
 
 message GetUserBankResp {
@@ -187,24 +205,7 @@ message GetUserBankResp {
 }
 
 message AddUserBankReq {
-  int64 user_id = 1;
-  string bank_name = 2;
-  string bank_code = 3;
-  string account_name = 4;
-  string account_no = 5;
-  string branch_name = 6;
-  string country_code = 7;
-  bool is_default = 8;
-  user.BankStatus status = 9;
-}
-
-message AddUserBankResp {
-  user.RespBase base = 1;
-  user.UserBank bank = 2;
-}
-
-message UpdateUserBankReq {
-  int64 id = 1;
+  int64 tenant_id = 1;
   int64 user_id = 2;
   string bank_name = 3;
   string bank_code = 4;
@@ -216,23 +217,45 @@ message UpdateUserBankReq {
   user.BankStatus status = 10;
 }
 
+message AddUserBankResp {
+  user.RespBase base = 1;
+  user.UserBank bank = 2;
+}
+
+message UpdateUserBankReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+  int64 user_id = 3;
+  string bank_name = 4;
+  string bank_code = 5;
+  string account_name = 6;
+  string account_no = 7;
+  string branch_name = 8;
+  string country_code = 9;
+  bool is_default = 10;
+  user.BankStatus status = 11;
+}
+
 message UpdateUserBankResp {
   user.RespBase base = 1;
   user.UserBank bank = 2;
 }
 
 message DeleteUserBankReq {
-  int64 id = 1;
+  int64 tenant_id = 1;
+  int64 id = 2;
 }
 
 message UpdateUserBankStatusReq {
-  int64 id = 1;
-  user.BankStatus status = 2;
+  int64 tenant_id = 1;
+  int64 id = 2;
+  user.BankStatus status = 3;
 }
 
 message SetDefaultUserBankReq {
-  int64 id = 1;
-  int64 user_id = 2;
+  int64 tenant_id = 1;
+  int64 id = 2;
+  int64 user_id = 3;
 }
 
 // 管理后台接口

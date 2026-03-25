@@ -83,6 +83,12 @@ type (
 	SysRoleListReq         = system.SysRoleListReq
 	SysRoleListResp        = system.SysRoleListResp
 	SysRoleUpdateReq       = system.SysRoleUpdateReq
+	SysTenantCreateReq     = system.SysTenantCreateReq
+	SysTenantDeleteReq     = system.SysTenantDeleteReq
+	SysTenantItem          = system.SysTenantItem
+	SysTenantListReq       = system.SysTenantListReq
+	SysTenantListResp      = system.SysTenantListResp
+	SysTenantUpdateReq     = system.SysTenantUpdateReq
 	SysUserCreateReq       = system.SysUserCreateReq
 	SysUserDeleteReq       = system.SysUserDeleteReq
 	SysUserDetailReq       = system.SysUserDetailReq
@@ -188,6 +194,14 @@ type (
 		SysCronJobHandlers(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysCronJobHandlersResp, error)
 		// 系统定时任务日志列表
 		SysCronJobLogList(ctx context.Context, in *SysCronJobLogListReq, opts ...grpc.CallOption) (*SysCronJobLogListResp, error)
+		// 创建租户
+		SysTenantCreate(ctx context.Context, in *SysTenantCreateReq, opts ...grpc.CallOption) (*RespBase, error)
+		// 更新租户
+		SysTenantUpdate(ctx context.Context, in *SysTenantUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
+		// 删除租户
+		SysTenantDelete(ctx context.Context, in *SysTenantDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
+		// 获取租户列表
+		SysTenantList(ctx context.Context, in *SysTenantListReq, opts ...grpc.CallOption) (*SysTenantListResp, error)
 	}
 
 	defaultSystem struct {
@@ -481,4 +495,28 @@ func (m *defaultSystem) SysCronJobHandlers(ctx context.Context, in *Empty, opts 
 func (m *defaultSystem) SysCronJobLogList(ctx context.Context, in *SysCronJobLogListReq, opts ...grpc.CallOption) (*SysCronJobLogListResp, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.SysCronJobLogList(ctx, in, opts...)
+}
+
+// 创建租户
+func (m *defaultSystem) SysTenantCreate(ctx context.Context, in *SysTenantCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysTenantCreate(ctx, in, opts...)
+}
+
+// 更新租户
+func (m *defaultSystem) SysTenantUpdate(ctx context.Context, in *SysTenantUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysTenantUpdate(ctx, in, opts...)
+}
+
+// 删除租户
+func (m *defaultSystem) SysTenantDelete(ctx context.Context, in *SysTenantDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysTenantDelete(ctx, in, opts...)
+}
+
+// 获取租户列表
+func (m *defaultSystem) SysTenantList(ctx context.Context, in *SysTenantListReq, opts ...grpc.CallOption) (*SysTenantListResp, error) {
+	client := system.NewSystemClient(m.cli.Conn())
+	return client.SysTenantList(ctx, in, opts...)
 }

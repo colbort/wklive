@@ -472,6 +472,59 @@ type SysRoleUpdateReq struct {
 	Remark string `json:"remark,optional"`
 }
 
+type SysTenantCreateReq struct {
+	TenantCode   string `json:"tenantCode"`
+	TenantName   string `json:"tenantName"`
+	Status       int64  `json:"status"`
+	ExpireTime   int64  `json:"expireTime"`
+	ContactName  string `json:"contactName,optional"`
+	ContactPhone string `json:"contactPhone,optional"`
+	Remark       string `json:"remark,optional"`
+}
+
+type SysTenantDeleteReq struct {
+	Id int64 `path:"id"`
+}
+
+type SysTenantItem struct {
+	Id           int64  `json:"id"`
+	TenantCode   string `json:"tenantCode"`
+	TenantName   string `json:"tenantName"`
+	Status       int64  `json:"status"`
+	ExpireTime   int64  `json:"expireTime"`
+	ContactName  string `json:"contactName,optional"`
+	ContactPhone string `json:"contactPhone,optional"`
+	Remark       string `json:"remark,optional"`
+	CreateTime   int64  `json:"createTime"`
+	UpdateTime   int64  `json:"updateTime"`
+}
+
+type SysTenantListReq struct {
+	PageReq
+	Keyword      string `form:"keyword,optional"` // 按 tenant_code/tenant_name/contact_name/contact_phone 模糊
+	Status       int64  `form:"status,optional"`  // 0/1
+	TenantCode   string `form:"tenantCode,optional"`
+	TenantName   string `form:"tenantName,optional"`
+	ContactName  string `form:"contactName,optional"`
+	ContactPhone string `form:"contactPhone,optional"`
+}
+
+type SysTenantListResp struct {
+	RespBase
+	Data []SysTenantItem `json:"data"`
+}
+
+type SysTenantUpdateReq struct {
+	Id           int64  `json:"id"`
+	TenantCode   string `json:"tenantCode,optional"`
+	TenantName   string `json:"tenantName,optional"`
+	Status       int64  `json:"status,optional"`
+	ExpireTime   int64  `json:"expireTime,optional"`
+	ContactName  string `json:"contactName,optional"`
+	ContactPhone string `json:"contactPhone,optional"`
+	Remark       string `json:"remark,optional"`
+}
+
 type SysUserCreateReq struct {
 	Username string  `json:"username"`
 	Password string  `json:"password"`

@@ -66,6 +66,10 @@ const (
 	System_SysCronJobStop_FullMethodName     = "/system.System/SysCronJobStop"
 	System_SysCronJobHandlers_FullMethodName = "/system.System/SysCronJobHandlers"
 	System_SysCronJobLogList_FullMethodName  = "/system.System/SysCronJobLogList"
+	System_SysTenantCreate_FullMethodName    = "/system.System/SysTenantCreate"
+	System_SysTenantUpdate_FullMethodName    = "/system.System/SysTenantUpdate"
+	System_SysTenantDelete_FullMethodName    = "/system.System/SysTenantDelete"
+	System_SysTenantList_FullMethodName      = "/system.System/SysTenantList"
 )
 
 // SystemClient is the client API for System service.
@@ -170,6 +174,14 @@ type SystemClient interface {
 	SysCronJobHandlers(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysCronJobHandlersResp, error)
 	// 系统定时任务日志列表
 	SysCronJobLogList(ctx context.Context, in *SysCronJobLogListReq, opts ...grpc.CallOption) (*SysCronJobLogListResp, error)
+	// 创建租户
+	SysTenantCreate(ctx context.Context, in *SysTenantCreateReq, opts ...grpc.CallOption) (*RespBase, error)
+	// 更新租户
+	SysTenantUpdate(ctx context.Context, in *SysTenantUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
+	// 删除租户
+	SysTenantDelete(ctx context.Context, in *SysTenantDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
+	// 获取租户列表
+	SysTenantList(ctx context.Context, in *SysTenantListReq, opts ...grpc.CallOption) (*SysTenantListResp, error)
 }
 
 type systemClient struct {
@@ -650,6 +662,46 @@ func (c *systemClient) SysCronJobLogList(ctx context.Context, in *SysCronJobLogL
 	return out, nil
 }
 
+func (c *systemClient) SysTenantCreate(ctx context.Context, in *SysTenantCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespBase)
+	err := c.cc.Invoke(ctx, System_SysTenantCreate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) SysTenantUpdate(ctx context.Context, in *SysTenantUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespBase)
+	err := c.cc.Invoke(ctx, System_SysTenantUpdate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) SysTenantDelete(ctx context.Context, in *SysTenantDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespBase)
+	err := c.cc.Invoke(ctx, System_SysTenantDelete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) SysTenantList(ctx context.Context, in *SysTenantListReq, opts ...grpc.CallOption) (*SysTenantListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SysTenantListResp)
+	err := c.cc.Invoke(ctx, System_SysTenantList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SystemServer is the server API for System service.
 // All implementations must embed UnimplementedSystemServer
 // for forward compatibility.
@@ -752,6 +804,14 @@ type SystemServer interface {
 	SysCronJobHandlers(context.Context, *Empty) (*SysCronJobHandlersResp, error)
 	// 系统定时任务日志列表
 	SysCronJobLogList(context.Context, *SysCronJobLogListReq) (*SysCronJobLogListResp, error)
+	// 创建租户
+	SysTenantCreate(context.Context, *SysTenantCreateReq) (*RespBase, error)
+	// 更新租户
+	SysTenantUpdate(context.Context, *SysTenantUpdateReq) (*RespBase, error)
+	// 删除租户
+	SysTenantDelete(context.Context, *SysTenantDeleteReq) (*RespBase, error)
+	// 获取租户列表
+	SysTenantList(context.Context, *SysTenantListReq) (*SysTenantListResp, error)
 	mustEmbedUnimplementedSystemServer()
 }
 
@@ -902,6 +962,18 @@ func (UnimplementedSystemServer) SysCronJobHandlers(context.Context, *Empty) (*S
 }
 func (UnimplementedSystemServer) SysCronJobLogList(context.Context, *SysCronJobLogListReq) (*SysCronJobLogListResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SysCronJobLogList not implemented")
+}
+func (UnimplementedSystemServer) SysTenantCreate(context.Context, *SysTenantCreateReq) (*RespBase, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SysTenantCreate not implemented")
+}
+func (UnimplementedSystemServer) SysTenantUpdate(context.Context, *SysTenantUpdateReq) (*RespBase, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SysTenantUpdate not implemented")
+}
+func (UnimplementedSystemServer) SysTenantDelete(context.Context, *SysTenantDeleteReq) (*RespBase, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SysTenantDelete not implemented")
+}
+func (UnimplementedSystemServer) SysTenantList(context.Context, *SysTenantListReq) (*SysTenantListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SysTenantList not implemented")
 }
 func (UnimplementedSystemServer) mustEmbedUnimplementedSystemServer() {}
 func (UnimplementedSystemServer) testEmbeddedByValue()                {}
@@ -1770,6 +1842,78 @@ func _System_SysCronJobLogList_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _System_SysTenantCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysTenantCreateReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysTenantCreate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysTenantCreate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysTenantCreate(ctx, req.(*SysTenantCreateReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_SysTenantUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysTenantUpdateReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysTenantUpdate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysTenantUpdate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysTenantUpdate(ctx, req.(*SysTenantUpdateReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_SysTenantDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysTenantDeleteReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysTenantDelete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysTenantDelete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysTenantDelete(ctx, req.(*SysTenantDeleteReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_SysTenantList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysTenantListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SysTenantList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SysTenantList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SysTenantList(ctx, req.(*SysTenantListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // System_ServiceDesc is the grpc.ServiceDesc for System service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1964,6 +2108,22 @@ var System_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SysCronJobLogList",
 			Handler:    _System_SysCronJobLogList_Handler,
+		},
+		{
+			MethodName: "SysTenantCreate",
+			Handler:    _System_SysTenantCreate_Handler,
+		},
+		{
+			MethodName: "SysTenantUpdate",
+			Handler:    _System_SysTenantUpdate_Handler,
+		},
+		{
+			MethodName: "SysTenantDelete",
+			Handler:    _System_SysTenantDelete_Handler,
+		},
+		{
+			MethodName: "SysTenantList",
+			Handler:    _System_SysTenantList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

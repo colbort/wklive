@@ -343,3 +343,21 @@ CREATE TABLE `sys_job_log` (
   KEY `idx_job_id` (`job_id`),
   KEY `idx_create_time` (`create_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='定时任务日志表';
+
+
+CREATE TABLE `sys_tenant` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '租户ID',
+  `tenant_code` varchar(64) NOT NULL COMMENT '租户编码',
+  `tenant_name` varchar(128) NOT NULL COMMENT '租户名称',
+  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：1正常 2禁用',
+  `expire_time` datetime DEFAULT NULL COMMENT '到期时间',
+  `contact_name` varchar(64) DEFAULT NULL COMMENT '联系人',
+  `contact_phone` varchar(32) DEFAULT NULL COMMENT '联系电话',
+  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_tenant_code` (`tenant_code`),
+  KEY `idx_status` (`status`),
+  KEY `idx_expire_time` (`expire_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='租户表';

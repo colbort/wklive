@@ -516,6 +516,58 @@ message SysCronJobLogListResp {
   repeated SysCronJobLogItem data = 4;
 }
 
+// 租户管理
+message SysTenantItem {
+  int64 id = 1;
+  string tenant_code = 2;
+  string tenant_name = 3;
+  int64 status = 4;
+  int64 expire_time = 5;
+  string contact_name = 6;
+  string contact_phone = 7;
+  string remark = 8;
+  int64 create_time = 9;
+  int64 update_time = 10;
+}
+
+message SysTenantListReq {
+  PageReq page = 1;
+  string keyword = 2;
+  int64 status = 3;
+  string tenant_code = 4;
+  string tenant_name = 5;
+  string contact_name = 6;
+  string contact_phone = 7;
+}
+message SysTenantListResp {
+  RespBase base = 1;
+  repeated SysTenantItem data = 4;
+}
+
+message SysTenantCreateReq {
+  string tenant_code = 1;
+  string tenant_name = 2;
+  int64 status = 3;
+  int64 expire_time = 4;
+  string contact_name = 5;
+  string contact_phone = 6;
+  string remark = 7;
+}
+
+message SysTenantUpdateReq {
+  int64 id = 1;
+  string tenant_name = 2;
+  int64 status = 3;
+  int64 expire_time = 4;
+  string contact_name = 5;
+  string contact_phone = 6;
+  string remark = 7;
+}
+
+message SysTenantDeleteReq {
+  int64 id = 1;
+}
+
 //////////////////////
 // Service
 //////////////////////
@@ -617,4 +669,12 @@ service System {
   rpc SysCronJobHandlers(Empty) returns (SysCronJobHandlersResp);
   // 系统定时任务日志列表
   rpc SysCronJobLogList(SysCronJobLogListReq) returns (SysCronJobLogListResp);
+  // 创建租户
+  rpc SysTenantCreate(SysTenantCreateReq) returns (RespBase);
+  // 更新租户
+  rpc SysTenantUpdate(SysTenantUpdateReq) returns (RespBase);
+  // 删除租户
+  rpc SysTenantDelete(SysTenantDeleteReq) returns (RespBase);
+  // 获取租户列表
+  rpc SysTenantList(SysTenantListReq) returns (SysTenantListResp);
 }

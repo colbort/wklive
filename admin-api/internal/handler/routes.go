@@ -205,6 +205,26 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: system.SysRoleGrantHandler(serverCtx),
 			},
 			{
+				Method:  http.MethodPost,
+				Path:    "/tenants",
+				Handler: system.SysTenantCreateHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/tenants",
+				Handler: system.SysTenantUpdateHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/tenants",
+				Handler: system.SysTenantListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodDelete,
+				Path:    "/tenants/:id",
+				Handler: system.SysTenantDeleteHandler(serverCtx),
+			},
+			{
 				Method:  http.MethodGet,
 				Path:    "/users",
 				Handler: system.SysUserListHandler(serverCtx),

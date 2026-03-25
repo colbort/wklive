@@ -304,3 +304,27 @@ func (s *SystemServer) SysCronJobLogList(ctx context.Context, in *system.SysCron
 	l := logic.NewSysCronJobLogListLogic(ctx, s.svcCtx)
 	return l.SysCronJobLogList(in)
 }
+
+// 创建租户
+func (s *SystemServer) SysTenantCreate(ctx context.Context, in *system.SysTenantCreateReq) (*system.RespBase, error) {
+	l := logic.NewSysTenantCreateLogic(ctx, s.svcCtx)
+	return l.SysTenantCreate(in)
+}
+
+// 更新租户
+func (s *SystemServer) SysTenantUpdate(ctx context.Context, in *system.SysTenantUpdateReq) (*system.RespBase, error) {
+	l := logic.NewSysTenantUpdateLogic(ctx, s.svcCtx)
+	return l.SysTenantUpdate(in)
+}
+
+// 删除租户
+func (s *SystemServer) SysTenantDelete(ctx context.Context, in *system.SysTenantDeleteReq) (*system.RespBase, error) {
+	l := logic.NewSysTenantDeleteLogic(ctx, s.svcCtx)
+	return l.SysTenantDelete(in)
+}
+
+// 获取租户列表
+func (s *SystemServer) SysTenantList(ctx context.Context, in *system.SysTenantListReq) (*system.SysTenantListResp, error) {
+	l := logic.NewSysTenantListLogic(ctx, s.svcCtx)
+	return l.SysTenantList(in)
+}
