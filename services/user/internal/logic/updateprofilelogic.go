@@ -23,7 +23,7 @@ func NewUpdateProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upd
 	}
 }
 
-// 更新用户信息
+// 更新用户资料
 func (l *UpdateProfileLogic) UpdateProfile(in *user.UpdateProfileReq) (*user.UpdateProfileResp, error) {
 	// todo: add your logic here and delete this line
 

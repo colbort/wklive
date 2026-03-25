@@ -42,6 +42,7 @@ type (
 
 	TUserBank struct {
 		Id          int64          `db:"id"`           // 主键ID
+		TenantId    int64          `db:"tenant_id"`    // 租户ID
 		UserId      int64          `db:"user_id"`      // 用户ID
 		BankName    string         `db:"bank_name"`    // 银行名称
 		BankCode    sql.NullString `db:"bank_code"`    // 银行编码
@@ -92,8 +93,8 @@ func (m *defaultTUserBankModel) FindOne(ctx context.Context, id int64) (*TUserBa
 func (m *defaultTUserBankModel) Insert(ctx context.Context, data *TUserBank) (sql.Result, error) {
 	tUserBankIdKey := fmt.Sprintf("%s%v", cacheTUserBankIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tUserBankRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.UserId, data.BankName, data.BankCode, data.AccountName, data.AccountNo, data.BranchName, data.CountryCode, data.IsDefault, data.Status)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tUserBankRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.BankName, data.BankCode, data.AccountName, data.AccountNo, data.BranchName, data.CountryCode, data.IsDefault, data.Status)
 	}, tUserBankIdKey)
 	return ret, err
 }
@@ -102,7 +103,7 @@ func (m *defaultTUserBankModel) Update(ctx context.Context, data *TUserBank) err
 	tUserBankIdKey := fmt.Sprintf("%s%v", cacheTUserBankIdPrefix, data.Id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tUserBankRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.UserId, data.BankName, data.BankCode, data.AccountName, data.AccountNo, data.BranchName, data.CountryCode, data.IsDefault, data.Status, data.Id)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.BankName, data.BankCode, data.AccountName, data.AccountNo, data.BranchName, data.CountryCode, data.IsDefault, data.Status, data.Id)
 	}, tUserBankIdKey)
 	return err
 }

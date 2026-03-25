@@ -1,17 +1,36 @@
+CREATE TABLE `t_tenant` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '租户ID',
+  `tenant_code` varchar(64) NOT NULL COMMENT '租户编码',
+  `tenant_name` varchar(128) NOT NULL COMMENT '租户名称',
+  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：1正常 2禁用',
+  `expire_time` datetime DEFAULT NULL COMMENT '到期时间',
+  `contact_name` varchar(64) DEFAULT NULL COMMENT '联系人',
+  `contact_phone` varchar(32) DEFAULT NULL COMMENT '联系电话',
+  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_tenant_code` (`tenant_code`),
+  KEY `idx_status` (`status`),
+  KEY `idx_expire_time` (`expire_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='租户表';
+
+
 CREATE TABLE `t_user` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '用户ID',
+  `tenant_id` bigint NOT NULL COMMENT '租户ID',
   `user_no` varchar(32) NOT NULL COMMENT '用户编号',
   `username` varchar(64) NOT NULL COMMENT '用户名',
   `nickname` varchar(64) DEFAULT NULL COMMENT '昵称',
   `avatar` varchar(255) DEFAULT NULL COMMENT '头像',
-  `language` varchar(16) DEFAULT NULL COMMENT '语言',
-  `timezone` varchar(64) DEFAULT NULL COMMENT '时区',
-  `invite_code` varchar(32) DEFAULT NULL COMMENT '邀请码',
-  `signature` varchar(255) DEFAULT NULL COMMENT '个性签名',
   `password_hash` varchar(255) NOT NULL COMMENT '登录密码哈希',
   `register_type` tinyint NOT NULL DEFAULT 1 COMMENT '注册方式：1用户名 2手机号 3邮箱 4游客',
   `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：1正常 2禁用 3冻结 4注销',
   `member_level` int NOT NULL DEFAULT 0 COMMENT '会员等级',
+  `language` varchar(16) DEFAULT NULL COMMENT '语言',
+  `timezone` varchar(64) DEFAULT NULL COMMENT '时区',
+  `invite_code` varchar(32) DEFAULT NULL COMMENT '邀请码',
+  `signature` varchar(255) DEFAULT NULL COMMENT '个性签名',
   `source` varchar(64) DEFAULT NULL COMMENT '注册来源',
   `referrer_user_id` bigint DEFAULT NULL COMMENT '邀请人ID',
   `last_login_ip` varchar(64) DEFAULT NULL COMMENT '最后登录IP',
@@ -23,15 +42,20 @@ CREATE TABLE `t_user` (
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_user_no` (`user_no`),
-  UNIQUE KEY `uk_username` (`username`),
-  KEY `idx_status` (`status`),
-  KEY `idx_referrer_user_id` (`referrer_user_id`)
+  UNIQUE KEY `uk_tenant_user_no` (`tenant_id`, `user_no`),
+  UNIQUE KEY `uk_tenant_username` (`tenant_id`, `username`),
+  UNIQUE KEY `uk_tenant_invite_code` (`tenant_id`, `invite_code`),
+  KEY `idx_tenant_status` (`tenant_id`, `status`),
+  KEY `idx_tenant_deleted` (`tenant_id`, `deleted`),
+  KEY `idx_tenant_register_time` (`tenant_id`, `register_time`),
+  KEY `idx_referrer_user_id` (`referrer_user_id`),
+  KEY `idx_last_login_time` (`last_login_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户基础表';
 
 
 CREATE TABLE `t_user_identity` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` bigint NOT NULL COMMENT '租户ID',
   `user_id` bigint NOT NULL COMMENT '用户ID',
   `phone` varchar(32) DEFAULT NULL COMMENT '手机号',
   `email` varchar(128) DEFAULT NULL COMMENT '邮箱',
@@ -39,7 +63,7 @@ CREATE TABLE `t_user_identity` (
   `gender` tinyint NOT NULL DEFAULT 0 COMMENT '性别：0未知 1男 2女',
   `birthday` date DEFAULT NULL COMMENT '生日',
   `country_code` varchar(16) DEFAULT NULL COMMENT '国家/地区代码',
-  `province` varchar(64) DEFAULT NULL COMMENT '省份',
+  `province` varchar(64) DEFAULT NULL COMMENT '省/州',
   `city` varchar(64) DEFAULT NULL COMMENT '城市',
   `address` varchar(255) DEFAULT NULL COMMENT '地址',
   `id_type` tinyint NOT NULL DEFAULT 0 COMMENT '证件类型：0未提交 1身份证 2护照 3驾驶证',
@@ -56,16 +80,19 @@ CREATE TABLE `t_user_identity` (
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_user_id` (`user_id`),
-  UNIQUE KEY `uk_phone` (`phone`),
-  UNIQUE KEY `uk_email` (`email`),
-  KEY `idx_verify_status` (`verify_status`),
-  KEY `idx_id_no` (`id_no`)
+  UNIQUE KEY `uk_tenant_user_id` (`tenant_id`, `user_id`),
+  UNIQUE KEY `uk_tenant_phone` (`tenant_id`, `phone`),
+  UNIQUE KEY `uk_tenant_email` (`tenant_id`, `email`),
+  KEY `idx_tenant_verify_status` (`tenant_id`, `verify_status`),
+  KEY `idx_tenant_kyc_level` (`tenant_id`, `kyc_level`),
+  KEY `idx_tenant_real_name` (`tenant_id`, `real_name`),
+  KEY `idx_tenant_id_no` (`tenant_id`, `id_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户实名表';
 
 
 CREATE TABLE `t_user_security` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` bigint NOT NULL COMMENT '租户ID',
   `user_id` bigint NOT NULL COMMENT '用户ID',
   `pay_password_hash` varchar(255) DEFAULT NULL COMMENT '支付密码哈希',
   `google_secret` varchar(255) DEFAULT NULL COMMENT 'Google密钥',
@@ -77,12 +104,15 @@ CREATE TABLE `t_user_security` (
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_user_id` (`user_id`)
+  UNIQUE KEY `uk_tenant_user_id` (`tenant_id`, `user_id`),
+  KEY `idx_tenant_google_enabled` (`tenant_id`, `google_enabled`),
+  KEY `idx_tenant_risk_level` (`tenant_id`, `risk_level`),
+  KEY `idx_lock_until` (`lock_until`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户安全表';
-
 
 CREATE TABLE `t_user_bank` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` bigint NOT NULL COMMENT '租户ID',
   `user_id` bigint NOT NULL COMMENT '用户ID',
   `bank_name` varchar(128) NOT NULL COMMENT '银行名称',
   `bank_code` varchar(32) DEFAULT NULL COMMENT '银行编码',
@@ -95,5 +125,8 @@ CREATE TABLE `t_user_bank` (
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`),
-  KEY `idx_user_id` (`user_id`)
+  KEY `idx_tenant_user_id` (`tenant_id`, `user_id`),
+  KEY `idx_tenant_status` (`tenant_id`, `status`),
+  KEY `idx_tenant_is_default` (`tenant_id`, `is_default`),
+  KEY `idx_tenant_account_no` (`tenant_id`, `account_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户银行卡表';

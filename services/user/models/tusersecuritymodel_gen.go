@@ -24,15 +24,15 @@ var (
 	tUserSecurityRowsExpectAutoSet   = strings.Join(stringx.Remove(tUserSecurityFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tUserSecurityRowsWithPlaceHolder = strings.Join(stringx.Remove(tUserSecurityFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTUserSecurityIdPrefix     = "cache:tUserSecurity:id:"
-	cacheTUserSecurityUserIdPrefix = "cache:tUserSecurity:userId:"
+	cacheTUserSecurityIdPrefix             = "cache:tUserSecurity:id:"
+	cacheTUserSecurityTenantIdUserIdPrefix = "cache:tUserSecurity:tenantId:userId:"
 )
 
 type (
 	tUserSecurityModel interface {
 		Insert(ctx context.Context, data *TUserSecurity) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TUserSecurity, error)
-		FindOneByUserId(ctx context.Context, userId int64) (*TUserSecurity, error)
+		FindOneByTenantIdUserId(ctx context.Context, tenantId int64, userId int64) (*TUserSecurity, error)
 		Update(ctx context.Context, data *TUserSecurity) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -44,6 +44,7 @@ type (
 
 	TUserSecurity struct {
 		Id              int64          `db:"id"`                // 主键ID
+		TenantId        int64          `db:"tenant_id"`         // 租户ID
 		UserId          int64          `db:"user_id"`           // 用户ID
 		PayPasswordHash sql.NullString `db:"pay_password_hash"` // 支付密码哈希
 		GoogleSecret    sql.NullString `db:"google_secret"`     // Google密钥
@@ -71,11 +72,11 @@ func (m *defaultTUserSecurityModel) Delete(ctx context.Context, id int64) error 
 	}
 
 	tUserSecurityIdKey := fmt.Sprintf("%s%v", cacheTUserSecurityIdPrefix, id)
-	tUserSecurityUserIdKey := fmt.Sprintf("%s%v", cacheTUserSecurityUserIdPrefix, data.UserId)
+	tUserSecurityTenantIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheTUserSecurityTenantIdUserIdPrefix, data.TenantId, data.UserId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tUserSecurityIdKey, tUserSecurityUserIdKey)
+	}, tUserSecurityIdKey, tUserSecurityTenantIdUserIdKey)
 	return err
 }
 
@@ -96,12 +97,12 @@ func (m *defaultTUserSecurityModel) FindOne(ctx context.Context, id int64) (*TUs
 	}
 }
 
-func (m *defaultTUserSecurityModel) FindOneByUserId(ctx context.Context, userId int64) (*TUserSecurity, error) {
-	tUserSecurityUserIdKey := fmt.Sprintf("%s%v", cacheTUserSecurityUserIdPrefix, userId)
+func (m *defaultTUserSecurityModel) FindOneByTenantIdUserId(ctx context.Context, tenantId int64, userId int64) (*TUserSecurity, error) {
+	tUserSecurityTenantIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheTUserSecurityTenantIdUserIdPrefix, tenantId, userId)
 	var resp TUserSecurity
-	err := m.QueryRowIndexCtx(ctx, &resp, tUserSecurityUserIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `user_id` = ? limit 1", tUserSecurityRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, userId); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tUserSecurityTenantIdUserIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `user_id` = ? limit 1", tUserSecurityRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, userId); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -118,11 +119,11 @@ func (m *defaultTUserSecurityModel) FindOneByUserId(ctx context.Context, userId 
 
 func (m *defaultTUserSecurityModel) Insert(ctx context.Context, data *TUserSecurity) (sql.Result, error) {
 	tUserSecurityIdKey := fmt.Sprintf("%s%v", cacheTUserSecurityIdPrefix, data.Id)
-	tUserSecurityUserIdKey := fmt.Sprintf("%s%v", cacheTUserSecurityUserIdPrefix, data.UserId)
+	tUserSecurityTenantIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheTUserSecurityTenantIdUserIdPrefix, data.TenantId, data.UserId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", m.table, tUserSecurityRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.UserId, data.PayPasswordHash, data.GoogleSecret, data.GoogleEnabled, data.LoginErrorCount, data.PayErrorCount, data.LockUntil, data.RiskLevel)
-	}, tUserSecurityIdKey, tUserSecurityUserIdKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tUserSecurityRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.PayPasswordHash, data.GoogleSecret, data.GoogleEnabled, data.LoginErrorCount, data.PayErrorCount, data.LockUntil, data.RiskLevel)
+	}, tUserSecurityIdKey, tUserSecurityTenantIdUserIdKey)
 	return ret, err
 }
 
@@ -133,11 +134,11 @@ func (m *defaultTUserSecurityModel) Update(ctx context.Context, newData *TUserSe
 	}
 
 	tUserSecurityIdKey := fmt.Sprintf("%s%v", cacheTUserSecurityIdPrefix, data.Id)
-	tUserSecurityUserIdKey := fmt.Sprintf("%s%v", cacheTUserSecurityUserIdPrefix, data.UserId)
+	tUserSecurityTenantIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheTUserSecurityTenantIdUserIdPrefix, data.TenantId, data.UserId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tUserSecurityRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.UserId, newData.PayPasswordHash, newData.GoogleSecret, newData.GoogleEnabled, newData.LoginErrorCount, newData.PayErrorCount, newData.LockUntil, newData.RiskLevel, newData.Id)
-	}, tUserSecurityIdKey, tUserSecurityUserIdKey)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.PayPasswordHash, newData.GoogleSecret, newData.GoogleEnabled, newData.LoginErrorCount, newData.PayErrorCount, newData.LockUntil, newData.RiskLevel, newData.Id)
+	}, tUserSecurityIdKey, tUserSecurityTenantIdUserIdKey)
 	return err
 }
 

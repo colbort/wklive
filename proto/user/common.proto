@@ -1,0 +1,110 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "wklive/proto/user;user";
+
+message Empty {}
+
+message RespBase {
+  int32 code = 1;
+  string msg = 2;
+  int64 total = 3;
+  bool has_next = 4;
+  bool has_prev = 5;
+  int64 next_cursor = 6;
+  int64 prev_cursor = 7;
+}
+
+message PageReq {
+  int64 page = 1;
+  int64 page_size = 2;
+}
+
+message IdReq {
+  int64 id = 1;
+}
+
+message UserIdReq {
+  int64 user_id = 1;
+}
+
+message TenantInfo {
+  int64 tenant_id = 1;
+  string tenant_code = 2;
+  string tenant_name = 3;
+  int32 tenant_status = 4;
+  int64 expire_time = 5;
+}
+
+message TenantScope {
+  int64 tenant_id = 1;
+  string tenant_code = 2;
+}
+
+message TokenInfo {
+  string access_token = 1;
+  string refresh_token = 2;
+  int64 expire_time = 3;
+}
+
+enum RegisterType {
+  REGISTER_TYPE_UNKNOWN = 0;
+  REGISTER_TYPE_USERNAME = 1;
+  REGISTER_TYPE_PHONE = 2;
+  REGISTER_TYPE_EMAIL = 3;
+  REGISTER_TYPE_GUEST = 4;
+}
+
+enum LoginType {
+  LOGIN_TYPE_UNKNOWN = 0;
+  LOGIN_TYPE_USERNAME = 1;
+  LOGIN_TYPE_PHONE = 2;
+  LOGIN_TYPE_EMAIL = 3;
+}
+
+enum UserStatus {
+  USER_STATUS_UNKNOWN = 0;
+  USER_STATUS_NORMAL = 1;
+  USER_STATUS_DISABLED = 2;
+  USER_STATUS_FROZEN = 3;
+  USER_STATUS_CANCELLED = 4;
+}
+
+enum Gender {
+  GENDER_UNKNOWN = 0;
+  GENDER_MALE = 1;
+  GENDER_FEMALE = 2;
+}
+
+enum IdType {
+  ID_TYPE_NONE = 0;
+  ID_TYPE_ID_CARD = 1;
+  ID_TYPE_PASSPORT = 2;
+  ID_TYPE_DRIVER_LICENSE = 3;
+}
+
+enum KycLevel {
+  KYC_LEVEL_NONE = 0;
+  KYC_LEVEL_PRIMARY = 1;
+  KYC_LEVEL_ADVANCED = 2;
+}
+
+enum VerifyStatus {
+  VERIFY_STATUS_NONE = 0;
+  VERIFY_STATUS_PENDING = 1;
+  VERIFY_STATUS_APPROVED = 2;
+  VERIFY_STATUS_REJECTED = 3;
+}
+
+enum BankStatus {
+  BANK_STATUS_UNKNOWN = 0;
+  BANK_STATUS_NORMAL = 1;
+  BANK_STATUS_DISABLED = 2;
+}
+
+enum RiskLevel {
+  RISK_LEVEL_NORMAL = 0;
+  RISK_LEVEL_ATTENTION = 1;
+  RISK_LEVEL_HIGH = 2;
+}

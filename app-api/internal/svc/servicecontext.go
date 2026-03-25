@@ -5,10 +5,13 @@ package svc
 
 import (
 	"wklive/app-api/internal/config"
+
+	"wklive/proto/user"
 )
 
 type ServiceContext struct {
-	Config config.Config
+	Config  config.Config
+	UserCli user.UserAppClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {

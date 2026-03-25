@@ -1,0 +1,275 @@
+syntax = "proto3";
+
+package user;
+
+import "proto/user/common.proto";
+import "proto/user/model.proto";
+
+option go_package = "wklive/proto/user;user";
+
+
+message AppCommonResp {
+  user.RespBase base = 1;
+}
+
+message RegisterReq {
+  string tenant_code = 1;
+  user.RegisterType register_type = 2;
+  string username = 3;
+  string phone = 4;
+  string email = 5;
+  string password = 6;
+  string confirm_password = 7;
+  string invite_code = 8;
+  string source = 9;
+  string register_ip = 10;
+}
+
+message RegisterResp {
+  user.RespBase base = 1;
+  int64 user_id = 2;
+  user.TokenInfo token = 3;
+  user.UserProfile profile = 4;
+}
+
+message LoginReq {
+  string tenant_code = 1;
+  user.LoginType login_type = 2;
+  string account = 3;
+  string password = 4;
+  string google_code = 5;
+  string login_ip = 6;
+}
+
+message LoginResp {
+  user.RespBase base = 1;
+  int64 user_id = 2;
+  user.TokenInfo token = 3;
+  user.UserProfile profile = 4;
+}
+
+message LogoutReq {
+  int64 user_id = 1;
+}
+
+message RefreshTokenReq {
+  string tenant_code = 1;
+  string refresh_token = 2;
+}
+
+message RefreshTokenResp {
+  user.RespBase base = 1;
+  user.TokenInfo token = 2;
+}
+
+message GetProfileReq {
+  int64 user_id = 1;
+}
+
+message GetProfileResp {
+  user.RespBase base = 1;
+  user.UserProfile profile = 2;
+}
+
+message UpdateProfileReq {
+  int64 user_id = 1;
+  string nickname = 2;
+  string avatar = 3;
+  string language = 4;
+  string timezone = 5;
+  string signature = 6;
+  user.Gender gender = 7;
+  string birthday = 8;
+  string country_code = 9;
+  string province = 10;
+  string city = 11;
+  string address = 12;
+}
+
+message UpdateProfileResp {
+  user.RespBase base = 1;
+  user.UserProfile profile = 2;
+}
+
+message ChangeLoginPasswordReq {
+  int64 user_id = 1;
+  string old_password = 2;
+  string new_password = 3;
+  string confirm_password = 4;
+}
+
+message GetIdentityReq {
+  int64 user_id = 1;
+}
+
+message GetIdentityResp {
+  user.RespBase base = 1;
+  user.UserIdentity identity = 2;
+}
+
+message SubmitIdentityReq {
+  int64 user_id = 1;
+  string phone = 2;
+  string email = 3;
+  string real_name = 4;
+  user.Gender gender = 5;
+  string birthday = 6;
+  string country_code = 7;
+  string province = 8;
+  string city = 9;
+  string address = 10;
+  user.IdType id_type = 11;
+  string id_no = 12;
+  string front_image = 13;
+  string back_image = 14;
+  string handheld_image = 15;
+  user.KycLevel kyc_level = 16;
+}
+
+message SubmitIdentityResp {
+  user.RespBase base = 1;
+  user.UserIdentity identity = 2;
+}
+
+message GetSecurityReq {
+  int64 user_id = 1;
+}
+
+message GetSecurityResp {
+  user.RespBase base = 1;
+  user.UserSecurity security = 2;
+}
+
+message SetPayPasswordReq {
+  int64 user_id = 1;
+  string pay_password = 2;
+  string confirm_password = 3;
+}
+
+message ChangePayPasswordReq {
+  int64 user_id = 1;
+  string old_pay_password = 2;
+  string new_pay_password = 3;
+  string confirm_password = 4;
+}
+
+message InitGoogle2FAReq {
+  int64 user_id = 1;
+}
+
+message InitGoogle2FAResp {
+  user.RespBase base = 1;
+  string secret = 2;
+  string qr_code_url = 3;
+}
+
+message EnableGoogle2FAReq {
+  int64 user_id = 1;
+  string google_code = 2;
+}
+
+message DisableGoogle2FAReq {
+  int64 user_id = 1;
+  string google_code = 2;
+}
+
+message ListBanksReq {
+  int64 user_id = 1;
+  user.PageReq page = 2;
+}
+
+message ListBanksResp {
+  user.RespBase base = 1;
+  repeated user.UserBank list = 2;
+}
+
+message AddBankReq {
+  int64 user_id = 1;
+  string bank_name = 2;
+  string bank_code = 3;
+  string account_name = 4;
+  string account_no = 5;
+  string branch_name = 6;
+  string country_code = 7;
+  bool is_default = 8;
+}
+
+message AddBankResp {
+  user.RespBase base = 1;
+  user.UserBank bank = 2;
+}
+
+message UpdateBankReq {
+  int64 id = 1;
+  int64 user_id = 2;
+  string bank_name = 3;
+  string bank_code = 4;
+  string account_name = 5;
+  string account_no = 6;
+  string branch_name = 7;
+  string country_code = 8;
+  bool is_default = 9;
+}
+
+message UpdateBankResp {
+  user.RespBase base = 1;
+  user.UserBank bank = 2;
+}
+
+message DeleteBankReq {
+  int64 id = 1;
+  int64 user_id = 2;
+}
+
+message SetDefaultBankReq {
+  int64 id = 1;
+  int64 user_id = 2;
+}
+
+// APP端接口
+service UserApp {
+  // 用户注册
+  rpc Register(RegisterReq) returns (RegisterResp);
+  // 用户登录
+  rpc Login(LoginReq) returns (LoginResp);
+  // 用户登出
+  rpc Logout(LogoutReq) returns (AppCommonResp);
+  // 刷新Token
+  rpc RefreshToken(RefreshTokenReq) returns (RefreshTokenResp);
+
+  // 用户资料相关接口
+  rpc GetProfile(GetProfileReq) returns (GetProfileResp);
+  // 更新用户资料
+  rpc UpdateProfile(UpdateProfileReq) returns (UpdateProfileResp);
+  // 修改登录密码
+  rpc ChangeLoginPassword(ChangeLoginPasswordReq) returns (AppCommonResp);
+
+  // 实名认证相关接口
+  rpc GetIdentity(GetIdentityReq) returns (GetIdentityResp);
+  // 提交实名认证信息
+  rpc SubmitIdentity(SubmitIdentityReq) returns (SubmitIdentityResp);
+
+  // 安全设置相关接口
+  rpc GetSecurity(GetSecurityReq) returns (GetSecurityResp);
+  // 设置支付密码
+  rpc SetPayPassword(SetPayPasswordReq) returns (AppCommonResp);
+  // 修改支付密码
+  rpc ChangePayPassword(ChangePayPasswordReq) returns (AppCommonResp);
+  // 初始化谷歌2FA
+  rpc InitGoogle2FA(InitGoogle2FAReq) returns (InitGoogle2FAResp);
+  // 启用谷歌2FA
+  rpc EnableGoogle2FA(EnableGoogle2FAReq) returns (AppCommonResp);
+  // 禁用谷歌2FA
+  rpc DisableGoogle2FA(DisableGoogle2FAReq) returns (AppCommonResp);
+
+  // 银行卡相关接口
+  rpc ListBanks(ListBanksReq) returns (ListBanksResp);
+  // 添加银行卡
+  rpc AddBank(AddBankReq) returns (AddBankResp);
+  // 更新银行卡
+  rpc UpdateBank(UpdateBankReq) returns (UpdateBankResp);
+  // 删除银行卡
+  rpc DeleteBank(DeleteBankReq) returns (AppCommonResp);
+  // 设置默认银行卡
+  rpc SetDefaultBank(SetDefaultBankReq) returns (AppCommonResp);
+}

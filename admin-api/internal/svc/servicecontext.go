@@ -6,6 +6,7 @@ package svc
 import (
 	"wklive/admin-api/internal/config"
 	"wklive/proto/system"
+	"wklive/proto/user"
 
 	"github.com/zeromicro/go-zero/zrpc"
 )
@@ -13,6 +14,7 @@ import (
 type ServiceContext struct {
 	Config    config.Config
 	SystemCli system.SystemClient
+	UserCli   user.UserAdminClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {

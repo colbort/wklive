@@ -24,17 +24,19 @@ var (
 	tUserRowsExpectAutoSet   = strings.Join(stringx.Remove(tUserFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tUserRowsWithPlaceHolder = strings.Join(stringx.Remove(tUserFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTUserIdPrefix       = "cache:tUser:id:"
-	cacheTUserUserNoPrefix   = "cache:tUser:userNo:"
-	cacheTUserUsernamePrefix = "cache:tUser:username:"
+	cacheTUserIdPrefix                 = "cache:tUser:id:"
+	cacheTUserTenantIdInviteCodePrefix = "cache:tUser:tenantId:inviteCode:"
+	cacheTUserTenantIdUserNoPrefix     = "cache:tUser:tenantId:userNo:"
+	cacheTUserTenantIdUsernamePrefix   = "cache:tUser:tenantId:username:"
 )
 
 type (
 	tUserModel interface {
 		Insert(ctx context.Context, data *TUser) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TUser, error)
-		FindOneByUserNo(ctx context.Context, userNo string) (*TUser, error)
-		FindOneByUsername(ctx context.Context, username string) (*TUser, error)
+		FindOneByTenantIdInviteCode(ctx context.Context, tenantId int64, inviteCode sql.NullString) (*TUser, error)
+		FindOneByTenantIdUserNo(ctx context.Context, tenantId int64, userNo string) (*TUser, error)
+		FindOneByTenantIdUsername(ctx context.Context, tenantId int64, username string) (*TUser, error)
 		Update(ctx context.Context, data *TUser) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -46,18 +48,19 @@ type (
 
 	TUser struct {
 		Id             int64          `db:"id"`               // 用户ID
+		TenantId       int64          `db:"tenant_id"`        // 租户ID
 		UserNo         string         `db:"user_no"`          // 用户编号
 		Username       string         `db:"username"`         // 用户名
 		Nickname       sql.NullString `db:"nickname"`         // 昵称
 		Avatar         sql.NullString `db:"avatar"`           // 头像
-		Language       sql.NullString `db:"language"`         // 语言
-		Timezone       sql.NullString `db:"timezone"`         // 时区
-		InviteCode     sql.NullString `db:"invite_code"`      // 邀请码
-		Signature      sql.NullString `db:"signature"`        // 个性签名
 		PasswordHash   string         `db:"password_hash"`    // 登录密码哈希
 		RegisterType   int64          `db:"register_type"`    // 注册方式：1用户名 2手机号 3邮箱 4游客
 		Status         int64          `db:"status"`           // 状态：1正常 2禁用 3冻结 4注销
 		MemberLevel    int64          `db:"member_level"`     // 会员等级
+		Language       sql.NullString `db:"language"`         // 语言
+		Timezone       sql.NullString `db:"timezone"`         // 时区
+		InviteCode     sql.NullString `db:"invite_code"`      // 邀请码
+		Signature      sql.NullString `db:"signature"`        // 个性签名
 		Source         sql.NullString `db:"source"`           // 注册来源
 		ReferrerUserId sql.NullInt64  `db:"referrer_user_id"` // 邀请人ID
 		LastLoginIp    sql.NullString `db:"last_login_ip"`    // 最后登录IP
@@ -85,12 +88,13 @@ func (m *defaultTUserModel) Delete(ctx context.Context, id int64) error {
 	}
 
 	tUserIdKey := fmt.Sprintf("%s%v", cacheTUserIdPrefix, id)
-	tUserUserNoKey := fmt.Sprintf("%s%v", cacheTUserUserNoPrefix, data.UserNo)
-	tUserUsernameKey := fmt.Sprintf("%s%v", cacheTUserUsernamePrefix, data.Username)
+	tUserTenantIdInviteCodeKey := fmt.Sprintf("%s%v:%v", cacheTUserTenantIdInviteCodePrefix, data.TenantId, data.InviteCode)
+	tUserTenantIdUserNoKey := fmt.Sprintf("%s%v:%v", cacheTUserTenantIdUserNoPrefix, data.TenantId, data.UserNo)
+	tUserTenantIdUsernameKey := fmt.Sprintf("%s%v:%v", cacheTUserTenantIdUsernamePrefix, data.TenantId, data.Username)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tUserIdKey, tUserUserNoKey, tUserUsernameKey)
+	}, tUserIdKey, tUserTenantIdInviteCodeKey, tUserTenantIdUserNoKey, tUserTenantIdUsernameKey)
 	return err
 }
 
@@ -111,12 +115,12 @@ func (m *defaultTUserModel) FindOne(ctx context.Context, id int64) (*TUser, erro
 	}
 }
 
-func (m *defaultTUserModel) FindOneByUserNo(ctx context.Context, userNo string) (*TUser, error) {
-	tUserUserNoKey := fmt.Sprintf("%s%v", cacheTUserUserNoPrefix, userNo)
+func (m *defaultTUserModel) FindOneByTenantIdInviteCode(ctx context.Context, tenantId int64, inviteCode sql.NullString) (*TUser, error) {
+	tUserTenantIdInviteCodeKey := fmt.Sprintf("%s%v:%v", cacheTUserTenantIdInviteCodePrefix, tenantId, inviteCode)
 	var resp TUser
-	err := m.QueryRowIndexCtx(ctx, &resp, tUserUserNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `user_no` = ? limit 1", tUserRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, userNo); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tUserTenantIdInviteCodeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `invite_code` = ? limit 1", tUserRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, inviteCode); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -131,12 +135,32 @@ func (m *defaultTUserModel) FindOneByUserNo(ctx context.Context, userNo string) 
 	}
 }
 
-func (m *defaultTUserModel) FindOneByUsername(ctx context.Context, username string) (*TUser, error) {
-	tUserUsernameKey := fmt.Sprintf("%s%v", cacheTUserUsernamePrefix, username)
+func (m *defaultTUserModel) FindOneByTenantIdUserNo(ctx context.Context, tenantId int64, userNo string) (*TUser, error) {
+	tUserTenantIdUserNoKey := fmt.Sprintf("%s%v:%v", cacheTUserTenantIdUserNoPrefix, tenantId, userNo)
 	var resp TUser
-	err := m.QueryRowIndexCtx(ctx, &resp, tUserUsernameKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `username` = ? limit 1", tUserRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, username); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tUserTenantIdUserNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `user_no` = ? limit 1", tUserRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, userNo); err != nil {
+			return nil, err
+		}
+		return resp.Id, nil
+	}, m.queryPrimary)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultTUserModel) FindOneByTenantIdUsername(ctx context.Context, tenantId int64, username string) (*TUser, error) {
+	tUserTenantIdUsernameKey := fmt.Sprintf("%s%v:%v", cacheTUserTenantIdUsernamePrefix, tenantId, username)
+	var resp TUser
+	err := m.QueryRowIndexCtx(ctx, &resp, tUserTenantIdUsernameKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `username` = ? limit 1", tUserRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, username); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -153,12 +177,13 @@ func (m *defaultTUserModel) FindOneByUsername(ctx context.Context, username stri
 
 func (m *defaultTUserModel) Insert(ctx context.Context, data *TUser) (sql.Result, error) {
 	tUserIdKey := fmt.Sprintf("%s%v", cacheTUserIdPrefix, data.Id)
-	tUserUserNoKey := fmt.Sprintf("%s%v", cacheTUserUserNoPrefix, data.UserNo)
-	tUserUsernameKey := fmt.Sprintf("%s%v", cacheTUserUsernamePrefix, data.Username)
+	tUserTenantIdInviteCodeKey := fmt.Sprintf("%s%v:%v", cacheTUserTenantIdInviteCodePrefix, data.TenantId, data.InviteCode)
+	tUserTenantIdUserNoKey := fmt.Sprintf("%s%v:%v", cacheTUserTenantIdUserNoPrefix, data.TenantId, data.UserNo)
+	tUserTenantIdUsernameKey := fmt.Sprintf("%s%v:%v", cacheTUserTenantIdUsernamePrefix, data.TenantId, data.Username)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tUserRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.UserNo, data.Username, data.Nickname, data.Avatar, data.Language, data.Timezone, data.InviteCode, data.Signature, data.PasswordHash, data.RegisterType, data.Status, data.MemberLevel, data.Source, data.ReferrerUserId, data.LastLoginIp, data.LastLoginTime, data.RegisterIp, data.RegisterTime, data.Remark, data.Deleted)
-	}, tUserIdKey, tUserUserNoKey, tUserUsernameKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tUserRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserNo, data.Username, data.Nickname, data.Avatar, data.PasswordHash, data.RegisterType, data.Status, data.MemberLevel, data.Language, data.Timezone, data.InviteCode, data.Signature, data.Source, data.ReferrerUserId, data.LastLoginIp, data.LastLoginTime, data.RegisterIp, data.RegisterTime, data.Remark, data.Deleted)
+	}, tUserIdKey, tUserTenantIdInviteCodeKey, tUserTenantIdUserNoKey, tUserTenantIdUsernameKey)
 	return ret, err
 }
 
@@ -169,12 +194,13 @@ func (m *defaultTUserModel) Update(ctx context.Context, newData *TUser) error {
 	}
 
 	tUserIdKey := fmt.Sprintf("%s%v", cacheTUserIdPrefix, data.Id)
-	tUserUserNoKey := fmt.Sprintf("%s%v", cacheTUserUserNoPrefix, data.UserNo)
-	tUserUsernameKey := fmt.Sprintf("%s%v", cacheTUserUsernamePrefix, data.Username)
+	tUserTenantIdInviteCodeKey := fmt.Sprintf("%s%v:%v", cacheTUserTenantIdInviteCodePrefix, data.TenantId, data.InviteCode)
+	tUserTenantIdUserNoKey := fmt.Sprintf("%s%v:%v", cacheTUserTenantIdUserNoPrefix, data.TenantId, data.UserNo)
+	tUserTenantIdUsernameKey := fmt.Sprintf("%s%v:%v", cacheTUserTenantIdUsernamePrefix, data.TenantId, data.Username)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tUserRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.UserNo, newData.Username, newData.Nickname, newData.Avatar, newData.Language, newData.Timezone, newData.InviteCode, newData.Signature, newData.PasswordHash, newData.RegisterType, newData.Status, newData.MemberLevel, newData.Source, newData.ReferrerUserId, newData.LastLoginIp, newData.LastLoginTime, newData.RegisterIp, newData.RegisterTime, newData.Remark, newData.Deleted, newData.Id)
-	}, tUserIdKey, tUserUserNoKey, tUserUsernameKey)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserNo, newData.Username, newData.Nickname, newData.Avatar, newData.PasswordHash, newData.RegisterType, newData.Status, newData.MemberLevel, newData.Language, newData.Timezone, newData.InviteCode, newData.Signature, newData.Source, newData.ReferrerUserId, newData.LastLoginIp, newData.LastLoginTime, newData.RegisterIp, newData.RegisterTime, newData.Remark, newData.Deleted, newData.Id)
+	}, tUserIdKey, tUserTenantIdInviteCodeKey, tUserTenantIdUserNoKey, tUserTenantIdUsernameKey)
 	return err
 }
 

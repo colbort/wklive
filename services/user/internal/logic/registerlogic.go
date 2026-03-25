@@ -23,7 +23,7 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 	}
 }
 
-// 注册
+// 用户注册
 func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, error) {
 	// todo: add your logic here and delete this line
 

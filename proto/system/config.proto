@@ -45,10 +45,9 @@ message MinioConfig {
 
 // 对象存储配置
 message ObjectStorageConfig {
-    AliyunOssConfig aliyun_oss = 1;
-    TencentCosConfig tencent_cos = 2;
-    MinioConfig minio = 3;  
-    int64 oss_type = 4; // 1阿里云OSS 2腾讯云COS 3MINIO
-    string oss_domain = 5; // 对象存储访问域名（可选，优先使用bucket_url）
+  AliyunOssConfig aliyun_oss = 1;
+  TencentCosConfig tencent_cos = 2;
+  MinioConfig minio = 3;
+  int64 oss_type = 4; // 1阿里云OSS 2腾讯云COS 3MINIO
+  string oss_domain = 5; // 对象存储访问域名（可选，优先使用bucket_url）
 }
-

@@ -24,19 +24,19 @@ var (
 	tUserIdentityRowsExpectAutoSet   = strings.Join(stringx.Remove(tUserIdentityFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tUserIdentityRowsWithPlaceHolder = strings.Join(stringx.Remove(tUserIdentityFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTUserIdentityIdPrefix     = "cache:tUserIdentity:id:"
-	cacheTUserIdentityEmailPrefix  = "cache:tUserIdentity:email:"
-	cacheTUserIdentityPhonePrefix  = "cache:tUserIdentity:phone:"
-	cacheTUserIdentityUserIdPrefix = "cache:tUserIdentity:userId:"
+	cacheTUserIdentityIdPrefix             = "cache:tUserIdentity:id:"
+	cacheTUserIdentityTenantIdEmailPrefix  = "cache:tUserIdentity:tenantId:email:"
+	cacheTUserIdentityTenantIdPhonePrefix  = "cache:tUserIdentity:tenantId:phone:"
+	cacheTUserIdentityTenantIdUserIdPrefix = "cache:tUserIdentity:tenantId:userId:"
 )
 
 type (
 	tUserIdentityModel interface {
 		Insert(ctx context.Context, data *TUserIdentity) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TUserIdentity, error)
-		FindOneByEmail(ctx context.Context, email sql.NullString) (*TUserIdentity, error)
-		FindOneByPhone(ctx context.Context, phone sql.NullString) (*TUserIdentity, error)
-		FindOneByUserId(ctx context.Context, userId int64) (*TUserIdentity, error)
+		FindOneByTenantIdEmail(ctx context.Context, tenantId int64, email sql.NullString) (*TUserIdentity, error)
+		FindOneByTenantIdPhone(ctx context.Context, tenantId int64, phone sql.NullString) (*TUserIdentity, error)
+		FindOneByTenantIdUserId(ctx context.Context, tenantId int64, userId int64) (*TUserIdentity, error)
 		Update(ctx context.Context, data *TUserIdentity) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -48,6 +48,7 @@ type (
 
 	TUserIdentity struct {
 		Id            int64          `db:"id"`             // 主键ID
+		TenantId      int64          `db:"tenant_id"`      // 租户ID
 		UserId        int64          `db:"user_id"`        // 用户ID
 		Phone         sql.NullString `db:"phone"`          // 手机号
 		Email         sql.NullString `db:"email"`          // 邮箱
@@ -55,7 +56,7 @@ type (
 		Gender        int64          `db:"gender"`         // 性别：0未知 1男 2女
 		Birthday      sql.NullTime   `db:"birthday"`       // 生日
 		CountryCode   sql.NullString `db:"country_code"`   // 国家/地区代码
-		Province      sql.NullString `db:"province"`       // 省份
+		Province      sql.NullString `db:"province"`       // 省/州
 		City          sql.NullString `db:"city"`           // 城市
 		Address       sql.NullString `db:"address"`        // 地址
 		IdType        int64          `db:"id_type"`        // 证件类型：0未提交 1身份证 2护照 3驾驶证
@@ -87,14 +88,14 @@ func (m *defaultTUserIdentityModel) Delete(ctx context.Context, id int64) error 
 		return err
 	}
 
-	tUserIdentityEmailKey := fmt.Sprintf("%s%v", cacheTUserIdentityEmailPrefix, data.Email)
 	tUserIdentityIdKey := fmt.Sprintf("%s%v", cacheTUserIdentityIdPrefix, id)
-	tUserIdentityPhoneKey := fmt.Sprintf("%s%v", cacheTUserIdentityPhonePrefix, data.Phone)
-	tUserIdentityUserIdKey := fmt.Sprintf("%s%v", cacheTUserIdentityUserIdPrefix, data.UserId)
+	tUserIdentityTenantIdEmailKey := fmt.Sprintf("%s%v:%v", cacheTUserIdentityTenantIdEmailPrefix, data.TenantId, data.Email)
+	tUserIdentityTenantIdPhoneKey := fmt.Sprintf("%s%v:%v", cacheTUserIdentityTenantIdPhonePrefix, data.TenantId, data.Phone)
+	tUserIdentityTenantIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheTUserIdentityTenantIdUserIdPrefix, data.TenantId, data.UserId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tUserIdentityEmailKey, tUserIdentityIdKey, tUserIdentityPhoneKey, tUserIdentityUserIdKey)
+	}, tUserIdentityIdKey, tUserIdentityTenantIdEmailKey, tUserIdentityTenantIdPhoneKey, tUserIdentityTenantIdUserIdKey)
 	return err
 }
 
@@ -115,12 +116,12 @@ func (m *defaultTUserIdentityModel) FindOne(ctx context.Context, id int64) (*TUs
 	}
 }
 
-func (m *defaultTUserIdentityModel) FindOneByEmail(ctx context.Context, email sql.NullString) (*TUserIdentity, error) {
-	tUserIdentityEmailKey := fmt.Sprintf("%s%v", cacheTUserIdentityEmailPrefix, email)
+func (m *defaultTUserIdentityModel) FindOneByTenantIdEmail(ctx context.Context, tenantId int64, email sql.NullString) (*TUserIdentity, error) {
+	tUserIdentityTenantIdEmailKey := fmt.Sprintf("%s%v:%v", cacheTUserIdentityTenantIdEmailPrefix, tenantId, email)
 	var resp TUserIdentity
-	err := m.QueryRowIndexCtx(ctx, &resp, tUserIdentityEmailKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `email` = ? limit 1", tUserIdentityRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, email); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tUserIdentityTenantIdEmailKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `email` = ? limit 1", tUserIdentityRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, email); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -135,12 +136,12 @@ func (m *defaultTUserIdentityModel) FindOneByEmail(ctx context.Context, email sq
 	}
 }
 
-func (m *defaultTUserIdentityModel) FindOneByPhone(ctx context.Context, phone sql.NullString) (*TUserIdentity, error) {
-	tUserIdentityPhoneKey := fmt.Sprintf("%s%v", cacheTUserIdentityPhonePrefix, phone)
+func (m *defaultTUserIdentityModel) FindOneByTenantIdPhone(ctx context.Context, tenantId int64, phone sql.NullString) (*TUserIdentity, error) {
+	tUserIdentityTenantIdPhoneKey := fmt.Sprintf("%s%v:%v", cacheTUserIdentityTenantIdPhonePrefix, tenantId, phone)
 	var resp TUserIdentity
-	err := m.QueryRowIndexCtx(ctx, &resp, tUserIdentityPhoneKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `phone` = ? limit 1", tUserIdentityRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, phone); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tUserIdentityTenantIdPhoneKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `phone` = ? limit 1", tUserIdentityRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, phone); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -155,12 +156,12 @@ func (m *defaultTUserIdentityModel) FindOneByPhone(ctx context.Context, phone sq
 	}
 }
 
-func (m *defaultTUserIdentityModel) FindOneByUserId(ctx context.Context, userId int64) (*TUserIdentity, error) {
-	tUserIdentityUserIdKey := fmt.Sprintf("%s%v", cacheTUserIdentityUserIdPrefix, userId)
+func (m *defaultTUserIdentityModel) FindOneByTenantIdUserId(ctx context.Context, tenantId int64, userId int64) (*TUserIdentity, error) {
+	tUserIdentityTenantIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheTUserIdentityTenantIdUserIdPrefix, tenantId, userId)
 	var resp TUserIdentity
-	err := m.QueryRowIndexCtx(ctx, &resp, tUserIdentityUserIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `user_id` = ? limit 1", tUserIdentityRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, userId); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tUserIdentityTenantIdUserIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `user_id` = ? limit 1", tUserIdentityRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, userId); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -176,14 +177,14 @@ func (m *defaultTUserIdentityModel) FindOneByUserId(ctx context.Context, userId 
 }
 
 func (m *defaultTUserIdentityModel) Insert(ctx context.Context, data *TUserIdentity) (sql.Result, error) {
-	tUserIdentityEmailKey := fmt.Sprintf("%s%v", cacheTUserIdentityEmailPrefix, data.Email)
 	tUserIdentityIdKey := fmt.Sprintf("%s%v", cacheTUserIdentityIdPrefix, data.Id)
-	tUserIdentityPhoneKey := fmt.Sprintf("%s%v", cacheTUserIdentityPhonePrefix, data.Phone)
-	tUserIdentityUserIdKey := fmt.Sprintf("%s%v", cacheTUserIdentityUserIdPrefix, data.UserId)
+	tUserIdentityTenantIdEmailKey := fmt.Sprintf("%s%v:%v", cacheTUserIdentityTenantIdEmailPrefix, data.TenantId, data.Email)
+	tUserIdentityTenantIdPhoneKey := fmt.Sprintf("%s%v:%v", cacheTUserIdentityTenantIdPhonePrefix, data.TenantId, data.Phone)
+	tUserIdentityTenantIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheTUserIdentityTenantIdUserIdPrefix, data.TenantId, data.UserId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tUserIdentityRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.UserId, data.Phone, data.Email, data.RealName, data.Gender, data.Birthday, data.CountryCode, data.Province, data.City, data.Address, data.IdType, data.IdNo, data.FrontImage, data.BackImage, data.HandheldImage, data.KycLevel, data.VerifyStatus, data.RejectReason, data.SubmitTime, data.VerifyTime, data.VerifyBy)
-	}, tUserIdentityEmailKey, tUserIdentityIdKey, tUserIdentityPhoneKey, tUserIdentityUserIdKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tUserIdentityRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.Phone, data.Email, data.RealName, data.Gender, data.Birthday, data.CountryCode, data.Province, data.City, data.Address, data.IdType, data.IdNo, data.FrontImage, data.BackImage, data.HandheldImage, data.KycLevel, data.VerifyStatus, data.RejectReason, data.SubmitTime, data.VerifyTime, data.VerifyBy)
+	}, tUserIdentityIdKey, tUserIdentityTenantIdEmailKey, tUserIdentityTenantIdPhoneKey, tUserIdentityTenantIdUserIdKey)
 	return ret, err
 }
 
@@ -193,14 +194,14 @@ func (m *defaultTUserIdentityModel) Update(ctx context.Context, newData *TUserId
 		return err
 	}
 
-	tUserIdentityEmailKey := fmt.Sprintf("%s%v", cacheTUserIdentityEmailPrefix, data.Email)
 	tUserIdentityIdKey := fmt.Sprintf("%s%v", cacheTUserIdentityIdPrefix, data.Id)
-	tUserIdentityPhoneKey := fmt.Sprintf("%s%v", cacheTUserIdentityPhonePrefix, data.Phone)
-	tUserIdentityUserIdKey := fmt.Sprintf("%s%v", cacheTUserIdentityUserIdPrefix, data.UserId)
+	tUserIdentityTenantIdEmailKey := fmt.Sprintf("%s%v:%v", cacheTUserIdentityTenantIdEmailPrefix, data.TenantId, data.Email)
+	tUserIdentityTenantIdPhoneKey := fmt.Sprintf("%s%v:%v", cacheTUserIdentityTenantIdPhonePrefix, data.TenantId, data.Phone)
+	tUserIdentityTenantIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheTUserIdentityTenantIdUserIdPrefix, data.TenantId, data.UserId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tUserIdentityRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.UserId, newData.Phone, newData.Email, newData.RealName, newData.Gender, newData.Birthday, newData.CountryCode, newData.Province, newData.City, newData.Address, newData.IdType, newData.IdNo, newData.FrontImage, newData.BackImage, newData.HandheldImage, newData.KycLevel, newData.VerifyStatus, newData.RejectReason, newData.SubmitTime, newData.VerifyTime, newData.VerifyBy, newData.Id)
-	}, tUserIdentityEmailKey, tUserIdentityIdKey, tUserIdentityPhoneKey, tUserIdentityUserIdKey)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.Phone, newData.Email, newData.RealName, newData.Gender, newData.Birthday, newData.CountryCode, newData.Province, newData.City, newData.Address, newData.IdType, newData.IdNo, newData.FrontImage, newData.BackImage, newData.HandheldImage, newData.KycLevel, newData.VerifyStatus, newData.RejectReason, newData.SubmitTime, newData.VerifyTime, newData.VerifyBy, newData.Id)
+	}, tUserIdentityIdKey, tUserIdentityTenantIdEmailKey, tUserIdentityTenantIdPhoneKey, tUserIdentityTenantIdUserIdKey)
 	return err
 }
 

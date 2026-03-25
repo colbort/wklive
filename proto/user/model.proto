@@ -1,0 +1,158 @@
+syntax = "proto3";
+
+package user;
+
+import "proto/user/common.proto";
+
+option go_package = "wklive/proto/user;user";
+
+message UserBase {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string user_no = 3;
+  string username = 4;
+  string nickname = 5;
+  string avatar = 6;
+  string language = 7;
+  string timezone = 8;
+  string invite_code = 9;
+  string signature = 10;
+  user.RegisterType register_type = 11;
+  user.UserStatus status = 12;
+  int32 member_level = 13;
+  string source = 14;
+  int64 referrer_user_id = 15;
+  string last_login_ip = 16;
+  int64 last_login_time = 17;
+  string register_ip = 18;
+  int64 register_time = 19;
+  string remark = 20;
+  bool deleted = 21;
+  int64 create_time = 22;
+  int64 update_time = 23;
+}
+
+message UserIdentity {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 user_id = 3;
+  string phone = 4;
+  string email = 5;
+  string real_name = 6;
+  user.Gender gender = 7;
+  string birthday = 8;
+  string country_code = 9;
+  string province = 10;
+  string city = 11;
+  string address = 12;
+  user.IdType id_type = 13;
+  string id_no = 14;
+  string front_image = 15;
+  string back_image = 16;
+  string handheld_image = 17;
+  user.KycLevel kyc_level = 18;
+  user.VerifyStatus verify_status = 19;
+  string reject_reason = 20;
+  int64 submit_time = 21;
+  int64 verify_time = 22;
+  int64 verify_by = 23;
+  int64 create_time = 24;
+  int64 update_time = 25;
+}
+
+message UserSecurity {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 user_id = 3;
+  bool has_pay_password = 4;
+  bool google_enabled = 5;
+  int32 login_error_count = 6;
+  int32 pay_error_count = 7;
+  int64 lock_until = 8;
+  user.RiskLevel risk_level = 9;
+  int64 create_time = 10;
+  int64 update_time = 11;
+}
+
+message UserBank {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 user_id = 3;
+  string bank_name = 4;
+  string bank_code = 5;
+  string account_name = 6;
+  string account_no = 7;
+  string masked_account_no = 8;
+  string branch_name = 9;
+  string country_code = 10;
+  bool is_default = 11;
+  user.BankStatus status = 12;
+  int64 create_time = 13;
+  int64 update_time = 14;
+}
+
+message UserProfile {
+  user.UserBase base = 1;
+  user.UserIdentity identity = 2;
+  user.UserSecurity security = 3;
+}
+
+message UserDetail {
+  user.UserBase base = 1;
+  user.UserIdentity identity = 2;
+  user.UserSecurity security = 3;
+  repeated user.UserBank banks = 4;
+}
+
+message UserListItem {
+  int64 user_id = 1;
+  string user_no = 2;
+  string username = 3;
+  string nickname = 4;
+  string avatar = 5;
+  string phone = 6;
+  string email = 7;
+  string real_name = 8;
+  user.UserStatus status = 9;
+  int32 member_level = 10;
+  user.KycLevel kyc_level = 11;
+  user.VerifyStatus verify_status = 12;
+  string invite_code = 13;
+  string last_login_ip = 14;
+  int64 last_login_time = 15;
+  int64 register_time = 16;
+}
+
+message UserIdentityListItem {
+  int64 user_id = 1;
+  string user_no = 2;
+  string username = 3;
+  string phone = 4;
+  string email = 5;
+  string real_name = 6;
+  user.IdType id_type = 7;
+  string id_no = 8;
+  user.KycLevel kyc_level = 9;
+  user.VerifyStatus verify_status = 10;
+  string reject_reason = 11;
+  int64 submit_time = 12;
+  int64 verify_time = 13;
+  int64 verify_by = 14;
+}
+
+message UserBankListItem {
+  int64 id = 1;
+  int64 user_id = 2;
+  string user_no = 3;
+  string username = 4;
+  string bank_name = 5;
+  string bank_code = 6;
+  string account_name = 7;
+  string account_no = 8;
+  string masked_account_no = 9;
+  string branch_name = 10;
+  string country_code = 11;
+  bool is_default = 12;
+  user.BankStatus status = 13;
+  int64 create_time = 14;
+}

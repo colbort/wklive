@@ -9,6 +9,21 @@ option go_package = "wklive/proto/system;system";
 
 message Empty {}
 
+message PageReq {
+  int64 cursor = 1;
+  int64 limit = 2;
+}
+
+message RespBase {
+  int32 code = 1;
+  string msg = 2;
+  int64 total = 3;
+  bool has_next = 4;
+  bool has_prev = 5;
+  int64 next_cursor = 6;
+  int64 prev_cursor = 7;
+}
+
 //////////////////////
 // Auth / 登录
 //////////////////////
@@ -23,8 +38,8 @@ message AdminLoginReq {
 message AdminLoginResp {
   RespBase base = 1;
   string token = 3;
-  int64  exp = 4;
-  int64  uid = 5;
+  int64 exp = 4;
+  int64 uid = 5;
   string nickname = 6;
   repeated int64 role_ids = 7;
   int64 google2fa_enabled = 8;
@@ -97,7 +112,9 @@ message SysMenuTreeResp {
 //////////////////////
 // Google 2FA
 //////////////////////
-message Google2FAInitReq { int64 user_id = 1; }
+message Google2FAInitReq {
+  int64 user_id = 1;
+}
 message Google2FAInitResp {
   RespBase base = 1;
   string secret = 3;
@@ -110,25 +127,21 @@ message Google2FABindReq {
   string code = 3;
 }
 
-message Google2FAEnableReq { int64 user_id = 1; string code = 2; }
-message Google2FADisableReq { int64 user_id = 1; string code = 2; } // 可选强校验
-message Google2FAResetReq { int64 user_id = 1; }
-
-message RespBase { 
-  int32 code = 1; 
-  string msg = 2; 
-  int64 total = 3; 
-  bool has_next = 4;
-  bool has_prev = 5;
-  int64 next_cursor = 6;
-  int64 prev_cursor = 7;
+message Google2FAEnableReq {
+  int64 user_id = 1;
+  string code = 2;
+}
+message Google2FADisableReq {
+  int64 user_id = 1;
+  string code = 2;
+} // 可选强校验
+message Google2FAResetReq {
+  int64 user_id = 1;
 }
 
 //////////////////////
 // RBAC - 用户
 //////////////////////
-message PageReq { int64 cursor = 1; int64 limit = 2; }
-
 message SysUserItem {
   int64 id = 1;
   string username = 2;
@@ -149,8 +162,13 @@ message SysUserListResp {
   repeated SysUserItem data = 4;
 }
 
-message SysUserDetailReq { int64 id = 1; }
-message SysUserDetailResp { RespBase base = 1; SysUserItem data = 3; }
+message SysUserDetailReq {
+  int64 id = 1;
+}
+message SysUserDetailResp {
+  RespBase base = 1;
+  SysUserItem data = 3;
+}
 
 message SysUserCreateReq {
   string username = 1;
@@ -165,10 +183,21 @@ message SysUserUpdateReq {
   int64 status = 3;
   repeated int64 role_ids = 4;
 }
-message SysUserDeleteReq { int64 id = 1; }
-message ChangeUserStatusReq { int64 id = 1; int64 status = 2; }
-message ResetUserPwdReq { int64 id = 1; string password = 2; }
-message AssignUserRolesReq { int64 user_id = 1; repeated int64 role_ids = 2; }
+message SysUserDeleteReq {
+  int64 id = 1;
+}
+message ChangeUserStatusReq {
+  int64 id = 1;
+  int64 status = 2;
+}
+message ResetUserPwdReq {
+  int64 id = 1;
+  string password = 2;
+}
+message AssignUserRolesReq {
+  int64 user_id = 1;
+  repeated int64 role_ids = 2;
+}
 
 //////////////////////
 // RBAC - 角色
@@ -181,15 +210,39 @@ message SysRoleItem {
   string remark = 5;
   int64 created_at = 6;
 }
-message SysRoleListReq { PageReq page = 1; string keyword = 2; int64 status = 3; }
-message SysRoleListResp { RespBase base = 1; repeated SysRoleItem data = 4; }
+message SysRoleListReq {
+  PageReq page = 1;
+  string keyword = 2;
+  int64 status = 3;
+}
+message SysRoleListResp {
+  RespBase base = 1;
+  repeated SysRoleItem data = 4;
+}
 
-message SysRoleCreateReq { string name = 1; string code = 2; int64 status = 3; string remark = 4; }
-message SysRoleUpdateReq { int64 id = 1; string name = 2; int64 status = 3; string remark = 4; }
-message SysRoleDeleteReq { int64 id = 1; }
-message SysRoleGrantReq { int64 role_id = 1; repeated int64 menu_ids = 2; }
+message SysRoleCreateReq {
+  string name = 1;
+  string code = 2;
+  int64 status = 3;
+  string remark = 4;
+}
+message SysRoleUpdateReq {
+  int64 id = 1;
+  string name = 2;
+  int64 status = 3;
+  string remark = 4;
+}
+message SysRoleDeleteReq {
+  int64 id = 1;
+}
+message SysRoleGrantReq {
+  int64 role_id = 1;
+  repeated int64 menu_ids = 2;
+}
 
-message SysRoleGrantDetailReq { int64 role_id = 1; }
+message SysRoleGrantDetailReq {
+  int64 role_id = 1;
+}
 message SysRoleGrantDetailResp {
   RespBase base = 1;
   int64 role_id = 3;
@@ -200,7 +253,6 @@ message SysRoleGrantDetailResp {
 message SysPermItem {
   string perm_key = 1;
   string name = 2;
-  
 }
 
 message SysPermListResp {
@@ -238,12 +290,20 @@ message SysMenuUpdateReq {
   int64 status = 11;
   string perms = 12;
 }
-message SysMenuDeleteReq { int64 id = 1; }
+message SysMenuDeleteReq {
+  int64 id = 1;
+}
 
-message SysMenuListReq { PageReq page = 1; string keyword = 2; int64 menu_type = 3; int64 status = 4; int64 visible = 5; }
-message SysMenuListResp { 
+message SysMenuListReq {
+  PageReq page = 1;
+  string keyword = 2;
+  int64 menu_type = 3;
+  int64 status = 4;
+  int64 visible = 5;
+}
+message SysMenuListResp {
   RespBase base = 1;
-  repeated SysMenuItem data = 4; 
+  repeated SysMenuItem data = 4;
 }
 
 //////////////////////
@@ -259,10 +319,14 @@ message LoginLogItem {
   string msg = 7;
   int64 login_at = 8;
 }
-message LoginLogListReq { PageReq page = 1; string username = 2; int64 success = 3; }
-message LoginLogListResp { 
+message LoginLogListReq {
+  PageReq page = 1;
+  string username = 2;
+  int64 success = 3;
+}
+message LoginLogListResp {
   RespBase base = 1;
-  repeated LoginLogItem data = 4; 
+  repeated LoginLogItem data = 4;
 }
 
 message OpLogItem {
@@ -278,10 +342,15 @@ message OpLogItem {
   int64 created_at = 10;
   int64 updated_at = 11;
 }
-message OpLogListReq { PageReq page = 1; string username = 2; string method = 3; string path = 4; }
-message OpLogListResp { 
+message OpLogListReq {
+  PageReq page = 1;
+  string username = 2;
+  string method = 3;
+  string path = 4;
+}
+message OpLogListResp {
   RespBase base = 1;
-  repeated OpLogItem data = 4; 
+  repeated OpLogItem data = 4;
 }
 
 message SysConfigCreateReq {
@@ -297,7 +366,9 @@ message SysConfigUpdateReq {
   string remark = 4;
 }
 
-message SysConfigDeleteReq { int64 id = 1; }
+message SysConfigDeleteReq {
+  int64 id = 1;
+}
 
 message SysConfigItem {
   int64 id = 1;
@@ -307,22 +378,41 @@ message SysConfigItem {
   int64 created_at = 5;
 }
 
-message SysConfigListReq { PageReq page = 1; string keyword = 2; }
-message SysConfigListResp { RespBase base = 1; repeated SysConfigItem data = 4; }
+message SysConfigListReq {
+  PageReq page = 1;
+  string keyword = 2;
+}
+message SysConfigListResp {
+  RespBase base = 1;
+  repeated SysConfigItem data = 4;
+}
 
-message SysConfigDetailReq { optional int64 id = 1; optional SysConfigType config_key = 2; }
+message SysConfigDetailReq {
+  optional int64 id = 1;
+  optional SysConfigType config_key = 2;
+}
 
-message SysConfigDetailResp { RespBase base = 1; SysConfigItem data = 3; }
+message SysConfigDetailResp {
+  RespBase base = 1;
+  SysConfigItem data = 3;
+}
 
-message SysConfigByKeysReq { repeated string config_keys = 1; }
-message SysConfigByKeysResp { RespBase base = 1; repeated system.SysConfigItem data = 3; }
+message SysConfigByKeysReq {
+  repeated string config_keys = 1;
+}
+message SysConfigByKeysResp {
+  RespBase base = 1;
+  repeated system.SysConfigItem data = 3;
+}
 
 message SysConfigKeysResp {
   RespBase base = 1;
   repeated string data = 3;
 }
 
-message LoginUserPermsReq { int64 user_id = 1; }
+message LoginUserPermsReq {
+  int64 user_id = 1;
+}
 message LoginUserPermsResp {
   repeated string perms = 1;
 }
@@ -342,14 +432,17 @@ message SysCronJobItem {
   int64 update_time = 11;
 }
 
-message SysCronJobListReq { 
-  PageReq page = 1; 
-  string keyword = 2; 
+message SysCronJobListReq {
+  PageReq page = 1;
+  string keyword = 2;
   string job_name = 3;
   string job_group = 4;
-  int64 status = 5; 
+  int64 status = 5;
 }
-message SysCronJobListResp { RespBase base = 1; repeated SysCronJobItem data = 4; }
+message SysCronJobListResp {
+  RespBase base = 1;
+  repeated SysCronJobItem data = 4;
+}
 
 message SysCronJobCreateReq {
   string job_name = 1;
@@ -358,7 +451,7 @@ message SysCronJobCreateReq {
   string cron_expression = 4;
   int64 status = 5;
   string remark = 6;
-} 
+}
 
 message SysCronJobUpdateReq {
   int64 id = 1;
@@ -370,9 +463,13 @@ message SysCronJobUpdateReq {
   string remark = 7;
 }
 
-message SysCronJobDeleteReq { int64 id = 1; }
+message SysCronJobDeleteReq {
+  int64 id = 1;
+}
 
-message SysCronJobRunReq { int64 id = 1; }
+message SysCronJobRunReq {
+  int64 id = 1;
+}
 
 message SysCronJobStartReq {
   int64 id = 1;
@@ -396,13 +493,13 @@ message SysCronJobLogItem {
   int64 create_time = 11;
 }
 
-message SysCronJobLogListReq { 
-  PageReq page = 1; 
-  int64 job_id = 2; 
+message SysCronJobLogListReq {
+  PageReq page = 1;
+  int64 job_id = 2;
   string job_name = 3;
   string invoke_target = 4;
-  int64 status = 5; 
-} 
+  int64 status = 5;
+}
 
 message SysCronJobHander {
   string invoke_target = 1;
@@ -414,8 +511,10 @@ message SysCronJobHandlersResp {
   repeated SysCronJobHander data = 3;
 }
 
-message SysCronJobLogListResp { RespBase base = 1; repeated SysCronJobLogItem data = 4; }
-
+message SysCronJobLogListResp {
+  RespBase base = 1;
+  repeated SysCronJobLogItem data = 4;
+}
 
 //////////////////////
 // Service
@@ -519,4 +618,3 @@ service System {
   // 系统定时任务日志列表
   rpc SysCronJobLogList(SysCronJobLogListReq) returns (SysCronJobLogListResp);
 }
-
