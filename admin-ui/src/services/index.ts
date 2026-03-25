@@ -7,6 +7,7 @@ export { MenuService, menuService } from './system/MenuService'
 export { LogService, logService } from './system/LogService'
 export { UploadService, uploadService } from './system/UploadService'
 export { ConfigService, configService } from './system/ConfigService'
+export { CronJobService, cronJobService } from './system/CronJobService'
 
 // 类型导出
 export type { RespBase } from './BaseService'
@@ -62,3 +63,19 @@ export type {
   SysConfigCreateReq,
   SysConfigUpdateReq,
 } from './system/ConfigService'
+export type {
+  SysCronJobItem,
+  SysCronJobListReq,
+  SysCronJobListResp,
+  SysCronJobCreateReq,
+  SysCronJobUpdateReq,
+  SysCronJobDeleteReq,
+  SysCronJobRunReq,
+  SysCronJobStartReq,
+  SysCronJobStopReq,
+  SysCronJobHandler,
+  SysCronJobHandlersResp,
+  SysCronJobLogItem,
+  SysCronJobLogListReq,
+  SysCronJobLogListResp,
+} from './system/CronJobService'

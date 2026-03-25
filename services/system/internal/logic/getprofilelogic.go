@@ -78,7 +78,7 @@ func (l *GetProfileLogic) GetProfile(in *system.ProfileReq) (*system.ProfileResp
 	}
 
 	// 4) menus flat
-	menus, err := l.svcCtx.MenuModel.FindByIds(l.ctx, menuIds)
+	menus, err := l.svcCtx.MenuModel.FindByIds(l.ctx, menuIds, 1, 1)
 	if err != nil {
 		return nil, err
 	}
@@ -104,8 +104,16 @@ func buildMenuTreeAndPerms(rows []*models.SysMenu) ([]*system.SysMenuNode, []str
 	childrenMap := make(map[int64][]*system.SysMenuNode)
 	permsSet := map[string]struct{}{}
 
-	// create nodes
+	// 1. 创建节点；按钮只收集 perms，不放入 tree
 	for _, r := range rows {
+		// 收集按钮权限
+		if r.MenuType == 3 {
+			if r.Perms != "" {
+				permsSet[r.Perms] = struct{}{}
+			}
+			continue
+		}
+
 		n := &system.SysMenuNode{
 			Id:        r.Id,
 			ParentId:  r.ParentId,
@@ -118,22 +126,17 @@ func buildMenuTreeAndPerms(rows []*models.SysMenu) ([]*system.SysMenuNode, []str
 			Visible:   r.Visible,
 			Status:    r.Status,
 			Perms:     r.Perms,
-			Children:  []*system.SysMenuNode{},
+			Children:  nil,
 		}
 		nodes[r.Id] = n
-
-		// perms from buttons
-		if r.MenuType == 3 && r.Perms != "" {
-			permsSet[r.Perms] = struct{}{}
-		}
 	}
 
-	// link children
+	// 2. 建立父子关系
 	for _, n := range nodes {
 		childrenMap[n.ParentId] = append(childrenMap[n.ParentId], n)
 	}
 
-	// sort helper
+	// 3. 排序
 	sortChildren := func(list []*system.SysMenuNode) {
 		sort.Slice(list, func(i, j int) bool {
 			if list[i].Sort == list[j].Sort {
@@ -143,18 +146,19 @@ func buildMenuTreeAndPerms(rows []*models.SysMenu) ([]*system.SysMenuNode, []str
 		})
 	}
 
-	// attach recursively
+	// 4. 递归组装树
 	var build func(pid int64) []*system.SysMenuNode
 	build = func(pid int64) []*system.SysMenuNode {
 		list := childrenMap[pid]
+		if len(list) == 0 {
+			return nil
+		}
+
 		sortChildren(list)
+
 		out := make([]*system.SysMenuNode, 0, len(list))
 		for _, item := range list {
-			// 子节点
-			child := build(item.Id)
-			if len(child) > 0 {
-				item.Children = child
-			}
+			item.Children = build(item.Id)
 			out = append(out, item)
 		}
 		return out
@@ -162,7 +166,7 @@ func buildMenuTreeAndPerms(rows []*models.SysMenu) ([]*system.SysMenuNode, []str
 
 	tree := build(0)
 
-	// perms to slice
+	// 5. perms 转 slice
 	perms := make([]string, 0, len(permsSet))
 	for p := range permsSet {
 		perms = append(perms, p)

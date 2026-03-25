@@ -1,4 +1,4 @@
-import { get } from '@/utils/request'
+import { get } from '@/utils/request';
 export function getSystemCore() {
-  return get('/admin/system/core')
+    return get('/admin/system/core');
 }

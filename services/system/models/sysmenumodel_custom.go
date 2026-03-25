@@ -9,19 +9,39 @@ import (
 
 type MenuModel interface {
 	sysMenuModel
-	FindByIds(ctx context.Context, ids []int64) ([]*SysMenu, error)
+	FindByIds(ctx context.Context, ids []int64, visible int64, status int64) ([]*SysMenu, error)
 	FindIdsByIds(ctx context.Context, ids []int64) ([]int64, error)
 	ListAll(ctx context.Context) ([]*SysMenu, error)
 	FindPage(ctx context.Context, keyword string, menuType, status, visible, cursor, limit int64) ([]*SysMenu, int64, error)
 }
 
-func (m *defaultSysMenuModel) FindByIds(ctx context.Context, ids []int64) ([]*SysMenu, error) {
+func (m *defaultSysMenuModel) FindByIds(ctx context.Context, ids []int64, visible int64, status int64) ([]*SysMenu, error) {
+	if len(ids) == 0 {
+		return []*SysMenu{}, nil
+	}
+
 	var menus []*SysMenu
-	query := "select " + sysMenuRows + " from " + m.table + " where id in (?) order by `sort` asc"
-	query, args, err := sqlx.In(query, ids)
+	query := "select " + sysMenuRows + " from " + m.table + " where id in (?)"
+
+	args := []interface{}{ids}
+
+	if visible != 0 {
+		query += " AND visible = ?"
+		args = append(args, visible)
+	}
+	if status != 0 {
+		query += " AND status = ?"
+		args = append(args, status)
+	}
+
+	query += " order by `sort` asc"
+
+	var err error
+	query, args, err = sqlx.In(query, args...)
 	if err != nil {
 		return nil, err
 	}
+
 	err = m.QueryRowsNoCacheCtx(ctx, &menus, query, args...)
 	return menus, err
 }

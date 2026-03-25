@@ -202,6 +202,8 @@ func getRequiredPermission(path, method string) string {
 		"GET /logs/login": "",
 		"GET /logs/op":    "",
 		"GET /configs":    "",
+		"GET /jobs":       "",
+		"GET /jobs/logs":  "",
 
 		// users
 		"POST /users":                   "sys:user:add",
@@ -235,6 +237,15 @@ func getRequiredPermission(path, method string) string {
 		"POST /configs":   "sys:config:add",
 		"PUT /configs":    "sys:config:update",
 		"DELETE /configs": "sys:config:delete",
+
+		// cron jobs
+		"POST /jobs":         "sys:job:add",
+		"PUT /jobs":          "sys:job:update",
+		"DELETE /jobs":       "sys:job:delete",
+		"POST /jobs/run":     "sys:job:run",
+		"POST /jobs/start":   "sys:job:start",
+		"POST /jobs/stop":    "sys:job:stop",
+		"GET /jobs/handlers": "sys:job:handlers",
 	}
 
 	key := strings.ToUpper(method) + " " + path
