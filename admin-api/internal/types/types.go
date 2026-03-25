@@ -3,6 +3,24 @@
 
 package types
 
+type AddUserBankReq struct {
+	TenantId    int64  `json:"tenantId"`
+	UserId      int64  `json:"userId"`
+	BankName    string `json:"bankName"`
+	BankCode    string `json:"bankCode,optional"`
+	AccountName string `json:"accountName"`
+	AccountNo   string `json:"accountNo"`
+	BranchName  string `json:"branchName,optional"`
+	CountryCode string `json:"countryCode,optional"`
+	IsDefault   bool   `json:"isDefault"`
+	Status      int64  `json:"status"`
+}
+
+type AddUserBankResp struct {
+	RespBase
+	Bank UserBank `json:"bank"`
+}
+
 type AssignUserRolesReq struct {
 	UserId  int64   `json:"userId"`
 	RoleIds []int64 `json:"roleIds"`
@@ -18,6 +36,41 @@ type ChangeUserStatusReq struct {
 	Status int64 `json:"status"` // 1启用 0禁用
 }
 
+type CreateUserReq struct {
+	TenantId       int64  `json:"tenantId"`
+	Username       string `json:"username"`
+	Nickname       string `json:"nickname,optional"`
+	Avatar         string `json:"avatar,optional"`
+	Phone          string `json:"phone,optional"`
+	Email          string `json:"email,optional"`
+	Password       string `json:"password"`
+	RegisterType   int64  `json:"registerType"`
+	Status         int64  `json:"status"`
+	MemberLevel    int32  `json:"memberLevel,optional"`
+	Language       string `json:"language,optional"`
+	Timezone       string `json:"timezone,optional"`
+	InviteCode     string `json:"inviteCode,optional"`
+	Signature      string `json:"signature,optional"`
+	Source         string `json:"source,optional"`
+	ReferrerUserId int64  `json:"referrerUserId,optional"`
+	Remark         string `json:"remark,optional"`
+}
+
+type CreateUserResp struct {
+	RespBase
+	UserId int64 `json:"userId"`
+}
+
+type DeleteUserBankReq struct {
+	TenantId int64 `form:"tenantId"`
+	Id       int64 `path:"id"`
+}
+
+type DeleteUserReq struct {
+	TenantId int64 `form:"tenantId"`
+	UserId   int64 `path:"userId"`
+}
+
 type GetSystemCore struct {
 	SiteName string `json:"siteName"`
 	SiteLogo string `json:"siteLogo"`
@@ -26,6 +79,36 @@ type GetSystemCore struct {
 type GetSystemCoreResp struct {
 	RespBase
 	Data GetSystemCore `json:"data"`
+}
+
+type GetUserBankReq struct {
+	TenantId int64 `form:"tenantId"`
+	Id       int64 `path:"id"`
+}
+
+type GetUserBankResp struct {
+	RespBase
+	Bank UserBank `json:"bank"`
+}
+
+type GetUserDetailReq struct {
+	TenantId int64 `form:"tenantId"`
+	UserId   int64 `path:"userId"`
+}
+
+type GetUserDetailResp struct {
+	RespBase
+	Detail UserDetail `json:"detail"`
+}
+
+type GetUserSecurityReq struct {
+	TenantId int64 `form:"tenantId"`
+	UserId   int64 `path:"userId"`
+}
+
+type GetUserSecurityResp struct {
+	RespBase
+	Security UserSecurity `json:"security"`
 }
 
 type Google2FABindReq struct {
@@ -61,6 +144,64 @@ type Google2FAInitResp struct {
 
 type Google2FAResetReq struct {
 	UserId int64 `json:"userId"`
+}
+
+type ListUserBanksReq struct {
+	PageReq
+	TenantId int64  `form:"tenantId,optional"`
+	UserId   int64  `form:"userId,optional"`
+	Keyword  string `form:"keyword,optional"`
+	Status   int64  `form:"status,optional"`
+}
+
+type ListUserBanksResp struct {
+	RespBase
+	Data []UserBankItem `json:"data"`
+}
+
+type ListUserIdentitiesReq struct {
+	PageReq
+	TenantId     int64  `form:"tenantId,optional"`
+	TenantCode   string `form:"tenantCode,optional"`
+	Keyword      string `form:"keyword,optional"`
+	UserId       int64  `form:"userId,optional"`
+	UserNo       string `form:"userNo,optional"`
+	Username     string `form:"username,optional"`
+	Phone        string `form:"phone,optional"`
+	Email        string `form:"email,optional"`
+	RealName     string `form:"realName,optional"`
+	VerifyStatus int64  `form:"verifyStatus,optional"`
+	KycLevel     int64  `form:"kycLevel,optional"`
+	IdType       int64  `form:"idType,optional"`
+}
+
+type ListUserIdentitiesResp struct {
+	RespBase
+	Data []UserIdentityItem `json:"data"`
+}
+
+type ListUsersReq struct {
+	PageReq
+	TenantId          int64  `form:"tenantId,optional"`
+	TenantCode        string `form:"tenantCode,optional"`
+	Keyword           string `form:"keyword,optional"`
+	UserId            int64  `form:"userId,optional"`
+	UserNo            string `form:"userNo,optional"`
+	Username          string `form:"username,optional"`
+	Phone             string `form:"phone,optional"`
+	Email             string `form:"email,optional"`
+	Status            int64  `form:"status,optional"`
+	MemberLevel       int32  `form:"memberLevel,optional"`
+	VerifyStatus      int64  `form:"verifyStatus,optional"`
+	KycLevel          int64  `form:"kycLevel,optional"`
+	InviteCode        string `form:"inviteCode,optional"`
+	RegisterTimeStart int64  `form:"registerTimeStart,optional"`
+	RegisterTimeEnd   int64  `form:"registerTimeEnd,optional"`
+}
+
+type ListUsersResp struct {
+	RespBase
+	Data []UserItem `json:"data"`
 }
 
 type LoginLogItem struct {
@@ -184,6 +325,23 @@ type ProfileUser struct {
 	Avatar   string `json:"avatar,optional"`
 }
 
+type ResetLoginPasswordReq struct {
+	TenantId    int64  `json:"tenantId"`
+	UserId      int64  `path:"userId"`
+	NewPassword string `json:"newPassword"`
+}
+
+type ResetPayPasswordReq struct {
+	TenantId       int64  `json:"tenantId"`
+	UserId         int64  `path:"userId"`
+	NewPayPassword string `json:"newPayPassword"`
+}
+
+type ResetUserGoogle2FAReq struct {
+	TenantId int64 `json:"tenantId"`
+	UserId   int64 `path:"userId"`
+}
+
 type ResetUserPwdReq struct {
 	Id       int64  `json:"id"`
 	Password string `json:"password"`
@@ -197,6 +355,25 @@ type RespBase struct {
 	HasPrev    bool   `json:"hasPrev,optional"`
 	NextCursor int64  `json:"nextCursor,optional"`
 	PrevCursor int64  `json:"prevCursor,optional"`
+}
+
+type ReviewUserIdentityReq struct {
+	TenantId     int64  `json:"tenantId"`
+	UserId       int64  `path:"userId"`
+	VerifyStatus int64  `json:"verifyStatus"`
+	RejectReason string `json:"rejectReason,optional"`
+	VerifyBy     int64  `json:"verifyBy"`
+}
+
+type ReviewUserIdentityResp struct {
+	RespBase
+	Identity UserIdentity `json:"identity"`
+}
+
+type SetDefaultUserBankReq struct {
+	TenantId int64 `json:"tenantId"`
+	Id       int64 `path:"id"`
+	UserId   int64 `json:"userId"`
 }
 
 type SysConfigCreateReq struct {
@@ -570,10 +747,90 @@ type SysUserUpdateReq struct {
 	RoleIds  []int64 `json:"roleIds,optional"`
 }
 
+type TenantJsonScope struct {
+	TenantId   int64  `json:"tenantId"`
+	TenantCode string `json:"tenantCode,optional"`
+}
+
+type TenantScope struct {
+	TenantId   int64  `form:"tenantId,optional"`
+	TenantCode string `form:"tenantCode,optional"`
+}
+
+type UnlockUserReq struct {
+	TenantId int64 `json:"tenantId"`
+	UserId   int64 `path:"userId"`
+}
+
 type UpdateProfileReq struct {
 	Nickname string `json:"nickname,optional"`
 	Avatar   string `json:"avatar,optional"`
 	Password string `json:"password,optional"`
+}
+
+type UpdateRiskLevelReq struct {
+	TenantId  int64 `json:"tenantId"`
+	UserId    int64 `path:"userId"`
+	RiskLevel int64 `json:"riskLevel"`
+}
+
+type UpdateUserBankReq struct {
+	TenantId    int64  `json:"tenantId"`
+	Id          int64  `path:"id"`
+	UserId      int64  `json:"userId"`
+	BankName    string `json:"bankName"`
+	BankCode    string `json:"bankCode,optional"`
+	AccountName string `json:"accountName"`
+	AccountNo   string `json:"accountNo"`
+	BranchName  string `json:"branchName,optional"`
+	CountryCode string `json:"countryCode,optional"`
+	IsDefault   bool   `json:"isDefault"`
+	Status      int64  `json:"status"`
+}
+
+type UpdateUserBankResp struct {
+	RespBase
+	Bank UserBank `json:"bank"`
+}
+
+type UpdateUserBankStatusReq struct {
+	TenantId int64 `json:"tenantId"`
+	Id       int64 `path:"id"`
+	Status   int64 `json:"status"`
+}
+
+type UpdateUserBaseReq struct {
+	TenantId       int64  `json:"tenantId"`
+	UserId         int64  `path:"userId"`
+	Username       string `json:"username,optional"`
+	Nickname       string `json:"nickname,optional"`
+	Avatar         string `json:"avatar,optional"`
+	Language       string `json:"language,optional"`
+	Timezone       string `json:"timezone,optional"`
+	Signature      string `json:"signature,optional"`
+	Source         string `json:"source,optional"`
+	ReferrerUserId int64  `json:"referrerUserId,optional"`
+	Remark         string `json:"remark,optional"`
+	Phone          string `json:"phone,optional"`
+	Email          string `json:"email,optional"`
+}
+
+type UpdateUserBaseResp struct {
+	RespBase
+	Detail UserDetail `json:"detail"`
+}
+
+type UpdateUserLevelReq struct {
+	TenantId    int64 `json:"tenantId"`
+	UserId      int64 `path:"userId"`
+	MemberLevel int32 `json:"memberLevel"`
+}
+
+type UpdateUserStatusReq struct {
+	TenantId int64  `json:"tenantId"`
+	UserId   int64  `path:"userId"`
+	Status   int64  `json:"status"`
+	Remark   string `json:"remark,optional"`
 }
 
 type UploadFileReq struct {
@@ -586,21 +843,147 @@ type UploadFileResp struct {
 	} `json:"data"`
 }
 
+type UserBank struct {
+	Id              int64  `json:"id"`
+	TenantId        int64  `json:"tenantId"`
+	UserId          int64  `json:"userId"`
+	BankName        string `json:"bankName"`
+	BankCode        string `json:"bankCode,optional"`
+	AccountName     string `json:"accountName"`
+	AccountNo       string `json:"accountNo"`
+	MaskedAccountNo string `json:"maskedAccountNo,optional"`
+	BranchName      string `json:"branchName,optional"`
+	CountryCode     string `json:"countryCode,optional"`
+	IsDefault       bool   `json:"isDefault"`
+	Status          int64  `json:"status"`
+	CreateTime      int64  `json:"createTime,optional"`
+	UpdateTime      int64  `json:"updateTime,optional"`
+}
+
+type UserBankItem struct {
+	Id              int64  `json:"id"`
+	UserId          int64  `json:"userId"`
+	UserNo          string `json:"userNo"`
+	Username        string `json:"username"`
+	BankName        string `json:"bankName"`
+	BankCode        string `json:"bankCode,optional"`
+	AccountName     string `json:"accountName"`
+	AccountNo       string `json:"accountNo"`
+	MaskedAccountNo string `json:"maskedAccountNo,optional"`
+	BranchName      string `json:"branchName,optional"`
+	CountryCode     string `json:"countryCode,optional"`
+	IsDefault       bool   `json:"isDefault"`
+	Status          int64  `json:"status"`
+	CreateTime      int64  `json:"createTime,optional"`
+}
+
+type UserBase struct {
+	Id             int64  `json:"id"`
+	TenantId       int64  `json:"tenantId"`
+	UserNo         string `json:"userNo"`
+	Username       string `json:"username"`
+	Nickname       string `json:"nickname,optional"`
+	Avatar         string `json:"avatar,optional"`
+	Language       string `json:"language,optional"`
+	Timezone       string `json:"timezone,optional"`
+	InviteCode     string `json:"inviteCode,optional"`
+	Signature      string `json:"signature,optional"`
+	RegisterType   int64  `json:"registerType"`
+	Status         int64  `json:"status"`
+	MemberLevel    int32  `json:"memberLevel"`
+	Source         string `json:"source,optional"`
+	ReferrerUserId int64  `json:"referrerUserId,optional"`
+	LastLoginIp    string `json:"lastLoginIp,optional"`
+	LastLoginTime  int64  `json:"lastLoginTime,optional"`
+	RegisterIp     string `json:"registerIp,optional"`
+	RegisterTime   int64  `json:"registerTime,optional"`
+	Remark         string `json:"remark,optional"`
+	Deleted        bool   `json:"deleted"`
+	CreateTime     int64  `json:"createTime,optional"`
+	UpdateTime     int64  `json:"updateTime,optional"`
+}
+
+type UserDetail struct {
+	Base     UserBase     `json:"base"`
+	Identity UserIdentity `json:"identity"`
+	Security UserSecurity `json:"security"`
+	Banks    []UserBank   `json:"banks"`
+}
+
+type UserIdentity struct {
+	Id            int64  `json:"id"`
+	TenantId      int64  `json:"tenantId"`
+	UserId        int64  `json:"userId"`
+	Phone         string `json:"phone,optional"`
+	Email         string `json:"email,optional"`
+	RealName      string `json:"realName,optional"`
+	Gender        int64  `json:"gender,optional"`
+	Birthday      string `json:"birthday,optional"`
+	CountryCode   string `json:"countryCode,optional"`
+	Province      string `json:"province,optional"`
+	City          string `json:"city,optional"`
+	Address       string `json:"address,optional"`
+	IdType        int64  `json:"idType,optional"`
+	IdNo          string `json:"idNo,optional"`
+	FrontImage    string `json:"frontImage,optional"`
+	BackImage     string `json:"backImage,optional"`
+	HandheldImage string `json:"handheldImage,optional"`
+	KycLevel      int64  `json:"kycLevel,optional"`
+	VerifyStatus  int64  `json:"verifyStatus,optional"`
+	RejectReason  string `json:"rejectReason,optional"`
+	SubmitTime    int64  `json:"submitTime,optional"`
+	VerifyTime    int64  `json:"verifyTime,optional"`
+	VerifyBy      int64  `json:"verifyBy,optional"`
+	CreateTime    int64  `json:"createTime,optional"`
+	UpdateTime    int64  `json:"updateTime,optional"`
+}
+
+type UserIdentityItem struct {
+	UserId       int64  `json:"userId"`
+	UserNo       string `json:"userNo"`
+	Username     string `json:"username"`
+	Phone        string `json:"phone,optional"`
+	Email        string `json:"email,optional"`
+	RealName     string `json:"realName,optional"`
+	IdType       int64  `json:"idType,optional"`
+	IdNo         string `json:"idNo,optional"`
+	KycLevel     int64  `json:"kycLevel,optional"`
+	VerifyStatus int64  `json:"verifyStatus,optional"`
+	RejectReason string `json:"rejectReason,optional"`
+	SubmitTime   int64  `json:"submitTime,optional"`
+	VerifyTime   int64  `json:"verifyTime,optional"`
+	VerifyBy     int64  `json:"verifyBy,optional"`
+}
+
 type UserItem struct {
-	Id        int64  `json:"id"`
-	Username  string `json:"username"`
-	Nickname  string `json:"nickname"`
-	Status    int64  `json:"status"`
-	CreatedAt int64  `json:"createdAt"`
+	UserId        int64  `json:"userId"`
+	UserNo        string `json:"userNo"`
+	Username      string `json:"username"`
+	Nickname      string `json:"nickname,optional"`
+	Avatar        string `json:"avatar,optional"`
+	Phone         string `json:"phone,optional"`
+	Email         string `json:"email,optional"`
+	RealName      string `json:"realName,optional"`
+	Status        int64  `json:"status"`
+	MemberLevel   int32  `json:"memberLevel"`
+	KycLevel      int64  `json:"kycLevel,optional"`
+	VerifyStatus  int64  `json:"verifyStatus,optional"`
+	InviteCode    string `json:"inviteCode,optional"`
+	LastLoginIp   string `json:"lastLoginIp,optional"`
+	LastLoginTime int64  `json:"lastLoginTime,optional"`
+	RegisterTime  int64  `json:"registerTime,optional"`
 }
 
-type UserListReq struct {
-	PageReq
-	Keyword string `form:"keyword,optional"`
-	Status  int64  `form:"status,optional"`
-}
-
-type UserListResp struct {
-	RespBase
-	Data []UserItem `json:"data"`
+type UserSecurity struct {
+	Id              int64 `json:"id"`
+	TenantId        int64 `json:"tenantId"`
+	UserId          int64 `json:"userId"`
+	HasPayPassword  bool  `json:"hasPayPassword"`
+	GoogleEnabled   bool  `json:"googleEnabled"`
+	LoginErrorCount int32 `json:"loginErrorCount"`
+	PayErrorCount   int32 `json:"payErrorCount"`
+	LockUntil       int64 `json:"lockUntil,optional"`
+	RiskLevel       int64 `json:"riskLevel"`
+	CreateTime      int64 `json:"createTime,optional"`
+	UpdateTime      int64 `json:"updateTime,optional"`
 }

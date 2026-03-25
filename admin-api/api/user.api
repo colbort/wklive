@@ -1,29 +1,474 @@
-// ===== user =====
-type UserListReq {
-  PageReq
-  keyword string `form:"keyword,optional"`
-  status  int64  `form:"status,optional"`
+type TenantScope {
+  tenantId   int64  `form:"tenantId,optional"`
+  tenantCode string `form:"tenantCode,optional"`
+}
+
+type TenantJsonScope {
+  tenantId   int64  `json:"tenantId"`
+  tenantCode string `json:"tenantCode,optional"`
+}
+
+type UserBase {
+  id             int64  `json:"id"`
+  tenantId       int64  `json:"tenantId"`
+  userNo         string `json:"userNo"`
+  username       string `json:"username"`
+  nickname       string `json:"nickname,optional"`
+  avatar         string `json:"avatar,optional"`
+  language       string `json:"language,optional"`
+  timezone       string `json:"timezone,optional"`
+  inviteCode     string `json:"inviteCode,optional"`
+  signature      string `json:"signature,optional"`
+  registerType   int64  `json:"registerType"`
+  status         int64  `json:"status"`
+  memberLevel    int32  `json:"memberLevel"`
+  source         string `json:"source,optional"`
+  referrerUserId int64  `json:"referrerUserId,optional"`
+  lastLoginIp    string `json:"lastLoginIp,optional"`
+  lastLoginTime  int64  `json:"lastLoginTime,optional"`
+  registerIp     string `json:"registerIp,optional"`
+  registerTime   int64  `json:"registerTime,optional"`
+  remark         string `json:"remark,optional"`
+  deleted        bool   `json:"deleted"`
+  createTime     int64  `json:"createTime,optional"`
+  updateTime     int64  `json:"updateTime,optional"`
+}
+
+type UserIdentity {
+  id           int64  `json:"id"`
+  tenantId     int64  `json:"tenantId"`
+  userId       int64  `json:"userId"`
+  phone        string `json:"phone,optional"`
+  email        string `json:"email,optional"`
+  realName     string `json:"realName,optional"`
+  gender       int64  `json:"gender,optional"`
+  birthday     string `json:"birthday,optional"`
+  countryCode  string `json:"countryCode,optional"`
+  province     string `json:"province,optional"`
+  city         string `json:"city,optional"`
+  address      string `json:"address,optional"`
+  idType       int64  `json:"idType,optional"`
+  idNo         string `json:"idNo,optional"`
+  frontImage   string `json:"frontImage,optional"`
+  backImage    string `json:"backImage,optional"`
+  handheldImage string `json:"handheldImage,optional"`
+  kycLevel     int64  `json:"kycLevel,optional"`
+  verifyStatus int64  `json:"verifyStatus,optional"`
+  rejectReason string `json:"rejectReason,optional"`
+  submitTime   int64  `json:"submitTime,optional"`
+  verifyTime   int64  `json:"verifyTime,optional"`
+  verifyBy     int64  `json:"verifyBy,optional"`
+  createTime   int64  `json:"createTime,optional"`
+  updateTime   int64  `json:"updateTime,optional"`
+}
+
+type UserSecurity {
+  id              int64 `json:"id"`
+  tenantId        int64 `json:"tenantId"`
+  userId          int64 `json:"userId"`
+  hasPayPassword  bool  `json:"hasPayPassword"`
+  googleEnabled   bool  `json:"googleEnabled"`
+  loginErrorCount int32 `json:"loginErrorCount"`
+  payErrorCount   int32 `json:"payErrorCount"`
+  lockUntil       int64 `json:"lockUntil,optional"`
+  riskLevel       int64 `json:"riskLevel"`
+  createTime      int64 `json:"createTime,optional"`
+  updateTime      int64 `json:"updateTime,optional"`
+}
+
+type UserBank {
+  id              int64  `json:"id"`
+  tenantId        int64  `json:"tenantId"`
+  userId          int64  `json:"userId"`
+  bankName        string `json:"bankName"`
+  bankCode        string `json:"bankCode,optional"`
+  accountName     string `json:"accountName"`
+  accountNo       string `json:"accountNo"`
+  maskedAccountNo string `json:"maskedAccountNo,optional"`
+  branchName      string `json:"branchName,optional"`
+  countryCode     string `json:"countryCode,optional"`
+  isDefault       bool   `json:"isDefault"`
+  status          int64  `json:"status"`
+  createTime      int64  `json:"createTime,optional"`
+  updateTime      int64  `json:"updateTime,optional"`
+}
+
+type UserDetail {
+  base     UserBase     `json:"base"`
+  identity UserIdentity `json:"identity"`
+  security UserSecurity `json:"security"`
+  banks    []UserBank   `json:"banks"`
 }
 
 type UserItem {
-  id        int64  `json:"id"`
-  username  string `json:"username"`
-  nickname  string `json:"nickname"`
-  status    int64  `json:"status"`
-  createdAt int64  `json:"createdAt"`
+  userId        int64  `json:"userId"`
+  userNo        string `json:"userNo"`
+  username      string `json:"username"`
+  nickname      string `json:"nickname,optional"`
+  avatar        string `json:"avatar,optional"`
+  phone         string `json:"phone,optional"`
+  email         string `json:"email,optional"`
+  realName      string `json:"realName,optional"`
+  status        int64  `json:"status"`
+  memberLevel   int32  `json:"memberLevel"`
+  kycLevel      int64  `json:"kycLevel,optional"`
+  verifyStatus  int64  `json:"verifyStatus,optional"`
+  inviteCode    string `json:"inviteCode,optional"`
+  lastLoginIp   string `json:"lastLoginIp,optional"`
+  lastLoginTime int64  `json:"lastLoginTime,optional"`
+  registerTime  int64  `json:"registerTime,optional"`
 }
 
-type UserListResp {
+type UserIdentityItem {
+  userId       int64  `json:"userId"`
+  userNo       string `json:"userNo"`
+  username     string `json:"username"`
+  phone        string `json:"phone,optional"`
+  email        string `json:"email,optional"`
+  realName     string `json:"realName,optional"`
+  idType       int64  `json:"idType,optional"`
+  idNo         string `json:"idNo,optional"`
+  kycLevel     int64  `json:"kycLevel,optional"`
+  verifyStatus int64  `json:"verifyStatus,optional"`
+  rejectReason string `json:"rejectReason,optional"`
+  submitTime   int64  `json:"submitTime,optional"`
+  verifyTime   int64  `json:"verifyTime,optional"`
+  verifyBy     int64  `json:"verifyBy,optional"`
+}
+
+type UserBankItem {
+  id              int64  `json:"id"`
+  userId          int64  `json:"userId"`
+  userNo          string `json:"userNo"`
+  username        string `json:"username"`
+  bankName        string `json:"bankName"`
+  bankCode        string `json:"bankCode,optional"`
+  accountName     string `json:"accountName"`
+  accountNo       string `json:"accountNo"`
+  maskedAccountNo string `json:"maskedAccountNo,optional"`
+  branchName      string `json:"branchName,optional"`
+  countryCode     string `json:"countryCode,optional"`
+  isDefault       bool   `json:"isDefault"`
+  status          int64  `json:"status"`
+  createTime      int64  `json:"createTime,optional"`
+}
+
+type CreateUserReq {
+  tenantId       int64  `json:"tenantId"`
+  username       string `json:"username"`
+  nickname       string `json:"nickname,optional"`
+  avatar         string `json:"avatar,optional"`
+  phone          string `json:"phone,optional"`
+  email          string `json:"email,optional"`
+  password       string `json:"password"`
+  registerType   int64  `json:"registerType"`
+  status         int64  `json:"status"`
+  memberLevel    int32  `json:"memberLevel,optional"`
+  language       string `json:"language,optional"`
+  timezone       string `json:"timezone,optional"`
+  inviteCode     string `json:"inviteCode,optional"`
+  signature      string `json:"signature,optional"`
+  source         string `json:"source,optional"`
+  referrerUserId int64  `json:"referrerUserId,optional"`
+  remark         string `json:"remark,optional"`
+}
+
+type CreateUserResp {
   RespBase
-  data  []UserItem `json:"data"`
+  userId int64 `json:"userId"`
 }
 
-@server(
-  prefix: /business
-  group: user
-  jwt: Jwt
+type GetUserDetailReq {
+  tenantId int64 `form:"tenantId"`
+  userId   int64 `path:"userId"`
+}
+
+type GetUserDetailResp {
+  RespBase
+  detail UserDetail `json:"detail"`
+}
+
+type ListUsersReq {
+  PageReq
+  tenantId          int64  `form:"tenantId,optional"`
+  tenantCode        string `form:"tenantCode,optional"`
+  keyword           string `form:"keyword,optional"`
+  userId            int64  `form:"userId,optional"`
+  userNo            string `form:"userNo,optional"`
+  username          string `form:"username,optional"`
+  phone             string `form:"phone,optional"`
+  email             string `form:"email,optional"`
+  status            int64  `form:"status,optional"`
+  memberLevel       int32  `form:"memberLevel,optional"`
+  verifyStatus      int64  `form:"verifyStatus,optional"`
+  kycLevel          int64  `form:"kycLevel,optional"`
+  inviteCode        string `form:"inviteCode,optional"`
+  registerTimeStart int64  `form:"registerTimeStart,optional"`
+  registerTimeEnd   int64  `form:"registerTimeEnd,optional"`
+}
+
+type ListUsersResp {
+  RespBase
+  data []UserItem `json:"data"`
+}
+
+type UpdateUserBaseReq {
+  tenantId       int64  `json:"tenantId"`
+  userId         int64  `path:"userId"`
+  username       string `json:"username,optional"`
+  nickname       string `json:"nickname,optional"`
+  avatar         string `json:"avatar,optional"`
+  language       string `json:"language,optional"`
+  timezone       string `json:"timezone,optional"`
+  signature      string `json:"signature,optional"`
+  source         string `json:"source,optional"`
+  referrerUserId int64  `json:"referrerUserId,optional"`
+  remark         string `json:"remark,optional"`
+  phone          string `json:"phone,optional"`
+  email          string `json:"email,optional"`
+}
+
+type UpdateUserBaseResp {
+  RespBase
+  detail UserDetail `json:"detail"`
+}
+
+type UpdateUserStatusReq {
+  tenantId int64  `json:"tenantId"`
+  userId   int64  `path:"userId"`
+  status   int64  `json:"status"`
+  remark   string `json:"remark,optional"`
+}
+
+type UpdateUserLevelReq {
+  tenantId    int64 `json:"tenantId"`
+  userId      int64 `path:"userId"`
+  memberLevel int32 `json:"memberLevel"`
+}
+
+type ResetLoginPasswordReq {
+  tenantId    int64  `json:"tenantId"`
+  userId      int64  `path:"userId"`
+  newPassword string `json:"newPassword"`
+}
+
+type ResetPayPasswordReq {
+  tenantId       int64  `json:"tenantId"`
+  userId         int64  `path:"userId"`
+  newPayPassword string `json:"newPayPassword"`
+}
+
+type UnlockUserReq {
+  tenantId int64 `json:"tenantId"`
+  userId   int64 `path:"userId"`
+}
+
+type UpdateRiskLevelReq {
+  tenantId  int64 `json:"tenantId"`
+  userId    int64 `path:"userId"`
+  riskLevel int64 `json:"riskLevel"`
+}
+
+type DeleteUserReq {
+  tenantId int64 `form:"tenantId"`
+  userId   int64 `path:"userId"`
+}
+
+type GetUserSecurityReq {
+  tenantId int64 `form:"tenantId"`
+  userId   int64 `path:"userId"`
+}
+
+type GetUserSecurityResp {
+  RespBase
+  security UserSecurity `json:"security"`
+}
+
+type ResetUserGoogle2FAReq {
+  tenantId int64 `json:"tenantId"`
+  userId   int64 `path:"userId"`
+}
+
+type ListUserIdentitiesReq {
+  PageReq
+  tenantId     int64  `form:"tenantId,optional"`
+  tenantCode   string `form:"tenantCode,optional"`
+  keyword      string `form:"keyword,optional"`
+  userId       int64  `form:"userId,optional"`
+  userNo       string `form:"userNo,optional"`
+  username     string `form:"username,optional"`
+  phone        string `form:"phone,optional"`
+  email        string `form:"email,optional"`
+  realName     string `form:"realName,optional"`
+  verifyStatus int64  `form:"verifyStatus,optional"`
+  kycLevel     int64  `form:"kycLevel,optional"`
+  idType       int64  `form:"idType,optional"`
+}
+
+type ListUserIdentitiesResp {
+  RespBase
+  data []UserIdentityItem `json:"data"`
+}
+
+type ReviewUserIdentityReq {
+  tenantId     int64  `json:"tenantId"`
+  userId       int64  `path:"userId"`
+  verifyStatus int64  `json:"verifyStatus"`
+  rejectReason string `json:"rejectReason,optional"`
+  verifyBy     int64  `json:"verifyBy"`
+}
+
+type ReviewUserIdentityResp {
+  RespBase
+  identity UserIdentity `json:"identity"`
+}
+
+type ListUserBanksReq {
+  PageReq
+  tenantId int64  `form:"tenantId,optional"`
+  userId   int64  `form:"userId,optional"`
+  keyword  string `form:"keyword,optional"`
+  status   int64  `form:"status,optional"`
+}
+
+type ListUserBanksResp {
+  RespBase
+  data []UserBankItem `json:"data"`
+}
+
+type GetUserBankReq {
+  tenantId int64 `form:"tenantId"`
+  id       int64 `path:"id"`
+}
+
+type GetUserBankResp {
+  RespBase
+  bank UserBank `json:"bank"`
+}
+
+type AddUserBankReq {
+  tenantId    int64  `json:"tenantId"`
+  userId      int64  `json:"userId"`
+  bankName    string `json:"bankName"`
+  bankCode    string `json:"bankCode,optional"`
+  accountName string `json:"accountName"`
+  accountNo   string `json:"accountNo"`
+  branchName  string `json:"branchName,optional"`
+  countryCode string `json:"countryCode,optional"`
+  isDefault   bool   `json:"isDefault"`
+  status      int64  `json:"status"`
+}
+
+type AddUserBankResp {
+  RespBase
+  bank UserBank `json:"bank"`
+}
+
+type UpdateUserBankReq {
+  tenantId    int64  `json:"tenantId"`
+  id          int64  `path:"id"`
+  userId      int64  `json:"userId"`
+  bankName    string `json:"bankName"`
+  bankCode    string `json:"bankCode,optional"`
+  accountName string `json:"accountName"`
+  accountNo   string `json:"accountNo"`
+  branchName  string `json:"branchName,optional"`
+  countryCode string `json:"countryCode,optional"`
+  isDefault   bool   `json:"isDefault"`
+  status      int64  `json:"status"`
+}
+
+type UpdateUserBankResp {
+  RespBase
+  bank UserBank `json:"bank"`
+}
+
+type DeleteUserBankReq {
+  tenantId int64 `form:"tenantId"`
+  id       int64 `path:"id"`
+}
+
+type UpdateUserBankStatusReq {
+  tenantId int64 `json:"tenantId"`
+  id       int64 `path:"id"`
+  status   int64 `json:"status"`
+}
+
+type SetDefaultUserBankReq {
+  tenantId int64 `json:"tenantId"`
+  id       int64 `path:"id"`
+  userId   int64 `json:"userId"`
+}
+
+@server( 
+  prefix: /admin 
+  group: user 
+  jwt: Jwt 
 )
 service admin {
+  @handler CreateUser
+  post /users (CreateUserReq) returns (CreateUserResp)
+
+  @handler GetUserDetail
+  get /users/:userId (GetUserDetailReq) returns (GetUserDetailResp)
+
   @handler ListUsers
-  get /users (UserListReq) returns (UserListResp)
+  get /users (ListUsersReq) returns (ListUsersResp)
+
+  @handler UpdateUserBase
+  put /users/:userId/base (UpdateUserBaseReq) returns (UpdateUserBaseResp)
+
+  @handler UpdateUserStatus
+  put /users/:userId/status (UpdateUserStatusReq) returns (RespBase)
+
+  @handler UpdateUserLevel
+  put /users/:userId/level (UpdateUserLevelReq) returns (RespBase)
+
+  @handler ResetLoginPassword
+  put /users/:userId/reset-login-password (ResetLoginPasswordReq) returns (RespBase)
+
+  @handler ResetPayPassword
+  put /users/:userId/reset-pay-password (ResetPayPasswordReq) returns (RespBase)
+
+  @handler UnlockUser
+  put /users/:userId/unlock (UnlockUserReq) returns (RespBase)
+
+  @handler UpdateRiskLevel
+  put /users/:userId/risk-level (UpdateRiskLevelReq) returns (RespBase)
+
+  @handler DeleteUser
+  delete /users/:userId (DeleteUserReq) returns (RespBase)
+
+  @handler GetUserSecurity
+  get /users/:userId/security (GetUserSecurityReq) returns (GetUserSecurityResp)
+
+  @handler ResetUserGoogle2FA
+  put /users/:userId/reset2fa (ResetUserGoogle2FAReq) returns (RespBase)
+
+  @handler ListUserIdentities
+  get /user-identities (ListUserIdentitiesReq) returns (ListUserIdentitiesResp)
+
+  @handler ReviewUserIdentity
+  put /user-identities/:userId/review (ReviewUserIdentityReq) returns (ReviewUserIdentityResp)
+
+  @handler ListUserBanks
+  get /user-banks (ListUserBanksReq) returns (ListUserBanksResp)
+
+  @handler GetUserBank
+  get /user-banks/:id (GetUserBankReq) returns (GetUserBankResp)
+
+  @handler AddUserBank
+  post /user-banks (AddUserBankReq) returns (AddUserBankResp)
+
+  @handler UpdateUserBank
+  put /user-banks/:id (UpdateUserBankReq) returns (UpdateUserBankResp)
+
+  @handler DeleteUserBank
+  delete /user-banks/:id (DeleteUserBankReq) returns (RespBase)
+
+  @handler UpdateUserBankStatus
+  put /user-banks/:id/status (UpdateUserBankStatusReq) returns (RespBase)
+
+  @handler SetDefaultUserBank
+  put /user-banks/:id/default (SetDefaultUserBankReq) returns (RespBase)
 }

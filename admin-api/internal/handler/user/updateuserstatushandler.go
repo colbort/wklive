@@ -12,16 +12,16 @@ import (
 	"wklive/admin-api/internal/types"
 )
 
-func ListUsersHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func UpdateUserStatusHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.ListUsersReq
+		var req types.UpdateUserStatusReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
 
-		l := user.NewListUsersLogic(r.Context(), svcCtx)
-		resp, err := l.ListUsers(&req)
+		l := user.NewUpdateUserStatusLogic(r.Context(), svcCtx)
+		resp, err := l.UpdateUserStatus(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

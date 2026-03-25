@@ -12,16 +12,16 @@ import (
 	"wklive/admin-api/internal/types"
 )
 
-func ListUsersHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func DeleteUserBankHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.ListUsersReq
+		var req types.DeleteUserBankReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
 
-		l := user.NewListUsersLogic(r.Context(), svcCtx)
-		resp, err := l.ListUsers(&req)
+		l := user.NewDeleteUserBankLogic(r.Context(), svcCtx)
+		resp, err := l.DeleteUserBank(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

@@ -12,16 +12,16 @@ import (
 	"wklive/admin-api/internal/types"
 )
 
-func ListUsersHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func GetUserDetailHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.ListUsersReq
+		var req types.GetUserDetailReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
 
-		l := user.NewListUsersLogic(r.Context(), svcCtx)
-		resp, err := l.ListUsers(&req)
+		l := user.NewGetUserDetailLogic(r.Context(), svcCtx)
+		resp, err := l.GetUserDetail(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

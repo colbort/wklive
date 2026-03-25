@@ -12,16 +12,16 @@ import (
 	"wklive/admin-api/internal/types"
 )
 
-func ListUsersHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func SetDefaultUserBankHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.ListUsersReq
+		var req types.SetDefaultUserBankReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
 
-		l := user.NewListUsersLogic(r.Context(), svcCtx)
-		resp, err := l.ListUsers(&req)
+		l := user.NewSetDefaultUserBankLogic(r.Context(), svcCtx)
+		resp, err := l.SetDefaultUserBank(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

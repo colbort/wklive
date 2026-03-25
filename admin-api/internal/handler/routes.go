@@ -298,11 +298,116 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodGet,
+				Path:    "/user-banks",
+				Handler: user.ListUserBanksHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/user-banks",
+				Handler: user.AddUserBankHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/user-banks/:id",
+				Handler: user.GetUserBankHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/user-banks/:id",
+				Handler: user.UpdateUserBankHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodDelete,
+				Path:    "/user-banks/:id",
+				Handler: user.DeleteUserBankHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/user-banks/:id/default",
+				Handler: user.SetDefaultUserBankHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/user-banks/:id/status",
+				Handler: user.UpdateUserBankStatusHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/user-identities",
+				Handler: user.ListUserIdentitiesHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/user-identities/:userId/review",
+				Handler: user.ReviewUserIdentityHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/users",
+				Handler: user.CreateUserHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
 				Path:    "/users",
 				Handler: user.ListUsersHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/users/:userId",
+				Handler: user.GetUserDetailHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodDelete,
+				Path:    "/users/:userId",
+				Handler: user.DeleteUserHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/users/:userId/base",
+				Handler: user.UpdateUserBaseHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/users/:userId/level",
+				Handler: user.UpdateUserLevelHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/users/:userId/reset-login-password",
+				Handler: user.ResetLoginPasswordHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/users/:userId/reset-pay-password",
+				Handler: user.ResetPayPasswordHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/users/:userId/reset2fa",
+				Handler: user.ResetUserGoogle2FAHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/users/:userId/risk-level",
+				Handler: user.UpdateRiskLevelHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/users/:userId/security",
+				Handler: user.GetUserSecurityHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/users/:userId/status",
+				Handler: user.UpdateUserStatusHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/users/:userId/unlock",
+				Handler: user.UnlockUserHandler(serverCtx),
+			},
 		},
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
-		rest.WithPrefix("/business"),
+		rest.WithPrefix("/admin"),
 	)
 }
