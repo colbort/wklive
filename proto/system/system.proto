@@ -341,10 +341,10 @@ message SysCronJobItem {
 
 message SysCronJobListReq { 
   PageReq page = 1; 
-  optional string keyword = 2; 
-  optional string job_name = 3;
-  optional string job_group = 4;
-  optional int64 status = 5; 
+  string keyword = 2; 
+  string job_name = 3;
+  string job_group = 4;
+  int64 status = 5; 
 }
 message SysCronJobListResp { RespBase base = 1; repeated SysCronJobItem data = 4; }
 
@@ -395,10 +395,10 @@ message SysCronJobLogItem {
 
 message SysCronJobLogListReq { 
   PageReq page = 1; 
-  optional int64 job_id = 2; 
-  optional string job_name = 3;
-  optional string invoke_target = 4;
-  optional int64 status = 5; 
+  int64 job_id = 2; 
+  string job_name = 3;
+  string invoke_target = 4;
+  int64 status = 5; 
 } 
 
 message SysCronJobHander {

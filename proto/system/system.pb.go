@@ -4243,10 +4243,10 @@ func (x *SysCronJobItem) GetUpdateTime() int64 {
 type SysCronJobListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
-	Keyword       *string                `protobuf:"bytes,2,opt,name=keyword,proto3,oneof" json:"keyword,omitempty"`
-	JobName       *string                `protobuf:"bytes,3,opt,name=job_name,json=jobName,proto3,oneof" json:"job_name,omitempty"`
-	JobGroup      *string                `protobuf:"bytes,4,opt,name=job_group,json=jobGroup,proto3,oneof" json:"job_group,omitempty"`
-	Status        *int64                 `protobuf:"varint,5,opt,name=status,proto3,oneof" json:"status,omitempty"`
+	Keyword       string                 `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"`
+	JobName       string                 `protobuf:"bytes,3,opt,name=job_name,json=jobName,proto3" json:"job_name,omitempty"`
+	JobGroup      string                 `protobuf:"bytes,4,opt,name=job_group,json=jobGroup,proto3" json:"job_group,omitempty"`
+	Status        int64                  `protobuf:"varint,5,opt,name=status,proto3" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4289,29 +4289,29 @@ func (x *SysCronJobListReq) GetPage() *PageReq {
 }
 
 func (x *SysCronJobListReq) GetKeyword() string {
-	if x != nil && x.Keyword != nil {
-		return *x.Keyword
+	if x != nil {
+		return x.Keyword
 	}
 	return ""
 }
 
 func (x *SysCronJobListReq) GetJobName() string {
-	if x != nil && x.JobName != nil {
-		return *x.JobName
+	if x != nil {
+		return x.JobName
 	}
 	return ""
 }
 
 func (x *SysCronJobListReq) GetJobGroup() string {
-	if x != nil && x.JobGroup != nil {
-		return *x.JobGroup
+	if x != nil {
+		return x.JobGroup
 	}
 	return ""
 }
 
 func (x *SysCronJobListReq) GetStatus() int64 {
-	if x != nil && x.Status != nil {
-		return *x.Status
+	if x != nil {
+		return x.Status
 	}
 	return 0
 }
@@ -4847,10 +4847,10 @@ func (x *SysCronJobLogItem) GetCreateTime() int64 {
 type SysCronJobLogListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
-	JobId         *int64                 `protobuf:"varint,2,opt,name=job_id,json=jobId,proto3,oneof" json:"job_id,omitempty"`
-	JobName       *string                `protobuf:"bytes,3,opt,name=job_name,json=jobName,proto3,oneof" json:"job_name,omitempty"`
-	InvokeTarget  *string                `protobuf:"bytes,4,opt,name=invoke_target,json=invokeTarget,proto3,oneof" json:"invoke_target,omitempty"`
-	Status        *int64                 `protobuf:"varint,5,opt,name=status,proto3,oneof" json:"status,omitempty"`
+	JobId         int64                  `protobuf:"varint,2,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	JobName       string                 `protobuf:"bytes,3,opt,name=job_name,json=jobName,proto3" json:"job_name,omitempty"`
+	InvokeTarget  string                 `protobuf:"bytes,4,opt,name=invoke_target,json=invokeTarget,proto3" json:"invoke_target,omitempty"`
+	Status        int64                  `protobuf:"varint,5,opt,name=status,proto3" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4893,29 +4893,29 @@ func (x *SysCronJobLogListReq) GetPage() *PageReq {
 }
 
 func (x *SysCronJobLogListReq) GetJobId() int64 {
-	if x != nil && x.JobId != nil {
-		return *x.JobId
+	if x != nil {
+		return x.JobId
 	}
 	return 0
 }
 
 func (x *SysCronJobLogListReq) GetJobName() string {
-	if x != nil && x.JobName != nil {
-		return *x.JobName
+	if x != nil {
+		return x.JobName
 	}
 	return ""
 }
 
 func (x *SysCronJobLogListReq) GetInvokeTarget() string {
-	if x != nil && x.InvokeTarget != nil {
-		return *x.InvokeTarget
+	if x != nil {
+		return x.InvokeTarget
 	}
 	return ""
 }
 
 func (x *SysCronJobLogListReq) GetStatus() int64 {
-	if x != nil && x.Status != nil {
-		return *x.Status
+	if x != nil {
+		return x.Status
 	}
 	return 0
 }
@@ -5405,19 +5405,13 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\tupdate_by\x18\n" +
 	" \x01(\tR\bupdateBy\x12\x1f\n" +
 	"\vupdate_time\x18\v \x01(\x03R\n" +
-	"updateTime\"\xe8\x01\n" +
+	"updateTime\"\xa2\x01\n" +
 	"\x11SysCronJobListReq\x12#\n" +
-	"\x04page\x18\x01 \x01(\v2\x0f.system.PageReqR\x04page\x12\x1d\n" +
-	"\akeyword\x18\x02 \x01(\tH\x00R\akeyword\x88\x01\x01\x12\x1e\n" +
-	"\bjob_name\x18\x03 \x01(\tH\x01R\ajobName\x88\x01\x01\x12 \n" +
-	"\tjob_group\x18\x04 \x01(\tH\x02R\bjobGroup\x88\x01\x01\x12\x1b\n" +
-	"\x06status\x18\x05 \x01(\x03H\x03R\x06status\x88\x01\x01B\n" +
-	"\n" +
-	"\b_keywordB\v\n" +
-	"\t_job_nameB\f\n" +
-	"\n" +
-	"_job_groupB\t\n" +
-	"\a_status\"f\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.system.PageReqR\x04page\x12\x18\n" +
+	"\akeyword\x18\x02 \x01(\tR\akeyword\x12\x19\n" +
+	"\bjob_name\x18\x03 \x01(\tR\ajobName\x12\x1b\n" +
+	"\tjob_group\x18\x04 \x01(\tR\bjobGroup\x12\x16\n" +
+	"\x06status\x18\x05 \x01(\x03R\x06status\"f\n" +
 	"\x12SysCronJobListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12*\n" +
 	"\x04data\x18\x04 \x03(\v2\x16.system.SysCronJobItemR\x04data\"\xcb\x01\n" +
@@ -5458,17 +5452,13 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\bend_time\x18\n" +
 	" \x01(\x03R\aendTime\x12\x1f\n" +
 	"\vcreate_time\x18\v \x01(\x03R\n" +
-	"createTime\"\xf3\x01\n" +
+	"createTime\"\xaa\x01\n" +
 	"\x14SysCronJobLogListReq\x12#\n" +
-	"\x04page\x18\x01 \x01(\v2\x0f.system.PageReqR\x04page\x12\x1a\n" +
-	"\x06job_id\x18\x02 \x01(\x03H\x00R\x05jobId\x88\x01\x01\x12\x1e\n" +
-	"\bjob_name\x18\x03 \x01(\tH\x01R\ajobName\x88\x01\x01\x12(\n" +
-	"\rinvoke_target\x18\x04 \x01(\tH\x02R\finvokeTarget\x88\x01\x01\x12\x1b\n" +
-	"\x06status\x18\x05 \x01(\x03H\x03R\x06status\x88\x01\x01B\t\n" +
-	"\a_job_idB\v\n" +
-	"\t_job_nameB\x10\n" +
-	"\x0e_invoke_targetB\t\n" +
-	"\a_status\"R\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.system.PageReqR\x04page\x12\x15\n" +
+	"\x06job_id\x18\x02 \x01(\x03R\x05jobId\x12\x19\n" +
+	"\bjob_name\x18\x03 \x01(\tR\ajobName\x12#\n" +
+	"\rinvoke_target\x18\x04 \x01(\tR\finvokeTarget\x12\x16\n" +
+	"\x06status\x18\x05 \x01(\x03R\x06status\"R\n" +
 	"\x10SysCronJobHander\x12#\n" +
 	"\rinvoke_target\x18\x01 \x01(\tR\finvokeTarget\x12\x19\n" +
 	"\bjob_name\x18\x02 \x01(\tR\ajobName\"l\n" +
@@ -5781,8 +5771,6 @@ func file_proto_system_system_proto_init() {
 	file_proto_system_config_proto_init()
 	file_proto_system_system_proto_msgTypes[7].OneofWrappers = []any{}
 	file_proto_system_system_proto_msgTypes[57].OneofWrappers = []any{}
-	file_proto_system_system_proto_msgTypes[65].OneofWrappers = []any{}
-	file_proto_system_system_proto_msgTypes[74].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
