@@ -109,7 +109,9 @@ onMounted(() => {
 
 <template>
   <el-card>
-    <template #header>{{ t('system.cronJobLog') }}</template>
+    <template #header>
+      {{ t('system.cronJobLog') }}
+    </template>
 
     <!-- Query Form -->
     <el-form :model="queryForm" inline style="margin-bottom: 16px">
@@ -144,13 +146,22 @@ onMounted(() => {
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" @click="onSearch">{{ t('common.search') }}</el-button>
-        <el-button @click="onReset">{{ t('common.reset') }}</el-button>
+        <el-button type="primary" @click="onSearch">
+          {{ t('common.search') }}
+        </el-button>
+        <el-button @click="onReset">
+          {{ t('common.reset') }}
+        </el-button>
       </el-form-item>
     </el-form>
 
     <!-- Table -->
-    <el-table :data="list_ref" v-loading="loading" row-key="id" style="margin-bottom: 16px">
+    <el-table
+      v-loading="loading"
+      :data="list_ref"
+      row-key="id"
+      style="margin-bottom: 16px"
+    >
       <el-table-column prop="id" :label="t('common.id')" width="70" />
       <el-table-column prop="jobId" :label="t('system.jobId')" width="80" />
       <el-table-column prop="jobName" :label="t('system.jobName')" min-width="120" />
@@ -182,7 +193,12 @@ onMounted(() => {
           <span>{{ calculateDuration(row) }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="message" :label="t('system.message')" min-width="140" show-overflow-tooltip />
+      <el-table-column
+        prop="message"
+        :label="t('system.message')"
+        min-width="140"
+        show-overflow-tooltip
+      />
       <el-table-column :label="t('common.actions')" width="120" fixed="right">
         <template #default="{ row }">
           <el-button type="primary" size="small" @click="showDetail(row)">
@@ -195,12 +211,16 @@ onMounted(() => {
     <!-- Pagination -->
     <div style="display: flex; justify-content: flex-end; gap: 10px; align-items: center">
       <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
-      <el-button @click="prevPage" :disabled="!pagination.hasPrev">{{
-        t('common.prevPage')
-      }}</el-button>
-      <el-button @click="nextPage" :disabled="!pagination.hasNext">{{
-        t('common.nextPage')
-      }}</el-button>
+      <el-button :disabled="!pagination.hasPrev" @click="prevPage">
+        {{
+          t('common.prevPage')
+        }}
+      </el-button>
+      <el-button :disabled="!pagination.hasNext" @click="nextPage">
+        {{
+          t('common.nextPage')
+        }}
+      </el-button>
       <el-select
         v-model="pagination.limit"
         style="width: 100px"
@@ -264,7 +284,9 @@ onMounted(() => {
             <div v-if="detailData.exceptionInfo" style="word-break: break-all; white-space: pre-wrap; max-height: 300px; overflow-y: auto; background-color: #f5f5f5; padding: 8px; border-radius: 4px; color: #d32f2f">
               {{ detailData.exceptionInfo }}
             </div>
-            <div v-else style="color: #999">-</div>
+            <div v-else style="color: #999">
+              -
+            </div>
           </el-descriptions-item>
           <el-descriptions-item :label="t('common.createdAt')">
             {{ formatTimestamp(detailData.createTime) }}

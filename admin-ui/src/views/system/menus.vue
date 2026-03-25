@@ -92,9 +92,15 @@
 
         <el-table-column :label="t('system.menuType')" width="100" align="center">
           <template #default="{ row }">
-            <el-tag v-if="row.menuType === 1" type="warning">{{ t('system.directory') }}</el-tag>
-            <el-tag v-else-if="row.menuType === 2" type="success">{{ t('system.menu') }}</el-tag>
-            <el-tag v-else type="info">{{ t('system.button') }}</el-tag>
+            <el-tag v-if="row.menuType === 1" type="warning">
+              {{ t('system.directory') }}
+            </el-tag>
+            <el-tag v-else-if="row.menuType === 2" type="success">
+              {{ t('system.menu') }}
+            </el-tag>
+            <el-tag v-else type="info">
+              {{ t('system.button') }}
+            </el-tag>
           </template>
         </el-table-column>
 
@@ -129,7 +135,12 @@
           min-width="180"
           show-overflow-tooltip
         />
-        <el-table-column :label="t('system.sort')" prop="sort" width="80" align="center" />
+        <el-table-column
+          :label="t('system.sort')"
+          prop="sort"
+          width="80"
+          align="center"
+        />
 
         <el-table-column :label="t('common.visible')" width="90" align="center">
           <template #default="{ row }">
@@ -147,9 +158,19 @@
           </template>
         </el-table-column>
 
-        <el-table-column :label="t('common.actions')" width="180" fixed="right" align="center">
+        <el-table-column
+          :label="t('common.actions')"
+          width="180"
+          fixed="right"
+          align="center"
+        >
           <template #default="{ row }" align="right">
-            <el-button v-if="row.menuType !== 3" link type="primary" @click="handleAdd(row.id)">
+            <el-button
+              v-if="row.menuType !== 3"
+              link
+              type="primary"
+              @click="handleAdd(row.id)"
+            >
               {{ t('system.addChild') }}
             </el-button>
             <el-button link type="primary" @click="handleEdit(row)">
@@ -169,7 +190,12 @@
       width="760px"
       destroy-on-close
     >
-      <el-form ref="formRef" :model="formData" :rules="rules" label-width="100px">
+      <el-form
+        ref="formRef"
+        :model="formData"
+        :rules="rules"
+        label-width="100px"
+      >
         <el-form-item :label="t('system.parentMenu')" prop="parentId">
           <el-tree-select
             v-model="formData.parentId"
@@ -189,20 +215,26 @@
 
         <el-form-item :label="t('system.menuType')" prop="menuType">
           <el-radio-group v-model="formData.menuType" @change="handleMenuTypeChange">
-            <el-radio :label="1">{{ t('system.directory') }}</el-radio>
-            <el-radio :label="2">{{ t('system.menu') }}</el-radio>
-            <el-radio :label="3">{{ t('system.button') }}</el-radio>
+            <el-radio :label="1">
+              {{ t('system.directory') }}
+            </el-radio>
+            <el-radio :label="2">
+              {{ t('system.menu') }}
+            </el-radio>
+            <el-radio :label="3">
+              {{ t('system.button') }}
+            </el-radio>
           </el-radio-group>
         </el-form-item>
 
-        <el-row :gutter="16" v-if="formData.menuType !== 3">
+        <el-row v-if="formData.menuType !== 3" :gutter="16">
           <el-col :span="12">
             <el-form-item :label="t('system.path')" prop="path">
               <el-input v-model="formData.path" :placeholder="t('system.pleaseInputPath')" />
             </el-form-item>
           </el-col>
 
-          <el-col :span="12" v-if="formData.menuType === 2">
+          <el-col v-if="formData.menuType === 2" :span="12">
             <el-form-item :label="t('system.component')" prop="component">
               <el-input
                 v-model="formData.component"
@@ -212,7 +244,7 @@
           </el-col>
         </el-row>
 
-        <el-row :gutter="16" v-if="formData.menuType !== 3">
+        <el-row v-if="formData.menuType !== 3" :gutter="16">
           <el-col :span="14">
             <el-form-item :label="t('system.icon')" prop="icon">
               <div class="icon-picker-box">
@@ -268,18 +300,28 @@
           </el-col>
         </el-row>
 
-        <el-row :gutter="16" v-if="formData.menuType !== 3">
+        <el-row v-if="formData.menuType !== 3" :gutter="16">
           <el-col :span="12">
             <el-form-item :label="t('system.sort')" prop="sort">
-              <el-input-number v-model="formData.sort" :min="0" :max="9999" style="width: 100%" />
+              <el-input-number
+                v-model="formData.sort"
+                :min="0"
+                :max="9999"
+                style="width: 100%"
+              />
             </el-form-item>
           </el-col>
         </el-row>
 
-        <el-row :gutter="16" v-if="formData.menuType === 3">
+        <el-row v-if="formData.menuType === 3" :gutter="16">
           <el-col :span="12">
             <el-form-item :label="t('system.sort')" prop="sort">
-              <el-input-number v-model="formData.sort" :min="0" :max="9999" style="width: 100%" />
+              <el-input-number
+                v-model="formData.sort"
+                :min="0"
+                :max="9999"
+                style="width: 100%"
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -292,8 +334,12 @@
           <el-col :span="12">
             <el-form-item :label="t('common.visible')" prop="visible">
               <el-radio-group v-model="formData.visible">
-                <el-radio :label="1">{{ t('common.visible') }}</el-radio>
-                <el-radio :label="0">{{ t('common.hidden') }}</el-radio>
+                <el-radio :label="1">
+                  {{ t('common.visible') }}
+                </el-radio>
+                <el-radio :label="0">
+                  {{ t('common.hidden') }}
+                </el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -301,8 +347,12 @@
           <el-col :span="12">
             <el-form-item :label="t('common.status')" prop="status">
               <el-radio-group v-model="formData.status">
-                <el-radio :label="1">{{ t('common.enabled') }}</el-radio>
-                <el-radio :label="0">{{ t('common.disabled') }}</el-radio>
+                <el-radio :label="1">
+                  {{ t('common.enabled') }}
+                </el-radio>
+                <el-radio :label="0">
+                  {{ t('common.disabled') }}
+                </el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>

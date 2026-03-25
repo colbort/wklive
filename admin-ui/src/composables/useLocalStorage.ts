@@ -3,6 +3,7 @@
  */
 
 import { ref, watch } from 'vue'
+import { logger } from '@/utils/logger'
 
 export function useLocalStorage<T>(key: string, initialValue?: T, parse = true) {
   const data = ref<T | undefined>(initialValue)
@@ -13,7 +14,7 @@ export function useLocalStorage<T>(key: string, initialValue?: T, parse = true) 
     try {
       data.value = parse ? JSON.parse(storedValue) : (storedValue as any)
     } catch (error) {
-      console.error(`Failed to parse localStorage[${key}]`, error)
+      logger.error(`Failed to parse localStorage[${key}]`, error)
     }
   }
 

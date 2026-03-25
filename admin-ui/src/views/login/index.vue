@@ -37,7 +37,9 @@ async function submit() {
 <template>
   <div class="wrap">
     <el-card class="card">
-      <template #header>{{ t('route.login') }}</template>
+      <template #header>
+        {{ t('route.login') }}
+      </template>
 
       <el-form label-position="top">
         <el-form-item :label="t('auth.username')">
@@ -57,7 +59,12 @@ async function submit() {
           <el-input v-model="form.googleCode" />
         </el-form-item>
 
-        <el-button type="primary" :loading="loading" style="width: 100%" @click="submit">
+        <el-button
+          type="primary"
+          :loading="loading"
+          style="width: 100%"
+          @click="submit"
+        >
           {{ t('auth.submit') }}
         </el-button>
       </el-form>

@@ -33,10 +33,10 @@ func (l *SysCronJobListLogic) SysCronJobList(req *types.SysCronJobListReq) (resp
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
 		},
-		Keyword:  &req.Keyword,
-		JobName:  &req.JobName,
-		JobGroup: &req.JobGroup,
-		Status:   &req.Status,
+		Keyword:  req.Keyword,
+		JobName:  req.JobName,
+		JobGroup: req.JobGroup,
+		Status:   req.Status,
 	})
 	if err != nil {
 		return nil, err

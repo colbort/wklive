@@ -2,33 +2,16 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import SideMenu from './side-menu.vue'
 import TopBar from './top-bar.vue'
-import { getSystemCore } from '@/stores/core'
-import { http } from '@/utils/request'
-
-type SystemCoreModel = {
-  siteName: string
-  siteLogo: string
-}
+import { useSystemCore } from '@/composables/useSystemCore'
+import { buildAssetUrl } from '@/utils/file-url'
 
 const collapsed = ref(false)
-const systemCore = ref<SystemCoreModel>({
-  siteName: 'Admin UI',
-  siteLogo: '',
+const { systemCore, loadSystemCore } = useSystemCore()
+
+onMounted(() => {
+  loadSystemCore()
 })
 
-onMounted(async () => {
-  try {
-    const res = await getSystemCore()
-    if (res && res.code === 200 && res.data) {
-      if (res.data.siteName) systemCore.value.siteName = res.data.siteName
-      if (res.data.siteLogo) systemCore.value.siteLogo = res.data.siteLogo
-    }
-  } catch (err) {
-    console.error('getSystemCore failed', err)
-  }
-})
-
-// 展开态宽度
 const asideWidth = ref(240)
 const MIN_W = 200
 const MAX_W = 360
@@ -72,13 +55,6 @@ onBeforeUnmount(() => {
   document.removeEventListener('mousemove', onDragMove)
   document.removeEventListener('mouseup', onDragEnd)
 })
-
-function formatUrl(url: string | undefined) {
-  console.log('formatUrl', url)
-  if (!url) return ''
-  const fullUrl = url.startsWith('http') ? url : `${http.defaults.baseURL}${url}`
-  return `${fullUrl}${fullUrl.includes('?') ? '&' : '?'}t=${Date.now()}`
-}
 </script>
 
 <template>
@@ -87,25 +63,22 @@ function formatUrl(url: string | undefined) {
       <div class="brand">
         <img
           v-if="systemCore.siteLogo"
-          :src="formatUrl(systemCore.siteLogo)"
+          :src="buildAssetUrl(systemCore.siteLogo)"
           alt="logo"
           class="brand-logo"
         />
-        <span class="brand-text" v-if="!collapsed">{{ systemCore.siteName }}</span>
-        <span class="brand-text" v-else>{{
+        <span v-if="!collapsed" class="brand-text">{{ systemCore.siteName }}</span>
+        <span v-else class="brand-text">{{
           systemCore.siteName ? systemCore.siteName.slice(0, 2).toUpperCase() : 'AI'
         }}</span>
       </div>
 
-      <!-- 关键：把 collapsed 传给侧边菜单，让 el-menu collapse -->
       <SideMenu :collapsed="collapsed" />
 
-      <!-- 拖拽条：仅展开态显示 -->
       <div v-if="!collapsed" class="resizer" @mousedown="onDragStart" />
     </aside>
 
     <main class="main">
-      <!-- TopBar 放折叠按钮 -->
       <TopBar :collapsed="collapsed" @toggle-sider="toggleSider" />
 
       <div class="content">
@@ -121,7 +94,6 @@ function formatUrl(url: string | undefined) {
   height: 100vh;
 }
 
-/* ✅ 禁止左右滑动的关键：overflow-x hidden */
 .sider {
   border-right: 1px solid #eee;
   display: flex;
@@ -132,7 +104,6 @@ function formatUrl(url: string | undefined) {
   position: relative;
 }
 
-/* brand 不要撑出横向滚动 */
 .brand {
   height: 56px;
   display: flex;
@@ -166,7 +137,6 @@ function formatUrl(url: string | undefined) {
   min-width: 0;
 }
 
-/* ✅ 拖拽条 */
 .resizer {
   position: absolute;
   top: 0;

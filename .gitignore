@@ -6,4 +6,7 @@ package-lock.json
 
 avatars/
 
+.vite/
 dist/
+
+*.tsbuildinfo

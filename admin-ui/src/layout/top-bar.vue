@@ -7,7 +7,9 @@ import { useRouter } from 'vue-router'
 import { Expand, Fold, User, Setting, Lock } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { uploadService } from '@/services'
-import { http } from '@/utils/request'
+import { logger } from '@/utils/logger'
+import { buildAssetUrl } from '@/utils/file-url'
+import { resetDynamicRoutes } from '@/router'
 import Cropper from 'cropperjs'
 
 const props = defineProps<{
@@ -47,10 +49,9 @@ function changePassword() {
           ElMessage.success(t('app.passwordUpdated'))
         })
         .catch((err) => {
-          console.error('更新密码失败:', err)
+          logger.error('更新密码失败', err)
           ElMessage.error(t('app.updatePasswordFailed'))
         })
-      console.log(t('app.newPasswordPrompt'), data.value)
     })
     .catch(() => {})
 }
@@ -70,10 +71,9 @@ function openSettings() {
           ElMessage.success(t('app.nicknameUpdated'))
         })
         .catch((err) => {
-          console.error('更新昵称失败:', err)
+          logger.error('更新昵称失败', err)
           ElMessage.error(t('app.updateNicknameFailed'))
         })
-      console.log(t('app.newNicknamePrompt'), data.value)
     })
     .catch(() => {})
 }
@@ -342,7 +342,7 @@ async function confirmCrop() {
 
           if (auth.user && result.data?.url) {
             apiUpdateProfile({ avatar: result.data.url }).catch((err) => {
-              console.error('更新头像失败:', err)
+              logger.error('更新头像失败', err)
               ElMessage.error(t('app.updateAvatarFailed'))
             })
             auth.user.avatar = result.data.url
@@ -352,7 +352,7 @@ async function confirmCrop() {
           cropperDialogVisible.value = false
           resetCropperState()
         } catch (error) {
-          console.error('头像上传失败:', error)
+          logger.error('头像上传失败', error)
           ElMessage.error(t('app.avatarUploadFailed'))
         }
       },
@@ -360,15 +360,13 @@ async function confirmCrop() {
       0.9,
     )
   } catch (error) {
-    console.error(t('app.cropFailed'), error)
+    logger.error(t('app.cropFailed'), error)
     ElMessage.error(t('app.cropFailed'))
   }
 }
 
 function formatAvatar(avatar: string | undefined) {
-  if (!avatar) return ''
-  const fullUrl = avatar.startsWith('http') ? avatar : `${http.defaults.baseURL}${avatar}`
-  return `${fullUrl}${fullUrl.includes('?') ? '&' : '?'}t=${Date.now()}`
+  return buildAssetUrl(avatar)
 }
 
 function cancelCrop() {
@@ -392,6 +390,7 @@ function handleCommand(command: string) {
 
 function logout() {
   auth.logout()
+  resetDynamicRoutes()
   router.push('/login')
 }
 
@@ -463,7 +462,7 @@ onBeforeUnmount(() => {
     append-to-body
   >
     <div class="cropper-dialog-body">
-      <div class="cropper-stage"></div>
+      <div class="cropper-stage" />
       <img ref="cropperImage" alt="avatar preview" style="display: none" />
     </div>
 

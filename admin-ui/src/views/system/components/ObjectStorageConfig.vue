@@ -1,6 +1,6 @@
 <template>
   <div class="object-storage-config">
-    <el-tabs v-model="activeTab" @tab-click="handleTabClick" class="config-tabs">
+    <el-tabs v-model="activeTab" class="config-tabs" @tab-click="handleTabClick">
       <el-tab-pane label="Aliyun OSS" name="aliyun">
         <el-card shadow="never" class="config-card">
           <el-row :gutter="20">

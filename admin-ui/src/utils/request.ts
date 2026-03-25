@@ -3,55 +3,55 @@
  * 支持：请求拦截、响应拦截、错误处理、日志
  */
 
-import axios, { AxiosRequestConfig, AxiosInstance, Method } from 'axios'
+import axios, { AxiosRequestConfig, type AxiosInstance, type Method } from 'axios'
 import { useAuthStore } from '@/stores'
-import { RespBase } from '@/services'
+import type { RespBase } from '@/services'
+import { ENV } from '@/config/environment'
 import { logger } from '@/utils/logger'
 
 export const http: AxiosInstance = axios.create({
-  baseURL: 'http://localhost:8888', // ✅ admin-api:8888
-  timeout: 15000,
+  baseURL: ENV.API_BASE_URL,
+  timeout: ENV.API_TIMEOUT,
   headers: {
     'Content-Type': 'application/json',
   },
 })
 
-// ==================== 请求拦截器 ====================
 http.interceptors.request.use(
   (config) => {
     const auth = useAuthStore()
     if (auth.token) {
       config.headers.Authorization = `Bearer ${auth.token}`
     }
-    logger.debug(`📤 [${config.method?.toUpperCase()}] ${config.url}`)
+    logger.debug(`[${config.method?.toUpperCase()}] ${config.url || ''}`)
     return config
   },
   (error) => {
-    logger.error('Request error:', error)
+    logger.error('Request error', error)
     return Promise.reject(error)
   },
 )
 
-// ==================== 响应拦截器 ====================
 http.interceptors.response.use(
   (resp) => {
-    logger.debug(`✅ Response from ${resp.config.url}`)
+    logger.debug(`Response from ${resp.config.url || ''}`)
     return resp.data
   },
   (error) => {
-    const { response } = error
-    if (error?.response?.status === 401) {
+    const response = error?.response
+
+    if (response?.status === 401) {
       const auth = useAuthStore()
       auth.logout()
       logger.warn('Token expired, redirect to login')
-      location.href = '/login'
+      window.location.assign('/login')
     }
-    logger.error(`❌ [${response?.status}] ${error.config?.url}`)
+
+    logger.error(`HTTP ${response?.status || 'unknown'} ${error?.config?.url || ''}`, error)
     return Promise.reject(error)
   },
 )
 
-// ==================== 通用 request ==================
 function request<T = any>(
   method: Method,
   url: string,
@@ -70,8 +70,6 @@ function request<T = any>(
     ...(config ?? {}),
   })
 }
-
-// ==================== 基础方法 ====================
 
 export function get<T = any>(
   url: string,

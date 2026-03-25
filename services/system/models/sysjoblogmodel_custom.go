@@ -11,10 +11,10 @@ import (
 
 type JobLogModel interface {
 	sysJobLogModel
-	FindPage(ctx context.Context, cursor, limit int64, jobId *int64, jobName, invokeTarget *string, status *int64) ([]*SysJobLog, int64, error)
+	FindPage(ctx context.Context, cursor, limit int64, jobId int64, jobName, invokeTarget string, status int64) ([]*SysJobLog, int64, error)
 }
 
-func (m *customSysJobLogModel) FindPage(ctx context.Context, cursor, limit int64, jobId *int64, jobName, invokeTarget *string, status *int64) ([]*SysJobLog, int64, error) {
+func (m *customSysJobLogModel) FindPage(ctx context.Context, cursor, limit int64, jobId int64, jobName, invokeTarget string, status int64) ([]*SysJobLog, int64, error) {
 	if limit <= 0 {
 		limit = 10
 	}
@@ -25,24 +25,24 @@ func (m *customSysJobLogModel) FindPage(ctx context.Context, cursor, limit int64
 	where := "1=1"
 	args := make([]any, 0, 2)
 
-	if jobId != nil {
+	if jobId > 0 {
 		where += " AND job_id = ?"
-		args = append(args, *jobId)
+		args = append(args, jobId)
 	}
 
-	if jobName != nil && *jobName != "" {
+	if jobName != "" {
 		where += " AND job_name LIKE ?"
-		args = append(args, "%"+*jobName+"%")
+		args = append(args, "%"+jobName+"%")
 	}
 
-	if invokeTarget != nil && *invokeTarget != "" {
+	if invokeTarget != "" {
 		where += " AND invoke_target LIKE ?"
-		args = append(args, "%"+*invokeTarget+"%")
+		args = append(args, "%"+invokeTarget+"%")
 	}
 
-	if status != nil {
+	if status > 0 {
 		where += " AND status = ?"
-		args = append(args, *status)
+		args = append(args, status)
 	}
 
 	// ---- total ----
@@ -64,7 +64,7 @@ func (m *customSysJobLogModel) FindPage(ctx context.Context, cursor, limit int64
 			WHERE %s
 			ORDER BY id DESC
 			LIMIT ?`,
-			sysConfigRows, m.table, where,
+			sysJobLogRows, m.table, where,
 		)
 		listArgs = append(listArgs, limit)
 	} else {

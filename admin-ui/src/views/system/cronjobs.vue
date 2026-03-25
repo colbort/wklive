@@ -252,7 +252,7 @@ onMounted(() => {
     <template #header>
       <div style="display: flex; justify-content: space-between; align-items: center">
         <span>{{ t('system.cronJobs') }}</span>
-        <el-button type="primary" v-perm="'sys:job:add'" @click="handleCreate">
+        <el-button v-perm="'sys:job:add'" type="primary" @click="handleCreate">
           <el-icon><Plus /></el-icon>
           {{ t('common.add') }}
         </el-button>
@@ -292,13 +292,22 @@ onMounted(() => {
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" @click="onSearch">{{ t('common.search') }}</el-button>
-        <el-button @click="onReset">{{ t('common.reset') }}</el-button>
+        <el-button type="primary" @click="onSearch">
+          {{ t('common.search') }}
+        </el-button>
+        <el-button @click="onReset">
+          {{ t('common.reset') }}
+        </el-button>
       </el-form-item>
     </el-form>
 
     <!-- Table -->
-    <el-table :data="list" v-loading="loading" row-key="id" style="margin-bottom: 16px">
+    <el-table
+      v-loading="loading"
+      :data="list"
+      row-key="id"
+      style="margin-bottom: 16px"
+    >
       <el-table-column prop="id" :label="t('common.id')" width="70" />
       <el-table-column prop="jobName" :label="t('system.jobName')" min-width="120" />
       <el-table-column prop="jobGroup" :label="t('system.jobGroup')" width="100" />
@@ -341,11 +350,21 @@ onMounted(() => {
             <el-icon><CircleCloseFilled /></el-icon>
             {{ t('system.stop') }}
           </el-button>
-          <el-button type="primary" size="small" v-perm="'sys:job:update'" @click="handleEdit(row)">
+          <el-button
+            v-perm="'sys:job:update'"
+            type="primary"
+            size="small"
+            @click="handleEdit(row)"
+          >
             <el-icon><Edit /></el-icon>
             {{ t('common.edit') }}
           </el-button>
-          <el-button type="danger" size="small" v-perm="'sys:job:delete'" @click="handleDelete(row)">
+          <el-button
+            v-perm="'sys:job:delete'"
+            type="danger"
+            size="small"
+            @click="handleDelete(row)"
+          >
             <el-icon><Delete /></el-icon>
             {{ t('common.delete') }}
           </el-button>
@@ -356,12 +375,16 @@ onMounted(() => {
     <!-- Pagination -->
     <div style="display: flex; justify-content: flex-end; gap: 10px; align-items: center">
       <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
-      <el-button @click="prevPage" :disabled="!pagination.hasPrev">{{
-        t('common.prevPage')
-      }}</el-button>
-      <el-button @click="nextPage" :disabled="!pagination.hasNext">{{
-        t('common.nextPage')
-      }}</el-button>
+      <el-button :disabled="!pagination.hasPrev" @click="prevPage">
+        {{
+          t('common.prevPage')
+        }}
+      </el-button>
+      <el-button :disabled="!pagination.hasNext" @click="nextPage">
+        {{
+          t('common.nextPage')
+        }}
+      </el-button>
       <el-select
         v-model="pagination.limit"
         style="width: 100px"
@@ -386,7 +409,12 @@ onMounted(() => {
       width="600px"
       :close-on-click-modal="false"
     >
-      <el-form ref="formRef" :model="formData" :rules="formRules" label-width="140px">
+      <el-form
+        ref="formRef"
+        :model="formData"
+        :rules="formRules"
+        label-width="140px"
+      >
         <el-form-item :label="t('system.jobName')" prop="jobName">
           <el-input
             v-model="formData.jobName"
@@ -429,8 +457,12 @@ onMounted(() => {
 
         <el-form-item :label="t('common.status')">
           <el-radio-group v-model="formData.status">
-            <el-radio :label="1">{{ t('common.enabled') }}</el-radio>
-            <el-radio :label="0">{{ t('common.disabled') }}</el-radio>
+            <el-radio :label="1">
+              {{ t('common.enabled') }}
+            </el-radio>
+            <el-radio :label="0">
+              {{ t('common.disabled') }}
+            </el-radio>
           </el-radio-group>
         </el-form-item>
 
@@ -446,7 +478,9 @@ onMounted(() => {
       </el-form>
 
       <template #footer>
-        <el-button @click="dialogVisible = false">{{ t('common.cancel') }}</el-button>
+        <el-button @click="dialogVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
         <el-button type="primary" :loading="submitLoading" @click="handleSubmit">
           {{ t('common.confirm') }}
         </el-button>

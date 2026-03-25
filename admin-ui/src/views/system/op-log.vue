@@ -87,7 +87,9 @@ onMounted(() => {
 
 <template>
   <el-card>
-    <template #header>{{ t('system.opLog') }}</template>
+    <template #header>
+      {{ t('system.opLog') }}
+    </template>
 
     <!-- Query Form -->
     <el-form :model="queryForm" inline style="margin-bottom: 16px">
@@ -119,13 +121,22 @@ onMounted(() => {
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" @click="onSearch">{{ t('common.search') }}</el-button>
-        <el-button @click="onReset">{{ t('common.reset') }}</el-button>
+        <el-button type="primary" @click="onSearch">
+          {{ t('common.search') }}
+        </el-button>
+        <el-button @click="onReset">
+          {{ t('common.reset') }}
+        </el-button>
       </el-form-item>
     </el-form>
 
     <!-- Table -->
-    <el-table :data="list_ref" v-loading="loading" row-key="id" style="margin-bottom: 16px">
+    <el-table
+      v-loading="loading"
+      :data="list_ref"
+      row-key="id"
+      style="margin-bottom: 16px"
+    >
       <el-table-column prop="id" :label="t('common.id')" width="70" />
       <el-table-column prop="username" :label="t('common.username')" min-width="120" />
       <el-table-column prop="method" :label="t('common.method')" width="80">
@@ -163,12 +174,16 @@ onMounted(() => {
     <!-- Pagination -->
     <div style="display: flex; justify-content: flex-end; gap: 10px; align-items: center">
       <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
-      <el-button @click="prevPage" :disabled="!pagination.hasPrev">{{
-        t('common.prevPage')
-      }}</el-button>
-      <el-button @click="nextPage" :disabled="!pagination.hasNext">{{
-        t('common.nextPage')
-      }}</el-button>
+      <el-button :disabled="!pagination.hasPrev" @click="prevPage">
+        {{
+          t('common.prevPage')
+        }}
+      </el-button>
+      <el-button :disabled="!pagination.hasNext" @click="nextPage">
+        {{
+          t('common.nextPage')
+        }}
+      </el-button>
       <el-select
         v-model="pagination.limit"
         style="width: 100px"

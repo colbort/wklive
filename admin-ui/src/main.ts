@@ -5,21 +5,14 @@ import elZhCN from 'element-plus/es/locale/lang/zh-cn'
 import elEnUS from 'element-plus/es/locale/lang/en'
 import 'element-plus/dist/index.css'
 
-import App from './App.vue'
-import { router } from './router'
-import { i18n, elLocaleMap } from './i18n'
-import { setupPermDirective } from './directives/perm'
+import App from '@/App.vue'
+import { router } from '@/router'
+import { i18n, elLocaleMap } from '@/i18n'
+import { setupPermDirective } from '@/directives/perm'
 import { getSystemCore } from '@/stores/core'
-import { http } from './utils/request'
+import { http } from '@/utils/request'
 
 const app = createApp(App)
-
-function formatUrl(url: string | undefined) {
-  console.log('formatUrl', url)
-  if (!url) return ''
-  const fullUrl = url.startsWith('http') ? url : `${http.defaults.baseURL}${url}`
-  return `${fullUrl}${fullUrl.includes('?') ? '&' : '?'}t=${Date.now()}`
-}
 
 function setFavicon(href: string) {
   let icon = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null

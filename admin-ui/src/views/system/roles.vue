@@ -349,7 +349,7 @@ onMounted(fetchList)
       <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
         <div>{{ t('system.roles') }}</div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap">
-          <el-button type="primary" v-perm="'sys:role:add'" @click="openCreate">
+          <el-button v-perm="'sys:role:add'" type="primary" @click="openCreate">
             {{ t('perms.sys:role:add') }}
           </el-button>
         </div>
@@ -376,12 +376,16 @@ onMounted(fetchList)
         <el-option :label="t('common.disabled')" :value="2" />
       </el-select>
 
-      <el-button @click="onSearch">{{ t('common.search') }}</el-button>
-      <el-button @click="onReset">{{ t('common.reset') }}</el-button>
+      <el-button @click="onSearch">
+        {{ t('common.search') }}
+      </el-button>
+      <el-button @click="onReset">
+        {{ t('common.reset') }}
+      </el-button>
     </div>
 
     <!-- 表格 -->
-    <el-table :data="tableData" v-loading="loading" style="width: 100%">
+    <el-table v-loading="loading" :data="tableData" style="width: 100%">
       <el-table-column prop="id" :label="t('common.id')" width="90" />
       <el-table-column prop="name" :label="t('system.roleName')" min-width="160" />
       <el-table-column prop="code" :label="t('system.roleCode')" min-width="160" />
@@ -389,8 +393,12 @@ onMounted(fetchList)
       <!-- 状态 -->
       <el-table-column :label="t('common.status')" width="110">
         <template #default="{ row }">
-          <el-tag v-if="(row as any).status === 1" type="success">{{ t('common.enabled') }}</el-tag>
-          <el-tag v-else type="info">{{ t('common.disabled') }}</el-tag>
+          <el-tag v-if="(row as any).status === 1" type="success">
+            {{ t('common.enabled') }}
+          </el-tag>
+          <el-tag v-else type="info">
+            {{ t('common.disabled') }}
+          </el-tag>
         </template>
       </el-table-column>
 
@@ -399,8 +407,8 @@ onMounted(fetchList)
       <el-table-column :label="t('common.actions')" width="320" fixed="right">
         <template #default="{ row }">
           <el-button
-            size="small"
             v-perm="'sys:role:update'"
+            size="small"
             :disabled="isSuperRole(row)"
             @click="openUpdate(row)"
           >
@@ -408,8 +416,8 @@ onMounted(fetchList)
           </el-button>
 
           <el-button
-            size="small"
             v-perm="'sys:role:grant'"
+            size="small"
             :disabled="isSuperRole(row)"
             @click="openGrant(row)"
           >
@@ -417,9 +425,9 @@ onMounted(fetchList)
           </el-button>
 
           <el-button
+            v-perm="'sys:role:delete'"
             size="small"
             type="danger"
-            v-perm="'sys:role:delete'"
             :disabled="isSuperRole(row)"
             @click="onDelete(row)"
           >
@@ -443,12 +451,16 @@ onMounted(fetchList)
       "
     >
       <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
-      <el-button @click="prevPage" :disabled="!pagination.hasPrev">{{
-        t('common.prevPage')
-      }}</el-button>
-      <el-button @click="nextPage" :disabled="!pagination.hasNext">{{
-        t('common.nextPage')
-      }}</el-button>
+      <el-button :disabled="!pagination.hasPrev" @click="prevPage">
+        {{
+          t('common.prevPage')
+        }}
+      </el-button>
+      <el-button :disabled="!pagination.hasNext" @click="nextPage">
+        {{
+          t('common.nextPage')
+        }}
+      </el-button>
       <el-select
         v-model="pagination.limit"
         style="width: 100px"
@@ -496,8 +508,12 @@ onMounted(fetchList)
         :rules="[{ required: true, message: t('common.required') }]"
       >
         <el-radio-group v-model="editForm.status">
-          <el-radio :label="1">{{ t('common.enabled') }}</el-radio>
-          <el-radio :label="2">{{ t('common.disabled') }}</el-radio>
+          <el-radio :label="1">
+            {{ t('common.enabled') }}
+          </el-radio>
+          <el-radio :label="2">
+            {{ t('common.disabled') }}
+          </el-radio>
         </el-radio-group>
       </el-form-item>
 
@@ -507,10 +523,14 @@ onMounted(fetchList)
     </el-form>
 
     <template #footer>
-      <el-button @click="editVisible = false">{{ t('common.cancel') }}</el-button>
-      <el-button type="primary" :loading="editLoading" @click="submitEdit">{{
-        t('common.confirm')
-      }}</el-button>
+      <el-button @click="editVisible = false">
+        {{ t('common.cancel') }}
+      </el-button>
+      <el-button type="primary" :loading="editLoading" @click="submitEdit">
+        {{
+          t('common.confirm')
+        }}
+      </el-button>
     </template>
   </el-dialog>
 
@@ -548,13 +568,15 @@ onMounted(fetchList)
         :check-strictly="false"
         :disabled="grantReadonly"
         :default-expand-all="false"
-        @check="onMenuTreeCheck"
         style="max-height: 420px; overflow: auto"
+        @check="onMenuTreeCheck"
       />
     </div>
 
     <template #footer>
-      <el-button @click="grantVisible = false">{{ t('common.cancel') }}</el-button>
+      <el-button @click="grantVisible = false">
+        {{ t('common.cancel') }}
+      </el-button>
       <el-button type="primary" :disabled="grantReadonly" @click="submitGrant">
         {{ t('common.save') }}
       </el-button>

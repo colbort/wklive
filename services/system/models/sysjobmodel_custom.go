@@ -11,12 +11,12 @@ import (
 
 type JobModel interface {
 	sysJobModel
-	FindPage(ctx context.Context, cursor, limit int64, keyword, jobName, jobGroup *string, status *int64) ([]*SysJob, int64, error)
+	FindPage(ctx context.Context, cursor, limit int64, keyword, jobName, jobGroup string, status int64) ([]*SysJob, int64, error)
 	FindByInvokeTarget(ctx context.Context, invokeTarget string) (*SysJob, error)
 	FindEnabledJobs(ctx context.Context) ([]*SysJob, error)
 }
 
-func (m *customSysJobModel) FindPage(ctx context.Context, cursor, limit int64, keyword, jobName, jobGroup *string, status *int64) ([]*SysJob, int64, error) {
+func (m *customSysJobModel) FindPage(ctx context.Context, cursor, limit int64, keyword, jobName, jobGroup string, status int64) ([]*SysJob, int64, error) {
 	if limit <= 0 {
 		limit = 10
 	}
@@ -27,24 +27,24 @@ func (m *customSysJobModel) FindPage(ctx context.Context, cursor, limit int64, k
 	where := "1=1"
 	args := make([]any, 0, 2)
 
-	if keyword != nil && *keyword != "" {
+	if keyword != "" {
 		where += " AND (job_name LIKE ? OR job_group LIKE ?)"
-		args = append(args, "%"+*keyword+"%", "%"+*keyword+"%")
+		args = append(args, "%"+keyword+"%", "%"+keyword+"%")
 	}
 
-	if jobName != nil && *jobName != "" {
+	if jobName != "" {
 		where += " AND job_name LIKE ?"
-		args = append(args, "%"+*jobName+"%")
+		args = append(args, "%"+jobName+"%")
 	}
 
-	if jobGroup != nil && *jobGroup != "" {
+	if jobGroup != "" {
 		where += " AND job_group LIKE ?"
-		args = append(args, "%"+*jobGroup+"%")
+		args = append(args, "%"+jobGroup+"%")
 	}
 
-	if status != nil {
+	if status > 0 {
 		where += " AND status = ?"
-		args = append(args, *status)
+		args = append(args, status)
 	}
 
 	// ---- total ----

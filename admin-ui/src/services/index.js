@@ -1,8 +1,0 @@
-export { BaseServiceImpl } from './BaseService';
-export { UserService, userService } from './system/UserService';
-export { RoleService, roleService } from './system/RoleService';
-export { MenuService, menuService } from './system/MenuService';
-export { LogService, logService } from './system/LogService';
-export { UploadService, uploadService } from './system/UploadService';
-export { ConfigService, configService } from './system/ConfigService';
-export { CronJobService, cronJobService } from './system/CronJobService';

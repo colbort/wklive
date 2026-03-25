@@ -75,7 +75,7 @@ import Cropper from 'cropperjs'
 import type { UploadFile } from 'element-plus'
 import type { SystemCore } from '@/services/system/ConfigService'
 import { apiUploadAvatar } from '@/api/system/upload'
-import { http } from '@/utils/request'
+import { formatUrl } from '@/utils/file-url'
 
 const { t } = useI18n()
 
@@ -245,13 +245,6 @@ async function confirmCrop() {
   } finally {
     uploading.value = false
   }
-}
-
-function formatUrl(url: string | undefined) {
-  if (!url) return ''
-  const fullUrl = url.startsWith('http') ? url : `${http.defaults.baseURL}${url}`
-
-  return `${fullUrl}${fullUrl.includes('?') ? '&' : '?'}t=${Date.now()}`
 }
 
 watch(showCropDialog, (newVal) => {
