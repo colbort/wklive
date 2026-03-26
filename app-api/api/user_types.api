@@ -1,0 +1,167 @@
+syntax = "v1"
+
+type TokenInfo {
+  accessToken  string `json:"accessToken"`
+  refreshToken string `json:"refreshToken"`
+  expireTime   int64  `json:"expireTime"`
+}
+
+type TenantInfo {
+  tenantId     int64  `json:"tenantId"`
+  tenantCode   string `json:"tenantCode"`
+  tenantName   string `json:"tenantName"`
+  tenantStatus int32  `json:"tenantStatus"`
+  expireTime   int64  `json:"expireTime"`
+}
+
+type UserBase {
+  id             int64  `json:"id"`
+  tenantId       int64  `json:"tenantId"`
+  userNo         string `json:"userNo"`
+  username       string `json:"username"`
+  nickname       string `json:"nickname,optional"`
+  avatar         string `json:"avatar,optional"`
+  language       string `json:"language,optional"`
+  timezone       string `json:"timezone,optional"`
+  inviteCode     string `json:"inviteCode,optional"`
+  signature      string `json:"signature,optional"`
+  registerType   int64  `json:"registerType"`
+  status         int64  `json:"status"`
+  memberLevel    int32  `json:"memberLevel"`
+  source         string `json:"source,optional"`
+  referrerUserId int64  `json:"referrerUserId,optional"`
+  lastLoginIp    string `json:"lastLoginIp,optional"`
+  lastLoginTime  int64  `json:"lastLoginTime,optional"`
+  registerIp     string `json:"registerIp,optional"`
+  registerTime   int64  `json:"registerTime,optional"`
+  remark         string `json:"remark,optional"`
+  deleted        bool   `json:"deleted"`
+  createTime     int64  `json:"createTime,optional"`
+  updateTime     int64  `json:"updateTime,optional"`
+}
+
+type UserIdentity {
+  id             int64  `json:"id"`
+  tenantId       int64  `json:"tenantId"`
+  userId         int64  `json:"userId"`
+  phone          string `json:"phone,optional"`
+  email          string `json:"email,optional"`
+  realName       string `json:"realName,optional"`
+  gender         int64  `json:"gender,optional"`
+  birthday       string `json:"birthday,optional"`
+  countryCode    string `json:"countryCode,optional"`
+  province       string `json:"province,optional"`
+  city           string `json:"city,optional"`
+  address        string `json:"address,optional"`
+  idType         int64  `json:"idType,optional"`
+  idNo           string `json:"idNo,optional"`
+  frontImage     string `json:"frontImage,optional"`
+  backImage      string `json:"backImage,optional"`
+  handheldImage  string `json:"handheldImage,optional"`
+  kycLevel       int64  `json:"kycLevel,optional"`
+  verifyStatus   int64  `json:"verifyStatus,optional"`
+  rejectReason   string `json:"rejectReason,optional"`
+  submitTime     int64  `json:"submitTime,optional"`
+  verifyTime     int64  `json:"verifyTime,optional"`
+  verifyBy       int64  `json:"verifyBy,optional"`
+  createTime     int64  `json:"createTime,optional"`
+  updateTime     int64  `json:"updateTime,optional"`
+}
+
+type UserSecurity {
+  id              int64 `json:"id"`
+  tenantId        int64 `json:"tenantId"`
+  userId          int64 `json:"userId"`
+  hasPayPassword  bool  `json:"hasPayPassword"`
+  googleEnabled   bool  `json:"googleEnabled"`
+  loginErrorCount int32 `json:"loginErrorCount"`
+  payErrorCount   int32 `json:"payErrorCount"`
+  lockUntil       int64 `json:"lockUntil,optional"`
+  riskLevel       int64 `json:"riskLevel"`
+  createTime      int64 `json:"createTime,optional"`
+  updateTime      int64 `json:"updateTime,optional"`
+}
+
+type UserBank {
+  id              int64  `json:"id"`
+  tenantId        int64  `json:"tenantId"`
+  userId          int64  `json:"userId"`
+  bankName        string `json:"bankName"`
+  bankCode        string `json:"bankCode,optional"`
+  accountName     string `json:"accountName"`
+  accountNo       string `json:"accountNo"`
+  maskedAccountNo string `json:"maskedAccountNo,optional"`
+  branchName      string `json:"branchName,optional"`
+  countryCode     string `json:"countryCode,optional"`
+  isDefault       bool   `json:"isDefault"`
+  status          int64  `json:"status"`
+  createTime      int64  `json:"createTime,optional"`
+  updateTime      int64  `json:"updateTime,optional"`
+}
+
+type UserProfile {
+  base     UserBase     `json:"base"`
+  identity UserIdentity `json:"identity,optional"`
+  security UserSecurity `json:"security,optional"`
+}
+
+type UserDetail {
+  base     UserBase     `json:"base"`
+  identity UserIdentity `json:"identity,optional"`
+  security UserSecurity `json:"security,optional"`
+  banks    []UserBank   `json:"banks,optional"`
+}
+
+type UserListItem {
+  userId        int64  `json:"userId"`
+  userNo        string `json:"userNo"`
+  username      string `json:"username"`
+  nickname      string `json:"nickname,optional"`
+  avatar        string `json:"avatar,optional"`
+  phone         string `json:"phone,optional"`
+  email         string `json:"email,optional"`
+  realName      string `json:"realName,optional"`
+  status        int64  `json:"status"`
+  memberLevel   int32  `json:"memberLevel"`
+  kycLevel      int64  `json:"kycLevel,optional"`
+  verifyStatus  int64  `json:"verifyStatus,optional"`
+  inviteCode    string `json:"inviteCode,optional"`
+  lastLoginIp   string `json:"lastLoginIp,optional"`
+  lastLoginTime int64  `json:"lastLoginTime,optional"`
+  registerTime  int64  `json:"registerTime,optional"`
+}
+
+type UserIdentityListItem {
+  userId       int64  `json:"userId"`
+  userNo       string `json:"userNo"`
+  username     string `json:"username"`
+  phone        string `json:"phone,optional"`
+  email        string `json:"email,optional"`
+  realName     string `json:"realName,optional"`
+  idType       int64  `json:"idType,optional"`
+  idNo         string `json:"idNo,optional"`
+  kycLevel     int64  `json:"kycLevel,optional"`
+  verifyStatus int64  `json:"verifyStatus,optional"`
+  rejectReason string `json:"rejectReason,optional"`
+  submitTime   int64  `json:"submitTime,optional"`
+  verifyTime   int64  `json:"verifyTime,optional"`
+  verifyBy     int64  `json:"verifyBy,optional"`
+}
+
+type UserBankListItem {
+  id              int64  `json:"id"`
+  tenantId        int64  `json:"tenantId"`
+  userId          int64  `json:"userId"`
+  userNo          string `json:"userNo"`
+  username        string `json:"username"`
+  bankName        string `json:"bankName"`
+  bankCode        string `json:"bankCode,optional"`
+  accountName     string `json:"accountName"`
+  accountNo       string `json:"accountNo"`
+  maskedAccountNo string `json:"maskedAccountNo,optional"`
+  branchName      string `json:"branchName,optional"`
+  countryCode     string `json:"countryCode,optional"`
+  isDefault       bool   `json:"isDefault"`
+  status          int64  `json:"status"`
+  createTime      int64  `json:"createTime,optional"`
+}

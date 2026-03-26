@@ -1,18 +1,24 @@
+import "common.api"
+import "user_types.api"
+import "user_public.api"
+import "user_private.api"
+
 // 用户登录前获取 配置，比如是否开启验证码，是否开启注册等
 type SystemCore {
-  IsCaptchaEnabled bool `json:"isCaptchaEnabled"`
-  IsRegisterEnabled bool `json:"isRegisterEnabled"`
+	IsCaptchaEnabled  bool `json:"isCaptchaEnabled"`
+	IsRegisterEnabled bool `json:"isRegisterEnabled"`
 }
 
 type GetSystemCoreResp {
-  data SystemCore `json:"data"`
+	data SystemCore `json:"data"`
 }
 
-@server(
-  prefix: /app
-  group: core
+@server (
+	prefix: /app
+	group:  core
 )
 service app {
-  @handler GetSystemCore
-  get /system/core returns (GetSystemCoreResp)
+	@handler GetSystemCore
+	get /system/core returns (GetSystemCoreResp)
 }
+

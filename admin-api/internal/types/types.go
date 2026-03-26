@@ -26,11 +26,6 @@ type AssignUserRolesReq struct {
 	RoleIds []int64 `json:"roleIds"`
 }
 
-type Auth struct {
-	AccessSecret string
-	AccessExpire int64
-}
-
 type ChangeUserStatusReq struct {
 	Id     int64 `json:"id"`
 	Status int64 `json:"status"` // 1启用 0禁用

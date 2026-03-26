@@ -12,21 +12,21 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type GetUserProfileLogic struct {
+type SetDefaultBankLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewGetUserProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUserProfileLogic {
-	return &GetUserProfileLogic{
+func NewSetDefaultBankLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SetDefaultBankLogic {
+	return &SetDefaultBankLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *GetUserProfileLogic) GetUserProfile() (resp *types.GetUserProfileResp, err error) {
+func (l *SetDefaultBankLogic) SetDefaultBank(req *types.SetDefaultBankReq) (resp *types.CommonResp, err error) {
 	// todo: add your logic here and delete this line
 
 	return

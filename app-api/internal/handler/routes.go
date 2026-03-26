@@ -30,21 +30,112 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodGet,
-				Path:    "/user/profile",
-				Handler: user_private.GetUserProfileHandler(serverCtx),
+				Path:    "/banks",
+				Handler: user_private.ListBanksHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/banks",
+				Handler: user_private.AddBankHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/banks/:id",
+				Handler: user_private.UpdateBankHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodDelete,
+				Path:    "/banks/:id",
+				Handler: user_private.DeleteBankHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/banks/:id/default",
+				Handler: user_private.SetDefaultBankHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/change-login-password",
+				Handler: user_private.ChangeLoginPasswordHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/google2fa/disable",
+				Handler: user_private.DisableGoogle2FAHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/google2fa/enable",
+				Handler: user_private.EnableGoogle2FAHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/google2fa/init",
+				Handler: user_private.InitGoogle2FAHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/identity",
+				Handler: user_private.GetIdentityHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/identity",
+				Handler: user_private.SubmitIdentityHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/logout",
+				Handler: user_private.LogoutHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/pay-password",
+				Handler: user_private.SetPayPasswordHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/pay-password",
+				Handler: user_private.ChangePayPasswordHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/profile",
+				Handler: user_private.GetProfileHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/profile",
+				Handler: user_private.UpdateProfileHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/security",
+				Handler: user_private.GetSecurityHandler(serverCtx),
 			},
 		},
-		rest.WithPrefix("/app"),
+		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
+		rest.WithPrefix("/app/user"),
 	)
 
 	server.AddRoutes(
 		[]rest.Route{
 			{
 				Method:  http.MethodPost,
-				Path:    "/user/login",
+				Path:    "/login",
 				Handler: user_public.LoginHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/refresh-token",
+				Handler: user_public.RefreshTokenHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/register",
+				Handler: user_public.RegisterHandler(serverCtx),
+			},
 		},
-		rest.WithPrefix("/app"),
+		rest.WithPrefix("/app/user"),
 	)
 }

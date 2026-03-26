@@ -1,13 +1,65 @@
-// 用户登录，获取用户信息等
+syntax = "v1"
 
+import "common.api"
+import "user_types.api"
+
+type RegisterReq {
+  tenantCode      string `json:"tenantCode"`
+  registerType    int64  `json:"registerType"`
+  username        string `json:"username,optional"`
+  phone           string `json:"phone,optional"`
+  email           string `json:"email,optional"`
+  password        string `json:"password"`
+  confirmPassword string `json:"confirmPassword"`
+  inviteCode      string `json:"inviteCode,optional"`
+  source          string `json:"source,optional"`
+  registerIp      string `json:"registerIp,optional"`
+}
+
+type RegisterResp {
+  RespBase
+  userId  int64       `json:"userId"`
+  token   TokenInfo   `json:"token"`
+  profile UserProfile `json:"profile"`
+}
+
+type LoginReq {
+  tenantCode string `json:"tenantCode"`
+  loginType  int64  `json:"loginType"`
+  account    string `json:"account"`
+  password   string `json:"password"`
+  googleCode string `json:"googleCode,optional"`
+  loginIp    string `json:"loginIp,optional"`
+}
+
+type LoginResp {
+  RespBase
+  userId  int64       `json:"userId"`
+  token   TokenInfo   `json:"token"`
+  profile UserProfile `json:"profile"`
+}
+
+type RefreshTokenReq {
+  tenantCode   string `json:"tenantCode,optional"`
+  refreshToken string `json:"refreshToken"`
+}
+
+type RefreshTokenResp {
+  RespBase
+  token TokenInfo `json:"token"`
+}
 
 @server(
-  prefix: /app
+  prefix: /app/user
   group: user_public
 )
-service app { 
-  // // 用户注册
-  // rpc Register(RegisterReq) returns (RegisterResp);
-  // // 用户登录
-  // rpc Login(LoginReq) returns (LoginResp);
+service app {
+  @handler Register
+  post /register (RegisterReq) returns (RegisterResp)
+
+  @handler Login
+  post /login (LoginReq) returns (LoginResp)
+
+  @handler RefreshToken
+  post /refresh-token (RefreshTokenReq) returns (RefreshTokenResp)
 }

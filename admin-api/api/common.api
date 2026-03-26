@@ -1,17 +1,3 @@
-syntax = "v1"
-
-info(
-  title: "admin-api"
-  desc: "Admin BFF"
-  author: "you"
-  version: "1.0"
-)
-
-type Auth {
-  AccessSecret string
-  AccessExpire int64
-}
-
 type RespBase {
   code int32  `json:"code"`
   msg  string `json:"msg"`
