@@ -26,7 +26,7 @@ func NewEnableGoogle2FALogic(ctx context.Context, svcCtx *svc.ServiceContext) *E
 	}
 }
 
-func (l *EnableGoogle2FALogic) EnableGoogle2FA(req *types.VerifyGoogle2FAReq) (resp *types.CommonResp, err error) {
+func (l *EnableGoogle2FALogic) EnableGoogle2FA(req *types.VerifyGoogle2FAReq) (resp *types.RespBase, err error) {
 	// todo: add your logic here and delete this line
 
 	return

@@ -3,9 +3,6 @@ syntax = "v1"
 import "common.api"
 import "user_types.api"
 
-type CommonResp {
-  RespBase
-}
 
 type GetProfileResp {
   RespBase
@@ -146,7 +143,7 @@ type SetDefaultBankReq {
 )
 service app {
   @handler Logout
-  post /logout returns (CommonResp)
+  post /logout returns (RespBase)
 
   @handler GetProfile
   get /profile returns (GetProfileResp)
@@ -155,7 +152,7 @@ service app {
   put /profile (UpdateProfileReq) returns (UpdateProfileResp)
 
   @handler ChangeLoginPassword
-  put /change-login-password (ChangeLoginPasswordReq) returns (CommonResp)
+  put /change-login-password (ChangeLoginPasswordReq) returns (RespBase)
 
   @handler GetIdentity
   get /identity returns (GetIdentityResp)
@@ -167,19 +164,19 @@ service app {
   get /security returns (GetSecurityResp)
 
   @handler SetPayPassword
-  post /pay-password (SetPayPasswordReq) returns (CommonResp)
+  post /pay-password (SetPayPasswordReq) returns (RespBase)
 
   @handler ChangePayPassword
-  put /pay-password (ChangePayPasswordReq) returns (CommonResp)
+  put /pay-password (ChangePayPasswordReq) returns (RespBase)
 
   @handler InitGoogle2FA
   get /google2fa/init returns (InitGoogle2FAResp)
 
   @handler EnableGoogle2FA
-  post /google2fa/enable (VerifyGoogle2FAReq) returns (CommonResp)
+  post /google2fa/enable (VerifyGoogle2FAReq) returns (RespBase)
 
   @handler DisableGoogle2FA
-  post /google2fa/disable (VerifyGoogle2FAReq) returns (CommonResp)
+  post /google2fa/disable (VerifyGoogle2FAReq) returns (RespBase)
 
   @handler ListBanks
   get /banks (ListBanksReq) returns (ListBanksResp)
@@ -191,8 +188,8 @@ service app {
   put /banks/:id (UpdateBankReq) returns (UpdateBankResp)
 
   @handler DeleteBank
-  delete /banks/:id (DeleteBankReq) returns (CommonResp)
+  delete /banks/:id (DeleteBankReq) returns (RespBase)
 
   @handler SetDefaultBank
-  put /banks/:id/default (SetDefaultBankReq) returns (CommonResp)
+  put /banks/:id/default (SetDefaultBankReq) returns (RespBase)
 }

@@ -26,7 +26,7 @@ func NewChangeLoginPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext
 	}
 }
 
-func (l *ChangeLoginPasswordLogic) ChangeLoginPassword(req *types.ChangeLoginPasswordReq) (resp *types.CommonResp, err error) {
+func (l *ChangeLoginPasswordLogic) ChangeLoginPassword(req *types.ChangeLoginPasswordReq) (resp *types.RespBase, err error) {
 	// todo: add your logic here and delete this line
 
 	return

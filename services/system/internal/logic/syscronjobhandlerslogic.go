@@ -28,7 +28,7 @@ func NewSysCronJobHandlersLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 func (l *SysCronJobHandlersLogic) SysCronJobHandlers(in *system.Empty) (*system.SysCronJobHandlersResp, error) {
 	data := make([]*system.SysCronJobHander, 0)
 	handlers := cronx.GetRegisteredHandlers()
-	for invokeTarget, _ := range handlers {
+	for invokeTarget := range handlers {
 		data = append(data, &system.SysCronJobHander{
 			InvokeTarget: invokeTarget,
 			JobName:      "",

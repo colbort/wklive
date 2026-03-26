@@ -19,14 +19,13 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PaymentApp_GetMyRechargeStat_FullMethodName      = "/payment.PaymentApp/GetMyRechargeStat"
-	PaymentApp_ListVisiblePayChannels_FullMethodName = "/payment.PaymentApp/ListVisiblePayChannels"
-	PaymentApp_CheckRechargeChannels_FullMethodName  = "/payment.PaymentApp/CheckRechargeChannels"
-	PaymentApp_CreateRechargeOrder_FullMethodName    = "/payment.PaymentApp/CreateRechargeOrder"
-	PaymentApp_GetMyPayOrder_FullMethodName          = "/payment.PaymentApp/GetMyPayOrder"
-	PaymentApp_ListMyPayOrders_FullMethodName        = "/payment.PaymentApp/ListMyPayOrders"
-	PaymentApp_CancelMyPayOrder_FullMethodName       = "/payment.PaymentApp/CancelMyPayOrder"
-	PaymentApp_QueryMyPayOrderStatus_FullMethodName  = "/payment.PaymentApp/QueryMyPayOrderStatus"
+	PaymentApp_GetMyRechargeStat_FullMethodName             = "/payment.PaymentApp/GetMyRechargeStat"
+	PaymentApp_ListAvailableRechargeChannels_FullMethodName = "/payment.PaymentApp/ListAvailableRechargeChannels"
+	PaymentApp_CreateRechargeOrder_FullMethodName           = "/payment.PaymentApp/CreateRechargeOrder"
+	PaymentApp_GetMyPayOrder_FullMethodName                 = "/payment.PaymentApp/GetMyPayOrder"
+	PaymentApp_ListMyPayOrders_FullMethodName               = "/payment.PaymentApp/ListMyPayOrders"
+	PaymentApp_CancelMyPayOrder_FullMethodName              = "/payment.PaymentApp/CancelMyPayOrder"
+	PaymentApp_QueryMyPayOrderStatus_FullMethodName         = "/payment.PaymentApp/QueryMyPayOrderStatus"
 )
 
 // PaymentAppClient is the client API for PaymentApp service.
@@ -35,13 +34,11 @@ const (
 //
 // APP端接口
 type PaymentAppClient interface {
-	// 当前用户累计充值统计
+	// 当前用户累计充值统计（展示用）
 	GetMyRechargeStat(ctx context.Context, in *GetMyRechargeStatReq, opts ...grpc.CallOption) (*GetMyRechargeStatResp, error)
-	// 获取当前金额下可见通道
-	ListVisiblePayChannels(ctx context.Context, in *ListVisiblePayChannelsReq, opts ...grpc.CallOption) (*ListVisiblePayChannelsResp, error)
-	// 检查某金额可用的通道（预检查）
-	CheckRechargeChannels(ctx context.Context, in *CheckRechargeChannelsReq, opts ...grpc.CallOption) (*CheckRechargeChannelsResp, error)
-	// 创建充值订单
+	// 获取当前登录用户在指定充值金额下可用的充值通道
+	ListAvailableRechargeChannels(ctx context.Context, in *ListAvailableRechargeChannelsReq, opts ...grpc.CallOption) (*ListAvailableRechargeChannelsResp, error)
+	// 创建充值订单（服务端需要再次校验通道与用户规则）
 	CreateRechargeOrder(ctx context.Context, in *CreateRechargeOrderReq, opts ...grpc.CallOption) (*CreateRechargeOrderResp, error)
 	// 查询我的订单详情
 	GetMyPayOrder(ctx context.Context, in *GetMyPayOrderReq, opts ...grpc.CallOption) (*GetMyPayOrderResp, error)
@@ -71,20 +68,10 @@ func (c *paymentAppClient) GetMyRechargeStat(ctx context.Context, in *GetMyRecha
 	return out, nil
 }
 
-func (c *paymentAppClient) ListVisiblePayChannels(ctx context.Context, in *ListVisiblePayChannelsReq, opts ...grpc.CallOption) (*ListVisiblePayChannelsResp, error) {
+func (c *paymentAppClient) ListAvailableRechargeChannels(ctx context.Context, in *ListAvailableRechargeChannelsReq, opts ...grpc.CallOption) (*ListAvailableRechargeChannelsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListVisiblePayChannelsResp)
-	err := c.cc.Invoke(ctx, PaymentApp_ListVisiblePayChannels_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentAppClient) CheckRechargeChannels(ctx context.Context, in *CheckRechargeChannelsReq, opts ...grpc.CallOption) (*CheckRechargeChannelsResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CheckRechargeChannelsResp)
-	err := c.cc.Invoke(ctx, PaymentApp_CheckRechargeChannels_FullMethodName, in, out, cOpts...)
+	out := new(ListAvailableRechargeChannelsResp)
+	err := c.cc.Invoke(ctx, PaymentApp_ListAvailableRechargeChannels_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -147,13 +134,11 @@ func (c *paymentAppClient) QueryMyPayOrderStatus(ctx context.Context, in *QueryM
 //
 // APP端接口
 type PaymentAppServer interface {
-	// 当前用户累计充值统计
+	// 当前用户累计充值统计（展示用）
 	GetMyRechargeStat(context.Context, *GetMyRechargeStatReq) (*GetMyRechargeStatResp, error)
-	// 获取当前金额下可见通道
-	ListVisiblePayChannels(context.Context, *ListVisiblePayChannelsReq) (*ListVisiblePayChannelsResp, error)
-	// 检查某金额可用的通道（预检查）
-	CheckRechargeChannels(context.Context, *CheckRechargeChannelsReq) (*CheckRechargeChannelsResp, error)
-	// 创建充值订单
+	// 获取当前登录用户在指定充值金额下可用的充值通道
+	ListAvailableRechargeChannels(context.Context, *ListAvailableRechargeChannelsReq) (*ListAvailableRechargeChannelsResp, error)
+	// 创建充值订单（服务端需要再次校验通道与用户规则）
 	CreateRechargeOrder(context.Context, *CreateRechargeOrderReq) (*CreateRechargeOrderResp, error)
 	// 查询我的订单详情
 	GetMyPayOrder(context.Context, *GetMyPayOrderReq) (*GetMyPayOrderResp, error)
@@ -176,11 +161,8 @@ type UnimplementedPaymentAppServer struct{}
 func (UnimplementedPaymentAppServer) GetMyRechargeStat(context.Context, *GetMyRechargeStatReq) (*GetMyRechargeStatResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMyRechargeStat not implemented")
 }
-func (UnimplementedPaymentAppServer) ListVisiblePayChannels(context.Context, *ListVisiblePayChannelsReq) (*ListVisiblePayChannelsResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListVisiblePayChannels not implemented")
-}
-func (UnimplementedPaymentAppServer) CheckRechargeChannels(context.Context, *CheckRechargeChannelsReq) (*CheckRechargeChannelsResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CheckRechargeChannels not implemented")
+func (UnimplementedPaymentAppServer) ListAvailableRechargeChannels(context.Context, *ListAvailableRechargeChannelsReq) (*ListAvailableRechargeChannelsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListAvailableRechargeChannels not implemented")
 }
 func (UnimplementedPaymentAppServer) CreateRechargeOrder(context.Context, *CreateRechargeOrderReq) (*CreateRechargeOrderResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateRechargeOrder not implemented")
@@ -236,38 +218,20 @@ func _PaymentApp_GetMyRechargeStat_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentApp_ListVisiblePayChannels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListVisiblePayChannelsReq)
+func _PaymentApp_ListAvailableRechargeChannels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListAvailableRechargeChannelsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAppServer).ListVisiblePayChannels(ctx, in)
+		return srv.(PaymentAppServer).ListAvailableRechargeChannels(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentApp_ListVisiblePayChannels_FullMethodName,
+		FullMethod: PaymentApp_ListAvailableRechargeChannels_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAppServer).ListVisiblePayChannels(ctx, req.(*ListVisiblePayChannelsReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentApp_CheckRechargeChannels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CheckRechargeChannelsReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentAppServer).CheckRechargeChannels(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentApp_CheckRechargeChannels_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAppServer).CheckRechargeChannels(ctx, req.(*CheckRechargeChannelsReq))
+		return srv.(PaymentAppServer).ListAvailableRechargeChannels(ctx, req.(*ListAvailableRechargeChannelsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -374,12 +338,8 @@ var PaymentApp_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PaymentApp_GetMyRechargeStat_Handler,
 		},
 		{
-			MethodName: "ListVisiblePayChannels",
-			Handler:    _PaymentApp_ListVisiblePayChannels_Handler,
-		},
-		{
-			MethodName: "CheckRechargeChannels",
-			Handler:    _PaymentApp_CheckRechargeChannels_Handler,
+			MethodName: "ListAvailableRechargeChannels",
+			Handler:    _PaymentApp_ListAvailableRechargeChannels_Handler,
 		},
 		{
 			MethodName: "CreateRechargeOrder",

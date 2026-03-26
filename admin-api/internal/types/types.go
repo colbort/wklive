@@ -31,6 +31,98 @@ type ChangeUserStatusReq struct {
 	Status int64 `json:"status"` // 1启用 0禁用
 }
 
+type ClosePayOrderReq struct {
+	TenantId int64  `json:"tenantId"`
+	OrderNo  string `path:"orderNo"`
+	Remark   string `json:"remark,optional"`
+}
+
+type CreatePayPlatformReq struct {
+	PlatformCode string `json:"platformCode"`
+	PlatformName string `json:"platformName"`
+	PlatformType int64  `json:"platformType"`
+	NotifyUrl    string `json:"notifyUrl,optional"`
+	ReturnUrl    string `json:"returnUrl,optional"`
+	Icon         string `json:"icon,optional"`
+	Status       int64  `json:"status"`
+	Remark       string `json:"remark,optional"`
+}
+
+type CreatePayProductReq struct {
+	PlatformId  int64  `json:"platformId"`
+	ProductCode string `json:"productCode"`
+	ProductName string `json:"productName"`
+	SceneType   int64  `json:"sceneType"`
+	Currency    string `json:"currency"`
+	Status      int64  `json:"status"`
+	Remark      string `json:"remark,optional"`
+}
+
+type CreateTenantPayAccountReq struct {
+	TenantId            int64  `json:"tenantId"`
+	TenantPayPlatformId int64  `json:"tenantPayPlatformId"`
+	PlatformId          int64  `json:"platformId"`
+	AccountCode         string `json:"accountCode"`
+	AccountName         string `json:"accountName"`
+	AppId               string `json:"appId,optional"`
+	MerchantId          string `json:"merchantId,optional"`
+	MerchantName        string `json:"merchantName,optional"`
+	ApiKeyCipher        string `json:"apiKeyCipher,optional"`
+	ApiSecretCipher     string `json:"apiSecretCipher,optional"`
+	PrivateKeyCipher    string `json:"privateKeyCipher,optional"`
+	PublicKey           string `json:"publicKey,optional"`
+	CertCipher          string `json:"certCipher,optional"`
+	ExtConfig           string `json:"extConfig,optional"`
+	Status              int64  `json:"status"`
+	IsDefault           bool   `json:"isDefault"`
+	Remark              string `json:"remark,optional"`
+}
+
+type CreateTenantPayChannelReq struct {
+	TenantId        int64  `json:"tenantId"`
+	PlatformId      int64  `json:"platformId"`
+	ProductId       int64  `json:"productId"`
+	AccountId       int64  `json:"accountId"`
+	ChannelCode     string `json:"channelCode"`
+	ChannelName     string `json:"channelName"`
+	DisplayName     string `json:"displayName"`
+	Icon            string `json:"icon,optional"`
+	Currency        string `json:"currency"`
+	Sort            int64  `json:"sort"`
+	Visible         bool   `json:"visible"`
+	Status          int64  `json:"status"`
+	SingleMinAmount int64  `json:"singleMinAmount"`
+	SingleMaxAmount int64  `json:"singleMaxAmount"`
+	DailyMaxAmount  int64  `json:"dailyMaxAmount"`
+	DailyMaxCount   int64  `json:"dailyMaxCount"`
+	FeeType         int64  `json:"feeType"`
+	FeeRate         string `json:"feeRate,optional"`
+	FeeFixedAmount  int64  `json:"feeFixedAmount,optional"`
+	ExtConfig       string `json:"extConfig,optional"`
+	Remark          string `json:"remark,optional"`
+}
+
+type CreateTenantPayChannelRuleReq struct {
+	TenantId             int64  `json:"tenantId"`
+	ChannelId            int64  `json:"channelId"`
+	RuleName             string `json:"ruleName"`
+	Priority             int64  `json:"priority"`
+	Status               int64  `json:"status"`
+	SingleAmountMin      int64  `json:"singleAmountMin"`
+	SingleAmountMax      int64  `json:"singleAmountMax"`
+	UserTotalRechargeMin int64  `json:"userTotalRechargeMin"`
+	UserTotalRechargeMax int64  `json:"userTotalRechargeMax"`
+	MemberLevelMin       int64  `json:"memberLevelMin"`
+	MemberLevelMax       int64  `json:"memberLevelMax"`
+	KycLevelMin          int64  `json:"kycLevelMin"`
+	KycLevelMax          int64  `json:"kycLevelMax"`
+	AllowNewUser         bool   `json:"allowNewUser"`
+	AllowOldUser         bool   `json:"allowOldUser"`
+	AllowTags            string `json:"allowTags,optional"`
+	DenyTags             string `json:"denyTags,optional"`
+	Remark               string `json:"remark,optional"`
+}
+
 type CreateUserReq struct {
 	TenantId       int64  `json:"tenantId"`
 	Username       string `json:"username"`
@@ -66,6 +158,44 @@ type DeleteUserReq struct {
 	UserId   int64 `path:"userId"`
 }
 
+type GetPayNotifyLogReq struct {
+	TenantId int64 `form:"tenantId"`
+	Id       int64 `form:"id"`
+}
+
+type GetPayNotifyLogResp struct {
+	RespBase
+	Data PayNotifyLog `json:"data"`
+}
+
+type GetPayOrderReq struct {
+	TenantId int64  `form:"tenantId"`
+	OrderNo  string `path:"orderNo"`
+}
+
+type GetPayOrderResp struct {
+	RespBase
+	Data PayOrder `json:"data"`
+}
+
+type GetPayPlatformReq struct {
+	Id int64 `form:"id"`
+}
+
+type GetPayPlatformResp struct {
+	RespBase
+	Data PayPlatform `json:"data"`
+}
+
+type GetPayProductReq struct {
+	Id int64 `form:"id"`
+}
+
+type GetPayProductResp struct {
+	RespBase
+	Data PayProduct `json:"data"`
+}
+
 type GetSystemCore struct {
 	SiteName string `json:"siteName"`
 	SiteLogo string `json:"siteLogo"`
@@ -74,6 +204,46 @@ type GetSystemCore struct {
 type GetSystemCoreResp struct {
 	RespBase
 	Data GetSystemCore `json:"data"`
+}
+
+type GetTenantPayAccountReq struct {
+	Id       int64 `form:"id"`
+	TenantId int64 `form:"tenantId"`
+}
+
+type GetTenantPayAccountResp struct {
+	RespBase
+	Data TenantPayAccount `json:"data"`
+}
+
+type GetTenantPayChannelReq struct {
+	Id       int64 `form:"id"`
+	TenantId int64 `form:"tenantId"`
+}
+
+type GetTenantPayChannelResp struct {
+	RespBase
+	Data TenantPayChannel `json:"data"`
+}
+
+type GetTenantPayChannelRuleReq struct {
+	Id       int64 `form:"id"`
+	TenantId int64 `form:"tenantId"`
+}
+
+type GetTenantPayChannelRuleResp struct {
+	RespBase
+	Data TenantPayChannelRule `json:"data"`
+}
+
+type GetTenantPayPlatformReq struct {
+	Id       int64 `form:"id"`
+	TenantId int64 `form:"tenantId"`
+}
+
+type GetTenantPayPlatformResp struct {
+	RespBase
+	Data TenantPayPlatform `json:"data"`
 }
 
 type GetUserBankReq struct {
@@ -94,6 +264,16 @@ type GetUserDetailReq struct {
 type GetUserDetailResp struct {
 	RespBase
 	Detail UserDetail `json:"detail"`
+}
+
+type GetUserRechargeStatReq struct {
+	TenantId int64 `form:"tenantId"`
+	UserId   int64 `form:"userId"`
+}
+
+type GetUserRechargeStatResp struct {
+	RespBase
+	Data UserRechargeStat `json:"data"`
 }
 
 type GetUserSecurityReq struct {
@@ -141,6 +321,127 @@ type Google2FAResetReq struct {
 	UserId int64 `json:"userId"`
 }
 
+type ListPayNotifyLogsReq struct {
+	PageReq
+	TenantId        int64  `form:"tenantId,optional"`
+	OrderNo         string `form:"orderNo,optional"`
+	OrderId         int64  `form:"orderId,optional"`
+	PlatformId      int64  `form:"platformId,optional"`
+	ChannelId       int64  `form:"channelId,optional"`
+	NotifyStatus    int64  `form:"notifyStatus,optional"`
+	SignResult      int64  `form:"signResult,optional"`
+	CreateTimeStart int64  `form:"createTimeStart,optional"`
+	CreateTimeEnd   int64  `form:"createTimeEnd,optional"`
+}
+
+type ListPayNotifyLogsResp struct {
+	RespBase
+	Data []PayNotifyLog `json:"data"`
+}
+
+type ListPayOrdersReq struct {
+	PageReq
+	TenantId        int64  `form:"tenantId,optional"`
+	UserId          int64  `form:"userId,optional"`
+	PlatformId      int64  `form:"platformId,optional"`
+	ProductId       int64  `form:"productId,optional"`
+	AccountId       int64  `form:"accountId,optional"`
+	ChannelId       int64  `form:"channelId,optional"`
+	OrderNo         string `form:"orderNo,optional"`
+	BizOrderNo      string `form:"bizOrderNo,optional"`
+	ThirdTradeNo    string `form:"thirdTradeNo,optional"`
+	Status          int64  `form:"status,optional"`
+	CreateTimeStart int64  `form:"createTimeStart,optional"`
+	CreateTimeEnd   int64  `form:"createTimeEnd,optional"`
+}
+
+type ListPayOrdersResp struct {
+	RespBase
+	Data []PayOrder `json:"data"`
+}
+
+type ListPayPlatformsReq struct {
+	PageReq
+	Keyword      string `form:"keyword,optional"`
+	PlatformCode string `form:"platformCode,optional"`
+	Status       int64  `form:"status,optional"`
+	PlatformType int64  `form:"platformType,optional"`
+}
+
+type ListPayPlatformsResp struct {
+	RespBase
+	Data []PayPlatform `json:"data"`
+}
+
+type ListPayProductsReq struct {
+	PageReq
+	PlatformId  int64  `form:"platformId,optional"`
+	Keyword     string `form:"keyword,optional"`
+	ProductCode string `form:"productCode,optional"`
+	Status      int64  `form:"status,optional"`
+	SceneType   int64  `form:"sceneType,optional"`
+}
+
+type ListPayProductsResp struct {
+	RespBase
+	Data []PayProduct `json:"data"`
+}
+
+type ListTenantPayAccountsReq struct {
+	PageReq
+	TenantId            int64  `form:"tenantId,optional"`
+	PlatformId          int64  `form:"platformId,optional"`
+	TenantPayPlatformId int64  `form:"tenantPayPlatformId,optional"`
+	Keyword             string `form:"keyword,optional"`
+	Status              int64  `form:"status,optional"`
+}
+
+type ListTenantPayAccountsResp struct {
+	RespBase
+	Data []TenantPayAccount `json:"data"`
+}
+
+type ListTenantPayChannelRulesReq struct {
+	PageReq
+	TenantId  int64 `form:"tenantId,optional"`
+	ChannelId int64 `form:"channelId,optional"`
+	Status    int64 `form:"status,optional"`
+}
+
+type ListTenantPayChannelRulesResp struct {
+	RespBase
+	Data []TenantPayChannelRule `json:"data"`
+}
+
+type ListTenantPayChannelsReq struct {
+	PageReq
+	TenantId   int64  `form:"tenantId,optional"`
+	PlatformId int64  `form:"platformId,optional"`
+	ProductId  int64  `form:"productId,optional"`
+	AccountId  int64  `form:"accountId,optional"`
+	Keyword    string `form:"keyword,optional"`
+	Status     int64  `form:"status,optional"`
+	Visible    bool   `form:"visible,optional"`
+}
+
+type ListTenantPayChannelsResp struct {
+	RespBase
+	Data []TenantPayChannel `json:"data"`
+}
+
+type ListTenantPayPlatformsReq struct {
+	PageReq
+	TenantId   int64 `form:"tenantId,optional"`
+	PlatformId int64 `form:"platformId,optional"`
+	Status     int64 `form:"status,optional"`
+	OpenStatus int64 `form:"openStatus,optional"`
+}
+
+type ListTenantPayPlatformsResp struct {
+	RespBase
+	Data []TenantPayPlatform `json:"data"`
+}
+
 type ListUserBanksReq struct {
 	PageReq
 	TenantId int64  `form:"tenantId,optional"`
@@ -173,6 +474,19 @@ type ListUserIdentitiesReq struct {
 type ListUserIdentitiesResp struct {
 	RespBase
 	Data []UserIdentityItem `json:"data"`
+}
+
+type ListUserRechargeStatsReq struct {
+	PageReq
+	TenantId              int64 `form:"tenantId,optional"`
+	UserId                int64 `form:"userId,optional"`
+	SuccessTotalAmountMin int64 `form:"successTotalAmountMin,optional"`
+	SuccessTotalAmountMax int64 `form:"successTotalAmountMax,optional"`
+}
+
+type ListUserRechargeStatsResp struct {
+	RespBase
+	Data []UserRechargeStat `json:"data"`
 }
 
 type ListUsersReq struct {
@@ -235,6 +549,14 @@ type LoginResp struct {
 	} `json:"data"`
 }
 
+type ManualMarkPayOrderSuccessReq struct {
+	TenantId     int64  `json:"tenantId"`
+	OrderNo      string `path:"orderNo"`
+	ThirdTradeNo string `json:"thirdTradeNo,optional"`
+	PayAmount    int64  `json:"payAmount"`
+	Remark       string `json:"remark,optional"`
+}
+
 type MenuNode struct {
 	Id        int64      `json:"id"`
 	ParentId  int64      `json:"parentId"`
@@ -276,29 +598,95 @@ type OpLogListResp struct {
 	Data []OpLogItem `json:"data"`
 }
 
-type OrderItem struct {
-	OrderNo   string `json:"orderNo"`
-	Uid       int64  `json:"uid"`
-	Amount    int64  `json:"amount"`
-	Status    int64  `json:"status"`
-	CreatedAt int64  `json:"createdAt"`
-}
-
-type OrderListReq struct {
-	PageReq
-	Uid     int64  `form:"uid,optional"`
-	Status  int64  `form:"status,optional"`
-	OrderNo string `form:"orderNo,optional"`
-}
-
-type OrderListResp struct {
-	RespBase
-	Data []OrderItem `json:"data"`
+type OpenTenantPayPlatformReq struct {
+	TenantId   int64  `json:"tenantId"`
+	PlatformId int64  `json:"platformId"`
+	Status     int64  `json:"status"`
+	OpenStatus int64  `json:"openStatus"`
+	Remark     string `json:"remark,optional"`
 }
 
 type PageReq struct {
 	Cursor int64 `form:"cursor,optional"`
 	Limit  int64 `form:"limit,optional"`
+}
+
+type PayNotifyLog struct {
+	Id            int64  `json:"id"`
+	TenantId      int64  `json:"tenantId"`
+	OrderId       int64  `json:"orderId"`
+	OrderNo       string `json:"orderNo"`
+	PlatformId    int64  `json:"platformId"`
+	ChannelId     int64  `json:"channelId"`
+	NotifyStatus  int64  `json:"notifyStatus"` // 0未知 1待处理 2成功 3失败
+	NotifyBody    string `json:"notifyBody"`
+	SignResult    int64  `json:"signResult"` // 0未知 1未校验 2通过 3失败
+	ProcessResult string `json:"processResult"`
+	ErrorMessage  string `json:"errorMessage"`
+	NotifyTime    int64  `json:"notifyTime"`
+	CreateTime    int64  `json:"createTime"`
+}
+
+type PayOrder struct {
+	Id           int64  `json:"id"`
+	TenantId     int64  `json:"tenantId"`
+	UserId       int64  `json:"userId"`
+	OrderNo      string `json:"orderNo"`
+	BizOrderNo   string `json:"bizOrderNo"`
+	PlatformId   int64  `json:"platformId"`
+	ProductId    int64  `json:"productId"`
+	AccountId    int64  `json:"accountId"`
+	ChannelId    int64  `json:"channelId"`
+	Currency     string `json:"currency"`
+	OrderAmount  int64  `json:"orderAmount"`
+	PayAmount    int64  `json:"payAmount"`
+	FeeAmount    int64  `json:"feeAmount"`
+	Subject      string `json:"subject"`
+	Body         string `json:"body"`
+	ClientType   int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
+	ClientIp     string `json:"clientIp"`
+	Status       int64  `json:"status"` // 0未知 1待支付 2支付中 3成功 4失败 5已关闭 6已退款
+	ThirdTradeNo string `json:"thirdTradeNo"`
+	ThirdOrderNo string `json:"thirdOrderNo"`
+	PayUrl       string `json:"payUrl"`
+	QrContent    string `json:"qrContent"`
+	RequestData  string `json:"requestData"`
+	ResponseData string `json:"responseData"`
+	NotifyData   string `json:"notifyData"`
+	ExpireTime   int64  `json:"expireTime"`
+	PaidTime     int64  `json:"paidTime"`
+	NotifyTime   int64  `json:"notifyTime"`
+	CloseTime    int64  `json:"closeTime"`
+	Remark       string `json:"remark"`
+	CreateTime   int64  `json:"createTime"`
+	UpdateTime   int64  `json:"updateTime"`
+}
+
+type PayPlatform struct {
+	Id           int64  `json:"id"`
+	PlatformCode string `json:"platformCode"`
+	PlatformName string `json:"platformName"`
+	PlatformType int64  `json:"platformType"` // 0未知 1三方支付 2银行转账 3链上支付 4人工代收
+	NotifyUrl    string `json:"notifyUrl"`
+	ReturnUrl    string `json:"returnUrl"`
+	Icon         string `json:"icon"`
+	Status       int64  `json:"status"` // 0未知 1启用 2禁用
+	Remark       string `json:"remark"`
+	CreateTime   int64  `json:"createTime"`
+	UpdateTime   int64  `json:"updateTime"`
+}
+
+type PayProduct struct {
+	Id          int64  `json:"id"`
+	PlatformId  int64  `json:"platformId"`
+	ProductCode string `json:"productCode"`
+	ProductName string `json:"productName"`
+	SceneType   int64  `json:"sceneType"` // 0未知 1APP 2H5 3WEB 4收银台 5链上
+	Currency    string `json:"currency"`
+	Status      int64  `json:"status"` // 0未知 1启用 2禁用
+	Remark      string `json:"remark"`
+	CreateTime  int64  `json:"createTime"`
+	UpdateTime  int64  `json:"updateTime"`
 }
 
 type ProfileReq struct {
@@ -350,6 +738,11 @@ type RespBase struct {
 	HasPrev    bool   `json:"hasPrev,optional"`
 	NextCursor int64  `json:"nextCursor,optional"`
 	PrevCursor int64  `json:"prevCursor,optional"`
+}
+
+type RetryNotifyReq struct {
+	TenantId int64  `json:"tenantId"`
+	OrderNo  string `path:"orderNo"`
 }
 
 type ReviewUserIdentityReq struct {
@@ -747,6 +1140,87 @@ type TenantJsonScope struct {
 	TenantCode string `json:"tenantCode,optional"`
 }
 
+type TenantPayAccount struct {
+	Id                  int64  `json:"id"`
+	TenantId            int64  `json:"tenantId"`
+	TenantPayPlatformId int64  `json:"tenantPayPlatformId"`
+	PlatformId          int64  `json:"platformId"`
+	AccountCode         string `json:"accountCode"`
+	AccountName         string `json:"accountName"`
+	AppId               string `json:"appId"`
+	MerchantId          string `json:"merchantId"`
+	MerchantName        string `json:"merchantName"`
+	PublicKey           string `json:"publicKey"`
+	ExtConfig           string `json:"extConfig"`
+	Status              int64  `json:"status"` // 0未知 1启用 2禁用
+	IsDefault           bool   `json:"isDefault"`
+	Remark              string `json:"remark"`
+	CreateTime          int64  `json:"createTime"`
+	UpdateTime          int64  `json:"updateTime"`
+}
+
+type TenantPayChannel struct {
+	Id              int64  `json:"id"`
+	TenantId        int64  `json:"tenantId"`
+	PlatformId      int64  `json:"platformId"`
+	ProductId       int64  `json:"productId"`
+	AccountId       int64  `json:"accountId"`
+	ChannelCode     string `json:"channelCode"`
+	ChannelName     string `json:"channelName"`
+	DisplayName     string `json:"displayName"`
+	Icon            string `json:"icon"`
+	Currency        string `json:"currency"`
+	Sort            int64  `json:"sort"`
+	Visible         bool   `json:"visible"`
+	Status          int64  `json:"status"` // 0未知 1启用 2禁用
+	SingleMinAmount int64  `json:"singleMinAmount"`
+	SingleMaxAmount int64  `json:"singleMaxAmount"`
+	DailyMaxAmount  int64  `json:"dailyMaxAmount"`
+	DailyMaxCount   int64  `json:"dailyMaxCount"`
+	FeeType         int64  `json:"feeType"` // 0未知 1费率 2固定
+	FeeRate         string `json:"feeRate"`
+	FeeFixedAmount  int64  `json:"feeFixedAmount"`
+	ExtConfig       string `json:"extConfig"`
+	Remark          string `json:"remark"`
+	CreateTime      int64  `json:"createTime"`
+	UpdateTime      int64  `json:"updateTime"`
+}
+
+type TenantPayChannelRule struct {
+	Id                   int64  `json:"id"`
+	TenantId             int64  `json:"tenantId"`
+	ChannelId            int64  `json:"channelId"`
+	RuleName             string `json:"ruleName"`
+	Priority             int64  `json:"priority"`
+	Status               int64  `json:"status"` // 0未知 1启用 2禁用
+	SingleAmountMin      int64  `json:"singleAmountMin"`
+	SingleAmountMax      int64  `json:"singleAmountMax"`
+	UserTotalRechargeMin int64  `json:"userTotalRechargeMin"`
+	UserTotalRechargeMax int64  `json:"userTotalRechargeMax"`
+	MemberLevelMin       int64  `json:"memberLevelMin"`
+	MemberLevelMax       int64  `json:"memberLevelMax"`
+	KycLevelMin          int64  `json:"kycLevelMin"`
+	KycLevelMax          int64  `json:"kycLevelMax"`
+	AllowNewUser         bool   `json:"allowNewUser"`
+	AllowOldUser         bool   `json:"allowOldUser"`
+	AllowTags            string `json:"allowTags"`
+	DenyTags             string `json:"denyTags"`
+	Remark               string `json:"remark"`
+	CreateTime           int64  `json:"createTime"`
+	UpdateTime           int64  `json:"updateTime"`
+}
+
+type TenantPayPlatform struct {
+	Id         int64  `json:"id"`
+	TenantId   int64  `json:"tenantId"`
+	PlatformId int64  `json:"platformId"`
+	Status     int64  `json:"status"`     // 0未知 1启用 2禁用
+	OpenStatus int64  `json:"openStatus"` // 0未知 1待配置 2已开通 3审核中 4已拒绝
+	Remark     string `json:"remark"`
+	CreateTime int64  `json:"createTime"`
+	UpdateTime int64  `json:"updateTime"`
+}
+
 type TenantScope struct {
 	TenantId   int64  `form:"tenantId,optional"`
 	TenantCode string `form:"tenantCode,optional"`
@@ -755,6 +1229,26 @@ type TenantScope struct {
 type UnlockUserReq struct {
 	TenantId int64 `json:"tenantId"`
 	UserId   int64 `path:"userId"`
+}
+
+type UpdatePayPlatformReq struct {
+	Id           int64  `json:"id"`
+	PlatformName string `json:"platformName"`
+	PlatformType int64  `json:"platformType"`
+	NotifyUrl    string `json:"notifyUrl,optional"`
+	ReturnUrl    string `json:"returnUrl,optional"`
+	Icon         string `json:"icon,optional"`
+	Status       int64  `json:"status"`
+	Remark       string `json:"remark,optional"`
+}
+
+type UpdatePayProductReq struct {
+	Id          int64  `json:"id"`
+	ProductName string `json:"productName"`
+	SceneType   int64  `json:"sceneType"`
+	Currency    string `json:"currency"`
+	Status      int64  `json:"status"`
+	Remark      string `json:"remark,optional"`
 }
 
 type UpdateProfileReq struct {
@@ -767,6 +1261,74 @@ type UpdateRiskLevelReq struct {
 	TenantId  int64 `json:"tenantId"`
 	UserId    int64 `path:"userId"`
 	RiskLevel int64 `json:"riskLevel"`
+}
+
+type UpdateTenantPayAccountReq struct {
+	Id               int64  `json:"id"`
+	TenantId         int64  `json:"tenantId"`
+	AccountName      string `json:"accountName"`
+	AppId            string `json:"appId,optional"`
+	MerchantId       string `json:"merchantId,optional"`
+	MerchantName     string `json:"merchantName,optional"`
+	ApiKeyCipher     string `json:"apiKeyCipher,optional"`
+	ApiSecretCipher  string `json:"apiSecretCipher,optional"`
+	PrivateKeyCipher string `json:"privateKeyCipher,optional"`
+	PublicKey        string `json:"publicKey,optional"`
+	CertCipher       string `json:"certCipher,optional"`
+	ExtConfig        string `json:"extConfig,optional"`
+	Status           int64  `json:"status"`
+	IsDefault        bool   `json:"isDefault"`
+	Remark           string `json:"remark,optional"`
+}
+
+type UpdateTenantPayChannelReq struct {
+	Id              int64  `json:"id"`
+	TenantId        int64  `json:"tenantId"`
+	ChannelName     string `json:"channelName"`
+	DisplayName     string `json:"displayName"`
+	Icon            string `json:"icon,optional"`
+	Currency        string `json:"currency"`
+	Sort            int64  `json:"sort"`
+	Visible         bool   `json:"visible"`
+	Status          int64  `json:"status"`
+	SingleMinAmount int64  `json:"singleMinAmount"`
+	SingleMaxAmount int64  `json:"singleMaxAmount"`
+	DailyMaxAmount  int64  `json:"dailyMaxAmount"`
+	DailyMaxCount   int64  `json:"dailyMaxCount"`
+	FeeType         int64  `json:"feeType"`
+	FeeRate         string `json:"feeRate,optional"`
+	FeeFixedAmount  int64  `json:"feeFixedAmount,optional"`
+	ExtConfig       string `json:"extConfig,optional"`
+	Remark          string `json:"remark,optional"`
+}
+
+type UpdateTenantPayChannelRuleReq struct {
+	Id                   int64  `json:"id"`
+	TenantId             int64  `json:"tenantId"`
+	RuleName             string `json:"ruleName"`
+	Priority             int64  `json:"priority"`
+	Status               int64  `json:"status"`
+	SingleAmountMin      int64  `json:"singleAmountMin"`
+	SingleAmountMax      int64  `json:"singleAmountMax"`
+	UserTotalRechargeMin int64  `json:"userTotalRechargeMin"`
+	UserTotalRechargeMax int64  `json:"userTotalRechargeMax"`
+	MemberLevelMin       int64  `json:"memberLevelMin"`
+	MemberLevelMax       int64  `json:"memberLevelMax"`
+	KycLevelMin          int64  `json:"kycLevelMin"`
+	KycLevelMax          int64  `json:"kycLevelMax"`
+	AllowNewUser         bool   `json:"allowNewUser"`
+	AllowOldUser         bool   `json:"allowOldUser"`
+	AllowTags            string `json:"allowTags,optional"`
+	DenyTags             string `json:"denyTags,optional"`
+	Remark               string `json:"remark,optional"`
+}
+
+type UpdateTenantPayPlatformReq struct {
+	Id         int64  `json:"id"`
+	TenantId   int64  `json:"tenantId"`
+	Status     int64  `json:"status"`
+	OpenStatus int64  `json:"openStatus"`
+	Remark     string `json:"remark,optional"`
 }
 
 type UpdateUserBankReq struct {
@@ -967,6 +1529,20 @@ type UserItem struct {
 	LastLoginIp   string `json:"lastLoginIp,optional"`
 	LastLoginTime int64  `json:"lastLoginTime,optional"`
 	RegisterTime  int64  `json:"registerTime,optional"`
+}
+
+type UserRechargeStat struct {
+	Id                 int64 `json:"id"`
+	TenantId           int64 `json:"tenantId"`
+	UserId             int64 `json:"userId"`
+	SuccessOrderCount  int64 `json:"successOrderCount"`
+	SuccessTotalAmount int64 `json:"successTotalAmount"`
+	TodaySuccessAmount int64 `json:"todaySuccessAmount"`
+	TodaySuccessCount  int64 `json:"todaySuccessCount"`
+	FirstSuccessTime   int64 `json:"firstSuccessTime"`
+	LastSuccessTime    int64 `json:"lastSuccessTime"`
+	CreateTime         int64 `json:"createTime"`
+	UpdateTime         int64 `json:"updateTime"`
 }
 
 type UserSecurity struct {

@@ -23,25 +23,19 @@ func NewPaymentAppServer(svcCtx *svc.ServiceContext) *PaymentAppServer {
 	}
 }
 
-// 当前用户累计充值统计
+// 当前用户累计充值统计（展示用）
 func (s *PaymentAppServer) GetMyRechargeStat(ctx context.Context, in *payment.GetMyRechargeStatReq) (*payment.GetMyRechargeStatResp, error) {
 	l := logic.NewGetMyRechargeStatLogic(ctx, s.svcCtx)
 	return l.GetMyRechargeStat(in)
 }
 
-// 获取当前金额下可见通道
-func (s *PaymentAppServer) ListVisiblePayChannels(ctx context.Context, in *payment.ListVisiblePayChannelsReq) (*payment.ListVisiblePayChannelsResp, error) {
-	l := logic.NewListVisiblePayChannelsLogic(ctx, s.svcCtx)
-	return l.ListVisiblePayChannels(in)
+// 获取当前登录用户在指定充值金额下可用的充值通道
+func (s *PaymentAppServer) ListAvailableRechargeChannels(ctx context.Context, in *payment.ListAvailableRechargeChannelsReq) (*payment.ListAvailableRechargeChannelsResp, error) {
+	l := logic.NewListAvailableRechargeChannelsLogic(ctx, s.svcCtx)
+	return l.ListAvailableRechargeChannels(in)
 }
 
-// 检查某金额可用的通道（预检查）
-func (s *PaymentAppServer) CheckRechargeChannels(ctx context.Context, in *payment.CheckRechargeChannelsReq) (*payment.CheckRechargeChannelsResp, error) {
-	l := logic.NewCheckRechargeChannelsLogic(ctx, s.svcCtx)
-	return l.CheckRechargeChannels(in)
-}
-
-// 创建充值订单
+// 创建充值订单（服务端需要再次校验通道与用户规则）
 func (s *PaymentAppServer) CreateRechargeOrder(ctx context.Context, in *payment.CreateRechargeOrderReq) (*payment.CreateRechargeOrderResp, error) {
 	l := logic.NewCreateRechargeOrderLogic(ctx, s.svcCtx)
 	return l.CreateRechargeOrder(in)

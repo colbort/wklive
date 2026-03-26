@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	core "wklive/app-api/internal/handler/core"
+	payment "wklive/app-api/internal/handler/payment"
 	user_private "wklive/app-api/internal/handler/user_private"
 	user_public "wklive/app-api/internal/handler/user_public"
 	"wklive/app-api/internal/svc"
@@ -24,6 +25,48 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 		},
 		rest.WithPrefix("/app"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodPost,
+				Path:    "/channels/available",
+				Handler: payment.ListAvailableRechargeChannelsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/orders",
+				Handler: payment.ListMyPayOrdersHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/orders/:orderNo",
+				Handler: payment.GetMyPayOrderHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/orders/:orderNo/cancel",
+				Handler: payment.CancelMyPayOrderHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/orders/:orderNo/status",
+				Handler: payment.QueryMyPayOrderStatusHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/orders/recharge",
+				Handler: payment.CreateRechargeOrderHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/recharge/stat",
+				Handler: payment.GetMyRechargeStatHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
+		rest.WithPrefix("/app/payment"),
 	)
 
 	server.AddRoutes(

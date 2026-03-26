@@ -26,7 +26,7 @@ func NewSetPayPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Se
 	}
 }
 
-func (l *SetPayPasswordLogic) SetPayPassword(req *types.SetPayPasswordReq) (resp *types.CommonResp, err error) {
+func (l *SetPayPasswordLogic) SetPayPassword(req *types.SetPayPasswordReq) (resp *types.RespBase, err error) {
 	// todo: add your logic here and delete this line
 
 	return

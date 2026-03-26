@@ -18,6 +18,29 @@ type AddBankResp struct {
 	Bank UserBank `json:"bank"`
 }
 
+type AvailableRechargeChannel struct {
+	ChannelId              int64  `json:"channelId"`
+	ChannelCode            string `json:"channelCode"`
+	ChannelName            string `json:"channelName"`
+	DisplayName            string `json:"displayName"`
+	Icon                   string `json:"icon"`
+	Currency               string `json:"currency"`
+	SingleMinAmount        int64  `json:"singleMinAmount"`
+	SingleMaxAmount        int64  `json:"singleMaxAmount"`
+	FeeType                int64  `json:"feeType"` // 0未知 1费率 2固定
+	FeeRate                string `json:"feeRate"`
+	FeeFixedAmount         int64  `json:"feeFixedAmount"`
+	PlatformId             int64  `json:"platformId"`
+	ProductId              int64  `json:"productId"`
+	AccountId              int64  `json:"accountId"`
+	UserSuccessTotalAmount int64  `json:"userSuccessTotalAmount"`
+}
+
+type CancelMyPayOrderReq struct {
+	TenantId int64  `json:"tenantId,optional"`
+	OrderNo  string `path:"orderNo"`
+}
+
 type ChangeLoginPasswordReq struct {
 	OldPassword     string `json:"oldPassword"`
 	NewPassword     string `json:"newPassword"`
@@ -30,8 +53,21 @@ type ChangePayPasswordReq struct {
 	ConfirmPassword string `json:"confirmPassword"`
 }
 
-type CommonResp struct {
+type CreateRechargeOrderReq struct {
+	TenantId       int64  `json:"json:"tenantId,optional"`
+	ChannelId      int64  `json:"channelId"`
+	RechargeAmount int64  `json:"rechargeAmount"` // 单位：分
+	Currency       string `json:"currency"`
+	Subject        string `json:"subject,optional"`
+	Body           string `json:"body,optional"`
+	ClientType     int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
+	ClientIp       string `json:"clientIp,optional"`
+	BizOrderNo     string `json:"bizOrderNo,optional"`
+}
+
+type CreateRechargeOrderResp struct {
 	RespBase
+	Order PayOrder `json:"order"`
 }
 
 type DeleteBankReq struct {
@@ -41,6 +77,25 @@ type DeleteBankReq struct {
 type GetIdentityResp struct {
 	RespBase
 	Identity UserIdentity `json:"identity"`
+}
+
+type GetMyPayOrderReq struct {
+	TenantId int64  `form:"tenantId,optional"`
+	OrderNo  string `path:"orderNo"`
+}
+
+type GetMyPayOrderResp struct {
+	RespBase
+	Order PayOrder `json:"order"`
+}
+
+type GetMyRechargeStatReq struct {
+	TenantId int64 `form:"tenantId,optional"`
+}
+
+type GetMyRechargeStatResp struct {
+	RespBase
+	Stat UserRechargeStat `json:"stat"`
 }
 
 type GetProfileResp struct {
@@ -67,6 +122,18 @@ type InitGoogle2FAResp struct {
 	QrCodeUrl string `json:"qrCodeUrl"`
 }
 
+type ListAvailableRechargeChannelsReq struct {
+	TenantId       int64  `json:"tenantId,optional"`
+	RechargeAmount int64  `json:"rechargeAmount"` // 单位：分
+	Currency       string `json:"currency"`
+	ClientType     int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
+}
+
+type ListAvailableRechargeChannelsResp struct {
+	RespBase
+	List []AvailableRechargeChannel `json:"list"`
+}
+
 type ListBanksReq struct {
 	PageReq
 }
@@ -74,6 +141,21 @@ type ListBanksReq struct {
 type ListBanksResp struct {
 	RespBase
 	Data []UserBank `json:"data"`
+}
+
+type ListMyPayOrdersReq struct {
+	TenantId        int64  `form:"tenantId,optional"`
+	Cursor          int64  `form:"cursor,optional"`
+	Limit           int64  `form:"limit,optional"`
+	Status          int64  `form:"status,optional"` // 0未知 1待支付 2支付中 3成功 4失败 5已关闭 6已退款
+	OrderNo         string `form:"orderNo,optional"`
+	CreateTimeStart int64  `form:"createTimeStart,optional"`
+	CreateTimeEnd   int64  `form:"createTimeEnd,optional"`
+}
+
+type ListMyPayOrdersResp struct {
+	RespBase
+	List []PayOrder `json:"list"`
 }
 
 type LoginReq struct {
@@ -95,6 +177,52 @@ type LoginResp struct {
 type PageReq struct {
 	Page     int64 `form:"page,optional"`
 	PageSize int64 `form:"pageSize,optional"`
+}
+
+type PayOrder struct {
+	Id           int64  `json:"id"`
+	TenantId     int64  `json:"tenantId"`
+	UserId       int64  `json:"userId"`
+	OrderNo      string `json:"orderNo"`
+	BizOrderNo   string `json:"bizOrderNo"`
+	PlatformId   int64  `json:"platformId"`
+	ProductId    int64  `json:"productId"`
+	AccountId    int64  `json:"accountId"`
+	ChannelId    int64  `json:"channelId"`
+	Currency     string `json:"currency"`
+	OrderAmount  int64  `json:"orderAmount"`
+	PayAmount    int64  `json:"payAmount"`
+	FeeAmount    int64  `json:"feeAmount"`
+	Subject      string `json:"subject"`
+	Body         string `json:"body"`
+	ClientType   int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
+	ClientIp     string `json:"clientIp"`
+	Status       int64  `json:"status"` // 0未知 1待支付 2支付中 3成功 4失败 5已关闭 6已退款
+	ThirdTradeNo string `json:"thirdTradeNo"`
+	ThirdOrderNo string `json:"thirdOrderNo"`
+	PayUrl       string `json:"payUrl"`
+	QrContent    string `json:"qrContent"`
+	RequestData  string `json:"requestData"`
+	ResponseData string `json:"responseData"`
+	NotifyData   string `json:"notifyData"`
+	ExpireTime   int64  `json:"expireTime"`
+	PaidTime     int64  `json:"paidTime"`
+	NotifyTime   int64  `json:"notifyTime"`
+	CloseTime    int64  `json:"closeTime"`
+	Remark       string `json:"remark"`
+	CreateTime   int64  `json:"createTime"`
+	UpdateTime   int64  `json:"updateTime"`
+}
+
+type QueryMyPayOrderStatusReq struct {
+	TenantId int64  `form:"tenantId,optional"`
+	OrderNo  string `path:"orderNo"`
+}
+
+type QueryMyPayOrderStatusResp struct {
+	RespBase
+	Status int64    `json:"status"` // 0未知 1待支付 2支付中 3成功 4失败 5已关闭 6已退款
+	Order  PayOrder `json:"order"`
 }
 
 type RefreshTokenReq struct {
@@ -373,6 +501,20 @@ type UserProfile struct {
 	Base     UserBase     `json:"base"`
 	Identity UserIdentity `json:"identity,optional"`
 	Security UserSecurity `json:"security,optional"`
+}
+
+type UserRechargeStat struct {
+	Id                 int64 `json:"id"`
+	TenantId           int64 `json:"tenantId"`
+	UserId             int64 `json:"userId"`
+	SuccessOrderCount  int64 `json:"successOrderCount"`
+	SuccessTotalAmount int64 `json:"successTotalAmount"`
+	TodaySuccessAmount int64 `json:"todaySuccessAmount"`
+	TodaySuccessCount  int64 `json:"todaySuccessCount"`
+	FirstSuccessTime   int64 `json:"firstSuccessTime"`
+	LastSuccessTime    int64 `json:"lastSuccessTime"`
+	CreateTime         int64 `json:"createTime"`
+	UpdateTime         int64 `json:"updateTime"`
 }
 
 type UserSecurity struct {

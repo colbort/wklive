@@ -26,7 +26,7 @@ func NewSetDefaultBankLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Se
 	}
 }
 
-func (l *SetDefaultBankLogic) SetDefaultBank(req *types.SetDefaultBankReq) (resp *types.CommonResp, err error) {
+func (l *SetDefaultBankLogic) SetDefaultBank(req *types.SetDefaultBankReq) (resp *types.RespBase, err error) {
 	// todo: add your logic here and delete this line
 
 	return

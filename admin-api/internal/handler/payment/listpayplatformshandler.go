@@ -12,16 +12,16 @@ import (
 	"wklive/admin-api/internal/types"
 )
 
-func ListOrdersHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func ListPayPlatformsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.OrderListReq
+		var req types.ListPayPlatformsReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
 
-		l := payment.NewListOrdersLogic(r.Context(), svcCtx)
-		resp, err := l.ListOrders(&req)
+		l := payment.NewListPayPlatformsLogic(r.Context(), svcCtx)
+		resp, err := l.ListPayPlatforms(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

@@ -12,21 +12,21 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type ListOrdersLogic struct {
+type ManualMarkPayOrderSuccessLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewListOrdersLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListOrdersLogic {
-	return &ListOrdersLogic{
+func NewManualMarkPayOrderSuccessLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ManualMarkPayOrderSuccessLogic {
+	return &ManualMarkPayOrderSuccessLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *ListOrdersLogic) ListOrders(req *types.OrderListReq) (resp *types.OrderListResp, err error) {
+func (l *ManualMarkPayOrderSuccessLogic) ManualMarkPayOrderSuccess(req *types.ManualMarkPayOrderSuccessReq) (resp *types.RespBase, err error) {
 	// todo: add your logic here and delete this line
 
 	return

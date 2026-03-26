@@ -1,0 +1,210 @@
+syntax = "v1"
+
+import "common.api"
+
+
+// ====================
+// payment types
+// ====================
+
+// 用户充值统计
+type UserRechargeStat {
+  id                 int64 `json:"id"`
+  tenantId           int64 `json:"tenantId"`
+  userId             int64 `json:"userId"`
+  successOrderCount  int64 `json:"successOrderCount"`
+  successTotalAmount int64 `json:"successTotalAmount"`
+  todaySuccessAmount int64 `json:"todaySuccessAmount"`
+  todaySuccessCount  int64 `json:"todaySuccessCount"`
+  firstSuccessTime   int64 `json:"firstSuccessTime"`
+  lastSuccessTime    int64 `json:"lastSuccessTime"`
+  createTime         int64 `json:"createTime"`
+  updateTime         int64 `json:"updateTime"`
+}
+
+// 当前用户可用充值通道
+type AvailableRechargeChannel {
+  channelId               int64  `json:"channelId"`
+  channelCode             string `json:"channelCode"`
+  channelName             string `json:"channelName"`
+  displayName             string `json:"displayName"`
+  icon                    string `json:"icon"`
+  currency                string `json:"currency"`
+  singleMinAmount         int64  `json:"singleMinAmount"`
+  singleMaxAmount         int64  `json:"singleMaxAmount"`
+  feeType                 int64  `json:"feeType"` // 0未知 1费率 2固定
+  feeRate                 string `json:"feeRate"`
+  feeFixedAmount          int64  `json:"feeFixedAmount"`
+  platformId              int64  `json:"platformId"`
+  productId               int64  `json:"productId"`
+  accountId               int64  `json:"accountId"`
+
+  // 以下字段为服务端基于当前登录用户上下文计算后返回，方便前端展示
+  userSuccessTotalAmount  int64  `json:"userSuccessTotalAmount"`
+}
+
+// 支付订单
+type PayOrder {
+  id            int64  `json:"id"`
+  tenantId      int64  `json:"tenantId"`
+  userId        int64  `json:"userId"`
+  orderNo       string `json:"orderNo"`
+  bizOrderNo    string `json:"bizOrderNo"`
+  platformId    int64  `json:"platformId"`
+  productId     int64  `json:"productId"`
+  accountId     int64  `json:"accountId"`
+  channelId     int64  `json:"channelId"`
+  currency      string `json:"currency"`
+  orderAmount   int64  `json:"orderAmount"`
+  payAmount     int64  `json:"payAmount"`
+  feeAmount     int64  `json:"feeAmount"`
+  subject       string `json:"subject"`
+  body          string `json:"body"`
+  clientType    int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
+  clientIp      string `json:"clientIp"`
+  status        int64  `json:"status"` // 0未知 1待支付 2支付中 3成功 4失败 5已关闭 6已退款
+  thirdTradeNo  string `json:"thirdTradeNo"`
+  thirdOrderNo  string `json:"thirdOrderNo"`
+  payUrl        string `json:"payUrl"`
+  qrContent     string `json:"qrContent"`
+  requestData   string `json:"requestData"`
+  responseData  string `json:"responseData"`
+  notifyData    string `json:"notifyData"`
+  expireTime    int64  `json:"expireTime"`
+  paidTime      int64  `json:"paidTime"`
+  notifyTime    int64  `json:"notifyTime"`
+  closeTime     int64  `json:"closeTime"`
+  remark        string `json:"remark"`
+  createTime    int64  `json:"createTime"`
+  updateTime    int64  `json:"updateTime"`
+}
+
+// ====================
+// request / response
+// ====================
+
+// 当前用户累计充值统计
+type GetMyRechargeStatReq {
+  tenantId int64 `form:"tenantId,optional"`
+}
+
+type GetMyRechargeStatResp {
+  RespBase
+  stat UserRechargeStat `json:"stat"`
+}
+
+// 获取当前用户在指定充值金额下可用的充值通道
+// 服务端需要基于当前登录用户自动查询累计充值金额并套用规则过滤
+type ListAvailableRechargeChannelsReq {
+  tenantId       int64  `json:"tenantId,optional"`
+  rechargeAmount int64  `json:"rechargeAmount"` // 单位：分
+  currency       string `json:"currency"`
+  clientType     int64  `json:"clientType"`     // 0未知 1APP 2H5 3WEB
+}
+
+type ListAvailableRechargeChannelsResp {
+  RespBase
+  list []AvailableRechargeChannel `json:"list"`
+}
+
+// 创建充值订单
+// 服务端创建时必须再次校验：
+// 1. 当前通道是否仍可用
+// 2. 当前用户是否满足通道规则
+// 3. 金额、币种、客户端是否合法
+type CreateRechargeOrderReq {
+  tenantId       int64  `json:"json:"tenantId,optional"`
+  channelId      int64  `json:"channelId"`
+  rechargeAmount int64  `json:"rechargeAmount"` // 单位：分
+  currency       string `json:"currency"`
+  subject        string `json:"subject,optional"`
+  body           string `json:"body,optional"`
+  clientType     int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
+  clientIp       string `json:"clientIp,optional"`
+  bizOrderNo     string `json:"bizOrderNo,optional"`
+}
+
+type CreateRechargeOrderResp {
+  RespBase
+  order PayOrder `json:"order"`
+}
+
+// 查询我的订单详情
+type GetMyPayOrderReq {
+  tenantId int64  `form:"tenantId,optional"`
+  orderNo  string `path:"orderNo"`
+}
+
+type GetMyPayOrderResp {
+  RespBase
+  order PayOrder `json:"order"`
+}
+
+// 查询我的充值订单列表
+type ListMyPayOrdersReq {
+  tenantId        int64  `form:"tenantId,optional"`
+  cursor          int64  `form:"cursor,optional"`
+  limit           int64  `form:"limit,optional"`
+  status          int64  `form:"status,optional"` // 0未知 1待支付 2支付中 3成功 4失败 5已关闭 6已退款
+  orderNo         string `form:"orderNo,optional"`
+  createTimeStart int64  `form:"createTimeStart,optional"`
+  createTimeEnd   int64  `form:"createTimeEnd,optional"`
+}
+
+type ListMyPayOrdersResp {
+  RespBase
+  list []PayOrder `json:"list"`
+}
+
+// 取消未支付订单
+type CancelMyPayOrderReq {
+  tenantId int64  `json:"tenantId,optional"`
+  orderNo  string `path:"orderNo"`
+}
+
+// 轮询订单状态
+type QueryMyPayOrderStatusReq {
+  tenantId int64  `form:"tenantId,optional"`
+  orderNo  string `path:"orderNo"`
+}
+
+type QueryMyPayOrderStatusResp {
+  RespBase
+  status int64    `json:"status"` // 0未知 1待支付 2支付中 3成功 4失败 5已关闭 6已退款
+  order  PayOrder `json:"order"`
+}
+
+@server(
+  prefix: /app/payment
+  group: payment
+  jwt: Jwt
+)
+service app {
+  // 当前用户累计充值统计（展示用）
+  @handler GetMyRechargeStat
+  get /recharge/stat (GetMyRechargeStatReq) returns (GetMyRechargeStatResp)
+
+  // 获取当前用户在指定充值金额下可用的充值通道
+  @handler ListAvailableRechargeChannels
+  post /channels/available (ListAvailableRechargeChannelsReq) returns (ListAvailableRechargeChannelsResp)
+
+  // 创建充值订单
+  @handler CreateRechargeOrder
+  post /orders/recharge (CreateRechargeOrderReq) returns (CreateRechargeOrderResp)
+
+  // 查询我的订单详情
+  @handler GetMyPayOrder
+  get /orders/:orderNo (GetMyPayOrderReq) returns (GetMyPayOrderResp)
+
+  // 查询我的充值订单列表
+  @handler ListMyPayOrders
+  get /orders (ListMyPayOrdersReq) returns (ListMyPayOrdersResp)
+
+  // 取消未支付订单
+  @handler CancelMyPayOrder
+  post /orders/:orderNo/cancel (CancelMyPayOrderReq) returns (RespBase)
+
+  // 轮询订单状态
+  @handler QueryMyPayOrderStatus
+  get /orders/:orderNo/status (QueryMyPayOrderStatusReq) returns (QueryMyPayOrderStatusResp)
+}

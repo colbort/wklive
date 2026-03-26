@@ -14,31 +14,27 @@ import (
 )
 
 type (
-	AppCommonResp              = payment.AppCommonResp
-	CancelMyPayOrderReq        = payment.CancelMyPayOrderReq
-	CheckRechargeChannelsReq   = payment.CheckRechargeChannelsReq
-	CheckRechargeChannelsResp  = payment.CheckRechargeChannelsResp
-	CreateRechargeOrderReq     = payment.CreateRechargeOrderReq
-	CreateRechargeOrderResp    = payment.CreateRechargeOrderResp
-	GetMyPayOrderReq           = payment.GetMyPayOrderReq
-	GetMyPayOrderResp          = payment.GetMyPayOrderResp
-	GetMyRechargeStatReq       = payment.GetMyRechargeStatReq
-	GetMyRechargeStatResp      = payment.GetMyRechargeStatResp
-	ListMyPayOrdersReq         = payment.ListMyPayOrdersReq
-	ListMyPayOrdersResp        = payment.ListMyPayOrdersResp
-	ListVisiblePayChannelsReq  = payment.ListVisiblePayChannelsReq
-	ListVisiblePayChannelsResp = payment.ListVisiblePayChannelsResp
-	QueryMyPayOrderStatusReq   = payment.QueryMyPayOrderStatusReq
-	QueryMyPayOrderStatusResp  = payment.QueryMyPayOrderStatusResp
+	AppCommonResp                     = payment.AppCommonResp
+	CancelMyPayOrderReq               = payment.CancelMyPayOrderReq
+	CreateRechargeOrderReq            = payment.CreateRechargeOrderReq
+	CreateRechargeOrderResp           = payment.CreateRechargeOrderResp
+	GetMyPayOrderReq                  = payment.GetMyPayOrderReq
+	GetMyPayOrderResp                 = payment.GetMyPayOrderResp
+	GetMyRechargeStatReq              = payment.GetMyRechargeStatReq
+	GetMyRechargeStatResp             = payment.GetMyRechargeStatResp
+	ListAvailableRechargeChannelsReq  = payment.ListAvailableRechargeChannelsReq
+	ListAvailableRechargeChannelsResp = payment.ListAvailableRechargeChannelsResp
+	ListMyPayOrdersReq                = payment.ListMyPayOrdersReq
+	ListMyPayOrdersResp               = payment.ListMyPayOrdersResp
+	QueryMyPayOrderStatusReq          = payment.QueryMyPayOrderStatusReq
+	QueryMyPayOrderStatusResp         = payment.QueryMyPayOrderStatusResp
 
 	PaymentApp interface {
-		// 当前用户累计充值统计
+		// 当前用户累计充值统计（展示用）
 		GetMyRechargeStat(ctx context.Context, in *GetMyRechargeStatReq, opts ...grpc.CallOption) (*GetMyRechargeStatResp, error)
-		// 获取当前金额下可见通道
-		ListVisiblePayChannels(ctx context.Context, in *ListVisiblePayChannelsReq, opts ...grpc.CallOption) (*ListVisiblePayChannelsResp, error)
-		// 检查某金额可用的通道（预检查）
-		CheckRechargeChannels(ctx context.Context, in *CheckRechargeChannelsReq, opts ...grpc.CallOption) (*CheckRechargeChannelsResp, error)
-		// 创建充值订单
+		// 获取当前登录用户在指定充值金额下可用的充值通道
+		ListAvailableRechargeChannels(ctx context.Context, in *ListAvailableRechargeChannelsReq, opts ...grpc.CallOption) (*ListAvailableRechargeChannelsResp, error)
+		// 创建充值订单（服务端需要再次校验通道与用户规则）
 		CreateRechargeOrder(ctx context.Context, in *CreateRechargeOrderReq, opts ...grpc.CallOption) (*CreateRechargeOrderResp, error)
 		// 查询我的订单详情
 		GetMyPayOrder(ctx context.Context, in *GetMyPayOrderReq, opts ...grpc.CallOption) (*GetMyPayOrderResp, error)
@@ -61,25 +57,19 @@ func NewPaymentApp(cli zrpc.Client) PaymentApp {
 	}
 }
 
-// 当前用户累计充值统计
+// 当前用户累计充值统计（展示用）
 func (m *defaultPaymentApp) GetMyRechargeStat(ctx context.Context, in *GetMyRechargeStatReq, opts ...grpc.CallOption) (*GetMyRechargeStatResp, error) {
 	client := payment.NewPaymentAppClient(m.cli.Conn())
 	return client.GetMyRechargeStat(ctx, in, opts...)
 }
 
-// 获取当前金额下可见通道
-func (m *defaultPaymentApp) ListVisiblePayChannels(ctx context.Context, in *ListVisiblePayChannelsReq, opts ...grpc.CallOption) (*ListVisiblePayChannelsResp, error) {
+// 获取当前登录用户在指定充值金额下可用的充值通道
+func (m *defaultPaymentApp) ListAvailableRechargeChannels(ctx context.Context, in *ListAvailableRechargeChannelsReq, opts ...grpc.CallOption) (*ListAvailableRechargeChannelsResp, error) {
 	client := payment.NewPaymentAppClient(m.cli.Conn())
-	return client.ListVisiblePayChannels(ctx, in, opts...)
+	return client.ListAvailableRechargeChannels(ctx, in, opts...)
 }
 
-// 检查某金额可用的通道（预检查）
-func (m *defaultPaymentApp) CheckRechargeChannels(ctx context.Context, in *CheckRechargeChannelsReq, opts ...grpc.CallOption) (*CheckRechargeChannelsResp, error) {
-	client := payment.NewPaymentAppClient(m.cli.Conn())
-	return client.CheckRechargeChannels(ctx, in, opts...)
-}
-
-// 创建充值订单
+// 创建充值订单（服务端需要再次校验通道与用户规则）
 func (m *defaultPaymentApp) CreateRechargeOrder(ctx context.Context, in *CreateRechargeOrderReq, opts ...grpc.CallOption) (*CreateRechargeOrderResp, error) {
 	client := payment.NewPaymentAppClient(m.cli.Conn())
 	return client.CreateRechargeOrder(ctx, in, opts...)

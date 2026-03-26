@@ -54,12 +54,172 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodGet,
-				Path:    "/payment/orders",
-				Handler: payment.ListOrdersHandler(serverCtx),
+				Path:    "/notify-logs",
+				Handler: payment.GetPayNotifyLogHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/notify-logs/list",
+				Handler: payment.ListPayNotifyLogsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/orders/:orderNo",
+				Handler: payment.GetPayOrderHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/orders/:orderNo/close",
+				Handler: payment.ClosePayOrderHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/orders/:orderNo/manual-success",
+				Handler: payment.ManualMarkPayOrderSuccessHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/orders/:orderNo/retry-notify",
+				Handler: payment.RetryNotifyHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/orders/list",
+				Handler: payment.ListPayOrdersHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/platforms",
+				Handler: payment.CreatePayPlatformHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/platforms",
+				Handler: payment.UpdatePayPlatformHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/platforms",
+				Handler: payment.GetPayPlatformHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/platforms/list",
+				Handler: payment.ListPayPlatformsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/products",
+				Handler: payment.CreatePayProductHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/products",
+				Handler: payment.UpdatePayProductHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/products",
+				Handler: payment.GetPayProductHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/products/list",
+				Handler: payment.ListPayProductsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/tenant-accounts",
+				Handler: payment.CreateTenantPayAccountHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/tenant-accounts",
+				Handler: payment.UpdateTenantPayAccountHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/tenant-accounts",
+				Handler: payment.GetTenantPayAccountHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/tenant-accounts/list",
+				Handler: payment.ListTenantPayAccountsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/tenant-channel-rules",
+				Handler: payment.CreateTenantPayChannelRuleHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/tenant-channel-rules",
+				Handler: payment.UpdateTenantPayChannelRuleHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/tenant-channel-rules",
+				Handler: payment.GetTenantPayChannelRuleHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/tenant-channel-rules/list",
+				Handler: payment.ListTenantPayChannelRulesHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/tenant-channels",
+				Handler: payment.CreateTenantPayChannelHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/tenant-channels",
+				Handler: payment.UpdateTenantPayChannelHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/tenant-channels",
+				Handler: payment.GetTenantPayChannelHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/tenant-channels/list",
+				Handler: payment.ListTenantPayChannelsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/tenant-platforms",
+				Handler: payment.UpdateTenantPayPlatformHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/tenant-platforms",
+				Handler: payment.GetTenantPayPlatformHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/tenant-platforms/list",
+				Handler: payment.ListTenantPayPlatformsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/tenant-platforms/open",
+				Handler: payment.OpenTenantPayPlatformHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/user-recharge-stats",
+				Handler: payment.GetUserRechargeStatHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/user-recharge-stats/list",
+				Handler: payment.ListUserRechargeStatsHandler(serverCtx),
 			},
 		},
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
-		rest.WithPrefix("/admin"),
+		rest.WithPrefix("/admin/payment"),
 	)
 
 	server.AddRoutes(

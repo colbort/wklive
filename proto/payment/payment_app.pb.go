@@ -65,10 +65,10 @@ func (x *AppCommonResp) GetBase() *RespBase {
 	return nil
 }
 
+// 当前用户累计充值统计
 type GetMyRechargeStatReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -106,13 +106,6 @@ func (*GetMyRechargeStatReq) Descriptor() ([]byte, []int) {
 func (x *GetMyRechargeStatReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
-	}
-	return 0
-}
-
-func (x *GetMyRechargeStatReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
 	}
 	return 0
 }
@@ -169,31 +162,31 @@ func (x *GetMyRechargeStatResp) GetStat() *UserRechargeStat {
 	return nil
 }
 
-type ListVisiblePayChannelsReq struct {
+// 获取当前登录用户在指定充值场景下可用的充值通道
+type ListAvailableRechargeChannelsReq struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	TenantId       int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId         int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	RechargeAmount int64                  `protobuf:"varint,3,opt,name=recharge_amount,json=rechargeAmount,proto3" json:"recharge_amount,omitempty"` // 单位分
-	Currency       string                 `protobuf:"bytes,4,opt,name=currency,proto3" json:"currency,omitempty"`
-	ClientType     ClientType             `protobuf:"varint,5,opt,name=client_type,json=clientType,proto3,enum=payment.ClientType" json:"client_type,omitempty"`
+	RechargeAmount int64                  `protobuf:"varint,2,opt,name=recharge_amount,json=rechargeAmount,proto3" json:"recharge_amount,omitempty"` // 单位：分
+	Currency       string                 `protobuf:"bytes,3,opt,name=currency,proto3" json:"currency,omitempty"`
+	ClientType     ClientType             `protobuf:"varint,4,opt,name=client_type,json=clientType,proto3,enum=payment.ClientType" json:"client_type,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
 
-func (x *ListVisiblePayChannelsReq) Reset() {
-	*x = ListVisiblePayChannelsReq{}
+func (x *ListAvailableRechargeChannelsReq) Reset() {
+	*x = ListAvailableRechargeChannelsReq{}
 	mi := &file_proto_payment_payment_app_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListVisiblePayChannelsReq) String() string {
+func (x *ListAvailableRechargeChannelsReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListVisiblePayChannelsReq) ProtoMessage() {}
+func (*ListAvailableRechargeChannelsReq) ProtoMessage() {}
 
-func (x *ListVisiblePayChannelsReq) ProtoReflect() protoreflect.Message {
+func (x *ListAvailableRechargeChannelsReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_payment_payment_app_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -205,47 +198,40 @@ func (x *ListVisiblePayChannelsReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListVisiblePayChannelsReq.ProtoReflect.Descriptor instead.
-func (*ListVisiblePayChannelsReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListAvailableRechargeChannelsReq.ProtoReflect.Descriptor instead.
+func (*ListAvailableRechargeChannelsReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *ListVisiblePayChannelsReq) GetTenantId() int64 {
+func (x *ListAvailableRechargeChannelsReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *ListVisiblePayChannelsReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *ListVisiblePayChannelsReq) GetRechargeAmount() int64 {
+func (x *ListAvailableRechargeChannelsReq) GetRechargeAmount() int64 {
 	if x != nil {
 		return x.RechargeAmount
 	}
 	return 0
 }
 
-func (x *ListVisiblePayChannelsReq) GetCurrency() string {
+func (x *ListAvailableRechargeChannelsReq) GetCurrency() string {
 	if x != nil {
 		return x.Currency
 	}
 	return ""
 }
 
-func (x *ListVisiblePayChannelsReq) GetClientType() ClientType {
+func (x *ListAvailableRechargeChannelsReq) GetClientType() ClientType {
 	if x != nil {
 		return x.ClientType
 	}
 	return ClientType_CLIENT_TYPE_UNKNOWN
 }
 
-type ListVisiblePayChannelsResp struct {
+type ListAvailableRechargeChannelsResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	List          []*VisiblePayChannel   `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
@@ -253,20 +239,20 @@ type ListVisiblePayChannelsResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListVisiblePayChannelsResp) Reset() {
-	*x = ListVisiblePayChannelsResp{}
+func (x *ListAvailableRechargeChannelsResp) Reset() {
+	*x = ListAvailableRechargeChannelsResp{}
 	mi := &file_proto_payment_payment_app_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListVisiblePayChannelsResp) String() string {
+func (x *ListAvailableRechargeChannelsResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListVisiblePayChannelsResp) ProtoMessage() {}
+func (*ListAvailableRechargeChannelsResp) ProtoMessage() {}
 
-func (x *ListVisiblePayChannelsResp) ProtoReflect() protoreflect.Message {
+func (x *ListAvailableRechargeChannelsResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_payment_payment_app_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -278,172 +264,44 @@ func (x *ListVisiblePayChannelsResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListVisiblePayChannelsResp.ProtoReflect.Descriptor instead.
-func (*ListVisiblePayChannelsResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListAvailableRechargeChannelsResp.ProtoReflect.Descriptor instead.
+func (*ListAvailableRechargeChannelsResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *ListVisiblePayChannelsResp) GetBase() *RespBase {
+func (x *ListAvailableRechargeChannelsResp) GetBase() *RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *ListVisiblePayChannelsResp) GetList() []*VisiblePayChannel {
+func (x *ListAvailableRechargeChannelsResp) GetList() []*VisiblePayChannel {
 	if x != nil {
 		return x.List
 	}
 	return nil
 }
 
-type CheckRechargeChannelsReq struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	TenantId       int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId         int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	RechargeAmount int64                  `protobuf:"varint,3,opt,name=recharge_amount,json=rechargeAmount,proto3" json:"recharge_amount,omitempty"`
-	Currency       string                 `protobuf:"bytes,4,opt,name=currency,proto3" json:"currency,omitempty"`
-	ClientType     ClientType             `protobuf:"varint,5,opt,name=client_type,json=clientType,proto3,enum=payment.ClientType" json:"client_type,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *CheckRechargeChannelsReq) Reset() {
-	*x = CheckRechargeChannelsReq{}
-	mi := &file_proto_payment_payment_app_proto_msgTypes[5]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CheckRechargeChannelsReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CheckRechargeChannelsReq) ProtoMessage() {}
-
-func (x *CheckRechargeChannelsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_app_proto_msgTypes[5]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CheckRechargeChannelsReq.ProtoReflect.Descriptor instead.
-func (*CheckRechargeChannelsReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *CheckRechargeChannelsReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *CheckRechargeChannelsReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *CheckRechargeChannelsReq) GetRechargeAmount() int64 {
-	if x != nil {
-		return x.RechargeAmount
-	}
-	return 0
-}
-
-func (x *CheckRechargeChannelsReq) GetCurrency() string {
-	if x != nil {
-		return x.Currency
-	}
-	return ""
-}
-
-func (x *CheckRechargeChannelsReq) GetClientType() ClientType {
-	if x != nil {
-		return x.ClientType
-	}
-	return ClientType_CLIENT_TYPE_UNKNOWN
-}
-
-type CheckRechargeChannelsResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	List          []*VisiblePayChannel   `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CheckRechargeChannelsResp) Reset() {
-	*x = CheckRechargeChannelsResp{}
-	mi := &file_proto_payment_payment_app_proto_msgTypes[6]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CheckRechargeChannelsResp) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CheckRechargeChannelsResp) ProtoMessage() {}
-
-func (x *CheckRechargeChannelsResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_app_proto_msgTypes[6]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CheckRechargeChannelsResp.ProtoReflect.Descriptor instead.
-func (*CheckRechargeChannelsResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{6}
-}
-
-func (x *CheckRechargeChannelsResp) GetBase() *RespBase {
-	if x != nil {
-		return x.Base
-	}
-	return nil
-}
-
-func (x *CheckRechargeChannelsResp) GetList() []*VisiblePayChannel {
-	if x != nil {
-		return x.List
-	}
-	return nil
-}
-
+// 创建充值订单
 type CreateRechargeOrderReq struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	TenantId       int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId         int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	ChannelId      int64                  `protobuf:"varint,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
-	RechargeAmount int64                  `protobuf:"varint,4,opt,name=recharge_amount,json=rechargeAmount,proto3" json:"recharge_amount,omitempty"` // 分
-	Currency       string                 `protobuf:"bytes,5,opt,name=currency,proto3" json:"currency,omitempty"`
-	Subject        string                 `protobuf:"bytes,6,opt,name=subject,proto3" json:"subject,omitempty"`
-	Body           string                 `protobuf:"bytes,7,opt,name=body,proto3" json:"body,omitempty"`
-	ClientType     ClientType             `protobuf:"varint,8,opt,name=client_type,json=clientType,proto3,enum=payment.ClientType" json:"client_type,omitempty"`
-	ClientIp       string                 `protobuf:"bytes,9,opt,name=client_ip,json=clientIp,proto3" json:"client_ip,omitempty"`
-	BizOrderNo     string                 `protobuf:"bytes,10,opt,name=biz_order_no,json=bizOrderNo,proto3" json:"biz_order_no,omitempty"`
+	ChannelId      int64                  `protobuf:"varint,2,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
+	RechargeAmount int64                  `protobuf:"varint,3,opt,name=recharge_amount,json=rechargeAmount,proto3" json:"recharge_amount,omitempty"` // 单位：分
+	Currency       string                 `protobuf:"bytes,4,opt,name=currency,proto3" json:"currency,omitempty"`
+	Subject        string                 `protobuf:"bytes,5,opt,name=subject,proto3" json:"subject,omitempty"`
+	Body           string                 `protobuf:"bytes,6,opt,name=body,proto3" json:"body,omitempty"`
+	ClientType     ClientType             `protobuf:"varint,7,opt,name=client_type,json=clientType,proto3,enum=payment.ClientType" json:"client_type,omitempty"`
+	ClientIp       string                 `protobuf:"bytes,8,opt,name=client_ip,json=clientIp,proto3" json:"client_ip,omitempty"`
+	BizOrderNo     string                 `protobuf:"bytes,9,opt,name=biz_order_no,json=bizOrderNo,proto3" json:"biz_order_no,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
 
 func (x *CreateRechargeOrderReq) Reset() {
 	*x = CreateRechargeOrderReq{}
-	mi := &file_proto_payment_payment_app_proto_msgTypes[7]
+	mi := &file_proto_payment_payment_app_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -455,7 +313,7 @@ func (x *CreateRechargeOrderReq) String() string {
 func (*CreateRechargeOrderReq) ProtoMessage() {}
 
 func (x *CreateRechargeOrderReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_app_proto_msgTypes[7]
+	mi := &file_proto_payment_payment_app_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -468,19 +326,12 @@ func (x *CreateRechargeOrderReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateRechargeOrderReq.ProtoReflect.Descriptor instead.
 func (*CreateRechargeOrderReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{7}
+	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *CreateRechargeOrderReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
-	}
-	return 0
-}
-
-func (x *CreateRechargeOrderReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
 	}
 	return 0
 }
@@ -551,7 +402,7 @@ type CreateRechargeOrderResp struct {
 
 func (x *CreateRechargeOrderResp) Reset() {
 	*x = CreateRechargeOrderResp{}
-	mi := &file_proto_payment_payment_app_proto_msgTypes[8]
+	mi := &file_proto_payment_payment_app_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -563,7 +414,7 @@ func (x *CreateRechargeOrderResp) String() string {
 func (*CreateRechargeOrderResp) ProtoMessage() {}
 
 func (x *CreateRechargeOrderResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_app_proto_msgTypes[8]
+	mi := &file_proto_payment_payment_app_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -576,7 +427,7 @@ func (x *CreateRechargeOrderResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateRechargeOrderResp.ProtoReflect.Descriptor instead.
 func (*CreateRechargeOrderResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{8}
+	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *CreateRechargeOrderResp) GetBase() *RespBase {
@@ -593,18 +444,18 @@ func (x *CreateRechargeOrderResp) GetOrder() *PayOrder {
 	return nil
 }
 
+// 查询我的订单详情
 type GetMyPayOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrderNo       string                 `protobuf:"bytes,3,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
+	OrderNo       string                 `protobuf:"bytes,2,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetMyPayOrderReq) Reset() {
 	*x = GetMyPayOrderReq{}
-	mi := &file_proto_payment_payment_app_proto_msgTypes[9]
+	mi := &file_proto_payment_payment_app_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -616,7 +467,7 @@ func (x *GetMyPayOrderReq) String() string {
 func (*GetMyPayOrderReq) ProtoMessage() {}
 
 func (x *GetMyPayOrderReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_app_proto_msgTypes[9]
+	mi := &file_proto_payment_payment_app_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -629,19 +480,12 @@ func (x *GetMyPayOrderReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMyPayOrderReq.ProtoReflect.Descriptor instead.
 func (*GetMyPayOrderReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{9}
+	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *GetMyPayOrderReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
-	}
-	return 0
-}
-
-func (x *GetMyPayOrderReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
 	}
 	return 0
 }
@@ -663,7 +507,7 @@ type GetMyPayOrderResp struct {
 
 func (x *GetMyPayOrderResp) Reset() {
 	*x = GetMyPayOrderResp{}
-	mi := &file_proto_payment_payment_app_proto_msgTypes[10]
+	mi := &file_proto_payment_payment_app_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -675,7 +519,7 @@ func (x *GetMyPayOrderResp) String() string {
 func (*GetMyPayOrderResp) ProtoMessage() {}
 
 func (x *GetMyPayOrderResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_app_proto_msgTypes[10]
+	mi := &file_proto_payment_payment_app_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -688,7 +532,7 @@ func (x *GetMyPayOrderResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMyPayOrderResp.ProtoReflect.Descriptor instead.
 func (*GetMyPayOrderResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{10}
+	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *GetMyPayOrderResp) GetBase() *RespBase {
@@ -705,22 +549,22 @@ func (x *GetMyPayOrderResp) GetOrder() *PayOrder {
 	return nil
 }
 
+// 查询我的充值订单列表
 type ListMyPayOrdersReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	TenantId        int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId          int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Page            *PageReq               `protobuf:"bytes,3,opt,name=page,proto3" json:"page,omitempty"`
-	Status          PayOrderStatus         `protobuf:"varint,4,opt,name=status,proto3,enum=payment.PayOrderStatus" json:"status,omitempty"`
-	OrderNo         string                 `protobuf:"bytes,5,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
-	CreateTimeStart int64                  `protobuf:"varint,6,opt,name=create_time_start,json=createTimeStart,proto3" json:"create_time_start,omitempty"`
-	CreateTimeEnd   int64                  `protobuf:"varint,7,opt,name=create_time_end,json=createTimeEnd,proto3" json:"create_time_end,omitempty"`
+	Page            *PageReq               `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
+	Status          PayOrderStatus         `protobuf:"varint,3,opt,name=status,proto3,enum=payment.PayOrderStatus" json:"status,omitempty"`
+	OrderNo         string                 `protobuf:"bytes,4,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
+	CreateTimeStart int64                  `protobuf:"varint,5,opt,name=create_time_start,json=createTimeStart,proto3" json:"create_time_start,omitempty"`
+	CreateTimeEnd   int64                  `protobuf:"varint,6,opt,name=create_time_end,json=createTimeEnd,proto3" json:"create_time_end,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
 
 func (x *ListMyPayOrdersReq) Reset() {
 	*x = ListMyPayOrdersReq{}
-	mi := &file_proto_payment_payment_app_proto_msgTypes[11]
+	mi := &file_proto_payment_payment_app_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -732,7 +576,7 @@ func (x *ListMyPayOrdersReq) String() string {
 func (*ListMyPayOrdersReq) ProtoMessage() {}
 
 func (x *ListMyPayOrdersReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_app_proto_msgTypes[11]
+	mi := &file_proto_payment_payment_app_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -745,19 +589,12 @@ func (x *ListMyPayOrdersReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListMyPayOrdersReq.ProtoReflect.Descriptor instead.
 func (*ListMyPayOrdersReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{11}
+	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ListMyPayOrdersReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
-	}
-	return 0
-}
-
-func (x *ListMyPayOrdersReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
 	}
 	return 0
 }
@@ -807,7 +644,7 @@ type ListMyPayOrdersResp struct {
 
 func (x *ListMyPayOrdersResp) Reset() {
 	*x = ListMyPayOrdersResp{}
-	mi := &file_proto_payment_payment_app_proto_msgTypes[12]
+	mi := &file_proto_payment_payment_app_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -819,7 +656,7 @@ func (x *ListMyPayOrdersResp) String() string {
 func (*ListMyPayOrdersResp) ProtoMessage() {}
 
 func (x *ListMyPayOrdersResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_app_proto_msgTypes[12]
+	mi := &file_proto_payment_payment_app_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -832,7 +669,7 @@ func (x *ListMyPayOrdersResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListMyPayOrdersResp.ProtoReflect.Descriptor instead.
 func (*ListMyPayOrdersResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{12}
+	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ListMyPayOrdersResp) GetBase() *RespBase {
@@ -849,18 +686,18 @@ func (x *ListMyPayOrdersResp) GetList() []*PayOrder {
 	return nil
 }
 
+// 取消未支付订单
 type CancelMyPayOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrderNo       string                 `protobuf:"bytes,3,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
+	OrderNo       string                 `protobuf:"bytes,2,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CancelMyPayOrderReq) Reset() {
 	*x = CancelMyPayOrderReq{}
-	mi := &file_proto_payment_payment_app_proto_msgTypes[13]
+	mi := &file_proto_payment_payment_app_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -872,7 +709,7 @@ func (x *CancelMyPayOrderReq) String() string {
 func (*CancelMyPayOrderReq) ProtoMessage() {}
 
 func (x *CancelMyPayOrderReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_app_proto_msgTypes[13]
+	mi := &file_proto_payment_payment_app_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -885,19 +722,12 @@ func (x *CancelMyPayOrderReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CancelMyPayOrderReq.ProtoReflect.Descriptor instead.
 func (*CancelMyPayOrderReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{13}
+	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *CancelMyPayOrderReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
-	}
-	return 0
-}
-
-func (x *CancelMyPayOrderReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
 	}
 	return 0
 }
@@ -909,18 +739,18 @@ func (x *CancelMyPayOrderReq) GetOrderNo() string {
 	return ""
 }
 
+// 轮询订单状态
 type QueryMyPayOrderStatusReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrderNo       string                 `protobuf:"bytes,3,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
+	OrderNo       string                 `protobuf:"bytes,2,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *QueryMyPayOrderStatusReq) Reset() {
 	*x = QueryMyPayOrderStatusReq{}
-	mi := &file_proto_payment_payment_app_proto_msgTypes[14]
+	mi := &file_proto_payment_payment_app_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -932,7 +762,7 @@ func (x *QueryMyPayOrderStatusReq) String() string {
 func (*QueryMyPayOrderStatusReq) ProtoMessage() {}
 
 func (x *QueryMyPayOrderStatusReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_app_proto_msgTypes[14]
+	mi := &file_proto_payment_payment_app_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -945,19 +775,12 @@ func (x *QueryMyPayOrderStatusReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use QueryMyPayOrderStatusReq.ProtoReflect.Descriptor instead.
 func (*QueryMyPayOrderStatusReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{14}
+	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *QueryMyPayOrderStatusReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
-	}
-	return 0
-}
-
-func (x *QueryMyPayOrderStatusReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
 	}
 	return 0
 }
@@ -980,7 +803,7 @@ type QueryMyPayOrderStatusResp struct {
 
 func (x *QueryMyPayOrderStatusResp) Reset() {
 	*x = QueryMyPayOrderStatusResp{}
-	mi := &file_proto_payment_payment_app_proto_msgTypes[15]
+	mi := &file_proto_payment_payment_app_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -992,7 +815,7 @@ func (x *QueryMyPayOrderStatusResp) String() string {
 func (*QueryMyPayOrderStatusResp) ProtoMessage() {}
 
 func (x *QueryMyPayOrderStatusResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_app_proto_msgTypes[15]
+	mi := &file_proto_payment_payment_app_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1005,7 +828,7 @@ func (x *QueryMyPayOrderStatusResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use QueryMyPayOrderStatusResp.ProtoReflect.Descriptor instead.
 func (*QueryMyPayOrderStatusResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{15}
+	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *QueryMyPayOrderStatusResp) GetBase() *RespBase {
@@ -1035,86 +858,67 @@ const file_proto_payment_payment_app_proto_rawDesc = "" +
 	"\n" +
 	"\x1fproto/payment/payment_app.proto\x12\apayment\x1a\x1aproto/payment/common.proto\x1a\x19proto/payment/model.proto\"6\n" +
 	"\rAppCommonResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\"L\n" +
+	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\"3\n" +
 	"\x14GetMyRechargeStatReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\"m\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\"m\n" +
 	"\x15GetMyRechargeStatResp\x12%\n" +
 	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12-\n" +
-	"\x04stat\x18\x02 \x01(\v2\x19.payment.UserRechargeStatR\x04stat\"\xcc\x01\n" +
-	"\x19ListVisiblePayChannelsReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12'\n" +
-	"\x0frecharge_amount\x18\x03 \x01(\x03R\x0erechargeAmount\x12\x1a\n" +
-	"\bcurrency\x18\x04 \x01(\tR\bcurrency\x124\n" +
-	"\vclient_type\x18\x05 \x01(\x0e2\x13.payment.ClientTypeR\n" +
-	"clientType\"s\n" +
-	"\x1aListVisiblePayChannelsResp\x12%\n" +
+	"\x04stat\x18\x02 \x01(\v2\x19.payment.UserRechargeStatR\x04stat\"\xba\x01\n" +
+	" ListAvailableRechargeChannelsReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12'\n" +
+	"\x0frecharge_amount\x18\x02 \x01(\x03R\x0erechargeAmount\x12\x1a\n" +
+	"\bcurrency\x18\x03 \x01(\tR\bcurrency\x124\n" +
+	"\vclient_type\x18\x04 \x01(\x0e2\x13.payment.ClientTypeR\n" +
+	"clientType\"z\n" +
+	"!ListAvailableRechargeChannelsResp\x12%\n" +
 	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12.\n" +
-	"\x04list\x18\x02 \x03(\v2\x1a.payment.VisiblePayChannelR\x04list\"\xcb\x01\n" +
-	"\x18CheckRechargeChannelsReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12'\n" +
-	"\x0frecharge_amount\x18\x03 \x01(\x03R\x0erechargeAmount\x12\x1a\n" +
-	"\bcurrency\x18\x04 \x01(\tR\bcurrency\x124\n" +
-	"\vclient_type\x18\x05 \x01(\x0e2\x13.payment.ClientTypeR\n" +
-	"clientType\"r\n" +
-	"\x19CheckRechargeChannelsResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12.\n" +
-	"\x04list\x18\x02 \x03(\v2\x1a.payment.VisiblePayChannelR\x04list\"\xd5\x02\n" +
+	"\x04list\x18\x02 \x03(\v2\x1a.payment.VisiblePayChannelR\x04list\"\xbc\x02\n" +
 	"\x16CreateRechargeOrderReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1d\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1d\n" +
 	"\n" +
-	"channel_id\x18\x03 \x01(\x03R\tchannelId\x12'\n" +
-	"\x0frecharge_amount\x18\x04 \x01(\x03R\x0erechargeAmount\x12\x1a\n" +
-	"\bcurrency\x18\x05 \x01(\tR\bcurrency\x12\x18\n" +
-	"\asubject\x18\x06 \x01(\tR\asubject\x12\x12\n" +
-	"\x04body\x18\a \x01(\tR\x04body\x124\n" +
-	"\vclient_type\x18\b \x01(\x0e2\x13.payment.ClientTypeR\n" +
+	"channel_id\x18\x02 \x01(\x03R\tchannelId\x12'\n" +
+	"\x0frecharge_amount\x18\x03 \x01(\x03R\x0erechargeAmount\x12\x1a\n" +
+	"\bcurrency\x18\x04 \x01(\tR\bcurrency\x12\x18\n" +
+	"\asubject\x18\x05 \x01(\tR\asubject\x12\x12\n" +
+	"\x04body\x18\x06 \x01(\tR\x04body\x124\n" +
+	"\vclient_type\x18\a \x01(\x0e2\x13.payment.ClientTypeR\n" +
 	"clientType\x12\x1b\n" +
-	"\tclient_ip\x18\t \x01(\tR\bclientIp\x12 \n" +
-	"\fbiz_order_no\x18\n" +
-	" \x01(\tR\n" +
+	"\tclient_ip\x18\b \x01(\tR\bclientIp\x12 \n" +
+	"\fbiz_order_no\x18\t \x01(\tR\n" +
 	"bizOrderNo\"i\n" +
 	"\x17CreateRechargeOrderResp\x12%\n" +
 	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12'\n" +
-	"\x05order\x18\x02 \x01(\v2\x11.payment.PayOrderR\x05order\"c\n" +
+	"\x05order\x18\x02 \x01(\v2\x11.payment.PayOrderR\x05order\"J\n" +
 	"\x10GetMyPayOrderReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x19\n" +
-	"\border_no\x18\x03 \x01(\tR\aorderNo\"c\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
+	"\border_no\x18\x02 \x01(\tR\aorderNo\"c\n" +
 	"\x11GetMyPayOrderResp\x12%\n" +
 	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12'\n" +
-	"\x05order\x18\x02 \x01(\v2\x11.payment.PayOrderR\x05order\"\x90\x02\n" +
+	"\x05order\x18\x02 \x01(\v2\x11.payment.PayOrderR\x05order\"\xf7\x01\n" +
 	"\x12ListMyPayOrdersReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12$\n" +
-	"\x04page\x18\x03 \x01(\v2\x10.payment.PageReqR\x04page\x12/\n" +
-	"\x06status\x18\x04 \x01(\x0e2\x17.payment.PayOrderStatusR\x06status\x12\x19\n" +
-	"\border_no\x18\x05 \x01(\tR\aorderNo\x12*\n" +
-	"\x11create_time_start\x18\x06 \x01(\x03R\x0fcreateTimeStart\x12&\n" +
-	"\x0fcreate_time_end\x18\a \x01(\x03R\rcreateTimeEnd\"c\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12$\n" +
+	"\x04page\x18\x02 \x01(\v2\x10.payment.PageReqR\x04page\x12/\n" +
+	"\x06status\x18\x03 \x01(\x0e2\x17.payment.PayOrderStatusR\x06status\x12\x19\n" +
+	"\border_no\x18\x04 \x01(\tR\aorderNo\x12*\n" +
+	"\x11create_time_start\x18\x05 \x01(\x03R\x0fcreateTimeStart\x12&\n" +
+	"\x0fcreate_time_end\x18\x06 \x01(\x03R\rcreateTimeEnd\"c\n" +
 	"\x13ListMyPayOrdersResp\x12%\n" +
 	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12%\n" +
-	"\x04list\x18\x02 \x03(\v2\x11.payment.PayOrderR\x04list\"f\n" +
+	"\x04list\x18\x02 \x03(\v2\x11.payment.PayOrderR\x04list\"M\n" +
 	"\x13CancelMyPayOrderReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x19\n" +
-	"\border_no\x18\x03 \x01(\tR\aorderNo\"k\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
+	"\border_no\x18\x02 \x01(\tR\aorderNo\"R\n" +
 	"\x18QueryMyPayOrderStatusReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x19\n" +
-	"\border_no\x18\x03 \x01(\tR\aorderNo\"\x9c\x01\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
+	"\border_no\x18\x02 \x01(\tR\aorderNo\"\x9c\x01\n" +
 	"\x19QueryMyPayOrderStatusResp\x12%\n" +
 	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12/\n" +
 	"\x06status\x18\x02 \x01(\x0e2\x17.payment.PayOrderStatusR\x06status\x12'\n" +
-	"\x05order\x18\x03 \x01(\v2\x11.payment.PayOrderR\x05order2\xbd\x05\n" +
+	"\x05order\x18\x03 \x01(\v2\x11.payment.PayOrderR\x05order2\xf2\x04\n" +
 	"\n" +
 	"PaymentApp\x12R\n" +
-	"\x11GetMyRechargeStat\x12\x1d.payment.GetMyRechargeStatReq\x1a\x1e.payment.GetMyRechargeStatResp\x12a\n" +
-	"\x16ListVisiblePayChannels\x12\".payment.ListVisiblePayChannelsReq\x1a#.payment.ListVisiblePayChannelsResp\x12^\n" +
-	"\x15CheckRechargeChannels\x12!.payment.CheckRechargeChannelsReq\x1a\".payment.CheckRechargeChannelsResp\x12X\n" +
+	"\x11GetMyRechargeStat\x12\x1d.payment.GetMyRechargeStatReq\x1a\x1e.payment.GetMyRechargeStatResp\x12v\n" +
+	"\x1dListAvailableRechargeChannels\x12).payment.ListAvailableRechargeChannelsReq\x1a*.payment.ListAvailableRechargeChannelsResp\x12X\n" +
 	"\x13CreateRechargeOrder\x12\x1f.payment.CreateRechargeOrderReq\x1a .payment.CreateRechargeOrderResp\x12F\n" +
 	"\rGetMyPayOrder\x12\x19.payment.GetMyPayOrderReq\x1a\x1a.payment.GetMyPayOrderResp\x12L\n" +
 	"\x0fListMyPayOrders\x12\x1b.payment.ListMyPayOrdersReq\x1a\x1c.payment.ListMyPayOrdersResp\x12H\n" +
@@ -1133,75 +937,68 @@ func file_proto_payment_payment_app_proto_rawDescGZIP() []byte {
 	return file_proto_payment_payment_app_proto_rawDescData
 }
 
-var file_proto_payment_payment_app_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_proto_payment_payment_app_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_proto_payment_payment_app_proto_goTypes = []any{
-	(*AppCommonResp)(nil),              // 0: payment.AppCommonResp
-	(*GetMyRechargeStatReq)(nil),       // 1: payment.GetMyRechargeStatReq
-	(*GetMyRechargeStatResp)(nil),      // 2: payment.GetMyRechargeStatResp
-	(*ListVisiblePayChannelsReq)(nil),  // 3: payment.ListVisiblePayChannelsReq
-	(*ListVisiblePayChannelsResp)(nil), // 4: payment.ListVisiblePayChannelsResp
-	(*CheckRechargeChannelsReq)(nil),   // 5: payment.CheckRechargeChannelsReq
-	(*CheckRechargeChannelsResp)(nil),  // 6: payment.CheckRechargeChannelsResp
-	(*CreateRechargeOrderReq)(nil),     // 7: payment.CreateRechargeOrderReq
-	(*CreateRechargeOrderResp)(nil),    // 8: payment.CreateRechargeOrderResp
-	(*GetMyPayOrderReq)(nil),           // 9: payment.GetMyPayOrderReq
-	(*GetMyPayOrderResp)(nil),          // 10: payment.GetMyPayOrderResp
-	(*ListMyPayOrdersReq)(nil),         // 11: payment.ListMyPayOrdersReq
-	(*ListMyPayOrdersResp)(nil),        // 12: payment.ListMyPayOrdersResp
-	(*CancelMyPayOrderReq)(nil),        // 13: payment.CancelMyPayOrderReq
-	(*QueryMyPayOrderStatusReq)(nil),   // 14: payment.QueryMyPayOrderStatusReq
-	(*QueryMyPayOrderStatusResp)(nil),  // 15: payment.QueryMyPayOrderStatusResp
-	(*RespBase)(nil),                   // 16: payment.RespBase
-	(*UserRechargeStat)(nil),           // 17: payment.UserRechargeStat
-	(ClientType)(0),                    // 18: payment.ClientType
-	(*VisiblePayChannel)(nil),          // 19: payment.VisiblePayChannel
-	(*PayOrder)(nil),                   // 20: payment.PayOrder
-	(*PageReq)(nil),                    // 21: payment.PageReq
-	(PayOrderStatus)(0),                // 22: payment.PayOrderStatus
+	(*AppCommonResp)(nil),                     // 0: payment.AppCommonResp
+	(*GetMyRechargeStatReq)(nil),              // 1: payment.GetMyRechargeStatReq
+	(*GetMyRechargeStatResp)(nil),             // 2: payment.GetMyRechargeStatResp
+	(*ListAvailableRechargeChannelsReq)(nil),  // 3: payment.ListAvailableRechargeChannelsReq
+	(*ListAvailableRechargeChannelsResp)(nil), // 4: payment.ListAvailableRechargeChannelsResp
+	(*CreateRechargeOrderReq)(nil),            // 5: payment.CreateRechargeOrderReq
+	(*CreateRechargeOrderResp)(nil),           // 6: payment.CreateRechargeOrderResp
+	(*GetMyPayOrderReq)(nil),                  // 7: payment.GetMyPayOrderReq
+	(*GetMyPayOrderResp)(nil),                 // 8: payment.GetMyPayOrderResp
+	(*ListMyPayOrdersReq)(nil),                // 9: payment.ListMyPayOrdersReq
+	(*ListMyPayOrdersResp)(nil),               // 10: payment.ListMyPayOrdersResp
+	(*CancelMyPayOrderReq)(nil),               // 11: payment.CancelMyPayOrderReq
+	(*QueryMyPayOrderStatusReq)(nil),          // 12: payment.QueryMyPayOrderStatusReq
+	(*QueryMyPayOrderStatusResp)(nil),         // 13: payment.QueryMyPayOrderStatusResp
+	(*RespBase)(nil),                          // 14: payment.RespBase
+	(*UserRechargeStat)(nil),                  // 15: payment.UserRechargeStat
+	(ClientType)(0),                           // 16: payment.ClientType
+	(*VisiblePayChannel)(nil),                 // 17: payment.VisiblePayChannel
+	(*PayOrder)(nil),                          // 18: payment.PayOrder
+	(*PageReq)(nil),                           // 19: payment.PageReq
+	(PayOrderStatus)(0),                       // 20: payment.PayOrderStatus
 }
 var file_proto_payment_payment_app_proto_depIdxs = []int32{
-	16, // 0: payment.AppCommonResp.base:type_name -> payment.RespBase
-	16, // 1: payment.GetMyRechargeStatResp.base:type_name -> payment.RespBase
-	17, // 2: payment.GetMyRechargeStatResp.stat:type_name -> payment.UserRechargeStat
-	18, // 3: payment.ListVisiblePayChannelsReq.client_type:type_name -> payment.ClientType
-	16, // 4: payment.ListVisiblePayChannelsResp.base:type_name -> payment.RespBase
-	19, // 5: payment.ListVisiblePayChannelsResp.list:type_name -> payment.VisiblePayChannel
-	18, // 6: payment.CheckRechargeChannelsReq.client_type:type_name -> payment.ClientType
-	16, // 7: payment.CheckRechargeChannelsResp.base:type_name -> payment.RespBase
-	19, // 8: payment.CheckRechargeChannelsResp.list:type_name -> payment.VisiblePayChannel
-	18, // 9: payment.CreateRechargeOrderReq.client_type:type_name -> payment.ClientType
-	16, // 10: payment.CreateRechargeOrderResp.base:type_name -> payment.RespBase
-	20, // 11: payment.CreateRechargeOrderResp.order:type_name -> payment.PayOrder
-	16, // 12: payment.GetMyPayOrderResp.base:type_name -> payment.RespBase
-	20, // 13: payment.GetMyPayOrderResp.order:type_name -> payment.PayOrder
-	21, // 14: payment.ListMyPayOrdersReq.page:type_name -> payment.PageReq
-	22, // 15: payment.ListMyPayOrdersReq.status:type_name -> payment.PayOrderStatus
-	16, // 16: payment.ListMyPayOrdersResp.base:type_name -> payment.RespBase
-	20, // 17: payment.ListMyPayOrdersResp.list:type_name -> payment.PayOrder
-	16, // 18: payment.QueryMyPayOrderStatusResp.base:type_name -> payment.RespBase
-	22, // 19: payment.QueryMyPayOrderStatusResp.status:type_name -> payment.PayOrderStatus
-	20, // 20: payment.QueryMyPayOrderStatusResp.order:type_name -> payment.PayOrder
-	1,  // 21: payment.PaymentApp.GetMyRechargeStat:input_type -> payment.GetMyRechargeStatReq
-	3,  // 22: payment.PaymentApp.ListVisiblePayChannels:input_type -> payment.ListVisiblePayChannelsReq
-	5,  // 23: payment.PaymentApp.CheckRechargeChannels:input_type -> payment.CheckRechargeChannelsReq
-	7,  // 24: payment.PaymentApp.CreateRechargeOrder:input_type -> payment.CreateRechargeOrderReq
-	9,  // 25: payment.PaymentApp.GetMyPayOrder:input_type -> payment.GetMyPayOrderReq
-	11, // 26: payment.PaymentApp.ListMyPayOrders:input_type -> payment.ListMyPayOrdersReq
-	13, // 27: payment.PaymentApp.CancelMyPayOrder:input_type -> payment.CancelMyPayOrderReq
-	14, // 28: payment.PaymentApp.QueryMyPayOrderStatus:input_type -> payment.QueryMyPayOrderStatusReq
-	2,  // 29: payment.PaymentApp.GetMyRechargeStat:output_type -> payment.GetMyRechargeStatResp
-	4,  // 30: payment.PaymentApp.ListVisiblePayChannels:output_type -> payment.ListVisiblePayChannelsResp
-	6,  // 31: payment.PaymentApp.CheckRechargeChannels:output_type -> payment.CheckRechargeChannelsResp
-	8,  // 32: payment.PaymentApp.CreateRechargeOrder:output_type -> payment.CreateRechargeOrderResp
-	10, // 33: payment.PaymentApp.GetMyPayOrder:output_type -> payment.GetMyPayOrderResp
-	12, // 34: payment.PaymentApp.ListMyPayOrders:output_type -> payment.ListMyPayOrdersResp
-	0,  // 35: payment.PaymentApp.CancelMyPayOrder:output_type -> payment.AppCommonResp
-	15, // 36: payment.PaymentApp.QueryMyPayOrderStatus:output_type -> payment.QueryMyPayOrderStatusResp
-	29, // [29:37] is the sub-list for method output_type
-	21, // [21:29] is the sub-list for method input_type
-	21, // [21:21] is the sub-list for extension type_name
-	21, // [21:21] is the sub-list for extension extendee
-	0,  // [0:21] is the sub-list for field type_name
+	14, // 0: payment.AppCommonResp.base:type_name -> payment.RespBase
+	14, // 1: payment.GetMyRechargeStatResp.base:type_name -> payment.RespBase
+	15, // 2: payment.GetMyRechargeStatResp.stat:type_name -> payment.UserRechargeStat
+	16, // 3: payment.ListAvailableRechargeChannelsReq.client_type:type_name -> payment.ClientType
+	14, // 4: payment.ListAvailableRechargeChannelsResp.base:type_name -> payment.RespBase
+	17, // 5: payment.ListAvailableRechargeChannelsResp.list:type_name -> payment.VisiblePayChannel
+	16, // 6: payment.CreateRechargeOrderReq.client_type:type_name -> payment.ClientType
+	14, // 7: payment.CreateRechargeOrderResp.base:type_name -> payment.RespBase
+	18, // 8: payment.CreateRechargeOrderResp.order:type_name -> payment.PayOrder
+	14, // 9: payment.GetMyPayOrderResp.base:type_name -> payment.RespBase
+	18, // 10: payment.GetMyPayOrderResp.order:type_name -> payment.PayOrder
+	19, // 11: payment.ListMyPayOrdersReq.page:type_name -> payment.PageReq
+	20, // 12: payment.ListMyPayOrdersReq.status:type_name -> payment.PayOrderStatus
+	14, // 13: payment.ListMyPayOrdersResp.base:type_name -> payment.RespBase
+	18, // 14: payment.ListMyPayOrdersResp.list:type_name -> payment.PayOrder
+	14, // 15: payment.QueryMyPayOrderStatusResp.base:type_name -> payment.RespBase
+	20, // 16: payment.QueryMyPayOrderStatusResp.status:type_name -> payment.PayOrderStatus
+	18, // 17: payment.QueryMyPayOrderStatusResp.order:type_name -> payment.PayOrder
+	1,  // 18: payment.PaymentApp.GetMyRechargeStat:input_type -> payment.GetMyRechargeStatReq
+	3,  // 19: payment.PaymentApp.ListAvailableRechargeChannels:input_type -> payment.ListAvailableRechargeChannelsReq
+	5,  // 20: payment.PaymentApp.CreateRechargeOrder:input_type -> payment.CreateRechargeOrderReq
+	7,  // 21: payment.PaymentApp.GetMyPayOrder:input_type -> payment.GetMyPayOrderReq
+	9,  // 22: payment.PaymentApp.ListMyPayOrders:input_type -> payment.ListMyPayOrdersReq
+	11, // 23: payment.PaymentApp.CancelMyPayOrder:input_type -> payment.CancelMyPayOrderReq
+	12, // 24: payment.PaymentApp.QueryMyPayOrderStatus:input_type -> payment.QueryMyPayOrderStatusReq
+	2,  // 25: payment.PaymentApp.GetMyRechargeStat:output_type -> payment.GetMyRechargeStatResp
+	4,  // 26: payment.PaymentApp.ListAvailableRechargeChannels:output_type -> payment.ListAvailableRechargeChannelsResp
+	6,  // 27: payment.PaymentApp.CreateRechargeOrder:output_type -> payment.CreateRechargeOrderResp
+	8,  // 28: payment.PaymentApp.GetMyPayOrder:output_type -> payment.GetMyPayOrderResp
+	10, // 29: payment.PaymentApp.ListMyPayOrders:output_type -> payment.ListMyPayOrdersResp
+	0,  // 30: payment.PaymentApp.CancelMyPayOrder:output_type -> payment.AppCommonResp
+	13, // 31: payment.PaymentApp.QueryMyPayOrderStatus:output_type -> payment.QueryMyPayOrderStatusResp
+	25, // [25:32] is the sub-list for method output_type
+	18, // [18:25] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_proto_payment_payment_app_proto_init() }
@@ -1217,7 +1014,7 @@ func file_proto_payment_payment_app_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_payment_payment_app_proto_rawDesc), len(file_proto_payment_payment_app_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   16,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

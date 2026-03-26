@@ -11,9 +11,9 @@ message AppCommonResp {
   payment.RespBase base = 1;
 }
 
+// 当前用户累计充值统计
 message GetMyRechargeStatReq {
   int64 tenant_id = 1;
-  int64 user_id = 2;
 }
 
 message GetMyRechargeStatResp {
@@ -21,43 +21,30 @@ message GetMyRechargeStatResp {
   payment.UserRechargeStat stat = 2;
 }
 
-message ListVisiblePayChannelsReq {
+// 获取当前登录用户在指定充值场景下可用的充值通道
+message ListAvailableRechargeChannelsReq {
   int64 tenant_id = 1;
-  int64 user_id = 2;
-  int64 recharge_amount = 3; // 单位分
-  string currency = 4;
-  payment.ClientType client_type = 5;
+  int64 recharge_amount = 2; // 单位：分
+  string currency = 3;
+  payment.ClientType client_type = 4;
 }
 
-message ListVisiblePayChannelsResp {
+message ListAvailableRechargeChannelsResp {
   payment.RespBase base = 1;
   repeated payment.VisiblePayChannel list = 2;
 }
 
-message CheckRechargeChannelsReq {
-  int64 tenant_id = 1;
-  int64 user_id = 2;
-  int64 recharge_amount = 3;
-  string currency = 4;
-  payment.ClientType client_type = 5;
-}
-
-message CheckRechargeChannelsResp {
-  payment.RespBase base = 1;
-  repeated payment.VisiblePayChannel list = 2;
-}
-
+// 创建充值订单
 message CreateRechargeOrderReq {
   int64 tenant_id = 1;
-  int64 user_id = 2;
-  int64 channel_id = 3;
-  int64 recharge_amount = 4; // 分
-  string currency = 5;
-  string subject = 6;
-  string body = 7;
-  payment.ClientType client_type = 8;
-  string client_ip = 9;
-  string biz_order_no = 10;
+  int64 channel_id = 2;
+  int64 recharge_amount = 3; // 单位：分
+  string currency = 4;
+  string subject = 5;
+  string body = 6;
+  payment.ClientType client_type = 7;
+  string client_ip = 8;
+  string biz_order_no = 9;
 }
 
 message CreateRechargeOrderResp {
@@ -65,10 +52,10 @@ message CreateRechargeOrderResp {
   payment.PayOrder order = 2;
 }
 
+// 查询我的订单详情
 message GetMyPayOrderReq {
   int64 tenant_id = 1;
-  int64 user_id = 2;
-  string order_no = 3;
+  string order_no = 2;
 }
 
 message GetMyPayOrderResp {
@@ -76,14 +63,14 @@ message GetMyPayOrderResp {
   payment.PayOrder order = 2;
 }
 
+// 查询我的充值订单列表
 message ListMyPayOrdersReq {
   int64 tenant_id = 1;
-  int64 user_id = 2;
-  payment.PageReq page = 3;
-  payment.PayOrderStatus status = 4;
-  string order_no = 5;
-  int64 create_time_start = 6;
-  int64 create_time_end = 7;
+  payment.PageReq page = 2;
+  payment.PayOrderStatus status = 3;
+  string order_no = 4;
+  int64 create_time_start = 5;
+  int64 create_time_end = 6;
 }
 
 message ListMyPayOrdersResp {
@@ -91,16 +78,16 @@ message ListMyPayOrdersResp {
   repeated payment.PayOrder list = 2;
 }
 
+// 取消未支付订单
 message CancelMyPayOrderReq {
   int64 tenant_id = 1;
-  int64 user_id = 2;
-  string order_no = 3;
+  string order_no = 2;
 }
 
+// 轮询订单状态
 message QueryMyPayOrderStatusReq {
   int64 tenant_id = 1;
-  int64 user_id = 2;
-  string order_no = 3;
+  string order_no = 2;
 }
 
 message QueryMyPayOrderStatusResp {
@@ -111,16 +98,13 @@ message QueryMyPayOrderStatusResp {
 
 // APP端接口
 service PaymentApp {
-  // 当前用户累计充值统计
+  // 当前用户累计充值统计（展示用）
   rpc GetMyRechargeStat(GetMyRechargeStatReq) returns (GetMyRechargeStatResp);
 
-  // 获取当前金额下可见通道
-  rpc ListVisiblePayChannels(ListVisiblePayChannelsReq) returns (ListVisiblePayChannelsResp);
+  // 获取当前登录用户在指定充值金额下可用的充值通道
+  rpc ListAvailableRechargeChannels(ListAvailableRechargeChannelsReq) returns (ListAvailableRechargeChannelsResp);
 
-  // 检查某金额可用的通道（预检查）
-  rpc CheckRechargeChannels(CheckRechargeChannelsReq) returns (CheckRechargeChannelsResp);
-
-  // 创建充值订单
+  // 创建充值订单（服务端需要再次校验通道与用户规则）
   rpc CreateRechargeOrder(CreateRechargeOrderReq) returns (CreateRechargeOrderResp);
 
   // 查询我的订单详情

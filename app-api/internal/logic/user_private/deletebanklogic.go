@@ -26,7 +26,7 @@ func NewDeleteBankLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delete
 	}
 }
 
-func (l *DeleteBankLogic) DeleteBank(req *types.DeleteBankReq) (resp *types.CommonResp, err error) {
+func (l *DeleteBankLogic) DeleteBank(req *types.DeleteBankReq) (resp *types.RespBase, err error) {
 	// todo: add your logic here and delete this line
 
 	return

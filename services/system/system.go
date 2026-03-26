@@ -35,6 +35,8 @@ func main() {
 	etcd.LoadFromEtcdAndMerge(strings.Split(*endpoints, ","), []string{*commonKey, *configKey}, &c)
 
 	ctx := svc.NewServiceContext(c)
+
+	// 加载定时任务
 	if err := bootstrap.LoadJobs(ctx); err != nil {
 		logx.Errorf("load cron jobs failed: %v", err)
 	}
