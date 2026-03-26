@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+package payment;
+
+option go_package = "wklive/proto/payment;payment";
+
+message Empty {}
+
+message RespBase {
+  int32 code = 1;
+  string msg = 2;
+  int64 total = 3;
+  bool has_next = 4;
+  bool has_prev = 5;
+  int64 next_cursor = 6;
+  int64 prev_cursor = 7;
+}
+
+message CommonResp {
+  RespBase base = 1;
+}
+
+message PageReq {
+  int64 cursor = 1;
+  int64 limit = 2;
+}
+
+message IdReq {
+  int64 id = 1;
+}
+
+message TenantScope {
+  int64 tenant_id = 1;
+  string tenant_code = 2;
+}
+
+enum PlatformType {
+  PLATFORM_TYPE_UNKNOWN = 0;
+  PLATFORM_TYPE_THIRD = 1; // 三方支付
+  PLATFORM_TYPE_BANK = 2; // 银行转账
+  PLATFORM_TYPE_CHAIN = 3; // 链上支付
+  PLATFORM_TYPE_MANUAL = 4; // 人工代收
+}
+
+enum CommonStatus {
+  COMMON_STATUS_UNKNOWN = 0;
+  COMMON_STATUS_ENABLED = 1;
+  COMMON_STATUS_DISABLED = 2;
+}
+
+enum OpenStatus {
+  OPEN_STATUS_UNKNOWN = 0;
+  OPEN_STATUS_PENDING_CONFIG = 1;
+  OPEN_STATUS_OPENED = 2;
+  OPEN_STATUS_AUDITING = 3;
+  OPEN_STATUS_REJECTED = 4;
+}
+
+enum SceneType {
+  SCENE_TYPE_UNKNOWN = 0;
+  SCENE_TYPE_APP = 1;
+  SCENE_TYPE_H5 = 2;
+  SCENE_TYPE_WEB = 3;
+  SCENE_TYPE_CASHIER = 4;
+  SCENE_TYPE_CHAIN = 5;
+}
+
+enum FeeType {
+  FEE_TYPE_UNKNOWN = 0;
+  FEE_TYPE_RATE = 1;
+  FEE_TYPE_FIXED = 2;
+}
+
+enum PayOrderStatus {
+  PAY_ORDER_STATUS_UNKNOWN = 0;
+  PAY_ORDER_STATUS_PENDING = 1;
+  PAY_ORDER_STATUS_PAYING = 2;
+  PAY_ORDER_STATUS_SUCCESS = 3;
+  PAY_ORDER_STATUS_FAILED = 4;
+  PAY_ORDER_STATUS_CLOSED = 5;
+  PAY_ORDER_STATUS_REFUNDED = 6;
+}
+
+enum NotifyProcessStatus {
+  NOTIFY_PROCESS_STATUS_UNKNOWN = 0;
+  NOTIFY_PROCESS_STATUS_PENDING = 1;
+  NOTIFY_PROCESS_STATUS_SUCCESS = 2;
+  NOTIFY_PROCESS_STATUS_FAILED = 3;
+}
+
+enum SignResult {
+  SIGN_RESULT_UNKNOWN = 0;
+  SIGN_RESULT_NOT_CHECKED = 1;
+  SIGN_RESULT_PASSED = 2;
+  SIGN_RESULT_FAILED = 3;
+}
+
+enum ClientType {
+  CLIENT_TYPE_UNKNOWN = 0;
+  CLIENT_TYPE_APP = 1;
+  CLIENT_TYPE_H5 = 2;
+  CLIENT_TYPE_WEB = 3;
+}

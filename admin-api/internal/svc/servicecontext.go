@@ -8,13 +8,16 @@ import (
 	"wklive/proto/system"
 	"wklive/proto/user"
 
+	"wklive/proto/payment"
+
 	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type ServiceContext struct {
-	Config    config.Config
-	SystemCli system.SystemClient
-	UserCli   user.UserAdminClient
+	Config     config.Config
+	SystemCli  system.SystemClient
+	UserCli    user.UserAdminClient
+	PaymentCli payment.PaymentAdminClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {

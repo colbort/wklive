@@ -1,0 +1,71 @@
+GOCTL ?= goctl
+
+# 当前服务 module（必须与你 services/payment/go.mod 的 module 一致）
+MODULE := wklive/services/payment
+
+# 仓库根目录（从 services/payment 往上两级）
+REPO_ROOT := ../..
+
+# proto 目录（属于 proto/payment 模块）
+PROTO_DIR := $(REPO_ROOT)/proto/payment
+
+# 自动查找所有 proto 文件
+PROTO_FILES := $(wildcard $(PROTO_DIR)/*.proto)
+
+.PHONY: gen gen-rpc fix-imports tidy fmt clean-gen gen-model print-protos
+
+gen: gen-rpc fix-imports fmt tidy clean-gen
+
+# 查看匹配到的 proto 文件
+print-protos:
+	@echo "PROTO_DIR=$(PROTO_DIR)"
+	@echo "PROTO_FILES=$(PROTO_FILES)"
+
+# 一键：只生成包含 service 的 proto
+gen-rpc:
+	@echo "🔧 [services/payment] goctl rpc protoc..."
+	@for file in $(PROTO_FILES); do \
+		if grep -Eq '^[[:space:]]*service[[:space:]]+[A-Za-z0-9_]+' $$file; then \
+			echo "➡️ generating rpc for $$file"; \
+			$(GOCTL) rpc protoc $$file \
+				--proto_path=$(REPO_ROOT) \
+				--module=$(MODULE) \
+				--go_out=. \
+				--go-grpc_out=. \
+				--zrpc_out=. \
+				--style=gozero || exit $$?; \
+		else \
+			echo "⏭️ skip(no service): $$file"; \
+		fi; \
+	done
+	@$(MAKE) fix-imports
+	@$(MAKE) fmt
+	@$(MAKE) tidy
+	@echo "✅ [services/payment] gen-rpc done"
+
+# 修复 goctl 可能生成的错误 import 路径/别名
+fix-imports:
+	@echo "🔧 [services/payment] fixing imports..."
+	@find . -name "*.go" -type f -print0 | xargs -0 sed -i \
+		's#"$(MODULE)/wklive/proto/payment"#"wklive/proto/payment"#g'
+	@find . -name "*.go" -type f -print0 | xargs -0 sed -i \
+		's#"wklive/services/payment/wklive/proto/payment"#"wklive/proto/payment"#g'
+	@find . -name "*.go" -type f -print0 | xargs -0 sed -i \
+		's/payment_payment\./payment\./g'
+	@echo "✅ [services/payment] imports fixed"
+
+fmt:
+	@echo "🔧 [services/payment] gofmt..."
+	@gofmt -w $$(find . -name "*.go" -type f)
+
+tidy:
+	@echo "🔧 [services/payment] go mod tidy..."
+	@go mod tidy
+
+# 谨慎：只清理 goctl 生成的 server 目录（避免误删你写的 logic）
+clean-gen:
+	@rm -rf wklive/
+
+.PHONY: gen-model
+gen-model:
+	goctl model mysql ddl --src payment.sql --dir ./models -c

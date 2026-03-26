@@ -611,61 +611,17 @@ func (x *RespBase) GetPrevCursor() int64 {
 	return 0
 }
 
-type CommonResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CommonResp) Reset() {
-	*x = CommonResp{}
-	mi := &file_proto_user_common_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CommonResp) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CommonResp) ProtoMessage() {}
-
-func (x *CommonResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_common_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CommonResp.ProtoReflect.Descriptor instead.
-func (*CommonResp) Descriptor() ([]byte, []int) {
-	return file_proto_user_common_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *CommonResp) GetBase() *RespBase {
-	if x != nil {
-		return x.Base
-	}
-	return nil
-}
-
 type PageReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Page          int64                  `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
-	PageSize      int64                  `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	Cursor        int64                  `protobuf:"varint,1,opt,name=cursor,proto3" json:"cursor,omitempty"`
+	Limit         int64                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *PageReq) Reset() {
 	*x = PageReq{}
-	mi := &file_proto_user_common_proto_msgTypes[3]
+	mi := &file_proto_user_common_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -677,7 +633,7 @@ func (x *PageReq) String() string {
 func (*PageReq) ProtoMessage() {}
 
 func (x *PageReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_common_proto_msgTypes[3]
+	mi := &file_proto_user_common_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -690,19 +646,19 @@ func (x *PageReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PageReq.ProtoReflect.Descriptor instead.
 func (*PageReq) Descriptor() ([]byte, []int) {
-	return file_proto_user_common_proto_rawDescGZIP(), []int{3}
+	return file_proto_user_common_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *PageReq) GetPage() int64 {
+func (x *PageReq) GetCursor() int64 {
 	if x != nil {
-		return x.Page
+		return x.Cursor
 	}
 	return 0
 }
 
-func (x *PageReq) GetPageSize() int64 {
+func (x *PageReq) GetLimit() int64 {
 	if x != nil {
-		return x.PageSize
+		return x.Limit
 	}
 	return 0
 }
@@ -716,7 +672,7 @@ type IdReq struct {
 
 func (x *IdReq) Reset() {
 	*x = IdReq{}
-	mi := &file_proto_user_common_proto_msgTypes[4]
+	mi := &file_proto_user_common_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -728,7 +684,7 @@ func (x *IdReq) String() string {
 func (*IdReq) ProtoMessage() {}
 
 func (x *IdReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_common_proto_msgTypes[4]
+	mi := &file_proto_user_common_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -741,7 +697,7 @@ func (x *IdReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IdReq.ProtoReflect.Descriptor instead.
 func (*IdReq) Descriptor() ([]byte, []int) {
-	return file_proto_user_common_proto_rawDescGZIP(), []int{4}
+	return file_proto_user_common_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *IdReq) GetId() int64 {
@@ -760,7 +716,7 @@ type UserIdReq struct {
 
 func (x *UserIdReq) Reset() {
 	*x = UserIdReq{}
-	mi := &file_proto_user_common_proto_msgTypes[5]
+	mi := &file_proto_user_common_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -772,7 +728,7 @@ func (x *UserIdReq) String() string {
 func (*UserIdReq) ProtoMessage() {}
 
 func (x *UserIdReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_common_proto_msgTypes[5]
+	mi := &file_proto_user_common_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -785,7 +741,7 @@ func (x *UserIdReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserIdReq.ProtoReflect.Descriptor instead.
 func (*UserIdReq) Descriptor() ([]byte, []int) {
-	return file_proto_user_common_proto_rawDescGZIP(), []int{5}
+	return file_proto_user_common_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *UserIdReq) GetUserId() int64 {
@@ -793,6 +749,134 @@ func (x *UserIdReq) GetUserId() int64 {
 		return x.UserId
 	}
 	return 0
+}
+
+type TenantInfo struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	TenantCode    string                 `protobuf:"bytes,2,opt,name=tenant_code,json=tenantCode,proto3" json:"tenant_code,omitempty"`
+	TenantName    string                 `protobuf:"bytes,3,opt,name=tenant_name,json=tenantName,proto3" json:"tenant_name,omitempty"`
+	TenantStatus  int32                  `protobuf:"varint,4,opt,name=tenant_status,json=tenantStatus,proto3" json:"tenant_status,omitempty"`
+	ExpireTime    int64                  `protobuf:"varint,5,opt,name=expire_time,json=expireTime,proto3" json:"expire_time,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TenantInfo) Reset() {
+	*x = TenantInfo{}
+	mi := &file_proto_user_common_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TenantInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TenantInfo) ProtoMessage() {}
+
+func (x *TenantInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_common_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TenantInfo.ProtoReflect.Descriptor instead.
+func (*TenantInfo) Descriptor() ([]byte, []int) {
+	return file_proto_user_common_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *TenantInfo) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *TenantInfo) GetTenantCode() string {
+	if x != nil {
+		return x.TenantCode
+	}
+	return ""
+}
+
+func (x *TenantInfo) GetTenantName() string {
+	if x != nil {
+		return x.TenantName
+	}
+	return ""
+}
+
+func (x *TenantInfo) GetTenantStatus() int32 {
+	if x != nil {
+		return x.TenantStatus
+	}
+	return 0
+}
+
+func (x *TenantInfo) GetExpireTime() int64 {
+	if x != nil {
+		return x.ExpireTime
+	}
+	return 0
+}
+
+type TenantScope struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	TenantCode    string                 `protobuf:"bytes,2,opt,name=tenant_code,json=tenantCode,proto3" json:"tenant_code,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TenantScope) Reset() {
+	*x = TenantScope{}
+	mi := &file_proto_user_common_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TenantScope) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TenantScope) ProtoMessage() {}
+
+func (x *TenantScope) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_common_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TenantScope.ProtoReflect.Descriptor instead.
+func (*TenantScope) Descriptor() ([]byte, []int) {
+	return file_proto_user_common_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *TenantScope) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *TenantScope) GetTenantCode() string {
+	if x != nil {
+		return x.TenantCode
+	}
+	return ""
 }
 
 type TokenInfo struct {
@@ -806,7 +890,7 @@ type TokenInfo struct {
 
 func (x *TokenInfo) Reset() {
 	*x = TokenInfo{}
-	mi := &file_proto_user_common_proto_msgTypes[6]
+	mi := &file_proto_user_common_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -818,7 +902,7 @@ func (x *TokenInfo) String() string {
 func (*TokenInfo) ProtoMessage() {}
 
 func (x *TokenInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_common_proto_msgTypes[6]
+	mi := &file_proto_user_common_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -831,7 +915,7 @@ func (x *TokenInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TokenInfo.ProtoReflect.Descriptor instead.
 func (*TokenInfo) Descriptor() ([]byte, []int) {
-	return file_proto_user_common_proto_rawDescGZIP(), []int{6}
+	return file_proto_user_common_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *TokenInfo) GetAccessToken() string {
@@ -870,17 +954,28 @@ const file_proto_user_common_proto_rawDesc = "" +
 	"\vnext_cursor\x18\x06 \x01(\x03R\n" +
 	"nextCursor\x12\x1f\n" +
 	"\vprev_cursor\x18\a \x01(\x03R\n" +
-	"prevCursor\"0\n" +
-	"\n" +
-	"CommonResp\x12\"\n" +
-	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\":\n" +
-	"\aPageReq\x12\x12\n" +
-	"\x04page\x18\x01 \x01(\x03R\x04page\x12\x1b\n" +
-	"\tpage_size\x18\x02 \x01(\x03R\bpageSize\"\x17\n" +
+	"prevCursor\"7\n" +
+	"\aPageReq\x12\x16\n" +
+	"\x06cursor\x18\x01 \x01(\x03R\x06cursor\x12\x14\n" +
+	"\x05limit\x18\x02 \x01(\x03R\x05limit\"\x17\n" +
 	"\x05IdReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"$\n" +
 	"\tUserIdReq\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"t\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"\xb1\x01\n" +
+	"\n" +
+	"TenantInfo\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1f\n" +
+	"\vtenant_code\x18\x02 \x01(\tR\n" +
+	"tenantCode\x12\x1f\n" +
+	"\vtenant_name\x18\x03 \x01(\tR\n" +
+	"tenantName\x12#\n" +
+	"\rtenant_status\x18\x04 \x01(\x05R\ftenantStatus\x12\x1f\n" +
+	"\vexpire_time\x18\x05 \x01(\x03R\n" +
+	"expireTime\"K\n" +
+	"\vTenantScope\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1f\n" +
+	"\vtenant_code\x18\x02 \x01(\tR\n" +
+	"tenantCode\"t\n" +
 	"\tTokenInfo\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
 	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\x12\x1f\n" +
@@ -945,32 +1040,32 @@ func file_proto_user_common_proto_rawDescGZIP() []byte {
 }
 
 var file_proto_user_common_proto_enumTypes = make([]protoimpl.EnumInfo, 9)
-var file_proto_user_common_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_proto_user_common_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_proto_user_common_proto_goTypes = []any{
-	(RegisterType)(0),  // 0: user.RegisterType
-	(LoginType)(0),     // 1: user.LoginType
-	(UserStatus)(0),    // 2: user.UserStatus
-	(Gender)(0),        // 3: user.Gender
-	(IdType)(0),        // 4: user.IdType
-	(KycLevel)(0),      // 5: user.KycLevel
-	(VerifyStatus)(0),  // 6: user.VerifyStatus
-	(BankStatus)(0),    // 7: user.BankStatus
-	(RiskLevel)(0),     // 8: user.RiskLevel
-	(*Empty)(nil),      // 9: user.Empty
-	(*RespBase)(nil),   // 10: user.RespBase
-	(*CommonResp)(nil), // 11: user.CommonResp
-	(*PageReq)(nil),    // 12: user.PageReq
-	(*IdReq)(nil),      // 13: user.IdReq
-	(*UserIdReq)(nil),  // 14: user.UserIdReq
-	(*TokenInfo)(nil),  // 15: user.TokenInfo
+	(RegisterType)(0),   // 0: user.RegisterType
+	(LoginType)(0),      // 1: user.LoginType
+	(UserStatus)(0),     // 2: user.UserStatus
+	(Gender)(0),         // 3: user.Gender
+	(IdType)(0),         // 4: user.IdType
+	(KycLevel)(0),       // 5: user.KycLevel
+	(VerifyStatus)(0),   // 6: user.VerifyStatus
+	(BankStatus)(0),     // 7: user.BankStatus
+	(RiskLevel)(0),      // 8: user.RiskLevel
+	(*Empty)(nil),       // 9: user.Empty
+	(*RespBase)(nil),    // 10: user.RespBase
+	(*PageReq)(nil),     // 11: user.PageReq
+	(*IdReq)(nil),       // 12: user.IdReq
+	(*UserIdReq)(nil),   // 13: user.UserIdReq
+	(*TenantInfo)(nil),  // 14: user.TenantInfo
+	(*TenantScope)(nil), // 15: user.TenantScope
+	(*TokenInfo)(nil),   // 16: user.TokenInfo
 }
 var file_proto_user_common_proto_depIdxs = []int32{
-	10, // 0: user.CommonResp.base:type_name -> user.RespBase
-	1,  // [1:1] is the sub-list for method output_type
-	1,  // [1:1] is the sub-list for method input_type
-	1,  // [1:1] is the sub-list for extension type_name
-	1,  // [1:1] is the sub-list for extension extendee
-	0,  // [0:1] is the sub-list for field type_name
+	0, // [0:0] is the sub-list for method output_type
+	0, // [0:0] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_proto_user_common_proto_init() }
@@ -984,7 +1079,7 @@ func file_proto_user_common_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_user_common_proto_rawDesc), len(file_proto_user_common_proto_rawDesc)),
 			NumEnums:      9,
-			NumMessages:   7,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

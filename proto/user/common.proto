@@ -17,8 +17,8 @@ message RespBase {
 }
 
 message PageReq {
-  int64 page = 1;
-  int64 page_size = 2;
+  int64 cursor = 1;
+  int64 limit = 2;
 }
 
 message IdReq {

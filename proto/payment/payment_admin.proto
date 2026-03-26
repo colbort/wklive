@@ -1,0 +1,522 @@
+syntax = "proto3";
+
+package payment;
+
+import "proto/payment/common.proto";
+import "proto/payment/model.proto"; 
+
+option go_package = "wklive/proto/payment;payment";
+
+message AdminCommonResp {
+  payment.RespBase base = 1;
+}
+
+// ---------- 平台 ----------
+message CreatePayPlatformReq {
+  string platform_code = 1;
+  string platform_name = 2;
+  payment.PlatformType platform_type = 3;
+  string notify_url = 4;
+  string return_url = 5;
+  string icon = 6;
+  payment.CommonStatus status = 7;
+  string remark = 8;
+}
+
+message UpdatePayPlatformReq {
+  int64 id = 1;
+  string platform_name = 2;
+  payment.PlatformType platform_type = 3;
+  string notify_url = 4;
+  string return_url = 5;
+  string icon = 6;
+  payment.CommonStatus status = 7;
+  string remark = 8;
+}
+
+message GetPayPlatformReq {
+  int64 id = 1;
+}
+
+message GetPayPlatformResp {
+  payment.RespBase base = 1;
+  payment.PayPlatform data = 2;
+}
+
+message ListPayPlatformsReq {
+  payment.PageReq page = 1;
+  string keyword = 2;
+  string platform_code = 3;
+  payment.CommonStatus status = 4;
+  payment.PlatformType platform_type = 5;
+}
+
+message ListPayPlatformsResp {
+  payment.RespBase base = 1;
+  repeated payment.PayPlatform list = 2;
+}
+
+// ---------- 产品 ----------
+message CreatePayProductReq {
+  int64 platform_id = 1;
+  string product_code = 2;
+  string product_name = 3;
+  payment.SceneType scene_type = 4;
+  string currency = 5;
+  payment.CommonStatus status = 6;
+  string remark = 7;
+}
+
+message UpdatePayProductReq {
+  int64 id = 1;
+  string product_name = 2;
+  payment.SceneType scene_type = 3;
+  string currency = 4;
+  payment.CommonStatus status = 5;
+  string remark = 6;
+}
+
+message GetPayProductReq {
+  int64 id = 1;
+}
+
+message GetPayProductResp {
+  payment.RespBase base = 1;
+  payment.PayProduct data = 2;
+}
+
+message ListPayProductsReq {
+  payment.PageReq page = 1;
+  int64 platform_id = 2;
+  string keyword = 3;
+  string product_code = 4;
+  payment.CommonStatus status = 5;
+  payment.SceneType scene_type = 6;
+}
+
+message ListPayProductsResp {
+  payment.RespBase base = 1;
+  repeated payment.PayProduct list = 2;
+}
+
+// ---------- 租户开通平台 ----------
+message OpenTenantPayPlatformReq {
+  int64 tenant_id = 1;
+  int64 platform_id = 2;
+  payment.CommonStatus status = 3;
+  payment.OpenStatus open_status = 4;
+  string remark = 5;
+}
+
+message UpdateTenantPayPlatformReq {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  payment.CommonStatus status = 3;
+  payment.OpenStatus open_status = 4;
+  string remark = 5;
+}
+
+message GetTenantPayPlatformReq {
+  int64 id = 1;
+  int64 tenant_id = 2;
+}
+
+message GetTenantPayPlatformResp {
+  payment.RespBase base = 1;
+  payment.TenantPayPlatform data = 2;
+}
+
+message ListTenantPayPlatformsReq {
+  payment.PageReq page = 1;
+  int64 tenant_id = 2;
+  int64 platform_id = 3;
+  payment.CommonStatus status = 4;
+  payment.OpenStatus open_status = 5;
+}
+
+message ListTenantPayPlatformsResp {
+  payment.RespBase base = 1;
+  repeated payment.TenantPayPlatform list = 2;
+}
+
+// ---------- 租户支付账号 ----------
+message CreateTenantPayAccountReq {
+  int64 tenant_id = 1;
+  int64 tenant_pay_platform_id = 2;
+  int64 platform_id = 3;
+  string account_code = 4;
+  string account_name = 5;
+  string app_id = 6;
+  string merchant_id = 7;
+  string merchant_name = 8;
+  string api_key_cipher = 9;
+  string api_secret_cipher = 10;
+  string private_key_cipher = 11;
+  string public_key = 12;
+  string cert_cipher = 13;
+  string ext_config = 14;
+  payment.CommonStatus status = 15;
+  bool is_default = 16;
+  string remark = 17;
+}
+
+message UpdateTenantPayAccountReq {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string account_name = 3;
+  string app_id = 4;
+  string merchant_id = 5;
+  string merchant_name = 6;
+  string api_key_cipher = 7;
+  string api_secret_cipher = 8;
+  string private_key_cipher = 9;
+  string public_key = 10;
+  string cert_cipher = 11;
+  string ext_config = 12;
+  payment.CommonStatus status = 13;
+  bool is_default = 14;
+  string remark = 15;
+}
+
+message GetTenantPayAccountReq {
+  int64 id = 1;
+  int64 tenant_id = 2;
+}
+
+message GetTenantPayAccountResp {
+  payment.RespBase base = 1;
+  payment.TenantPayAccount data = 2;
+}
+
+message ListTenantPayAccountsReq {
+  payment.PageReq page = 1;
+  int64 tenant_id = 2;
+  int64 platform_id = 3;
+  int64 tenant_pay_platform_id = 4;
+  string keyword = 5;
+  payment.CommonStatus status = 6;
+}
+
+message ListTenantPayAccountsResp {
+  payment.RespBase base = 1;
+  repeated payment.TenantPayAccount list = 2;
+}
+
+// ---------- 租户支付通道 ----------
+message CreateTenantPayChannelReq {
+  int64 tenant_id = 1;
+  int64 platform_id = 2;
+  int64 product_id = 3;
+  int64 account_id = 4;
+  string channel_code = 5;
+  string channel_name = 6;
+  string display_name = 7;
+  string icon = 8;
+  string currency = 9;
+  int32 sort = 10;
+  bool visible = 11;
+  payment.CommonStatus status = 12;
+  int64 single_min_amount = 13;
+  int64 single_max_amount = 14;
+  int64 daily_max_amount = 15;
+  int32 daily_max_count = 16;
+  payment.FeeType fee_type = 17;
+  string fee_rate = 18;
+  int64 fee_fixed_amount = 19;
+  string ext_config = 20;
+  string remark = 21;
+}
+
+message UpdateTenantPayChannelReq {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string channel_name = 3;
+  string display_name = 4;
+  string icon = 5;
+  string currency = 6;
+  int32 sort = 7;
+  bool visible = 8;
+  payment.CommonStatus status = 9;
+  int64 single_min_amount = 10;
+  int64 single_max_amount = 11;
+  int64 daily_max_amount = 12;
+  int32 daily_max_count = 13;
+  payment.FeeType fee_type = 14;
+  string fee_rate = 15;
+  int64 fee_fixed_amount = 16;
+  string ext_config = 17;
+  string remark = 18;
+}
+
+message GetTenantPayChannelReq {
+  int64 id = 1;
+  int64 tenant_id = 2;
+}
+
+message GetTenantPayChannelResp {
+  payment.RespBase base = 1;
+  payment.TenantPayChannel data = 2;
+}
+
+message ListTenantPayChannelsReq {
+  payment.PageReq page = 1;
+  int64 tenant_id = 2;
+  int64 platform_id = 3;
+  int64 product_id = 4;
+  int64 account_id = 5;
+  string keyword = 6;
+  payment.CommonStatus status = 7;
+  bool visible = 8;
+}
+
+message ListTenantPayChannelsResp {
+  payment.RespBase base = 1;
+  repeated payment.TenantPayChannel list = 2;
+}
+
+// ---------- 通道规则 ----------
+message CreateTenantPayChannelRuleReq {
+  int64 tenant_id = 1;
+  int64 channel_id = 2;
+  string rule_name = 3;
+  int32 priority = 4;
+  payment.CommonStatus status = 5;
+  int64 single_amount_min = 6;
+  int64 single_amount_max = 7;
+  int64 user_total_recharge_min = 8;
+  int64 user_total_recharge_max = 9;
+  int32 member_level_min = 10;
+  int32 member_level_max = 11;
+  int32 kyc_level_min = 12;
+  int32 kyc_level_max = 13;
+  bool allow_new_user = 14;
+  bool allow_old_user = 15;
+  string allow_tags = 16;
+  string deny_tags = 17;
+  string remark = 18;
+}
+
+message UpdateTenantPayChannelRuleReq {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string rule_name = 3;
+  int32 priority = 4;
+  payment.CommonStatus status = 5;
+  int64 single_amount_min = 6;
+  int64 single_amount_max = 7;
+  int64 user_total_recharge_min = 8;
+  int64 user_total_recharge_max = 9;
+  int32 member_level_min = 10;
+  int32 member_level_max = 11;
+  int32 kyc_level_min = 12;
+  int32 kyc_level_max = 13;
+  bool allow_new_user = 14;
+  bool allow_old_user = 15;
+  string allow_tags = 16;
+  string deny_tags = 17;
+  string remark = 18;
+}
+
+message GetTenantPayChannelRuleReq {
+  int64 id = 1;
+  int64 tenant_id = 2;
+}
+
+message GetTenantPayChannelRuleResp {
+  payment.RespBase base = 1;
+  payment.TenantPayChannelRule data = 2;
+}
+
+message ListTenantPayChannelRulesReq {
+  payment.PageReq page = 1;
+  int64 tenant_id = 2;
+  int64 channel_id = 3;
+  payment.CommonStatus status = 4;
+}
+
+message ListTenantPayChannelRulesResp {
+  payment.RespBase base = 1;
+  repeated payment.TenantPayChannelRule list = 2;
+}
+
+// ---------- 用户充值统计 ----------
+message GetUserRechargeStatReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+}
+
+message GetUserRechargeStatResp {
+  payment.RespBase base = 1;
+  payment.UserRechargeStat data = 2;
+}
+
+message ListUserRechargeStatsReq {
+  payment.PageReq page = 1;
+  int64 tenant_id = 2;
+  int64 user_id = 3;
+  int64 success_total_amount_min = 4;
+  int64 success_total_amount_max = 5;
+}
+
+message ListUserRechargeStatsResp {
+  payment.RespBase base = 1;
+  repeated payment.UserRechargeStat list = 2;
+}
+
+// ---------- 订单 ----------
+message GetPayOrderReq {
+  int64 tenant_id = 1;
+  string order_no = 2;
+}
+
+message GetPayOrderResp {
+  payment.RespBase base = 1;
+  payment.PayOrder data = 2;
+}
+
+message ListPayOrdersReq {
+  payment.PageReq page = 1;
+  int64 tenant_id = 2;
+  int64 user_id = 3;
+  int64 platform_id = 4;
+  int64 product_id = 5;
+  int64 account_id = 6;
+  int64 channel_id = 7;
+  string order_no = 8;
+  string biz_order_no = 9;
+  string third_trade_no = 10;
+  payment.PayOrderStatus status = 11;
+  int64 create_time_start = 12;
+  int64 create_time_end = 13;
+}
+
+message ListPayOrdersResp {
+  payment.RespBase base = 1;
+  repeated payment.PayOrder list = 2;
+}
+
+message ClosePayOrderReq {
+  int64 tenant_id = 1;
+  string order_no = 2;
+  string remark = 3;
+}
+
+message ManualMarkPayOrderSuccessReq {
+  int64 tenant_id = 1;
+  string order_no = 2;
+  string third_trade_no = 3;
+  int64 pay_amount = 4;
+  string remark = 5;
+}
+
+message RetryNotifyReq {
+  int64 tenant_id = 1;
+  string order_no = 2;
+}
+
+// ---------- 回调日志 ----------
+message GetPayNotifyLogReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+}
+
+message GetPayNotifyLogResp {
+  RespBase base = 1;
+  PayNotifyLog data = 2;
+}
+
+message ListPayNotifyLogsReq {
+  payment.PageReq page = 1;
+  int64 tenant_id = 2;
+  string order_no = 3;
+  int64 order_id = 4;
+  int64 platform_id = 5;
+  int64 channel_id = 6;
+  payment.NotifyProcessStatus notify_status = 7;
+  payment.SignResult sign_result = 8;
+  int64 create_time_start = 9;
+  int64 create_time_end = 10;
+}
+
+message ListPayNotifyLogsResp {
+  payment.RespBase base = 1;
+  repeated payment.PayNotifyLog list = 2;
+}
+
+// Admin 接口
+service PaymentAdmin {
+  // 创建平台
+  rpc CreatePayPlatform(CreatePayPlatformReq) returns (AdminCommonResp);
+  // 更新平台
+  rpc UpdatePayPlatform(UpdatePayPlatformReq) returns (AdminCommonResp);
+  // 获取平台详情
+  rpc GetPayPlatform(GetPayPlatformReq) returns (GetPayPlatformResp);
+  // 平台列表
+  rpc ListPayPlatforms(ListPayPlatformsReq) returns (ListPayPlatformsResp);
+
+  // 创建产品
+  rpc CreatePayProduct(CreatePayProductReq) returns (AdminCommonResp);
+    // 更新产品
+  rpc UpdatePayProduct(UpdatePayProductReq) returns (AdminCommonResp);
+  // 获取产品详情
+  rpc GetPayProduct(GetPayProductReq) returns (GetPayProductResp);
+  // 产品列表
+  rpc ListPayProducts(ListPayProductsReq) returns (ListPayProductsResp);
+
+  // 租户开通平台
+  rpc OpenTenantPayPlatform(OpenTenantPayPlatformReq) returns (AdminCommonResp);
+  // 更新租户开通平台
+  rpc UpdateTenantPayPlatform(UpdateTenantPayPlatformReq) returns (AdminCommonResp);
+  // 获取租户开通平台详情
+  rpc GetTenantPayPlatform(GetTenantPayPlatformReq) returns (GetTenantPayPlatformResp);
+  // 租户开通平台列表
+  rpc ListTenantPayPlatforms(ListTenantPayPlatformsReq) returns (ListTenantPayPlatformsResp);
+
+  // 租户支付账号
+  rpc CreateTenantPayAccount(CreateTenantPayAccountReq) returns (AdminCommonResp);
+  // 更新租户支付账号
+  rpc UpdateTenantPayAccount(UpdateTenantPayAccountReq) returns (AdminCommonResp);
+  // 获取租户支付账号详情
+  rpc GetTenantPayAccount(GetTenantPayAccountReq) returns (GetTenantPayAccountResp);
+  // 租户支付账号列表
+  rpc ListTenantPayAccounts(ListTenantPayAccountsReq) returns (ListTenantPayAccountsResp);
+
+  // 创建租户支付通道
+  rpc CreateTenantPayChannel(CreateTenantPayChannelReq) returns (AdminCommonResp);
+  // 更新租户支付通道
+  rpc UpdateTenantPayChannel(UpdateTenantPayChannelReq) returns (AdminCommonResp);
+  // 获取租户支付通道详情
+  rpc GetTenantPayChannel(GetTenantPayChannelReq) returns (GetTenantPayChannelResp);
+  // 租户支付通道列表
+  rpc ListTenantPayChannels(ListTenantPayChannelsReq) returns (ListTenantPayChannelsResp);
+
+  // 创建通道规则
+  rpc CreateTenantPayChannelRule(CreateTenantPayChannelRuleReq) returns (AdminCommonResp);
+  // 更新通道规则
+  rpc UpdateTenantPayChannelRule(UpdateTenantPayChannelRuleReq) returns (AdminCommonResp);
+  // 获取通道规则详情
+  rpc GetTenantPayChannelRule(GetTenantPayChannelRuleReq) returns (GetTenantPayChannelRuleResp);
+  // 通道规则列表
+  rpc ListTenantPayChannelRules(ListTenantPayChannelRulesReq) returns (ListTenantPayChannelRulesResp);
+
+  // 用户充值统计
+  rpc GetUserRechargeStat(GetUserRechargeStatReq) returns (GetUserRechargeStatResp);
+  // 用户充值统计列表
+  rpc ListUserRechargeStats(ListUserRechargeStatsReq) returns (ListUserRechargeStatsResp);
+
+  // 订单
+  rpc GetPayOrder(GetPayOrderReq) returns (GetPayOrderResp);
+  // 订单列表
+  rpc ListPayOrders(ListPayOrdersReq) returns (ListPayOrdersResp);
+  // 关闭订单
+  rpc ClosePayOrder(ClosePayOrderReq) returns (AdminCommonResp);
+  // 人工标记订单支付成功
+  rpc ManualMarkPayOrderSuccess(ManualMarkPayOrderSuccessReq) returns (AdminCommonResp);
+  // 重试回调
+  rpc RetryNotify(RetryNotifyReq) returns (AdminCommonResp);
+
+  // 回调日志
+  rpc GetPayNotifyLog(GetPayNotifyLogReq) returns (GetPayNotifyLogResp);
+  // 回调日志列表
+  rpc ListPayNotifyLogs(ListPayNotifyLogsReq) returns (ListPayNotifyLogsResp);
+}

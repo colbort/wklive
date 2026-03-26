@@ -24,27 +24,28 @@ const (
 type UserBase struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserNo         string                 `protobuf:"bytes,2,opt,name=user_no,json=userNo,proto3" json:"user_no,omitempty"`
-	Username       string                 `protobuf:"bytes,3,opt,name=username,proto3" json:"username,omitempty"`
-	Nickname       string                 `protobuf:"bytes,4,opt,name=nickname,proto3" json:"nickname,omitempty"`
-	Avatar         string                 `protobuf:"bytes,5,opt,name=avatar,proto3" json:"avatar,omitempty"`
-	Language       string                 `protobuf:"bytes,6,opt,name=language,proto3" json:"language,omitempty"`
-	Timezone       string                 `protobuf:"bytes,7,opt,name=timezone,proto3" json:"timezone,omitempty"`
-	InviteCode     string                 `protobuf:"bytes,8,opt,name=invite_code,json=inviteCode,proto3" json:"invite_code,omitempty"`
-	Signature      string                 `protobuf:"bytes,9,opt,name=signature,proto3" json:"signature,omitempty"`
-	RegisterType   RegisterType           `protobuf:"varint,10,opt,name=register_type,json=registerType,proto3,enum=user.RegisterType" json:"register_type,omitempty"`
-	Status         UserStatus             `protobuf:"varint,11,opt,name=status,proto3,enum=user.UserStatus" json:"status,omitempty"`
-	MemberLevel    int32                  `protobuf:"varint,12,opt,name=member_level,json=memberLevel,proto3" json:"member_level,omitempty"`
-	Source         string                 `protobuf:"bytes,13,opt,name=source,proto3" json:"source,omitempty"`
-	ReferrerUserId int64                  `protobuf:"varint,14,opt,name=referrer_user_id,json=referrerUserId,proto3" json:"referrer_user_id,omitempty"`
-	LastLoginIp    string                 `protobuf:"bytes,15,opt,name=last_login_ip,json=lastLoginIp,proto3" json:"last_login_ip,omitempty"`
-	LastLoginTime  int64                  `protobuf:"varint,16,opt,name=last_login_time,json=lastLoginTime,proto3" json:"last_login_time,omitempty"`
-	RegisterIp     string                 `protobuf:"bytes,17,opt,name=register_ip,json=registerIp,proto3" json:"register_ip,omitempty"`
-	RegisterTime   int64                  `protobuf:"varint,18,opt,name=register_time,json=registerTime,proto3" json:"register_time,omitempty"`
-	Remark         string                 `protobuf:"bytes,19,opt,name=remark,proto3" json:"remark,omitempty"`
-	Deleted        bool                   `protobuf:"varint,20,opt,name=deleted,proto3" json:"deleted,omitempty"`
-	CreateTime     int64                  `protobuf:"varint,21,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	UpdateTime     int64                  `protobuf:"varint,22,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
+	TenantId       int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserNo         string                 `protobuf:"bytes,3,opt,name=user_no,json=userNo,proto3" json:"user_no,omitempty"`
+	Username       string                 `protobuf:"bytes,4,opt,name=username,proto3" json:"username,omitempty"`
+	Nickname       string                 `protobuf:"bytes,5,opt,name=nickname,proto3" json:"nickname,omitempty"`
+	Avatar         string                 `protobuf:"bytes,6,opt,name=avatar,proto3" json:"avatar,omitempty"`
+	Language       string                 `protobuf:"bytes,7,opt,name=language,proto3" json:"language,omitempty"`
+	Timezone       string                 `protobuf:"bytes,8,opt,name=timezone,proto3" json:"timezone,omitempty"`
+	InviteCode     string                 `protobuf:"bytes,9,opt,name=invite_code,json=inviteCode,proto3" json:"invite_code,omitempty"`
+	Signature      string                 `protobuf:"bytes,10,opt,name=signature,proto3" json:"signature,omitempty"`
+	RegisterType   RegisterType           `protobuf:"varint,11,opt,name=register_type,json=registerType,proto3,enum=user.RegisterType" json:"register_type,omitempty"`
+	Status         UserStatus             `protobuf:"varint,12,opt,name=status,proto3,enum=user.UserStatus" json:"status,omitempty"`
+	MemberLevel    int32                  `protobuf:"varint,13,opt,name=member_level,json=memberLevel,proto3" json:"member_level,omitempty"`
+	Source         string                 `protobuf:"bytes,14,opt,name=source,proto3" json:"source,omitempty"`
+	ReferrerUserId int64                  `protobuf:"varint,15,opt,name=referrer_user_id,json=referrerUserId,proto3" json:"referrer_user_id,omitempty"`
+	LastLoginIp    string                 `protobuf:"bytes,16,opt,name=last_login_ip,json=lastLoginIp,proto3" json:"last_login_ip,omitempty"`
+	LastLoginTime  int64                  `protobuf:"varint,17,opt,name=last_login_time,json=lastLoginTime,proto3" json:"last_login_time,omitempty"`
+	RegisterIp     string                 `protobuf:"bytes,18,opt,name=register_ip,json=registerIp,proto3" json:"register_ip,omitempty"`
+	RegisterTime   int64                  `protobuf:"varint,19,opt,name=register_time,json=registerTime,proto3" json:"register_time,omitempty"`
+	Remark         string                 `protobuf:"bytes,20,opt,name=remark,proto3" json:"remark,omitempty"`
+	Deleted        bool                   `protobuf:"varint,21,opt,name=deleted,proto3" json:"deleted,omitempty"`
+	CreateTime     int64                  `protobuf:"varint,22,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	UpdateTime     int64                  `protobuf:"varint,23,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -82,6 +83,13 @@ func (*UserBase) Descriptor() ([]byte, []int) {
 func (x *UserBase) GetId() int64 {
 	if x != nil {
 		return x.Id
+	}
+	return 0
+}
+
+func (x *UserBase) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
 	}
 	return 0
 }
@@ -236,29 +244,30 @@ func (x *UserBase) GetUpdateTime() int64 {
 type UserIdentity struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Phone         string                 `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
-	Email         string                 `protobuf:"bytes,4,opt,name=email,proto3" json:"email,omitempty"`
-	RealName      string                 `protobuf:"bytes,5,opt,name=real_name,json=realName,proto3" json:"real_name,omitempty"`
-	Gender        Gender                 `protobuf:"varint,6,opt,name=gender,proto3,enum=user.Gender" json:"gender,omitempty"`
-	Birthday      string                 `protobuf:"bytes,7,opt,name=birthday,proto3" json:"birthday,omitempty"`
-	CountryCode   string                 `protobuf:"bytes,8,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
-	Province      string                 `protobuf:"bytes,9,opt,name=province,proto3" json:"province,omitempty"`
-	City          string                 `protobuf:"bytes,10,opt,name=city,proto3" json:"city,omitempty"`
-	Address       string                 `protobuf:"bytes,11,opt,name=address,proto3" json:"address,omitempty"`
-	IdType        IdType                 `protobuf:"varint,12,opt,name=id_type,json=idType,proto3,enum=user.IdType" json:"id_type,omitempty"`
-	IdNo          string                 `protobuf:"bytes,13,opt,name=id_no,json=idNo,proto3" json:"id_no,omitempty"`
-	FrontImage    string                 `protobuf:"bytes,14,opt,name=front_image,json=frontImage,proto3" json:"front_image,omitempty"`
-	BackImage     string                 `protobuf:"bytes,15,opt,name=back_image,json=backImage,proto3" json:"back_image,omitempty"`
-	HandheldImage string                 `protobuf:"bytes,16,opt,name=handheld_image,json=handheldImage,proto3" json:"handheld_image,omitempty"`
-	KycLevel      KycLevel               `protobuf:"varint,17,opt,name=kyc_level,json=kycLevel,proto3,enum=user.KycLevel" json:"kyc_level,omitempty"`
-	VerifyStatus  VerifyStatus           `protobuf:"varint,18,opt,name=verify_status,json=verifyStatus,proto3,enum=user.VerifyStatus" json:"verify_status,omitempty"`
-	RejectReason  string                 `protobuf:"bytes,19,opt,name=reject_reason,json=rejectReason,proto3" json:"reject_reason,omitempty"`
-	SubmitTime    int64                  `protobuf:"varint,20,opt,name=submit_time,json=submitTime,proto3" json:"submit_time,omitempty"`
-	VerifyTime    int64                  `protobuf:"varint,21,opt,name=verify_time,json=verifyTime,proto3" json:"verify_time,omitempty"`
-	VerifyBy      int64                  `protobuf:"varint,22,opt,name=verify_by,json=verifyBy,proto3" json:"verify_by,omitempty"`
-	CreateTime    int64                  `protobuf:"varint,23,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	UpdateTime    int64                  `protobuf:"varint,24,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
+	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Phone         string                 `protobuf:"bytes,4,opt,name=phone,proto3" json:"phone,omitempty"`
+	Email         string                 `protobuf:"bytes,5,opt,name=email,proto3" json:"email,omitempty"`
+	RealName      string                 `protobuf:"bytes,6,opt,name=real_name,json=realName,proto3" json:"real_name,omitempty"`
+	Gender        Gender                 `protobuf:"varint,7,opt,name=gender,proto3,enum=user.Gender" json:"gender,omitempty"`
+	Birthday      string                 `protobuf:"bytes,8,opt,name=birthday,proto3" json:"birthday,omitempty"`
+	CountryCode   string                 `protobuf:"bytes,9,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
+	Province      string                 `protobuf:"bytes,10,opt,name=province,proto3" json:"province,omitempty"`
+	City          string                 `protobuf:"bytes,11,opt,name=city,proto3" json:"city,omitempty"`
+	Address       string                 `protobuf:"bytes,12,opt,name=address,proto3" json:"address,omitempty"`
+	IdType        IdType                 `protobuf:"varint,13,opt,name=id_type,json=idType,proto3,enum=user.IdType" json:"id_type,omitempty"`
+	IdNo          string                 `protobuf:"bytes,14,opt,name=id_no,json=idNo,proto3" json:"id_no,omitempty"`
+	FrontImage    string                 `protobuf:"bytes,15,opt,name=front_image,json=frontImage,proto3" json:"front_image,omitempty"`
+	BackImage     string                 `protobuf:"bytes,16,opt,name=back_image,json=backImage,proto3" json:"back_image,omitempty"`
+	HandheldImage string                 `protobuf:"bytes,17,opt,name=handheld_image,json=handheldImage,proto3" json:"handheld_image,omitempty"`
+	KycLevel      KycLevel               `protobuf:"varint,18,opt,name=kyc_level,json=kycLevel,proto3,enum=user.KycLevel" json:"kyc_level,omitempty"`
+	VerifyStatus  VerifyStatus           `protobuf:"varint,19,opt,name=verify_status,json=verifyStatus,proto3,enum=user.VerifyStatus" json:"verify_status,omitempty"`
+	RejectReason  string                 `protobuf:"bytes,20,opt,name=reject_reason,json=rejectReason,proto3" json:"reject_reason,omitempty"`
+	SubmitTime    int64                  `protobuf:"varint,21,opt,name=submit_time,json=submitTime,proto3" json:"submit_time,omitempty"`
+	VerifyTime    int64                  `protobuf:"varint,22,opt,name=verify_time,json=verifyTime,proto3" json:"verify_time,omitempty"`
+	VerifyBy      int64                  `protobuf:"varint,23,opt,name=verify_by,json=verifyBy,proto3" json:"verify_by,omitempty"`
+	CreateTime    int64                  `protobuf:"varint,24,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	UpdateTime    int64                  `protobuf:"varint,25,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -296,6 +305,13 @@ func (*UserIdentity) Descriptor() ([]byte, []int) {
 func (x *UserIdentity) GetId() int64 {
 	if x != nil {
 		return x.Id
+	}
+	return 0
+}
+
+func (x *UserIdentity) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
 	}
 	return 0
 }
@@ -464,15 +480,16 @@ func (x *UserIdentity) GetUpdateTime() int64 {
 type UserSecurity struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId          int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	HasPayPassword  bool                   `protobuf:"varint,3,opt,name=has_pay_password,json=hasPayPassword,proto3" json:"has_pay_password,omitempty"`
-	GoogleEnabled   bool                   `protobuf:"varint,4,opt,name=google_enabled,json=googleEnabled,proto3" json:"google_enabled,omitempty"`
-	LoginErrorCount int32                  `protobuf:"varint,5,opt,name=login_error_count,json=loginErrorCount,proto3" json:"login_error_count,omitempty"`
-	PayErrorCount   int32                  `protobuf:"varint,6,opt,name=pay_error_count,json=payErrorCount,proto3" json:"pay_error_count,omitempty"`
-	LockUntil       int64                  `protobuf:"varint,7,opt,name=lock_until,json=lockUntil,proto3" json:"lock_until,omitempty"`
-	RiskLevel       RiskLevel              `protobuf:"varint,8,opt,name=risk_level,json=riskLevel,proto3,enum=user.RiskLevel" json:"risk_level,omitempty"`
-	CreateTime      int64                  `protobuf:"varint,9,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	UpdateTime      int64                  `protobuf:"varint,10,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
+	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId          int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	HasPayPassword  bool                   `protobuf:"varint,4,opt,name=has_pay_password,json=hasPayPassword,proto3" json:"has_pay_password,omitempty"`
+	GoogleEnabled   bool                   `protobuf:"varint,5,opt,name=google_enabled,json=googleEnabled,proto3" json:"google_enabled,omitempty"`
+	LoginErrorCount int32                  `protobuf:"varint,6,opt,name=login_error_count,json=loginErrorCount,proto3" json:"login_error_count,omitempty"`
+	PayErrorCount   int32                  `protobuf:"varint,7,opt,name=pay_error_count,json=payErrorCount,proto3" json:"pay_error_count,omitempty"`
+	LockUntil       int64                  `protobuf:"varint,8,opt,name=lock_until,json=lockUntil,proto3" json:"lock_until,omitempty"`
+	RiskLevel       RiskLevel              `protobuf:"varint,9,opt,name=risk_level,json=riskLevel,proto3,enum=user.RiskLevel" json:"risk_level,omitempty"`
+	CreateTime      int64                  `protobuf:"varint,10,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	UpdateTime      int64                  `protobuf:"varint,11,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -510,6 +527,13 @@ func (*UserSecurity) Descriptor() ([]byte, []int) {
 func (x *UserSecurity) GetId() int64 {
 	if x != nil {
 		return x.Id
+	}
+	return 0
+}
+
+func (x *UserSecurity) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
 	}
 	return 0
 }
@@ -580,18 +604,19 @@ func (x *UserSecurity) GetUpdateTime() int64 {
 type UserBank struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId          int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	BankName        string                 `protobuf:"bytes,3,opt,name=bank_name,json=bankName,proto3" json:"bank_name,omitempty"`
-	BankCode        string                 `protobuf:"bytes,4,opt,name=bank_code,json=bankCode,proto3" json:"bank_code,omitempty"`
-	AccountName     string                 `protobuf:"bytes,5,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`
-	AccountNo       string                 `protobuf:"bytes,6,opt,name=account_no,json=accountNo,proto3" json:"account_no,omitempty"`
-	MaskedAccountNo string                 `protobuf:"bytes,7,opt,name=masked_account_no,json=maskedAccountNo,proto3" json:"masked_account_no,omitempty"`
-	BranchName      string                 `protobuf:"bytes,8,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`
-	CountryCode     string                 `protobuf:"bytes,9,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
-	IsDefault       bool                   `protobuf:"varint,10,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
-	Status          BankStatus             `protobuf:"varint,11,opt,name=status,proto3,enum=user.BankStatus" json:"status,omitempty"`
-	CreateTime      int64                  `protobuf:"varint,12,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	UpdateTime      int64                  `protobuf:"varint,13,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
+	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId          int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	BankName        string                 `protobuf:"bytes,4,opt,name=bank_name,json=bankName,proto3" json:"bank_name,omitempty"`
+	BankCode        string                 `protobuf:"bytes,5,opt,name=bank_code,json=bankCode,proto3" json:"bank_code,omitempty"`
+	AccountName     string                 `protobuf:"bytes,6,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`
+	AccountNo       string                 `protobuf:"bytes,7,opt,name=account_no,json=accountNo,proto3" json:"account_no,omitempty"`
+	MaskedAccountNo string                 `protobuf:"bytes,8,opt,name=masked_account_no,json=maskedAccountNo,proto3" json:"masked_account_no,omitempty"`
+	BranchName      string                 `protobuf:"bytes,9,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`
+	CountryCode     string                 `protobuf:"bytes,10,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
+	IsDefault       bool                   `protobuf:"varint,11,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
+	Status          BankStatus             `protobuf:"varint,12,opt,name=status,proto3,enum=user.BankStatus" json:"status,omitempty"`
+	CreateTime      int64                  `protobuf:"varint,13,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	UpdateTime      int64                  `protobuf:"varint,14,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -629,6 +654,13 @@ func (*UserBank) Descriptor() ([]byte, []int) {
 func (x *UserBank) GetId() int64 {
 	if x != nil {
 		return x.Id
+	}
+	return 0
+}
+
+func (x *UserBank) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
 	}
 	return 0
 }
@@ -1309,102 +1341,106 @@ var File_proto_user_model_proto protoreflect.FileDescriptor
 
 const file_proto_user_model_proto_rawDesc = "" +
 	"\n" +
-	"\x16proto/user/model.proto\x12\x04user\x1a\x17proto/user/common.proto\"\xc8\x05\n" +
+	"\x16proto/user/model.proto\x12\x04user\x1a\x17proto/user/common.proto\"\xe5\x05\n" +
 	"\bUserBase\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
-	"\auser_no\x18\x02 \x01(\tR\x06userNo\x12\x1a\n" +
-	"\busername\x18\x03 \x01(\tR\busername\x12\x1a\n" +
-	"\bnickname\x18\x04 \x01(\tR\bnickname\x12\x16\n" +
-	"\x06avatar\x18\x05 \x01(\tR\x06avatar\x12\x1a\n" +
-	"\blanguage\x18\x06 \x01(\tR\blanguage\x12\x1a\n" +
-	"\btimezone\x18\a \x01(\tR\btimezone\x12\x1f\n" +
-	"\vinvite_code\x18\b \x01(\tR\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_no\x18\x03 \x01(\tR\x06userNo\x12\x1a\n" +
+	"\busername\x18\x04 \x01(\tR\busername\x12\x1a\n" +
+	"\bnickname\x18\x05 \x01(\tR\bnickname\x12\x16\n" +
+	"\x06avatar\x18\x06 \x01(\tR\x06avatar\x12\x1a\n" +
+	"\blanguage\x18\a \x01(\tR\blanguage\x12\x1a\n" +
+	"\btimezone\x18\b \x01(\tR\btimezone\x12\x1f\n" +
+	"\vinvite_code\x18\t \x01(\tR\n" +
 	"inviteCode\x12\x1c\n" +
-	"\tsignature\x18\t \x01(\tR\tsignature\x127\n" +
-	"\rregister_type\x18\n" +
-	" \x01(\x0e2\x12.user.RegisterTypeR\fregisterType\x12(\n" +
-	"\x06status\x18\v \x01(\x0e2\x10.user.UserStatusR\x06status\x12!\n" +
-	"\fmember_level\x18\f \x01(\x05R\vmemberLevel\x12\x16\n" +
-	"\x06source\x18\r \x01(\tR\x06source\x12(\n" +
-	"\x10referrer_user_id\x18\x0e \x01(\x03R\x0ereferrerUserId\x12\"\n" +
-	"\rlast_login_ip\x18\x0f \x01(\tR\vlastLoginIp\x12&\n" +
-	"\x0flast_login_time\x18\x10 \x01(\x03R\rlastLoginTime\x12\x1f\n" +
-	"\vregister_ip\x18\x11 \x01(\tR\n" +
+	"\tsignature\x18\n" +
+	" \x01(\tR\tsignature\x127\n" +
+	"\rregister_type\x18\v \x01(\x0e2\x12.user.RegisterTypeR\fregisterType\x12(\n" +
+	"\x06status\x18\f \x01(\x0e2\x10.user.UserStatusR\x06status\x12!\n" +
+	"\fmember_level\x18\r \x01(\x05R\vmemberLevel\x12\x16\n" +
+	"\x06source\x18\x0e \x01(\tR\x06source\x12(\n" +
+	"\x10referrer_user_id\x18\x0f \x01(\x03R\x0ereferrerUserId\x12\"\n" +
+	"\rlast_login_ip\x18\x10 \x01(\tR\vlastLoginIp\x12&\n" +
+	"\x0flast_login_time\x18\x11 \x01(\x03R\rlastLoginTime\x12\x1f\n" +
+	"\vregister_ip\x18\x12 \x01(\tR\n" +
 	"registerIp\x12#\n" +
-	"\rregister_time\x18\x12 \x01(\x03R\fregisterTime\x12\x16\n" +
-	"\x06remark\x18\x13 \x01(\tR\x06remark\x12\x18\n" +
-	"\adeleted\x18\x14 \x01(\bR\adeleted\x12\x1f\n" +
-	"\vcreate_time\x18\x15 \x01(\x03R\n" +
+	"\rregister_time\x18\x13 \x01(\x03R\fregisterTime\x12\x16\n" +
+	"\x06remark\x18\x14 \x01(\tR\x06remark\x12\x18\n" +
+	"\adeleted\x18\x15 \x01(\bR\adeleted\x12\x1f\n" +
+	"\vcreate_time\x18\x16 \x01(\x03R\n" +
 	"createTime\x12\x1f\n" +
-	"\vupdate_time\x18\x16 \x01(\x03R\n" +
-	"updateTime\"\xfe\x05\n" +
+	"\vupdate_time\x18\x17 \x01(\x03R\n" +
+	"updateTime\"\x9b\x06\n" +
 	"\fUserIdentity\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x14\n" +
-	"\x05phone\x18\x03 \x01(\tR\x05phone\x12\x14\n" +
-	"\x05email\x18\x04 \x01(\tR\x05email\x12\x1b\n" +
-	"\treal_name\x18\x05 \x01(\tR\brealName\x12$\n" +
-	"\x06gender\x18\x06 \x01(\x0e2\f.user.GenderR\x06gender\x12\x1a\n" +
-	"\bbirthday\x18\a \x01(\tR\bbirthday\x12!\n" +
-	"\fcountry_code\x18\b \x01(\tR\vcountryCode\x12\x1a\n" +
-	"\bprovince\x18\t \x01(\tR\bprovince\x12\x12\n" +
-	"\x04city\x18\n" +
-	" \x01(\tR\x04city\x12\x18\n" +
-	"\aaddress\x18\v \x01(\tR\aaddress\x12%\n" +
-	"\aid_type\x18\f \x01(\x0e2\f.user.IdTypeR\x06idType\x12\x13\n" +
-	"\x05id_no\x18\r \x01(\tR\x04idNo\x12\x1f\n" +
-	"\vfront_image\x18\x0e \x01(\tR\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x14\n" +
+	"\x05phone\x18\x04 \x01(\tR\x05phone\x12\x14\n" +
+	"\x05email\x18\x05 \x01(\tR\x05email\x12\x1b\n" +
+	"\treal_name\x18\x06 \x01(\tR\brealName\x12$\n" +
+	"\x06gender\x18\a \x01(\x0e2\f.user.GenderR\x06gender\x12\x1a\n" +
+	"\bbirthday\x18\b \x01(\tR\bbirthday\x12!\n" +
+	"\fcountry_code\x18\t \x01(\tR\vcountryCode\x12\x1a\n" +
+	"\bprovince\x18\n" +
+	" \x01(\tR\bprovince\x12\x12\n" +
+	"\x04city\x18\v \x01(\tR\x04city\x12\x18\n" +
+	"\aaddress\x18\f \x01(\tR\aaddress\x12%\n" +
+	"\aid_type\x18\r \x01(\x0e2\f.user.IdTypeR\x06idType\x12\x13\n" +
+	"\x05id_no\x18\x0e \x01(\tR\x04idNo\x12\x1f\n" +
+	"\vfront_image\x18\x0f \x01(\tR\n" +
 	"frontImage\x12\x1d\n" +
 	"\n" +
-	"back_image\x18\x0f \x01(\tR\tbackImage\x12%\n" +
-	"\x0ehandheld_image\x18\x10 \x01(\tR\rhandheldImage\x12+\n" +
-	"\tkyc_level\x18\x11 \x01(\x0e2\x0e.user.KycLevelR\bkycLevel\x127\n" +
-	"\rverify_status\x18\x12 \x01(\x0e2\x12.user.VerifyStatusR\fverifyStatus\x12#\n" +
-	"\rreject_reason\x18\x13 \x01(\tR\frejectReason\x12\x1f\n" +
-	"\vsubmit_time\x18\x14 \x01(\x03R\n" +
+	"back_image\x18\x10 \x01(\tR\tbackImage\x12%\n" +
+	"\x0ehandheld_image\x18\x11 \x01(\tR\rhandheldImage\x12+\n" +
+	"\tkyc_level\x18\x12 \x01(\x0e2\x0e.user.KycLevelR\bkycLevel\x127\n" +
+	"\rverify_status\x18\x13 \x01(\x0e2\x12.user.VerifyStatusR\fverifyStatus\x12#\n" +
+	"\rreject_reason\x18\x14 \x01(\tR\frejectReason\x12\x1f\n" +
+	"\vsubmit_time\x18\x15 \x01(\x03R\n" +
 	"submitTime\x12\x1f\n" +
-	"\vverify_time\x18\x15 \x01(\x03R\n" +
+	"\vverify_time\x18\x16 \x01(\x03R\n" +
 	"verifyTime\x12\x1b\n" +
-	"\tverify_by\x18\x16 \x01(\x03R\bverifyBy\x12\x1f\n" +
-	"\vcreate_time\x18\x17 \x01(\x03R\n" +
+	"\tverify_by\x18\x17 \x01(\x03R\bverifyBy\x12\x1f\n" +
+	"\vcreate_time\x18\x18 \x01(\x03R\n" +
 	"createTime\x12\x1f\n" +
-	"\vupdate_time\x18\x18 \x01(\x03R\n" +
-	"updateTime\"\xed\x02\n" +
+	"\vupdate_time\x18\x19 \x01(\x03R\n" +
+	"updateTime\"\x8a\x03\n" +
 	"\fUserSecurity\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12(\n" +
-	"\x10has_pay_password\x18\x03 \x01(\bR\x0ehasPayPassword\x12%\n" +
-	"\x0egoogle_enabled\x18\x04 \x01(\bR\rgoogleEnabled\x12*\n" +
-	"\x11login_error_count\x18\x05 \x01(\x05R\x0floginErrorCount\x12&\n" +
-	"\x0fpay_error_count\x18\x06 \x01(\x05R\rpayErrorCount\x12\x1d\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12(\n" +
+	"\x10has_pay_password\x18\x04 \x01(\bR\x0ehasPayPassword\x12%\n" +
+	"\x0egoogle_enabled\x18\x05 \x01(\bR\rgoogleEnabled\x12*\n" +
+	"\x11login_error_count\x18\x06 \x01(\x05R\x0floginErrorCount\x12&\n" +
+	"\x0fpay_error_count\x18\a \x01(\x05R\rpayErrorCount\x12\x1d\n" +
 	"\n" +
-	"lock_until\x18\a \x01(\x03R\tlockUntil\x12.\n" +
+	"lock_until\x18\b \x01(\x03R\tlockUntil\x12.\n" +
 	"\n" +
-	"risk_level\x18\b \x01(\x0e2\x0f.user.RiskLevelR\triskLevel\x12\x1f\n" +
-	"\vcreate_time\x18\t \x01(\x03R\n" +
-	"createTime\x12\x1f\n" +
-	"\vupdate_time\x18\n" +
+	"risk_level\x18\t \x01(\x0e2\x0f.user.RiskLevelR\triskLevel\x12\x1f\n" +
+	"\vcreate_time\x18\n" +
 	" \x01(\x03R\n" +
-	"updateTime\"\xaa\x03\n" +
-	"\bUserBank\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1b\n" +
-	"\tbank_name\x18\x03 \x01(\tR\bbankName\x12\x1b\n" +
-	"\tbank_code\x18\x04 \x01(\tR\bbankCode\x12!\n" +
-	"\faccount_name\x18\x05 \x01(\tR\vaccountName\x12\x1d\n" +
-	"\n" +
-	"account_no\x18\x06 \x01(\tR\taccountNo\x12*\n" +
-	"\x11masked_account_no\x18\a \x01(\tR\x0fmaskedAccountNo\x12\x1f\n" +
-	"\vbranch_name\x18\b \x01(\tR\n" +
-	"branchName\x12!\n" +
-	"\fcountry_code\x18\t \x01(\tR\vcountryCode\x12\x1d\n" +
-	"\n" +
-	"is_default\x18\n" +
-	" \x01(\bR\tisDefault\x12(\n" +
-	"\x06status\x18\v \x01(\x0e2\x10.user.BankStatusR\x06status\x12\x1f\n" +
-	"\vcreate_time\x18\f \x01(\x03R\n" +
 	"createTime\x12\x1f\n" +
-	"\vupdate_time\x18\r \x01(\x03R\n" +
+	"\vupdate_time\x18\v \x01(\x03R\n" +
+	"updateTime\"\xc7\x03\n" +
+	"\bUserBank\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x1b\n" +
+	"\tbank_name\x18\x04 \x01(\tR\bbankName\x12\x1b\n" +
+	"\tbank_code\x18\x05 \x01(\tR\bbankCode\x12!\n" +
+	"\faccount_name\x18\x06 \x01(\tR\vaccountName\x12\x1d\n" +
+	"\n" +
+	"account_no\x18\a \x01(\tR\taccountNo\x12*\n" +
+	"\x11masked_account_no\x18\b \x01(\tR\x0fmaskedAccountNo\x12\x1f\n" +
+	"\vbranch_name\x18\t \x01(\tR\n" +
+	"branchName\x12!\n" +
+	"\fcountry_code\x18\n" +
+	" \x01(\tR\vcountryCode\x12\x1d\n" +
+	"\n" +
+	"is_default\x18\v \x01(\bR\tisDefault\x12(\n" +
+	"\x06status\x18\f \x01(\x0e2\x10.user.BankStatusR\x06status\x12\x1f\n" +
+	"\vcreate_time\x18\r \x01(\x03R\n" +
+	"createTime\x12\x1f\n" +
+	"\vupdate_time\x18\x0e \x01(\x03R\n" +
 	"updateTime\"\x91\x01\n" +
 	"\vUserProfile\x12\"\n" +
 	"\x04base\x18\x01 \x01(\v2\x0e.user.UserBaseR\x04base\x12.\n" +

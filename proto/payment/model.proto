@@ -1,0 +1,197 @@
+syntax = "proto3";
+
+package payment;
+
+import "proto/payment/common.proto";
+
+option go_package = "wklive/proto/payment;payment";
+
+message PayPlatform {
+  int64 id = 1;
+  string platform_code = 2;
+  string platform_name = 3;
+  payment.PlatformType platform_type = 4;
+  string notify_url = 5;
+  string return_url = 6;
+  string icon = 7;
+  payment.CommonStatus status = 8;
+  string remark = 9;
+  int64 create_time = 10;
+  int64 update_time = 11;
+}
+
+message PayProduct {
+  int64 id = 1;
+  int64 platform_id = 2;
+  string product_code = 3;
+  string product_name = 4;
+  payment.SceneType scene_type = 5;
+  string currency = 6;
+  payment.CommonStatus status = 7;
+  string remark = 8;
+  int64 create_time = 9;
+  int64 update_time = 10;
+}
+
+message TenantPayPlatform {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 platform_id = 3;
+  payment.CommonStatus status = 4;
+  payment.OpenStatus open_status = 5;
+  string remark = 6;
+  int64 create_time = 7;
+  int64 update_time = 8;
+}
+
+message TenantPayAccount {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 tenant_pay_platform_id = 3;
+  int64 platform_id = 4;
+  string account_code = 5;
+  string account_name = 6;
+  string app_id = 7;
+  string merchant_id = 8;
+  string merchant_name = 9;
+  string public_key = 10;
+  string ext_config = 11; // JSON string
+  payment.CommonStatus status = 12;
+  bool is_default = 13;
+  string remark = 14;
+  int64 create_time = 15;
+  int64 update_time = 16;
+}
+
+message TenantPayChannel {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 platform_id = 3;
+  int64 product_id = 4;
+  int64 account_id = 5;
+  string channel_code = 6;
+  string channel_name = 7;
+  string display_name = 8;
+  string icon = 9;
+  string currency = 10;
+  int32 sort = 11;
+  bool visible = 12;
+  payment.CommonStatus status = 13;
+  int64 single_min_amount = 14;
+  int64 single_max_amount = 15;
+  int64 daily_max_amount = 16;
+  int32 daily_max_count = 17;
+  payment.FeeType fee_type = 18;
+  string fee_rate = 19;
+  int64 fee_fixed_amount = 20;
+  string ext_config = 21; // JSON string
+  string remark = 22;
+  int64 create_time = 23;
+  int64 update_time = 24;
+}
+
+message TenantPayChannelRule {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 channel_id = 3;
+  string rule_name = 4;
+  int32 priority = 5;
+  payment.CommonStatus status = 6;
+  int64 single_amount_min = 7;
+  int64 single_amount_max = 8;
+  int64 user_total_recharge_min = 9;
+  int64 user_total_recharge_max = 10;
+  int32 member_level_min = 11;
+  int32 member_level_max = 12;
+  int32 kyc_level_min = 13;
+  int32 kyc_level_max = 14;
+  bool allow_new_user = 15;
+  bool allow_old_user = 16;
+  string allow_tags = 17; // JSON string
+  string deny_tags = 18; // JSON string
+  string remark = 19;
+  int64 create_time = 20;
+  int64 update_time = 21;
+}
+
+message UserRechargeStat {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 user_id = 3;
+  int32 success_order_count = 4;
+  int64 success_total_amount = 5;
+  int64 today_success_amount = 6;
+  int32 today_success_count = 7;
+  int64 first_success_time = 8;
+  int64 last_success_time = 9;
+  int64 create_time = 10;
+  int64 update_time = 11;
+}
+
+message PayOrder {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 user_id = 3;
+  string order_no = 4;
+  string biz_order_no = 5;
+  int64 platform_id = 6;
+  int64 product_id = 7;
+  int64 account_id = 8;
+  int64 channel_id = 9;
+  string currency = 10;
+  int64 order_amount = 11;
+  int64 pay_amount = 12;
+  int64 fee_amount = 13;
+  string subject = 14;
+  string body = 15;
+  payment.ClientType client_type = 16;
+  string client_ip = 17;
+  payment.PayOrderStatus status = 18;
+  string third_trade_no = 19;
+  string third_order_no = 20;
+  string pay_url = 21;
+  string qr_content = 22;
+  string request_data = 23;
+  string response_data = 24;
+  string notify_data = 25;
+  int64 expire_time = 26;
+  int64 paid_time = 27;
+  int64 notify_time = 28;
+  int64 close_time = 29;
+  string remark = 30;
+  int64 create_time = 31;
+  int64 update_time = 32;
+}
+
+message PayNotifyLog {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 order_id = 3;
+  string order_no = 4;
+  int64 platform_id = 5;
+  int64 channel_id = 6;
+  payment.NotifyProcessStatus notify_status = 7;
+  string notify_body = 8;
+  payment.SignResult sign_result = 9;
+  string process_result = 10;
+  string error_message = 11;
+  int64 notify_time = 12;
+  int64 create_time = 13;
+}
+
+message VisiblePayChannel {
+  int64 channel_id = 1;
+  string channel_code = 2;
+  string channel_name = 3;
+  string display_name = 4;
+  string icon = 5;
+  string currency = 6;
+  int64 single_min_amount = 7;
+  int64 single_max_amount = 8;
+  payment.FeeType fee_type = 9;
+  string fee_rate = 10;
+  int64 fee_fixed_amount = 11;
+  int64 platform_id = 12;
+  int64 product_id = 13;
+  int64 account_id = 14;
+}

@@ -67,15 +67,16 @@ func (x *AppCommonResp) GetBase() *RespBase {
 
 type RegisterReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	RegisterType    RegisterType           `protobuf:"varint,1,opt,name=register_type,json=registerType,proto3,enum=user.RegisterType" json:"register_type,omitempty"`
-	Username        string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
-	Phone           string                 `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
-	Email           string                 `protobuf:"bytes,4,opt,name=email,proto3" json:"email,omitempty"`
-	Password        string                 `protobuf:"bytes,5,opt,name=password,proto3" json:"password,omitempty"`
-	ConfirmPassword string                 `protobuf:"bytes,6,opt,name=confirm_password,json=confirmPassword,proto3" json:"confirm_password,omitempty"`
-	InviteCode      string                 `protobuf:"bytes,7,opt,name=invite_code,json=inviteCode,proto3" json:"invite_code,omitempty"`
-	Source          string                 `protobuf:"bytes,8,opt,name=source,proto3" json:"source,omitempty"`
-	RegisterIp      string                 `protobuf:"bytes,9,opt,name=register_ip,json=registerIp,proto3" json:"register_ip,omitempty"`
+	TenantCode      string                 `protobuf:"bytes,1,opt,name=tenant_code,json=tenantCode,proto3" json:"tenant_code,omitempty"`
+	RegisterType    RegisterType           `protobuf:"varint,2,opt,name=register_type,json=registerType,proto3,enum=user.RegisterType" json:"register_type,omitempty"`
+	Username        string                 `protobuf:"bytes,3,opt,name=username,proto3" json:"username,omitempty"`
+	Phone           string                 `protobuf:"bytes,4,opt,name=phone,proto3" json:"phone,omitempty"`
+	Email           string                 `protobuf:"bytes,5,opt,name=email,proto3" json:"email,omitempty"`
+	Password        string                 `protobuf:"bytes,6,opt,name=password,proto3" json:"password,omitempty"`
+	ConfirmPassword string                 `protobuf:"bytes,7,opt,name=confirm_password,json=confirmPassword,proto3" json:"confirm_password,omitempty"`
+	InviteCode      string                 `protobuf:"bytes,8,opt,name=invite_code,json=inviteCode,proto3" json:"invite_code,omitempty"`
+	Source          string                 `protobuf:"bytes,9,opt,name=source,proto3" json:"source,omitempty"`
+	RegisterIp      string                 `protobuf:"bytes,10,opt,name=register_ip,json=registerIp,proto3" json:"register_ip,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -108,6 +109,13 @@ func (x *RegisterReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use RegisterReq.ProtoReflect.Descriptor instead.
 func (*RegisterReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_app_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *RegisterReq) GetTenantCode() string {
+	if x != nil {
+		return x.TenantCode
+	}
+	return ""
 }
 
 func (x *RegisterReq) GetRegisterType() RegisterType {
@@ -243,11 +251,12 @@ func (x *RegisterResp) GetProfile() *UserProfile {
 
 type LoginReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	LoginType     LoginType              `protobuf:"varint,1,opt,name=login_type,json=loginType,proto3,enum=user.LoginType" json:"login_type,omitempty"`
-	Account       string                 `protobuf:"bytes,2,opt,name=account,proto3" json:"account,omitempty"`
-	Password      string                 `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
-	GoogleCode    string                 `protobuf:"bytes,4,opt,name=google_code,json=googleCode,proto3" json:"google_code,omitempty"`
-	LoginIp       string                 `protobuf:"bytes,5,opt,name=login_ip,json=loginIp,proto3" json:"login_ip,omitempty"`
+	TenantCode    string                 `protobuf:"bytes,1,opt,name=tenant_code,json=tenantCode,proto3" json:"tenant_code,omitempty"`
+	LoginType     LoginType              `protobuf:"varint,2,opt,name=login_type,json=loginType,proto3,enum=user.LoginType" json:"login_type,omitempty"`
+	Account       string                 `protobuf:"bytes,3,opt,name=account,proto3" json:"account,omitempty"`
+	Password      string                 `protobuf:"bytes,4,opt,name=password,proto3" json:"password,omitempty"`
+	GoogleCode    string                 `protobuf:"bytes,5,opt,name=google_code,json=googleCode,proto3" json:"google_code,omitempty"`
+	LoginIp       string                 `protobuf:"bytes,6,opt,name=login_ip,json=loginIp,proto3" json:"login_ip,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -280,6 +289,13 @@ func (x *LoginReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use LoginReq.ProtoReflect.Descriptor instead.
 func (*LoginReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_app_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *LoginReq) GetTenantCode() string {
+	if x != nil {
+		return x.TenantCode
+	}
+	return ""
 }
 
 func (x *LoginReq) GetLoginType() LoginType {
@@ -431,7 +447,8 @@ func (x *LogoutReq) GetUserId() int64 {
 
 type RefreshTokenReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	RefreshToken  string                 `protobuf:"bytes,1,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+	TenantCode    string                 `protobuf:"bytes,1,opt,name=tenant_code,json=tenantCode,proto3" json:"tenant_code,omitempty"`
+	RefreshToken  string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -464,6 +481,13 @@ func (x *RefreshTokenReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use RefreshTokenReq.ProtoReflect.Descriptor instead.
 func (*RefreshTokenReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_app_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *RefreshTokenReq) GetTenantCode() string {
+	if x != nil {
+		return x.TenantCode
+	}
+	return ""
 }
 
 func (x *RefreshTokenReq) GetRefreshToken() string {
@@ -2143,41 +2167,48 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\n" +
 	"\x19proto/user/user_app.proto\x12\x04user\x1a\x17proto/user/common.proto\x1a\x16proto/user/model.proto\"3\n" +
 	"\rAppCommonResp\x12\"\n" +
-	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\"\xaf\x02\n" +
-	"\vRegisterReq\x127\n" +
-	"\rregister_type\x18\x01 \x01(\x0e2\x12.user.RegisterTypeR\fregisterType\x12\x1a\n" +
-	"\busername\x18\x02 \x01(\tR\busername\x12\x14\n" +
-	"\x05phone\x18\x03 \x01(\tR\x05phone\x12\x14\n" +
-	"\x05email\x18\x04 \x01(\tR\x05email\x12\x1a\n" +
-	"\bpassword\x18\x05 \x01(\tR\bpassword\x12)\n" +
-	"\x10confirm_password\x18\x06 \x01(\tR\x0fconfirmPassword\x12\x1f\n" +
-	"\vinvite_code\x18\a \x01(\tR\n" +
+	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\"\xd0\x02\n" +
+	"\vRegisterReq\x12\x1f\n" +
+	"\vtenant_code\x18\x01 \x01(\tR\n" +
+	"tenantCode\x127\n" +
+	"\rregister_type\x18\x02 \x01(\x0e2\x12.user.RegisterTypeR\fregisterType\x12\x1a\n" +
+	"\busername\x18\x03 \x01(\tR\busername\x12\x14\n" +
+	"\x05phone\x18\x04 \x01(\tR\x05phone\x12\x14\n" +
+	"\x05email\x18\x05 \x01(\tR\x05email\x12\x1a\n" +
+	"\bpassword\x18\x06 \x01(\tR\bpassword\x12)\n" +
+	"\x10confirm_password\x18\a \x01(\tR\x0fconfirmPassword\x12\x1f\n" +
+	"\vinvite_code\x18\b \x01(\tR\n" +
 	"inviteCode\x12\x16\n" +
-	"\x06source\x18\b \x01(\tR\x06source\x12\x1f\n" +
-	"\vregister_ip\x18\t \x01(\tR\n" +
+	"\x06source\x18\t \x01(\tR\x06source\x12\x1f\n" +
+	"\vregister_ip\x18\n" +
+	" \x01(\tR\n" +
 	"registerIp\"\x9f\x01\n" +
 	"\fRegisterResp\x12\"\n" +
 	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12%\n" +
 	"\x05token\x18\x03 \x01(\v2\x0f.user.TokenInfoR\x05token\x12+\n" +
-	"\aprofile\x18\x04 \x01(\v2\x11.user.UserProfileR\aprofile\"\xac\x01\n" +
-	"\bLoginReq\x12.\n" +
+	"\aprofile\x18\x04 \x01(\v2\x11.user.UserProfileR\aprofile\"\xcd\x01\n" +
+	"\bLoginReq\x12\x1f\n" +
+	"\vtenant_code\x18\x01 \x01(\tR\n" +
+	"tenantCode\x12.\n" +
 	"\n" +
-	"login_type\x18\x01 \x01(\x0e2\x0f.user.LoginTypeR\tloginType\x12\x18\n" +
-	"\aaccount\x18\x02 \x01(\tR\aaccount\x12\x1a\n" +
-	"\bpassword\x18\x03 \x01(\tR\bpassword\x12\x1f\n" +
-	"\vgoogle_code\x18\x04 \x01(\tR\n" +
+	"login_type\x18\x02 \x01(\x0e2\x0f.user.LoginTypeR\tloginType\x12\x18\n" +
+	"\aaccount\x18\x03 \x01(\tR\aaccount\x12\x1a\n" +
+	"\bpassword\x18\x04 \x01(\tR\bpassword\x12\x1f\n" +
+	"\vgoogle_code\x18\x05 \x01(\tR\n" +
 	"googleCode\x12\x19\n" +
-	"\blogin_ip\x18\x05 \x01(\tR\aloginIp\"\x9c\x01\n" +
+	"\blogin_ip\x18\x06 \x01(\tR\aloginIp\"\x9c\x01\n" +
 	"\tLoginResp\x12\"\n" +
 	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12%\n" +
 	"\x05token\x18\x03 \x01(\v2\x0f.user.TokenInfoR\x05token\x12+\n" +
 	"\aprofile\x18\x04 \x01(\v2\x11.user.UserProfileR\aprofile\"$\n" +
 	"\tLogoutReq\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"6\n" +
-	"\x0fRefreshTokenReq\x12#\n" +
-	"\rrefresh_token\x18\x01 \x01(\tR\frefreshToken\"]\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"W\n" +
+	"\x0fRefreshTokenReq\x12\x1f\n" +
+	"\vtenant_code\x18\x01 \x01(\tR\n" +
+	"tenantCode\x12#\n" +
+	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"]\n" +
 	"\x10RefreshTokenResp\x12\"\n" +
 	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12%\n" +
 	"\x05token\x18\x02 \x01(\v2\x0f.user.TokenInfoR\x05token\"(\n" +

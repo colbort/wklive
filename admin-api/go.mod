@@ -6,6 +6,7 @@ require (
 	github.com/casbin/casbin/v2 v2.135.0
 	github.com/jinzhu/copier v0.4.0
 	github.com/zeromicro/go-zero v1.9.4
+	wklive/proto/payment v0.0.0-00010101000000-000000000000
 	wklive/proto/user v0.0.0-00010101000000-000000000000
 )
 
@@ -129,3 +130,5 @@ replace wklive/common => ../common
 replace wklive/proto/system => ../proto/system
 
 replace wklive/proto/user => ../proto/user
+
+replace wklive/proto/payment => ../proto/payment

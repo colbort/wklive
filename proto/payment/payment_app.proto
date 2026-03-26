@@ -1,0 +1,137 @@
+syntax = "proto3";
+
+package payment;
+
+import "proto/payment/common.proto";
+import "proto/payment/model.proto";
+
+option go_package = "wklive/proto/payment;payment";
+
+message AppCommonResp {
+  payment.RespBase base = 1;
+}
+
+message GetMyRechargeStatReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+}
+
+message GetMyRechargeStatResp {
+  payment.RespBase base = 1;
+  payment.UserRechargeStat stat = 2;
+}
+
+message ListVisiblePayChannelsReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  int64 recharge_amount = 3; // 单位分
+  string currency = 4;
+  payment.ClientType client_type = 5;
+}
+
+message ListVisiblePayChannelsResp {
+  payment.RespBase base = 1;
+  repeated payment.VisiblePayChannel list = 2;
+}
+
+message CheckRechargeChannelsReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  int64 recharge_amount = 3;
+  string currency = 4;
+  payment.ClientType client_type = 5;
+}
+
+message CheckRechargeChannelsResp {
+  payment.RespBase base = 1;
+  repeated payment.VisiblePayChannel list = 2;
+}
+
+message CreateRechargeOrderReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  int64 channel_id = 3;
+  int64 recharge_amount = 4; // 分
+  string currency = 5;
+  string subject = 6;
+  string body = 7;
+  payment.ClientType client_type = 8;
+  string client_ip = 9;
+  string biz_order_no = 10;
+}
+
+message CreateRechargeOrderResp {
+  payment.RespBase base = 1;
+  payment.PayOrder order = 2;
+}
+
+message GetMyPayOrderReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  string order_no = 3;
+}
+
+message GetMyPayOrderResp {
+  payment.RespBase base = 1;
+  payment.PayOrder order = 2;
+}
+
+message ListMyPayOrdersReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  payment.PageReq page = 3;
+  payment.PayOrderStatus status = 4;
+  string order_no = 5;
+  int64 create_time_start = 6;
+  int64 create_time_end = 7;
+}
+
+message ListMyPayOrdersResp {
+  payment.RespBase base = 1;
+  repeated payment.PayOrder list = 2;
+}
+
+message CancelMyPayOrderReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  string order_no = 3;
+}
+
+message QueryMyPayOrderStatusReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  string order_no = 3;
+}
+
+message QueryMyPayOrderStatusResp {
+  payment.RespBase base = 1;
+  payment.PayOrderStatus status = 2;
+  payment.PayOrder order = 3;
+}
+
+// APP端接口
+service PaymentApp {
+  // 当前用户累计充值统计
+  rpc GetMyRechargeStat(GetMyRechargeStatReq) returns (GetMyRechargeStatResp);
+
+  // 获取当前金额下可见通道
+  rpc ListVisiblePayChannels(ListVisiblePayChannelsReq) returns (ListVisiblePayChannelsResp);
+
+  // 检查某金额可用的通道（预检查）
+  rpc CheckRechargeChannels(CheckRechargeChannelsReq) returns (CheckRechargeChannelsResp);
+
+  // 创建充值订单
+  rpc CreateRechargeOrder(CreateRechargeOrderReq) returns (CreateRechargeOrderResp);
+
+  // 查询我的订单详情
+  rpc GetMyPayOrder(GetMyPayOrderReq) returns (GetMyPayOrderResp);
+
+  // 查询我的充值订单列表
+  rpc ListMyPayOrders(ListMyPayOrdersReq) returns (ListMyPayOrdersResp);
+
+  // 取消未支付订单
+  rpc CancelMyPayOrder(CancelMyPayOrderReq) returns (AppCommonResp);
+
+  // 轮询订单状态
+  rpc QueryMyPayOrderStatus(QueryMyPayOrderStatusReq) returns (QueryMyPayOrderStatusResp);
+}

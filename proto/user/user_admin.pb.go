@@ -67,22 +67,23 @@ func (x *AdminCommonResp) GetBase() *RespBase {
 
 type CreateUserReq struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	Username       string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
-	Nickname       string                 `protobuf:"bytes,2,opt,name=nickname,proto3" json:"nickname,omitempty"`
-	Avatar         string                 `protobuf:"bytes,3,opt,name=avatar,proto3" json:"avatar,omitempty"`
-	Phone          string                 `protobuf:"bytes,4,opt,name=phone,proto3" json:"phone,omitempty"`
-	Email          string                 `protobuf:"bytes,5,opt,name=email,proto3" json:"email,omitempty"`
-	Password       string                 `protobuf:"bytes,6,opt,name=password,proto3" json:"password,omitempty"`
-	RegisterType   RegisterType           `protobuf:"varint,7,opt,name=register_type,json=registerType,proto3,enum=user.RegisterType" json:"register_type,omitempty"`
-	Status         UserStatus             `protobuf:"varint,8,opt,name=status,proto3,enum=user.UserStatus" json:"status,omitempty"`
-	MemberLevel    int32                  `protobuf:"varint,9,opt,name=member_level,json=memberLevel,proto3" json:"member_level,omitempty"`
-	Language       string                 `protobuf:"bytes,10,opt,name=language,proto3" json:"language,omitempty"`
-	Timezone       string                 `protobuf:"bytes,11,opt,name=timezone,proto3" json:"timezone,omitempty"`
-	InviteCode     string                 `protobuf:"bytes,12,opt,name=invite_code,json=inviteCode,proto3" json:"invite_code,omitempty"`
-	Signature      string                 `protobuf:"bytes,13,opt,name=signature,proto3" json:"signature,omitempty"`
-	Source         string                 `protobuf:"bytes,14,opt,name=source,proto3" json:"source,omitempty"`
-	ReferrerUserId int64                  `protobuf:"varint,15,opt,name=referrer_user_id,json=referrerUserId,proto3" json:"referrer_user_id,omitempty"`
-	Remark         string                 `protobuf:"bytes,16,opt,name=remark,proto3" json:"remark,omitempty"`
+	TenantId       int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Username       string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	Nickname       string                 `protobuf:"bytes,3,opt,name=nickname,proto3" json:"nickname,omitempty"`
+	Avatar         string                 `protobuf:"bytes,4,opt,name=avatar,proto3" json:"avatar,omitempty"`
+	Phone          string                 `protobuf:"bytes,5,opt,name=phone,proto3" json:"phone,omitempty"`
+	Email          string                 `protobuf:"bytes,6,opt,name=email,proto3" json:"email,omitempty"`
+	Password       string                 `protobuf:"bytes,7,opt,name=password,proto3" json:"password,omitempty"`
+	RegisterType   RegisterType           `protobuf:"varint,8,opt,name=register_type,json=registerType,proto3,enum=user.RegisterType" json:"register_type,omitempty"`
+	Status         UserStatus             `protobuf:"varint,9,opt,name=status,proto3,enum=user.UserStatus" json:"status,omitempty"`
+	MemberLevel    int32                  `protobuf:"varint,10,opt,name=member_level,json=memberLevel,proto3" json:"member_level,omitempty"`
+	Language       string                 `protobuf:"bytes,11,opt,name=language,proto3" json:"language,omitempty"`
+	Timezone       string                 `protobuf:"bytes,12,opt,name=timezone,proto3" json:"timezone,omitempty"`
+	InviteCode     string                 `protobuf:"bytes,13,opt,name=invite_code,json=inviteCode,proto3" json:"invite_code,omitempty"`
+	Signature      string                 `protobuf:"bytes,14,opt,name=signature,proto3" json:"signature,omitempty"`
+	Source         string                 `protobuf:"bytes,15,opt,name=source,proto3" json:"source,omitempty"`
+	ReferrerUserId int64                  `protobuf:"varint,16,opt,name=referrer_user_id,json=referrerUserId,proto3" json:"referrer_user_id,omitempty"`
+	Remark         string                 `protobuf:"bytes,17,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -115,6 +116,13 @@ func (x *CreateUserReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use CreateUserReq.ProtoReflect.Descriptor instead.
 func (*CreateUserReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_admin_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *CreateUserReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
 }
 
 func (x *CreateUserReq) GetUsername() string {
@@ -283,7 +291,8 @@ func (x *CreateUserResp) GetUserId() int64 {
 
 type GetUserDetailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -316,6 +325,13 @@ func (x *GetUserDetailReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetUserDetailReq.ProtoReflect.Descriptor instead.
 func (*GetUserDetailReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_admin_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *GetUserDetailReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
 }
 
 func (x *GetUserDetailReq) GetUserId() int64 {
@@ -380,19 +396,21 @@ func (x *GetUserDetailResp) GetDetail() *UserDetail {
 type ListUsersReq struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	Page              *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
-	Keyword           string                 `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"`
-	UserId            int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	UserNo            string                 `protobuf:"bytes,4,opt,name=user_no,json=userNo,proto3" json:"user_no,omitempty"`
-	Username          string                 `protobuf:"bytes,5,opt,name=username,proto3" json:"username,omitempty"`
-	Phone             string                 `protobuf:"bytes,6,opt,name=phone,proto3" json:"phone,omitempty"`
-	Email             string                 `protobuf:"bytes,7,opt,name=email,proto3" json:"email,omitempty"`
-	Status            UserStatus             `protobuf:"varint,8,opt,name=status,proto3,enum=user.UserStatus" json:"status,omitempty"`
-	MemberLevel       int32                  `protobuf:"varint,9,opt,name=member_level,json=memberLevel,proto3" json:"member_level,omitempty"`
-	VerifyStatus      VerifyStatus           `protobuf:"varint,10,opt,name=verify_status,json=verifyStatus,proto3,enum=user.VerifyStatus" json:"verify_status,omitempty"`
-	KycLevel          KycLevel               `protobuf:"varint,11,opt,name=kyc_level,json=kycLevel,proto3,enum=user.KycLevel" json:"kyc_level,omitempty"`
-	InviteCode        string                 `protobuf:"bytes,12,opt,name=invite_code,json=inviteCode,proto3" json:"invite_code,omitempty"`
-	RegisterTimeStart int64                  `protobuf:"varint,13,opt,name=register_time_start,json=registerTimeStart,proto3" json:"register_time_start,omitempty"`
-	RegisterTimeEnd   int64                  `protobuf:"varint,14,opt,name=register_time_end,json=registerTimeEnd,proto3" json:"register_time_end,omitempty"`
+	TenantId          int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	TenantCode        string                 `protobuf:"bytes,3,opt,name=tenant_code,json=tenantCode,proto3" json:"tenant_code,omitempty"`
+	Keyword           string                 `protobuf:"bytes,4,opt,name=keyword,proto3" json:"keyword,omitempty"`
+	UserId            int64                  `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserNo            string                 `protobuf:"bytes,6,opt,name=user_no,json=userNo,proto3" json:"user_no,omitempty"`
+	Username          string                 `protobuf:"bytes,7,opt,name=username,proto3" json:"username,omitempty"`
+	Phone             string                 `protobuf:"bytes,8,opt,name=phone,proto3" json:"phone,omitempty"`
+	Email             string                 `protobuf:"bytes,9,opt,name=email,proto3" json:"email,omitempty"`
+	Status            UserStatus             `protobuf:"varint,10,opt,name=status,proto3,enum=user.UserStatus" json:"status,omitempty"`
+	MemberLevel       int32                  `protobuf:"varint,11,opt,name=member_level,json=memberLevel,proto3" json:"member_level,omitempty"`
+	VerifyStatus      VerifyStatus           `protobuf:"varint,12,opt,name=verify_status,json=verifyStatus,proto3,enum=user.VerifyStatus" json:"verify_status,omitempty"`
+	KycLevel          KycLevel               `protobuf:"varint,13,opt,name=kyc_level,json=kycLevel,proto3,enum=user.KycLevel" json:"kyc_level,omitempty"`
+	InviteCode        string                 `protobuf:"bytes,14,opt,name=invite_code,json=inviteCode,proto3" json:"invite_code,omitempty"`
+	RegisterTimeStart int64                  `protobuf:"varint,15,opt,name=register_time_start,json=registerTimeStart,proto3" json:"register_time_start,omitempty"`
+	RegisterTimeEnd   int64                  `protobuf:"varint,16,opt,name=register_time_end,json=registerTimeEnd,proto3" json:"register_time_end,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -432,6 +450,20 @@ func (x *ListUsersReq) GetPage() *PageReq {
 		return x.Page
 	}
 	return nil
+}
+
+func (x *ListUsersReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *ListUsersReq) GetTenantCode() string {
+	if x != nil {
+		return x.TenantCode
+	}
+	return ""
 }
 
 func (x *ListUsersReq) GetKeyword() string {
@@ -579,18 +611,19 @@ func (x *ListUsersResp) GetList() []*UserListItem {
 
 type UpdateUserBaseReq struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	UserId         int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Username       string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
-	Nickname       string                 `protobuf:"bytes,3,opt,name=nickname,proto3" json:"nickname,omitempty"`
-	Avatar         string                 `protobuf:"bytes,4,opt,name=avatar,proto3" json:"avatar,omitempty"`
-	Language       string                 `protobuf:"bytes,5,opt,name=language,proto3" json:"language,omitempty"`
-	Timezone       string                 `protobuf:"bytes,6,opt,name=timezone,proto3" json:"timezone,omitempty"`
-	Signature      string                 `protobuf:"bytes,7,opt,name=signature,proto3" json:"signature,omitempty"`
-	Source         string                 `protobuf:"bytes,8,opt,name=source,proto3" json:"source,omitempty"`
-	ReferrerUserId int64                  `protobuf:"varint,9,opt,name=referrer_user_id,json=referrerUserId,proto3" json:"referrer_user_id,omitempty"`
-	Remark         string                 `protobuf:"bytes,10,opt,name=remark,proto3" json:"remark,omitempty"`
-	Phone          string                 `protobuf:"bytes,11,opt,name=phone,proto3" json:"phone,omitempty"`
-	Email          string                 `protobuf:"bytes,12,opt,name=email,proto3" json:"email,omitempty"`
+	TenantId       int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId         int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Username       string                 `protobuf:"bytes,3,opt,name=username,proto3" json:"username,omitempty"`
+	Nickname       string                 `protobuf:"bytes,4,opt,name=nickname,proto3" json:"nickname,omitempty"`
+	Avatar         string                 `protobuf:"bytes,5,opt,name=avatar,proto3" json:"avatar,omitempty"`
+	Language       string                 `protobuf:"bytes,6,opt,name=language,proto3" json:"language,omitempty"`
+	Timezone       string                 `protobuf:"bytes,7,opt,name=timezone,proto3" json:"timezone,omitempty"`
+	Signature      string                 `protobuf:"bytes,8,opt,name=signature,proto3" json:"signature,omitempty"`
+	Source         string                 `protobuf:"bytes,9,opt,name=source,proto3" json:"source,omitempty"`
+	ReferrerUserId int64                  `protobuf:"varint,10,opt,name=referrer_user_id,json=referrerUserId,proto3" json:"referrer_user_id,omitempty"`
+	Remark         string                 `protobuf:"bytes,11,opt,name=remark,proto3" json:"remark,omitempty"`
+	Phone          string                 `protobuf:"bytes,12,opt,name=phone,proto3" json:"phone,omitempty"`
+	Email          string                 `protobuf:"bytes,13,opt,name=email,proto3" json:"email,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -623,6 +656,13 @@ func (x *UpdateUserBaseReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use UpdateUserBaseReq.ProtoReflect.Descriptor instead.
 func (*UpdateUserBaseReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_admin_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *UpdateUserBaseReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
 }
 
 func (x *UpdateUserBaseReq) GetUserId() int64 {
@@ -763,9 +803,10 @@ func (x *UpdateUserBaseResp) GetDetail() *UserDetail {
 
 type UpdateUserStatusReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Status        UserStatus             `protobuf:"varint,2,opt,name=status,proto3,enum=user.UserStatus" json:"status,omitempty"`
-	Remark        string                 `protobuf:"bytes,3,opt,name=remark,proto3" json:"remark,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Status        UserStatus             `protobuf:"varint,3,opt,name=status,proto3,enum=user.UserStatus" json:"status,omitempty"`
+	Remark        string                 `protobuf:"bytes,4,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -800,6 +841,13 @@ func (*UpdateUserStatusReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_admin_proto_rawDescGZIP(), []int{9}
 }
 
+func (x *UpdateUserStatusReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
 func (x *UpdateUserStatusReq) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
@@ -823,8 +871,9 @@ func (x *UpdateUserStatusReq) GetRemark() string {
 
 type UpdateUserLevelReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	MemberLevel   int32                  `protobuf:"varint,2,opt,name=member_level,json=memberLevel,proto3" json:"member_level,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	MemberLevel   int32                  `protobuf:"varint,3,opt,name=member_level,json=memberLevel,proto3" json:"member_level,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -859,6 +908,13 @@ func (*UpdateUserLevelReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_admin_proto_rawDescGZIP(), []int{10}
 }
 
+func (x *UpdateUserLevelReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
 func (x *UpdateUserLevelReq) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
@@ -875,8 +931,9 @@ func (x *UpdateUserLevelReq) GetMemberLevel() int32 {
 
 type ResetLoginPasswordReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	NewPassword   string                 `protobuf:"bytes,2,opt,name=new_password,json=newPassword,proto3" json:"new_password,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	NewPassword   string                 `protobuf:"bytes,3,opt,name=new_password,json=newPassword,proto3" json:"new_password,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -911,6 +968,13 @@ func (*ResetLoginPasswordReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_admin_proto_rawDescGZIP(), []int{11}
 }
 
+func (x *ResetLoginPasswordReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
 func (x *ResetLoginPasswordReq) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
@@ -927,8 +991,9 @@ func (x *ResetLoginPasswordReq) GetNewPassword() string {
 
 type ResetPayPasswordReq struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	UserId         int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	NewPayPassword string                 `protobuf:"bytes,2,opt,name=new_pay_password,json=newPayPassword,proto3" json:"new_pay_password,omitempty"`
+	TenantId       int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId         int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	NewPayPassword string                 `protobuf:"bytes,3,opt,name=new_pay_password,json=newPayPassword,proto3" json:"new_pay_password,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -963,6 +1028,13 @@ func (*ResetPayPasswordReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_admin_proto_rawDescGZIP(), []int{12}
 }
 
+func (x *ResetPayPasswordReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
 func (x *ResetPayPasswordReq) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
@@ -979,7 +1051,8 @@ func (x *ResetPayPasswordReq) GetNewPayPassword() string {
 
 type UnlockUserReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1014,6 +1087,13 @@ func (*UnlockUserReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_admin_proto_rawDescGZIP(), []int{13}
 }
 
+func (x *UnlockUserReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
 func (x *UnlockUserReq) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
@@ -1023,8 +1103,9 @@ func (x *UnlockUserReq) GetUserId() int64 {
 
 type UpdateRiskLevelReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	RiskLevel     RiskLevel              `protobuf:"varint,2,opt,name=risk_level,json=riskLevel,proto3,enum=user.RiskLevel" json:"risk_level,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	RiskLevel     RiskLevel              `protobuf:"varint,3,opt,name=risk_level,json=riskLevel,proto3,enum=user.RiskLevel" json:"risk_level,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1059,6 +1140,13 @@ func (*UpdateRiskLevelReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_admin_proto_rawDescGZIP(), []int{14}
 }
 
+func (x *UpdateRiskLevelReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
 func (x *UpdateRiskLevelReq) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
@@ -1075,7 +1163,8 @@ func (x *UpdateRiskLevelReq) GetRiskLevel() RiskLevel {
 
 type DeleteUserReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1110,6 +1199,13 @@ func (*DeleteUserReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_admin_proto_rawDescGZIP(), []int{15}
 }
 
+func (x *DeleteUserReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
 func (x *DeleteUserReq) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
@@ -1119,7 +1215,8 @@ func (x *DeleteUserReq) GetUserId() int64 {
 
 type GetUserSecurityReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1152,6 +1249,13 @@ func (x *GetUserSecurityReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetUserSecurityReq.ProtoReflect.Descriptor instead.
 func (*GetUserSecurityReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_admin_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *GetUserSecurityReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
 }
 
 func (x *GetUserSecurityReq) GetUserId() int64 {
@@ -1215,7 +1319,8 @@ func (x *GetUserSecurityResp) GetSecurity() *UserSecurity {
 
 type ResetUserGoogle2FAReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1250,6 +1355,13 @@ func (*ResetUserGoogle2FAReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_admin_proto_rawDescGZIP(), []int{18}
 }
 
+func (x *ResetUserGoogle2FAReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
 func (x *ResetUserGoogle2FAReq) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
@@ -1260,16 +1372,18 @@ func (x *ResetUserGoogle2FAReq) GetUserId() int64 {
 type ListUserIdentitiesReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
-	Keyword       string                 `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"`
-	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	UserNo        string                 `protobuf:"bytes,4,opt,name=user_no,json=userNo,proto3" json:"user_no,omitempty"`
-	Username      string                 `protobuf:"bytes,5,opt,name=username,proto3" json:"username,omitempty"`
-	Phone         string                 `protobuf:"bytes,6,opt,name=phone,proto3" json:"phone,omitempty"`
-	Email         string                 `protobuf:"bytes,7,opt,name=email,proto3" json:"email,omitempty"`
-	RealName      string                 `protobuf:"bytes,8,opt,name=real_name,json=realName,proto3" json:"real_name,omitempty"`
-	VerifyStatus  VerifyStatus           `protobuf:"varint,9,opt,name=verify_status,json=verifyStatus,proto3,enum=user.VerifyStatus" json:"verify_status,omitempty"`
-	KycLevel      KycLevel               `protobuf:"varint,10,opt,name=kyc_level,json=kycLevel,proto3,enum=user.KycLevel" json:"kyc_level,omitempty"`
-	IdType        IdType                 `protobuf:"varint,11,opt,name=id_type,json=idType,proto3,enum=user.IdType" json:"id_type,omitempty"`
+	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	TenantCode    string                 `protobuf:"bytes,3,opt,name=tenant_code,json=tenantCode,proto3" json:"tenant_code,omitempty"`
+	Keyword       string                 `protobuf:"bytes,4,opt,name=keyword,proto3" json:"keyword,omitempty"`
+	UserId        int64                  `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserNo        string                 `protobuf:"bytes,6,opt,name=user_no,json=userNo,proto3" json:"user_no,omitempty"`
+	Username      string                 `protobuf:"bytes,7,opt,name=username,proto3" json:"username,omitempty"`
+	Phone         string                 `protobuf:"bytes,8,opt,name=phone,proto3" json:"phone,omitempty"`
+	Email         string                 `protobuf:"bytes,9,opt,name=email,proto3" json:"email,omitempty"`
+	RealName      string                 `protobuf:"bytes,10,opt,name=real_name,json=realName,proto3" json:"real_name,omitempty"`
+	VerifyStatus  VerifyStatus           `protobuf:"varint,11,opt,name=verify_status,json=verifyStatus,proto3,enum=user.VerifyStatus" json:"verify_status,omitempty"`
+	KycLevel      KycLevel               `protobuf:"varint,12,opt,name=kyc_level,json=kycLevel,proto3,enum=user.KycLevel" json:"kyc_level,omitempty"`
+	IdType        IdType                 `protobuf:"varint,13,opt,name=id_type,json=idType,proto3,enum=user.IdType" json:"id_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1309,6 +1423,20 @@ func (x *ListUserIdentitiesReq) GetPage() *PageReq {
 		return x.Page
 	}
 	return nil
+}
+
+func (x *ListUserIdentitiesReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *ListUserIdentitiesReq) GetTenantCode() string {
+	if x != nil {
+		return x.TenantCode
+	}
+	return ""
 }
 
 func (x *ListUserIdentitiesReq) GetKeyword() string {
@@ -1435,10 +1563,11 @@ func (x *ListUserIdentitiesResp) GetList() []*UserIdentityListItem {
 
 type ReviewUserIdentityReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	VerifyStatus  VerifyStatus           `protobuf:"varint,2,opt,name=verify_status,json=verifyStatus,proto3,enum=user.VerifyStatus" json:"verify_status,omitempty"`
-	RejectReason  string                 `protobuf:"bytes,3,opt,name=reject_reason,json=rejectReason,proto3" json:"reject_reason,omitempty"`
-	VerifyBy      int64                  `protobuf:"varint,4,opt,name=verify_by,json=verifyBy,proto3" json:"verify_by,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	VerifyStatus  VerifyStatus           `protobuf:"varint,3,opt,name=verify_status,json=verifyStatus,proto3,enum=user.VerifyStatus" json:"verify_status,omitempty"`
+	RejectReason  string                 `protobuf:"bytes,4,opt,name=reject_reason,json=rejectReason,proto3" json:"reject_reason,omitempty"`
+	VerifyBy      int64                  `protobuf:"varint,5,opt,name=verify_by,json=verifyBy,proto3" json:"verify_by,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1471,6 +1600,13 @@ func (x *ReviewUserIdentityReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ReviewUserIdentityReq.ProtoReflect.Descriptor instead.
 func (*ReviewUserIdentityReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_admin_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *ReviewUserIdentityReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
 }
 
 func (x *ReviewUserIdentityReq) GetUserId() int64 {
@@ -1556,9 +1692,10 @@ func (x *ReviewUserIdentityResp) GetIdentity() *UserIdentity {
 type ListUserBanksReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Keyword       string                 `protobuf:"bytes,3,opt,name=keyword,proto3" json:"keyword,omitempty"`
-	Status        BankStatus             `protobuf:"varint,4,opt,name=status,proto3,enum=user.BankStatus" json:"status,omitempty"`
+	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Keyword       string                 `protobuf:"bytes,4,opt,name=keyword,proto3" json:"keyword,omitempty"`
+	Status        BankStatus             `protobuf:"varint,5,opt,name=status,proto3,enum=user.BankStatus" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1598,6 +1735,13 @@ func (x *ListUserBanksReq) GetPage() *PageReq {
 		return x.Page
 	}
 	return nil
+}
+
+func (x *ListUserBanksReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
 }
 
 func (x *ListUserBanksReq) GetUserId() int64 {
@@ -1675,7 +1819,8 @@ func (x *ListUserBanksResp) GetList() []*UserBankListItem {
 
 type GetUserBankReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1708,6 +1853,13 @@ func (x *GetUserBankReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetUserBankReq.ProtoReflect.Descriptor instead.
 func (*GetUserBankReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_admin_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *GetUserBankReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
 }
 
 func (x *GetUserBankReq) GetId() int64 {
@@ -1771,15 +1923,16 @@ func (x *GetUserBankResp) GetBank() *UserBank {
 
 type AddUserBankReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	BankName      string                 `protobuf:"bytes,2,opt,name=bank_name,json=bankName,proto3" json:"bank_name,omitempty"`
-	BankCode      string                 `protobuf:"bytes,3,opt,name=bank_code,json=bankCode,proto3" json:"bank_code,omitempty"`
-	AccountName   string                 `protobuf:"bytes,4,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`
-	AccountNo     string                 `protobuf:"bytes,5,opt,name=account_no,json=accountNo,proto3" json:"account_no,omitempty"`
-	BranchName    string                 `protobuf:"bytes,6,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`
-	CountryCode   string                 `protobuf:"bytes,7,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
-	IsDefault     bool                   `protobuf:"varint,8,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
-	Status        BankStatus             `protobuf:"varint,9,opt,name=status,proto3,enum=user.BankStatus" json:"status,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	BankName      string                 `protobuf:"bytes,3,opt,name=bank_name,json=bankName,proto3" json:"bank_name,omitempty"`
+	BankCode      string                 `protobuf:"bytes,4,opt,name=bank_code,json=bankCode,proto3" json:"bank_code,omitempty"`
+	AccountName   string                 `protobuf:"bytes,5,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`
+	AccountNo     string                 `protobuf:"bytes,6,opt,name=account_no,json=accountNo,proto3" json:"account_no,omitempty"`
+	BranchName    string                 `protobuf:"bytes,7,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`
+	CountryCode   string                 `protobuf:"bytes,8,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
+	IsDefault     bool                   `protobuf:"varint,9,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
+	Status        BankStatus             `protobuf:"varint,10,opt,name=status,proto3,enum=user.BankStatus" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1812,6 +1965,13 @@ func (x *AddUserBankReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AddUserBankReq.ProtoReflect.Descriptor instead.
 func (*AddUserBankReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_admin_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *AddUserBankReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
 }
 
 func (x *AddUserBankReq) GetUserId() int64 {
@@ -1931,16 +2091,17 @@ func (x *AddUserBankResp) GetBank() *UserBank {
 
 type UpdateUserBankReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	BankName      string                 `protobuf:"bytes,3,opt,name=bank_name,json=bankName,proto3" json:"bank_name,omitempty"`
-	BankCode      string                 `protobuf:"bytes,4,opt,name=bank_code,json=bankCode,proto3" json:"bank_code,omitempty"`
-	AccountName   string                 `protobuf:"bytes,5,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`
-	AccountNo     string                 `protobuf:"bytes,6,opt,name=account_no,json=accountNo,proto3" json:"account_no,omitempty"`
-	BranchName    string                 `protobuf:"bytes,7,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`
-	CountryCode   string                 `protobuf:"bytes,8,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
-	IsDefault     bool                   `protobuf:"varint,9,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
-	Status        BankStatus             `protobuf:"varint,10,opt,name=status,proto3,enum=user.BankStatus" json:"status,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	BankName      string                 `protobuf:"bytes,4,opt,name=bank_name,json=bankName,proto3" json:"bank_name,omitempty"`
+	BankCode      string                 `protobuf:"bytes,5,opt,name=bank_code,json=bankCode,proto3" json:"bank_code,omitempty"`
+	AccountName   string                 `protobuf:"bytes,6,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`
+	AccountNo     string                 `protobuf:"bytes,7,opt,name=account_no,json=accountNo,proto3" json:"account_no,omitempty"`
+	BranchName    string                 `protobuf:"bytes,8,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`
+	CountryCode   string                 `protobuf:"bytes,9,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
+	IsDefault     bool                   `protobuf:"varint,10,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
+	Status        BankStatus             `protobuf:"varint,11,opt,name=status,proto3,enum=user.BankStatus" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1973,6 +2134,13 @@ func (x *UpdateUserBankReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use UpdateUserBankReq.ProtoReflect.Descriptor instead.
 func (*UpdateUserBankReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_admin_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *UpdateUserBankReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
 }
 
 func (x *UpdateUserBankReq) GetId() int64 {
@@ -2099,7 +2267,8 @@ func (x *UpdateUserBankResp) GetBank() *UserBank {
 
 type DeleteUserBankReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2134,6 +2303,13 @@ func (*DeleteUserBankReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_admin_proto_rawDescGZIP(), []int{31}
 }
 
+func (x *DeleteUserBankReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
 func (x *DeleteUserBankReq) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -2143,8 +2319,9 @@ func (x *DeleteUserBankReq) GetId() int64 {
 
 type UpdateUserBankStatusReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Status        BankStatus             `protobuf:"varint,2,opt,name=status,proto3,enum=user.BankStatus" json:"status,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	Status        BankStatus             `protobuf:"varint,3,opt,name=status,proto3,enum=user.BankStatus" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2179,6 +2356,13 @@ func (*UpdateUserBankStatusReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_admin_proto_rawDescGZIP(), []int{32}
 }
 
+func (x *UpdateUserBankStatusReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
 func (x *UpdateUserBankStatusReq) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -2195,8 +2379,9 @@ func (x *UpdateUserBankStatusReq) GetStatus() BankStatus {
 
 type SetDefaultUserBankReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2231,6 +2416,13 @@ func (*SetDefaultUserBankReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_admin_proto_rawDescGZIP(), []int{33}
 }
 
+func (x *SetDefaultUserBankReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
 func (x *SetDefaultUserBankReq) GetId() int64 {
 	if x != nil {
 		return x.Id
@@ -2251,154 +2443,159 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	"\n" +
 	"\x1bproto/user/user_admin.proto\x12\x04user\x1a\x17proto/user/common.proto\x1a\x16proto/user/model.proto\"5\n" +
 	"\x0fAdminCommonResp\x12\"\n" +
-	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\"\xfe\x03\n" +
-	"\rCreateUserReq\x12\x1a\n" +
-	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
-	"\bnickname\x18\x02 \x01(\tR\bnickname\x12\x16\n" +
-	"\x06avatar\x18\x03 \x01(\tR\x06avatar\x12\x14\n" +
-	"\x05phone\x18\x04 \x01(\tR\x05phone\x12\x14\n" +
-	"\x05email\x18\x05 \x01(\tR\x05email\x12\x1a\n" +
-	"\bpassword\x18\x06 \x01(\tR\bpassword\x127\n" +
-	"\rregister_type\x18\a \x01(\x0e2\x12.user.RegisterTypeR\fregisterType\x12(\n" +
-	"\x06status\x18\b \x01(\x0e2\x10.user.UserStatusR\x06status\x12!\n" +
-	"\fmember_level\x18\t \x01(\x05R\vmemberLevel\x12\x1a\n" +
-	"\blanguage\x18\n" +
-	" \x01(\tR\blanguage\x12\x1a\n" +
-	"\btimezone\x18\v \x01(\tR\btimezone\x12\x1f\n" +
-	"\vinvite_code\x18\f \x01(\tR\n" +
-	"inviteCode\x12\x1c\n" +
-	"\tsignature\x18\r \x01(\tR\tsignature\x12\x16\n" +
-	"\x06source\x18\x0e \x01(\tR\x06source\x12(\n" +
-	"\x10referrer_user_id\x18\x0f \x01(\x03R\x0ereferrerUserId\x12\x16\n" +
-	"\x06remark\x18\x10 \x01(\tR\x06remark\"M\n" +
-	"\x0eCreateUserResp\x12\"\n" +
-	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\"+\n" +
-	"\x10GetUserDetailReq\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"a\n" +
-	"\x11GetUserDetailResp\x12\"\n" +
-	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12(\n" +
-	"\x06detail\x18\x02 \x01(\v2\x10.user.UserDetailR\x06detail\"\xf5\x03\n" +
-	"\fListUsersReq\x12!\n" +
-	"\x04page\x18\x01 \x01(\v2\r.user.PageReqR\x04page\x12\x18\n" +
-	"\akeyword\x18\x02 \x01(\tR\akeyword\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x17\n" +
-	"\auser_no\x18\x04 \x01(\tR\x06userNo\x12\x1a\n" +
-	"\busername\x18\x05 \x01(\tR\busername\x12\x14\n" +
-	"\x05phone\x18\x06 \x01(\tR\x05phone\x12\x14\n" +
-	"\x05email\x18\a \x01(\tR\x05email\x12(\n" +
-	"\x06status\x18\b \x01(\x0e2\x10.user.UserStatusR\x06status\x12!\n" +
-	"\fmember_level\x18\t \x01(\x05R\vmemberLevel\x127\n" +
-	"\rverify_status\x18\n" +
-	" \x01(\x0e2\x12.user.VerifyStatusR\fverifyStatus\x12+\n" +
-	"\tkyc_level\x18\v \x01(\x0e2\x0e.user.KycLevelR\bkycLevel\x12\x1f\n" +
-	"\vinvite_code\x18\f \x01(\tR\n" +
-	"inviteCode\x12.\n" +
-	"\x13register_time_start\x18\r \x01(\x03R\x11registerTimeStart\x12*\n" +
-	"\x11register_time_end\x18\x0e \x01(\x03R\x0fregisterTimeEnd\"[\n" +
-	"\rListUsersResp\x12\"\n" +
-	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12&\n" +
-	"\x04list\x18\x02 \x03(\v2\x12.user.UserListItemR\x04list\"\xd8\x02\n" +
-	"\x11UpdateUserBaseReq\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1a\n" +
+	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\"\x9b\x04\n" +
+	"\rCreateUserReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x12\x1a\n" +
 	"\bnickname\x18\x03 \x01(\tR\bnickname\x12\x16\n" +
-	"\x06avatar\x18\x04 \x01(\tR\x06avatar\x12\x1a\n" +
-	"\blanguage\x18\x05 \x01(\tR\blanguage\x12\x1a\n" +
-	"\btimezone\x18\x06 \x01(\tR\btimezone\x12\x1c\n" +
-	"\tsignature\x18\a \x01(\tR\tsignature\x12\x16\n" +
-	"\x06source\x18\b \x01(\tR\x06source\x12(\n" +
-	"\x10referrer_user_id\x18\t \x01(\x03R\x0ereferrerUserId\x12\x16\n" +
-	"\x06remark\x18\n" +
-	" \x01(\tR\x06remark\x12\x14\n" +
-	"\x05phone\x18\v \x01(\tR\x05phone\x12\x14\n" +
-	"\x05email\x18\f \x01(\tR\x05email\"b\n" +
+	"\x06avatar\x18\x04 \x01(\tR\x06avatar\x12\x14\n" +
+	"\x05phone\x18\x05 \x01(\tR\x05phone\x12\x14\n" +
+	"\x05email\x18\x06 \x01(\tR\x05email\x12\x1a\n" +
+	"\bpassword\x18\a \x01(\tR\bpassword\x127\n" +
+	"\rregister_type\x18\b \x01(\x0e2\x12.user.RegisterTypeR\fregisterType\x12(\n" +
+	"\x06status\x18\t \x01(\x0e2\x10.user.UserStatusR\x06status\x12!\n" +
+	"\fmember_level\x18\n" +
+	" \x01(\x05R\vmemberLevel\x12\x1a\n" +
+	"\blanguage\x18\v \x01(\tR\blanguage\x12\x1a\n" +
+	"\btimezone\x18\f \x01(\tR\btimezone\x12\x1f\n" +
+	"\vinvite_code\x18\r \x01(\tR\n" +
+	"inviteCode\x12\x1c\n" +
+	"\tsignature\x18\x0e \x01(\tR\tsignature\x12\x16\n" +
+	"\x06source\x18\x0f \x01(\tR\x06source\x12(\n" +
+	"\x10referrer_user_id\x18\x10 \x01(\x03R\x0ereferrerUserId\x12\x16\n" +
+	"\x06remark\x18\x11 \x01(\tR\x06remark\"M\n" +
+	"\x0eCreateUserResp\x12\"\n" +
+	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\"H\n" +
+	"\x10GetUserDetailReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\"a\n" +
+	"\x11GetUserDetailResp\x12\"\n" +
+	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12(\n" +
+	"\x06detail\x18\x02 \x01(\v2\x10.user.UserDetailR\x06detail\"\xb3\x04\n" +
+	"\fListUsersReq\x12!\n" +
+	"\x04page\x18\x01 \x01(\v2\r.user.PageReqR\x04page\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
+	"\vtenant_code\x18\x03 \x01(\tR\n" +
+	"tenantCode\x12\x18\n" +
+	"\akeyword\x18\x04 \x01(\tR\akeyword\x12\x17\n" +
+	"\auser_id\x18\x05 \x01(\x03R\x06userId\x12\x17\n" +
+	"\auser_no\x18\x06 \x01(\tR\x06userNo\x12\x1a\n" +
+	"\busername\x18\a \x01(\tR\busername\x12\x14\n" +
+	"\x05phone\x18\b \x01(\tR\x05phone\x12\x14\n" +
+	"\x05email\x18\t \x01(\tR\x05email\x12(\n" +
+	"\x06status\x18\n" +
+	" \x01(\x0e2\x10.user.UserStatusR\x06status\x12!\n" +
+	"\fmember_level\x18\v \x01(\x05R\vmemberLevel\x127\n" +
+	"\rverify_status\x18\f \x01(\x0e2\x12.user.VerifyStatusR\fverifyStatus\x12+\n" +
+	"\tkyc_level\x18\r \x01(\x0e2\x0e.user.KycLevelR\bkycLevel\x12\x1f\n" +
+	"\vinvite_code\x18\x0e \x01(\tR\n" +
+	"inviteCode\x12.\n" +
+	"\x13register_time_start\x18\x0f \x01(\x03R\x11registerTimeStart\x12*\n" +
+	"\x11register_time_end\x18\x10 \x01(\x03R\x0fregisterTimeEnd\"[\n" +
+	"\rListUsersResp\x12\"\n" +
+	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12&\n" +
+	"\x04list\x18\x02 \x03(\v2\x12.user.UserListItemR\x04list\"\xf5\x02\n" +
+	"\x11UpdateUserBaseReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1a\n" +
+	"\busername\x18\x03 \x01(\tR\busername\x12\x1a\n" +
+	"\bnickname\x18\x04 \x01(\tR\bnickname\x12\x16\n" +
+	"\x06avatar\x18\x05 \x01(\tR\x06avatar\x12\x1a\n" +
+	"\blanguage\x18\x06 \x01(\tR\blanguage\x12\x1a\n" +
+	"\btimezone\x18\a \x01(\tR\btimezone\x12\x1c\n" +
+	"\tsignature\x18\b \x01(\tR\tsignature\x12\x16\n" +
+	"\x06source\x18\t \x01(\tR\x06source\x12(\n" +
+	"\x10referrer_user_id\x18\n" +
+	" \x01(\x03R\x0ereferrerUserId\x12\x16\n" +
+	"\x06remark\x18\v \x01(\tR\x06remark\x12\x14\n" +
+	"\x05phone\x18\f \x01(\tR\x05phone\x12\x14\n" +
+	"\x05email\x18\r \x01(\tR\x05email\"b\n" +
 	"\x12UpdateUserBaseResp\x12\"\n" +
 	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12(\n" +
-	"\x06detail\x18\x02 \x01(\v2\x10.user.UserDetailR\x06detail\"p\n" +
-	"\x13UpdateUserStatusReq\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12(\n" +
-	"\x06status\x18\x02 \x01(\x0e2\x10.user.UserStatusR\x06status\x12\x16\n" +
-	"\x06remark\x18\x03 \x01(\tR\x06remark\"P\n" +
-	"\x12UpdateUserLevelReq\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12!\n" +
-	"\fmember_level\x18\x02 \x01(\x05R\vmemberLevel\"S\n" +
-	"\x15ResetLoginPasswordReq\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12!\n" +
-	"\fnew_password\x18\x02 \x01(\tR\vnewPassword\"X\n" +
-	"\x13ResetPayPasswordReq\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12(\n" +
-	"\x10new_pay_password\x18\x02 \x01(\tR\x0enewPayPassword\"(\n" +
-	"\rUnlockUserReq\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"]\n" +
-	"\x12UpdateRiskLevelReq\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12.\n" +
+	"\x06detail\x18\x02 \x01(\v2\x10.user.UserDetailR\x06detail\"\x8d\x01\n" +
+	"\x13UpdateUserStatusReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12(\n" +
+	"\x06status\x18\x03 \x01(\x0e2\x10.user.UserStatusR\x06status\x12\x16\n" +
+	"\x06remark\x18\x04 \x01(\tR\x06remark\"m\n" +
+	"\x12UpdateUserLevelReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12!\n" +
+	"\fmember_level\x18\x03 \x01(\x05R\vmemberLevel\"p\n" +
+	"\x15ResetLoginPasswordReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12!\n" +
+	"\fnew_password\x18\x03 \x01(\tR\vnewPassword\"u\n" +
+	"\x13ResetPayPasswordReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12(\n" +
+	"\x10new_pay_password\x18\x03 \x01(\tR\x0enewPayPassword\"E\n" +
+	"\rUnlockUserReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\"z\n" +
+	"\x12UpdateRiskLevelReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12.\n" +
 	"\n" +
-	"risk_level\x18\x02 \x01(\x0e2\x0f.user.RiskLevelR\triskLevel\"(\n" +
-	"\rDeleteUserReq\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"-\n" +
-	"\x12GetUserSecurityReq\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"i\n" +
+	"risk_level\x18\x03 \x01(\x0e2\x0f.user.RiskLevelR\triskLevel\"E\n" +
+	"\rDeleteUserReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\"J\n" +
+	"\x12GetUserSecurityReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\"i\n" +
 	"\x13GetUserSecurityResp\x12\"\n" +
 	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12.\n" +
-	"\bsecurity\x18\x02 \x01(\v2\x12.user.UserSecurityR\bsecurity\"0\n" +
-	"\x15ResetUserGoogle2FAReq\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"\xf8\x02\n" +
+	"\bsecurity\x18\x02 \x01(\v2\x12.user.UserSecurityR\bsecurity\"M\n" +
+	"\x15ResetUserGoogle2FAReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\"\xb6\x03\n" +
 	"\x15ListUserIdentitiesReq\x12!\n" +
-	"\x04page\x18\x01 \x01(\v2\r.user.PageReqR\x04page\x12\x18\n" +
-	"\akeyword\x18\x02 \x01(\tR\akeyword\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x17\n" +
-	"\auser_no\x18\x04 \x01(\tR\x06userNo\x12\x1a\n" +
-	"\busername\x18\x05 \x01(\tR\busername\x12\x14\n" +
-	"\x05phone\x18\x06 \x01(\tR\x05phone\x12\x14\n" +
-	"\x05email\x18\a \x01(\tR\x05email\x12\x1b\n" +
-	"\treal_name\x18\b \x01(\tR\brealName\x127\n" +
-	"\rverify_status\x18\t \x01(\x0e2\x12.user.VerifyStatusR\fverifyStatus\x12+\n" +
-	"\tkyc_level\x18\n" +
-	" \x01(\x0e2\x0e.user.KycLevelR\bkycLevel\x12%\n" +
-	"\aid_type\x18\v \x01(\x0e2\f.user.IdTypeR\x06idType\"l\n" +
+	"\x04page\x18\x01 \x01(\v2\r.user.PageReqR\x04page\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
+	"\vtenant_code\x18\x03 \x01(\tR\n" +
+	"tenantCode\x12\x18\n" +
+	"\akeyword\x18\x04 \x01(\tR\akeyword\x12\x17\n" +
+	"\auser_id\x18\x05 \x01(\x03R\x06userId\x12\x17\n" +
+	"\auser_no\x18\x06 \x01(\tR\x06userNo\x12\x1a\n" +
+	"\busername\x18\a \x01(\tR\busername\x12\x14\n" +
+	"\x05phone\x18\b \x01(\tR\x05phone\x12\x14\n" +
+	"\x05email\x18\t \x01(\tR\x05email\x12\x1b\n" +
+	"\treal_name\x18\n" +
+	" \x01(\tR\brealName\x127\n" +
+	"\rverify_status\x18\v \x01(\x0e2\x12.user.VerifyStatusR\fverifyStatus\x12+\n" +
+	"\tkyc_level\x18\f \x01(\x0e2\x0e.user.KycLevelR\bkycLevel\x12%\n" +
+	"\aid_type\x18\r \x01(\x0e2\f.user.IdTypeR\x06idType\"l\n" +
 	"\x16ListUserIdentitiesResp\x12\"\n" +
 	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12.\n" +
-	"\x04list\x18\x02 \x03(\v2\x1a.user.UserIdentityListItemR\x04list\"\xab\x01\n" +
-	"\x15ReviewUserIdentityReq\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x127\n" +
-	"\rverify_status\x18\x02 \x01(\x0e2\x12.user.VerifyStatusR\fverifyStatus\x12#\n" +
-	"\rreject_reason\x18\x03 \x01(\tR\frejectReason\x12\x1b\n" +
-	"\tverify_by\x18\x04 \x01(\x03R\bverifyBy\"l\n" +
+	"\x04list\x18\x02 \x03(\v2\x1a.user.UserIdentityListItemR\x04list\"\xc8\x01\n" +
+	"\x15ReviewUserIdentityReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x127\n" +
+	"\rverify_status\x18\x03 \x01(\x0e2\x12.user.VerifyStatusR\fverifyStatus\x12#\n" +
+	"\rreject_reason\x18\x04 \x01(\tR\frejectReason\x12\x1b\n" +
+	"\tverify_by\x18\x05 \x01(\x03R\bverifyBy\"l\n" +
 	"\x16ReviewUserIdentityResp\x12\"\n" +
 	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12.\n" +
-	"\bidentity\x18\x02 \x01(\v2\x12.user.UserIdentityR\bidentity\"\x92\x01\n" +
+	"\bidentity\x18\x02 \x01(\v2\x12.user.UserIdentityR\bidentity\"\xaf\x01\n" +
 	"\x10ListUserBanksReq\x12!\n" +
-	"\x04page\x18\x01 \x01(\v2\r.user.PageReqR\x04page\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x18\n" +
-	"\akeyword\x18\x03 \x01(\tR\akeyword\x12(\n" +
-	"\x06status\x18\x04 \x01(\x0e2\x10.user.BankStatusR\x06status\"c\n" +
+	"\x04page\x18\x01 \x01(\v2\r.user.PageReqR\x04page\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x18\n" +
+	"\akeyword\x18\x04 \x01(\tR\akeyword\x12(\n" +
+	"\x06status\x18\x05 \x01(\x0e2\x10.user.BankStatusR\x06status\"c\n" +
 	"\x11ListUserBanksResp\x12\"\n" +
 	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12*\n" +
-	"\x04list\x18\x02 \x03(\v2\x16.user.UserBankListItemR\x04list\" \n" +
-	"\x0eGetUserBankReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"Y\n" +
+	"\x04list\x18\x02 \x03(\v2\x16.user.UserBankListItemR\x04list\"=\n" +
+	"\x0eGetUserBankReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"Y\n" +
 	"\x0fGetUserBankResp\x12\"\n" +
 	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12\"\n" +
-	"\x04bank\x18\x02 \x01(\v2\x0e.user.UserBankR\x04bank\"\xb2\x02\n" +
-	"\x0eAddUserBankReq\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1b\n" +
-	"\tbank_name\x18\x02 \x01(\tR\bbankName\x12\x1b\n" +
-	"\tbank_code\x18\x03 \x01(\tR\bbankCode\x12!\n" +
-	"\faccount_name\x18\x04 \x01(\tR\vaccountName\x12\x1d\n" +
-	"\n" +
-	"account_no\x18\x05 \x01(\tR\taccountNo\x12\x1f\n" +
-	"\vbranch_name\x18\x06 \x01(\tR\n" +
-	"branchName\x12!\n" +
-	"\fcountry_code\x18\a \x01(\tR\vcountryCode\x12\x1d\n" +
-	"\n" +
-	"is_default\x18\b \x01(\bR\tisDefault\x12(\n" +
-	"\x06status\x18\t \x01(\x0e2\x10.user.BankStatusR\x06status\"Y\n" +
-	"\x0fAddUserBankResp\x12\"\n" +
-	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12\"\n" +
-	"\x04bank\x18\x02 \x01(\v2\x0e.user.UserBankR\x04bank\"\xc5\x02\n" +
-	"\x11UpdateUserBankReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
+	"\x04bank\x18\x02 \x01(\v2\x0e.user.UserBankR\x04bank\"\xcf\x02\n" +
+	"\x0eAddUserBankReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1b\n" +
 	"\tbank_name\x18\x03 \x01(\tR\bbankName\x12\x1b\n" +
 	"\tbank_code\x18\x04 \x01(\tR\bbankCode\x12!\n" +
@@ -2411,18 +2608,40 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	"\n" +
 	"is_default\x18\t \x01(\bR\tisDefault\x12(\n" +
 	"\x06status\x18\n" +
-	" \x01(\x0e2\x10.user.BankStatusR\x06status\"\\\n" +
+	" \x01(\x0e2\x10.user.BankStatusR\x06status\"Y\n" +
+	"\x0fAddUserBankResp\x12\"\n" +
+	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12\"\n" +
+	"\x04bank\x18\x02 \x01(\v2\x0e.user.UserBankR\x04bank\"\xe2\x02\n" +
+	"\x11UpdateUserBankReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x1b\n" +
+	"\tbank_name\x18\x04 \x01(\tR\bbankName\x12\x1b\n" +
+	"\tbank_code\x18\x05 \x01(\tR\bbankCode\x12!\n" +
+	"\faccount_name\x18\x06 \x01(\tR\vaccountName\x12\x1d\n" +
+	"\n" +
+	"account_no\x18\a \x01(\tR\taccountNo\x12\x1f\n" +
+	"\vbranch_name\x18\b \x01(\tR\n" +
+	"branchName\x12!\n" +
+	"\fcountry_code\x18\t \x01(\tR\vcountryCode\x12\x1d\n" +
+	"\n" +
+	"is_default\x18\n" +
+	" \x01(\bR\tisDefault\x12(\n" +
+	"\x06status\x18\v \x01(\x0e2\x10.user.BankStatusR\x06status\"\\\n" +
 	"\x12UpdateUserBankResp\x12\"\n" +
 	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12\"\n" +
-	"\x04bank\x18\x02 \x01(\v2\x0e.user.UserBankR\x04bank\"#\n" +
-	"\x11DeleteUserBankReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"S\n" +
-	"\x17UpdateUserBankStatusReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12(\n" +
-	"\x06status\x18\x02 \x01(\x0e2\x10.user.BankStatusR\x06status\"@\n" +
-	"\x15SetDefaultUserBankReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId2\xe0\v\n" +
+	"\x04bank\x18\x02 \x01(\v2\x0e.user.UserBankR\x04bank\"@\n" +
+	"\x11DeleteUserBankReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"p\n" +
+	"\x17UpdateUserBankStatusReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\x12(\n" +
+	"\x06status\x18\x03 \x01(\x0e2\x10.user.BankStatusR\x06status\"]\n" +
+	"\x15SetDefaultUserBankReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId2\xe0\v\n" +
 	"\tUserAdmin\x127\n" +
 	"\n" +
 	"CreateUser\x12\x13.user.CreateUserReq\x1a\x14.user.CreateUserResp\x12@\n" +
