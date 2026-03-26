@@ -3,7 +3,6 @@ package logic
 import (
 	"context"
 
-	"wklive/common/utils"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -45,14 +44,10 @@ func (l *SysConfigListLogic) SysConfigList(in *system.SysConfigListReq) (*system
 
 	var data []*system.SysConfigItem
 	for _, config := range items {
-		value, err := utils.StringToStruct(config.ConfigValue.String)
-		if err != nil {
-			return nil, err
-		}
 		data = append(data, &system.SysConfigItem{
 			Id:          config.Id,
 			ConfigKey:   config.ConfigKey.String,
-			ConfigValue: value,
+			ConfigValue: config.ConfigValue.String,
 			Remark:      config.Remark.String,
 			CreatedAt:   config.CreatedAt.Unix(),
 		})

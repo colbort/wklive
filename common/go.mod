@@ -13,10 +13,8 @@ require (
 	github.com/zeromicro/go-zero v1.9.4
 	go.etcd.io/etcd/client/v3 v3.5.15
 	google.golang.org/grpc v1.78.0
-	google.golang.org/protobuf v1.36.11
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.1
-	wklive/proto/system v0.0.0-20251105000000-000000000000
 )
 
 require (
@@ -71,8 +69,7 @@ require (
 	golang.org/x/time v0.10.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20251029180050-ab9386a59fda // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20251029180050-ab9386a59fda // indirect
+	google.golang.org/protobuf v1.36.11 // indirect
 	gopkg.in/ini.v1 v1.42.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 )
-
-replace wklive/proto/system => ../proto/system

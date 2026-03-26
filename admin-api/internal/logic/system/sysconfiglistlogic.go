@@ -8,7 +8,6 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/common/utils"
 	"wklive/proto/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -41,25 +40,21 @@ func (l *SysConfigListLogic) SysConfigList(req *types.SysConfigListReq) (resp *t
 	}
 	resp = &types.SysConfigListResp{
 		RespBase: types.RespBase{
-			Code:    result.Base.Code,
-			Msg:     result.Base.Msg,
-			Total:   result.Base.Total,
-			HasNext: result.Base.HasNext,
-			HasPrev: result.Base.HasPrev,
+			Code:       result.Base.Code,
+			Msg:        result.Base.Msg,
+			Total:      result.Base.Total,
+			HasNext:    result.Base.HasNext,
+			HasPrev:    result.Base.HasPrev,
 			NextCursor: result.Base.NextCursor,
 			PrevCursor: result.Base.PrevCursor,
 		},
 		Data: make([]types.SysConfigItem, len(result.Data)),
 	}
 	for i, v := range result.Data {
-		jsonValue, err := utils.StructToString(v.ConfigValue)
-		if err != nil {
-			return nil, err
-		}
 		resp.Data[i] = types.SysConfigItem{
 			Id:          v.Id,
 			ConfigKey:   v.ConfigKey,
-			ConfigValue: string(jsonValue),
+			ConfigValue: v.ConfigValue,
 			Remark:      v.Remark,
 			CreatedAt:   v.CreatedAt,
 		}

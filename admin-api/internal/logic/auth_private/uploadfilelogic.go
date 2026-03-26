@@ -5,13 +5,13 @@ package auth_private
 
 import (
 	"context"
+	"encoding/json"
 	"mime/multipart"
 	"strings"
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
 	"wklive/common/storage"
-	"wklive/common/utils"
 	"wklive/proto/system"
 
 	"github.com/jinzhu/copier"
@@ -62,7 +62,7 @@ func (l *UploadFileLogic) UploadFile(file multipart.File, header *multipart.File
 	}
 
 	var config system.ObjectStorageConfig
-	err = utils.StructToGoStruct(cd.Data.ConfigValue, &config)
+	err = json.Unmarshal([]byte(cd.Data.ConfigValue), &config)
 	if err != nil {
 		return nil, err
 	}

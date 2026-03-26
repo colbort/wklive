@@ -8,6 +8,7 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
+	"wklive/proto/user"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,32 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 }
 
 func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err error) {
-	// todo: add your logic here and delete this line
+	result, err := l.svcCtx.UserCli.Login(l.ctx, &user.LoginReq{
+		TenantCode: req.TenantCode,
+		LoginType:  user.LoginType(req.LoginType),
+		Account:    req.Account,
+		Password:   req.Password,
+		GoogleCode: req.GoogleCode,
+		LoginIp:    "",
+	})
+	if err != nil {
+		return nil, err
+	}
 
+	resp = &types.LoginResp{
+		RespBase: types.RespBase{
+			Code: result.Base.Code,
+			Msg:  result.Base.Msg,
+		},
+		UserId: result.UserId,
+		Token: types.TokenInfo{
+			AccessToken:  result.Token.AccessToken,
+			RefreshToken: result.Token.RefreshToken,
+		},
+		Profile: types.UserProfile{
+			Identity: types.UserIdentity{},
+			Security: types.UserSecurity{},
+		},
+	}
 	return
 }

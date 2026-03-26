@@ -6,7 +6,9 @@ import (
 
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
+	"wklive/services/system/internal/utils"
 
+	"github.com/zeromicro/go-zero/core/errorx"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -26,6 +28,9 @@ func NewSysConfigUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 
 // 更新系统配置
 func (l *SysConfigUpdateLogic) SysConfigUpdate(in *system.SysConfigUpdateReq) (*system.RespBase, error) {
+	if err := utils.CheckConfig(in.ConfigKey, in.ConfigValue); err != nil {
+		return nil, errorx.Wrap(err, "配置项校验失败")
+	}
 	config, err := l.svcCtx.ConfigModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
@@ -34,12 +39,8 @@ func (l *SysConfigUpdateLogic) SysConfigUpdate(in *system.SysConfigUpdateReq) (*
 	if in.ConfigKey != "" {
 		config.ConfigKey = sql.NullString{String: in.ConfigKey, Valid: true}
 	}
-	if in.ConfigValue != nil {
-		jsonValue, err := in.ConfigValue.MarshalJSON()
-		if err != nil {
-			return nil, err
-		}
-		config.ConfigValue = sql.NullString{String: string(jsonValue), Valid: true}
+	if in.ConfigValue != "" {
+		config.ConfigValue = sql.NullString{String: in.ConfigValue, Valid: true}
 	}
 	if in.Remark != "" {
 		config.Remark = sql.NullString{String: in.Remark, Valid: true}

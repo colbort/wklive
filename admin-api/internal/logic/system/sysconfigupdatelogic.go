@@ -8,10 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/common/utils"
 	"wklive/proto/system"
 
-	"github.com/zeromicro/go-zero/core/errorx"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -30,17 +28,10 @@ func NewSysConfigUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 }
 
 func (l *SysConfigUpdateLogic) SysConfigUpdate(req *types.SysConfigUpdateReq) (resp *types.RespBase, err error) {
-	if utils.CheckConfig(req.ConfigKey, req.ConfigValue) != nil {
-		return nil, errorx.Wrap(err, "配置项校验失败")
-	}
-	value, err := utils.StringToStruct(req.ConfigValue)
-	if err != nil {
-		return nil, err
-	}
 	out, err := l.svcCtx.SystemCli.SysConfigUpdate(l.ctx, &system.SysConfigUpdateReq{
 		Id:          req.Id,
 		ConfigKey:   req.ConfigKey,
-		ConfigValue: value,
+		ConfigValue: req.ConfigValue,
 		Remark:      req.Remark,
 	})
 	if err != nil {

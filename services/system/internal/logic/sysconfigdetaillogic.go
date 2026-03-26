@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 
-	"wklive/common/utils"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
@@ -42,11 +41,6 @@ func (l *SysConfigDetailLogic) SysConfigDetail(in *system.SysConfigDetailReq) (*
 	if err != nil {
 		return nil, err
 	}
-
-	value, err := utils.StringToStruct(config.ConfigValue.String)
-	if err != nil {
-		return nil, err
-	}
 	return &system.SysConfigDetailResp{
 		Base: &system.RespBase{
 			Code: 200,
@@ -55,7 +49,7 @@ func (l *SysConfigDetailLogic) SysConfigDetail(in *system.SysConfigDetailReq) (*
 		Data: &system.SysConfigItem{
 			Id:          config.Id,
 			ConfigKey:   config.ConfigKey.String,
-			ConfigValue: value,
+			ConfigValue: config.ConfigValue.String,
 			Remark:      config.Remark.String,
 			CreatedAt:   config.CreatedAt.Unix(),
 		},

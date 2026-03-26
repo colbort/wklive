@@ -8,7 +8,10 @@ import (
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
 
+	"github.com/zeromicro/go-zero/core/errorx"
 	"github.com/zeromicro/go-zero/core/logx"
+
+	"wklive/services/system/internal/utils"
 )
 
 type SysConfigCreateLogic struct {
@@ -27,6 +30,9 @@ func NewSysConfigCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 
 // 新增系统配置
 func (l *SysConfigCreateLogic) SysConfigCreate(in *system.SysConfigCreateReq) (*system.RespBase, error) {
+	if err := utils.CheckConfig(in.ConfigKey, in.ConfigValue); err != nil {
+		return nil, errorx.Wrap(err, "配置项校验失败")
+	}
 	config, err := l.svcCtx.ConfigModel.FindOneByConfigKey(l.ctx, sql.NullString{String: in.ConfigKey, Valid: true})
 	if err != nil && err != models.ErrNotFound {
 		return &system.RespBase{
@@ -40,16 +46,9 @@ func (l *SysConfigCreateLogic) SysConfigCreate(in *system.SysConfigCreateReq) (*
 			Msg:  "配置项已存在",
 		}, nil
 	}
-	jsonValue, err := in.ConfigValue.MarshalJSON()
-	if err != nil {
-		return &system.RespBase{
-			Code: 500,
-			Msg:  err.Error(),
-		}, nil
-	}
 	_, err = l.svcCtx.ConfigModel.Insert(l.ctx, &models.SysConfig{
 		ConfigKey:   sql.NullString{String: in.ConfigKey, Valid: true},
-		ConfigValue: sql.NullString{String: string(jsonValue), Valid: true},
+		ConfigValue: sql.NullString{String: in.ConfigValue, Valid: true},
 		Remark:      sql.NullString{String: in.Remark, Valid: true},
 	})
 	if err != nil {

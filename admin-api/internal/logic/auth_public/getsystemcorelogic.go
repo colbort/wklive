@@ -5,10 +5,10 @@ package auth_public
 
 import (
 	"context"
+	"encoding/json"
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/common/utils"
 	"wklive/proto/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -38,7 +38,7 @@ func (l *GetSystemCoreLogic) GetSystemCore() (resp *types.GetSystemCoreResp, err
 	}
 
 	var config system.SystemCore
-	err = utils.StructToGoStruct(cd.Data.ConfigValue, &config)
+	err = json.Unmarshal([]byte(cd.Data.ConfigValue), &config)
 	if err != nil {
 		return nil, err
 	}

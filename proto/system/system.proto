@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package system;
 
-import "google/protobuf/struct.proto";
 import "proto/system/config.proto";
 
 option go_package = "wklive/proto/system;system";
@@ -355,14 +354,14 @@ message OpLogListResp {
 
 message SysConfigCreateReq {
   string config_key = 1;
-  google.protobuf.Struct config_value = 2;
+  string config_value = 2;
   string remark = 3;
 }
 
 message SysConfigUpdateReq {
   int64 id = 1;
   string config_key = 2;
-  google.protobuf.Struct config_value = 3;
+  string config_value = 3;
   string remark = 4;
 }
 
@@ -373,7 +372,7 @@ message SysConfigDeleteReq {
 message SysConfigItem {
   int64 id = 1;
   string config_key = 2;
-  google.protobuf.Struct config_value = 3;
+  string config_value = 3;
   string remark = 4;
   int64 created_at = 5;
 }
