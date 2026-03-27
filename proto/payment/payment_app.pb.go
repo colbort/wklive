@@ -166,9 +166,10 @@ func (x *GetMyRechargeStatResp) GetStat() *UserRechargeStat {
 type ListAvailableRechargeChannelsReq struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	TenantId       int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	RechargeAmount int64                  `protobuf:"varint,2,opt,name=recharge_amount,json=rechargeAmount,proto3" json:"recharge_amount,omitempty"` // 单位：分
-	Currency       string                 `protobuf:"bytes,3,opt,name=currency,proto3" json:"currency,omitempty"`
-	ClientType     ClientType             `protobuf:"varint,4,opt,name=client_type,json=clientType,proto3,enum=payment.ClientType" json:"client_type,omitempty"`
+	UserId         int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	RechargeAmount int64                  `protobuf:"varint,3,opt,name=recharge_amount,json=rechargeAmount,proto3" json:"recharge_amount,omitempty"` // 单位：分
+	Currency       string                 `protobuf:"bytes,4,opt,name=currency,proto3" json:"currency,omitempty"`
+	ClientType     ClientType             `protobuf:"varint,5,opt,name=client_type,json=clientType,proto3,enum=payment.ClientType" json:"client_type,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -206,6 +207,13 @@ func (*ListAvailableRechargeChannelsReq) Descriptor() ([]byte, []int) {
 func (x *ListAvailableRechargeChannelsReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
+	}
+	return 0
+}
+
+func (x *ListAvailableRechargeChannelsReq) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
 	}
 	return 0
 }
@@ -553,11 +561,12 @@ func (x *GetMyPayOrderResp) GetOrder() *PayOrder {
 type ListMyPayOrdersReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	TenantId        int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Page            *PageReq               `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
-	Status          PayOrderStatus         `protobuf:"varint,3,opt,name=status,proto3,enum=payment.PayOrderStatus" json:"status,omitempty"`
-	OrderNo         string                 `protobuf:"bytes,4,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
-	CreateTimeStart int64                  `protobuf:"varint,5,opt,name=create_time_start,json=createTimeStart,proto3" json:"create_time_start,omitempty"`
-	CreateTimeEnd   int64                  `protobuf:"varint,6,opt,name=create_time_end,json=createTimeEnd,proto3" json:"create_time_end,omitempty"`
+	UserId          int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Page            *PageReq               `protobuf:"bytes,3,opt,name=page,proto3" json:"page,omitempty"`
+	Status          PayOrderStatus         `protobuf:"varint,4,opt,name=status,proto3,enum=payment.PayOrderStatus" json:"status,omitempty"`
+	OrderNo         string                 `protobuf:"bytes,5,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
+	CreateTimeStart int64                  `protobuf:"varint,6,opt,name=create_time_start,json=createTimeStart,proto3" json:"create_time_start,omitempty"`
+	CreateTimeEnd   int64                  `protobuf:"varint,7,opt,name=create_time_end,json=createTimeEnd,proto3" json:"create_time_end,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -595,6 +604,13 @@ func (*ListMyPayOrdersReq) Descriptor() ([]byte, []int) {
 func (x *ListMyPayOrdersReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
+	}
+	return 0
+}
+
+func (x *ListMyPayOrdersReq) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
 	}
 	return 0
 }
@@ -743,7 +759,8 @@ func (x *CancelMyPayOrderReq) GetOrderNo() string {
 type QueryMyPayOrderStatusReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	OrderNo       string                 `protobuf:"bytes,2,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	OrderNo       string                 `protobuf:"bytes,3,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -785,6 +802,13 @@ func (x *QueryMyPayOrderStatusReq) GetTenantId() int64 {
 	return 0
 }
 
+func (x *QueryMyPayOrderStatusReq) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
 func (x *QueryMyPayOrderStatusReq) GetOrderNo() string {
 	if x != nil {
 		return x.OrderNo
@@ -795,8 +819,7 @@ func (x *QueryMyPayOrderStatusReq) GetOrderNo() string {
 type QueryMyPayOrderStatusResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Status        PayOrderStatus         `protobuf:"varint,2,opt,name=status,proto3,enum=payment.PayOrderStatus" json:"status,omitempty"`
-	Order         *PayOrder              `protobuf:"bytes,3,opt,name=order,proto3" json:"order,omitempty"`
+	Order         *PayOrder              `protobuf:"bytes,2,opt,name=order,proto3" json:"order,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -838,13 +861,6 @@ func (x *QueryMyPayOrderStatusResp) GetBase() *RespBase {
 	return nil
 }
 
-func (x *QueryMyPayOrderStatusResp) GetStatus() PayOrderStatus {
-	if x != nil {
-		return x.Status
-	}
-	return PayOrderStatus_PAY_ORDER_STATUS_UNKNOWN
-}
-
 func (x *QueryMyPayOrderStatusResp) GetOrder() *PayOrder {
 	if x != nil {
 		return x.Order
@@ -863,12 +879,13 @@ const file_proto_payment_payment_app_proto_rawDesc = "" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\"m\n" +
 	"\x15GetMyRechargeStatResp\x12%\n" +
 	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12-\n" +
-	"\x04stat\x18\x02 \x01(\v2\x19.payment.UserRechargeStatR\x04stat\"\xba\x01\n" +
+	"\x04stat\x18\x02 \x01(\v2\x19.payment.UserRechargeStatR\x04stat\"\xd3\x01\n" +
 	" ListAvailableRechargeChannelsReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12'\n" +
-	"\x0frecharge_amount\x18\x02 \x01(\x03R\x0erechargeAmount\x12\x1a\n" +
-	"\bcurrency\x18\x03 \x01(\tR\bcurrency\x124\n" +
-	"\vclient_type\x18\x04 \x01(\x0e2\x13.payment.ClientTypeR\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12'\n" +
+	"\x0frecharge_amount\x18\x03 \x01(\x03R\x0erechargeAmount\x12\x1a\n" +
+	"\bcurrency\x18\x04 \x01(\tR\bcurrency\x124\n" +
+	"\vclient_type\x18\x05 \x01(\x0e2\x13.payment.ClientTypeR\n" +
 	"clientType\"z\n" +
 	"!ListAvailableRechargeChannelsResp\x12%\n" +
 	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12.\n" +
@@ -894,27 +911,28 @@ const file_proto_payment_payment_app_proto_rawDesc = "" +
 	"\border_no\x18\x02 \x01(\tR\aorderNo\"c\n" +
 	"\x11GetMyPayOrderResp\x12%\n" +
 	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12'\n" +
-	"\x05order\x18\x02 \x01(\v2\x11.payment.PayOrderR\x05order\"\xf7\x01\n" +
+	"\x05order\x18\x02 \x01(\v2\x11.payment.PayOrderR\x05order\"\x90\x02\n" +
 	"\x12ListMyPayOrdersReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12$\n" +
-	"\x04page\x18\x02 \x01(\v2\x10.payment.PageReqR\x04page\x12/\n" +
-	"\x06status\x18\x03 \x01(\x0e2\x17.payment.PayOrderStatusR\x06status\x12\x19\n" +
-	"\border_no\x18\x04 \x01(\tR\aorderNo\x12*\n" +
-	"\x11create_time_start\x18\x05 \x01(\x03R\x0fcreateTimeStart\x12&\n" +
-	"\x0fcreate_time_end\x18\x06 \x01(\x03R\rcreateTimeEnd\"c\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12$\n" +
+	"\x04page\x18\x03 \x01(\v2\x10.payment.PageReqR\x04page\x12/\n" +
+	"\x06status\x18\x04 \x01(\x0e2\x17.payment.PayOrderStatusR\x06status\x12\x19\n" +
+	"\border_no\x18\x05 \x01(\tR\aorderNo\x12*\n" +
+	"\x11create_time_start\x18\x06 \x01(\x03R\x0fcreateTimeStart\x12&\n" +
+	"\x0fcreate_time_end\x18\a \x01(\x03R\rcreateTimeEnd\"c\n" +
 	"\x13ListMyPayOrdersResp\x12%\n" +
 	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12%\n" +
 	"\x04list\x18\x02 \x03(\v2\x11.payment.PayOrderR\x04list\"M\n" +
 	"\x13CancelMyPayOrderReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
-	"\border_no\x18\x02 \x01(\tR\aorderNo\"R\n" +
+	"\border_no\x18\x02 \x01(\tR\aorderNo\"k\n" +
 	"\x18QueryMyPayOrderStatusReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
-	"\border_no\x18\x02 \x01(\tR\aorderNo\"\x9c\x01\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x19\n" +
+	"\border_no\x18\x03 \x01(\tR\aorderNo\"k\n" +
 	"\x19QueryMyPayOrderStatusResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12/\n" +
-	"\x06status\x18\x02 \x01(\x0e2\x17.payment.PayOrderStatusR\x06status\x12'\n" +
-	"\x05order\x18\x03 \x01(\v2\x11.payment.PayOrderR\x05order2\xf2\x04\n" +
+	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12'\n" +
+	"\x05order\x18\x02 \x01(\v2\x11.payment.PayOrderR\x05order2\xf2\x04\n" +
 	"\n" +
 	"PaymentApp\x12R\n" +
 	"\x11GetMyRechargeStat\x12\x1d.payment.GetMyRechargeStatReq\x1a\x1e.payment.GetMyRechargeStatResp\x12v\n" +
@@ -978,27 +996,26 @@ var file_proto_payment_payment_app_proto_depIdxs = []int32{
 	14, // 13: payment.ListMyPayOrdersResp.base:type_name -> payment.RespBase
 	18, // 14: payment.ListMyPayOrdersResp.list:type_name -> payment.PayOrder
 	14, // 15: payment.QueryMyPayOrderStatusResp.base:type_name -> payment.RespBase
-	20, // 16: payment.QueryMyPayOrderStatusResp.status:type_name -> payment.PayOrderStatus
-	18, // 17: payment.QueryMyPayOrderStatusResp.order:type_name -> payment.PayOrder
-	1,  // 18: payment.PaymentApp.GetMyRechargeStat:input_type -> payment.GetMyRechargeStatReq
-	3,  // 19: payment.PaymentApp.ListAvailableRechargeChannels:input_type -> payment.ListAvailableRechargeChannelsReq
-	5,  // 20: payment.PaymentApp.CreateRechargeOrder:input_type -> payment.CreateRechargeOrderReq
-	7,  // 21: payment.PaymentApp.GetMyPayOrder:input_type -> payment.GetMyPayOrderReq
-	9,  // 22: payment.PaymentApp.ListMyPayOrders:input_type -> payment.ListMyPayOrdersReq
-	11, // 23: payment.PaymentApp.CancelMyPayOrder:input_type -> payment.CancelMyPayOrderReq
-	12, // 24: payment.PaymentApp.QueryMyPayOrderStatus:input_type -> payment.QueryMyPayOrderStatusReq
-	2,  // 25: payment.PaymentApp.GetMyRechargeStat:output_type -> payment.GetMyRechargeStatResp
-	4,  // 26: payment.PaymentApp.ListAvailableRechargeChannels:output_type -> payment.ListAvailableRechargeChannelsResp
-	6,  // 27: payment.PaymentApp.CreateRechargeOrder:output_type -> payment.CreateRechargeOrderResp
-	8,  // 28: payment.PaymentApp.GetMyPayOrder:output_type -> payment.GetMyPayOrderResp
-	10, // 29: payment.PaymentApp.ListMyPayOrders:output_type -> payment.ListMyPayOrdersResp
-	0,  // 30: payment.PaymentApp.CancelMyPayOrder:output_type -> payment.AppCommonResp
-	13, // 31: payment.PaymentApp.QueryMyPayOrderStatus:output_type -> payment.QueryMyPayOrderStatusResp
-	25, // [25:32] is the sub-list for method output_type
-	18, // [18:25] is the sub-list for method input_type
-	18, // [18:18] is the sub-list for extension type_name
-	18, // [18:18] is the sub-list for extension extendee
-	0,  // [0:18] is the sub-list for field type_name
+	18, // 16: payment.QueryMyPayOrderStatusResp.order:type_name -> payment.PayOrder
+	1,  // 17: payment.PaymentApp.GetMyRechargeStat:input_type -> payment.GetMyRechargeStatReq
+	3,  // 18: payment.PaymentApp.ListAvailableRechargeChannels:input_type -> payment.ListAvailableRechargeChannelsReq
+	5,  // 19: payment.PaymentApp.CreateRechargeOrder:input_type -> payment.CreateRechargeOrderReq
+	7,  // 20: payment.PaymentApp.GetMyPayOrder:input_type -> payment.GetMyPayOrderReq
+	9,  // 21: payment.PaymentApp.ListMyPayOrders:input_type -> payment.ListMyPayOrdersReq
+	11, // 22: payment.PaymentApp.CancelMyPayOrder:input_type -> payment.CancelMyPayOrderReq
+	12, // 23: payment.PaymentApp.QueryMyPayOrderStatus:input_type -> payment.QueryMyPayOrderStatusReq
+	2,  // 24: payment.PaymentApp.GetMyRechargeStat:output_type -> payment.GetMyRechargeStatResp
+	4,  // 25: payment.PaymentApp.ListAvailableRechargeChannels:output_type -> payment.ListAvailableRechargeChannelsResp
+	6,  // 26: payment.PaymentApp.CreateRechargeOrder:output_type -> payment.CreateRechargeOrderResp
+	8,  // 27: payment.PaymentApp.GetMyPayOrder:output_type -> payment.GetMyPayOrderResp
+	10, // 28: payment.PaymentApp.ListMyPayOrders:output_type -> payment.ListMyPayOrdersResp
+	0,  // 29: payment.PaymentApp.CancelMyPayOrder:output_type -> payment.AppCommonResp
+	13, // 30: payment.PaymentApp.QueryMyPayOrderStatus:output_type -> payment.QueryMyPayOrderStatusResp
+	24, // [24:31] is the sub-list for method output_type
+	17, // [17:24] is the sub-list for method input_type
+	17, // [17:17] is the sub-list for extension type_name
+	17, // [17:17] is the sub-list for extension extendee
+	0,  // [0:17] is the sub-list for field type_name
 }
 
 func init() { file_proto_payment_payment_app_proto_init() }

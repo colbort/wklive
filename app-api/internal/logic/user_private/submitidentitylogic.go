@@ -8,6 +8,8 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
+	"wklive/common/utils"
+	"wklive/proto/user"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +29,35 @@ func NewSubmitIdentityLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Su
 }
 
 func (l *SubmitIdentityLogic) SubmitIdentity(req *types.SubmitIdentityReq) (resp *types.SubmitIdentityResp, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	userId, err := utils.GetUidFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	result, err := l.svcCtx.UserCli.SubmitIdentity(l.ctx, &user.SubmitIdentityReq{
+		UserId:        userId,
+		Phone:         req.Phone,
+		Email:         req.Email,
+		RealName:      req.RealName,
+		Gender:        user.Gender(req.Gender),
+		Birthday:      req.Birthday,
+		CountryCode:   req.CountryCode,
+		Province:      req.Province,
+		City:          req.City,
+		Address:       req.Address,
+		IdType:        user.IdType(req.IdType),
+		IdNo:          req.IdNo,
+		FrontImage:    req.FrontImage,
+		BackImage:     req.BackImage,
+		HandheldImage: req.HandheldImage,
+		KycLevel:      user.KycLevel(req.KycLevel),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &types.SubmitIdentityResp{
+		RespBase: types.RespBase{
+			Code: result.Base.Code,
+			Msg:  result.Base.Msg,
+		},
+	}, nil
 }

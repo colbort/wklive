@@ -6,7 +6,7 @@ import "user_types.api"
 
 type GetProfileResp {
   RespBase
-  profile UserProfile `json:"profile"`
+  data UserProfile `json:"data"`
 }
 
 type UpdateProfileReq {
@@ -36,7 +36,7 @@ type ChangeLoginPasswordReq {
 
 type GetIdentityResp {
   RespBase
-  identity UserIdentity `json:"identity"`
+  data UserIdentity `json:"data"`
 }
 
 type SubmitIdentityReq {
@@ -59,22 +59,22 @@ type SubmitIdentityReq {
 
 type SubmitIdentityResp {
   RespBase
-  identity UserIdentity `json:"identity"`
+  data UserIdentity `json:"data"`
 }
 
 type GetSecurityResp {
   RespBase
-  security UserSecurity `json:"security"`
+  data UserSecurity `json:"data"`
 }
 
 type SetPayPasswordReq {
-  payPassword     string `json:"payPassword"`
+  password     string `json:"password"`
   confirmPassword string `json:"confirmPassword"`
 }
 
 type ChangePayPasswordReq {
-  oldPayPassword  string `json:"oldPayPassword"`
-  newPayPassword  string `json:"newPayPassword"`
+  oldPassword  string `json:"oldPassword"`
+  newPassword  string `json:"newPassword"`
   confirmPassword string `json:"confirmPassword"`
 }
 

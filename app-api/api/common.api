@@ -11,8 +11,8 @@ type RespBase {
 }
 
 type PageReq {
-  page     int64 `form:"page,optional"`
-  pageSize int64 `form:"pageSize,optional"`
+  cursor     int64 `form:"cursor,optional"`
+  limit int64 `form:"limit,optional"`
 }
 
 type IdReq {

@@ -113,7 +113,7 @@ message ResetLoginPasswordReq {
 message ResetPayPasswordReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
-  string new_pay_password = 3;
+  string new_password = 3;
 }
 
 message UnlockUserReq {

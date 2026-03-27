@@ -1308,7 +1308,7 @@ func (x *GetSecurityResp) GetSecurity() *UserSecurity {
 type SetPayPasswordReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	UserId          int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	PayPassword     string                 `protobuf:"bytes,2,opt,name=pay_password,json=payPassword,proto3" json:"pay_password,omitempty"`
+	Password        string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
 	ConfirmPassword string                 `protobuf:"bytes,3,opt,name=confirm_password,json=confirmPassword,proto3" json:"confirm_password,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
@@ -1351,9 +1351,9 @@ func (x *SetPayPasswordReq) GetUserId() int64 {
 	return 0
 }
 
-func (x *SetPayPasswordReq) GetPayPassword() string {
+func (x *SetPayPasswordReq) GetPassword() string {
 	if x != nil {
-		return x.PayPassword
+		return x.Password
 	}
 	return ""
 }
@@ -1368,8 +1368,8 @@ func (x *SetPayPasswordReq) GetConfirmPassword() string {
 type ChangePayPasswordReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	UserId          int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OldPayPassword  string                 `protobuf:"bytes,2,opt,name=old_pay_password,json=oldPayPassword,proto3" json:"old_pay_password,omitempty"`
-	NewPayPassword  string                 `protobuf:"bytes,3,opt,name=new_pay_password,json=newPayPassword,proto3" json:"new_pay_password,omitempty"`
+	OldPassword     string                 `protobuf:"bytes,2,opt,name=old_password,json=oldPassword,proto3" json:"old_password,omitempty"`
+	NewPassword     string                 `protobuf:"bytes,3,opt,name=new_password,json=newPassword,proto3" json:"new_password,omitempty"`
 	ConfirmPassword string                 `protobuf:"bytes,4,opt,name=confirm_password,json=confirmPassword,proto3" json:"confirm_password,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
@@ -1412,16 +1412,16 @@ func (x *ChangePayPasswordReq) GetUserId() int64 {
 	return 0
 }
 
-func (x *ChangePayPasswordReq) GetOldPayPassword() string {
+func (x *ChangePayPasswordReq) GetOldPassword() string {
 	if x != nil {
-		return x.OldPayPassword
+		return x.OldPassword
 	}
 	return ""
 }
 
-func (x *ChangePayPasswordReq) GetNewPayPassword() string {
+func (x *ChangePayPasswordReq) GetNewPassword() string {
 	if x != nil {
-		return x.NewPayPassword
+		return x.NewPassword
 	}
 	return ""
 }
@@ -2271,15 +2271,15 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\"e\n" +
 	"\x0fGetSecurityResp\x12\"\n" +
 	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12.\n" +
-	"\bsecurity\x18\x02 \x01(\v2\x12.user.UserSecurityR\bsecurity\"z\n" +
+	"\bsecurity\x18\x02 \x01(\v2\x12.user.UserSecurityR\bsecurity\"s\n" +
 	"\x11SetPayPasswordReq\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12!\n" +
-	"\fpay_password\x18\x02 \x01(\tR\vpayPassword\x12)\n" +
-	"\x10confirm_password\x18\x03 \x01(\tR\x0fconfirmPassword\"\xae\x01\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1a\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\x12)\n" +
+	"\x10confirm_password\x18\x03 \x01(\tR\x0fconfirmPassword\"\xa0\x01\n" +
 	"\x14ChangePayPasswordReq\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12(\n" +
-	"\x10old_pay_password\x18\x02 \x01(\tR\x0eoldPayPassword\x12(\n" +
-	"\x10new_pay_password\x18\x03 \x01(\tR\x0enewPayPassword\x12)\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12!\n" +
+	"\fold_password\x18\x02 \x01(\tR\voldPassword\x12!\n" +
+	"\fnew_password\x18\x03 \x01(\tR\vnewPassword\x12)\n" +
 	"\x10confirm_password\x18\x04 \x01(\tR\x0fconfirmPassword\"+\n" +
 	"\x10InitGoogle2FAReq\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\"o\n" +

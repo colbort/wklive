@@ -8,6 +8,8 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
+	"wklive/common/utils"
+	"wklive/proto/user"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +29,47 @@ func NewGetIdentityLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetId
 }
 
 func (l *GetIdentityLogic) GetIdentity() (resp *types.GetIdentityResp, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	userId, err := utils.GetUidFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	result, err := l.svcCtx.UserCli.GetIdentity(l.ctx, &user.GetIdentityReq{
+		UserId: userId,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &types.GetIdentityResp{
+		RespBase: types.RespBase{
+			Code: result.Base.Code,
+			Msg:  result.Base.Msg,
+		},
+		Data: types.UserIdentity{
+			Id:            result.Identity.Id,
+			TenantId:      result.Identity.TenantId,
+			UserId:        result.Identity.UserId,
+			Phone:         result.Identity.Phone,
+			Email:         result.Identity.Email,
+			RealName:      result.Identity.RealName,
+			Gender:        int64(result.Identity.Gender.Number()),
+			Birthday:      result.Identity.Birthday,
+			CountryCode:   result.Identity.CountryCode,
+			Province:      result.Identity.Province,
+			City:          result.Identity.City,
+			Address:       result.Identity.Address,
+			IdType:        int64(result.Identity.IdType.Number()),
+			IdNo:          result.Identity.IdNo,
+			FrontImage:    result.Identity.FrontImage,
+			BackImage:     result.Identity.BackImage,
+			HandheldImage: result.Identity.HandheldImage,
+			KycLevel:      int64(result.Identity.KycLevel.Number()),
+			VerifyStatus:  int64(result.Identity.VerifyStatus.Number()),
+			RejectReason:  result.Identity.RejectReason,
+			SubmitTime:    result.Identity.SubmitTime,
+			VerifyTime:    result.Identity.VerifyTime,
+			VerifyBy:      result.Identity.VerifyBy,
+			CreateTime:    result.Identity.CreateTime,
+			UpdateTime:    result.Identity.UpdateTime,
+		},
+	}, nil
 }

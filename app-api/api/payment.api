@@ -90,7 +90,7 @@ type GetMyRechargeStatReq {
 
 type GetMyRechargeStatResp {
   RespBase
-  stat UserRechargeStat `json:"stat"`
+  data UserRechargeStat `json:"data"`
 }
 
 // 获取当前用户在指定充值金额下可用的充值通道
@@ -104,7 +104,7 @@ type ListAvailableRechargeChannelsReq {
 
 type ListAvailableRechargeChannelsResp {
   RespBase
-  list []AvailableRechargeChannel `json:"list"`
+  data []AvailableRechargeChannel `json:"data"`
 }
 
 // 创建充值订单
@@ -126,7 +126,7 @@ type CreateRechargeOrderReq {
 
 type CreateRechargeOrderResp {
   RespBase
-  order PayOrder `json:"order"`
+  data PayOrder `json:"data"`
 }
 
 // 查询我的订单详情
@@ -137,7 +137,7 @@ type GetMyPayOrderReq {
 
 type GetMyPayOrderResp {
   RespBase
-  order PayOrder `json:"order"`
+  data PayOrder `json:"data"`
 }
 
 // 查询我的充值订单列表
@@ -153,7 +153,7 @@ type ListMyPayOrdersReq {
 
 type ListMyPayOrdersResp {
   RespBase
-  list []PayOrder `json:"list"`
+  data []PayOrder `json:"data"`
 }
 
 // 取消未支付订单
@@ -170,8 +170,7 @@ type QueryMyPayOrderStatusReq {
 
 type QueryMyPayOrderStatusResp {
   RespBase
-  status int64    `json:"status"` // 0未知 1待支付 2支付中 3成功 4失败 5已关闭 6已退款
-  order  PayOrder `json:"order"`
+  data  PayOrder `json:"data"`
 }
 
 @server(

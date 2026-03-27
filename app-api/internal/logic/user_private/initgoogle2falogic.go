@@ -8,6 +8,8 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
+	"wklive/common/utils"
+	"wklive/proto/user"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +29,22 @@ func NewInitGoogle2FALogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ini
 }
 
 func (l *InitGoogle2FALogic) InitGoogle2FA() (resp *types.InitGoogle2FAResp, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	userId, err := utils.GetUidFromCtx(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	result, err := l.svcCtx.UserCli.InitGoogle2FA(l.ctx, &user.InitGoogle2FAReq{
+		UserId: userId,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &types.InitGoogle2FAResp{
+		RespBase: types.RespBase{
+			Code: result.Base.Code,
+			Msg:  result.Base.Msg,
+		},
+		QrCodeUrl: result.QrCodeUrl,
+		Secret:    result.Secret,
+	}, nil
 }

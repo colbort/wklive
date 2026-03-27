@@ -990,12 +990,12 @@ func (x *ResetLoginPasswordReq) GetNewPassword() string {
 }
 
 type ResetPayPasswordReq struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	TenantId       int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId         int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	NewPayPassword string                 `protobuf:"bytes,3,opt,name=new_pay_password,json=newPayPassword,proto3" json:"new_pay_password,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	NewPassword   string                 `protobuf:"bytes,3,opt,name=new_password,json=newPassword,proto3" json:"new_password,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ResetPayPasswordReq) Reset() {
@@ -1042,9 +1042,9 @@ func (x *ResetPayPasswordReq) GetUserId() int64 {
 	return 0
 }
 
-func (x *ResetPayPasswordReq) GetNewPayPassword() string {
+func (x *ResetPayPasswordReq) GetNewPassword() string {
 	if x != nil {
-		return x.NewPayPassword
+		return x.NewPassword
 	}
 	return ""
 }
@@ -2526,11 +2526,11 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	"\x15ResetLoginPasswordReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12!\n" +
-	"\fnew_password\x18\x03 \x01(\tR\vnewPassword\"u\n" +
+	"\fnew_password\x18\x03 \x01(\tR\vnewPassword\"n\n" +
 	"\x13ResetPayPasswordReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12(\n" +
-	"\x10new_pay_password\x18\x03 \x01(\tR\x0enewPayPassword\"E\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12!\n" +
+	"\fnew_password\x18\x03 \x01(\tR\vnewPassword\"E\n" +
 	"\rUnlockUserReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\"z\n" +

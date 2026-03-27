@@ -76,3 +76,19 @@ func GetUsernameFromCtx(ctx context.Context) (string, error) {
 	}
 	return username, nil
 }
+
+func GetTenantIdFromCtx(ctx context.Context) (int64, error) {
+	var tenantId int64
+	jsonTenantId, ok := ctx.Value("tenantId").(json.Number)
+	if !ok {
+		logx.WithContext(ctx).Errorf("GetTenantIdFromCtx err : not found tenantId in context")
+		return 0, errors.New("tenantId not found in context")
+	}
+	if int64TenantId, err := jsonTenantId.Int64(); err == nil {
+		tenantId = int64TenantId
+	} else {
+		logx.WithContext(ctx).Errorf("GetTenantIdFromCtx err : %+v", err)
+		return 0, err
+	}
+	return tenantId, nil
+}

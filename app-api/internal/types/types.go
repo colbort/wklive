@@ -48,8 +48,8 @@ type ChangeLoginPasswordReq struct {
 }
 
 type ChangePayPasswordReq struct {
-	OldPayPassword  string `json:"oldPayPassword"`
-	NewPayPassword  string `json:"newPayPassword"`
+	OldPassword     string `json:"oldPassword"`
+	NewPassword     string `json:"newPassword"`
 	ConfirmPassword string `json:"confirmPassword"`
 }
 
@@ -67,7 +67,7 @@ type CreateRechargeOrderReq struct {
 
 type CreateRechargeOrderResp struct {
 	RespBase
-	Order PayOrder `json:"order"`
+	Data PayOrder `json:"data"`
 }
 
 type DeleteBankReq struct {
@@ -76,7 +76,7 @@ type DeleteBankReq struct {
 
 type GetIdentityResp struct {
 	RespBase
-	Identity UserIdentity `json:"identity"`
+	Data UserIdentity `json:"data"`
 }
 
 type GetMyPayOrderReq struct {
@@ -86,7 +86,7 @@ type GetMyPayOrderReq struct {
 
 type GetMyPayOrderResp struct {
 	RespBase
-	Order PayOrder `json:"order"`
+	Data PayOrder `json:"data"`
 }
 
 type GetMyRechargeStatReq struct {
@@ -95,17 +95,17 @@ type GetMyRechargeStatReq struct {
 
 type GetMyRechargeStatResp struct {
 	RespBase
-	Stat UserRechargeStat `json:"stat"`
+	Data UserRechargeStat `json:"data"`
 }
 
 type GetProfileResp struct {
 	RespBase
-	Profile UserProfile `json:"profile"`
+	Data UserProfile `json:"data"`
 }
 
 type GetSecurityResp struct {
 	RespBase
-	Security UserSecurity `json:"security"`
+	Data UserSecurity `json:"data"`
 }
 
 type GetSystemCoreResp struct {
@@ -131,7 +131,7 @@ type ListAvailableRechargeChannelsReq struct {
 
 type ListAvailableRechargeChannelsResp struct {
 	RespBase
-	List []AvailableRechargeChannel `json:"list"`
+	Data []AvailableRechargeChannel `json:"data"`
 }
 
 type ListBanksReq struct {
@@ -155,7 +155,7 @@ type ListMyPayOrdersReq struct {
 
 type ListMyPayOrdersResp struct {
 	RespBase
-	List []PayOrder `json:"list"`
+	Data []PayOrder `json:"data"`
 }
 
 type LoginReq struct {
@@ -175,8 +175,8 @@ type LoginResp struct {
 }
 
 type PageReq struct {
-	Page     int64 `form:"page,optional"`
-	PageSize int64 `form:"pageSize,optional"`
+	Cursor int64 `form:"cursor,optional"`
+	Limit  int64 `form:"limit,optional"`
 }
 
 type PayOrder struct {
@@ -221,8 +221,7 @@ type QueryMyPayOrderStatusReq struct {
 
 type QueryMyPayOrderStatusResp struct {
 	RespBase
-	Status int64    `json:"status"` // 0未知 1待支付 2支付中 3成功 4失败 5已关闭 6已退款
-	Order  PayOrder `json:"order"`
+	Data PayOrder `json:"data"`
 }
 
 type RefreshTokenReq struct {
@@ -270,7 +269,7 @@ type SetDefaultBankReq struct {
 }
 
 type SetPayPasswordReq struct {
-	PayPassword     string `json:"payPassword"`
+	Password        string `json:"password"`
 	ConfirmPassword string `json:"confirmPassword"`
 }
 
@@ -294,7 +293,7 @@ type SubmitIdentityReq struct {
 
 type SubmitIdentityResp struct {
 	RespBase
-	Identity UserIdentity `json:"identity"`
+	Data UserIdentity `json:"data"`
 }
 
 type SystemCore struct {

@@ -142,14 +142,14 @@ message GetSecurityResp {
 
 message SetPayPasswordReq {
   int64 user_id = 1;
-  string pay_password = 2;
+  string password = 2;
   string confirm_password = 3;
 }
 
 message ChangePayPasswordReq {
   int64 user_id = 1;
-  string old_pay_password = 2;
-  string new_pay_password = 3;
+  string old_password = 2;
+  string new_password = 3;
   string confirm_password = 4;
 }
 
