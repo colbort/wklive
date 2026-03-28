@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	cronx.Register("reportJob.dailyReport", dailyReport)
+	cronx.Register("reportJob.dailyReport", "Daily Report", dailyReport)
 }
 
 func dailyReport(ctx context.Context, job *models.SysJob) error {

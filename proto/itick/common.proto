@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package itick;
+
+option go_package = "wklive/proto/itick;itick";
+
+message Empty {}
+
+message RespBase {
+  int32 code = 1;
+  string msg = 2;
+  int64 total = 3;
+  bool has_next = 4;
+  bool has_prev = 5;
+  int64 next_cursor = 6;
+  int64 prev_cursor = 7;
+}
+
+message CommonResp {
+  RespBase base = 1;
+}
+
+message PageReq {
+  int64 cursor = 1;
+  int64 limit = 2;
+}
+
+// 产品类型
+enum ProductType {
+  PRODUCT_TYPE_UNKNOWN = 0;
+  PRODUCT_TYPE_FOREX = 1;
+  PRODUCT_TYPE_CRYPTO = 2;
+  PRODUCT_TYPE_STOCK = 3;
+  PRODUCT_TYPE_FUTURE = 4;
+  PRODUCT_TYPE_INDICES = 5;
+  PRODUCT_TYPE_FUND = 6;
+}
+
+// K线周期
+enum KlineType {
+  KLINE_TYPE_UNKNOWN = 0;
+  KLINE_TYPE_1M = 1;
+  KLINE_TYPE_5M = 2;
+  KLINE_TYPE_15M = 3;
+  KLINE_TYPE_30M = 4;
+  KLINE_TYPE_60M = 5;
+  KLINE_TYPE_2H = 6;
+  KLINE_TYPE_4H = 7;
+  KLINE_TYPE_1D = 8;
+  KLINE_TYPE_1W = 9;
+  KLINE_TYPE_1MO = 10;
+}

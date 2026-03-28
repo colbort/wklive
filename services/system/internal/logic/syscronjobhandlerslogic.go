@@ -27,11 +27,11 @@ func NewSysCronJobHandlersLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 // 获取系统支持的定时任务处理器列表
 func (l *SysCronJobHandlersLogic) SysCronJobHandlers(in *system.Empty) (*system.SysCronJobHandlersResp, error) {
 	data := make([]*system.SysCronJobHander, 0)
-	handlers := cronx.GetRegisteredHandlers()
-	for invokeTarget := range handlers {
+	handlers := cronx.GetRegisteredNames()
+	for invokeTarget, jobName := range handlers {
 		data = append(data, &system.SysCronJobHander{
 			InvokeTarget: invokeTarget,
-			JobName:      "",
+			JobName:      jobName,
 		})
 	}
 	return &system.SysCronJobHandlersResp{

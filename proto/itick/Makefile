@@ -11,7 +11,8 @@ gen:
 		proto/itick/common.proto \
 		proto/itick/model.proto \
 		proto/itick/itick_app.proto \
-		proto/itick/itick_admin.proto 
+		proto/itick/itick_admin.proto \
+		proto/itick/itick_task.proto 
 	@echo "✅ [proto/itick] generated"
 
 clean:

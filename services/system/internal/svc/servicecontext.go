@@ -1,11 +1,14 @@
 package svc
 
 import (
+	"wklive/proto/itick"
 	"wklive/services/system/internal/config"
+	"wklive/services/system/internal/global"
 	"wklive/services/system/internal/plugins/cronx"
 	"wklive/services/system/models"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
+	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type ServiceContext struct {
@@ -25,6 +28,9 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
+	cli := zrpc.MustNewClient(c.ItickRpc)
+	global.ItickTaskCli = itick.NewItickTaskClient(cli.Conn())
+
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
 	jobLogModel := models.NewSysJobLogModel(conn, c.CacheRedis).(models.JobLogModel)
 	cron := cronx.NewCronManager(jobLogModel)

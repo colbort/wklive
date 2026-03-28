@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package itick;
+
+import "proto/itick/common.proto";
+
+option go_package = "wklive/proto/itick;itick";
+
+
+message SyncProductsReq {
+}
+
+message SyncProductsResp {
+  itick.RespBase base = 1;
+}
+
+message SyncKlinesReq {
+}
+
+message SyncKlinesResp {
+  itick.RespBase base = 1;
+}
+
+
+// ====================
+// 定时任务
+// ====================
+service ItickTask {
+  // 同步产品列表
+  rpc SyncProducts (SyncProductsReq) returns (SyncProductsResp);
+  // 同步K线数据
+  rpc SyncKlines (SyncKlinesReq) returns (SyncKlinesResp);
+}

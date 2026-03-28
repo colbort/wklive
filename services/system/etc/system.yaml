@@ -17,3 +17,11 @@ Mysql:
 Jwt:
   AccessSecret: "your_access_secret"
   AccessExpire: 3600
+
+
+ItickRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts: 
+    - "192.168.10.116:2379"
+    Key: system.rpc

@@ -1,0 +1,316 @@
+syntax = "proto3";
+
+package itick;
+
+import "proto/itick/common.proto";
+import "proto/itick/model.proto";
+
+option go_package = "wklive/proto/itick;itick";
+
+message AdminCommonResp {
+  itick.RespBase base = 1;
+}
+
+// ====================
+// 产品类型
+// ====================
+
+message CreateProductCategoryReq {
+  itick.ProductType product_type = 1;
+  string product_type_name = 2;
+  bool enabled = 3;
+  bool app_visible = 4;
+  int64 sort = 5;
+  string icon = 6;
+  string remark = 7;
+}
+
+message UpdateProductCategoryReq {
+  int64 id = 1;
+  string product_type_name = 2;
+  bool enabled = 3;
+  bool app_visible = 4;
+  int64 sort = 5;
+  string icon = 6;
+  string remark = 7;
+}
+
+message GetProductCategoryReq {
+  int64 id = 1;
+}
+
+message GetProductCategoryResp {
+  itick.RespBase base = 1;
+  itick.ItickProductCategory data = 2;
+}
+
+message ListProductCategoriesReq {
+  itick.PageReq page = 1;
+  itick.ProductType product_type = 2;
+  int32 status = 3; // 0全部 1启用 2禁用
+}
+
+message ListProductCategoriesResp {
+  itick.RespBase base = 1;
+  repeated itick.ItickProductCategory data = 2;
+}
+
+// ====================
+// 产品
+// ====================
+
+message CreateProductReq {
+  itick.ProductType product_type = 1;
+  string market = 2;
+  string symbol = 3;
+  string code = 4;
+  string name = 5;
+  string display_name = 6;
+  string base_coin = 7;
+  string quote_coin = 8;
+  bool enabled = 9;
+  bool app_visible = 10;
+  int64 sort = 11;
+  string icon = 12;
+  string remark = 13;
+}
+
+message UpdateProductReq {
+  int64 id = 1;
+  string code = 2;
+  string name = 3;
+  string display_name = 4;
+  string base_coin = 5;
+  string quote_coin = 6;
+  bool enabled = 7;
+  bool app_visible = 8;
+  int64 sort = 9;
+  string icon = 10;
+  string remark = 11;
+}
+
+message GetProductReq {
+  int64 id = 1;
+}
+
+message GetProductResp {
+  itick.RespBase base = 1;
+  itick.ItickProduct data = 2;
+}
+
+message ListProductsReq {
+  itick.PageReq page = 1;
+  itick.ProductType product_type = 2;
+  string market = 3;
+  string keyword = 4;
+  int32 status = 5; // 0全部 1启用 2禁用
+  int32 visible_status = 6; // 0全部 1显示 2隐藏
+}
+
+message ListProductsResp {
+  itick.RespBase base = 1;
+  repeated itick.ItickProduct data = 2;
+}
+
+// ====================
+// K线
+// ====================
+
+message GetAdminKlineReq {
+  string market = 1;
+  string symbol = 2;
+  itick.KlineType k_type = 3;
+  int64 end_ts = 4;
+  int64 limit = 5;
+}
+
+message GetAdminKlineResp {
+  itick.RespBase base = 1;
+  repeated itick.Kline data = 2;
+}
+
+// ====================
+// tenant product category
+// ====================
+
+message CreateTenantProductCategoryReq {
+  int64 tenant_id = 1;
+  int64 category_id = 2;
+  bool enabled = 3;
+  bool app_visible = 4;
+  int64 sort = 5;
+  string remark = 6;
+}
+
+message UpdateTenantProductCategoryReq {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  bool enabled = 3;
+  bool app_visible = 4;
+  int64 sort = 5;
+  string remark = 6;
+}
+
+message BatchUpsertTenantProductCategoriesReq {
+  int64 tenant_id = 1;
+  repeated TenantProductCategoryItem data = 2;
+}
+
+message TenantProductCategoryItem {
+  int64 id = 1;
+  int64 category_id = 2;
+  bool enabled = 3;
+  bool app_visible = 4;
+  int64 sort = 5;
+  string remark = 6;
+}
+
+message GetTenantProductCategoryReq {
+  int64 id = 1;
+  int64 tenant_id = 2;
+}
+
+message GetTenantProductCategoryResp {
+  itick.RespBase base = 1;
+  itick.ItickTenantProductCategory data = 2;
+}
+
+message ListTenantProductCategoriesReq {
+  itick.PageReq page = 1;
+  int64 tenant_id = 2;
+  itick.ProductType product_type = 3;
+  int32 status = 4; // 0全部 1启用 2禁用
+  int32 visible_status = 5; // 0全部 1显示 2隐藏
+}
+
+message ListTenantProductCategoriesResp {
+  itick.RespBase base = 1;
+  repeated itick.ItickTenantProductCategory data = 2;
+}
+
+// ====================
+// tenant product
+// ====================
+
+message CreateTenantProductReq {
+  int64 tenant_id = 1;
+  int64 product_id = 2;
+  bool enabled = 3;
+  bool app_visible = 4;
+  int64 sort = 5;
+  string remark = 6;
+}
+
+message UpdateTenantProductReq {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  bool enabled = 3;
+  bool app_visible = 4;
+  int64 sort = 5;
+  string remark = 6;
+}
+
+message BatchUpsertTenantProductsReq {
+  int64 tenant_id = 1;
+  repeated TenantProductItem data = 2;
+}
+
+message TenantProductItem {
+  int64 id = 1;
+  int64 product_id = 2;
+  bool enabled = 3;
+  bool app_visible = 4;
+  int64 sort = 5;
+  string remark = 6;
+}
+
+message GetTenantProductReq {
+  int64 id = 1;
+  int64 tenant_id = 2;
+}
+
+message GetTenantProductResp {
+  itick.RespBase base = 1;
+  itick.ItickTenantProduct data = 2;
+}
+
+message ListTenantProductsReq {
+  itick.PageReq page = 1;
+  int64 tenant_id = 2;
+  itick.ProductType product_type = 3;
+  string market = 4;
+  string keyword = 5;
+  int32 status = 6; // 0全部 1启用 2禁用
+  int32 visible_status = 7; // 0全部 1显示 2隐藏
+}
+
+message ListTenantProductsResp {
+  itick.RespBase base = 1;
+  repeated itick.ItickTenantProduct data = 2;
+}
+
+// ====================
+// tenant init
+// ====================
+
+message InitTenantItickDisplayReq {
+  int64 tenant_id = 1;
+  bool overwrite = 2; // 是否覆盖已有配置
+}
+
+message InitTenantItickDisplayResp {
+  itick.RespBase base = 1;
+  int64 category_count = 2;
+  int64 product_count = 3;
+}
+
+// ====================
+// admin service
+// ====================
+service ItickAdmin {
+  // 产品类型
+  rpc CreateProductCategory(CreateProductCategoryReq) returns (AdminCommonResp);
+  // 更新产品类型仅允许更新名称、状态、排序、图标和备注，产品类型不允许修改
+  rpc UpdateProductCategory(UpdateProductCategoryReq) returns (AdminCommonResp);
+  // 获取产品类型详情
+  rpc GetProductCategory(GetProductCategoryReq) returns (GetProductCategoryResp);
+  // 产品类型列表
+  rpc ListProductCategories(ListProductCategoriesReq) returns (ListProductCategoriesResp);
+
+  // 产品
+  rpc CreateProduct(CreateProductReq) returns (AdminCommonResp);
+  // 更新产品仅允许更新名称、状态、排序、图标和备注，市场、品种、代码不允许修改
+  rpc UpdateProduct(UpdateProductReq) returns (AdminCommonResp);
+  // 获取产品详情
+  rpc GetProduct(GetProductReq) returns (GetProductResp);
+  // 产品列表
+  rpc ListProducts(ListProductsReq) returns (ListProductsResp);
+
+  // K线查看
+  rpc GetAdminKline(GetAdminKlineReq) returns (GetAdminKlineResp);
+
+  // 租户产品类型
+  rpc CreateTenantProductCategory(CreateTenantProductCategoryReq) returns (AdminCommonResp);
+  // 更新租户产品类型仅允许更新状态、排序和备注，关联的产品类型不允许修改
+  rpc UpdateTenantProductCategory(UpdateTenantProductCategoryReq) returns (AdminCommonResp);
+  // 批量更新租户产品类型，已关联的修改状态、排序和备注，未关联的新增，未提交的删除
+  rpc BatchUpsertTenantProductCategories(BatchUpsertTenantProductCategoriesReq) returns (AdminCommonResp);
+  // 获取租户产品类型详情
+  rpc GetTenantProductCategory(GetTenantProductCategoryReq) returns (GetTenantProductCategoryResp);
+  // 租户产品类型列表
+  rpc ListTenantProductCategories(ListTenantProductCategoriesReq) returns (ListTenantProductCategoriesResp);
+
+  // 租户产品
+  rpc CreateTenantProduct(CreateTenantProductReq) returns (AdminCommonResp);
+  // 更新租户产品仅允许更新状态、排序和备注，关联的产品不允许修改
+  rpc UpdateTenantProduct(UpdateTenantProductReq) returns (AdminCommonResp);
+  // 批量更新租户产品，已关联的修改状态、排序和备注，未关联的新增，未提交的删除
+  rpc BatchUpsertTenantProducts(BatchUpsertTenantProductsReq) returns (AdminCommonResp);
+  // 获取租户产品详情
+  rpc GetTenantProduct(GetTenantProductReq) returns (GetTenantProductResp);
+  // 租户产品列表
+  rpc ListTenantProducts(ListTenantProductsReq) returns (ListTenantProductsResp);
+
+  // 初始化租户展示配置
+  rpc InitTenantItickDisplay(InitTenantItickDisplayReq) returns (InitTenantItickDisplayResp);
+}

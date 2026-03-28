@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	cronx.Register("orderJob.autoCancel", autoCancel)
+	cronx.Register("orderJob.autoCancel", "Auto Cancel Order", autoCancel)
 }
 
 func autoCancel(ctx context.Context, job *models.SysJob) error {

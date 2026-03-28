@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	cronx.Register("demoJob.test", testJob)
+	cronx.Register("demoJob.test", "Demo Job Test", testJob)
 }
 
 func testJob(ctx context.Context, job *models.SysJob) error {

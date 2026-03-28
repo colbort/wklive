@@ -1,0 +1,142 @@
+syntax = "proto3";
+
+package itick;
+
+import "proto/itick/common.proto";
+import "proto/itick/model.proto";
+
+option go_package = "wklive/proto/itick;itick";
+
+message AppCommonResp {
+  itick.RespBase base = 1;
+}
+
+// ====================
+// 产品类型 & 产品
+// ====================
+
+message ListVisibleProductCategoriesReq {
+}
+
+message ListVisibleProductCategoriesResp {
+  itick.RespBase base = 1;
+  repeated ItickTenantProductCategory data = 2;
+}
+
+message ListVisibleProductsReq {
+  itick.ProductType product_type = 1;
+  string market = 2;
+  string keyword = 3;
+}
+
+message ListVisibleProductsResp {
+  itick.RespBase base = 1;
+  repeated ItickTenantProduct data = 2;
+}
+
+// ====================
+// K线
+// ====================
+
+message GetKlineReq {
+  string market = 1;
+  string symbol = 2;
+  itick.KlineType k_type = 3;
+  int64 end_ts = 4;
+  int64 limit = 5;
+}
+
+message GetKlineResp {
+  itick.RespBase base = 1;
+  repeated itick.Kline data = 2;
+}
+
+// ====================
+// 实时报价
+// ====================
+
+message GetQuoteReq {
+  string market = 1;
+  string symbol = 2;
+}
+
+message GetQuoteResp {
+  itick.RespBase base = 1;
+  itick.Quote data = 2;
+}
+
+message BatchGetQuoteReq {
+  string market = 1;
+  repeated string data = 2;
+}
+
+message BatchGetQuoteResp {
+  itick.RespBase base = 1;
+  repeated itick.Quote data = 2;
+}
+
+// ====================
+// 深度
+// ====================
+
+message GetDepthReq {
+  string market = 1;
+  string symbol = 2;
+  int32 level = 3;
+}
+
+message GetDepthResp {
+  itick.RespBase base = 1;
+  itick.Depth data = 2;
+}
+
+// ====================
+// 订阅
+// ====================
+
+message SubscribeQuoteReq {
+  string market = 1;
+  repeated string data = 2;
+}
+
+message SubscribeQuoteResp {
+  itick.RespBase base = 1;
+}
+
+message SubscribeDepthReq {
+  string market = 1;
+  repeated string data = 2;
+}
+
+message SubscribeDepthResp {
+  itick.RespBase base = 1;
+}
+
+// ====================
+// app service
+// ====================
+service ItickApp {
+  // 获取允许显示的产品类型
+  rpc ListVisibleProductCategories(ListVisibleProductCategoriesReq) returns (ListVisibleProductCategoriesResp);
+
+  // 获取允许显示的产品
+  rpc ListVisibleProducts(ListVisibleProductsReq) returns (ListVisibleProductsResp);
+
+  // 获取K线
+  rpc GetKline(GetKlineReq) returns (GetKlineResp);
+
+  // 获取最新报价
+  rpc GetQuote(GetQuoteReq) returns (GetQuoteResp);
+
+  // 批量获取最新报价
+  rpc BatchGetQuote(BatchGetQuoteReq) returns (BatchGetQuoteResp);
+
+  // 获取深度
+  rpc GetDepth(GetDepthReq) returns (GetDepthResp);
+
+  // 订阅报价
+  rpc SubscribeQuote(SubscribeQuoteReq) returns (SubscribeQuoteResp);
+
+  // 订阅深度
+  rpc SubscribeDepth(SubscribeDepthReq) returns (SubscribeDepthResp);
+}

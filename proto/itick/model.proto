@@ -1,0 +1,127 @@
+syntax = "proto3";
+
+package itick;
+
+import "proto/itick/common.proto";
+
+option go_package = "wklive/proto/itick;itick";
+
+// 产品类型配置
+message ItickProductCategory {
+  int64 id = 1;
+  itick.ProductType product_type = 2;
+  string product_type_name = 3;
+  bool enabled = 4;
+  bool app_visible = 5;
+  int64 sort = 6;
+  string icon = 7;
+  string remark = 8;
+  int64 create_time = 9;
+  int64 update_time = 10;
+}
+
+// 产品
+message ItickProduct {
+  int64 id = 1;
+  itick.ProductType product_type = 2;
+  string market = 3; // binance / hk / us / forex ...
+  string symbol = 4; // BTCUSDT / AAPL / EURUSD
+  string code = 5; // 第三方原始 code
+  string name = 6;
+  string display_name = 7;
+  string base_coin = 8;
+  string quote_coin = 9;
+  bool enabled = 10;
+  bool app_visible = 11;
+  int64 sort = 12;
+  string icon = 13;
+  string remark = 14;
+  int64 create_time = 15;
+  int64 update_time = 16;
+}
+
+// K线
+message Kline {
+  string market = 1;
+  string symbol = 2;
+  itick.KlineType k_type = 3;
+  int64 ts = 4;
+  double open = 5;
+  double high = 6;
+  double low = 7;
+  double close = 8;
+  double volume = 9;
+  double turnover = 10;
+}
+
+// 深度档位
+message DepthLevel {
+  double price = 1;
+  double volume = 2;
+}
+
+// 深度
+message Depth {
+  string market = 1;
+  string symbol = 2;
+  repeated DepthLevel asks = 3;
+  repeated DepthLevel bids = 4;
+  int64 ts = 5;
+}
+
+// 实时报价
+message Quote {
+  string market = 1;
+  string symbol = 2;
+  double last_price = 3;
+  double open_price = 4;
+  double high_price = 5;
+  double low_price = 6;
+  double prev_close_price = 7;
+  double change_value = 8;
+  double change_rate = 9;
+  double volume = 10;
+  double turnover = 11;
+  int64 ts = 12;
+}
+
+
+message ItickTenantProductCategory {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 category_id = 3;
+  bool enabled = 4;
+  bool app_visible = 5;
+  int64 sort = 6;
+  string remark = 7;
+  int64 create_time = 8;
+  int64 update_time = 9;
+
+  // 冗余返回字段，方便前端展示
+  itick.ProductType product_type = 10;
+  string product_type_name = 11;
+  string icon = 12;
+}
+
+message ItickTenantProduct {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 product_id = 3;
+  bool enabled = 4;
+  bool app_visible = 5;
+  int64 sort = 6;
+  string remark = 7;
+  int64 create_time = 8;
+  int64 update_time = 9;
+
+  // 冗余返回字段，方便前端展示
+  itick.ProductType product_type = 10;
+  string market = 11;
+  string symbol = 12;
+  string code = 13;
+  string name = 14;
+  string display_name = 15;
+  string base_coin = 16;
+  string quote_coin = 17;
+  string icon = 18;
+}
