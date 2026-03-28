@@ -90,6 +90,42 @@
               "test": "test"
           },
           "program": "${workspaceFolder:services}/system/"
+      },
+      {
+          "name": "user",
+          "type": "go",
+          "request": "launch",
+          "mode": "auto",
+          "env": {
+              "DEBUG": "true",
+              "VSCODE": "true",
+              "test": "test"
+          },
+          "program": "${workspaceFolder:services}/user/"
+      },
+      {
+          "name": "payment",
+          "type": "go",
+          "request": "launch",
+          "mode": "auto",
+          "env": {
+              "DEBUG": "true",
+              "VSCODE": "true",
+              "test": "test"
+          },
+          "program": "${workspaceFolder:services}/payment/"
+      },
+      {
+          "name": "itick",
+          "type": "go",
+          "request": "launch",
+          "mode": "auto",
+          "env": {
+              "DEBUG": "true",
+              "VSCODE": "true",
+              "test": "test"
+          },
+          "program": "${workspaceFolder:services}/itick/"
       }
     ],
     "compounds": []

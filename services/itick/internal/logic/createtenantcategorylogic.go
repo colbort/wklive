@@ -9,14 +9,14 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type CreateTenantProductCategoryLogic struct {
+type CreateTenantCategoryLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewCreateTenantProductCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateTenantProductCategoryLogic {
-	return &CreateTenantProductCategoryLogic{
+func NewCreateTenantCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateTenantCategoryLogic {
+	return &CreateTenantCategoryLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
@@ -24,7 +24,7 @@ func NewCreateTenantProductCategoryLogic(ctx context.Context, svcCtx *svc.Servic
 }
 
 // 租户产品类型
-func (l *CreateTenantProductCategoryLogic) CreateTenantProductCategory(in *itick.CreateTenantProductCategoryReq) (*itick.AdminCommonResp, error) {
+func (l *CreateTenantCategoryLogic) CreateTenantCategory(in *itick.CreateTenantCategoryReq) (*itick.AdminCommonResp, error) {
 	// todo: add your logic here and delete this line
 
 	return &itick.AdminCommonResp{}, nil

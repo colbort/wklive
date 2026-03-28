@@ -14,49 +14,49 @@ import (
 )
 
 type (
-	AdminCommonResp                       = itick.AdminCommonResp
-	BatchUpsertTenantProductCategoriesReq = itick.BatchUpsertTenantProductCategoriesReq
-	BatchUpsertTenantProductsReq          = itick.BatchUpsertTenantProductsReq
-	CreateProductCategoryReq              = itick.CreateProductCategoryReq
-	CreateProductReq                      = itick.CreateProductReq
-	CreateTenantProductCategoryReq        = itick.CreateTenantProductCategoryReq
-	CreateTenantProductReq                = itick.CreateTenantProductReq
-	GetAdminKlineReq                      = itick.GetAdminKlineReq
-	GetAdminKlineResp                     = itick.GetAdminKlineResp
-	GetProductCategoryReq                 = itick.GetProductCategoryReq
-	GetProductCategoryResp                = itick.GetProductCategoryResp
-	GetProductReq                         = itick.GetProductReq
-	GetProductResp                        = itick.GetProductResp
-	GetTenantProductCategoryReq           = itick.GetTenantProductCategoryReq
-	GetTenantProductCategoryResp          = itick.GetTenantProductCategoryResp
-	GetTenantProductReq                   = itick.GetTenantProductReq
-	GetTenantProductResp                  = itick.GetTenantProductResp
-	InitTenantItickDisplayReq             = itick.InitTenantItickDisplayReq
-	InitTenantItickDisplayResp            = itick.InitTenantItickDisplayResp
-	ListProductCategoriesReq              = itick.ListProductCategoriesReq
-	ListProductCategoriesResp             = itick.ListProductCategoriesResp
-	ListProductsReq                       = itick.ListProductsReq
-	ListProductsResp                      = itick.ListProductsResp
-	ListTenantProductCategoriesReq        = itick.ListTenantProductCategoriesReq
-	ListTenantProductCategoriesResp       = itick.ListTenantProductCategoriesResp
-	ListTenantProductsReq                 = itick.ListTenantProductsReq
-	ListTenantProductsResp                = itick.ListTenantProductsResp
-	TenantProductCategoryItem             = itick.TenantProductCategoryItem
-	TenantProductItem                     = itick.TenantProductItem
-	UpdateProductCategoryReq              = itick.UpdateProductCategoryReq
-	UpdateProductReq                      = itick.UpdateProductReq
-	UpdateTenantProductCategoryReq        = itick.UpdateTenantProductCategoryReq
-	UpdateTenantProductReq                = itick.UpdateTenantProductReq
+	AdminCommonResp                = itick.AdminCommonResp
+	BatchUpsertTenantCategoriesReq = itick.BatchUpsertTenantCategoriesReq
+	BatchUpsertTenantProductsReq   = itick.BatchUpsertTenantProductsReq
+	CreateCategoryReq              = itick.CreateCategoryReq
+	CreateProductReq               = itick.CreateProductReq
+	CreateTenantCategoryReq        = itick.CreateTenantCategoryReq
+	CreateTenantProductReq         = itick.CreateTenantProductReq
+	GetAdminKlineReq               = itick.GetAdminKlineReq
+	GetAdminKlineResp              = itick.GetAdminKlineResp
+	GetCategoryReq                 = itick.GetCategoryReq
+	GetCategoryResp                = itick.GetCategoryResp
+	GetProductReq                  = itick.GetProductReq
+	GetProductResp                 = itick.GetProductResp
+	GetTenantCategoryReq           = itick.GetTenantCategoryReq
+	GetTenantCategoryResp          = itick.GetTenantCategoryResp
+	GetTenantProductReq            = itick.GetTenantProductReq
+	GetTenantProductResp           = itick.GetTenantProductResp
+	InitTenantItickDisplayReq      = itick.InitTenantItickDisplayReq
+	InitTenantItickDisplayResp     = itick.InitTenantItickDisplayResp
+	ListCategoriesReq              = itick.ListCategoriesReq
+	ListCategoriesResp             = itick.ListCategoriesResp
+	ListProductsReq                = itick.ListProductsReq
+	ListProductsResp               = itick.ListProductsResp
+	ListTenantCategoriesReq        = itick.ListTenantCategoriesReq
+	ListTenantCategoriesResp       = itick.ListTenantCategoriesResp
+	ListTenantProductsReq          = itick.ListTenantProductsReq
+	ListTenantProductsResp         = itick.ListTenantProductsResp
+	TenantCategoryItem             = itick.TenantCategoryItem
+	TenantProductItem              = itick.TenantProductItem
+	UpdateCategoryReq              = itick.UpdateCategoryReq
+	UpdateProductReq               = itick.UpdateProductReq
+	UpdateTenantCategoryReq        = itick.UpdateTenantCategoryReq
+	UpdateTenantProductReq         = itick.UpdateTenantProductReq
 
 	ItickAdmin interface {
 		// 产品类型
-		CreateProductCategory(ctx context.Context, in *CreateProductCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		CreateCategory(ctx context.Context, in *CreateCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 		// 更新产品类型仅允许更新名称、状态、排序、图标和备注，产品类型不允许修改
-		UpdateProductCategory(ctx context.Context, in *UpdateProductCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		UpdateCategory(ctx context.Context, in *UpdateCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 		// 获取产品类型详情
-		GetProductCategory(ctx context.Context, in *GetProductCategoryReq, opts ...grpc.CallOption) (*GetProductCategoryResp, error)
+		GetCategory(ctx context.Context, in *GetCategoryReq, opts ...grpc.CallOption) (*GetCategoryResp, error)
 		// 产品类型列表
-		ListProductCategories(ctx context.Context, in *ListProductCategoriesReq, opts ...grpc.CallOption) (*ListProductCategoriesResp, error)
+		ListCategories(ctx context.Context, in *ListCategoriesReq, opts ...grpc.CallOption) (*ListCategoriesResp, error)
 		// 产品
 		CreateProduct(ctx context.Context, in *CreateProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 		// 更新产品仅允许更新名称、状态、排序、图标和备注，市场、品种、代码不允许修改
@@ -68,15 +68,15 @@ type (
 		// K线查看
 		GetAdminKline(ctx context.Context, in *GetAdminKlineReq, opts ...grpc.CallOption) (*GetAdminKlineResp, error)
 		// 租户产品类型
-		CreateTenantProductCategory(ctx context.Context, in *CreateTenantProductCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		CreateTenantCategory(ctx context.Context, in *CreateTenantCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 		// 更新租户产品类型仅允许更新状态、排序和备注，关联的产品类型不允许修改
-		UpdateTenantProductCategory(ctx context.Context, in *UpdateTenantProductCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		UpdateTenantCategory(ctx context.Context, in *UpdateTenantCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 		// 批量更新租户产品类型，已关联的修改状态、排序和备注，未关联的新增，未提交的删除
-		BatchUpsertTenantProductCategories(ctx context.Context, in *BatchUpsertTenantProductCategoriesReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		BatchUpsertTenantCategories(ctx context.Context, in *BatchUpsertTenantCategoriesReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 		// 获取租户产品类型详情
-		GetTenantProductCategory(ctx context.Context, in *GetTenantProductCategoryReq, opts ...grpc.CallOption) (*GetTenantProductCategoryResp, error)
+		GetTenantCategory(ctx context.Context, in *GetTenantCategoryReq, opts ...grpc.CallOption) (*GetTenantCategoryResp, error)
 		// 租户产品类型列表
-		ListTenantProductCategories(ctx context.Context, in *ListTenantProductCategoriesReq, opts ...grpc.CallOption) (*ListTenantProductCategoriesResp, error)
+		ListTenantCategories(ctx context.Context, in *ListTenantCategoriesReq, opts ...grpc.CallOption) (*ListTenantCategoriesResp, error)
 		// 租户产品
 		CreateTenantProduct(ctx context.Context, in *CreateTenantProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 		// 更新租户产品仅允许更新状态、排序和备注，关联的产品不允许修改
@@ -103,27 +103,27 @@ func NewItickAdmin(cli zrpc.Client) ItickAdmin {
 }
 
 // 产品类型
-func (m *defaultItickAdmin) CreateProductCategory(ctx context.Context, in *CreateProductCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultItickAdmin) CreateCategory(ctx context.Context, in *CreateCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
-	return client.CreateProductCategory(ctx, in, opts...)
+	return client.CreateCategory(ctx, in, opts...)
 }
 
 // 更新产品类型仅允许更新名称、状态、排序、图标和备注，产品类型不允许修改
-func (m *defaultItickAdmin) UpdateProductCategory(ctx context.Context, in *UpdateProductCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultItickAdmin) UpdateCategory(ctx context.Context, in *UpdateCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
-	return client.UpdateProductCategory(ctx, in, opts...)
+	return client.UpdateCategory(ctx, in, opts...)
 }
 
 // 获取产品类型详情
-func (m *defaultItickAdmin) GetProductCategory(ctx context.Context, in *GetProductCategoryReq, opts ...grpc.CallOption) (*GetProductCategoryResp, error) {
+func (m *defaultItickAdmin) GetCategory(ctx context.Context, in *GetCategoryReq, opts ...grpc.CallOption) (*GetCategoryResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
-	return client.GetProductCategory(ctx, in, opts...)
+	return client.GetCategory(ctx, in, opts...)
 }
 
 // 产品类型列表
-func (m *defaultItickAdmin) ListProductCategories(ctx context.Context, in *ListProductCategoriesReq, opts ...grpc.CallOption) (*ListProductCategoriesResp, error) {
+func (m *defaultItickAdmin) ListCategories(ctx context.Context, in *ListCategoriesReq, opts ...grpc.CallOption) (*ListCategoriesResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
-	return client.ListProductCategories(ctx, in, opts...)
+	return client.ListCategories(ctx, in, opts...)
 }
 
 // 产品
@@ -157,33 +157,33 @@ func (m *defaultItickAdmin) GetAdminKline(ctx context.Context, in *GetAdminKline
 }
 
 // 租户产品类型
-func (m *defaultItickAdmin) CreateTenantProductCategory(ctx context.Context, in *CreateTenantProductCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultItickAdmin) CreateTenantCategory(ctx context.Context, in *CreateTenantCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
-	return client.CreateTenantProductCategory(ctx, in, opts...)
+	return client.CreateTenantCategory(ctx, in, opts...)
 }
 
 // 更新租户产品类型仅允许更新状态、排序和备注，关联的产品类型不允许修改
-func (m *defaultItickAdmin) UpdateTenantProductCategory(ctx context.Context, in *UpdateTenantProductCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultItickAdmin) UpdateTenantCategory(ctx context.Context, in *UpdateTenantCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
-	return client.UpdateTenantProductCategory(ctx, in, opts...)
+	return client.UpdateTenantCategory(ctx, in, opts...)
 }
 
 // 批量更新租户产品类型，已关联的修改状态、排序和备注，未关联的新增，未提交的删除
-func (m *defaultItickAdmin) BatchUpsertTenantProductCategories(ctx context.Context, in *BatchUpsertTenantProductCategoriesReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (m *defaultItickAdmin) BatchUpsertTenantCategories(ctx context.Context, in *BatchUpsertTenantCategoriesReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
-	return client.BatchUpsertTenantProductCategories(ctx, in, opts...)
+	return client.BatchUpsertTenantCategories(ctx, in, opts...)
 }
 
 // 获取租户产品类型详情
-func (m *defaultItickAdmin) GetTenantProductCategory(ctx context.Context, in *GetTenantProductCategoryReq, opts ...grpc.CallOption) (*GetTenantProductCategoryResp, error) {
+func (m *defaultItickAdmin) GetTenantCategory(ctx context.Context, in *GetTenantCategoryReq, opts ...grpc.CallOption) (*GetTenantCategoryResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
-	return client.GetTenantProductCategory(ctx, in, opts...)
+	return client.GetTenantCategory(ctx, in, opts...)
 }
 
 // 租户产品类型列表
-func (m *defaultItickAdmin) ListTenantProductCategories(ctx context.Context, in *ListTenantProductCategoriesReq, opts ...grpc.CallOption) (*ListTenantProductCategoriesResp, error) {
+func (m *defaultItickAdmin) ListTenantCategories(ctx context.Context, in *ListTenantCategoriesReq, opts ...grpc.CallOption) (*ListTenantCategoriesResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
-	return client.ListTenantProductCategories(ctx, in, opts...)
+	return client.ListTenantCategories(ctx, in, opts...)
 }
 
 // 租户产品

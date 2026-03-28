@@ -27,6 +27,7 @@ const (
 	SysConfigType_UNKNOWN        SysConfigType = 0
 	SysConfigType_SYSTEM_CORE    SysConfigType = 1 // 系统配置
 	SysConfigType_OBJECT_STORAGE SysConfigType = 2 // 对象存储配置
+	SysConfigType_ITICK_CONFIG   SysConfigType = 3 // ITICK配置
 )
 
 // Enum value maps for SysConfigType.
@@ -35,11 +36,13 @@ var (
 		0: "UNKNOWN",
 		1: "SYSTEM_CORE",
 		2: "OBJECT_STORAGE",
+		3: "ITICK_CONFIG",
 	}
 	SysConfigType_value = map[string]int32{
 		"UNKNOWN":        0,
 		"SYSTEM_CORE":    1,
 		"OBJECT_STORAGE": 2,
+		"ITICK_CONFIG":   3,
 	}
 )
 
@@ -431,6 +434,66 @@ func (x *ObjectStorageConfig) GetOssDomain() string {
 	return ""
 }
 
+type ItickConfig struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ApiUrl        string                 `protobuf:"bytes,1,opt,name=api_url,json=apiUrl,proto3" json:"api_url,omitempty"`       // ITICK API地址
+	ApiToken      string                 `protobuf:"bytes,2,opt,name=api_token,json=apiToken,proto3" json:"api_token,omitempty"` // ITICK API密钥
+	WsUrl         string                 `protobuf:"bytes,3,opt,name=ws_url,json=wsUrl,proto3" json:"ws_url,omitempty"`          // ITICK WebSocket地址
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ItickConfig) Reset() {
+	*x = ItickConfig{}
+	mi := &file_proto_system_config_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ItickConfig) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ItickConfig) ProtoMessage() {}
+
+func (x *ItickConfig) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_system_config_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ItickConfig.ProtoReflect.Descriptor instead.
+func (*ItickConfig) Descriptor() ([]byte, []int) {
+	return file_proto_system_config_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *ItickConfig) GetApiUrl() string {
+	if x != nil {
+		return x.ApiUrl
+	}
+	return ""
+}
+
+func (x *ItickConfig) GetApiToken() string {
+	if x != nil {
+		return x.ApiToken
+	}
+	return ""
+}
+
+func (x *ItickConfig) GetWsUrl() string {
+	if x != nil {
+		return x.WsUrl
+	}
+	return ""
+}
+
 var File_proto_system_config_proto protoreflect.FileDescriptor
 
 const file_proto_system_config_proto_rawDesc = "" +
@@ -473,11 +536,16 @@ const file_proto_system_config_proto_rawDesc = "" +
 	"\x05minio\x18\x03 \x01(\v2\x13.system.MinioConfigR\x05minio\x12\x19\n" +
 	"\boss_type\x18\x04 \x01(\x03R\aossType\x12\x1d\n" +
 	"\n" +
-	"oss_domain\x18\x05 \x01(\tR\tossDomain*A\n" +
+	"oss_domain\x18\x05 \x01(\tR\tossDomain\"Z\n" +
+	"\vItickConfig\x12\x17\n" +
+	"\aapi_url\x18\x01 \x01(\tR\x06apiUrl\x12\x1b\n" +
+	"\tapi_token\x18\x02 \x01(\tR\bapiToken\x12\x15\n" +
+	"\x06ws_url\x18\x03 \x01(\tR\x05wsUrl*S\n" +
 	"\rSysConfigType\x12\v\n" +
 	"\aUNKNOWN\x10\x00\x12\x0f\n" +
 	"\vSYSTEM_CORE\x10\x01\x12\x12\n" +
-	"\x0eOBJECT_STORAGE\x10\x02B\x1cZ\x1awklive/proto/system;systemb\x06proto3"
+	"\x0eOBJECT_STORAGE\x10\x02\x12\x10\n" +
+	"\fITICK_CONFIG\x10\x03B\x1cZ\x1awklive/proto/system;systemb\x06proto3"
 
 var (
 	file_proto_system_config_proto_rawDescOnce sync.Once
@@ -492,7 +560,7 @@ func file_proto_system_config_proto_rawDescGZIP() []byte {
 }
 
 var file_proto_system_config_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_proto_system_config_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_proto_system_config_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_proto_system_config_proto_goTypes = []any{
 	(SysConfigType)(0),          // 0: system.SysConfigType
 	(*SystemCore)(nil),          // 1: system.SystemCore
@@ -500,6 +568,7 @@ var file_proto_system_config_proto_goTypes = []any{
 	(*TencentCosConfig)(nil),    // 3: system.TencentCosConfig
 	(*MinioConfig)(nil),         // 4: system.MinioConfig
 	(*ObjectStorageConfig)(nil), // 5: system.ObjectStorageConfig
+	(*ItickConfig)(nil),         // 6: system.ItickConfig
 }
 var file_proto_system_config_proto_depIdxs = []int32{
 	2, // 0: system.ObjectStorageConfig.aliyun_oss:type_name -> system.AliyunOssConfig
@@ -523,7 +592,7 @@ func file_proto_system_config_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_system_config_proto_rawDesc), len(file_proto_system_config_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   5,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

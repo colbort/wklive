@@ -1,7 +1,8 @@
-CREATE TABLE `t_itick_product_category` (
+CREATE TABLE `t_itick_category` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `product_type` tinyint NOT NULL DEFAULT '0' COMMENT '产品类型: 1-forex 2-crypto 3-stock 4-future 5-indices 6-fund',
-  `product_type_name` varchar(64) NOT NULL DEFAULT '' COMMENT '产品类型名称',
+  `category_type` tinyint NOT NULL DEFAULT '0' COMMENT '产品类型: 1-forex 2-crypto 3-stock 4-future 5-indices 6-fund',
+  `category_type_name` varchar(64) NOT NULL DEFAULT '' COMMENT '产品类型名称',
+  `category_code` varchar(64) NOT NULL DEFAULT '' COMMENT '产品类型标识, 如 forex/crypto/stock/future/indices/fund',
   `enabled` tinyint NOT NULL DEFAULT '1' COMMENT '是否启用: 0-否 1-是',
   `app_visible` tinyint NOT NULL DEFAULT '1' COMMENT 'APP是否可见: 0-否 1-是',
   `sort` int NOT NULL DEFAULT '0' COMMENT '排序值,越小越靠前',
@@ -10,14 +11,22 @@ CREATE TABLE `t_itick_product_category` (
   `create_time` bigint NOT NULL DEFAULT '0' COMMENT '创建时间(毫秒时间戳)',
   `update_time` bigint NOT NULL DEFAULT '0' COMMENT '更新时间(毫秒时间戳)',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_product_type` (`product_type`),
+  UNIQUE KEY `uk_category_type` (`category_type`),
   KEY `idx_enabled_visible_sort` (`enabled`, `app_visible`, `sort`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='itick产品类型表';
+
+INSERT INTO `t_itick_category` (`id`, `category_type`, `category_type_name`, `category_code`, `enabled`, `app_visible`, `sort`, `icon`, `remark`, `create_time`, `update_time`) VALUES
+(1, 1, '外汇', 'forex', 1, 1, 1, '', '', 0, 0),
+(2, 2, '加密货币', 'crypto', 1, 1, 2, '', '', 0, 0),
+(3, 3, '股票', 'stock', 1, 1, 3, '', '', 0, 0),
+(4, 4, '期货', 'future', 1, 1, 4, '', '', 0, 0),
+(5, 5, '指数', 'indices', 1, 1, 5, '', '', 0, 0),
+(6, 6, '基金', 'fund', 1, 1, 6, '', '', 0, 0);
 
 
 CREATE TABLE `t_itick_product` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `product_type` tinyint NOT NULL DEFAULT '0' COMMENT '产品类型: 1-forex 2-crypto 3-stock 4-future 5-indices 6-fund',
+  `category_type` tinyint NOT NULL DEFAULT '0' COMMENT '产品类型: 1-forex 2-crypto 3-stock 4-future 5-indices 6-fund',
   `market` varchar(64) NOT NULL DEFAULT '' COMMENT '市场/来源, 如 binance/hk/us/forex',
   `symbol` varchar(64) NOT NULL DEFAULT '' COMMENT '产品标识, 如 BTCUSDT/AAPL/EURUSD',
   `code` varchar(128) NOT NULL DEFAULT '' COMMENT '第三方原始code',
@@ -33,18 +42,18 @@ CREATE TABLE `t_itick_product` (
   `create_time` bigint NOT NULL DEFAULT '0' COMMENT '创建时间(毫秒时间戳)',
   `update_time` bigint NOT NULL DEFAULT '0' COMMENT '更新时间(毫秒时间戳)',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_type_market_symbol` (`product_type`, `market`, `symbol`),
-  KEY `idx_product_type` (`product_type`),
+  UNIQUE KEY `uk_type_market_symbol` (`category_type`, `market`, `symbol`),
+  KEY `idx_category_type` (`category_type`),
   KEY `idx_market` (`market`),
   KEY `idx_enabled_visible_sort` (`enabled`, `app_visible`, `sort`),
-  KEY `idx_keyword_query` (`product_type`, `market`, `name`, `display_name`)
+  KEY `idx_keyword_query` (`category_type`, `market`, `name`, `display_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='itick产品表';
 
 
-CREATE TABLE `t_itick_tenant_product_category` (
+CREATE TABLE `t_itick_tenant_category` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` bigint NOT NULL DEFAULT '0' COMMENT '租户ID',
-  `category_id` bigint NOT NULL DEFAULT '0' COMMENT '产品类型ID, 对应 itick_product_category.id',
+  `category_id` bigint NOT NULL DEFAULT '0' COMMENT '产品类型ID, 对应 itick_category.id',
   `enabled` tinyint NOT NULL DEFAULT '1' COMMENT '是否启用: 0-否 1-是',
   `app_visible` tinyint NOT NULL DEFAULT '1' COMMENT 'APP是否可见: 0-否 1-是',
   `sort` int NOT NULL DEFAULT '0' COMMENT '租户排序, 越小越靠前',

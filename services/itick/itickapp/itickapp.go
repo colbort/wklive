@@ -14,27 +14,30 @@ import (
 )
 
 type (
-	AppCommonResp                    = itick.AppCommonResp
-	BatchGetQuoteReq                 = itick.BatchGetQuoteReq
-	BatchGetQuoteResp                = itick.BatchGetQuoteResp
-	GetDepthReq                      = itick.GetDepthReq
-	GetDepthResp                     = itick.GetDepthResp
-	GetKlineReq                      = itick.GetKlineReq
-	GetKlineResp                     = itick.GetKlineResp
-	GetQuoteReq                      = itick.GetQuoteReq
-	GetQuoteResp                     = itick.GetQuoteResp
-	ListVisibleProductCategoriesReq  = itick.ListVisibleProductCategoriesReq
-	ListVisibleProductCategoriesResp = itick.ListVisibleProductCategoriesResp
-	ListVisibleProductsReq           = itick.ListVisibleProductsReq
-	ListVisibleProductsResp          = itick.ListVisibleProductsResp
-	SubscribeDepthReq                = itick.SubscribeDepthReq
-	SubscribeDepthResp               = itick.SubscribeDepthResp
-	SubscribeQuoteReq                = itick.SubscribeQuoteReq
-	SubscribeQuoteResp               = itick.SubscribeQuoteResp
+	AppCommonResp             = itick.AppCommonResp
+	BatchGetQuoteReq          = itick.BatchGetQuoteReq
+	BatchGetQuoteResp         = itick.BatchGetQuoteResp
+	GetDepthReq               = itick.GetDepthReq
+	GetDepthResp              = itick.GetDepthResp
+	GetKlineReq               = itick.GetKlineReq
+	GetKlineResp              = itick.GetKlineResp
+	GetQuoteReq               = itick.GetQuoteReq
+	GetQuoteResp              = itick.GetQuoteResp
+	ListVisibleCategoriesReq  = itick.ListVisibleCategoriesReq
+	ListVisibleCategoriesResp = itick.ListVisibleCategoriesResp
+	ListVisibleProductsReq    = itick.ListVisibleProductsReq
+	ListVisibleProductsResp   = itick.ListVisibleProductsResp
+	PushReply                 = itick.PushReply
+	SubscribeDepthReq         = itick.SubscribeDepthReq
+	SubscribeDepthResp        = itick.SubscribeDepthResp
+	SubscribeQuoteReq         = itick.SubscribeQuoteReq
+	SubscribeQuoteResp        = itick.SubscribeQuoteResp
+	SubscribeRequest          = itick.SubscribeRequest
+	SubscribeTopic            = itick.SubscribeTopic
 
 	ItickApp interface {
 		// 获取允许显示的产品类型
-		ListVisibleProductCategories(ctx context.Context, in *ListVisibleProductCategoriesReq, opts ...grpc.CallOption) (*ListVisibleProductCategoriesResp, error)
+		ListVisibleCategories(ctx context.Context, in *ListVisibleCategoriesReq, opts ...grpc.CallOption) (*ListVisibleCategoriesResp, error)
 		// 获取允许显示的产品
 		ListVisibleProducts(ctx context.Context, in *ListVisibleProductsReq, opts ...grpc.CallOption) (*ListVisibleProductsResp, error)
 		// 获取K线
@@ -49,6 +52,8 @@ type (
 		SubscribeQuote(ctx context.Context, in *SubscribeQuoteReq, opts ...grpc.CallOption) (*SubscribeQuoteResp, error)
 		// 订阅深度
 		SubscribeDepth(ctx context.Context, in *SubscribeDepthReq, opts ...grpc.CallOption) (*SubscribeDepthResp, error)
+		// 订阅数据流
+		SubscribeStream(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (itick.ItickApp_SubscribeStreamClient, error)
 	}
 
 	defaultItickApp struct {
@@ -63,9 +68,9 @@ func NewItickApp(cli zrpc.Client) ItickApp {
 }
 
 // 获取允许显示的产品类型
-func (m *defaultItickApp) ListVisibleProductCategories(ctx context.Context, in *ListVisibleProductCategoriesReq, opts ...grpc.CallOption) (*ListVisibleProductCategoriesResp, error) {
+func (m *defaultItickApp) ListVisibleCategories(ctx context.Context, in *ListVisibleCategoriesReq, opts ...grpc.CallOption) (*ListVisibleCategoriesResp, error) {
 	client := itick.NewItickAppClient(m.cli.Conn())
-	return client.ListVisibleProductCategories(ctx, in, opts...)
+	return client.ListVisibleCategories(ctx, in, opts...)
 }
 
 // 获取允许显示的产品
@@ -108,4 +113,10 @@ func (m *defaultItickApp) SubscribeQuote(ctx context.Context, in *SubscribeQuote
 func (m *defaultItickApp) SubscribeDepth(ctx context.Context, in *SubscribeDepthReq, opts ...grpc.CallOption) (*SubscribeDepthResp, error) {
 	client := itick.NewItickAppClient(m.cli.Conn())
 	return client.SubscribeDepth(ctx, in, opts...)
+}
+
+// 订阅数据流
+func (m *defaultItickApp) SubscribeStream(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (itick.ItickApp_SubscribeStreamClient, error) {
+	client := itick.NewItickAppClient(m.cli.Conn())
+	return client.SubscribeStream(ctx, in, opts...)
 }

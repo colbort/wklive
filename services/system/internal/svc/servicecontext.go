@@ -33,6 +33,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
 	jobLogModel := models.NewSysJobLogModel(conn, c.CacheRedis).(models.JobLogModel)
+	global.ConfigModel = models.NewSysConfigModel(conn, c.CacheRedis).(models.ConfigModel)
 	cron := cronx.NewCronManager(jobLogModel)
 	cron.LoadRegisteredHandlers()
 	cron.StartScheduler()
@@ -46,7 +47,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		RoleMenuModel: models.NewSysRoleMenuModel(conn, c.CacheRedis).(models.RoleMenuModel),
 		LoginLogModel: models.NewSysLoginLogModel(conn, c.CacheRedis).(models.LoginLogModel),
 		OpLogModel:    models.NewSysOpLogModel(conn, c.CacheRedis).(models.OpLogModel),
-		ConfigModel:   models.NewSysConfigModel(conn, c.CacheRedis).(models.ConfigModel),
+		ConfigModel:   global.ConfigModel,
 		JobModel:      models.NewSysJobModel(conn, c.CacheRedis).(models.JobModel),
 		JobLogModel:   jobLogModel,
 		TenantMode:    models.NewSysTenantModel(conn, c.CacheRedis).(models.TenantModel),

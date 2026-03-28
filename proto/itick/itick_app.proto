@@ -15,16 +15,16 @@ message AppCommonResp {
 // 产品类型 & 产品
 // ====================
 
-message ListVisibleProductCategoriesReq {
+message ListVisibleCategoriesReq {
 }
 
-message ListVisibleProductCategoriesResp {
+message ListVisibleCategoriesResp {
   itick.RespBase base = 1;
-  repeated ItickTenantProductCategory data = 2;
+  repeated ItickTenantCategory data = 2;
 }
 
 message ListVisibleProductsReq {
-  itick.ProductType product_type = 1;
+  itick.CategoryType category_type = 1;
   string market = 2;
   string keyword = 3;
 }
@@ -112,12 +112,33 @@ message SubscribeDepthResp {
   itick.RespBase base = 1;
 }
 
+message SubscribeRequest {
+  repeated SubscribeTopic topics = 1;
+}
+
+message SubscribeTopic {
+  string topic = 1; // quote depth tick kline
+  string market = 2; // crypto forex indices stock future fund
+  string symbol = 3; // BTCUSDT / EURUSD / ...
+  string region = 4; // BA / US / HK ...
+  string interval = 5; // 1m 5m 1h 1d
+}
+
+message PushReply {
+  string topic = 1;
+  string market = 2;
+  string symbol = 3;
+  string region = 4;
+  string interval = 5;
+  bytes payload = 6;
+}
+
 // ====================
 // app service
 // ====================
 service ItickApp {
   // 获取允许显示的产品类型
-  rpc ListVisibleProductCategories(ListVisibleProductCategoriesReq) returns (ListVisibleProductCategoriesResp);
+  rpc ListVisibleCategories(ListVisibleCategoriesReq) returns (ListVisibleCategoriesResp);
 
   // 获取允许显示的产品
   rpc ListVisibleProducts(ListVisibleProductsReq) returns (ListVisibleProductsResp);
@@ -139,4 +160,7 @@ service ItickApp {
 
   // 订阅深度
   rpc SubscribeDepth(SubscribeDepthReq) returns (SubscribeDepthResp);
+
+  // 订阅数据流
+  rpc SubscribeStream(SubscribeRequest) returns (stream PushReply);
 }

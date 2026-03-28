@@ -22,36 +22,36 @@ const (
 )
 
 // 产品类型配置
-type ItickProductCategory struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	ProductType     ProductType            `protobuf:"varint,2,opt,name=product_type,json=productType,proto3,enum=itick.ProductType" json:"product_type,omitempty"`
-	ProductTypeName string                 `protobuf:"bytes,3,opt,name=product_type_name,json=productTypeName,proto3" json:"product_type_name,omitempty"`
-	Enabled         bool                   `protobuf:"varint,4,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	AppVisible      bool                   `protobuf:"varint,5,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
-	Sort            int64                  `protobuf:"varint,6,opt,name=sort,proto3" json:"sort,omitempty"`
-	Icon            string                 `protobuf:"bytes,7,opt,name=icon,proto3" json:"icon,omitempty"`
-	Remark          string                 `protobuf:"bytes,8,opt,name=remark,proto3" json:"remark,omitempty"`
-	CreateTime      int64                  `protobuf:"varint,9,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	UpdateTime      int64                  `protobuf:"varint,10,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+type ItickCategory struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	CategoryType     CategoryType           `protobuf:"varint,2,opt,name=category_type,json=categoryType,proto3,enum=itick.CategoryType" json:"category_type,omitempty"`
+	CategoryTypeName string                 `protobuf:"bytes,3,opt,name=category_type_name,json=categoryTypeName,proto3" json:"category_type_name,omitempty"`
+	Enabled          bool                   `protobuf:"varint,4,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	AppVisible       bool                   `protobuf:"varint,5,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
+	Sort             int64                  `protobuf:"varint,6,opt,name=sort,proto3" json:"sort,omitempty"`
+	Icon             string                 `protobuf:"bytes,7,opt,name=icon,proto3" json:"icon,omitempty"`
+	Remark           string                 `protobuf:"bytes,8,opt,name=remark,proto3" json:"remark,omitempty"`
+	CreateTime       int64                  `protobuf:"varint,9,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	UpdateTime       int64                  `protobuf:"varint,10,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
-func (x *ItickProductCategory) Reset() {
-	*x = ItickProductCategory{}
+func (x *ItickCategory) Reset() {
+	*x = ItickCategory{}
 	mi := &file_proto_itick_model_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ItickProductCategory) String() string {
+func (x *ItickCategory) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ItickProductCategory) ProtoMessage() {}
+func (*ItickCategory) ProtoMessage() {}
 
-func (x *ItickProductCategory) ProtoReflect() protoreflect.Message {
+func (x *ItickCategory) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_itick_model_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -63,75 +63,75 @@ func (x *ItickProductCategory) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ItickProductCategory.ProtoReflect.Descriptor instead.
-func (*ItickProductCategory) Descriptor() ([]byte, []int) {
+// Deprecated: Use ItickCategory.ProtoReflect.Descriptor instead.
+func (*ItickCategory) Descriptor() ([]byte, []int) {
 	return file_proto_itick_model_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *ItickProductCategory) GetId() int64 {
+func (x *ItickCategory) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *ItickProductCategory) GetProductType() ProductType {
+func (x *ItickCategory) GetCategoryType() CategoryType {
 	if x != nil {
-		return x.ProductType
+		return x.CategoryType
 	}
-	return ProductType_PRODUCT_TYPE_UNKNOWN
+	return CategoryType_CATEGORY_TYPE_UNKNOWN
 }
 
-func (x *ItickProductCategory) GetProductTypeName() string {
+func (x *ItickCategory) GetCategoryTypeName() string {
 	if x != nil {
-		return x.ProductTypeName
+		return x.CategoryTypeName
 	}
 	return ""
 }
 
-func (x *ItickProductCategory) GetEnabled() bool {
+func (x *ItickCategory) GetEnabled() bool {
 	if x != nil {
 		return x.Enabled
 	}
 	return false
 }
 
-func (x *ItickProductCategory) GetAppVisible() bool {
+func (x *ItickCategory) GetAppVisible() bool {
 	if x != nil {
 		return x.AppVisible
 	}
 	return false
 }
 
-func (x *ItickProductCategory) GetSort() int64 {
+func (x *ItickCategory) GetSort() int64 {
 	if x != nil {
 		return x.Sort
 	}
 	return 0
 }
 
-func (x *ItickProductCategory) GetIcon() string {
+func (x *ItickCategory) GetIcon() string {
 	if x != nil {
 		return x.Icon
 	}
 	return ""
 }
 
-func (x *ItickProductCategory) GetRemark() string {
+func (x *ItickCategory) GetRemark() string {
 	if x != nil {
 		return x.Remark
 	}
 	return ""
 }
 
-func (x *ItickProductCategory) GetCreateTime() int64 {
+func (x *ItickCategory) GetCreateTime() int64 {
 	if x != nil {
 		return x.CreateTime
 	}
 	return 0
 }
 
-func (x *ItickProductCategory) GetUpdateTime() int64 {
+func (x *ItickCategory) GetUpdateTime() int64 {
 	if x != nil {
 		return x.UpdateTime
 	}
@@ -142,7 +142,7 @@ func (x *ItickProductCategory) GetUpdateTime() int64 {
 type ItickProduct struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	ProductType   ProductType            `protobuf:"varint,2,opt,name=product_type,json=productType,proto3,enum=itick.ProductType" json:"product_type,omitempty"`
+	CategoryType  CategoryType           `protobuf:"varint,2,opt,name=category_type,json=categoryType,proto3,enum=itick.CategoryType" json:"category_type,omitempty"`
 	Market        string                 `protobuf:"bytes,3,opt,name=market,proto3" json:"market,omitempty"` // binance / hk / us / forex ...
 	Symbol        string                 `protobuf:"bytes,4,opt,name=symbol,proto3" json:"symbol,omitempty"` // BTCUSDT / AAPL / EURUSD
 	Code          string                 `protobuf:"bytes,5,opt,name=code,proto3" json:"code,omitempty"`     // 第三方原始 code
@@ -198,11 +198,11 @@ func (x *ItickProduct) GetId() int64 {
 	return 0
 }
 
-func (x *ItickProduct) GetProductType() ProductType {
+func (x *ItickProduct) GetCategoryType() CategoryType {
 	if x != nil {
-		return x.ProductType
+		return x.CategoryType
 	}
-	return ProductType_PRODUCT_TYPE_UNKNOWN
+	return CategoryType_CATEGORY_TYPE_UNKNOWN
 }
 
 func (x *ItickProduct) GetMarket() string {
@@ -683,7 +683,7 @@ func (x *Quote) GetTs() int64 {
 	return 0
 }
 
-type ItickTenantProductCategory struct {
+type ItickTenantCategory struct {
 	state      protoimpl.MessageState `protogen:"open.v1"`
 	Id         int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	TenantId   int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
@@ -695,27 +695,27 @@ type ItickTenantProductCategory struct {
 	CreateTime int64                  `protobuf:"varint,8,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
 	UpdateTime int64                  `protobuf:"varint,9,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
 	// 冗余返回字段，方便前端展示
-	ProductType     ProductType `protobuf:"varint,10,opt,name=product_type,json=productType,proto3,enum=itick.ProductType" json:"product_type,omitempty"`
-	ProductTypeName string      `protobuf:"bytes,11,opt,name=product_type_name,json=productTypeName,proto3" json:"product_type_name,omitempty"`
-	Icon            string      `protobuf:"bytes,12,opt,name=icon,proto3" json:"icon,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	CategoryType     CategoryType `protobuf:"varint,10,opt,name=category_type,json=categoryType,proto3,enum=itick.CategoryType" json:"category_type,omitempty"`
+	CategoryTypeName string       `protobuf:"bytes,11,opt,name=category_type_name,json=categoryTypeName,proto3" json:"category_type_name,omitempty"`
+	Icon             string       `protobuf:"bytes,12,opt,name=icon,proto3" json:"icon,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
-func (x *ItickTenantProductCategory) Reset() {
-	*x = ItickTenantProductCategory{}
+func (x *ItickTenantCategory) Reset() {
+	*x = ItickTenantCategory{}
 	mi := &file_proto_itick_model_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ItickTenantProductCategory) String() string {
+func (x *ItickTenantCategory) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ItickTenantProductCategory) ProtoMessage() {}
+func (*ItickTenantCategory) ProtoMessage() {}
 
-func (x *ItickTenantProductCategory) ProtoReflect() protoreflect.Message {
+func (x *ItickTenantCategory) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_itick_model_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -727,89 +727,89 @@ func (x *ItickTenantProductCategory) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ItickTenantProductCategory.ProtoReflect.Descriptor instead.
-func (*ItickTenantProductCategory) Descriptor() ([]byte, []int) {
+// Deprecated: Use ItickTenantCategory.ProtoReflect.Descriptor instead.
+func (*ItickTenantCategory) Descriptor() ([]byte, []int) {
 	return file_proto_itick_model_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *ItickTenantProductCategory) GetId() int64 {
+func (x *ItickTenantCategory) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *ItickTenantProductCategory) GetTenantId() int64 {
+func (x *ItickTenantCategory) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *ItickTenantProductCategory) GetCategoryId() int64 {
+func (x *ItickTenantCategory) GetCategoryId() int64 {
 	if x != nil {
 		return x.CategoryId
 	}
 	return 0
 }
 
-func (x *ItickTenantProductCategory) GetEnabled() bool {
+func (x *ItickTenantCategory) GetEnabled() bool {
 	if x != nil {
 		return x.Enabled
 	}
 	return false
 }
 
-func (x *ItickTenantProductCategory) GetAppVisible() bool {
+func (x *ItickTenantCategory) GetAppVisible() bool {
 	if x != nil {
 		return x.AppVisible
 	}
 	return false
 }
 
-func (x *ItickTenantProductCategory) GetSort() int64 {
+func (x *ItickTenantCategory) GetSort() int64 {
 	if x != nil {
 		return x.Sort
 	}
 	return 0
 }
 
-func (x *ItickTenantProductCategory) GetRemark() string {
+func (x *ItickTenantCategory) GetRemark() string {
 	if x != nil {
 		return x.Remark
 	}
 	return ""
 }
 
-func (x *ItickTenantProductCategory) GetCreateTime() int64 {
+func (x *ItickTenantCategory) GetCreateTime() int64 {
 	if x != nil {
 		return x.CreateTime
 	}
 	return 0
 }
 
-func (x *ItickTenantProductCategory) GetUpdateTime() int64 {
+func (x *ItickTenantCategory) GetUpdateTime() int64 {
 	if x != nil {
 		return x.UpdateTime
 	}
 	return 0
 }
 
-func (x *ItickTenantProductCategory) GetProductType() ProductType {
+func (x *ItickTenantCategory) GetCategoryType() CategoryType {
 	if x != nil {
-		return x.ProductType
+		return x.CategoryType
 	}
-	return ProductType_PRODUCT_TYPE_UNKNOWN
+	return CategoryType_CATEGORY_TYPE_UNKNOWN
 }
 
-func (x *ItickTenantProductCategory) GetProductTypeName() string {
+func (x *ItickTenantCategory) GetCategoryTypeName() string {
 	if x != nil {
-		return x.ProductTypeName
+		return x.CategoryTypeName
 	}
 	return ""
 }
 
-func (x *ItickTenantProductCategory) GetIcon() string {
+func (x *ItickTenantCategory) GetIcon() string {
 	if x != nil {
 		return x.Icon
 	}
@@ -828,17 +828,18 @@ type ItickTenantProduct struct {
 	CreateTime int64                  `protobuf:"varint,8,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
 	UpdateTime int64                  `protobuf:"varint,9,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
 	// 冗余返回字段，方便前端展示
-	ProductType   ProductType `protobuf:"varint,10,opt,name=product_type,json=productType,proto3,enum=itick.ProductType" json:"product_type,omitempty"`
-	Market        string      `protobuf:"bytes,11,opt,name=market,proto3" json:"market,omitempty"`
-	Symbol        string      `protobuf:"bytes,12,opt,name=symbol,proto3" json:"symbol,omitempty"`
-	Code          string      `protobuf:"bytes,13,opt,name=code,proto3" json:"code,omitempty"`
-	Name          string      `protobuf:"bytes,14,opt,name=name,proto3" json:"name,omitempty"`
-	DisplayName   string      `protobuf:"bytes,15,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
-	BaseCoin      string      `protobuf:"bytes,16,opt,name=base_coin,json=baseCoin,proto3" json:"base_coin,omitempty"`
-	QuoteCoin     string      `protobuf:"bytes,17,opt,name=quote_coin,json=quoteCoin,proto3" json:"quote_coin,omitempty"`
-	Icon          string      `protobuf:"bytes,18,opt,name=icon,proto3" json:"icon,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	CategoryType     CategoryType `protobuf:"varint,10,opt,name=category_type,json=categoryType,proto3,enum=itick.CategoryType" json:"category_type,omitempty"`
+	CategoryTypeName string       `protobuf:"bytes,11,opt,name=category_type_name,json=categoryTypeName,proto3" json:"category_type_name,omitempty"`
+	Market           string       `protobuf:"bytes,12,opt,name=market,proto3" json:"market,omitempty"`
+	Symbol           string       `protobuf:"bytes,13,opt,name=symbol,proto3" json:"symbol,omitempty"`
+	Code             string       `protobuf:"bytes,14,opt,name=code,proto3" json:"code,omitempty"`
+	Name             string       `protobuf:"bytes,15,opt,name=name,proto3" json:"name,omitempty"`
+	DisplayName      string       `protobuf:"bytes,16,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	BaseCoin         string       `protobuf:"bytes,17,opt,name=base_coin,json=baseCoin,proto3" json:"base_coin,omitempty"`
+	QuoteCoin        string       `protobuf:"bytes,18,opt,name=quote_coin,json=quoteCoin,proto3" json:"quote_coin,omitempty"`
+	Icon             string       `protobuf:"bytes,19,opt,name=icon,proto3" json:"icon,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *ItickTenantProduct) Reset() {
@@ -934,11 +935,18 @@ func (x *ItickTenantProduct) GetUpdateTime() int64 {
 	return 0
 }
 
-func (x *ItickTenantProduct) GetProductType() ProductType {
+func (x *ItickTenantProduct) GetCategoryType() CategoryType {
 	if x != nil {
-		return x.ProductType
+		return x.CategoryType
 	}
-	return ProductType_PRODUCT_TYPE_UNKNOWN
+	return CategoryType_CATEGORY_TYPE_UNKNOWN
+}
+
+func (x *ItickTenantProduct) GetCategoryTypeName() string {
+	if x != nil {
+		return x.CategoryTypeName
+	}
+	return ""
 }
 
 func (x *ItickTenantProduct) GetMarket() string {
@@ -1001,11 +1009,11 @@ var File_proto_itick_model_proto protoreflect.FileDescriptor
 
 const file_proto_itick_model_proto_rawDesc = "" +
 	"\n" +
-	"\x17proto/itick/model.proto\x12\x05itick\x1a\x18proto/itick/common.proto\"\xc6\x02\n" +
-	"\x14ItickProductCategory\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x125\n" +
-	"\fproduct_type\x18\x02 \x01(\x0e2\x12.itick.ProductTypeR\vproductType\x12*\n" +
-	"\x11product_type_name\x18\x03 \x01(\tR\x0fproductTypeName\x12\x18\n" +
+	"\x17proto/itick/model.proto\x12\x05itick\x1a\x18proto/itick/common.proto\"\xc4\x02\n" +
+	"\rItickCategory\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x128\n" +
+	"\rcategory_type\x18\x02 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12,\n" +
+	"\x12category_type_name\x18\x03 \x01(\tR\x10categoryTypeName\x12\x18\n" +
 	"\aenabled\x18\x04 \x01(\bR\aenabled\x12\x1f\n" +
 	"\vapp_visible\x18\x05 \x01(\bR\n" +
 	"appVisible\x12\x12\n" +
@@ -1016,10 +1024,10 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"createTime\x12\x1f\n" +
 	"\vupdate_time\x18\n" +
 	" \x01(\x03R\n" +
-	"updateTime\"\xc9\x03\n" +
+	"updateTime\"\xcc\x03\n" +
 	"\fItickProduct\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x125\n" +
-	"\fproduct_type\x18\x02 \x01(\x0e2\x12.itick.ProductTypeR\vproductType\x12\x16\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x128\n" +
+	"\rcategory_type\x18\x02 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12\x16\n" +
 	"\x06market\x18\x03 \x01(\tR\x06market\x12\x16\n" +
 	"\x06symbol\x18\x04 \x01(\tR\x06symbol\x12\x12\n" +
 	"\x04code\x18\x05 \x01(\tR\x04code\x12\x12\n" +
@@ -1078,8 +1086,8 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"\x06volume\x18\n" +
 	" \x01(\x01R\x06volume\x12\x1a\n" +
 	"\bturnover\x18\v \x01(\x01R\bturnover\x12\x0e\n" +
-	"\x02ts\x18\f \x01(\x03R\x02ts\"\x8a\x03\n" +
-	"\x1aItickTenantProductCategory\x12\x0e\n" +
+	"\x02ts\x18\f \x01(\x03R\x02ts\"\x88\x03\n" +
+	"\x13ItickTenantCategory\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
 	"\vcategory_id\x18\x03 \x01(\x03R\n" +
@@ -1092,11 +1100,11 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"\vcreate_time\x18\b \x01(\x03R\n" +
 	"createTime\x12\x1f\n" +
 	"\vupdate_time\x18\t \x01(\x03R\n" +
-	"updateTime\x125\n" +
-	"\fproduct_type\x18\n" +
-	" \x01(\x0e2\x12.itick.ProductTypeR\vproductType\x12*\n" +
-	"\x11product_type_name\x18\v \x01(\tR\x0fproductTypeName\x12\x12\n" +
-	"\x04icon\x18\f \x01(\tR\x04icon\"\x8b\x04\n" +
+	"updateTime\x128\n" +
+	"\rcategory_type\x18\n" +
+	" \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12,\n" +
+	"\x12category_type_name\x18\v \x01(\tR\x10categoryTypeName\x12\x12\n" +
+	"\x04icon\x18\f \x01(\tR\x04icon\"\xbc\x04\n" +
 	"\x12ItickTenantProduct\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1d\n" +
@@ -1110,18 +1118,19 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"\vcreate_time\x18\b \x01(\x03R\n" +
 	"createTime\x12\x1f\n" +
 	"\vupdate_time\x18\t \x01(\x03R\n" +
-	"updateTime\x125\n" +
-	"\fproduct_type\x18\n" +
-	" \x01(\x0e2\x12.itick.ProductTypeR\vproductType\x12\x16\n" +
-	"\x06market\x18\v \x01(\tR\x06market\x12\x16\n" +
-	"\x06symbol\x18\f \x01(\tR\x06symbol\x12\x12\n" +
-	"\x04code\x18\r \x01(\tR\x04code\x12\x12\n" +
-	"\x04name\x18\x0e \x01(\tR\x04name\x12!\n" +
-	"\fdisplay_name\x18\x0f \x01(\tR\vdisplayName\x12\x1b\n" +
-	"\tbase_coin\x18\x10 \x01(\tR\bbaseCoin\x12\x1d\n" +
+	"updateTime\x128\n" +
+	"\rcategory_type\x18\n" +
+	" \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12,\n" +
+	"\x12category_type_name\x18\v \x01(\tR\x10categoryTypeName\x12\x16\n" +
+	"\x06market\x18\f \x01(\tR\x06market\x12\x16\n" +
+	"\x06symbol\x18\r \x01(\tR\x06symbol\x12\x12\n" +
+	"\x04code\x18\x0e \x01(\tR\x04code\x12\x12\n" +
+	"\x04name\x18\x0f \x01(\tR\x04name\x12!\n" +
+	"\fdisplay_name\x18\x10 \x01(\tR\vdisplayName\x12\x1b\n" +
+	"\tbase_coin\x18\x11 \x01(\tR\bbaseCoin\x12\x1d\n" +
 	"\n" +
-	"quote_coin\x18\x11 \x01(\tR\tquoteCoin\x12\x12\n" +
-	"\x04icon\x18\x12 \x01(\tR\x04iconB\x1aZ\x18wklive/proto/itick;itickb\x06proto3"
+	"quote_coin\x18\x12 \x01(\tR\tquoteCoin\x12\x12\n" +
+	"\x04icon\x18\x13 \x01(\tR\x04iconB\x1aZ\x18wklive/proto/itick;itickb\x06proto3"
 
 var (
 	file_proto_itick_model_proto_rawDescOnce sync.Once
@@ -1137,25 +1146,25 @@ func file_proto_itick_model_proto_rawDescGZIP() []byte {
 
 var file_proto_itick_model_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_proto_itick_model_proto_goTypes = []any{
-	(*ItickProductCategory)(nil),       // 0: itick.ItickProductCategory
-	(*ItickProduct)(nil),               // 1: itick.ItickProduct
-	(*Kline)(nil),                      // 2: itick.Kline
-	(*DepthLevel)(nil),                 // 3: itick.DepthLevel
-	(*Depth)(nil),                      // 4: itick.Depth
-	(*Quote)(nil),                      // 5: itick.Quote
-	(*ItickTenantProductCategory)(nil), // 6: itick.ItickTenantProductCategory
-	(*ItickTenantProduct)(nil),         // 7: itick.ItickTenantProduct
-	(ProductType)(0),                   // 8: itick.ProductType
-	(KlineType)(0),                     // 9: itick.KlineType
+	(*ItickCategory)(nil),       // 0: itick.ItickCategory
+	(*ItickProduct)(nil),        // 1: itick.ItickProduct
+	(*Kline)(nil),               // 2: itick.Kline
+	(*DepthLevel)(nil),          // 3: itick.DepthLevel
+	(*Depth)(nil),               // 4: itick.Depth
+	(*Quote)(nil),               // 5: itick.Quote
+	(*ItickTenantCategory)(nil), // 6: itick.ItickTenantCategory
+	(*ItickTenantProduct)(nil),  // 7: itick.ItickTenantProduct
+	(CategoryType)(0),           // 8: itick.CategoryType
+	(KlineType)(0),              // 9: itick.KlineType
 }
 var file_proto_itick_model_proto_depIdxs = []int32{
-	8, // 0: itick.ItickProductCategory.product_type:type_name -> itick.ProductType
-	8, // 1: itick.ItickProduct.product_type:type_name -> itick.ProductType
+	8, // 0: itick.ItickCategory.category_type:type_name -> itick.CategoryType
+	8, // 1: itick.ItickProduct.category_type:type_name -> itick.CategoryType
 	9, // 2: itick.Kline.k_type:type_name -> itick.KlineType
 	3, // 3: itick.Depth.asks:type_name -> itick.DepthLevel
 	3, // 4: itick.Depth.bids:type_name -> itick.DepthLevel
-	8, // 5: itick.ItickTenantProductCategory.product_type:type_name -> itick.ProductType
-	8, // 6: itick.ItickTenantProduct.product_type:type_name -> itick.ProductType
+	8, // 5: itick.ItickTenantCategory.category_type:type_name -> itick.CategoryType
+	8, // 6: itick.ItickTenantProduct.category_type:type_name -> itick.CategoryType
 	7, // [7:7] is the sub-list for method output_type
 	7, // [7:7] is the sub-list for method input_type
 	7, // [7:7] is the sub-list for extension type_name

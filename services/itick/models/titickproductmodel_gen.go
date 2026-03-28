@@ -23,15 +23,15 @@ var (
 	tItickProductRowsExpectAutoSet   = strings.Join(stringx.Remove(tItickProductFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tItickProductRowsWithPlaceHolder = strings.Join(stringx.Remove(tItickProductFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTItickProductIdPrefix                      = "cache:tItickProduct:id:"
-	cacheTItickProductProductTypeMarketSymbolPrefix = "cache:tItickProduct:productType:market:symbol:"
+	cacheTItickProductIdPrefix                       = "cache:tItickProduct:id:"
+	cacheTItickProductCategoryTypeMarketSymbolPrefix = "cache:tItickProduct:categoryType:market:symbol:"
 )
 
 type (
 	tItickProductModel interface {
 		Insert(ctx context.Context, data *TItickProduct) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TItickProduct, error)
-		FindOneByProductTypeMarketSymbol(ctx context.Context, productType int64, market string, symbol string) (*TItickProduct, error)
+		FindOneByCategoryTypeMarketSymbol(ctx context.Context, categoryType int64, market string, symbol string) (*TItickProduct, error)
 		Update(ctx context.Context, data *TItickProduct) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -42,22 +42,22 @@ type (
 	}
 
 	TItickProduct struct {
-		Id          int64  `db:"id"`           // 主键ID
-		ProductType int64  `db:"product_type"` // 产品类型: 1-forex 2-crypto 3-stock 4-future 5-indices 6-fund
-		Market      string `db:"market"`       // 市场/来源, 如 binance/hk/us/forex
-		Symbol      string `db:"symbol"`       // 产品标识, 如 BTCUSDT/AAPL/EURUSD
-		Code        string `db:"code"`         // 第三方原始code
-		Name        string `db:"name"`         // 产品名称
-		DisplayName string `db:"display_name"` // 前端展示名称
-		BaseCoin    string `db:"base_coin"`    // 基础币种, 如 BTC
-		QuoteCoin   string `db:"quote_coin"`   // 计价币种, 如 USDT
-		Enabled     int64  `db:"enabled"`      // 是否启用: 0-否 1-是
-		AppVisible  int64  `db:"app_visible"`  // APP是否可见: 0-否 1-是
-		Sort        int64  `db:"sort"`         // 排序值,越小越靠前
-		Icon        string `db:"icon"`         // 图标
-		Remark      string `db:"remark"`       // 备注
-		CreateTime  int64  `db:"create_time"`  // 创建时间(毫秒时间戳)
-		UpdateTime  int64  `db:"update_time"`  // 更新时间(毫秒时间戳)
+		Id           int64  `db:"id"`            // 主键ID
+		CategoryType int64  `db:"category_type"` // 产品类型: 1-forex 2-crypto 3-stock 4-future 5-indices 6-fund
+		Market       string `db:"market"`        // 市场/来源, 如 binance/hk/us/forex
+		Symbol       string `db:"symbol"`        // 产品标识, 如 BTCUSDT/AAPL/EURUSD
+		Code         string `db:"code"`          // 第三方原始code
+		Name         string `db:"name"`          // 产品名称
+		DisplayName  string `db:"display_name"`  // 前端展示名称
+		BaseCoin     string `db:"base_coin"`     // 基础币种, 如 BTC
+		QuoteCoin    string `db:"quote_coin"`    // 计价币种, 如 USDT
+		Enabled      int64  `db:"enabled"`       // 是否启用: 0-否 1-是
+		AppVisible   int64  `db:"app_visible"`   // APP是否可见: 0-否 1-是
+		Sort         int64  `db:"sort"`          // 排序值,越小越靠前
+		Icon         string `db:"icon"`          // 图标
+		Remark       string `db:"remark"`        // 备注
+		CreateTime   int64  `db:"create_time"`   // 创建时间(毫秒时间戳)
+		UpdateTime   int64  `db:"update_time"`   // 更新时间(毫秒时间戳)
 	}
 )
 
@@ -74,12 +74,12 @@ func (m *defaultTItickProductModel) Delete(ctx context.Context, id int64) error 
 		return err
 	}
 
+	tItickProductCategoryTypeMarketSymbolKey := fmt.Sprintf("%s%v:%v:%v", cacheTItickProductCategoryTypeMarketSymbolPrefix, data.CategoryType, data.Market, data.Symbol)
 	tItickProductIdKey := fmt.Sprintf("%s%v", cacheTItickProductIdPrefix, id)
-	tItickProductProductTypeMarketSymbolKey := fmt.Sprintf("%s%v:%v:%v", cacheTItickProductProductTypeMarketSymbolPrefix, data.ProductType, data.Market, data.Symbol)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tItickProductIdKey, tItickProductProductTypeMarketSymbolKey)
+	}, tItickProductCategoryTypeMarketSymbolKey, tItickProductIdKey)
 	return err
 }
 
@@ -100,12 +100,12 @@ func (m *defaultTItickProductModel) FindOne(ctx context.Context, id int64) (*TIt
 	}
 }
 
-func (m *defaultTItickProductModel) FindOneByProductTypeMarketSymbol(ctx context.Context, productType int64, market string, symbol string) (*TItickProduct, error) {
-	tItickProductProductTypeMarketSymbolKey := fmt.Sprintf("%s%v:%v:%v", cacheTItickProductProductTypeMarketSymbolPrefix, productType, market, symbol)
+func (m *defaultTItickProductModel) FindOneByCategoryTypeMarketSymbol(ctx context.Context, categoryType int64, market string, symbol string) (*TItickProduct, error) {
+	tItickProductCategoryTypeMarketSymbolKey := fmt.Sprintf("%s%v:%v:%v", cacheTItickProductCategoryTypeMarketSymbolPrefix, categoryType, market, symbol)
 	var resp TItickProduct
-	err := m.QueryRowIndexCtx(ctx, &resp, tItickProductProductTypeMarketSymbolKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `product_type` = ? and `market` = ? and `symbol` = ? limit 1", tItickProductRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, productType, market, symbol); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tItickProductCategoryTypeMarketSymbolKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `category_type` = ? and `market` = ? and `symbol` = ? limit 1", tItickProductRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, categoryType, market, symbol); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -121,12 +121,12 @@ func (m *defaultTItickProductModel) FindOneByProductTypeMarketSymbol(ctx context
 }
 
 func (m *defaultTItickProductModel) Insert(ctx context.Context, data *TItickProduct) (sql.Result, error) {
+	tItickProductCategoryTypeMarketSymbolKey := fmt.Sprintf("%s%v:%v:%v", cacheTItickProductCategoryTypeMarketSymbolPrefix, data.CategoryType, data.Market, data.Symbol)
 	tItickProductIdKey := fmt.Sprintf("%s%v", cacheTItickProductIdPrefix, data.Id)
-	tItickProductProductTypeMarketSymbolKey := fmt.Sprintf("%s%v:%v:%v", cacheTItickProductProductTypeMarketSymbolPrefix, data.ProductType, data.Market, data.Symbol)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickProductRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.ProductType, data.Market, data.Symbol, data.Code, data.Name, data.DisplayName, data.BaseCoin, data.QuoteCoin, data.Enabled, data.AppVisible, data.Sort, data.Icon, data.Remark)
-	}, tItickProductIdKey, tItickProductProductTypeMarketSymbolKey)
+		return conn.ExecCtx(ctx, query, data.CategoryType, data.Market, data.Symbol, data.Code, data.Name, data.DisplayName, data.BaseCoin, data.QuoteCoin, data.Enabled, data.AppVisible, data.Sort, data.Icon, data.Remark)
+	}, tItickProductCategoryTypeMarketSymbolKey, tItickProductIdKey)
 	return ret, err
 }
 
@@ -136,12 +136,12 @@ func (m *defaultTItickProductModel) Update(ctx context.Context, newData *TItickP
 		return err
 	}
 
+	tItickProductCategoryTypeMarketSymbolKey := fmt.Sprintf("%s%v:%v:%v", cacheTItickProductCategoryTypeMarketSymbolPrefix, data.CategoryType, data.Market, data.Symbol)
 	tItickProductIdKey := fmt.Sprintf("%s%v", cacheTItickProductIdPrefix, data.Id)
-	tItickProductProductTypeMarketSymbolKey := fmt.Sprintf("%s%v:%v:%v", cacheTItickProductProductTypeMarketSymbolPrefix, data.ProductType, data.Market, data.Symbol)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickProductRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.ProductType, newData.Market, newData.Symbol, newData.Code, newData.Name, newData.DisplayName, newData.BaseCoin, newData.QuoteCoin, newData.Enabled, newData.AppVisible, newData.Sort, newData.Icon, newData.Remark, newData.Id)
-	}, tItickProductIdKey, tItickProductProductTypeMarketSymbolKey)
+		return conn.ExecCtx(ctx, query, newData.CategoryType, newData.Market, newData.Symbol, newData.Code, newData.Name, newData.DisplayName, newData.BaseCoin, newData.QuoteCoin, newData.Enabled, newData.AppVisible, newData.Sort, newData.Icon, newData.Remark, newData.Id)
+	}, tItickProductCategoryTypeMarketSymbolKey, tItickProductIdKey)
 	return err
 }
 

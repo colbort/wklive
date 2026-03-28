@@ -8,6 +8,7 @@ enum SysConfigType {
   UNKNOWN = 0;
   SYSTEM_CORE = 1; // 系统配置
   OBJECT_STORAGE = 2; // 对象存储配置
+  ITICK_CONFIG = 3; // ITICK配置
 }
 
 // 系统配置
@@ -50,4 +51,10 @@ message ObjectStorageConfig {
   MinioConfig minio = 3;
   int64 oss_type = 4; // 1阿里云OSS 2腾讯云COS 3MINIO
   string oss_domain = 5; // 对象存储访问域名（可选，优先使用bucket_url）
+}
+
+message ItickConfig {
+  string api_url = 1; // ITICK API地址
+  string api_token = 2; // ITICK API密钥
+  string ws_url = 3; // ITICK WebSocket地址
 }

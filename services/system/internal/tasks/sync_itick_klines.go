@@ -2,8 +2,11 @@ package tasks
 
 import (
 	"context"
+	"database/sql"
+	"encoding/json"
 	"fmt"
 	"wklive/proto/itick"
+	"wklive/proto/system"
 	"wklive/services/system/internal/global"
 	"wklive/services/system/internal/plugins/cronx"
 	"wklive/services/system/models"
@@ -14,7 +17,20 @@ func init() {
 }
 
 func syncItickKlines(ctx context.Context, job *models.SysJob) error {
-	result, err := global.ItickTaskCli.SyncKlines(ctx, &itick.SyncKlinesReq{})
+	config, err := global.ConfigModel.FindOneByConfigKey(ctx, sql.NullString{
+		String: system.SysConfigType_ITICK_CONFIG.String(),
+		Valid:  true,
+	})
+	var itickConfig system.ItickConfig
+	err = json.Unmarshal([]byte(config.ConfigKey.String), &itickConfig)
+	if err != nil {
+		return fmt.Errorf("failed to find itick config: %w", err)
+	}
+	result, err := global.ItickTaskCli.SyncKlines(ctx, &itick.SyncKlinesReq{
+		ApiUrl:   itickConfig.ApiUrl,
+		ApiToken: itickConfig.ApiToken,
+		WsUrl:    itickConfig.WsUrl,
+	})
 	if err != nil {
 		return err
 	}

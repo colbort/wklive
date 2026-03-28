@@ -24,27 +24,27 @@ func NewItickAdminServer(svcCtx *svc.ServiceContext) *ItickAdminServer {
 }
 
 // 产品类型
-func (s *ItickAdminServer) CreateProductCategory(ctx context.Context, in *itick.CreateProductCategoryReq) (*itick.AdminCommonResp, error) {
-	l := logic.NewCreateProductCategoryLogic(ctx, s.svcCtx)
-	return l.CreateProductCategory(in)
+func (s *ItickAdminServer) CreateCategory(ctx context.Context, in *itick.CreateCategoryReq) (*itick.AdminCommonResp, error) {
+	l := logic.NewCreateCategoryLogic(ctx, s.svcCtx)
+	return l.CreateCategory(in)
 }
 
 // 更新产品类型仅允许更新名称、状态、排序、图标和备注，产品类型不允许修改
-func (s *ItickAdminServer) UpdateProductCategory(ctx context.Context, in *itick.UpdateProductCategoryReq) (*itick.AdminCommonResp, error) {
-	l := logic.NewUpdateProductCategoryLogic(ctx, s.svcCtx)
-	return l.UpdateProductCategory(in)
+func (s *ItickAdminServer) UpdateCategory(ctx context.Context, in *itick.UpdateCategoryReq) (*itick.AdminCommonResp, error) {
+	l := logic.NewUpdateCategoryLogic(ctx, s.svcCtx)
+	return l.UpdateCategory(in)
 }
 
 // 获取产品类型详情
-func (s *ItickAdminServer) GetProductCategory(ctx context.Context, in *itick.GetProductCategoryReq) (*itick.GetProductCategoryResp, error) {
-	l := logic.NewGetProductCategoryLogic(ctx, s.svcCtx)
-	return l.GetProductCategory(in)
+func (s *ItickAdminServer) GetCategory(ctx context.Context, in *itick.GetCategoryReq) (*itick.GetCategoryResp, error) {
+	l := logic.NewGetCategoryLogic(ctx, s.svcCtx)
+	return l.GetCategory(in)
 }
 
 // 产品类型列表
-func (s *ItickAdminServer) ListProductCategories(ctx context.Context, in *itick.ListProductCategoriesReq) (*itick.ListProductCategoriesResp, error) {
-	l := logic.NewListProductCategoriesLogic(ctx, s.svcCtx)
-	return l.ListProductCategories(in)
+func (s *ItickAdminServer) ListCategories(ctx context.Context, in *itick.ListCategoriesReq) (*itick.ListCategoriesResp, error) {
+	l := logic.NewListCategoriesLogic(ctx, s.svcCtx)
+	return l.ListCategories(in)
 }
 
 // 产品
@@ -78,33 +78,33 @@ func (s *ItickAdminServer) GetAdminKline(ctx context.Context, in *itick.GetAdmin
 }
 
 // 租户产品类型
-func (s *ItickAdminServer) CreateTenantProductCategory(ctx context.Context, in *itick.CreateTenantProductCategoryReq) (*itick.AdminCommonResp, error) {
-	l := logic.NewCreateTenantProductCategoryLogic(ctx, s.svcCtx)
-	return l.CreateTenantProductCategory(in)
+func (s *ItickAdminServer) CreateTenantCategory(ctx context.Context, in *itick.CreateTenantCategoryReq) (*itick.AdminCommonResp, error) {
+	l := logic.NewCreateTenantCategoryLogic(ctx, s.svcCtx)
+	return l.CreateTenantCategory(in)
 }
 
 // 更新租户产品类型仅允许更新状态、排序和备注，关联的产品类型不允许修改
-func (s *ItickAdminServer) UpdateTenantProductCategory(ctx context.Context, in *itick.UpdateTenantProductCategoryReq) (*itick.AdminCommonResp, error) {
-	l := logic.NewUpdateTenantProductCategoryLogic(ctx, s.svcCtx)
-	return l.UpdateTenantProductCategory(in)
+func (s *ItickAdminServer) UpdateTenantCategory(ctx context.Context, in *itick.UpdateTenantCategoryReq) (*itick.AdminCommonResp, error) {
+	l := logic.NewUpdateTenantCategoryLogic(ctx, s.svcCtx)
+	return l.UpdateTenantCategory(in)
 }
 
 // 批量更新租户产品类型，已关联的修改状态、排序和备注，未关联的新增，未提交的删除
-func (s *ItickAdminServer) BatchUpsertTenantProductCategories(ctx context.Context, in *itick.BatchUpsertTenantProductCategoriesReq) (*itick.AdminCommonResp, error) {
-	l := logic.NewBatchUpsertTenantProductCategoriesLogic(ctx, s.svcCtx)
-	return l.BatchUpsertTenantProductCategories(in)
+func (s *ItickAdminServer) BatchUpsertTenantCategories(ctx context.Context, in *itick.BatchUpsertTenantCategoriesReq) (*itick.AdminCommonResp, error) {
+	l := logic.NewBatchUpsertTenantCategoriesLogic(ctx, s.svcCtx)
+	return l.BatchUpsertTenantCategories(in)
 }
 
 // 获取租户产品类型详情
-func (s *ItickAdminServer) GetTenantProductCategory(ctx context.Context, in *itick.GetTenantProductCategoryReq) (*itick.GetTenantProductCategoryResp, error) {
-	l := logic.NewGetTenantProductCategoryLogic(ctx, s.svcCtx)
-	return l.GetTenantProductCategory(in)
+func (s *ItickAdminServer) GetTenantCategory(ctx context.Context, in *itick.GetTenantCategoryReq) (*itick.GetTenantCategoryResp, error) {
+	l := logic.NewGetTenantCategoryLogic(ctx, s.svcCtx)
+	return l.GetTenantCategory(in)
 }
 
 // 租户产品类型列表
-func (s *ItickAdminServer) ListTenantProductCategories(ctx context.Context, in *itick.ListTenantProductCategoriesReq) (*itick.ListTenantProductCategoriesResp, error) {
-	l := logic.NewListTenantProductCategoriesLogic(ctx, s.svcCtx)
-	return l.ListTenantProductCategories(in)
+func (s *ItickAdminServer) ListTenantCategories(ctx context.Context, in *itick.ListTenantCategoriesReq) (*itick.ListTenantCategoriesResp, error) {
+	l := logic.NewListTenantCategoriesLogic(ctx, s.svcCtx)
+	return l.ListTenantCategories(in)
 }
 
 // 租户产品

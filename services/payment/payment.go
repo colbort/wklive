@@ -20,7 +20,7 @@ import (
 
 var (
 	endpoints = flag.String("etcd", "192.168.10.116:2379", "etcd endpoints")
-	configKey = flag.String("config", "/wklive/system-rpc/config", "etcd config key")
+	configKey = flag.String("config", "/wklive/payment-rpc/config", "etcd config key")
 	commonKey = flag.String("common", "/wklive/common/config", "etcd common config key")
 )
 
@@ -30,7 +30,9 @@ func main() {
 	var c config.Config
 
 	// 用 etcd 配置中心
-	etcd.LoadFromEtcdAndMerge(strings.Split(*endpoints, ","), []string{*commonKey, *configKey}, &c)
+	if err := etcd.LoadFromEtcdAndMerge(strings.Split(*endpoints, ","), []string{*commonKey, *configKey}, &c); err != nil {
+		panic(err)
+	}
 
 	ctx := svc.NewServiceContext(c)
 

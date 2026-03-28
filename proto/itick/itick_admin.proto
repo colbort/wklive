@@ -15,9 +15,9 @@ message AdminCommonResp {
 // 产品类型
 // ====================
 
-message CreateProductCategoryReq {
-  itick.ProductType product_type = 1;
-  string product_type_name = 2;
+message CreateCategoryReq {
+  itick.CategoryType category_type = 1;
+  string category_name = 2;
   bool enabled = 3;
   bool app_visible = 4;
   int64 sort = 5;
@@ -25,9 +25,9 @@ message CreateProductCategoryReq {
   string remark = 7;
 }
 
-message UpdateProductCategoryReq {
+message UpdateCategoryReq {
   int64 id = 1;
-  string product_type_name = 2;
+  string category_name = 2;
   bool enabled = 3;
   bool app_visible = 4;
   int64 sort = 5;
@@ -35,24 +35,24 @@ message UpdateProductCategoryReq {
   string remark = 7;
 }
 
-message GetProductCategoryReq {
+message GetCategoryReq {
   int64 id = 1;
 }
 
-message GetProductCategoryResp {
+message GetCategoryResp {
   itick.RespBase base = 1;
-  itick.ItickProductCategory data = 2;
+  itick.ItickCategory data = 2;
 }
 
-message ListProductCategoriesReq {
+message ListCategoriesReq {
   itick.PageReq page = 1;
-  itick.ProductType product_type = 2;
+  itick.CategoryType category_type = 2;
   int32 status = 3; // 0全部 1启用 2禁用
 }
 
-message ListProductCategoriesResp {
+message ListCategoriesResp {
   itick.RespBase base = 1;
-  repeated itick.ItickProductCategory data = 2;
+  repeated itick.ItickCategory data = 2;
 }
 
 // ====================
@@ -60,7 +60,7 @@ message ListProductCategoriesResp {
 // ====================
 
 message CreateProductReq {
-  itick.ProductType product_type = 1;
+  itick.CategoryType category_type = 1;
   string market = 2;
   string symbol = 3;
   string code = 4;
@@ -100,7 +100,7 @@ message GetProductResp {
 
 message ListProductsReq {
   itick.PageReq page = 1;
-  itick.ProductType product_type = 2;
+  itick.CategoryType category_type = 2;
   string market = 3;
   string keyword = 4;
   int32 status = 5; // 0全部 1启用 2禁用
@@ -133,7 +133,7 @@ message GetAdminKlineResp {
 // tenant product category
 // ====================
 
-message CreateTenantProductCategoryReq {
+message CreateTenantCategoryReq {
   int64 tenant_id = 1;
   int64 category_id = 2;
   bool enabled = 3;
@@ -142,7 +142,7 @@ message CreateTenantProductCategoryReq {
   string remark = 6;
 }
 
-message UpdateTenantProductCategoryReq {
+message UpdateTenantCategoryReq {
   int64 id = 1;
   int64 tenant_id = 2;
   bool enabled = 3;
@@ -151,12 +151,12 @@ message UpdateTenantProductCategoryReq {
   string remark = 6;
 }
 
-message BatchUpsertTenantProductCategoriesReq {
+message BatchUpsertTenantCategoriesReq {
   int64 tenant_id = 1;
-  repeated TenantProductCategoryItem data = 2;
+  repeated TenantCategoryItem data = 2;
 }
 
-message TenantProductCategoryItem {
+message TenantCategoryItem {
   int64 id = 1;
   int64 category_id = 2;
   bool enabled = 3;
@@ -165,27 +165,27 @@ message TenantProductCategoryItem {
   string remark = 6;
 }
 
-message GetTenantProductCategoryReq {
+message GetTenantCategoryReq {
   int64 id = 1;
   int64 tenant_id = 2;
 }
 
-message GetTenantProductCategoryResp {
+message GetTenantCategoryResp {
   itick.RespBase base = 1;
-  itick.ItickTenantProductCategory data = 2;
+  itick.ItickTenantCategory data = 2;
 }
 
-message ListTenantProductCategoriesReq {
+message ListTenantCategoriesReq {
   itick.PageReq page = 1;
   int64 tenant_id = 2;
-  itick.ProductType product_type = 3;
+  itick.CategoryType category_type = 3;
   int32 status = 4; // 0全部 1启用 2禁用
   int32 visible_status = 5; // 0全部 1显示 2隐藏
 }
 
-message ListTenantProductCategoriesResp {
+message ListTenantCategoriesResp {
   itick.RespBase base = 1;
-  repeated itick.ItickTenantProductCategory data = 2;
+  repeated itick.ItickTenantCategory data = 2;
 }
 
 // ====================
@@ -237,7 +237,7 @@ message GetTenantProductResp {
 message ListTenantProductsReq {
   itick.PageReq page = 1;
   int64 tenant_id = 2;
-  itick.ProductType product_type = 3;
+  itick.CategoryType category_type = 3;
   string market = 4;
   string keyword = 5;
   int32 status = 6; // 0全部 1启用 2禁用
@@ -269,13 +269,13 @@ message InitTenantItickDisplayResp {
 // ====================
 service ItickAdmin {
   // 产品类型
-  rpc CreateProductCategory(CreateProductCategoryReq) returns (AdminCommonResp);
+  rpc CreateCategory(CreateCategoryReq) returns (AdminCommonResp);
   // 更新产品类型仅允许更新名称、状态、排序、图标和备注，产品类型不允许修改
-  rpc UpdateProductCategory(UpdateProductCategoryReq) returns (AdminCommonResp);
+  rpc UpdateCategory(UpdateCategoryReq) returns (AdminCommonResp);
   // 获取产品类型详情
-  rpc GetProductCategory(GetProductCategoryReq) returns (GetProductCategoryResp);
+  rpc GetCategory(GetCategoryReq) returns (GetCategoryResp);
   // 产品类型列表
-  rpc ListProductCategories(ListProductCategoriesReq) returns (ListProductCategoriesResp);
+  rpc ListCategories(ListCategoriesReq) returns (ListCategoriesResp);
 
   // 产品
   rpc CreateProduct(CreateProductReq) returns (AdminCommonResp);
@@ -290,15 +290,15 @@ service ItickAdmin {
   rpc GetAdminKline(GetAdminKlineReq) returns (GetAdminKlineResp);
 
   // 租户产品类型
-  rpc CreateTenantProductCategory(CreateTenantProductCategoryReq) returns (AdminCommonResp);
+  rpc CreateTenantCategory(CreateTenantCategoryReq) returns (AdminCommonResp);
   // 更新租户产品类型仅允许更新状态、排序和备注，关联的产品类型不允许修改
-  rpc UpdateTenantProductCategory(UpdateTenantProductCategoryReq) returns (AdminCommonResp);
+  rpc UpdateTenantCategory(UpdateTenantCategoryReq) returns (AdminCommonResp);
   // 批量更新租户产品类型，已关联的修改状态、排序和备注，未关联的新增，未提交的删除
-  rpc BatchUpsertTenantProductCategories(BatchUpsertTenantProductCategoriesReq) returns (AdminCommonResp);
+  rpc BatchUpsertTenantCategories(BatchUpsertTenantCategoriesReq) returns (AdminCommonResp);
   // 获取租户产品类型详情
-  rpc GetTenantProductCategory(GetTenantProductCategoryReq) returns (GetTenantProductCategoryResp);
+  rpc GetTenantCategory(GetTenantCategoryReq) returns (GetTenantCategoryResp);
   // 租户产品类型列表
-  rpc ListTenantProductCategories(ListTenantProductCategoriesReq) returns (ListTenantProductCategoriesResp);
+  rpc ListTenantCategories(ListTenantCategoriesReq) returns (ListTenantCategoriesResp);
 
   // 租户产品
   rpc CreateTenantProduct(CreateTenantProductReq) returns (AdminCommonResp);

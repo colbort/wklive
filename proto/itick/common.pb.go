@@ -22,64 +22,64 @@ const (
 )
 
 // 产品类型
-type ProductType int32
+type CategoryType int32
 
 const (
-	ProductType_PRODUCT_TYPE_UNKNOWN ProductType = 0
-	ProductType_PRODUCT_TYPE_FOREX   ProductType = 1
-	ProductType_PRODUCT_TYPE_CRYPTO  ProductType = 2
-	ProductType_PRODUCT_TYPE_STOCK   ProductType = 3
-	ProductType_PRODUCT_TYPE_FUTURE  ProductType = 4
-	ProductType_PRODUCT_TYPE_INDICES ProductType = 5
-	ProductType_PRODUCT_TYPE_FUND    ProductType = 6
+	CategoryType_CATEGORY_TYPE_UNKNOWN CategoryType = 0
+	CategoryType_CATEGORY_TYPE_FOREX   CategoryType = 1
+	CategoryType_CATEGORY_TYPE_CRYPTO  CategoryType = 2
+	CategoryType_CATEGORY_TYPE_STOCK   CategoryType = 3
+	CategoryType_CATEGORY_TYPE_FUTURE  CategoryType = 4
+	CategoryType_CATEGORY_TYPE_INDICES CategoryType = 5
+	CategoryType_CATEGORY_TYPE_FUND    CategoryType = 6
 )
 
-// Enum value maps for ProductType.
+// Enum value maps for CategoryType.
 var (
-	ProductType_name = map[int32]string{
-		0: "PRODUCT_TYPE_UNKNOWN",
-		1: "PRODUCT_TYPE_FOREX",
-		2: "PRODUCT_TYPE_CRYPTO",
-		3: "PRODUCT_TYPE_STOCK",
-		4: "PRODUCT_TYPE_FUTURE",
-		5: "PRODUCT_TYPE_INDICES",
-		6: "PRODUCT_TYPE_FUND",
+	CategoryType_name = map[int32]string{
+		0: "CATEGORY_TYPE_UNKNOWN",
+		1: "CATEGORY_TYPE_FOREX",
+		2: "CATEGORY_TYPE_CRYPTO",
+		3: "CATEGORY_TYPE_STOCK",
+		4: "CATEGORY_TYPE_FUTURE",
+		5: "CATEGORY_TYPE_INDICES",
+		6: "CATEGORY_TYPE_FUND",
 	}
-	ProductType_value = map[string]int32{
-		"PRODUCT_TYPE_UNKNOWN": 0,
-		"PRODUCT_TYPE_FOREX":   1,
-		"PRODUCT_TYPE_CRYPTO":  2,
-		"PRODUCT_TYPE_STOCK":   3,
-		"PRODUCT_TYPE_FUTURE":  4,
-		"PRODUCT_TYPE_INDICES": 5,
-		"PRODUCT_TYPE_FUND":    6,
+	CategoryType_value = map[string]int32{
+		"CATEGORY_TYPE_UNKNOWN": 0,
+		"CATEGORY_TYPE_FOREX":   1,
+		"CATEGORY_TYPE_CRYPTO":  2,
+		"CATEGORY_TYPE_STOCK":   3,
+		"CATEGORY_TYPE_FUTURE":  4,
+		"CATEGORY_TYPE_INDICES": 5,
+		"CATEGORY_TYPE_FUND":    6,
 	}
 )
 
-func (x ProductType) Enum() *ProductType {
-	p := new(ProductType)
+func (x CategoryType) Enum() *CategoryType {
+	p := new(CategoryType)
 	*p = x
 	return p
 }
 
-func (x ProductType) String() string {
+func (x CategoryType) String() string {
 	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-func (ProductType) Descriptor() protoreflect.EnumDescriptor {
+func (CategoryType) Descriptor() protoreflect.EnumDescriptor {
 	return file_proto_itick_common_proto_enumTypes[0].Descriptor()
 }
 
-func (ProductType) Type() protoreflect.EnumType {
+func (CategoryType) Type() protoreflect.EnumType {
 	return &file_proto_itick_common_proto_enumTypes[0]
 }
 
-func (x ProductType) Number() protoreflect.EnumNumber {
+func (x CategoryType) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use ProductType.Descriptor instead.
-func (ProductType) EnumDescriptor() ([]byte, []int) {
+// Deprecated: Use CategoryType.Descriptor instead.
+func (CategoryType) EnumDescriptor() ([]byte, []int) {
 	return file_proto_itick_common_proto_rawDescGZIP(), []int{0}
 }
 
@@ -402,15 +402,15 @@ const file_proto_itick_common_proto_rawDesc = "" +
 	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\"7\n" +
 	"\aPageReq\x12\x16\n" +
 	"\x06cursor\x18\x01 \x01(\x03R\x06cursor\x12\x14\n" +
-	"\x05limit\x18\x02 \x01(\x03R\x05limit*\xba\x01\n" +
-	"\vProductType\x12\x18\n" +
-	"\x14PRODUCT_TYPE_UNKNOWN\x10\x00\x12\x16\n" +
-	"\x12PRODUCT_TYPE_FOREX\x10\x01\x12\x17\n" +
-	"\x13PRODUCT_TYPE_CRYPTO\x10\x02\x12\x16\n" +
-	"\x12PRODUCT_TYPE_STOCK\x10\x03\x12\x17\n" +
-	"\x13PRODUCT_TYPE_FUTURE\x10\x04\x12\x18\n" +
-	"\x14PRODUCT_TYPE_INDICES\x10\x05\x12\x15\n" +
-	"\x11PRODUCT_TYPE_FUND\x10\x06*\xe5\x01\n" +
+	"\x05limit\x18\x02 \x01(\x03R\x05limit*\xc2\x01\n" +
+	"\fCategoryType\x12\x19\n" +
+	"\x15CATEGORY_TYPE_UNKNOWN\x10\x00\x12\x17\n" +
+	"\x13CATEGORY_TYPE_FOREX\x10\x01\x12\x18\n" +
+	"\x14CATEGORY_TYPE_CRYPTO\x10\x02\x12\x17\n" +
+	"\x13CATEGORY_TYPE_STOCK\x10\x03\x12\x18\n" +
+	"\x14CATEGORY_TYPE_FUTURE\x10\x04\x12\x19\n" +
+	"\x15CATEGORY_TYPE_INDICES\x10\x05\x12\x16\n" +
+	"\x12CATEGORY_TYPE_FUND\x10\x06*\xe5\x01\n" +
 	"\tKlineType\x12\x16\n" +
 	"\x12KLINE_TYPE_UNKNOWN\x10\x00\x12\x11\n" +
 	"\rKLINE_TYPE_1M\x10\x01\x12\x11\n" +
@@ -440,7 +440,7 @@ func file_proto_itick_common_proto_rawDescGZIP() []byte {
 var file_proto_itick_common_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_proto_itick_common_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_proto_itick_common_proto_goTypes = []any{
-	(ProductType)(0),   // 0: itick.ProductType
+	(CategoryType)(0),  // 0: itick.CategoryType
 	(KlineType)(0),     // 1: itick.KlineType
 	(*Empty)(nil),      // 2: itick.Empty
 	(*RespBase)(nil),   // 3: itick.RespBase

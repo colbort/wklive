@@ -23,6 +23,9 @@ const (
 
 type SyncProductsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	ApiUrl        string                 `protobuf:"bytes,1,opt,name=api_url,json=apiUrl,proto3" json:"api_url,omitempty"`       // ITICK API地址
+	ApiToken      string                 `protobuf:"bytes,2,opt,name=api_token,json=apiToken,proto3" json:"api_token,omitempty"` // ITICK API密钥
+	WsUrl         string                 `protobuf:"bytes,3,opt,name=ws_url,json=wsUrl,proto3" json:"ws_url,omitempty"`          // ITICK WebSocket地址
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -55,6 +58,27 @@ func (x *SyncProductsReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use SyncProductsReq.ProtoReflect.Descriptor instead.
 func (*SyncProductsReq) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_task_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *SyncProductsReq) GetApiUrl() string {
+	if x != nil {
+		return x.ApiUrl
+	}
+	return ""
+}
+
+func (x *SyncProductsReq) GetApiToken() string {
+	if x != nil {
+		return x.ApiToken
+	}
+	return ""
+}
+
+func (x *SyncProductsReq) GetWsUrl() string {
+	if x != nil {
+		return x.WsUrl
+	}
+	return ""
 }
 
 type SyncProductsResp struct {
@@ -103,6 +127,9 @@ func (x *SyncProductsResp) GetBase() *RespBase {
 
 type SyncKlinesReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	ApiUrl        string                 `protobuf:"bytes,1,opt,name=api_url,json=apiUrl,proto3" json:"api_url,omitempty"`       // ITICK API地址
+	ApiToken      string                 `protobuf:"bytes,2,opt,name=api_token,json=apiToken,proto3" json:"api_token,omitempty"` // ITICK API密钥
+	WsUrl         string                 `protobuf:"bytes,3,opt,name=ws_url,json=wsUrl,proto3" json:"ws_url,omitempty"`          // ITICK WebSocket地址
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -135,6 +162,27 @@ func (x *SyncKlinesReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use SyncKlinesReq.ProtoReflect.Descriptor instead.
 func (*SyncKlinesReq) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_task_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *SyncKlinesReq) GetApiUrl() string {
+	if x != nil {
+		return x.ApiUrl
+	}
+	return ""
+}
+
+func (x *SyncKlinesReq) GetApiToken() string {
+	if x != nil {
+		return x.ApiToken
+	}
+	return ""
+}
+
+func (x *SyncKlinesReq) GetWsUrl() string {
+	if x != nil {
+		return x.WsUrl
+	}
+	return ""
 }
 
 type SyncKlinesResp struct {
@@ -185,11 +233,17 @@ var File_proto_itick_itick_task_proto protoreflect.FileDescriptor
 
 const file_proto_itick_itick_task_proto_rawDesc = "" +
 	"\n" +
-	"\x1cproto/itick/itick_task.proto\x12\x05itick\x1a\x18proto/itick/common.proto\"\x11\n" +
-	"\x0fSyncProductsReq\"7\n" +
+	"\x1cproto/itick/itick_task.proto\x12\x05itick\x1a\x18proto/itick/common.proto\"^\n" +
+	"\x0fSyncProductsReq\x12\x17\n" +
+	"\aapi_url\x18\x01 \x01(\tR\x06apiUrl\x12\x1b\n" +
+	"\tapi_token\x18\x02 \x01(\tR\bapiToken\x12\x15\n" +
+	"\x06ws_url\x18\x03 \x01(\tR\x05wsUrl\"7\n" +
 	"\x10SyncProductsResp\x12#\n" +
-	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\"\x0f\n" +
-	"\rSyncKlinesReq\"5\n" +
+	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\"\\\n" +
+	"\rSyncKlinesReq\x12\x17\n" +
+	"\aapi_url\x18\x01 \x01(\tR\x06apiUrl\x12\x1b\n" +
+	"\tapi_token\x18\x02 \x01(\tR\bapiToken\x12\x15\n" +
+	"\x06ws_url\x18\x03 \x01(\tR\x05wsUrl\"5\n" +
 	"\x0eSyncKlinesResp\x12#\n" +
 	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base2\x87\x01\n" +
 	"\tItickTask\x12?\n" +

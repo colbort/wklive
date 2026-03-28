@@ -109,4 +109,46 @@ Etcd:
   Hosts:
   - 192.168.10.116:2379
   Key: system.rpc
+ItickRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts: 
+    - "192.168.10.116:2379"
+    Key: itick.rpc
+```
+
+
+### user-rpc 微服务配置 /wklive/user-rpc/config
+```
+Name: user.rpc
+ListenOn: 0.0.0.0:8081
+Mode: dev
+Etcd:
+  Hosts:
+  - 192.168.10.116:2379
+  Key: user.rpc
+```
+
+
+### itick-rpc 微服务配置 /wklive/itick-rpc/config
+```
+Name: itick.rpc
+ListenOn: 0.0.0.0:8082
+Mode: dev
+Etcd:
+  Hosts:
+  - 192.168.10.116:2379
+  Key: itick.rpc
+```
+
+
+### payment-rpc 微服务配置 /wklive/payment-rpc/config
+```
+Name: payment.rpc
+ListenOn: 0.0.0.0:8082
+Mode: dev
+Etcd:
+  Hosts:
+  - 192.168.10.116:2379
+  Key: payment.rpc
 ```

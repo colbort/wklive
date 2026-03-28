@@ -9,14 +9,14 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type UpdateProductCategoryLogic struct {
+type UpdateCategoryLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
 
-func NewUpdateProductCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateProductCategoryLogic {
-	return &UpdateProductCategoryLogic{
+func NewUpdateCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateCategoryLogic {
+	return &UpdateCategoryLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
@@ -24,7 +24,7 @@ func NewUpdateProductCategoryLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 // 更新产品类型仅允许更新名称、状态、排序、图标和备注，产品类型不允许修改
-func (l *UpdateProductCategoryLogic) UpdateProductCategory(in *itick.UpdateProductCategoryReq) (*itick.AdminCommonResp, error) {
+func (l *UpdateCategoryLogic) UpdateCategory(in *itick.UpdateCategoryReq) (*itick.AdminCommonResp, error) {
 	// todo: add your logic here and delete this line
 
 	return &itick.AdminCommonResp{}, nil

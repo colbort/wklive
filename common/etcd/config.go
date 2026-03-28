@@ -13,13 +13,13 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func LoadFromEtcdAndMerge(hosts []string, keys []string, c any) {
+func LoadFromEtcdAndMerge(hosts []string, keys []string, c any) error {
 	cli, err := v3.New(v3.Config{
 		Endpoints:   hosts,
 		DialTimeout: 3 * time.Second,
 	})
 	if err != nil {
-		return
+		return fmt.Errorf("failed to connect etcd: %w", err)
 	}
 	defer cli.Close()
 
@@ -31,7 +31,7 @@ func LoadFromEtcdAndMerge(hosts []string, keys []string, c any) {
 	for _, key := range keys {
 		resp, err := cli.Get(ctx, key)
 		if err != nil || len(resp.Kvs) == 0 {
-			continue
+			return fmt.Errorf("failed to get config from etcd key=%s err=%w", key, err)
 		}
 
 		data := resp.Kvs[0].Value
@@ -39,7 +39,7 @@ func LoadFromEtcdAndMerge(hosts []string, keys []string, c any) {
 		var m map[string]any
 		if err := yaml.Unmarshal(data, &m); err != nil {
 			logx.Errorf("yaml parse failed key=%s err=%v", key, err)
-			continue
+			return fmt.Errorf("failed to parse yaml key=%s err=%w", key, err)
 		}
 
 		deepMerge(merged, m)
@@ -49,7 +49,9 @@ func LoadFromEtcdAndMerge(hosts []string, keys []string, c any) {
 	bs, _ := yaml.Marshal(merged)
 	if err := conf.LoadFromYamlBytes(bs, c); err != nil {
 		logx.Errorf("load merged yaml failed err=%v yaml=%s", err, string(bs))
+		return fmt.Errorf("failed to load merged yaml err=%w", err)
 	}
+	return nil
 }
 
 func deepMerge(dst, src map[string]any) {

@@ -24,9 +24,9 @@ func NewItickAppServer(svcCtx *svc.ServiceContext) *ItickAppServer {
 }
 
 // 获取允许显示的产品类型
-func (s *ItickAppServer) ListVisibleProductCategories(ctx context.Context, in *itick.ListVisibleProductCategoriesReq) (*itick.ListVisibleProductCategoriesResp, error) {
-	l := logic.NewListVisibleProductCategoriesLogic(ctx, s.svcCtx)
-	return l.ListVisibleProductCategories(in)
+func (s *ItickAppServer) ListVisibleCategories(ctx context.Context, in *itick.ListVisibleCategoriesReq) (*itick.ListVisibleCategoriesResp, error) {
+	l := logic.NewListVisibleCategoriesLogic(ctx, s.svcCtx)
+	return l.ListVisibleCategories(in)
 }
 
 // 获取允许显示的产品
@@ -69,4 +69,10 @@ func (s *ItickAppServer) SubscribeQuote(ctx context.Context, in *itick.Subscribe
 func (s *ItickAppServer) SubscribeDepth(ctx context.Context, in *itick.SubscribeDepthReq) (*itick.SubscribeDepthResp, error) {
 	l := logic.NewSubscribeDepthLogic(ctx, s.svcCtx)
 	return l.SubscribeDepth(in)
+}
+
+// 订阅数据流
+func (s *ItickAppServer) SubscribeStream(in *itick.SubscribeRequest, stream itick.ItickApp_SubscribeStreamServer) error {
+	l := logic.NewSubscribeStreamLogic(stream.Context(), s.svcCtx)
+	return l.SubscribeStream(in, stream)
 }

@@ -19,14 +19,15 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ItickApp_ListVisibleProductCategories_FullMethodName = "/itick.ItickApp/ListVisibleProductCategories"
-	ItickApp_ListVisibleProducts_FullMethodName          = "/itick.ItickApp/ListVisibleProducts"
-	ItickApp_GetKline_FullMethodName                     = "/itick.ItickApp/GetKline"
-	ItickApp_GetQuote_FullMethodName                     = "/itick.ItickApp/GetQuote"
-	ItickApp_BatchGetQuote_FullMethodName                = "/itick.ItickApp/BatchGetQuote"
-	ItickApp_GetDepth_FullMethodName                     = "/itick.ItickApp/GetDepth"
-	ItickApp_SubscribeQuote_FullMethodName               = "/itick.ItickApp/SubscribeQuote"
-	ItickApp_SubscribeDepth_FullMethodName               = "/itick.ItickApp/SubscribeDepth"
+	ItickApp_ListVisibleCategories_FullMethodName = "/itick.ItickApp/ListVisibleCategories"
+	ItickApp_ListVisibleProducts_FullMethodName   = "/itick.ItickApp/ListVisibleProducts"
+	ItickApp_GetKline_FullMethodName              = "/itick.ItickApp/GetKline"
+	ItickApp_GetQuote_FullMethodName              = "/itick.ItickApp/GetQuote"
+	ItickApp_BatchGetQuote_FullMethodName         = "/itick.ItickApp/BatchGetQuote"
+	ItickApp_GetDepth_FullMethodName              = "/itick.ItickApp/GetDepth"
+	ItickApp_SubscribeQuote_FullMethodName        = "/itick.ItickApp/SubscribeQuote"
+	ItickApp_SubscribeDepth_FullMethodName        = "/itick.ItickApp/SubscribeDepth"
+	ItickApp_SubscribeStream_FullMethodName       = "/itick.ItickApp/SubscribeStream"
 )
 
 // ItickAppClient is the client API for ItickApp service.
@@ -38,7 +39,7 @@ const (
 // ====================
 type ItickAppClient interface {
 	// 获取允许显示的产品类型
-	ListVisibleProductCategories(ctx context.Context, in *ListVisibleProductCategoriesReq, opts ...grpc.CallOption) (*ListVisibleProductCategoriesResp, error)
+	ListVisibleCategories(ctx context.Context, in *ListVisibleCategoriesReq, opts ...grpc.CallOption) (*ListVisibleCategoriesResp, error)
 	// 获取允许显示的产品
 	ListVisibleProducts(ctx context.Context, in *ListVisibleProductsReq, opts ...grpc.CallOption) (*ListVisibleProductsResp, error)
 	// 获取K线
@@ -53,6 +54,8 @@ type ItickAppClient interface {
 	SubscribeQuote(ctx context.Context, in *SubscribeQuoteReq, opts ...grpc.CallOption) (*SubscribeQuoteResp, error)
 	// 订阅深度
 	SubscribeDepth(ctx context.Context, in *SubscribeDepthReq, opts ...grpc.CallOption) (*SubscribeDepthResp, error)
+	// 订阅数据流
+	SubscribeStream(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[PushReply], error)
 }
 
 type itickAppClient struct {
@@ -63,10 +66,10 @@ func NewItickAppClient(cc grpc.ClientConnInterface) ItickAppClient {
 	return &itickAppClient{cc}
 }
 
-func (c *itickAppClient) ListVisibleProductCategories(ctx context.Context, in *ListVisibleProductCategoriesReq, opts ...grpc.CallOption) (*ListVisibleProductCategoriesResp, error) {
+func (c *itickAppClient) ListVisibleCategories(ctx context.Context, in *ListVisibleCategoriesReq, opts ...grpc.CallOption) (*ListVisibleCategoriesResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListVisibleProductCategoriesResp)
-	err := c.cc.Invoke(ctx, ItickApp_ListVisibleProductCategories_FullMethodName, in, out, cOpts...)
+	out := new(ListVisibleCategoriesResp)
+	err := c.cc.Invoke(ctx, ItickApp_ListVisibleCategories_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -143,6 +146,25 @@ func (c *itickAppClient) SubscribeDepth(ctx context.Context, in *SubscribeDepthR
 	return out, nil
 }
 
+func (c *itickAppClient) SubscribeStream(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[PushReply], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &ItickApp_ServiceDesc.Streams[0], ItickApp_SubscribeStream_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[SubscribeRequest, PushReply]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type ItickApp_SubscribeStreamClient = grpc.ServerStreamingClient[PushReply]
+
 // ItickAppServer is the server API for ItickApp service.
 // All implementations must embed UnimplementedItickAppServer
 // for forward compatibility.
@@ -152,7 +174,7 @@ func (c *itickAppClient) SubscribeDepth(ctx context.Context, in *SubscribeDepthR
 // ====================
 type ItickAppServer interface {
 	// 获取允许显示的产品类型
-	ListVisibleProductCategories(context.Context, *ListVisibleProductCategoriesReq) (*ListVisibleProductCategoriesResp, error)
+	ListVisibleCategories(context.Context, *ListVisibleCategoriesReq) (*ListVisibleCategoriesResp, error)
 	// 获取允许显示的产品
 	ListVisibleProducts(context.Context, *ListVisibleProductsReq) (*ListVisibleProductsResp, error)
 	// 获取K线
@@ -167,6 +189,8 @@ type ItickAppServer interface {
 	SubscribeQuote(context.Context, *SubscribeQuoteReq) (*SubscribeQuoteResp, error)
 	// 订阅深度
 	SubscribeDepth(context.Context, *SubscribeDepthReq) (*SubscribeDepthResp, error)
+	// 订阅数据流
+	SubscribeStream(*SubscribeRequest, grpc.ServerStreamingServer[PushReply]) error
 	mustEmbedUnimplementedItickAppServer()
 }
 
@@ -177,8 +201,8 @@ type ItickAppServer interface {
 // pointer dereference when methods are called.
 type UnimplementedItickAppServer struct{}
 
-func (UnimplementedItickAppServer) ListVisibleProductCategories(context.Context, *ListVisibleProductCategoriesReq) (*ListVisibleProductCategoriesResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListVisibleProductCategories not implemented")
+func (UnimplementedItickAppServer) ListVisibleCategories(context.Context, *ListVisibleCategoriesReq) (*ListVisibleCategoriesResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListVisibleCategories not implemented")
 }
 func (UnimplementedItickAppServer) ListVisibleProducts(context.Context, *ListVisibleProductsReq) (*ListVisibleProductsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListVisibleProducts not implemented")
@@ -201,6 +225,9 @@ func (UnimplementedItickAppServer) SubscribeQuote(context.Context, *SubscribeQuo
 func (UnimplementedItickAppServer) SubscribeDepth(context.Context, *SubscribeDepthReq) (*SubscribeDepthResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SubscribeDepth not implemented")
 }
+func (UnimplementedItickAppServer) SubscribeStream(*SubscribeRequest, grpc.ServerStreamingServer[PushReply]) error {
+	return status.Errorf(codes.Unimplemented, "method SubscribeStream not implemented")
+}
 func (UnimplementedItickAppServer) mustEmbedUnimplementedItickAppServer() {}
 func (UnimplementedItickAppServer) testEmbeddedByValue()                  {}
 
@@ -222,20 +249,20 @@ func RegisterItickAppServer(s grpc.ServiceRegistrar, srv ItickAppServer) {
 	s.RegisterService(&ItickApp_ServiceDesc, srv)
 }
 
-func _ItickApp_ListVisibleProductCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListVisibleProductCategoriesReq)
+func _ItickApp_ListVisibleCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListVisibleCategoriesReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAppServer).ListVisibleProductCategories(ctx, in)
+		return srv.(ItickAppServer).ListVisibleCategories(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickApp_ListVisibleProductCategories_FullMethodName,
+		FullMethod: ItickApp_ListVisibleCategories_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAppServer).ListVisibleProductCategories(ctx, req.(*ListVisibleProductCategoriesReq))
+		return srv.(ItickAppServer).ListVisibleCategories(ctx, req.(*ListVisibleCategoriesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -366,6 +393,17 @@ func _ItickApp_SubscribeDepth_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ItickApp_SubscribeStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(SubscribeRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(ItickAppServer).SubscribeStream(m, &grpc.GenericServerStream[SubscribeRequest, PushReply]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type ItickApp_SubscribeStreamServer = grpc.ServerStreamingServer[PushReply]
+
 // ItickApp_ServiceDesc is the grpc.ServiceDesc for ItickApp service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -374,8 +412,8 @@ var ItickApp_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ItickAppServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "ListVisibleProductCategories",
-			Handler:    _ItickApp_ListVisibleProductCategories_Handler,
+			MethodName: "ListVisibleCategories",
+			Handler:    _ItickApp_ListVisibleCategories_Handler,
 		},
 		{
 			MethodName: "ListVisibleProducts",
@@ -406,6 +444,12 @@ var ItickApp_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ItickApp_SubscribeDepth_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "SubscribeStream",
+			Handler:       _ItickApp_SubscribeStream_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "proto/itick/itick_app.proto",
 }

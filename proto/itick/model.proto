@@ -7,23 +7,24 @@ import "proto/itick/common.proto";
 option go_package = "wklive/proto/itick;itick";
 
 // 产品类型配置
-message ItickProductCategory {
+message ItickCategory {
   int64 id = 1;
-  itick.ProductType product_type = 2;
-  string product_type_name = 3;
-  bool enabled = 4;
-  bool app_visible = 5;
-  int64 sort = 6;
-  string icon = 7;
-  string remark = 8;
-  int64 create_time = 9;
-  int64 update_time = 10;
+  itick.CategoryType category_type = 2;
+  string category_code = 3;
+  string category_name = 4;
+  bool enabled = 5;
+  bool app_visible = 6;
+  int64 sort = 7;
+  string icon = 8;
+  string remark = 9;
+  int64 create_time = 10;
+  int64 update_time = 11;
 }
 
 // 产品
 message ItickProduct {
   int64 id = 1;
-  itick.ProductType product_type = 2;
+  itick.CategoryType category_type = 2;
   string market = 3; // binance / hk / us / forex ...
   string symbol = 4; // BTCUSDT / AAPL / EURUSD
   string code = 5; // 第三方原始 code
@@ -86,7 +87,7 @@ message Quote {
 }
 
 
-message ItickTenantProductCategory {
+message ItickTenantCategory {
   int64 id = 1;
   int64 tenant_id = 2;
   int64 category_id = 3;
@@ -98,8 +99,8 @@ message ItickTenantProductCategory {
   int64 update_time = 9;
 
   // 冗余返回字段，方便前端展示
-  itick.ProductType product_type = 10;
-  string product_type_name = 11;
+  itick.CategoryType category_type = 10;
+  string category_type_name = 11;
   string icon = 12;
 }
 
@@ -115,13 +116,14 @@ message ItickTenantProduct {
   int64 update_time = 9;
 
   // 冗余返回字段，方便前端展示
-  itick.ProductType product_type = 10;
-  string market = 11;
-  string symbol = 12;
-  string code = 13;
-  string name = 14;
-  string display_name = 15;
-  string base_coin = 16;
-  string quote_coin = 17;
-  string icon = 18;
+  itick.CategoryType category_type = 10;
+  string category_name = 11;
+  string market = 12;
+  string symbol = 13;
+  string code = 14;
+  string name = 15;
+  string display_name = 16;
+  string base_coin = 17;
+  string quote_coin = 18;
+  string icon = 19;
 }

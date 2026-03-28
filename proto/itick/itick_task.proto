@@ -8,6 +8,9 @@ option go_package = "wklive/proto/itick;itick";
 
 
 message SyncProductsReq {
+  string api_url = 1; // ITICK API地址
+  string api_token = 2; // ITICK API密钥
+  string ws_url = 3; // ITICK WebSocket地址
 }
 
 message SyncProductsResp {
@@ -15,6 +18,9 @@ message SyncProductsResp {
 }
 
 message SyncKlinesReq {
+  string api_url = 1; // ITICK API地址
+  string api_token = 2; // ITICK API密钥
+  string ws_url = 3; // ITICK WebSocket地址
 }
 
 message SyncKlinesResp {
