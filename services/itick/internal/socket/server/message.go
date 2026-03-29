@@ -6,9 +6,6 @@ type ClientAction string
 type Topic string
 
 const (
-	ActionSubscribe   ClientAction = "subscribe"
-	ActionUnsubscribe ClientAction = "unsubscribe"
-
 	TopicQuote Topic = "quote"
 	TopicDepth Topic = "depth"
 	TopicTick  Topic = "tick"
@@ -16,12 +13,11 @@ const (
 )
 
 type ClientMessage struct {
-	Action   ClientAction `json:"action"`
-	Topic    Topic        `json:"topic"`
-	Market   string       `json:"market"`             // crypto
-	Symbol   string       `json:"symbol"`             // BTCUSDT
-	Region   string       `json:"region,omitempty"`   // BA
-	Interval string       `json:"interval,omitempty"` // 1m/5m/15m/30m/1h/1d/1w/1mo
+	Topic    Topic  `json:"topic"`
+	Market   string `json:"market"`             // crypto
+	Symbol   string `json:"symbol"`             // BTCUSDT
+	Region   string `json:"region,omitempty"`   // BA
+	Interval string `json:"interval,omitempty"` // 1m/5m/15m/30m/1h/1d/1w/1mo
 }
 
 type ServerMessage struct {

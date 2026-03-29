@@ -75,43 +75,6 @@ message BatchGetQuoteResp {
   repeated itick.Quote data = 2;
 }
 
-// ====================
-// 深度
-// ====================
-
-message GetDepthReq {
-  string market = 1;
-  string symbol = 2;
-  int32 level = 3;
-}
-
-message GetDepthResp {
-  itick.RespBase base = 1;
-  itick.Depth data = 2;
-}
-
-// ====================
-// 订阅
-// ====================
-
-message SubscribeQuoteReq {
-  string market = 1;
-  repeated string data = 2;
-}
-
-message SubscribeQuoteResp {
-  itick.RespBase base = 1;
-}
-
-message SubscribeDepthReq {
-  string market = 1;
-  repeated string data = 2;
-}
-
-message SubscribeDepthResp {
-  itick.RespBase base = 1;
-}
-
 message SubscribeRequest {
   repeated SubscribeTopic topics = 1;
 }
@@ -151,15 +114,6 @@ service ItickApp {
 
   // 批量获取最新报价
   rpc BatchGetQuote(BatchGetQuoteReq) returns (BatchGetQuoteResp);
-
-  // 获取深度
-  rpc GetDepth(GetDepthReq) returns (GetDepthResp);
-
-  // 订阅报价
-  rpc SubscribeQuote(SubscribeQuoteReq) returns (SubscribeQuoteResp);
-
-  // 订阅深度
-  rpc SubscribeDepth(SubscribeDepthReq) returns (SubscribeDepthResp);
 
   // 订阅数据流
   rpc SubscribeStream(SubscribeRequest) returns (stream PushReply);

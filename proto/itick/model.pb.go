@@ -23,19 +23,20 @@ const (
 
 // 产品类型配置
 type ItickCategory struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	CategoryType     CategoryType           `protobuf:"varint,2,opt,name=category_type,json=categoryType,proto3,enum=itick.CategoryType" json:"category_type,omitempty"`
-	CategoryTypeName string                 `protobuf:"bytes,3,opt,name=category_type_name,json=categoryTypeName,proto3" json:"category_type_name,omitempty"`
-	Enabled          bool                   `protobuf:"varint,4,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	AppVisible       bool                   `protobuf:"varint,5,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
-	Sort             int64                  `protobuf:"varint,6,opt,name=sort,proto3" json:"sort,omitempty"`
-	Icon             string                 `protobuf:"bytes,7,opt,name=icon,proto3" json:"icon,omitempty"`
-	Remark           string                 `protobuf:"bytes,8,opt,name=remark,proto3" json:"remark,omitempty"`
-	CreateTime       int64                  `protobuf:"varint,9,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	UpdateTime       int64                  `protobuf:"varint,10,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	CategoryType  CategoryType           `protobuf:"varint,2,opt,name=category_type,json=categoryType,proto3,enum=itick.CategoryType" json:"category_type,omitempty"`
+	CategoryCode  string                 `protobuf:"bytes,3,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"`
+	CategoryName  string                 `protobuf:"bytes,4,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"`
+	Enabled       bool                   `protobuf:"varint,5,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	AppVisible    bool                   `protobuf:"varint,6,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
+	Sort          int64                  `protobuf:"varint,7,opt,name=sort,proto3" json:"sort,omitempty"`
+	Icon          string                 `protobuf:"bytes,8,opt,name=icon,proto3" json:"icon,omitempty"`
+	Remark        string                 `protobuf:"bytes,9,opt,name=remark,proto3" json:"remark,omitempty"`
+	CreateTime    int64                  `protobuf:"varint,10,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	UpdateTime    int64                  `protobuf:"varint,11,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ItickCategory) Reset() {
@@ -82,9 +83,16 @@ func (x *ItickCategory) GetCategoryType() CategoryType {
 	return CategoryType_CATEGORY_TYPE_UNKNOWN
 }
 
-func (x *ItickCategory) GetCategoryTypeName() string {
+func (x *ItickCategory) GetCategoryCode() string {
 	if x != nil {
-		return x.CategoryTypeName
+		return x.CategoryCode
+	}
+	return ""
+}
+
+func (x *ItickCategory) GetCategoryName() string {
+	if x != nil {
+		return x.CategoryName
 	}
 	return ""
 }
@@ -828,18 +836,18 @@ type ItickTenantProduct struct {
 	CreateTime int64                  `protobuf:"varint,8,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
 	UpdateTime int64                  `protobuf:"varint,9,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
 	// 冗余返回字段，方便前端展示
-	CategoryType     CategoryType `protobuf:"varint,10,opt,name=category_type,json=categoryType,proto3,enum=itick.CategoryType" json:"category_type,omitempty"`
-	CategoryTypeName string       `protobuf:"bytes,11,opt,name=category_type_name,json=categoryTypeName,proto3" json:"category_type_name,omitempty"`
-	Market           string       `protobuf:"bytes,12,opt,name=market,proto3" json:"market,omitempty"`
-	Symbol           string       `protobuf:"bytes,13,opt,name=symbol,proto3" json:"symbol,omitempty"`
-	Code             string       `protobuf:"bytes,14,opt,name=code,proto3" json:"code,omitempty"`
-	Name             string       `protobuf:"bytes,15,opt,name=name,proto3" json:"name,omitempty"`
-	DisplayName      string       `protobuf:"bytes,16,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
-	BaseCoin         string       `protobuf:"bytes,17,opt,name=base_coin,json=baseCoin,proto3" json:"base_coin,omitempty"`
-	QuoteCoin        string       `protobuf:"bytes,18,opt,name=quote_coin,json=quoteCoin,proto3" json:"quote_coin,omitempty"`
-	Icon             string       `protobuf:"bytes,19,opt,name=icon,proto3" json:"icon,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	CategoryType  CategoryType `protobuf:"varint,10,opt,name=category_type,json=categoryType,proto3,enum=itick.CategoryType" json:"category_type,omitempty"`
+	CategoryName  string       `protobuf:"bytes,11,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"`
+	Market        string       `protobuf:"bytes,12,opt,name=market,proto3" json:"market,omitempty"`
+	Symbol        string       `protobuf:"bytes,13,opt,name=symbol,proto3" json:"symbol,omitempty"`
+	Code          string       `protobuf:"bytes,14,opt,name=code,proto3" json:"code,omitempty"`
+	Name          string       `protobuf:"bytes,15,opt,name=name,proto3" json:"name,omitempty"`
+	DisplayName   string       `protobuf:"bytes,16,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	BaseCoin      string       `protobuf:"bytes,17,opt,name=base_coin,json=baseCoin,proto3" json:"base_coin,omitempty"`
+	QuoteCoin     string       `protobuf:"bytes,18,opt,name=quote_coin,json=quoteCoin,proto3" json:"quote_coin,omitempty"`
+	Icon          string       `protobuf:"bytes,19,opt,name=icon,proto3" json:"icon,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ItickTenantProduct) Reset() {
@@ -942,9 +950,9 @@ func (x *ItickTenantProduct) GetCategoryType() CategoryType {
 	return CategoryType_CATEGORY_TYPE_UNKNOWN
 }
 
-func (x *ItickTenantProduct) GetCategoryTypeName() string {
+func (x *ItickTenantProduct) GetCategoryName() string {
 	if x != nil {
-		return x.CategoryTypeName
+		return x.CategoryName
 	}
 	return ""
 }
@@ -1009,21 +1017,22 @@ var File_proto_itick_model_proto protoreflect.FileDescriptor
 
 const file_proto_itick_model_proto_rawDesc = "" +
 	"\n" +
-	"\x17proto/itick/model.proto\x12\x05itick\x1a\x18proto/itick/common.proto\"\xc4\x02\n" +
+	"\x17proto/itick/model.proto\x12\x05itick\x1a\x18proto/itick/common.proto\"\xe0\x02\n" +
 	"\rItickCategory\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x128\n" +
-	"\rcategory_type\x18\x02 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12,\n" +
-	"\x12category_type_name\x18\x03 \x01(\tR\x10categoryTypeName\x12\x18\n" +
-	"\aenabled\x18\x04 \x01(\bR\aenabled\x12\x1f\n" +
-	"\vapp_visible\x18\x05 \x01(\bR\n" +
+	"\rcategory_type\x18\x02 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12#\n" +
+	"\rcategory_code\x18\x03 \x01(\tR\fcategoryCode\x12#\n" +
+	"\rcategory_name\x18\x04 \x01(\tR\fcategoryName\x12\x18\n" +
+	"\aenabled\x18\x05 \x01(\bR\aenabled\x12\x1f\n" +
+	"\vapp_visible\x18\x06 \x01(\bR\n" +
 	"appVisible\x12\x12\n" +
-	"\x04sort\x18\x06 \x01(\x03R\x04sort\x12\x12\n" +
-	"\x04icon\x18\a \x01(\tR\x04icon\x12\x16\n" +
-	"\x06remark\x18\b \x01(\tR\x06remark\x12\x1f\n" +
-	"\vcreate_time\x18\t \x01(\x03R\n" +
-	"createTime\x12\x1f\n" +
-	"\vupdate_time\x18\n" +
+	"\x04sort\x18\a \x01(\x03R\x04sort\x12\x12\n" +
+	"\x04icon\x18\b \x01(\tR\x04icon\x12\x16\n" +
+	"\x06remark\x18\t \x01(\tR\x06remark\x12\x1f\n" +
+	"\vcreate_time\x18\n" +
 	" \x01(\x03R\n" +
+	"createTime\x12\x1f\n" +
+	"\vupdate_time\x18\v \x01(\x03R\n" +
 	"updateTime\"\xcc\x03\n" +
 	"\fItickProduct\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x128\n" +
@@ -1104,7 +1113,7 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"\rcategory_type\x18\n" +
 	" \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12,\n" +
 	"\x12category_type_name\x18\v \x01(\tR\x10categoryTypeName\x12\x12\n" +
-	"\x04icon\x18\f \x01(\tR\x04icon\"\xbc\x04\n" +
+	"\x04icon\x18\f \x01(\tR\x04icon\"\xb3\x04\n" +
 	"\x12ItickTenantProduct\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1d\n" +
@@ -1120,8 +1129,8 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"\vupdate_time\x18\t \x01(\x03R\n" +
 	"updateTime\x128\n" +
 	"\rcategory_type\x18\n" +
-	" \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12,\n" +
-	"\x12category_type_name\x18\v \x01(\tR\x10categoryTypeName\x12\x16\n" +
+	" \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12#\n" +
+	"\rcategory_name\x18\v \x01(\tR\fcategoryName\x12\x16\n" +
 	"\x06market\x18\f \x01(\tR\x06market\x12\x16\n" +
 	"\x06symbol\x18\r \x01(\tR\x06symbol\x12\x12\n" +
 	"\x04code\x18\x0e \x01(\tR\x04code\x12\x12\n" +

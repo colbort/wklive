@@ -66,16 +66,16 @@ func (x *AdminCommonResp) GetBase() *RespBase {
 }
 
 type CreateCategoryReq struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	CategoryType     CategoryType           `protobuf:"varint,1,opt,name=category_type,json=categoryType,proto3,enum=itick.CategoryType" json:"category_type,omitempty"`
-	CategoryTypeName string                 `protobuf:"bytes,2,opt,name=category_type_name,json=categoryTypeName,proto3" json:"category_type_name,omitempty"`
-	Enabled          bool                   `protobuf:"varint,3,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	AppVisible       bool                   `protobuf:"varint,4,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
-	Sort             int64                  `protobuf:"varint,5,opt,name=sort,proto3" json:"sort,omitempty"`
-	Icon             string                 `protobuf:"bytes,6,opt,name=icon,proto3" json:"icon,omitempty"`
-	Remark           string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CategoryType  CategoryType           `protobuf:"varint,1,opt,name=category_type,json=categoryType,proto3,enum=itick.CategoryType" json:"category_type,omitempty"`
+	CategoryName  string                 `protobuf:"bytes,2,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"`
+	Enabled       bool                   `protobuf:"varint,3,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	AppVisible    bool                   `protobuf:"varint,4,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
+	Sort          int64                  `protobuf:"varint,5,opt,name=sort,proto3" json:"sort,omitempty"`
+	Icon          string                 `protobuf:"bytes,6,opt,name=icon,proto3" json:"icon,omitempty"`
+	Remark        string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateCategoryReq) Reset() {
@@ -115,9 +115,9 @@ func (x *CreateCategoryReq) GetCategoryType() CategoryType {
 	return CategoryType_CATEGORY_TYPE_UNKNOWN
 }
 
-func (x *CreateCategoryReq) GetCategoryTypeName() string {
+func (x *CreateCategoryReq) GetCategoryName() string {
 	if x != nil {
-		return x.CategoryTypeName
+		return x.CategoryName
 	}
 	return ""
 }
@@ -158,16 +158,16 @@ func (x *CreateCategoryReq) GetRemark() string {
 }
 
 type UpdateCategoryReq struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	CategoryTypeName string                 `protobuf:"bytes,2,opt,name=category_type_name,json=categoryTypeName,proto3" json:"category_type_name,omitempty"`
-	Enabled          bool                   `protobuf:"varint,3,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	AppVisible       bool                   `protobuf:"varint,4,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
-	Sort             int64                  `protobuf:"varint,5,opt,name=sort,proto3" json:"sort,omitempty"`
-	Icon             string                 `protobuf:"bytes,6,opt,name=icon,proto3" json:"icon,omitempty"`
-	Remark           string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	CategoryName  string                 `protobuf:"bytes,2,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"`
+	Enabled       bool                   `protobuf:"varint,3,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	AppVisible    bool                   `protobuf:"varint,4,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
+	Sort          int64                  `protobuf:"varint,5,opt,name=sort,proto3" json:"sort,omitempty"`
+	Icon          string                 `protobuf:"bytes,6,opt,name=icon,proto3" json:"icon,omitempty"`
+	Remark        string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UpdateCategoryReq) Reset() {
@@ -207,9 +207,9 @@ func (x *UpdateCategoryReq) GetId() int64 {
 	return 0
 }
 
-func (x *UpdateCategoryReq) GetCategoryTypeName() string {
+func (x *UpdateCategoryReq) GetCategoryName() string {
 	if x != nil {
-		return x.CategoryTypeName
+		return x.CategoryName
 	}
 	return ""
 }
@@ -2287,19 +2287,19 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\n" +
 	"\x1dproto/itick/itick_admin.proto\x12\x05itick\x1a\x18proto/itick/common.proto\x1a\x17proto/itick/model.proto\"6\n" +
 	"\x0fAdminCommonResp\x12#\n" +
-	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\"\xf6\x01\n" +
+	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\"\xed\x01\n" +
 	"\x11CreateCategoryReq\x128\n" +
-	"\rcategory_type\x18\x01 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12,\n" +
-	"\x12category_type_name\x18\x02 \x01(\tR\x10categoryTypeName\x12\x18\n" +
+	"\rcategory_type\x18\x01 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12#\n" +
+	"\rcategory_name\x18\x02 \x01(\tR\fcategoryName\x12\x18\n" +
 	"\aenabled\x18\x03 \x01(\bR\aenabled\x12\x1f\n" +
 	"\vapp_visible\x18\x04 \x01(\bR\n" +
 	"appVisible\x12\x12\n" +
 	"\x04sort\x18\x05 \x01(\x03R\x04sort\x12\x12\n" +
 	"\x04icon\x18\x06 \x01(\tR\x04icon\x12\x16\n" +
-	"\x06remark\x18\a \x01(\tR\x06remark\"\xcc\x01\n" +
+	"\x06remark\x18\a \x01(\tR\x06remark\"\xc3\x01\n" +
 	"\x11UpdateCategoryReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12,\n" +
-	"\x12category_type_name\x18\x02 \x01(\tR\x10categoryTypeName\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
+	"\rcategory_name\x18\x02 \x01(\tR\fcategoryName\x12\x18\n" +
 	"\aenabled\x18\x03 \x01(\bR\aenabled\x12\x1f\n" +
 	"\vapp_visible\x18\x04 \x01(\bR\n" +
 	"appVisible\x12\x12\n" +

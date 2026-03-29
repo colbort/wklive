@@ -178,6 +178,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/register",
 				Handler: user_public.RegisterHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/ws/tick",
+				Handler: user_public.TickWsHandler(serverCtx),
+			},
 		},
 		rest.WithPrefix("/app/user"),
 	)

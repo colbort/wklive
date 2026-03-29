@@ -533,3 +533,26 @@ type UserSecurity struct {
 type VerifyGoogle2FAReq struct {
 	GoogleCode string `json:"googleCode"`
 }
+
+type WsMessage struct {
+	Type     string        `json:"type"`
+	ClientTs int64         `json:"clientTs,omitempty"` // 客户端毫秒时间戳
+	ServerTs int64         `json:"serverTs,omitempty"` // 服务端毫秒时间戳
+	Topics   []WsTickTopic `json:"topics,omitempty"`
+	Code     int           `json:"code,omitempty"`
+	Message  string        `json:"message,omitempty"`
+	Topic    string        `json:"topic,omitempty"`
+	Market   string        `json:"market,omitempty"`
+	Symbol   string        `json:"symbol,omitempty"`
+	Region   string        `json:"region,omitempty"`
+	Interval string        `json:"interval,omitempty"`
+	Payload  []byte        `json:"payload,omitempty"`
+}
+
+type WsTickTopic struct {
+	Topic    string `json:"topic"`
+	Market   string `json:"market"`
+	Symbol   string `json:"symbol"`
+	Region   string `json:"region,optional"`
+	Interval string `json:"interval,optional"`
+}

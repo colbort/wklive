@@ -6,6 +6,7 @@ package svc
 import (
 	"wklive/app-api/internal/config"
 
+	"wklive/proto/itick"
 	"wklive/proto/payment"
 	"wklive/proto/user"
 )
@@ -14,6 +15,7 @@ type ServiceContext struct {
 	Config     config.Config
 	UserCli    user.UserAppClient
 	PaymentCli payment.PaymentAppClient
+	ItickCli   itick.ItickAppClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {

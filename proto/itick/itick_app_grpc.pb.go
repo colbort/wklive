@@ -24,9 +24,6 @@ const (
 	ItickApp_GetKline_FullMethodName              = "/itick.ItickApp/GetKline"
 	ItickApp_GetQuote_FullMethodName              = "/itick.ItickApp/GetQuote"
 	ItickApp_BatchGetQuote_FullMethodName         = "/itick.ItickApp/BatchGetQuote"
-	ItickApp_GetDepth_FullMethodName              = "/itick.ItickApp/GetDepth"
-	ItickApp_SubscribeQuote_FullMethodName        = "/itick.ItickApp/SubscribeQuote"
-	ItickApp_SubscribeDepth_FullMethodName        = "/itick.ItickApp/SubscribeDepth"
 	ItickApp_SubscribeStream_FullMethodName       = "/itick.ItickApp/SubscribeStream"
 )
 
@@ -48,12 +45,6 @@ type ItickAppClient interface {
 	GetQuote(ctx context.Context, in *GetQuoteReq, opts ...grpc.CallOption) (*GetQuoteResp, error)
 	// 批量获取最新报价
 	BatchGetQuote(ctx context.Context, in *BatchGetQuoteReq, opts ...grpc.CallOption) (*BatchGetQuoteResp, error)
-	// 获取深度
-	GetDepth(ctx context.Context, in *GetDepthReq, opts ...grpc.CallOption) (*GetDepthResp, error)
-	// 订阅报价
-	SubscribeQuote(ctx context.Context, in *SubscribeQuoteReq, opts ...grpc.CallOption) (*SubscribeQuoteResp, error)
-	// 订阅深度
-	SubscribeDepth(ctx context.Context, in *SubscribeDepthReq, opts ...grpc.CallOption) (*SubscribeDepthResp, error)
 	// 订阅数据流
 	SubscribeStream(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[PushReply], error)
 }
@@ -116,36 +107,6 @@ func (c *itickAppClient) BatchGetQuote(ctx context.Context, in *BatchGetQuoteReq
 	return out, nil
 }
 
-func (c *itickAppClient) GetDepth(ctx context.Context, in *GetDepthReq, opts ...grpc.CallOption) (*GetDepthResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetDepthResp)
-	err := c.cc.Invoke(ctx, ItickApp_GetDepth_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *itickAppClient) SubscribeQuote(ctx context.Context, in *SubscribeQuoteReq, opts ...grpc.CallOption) (*SubscribeQuoteResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SubscribeQuoteResp)
-	err := c.cc.Invoke(ctx, ItickApp_SubscribeQuote_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *itickAppClient) SubscribeDepth(ctx context.Context, in *SubscribeDepthReq, opts ...grpc.CallOption) (*SubscribeDepthResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SubscribeDepthResp)
-	err := c.cc.Invoke(ctx, ItickApp_SubscribeDepth_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *itickAppClient) SubscribeStream(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[PushReply], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &ItickApp_ServiceDesc.Streams[0], ItickApp_SubscribeStream_FullMethodName, cOpts...)
@@ -183,12 +144,6 @@ type ItickAppServer interface {
 	GetQuote(context.Context, *GetQuoteReq) (*GetQuoteResp, error)
 	// 批量获取最新报价
 	BatchGetQuote(context.Context, *BatchGetQuoteReq) (*BatchGetQuoteResp, error)
-	// 获取深度
-	GetDepth(context.Context, *GetDepthReq) (*GetDepthResp, error)
-	// 订阅报价
-	SubscribeQuote(context.Context, *SubscribeQuoteReq) (*SubscribeQuoteResp, error)
-	// 订阅深度
-	SubscribeDepth(context.Context, *SubscribeDepthReq) (*SubscribeDepthResp, error)
 	// 订阅数据流
 	SubscribeStream(*SubscribeRequest, grpc.ServerStreamingServer[PushReply]) error
 	mustEmbedUnimplementedItickAppServer()
@@ -215,15 +170,6 @@ func (UnimplementedItickAppServer) GetQuote(context.Context, *GetQuoteReq) (*Get
 }
 func (UnimplementedItickAppServer) BatchGetQuote(context.Context, *BatchGetQuoteReq) (*BatchGetQuoteResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BatchGetQuote not implemented")
-}
-func (UnimplementedItickAppServer) GetDepth(context.Context, *GetDepthReq) (*GetDepthResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetDepth not implemented")
-}
-func (UnimplementedItickAppServer) SubscribeQuote(context.Context, *SubscribeQuoteReq) (*SubscribeQuoteResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SubscribeQuote not implemented")
-}
-func (UnimplementedItickAppServer) SubscribeDepth(context.Context, *SubscribeDepthReq) (*SubscribeDepthResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SubscribeDepth not implemented")
 }
 func (UnimplementedItickAppServer) SubscribeStream(*SubscribeRequest, grpc.ServerStreamingServer[PushReply]) error {
 	return status.Errorf(codes.Unimplemented, "method SubscribeStream not implemented")
@@ -339,60 +285,6 @@ func _ItickApp_BatchGetQuote_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickApp_GetDepth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetDepthReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ItickAppServer).GetDepth(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ItickApp_GetDepth_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAppServer).GetDepth(ctx, req.(*GetDepthReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ItickApp_SubscribeQuote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SubscribeQuoteReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ItickAppServer).SubscribeQuote(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ItickApp_SubscribeQuote_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAppServer).SubscribeQuote(ctx, req.(*SubscribeQuoteReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ItickApp_SubscribeDepth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SubscribeDepthReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ItickAppServer).SubscribeDepth(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ItickApp_SubscribeDepth_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAppServer).SubscribeDepth(ctx, req.(*SubscribeDepthReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _ItickApp_SubscribeStream_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(SubscribeRequest)
 	if err := stream.RecvMsg(m); err != nil {
@@ -430,18 +322,6 @@ var ItickApp_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "BatchGetQuote",
 			Handler:    _ItickApp_BatchGetQuote_Handler,
-		},
-		{
-			MethodName: "GetDepth",
-			Handler:    _ItickApp_GetDepth_Handler,
-		},
-		{
-			MethodName: "SubscribeQuote",
-			Handler:    _ItickApp_SubscribeQuote_Handler,
-		},
-		{
-			MethodName: "SubscribeDepth",
-			Handler:    _ItickApp_SubscribeDepth_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

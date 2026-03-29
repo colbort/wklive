@@ -40,6 +40,11 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	// 加载 itick 分类数据并初始化 WebSocket 客户端
+	err := svcCtx.ItickManager.Load(ctx)
+	if err != nil {
+		panic(err)
+	}
 	// 启动 itick 数据流管理器
 	svcCtx.ItickManager.Start(ctx)
 

@@ -2,8 +2,10 @@ package logic
 
 import (
 	"context"
+	"encoding/json"
 
 	"wklive/proto/itick"
+	"wklive/services/itick/internal/socket/server"
 	"wklive/services/itick/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -25,7 +27,46 @@ func NewSubscribeStreamLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 
 // 订阅数据流
 func (l *SubscribeStreamLogic) SubscribeStream(in *itick.SubscribeRequest, stream itick.ItickApp_SubscribeStreamServer) error {
-	// todo: add your logic here and delete this line
+	sub := l.svcCtx.Hub.NewSubscriber(256)
+	defer l.svcCtx.Hub.RemoveSubscriber(sub)
 
-	return nil
+	for _, topic := range in.Topics {
+		msg := server.ClientMessage{
+			Topic:    server.Topic(topic.Topic),
+			Market:   topic.Market,
+			Symbol:   topic.Symbol,
+			Region:   topic.Region,
+			Interval: topic.Interval,
+		}
+		if err := l.svcCtx.Hub.Subscribe(sub, msg); err != nil {
+			return err
+		}
+	}
+
+	for {
+		select {
+		case <-stream.Context().Done():
+			return nil
+		case pushMsg, ok := <-sub.C():
+			if !ok {
+				return nil
+			}
+
+			payloadBytes, err := json.Marshal(pushMsg.Payload)
+			if err != nil {
+				continue
+			}
+
+			if err := stream.Send(&itick.PushReply{
+				Topic:    string(pushMsg.Topic),
+				Market:   pushMsg.Market,
+				Symbol:   pushMsg.Symbol,
+				Region:   pushMsg.Region,
+				Interval: pushMsg.Interval,
+				Payload:  payloadBytes,
+			}); err != nil {
+				return err
+			}
+		}
+	}
 }

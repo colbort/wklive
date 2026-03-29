@@ -17,8 +17,6 @@ type (
 	AppCommonResp             = itick.AppCommonResp
 	BatchGetQuoteReq          = itick.BatchGetQuoteReq
 	BatchGetQuoteResp         = itick.BatchGetQuoteResp
-	GetDepthReq               = itick.GetDepthReq
-	GetDepthResp              = itick.GetDepthResp
 	GetKlineReq               = itick.GetKlineReq
 	GetKlineResp              = itick.GetKlineResp
 	GetQuoteReq               = itick.GetQuoteReq
@@ -28,10 +26,6 @@ type (
 	ListVisibleProductsReq    = itick.ListVisibleProductsReq
 	ListVisibleProductsResp   = itick.ListVisibleProductsResp
 	PushReply                 = itick.PushReply
-	SubscribeDepthReq         = itick.SubscribeDepthReq
-	SubscribeDepthResp        = itick.SubscribeDepthResp
-	SubscribeQuoteReq         = itick.SubscribeQuoteReq
-	SubscribeQuoteResp        = itick.SubscribeQuoteResp
 	SubscribeRequest          = itick.SubscribeRequest
 	SubscribeTopic            = itick.SubscribeTopic
 
@@ -46,12 +40,6 @@ type (
 		GetQuote(ctx context.Context, in *GetQuoteReq, opts ...grpc.CallOption) (*GetQuoteResp, error)
 		// 批量获取最新报价
 		BatchGetQuote(ctx context.Context, in *BatchGetQuoteReq, opts ...grpc.CallOption) (*BatchGetQuoteResp, error)
-		// 获取深度
-		GetDepth(ctx context.Context, in *GetDepthReq, opts ...grpc.CallOption) (*GetDepthResp, error)
-		// 订阅报价
-		SubscribeQuote(ctx context.Context, in *SubscribeQuoteReq, opts ...grpc.CallOption) (*SubscribeQuoteResp, error)
-		// 订阅深度
-		SubscribeDepth(ctx context.Context, in *SubscribeDepthReq, opts ...grpc.CallOption) (*SubscribeDepthResp, error)
 		// 订阅数据流
 		SubscribeStream(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (itick.ItickApp_SubscribeStreamClient, error)
 	}
@@ -95,24 +83,6 @@ func (m *defaultItickApp) GetQuote(ctx context.Context, in *GetQuoteReq, opts ..
 func (m *defaultItickApp) BatchGetQuote(ctx context.Context, in *BatchGetQuoteReq, opts ...grpc.CallOption) (*BatchGetQuoteResp, error) {
 	client := itick.NewItickAppClient(m.cli.Conn())
 	return client.BatchGetQuote(ctx, in, opts...)
-}
-
-// 获取深度
-func (m *defaultItickApp) GetDepth(ctx context.Context, in *GetDepthReq, opts ...grpc.CallOption) (*GetDepthResp, error) {
-	client := itick.NewItickAppClient(m.cli.Conn())
-	return client.GetDepth(ctx, in, opts...)
-}
-
-// 订阅报价
-func (m *defaultItickApp) SubscribeQuote(ctx context.Context, in *SubscribeQuoteReq, opts ...grpc.CallOption) (*SubscribeQuoteResp, error) {
-	client := itick.NewItickAppClient(m.cli.Conn())
-	return client.SubscribeQuote(ctx, in, opts...)
-}
-
-// 订阅深度
-func (m *defaultItickApp) SubscribeDepth(ctx context.Context, in *SubscribeDepthReq, opts ...grpc.CallOption) (*SubscribeDepthResp, error) {
-	client := itick.NewItickAppClient(m.cli.Conn())
-	return client.SubscribeDepth(ctx, in, opts...)
 }
 
 // 订阅数据流

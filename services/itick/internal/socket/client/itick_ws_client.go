@@ -43,11 +43,11 @@ type ItickWsClient struct {
 	subscribers map[string]SubscribeReq
 }
 
-func NewItickWsClient(url, token string, hub *server.Hub) *ItickWsClient {
+func NewItickWsClient(url, token string, market string, hub *server.Hub) *ItickWsClient {
 	return &ItickWsClient{
 		url:    url,
 		token:  token,
-		market: "crypto",
+		market: market,
 		dialer: &websocket.Dialer{
 			HandshakeTimeout: 10 * time.Second,
 		},
@@ -286,7 +286,7 @@ func (c *ItickWsClient) SubscribeByClientMessage(msg server.ClientMessage) error
 	if err != nil {
 		return err
 	}
-	return c.Subscribe(params, types)
+	return c.subscribe(params, types)
 }
 
 func (c *ItickWsClient) UnsubscribeByClientMessage(msg server.ClientMessage) error {
@@ -323,7 +323,7 @@ func (c *ItickWsClient) buildItickSubscribe(msg server.ClientMessage) (params st
 	return params, types, nil
 }
 
-func (c *ItickWsClient) Subscribe(params, types string) error {
+func (c *ItickWsClient) subscribe(params, types string) error {
 	req := SubscribeReq{
 		Ac:     "subscribe",
 		Params: params,

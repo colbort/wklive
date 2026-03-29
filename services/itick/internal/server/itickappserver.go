@@ -53,24 +53,6 @@ func (s *ItickAppServer) BatchGetQuote(ctx context.Context, in *itick.BatchGetQu
 	return l.BatchGetQuote(in)
 }
 
-// 获取深度
-func (s *ItickAppServer) GetDepth(ctx context.Context, in *itick.GetDepthReq) (*itick.GetDepthResp, error) {
-	l := logic.NewGetDepthLogic(ctx, s.svcCtx)
-	return l.GetDepth(in)
-}
-
-// 订阅报价
-func (s *ItickAppServer) SubscribeQuote(ctx context.Context, in *itick.SubscribeQuoteReq) (*itick.SubscribeQuoteResp, error) {
-	l := logic.NewSubscribeQuoteLogic(ctx, s.svcCtx)
-	return l.SubscribeQuote(in)
-}
-
-// 订阅深度
-func (s *ItickAppServer) SubscribeDepth(ctx context.Context, in *itick.SubscribeDepthReq) (*itick.SubscribeDepthResp, error) {
-	l := logic.NewSubscribeDepthLogic(ctx, s.svcCtx)
-	return l.SubscribeDepth(in)
-}
-
 // 订阅数据流
 func (s *ItickAppServer) SubscribeStream(in *itick.SubscribeRequest, stream itick.ItickApp_SubscribeStreamServer) error {
 	l := logic.NewSubscribeStreamLogic(stream.Context(), s.svcCtx)

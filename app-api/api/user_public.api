@@ -49,6 +49,29 @@ type RefreshTokenResp {
   token TokenInfo `json:"token"`
 }
 
+type WsTickTopic {
+  topic string `json:"topic"`
+  market string `json:"market"`
+  symbol string `json:"symbol"`
+  region string `json:"region,optional"`
+  interval string `json:"interval,optional"`
+}
+
+type WsMessage {
+	Type      string    `json:"type"`
+	ClientTs  int64     `json:"clientTs,omitempty"`  // 客户端毫秒时间戳
+	ServerTs  int64     `json:"serverTs,omitempty"`  // 服务端毫秒时间戳
+	Topics    []WsTickTopic `json:"topics,omitempty"`
+	Code      int       `json:"code,omitempty"`
+	Message   string    `json:"message,omitempty"`
+	Topic     string    `json:"topic,omitempty"`
+	Market    string    `json:"market,omitempty"`
+	Symbol    string    `json:"symbol,omitempty"`
+	Region    string    `json:"region,omitempty"`
+	Interval  string    `json:"interval,omitempty"`
+	Payload   []byte    `json:"payload,omitempty"`
+}
+
 @server(
   prefix: /app/user
   group: user_public
@@ -62,4 +85,7 @@ service app {
 
   @handler RefreshToken
   post /refresh-token (RefreshTokenReq) returns (RefreshTokenResp)
+
+  @handler TickWsHandler
+  get /ws/tick
 }
