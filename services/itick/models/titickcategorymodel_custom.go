@@ -12,6 +12,7 @@ import (
 type ItickCategoryModel interface {
 	tItickCategoryModel
 	FindAll(ctx context.Context) ([]*TItickCategory, error)
+	FindPage(ctx context.Context, cursor int64, limit int64) ([]*TItickCategory, int64, error)
 }
 
 func (m *defaultTItickCategoryModel) FindAll(ctx context.Context) ([]*TItickCategory, error) {
@@ -19,4 +20,18 @@ func (m *defaultTItickCategoryModel) FindAll(ctx context.Context) ([]*TItickCate
 	var resp []*TItickCategory
 	err := m.QueryRowsNoCacheCtx(ctx, &resp, query)
 	return resp, err
+}
+
+func (m *defaultTItickCategoryModel) FindPage(ctx context.Context, cursor int64, limit int64) ([]*TItickCategory, int64, error) {
+	query := fmt.Sprintf("select %s from %s where id > ? order by id limit ?", tItickCategoryRows, m.table)
+	var resp []*TItickCategory
+	err := m.QueryRowsNoCacheCtx(ctx, &resp, query, cursor, limit)
+	if err != nil {
+		return nil, 0, err
+	}
+	var nextCursor int64
+	if len(resp) > 0 {
+		nextCursor = resp[len(resp)-1].Id
+	}
+	return resp, nextCursor, nil
 }

@@ -1,68 +1,67 @@
-type ProfileReq {
-}
+type ProfileReq {}
 
 type ProfileUser {
-  id       int64  `json:"id"`
-  username string `json:"username"`
-  nickname string `json:"nickname,optional"`
-  avatar   string `json:"avatar,optional"`
+	id       int64  `json:"id"`
+	username string `json:"username"`
+	nickname string `json:"nickname,optional"`
+	avatar   string `json:"avatar,optional"`
 }
 
 type MenuNode {
-  id        int64    `json:"id"`
-  parentId  int64    `json:"parentId"`
-  name      string   `json:"name"`
-  menuType  int64    `json:"menuType"` // 1目录 2菜单 3按钮
-  path      string   `json:"path,optional"`
-  component string   `json:"component,optional"`
-  icon      string   `json:"icon,optional"`
-  sort      int64    `json:"sort"`
-  visible   int64    `json:"visible"`
-  status    int64    `json:"status"`
-  perms     string   `json:"perms,optional"`
-  children  []MenuNode `json:"children,optional"`
+	id        int64      `json:"id"`
+	parentId  int64      `json:"parentId"`
+	name      string     `json:"name"`
+	menuType  int64      `json:"menuType"` // 1目录 2菜单 3按钮
+	path      string     `json:"path,optional"`
+	component string     `json:"component,optional"`
+	icon      string     `json:"icon,optional"`
+	sort      int64      `json:"sort"`
+	visible   int64      `json:"visible"`
+	status    int64      `json:"status"`
+	perms     string     `json:"perms,optional"`
+	children  []MenuNode `json:"children,optional"`
 }
 
 type ProfileResp {
-  RespBase
-  data {
-    user  ProfileUser `json:"user"`
-    menus []MenuNode  `json:"menus"`
-    perms []string    `json:"perms"`
-  } `json:"data"`
+	RespBase
+	data {
+		user  ProfileUser `json:"user"`
+		menus []MenuNode  `json:"menus"`
+		perms []string    `json:"perms"`
+	} `json:"data"`
 }
 
 type UploadFileReq {}
 
 type UploadFileResp {
-    RespBase
-    Data {
-        Url string `json:"url"`
-    } `json:"data"`
+	RespBase
+	Data {
+		Url string `json:"url"`
+	} `json:"data"`
 }
 
 type UpdateProfileReq {
-  nickname string `json:"nickname,optional"`
-  avatar   string `json:"avatar,optional"`
-  password string `json:"password,optional"`
+	nickname string `json:"nickname,optional"`
+	avatar   string `json:"avatar,optional"`
+	password string `json:"password,optional"`
 }
 
-
-@server(
-  prefix: /admin
-  group: auth_private
-  jwt: Jwt
+@server (
+	prefix: /admin
+	group:  auth_private
+	jwt:    Jwt
 )
 service admin {
-  @handler Profile
-  get /auth/profile (ProfileReq) returns (ProfileResp)
-  // 下面的两个文件上传接口，之生成一次，之后不再生成所以需要注释掉
-  // @handler UploadAvatar
-  // post /upload/avatar (UploadFileReq) returns (UploadFileResp)
-  // @handler UploadFile
-  // post /upload/file (UploadFileReq) returns (UploadFileResp)
-  // 修改头像，密码，昵称
-  @handler UpdateProfile
-  post /auth/profile (UpdateProfileReq) returns (RespBase)
+	@handler Profile
+	get /auth/profile (ProfileReq) returns (ProfileResp)
+
+	// 下面的两个文件上传接口，之生成一次，之后不再生成所以需要注释掉
+	// @handler UploadAvatar
+	// post /upload/avatar (UploadFileReq) returns (UploadFileResp)
+	// @handler UploadFile
+	// post /upload/file (UploadFileReq) returns (UploadFileResp)
+	// 修改头像，密码，昵称
+	@handler UpdateProfile
+	post /auth/profile (UpdateProfileReq) returns (RespBase)
 }
 

@@ -15,19 +15,25 @@ import (
 
 type (
 	AppCommonResp                     = payment.AppCommonResp
-	CancelMyPayOrderReq               = payment.CancelMyPayOrderReq
+	CancelMyRechargeOrderReq          = payment.CancelMyRechargeOrderReq
 	CreateRechargeOrderReq            = payment.CreateRechargeOrderReq
 	CreateRechargeOrderResp           = payment.CreateRechargeOrderResp
-	GetMyPayOrderReq                  = payment.GetMyPayOrderReq
-	GetMyPayOrderResp                 = payment.GetMyPayOrderResp
+	GetMyRechargeOrderReq             = payment.GetMyRechargeOrderReq
+	GetMyRechargeOrderResp            = payment.GetMyRechargeOrderResp
 	GetMyRechargeStatReq              = payment.GetMyRechargeStatReq
 	GetMyRechargeStatResp             = payment.GetMyRechargeStatResp
+	GetMyWithdrawOrderReq             = payment.GetMyWithdrawOrderReq
+	GetMyWithdrawOrderResp            = payment.GetMyWithdrawOrderResp
 	ListAvailableRechargeChannelsReq  = payment.ListAvailableRechargeChannelsReq
 	ListAvailableRechargeChannelsResp = payment.ListAvailableRechargeChannelsResp
-	ListMyPayOrdersReq                = payment.ListMyPayOrdersReq
-	ListMyPayOrdersResp               = payment.ListMyPayOrdersResp
-	QueryMyPayOrderStatusReq          = payment.QueryMyPayOrderStatusReq
-	QueryMyPayOrderStatusResp         = payment.QueryMyPayOrderStatusResp
+	ListMyRechargeOrdersReq           = payment.ListMyRechargeOrdersReq
+	ListMyRechargeOrdersResp          = payment.ListMyRechargeOrdersResp
+	ListMyWithdrawOrdersReq           = payment.ListMyWithdrawOrdersReq
+	ListMyWithdrawOrdersResp          = payment.ListMyWithdrawOrdersResp
+	QueryMyRechargeOrderStatusReq     = payment.QueryMyRechargeOrderStatusReq
+	QueryMyRechargeOrderStatusResp    = payment.QueryMyRechargeOrderStatusResp
+	WithdrawReq                       = payment.WithdrawReq
+	WithdrawResp                      = payment.WithdrawResp
 
 	PaymentApp interface {
 		// 当前用户累计充值统计（展示用）
@@ -37,13 +43,19 @@ type (
 		// 创建充值订单（服务端需要再次校验通道与用户规则）
 		CreateRechargeOrder(ctx context.Context, in *CreateRechargeOrderReq, opts ...grpc.CallOption) (*CreateRechargeOrderResp, error)
 		// 查询我的订单详情
-		GetMyPayOrder(ctx context.Context, in *GetMyPayOrderReq, opts ...grpc.CallOption) (*GetMyPayOrderResp, error)
+		GetMyRechargeOrder(ctx context.Context, in *GetMyRechargeOrderReq, opts ...grpc.CallOption) (*GetMyRechargeOrderResp, error)
 		// 查询我的充值订单列表
-		ListMyPayOrders(ctx context.Context, in *ListMyPayOrdersReq, opts ...grpc.CallOption) (*ListMyPayOrdersResp, error)
+		ListMyRechargeOrders(ctx context.Context, in *ListMyRechargeOrdersReq, opts ...grpc.CallOption) (*ListMyRechargeOrdersResp, error)
 		// 取消未支付订单
-		CancelMyPayOrder(ctx context.Context, in *CancelMyPayOrderReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+		CancelMyRechargeOrder(ctx context.Context, in *CancelMyRechargeOrderReq, opts ...grpc.CallOption) (*AppCommonResp, error)
 		// 轮询订单状态
-		QueryMyPayOrderStatus(ctx context.Context, in *QueryMyPayOrderStatusReq, opts ...grpc.CallOption) (*QueryMyPayOrderStatusResp, error)
+		QueryMyRechargeOrderStatus(ctx context.Context, in *QueryMyRechargeOrderStatusReq, opts ...grpc.CallOption) (*QueryMyRechargeOrderStatusResp, error)
+		// 提现
+		Withdraw(ctx context.Context, in *WithdrawReq, opts ...grpc.CallOption) (*WithdrawResp, error)
+		// 获取提现订单列表
+		ListMyWithdrawOrders(ctx context.Context, in *ListMyWithdrawOrdersReq, opts ...grpc.CallOption) (*ListMyWithdrawOrdersResp, error)
+		// 获取提现订单详情
+		GetMyWithdrawOrder(ctx context.Context, in *GetMyWithdrawOrderReq, opts ...grpc.CallOption) (*GetMyWithdrawOrderResp, error)
 	}
 
 	defaultPaymentApp struct {
@@ -76,25 +88,43 @@ func (m *defaultPaymentApp) CreateRechargeOrder(ctx context.Context, in *CreateR
 }
 
 // 查询我的订单详情
-func (m *defaultPaymentApp) GetMyPayOrder(ctx context.Context, in *GetMyPayOrderReq, opts ...grpc.CallOption) (*GetMyPayOrderResp, error) {
+func (m *defaultPaymentApp) GetMyRechargeOrder(ctx context.Context, in *GetMyRechargeOrderReq, opts ...grpc.CallOption) (*GetMyRechargeOrderResp, error) {
 	client := payment.NewPaymentAppClient(m.cli.Conn())
-	return client.GetMyPayOrder(ctx, in, opts...)
+	return client.GetMyRechargeOrder(ctx, in, opts...)
 }
 
 // 查询我的充值订单列表
-func (m *defaultPaymentApp) ListMyPayOrders(ctx context.Context, in *ListMyPayOrdersReq, opts ...grpc.CallOption) (*ListMyPayOrdersResp, error) {
+func (m *defaultPaymentApp) ListMyRechargeOrders(ctx context.Context, in *ListMyRechargeOrdersReq, opts ...grpc.CallOption) (*ListMyRechargeOrdersResp, error) {
 	client := payment.NewPaymentAppClient(m.cli.Conn())
-	return client.ListMyPayOrders(ctx, in, opts...)
+	return client.ListMyRechargeOrders(ctx, in, opts...)
 }
 
 // 取消未支付订单
-func (m *defaultPaymentApp) CancelMyPayOrder(ctx context.Context, in *CancelMyPayOrderReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (m *defaultPaymentApp) CancelMyRechargeOrder(ctx context.Context, in *CancelMyRechargeOrderReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
 	client := payment.NewPaymentAppClient(m.cli.Conn())
-	return client.CancelMyPayOrder(ctx, in, opts...)
+	return client.CancelMyRechargeOrder(ctx, in, opts...)
 }
 
 // 轮询订单状态
-func (m *defaultPaymentApp) QueryMyPayOrderStatus(ctx context.Context, in *QueryMyPayOrderStatusReq, opts ...grpc.CallOption) (*QueryMyPayOrderStatusResp, error) {
+func (m *defaultPaymentApp) QueryMyRechargeOrderStatus(ctx context.Context, in *QueryMyRechargeOrderStatusReq, opts ...grpc.CallOption) (*QueryMyRechargeOrderStatusResp, error) {
 	client := payment.NewPaymentAppClient(m.cli.Conn())
-	return client.QueryMyPayOrderStatus(ctx, in, opts...)
+	return client.QueryMyRechargeOrderStatus(ctx, in, opts...)
+}
+
+// 提现
+func (m *defaultPaymentApp) Withdraw(ctx context.Context, in *WithdrawReq, opts ...grpc.CallOption) (*WithdrawResp, error) {
+	client := payment.NewPaymentAppClient(m.cli.Conn())
+	return client.Withdraw(ctx, in, opts...)
+}
+
+// 获取提现订单列表
+func (m *defaultPaymentApp) ListMyWithdrawOrders(ctx context.Context, in *ListMyWithdrawOrdersReq, opts ...grpc.CallOption) (*ListMyWithdrawOrdersResp, error) {
+	client := payment.NewPaymentAppClient(m.cli.Conn())
+	return client.ListMyWithdrawOrders(ctx, in, opts...)
+}
+
+// 获取提现订单详情
+func (m *defaultPaymentApp) GetMyWithdrawOrder(ctx context.Context, in *GetMyWithdrawOrderReq, opts ...grpc.CallOption) (*GetMyWithdrawOrderResp, error) {
+	client := payment.NewPaymentAppClient(m.cli.Conn())
+	return client.GetMyWithdrawOrder(ctx, in, opts...)
 }

@@ -32,6 +32,9 @@ CREATE TABLE `t_itick_product` (
   `code` varchar(128) NOT NULL DEFAULT '' COMMENT '第三方原始code',
   `name` varchar(128) NOT NULL DEFAULT '' COMMENT '产品名称',
   `display_name` varchar(128) NOT NULL DEFAULT '' COMMENT '前端展示名称',
+  `exchange` varchar(64) NOT NULL DEFAULT '' COMMENT '交易所, 如 binance/forex/hk/us',
+  `sector` varchar(64) NOT NULL DEFAULT '' COMMENT '行业/领域, 如 technology/forex',
+  `lug` varchar(64) NOT NULL DEFAULT '' COMMENT 'slug, URL友好标识',
   `base_coin` varchar(64) NOT NULL DEFAULT '' COMMENT '基础币种, 如 BTC',
   `quote_coin` varchar(64) NOT NULL DEFAULT '' COMMENT '计价币种, 如 USDT',
   `enabled` tinyint NOT NULL DEFAULT '1' COMMENT '是否启用: 0-否 1-是',
@@ -82,3 +85,47 @@ CREATE TABLE `t_itick_tenant_product` (
   KEY `idx_tenant_visible_sort` (`tenant_id`, `enabled`, `app_visible`, `sort`),
   KEY `idx_product_id` (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户产品可见配置表';
+
+
+CREATE TABLE `t_itick_sync_task` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `task_no` varchar(64) NOT NULL DEFAULT '' COMMENT '任务号',
+  `task_type` varchar(64) NOT NULL DEFAULT '' COMMENT '任务类型',
+  `biz_id` bigint NOT NULL DEFAULT 0 COMMENT '业务id，比如category_id',
+  `status` tinyint NOT NULL DEFAULT 0 COMMENT '0待执行 1执行中 2成功 3失败',
+  `message` varchar(500) NOT NULL DEFAULT '' COMMENT '结果描述',
+  `created_at` bigint NOT NULL DEFAULT 0,
+  `updated_at` bigint NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_task_no` (`task_no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+CREATE TABLE `t_itick_quote` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `market` varchar(32) NOT NULL DEFAULT '' COMMENT '市场/地区，如 GB',
+  `symbol` varchar(64) NOT NULL DEFAULT '' COMMENT '代码，如 EURUSD',
+
+  `last_price` decimal(20,8) NOT NULL DEFAULT '0.00000000' COMMENT '最新价，对应 ld',
+  `open_price` decimal(20,8) NOT NULL DEFAULT '0.00000000' COMMENT '开盘价，对应 o',
+  `high_price` decimal(20,8) NOT NULL DEFAULT '0.00000000' COMMENT '最高价，对应 h',
+  `low_price` decimal(20,8) NOT NULL DEFAULT '0.00000000' COMMENT '最低价，对应 l',
+  `prev_close_price` decimal(20,8) NOT NULL DEFAULT '0.00000000' COMMENT '昨收价，按 ld - ch 计算',
+
+  `change_value` decimal(20,8) NOT NULL DEFAULT '0.00000000' COMMENT '涨跌额，对应 ch',
+  `change_rate` decimal(10,4) NOT NULL DEFAULT '0.0000' COMMENT '涨跌幅(%)，对应 chp',
+
+  `volume` decimal(20,4) NOT NULL DEFAULT '0.0000' COMMENT '成交量，对应 v',
+  `turnover` decimal(20,8) NOT NULL DEFAULT '0.00000000' COMMENT '成交额，对应 tu',
+
+  `quote_ts` bigint NOT NULL DEFAULT 0 COMMENT '行情时间戳(毫秒)，对应 t',
+  `trade_status` tinyint NOT NULL DEFAULT 0 COMMENT '交易状态，对应 ts',
+
+  `create_time` bigint NOT NULL DEFAULT 0 COMMENT '创建时间(毫秒)',
+  `update_time` bigint NOT NULL DEFAULT 0 COMMENT '更新时间(毫秒)',
+
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_market_symbol` (`market`, `symbol`),
+  KEY `idx_symbol` (`symbol`),
+  KEY `idx_quote_ts` (`quote_ts`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='iTick实时报价表';

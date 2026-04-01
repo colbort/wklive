@@ -139,13 +139,17 @@ Etcd:
   Hosts:
   - 192.168.10.116:2379
   Key: itick.rpc
+Itick:
+  ApiUrl: https://api.itick.org
+  WSUrl: wss://api.itick.org
+  Token: 5093272afb5241dfa3fd5505937289804447d9d6941547b2ab45929024c0fd4b
 ```
 
 
 ### payment-rpc 微服务配置 /wklive/payment-rpc/config
 ```
 Name: payment.rpc
-ListenOn: 0.0.0.0:8082
+ListenOn: 0.0.0.0:8083
 Mode: dev
 Etcd:
   Hosts:

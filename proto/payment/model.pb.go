@@ -1081,7 +1081,7 @@ func (x *UserRechargeStat) GetUpdateTime() int64 {
 	return 0
 }
 
-type PayOrder struct {
+type RechargeOrder struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
@@ -1119,20 +1119,20 @@ type PayOrder struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *PayOrder) Reset() {
-	*x = PayOrder{}
+func (x *RechargeOrder) Reset() {
+	*x = RechargeOrder{}
 	mi := &file_proto_payment_model_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *PayOrder) String() string {
+func (x *RechargeOrder) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PayOrder) ProtoMessage() {}
+func (*RechargeOrder) ProtoMessage() {}
 
-func (x *PayOrder) ProtoReflect() protoreflect.Message {
+func (x *RechargeOrder) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_payment_model_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1144,229 +1144,229 @@ func (x *PayOrder) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PayOrder.ProtoReflect.Descriptor instead.
-func (*PayOrder) Descriptor() ([]byte, []int) {
+// Deprecated: Use RechargeOrder.ProtoReflect.Descriptor instead.
+func (*RechargeOrder) Descriptor() ([]byte, []int) {
 	return file_proto_payment_model_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *PayOrder) GetId() int64 {
+func (x *RechargeOrder) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *PayOrder) GetTenantId() int64 {
+func (x *RechargeOrder) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *PayOrder) GetUserId() int64 {
+func (x *RechargeOrder) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
 	}
 	return 0
 }
 
-func (x *PayOrder) GetOrderNo() string {
+func (x *RechargeOrder) GetOrderNo() string {
 	if x != nil {
 		return x.OrderNo
 	}
 	return ""
 }
 
-func (x *PayOrder) GetBizOrderNo() string {
+func (x *RechargeOrder) GetBizOrderNo() string {
 	if x != nil {
 		return x.BizOrderNo
 	}
 	return ""
 }
 
-func (x *PayOrder) GetPlatformId() int64 {
+func (x *RechargeOrder) GetPlatformId() int64 {
 	if x != nil {
 		return x.PlatformId
 	}
 	return 0
 }
 
-func (x *PayOrder) GetProductId() int64 {
+func (x *RechargeOrder) GetProductId() int64 {
 	if x != nil {
 		return x.ProductId
 	}
 	return 0
 }
 
-func (x *PayOrder) GetAccountId() int64 {
+func (x *RechargeOrder) GetAccountId() int64 {
 	if x != nil {
 		return x.AccountId
 	}
 	return 0
 }
 
-func (x *PayOrder) GetChannelId() int64 {
+func (x *RechargeOrder) GetChannelId() int64 {
 	if x != nil {
 		return x.ChannelId
 	}
 	return 0
 }
 
-func (x *PayOrder) GetCurrency() string {
+func (x *RechargeOrder) GetCurrency() string {
 	if x != nil {
 		return x.Currency
 	}
 	return ""
 }
 
-func (x *PayOrder) GetOrderAmount() int64 {
+func (x *RechargeOrder) GetOrderAmount() int64 {
 	if x != nil {
 		return x.OrderAmount
 	}
 	return 0
 }
 
-func (x *PayOrder) GetPayAmount() int64 {
+func (x *RechargeOrder) GetPayAmount() int64 {
 	if x != nil {
 		return x.PayAmount
 	}
 	return 0
 }
 
-func (x *PayOrder) GetFeeAmount() int64 {
+func (x *RechargeOrder) GetFeeAmount() int64 {
 	if x != nil {
 		return x.FeeAmount
 	}
 	return 0
 }
 
-func (x *PayOrder) GetSubject() string {
+func (x *RechargeOrder) GetSubject() string {
 	if x != nil {
 		return x.Subject
 	}
 	return ""
 }
 
-func (x *PayOrder) GetBody() string {
+func (x *RechargeOrder) GetBody() string {
 	if x != nil {
 		return x.Body
 	}
 	return ""
 }
 
-func (x *PayOrder) GetClientType() ClientType {
+func (x *RechargeOrder) GetClientType() ClientType {
 	if x != nil {
 		return x.ClientType
 	}
 	return ClientType_CLIENT_TYPE_UNKNOWN
 }
 
-func (x *PayOrder) GetClientIp() string {
+func (x *RechargeOrder) GetClientIp() string {
 	if x != nil {
 		return x.ClientIp
 	}
 	return ""
 }
 
-func (x *PayOrder) GetStatus() PayOrderStatus {
+func (x *RechargeOrder) GetStatus() PayOrderStatus {
 	if x != nil {
 		return x.Status
 	}
 	return PayOrderStatus_PAY_ORDER_STATUS_UNKNOWN
 }
 
-func (x *PayOrder) GetThirdTradeNo() string {
+func (x *RechargeOrder) GetThirdTradeNo() string {
 	if x != nil {
 		return x.ThirdTradeNo
 	}
 	return ""
 }
 
-func (x *PayOrder) GetThirdOrderNo() string {
+func (x *RechargeOrder) GetThirdOrderNo() string {
 	if x != nil {
 		return x.ThirdOrderNo
 	}
 	return ""
 }
 
-func (x *PayOrder) GetPayUrl() string {
+func (x *RechargeOrder) GetPayUrl() string {
 	if x != nil {
 		return x.PayUrl
 	}
 	return ""
 }
 
-func (x *PayOrder) GetQrContent() string {
+func (x *RechargeOrder) GetQrContent() string {
 	if x != nil {
 		return x.QrContent
 	}
 	return ""
 }
 
-func (x *PayOrder) GetRequestData() string {
+func (x *RechargeOrder) GetRequestData() string {
 	if x != nil {
 		return x.RequestData
 	}
 	return ""
 }
 
-func (x *PayOrder) GetResponseData() string {
+func (x *RechargeOrder) GetResponseData() string {
 	if x != nil {
 		return x.ResponseData
 	}
 	return ""
 }
 
-func (x *PayOrder) GetNotifyData() string {
+func (x *RechargeOrder) GetNotifyData() string {
 	if x != nil {
 		return x.NotifyData
 	}
 	return ""
 }
 
-func (x *PayOrder) GetExpireTime() int64 {
+func (x *RechargeOrder) GetExpireTime() int64 {
 	if x != nil {
 		return x.ExpireTime
 	}
 	return 0
 }
 
-func (x *PayOrder) GetPaidTime() int64 {
+func (x *RechargeOrder) GetPaidTime() int64 {
 	if x != nil {
 		return x.PaidTime
 	}
 	return 0
 }
 
-func (x *PayOrder) GetNotifyTime() int64 {
+func (x *RechargeOrder) GetNotifyTime() int64 {
 	if x != nil {
 		return x.NotifyTime
 	}
 	return 0
 }
 
-func (x *PayOrder) GetCloseTime() int64 {
+func (x *RechargeOrder) GetCloseTime() int64 {
 	if x != nil {
 		return x.CloseTime
 	}
 	return 0
 }
 
-func (x *PayOrder) GetRemark() string {
+func (x *RechargeOrder) GetRemark() string {
 	if x != nil {
 		return x.Remark
 	}
 	return ""
 }
 
-func (x *PayOrder) GetCreateTime() int64 {
+func (x *RechargeOrder) GetCreateTime() int64 {
 	if x != nil {
 		return x.CreateTime
 	}
 	return 0
 }
 
-func (x *PayOrder) GetUpdateTime() int64 {
+func (x *RechargeOrder) GetUpdateTime() int64 {
 	if x != nil {
 		return x.UpdateTime
 	}
@@ -1661,6 +1661,226 @@ func (x *VisiblePayChannel) GetAccountId() int64 {
 	return 0
 }
 
+type WithdrawOrder struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	OrderNo       string                 `protobuf:"bytes,4,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
+	BizOrderNo    string                 `protobuf:"bytes,5,opt,name=biz_order_no,json=bizOrderNo,proto3" json:"biz_order_no,omitempty"`
+	Currency      string                 `protobuf:"bytes,6,opt,name=currency,proto3" json:"currency,omitempty"`
+	Amount        int64                  `protobuf:"varint,7,opt,name=amount,proto3" json:"amount,omitempty"`
+	FeeAmount     int64                  `protobuf:"varint,8,opt,name=fee_amount,json=feeAmount,proto3" json:"fee_amount,omitempty"`
+	ActualAmount  int64                  `protobuf:"varint,9,opt,name=actual_amount,json=actualAmount,proto3" json:"actual_amount,omitempty"`
+	ClientType    ClientType             `protobuf:"varint,10,opt,name=client_type,json=clientType,proto3,enum=payment.ClientType" json:"client_type,omitempty"`
+	ClientIp      string                 `protobuf:"bytes,11,opt,name=client_ip,json=clientIp,proto3" json:"client_ip,omitempty"`
+	Status        PayOrderStatus         `protobuf:"varint,12,opt,name=status,proto3,enum=payment.PayOrderStatus" json:"status,omitempty"`
+	ThirdTradeNo  string                 `protobuf:"bytes,13,opt,name=third_trade_no,json=thirdTradeNo,proto3" json:"third_trade_no,omitempty"`
+	ThirdOrderNo  string                 `protobuf:"bytes,14,opt,name=third_order_no,json=thirdOrderNo,proto3" json:"third_order_no,omitempty"`
+	RequestData   string                 `protobuf:"bytes,15,opt,name=request_data,json=requestData,proto3" json:"request_data,omitempty"`
+	ResponseData  string                 `protobuf:"bytes,16,opt,name=response_data,json=responseData,proto3" json:"response_data,omitempty"`
+	NotifyData    string                 `protobuf:"bytes,17,opt,name=notify_data,json=notifyData,proto3" json:"notify_data,omitempty"`
+	ProcessTime   int64                  `protobuf:"varint,18,opt,name=process_time,json=processTime,proto3" json:"process_time,omitempty"`
+	NotifyTime    int64                  `protobuf:"varint,19,opt,name=notify_time,json=notifyTime,proto3" json:"notify_time,omitempty"`
+	CloseTime     int64                  `protobuf:"varint,20,opt,name=close_time,json=closeTime,proto3" json:"close_time,omitempty"`
+	Remark        string                 `protobuf:"bytes,21,opt,name=remark,proto3" json:"remark,omitempty"`
+	CreateTime    int64                  `protobuf:"varint,22,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	UpdateTime    int64                  `protobuf:"varint,23,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *WithdrawOrder) Reset() {
+	*x = WithdrawOrder{}
+	mi := &file_proto_payment_model_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WithdrawOrder) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WithdrawOrder) ProtoMessage() {}
+
+func (x *WithdrawOrder) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_payment_model_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WithdrawOrder.ProtoReflect.Descriptor instead.
+func (*WithdrawOrder) Descriptor() ([]byte, []int) {
+	return file_proto_payment_model_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *WithdrawOrder) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *WithdrawOrder) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *WithdrawOrder) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *WithdrawOrder) GetOrderNo() string {
+	if x != nil {
+		return x.OrderNo
+	}
+	return ""
+}
+
+func (x *WithdrawOrder) GetBizOrderNo() string {
+	if x != nil {
+		return x.BizOrderNo
+	}
+	return ""
+}
+
+func (x *WithdrawOrder) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *WithdrawOrder) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+func (x *WithdrawOrder) GetFeeAmount() int64 {
+	if x != nil {
+		return x.FeeAmount
+	}
+	return 0
+}
+
+func (x *WithdrawOrder) GetActualAmount() int64 {
+	if x != nil {
+		return x.ActualAmount
+	}
+	return 0
+}
+
+func (x *WithdrawOrder) GetClientType() ClientType {
+	if x != nil {
+		return x.ClientType
+	}
+	return ClientType_CLIENT_TYPE_UNKNOWN
+}
+
+func (x *WithdrawOrder) GetClientIp() string {
+	if x != nil {
+		return x.ClientIp
+	}
+	return ""
+}
+
+func (x *WithdrawOrder) GetStatus() PayOrderStatus {
+	if x != nil {
+		return x.Status
+	}
+	return PayOrderStatus_PAY_ORDER_STATUS_UNKNOWN
+}
+
+func (x *WithdrawOrder) GetThirdTradeNo() string {
+	if x != nil {
+		return x.ThirdTradeNo
+	}
+	return ""
+}
+
+func (x *WithdrawOrder) GetThirdOrderNo() string {
+	if x != nil {
+		return x.ThirdOrderNo
+	}
+	return ""
+}
+
+func (x *WithdrawOrder) GetRequestData() string {
+	if x != nil {
+		return x.RequestData
+	}
+	return ""
+}
+
+func (x *WithdrawOrder) GetResponseData() string {
+	if x != nil {
+		return x.ResponseData
+	}
+	return ""
+}
+
+func (x *WithdrawOrder) GetNotifyData() string {
+	if x != nil {
+		return x.NotifyData
+	}
+	return ""
+}
+
+func (x *WithdrawOrder) GetProcessTime() int64 {
+	if x != nil {
+		return x.ProcessTime
+	}
+	return 0
+}
+
+func (x *WithdrawOrder) GetNotifyTime() int64 {
+	if x != nil {
+		return x.NotifyTime
+	}
+	return 0
+}
+
+func (x *WithdrawOrder) GetCloseTime() int64 {
+	if x != nil {
+		return x.CloseTime
+	}
+	return 0
+}
+
+func (x *WithdrawOrder) GetRemark() string {
+	if x != nil {
+		return x.Remark
+	}
+	return ""
+}
+
+func (x *WithdrawOrder) GetCreateTime() int64 {
+	if x != nil {
+		return x.CreateTime
+	}
+	return 0
+}
+
+func (x *WithdrawOrder) GetUpdateTime() int64 {
+	if x != nil {
+		return x.UpdateTime
+	}
+	return 0
+}
+
 var File_proto_payment_model_proto protoreflect.FileDescriptor
 
 const file_proto_payment_model_proto_rawDesc = "" +
@@ -1811,8 +2031,8 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	" \x01(\x03R\n" +
 	"createTime\x12\x1f\n" +
 	"\vupdate_time\x18\v \x01(\x03R\n" +
-	"updateTime\"\xff\a\n" +
-	"\bPayOrder\x12\x0e\n" +
+	"updateTime\"\x84\b\n" +
+	"\rRechargeOrder\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x19\n" +
@@ -1901,7 +2121,40 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\n" +
 	"product_id\x18\r \x01(\x03R\tproductId\x12\x1d\n" +
 	"\n" +
-	"account_id\x18\x0e \x01(\x03R\taccountIdB\x1eZ\x1cwklive/proto/payment;paymentb\x06proto3"
+	"account_id\x18\x0e \x01(\x03R\taccountId\"\x80\x06\n" +
+	"\rWithdrawOrder\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x19\n" +
+	"\border_no\x18\x04 \x01(\tR\aorderNo\x12 \n" +
+	"\fbiz_order_no\x18\x05 \x01(\tR\n" +
+	"bizOrderNo\x12\x1a\n" +
+	"\bcurrency\x18\x06 \x01(\tR\bcurrency\x12\x16\n" +
+	"\x06amount\x18\a \x01(\x03R\x06amount\x12\x1d\n" +
+	"\n" +
+	"fee_amount\x18\b \x01(\x03R\tfeeAmount\x12#\n" +
+	"\ractual_amount\x18\t \x01(\x03R\factualAmount\x124\n" +
+	"\vclient_type\x18\n" +
+	" \x01(\x0e2\x13.payment.ClientTypeR\n" +
+	"clientType\x12\x1b\n" +
+	"\tclient_ip\x18\v \x01(\tR\bclientIp\x12/\n" +
+	"\x06status\x18\f \x01(\x0e2\x17.payment.PayOrderStatusR\x06status\x12$\n" +
+	"\x0ethird_trade_no\x18\r \x01(\tR\fthirdTradeNo\x12$\n" +
+	"\x0ethird_order_no\x18\x0e \x01(\tR\fthirdOrderNo\x12!\n" +
+	"\frequest_data\x18\x0f \x01(\tR\vrequestData\x12#\n" +
+	"\rresponse_data\x18\x10 \x01(\tR\fresponseData\x12\x1f\n" +
+	"\vnotify_data\x18\x11 \x01(\tR\n" +
+	"notifyData\x12!\n" +
+	"\fprocess_time\x18\x12 \x01(\x03R\vprocessTime\x12\x1f\n" +
+	"\vnotify_time\x18\x13 \x01(\x03R\n" +
+	"notifyTime\x12\x1d\n" +
+	"\n" +
+	"close_time\x18\x14 \x01(\x03R\tcloseTime\x12\x16\n" +
+	"\x06remark\x18\x15 \x01(\tR\x06remark\x12\x1f\n" +
+	"\vcreate_time\x18\x16 \x01(\x03R\n" +
+	"createTime\x12\x1f\n" +
+	"\vupdate_time\x18\x17 \x01(\x03R\n" +
+	"updateTimeB\x1eZ\x1cwklive/proto/payment;paymentb\x06proto3"
 
 var (
 	file_proto_payment_model_proto_rawDescOnce sync.Once
@@ -1915,7 +2168,7 @@ func file_proto_payment_model_proto_rawDescGZIP() []byte {
 	return file_proto_payment_model_proto_rawDescData
 }
 
-var file_proto_payment_model_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_proto_payment_model_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_proto_payment_model_proto_goTypes = []any{
 	(*PayPlatform)(nil),          // 0: payment.PayPlatform
 	(*PayProduct)(nil),           // 1: payment.PayProduct
@@ -1924,40 +2177,43 @@ var file_proto_payment_model_proto_goTypes = []any{
 	(*TenantPayChannel)(nil),     // 4: payment.TenantPayChannel
 	(*TenantPayChannelRule)(nil), // 5: payment.TenantPayChannelRule
 	(*UserRechargeStat)(nil),     // 6: payment.UserRechargeStat
-	(*PayOrder)(nil),             // 7: payment.PayOrder
+	(*RechargeOrder)(nil),        // 7: payment.RechargeOrder
 	(*PayNotifyLog)(nil),         // 8: payment.PayNotifyLog
 	(*VisiblePayChannel)(nil),    // 9: payment.VisiblePayChannel
-	(PlatformType)(0),            // 10: payment.PlatformType
-	(CommonStatus)(0),            // 11: payment.CommonStatus
-	(SceneType)(0),               // 12: payment.SceneType
-	(OpenStatus)(0),              // 13: payment.OpenStatus
-	(FeeType)(0),                 // 14: payment.FeeType
-	(ClientType)(0),              // 15: payment.ClientType
-	(PayOrderStatus)(0),          // 16: payment.PayOrderStatus
-	(NotifyProcessStatus)(0),     // 17: payment.NotifyProcessStatus
-	(SignResult)(0),              // 18: payment.SignResult
+	(*WithdrawOrder)(nil),        // 10: payment.WithdrawOrder
+	(PlatformType)(0),            // 11: payment.PlatformType
+	(CommonStatus)(0),            // 12: payment.CommonStatus
+	(SceneType)(0),               // 13: payment.SceneType
+	(OpenStatus)(0),              // 14: payment.OpenStatus
+	(FeeType)(0),                 // 15: payment.FeeType
+	(ClientType)(0),              // 16: payment.ClientType
+	(PayOrderStatus)(0),          // 17: payment.PayOrderStatus
+	(NotifyProcessStatus)(0),     // 18: payment.NotifyProcessStatus
+	(SignResult)(0),              // 19: payment.SignResult
 }
 var file_proto_payment_model_proto_depIdxs = []int32{
-	10, // 0: payment.PayPlatform.platform_type:type_name -> payment.PlatformType
-	11, // 1: payment.PayPlatform.status:type_name -> payment.CommonStatus
-	12, // 2: payment.PayProduct.scene_type:type_name -> payment.SceneType
-	11, // 3: payment.PayProduct.status:type_name -> payment.CommonStatus
-	11, // 4: payment.TenantPayPlatform.status:type_name -> payment.CommonStatus
-	13, // 5: payment.TenantPayPlatform.open_status:type_name -> payment.OpenStatus
-	11, // 6: payment.TenantPayAccount.status:type_name -> payment.CommonStatus
-	11, // 7: payment.TenantPayChannel.status:type_name -> payment.CommonStatus
-	14, // 8: payment.TenantPayChannel.fee_type:type_name -> payment.FeeType
-	11, // 9: payment.TenantPayChannelRule.status:type_name -> payment.CommonStatus
-	15, // 10: payment.PayOrder.client_type:type_name -> payment.ClientType
-	16, // 11: payment.PayOrder.status:type_name -> payment.PayOrderStatus
-	17, // 12: payment.PayNotifyLog.notify_status:type_name -> payment.NotifyProcessStatus
-	18, // 13: payment.PayNotifyLog.sign_result:type_name -> payment.SignResult
-	14, // 14: payment.VisiblePayChannel.fee_type:type_name -> payment.FeeType
-	15, // [15:15] is the sub-list for method output_type
-	15, // [15:15] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	11, // 0: payment.PayPlatform.platform_type:type_name -> payment.PlatformType
+	12, // 1: payment.PayPlatform.status:type_name -> payment.CommonStatus
+	13, // 2: payment.PayProduct.scene_type:type_name -> payment.SceneType
+	12, // 3: payment.PayProduct.status:type_name -> payment.CommonStatus
+	12, // 4: payment.TenantPayPlatform.status:type_name -> payment.CommonStatus
+	14, // 5: payment.TenantPayPlatform.open_status:type_name -> payment.OpenStatus
+	12, // 6: payment.TenantPayAccount.status:type_name -> payment.CommonStatus
+	12, // 7: payment.TenantPayChannel.status:type_name -> payment.CommonStatus
+	15, // 8: payment.TenantPayChannel.fee_type:type_name -> payment.FeeType
+	12, // 9: payment.TenantPayChannelRule.status:type_name -> payment.CommonStatus
+	16, // 10: payment.RechargeOrder.client_type:type_name -> payment.ClientType
+	17, // 11: payment.RechargeOrder.status:type_name -> payment.PayOrderStatus
+	18, // 12: payment.PayNotifyLog.notify_status:type_name -> payment.NotifyProcessStatus
+	19, // 13: payment.PayNotifyLog.sign_result:type_name -> payment.SignResult
+	15, // 14: payment.VisiblePayChannel.fee_type:type_name -> payment.FeeType
+	16, // 15: payment.WithdrawOrder.client_type:type_name -> payment.ClientType
+	17, // 16: payment.WithdrawOrder.status:type_name -> payment.PayOrderStatus
+	17, // [17:17] is the sub-list for method output_type
+	17, // [17:17] is the sub-list for method input_type
+	17, // [17:17] is the sub-list for extension type_name
+	17, // [17:17] is the sub-list for extension extendee
+	0,  // [0:17] is the sub-list for field type_name
 }
 
 func init() { file_proto_payment_model_proto_init() }
@@ -1972,7 +2228,7 @@ func file_proto_payment_model_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_payment_model_proto_rawDesc), len(file_proto_payment_model_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   10,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

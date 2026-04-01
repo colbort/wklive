@@ -8,7 +8,7 @@ GOCTL ?= goctl
 SERVICE_NAME ?= admin
 ENTRY_FILE := $(SERVICE_NAME).go
 
-.PHONY: gen regen check fmt verify clean
+.PHONY: gen regen check fmt verify clean fmt-api
 
 # 一键生成
 gen: check
@@ -66,3 +66,6 @@ clean:
 	@rm -f internal/handler/routes.go
 	@rm -f internal/types/types.go
 	@echo "✅ clean done"
+
+fmt-api:
+	goctl api format --dir ./api

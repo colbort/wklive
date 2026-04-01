@@ -68,5 +68,5 @@ clean-gen:
 
 .PHONY: gen-model
 gen-model:
-	goctl model mongo --type CoinKline --dir ./models
+	# goctl model mongo --type CoinKline --dir ./models
 	goctl model mysql ddl --src itick.sql --dir ./models -c

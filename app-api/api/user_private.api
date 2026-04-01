@@ -3,193 +3,193 @@ syntax = "v1"
 import "common.api"
 import "user_types.api"
 
-
 type GetProfileResp {
-  RespBase
-  data UserProfile `json:"data"`
+	RespBase
+	data UserProfile `json:"data"`
 }
 
 type UpdateProfileReq {
-  nickname    string `json:"nickname,optional"`
-  avatar      string `json:"avatar,optional"`
-  language    string `json:"language,optional"`
-  timezone    string `json:"timezone,optional"`
-  signature   string `json:"signature,optional"`
-  gender      int64  `json:"gender,optional"`
-  birthday    string `json:"birthday,optional"`
-  countryCode string `json:"countryCode,optional"`
-  province    string `json:"province,optional"`
-  city        string `json:"city,optional"`
-  address     string `json:"address,optional"`
+	nickname    string `json:"nickname,optional"`
+	avatar      string `json:"avatar,optional"`
+	language    string `json:"language,optional"`
+	timezone    string `json:"timezone,optional"`
+	signature   string `json:"signature,optional"`
+	gender      int64  `json:"gender,optional"`
+	birthday    string `json:"birthday,optional"`
+	countryCode string `json:"countryCode,optional"`
+	province    string `json:"province,optional"`
+	city        string `json:"city,optional"`
+	address     string `json:"address,optional"`
 }
 
 type UpdateProfileResp {
-  RespBase
-  profile UserProfile `json:"profile"`
+	RespBase
+	profile UserProfile `json:"profile"`
 }
 
 type ChangeLoginPasswordReq {
-  oldPassword     string `json:"oldPassword"`
-  newPassword     string `json:"newPassword"`
-  confirmPassword string `json:"confirmPassword"`
+	oldPassword     string `json:"oldPassword"`
+	newPassword     string `json:"newPassword"`
+	confirmPassword string `json:"confirmPassword"`
 }
 
 type GetIdentityResp {
-  RespBase
-  data UserIdentity `json:"data"`
+	RespBase
+	data UserIdentity `json:"data"`
 }
 
 type SubmitIdentityReq {
-  phone         string `json:"phone,optional"`
-  email         string `json:"email,optional"`
-  realName      string `json:"realName"`
-  gender        int64  `json:"gender,optional"`
-  birthday      string `json:"birthday,optional"`
-  countryCode   string `json:"countryCode,optional"`
-  province      string `json:"province,optional"`
-  city          string `json:"city,optional"`
-  address       string `json:"address,optional"`
-  idType        int64  `json:"idType"`
-  idNo          string `json:"idNo"`
-  frontImage    string `json:"frontImage,optional"`
-  backImage     string `json:"backImage,optional"`
-  handheldImage string `json:"handheldImage,optional"`
-  kycLevel      int64  `json:"kycLevel,optional"`
+	phone         string `json:"phone,optional"`
+	email         string `json:"email,optional"`
+	realName      string `json:"realName"`
+	gender        int64  `json:"gender,optional"`
+	birthday      string `json:"birthday,optional"`
+	countryCode   string `json:"countryCode,optional"`
+	province      string `json:"province,optional"`
+	city          string `json:"city,optional"`
+	address       string `json:"address,optional"`
+	idType        int64  `json:"idType"`
+	idNo          string `json:"idNo"`
+	frontImage    string `json:"frontImage,optional"`
+	backImage     string `json:"backImage,optional"`
+	handheldImage string `json:"handheldImage,optional"`
+	kycLevel      int64  `json:"kycLevel,optional"`
 }
 
 type SubmitIdentityResp {
-  RespBase
-  data UserIdentity `json:"data"`
+	RespBase
+	data UserIdentity `json:"data"`
 }
 
 type GetSecurityResp {
-  RespBase
-  data UserSecurity `json:"data"`
+	RespBase
+	data UserSecurity `json:"data"`
 }
 
 type SetPayPasswordReq {
-  password     string `json:"password"`
-  confirmPassword string `json:"confirmPassword"`
+	password        string `json:"password"`
+	confirmPassword string `json:"confirmPassword"`
 }
 
 type ChangePayPasswordReq {
-  oldPassword  string `json:"oldPassword"`
-  newPassword  string `json:"newPassword"`
-  confirmPassword string `json:"confirmPassword"`
+	oldPassword     string `json:"oldPassword"`
+	newPassword     string `json:"newPassword"`
+	confirmPassword string `json:"confirmPassword"`
 }
 
 type InitGoogle2FAResp {
-  RespBase
-  secret    string `json:"secret"`
-  qrCodeUrl string `json:"qrCodeUrl"`
+	RespBase
+	secret    string `json:"secret"`
+	qrCodeUrl string `json:"qrCodeUrl"`
 }
 
 type VerifyGoogle2FAReq {
-  googleCode string `json:"googleCode"`
+	googleCode string `json:"googleCode"`
 }
 
 type ListBanksReq {
-  PageReq
+	PageReq
 }
 
 type ListBanksResp {
-  RespBase
-  data []UserBank `json:"data"`
+	RespBase
+	data []UserBank `json:"data"`
 }
 
 type AddBankReq {
-  bankName    string `json:"bankName"`
-  bankCode    string `json:"bankCode,optional"`
-  accountName string `json:"accountName"`
-  accountNo   string `json:"accountNo"`
-  branchName  string `json:"branchName,optional"`
-  countryCode string `json:"countryCode,optional"`
-  isDefault   bool   `json:"isDefault,optional"`
+	bankName    string `json:"bankName"`
+	bankCode    string `json:"bankCode,optional"`
+	accountName string `json:"accountName"`
+	accountNo   string `json:"accountNo"`
+	branchName  string `json:"branchName,optional"`
+	countryCode string `json:"countryCode,optional"`
+	isDefault   bool   `json:"isDefault,optional"`
 }
 
 type AddBankResp {
-  RespBase
-  bank UserBank `json:"bank"`
+	RespBase
+	bank UserBank `json:"bank"`
 }
 
 type UpdateBankReq {
-  id          int64  `path:"id"`
-  bankName    string `json:"bankName"`
-  bankCode    string `json:"bankCode,optional"`
-  accountName string `json:"accountName"`
-  accountNo   string `json:"accountNo"`
-  branchName  string `json:"branchName,optional"`
-  countryCode string `json:"countryCode,optional"`
-  isDefault   bool   `json:"isDefault,optional"`
+	id          int64  `path:"id"`
+	bankName    string `json:"bankName"`
+	bankCode    string `json:"bankCode,optional"`
+	accountName string `json:"accountName"`
+	accountNo   string `json:"accountNo"`
+	branchName  string `json:"branchName,optional"`
+	countryCode string `json:"countryCode,optional"`
+	isDefault   bool   `json:"isDefault,optional"`
 }
 
 type UpdateBankResp {
-  RespBase
-  bank UserBank `json:"bank"`
+	RespBase
+	bank UserBank `json:"bank"`
 }
 
 type DeleteBankReq {
-  id int64 `path:"id"`
+	id int64 `path:"id"`
 }
 
 type SetDefaultBankReq {
-  id int64 `path:"id"`
+	id int64 `path:"id"`
 }
 
-@server(
-  prefix: /app/user
-  group: user_private
-  jwt: Jwt
+@server (
+	prefix: /app/user
+	group:  user_private
+	jwt:    Jwt
 )
 service app {
-  @handler Logout
-  post /logout returns (RespBase)
+	@handler Logout
+	post /logout returns (RespBase)
 
-  @handler GetProfile
-  get /profile returns (GetProfileResp)
+	@handler GetProfile
+	get /profile returns (GetProfileResp)
 
-  @handler UpdateProfile
-  put /profile (UpdateProfileReq) returns (UpdateProfileResp)
+	@handler UpdateProfile
+	put /profile (UpdateProfileReq) returns (UpdateProfileResp)
 
-  @handler ChangeLoginPassword
-  put /change-login-password (ChangeLoginPasswordReq) returns (RespBase)
+	@handler ChangeLoginPassword
+	put /change-login-password (ChangeLoginPasswordReq) returns (RespBase)
 
-  @handler GetIdentity
-  get /identity returns (GetIdentityResp)
+	@handler GetIdentity
+	get /identity returns (GetIdentityResp)
 
-  @handler SubmitIdentity
-  post /identity (SubmitIdentityReq) returns (SubmitIdentityResp)
+	@handler SubmitIdentity
+	post /identity (SubmitIdentityReq) returns (SubmitIdentityResp)
 
-  @handler GetSecurity
-  get /security returns (GetSecurityResp)
+	@handler GetSecurity
+	get /security returns (GetSecurityResp)
 
-  @handler SetPayPassword
-  post /pay-password (SetPayPasswordReq) returns (RespBase)
+	@handler SetPayPassword
+	post /pay-password (SetPayPasswordReq) returns (RespBase)
 
-  @handler ChangePayPassword
-  put /pay-password (ChangePayPasswordReq) returns (RespBase)
+	@handler ChangePayPassword
+	put /pay-password (ChangePayPasswordReq) returns (RespBase)
 
-  @handler InitGoogle2FA
-  get /google2fa/init returns (InitGoogle2FAResp)
+	@handler InitGoogle2FA
+	get /google2fa/init returns (InitGoogle2FAResp)
 
-  @handler EnableGoogle2FA
-  post /google2fa/enable (VerifyGoogle2FAReq) returns (RespBase)
+	@handler EnableGoogle2FA
+	post /google2fa/enable (VerifyGoogle2FAReq) returns (RespBase)
 
-  @handler DisableGoogle2FA
-  post /google2fa/disable (VerifyGoogle2FAReq) returns (RespBase)
+	@handler DisableGoogle2FA
+	post /google2fa/disable (VerifyGoogle2FAReq) returns (RespBase)
 
-  @handler ListBanks
-  get /banks (ListBanksReq) returns (ListBanksResp)
+	@handler ListBanks
+	get /banks (ListBanksReq) returns (ListBanksResp)
 
-  @handler AddBank
-  post /banks (AddBankReq) returns (AddBankResp)
+	@handler AddBank
+	post /banks (AddBankReq) returns (AddBankResp)
 
-  @handler UpdateBank
-  put /banks/:id (UpdateBankReq) returns (UpdateBankResp)
+	@handler UpdateBank
+	put /banks/:id (UpdateBankReq) returns (UpdateBankResp)
 
-  @handler DeleteBank
-  delete /banks/:id (DeleteBankReq) returns (RespBase)
+	@handler DeleteBank
+	delete /banks/:id (DeleteBankReq) returns (RespBase)
 
-  @handler SetDefaultBank
-  put /banks/:id/default (SetDefaultBankReq) returns (RespBase)
+	@handler SetDefaultBank
+	put /banks/:id/default (SetDefaultBankReq) returns (RespBase)
 }
+

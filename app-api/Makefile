@@ -2,7 +2,7 @@ API_FILE := api/core.api
 
 GOCTL ?= goctl
 
-.PHONY: gen check fmt clean verify
+.PHONY: gen check fmt clean verify fmt-api
 
 # 一键生成
 gen: check
@@ -38,3 +38,7 @@ clean:
 	@rm -rf internal/svc
 	@rm -f internal/config/config.go
 	@echo "✅ clean done"
+
+
+fmt-api:
+	goctl api format --dir ./api

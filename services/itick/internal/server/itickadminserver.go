@@ -47,6 +47,18 @@ func (s *ItickAdminServer) ListCategories(ctx context.Context, in *itick.ListCat
 	return l.ListCategories(in)
 }
 
+// 同步类型下的产品
+func (s *ItickAdminServer) SyncCategoryProducts(ctx context.Context, in *itick.SyncCategoryProductsReq) (*itick.AdminCommonResp, error) {
+	l := logic.NewSyncCategoryProductsLogic(ctx, s.svcCtx)
+	return l.SyncCategoryProducts(in)
+}
+
+// 获取同步任务状态
+func (s *ItickAdminServer) GetSyncTaskStatus(ctx context.Context, in *itick.GetSyncTaskStatusReq) (*itick.GetSyncTaskStatusResp, error) {
+	l := logic.NewGetSyncTaskStatusLogic(ctx, s.svcCtx)
+	return l.GetSyncTaskStatus(in)
+}
+
 // 产品
 func (s *ItickAdminServer) CreateProduct(ctx context.Context, in *itick.CreateProductReq) (*itick.AdminCommonResp, error) {
 	l := logic.NewCreateProductLogic(ctx, s.svcCtx)

@@ -1,37 +1,38 @@
 // System config
 type GetSystemCore {
-  siteName string `json:"siteName"`
-  siteLogo string `json:"siteLogo"`
+	siteName string `json:"siteName"`
+	siteLogo string `json:"siteLogo"`
 }
+
 type GetSystemCoreResp {
-  RespBase
-  data GetSystemCore `json:"data"`
+	RespBase
+	data GetSystemCore `json:"data"`
 }
 
 // ===== auth =====
 type LoginReq {
-  username   string `json:"username"`
-  password   string `json:"password"`
-  googleCode string `json:"googleCode,optional"`
+	username   string `json:"username"`
+	password   string `json:"password"`
+	googleCode string `json:"googleCode,optional"`
 }
 
 type LoginResp {
-  RespBase
-  data { 
-    token string `json:"token"`
-    exp   int64  `json:"exp"`
-  } `json:"data"`
+	RespBase
+	data {
+		token string `json:"token"`
+		exp   int64  `json:"exp"`
+	} `json:"data"`
 }
 
-@server(
-  prefix: /admin
-  group: auth_public
+@server (
+	prefix: /admin
+	group:  auth_public
 )
 service admin {
-  @handler GetSystemCore
-  get /system/core returns (GetSystemCoreResp)
-  @handler Login
-  post /auth/login (LoginReq) returns (LoginResp)
-}
+	@handler GetSystemCore
+	get /system/core returns (GetSystemCoreResp)
 
+	@handler Login
+	post /auth/login (LoginReq) returns (LoginResp)
+}
 

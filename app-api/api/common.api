@@ -1,34 +1,35 @@
 syntax = "v1"
 
 type RespBase {
-  code       int32  `json:"code"`
-  msg        string `json:"msg"`
-  total      int64  `json:"total,optional"`
-  hasNext    bool   `json:"hasNext,optional"`
-  hasPrev    bool   `json:"hasPrev,optional"`
-  nextCursor int64  `json:"nextCursor,optional"`
-  prevCursor int64  `json:"prevCursor,optional"`
+	code       int32  `json:"code"`
+	msg        string `json:"msg"`
+	total      int64  `json:"total,optional"`
+	hasNext    bool   `json:"hasNext,optional"`
+	hasPrev    bool   `json:"hasPrev,optional"`
+	nextCursor int64  `json:"nextCursor,optional"`
+	prevCursor int64  `json:"prevCursor,optional"`
 }
 
 type PageReq {
-  cursor     int64 `form:"cursor,optional"`
-  limit int64 `form:"limit,optional"`
+	cursor int64 `form:"cursor,optional"`
+	limit  int64 `form:"limit,optional"`
 }
 
 type IdReq {
-  id int64 `path:"id"`
+	id int64 `path:"id"`
 }
 
 type UserIdReq {
-  userId int64 `path:"userId"`
+	userId int64 `path:"userId"`
 }
 
 type TenantScope {
-  tenantId   int64  `form:"tenantId,optional"`
-  tenantCode string `form:"tenantCode,optional"`
+	tenantId   int64  `form:"tenantId,optional"`
+	tenantCode string `form:"tenantCode,optional"`
 }
 
 type TenantJsonScope {
-  tenantId   int64  `json:"tenantId,optional"`
-  tenantCode string `json:"tenantCode,optional"`
+	tenantId   int64  `json:"tenantId,optional"`
+	tenantCode string `json:"tenantCode,optional"`
 }
+

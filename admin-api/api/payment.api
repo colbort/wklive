@@ -1,753 +1,847 @@
 import "common.api"
 
-
 // ====================
 // model types
 // ====================
-
 type PayPlatform {
-  id           int64  `json:"id"`
-  platformCode string `json:"platformCode"`
-  platformName string `json:"platformName"`
-  platformType int64  `json:"platformType"` // 0未知 1三方支付 2银行转账 3链上支付 4人工代收
-  notifyUrl    string `json:"notifyUrl"`
-  returnUrl    string `json:"returnUrl"`
-  icon         string `json:"icon"`
-  status       int64  `json:"status"` // 0未知 1启用 2禁用
-  remark       string `json:"remark"`
-  createTime   int64  `json:"createTime"`
-  updateTime   int64  `json:"updateTime"`
+	id           int64  `json:"id"`
+	platformCode string `json:"platformCode"`
+	platformName string `json:"platformName"`
+	platformType int64  `json:"platformType"` // 0未知 1三方支付 2银行转账 3链上支付 4人工代收
+	notifyUrl    string `json:"notifyUrl"`
+	returnUrl    string `json:"returnUrl"`
+	icon         string `json:"icon"`
+	status       int64  `json:"status"` // 0未知 1启用 2禁用
+	remark       string `json:"remark"`
+	createTime   int64  `json:"createTime"`
+	updateTime   int64  `json:"updateTime"`
 }
 
 type PayProduct {
-  id          int64  `json:"id"`
-  platformId  int64  `json:"platformId"`
-  productCode string `json:"productCode"`
-  productName string `json:"productName"`
-  sceneType   int64  `json:"sceneType"` // 0未知 1APP 2H5 3WEB 4收银台 5链上
-  currency    string `json:"currency"`
-  status      int64  `json:"status"` // 0未知 1启用 2禁用
-  remark      string `json:"remark"`
-  createTime  int64  `json:"createTime"`
-  updateTime  int64  `json:"updateTime"`
+	id          int64  `json:"id"`
+	platformId  int64  `json:"platformId"`
+	productCode string `json:"productCode"`
+	productName string `json:"productName"`
+	sceneType   int64  `json:"sceneType"` // 0未知 1APP 2H5 3WEB 4收银台 5链上
+	currency    string `json:"currency"`
+	status      int64  `json:"status"` // 0未知 1启用 2禁用
+	remark      string `json:"remark"`
+	createTime  int64  `json:"createTime"`
+	updateTime  int64  `json:"updateTime"`
 }
 
 type TenantPayPlatform {
-  id         int64  `json:"id"`
-  tenantId   int64  `json:"tenantId"`
-  platformId int64  `json:"platformId"`
-  status     int64  `json:"status"`     // 0未知 1启用 2禁用
-  openStatus int64  `json:"openStatus"` // 0未知 1待配置 2已开通 3审核中 4已拒绝
-  remark     string `json:"remark"`
-  createTime int64  `json:"createTime"`
-  updateTime int64  `json:"updateTime"`
+	id         int64  `json:"id"`
+	tenantId   int64  `json:"tenantId"`
+	platformId int64  `json:"platformId"`
+	status     int64  `json:"status"` // 0未知 1启用 2禁用
+	openStatus int64  `json:"openStatus"` // 0未知 1待配置 2已开通 3审核中 4已拒绝
+	remark     string `json:"remark"`
+	createTime int64  `json:"createTime"`
+	updateTime int64  `json:"updateTime"`
 }
 
 type TenantPayAccount {
-  id                  int64  `json:"id"`
-  tenantId            int64  `json:"tenantId"`
-  tenantPayPlatformId int64  `json:"tenantPayPlatformId"`
-  platformId          int64  `json:"platformId"`
-  accountCode         string `json:"accountCode"`
-  accountName         string `json:"accountName"`
-  appId               string `json:"appId"`
-  merchantId          string `json:"merchantId"`
-  merchantName        string `json:"merchantName"`
-  publicKey           string `json:"publicKey"`
-  extConfig           string `json:"extConfig"`
-  status              int64  `json:"status"` // 0未知 1启用 2禁用
-  isDefault           bool   `json:"isDefault"`
-  remark              string `json:"remark"`
-  createTime          int64  `json:"createTime"`
-  updateTime          int64  `json:"updateTime"`
+	id                  int64  `json:"id"`
+	tenantId            int64  `json:"tenantId"`
+	tenantPayPlatformId int64  `json:"tenantPayPlatformId"`
+	platformId          int64  `json:"platformId"`
+	accountCode         string `json:"accountCode"`
+	accountName         string `json:"accountName"`
+	appId               string `json:"appId"`
+	merchantId          string `json:"merchantId"`
+	merchantName        string `json:"merchantName"`
+	publicKey           string `json:"publicKey"`
+	extConfig           string `json:"extConfig"`
+	status              int64  `json:"status"` // 0未知 1启用 2禁用
+	isDefault           bool   `json:"isDefault"`
+	remark              string `json:"remark"`
+	createTime          int64  `json:"createTime"`
+	updateTime          int64  `json:"updateTime"`
 }
 
 type TenantPayChannel {
-  id              int64  `json:"id"`
-  tenantId        int64  `json:"tenantId"`
-  platformId      int64  `json:"platformId"`
-  productId       int64  `json:"productId"`
-  accountId       int64  `json:"accountId"`
-  channelCode     string `json:"channelCode"`
-  channelName     string `json:"channelName"`
-  displayName     string `json:"displayName"`
-  icon            string `json:"icon"`
-  currency        string `json:"currency"`
-  sort            int64  `json:"sort"`
-  visible         bool   `json:"visible"`
-  status          int64  `json:"status"` // 0未知 1启用 2禁用
-  singleMinAmount int64  `json:"singleMinAmount"`
-  singleMaxAmount int64  `json:"singleMaxAmount"`
-  dailyMaxAmount  int64  `json:"dailyMaxAmount"`
-  dailyMaxCount   int64  `json:"dailyMaxCount"`
-  feeType         int64  `json:"feeType"` // 0未知 1费率 2固定
-  feeRate         string `json:"feeRate"`
-  feeFixedAmount  int64  `json:"feeFixedAmount"`
-  extConfig       string `json:"extConfig"`
-  remark          string `json:"remark"`
-  createTime      int64  `json:"createTime"`
-  updateTime      int64  `json:"updateTime"`
+	id              int64  `json:"id"`
+	tenantId        int64  `json:"tenantId"`
+	platformId      int64  `json:"platformId"`
+	productId       int64  `json:"productId"`
+	accountId       int64  `json:"accountId"`
+	channelCode     string `json:"channelCode"`
+	channelName     string `json:"channelName"`
+	displayName     string `json:"displayName"`
+	icon            string `json:"icon"`
+	currency        string `json:"currency"`
+	sort            int64  `json:"sort"`
+	visible         bool   `json:"visible"`
+	status          int64  `json:"status"` // 0未知 1启用 2禁用
+	singleMinAmount int64  `json:"singleMinAmount"`
+	singleMaxAmount int64  `json:"singleMaxAmount"`
+	dailyMaxAmount  int64  `json:"dailyMaxAmount"`
+	dailyMaxCount   int64  `json:"dailyMaxCount"`
+	feeType         int64  `json:"feeType"` // 0未知 1费率 2固定
+	feeRate         string `json:"feeRate"`
+	feeFixedAmount  int64  `json:"feeFixedAmount"`
+	extConfig       string `json:"extConfig"`
+	remark          string `json:"remark"`
+	createTime      int64  `json:"createTime"`
+	updateTime      int64  `json:"updateTime"`
 }
 
 type TenantPayChannelRule {
-  id                   int64  `json:"id"`
-  tenantId             int64  `json:"tenantId"`
-  channelId            int64  `json:"channelId"`
-  ruleName             string `json:"ruleName"`
-  priority             int64  `json:"priority"`
-  status               int64  `json:"status"` // 0未知 1启用 2禁用
-  singleAmountMin      int64  `json:"singleAmountMin"`
-  singleAmountMax      int64  `json:"singleAmountMax"`
-  userTotalRechargeMin int64  `json:"userTotalRechargeMin"`
-  userTotalRechargeMax int64  `json:"userTotalRechargeMax"`
-  memberLevelMin       int64  `json:"memberLevelMin"`
-  memberLevelMax       int64  `json:"memberLevelMax"`
-  kycLevelMin          int64  `json:"kycLevelMin"`
-  kycLevelMax          int64  `json:"kycLevelMax"`
-  allowNewUser         bool   `json:"allowNewUser"`
-  allowOldUser         bool   `json:"allowOldUser"`
-  allowTags            string `json:"allowTags"`
-  denyTags             string `json:"denyTags"`
-  remark               string `json:"remark"`
-  createTime           int64  `json:"createTime"`
-  updateTime           int64  `json:"updateTime"`
+	id                   int64  `json:"id"`
+	tenantId             int64  `json:"tenantId"`
+	channelId            int64  `json:"channelId"`
+	ruleName             string `json:"ruleName"`
+	priority             int64  `json:"priority"`
+	status               int64  `json:"status"` // 0未知 1启用 2禁用
+	singleAmountMin      int64  `json:"singleAmountMin"`
+	singleAmountMax      int64  `json:"singleAmountMax"`
+	userTotalRechargeMin int64  `json:"userTotalRechargeMin"`
+	userTotalRechargeMax int64  `json:"userTotalRechargeMax"`
+	memberLevelMin       int64  `json:"memberLevelMin"`
+	memberLevelMax       int64  `json:"memberLevelMax"`
+	kycLevelMin          int64  `json:"kycLevelMin"`
+	kycLevelMax          int64  `json:"kycLevelMax"`
+	allowNewUser         bool   `json:"allowNewUser"`
+	allowOldUser         bool   `json:"allowOldUser"`
+	allowTags            string `json:"allowTags"`
+	denyTags             string `json:"denyTags"`
+	remark               string `json:"remark"`
+	createTime           int64  `json:"createTime"`
+	updateTime           int64  `json:"updateTime"`
 }
 
 type UserRechargeStat {
-  id                 int64 `json:"id"`
-  tenantId           int64 `json:"tenantId"`
-  userId             int64 `json:"userId"`
-  successOrderCount  int64 `json:"successOrderCount"`
-  successTotalAmount int64 `json:"successTotalAmount"`
-  todaySuccessAmount int64 `json:"todaySuccessAmount"`
-  todaySuccessCount  int64 `json:"todaySuccessCount"`
-  firstSuccessTime   int64 `json:"firstSuccessTime"`
-  lastSuccessTime    int64 `json:"lastSuccessTime"`
-  createTime         int64 `json:"createTime"`
-  updateTime         int64 `json:"updateTime"`
+	id                 int64 `json:"id"`
+	tenantId           int64 `json:"tenantId"`
+	userId             int64 `json:"userId"`
+	successOrderCount  int64 `json:"successOrderCount"`
+	successTotalAmount int64 `json:"successTotalAmount"`
+	todaySuccessAmount int64 `json:"todaySuccessAmount"`
+	todaySuccessCount  int64 `json:"todaySuccessCount"`
+	firstSuccessTime   int64 `json:"firstSuccessTime"`
+	lastSuccessTime    int64 `json:"lastSuccessTime"`
+	createTime         int64 `json:"createTime"`
+	updateTime         int64 `json:"updateTime"`
 }
 
-type PayOrder {
-  id            int64  `json:"id"`
-  tenantId      int64  `json:"tenantId"`
-  userId        int64  `json:"userId"`
-  orderNo       string `json:"orderNo"`
-  bizOrderNo    string `json:"bizOrderNo"`
-  platformId    int64  `json:"platformId"`
-  productId     int64  `json:"productId"`
-  accountId     int64  `json:"accountId"`
-  channelId     int64  `json:"channelId"`
-  currency      string `json:"currency"`
-  orderAmount   int64  `json:"orderAmount"`
-  payAmount     int64  `json:"payAmount"`
-  feeAmount     int64  `json:"feeAmount"`
-  subject       string `json:"subject"`
-  body          string `json:"body"`
-  clientType    int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
-  clientIp      string `json:"clientIp"`
-  status        int64  `json:"status"` // 0未知 1待支付 2支付中 3成功 4失败 5已关闭 6已退款
-  thirdTradeNo  string `json:"thirdTradeNo"`
-  thirdOrderNo  string `json:"thirdOrderNo"`
-  payUrl        string `json:"payUrl"`
-  qrContent     string `json:"qrContent"`
-  requestData   string `json:"requestData"`
-  responseData  string `json:"responseData"`
-  notifyData    string `json:"notifyData"`
-  expireTime    int64  `json:"expireTime"`
-  paidTime      int64  `json:"paidTime"`
-  notifyTime    int64  `json:"notifyTime"`
-  closeTime     int64  `json:"closeTime"`
-  remark        string `json:"remark"`
-  createTime    int64  `json:"createTime"`
-  updateTime    int64  `json:"updateTime"`
+type RechargeOrder {
+	id           int64  `json:"id"`
+	tenantId     int64  `json:"tenantId"`
+	userId       int64  `json:"userId"`
+	orderNo      string `json:"orderNo"`
+	bizOrderNo   string `json:"bizOrderNo"`
+	platformId   int64  `json:"platformId"`
+	productId    int64  `json:"productId"`
+	accountId    int64  `json:"accountId"`
+	channelId    int64  `json:"channelId"`
+	currency     string `json:"currency"`
+	orderAmount  int64  `json:"orderAmount"`
+	payAmount    int64  `json:"payAmount"`
+	feeAmount    int64  `json:"feeAmount"`
+	subject      string `json:"subject"`
+	body         string `json:"body"`
+	clientType   int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
+	clientIp     string `json:"clientIp"`
+	status       int64  `json:"status"` // 0未知 1待支付 2支付中 3成功 4失败 5已关闭 6已退款
+	thirdTradeNo string `json:"thirdTradeNo"`
+	thirdOrderNo string `json:"thirdOrderNo"`
+	payUrl       string `json:"payUrl"`
+	qrContent    string `json:"qrContent"`
+	requestData  string `json:"requestData"`
+	responseData string `json:"responseData"`
+	notifyData   string `json:"notifyData"`
+	expireTime   int64  `json:"expireTime"`
+	paidTime     int64  `json:"paidTime"`
+	notifyTime   int64  `json:"notifyTime"`
+	closeTime    int64  `json:"closeTime"`
+	remark       string `json:"remark"`
+	createTime   int64  `json:"createTime"`
+	updateTime   int64  `json:"updateTime"`
 }
 
 type PayNotifyLog {
-  id            int64  `json:"id"`
-  tenantId      int64  `json:"tenantId"`
-  orderId       int64  `json:"orderId"`
-  orderNo       string `json:"orderNo"`
-  platformId    int64  `json:"platformId"`
-  channelId     int64  `json:"channelId"`
-  notifyStatus  int64  `json:"notifyStatus"` // 0未知 1待处理 2成功 3失败
-  notifyBody    string `json:"notifyBody"`
-  signResult    int64  `json:"signResult"` // 0未知 1未校验 2通过 3失败
-  processResult string `json:"processResult"`
-  errorMessage  string `json:"errorMessage"`
-  notifyTime    int64  `json:"notifyTime"`
-  createTime    int64  `json:"createTime"`
+	id            int64  `json:"id"`
+	tenantId      int64  `json:"tenantId"`
+	orderId       int64  `json:"orderId"`
+	orderNo       string `json:"orderNo"`
+	platformId    int64  `json:"platformId"`
+	channelId     int64  `json:"channelId"`
+	notifyStatus  int64  `json:"notifyStatus"` // 0未知 1待处理 2成功 3失败
+	notifyBody    string `json:"notifyBody"`
+	signResult    int64  `json:"signResult"` // 0未知 1未校验 2通过 3失败
+	processResult string `json:"processResult"`
+	errorMessage  string `json:"errorMessage"`
+	notifyTime    int64  `json:"notifyTime"`
+	createTime    int64  `json:"createTime"`
 }
 
 // ====================
 // platform
 // ====================
-
 type CreatePayPlatformReq {
-  platformCode string `json:"platformCode"`
-  platformName string `json:"platformName"`
-  platformType int64  `json:"platformType"`
-  notifyUrl    string `json:"notifyUrl,optional"`
-  returnUrl    string `json:"returnUrl,optional"`
-  icon         string `json:"icon,optional"`
-  status       int64  `json:"status"`
-  remark       string `json:"remark,optional"`
+	platformCode string `json:"platformCode"`
+	platformName string `json:"platformName"`
+	platformType int64  `json:"platformType"`
+	notifyUrl    string `json:"notifyUrl,optional"`
+	returnUrl    string `json:"returnUrl,optional"`
+	icon         string `json:"icon,optional"`
+	status       int64  `json:"status"`
+	remark       string `json:"remark,optional"`
 }
 
 type UpdatePayPlatformReq {
-  id           int64  `json:"id"`
-  platformName string `json:"platformName"`
-  platformType int64  `json:"platformType"`
-  notifyUrl    string `json:"notifyUrl,optional"`
-  returnUrl    string `json:"returnUrl,optional"`
-  icon         string `json:"icon,optional"`
-  status       int64  `json:"status"`
-  remark       string `json:"remark,optional"`
+	id           int64  `json:"id"`
+	platformName string `json:"platformName"`
+	platformType int64  `json:"platformType"`
+	notifyUrl    string `json:"notifyUrl,optional"`
+	returnUrl    string `json:"returnUrl,optional"`
+	icon         string `json:"icon,optional"`
+	status       int64  `json:"status"`
+	remark       string `json:"remark,optional"`
 }
 
 type GetPayPlatformReq {
-  id int64 `form:"id"`
+	id int64 `form:"id"`
 }
 
 type GetPayPlatformResp {
-  RespBase
-  data PayPlatform `json:"data"`
+	RespBase
+	data PayPlatform `json:"data"`
 }
 
 type ListPayPlatformsReq {
-  PageReq
-  keyword      string `form:"keyword,optional"`
-  platformCode string `form:"platformCode,optional"`
-  status       int64  `form:"status,optional"`
-  platformType int64  `form:"platformType,optional"`
+	PageReq
+	keyword      string `form:"keyword,optional"`
+	platformCode string `form:"platformCode,optional"`
+	status       int64  `form:"status,optional"`
+	platformType int64  `form:"platformType,optional"`
 }
 
 type ListPayPlatformsResp {
-  RespBase
-  data []PayPlatform `json:"data"`
+	RespBase
+	data []PayPlatform `json:"data"`
 }
 
 // ====================
 // product
 // ====================
-
 type CreatePayProductReq {
-  platformId  int64  `json:"platformId"`
-  productCode string `json:"productCode"`
-  productName string `json:"productName"`
-  sceneType   int64  `json:"sceneType"`
-  currency    string `json:"currency"`
-  status      int64  `json:"status"`
-  remark      string `json:"remark,optional"`
+	platformId  int64  `json:"platformId"`
+	productCode string `json:"productCode"`
+	productName string `json:"productName"`
+	sceneType   int64  `json:"sceneType"`
+	currency    string `json:"currency"`
+	status      int64  `json:"status"`
+	remark      string `json:"remark,optional"`
 }
 
 type UpdatePayProductReq {
-  id          int64  `json:"id"`
-  productName string `json:"productName"`
-  sceneType   int64  `json:"sceneType"`
-  currency    string `json:"currency"`
-  status      int64  `json:"status"`
-  remark      string `json:"remark,optional"`
+	id          int64  `json:"id"`
+	productName string `json:"productName"`
+	sceneType   int64  `json:"sceneType"`
+	currency    string `json:"currency"`
+	status      int64  `json:"status"`
+	remark      string `json:"remark,optional"`
 }
 
 type GetPayProductReq {
-  id int64 `form:"id"`
+	id int64 `form:"id"`
 }
 
 type GetPayProductResp {
-  RespBase
-  data PayProduct `json:"data"`
+	RespBase
+	data PayProduct `json:"data"`
 }
 
 type ListPayProductsReq {
-  PageReq
-  platformId  int64  `form:"platformId,optional"`
-  keyword     string `form:"keyword,optional"`
-  productCode string `form:"productCode,optional"`
-  status      int64  `form:"status,optional"`
-  sceneType   int64  `form:"sceneType,optional"`
+	PageReq
+	platformId  int64  `form:"platformId,optional"`
+	keyword     string `form:"keyword,optional"`
+	productCode string `form:"productCode,optional"`
+	status      int64  `form:"status,optional"`
+	sceneType   int64  `form:"sceneType,optional"`
 }
 
 type ListPayProductsResp {
-  RespBase
-  data []PayProduct `json:"data"`
+	RespBase
+	data []PayProduct `json:"data"`
 }
 
 // ====================
 // tenant pay platform
 // ====================
-
 type OpenTenantPayPlatformReq {
-  tenantId    int64  `json:"tenantId"`
-  platformId  int64  `json:"platformId"`
-  status      int64  `json:"status"`
-  openStatus  int64  `json:"openStatus"`
-  remark      string `json:"remark,optional"`
+	tenantId   int64  `json:"tenantId"`
+	platformId int64  `json:"platformId"`
+	status     int64  `json:"status"`
+	openStatus int64  `json:"openStatus"`
+	remark     string `json:"remark,optional"`
 }
 
 type UpdateTenantPayPlatformReq {
-  id         int64  `json:"id"`
-  tenantId   int64  `json:"tenantId"`
-  status     int64  `json:"status"`
-  openStatus int64  `json:"openStatus"`
-  remark     string `json:"remark,optional"`
+	id         int64  `json:"id"`
+	tenantId   int64  `json:"tenantId"`
+	status     int64  `json:"status"`
+	openStatus int64  `json:"openStatus"`
+	remark     string `json:"remark,optional"`
 }
 
 type GetTenantPayPlatformReq {
-  id       int64 `form:"id"`
-  tenantId int64 `form:"tenantId"`
+	id       int64 `form:"id"`
+	tenantId int64 `form:"tenantId"`
 }
 
 type GetTenantPayPlatformResp {
-  RespBase
-  data TenantPayPlatform `json:"data"`
+	RespBase
+	data TenantPayPlatform `json:"data"`
 }
 
 type ListTenantPayPlatformsReq {
-  PageReq
-  tenantId   int64 `form:"tenantId,optional"`
-  platformId int64 `form:"platformId,optional"`
-  status     int64 `form:"status,optional"`
-  openStatus int64 `form:"openStatus,optional"`
+	PageReq
+	tenantId   int64 `form:"tenantId,optional"`
+	platformId int64 `form:"platformId,optional"`
+	status     int64 `form:"status,optional"`
+	openStatus int64 `form:"openStatus,optional"`
 }
 
 type ListTenantPayPlatformsResp {
-  RespBase
-  data []TenantPayPlatform `json:"data"`
+	RespBase
+	data []TenantPayPlatform `json:"data"`
 }
 
 // ====================
 // tenant pay account
 // ====================
-
 type CreateTenantPayAccountReq {
-  tenantId            int64  `json:"tenantId"`
-  tenantPayPlatformId int64  `json:"tenantPayPlatformId"`
-  platformId          int64  `json:"platformId"`
-  accountCode         string `json:"accountCode"`
-  accountName         string `json:"accountName"`
-  appId               string `json:"appId,optional"`
-  merchantId          string `json:"merchantId,optional"`
-  merchantName        string `json:"merchantName,optional"`
-  apiKeyCipher        string `json:"apiKeyCipher,optional"`
-  apiSecretCipher     string `json:"apiSecretCipher,optional"`
-  privateKeyCipher    string `json:"privateKeyCipher,optional"`
-  publicKey           string `json:"publicKey,optional"`
-  certCipher          string `json:"certCipher,optional"`
-  extConfig           string `json:"extConfig,optional"`
-  status              int64  `json:"status"`
-  isDefault           bool   `json:"isDefault"`
-  remark              string `json:"remark,optional"`
+	tenantId            int64  `json:"tenantId"`
+	tenantPayPlatformId int64  `json:"tenantPayPlatformId"`
+	platformId          int64  `json:"platformId"`
+	accountCode         string `json:"accountCode"`
+	accountName         string `json:"accountName"`
+	appId               string `json:"appId,optional"`
+	merchantId          string `json:"merchantId,optional"`
+	merchantName        string `json:"merchantName,optional"`
+	apiKeyCipher        string `json:"apiKeyCipher,optional"`
+	apiSecretCipher     string `json:"apiSecretCipher,optional"`
+	privateKeyCipher    string `json:"privateKeyCipher,optional"`
+	publicKey           string `json:"publicKey,optional"`
+	certCipher          string `json:"certCipher,optional"`
+	extConfig           string `json:"extConfig,optional"`
+	status              int64  `json:"status"`
+	isDefault           bool   `json:"isDefault"`
+	remark              string `json:"remark,optional"`
 }
 
 type UpdateTenantPayAccountReq {
-  id               int64  `json:"id"`
-  tenantId         int64  `json:"tenantId"`
-  accountName      string `json:"accountName"`
-  appId            string `json:"appId,optional"`
-  merchantId       string `json:"merchantId,optional"`
-  merchantName     string `json:"merchantName,optional"`
-  apiKeyCipher     string `json:"apiKeyCipher,optional"`
-  apiSecretCipher  string `json:"apiSecretCipher,optional"`
-  privateKeyCipher string `json:"privateKeyCipher,optional"`
-  publicKey        string `json:"publicKey,optional"`
-  certCipher       string `json:"certCipher,optional"`
-  extConfig        string `json:"extConfig,optional"`
-  status           int64  `json:"status"`
-  isDefault        bool   `json:"isDefault"`
-  remark           string `json:"remark,optional"`
+	id               int64  `json:"id"`
+	tenantId         int64  `json:"tenantId"`
+	accountName      string `json:"accountName"`
+	appId            string `json:"appId,optional"`
+	merchantId       string `json:"merchantId,optional"`
+	merchantName     string `json:"merchantName,optional"`
+	apiKeyCipher     string `json:"apiKeyCipher,optional"`
+	apiSecretCipher  string `json:"apiSecretCipher,optional"`
+	privateKeyCipher string `json:"privateKeyCipher,optional"`
+	publicKey        string `json:"publicKey,optional"`
+	certCipher       string `json:"certCipher,optional"`
+	extConfig        string `json:"extConfig,optional"`
+	status           int64  `json:"status"`
+	isDefault        bool   `json:"isDefault"`
+	remark           string `json:"remark,optional"`
 }
 
 type GetTenantPayAccountReq {
-  id       int64 `form:"id"`
-  tenantId int64 `form:"tenantId"`
+	id       int64 `form:"id"`
+	tenantId int64 `form:"tenantId"`
 }
 
 type GetTenantPayAccountResp {
-  RespBase
-  data TenantPayAccount `json:"data"`
+	RespBase
+	data TenantPayAccount `json:"data"`
 }
 
 type ListTenantPayAccountsReq {
-  PageReq
-  tenantId            int64  `form:"tenantId,optional"`
-  platformId          int64  `form:"platformId,optional"`
-  tenantPayPlatformId int64  `form:"tenantPayPlatformId,optional"`
-  keyword             string `form:"keyword,optional"`
-  status              int64  `form:"status,optional"`
+	PageReq
+	tenantId            int64  `form:"tenantId,optional"`
+	platformId          int64  `form:"platformId,optional"`
+	tenantPayPlatformId int64  `form:"tenantPayPlatformId,optional"`
+	keyword             string `form:"keyword,optional"`
+	status              int64  `form:"status,optional"`
 }
 
 type ListTenantPayAccountsResp {
-  RespBase
-  data []TenantPayAccount `json:"data"`
+	RespBase
+	data []TenantPayAccount `json:"data"`
 }
 
 // ====================
 // tenant pay channel
 // ====================
-
 type CreateTenantPayChannelReq {
-  tenantId        int64  `json:"tenantId"`
-  platformId      int64  `json:"platformId"`
-  productId       int64  `json:"productId"`
-  accountId       int64  `json:"accountId"`
-  channelCode     string `json:"channelCode"`
-  channelName     string `json:"channelName"`
-  displayName     string `json:"displayName"`
-  icon            string `json:"icon,optional"`
-  currency        string `json:"currency"`
-  sort            int64  `json:"sort"`
-  visible         bool   `json:"visible"`
-  status          int64  `json:"status"`
-  singleMinAmount int64  `json:"singleMinAmount"`
-  singleMaxAmount int64  `json:"singleMaxAmount"`
-  dailyMaxAmount  int64  `json:"dailyMaxAmount"`
-  dailyMaxCount   int64  `json:"dailyMaxCount"`
-  feeType         int64  `json:"feeType"`
-  feeRate         string `json:"feeRate,optional"`
-  feeFixedAmount  int64  `json:"feeFixedAmount,optional"`
-  extConfig       string `json:"extConfig,optional"`
-  remark          string `json:"remark,optional"`
+	tenantId        int64  `json:"tenantId"`
+	platformId      int64  `json:"platformId"`
+	productId       int64  `json:"productId"`
+	accountId       int64  `json:"accountId"`
+	channelCode     string `json:"channelCode"`
+	channelName     string `json:"channelName"`
+	displayName     string `json:"displayName"`
+	icon            string `json:"icon,optional"`
+	currency        string `json:"currency"`
+	sort            int64  `json:"sort"`
+	visible         bool   `json:"visible"`
+	status          int64  `json:"status"`
+	singleMinAmount int64  `json:"singleMinAmount"`
+	singleMaxAmount int64  `json:"singleMaxAmount"`
+	dailyMaxAmount  int64  `json:"dailyMaxAmount"`
+	dailyMaxCount   int64  `json:"dailyMaxCount"`
+	feeType         int64  `json:"feeType"`
+	feeRate         string `json:"feeRate,optional"`
+	feeFixedAmount  int64  `json:"feeFixedAmount,optional"`
+	extConfig       string `json:"extConfig,optional"`
+	remark          string `json:"remark,optional"`
 }
 
 type UpdateTenantPayChannelReq {
-  id              int64  `json:"id"`
-  tenantId        int64  `json:"tenantId"`
-  channelName     string `json:"channelName"`
-  displayName     string `json:"displayName"`
-  icon            string `json:"icon,optional"`
-  currency        string `json:"currency"`
-  sort            int64  `json:"sort"`
-  visible         bool   `json:"visible"`
-  status          int64  `json:"status"`
-  singleMinAmount int64  `json:"singleMinAmount"`
-  singleMaxAmount int64  `json:"singleMaxAmount"`
-  dailyMaxAmount  int64  `json:"dailyMaxAmount"`
-  dailyMaxCount   int64  `json:"dailyMaxCount"`
-  feeType         int64  `json:"feeType"`
-  feeRate         string `json:"feeRate,optional"`
-  feeFixedAmount  int64  `json:"feeFixedAmount,optional"`
-  extConfig       string `json:"extConfig,optional"`
-  remark          string `json:"remark,optional"`
+	id              int64  `json:"id"`
+	tenantId        int64  `json:"tenantId"`
+	channelName     string `json:"channelName"`
+	displayName     string `json:"displayName"`
+	icon            string `json:"icon,optional"`
+	currency        string `json:"currency"`
+	sort            int64  `json:"sort"`
+	visible         bool   `json:"visible"`
+	status          int64  `json:"status"`
+	singleMinAmount int64  `json:"singleMinAmount"`
+	singleMaxAmount int64  `json:"singleMaxAmount"`
+	dailyMaxAmount  int64  `json:"dailyMaxAmount"`
+	dailyMaxCount   int64  `json:"dailyMaxCount"`
+	feeType         int64  `json:"feeType"`
+	feeRate         string `json:"feeRate,optional"`
+	feeFixedAmount  int64  `json:"feeFixedAmount,optional"`
+	extConfig       string `json:"extConfig,optional"`
+	remark          string `json:"remark,optional"`
 }
 
 type GetTenantPayChannelReq {
-  id       int64 `form:"id"`
-  tenantId int64 `form:"tenantId"`
+	id       int64 `form:"id"`
+	tenantId int64 `form:"tenantId"`
 }
 
 type GetTenantPayChannelResp {
-  RespBase
-  data TenantPayChannel `json:"data"`
+	RespBase
+	data TenantPayChannel `json:"data"`
 }
 
 type ListTenantPayChannelsReq {
-  PageReq
-  tenantId   int64  `form:"tenantId,optional"`
-  platformId int64  `form:"platformId,optional"`
-  productId  int64  `form:"productId,optional"`
-  accountId  int64  `form:"accountId,optional"`
-  keyword    string `form:"keyword,optional"`
-  status     int64  `form:"status,optional"`
-  visible    bool   `form:"visible,optional"`
+	PageReq
+	tenantId   int64  `form:"tenantId,optional"`
+	platformId int64  `form:"platformId,optional"`
+	productId  int64  `form:"productId,optional"`
+	accountId  int64  `form:"accountId,optional"`
+	keyword    string `form:"keyword,optional"`
+	status     int64  `form:"status,optional"`
+	visible    bool   `form:"visible,optional"`
 }
 
 type ListTenantPayChannelsResp {
-  RespBase
-  data []TenantPayChannel `json:"data"`
+	RespBase
+	data []TenantPayChannel `json:"data"`
 }
 
 // ====================
 // channel rule
 // ====================
-
 type CreateTenantPayChannelRuleReq {
-  tenantId             int64  `json:"tenantId"`
-  channelId            int64  `json:"channelId"`
-  ruleName             string `json:"ruleName"`
-  priority             int64  `json:"priority"`
-  status               int64  `json:"status"`
-  singleAmountMin      int64  `json:"singleAmountMin"`
-  singleAmountMax      int64  `json:"singleAmountMax"`
-  userTotalRechargeMin int64  `json:"userTotalRechargeMin"`
-  userTotalRechargeMax int64  `json:"userTotalRechargeMax"`
-  memberLevelMin       int64  `json:"memberLevelMin"`
-  memberLevelMax       int64  `json:"memberLevelMax"`
-  kycLevelMin          int64  `json:"kycLevelMin"`
-  kycLevelMax          int64  `json:"kycLevelMax"`
-  allowNewUser         bool   `json:"allowNewUser"`
-  allowOldUser         bool   `json:"allowOldUser"`
-  allowTags            string `json:"allowTags,optional"`
-  denyTags             string `json:"denyTags,optional"`
-  remark               string `json:"remark,optional"`
+	tenantId             int64  `json:"tenantId"`
+	channelId            int64  `json:"channelId"`
+	ruleName             string `json:"ruleName"`
+	priority             int64  `json:"priority"`
+	status               int64  `json:"status"`
+	singleAmountMin      int64  `json:"singleAmountMin"`
+	singleAmountMax      int64  `json:"singleAmountMax"`
+	userTotalRechargeMin int64  `json:"userTotalRechargeMin"`
+	userTotalRechargeMax int64  `json:"userTotalRechargeMax"`
+	memberLevelMin       int64  `json:"memberLevelMin"`
+	memberLevelMax       int64  `json:"memberLevelMax"`
+	kycLevelMin          int64  `json:"kycLevelMin"`
+	kycLevelMax          int64  `json:"kycLevelMax"`
+	allowNewUser         bool   `json:"allowNewUser"`
+	allowOldUser         bool   `json:"allowOldUser"`
+	allowTags            string `json:"allowTags,optional"`
+	denyTags             string `json:"denyTags,optional"`
+	remark               string `json:"remark,optional"`
 }
 
 type UpdateTenantPayChannelRuleReq {
-  id                   int64  `json:"id"`
-  tenantId             int64  `json:"tenantId"`
-  ruleName             string `json:"ruleName"`
-  priority             int64  `json:"priority"`
-  status               int64  `json:"status"`
-  singleAmountMin      int64  `json:"singleAmountMin"`
-  singleAmountMax      int64  `json:"singleAmountMax"`
-  userTotalRechargeMin int64  `json:"userTotalRechargeMin"`
-  userTotalRechargeMax int64  `json:"userTotalRechargeMax"`
-  memberLevelMin       int64  `json:"memberLevelMin"`
-  memberLevelMax       int64  `json:"memberLevelMax"`
-  kycLevelMin          int64  `json:"kycLevelMin"`
-  kycLevelMax          int64  `json:"kycLevelMax"`
-  allowNewUser         bool   `json:"allowNewUser"`
-  allowOldUser         bool   `json:"allowOldUser"`
-  allowTags            string `json:"allowTags,optional"`
-  denyTags             string `json:"denyTags,optional"`
-  remark               string `json:"remark,optional"`
+	id                   int64  `json:"id"`
+	tenantId             int64  `json:"tenantId"`
+	ruleName             string `json:"ruleName"`
+	priority             int64  `json:"priority"`
+	status               int64  `json:"status"`
+	singleAmountMin      int64  `json:"singleAmountMin"`
+	singleAmountMax      int64  `json:"singleAmountMax"`
+	userTotalRechargeMin int64  `json:"userTotalRechargeMin"`
+	userTotalRechargeMax int64  `json:"userTotalRechargeMax"`
+	memberLevelMin       int64  `json:"memberLevelMin"`
+	memberLevelMax       int64  `json:"memberLevelMax"`
+	kycLevelMin          int64  `json:"kycLevelMin"`
+	kycLevelMax          int64  `json:"kycLevelMax"`
+	allowNewUser         bool   `json:"allowNewUser"`
+	allowOldUser         bool   `json:"allowOldUser"`
+	allowTags            string `json:"allowTags,optional"`
+	denyTags             string `json:"denyTags,optional"`
+	remark               string `json:"remark,optional"`
 }
 
 type GetTenantPayChannelRuleReq {
-  id       int64 `form:"id"`
-  tenantId int64 `form:"tenantId"`
+	id       int64 `form:"id"`
+	tenantId int64 `form:"tenantId"`
 }
 
 type GetTenantPayChannelRuleResp {
-  RespBase
-  data TenantPayChannelRule `json:"data"`
+	RespBase
+	data TenantPayChannelRule `json:"data"`
 }
 
 type ListTenantPayChannelRulesReq {
-  PageReq
-  tenantId  int64 `form:"tenantId,optional"`
-  channelId int64 `form:"channelId,optional"`
-  status    int64 `form:"status,optional"`
+	PageReq
+	tenantId  int64 `form:"tenantId,optional"`
+	channelId int64 `form:"channelId,optional"`
+	status    int64 `form:"status,optional"`
 }
 
 type ListTenantPayChannelRulesResp {
-  RespBase
-  data []TenantPayChannelRule `json:"data"`
+	RespBase
+	data []TenantPayChannelRule `json:"data"`
 }
 
 // ====================
 // user recharge stat
 // ====================
-
 type GetUserRechargeStatReq {
-  tenantId int64 `form:"tenantId"`
-  userId   int64 `form:"userId"`
+	tenantId int64 `form:"tenantId"`
+	userId   int64 `form:"userId"`
 }
 
 type GetUserRechargeStatResp {
-  RespBase
-  data UserRechargeStat `json:"data"`
+	RespBase
+	data UserRechargeStat `json:"data"`
 }
 
 type ListUserRechargeStatsReq {
-  PageReq
-  tenantId              int64 `form:"tenantId,optional"`
-  userId                int64 `form:"userId,optional"`
-  successTotalAmountMin int64 `form:"successTotalAmountMin,optional"`
-  successTotalAmountMax int64 `form:"successTotalAmountMax,optional"`
+	PageReq
+	tenantId              int64 `form:"tenantId,optional"`
+	userId                int64 `form:"userId,optional"`
+	successTotalAmountMin int64 `form:"successTotalAmountMin,optional"`
+	successTotalAmountMax int64 `form:"successTotalAmountMax,optional"`
 }
 
 type ListUserRechargeStatsResp {
-  RespBase
-  data []UserRechargeStat `json:"data"`
+	RespBase
+	data []UserRechargeStat `json:"data"`
 }
 
 // ====================
 // pay order
 // ====================
-
-type GetPayOrderReq {
-  tenantId int64  `form:"tenantId"`
-  orderNo  string `path:"orderNo"`
+type GetRechargeOrderReq {
+	tenantId int64  `form:"tenantId"`
+	orderNo  string `path:"orderNo"`
 }
 
-type GetPayOrderResp {
-  RespBase
-  data PayOrder `json:"data"`
+type GetRechargeOrderResp {
+	RespBase
+	data RechargeOrder `json:"data"`
 }
 
-type ListPayOrdersReq {
-  PageReq
-  tenantId        int64  `form:"tenantId,optional"`
-  userId          int64  `form:"userId,optional"`
-  platformId      int64  `form:"platformId,optional"`
-  productId       int64  `form:"productId,optional"`
-  accountId       int64  `form:"accountId,optional"`
-  channelId       int64  `form:"channelId,optional"`
-  orderNo         string `form:"orderNo,optional"`
-  bizOrderNo      string `form:"bizOrderNo,optional"`
-  thirdTradeNo    string `form:"thirdTradeNo,optional"`
-  status          int64  `form:"status,optional"`
-  createTimeStart int64  `form:"createTimeStart,optional"`
-  createTimeEnd   int64  `form:"createTimeEnd,optional"`
+type ListRechargeOrdersReq {
+	PageReq
+	tenantId        int64  `form:"tenantId,optional"`
+	userId          int64  `form:"userId,optional"`
+	platformId      int64  `form:"platformId,optional"`
+	productId       int64  `form:"productId,optional"`
+	accountId       int64  `form:"accountId,optional"`
+	channelId       int64  `form:"channelId,optional"`
+	orderNo         string `form:"orderNo,optional"`
+	bizOrderNo      string `form:"bizOrderNo,optional"`
+	thirdTradeNo    string `form:"thirdTradeNo,optional"`
+	status          int64  `form:"status,optional"`
+	createTimeStart int64  `form:"createTimeStart,optional"`
+	createTimeEnd   int64  `form:"createTimeEnd,optional"`
 }
 
-type ListPayOrdersResp {
-  RespBase
-  data []PayOrder `json:"data"`
+type ListRechargeOrdersResp {
+	RespBase
+	data []RechargeOrder `json:"data"`
 }
 
-type ClosePayOrderReq {
-  tenantId int64  `json:"tenantId"`
-  orderNo  string `path:"orderNo"`
-  remark   string `json:"remark,optional"`
+type CloseRechargeOrderReq {
+	tenantId int64  `json:"tenantId"`
+	orderNo  string `path:"orderNo"`
+	remark   string `json:"remark,optional"`
 }
 
-type ManualMarkPayOrderSuccessReq {
-  tenantId     int64  `json:"tenantId"`
-  orderNo      string `path:"orderNo"`
-  thirdTradeNo string `json:"thirdTradeNo,optional"`
-  payAmount    int64  `json:"payAmount"`
-  remark       string `json:"remark,optional"`
+type ManualMarkRechargeOrderSuccessReq {
+	tenantId     int64  `json:"tenantId"`
+	orderNo      string `path:"orderNo"`
+	thirdTradeNo string `json:"thirdTradeNo,optional"`
+	payAmount    int64  `json:"payAmount"`
+	remark       string `json:"remark,optional"`
 }
 
 type RetryNotifyReq {
-  tenantId int64  `json:"tenantId"`
-  orderNo  string `path:"orderNo"`
+	tenantId int64  `json:"tenantId"`
+	orderNo  string `path:"orderNo"`
 }
 
 // ====================
 // pay notify log
 // ====================
-
-type GetPayNotifyLogReq {
-  tenantId int64 `form:"tenantId"`
-  id       int64 `form:"id"`
+type GetRechargeNotifyLogReq {
+	tenantId int64 `form:"tenantId"`
+	id       int64 `form:"id"`
 }
 
-type GetPayNotifyLogResp {
-  RespBase
-  data PayNotifyLog `json:"data"`
+type GetRechargeNotifyLogResp {
+	RespBase
+	data PayNotifyLog `json:"data"`
 }
 
-type ListPayNotifyLogsReq {
-  PageReq
-  tenantId        int64  `form:"tenantId,optional"`
-  orderNo         string `form:"orderNo,optional"`
-  orderId         int64  `form:"orderId,optional"`
-  platformId      int64  `form:"platformId,optional"`
-  channelId       int64  `form:"channelId,optional"`
-  notifyStatus    int64  `form:"notifyStatus,optional"`
-  signResult      int64  `form:"signResult,optional"`
-  createTimeStart int64  `form:"createTimeStart,optional"`
-  createTimeEnd   int64  `form:"createTimeEnd,optional"`
+type ListRechargeNotifyLogsReq {
+	PageReq
+	tenantId        int64  `form:"tenantId,optional"`
+	orderNo         string `form:"orderNo,optional"`
+	orderId         int64  `form:"orderId,optional"`
+	platformId      int64  `form:"platformId,optional"`
+	channelId       int64  `form:"channelId,optional"`
+	notifyStatus    int64  `form:"notifyStatus,optional"`
+	signResult      int64  `form:"signResult,optional"`
+	createTimeStart int64  `form:"createTimeStart,optional"`
+	createTimeEnd   int64  `form:"createTimeEnd,optional"`
 }
 
-type ListPayNotifyLogsResp {
-  RespBase
-  data []PayNotifyLog `json:"data"`
+type ListRechargeNotifyLogsResp {
+	RespBase
+	data []PayNotifyLog `json:"data"`
 }
 
-@server(
-  prefix: /admin/payment
-  group: payment
-  jwt: Jwt
+// =========== 提现 =================
+type WithdrawOrder {
+	id           int64  `json:"id"`
+	tenantId     int64  `json:"tenantId"`
+	userId       int64  `json:"userId"`
+	orderNo      string `json:"orderNo"`
+	bizOrderNo   string `json:"bizOrderNo"`
+	currency     string `json:"currency"`
+	amount       int64  `json:"amount"`
+	feeAmount    int64  `json:"feeAmount"`
+	actualAmount int64  `json:"actualAmount"`
+	clientType   int64  `json:"clientType"`
+	clientIp     string `json:"clientIp"`
+	status       int64  `json:"status"`
+	thirdTradeNo string `json:"thirdTradeNo"`
+	thirdOrderNo string `json:"thirdOrderNo"`
+	requestData  string `json:"requestData"`
+	responseData string `json:"responseData"`
+	notifyData   string `json:"notifyData"`
+	processTime  int64  `json:"processTime"`
+	notifyTime   int64  `json:"notifyTime"`
+	closeTime    int64  `json:"closeTime"`
+	remark       string `json:"remark"`
+	createTime   int64  `json:"createTime"`
+	updateTime   int64  `json:"updateTime"`
+}
+
+type ListWithdrawOrdersReq {
+	PageReq
+	tenantId int64  `form:"tenantId,optional"`
+	userId   int64  `form:"userId,optional"`
+	orderNo  string `form:"orderNo,optional"`
+}
+
+type ListWithdrawOrdersResp {
+	RespBase
+	data []WithdrawOrder `json:"data"`
+}
+
+type GetWithdrawOrderReq {
+	tenantId int64  `form:"tenantId"`
+	orderNo  string `form:"orderNo"`
+}
+
+type GetWithdrawOrderResp {
+	RespBase
+	data WithdrawOrder `json:"data"`
+}
+
+type AuditWithdrawOrderReq {
+	tenantId int64  `json:"tenantId"`
+	orderNo  string `json:"orderNo"`
+	approve  bool   `json:"approve"`
+	remark   string `json:"remark,optional"`
+}
+
+type ListWithdrawNotifyLogsReq {
+	PageReq
+	tenantId        int64  `form:"tenantId,optional"`
+	orderNo         string `form:"orderNo,optional"`
+	orderId         int64  `form:"orderId,optional"`
+	platformId      int64  `form:"platformId,optional"`
+	channelId       int64  `form:"channelId,optional"`
+	notifyStatus    int64  `form:"notifyStatus,optional"`
+	signResult      int64  `form:"signResult,optional"`
+	createTimeStart int64  `form:"createTimeStart,optional"`
+	createTimeEnd   int64  `form:"createTimeEnd,optional"`
+}
+
+type ListWithdrawNotifyLogsResp {
+	RespBase
+	data []PayNotifyLog `json:"data"`
+}
+
+type GetWithdrawNotifyLogReq {
+	tenantId int64 `form:"tenantId"`
+	id       int64 `form:"id"`
+}
+
+type GetWithdrawNotifyLogResp {
+	RespBase
+	data PayNotifyLog `json:"data"`
+}
+
+@server (
+	prefix: /admin/payment
+	group:  payment
+	jwt:    Jwt
 )
 service admin {
-  // 平台
-  @handler CreatePayPlatform
-  post /platforms (CreatePayPlatformReq) returns (RespBase)
+	// 平台
+	@handler CreatePayPlatform
+	post /platforms (CreatePayPlatformReq) returns (RespBase)
 
-  @handler UpdatePayPlatform
-  put /platforms (UpdatePayPlatformReq) returns (RespBase)
+	@handler UpdatePayPlatform
+	put /platforms (UpdatePayPlatformReq) returns (RespBase)
 
-  @handler GetPayPlatform
-  get /platforms (GetPayPlatformReq) returns (GetPayPlatformResp)
+	@handler GetPayPlatform
+	get /platforms (GetPayPlatformReq) returns (GetPayPlatformResp)
 
-  @handler ListPayPlatforms
-  get /platforms/list (ListPayPlatformsReq) returns (ListPayPlatformsResp)
+	@handler ListPayPlatforms
+	get /platforms/list (ListPayPlatformsReq) returns (ListPayPlatformsResp)
 
-  // 产品
-  @handler CreatePayProduct
-  post /products (CreatePayProductReq) returns (RespBase)
+	// 产品
+	@handler CreatePayProduct
+	post /products (CreatePayProductReq) returns (RespBase)
 
-  @handler UpdatePayProduct
-  put /products (UpdatePayProductReq) returns (RespBase)
+	@handler UpdatePayProduct
+	put /products (UpdatePayProductReq) returns (RespBase)
 
-  @handler GetPayProduct
-  get /products (GetPayProductReq) returns (GetPayProductResp)
+	@handler GetPayProduct
+	get /products (GetPayProductReq) returns (GetPayProductResp)
 
-  @handler ListPayProducts
-  get /products/list (ListPayProductsReq) returns (ListPayProductsResp)
+	@handler ListPayProducts
+	get /products/list (ListPayProductsReq) returns (ListPayProductsResp)
 
-  // 租户开通平台
-  @handler OpenTenantPayPlatform
-  post /tenant-platforms/open (OpenTenantPayPlatformReq) returns (RespBase)
+	// 租户开通平台
+	@handler OpenTenantPayPlatform
+	post /tenant-platforms/open (OpenTenantPayPlatformReq) returns (RespBase)
 
-  @handler UpdateTenantPayPlatform
-  put /tenant-platforms (UpdateTenantPayPlatformReq) returns (RespBase)
+	@handler UpdateTenantPayPlatform
+	put /tenant-platforms (UpdateTenantPayPlatformReq) returns (RespBase)
 
-  @handler GetTenantPayPlatform
-  get /tenant-platforms (GetTenantPayPlatformReq) returns (GetTenantPayPlatformResp)
+	@handler GetTenantPayPlatform
+	get /tenant-platforms (GetTenantPayPlatformReq) returns (GetTenantPayPlatformResp)
 
-  @handler ListTenantPayPlatforms
-  get /tenant-platforms/list (ListTenantPayPlatformsReq) returns (ListTenantPayPlatformsResp)
+	@handler ListTenantPayPlatforms
+	get /tenant-platforms/list (ListTenantPayPlatformsReq) returns (ListTenantPayPlatformsResp)
 
-  // 租户支付账号
-  @handler CreateTenantPayAccount
-  post /tenant-accounts (CreateTenantPayAccountReq) returns (RespBase)
+	// 租户支付账号
+	@handler CreateTenantPayAccount
+	post /tenant-accounts (CreateTenantPayAccountReq) returns (RespBase)
 
-  @handler UpdateTenantPayAccount
-  put /tenant-accounts (UpdateTenantPayAccountReq) returns (RespBase)
+	@handler UpdateTenantPayAccount
+	put /tenant-accounts (UpdateTenantPayAccountReq) returns (RespBase)
 
-  @handler GetTenantPayAccount
-  get /tenant-accounts (GetTenantPayAccountReq) returns (GetTenantPayAccountResp)
+	@handler GetTenantPayAccount
+	get /tenant-accounts (GetTenantPayAccountReq) returns (GetTenantPayAccountResp)
 
-  @handler ListTenantPayAccounts
-  get /tenant-accounts/list (ListTenantPayAccountsReq) returns (ListTenantPayAccountsResp)
+	@handler ListTenantPayAccounts
+	get /tenant-accounts/list (ListTenantPayAccountsReq) returns (ListTenantPayAccountsResp)
 
-  // 租户支付通道
-  @handler CreateTenantPayChannel
-  post /tenant-channels (CreateTenantPayChannelReq) returns (RespBase)
+	// 租户支付通道
+	@handler CreateTenantPayChannel
+	post /tenant-channels (CreateTenantPayChannelReq) returns (RespBase)
 
-  @handler UpdateTenantPayChannel
-  put /tenant-channels (UpdateTenantPayChannelReq) returns (RespBase)
+	@handler UpdateTenantPayChannel
+	put /tenant-channels (UpdateTenantPayChannelReq) returns (RespBase)
 
-  @handler GetTenantPayChannel
-  get /tenant-channels (GetTenantPayChannelReq) returns (GetTenantPayChannelResp)
+	@handler GetTenantPayChannel
+	get /tenant-channels (GetTenantPayChannelReq) returns (GetTenantPayChannelResp)
 
-  @handler ListTenantPayChannels
-  get /tenant-channels/list (ListTenantPayChannelsReq) returns (ListTenantPayChannelsResp)
+	@handler ListTenantPayChannels
+	get /tenant-channels/list (ListTenantPayChannelsReq) returns (ListTenantPayChannelsResp)
 
-  // 通道规则
-  @handler CreateTenantPayChannelRule
-  post /tenant-channel-rules (CreateTenantPayChannelRuleReq) returns (RespBase)
+	// 通道规则
+	@handler CreateTenantPayChannelRule
+	post /tenant-channel-rules (CreateTenantPayChannelRuleReq) returns (RespBase)
 
-  @handler UpdateTenantPayChannelRule
-  put /tenant-channel-rules (UpdateTenantPayChannelRuleReq) returns (RespBase)
+	@handler UpdateTenantPayChannelRule
+	put /tenant-channel-rules (UpdateTenantPayChannelRuleReq) returns (RespBase)
 
-  @handler GetTenantPayChannelRule
-  get /tenant-channel-rules (GetTenantPayChannelRuleReq) returns (GetTenantPayChannelRuleResp)
+	@handler GetTenantPayChannelRule
+	get /tenant-channel-rules (GetTenantPayChannelRuleReq) returns (GetTenantPayChannelRuleResp)
 
-  @handler ListTenantPayChannelRules
-  get /tenant-channel-rules/list (ListTenantPayChannelRulesReq) returns (ListTenantPayChannelRulesResp)
+	@handler ListTenantPayChannelRules
+	get /tenant-channel-rules/list (ListTenantPayChannelRulesReq) returns (ListTenantPayChannelRulesResp)
 
-  // 用户充值统计
-  @handler GetUserRechargeStat
-  get /user-recharge-stats (GetUserRechargeStatReq) returns (GetUserRechargeStatResp)
+	// 用户充值统计
+	@handler GetUserRechargeStat
+	get /user-recharge-stats (GetUserRechargeStatReq) returns (GetUserRechargeStatResp)
 
-  @handler ListUserRechargeStats
-  get /user-recharge-stats/list (ListUserRechargeStatsReq) returns (ListUserRechargeStatsResp)
+	@handler ListUserRechargeStats
+	get /user-recharge-stats/list (ListUserRechargeStatsReq) returns (ListUserRechargeStatsResp)
 
-  // 订单
-  @handler GetPayOrder
-  get /orders/:orderNo (GetPayOrderReq) returns (GetPayOrderResp)
+	// 订单
+	@handler ListRechargeOrders
+	get /recharge-orders/list (ListRechargeOrdersReq) returns (ListRechargeOrdersResp)
 
-  @handler ListPayOrders
-  get /orders/list (ListPayOrdersReq) returns (ListPayOrdersResp)
+	@handler GetRechargeOrder
+	get /recharge-orders/:orderNo (GetRechargeOrderReq) returns (GetRechargeOrderResp)
 
-  @handler ClosePayOrder
-  post /orders/:orderNo/close (ClosePayOrderReq) returns (RespBase)
+	@handler CloseRechargeOrder
+	post /recharge-orders/:orderNo/close (CloseRechargeOrderReq) returns (RespBase)
 
-  @handler ManualMarkPayOrderSuccess
-  post /orders/:orderNo/manual-success (ManualMarkPayOrderSuccessReq) returns (RespBase)
+	@handler ManualMarkRechargeOrderSuccess
+	post /recharge-orders/:orderNo/manual-success (ManualMarkRechargeOrderSuccessReq) returns (RespBase)
 
-  @handler RetryNotify
-  post /orders/:orderNo/retry-notify (RetryNotifyReq) returns (RespBase)
+	@handler RetryNotify
+	post /recharge-orders/:orderNo/retry-notify (RetryNotifyReq) returns (RespBase)
 
-  // 回调日志
-  @handler GetPayNotifyLog
-  get /notify-logs (GetPayNotifyLogReq) returns (GetPayNotifyLogResp)
+	// 充值回调日志
+	@handler ListRechargeNotifyLogs
+	get /notify-logs/list (ListRechargeNotifyLogsReq) returns (ListRechargeNotifyLogsResp)
 
-  @handler ListPayNotifyLogs
-  get /notify-logs/list (ListPayNotifyLogsReq) returns (ListPayNotifyLogsResp)
+	@handler GetRechargeNotifyLog
+	get /notify-logs (GetRechargeNotifyLogReq) returns (GetRechargeNotifyLogResp)
+
+	// 获取提现订单列表
+	@handler ListWithdrawOrders
+	get /withdraw-orders/list (ListWithdrawOrdersReq) returns (ListWithdrawOrdersResp)
+
+	// 获取提现订单详情
+	@handler GetWithdrawOrder
+	get /withdraw-orders (GetWithdrawOrderReq) returns (GetWithdrawOrderResp)
+
+	// 审核提现订单
+	@handler AuditWithdrawOrder
+	post /withdraw-orders/:orderNo/audit (AuditWithdrawOrderReq) returns (RespBase)
+
+	// 提现回调日志列表
+	@handler ListWithdrawNotifyLogs
+	get /withdraw-notify-logs/list (ListWithdrawNotifyLogsReq) returns (ListWithdrawNotifyLogsResp)
+
+	// 获取提现回调日志详情
+	@handler GetWithdrawNotifyLog
+	get /withdraw-notify-logs (GetWithdrawNotifyLogReq) returns (GetWithdrawNotifyLogResp)
 }
+

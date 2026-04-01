@@ -49,6 +49,9 @@ type (
 		Code         string `db:"code"`          // 第三方原始code
 		Name         string `db:"name"`          // 产品名称
 		DisplayName  string `db:"display_name"`  // 前端展示名称
+		Exchange     string `db:"exchange"`      // 交易所, 如 binance/forex/hk/us
+		Sector       string `db:"sector"`        // 行业/领域, 如 technology/forex
+		Lug          string `db:"lug"`           // slug, URL友好标识
 		BaseCoin     string `db:"base_coin"`     // 基础币种, 如 BTC
 		QuoteCoin    string `db:"quote_coin"`    // 计价币种, 如 USDT
 		Enabled      int64  `db:"enabled"`       // 是否启用: 0-否 1-是
@@ -124,8 +127,8 @@ func (m *defaultTItickProductModel) Insert(ctx context.Context, data *TItickProd
 	tItickProductCategoryTypeMarketSymbolKey := fmt.Sprintf("%s%v:%v:%v", cacheTItickProductCategoryTypeMarketSymbolPrefix, data.CategoryType, data.Market, data.Symbol)
 	tItickProductIdKey := fmt.Sprintf("%s%v", cacheTItickProductIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickProductRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.CategoryType, data.Market, data.Symbol, data.Code, data.Name, data.DisplayName, data.BaseCoin, data.QuoteCoin, data.Enabled, data.AppVisible, data.Sort, data.Icon, data.Remark)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickProductRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.CategoryType, data.Market, data.Symbol, data.Code, data.Name, data.DisplayName, data.Exchange, data.Sector, data.Lug, data.BaseCoin, data.QuoteCoin, data.Enabled, data.AppVisible, data.Sort, data.Icon, data.Remark)
 	}, tItickProductCategoryTypeMarketSymbolKey, tItickProductIdKey)
 	return ret, err
 }
@@ -140,7 +143,7 @@ func (m *defaultTItickProductModel) Update(ctx context.Context, newData *TItickP
 	tItickProductIdKey := fmt.Sprintf("%s%v", cacheTItickProductIdPrefix, data.Id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickProductRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.CategoryType, newData.Market, newData.Symbol, newData.Code, newData.Name, newData.DisplayName, newData.BaseCoin, newData.QuoteCoin, newData.Enabled, newData.AppVisible, newData.Sort, newData.Icon, newData.Remark, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.CategoryType, newData.Market, newData.Symbol, newData.Code, newData.Name, newData.DisplayName, newData.Exchange, newData.Sector, newData.Lug, newData.BaseCoin, newData.QuoteCoin, newData.Enabled, newData.AppVisible, newData.Sort, newData.Icon, newData.Remark, newData.Id)
 	}, tItickProductCategoryTypeMarketSymbolKey, tItickProductIdKey)
 	return err
 }

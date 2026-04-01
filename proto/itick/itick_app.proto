@@ -65,9 +65,14 @@ message GetQuoteResp {
   itick.Quote data = 2;
 }
 
+message MarketSymbol {
+	string market = 1;
+	string symbol = 2;
+}
+
 message BatchGetQuoteReq {
   string market = 1;
-  repeated string data = 2;
+  repeated MarketSymbol data = 2;
 }
 
 message BatchGetQuoteResp {

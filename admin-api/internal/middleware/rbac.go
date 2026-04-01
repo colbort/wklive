@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -16,11 +17,24 @@ import (
 
 type RbacMiddleware struct {
 	svcCtx *svc.ServiceContext
+	perms  map[string]string // path+method -> permKey
 }
 
 func NewRbacMiddleware(svcCtx *svc.ServiceContext) *RbacMiddleware {
+	result, err := svcCtx.SystemCli.SysPermList(context.Background(), &system.Empty{})
+	if err != nil {
+		logx.Errorf("fetch system permissions failed: %v", err)
+	}
+	perms := make(map[string]string, 0)
+	perms["GET /system/core"] = ""
+	perms["GET /auth/profile"] = ""
+	perms["POST /auth/profile"] = ""
+	for _, item := range result.Data {
+		perms[fmt.Sprintf("%s %s", item.Method, item.Path)] = item.PermKey
+	}
 	return &RbacMiddleware{
 		svcCtx: svcCtx,
+		perms:  perms,
 	}
 }
 
@@ -51,7 +65,7 @@ func (m *RbacMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		// 4. 根据 path + method 映射出需要的权限
-		requiredPerm := getRequiredPermission(r.URL.Path, r.Method)
+		requiredPerm := getRequiredPermission(m.perms, r.URL.Path, r.Method)
 
 		// 没配权限映射的接口，默认放过
 		// 如果你想改成“没配置就拒绝”，可以改这里
@@ -173,7 +187,7 @@ func isWhitePath(path string) bool {
 }
 
 // getRequiredPermission 根据 path + method 映射权限
-func getRequiredPermission(path, method string) string {
+func getRequiredPermission(perms map[string]string, path, method string) string {
 	// 去掉 query 参数影响（通常 URL.Path 本身不带 query，这里只是保险）
 	path = strings.TrimSpace(path)
 
@@ -190,66 +204,8 @@ func getRequiredPermission(path, method string) string {
 	// 某些带 id 的路径可做归一化
 	path = normalizeDynamicPath(path)
 
-	permMap := map[string]string{
-		// auth
-		"GET /system/core":   "",
-		"GET /auth/profile":  "",
-		"POST /auth/profile": "", // 修改个人资料接口，暂不区分修改和查看权限
-		// 白名单接口
-		"GET /users":      "",
-		"GET /roles":      "",
-		"GET /menus":      "",
-		"GET /logs/login": "",
-		"GET /logs/op":    "",
-		"GET /configs":    "",
-		"GET /jobs":       "",
-		"GET /jobs/logs":  "",
-
-		// users
-		"POST /users":                   "sys:user:add",
-		"PUT /users":                    "sys:user:update",
-		"DELETE /users":                 "sys:user:delete",
-		"POST /users/status":            "sys:user:update",
-		"POST /users/resetPwd":          "sys:user:resetPwd",
-		"POST /users/assignRoles":       "sys:user:assignRoles",
-		"POST /users/google2fa/init":    "sys:user:2fa:init",
-		"POST /users/google2fa/bind":    "sys:user:2fa:bind",
-		"POST /users/google2fa/reset":   "sys:user:2fa:reset",
-		"POST /users/google2fa/enable":  "sys:user:2fa:enable",
-		"POST /users/google2fa/disable": "sys:user:2fa:disable",
-
-		// roles
-		"POST /roles":       "sys:role:add",
-		"PUT /roles":        "sys:role:update",
-		"DELETE /roles":     "sys:role:delete",
-		"POST /roles/grant": "sys:role:grant",
-
-		// menus
-		"POST /menus":   "sys:menu:add",
-		"PUT /menus":    "sys:menu:update",
-		"DELETE /menus": "sys:menu:delete",
-
-		// logs
-		"DELETE /logs/login": "sys:log:delete",
-		"DELETE /logs/op":    "sys:log:delete",
-
-		// configs
-		"POST /configs":   "sys:config:add",
-		"PUT /configs":    "sys:config:update",
-		"DELETE /configs": "sys:config:delete",
-
-		// cron jobs
-		"POST /jobs":         "sys:job:add",
-		"PUT /jobs":          "sys:job:update",
-		"DELETE /jobs":       "sys:job:delete",
-		"POST /jobs/run":     "sys:job:run",
-		"POST /jobs/start":   "sys:job:start",
-		"POST /jobs/stop":    "sys:job:stop",
-		"GET /jobs/handlers": "sys:job:handlers",
-	}
-
 	key := strings.ToUpper(method) + " " + path
-	return permMap[key]
+	return perms[key]
 }
 
 // normalizePath 统一 path 格式

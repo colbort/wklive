@@ -441,7 +441,7 @@ func (x *ListPayPlatformsReq) GetPlatformType() PlatformType {
 type ListPayPlatformsResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	List          []*PayPlatform         `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
+	Data          []*PayPlatform         `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -483,9 +483,9 @@ func (x *ListPayPlatformsResp) GetBase() *RespBase {
 	return nil
 }
 
-func (x *ListPayPlatformsResp) GetList() []*PayPlatform {
+func (x *ListPayPlatformsResp) GetData() []*PayPlatform {
 	if x != nil {
-		return x.List
+		return x.Data
 	}
 	return nil
 }
@@ -850,7 +850,7 @@ func (x *ListPayProductsReq) GetSceneType() SceneType {
 type ListPayProductsResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	List          []*PayProduct          `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
+	Data          []*PayProduct          `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -892,9 +892,9 @@ func (x *ListPayProductsResp) GetBase() *RespBase {
 	return nil
 }
 
-func (x *ListPayProductsResp) GetList() []*PayProduct {
+func (x *ListPayProductsResp) GetData() []*PayProduct {
 	if x != nil {
-		return x.List
+		return x.Data
 	}
 	return nil
 }
@@ -1235,7 +1235,7 @@ func (x *ListTenantPayPlatformsReq) GetOpenStatus() OpenStatus {
 type ListTenantPayPlatformsResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	List          []*TenantPayPlatform   `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
+	Data          []*TenantPayPlatform   `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1277,9 +1277,9 @@ func (x *ListTenantPayPlatformsResp) GetBase() *RespBase {
 	return nil
 }
 
-func (x *ListTenantPayPlatformsResp) GetList() []*TenantPayPlatform {
+func (x *ListTenantPayPlatformsResp) GetData() []*TenantPayPlatform {
 	if x != nil {
-		return x.List
+		return x.Data
 	}
 	return nil
 }
@@ -1804,7 +1804,7 @@ func (x *ListTenantPayAccountsReq) GetStatus() CommonStatus {
 type ListTenantPayAccountsResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	List          []*TenantPayAccount    `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
+	Data          []*TenantPayAccount    `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1846,9 +1846,9 @@ func (x *ListTenantPayAccountsResp) GetBase() *RespBase {
 	return nil
 }
 
-func (x *ListTenantPayAccountsResp) GetList() []*TenantPayAccount {
+func (x *ListTenantPayAccountsResp) GetData() []*TenantPayAccount {
 	if x != nil {
-		return x.List
+		return x.Data
 	}
 	return nil
 }
@@ -2445,7 +2445,7 @@ func (x *ListTenantPayChannelsReq) GetVisible() bool {
 type ListTenantPayChannelsResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	List          []*TenantPayChannel    `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
+	Data          []*TenantPayChannel    `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2487,9 +2487,9 @@ func (x *ListTenantPayChannelsResp) GetBase() *RespBase {
 	return nil
 }
 
-func (x *ListTenantPayChannelsResp) GetList() []*TenantPayChannel {
+func (x *ListTenantPayChannelsResp) GetData() []*TenantPayChannel {
 	if x != nil {
-		return x.List
+		return x.Data
 	}
 	return nil
 }
@@ -3030,7 +3030,7 @@ func (x *ListTenantPayChannelRulesReq) GetStatus() CommonStatus {
 type ListTenantPayChannelRulesResp struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	Base          *RespBase               `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	List          []*TenantPayChannelRule `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
+	Data          []*TenantPayChannelRule `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3072,9 +3072,9 @@ func (x *ListTenantPayChannelRulesResp) GetBase() *RespBase {
 	return nil
 }
 
-func (x *ListTenantPayChannelRulesResp) GetList() []*TenantPayChannelRule {
+func (x *ListTenantPayChannelRulesResp) GetData() []*TenantPayChannelRule {
 	if x != nil {
-		return x.List
+		return x.Data
 	}
 	return nil
 }
@@ -3263,7 +3263,7 @@ func (x *ListUserRechargeStatsReq) GetSuccessTotalAmountMax() int64 {
 type ListUserRechargeStatsResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	List          []*UserRechargeStat    `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
+	Data          []*UserRechargeStat    `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3305,15 +3305,15 @@ func (x *ListUserRechargeStatsResp) GetBase() *RespBase {
 	return nil
 }
 
-func (x *ListUserRechargeStatsResp) GetList() []*UserRechargeStat {
+func (x *ListUserRechargeStatsResp) GetData() []*UserRechargeStat {
 	if x != nil {
-		return x.List
+		return x.Data
 	}
 	return nil
 }
 
 // ---------- 订单 ----------
-type GetPayOrderReq struct {
+type GetRechargeOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	OrderNo       string                 `protobuf:"bytes,2,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
@@ -3321,20 +3321,20 @@ type GetPayOrderReq struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetPayOrderReq) Reset() {
-	*x = GetPayOrderReq{}
+func (x *GetRechargeOrderReq) Reset() {
+	*x = GetRechargeOrderReq{}
 	mi := &file_proto_payment_payment_admin_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetPayOrderReq) String() string {
+func (x *GetRechargeOrderReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetPayOrderReq) ProtoMessage() {}
+func (*GetRechargeOrderReq) ProtoMessage() {}
 
-func (x *GetPayOrderReq) ProtoReflect() protoreflect.Message {
+func (x *GetRechargeOrderReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_payment_payment_admin_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3346,47 +3346,47 @@ func (x *GetPayOrderReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetPayOrderReq.ProtoReflect.Descriptor instead.
-func (*GetPayOrderReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetRechargeOrderReq.ProtoReflect.Descriptor instead.
+func (*GetRechargeOrderReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{41}
 }
 
-func (x *GetPayOrderReq) GetTenantId() int64 {
+func (x *GetRechargeOrderReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *GetPayOrderReq) GetOrderNo() string {
+func (x *GetRechargeOrderReq) GetOrderNo() string {
 	if x != nil {
 		return x.OrderNo
 	}
 	return ""
 }
 
-type GetPayOrderResp struct {
+type GetRechargeOrderResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          *PayOrder              `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	Data          *RechargeOrder         `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetPayOrderResp) Reset() {
-	*x = GetPayOrderResp{}
+func (x *GetRechargeOrderResp) Reset() {
+	*x = GetRechargeOrderResp{}
 	mi := &file_proto_payment_payment_admin_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetPayOrderResp) String() string {
+func (x *GetRechargeOrderResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetPayOrderResp) ProtoMessage() {}
+func (*GetRechargeOrderResp) ProtoMessage() {}
 
-func (x *GetPayOrderResp) ProtoReflect() protoreflect.Message {
+func (x *GetRechargeOrderResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_payment_payment_admin_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3398,26 +3398,26 @@ func (x *GetPayOrderResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetPayOrderResp.ProtoReflect.Descriptor instead.
-func (*GetPayOrderResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetRechargeOrderResp.ProtoReflect.Descriptor instead.
+func (*GetRechargeOrderResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{42}
 }
 
-func (x *GetPayOrderResp) GetBase() *RespBase {
+func (x *GetRechargeOrderResp) GetBase() *RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *GetPayOrderResp) GetData() *PayOrder {
+func (x *GetRechargeOrderResp) GetData() *RechargeOrder {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type ListPayOrdersReq struct {
+type ListRechargeOrdersReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	Page            *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
@@ -3436,20 +3436,20 @@ type ListPayOrdersReq struct {
 	sizeCache       protoimpl.SizeCache
 }
 
-func (x *ListPayOrdersReq) Reset() {
-	*x = ListPayOrdersReq{}
+func (x *ListRechargeOrdersReq) Reset() {
+	*x = ListRechargeOrdersReq{}
 	mi := &file_proto_payment_payment_admin_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListPayOrdersReq) String() string {
+func (x *ListRechargeOrdersReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListPayOrdersReq) ProtoMessage() {}
+func (*ListRechargeOrdersReq) ProtoMessage() {}
 
-func (x *ListPayOrdersReq) ProtoReflect() protoreflect.Message {
+func (x *ListRechargeOrdersReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_payment_payment_admin_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3461,124 +3461,124 @@ func (x *ListPayOrdersReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListPayOrdersReq.ProtoReflect.Descriptor instead.
-func (*ListPayOrdersReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListRechargeOrdersReq.ProtoReflect.Descriptor instead.
+func (*ListRechargeOrdersReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{43}
 }
 
-func (x *ListPayOrdersReq) GetPage() *PageReq {
+func (x *ListRechargeOrdersReq) GetPage() *PageReq {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-func (x *ListPayOrdersReq) GetTenantId() int64 {
+func (x *ListRechargeOrdersReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *ListPayOrdersReq) GetUserId() int64 {
+func (x *ListRechargeOrdersReq) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
 	}
 	return 0
 }
 
-func (x *ListPayOrdersReq) GetPlatformId() int64 {
+func (x *ListRechargeOrdersReq) GetPlatformId() int64 {
 	if x != nil {
 		return x.PlatformId
 	}
 	return 0
 }
 
-func (x *ListPayOrdersReq) GetProductId() int64 {
+func (x *ListRechargeOrdersReq) GetProductId() int64 {
 	if x != nil {
 		return x.ProductId
 	}
 	return 0
 }
 
-func (x *ListPayOrdersReq) GetAccountId() int64 {
+func (x *ListRechargeOrdersReq) GetAccountId() int64 {
 	if x != nil {
 		return x.AccountId
 	}
 	return 0
 }
 
-func (x *ListPayOrdersReq) GetChannelId() int64 {
+func (x *ListRechargeOrdersReq) GetChannelId() int64 {
 	if x != nil {
 		return x.ChannelId
 	}
 	return 0
 }
 
-func (x *ListPayOrdersReq) GetOrderNo() string {
+func (x *ListRechargeOrdersReq) GetOrderNo() string {
 	if x != nil {
 		return x.OrderNo
 	}
 	return ""
 }
 
-func (x *ListPayOrdersReq) GetBizOrderNo() string {
+func (x *ListRechargeOrdersReq) GetBizOrderNo() string {
 	if x != nil {
 		return x.BizOrderNo
 	}
 	return ""
 }
 
-func (x *ListPayOrdersReq) GetThirdTradeNo() string {
+func (x *ListRechargeOrdersReq) GetThirdTradeNo() string {
 	if x != nil {
 		return x.ThirdTradeNo
 	}
 	return ""
 }
 
-func (x *ListPayOrdersReq) GetStatus() PayOrderStatus {
+func (x *ListRechargeOrdersReq) GetStatus() PayOrderStatus {
 	if x != nil {
 		return x.Status
 	}
 	return PayOrderStatus_PAY_ORDER_STATUS_UNKNOWN
 }
 
-func (x *ListPayOrdersReq) GetCreateTimeStart() int64 {
+func (x *ListRechargeOrdersReq) GetCreateTimeStart() int64 {
 	if x != nil {
 		return x.CreateTimeStart
 	}
 	return 0
 }
 
-func (x *ListPayOrdersReq) GetCreateTimeEnd() int64 {
+func (x *ListRechargeOrdersReq) GetCreateTimeEnd() int64 {
 	if x != nil {
 		return x.CreateTimeEnd
 	}
 	return 0
 }
 
-type ListPayOrdersResp struct {
+type ListRechargeOrdersResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	List          []*PayOrder            `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
+	Data          []*RechargeOrder       `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListPayOrdersResp) Reset() {
-	*x = ListPayOrdersResp{}
+func (x *ListRechargeOrdersResp) Reset() {
+	*x = ListRechargeOrdersResp{}
 	mi := &file_proto_payment_payment_admin_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListPayOrdersResp) String() string {
+func (x *ListRechargeOrdersResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListPayOrdersResp) ProtoMessage() {}
+func (*ListRechargeOrdersResp) ProtoMessage() {}
 
-func (x *ListPayOrdersResp) ProtoReflect() protoreflect.Message {
+func (x *ListRechargeOrdersResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_payment_payment_admin_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3590,26 +3590,26 @@ func (x *ListPayOrdersResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListPayOrdersResp.ProtoReflect.Descriptor instead.
-func (*ListPayOrdersResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListRechargeOrdersResp.ProtoReflect.Descriptor instead.
+func (*ListRechargeOrdersResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{44}
 }
 
-func (x *ListPayOrdersResp) GetBase() *RespBase {
+func (x *ListRechargeOrdersResp) GetBase() *RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *ListPayOrdersResp) GetList() []*PayOrder {
+func (x *ListRechargeOrdersResp) GetData() []*RechargeOrder {
 	if x != nil {
-		return x.List
+		return x.Data
 	}
 	return nil
 }
 
-type ClosePayOrderReq struct {
+type CloseRechargeOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	OrderNo       string                 `protobuf:"bytes,2,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
@@ -3618,20 +3618,20 @@ type ClosePayOrderReq struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ClosePayOrderReq) Reset() {
-	*x = ClosePayOrderReq{}
+func (x *CloseRechargeOrderReq) Reset() {
+	*x = CloseRechargeOrderReq{}
 	mi := &file_proto_payment_payment_admin_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ClosePayOrderReq) String() string {
+func (x *CloseRechargeOrderReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ClosePayOrderReq) ProtoMessage() {}
+func (*CloseRechargeOrderReq) ProtoMessage() {}
 
-func (x *ClosePayOrderReq) ProtoReflect() protoreflect.Message {
+func (x *CloseRechargeOrderReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_payment_payment_admin_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3643,33 +3643,33 @@ func (x *ClosePayOrderReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ClosePayOrderReq.ProtoReflect.Descriptor instead.
-func (*ClosePayOrderReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use CloseRechargeOrderReq.ProtoReflect.Descriptor instead.
+func (*CloseRechargeOrderReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{45}
 }
 
-func (x *ClosePayOrderReq) GetTenantId() int64 {
+func (x *CloseRechargeOrderReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *ClosePayOrderReq) GetOrderNo() string {
+func (x *CloseRechargeOrderReq) GetOrderNo() string {
 	if x != nil {
 		return x.OrderNo
 	}
 	return ""
 }
 
-func (x *ClosePayOrderReq) GetRemark() string {
+func (x *CloseRechargeOrderReq) GetRemark() string {
 	if x != nil {
 		return x.Remark
 	}
 	return ""
 }
 
-type ManualMarkPayOrderSuccessReq struct {
+type ManualMarkRechargeOrderSuccessReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	OrderNo       string                 `protobuf:"bytes,2,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
@@ -3680,20 +3680,20 @@ type ManualMarkPayOrderSuccessReq struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ManualMarkPayOrderSuccessReq) Reset() {
-	*x = ManualMarkPayOrderSuccessReq{}
+func (x *ManualMarkRechargeOrderSuccessReq) Reset() {
+	*x = ManualMarkRechargeOrderSuccessReq{}
 	mi := &file_proto_payment_payment_admin_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ManualMarkPayOrderSuccessReq) String() string {
+func (x *ManualMarkRechargeOrderSuccessReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ManualMarkPayOrderSuccessReq) ProtoMessage() {}
+func (*ManualMarkRechargeOrderSuccessReq) ProtoMessage() {}
 
-func (x *ManualMarkPayOrderSuccessReq) ProtoReflect() protoreflect.Message {
+func (x *ManualMarkRechargeOrderSuccessReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_payment_payment_admin_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3705,40 +3705,40 @@ func (x *ManualMarkPayOrderSuccessReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ManualMarkPayOrderSuccessReq.ProtoReflect.Descriptor instead.
-func (*ManualMarkPayOrderSuccessReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use ManualMarkRechargeOrderSuccessReq.ProtoReflect.Descriptor instead.
+func (*ManualMarkRechargeOrderSuccessReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{46}
 }
 
-func (x *ManualMarkPayOrderSuccessReq) GetTenantId() int64 {
+func (x *ManualMarkRechargeOrderSuccessReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *ManualMarkPayOrderSuccessReq) GetOrderNo() string {
+func (x *ManualMarkRechargeOrderSuccessReq) GetOrderNo() string {
 	if x != nil {
 		return x.OrderNo
 	}
 	return ""
 }
 
-func (x *ManualMarkPayOrderSuccessReq) GetThirdTradeNo() string {
+func (x *ManualMarkRechargeOrderSuccessReq) GetThirdTradeNo() string {
 	if x != nil {
 		return x.ThirdTradeNo
 	}
 	return ""
 }
 
-func (x *ManualMarkPayOrderSuccessReq) GetPayAmount() int64 {
+func (x *ManualMarkRechargeOrderSuccessReq) GetPayAmount() int64 {
 	if x != nil {
 		return x.PayAmount
 	}
 	return 0
 }
 
-func (x *ManualMarkPayOrderSuccessReq) GetRemark() string {
+func (x *ManualMarkRechargeOrderSuccessReq) GetRemark() string {
 	if x != nil {
 		return x.Remark
 	}
@@ -3798,7 +3798,7 @@ func (x *RetryNotifyReq) GetOrderNo() string {
 }
 
 // ---------- 回调日志 ----------
-type GetPayNotifyLogReq struct {
+type GetRechargeNotifyLogReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
@@ -3806,20 +3806,20 @@ type GetPayNotifyLogReq struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetPayNotifyLogReq) Reset() {
-	*x = GetPayNotifyLogReq{}
+func (x *GetRechargeNotifyLogReq) Reset() {
+	*x = GetRechargeNotifyLogReq{}
 	mi := &file_proto_payment_payment_admin_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetPayNotifyLogReq) String() string {
+func (x *GetRechargeNotifyLogReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetPayNotifyLogReq) ProtoMessage() {}
+func (*GetRechargeNotifyLogReq) ProtoMessage() {}
 
-func (x *GetPayNotifyLogReq) ProtoReflect() protoreflect.Message {
+func (x *GetRechargeNotifyLogReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_payment_payment_admin_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3831,26 +3831,26 @@ func (x *GetPayNotifyLogReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetPayNotifyLogReq.ProtoReflect.Descriptor instead.
-func (*GetPayNotifyLogReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetRechargeNotifyLogReq.ProtoReflect.Descriptor instead.
+func (*GetRechargeNotifyLogReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{48}
 }
 
-func (x *GetPayNotifyLogReq) GetTenantId() int64 {
+func (x *GetRechargeNotifyLogReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *GetPayNotifyLogReq) GetId() int64 {
+func (x *GetRechargeNotifyLogReq) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-type GetPayNotifyLogResp struct {
+type GetRechargeNotifyLogResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          *PayNotifyLog          `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
@@ -3858,20 +3858,20 @@ type GetPayNotifyLogResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetPayNotifyLogResp) Reset() {
-	*x = GetPayNotifyLogResp{}
+func (x *GetRechargeNotifyLogResp) Reset() {
+	*x = GetRechargeNotifyLogResp{}
 	mi := &file_proto_payment_payment_admin_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetPayNotifyLogResp) String() string {
+func (x *GetRechargeNotifyLogResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetPayNotifyLogResp) ProtoMessage() {}
+func (*GetRechargeNotifyLogResp) ProtoMessage() {}
 
-func (x *GetPayNotifyLogResp) ProtoReflect() protoreflect.Message {
+func (x *GetRechargeNotifyLogResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_payment_payment_admin_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3883,26 +3883,26 @@ func (x *GetPayNotifyLogResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetPayNotifyLogResp.ProtoReflect.Descriptor instead.
-func (*GetPayNotifyLogResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetRechargeNotifyLogResp.ProtoReflect.Descriptor instead.
+func (*GetRechargeNotifyLogResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{49}
 }
 
-func (x *GetPayNotifyLogResp) GetBase() *RespBase {
+func (x *GetRechargeNotifyLogResp) GetBase() *RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *GetPayNotifyLogResp) GetData() *PayNotifyLog {
+func (x *GetRechargeNotifyLogResp) GetData() *PayNotifyLog {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type ListPayNotifyLogsReq struct {
+type ListRechargeNotifyLogsReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	Page            *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
@@ -3918,20 +3918,20 @@ type ListPayNotifyLogsReq struct {
 	sizeCache       protoimpl.SizeCache
 }
 
-func (x *ListPayNotifyLogsReq) Reset() {
-	*x = ListPayNotifyLogsReq{}
+func (x *ListRechargeNotifyLogsReq) Reset() {
+	*x = ListRechargeNotifyLogsReq{}
 	mi := &file_proto_payment_payment_admin_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListPayNotifyLogsReq) String() string {
+func (x *ListRechargeNotifyLogsReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListPayNotifyLogsReq) ProtoMessage() {}
+func (*ListRechargeNotifyLogsReq) ProtoMessage() {}
 
-func (x *ListPayNotifyLogsReq) ProtoReflect() protoreflect.Message {
+func (x *ListRechargeNotifyLogsReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_payment_payment_admin_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3943,103 +3943,103 @@ func (x *ListPayNotifyLogsReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListPayNotifyLogsReq.ProtoReflect.Descriptor instead.
-func (*ListPayNotifyLogsReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListRechargeNotifyLogsReq.ProtoReflect.Descriptor instead.
+func (*ListRechargeNotifyLogsReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{50}
 }
 
-func (x *ListPayNotifyLogsReq) GetPage() *PageReq {
+func (x *ListRechargeNotifyLogsReq) GetPage() *PageReq {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-func (x *ListPayNotifyLogsReq) GetTenantId() int64 {
+func (x *ListRechargeNotifyLogsReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *ListPayNotifyLogsReq) GetOrderNo() string {
+func (x *ListRechargeNotifyLogsReq) GetOrderNo() string {
 	if x != nil {
 		return x.OrderNo
 	}
 	return ""
 }
 
-func (x *ListPayNotifyLogsReq) GetOrderId() int64 {
+func (x *ListRechargeNotifyLogsReq) GetOrderId() int64 {
 	if x != nil {
 		return x.OrderId
 	}
 	return 0
 }
 
-func (x *ListPayNotifyLogsReq) GetPlatformId() int64 {
+func (x *ListRechargeNotifyLogsReq) GetPlatformId() int64 {
 	if x != nil {
 		return x.PlatformId
 	}
 	return 0
 }
 
-func (x *ListPayNotifyLogsReq) GetChannelId() int64 {
+func (x *ListRechargeNotifyLogsReq) GetChannelId() int64 {
 	if x != nil {
 		return x.ChannelId
 	}
 	return 0
 }
 
-func (x *ListPayNotifyLogsReq) GetNotifyStatus() NotifyProcessStatus {
+func (x *ListRechargeNotifyLogsReq) GetNotifyStatus() NotifyProcessStatus {
 	if x != nil {
 		return x.NotifyStatus
 	}
 	return NotifyProcessStatus_NOTIFY_PROCESS_STATUS_UNKNOWN
 }
 
-func (x *ListPayNotifyLogsReq) GetSignResult() SignResult {
+func (x *ListRechargeNotifyLogsReq) GetSignResult() SignResult {
 	if x != nil {
 		return x.SignResult
 	}
 	return SignResult_SIGN_RESULT_UNKNOWN
 }
 
-func (x *ListPayNotifyLogsReq) GetCreateTimeStart() int64 {
+func (x *ListRechargeNotifyLogsReq) GetCreateTimeStart() int64 {
 	if x != nil {
 		return x.CreateTimeStart
 	}
 	return 0
 }
 
-func (x *ListPayNotifyLogsReq) GetCreateTimeEnd() int64 {
+func (x *ListRechargeNotifyLogsReq) GetCreateTimeEnd() int64 {
 	if x != nil {
 		return x.CreateTimeEnd
 	}
 	return 0
 }
 
-type ListPayNotifyLogsResp struct {
+type ListRechargeNotifyLogsResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	List          []*PayNotifyLog        `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
+	Data          []*PayNotifyLog        `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListPayNotifyLogsResp) Reset() {
-	*x = ListPayNotifyLogsResp{}
+func (x *ListRechargeNotifyLogsResp) Reset() {
+	*x = ListRechargeNotifyLogsResp{}
 	mi := &file_proto_payment_payment_admin_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListPayNotifyLogsResp) String() string {
+func (x *ListRechargeNotifyLogsResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListPayNotifyLogsResp) ProtoMessage() {}
+func (*ListRechargeNotifyLogsResp) ProtoMessage() {}
 
-func (x *ListPayNotifyLogsResp) ProtoReflect() protoreflect.Message {
+func (x *ListRechargeNotifyLogsResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_payment_payment_admin_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -4051,21 +4051,586 @@ func (x *ListPayNotifyLogsResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListPayNotifyLogsResp.ProtoReflect.Descriptor instead.
-func (*ListPayNotifyLogsResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListRechargeNotifyLogsResp.ProtoReflect.Descriptor instead.
+func (*ListRechargeNotifyLogsResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{51}
 }
 
-func (x *ListPayNotifyLogsResp) GetBase() *RespBase {
+func (x *ListRechargeNotifyLogsResp) GetBase() *RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *ListPayNotifyLogsResp) GetList() []*PayNotifyLog {
+func (x *ListRechargeNotifyLogsResp) GetData() []*PayNotifyLog {
 	if x != nil {
-		return x.List
+		return x.Data
+	}
+	return nil
+}
+
+// ---------- 提现订单 ----------
+type ListWithdrawOrdersReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	OrderNo       string                 `protobuf:"bytes,4,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListWithdrawOrdersReq) Reset() {
+	*x = ListWithdrawOrdersReq{}
+	mi := &file_proto_payment_payment_admin_proto_msgTypes[52]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListWithdrawOrdersReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListWithdrawOrdersReq) ProtoMessage() {}
+
+func (x *ListWithdrawOrdersReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_payment_payment_admin_proto_msgTypes[52]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListWithdrawOrdersReq.ProtoReflect.Descriptor instead.
+func (*ListWithdrawOrdersReq) Descriptor() ([]byte, []int) {
+	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{52}
+}
+
+func (x *ListWithdrawOrdersReq) GetPage() *PageReq {
+	if x != nil {
+		return x.Page
+	}
+	return nil
+}
+
+func (x *ListWithdrawOrdersReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *ListWithdrawOrdersReq) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ListWithdrawOrdersReq) GetOrderNo() string {
+	if x != nil {
+		return x.OrderNo
+	}
+	return ""
+}
+
+type ListWithdrawOrdersResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          []*WithdrawOrder       `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListWithdrawOrdersResp) Reset() {
+	*x = ListWithdrawOrdersResp{}
+	mi := &file_proto_payment_payment_admin_proto_msgTypes[53]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListWithdrawOrdersResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListWithdrawOrdersResp) ProtoMessage() {}
+
+func (x *ListWithdrawOrdersResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_payment_payment_admin_proto_msgTypes[53]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListWithdrawOrdersResp.ProtoReflect.Descriptor instead.
+func (*ListWithdrawOrdersResp) Descriptor() ([]byte, []int) {
+	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{53}
+}
+
+func (x *ListWithdrawOrdersResp) GetBase() *RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *ListWithdrawOrdersResp) GetData() []*WithdrawOrder {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type GetWithdrawOrderReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	OrderNo       string                 `protobuf:"bytes,2,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetWithdrawOrderReq) Reset() {
+	*x = GetWithdrawOrderReq{}
+	mi := &file_proto_payment_payment_admin_proto_msgTypes[54]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetWithdrawOrderReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetWithdrawOrderReq) ProtoMessage() {}
+
+func (x *GetWithdrawOrderReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_payment_payment_admin_proto_msgTypes[54]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetWithdrawOrderReq.ProtoReflect.Descriptor instead.
+func (*GetWithdrawOrderReq) Descriptor() ([]byte, []int) {
+	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{54}
+}
+
+func (x *GetWithdrawOrderReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *GetWithdrawOrderReq) GetOrderNo() string {
+	if x != nil {
+		return x.OrderNo
+	}
+	return ""
+}
+
+type GetWithdrawOrderResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          *WithdrawOrder         `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetWithdrawOrderResp) Reset() {
+	*x = GetWithdrawOrderResp{}
+	mi := &file_proto_payment_payment_admin_proto_msgTypes[55]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetWithdrawOrderResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetWithdrawOrderResp) ProtoMessage() {}
+
+func (x *GetWithdrawOrderResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_payment_payment_admin_proto_msgTypes[55]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetWithdrawOrderResp.ProtoReflect.Descriptor instead.
+func (*GetWithdrawOrderResp) Descriptor() ([]byte, []int) {
+	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{55}
+}
+
+func (x *GetWithdrawOrderResp) GetBase() *RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *GetWithdrawOrderResp) GetData() *WithdrawOrder {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type AuditWithdrawOrderReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	OrderNo       string                 `protobuf:"bytes,2,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
+	Approve       bool                   `protobuf:"varint,3,opt,name=approve,proto3" json:"approve,omitempty"`
+	Remark        string                 `protobuf:"bytes,4,opt,name=remark,proto3" json:"remark,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AuditWithdrawOrderReq) Reset() {
+	*x = AuditWithdrawOrderReq{}
+	mi := &file_proto_payment_payment_admin_proto_msgTypes[56]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AuditWithdrawOrderReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AuditWithdrawOrderReq) ProtoMessage() {}
+
+func (x *AuditWithdrawOrderReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_payment_payment_admin_proto_msgTypes[56]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AuditWithdrawOrderReq.ProtoReflect.Descriptor instead.
+func (*AuditWithdrawOrderReq) Descriptor() ([]byte, []int) {
+	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{56}
+}
+
+func (x *AuditWithdrawOrderReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *AuditWithdrawOrderReq) GetOrderNo() string {
+	if x != nil {
+		return x.OrderNo
+	}
+	return ""
+}
+
+func (x *AuditWithdrawOrderReq) GetApprove() bool {
+	if x != nil {
+		return x.Approve
+	}
+	return false
+}
+
+func (x *AuditWithdrawOrderReq) GetRemark() string {
+	if x != nil {
+		return x.Remark
+	}
+	return ""
+}
+
+type ListWithdrawNotifyLogsReq struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Page            *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	OrderNo         string                 `protobuf:"bytes,3,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
+	OrderId         int64                  `protobuf:"varint,4,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	PlatformId      int64                  `protobuf:"varint,5,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`
+	ChannelId       int64                  `protobuf:"varint,6,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
+	NotifyStatus    NotifyProcessStatus    `protobuf:"varint,7,opt,name=notify_status,json=notifyStatus,proto3,enum=payment.NotifyProcessStatus" json:"notify_status,omitempty"`
+	SignResult      SignResult             `protobuf:"varint,8,opt,name=sign_result,json=signResult,proto3,enum=payment.SignResult" json:"sign_result,omitempty"`
+	CreateTimeStart int64                  `protobuf:"varint,9,opt,name=create_time_start,json=createTimeStart,proto3" json:"create_time_start,omitempty"`
+	CreateTimeEnd   int64                  `protobuf:"varint,10,opt,name=create_time_end,json=createTimeEnd,proto3" json:"create_time_end,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *ListWithdrawNotifyLogsReq) Reset() {
+	*x = ListWithdrawNotifyLogsReq{}
+	mi := &file_proto_payment_payment_admin_proto_msgTypes[57]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListWithdrawNotifyLogsReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListWithdrawNotifyLogsReq) ProtoMessage() {}
+
+func (x *ListWithdrawNotifyLogsReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_payment_payment_admin_proto_msgTypes[57]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListWithdrawNotifyLogsReq.ProtoReflect.Descriptor instead.
+func (*ListWithdrawNotifyLogsReq) Descriptor() ([]byte, []int) {
+	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{57}
+}
+
+func (x *ListWithdrawNotifyLogsReq) GetPage() *PageReq {
+	if x != nil {
+		return x.Page
+	}
+	return nil
+}
+
+func (x *ListWithdrawNotifyLogsReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *ListWithdrawNotifyLogsReq) GetOrderNo() string {
+	if x != nil {
+		return x.OrderNo
+	}
+	return ""
+}
+
+func (x *ListWithdrawNotifyLogsReq) GetOrderId() int64 {
+	if x != nil {
+		return x.OrderId
+	}
+	return 0
+}
+
+func (x *ListWithdrawNotifyLogsReq) GetPlatformId() int64 {
+	if x != nil {
+		return x.PlatformId
+	}
+	return 0
+}
+
+func (x *ListWithdrawNotifyLogsReq) GetChannelId() int64 {
+	if x != nil {
+		return x.ChannelId
+	}
+	return 0
+}
+
+func (x *ListWithdrawNotifyLogsReq) GetNotifyStatus() NotifyProcessStatus {
+	if x != nil {
+		return x.NotifyStatus
+	}
+	return NotifyProcessStatus_NOTIFY_PROCESS_STATUS_UNKNOWN
+}
+
+func (x *ListWithdrawNotifyLogsReq) GetSignResult() SignResult {
+	if x != nil {
+		return x.SignResult
+	}
+	return SignResult_SIGN_RESULT_UNKNOWN
+}
+
+func (x *ListWithdrawNotifyLogsReq) GetCreateTimeStart() int64 {
+	if x != nil {
+		return x.CreateTimeStart
+	}
+	return 0
+}
+
+func (x *ListWithdrawNotifyLogsReq) GetCreateTimeEnd() int64 {
+	if x != nil {
+		return x.CreateTimeEnd
+	}
+	return 0
+}
+
+type ListWithdrawNotifyLogsResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          []*PayNotifyLog        `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListWithdrawNotifyLogsResp) Reset() {
+	*x = ListWithdrawNotifyLogsResp{}
+	mi := &file_proto_payment_payment_admin_proto_msgTypes[58]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListWithdrawNotifyLogsResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListWithdrawNotifyLogsResp) ProtoMessage() {}
+
+func (x *ListWithdrawNotifyLogsResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_payment_payment_admin_proto_msgTypes[58]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListWithdrawNotifyLogsResp.ProtoReflect.Descriptor instead.
+func (*ListWithdrawNotifyLogsResp) Descriptor() ([]byte, []int) {
+	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{58}
+}
+
+func (x *ListWithdrawNotifyLogsResp) GetBase() *RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *ListWithdrawNotifyLogsResp) GetData() []*PayNotifyLog {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type GetWithdrawNotifyLogReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetWithdrawNotifyLogReq) Reset() {
+	*x = GetWithdrawNotifyLogReq{}
+	mi := &file_proto_payment_payment_admin_proto_msgTypes[59]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetWithdrawNotifyLogReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetWithdrawNotifyLogReq) ProtoMessage() {}
+
+func (x *GetWithdrawNotifyLogReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_payment_payment_admin_proto_msgTypes[59]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetWithdrawNotifyLogReq.ProtoReflect.Descriptor instead.
+func (*GetWithdrawNotifyLogReq) Descriptor() ([]byte, []int) {
+	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{59}
+}
+
+func (x *GetWithdrawNotifyLogReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *GetWithdrawNotifyLogReq) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type GetWithdrawNotifyLogResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          *PayNotifyLog          `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetWithdrawNotifyLogResp) Reset() {
+	*x = GetWithdrawNotifyLogResp{}
+	mi := &file_proto_payment_payment_admin_proto_msgTypes[60]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetWithdrawNotifyLogResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetWithdrawNotifyLogResp) ProtoMessage() {}
+
+func (x *GetWithdrawNotifyLogResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_payment_payment_admin_proto_msgTypes[60]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetWithdrawNotifyLogResp.ProtoReflect.Descriptor instead.
+func (*GetWithdrawNotifyLogResp) Descriptor() ([]byte, []int) {
+	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{60}
+}
+
+func (x *GetWithdrawNotifyLogResp) GetBase() *RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *GetWithdrawNotifyLogResp) GetData() *PayNotifyLog {
+	if x != nil {
+		return x.Data
 	}
 	return nil
 }
@@ -4112,7 +4677,7 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\rplatform_type\x18\x05 \x01(\x0e2\x15.payment.PlatformTypeR\fplatformType\"g\n" +
 	"\x14ListPayPlatformsResp\x12%\n" +
 	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12(\n" +
-	"\x04list\x18\x02 \x03(\v2\x14.payment.PayPlatformR\x04list\"\x92\x02\n" +
+	"\x04data\x18\x02 \x03(\v2\x14.payment.PayPlatformR\x04data\"\x92\x02\n" +
 	"\x13CreatePayProductReq\x12\x1f\n" +
 	"\vplatform_id\x18\x01 \x01(\x03R\n" +
 	"platformId\x12!\n" +
@@ -4147,7 +4712,7 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"scene_type\x18\x06 \x01(\x0e2\x12.payment.SceneTypeR\tsceneType\"e\n" +
 	"\x13ListPayProductsResp\x12%\n" +
 	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12'\n" +
-	"\x04list\x18\x02 \x03(\v2\x13.payment.PayProductR\x04list\"\xd5\x01\n" +
+	"\x04data\x18\x02 \x03(\v2\x13.payment.PayProductR\x04data\"\xd5\x01\n" +
 	"\x18OpenTenantPayPlatformReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1f\n" +
 	"\vplatform_id\x18\x02 \x01(\x03R\n" +
@@ -4179,7 +4744,7 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"openStatus\"s\n" +
 	"\x1aListTenantPayPlatformsResp\x12%\n" +
 	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12.\n" +
-	"\x04list\x18\x02 \x03(\v2\x1a.payment.TenantPayPlatformR\x04list\"\xf6\x04\n" +
+	"\x04data\x18\x02 \x03(\v2\x1a.payment.TenantPayPlatformR\x04data\"\xf6\x04\n" +
 	"\x19CreateTenantPayAccountReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x123\n" +
 	"\x16tenant_pay_platform_id\x18\x02 \x01(\x03R\x13tenantPayPlatformId\x12\x1f\n" +
@@ -4243,7 +4808,7 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\x06status\x18\x06 \x01(\x0e2\x15.payment.CommonStatusR\x06status\"q\n" +
 	"\x19ListTenantPayAccountsResp\x12%\n" +
 	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12-\n" +
-	"\x04list\x18\x02 \x03(\v2\x19.payment.TenantPayAccountR\x04list\"\xe0\x05\n" +
+	"\x04data\x18\x02 \x03(\v2\x19.payment.TenantPayAccountR\x04data\"\xe0\x05\n" +
 	"\x19CreateTenantPayChannelReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1f\n" +
 	"\vplatform_id\x18\x02 \x01(\x03R\n" +
@@ -4312,7 +4877,7 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\avisible\x18\b \x01(\bR\avisible\"q\n" +
 	"\x19ListTenantPayChannelsResp\x12%\n" +
 	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12-\n" +
-	"\x04list\x18\x02 \x03(\v2\x19.payment.TenantPayChannelR\x04list\"\xc5\x05\n" +
+	"\x04data\x18\x02 \x03(\v2\x19.payment.TenantPayChannelR\x04data\"\xc5\x05\n" +
 	"\x1dCreateTenantPayChannelRuleReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1d\n" +
 	"\n" +
@@ -4370,7 +4935,7 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\x06status\x18\x04 \x01(\x0e2\x15.payment.CommonStatusR\x06status\"y\n" +
 	"\x1dListTenantPayChannelRulesResp\x12%\n" +
 	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x121\n" +
-	"\x04list\x18\x02 \x03(\v2\x1d.payment.TenantPayChannelRuleR\x04list\"N\n" +
+	"\x04data\x18\x02 \x03(\v2\x1d.payment.TenantPayChannelRuleR\x04data\"N\n" +
 	"\x16GetUserRechargeStatReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\"o\n" +
@@ -4385,14 +4950,14 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\x18success_total_amount_max\x18\x05 \x01(\x03R\x15successTotalAmountMax\"q\n" +
 	"\x19ListUserRechargeStatsResp\x12%\n" +
 	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12-\n" +
-	"\x04list\x18\x02 \x03(\v2\x19.payment.UserRechargeStatR\x04list\"H\n" +
-	"\x0eGetPayOrderReq\x12\x1b\n" +
+	"\x04data\x18\x02 \x03(\v2\x19.payment.UserRechargeStatR\x04data\"M\n" +
+	"\x13GetRechargeOrderReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
-	"\border_no\x18\x02 \x01(\tR\aorderNo\"_\n" +
-	"\x0fGetPayOrderResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12%\n" +
-	"\x04data\x18\x02 \x01(\v2\x11.payment.PayOrderR\x04data\"\xd4\x03\n" +
-	"\x10ListPayOrdersReq\x12$\n" +
+	"\border_no\x18\x02 \x01(\tR\aorderNo\"i\n" +
+	"\x14GetRechargeOrderResp\x12%\n" +
+	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12*\n" +
+	"\x04data\x18\x02 \x01(\v2\x16.payment.RechargeOrderR\x04data\"\xd9\x03\n" +
+	"\x15ListRechargeOrdersReq\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.payment.PageReqR\x04page\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x1f\n" +
@@ -4411,15 +4976,15 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	" \x01(\tR\fthirdTradeNo\x12/\n" +
 	"\x06status\x18\v \x01(\x0e2\x17.payment.PayOrderStatusR\x06status\x12*\n" +
 	"\x11create_time_start\x18\f \x01(\x03R\x0fcreateTimeStart\x12&\n" +
-	"\x0fcreate_time_end\x18\r \x01(\x03R\rcreateTimeEnd\"a\n" +
-	"\x11ListPayOrdersResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12%\n" +
-	"\x04list\x18\x02 \x03(\v2\x11.payment.PayOrderR\x04list\"b\n" +
-	"\x10ClosePayOrderReq\x12\x1b\n" +
+	"\x0fcreate_time_end\x18\r \x01(\x03R\rcreateTimeEnd\"k\n" +
+	"\x16ListRechargeOrdersResp\x12%\n" +
+	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12*\n" +
+	"\x04data\x18\x02 \x03(\v2\x16.payment.RechargeOrderR\x04data\"g\n" +
+	"\x15CloseRechargeOrderReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
 	"\border_no\x18\x02 \x01(\tR\aorderNo\x12\x16\n" +
-	"\x06remark\x18\x03 \x01(\tR\x06remark\"\xb3\x01\n" +
-	"\x1cManualMarkPayOrderSuccessReq\x12\x1b\n" +
+	"\x06remark\x18\x03 \x01(\tR\x06remark\"\xb8\x01\n" +
+	"!ManualMarkRechargeOrderSuccessReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
 	"\border_no\x18\x02 \x01(\tR\aorderNo\x12$\n" +
 	"\x0ethird_trade_no\x18\x03 \x01(\tR\fthirdTradeNo\x12\x1d\n" +
@@ -4428,14 +4993,14 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\x06remark\x18\x05 \x01(\tR\x06remark\"H\n" +
 	"\x0eRetryNotifyReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
-	"\border_no\x18\x02 \x01(\tR\aorderNo\"A\n" +
-	"\x12GetPayNotifyLogReq\x12\x1b\n" +
+	"\border_no\x18\x02 \x01(\tR\aorderNo\"F\n" +
+	"\x17GetRechargeNotifyLogReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"g\n" +
-	"\x13GetPayNotifyLogResp\x12%\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"l\n" +
+	"\x18GetRechargeNotifyLogResp\x12%\n" +
 	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12)\n" +
-	"\x04data\x18\x02 \x01(\v2\x15.payment.PayNotifyLogR\x04data\"\x9c\x03\n" +
-	"\x14ListPayNotifyLogsReq\x12$\n" +
+	"\x04data\x18\x02 \x01(\v2\x15.payment.PayNotifyLogR\x04data\"\xa1\x03\n" +
+	"\x19ListRechargeNotifyLogsReq\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.payment.PageReqR\x04page\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
 	"\border_no\x18\x03 \x01(\tR\aorderNo\x12\x19\n" +
@@ -4449,10 +5014,53 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"signResult\x12*\n" +
 	"\x11create_time_start\x18\t \x01(\x03R\x0fcreateTimeStart\x12&\n" +
 	"\x0fcreate_time_end\x18\n" +
-	" \x01(\x03R\rcreateTimeEnd\"i\n" +
-	"\x15ListPayNotifyLogsResp\x12%\n" +
+	" \x01(\x03R\rcreateTimeEnd\"n\n" +
+	"\x1aListRechargeNotifyLogsResp\x12%\n" +
 	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12)\n" +
-	"\x04list\x18\x02 \x03(\v2\x15.payment.PayNotifyLogR\x04list2\x96\x16\n" +
+	"\x04data\x18\x02 \x03(\v2\x15.payment.PayNotifyLogR\x04data\"\x8e\x01\n" +
+	"\x15ListWithdrawOrdersReq\x12$\n" +
+	"\x04page\x18\x01 \x01(\v2\x10.payment.PageReqR\x04page\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x19\n" +
+	"\border_no\x18\x04 \x01(\tR\aorderNo\"k\n" +
+	"\x16ListWithdrawOrdersResp\x12%\n" +
+	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12*\n" +
+	"\x04data\x18\x02 \x03(\v2\x16.payment.WithdrawOrderR\x04data\"M\n" +
+	"\x13GetWithdrawOrderReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
+	"\border_no\x18\x02 \x01(\tR\aorderNo\"i\n" +
+	"\x14GetWithdrawOrderResp\x12%\n" +
+	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12*\n" +
+	"\x04data\x18\x02 \x01(\v2\x16.payment.WithdrawOrderR\x04data\"\x81\x01\n" +
+	"\x15AuditWithdrawOrderReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
+	"\border_no\x18\x02 \x01(\tR\aorderNo\x12\x18\n" +
+	"\aapprove\x18\x03 \x01(\bR\aapprove\x12\x16\n" +
+	"\x06remark\x18\x04 \x01(\tR\x06remark\"\xa1\x03\n" +
+	"\x19ListWithdrawNotifyLogsReq\x12$\n" +
+	"\x04page\x18\x01 \x01(\v2\x10.payment.PageReqR\x04page\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
+	"\border_no\x18\x03 \x01(\tR\aorderNo\x12\x19\n" +
+	"\border_id\x18\x04 \x01(\x03R\aorderId\x12\x1f\n" +
+	"\vplatform_id\x18\x05 \x01(\x03R\n" +
+	"platformId\x12\x1d\n" +
+	"\n" +
+	"channel_id\x18\x06 \x01(\x03R\tchannelId\x12A\n" +
+	"\rnotify_status\x18\a \x01(\x0e2\x1c.payment.NotifyProcessStatusR\fnotifyStatus\x124\n" +
+	"\vsign_result\x18\b \x01(\x0e2\x13.payment.SignResultR\n" +
+	"signResult\x12*\n" +
+	"\x11create_time_start\x18\t \x01(\x03R\x0fcreateTimeStart\x12&\n" +
+	"\x0fcreate_time_end\x18\n" +
+	" \x01(\x03R\rcreateTimeEnd\"n\n" +
+	"\x1aListWithdrawNotifyLogsResp\x12%\n" +
+	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12)\n" +
+	"\x04data\x18\x02 \x03(\v2\x15.payment.PayNotifyLogR\x04data\"F\n" +
+	"\x17GetWithdrawNotifyLogReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"l\n" +
+	"\x18GetWithdrawNotifyLogResp\x12%\n" +
+	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12)\n" +
+	"\x04data\x18\x02 \x01(\v2\x15.payment.PayNotifyLogR\x04data2\x9e\x1a\n" +
 	"\fPaymentAdmin\x12L\n" +
 	"\x11CreatePayPlatform\x12\x1d.payment.CreatePayPlatformReq\x1a\x18.payment.AdminCommonResp\x12L\n" +
 	"\x11UpdatePayPlatform\x12\x1d.payment.UpdatePayPlatformReq\x1a\x18.payment.AdminCommonResp\x12I\n" +
@@ -4479,14 +5087,19 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\x17GetTenantPayChannelRule\x12#.payment.GetTenantPayChannelRuleReq\x1a$.payment.GetTenantPayChannelRuleResp\x12j\n" +
 	"\x19ListTenantPayChannelRules\x12%.payment.ListTenantPayChannelRulesReq\x1a&.payment.ListTenantPayChannelRulesResp\x12X\n" +
 	"\x13GetUserRechargeStat\x12\x1f.payment.GetUserRechargeStatReq\x1a .payment.GetUserRechargeStatResp\x12^\n" +
-	"\x15ListUserRechargeStats\x12!.payment.ListUserRechargeStatsReq\x1a\".payment.ListUserRechargeStatsResp\x12@\n" +
-	"\vGetPayOrder\x12\x17.payment.GetPayOrderReq\x1a\x18.payment.GetPayOrderResp\x12F\n" +
-	"\rListPayOrders\x12\x19.payment.ListPayOrdersReq\x1a\x1a.payment.ListPayOrdersResp\x12D\n" +
-	"\rClosePayOrder\x12\x19.payment.ClosePayOrderReq\x1a\x18.payment.AdminCommonResp\x12\\\n" +
-	"\x19ManualMarkPayOrderSuccess\x12%.payment.ManualMarkPayOrderSuccessReq\x1a\x18.payment.AdminCommonResp\x12@\n" +
-	"\vRetryNotify\x12\x17.payment.RetryNotifyReq\x1a\x18.payment.AdminCommonResp\x12L\n" +
-	"\x0fGetPayNotifyLog\x12\x1b.payment.GetPayNotifyLogReq\x1a\x1c.payment.GetPayNotifyLogResp\x12R\n" +
-	"\x11ListPayNotifyLogs\x12\x1d.payment.ListPayNotifyLogsReq\x1a\x1e.payment.ListPayNotifyLogsRespB\x1eZ\x1cwklive/proto/payment;paymentb\x06proto3"
+	"\x15ListUserRechargeStats\x12!.payment.ListUserRechargeStatsReq\x1a\".payment.ListUserRechargeStatsResp\x12U\n" +
+	"\x12ListRechargeOrders\x12\x1e.payment.ListRechargeOrdersReq\x1a\x1f.payment.ListRechargeOrdersResp\x12O\n" +
+	"\x10GetRechargeOrder\x12\x1c.payment.GetRechargeOrderReq\x1a\x1d.payment.GetRechargeOrderResp\x12N\n" +
+	"\x12CloseRechargeOrder\x12\x1e.payment.CloseRechargeOrderReq\x1a\x18.payment.AdminCommonResp\x12f\n" +
+	"\x1eManualMarkRechargeOrderSuccess\x12*.payment.ManualMarkRechargeOrderSuccessReq\x1a\x18.payment.AdminCommonResp\x12@\n" +
+	"\vRetryNotify\x12\x17.payment.RetryNotifyReq\x1a\x18.payment.AdminCommonResp\x12a\n" +
+	"\x16ListRechargeNotifyLogs\x12\".payment.ListRechargeNotifyLogsReq\x1a#.payment.ListRechargeNotifyLogsResp\x12[\n" +
+	"\x14GetRechargeNotifyLog\x12 .payment.GetRechargeNotifyLogReq\x1a!.payment.GetRechargeNotifyLogResp\x12U\n" +
+	"\x12ListWithdrawOrders\x12\x1e.payment.ListWithdrawOrdersReq\x1a\x1f.payment.ListWithdrawOrdersResp\x12O\n" +
+	"\x10GetWithdrawOrder\x12\x1c.payment.GetWithdrawOrderReq\x1a\x1d.payment.GetWithdrawOrderResp\x12N\n" +
+	"\x12AuditWithdrawOrder\x12\x1e.payment.AuditWithdrawOrderReq\x1a\x18.payment.AdminCommonResp\x12a\n" +
+	"\x16ListWithdrawNotifyLogs\x12\".payment.ListWithdrawNotifyLogsReq\x1a#.payment.ListWithdrawNotifyLogsResp\x12[\n" +
+	"\x14GetWithdrawNotifyLog\x12 .payment.GetWithdrawNotifyLogReq\x1a!.payment.GetWithdrawNotifyLogRespB\x1eZ\x1cwklive/proto/payment;paymentb\x06proto3"
 
 var (
 	file_proto_payment_payment_admin_proto_rawDescOnce sync.Once
@@ -4500,230 +5113,262 @@ func file_proto_payment_payment_admin_proto_rawDescGZIP() []byte {
 	return file_proto_payment_payment_admin_proto_rawDescData
 }
 
-var file_proto_payment_payment_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 52)
+var file_proto_payment_payment_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 61)
 var file_proto_payment_payment_admin_proto_goTypes = []any{
-	(*AdminCommonResp)(nil),               // 0: payment.AdminCommonResp
-	(*CreatePayPlatformReq)(nil),          // 1: payment.CreatePayPlatformReq
-	(*UpdatePayPlatformReq)(nil),          // 2: payment.UpdatePayPlatformReq
-	(*GetPayPlatformReq)(nil),             // 3: payment.GetPayPlatformReq
-	(*GetPayPlatformResp)(nil),            // 4: payment.GetPayPlatformResp
-	(*ListPayPlatformsReq)(nil),           // 5: payment.ListPayPlatformsReq
-	(*ListPayPlatformsResp)(nil),          // 6: payment.ListPayPlatformsResp
-	(*CreatePayProductReq)(nil),           // 7: payment.CreatePayProductReq
-	(*UpdatePayProductReq)(nil),           // 8: payment.UpdatePayProductReq
-	(*GetPayProductReq)(nil),              // 9: payment.GetPayProductReq
-	(*GetPayProductResp)(nil),             // 10: payment.GetPayProductResp
-	(*ListPayProductsReq)(nil),            // 11: payment.ListPayProductsReq
-	(*ListPayProductsResp)(nil),           // 12: payment.ListPayProductsResp
-	(*OpenTenantPayPlatformReq)(nil),      // 13: payment.OpenTenantPayPlatformReq
-	(*UpdateTenantPayPlatformReq)(nil),    // 14: payment.UpdateTenantPayPlatformReq
-	(*GetTenantPayPlatformReq)(nil),       // 15: payment.GetTenantPayPlatformReq
-	(*GetTenantPayPlatformResp)(nil),      // 16: payment.GetTenantPayPlatformResp
-	(*ListTenantPayPlatformsReq)(nil),     // 17: payment.ListTenantPayPlatformsReq
-	(*ListTenantPayPlatformsResp)(nil),    // 18: payment.ListTenantPayPlatformsResp
-	(*CreateTenantPayAccountReq)(nil),     // 19: payment.CreateTenantPayAccountReq
-	(*UpdateTenantPayAccountReq)(nil),     // 20: payment.UpdateTenantPayAccountReq
-	(*GetTenantPayAccountReq)(nil),        // 21: payment.GetTenantPayAccountReq
-	(*GetTenantPayAccountResp)(nil),       // 22: payment.GetTenantPayAccountResp
-	(*ListTenantPayAccountsReq)(nil),      // 23: payment.ListTenantPayAccountsReq
-	(*ListTenantPayAccountsResp)(nil),     // 24: payment.ListTenantPayAccountsResp
-	(*CreateTenantPayChannelReq)(nil),     // 25: payment.CreateTenantPayChannelReq
-	(*UpdateTenantPayChannelReq)(nil),     // 26: payment.UpdateTenantPayChannelReq
-	(*GetTenantPayChannelReq)(nil),        // 27: payment.GetTenantPayChannelReq
-	(*GetTenantPayChannelResp)(nil),       // 28: payment.GetTenantPayChannelResp
-	(*ListTenantPayChannelsReq)(nil),      // 29: payment.ListTenantPayChannelsReq
-	(*ListTenantPayChannelsResp)(nil),     // 30: payment.ListTenantPayChannelsResp
-	(*CreateTenantPayChannelRuleReq)(nil), // 31: payment.CreateTenantPayChannelRuleReq
-	(*UpdateTenantPayChannelRuleReq)(nil), // 32: payment.UpdateTenantPayChannelRuleReq
-	(*GetTenantPayChannelRuleReq)(nil),    // 33: payment.GetTenantPayChannelRuleReq
-	(*GetTenantPayChannelRuleResp)(nil),   // 34: payment.GetTenantPayChannelRuleResp
-	(*ListTenantPayChannelRulesReq)(nil),  // 35: payment.ListTenantPayChannelRulesReq
-	(*ListTenantPayChannelRulesResp)(nil), // 36: payment.ListTenantPayChannelRulesResp
-	(*GetUserRechargeStatReq)(nil),        // 37: payment.GetUserRechargeStatReq
-	(*GetUserRechargeStatResp)(nil),       // 38: payment.GetUserRechargeStatResp
-	(*ListUserRechargeStatsReq)(nil),      // 39: payment.ListUserRechargeStatsReq
-	(*ListUserRechargeStatsResp)(nil),     // 40: payment.ListUserRechargeStatsResp
-	(*GetPayOrderReq)(nil),                // 41: payment.GetPayOrderReq
-	(*GetPayOrderResp)(nil),               // 42: payment.GetPayOrderResp
-	(*ListPayOrdersReq)(nil),              // 43: payment.ListPayOrdersReq
-	(*ListPayOrdersResp)(nil),             // 44: payment.ListPayOrdersResp
-	(*ClosePayOrderReq)(nil),              // 45: payment.ClosePayOrderReq
-	(*ManualMarkPayOrderSuccessReq)(nil),  // 46: payment.ManualMarkPayOrderSuccessReq
-	(*RetryNotifyReq)(nil),                // 47: payment.RetryNotifyReq
-	(*GetPayNotifyLogReq)(nil),            // 48: payment.GetPayNotifyLogReq
-	(*GetPayNotifyLogResp)(nil),           // 49: payment.GetPayNotifyLogResp
-	(*ListPayNotifyLogsReq)(nil),          // 50: payment.ListPayNotifyLogsReq
-	(*ListPayNotifyLogsResp)(nil),         // 51: payment.ListPayNotifyLogsResp
-	(*RespBase)(nil),                      // 52: payment.RespBase
-	(PlatformType)(0),                     // 53: payment.PlatformType
-	(CommonStatus)(0),                     // 54: payment.CommonStatus
-	(*PayPlatform)(nil),                   // 55: payment.PayPlatform
-	(*PageReq)(nil),                       // 56: payment.PageReq
-	(SceneType)(0),                        // 57: payment.SceneType
-	(*PayProduct)(nil),                    // 58: payment.PayProduct
-	(OpenStatus)(0),                       // 59: payment.OpenStatus
-	(*TenantPayPlatform)(nil),             // 60: payment.TenantPayPlatform
-	(*TenantPayAccount)(nil),              // 61: payment.TenantPayAccount
-	(FeeType)(0),                          // 62: payment.FeeType
-	(*TenantPayChannel)(nil),              // 63: payment.TenantPayChannel
-	(*TenantPayChannelRule)(nil),          // 64: payment.TenantPayChannelRule
-	(*UserRechargeStat)(nil),              // 65: payment.UserRechargeStat
-	(*PayOrder)(nil),                      // 66: payment.PayOrder
-	(PayOrderStatus)(0),                   // 67: payment.PayOrderStatus
-	(*PayNotifyLog)(nil),                  // 68: payment.PayNotifyLog
-	(NotifyProcessStatus)(0),              // 69: payment.NotifyProcessStatus
-	(SignResult)(0),                       // 70: payment.SignResult
+	(*AdminCommonResp)(nil),                   // 0: payment.AdminCommonResp
+	(*CreatePayPlatformReq)(nil),              // 1: payment.CreatePayPlatformReq
+	(*UpdatePayPlatformReq)(nil),              // 2: payment.UpdatePayPlatformReq
+	(*GetPayPlatformReq)(nil),                 // 3: payment.GetPayPlatformReq
+	(*GetPayPlatformResp)(nil),                // 4: payment.GetPayPlatformResp
+	(*ListPayPlatformsReq)(nil),               // 5: payment.ListPayPlatformsReq
+	(*ListPayPlatformsResp)(nil),              // 6: payment.ListPayPlatformsResp
+	(*CreatePayProductReq)(nil),               // 7: payment.CreatePayProductReq
+	(*UpdatePayProductReq)(nil),               // 8: payment.UpdatePayProductReq
+	(*GetPayProductReq)(nil),                  // 9: payment.GetPayProductReq
+	(*GetPayProductResp)(nil),                 // 10: payment.GetPayProductResp
+	(*ListPayProductsReq)(nil),                // 11: payment.ListPayProductsReq
+	(*ListPayProductsResp)(nil),               // 12: payment.ListPayProductsResp
+	(*OpenTenantPayPlatformReq)(nil),          // 13: payment.OpenTenantPayPlatformReq
+	(*UpdateTenantPayPlatformReq)(nil),        // 14: payment.UpdateTenantPayPlatformReq
+	(*GetTenantPayPlatformReq)(nil),           // 15: payment.GetTenantPayPlatformReq
+	(*GetTenantPayPlatformResp)(nil),          // 16: payment.GetTenantPayPlatformResp
+	(*ListTenantPayPlatformsReq)(nil),         // 17: payment.ListTenantPayPlatformsReq
+	(*ListTenantPayPlatformsResp)(nil),        // 18: payment.ListTenantPayPlatformsResp
+	(*CreateTenantPayAccountReq)(nil),         // 19: payment.CreateTenantPayAccountReq
+	(*UpdateTenantPayAccountReq)(nil),         // 20: payment.UpdateTenantPayAccountReq
+	(*GetTenantPayAccountReq)(nil),            // 21: payment.GetTenantPayAccountReq
+	(*GetTenantPayAccountResp)(nil),           // 22: payment.GetTenantPayAccountResp
+	(*ListTenantPayAccountsReq)(nil),          // 23: payment.ListTenantPayAccountsReq
+	(*ListTenantPayAccountsResp)(nil),         // 24: payment.ListTenantPayAccountsResp
+	(*CreateTenantPayChannelReq)(nil),         // 25: payment.CreateTenantPayChannelReq
+	(*UpdateTenantPayChannelReq)(nil),         // 26: payment.UpdateTenantPayChannelReq
+	(*GetTenantPayChannelReq)(nil),            // 27: payment.GetTenantPayChannelReq
+	(*GetTenantPayChannelResp)(nil),           // 28: payment.GetTenantPayChannelResp
+	(*ListTenantPayChannelsReq)(nil),          // 29: payment.ListTenantPayChannelsReq
+	(*ListTenantPayChannelsResp)(nil),         // 30: payment.ListTenantPayChannelsResp
+	(*CreateTenantPayChannelRuleReq)(nil),     // 31: payment.CreateTenantPayChannelRuleReq
+	(*UpdateTenantPayChannelRuleReq)(nil),     // 32: payment.UpdateTenantPayChannelRuleReq
+	(*GetTenantPayChannelRuleReq)(nil),        // 33: payment.GetTenantPayChannelRuleReq
+	(*GetTenantPayChannelRuleResp)(nil),       // 34: payment.GetTenantPayChannelRuleResp
+	(*ListTenantPayChannelRulesReq)(nil),      // 35: payment.ListTenantPayChannelRulesReq
+	(*ListTenantPayChannelRulesResp)(nil),     // 36: payment.ListTenantPayChannelRulesResp
+	(*GetUserRechargeStatReq)(nil),            // 37: payment.GetUserRechargeStatReq
+	(*GetUserRechargeStatResp)(nil),           // 38: payment.GetUserRechargeStatResp
+	(*ListUserRechargeStatsReq)(nil),          // 39: payment.ListUserRechargeStatsReq
+	(*ListUserRechargeStatsResp)(nil),         // 40: payment.ListUserRechargeStatsResp
+	(*GetRechargeOrderReq)(nil),               // 41: payment.GetRechargeOrderReq
+	(*GetRechargeOrderResp)(nil),              // 42: payment.GetRechargeOrderResp
+	(*ListRechargeOrdersReq)(nil),             // 43: payment.ListRechargeOrdersReq
+	(*ListRechargeOrdersResp)(nil),            // 44: payment.ListRechargeOrdersResp
+	(*CloseRechargeOrderReq)(nil),             // 45: payment.CloseRechargeOrderReq
+	(*ManualMarkRechargeOrderSuccessReq)(nil), // 46: payment.ManualMarkRechargeOrderSuccessReq
+	(*RetryNotifyReq)(nil),                    // 47: payment.RetryNotifyReq
+	(*GetRechargeNotifyLogReq)(nil),           // 48: payment.GetRechargeNotifyLogReq
+	(*GetRechargeNotifyLogResp)(nil),          // 49: payment.GetRechargeNotifyLogResp
+	(*ListRechargeNotifyLogsReq)(nil),         // 50: payment.ListRechargeNotifyLogsReq
+	(*ListRechargeNotifyLogsResp)(nil),        // 51: payment.ListRechargeNotifyLogsResp
+	(*ListWithdrawOrdersReq)(nil),             // 52: payment.ListWithdrawOrdersReq
+	(*ListWithdrawOrdersResp)(nil),            // 53: payment.ListWithdrawOrdersResp
+	(*GetWithdrawOrderReq)(nil),               // 54: payment.GetWithdrawOrderReq
+	(*GetWithdrawOrderResp)(nil),              // 55: payment.GetWithdrawOrderResp
+	(*AuditWithdrawOrderReq)(nil),             // 56: payment.AuditWithdrawOrderReq
+	(*ListWithdrawNotifyLogsReq)(nil),         // 57: payment.ListWithdrawNotifyLogsReq
+	(*ListWithdrawNotifyLogsResp)(nil),        // 58: payment.ListWithdrawNotifyLogsResp
+	(*GetWithdrawNotifyLogReq)(nil),           // 59: payment.GetWithdrawNotifyLogReq
+	(*GetWithdrawNotifyLogResp)(nil),          // 60: payment.GetWithdrawNotifyLogResp
+	(*RespBase)(nil),                          // 61: payment.RespBase
+	(PlatformType)(0),                         // 62: payment.PlatformType
+	(CommonStatus)(0),                         // 63: payment.CommonStatus
+	(*PayPlatform)(nil),                       // 64: payment.PayPlatform
+	(*PageReq)(nil),                           // 65: payment.PageReq
+	(SceneType)(0),                            // 66: payment.SceneType
+	(*PayProduct)(nil),                        // 67: payment.PayProduct
+	(OpenStatus)(0),                           // 68: payment.OpenStatus
+	(*TenantPayPlatform)(nil),                 // 69: payment.TenantPayPlatform
+	(*TenantPayAccount)(nil),                  // 70: payment.TenantPayAccount
+	(FeeType)(0),                              // 71: payment.FeeType
+	(*TenantPayChannel)(nil),                  // 72: payment.TenantPayChannel
+	(*TenantPayChannelRule)(nil),              // 73: payment.TenantPayChannelRule
+	(*UserRechargeStat)(nil),                  // 74: payment.UserRechargeStat
+	(*RechargeOrder)(nil),                     // 75: payment.RechargeOrder
+	(PayOrderStatus)(0),                       // 76: payment.PayOrderStatus
+	(*PayNotifyLog)(nil),                      // 77: payment.PayNotifyLog
+	(NotifyProcessStatus)(0),                  // 78: payment.NotifyProcessStatus
+	(SignResult)(0),                           // 79: payment.SignResult
+	(*WithdrawOrder)(nil),                     // 80: payment.WithdrawOrder
 }
 var file_proto_payment_payment_admin_proto_depIdxs = []int32{
-	52,  // 0: payment.AdminCommonResp.base:type_name -> payment.RespBase
-	53,  // 1: payment.CreatePayPlatformReq.platform_type:type_name -> payment.PlatformType
-	54,  // 2: payment.CreatePayPlatformReq.status:type_name -> payment.CommonStatus
-	53,  // 3: payment.UpdatePayPlatformReq.platform_type:type_name -> payment.PlatformType
-	54,  // 4: payment.UpdatePayPlatformReq.status:type_name -> payment.CommonStatus
-	52,  // 5: payment.GetPayPlatformResp.base:type_name -> payment.RespBase
-	55,  // 6: payment.GetPayPlatformResp.data:type_name -> payment.PayPlatform
-	56,  // 7: payment.ListPayPlatformsReq.page:type_name -> payment.PageReq
-	54,  // 8: payment.ListPayPlatformsReq.status:type_name -> payment.CommonStatus
-	53,  // 9: payment.ListPayPlatformsReq.platform_type:type_name -> payment.PlatformType
-	52,  // 10: payment.ListPayPlatformsResp.base:type_name -> payment.RespBase
-	55,  // 11: payment.ListPayPlatformsResp.list:type_name -> payment.PayPlatform
-	57,  // 12: payment.CreatePayProductReq.scene_type:type_name -> payment.SceneType
-	54,  // 13: payment.CreatePayProductReq.status:type_name -> payment.CommonStatus
-	57,  // 14: payment.UpdatePayProductReq.scene_type:type_name -> payment.SceneType
-	54,  // 15: payment.UpdatePayProductReq.status:type_name -> payment.CommonStatus
-	52,  // 16: payment.GetPayProductResp.base:type_name -> payment.RespBase
-	58,  // 17: payment.GetPayProductResp.data:type_name -> payment.PayProduct
-	56,  // 18: payment.ListPayProductsReq.page:type_name -> payment.PageReq
-	54,  // 19: payment.ListPayProductsReq.status:type_name -> payment.CommonStatus
-	57,  // 20: payment.ListPayProductsReq.scene_type:type_name -> payment.SceneType
-	52,  // 21: payment.ListPayProductsResp.base:type_name -> payment.RespBase
-	58,  // 22: payment.ListPayProductsResp.list:type_name -> payment.PayProduct
-	54,  // 23: payment.OpenTenantPayPlatformReq.status:type_name -> payment.CommonStatus
-	59,  // 24: payment.OpenTenantPayPlatformReq.open_status:type_name -> payment.OpenStatus
-	54,  // 25: payment.UpdateTenantPayPlatformReq.status:type_name -> payment.CommonStatus
-	59,  // 26: payment.UpdateTenantPayPlatformReq.open_status:type_name -> payment.OpenStatus
-	52,  // 27: payment.GetTenantPayPlatformResp.base:type_name -> payment.RespBase
-	60,  // 28: payment.GetTenantPayPlatformResp.data:type_name -> payment.TenantPayPlatform
-	56,  // 29: payment.ListTenantPayPlatformsReq.page:type_name -> payment.PageReq
-	54,  // 30: payment.ListTenantPayPlatformsReq.status:type_name -> payment.CommonStatus
-	59,  // 31: payment.ListTenantPayPlatformsReq.open_status:type_name -> payment.OpenStatus
-	52,  // 32: payment.ListTenantPayPlatformsResp.base:type_name -> payment.RespBase
-	60,  // 33: payment.ListTenantPayPlatformsResp.list:type_name -> payment.TenantPayPlatform
-	54,  // 34: payment.CreateTenantPayAccountReq.status:type_name -> payment.CommonStatus
-	54,  // 35: payment.UpdateTenantPayAccountReq.status:type_name -> payment.CommonStatus
-	52,  // 36: payment.GetTenantPayAccountResp.base:type_name -> payment.RespBase
-	61,  // 37: payment.GetTenantPayAccountResp.data:type_name -> payment.TenantPayAccount
-	56,  // 38: payment.ListTenantPayAccountsReq.page:type_name -> payment.PageReq
-	54,  // 39: payment.ListTenantPayAccountsReq.status:type_name -> payment.CommonStatus
-	52,  // 40: payment.ListTenantPayAccountsResp.base:type_name -> payment.RespBase
-	61,  // 41: payment.ListTenantPayAccountsResp.list:type_name -> payment.TenantPayAccount
-	54,  // 42: payment.CreateTenantPayChannelReq.status:type_name -> payment.CommonStatus
-	62,  // 43: payment.CreateTenantPayChannelReq.fee_type:type_name -> payment.FeeType
-	54,  // 44: payment.UpdateTenantPayChannelReq.status:type_name -> payment.CommonStatus
-	62,  // 45: payment.UpdateTenantPayChannelReq.fee_type:type_name -> payment.FeeType
-	52,  // 46: payment.GetTenantPayChannelResp.base:type_name -> payment.RespBase
-	63,  // 47: payment.GetTenantPayChannelResp.data:type_name -> payment.TenantPayChannel
-	56,  // 48: payment.ListTenantPayChannelsReq.page:type_name -> payment.PageReq
-	54,  // 49: payment.ListTenantPayChannelsReq.status:type_name -> payment.CommonStatus
-	52,  // 50: payment.ListTenantPayChannelsResp.base:type_name -> payment.RespBase
-	63,  // 51: payment.ListTenantPayChannelsResp.list:type_name -> payment.TenantPayChannel
-	54,  // 52: payment.CreateTenantPayChannelRuleReq.status:type_name -> payment.CommonStatus
-	54,  // 53: payment.UpdateTenantPayChannelRuleReq.status:type_name -> payment.CommonStatus
-	52,  // 54: payment.GetTenantPayChannelRuleResp.base:type_name -> payment.RespBase
-	64,  // 55: payment.GetTenantPayChannelRuleResp.data:type_name -> payment.TenantPayChannelRule
-	56,  // 56: payment.ListTenantPayChannelRulesReq.page:type_name -> payment.PageReq
-	54,  // 57: payment.ListTenantPayChannelRulesReq.status:type_name -> payment.CommonStatus
-	52,  // 58: payment.ListTenantPayChannelRulesResp.base:type_name -> payment.RespBase
-	64,  // 59: payment.ListTenantPayChannelRulesResp.list:type_name -> payment.TenantPayChannelRule
-	52,  // 60: payment.GetUserRechargeStatResp.base:type_name -> payment.RespBase
-	65,  // 61: payment.GetUserRechargeStatResp.data:type_name -> payment.UserRechargeStat
-	56,  // 62: payment.ListUserRechargeStatsReq.page:type_name -> payment.PageReq
-	52,  // 63: payment.ListUserRechargeStatsResp.base:type_name -> payment.RespBase
-	65,  // 64: payment.ListUserRechargeStatsResp.list:type_name -> payment.UserRechargeStat
-	52,  // 65: payment.GetPayOrderResp.base:type_name -> payment.RespBase
-	66,  // 66: payment.GetPayOrderResp.data:type_name -> payment.PayOrder
-	56,  // 67: payment.ListPayOrdersReq.page:type_name -> payment.PageReq
-	67,  // 68: payment.ListPayOrdersReq.status:type_name -> payment.PayOrderStatus
-	52,  // 69: payment.ListPayOrdersResp.base:type_name -> payment.RespBase
-	66,  // 70: payment.ListPayOrdersResp.list:type_name -> payment.PayOrder
-	52,  // 71: payment.GetPayNotifyLogResp.base:type_name -> payment.RespBase
-	68,  // 72: payment.GetPayNotifyLogResp.data:type_name -> payment.PayNotifyLog
-	56,  // 73: payment.ListPayNotifyLogsReq.page:type_name -> payment.PageReq
-	69,  // 74: payment.ListPayNotifyLogsReq.notify_status:type_name -> payment.NotifyProcessStatus
-	70,  // 75: payment.ListPayNotifyLogsReq.sign_result:type_name -> payment.SignResult
-	52,  // 76: payment.ListPayNotifyLogsResp.base:type_name -> payment.RespBase
-	68,  // 77: payment.ListPayNotifyLogsResp.list:type_name -> payment.PayNotifyLog
-	1,   // 78: payment.PaymentAdmin.CreatePayPlatform:input_type -> payment.CreatePayPlatformReq
-	2,   // 79: payment.PaymentAdmin.UpdatePayPlatform:input_type -> payment.UpdatePayPlatformReq
-	3,   // 80: payment.PaymentAdmin.GetPayPlatform:input_type -> payment.GetPayPlatformReq
-	5,   // 81: payment.PaymentAdmin.ListPayPlatforms:input_type -> payment.ListPayPlatformsReq
-	7,   // 82: payment.PaymentAdmin.CreatePayProduct:input_type -> payment.CreatePayProductReq
-	8,   // 83: payment.PaymentAdmin.UpdatePayProduct:input_type -> payment.UpdatePayProductReq
-	9,   // 84: payment.PaymentAdmin.GetPayProduct:input_type -> payment.GetPayProductReq
-	11,  // 85: payment.PaymentAdmin.ListPayProducts:input_type -> payment.ListPayProductsReq
-	13,  // 86: payment.PaymentAdmin.OpenTenantPayPlatform:input_type -> payment.OpenTenantPayPlatformReq
-	14,  // 87: payment.PaymentAdmin.UpdateTenantPayPlatform:input_type -> payment.UpdateTenantPayPlatformReq
-	15,  // 88: payment.PaymentAdmin.GetTenantPayPlatform:input_type -> payment.GetTenantPayPlatformReq
-	17,  // 89: payment.PaymentAdmin.ListTenantPayPlatforms:input_type -> payment.ListTenantPayPlatformsReq
-	19,  // 90: payment.PaymentAdmin.CreateTenantPayAccount:input_type -> payment.CreateTenantPayAccountReq
-	20,  // 91: payment.PaymentAdmin.UpdateTenantPayAccount:input_type -> payment.UpdateTenantPayAccountReq
-	21,  // 92: payment.PaymentAdmin.GetTenantPayAccount:input_type -> payment.GetTenantPayAccountReq
-	23,  // 93: payment.PaymentAdmin.ListTenantPayAccounts:input_type -> payment.ListTenantPayAccountsReq
-	25,  // 94: payment.PaymentAdmin.CreateTenantPayChannel:input_type -> payment.CreateTenantPayChannelReq
-	26,  // 95: payment.PaymentAdmin.UpdateTenantPayChannel:input_type -> payment.UpdateTenantPayChannelReq
-	27,  // 96: payment.PaymentAdmin.GetTenantPayChannel:input_type -> payment.GetTenantPayChannelReq
-	29,  // 97: payment.PaymentAdmin.ListTenantPayChannels:input_type -> payment.ListTenantPayChannelsReq
-	31,  // 98: payment.PaymentAdmin.CreateTenantPayChannelRule:input_type -> payment.CreateTenantPayChannelRuleReq
-	32,  // 99: payment.PaymentAdmin.UpdateTenantPayChannelRule:input_type -> payment.UpdateTenantPayChannelRuleReq
-	33,  // 100: payment.PaymentAdmin.GetTenantPayChannelRule:input_type -> payment.GetTenantPayChannelRuleReq
-	35,  // 101: payment.PaymentAdmin.ListTenantPayChannelRules:input_type -> payment.ListTenantPayChannelRulesReq
-	37,  // 102: payment.PaymentAdmin.GetUserRechargeStat:input_type -> payment.GetUserRechargeStatReq
-	39,  // 103: payment.PaymentAdmin.ListUserRechargeStats:input_type -> payment.ListUserRechargeStatsReq
-	41,  // 104: payment.PaymentAdmin.GetPayOrder:input_type -> payment.GetPayOrderReq
-	43,  // 105: payment.PaymentAdmin.ListPayOrders:input_type -> payment.ListPayOrdersReq
-	45,  // 106: payment.PaymentAdmin.ClosePayOrder:input_type -> payment.ClosePayOrderReq
-	46,  // 107: payment.PaymentAdmin.ManualMarkPayOrderSuccess:input_type -> payment.ManualMarkPayOrderSuccessReq
-	47,  // 108: payment.PaymentAdmin.RetryNotify:input_type -> payment.RetryNotifyReq
-	48,  // 109: payment.PaymentAdmin.GetPayNotifyLog:input_type -> payment.GetPayNotifyLogReq
-	50,  // 110: payment.PaymentAdmin.ListPayNotifyLogs:input_type -> payment.ListPayNotifyLogsReq
-	0,   // 111: payment.PaymentAdmin.CreatePayPlatform:output_type -> payment.AdminCommonResp
-	0,   // 112: payment.PaymentAdmin.UpdatePayPlatform:output_type -> payment.AdminCommonResp
-	4,   // 113: payment.PaymentAdmin.GetPayPlatform:output_type -> payment.GetPayPlatformResp
-	6,   // 114: payment.PaymentAdmin.ListPayPlatforms:output_type -> payment.ListPayPlatformsResp
-	0,   // 115: payment.PaymentAdmin.CreatePayProduct:output_type -> payment.AdminCommonResp
-	0,   // 116: payment.PaymentAdmin.UpdatePayProduct:output_type -> payment.AdminCommonResp
-	10,  // 117: payment.PaymentAdmin.GetPayProduct:output_type -> payment.GetPayProductResp
-	12,  // 118: payment.PaymentAdmin.ListPayProducts:output_type -> payment.ListPayProductsResp
-	0,   // 119: payment.PaymentAdmin.OpenTenantPayPlatform:output_type -> payment.AdminCommonResp
-	0,   // 120: payment.PaymentAdmin.UpdateTenantPayPlatform:output_type -> payment.AdminCommonResp
-	16,  // 121: payment.PaymentAdmin.GetTenantPayPlatform:output_type -> payment.GetTenantPayPlatformResp
-	18,  // 122: payment.PaymentAdmin.ListTenantPayPlatforms:output_type -> payment.ListTenantPayPlatformsResp
-	0,   // 123: payment.PaymentAdmin.CreateTenantPayAccount:output_type -> payment.AdminCommonResp
-	0,   // 124: payment.PaymentAdmin.UpdateTenantPayAccount:output_type -> payment.AdminCommonResp
-	22,  // 125: payment.PaymentAdmin.GetTenantPayAccount:output_type -> payment.GetTenantPayAccountResp
-	24,  // 126: payment.PaymentAdmin.ListTenantPayAccounts:output_type -> payment.ListTenantPayAccountsResp
-	0,   // 127: payment.PaymentAdmin.CreateTenantPayChannel:output_type -> payment.AdminCommonResp
-	0,   // 128: payment.PaymentAdmin.UpdateTenantPayChannel:output_type -> payment.AdminCommonResp
-	28,  // 129: payment.PaymentAdmin.GetTenantPayChannel:output_type -> payment.GetTenantPayChannelResp
-	30,  // 130: payment.PaymentAdmin.ListTenantPayChannels:output_type -> payment.ListTenantPayChannelsResp
-	0,   // 131: payment.PaymentAdmin.CreateTenantPayChannelRule:output_type -> payment.AdminCommonResp
-	0,   // 132: payment.PaymentAdmin.UpdateTenantPayChannelRule:output_type -> payment.AdminCommonResp
-	34,  // 133: payment.PaymentAdmin.GetTenantPayChannelRule:output_type -> payment.GetTenantPayChannelRuleResp
-	36,  // 134: payment.PaymentAdmin.ListTenantPayChannelRules:output_type -> payment.ListTenantPayChannelRulesResp
-	38,  // 135: payment.PaymentAdmin.GetUserRechargeStat:output_type -> payment.GetUserRechargeStatResp
-	40,  // 136: payment.PaymentAdmin.ListUserRechargeStats:output_type -> payment.ListUserRechargeStatsResp
-	42,  // 137: payment.PaymentAdmin.GetPayOrder:output_type -> payment.GetPayOrderResp
-	44,  // 138: payment.PaymentAdmin.ListPayOrders:output_type -> payment.ListPayOrdersResp
-	0,   // 139: payment.PaymentAdmin.ClosePayOrder:output_type -> payment.AdminCommonResp
-	0,   // 140: payment.PaymentAdmin.ManualMarkPayOrderSuccess:output_type -> payment.AdminCommonResp
-	0,   // 141: payment.PaymentAdmin.RetryNotify:output_type -> payment.AdminCommonResp
-	49,  // 142: payment.PaymentAdmin.GetPayNotifyLog:output_type -> payment.GetPayNotifyLogResp
-	51,  // 143: payment.PaymentAdmin.ListPayNotifyLogs:output_type -> payment.ListPayNotifyLogsResp
-	111, // [111:144] is the sub-list for method output_type
-	78,  // [78:111] is the sub-list for method input_type
-	78,  // [78:78] is the sub-list for extension type_name
-	78,  // [78:78] is the sub-list for extension extendee
-	0,   // [0:78] is the sub-list for field type_name
+	61,  // 0: payment.AdminCommonResp.base:type_name -> payment.RespBase
+	62,  // 1: payment.CreatePayPlatformReq.platform_type:type_name -> payment.PlatformType
+	63,  // 2: payment.CreatePayPlatformReq.status:type_name -> payment.CommonStatus
+	62,  // 3: payment.UpdatePayPlatformReq.platform_type:type_name -> payment.PlatformType
+	63,  // 4: payment.UpdatePayPlatformReq.status:type_name -> payment.CommonStatus
+	61,  // 5: payment.GetPayPlatformResp.base:type_name -> payment.RespBase
+	64,  // 6: payment.GetPayPlatformResp.data:type_name -> payment.PayPlatform
+	65,  // 7: payment.ListPayPlatformsReq.page:type_name -> payment.PageReq
+	63,  // 8: payment.ListPayPlatformsReq.status:type_name -> payment.CommonStatus
+	62,  // 9: payment.ListPayPlatformsReq.platform_type:type_name -> payment.PlatformType
+	61,  // 10: payment.ListPayPlatformsResp.base:type_name -> payment.RespBase
+	64,  // 11: payment.ListPayPlatformsResp.data:type_name -> payment.PayPlatform
+	66,  // 12: payment.CreatePayProductReq.scene_type:type_name -> payment.SceneType
+	63,  // 13: payment.CreatePayProductReq.status:type_name -> payment.CommonStatus
+	66,  // 14: payment.UpdatePayProductReq.scene_type:type_name -> payment.SceneType
+	63,  // 15: payment.UpdatePayProductReq.status:type_name -> payment.CommonStatus
+	61,  // 16: payment.GetPayProductResp.base:type_name -> payment.RespBase
+	67,  // 17: payment.GetPayProductResp.data:type_name -> payment.PayProduct
+	65,  // 18: payment.ListPayProductsReq.page:type_name -> payment.PageReq
+	63,  // 19: payment.ListPayProductsReq.status:type_name -> payment.CommonStatus
+	66,  // 20: payment.ListPayProductsReq.scene_type:type_name -> payment.SceneType
+	61,  // 21: payment.ListPayProductsResp.base:type_name -> payment.RespBase
+	67,  // 22: payment.ListPayProductsResp.data:type_name -> payment.PayProduct
+	63,  // 23: payment.OpenTenantPayPlatformReq.status:type_name -> payment.CommonStatus
+	68,  // 24: payment.OpenTenantPayPlatformReq.open_status:type_name -> payment.OpenStatus
+	63,  // 25: payment.UpdateTenantPayPlatformReq.status:type_name -> payment.CommonStatus
+	68,  // 26: payment.UpdateTenantPayPlatformReq.open_status:type_name -> payment.OpenStatus
+	61,  // 27: payment.GetTenantPayPlatformResp.base:type_name -> payment.RespBase
+	69,  // 28: payment.GetTenantPayPlatformResp.data:type_name -> payment.TenantPayPlatform
+	65,  // 29: payment.ListTenantPayPlatformsReq.page:type_name -> payment.PageReq
+	63,  // 30: payment.ListTenantPayPlatformsReq.status:type_name -> payment.CommonStatus
+	68,  // 31: payment.ListTenantPayPlatformsReq.open_status:type_name -> payment.OpenStatus
+	61,  // 32: payment.ListTenantPayPlatformsResp.base:type_name -> payment.RespBase
+	69,  // 33: payment.ListTenantPayPlatformsResp.data:type_name -> payment.TenantPayPlatform
+	63,  // 34: payment.CreateTenantPayAccountReq.status:type_name -> payment.CommonStatus
+	63,  // 35: payment.UpdateTenantPayAccountReq.status:type_name -> payment.CommonStatus
+	61,  // 36: payment.GetTenantPayAccountResp.base:type_name -> payment.RespBase
+	70,  // 37: payment.GetTenantPayAccountResp.data:type_name -> payment.TenantPayAccount
+	65,  // 38: payment.ListTenantPayAccountsReq.page:type_name -> payment.PageReq
+	63,  // 39: payment.ListTenantPayAccountsReq.status:type_name -> payment.CommonStatus
+	61,  // 40: payment.ListTenantPayAccountsResp.base:type_name -> payment.RespBase
+	70,  // 41: payment.ListTenantPayAccountsResp.data:type_name -> payment.TenantPayAccount
+	63,  // 42: payment.CreateTenantPayChannelReq.status:type_name -> payment.CommonStatus
+	71,  // 43: payment.CreateTenantPayChannelReq.fee_type:type_name -> payment.FeeType
+	63,  // 44: payment.UpdateTenantPayChannelReq.status:type_name -> payment.CommonStatus
+	71,  // 45: payment.UpdateTenantPayChannelReq.fee_type:type_name -> payment.FeeType
+	61,  // 46: payment.GetTenantPayChannelResp.base:type_name -> payment.RespBase
+	72,  // 47: payment.GetTenantPayChannelResp.data:type_name -> payment.TenantPayChannel
+	65,  // 48: payment.ListTenantPayChannelsReq.page:type_name -> payment.PageReq
+	63,  // 49: payment.ListTenantPayChannelsReq.status:type_name -> payment.CommonStatus
+	61,  // 50: payment.ListTenantPayChannelsResp.base:type_name -> payment.RespBase
+	72,  // 51: payment.ListTenantPayChannelsResp.data:type_name -> payment.TenantPayChannel
+	63,  // 52: payment.CreateTenantPayChannelRuleReq.status:type_name -> payment.CommonStatus
+	63,  // 53: payment.UpdateTenantPayChannelRuleReq.status:type_name -> payment.CommonStatus
+	61,  // 54: payment.GetTenantPayChannelRuleResp.base:type_name -> payment.RespBase
+	73,  // 55: payment.GetTenantPayChannelRuleResp.data:type_name -> payment.TenantPayChannelRule
+	65,  // 56: payment.ListTenantPayChannelRulesReq.page:type_name -> payment.PageReq
+	63,  // 57: payment.ListTenantPayChannelRulesReq.status:type_name -> payment.CommonStatus
+	61,  // 58: payment.ListTenantPayChannelRulesResp.base:type_name -> payment.RespBase
+	73,  // 59: payment.ListTenantPayChannelRulesResp.data:type_name -> payment.TenantPayChannelRule
+	61,  // 60: payment.GetUserRechargeStatResp.base:type_name -> payment.RespBase
+	74,  // 61: payment.GetUserRechargeStatResp.data:type_name -> payment.UserRechargeStat
+	65,  // 62: payment.ListUserRechargeStatsReq.page:type_name -> payment.PageReq
+	61,  // 63: payment.ListUserRechargeStatsResp.base:type_name -> payment.RespBase
+	74,  // 64: payment.ListUserRechargeStatsResp.data:type_name -> payment.UserRechargeStat
+	61,  // 65: payment.GetRechargeOrderResp.base:type_name -> payment.RespBase
+	75,  // 66: payment.GetRechargeOrderResp.data:type_name -> payment.RechargeOrder
+	65,  // 67: payment.ListRechargeOrdersReq.page:type_name -> payment.PageReq
+	76,  // 68: payment.ListRechargeOrdersReq.status:type_name -> payment.PayOrderStatus
+	61,  // 69: payment.ListRechargeOrdersResp.base:type_name -> payment.RespBase
+	75,  // 70: payment.ListRechargeOrdersResp.data:type_name -> payment.RechargeOrder
+	61,  // 71: payment.GetRechargeNotifyLogResp.base:type_name -> payment.RespBase
+	77,  // 72: payment.GetRechargeNotifyLogResp.data:type_name -> payment.PayNotifyLog
+	65,  // 73: payment.ListRechargeNotifyLogsReq.page:type_name -> payment.PageReq
+	78,  // 74: payment.ListRechargeNotifyLogsReq.notify_status:type_name -> payment.NotifyProcessStatus
+	79,  // 75: payment.ListRechargeNotifyLogsReq.sign_result:type_name -> payment.SignResult
+	61,  // 76: payment.ListRechargeNotifyLogsResp.base:type_name -> payment.RespBase
+	77,  // 77: payment.ListRechargeNotifyLogsResp.data:type_name -> payment.PayNotifyLog
+	65,  // 78: payment.ListWithdrawOrdersReq.page:type_name -> payment.PageReq
+	61,  // 79: payment.ListWithdrawOrdersResp.base:type_name -> payment.RespBase
+	80,  // 80: payment.ListWithdrawOrdersResp.data:type_name -> payment.WithdrawOrder
+	61,  // 81: payment.GetWithdrawOrderResp.base:type_name -> payment.RespBase
+	80,  // 82: payment.GetWithdrawOrderResp.data:type_name -> payment.WithdrawOrder
+	65,  // 83: payment.ListWithdrawNotifyLogsReq.page:type_name -> payment.PageReq
+	78,  // 84: payment.ListWithdrawNotifyLogsReq.notify_status:type_name -> payment.NotifyProcessStatus
+	79,  // 85: payment.ListWithdrawNotifyLogsReq.sign_result:type_name -> payment.SignResult
+	61,  // 86: payment.ListWithdrawNotifyLogsResp.base:type_name -> payment.RespBase
+	77,  // 87: payment.ListWithdrawNotifyLogsResp.data:type_name -> payment.PayNotifyLog
+	61,  // 88: payment.GetWithdrawNotifyLogResp.base:type_name -> payment.RespBase
+	77,  // 89: payment.GetWithdrawNotifyLogResp.data:type_name -> payment.PayNotifyLog
+	1,   // 90: payment.PaymentAdmin.CreatePayPlatform:input_type -> payment.CreatePayPlatformReq
+	2,   // 91: payment.PaymentAdmin.UpdatePayPlatform:input_type -> payment.UpdatePayPlatformReq
+	3,   // 92: payment.PaymentAdmin.GetPayPlatform:input_type -> payment.GetPayPlatformReq
+	5,   // 93: payment.PaymentAdmin.ListPayPlatforms:input_type -> payment.ListPayPlatformsReq
+	7,   // 94: payment.PaymentAdmin.CreatePayProduct:input_type -> payment.CreatePayProductReq
+	8,   // 95: payment.PaymentAdmin.UpdatePayProduct:input_type -> payment.UpdatePayProductReq
+	9,   // 96: payment.PaymentAdmin.GetPayProduct:input_type -> payment.GetPayProductReq
+	11,  // 97: payment.PaymentAdmin.ListPayProducts:input_type -> payment.ListPayProductsReq
+	13,  // 98: payment.PaymentAdmin.OpenTenantPayPlatform:input_type -> payment.OpenTenantPayPlatformReq
+	14,  // 99: payment.PaymentAdmin.UpdateTenantPayPlatform:input_type -> payment.UpdateTenantPayPlatformReq
+	15,  // 100: payment.PaymentAdmin.GetTenantPayPlatform:input_type -> payment.GetTenantPayPlatformReq
+	17,  // 101: payment.PaymentAdmin.ListTenantPayPlatforms:input_type -> payment.ListTenantPayPlatformsReq
+	19,  // 102: payment.PaymentAdmin.CreateTenantPayAccount:input_type -> payment.CreateTenantPayAccountReq
+	20,  // 103: payment.PaymentAdmin.UpdateTenantPayAccount:input_type -> payment.UpdateTenantPayAccountReq
+	21,  // 104: payment.PaymentAdmin.GetTenantPayAccount:input_type -> payment.GetTenantPayAccountReq
+	23,  // 105: payment.PaymentAdmin.ListTenantPayAccounts:input_type -> payment.ListTenantPayAccountsReq
+	25,  // 106: payment.PaymentAdmin.CreateTenantPayChannel:input_type -> payment.CreateTenantPayChannelReq
+	26,  // 107: payment.PaymentAdmin.UpdateTenantPayChannel:input_type -> payment.UpdateTenantPayChannelReq
+	27,  // 108: payment.PaymentAdmin.GetTenantPayChannel:input_type -> payment.GetTenantPayChannelReq
+	29,  // 109: payment.PaymentAdmin.ListTenantPayChannels:input_type -> payment.ListTenantPayChannelsReq
+	31,  // 110: payment.PaymentAdmin.CreateTenantPayChannelRule:input_type -> payment.CreateTenantPayChannelRuleReq
+	32,  // 111: payment.PaymentAdmin.UpdateTenantPayChannelRule:input_type -> payment.UpdateTenantPayChannelRuleReq
+	33,  // 112: payment.PaymentAdmin.GetTenantPayChannelRule:input_type -> payment.GetTenantPayChannelRuleReq
+	35,  // 113: payment.PaymentAdmin.ListTenantPayChannelRules:input_type -> payment.ListTenantPayChannelRulesReq
+	37,  // 114: payment.PaymentAdmin.GetUserRechargeStat:input_type -> payment.GetUserRechargeStatReq
+	39,  // 115: payment.PaymentAdmin.ListUserRechargeStats:input_type -> payment.ListUserRechargeStatsReq
+	43,  // 116: payment.PaymentAdmin.ListRechargeOrders:input_type -> payment.ListRechargeOrdersReq
+	41,  // 117: payment.PaymentAdmin.GetRechargeOrder:input_type -> payment.GetRechargeOrderReq
+	45,  // 118: payment.PaymentAdmin.CloseRechargeOrder:input_type -> payment.CloseRechargeOrderReq
+	46,  // 119: payment.PaymentAdmin.ManualMarkRechargeOrderSuccess:input_type -> payment.ManualMarkRechargeOrderSuccessReq
+	47,  // 120: payment.PaymentAdmin.RetryNotify:input_type -> payment.RetryNotifyReq
+	50,  // 121: payment.PaymentAdmin.ListRechargeNotifyLogs:input_type -> payment.ListRechargeNotifyLogsReq
+	48,  // 122: payment.PaymentAdmin.GetRechargeNotifyLog:input_type -> payment.GetRechargeNotifyLogReq
+	52,  // 123: payment.PaymentAdmin.ListWithdrawOrders:input_type -> payment.ListWithdrawOrdersReq
+	54,  // 124: payment.PaymentAdmin.GetWithdrawOrder:input_type -> payment.GetWithdrawOrderReq
+	56,  // 125: payment.PaymentAdmin.AuditWithdrawOrder:input_type -> payment.AuditWithdrawOrderReq
+	57,  // 126: payment.PaymentAdmin.ListWithdrawNotifyLogs:input_type -> payment.ListWithdrawNotifyLogsReq
+	59,  // 127: payment.PaymentAdmin.GetWithdrawNotifyLog:input_type -> payment.GetWithdrawNotifyLogReq
+	0,   // 128: payment.PaymentAdmin.CreatePayPlatform:output_type -> payment.AdminCommonResp
+	0,   // 129: payment.PaymentAdmin.UpdatePayPlatform:output_type -> payment.AdminCommonResp
+	4,   // 130: payment.PaymentAdmin.GetPayPlatform:output_type -> payment.GetPayPlatformResp
+	6,   // 131: payment.PaymentAdmin.ListPayPlatforms:output_type -> payment.ListPayPlatformsResp
+	0,   // 132: payment.PaymentAdmin.CreatePayProduct:output_type -> payment.AdminCommonResp
+	0,   // 133: payment.PaymentAdmin.UpdatePayProduct:output_type -> payment.AdminCommonResp
+	10,  // 134: payment.PaymentAdmin.GetPayProduct:output_type -> payment.GetPayProductResp
+	12,  // 135: payment.PaymentAdmin.ListPayProducts:output_type -> payment.ListPayProductsResp
+	0,   // 136: payment.PaymentAdmin.OpenTenantPayPlatform:output_type -> payment.AdminCommonResp
+	0,   // 137: payment.PaymentAdmin.UpdateTenantPayPlatform:output_type -> payment.AdminCommonResp
+	16,  // 138: payment.PaymentAdmin.GetTenantPayPlatform:output_type -> payment.GetTenantPayPlatformResp
+	18,  // 139: payment.PaymentAdmin.ListTenantPayPlatforms:output_type -> payment.ListTenantPayPlatformsResp
+	0,   // 140: payment.PaymentAdmin.CreateTenantPayAccount:output_type -> payment.AdminCommonResp
+	0,   // 141: payment.PaymentAdmin.UpdateTenantPayAccount:output_type -> payment.AdminCommonResp
+	22,  // 142: payment.PaymentAdmin.GetTenantPayAccount:output_type -> payment.GetTenantPayAccountResp
+	24,  // 143: payment.PaymentAdmin.ListTenantPayAccounts:output_type -> payment.ListTenantPayAccountsResp
+	0,   // 144: payment.PaymentAdmin.CreateTenantPayChannel:output_type -> payment.AdminCommonResp
+	0,   // 145: payment.PaymentAdmin.UpdateTenantPayChannel:output_type -> payment.AdminCommonResp
+	28,  // 146: payment.PaymentAdmin.GetTenantPayChannel:output_type -> payment.GetTenantPayChannelResp
+	30,  // 147: payment.PaymentAdmin.ListTenantPayChannels:output_type -> payment.ListTenantPayChannelsResp
+	0,   // 148: payment.PaymentAdmin.CreateTenantPayChannelRule:output_type -> payment.AdminCommonResp
+	0,   // 149: payment.PaymentAdmin.UpdateTenantPayChannelRule:output_type -> payment.AdminCommonResp
+	34,  // 150: payment.PaymentAdmin.GetTenantPayChannelRule:output_type -> payment.GetTenantPayChannelRuleResp
+	36,  // 151: payment.PaymentAdmin.ListTenantPayChannelRules:output_type -> payment.ListTenantPayChannelRulesResp
+	38,  // 152: payment.PaymentAdmin.GetUserRechargeStat:output_type -> payment.GetUserRechargeStatResp
+	40,  // 153: payment.PaymentAdmin.ListUserRechargeStats:output_type -> payment.ListUserRechargeStatsResp
+	44,  // 154: payment.PaymentAdmin.ListRechargeOrders:output_type -> payment.ListRechargeOrdersResp
+	42,  // 155: payment.PaymentAdmin.GetRechargeOrder:output_type -> payment.GetRechargeOrderResp
+	0,   // 156: payment.PaymentAdmin.CloseRechargeOrder:output_type -> payment.AdminCommonResp
+	0,   // 157: payment.PaymentAdmin.ManualMarkRechargeOrderSuccess:output_type -> payment.AdminCommonResp
+	0,   // 158: payment.PaymentAdmin.RetryNotify:output_type -> payment.AdminCommonResp
+	51,  // 159: payment.PaymentAdmin.ListRechargeNotifyLogs:output_type -> payment.ListRechargeNotifyLogsResp
+	49,  // 160: payment.PaymentAdmin.GetRechargeNotifyLog:output_type -> payment.GetRechargeNotifyLogResp
+	53,  // 161: payment.PaymentAdmin.ListWithdrawOrders:output_type -> payment.ListWithdrawOrdersResp
+	55,  // 162: payment.PaymentAdmin.GetWithdrawOrder:output_type -> payment.GetWithdrawOrderResp
+	0,   // 163: payment.PaymentAdmin.AuditWithdrawOrder:output_type -> payment.AdminCommonResp
+	58,  // 164: payment.PaymentAdmin.ListWithdrawNotifyLogs:output_type -> payment.ListWithdrawNotifyLogsResp
+	60,  // 165: payment.PaymentAdmin.GetWithdrawNotifyLog:output_type -> payment.GetWithdrawNotifyLogResp
+	128, // [128:166] is the sub-list for method output_type
+	90,  // [90:128] is the sub-list for method input_type
+	90,  // [90:90] is the sub-list for extension type_name
+	90,  // [90:90] is the sub-list for extension extendee
+	0,   // [0:90] is the sub-list for field type_name
 }
 
 func init() { file_proto_payment_payment_admin_proto_init() }
@@ -4739,7 +5384,7 @@ func file_proto_payment_payment_admin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_payment_payment_admin_proto_rawDesc), len(file_proto_payment_payment_admin_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   52,
+			NumMessages:   61,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

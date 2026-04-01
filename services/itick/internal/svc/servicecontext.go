@@ -12,11 +12,16 @@ import (
 )
 
 type ServiceContext struct {
-	Config             config.Config
-	SystemCli          system.SystemClient
-	ItickManager       *client.ItickManager
-	ItickCategoryModel models.ItickCategoryModel
-	Hub                *server.Hub
+	Config                   config.Config
+	SystemCli                system.SystemClient
+	ItickManager             *client.ItickManager
+	Hub                      *server.Hub
+	ItickCategoryModel       models.ItickCategoryModel
+	ItickProductModel        models.ItickProductModel
+	ItickTenantCategoryModel models.ItickTenantCategoryModel
+	ItickTenantProductModel  models.ItickTenantProductModel
+	ItickSyncTaskModel       models.ItickSyncTaskModel
+	ItickQuoteModel           models.ItickQuoteModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -39,9 +44,14 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	)
 
 	return &ServiceContext{
-		Config:             c,
-		ItickManager:       itickManager,
-		ItickCategoryModel: itickCategoryModel,
-		Hub:                hub,
+		Config:                   c,
+		ItickManager:             itickManager,
+		Hub:                      hub,
+		ItickCategoryModel:       itickCategoryModel,
+		ItickProductModel:        models.NewTItickProductModel(conn, c.CacheRedis).(models.ItickProductModel),
+		ItickTenantCategoryModel: models.NewTItickTenantCategoryModel(conn, c.CacheRedis).(models.ItickTenantCategoryModel),
+		ItickTenantProductModel:  models.NewTItickTenantProductModel(conn, c.CacheRedis).(models.ItickTenantProductModel),
+		ItickSyncTaskModel:       models.NewTItickSyncTaskModel(conn, c.CacheRedis).(models.ItickSyncTaskModel),
+		ItickQuoteModel:           models.NewTItickQuoteModel(conn, c.CacheRedis).(models.ItickQuoteModel),
 	}
 }

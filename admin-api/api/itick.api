@@ -1,0 +1,481 @@
+// 产品类型配置
+type ItickCategory {
+	id           int64  `json:"id"`
+	categoryType int64  `json:"categoryType"`
+	categoryCode string `json:"categoryCode"`
+	categoryName string `json:"categoryName"`
+	enabled      bool   `json:"enabled"`
+	appVisible   bool   `json:"appVisible"`
+	sort         int64  `json:"sort"`
+	icon         string `json:"icon"`
+	remark       string `json:"remark"`
+	createTime   int64  `json:"createTime"`
+	updateTime   int64  `json:"updateTime"`
+}
+
+// 产品
+type ItickProduct {
+	id           int64  `json:"id"`
+	categoryType int64  `json:"categoryType"`
+	market       string `json:"market"` // binance / hk / us / forex ...
+	symbol       string `json:"symbol"` // BTCUSDT / AAPL / EURUSD
+	code         string `json:"code"` // 第三方原始 code
+	name         string `json:"name"`
+	displayName  string `json:"displayName"`
+	baseCoin     string `json:"baseCoin"`
+	quoteCoin    string `json:"quoteCoin"`
+	enabled      bool   `json:"enabled"`
+	appVisible   bool   `json:"appVisible"`
+	sort         int64  `json:"sort"`
+	icon         string `json:"icon"`
+	remark       string `json:"remark"`
+	createTime   int64  `json:"createTime"`
+	updateTime   int64  `json:"updateTime"`
+}
+
+// K线
+type Kline {
+	market   string  `json:"market"`
+	symbol   string  `json:"symbol"`
+	kType    int64   `json:"kType"`
+	ts       int64   `json:"ts"`
+	open     float64 `json:"open"`
+	high     float64 `json:"high"`
+	low      float64 `json:"low"`
+	close    float64 `json:"close"`
+	volume   float64 `json:"volume"`
+	turnover float64 `json:"turnover"`
+}
+
+// 深度档位
+type DepthLevel {
+	price  float64 `json:"price"`
+	volume float64 `json:"volume"`
+}
+
+// 深度
+type Depth {
+	market string       `json:"market"`
+	symbol string       `json:"symbol"`
+	asks   []DepthLevel `json:"asks"`
+	bids   []DepthLevel `json:"bids"`
+	ts     int64        `json:"ts"`
+}
+
+// 实时报价
+type Quote {
+	market         string  `json:"market"`
+	symbol         string  `json:"symbol"`
+	lastPrice      float64 `json:"lastPrice"`
+	openPrice      float64 `json:"openPrice"`
+	highPrice      float64 `json:"highPrice"`
+	lowPrice       float64 `json:"lowPrice"`
+	prevClosePrice float64 `json:"prevClosePrice"`
+	changeValue    float64 `json:"changeValue"`
+	changeRate     float64 `json:"changeRate"`
+	volume         float64 `json:"volume"`
+	turnover       float64 `json:"turnover"`
+	quoteTs        int64   `json:"quoteTs"`
+	tradeStatus    int64   `json:"tradeStatus"`
+}
+
+type ItickTenantCategory {
+	id         int64  `json:"id"`
+	tenantId   int64  `json:"tenantId"`
+	categoryId int64  `json:"categoryId"`
+	enabled    bool   `json:"enabled"`
+	appVisible bool   `json:"appVisible"`
+	sort       int64  `json:"sort"`
+	remark     string `json:"remark"`
+	createTime int64  `json:"createTime"`
+	updateTime int64  `json:"updateTime"`
+	// 冗余返回字段，方便前端展示
+	categoryType     int64  `json:"categoryType"`
+	categoryTypeName string `json:"categoryTypeName"`
+	icon             string `json:"icon"`
+}
+
+type ItickTenantProduct {
+	id         int64  `json:"id"`
+	tenantId   int64  `json:"tenantId"`
+	productId  int64  `json:"productId"`
+	enabled    bool   `json:"enabled"`
+	appVisible bool   `json:"appVisible"`
+	sort       int64  `json:"sort"`
+	remark     string `json:"remark"`
+	createTime int64  `json:"createTime"`
+	updateTime int64  `json:"updateTime"`
+	// 冗余返回字段，方便前端展示
+	categoryType int64  `json:"categoryType"`
+	categoryName string `json:"categoryName"`
+	market       string `json:"market"`
+	symbol       string `json:"symbol"`
+	code         string `json:"code"`
+	name         string `json:"name"`
+	displayName  string `json:"displayName"`
+	baseCoin     string `json:"baseCoin"`
+	quoteCoin    string `json:"quoteCoin"`
+	icon         string `json:"icon"`
+}
+
+// ====================
+// 产品类型
+// ====================
+type CreateCategoryReq {
+	categoryType int64  `json:"categoryType"`
+	categoryName string `json:"categoryName"`
+	enabled      bool   `json:"enabled"`
+	appVisible   bool   `json:"appVisible"`
+	sort         int64  `json:"sort"`
+	icon         string `json:"icon"`
+	remark       string `json:"remark"`
+}
+
+type UpdateCategoryReq {
+	id           int64  `json:"id"`
+	categoryName string `json:"categoryName"`
+	enabled      bool   `json:"enabled"`
+	appVisible   bool   `json:"appVisible"`
+	sort         int64  `json:"sort"`
+	icon         string `json:"icon"`
+	remark       string `json:"remark"`
+}
+
+type GetCategoryReq {
+	id int64 `json:"id"`
+}
+
+type GetCategoryResp {
+	RespBase
+	data ItickCategory `json:"data"`
+}
+
+type ListCategoriesReq {
+	page         PageReq `json:"page"`
+	categoryType int64   `json:"categoryType"`
+	status       int32   `json:"status"` // 0全部 1启用 2禁用
+}
+
+type ListCategoriesResp {
+	RespBase
+	data []ItickCategory `json:"data"`
+}
+
+type SyncCategoryProductsReq {
+	categoryId int64 `json:"categoryId"`
+}
+
+type SyncCategoryProductsResp {
+	RespBase
+	taskNo string `json:"taskNo"`
+}
+
+type GetSyncTaskStatusReq {
+	taskNo string `json:"taskNo"`
+}
+
+type GetSyncTaskStatusResp {
+	RespBase
+	taskNo  string `json:"taskNo"`
+	status  int32  `json:"status"` // 0进行中 1成功 2失败
+	message string `json:"message"`
+}
+
+// ====================
+// 产品
+// ====================
+type CreateProductReq {
+	categoryType int64  `json:"categoryType"`
+	market       string `json:"market"`
+	symbol       string `json:"symbol"`
+	code         string `json:"code"`
+	name         string `json:"name"`
+	displayName  string `json:"displayName"`
+	baseCoin     string `json:"baseCoin"`
+	quoteCoin    string `json:"quoteCoin"`
+	enabled      bool   `json:"enabled"`
+	appVisible   bool   `json:"appVisible"`
+	sort         int64  `json:"sort"`
+	icon         string `json:"icon"`
+	remark       string `json:"remark"`
+}
+
+type UpdateProductReq {
+	id          int64  `json:"id"`
+	name        string `json:"name"`
+	displayName string `json:"displayName"`
+	baseCoin    string `json:"baseCoin"`
+	quoteCoin   string `json:"quoteCoin"`
+	enabled     bool   `json:"enabled"`
+	appVisible  bool   `json:"appVisible"`
+	sort        int64  `json:"sort"`
+	icon        string `json:"icon"`
+	remark      string `json:"remark"`
+}
+
+type GetProductReq {
+	id int64 `json:"id"`
+}
+
+type GetProductResp {
+	RespBase
+	data ItickProduct `json:"data"`
+}
+
+type ListProductsReq {
+	page          PageReq `json:"page"`
+	categoryType  int64   `json:"categoryType"`
+	market        string  `json:"market"`
+	keyword       string  `json:"keyword"`
+	status        int32   `json:"status"` // 0全部 1启用 2禁用
+	visibleStatus int32   `json:"visibleStatus"` // 0全部 1显示 2隐藏
+}
+
+type ListProductsResp {
+	RespBase
+	data []ItickProduct `json:"data"`
+}
+
+// ====================
+// K线
+// ====================
+type GetAdminKlineReq {
+	market string `json:"market"`
+	symbol string `json:"symbol"`
+	kType  int64  `json:"kType"`
+	endTs  int64  `json:"endTs"`
+	limit  int64  `json:"limit"`
+}
+
+type GetAdminKlineResp {
+	RespBase
+	data []Kline `json:"data"`
+}
+
+// ====================
+// tenant product category
+// ====================
+type CreateTenantCategoryReq {
+	tenantId   int64  `json:"tenantId"`
+	categoryId int64  `json:"categoryId"`
+	enabled    bool   `json:"enabled"`
+	appVisible bool   `json:"appVisible"`
+	sort       int64  `json:"sort"`
+	remark     string `json:"remark"`
+}
+
+type UpdateTenantCategoryReq {
+	id         int64  `json:"id"`
+	tenantId   int64  `json:"tenantId"`
+	enabled    bool   `json:"enabled"`
+	appVisible bool   `json:"appVisible"`
+	sort       int64  `json:"sort"`
+	remark     string `json:"remark"`
+}
+
+type BatchUpsertTenantCategoriesReq {
+	tenantId int64                `json:"tenantId"`
+	data     []TenantCategoryItem `json:"data"`
+}
+
+type TenantCategoryItem {
+	id         int64  `json:"id"`
+	categoryId int64  `json:"categoryId"`
+	enabled    bool   `json:"enabled"`
+	appVisible bool   `json:"appVisible"`
+	sort       int64  `json:"sort"`
+	remark     string `json:"remark"`
+}
+
+type GetTenantCategoryReq {
+	id       int64 `json:"id"`
+	tenantId int64 `json:"tenantId"`
+}
+
+type GetTenantCategoryResp {
+	RespBase
+	data ItickTenantCategory `json:"data"`
+}
+
+type ListTenantCategoriesReq {
+	page          PageReq `json:"page"`
+	tenantId      int64   `json:"tenantId"`
+	categoryType  int64   `json:"categoryType"`
+	status        int32   `json:"status"` // 0全部 1启用 2禁用
+	visibleStatus int32   `json:"visibleStatus"` // 0全部 1显示 2隐藏
+}
+
+type ListTenantCategoriesResp {
+	RespBase
+	data []ItickTenantCategory `json:"data"`
+}
+
+// ====================
+// tenant product
+// ====================
+type CreateTenantProductReq {
+	tenantId   int64  `json:"tenantId"`
+	productId  int64  `json:"productId"`
+	enabled    bool   `json:"enabled"`
+	appVisible bool   `json:"appVisible"`
+	sort       int64  `json:"sort"`
+	remark     string `json:"remark"`
+}
+
+type UpdateTenantProductReq {
+	id         int64  `json:"id"`
+	tenantId   int64  `json:"tenantId"`
+	enabled    bool   `json:"enabled"`
+	appVisible bool   `json:"appVisible"`
+	sort       int64  `json:"sort"`
+	remark     string `json:"remark"`
+}
+
+type BatchUpsertTenantProductsReq {
+	tenantId int64               `json:"tenantId"`
+	data     []TenantProductItem `json:"data"`
+}
+
+type TenantProductItem {
+	id         int64  `json:"id"`
+	productId  int64  `json:"productId"`
+	enabled    bool   `json:"enabled"`
+	appVisible bool   `json:"appVisible"`
+	sort       int64  `json:"sort"`
+	remark     string `json:"remark"`
+}
+
+type GetTenantProductReq {
+	id       int64 `json:"id"`
+	tenantId int64 `json:"tenantId"`
+}
+
+type GetTenantProductResp {
+	RespBase
+	data ItickTenantProduct `json:"data"`
+}
+
+type ListTenantProductsReq {
+	page          PageReq `json:"page"`
+	tenantId      int64   `json:"tenantId"`
+	categoryType  int64   `json:"categoryType"`
+	market        string  `json:"market"`
+	keyword       string  `json:"keyword"`
+	status        int32   `json:"status"` // 0全部 1启用 2禁用
+	visibleStatus int32   `json:"visibleStatus"` // 0全部 1显示 2隐藏
+}
+
+type ListTenantProductsResp {
+	RespBase
+	data []ItickTenantProduct `json:"data"`
+}
+
+// ====================
+// tenant init
+// ====================
+type InitTenantItickDisplayReq {
+	tenantId  int64 `json:"tenantId"`
+	overwrite bool  `json:"overwrite"` // 是否覆盖已有配置
+}
+
+type InitTenantItickDisplayResp {
+	RespBase
+	categoryCount int64 `json:"categoryCount"`
+	productCount  int64 `json:"productCount"`
+}
+
+@server (
+	prefix: /admin/itick
+	group:  itick
+	jwt:    Jwt
+)
+service admin {
+	// 产品类型列表
+	@handler ListCategories
+	get /categories (ListCategoriesReq) returns (ListCategoriesResp)
+
+	// 产品类型
+	@handler CreateCategory
+	post /categories (CreateCategoryReq) returns (RespBase)
+
+	// 更新产品类型仅允许更新名称、状态、排序、图标和备注，产品类型不允许修改
+	@handler UpdateCategory
+	put /categories (UpdateCategoryReq) returns (RespBase)
+
+	// 获取产品类型详情
+	@handler GetCategory
+	get /categories/:id (GetCategoryReq) returns (GetCategoryResp)
+
+	// 同步类型下的产品
+	@handler SyncCategoryProducts
+	post /categories/:id/sync-products (SyncCategoryProductsReq) returns (SyncCategoryProductsResp)
+
+	// 获取同步任务状态
+	@handler GetSyncTaskStatus
+	get /sync-tasks/:taskNo/status (GetSyncTaskStatusReq) returns (GetSyncTaskStatusResp)
+
+	// 产品列表
+	@handler ListProducts
+	get /products (ListProductsReq) returns (ListProductsResp)
+
+	// 产品
+	@handler CreateProduct
+	post /products (CreateProductReq) returns (RespBase)
+
+	// 更新产品仅允许更新名称、状态、排序、图标和备注，市场、品种、代码不允许修改
+	@handler UpdateProduct
+	put /products (UpdateProductReq) returns (RespBase)
+
+	// 获取产品详情
+	@handler GetProduct
+	get /products/:id (GetProductReq) returns (GetProductResp)
+
+	// K线查看
+	@handler GetAdminKline
+	get /kline (GetAdminKlineReq) returns (GetAdminKlineResp)
+
+	// 租户产品类型列表
+	@handler ListTenantCategories
+	get /tenant-categories (ListTenantCategoriesReq) returns (ListTenantCategoriesResp)
+
+	// 租户产品类型
+	@handler CreateTenantCategory
+	post /tenant-categories (CreateTenantCategoryReq) returns (RespBase)
+
+	// 更新租户产品类型仅允许更新状态、排序和备注，关联的产品类型不允许修改
+	@handler UpdateTenantCategory
+	put /tenant-categories (UpdateTenantCategoryReq) returns (RespBase)
+
+	// 批量更新租户产品类型，已关联的修改状态、排序和备注，未关联的新增，未提交的删除
+	@handler BatchUpsertTenantCategories
+	post /tenant-categories/batch (BatchUpsertTenantCategoriesReq) returns (RespBase)
+
+	// 获取租户产品类型详情
+	@handler GetTenantCategory
+	get /tenant-categories/:id (GetTenantCategoryReq) returns (GetTenantCategoryResp)
+
+	// 租户产品列表
+	@handler ListTenantProducts
+	get /tenant-products (ListTenantProductsReq) returns (ListTenantProductsResp)
+
+	// 租户产品
+	@handler CreateTenantProduct
+	post /tenant-products (CreateTenantProductReq) returns (RespBase)
+
+	// 更新租户产品仅允许更新状态、排序和备注，关联的产品不允许修改
+	@handler UpdateTenantProduct
+	put /tenant-products (UpdateTenantProductReq) returns (RespBase)
+
+	// 批量更新租户产品，已关联的修改状态、排序和备注，未关联的新增，未提交的删除
+	@handler BatchUpsertTenantProducts
+	post /tenant-products/batch (BatchUpsertTenantProductsReq) returns (RespBase)
+
+	// 获取租户产品详情
+	@handler GetTenantProduct
+	get /tenant-products/:id (GetTenantProductReq) returns (GetTenantProductResp)
+
+	// 初始化租户展示配置
+	@handler InitTenantItickDisplay
+	post /tenant-display/init (InitTenantItickDisplayReq) returns (InitTenantItickDisplayResp)
+}
+

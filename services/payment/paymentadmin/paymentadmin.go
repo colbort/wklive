@@ -14,58 +14,67 @@ import (
 )
 
 type (
-	AdminCommonResp               = payment.AdminCommonResp
-	ClosePayOrderReq              = payment.ClosePayOrderReq
-	CreatePayPlatformReq          = payment.CreatePayPlatformReq
-	CreatePayProductReq           = payment.CreatePayProductReq
-	CreateTenantPayAccountReq     = payment.CreateTenantPayAccountReq
-	CreateTenantPayChannelReq     = payment.CreateTenantPayChannelReq
-	CreateTenantPayChannelRuleReq = payment.CreateTenantPayChannelRuleReq
-	GetPayNotifyLogReq            = payment.GetPayNotifyLogReq
-	GetPayNotifyLogResp           = payment.GetPayNotifyLogResp
-	GetPayOrderReq                = payment.GetPayOrderReq
-	GetPayOrderResp               = payment.GetPayOrderResp
-	GetPayPlatformReq             = payment.GetPayPlatformReq
-	GetPayPlatformResp            = payment.GetPayPlatformResp
-	GetPayProductReq              = payment.GetPayProductReq
-	GetPayProductResp             = payment.GetPayProductResp
-	GetTenantPayAccountReq        = payment.GetTenantPayAccountReq
-	GetTenantPayAccountResp       = payment.GetTenantPayAccountResp
-	GetTenantPayChannelReq        = payment.GetTenantPayChannelReq
-	GetTenantPayChannelResp       = payment.GetTenantPayChannelResp
-	GetTenantPayChannelRuleReq    = payment.GetTenantPayChannelRuleReq
-	GetTenantPayChannelRuleResp   = payment.GetTenantPayChannelRuleResp
-	GetTenantPayPlatformReq       = payment.GetTenantPayPlatformReq
-	GetTenantPayPlatformResp      = payment.GetTenantPayPlatformResp
-	GetUserRechargeStatReq        = payment.GetUserRechargeStatReq
-	GetUserRechargeStatResp       = payment.GetUserRechargeStatResp
-	ListPayNotifyLogsReq          = payment.ListPayNotifyLogsReq
-	ListPayNotifyLogsResp         = payment.ListPayNotifyLogsResp
-	ListPayOrdersReq              = payment.ListPayOrdersReq
-	ListPayOrdersResp             = payment.ListPayOrdersResp
-	ListPayPlatformsReq           = payment.ListPayPlatformsReq
-	ListPayPlatformsResp          = payment.ListPayPlatformsResp
-	ListPayProductsReq            = payment.ListPayProductsReq
-	ListPayProductsResp           = payment.ListPayProductsResp
-	ListTenantPayAccountsReq      = payment.ListTenantPayAccountsReq
-	ListTenantPayAccountsResp     = payment.ListTenantPayAccountsResp
-	ListTenantPayChannelRulesReq  = payment.ListTenantPayChannelRulesReq
-	ListTenantPayChannelRulesResp = payment.ListTenantPayChannelRulesResp
-	ListTenantPayChannelsReq      = payment.ListTenantPayChannelsReq
-	ListTenantPayChannelsResp     = payment.ListTenantPayChannelsResp
-	ListTenantPayPlatformsReq     = payment.ListTenantPayPlatformsReq
-	ListTenantPayPlatformsResp    = payment.ListTenantPayPlatformsResp
-	ListUserRechargeStatsReq      = payment.ListUserRechargeStatsReq
-	ListUserRechargeStatsResp     = payment.ListUserRechargeStatsResp
-	ManualMarkPayOrderSuccessReq  = payment.ManualMarkPayOrderSuccessReq
-	OpenTenantPayPlatformReq      = payment.OpenTenantPayPlatformReq
-	RetryNotifyReq                = payment.RetryNotifyReq
-	UpdatePayPlatformReq          = payment.UpdatePayPlatformReq
-	UpdatePayProductReq           = payment.UpdatePayProductReq
-	UpdateTenantPayAccountReq     = payment.UpdateTenantPayAccountReq
-	UpdateTenantPayChannelReq     = payment.UpdateTenantPayChannelReq
-	UpdateTenantPayChannelRuleReq = payment.UpdateTenantPayChannelRuleReq
-	UpdateTenantPayPlatformReq    = payment.UpdateTenantPayPlatformReq
+	AdminCommonResp                   = payment.AdminCommonResp
+	AuditWithdrawOrderReq             = payment.AuditWithdrawOrderReq
+	CloseRechargeOrderReq             = payment.CloseRechargeOrderReq
+	CreatePayPlatformReq              = payment.CreatePayPlatformReq
+	CreatePayProductReq               = payment.CreatePayProductReq
+	CreateTenantPayAccountReq         = payment.CreateTenantPayAccountReq
+	CreateTenantPayChannelReq         = payment.CreateTenantPayChannelReq
+	CreateTenantPayChannelRuleReq     = payment.CreateTenantPayChannelRuleReq
+	GetPayPlatformReq                 = payment.GetPayPlatformReq
+	GetPayPlatformResp                = payment.GetPayPlatformResp
+	GetPayProductReq                  = payment.GetPayProductReq
+	GetPayProductResp                 = payment.GetPayProductResp
+	GetRechargeNotifyLogReq           = payment.GetRechargeNotifyLogReq
+	GetRechargeNotifyLogResp          = payment.GetRechargeNotifyLogResp
+	GetRechargeOrderReq               = payment.GetRechargeOrderReq
+	GetRechargeOrderResp              = payment.GetRechargeOrderResp
+	GetTenantPayAccountReq            = payment.GetTenantPayAccountReq
+	GetTenantPayAccountResp           = payment.GetTenantPayAccountResp
+	GetTenantPayChannelReq            = payment.GetTenantPayChannelReq
+	GetTenantPayChannelResp           = payment.GetTenantPayChannelResp
+	GetTenantPayChannelRuleReq        = payment.GetTenantPayChannelRuleReq
+	GetTenantPayChannelRuleResp       = payment.GetTenantPayChannelRuleResp
+	GetTenantPayPlatformReq           = payment.GetTenantPayPlatformReq
+	GetTenantPayPlatformResp          = payment.GetTenantPayPlatformResp
+	GetUserRechargeStatReq            = payment.GetUserRechargeStatReq
+	GetUserRechargeStatResp           = payment.GetUserRechargeStatResp
+	GetWithdrawNotifyLogReq           = payment.GetWithdrawNotifyLogReq
+	GetWithdrawNotifyLogResp          = payment.GetWithdrawNotifyLogResp
+	GetWithdrawOrderReq               = payment.GetWithdrawOrderReq
+	GetWithdrawOrderResp              = payment.GetWithdrawOrderResp
+	ListPayPlatformsReq               = payment.ListPayPlatformsReq
+	ListPayPlatformsResp              = payment.ListPayPlatformsResp
+	ListPayProductsReq                = payment.ListPayProductsReq
+	ListPayProductsResp               = payment.ListPayProductsResp
+	ListRechargeNotifyLogsReq         = payment.ListRechargeNotifyLogsReq
+	ListRechargeNotifyLogsResp        = payment.ListRechargeNotifyLogsResp
+	ListRechargeOrdersReq             = payment.ListRechargeOrdersReq
+	ListRechargeOrdersResp            = payment.ListRechargeOrdersResp
+	ListTenantPayAccountsReq          = payment.ListTenantPayAccountsReq
+	ListTenantPayAccountsResp         = payment.ListTenantPayAccountsResp
+	ListTenantPayChannelRulesReq      = payment.ListTenantPayChannelRulesReq
+	ListTenantPayChannelRulesResp     = payment.ListTenantPayChannelRulesResp
+	ListTenantPayChannelsReq          = payment.ListTenantPayChannelsReq
+	ListTenantPayChannelsResp         = payment.ListTenantPayChannelsResp
+	ListTenantPayPlatformsReq         = payment.ListTenantPayPlatformsReq
+	ListTenantPayPlatformsResp        = payment.ListTenantPayPlatformsResp
+	ListUserRechargeStatsReq          = payment.ListUserRechargeStatsReq
+	ListUserRechargeStatsResp         = payment.ListUserRechargeStatsResp
+	ListWithdrawNotifyLogsReq         = payment.ListWithdrawNotifyLogsReq
+	ListWithdrawNotifyLogsResp        = payment.ListWithdrawNotifyLogsResp
+	ListWithdrawOrdersReq             = payment.ListWithdrawOrdersReq
+	ListWithdrawOrdersResp            = payment.ListWithdrawOrdersResp
+	ManualMarkRechargeOrderSuccessReq = payment.ManualMarkRechargeOrderSuccessReq
+	OpenTenantPayPlatformReq          = payment.OpenTenantPayPlatformReq
+	RetryNotifyReq                    = payment.RetryNotifyReq
+	UpdatePayPlatformReq              = payment.UpdatePayPlatformReq
+	UpdatePayProductReq               = payment.UpdatePayProductReq
+	UpdateTenantPayAccountReq         = payment.UpdateTenantPayAccountReq
+	UpdateTenantPayChannelReq         = payment.UpdateTenantPayChannelReq
+	UpdateTenantPayChannelRuleReq     = payment.UpdateTenantPayChannelRuleReq
+	UpdateTenantPayPlatformReq        = payment.UpdateTenantPayPlatformReq
 
 	PaymentAdmin interface {
 		// 创建平台
@@ -120,20 +129,30 @@ type (
 		GetUserRechargeStat(ctx context.Context, in *GetUserRechargeStatReq, opts ...grpc.CallOption) (*GetUserRechargeStatResp, error)
 		// 用户充值统计列表
 		ListUserRechargeStats(ctx context.Context, in *ListUserRechargeStatsReq, opts ...grpc.CallOption) (*ListUserRechargeStatsResp, error)
-		// 订单
-		GetPayOrder(ctx context.Context, in *GetPayOrderReq, opts ...grpc.CallOption) (*GetPayOrderResp, error)
-		// 订单列表
-		ListPayOrders(ctx context.Context, in *ListPayOrdersReq, opts ...grpc.CallOption) (*ListPayOrdersResp, error)
-		// 关闭订单
-		ClosePayOrder(ctx context.Context, in *ClosePayOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
-		// 人工标记订单支付成功
-		ManualMarkPayOrderSuccess(ctx context.Context, in *ManualMarkPayOrderSuccessReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 充值订单列表
+		ListRechargeOrders(ctx context.Context, in *ListRechargeOrdersReq, opts ...grpc.CallOption) (*ListRechargeOrdersResp, error)
+		// 获取充值订单
+		GetRechargeOrder(ctx context.Context, in *GetRechargeOrderReq, opts ...grpc.CallOption) (*GetRechargeOrderResp, error)
+		// 关闭充值订单
+		CloseRechargeOrder(ctx context.Context, in *CloseRechargeOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 人工标记充值订单支付成功
+		ManualMarkRechargeOrderSuccess(ctx context.Context, in *ManualMarkRechargeOrderSuccessReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 		// 重试回调
 		RetryNotify(ctx context.Context, in *RetryNotifyReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
-		// 回调日志
-		GetPayNotifyLog(ctx context.Context, in *GetPayNotifyLogReq, opts ...grpc.CallOption) (*GetPayNotifyLogResp, error)
-		// 回调日志列表
-		ListPayNotifyLogs(ctx context.Context, in *ListPayNotifyLogsReq, opts ...grpc.CallOption) (*ListPayNotifyLogsResp, error)
+		// 充值回调日志列表
+		ListRechargeNotifyLogs(ctx context.Context, in *ListRechargeNotifyLogsReq, opts ...grpc.CallOption) (*ListRechargeNotifyLogsResp, error)
+		// 充值回调日志
+		GetRechargeNotifyLog(ctx context.Context, in *GetRechargeNotifyLogReq, opts ...grpc.CallOption) (*GetRechargeNotifyLogResp, error)
+		// 获取提现订单列表
+		ListWithdrawOrders(ctx context.Context, in *ListWithdrawOrdersReq, opts ...grpc.CallOption) (*ListWithdrawOrdersResp, error)
+		// 获取提现订单详情
+		GetWithdrawOrder(ctx context.Context, in *GetWithdrawOrderReq, opts ...grpc.CallOption) (*GetWithdrawOrderResp, error)
+		// 审核提现订单
+		AuditWithdrawOrder(ctx context.Context, in *AuditWithdrawOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 提现回调日志列表
+		ListWithdrawNotifyLogs(ctx context.Context, in *ListWithdrawNotifyLogsReq, opts ...grpc.CallOption) (*ListWithdrawNotifyLogsResp, error)
+		// 获取提现回调日志详情
+		GetWithdrawNotifyLog(ctx context.Context, in *GetWithdrawNotifyLogReq, opts ...grpc.CallOption) (*GetWithdrawNotifyLogResp, error)
 	}
 
 	defaultPaymentAdmin struct {
@@ -303,28 +322,28 @@ func (m *defaultPaymentAdmin) ListUserRechargeStats(ctx context.Context, in *Lis
 	return client.ListUserRechargeStats(ctx, in, opts...)
 }
 
-// 订单
-func (m *defaultPaymentAdmin) GetPayOrder(ctx context.Context, in *GetPayOrderReq, opts ...grpc.CallOption) (*GetPayOrderResp, error) {
+// 充值订单列表
+func (m *defaultPaymentAdmin) ListRechargeOrders(ctx context.Context, in *ListRechargeOrdersReq, opts ...grpc.CallOption) (*ListRechargeOrdersResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
-	return client.GetPayOrder(ctx, in, opts...)
+	return client.ListRechargeOrders(ctx, in, opts...)
 }
 
-// 订单列表
-func (m *defaultPaymentAdmin) ListPayOrders(ctx context.Context, in *ListPayOrdersReq, opts ...grpc.CallOption) (*ListPayOrdersResp, error) {
+// 获取充值订单
+func (m *defaultPaymentAdmin) GetRechargeOrder(ctx context.Context, in *GetRechargeOrderReq, opts ...grpc.CallOption) (*GetRechargeOrderResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
-	return client.ListPayOrders(ctx, in, opts...)
+	return client.GetRechargeOrder(ctx, in, opts...)
 }
 
-// 关闭订单
-func (m *defaultPaymentAdmin) ClosePayOrder(ctx context.Context, in *ClosePayOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+// 关闭充值订单
+func (m *defaultPaymentAdmin) CloseRechargeOrder(ctx context.Context, in *CloseRechargeOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
-	return client.ClosePayOrder(ctx, in, opts...)
+	return client.CloseRechargeOrder(ctx, in, opts...)
 }
 
-// 人工标记订单支付成功
-func (m *defaultPaymentAdmin) ManualMarkPayOrderSuccess(ctx context.Context, in *ManualMarkPayOrderSuccessReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+// 人工标记充值订单支付成功
+func (m *defaultPaymentAdmin) ManualMarkRechargeOrderSuccess(ctx context.Context, in *ManualMarkRechargeOrderSuccessReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
-	return client.ManualMarkPayOrderSuccess(ctx, in, opts...)
+	return client.ManualMarkRechargeOrderSuccess(ctx, in, opts...)
 }
 
 // 重试回调
@@ -333,14 +352,44 @@ func (m *defaultPaymentAdmin) RetryNotify(ctx context.Context, in *RetryNotifyRe
 	return client.RetryNotify(ctx, in, opts...)
 }
 
-// 回调日志
-func (m *defaultPaymentAdmin) GetPayNotifyLog(ctx context.Context, in *GetPayNotifyLogReq, opts ...grpc.CallOption) (*GetPayNotifyLogResp, error) {
+// 充值回调日志列表
+func (m *defaultPaymentAdmin) ListRechargeNotifyLogs(ctx context.Context, in *ListRechargeNotifyLogsReq, opts ...grpc.CallOption) (*ListRechargeNotifyLogsResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
-	return client.GetPayNotifyLog(ctx, in, opts...)
+	return client.ListRechargeNotifyLogs(ctx, in, opts...)
 }
 
-// 回调日志列表
-func (m *defaultPaymentAdmin) ListPayNotifyLogs(ctx context.Context, in *ListPayNotifyLogsReq, opts ...grpc.CallOption) (*ListPayNotifyLogsResp, error) {
+// 充值回调日志
+func (m *defaultPaymentAdmin) GetRechargeNotifyLog(ctx context.Context, in *GetRechargeNotifyLogReq, opts ...grpc.CallOption) (*GetRechargeNotifyLogResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
-	return client.ListPayNotifyLogs(ctx, in, opts...)
+	return client.GetRechargeNotifyLog(ctx, in, opts...)
+}
+
+// 获取提现订单列表
+func (m *defaultPaymentAdmin) ListWithdrawOrders(ctx context.Context, in *ListWithdrawOrdersReq, opts ...grpc.CallOption) (*ListWithdrawOrdersResp, error) {
+	client := payment.NewPaymentAdminClient(m.cli.Conn())
+	return client.ListWithdrawOrders(ctx, in, opts...)
+}
+
+// 获取提现订单详情
+func (m *defaultPaymentAdmin) GetWithdrawOrder(ctx context.Context, in *GetWithdrawOrderReq, opts ...grpc.CallOption) (*GetWithdrawOrderResp, error) {
+	client := payment.NewPaymentAdminClient(m.cli.Conn())
+	return client.GetWithdrawOrder(ctx, in, opts...)
+}
+
+// 审核提现订单
+func (m *defaultPaymentAdmin) AuditWithdrawOrder(ctx context.Context, in *AuditWithdrawOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	client := payment.NewPaymentAdminClient(m.cli.Conn())
+	return client.AuditWithdrawOrder(ctx, in, opts...)
+}
+
+// 提现回调日志列表
+func (m *defaultPaymentAdmin) ListWithdrawNotifyLogs(ctx context.Context, in *ListWithdrawNotifyLogsReq, opts ...grpc.CallOption) (*ListWithdrawNotifyLogsResp, error) {
+	client := payment.NewPaymentAdminClient(m.cli.Conn())
+	return client.ListWithdrawNotifyLogs(ctx, in, opts...)
+}
+
+// 获取提现回调日志详情
+func (m *defaultPaymentAdmin) GetWithdrawNotifyLog(ctx context.Context, in *GetWithdrawNotifyLogReq, opts ...grpc.CallOption) (*GetWithdrawNotifyLogResp, error) {
+	client := payment.NewPaymentAdminClient(m.cli.Conn())
+	return client.GetWithdrawNotifyLog(ctx, in, opts...)
 }

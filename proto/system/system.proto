@@ -251,7 +251,9 @@ message SysRoleGrantDetailResp {
 
 message SysPermItem {
   string perm_key = 1;
-  string name = 2;
+  string method = 2;
+  string path = 3;
+  string name = 4;
 }
 
 message SysPermListResp {

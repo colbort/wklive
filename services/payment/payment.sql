@@ -157,8 +157,8 @@ CREATE TABLE `t_user_recharge_stat` (
   KEY `idx_tenant_total_amount` (`tenant_id`, `success_total_amount`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户充值统计表';
 
-CREATE TABLE `t_pay_order` (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '支付订单ID',
+CREATE TABLE `t_recharge_order` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '充值订单ID',
   `tenant_id` bigint NOT NULL COMMENT '租户ID',
   `user_id` bigint NOT NULL COMMENT '用户ID',
   `order_no` varchar(64) NOT NULL COMMENT '平台订单号',
@@ -197,12 +197,12 @@ CREATE TABLE `t_pay_order` (
   KEY `idx_tenant_status` (`tenant_id`, `status`),
   KEY `idx_third_trade_no` (`third_trade_no`),
   KEY `idx_create_time` (`create_time`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='支付订单表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='充值订单表';
 
-CREATE TABLE `t_pay_notify_log` (
+CREATE TABLE `t_recharge_notify_log` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '回调日志ID',
   `tenant_id` bigint NOT NULL COMMENT '租户ID',
-  `order_id` bigint DEFAULT NULL COMMENT '支付订单ID',
+  `order_id` bigint DEFAULT NULL COMMENT '充值订单ID',
   `order_no` varchar(64) DEFAULT NULL COMMENT '平台订单号',
   `platform_id` bigint NOT NULL COMMENT '平台ID',
   `channel_id` bigint DEFAULT NULL COMMENT '通道ID',
@@ -217,4 +217,62 @@ CREATE TABLE `t_pay_notify_log` (
   KEY `idx_tenant_order_no` (`tenant_id`, `order_no`),
   KEY `idx_order_id` (`order_id`),
   KEY `idx_notify_status` (`notify_status`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='支付回调日志表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='充值回调日志表';
+
+
+CREATE TABLE `t_withdraw_order` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '提现订单ID',
+  `tenant_id` bigint NOT NULL COMMENT '租户ID',
+  `user_id` bigint NOT NULL COMMENT '用户ID',
+  `order_no` varchar(64) NOT NULL COMMENT '平台订单号',
+  `biz_order_no` varchar(64) DEFAULT NULL COMMENT '业务订单号',
+  `platform_id` bigint NOT NULL COMMENT '平台ID',
+  `product_id` bigint NOT NULL COMMENT '产品ID',
+  `account_id` bigint NOT NULL COMMENT '账号ID',
+  `channel_id` bigint NOT NULL COMMENT '通道ID',
+  `currency` varchar(16) NOT NULL DEFAULT 'CNY' COMMENT '币种',
+  `amount` bigint NOT NULL COMMENT '订单金额，单位分',
+  `fee_amount` bigint NOT NULL DEFAULT 0 COMMENT '手续费金额，单位分',
+  `actual_amount` bigint NOT NULL DEFAULT 0 COMMENT '实际到账金额，单位分',
+  `client_type` tinyint NOT NULL DEFAULT 1 COMMENT '客户端类型：1APP 2H5 3WEB',
+  `client_ip` varchar(64) DEFAULT NULL COMMENT '客户端IP',
+  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：1待处理 2处理中 3成功 4失败 5已关闭',
+  `third_trade_no` varchar(128) DEFAULT NULL COMMENT '三方交易号',
+  `third_order_no` varchar(128) DEFAULT NULL COMMENT '三方订单号',
+  `request_data` json DEFAULT NULL COMMENT '请求快照',
+  `response_data` json DEFAULT NULL COMMENT '响应快照',
+  `notify_data` json DEFAULT NULL COMMENT '回调数据',
+  `process_time` datetime DEFAULT NULL COMMENT '处理时间',
+  `notify_time` datetime DEFAULT NULL COMMENT '回调时间',
+  `close_time` datetime DEFAULT NULL COMMENT '关闭时间',
+  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_order_no` (`order_no`),
+  UNIQUE KEY `uk_tenant_biz_order_no` (`tenant_id`, `biz_order_no`),
+  KEY `idx_tenant_user` (`tenant_id`, `user_id`),
+  KEY `idx_tenant_status` (`tenant_id`, `status`),
+  KEY `idx_third_trade_no` (`third_trade_no`),
+  KEY `idx_create_time` (`create_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='提现订单表';
+
+CREATE TABLE `t_withdraw_notify_log` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '回调日志ID',
+  `tenant_id` bigint NOT NULL COMMENT '租户ID',
+  `order_id` bigint DEFAULT NULL COMMENT '提现订单ID',
+  `order_no` varchar(64) DEFAULT NULL COMMENT '平台订单号',
+  `platform_id` bigint NOT NULL COMMENT '平台ID',
+  `channel_id` bigint DEFAULT NULL COMMENT '通道ID',
+  `notify_status` tinyint NOT NULL DEFAULT 1 COMMENT '处理状态：1待处理 2成功 3失败',
+  `notify_body` longtext COMMENT '回调原文',
+  `sign_result` tinyint NOT NULL DEFAULT 0 COMMENT '验签结果：0未验 1通过 2失败',
+  `process_result` varchar(255) DEFAULT NULL COMMENT '处理结果',
+  `error_message` varchar(1000) DEFAULT NULL COMMENT '错误信息',
+  `notify_time` datetime DEFAULT NULL COMMENT '回调时间',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_tenant_order_no` (`tenant_id`, `order_no`),
+  KEY `idx_order_id` (`order_id`),
+  KEY `idx_notify_status` (`notify_status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='提现回调日志表'; 

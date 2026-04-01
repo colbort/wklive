@@ -128,7 +128,7 @@ message UserRechargeStat {
   int64 update_time = 11;
 }
 
-message PayOrder {
+message RechargeOrder {
   int64 id = 1;
   int64 tenant_id = 2;
   int64 user_id = 3;
@@ -194,4 +194,30 @@ message VisiblePayChannel {
   int64 platform_id = 12;
   int64 product_id = 13;
   int64 account_id = 14;
+}
+
+message WithdrawOrder {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 user_id = 3;
+  string order_no = 4;
+  string biz_order_no = 5;
+  string currency = 6;
+  int64 amount = 7;
+  int64 fee_amount = 8;
+  int64 actual_amount = 9;
+  payment.ClientType client_type = 10;
+  string client_ip = 11;
+  payment.PayOrderStatus status = 12;
+  string third_trade_no = 13;
+  string third_order_no = 14;
+  string request_data = 15;
+  string response_data = 16;
+  string notify_data = 17;
+  int64 process_time = 18;
+  int64 notify_time = 19;
+  int64 close_time = 20;
+  string remark = 21;
+  int64 create_time = 22;
+  int64 update_time = 23;
 }

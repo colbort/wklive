@@ -25,7 +25,34 @@ func NewBatchGetQuoteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Bat
 
 // 批量获取最新报价
 func (l *BatchGetQuoteLogic) BatchGetQuote(in *itick.BatchGetQuoteReq) (*itick.BatchGetQuoteResp, error) {
-	// todo: add your logic here and delete this line
+	result, err := l.svcCtx.ItickQuoteModel.FindQuotes(l.ctx, in.Data)
+	if err != nil {
+		return nil, err
+	}
+	data := make([]*itick.Quote, 0)
+	for _, quote := range result {
+		data = append(data, &itick.Quote{
+			Market:         quote.Market,
+			Symbol:         quote.Symbol,
+			LastPrice:      quote.LastPrice,
+			OpenPrice:      quote.OpenPrice,
+			HighPrice:      quote.HighPrice,
+			LowPrice:       quote.LowPrice,
+			PrevClosePrice: quote.PrevClosePrice,
+			ChangeValue:    quote.ChangeValue,
+			ChangeRate:     quote.ChangeRate,
+			Volume:         quote.Volume,
+			Turnover:       quote.Turnover,
+			QuoteTs:        quote.QuoteTs,
+			TradeStatus:    quote.TradeStatus,
+		})
+	}
 
-	return &itick.BatchGetQuoteResp{}, nil
+	return &itick.BatchGetQuoteResp{
+		Base: &itick.RespBase{
+			Code: 200,
+			Msg:  "获取成功",
+		},
+		Data: data,
+	}, nil
 }

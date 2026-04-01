@@ -55,6 +55,26 @@ message ListCategoriesResp {
   repeated itick.ItickCategory data = 2;
 }
 
+message SyncCategoryProductsReq {
+  int64 category_id = 1;
+}
+
+message SyncCategoryProductsResp {
+  itick.RespBase base = 1;
+  string task_no = 2;
+}
+
+message GetSyncTaskStatusReq {
+  string task_no = 1;
+}
+
+message GetSyncTaskStatusResp {
+  RespBase base = 1;
+  string task_no = 2;
+  int32 status = 3;
+  string message = 4;
+}
+
 // ====================
 // 产品
 // ====================
@@ -268,27 +288,33 @@ message InitTenantItickDisplayResp {
 // admin service
 // ====================
 service ItickAdmin {
+  // 产品类型列表
+  rpc ListCategories(ListCategoriesReq) returns (ListCategoriesResp);
   // 产品类型
   rpc CreateCategory(CreateCategoryReq) returns (AdminCommonResp);
   // 更新产品类型仅允许更新名称、状态、排序、图标和备注，产品类型不允许修改
   rpc UpdateCategory(UpdateCategoryReq) returns (AdminCommonResp);
   // 获取产品类型详情
   rpc GetCategory(GetCategoryReq) returns (GetCategoryResp);
-  // 产品类型列表
-  rpc ListCategories(ListCategoriesReq) returns (ListCategoriesResp);
+  // 同步类型下的产品
+  rpc SyncCategoryProducts(SyncCategoryProductsReq) returns (AdminCommonResp);
+  // 获取同步任务状态
+  rpc GetSyncTaskStatus(GetSyncTaskStatusReq) returns (GetSyncTaskStatusResp);
 
+  // 产品列表
+  rpc ListProducts(ListProductsReq) returns (ListProductsResp);
   // 产品
   rpc CreateProduct(CreateProductReq) returns (AdminCommonResp);
   // 更新产品仅允许更新名称、状态、排序、图标和备注，市场、品种、代码不允许修改
   rpc UpdateProduct(UpdateProductReq) returns (AdminCommonResp);
   // 获取产品详情
   rpc GetProduct(GetProductReq) returns (GetProductResp);
-  // 产品列表
-  rpc ListProducts(ListProductsReq) returns (ListProductsResp);
 
   // K线查看
   rpc GetAdminKline(GetAdminKlineReq) returns (GetAdminKlineResp);
 
+  // 租户产品类型列表
+  rpc ListTenantCategories(ListTenantCategoriesReq) returns (ListTenantCategoriesResp);
   // 租户产品类型
   rpc CreateTenantCategory(CreateTenantCategoryReq) returns (AdminCommonResp);
   // 更新租户产品类型仅允许更新状态、排序和备注，关联的产品类型不允许修改
@@ -297,9 +323,9 @@ service ItickAdmin {
   rpc BatchUpsertTenantCategories(BatchUpsertTenantCategoriesReq) returns (AdminCommonResp);
   // 获取租户产品类型详情
   rpc GetTenantCategory(GetTenantCategoryReq) returns (GetTenantCategoryResp);
-  // 租户产品类型列表
-  rpc ListTenantCategories(ListTenantCategoriesReq) returns (ListTenantCategoriesResp);
 
+  // 租户产品列表
+  rpc ListTenantProducts(ListTenantProductsReq) returns (ListTenantProductsResp);
   // 租户产品
   rpc CreateTenantProduct(CreateTenantProductReq) returns (AdminCommonResp);
   // 更新租户产品仅允许更新状态、排序和备注，关联的产品不允许修改
@@ -308,8 +334,6 @@ service ItickAdmin {
   rpc BatchUpsertTenantProducts(BatchUpsertTenantProductsReq) returns (AdminCommonResp);
   // 获取租户产品详情
   rpc GetTenantProduct(GetTenantProductReq) returns (GetTenantProductResp);
-  // 租户产品列表
-  rpc ListTenantProducts(ListTenantProductsReq) returns (ListTenantProductsResp);
 
   // 初始化租户展示配置
   rpc InitTenantItickDisplay(InitTenantItickDisplayReq) returns (InitTenantItickDisplayResp);

@@ -27,6 +27,8 @@ type (
 	GetCategoryResp                = itick.GetCategoryResp
 	GetProductReq                  = itick.GetProductReq
 	GetProductResp                 = itick.GetProductResp
+	GetSyncTaskStatusReq           = itick.GetSyncTaskStatusReq
+	GetSyncTaskStatusResp          = itick.GetSyncTaskStatusResp
 	GetTenantCategoryReq           = itick.GetTenantCategoryReq
 	GetTenantCategoryResp          = itick.GetTenantCategoryResp
 	GetTenantProductReq            = itick.GetTenantProductReq
@@ -41,6 +43,8 @@ type (
 	ListTenantCategoriesResp       = itick.ListTenantCategoriesResp
 	ListTenantProductsReq          = itick.ListTenantProductsReq
 	ListTenantProductsResp         = itick.ListTenantProductsResp
+	SyncCategoryProductsReq        = itick.SyncCategoryProductsReq
+	SyncCategoryProductsResp       = itick.SyncCategoryProductsResp
 	TenantCategoryItem             = itick.TenantCategoryItem
 	TenantProductItem              = itick.TenantProductItem
 	UpdateCategoryReq              = itick.UpdateCategoryReq
@@ -57,6 +61,10 @@ type (
 		GetCategory(ctx context.Context, in *GetCategoryReq, opts ...grpc.CallOption) (*GetCategoryResp, error)
 		// 产品类型列表
 		ListCategories(ctx context.Context, in *ListCategoriesReq, opts ...grpc.CallOption) (*ListCategoriesResp, error)
+		// 同步类型下的产品
+		SyncCategoryProducts(ctx context.Context, in *SyncCategoryProductsReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 获取同步任务状态
+		GetSyncTaskStatus(ctx context.Context, in *GetSyncTaskStatusReq, opts ...grpc.CallOption) (*GetSyncTaskStatusResp, error)
 		// 产品
 		CreateProduct(ctx context.Context, in *CreateProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 		// 更新产品仅允许更新名称、状态、排序、图标和备注，市场、品种、代码不允许修改
@@ -124,6 +132,18 @@ func (m *defaultItickAdmin) GetCategory(ctx context.Context, in *GetCategoryReq,
 func (m *defaultItickAdmin) ListCategories(ctx context.Context, in *ListCategoriesReq, opts ...grpc.CallOption) (*ListCategoriesResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
 	return client.ListCategories(ctx, in, opts...)
+}
+
+// 同步类型下的产品
+func (m *defaultItickAdmin) SyncCategoryProducts(ctx context.Context, in *SyncCategoryProductsReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	client := itick.NewItickAdminClient(m.cli.Conn())
+	return client.SyncCategoryProducts(ctx, in, opts...)
+}
+
+// 获取同步任务状态
+func (m *defaultItickAdmin) GetSyncTaskStatus(ctx context.Context, in *GetSyncTaskStatusReq, opts ...grpc.CallOption) (*GetSyncTaskStatusResp, error) {
+	client := itick.NewItickAdminClient(m.cli.Conn())
+	return client.GetSyncTaskStatus(ctx, in, opts...)
 }
 
 // 产品

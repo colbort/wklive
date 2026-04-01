@@ -83,7 +83,8 @@ message Quote {
   double change_rate = 9;
   double volume = 10;
   double turnover = 11;
-  int64 ts = 12;
+  int64 quote_ts = 12;
+  int64 trade_status = 13;
 }
 
 

@@ -42,25 +42,43 @@ func (s *PaymentAppServer) CreateRechargeOrder(ctx context.Context, in *payment.
 }
 
 // 查询我的订单详情
-func (s *PaymentAppServer) GetMyPayOrder(ctx context.Context, in *payment.GetMyPayOrderReq) (*payment.GetMyPayOrderResp, error) {
-	l := logic.NewGetMyPayOrderLogic(ctx, s.svcCtx)
-	return l.GetMyPayOrder(in)
+func (s *PaymentAppServer) GetMyRechargeOrder(ctx context.Context, in *payment.GetMyRechargeOrderReq) (*payment.GetMyRechargeOrderResp, error) {
+	l := logic.NewGetMyRechargeOrderLogic(ctx, s.svcCtx)
+	return l.GetMyRechargeOrder(in)
 }
 
 // 查询我的充值订单列表
-func (s *PaymentAppServer) ListMyPayOrders(ctx context.Context, in *payment.ListMyPayOrdersReq) (*payment.ListMyPayOrdersResp, error) {
-	l := logic.NewListMyPayOrdersLogic(ctx, s.svcCtx)
-	return l.ListMyPayOrders(in)
+func (s *PaymentAppServer) ListMyRechargeOrders(ctx context.Context, in *payment.ListMyRechargeOrdersReq) (*payment.ListMyRechargeOrdersResp, error) {
+	l := logic.NewListMyRechargeOrdersLogic(ctx, s.svcCtx)
+	return l.ListMyRechargeOrders(in)
 }
 
 // 取消未支付订单
-func (s *PaymentAppServer) CancelMyPayOrder(ctx context.Context, in *payment.CancelMyPayOrderReq) (*payment.AppCommonResp, error) {
-	l := logic.NewCancelMyPayOrderLogic(ctx, s.svcCtx)
-	return l.CancelMyPayOrder(in)
+func (s *PaymentAppServer) CancelMyRechargeOrder(ctx context.Context, in *payment.CancelMyRechargeOrderReq) (*payment.AppCommonResp, error) {
+	l := logic.NewCancelMyRechargeOrderLogic(ctx, s.svcCtx)
+	return l.CancelMyRechargeOrder(in)
 }
 
 // 轮询订单状态
-func (s *PaymentAppServer) QueryMyPayOrderStatus(ctx context.Context, in *payment.QueryMyPayOrderStatusReq) (*payment.QueryMyPayOrderStatusResp, error) {
-	l := logic.NewQueryMyPayOrderStatusLogic(ctx, s.svcCtx)
-	return l.QueryMyPayOrderStatus(in)
+func (s *PaymentAppServer) QueryMyRechargeOrderStatus(ctx context.Context, in *payment.QueryMyRechargeOrderStatusReq) (*payment.QueryMyRechargeOrderStatusResp, error) {
+	l := logic.NewQueryMyRechargeOrderStatusLogic(ctx, s.svcCtx)
+	return l.QueryMyRechargeOrderStatus(in)
+}
+
+// 提现
+func (s *PaymentAppServer) Withdraw(ctx context.Context, in *payment.WithdrawReq) (*payment.WithdrawResp, error) {
+	l := logic.NewWithdrawLogic(ctx, s.svcCtx)
+	return l.Withdraw(in)
+}
+
+// 获取提现订单列表
+func (s *PaymentAppServer) ListMyWithdrawOrders(ctx context.Context, in *payment.ListMyWithdrawOrdersReq) (*payment.ListMyWithdrawOrdersResp, error) {
+	l := logic.NewListMyWithdrawOrdersLogic(ctx, s.svcCtx)
+	return l.ListMyWithdrawOrders(in)
+}
+
+// 获取提现订单详情
+func (s *PaymentAppServer) GetMyWithdrawOrder(ctx context.Context, in *payment.GetMyWithdrawOrderReq) (*payment.GetMyWithdrawOrderResp, error) {
+	l := logic.NewGetMyWithdrawOrderLogic(ctx, s.svcCtx)
+	return l.GetMyWithdrawOrder(in)
 }

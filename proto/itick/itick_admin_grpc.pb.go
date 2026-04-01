@@ -23,6 +23,8 @@ const (
 	ItickAdmin_UpdateCategory_FullMethodName              = "/itick.ItickAdmin/UpdateCategory"
 	ItickAdmin_GetCategory_FullMethodName                 = "/itick.ItickAdmin/GetCategory"
 	ItickAdmin_ListCategories_FullMethodName              = "/itick.ItickAdmin/ListCategories"
+	ItickAdmin_SyncCategoryProducts_FullMethodName        = "/itick.ItickAdmin/SyncCategoryProducts"
+	ItickAdmin_GetSyncTaskStatus_FullMethodName           = "/itick.ItickAdmin/GetSyncTaskStatus"
 	ItickAdmin_CreateProduct_FullMethodName               = "/itick.ItickAdmin/CreateProduct"
 	ItickAdmin_UpdateProduct_FullMethodName               = "/itick.ItickAdmin/UpdateProduct"
 	ItickAdmin_GetProduct_FullMethodName                  = "/itick.ItickAdmin/GetProduct"
@@ -57,6 +59,10 @@ type ItickAdminClient interface {
 	GetCategory(ctx context.Context, in *GetCategoryReq, opts ...grpc.CallOption) (*GetCategoryResp, error)
 	// 产品类型列表
 	ListCategories(ctx context.Context, in *ListCategoriesReq, opts ...grpc.CallOption) (*ListCategoriesResp, error)
+	// 同步类型下的产品
+	SyncCategoryProducts(ctx context.Context, in *SyncCategoryProductsReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	// 获取同步任务状态
+	GetSyncTaskStatus(ctx context.Context, in *GetSyncTaskStatusReq, opts ...grpc.CallOption) (*GetSyncTaskStatusResp, error)
 	// 产品
 	CreateProduct(ctx context.Context, in *CreateProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	// 更新产品仅允许更新名称、状态、排序、图标和备注，市场、品种、代码不允许修改
@@ -133,6 +139,26 @@ func (c *itickAdminClient) ListCategories(ctx context.Context, in *ListCategorie
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListCategoriesResp)
 	err := c.cc.Invoke(ctx, ItickAdmin_ListCategories_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *itickAdminClient) SyncCategoryProducts(ctx context.Context, in *SyncCategoryProductsReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminCommonResp)
+	err := c.cc.Invoke(ctx, ItickAdmin_SyncCategoryProducts_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *itickAdminClient) GetSyncTaskStatus(ctx context.Context, in *GetSyncTaskStatusReq, opts ...grpc.CallOption) (*GetSyncTaskStatusResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSyncTaskStatusResp)
+	err := c.cc.Invoke(ctx, ItickAdmin_GetSyncTaskStatus_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -315,6 +341,10 @@ type ItickAdminServer interface {
 	GetCategory(context.Context, *GetCategoryReq) (*GetCategoryResp, error)
 	// 产品类型列表
 	ListCategories(context.Context, *ListCategoriesReq) (*ListCategoriesResp, error)
+	// 同步类型下的产品
+	SyncCategoryProducts(context.Context, *SyncCategoryProductsReq) (*AdminCommonResp, error)
+	// 获取同步任务状态
+	GetSyncTaskStatus(context.Context, *GetSyncTaskStatusReq) (*GetSyncTaskStatusResp, error)
 	// 产品
 	CreateProduct(context.Context, *CreateProductReq) (*AdminCommonResp, error)
 	// 更新产品仅允许更新名称、状态、排序、图标和备注，市场、品种、代码不允许修改
@@ -368,6 +398,12 @@ func (UnimplementedItickAdminServer) GetCategory(context.Context, *GetCategoryRe
 }
 func (UnimplementedItickAdminServer) ListCategories(context.Context, *ListCategoriesReq) (*ListCategoriesResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListCategories not implemented")
+}
+func (UnimplementedItickAdminServer) SyncCategoryProducts(context.Context, *SyncCategoryProductsReq) (*AdminCommonResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SyncCategoryProducts not implemented")
+}
+func (UnimplementedItickAdminServer) GetSyncTaskStatus(context.Context, *GetSyncTaskStatusReq) (*GetSyncTaskStatusResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSyncTaskStatus not implemented")
 }
 func (UnimplementedItickAdminServer) CreateProduct(context.Context, *CreateProductReq) (*AdminCommonResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateProduct not implemented")
@@ -506,6 +542,42 @@ func _ItickAdmin_ListCategories_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ItickAdminServer).ListCategories(ctx, req.(*ListCategoriesReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ItickAdmin_SyncCategoryProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SyncCategoryProductsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ItickAdminServer).SyncCategoryProducts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ItickAdmin_SyncCategoryProducts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ItickAdminServer).SyncCategoryProducts(ctx, req.(*SyncCategoryProductsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ItickAdmin_GetSyncTaskStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSyncTaskStatusReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ItickAdminServer).GetSyncTaskStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ItickAdmin_GetSyncTaskStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ItickAdminServer).GetSyncTaskStatus(ctx, req.(*GetSyncTaskStatusReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -820,6 +892,14 @@ var ItickAdmin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListCategories",
 			Handler:    _ItickAdmin_ListCategories_Handler,
+		},
+		{
+			MethodName: "SyncCategoryProducts",
+			Handler:    _ItickAdmin_SyncCategoryProducts_Handler,
+		},
+		{
+			MethodName: "GetSyncTaskStatus",
+			Handler:    _ItickAdmin_GetSyncTaskStatus_Handler,
 		},
 		{
 			MethodName: "CreateProduct",

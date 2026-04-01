@@ -19,39 +19,44 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PaymentAdmin_CreatePayPlatform_FullMethodName          = "/payment.PaymentAdmin/CreatePayPlatform"
-	PaymentAdmin_UpdatePayPlatform_FullMethodName          = "/payment.PaymentAdmin/UpdatePayPlatform"
-	PaymentAdmin_GetPayPlatform_FullMethodName             = "/payment.PaymentAdmin/GetPayPlatform"
-	PaymentAdmin_ListPayPlatforms_FullMethodName           = "/payment.PaymentAdmin/ListPayPlatforms"
-	PaymentAdmin_CreatePayProduct_FullMethodName           = "/payment.PaymentAdmin/CreatePayProduct"
-	PaymentAdmin_UpdatePayProduct_FullMethodName           = "/payment.PaymentAdmin/UpdatePayProduct"
-	PaymentAdmin_GetPayProduct_FullMethodName              = "/payment.PaymentAdmin/GetPayProduct"
-	PaymentAdmin_ListPayProducts_FullMethodName            = "/payment.PaymentAdmin/ListPayProducts"
-	PaymentAdmin_OpenTenantPayPlatform_FullMethodName      = "/payment.PaymentAdmin/OpenTenantPayPlatform"
-	PaymentAdmin_UpdateTenantPayPlatform_FullMethodName    = "/payment.PaymentAdmin/UpdateTenantPayPlatform"
-	PaymentAdmin_GetTenantPayPlatform_FullMethodName       = "/payment.PaymentAdmin/GetTenantPayPlatform"
-	PaymentAdmin_ListTenantPayPlatforms_FullMethodName     = "/payment.PaymentAdmin/ListTenantPayPlatforms"
-	PaymentAdmin_CreateTenantPayAccount_FullMethodName     = "/payment.PaymentAdmin/CreateTenantPayAccount"
-	PaymentAdmin_UpdateTenantPayAccount_FullMethodName     = "/payment.PaymentAdmin/UpdateTenantPayAccount"
-	PaymentAdmin_GetTenantPayAccount_FullMethodName        = "/payment.PaymentAdmin/GetTenantPayAccount"
-	PaymentAdmin_ListTenantPayAccounts_FullMethodName      = "/payment.PaymentAdmin/ListTenantPayAccounts"
-	PaymentAdmin_CreateTenantPayChannel_FullMethodName     = "/payment.PaymentAdmin/CreateTenantPayChannel"
-	PaymentAdmin_UpdateTenantPayChannel_FullMethodName     = "/payment.PaymentAdmin/UpdateTenantPayChannel"
-	PaymentAdmin_GetTenantPayChannel_FullMethodName        = "/payment.PaymentAdmin/GetTenantPayChannel"
-	PaymentAdmin_ListTenantPayChannels_FullMethodName      = "/payment.PaymentAdmin/ListTenantPayChannels"
-	PaymentAdmin_CreateTenantPayChannelRule_FullMethodName = "/payment.PaymentAdmin/CreateTenantPayChannelRule"
-	PaymentAdmin_UpdateTenantPayChannelRule_FullMethodName = "/payment.PaymentAdmin/UpdateTenantPayChannelRule"
-	PaymentAdmin_GetTenantPayChannelRule_FullMethodName    = "/payment.PaymentAdmin/GetTenantPayChannelRule"
-	PaymentAdmin_ListTenantPayChannelRules_FullMethodName  = "/payment.PaymentAdmin/ListTenantPayChannelRules"
-	PaymentAdmin_GetUserRechargeStat_FullMethodName        = "/payment.PaymentAdmin/GetUserRechargeStat"
-	PaymentAdmin_ListUserRechargeStats_FullMethodName      = "/payment.PaymentAdmin/ListUserRechargeStats"
-	PaymentAdmin_GetPayOrder_FullMethodName                = "/payment.PaymentAdmin/GetPayOrder"
-	PaymentAdmin_ListPayOrders_FullMethodName              = "/payment.PaymentAdmin/ListPayOrders"
-	PaymentAdmin_ClosePayOrder_FullMethodName              = "/payment.PaymentAdmin/ClosePayOrder"
-	PaymentAdmin_ManualMarkPayOrderSuccess_FullMethodName  = "/payment.PaymentAdmin/ManualMarkPayOrderSuccess"
-	PaymentAdmin_RetryNotify_FullMethodName                = "/payment.PaymentAdmin/RetryNotify"
-	PaymentAdmin_GetPayNotifyLog_FullMethodName            = "/payment.PaymentAdmin/GetPayNotifyLog"
-	PaymentAdmin_ListPayNotifyLogs_FullMethodName          = "/payment.PaymentAdmin/ListPayNotifyLogs"
+	PaymentAdmin_CreatePayPlatform_FullMethodName              = "/payment.PaymentAdmin/CreatePayPlatform"
+	PaymentAdmin_UpdatePayPlatform_FullMethodName              = "/payment.PaymentAdmin/UpdatePayPlatform"
+	PaymentAdmin_GetPayPlatform_FullMethodName                 = "/payment.PaymentAdmin/GetPayPlatform"
+	PaymentAdmin_ListPayPlatforms_FullMethodName               = "/payment.PaymentAdmin/ListPayPlatforms"
+	PaymentAdmin_CreatePayProduct_FullMethodName               = "/payment.PaymentAdmin/CreatePayProduct"
+	PaymentAdmin_UpdatePayProduct_FullMethodName               = "/payment.PaymentAdmin/UpdatePayProduct"
+	PaymentAdmin_GetPayProduct_FullMethodName                  = "/payment.PaymentAdmin/GetPayProduct"
+	PaymentAdmin_ListPayProducts_FullMethodName                = "/payment.PaymentAdmin/ListPayProducts"
+	PaymentAdmin_OpenTenantPayPlatform_FullMethodName          = "/payment.PaymentAdmin/OpenTenantPayPlatform"
+	PaymentAdmin_UpdateTenantPayPlatform_FullMethodName        = "/payment.PaymentAdmin/UpdateTenantPayPlatform"
+	PaymentAdmin_GetTenantPayPlatform_FullMethodName           = "/payment.PaymentAdmin/GetTenantPayPlatform"
+	PaymentAdmin_ListTenantPayPlatforms_FullMethodName         = "/payment.PaymentAdmin/ListTenantPayPlatforms"
+	PaymentAdmin_CreateTenantPayAccount_FullMethodName         = "/payment.PaymentAdmin/CreateTenantPayAccount"
+	PaymentAdmin_UpdateTenantPayAccount_FullMethodName         = "/payment.PaymentAdmin/UpdateTenantPayAccount"
+	PaymentAdmin_GetTenantPayAccount_FullMethodName            = "/payment.PaymentAdmin/GetTenantPayAccount"
+	PaymentAdmin_ListTenantPayAccounts_FullMethodName          = "/payment.PaymentAdmin/ListTenantPayAccounts"
+	PaymentAdmin_CreateTenantPayChannel_FullMethodName         = "/payment.PaymentAdmin/CreateTenantPayChannel"
+	PaymentAdmin_UpdateTenantPayChannel_FullMethodName         = "/payment.PaymentAdmin/UpdateTenantPayChannel"
+	PaymentAdmin_GetTenantPayChannel_FullMethodName            = "/payment.PaymentAdmin/GetTenantPayChannel"
+	PaymentAdmin_ListTenantPayChannels_FullMethodName          = "/payment.PaymentAdmin/ListTenantPayChannels"
+	PaymentAdmin_CreateTenantPayChannelRule_FullMethodName     = "/payment.PaymentAdmin/CreateTenantPayChannelRule"
+	PaymentAdmin_UpdateTenantPayChannelRule_FullMethodName     = "/payment.PaymentAdmin/UpdateTenantPayChannelRule"
+	PaymentAdmin_GetTenantPayChannelRule_FullMethodName        = "/payment.PaymentAdmin/GetTenantPayChannelRule"
+	PaymentAdmin_ListTenantPayChannelRules_FullMethodName      = "/payment.PaymentAdmin/ListTenantPayChannelRules"
+	PaymentAdmin_GetUserRechargeStat_FullMethodName            = "/payment.PaymentAdmin/GetUserRechargeStat"
+	PaymentAdmin_ListUserRechargeStats_FullMethodName          = "/payment.PaymentAdmin/ListUserRechargeStats"
+	PaymentAdmin_ListRechargeOrders_FullMethodName             = "/payment.PaymentAdmin/ListRechargeOrders"
+	PaymentAdmin_GetRechargeOrder_FullMethodName               = "/payment.PaymentAdmin/GetRechargeOrder"
+	PaymentAdmin_CloseRechargeOrder_FullMethodName             = "/payment.PaymentAdmin/CloseRechargeOrder"
+	PaymentAdmin_ManualMarkRechargeOrderSuccess_FullMethodName = "/payment.PaymentAdmin/ManualMarkRechargeOrderSuccess"
+	PaymentAdmin_RetryNotify_FullMethodName                    = "/payment.PaymentAdmin/RetryNotify"
+	PaymentAdmin_ListRechargeNotifyLogs_FullMethodName         = "/payment.PaymentAdmin/ListRechargeNotifyLogs"
+	PaymentAdmin_GetRechargeNotifyLog_FullMethodName           = "/payment.PaymentAdmin/GetRechargeNotifyLog"
+	PaymentAdmin_ListWithdrawOrders_FullMethodName             = "/payment.PaymentAdmin/ListWithdrawOrders"
+	PaymentAdmin_GetWithdrawOrder_FullMethodName               = "/payment.PaymentAdmin/GetWithdrawOrder"
+	PaymentAdmin_AuditWithdrawOrder_FullMethodName             = "/payment.PaymentAdmin/AuditWithdrawOrder"
+	PaymentAdmin_ListWithdrawNotifyLogs_FullMethodName         = "/payment.PaymentAdmin/ListWithdrawNotifyLogs"
+	PaymentAdmin_GetWithdrawNotifyLog_FullMethodName           = "/payment.PaymentAdmin/GetWithdrawNotifyLog"
 )
 
 // PaymentAdminClient is the client API for PaymentAdmin service.
@@ -112,20 +117,30 @@ type PaymentAdminClient interface {
 	GetUserRechargeStat(ctx context.Context, in *GetUserRechargeStatReq, opts ...grpc.CallOption) (*GetUserRechargeStatResp, error)
 	// 用户充值统计列表
 	ListUserRechargeStats(ctx context.Context, in *ListUserRechargeStatsReq, opts ...grpc.CallOption) (*ListUserRechargeStatsResp, error)
-	// 订单
-	GetPayOrder(ctx context.Context, in *GetPayOrderReq, opts ...grpc.CallOption) (*GetPayOrderResp, error)
-	// 订单列表
-	ListPayOrders(ctx context.Context, in *ListPayOrdersReq, opts ...grpc.CallOption) (*ListPayOrdersResp, error)
-	// 关闭订单
-	ClosePayOrder(ctx context.Context, in *ClosePayOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
-	// 人工标记订单支付成功
-	ManualMarkPayOrderSuccess(ctx context.Context, in *ManualMarkPayOrderSuccessReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	// 充值订单列表
+	ListRechargeOrders(ctx context.Context, in *ListRechargeOrdersReq, opts ...grpc.CallOption) (*ListRechargeOrdersResp, error)
+	// 获取充值订单
+	GetRechargeOrder(ctx context.Context, in *GetRechargeOrderReq, opts ...grpc.CallOption) (*GetRechargeOrderResp, error)
+	// 关闭充值订单
+	CloseRechargeOrder(ctx context.Context, in *CloseRechargeOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	// 人工标记充值订单支付成功
+	ManualMarkRechargeOrderSuccess(ctx context.Context, in *ManualMarkRechargeOrderSuccessReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	// 重试回调
 	RetryNotify(ctx context.Context, in *RetryNotifyReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
-	// 回调日志
-	GetPayNotifyLog(ctx context.Context, in *GetPayNotifyLogReq, opts ...grpc.CallOption) (*GetPayNotifyLogResp, error)
-	// 回调日志列表
-	ListPayNotifyLogs(ctx context.Context, in *ListPayNotifyLogsReq, opts ...grpc.CallOption) (*ListPayNotifyLogsResp, error)
+	// 充值回调日志列表
+	ListRechargeNotifyLogs(ctx context.Context, in *ListRechargeNotifyLogsReq, opts ...grpc.CallOption) (*ListRechargeNotifyLogsResp, error)
+	// 充值回调日志
+	GetRechargeNotifyLog(ctx context.Context, in *GetRechargeNotifyLogReq, opts ...grpc.CallOption) (*GetRechargeNotifyLogResp, error)
+	// 获取提现订单列表
+	ListWithdrawOrders(ctx context.Context, in *ListWithdrawOrdersReq, opts ...grpc.CallOption) (*ListWithdrawOrdersResp, error)
+	// 获取提现订单详情
+	GetWithdrawOrder(ctx context.Context, in *GetWithdrawOrderReq, opts ...grpc.CallOption) (*GetWithdrawOrderResp, error)
+	// 审核提现订单
+	AuditWithdrawOrder(ctx context.Context, in *AuditWithdrawOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	// 提现回调日志列表
+	ListWithdrawNotifyLogs(ctx context.Context, in *ListWithdrawNotifyLogsReq, opts ...grpc.CallOption) (*ListWithdrawNotifyLogsResp, error)
+	// 获取提现回调日志详情
+	GetWithdrawNotifyLog(ctx context.Context, in *GetWithdrawNotifyLogReq, opts ...grpc.CallOption) (*GetWithdrawNotifyLogResp, error)
 }
 
 type paymentAdminClient struct {
@@ -396,40 +411,40 @@ func (c *paymentAdminClient) ListUserRechargeStats(ctx context.Context, in *List
 	return out, nil
 }
 
-func (c *paymentAdminClient) GetPayOrder(ctx context.Context, in *GetPayOrderReq, opts ...grpc.CallOption) (*GetPayOrderResp, error) {
+func (c *paymentAdminClient) ListRechargeOrders(ctx context.Context, in *ListRechargeOrdersReq, opts ...grpc.CallOption) (*ListRechargeOrdersResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetPayOrderResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_GetPayOrder_FullMethodName, in, out, cOpts...)
+	out := new(ListRechargeOrdersResp)
+	err := c.cc.Invoke(ctx, PaymentAdmin_ListRechargeOrders_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) ListPayOrders(ctx context.Context, in *ListPayOrdersReq, opts ...grpc.CallOption) (*ListPayOrdersResp, error) {
+func (c *paymentAdminClient) GetRechargeOrder(ctx context.Context, in *GetRechargeOrderReq, opts ...grpc.CallOption) (*GetRechargeOrderResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListPayOrdersResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_ListPayOrders_FullMethodName, in, out, cOpts...)
+	out := new(GetRechargeOrderResp)
+	err := c.cc.Invoke(ctx, PaymentAdmin_GetRechargeOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) ClosePayOrder(ctx context.Context, in *ClosePayOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *paymentAdminClient) CloseRechargeOrder(ctx context.Context, in *CloseRechargeOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AdminCommonResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_ClosePayOrder_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, PaymentAdmin_CloseRechargeOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) ManualMarkPayOrderSuccess(ctx context.Context, in *ManualMarkPayOrderSuccessReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+func (c *paymentAdminClient) ManualMarkRechargeOrderSuccess(ctx context.Context, in *ManualMarkRechargeOrderSuccessReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AdminCommonResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_ManualMarkPayOrderSuccess_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, PaymentAdmin_ManualMarkRechargeOrderSuccess_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -446,20 +461,70 @@ func (c *paymentAdminClient) RetryNotify(ctx context.Context, in *RetryNotifyReq
 	return out, nil
 }
 
-func (c *paymentAdminClient) GetPayNotifyLog(ctx context.Context, in *GetPayNotifyLogReq, opts ...grpc.CallOption) (*GetPayNotifyLogResp, error) {
+func (c *paymentAdminClient) ListRechargeNotifyLogs(ctx context.Context, in *ListRechargeNotifyLogsReq, opts ...grpc.CallOption) (*ListRechargeNotifyLogsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetPayNotifyLogResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_GetPayNotifyLog_FullMethodName, in, out, cOpts...)
+	out := new(ListRechargeNotifyLogsResp)
+	err := c.cc.Invoke(ctx, PaymentAdmin_ListRechargeNotifyLogs_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) ListPayNotifyLogs(ctx context.Context, in *ListPayNotifyLogsReq, opts ...grpc.CallOption) (*ListPayNotifyLogsResp, error) {
+func (c *paymentAdminClient) GetRechargeNotifyLog(ctx context.Context, in *GetRechargeNotifyLogReq, opts ...grpc.CallOption) (*GetRechargeNotifyLogResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListPayNotifyLogsResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_ListPayNotifyLogs_FullMethodName, in, out, cOpts...)
+	out := new(GetRechargeNotifyLogResp)
+	err := c.cc.Invoke(ctx, PaymentAdmin_GetRechargeNotifyLog_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentAdminClient) ListWithdrawOrders(ctx context.Context, in *ListWithdrawOrdersReq, opts ...grpc.CallOption) (*ListWithdrawOrdersResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListWithdrawOrdersResp)
+	err := c.cc.Invoke(ctx, PaymentAdmin_ListWithdrawOrders_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentAdminClient) GetWithdrawOrder(ctx context.Context, in *GetWithdrawOrderReq, opts ...grpc.CallOption) (*GetWithdrawOrderResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetWithdrawOrderResp)
+	err := c.cc.Invoke(ctx, PaymentAdmin_GetWithdrawOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentAdminClient) AuditWithdrawOrder(ctx context.Context, in *AuditWithdrawOrderReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminCommonResp)
+	err := c.cc.Invoke(ctx, PaymentAdmin_AuditWithdrawOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentAdminClient) ListWithdrawNotifyLogs(ctx context.Context, in *ListWithdrawNotifyLogsReq, opts ...grpc.CallOption) (*ListWithdrawNotifyLogsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListWithdrawNotifyLogsResp)
+	err := c.cc.Invoke(ctx, PaymentAdmin_ListWithdrawNotifyLogs_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentAdminClient) GetWithdrawNotifyLog(ctx context.Context, in *GetWithdrawNotifyLogReq, opts ...grpc.CallOption) (*GetWithdrawNotifyLogResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetWithdrawNotifyLogResp)
+	err := c.cc.Invoke(ctx, PaymentAdmin_GetWithdrawNotifyLog_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -524,20 +589,30 @@ type PaymentAdminServer interface {
 	GetUserRechargeStat(context.Context, *GetUserRechargeStatReq) (*GetUserRechargeStatResp, error)
 	// 用户充值统计列表
 	ListUserRechargeStats(context.Context, *ListUserRechargeStatsReq) (*ListUserRechargeStatsResp, error)
-	// 订单
-	GetPayOrder(context.Context, *GetPayOrderReq) (*GetPayOrderResp, error)
-	// 订单列表
-	ListPayOrders(context.Context, *ListPayOrdersReq) (*ListPayOrdersResp, error)
-	// 关闭订单
-	ClosePayOrder(context.Context, *ClosePayOrderReq) (*AdminCommonResp, error)
-	// 人工标记订单支付成功
-	ManualMarkPayOrderSuccess(context.Context, *ManualMarkPayOrderSuccessReq) (*AdminCommonResp, error)
+	// 充值订单列表
+	ListRechargeOrders(context.Context, *ListRechargeOrdersReq) (*ListRechargeOrdersResp, error)
+	// 获取充值订单
+	GetRechargeOrder(context.Context, *GetRechargeOrderReq) (*GetRechargeOrderResp, error)
+	// 关闭充值订单
+	CloseRechargeOrder(context.Context, *CloseRechargeOrderReq) (*AdminCommonResp, error)
+	// 人工标记充值订单支付成功
+	ManualMarkRechargeOrderSuccess(context.Context, *ManualMarkRechargeOrderSuccessReq) (*AdminCommonResp, error)
 	// 重试回调
 	RetryNotify(context.Context, *RetryNotifyReq) (*AdminCommonResp, error)
-	// 回调日志
-	GetPayNotifyLog(context.Context, *GetPayNotifyLogReq) (*GetPayNotifyLogResp, error)
-	// 回调日志列表
-	ListPayNotifyLogs(context.Context, *ListPayNotifyLogsReq) (*ListPayNotifyLogsResp, error)
+	// 充值回调日志列表
+	ListRechargeNotifyLogs(context.Context, *ListRechargeNotifyLogsReq) (*ListRechargeNotifyLogsResp, error)
+	// 充值回调日志
+	GetRechargeNotifyLog(context.Context, *GetRechargeNotifyLogReq) (*GetRechargeNotifyLogResp, error)
+	// 获取提现订单列表
+	ListWithdrawOrders(context.Context, *ListWithdrawOrdersReq) (*ListWithdrawOrdersResp, error)
+	// 获取提现订单详情
+	GetWithdrawOrder(context.Context, *GetWithdrawOrderReq) (*GetWithdrawOrderResp, error)
+	// 审核提现订单
+	AuditWithdrawOrder(context.Context, *AuditWithdrawOrderReq) (*AdminCommonResp, error)
+	// 提现回调日志列表
+	ListWithdrawNotifyLogs(context.Context, *ListWithdrawNotifyLogsReq) (*ListWithdrawNotifyLogsResp, error)
+	// 获取提现回调日志详情
+	GetWithdrawNotifyLog(context.Context, *GetWithdrawNotifyLogReq) (*GetWithdrawNotifyLogResp, error)
 	mustEmbedUnimplementedPaymentAdminServer()
 }
 
@@ -626,26 +701,41 @@ func (UnimplementedPaymentAdminServer) GetUserRechargeStat(context.Context, *Get
 func (UnimplementedPaymentAdminServer) ListUserRechargeStats(context.Context, *ListUserRechargeStatsReq) (*ListUserRechargeStatsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUserRechargeStats not implemented")
 }
-func (UnimplementedPaymentAdminServer) GetPayOrder(context.Context, *GetPayOrderReq) (*GetPayOrderResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPayOrder not implemented")
+func (UnimplementedPaymentAdminServer) ListRechargeOrders(context.Context, *ListRechargeOrdersReq) (*ListRechargeOrdersResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListRechargeOrders not implemented")
 }
-func (UnimplementedPaymentAdminServer) ListPayOrders(context.Context, *ListPayOrdersReq) (*ListPayOrdersResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListPayOrders not implemented")
+func (UnimplementedPaymentAdminServer) GetRechargeOrder(context.Context, *GetRechargeOrderReq) (*GetRechargeOrderResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRechargeOrder not implemented")
 }
-func (UnimplementedPaymentAdminServer) ClosePayOrder(context.Context, *ClosePayOrderReq) (*AdminCommonResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ClosePayOrder not implemented")
+func (UnimplementedPaymentAdminServer) CloseRechargeOrder(context.Context, *CloseRechargeOrderReq) (*AdminCommonResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CloseRechargeOrder not implemented")
 }
-func (UnimplementedPaymentAdminServer) ManualMarkPayOrderSuccess(context.Context, *ManualMarkPayOrderSuccessReq) (*AdminCommonResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ManualMarkPayOrderSuccess not implemented")
+func (UnimplementedPaymentAdminServer) ManualMarkRechargeOrderSuccess(context.Context, *ManualMarkRechargeOrderSuccessReq) (*AdminCommonResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ManualMarkRechargeOrderSuccess not implemented")
 }
 func (UnimplementedPaymentAdminServer) RetryNotify(context.Context, *RetryNotifyReq) (*AdminCommonResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RetryNotify not implemented")
 }
-func (UnimplementedPaymentAdminServer) GetPayNotifyLog(context.Context, *GetPayNotifyLogReq) (*GetPayNotifyLogResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPayNotifyLog not implemented")
+func (UnimplementedPaymentAdminServer) ListRechargeNotifyLogs(context.Context, *ListRechargeNotifyLogsReq) (*ListRechargeNotifyLogsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListRechargeNotifyLogs not implemented")
 }
-func (UnimplementedPaymentAdminServer) ListPayNotifyLogs(context.Context, *ListPayNotifyLogsReq) (*ListPayNotifyLogsResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListPayNotifyLogs not implemented")
+func (UnimplementedPaymentAdminServer) GetRechargeNotifyLog(context.Context, *GetRechargeNotifyLogReq) (*GetRechargeNotifyLogResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRechargeNotifyLog not implemented")
+}
+func (UnimplementedPaymentAdminServer) ListWithdrawOrders(context.Context, *ListWithdrawOrdersReq) (*ListWithdrawOrdersResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListWithdrawOrders not implemented")
+}
+func (UnimplementedPaymentAdminServer) GetWithdrawOrder(context.Context, *GetWithdrawOrderReq) (*GetWithdrawOrderResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetWithdrawOrder not implemented")
+}
+func (UnimplementedPaymentAdminServer) AuditWithdrawOrder(context.Context, *AuditWithdrawOrderReq) (*AdminCommonResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AuditWithdrawOrder not implemented")
+}
+func (UnimplementedPaymentAdminServer) ListWithdrawNotifyLogs(context.Context, *ListWithdrawNotifyLogsReq) (*ListWithdrawNotifyLogsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListWithdrawNotifyLogs not implemented")
+}
+func (UnimplementedPaymentAdminServer) GetWithdrawNotifyLog(context.Context, *GetWithdrawNotifyLogReq) (*GetWithdrawNotifyLogResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetWithdrawNotifyLog not implemented")
 }
 func (UnimplementedPaymentAdminServer) mustEmbedUnimplementedPaymentAdminServer() {}
 func (UnimplementedPaymentAdminServer) testEmbeddedByValue()                      {}
@@ -1136,74 +1226,74 @@ func _PaymentAdmin_ListUserRechargeStats_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_GetPayOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetPayOrderReq)
+func _PaymentAdmin_ListRechargeOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListRechargeOrdersReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).GetPayOrder(ctx, in)
+		return srv.(PaymentAdminServer).ListRechargeOrders(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_GetPayOrder_FullMethodName,
+		FullMethod: PaymentAdmin_ListRechargeOrders_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).GetPayOrder(ctx, req.(*GetPayOrderReq))
+		return srv.(PaymentAdminServer).ListRechargeOrders(ctx, req.(*ListRechargeOrdersReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_ListPayOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListPayOrdersReq)
+func _PaymentAdmin_GetRechargeOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRechargeOrderReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).ListPayOrders(ctx, in)
+		return srv.(PaymentAdminServer).GetRechargeOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_ListPayOrders_FullMethodName,
+		FullMethod: PaymentAdmin_GetRechargeOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).ListPayOrders(ctx, req.(*ListPayOrdersReq))
+		return srv.(PaymentAdminServer).GetRechargeOrder(ctx, req.(*GetRechargeOrderReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_ClosePayOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ClosePayOrderReq)
+func _PaymentAdmin_CloseRechargeOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CloseRechargeOrderReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).ClosePayOrder(ctx, in)
+		return srv.(PaymentAdminServer).CloseRechargeOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_ClosePayOrder_FullMethodName,
+		FullMethod: PaymentAdmin_CloseRechargeOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).ClosePayOrder(ctx, req.(*ClosePayOrderReq))
+		return srv.(PaymentAdminServer).CloseRechargeOrder(ctx, req.(*CloseRechargeOrderReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_ManualMarkPayOrderSuccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ManualMarkPayOrderSuccessReq)
+func _PaymentAdmin_ManualMarkRechargeOrderSuccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ManualMarkRechargeOrderSuccessReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).ManualMarkPayOrderSuccess(ctx, in)
+		return srv.(PaymentAdminServer).ManualMarkRechargeOrderSuccess(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_ManualMarkPayOrderSuccess_FullMethodName,
+		FullMethod: PaymentAdmin_ManualMarkRechargeOrderSuccess_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).ManualMarkPayOrderSuccess(ctx, req.(*ManualMarkPayOrderSuccessReq))
+		return srv.(PaymentAdminServer).ManualMarkRechargeOrderSuccess(ctx, req.(*ManualMarkRechargeOrderSuccessReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1226,38 +1316,128 @@ func _PaymentAdmin_RetryNotify_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_GetPayNotifyLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetPayNotifyLogReq)
+func _PaymentAdmin_ListRechargeNotifyLogs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListRechargeNotifyLogsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).GetPayNotifyLog(ctx, in)
+		return srv.(PaymentAdminServer).ListRechargeNotifyLogs(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_GetPayNotifyLog_FullMethodName,
+		FullMethod: PaymentAdmin_ListRechargeNotifyLogs_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).GetPayNotifyLog(ctx, req.(*GetPayNotifyLogReq))
+		return srv.(PaymentAdminServer).ListRechargeNotifyLogs(ctx, req.(*ListRechargeNotifyLogsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_ListPayNotifyLogs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListPayNotifyLogsReq)
+func _PaymentAdmin_GetRechargeNotifyLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRechargeNotifyLogReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).ListPayNotifyLogs(ctx, in)
+		return srv.(PaymentAdminServer).GetRechargeNotifyLog(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_ListPayNotifyLogs_FullMethodName,
+		FullMethod: PaymentAdmin_GetRechargeNotifyLog_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).ListPayNotifyLogs(ctx, req.(*ListPayNotifyLogsReq))
+		return srv.(PaymentAdminServer).GetRechargeNotifyLog(ctx, req.(*GetRechargeNotifyLogReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentAdmin_ListWithdrawOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWithdrawOrdersReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentAdminServer).ListWithdrawOrders(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentAdmin_ListWithdrawOrders_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentAdminServer).ListWithdrawOrders(ctx, req.(*ListWithdrawOrdersReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentAdmin_GetWithdrawOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetWithdrawOrderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentAdminServer).GetWithdrawOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentAdmin_GetWithdrawOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentAdminServer).GetWithdrawOrder(ctx, req.(*GetWithdrawOrderReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentAdmin_AuditWithdrawOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AuditWithdrawOrderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentAdminServer).AuditWithdrawOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentAdmin_AuditWithdrawOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentAdminServer).AuditWithdrawOrder(ctx, req.(*AuditWithdrawOrderReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentAdmin_ListWithdrawNotifyLogs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWithdrawNotifyLogsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentAdminServer).ListWithdrawNotifyLogs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentAdmin_ListWithdrawNotifyLogs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentAdminServer).ListWithdrawNotifyLogs(ctx, req.(*ListWithdrawNotifyLogsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentAdmin_GetWithdrawNotifyLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetWithdrawNotifyLogReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentAdminServer).GetWithdrawNotifyLog(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentAdmin_GetWithdrawNotifyLog_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentAdminServer).GetWithdrawNotifyLog(ctx, req.(*GetWithdrawNotifyLogReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1374,32 +1554,52 @@ var PaymentAdmin_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PaymentAdmin_ListUserRechargeStats_Handler,
 		},
 		{
-			MethodName: "GetPayOrder",
-			Handler:    _PaymentAdmin_GetPayOrder_Handler,
+			MethodName: "ListRechargeOrders",
+			Handler:    _PaymentAdmin_ListRechargeOrders_Handler,
 		},
 		{
-			MethodName: "ListPayOrders",
-			Handler:    _PaymentAdmin_ListPayOrders_Handler,
+			MethodName: "GetRechargeOrder",
+			Handler:    _PaymentAdmin_GetRechargeOrder_Handler,
 		},
 		{
-			MethodName: "ClosePayOrder",
-			Handler:    _PaymentAdmin_ClosePayOrder_Handler,
+			MethodName: "CloseRechargeOrder",
+			Handler:    _PaymentAdmin_CloseRechargeOrder_Handler,
 		},
 		{
-			MethodName: "ManualMarkPayOrderSuccess",
-			Handler:    _PaymentAdmin_ManualMarkPayOrderSuccess_Handler,
+			MethodName: "ManualMarkRechargeOrderSuccess",
+			Handler:    _PaymentAdmin_ManualMarkRechargeOrderSuccess_Handler,
 		},
 		{
 			MethodName: "RetryNotify",
 			Handler:    _PaymentAdmin_RetryNotify_Handler,
 		},
 		{
-			MethodName: "GetPayNotifyLog",
-			Handler:    _PaymentAdmin_GetPayNotifyLog_Handler,
+			MethodName: "ListRechargeNotifyLogs",
+			Handler:    _PaymentAdmin_ListRechargeNotifyLogs_Handler,
 		},
 		{
-			MethodName: "ListPayNotifyLogs",
-			Handler:    _PaymentAdmin_ListPayNotifyLogs_Handler,
+			MethodName: "GetRechargeNotifyLog",
+			Handler:    _PaymentAdmin_GetRechargeNotifyLog_Handler,
+		},
+		{
+			MethodName: "ListWithdrawOrders",
+			Handler:    _PaymentAdmin_ListWithdrawOrders_Handler,
+		},
+		{
+			MethodName: "GetWithdrawOrder",
+			Handler:    _PaymentAdmin_GetWithdrawOrder_Handler,
+		},
+		{
+			MethodName: "AuditWithdrawOrder",
+			Handler:    _PaymentAdmin_AuditWithdrawOrder_Handler,
+		},
+		{
+			MethodName: "ListWithdrawNotifyLogs",
+			Handler:    _PaymentAdmin_ListWithdrawNotifyLogs_Handler,
+		},
+		{
+			MethodName: "GetWithdrawNotifyLog",
+			Handler:    _PaymentAdmin_GetWithdrawNotifyLog_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

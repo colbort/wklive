@@ -53,7 +53,7 @@ message ListPayPlatformsReq {
 
 message ListPayPlatformsResp {
   payment.RespBase base = 1;
-  repeated payment.PayPlatform list = 2;
+  repeated payment.PayPlatform data = 2;
 }
 
 // ---------- 产品 ----------
@@ -96,7 +96,7 @@ message ListPayProductsReq {
 
 message ListPayProductsResp {
   payment.RespBase base = 1;
-  repeated payment.PayProduct list = 2;
+  repeated payment.PayProduct data = 2;
 }
 
 // ---------- 租户开通平台 ----------
@@ -136,7 +136,7 @@ message ListTenantPayPlatformsReq {
 
 message ListTenantPayPlatformsResp {
   payment.RespBase base = 1;
-  repeated payment.TenantPayPlatform list = 2;
+  repeated payment.TenantPayPlatform data = 2;
 }
 
 // ---------- 租户支付账号 ----------
@@ -199,7 +199,7 @@ message ListTenantPayAccountsReq {
 
 message ListTenantPayAccountsResp {
   payment.RespBase base = 1;
-  repeated payment.TenantPayAccount list = 2;
+  repeated payment.TenantPayAccount data = 2;
 }
 
 // ---------- 租户支付通道 ----------
@@ -271,7 +271,7 @@ message ListTenantPayChannelsReq {
 
 message ListTenantPayChannelsResp {
   payment.RespBase base = 1;
-  repeated payment.TenantPayChannel list = 2;
+  repeated payment.TenantPayChannel data = 2;
 }
 
 // ---------- 通道规则 ----------
@@ -336,7 +336,7 @@ message ListTenantPayChannelRulesReq {
 
 message ListTenantPayChannelRulesResp {
   payment.RespBase base = 1;
-  repeated payment.TenantPayChannelRule list = 2;
+  repeated payment.TenantPayChannelRule data = 2;
 }
 
 // ---------- 用户充值统计 ----------
@@ -360,21 +360,21 @@ message ListUserRechargeStatsReq {
 
 message ListUserRechargeStatsResp {
   payment.RespBase base = 1;
-  repeated payment.UserRechargeStat list = 2;
+  repeated payment.UserRechargeStat data = 2;
 }
 
 // ---------- 订单 ----------
-message GetPayOrderReq {
+message GetRechargeOrderReq {
   int64 tenant_id = 1;
   string order_no = 2;
 }
 
-message GetPayOrderResp {
+message GetRechargeOrderResp {
   payment.RespBase base = 1;
-  payment.PayOrder data = 2;
+  payment.RechargeOrder data = 2;
 }
 
-message ListPayOrdersReq {
+message ListRechargeOrdersReq {
   payment.PageReq page = 1;
   int64 tenant_id = 2;
   int64 user_id = 3;
@@ -390,18 +390,18 @@ message ListPayOrdersReq {
   int64 create_time_end = 13;
 }
 
-message ListPayOrdersResp {
+message ListRechargeOrdersResp {
   payment.RespBase base = 1;
-  repeated payment.PayOrder list = 2;
+  repeated payment.RechargeOrder data = 2;
 }
 
-message ClosePayOrderReq {
+message CloseRechargeOrderReq {
   int64 tenant_id = 1;
   string order_no = 2;
   string remark = 3;
 }
 
-message ManualMarkPayOrderSuccessReq {
+message ManualMarkRechargeOrderSuccessReq {
   int64 tenant_id = 1;
   string order_no = 2;
   string third_trade_no = 3;
@@ -415,17 +415,17 @@ message RetryNotifyReq {
 }
 
 // ---------- 回调日志 ----------
-message GetPayNotifyLogReq {
+message GetRechargeNotifyLogReq {
   int64 tenant_id = 1;
   int64 id = 2;
 }
 
-message GetPayNotifyLogResp {
+message GetRechargeNotifyLogResp {
   RespBase base = 1;
   PayNotifyLog data = 2;
 }
 
-message ListPayNotifyLogsReq {
+message ListRechargeNotifyLogsReq {
   payment.PageReq page = 1;
   int64 tenant_id = 2;
   string order_no = 3;
@@ -438,10 +438,69 @@ message ListPayNotifyLogsReq {
   int64 create_time_end = 10;
 }
 
-message ListPayNotifyLogsResp {
+message ListRechargeNotifyLogsResp {
   payment.RespBase base = 1;
-  repeated payment.PayNotifyLog list = 2;
+  repeated payment.PayNotifyLog data = 2;
 }
+
+// ---------- 提现订单 ----------
+message ListWithdrawOrdersReq {
+  payment.PageReq page = 1;
+  int64 tenant_id = 2;
+  int64 user_id = 3;
+  string order_no = 4;
+}
+
+message ListWithdrawOrdersResp {
+  payment.RespBase base = 1;
+  repeated payment.WithdrawOrder data = 2;
+}
+
+message GetWithdrawOrderReq {
+  int64 tenant_id = 1;
+  string order_no = 2;
+}
+
+message GetWithdrawOrderResp {
+  payment.RespBase base = 1;
+  payment.WithdrawOrder data = 2;
+}
+
+message AuditWithdrawOrderReq {
+  int64 tenant_id = 1;
+  string order_no = 2;
+  bool approve = 3;
+  string remark = 4;
+}
+
+message ListWithdrawNotifyLogsReq {
+  payment.PageReq page = 1;
+  int64 tenant_id = 2;
+  string order_no = 3;
+  int64 order_id = 4;
+  int64 platform_id = 5;
+  int64 channel_id = 6;
+  payment.NotifyProcessStatus notify_status = 7;
+  payment.SignResult sign_result = 8;
+  int64 create_time_start = 9;
+  int64 create_time_end = 10;
+}
+
+message ListWithdrawNotifyLogsResp {
+  payment.RespBase base = 1;
+  repeated payment.PayNotifyLog data = 2;
+}
+
+message GetWithdrawNotifyLogReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+}
+
+message GetWithdrawNotifyLogResp {
+  payment.RespBase base = 1;
+  payment.PayNotifyLog data = 2;
+}
+  
 
 // Admin 接口
 service PaymentAdmin {
@@ -504,19 +563,31 @@ service PaymentAdmin {
   // 用户充值统计列表
   rpc ListUserRechargeStats(ListUserRechargeStatsReq) returns (ListUserRechargeStatsResp);
 
-  // 订单
-  rpc GetPayOrder(GetPayOrderReq) returns (GetPayOrderResp);
-  // 订单列表
-  rpc ListPayOrders(ListPayOrdersReq) returns (ListPayOrdersResp);
-  // 关闭订单
-  rpc ClosePayOrder(ClosePayOrderReq) returns (AdminCommonResp);
-  // 人工标记订单支付成功
-  rpc ManualMarkPayOrderSuccess(ManualMarkPayOrderSuccessReq) returns (AdminCommonResp);
+  // 充值订单列表
+  rpc ListRechargeOrders(ListRechargeOrdersReq) returns (ListRechargeOrdersResp);
+  // 获取充值订单
+  rpc GetRechargeOrder(GetRechargeOrderReq) returns (GetRechargeOrderResp);
+  // 关闭充值订单
+  rpc CloseRechargeOrder(CloseRechargeOrderReq) returns (AdminCommonResp);
+  // 人工标记充值订单支付成功
+  rpc ManualMarkRechargeOrderSuccess(ManualMarkRechargeOrderSuccessReq) returns (AdminCommonResp);
   // 重试回调
   rpc RetryNotify(RetryNotifyReq) returns (AdminCommonResp);
 
-  // 回调日志
-  rpc GetPayNotifyLog(GetPayNotifyLogReq) returns (GetPayNotifyLogResp);
-  // 回调日志列表
-  rpc ListPayNotifyLogs(ListPayNotifyLogsReq) returns (ListPayNotifyLogsResp);
+  // 充值回调日志列表
+  rpc ListRechargeNotifyLogs(ListRechargeNotifyLogsReq) returns (ListRechargeNotifyLogsResp);
+  // 充值回调日志
+  rpc GetRechargeNotifyLog(GetRechargeNotifyLogReq) returns (GetRechargeNotifyLogResp);
+
+  // 获取提现订单列表
+  rpc ListWithdrawOrders(ListWithdrawOrdersReq) returns (ListWithdrawOrdersResp);
+  // 获取提现订单详情
+  rpc GetWithdrawOrder(GetWithdrawOrderReq) returns (GetWithdrawOrderResp);
+  // 审核提现订单
+  rpc AuditWithdrawOrder(AuditWithdrawOrderReq) returns (AdminCommonResp);
+  
+  // 提现回调日志列表
+  rpc ListWithdrawNotifyLogs(ListWithdrawNotifyLogsReq) returns (ListWithdrawNotifyLogsResp);
+  // 获取提现回调日志详情
+  rpc GetWithdrawNotifyLog(GetWithdrawNotifyLogReq) returns (GetWithdrawNotifyLogResp);
 }

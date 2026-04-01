@@ -179,28 +179,28 @@ func (s *PaymentAdminServer) ListUserRechargeStats(ctx context.Context, in *paym
 	return l.ListUserRechargeStats(in)
 }
 
-// 订单
-func (s *PaymentAdminServer) GetPayOrder(ctx context.Context, in *payment.GetPayOrderReq) (*payment.GetPayOrderResp, error) {
-	l := logic.NewGetPayOrderLogic(ctx, s.svcCtx)
-	return l.GetPayOrder(in)
+// 充值订单列表
+func (s *PaymentAdminServer) ListRechargeOrders(ctx context.Context, in *payment.ListRechargeOrdersReq) (*payment.ListRechargeOrdersResp, error) {
+	l := logic.NewListRechargeOrdersLogic(ctx, s.svcCtx)
+	return l.ListRechargeOrders(in)
 }
 
-// 订单列表
-func (s *PaymentAdminServer) ListPayOrders(ctx context.Context, in *payment.ListPayOrdersReq) (*payment.ListPayOrdersResp, error) {
-	l := logic.NewListPayOrdersLogic(ctx, s.svcCtx)
-	return l.ListPayOrders(in)
+// 获取充值订单
+func (s *PaymentAdminServer) GetRechargeOrder(ctx context.Context, in *payment.GetRechargeOrderReq) (*payment.GetRechargeOrderResp, error) {
+	l := logic.NewGetRechargeOrderLogic(ctx, s.svcCtx)
+	return l.GetRechargeOrder(in)
 }
 
-// 关闭订单
-func (s *PaymentAdminServer) ClosePayOrder(ctx context.Context, in *payment.ClosePayOrderReq) (*payment.AdminCommonResp, error) {
-	l := logic.NewClosePayOrderLogic(ctx, s.svcCtx)
-	return l.ClosePayOrder(in)
+// 关闭充值订单
+func (s *PaymentAdminServer) CloseRechargeOrder(ctx context.Context, in *payment.CloseRechargeOrderReq) (*payment.AdminCommonResp, error) {
+	l := logic.NewCloseRechargeOrderLogic(ctx, s.svcCtx)
+	return l.CloseRechargeOrder(in)
 }
 
-// 人工标记订单支付成功
-func (s *PaymentAdminServer) ManualMarkPayOrderSuccess(ctx context.Context, in *payment.ManualMarkPayOrderSuccessReq) (*payment.AdminCommonResp, error) {
-	l := logic.NewManualMarkPayOrderSuccessLogic(ctx, s.svcCtx)
-	return l.ManualMarkPayOrderSuccess(in)
+// 人工标记充值订单支付成功
+func (s *PaymentAdminServer) ManualMarkRechargeOrderSuccess(ctx context.Context, in *payment.ManualMarkRechargeOrderSuccessReq) (*payment.AdminCommonResp, error) {
+	l := logic.NewManualMarkRechargeOrderSuccessLogic(ctx, s.svcCtx)
+	return l.ManualMarkRechargeOrderSuccess(in)
 }
 
 // 重试回调
@@ -209,14 +209,44 @@ func (s *PaymentAdminServer) RetryNotify(ctx context.Context, in *payment.RetryN
 	return l.RetryNotify(in)
 }
 
-// 回调日志
-func (s *PaymentAdminServer) GetPayNotifyLog(ctx context.Context, in *payment.GetPayNotifyLogReq) (*payment.GetPayNotifyLogResp, error) {
-	l := logic.NewGetPayNotifyLogLogic(ctx, s.svcCtx)
-	return l.GetPayNotifyLog(in)
+// 充值回调日志列表
+func (s *PaymentAdminServer) ListRechargeNotifyLogs(ctx context.Context, in *payment.ListRechargeNotifyLogsReq) (*payment.ListRechargeNotifyLogsResp, error) {
+	l := logic.NewListRechargeNotifyLogsLogic(ctx, s.svcCtx)
+	return l.ListRechargeNotifyLogs(in)
 }
 
-// 回调日志列表
-func (s *PaymentAdminServer) ListPayNotifyLogs(ctx context.Context, in *payment.ListPayNotifyLogsReq) (*payment.ListPayNotifyLogsResp, error) {
-	l := logic.NewListPayNotifyLogsLogic(ctx, s.svcCtx)
-	return l.ListPayNotifyLogs(in)
+// 充值回调日志
+func (s *PaymentAdminServer) GetRechargeNotifyLog(ctx context.Context, in *payment.GetRechargeNotifyLogReq) (*payment.GetRechargeNotifyLogResp, error) {
+	l := logic.NewGetRechargeNotifyLogLogic(ctx, s.svcCtx)
+	return l.GetRechargeNotifyLog(in)
+}
+
+// 获取提现订单列表
+func (s *PaymentAdminServer) ListWithdrawOrders(ctx context.Context, in *payment.ListWithdrawOrdersReq) (*payment.ListWithdrawOrdersResp, error) {
+	l := logic.NewListWithdrawOrdersLogic(ctx, s.svcCtx)
+	return l.ListWithdrawOrders(in)
+}
+
+// 获取提现订单详情
+func (s *PaymentAdminServer) GetWithdrawOrder(ctx context.Context, in *payment.GetWithdrawOrderReq) (*payment.GetWithdrawOrderResp, error) {
+	l := logic.NewGetWithdrawOrderLogic(ctx, s.svcCtx)
+	return l.GetWithdrawOrder(in)
+}
+
+// 审核提现订单
+func (s *PaymentAdminServer) AuditWithdrawOrder(ctx context.Context, in *payment.AuditWithdrawOrderReq) (*payment.AdminCommonResp, error) {
+	l := logic.NewAuditWithdrawOrderLogic(ctx, s.svcCtx)
+	return l.AuditWithdrawOrder(in)
+}
+
+// 提现回调日志列表
+func (s *PaymentAdminServer) ListWithdrawNotifyLogs(ctx context.Context, in *payment.ListWithdrawNotifyLogsReq) (*payment.ListWithdrawNotifyLogsResp, error) {
+	l := logic.NewListWithdrawNotifyLogsLogic(ctx, s.svcCtx)
+	return l.ListWithdrawNotifyLogs(in)
+}
+
+// 获取提现回调日志详情
+func (s *PaymentAdminServer) GetWithdrawNotifyLog(ctx context.Context, in *payment.GetWithdrawNotifyLogReq) (*payment.GetWithdrawNotifyLogResp, error) {
+	l := logic.NewGetWithdrawNotifyLogLogic(ctx, s.svcCtx)
+	return l.GetWithdrawNotifyLog(in)
 }

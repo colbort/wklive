@@ -31,10 +31,10 @@ func (l *SysPermListLogic) SysPermList(in *system.Empty) (*system.SysPermListRes
 	if err != nil {
 		return nil, err
 	}
-	m := make(map[string]string, 256)
 
+	data := make([]*system.SysPermItem, 0)
 	for _, menu := range menus {
-		if int32(menu.MenuType) != 3 {
+		if int32(menu.MenuType) == 1 {
 			continue
 		}
 		if int32(menu.Status) != 1 {
@@ -45,21 +45,20 @@ func (l *SysPermListLogic) SysPermList(in *system.Empty) (*system.SysPermListRes
 		if key == "" {
 			continue
 		}
-		name := strings.TrimSpace(menu.Name)
-		if name == "" {
-			name = key
+		path := strings.TrimSpace(menu.Path)
+		if path == "" {
+			continue
 		}
 
-		if old, ok := m[key]; !ok || old == "" {
-			m[key] = name
+		method := strings.TrimSpace(menu.Method)
+		if method == "" {
+			continue
 		}
-	}
-
-	data := make([]*system.SysPermItem, 0, len(m))
-	for k, v := range m {
 		data = append(data, &system.SysPermItem{
-			PermKey: k,
-			Name:    v,
+			PermKey: key,
+			Method:  method,
+			Path:    path,
+			Name:    menu.Name,
 		})
 	}
 

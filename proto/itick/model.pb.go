@@ -572,7 +572,8 @@ type Quote struct {
 	ChangeRate     float64                `protobuf:"fixed64,9,opt,name=change_rate,json=changeRate,proto3" json:"change_rate,omitempty"`
 	Volume         float64                `protobuf:"fixed64,10,opt,name=volume,proto3" json:"volume,omitempty"`
 	Turnover       float64                `protobuf:"fixed64,11,opt,name=turnover,proto3" json:"turnover,omitempty"`
-	Ts             int64                  `protobuf:"varint,12,opt,name=ts,proto3" json:"ts,omitempty"`
+	QuoteTs        int64                  `protobuf:"varint,12,opt,name=quote_ts,json=quoteTs,proto3" json:"quote_ts,omitempty"`
+	TradeStatus    int64                  `protobuf:"varint,13,opt,name=trade_status,json=tradeStatus,proto3" json:"trade_status,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -684,9 +685,16 @@ func (x *Quote) GetTurnover() float64 {
 	return 0
 }
 
-func (x *Quote) GetTs() int64 {
+func (x *Quote) GetQuoteTs() int64 {
 	if x != nil {
-		return x.Ts
+		return x.QuoteTs
+	}
+	return 0
+}
+
+func (x *Quote) GetTradeStatus() int64 {
+	if x != nil {
+		return x.TradeStatus
 	}
 	return 0
 }
@@ -1077,7 +1085,7 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"\x06symbol\x18\x02 \x01(\tR\x06symbol\x12%\n" +
 	"\x04asks\x18\x03 \x03(\v2\x11.itick.DepthLevelR\x04asks\x12%\n" +
 	"\x04bids\x18\x04 \x03(\v2\x11.itick.DepthLevelR\x04bids\x12\x0e\n" +
-	"\x02ts\x18\x05 \x01(\x03R\x02ts\"\xe3\x02\n" +
+	"\x02ts\x18\x05 \x01(\x03R\x02ts\"\x91\x03\n" +
 	"\x05Quote\x12\x16\n" +
 	"\x06market\x18\x01 \x01(\tR\x06market\x12\x16\n" +
 	"\x06symbol\x18\x02 \x01(\tR\x06symbol\x12\x1d\n" +
@@ -1094,8 +1102,9 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"changeRate\x12\x16\n" +
 	"\x06volume\x18\n" +
 	" \x01(\x01R\x06volume\x12\x1a\n" +
-	"\bturnover\x18\v \x01(\x01R\bturnover\x12\x0e\n" +
-	"\x02ts\x18\f \x01(\x03R\x02ts\"\x88\x03\n" +
+	"\bturnover\x18\v \x01(\x01R\bturnover\x12\x19\n" +
+	"\bquote_ts\x18\f \x01(\x03R\aquoteTs\x12!\n" +
+	"\ftrade_status\x18\r \x01(\x03R\vtradeStatus\"\x88\x03\n" +
 	"\x13ItickTenantCategory\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +

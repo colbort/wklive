@@ -22,10 +22,13 @@ const (
 	PaymentApp_GetMyRechargeStat_FullMethodName             = "/payment.PaymentApp/GetMyRechargeStat"
 	PaymentApp_ListAvailableRechargeChannels_FullMethodName = "/payment.PaymentApp/ListAvailableRechargeChannels"
 	PaymentApp_CreateRechargeOrder_FullMethodName           = "/payment.PaymentApp/CreateRechargeOrder"
-	PaymentApp_GetMyPayOrder_FullMethodName                 = "/payment.PaymentApp/GetMyPayOrder"
-	PaymentApp_ListMyPayOrders_FullMethodName               = "/payment.PaymentApp/ListMyPayOrders"
-	PaymentApp_CancelMyPayOrder_FullMethodName              = "/payment.PaymentApp/CancelMyPayOrder"
-	PaymentApp_QueryMyPayOrderStatus_FullMethodName         = "/payment.PaymentApp/QueryMyPayOrderStatus"
+	PaymentApp_GetMyRechargeOrder_FullMethodName            = "/payment.PaymentApp/GetMyRechargeOrder"
+	PaymentApp_ListMyRechargeOrders_FullMethodName          = "/payment.PaymentApp/ListMyRechargeOrders"
+	PaymentApp_CancelMyRechargeOrder_FullMethodName         = "/payment.PaymentApp/CancelMyRechargeOrder"
+	PaymentApp_QueryMyRechargeOrderStatus_FullMethodName    = "/payment.PaymentApp/QueryMyRechargeOrderStatus"
+	PaymentApp_Withdraw_FullMethodName                      = "/payment.PaymentApp/Withdraw"
+	PaymentApp_ListMyWithdrawOrders_FullMethodName          = "/payment.PaymentApp/ListMyWithdrawOrders"
+	PaymentApp_GetMyWithdrawOrder_FullMethodName            = "/payment.PaymentApp/GetMyWithdrawOrder"
 )
 
 // PaymentAppClient is the client API for PaymentApp service.
@@ -41,13 +44,19 @@ type PaymentAppClient interface {
 	// 创建充值订单（服务端需要再次校验通道与用户规则）
 	CreateRechargeOrder(ctx context.Context, in *CreateRechargeOrderReq, opts ...grpc.CallOption) (*CreateRechargeOrderResp, error)
 	// 查询我的订单详情
-	GetMyPayOrder(ctx context.Context, in *GetMyPayOrderReq, opts ...grpc.CallOption) (*GetMyPayOrderResp, error)
+	GetMyRechargeOrder(ctx context.Context, in *GetMyRechargeOrderReq, opts ...grpc.CallOption) (*GetMyRechargeOrderResp, error)
 	// 查询我的充值订单列表
-	ListMyPayOrders(ctx context.Context, in *ListMyPayOrdersReq, opts ...grpc.CallOption) (*ListMyPayOrdersResp, error)
+	ListMyRechargeOrders(ctx context.Context, in *ListMyRechargeOrdersReq, opts ...grpc.CallOption) (*ListMyRechargeOrdersResp, error)
 	// 取消未支付订单
-	CancelMyPayOrder(ctx context.Context, in *CancelMyPayOrderReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+	CancelMyRechargeOrder(ctx context.Context, in *CancelMyRechargeOrderReq, opts ...grpc.CallOption) (*AppCommonResp, error)
 	// 轮询订单状态
-	QueryMyPayOrderStatus(ctx context.Context, in *QueryMyPayOrderStatusReq, opts ...grpc.CallOption) (*QueryMyPayOrderStatusResp, error)
+	QueryMyRechargeOrderStatus(ctx context.Context, in *QueryMyRechargeOrderStatusReq, opts ...grpc.CallOption) (*QueryMyRechargeOrderStatusResp, error)
+	// 提现
+	Withdraw(ctx context.Context, in *WithdrawReq, opts ...grpc.CallOption) (*WithdrawResp, error)
+	// 获取提现订单列表
+	ListMyWithdrawOrders(ctx context.Context, in *ListMyWithdrawOrdersReq, opts ...grpc.CallOption) (*ListMyWithdrawOrdersResp, error)
+	// 获取提现订单详情
+	GetMyWithdrawOrder(ctx context.Context, in *GetMyWithdrawOrderReq, opts ...grpc.CallOption) (*GetMyWithdrawOrderResp, error)
 }
 
 type paymentAppClient struct {
@@ -88,40 +97,70 @@ func (c *paymentAppClient) CreateRechargeOrder(ctx context.Context, in *CreateRe
 	return out, nil
 }
 
-func (c *paymentAppClient) GetMyPayOrder(ctx context.Context, in *GetMyPayOrderReq, opts ...grpc.CallOption) (*GetMyPayOrderResp, error) {
+func (c *paymentAppClient) GetMyRechargeOrder(ctx context.Context, in *GetMyRechargeOrderReq, opts ...grpc.CallOption) (*GetMyRechargeOrderResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetMyPayOrderResp)
-	err := c.cc.Invoke(ctx, PaymentApp_GetMyPayOrder_FullMethodName, in, out, cOpts...)
+	out := new(GetMyRechargeOrderResp)
+	err := c.cc.Invoke(ctx, PaymentApp_GetMyRechargeOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAppClient) ListMyPayOrders(ctx context.Context, in *ListMyPayOrdersReq, opts ...grpc.CallOption) (*ListMyPayOrdersResp, error) {
+func (c *paymentAppClient) ListMyRechargeOrders(ctx context.Context, in *ListMyRechargeOrdersReq, opts ...grpc.CallOption) (*ListMyRechargeOrdersResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListMyPayOrdersResp)
-	err := c.cc.Invoke(ctx, PaymentApp_ListMyPayOrders_FullMethodName, in, out, cOpts...)
+	out := new(ListMyRechargeOrdersResp)
+	err := c.cc.Invoke(ctx, PaymentApp_ListMyRechargeOrders_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAppClient) CancelMyPayOrder(ctx context.Context, in *CancelMyPayOrderReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
+func (c *paymentAppClient) CancelMyRechargeOrder(ctx context.Context, in *CancelMyRechargeOrderReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AppCommonResp)
-	err := c.cc.Invoke(ctx, PaymentApp_CancelMyPayOrder_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, PaymentApp_CancelMyRechargeOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAppClient) QueryMyPayOrderStatus(ctx context.Context, in *QueryMyPayOrderStatusReq, opts ...grpc.CallOption) (*QueryMyPayOrderStatusResp, error) {
+func (c *paymentAppClient) QueryMyRechargeOrderStatus(ctx context.Context, in *QueryMyRechargeOrderStatusReq, opts ...grpc.CallOption) (*QueryMyRechargeOrderStatusResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(QueryMyPayOrderStatusResp)
-	err := c.cc.Invoke(ctx, PaymentApp_QueryMyPayOrderStatus_FullMethodName, in, out, cOpts...)
+	out := new(QueryMyRechargeOrderStatusResp)
+	err := c.cc.Invoke(ctx, PaymentApp_QueryMyRechargeOrderStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentAppClient) Withdraw(ctx context.Context, in *WithdrawReq, opts ...grpc.CallOption) (*WithdrawResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(WithdrawResp)
+	err := c.cc.Invoke(ctx, PaymentApp_Withdraw_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentAppClient) ListMyWithdrawOrders(ctx context.Context, in *ListMyWithdrawOrdersReq, opts ...grpc.CallOption) (*ListMyWithdrawOrdersResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListMyWithdrawOrdersResp)
+	err := c.cc.Invoke(ctx, PaymentApp_ListMyWithdrawOrders_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentAppClient) GetMyWithdrawOrder(ctx context.Context, in *GetMyWithdrawOrderReq, opts ...grpc.CallOption) (*GetMyWithdrawOrderResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetMyWithdrawOrderResp)
+	err := c.cc.Invoke(ctx, PaymentApp_GetMyWithdrawOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -141,13 +180,19 @@ type PaymentAppServer interface {
 	// 创建充值订单（服务端需要再次校验通道与用户规则）
 	CreateRechargeOrder(context.Context, *CreateRechargeOrderReq) (*CreateRechargeOrderResp, error)
 	// 查询我的订单详情
-	GetMyPayOrder(context.Context, *GetMyPayOrderReq) (*GetMyPayOrderResp, error)
+	GetMyRechargeOrder(context.Context, *GetMyRechargeOrderReq) (*GetMyRechargeOrderResp, error)
 	// 查询我的充值订单列表
-	ListMyPayOrders(context.Context, *ListMyPayOrdersReq) (*ListMyPayOrdersResp, error)
+	ListMyRechargeOrders(context.Context, *ListMyRechargeOrdersReq) (*ListMyRechargeOrdersResp, error)
 	// 取消未支付订单
-	CancelMyPayOrder(context.Context, *CancelMyPayOrderReq) (*AppCommonResp, error)
+	CancelMyRechargeOrder(context.Context, *CancelMyRechargeOrderReq) (*AppCommonResp, error)
 	// 轮询订单状态
-	QueryMyPayOrderStatus(context.Context, *QueryMyPayOrderStatusReq) (*QueryMyPayOrderStatusResp, error)
+	QueryMyRechargeOrderStatus(context.Context, *QueryMyRechargeOrderStatusReq) (*QueryMyRechargeOrderStatusResp, error)
+	// 提现
+	Withdraw(context.Context, *WithdrawReq) (*WithdrawResp, error)
+	// 获取提现订单列表
+	ListMyWithdrawOrders(context.Context, *ListMyWithdrawOrdersReq) (*ListMyWithdrawOrdersResp, error)
+	// 获取提现订单详情
+	GetMyWithdrawOrder(context.Context, *GetMyWithdrawOrderReq) (*GetMyWithdrawOrderResp, error)
 	mustEmbedUnimplementedPaymentAppServer()
 }
 
@@ -167,17 +212,26 @@ func (UnimplementedPaymentAppServer) ListAvailableRechargeChannels(context.Conte
 func (UnimplementedPaymentAppServer) CreateRechargeOrder(context.Context, *CreateRechargeOrderReq) (*CreateRechargeOrderResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateRechargeOrder not implemented")
 }
-func (UnimplementedPaymentAppServer) GetMyPayOrder(context.Context, *GetMyPayOrderReq) (*GetMyPayOrderResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetMyPayOrder not implemented")
+func (UnimplementedPaymentAppServer) GetMyRechargeOrder(context.Context, *GetMyRechargeOrderReq) (*GetMyRechargeOrderResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMyRechargeOrder not implemented")
 }
-func (UnimplementedPaymentAppServer) ListMyPayOrders(context.Context, *ListMyPayOrdersReq) (*ListMyPayOrdersResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListMyPayOrders not implemented")
+func (UnimplementedPaymentAppServer) ListMyRechargeOrders(context.Context, *ListMyRechargeOrdersReq) (*ListMyRechargeOrdersResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListMyRechargeOrders not implemented")
 }
-func (UnimplementedPaymentAppServer) CancelMyPayOrder(context.Context, *CancelMyPayOrderReq) (*AppCommonResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CancelMyPayOrder not implemented")
+func (UnimplementedPaymentAppServer) CancelMyRechargeOrder(context.Context, *CancelMyRechargeOrderReq) (*AppCommonResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CancelMyRechargeOrder not implemented")
 }
-func (UnimplementedPaymentAppServer) QueryMyPayOrderStatus(context.Context, *QueryMyPayOrderStatusReq) (*QueryMyPayOrderStatusResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method QueryMyPayOrderStatus not implemented")
+func (UnimplementedPaymentAppServer) QueryMyRechargeOrderStatus(context.Context, *QueryMyRechargeOrderStatusReq) (*QueryMyRechargeOrderStatusResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryMyRechargeOrderStatus not implemented")
+}
+func (UnimplementedPaymentAppServer) Withdraw(context.Context, *WithdrawReq) (*WithdrawResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Withdraw not implemented")
+}
+func (UnimplementedPaymentAppServer) ListMyWithdrawOrders(context.Context, *ListMyWithdrawOrdersReq) (*ListMyWithdrawOrdersResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListMyWithdrawOrders not implemented")
+}
+func (UnimplementedPaymentAppServer) GetMyWithdrawOrder(context.Context, *GetMyWithdrawOrderReq) (*GetMyWithdrawOrderResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMyWithdrawOrder not implemented")
 }
 func (UnimplementedPaymentAppServer) mustEmbedUnimplementedPaymentAppServer() {}
 func (UnimplementedPaymentAppServer) testEmbeddedByValue()                    {}
@@ -254,74 +308,128 @@ func _PaymentApp_CreateRechargeOrder_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentApp_GetMyPayOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetMyPayOrderReq)
+func _PaymentApp_GetMyRechargeOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMyRechargeOrderReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAppServer).GetMyPayOrder(ctx, in)
+		return srv.(PaymentAppServer).GetMyRechargeOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentApp_GetMyPayOrder_FullMethodName,
+		FullMethod: PaymentApp_GetMyRechargeOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAppServer).GetMyPayOrder(ctx, req.(*GetMyPayOrderReq))
+		return srv.(PaymentAppServer).GetMyRechargeOrder(ctx, req.(*GetMyRechargeOrderReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentApp_ListMyPayOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListMyPayOrdersReq)
+func _PaymentApp_ListMyRechargeOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListMyRechargeOrdersReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAppServer).ListMyPayOrders(ctx, in)
+		return srv.(PaymentAppServer).ListMyRechargeOrders(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentApp_ListMyPayOrders_FullMethodName,
+		FullMethod: PaymentApp_ListMyRechargeOrders_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAppServer).ListMyPayOrders(ctx, req.(*ListMyPayOrdersReq))
+		return srv.(PaymentAppServer).ListMyRechargeOrders(ctx, req.(*ListMyRechargeOrdersReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentApp_CancelMyPayOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CancelMyPayOrderReq)
+func _PaymentApp_CancelMyRechargeOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CancelMyRechargeOrderReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAppServer).CancelMyPayOrder(ctx, in)
+		return srv.(PaymentAppServer).CancelMyRechargeOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentApp_CancelMyPayOrder_FullMethodName,
+		FullMethod: PaymentApp_CancelMyRechargeOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAppServer).CancelMyPayOrder(ctx, req.(*CancelMyPayOrderReq))
+		return srv.(PaymentAppServer).CancelMyRechargeOrder(ctx, req.(*CancelMyRechargeOrderReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentApp_QueryMyPayOrderStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryMyPayOrderStatusReq)
+func _PaymentApp_QueryMyRechargeOrderStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryMyRechargeOrderStatusReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAppServer).QueryMyPayOrderStatus(ctx, in)
+		return srv.(PaymentAppServer).QueryMyRechargeOrderStatus(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentApp_QueryMyPayOrderStatus_FullMethodName,
+		FullMethod: PaymentApp_QueryMyRechargeOrderStatus_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAppServer).QueryMyPayOrderStatus(ctx, req.(*QueryMyPayOrderStatusReq))
+		return srv.(PaymentAppServer).QueryMyRechargeOrderStatus(ctx, req.(*QueryMyRechargeOrderStatusReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentApp_Withdraw_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WithdrawReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentAppServer).Withdraw(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentApp_Withdraw_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentAppServer).Withdraw(ctx, req.(*WithdrawReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentApp_ListMyWithdrawOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListMyWithdrawOrdersReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentAppServer).ListMyWithdrawOrders(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentApp_ListMyWithdrawOrders_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentAppServer).ListMyWithdrawOrders(ctx, req.(*ListMyWithdrawOrdersReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentApp_GetMyWithdrawOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMyWithdrawOrderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentAppServer).GetMyWithdrawOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentApp_GetMyWithdrawOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentAppServer).GetMyWithdrawOrder(ctx, req.(*GetMyWithdrawOrderReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -346,20 +454,32 @@ var PaymentApp_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PaymentApp_CreateRechargeOrder_Handler,
 		},
 		{
-			MethodName: "GetMyPayOrder",
-			Handler:    _PaymentApp_GetMyPayOrder_Handler,
+			MethodName: "GetMyRechargeOrder",
+			Handler:    _PaymentApp_GetMyRechargeOrder_Handler,
 		},
 		{
-			MethodName: "ListMyPayOrders",
-			Handler:    _PaymentApp_ListMyPayOrders_Handler,
+			MethodName: "ListMyRechargeOrders",
+			Handler:    _PaymentApp_ListMyRechargeOrders_Handler,
 		},
 		{
-			MethodName: "CancelMyPayOrder",
-			Handler:    _PaymentApp_CancelMyPayOrder_Handler,
+			MethodName: "CancelMyRechargeOrder",
+			Handler:    _PaymentApp_CancelMyRechargeOrder_Handler,
 		},
 		{
-			MethodName: "QueryMyPayOrderStatus",
-			Handler:    _PaymentApp_QueryMyPayOrderStatus_Handler,
+			MethodName: "QueryMyRechargeOrderStatus",
+			Handler:    _PaymentApp_QueryMyRechargeOrderStatus_Handler,
+		},
+		{
+			MethodName: "Withdraw",
+			Handler:    _PaymentApp_Withdraw_Handler,
+		},
+		{
+			MethodName: "ListMyWithdrawOrders",
+			Handler:    _PaymentApp_ListMyWithdrawOrders_Handler,
+		},
+		{
+			MethodName: "GetMyWithdrawOrder",
+			Handler:    _PaymentApp_GetMyWithdrawOrder_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

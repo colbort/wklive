@@ -291,12 +291,12 @@ type PayOrderStatus int32
 
 const (
 	PayOrderStatus_PAY_ORDER_STATUS_UNKNOWN  PayOrderStatus = 0
-	PayOrderStatus_PAY_ORDER_STATUS_PENDING  PayOrderStatus = 1
-	PayOrderStatus_PAY_ORDER_STATUS_PAYING   PayOrderStatus = 2
-	PayOrderStatus_PAY_ORDER_STATUS_SUCCESS  PayOrderStatus = 3
-	PayOrderStatus_PAY_ORDER_STATUS_FAILED   PayOrderStatus = 4
-	PayOrderStatus_PAY_ORDER_STATUS_CLOSED   PayOrderStatus = 5
-	PayOrderStatus_PAY_ORDER_STATUS_REFUNDED PayOrderStatus = 6
+	PayOrderStatus_PAY_ORDER_STATUS_PENDING  PayOrderStatus = 1 // 待支付，提现中
+	PayOrderStatus_PAY_ORDER_STATUS_PAYING   PayOrderStatus = 2 // 支付中
+	PayOrderStatus_PAY_ORDER_STATUS_SUCCESS  PayOrderStatus = 3 // 支付成功，提现成功
+	PayOrderStatus_PAY_ORDER_STATUS_FAILED   PayOrderStatus = 4 // 支付失败，提现失败
+	PayOrderStatus_PAY_ORDER_STATUS_CLOSED   PayOrderStatus = 5 // 订单关闭（未支付的订单过期或被用户取消）
+	PayOrderStatus_PAY_ORDER_STATUS_REFUNDED PayOrderStatus = 6 // 已退款
 )
 
 // Enum value maps for PayOrderStatus.

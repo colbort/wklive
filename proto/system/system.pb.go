@@ -2455,7 +2455,9 @@ func (x *SysRoleGrantDetailResp) GetPermKeys() []string {
 type SysPermItem struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	PermKey       string                 `protobuf:"bytes,1,opt,name=perm_key,json=permKey,proto3" json:"perm_key,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Method        string                 `protobuf:"bytes,2,opt,name=method,proto3" json:"method,omitempty"`
+	Path          string                 `protobuf:"bytes,3,opt,name=path,proto3" json:"path,omitempty"`
+	Name          string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2493,6 +2495,20 @@ func (*SysPermItem) Descriptor() ([]byte, []int) {
 func (x *SysPermItem) GetPermKey() string {
 	if x != nil {
 		return x.PermKey
+	}
+	return ""
+}
+
+func (x *SysPermItem) GetMethod() string {
+	if x != nil {
+		return x.Method
+	}
+	return ""
+}
+
+func (x *SysPermItem) GetPath() string {
+	if x != nil {
+		return x.Path
 	}
 	return ""
 }
@@ -5773,10 +5789,12 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12\x17\n" +
 	"\arole_id\x18\x03 \x01(\x03R\x06roleId\x12\x19\n" +
 	"\bmenu_ids\x18\x04 \x03(\x03R\amenuIds\x12\x1b\n" +
-	"\tperm_keys\x18\x05 \x03(\tR\bpermKeys\"<\n" +
+	"\tperm_keys\x18\x05 \x03(\tR\bpermKeys\"h\n" +
 	"\vSysPermItem\x12\x19\n" +
-	"\bperm_key\x18\x01 \x01(\tR\apermKey\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\"`\n" +
+	"\bperm_key\x18\x01 \x01(\tR\apermKey\x12\x16\n" +
+	"\x06method\x18\x02 \x01(\tR\x06method\x12\x12\n" +
+	"\x04path\x18\x03 \x01(\tR\x04path\x12\x12\n" +
+	"\x04name\x18\x04 \x01(\tR\x04name\"`\n" +
 	"\x0fSysPermListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.system.RespBaseR\x04base\x12'\n" +
 	"\x04data\x18\x03 \x03(\v2\x13.system.SysPermItemR\x04data\"\x9a\x02\n" +

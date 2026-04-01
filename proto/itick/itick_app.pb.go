@@ -497,17 +497,69 @@ func (x *GetQuoteResp) GetData() *Quote {
 	return nil
 }
 
+type MarketSymbol struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Market        string                 `protobuf:"bytes,1,opt,name=market,proto3" json:"market,omitempty"`
+	Symbol        string                 `protobuf:"bytes,2,opt,name=symbol,proto3" json:"symbol,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MarketSymbol) Reset() {
+	*x = MarketSymbol{}
+	mi := &file_proto_itick_itick_app_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MarketSymbol) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MarketSymbol) ProtoMessage() {}
+
+func (x *MarketSymbol) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_itick_itick_app_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MarketSymbol.ProtoReflect.Descriptor instead.
+func (*MarketSymbol) Descriptor() ([]byte, []int) {
+	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *MarketSymbol) GetMarket() string {
+	if x != nil {
+		return x.Market
+	}
+	return ""
+}
+
+func (x *MarketSymbol) GetSymbol() string {
+	if x != nil {
+		return x.Symbol
+	}
+	return ""
+}
+
 type BatchGetQuoteReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Market        string                 `protobuf:"bytes,1,opt,name=market,proto3" json:"market,omitempty"`
-	Data          []string               `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
+	Data          []*MarketSymbol        `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *BatchGetQuoteReq) Reset() {
 	*x = BatchGetQuoteReq{}
-	mi := &file_proto_itick_itick_app_proto_msgTypes[9]
+	mi := &file_proto_itick_itick_app_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -519,7 +571,7 @@ func (x *BatchGetQuoteReq) String() string {
 func (*BatchGetQuoteReq) ProtoMessage() {}
 
 func (x *BatchGetQuoteReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_itick_itick_app_proto_msgTypes[9]
+	mi := &file_proto_itick_itick_app_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -532,7 +584,7 @@ func (x *BatchGetQuoteReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BatchGetQuoteReq.ProtoReflect.Descriptor instead.
 func (*BatchGetQuoteReq) Descriptor() ([]byte, []int) {
-	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{9}
+	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *BatchGetQuoteReq) GetMarket() string {
@@ -542,7 +594,7 @@ func (x *BatchGetQuoteReq) GetMarket() string {
 	return ""
 }
 
-func (x *BatchGetQuoteReq) GetData() []string {
+func (x *BatchGetQuoteReq) GetData() []*MarketSymbol {
 	if x != nil {
 		return x.Data
 	}
@@ -559,7 +611,7 @@ type BatchGetQuoteResp struct {
 
 func (x *BatchGetQuoteResp) Reset() {
 	*x = BatchGetQuoteResp{}
-	mi := &file_proto_itick_itick_app_proto_msgTypes[10]
+	mi := &file_proto_itick_itick_app_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -571,7 +623,7 @@ func (x *BatchGetQuoteResp) String() string {
 func (*BatchGetQuoteResp) ProtoMessage() {}
 
 func (x *BatchGetQuoteResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_itick_itick_app_proto_msgTypes[10]
+	mi := &file_proto_itick_itick_app_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -584,7 +636,7 @@ func (x *BatchGetQuoteResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BatchGetQuoteResp.ProtoReflect.Descriptor instead.
 func (*BatchGetQuoteResp) Descriptor() ([]byte, []int) {
-	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{10}
+	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *BatchGetQuoteResp) GetBase() *RespBase {
@@ -610,7 +662,7 @@ type SubscribeRequest struct {
 
 func (x *SubscribeRequest) Reset() {
 	*x = SubscribeRequest{}
-	mi := &file_proto_itick_itick_app_proto_msgTypes[11]
+	mi := &file_proto_itick_itick_app_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -622,7 +674,7 @@ func (x *SubscribeRequest) String() string {
 func (*SubscribeRequest) ProtoMessage() {}
 
 func (x *SubscribeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_itick_itick_app_proto_msgTypes[11]
+	mi := &file_proto_itick_itick_app_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -635,7 +687,7 @@ func (x *SubscribeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SubscribeRequest.ProtoReflect.Descriptor instead.
 func (*SubscribeRequest) Descriptor() ([]byte, []int) {
-	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{11}
+	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *SubscribeRequest) GetTopics() []*SubscribeTopic {
@@ -658,7 +710,7 @@ type SubscribeTopic struct {
 
 func (x *SubscribeTopic) Reset() {
 	*x = SubscribeTopic{}
-	mi := &file_proto_itick_itick_app_proto_msgTypes[12]
+	mi := &file_proto_itick_itick_app_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -670,7 +722,7 @@ func (x *SubscribeTopic) String() string {
 func (*SubscribeTopic) ProtoMessage() {}
 
 func (x *SubscribeTopic) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_itick_itick_app_proto_msgTypes[12]
+	mi := &file_proto_itick_itick_app_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -683,7 +735,7 @@ func (x *SubscribeTopic) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SubscribeTopic.ProtoReflect.Descriptor instead.
 func (*SubscribeTopic) Descriptor() ([]byte, []int) {
-	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{12}
+	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *SubscribeTopic) GetTopic() string {
@@ -735,7 +787,7 @@ type PushReply struct {
 
 func (x *PushReply) Reset() {
 	*x = PushReply{}
-	mi := &file_proto_itick_itick_app_proto_msgTypes[13]
+	mi := &file_proto_itick_itick_app_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -747,7 +799,7 @@ func (x *PushReply) String() string {
 func (*PushReply) ProtoMessage() {}
 
 func (x *PushReply) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_itick_itick_app_proto_msgTypes[13]
+	mi := &file_proto_itick_itick_app_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -760,7 +812,7 @@ func (x *PushReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PushReply.ProtoReflect.Descriptor instead.
 func (*PushReply) Descriptor() ([]byte, []int) {
-	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{13}
+	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *PushReply) GetTopic() string {
@@ -838,9 +890,12 @@ const file_proto_itick_itick_app_proto_rawDesc = "" +
 	"\fGetQuoteResp\x12#\n" +
 	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12 \n" +
 	"\x04data\x18\x02 \x01(\v2\f.itick.QuoteR\x04data\">\n" +
+	"\fMarketSymbol\x12\x16\n" +
+	"\x06market\x18\x01 \x01(\tR\x06market\x12\x16\n" +
+	"\x06symbol\x18\x02 \x01(\tR\x06symbol\"S\n" +
 	"\x10BatchGetQuoteReq\x12\x16\n" +
-	"\x06market\x18\x01 \x01(\tR\x06market\x12\x12\n" +
-	"\x04data\x18\x02 \x03(\tR\x04data\"Z\n" +
+	"\x06market\x18\x01 \x01(\tR\x06market\x12'\n" +
+	"\x04data\x18\x02 \x03(\v2\x13.itick.MarketSymbolR\x04data\"Z\n" +
 	"\x11BatchGetQuoteResp\x12#\n" +
 	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12 \n" +
 	"\x04data\x18\x02 \x03(\v2\f.itick.QuoteR\x04data\"A\n" +
@@ -879,7 +934,7 @@ func file_proto_itick_itick_app_proto_rawDescGZIP() []byte {
 	return file_proto_itick_itick_app_proto_rawDescData
 }
 
-var file_proto_itick_itick_app_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_proto_itick_itick_app_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_proto_itick_itick_app_proto_goTypes = []any{
 	(*AppCommonResp)(nil),             // 0: itick.AppCommonResp
 	(*ListVisibleCategoriesReq)(nil),  // 1: itick.ListVisibleCategoriesReq
@@ -890,51 +945,53 @@ var file_proto_itick_itick_app_proto_goTypes = []any{
 	(*GetKlineResp)(nil),              // 6: itick.GetKlineResp
 	(*GetQuoteReq)(nil),               // 7: itick.GetQuoteReq
 	(*GetQuoteResp)(nil),              // 8: itick.GetQuoteResp
-	(*BatchGetQuoteReq)(nil),          // 9: itick.BatchGetQuoteReq
-	(*BatchGetQuoteResp)(nil),         // 10: itick.BatchGetQuoteResp
-	(*SubscribeRequest)(nil),          // 11: itick.SubscribeRequest
-	(*SubscribeTopic)(nil),            // 12: itick.SubscribeTopic
-	(*PushReply)(nil),                 // 13: itick.PushReply
-	(*RespBase)(nil),                  // 14: itick.RespBase
-	(*ItickTenantCategory)(nil),       // 15: itick.ItickTenantCategory
-	(CategoryType)(0),                 // 16: itick.CategoryType
-	(*ItickTenantProduct)(nil),        // 17: itick.ItickTenantProduct
-	(KlineType)(0),                    // 18: itick.KlineType
-	(*Kline)(nil),                     // 19: itick.Kline
-	(*Quote)(nil),                     // 20: itick.Quote
+	(*MarketSymbol)(nil),              // 9: itick.MarketSymbol
+	(*BatchGetQuoteReq)(nil),          // 10: itick.BatchGetQuoteReq
+	(*BatchGetQuoteResp)(nil),         // 11: itick.BatchGetQuoteResp
+	(*SubscribeRequest)(nil),          // 12: itick.SubscribeRequest
+	(*SubscribeTopic)(nil),            // 13: itick.SubscribeTopic
+	(*PushReply)(nil),                 // 14: itick.PushReply
+	(*RespBase)(nil),                  // 15: itick.RespBase
+	(*ItickTenantCategory)(nil),       // 16: itick.ItickTenantCategory
+	(CategoryType)(0),                 // 17: itick.CategoryType
+	(*ItickTenantProduct)(nil),        // 18: itick.ItickTenantProduct
+	(KlineType)(0),                    // 19: itick.KlineType
+	(*Kline)(nil),                     // 20: itick.Kline
+	(*Quote)(nil),                     // 21: itick.Quote
 }
 var file_proto_itick_itick_app_proto_depIdxs = []int32{
-	14, // 0: itick.AppCommonResp.base:type_name -> itick.RespBase
-	14, // 1: itick.ListVisibleCategoriesResp.base:type_name -> itick.RespBase
-	15, // 2: itick.ListVisibleCategoriesResp.data:type_name -> itick.ItickTenantCategory
-	16, // 3: itick.ListVisibleProductsReq.category_type:type_name -> itick.CategoryType
-	14, // 4: itick.ListVisibleProductsResp.base:type_name -> itick.RespBase
-	17, // 5: itick.ListVisibleProductsResp.data:type_name -> itick.ItickTenantProduct
-	18, // 6: itick.GetKlineReq.k_type:type_name -> itick.KlineType
-	14, // 7: itick.GetKlineResp.base:type_name -> itick.RespBase
-	19, // 8: itick.GetKlineResp.data:type_name -> itick.Kline
-	14, // 9: itick.GetQuoteResp.base:type_name -> itick.RespBase
-	20, // 10: itick.GetQuoteResp.data:type_name -> itick.Quote
-	14, // 11: itick.BatchGetQuoteResp.base:type_name -> itick.RespBase
-	20, // 12: itick.BatchGetQuoteResp.data:type_name -> itick.Quote
-	12, // 13: itick.SubscribeRequest.topics:type_name -> itick.SubscribeTopic
-	1,  // 14: itick.ItickApp.ListVisibleCategories:input_type -> itick.ListVisibleCategoriesReq
-	3,  // 15: itick.ItickApp.ListVisibleProducts:input_type -> itick.ListVisibleProductsReq
-	5,  // 16: itick.ItickApp.GetKline:input_type -> itick.GetKlineReq
-	7,  // 17: itick.ItickApp.GetQuote:input_type -> itick.GetQuoteReq
-	9,  // 18: itick.ItickApp.BatchGetQuote:input_type -> itick.BatchGetQuoteReq
-	11, // 19: itick.ItickApp.SubscribeStream:input_type -> itick.SubscribeRequest
-	2,  // 20: itick.ItickApp.ListVisibleCategories:output_type -> itick.ListVisibleCategoriesResp
-	4,  // 21: itick.ItickApp.ListVisibleProducts:output_type -> itick.ListVisibleProductsResp
-	6,  // 22: itick.ItickApp.GetKline:output_type -> itick.GetKlineResp
-	8,  // 23: itick.ItickApp.GetQuote:output_type -> itick.GetQuoteResp
-	10, // 24: itick.ItickApp.BatchGetQuote:output_type -> itick.BatchGetQuoteResp
-	13, // 25: itick.ItickApp.SubscribeStream:output_type -> itick.PushReply
-	20, // [20:26] is the sub-list for method output_type
-	14, // [14:20] is the sub-list for method input_type
-	14, // [14:14] is the sub-list for extension type_name
-	14, // [14:14] is the sub-list for extension extendee
-	0,  // [0:14] is the sub-list for field type_name
+	15, // 0: itick.AppCommonResp.base:type_name -> itick.RespBase
+	15, // 1: itick.ListVisibleCategoriesResp.base:type_name -> itick.RespBase
+	16, // 2: itick.ListVisibleCategoriesResp.data:type_name -> itick.ItickTenantCategory
+	17, // 3: itick.ListVisibleProductsReq.category_type:type_name -> itick.CategoryType
+	15, // 4: itick.ListVisibleProductsResp.base:type_name -> itick.RespBase
+	18, // 5: itick.ListVisibleProductsResp.data:type_name -> itick.ItickTenantProduct
+	19, // 6: itick.GetKlineReq.k_type:type_name -> itick.KlineType
+	15, // 7: itick.GetKlineResp.base:type_name -> itick.RespBase
+	20, // 8: itick.GetKlineResp.data:type_name -> itick.Kline
+	15, // 9: itick.GetQuoteResp.base:type_name -> itick.RespBase
+	21, // 10: itick.GetQuoteResp.data:type_name -> itick.Quote
+	9,  // 11: itick.BatchGetQuoteReq.data:type_name -> itick.MarketSymbol
+	15, // 12: itick.BatchGetQuoteResp.base:type_name -> itick.RespBase
+	21, // 13: itick.BatchGetQuoteResp.data:type_name -> itick.Quote
+	13, // 14: itick.SubscribeRequest.topics:type_name -> itick.SubscribeTopic
+	1,  // 15: itick.ItickApp.ListVisibleCategories:input_type -> itick.ListVisibleCategoriesReq
+	3,  // 16: itick.ItickApp.ListVisibleProducts:input_type -> itick.ListVisibleProductsReq
+	5,  // 17: itick.ItickApp.GetKline:input_type -> itick.GetKlineReq
+	7,  // 18: itick.ItickApp.GetQuote:input_type -> itick.GetQuoteReq
+	10, // 19: itick.ItickApp.BatchGetQuote:input_type -> itick.BatchGetQuoteReq
+	12, // 20: itick.ItickApp.SubscribeStream:input_type -> itick.SubscribeRequest
+	2,  // 21: itick.ItickApp.ListVisibleCategories:output_type -> itick.ListVisibleCategoriesResp
+	4,  // 22: itick.ItickApp.ListVisibleProducts:output_type -> itick.ListVisibleProductsResp
+	6,  // 23: itick.ItickApp.GetKline:output_type -> itick.GetKlineResp
+	8,  // 24: itick.ItickApp.GetQuote:output_type -> itick.GetQuoteResp
+	11, // 25: itick.ItickApp.BatchGetQuote:output_type -> itick.BatchGetQuoteResp
+	14, // 26: itick.ItickApp.SubscribeStream:output_type -> itick.PushReply
+	21, // [21:27] is the sub-list for method output_type
+	15, // [15:21] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
 func init() { file_proto_itick_itick_app_proto_init() }
@@ -950,7 +1007,7 @@ func file_proto_itick_itick_app_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_itick_itick_app_proto_rawDesc), len(file_proto_itick_itick_app_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
