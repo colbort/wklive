@@ -95,7 +95,7 @@ type ItickTenantCategory {
 	updateTime int64  `json:"updateTime"`
 	// 冗余返回字段，方便前端展示
 	categoryType     int64  `json:"categoryType"`
-	categoryTypeName string `json:"categoryTypeName"`
+	categoryName string `json:"categoryName"`
 	icon             string `json:"icon"`
 }
 

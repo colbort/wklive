@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/user"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,17 @@ func NewUpdateUserLevelLogic(ctx context.Context, svcCtx *svc.ServiceContext) *U
 }
 
 func (l *UpdateUserLevelLogic) UpdateUserLevel(req *types.UpdateUserLevelReq) (resp *types.RespBase, err error) {
-	// todo: add your logic here and delete this line
+	result, err := l.svcCtx.UserCli.UpdateUserLevel(l.ctx, &user.UpdateUserLevelReq{
+		TenantId:    req.TenantId,
+		UserId:      req.UserId,
+		MemberLevel: req.MemberLevel,
+	})
+	if err != nil {
+		return nil, err
+	}
 
-	return
+	return &types.RespBase{
+		Code: result.Base.Code,
+		Msg:  result.Base.Msg,
+	}, nil
 }

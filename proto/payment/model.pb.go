@@ -962,10 +962,10 @@ type UserRechargeStat struct {
 	Id                 int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	TenantId           int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	UserId             int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	SuccessOrderCount  int32                  `protobuf:"varint,4,opt,name=success_order_count,json=successOrderCount,proto3" json:"success_order_count,omitempty"`
+	SuccessOrderCount  int64                  `protobuf:"varint,4,opt,name=success_order_count,json=successOrderCount,proto3" json:"success_order_count,omitempty"`
 	SuccessTotalAmount int64                  `protobuf:"varint,5,opt,name=success_total_amount,json=successTotalAmount,proto3" json:"success_total_amount,omitempty"`
 	TodaySuccessAmount int64                  `protobuf:"varint,6,opt,name=today_success_amount,json=todaySuccessAmount,proto3" json:"today_success_amount,omitempty"`
-	TodaySuccessCount  int32                  `protobuf:"varint,7,opt,name=today_success_count,json=todaySuccessCount,proto3" json:"today_success_count,omitempty"`
+	TodaySuccessCount  int64                  `protobuf:"varint,7,opt,name=today_success_count,json=todaySuccessCount,proto3" json:"today_success_count,omitempty"`
 	FirstSuccessTime   int64                  `protobuf:"varint,8,opt,name=first_success_time,json=firstSuccessTime,proto3" json:"first_success_time,omitempty"`
 	LastSuccessTime    int64                  `protobuf:"varint,9,opt,name=last_success_time,json=lastSuccessTime,proto3" json:"last_success_time,omitempty"`
 	CreateTime         int64                  `protobuf:"varint,10,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
@@ -1025,7 +1025,7 @@ func (x *UserRechargeStat) GetUserId() int64 {
 	return 0
 }
 
-func (x *UserRechargeStat) GetSuccessOrderCount() int32 {
+func (x *UserRechargeStat) GetSuccessOrderCount() int64 {
 	if x != nil {
 		return x.SuccessOrderCount
 	}
@@ -1046,7 +1046,7 @@ func (x *UserRechargeStat) GetTodaySuccessAmount() int64 {
 	return 0
 }
 
-func (x *UserRechargeStat) GetTodaySuccessCount() int32 {
+func (x *UserRechargeStat) GetTodaySuccessCount() int64 {
 	if x != nil {
 		return x.TodaySuccessCount
 	}
@@ -2021,10 +2021,10 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12.\n" +
-	"\x13success_order_count\x18\x04 \x01(\x05R\x11successOrderCount\x120\n" +
+	"\x13success_order_count\x18\x04 \x01(\x03R\x11successOrderCount\x120\n" +
 	"\x14success_total_amount\x18\x05 \x01(\x03R\x12successTotalAmount\x120\n" +
 	"\x14today_success_amount\x18\x06 \x01(\x03R\x12todaySuccessAmount\x12.\n" +
-	"\x13today_success_count\x18\a \x01(\x05R\x11todaySuccessCount\x12,\n" +
+	"\x13today_success_count\x18\a \x01(\x03R\x11todaySuccessCount\x12,\n" +
 	"\x12first_success_time\x18\b \x01(\x03R\x10firstSuccessTime\x12*\n" +
 	"\x11last_success_time\x18\t \x01(\x03R\x0flastSuccessTime\x12\x1f\n" +
 	"\vcreate_time\x18\n" +

@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/user"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,16 @@ func NewResetPayPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *ResetPayPasswordLogic) ResetPayPassword(req *types.ResetPayPasswordReq) (resp *types.RespBase, err error) {
-	// todo: add your logic here and delete this line
+	result, err := l.svcCtx.UserCli.ResetPayPassword(l.ctx, &user.ResetPayPasswordReq{
+		TenantId: req.TenantId,
+		UserId:   req.UserId,
+	})
+	if err != nil {
+		return nil, err
+	}
 
-	return
+	return &types.RespBase{
+		Code: result.Base.Code,
+		Msg:  result.Base.Msg,
+	}, nil
 }

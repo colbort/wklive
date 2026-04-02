@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/payment"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,53 @@ func NewGetRechargeOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *GetRechargeOrderLogic) GetRechargeOrder(req *types.GetRechargeOrderReq) (resp *types.GetRechargeOrderResp, err error) {
-	// todo: add your logic here and delete this line
+	result, err := l.svcCtx.PaymentCli.GetRechargeOrder(l.ctx, &payment.GetRechargeOrderReq{
+		TenantId: req.TenantId,
+		OrderNo:  req.OrderNo,
+	})
+	if err != nil {
+		return nil, err
+	}
 
-	return
+	resp = &types.GetRechargeOrderResp{
+		RespBase: types.RespBase{
+			Code: result.Base.Code,
+			Msg:  result.Base.Msg,
+		},
+		Data: types.RechargeOrder{
+			Id:           result.Data.Id,
+			TenantId:     result.Data.TenantId,
+			UserId:       result.Data.UserId,
+			OrderNo:      result.Data.OrderNo,
+			BizOrderNo:   result.Data.BizOrderNo,
+			PlatformId:   result.Data.PlatformId,
+			ProductId:    result.Data.ProductId,
+			AccountId:    result.Data.AccountId,
+			ChannelId:    result.Data.ChannelId,
+			Currency:     result.Data.Currency,
+			OrderAmount:  result.Data.OrderAmount,
+			PayAmount:    result.Data.PayAmount,
+			FeeAmount:    result.Data.FeeAmount,
+			Subject:      result.Data.Subject,
+			Body:         result.Data.Body,
+			ClientType:   int64(result.Data.ClientType),
+			ClientIp:     result.Data.ClientIp,
+			Status:       int64(result.Data.Status),
+			ThirdTradeNo: result.Data.ThirdTradeNo,
+			ThirdOrderNo: result.Data.ThirdOrderNo,
+			PayUrl:       result.Data.PayUrl,
+			QrContent:    result.Data.QrContent,
+			RequestData:  result.Data.RequestData,
+			ResponseData: result.Data.ResponseData,
+			NotifyData:   result.Data.NotifyData,
+			ExpireTime:   result.Data.ExpireTime,
+			PaidTime:     result.Data.PaidTime,
+			NotifyTime:   result.Data.NotifyTime,
+			CloseTime:    result.Data.CloseTime,
+			Remark:       result.Data.Remark,
+			CreateTime:   result.Data.CreateTime,
+			UpdateTime:   result.Data.UpdateTime,
+		},
+	}
+	return resp, nil
 }

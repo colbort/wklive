@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/payment"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,31 @@ func NewGetPayPlatformLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ge
 }
 
 func (l *GetPayPlatformLogic) GetPayPlatform(req *types.GetPayPlatformReq) (resp *types.GetPayPlatformResp, err error) {
-	// todo: add your logic here and delete this line
+	result, err := l.svcCtx.PaymentCli.GetPayPlatform(l.ctx, &payment.GetPayPlatformReq{
+		Id: req.Id,
+	})
+	if err != nil {
+		return nil, err
+	}
 
-	return
+	resp = &types.GetPayPlatformResp{
+		RespBase: types.RespBase{
+			Code: result.Base.Code,
+			Msg:  result.Base.Msg,
+		},
+		Data: types.PayPlatform{
+			Id:           result.Data.Id,
+			PlatformCode: result.Data.PlatformCode,
+			PlatformName: result.Data.PlatformName,
+			PlatformType: int64(result.Data.PlatformType),
+			NotifyUrl:    result.Data.NotifyUrl,
+			ReturnUrl:    result.Data.ReturnUrl,
+			Icon:         result.Data.Icon,
+			Status:       int64(result.Data.Status),
+			Remark:       result.Data.Remark,
+			CreateTime:   result.Data.CreateTime,
+			UpdateTime:   result.Data.UpdateTime,
+		},
+	}
+	return resp, nil
 }

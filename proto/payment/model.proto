@@ -118,10 +118,10 @@ message UserRechargeStat {
   int64 id = 1;
   int64 tenant_id = 2;
   int64 user_id = 3;
-  int32 success_order_count = 4;
+  int64 success_order_count = 4;
   int64 success_total_amount = 5;
   int64 today_success_amount = 6;
-  int32 today_success_count = 7;
+  int64 today_success_count = 7;
   int64 first_success_time = 8;
   int64 last_success_time = 9;
   int64 create_time = 10;

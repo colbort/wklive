@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/payment"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,36 @@ func NewCreateTenantPayChannelLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 func (l *CreateTenantPayChannelLogic) CreateTenantPayChannel(req *types.CreateTenantPayChannelReq) (resp *types.RespBase, err error) {
-	// todo: add your logic here and delete this line
+	result, err := l.svcCtx.PaymentCli.CreateTenantPayChannel(l.ctx, &payment.CreateTenantPayChannelReq{
+		TenantId:        req.TenantId,
+		PlatformId:      req.PlatformId,
+		ProductId:       req.ProductId,
+		AccountId:       req.AccountId,
+		ChannelCode:     req.ChannelCode,
+		ChannelName:     req.ChannelName,
+		DisplayName:     req.DisplayName,
+		Icon:            req.Icon,
+		Currency:        req.Currency,
+		Sort:            int32(req.Sort),
+		Visible:         req.Visible,
+		Status:          payment.CommonStatus(req.Status),
+		SingleMinAmount: req.SingleMinAmount,
+		SingleMaxAmount: req.SingleMaxAmount,
+		DailyMaxAmount:  req.DailyMaxAmount,
+		DailyMaxCount:   int32(req.DailyMaxCount),
+		FeeType:         payment.FeeType(req.FeeType),
+		FeeRate:         req.FeeRate,
+		FeeFixedAmount:  req.FeeFixedAmount,
+		ExtConfig:       req.ExtConfig,
+		Remark:          req.Remark,
+	})
+	if err != nil {
+		return nil, err
+	}
 
-	return
+	resp = &types.RespBase{
+		Code: result.Base.Code,
+		Msg:  result.Base.Msg,
+	}
+	return resp, nil
 }

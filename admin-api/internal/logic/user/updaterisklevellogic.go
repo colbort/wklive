@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/user"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,17 @@ func NewUpdateRiskLevelLogic(ctx context.Context, svcCtx *svc.ServiceContext) *U
 }
 
 func (l *UpdateRiskLevelLogic) UpdateRiskLevel(req *types.UpdateRiskLevelReq) (resp *types.RespBase, err error) {
-	// todo: add your logic here and delete this line
+	result, err := l.svcCtx.UserCli.UpdateRiskLevel(l.ctx, &user.UpdateRiskLevelReq{
+		TenantId:  req.TenantId,
+		UserId:    req.UserId,
+		RiskLevel: user.RiskLevel(req.RiskLevel),
+	})
+	if err != nil {
+		return nil, err
+	}
 
-	return
+	return &types.RespBase{
+		Code: result.Base.Code,
+		Msg:  result.Base.Msg,
+	}, nil
 }

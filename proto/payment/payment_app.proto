@@ -14,6 +14,7 @@ message AppCommonResp {
 // 当前用户累计充值统计
 message GetMyRechargeStatReq {
   int64 tenant_id = 1;
+  int64 user_id = 2;
 }
 
 message GetMyRechargeStatResp {
@@ -38,14 +39,15 @@ message ListAvailableRechargeChannelsResp {
 // 创建充值订单
 message CreateRechargeOrderReq {
   int64 tenant_id = 1;
-  int64 channel_id = 2;
-  int64 recharge_amount = 3; // 单位：分
-  string currency = 4;
-  string subject = 5;
-  string body = 6;
-  payment.ClientType client_type = 7;
-  string client_ip = 8;
-  string biz_order_no = 9;
+  int64 user_id = 2;
+  int64 channel_id = 3;
+  int64 recharge_amount = 4; // 单位：分
+  string currency = 5;
+  string subject = 6;
+  string body = 7;
+  payment.ClientType client_type = 8;
+  string client_ip = 9;
+  string biz_order_no = 10;
 }
 
 message CreateRechargeOrderResp {
@@ -57,6 +59,7 @@ message CreateRechargeOrderResp {
 message GetMyRechargeOrderReq {
   int64 tenant_id = 1;
   string order_no = 2;
+  int64 user_id = 64;
 }
 
 message GetMyRechargeOrderResp {
@@ -84,6 +87,7 @@ message ListMyRechargeOrdersResp {
 message CancelMyRechargeOrderReq {
   int64 tenant_id = 1;
   string order_no = 2;
+  int64 user_id = 3;
 }
 
 // 轮询订单状态
@@ -130,6 +134,7 @@ message ListMyWithdrawOrdersResp {
 // 获取提现订单详情
 message GetMyWithdrawOrderReq {
   int64 id = 1;
+  int64 user_id = 2;
 }
 
 message GetMyWithdrawOrderResp {

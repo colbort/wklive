@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/user"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,106 @@ func NewGetUserDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Get
 }
 
 func (l *GetUserDetailLogic) GetUserDetail(req *types.GetUserDetailReq) (resp *types.GetUserDetailResp, err error) {
-	// todo: add your logic here and delete this line
+	result, err := l.svcCtx.UserCli.GetUserDetail(l.ctx, &user.GetUserDetailReq{
+		TenantId: req.TenantId,
+		UserId:   req.UserId,
+	})
+	if err != nil {
+		return nil, err
+	}
 
-	return
+	// Map UserDetail
+	detail := types.UserDetail{
+		Base: types.UserBase{
+			Id:             result.Detail.Base.Id,
+			TenantId:       result.Detail.Base.TenantId,
+			UserNo:         result.Detail.Base.UserNo,
+			Username:       result.Detail.Base.Username,
+			Nickname:       result.Detail.Base.Nickname,
+			Avatar:         result.Detail.Base.Avatar,
+			RegisterType:   int64(result.Detail.Base.RegisterType),
+			Status:         int64(result.Detail.Base.Status),
+			MemberLevel:    result.Detail.Base.MemberLevel,
+			Language:       result.Detail.Base.Language,
+			Timezone:       result.Detail.Base.Timezone,
+			InviteCode:     result.Detail.Base.InviteCode,
+			Signature:      result.Detail.Base.Signature,
+			Source:         result.Detail.Base.Source,
+			ReferrerUserId: result.Detail.Base.ReferrerUserId,
+			RegisterTime:   result.Detail.Base.RegisterTime,
+			RegisterIp:     result.Detail.Base.RegisterIp,
+			LastLoginTime:  result.Detail.Base.LastLoginTime,
+			LastLoginIp:    result.Detail.Base.LastLoginIp,
+			CreateTime:     result.Detail.Base.CreateTime,
+			UpdateTime:     result.Detail.Base.UpdateTime,
+		},
+		Identity: types.UserIdentity{
+			Id:            result.Detail.Identity.Id,
+			TenantId:      result.Detail.Identity.TenantId,
+			UserId:        result.Detail.Identity.UserId,
+			Phone:         result.Detail.Identity.Phone,
+			Email:         result.Detail.Identity.Email,
+			RealName:      result.Detail.Identity.RealName,
+			Gender:        int64(result.Detail.Identity.Gender),
+			Birthday:      result.Detail.Identity.Birthday,
+			CountryCode:   result.Detail.Identity.CountryCode,
+			Province:      result.Detail.Identity.Province,
+			City:          result.Detail.Identity.City,
+			Address:       result.Detail.Identity.Address,
+			IdType:        int64(result.Detail.Identity.IdType),
+			IdNo:          result.Detail.Identity.IdNo,
+			FrontImage:    result.Detail.Identity.FrontImage,
+			BackImage:     result.Detail.Identity.BackImage,
+			HandheldImage: result.Detail.Identity.HandheldImage,
+			KycLevel:      int64(result.Detail.Identity.KycLevel),
+			VerifyStatus:  int64(result.Detail.Identity.VerifyStatus),
+			RejectReason:  result.Detail.Identity.RejectReason,
+			SubmitTime:    result.Detail.Identity.SubmitTime,
+			VerifyTime:    result.Detail.Identity.VerifyTime,
+			VerifyBy:      result.Detail.Identity.VerifyBy,
+			CreateTime:    result.Detail.Identity.CreateTime,
+			UpdateTime:    result.Detail.Identity.UpdateTime,
+		},
+		Security: types.UserSecurity{
+			Id:              result.Detail.Security.Id,
+			TenantId:        result.Detail.Security.TenantId,
+			UserId:          result.Detail.Security.UserId,
+			HasPayPassword:  result.Detail.Security.HasPayPassword,
+			GoogleEnabled:   result.Detail.Security.GoogleEnabled,
+			LoginErrorCount: result.Detail.Security.LoginErrorCount,
+			PayErrorCount:   result.Detail.Security.PayErrorCount,
+			LockUntil:       result.Detail.Security.LockUntil,
+			RiskLevel:       int64(result.Detail.Security.RiskLevel),
+			CreateTime:      result.Detail.Security.CreateTime,
+			UpdateTime:      result.Detail.Security.UpdateTime,
+		},
+	}
+
+	// Map banks
+	detail.Banks = make([]types.UserBank, len(result.Detail.Banks))
+	for i, bank := range result.Detail.Banks {
+		detail.Banks[i] = types.UserBank{
+			Id:          bank.Id,
+			TenantId:    bank.TenantId,
+			UserId:      bank.UserId,
+			BankName:    bank.BankName,
+			BankCode:    bank.BankCode,
+			AccountName: bank.AccountName,
+			AccountNo:   bank.AccountNo,
+			BranchName:  bank.BranchName,
+			CountryCode: bank.CountryCode,
+			IsDefault:   bank.IsDefault,
+			Status:      int64(bank.Status),
+			CreateTime:  bank.CreateTime,
+			UpdateTime:  bank.UpdateTime,
+		}
+	}
+
+	return &types.GetUserDetailResp{
+		RespBase: types.RespBase{
+			Code: result.Base.Code,
+			Msg:  result.Base.Msg,
+		},
+		Detail: detail,
+	}, nil
 }

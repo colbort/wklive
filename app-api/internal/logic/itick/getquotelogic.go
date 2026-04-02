@@ -8,6 +8,7 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
+	"wklive/proto/itick"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,35 @@ func NewGetQuoteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetQuote
 }
 
 func (l *GetQuoteLogic) GetQuote(req *types.GetQuoteReq) (resp *types.GetQuoteResp, err error) {
-	// todo: add your logic here and delete this line
+	result, err := l.svcCtx.ItickCli.GetQuote(l.ctx, &itick.GetQuoteReq{
+		Market: req.Market,
+		Symbol: req.Symbol,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	resp = &types.GetQuoteResp{
+		RespBase: types.RespBase{
+			Code: result.Base.Code,
+			Msg:  result.Base.Msg,
+		},
+		Data: types.Quote{
+			Market:         result.Data.Market,
+			Symbol:         result.Data.Symbol,
+			LastPrice:      result.Data.LastPrice,
+			OpenPrice:      result.Data.OpenPrice,
+			HighPrice:      result.Data.HighPrice,
+			LowPrice:       result.Data.LowPrice,
+			PrevClosePrice: result.Data.PrevClosePrice,
+			ChangeValue:    result.Data.ChangeValue,
+			ChangeRate:     result.Data.ChangeRate,
+			Volume:         result.Data.Volume,
+			Turnover:       result.Data.Turnover,
+			QuoteTs:        result.Data.QuoteTs,
+			TradeStatus:    int64(result.Data.TradeStatus),
+		},
+	}
 
 	return
 }
