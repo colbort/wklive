@@ -297,7 +297,7 @@ service ItickAdmin {
   // 获取产品类型详情
   rpc GetCategory(GetCategoryReq) returns (GetCategoryResp);
   // 同步类型下的产品
-  rpc SyncCategoryProducts(SyncCategoryProductsReq) returns (AdminCommonResp);
+  rpc SyncCategoryProducts(SyncCategoryProductsReq) returns (SyncCategoryProductsResp);
   // 获取同步任务状态
   rpc GetSyncTaskStatus(GetSyncTaskStatusReq) returns (GetSyncTaskStatusResp);
 

@@ -19,27 +19,27 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	ItickAdmin_ListCategories_FullMethodName              = "/itick.ItickAdmin/ListCategories"
 	ItickAdmin_CreateCategory_FullMethodName              = "/itick.ItickAdmin/CreateCategory"
 	ItickAdmin_UpdateCategory_FullMethodName              = "/itick.ItickAdmin/UpdateCategory"
 	ItickAdmin_GetCategory_FullMethodName                 = "/itick.ItickAdmin/GetCategory"
-	ItickAdmin_ListCategories_FullMethodName              = "/itick.ItickAdmin/ListCategories"
 	ItickAdmin_SyncCategoryProducts_FullMethodName        = "/itick.ItickAdmin/SyncCategoryProducts"
 	ItickAdmin_GetSyncTaskStatus_FullMethodName           = "/itick.ItickAdmin/GetSyncTaskStatus"
+	ItickAdmin_ListProducts_FullMethodName                = "/itick.ItickAdmin/ListProducts"
 	ItickAdmin_CreateProduct_FullMethodName               = "/itick.ItickAdmin/CreateProduct"
 	ItickAdmin_UpdateProduct_FullMethodName               = "/itick.ItickAdmin/UpdateProduct"
 	ItickAdmin_GetProduct_FullMethodName                  = "/itick.ItickAdmin/GetProduct"
-	ItickAdmin_ListProducts_FullMethodName                = "/itick.ItickAdmin/ListProducts"
 	ItickAdmin_GetAdminKline_FullMethodName               = "/itick.ItickAdmin/GetAdminKline"
+	ItickAdmin_ListTenantCategories_FullMethodName        = "/itick.ItickAdmin/ListTenantCategories"
 	ItickAdmin_CreateTenantCategory_FullMethodName        = "/itick.ItickAdmin/CreateTenantCategory"
 	ItickAdmin_UpdateTenantCategory_FullMethodName        = "/itick.ItickAdmin/UpdateTenantCategory"
 	ItickAdmin_BatchUpsertTenantCategories_FullMethodName = "/itick.ItickAdmin/BatchUpsertTenantCategories"
 	ItickAdmin_GetTenantCategory_FullMethodName           = "/itick.ItickAdmin/GetTenantCategory"
-	ItickAdmin_ListTenantCategories_FullMethodName        = "/itick.ItickAdmin/ListTenantCategories"
+	ItickAdmin_ListTenantProducts_FullMethodName          = "/itick.ItickAdmin/ListTenantProducts"
 	ItickAdmin_CreateTenantProduct_FullMethodName         = "/itick.ItickAdmin/CreateTenantProduct"
 	ItickAdmin_UpdateTenantProduct_FullMethodName         = "/itick.ItickAdmin/UpdateTenantProduct"
 	ItickAdmin_BatchUpsertTenantProducts_FullMethodName   = "/itick.ItickAdmin/BatchUpsertTenantProducts"
 	ItickAdmin_GetTenantProduct_FullMethodName            = "/itick.ItickAdmin/GetTenantProduct"
-	ItickAdmin_ListTenantProducts_FullMethodName          = "/itick.ItickAdmin/ListTenantProducts"
 	ItickAdmin_InitTenantItickDisplay_FullMethodName      = "/itick.ItickAdmin/InitTenantItickDisplay"
 )
 
@@ -51,28 +51,30 @@ const (
 // admin service
 // ====================
 type ItickAdminClient interface {
+	// 产品类型列表
+	ListCategories(ctx context.Context, in *ListCategoriesReq, opts ...grpc.CallOption) (*ListCategoriesResp, error)
 	// 产品类型
 	CreateCategory(ctx context.Context, in *CreateCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	// 更新产品类型仅允许更新名称、状态、排序、图标和备注，产品类型不允许修改
 	UpdateCategory(ctx context.Context, in *UpdateCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	// 获取产品类型详情
 	GetCategory(ctx context.Context, in *GetCategoryReq, opts ...grpc.CallOption) (*GetCategoryResp, error)
-	// 产品类型列表
-	ListCategories(ctx context.Context, in *ListCategoriesReq, opts ...grpc.CallOption) (*ListCategoriesResp, error)
 	// 同步类型下的产品
-	SyncCategoryProducts(ctx context.Context, in *SyncCategoryProductsReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	SyncCategoryProducts(ctx context.Context, in *SyncCategoryProductsReq, opts ...grpc.CallOption) (*SyncCategoryProductsResp, error)
 	// 获取同步任务状态
 	GetSyncTaskStatus(ctx context.Context, in *GetSyncTaskStatusReq, opts ...grpc.CallOption) (*GetSyncTaskStatusResp, error)
+	// 产品列表
+	ListProducts(ctx context.Context, in *ListProductsReq, opts ...grpc.CallOption) (*ListProductsResp, error)
 	// 产品
 	CreateProduct(ctx context.Context, in *CreateProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	// 更新产品仅允许更新名称、状态、排序、图标和备注，市场、品种、代码不允许修改
 	UpdateProduct(ctx context.Context, in *UpdateProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	// 获取产品详情
 	GetProduct(ctx context.Context, in *GetProductReq, opts ...grpc.CallOption) (*GetProductResp, error)
-	// 产品列表
-	ListProducts(ctx context.Context, in *ListProductsReq, opts ...grpc.CallOption) (*ListProductsResp, error)
 	// K线查看
 	GetAdminKline(ctx context.Context, in *GetAdminKlineReq, opts ...grpc.CallOption) (*GetAdminKlineResp, error)
+	// 租户产品类型列表
+	ListTenantCategories(ctx context.Context, in *ListTenantCategoriesReq, opts ...grpc.CallOption) (*ListTenantCategoriesResp, error)
 	// 租户产品类型
 	CreateTenantCategory(ctx context.Context, in *CreateTenantCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	// 更新租户产品类型仅允许更新状态、排序和备注，关联的产品类型不允许修改
@@ -81,8 +83,8 @@ type ItickAdminClient interface {
 	BatchUpsertTenantCategories(ctx context.Context, in *BatchUpsertTenantCategoriesReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	// 获取租户产品类型详情
 	GetTenantCategory(ctx context.Context, in *GetTenantCategoryReq, opts ...grpc.CallOption) (*GetTenantCategoryResp, error)
-	// 租户产品类型列表
-	ListTenantCategories(ctx context.Context, in *ListTenantCategoriesReq, opts ...grpc.CallOption) (*ListTenantCategoriesResp, error)
+	// 租户产品列表
+	ListTenantProducts(ctx context.Context, in *ListTenantProductsReq, opts ...grpc.CallOption) (*ListTenantProductsResp, error)
 	// 租户产品
 	CreateTenantProduct(ctx context.Context, in *CreateTenantProductReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	// 更新租户产品仅允许更新状态、排序和备注，关联的产品不允许修改
@@ -91,8 +93,6 @@ type ItickAdminClient interface {
 	BatchUpsertTenantProducts(ctx context.Context, in *BatchUpsertTenantProductsReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	// 获取租户产品详情
 	GetTenantProduct(ctx context.Context, in *GetTenantProductReq, opts ...grpc.CallOption) (*GetTenantProductResp, error)
-	// 租户产品列表
-	ListTenantProducts(ctx context.Context, in *ListTenantProductsReq, opts ...grpc.CallOption) (*ListTenantProductsResp, error)
 	// 初始化租户展示配置
 	InitTenantItickDisplay(ctx context.Context, in *InitTenantItickDisplayReq, opts ...grpc.CallOption) (*InitTenantItickDisplayResp, error)
 }
@@ -103,6 +103,16 @@ type itickAdminClient struct {
 
 func NewItickAdminClient(cc grpc.ClientConnInterface) ItickAdminClient {
 	return &itickAdminClient{cc}
+}
+
+func (c *itickAdminClient) ListCategories(ctx context.Context, in *ListCategoriesReq, opts ...grpc.CallOption) (*ListCategoriesResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListCategoriesResp)
+	err := c.cc.Invoke(ctx, ItickAdmin_ListCategories_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *itickAdminClient) CreateCategory(ctx context.Context, in *CreateCategoryReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
@@ -135,19 +145,9 @@ func (c *itickAdminClient) GetCategory(ctx context.Context, in *GetCategoryReq, 
 	return out, nil
 }
 
-func (c *itickAdminClient) ListCategories(ctx context.Context, in *ListCategoriesReq, opts ...grpc.CallOption) (*ListCategoriesResp, error) {
+func (c *itickAdminClient) SyncCategoryProducts(ctx context.Context, in *SyncCategoryProductsReq, opts ...grpc.CallOption) (*SyncCategoryProductsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListCategoriesResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_ListCategories_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *itickAdminClient) SyncCategoryProducts(ctx context.Context, in *SyncCategoryProductsReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AdminCommonResp)
+	out := new(SyncCategoryProductsResp)
 	err := c.cc.Invoke(ctx, ItickAdmin_SyncCategoryProducts_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -159,6 +159,16 @@ func (c *itickAdminClient) GetSyncTaskStatus(ctx context.Context, in *GetSyncTas
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetSyncTaskStatusResp)
 	err := c.cc.Invoke(ctx, ItickAdmin_GetSyncTaskStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *itickAdminClient) ListProducts(ctx context.Context, in *ListProductsReq, opts ...grpc.CallOption) (*ListProductsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListProductsResp)
+	err := c.cc.Invoke(ctx, ItickAdmin_ListProducts_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -195,20 +205,20 @@ func (c *itickAdminClient) GetProduct(ctx context.Context, in *GetProductReq, op
 	return out, nil
 }
 
-func (c *itickAdminClient) ListProducts(ctx context.Context, in *ListProductsReq, opts ...grpc.CallOption) (*ListProductsResp, error) {
+func (c *itickAdminClient) GetAdminKline(ctx context.Context, in *GetAdminKlineReq, opts ...grpc.CallOption) (*GetAdminKlineResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListProductsResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_ListProducts_FullMethodName, in, out, cOpts...)
+	out := new(GetAdminKlineResp)
+	err := c.cc.Invoke(ctx, ItickAdmin_GetAdminKline_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) GetAdminKline(ctx context.Context, in *GetAdminKlineReq, opts ...grpc.CallOption) (*GetAdminKlineResp, error) {
+func (c *itickAdminClient) ListTenantCategories(ctx context.Context, in *ListTenantCategoriesReq, opts ...grpc.CallOption) (*ListTenantCategoriesResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetAdminKlineResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_GetAdminKline_FullMethodName, in, out, cOpts...)
+	out := new(ListTenantCategoriesResp)
+	err := c.cc.Invoke(ctx, ItickAdmin_ListTenantCategories_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -255,10 +265,10 @@ func (c *itickAdminClient) GetTenantCategory(ctx context.Context, in *GetTenantC
 	return out, nil
 }
 
-func (c *itickAdminClient) ListTenantCategories(ctx context.Context, in *ListTenantCategoriesReq, opts ...grpc.CallOption) (*ListTenantCategoriesResp, error) {
+func (c *itickAdminClient) ListTenantProducts(ctx context.Context, in *ListTenantProductsReq, opts ...grpc.CallOption) (*ListTenantProductsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListTenantCategoriesResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_ListTenantCategories_FullMethodName, in, out, cOpts...)
+	out := new(ListTenantProductsResp)
+	err := c.cc.Invoke(ctx, ItickAdmin_ListTenantProducts_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -305,16 +315,6 @@ func (c *itickAdminClient) GetTenantProduct(ctx context.Context, in *GetTenantPr
 	return out, nil
 }
 
-func (c *itickAdminClient) ListTenantProducts(ctx context.Context, in *ListTenantProductsReq, opts ...grpc.CallOption) (*ListTenantProductsResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListTenantProductsResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_ListTenantProducts_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *itickAdminClient) InitTenantItickDisplay(ctx context.Context, in *InitTenantItickDisplayReq, opts ...grpc.CallOption) (*InitTenantItickDisplayResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(InitTenantItickDisplayResp)
@@ -333,28 +333,30 @@ func (c *itickAdminClient) InitTenantItickDisplay(ctx context.Context, in *InitT
 // admin service
 // ====================
 type ItickAdminServer interface {
+	// 产品类型列表
+	ListCategories(context.Context, *ListCategoriesReq) (*ListCategoriesResp, error)
 	// 产品类型
 	CreateCategory(context.Context, *CreateCategoryReq) (*AdminCommonResp, error)
 	// 更新产品类型仅允许更新名称、状态、排序、图标和备注，产品类型不允许修改
 	UpdateCategory(context.Context, *UpdateCategoryReq) (*AdminCommonResp, error)
 	// 获取产品类型详情
 	GetCategory(context.Context, *GetCategoryReq) (*GetCategoryResp, error)
-	// 产品类型列表
-	ListCategories(context.Context, *ListCategoriesReq) (*ListCategoriesResp, error)
 	// 同步类型下的产品
-	SyncCategoryProducts(context.Context, *SyncCategoryProductsReq) (*AdminCommonResp, error)
+	SyncCategoryProducts(context.Context, *SyncCategoryProductsReq) (*SyncCategoryProductsResp, error)
 	// 获取同步任务状态
 	GetSyncTaskStatus(context.Context, *GetSyncTaskStatusReq) (*GetSyncTaskStatusResp, error)
+	// 产品列表
+	ListProducts(context.Context, *ListProductsReq) (*ListProductsResp, error)
 	// 产品
 	CreateProduct(context.Context, *CreateProductReq) (*AdminCommonResp, error)
 	// 更新产品仅允许更新名称、状态、排序、图标和备注，市场、品种、代码不允许修改
 	UpdateProduct(context.Context, *UpdateProductReq) (*AdminCommonResp, error)
 	// 获取产品详情
 	GetProduct(context.Context, *GetProductReq) (*GetProductResp, error)
-	// 产品列表
-	ListProducts(context.Context, *ListProductsReq) (*ListProductsResp, error)
 	// K线查看
 	GetAdminKline(context.Context, *GetAdminKlineReq) (*GetAdminKlineResp, error)
+	// 租户产品类型列表
+	ListTenantCategories(context.Context, *ListTenantCategoriesReq) (*ListTenantCategoriesResp, error)
 	// 租户产品类型
 	CreateTenantCategory(context.Context, *CreateTenantCategoryReq) (*AdminCommonResp, error)
 	// 更新租户产品类型仅允许更新状态、排序和备注，关联的产品类型不允许修改
@@ -363,8 +365,8 @@ type ItickAdminServer interface {
 	BatchUpsertTenantCategories(context.Context, *BatchUpsertTenantCategoriesReq) (*AdminCommonResp, error)
 	// 获取租户产品类型详情
 	GetTenantCategory(context.Context, *GetTenantCategoryReq) (*GetTenantCategoryResp, error)
-	// 租户产品类型列表
-	ListTenantCategories(context.Context, *ListTenantCategoriesReq) (*ListTenantCategoriesResp, error)
+	// 租户产品列表
+	ListTenantProducts(context.Context, *ListTenantProductsReq) (*ListTenantProductsResp, error)
 	// 租户产品
 	CreateTenantProduct(context.Context, *CreateTenantProductReq) (*AdminCommonResp, error)
 	// 更新租户产品仅允许更新状态、排序和备注，关联的产品不允许修改
@@ -373,8 +375,6 @@ type ItickAdminServer interface {
 	BatchUpsertTenantProducts(context.Context, *BatchUpsertTenantProductsReq) (*AdminCommonResp, error)
 	// 获取租户产品详情
 	GetTenantProduct(context.Context, *GetTenantProductReq) (*GetTenantProductResp, error)
-	// 租户产品列表
-	ListTenantProducts(context.Context, *ListTenantProductsReq) (*ListTenantProductsResp, error)
 	// 初始化租户展示配置
 	InitTenantItickDisplay(context.Context, *InitTenantItickDisplayReq) (*InitTenantItickDisplayResp, error)
 	mustEmbedUnimplementedItickAdminServer()
@@ -387,6 +387,9 @@ type ItickAdminServer interface {
 // pointer dereference when methods are called.
 type UnimplementedItickAdminServer struct{}
 
+func (UnimplementedItickAdminServer) ListCategories(context.Context, *ListCategoriesReq) (*ListCategoriesResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListCategories not implemented")
+}
 func (UnimplementedItickAdminServer) CreateCategory(context.Context, *CreateCategoryReq) (*AdminCommonResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCategory not implemented")
 }
@@ -396,14 +399,14 @@ func (UnimplementedItickAdminServer) UpdateCategory(context.Context, *UpdateCate
 func (UnimplementedItickAdminServer) GetCategory(context.Context, *GetCategoryReq) (*GetCategoryResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCategory not implemented")
 }
-func (UnimplementedItickAdminServer) ListCategories(context.Context, *ListCategoriesReq) (*ListCategoriesResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListCategories not implemented")
-}
-func (UnimplementedItickAdminServer) SyncCategoryProducts(context.Context, *SyncCategoryProductsReq) (*AdminCommonResp, error) {
+func (UnimplementedItickAdminServer) SyncCategoryProducts(context.Context, *SyncCategoryProductsReq) (*SyncCategoryProductsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SyncCategoryProducts not implemented")
 }
 func (UnimplementedItickAdminServer) GetSyncTaskStatus(context.Context, *GetSyncTaskStatusReq) (*GetSyncTaskStatusResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSyncTaskStatus not implemented")
+}
+func (UnimplementedItickAdminServer) ListProducts(context.Context, *ListProductsReq) (*ListProductsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListProducts not implemented")
 }
 func (UnimplementedItickAdminServer) CreateProduct(context.Context, *CreateProductReq) (*AdminCommonResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateProduct not implemented")
@@ -414,11 +417,11 @@ func (UnimplementedItickAdminServer) UpdateProduct(context.Context, *UpdateProdu
 func (UnimplementedItickAdminServer) GetProduct(context.Context, *GetProductReq) (*GetProductResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProduct not implemented")
 }
-func (UnimplementedItickAdminServer) ListProducts(context.Context, *ListProductsReq) (*ListProductsResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListProducts not implemented")
-}
 func (UnimplementedItickAdminServer) GetAdminKline(context.Context, *GetAdminKlineReq) (*GetAdminKlineResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAdminKline not implemented")
+}
+func (UnimplementedItickAdminServer) ListTenantCategories(context.Context, *ListTenantCategoriesReq) (*ListTenantCategoriesResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListTenantCategories not implemented")
 }
 func (UnimplementedItickAdminServer) CreateTenantCategory(context.Context, *CreateTenantCategoryReq) (*AdminCommonResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTenantCategory not implemented")
@@ -432,8 +435,8 @@ func (UnimplementedItickAdminServer) BatchUpsertTenantCategories(context.Context
 func (UnimplementedItickAdminServer) GetTenantCategory(context.Context, *GetTenantCategoryReq) (*GetTenantCategoryResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTenantCategory not implemented")
 }
-func (UnimplementedItickAdminServer) ListTenantCategories(context.Context, *ListTenantCategoriesReq) (*ListTenantCategoriesResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListTenantCategories not implemented")
+func (UnimplementedItickAdminServer) ListTenantProducts(context.Context, *ListTenantProductsReq) (*ListTenantProductsResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListTenantProducts not implemented")
 }
 func (UnimplementedItickAdminServer) CreateTenantProduct(context.Context, *CreateTenantProductReq) (*AdminCommonResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTenantProduct not implemented")
@@ -446,9 +449,6 @@ func (UnimplementedItickAdminServer) BatchUpsertTenantProducts(context.Context, 
 }
 func (UnimplementedItickAdminServer) GetTenantProduct(context.Context, *GetTenantProductReq) (*GetTenantProductResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTenantProduct not implemented")
-}
-func (UnimplementedItickAdminServer) ListTenantProducts(context.Context, *ListTenantProductsReq) (*ListTenantProductsResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListTenantProducts not implemented")
 }
 func (UnimplementedItickAdminServer) InitTenantItickDisplay(context.Context, *InitTenantItickDisplayReq) (*InitTenantItickDisplayResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InitTenantItickDisplay not implemented")
@@ -472,6 +472,24 @@ func RegisterItickAdminServer(s grpc.ServiceRegistrar, srv ItickAdminServer) {
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&ItickAdmin_ServiceDesc, srv)
+}
+
+func _ItickAdmin_ListCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCategoriesReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ItickAdminServer).ListCategories(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ItickAdmin_ListCategories_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ItickAdminServer).ListCategories(ctx, req.(*ListCategoriesReq))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _ItickAdmin_CreateCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -528,24 +546,6 @@ func _ItickAdmin_GetCategory_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_ListCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListCategoriesReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ItickAdminServer).ListCategories(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ItickAdmin_ListCategories_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).ListCategories(ctx, req.(*ListCategoriesReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _ItickAdmin_SyncCategoryProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SyncCategoryProductsReq)
 	if err := dec(in); err != nil {
@@ -578,6 +578,24 @@ func _ItickAdmin_GetSyncTaskStatus_Handler(srv interface{}, ctx context.Context,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ItickAdminServer).GetSyncTaskStatus(ctx, req.(*GetSyncTaskStatusReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ItickAdmin_ListProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListProductsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ItickAdminServer).ListProducts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ItickAdmin_ListProducts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ItickAdminServer).ListProducts(ctx, req.(*ListProductsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -636,24 +654,6 @@ func _ItickAdmin_GetProduct_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_ListProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListProductsReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ItickAdminServer).ListProducts(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ItickAdmin_ListProducts_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).ListProducts(ctx, req.(*ListProductsReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _ItickAdmin_GetAdminKline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetAdminKlineReq)
 	if err := dec(in); err != nil {
@@ -668,6 +668,24 @@ func _ItickAdmin_GetAdminKline_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ItickAdminServer).GetAdminKline(ctx, req.(*GetAdminKlineReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ItickAdmin_ListTenantCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTenantCategoriesReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ItickAdminServer).ListTenantCategories(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ItickAdmin_ListTenantCategories_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ItickAdminServer).ListTenantCategories(ctx, req.(*ListTenantCategoriesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -744,20 +762,20 @@ func _ItickAdmin_GetTenantCategory_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_ListTenantCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListTenantCategoriesReq)
+func _ItickAdmin_ListTenantProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTenantProductsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).ListTenantCategories(ctx, in)
+		return srv.(ItickAdminServer).ListTenantProducts(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_ListTenantCategories_FullMethodName,
+		FullMethod: ItickAdmin_ListTenantProducts_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).ListTenantCategories(ctx, req.(*ListTenantCategoriesReq))
+		return srv.(ItickAdminServer).ListTenantProducts(ctx, req.(*ListTenantProductsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -834,24 +852,6 @@ func _ItickAdmin_GetTenantProduct_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_ListTenantProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListTenantProductsReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ItickAdminServer).ListTenantProducts(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ItickAdmin_ListTenantProducts_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).ListTenantProducts(ctx, req.(*ListTenantProductsReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _ItickAdmin_InitTenantItickDisplay_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(InitTenantItickDisplayReq)
 	if err := dec(in); err != nil {
@@ -878,6 +878,10 @@ var ItickAdmin_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ItickAdminServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "ListCategories",
+			Handler:    _ItickAdmin_ListCategories_Handler,
+		},
+		{
 			MethodName: "CreateCategory",
 			Handler:    _ItickAdmin_CreateCategory_Handler,
 		},
@@ -890,16 +894,16 @@ var ItickAdmin_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ItickAdmin_GetCategory_Handler,
 		},
 		{
-			MethodName: "ListCategories",
-			Handler:    _ItickAdmin_ListCategories_Handler,
-		},
-		{
 			MethodName: "SyncCategoryProducts",
 			Handler:    _ItickAdmin_SyncCategoryProducts_Handler,
 		},
 		{
 			MethodName: "GetSyncTaskStatus",
 			Handler:    _ItickAdmin_GetSyncTaskStatus_Handler,
+		},
+		{
+			MethodName: "ListProducts",
+			Handler:    _ItickAdmin_ListProducts_Handler,
 		},
 		{
 			MethodName: "CreateProduct",
@@ -914,12 +918,12 @@ var ItickAdmin_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ItickAdmin_GetProduct_Handler,
 		},
 		{
-			MethodName: "ListProducts",
-			Handler:    _ItickAdmin_ListProducts_Handler,
-		},
-		{
 			MethodName: "GetAdminKline",
 			Handler:    _ItickAdmin_GetAdminKline_Handler,
+		},
+		{
+			MethodName: "ListTenantCategories",
+			Handler:    _ItickAdmin_ListTenantCategories_Handler,
 		},
 		{
 			MethodName: "CreateTenantCategory",
@@ -938,8 +942,8 @@ var ItickAdmin_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ItickAdmin_GetTenantCategory_Handler,
 		},
 		{
-			MethodName: "ListTenantCategories",
-			Handler:    _ItickAdmin_ListTenantCategories_Handler,
+			MethodName: "ListTenantProducts",
+			Handler:    _ItickAdmin_ListTenantProducts_Handler,
 		},
 		{
 			MethodName: "CreateTenantProduct",
@@ -956,10 +960,6 @@ var ItickAdmin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTenantProduct",
 			Handler:    _ItickAdmin_GetTenantProduct_Handler,
-		},
-		{
-			MethodName: "ListTenantProducts",
-			Handler:    _ItickAdmin_ListTenantProducts_Handler,
 		},
 		{
 			MethodName: "InitTenantItickDisplay",

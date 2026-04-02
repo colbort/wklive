@@ -101,7 +101,7 @@ message ItickTenantCategory {
 
   // 冗余返回字段，方便前端展示
   itick.CategoryType category_type = 10;
-  string category_type_name = 11;
+  string category_name = 11;
   string icon = 12;
 }
 

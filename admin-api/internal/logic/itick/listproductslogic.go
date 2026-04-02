@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/itick"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,51 @@ func NewListProductsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *List
 }
 
 func (l *ListProductsLogic) ListProducts(req *types.ListProductsReq) (resp *types.ListProductsResp, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	result, err := l.svcCtx.ItickCli.ListProducts(l.ctx, &itick.ListProductsReq{
+		Page: &itick.PageReq{
+			Cursor: req.Page.Cursor,
+			Limit:  req.Page.Limit,
+		},
+		CategoryType:  itick.CategoryType(req.CategoryType),
+		Market:        req.Market,
+		Keyword:       req.Keyword,
+		Status:        req.Status,
+		VisibleStatus: req.VisibleStatus,
+	})
+	if err != nil {
+		return nil, err
+	}
+	data := make([]types.ItickProduct, 0)
+	for _, item := range result.Data {
+		data = append(data, types.ItickProduct{
+			Id:           item.Id,
+			CategoryType: int64(item.CategoryType),
+			Market:       item.Market,
+			Symbol:       item.Symbol,
+			Code:         item.Code,
+			Name:         item.Name,
+			DisplayName:  item.DisplayName,
+			BaseCoin:     item.BaseCoin,
+			QuoteCoin:    item.QuoteCoin,
+			Enabled:      item.Enabled,
+			AppVisible:   item.AppVisible,
+			Sort:         item.Sort,
+			Icon:         item.Icon,
+			Remark:       item.Remark,
+			CreateTime:   item.CreateTime,
+			UpdateTime:   item.UpdateTime,
+		})
+	}
+	return &types.ListProductsResp{
+		RespBase: types.RespBase{
+			Code:       result.Base.Code,
+			Msg:        result.Base.Msg,
+			Total:      result.Base.Total,
+			HasNext:    result.Base.HasNext,
+			HasPrev:    result.Base.HasPrev,
+			NextCursor: result.Base.NextCursor,
+			PrevCursor: result.Base.PrevCursor,
+		},
+		Data: data,
+	}, nil
 }

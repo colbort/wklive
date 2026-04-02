@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/itick"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,20 @@ func NewUpdateCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Up
 }
 
 func (l *UpdateCategoryLogic) UpdateCategory(req *types.UpdateCategoryReq) (resp *types.RespBase, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	result, err := l.svcCtx.ItickCli.UpdateCategory(l.ctx, &itick.UpdateCategoryReq{
+		Id:           req.Id,
+		CategoryName: req.CategoryName,
+		Enabled:      req.Enabled,
+		AppVisible:   req.AppVisible,
+		Sort:         req.Sort,
+		Icon:         req.Icon,
+		Remark:       req.Remark,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &types.RespBase{
+		Code: result.Base.Code,
+		Msg:  result.Base.Msg,
+	}, nil
 }

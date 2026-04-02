@@ -522,18 +522,18 @@ type ItickProduct struct {
 }
 
 type ItickTenantCategory struct {
-	Id               int64  `json:"id"`
-	TenantId         int64  `json:"tenantId"`
-	CategoryId       int64  `json:"categoryId"`
-	Enabled          bool   `json:"enabled"`
-	AppVisible       bool   `json:"appVisible"`
-	Sort             int64  `json:"sort"`
-	Remark           string `json:"remark"`
-	CreateTime       int64  `json:"createTime"`
-	UpdateTime       int64  `json:"updateTime"`
-	CategoryType     int64  `json:"categoryType"`
-	CategoryTypeName string `json:"categoryTypeName"`
-	Icon             string `json:"icon"`
+	Id           int64  `json:"id"`
+	TenantId     int64  `json:"tenantId"`
+	CategoryId   int64  `json:"categoryId"`
+	Enabled      bool   `json:"enabled"`
+	AppVisible   bool   `json:"appVisible"`
+	Sort         int64  `json:"sort"`
+	Remark       string `json:"remark"`
+	CreateTime   int64  `json:"createTime"`
+	UpdateTime   int64  `json:"updateTime"`
+	CategoryType int64  `json:"categoryType"`
+	CategoryName string `json:"categoryName"`
+	Icon         string `json:"icon"`
 }
 
 type ItickTenantProduct struct {

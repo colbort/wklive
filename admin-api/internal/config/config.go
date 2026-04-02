@@ -14,5 +14,8 @@ type Config struct {
 		AccessSecret string
 		AccessExpire int64
 	} `json:"Jwt" yaml:"Jwt"`
-	SystemRpc zrpc.RpcClientConf
+	SystemRpc  zrpc.RpcClientConf
+	UserRpc    zrpc.RpcClientConf
+	PaymentRpc zrpc.RpcClientConf
+	ItickRpc   zrpc.RpcClientConf
 }

@@ -7,6 +7,7 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/zeromicro/go-zero v1.9.4
 	wklive/common v0.0.0-00010101000000-000000000000
+	wklive/proto/itick v0.0.0-00010101000000-000000000000
 	wklive/proto/payment v0.0.0-00010101000000-000000000000
 	wklive/proto/system v0.0.0-20251105000000-000000000000
 	wklive/proto/user v0.0.0-00010101000000-000000000000
@@ -132,3 +133,5 @@ replace wklive/proto/system => ../proto/system
 replace wklive/proto/user => ../proto/user
 
 replace wklive/proto/payment => ../proto/payment
+
+replace wklive/proto/itick => ../proto/itick

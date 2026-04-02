@@ -2691,31 +2691,31 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\x1aInitTenantItickDisplayResp\x12#\n" +
 	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12%\n" +
 	"\x0ecategory_count\x18\x02 \x01(\x03R\rcategoryCount\x12#\n" +
-	"\rproduct_count\x18\x03 \x01(\x03R\fproductCount2\x99\r\n" +
+	"\rproduct_count\x18\x03 \x01(\x03R\fproductCount2\xa2\r\n" +
 	"\n" +
-	"ItickAdmin\x12B\n" +
+	"ItickAdmin\x12E\n" +
+	"\x0eListCategories\x12\x18.itick.ListCategoriesReq\x1a\x19.itick.ListCategoriesResp\x12B\n" +
 	"\x0eCreateCategory\x12\x18.itick.CreateCategoryReq\x1a\x16.itick.AdminCommonResp\x12B\n" +
 	"\x0eUpdateCategory\x12\x18.itick.UpdateCategoryReq\x1a\x16.itick.AdminCommonResp\x12<\n" +
-	"\vGetCategory\x12\x15.itick.GetCategoryReq\x1a\x16.itick.GetCategoryResp\x12E\n" +
-	"\x0eListCategories\x12\x18.itick.ListCategoriesReq\x1a\x19.itick.ListCategoriesResp\x12N\n" +
-	"\x14SyncCategoryProducts\x12\x1e.itick.SyncCategoryProductsReq\x1a\x16.itick.AdminCommonResp\x12N\n" +
-	"\x11GetSyncTaskStatus\x12\x1b.itick.GetSyncTaskStatusReq\x1a\x1c.itick.GetSyncTaskStatusResp\x12@\n" +
+	"\vGetCategory\x12\x15.itick.GetCategoryReq\x1a\x16.itick.GetCategoryResp\x12W\n" +
+	"\x14SyncCategoryProducts\x12\x1e.itick.SyncCategoryProductsReq\x1a\x1f.itick.SyncCategoryProductsResp\x12N\n" +
+	"\x11GetSyncTaskStatus\x12\x1b.itick.GetSyncTaskStatusReq\x1a\x1c.itick.GetSyncTaskStatusResp\x12?\n" +
+	"\fListProducts\x12\x16.itick.ListProductsReq\x1a\x17.itick.ListProductsResp\x12@\n" +
 	"\rCreateProduct\x12\x17.itick.CreateProductReq\x1a\x16.itick.AdminCommonResp\x12@\n" +
 	"\rUpdateProduct\x12\x17.itick.UpdateProductReq\x1a\x16.itick.AdminCommonResp\x129\n" +
 	"\n" +
-	"GetProduct\x12\x14.itick.GetProductReq\x1a\x15.itick.GetProductResp\x12?\n" +
-	"\fListProducts\x12\x16.itick.ListProductsReq\x1a\x17.itick.ListProductsResp\x12B\n" +
-	"\rGetAdminKline\x12\x17.itick.GetAdminKlineReq\x1a\x18.itick.GetAdminKlineResp\x12N\n" +
+	"GetProduct\x12\x14.itick.GetProductReq\x1a\x15.itick.GetProductResp\x12B\n" +
+	"\rGetAdminKline\x12\x17.itick.GetAdminKlineReq\x1a\x18.itick.GetAdminKlineResp\x12W\n" +
+	"\x14ListTenantCategories\x12\x1e.itick.ListTenantCategoriesReq\x1a\x1f.itick.ListTenantCategoriesResp\x12N\n" +
 	"\x14CreateTenantCategory\x12\x1e.itick.CreateTenantCategoryReq\x1a\x16.itick.AdminCommonResp\x12N\n" +
 	"\x14UpdateTenantCategory\x12\x1e.itick.UpdateTenantCategoryReq\x1a\x16.itick.AdminCommonResp\x12\\\n" +
 	"\x1bBatchUpsertTenantCategories\x12%.itick.BatchUpsertTenantCategoriesReq\x1a\x16.itick.AdminCommonResp\x12N\n" +
-	"\x11GetTenantCategory\x12\x1b.itick.GetTenantCategoryReq\x1a\x1c.itick.GetTenantCategoryResp\x12W\n" +
-	"\x14ListTenantCategories\x12\x1e.itick.ListTenantCategoriesReq\x1a\x1f.itick.ListTenantCategoriesResp\x12L\n" +
+	"\x11GetTenantCategory\x12\x1b.itick.GetTenantCategoryReq\x1a\x1c.itick.GetTenantCategoryResp\x12Q\n" +
+	"\x12ListTenantProducts\x12\x1c.itick.ListTenantProductsReq\x1a\x1d.itick.ListTenantProductsResp\x12L\n" +
 	"\x13CreateTenantProduct\x12\x1d.itick.CreateTenantProductReq\x1a\x16.itick.AdminCommonResp\x12L\n" +
 	"\x13UpdateTenantProduct\x12\x1d.itick.UpdateTenantProductReq\x1a\x16.itick.AdminCommonResp\x12X\n" +
 	"\x19BatchUpsertTenantProducts\x12#.itick.BatchUpsertTenantProductsReq\x1a\x16.itick.AdminCommonResp\x12K\n" +
-	"\x10GetTenantProduct\x12\x1a.itick.GetTenantProductReq\x1a\x1b.itick.GetTenantProductResp\x12Q\n" +
-	"\x12ListTenantProducts\x12\x1c.itick.ListTenantProductsReq\x1a\x1d.itick.ListTenantProductsResp\x12]\n" +
+	"\x10GetTenantProduct\x12\x1a.itick.GetTenantProductReq\x1a\x1b.itick.GetTenantProductResp\x12]\n" +
 	"\x16InitTenantItickDisplay\x12 .itick.InitTenantItickDisplayReq\x1a!.itick.InitTenantItickDisplayRespB\x1aZ\x18wklive/proto/itick;itickb\x06proto3"
 
 var (
@@ -2815,49 +2815,49 @@ var file_proto_itick_itick_admin_proto_depIdxs = []int32{
 	37, // 32: itick.ListTenantProductsResp.base:type_name -> itick.RespBase
 	45, // 33: itick.ListTenantProductsResp.data:type_name -> itick.ItickTenantProduct
 	37, // 34: itick.InitTenantItickDisplayResp.base:type_name -> itick.RespBase
-	1,  // 35: itick.ItickAdmin.CreateCategory:input_type -> itick.CreateCategoryReq
-	2,  // 36: itick.ItickAdmin.UpdateCategory:input_type -> itick.UpdateCategoryReq
-	3,  // 37: itick.ItickAdmin.GetCategory:input_type -> itick.GetCategoryReq
-	5,  // 38: itick.ItickAdmin.ListCategories:input_type -> itick.ListCategoriesReq
+	5,  // 35: itick.ItickAdmin.ListCategories:input_type -> itick.ListCategoriesReq
+	1,  // 36: itick.ItickAdmin.CreateCategory:input_type -> itick.CreateCategoryReq
+	2,  // 37: itick.ItickAdmin.UpdateCategory:input_type -> itick.UpdateCategoryReq
+	3,  // 38: itick.ItickAdmin.GetCategory:input_type -> itick.GetCategoryReq
 	7,  // 39: itick.ItickAdmin.SyncCategoryProducts:input_type -> itick.SyncCategoryProductsReq
 	9,  // 40: itick.ItickAdmin.GetSyncTaskStatus:input_type -> itick.GetSyncTaskStatusReq
-	11, // 41: itick.ItickAdmin.CreateProduct:input_type -> itick.CreateProductReq
-	12, // 42: itick.ItickAdmin.UpdateProduct:input_type -> itick.UpdateProductReq
-	13, // 43: itick.ItickAdmin.GetProduct:input_type -> itick.GetProductReq
-	15, // 44: itick.ItickAdmin.ListProducts:input_type -> itick.ListProductsReq
+	15, // 41: itick.ItickAdmin.ListProducts:input_type -> itick.ListProductsReq
+	11, // 42: itick.ItickAdmin.CreateProduct:input_type -> itick.CreateProductReq
+	12, // 43: itick.ItickAdmin.UpdateProduct:input_type -> itick.UpdateProductReq
+	13, // 44: itick.ItickAdmin.GetProduct:input_type -> itick.GetProductReq
 	17, // 45: itick.ItickAdmin.GetAdminKline:input_type -> itick.GetAdminKlineReq
-	19, // 46: itick.ItickAdmin.CreateTenantCategory:input_type -> itick.CreateTenantCategoryReq
-	20, // 47: itick.ItickAdmin.UpdateTenantCategory:input_type -> itick.UpdateTenantCategoryReq
-	21, // 48: itick.ItickAdmin.BatchUpsertTenantCategories:input_type -> itick.BatchUpsertTenantCategoriesReq
-	23, // 49: itick.ItickAdmin.GetTenantCategory:input_type -> itick.GetTenantCategoryReq
-	25, // 50: itick.ItickAdmin.ListTenantCategories:input_type -> itick.ListTenantCategoriesReq
-	27, // 51: itick.ItickAdmin.CreateTenantProduct:input_type -> itick.CreateTenantProductReq
-	28, // 52: itick.ItickAdmin.UpdateTenantProduct:input_type -> itick.UpdateTenantProductReq
-	29, // 53: itick.ItickAdmin.BatchUpsertTenantProducts:input_type -> itick.BatchUpsertTenantProductsReq
-	31, // 54: itick.ItickAdmin.GetTenantProduct:input_type -> itick.GetTenantProductReq
-	33, // 55: itick.ItickAdmin.ListTenantProducts:input_type -> itick.ListTenantProductsReq
+	25, // 46: itick.ItickAdmin.ListTenantCategories:input_type -> itick.ListTenantCategoriesReq
+	19, // 47: itick.ItickAdmin.CreateTenantCategory:input_type -> itick.CreateTenantCategoryReq
+	20, // 48: itick.ItickAdmin.UpdateTenantCategory:input_type -> itick.UpdateTenantCategoryReq
+	21, // 49: itick.ItickAdmin.BatchUpsertTenantCategories:input_type -> itick.BatchUpsertTenantCategoriesReq
+	23, // 50: itick.ItickAdmin.GetTenantCategory:input_type -> itick.GetTenantCategoryReq
+	33, // 51: itick.ItickAdmin.ListTenantProducts:input_type -> itick.ListTenantProductsReq
+	27, // 52: itick.ItickAdmin.CreateTenantProduct:input_type -> itick.CreateTenantProductReq
+	28, // 53: itick.ItickAdmin.UpdateTenantProduct:input_type -> itick.UpdateTenantProductReq
+	29, // 54: itick.ItickAdmin.BatchUpsertTenantProducts:input_type -> itick.BatchUpsertTenantProductsReq
+	31, // 55: itick.ItickAdmin.GetTenantProduct:input_type -> itick.GetTenantProductReq
 	35, // 56: itick.ItickAdmin.InitTenantItickDisplay:input_type -> itick.InitTenantItickDisplayReq
-	0,  // 57: itick.ItickAdmin.CreateCategory:output_type -> itick.AdminCommonResp
-	0,  // 58: itick.ItickAdmin.UpdateCategory:output_type -> itick.AdminCommonResp
-	4,  // 59: itick.ItickAdmin.GetCategory:output_type -> itick.GetCategoryResp
-	6,  // 60: itick.ItickAdmin.ListCategories:output_type -> itick.ListCategoriesResp
-	0,  // 61: itick.ItickAdmin.SyncCategoryProducts:output_type -> itick.AdminCommonResp
+	6,  // 57: itick.ItickAdmin.ListCategories:output_type -> itick.ListCategoriesResp
+	0,  // 58: itick.ItickAdmin.CreateCategory:output_type -> itick.AdminCommonResp
+	0,  // 59: itick.ItickAdmin.UpdateCategory:output_type -> itick.AdminCommonResp
+	4,  // 60: itick.ItickAdmin.GetCategory:output_type -> itick.GetCategoryResp
+	8,  // 61: itick.ItickAdmin.SyncCategoryProducts:output_type -> itick.SyncCategoryProductsResp
 	10, // 62: itick.ItickAdmin.GetSyncTaskStatus:output_type -> itick.GetSyncTaskStatusResp
-	0,  // 63: itick.ItickAdmin.CreateProduct:output_type -> itick.AdminCommonResp
-	0,  // 64: itick.ItickAdmin.UpdateProduct:output_type -> itick.AdminCommonResp
-	14, // 65: itick.ItickAdmin.GetProduct:output_type -> itick.GetProductResp
-	16, // 66: itick.ItickAdmin.ListProducts:output_type -> itick.ListProductsResp
+	16, // 63: itick.ItickAdmin.ListProducts:output_type -> itick.ListProductsResp
+	0,  // 64: itick.ItickAdmin.CreateProduct:output_type -> itick.AdminCommonResp
+	0,  // 65: itick.ItickAdmin.UpdateProduct:output_type -> itick.AdminCommonResp
+	14, // 66: itick.ItickAdmin.GetProduct:output_type -> itick.GetProductResp
 	18, // 67: itick.ItickAdmin.GetAdminKline:output_type -> itick.GetAdminKlineResp
-	0,  // 68: itick.ItickAdmin.CreateTenantCategory:output_type -> itick.AdminCommonResp
-	0,  // 69: itick.ItickAdmin.UpdateTenantCategory:output_type -> itick.AdminCommonResp
-	0,  // 70: itick.ItickAdmin.BatchUpsertTenantCategories:output_type -> itick.AdminCommonResp
-	24, // 71: itick.ItickAdmin.GetTenantCategory:output_type -> itick.GetTenantCategoryResp
-	26, // 72: itick.ItickAdmin.ListTenantCategories:output_type -> itick.ListTenantCategoriesResp
-	0,  // 73: itick.ItickAdmin.CreateTenantProduct:output_type -> itick.AdminCommonResp
-	0,  // 74: itick.ItickAdmin.UpdateTenantProduct:output_type -> itick.AdminCommonResp
-	0,  // 75: itick.ItickAdmin.BatchUpsertTenantProducts:output_type -> itick.AdminCommonResp
-	32, // 76: itick.ItickAdmin.GetTenantProduct:output_type -> itick.GetTenantProductResp
-	34, // 77: itick.ItickAdmin.ListTenantProducts:output_type -> itick.ListTenantProductsResp
+	26, // 68: itick.ItickAdmin.ListTenantCategories:output_type -> itick.ListTenantCategoriesResp
+	0,  // 69: itick.ItickAdmin.CreateTenantCategory:output_type -> itick.AdminCommonResp
+	0,  // 70: itick.ItickAdmin.UpdateTenantCategory:output_type -> itick.AdminCommonResp
+	0,  // 71: itick.ItickAdmin.BatchUpsertTenantCategories:output_type -> itick.AdminCommonResp
+	24, // 72: itick.ItickAdmin.GetTenantCategory:output_type -> itick.GetTenantCategoryResp
+	34, // 73: itick.ItickAdmin.ListTenantProducts:output_type -> itick.ListTenantProductsResp
+	0,  // 74: itick.ItickAdmin.CreateTenantProduct:output_type -> itick.AdminCommonResp
+	0,  // 75: itick.ItickAdmin.UpdateTenantProduct:output_type -> itick.AdminCommonResp
+	0,  // 76: itick.ItickAdmin.BatchUpsertTenantProducts:output_type -> itick.AdminCommonResp
+	32, // 77: itick.ItickAdmin.GetTenantProduct:output_type -> itick.GetTenantProductResp
 	36, // 78: itick.ItickAdmin.InitTenantItickDisplay:output_type -> itick.InitTenantItickDisplayResp
 	57, // [57:79] is the sub-list for method output_type
 	35, // [35:57] is the sub-list for method input_type

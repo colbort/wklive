@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/itick"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,26 @@ func NewCreateProductLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cre
 }
 
 func (l *CreateProductLogic) CreateProduct(req *types.CreateProductReq) (resp *types.RespBase, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	result, err := l.svcCtx.ItickCli.CreateProduct(l.ctx, &itick.CreateProductReq{
+		CategoryType: itick.CategoryType(req.CategoryType),
+		Market:       req.Market,
+		Symbol:       req.Symbol,
+		Code:         req.Code,
+		Name:         req.Name,
+		DisplayName:  req.DisplayName,
+		BaseCoin:     req.BaseCoin,
+		QuoteCoin:    req.QuoteCoin,
+		Enabled:      req.Enabled,
+		AppVisible:   req.AppVisible,
+		Sort:         req.Sort,
+		Icon:         req.Icon,
+		Remark:       req.Remark,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &types.RespBase{
+		Code: result.Base.Code,
+		Msg:  result.Base.Msg,
+	}, nil
 }

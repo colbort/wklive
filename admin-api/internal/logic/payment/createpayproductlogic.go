@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/payment"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,22 @@ func NewCreatePayProductLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *CreatePayProductLogic) CreatePayProduct(req *types.CreatePayProductReq) (resp *types.RespBase, err error) {
-	// todo: add your logic here and delete this line
+	result, err := l.svcCtx.PaymentCli.CreatePayProduct(l.ctx, &payment.CreatePayProductReq{
+		PlatformId:  req.PlatformId,
+		ProductCode: req.ProductCode,
+		ProductName: req.ProductName,
+		SceneType:   payment.SceneType(req.SceneType),
+		Currency:    req.Currency,
+		Status:      payment.CommonStatus(req.Status),
+		Remark:      req.Remark,
+	})
+	if err != nil {
+		return nil, err
+	}
 
-	return
+	resp = &types.RespBase{
+		Code: result.Base.Code,
+		Msg:  result.Base.Msg,
+	}
+	return resp, nil
 }

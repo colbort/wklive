@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/itick"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,47 @@ func NewListTenantCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 func (l *ListTenantCategoriesLogic) ListTenantCategories(req *types.ListTenantCategoriesReq) (resp *types.ListTenantCategoriesResp, err error) {
-	// todo: add your logic here and delete this line
+	result, err := l.svcCtx.ItickCli.ListTenantCategories(l.ctx, &itick.ListTenantCategoriesReq{
+		Page: &itick.PageReq{
+			Cursor: req.Page.Cursor,
+			Limit:  req.Page.Limit,
+		},
+		TenantId:      req.TenantId,
+		CategoryType:  itick.CategoryType(req.CategoryType),
+		Status:        req.Status,
+		VisibleStatus: req.VisibleStatus,
+	})
+	if err != nil {
+		return nil, err
+	}
+	data := make([]types.ItickTenantCategory, 0)
+	for _, item := range result.Data {
+		data = append(data, types.ItickTenantCategory{
+			Id:           item.Id,
+			TenantId:     item.TenantId,
+			CategoryId:   item.CategoryId,
+			Enabled:      item.Enabled,
+			AppVisible:   item.AppVisible,
+			Sort:         item.Sort,
+			Remark:       item.Remark,
+			CreateTime:   item.CreateTime,
+			UpdateTime:   item.UpdateTime,
+			CategoryType: int64(item.CategoryType),
+			CategoryName: item.CategoryName,
+			Icon:         item.Icon,
+		})
+	}
 
-	return
+	return &types.ListTenantCategoriesResp{
+		RespBase: types.RespBase{
+			Code:       result.Base.Code,
+			Msg:        result.Base.Msg,
+			Total:      result.Base.Total,
+			HasNext:    result.Base.HasNext,
+			HasPrev:    result.Base.HasPrev,
+			NextCursor: result.Base.NextCursor,
+			PrevCursor: result.Base.PrevCursor,
+		},
+		Data: data,
+	}, nil
 }

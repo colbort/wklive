@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/itick"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -27,7 +28,43 @@ func NewListCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Li
 }
 
 func (l *ListCategoriesLogic) ListCategories(req *types.ListCategoriesReq) (resp *types.ListCategoriesResp, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	result, err := l.svcCtx.ItickCli.ListCategories(l.ctx, &itick.ListCategoriesReq{
+		Page: &itick.PageReq{
+			Cursor: req.Page.Cursor,
+			Limit:  req.Page.Limit,
+		},
+		CategoryType: itick.CategoryType(req.CategoryType),
+		Status:       req.Status,
+	})
+	if err != nil {
+		return nil, err
+	}
+	data := make([]types.ItickCategory, 0)
+	for _, v := range result.Data {
+		data = append(data, types.ItickCategory{
+			Id:           v.Id,
+			CategoryType: int64(v.CategoryType),
+			CategoryCode: v.CategoryCode,
+			CategoryName: v.CategoryName,
+			Enabled:      v.Enabled,
+			AppVisible:   v.AppVisible,
+			Sort:         v.Sort,
+			Icon:         v.Icon,
+			Remark:       v.Remark,
+			CreateTime:   v.CreateTime,
+			UpdateTime:   v.UpdateTime,
+		})
+	}
+	return &types.ListCategoriesResp{
+		RespBase: types.RespBase{
+			Code:       result.Base.Code,
+			Msg:        result.Base.Msg,
+			Total:      result.Base.Total,
+			HasNext:    result.Base.HasNext,
+			HasPrev:    result.Base.HasPrev,
+			NextCursor: result.Base.NextCursor,
+			PrevCursor: result.Base.PrevCursor,
+		},
+		Data: data,
+	}, nil
 }

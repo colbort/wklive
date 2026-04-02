@@ -711,11 +711,11 @@ type ItickTenantCategory struct {
 	CreateTime int64                  `protobuf:"varint,8,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
 	UpdateTime int64                  `protobuf:"varint,9,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
 	// 冗余返回字段，方便前端展示
-	CategoryType     CategoryType `protobuf:"varint,10,opt,name=category_type,json=categoryType,proto3,enum=itick.CategoryType" json:"category_type,omitempty"`
-	CategoryTypeName string       `protobuf:"bytes,11,opt,name=category_type_name,json=categoryTypeName,proto3" json:"category_type_name,omitempty"`
-	Icon             string       `protobuf:"bytes,12,opt,name=icon,proto3" json:"icon,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	CategoryType  CategoryType `protobuf:"varint,10,opt,name=category_type,json=categoryType,proto3,enum=itick.CategoryType" json:"category_type,omitempty"`
+	CategoryName  string       `protobuf:"bytes,11,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"`
+	Icon          string       `protobuf:"bytes,12,opt,name=icon,proto3" json:"icon,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ItickTenantCategory) Reset() {
@@ -818,9 +818,9 @@ func (x *ItickTenantCategory) GetCategoryType() CategoryType {
 	return CategoryType_CATEGORY_TYPE_UNKNOWN
 }
 
-func (x *ItickTenantCategory) GetCategoryTypeName() string {
+func (x *ItickTenantCategory) GetCategoryName() string {
 	if x != nil {
-		return x.CategoryTypeName
+		return x.CategoryName
 	}
 	return ""
 }
@@ -1104,7 +1104,7 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	" \x01(\x01R\x06volume\x12\x1a\n" +
 	"\bturnover\x18\v \x01(\x01R\bturnover\x12\x19\n" +
 	"\bquote_ts\x18\f \x01(\x03R\aquoteTs\x12!\n" +
-	"\ftrade_status\x18\r \x01(\x03R\vtradeStatus\"\x88\x03\n" +
+	"\ftrade_status\x18\r \x01(\x03R\vtradeStatus\"\xff\x02\n" +
 	"\x13ItickTenantCategory\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
@@ -1120,8 +1120,8 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"\vupdate_time\x18\t \x01(\x03R\n" +
 	"updateTime\x128\n" +
 	"\rcategory_type\x18\n" +
-	" \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12,\n" +
-	"\x12category_type_name\x18\v \x01(\tR\x10categoryTypeName\x12\x12\n" +
+	" \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12#\n" +
+	"\rcategory_name\x18\v \x01(\tR\fcategoryName\x12\x12\n" +
 	"\x04icon\x18\f \x01(\tR\x04icon\"\xb3\x04\n" +
 	"\x12ItickTenantProduct\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
