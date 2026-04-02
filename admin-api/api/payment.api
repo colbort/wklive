@@ -819,10 +819,10 @@ service admin {
 
 	// 充值回调日志
 	@handler ListRechargeNotifyLogs
-	get /notify-logs/list (ListRechargeNotifyLogsReq) returns (ListRechargeNotifyLogsResp)
+	get /recharge-notify-logs/list (ListRechargeNotifyLogsReq) returns (ListRechargeNotifyLogsResp)
 
 	@handler GetRechargeNotifyLog
-	get /notify-logs (GetRechargeNotifyLogReq) returns (GetRechargeNotifyLogResp)
+	get /recharge-notify-logs/:id (GetRechargeNotifyLogReq) returns (GetRechargeNotifyLogResp)
 
 	// 获取提现订单列表
 	@handler ListWithdrawOrders
@@ -830,7 +830,7 @@ service admin {
 
 	// 获取提现订单详情
 	@handler GetWithdrawOrder
-	get /withdraw-orders (GetWithdrawOrderReq) returns (GetWithdrawOrderResp)
+	get /withdraw-orders/:id (GetWithdrawOrderReq) returns (GetWithdrawOrderResp)
 
 	// 审核提现订单
 	@handler AuditWithdrawOrder
@@ -842,6 +842,6 @@ service admin {
 
 	// 获取提现回调日志详情
 	@handler GetWithdrawNotifyLog
-	get /withdraw-notify-logs (GetWithdrawNotifyLogReq) returns (GetWithdrawNotifyLogResp)
+	get /withdraw-notify-logs/:id (GetWithdrawNotifyLogReq) returns (GetWithdrawNotifyLogResp)
 }
 

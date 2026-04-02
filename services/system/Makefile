@@ -12,9 +12,19 @@ PROTO_DIR := $(REPO_ROOT)/proto/system
 # 自动查找所有 proto 文件
 PROTO_FILES := $(wildcard $(PROTO_DIR)/*.proto)
 
-.PHONY: gen gen-rpc fix-imports tidy fmt clean-gen gen-model print-protos
+GOCTL ?= $(shell go env GOPATH)/bin/goctl
 
-gen: gen-rpc fix-imports fmt tidy clean-gen
+.PHONY: gen gen-rpc fix-imports tidy fmt clean-gen gen-model print-protos install-goctl
+
+gen: check-goctl gen-rpc fix-imports fmt tidy clean-gen
+
+
+check-goctl:
+	@$(GOCTL) --version | grep "1.9.2" >/dev/null || \
+		(echo "❌ 当前项目要求 goctl v1.9.2"; exit 1)
+
+install-goctl:
+	go install github.com/zeromicro/go-zero/tools/goctl@v1.9.2
 
 # 查看匹配到的 proto 文件
 print-protos:

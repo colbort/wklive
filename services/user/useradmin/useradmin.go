@@ -50,7 +50,7 @@ type (
 	UpdateUserStatusReq     = user.UpdateUserStatusReq
 
 	UserAdmin interface {
-		// 用户管理接口
+		// 创建用户
 		CreateUser(ctx context.Context, in *CreateUserReq, opts ...grpc.CallOption) (*CreateUserResp, error)
 		// 获取用户详情
 		GetUserDetail(ctx context.Context, in *GetUserDetailReq, opts ...grpc.CallOption) (*GetUserDetailResp, error)
@@ -76,11 +76,11 @@ type (
 		GetUserSecurity(ctx context.Context, in *GetUserSecurityReq, opts ...grpc.CallOption) (*GetUserSecurityResp, error)
 		// 重置用户谷歌2FA
 		ResetUserGoogle2FA(ctx context.Context, in *ResetUserGoogle2FAReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
-		// 实名认证相关接口
+		// 实名认证信息列表
 		ListUserIdentities(ctx context.Context, in *ListUserIdentitiesReq, opts ...grpc.CallOption) (*ListUserIdentitiesResp, error)
 		// 审核实名认证信息
 		ReviewUserIdentity(ctx context.Context, in *ReviewUserIdentityReq, opts ...grpc.CallOption) (*ReviewUserIdentityResp, error)
-		// 银行卡相关接口
+		// 用户银行卡列表
 		ListUserBanks(ctx context.Context, in *ListUserBanksReq, opts ...grpc.CallOption) (*ListUserBanksResp, error)
 		// 获取用户银行卡详情
 		GetUserBank(ctx context.Context, in *GetUserBankReq, opts ...grpc.CallOption) (*GetUserBankResp, error)
@@ -107,7 +107,7 @@ func NewUserAdmin(cli zrpc.Client) UserAdmin {
 	}
 }
 
-// 用户管理接口
+// 创建用户
 func (m *defaultUserAdmin) CreateUser(ctx context.Context, in *CreateUserReq, opts ...grpc.CallOption) (*CreateUserResp, error) {
 	client := user.NewUserAdminClient(m.cli.Conn())
 	return client.CreateUser(ctx, in, opts...)
@@ -185,7 +185,7 @@ func (m *defaultUserAdmin) ResetUserGoogle2FA(ctx context.Context, in *ResetUser
 	return client.ResetUserGoogle2FA(ctx, in, opts...)
 }
 
-// 实名认证相关接口
+// 实名认证信息列表
 func (m *defaultUserAdmin) ListUserIdentities(ctx context.Context, in *ListUserIdentitiesReq, opts ...grpc.CallOption) (*ListUserIdentitiesResp, error) {
 	client := user.NewUserAdminClient(m.cli.Conn())
 	return client.ListUserIdentities(ctx, in, opts...)
@@ -197,7 +197,7 @@ func (m *defaultUserAdmin) ReviewUserIdentity(ctx context.Context, in *ReviewUse
 	return client.ReviewUserIdentity(ctx, in, opts...)
 }
 
-// 银行卡相关接口
+// 用户银行卡列表
 func (m *defaultUserAdmin) ListUserBanks(ctx context.Context, in *ListUserBanksReq, opts ...grpc.CallOption) (*ListUserBanksResp, error) {
 	client := user.NewUserAdminClient(m.cli.Conn())
 	return client.ListUserBanks(ctx, in, opts...)

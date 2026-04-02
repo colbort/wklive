@@ -421,8 +421,8 @@ message GetRechargeNotifyLogReq {
 }
 
 message GetRechargeNotifyLogResp {
-  RespBase base = 1;
-  PayNotifyLog data = 2;
+  payment.RespBase base = 1;
+  payment.PayNotifyLog data = 2;
 }
 
 message ListRechargeNotifyLogsReq {

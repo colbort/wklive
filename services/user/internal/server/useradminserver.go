@@ -23,7 +23,7 @@ func NewUserAdminServer(svcCtx *svc.ServiceContext) *UserAdminServer {
 	}
 }
 
-// 用户管理接口
+// 创建用户
 func (s *UserAdminServer) CreateUser(ctx context.Context, in *user.CreateUserReq) (*user.CreateUserResp, error) {
 	l := logic.NewCreateUserLogic(ctx, s.svcCtx)
 	return l.CreateUser(in)
@@ -101,7 +101,7 @@ func (s *UserAdminServer) ResetUserGoogle2FA(ctx context.Context, in *user.Reset
 	return l.ResetUserGoogle2FA(in)
 }
 
-// 实名认证相关接口
+// 实名认证信息列表
 func (s *UserAdminServer) ListUserIdentities(ctx context.Context, in *user.ListUserIdentitiesReq) (*user.ListUserIdentitiesResp, error) {
 	l := logic.NewListUserIdentitiesLogic(ctx, s.svcCtx)
 	return l.ListUserIdentities(in)
@@ -113,7 +113,7 @@ func (s *UserAdminServer) ReviewUserIdentity(ctx context.Context, in *user.Revie
 	return l.ReviewUserIdentity(in)
 }
 
-// 银行卡相关接口
+// 用户银行卡列表
 func (s *UserAdminServer) ListUserBanks(ctx context.Context, in *user.ListUserBanksReq) (*user.ListUserBanksResp, error) {
 	l := logic.NewListUserBanksLogic(ctx, s.svcCtx)
 	return l.ListUserBanks(in)

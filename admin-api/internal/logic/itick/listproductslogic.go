@@ -33,11 +33,11 @@ func (l *ListProductsLogic) ListProducts(req *types.ListProductsReq) (resp *type
 			Cursor: req.Page.Cursor,
 			Limit:  req.Page.Limit,
 		},
-		CategoryType:  itick.CategoryType(req.CategoryType),
-		Market:        req.Market,
-		Keyword:       req.Keyword,
-		Status:        req.Status,
-		VisibleStatus: req.VisibleStatus,
+		CategoryType: itick.CategoryType(req.CategoryType),
+		Market:       req.Market,
+		Keyword:      req.Keyword,
+		Enabled:      req.Enabled,
+		AppVisible:   req.AppVisible,
 	})
 	if err != nil {
 		return nil, err

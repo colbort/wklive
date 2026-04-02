@@ -1,7 +1,7 @@
 CREATE TABLE `t_itick_category` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `category_type` tinyint NOT NULL DEFAULT '0' COMMENT '产品类型: 1-forex 2-crypto 3-stock 4-future 5-indices 6-fund',
-  `category_type_name` varchar(64) NOT NULL DEFAULT '' COMMENT '产品类型名称',
+  `category_name` varchar(64) NOT NULL DEFAULT '' COMMENT '产品类型名称',
   `category_code` varchar(64) NOT NULL DEFAULT '' COMMENT '产品类型标识, 如 forex/crypto/stock/future/indices/fund',
   `enabled` tinyint NOT NULL DEFAULT '1' COMMENT '是否启用: 0-否 1-是',
   `app_visible` tinyint NOT NULL DEFAULT '1' COMMENT 'APP是否可见: 0-否 1-是',

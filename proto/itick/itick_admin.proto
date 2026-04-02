@@ -18,8 +18,8 @@ message AdminCommonResp {
 message CreateCategoryReq {
   itick.CategoryType category_type = 1;
   string category_name = 2;
-  bool enabled = 3;
-  bool app_visible = 4;
+  int64 enabled = 3;
+  int64 app_visible = 4;
   int64 sort = 5;
   string icon = 6;
   string remark = 7;
@@ -28,8 +28,8 @@ message CreateCategoryReq {
 message UpdateCategoryReq {
   int64 id = 1;
   string category_name = 2;
-  bool enabled = 3;
-  bool app_visible = 4;
+  int64 enabled = 3;
+  int64 app_visible = 4;
   int64 sort = 5;
   string icon = 6;
   string remark = 7;
@@ -47,7 +47,8 @@ message GetCategoryResp {
 message ListCategoriesReq {
   itick.PageReq page = 1;
   itick.CategoryType category_type = 2;
-  int32 status = 3; // 0全部 1启用 2禁用
+  int32 enabled = 3; // 0全部 1启用 2禁用
+  int32 app_visible = 4; // 0全部 1可见 2不可见
 }
 
 message ListCategoriesResp {
@@ -69,7 +70,7 @@ message GetSyncTaskStatusReq {
 }
 
 message GetSyncTaskStatusResp {
-  RespBase base = 1;
+  itick.RespBase base = 1;
   string task_no = 2;
   int32 status = 3;
   string message = 4;
@@ -88,8 +89,8 @@ message CreateProductReq {
   string display_name = 6;
   string base_coin = 7;
   string quote_coin = 8;
-  bool enabled = 9;
-  bool app_visible = 10;
+  int64 enabled = 9;
+  int64 app_visible = 10;
   int64 sort = 11;
   string icon = 12;
   string remark = 13;
@@ -102,8 +103,8 @@ message UpdateProductReq {
   string display_name = 4;
   string base_coin = 5;
   string quote_coin = 6;
-  bool enabled = 7;
-  bool app_visible = 8;
+  int64 enabled = 7;
+  int64 app_visible = 8;
   int64 sort = 9;
   string icon = 10;
   string remark = 11;
@@ -123,8 +124,8 @@ message ListProductsReq {
   itick.CategoryType category_type = 2;
   string market = 3;
   string keyword = 4;
-  int32 status = 5; // 0全部 1启用 2禁用
-  int32 visible_status = 6; // 0全部 1显示 2隐藏
+  int32 enabled = 5; // 0全部 1启用 2禁用
+  int32 app_visible = 6; // 0全部 1显示 2隐藏
 }
 
 message ListProductsResp {
@@ -156,8 +157,8 @@ message GetAdminKlineResp {
 message CreateTenantCategoryReq {
   int64 tenant_id = 1;
   int64 category_id = 2;
-  bool enabled = 3;
-  bool app_visible = 4;
+  int64 enabled = 3;
+  int64 app_visible = 4;
   int64 sort = 5;
   string remark = 6;
 }
@@ -165,8 +166,8 @@ message CreateTenantCategoryReq {
 message UpdateTenantCategoryReq {
   int64 id = 1;
   int64 tenant_id = 2;
-  bool enabled = 3;
-  bool app_visible = 4;
+  int64 enabled = 3;
+  int64 app_visible = 4;
   int64 sort = 5;
   string remark = 6;
 }
@@ -179,8 +180,8 @@ message BatchUpsertTenantCategoriesReq {
 message TenantCategoryItem {
   int64 id = 1;
   int64 category_id = 2;
-  bool enabled = 3;
-  bool app_visible = 4;
+  int64 enabled = 3;
+  int64 app_visible = 4;
   int64 sort = 5;
   string remark = 6;
 }
@@ -215,8 +216,8 @@ message ListTenantCategoriesResp {
 message CreateTenantProductReq {
   int64 tenant_id = 1;
   int64 product_id = 2;
-  bool enabled = 3;
-  bool app_visible = 4;
+  int64 enabled = 3;
+  int64 app_visible = 4;
   int64 sort = 5;
   string remark = 6;
 }
@@ -224,8 +225,8 @@ message CreateTenantProductReq {
 message UpdateTenantProductReq {
   int64 id = 1;
   int64 tenant_id = 2;
-  bool enabled = 3;
-  bool app_visible = 4;
+  int64 enabled = 3;
+  int64 app_visible = 4;
   int64 sort = 5;
   string remark = 6;
 }
@@ -238,8 +239,8 @@ message BatchUpsertTenantProductsReq {
 message TenantProductItem {
   int64 id = 1;
   int64 product_id = 2;
-  bool enabled = 3;
-  bool app_visible = 4;
+  int64 enabled = 3;
+  int64 app_visible = 4;
   int64 sort = 5;
   string remark = 6;
 }
@@ -275,7 +276,7 @@ message ListTenantProductsResp {
 
 message InitTenantItickDisplayReq {
   int64 tenant_id = 1;
-  bool overwrite = 2; // 是否覆盖已有配置
+  int64 overwrite = 2; // 是否覆盖已有配置
 }
 
 message InitTenantItickDisplayResp {

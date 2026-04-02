@@ -23,6 +23,12 @@ func NewItickAdminServer(svcCtx *svc.ServiceContext) *ItickAdminServer {
 	}
 }
 
+// 产品类型列表
+func (s *ItickAdminServer) ListCategories(ctx context.Context, in *itick.ListCategoriesReq) (*itick.ListCategoriesResp, error) {
+	l := logic.NewListCategoriesLogic(ctx, s.svcCtx)
+	return l.ListCategories(in)
+}
+
 // 产品类型
 func (s *ItickAdminServer) CreateCategory(ctx context.Context, in *itick.CreateCategoryReq) (*itick.AdminCommonResp, error) {
 	l := logic.NewCreateCategoryLogic(ctx, s.svcCtx)
@@ -41,14 +47,8 @@ func (s *ItickAdminServer) GetCategory(ctx context.Context, in *itick.GetCategor
 	return l.GetCategory(in)
 }
 
-// 产品类型列表
-func (s *ItickAdminServer) ListCategories(ctx context.Context, in *itick.ListCategoriesReq) (*itick.ListCategoriesResp, error) {
-	l := logic.NewListCategoriesLogic(ctx, s.svcCtx)
-	return l.ListCategories(in)
-}
-
 // 同步类型下的产品
-func (s *ItickAdminServer) SyncCategoryProducts(ctx context.Context, in *itick.SyncCategoryProductsReq) (*itick.AdminCommonResp, error) {
+func (s *ItickAdminServer) SyncCategoryProducts(ctx context.Context, in *itick.SyncCategoryProductsReq) (*itick.SyncCategoryProductsResp, error) {
 	l := logic.NewSyncCategoryProductsLogic(ctx, s.svcCtx)
 	return l.SyncCategoryProducts(in)
 }
@@ -57,6 +57,12 @@ func (s *ItickAdminServer) SyncCategoryProducts(ctx context.Context, in *itick.S
 func (s *ItickAdminServer) GetSyncTaskStatus(ctx context.Context, in *itick.GetSyncTaskStatusReq) (*itick.GetSyncTaskStatusResp, error) {
 	l := logic.NewGetSyncTaskStatusLogic(ctx, s.svcCtx)
 	return l.GetSyncTaskStatus(in)
+}
+
+// 产品列表
+func (s *ItickAdminServer) ListProducts(ctx context.Context, in *itick.ListProductsReq) (*itick.ListProductsResp, error) {
+	l := logic.NewListProductsLogic(ctx, s.svcCtx)
+	return l.ListProducts(in)
 }
 
 // 产品
@@ -77,16 +83,16 @@ func (s *ItickAdminServer) GetProduct(ctx context.Context, in *itick.GetProductR
 	return l.GetProduct(in)
 }
 
-// 产品列表
-func (s *ItickAdminServer) ListProducts(ctx context.Context, in *itick.ListProductsReq) (*itick.ListProductsResp, error) {
-	l := logic.NewListProductsLogic(ctx, s.svcCtx)
-	return l.ListProducts(in)
-}
-
 // K线查看
 func (s *ItickAdminServer) GetAdminKline(ctx context.Context, in *itick.GetAdminKlineReq) (*itick.GetAdminKlineResp, error) {
 	l := logic.NewGetAdminKlineLogic(ctx, s.svcCtx)
 	return l.GetAdminKline(in)
+}
+
+// 租户产品类型列表
+func (s *ItickAdminServer) ListTenantCategories(ctx context.Context, in *itick.ListTenantCategoriesReq) (*itick.ListTenantCategoriesResp, error) {
+	l := logic.NewListTenantCategoriesLogic(ctx, s.svcCtx)
+	return l.ListTenantCategories(in)
 }
 
 // 租户产品类型
@@ -113,10 +119,10 @@ func (s *ItickAdminServer) GetTenantCategory(ctx context.Context, in *itick.GetT
 	return l.GetTenantCategory(in)
 }
 
-// 租户产品类型列表
-func (s *ItickAdminServer) ListTenantCategories(ctx context.Context, in *itick.ListTenantCategoriesReq) (*itick.ListTenantCategoriesResp, error) {
-	l := logic.NewListTenantCategoriesLogic(ctx, s.svcCtx)
-	return l.ListTenantCategories(in)
+// 租户产品列表
+func (s *ItickAdminServer) ListTenantProducts(ctx context.Context, in *itick.ListTenantProductsReq) (*itick.ListTenantProductsResp, error) {
+	l := logic.NewListTenantProductsLogic(ctx, s.svcCtx)
+	return l.ListTenantProducts(in)
 }
 
 // 租户产品
@@ -141,12 +147,6 @@ func (s *ItickAdminServer) BatchUpsertTenantProducts(ctx context.Context, in *it
 func (s *ItickAdminServer) GetTenantProduct(ctx context.Context, in *itick.GetTenantProductReq) (*itick.GetTenantProductResp, error) {
 	l := logic.NewGetTenantProductLogic(ctx, s.svcCtx)
 	return l.GetTenantProduct(in)
-}
-
-// 租户产品列表
-func (s *ItickAdminServer) ListTenantProducts(ctx context.Context, in *itick.ListTenantProductsReq) (*itick.ListTenantProductsResp, error) {
-	l := logic.NewListTenantProductsLogic(ctx, s.svcCtx)
-	return l.ListTenantProducts(in)
 }
 
 // 初始化租户展示配置

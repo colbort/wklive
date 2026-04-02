@@ -25,6 +25,7 @@ type (
 	ListVisibleCategoriesResp = itick.ListVisibleCategoriesResp
 	ListVisibleProductsReq    = itick.ListVisibleProductsReq
 	ListVisibleProductsResp   = itick.ListVisibleProductsResp
+	MarketSymbol              = itick.MarketSymbol
 	PushReply                 = itick.PushReply
 	SubscribeRequest          = itick.SubscribeRequest
 	SubscribeTopic            = itick.SubscribeTopic

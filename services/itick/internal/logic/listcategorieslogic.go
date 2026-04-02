@@ -25,7 +25,50 @@ func NewListCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Li
 
 // 产品类型列表
 func (l *ListCategoriesLogic) ListCategories(in *itick.ListCategoriesReq) (*itick.ListCategoriesResp, error) {
-	// todo: add your logic here and delete this line
+	items, count, err := l.svcCtx.ItickCategoryModel.FindPage(l.ctx, int32(in.CategoryType), in.Enabled, in.AppVisible, in.Page.Cursor, in.Page.Limit)
+	if err != nil {
+		return nil, err
+	}
 
-	return &itick.ListCategoriesResp{}, nil
+	prevCursor := in.Page.Cursor
+	if prevCursor < 0 {
+		prevCursor = 0
+	}
+	nextCursor := int64(0)
+	if int64(len(items)) == in.Page.Limit {
+		lastItem := items[len(items)-1]
+		nextCursor = lastItem.Id
+	}
+	hasPrev := prevCursor > 0
+	hasNext := int64(len(items)) == in.Page.Limit
+
+	var data []*itick.ItickCategory
+	for _, item := range items {
+		data = append(data, &itick.ItickCategory{
+			Id:           item.Id,
+			CategoryType: itick.CategoryType(item.CategoryType),
+			CategoryCode: item.CategoryCode,
+			CategoryName: item.CategoryName,
+			Enabled:      item.Enabled,
+			AppVisible:   item.AppVisible,
+			Sort:         item.Sort,
+			Icon:         item.Icon,
+			Remark:       item.Remark,
+			CreateTime:   item.CreateTime,
+			UpdateTime:   item.UpdateTime,
+		})
+	}
+
+	return &itick.ListCategoriesResp{
+		Base: &itick.RespBase{
+			Code:       200,
+			Msg:        "查询成功",
+			Total:      count,
+			HasNext:    hasNext,
+			HasPrev:    hasPrev,
+			NextCursor: nextCursor,
+			PrevCursor: prevCursor,
+		},
+		Data: data,
+	}, nil
 }

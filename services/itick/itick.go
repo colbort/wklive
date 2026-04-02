@@ -50,6 +50,8 @@ func main() {
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		itick.RegisterItickAdminServer(grpcServer, server.NewItickAdminServer(svcCtx))
+		itick.RegisterItickAppServer(grpcServer, server.NewItickAppServer(svcCtx))
+		itick.RegisterItickTaskServer(grpcServer, server.NewItickTaskServer(svcCtx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

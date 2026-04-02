@@ -4,8 +4,8 @@ type ItickCategory {
 	categoryType int64  `json:"categoryType"`
 	categoryCode string `json:"categoryCode"`
 	categoryName string `json:"categoryName"`
-	enabled      bool   `json:"enabled"`
-	appVisible   bool   `json:"appVisible"`
+	enabled      int64  `json:"enabled"`
+	appVisible   int64  `json:"appVisible"`
 	sort         int64  `json:"sort"`
 	icon         string `json:"icon"`
 	remark       string `json:"remark"`
@@ -24,8 +24,8 @@ type ItickProduct {
 	displayName  string `json:"displayName"`
 	baseCoin     string `json:"baseCoin"`
 	quoteCoin    string `json:"quoteCoin"`
-	enabled      bool   `json:"enabled"`
-	appVisible   bool   `json:"appVisible"`
+	enabled      int64  `json:"enabled"`
+	appVisible   int64  `json:"appVisible"`
 	sort         int64  `json:"sort"`
 	icon         string `json:"icon"`
 	remark       string `json:"remark"`
@@ -83,8 +83,8 @@ type ItickTenantCategory {
 	id         int64  `json:"id"`
 	tenantId   int64  `json:"tenantId"`
 	categoryId int64  `json:"categoryId"`
-	enabled    bool   `json:"enabled"`
-	appVisible bool   `json:"appVisible"`
+	enabled    int64  `json:"enabled"`
+	appVisible int64  `json:"appVisible"`
 	sort       int64  `json:"sort"`
 	remark     string `json:"remark"`
 	createTime int64  `json:"createTime"`
@@ -99,8 +99,8 @@ type ItickTenantProduct {
 	id         int64  `json:"id"`
 	tenantId   int64  `json:"tenantId"`
 	productId  int64  `json:"productId"`
-	enabled    bool   `json:"enabled"`
-	appVisible bool   `json:"appVisible"`
+	enabled    int64  `json:"enabled"`
+	appVisible int64  `json:"appVisible"`
 	sort       int64  `json:"sort"`
 	remark     string `json:"remark"`
 	createTime int64  `json:"createTime"`
@@ -124,8 +124,8 @@ type ItickTenantProduct {
 type CreateCategoryReq {
 	categoryType int64  `json:"categoryType"`
 	categoryName string `json:"categoryName"`
-	enabled      bool   `json:"enabled"`
-	appVisible   bool   `json:"appVisible"`
+	enabled      int64  `json:"enabled"`
+	appVisible   int64  `json:"appVisible"`
 	sort         int64  `json:"sort"`
 	icon         string `json:"icon"`
 	remark       string `json:"remark"`
@@ -134,8 +134,8 @@ type CreateCategoryReq {
 type UpdateCategoryReq {
 	id           int64  `json:"id"`
 	categoryName string `json:"categoryName"`
-	enabled      bool   `json:"enabled"`
-	appVisible   bool   `json:"appVisible"`
+	enabled      int64  `json:"enabled"`
+	appVisible   int64  `json:"appVisible"`
 	sort         int64  `json:"sort"`
 	icon         string `json:"icon"`
 	remark       string `json:"remark"`
@@ -153,7 +153,8 @@ type GetCategoryResp {
 type ListCategoriesReq {
 	page         PageReq `json:"page"`
 	categoryType int64   `json:"categoryType"`
-	status       int32   `json:"status"` // 0全部 1启用 2禁用
+	enabled      int32   `json:"enable"` // 0全部 1启用 2禁用
+	appVisible   int32   `json:"appVisible"`
 }
 
 type ListCategoriesResp {
@@ -193,8 +194,8 @@ type CreateProductReq {
 	displayName  string `json:"displayName"`
 	baseCoin     string `json:"baseCoin"`
 	quoteCoin    string `json:"quoteCoin"`
-	enabled      bool   `json:"enabled"`
-	appVisible   bool   `json:"appVisible"`
+	enabled      int64  `json:"enabled"`
+	appVisible   int64  `json:"appVisible"`
 	sort         int64  `json:"sort"`
 	icon         string `json:"icon"`
 	remark       string `json:"remark"`
@@ -206,8 +207,8 @@ type UpdateProductReq {
 	displayName string `json:"displayName"`
 	baseCoin    string `json:"baseCoin"`
 	quoteCoin   string `json:"quoteCoin"`
-	enabled     bool   `json:"enabled"`
-	appVisible  bool   `json:"appVisible"`
+	enabled     int64  `json:"enabled"`
+	appVisible  int64  `json:"appVisible"`
 	sort        int64  `json:"sort"`
 	icon        string `json:"icon"`
 	remark      string `json:"remark"`
@@ -223,12 +224,12 @@ type GetProductResp {
 }
 
 type ListProductsReq {
-	page          PageReq `json:"page"`
-	categoryType  int64   `json:"categoryType"`
-	market        string  `json:"market"`
-	keyword       string  `json:"keyword"`
-	status        int32   `json:"status"` // 0全部 1启用 2禁用
-	visibleStatus int32   `json:"visibleStatus"` // 0全部 1显示 2隐藏
+	page         PageReq `json:"page"`
+	categoryType int64   `json:"categoryType"`
+	market       string  `json:"market"`
+	keyword      string  `json:"keyword"`
+	enabled      int32   `json:"enabled"` // 0全部 1启用 2禁用
+	appVisible   int32   `json:"appVisible"` // 0全部 1显示 2隐藏
 }
 
 type ListProductsResp {
@@ -258,8 +259,8 @@ type GetAdminKlineResp {
 type CreateTenantCategoryReq {
 	tenantId   int64  `json:"tenantId"`
 	categoryId int64  `json:"categoryId"`
-	enabled    bool   `json:"enabled"`
-	appVisible bool   `json:"appVisible"`
+	enabled    int64  `json:"enabled"`
+	appVisible int64  `json:"appVisible"`
 	sort       int64  `json:"sort"`
 	remark     string `json:"remark"`
 }
@@ -267,8 +268,8 @@ type CreateTenantCategoryReq {
 type UpdateTenantCategoryReq {
 	id         int64  `json:"id"`
 	tenantId   int64  `json:"tenantId"`
-	enabled    bool   `json:"enabled"`
-	appVisible bool   `json:"appVisible"`
+	enabled    int64  `json:"enabled"`
+	appVisible int64  `json:"appVisible"`
 	sort       int64  `json:"sort"`
 	remark     string `json:"remark"`
 }
@@ -281,8 +282,8 @@ type BatchUpsertTenantCategoriesReq {
 type TenantCategoryItem {
 	id         int64  `json:"id"`
 	categoryId int64  `json:"categoryId"`
-	enabled    bool   `json:"enabled"`
-	appVisible bool   `json:"appVisible"`
+	enabled    int64  `json:"enabled"`
+	appVisible int64  `json:"appVisible"`
 	sort       int64  `json:"sort"`
 	remark     string `json:"remark"`
 }
@@ -316,8 +317,8 @@ type ListTenantCategoriesResp {
 type CreateTenantProductReq {
 	tenantId   int64  `json:"tenantId"`
 	productId  int64  `json:"productId"`
-	enabled    bool   `json:"enabled"`
-	appVisible bool   `json:"appVisible"`
+	enabled    int64  `json:"enabled"`
+	appVisible int64  `json:"appVisible"`
 	sort       int64  `json:"sort"`
 	remark     string `json:"remark"`
 }
@@ -325,8 +326,8 @@ type CreateTenantProductReq {
 type UpdateTenantProductReq {
 	id         int64  `json:"id"`
 	tenantId   int64  `json:"tenantId"`
-	enabled    bool   `json:"enabled"`
-	appVisible bool   `json:"appVisible"`
+	enabled    int64  `json:"enabled"`
+	appVisible int64  `json:"appVisible"`
 	sort       int64  `json:"sort"`
 	remark     string `json:"remark"`
 }
@@ -339,8 +340,8 @@ type BatchUpsertTenantProductsReq {
 type TenantProductItem {
 	id         int64  `json:"id"`
 	productId  int64  `json:"productId"`
-	enabled    bool   `json:"enabled"`
-	appVisible bool   `json:"appVisible"`
+	enabled    int64  `json:"enabled"`
+	appVisible int64  `json:"appVisible"`
 	sort       int64  `json:"sort"`
 	remark     string `json:"remark"`
 }
@@ -375,7 +376,7 @@ type ListTenantProductsResp {
 // ====================
 type InitTenantItickDisplayReq {
 	tenantId  int64 `json:"tenantId"`
-	overwrite bool  `json:"overwrite"` // 是否覆盖已有配置
+	overwrite int64 `json:"overwrite"` // 是否覆盖已有配置
 }
 
 type InitTenantItickDisplayResp {
@@ -394,7 +395,7 @@ service admin {
 	@handler ListCategories
 	get /categories (ListCategoriesReq) returns (ListCategoriesResp)
 
-	// 产品类型
+	// 创建产品类型
 	@handler CreateCategory
 	post /categories (CreateCategoryReq) returns (RespBase)
 

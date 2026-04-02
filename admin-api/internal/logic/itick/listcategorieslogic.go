@@ -34,7 +34,8 @@ func (l *ListCategoriesLogic) ListCategories(req *types.ListCategoriesReq) (resp
 			Limit:  req.Page.Limit,
 		},
 		CategoryType: itick.CategoryType(req.CategoryType),
-		Status:       req.Status,
+		Enabled:      req.Enabled,
+		AppVisible:   req.AppVisible,
 	})
 	if err != nil {
 		return nil, err

@@ -28,8 +28,8 @@ type ItickCategory struct {
 	CategoryType  CategoryType           `protobuf:"varint,2,opt,name=category_type,json=categoryType,proto3,enum=itick.CategoryType" json:"category_type,omitempty"`
 	CategoryCode  string                 `protobuf:"bytes,3,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"`
 	CategoryName  string                 `protobuf:"bytes,4,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"`
-	Enabled       bool                   `protobuf:"varint,5,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	AppVisible    bool                   `protobuf:"varint,6,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
+	Enabled       int64                  `protobuf:"varint,5,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	AppVisible    int64                  `protobuf:"varint,6,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
 	Sort          int64                  `protobuf:"varint,7,opt,name=sort,proto3" json:"sort,omitempty"`
 	Icon          string                 `protobuf:"bytes,8,opt,name=icon,proto3" json:"icon,omitempty"`
 	Remark        string                 `protobuf:"bytes,9,opt,name=remark,proto3" json:"remark,omitempty"`
@@ -97,18 +97,18 @@ func (x *ItickCategory) GetCategoryName() string {
 	return ""
 }
 
-func (x *ItickCategory) GetEnabled() bool {
+func (x *ItickCategory) GetEnabled() int64 {
 	if x != nil {
 		return x.Enabled
 	}
-	return false
+	return 0
 }
 
-func (x *ItickCategory) GetAppVisible() bool {
+func (x *ItickCategory) GetAppVisible() int64 {
 	if x != nil {
 		return x.AppVisible
 	}
-	return false
+	return 0
 }
 
 func (x *ItickCategory) GetSort() int64 {
@@ -158,8 +158,8 @@ type ItickProduct struct {
 	DisplayName   string                 `protobuf:"bytes,7,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
 	BaseCoin      string                 `protobuf:"bytes,8,opt,name=base_coin,json=baseCoin,proto3" json:"base_coin,omitempty"`
 	QuoteCoin     string                 `protobuf:"bytes,9,opt,name=quote_coin,json=quoteCoin,proto3" json:"quote_coin,omitempty"`
-	Enabled       bool                   `protobuf:"varint,10,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	AppVisible    bool                   `protobuf:"varint,11,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
+	Enabled       int64                  `protobuf:"varint,10,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	AppVisible    int64                  `protobuf:"varint,11,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
 	Sort          int64                  `protobuf:"varint,12,opt,name=sort,proto3" json:"sort,omitempty"`
 	Icon          string                 `protobuf:"bytes,13,opt,name=icon,proto3" json:"icon,omitempty"`
 	Remark        string                 `protobuf:"bytes,14,opt,name=remark,proto3" json:"remark,omitempty"`
@@ -262,18 +262,18 @@ func (x *ItickProduct) GetQuoteCoin() string {
 	return ""
 }
 
-func (x *ItickProduct) GetEnabled() bool {
+func (x *ItickProduct) GetEnabled() int64 {
 	if x != nil {
 		return x.Enabled
 	}
-	return false
+	return 0
 }
 
-func (x *ItickProduct) GetAppVisible() bool {
+func (x *ItickProduct) GetAppVisible() int64 {
 	if x != nil {
 		return x.AppVisible
 	}
-	return false
+	return 0
 }
 
 func (x *ItickProduct) GetSort() int64 {
@@ -704,8 +704,8 @@ type ItickTenantCategory struct {
 	Id         int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	TenantId   int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	CategoryId int64                  `protobuf:"varint,3,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
-	Enabled    bool                   `protobuf:"varint,4,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	AppVisible bool                   `protobuf:"varint,5,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
+	Enabled    int64                  `protobuf:"varint,4,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	AppVisible int64                  `protobuf:"varint,5,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
 	Sort       int64                  `protobuf:"varint,6,opt,name=sort,proto3" json:"sort,omitempty"`
 	Remark     string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`
 	CreateTime int64                  `protobuf:"varint,8,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
@@ -769,18 +769,18 @@ func (x *ItickTenantCategory) GetCategoryId() int64 {
 	return 0
 }
 
-func (x *ItickTenantCategory) GetEnabled() bool {
+func (x *ItickTenantCategory) GetEnabled() int64 {
 	if x != nil {
 		return x.Enabled
 	}
-	return false
+	return 0
 }
 
-func (x *ItickTenantCategory) GetAppVisible() bool {
+func (x *ItickTenantCategory) GetAppVisible() int64 {
 	if x != nil {
 		return x.AppVisible
 	}
-	return false
+	return 0
 }
 
 func (x *ItickTenantCategory) GetSort() int64 {
@@ -837,8 +837,8 @@ type ItickTenantProduct struct {
 	Id         int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	TenantId   int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	ProductId  int64                  `protobuf:"varint,3,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
-	Enabled    bool                   `protobuf:"varint,4,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	AppVisible bool                   `protobuf:"varint,5,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
+	Enabled    int64                  `protobuf:"varint,4,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	AppVisible int64                  `protobuf:"varint,5,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"`
 	Sort       int64                  `protobuf:"varint,6,opt,name=sort,proto3" json:"sort,omitempty"`
 	Remark     string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`
 	CreateTime int64                  `protobuf:"varint,8,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
@@ -909,18 +909,18 @@ func (x *ItickTenantProduct) GetProductId() int64 {
 	return 0
 }
 
-func (x *ItickTenantProduct) GetEnabled() bool {
+func (x *ItickTenantProduct) GetEnabled() int64 {
 	if x != nil {
 		return x.Enabled
 	}
-	return false
+	return 0
 }
 
-func (x *ItickTenantProduct) GetAppVisible() bool {
+func (x *ItickTenantProduct) GetAppVisible() int64 {
 	if x != nil {
 		return x.AppVisible
 	}
-	return false
+	return 0
 }
 
 func (x *ItickTenantProduct) GetSort() int64 {
@@ -1031,8 +1031,8 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"\rcategory_type\x18\x02 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12#\n" +
 	"\rcategory_code\x18\x03 \x01(\tR\fcategoryCode\x12#\n" +
 	"\rcategory_name\x18\x04 \x01(\tR\fcategoryName\x12\x18\n" +
-	"\aenabled\x18\x05 \x01(\bR\aenabled\x12\x1f\n" +
-	"\vapp_visible\x18\x06 \x01(\bR\n" +
+	"\aenabled\x18\x05 \x01(\x03R\aenabled\x12\x1f\n" +
+	"\vapp_visible\x18\x06 \x01(\x03R\n" +
 	"appVisible\x12\x12\n" +
 	"\x04sort\x18\a \x01(\x03R\x04sort\x12\x12\n" +
 	"\x04icon\x18\b \x01(\tR\x04icon\x12\x16\n" +
@@ -1054,8 +1054,8 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"\n" +
 	"quote_coin\x18\t \x01(\tR\tquoteCoin\x12\x18\n" +
 	"\aenabled\x18\n" +
-	" \x01(\bR\aenabled\x12\x1f\n" +
-	"\vapp_visible\x18\v \x01(\bR\n" +
+	" \x01(\x03R\aenabled\x12\x1f\n" +
+	"\vapp_visible\x18\v \x01(\x03R\n" +
 	"appVisible\x12\x12\n" +
 	"\x04sort\x18\f \x01(\x03R\x04sort\x12\x12\n" +
 	"\x04icon\x18\r \x01(\tR\x04icon\x12\x16\n" +
@@ -1110,8 +1110,8 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
 	"\vcategory_id\x18\x03 \x01(\x03R\n" +
 	"categoryId\x12\x18\n" +
-	"\aenabled\x18\x04 \x01(\bR\aenabled\x12\x1f\n" +
-	"\vapp_visible\x18\x05 \x01(\bR\n" +
+	"\aenabled\x18\x04 \x01(\x03R\aenabled\x12\x1f\n" +
+	"\vapp_visible\x18\x05 \x01(\x03R\n" +
 	"appVisible\x12\x12\n" +
 	"\x04sort\x18\x06 \x01(\x03R\x04sort\x12\x16\n" +
 	"\x06remark\x18\a \x01(\tR\x06remark\x12\x1f\n" +
@@ -1128,8 +1128,8 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1d\n" +
 	"\n" +
 	"product_id\x18\x03 \x01(\x03R\tproductId\x12\x18\n" +
-	"\aenabled\x18\x04 \x01(\bR\aenabled\x12\x1f\n" +
-	"\vapp_visible\x18\x05 \x01(\bR\n" +
+	"\aenabled\x18\x04 \x01(\x03R\aenabled\x12\x1f\n" +
+	"\vapp_visible\x18\x05 \x01(\x03R\n" +
 	"appVisible\x12\x12\n" +
 	"\x04sort\x18\x06 \x01(\x03R\x04sort\x12\x16\n" +
 	"\x06remark\x18\a \x01(\tR\x06remark\x12\x1f\n" +

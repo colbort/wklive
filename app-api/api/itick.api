@@ -8,8 +8,8 @@ type ItickCategory {
 	categoryType int64  `json:"categoryType"`
 	categoryCode string `json:"categoryCode"`
 	categoryName string `json:"categoryName"`
-	enabled      bool   `json:"enabled"`
-	appVisible   bool   `json:"appVisible"`
+	enabled      int64  `json:"enabled"`
+	appVisible   int64  `json:"appVisible"`
 	sort         int64  `json:"sort"`
 	icon         string `json:"icon"`
 	remark       string `json:"remark"`
@@ -28,8 +28,8 @@ type ItickProduct {
 	displayName  string `json:"displayName"`
 	baseCoin     string `json:"baseCoin"`
 	quoteCoin    string `json:"quoteCoin"`
-	enabled      bool   `json:"enabled"`
-	appVisible   bool   `json:"appVisible"`
+	enabled      int64  `json:"enabled"`
+	appVisible   int64  `json:"appVisible"`
 	sort         int64  `json:"sort"`
 	icon         string `json:"icon"`
 	remark       string `json:"remark"`
@@ -87,24 +87,24 @@ type ItickTenantCategory {
 	id         int64  `json:"id"`
 	tenantId   int64  `json:"tenantId"`
 	categoryId int64  `json:"categoryId"`
-	enabled    bool   `json:"enabled"`
-	appVisible bool   `json:"appVisible"`
+	enabled    int64  `json:"enabled"`
+	appVisible int64  `json:"appVisible"`
 	sort       int64  `json:"sort"`
 	remark     string `json:"remark"`
 	createTime int64  `json:"createTime"`
 	updateTime int64  `json:"updateTime"`
 	// 冗余返回字段，方便前端展示
-	categoryType     int64  `json:"categoryType"`
+	categoryType int64  `json:"categoryType"`
 	categoryName string `json:"categoryName"`
-	icon             string `json:"icon"`
+	icon         string `json:"icon"`
 }
 
 type ItickTenantProduct {
 	id         int64  `json:"id"`
 	tenantId   int64  `json:"tenantId"`
 	productId  int64  `json:"productId"`
-	enabled    bool   `json:"enabled"`
-	appVisible bool   `json:"appVisible"`
+	enabled    int64  `json:"enabled"`
+	appVisible int64  `json:"appVisible"`
 	sort       int64  `json:"sort"`
 	remark     string `json:"remark"`
 	createTime int64  `json:"createTime"`

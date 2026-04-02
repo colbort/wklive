@@ -12,9 +12,18 @@ PROTO_DIR := $(REPO_ROOT)/proto/payment
 # 自动查找所有 proto 文件
 PROTO_FILES := $(wildcard $(PROTO_DIR)/*.proto)
 
-.PHONY: gen gen-rpc fix-imports tidy fmt clean-gen gen-model print-protos
+GOCTL ?= $(shell go env GOPATH)/bin/goctl
 
-gen: gen-rpc fix-imports fmt tidy clean-gen
+.PHONY: gen gen-rpc fix-imports tidy fmt clean-gen gen-model print-protos clean-main install-goctl
+
+gen: chech-goctl gen-rpc fix-imports fmt tidy clean-gen clean-main
+
+check-goctl:
+	@$(GOCTL) --version | grep "1.9.2" >/dev/null || \
+		(echo "❌ 当前项目要求 goctl v1.9.2"; exit 1)
+
+install-goctl:
+	go install github.com/zeromicro/go-zero/tools/goctl@v1.9.2
 
 # 查看匹配到的 proto 文件
 print-protos:
@@ -65,6 +74,9 @@ tidy:
 # 谨慎：只清理 goctl 生成的 server 目录（避免误删你写的 logic）
 clean-gen:
 	@rm -rf wklive/
+
+clean-main:
+	@rm -rf paymentadmin.go paymentapp.go ./etc/paymentadmin.yaml ./etc/paymentapp.yaml
 
 .PHONY: gen-model
 gen-model:

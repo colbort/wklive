@@ -21,7 +21,7 @@ type ServiceContext struct {
 	ItickTenantCategoryModel models.ItickTenantCategoryModel
 	ItickTenantProductModel  models.ItickTenantProductModel
 	ItickSyncTaskModel       models.ItickSyncTaskModel
-	ItickQuoteModel           models.ItickQuoteModel
+	ItickQuoteModel          models.ItickQuoteModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -52,6 +52,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ItickTenantCategoryModel: models.NewTItickTenantCategoryModel(conn, c.CacheRedis).(models.ItickTenantCategoryModel),
 		ItickTenantProductModel:  models.NewTItickTenantProductModel(conn, c.CacheRedis).(models.ItickTenantProductModel),
 		ItickSyncTaskModel:       models.NewTItickSyncTaskModel(conn, c.CacheRedis).(models.ItickSyncTaskModel),
-		ItickQuoteModel:           models.NewTItickQuoteModel(conn, c.CacheRedis).(models.ItickQuoteModel),
+		ItickQuoteModel:          models.NewTItickQuoteModel(conn, c.CacheRedis).(models.ItickQuoteModel),
 	}
 }

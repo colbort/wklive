@@ -7,7 +7,7 @@ GOCTL ?= goctl
 # 一键生成
 gen: check
 	@echo "🔧 generating from $(API_FILE) ..."
-	@$(GOCTL) api go -api $(API_FILE) -dir .
+	@$(GOCTL) api go swagger -api $(API_FILE) -dir .
 	@echo "✅ generate done"
 
 # 检查 core.api 是否存在

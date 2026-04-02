@@ -1,3 +1,7 @@
 Name: app
 Host: 0.0.0.0
 Port: 8888
+
+Jwt:
+  AccessSecret: "your_access_secret"
+  AccessExpire: 3600

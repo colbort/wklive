@@ -42,17 +42,17 @@ type (
 	}
 
 	TItickCategory struct {
-		Id               int64  `db:"id"`                 // 主键ID
-		CategoryType     int64  `db:"category_type"`      // 产品类型: 1-forex 2-crypto 3-stock 4-future 5-indices 6-fund
-		CategoryTypeName string `db:"category_type_name"` // 产品类型名称
-		CategoryCode     string `db:"category_code"`      // 产品类型标识, 如 forex/crypto/stock/future/indices/fund
-		Enabled          int64  `db:"enabled"`            // 是否启用: 0-否 1-是
-		AppVisible       int64  `db:"app_visible"`        // APP是否可见: 0-否 1-是
-		Sort             int64  `db:"sort"`               // 排序值,越小越靠前
-		Icon             string `db:"icon"`               // 图标
-		Remark           string `db:"remark"`             // 备注
-		CreateTime       int64  `db:"create_time"`        // 创建时间(毫秒时间戳)
-		UpdateTime       int64  `db:"update_time"`        // 更新时间(毫秒时间戳)
+		Id           int64  `db:"id"`            // 主键ID
+		CategoryType int64  `db:"category_type"` // 产品类型: 1-forex 2-crypto 3-stock 4-future 5-indices 6-fund
+		CategoryName string `db:"category_name"` // 产品类型名称
+		CategoryCode string `db:"category_code"` // 产品类型标识, 如 forex/crypto/stock/future/indices/fund
+		Enabled      int64  `db:"enabled"`       // 是否启用: 0-否 1-是
+		AppVisible   int64  `db:"app_visible"`   // APP是否可见: 0-否 1-是
+		Sort         int64  `db:"sort"`          // 排序值,越小越靠前
+		Icon         string `db:"icon"`          // 图标
+		Remark       string `db:"remark"`        // 备注
+		CreateTime   int64  `db:"create_time"`   // 创建时间(毫秒时间戳)
+		UpdateTime   int64  `db:"update_time"`   // 更新时间(毫秒时间戳)
 	}
 )
 
@@ -120,7 +120,7 @@ func (m *defaultTItickCategoryModel) Insert(ctx context.Context, data *TItickCat
 	tItickCategoryIdKey := fmt.Sprintf("%s%v", cacheTItickCategoryIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickCategoryRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.CategoryType, data.CategoryTypeName, data.CategoryCode, data.Enabled, data.AppVisible, data.Sort, data.Icon, data.Remark)
+		return conn.ExecCtx(ctx, query, data.CategoryType, data.CategoryName, data.CategoryCode, data.Enabled, data.AppVisible, data.Sort, data.Icon, data.Remark)
 	}, tItickCategoryCategoryTypeKey, tItickCategoryIdKey)
 	return ret, err
 }
@@ -135,7 +135,7 @@ func (m *defaultTItickCategoryModel) Update(ctx context.Context, newData *TItick
 	tItickCategoryIdKey := fmt.Sprintf("%s%v", cacheTItickCategoryIdPrefix, data.Id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickCategoryRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.CategoryType, newData.CategoryTypeName, newData.CategoryCode, newData.Enabled, newData.AppVisible, newData.Sort, newData.Icon, newData.Remark, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.CategoryType, newData.CategoryName, newData.CategoryCode, newData.Enabled, newData.AppVisible, newData.Sort, newData.Icon, newData.Remark, newData.Id)
 	}, tItickCategoryCategoryTypeKey, tItickCategoryIdKey)
 	return err
 }

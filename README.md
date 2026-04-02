@@ -97,6 +97,28 @@ SystemRpc:
     Hosts: 
     - "192.168.10.116:2379"
     Key: system.rpc
+
+
+UserRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts: 
+    - "192.168.10.116:2379"
+    Key: user.rpc
+
+PaymentRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts: 
+    - "192.168.10.116:2379"
+    Key: payment.rpc
+
+ItickRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts: 
+    - "192.168.10.116:2379"
+    Key: itick.rpc
 ```
 
 

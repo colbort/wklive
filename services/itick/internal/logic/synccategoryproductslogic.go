@@ -33,11 +33,11 @@ func NewSyncCategoryProductsLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 // 同步类型下的产品
-func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryProductsReq) (*itick.AdminCommonResp, error) {
+func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryProductsReq) (*itick.SyncCategoryProductsResp, error) {
 	result, err := l.svcCtx.ItickCategoryModel.FindOne(l.ctx, in.CategoryId)
 	if err != nil {
 		logx.Errorf("find category failed, err=%v", err)
-		return &itick.AdminCommonResp{
+		return &itick.SyncCategoryProductsResp{
 			Base: &itick.RespBase{
 				Code: 1,
 				Msg:  err.Error(),
@@ -45,7 +45,7 @@ func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryP
 		}, nil
 	}
 	if result == nil {
-		return &itick.AdminCommonResp{
+		return &itick.SyncCategoryProductsResp{
 			Base: &itick.RespBase{
 				Code: 1,
 				Msg:  "分类不存在",
@@ -68,7 +68,7 @@ func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryP
 	})
 	if err != nil {
 		logx.Errorf("create sync task failed, err=%v", err)
-		return &itick.AdminCommonResp{
+		return &itick.SyncCategoryProductsResp{
 			Base: &itick.RespBase{
 				Code: 1,
 				Msg:  "创建同步任务失败",
@@ -88,11 +88,12 @@ func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryP
 		logic.Run(taskNo, reqCopy)
 	}(taskNo, &reqCopy)
 
-	return &itick.AdminCommonResp{
+	return &itick.SyncCategoryProductsResp{
 		Base: &itick.RespBase{
 			Code: 0,
 			Msg:  "同步任务已提交",
 		},
+		TaskNo: taskNo,
 	}, nil
 }
 
