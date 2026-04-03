@@ -475,51 +475,51 @@ type SysTenantListResp {
 }
 
 @server (
-	prefix: /admin
+	prefix: /admin/system
 	group:  system
 	jwt:    Jwt
 )
 service admin {
 	// --- 后台用户 ---
 	@handler SysUserList
-	get /sys/users (SysUserListReq) returns (SysUserListResp)
+	get /users (SysUserListReq) returns (SysUserListResp)
 
 	@handler SysUserDetail
-	get /sys/users/:id returns (SysUserDetailResp)
+	get /users/:id returns (SysUserDetailResp)
 
 	@handler SysUserCreate
-	post /sys/users (SysUserCreateReq) returns (RespBase)
+	post /users (SysUserCreateReq) returns (RespBase)
 
 	@handler SysUserUpdate
-	put /sys/users (SysUserUpdateReq) returns (RespBase)
+	put /users (SysUserUpdateReq) returns (RespBase)
 
 	@handler SysUserDelete
-	delete /sys/users/:id (SysUserDeleteReq) returns (RespBase)
+	delete /users/:id (SysUserDeleteReq) returns (RespBase)
 
 	@handler ChangeUserStatus
-	post /sys/users/status (ChangeUserStatusReq) returns (RespBase)
+	post /users/status (ChangeUserStatusReq) returns (RespBase)
 
 	@handler ResetUserPwd
-	post /sys/users/resetPwd (ResetUserPwdReq) returns (RespBase)
+	post /users/resetPwd (ResetUserPwdReq) returns (RespBase)
 
 	@handler AssignUserRoles
-	post /sys/users/assignRoles (AssignUserRolesReq) returns (RespBase)
+	post /users/assignRoles (AssignUserRolesReq) returns (RespBase)
 
 	// --- Google 2FA ---
 	@handler Google2FAInit
-	post /sys/users/google2fa/init (Google2FAInitReq) returns (Google2FAInitResp)
+	post /users/google2fa/init (Google2FAInitReq) returns (Google2FAInitResp)
 
 	@handler Google2FABind
-	post /sys/users/google2fa/bind (Google2FABindReq) returns (RespBase)
+	post /users/google2fa/bind (Google2FABindReq) returns (RespBase)
 
 	@handler Google2FAEnable
-	post /sys/users/google2fa/enable (Google2FAEnableReq) returns (RespBase)
+	post /users/google2fa/enable (Google2FAEnableReq) returns (RespBase)
 
 	@handler Google2FADisable
-	post /sys/users/google2fa/disable (Google2FADisableReq) returns (RespBase)
+	post /users/google2fa/disable (Google2FADisableReq) returns (RespBase)
 
 	@handler Google2FAReset
-	post /sys/users/google2fa/reset (Google2FAResetReq) returns (RespBase)
+	post /users/google2fa/reset (Google2FAResetReq) returns (RespBase)
 
 	// --- 角色 ---
 	@handler SysRoleList

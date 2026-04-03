@@ -10,21 +10,21 @@ import type {
 // ===== API 函数 =====
 
 export function apiSysConfigList(params: SysConfigListReq): Promise<RespBase<SysConfigItem[]>> {
-  return get<SysConfigItem[]>('/admin/configs', params)
+  return get<SysConfigItem[]>('/admin/system/configs', params)
 }
 
 export function apiSysConfigCreate(data: SysConfigCreateReq): Promise<RespBase> {
-  return post('/admin/configs', data)
+  return post('/admin/system/configs', data)
 }
 
 export function apiSysConfigUpdate(data: SysConfigUpdateReq): Promise<RespBase> {
-  return put('/admin/configs', data)
+  return put('/admin/system/configs', data)
 }
 
 export function apiSysConfigDelete(id: number): Promise<RespBase> {
-  return del(`/admin/configs/${id}`)
+  return del(`/admin/system/configs/${id}`)
 }
 
 export function apiSysConfigKeys(): Promise<RespBase<string[]>> {
-  return get<string[]>('/admin/configs/keys')
+  return get<string[]>('/admin/system/configs/keys')
 }

@@ -21,6 +21,8 @@ type ItickCategory {
 type ItickProduct {
 	id           int64  `json:"id"`
 	categoryType int64  `json:"categoryType"`
+	categoryCode string `json:"categoryCode"`
+	categoryName string `json:"categoryName"`
 	market       string `json:"market"` // binance / hk / us / forex ...
 	symbol       string `json:"symbol"` // BTCUSDT / AAPL / EURUSD
 	code         string `json:"code"` // 第三方原始 code

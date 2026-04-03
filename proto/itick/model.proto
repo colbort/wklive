@@ -25,20 +25,22 @@ message ItickCategory {
 message ItickProduct {
   int64 id = 1;
   itick.CategoryType category_type = 2;
-  string market = 3; // binance / hk / us / forex ...
-  string symbol = 4; // BTCUSDT / AAPL / EURUSD
-  string code = 5; // 第三方原始 code
-  string name = 6;
-  string display_name = 7;
-  string base_coin = 8;
-  string quote_coin = 9;
-  int64 enabled = 10;
-  int64 app_visible = 11;
-  int64 sort = 12;
-  string icon = 13;
-  string remark = 14;
-  int64 create_time = 15;
-  int64 update_time = 16;
+  string category_code = 3;
+  string category_name = 4;
+  string market = 5; // binance / hk / us / forex ...
+  string symbol = 6; // BTCUSDT / AAPL / EURUSD
+  string code = 7; // 第三方原始 code
+  string name = 8;
+  string display_name = 9;
+  string base_coin = 10;
+  string quote_coin = 11;
+  int64 enabled = 12;
+  int64 app_visible = 13;
+  int64 sort = 14;
+  string icon = 15;
+  string remark = 16;
+  int64 create_time = 17;
+  int64 update_time = 18;
 }
 
 // K线

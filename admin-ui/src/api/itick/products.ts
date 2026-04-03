@@ -10,23 +10,22 @@ import type {
   Kline,
 } from '@/services'
 
-
 export function apiItickProductList(params: ListProductsReq): Promise<RespBase<ItickProduct[]>> {
-    return get<ItickProduct[]>(`/admin/itick/products`, params)
+  return get<ItickProduct[]>(`/admin/itick/products`, params)
 }
 
 export function apiItickProductCreate(params: CreateProductReq): Promise<RespBase> {
-    return post(`/admin/itick/products`, params)
+  return post(`/admin/itick/products`, params)
 }
 
 export function apiItickProductUpdate(params: UpdateProductReq): Promise<RespBase> {
-    return put(`/admin/itick/products`, params)
+  return put(`/admin/itick/products`, params)
 }
 
 export function apiItickProductDetail(id: number): Promise<RespBase<ItickProduct>> {
-    return get<ItickProduct>(`/admin/itick/products/${id}`)
+  return get<ItickProduct>(`/admin/itick/products/${id}`)
 }
 
 export function apiItickProductKline(params: GetProductKlineReq): Promise<RespBase<Kline[]>> {
-    return get<Kline[]>(`/admin/itick/product/kline`, params)
+  return get<Kline[]>(`/admin/itick/product/kline`, params)
 }

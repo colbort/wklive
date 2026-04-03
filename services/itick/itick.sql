@@ -27,6 +27,8 @@ INSERT INTO `t_itick_category` (`id`, `category_type`, `category_type_name`, `ca
 CREATE TABLE `t_itick_product` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `category_type` tinyint NOT NULL DEFAULT '0' COMMENT '产品类型: 1-forex 2-crypto 3-stock 4-future 5-indices 6-fund',
+  `category_name` varchar(64) NOT NULL DEFAULT '' COMMENT '产品类型名称',
+  `category_code` varchar(64) NOT NULL DEFAULT '' COMMENT '产品类型标识, 如 forex/crypto/stock/future/indices/fund',
   `market` varchar(64) NOT NULL DEFAULT '' COMMENT '市场/来源, 如 binance/hk/us/forex',
   `symbol` varchar(64) NOT NULL DEFAULT '' COMMENT '产品标识, 如 BTCUSDT/AAPL/EURUSD',
   `code` varchar(128) NOT NULL DEFAULT '' COMMENT '第三方原始code',

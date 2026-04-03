@@ -30,8 +30,8 @@ func NewListProductsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *List
 func (l *ListProductsLogic) ListProducts(req *types.ListProductsReq) (resp *types.ListProductsResp, err error) {
 	result, err := l.svcCtx.ItickCli.ListProducts(l.ctx, &itick.ListProductsReq{
 		Page: &itick.PageReq{
-			Cursor: req.Page.Cursor,
-			Limit:  req.Page.Limit,
+			Cursor: req.PageReq.Cursor,
+			Limit:  req.PageReq.Limit,
 		},
 		CategoryType: itick.CategoryType(req.CategoryType),
 		Market:       req.Market,

@@ -60,7 +60,7 @@ export type SyncCategoryProductsResp = {
 
 // ===== ITICK服务 =====
 
-class CategoriesService implements BaseService {
+export class CategoriesService implements BaseService {
   async getList(params: ListCategoriesReq): Promise<RespBase<ItickCategory[]>> {
     return apiItickCategoryList(params)
   }
@@ -82,5 +82,4 @@ class CategoriesService implements BaseService {
   }
 }
 
-export { CategoriesService }
 export const categoriesService = new CategoriesService()

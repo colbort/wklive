@@ -401,7 +401,7 @@ type SetDefaultUserBankReq {
 }
 
 @server (
-	prefix: /admin
+	prefix: /admin/member
 	group:  user
 	jwt:    Jwt
 )

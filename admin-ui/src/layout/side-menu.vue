@@ -16,12 +16,11 @@ const { t } = useI18n()
 
 const iconMap = ElementPlusIconsVue as Record<string, any>
 
-const menuTree = computed(() =>
-  (auth.menus || [])
-    .filter((a) => a.menuType !== 3 && a.visible !== 0 && a.status !== 0)
-    .slice()
-    .sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0)),
-)
+const menuTree = computed(() => {
+  const menus = auth.menus
+  console.log('menus:', menus)
+  return menus
+})
 
 function iconComp(icon?: string) {
   if (!icon) return iconMap.Menu

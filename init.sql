@@ -154,28 +154,28 @@ INSERT INTO sys_menu (id, parent_id, name, menu_type, icon, sort)
 VALUES (10, 0, '用户管理', 1, 'Users', 10);
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
 VALUES 
-(11, 10, '用户列表', 2, 'GET', '/users', 'users:user:list', 'users/user', 'User', 11),
-(12, 10, '创建用户', 3, 'POST', '/users', 'users:user:add', '', '', 12),
-(13, 10, '获取用户详情', 3, 'GET', '/users/{id}', 'users:user:detail', '', '', 13),
-(14, 10, '更新用户基本信息', 3, 'PUT', '/users/{id}', 'users:user:update', '', '', 14),
-(15, 10, '更新用户状态', 3, 'PUT', '/users/{id}/status', 'users:user:update:status', '', '', 15),
-(16, 10, '更新用户会员等级', 3, 'PUT', '/users/{id}/level', 'users:user:update:level', '', '', 16),
-(17, 10, '重置登录密码', 3, 'POST', '/users/{id}/reset-loginpwd', 'users:user:reset:loginpwd', '', '', 17),
-(18, 10, '重置支付密码', 3, 'POST', '/users/{id}/reset-paypwd', 'users:user:reset:paypwd', '', '', 18),
-(19, 10, '解锁用户', 3, 'POST', '/users/{id}/unlock', 'users:user:unlock', '', '', 19),
-(20, 10, '更新用户风险等级', 3, 'PUT', '/users/{id}/risk-level', 'users:user:update:risklevel', '', '', 20),
-(21, 10, '删除用户', 3, 'DELETE', '/users/{id}', 'users:user:delete', '', '', 21),
-(22, 10, '获取用户安全设置', 3, 'GET', '/users/{id}/security', 'users:user:security:detail', '', '', 22),
-(23, 10, '重置用户谷歌2FA', 3, 'POST', '/users/{id}/reset-google2fa', 'users:user:reset:google2fa', '', '', 23),
-(24, 10, '实名认证信息列表', 2, 'GET', '/users/{id}/identities', 'users:user:identities:list', 'users/identity', '', 24),
-(25, 10, '审核实名认证信息', 3, 'POST', '/users/{id}/identities/review', 'users:user:identities:review', '', '', 25),
-(26, 10, '用户银行卡列表', 2, 'GET', '/users/{id}/banks', 'users:user:banks:list', 'users/bank', '', 26),
-(27, 10, '获取用户银行卡详情', 3, 'GET', '/users/{id}/banks/{bankId}', 'users:user:bank:detail', '', '', 27),
-(28, 10, '添加用户银行卡', 3, 'POST', '/users/{id}/banks', 'users:user:bank:add', '', '', 28),
-(29, 10, '更新用户银行卡', 3, 'PUT', '/users/{id}/banks/{bankId}', 'users:user:bank:update', '', '', 29),
-(30, 10, '删除用户银行卡', 3, 'DELETE', '/users/{id}/banks/{bankId}', 'users:user:bank:delete', '', '', 30),
-(31, 10, '更新用户银行卡状态', 3, 'PUT', '/users/{id}/banks/{bankId}/status', 'users:user:bank:update:status', '', '', 31),
-(32, 10, '设置默认用户银行卡', 3, 'POST', '/users/{id}/banks/{bankId}/default', 'users:user:bank:setdefault', '', '', 32);
+(11, 10, '用户列表', 2, 'GET', '/member/users', 'users:user:list', 'users/user', 'User', 11),
+(12, 10, '创建用户', 3, 'POST', '/member/users', 'users:user:add', '', '', 12),
+(13, 10, '获取用户详情', 3, 'GET', '/member/users/{id}', 'users:user:detail', '', '', 13),
+(14, 10, '更新用户基本信息', 3, 'PUT', '/member/users/{id}', 'users:user:update', '', '', 14),
+(15, 10, '更新用户状态', 3, 'PUT', '/member/users/{id}/status', 'users:user:update:status', '', '', 15),
+(16, 10, '更新用户会员等级', 3, 'PUT', '/member/users/{id}/level', 'users:user:update:level', '', '', 16),
+(17, 10, '重置登录密码', 3, 'POST', '/member/users/{id}/reset-loginpwd', 'users:user:reset:loginpwd', '', '', 17),
+(18, 10, '重置支付密码', 3, 'POST', '/member/users/{id}/reset-paypwd', 'users:user:reset:paypwd', '', '', 18),
+(19, 10, '解锁用户', 3, 'POST', '/member/users/{id}/unlock', 'users:user:unlock', '', '', 19),
+(20, 10, '更新用户风险等级', 3, 'PUT', '/member/users/{id}/risk-level', 'users:user:update:risklevel', '', '', 20),
+(21, 10, '删除用户', 3, 'DELETE', '/member/users/{id}', 'users:user:delete', '', '', 21),
+(22, 10, '获取用户安全设置', 3, 'GET', '/member/users/{id}/security', 'users:user:security:detail', '', '', 22),
+(23, 10, '重置用户谷歌2FA', 3, 'POST', '/member/users/{id}/reset-google2fa', 'users:user:reset:google2fa', '', '', 23),
+(24, 10, '实名认证信息列表', 2, 'GET', '/member/users/{id}/identities', 'users:user:identities:list', 'users/identity', '', 24),
+(25, 10, '审核实名认证信息', 3, 'POST', '/member/users/{id}/identities/review', 'users:user:identities:review', '', '', 25),
+(26, 10, '用户银行卡列表', 2, 'GET', '/member/users/{id}/banks', 'users:user:banks:list', 'users/bank', '', 26),
+(27, 10, '获取用户银行卡详情', 3, 'GET', '/member/users/{id}/banks/{bankId}', 'users:user:bank:detail', '', '', 27),
+(28, 10, '添加用户银行卡', 3, 'POST', '/member/users/{id}/banks', 'users:user:bank:add', '', '', 28),
+(29, 10, '更新用户银行卡', 3, 'PUT', '/member/users/{id}/banks/{bankId}', 'users:user:bank:update', '', '', 29),
+(30, 10, '删除用户银行卡', 3, 'DELETE', '/member/users/{id}/banks/{bankId}', 'users:user:bank:delete', '', '', 30),
+(31, 10, '更新用户银行卡状态', 3, 'PUT', '/member/users/{id}/banks/{bankId}/status', 'users:user:bank:update:status', '', '', 31),
+(32, 10, '设置默认用户银行卡', 3, 'POST', '/member/users/{id}/banks/{bankId}/default', 'users:user:bank:setdefault', '', '', 32);
 
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, icon, sort)
@@ -225,7 +225,7 @@ VALUES
 
 (132, 100, '提现管理', 2, 'GET', '/payment/withdraw-orders', 'payment:withdraw-order:list', 'payment/withdraw-orders', 'Gold', 73),
 (133, 132, '获取提现订单详情', 3, 'GET', '/payment/withdraw-orders/{id}', 'payment:withdraw-order:detail', '', '', 74),
-(134, 132, '审核提现订单', 3, 'POST', '/withdraw-orders/:orderNo/audit', 'payment:withdraw-order:audit', '', '', 75),
+(134, 132, '审核提现订单', 3, 'POST', '/payment/withdraw-orders/:orderNo/audit', 'payment:withdraw-order:audit', '', '', 75),
 
 (135, 100, '提现回调日志列表', 2, 'GET', '/payment/withdraw-notify-logs/list', 'payment:withdraw-notifylog:list', 'payment/withdraw-notify-logs', 'Gold', 76),
 (136, 135, '获取提现回调日志详情', 3, 'GET', '/payment/withdraw-notify-logs/{id}', 'payment:withdraw-notifylog:detail', '', '', 77);
@@ -278,79 +278,79 @@ INSERT INTO sys_menu (id, parent_id, name, menu_type, icon, sort)
 VALUES (10000, 0, '系统管理', 1, 'Setting', 10000);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
-VALUES (10100, 10000, '用户管理', 2, 'GET', '/users', 'sys:user:list', 'system/users', 'User', 10100);
+VALUES (10100, 10000, '用户管理', 2, 'GET', '/system/users', 'sys:user:list', 'system/users', 'User', 10100);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, sort)
 VALUES
-(10101, 10100, '新增用户', 3, 'POST', '/sys/users', 'sys:user:add', 10101),
-(10102, 10100, '编辑用户', 3, 'PUT', '/sys/users', 'sys:user:update', 10102),
-(10103, 10100, '删除用户', 3, 'DELETE', '/sys/users', 'sys:user:delete', 10103),
-(10104, 10100, '重置密码', 3, 'POST', '/sys/users/resetPwd', 'sys:user:resetpwd', 10104),
-(10105, 10100, '分配角色', 3, 'POST', '/sys/users/assignRoles', 'sys:user:assignrole', 10105),
-(10106, 10100, 'Google2FA管理', 3, 'GET', '/sys/users/google2fa', 'sys:user:google2fa', 10106),
-(10107, 10100, '2FA初始化', 3, 'POST', '/sys/users/google2fa/init', 'sys:user:2fa:init', 10107),
-(10108, 10100, '2FA绑定', 3, 'POST', '/sys/users/google2fa/bind', 'sys:user:2fa:bind', 10108),
-(10109, 10100, '2FA启用', 3, 'POST', '/sys/users/google2fa/enable', 'sys:user:2fa:enable', 10109),
-(10110, 10100, '2FA禁用', 3, 'POST', '/sys/users/google2fa/disable', 'sys:user:2fa:disable', 10110),
-(10111, 10100, '2FA重置', 3, 'POST', '/sys/users/google2fa/reset', 'sys:user:2fa:reset', 10111);
+(10101, 10100, '新增用户', 3, 'POST', '/system/users', 'sys:user:add', 10101),
+(10102, 10100, '编辑用户', 3, 'PUT', '/system/users', 'sys:user:update', 10102),
+(10103, 10100, '删除用户', 3, 'DELETE', '/system/users', 'sys:user:delete', 10103),
+(10104, 10100, '重置密码', 3, 'POST', '/system/users/resetPwd', 'sys:user:resetpwd', 10104),
+(10105, 10100, '分配角色', 3, 'POST', '/system/users/assignRoles', 'sys:user:assignrole', 10105),
+(10106, 10100, 'Google2FA管理', 3, 'GET', '/system/users/google2fa', 'sys:user:google2fa', 10106),
+(10107, 10100, '2FA初始化', 3, 'POST', '/system/users/google2fa/init', 'sys:user:2fa:init', 10107),
+(10108, 10100, '2FA绑定', 3, 'POST', '/system/users/google2fa/bind', 'sys:user:2fa:bind', 10108),
+(10109, 10100, '2FA启用', 3, 'POST', '/system/users/google2fa/enable', 'sys:user:2fa:enable', 10109),
+(10110, 10100, '2FA禁用', 3, 'POST', '/system/users/google2fa/disable', 'sys:user:2fa:disable', 10110),
+(10111, 10100, '2FA重置', 3, 'POST', '/system/users/google2fa/reset', 'sys:user:2fa:reset', 10111);
 
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
-VALUES (10200, 10000, '角色管理', 2, 'GET', '/roles', 'sys:role:list', 'system/roles', 'Guide', 10200);
+VALUES (10200, 10000, '角色管理', 2, 'GET', '/system/roles', 'sys:role:list', 'system/roles', 'Guide', 10200);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, sort)
 VALUES
-(10201, 10200, '新增角色', 3, 'POST', '/roles', 'sys:role:add', 10201),
-(10202, 10200, '编辑角色', 3, 'PUT', '/roles', 'sys:role:update', 10202),
-(10203, 10200, '删除角色', 3, 'DELETE', '/roles', 'sys:role:delete', 10203),
-(10204, 10200, '菜单授权', 3, 'POST', '/roles/grant', 'sys:role:grant', 10204);
+(10201, 10200, '新增角色', 3, 'POST', '/system/roles', 'sys:role:add', 10201),
+(10202, 10200, '编辑角色', 3, 'PUT', '/system/roles', 'sys:role:update', 10202),
+(10203, 10200, '删除角色', 3, 'DELETE', '/system/roles', 'sys:role:delete', 10203),
+(10204, 10200, '菜单授权', 3, 'POST', '/system/roles/grant', 'sys:role:grant', 10204);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
-VALUES (10300, 10000, '菜单管理', 2, 'GET', '/menus', 'sys:menu:list', 'system/menus', 'Menu', 10300);
+VALUES (10300, 10000, '菜单管理', 2, 'GET', '/system/menus', 'sys:menu:list', 'system/menus', 'Menu', 10300);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, sort)
 VALUES
-(10301, 10300, '新增菜单', 3, 'POST', '/menus', 'sys:menu:add', 10301),
-(10302, 10300, '编辑菜单', 3, 'PUT', '/menus', 'sys:menu:update', 10302),
-(10303, 10300, '删除菜单', 3, 'DELETE', '/menus', 'sys:menu:delete', 10303);
+(10301, 10300, '新增菜单', 3, 'POST', '/system/menus', 'sys:menu:add', 10301),
+(10302, 10300, '编辑菜单', 3, 'PUT', '/system/menus', 'sys:menu:update', 10302),
+(10303, 10300, '删除菜单', 3, 'DELETE', '/system/menus', 'sys:menu:delete', 10303);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
-VALUES (10400, 10000, '系统配置', 2, 'GET', '/configs', 'sys:config:list', 'system/configs', 'Cpu', 10400);
+VALUES (10400, 10000, '系统配置', 2, 'GET', '/system/configs', 'sys:config:list', 'system/configs', 'Cpu', 10400);
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, sort)
 VALUES
-(10401, 10400, '新增配置', 3, 'POST', '/configs', 'sys:config:add', 10401),
-(10402, 10400, '编辑配置', 3, 'PUT', '/configs', 'sys:config:update', 10402),
-(10403, 10400, '删除配置', 3, 'DELETE', '/configs', 'sys:config:delete', 10403);
+(10401, 10400, '新增配置', 3, 'POST', '/system/configs', 'sys:config:add', 10401),
+(10402, 10400, '编辑配置', 3, 'PUT', '/system/configs', 'sys:config:update', 10402),
+(10403, 10400, '删除配置', 3, 'DELETE', '/system/configs', 'sys:config:delete', 10403);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, icon, sort)
 VALUES (10500, 10000, '定时任务', 1, '', '', 'AlarmClock', 10500);
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
-VALUES (10600, 10500, '定时任务列表', 2, 'GET', '/cronjobs', 'sys:job:list', 'system/cronjobs', 'Clock', 10600);
+VALUES (10600, 10500, '定时任务列表', 2, 'GET', '/system/cronjobs', 'sys:job:list', 'system/cronjobs', 'Clock', 10600);
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, sort)
 VALUES
-(10601, 10600, '新增任务', 3, 'POST', '/jobs', 'sys:job:add', 10601),
-(10602, 10600, '编辑任务', 3, 'PUT', '/jobs', 'sys:job:update', 10602),
-(10603, 10600, '删除任务', 3, 'DELETE', '/jobs', 'sys:job:delete', 10603),
-(10604, 10600, '运行任务', 3, 'POST', '/jobs/run', 'sys:job:run', 10604),
-(10605, 10600, '启动任务', 3, 'POST', '/jobs/start', 'sys:job:start', 10605),
-(10606, 10600, '停止任务', 3, 'POST', '/jobs/stop', 'sys:job:stop', 10606),
-(10607, 10600, '任务处理器', 3, 'GET', '/jobs/handlers', 'sys:job:handlers', 10607);
+(10601, 10600, '新增任务', 3, 'POST', '/system/jobs', 'sys:job:add', 10601),
+(10602, 10600, '编辑任务', 3, 'PUT', '/system/jobs', 'sys:job:update', 10602),
+(10603, 10600, '删除任务', 3, 'DELETE', '/system/jobs', 'sys:job:delete', 10603),
+(10604, 10600, '运行任务', 3, 'POST', '/system/jobs/run', 'sys:job:run', 10604),
+(10605, 10600, '启动任务', 3, 'POST', '/system/jobs/start', 'sys:job:start', 10605),
+(10606, 10600, '停止任务', 3, 'POST', '/system/jobs/stop', 'sys:job:stop', 10606),
+(10607, 10600, '任务处理器', 3, 'GET', '/system/jobs/handlers', 'sys:job:handlers', 10607);
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
-VALUES (10700, 10500, '定时任务日志', 2, 'GET', '/cronjobs-log', 'sys:job:log:list', 'system/cronjobs-log', 'Paperclip', 10700);
+VALUES (10700, 10500, '定时任务日志', 2, 'GET', '/system/cronjobs-log', 'sys:job:log:list', 'system/cronjobs-log', 'Paperclip', 10700);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
-VALUES (10800, 10000, '登录日志', 2, 'GET', '/logs/login', 'sys:log:login:list', 'system/login-log', 'Reading', 10800);
+VALUES (10800, 10000, '登录日志', 2, 'GET', '/system/logs/login', 'sys:log:login:list', 'system/login-log', 'Reading', 10800);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
-VALUES (10900, 10000, '操作日志', 2, 'GET', '/logs/op', 'sys:log:op:list', 'system/op-log', 'Document', 10900);
+VALUES (10900, 10000, '操作日志', 2, 'GET', '/system/logs/op', 'sys:log:op:list', 'system/op-log', 'Document', 10900);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
-VALUES (11000, 10000, '租户管理', 2, 'GET', '/tenants', 'sys:tenant:list', 'system/tenants', 'Team', 11000);
+VALUES (11000, 10000, '租户管理', 2, 'GET', '/system/tenants', 'sys:tenant:list', 'system/tenants', 'Team', 11000);
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, sort)
 VALUES
-(11001, 11000, '新增租户', 3, 'POST', '/tenants', 'sys:tenant:add', 11001),
-(11002, 11000, '编辑租户', 3, 'PUT', '/tenants', 'sys:tenant:update', 11002),
-(11003, 11000, '删除租户', 3, 'DELETE', '/tenants', 'sys:tenant:delete', 11003),
-(11004, 11000, '重置密码', 3, 'POST', '/tenants/resetPwd', 'sys:tenant:resetpwd', 11004),
-(11005, 11000, '禁用租户', 3, 'POST', '/tenants/disable', 'sys:tenant:disable', 11005),
-(11006, 11000, '启用租户', 3, 'POST', '/tenants/enable', 'sys:tenant:enable', 11006);
+(11001, 11000, '新增租户', 3, 'POST', '/system/tenants', 'sys:tenant:add', 11001),
+(11002, 11000, '编辑租户', 3, 'PUT', '/system/tenants', 'sys:tenant:update', 11002),
+(11003, 11000, '删除租户', 3, 'DELETE', '/system/tenants', 'sys:tenant:delete', 11003),
+(11004, 11000, '重置密码', 3, 'POST', '/system/tenants/resetPwd', 'sys:tenant:resetpwd', 11004),
+(11005, 11000, '禁用租户', 3, 'POST', '/system/tenants/disable', 'sys:tenant:disable', 11005),
+(11006, 11000, '启用租户', 3, 'POST', '/system/tenants/enable', 'sys:tenant:enable', 11006);

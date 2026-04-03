@@ -30,8 +30,8 @@ func NewListTenantCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceContex
 func (l *ListTenantCategoriesLogic) ListTenantCategories(req *types.ListTenantCategoriesReq) (resp *types.ListTenantCategoriesResp, err error) {
 	result, err := l.svcCtx.ItickCli.ListTenantCategories(l.ctx, &itick.ListTenantCategoriesReq{
 		Page: &itick.PageReq{
-			Cursor: req.Page.Cursor,
-			Limit:  req.Page.Limit,
+			Cursor: req.PageReq.Cursor,
+			Limit:  req.PageReq.Limit,
 		},
 		TenantId:      req.TenantId,
 		CategoryType:  itick.CategoryType(req.CategoryType),

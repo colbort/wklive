@@ -1,6 +1,20 @@
 <template>
-  <div class="app-container">
-    <el-card shadow="never" class="search-card">
+  <div class="itick-categories">
+    <div class="page-header">
+      <h2>{{ t('itick.categories') }}</h2>
+      <div class="header-actions">
+        <el-button type="primary" @click="handleAdd">
+          <el-icon><Plus /></el-icon>
+          {{ t('common.add') }}
+        </el-button>
+        <el-button @click="refreshCurrentPage">
+          <el-icon><Refresh /></el-icon>
+          {{ t('common.refresh') }}
+        </el-button>
+      </div>
+    </div>
+
+    <el-card class="query-card" shadow="never">
       <el-form :model="queryParams" inline label-width="90px">
         <el-form-item label="分类类型">
           <el-input
@@ -45,13 +59,8 @@
       </el-form>
     </el-card>
 
-    <el-card shadow="never" class="table-card">
-      <div class="toolbar">
-        <el-button type="primary" @click="handleAdd">新增</el-button>
-        <el-button @click="refreshCurrentPage">刷新</el-button>
-      </div>
-
-      <el-table v-loading="loading" :data="list" border>
+    <el-card class="table-card" shadow="never">
+      <el-table v-loading="loading" :data="list" stripe>
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="categoryType" label="分类类型" width="100" />
         <el-table-column prop="categoryCode" label="分类编码" min-width="140" />
@@ -98,26 +107,20 @@
         </el-table-column>
       </el-table>
 
-      <div class="cursor-pagination">
-        <div class="cursor-pagination__info">
-          <span>共 {{ total }} 条</span>
-          <span>每页</span>
-          <el-select v-model="queryParams.limit" style="width: 100px" @change="handleLimitChange">
-            <el-option :value="10" label="10条/页" />
-            <el-option :value="20" label="20条/页" />
-            <el-option :value="50" label="50条/页" />
-            <el-option :value="100" label="100条/页" />
-          </el-select>
-        </div>
-
-        <div class="cursor-pagination__actions">
-          <el-button :disabled="loading || !hasPrev" @click="handlePrevPage">
-            上一页
-          </el-button>
-          <el-button :disabled="loading || !hasNext" type="primary" @click="handleNextPage">
-            下一页
-          </el-button>
-        </div>
+      <div class="pagination-bar">
+        <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
+        <el-button :disabled="!pagination.hasPrev" @click="handlePrevPage">
+          {{ t('common.prevPage') }}
+        </el-button>
+        <el-button :disabled="!pagination.hasNext" type="primary" @click="handleNextPage">
+          {{ t('common.nextPage') }}
+        </el-button>
+        <el-select v-model="pagination.limit" style="width: 100px" @change="handleLimitChange">
+          <el-option :value="10" :label="t('common.perPage10')" />
+          <el-option :value="20" :label="t('common.perPage20')" />
+          <el-option :value="50" :label="t('common.perPage50')" />
+          <el-option :value="100" :label="t('common.perPage100')" />
+        </el-select>
       </div>
     </el-card>
 
@@ -126,12 +129,7 @@
       :title="formMode === 'add' ? '新增分类' : '编辑分类'"
       width="620px"
     >
-      <el-form
-        ref="formRef"
-        :model="form"
-        :rules="rules"
-        label-width="100px"
-      >
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item v-if="formMode === 'add'" label="分类类型" prop="categoryType">
           <el-input-number
             v-model="form.categoryType"
@@ -193,18 +191,22 @@
 
       <template #footer>
         <el-button @click="formDialogVisible = false">取消</el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitForm">
-          确定
-        </el-button>
+        <el-button type="primary" :loading="submitLoading" @click="submitForm"> 确定 </el-button>
       </template>
     </el-dialog>
 
     <el-dialog v-model="detailDialogVisible" title="分类详情" width="700px">
       <el-descriptions :column="2" border v-loading="detailLoading">
         <el-descriptions-item label="ID">{{ detail.id ?? '-' }}</el-descriptions-item>
-        <el-descriptions-item label="分类类型">{{ detail.categoryType ?? '-' }}</el-descriptions-item>
-        <el-descriptions-item label="分类编码">{{ detail.categoryCode || '-' }}</el-descriptions-item>
-        <el-descriptions-item label="分类名称">{{ detail.categoryName || '-' }}</el-descriptions-item>
+        <el-descriptions-item label="分类类型">{{
+          detail.categoryType ?? '-'
+        }}</el-descriptions-item>
+        <el-descriptions-item label="分类编码">{{
+          detail.categoryCode || '-'
+        }}</el-descriptions-item>
+        <el-descriptions-item label="分类名称">{{
+          detail.categoryName || '-'
+        }}</el-descriptions-item>
         <el-descriptions-item label="启用状态">
           {{ detail.enabled === 1 ? '启用' : detail.enabled === 2 ? '禁用' : '-' }}
         </el-descriptions-item>
@@ -213,7 +215,9 @@
         </el-descriptions-item>
         <el-descriptions-item label="排序">{{ detail.sort ?? '-' }}</el-descriptions-item>
         <el-descriptions-item label="图标">{{ detail.icon || '-' }}</el-descriptions-item>
-        <el-descriptions-item label="备注" :span="2">{{ detail.remark || '-' }}</el-descriptions-item>
+        <el-descriptions-item label="备注" :span="2">{{
+          detail.remark || '-'
+        }}</el-descriptions-item>
         <el-descriptions-item label="创建时间">
           {{ formatTime(detail.createTime) }}
         </el-descriptions-item>
@@ -230,14 +234,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, reactive, ref } from 'vue'
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
+import { computed, nextTick, ref, onMounted } from 'vue'
+import { ElMessage, type FormRules } from 'element-plus'
+import { useI18n } from 'vue-i18n'
+import { usePagination } from '@/composables/usePagination'
+import { useLoading } from '@/composables/useLoading'
+import { useForm } from '@/composables/useForm'
 import {
   categoriesService,
   type ItickCategory,
-  type CreateCategoryReq,
-  type UpdateCategoryReq,
-  type ListCategoriesReq
+  type ListCategoriesReq,
 } from '@/services/itick/CategoriesService'
 
 type FormData = {
@@ -251,72 +257,65 @@ type FormData = {
   remark: string
 }
 
-const loading = ref(false)
+const { t } = useI18n()
+const { pagination, updatePagination, reset: resetPagination } = usePagination(20)
+const { loading, withLoading } = useLoading()
+
+const { form: queryParams, reset: resetQueryParams } = useForm<ListCategoriesReq>({
+  initialData: {
+    categoryType: undefined,
+    enabled: 0,
+    appVisible: 0,
+    cursor: null,
+    limit: 20,
+  },
+})
+
+const {
+  form: form,
+  formRef,
+  reset: resetForm,
+} = useForm<FormData>({
+  initialData: {
+    id: undefined,
+    categoryType: undefined,
+    categoryName: '',
+    enabled: 1,
+    appVisible: 1,
+    sort: 0,
+    icon: '',
+    remark: '',
+  },
+})
+
 const submitLoading = ref(false)
 const detailLoading = ref(false)
-
 const list = ref<ItickCategory[]>([])
-const total = ref(0)
-
-const nextCursor = ref<string | null>(null)
-const prevCursor = ref<string | null>(null)
-const hasNext = ref(false)
-const hasPrev = ref(false)
-
+const detail = ref<Partial<ItickCategory>>({})
 const formDialogVisible = ref(false)
 const detailDialogVisible = ref(false)
 const formMode = ref<'add' | 'edit'>('add')
-
-const formRef = ref<FormInstance>()
-
-const queryParams = reactive<ListCategoriesReq>({
-  categoryType: undefined,
-  enabled: 0,
-  appVisible: 0,
-  cursor: null,
-  limit: 20
-})
-
-const createDefaultForm = (): FormData => ({
-  id: undefined,
-  categoryType: undefined,
-  categoryName: '',
-  enabled: 1,
-  appVisible: 1,
-  sort: 0,
-  icon: '',
-  remark: ''
-})
-
-const form = reactive<FormData>(createDefaultForm())
-const detail = ref<Partial<ItickCategory>>({})
 
 const rules: FormRules<FormData> = {
   categoryType: [{ required: true, message: '请输入分类类型', trigger: 'blur' }],
   categoryName: [{ required: true, message: '请输入分类名称', trigger: 'blur' }],
   enabled: [{ required: true, message: '请选择启用状态', trigger: 'change' }],
   appVisible: [{ required: true, message: '请选择APP显示状态', trigger: 'change' }],
-  sort: [{ required: true, message: '请输入排序', trigger: 'blur' }]
+  sort: [{ required: true, message: '请输入排序', trigger: 'blur' }],
 }
 
 const cleanedQueryParams = computed<ListCategoriesReq>(() => {
   const params: ListCategoriesReq = {
     cursor: queryParams.cursor,
-    limit: queryParams.limit
+    limit: queryParams.limit,
   }
 
-  if (
-    queryParams.categoryType !== undefined &&
-    queryParams.categoryType !== null &&
-    queryParams.categoryType !== 0
-  ) {
+  if (queryParams.categoryType && queryParams.categoryType !== 0) {
     params.categoryType = Number(queryParams.categoryType)
   }
-
   if (queryParams.enabled && queryParams.enabled !== 0) {
     params.enabled = queryParams.enabled
   }
-
   if (queryParams.appVisible && queryParams.appVisible !== 0) {
     params.appVisible = queryParams.appVisible
   }
@@ -324,59 +323,40 @@ const cleanedQueryParams = computed<ListCategoriesReq>(() => {
   return params
 })
 
-const resetForm = () => {
-  Object.assign(form, createDefaultForm())
-}
-
-const updatePageState = (res: any) => {
-  total.value = res?.total ?? 0
-  nextCursor.value = res?.nextCursor ?? null
-  prevCursor.value = res?.prevCursor ?? null
-  hasNext.value = !!res?.hasNext
-  hasPrev.value = !!res?.hasPrev
-}
-
 const getList = async () => {
-  loading.value = true
-  try {
-    const res = await categoriesService.getList(cleanedQueryParams.value)
-    list.value = res?.data || []
-    updatePageState(res)
-  } catch (error) {
-    ElMessage.error('获取分类列表失败')
-  } finally {
-    loading.value = false
-  }
+  await withLoading(async () => {
+    try {
+      const res = await categoriesService.getList({
+        ...cleanedQueryParams.value,
+        cursor: pagination.cursor,
+      })
+      list.value = res?.data || []
+      updatePagination(
+        res?.total || 0,
+        !!res?.hasNext,
+        !!res?.hasPrev,
+        res?.nextCursor || null,
+        res?.prevCursor || null,
+      )
+    } catch (error) {
+      ElMessage.error(t('common.loadFailed'))
+    }
+  })
 }
 
 const handleQuery = () => {
-  queryParams.cursor = null
+  pagination.cursor = null
   getList()
 }
 
 const resetQuery = () => {
-  queryParams.categoryType = undefined
-  queryParams.enabled = 0
-  queryParams.appVisible = 0
-  queryParams.cursor = null
-  queryParams.limit = 20
+  resetQueryParams()
+  resetPagination()
   getList()
 }
 
 const handleLimitChange = () => {
-  queryParams.cursor = null
-  getList()
-}
-
-const handleNextPage = () => {
-  if (!hasNext.value || !nextCursor.value) return
-  queryParams.cursor = nextCursor.value
-  getList()
-}
-
-const handlePrevPage = () => {
-  if (!hasPrev.value || !prevCursor.value) return
-  queryParams.cursor = prevCursor.value
+  pagination.cursor = null
   getList()
 }
 
@@ -408,14 +388,14 @@ const handleEdit = async (row: ItickCategory) => {
       appVisible: data.appVisible,
       sort: data.sort || 0,
       icon: data.icon || '',
-      remark: data.remark || ''
+      remark: data.remark || '',
     })
 
     formDialogVisible.value = true
     await nextTick()
     formRef.value?.clearValidate()
   } catch (error) {
-    ElMessage.error('获取详情失败')
+    ElMessage.error(t('common.loadFailed'))
   }
 }
 
@@ -428,7 +408,7 @@ const handleDetail = async (row: ItickCategory) => {
     const res = await categoriesService.detail(row.id)
     detail.value = res?.data || {}
   } catch (error) {
-    ElMessage.error('获取详情失败')
+    ElMessage.error(t('common.loadFailed'))
   } finally {
     detailLoading.value = false
   }
@@ -436,43 +416,38 @@ const handleDetail = async (row: ItickCategory) => {
 
 const submitForm = async () => {
   if (!formRef.value) return
-
   const valid = await formRef.value.validate().catch(() => false)
   if (!valid) return
 
   submitLoading.value = true
   try {
     if (formMode.value === 'add') {
-      const params: CreateCategoryReq = {
+      await categoriesService.create({
         categoryType: Number(form.categoryType),
         categoryName: form.categoryName,
         enabled: form.enabled,
         appVisible: form.appVisible,
         sort: form.sort,
         icon: form.icon,
-        remark: form.remark
-      }
-      await categoriesService.create(params)
-      ElMessage.success('新增成功')
-      queryParams.cursor = null
-      await getList()
+        remark: form.remark,
+      })
+      ElMessage.success(t('common.createSuccess'))
     } else {
-      const params: Partial<UpdateCategoryReq> = {
+      await categoriesService.update(form.id as number, {
         categoryName: form.categoryName,
         enabled: form.enabled,
         appVisible: form.appVisible,
         sort: form.sort,
         icon: form.icon,
-        remark: form.remark
-      }
-      await categoriesService.update(form.id as number, params)
-      ElMessage.success('修改成功')
-      await getList()
+        remark: form.remark,
+      })
+      ElMessage.success(t('common.updateSuccess'))
     }
 
     formDialogVisible.value = false
+    getList()
   } catch (error) {
-    ElMessage.error(formMode.value === 'add' ? '新增失败' : '修改失败')
+    ElMessage.error(formMode.value === 'add' ? t('common.createFailed') : t('common.updateFailed'))
   } finally {
     submitLoading.value = false
   }
@@ -482,41 +457,68 @@ const handleSync = async (row: ItickCategory) => {
   try {
     const res = await categoriesService.syncProducts({ id: row.id })
     ElMessage.success(`同步任务已提交，任务号：${res?.data?.taskNo || '-'}`)
-  } catch (error) {
-    ElMessage.error('同步产品失败')
+  } catch {
+    ElMessage.error(t('common.operationFailed'))
+  }
+}
+
+const handlePrevPage = () => {
+  if (pagination.hasPrev && pagination.prevCursor) {
+    pagination.cursor = pagination.prevCursor
+    getList()
+  }
+}
+
+const handleNextPage = () => {
+  if (pagination.hasNext && pagination.nextCursor) {
+    pagination.cursor = pagination.nextCursor
+    getList()
   }
 }
 
 const formatTime = (timestamp?: number) => {
   if (!timestamp) return '-'
-
   let time = Number(timestamp)
-  if (String(time).length === 10) {
-    time = time * 1000
-  }
-
+  if (String(time).length === 10) time = time * 1000
   const date = new Date(time)
-  const yyyy = date.getFullYear()
+  const YYYY = date.getFullYear()
   const MM = String(date.getMonth() + 1).padStart(2, '0')
-  const dd = String(date.getDate()).padStart(2, '0')
-  const HH = String(date.getHours()).padStart(2, '0')
+  const DD = String(date.getDate()).padStart(2, '0')
+  const hh = String(date.getHours()).padStart(2, '0')
   const mm = String(date.getMinutes()).padStart(2, '0')
   const ss = String(date.getSeconds()).padStart(2, '0')
-
-  return `${yyyy}-${MM}-${dd} ${HH}:${mm}:${ss}`
+  return `${YYYY}-${MM}-${DD} ${hh}:${mm}:${ss}`
 }
 
-getList()
+onMounted(() => {
+  getList()
+})
 </script>
 
 <style scoped>
-.app-container {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+.itick-categories {
+  padding: 20px;
 }
 
-.search-card,
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.page-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.query-card,
 .table-card {
   border-radius: 12px;
 }
@@ -537,16 +539,11 @@ getList()
   flex-wrap: wrap;
 }
 
-.cursor-pagination__info {
+.pagination-bar {
   display: flex;
+  justify-content: flex-end;
+  gap: 10px;
   align-items: center;
-  gap: 12px;
-  color: var(--el-text-color-regular);
-}
-
-.cursor-pagination__actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  margin-top: 12px;
 }
 </style>

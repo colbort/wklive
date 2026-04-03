@@ -7,11 +7,11 @@ export function apiUserList(params: {
   cursor?: string | null
   limit?: number
 }): Promise<RespBase<SysUserItem[]>> {
-  return get<SysUserItem[]>('/admin/sys/users', params)
+  return get<SysUserItem[]>('/admin/system/users', params)
 }
 
 export function apiUserDetail(id: number): Promise<RespBase<SysUserItem>> {
-  return get<SysUserItem>(`/admin/sys/users/${id}`)
+  return get<SysUserItem>(`/admin/system/users/${id}`)
 }
 
 export function apiUserCreate(data: {
@@ -21,7 +21,7 @@ export function apiUserCreate(data: {
   status?: number
   roleIds?: number[]
 }): Promise<RespBase> {
-  return post<RespBase>('/admin/sys/users', data)
+  return post<RespBase>('/admin/system/users', data)
 }
 
 export function apiUserUpdate(data: {
@@ -30,30 +30,30 @@ export function apiUserUpdate(data: {
   status?: number
   roleIds?: number[]
 }): Promise<RespBase> {
-  return put<RespBase>('/admin/sys/users', data)
+  return put<RespBase>('/admin/system/users', data)
 }
 
 export function apiUserDelete(id: number): Promise<RespBase> {
-  return del<RespBase>(`/admin/sys/users/${id}`)
+  return del<RespBase>(`/admin/system/users/${id}`)
 }
 
 export function apiChangeUserStatus(data: { id: number; status: number }): Promise<RespBase> {
-  return post<RespBase>('/admin/sys/users/status', data)
+  return post<RespBase>('/admin/system/users/status', data)
 }
 
 export function apiResetUserPwd(data: { id: number; password: string }): Promise<RespBase> {
-  return post<RespBase>('/admin/sys/users/resetPwd', data)
+  return post<RespBase>('/admin/system/users/resetPwd', data)
 }
 
 export function apiAssignUserRoles(data: { userId: number; roleIds: number[] }): Promise<RespBase> {
-  return post<RespBase>('/admin/sys/users/assignRoles', data)
+  return post<RespBase>('/admin/system/users/assignRoles', data)
 }
 
 // ---- Google 2FA ----
 export function apiGoogle2faInit(data: {
   userId: number
 }): Promise<RespBase<Google2FABindInitResp>> {
-  return post<Google2FABindInitResp>('/admin/sys/users/google2fa/init', data)
+  return post<Google2FABindInitResp>('/admin/system/users/google2fa/init', data)
 }
 
 export function apiGoogle2faBind(data: {
@@ -61,17 +61,17 @@ export function apiGoogle2faBind(data: {
   secret: string
   code: string
 }): Promise<RespBase> {
-  return post<RespBase>('/admin/sys/users/google2fa/bind', data)
+  return post<RespBase>('/admin/system/users/google2fa/bind', data)
 }
 
 export function apiGoogle2faEnable(data: { userId: number; code: string }): Promise<RespBase> {
-  return post<RespBase>('/admin/sys/users/google2fa/enable', data)
+  return post<RespBase>('/admin/system/users/google2fa/enable', data)
 }
 
 export function apiGoogle2faDisable(data: { userId: number; code?: string }): Promise<RespBase> {
-  return post<RespBase>('/admin/sys/users/google2fa/disable', data)
+  return post<RespBase>('/admin/system/users/google2fa/disable', data)
 }
 
 export function apiGoogle2faReset(data: { userId: number }): Promise<RespBase> {
-  return post<RespBase>('/admin/sys/users/google2fa/reset', data)
+  return post<RespBase>('/admin/system/users/google2fa/reset', data)
 }

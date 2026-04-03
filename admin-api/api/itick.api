@@ -17,6 +17,8 @@ type ItickCategory {
 type ItickProduct {
 	id           int64  `json:"id"`
 	categoryType int64  `json:"categoryType"`
+	categoryCode string `json:"categoryCode"`
+	categoryName string `json:"categoryName"`
 	market       string `json:"market"` // binance / hk / us / forex ...
 	symbol       string `json:"symbol"` // BTCUSDT / AAPL / EURUSD
 	code         string `json:"code"` // 第三方原始 code
@@ -142,7 +144,7 @@ type UpdateCategoryReq {
 }
 
 type GetCategoryReq {
-	id int64 `json:"id"` 
+	id int64 `path:"id"` 
 }
 
 type GetCategoryResp {
@@ -151,10 +153,10 @@ type GetCategoryResp {
 }
 
 type ListCategoriesReq {
-	page         PageReq `json:"page"`
-	categoryType int64   `json:"categoryType"`
-	enabled      int32   `json:"enable"` // 0全部 1启用 2禁用
-	appVisible   int32   `json:"appVisible"`
+	PageReq
+	categoryType int64   `json:"categoryType,optional"`
+	enabled      int32   `json:"enable,optional"` // 0全部 1启用 2禁用
+	appVisible   int32   `json:"appVisible,optional"`
 }
 
 type ListCategoriesResp {
@@ -224,12 +226,12 @@ type GetProductResp {
 }
 
 type ListProductsReq {
-	page         PageReq `json:"page"`
-	categoryType int64   `json:"categoryType"`
-	market       string  `json:"market"`
-	keyword      string  `json:"keyword"`
-	enabled      int32   `json:"enabled"` // 0全部 1启用 2禁用
-	appVisible   int32   `json:"appVisible"` // 0全部 1显示 2隐藏
+	PageReq
+	categoryType int64   `json:"categoryType,optional"`
+	market       string  `json:"market,optional"`
+	keyword      string  `json:"keyword,optional"`
+	enabled      int32   `json:"enabled,optional"` // 0全部 1启用 2禁用
+	appVisible   int32   `json:"appVisible,optional"` // 0全部 1显示 2隐藏
 }
 
 type ListProductsResp {
@@ -299,7 +301,7 @@ type GetTenantCategoryResp {
 }
 
 type ListTenantCategoriesReq {
-	page          PageReq `json:"page"`
+	PageReq
 	tenantId      int64   `json:"tenantId"`
 	categoryType  int64   `json:"categoryType"`
 	status        int32   `json:"status"` // 0全部 1启用 2禁用
@@ -357,7 +359,7 @@ type GetTenantProductResp {
 }
 
 type ListTenantProductsReq {
-	page          PageReq `json:"page"`
+	PageReq
 	tenantId      int64   `json:"tenantId"`
 	categoryType  int64   `json:"categoryType"`
 	market        string  `json:"market"`

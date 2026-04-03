@@ -25,7 +25,35 @@ func NewGetCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetCa
 
 // 获取产品类型详情
 func (l *GetCategoryLogic) GetCategory(in *itick.GetCategoryReq) (*itick.GetCategoryResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &itick.GetCategoryResp{}, nil
+	result, err := l.svcCtx.ItickCategoryModel.FindOne(l.ctx, in.Id)
+	if err != nil {
+		return nil, err
+	}
+	if result == nil {
+		return &itick.GetCategoryResp{
+			Base: &itick.RespBase{
+				Code: 1,
+				Msg:  "数据不存在",
+			},
+		}, nil
+	}
+	return &itick.GetCategoryResp{
+		Base: &itick.RespBase{
+			Code: 200,
+			Msg:  "",
+		},
+		Data: &itick.ItickCategory{
+			Id:           result.Id,
+			CategoryType: itick.CategoryType(result.CategoryType),
+			CategoryCode: result.CategoryCode,
+			CategoryName: result.CategoryName,
+			Enabled:      result.Enabled,
+			AppVisible:   result.AppVisible,
+			Sort:         result.Sort,
+			Icon:         result.Icon,
+			Remark:       result.Remark,
+			CreateTime:   result.CreateTime,
+			UpdateTime:   result.UpdateTime,
+		},
+	}, nil
 }

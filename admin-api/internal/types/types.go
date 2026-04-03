@@ -233,7 +233,7 @@ type DepthLevel struct {
 }
 
 type GetCategoryReq struct {
-	Id int64 `json:"id"`
+	Id int64 `path:"id"`
 }
 
 type GetCategoryResp struct {
@@ -572,10 +572,10 @@ type Kline struct {
 }
 
 type ListCategoriesReq struct {
-	Page         PageReq `json:"page"`
-	CategoryType int64   `json:"categoryType"`
-	Enabled      int32   `json:"enable"` // 0全部 1启用 2禁用
-	AppVisible   int32   `json:"appVisible"`
+	PageReq
+	CategoryType int64 `json:"categoryType,optional"`
+	Enabled      int32 `json:"enable,optional"` // 0全部 1启用 2禁用
+	AppVisible   int32 `json:"appVisible,optional"`
 }
 
 type ListCategoriesResp struct {
@@ -611,12 +611,12 @@ type ListPayProductsResp struct {
 }
 
 type ListProductsReq struct {
-	Page         PageReq `json:"page"`
-	CategoryType int64   `json:"categoryType"`
-	Market       string  `json:"market"`
-	Keyword      string  `json:"keyword"`
-	Enabled      int32   `json:"enabled"`    // 0全部 1启用 2禁用
-	AppVisible   int32   `json:"appVisible"` // 0全部 1显示 2隐藏
+	PageReq
+	CategoryType int64  `json:"categoryType,optional"`
+	Market       string `json:"market,optional"`
+	Keyword      string `json:"keyword,optional"`
+	Enabled      int32  `json:"enabled,optional"`    // 0全部 1启用 2禁用
+	AppVisible   int32  `json:"appVisible,optional"` // 0全部 1显示 2隐藏
 }
 
 type ListProductsResp struct {
@@ -664,11 +664,11 @@ type ListRechargeOrdersResp struct {
 }
 
 type ListTenantCategoriesReq struct {
-	Page          PageReq `json:"page"`
-	TenantId      int64   `json:"tenantId"`
-	CategoryType  int64   `json:"categoryType"`
-	Status        int32   `json:"status"`        // 0全部 1启用 2禁用
-	VisibleStatus int32   `json:"visibleStatus"` // 0全部 1显示 2隐藏
+	PageReq
+	TenantId      int64 `json:"tenantId"`
+	CategoryType  int64 `json:"categoryType"`
+	Status        int32 `json:"status"`        // 0全部 1启用 2禁用
+	VisibleStatus int32 `json:"visibleStatus"` // 0全部 1显示 2隐藏
 }
 
 type ListTenantCategoriesResp struct {
@@ -732,13 +732,13 @@ type ListTenantPayPlatformsResp struct {
 }
 
 type ListTenantProductsReq struct {
-	Page          PageReq `json:"page"`
-	TenantId      int64   `json:"tenantId"`
-	CategoryType  int64   `json:"categoryType"`
-	Market        string  `json:"market"`
-	Keyword       string  `json:"keyword"`
-	Status        int32   `json:"status"`        // 0全部 1启用 2禁用
-	VisibleStatus int32   `json:"visibleStatus"` // 0全部 1显示 2隐藏
+	PageReq
+	TenantId      int64  `json:"tenantId"`
+	CategoryType  int64  `json:"categoryType"`
+	Market        string `json:"market"`
+	Keyword       string `json:"keyword"`
+	Status        int32  `json:"status"`        // 0全部 1启用 2禁用
+	VisibleStatus int32  `json:"visibleStatus"` // 0全部 1显示 2隐藏
 }
 
 type ListTenantProductsResp struct {

@@ -32,7 +32,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 		},
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
-		rest.WithPrefix("/admin"),
+		rest.WithPrefix("/admin/system"),
 	)
 
 	server.AddRoutes(
@@ -44,11 +44,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
-				Path:    "/system/core",
+				Path:    "/core",
 				Handler: auth_public.GetSystemCoreHandler(serverCtx),
 			},
 		},
-		rest.WithPrefix("/admin"),
+		rest.WithPrefix("/admin/system"),
 	)
 
 	server.AddRoutes(
@@ -508,71 +508,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: system.SysRoleGrantHandler(serverCtx),
 			},
 			{
-				Method:  http.MethodGet,
-				Path:    "/sys/users",
-				Handler: system.SysUserListHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/sys/users",
-				Handler: system.SysUserCreateHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPut,
-				Path:    "/sys/users",
-				Handler: system.SysUserUpdateHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/sys/users/:id",
-				Handler: system.SysUserDetailHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodDelete,
-				Path:    "/sys/users/:id",
-				Handler: system.SysUserDeleteHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/sys/users/assignRoles",
-				Handler: system.AssignUserRolesHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/sys/users/google2fa/bind",
-				Handler: system.Google2FABindHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/sys/users/google2fa/disable",
-				Handler: system.Google2FADisableHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/sys/users/google2fa/enable",
-				Handler: system.Google2FAEnableHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/sys/users/google2fa/init",
-				Handler: system.Google2FAInitHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/sys/users/google2fa/reset",
-				Handler: system.Google2FAResetHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/sys/users/resetPwd",
-				Handler: system.ResetUserPwdHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/sys/users/status",
-				Handler: system.ChangeUserStatusHandler(serverCtx),
-			},
-			{
 				Method:  http.MethodPost,
 				Path:    "/tenants",
 				Handler: system.SysTenantCreateHandler(serverCtx),
@@ -592,9 +527,74 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/tenants/:id",
 				Handler: system.SysTenantDeleteHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/users",
+				Handler: system.SysUserListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/users",
+				Handler: system.SysUserCreateHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/users",
+				Handler: system.SysUserUpdateHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/users/:id",
+				Handler: system.SysUserDetailHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodDelete,
+				Path:    "/users/:id",
+				Handler: system.SysUserDeleteHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/users/assignRoles",
+				Handler: system.AssignUserRolesHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/users/google2fa/bind",
+				Handler: system.Google2FABindHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/users/google2fa/disable",
+				Handler: system.Google2FADisableHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/users/google2fa/enable",
+				Handler: system.Google2FAEnableHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/users/google2fa/init",
+				Handler: system.Google2FAInitHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/users/google2fa/reset",
+				Handler: system.Google2FAResetHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/users/resetPwd",
+				Handler: system.ResetUserPwdHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/users/status",
+				Handler: system.ChangeUserStatusHandler(serverCtx),
+			},
 		},
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
-		rest.WithPrefix("/admin"),
+		rest.WithPrefix("/admin/system"),
 	)
 
 	server.AddRoutes(
@@ -711,6 +711,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 		},
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
-		rest.WithPrefix("/admin"),
+		rest.WithPrefix("/admin/member"),
 	)
 }

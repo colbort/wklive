@@ -103,7 +103,7 @@ export type SysCronJobLogListReq = {
 
 export type SysCronJobLogListResp = RespBase<SysCronJobLogItem[]>
 
-class CronJobService implements BaseService {
+export class CronJobService implements BaseService {
   async getList(params: SysCronJobListReq): Promise<RespBase<SysCronJobItem[]>> {
     return apiSysCronJobList(params)
   }
@@ -133,5 +133,4 @@ class CronJobService implements BaseService {
   }
 }
 
-export { CronJobService }
 export const cronJobService = new CronJobService()

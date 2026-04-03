@@ -12,39 +12,39 @@ import type {
 } from '@/services'
 
 export function apiSysCronJobList(params: SysCronJobListReq): Promise<RespBase<SysCronJobItem[]>> {
-  return get<SysCronJobItem[]>('/admin/jobs', params)
+  return get<SysCronJobItem[]>('/admin/system/jobs', params)
 }
 
 export function apiSysCronJobCreate(data: SysCronJobCreateReq): Promise<RespBase> {
-  return post('/admin/jobs', data)
+  return post('/admin/system/jobs', data)
 }
 
 export function apiSysCronJobUpdate(data: SysCronJobUpdateReq): Promise<RespBase> {
-  return put('/admin/jobs', data)
+  return put('/admin/system/jobs', data)
 }
 
 export function apiSysCronJobDelete(id: number): Promise<RespBase> {
-  return del(`/admin/jobs/${id}`)
+  return del(`/admin/system/jobs/${id}`)
 }
 
 export function apiSysCronJobRun(id: number): Promise<RespBase> {
-  return post(`/admin/jobs/${id}/run`)
+  return post(`/admin/system/jobs/${id}/run`)
 }
 
 export function apiSysCronJobStart(id: number): Promise<RespBase> {
-  return post(`/admin/jobs/${id}/start`)
+  return post(`/admin/system/jobs/${id}/start`)
 }
 
 export function apiSysCronJobStop(id: number): Promise<RespBase> {
-  return post(`/admin/jobs/${id}/stop`)
+  return post(`/admin/system/jobs/${id}/stop`)
 }
 
 export function apiSysCronJobHandlers(): Promise<RespBase<SysCronJobHandler[]>> {
-  return get<SysCronJobHandler[]>('/admin/jobs/handlers')
+  return get<SysCronJobHandler[]>('/admin/system/jobs/handlers')
 }
 
 export function apiSysCronJobLogList(
   params: SysCronJobLogListReq,
 ): Promise<RespBase<SysCronJobLogItem[]>> {
-  return get<SysCronJobLogItem[]>('/admin/logs/job', params)
+  return get<SysCronJobLogItem[]>('/admin/system/logs/job', params)
 }

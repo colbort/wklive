@@ -50,7 +50,7 @@ export const useAuthStore = defineStore('auth', {
   },
   actions: {
     async login(payload: { username: string; password: string; googleCode?: string }) {
-      const res = await post<LoginResp>('/admin/auth/login', payload)
+      const res = await post<LoginResp>('/admin/system/auth/login', payload)
       if (res.code !== 200) throw new Error(res.msg || 'login failed')
       // payload is stored at top level since RespBase strips `data`
       this.token = res.data!.token
@@ -59,7 +59,7 @@ export const useAuthStore = defineStore('auth', {
       localStorage.setItem('exp', String(res.data!.exp))
     },
     async fetchProfile() {
-      const res = await get<ProfileResp>('/admin/auth/profile')
+      const res = await get<ProfileResp>('/admin/system/auth/profile')
       if (res.code !== 200) throw new Error(res.msg || 'profile failed')
       this.user = res.data!.user
       this.menus = res.data!.menus || []
@@ -84,5 +84,5 @@ export function apiUpdateProfile(data: {
   avatar?: string
   password?: string
 }): Promise<RespBase> {
-  return post<RespBase>('/admin/auth/profile', data)
+  return post<RespBase>('/admin/system/auth/profile', data)
 }

@@ -86,7 +86,7 @@ export type ObjectStorageConfig = {
 
 // ===== 系统配置服务 =====
 
-class ConfigService implements BaseService {
+export class ConfigService implements BaseService {
   async getList(params: SysConfigListReq): Promise<RespBase<SysConfigItem[]>> {
     return apiSysConfigList(params)
   }
@@ -108,5 +108,4 @@ class ConfigService implements BaseService {
   }
 }
 
-export { ConfigService }
 export const configService = new ConfigService()

@@ -14,20 +14,20 @@ export function apiRoleList(params: {
 
 export async function apiRoleCreate(data: any): Promise<RespBase> {
   // POST /roles
-  return await post('/admin/roles', data)
+  return await post('/admin/system/roles', data)
 }
 export async function apiRoleUpdate(data: any): Promise<RespBase> {
   // PUT /roles
-  return await put('/admin/roles', data)
+  return await put('/admin/system/roles', data)
 }
 export async function apiRoleDelete(id: number): Promise<RespBase> {
   // DELETE /roles/:id
-  return await del(`/admin/roles/${id}`)
+  return await del(`/admin/system/roles/${id}`)
 }
 export async function apiRoleGrant(data: any): Promise<RespBase> {
   // POST /roles/grant
-  return await post('/admin/roles/grant', data)
+  return await post('/admin/system/roles/grant', data)
 }
 export async function apiRoleGrantDetail(roleId: number): Promise<RespBase> {
-  return await get(`/admin/roles/${roleId}/grant`)
+  return await get(`/admin/system/roles/${roleId}/grant`)
 }

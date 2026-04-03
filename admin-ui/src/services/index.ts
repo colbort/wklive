@@ -8,6 +8,7 @@ export { LogService, logService } from './system/LogService'
 export { UploadService, uploadService } from './system/UploadService'
 export { ConfigService, configService } from './system/ConfigService'
 export { CronJobService, cronJobService } from './system/CronJobService'
+export { TenantsService, tenantsService } from './system/TenantsService'
 export { CategoriesService, categoriesService } from './itick/CategoriesService'
 export { ProductsService, productsService } from './itick/ProductsService'
 export { TenantCategoriesService, tenantCategoriesService } from './itick/TenantCategoriesService'
@@ -83,6 +84,12 @@ export type {
   SysCronJobLogListReq,
   SysCronJobLogListResp,
 } from './system/CronJobService'
+export type {
+  SysTenantItem,
+  SysTenantListReq,
+  SysTenantCreateReq,
+  SysTenantUpdateReq,
+} from './system/TenantsService'
 
 export type {
   ListCategoriesReq,
@@ -92,7 +99,6 @@ export type {
   SyncCategoryProductsReq,
   SyncCategoryProductsResp,
 } from './itick/CategoriesService'
-
 
 export type {
   ListProductsReq,

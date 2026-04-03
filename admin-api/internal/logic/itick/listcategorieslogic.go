@@ -30,8 +30,8 @@ func NewListCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Li
 func (l *ListCategoriesLogic) ListCategories(req *types.ListCategoriesReq) (resp *types.ListCategoriesResp, err error) {
 	result, err := l.svcCtx.ItickCli.ListCategories(l.ctx, &itick.ListCategoriesReq{
 		Page: &itick.PageReq{
-			Cursor: req.Page.Cursor,
-			Limit:  req.Page.Limit,
+			Cursor: req.PageReq.Cursor,
+			Limit:  req.PageReq.Limit,
 		},
 		CategoryType: itick.CategoryType(req.CategoryType),
 		Enabled:      req.Enabled,

@@ -159,7 +159,7 @@ func (w *SyncCategoryProductsWorker) doSync(in *itick.SyncCategoryProductsReq) e
 		}
 
 		for _, item := range resp.Data {
-			_, err := w.svcCtx.ItickProductModel.Insert(w.ctx, &models.TItickProduct{
+			_, err := w.svcCtx.ItickProductModel.Upsert(w.ctx, &models.TItickProduct{
 				CategoryType: result.CategoryType,
 				Market:       region,
 				Symbol:       item.Code,
