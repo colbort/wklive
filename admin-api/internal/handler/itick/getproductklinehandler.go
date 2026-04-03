@@ -1,5 +1,5 @@
 // Code scaffolded by goctl. Safe to edit.
-// goctl 1.10.1
+// goctl 1.9.2
 
 package itick
 
@@ -12,16 +12,16 @@ import (
 	"wklive/admin-api/internal/types"
 )
 
-func GetAdminKlineHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func GetProductKlineHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.GetAdminKlineReq
+		var req types.GetProductKlineReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
 
-		l := itick.NewGetAdminKlineLogic(r.Context(), svcCtx)
-		resp, err := l.GetAdminKline(&req)
+		l := itick.NewGetProductKlineLogic(r.Context(), svcCtx)
+		resp, err := l.GetProductKline(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

@@ -467,7 +467,7 @@ func (x *ListCategoriesResp) GetData() []*ItickCategory {
 
 type SyncCategoryProductsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	CategoryId    int64                  `protobuf:"varint,1,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -502,9 +502,9 @@ func (*SyncCategoryProductsReq) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *SyncCategoryProductsReq) GetCategoryId() int64 {
+func (x *SyncCategoryProductsReq) GetId() int64 {
 	if x != nil {
-		return x.CategoryId
+		return x.Id
 	}
 	return 0
 }
@@ -1169,7 +1169,7 @@ func (x *ListProductsResp) GetData() []*ItickProduct {
 	return nil
 }
 
-type GetAdminKlineReq struct {
+type GetProductKlineReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Market        string                 `protobuf:"bytes,1,opt,name=market,proto3" json:"market,omitempty"`
 	Symbol        string                 `protobuf:"bytes,2,opt,name=symbol,proto3" json:"symbol,omitempty"`
@@ -1180,20 +1180,20 @@ type GetAdminKlineReq struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetAdminKlineReq) Reset() {
-	*x = GetAdminKlineReq{}
+func (x *GetProductKlineReq) Reset() {
+	*x = GetProductKlineReq{}
 	mi := &file_proto_itick_itick_admin_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetAdminKlineReq) String() string {
+func (x *GetProductKlineReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetAdminKlineReq) ProtoMessage() {}
+func (*GetProductKlineReq) ProtoMessage() {}
 
-func (x *GetAdminKlineReq) ProtoReflect() protoreflect.Message {
+func (x *GetProductKlineReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_itick_itick_admin_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1205,47 +1205,47 @@ func (x *GetAdminKlineReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetAdminKlineReq.ProtoReflect.Descriptor instead.
-func (*GetAdminKlineReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetProductKlineReq.ProtoReflect.Descriptor instead.
+func (*GetProductKlineReq) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{17}
 }
 
-func (x *GetAdminKlineReq) GetMarket() string {
+func (x *GetProductKlineReq) GetMarket() string {
 	if x != nil {
 		return x.Market
 	}
 	return ""
 }
 
-func (x *GetAdminKlineReq) GetSymbol() string {
+func (x *GetProductKlineReq) GetSymbol() string {
 	if x != nil {
 		return x.Symbol
 	}
 	return ""
 }
 
-func (x *GetAdminKlineReq) GetKType() KlineType {
+func (x *GetProductKlineReq) GetKType() KlineType {
 	if x != nil {
 		return x.KType
 	}
 	return KlineType_KLINE_TYPE_UNKNOWN
 }
 
-func (x *GetAdminKlineReq) GetEndTs() int64 {
+func (x *GetProductKlineReq) GetEndTs() int64 {
 	if x != nil {
 		return x.EndTs
 	}
 	return 0
 }
 
-func (x *GetAdminKlineReq) GetLimit() int64 {
+func (x *GetProductKlineReq) GetLimit() int64 {
 	if x != nil {
 		return x.Limit
 	}
 	return 0
 }
 
-type GetAdminKlineResp struct {
+type GetProductKlineResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*Kline               `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
@@ -1253,20 +1253,20 @@ type GetAdminKlineResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetAdminKlineResp) Reset() {
-	*x = GetAdminKlineResp{}
+func (x *GetProductKlineResp) Reset() {
+	*x = GetProductKlineResp{}
 	mi := &file_proto_itick_itick_admin_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetAdminKlineResp) String() string {
+func (x *GetProductKlineResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetAdminKlineResp) ProtoMessage() {}
+func (*GetProductKlineResp) ProtoMessage() {}
 
-func (x *GetAdminKlineResp) ProtoReflect() protoreflect.Message {
+func (x *GetProductKlineResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_itick_itick_admin_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1278,19 +1278,19 @@ func (x *GetAdminKlineResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetAdminKlineResp.ProtoReflect.Descriptor instead.
-func (*GetAdminKlineResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetProductKlineResp.ProtoReflect.Descriptor instead.
+func (*GetProductKlineResp) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *GetAdminKlineResp) GetBase() *RespBase {
+func (x *GetProductKlineResp) GetBase() *RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *GetAdminKlineResp) GetData() []*Kline {
+func (x *GetProductKlineResp) GetData() []*Kline {
 	if x != nil {
 		return x.Data
 	}
@@ -2535,10 +2535,9 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"appVisible\"c\n" +
 	"\x12ListCategoriesResp\x12#\n" +
 	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12(\n" +
-	"\x04data\x18\x02 \x03(\v2\x14.itick.ItickCategoryR\x04data\":\n" +
-	"\x17SyncCategoryProductsReq\x12\x1f\n" +
-	"\vcategory_id\x18\x01 \x01(\x03R\n" +
-	"categoryId\"X\n" +
+	"\x04data\x18\x02 \x03(\v2\x14.itick.ItickCategoryR\x04data\")\n" +
+	"\x17SyncCategoryProductsReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"X\n" +
 	"\x18SyncCategoryProductsResp\x12#\n" +
 	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12\x17\n" +
 	"\atask_no\x18\x02 \x01(\tR\x06taskNo\"/\n" +
@@ -2596,14 +2595,14 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"appVisible\"`\n" +
 	"\x10ListProductsResp\x12#\n" +
 	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12'\n" +
-	"\x04data\x18\x02 \x03(\v2\x13.itick.ItickProductR\x04data\"\x98\x01\n" +
-	"\x10GetAdminKlineReq\x12\x16\n" +
+	"\x04data\x18\x02 \x03(\v2\x13.itick.ItickProductR\x04data\"\x9a\x01\n" +
+	"\x12GetProductKlineReq\x12\x16\n" +
 	"\x06market\x18\x01 \x01(\tR\x06market\x12\x16\n" +
 	"\x06symbol\x18\x02 \x01(\tR\x06symbol\x12'\n" +
 	"\x06k_type\x18\x03 \x01(\x0e2\x10.itick.KlineTypeR\x05kType\x12\x15\n" +
 	"\x06end_ts\x18\x04 \x01(\x03R\x05endTs\x12\x14\n" +
-	"\x05limit\x18\x05 \x01(\x03R\x05limit\"Z\n" +
-	"\x11GetAdminKlineResp\x12#\n" +
+	"\x05limit\x18\x05 \x01(\x03R\x05limit\"\\\n" +
+	"\x13GetProductKlineResp\x12#\n" +
 	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12 \n" +
 	"\x04data\x18\x02 \x03(\v2\f.itick.KlineR\x04data\"\xbe\x01\n" +
 	"\x17CreateTenantCategoryReq\x12\x1b\n" +
@@ -2702,7 +2701,7 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\x1aInitTenantItickDisplayResp\x12#\n" +
 	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12%\n" +
 	"\x0ecategory_count\x18\x02 \x01(\x03R\rcategoryCount\x12#\n" +
-	"\rproduct_count\x18\x03 \x01(\x03R\fproductCount2\xa2\r\n" +
+	"\rproduct_count\x18\x03 \x01(\x03R\fproductCount2\xa8\r\n" +
 	"\n" +
 	"ItickAdmin\x12E\n" +
 	"\x0eListCategories\x12\x18.itick.ListCategoriesReq\x1a\x19.itick.ListCategoriesResp\x12B\n" +
@@ -2715,8 +2714,8 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\rCreateProduct\x12\x17.itick.CreateProductReq\x1a\x16.itick.AdminCommonResp\x12@\n" +
 	"\rUpdateProduct\x12\x17.itick.UpdateProductReq\x1a\x16.itick.AdminCommonResp\x129\n" +
 	"\n" +
-	"GetProduct\x12\x14.itick.GetProductReq\x1a\x15.itick.GetProductResp\x12B\n" +
-	"\rGetAdminKline\x12\x17.itick.GetAdminKlineReq\x1a\x18.itick.GetAdminKlineResp\x12W\n" +
+	"GetProduct\x12\x14.itick.GetProductReq\x1a\x15.itick.GetProductResp\x12H\n" +
+	"\x0fGetProductKline\x12\x19.itick.GetProductKlineReq\x1a\x1a.itick.GetProductKlineResp\x12W\n" +
 	"\x14ListTenantCategories\x12\x1e.itick.ListTenantCategoriesReq\x1a\x1f.itick.ListTenantCategoriesResp\x12N\n" +
 	"\x14CreateTenantCategory\x12\x1e.itick.CreateTenantCategoryReq\x1a\x16.itick.AdminCommonResp\x12N\n" +
 	"\x14UpdateTenantCategory\x12\x1e.itick.UpdateTenantCategoryReq\x1a\x16.itick.AdminCommonResp\x12\\\n" +
@@ -2760,8 +2759,8 @@ var file_proto_itick_itick_admin_proto_goTypes = []any{
 	(*GetProductResp)(nil),                 // 14: itick.GetProductResp
 	(*ListProductsReq)(nil),                // 15: itick.ListProductsReq
 	(*ListProductsResp)(nil),               // 16: itick.ListProductsResp
-	(*GetAdminKlineReq)(nil),               // 17: itick.GetAdminKlineReq
-	(*GetAdminKlineResp)(nil),              // 18: itick.GetAdminKlineResp
+	(*GetProductKlineReq)(nil),             // 17: itick.GetProductKlineReq
+	(*GetProductKlineResp)(nil),            // 18: itick.GetProductKlineResp
 	(*CreateTenantCategoryReq)(nil),        // 19: itick.CreateTenantCategoryReq
 	(*UpdateTenantCategoryReq)(nil),        // 20: itick.UpdateTenantCategoryReq
 	(*BatchUpsertTenantCategoriesReq)(nil), // 21: itick.BatchUpsertTenantCategoriesReq
@@ -2808,9 +2807,9 @@ var file_proto_itick_itick_admin_proto_depIdxs = []int32{
 	38, // 14: itick.ListProductsReq.category_type:type_name -> itick.CategoryType
 	37, // 15: itick.ListProductsResp.base:type_name -> itick.RespBase
 	41, // 16: itick.ListProductsResp.data:type_name -> itick.ItickProduct
-	42, // 17: itick.GetAdminKlineReq.k_type:type_name -> itick.KlineType
-	37, // 18: itick.GetAdminKlineResp.base:type_name -> itick.RespBase
-	43, // 19: itick.GetAdminKlineResp.data:type_name -> itick.Kline
+	42, // 17: itick.GetProductKlineReq.k_type:type_name -> itick.KlineType
+	37, // 18: itick.GetProductKlineResp.base:type_name -> itick.RespBase
+	43, // 19: itick.GetProductKlineResp.data:type_name -> itick.Kline
 	22, // 20: itick.BatchUpsertTenantCategoriesReq.data:type_name -> itick.TenantCategoryItem
 	37, // 21: itick.GetTenantCategoryResp.base:type_name -> itick.RespBase
 	44, // 22: itick.GetTenantCategoryResp.data:type_name -> itick.ItickTenantCategory
@@ -2836,7 +2835,7 @@ var file_proto_itick_itick_admin_proto_depIdxs = []int32{
 	11, // 42: itick.ItickAdmin.CreateProduct:input_type -> itick.CreateProductReq
 	12, // 43: itick.ItickAdmin.UpdateProduct:input_type -> itick.UpdateProductReq
 	13, // 44: itick.ItickAdmin.GetProduct:input_type -> itick.GetProductReq
-	17, // 45: itick.ItickAdmin.GetAdminKline:input_type -> itick.GetAdminKlineReq
+	17, // 45: itick.ItickAdmin.GetProductKline:input_type -> itick.GetProductKlineReq
 	25, // 46: itick.ItickAdmin.ListTenantCategories:input_type -> itick.ListTenantCategoriesReq
 	19, // 47: itick.ItickAdmin.CreateTenantCategory:input_type -> itick.CreateTenantCategoryReq
 	20, // 48: itick.ItickAdmin.UpdateTenantCategory:input_type -> itick.UpdateTenantCategoryReq
@@ -2858,7 +2857,7 @@ var file_proto_itick_itick_admin_proto_depIdxs = []int32{
 	0,  // 64: itick.ItickAdmin.CreateProduct:output_type -> itick.AdminCommonResp
 	0,  // 65: itick.ItickAdmin.UpdateProduct:output_type -> itick.AdminCommonResp
 	14, // 66: itick.ItickAdmin.GetProduct:output_type -> itick.GetProductResp
-	18, // 67: itick.ItickAdmin.GetAdminKline:output_type -> itick.GetAdminKlineResp
+	18, // 67: itick.ItickAdmin.GetProductKline:output_type -> itick.GetProductKlineResp
 	26, // 68: itick.ItickAdmin.ListTenantCategories:output_type -> itick.ListTenantCategoriesResp
 	0,  // 69: itick.ItickAdmin.CreateTenantCategory:output_type -> itick.AdminCommonResp
 	0,  // 70: itick.ItickAdmin.UpdateTenantCategory:output_type -> itick.AdminCommonResp

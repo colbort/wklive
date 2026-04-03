@@ -220,14 +220,14 @@ VALUES
 (128, 125, '人工标记充值订单支付成功', 3, 'POST', '/payment/recharge-orders/{id}/manual-success', 'payment:recharge-order:manualsuccess', '', '', 69),
 (129, 125, '重试充值回调', 3, 'POST', '/payment/recharge-orders/{id}/retry-notify', 'payment:recharge-order:retrynotify', '', '', 70),
 
-(130, 100, '充值回调日志列表', 2, 'GET', '/payment/recharge-notify-logs', 'payment:recharge-notifylog:list', 'payment/notify-logs', 'Gold', 71),
+(130, 100, '充值回调日志列表', 2, 'GET', '/payment/recharge-notify-logs', 'payment:recharge-notifylog:list', 'payment/recharge-notify-logs', 'Gold', 71),
 (131, 130, '获取充值回调日志详情', 3, 'GET', '/payment/recharge-notify-logs/{id}', 'payment:recharge-notifylog:detail', '', '', 72),
 
 (132, 100, '提现管理', 2, 'GET', '/payment/withdraw-orders', 'payment:withdraw-order:list', 'payment/withdraw-orders', 'Gold', 73),
 (133, 132, '获取提现订单详情', 3, 'GET', '/payment/withdraw-orders/{id}', 'payment:withdraw-order:detail', '', '', 74),
 (134, 132, '审核提现订单', 3, 'POST', '/withdraw-orders/:orderNo/audit', 'payment:withdraw-order:audit', '', '', 75),
 
-(135, 100, '提现回调日志列表', 2, 'GET', '/payment/withdraw-notify-logs/list', 'payment:withdraw-notifylog:list', 'payment/notify-logs', 'Gold', 76),
+(135, 100, '提现回调日志列表', 2, 'GET', '/payment/withdraw-notify-logs/list', 'payment:withdraw-notifylog:list', 'payment/withdraw-notify-logs', 'Gold', 76),
 (136, 135, '获取提现回调日志详情', 3, 'GET', '/payment/withdraw-notify-logs/{id}', 'payment:withdraw-notifylog:detail', '', '', 77);
 
 
@@ -238,36 +238,36 @@ VALUES (300, 0, 'ITICK数据管理', 1, 'Goods', 300);
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
 VALUES
 -- 产品类型管理
-(301, 300, '产品类型列表', 2, 'GET', '/itick/categories', 'itick:category:list', 'product/categories', 'Menu', 301),
+(301, 300, '产品类型列表', 2, 'GET', '/itick/categories', 'itick:category:list', 'itick/categories', 'Menu', 301),
 (302, 301, '创建产品类型', 3, 'POST', '/itick/categories', 'itick:category:add', '', '', 302),
 (303, 301, '更新产品类型', 3, 'PUT', '/itick/categories', 'itick:category:update', '', '', 303),
 (304, 301, '获取产品类型详情', 3, 'GET', '/itick/categories/:id', 'itick:category:detail', '', '', 304),
-(305, 301, '同步类型下的产品', 3, 'POST', '/itick/categories/:id/sync-products', 'itick:category:syncProducts', '', '', 305),
-(306, 301, '同步任务状态', 3, 'GET', '/itick/sync-tasks/:taskNo/status', 'itick:sync-task:status', 'product/sync-task-status', '', 306),
+(305, 301, '同步类型下的产品', 3, 'POST', '/itick/categories/sync-products', 'itick:category:syncProducts', '', '', 305),
+(306, 301, '同步任务状态', 3, 'GET', '/itick/sync-tasks/:taskNo/status', 'itick:sync-task:status', '', '', 306),
 
 -- 产品管理
-(307, 300, '产品列表', 2, 'GET', '/itick/products', 'itick:itick:list', 'product/products', 'Goods', 307),
+(307, 300, '产品列表', 2, 'GET', '/itick/products', 'itick:itick:list', 'itick/products', 'Goods', 307),
 (308, 307, '创建产品', 3, 'POST', '/itick/products', 'itick:itick:add', '', '', 308),
 (309, 307, '更新产品', 3, 'PUT', '/itick/products', 'itick:itick:update', '', '', 309),
 (310, 307, '获取产品详情', 3, 'GET', '/itick/products/:id', 'itick:itick:detail', '', '', 310),
-(311, 307, 'K线查看', 3, 'GET', '/itick/kline', 'itick:kline:view', 'product/kline', '', 311),
+(311, 307, 'K线查看', 3, 'GET', '/itick/kline', 'itick:kline:view', '', '', 311),
 
 -- 租户产品类型管理
-(312, 300, '租户产品类型列表', 2, 'GET', '/itick/tenant-categories', 'itick:tenant-category:list', 'product/tenant-categories', 'OfficeBuilding', 312),
+(312, 300, '租户产品类型列表', 2, 'GET', '/itick/tenant-categories', 'itick:tenant-category:list', 'itick/tenant-categories', 'OfficeBuilding', 312),
 (313, 312, '创建租户产品类型', 3, 'POST', '/itick/tenant-categories', 'itick:tenant-category:add', '', '', 313),
 (314, 312, '更新租户产品类型', 3, 'PUT', '/itick/tenant-categories', 'itick:tenant-category:update', '', '', 314),
 (315, 312, '批量更新租户产品类型', 3, 'POST', '/itick/tenant-categories/batch', 'itick:tenant-category:batchUpsert', '', '', 315),
 (316, 312, '获取租户产品类型详情', 3, 'GET', '/itick/tenant-categories/:id', 'itick:tenant-category:detail', '', '', 316),
 
 -- 租户产品管理
-(317, 300, '租户产品列表', 2, 'GET', '/itick/tenant-products', 'itick:tenant-itick:list', 'product/tenant-products', 'Grid', 317),
+(317, 300, '租户产品列表', 2, 'GET', '/itick/tenant-products', 'itick:tenant-itick:list', 'itick/tenant-products', 'Grid', 317),
 (318, 317, '创建租户产品', 3, 'POST', '/itick/tenant-products', 'itick:tenant-itick:add', '', '', 318),
 (319, 317, '更新租户产品', 3, 'PUT', '/itick/tenant-products', 'itick:tenant-itick:update', '', '', 319),
 (320, 317, '批量更新租户产品', 3, 'POST', '/itick/tenant-products/batch', 'itick:tenant-itick:batchUpsert', '', '', 320),
 (321, 317, '获取租户产品详情', 3, 'GET', '/itick/tenant-products/:id', 'itick:tenant-itick:detail', '', '', 321),
 
 -- 初始化租户展示配置
-(322, 300, '初始化租户展示配置', 2, 'POST', '/itick/tenant-display/init', 'itick:tenant-display:init', 'product/tenant-display-init', 'Setting', 322);
+(322, 300, '初始化租户展示配置', 2, 'POST', '/itick/tenant-display/init', 'itick:tenant-display:init', 'itick/tenant-display-init', 'Setting', 322);
 
 
 

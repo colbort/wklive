@@ -21,10 +21,10 @@ type (
 	CreateProductReq               = itick.CreateProductReq
 	CreateTenantCategoryReq        = itick.CreateTenantCategoryReq
 	CreateTenantProductReq         = itick.CreateTenantProductReq
-	GetAdminKlineReq               = itick.GetAdminKlineReq
-	GetAdminKlineResp              = itick.GetAdminKlineResp
 	GetCategoryReq                 = itick.GetCategoryReq
 	GetCategoryResp                = itick.GetCategoryResp
+	GetProductKlineReq             = itick.GetProductKlineReq
+	GetProductKlineResp            = itick.GetProductKlineResp
 	GetProductReq                  = itick.GetProductReq
 	GetProductResp                 = itick.GetProductResp
 	GetSyncTaskStatusReq           = itick.GetSyncTaskStatusReq
@@ -74,7 +74,7 @@ type (
 		// 获取产品详情
 		GetProduct(ctx context.Context, in *GetProductReq, opts ...grpc.CallOption) (*GetProductResp, error)
 		// K线查看
-		GetAdminKline(ctx context.Context, in *GetAdminKlineReq, opts ...grpc.CallOption) (*GetAdminKlineResp, error)
+		GetProductKline(ctx context.Context, in *GetProductKlineReq, opts ...grpc.CallOption) (*GetProductKlineResp, error)
 		// 租户产品类型列表
 		ListTenantCategories(ctx context.Context, in *ListTenantCategoriesReq, opts ...grpc.CallOption) (*ListTenantCategoriesResp, error)
 		// 租户产品类型
@@ -171,9 +171,9 @@ func (m *defaultItickAdmin) GetProduct(ctx context.Context, in *GetProductReq, o
 }
 
 // K线查看
-func (m *defaultItickAdmin) GetAdminKline(ctx context.Context, in *GetAdminKlineReq, opts ...grpc.CallOption) (*GetAdminKlineResp, error) {
+func (m *defaultItickAdmin) GetProductKline(ctx context.Context, in *GetProductKlineReq, opts ...grpc.CallOption) (*GetProductKlineResp, error) {
 	client := itick.NewItickAdminClient(m.cli.Conn())
-	return client.GetAdminKline(ctx, in, opts...)
+	return client.GetProductKline(ctx, in, opts...)
 }
 
 // 租户产品类型列表

@@ -84,9 +84,9 @@ func (s *ItickAdminServer) GetProduct(ctx context.Context, in *itick.GetProductR
 }
 
 // K线查看
-func (s *ItickAdminServer) GetAdminKline(ctx context.Context, in *itick.GetAdminKlineReq) (*itick.GetAdminKlineResp, error) {
-	l := logic.NewGetAdminKlineLogic(ctx, s.svcCtx)
-	return l.GetAdminKline(in)
+func (s *ItickAdminServer) GetProductKline(ctx context.Context, in *itick.GetProductKlineReq) (*itick.GetProductKlineResp, error) {
+	l := logic.NewGetProductKlineLogic(ctx, s.svcCtx)
+	return l.GetProductKline(in)
 }
 
 // 租户产品类型列表

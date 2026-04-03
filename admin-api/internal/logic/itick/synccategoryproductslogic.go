@@ -29,7 +29,7 @@ func NewSyncCategoryProductsLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 func (l *SyncCategoryProductsLogic) SyncCategoryProducts(req *types.SyncCategoryProductsReq) (resp *types.SyncCategoryProductsResp, err error) {
 	reuslt, err := l.svcCtx.ItickCli.SyncCategoryProducts(l.ctx, &itick.SyncCategoryProductsReq{
-		CategoryId: req.CategoryId,
+		Id: req.Id,
 	})
 	if err != nil {
 		return nil, err

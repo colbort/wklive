@@ -8,6 +8,10 @@ export { LogService, logService } from './system/LogService'
 export { UploadService, uploadService } from './system/UploadService'
 export { ConfigService, configService } from './system/ConfigService'
 export { CronJobService, cronJobService } from './system/CronJobService'
+export { CategoriesService, categoriesService } from './itick/CategoriesService'
+export { ProductsService, productsService } from './itick/ProductsService'
+export { TenantCategoriesService, tenantCategoriesService } from './itick/TenantCategoriesService'
+export { TenantProductsService, tenantProductsService } from './itick/TenantProductsService'
 
 // 类型导出
 export type { RespBase } from './BaseService'
@@ -79,3 +83,22 @@ export type {
   SysCronJobLogListReq,
   SysCronJobLogListResp,
 } from './system/CronJobService'
+
+export type {
+  ListCategoriesReq,
+  ItickCategory,
+  CreateCategoryReq,
+  UpdateCategoryReq,
+  SyncCategoryProductsReq,
+  SyncCategoryProductsResp,
+} from './itick/CategoriesService'
+
+
+export type {
+  ListProductsReq,
+  ItickProduct,
+  CreateProductReq,
+  UpdateProductReq,
+  GetProductKlineReq,
+  Kline,
+} from './itick/ProductsService'

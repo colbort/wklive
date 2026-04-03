@@ -34,7 +34,7 @@ func NewSyncCategoryProductsLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 // 同步类型下的产品
 func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryProductsReq) (*itick.SyncCategoryProductsResp, error) {
-	result, err := l.svcCtx.ItickCategoryModel.FindOne(l.ctx, in.CategoryId)
+	result, err := l.svcCtx.ItickCategoryModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		logx.Errorf("find category failed, err=%v", err)
 		return &itick.SyncCategoryProductsResp{
@@ -53,14 +53,14 @@ func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryP
 		}, nil
 	}
 
-	taskNo := fmt.Sprintf("sync_category_products_%d_%d", in.CategoryId, time.Now().UnixNano())
+	taskNo := fmt.Sprintf("sync_category_products_%d_%d", in.Id, time.Now().UnixNano())
 	now := time.Now().UnixMilli()
 
 	// 创建任务记录
 	_, err = l.svcCtx.ItickSyncTaskModel.Insert(l.ctx, &models.TItickSyncTask{
 		TaskNo:    taskNo,
 		TaskType:  "sync_category_products",
-		BizId:     in.CategoryId,
+		BizId:     in.Id,
 		Status:    0,
 		Message:   "任务已提交",
 		CreatedAt: now,
@@ -133,7 +133,7 @@ func (w *SyncCategoryProductsWorker) Run(taskNo string, in *itick.SyncCategoryPr
 }
 
 func (w *SyncCategoryProductsWorker) doSync(in *itick.SyncCategoryProductsReq) error {
-	result, err := w.svcCtx.ItickCategoryModel.FindOne(w.ctx, in.CategoryId)
+	result, err := w.svcCtx.ItickCategoryModel.FindOne(w.ctx, in.Id)
 	if err != nil {
 		return fmt.Errorf("find category failed: %w", err)
 	}

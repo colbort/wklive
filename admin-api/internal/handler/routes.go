@@ -75,13 +75,13 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodPost,
-				Path:    "/categories/:id/sync-products",
+				Path:    "/categories/sync-products",
 				Handler: itick.SyncCategoryProductsHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
-				Path:    "/kline",
-				Handler: itick.GetAdminKlineHandler(serverCtx),
+				Path:    "/product/kline",
+				Handler: itick.GetProductKlineHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,

@@ -22,7 +22,7 @@ func (m *defaultTItickCategoryModel) FindAll(ctx context.Context) ([]*TItickCate
 	return resp, err
 }
 
-func (m *defaultTItickCategoryModel) FindPage(ctx context.Context, categoryType int64, enabled int64, appVisible int64, cursor int64, limit int64) ([]*TItickCategory, int64, error) {
+func (m *defaultTItickCategoryModel) FindPage(ctx context.Context, categoryType int32, enabled int32, appVisible int32, cursor int64, limit int64) ([]*TItickCategory, int64, error) {
 	if limit <= 0 {
 		limit = 10
 	}

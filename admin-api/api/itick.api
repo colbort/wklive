@@ -142,7 +142,7 @@ type UpdateCategoryReq {
 }
 
 type GetCategoryReq {
-	id int64 `json:"id"`
+	id int64 `json:"id"` 
 }
 
 type GetCategoryResp {
@@ -163,7 +163,7 @@ type ListCategoriesResp {
 }
 
 type SyncCategoryProductsReq {
-	categoryId int64 `json:"categoryId"`
+	id int64 `json:"id"`
 }
 
 type SyncCategoryProductsResp {
@@ -240,7 +240,7 @@ type ListProductsResp {
 // ====================
 // K线
 // ====================
-type GetAdminKlineReq {
+type GetProductKlineReq {
 	market string `json:"market"`
 	symbol string `json:"symbol"`
 	kType  int64  `json:"kType"`
@@ -248,7 +248,7 @@ type GetAdminKlineReq {
 	limit  int64  `json:"limit"`
 }
 
-type GetAdminKlineResp {
+type GetProductKlineResp {
 	RespBase
 	data []Kline `json:"data"`
 }
@@ -409,7 +409,7 @@ service admin {
 
 	// 同步类型下的产品
 	@handler SyncCategoryProducts
-	post /categories/:id/sync-products (SyncCategoryProductsReq) returns (SyncCategoryProductsResp)
+	post /categories/sync-products (SyncCategoryProductsReq) returns (SyncCategoryProductsResp)
 
 	// 获取同步任务状态
 	@handler GetSyncTaskStatus
@@ -432,8 +432,8 @@ service admin {
 	get /products/:id (GetProductReq) returns (GetProductResp)
 
 	// K线查看
-	@handler GetAdminKline
-	get /kline (GetAdminKlineReq) returns (GetAdminKlineResp)
+	@handler GetProductKline
+	get /product/kline (GetProductKlineReq) returns (GetProductKlineResp)
 
 	// 租户产品类型列表
 	@handler ListTenantCategories

@@ -57,7 +57,7 @@ message ListCategoriesResp {
 }
 
 message SyncCategoryProductsReq {
-  int64 category_id = 1;
+  int64 id = 1;
 }
 
 message SyncCategoryProductsResp {
@@ -137,7 +137,7 @@ message ListProductsResp {
 // K线
 // ====================
 
-message GetAdminKlineReq {
+message GetProductKlineReq {
   string market = 1;
   string symbol = 2;
   itick.KlineType k_type = 3;
@@ -145,7 +145,7 @@ message GetAdminKlineReq {
   int64 limit = 5;
 }
 
-message GetAdminKlineResp {
+message GetProductKlineResp {
   itick.RespBase base = 1;
   repeated itick.Kline data = 2;
 }
@@ -312,7 +312,7 @@ service ItickAdmin {
   rpc GetProduct(GetProductReq) returns (GetProductResp);
 
   // K线查看
-  rpc GetAdminKline(GetAdminKlineReq) returns (GetAdminKlineResp);
+  rpc GetProductKline(GetProductKlineReq) returns (GetProductKlineResp);
 
   // 租户产品类型列表
   rpc ListTenantCategories(ListTenantCategoriesReq) returns (ListTenantCategoriesResp);

@@ -1,5 +1,5 @@
 // Code scaffolded by goctl. Safe to edit.
-// goctl 1.10.1
+// goctl 1.9.2
 
 package itick
 
@@ -13,22 +13,22 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type GetAdminKlineLogic struct {
+type GetProductKlineLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewGetAdminKlineLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetAdminKlineLogic {
-	return &GetAdminKlineLogic{
+func NewGetProductKlineLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetProductKlineLogic {
+	return &GetProductKlineLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *GetAdminKlineLogic) GetAdminKline(req *types.GetAdminKlineReq) (resp *types.GetAdminKlineResp, err error) {
-	result, err := l.svcCtx.ItickCli.GetAdminKline(l.ctx, &itick.GetAdminKlineReq{
+func (l *GetProductKlineLogic) GetProductKline(req *types.GetProductKlineReq) (resp *types.GetProductKlineResp, err error) {
+	result, err := l.svcCtx.ItickCli.GetProductKline(l.ctx, &itick.GetProductKlineReq{
 		Market: req.Market,
 		Symbol: req.Symbol,
 		KType:  itick.KlineType(req.KType),
@@ -53,7 +53,7 @@ func (l *GetAdminKlineLogic) GetAdminKline(req *types.GetAdminKlineReq) (resp *t
 			Turnover: item.Turnover,
 		})
 	}
-	return &types.GetAdminKlineResp{
+	return &types.GetProductKlineResp{
 		RespBase: types.RespBase{
 			Code: result.Base.Code,
 			Msg:  result.Base.Msg,

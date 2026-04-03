@@ -232,19 +232,6 @@ type DepthLevel struct {
 	Volume float64 `json:"volume"`
 }
 
-type GetAdminKlineReq struct {
-	Market string `json:"market"`
-	Symbol string `json:"symbol"`
-	KType  int64  `json:"kType"`
-	EndTs  int64  `json:"endTs"`
-	Limit  int64  `json:"limit"`
-}
-
-type GetAdminKlineResp struct {
-	RespBase
-	Data []Kline `json:"data"`
-}
-
 type GetCategoryReq struct {
 	Id int64 `json:"id"`
 }
@@ -270,6 +257,19 @@ type GetPayProductReq struct {
 type GetPayProductResp struct {
 	RespBase
 	Data PayProduct `json:"data"`
+}
+
+type GetProductKlineReq struct {
+	Market string `json:"market"`
+	Symbol string `json:"symbol"`
+	KType  int64  `json:"kType"`
+	EndTs  int64  `json:"endTs"`
+	Limit  int64  `json:"limit"`
+}
+
+type GetProductKlineResp struct {
+	RespBase
+	Data []Kline `json:"data"`
 }
 
 type GetProductReq struct {
@@ -1115,7 +1115,7 @@ type SetDefaultUserBankReq struct {
 }
 
 type SyncCategoryProductsReq struct {
-	CategoryId int64 `json:"categoryId"`
+	Id int64 `json:"id"`
 }
 
 type SyncCategoryProductsResp struct {

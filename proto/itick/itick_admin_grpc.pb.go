@@ -29,7 +29,7 @@ const (
 	ItickAdmin_CreateProduct_FullMethodName               = "/itick.ItickAdmin/CreateProduct"
 	ItickAdmin_UpdateProduct_FullMethodName               = "/itick.ItickAdmin/UpdateProduct"
 	ItickAdmin_GetProduct_FullMethodName                  = "/itick.ItickAdmin/GetProduct"
-	ItickAdmin_GetAdminKline_FullMethodName               = "/itick.ItickAdmin/GetAdminKline"
+	ItickAdmin_GetProductKline_FullMethodName             = "/itick.ItickAdmin/GetProductKline"
 	ItickAdmin_ListTenantCategories_FullMethodName        = "/itick.ItickAdmin/ListTenantCategories"
 	ItickAdmin_CreateTenantCategory_FullMethodName        = "/itick.ItickAdmin/CreateTenantCategory"
 	ItickAdmin_UpdateTenantCategory_FullMethodName        = "/itick.ItickAdmin/UpdateTenantCategory"
@@ -72,7 +72,7 @@ type ItickAdminClient interface {
 	// 获取产品详情
 	GetProduct(ctx context.Context, in *GetProductReq, opts ...grpc.CallOption) (*GetProductResp, error)
 	// K线查看
-	GetAdminKline(ctx context.Context, in *GetAdminKlineReq, opts ...grpc.CallOption) (*GetAdminKlineResp, error)
+	GetProductKline(ctx context.Context, in *GetProductKlineReq, opts ...grpc.CallOption) (*GetProductKlineResp, error)
 	// 租户产品类型列表
 	ListTenantCategories(ctx context.Context, in *ListTenantCategoriesReq, opts ...grpc.CallOption) (*ListTenantCategoriesResp, error)
 	// 租户产品类型
@@ -205,10 +205,10 @@ func (c *itickAdminClient) GetProduct(ctx context.Context, in *GetProductReq, op
 	return out, nil
 }
 
-func (c *itickAdminClient) GetAdminKline(ctx context.Context, in *GetAdminKlineReq, opts ...grpc.CallOption) (*GetAdminKlineResp, error) {
+func (c *itickAdminClient) GetProductKline(ctx context.Context, in *GetProductKlineReq, opts ...grpc.CallOption) (*GetProductKlineResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetAdminKlineResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_GetAdminKline_FullMethodName, in, out, cOpts...)
+	out := new(GetProductKlineResp)
+	err := c.cc.Invoke(ctx, ItickAdmin_GetProductKline_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -354,7 +354,7 @@ type ItickAdminServer interface {
 	// 获取产品详情
 	GetProduct(context.Context, *GetProductReq) (*GetProductResp, error)
 	// K线查看
-	GetAdminKline(context.Context, *GetAdminKlineReq) (*GetAdminKlineResp, error)
+	GetProductKline(context.Context, *GetProductKlineReq) (*GetProductKlineResp, error)
 	// 租户产品类型列表
 	ListTenantCategories(context.Context, *ListTenantCategoriesReq) (*ListTenantCategoriesResp, error)
 	// 租户产品类型
@@ -417,8 +417,8 @@ func (UnimplementedItickAdminServer) UpdateProduct(context.Context, *UpdateProdu
 func (UnimplementedItickAdminServer) GetProduct(context.Context, *GetProductReq) (*GetProductResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProduct not implemented")
 }
-func (UnimplementedItickAdminServer) GetAdminKline(context.Context, *GetAdminKlineReq) (*GetAdminKlineResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAdminKline not implemented")
+func (UnimplementedItickAdminServer) GetProductKline(context.Context, *GetProductKlineReq) (*GetProductKlineResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetProductKline not implemented")
 }
 func (UnimplementedItickAdminServer) ListTenantCategories(context.Context, *ListTenantCategoriesReq) (*ListTenantCategoriesResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListTenantCategories not implemented")
@@ -654,20 +654,20 @@ func _ItickAdmin_GetProduct_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_GetAdminKline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAdminKlineReq)
+func _ItickAdmin_GetProductKline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetProductKlineReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).GetAdminKline(ctx, in)
+		return srv.(ItickAdminServer).GetProductKline(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_GetAdminKline_FullMethodName,
+		FullMethod: ItickAdmin_GetProductKline_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).GetAdminKline(ctx, req.(*GetAdminKlineReq))
+		return srv.(ItickAdminServer).GetProductKline(ctx, req.(*GetProductKlineReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -918,8 +918,8 @@ var ItickAdmin_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ItickAdmin_GetProduct_Handler,
 		},
 		{
-			MethodName: "GetAdminKline",
-			Handler:    _ItickAdmin_GetAdminKline_Handler,
+			MethodName: "GetProductKline",
+			Handler:    _ItickAdmin_GetProductKline_Handler,
 		},
 		{
 			MethodName: "ListTenantCategories",
