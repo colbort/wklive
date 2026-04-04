@@ -52,7 +52,7 @@ func (l *SysRoleListLogic) SysRoleList(in *system.SysRoleListReq) (*system.SysRo
 			Code:        r.Code,
 			Status:      r.Status,
 			Remark:      r.Remark,
-			CreateTimes: r.CreateTimes.UnixMilli(),
+			CreateTimes: r.CreateTimes,
 		})
 	}
 

@@ -9,7 +9,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
 	"github.com/zeromicro/go-zero/core/stores/cache"
@@ -53,9 +52,9 @@ type (
 		GoogleEnabled int64          `db:"google_enabled"` // 是否开启2FA
 		PermsVer      int64          `db:"perms_ver"`      // 权限版本(角色变化强制token失效)
 		LastLoginIp   sql.NullString `db:"last_login_ip"`
-		LastLoginAt   sql.NullTime   `db:"last_login_at"`
-		CreateTimes   time.Time      `db:"create_times"`
-		UpdateTimes   time.Time      `db:"update_times"`
+		LastLoginAt   int64          `db:"last_login_at"`
+		CreateTimes   int64          `db:"create_times"`
+		UpdateTimes   int64          `db:"update_times"`
 	}
 )
 

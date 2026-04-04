@@ -37,7 +37,7 @@ func (l *SysConfigByKeysLogic) SysConfigByKeys(in *system.SysConfigByKeysReq) (*
 			ConfigKey:   config.ConfigKey.String,
 			ConfigValue: config.ConfigValue.String,
 			Remark:      config.Remark.String,
-			CreateTimes: config.CreateTimes.Unix(),
+			CreateTimes: config.CreateTimes,
 		})
 	}
 

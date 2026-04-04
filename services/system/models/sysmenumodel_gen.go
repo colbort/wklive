@@ -9,7 +9,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
 	"github.com/zeromicro/go-zero/core/stores/cache"
@@ -41,20 +40,20 @@ type (
 	}
 
 	SysMenu struct {
-		Id          int64     `db:"id"`
-		ParentId    int64     `db:"parent_id"` // 父级ID
-		Name        string    `db:"name"`      // 名称
-		MenuType    int64     `db:"menu_type"` // 1目录 2菜单 3按钮
-		Method      string    `db:"method"`    // 请求方法 GET POST PUT DELETE
-		Path        string    `db:"path"`      // 路由路径
-		Component   string    `db:"component"` // 前端组件
-		Perms       string    `db:"perms"`     // 按钮权限标识 sys:user:add
-		Icon        string    `db:"icon"`
-		Sort        int64     `db:"sort"`
-		Visible     int64     `db:"visible"` // 1显示 2隐藏
-		Status      int64     `db:"status"`  // 1启用 2禁用
-		CreateTimes time.Time `db:"create_times"`
-		UpdateTimes time.Time `db:"update_times"`
+		Id          int64  `db:"id"`
+		ParentId    int64  `db:"parent_id"` // 父级ID
+		Name        string `db:"name"`      // 名称
+		MenuType    int64  `db:"menu_type"` // 1目录 2菜单 3按钮
+		Method      string `db:"method"`    // 请求方法 GET POST PUT DELETE
+		Path        string `db:"path"`      // 路由路径
+		Component   string `db:"component"` // 前端组件
+		Perms       string `db:"perms"`     // 按钮权限标识 sys:user:add
+		Icon        string `db:"icon"`
+		Sort        int64  `db:"sort"`
+		Visible     int64  `db:"visible"` // 1显示 2隐藏
+		Status      int64  `db:"status"`  // 1启用 2禁用
+		CreateTimes int64  `db:"create_times"`
+		UpdateTimes int64  `db:"update_times"`
 	}
 )
 

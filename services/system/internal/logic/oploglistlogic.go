@@ -60,8 +60,8 @@ func (l *OpLogListLogic) OpLogList(in *system.OpLogListReq) (*system.OpLogListRe
 			Resp:        item.Resp.String,
 			Ip:          item.Ip.String,
 			CostMs:      item.CostMs.Int64,
-			CreateTimes: item.CreateTimes.UnixMilli(),
-			UpdateTimes: item.UpdateTimes.UnixMilli(),
+			CreateTimes: item.CreateTimes,
+			UpdateTimes: item.UpdateTimes,
 		})
 	}
 

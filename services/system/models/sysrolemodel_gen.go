@@ -9,7 +9,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
 	"github.com/zeromicro/go-zero/core/stores/cache"
@@ -45,13 +44,13 @@ type (
 	}
 
 	SysRole struct {
-		Id          int64     `db:"id"`
-		Name        string    `db:"name"`   // 角色名称
-		Code        string    `db:"code"`   // 角色标识(如admin)
-		Status      int64     `db:"status"` // 1启用 2禁用
-		Remark      string    `db:"remark"`
-		CreateTimes time.Time `db:"create_times"`
-		UpdateTimes time.Time `db:"update_times"`
+		Id          int64  `db:"id"`
+		Name        string `db:"name"`   // 角色名称
+		Code        string `db:"code"`   // 角色标识(如admin)
+		Status      int64  `db:"status"` // 1启用 2禁用
+		Remark      string `db:"remark"`
+		CreateTimes int64  `db:"create_times"`
+		UpdateTimes int64  `db:"update_times"`
 	}
 )
 

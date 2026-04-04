@@ -58,7 +58,7 @@ func (l *LoginLogListLogic) LoginLogList(in *system.LoginLogListReq) (*system.Lo
 			Ua:       item.Ua.String,
 			Success:  item.Success.Int64,
 			Msg:      item.Msg.String,
-			LoginAt:  item.LoginAt.UnixMilli(),
+			LoginAt:  item.LoginAt,
 		})
 	}
 

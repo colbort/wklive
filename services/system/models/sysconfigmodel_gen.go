@@ -9,7 +9,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
 	"github.com/zeromicro/go-zero/core/stores/cache"
@@ -47,8 +46,8 @@ type (
 		ConfigKey   sql.NullString `db:"config_key"`
 		ConfigValue sql.NullString `db:"config_value"`
 		Remark      sql.NullString `db:"remark"`
-		CreateTimes time.Time      `db:"create_times"`
-		UpdateTimes time.Time      `db:"update_times"`
+		CreateTimes int64          `db:"create_times"`
+		UpdateTimes int64          `db:"update_times"`
 	}
 )
 

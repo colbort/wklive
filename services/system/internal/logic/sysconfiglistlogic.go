@@ -49,7 +49,7 @@ func (l *SysConfigListLogic) SysConfigList(in *system.SysConfigListReq) (*system
 			ConfigKey:   config.ConfigKey.String,
 			ConfigValue: config.ConfigValue.String,
 			Remark:      config.Remark.String,
-			CreateTimes: config.CreateTimes.Unix(),
+			CreateTimes: config.CreateTimes,
 		})
 	}
 

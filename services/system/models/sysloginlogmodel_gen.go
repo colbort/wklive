@@ -9,7 +9,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
 	"github.com/zeromicro/go-zero/core/stores/cache"
@@ -48,7 +47,7 @@ type (
 		Ua       sql.NullString `db:"ua"`
 		Success  sql.NullInt64  `db:"success"` // 1成功 0失败
 		Msg      sql.NullString `db:"msg"`
-		LoginAt  time.Time      `db:"login_at"`
+		LoginAt  int64          `db:"login_at"`
 	}
 )
 

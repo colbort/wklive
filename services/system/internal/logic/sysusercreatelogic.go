@@ -57,9 +57,9 @@ func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system
 		GoogleSecret:  "",
 		GoogleEnabled: 0,
 		LastLoginIp:   sql.NullString{},
-		LastLoginAt:   sql.NullTime{},
-		CreateTimes:   time.Now(),
-		UpdateTimes:   time.Now(),
+		LastLoginAt:   0,
+		CreateTimes:   time.Now().UnixMilli(),
+		UpdateTimes:   time.Now().UnixMilli(),
 	}
 
 	roleIds := make([]int64, 0, len(in.RoleIds))

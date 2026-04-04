@@ -63,8 +63,8 @@ func (l *SysMenuCreateLogic) SysMenuCreate(in *system.SysMenuCreateReq) (*system
 		Sort:        in.Sort,
 		Visible:     in.Visible,
 		Status:      in.Status,
-		CreateTimes: time.Now(),
-		UpdateTimes: time.Now(),
+		CreateTimes: time.Now().UnixMilli(),
+		UpdateTimes: time.Now().UnixMilli(),
 	})
 	if err != nil {
 		return nil, err

@@ -75,7 +75,7 @@ func (m *customSysJobLogModel) FindPage(ctx context.Context, cursor, limit int64
 			WHERE %s AND id < ?
 			ORDER BY id DESC
 			LIMIT ?`,
-			sysConfigRows, m.table, where,
+			sysJobLogRows, m.table, where,
 		)
 		listArgs = append(listArgs, cursor, limit)
 	}

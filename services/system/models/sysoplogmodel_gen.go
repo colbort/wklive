@@ -9,7 +9,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
 	"github.com/zeromicro/go-zero/core/stores/cache"
@@ -50,8 +49,8 @@ type (
 		Resp        sql.NullString `db:"resp"`
 		Ip          sql.NullString `db:"ip"`
 		CostMs      sql.NullInt64  `db:"cost_ms"` // 耗时
-		CreateTimes time.Time      `db:"create_times"`
-		UpdateTimes time.Time      `db:"update_times"`
+		CreateTimes int64          `db:"create_times"`
+		UpdateTimes int64          `db:"update_times"`
 	}
 )
 
