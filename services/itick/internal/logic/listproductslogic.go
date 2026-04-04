@@ -25,7 +25,7 @@ func NewListProductsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *List
 
 // 产品列表
 func (l *ListProductsLogic) ListProducts(in *itick.ListProductsReq) (*itick.ListProductsResp, error) {
-	items, count, err := l.svcCtx.ItickProductModel.FindPage(l.ctx, int32(in.CategoryType), in.Market, in.Keyword, in.Enabled, in.AppVisible, in.Page.Cursor, in.Page.Limit)
+	items, count, err := l.svcCtx.ItickProductModel.FindPage(l.ctx, int32(in.CategoryType), in.CategoryName, in.Market, in.Keyword, in.Enabled, in.AppVisible, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -47,6 +47,8 @@ func (l *ListProductsLogic) ListProducts(in *itick.ListProductsReq) (*itick.List
 		data = append(data, &itick.ItickProduct{
 			Id:           item.Id,
 			CategoryType: itick.CategoryType(item.CategoryType),
+			CategoryName: item.CategoryName,
+			CategoryCode: item.CategoryCode,
 			Market:       item.Market,
 			Symbol:       item.Symbol,
 			Code:         item.Code,
@@ -59,8 +61,8 @@ func (l *ListProductsLogic) ListProducts(in *itick.ListProductsReq) (*itick.List
 			Sort:         item.Sort,
 			Icon:         item.Icon,
 			Remark:       item.Remark,
-			CreateTime:   item.CreateTime,
-			UpdateTime:   item.UpdateTime,
+			CreateTimes:  item.CreateTimes,
+			UpdateTimes:  item.UpdateTimes,
 		})
 	}
 

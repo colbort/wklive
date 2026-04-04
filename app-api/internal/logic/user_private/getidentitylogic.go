@@ -68,8 +68,8 @@ func (l *GetIdentityLogic) GetIdentity() (resp *types.GetIdentityResp, err error
 			SubmitTime:    result.Identity.SubmitTime,
 			VerifyTime:    result.Identity.VerifyTime,
 			VerifyBy:      result.Identity.VerifyBy,
-			CreateTime:    result.Identity.CreateTime,
-			UpdateTime:    result.Identity.UpdateTime,
+			CreateTimes:    result.Identity.CreateTimes,
+			UpdateTimes:    result.Identity.UpdateTimes,
 		},
 	}, nil
 }

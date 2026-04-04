@@ -54,7 +54,7 @@ func (l *GetWithdrawNotifyLogLogic) GetWithdrawNotifyLog(req *types.GetWithdrawN
 			ProcessResult: result.Data.ProcessResult,
 			ErrorMessage:  result.Data.ErrorMessage,
 			NotifyTime:    result.Data.NotifyTime,
-			CreateTime:    result.Data.CreateTime,
+			CreateTimes:    result.Data.CreateTimes,
 		},
 	}, nil
 }

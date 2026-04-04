@@ -9,7 +9,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
 	"github.com/zeromicro/go-zero/core/stores/cache"
@@ -51,10 +50,10 @@ type (
 		GoogleEnabled   int64          `db:"google_enabled"`    // Google2FA是否启用：0否 1是
 		LoginErrorCount int64          `db:"login_error_count"` // 登录错误次数
 		PayErrorCount   int64          `db:"pay_error_count"`   // 支付密码错误次数
-		LockUntil       sql.NullTime   `db:"lock_until"`        // 锁定到期时间
+		LockUntil       int64          `db:"lock_until"`        // 锁定到期时间
 		RiskLevel       int64          `db:"risk_level"`        // 风控等级：0正常 1关注 2高风险
-		CreateTime      time.Time      `db:"create_time"`       // 创建时间
-		UpdateTime      time.Time      `db:"update_time"`       // 更新时间
+		CreateTimes     int64          `db:"create_times"`      // 创建时间
+		UpdateTimes     int64          `db:"update_times"`      // 更新时间
 	}
 )
 
@@ -121,8 +120,8 @@ func (m *defaultTUserSecurityModel) Insert(ctx context.Context, data *TUserSecur
 	tUserSecurityIdKey := fmt.Sprintf("%s%v", cacheTUserSecurityIdPrefix, data.Id)
 	tUserSecurityTenantIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheTUserSecurityTenantIdUserIdPrefix, data.TenantId, data.UserId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tUserSecurityRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.PayPasswordHash, data.GoogleSecret, data.GoogleEnabled, data.LoginErrorCount, data.PayErrorCount, data.LockUntil, data.RiskLevel)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tUserSecurityRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.PayPasswordHash, data.GoogleSecret, data.GoogleEnabled, data.LoginErrorCount, data.PayErrorCount, data.LockUntil, data.RiskLevel, data.CreateTimes, data.UpdateTimes)
 	}, tUserSecurityIdKey, tUserSecurityTenantIdUserIdKey)
 	return ret, err
 }
@@ -137,7 +136,7 @@ func (m *defaultTUserSecurityModel) Update(ctx context.Context, newData *TUserSe
 	tUserSecurityTenantIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheTUserSecurityTenantIdUserIdPrefix, data.TenantId, data.UserId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tUserSecurityRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.PayPasswordHash, newData.GoogleSecret, newData.GoogleEnabled, newData.LoginErrorCount, newData.PayErrorCount, newData.LockUntil, newData.RiskLevel, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.PayPasswordHash, newData.GoogleSecret, newData.GoogleEnabled, newData.LoginErrorCount, newData.PayErrorCount, newData.LockUntil, newData.RiskLevel, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tUserSecurityIdKey, tUserSecurityTenantIdUserIdKey)
 	return err
 }

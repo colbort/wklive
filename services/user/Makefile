@@ -56,12 +56,15 @@ gen-rpc:
 # 修复 goctl 可能生成的错误 import 路径/别名
 fix-imports:
 	@echo "🔧 [services/user] fixing imports..."
-	@find . -name "*.go" -type f -print0 | xargs -0 sed -i \
-		's#"$(MODULE)/wklive/proto/user"#"wklive/proto/user"#g'
-	@find . -name "*.go" -type f -print0 | xargs -0 sed -i \
-		's#"wklive/services/user/wklive/proto/user"#"wklive/proto/user"#g'
-	@find . -name "*.go" -type f -print0 | xargs -0 sed -i \
-		's/user_user\./user\./g'
+ifeq ($(shell uname -s),Darwin)
+	@find . -name "*.go" -type f -exec sed -i '' -e 's#"$(MODULE)/wklive/proto/user"#"wklive/proto/user"#g' {} +
+	@find . -name "*.go" -type f -exec sed -i '' -e 's#"wklive/services/user/wklive/proto/user"#"wklive/proto/user"#g' {} +
+	@find . -name "*.go" -type f -exec sed -i '' -e 's/user_user\./user\./g' {} +
+else
+	@find . -name "*.go" -type f -exec sed -i -e 's#"$(MODULE)/wklive/proto/user"#"wklive/proto/user"#g' {} +
+	@find . -name "*.go" -type f -exec sed -i -e 's#"wklive/services/user/wklive/proto/user"#"wklive/proto/user"#g' {} +
+	@find . -name "*.go" -type f -exec sed -i -e 's/user_user\./user\./g' {} +
+endif
 	@echo "✅ [services/user] imports fixed"
 
 fmt:

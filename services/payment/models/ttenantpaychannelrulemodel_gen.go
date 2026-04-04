@@ -9,7 +9,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
 	"github.com/zeromicro/go-zero/core/stores/cache"
@@ -60,8 +59,8 @@ type (
 		AllowTags            sql.NullString `db:"allow_tags"`              // 允许的用户标签(JSON数组)
 		DenyTags             sql.NullString `db:"deny_tags"`               // 禁止的用户标签(JSON数组)
 		Remark               sql.NullString `db:"remark"`                  // 备注
-		CreateTime           time.Time      `db:"create_time"`             // 创建时间
-		UpdateTime           time.Time      `db:"update_time"`             // 更新时间
+		CreateTimes          int64          `db:"create_times"`            // 创建时间
+		UpdateTimes          int64          `db:"update_times"`            // 更新时间
 	}
 )
 
@@ -101,8 +100,8 @@ func (m *defaultTTenantPayChannelRuleModel) FindOne(ctx context.Context, id int6
 func (m *defaultTTenantPayChannelRuleModel) Insert(ctx context.Context, data *TTenantPayChannelRule) (sql.Result, error) {
 	tTenantPayChannelRuleIdKey := fmt.Sprintf("%s%v", cacheTTenantPayChannelRuleIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTenantPayChannelRuleRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.ChannelId, data.RuleName, data.Priority, data.Status, data.SingleAmountMin, data.SingleAmountMax, data.UserTotalRechargeMin, data.UserTotalRechargeMax, data.MemberLevelMin, data.MemberLevelMax, data.KycLevelMin, data.KycLevelMax, data.AllowNewUser, data.AllowOldUser, data.AllowTags, data.DenyTags, data.Remark)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTenantPayChannelRuleRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.ChannelId, data.RuleName, data.Priority, data.Status, data.SingleAmountMin, data.SingleAmountMax, data.UserTotalRechargeMin, data.UserTotalRechargeMax, data.MemberLevelMin, data.MemberLevelMax, data.KycLevelMin, data.KycLevelMax, data.AllowNewUser, data.AllowOldUser, data.AllowTags, data.DenyTags, data.Remark, data.CreateTimes, data.UpdateTimes)
 	}, tTenantPayChannelRuleIdKey)
 	return ret, err
 }
@@ -111,7 +110,7 @@ func (m *defaultTTenantPayChannelRuleModel) Update(ctx context.Context, data *TT
 	tTenantPayChannelRuleIdKey := fmt.Sprintf("%s%v", cacheTTenantPayChannelRuleIdPrefix, data.Id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tTenantPayChannelRuleRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.ChannelId, data.RuleName, data.Priority, data.Status, data.SingleAmountMin, data.SingleAmountMax, data.UserTotalRechargeMin, data.UserTotalRechargeMax, data.MemberLevelMin, data.MemberLevelMax, data.KycLevelMin, data.KycLevelMax, data.AllowNewUser, data.AllowOldUser, data.AllowTags, data.DenyTags, data.Remark, data.Id)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.ChannelId, data.RuleName, data.Priority, data.Status, data.SingleAmountMin, data.SingleAmountMax, data.UserTotalRechargeMin, data.UserTotalRechargeMax, data.MemberLevelMin, data.MemberLevelMax, data.KycLevelMin, data.KycLevelMax, data.AllowNewUser, data.AllowOldUser, data.AllowTags, data.DenyTags, data.Remark, data.CreateTimes, data.UpdateTimes, data.Id)
 	}, tTenantPayChannelRuleIdKey)
 	return err
 }

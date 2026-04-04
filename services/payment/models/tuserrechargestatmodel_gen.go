@@ -9,7 +9,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
 	"github.com/zeromicro/go-zero/core/stores/cache"
@@ -43,17 +42,17 @@ type (
 	}
 
 	TUserRechargeStat struct {
-		Id                 int64        `db:"id"`                   // 主键ID
-		TenantId           int64        `db:"tenant_id"`            // 租户ID
-		UserId             int64        `db:"user_id"`              // 用户ID
-		SuccessOrderCount  int64        `db:"success_order_count"`  // 成功充值笔数
-		SuccessTotalAmount int64        `db:"success_total_amount"` // 成功累计充值金额，单位分
-		TodaySuccessAmount int64        `db:"today_success_amount"` // 今日成功充值金额，单位分
-		TodaySuccessCount  int64        `db:"today_success_count"`  // 今日成功充值次数
-		FirstSuccessTime   sql.NullTime `db:"first_success_time"`   // 首次成功充值时间
-		LastSuccessTime    sql.NullTime `db:"last_success_time"`    // 最近成功充值时间
-		CreateTime         time.Time    `db:"create_time"`          // 创建时间
-		UpdateTime         time.Time    `db:"update_time"`          // 更新时间
+		Id                 int64         `db:"id"`                   // 主键ID
+		TenantId           int64         `db:"tenant_id"`            // 租户ID
+		UserId             int64         `db:"user_id"`              // 用户ID
+		SuccessOrderCount  int64         `db:"success_order_count"`  // 成功充值笔数
+		SuccessTotalAmount int64         `db:"success_total_amount"` // 成功累计充值金额，单位分
+		TodaySuccessAmount int64         `db:"today_success_amount"` // 今日成功充值金额，单位分
+		TodaySuccessCount  int64         `db:"today_success_count"`  // 今日成功充值次数
+		FirstSuccessTime   sql.NullInt64 `db:"first_success_time"`   // 首次成功充值时间
+		LastSuccessTime    sql.NullInt64 `db:"last_success_time"`    // 最近成功充值时间
+		CreateTimes        int64         `db:"create_times"`         // 创建时间
+		UpdateTimes        int64         `db:"update_times"`         // 更新时间
 	}
 )
 
@@ -120,8 +119,8 @@ func (m *defaultTUserRechargeStatModel) Insert(ctx context.Context, data *TUserR
 	tUserRechargeStatIdKey := fmt.Sprintf("%s%v", cacheTUserRechargeStatIdPrefix, data.Id)
 	tUserRechargeStatTenantIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheTUserRechargeStatTenantIdUserIdPrefix, data.TenantId, data.UserId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", m.table, tUserRechargeStatRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.SuccessOrderCount, data.SuccessTotalAmount, data.TodaySuccessAmount, data.TodaySuccessCount, data.FirstSuccessTime, data.LastSuccessTime)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tUserRechargeStatRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.SuccessOrderCount, data.SuccessTotalAmount, data.TodaySuccessAmount, data.TodaySuccessCount, data.FirstSuccessTime, data.LastSuccessTime, data.CreateTimes, data.UpdateTimes)
 	}, tUserRechargeStatIdKey, tUserRechargeStatTenantIdUserIdKey)
 	return ret, err
 }
@@ -136,7 +135,7 @@ func (m *defaultTUserRechargeStatModel) Update(ctx context.Context, newData *TUs
 	tUserRechargeStatTenantIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheTUserRechargeStatTenantIdUserIdPrefix, data.TenantId, data.UserId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tUserRechargeStatRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.SuccessOrderCount, newData.SuccessTotalAmount, newData.TodaySuccessAmount, newData.TodaySuccessCount, newData.FirstSuccessTime, newData.LastSuccessTime, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.SuccessOrderCount, newData.SuccessTotalAmount, newData.TodaySuccessAmount, newData.TodaySuccessCount, newData.FirstSuccessTime, newData.LastSuccessTime, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tUserRechargeStatIdKey, tUserRechargeStatTenantIdUserIdKey)
 	return err
 }

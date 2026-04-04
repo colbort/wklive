@@ -16,8 +16,8 @@ message PayPlatform {
   string icon = 7;
   payment.CommonStatus status = 8;
   string remark = 9;
-  int64 create_time = 10;
-  int64 update_time = 11;
+  int64 create_times = 10;
+  int64 update_times = 11;
 }
 
 message PayProduct {
@@ -29,8 +29,8 @@ message PayProduct {
   string currency = 6;
   payment.CommonStatus status = 7;
   string remark = 8;
-  int64 create_time = 9;
-  int64 update_time = 10;
+  int64 create_times = 9;
+  int64 update_times = 10;
 }
 
 message TenantPayPlatform {
@@ -40,8 +40,8 @@ message TenantPayPlatform {
   payment.CommonStatus status = 4;
   payment.OpenStatus open_status = 5;
   string remark = 6;
-  int64 create_time = 7;
-  int64 update_time = 8;
+  int64 create_times = 7;
+  int64 update_times = 8;
 }
 
 message TenantPayAccount {
@@ -59,8 +59,8 @@ message TenantPayAccount {
   payment.CommonStatus status = 12;
   bool is_default = 13;
   string remark = 14;
-  int64 create_time = 15;
-  int64 update_time = 16;
+  int64 create_times = 15;
+  int64 update_times = 16;
 }
 
 message TenantPayChannel {
@@ -86,8 +86,8 @@ message TenantPayChannel {
   int64 fee_fixed_amount = 20;
   string ext_config = 21; // JSON string
   string remark = 22;
-  int64 create_time = 23;
-  int64 update_time = 24;
+  int64 create_times = 23;
+  int64 update_times = 24;
 }
 
 message TenantPayChannelRule {
@@ -110,8 +110,8 @@ message TenantPayChannelRule {
   string allow_tags = 17; // JSON string
   string deny_tags = 18; // JSON string
   string remark = 19;
-  int64 create_time = 20;
-  int64 update_time = 21;
+  int64 create_times = 20;
+  int64 update_times = 21;
 }
 
 message UserRechargeStat {
@@ -124,8 +124,8 @@ message UserRechargeStat {
   int64 today_success_count = 7;
   int64 first_success_time = 8;
   int64 last_success_time = 9;
-  int64 create_time = 10;
-  int64 update_time = 11;
+  int64 create_times = 10;
+  int64 update_times = 11;
 }
 
 message RechargeOrder {
@@ -159,8 +159,8 @@ message RechargeOrder {
   int64 notify_time = 28;
   int64 close_time = 29;
   string remark = 30;
-  int64 create_time = 31;
-  int64 update_time = 32;
+  int64 create_times = 31;
+  int64 update_times = 32;
 }
 
 message PayNotifyLog {
@@ -176,7 +176,7 @@ message PayNotifyLog {
   string process_result = 10;
   string error_message = 11;
   int64 notify_time = 12;
-  int64 create_time = 13;
+  int64 create_times = 13;
 }
 
 message VisiblePayChannel {
@@ -218,6 +218,6 @@ message WithdrawOrder {
   int64 notify_time = 19;
   int64 close_time = 20;
   string remark = 21;
-  int64 create_time = 22;
-  int64 update_time = 23;
+  int64 create_times = 22;
+  int64 update_times = 23;
 }

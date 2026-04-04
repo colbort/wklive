@@ -52,8 +52,8 @@ func (l *GetCategoryLogic) GetCategory(in *itick.GetCategoryReq) (*itick.GetCate
 			Sort:         result.Sort,
 			Icon:         result.Icon,
 			Remark:       result.Remark,
-			CreateTime:   result.CreateTime,
-			UpdateTime:   result.UpdateTime,
+			CreateTimes:  result.CreateTimes,
+			UpdateTimes:  result.UpdateTimes,
 		},
 	}, nil
 }

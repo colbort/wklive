@@ -53,8 +53,8 @@ func (l *GetUserBankLogic) GetUserBank(req *types.GetUserBankReq) (resp *types.G
 			CountryCode: result.Bank.CountryCode,
 			IsDefault:   result.Bank.IsDefault,
 			Status:      int64(result.Bank.Status),
-			CreateTime:  result.Bank.CreateTime,
-			UpdateTime:  result.Bank.UpdateTime,
+			CreateTimes:  result.Bank.CreateTimes,
+			UpdateTimes:  result.Bank.UpdateTimes,
 		},
 	}, nil
 }

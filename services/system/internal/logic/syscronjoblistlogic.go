@@ -53,9 +53,9 @@ func (l *SysCronJobListLogic) SysCronJobList(in *system.SysCronJobListReq) (*sys
 			Status:         item.Status,
 			Remark:         item.Remark.String,
 			CreateBy:       item.CreateBy.String,
-			CreateTime:     item.CreateTime.Unix(),
+			CreateTimes:    item.CreateTimes,
 			UpdateBy:       item.UpdateBy.String,
-			UpdateTime:     item.UpdateTime.Unix(),
+			UpdateTimes:    item.UpdateTimes,
 		})
 	}
 

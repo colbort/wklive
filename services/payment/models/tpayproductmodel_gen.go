@@ -9,7 +9,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
 	"github.com/zeromicro/go-zero/core/stores/cache"
@@ -51,8 +50,8 @@ type (
 		Currency    string         `db:"currency"`     // 币种
 		Status      int64          `db:"status"`       // 状态：1启用 2停用
 		Remark      sql.NullString `db:"remark"`       // 备注
-		CreateTime  time.Time      `db:"create_time"`  // 创建时间
-		UpdateTime  time.Time      `db:"update_time"`  // 更新时间
+		CreateTimes int64          `db:"create_times"` // 创建时间
+		UpdateTimes int64          `db:"update_times"` // 更新时间
 	}
 )
 
@@ -119,8 +118,8 @@ func (m *defaultTPayProductModel) Insert(ctx context.Context, data *TPayProduct)
 	tPayProductIdKey := fmt.Sprintf("%s%v", cacheTPayProductIdPrefix, data.Id)
 	tPayProductProductCodeKey := fmt.Sprintf("%s%v", cacheTPayProductProductCodePrefix, data.ProductCode)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, tPayProductRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.PlatformId, data.ProductCode, data.ProductName, data.SceneType, data.Currency, data.Status, data.Remark)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tPayProductRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.PlatformId, data.ProductCode, data.ProductName, data.SceneType, data.Currency, data.Status, data.Remark, data.CreateTimes, data.UpdateTimes)
 	}, tPayProductIdKey, tPayProductProductCodeKey)
 	return ret, err
 }
@@ -135,7 +134,7 @@ func (m *defaultTPayProductModel) Update(ctx context.Context, newData *TPayProdu
 	tPayProductProductCodeKey := fmt.Sprintf("%s%v", cacheTPayProductProductCodePrefix, data.ProductCode)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tPayProductRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.PlatformId, newData.ProductCode, newData.ProductName, newData.SceneType, newData.Currency, newData.Status, newData.Remark, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.PlatformId, newData.ProductCode, newData.ProductName, newData.SceneType, newData.Currency, newData.Status, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tPayProductIdKey, tPayProductProductCodeKey)
 	return err
 }

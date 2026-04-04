@@ -52,9 +52,9 @@ func (l *SysCronJobListLogic) SysCronJobList(req *types.SysCronJobListReq) (resp
 			Status:         item.Status,
 			Remark:         item.Remark,
 			CreateBy:       item.CreateBy,
-			CreateTime:     item.CreateTime,
+			CreateTimes:     item.CreateTimes,
 			UpdateBy:       item.UpdateBy,
-			UpdateTime:     item.UpdateTime,
+			UpdateTimes:     item.UpdateTimes,
 		})
 	}
 	resp = &types.SysCronJobListResp{

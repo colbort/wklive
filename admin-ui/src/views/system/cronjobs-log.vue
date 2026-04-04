@@ -156,12 +156,7 @@ onMounted(() => {
     </el-form>
 
     <!-- Table -->
-    <el-table
-      v-loading="loading"
-      :data="list_ref"
-      row-key="id"
-      style="margin-bottom: 16px"
-    >
+    <el-table v-loading="loading" :data="list_ref" row-key="id" style="margin-bottom: 16px">
       <el-table-column prop="id" :label="t('common.id')" width="70" />
       <el-table-column prop="jobId" :label="t('system.jobId')" width="80" />
       <el-table-column prop="jobName" :label="t('system.jobName')" min-width="120" />
@@ -212,14 +207,10 @@ onMounted(() => {
     <div style="display: flex; justify-content: flex-end; gap: 10px; align-items: center">
       <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
       <el-button :disabled="!pagination.hasPrev" @click="prevPage">
-        {{
-          t('common.prevPage')
-        }}
+        {{ t('common.prevPage') }}
       </el-button>
       <el-button :disabled="!pagination.hasNext" @click="nextPage">
-        {{
-          t('common.nextPage')
-        }}
+        {{ t('common.nextPage') }}
       </el-button>
       <el-select
         v-model="pagination.limit"
@@ -239,11 +230,7 @@ onMounted(() => {
     </div>
 
     <!-- Detail Drawer -->
-    <el-drawer
-      v-model="detailDrawerVisible"
-      :title="t('system.logDetail')"
-      size="50%"
-    >
+    <el-drawer v-model="detailDrawerVisible" :title="t('system.logDetail')" size="50%">
       <div v-if="detailData" style="padding: 0 20px">
         <el-descriptions :column="1" border>
           <el-descriptions-item :label="t('common.id')">
@@ -276,20 +263,37 @@ onMounted(() => {
             {{ calculateDuration(detailData) }}
           </el-descriptions-item>
           <el-descriptions-item :label="t('system.message')">
-            <div style="word-break: break-all; white-space: pre-wrap; max-height: 200px; overflow-y: auto">
+            <div
+              style="
+                word-break: break-all;
+                white-space: pre-wrap;
+                max-height: 200px;
+                overflow-y: auto;
+              "
+            >
               {{ detailData.message || '-' }}
             </div>
           </el-descriptions-item>
           <el-descriptions-item :label="t('system.exceptionInfo')">
-            <div v-if="detailData.exceptionInfo" style="word-break: break-all; white-space: pre-wrap; max-height: 300px; overflow-y: auto; background-color: #f5f5f5; padding: 8px; border-radius: 4px; color: #d32f2f">
+            <div
+              v-if="detailData.exceptionInfo"
+              style="
+                word-break: break-all;
+                white-space: pre-wrap;
+                max-height: 300px;
+                overflow-y: auto;
+                background-color: #f5f5f5;
+                padding: 8px;
+                border-radius: 4px;
+                color: #d32f2f;
+              "
+            >
               {{ detailData.exceptionInfo }}
             </div>
-            <div v-else style="color: #999">
-              -
-            </div>
+            <div v-else style="color: #999">-</div>
           </el-descriptions-item>
-          <el-descriptions-item :label="t('common.createdAt')">
-            {{ formatTimestamp(detailData.createTime) }}
+          <el-descriptions-item :label="t('common.createTimes')">
+            {{ formatTimestamp(detailData.createTimes) }}
           </el-descriptions-item>
         </el-descriptions>
       </div>

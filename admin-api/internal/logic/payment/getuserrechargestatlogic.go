@@ -51,8 +51,8 @@ func (l *GetUserRechargeStatLogic) GetUserRechargeStat(req *types.GetUserRecharg
 			TodaySuccessCount:  int64(result.Data.TodaySuccessCount),
 			FirstSuccessTime:   result.Data.FirstSuccessTime,
 			LastSuccessTime:    result.Data.LastSuccessTime,
-			CreateTime:         result.Data.CreateTime,
-			UpdateTime:         result.Data.UpdateTime,
+			CreateTimes:         result.Data.CreateTimes,
+			UpdateTimes:         result.Data.UpdateTimes,
 		},
 	}, nil
 }

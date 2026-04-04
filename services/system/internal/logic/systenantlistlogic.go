@@ -48,12 +48,12 @@ func (l *SysTenantListLogic) SysTenantList(in *system.SysTenantListReq) (*system
 			TenantCode:   v.TenantCode,
 			TenantName:   v.TenantName,
 			Status:       v.Status,
-			ExpireTime:   v.ExpireTime.Time.UnixMilli(),
+			ExpireTime:   v.ExpireTime,
 			ContactName:  v.ContactName.String,
 			ContactPhone: v.ContactPhone.String,
 			Remark:       v.Remark.String,
-			CreateTime:   v.CreateTime.UnixMilli(),
-			UpdateTime:   v.UpdateTime.UnixMilli(),
+			CreateTimes:  v.CreateTimes,
+			UpdateTimes:  v.UpdateTimes,
 		})
 	}
 	return &system.SysTenantListResp{

@@ -14,7 +14,7 @@ export type SysConfigItem = {
   configKey: string
   configValue: string
   remark?: string
-  createdAt: number
+  createTimes: number
 }
 
 export type SysConfigListReq = {

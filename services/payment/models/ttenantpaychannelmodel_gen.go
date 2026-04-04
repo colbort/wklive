@@ -9,7 +9,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
 	"github.com/zeromicro/go-zero/core/stores/cache"
@@ -65,8 +64,8 @@ type (
 		FeeFixedAmount  int64          `db:"fee_fixed_amount"`  // 固定手续费，单位分
 		ExtConfig       sql.NullString `db:"ext_config"`        // 扩展配置
 		Remark          sql.NullString `db:"remark"`            // 备注
-		CreateTime      time.Time      `db:"create_time"`       // 创建时间
-		UpdateTime      time.Time      `db:"update_time"`       // 更新时间
+		CreateTimes     int64          `db:"create_times"`      // 创建时间
+		UpdateTimes     int64          `db:"update_times"`      // 更新时间
 	}
 )
 
@@ -133,8 +132,8 @@ func (m *defaultTTenantPayChannelModel) Insert(ctx context.Context, data *TTenan
 	tTenantPayChannelIdKey := fmt.Sprintf("%s%v", cacheTTenantPayChannelIdPrefix, data.Id)
 	tTenantPayChannelTenantIdChannelCodeKey := fmt.Sprintf("%s%v:%v", cacheTTenantPayChannelTenantIdChannelCodePrefix, data.TenantId, data.ChannelCode)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTenantPayChannelRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.PlatformId, data.ProductId, data.AccountId, data.ChannelCode, data.ChannelName, data.DisplayName, data.Icon, data.Currency, data.Sort, data.Visible, data.Status, data.SingleMinAmount, data.SingleMaxAmount, data.DailyMaxAmount, data.DailyMaxCount, data.FeeType, data.FeeRate, data.FeeFixedAmount, data.ExtConfig, data.Remark)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTenantPayChannelRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.PlatformId, data.ProductId, data.AccountId, data.ChannelCode, data.ChannelName, data.DisplayName, data.Icon, data.Currency, data.Sort, data.Visible, data.Status, data.SingleMinAmount, data.SingleMaxAmount, data.DailyMaxAmount, data.DailyMaxCount, data.FeeType, data.FeeRate, data.FeeFixedAmount, data.ExtConfig, data.Remark, data.CreateTimes, data.UpdateTimes)
 	}, tTenantPayChannelIdKey, tTenantPayChannelTenantIdChannelCodeKey)
 	return ret, err
 }
@@ -149,7 +148,7 @@ func (m *defaultTTenantPayChannelModel) Update(ctx context.Context, newData *TTe
 	tTenantPayChannelTenantIdChannelCodeKey := fmt.Sprintf("%s%v:%v", cacheTTenantPayChannelTenantIdChannelCodePrefix, data.TenantId, data.ChannelCode)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tTenantPayChannelRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.PlatformId, newData.ProductId, newData.AccountId, newData.ChannelCode, newData.ChannelName, newData.DisplayName, newData.Icon, newData.Currency, newData.Sort, newData.Visible, newData.Status, newData.SingleMinAmount, newData.SingleMaxAmount, newData.DailyMaxAmount, newData.DailyMaxCount, newData.FeeType, newData.FeeRate, newData.FeeFixedAmount, newData.ExtConfig, newData.Remark, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.PlatformId, newData.ProductId, newData.AccountId, newData.ChannelCode, newData.ChannelName, newData.DisplayName, newData.Icon, newData.Currency, newData.Sort, newData.Visible, newData.Status, newData.SingleMinAmount, newData.SingleMaxAmount, newData.DailyMaxAmount, newData.DailyMaxCount, newData.FeeType, newData.FeeRate, newData.FeeFixedAmount, newData.ExtConfig, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tTenantPayChannelIdKey, tTenantPayChannelTenantIdChannelCodeKey)
 	return err
 }

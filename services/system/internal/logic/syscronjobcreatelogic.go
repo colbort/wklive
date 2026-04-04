@@ -65,7 +65,7 @@ func (l *SysCronJobCreateLogic) SysCronJobCreate(in *system.SysCronJobCreateReq)
 		Status:         in.Status,
 		Remark:         sql.NullString{String: in.Remark, Valid: true},
 		CreateBy:       sql.NullString{String: userName, Valid: true},
-		CreateTime:     time.Now(),
+		CreateTimes:    time.Now().UnixMilli(),
 	})
 	if err != nil {
 		return &system.RespBase{

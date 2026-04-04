@@ -51,8 +51,8 @@ func (l *GetUserSecurityLogic) GetUserSecurity(req *types.GetUserSecurityReq) (r
 			PayErrorCount:   result.Security.PayErrorCount,
 			LockUntil:       result.Security.LockUntil,
 			RiskLevel:       int64(result.Security.RiskLevel),
-			CreateTime:      result.Security.CreateTime,
-			UpdateTime:      result.Security.UpdateTime,
+			CreateTimes:      result.Security.CreateTimes,
+			UpdateTimes:      result.Security.UpdateTimes,
 		},
 	}, nil
 }

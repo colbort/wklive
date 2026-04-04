@@ -86,9 +86,14 @@
           </template>
         </el-table-column>
         <el-table-column prop="remark" :label="t('common.remark')" min-width="150" />
-        <el-table-column prop="createdAt" :label="t('common.createdAt')" width="160" align="center">
+        <el-table-column
+          prop="createTimes"
+          :label="t('common.createTimes')"
+          width="160"
+          align="center"
+        >
           <template #default="{ row }">
-            {{ formatDate(row.createdAt) }}
+            {{ formatDate(row.createTimes) }}
           </template>
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="180" align="center" fixed="right">

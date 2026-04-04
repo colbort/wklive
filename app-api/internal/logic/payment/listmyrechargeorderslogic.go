@@ -85,8 +85,8 @@ func (l *ListMyRechargeOrdersLogic) ListMyRechargeOrders(req *types.ListMyRechar
 			NotifyTime:   order.NotifyTime,
 			CloseTime:    order.CloseTime,
 			Remark:       order.Remark,
-			CreateTime:   order.CreateTime,
-			UpdateTime:   order.UpdateTime,
+			CreateTimes:   order.CreateTimes,
+			UpdateTimes:   order.UpdateTimes,
 		})
 	}
 	return &types.ListMyRechargeOrdersResp{

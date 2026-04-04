@@ -47,7 +47,7 @@ func (l *SysUserListLogic) SysUserList(req *types.SysUserListReq) (resp *types.S
 			Nickname:         item.Nickname,
 			Status:           item.Status,
 			RoleIds:          item.RoleIds,
-			CreatedAt:        item.CreatedAt,
+			CreateTimes:        item.CreateTimes,
 			Google2faEnabled: item.Google2FaEnabled,
 		})
 	}

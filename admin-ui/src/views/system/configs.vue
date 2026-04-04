@@ -42,18 +42,8 @@
 
     <!-- 数据表格 -->
     <el-card class="table-card" shadow="never">
-      <el-table
-        v-loading="loading"
-        :data="list"
-        :empty-text="t('common.noData')"
-        stripe
-      >
-        <el-table-column
-          prop="id"
-          :label="t('common.id')"
-          width="80"
-          align="center"
-        />
+      <el-table v-loading="loading" :data="list" :empty-text="t('common.noData')" stripe>
+        <el-table-column prop="id" :label="t('common.id')" width="80" align="center" />
         <el-table-column prop="configKey" :label="t('system.configKey')" min-width="150" />
         <el-table-column prop="configValue" :label="t('system.configValue')" min-width="200">
           <template #default="{ row }">
@@ -64,21 +54,16 @@
         </el-table-column>
         <el-table-column prop="remark" :label="t('common.remark')" min-width="150" />
         <el-table-column
-          prop="createdAt"
-          :label="t('common.createdAt')"
+          prop="createTimes"
+          :label="t('common.createTimes')"
           width="160"
           align="center"
         >
           <template #default="{ row }">
-            {{ formatDate(row.createdAt) }}
+            {{ formatDate(row.createTimes) }}
           </template>
         </el-table-column>
-        <el-table-column
-          :label="t('common.actions')"
-          width="150"
-          align="center"
-          fixed="right"
-        >
+        <el-table-column :label="t('common.actions')" width="150" align="center" fixed="right">
           <template #default="{ row }">
             <el-button
               v-perm="'sys:config:update'"
@@ -112,14 +97,10 @@
       >
         <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
         <el-button :disabled="!pagination.hasPrev" @click="prevPage">
-          {{
-            t('common.prevPage')
-          }}
+          {{ t('common.prevPage') }}
         </el-button>
         <el-button :disabled="!pagination.hasNext" @click="nextPage">
-          {{
-            t('common.nextPage')
-          }}
+          {{ t('common.nextPage') }}
         </el-button>
         <el-select
           v-model="pagination.limit"
@@ -146,12 +127,7 @@
       width="600px"
       :close-on-click-modal="false"
     >
-      <el-form
-        ref="formRef"
-        :model="formData"
-        :rules="formRules"
-        label-width="100px"
-      >
+      <el-form ref="formRef" :model="formData" :rules="formRules" label-width="100px">
         <el-form-item :label="t('system.configKey')" prop="configKey">
           <el-select
             v-if="!isEdit"

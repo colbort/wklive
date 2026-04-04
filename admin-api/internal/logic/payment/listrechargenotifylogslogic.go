@@ -62,7 +62,7 @@ func (l *ListRechargeNotifyLogsLogic) ListRechargeNotifyLogs(req *types.ListRech
 			ProcessResult: item.ProcessResult,
 			ErrorMessage:  item.ErrorMessage,
 			NotifyTime:    item.NotifyTime,
-			CreateTime:    item.CreateTime,
+			CreateTimes:    item.CreateTimes,
 		}
 	}
 

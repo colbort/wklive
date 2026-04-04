@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"time"
 
 	"wklive/proto/system"
@@ -29,7 +30,7 @@ func NewSysTenantCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 // 创建租户
 func (l *SysTenantCreateLogic) SysTenantCreate(in *system.SysTenantCreateReq) (*system.RespBase, error) {
 	tenant, err := l.svcCtx.TenantMode.FindByTenantCode(l.ctx, in.TenantCode)
-	if err != nil {
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 	if tenant != nil {
@@ -42,12 +43,12 @@ func (l *SysTenantCreateLogic) SysTenantCreate(in *system.SysTenantCreateReq) (*
 		TenantCode:   in.TenantCode,
 		TenantName:   in.TenantName,
 		Status:       in.Status,
-		ExpireTime:   sql.NullTime{Time: time.UnixMilli(in.ExpireTime), Valid: true},
+		ExpireTime:   in.ExpireTime,
 		ContactName:  sql.NullString{String: in.ContactName, Valid: true},
 		ContactPhone: sql.NullString{String: in.ContactPhone, Valid: true},
 		Remark:       sql.NullString{String: in.Remark, Valid: true},
-		CreateTime:   time.Now(),
-		UpdateTime:   time.Now(),
+		CreateTimes:  time.Now().UnixMilli(),
+		UpdateTimes:  time.Now().UnixMilli(),
 	})
 	if err != nil {
 		return nil, err

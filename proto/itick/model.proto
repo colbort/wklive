@@ -17,8 +17,8 @@ message ItickCategory {
   int64 sort = 7;
   string icon = 8;
   string remark = 9;
-  int64 create_time = 10;
-  int64 update_time = 11;
+  int64 create_times = 10;
+  int64 update_times = 11;
 }
 
 // 产品
@@ -39,8 +39,8 @@ message ItickProduct {
   int64 sort = 14;
   string icon = 15;
   string remark = 16;
-  int64 create_time = 17;
-  int64 update_time = 18;
+  int64 create_times = 17;
+  int64 update_times = 18;
 }
 
 // K线
@@ -98,8 +98,8 @@ message ItickTenantCategory {
   int64 app_visible = 5;
   int64 sort = 6;
   string remark = 7;
-  int64 create_time = 8;
-  int64 update_time = 9;
+  int64 create_times = 8;
+  int64 update_times = 9;
 
   // 冗余返回字段，方便前端展示
   itick.CategoryType category_type = 10;
@@ -115,8 +115,8 @@ message ItickTenantProduct {
   int64 app_visible = 5;
   int64 sort = 6;
   string remark = 7;
-  int64 create_time = 8;
-  int64 update_time = 9;
+  int64 create_times = 8;
+  int64 update_times = 9;
 
   // 冗余返回字段，方便前端展示
   itick.CategoryType category_type = 10;

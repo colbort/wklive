@@ -51,7 +51,7 @@ func (l *SysConfigDetailLogic) SysConfigDetail(in *system.SysConfigDetailReq) (*
 			ConfigKey:   config.ConfigKey.String,
 			ConfigValue: config.ConfigValue.String,
 			Remark:      config.Remark.String,
-			CreatedAt:   config.CreatedAt.Unix(),
+			CreateTimes: config.CreateTimes.Unix(),
 		},
 	}, nil
 }

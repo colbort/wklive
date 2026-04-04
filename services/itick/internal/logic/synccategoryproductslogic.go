@@ -58,13 +58,13 @@ func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryP
 
 	// 创建任务记录
 	_, err = l.svcCtx.ItickSyncTaskModel.Insert(l.ctx, &models.TItickSyncTask{
-		TaskNo:    taskNo,
-		TaskType:  "sync_category_products",
-		BizId:     in.Id,
-		Status:    0,
-		Message:   "任务已提交",
-		CreatedAt: now,
-		UpdatedAt: now,
+		TaskNo:      taskNo,
+		TaskType:    "sync_category_products",
+		BizId:       in.Id,
+		Status:      0,
+		Message:     "任务已提交",
+		CreateTimes: now,
+		UpdateTimes: now,
 	})
 	if err != nil {
 		logx.Errorf("create sync task failed, err=%v", err)
@@ -161,6 +161,8 @@ func (w *SyncCategoryProductsWorker) doSync(in *itick.SyncCategoryProductsReq) e
 		for _, item := range resp.Data {
 			_, err := w.svcCtx.ItickProductModel.Upsert(w.ctx, &models.TItickProduct{
 				CategoryType: result.CategoryType,
+				CategoryName: result.CategoryName,
+				CategoryCode: result.CategoryCode,
 				Market:       region,
 				Symbol:       item.Code,
 				Code:         item.Code,
@@ -176,8 +178,8 @@ func (w *SyncCategoryProductsWorker) doSync(in *itick.SyncCategoryProductsReq) e
 				Sort:         0,
 				Icon:         "",
 				Remark:       fmt.Sprintf("同步自 iTick，分类：%s，地区：%s", result.CategoryCode, region),
-				CreateTime:   time.Now().UnixMilli(),
-				UpdateTime:   time.Now().UnixMilli(),
+				CreateTimes:  time.Now().UnixMilli(),
+				UpdateTimes:  time.Now().UnixMilli(),
 			})
 			if err != nil {
 				logx.Errorf("insert product failed, code=%s, err=%v", item.Code, err)

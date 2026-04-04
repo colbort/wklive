@@ -42,15 +42,15 @@ type (
 	}
 
 	TItickTenantCategory struct {
-		Id         int64  `db:"id"`          // 主键ID
-		TenantId   int64  `db:"tenant_id"`   // 租户ID
-		CategoryId int64  `db:"category_id"` // 产品类型ID, 对应 itick_category.id
-		Enabled    int64  `db:"enabled"`     // 是否启用: 0-否 1-是
-		AppVisible int64  `db:"app_visible"` // APP是否可见: 0-否 1-是
-		Sort       int64  `db:"sort"`        // 租户排序, 越小越靠前
-		Remark     string `db:"remark"`      // 备注
-		CreateTime int64  `db:"create_time"` // 创建时间(毫秒时间戳)
-		UpdateTime int64  `db:"update_time"` // 更新时间(毫秒时间戳)
+		Id          int64  `db:"id"`           // 主键ID
+		TenantId    int64  `db:"tenant_id"`    // 租户ID
+		CategoryId  int64  `db:"category_id"`  // 产品类型ID, 对应 itick_category.id
+		Enabled     int64  `db:"enabled"`      // 是否启用: 0-否 1-是
+		AppVisible  int64  `db:"app_visible"`  // APP是否可见: 0-否 1-是
+		Sort        int64  `db:"sort"`         // 租户排序, 越小越靠前
+		Remark      string `db:"remark"`       // 备注
+		CreateTimes int64  `db:"create_times"` // 创建时间(毫秒时间戳)
+		UpdateTimes int64  `db:"update_times"` // 更新时间(毫秒时间戳)
 	}
 )
 
@@ -117,8 +117,8 @@ func (m *defaultTItickTenantCategoryModel) Insert(ctx context.Context, data *TIt
 	tItickTenantCategoryIdKey := fmt.Sprintf("%s%v", cacheTItickTenantCategoryIdPrefix, data.Id)
 	tItickTenantCategoryTenantIdCategoryIdKey := fmt.Sprintf("%s%v:%v", cacheTItickTenantCategoryTenantIdCategoryIdPrefix, data.TenantId, data.CategoryId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?)", m.table, tItickTenantCategoryRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.CategoryId, data.Enabled, data.AppVisible, data.Sort, data.Remark)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickTenantCategoryRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.CategoryId, data.Enabled, data.AppVisible, data.Sort, data.Remark, data.CreateTimes, data.UpdateTimes)
 	}, tItickTenantCategoryIdKey, tItickTenantCategoryTenantIdCategoryIdKey)
 	return ret, err
 }
@@ -133,7 +133,7 @@ func (m *defaultTItickTenantCategoryModel) Update(ctx context.Context, newData *
 	tItickTenantCategoryTenantIdCategoryIdKey := fmt.Sprintf("%s%v:%v", cacheTItickTenantCategoryTenantIdCategoryIdPrefix, data.TenantId, data.CategoryId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickTenantCategoryRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.CategoryId, newData.Enabled, newData.AppVisible, newData.Sort, newData.Remark, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.CategoryId, newData.Enabled, newData.AppVisible, newData.Sort, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tItickTenantCategoryIdKey, tItickTenantCategoryTenantIdCategoryIdKey)
 	return err
 }

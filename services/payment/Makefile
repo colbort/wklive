@@ -16,7 +16,7 @@ GOCTL ?= $(shell go env GOPATH)/bin/goctl
 
 .PHONY: gen gen-rpc fix-imports tidy fmt clean-gen gen-model print-protos clean-main install-goctl
 
-gen: chech-goctl gen-rpc fix-imports fmt tidy clean-gen clean-main
+gen: check-goctl gen-rpc fix-imports fmt tidy clean-gen clean-main
 
 check-goctl:
 	@$(GOCTL) --version | grep "1.9.2" >/dev/null || \
@@ -55,12 +55,15 @@ gen-rpc:
 # 修复 goctl 可能生成的错误 import 路径/别名
 fix-imports:
 	@echo "🔧 [services/payment] fixing imports..."
-	@find . -name "*.go" -type f -print0 | xargs -0 sed -i \
-		's#"$(MODULE)/wklive/proto/payment"#"wklive/proto/payment"#g'
-	@find . -name "*.go" -type f -print0 | xargs -0 sed -i \
-		's#"wklive/services/payment/wklive/proto/payment"#"wklive/proto/payment"#g'
-	@find . -name "*.go" -type f -print0 | xargs -0 sed -i \
-		's/payment_payment\./payment\./g'
+ifeq ($(shell uname -s),Darwin)
+	@find . -name "*.go" -type f -exec sed -i '' -e 's#"$(MODULE)/wklive/proto/payment"#"wklive/proto/payment"#g' {} +
+	@find . -name "*.go" -type f -exec sed -i '' -e 's#"wklive/services/payment/wklive/proto/payment"#"wklive/proto/payment"#g' {} +
+	@find . -name "*.go" -type f -exec sed -i '' -e 's/payment_payment\./payment\./g' {} +
+else
+	@find . -name "*.go" -type f -exec sed -i -e 's#"$(MODULE)/wklive/proto/payment"#"wklive/proto/payment"#g' {} +
+	@find . -name "*.go" -type f -exec sed -i -e 's#"wklive/services/payment/wklive/proto/payment"#"wklive/proto/payment"#g' {} +
+	@find . -name "*.go" -type f -exec sed -i -e 's/payment_payment\./payment\./g' {} +
+endif
 	@echo "✅ [services/payment] imports fixed"
 
 fmt:

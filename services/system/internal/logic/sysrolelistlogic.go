@@ -47,12 +47,12 @@ func (l *SysRoleListLogic) SysRoleList(in *system.SysRoleListReq) (*system.SysRo
 	data := make([]*system.SysRoleItem, 0, len(items))
 	for _, r := range items {
 		data = append(data, &system.SysRoleItem{
-			Id:        r.Id,
-			Name:      r.Name,
-			Code:      r.Code,
-			Status:    r.Status,
-			Remark:    r.Remark,
-			CreatedAt: r.CreatedAt.UnixMilli(),
+			Id:          r.Id,
+			Name:        r.Name,
+			Code:        r.Code,
+			Status:      r.Status,
+			Remark:      r.Remark,
+			CreateTimes: r.CreateTimes.UnixMilli(),
 		})
 	}
 

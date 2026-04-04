@@ -37,8 +37,8 @@ export type SysTenantItem = {
   contactName: string
   contactPhone: string
   remark: string
-  createTime: number
-  updateTime: number
+  createTimes: number
+  updateTimes: number
 }
 
 export type SysTenantListReq = {

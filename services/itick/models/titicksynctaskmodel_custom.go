@@ -29,7 +29,7 @@ func (m *defaultTItickSyncTaskModel) FindPage(ctx context.Context, cursor, limit
 }
 
 func (m *defaultTItickSyncTaskModel) UpdateStatusByTaskNo(ctx context.Context, taskNo string, status int64, message string, updatedAt int64) error {
-	query := fmt.Sprintf("update %s set status = ?, message = ?, updated_at = ? where task_no = ?", m.table)
+	query := fmt.Sprintf("update %s set status = ?, message = ?, update_times = ? where task_no = ?", m.table)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
 		return conn.ExecCtx(ctx, query, status, message, updatedAt, taskNo)
 	})

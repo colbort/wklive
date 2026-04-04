@@ -9,7 +9,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
 	"github.com/zeromicro/go-zero/core/stores/cache"
@@ -49,9 +48,9 @@ type (
 		Status         int64          `db:"status"`          // 执行状态：0失败 1成功
 		Message        sql.NullString `db:"message"`         // 执行信息
 		ExceptionInfo  sql.NullString `db:"exception_info"`  // 异常信息
-		StartTime      sql.NullTime   `db:"start_time"`      // 开始时间
-		EndTime        sql.NullTime   `db:"end_time"`        // 结束时间
-		CreateTime     time.Time      `db:"create_time"`     // 创建时间
+		StartTime      int64          `db:"start_time"`      // 开始时间
+		EndTime        int64          `db:"end_time"`        // 结束时间
+		CreateTimes    int64          `db:"create_times"`    // 创建时间
 	}
 )
 
@@ -91,8 +90,8 @@ func (m *defaultSysJobLogModel) FindOne(ctx context.Context, id int64) (*SysJobL
 func (m *defaultSysJobLogModel) Insert(ctx context.Context, data *SysJobLog) (sql.Result, error) {
 	sysJobLogIdKey := fmt.Sprintf("%s%v", cacheSysJobLogIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysJobLogRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.JobId, data.JobName, data.InvokeTarget, data.CronExpression, data.Status, data.Message, data.ExceptionInfo, data.StartTime, data.EndTime)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysJobLogRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.JobId, data.JobName, data.InvokeTarget, data.CronExpression, data.Status, data.Message, data.ExceptionInfo, data.StartTime, data.EndTime, data.CreateTimes)
 	}, sysJobLogIdKey)
 	return ret, err
 }
@@ -101,7 +100,7 @@ func (m *defaultSysJobLogModel) Update(ctx context.Context, data *SysJobLog) err
 	sysJobLogIdKey := fmt.Sprintf("%s%v", cacheSysJobLogIdPrefix, data.Id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysJobLogRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.JobId, data.JobName, data.InvokeTarget, data.CronExpression, data.Status, data.Message, data.ExceptionInfo, data.StartTime, data.EndTime, data.Id)
+		return conn.ExecCtx(ctx, query, data.JobId, data.JobName, data.InvokeTarget, data.CronExpression, data.Status, data.Message, data.ExceptionInfo, data.StartTime, data.EndTime, data.CreateTimes, data.Id)
 	}, sysJobLogIdKey)
 	return err
 }

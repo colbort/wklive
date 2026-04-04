@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"time"
 	"wklive/proto/itick"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
@@ -20,12 +19,6 @@ type ItickQuoteModel interface {
 }
 
 func (m *defaultTItickQuoteModel) Upsert(ctx context.Context, data *TItickQuote) (sql.Result, error) {
-	now := time.Now().UnixMilli()
-	if data.CreateTime == 0 {
-		data.CreateTime = now
-	}
-	data.UpdateTime = now
-
 	query := fmt.Sprintf(`
 		INSERT INTO %s (%s)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -41,7 +34,7 @@ func (m *defaultTItickQuoteModel) Upsert(ctx context.Context, data *TItickQuote)
 			turnover = VALUES(turnover),
 			quote_ts = VALUES(quote_ts),
 			trade_status = VALUES(trade_status),
-			update_time = VALUES(update_time)
+			update_times = VALUES(update_times)
 	`, m.table, tItickQuoteRowsExpectAutoSet)
 
 	itickQuoteMarketSymbolKey := fmt.Sprintf("%s%v:%v", cacheTItickQuoteMarketSymbolPrefix, data.Market, data.Symbol)
@@ -61,8 +54,8 @@ func (m *defaultTItickQuoteModel) Upsert(ctx context.Context, data *TItickQuote)
 			data.Turnover,
 			data.QuoteTs,
 			data.TradeStatus,
-			data.CreateTime,
-			data.UpdateTime,
+			data.CreateTimes,
+			data.UpdateTimes,
 		)
 	}, itickQuoteMarketSymbolKey)
 }

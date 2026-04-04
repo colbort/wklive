@@ -9,7 +9,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
 	"github.com/zeromicro/go-zero/core/stores/cache"
@@ -52,8 +51,8 @@ type (
 		SignResult    int64          `db:"sign_result"`    // 验签结果：0未验 1通过 2失败
 		ProcessResult sql.NullString `db:"process_result"` // 处理结果
 		ErrorMessage  sql.NullString `db:"error_message"`  // 错误信息
-		NotifyTime    sql.NullTime   `db:"notify_time"`    // 回调时间
-		CreateTime    time.Time      `db:"create_time"`    // 创建时间
+		NotifyTime    sql.NullInt64  `db:"notify_time"`    // 回调时间
+		CreateTimes   int64          `db:"create_times"`   // 创建时间
 	}
 )
 
@@ -93,8 +92,8 @@ func (m *defaultTRechargeNotifyLogModel) FindOne(ctx context.Context, id int64) 
 func (m *defaultTRechargeNotifyLogModel) Insert(ctx context.Context, data *TRechargeNotifyLog) (sql.Result, error) {
 	tRechargeNotifyLogIdKey := fmt.Sprintf("%s%v", cacheTRechargeNotifyLogIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tRechargeNotifyLogRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderId, data.OrderNo, data.PlatformId, data.ChannelId, data.NotifyStatus, data.NotifyBody, data.SignResult, data.ProcessResult, data.ErrorMessage, data.NotifyTime)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tRechargeNotifyLogRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderId, data.OrderNo, data.PlatformId, data.ChannelId, data.NotifyStatus, data.NotifyBody, data.SignResult, data.ProcessResult, data.ErrorMessage, data.NotifyTime, data.CreateTimes)
 	}, tRechargeNotifyLogIdKey)
 	return ret, err
 }
@@ -103,7 +102,7 @@ func (m *defaultTRechargeNotifyLogModel) Update(ctx context.Context, data *TRech
 	tRechargeNotifyLogIdKey := fmt.Sprintf("%s%v", cacheTRechargeNotifyLogIdPrefix, data.Id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tRechargeNotifyLogRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderId, data.OrderNo, data.PlatformId, data.ChannelId, data.NotifyStatus, data.NotifyBody, data.SignResult, data.ProcessResult, data.ErrorMessage, data.NotifyTime, data.Id)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderId, data.OrderNo, data.PlatformId, data.ChannelId, data.NotifyStatus, data.NotifyBody, data.SignResult, data.ProcessResult, data.ErrorMessage, data.NotifyTime, data.CreateTimes, data.Id)
 	}, tRechargeNotifyLogIdKey)
 	return err
 }

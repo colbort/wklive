@@ -23,7 +23,7 @@ export type SysUserItem = {
   nickname: string
   status: number
   roleIds: number[]
-  createdAt: number
+  createTimes: number
   google2faEnabled: number
 }
 

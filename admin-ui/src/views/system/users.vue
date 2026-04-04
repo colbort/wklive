@@ -464,10 +464,10 @@ onMounted(async () => {
         </template>
       </el-table-column>
 
-      <el-table-column :label="t('common.createdAt')" min-width="170">
+      <el-table-column :label="t('common.createTimes')" min-width="170">
         <template #default="{ row }">
           <span style="color: #666">{{
-            row.createdAt ? new Date(row.createdAt * 1000).toLocaleString() : '-'
+            row.createTimes ? new Date(row.createTimes * 1000).toLocaleString() : '-'
           }}</span>
         </template>
       </el-table-column>
@@ -527,14 +527,10 @@ onMounted(async () => {
     >
       <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
       <el-button :disabled="!pagination.hasPrev" @click="prevPage">
-        {{
-          t('common.prevPage')
-        }}
+        {{ t('common.prevPage') }}
       </el-button>
       <el-button :disabled="!pagination.hasNext" @click="nextPage">
-        {{
-          t('common.nextPage')
-        }}
+        {{ t('common.nextPage') }}
       </el-button>
       <el-select
         v-model="pagination.limit"
@@ -581,12 +577,7 @@ onMounted(async () => {
           style="width: 100%"
           :loading="roleLoading"
         >
-          <el-option
-            v-for="r in roles"
-            :key="r.id"
-            :label="r.name"
-            :value="r.id"
-          />
+          <el-option v-for="r in roles" :key="r.id" :label="r.name" :value="r.id" />
         </el-select>
       </el-form-item>
     </el-form>
@@ -596,9 +587,7 @@ onMounted(async () => {
         {{ t('common.cancel') }}
       </el-button>
       <el-button type="primary" :loading="editFormLoading" @click="submitEdit">
-        {{
-          t('common.confirm')
-        }}
+        {{ t('common.confirm') }}
       </el-button>
     </template>
   </el-dialog>
@@ -619,9 +608,7 @@ onMounted(async () => {
         {{ t('common.cancel') }}
       </el-button>
       <el-button type="primary" :loading="pwdSubmitLoading" @click="submitResetPwd">
-        {{
-          t('common.confirm')
-        }}
+        {{ t('common.confirm') }}
       </el-button>
     </template>
   </el-dialog>
@@ -640,12 +627,7 @@ onMounted(async () => {
           style="width: 100%"
           :loading="roleLoading"
         >
-          <el-option
-            v-for="r in roles"
-            :key="r.id"
-            :label="r.name"
-            :value="r.id"
-          />
+          <el-option v-for="r in roles" :key="r.id" :label="r.name" :value="r.id" />
         </el-select>
       </el-form-item>
     </el-form>
@@ -655,9 +637,7 @@ onMounted(async () => {
         {{ t('common.cancel') }}
       </el-button>
       <el-button type="primary" :loading="roleAssignLoading" @click="submitAssignRoles">
-        {{
-          t('common.confirm')
-        }}
+        {{ t('common.confirm') }}
       </el-button>
     </template>
   </el-dialog>
@@ -672,9 +652,7 @@ onMounted(async () => {
 
         <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px">
           <el-button v-perm="'sys:user:2fa:init'" :loading="g2InitLoading" @click="doG2Init">
-            {{
-              t('perms.sys:user:2fa:init')
-            }}
+            {{ t('perms.sys:user:2fa:init') }}
           </el-button>
           <el-button
             v-perm="'sys:user:2fa:enable'"
@@ -693,9 +671,7 @@ onMounted(async () => {
             {{ t('perms.sys:user:2fa:disable') }}
           </el-button>
           <el-button v-perm="'sys:user:2fa:reset'" type="danger" @click="doG2Reset">
-            {{
-              t('perms.sys:user:2fa:reset')
-            }}
+            {{ t('perms.sys:user:2fa:reset') }}
           </el-button>
         </div>
 
@@ -717,9 +693,7 @@ onMounted(async () => {
             <div style="display: flex; gap: 8px">
               <el-input :model-value="g2Init.secret" readonly style="flex: 1" />
               <el-button :disabled="!g2Init.secret" @click="copySecret">
-                {{
-                  t('common.copy')
-                }}
+                {{ t('common.copy') }}
               </el-button>
             </div>
           </el-form-item>
@@ -728,9 +702,7 @@ onMounted(async () => {
             <div style="display: flex; gap: 8px">
               <el-input :model-value="g2Init.otpauthUrl" readonly style="flex: 1" />
               <el-button :disabled="!g2Init.otpauthUrl" @click="copyOtpauthUrl">
-                {{
-                  t('common.copy')
-                }}
+                {{ t('common.copy') }}
               </el-button>
             </div>
           </el-form-item>
@@ -750,7 +722,7 @@ onMounted(async () => {
             min-height: 240px;
           "
         >
-          <img v-if="g2Init.qrCode" :src="g2Init.qrCode" style="width: 100%; height: auto">
+          <img v-if="g2Init.qrCode" :src="g2Init.qrCode" style="width: 100%; height: auto" />
           <div v-else style="color: #999">
             {{ t('common.click2faBindGenerateQrCode') }}
           </div>

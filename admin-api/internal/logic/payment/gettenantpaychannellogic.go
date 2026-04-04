@@ -64,8 +64,8 @@ func (l *GetTenantPayChannelLogic) GetTenantPayChannel(req *types.GetTenantPayCh
 			FeeFixedAmount:  result.Data.FeeFixedAmount,
 			ExtConfig:       result.Data.ExtConfig,
 			Remark:          result.Data.Remark,
-			CreateTime:      result.Data.CreateTime,
-			UpdateTime:      result.Data.UpdateTime,
+			CreateTimes:      result.Data.CreateTimes,
+			UpdateTimes:      result.Data.UpdateTimes,
 		},
 	}
 	return resp, nil

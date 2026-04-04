@@ -90,8 +90,8 @@ func (l *ListMyWithdrawOrdersLogic) ListMyWithdrawOrders(req *types.ListMyWithdr
 			NotifyTime:   item.NotifyTime,
 			CloseTime:    item.CloseTime,
 			Remark:       item.Remark,
-			CreateTime:   item.CreateTime,
-			UpdateTime:   item.UpdateTime,
+			CreateTimes:   item.CreateTimes,
+			UpdateTimes:   item.UpdateTimes,
 		})
 	}
 

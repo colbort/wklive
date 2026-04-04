@@ -22,8 +22,8 @@ CREATE TABLE sys_user (
   last_login_ip VARCHAR(64),
   last_login_at DATETIME,
 
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  create_times DATETIME DEFAULT CURRENT_TIMESTAMP,
+  update_times DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
   PRIMARY KEY (id),
   INDEX idx_status(status)
@@ -44,8 +44,8 @@ CREATE TABLE sys_role (
 
   remark VARCHAR(255) DEFAULT '',
 
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  create_times DATETIME DEFAULT CURRENT_TIMESTAMP,
+  update_times DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色表';
 
@@ -89,8 +89,8 @@ CREATE TABLE sys_menu (
   visible TINYINT DEFAULT 1 COMMENT '1显示 2隐藏',
   status TINYINT DEFAULT 1 COMMENT '1启用 2禁用',
 
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  create_times DATETIME DEFAULT CURRENT_TIMESTAMP,
+  update_times DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
   PRIMARY KEY (id),
   INDEX idx_parent(parent_id),
@@ -156,12 +156,12 @@ CREATE TABLE sys_op_log (
 
   cost_ms INT COMMENT '耗时',
 
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  create_times DATETIME DEFAULT CURRENT_TIMESTAMP,
+  update_times DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
   PRIMARY KEY (id),
   INDEX idx_user(user_id),
-  INDEX idx_time(created_at)
+  INDEX idx_time(create_times)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='操作日志';
 
 
@@ -176,8 +176,8 @@ CREATE TABLE sys_config (
   config_value JSON,
   remark VARCHAR(255),
 
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  create_times DATETIME DEFAULT CURRENT_TIMESTAMP,
+  update_times DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系统配置';
 
@@ -191,9 +191,9 @@ CREATE TABLE `sys_job` (
   `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：0停用 1启用',
   `remark` varchar(500) DEFAULT NULL COMMENT '备注',
   `create_by` varchar(64) DEFAULT NULL COMMENT '创建人',
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `create_times` bigint NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_by` varchar(64) DEFAULT NULL COMMENT '更新人',
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `update_times` bigint NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
   KEY `idx_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='定时任务表';
@@ -208,12 +208,12 @@ CREATE TABLE `sys_job_log` (
   `status` tinyint NOT NULL COMMENT '执行状态：0失败 1成功',
   `message` varchar(2000) DEFAULT NULL COMMENT '执行信息',
   `exception_info` text COMMENT '异常信息',
-  `start_time` datetime DEFAULT NULL COMMENT '开始时间',
-  `end_time` datetime DEFAULT NULL COMMENT '结束时间',
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `start_time` bigint DEFAULT 0 COMMENT '开始时间',
+  `end_time` bigint DEFAULT 0 COMMENT '结束时间',
+  `create_times` bigint NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`),
   KEY `idx_job_id` (`job_id`),
-  KEY `idx_create_time` (`create_time`)
+  KEY `idx_create_times` (`create_times`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='定时任务日志表';
 
 
@@ -224,17 +224,17 @@ CREATE TABLE `sys_tenant` (
   `tenant_password` varchar(255) NOT NULL COMMENT '租户管理员密码（bcrypt加密）',
   `tenant_name` varchar(128) NOT NULL COMMENT '租户名称',
   `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：1正常 2禁用',
-  `expire_time` datetime DEFAULT NULL COMMENT '到期时间',
+  `expire_time` bigint DEFAULT 0 COMMENT '到期时间',
   `contact_name` varchar(64) DEFAULT NULL COMMENT '联系人',
   `contact_phone` varchar(32) DEFAULT NULL COMMENT '联系电话',
   `login_ip` varchar(64) DEFAULT NULL COMMENT '最后登录IP',
-  `login_time` datetime DEFAULT NULL COMMENT '最后登录时间',
+  `login_time` bigint DEFAULT 0 COMMENT '最后登录时间',
   `login_count` int DEFAULT 0 COMMENT '登录次数',
   `remark` varchar(255) DEFAULT NULL COMMENT '备注',
   `create_by` varchar(64) DEFAULT NULL COMMENT '创建人',
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `create_times` bigint NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_by` varchar(64) DEFAULT NULL COMMENT '更新人',
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `update_times` bigint NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_code` (`tenant_code`),
   KEY `idx_status` (`status`),

@@ -54,8 +54,8 @@ func (l *ListCategoriesLogic) ListCategories(in *itick.ListCategoriesReq) (*itic
 			Sort:         item.Sort,
 			Icon:         item.Icon,
 			Remark:       item.Remark,
-			CreateTime:   item.CreateTime,
-			UpdateTime:   item.UpdateTime,
+			CreateTimes:  item.CreateTimes,
+			UpdateTimes:  item.UpdateTimes,
 		})
 	}
 

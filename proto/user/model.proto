@@ -28,8 +28,8 @@ message UserBase {
   int64 register_time = 19;
   string remark = 20;
   bool deleted = 21;
-  int64 create_time = 22;
-  int64 update_time = 23;
+  int64 create_times = 22;
+  int64 update_times = 23;
 }
 
 message UserIdentity {
@@ -56,8 +56,8 @@ message UserIdentity {
   int64 submit_time = 21;
   int64 verify_time = 22;
   int64 verify_by = 23;
-  int64 create_time = 24;
-  int64 update_time = 25;
+  int64 create_times = 24;
+  int64 update_times = 25;
 }
 
 message UserSecurity {
@@ -70,8 +70,8 @@ message UserSecurity {
   int32 pay_error_count = 7;
   int64 lock_until = 8;
   user.RiskLevel risk_level = 9;
-  int64 create_time = 10;
-  int64 update_time = 11;
+  int64 create_times = 10;
+  int64 update_times = 11;
 }
 
 message UserBank {
@@ -87,8 +87,8 @@ message UserBank {
   string country_code = 10;
   bool is_default = 11;
   user.BankStatus status = 12;
-  int64 create_time = 13;
-  int64 update_time = 14;
+  int64 create_times = 13;
+  int64 update_times = 14;
 }
 
 message UserProfile {
@@ -154,5 +154,5 @@ message UserBankListItem {
   string country_code = 11;
   bool is_default = 12;
   user.BankStatus status = 13;
-  int64 create_time = 14;
+  int64 create_times = 14;
 }

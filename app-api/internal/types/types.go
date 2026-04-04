@@ -202,13 +202,15 @@ type ItickCategory struct {
 	Sort         int64  `json:"sort"`
 	Icon         string `json:"icon"`
 	Remark       string `json:"remark"`
-	CreateTime   int64  `json:"createTime"`
-	UpdateTime   int64  `json:"updateTime"`
+	CreateTimes  int64  `json:"createTimes"`
+	UpdateTimes  int64  `json:"updateTimes"`
 }
 
 type ItickProduct struct {
 	Id           int64  `json:"id"`
 	CategoryType int64  `json:"categoryType"`
+	CategoryCode string `json:"categoryCode"`
+	CategoryName string `json:"categoryName"`
 	Market       string `json:"market"` // binance / hk / us / forex ...
 	Symbol       string `json:"symbol"` // BTCUSDT / AAPL / EURUSD
 	Code         string `json:"code"`   // 第三方原始 code
@@ -221,8 +223,8 @@ type ItickProduct struct {
 	Sort         int64  `json:"sort"`
 	Icon         string `json:"icon"`
 	Remark       string `json:"remark"`
-	CreateTime   int64  `json:"createTime"`
-	UpdateTime   int64  `json:"updateTime"`
+	CreateTimes  int64  `json:"createTimes"`
+	UpdateTimes  int64  `json:"updateTimes"`
 }
 
 type ItickTenantCategory struct {
@@ -233,8 +235,8 @@ type ItickTenantCategory struct {
 	AppVisible   int64  `json:"appVisible"`
 	Sort         int64  `json:"sort"`
 	Remark       string `json:"remark"`
-	CreateTime   int64  `json:"createTime"`
-	UpdateTime   int64  `json:"updateTime"`
+	CreateTimes  int64  `json:"createTimes"`
+	UpdateTimes  int64  `json:"updateTimes"`
 	CategoryType int64  `json:"categoryType"`
 	CategoryName string `json:"categoryName"`
 	Icon         string `json:"icon"`
@@ -248,8 +250,8 @@ type ItickTenantProduct struct {
 	AppVisible   int64  `json:"appVisible"`
 	Sort         int64  `json:"sort"`
 	Remark       string `json:"remark"`
-	CreateTime   int64  `json:"createTime"`
-	UpdateTime   int64  `json:"updateTime"`
+	CreateTimes  int64  `json:"createTimes"`
+	UpdateTimes  int64  `json:"updateTimes"`
 	CategoryType int64  `json:"categoryType"`
 	CategoryName string `json:"categoryName"`
 	Market       string `json:"market"`
@@ -425,8 +427,8 @@ type RechargeOrder struct {
 	NotifyTime   int64  `json:"notifyTime"`
 	CloseTime    int64  `json:"closeTime"`
 	Remark       string `json:"remark"`
-	CreateTime   int64  `json:"createTime"`
-	UpdateTime   int64  `json:"updateTime"`
+	CreateTimes  int64  `json:"createTimes"`
+	UpdateTimes  int64  `json:"updateTimes"`
 }
 
 type RefreshTokenReq struct {
@@ -578,8 +580,8 @@ type UserBank struct {
 	CountryCode     string `json:"countryCode,optional"`
 	IsDefault       bool   `json:"isDefault"`
 	Status          int64  `json:"status"`
-	CreateTime      int64  `json:"createTime,optional"`
-	UpdateTime      int64  `json:"updateTime,optional"`
+	CreateTimes     int64  `json:"createTimes,optional"`
+	UpdateTimes     int64  `json:"updateTimes,optional"`
 }
 
 type UserBankListItem struct {
@@ -597,7 +599,7 @@ type UserBankListItem struct {
 	CountryCode     string `json:"countryCode,optional"`
 	IsDefault       bool   `json:"isDefault"`
 	Status          int64  `json:"status"`
-	CreateTime      int64  `json:"createTime,optional"`
+	CreateTimes     int64  `json:"createTimes,optional"`
 }
 
 type UserBase struct {
@@ -622,8 +624,8 @@ type UserBase struct {
 	RegisterTime   int64  `json:"registerTime,optional"`
 	Remark         string `json:"remark,optional"`
 	Deleted        bool   `json:"deleted"`
-	CreateTime     int64  `json:"createTime,optional"`
-	UpdateTime     int64  `json:"updateTime,optional"`
+	CreateTimes    int64  `json:"createTimes,optional"`
+	UpdateTimes    int64  `json:"updateTimes,optional"`
 }
 
 type UserDetail struct {
@@ -661,8 +663,8 @@ type UserIdentity struct {
 	SubmitTime    int64  `json:"submitTime,optional"`
 	VerifyTime    int64  `json:"verifyTime,optional"`
 	VerifyBy      int64  `json:"verifyBy,optional"`
-	CreateTime    int64  `json:"createTime,optional"`
-	UpdateTime    int64  `json:"updateTime,optional"`
+	CreateTimes   int64  `json:"createTimes,optional"`
+	UpdateTimes   int64  `json:"updateTimes,optional"`
 }
 
 type UserIdentityListItem struct {
@@ -717,8 +719,8 @@ type UserRechargeStat struct {
 	TodaySuccessCount  int64 `json:"todaySuccessCount"`
 	FirstSuccessTime   int64 `json:"firstSuccessTime"`
 	LastSuccessTime    int64 `json:"lastSuccessTime"`
-	CreateTime         int64 `json:"createTime"`
-	UpdateTime         int64 `json:"updateTime"`
+	CreateTimes        int64 `json:"createTimes"`
+	UpdateTimes        int64 `json:"updateTimes"`
 }
 
 type UserSecurity struct {
@@ -731,8 +733,8 @@ type UserSecurity struct {
 	PayErrorCount   int32 `json:"payErrorCount"`
 	LockUntil       int64 `json:"lockUntil,optional"`
 	RiskLevel       int64 `json:"riskLevel"`
-	CreateTime      int64 `json:"createTime,optional"`
-	UpdateTime      int64 `json:"updateTime,optional"`
+	CreateTimes     int64 `json:"createTimes,optional"`
+	UpdateTimes     int64 `json:"updateTimes,optional"`
 }
 
 type VerifyGoogle2FAReq struct {
@@ -761,8 +763,8 @@ type WithdrawOrder struct {
 	NotifyTime   int64  `json:"notifyTime"`
 	CloseTime    int64  `json:"closeTime"`
 	Remark       string `json:"remark"`
-	CreateTime   int64  `json:"createTime"`
-	UpdateTime   int64  `json:"updateTime"`
+	CreateTimes  int64  `json:"createTimes"`
+	UpdateTimes  int64  `json:"updateTimes"`
 }
 
 type WsMessage struct {

@@ -51,8 +51,8 @@ func (l *ListTenantPayPlatformsLogic) ListTenantPayPlatforms(req *types.ListTena
 			Status:     int64(item.Status),
 			OpenStatus: int64(item.OpenStatus),
 			Remark:     item.Remark,
-			CreateTime: item.CreateTime,
-			UpdateTime: item.UpdateTime,
+			CreateTimes: item.CreateTimes,
+			UpdateTimes: item.UpdateTimes,
 		}
 	}
 

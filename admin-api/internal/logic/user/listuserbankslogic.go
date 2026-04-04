@@ -55,7 +55,7 @@ func (l *ListUserBanksLogic) ListUserBanks(req *types.ListUserBanksReq) (resp *t
 			AccountNo:   item.AccountNo,
 			IsDefault:   item.IsDefault,
 			Status:      int64(item.Status),
-			CreateTime:  item.CreateTime,
+			CreateTimes:  item.CreateTimes,
 		}
 	}
 

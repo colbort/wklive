@@ -27,8 +27,8 @@ func NewRbacMiddleware(svcCtx *svc.ServiceContext) *RbacMiddleware {
 	}
 	perms := make(map[string]string, 0)
 	perms["GET /system/core"] = ""
-	perms["GET /auth/profile"] = ""
-	perms["POST /auth/profile"] = ""
+	perms["GET /system/auth/profile"] = ""
+	perms["POST /system/auth/profile"] = ""
 	for _, item := range result.Data {
 		perms[fmt.Sprintf("%s %s", item.Method, item.Path)] = item.PermKey
 	}
@@ -176,10 +176,10 @@ func parsePerm(perm string) (obj string, act string, ok bool) {
 // isWhitePath 白名单接口
 func isWhitePath(path string) bool {
 	whiteList := map[string]struct{}{
-		"/admin/system/core":  {},
-		"/admin/auth/login":   {},
-		"/admin/auth/captcha": {},
-		"/health":             {},
+		"/admin/system/core":         {},
+		"/admin/system/auth/login":   {},
+		"/admin/system/auth/captcha": {},
+		"/health":                    {},
 	}
 
 	_, ok := whiteList[path]

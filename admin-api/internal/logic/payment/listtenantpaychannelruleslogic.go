@@ -63,8 +63,8 @@ func (l *ListTenantPayChannelRulesLogic) ListTenantPayChannelRules(req *types.Li
 			AllowTags:            item.AllowTags,
 			DenyTags:             item.DenyTags,
 			Remark:               item.Remark,
-			CreateTime:           item.CreateTime,
-			UpdateTime:           item.UpdateTime,
+			CreateTimes:           item.CreateTimes,
+			UpdateTimes:           item.UpdateTimes,
 		}
 	}
 

@@ -45,13 +45,13 @@ type (
 	}
 
 	SysRole struct {
-		Id        int64     `db:"id"`
-		Name      string    `db:"name"`   // 角色名称
-		Code      string    `db:"code"`   // 角色标识(如admin)
-		Status    int64     `db:"status"` // 1启用 2禁用
-		Remark    string    `db:"remark"`
-		CreatedAt time.Time `db:"created_at"`
-		UpdatedAt time.Time `db:"updated_at"`
+		Id          int64     `db:"id"`
+		Name        string    `db:"name"`   // 角色名称
+		Code        string    `db:"code"`   // 角色标识(如admin)
+		Status      int64     `db:"status"` // 1启用 2禁用
+		Remark      string    `db:"remark"`
+		CreateTimes time.Time `db:"create_times"`
+		UpdateTimes time.Time `db:"update_times"`
 	}
 )
 
@@ -140,8 +140,8 @@ func (m *defaultSysRoleModel) Insert(ctx context.Context, data *SysRole) (sql.Re
 	sysRoleIdKey := fmt.Sprintf("%s%v", cacheSysRoleIdPrefix, data.Id)
 	sysRoleNameKey := fmt.Sprintf("%s%v", cacheSysRoleNamePrefix, data.Name)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?)", m.table, sysRoleRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.Name, data.Code, data.Status, data.Remark)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?)", m.table, sysRoleRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.Name, data.Code, data.Status, data.Remark, data.CreateTimes, data.UpdateTimes)
 	}, sysRoleCodeKey, sysRoleIdKey, sysRoleNameKey)
 	return ret, err
 }
@@ -157,7 +157,7 @@ func (m *defaultSysRoleModel) Update(ctx context.Context, newData *SysRole) erro
 	sysRoleNameKey := fmt.Sprintf("%s%v", cacheSysRoleNamePrefix, data.Name)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysRoleRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.Name, newData.Code, newData.Status, newData.Remark, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.Name, newData.Code, newData.Status, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, sysRoleCodeKey, sysRoleIdKey, sysRoleNameKey)
 	return err
 }

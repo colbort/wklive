@@ -52,8 +52,8 @@ func (l *ListCategoriesLogic) ListCategories(req *types.ListCategoriesReq) (resp
 			Sort:         v.Sort,
 			Icon:         v.Icon,
 			Remark:       v.Remark,
-			CreateTime:   v.CreateTime,
-			UpdateTime:   v.UpdateTime,
+			CreateTimes:  v.CreateTimes,
+			UpdateTimes:  v.UpdateTimes,
 		})
 	}
 	return &types.ListCategoriesResp{

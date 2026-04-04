@@ -54,8 +54,8 @@ type (
 		PermsVer      int64          `db:"perms_ver"`      // 权限版本(角色变化强制token失效)
 		LastLoginIp   sql.NullString `db:"last_login_ip"`
 		LastLoginAt   sql.NullTime   `db:"last_login_at"`
-		CreatedAt     time.Time      `db:"created_at"`
-		UpdatedAt     time.Time      `db:"updated_at"`
+		CreateTimes   time.Time      `db:"create_times"`
+		UpdateTimes   time.Time      `db:"update_times"`
 	}
 )
 
@@ -122,8 +122,8 @@ func (m *defaultSysUserModel) Insert(ctx context.Context, data *SysUser) (sql.Re
 	sysUserIdKey := fmt.Sprintf("%s%v", cacheSysUserIdPrefix, data.Id)
 	sysUserUsernameKey := fmt.Sprintf("%s%v", cacheSysUserUsernamePrefix, data.Username)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysUserRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.Username, data.Password, data.Nickname, data.Avatar, data.Status, data.GoogleSecret, data.GoogleEnabled, data.PermsVer, data.LastLoginIp, data.LastLoginAt)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysUserRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.Username, data.Password, data.Nickname, data.Avatar, data.Status, data.GoogleSecret, data.GoogleEnabled, data.PermsVer, data.LastLoginIp, data.LastLoginAt, data.CreateTimes, data.UpdateTimes)
 	}, sysUserIdKey, sysUserUsernameKey)
 	return ret, err
 }
@@ -138,7 +138,7 @@ func (m *defaultSysUserModel) Update(ctx context.Context, newData *SysUser) erro
 	sysUserUsernameKey := fmt.Sprintf("%s%v", cacheSysUserUsernamePrefix, data.Username)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysUserRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.Username, newData.Password, newData.Nickname, newData.Avatar, newData.Status, newData.GoogleSecret, newData.GoogleEnabled, newData.PermsVer, newData.LastLoginIp, newData.LastLoginAt, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.Username, newData.Password, newData.Nickname, newData.Avatar, newData.Status, newData.GoogleSecret, newData.GoogleEnabled, newData.PermsVer, newData.LastLoginIp, newData.LastLoginAt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, sysUserIdKey, sysUserUsernameKey)
 	return err
 }

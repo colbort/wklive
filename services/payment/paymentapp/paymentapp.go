@@ -18,6 +18,8 @@ type (
 	CancelMyRechargeOrderReq          = payment.CancelMyRechargeOrderReq
 	CreateRechargeOrderReq            = payment.CreateRechargeOrderReq
 	CreateRechargeOrderResp           = payment.CreateRechargeOrderResp
+	CreateWithdrawOrderReq            = payment.CreateWithdrawOrderReq
+	CreateWithdrawOrderResp           = payment.CreateWithdrawOrderResp
 	GetMyRechargeOrderReq             = payment.GetMyRechargeOrderReq
 	GetMyRechargeOrderResp            = payment.GetMyRechargeOrderResp
 	GetMyRechargeStatReq              = payment.GetMyRechargeStatReq
@@ -32,8 +34,6 @@ type (
 	ListMyWithdrawOrdersResp          = payment.ListMyWithdrawOrdersResp
 	QueryMyRechargeOrderStatusReq     = payment.QueryMyRechargeOrderStatusReq
 	QueryMyRechargeOrderStatusResp    = payment.QueryMyRechargeOrderStatusResp
-	WithdrawReq                       = payment.WithdrawReq
-	WithdrawResp                      = payment.WithdrawResp
 
 	PaymentApp interface {
 		// 当前用户累计充值统计（展示用）
@@ -51,7 +51,7 @@ type (
 		// 轮询订单状态
 		QueryMyRechargeOrderStatus(ctx context.Context, in *QueryMyRechargeOrderStatusReq, opts ...grpc.CallOption) (*QueryMyRechargeOrderStatusResp, error)
 		// 提现
-		Withdraw(ctx context.Context, in *WithdrawReq, opts ...grpc.CallOption) (*WithdrawResp, error)
+		CreateWithdrawOrder(ctx context.Context, in *CreateWithdrawOrderReq, opts ...grpc.CallOption) (*CreateWithdrawOrderResp, error)
 		// 获取提现订单列表
 		ListMyWithdrawOrders(ctx context.Context, in *ListMyWithdrawOrdersReq, opts ...grpc.CallOption) (*ListMyWithdrawOrdersResp, error)
 		// 获取提现订单详情
@@ -112,9 +112,9 @@ func (m *defaultPaymentApp) QueryMyRechargeOrderStatus(ctx context.Context, in *
 }
 
 // 提现
-func (m *defaultPaymentApp) Withdraw(ctx context.Context, in *WithdrawReq, opts ...grpc.CallOption) (*WithdrawResp, error) {
+func (m *defaultPaymentApp) CreateWithdrawOrder(ctx context.Context, in *CreateWithdrawOrderReq, opts ...grpc.CallOption) (*CreateWithdrawOrderResp, error) {
 	client := payment.NewPaymentAppClient(m.cli.Conn())
-	return client.Withdraw(ctx, in, opts...)
+	return client.CreateWithdrawOrder(ctx, in, opts...)
 }
 
 // 获取提现订单列表

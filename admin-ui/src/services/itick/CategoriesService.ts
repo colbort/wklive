@@ -18,8 +18,8 @@ export type ItickCategory = {
   sort: number
   icon: string
   remark: string
-  createTime: number
-  updateTime: number
+  createTimes: number
+  updateTimes: number
 }
 
 export type ListCategoriesReq = {

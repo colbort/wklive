@@ -68,8 +68,8 @@ func (l *ReviewUserIdentityLogic) ReviewUserIdentity(req *types.ReviewUserIdenti
 			SubmitTime:    result.Identity.SubmitTime,
 			VerifyTime:    result.Identity.VerifyTime,
 			VerifyBy:      result.Identity.VerifyBy,
-			CreateTime:    result.Identity.CreateTime,
-			UpdateTime:    result.Identity.UpdateTime,
+			CreateTimes:    result.Identity.CreateTimes,
+			UpdateTimes:    result.Identity.UpdateTimes,
 		},
 	}, nil
 }

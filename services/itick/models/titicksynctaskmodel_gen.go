@@ -42,14 +42,14 @@ type (
 	}
 
 	TItickSyncTask struct {
-		Id        int64  `db:"id"`
-		TaskNo    string `db:"task_no"`   // 任务号
-		TaskType  string `db:"task_type"` // 任务类型
-		BizId     int64  `db:"biz_id"`    // 业务id，比如category_id
-		Status    int64  `db:"status"`    // 0待执行 1执行中 2成功 3失败
-		Message   string `db:"message"`   // 结果描述
-		CreatedAt int64  `db:"created_at"`
-		UpdatedAt int64  `db:"updated_at"`
+		Id          int64  `db:"id"`
+		TaskNo      string `db:"task_no"`   // 任务号
+		TaskType    string `db:"task_type"` // 任务类型
+		BizId       int64  `db:"biz_id"`    // 业务id，比如category_id
+		Status      int64  `db:"status"`    // 0待执行 1执行中 2成功 3失败
+		Message     string `db:"message"`   // 结果描述
+		CreateTimes int64  `db:"create_times"`
+		UpdateTimes int64  `db:"update_times"`
 	}
 )
 
@@ -116,8 +116,8 @@ func (m *defaultTItickSyncTaskModel) Insert(ctx context.Context, data *TItickSyn
 	tItickSyncTaskIdKey := fmt.Sprintf("%s%v", cacheTItickSyncTaskIdPrefix, data.Id)
 	tItickSyncTaskTaskNoKey := fmt.Sprintf("%s%v", cacheTItickSyncTaskTaskNoPrefix, data.TaskNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?)", m.table, tItickSyncTaskRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TaskNo, data.TaskType, data.BizId, data.Status, data.Message)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, tItickSyncTaskRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TaskNo, data.TaskType, data.BizId, data.Status, data.Message, data.CreateTimes, data.UpdateTimes)
 	}, tItickSyncTaskIdKey, tItickSyncTaskTaskNoKey)
 	return ret, err
 }
@@ -132,7 +132,7 @@ func (m *defaultTItickSyncTaskModel) Update(ctx context.Context, newData *TItick
 	tItickSyncTaskTaskNoKey := fmt.Sprintf("%s%v", cacheTItickSyncTaskTaskNoPrefix, data.TaskNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickSyncTaskRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TaskNo, newData.TaskType, newData.BizId, newData.Status, newData.Message, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TaskNo, newData.TaskType, newData.BizId, newData.Status, newData.Message, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tItickSyncTaskIdKey, tItickSyncTaskTaskNoKey)
 	return err
 }

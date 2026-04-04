@@ -49,8 +49,8 @@ func (l *GetCategoryLogic) GetCategory(req *types.GetCategoryReq) (resp *types.G
 			Sort:         result.Data.Sort,
 			Icon:         result.Data.Icon,
 			Remark:       result.Data.Remark,
-			CreateTime:   result.Data.CreateTime,
-			UpdateTime:   result.Data.UpdateTime,
+			CreateTimes:  result.Data.CreateTimes,
+			UpdateTimes:  result.Data.UpdateTimes,
 		},
 	}, nil
 }

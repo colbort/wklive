@@ -69,8 +69,8 @@ func (l *UpdateUserBaseLogic) UpdateUserBase(req *types.UpdateUserBaseReq) (resp
 			RegisterIp:     result.Detail.Base.RegisterIp,
 			LastLoginTime:  result.Detail.Base.LastLoginTime,
 			LastLoginIp:    result.Detail.Base.LastLoginIp,
-			CreateTime:     result.Detail.Base.CreateTime,
-			UpdateTime:     result.Detail.Base.UpdateTime,
+			CreateTimes:     result.Detail.Base.CreateTimes,
+			UpdateTimes:     result.Detail.Base.UpdateTimes,
 		},
 		Identity: types.UserIdentity{
 			Id:            result.Detail.Identity.Id,
@@ -96,8 +96,8 @@ func (l *UpdateUserBaseLogic) UpdateUserBase(req *types.UpdateUserBaseReq) (resp
 			SubmitTime:    result.Detail.Identity.SubmitTime,
 			VerifyTime:    result.Detail.Identity.VerifyTime,
 			VerifyBy:      result.Detail.Identity.VerifyBy,
-			CreateTime:    result.Detail.Identity.CreateTime,
-			UpdateTime:    result.Detail.Identity.UpdateTime,
+			CreateTimes:    result.Detail.Identity.CreateTimes,
+			UpdateTimes:    result.Detail.Identity.UpdateTimes,
 		},
 		Security: types.UserSecurity{
 			Id:              result.Detail.Security.Id,
@@ -109,8 +109,8 @@ func (l *UpdateUserBaseLogic) UpdateUserBase(req *types.UpdateUserBaseReq) (resp
 			PayErrorCount:   result.Detail.Security.PayErrorCount,
 			LockUntil:       result.Detail.Security.LockUntil,
 			RiskLevel:       int64(result.Detail.Security.RiskLevel),
-			CreateTime:      result.Detail.Security.CreateTime,
-			UpdateTime:      result.Detail.Security.UpdateTime,
+			CreateTimes:      result.Detail.Security.CreateTimes,
+			UpdateTimes:      result.Detail.Security.UpdateTimes,
 		},
 	}
 
@@ -129,8 +129,8 @@ func (l *UpdateUserBaseLogic) UpdateUserBase(req *types.UpdateUserBaseReq) (resp
 			CountryCode: bank.CountryCode,
 			IsDefault:   bank.IsDefault,
 			Status:      int64(bank.Status),
-			CreateTime:  bank.CreateTime,
-			UpdateTime:  bank.UpdateTime,
+			CreateTimes:  bank.CreateTimes,
+			UpdateTimes:  bank.UpdateTimes,
 		}
 	}
 

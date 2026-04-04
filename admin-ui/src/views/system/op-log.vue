@@ -131,12 +131,7 @@ onMounted(() => {
     </el-form>
 
     <!-- Table -->
-    <el-table
-      v-loading="loading"
-      :data="list_ref"
-      row-key="id"
-      style="margin-bottom: 16px"
-    >
+    <el-table v-loading="loading" :data="list_ref" row-key="id" style="margin-bottom: 16px">
       <el-table-column prop="id" :label="t('common.id')" width="70" />
       <el-table-column prop="username" :label="t('common.username')" min-width="120" />
       <el-table-column prop="method" :label="t('common.method')" width="80">
@@ -162,10 +157,10 @@ onMounted(() => {
           <span style="color: #666">{{ row.costMs }}ms</span>
         </template>
       </el-table-column>
-      <el-table-column prop="createdAt" :label="t('common.createdAt')" min-width="170">
+      <el-table-column prop="createTimes" :label="t('common.createTimes')" min-width="170">
         <template #default="{ row }">
           <span style="color: #666">{{
-            row.createdAt ? new Date(row.createdAt * 1000).toLocaleString() : '-'
+            row.createTimes ? new Date(row.createTimes * 1000).toLocaleString() : '-'
           }}</span>
         </template>
       </el-table-column>
@@ -175,14 +170,10 @@ onMounted(() => {
     <div style="display: flex; justify-content: flex-end; gap: 10px; align-items: center">
       <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
       <el-button :disabled="!pagination.hasPrev" @click="prevPage">
-        {{
-          t('common.prevPage')
-        }}
+        {{ t('common.prevPage') }}
       </el-button>
       <el-button :disabled="!pagination.hasNext" @click="nextPage">
-        {{
-          t('common.nextPage')
-        }}
+        {{ t('common.nextPage') }}
       </el-button>
       <el-select
         v-model="pagination.limit"

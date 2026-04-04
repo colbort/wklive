@@ -41,17 +41,17 @@ type (
 	}
 
 	SysOpLog struct {
-		Id        int64          `db:"id"`
-		UserId    sql.NullInt64  `db:"user_id"`
-		Username  sql.NullString `db:"username"`
-		Method    sql.NullString `db:"method"`
-		Path      sql.NullString `db:"path"`
-		Req       sql.NullString `db:"req"`
-		Resp      sql.NullString `db:"resp"`
-		Ip        sql.NullString `db:"ip"`
-		CostMs    sql.NullInt64  `db:"cost_ms"` // 耗时
-		CreatedAt time.Time      `db:"created_at"`
-		UpdatedAt time.Time      `db:"updated_at"`
+		Id          int64          `db:"id"`
+		UserId      sql.NullInt64  `db:"user_id"`
+		Username    sql.NullString `db:"username"`
+		Method      sql.NullString `db:"method"`
+		Path        sql.NullString `db:"path"`
+		Req         sql.NullString `db:"req"`
+		Resp        sql.NullString `db:"resp"`
+		Ip          sql.NullString `db:"ip"`
+		CostMs      sql.NullInt64  `db:"cost_ms"` // 耗时
+		CreateTimes time.Time      `db:"create_times"`
+		UpdateTimes time.Time      `db:"update_times"`
 	}
 )
 
@@ -91,8 +91,8 @@ func (m *defaultSysOpLogModel) FindOne(ctx context.Context, id int64) (*SysOpLog
 func (m *defaultSysOpLogModel) Insert(ctx context.Context, data *SysOpLog) (sql.Result, error) {
 	sysOpLogIdKey := fmt.Sprintf("%s%v", cacheSysOpLogIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysOpLogRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.UserId, data.Username, data.Method, data.Path, data.Req, data.Resp, data.Ip, data.CostMs)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysOpLogRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.UserId, data.Username, data.Method, data.Path, data.Req, data.Resp, data.Ip, data.CostMs, data.CreateTimes, data.UpdateTimes)
 	}, sysOpLogIdKey)
 	return ret, err
 }
@@ -101,7 +101,7 @@ func (m *defaultSysOpLogModel) Update(ctx context.Context, data *SysOpLog) error
 	sysOpLogIdKey := fmt.Sprintf("%s%v", cacheSysOpLogIdPrefix, data.Id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysOpLogRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.UserId, data.Username, data.Method, data.Path, data.Req, data.Resp, data.Ip, data.CostMs, data.Id)
+		return conn.ExecCtx(ctx, query, data.UserId, data.Username, data.Method, data.Path, data.Req, data.Resp, data.Ip, data.CostMs, data.CreateTimes, data.UpdateTimes, data.Id)
 	}, sysOpLogIdKey)
 	return err
 }

@@ -43,17 +43,17 @@ func (l *OpLogListLogic) OpLogList(req *types.OpLogListReq) (resp *types.OpLogLi
 	data := make([]types.OpLogItem, 0)
 	for _, item := range result.Data {
 		data = append(data, types.OpLogItem{
-			Id:        item.Id,
-			UserId:    item.UserId,
-			Username:  item.Username,
-			Method:    item.Method,
-			Path:      item.Path,
-			Req:       item.Req,
-			Resp:      item.Resp,
-			Ip:        item.Ip,
-			CostMs:    item.CostMs,
-			CreatedAt: item.CreatedAt,
-			UpdatedAt: item.UpdatedAt,
+			Id:          item.Id,
+			UserId:      item.UserId,
+			Username:    item.Username,
+			Method:      item.Method,
+			Path:        item.Path,
+			Req:         item.Req,
+			Resp:        item.Resp,
+			Ip:          item.Ip,
+			CostMs:      item.CostMs,
+			CreateTimes: item.CreateTimes,
+			UpdateTimes: item.UpdateTimes,
 		})
 	}
 	return &types.OpLogListResp{

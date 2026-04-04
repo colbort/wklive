@@ -54,7 +54,7 @@ func (l *SysCronJobLogListLogic) SysCronJobLogList(req *types.SysCronJobLogListR
 			ExceptionInfo:  item.ExceptionInfo,
 			StartTime:      item.StartTime,
 			EndTime:        item.EndTime,
-			CreateTime:     item.CreateTime,
+			CreateTimes:     item.CreateTimes,
 		})
 	}
 	resp = &types.SysCronJobLogListResp{

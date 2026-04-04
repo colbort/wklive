@@ -25,12 +25,12 @@ type LoginResp {
 }
 
 @server (
-	prefix: /admin
+	prefix: /admin/system
 	group:  auth_public
 )
 service admin {
 	@handler GetSystemCore
-	get /system/core returns (GetSystemCoreResp)
+	get /core returns (GetSystemCoreResp)
 
 	@handler Login
 	post /auth/login (LoginReq) returns (LoginResp)

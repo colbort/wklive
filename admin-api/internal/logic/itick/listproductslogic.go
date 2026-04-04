@@ -34,6 +34,7 @@ func (l *ListProductsLogic) ListProducts(req *types.ListProductsReq) (resp *type
 			Limit:  req.PageReq.Limit,
 		},
 		CategoryType: itick.CategoryType(req.CategoryType),
+		CategoryName: req.CategoryName,
 		Market:       req.Market,
 		Keyword:      req.Keyword,
 		Enabled:      req.Enabled,
@@ -47,6 +48,8 @@ func (l *ListProductsLogic) ListProducts(req *types.ListProductsReq) (resp *type
 		data = append(data, types.ItickProduct{
 			Id:           item.Id,
 			CategoryType: int64(item.CategoryType),
+			CategoryName: item.CategoryName,
+			CategoryCode: item.CategoryCode,
 			Market:       item.Market,
 			Symbol:       item.Symbol,
 			Code:         item.Code,
@@ -59,8 +62,8 @@ func (l *ListProductsLogic) ListProducts(req *types.ListProductsReq) (resp *type
 			Sort:         item.Sort,
 			Icon:         item.Icon,
 			Remark:       item.Remark,
-			CreateTime:   item.CreateTime,
-			UpdateTime:   item.UpdateTime,
+			CreateTimes:   item.CreateTimes,
+			UpdateTimes:   item.UpdateTimes,
 		})
 	}
 	return &types.ListProductsResp{

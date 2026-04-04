@@ -9,7 +9,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
 	"github.com/zeromicro/go-zero/core/stores/cache"
@@ -64,13 +63,13 @@ type (
 		Source         sql.NullString `db:"source"`           // 注册来源
 		ReferrerUserId sql.NullInt64  `db:"referrer_user_id"` // 邀请人ID
 		LastLoginIp    sql.NullString `db:"last_login_ip"`    // 最后登录IP
-		LastLoginTime  sql.NullTime   `db:"last_login_time"`  // 最后登录时间
+		LastLoginTime  int64          `db:"last_login_time"`  // 最后登录时间
 		RegisterIp     sql.NullString `db:"register_ip"`      // 注册IP
-		RegisterTime   time.Time      `db:"register_time"`    // 注册时间
+		RegisterTime   int64          `db:"register_time"`    // 注册时间
 		Remark         sql.NullString `db:"remark"`           // 备注
 		Deleted        int64          `db:"deleted"`          // 是否删除：0否 1是
-		CreateTime     time.Time      `db:"create_time"`      // 创建时间
-		UpdateTime     time.Time      `db:"update_time"`      // 更新时间
+		CreateTimes    int64          `db:"create_times"`     // 创建时间
+		UpdateTimes    int64          `db:"update_times"`     // 更新时间
 	}
 )
 
@@ -181,8 +180,8 @@ func (m *defaultTUserModel) Insert(ctx context.Context, data *TUser) (sql.Result
 	tUserTenantIdUserNoKey := fmt.Sprintf("%s%v:%v", cacheTUserTenantIdUserNoPrefix, data.TenantId, data.UserNo)
 	tUserTenantIdUsernameKey := fmt.Sprintf("%s%v:%v", cacheTUserTenantIdUsernamePrefix, data.TenantId, data.Username)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tUserRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserNo, data.Username, data.Nickname, data.Avatar, data.PasswordHash, data.RegisterType, data.Status, data.MemberLevel, data.Language, data.Timezone, data.InviteCode, data.Signature, data.Source, data.ReferrerUserId, data.LastLoginIp, data.LastLoginTime, data.RegisterIp, data.RegisterTime, data.Remark, data.Deleted)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tUserRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserNo, data.Username, data.Nickname, data.Avatar, data.PasswordHash, data.RegisterType, data.Status, data.MemberLevel, data.Language, data.Timezone, data.InviteCode, data.Signature, data.Source, data.ReferrerUserId, data.LastLoginIp, data.LastLoginTime, data.RegisterIp, data.RegisterTime, data.Remark, data.Deleted, data.CreateTimes, data.UpdateTimes)
 	}, tUserIdKey, tUserTenantIdInviteCodeKey, tUserTenantIdUserNoKey, tUserTenantIdUsernameKey)
 	return ret, err
 }
@@ -199,7 +198,7 @@ func (m *defaultTUserModel) Update(ctx context.Context, newData *TUser) error {
 	tUserTenantIdUsernameKey := fmt.Sprintf("%s%v:%v", cacheTUserTenantIdUsernamePrefix, data.TenantId, data.Username)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tUserRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserNo, newData.Username, newData.Nickname, newData.Avatar, newData.PasswordHash, newData.RegisterType, newData.Status, newData.MemberLevel, newData.Language, newData.Timezone, newData.InviteCode, newData.Signature, newData.Source, newData.ReferrerUserId, newData.LastLoginIp, newData.LastLoginTime, newData.RegisterIp, newData.RegisterTime, newData.Remark, newData.Deleted, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserNo, newData.Username, newData.Nickname, newData.Avatar, newData.PasswordHash, newData.RegisterType, newData.Status, newData.MemberLevel, newData.Language, newData.Timezone, newData.InviteCode, newData.Signature, newData.Source, newData.ReferrerUserId, newData.LastLoginIp, newData.LastLoginTime, newData.RegisterIp, newData.RegisterTime, newData.Remark, newData.Deleted, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tUserIdKey, tUserTenantIdInviteCodeKey, tUserTenantIdUserNoKey, tUserTenantIdUsernameKey)
 	return err
 }

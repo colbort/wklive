@@ -42,8 +42,8 @@ export type OpLogItem = {
   resp?: string
   ip: string
   costMs: number
-  createdAt: number
-  updatedAt: number
+  createTimes: number
+  updateTimes: number
 }
 
 // 操作日志列表请求

@@ -39,11 +39,11 @@ func (l *SysTenantUpdateLogic) SysTenantUpdate(in *system.SysTenantUpdateReq) (*
 	}
 	tenant.TenantName = in.TenantName
 	tenant.Status = in.Status
-	tenant.ExpireTime = sql.NullTime{Time: time.UnixMilli(in.ExpireTime), Valid: true}
+	tenant.ExpireTime = in.ExpireTime
 	tenant.ContactName = sql.NullString{String: in.ContactName, Valid: true}
 	tenant.ContactPhone = sql.NullString{String: in.ContactPhone, Valid: true}
 	tenant.Remark = sql.NullString{String: in.Remark, Valid: true}
-	tenant.UpdateTime = time.Now()
+	tenant.UpdateTimes = time.Now().UnixMilli()
 	err = l.svcCtx.TenantMode.Update(l.ctx, tenant)
 	if err != nil {
 		return nil, err

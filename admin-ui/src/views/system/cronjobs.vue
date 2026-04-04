@@ -2,7 +2,14 @@
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, Edit, Delete, VideoPlay, CircleCheck, CircleCloseFilled } from '@element-plus/icons-vue'
+import {
+  Plus,
+  Edit,
+  Delete,
+  VideoPlay,
+  CircleCheck,
+  CircleCloseFilled,
+} from '@element-plus/icons-vue'
 import { cronJobService } from '@/services'
 import type {
   SysCronJobItem,
@@ -302,12 +309,7 @@ onMounted(() => {
     </el-form>
 
     <!-- Table -->
-    <el-table
-      v-loading="loading"
-      :data="list"
-      row-key="id"
-      style="margin-bottom: 16px"
-    >
+    <el-table v-loading="loading" :data="list" row-key="id" style="margin-bottom: 16px">
       <el-table-column prop="id" :label="t('common.id')" width="70" />
       <el-table-column prop="jobName" :label="t('system.jobName')" min-width="120" />
       <el-table-column prop="jobGroup" :label="t('system.jobGroup')" width="100" />
@@ -321,9 +323,9 @@ onMounted(() => {
         </template>
       </el-table-column>
       <el-table-column prop="createBy" :label="t('system.createBy')" width="100" />
-      <el-table-column prop="createTime" :label="t('common.createdAt')" width="170">
+      <el-table-column prop="createTimes" :label="t('common.createTimes')" width="170">
         <template #default="{ row }">
-          <span>{{ formatDateFn(row.createTime) }}</span>
+          <span>{{ formatDateFn(row.createTimes) }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="t('common.actions')" width="280" fixed="right">
@@ -332,30 +334,15 @@ onMounted(() => {
             <el-icon><VideoPlay /></el-icon>
             {{ t('system.run') }}
           </el-button>
-          <el-button
-            v-if="row.status === 0"
-            type="success"
-            size="small"
-            @click="handleStart(row)"
-          >
+          <el-button v-if="row.status === 0" type="success" size="small" @click="handleStart(row)">
             <el-icon><CircleCheck /></el-icon>
             {{ t('system.start') }}
           </el-button>
-          <el-button
-            v-if="row.status === 1"
-            type="warning"
-            size="small"
-            @click="handleStop(row)"
-          >
+          <el-button v-if="row.status === 1" type="warning" size="small" @click="handleStop(row)">
             <el-icon><CircleCloseFilled /></el-icon>
             {{ t('system.stop') }}
           </el-button>
-          <el-button
-            v-perm="'sys:job:update'"
-            type="primary"
-            size="small"
-            @click="handleEdit(row)"
-          >
+          <el-button v-perm="'sys:job:update'" type="primary" size="small" @click="handleEdit(row)">
             <el-icon><Edit /></el-icon>
             {{ t('common.edit') }}
           </el-button>
@@ -376,14 +363,10 @@ onMounted(() => {
     <div style="display: flex; justify-content: flex-end; gap: 10px; align-items: center">
       <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
       <el-button :disabled="!pagination.hasPrev" @click="prevPage">
-        {{
-          t('common.prevPage')
-        }}
+        {{ t('common.prevPage') }}
       </el-button>
       <el-button :disabled="!pagination.hasNext" @click="nextPage">
-        {{
-          t('common.nextPage')
-        }}
+        {{ t('common.nextPage') }}
       </el-button>
       <el-select
         v-model="pagination.limit"
@@ -409,12 +392,7 @@ onMounted(() => {
       width="600px"
       :close-on-click-modal="false"
     >
-      <el-form
-        ref="formRef"
-        :model="formData"
-        :rules="formRules"
-        label-width="140px"
-      >
+      <el-form ref="formRef" :model="formData" :rules="formRules" label-width="140px">
         <el-form-item :label="t('system.jobName')" prop="jobName">
           <el-input
             v-model="formData.jobName"

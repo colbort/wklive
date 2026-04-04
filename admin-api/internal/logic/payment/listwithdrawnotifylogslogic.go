@@ -62,7 +62,7 @@ func (l *ListWithdrawNotifyLogsLogic) ListWithdrawNotifyLogs(req *types.ListWith
 			ProcessResult: item.ProcessResult,
 			ErrorMessage:  item.ErrorMessage,
 			NotifyTime:    item.NotifyTime,
-			CreateTime:    item.CreateTime,
+			CreateTimes:    item.CreateTimes,
 		}
 	}
 

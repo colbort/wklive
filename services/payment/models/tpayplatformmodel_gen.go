@@ -9,7 +9,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
 	"github.com/zeromicro/go-zero/core/stores/cache"
@@ -52,8 +51,8 @@ type (
 		Icon         sql.NullString `db:"icon"`          // 图标
 		Status       int64          `db:"status"`        // 状态：1启用 2停用
 		Remark       sql.NullString `db:"remark"`        // 备注
-		CreateTime   time.Time      `db:"create_time"`   // 创建时间
-		UpdateTime   time.Time      `db:"update_time"`   // 更新时间
+		CreateTimes  int64          `db:"create_times"`  // 创建时间
+		UpdateTimes  int64          `db:"update_times"`  // 更新时间
 	}
 )
 
@@ -120,8 +119,8 @@ func (m *defaultTPayPlatformModel) Insert(ctx context.Context, data *TPayPlatfor
 	tPayPlatformIdKey := fmt.Sprintf("%s%v", cacheTPayPlatformIdPrefix, data.Id)
 	tPayPlatformPlatformCodeKey := fmt.Sprintf("%s%v", cacheTPayPlatformPlatformCodePrefix, data.PlatformCode)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", m.table, tPayPlatformRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.PlatformCode, data.PlatformName, data.PlatformType, data.NotifyUrl, data.ReturnUrl, data.Icon, data.Status, data.Remark)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tPayPlatformRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.PlatformCode, data.PlatformName, data.PlatformType, data.NotifyUrl, data.ReturnUrl, data.Icon, data.Status, data.Remark, data.CreateTimes, data.UpdateTimes)
 	}, tPayPlatformIdKey, tPayPlatformPlatformCodeKey)
 	return ret, err
 }
@@ -136,7 +135,7 @@ func (m *defaultTPayPlatformModel) Update(ctx context.Context, newData *TPayPlat
 	tPayPlatformPlatformCodeKey := fmt.Sprintf("%s%v", cacheTPayPlatformPlatformCodePrefix, data.PlatformCode)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tPayPlatformRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.PlatformCode, newData.PlatformName, newData.PlatformType, newData.NotifyUrl, newData.ReturnUrl, newData.Icon, newData.Status, newData.Remark, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.PlatformCode, newData.PlatformName, newData.PlatformType, newData.NotifyUrl, newData.ReturnUrl, newData.Icon, newData.Status, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tPayPlatformIdKey, tPayPlatformPlatformCodeKey)
 	return err
 }

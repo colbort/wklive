@@ -229,7 +229,7 @@ func (m *CronManager) ListStartedJobIDs() []int64 {
 // execute 实际执行任务
 // 默认同一个任务不允许并发执行
 func (m *CronManager) execute(job *models.SysJob, handler JobHandler) error {
-	startTime := time.Now()
+	startTime := time.Now().UnixMilli()
 	if _, loaded := m.runningMap.LoadOrStore(job.Id, struct{}{}); loaded {
 		log.Printf("job[%d-%s] is already running, skip this time", job.Id, job.JobName)
 		return nil
@@ -245,7 +245,7 @@ func (m *CronManager) execute(job *models.SysJob, handler JobHandler) error {
 
 	log.Printf("job start: id=%d, name=%s, target=%s", job.Id, job.JobName, job.InvokeTarget)
 	err := handler(ctx, job)
-	endTime := time.Now()
+	endTime := time.Now().UnixMilli()
 	status := int64(1)
 	message := "success"
 	exceptionInfo := ""
@@ -265,9 +265,9 @@ func (m *CronManager) execute(job *models.SysJob, handler JobHandler) error {
 		Status:         status,
 		Message:        sql.NullString{String: message, Valid: true},
 		ExceptionInfo:  sql.NullString{String: exceptionInfo},
-		StartTime:      sql.NullTime{Time: startTime, Valid: true},
-		EndTime:        sql.NullTime{Time: endTime, Valid: true},
-		CreateTime:     time.Now(),
+		StartTime:      startTime,
+		EndTime:        endTime,
+		CreateTimes:    time.Now().UnixMilli(),
 	})
 	return err
 }

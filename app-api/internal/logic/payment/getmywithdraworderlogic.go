@@ -68,8 +68,8 @@ func (l *GetMyWithdrawOrderLogic) GetMyWithdrawOrder(req *types.GetMyWithdrawOrd
 			NotifyTime:   result.Data.NotifyTime,
 			CloseTime:    result.Data.CloseTime,
 			Remark:       result.Data.Remark,
-			CreateTime:   result.Data.CreateTime,
-			UpdateTime:   result.Data.UpdateTime,
+			CreateTimes:   result.Data.CreateTimes,
+			UpdateTimes:   result.Data.UpdateTimes,
 		},
 	}
 

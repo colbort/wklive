@@ -11,6 +11,8 @@ import {
 export type ItickProduct = {
   id: number
   categoryType: number
+  categoryName: string
+  categoryCode: string
   market: string
   symbol: string
   code: string
@@ -23,8 +25,8 @@ export type ItickProduct = {
   sort: number
   icon: string
   remark: string
-  createTime: number
-  updateTime: number
+  createTimes: number
+  updateTimes: number
 }
 
 export type CreateProductReq = {

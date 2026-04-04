@@ -88,13 +88,13 @@
 
         <el-table-column label="创建时间" min-width="170">
           <template #default="{ row }">
-            {{ formatTime(row.createTime) }}
+            {{ formatTime(row.createTimes) }}
           </template>
         </el-table-column>
 
         <el-table-column label="更新时间" min-width="170">
           <template #default="{ row }">
-            {{ formatTime(row.updateTime) }}
+            {{ formatTime(row.updateTimes) }}
           </template>
         </el-table-column>
 
@@ -219,10 +219,10 @@
           detail.remark || '-'
         }}</el-descriptions-item>
         <el-descriptions-item label="创建时间">
-          {{ formatTime(detail.createTime) }}
+          {{ formatTime(detail.createTimes) }}
         </el-descriptions-item>
         <el-descriptions-item label="更新时间">
-          {{ formatTime(detail.updateTime) }}
+          {{ formatTime(detail.updateTimes) }}
         </el-descriptions-item>
       </el-descriptions>
 

@@ -94,8 +94,8 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(req *types.CreateRecharge
 			NotifyTime:   result.Order.NotifyTime,
 			CloseTime:    result.Order.CloseTime,
 			Remark:       result.Order.Remark,
-			CreateTime:   result.Order.CreateTime,
-			UpdateTime:   result.Order.UpdateTime,
+			CreateTimes:   result.Order.CreateTimes,
+			UpdateTimes:   result.Order.UpdateTimes,
 		},
 	}
 

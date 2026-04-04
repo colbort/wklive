@@ -11,7 +11,7 @@ type SysUserItem {
 	nickname         string  `json:"nickname"`
 	status           int64   `json:"status"`
 	roleIds          []int64 `json:"roleIds"`
-	createdAt        int64   `json:"createdAt"`
+	createTimes      int64   `json:"createTimes"`
 	google2faEnabled int64   `json:"google2faEnabled"`
 }
 
@@ -97,12 +97,12 @@ type Google2FAResetReq {
 
 // ===== system: 角色 =====
 type SysRoleItem {
-	id        int64  `json:"id"`
-	name      string `json:"name"`
-	code      string `json:"code"`
-	status    int64  `json:"status"`
-	remark    string `json:"remark,optional"`
-	createdAt int64  `json:"createdAt"`
+	id          int64  `json:"id"`
+	name        string `json:"name"`
+	code        string `json:"code"`
+	status      int64  `json:"status"`
+	remark      string `json:"remark,optional"`
+	createTimes int64  `json:"createTimes"`
 }
 
 type SysRoleListReq {
@@ -255,17 +255,17 @@ type LoginLogListResp {
 }
 
 type OpLogItem {
-	id        int64  `json:"id"`
-	userId    int64  `json:"userId"`
-	username  string `json:"username"`
-	method    string `json:"method"`
-	path      string `json:"path"`
-	req       string `json:"req,optional"`
-	resp      string `json:"resp,optional"`
-	ip        string `json:"ip"`
-	costMs    int64  `json:"costMs"`
-	createdAt int64  `json:"createdAt"`
-	updatedAt int64  `json:"updatedAt"`
+	id          int64  `json:"id"`
+	userId      int64  `json:"userId"`
+	username    string `json:"username"`
+	method      string `json:"method"`
+	path        string `json:"path"`
+	req         string `json:"req,optional"`
+	resp        string `json:"resp,optional"`
+	ip          string `json:"ip"`
+	costMs      int64  `json:"costMs"`
+	createTimes int64  `json:"createTimes"`
+	updateTimes int64  `json:"updateTimes"`
 }
 
 type OpLogListReq {
@@ -302,7 +302,7 @@ type SysConfigItem {
 	configKey   string `json:"configKey"`
 	configValue string `json:"configValue"`
 	remark      string `json:"remark,optional"`
-	createdAt   int64  `json:"createdAt"`
+	createTimes int64  `json:"createTimes"`
 }
 
 type SysConfigListReq {
@@ -330,9 +330,9 @@ type SysCronJobItem {
 	status         int64  `json:"status"`
 	remark         string `json:"remark,optional"`
 	createBy       string `json:"createBy"`
-	createTime     int64  `json:"createTime"`
+	createTimes    int64  `json:"createTimes"`
 	updateBy       string `json:"updateBy"`
-	updateTime     int64  `json:"updateTime"`
+	updateTimes    int64  `json:"updateTimes"`
 }
 
 type SysCronJobListReq {
@@ -404,7 +404,7 @@ type SysCronJobLogItem {
 	exceptionInfo  string `json:"exceptionInfo,optional"`
 	startTime      int64  `json:"startTime"`
 	endTime        int64  `json:"endTime"`
-	createTime     int64  `json:"createTime"`
+	createTimes    int64  `json:"createTimes"`
 }
 
 type SysCronJobLogListReq {
@@ -455,8 +455,8 @@ type SysTenantItem {
 	contactName  string `json:"contactName,optional"`
 	contactPhone string `json:"contactPhone,optional"`
 	remark       string `json:"remark,optional"`
-	createTime   int64  `json:"createTime"`
-	updateTime   int64  `json:"updateTime"`
+	createTimes  int64  `json:"createTimes"`
+	updateTimes  int64  `json:"updateTimes"`
 }
 
 type SysTenantListReq {

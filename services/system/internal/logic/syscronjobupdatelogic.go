@@ -63,7 +63,7 @@ func (l *SysCronJobUpdateLogic) SysCronJobUpdate(in *system.SysCronJobUpdateReq)
 		}, nil
 	}
 	job.UpdateBy = sql.NullString{String: userName, Valid: true}
-	job.UpdateTime = time.Now()
+	job.UpdateTimes = time.Now().UnixMilli()
 
 	err = l.svcCtx.JobModel.Update(l.ctx, job)
 	if err != nil {

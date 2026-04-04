@@ -9,7 +9,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
 	"github.com/zeromicro/go-zero/core/stores/cache"
@@ -52,8 +51,8 @@ type (
 		CountryCode sql.NullString `db:"country_code"` // 国家地区
 		IsDefault   int64          `db:"is_default"`   // 是否默认：0否 1是
 		Status      int64          `db:"status"`       // 状态：1正常 2禁用
-		CreateTime  time.Time      `db:"create_time"`  // 创建时间
-		UpdateTime  time.Time      `db:"update_time"`  // 更新时间
+		CreateTimes int64          `db:"create_times"` // 创建时间
+		UpdateTimes int64          `db:"update_times"` // 更新时间
 	}
 )
 
@@ -93,8 +92,8 @@ func (m *defaultTUserBankModel) FindOne(ctx context.Context, id int64) (*TUserBa
 func (m *defaultTUserBankModel) Insert(ctx context.Context, data *TUserBank) (sql.Result, error) {
 	tUserBankIdKey := fmt.Sprintf("%s%v", cacheTUserBankIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tUserBankRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.BankName, data.BankCode, data.AccountName, data.AccountNo, data.BranchName, data.CountryCode, data.IsDefault, data.Status)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tUserBankRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.BankName, data.BankCode, data.AccountName, data.AccountNo, data.BranchName, data.CountryCode, data.IsDefault, data.Status, data.CreateTimes, data.UpdateTimes)
 	}, tUserBankIdKey)
 	return ret, err
 }
@@ -103,7 +102,7 @@ func (m *defaultTUserBankModel) Update(ctx context.Context, data *TUserBank) err
 	tUserBankIdKey := fmt.Sprintf("%s%v", cacheTUserBankIdPrefix, data.Id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tUserBankRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.BankName, data.BankCode, data.AccountName, data.AccountNo, data.BranchName, data.CountryCode, data.IsDefault, data.Status, data.Id)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.BankName, data.BankCode, data.AccountName, data.AccountNo, data.BranchName, data.CountryCode, data.IsDefault, data.Status, data.CreateTimes, data.UpdateTimes, data.Id)
 	}, tUserBankIdKey)
 	return err
 }

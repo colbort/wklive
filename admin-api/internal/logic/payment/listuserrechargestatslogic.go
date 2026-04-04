@@ -54,8 +54,8 @@ func (l *ListUserRechargeStatsLogic) ListUserRechargeStats(req *types.ListUserRe
 			TodaySuccessCount:  int64(item.TodaySuccessCount),
 			FirstSuccessTime:   item.FirstSuccessTime,
 			LastSuccessTime:    item.LastSuccessTime,
-			CreateTime:         item.CreateTime,
-			UpdateTime:         item.UpdateTime,
+			CreateTimes:         item.CreateTimes,
+			UpdateTimes:         item.UpdateTimes,
 		}
 	}
 

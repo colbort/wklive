@@ -9,7 +9,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
 	"github.com/zeromicro/go-zero/core/stores/cache"
@@ -67,11 +66,11 @@ type (
 		KycLevel      int64          `db:"kyc_level"`      // KYC等级：0未认证 1初级 2高级
 		VerifyStatus  int64          `db:"verify_status"`  // 实名状态：0未提交 1审核中 2通过 3拒绝
 		RejectReason  sql.NullString `db:"reject_reason"`  // 驳回原因
-		SubmitTime    sql.NullTime   `db:"submit_time"`    // 提交时间
-		VerifyTime    sql.NullTime   `db:"verify_time"`    // 审核时间
+		SubmitTime    int64          `db:"submit_time"`    // 提交时间
+		VerifyTime    int64          `db:"verify_time"`    // 审核时间
 		VerifyBy      sql.NullInt64  `db:"verify_by"`      // 审核人
-		CreateTime    time.Time      `db:"create_time"`    // 创建时间
-		UpdateTime    time.Time      `db:"update_time"`    // 更新时间
+		CreateTimes   int64          `db:"create_times"`   // 创建时间
+		UpdateTimes   int64          `db:"update_times"`   // 更新时间
 	}
 )
 
@@ -182,8 +181,8 @@ func (m *defaultTUserIdentityModel) Insert(ctx context.Context, data *TUserIdent
 	tUserIdentityTenantIdPhoneKey := fmt.Sprintf("%s%v:%v", cacheTUserIdentityTenantIdPhonePrefix, data.TenantId, data.Phone)
 	tUserIdentityTenantIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheTUserIdentityTenantIdUserIdPrefix, data.TenantId, data.UserId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tUserIdentityRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.Phone, data.Email, data.RealName, data.Gender, data.Birthday, data.CountryCode, data.Province, data.City, data.Address, data.IdType, data.IdNo, data.FrontImage, data.BackImage, data.HandheldImage, data.KycLevel, data.VerifyStatus, data.RejectReason, data.SubmitTime, data.VerifyTime, data.VerifyBy)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tUserIdentityRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.Phone, data.Email, data.RealName, data.Gender, data.Birthday, data.CountryCode, data.Province, data.City, data.Address, data.IdType, data.IdNo, data.FrontImage, data.BackImage, data.HandheldImage, data.KycLevel, data.VerifyStatus, data.RejectReason, data.SubmitTime, data.VerifyTime, data.VerifyBy, data.CreateTimes, data.UpdateTimes)
 	}, tUserIdentityIdKey, tUserIdentityTenantIdEmailKey, tUserIdentityTenantIdPhoneKey, tUserIdentityTenantIdUserIdKey)
 	return ret, err
 }
@@ -200,7 +199,7 @@ func (m *defaultTUserIdentityModel) Update(ctx context.Context, newData *TUserId
 	tUserIdentityTenantIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheTUserIdentityTenantIdUserIdPrefix, data.TenantId, data.UserId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tUserIdentityRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.Phone, newData.Email, newData.RealName, newData.Gender, newData.Birthday, newData.CountryCode, newData.Province, newData.City, newData.Address, newData.IdType, newData.IdNo, newData.FrontImage, newData.BackImage, newData.HandheldImage, newData.KycLevel, newData.VerifyStatus, newData.RejectReason, newData.SubmitTime, newData.VerifyTime, newData.VerifyBy, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.Phone, newData.Email, newData.RealName, newData.Gender, newData.Birthday, newData.CountryCode, newData.Province, newData.City, newData.Address, newData.IdType, newData.IdNo, newData.FrontImage, newData.BackImage, newData.HandheldImage, newData.KycLevel, newData.VerifyStatus, newData.RejectReason, newData.SubmitTime, newData.VerifyTime, newData.VerifyBy, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tUserIdentityIdKey, tUserIdentityTenantIdEmailKey, tUserIdentityTenantIdPhoneKey, tUserIdentityTenantIdUserIdKey)
 	return err
 }

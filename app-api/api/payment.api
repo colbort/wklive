@@ -16,8 +16,8 @@ type UserRechargeStat {
 	todaySuccessCount  int64 `json:"todaySuccessCount"`
 	firstSuccessTime   int64 `json:"firstSuccessTime"`
 	lastSuccessTime    int64 `json:"lastSuccessTime"`
-	createTime         int64 `json:"createTime"`
-	updateTime         int64 `json:"updateTime"`
+	createTimes        int64 `json:"createTimes"`
+	updateTimes        int64 `json:"updateTimes"`
 }
 
 // 当前用户可用充值通道
@@ -72,8 +72,8 @@ type RechargeOrder {
 	notifyTime   int64  `json:"notifyTime"`
 	closeTime    int64  `json:"closeTime"`
 	remark       string `json:"remark"`
-	createTime   int64  `json:"createTime"`
-	updateTime   int64  `json:"updateTime"`
+	createTimes  int64  `json:"createTimes"`
+	updateTimes  int64  `json:"updateTimes"`
 }
 
 // ====================
@@ -192,8 +192,8 @@ type WithdrawOrder {
 	notifyTime   int64  `json:"notifyTime"`
 	closeTime    int64  `json:"closeTime"`
 	remark       string `json:"remark"`
-	createTime   int64  `json:"createTime"`
-	updateTime   int64  `json:"updateTime"`
+	createTimes  int64  `json:"createTimes"`
+	updateTimes  int64  `json:"updateTimes"`
 }
 
 type CreateWithdrawOrderReq {

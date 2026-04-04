@@ -56,8 +56,8 @@ type (
 		Turnover       float64 `db:"turnover"`         // 成交额，对应 tu
 		QuoteTs        int64   `db:"quote_ts"`         // 行情时间戳(毫秒)，对应 t
 		TradeStatus    int64   `db:"trade_status"`     // 交易状态，对应 ts
-		CreateTime     int64   `db:"create_time"`      // 创建时间(毫秒)
-		UpdateTime     int64   `db:"update_time"`      // 更新时间(毫秒)
+		CreateTimes    int64   `db:"create_times"`     // 创建时间(毫秒)
+		UpdateTimes    int64   `db:"update_times"`     // 更新时间(毫秒)
 	}
 )
 
@@ -124,8 +124,8 @@ func (m *defaultTItickQuoteModel) Insert(ctx context.Context, data *TItickQuote)
 	tItickQuoteIdKey := fmt.Sprintf("%s%v", cacheTItickQuoteIdPrefix, data.Id)
 	tItickQuoteMarketSymbolKey := fmt.Sprintf("%s%v:%v", cacheTItickQuoteMarketSymbolPrefix, data.Market, data.Symbol)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickQuoteRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.Market, data.Symbol, data.LastPrice, data.OpenPrice, data.HighPrice, data.LowPrice, data.PrevClosePrice, data.ChangeValue, data.ChangeRate, data.Volume, data.Turnover, data.QuoteTs, data.TradeStatus)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickQuoteRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.Market, data.Symbol, data.LastPrice, data.OpenPrice, data.HighPrice, data.LowPrice, data.PrevClosePrice, data.ChangeValue, data.ChangeRate, data.Volume, data.Turnover, data.QuoteTs, data.TradeStatus, data.CreateTimes, data.UpdateTimes)
 	}, tItickQuoteIdKey, tItickQuoteMarketSymbolKey)
 	return ret, err
 }
@@ -140,7 +140,7 @@ func (m *defaultTItickQuoteModel) Update(ctx context.Context, newData *TItickQuo
 	tItickQuoteMarketSymbolKey := fmt.Sprintf("%s%v:%v", cacheTItickQuoteMarketSymbolPrefix, data.Market, data.Symbol)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickQuoteRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.Market, newData.Symbol, newData.LastPrice, newData.OpenPrice, newData.HighPrice, newData.LowPrice, newData.PrevClosePrice, newData.ChangeValue, newData.ChangeRate, newData.Volume, newData.Turnover, newData.QuoteTs, newData.TradeStatus, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.Market, newData.Symbol, newData.LastPrice, newData.OpenPrice, newData.HighPrice, newData.LowPrice, newData.PrevClosePrice, newData.ChangeValue, newData.ChangeRate, newData.Volume, newData.Turnover, newData.QuoteTs, newData.TradeStatus, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tItickQuoteIdKey, tItickQuoteMarketSymbolKey)
 	return err
 }

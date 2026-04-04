@@ -58,8 +58,8 @@ func (l *ListBanksLogic) ListBanks(req *types.ListBanksReq) (resp *types.ListBan
 			CountryCode:     bank.CountryCode,
 			IsDefault:       bank.IsDefault,
 			Status:          int64(bank.Status.Number()),
-			CreateTime:      bank.CreateTime,
-			UpdateTime:      bank.UpdateTime,
+			CreateTimes:      bank.CreateTimes,
+			UpdateTimes:      bank.UpdateTimes,
 		}
 	}
 	return &types.ListBanksResp{

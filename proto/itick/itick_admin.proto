@@ -122,10 +122,11 @@ message GetProductResp {
 message ListProductsReq {
   itick.PageReq page = 1;
   itick.CategoryType category_type = 2;
-  string market = 3;
-  string keyword = 4;
-  int32 enabled = 5; // 0全部 1启用 2禁用
-  int32 app_visible = 6; // 0全部 1显示 2隐藏
+  string category_name = 3;
+  string market = 4;
+  string keyword = 5;
+  int32 enabled = 6; // 0全部 1启用 2禁用
+  int32 app_visible = 7; // 0全部 1显示 2隐藏
 }
 
 message ListProductsResp {

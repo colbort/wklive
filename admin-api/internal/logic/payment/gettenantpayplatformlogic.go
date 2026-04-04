@@ -48,8 +48,8 @@ func (l *GetTenantPayPlatformLogic) GetTenantPayPlatform(req *types.GetTenantPay
 			Status:     int64(result.Data.Status),
 			OpenStatus: int64(result.Data.OpenStatus),
 			Remark:     result.Data.Remark,
-			CreateTime: result.Data.CreateTime,
-			UpdateTime: result.Data.UpdateTime,
+			CreateTimes: result.Data.CreateTimes,
+			UpdateTimes: result.Data.UpdateTimes,
 		},
 	}
 	return resp, nil

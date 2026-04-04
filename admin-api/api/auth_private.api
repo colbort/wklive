@@ -47,7 +47,7 @@ type UpdateProfileReq {
 }
 
 @server (
-	prefix: /admin
+	prefix: /admin/system
 	group:  auth_private
 	jwt:    Jwt
 )

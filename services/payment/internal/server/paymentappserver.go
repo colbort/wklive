@@ -66,9 +66,9 @@ func (s *PaymentAppServer) QueryMyRechargeOrderStatus(ctx context.Context, in *p
 }
 
 // 提现
-func (s *PaymentAppServer) Withdraw(ctx context.Context, in *payment.WithdrawReq) (*payment.WithdrawResp, error) {
-	l := logic.NewWithdrawLogic(ctx, s.svcCtx)
-	return l.Withdraw(in)
+func (s *PaymentAppServer) CreateWithdrawOrder(ctx context.Context, in *payment.CreateWithdrawOrderReq) (*payment.CreateWithdrawOrderResp, error) {
+	l := logic.NewCreateWithdrawOrderLogic(ctx, s.svcCtx)
+	return l.CreateWithdrawOrder(in)
 }
 
 // 获取提现订单列表

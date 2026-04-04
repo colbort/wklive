@@ -53,18 +53,18 @@ func (l *ListPayPlatformsLogic) ListPayPlatforms(req *types.ListPayPlatformsReq)
 			Icon:         item.Icon,
 			Status:       int64(item.Status),
 			Remark:       item.Remark,
-			CreateTime:   item.CreateTime,
-			UpdateTime:   item.UpdateTime,
+			CreateTimes:  item.CreateTimes,
+			UpdateTimes:  item.UpdateTimes,
 		}
 	}
 
 	resp = &types.ListPayPlatformsResp{
 		RespBase: types.RespBase{
-			Code:    result.Base.Code,
-			Msg:     result.Base.Msg,
-			Total:   result.Base.Total,
-			HasNext: result.Base.HasNext,
-			HasPrev: result.Base.HasPrev,
+			Code:       result.Base.Code,
+			Msg:        result.Base.Msg,
+			Total:      result.Base.Total,
+			HasNext:    result.Base.HasNext,
+			HasPrev:    result.Base.HasPrev,
 			NextCursor: result.Base.NextCursor,
 			PrevCursor: result.Base.PrevCursor,
 		},

@@ -57,8 +57,8 @@ func (l *GetMyRechargeStatLogic) GetMyRechargeStat(req *types.GetMyRechargeStatR
 			TodaySuccessCount:  result.Stat.TodaySuccessCount,
 			FirstSuccessTime:   result.Stat.FirstSuccessTime,
 			LastSuccessTime:    result.Stat.LastSuccessTime,
-			CreateTime:         result.Stat.CreateTime,
-			UpdateTime:         result.Stat.UpdateTime,
+			CreateTimes:         result.Stat.CreateTimes,
+			UpdateTimes:         result.Stat.UpdateTimes,
 		},
 	}
 

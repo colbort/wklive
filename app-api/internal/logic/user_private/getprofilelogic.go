@@ -69,8 +69,8 @@ func (l *GetProfileLogic) GetProfile() (resp *types.GetProfileResp, err error) {
 				SubmitTime:    result.Profile.Identity.SubmitTime,
 				VerifyTime:    result.Profile.Identity.VerifyTime,
 				VerifyBy:      result.Profile.Identity.VerifyBy,
-				CreateTime:    result.Profile.Identity.CreateTime,
-				UpdateTime:    result.Profile.Identity.UpdateTime,
+				CreateTimes:    result.Profile.Identity.CreateTimes,
+				UpdateTimes:    result.Profile.Identity.UpdateTimes,
 			},
 			Security: types.UserSecurity{
 				Id:              result.Profile.Security.Id,
@@ -82,8 +82,8 @@ func (l *GetProfileLogic) GetProfile() (resp *types.GetProfileResp, err error) {
 				PayErrorCount:   result.Profile.Security.PayErrorCount,
 				LockUntil:       result.Profile.Security.LockUntil,
 				RiskLevel:       int64(result.Profile.Security.RiskLevel.Number()),
-				CreateTime:      result.Profile.Security.CreateTime,
-				UpdateTime:      result.Profile.Security.UpdateTime,
+				CreateTimes:      result.Profile.Security.CreateTimes,
+				UpdateTimes:      result.Profile.Security.UpdateTimes,
 			},
 		},
 	}, nil

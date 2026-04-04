@@ -81,7 +81,7 @@ func (l *SysUserListLogic) SysUserList(in *system.SysUserListReq) (*system.SysUs
 			Nickname:         u.Nickname,
 			Status:           u.Status,
 			RoleIds:          roleMap[u.Id],
-			CreatedAt:        u.CreatedAt.UnixMilli(),
+			CreateTimes:      u.CreateTimes.UnixMilli(),
 			Google2FaEnabled: u.GoogleEnabled,
 		})
 	}

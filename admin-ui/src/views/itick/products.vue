@@ -83,6 +83,8 @@
       <el-table v-loading="loading" :data="list" stripe>
         <el-table-column prop="id" :label="t('common.id')" width="80" />
         <el-table-column prop="categoryType" :label="t('itick.categoryType')" width="100" />
+        <el-table-column prop="categoryName" :label="t('itick.categoryName')" min-width="140" />
+        <el-table-column prop="categoryCode" :label="t('itick.categoryCode')" min-width="140" />
         <el-table-column prop="market" :label="t('itick.market')" width="100" />
         <el-table-column prop="symbol" :label="t('itick.symbol')" min-width="120" />
         <el-table-column prop="code" :label="t('itick.code')" min-width="120" />
@@ -121,15 +123,15 @@
           show-overflow-tooltip
         />
 
-        <el-table-column :label="t('common.createdAt')" min-width="170">
+        <el-table-column :label="t('common.createTimes')" min-width="170">
           <template #default="{ row }">
-            {{ formatTime(row.createTime) }}
+            {{ formatTime(row.createTimes) }}
           </template>
         </el-table-column>
 
-        <el-table-column :label="t('itick.updateTime')" min-width="170">
+        <el-table-column :label="t('itick.updateTimes')" min-width="170">
           <template #default="{ row }">
-            {{ formatTime(row.updateTime) }}
+            {{ formatTime(row.updateTimes) }}
           </template>
         </el-table-column>
 
@@ -181,6 +183,29 @@
                 :precision="0"
                 controls-position="right"
                 style="width: 100%"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item :label="t('itick.categoryName')" prop="categoryName">
+              <el-input
+                v-model="form.categoryName"
+                :placeholder="t('itick.pleaseInputCategoryName')"
+                maxlength="100"
+                show-word-limit
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item :label="t('itick.categoryCode')" prop="categoryCode">
+              <el-input
+                v-model="form.categoryCode"
+                :placeholder="t('itick.categoryCode')"
+                maxlength="50"
+                show-word-limit
               />
             </el-form-item>
           </el-col>
@@ -329,6 +354,12 @@
         <el-descriptions-item :label="t('itick.categoryType')">{{
           detail.categoryType ?? '-'
         }}</el-descriptions-item>
+        <el-descriptions-item :label="t('itick.categoryName')">{{
+          detail.categoryName || '-'
+        }}</el-descriptions-item>
+        <el-descriptions-item :label="t('itick.categoryCode')">{{
+          detail.categoryCode || '-'
+        }}</el-descriptions-item>
         <el-descriptions-item :label="t('itick.market')">{{
           detail.market || '-'
         }}</el-descriptions-item>
@@ -377,11 +408,11 @@
         <el-descriptions-item :label="t('common.remark')" :span="2">{{
           detail.remark || '-'
         }}</el-descriptions-item>
-        <el-descriptions-item :label="t('common.createdAt')">
-          {{ formatTime(detail.createTime) }}
+        <el-descriptions-item :label="t('common.createTimes')">
+          {{ formatTime(detail.createTimes) }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.updateTime')">
-          {{ formatTime(detail.updateTime) }}
+        <el-descriptions-item :label="t('itick.updateTimes')">
+          {{ formatTime(detail.updateTimes) }}
         </el-descriptions-item>
       </el-descriptions>
 
@@ -410,6 +441,8 @@ import {
 type FormData = {
   id?: number
   categoryType?: number
+  categoryName: string
+  categoryCode: string
   market: string
   symbol: string
   code: string
@@ -448,6 +481,8 @@ const {
   initialData: {
     id: undefined,
     categoryType: undefined,
+    categoryName: '',
+    categoryCode: '',
     market: '',
     symbol: '',
     code: '',
@@ -473,6 +508,8 @@ const formMode = ref<'add' | 'edit'>('add')
 
 const rules: FormRules<FormData> = {
   categoryType: [{ required: true, message: t('itick.pleaseInputCategoryType'), trigger: 'blur' }],
+  categoryName: [{ required: true, message: t('itick.pleaseInputCategoryName'), trigger: 'blur' }],
+  categoryCode: [{ required: true, message: t('itick.categoryCode'), trigger: 'blur' }],
   market: [{ required: true, message: t('itick.pleaseInputMarket'), trigger: 'blur' }],
   symbol: [{ required: true, message: t('itick.pleaseInputSymbol'), trigger: 'blur' }],
   code: [{ required: true, message: t('itick.pleaseInputCode'), trigger: 'blur' }],
@@ -570,6 +607,8 @@ const handleEdit = async (row: ItickProduct) => {
     Object.assign(form, {
       id: data.id,
       categoryType: data.categoryType,
+      categoryName: data.categoryName || '',
+      categoryCode: data.categoryCode || '',
       market: data.market || '',
       symbol: data.symbol || '',
       code: data.code || '',
@@ -617,6 +656,8 @@ const submitForm = async () => {
     if (formMode.value === 'add') {
       await productsService.create({
         categoryType: Number(form.categoryType),
+        categoryName: form.categoryName,
+        categoryCode: form.categoryCode,
         market: form.market,
         symbol: form.symbol,
         code: form.code,

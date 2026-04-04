@@ -20,9 +20,9 @@ export type SysCronJobItem = {
   status: number
   remark?: string
   createBy: string
-  createTime: number
+  createTimes: number
   updateBy: string
-  updateTime: number
+  updateTimes: number
 }
 
 export type SysCronJobListReq = {
@@ -89,7 +89,7 @@ export type SysCronJobLogItem = {
   exceptionInfo?: string
   startTime: number
   endTime: number
-  createTime: number
+  createTimes: number
 }
 
 export type SysCronJobLogListReq = {

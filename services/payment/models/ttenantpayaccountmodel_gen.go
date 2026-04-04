@@ -9,7 +9,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
 	"github.com/zeromicro/go-zero/core/stores/cache"
@@ -61,8 +60,8 @@ type (
 		Status              int64          `db:"status"`                 // 状态：1启用 2停用
 		IsDefault           int64          `db:"is_default"`             // 是否默认账号：0否 1是
 		Remark              sql.NullString `db:"remark"`                 // 备注
-		CreateTime          time.Time      `db:"create_time"`            // 创建时间
-		UpdateTime          time.Time      `db:"update_time"`            // 更新时间
+		CreateTimes         int64          `db:"create_times"`           // 创建时间
+		UpdateTimes         int64          `db:"update_times"`           // 更新时间
 	}
 )
 
@@ -129,8 +128,8 @@ func (m *defaultTTenantPayAccountModel) Insert(ctx context.Context, data *TTenan
 	tTenantPayAccountIdKey := fmt.Sprintf("%s%v", cacheTTenantPayAccountIdPrefix, data.Id)
 	tTenantPayAccountTenantIdAccountCodeKey := fmt.Sprintf("%s%v:%v", cacheTTenantPayAccountTenantIdAccountCodePrefix, data.TenantId, data.AccountCode)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTenantPayAccountRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.TenantPayPlatformId, data.PlatformId, data.AccountCode, data.AccountName, data.AppId, data.MerchantId, data.MerchantName, data.ApiKeyCipher, data.ApiSecretCipher, data.PrivateKeyCipher, data.PublicKey, data.CertCipher, data.ExtConfig, data.Status, data.IsDefault, data.Remark)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTenantPayAccountRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.TenantPayPlatformId, data.PlatformId, data.AccountCode, data.AccountName, data.AppId, data.MerchantId, data.MerchantName, data.ApiKeyCipher, data.ApiSecretCipher, data.PrivateKeyCipher, data.PublicKey, data.CertCipher, data.ExtConfig, data.Status, data.IsDefault, data.Remark, data.CreateTimes, data.UpdateTimes)
 	}, tTenantPayAccountIdKey, tTenantPayAccountTenantIdAccountCodeKey)
 	return ret, err
 }
@@ -145,7 +144,7 @@ func (m *defaultTTenantPayAccountModel) Update(ctx context.Context, newData *TTe
 	tTenantPayAccountTenantIdAccountCodeKey := fmt.Sprintf("%s%v:%v", cacheTTenantPayAccountTenantIdAccountCodePrefix, data.TenantId, data.AccountCode)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tTenantPayAccountRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.TenantPayPlatformId, newData.PlatformId, newData.AccountCode, newData.AccountName, newData.AppId, newData.MerchantId, newData.MerchantName, newData.ApiKeyCipher, newData.ApiSecretCipher, newData.PrivateKeyCipher, newData.PublicKey, newData.CertCipher, newData.ExtConfig, newData.Status, newData.IsDefault, newData.Remark, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.TenantPayPlatformId, newData.PlatformId, newData.AccountCode, newData.AccountName, newData.AppId, newData.MerchantId, newData.MerchantName, newData.ApiKeyCipher, newData.ApiSecretCipher, newData.PrivateKeyCipher, newData.PublicKey, newData.CertCipher, newData.ExtConfig, newData.Status, newData.IsDefault, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tTenantPayAccountIdKey, tTenantPayAccountTenantIdAccountCodeKey)
 	return err
 }

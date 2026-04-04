@@ -8,14 +8,14 @@ CREATE TABLE `t_itick_category` (
   `sort` int NOT NULL DEFAULT '0' COMMENT '排序值,越小越靠前',
   `icon` varchar(255) NOT NULL DEFAULT '' COMMENT '图标',
   `remark` varchar(500) NOT NULL DEFAULT '' COMMENT '备注',
-  `create_time` bigint NOT NULL DEFAULT '0' COMMENT '创建时间(毫秒时间戳)',
-  `update_time` bigint NOT NULL DEFAULT '0' COMMENT '更新时间(毫秒时间戳)',
+  `create_times` bigint NOT NULL DEFAULT '0' COMMENT '创建时间(毫秒时间戳)',
+  `update_times` bigint NOT NULL DEFAULT '0' COMMENT '更新时间(毫秒时间戳)',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_category_type` (`category_type`),
   KEY `idx_enabled_visible_sort` (`enabled`, `app_visible`, `sort`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='itick产品类型表';
 
-INSERT INTO `t_itick_category` (`id`, `category_type`, `category_type_name`, `category_code`, `enabled`, `app_visible`, `sort`, `icon`, `remark`, `create_time`, `update_time`) VALUES
+INSERT INTO `t_itick_category` (`id`, `category_type`, `category_type_name`, `category_code`, `enabled`, `app_visible`, `sort`, `icon`, `remark`, `create_times`, `update_times`) VALUES
 (1, 1, '外汇', 'forex', 1, 1, 1, '', '', 0, 0),
 (2, 2, '加密货币', 'crypto', 1, 1, 2, '', '', 0, 0),
 (3, 3, '股票', 'stock', 1, 1, 3, '', '', 0, 0),
@@ -44,8 +44,8 @@ CREATE TABLE `t_itick_product` (
   `sort` int NOT NULL DEFAULT '0' COMMENT '排序值,越小越靠前',
   `icon` varchar(255) NOT NULL DEFAULT '' COMMENT '图标',
   `remark` varchar(500) NOT NULL DEFAULT '' COMMENT '备注',
-  `create_time` bigint NOT NULL DEFAULT '0' COMMENT '创建时间(毫秒时间戳)',
-  `update_time` bigint NOT NULL DEFAULT '0' COMMENT '更新时间(毫秒时间戳)',
+  `create_times` bigint NOT NULL DEFAULT '0' COMMENT '创建时间(毫秒时间戳)',
+  `update_times` bigint NOT NULL DEFAULT '0' COMMENT '更新时间(毫秒时间戳)',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_type_market_symbol` (`category_type`, `market`, `symbol`),
   KEY `idx_category_type` (`category_type`),
@@ -63,8 +63,8 @@ CREATE TABLE `t_itick_tenant_category` (
   `app_visible` tinyint NOT NULL DEFAULT '1' COMMENT 'APP是否可见: 0-否 1-是',
   `sort` int NOT NULL DEFAULT '0' COMMENT '租户排序, 越小越靠前',
   `remark` varchar(500) NOT NULL DEFAULT '' COMMENT '备注',
-  `create_time` bigint NOT NULL DEFAULT '0' COMMENT '创建时间(毫秒时间戳)',
-  `update_time` bigint NOT NULL DEFAULT '0' COMMENT '更新时间(毫秒时间戳)',
+  `create_times` bigint NOT NULL DEFAULT '0' COMMENT '创建时间(毫秒时间戳)',
+  `update_times` bigint NOT NULL DEFAULT '0' COMMENT '更新时间(毫秒时间戳)',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_category` (`tenant_id`, `category_id`),
   KEY `idx_tenant_visible_sort` (`tenant_id`, `enabled`, `app_visible`, `sort`),
@@ -80,8 +80,8 @@ CREATE TABLE `t_itick_tenant_product` (
   `app_visible` tinyint NOT NULL DEFAULT '1' COMMENT 'APP是否可见: 0-否 1-是',
   `sort` int NOT NULL DEFAULT '0' COMMENT '租户排序, 越小越靠前',
   `remark` varchar(500) NOT NULL DEFAULT '' COMMENT '备注',
-  `create_time` bigint NOT NULL DEFAULT '0' COMMENT '创建时间(毫秒时间戳)',
-  `update_time` bigint NOT NULL DEFAULT '0' COMMENT '更新时间(毫秒时间戳)',
+  `create_times` bigint NOT NULL DEFAULT '0' COMMENT '创建时间(毫秒时间戳)',
+  `update_times` bigint NOT NULL DEFAULT '0' COMMENT '更新时间(毫秒时间戳)',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_product` (`tenant_id`, `product_id`),
   KEY `idx_tenant_visible_sort` (`tenant_id`, `enabled`, `app_visible`, `sort`),
@@ -96,8 +96,8 @@ CREATE TABLE `t_itick_sync_task` (
   `biz_id` bigint NOT NULL DEFAULT 0 COMMENT '业务id，比如category_id',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '0待执行 1执行中 2成功 3失败',
   `message` varchar(500) NOT NULL DEFAULT '' COMMENT '结果描述',
-  `created_at` bigint NOT NULL DEFAULT 0,
-  `updated_at` bigint NOT NULL DEFAULT 0,
+  `create_times` bigint NOT NULL DEFAULT 0,
+  `update_times` bigint NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_task_no` (`task_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -123,8 +123,8 @@ CREATE TABLE `t_itick_quote` (
   `quote_ts` bigint NOT NULL DEFAULT 0 COMMENT '行情时间戳(毫秒)，对应 t',
   `trade_status` tinyint NOT NULL DEFAULT 0 COMMENT '交易状态，对应 ts',
 
-  `create_time` bigint NOT NULL DEFAULT 0 COMMENT '创建时间(毫秒)',
-  `update_time` bigint NOT NULL DEFAULT 0 COMMENT '更新时间(毫秒)',
+  `create_times` bigint NOT NULL DEFAULT 0 COMMENT '创建时间(毫秒)',
+  `update_times` bigint NOT NULL DEFAULT 0 COMMENT '更新时间(毫秒)',
 
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_market_symbol` (`market`, `symbol`),

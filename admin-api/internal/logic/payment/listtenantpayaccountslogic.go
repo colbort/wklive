@@ -60,8 +60,8 @@ func (l *ListTenantPayAccountsLogic) ListTenantPayAccounts(req *types.ListTenant
 			Status:              int64(item.Status),
 			IsDefault:           item.IsDefault,
 			Remark:              item.Remark,
-			CreateTime:          item.CreateTime,
-			UpdateTime:          item.UpdateTime,
+			CreateTimes:          item.CreateTimes,
+			UpdateTimes:          item.UpdateTimes,
 		}
 	}
 

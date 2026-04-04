@@ -50,8 +50,8 @@ func (l *GetPayPlatformLogic) GetPayPlatform(req *types.GetPayPlatformReq) (resp
 			Icon:         result.Data.Icon,
 			Status:       int64(result.Data.Status),
 			Remark:       result.Data.Remark,
-			CreateTime:   result.Data.CreateTime,
-			UpdateTime:   result.Data.UpdateTime,
+			CreateTimes:   result.Data.CreateTimes,
+			UpdateTimes:   result.Data.UpdateTimes,
 		},
 	}
 	return resp, nil

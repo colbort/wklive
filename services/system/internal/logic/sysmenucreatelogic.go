@@ -52,19 +52,19 @@ func (l *SysMenuCreateLogic) SysMenuCreate(in *system.SysMenuCreateReq) (*system
 		}, nil
 	}
 	_, err = l.svcCtx.MenuModel.Insert(l.ctx, &models.SysMenu{
-		ParentId:  in.ParentId,
-		Name:      in.Name,
-		MenuType:  in.MenuType,
-		Method:    in.Method,
-		Path:      in.Path,
-		Component: in.Component,
-		Perms:     in.Perms,
-		Icon:      in.Icon,
-		Sort:      in.Sort,
-		Visible:   in.Visible,
-		Status:    in.Status,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		ParentId:    in.ParentId,
+		Name:        in.Name,
+		MenuType:    in.MenuType,
+		Method:      in.Method,
+		Path:        in.Path,
+		Component:   in.Component,
+		Perms:       in.Perms,
+		Icon:        in.Icon,
+		Sort:        in.Sort,
+		Visible:     in.Visible,
+		Status:      in.Status,
+		CreateTimes: time.Now(),
+		UpdateTimes: time.Now(),
 	})
 	if err != nil {
 		return nil, err

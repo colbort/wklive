@@ -47,8 +47,8 @@ type (
 		ConfigKey   sql.NullString `db:"config_key"`
 		ConfigValue sql.NullString `db:"config_value"`
 		Remark      sql.NullString `db:"remark"`
-		CreatedAt   time.Time      `db:"created_at"`
-		UpdatedAt   time.Time      `db:"updated_at"`
+		CreateTimes time.Time      `db:"create_times"`
+		UpdateTimes time.Time      `db:"update_times"`
 	}
 )
 
@@ -115,8 +115,8 @@ func (m *defaultSysConfigModel) Insert(ctx context.Context, data *SysConfig) (sq
 	sysConfigConfigKeyKey := fmt.Sprintf("%s%v", cacheSysConfigConfigKeyPrefix, data.ConfigKey)
 	sysConfigIdKey := fmt.Sprintf("%s%v", cacheSysConfigIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?)", m.table, sysConfigRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.ConfigKey, data.ConfigValue, data.Remark)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?)", m.table, sysConfigRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.ConfigKey, data.ConfigValue, data.Remark, data.CreateTimes, data.UpdateTimes)
 	}, sysConfigConfigKeyKey, sysConfigIdKey)
 	return ret, err
 }
@@ -131,7 +131,7 @@ func (m *defaultSysConfigModel) Update(ctx context.Context, newData *SysConfig) 
 	sysConfigIdKey := fmt.Sprintf("%s%v", cacheSysConfigIdPrefix, data.Id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysConfigRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.ConfigKey, newData.ConfigValue, newData.Remark, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.ConfigKey, newData.ConfigValue, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, sysConfigConfigKeyKey, sysConfigIdKey)
 	return err
 }

@@ -42,15 +42,15 @@ type (
 	}
 
 	TItickTenantProduct struct {
-		Id         int64  `db:"id"`          // 主键ID
-		TenantId   int64  `db:"tenant_id"`   // 租户ID
-		ProductId  int64  `db:"product_id"`  // 产品ID, 对应 itick_product.id
-		Enabled    int64  `db:"enabled"`     // 是否启用: 0-否 1-是
-		AppVisible int64  `db:"app_visible"` // APP是否可见: 0-否 1-是
-		Sort       int64  `db:"sort"`        // 租户排序, 越小越靠前
-		Remark     string `db:"remark"`      // 备注
-		CreateTime int64  `db:"create_time"` // 创建时间(毫秒时间戳)
-		UpdateTime int64  `db:"update_time"` // 更新时间(毫秒时间戳)
+		Id          int64  `db:"id"`           // 主键ID
+		TenantId    int64  `db:"tenant_id"`    // 租户ID
+		ProductId   int64  `db:"product_id"`   // 产品ID, 对应 itick_product.id
+		Enabled     int64  `db:"enabled"`      // 是否启用: 0-否 1-是
+		AppVisible  int64  `db:"app_visible"`  // APP是否可见: 0-否 1-是
+		Sort        int64  `db:"sort"`         // 租户排序, 越小越靠前
+		Remark      string `db:"remark"`       // 备注
+		CreateTimes int64  `db:"create_times"` // 创建时间(毫秒时间戳)
+		UpdateTimes int64  `db:"update_times"` // 更新时间(毫秒时间戳)
 	}
 )
 
@@ -117,8 +117,8 @@ func (m *defaultTItickTenantProductModel) Insert(ctx context.Context, data *TIti
 	tItickTenantProductIdKey := fmt.Sprintf("%s%v", cacheTItickTenantProductIdPrefix, data.Id)
 	tItickTenantProductTenantIdProductIdKey := fmt.Sprintf("%s%v:%v", cacheTItickTenantProductTenantIdProductIdPrefix, data.TenantId, data.ProductId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?)", m.table, tItickTenantProductRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.ProductId, data.Enabled, data.AppVisible, data.Sort, data.Remark)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickTenantProductRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.ProductId, data.Enabled, data.AppVisible, data.Sort, data.Remark, data.CreateTimes, data.UpdateTimes)
 	}, tItickTenantProductIdKey, tItickTenantProductTenantIdProductIdKey)
 	return ret, err
 }
@@ -133,7 +133,7 @@ func (m *defaultTItickTenantProductModel) Update(ctx context.Context, newData *T
 	tItickTenantProductTenantIdProductIdKey := fmt.Sprintf("%s%v:%v", cacheTItickTenantProductTenantIdProductIdPrefix, data.TenantId, data.ProductId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickTenantProductRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.ProductId, newData.Enabled, newData.AppVisible, newData.Sort, newData.Remark, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.ProductId, newData.Enabled, newData.AppVisible, newData.Sort, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tItickTenantProductIdKey, tItickTenantProductTenantIdProductIdKey)
 	return err
 }

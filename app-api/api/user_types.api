@@ -36,8 +36,8 @@ type UserBase {
 	registerTime   int64  `json:"registerTime,optional"`
 	remark         string `json:"remark,optional"`
 	deleted        bool   `json:"deleted"`
-	createTime     int64  `json:"createTime,optional"`
-	updateTime     int64  `json:"updateTime,optional"`
+	createTimes    int64  `json:"createTimes,optional"`
+	updateTimes    int64  `json:"updateTimes,optional"`
 }
 
 type UserIdentity {
@@ -64,8 +64,8 @@ type UserIdentity {
 	submitTime    int64  `json:"submitTime,optional"`
 	verifyTime    int64  `json:"verifyTime,optional"`
 	verifyBy      int64  `json:"verifyBy,optional"`
-	createTime    int64  `json:"createTime,optional"`
-	updateTime    int64  `json:"updateTime,optional"`
+	createTimes   int64  `json:"createTimes,optional"`
+	updateTimes   int64  `json:"updateTimes,optional"`
 }
 
 type UserSecurity {
@@ -78,8 +78,8 @@ type UserSecurity {
 	payErrorCount   int32 `json:"payErrorCount"`
 	lockUntil       int64 `json:"lockUntil,optional"`
 	riskLevel       int64 `json:"riskLevel"`
-	createTime      int64 `json:"createTime,optional"`
-	updateTime      int64 `json:"updateTime,optional"`
+	createTimes     int64 `json:"createTimes,optional"`
+	updateTimes     int64 `json:"updateTimes,optional"`
 }
 
 type UserBank {
@@ -95,8 +95,8 @@ type UserBank {
 	countryCode     string `json:"countryCode,optional"`
 	isDefault       bool   `json:"isDefault"`
 	status          int64  `json:"status"`
-	createTime      int64  `json:"createTime,optional"`
-	updateTime      int64  `json:"updateTime,optional"`
+	createTimes     int64  `json:"createTimes,optional"`
+	updateTimes     int64  `json:"updateTimes,optional"`
 }
 
 type UserProfile {
@@ -163,6 +163,6 @@ type UserBankListItem {
 	countryCode     string `json:"countryCode,optional"`
 	isDefault       bool   `json:"isDefault"`
 	status          int64  `json:"status"`
-	createTime      int64  `json:"createTime,optional"`
+	createTimes     int64  `json:"createTimes,optional"`
 }
 

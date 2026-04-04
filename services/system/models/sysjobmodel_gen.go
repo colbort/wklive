@@ -9,7 +9,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
 	"github.com/zeromicro/go-zero/core/stores/cache"
@@ -49,9 +48,9 @@ type (
 		Status         int64          `db:"status"`          // 状态：0停用 1启用
 		Remark         sql.NullString `db:"remark"`          // 备注
 		CreateBy       sql.NullString `db:"create_by"`       // 创建人
-		CreateTime     time.Time      `db:"create_time"`     // 创建时间
+		CreateTimes    int64          `db:"create_times"`    // 创建时间
 		UpdateBy       sql.NullString `db:"update_by"`       // 更新人
-		UpdateTime     time.Time      `db:"update_time"`     // 更新时间
+		UpdateTimes    int64          `db:"update_times"`    // 更新时间
 	}
 )
 
@@ -91,8 +90,8 @@ func (m *defaultSysJobModel) FindOne(ctx context.Context, id int64) (*SysJob, er
 func (m *defaultSysJobModel) Insert(ctx context.Context, data *SysJob) (sql.Result, error) {
 	sysJobIdKey := fmt.Sprintf("%s%v", cacheSysJobIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysJobRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.JobName, data.JobGroup, data.InvokeTarget, data.CronExpression, data.Status, data.Remark, data.CreateBy, data.UpdateBy)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysJobRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.JobName, data.JobGroup, data.InvokeTarget, data.CronExpression, data.Status, data.Remark, data.CreateBy, data.CreateTimes, data.UpdateBy, data.UpdateTimes)
 	}, sysJobIdKey)
 	return ret, err
 }
@@ -101,7 +100,7 @@ func (m *defaultSysJobModel) Update(ctx context.Context, data *SysJob) error {
 	sysJobIdKey := fmt.Sprintf("%s%v", cacheSysJobIdPrefix, data.Id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysJobRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.JobName, data.JobGroup, data.InvokeTarget, data.CronExpression, data.Status, data.Remark, data.CreateBy, data.UpdateBy, data.Id)
+		return conn.ExecCtx(ctx, query, data.JobName, data.JobGroup, data.InvokeTarget, data.CronExpression, data.Status, data.Remark, data.CreateBy, data.CreateTimes, data.UpdateBy, data.UpdateTimes, data.Id)
 	}, sysJobIdKey)
 	return err
 }

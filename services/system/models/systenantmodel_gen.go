@@ -9,7 +9,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
 	"github.com/zeromicro/go-zero/core/stores/cache"
@@ -49,17 +48,17 @@ type (
 		TenantPassword string         `db:"tenant_password"` // 租户管理员密码（bcrypt加密）
 		TenantName     string         `db:"tenant_name"`     // 租户名称
 		Status         int64          `db:"status"`          // 状态：1正常 2禁用
-		ExpireTime     sql.NullTime   `db:"expire_time"`     // 到期时间
+		ExpireTime     int64          `db:"expire_time"`     // 到期时间
 		ContactName    sql.NullString `db:"contact_name"`    // 联系人
 		ContactPhone   sql.NullString `db:"contact_phone"`   // 联系电话
 		LoginIp        sql.NullString `db:"login_ip"`        // 最后登录IP
-		LoginTime      sql.NullTime   `db:"login_time"`      // 最后登录时间
+		LoginTime      int64          `db:"login_time"`      // 最后登录时间
 		LoginCount     int64          `db:"login_count"`     // 登录次数
 		Remark         sql.NullString `db:"remark"`          // 备注
 		CreateBy       sql.NullString `db:"create_by"`       // 创建人
-		CreateTime     time.Time      `db:"create_time"`     // 创建时间
+		CreateTimes    int64          `db:"create_times"`    // 创建时间
 		UpdateBy       sql.NullString `db:"update_by"`       // 更新人
-		UpdateTime     time.Time      `db:"update_time"`     // 更新时间
+		UpdateTimes    int64          `db:"update_times"`    // 更新时间
 	}
 )
 
@@ -126,8 +125,8 @@ func (m *defaultSysTenantModel) Insert(ctx context.Context, data *SysTenant) (sq
 	sysTenantIdKey := fmt.Sprintf("%s%v", cacheSysTenantIdPrefix, data.Id)
 	sysTenantTenantCodeKey := fmt.Sprintf("%s%v", cacheSysTenantTenantCodePrefix, data.TenantCode)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysTenantRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantCode, data.TenantUsername, data.TenantPassword, data.TenantName, data.Status, data.ExpireTime, data.ContactName, data.ContactPhone, data.LoginIp, data.LoginTime, data.LoginCount, data.Remark, data.CreateBy, data.UpdateBy)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysTenantRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantCode, data.TenantUsername, data.TenantPassword, data.TenantName, data.Status, data.ExpireTime, data.ContactName, data.ContactPhone, data.LoginIp, data.LoginTime, data.LoginCount, data.Remark, data.CreateBy, data.CreateTimes, data.UpdateBy, data.UpdateTimes)
 	}, sysTenantIdKey, sysTenantTenantCodeKey)
 	return ret, err
 }
@@ -142,7 +141,7 @@ func (m *defaultSysTenantModel) Update(ctx context.Context, newData *SysTenant) 
 	sysTenantTenantCodeKey := fmt.Sprintf("%s%v", cacheSysTenantTenantCodePrefix, data.TenantCode)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysTenantRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantCode, newData.TenantUsername, newData.TenantPassword, newData.TenantName, newData.Status, newData.ExpireTime, newData.ContactName, newData.ContactPhone, newData.LoginIp, newData.LoginTime, newData.LoginCount, newData.Remark, newData.CreateBy, newData.UpdateBy, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantCode, newData.TenantUsername, newData.TenantPassword, newData.TenantName, newData.Status, newData.ExpireTime, newData.ContactName, newData.ContactPhone, newData.LoginIp, newData.LoginTime, newData.LoginCount, newData.Remark, newData.CreateBy, newData.CreateTimes, newData.UpdateBy, newData.UpdateTimes, newData.Id)
 	}, sysTenantIdKey, sysTenantTenantCodeKey)
 	return err
 }

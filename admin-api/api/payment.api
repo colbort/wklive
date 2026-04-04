@@ -13,8 +13,8 @@ type PayPlatform {
 	icon         string `json:"icon"`
 	status       int64  `json:"status"` // 0未知 1启用 2禁用
 	remark       string `json:"remark"`
-	createTime   int64  `json:"createTime"`
-	updateTime   int64  `json:"updateTime"`
+	createTimes  int64  `json:"createTimes"`
+	updateTimes  int64  `json:"updateTimes"`
 }
 
 type PayProduct {
@@ -26,19 +26,19 @@ type PayProduct {
 	currency    string `json:"currency"`
 	status      int64  `json:"status"` // 0未知 1启用 2禁用
 	remark      string `json:"remark"`
-	createTime  int64  `json:"createTime"`
-	updateTime  int64  `json:"updateTime"`
+	createTimes int64  `json:"createTimes"`
+	updateTimes int64  `json:"updateTimes"`
 }
 
 type TenantPayPlatform {
-	id         int64  `json:"id"`
-	tenantId   int64  `json:"tenantId"`
-	platformId int64  `json:"platformId"`
-	status     int64  `json:"status"` // 0未知 1启用 2禁用
-	openStatus int64  `json:"openStatus"` // 0未知 1待配置 2已开通 3审核中 4已拒绝
-	remark     string `json:"remark"`
-	createTime int64  `json:"createTime"`
-	updateTime int64  `json:"updateTime"`
+	id          int64  `json:"id"`
+	tenantId    int64  `json:"tenantId"`
+	platformId  int64  `json:"platformId"`
+	status      int64  `json:"status"` // 0未知 1启用 2禁用
+	openStatus  int64  `json:"openStatus"` // 0未知 1待配置 2已开通 3审核中 4已拒绝
+	remark      string `json:"remark"`
+	createTimes int64  `json:"createTimes"`
+	updateTimes int64  `json:"updateTimes"`
 }
 
 type TenantPayAccount {
@@ -56,8 +56,8 @@ type TenantPayAccount {
 	status              int64  `json:"status"` // 0未知 1启用 2禁用
 	isDefault           bool   `json:"isDefault"`
 	remark              string `json:"remark"`
-	createTime          int64  `json:"createTime"`
-	updateTime          int64  `json:"updateTime"`
+	createTimes         int64  `json:"createTimes"`
+	updateTimes         int64  `json:"updateTimes"`
 }
 
 type TenantPayChannel {
@@ -83,8 +83,8 @@ type TenantPayChannel {
 	feeFixedAmount  int64  `json:"feeFixedAmount"`
 	extConfig       string `json:"extConfig"`
 	remark          string `json:"remark"`
-	createTime      int64  `json:"createTime"`
-	updateTime      int64  `json:"updateTime"`
+	createTimes     int64  `json:"createTimes"`
+	updateTimes     int64  `json:"updateTimes"`
 }
 
 type TenantPayChannelRule {
@@ -107,8 +107,8 @@ type TenantPayChannelRule {
 	allowTags            string `json:"allowTags"`
 	denyTags             string `json:"denyTags"`
 	remark               string `json:"remark"`
-	createTime           int64  `json:"createTime"`
-	updateTime           int64  `json:"updateTime"`
+	createTimes          int64  `json:"createTimes"`
+	updateTimes          int64  `json:"updateTimes"`
 }
 
 type UserRechargeStat {
@@ -121,8 +121,8 @@ type UserRechargeStat {
 	todaySuccessCount  int64 `json:"todaySuccessCount"`
 	firstSuccessTime   int64 `json:"firstSuccessTime"`
 	lastSuccessTime    int64 `json:"lastSuccessTime"`
-	createTime         int64 `json:"createTime"`
-	updateTime         int64 `json:"updateTime"`
+	createTimes        int64 `json:"createTimes"`
+	updateTimes        int64 `json:"updateTimes"`
 }
 
 type RechargeOrder {
@@ -156,8 +156,8 @@ type RechargeOrder {
 	notifyTime   int64  `json:"notifyTime"`
 	closeTime    int64  `json:"closeTime"`
 	remark       string `json:"remark"`
-	createTime   int64  `json:"createTime"`
-	updateTime   int64  `json:"updateTime"`
+	createTimes  int64  `json:"createTimes"`
+	updateTimes  int64  `json:"updateTimes"`
 }
 
 type PayNotifyLog {
@@ -173,7 +173,7 @@ type PayNotifyLog {
 	processResult string `json:"processResult"`
 	errorMessage  string `json:"errorMessage"`
 	notifyTime    int64  `json:"notifyTime"`
-	createTime    int64  `json:"createTime"`
+	createTimes   int64  `json:"createTimes"`
 }
 
 // ====================
@@ -649,8 +649,8 @@ type WithdrawOrder {
 	notifyTime   int64  `json:"notifyTime"`
 	closeTime    int64  `json:"closeTime"`
 	remark       string `json:"remark"`
-	createTime   int64  `json:"createTime"`
-	updateTime   int64  `json:"updateTime"`
+	createTimes  int64  `json:"createTimes"`
+	updateTimes  int64  `json:"updateTimes"`
 }
 
 type ListWithdrawOrdersReq {

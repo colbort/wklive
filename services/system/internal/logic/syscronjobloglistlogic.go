@@ -53,9 +53,9 @@ func (l *SysCronJobLogListLogic) SysCronJobLogList(in *system.SysCronJobLogListR
 			Status:         item.Status,
 			Message:        item.Message.String,
 			ExceptionInfo:  item.ExceptionInfo.String,
-			StartTime:      item.StartTime.Time.Unix(),
-			EndTime:        item.EndTime.Time.Unix(),
-			CreateTime:     item.CreateTime.Unix(),
+			StartTime:      item.StartTime,
+			EndTime:        item.EndTime,
+			CreateTimes:    item.CreateTimes,
 		})
 	}
 

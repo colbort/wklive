@@ -4,17 +4,19 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
+	"github.com/zeromicro/go-zero/core/stringx"
 )
 
 type ItickProductModel interface {
 	tItickProductModel
-	FindPage(ctx context.Context, categoryType int32, market string, keyword string, enabled int32, appVisible int32, cursor int64, limit int64) ([]*TItickProduct, int64, error)
+	FindPage(ctx context.Context, categoryType int32, categoryName string, market string, keyword string, enabled int32, appVisible int32, cursor int64, limit int64) ([]*TItickProduct, int64, error)
 	Upsert(ctx context.Context, data *TItickProduct) (sql.Result, error)
 }
 
-func (m *defaultTItickProductModel) FindPage(ctx context.Context, categoryType int32, market string, keyword string, enabled int32, appVisible int32, cursor int64, limit int64) ([]*TItickProduct, int64, error) {
+func (m *defaultTItickProductModel) FindPage(ctx context.Context, categoryType int32, categoryName string, market string, keyword string, enabled int32, appVisible int32, cursor int64, limit int64) ([]*TItickProduct, int64, error) {
 	if limit <= 0 {
 		limit = 10
 	}
@@ -28,6 +30,11 @@ func (m *defaultTItickProductModel) FindPage(ctx context.Context, categoryType i
 	if categoryType != 0 {
 		where += " AND category_type = ?"
 		args = append(args, categoryType)
+	}
+
+	if categoryName != "" {
+		where += " AND category_name = ?"
+		args = append(args, categoryName)
 	}
 
 	if market != "" {
@@ -95,30 +102,33 @@ func (m *defaultTItickProductModel) Upsert(ctx context.Context, data *TItickProd
 	)
 	tItickProductIdKey := fmt.Sprintf("%s%v", cacheTItickProductIdPrefix, data.Id)
 
-	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+	feilds := strings.Join(stringx.Remove(tItickProductFieldNames, "`id`"), ",")
 
+	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
 		query := fmt.Sprintf(`
-			INSERT INTO %s (%s)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-			ON DUPLICATE KEY UPDATE
-				code = VALUES(code),
-				name = VALUES(name),
-				display_name = VALUES(display_name),
-				exchange = VALUES(exchange),
-				sector = VALUES(sector),
-				lug = VALUES(lug),
-				base_coin = VALUES(base_coin),
-				quote_coin = VALUES(quote_coin),
-				enabled = VALUES(enabled),
-				app_visible = VALUES(app_visible),
-				sort = VALUES(sort),
-				icon = VALUES(icon),
-				remark = VALUES(remark),
-				update_time = VALUES(update_time)
-		`, m.table, tItickProductRowsExpectAutoSet)
+            INSERT INTO %s (%s)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+                code = VALUES(code),
+                name = VALUES(name),
+                display_name = VALUES(display_name),
+                exchange = VALUES(exchange),
+                sector = VALUES(sector),
+                lug = VALUES(lug),
+                base_coin = VALUES(base_coin),
+                quote_coin = VALUES(quote_coin),
+                enabled = VALUES(enabled),
+                app_visible = VALUES(app_visible),
+                sort = VALUES(sort),
+                icon = VALUES(icon),
+                remark = VALUES(remark),
+                update_times = VALUES(update_times)
+        `, m.table, feilds)
 
 		return conn.ExecCtx(ctx, query,
 			data.CategoryType,
+			data.CategoryName,
+			data.CategoryCode,
 			data.Market,
 			data.Symbol,
 			data.Code,
@@ -134,6 +144,8 @@ func (m *defaultTItickProductModel) Upsert(ctx context.Context, data *TItickProd
 			data.Sort,
 			data.Icon,
 			data.Remark,
+			data.CreateTimes,
+			data.UpdateTimes,
 		)
 	}, tItickProductCategoryTypeMarketSymbolKey, tItickProductIdKey)
 

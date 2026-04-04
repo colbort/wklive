@@ -9,7 +9,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
 	"github.com/zeromicro/go-zero/core/stores/cache"
@@ -66,12 +65,12 @@ type (
 		RequestData  sql.NullString `db:"request_data"`   // 请求快照
 		ResponseData sql.NullString `db:"response_data"`  // 响应快照
 		NotifyData   sql.NullString `db:"notify_data"`    // 回调数据
-		ProcessTime  sql.NullTime   `db:"process_time"`   // 处理时间
-		NotifyTime   sql.NullTime   `db:"notify_time"`    // 回调时间
-		CloseTime    sql.NullTime   `db:"close_time"`     // 关闭时间
+		ProcessTime  sql.NullInt64  `db:"process_time"`   // 处理时间
+		NotifyTime   sql.NullInt64  `db:"notify_time"`    // 回调时间
+		CloseTime    sql.NullInt64  `db:"close_time"`     // 关闭时间
 		Remark       sql.NullString `db:"remark"`         // 备注
-		CreateTime   time.Time      `db:"create_time"`    // 创建时间
-		UpdateTime   time.Time      `db:"update_time"`    // 更新时间
+		CreateTimes  int64          `db:"create_times"`   // 创建时间
+		UpdateTimes  int64          `db:"update_times"`   // 更新时间
 	}
 )
 
@@ -160,8 +159,8 @@ func (m *defaultTWithdrawOrderModel) Insert(ctx context.Context, data *TWithdraw
 	tWithdrawOrderOrderNoKey := fmt.Sprintf("%s%v", cacheTWithdrawOrderOrderNoPrefix, data.OrderNo)
 	tWithdrawOrderTenantIdBizOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTWithdrawOrderTenantIdBizOrderNoPrefix, data.TenantId, data.BizOrderNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tWithdrawOrderRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.OrderNo, data.BizOrderNo, data.PlatformId, data.ProductId, data.AccountId, data.ChannelId, data.Currency, data.Amount, data.FeeAmount, data.ActualAmount, data.ClientType, data.ClientIp, data.Status, data.ThirdTradeNo, data.ThirdOrderNo, data.RequestData, data.ResponseData, data.NotifyData, data.ProcessTime, data.NotifyTime, data.CloseTime, data.Remark)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tWithdrawOrderRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.OrderNo, data.BizOrderNo, data.PlatformId, data.ProductId, data.AccountId, data.ChannelId, data.Currency, data.Amount, data.FeeAmount, data.ActualAmount, data.ClientType, data.ClientIp, data.Status, data.ThirdTradeNo, data.ThirdOrderNo, data.RequestData, data.ResponseData, data.NotifyData, data.ProcessTime, data.NotifyTime, data.CloseTime, data.Remark, data.CreateTimes, data.UpdateTimes)
 	}, tWithdrawOrderIdKey, tWithdrawOrderOrderNoKey, tWithdrawOrderTenantIdBizOrderNoKey)
 	return ret, err
 }
@@ -177,7 +176,7 @@ func (m *defaultTWithdrawOrderModel) Update(ctx context.Context, newData *TWithd
 	tWithdrawOrderTenantIdBizOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTWithdrawOrderTenantIdBizOrderNoPrefix, data.TenantId, data.BizOrderNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tWithdrawOrderRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.OrderNo, newData.BizOrderNo, newData.PlatformId, newData.ProductId, newData.AccountId, newData.ChannelId, newData.Currency, newData.Amount, newData.FeeAmount, newData.ActualAmount, newData.ClientType, newData.ClientIp, newData.Status, newData.ThirdTradeNo, newData.ThirdOrderNo, newData.RequestData, newData.ResponseData, newData.NotifyData, newData.ProcessTime, newData.NotifyTime, newData.CloseTime, newData.Remark, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.OrderNo, newData.BizOrderNo, newData.PlatformId, newData.ProductId, newData.AccountId, newData.ChannelId, newData.Currency, newData.Amount, newData.FeeAmount, newData.ActualAmount, newData.ClientType, newData.ClientIp, newData.Status, newData.ThirdTradeNo, newData.ThirdOrderNo, newData.RequestData, newData.ResponseData, newData.NotifyData, newData.ProcessTime, newData.NotifyTime, newData.CloseTime, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tWithdrawOrderIdKey, tWithdrawOrderOrderNoKey, tWithdrawOrderTenantIdBizOrderNoKey)
 	return err
 }
