@@ -29,11 +29,12 @@ func NewGetProductKlineLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 
 func (l *GetProductKlineLogic) GetProductKline(req *types.GetProductKlineReq) (resp *types.GetProductKlineResp, err error) {
 	result, err := l.svcCtx.ItickCli.GetProductKline(l.ctx, &itick.GetProductKlineReq{
-		Market: req.Market,
-		Symbol: req.Symbol,
-		KType:  itick.KlineType(req.KType),
-		EndTs:  req.EndTs,
-		Limit:  req.Limit,
+		CategoryCode: req.CategoryCode,
+		Market:       req.Market,
+		Symbol:       req.Symbol,
+		KType:        itick.KlineType(req.KType),
+		EndTs:        req.EndTs,
+		Limit:        req.Limit,
 	})
 	if err != nil {
 		return nil, err
@@ -41,16 +42,17 @@ func (l *GetProductKlineLogic) GetProductKline(req *types.GetProductKlineReq) (r
 	data := make([]types.Kline, 0)
 	for _, item := range result.Data {
 		data = append(data, types.Kline{
-			Market:   item.Market,
-			Symbol:   item.Symbol,
-			KType:    int64(item.KType),
-			Ts:       item.Ts,
-			Open:     item.Open,
-			High:     item.High,
-			Low:      item.Low,
-			Close:    item.Close,
-			Volume:   item.Volume,
-			Turnover: item.Turnover,
+			CategoryCode: item.CategoryCode,
+			Market:       item.Market,
+			Symbol:       item.Symbol,
+			KType:        int64(item.KType),
+			Ts:           item.Ts,
+			Open:         item.Open,
+			High:         item.High,
+			Low:          item.Low,
+			Close:        item.Close,
+			Volume:       item.Volume,
+			Turnover:     item.Turnover,
 		})
 	}
 	return &types.GetProductKlineResp{

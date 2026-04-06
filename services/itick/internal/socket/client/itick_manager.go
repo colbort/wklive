@@ -42,15 +42,15 @@ func (m *ItickManager) Load(ctx context.Context) error {
 	newClients := make(map[string]*ItickWsClient)
 
 	for _, item := range categories {
-		market := strings.ToLower(strings.TrimSpace(item.CategoryCode))
+		categoryCode := strings.ToLower(strings.TrimSpace(item.CategoryCode))
 		wsURL := strings.TrimSpace(m.wsurl)
 
-		if market == "" || wsURL == "" {
+		if categoryCode == "" || wsURL == "" {
 			logx.Errorf("skip invalid itick category, code=%s, wsURL=%s", item.CategoryCode, m.wsurl)
 			continue
 		}
 
-		newClients[market] = NewItickWsClient(fmt.Sprintf("%s/%s", wsURL, market), m.token, market, m.hub)
+		newClients[categoryCode] = NewItickWsClient(fmt.Sprintf("%s/%s", wsURL, categoryCode), m.token, categoryCode, m.hub)
 	}
 
 	if len(newClients) == 0 {
@@ -80,22 +80,22 @@ func (m *ItickManager) Start(ctx context.Context) {
 
 func (m *ItickManager) Subscribe(msg server.ClientMessage) error {
 	m.mu.RLock()
-	cli, ok := m.clients[msg.Market]
+	cli, ok := m.clients[msg.CategoryCode]
 	m.mu.RUnlock()
 
 	if !ok {
-		return fmt.Errorf("unsupported market: %s", msg.Market)
+		return fmt.Errorf("unsupported categoryCode: %s", msg.CategoryCode)
 	}
 	return cli.SubscribeByClientMessage(msg)
 }
 
 func (m *ItickManager) Unsubscribe(msg server.ClientMessage) error {
 	m.mu.RLock()
-	cli, ok := m.clients[msg.Market]
+	cli, ok := m.clients[msg.CategoryCode]
 	m.mu.RUnlock()
 
 	if !ok {
-		return fmt.Errorf("unsupported market: %s", msg.Market)
+		return fmt.Errorf("unsupported categoryCode: %s", msg.CategoryCode)
 	}
 	return cli.UnsubscribeByClientMessage(msg)
 }

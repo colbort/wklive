@@ -20,10 +20,10 @@ CREATE TABLE sys_user (
   perms_ver INT DEFAULT 1 COMMENT '权限版本(角色变化强制token失效)',
 
   last_login_ip VARCHAR(64),
-  last_login_at bigint DEFAULT 0,
+  last_login_at bigint NOT NULL DEFAULT 0,
 
-  create_times bigint DEFAULT 0,
-  update_times bigint DEFAULT 0,
+  create_times bigint NOT NULL DEFAULT 0,
+  update_times bigint NOT NULL DEFAULT 0,
 
   PRIMARY KEY (id),
   INDEX idx_status(status)
@@ -44,8 +44,8 @@ CREATE TABLE sys_role (
 
   remark VARCHAR(255) DEFAULT '',
 
-  create_times bigint DEFAULT 0,
-  update_times bigint DEFAULT 0,
+  create_times bigint NOT NULL DEFAULT 0,
+  update_times bigint NOT NULL DEFAULT 0,
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色表';
 
@@ -89,8 +89,8 @@ CREATE TABLE sys_menu (
   visible TINYINT DEFAULT 1 COMMENT '1显示 2隐藏',
   status TINYINT DEFAULT 1 COMMENT '1启用 2禁用',
 
-  create_times bigint DEFAULT 0,
-  update_times bigint DEFAULT 0,
+  create_times bigint NOT NULL DEFAULT 0,
+  update_times bigint NOT NULL DEFAULT 0,
 
   PRIMARY KEY (id),
   INDEX idx_parent(parent_id),
@@ -128,7 +128,7 @@ CREATE TABLE sys_login_log (
   success TINYINT COMMENT '1成功 0失败',
   msg VARCHAR(255),
 
-  login_at bigint DEFAULT 0,
+  login_at bigint NOT NULL DEFAULT 0,
   
   PRIMARY KEY (id),
   INDEX idx_user(user_id),
@@ -156,8 +156,8 @@ CREATE TABLE sys_op_log (
 
   cost_ms INT COMMENT '耗时',
 
-  create_times bigint DEFAULT 0,
-  update_times bigint DEFAULT 0,
+  create_times bigint NOT NULL DEFAULT 0,
+  update_times bigint NOT NULL DEFAULT 0,
 
   PRIMARY KEY (id),
   INDEX idx_user(user_id),
@@ -176,8 +176,8 @@ CREATE TABLE sys_config (
   config_value JSON,
   remark VARCHAR(255),
 
-  create_times bigint DEFAULT 0,
-  update_times bigint DEFAULT 0,
+  create_times bigint NOT NULL DEFAULT 0,
+  update_times bigint NOT NULL DEFAULT 0,
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系统配置';
 

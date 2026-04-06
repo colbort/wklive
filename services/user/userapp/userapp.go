@@ -28,6 +28,9 @@ type (
 	GetProfileResp         = user.GetProfileResp
 	GetSecurityReq         = user.GetSecurityReq
 	GetSecurityResp        = user.GetSecurityResp
+	GuestLogin             = user.GuestLogin
+	GuestLoginReq          = user.GuestLoginReq
+	GuestLoginResp         = user.GuestLoginResp
 	InitGoogle2FAReq       = user.InitGoogle2FAReq
 	InitGoogle2FAResp      = user.InitGoogle2FAResp
 	ListBanksReq           = user.ListBanksReq
@@ -53,6 +56,8 @@ type (
 		Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error)
 		// 用户登录
 		Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
+		// 游客登了
+		GuestLogin(ctx context.Context, in *GuestLoginReq, opts ...grpc.CallOption) (*GuestLoginResp, error)
 		// 用户登出
 		Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*AppCommonResp, error)
 		// 刷新Token
@@ -112,6 +117,12 @@ func (m *defaultUserApp) Register(ctx context.Context, in *RegisterReq, opts ...
 func (m *defaultUserApp) Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error) {
 	client := user.NewUserAppClient(m.cli.Conn())
 	return client.Login(ctx, in, opts...)
+}
+
+// 游客登了
+func (m *defaultUserApp) GuestLogin(ctx context.Context, in *GuestLoginReq, opts ...grpc.CallOption) (*GuestLoginResp, error) {
+	client := user.NewUserAppClient(m.cli.Conn())
+	return client.GuestLogin(ctx, in, opts...)
 }
 
 // 用户登出

@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	UserApp_Register_FullMethodName            = "/user.UserApp/Register"
 	UserApp_Login_FullMethodName               = "/user.UserApp/Login"
+	UserApp_GuestLogin_FullMethodName          = "/user.UserApp/GuestLogin"
 	UserApp_Logout_FullMethodName              = "/user.UserApp/Logout"
 	UserApp_RefreshToken_FullMethodName        = "/user.UserApp/RefreshToken"
 	UserApp_GetProfile_FullMethodName          = "/user.UserApp/GetProfile"
@@ -51,6 +52,8 @@ type UserAppClient interface {
 	Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error)
 	// 用户登录
 	Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
+	// 游客登了
+	GuestLogin(ctx context.Context, in *GuestLoginReq, opts ...grpc.CallOption) (*GuestLoginResp, error)
 	// 用户登出
 	Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*AppCommonResp, error)
 	// 刷新Token
@@ -111,6 +114,16 @@ func (c *userAppClient) Login(ctx context.Context, in *LoginReq, opts ...grpc.Ca
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(LoginResp)
 	err := c.cc.Invoke(ctx, UserApp_Login_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userAppClient) GuestLogin(ctx context.Context, in *GuestLoginReq, opts ...grpc.CallOption) (*GuestLoginResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GuestLoginResp)
+	err := c.cc.Invoke(ctx, UserApp_GuestLogin_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -307,6 +320,8 @@ type UserAppServer interface {
 	Register(context.Context, *RegisterReq) (*RegisterResp, error)
 	// 用户登录
 	Login(context.Context, *LoginReq) (*LoginResp, error)
+	// 游客登了
+	GuestLogin(context.Context, *GuestLoginReq) (*GuestLoginResp, error)
 	// 用户登出
 	Logout(context.Context, *LogoutReq) (*AppCommonResp, error)
 	// 刷新Token
@@ -358,6 +373,9 @@ func (UnimplementedUserAppServer) Register(context.Context, *RegisterReq) (*Regi
 }
 func (UnimplementedUserAppServer) Login(context.Context, *LoginReq) (*LoginResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method Login not implemented")
+}
+func (UnimplementedUserAppServer) GuestLogin(context.Context, *GuestLoginReq) (*GuestLoginResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GuestLogin not implemented")
 }
 func (UnimplementedUserAppServer) Logout(context.Context, *LogoutReq) (*AppCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method Logout not implemented")
@@ -466,6 +484,24 @@ func _UserApp_Login_Handler(srv interface{}, ctx context.Context, dec func(inter
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserAppServer).Login(ctx, req.(*LoginReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserApp_GuestLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GuestLoginReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserAppServer).GuestLogin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserApp_GuestLogin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserAppServer).GuestLogin(ctx, req.(*GuestLoginReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -808,6 +844,10 @@ var UserApp_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Login",
 			Handler:    _UserApp_Login_Handler,
+		},
+		{
+			MethodName: "GuestLogin",
+			Handler:    _UserApp_GuestLogin_Handler,
 		},
 		{
 			MethodName: "Logout",

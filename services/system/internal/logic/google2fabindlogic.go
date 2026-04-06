@@ -22,7 +22,7 @@ func NewGoogle2FABindLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Goo
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
 	}
-}
+} 
 
 // 绑定Google 2FA
 func (l *Google2FABindLogic) Google2FABind(in *system.Google2FABindReq) (*system.RespBase, error) {

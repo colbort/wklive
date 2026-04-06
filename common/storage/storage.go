@@ -48,7 +48,7 @@ func NewUploader(cfg Config) (Uploader, error) {
 	case OssTypeAliyun:
 		return impl.NewAliyunUploader(cfg.AliyunOss.Endpoint, cfg.AliyunOss.AccessKeyId, cfg.AliyunOss.AccessKeySecret, cfg.AliyunOss.BucketName)
 	case OssTypeTencent:
-		return impl.NewTencentUploader(cfg.TencentCos.Region, cfg.TencentCos.SecretId, cfg.TencentCos.SecretKey, cfg.TencentCos.BucketName, cfg.TencentCos.BucketUrl)
+		return impl.NewTencentUploader(cfg.TencentCos.Market, cfg.TencentCos.SecretId, cfg.TencentCos.SecretKey, cfg.TencentCos.BucketName, cfg.TencentCos.BucketUrl)
 	case OssTypeMinio:
 		return impl.NewMinioUploader(cfg.Minio.Endpoint, cfg.Minio.AccessKeyId, cfg.Minio.AccessKeySecret, cfg.Minio.BucketName)
 	default:
@@ -78,7 +78,7 @@ type AliyunOssConfig struct {
 
 // TencentCosConfig contains the subset of COS config required for uploads.
 type TencentCosConfig struct {
-	Region     string `json:"region,omitempty"`
+	Market     string `json:"market,omitempty"`
 	SecretId   string `json:"secret_id,omitempty"`
 	SecretKey  string `json:"secret_key,omitempty"`
 	BucketName string `json:"bucket_name,omitempty"`

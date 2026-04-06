@@ -1,8 +1,10 @@
 package svc
 
 import (
+	"time"
 	"wklive/proto/system"
 	"wklive/services/itick/internal/config"
+	"wklive/services/itick/internal/klinewriter"
 	"wklive/services/itick/internal/socket/client"
 	"wklive/services/itick/internal/socket/server"
 	"wklive/services/itick/models"
@@ -16,6 +18,8 @@ type ServiceContext struct {
 	SystemCli                system.SystemClient
 	ItickManager             *client.ItickManager
 	Hub                      *server.Hub
+	Factory                  *models.CoinKlineModelFactory
+	Writer                   *klinewriter.BatchWriter
 	ItickCategoryModel       models.ItickCategoryModel
 	ItickProductModel        models.ItickProductModel
 	ItickTenantCategoryModel models.ItickTenantCategoryModel
@@ -43,10 +47,22 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		},
 	)
 
+	factory := models.NewCoinKlineModelFactory(c.Mongo.Url, c.Mongo.Db)
+
+	writer := klinewriter.NewBatchWriter(
+		factory,
+		c.KlineWriter.QueueSize,
+		c.KlineWriter.BatchSize,
+		time.Duration(c.KlineWriter.FlushIntervalMs)*time.Millisecond,
+		time.Duration(c.KlineWriter.WriteTimeoutMs)*time.Millisecond,
+	)
+
 	return &ServiceContext{
 		Config:                   c,
 		ItickManager:             itickManager,
 		Hub:                      hub,
+		Factory:                  factory,
+		Writer:                   writer,
 		ItickCategoryModel:       itickCategoryModel,
 		ItickProductModel:        models.NewTItickProductModel(conn, c.CacheRedis).(models.ItickProductModel),
 		ItickTenantCategoryModel: models.NewTItickTenantCategoryModel(conn, c.CacheRedis).(models.ItickTenantCategoryModel),

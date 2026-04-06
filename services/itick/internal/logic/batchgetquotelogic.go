@@ -32,6 +32,7 @@ func (l *BatchGetQuoteLogic) BatchGetQuote(in *itick.BatchGetQuoteReq) (*itick.B
 	data := make([]*itick.Quote, 0)
 	for _, quote := range result {
 		data = append(data, &itick.Quote{
+			CategoryCode:   quote.CategoryCode,
 			Market:         quote.Market,
 			Symbol:         quote.Symbol,
 			LastPrice:      quote.LastPrice,

@@ -97,7 +97,7 @@ func (m *defaultTItickProductModel) FindPage(ctx context.Context, categoryType i
 
 func (m *defaultTItickProductModel) Upsert(ctx context.Context, data *TItickProduct) (sql.Result, error) {
 	tItickProductCategoryTypeMarketSymbolKey := fmt.Sprintf("%s%v:%v:%v",
-		cacheTItickProductCategoryTypeMarketSymbolPrefix,
+		cacheTItickProductCategoryTypeRegionSymbolPrefix,
 		data.CategoryType, data.Market, data.Symbol,
 	)
 	tItickProductIdKey := fmt.Sprintf("%s%v", cacheTItickProductIdPrefix, data.Id)

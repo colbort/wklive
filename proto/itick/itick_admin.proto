@@ -139,11 +139,12 @@ message ListProductsResp {
 // ====================
 
 message GetProductKlineReq {
-  string market = 1;
-  string symbol = 2;
-  itick.KlineType k_type = 3;
-  int64 end_ts = 4;
-  int64 limit = 5;
+  string category_code = 1;
+  string market = 2;
+  string symbol = 3;
+  itick.KlineType k_type = 4;
+  int64 end_ts = 5;
+  int64 limit = 6;
 }
 
 message GetProductKlineResp {
@@ -152,7 +153,7 @@ message GetProductKlineResp {
 }
 
 // ====================
-// tenant product category
+// tenant product market
 // ====================
 
 message CreateTenantCategoryReq {

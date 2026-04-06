@@ -76,7 +76,7 @@ func (h *Hub) Subscribe(sub *Subscriber, msg ClientMessage) error {
 	if sub == nil {
 		return errors.New("subscriber is nil")
 	}
-	if msg.Topic == "" || msg.Market == "" || msg.Symbol == "" || msg.Region == "" {
+	if msg.Topic == "" || msg.CategoryCode == "" || msg.Symbol == "" || msg.Market == "" {
 		return errors.New("invalid subscribe message")
 	}
 	if msg.Topic == TopicKline && msg.Interval == "" {
@@ -126,7 +126,7 @@ func (h *Hub) Unsubscribe(sub *Subscriber, msg ClientMessage) error {
 	if sub == nil {
 		return errors.New("subscriber is nil")
 	}
-	if msg.Topic == "" || msg.Market == "" || msg.Symbol == "" || msg.Region == "" {
+	if msg.Topic == "" || msg.CategoryCode == "" || msg.Symbol == "" || msg.Market == "" {
 		return errors.New("invalid unsubscribe message")
 	}
 
@@ -204,12 +204,12 @@ func (h *Hub) Broadcast(topicMsg ClientMessage, payload any) {
 	key := BuildTopicKey(topicMsg)
 
 	msg := ServerMessage{
-		Topic:    topicMsg.Topic,
-		Market:   topicMsg.Market,
-		Symbol:   topicMsg.Symbol,
-		Region:   topicMsg.Region,
-		Interval: topicMsg.Interval,
-		Payload:  payload,
+		Topic:        topicMsg.Topic,
+		CategoryCode: topicMsg.CategoryCode,
+		Symbol:       topicMsg.Symbol,
+		Market:       topicMsg.Market,
+		Interval:     topicMsg.Interval,
+		Payload:      payload,
 	}
 
 	h.mu.RLock()

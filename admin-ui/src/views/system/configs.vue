@@ -253,7 +253,7 @@ const objectStorageForm = ref<ObjectStorageConfig>({
     bucket_url: '',
   },
   tencent_cos: {
-    region: '',
+    market: '',
     secret_id: '',
     secret_key: '',
     bucket_name: '',
@@ -341,7 +341,7 @@ function resetTypeForms() {
       bucket_url: '',
     },
     tencent_cos: {
-      region: '',
+      market: '',
       secret_id: '',
       secret_key: '',
       bucket_name: '',
@@ -376,7 +376,7 @@ function handleConfigKeyChange(value: string) {
         bucket_url: '',
       },
       tencent_cos: {
-        region: '',
+        market: '',
         secret_id: '',
         secret_key: '',
         bucket_name: '',

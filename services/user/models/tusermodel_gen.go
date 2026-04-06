@@ -66,6 +66,10 @@ type (
 		LastLoginTime  int64          `db:"last_login_time"`  // 最后登录时间
 		RegisterIp     sql.NullString `db:"register_ip"`      // 注册IP
 		RegisterTime   int64          `db:"register_time"`    // 注册时间
+		IsGuest        int64          `db:"is_guest"`         // 是否游客；1正常用户，2游客
+		IsRecharge     int64          `db:"is_recharge"`      // 是否充值；0没有充值，1已充值
+		DeviceId       string         `db:"device_id"`        // 设备唯一ID
+		Fingerprint    string         `db:"fingerprint"`      // 浏览器指纹
 		Remark         sql.NullString `db:"remark"`           // 备注
 		Deleted        int64          `db:"deleted"`          // 是否删除：0否 1是
 		CreateTimes    int64          `db:"create_times"`     // 创建时间
@@ -180,8 +184,8 @@ func (m *defaultTUserModel) Insert(ctx context.Context, data *TUser) (sql.Result
 	tUserTenantIdUserNoKey := fmt.Sprintf("%s%v:%v", cacheTUserTenantIdUserNoPrefix, data.TenantId, data.UserNo)
 	tUserTenantIdUsernameKey := fmt.Sprintf("%s%v:%v", cacheTUserTenantIdUsernamePrefix, data.TenantId, data.Username)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tUserRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserNo, data.Username, data.Nickname, data.Avatar, data.PasswordHash, data.RegisterType, data.Status, data.MemberLevel, data.Language, data.Timezone, data.InviteCode, data.Signature, data.Source, data.ReferrerUserId, data.LastLoginIp, data.LastLoginTime, data.RegisterIp, data.RegisterTime, data.Remark, data.Deleted, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tUserRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserNo, data.Username, data.Nickname, data.Avatar, data.PasswordHash, data.RegisterType, data.Status, data.MemberLevel, data.Language, data.Timezone, data.InviteCode, data.Signature, data.Source, data.ReferrerUserId, data.LastLoginIp, data.LastLoginTime, data.RegisterIp, data.RegisterTime, data.IsGuest, data.IsRecharge, data.DeviceId, data.Fingerprint, data.Remark, data.Deleted, data.CreateTimes, data.UpdateTimes)
 	}, tUserIdKey, tUserTenantIdInviteCodeKey, tUserTenantIdUserNoKey, tUserTenantIdUsernameKey)
 	return ret, err
 }
@@ -198,7 +202,7 @@ func (m *defaultTUserModel) Update(ctx context.Context, newData *TUser) error {
 	tUserTenantIdUsernameKey := fmt.Sprintf("%s%v:%v", cacheTUserTenantIdUsernamePrefix, data.TenantId, data.Username)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tUserRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserNo, newData.Username, newData.Nickname, newData.Avatar, newData.PasswordHash, newData.RegisterType, newData.Status, newData.MemberLevel, newData.Language, newData.Timezone, newData.InviteCode, newData.Signature, newData.Source, newData.ReferrerUserId, newData.LastLoginIp, newData.LastLoginTime, newData.RegisterIp, newData.RegisterTime, newData.Remark, newData.Deleted, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserNo, newData.Username, newData.Nickname, newData.Avatar, newData.PasswordHash, newData.RegisterType, newData.Status, newData.MemberLevel, newData.Language, newData.Timezone, newData.InviteCode, newData.Signature, newData.Source, newData.ReferrerUserId, newData.LastLoginIp, newData.LastLoginTime, newData.RegisterIp, newData.RegisterTime, newData.IsGuest, newData.IsRecharge, newData.DeviceId, newData.Fingerprint, newData.Remark, newData.Deleted, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tUserIdKey, tUserTenantIdInviteCodeKey, tUserTenantIdUserNoKey, tUserTenantIdUsernameKey)
 	return err
 }

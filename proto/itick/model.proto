@@ -45,36 +45,22 @@ message ItickProduct {
 
 // K线
 message Kline {
-  string market = 1;
-  string symbol = 2;
-  itick.KlineType k_type = 3;
-  int64 ts = 4;
-  double open = 5;
-  double high = 6;
-  double low = 7;
-  double close = 8;
-  double volume = 9;
-  double turnover = 10;
-}
-
-// 深度档位
-message DepthLevel {
-  double price = 1;
-  double volume = 2;
-}
-
-// 深度
-message Depth {
-  string market = 1;
-  string symbol = 2;
-  repeated DepthLevel asks = 3;
-  repeated DepthLevel bids = 4;
+  string category_code = 1;
+  string market = 2;
+  string symbol = 3;
+  itick.KlineType k_type = 4;
   int64 ts = 5;
+  double open = 6;
+  double high = 7;
+  double low = 8;
+  double close = 9;
+  double volume = 10;
+  double turnover = 11;
 }
 
 // 实时报价
 message Quote {
-  string market = 1;
+  string category_code = 1;
   string symbol = 2;
   double last_price = 3;
   double open_price = 4;
@@ -87,6 +73,7 @@ message Quote {
   double turnover = 11;
   int64 quote_ts = 12;
   int64 trade_status = 13;
+  string market = 14;
 }
 
 

@@ -25,6 +25,7 @@ const (
 	ItickApp_GetQuote_FullMethodName              = "/itick.ItickApp/GetQuote"
 	ItickApp_BatchGetQuote_FullMethodName         = "/itick.ItickApp/BatchGetQuote"
 	ItickApp_SubscribeStream_FullMethodName       = "/itick.ItickApp/SubscribeStream"
+	ItickApp_GetKlineIntervals_FullMethodName     = "/itick.ItickApp/GetKlineIntervals"
 )
 
 // ItickAppClient is the client API for ItickApp service.
@@ -47,6 +48,8 @@ type ItickAppClient interface {
 	BatchGetQuote(ctx context.Context, in *BatchGetQuoteReq, opts ...grpc.CallOption) (*BatchGetQuoteResp, error)
 	// 订阅数据流
 	SubscribeStream(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[PushReply], error)
+	// 获取 kline 粒度
+	GetKlineIntervals(ctx context.Context, in *AppEmpty, opts ...grpc.CallOption) (*KlineIntervalsResp, error)
 }
 
 type itickAppClient struct {
@@ -126,6 +129,16 @@ func (c *itickAppClient) SubscribeStream(ctx context.Context, in *SubscribeReque
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type ItickApp_SubscribeStreamClient = grpc.ServerStreamingClient[PushReply]
 
+func (c *itickAppClient) GetKlineIntervals(ctx context.Context, in *AppEmpty, opts ...grpc.CallOption) (*KlineIntervalsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(KlineIntervalsResp)
+	err := c.cc.Invoke(ctx, ItickApp_GetKlineIntervals_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ItickAppServer is the server API for ItickApp service.
 // All implementations must embed UnimplementedItickAppServer
 // for forward compatibility.
@@ -146,6 +159,8 @@ type ItickAppServer interface {
 	BatchGetQuote(context.Context, *BatchGetQuoteReq) (*BatchGetQuoteResp, error)
 	// 订阅数据流
 	SubscribeStream(*SubscribeRequest, grpc.ServerStreamingServer[PushReply]) error
+	// 获取 kline 粒度
+	GetKlineIntervals(context.Context, *AppEmpty) (*KlineIntervalsResp, error)
 	mustEmbedUnimplementedItickAppServer()
 }
 
@@ -173,6 +188,9 @@ func (UnimplementedItickAppServer) BatchGetQuote(context.Context, *BatchGetQuote
 }
 func (UnimplementedItickAppServer) SubscribeStream(*SubscribeRequest, grpc.ServerStreamingServer[PushReply]) error {
 	return status.Error(codes.Unimplemented, "method SubscribeStream not implemented")
+}
+func (UnimplementedItickAppServer) GetKlineIntervals(context.Context, *AppEmpty) (*KlineIntervalsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetKlineIntervals not implemented")
 }
 func (UnimplementedItickAppServer) mustEmbedUnimplementedItickAppServer() {}
 func (UnimplementedItickAppServer) testEmbeddedByValue()                  {}
@@ -296,6 +314,24 @@ func _ItickApp_SubscribeStream_Handler(srv interface{}, stream grpc.ServerStream
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type ItickApp_SubscribeStreamServer = grpc.ServerStreamingServer[PushReply]
 
+func _ItickApp_GetKlineIntervals_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AppEmpty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ItickAppServer).GetKlineIntervals(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ItickApp_GetKlineIntervals_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ItickAppServer).GetKlineIntervals(ctx, req.(*AppEmpty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ItickApp_ServiceDesc is the grpc.ServiceDesc for ItickApp service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -322,6 +358,10 @@ var ItickApp_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "BatchGetQuote",
 			Handler:    _ItickApp_BatchGetQuote_Handler,
+		},
+		{
+			MethodName: "GetKlineIntervals",
+			Handler:    _ItickApp_GetKlineIntervals_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

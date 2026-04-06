@@ -29,8 +29,9 @@ func NewGetQuoteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetQuote
 
 func (l *GetQuoteLogic) GetQuote(req *types.GetQuoteReq) (resp *types.GetQuoteResp, err error) {
 	result, err := l.svcCtx.ItickCli.GetQuote(l.ctx, &itick.GetQuoteReq{
-		Market: req.Market,
-		Symbol: req.Symbol,
+		CategoryCode: req.CategoryCode,
+		Market:       req.Market,
+		Symbol:       req.Symbol,
 	})
 	if err != nil {
 		return nil, err
@@ -42,7 +43,8 @@ func (l *GetQuoteLogic) GetQuote(req *types.GetQuoteReq) (resp *types.GetQuoteRe
 			Msg:  result.Base.Msg,
 		},
 		Data: types.Quote{
-			Market:         result.Data.Market,
+			CategoryCode:   result.Data.CategoryCode,
+			Market:         resp.Data.Market,
 			Symbol:         result.Data.Symbol,
 			LastPrice:      result.Data.LastPrice,
 			OpenPrice:      result.Data.OpenPrice,

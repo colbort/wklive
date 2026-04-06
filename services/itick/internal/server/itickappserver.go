@@ -58,3 +58,9 @@ func (s *ItickAppServer) SubscribeStream(in *itick.SubscribeRequest, stream itic
 	l := logic.NewSubscribeStreamLogic(stream.Context(), s.svcCtx)
 	return l.SubscribeStream(in, stream)
 }
+
+// 获取 kline 粒度
+func (s *ItickAppServer) GetKlineIntervals(ctx context.Context, in *itick.AppEmpty) (*itick.KlineIntervalsResp, error) {
+	l := logic.NewGetKlineIntervalsLogic(ctx, s.svcCtx)
+	return l.GetKlineIntervals(in)
+}

@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	endpoints = flag.String("etcd", "192.168.10.116:2379", "etcd endpoints")
+	endpoints = flag.String("etcd", "127.0.0.1:2379", "etcd endpoints")
 	configKey = flag.String("config", "/wklive/user-rpc/config", "etcd config key")
 	commonKey = flag.String("common", "/wklive/common/config", "etcd common config key")
 )

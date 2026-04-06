@@ -5,6 +5,7 @@ import { ElMessage } from 'element-plus'
 import { usePagination } from '@/composables/usePagination'
 import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
+import { formatDate } from '@/utils'
 import { logService } from '@/services'
 import type { OpLogItem } from '@/services/system/LogService'
 
@@ -159,9 +160,7 @@ onMounted(() => {
       </el-table-column>
       <el-table-column prop="createTimes" :label="t('common.createTimes')" min-width="170">
         <template #default="{ row }">
-          <span style="color: #666">{{
-            row.createTimes ? new Date(row.createTimes * 1000).toLocaleString() : '-'
-          }}</span>
+          <span style="color: #666">{{ formatDate(row.createTimes) }}</span>
         </template>
       </el-table-column>
     </el-table>

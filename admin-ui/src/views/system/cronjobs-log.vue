@@ -90,12 +90,6 @@ function showDetail(row: SysCronJobLogItem) {
   detailDrawerVisible.value = true
 }
 
-// Format timestamp to date string
-const formatTimestamp = (timestamp: number) => {
-  if (!timestamp || timestamp === 0) return '-'
-  return formatDate(new Date(timestamp * 1000).getTime())
-}
-
 // Calculate duration
 const calculateDuration = (row: SysCronJobLogItem) => {
   if (!row.endTime || !row.startTime) return '-'
@@ -175,12 +169,12 @@ onMounted(() => {
       </el-table-column>
       <el-table-column prop="startTime" :label="t('system.startTime')" width="170">
         <template #default="{ row }">
-          <span>{{ formatTimestamp(row.startTime) }}</span>
+          <span>{{ formatDate(row.startTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="endTime" :label="t('system.endTime')" width="170">
         <template #default="{ row }">
-          <span>{{ formatTimestamp(row.endTime) }}</span>
+          <span>{{ formatDate(row.endTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="t('system.duration')" width="100">
@@ -254,10 +248,10 @@ onMounted(() => {
             </el-tag>
           </el-descriptions-item>
           <el-descriptions-item :label="t('system.startTime')">
-            {{ formatTimestamp(detailData.startTime) }}
+            {{ formatDate(detailData.startTime) }}
           </el-descriptions-item>
           <el-descriptions-item :label="t('system.endTime')">
-            {{ formatTimestamp(detailData.endTime) }}
+            {{ formatDate(detailData.endTime) }}
           </el-descriptions-item>
           <el-descriptions-item :label="t('system.duration')">
             {{ calculateDuration(detailData) }}
@@ -293,7 +287,7 @@ onMounted(() => {
             <div v-else style="color: #999">-</div>
           </el-descriptions-item>
           <el-descriptions-item :label="t('common.createTimes')">
-            {{ formatTimestamp(detailData.createTimes) }}
+            {{ formatDate(detailData.createTimes) }}
           </el-descriptions-item>
         </el-descriptions>
       </div>

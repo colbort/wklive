@@ -83,18 +83,28 @@
         </el-table-column>
 
         <el-table-column prop="sort" label="排序" width="90" />
-        <el-table-column prop="icon" label="图标" min-width="180" show-overflow-tooltip />
-        <el-table-column prop="remark" label="备注" min-width="180" show-overflow-tooltip />
+        <el-table-column
+          prop="icon"
+          label="图标"
+          min-width="180"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="remark"
+          label="备注"
+          min-width="180"
+          show-overflow-tooltip
+        />
 
         <el-table-column label="创建时间" min-width="170">
           <template #default="{ row }">
-            {{ formatTime(row.createTimes) }}
+            {{ formatDate(row.createTimes) }}
           </template>
         </el-table-column>
 
         <el-table-column label="更新时间" min-width="170">
           <template #default="{ row }">
-            {{ formatTime(row.updateTimes) }}
+            {{ formatDate(row.updateTimes) }}
           </template>
         </el-table-column>
 
@@ -129,7 +139,12 @@
       :title="formMode === 'add' ? '新增分类' : '编辑分类'"
       width="620px"
     >
-      <el-form ref="formRef" :model="form" :rules="rules" label-width="100px">
+      <el-form
+        ref="formRef"
+        :model="form"
+        :rules="rules"
+        label-width="100px"
+      >
         <el-form-item v-if="formMode === 'add'" label="分类类型" prop="categoryType">
           <el-input-number
             v-model="form.categoryType"
@@ -219,10 +234,10 @@
           detail.remark || '-'
         }}</el-descriptions-item>
         <el-descriptions-item label="创建时间">
-          {{ formatTime(detail.createTimes) }}
+          {{ formatDate(detail?.createTimes??0) }}
         </el-descriptions-item>
         <el-descriptions-item label="更新时间">
-          {{ formatTime(detail.updateTimes) }}
+          {{ formatDate(detail?.updateTimes??0) }}
         </el-descriptions-item>
       </el-descriptions>
 
@@ -245,6 +260,7 @@ import {
   type ItickCategory,
   type ListCategoriesReq,
 } from '@/services/itick/CategoriesService'
+import { formatDate } from '@/utils'
 
 type FormData = {
   id?: number
@@ -474,20 +490,6 @@ const handleNextPage = () => {
     pagination.cursor = pagination.nextCursor
     getList()
   }
-}
-
-const formatTime = (timestamp?: number) => {
-  if (!timestamp) return '-'
-  let time = Number(timestamp)
-  if (String(time).length === 10) time = time * 1000
-  const date = new Date(time)
-  const YYYY = date.getFullYear()
-  const MM = String(date.getMonth() + 1).padStart(2, '0')
-  const DD = String(date.getDate()).padStart(2, '0')
-  const hh = String(date.getHours()).padStart(2, '0')
-  const mm = String(date.getMinutes()).padStart(2, '0')
-  const ss = String(date.getSeconds()).padStart(2, '0')
-  return `${YYYY}-${MM}-${DD} ${hh}:${mm}:${ss}`
 }
 
 onMounted(() => {

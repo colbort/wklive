@@ -47,9 +47,9 @@ CREATE TABLE `t_itick_product` (
   `create_times` bigint NOT NULL DEFAULT '0' COMMENT '创建时间(毫秒时间戳)',
   `update_times` bigint NOT NULL DEFAULT '0' COMMENT '更新时间(毫秒时间戳)',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_type_market_symbol` (`category_type`, `market`, `symbol`),
+  UNIQUE KEY `uk_type_region_symbol` (`category_type`, `market`, `symbol`),
   KEY `idx_category_type` (`category_type`),
-  KEY `idx_market` (`market`),
+  KEY `idx_region` (`market`),
   KEY `idx_enabled_visible_sort` (`enabled`, `app_visible`, `sort`),
   KEY `idx_keyword_query` (`category_type`, `market`, `name`, `display_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='itick产品表';
@@ -105,6 +105,7 @@ CREATE TABLE `t_itick_sync_task` (
 
 CREATE TABLE `t_itick_quote` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `category_code` varchar(64) NOT NULL DEFAULT '' COMMENT '产品类型标识, 如 forex/crypto/stock/future/indices/fund',
   `market` varchar(32) NOT NULL DEFAULT '' COMMENT '市场/地区，如 GB',
   `symbol` varchar(64) NOT NULL DEFAULT '' COMMENT '代码，如 EURUSD',
 
@@ -127,7 +128,7 @@ CREATE TABLE `t_itick_quote` (
   `update_times` bigint NOT NULL DEFAULT 0 COMMENT '更新时间(毫秒)',
 
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_market_symbol` (`market`, `symbol`),
+  UNIQUE KEY `uk_region_symbol` (`market`, `symbol`),
   KEY `idx_symbol` (`symbol`),
   KEY `idx_quote_ts` (`quote_ts`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='iTick实时报价表';

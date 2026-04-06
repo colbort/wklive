@@ -48,6 +48,24 @@ message LoginResp {
   user.UserProfile profile = 4;
 }
 
+message GuestLoginReq {
+	string deviceId = 1;
+	string fingerprint = 2;
+  string registerIp = 3;
+}
+
+message GuestLogin {
+  string token = 1;
+	string uid = 2;
+	bool   isNew = 3;
+  string username = 4;
+}
+
+message GuestLoginResp {
+	user.RespBase base = 1;
+  GuestLogin data = 2;
+}
+
 message LogoutReq {
   int64 user_id = 1;
 }
@@ -232,6 +250,8 @@ service UserApp {
   rpc Register(RegisterReq) returns (RegisterResp);
   // 用户登录
   rpc Login(LoginReq) returns (LoginResp);
+  // 游客登了
+  rpc GuestLogin(GuestLoginReq) returns (GuestLoginResp);
   // 用户登出
   rpc Logout(LogoutReq) returns (AppCommonResp);
   // 刷新Token

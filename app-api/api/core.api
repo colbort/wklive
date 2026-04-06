@@ -5,13 +5,23 @@ import "user_private.api"
 import "payment.api"
 import "itick.api"
 
+//
+type Interval {
+	name  string `json:"name"`
+	kType int32  `json:"kType"`
+}
+
 // 用户登录前获取 配置，比如是否开启验证码，是否开启注册等
 type SystemCore {
-	IsCaptchaEnabled  bool `json:"isCaptchaEnabled"`
-	IsRegisterEnabled bool `json:"isRegisterEnabled"`
+	isCaptchaEnabled  bool       `json:"isCaptchaEnabled"` // 是否开启验证码
+	isRegisterEnabled bool       `json:"isRegisterEnabled"` // 是否开启注册
+	isGuestEnabled    bool       `json:"isGuestEnabled"` // 是否允许游客登录
+	isCryptoEnabled   bool       `json:"isCryptoEnabled"` // 是否加密接口提交数据
+	intervals         []Interval `json:"intervals"` // kline 支持粒度
 }
 
 type GetSystemCoreResp {
+	RespBase
 	data SystemCore `json:"data"`
 }
 

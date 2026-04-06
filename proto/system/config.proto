@@ -11,10 +11,20 @@ enum SysConfigType {
   ITICK_CONFIG = 3; // ITICK配置
 }
 
+message Interval {
+	string name   = 1;
+	int32  kType  = 2;
+}
+
 // 系统配置
 message SystemCore {
   string site_name = 1; // 网站名称
   string site_logo = 2; // 网站LOGO
+  bool       is_captcha_enabled  = 3; // 是否开启验证码
+	bool       is_register_enabled = 4; // 是否开启注册
+	bool       is_guest_enabled    = 5;// 是否允许游客登录
+	bool       is_crypto_enabled   = 6;// 是否加密接口提交数据
+	repeated Interval intervals  = 7;// kline 支持粒度
 }
 
 // 阿里云 OSS配置
@@ -28,7 +38,7 @@ message AliyunOssConfig {
 
 // 腾讯云 COS配置
 message TencentCosConfig {
-  string region = 1;
+  string market = 1;
   string secret_id = 2;
   string secret_key = 3;
   string bucket_name = 4;

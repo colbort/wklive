@@ -25,9 +25,9 @@ const (
 )
 
 type ItickWsClient struct {
-	url    string
-	token  string
-	market string // 固定 crypto
+	url          string
+	token        string
+	categoryCode string // 固定 crypto
 
 	dialer *websocket.Dialer
 
@@ -43,11 +43,11 @@ type ItickWsClient struct {
 	subscribers map[string]SubscribeReq
 }
 
-func NewItickWsClient(url, token string, market string, hub *server.Hub) *ItickWsClient {
+func NewItickWsClient(url, token string, categoryCode string, hub *server.Hub) *ItickWsClient {
 	return &ItickWsClient{
-		url:    url,
-		token:  token,
-		market: market,
+		url:          url,
+		token:        token,
+		categoryCode: categoryCode,
 		dialer: &websocket.Dialer{
 			HandshakeTimeout: 10 * time.Second,
 		},
@@ -67,7 +67,7 @@ func (c *ItickWsClient) loop(ctx context.Context) {
 		}
 
 		if err := c.connect(); err != nil {
-			logx.Errorf("itick ws connect failed: %v", err)
+			logx.Errorf("itick ws connect failed: %v  %s", err, c.url)
 			select {
 			case <-ctx.Done():
 				return
@@ -214,70 +214,59 @@ func (c *ItickWsClient) handleUpstreamMessage(data []byte) {
 	}
 
 	msg := server.ClientMessage{
-		Topic:    topic,
-		Market:   c.market,
-		Symbol:   strings.ToUpper(strings.TrimSpace(d.S)),
-		Region:   strings.ToUpper(strings.TrimSpace(d.R)),
-		Interval: interval,
+		Topic:        topic,
+		CategoryCode: c.categoryCode,
+		Symbol:       strings.ToUpper(strings.TrimSpace(d.S)),
+		Market:       strings.ToUpper(strings.TrimSpace(d.R)),
+		Interval:     interval,
 	}
 
 	switch topic {
 	case server.TopicQuote:
-		payload := map[string]any{
-			"symbol":    d.S,
-			"region":    d.R,
-			"lastPrice": d.LD,
-			"open":      d.O,
-			"high":      d.H,
-			"low":       d.L,
-			"volume":    d.V,
-			"turnover":  d.TU,
-			"ts":        d.T,
-			"type":      d.Type,
+		payload := QuotePayload{
+			LastPrice: d.LD,
+			Open:      d.O,
+			High:      d.H,
+			Low:       d.L,
+			Volume:    d.V,
+			Turnover:  d.TU,
+			Ts:        d.T,
 		}
-		c.hub.Broadcast(msg, payload)
+		c.hub.Broadcast(msg, &payload)
 
 	case server.TopicTick:
-		payload := map[string]any{
-			"symbol":    d.S,
-			"region":    d.R,
-			"lastPrice": d.LD,
-			"volume":    d.V,
-			"ts":        d.T,
-			"type":      d.Type,
+		payload := TickPayload{
+			LastPrice: d.LD,
+			Volume:    d.V,
+			Ts:        d.T,
 		}
-		c.hub.Broadcast(msg, payload)
+		c.hub.Broadcast(msg, &payload)
 
 	case server.TopicDepth:
-		var asks any
-		var bids any
+		asks := make([]*DepthLevel, 0)
+		bids := make([]*DepthLevel, 0)
 		_ = json.Unmarshal(d.A, &asks)
 		_ = json.Unmarshal(d.B, &bids)
 
-		payload := map[string]any{
-			"symbol": d.S,
-			"region": d.R,
-			"asks":   asks,
-			"bids":   bids,
-			"type":   d.Type,
+		payload := DepthPayload{
+			Asks: asks,
+			Bids: bids,
 		}
-		c.hub.Broadcast(msg, payload)
+
+		c.hub.Broadcast(msg, &payload)
 
 	case server.TopicKline:
-		payload := map[string]any{
-			"symbol":   d.S,
-			"region":   d.R,
-			"interval": interval,
-			"open":     d.O,
-			"high":     d.H,
-			"low":      d.L,
-			"close":    d.C,
-			"volume":   d.V,
-			"turnover": d.TU,
-			"ts":       d.T,
-			"type":     d.Type,
+		payload := KlinePayload{
+			Interval: interval,
+			Open:     d.O,
+			High:     d.H,
+			Low:      d.L,
+			Close:    d.C,
+			Volume:   d.V,
+			Turnover: d.TU,
+			Ts:       d.T,
 		}
-		c.hub.Broadcast(msg, payload)
+		c.hub.Broadcast(msg, &payload)
 	}
 }
 
@@ -298,11 +287,11 @@ func (c *ItickWsClient) UnsubscribeByClientMessage(msg server.ClientMessage) err
 }
 
 func (c *ItickWsClient) buildItickSubscribe(msg server.ClientMessage) (params string, types string, err error) {
-	if msg.Symbol == "" || msg.Region == "" {
-		return "", "", errors.New("symbol or region is empty")
+	if msg.Symbol == "" || msg.Market == "" {
+		return "", "", errors.New("symbol or market is empty")
 	}
 
-	params = buildSymbolRegion(msg.Symbol, msg.Region)
+	params = buildSymbolRegion(msg.Symbol, msg.Market)
 
 	switch msg.Topic {
 	case server.TopicQuote:
@@ -429,8 +418,8 @@ func buildSubKey(params, types string) string {
 	return params + "|" + types
 }
 
-func buildSymbolRegion(symbol, region string) string {
-	return strings.ToUpper(strings.TrimSpace(symbol)) + "$" + strings.ToUpper(strings.TrimSpace(region))
+func buildSymbolRegion(symbol, market string) string {
+	return strings.ToUpper(strings.TrimSpace(symbol)) + "$" + strings.ToUpper(strings.TrimSpace(market))
 }
 
 func intervalToItickKlineType(interval string) (string, error) {

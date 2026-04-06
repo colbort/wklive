@@ -37,8 +37,9 @@ type AvailableRechargeChannel struct {
 }
 
 type BatchGetQuoteReq struct {
-	Market string         `json:"market"`
-	Data   []MarketSymbol `json:"data"`
+	CategoryCode string         `json:"categoryCode"`
+	Market       string         `json:"market"`
+	Data         []MarketSymbol `json:"data"`
 }
 
 type BatchGetQuoteResp struct {
@@ -100,11 +101,12 @@ type DeleteBankReq struct {
 }
 
 type Depth struct {
-	Market string       `json:"market"`
-	Symbol string       `json:"symbol"`
-	Asks   []DepthLevel `json:"asks"`
-	Bids   []DepthLevel `json:"bids"`
-	Ts     int64        `json:"ts"`
+	CategoryCode string       `json:"categoryCode"`
+	Market       string       `json:"market"`
+	Symbol       string       `json:"symbol"`
+	Asks         []DepthLevel `json:"asks"`
+	Bids         []DepthLevel `json:"bids"`
+	Ts           int64        `json:"ts"`
 }
 
 type DepthLevel struct {
@@ -118,11 +120,12 @@ type GetIdentityResp struct {
 }
 
 type GetKlineReq struct {
-	Market string `json:"market"`
-	Symbol string `json:"symbol"`
-	KType  int64  `json:"kType"`
-	EndTs  int64  `json:"endTs"`
-	Limit  int64  `json:"limit"`
+	CategoryCode string `json:"categoryCode"`
+	Market       string `json:"market"`
+	Symbol       string `json:"symbol"`
+	KType        int64  `json:"kType"`
+	EndTs        int64  `json:"endTs"`
+	Limit        int64  `json:"limit"`
 }
 
 type GetKlineResp struct {
@@ -164,8 +167,9 @@ type GetProfileResp struct {
 }
 
 type GetQuoteReq struct {
-	Market string `json:"market"`
-	Symbol string `json:"symbol"`
+	CategoryCode string `json:"categoryCode"`
+	Market       string `json:"market"`
+	Symbol       string `json:"symbol"`
 }
 
 type GetQuoteResp struct {
@@ -179,7 +183,26 @@ type GetSecurityResp struct {
 }
 
 type GetSystemCoreResp struct {
+	RespBase
 	Data SystemCore `json:"data"`
+}
+
+type GuestLogin struct {
+	Token    string `json:"token"`
+	Uid      string `json:"uid"`
+	IsNew    bool   `json:"isNew"`
+	Username string `json:"username"`
+}
+
+type GuestLoginReq struct {
+	DeviceId    string `json:"deviceId"`
+	Fingerprint string `json:"fingerprint"`
+	RegisterIp  string `json:"registerIp,optional"`
+}
+
+type GuestLoginResp struct {
+	RespBase
+	Data GuestLogin `json:"data"`
 }
 
 type IdReq struct {
@@ -190,6 +213,11 @@ type InitGoogle2FAResp struct {
 	RespBase
 	Secret    string `json:"secret"`
 	QrCodeUrl string `json:"qrCodeUrl"`
+}
+
+type Interval struct {
+	Name  string `json:"name"`
+	KType int32  `json:"kType"`
 }
 
 type ItickCategory struct {
@@ -265,16 +293,17 @@ type ItickTenantProduct struct {
 }
 
 type Kline struct {
-	Market   string  `json:"market"`
-	Symbol   string  `json:"symbol"`
-	KType    int64   `json:"kType"`
-	Ts       int64   `json:"ts"`
-	Open     float64 `json:"open"`
-	High     float64 `json:"high"`
-	Low      float64 `json:"low"`
-	Close    float64 `json:"close"`
-	Volume   float64 `json:"volume"`
-	Turnover float64 `json:"turnover"`
+	CategoryCode string  `json:"categoryCode"`
+	Market       string  `json:"market"`
+	Symbol       string  `json:"symbol"`
+	KType        int64   `json:"kType"`
+	Ts           int64   `json:"ts"`
+	Open         float64 `json:"open"`
+	High         float64 `json:"high"`
+	Low          float64 `json:"low"`
+	Close        float64 `json:"close"`
+	Volume       float64 `json:"volume"`
+	Turnover     float64 `json:"turnover"`
 }
 
 type ListAvailableRechargeChannelsReq struct {
@@ -335,6 +364,7 @@ type ListVisibleCategoriesResp struct {
 
 type ListVisibleProductsReq struct {
 	CategoryType int64  `json:"categoryType"`
+	CategoryCode string `json:"categoryCode"`
 	Market       string `json:"market"`
 	Keyword      string `json:"keyword"`
 }
@@ -361,8 +391,9 @@ type LoginResp struct {
 }
 
 type MarketSymbol struct {
-	Market string `json:"market"`
-	Symbol string `json:"symbol"`
+	CategoryCode string `json:"categoryCode"`
+	Market       string `json:"market"`
+	Symbol       string `json:"symbol"`
 }
 
 type PageReq struct {
@@ -381,6 +412,7 @@ type QueryMyRechargeOrderStatusResp struct {
 }
 
 type Quote struct {
+	CategoryCode   string  `json:"categoryCode"`
 	Market         string  `json:"market"`
 	Symbol         string  `json:"symbol"`
 	LastPrice      float64 `json:"lastPrice"`
@@ -504,8 +536,11 @@ type SubmitIdentityResp struct {
 }
 
 type SystemCore struct {
-	IsCaptchaEnabled  bool `json:"isCaptchaEnabled"`
-	IsRegisterEnabled bool `json:"isRegisterEnabled"`
+	IsCaptchaEnabled  bool       `json:"isCaptchaEnabled"`  // 是否开启验证码
+	IsRegisterEnabled bool       `json:"isRegisterEnabled"` // 是否开启注册
+	IsGuestEnabled    bool       `json:"isGuestEnabled"`    // 是否允许游客登录
+	IsCryptoEnabled   bool       `json:"isCryptoEnabled"`   // 是否加密接口提交数据
+	Intervals         []Interval `json:"intervals"`         // kline 支持粒度
 }
 
 type TenantInfo struct {
@@ -768,24 +803,24 @@ type WithdrawOrder struct {
 }
 
 type WsMessage struct {
-	Type     string        `json:"type"`
-	ClientTs int64         `json:"clientTs,omitempty"` // 客户端毫秒时间戳
-	ServerTs int64         `json:"serverTs,omitempty"` // 服务端毫秒时间戳
-	Topics   []WsTickTopic `json:"topics,omitempty"`
-	Code     int           `json:"code,omitempty"`
-	Message  string        `json:"message,omitempty"`
-	Topic    string        `json:"topic,omitempty"`
-	Market   string        `json:"market,omitempty"`
-	Symbol   string        `json:"symbol,omitempty"`
-	Region   string        `json:"region,omitempty"`
-	Interval string        `json:"interval,omitempty"`
-	Payload  []byte        `json:"payload,omitempty"`
+	Type         string        `json:"type"`
+	ClientTs     int64         `json:"clientTs,omitempty"` // 客户端毫秒时间戳
+	ServerTs     int64         `json:"serverTs,omitempty"` // 服务端毫秒时间戳
+	Topics       []WsTickTopic `json:"topics,omitempty"`
+	Code         int           `json:"code,omitempty"`
+	Message      string        `json:"message,omitempty"`
+	Topic        string        `json:"topic,omitempty"`
+	CategoryCode string        `json:"categoryCode,omitempty"`
+	Symbol       string        `json:"symbol,omitempty"`
+	Market       string        `json:"market,omitempty"`
+	Interval     string        `json:"interval,omitempty"`
+	Payload      []byte        `json:"payload,omitempty"`
 }
 
 type WsTickTopic struct {
-	Topic    string `json:"topic"`
-	Market   string `json:"market"`
-	Symbol   string `json:"symbol"`
-	Region   string `json:"region,optional"`
-	Interval string `json:"interval,optional"`
+	Topic        string `json:"topic"`
+	CategoryCode string `json:"categoryCode"`
+	Symbol       string `json:"symbol"`
+	Market       string `json:"market,optional"`
+	Interval     string `json:"interval,optional"`
 }

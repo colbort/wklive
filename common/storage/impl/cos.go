@@ -15,19 +15,19 @@ import (
 )
 
 type cosUploader struct {
-	region     string
+	market     string
 	secretID   string
 	secretKey  string
 	bucketName string
 	bucketUrl  string
 }
 
-func NewTencentUploader(region, secretID, secretKey, bucketName, bucketUrl string) (*cosUploader, error) {
-	if region == "" || secretID == "" || secretKey == "" || bucketName == "" {
+func NewTencentUploader(market, secretID, secretKey, bucketName, bucketUrl string) (*cosUploader, error) {
+	if market == "" || secretID == "" || secretKey == "" || bucketName == "" {
 		return nil, fmt.Errorf("tencent uploader missing required parameters")
 	}
 	return &cosUploader{
-		region:     region,
+		market:     market,
 		secretID:   secretID,
 		secretKey:  secretKey,
 		bucketName: bucketName,
@@ -49,7 +49,7 @@ func (u *cosUploader) Upload(ctx context.Context, file multipart.File, header *m
 
 	bucketUrl := strings.TrimSpace(u.bucketUrl)
 	if bucketUrl == "" {
-		bucketUrl = fmt.Sprintf("https://%s.cos.%s.myqcloud.com", u.bucketName, u.region)
+		bucketUrl = fmt.Sprintf("https://%s.cos.%s.myqcloud.com", u.bucketName, u.market)
 	}
 
 	uUrl, err := url.Parse(bucketUrl)

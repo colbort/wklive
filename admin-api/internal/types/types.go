@@ -260,11 +260,12 @@ type GetPayProductResp struct {
 }
 
 type GetProductKlineReq struct {
-	Market string `json:"market"`
-	Symbol string `json:"symbol"`
-	KType  int64  `json:"kType"`
-	EndTs  int64  `json:"endTs"`
-	Limit  int64  `json:"limit"`
+	CategoryCode string `json:"categoryCode"`
+	Market       string `json:"market"`
+	Symbol       string `json:"symbol"`
+	KType        int64  `json:"kType"`
+	EndTs        int64  `json:"endTs"`
+	Limit        int64  `json:"limit"`
 }
 
 type GetProductKlineResp struct {
@@ -561,16 +562,17 @@ type ItickTenantProduct struct {
 }
 
 type Kline struct {
-	Market   string  `json:"market"`
-	Symbol   string  `json:"symbol"`
-	KType    int64   `json:"kType"`
-	Ts       int64   `json:"ts"`
-	Open     float64 `json:"open"`
-	High     float64 `json:"high"`
-	Low      float64 `json:"low"`
-	Close    float64 `json:"close"`
-	Volume   float64 `json:"volume"`
-	Turnover float64 `json:"turnover"`
+	CategoryCode string  `json:"categoryCode"`
+	Market       string  `json:"market"`
+	Symbol       string  `json:"symbol"`
+	KType        int64   `json:"kType"`
+	Ts           int64   `json:"ts"`
+	Open         float64 `json:"open"`
+	High         float64 `json:"high"`
+	Low          float64 `json:"low"`
+	Close        float64 `json:"close"`
+	Volume       float64 `json:"volume"`
+	Turnover     float64 `json:"turnover"`
 }
 
 type ListCategoriesReq struct {

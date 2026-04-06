@@ -29,11 +29,12 @@ func NewGetKlineLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetKline
 
 func (l *GetKlineLogic) GetKline(req *types.GetKlineReq) (resp *types.GetKlineResp, err error) {
 	result, err := l.svcCtx.ItickCli.GetKline(l.ctx, &itick.GetKlineReq{
-		Market: req.Market,
-		Symbol: req.Symbol,
-		KType:  itick.KlineType(req.KType),
-		EndTs:  req.EndTs,
-		Limit:  req.Limit,
+		CategoryCode: req.CategoryCode,
+		Market:       req.Market,
+		Symbol:       req.Symbol,
+		KType:        itick.KlineType(req.KType),
+		EndTs:        req.EndTs,
+		Limit:        req.Limit,
 	})
 	if err != nil {
 		return nil, err
@@ -48,16 +49,17 @@ func (l *GetKlineLogic) GetKline(req *types.GetKlineReq) (resp *types.GetKlineRe
 	}
 	for _, item := range result.Data {
 		resp.Data = append(resp.Data, types.Kline{
-			Market:   item.Market,
-			Symbol:   item.Symbol,
-			KType:    int64(item.KType),
-			Ts:       item.Ts,
-			Open:     item.Open,
-			High:     item.High,
-			Low:      item.Low,
-			Close:    item.Close,
-			Volume:   item.Volume,
-			Turnover: item.Turnover,
+			CategoryCode: item.CategoryCode,
+			Market:       item.Market,
+			Symbol:       item.Symbol,
+			KType:        int64(item.KType),
+			Ts:           item.Ts,
+			Open:         item.Open,
+			High:         item.High,
+			Low:          item.Low,
+			Close:        item.Close,
+			Volume:       item.Volume,
+			Turnover:     item.Turnover,
 		})
 	}
 

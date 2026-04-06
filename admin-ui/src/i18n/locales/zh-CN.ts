@@ -218,7 +218,7 @@ export default {
     accessKeySecret: '访问密钥',
     bucketName: '存储桶名称',
     bucketUrl: '存储桶URL',
-    region: '区域',
+    market: '区域',
     secretId: 'Secret ID',
     secretKey: 'Secret Key',
     endpointPlaceholder: '请输入端点',

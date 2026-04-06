@@ -4,9 +4,11 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"log"
 	"strings"
 
 	"wklive/proto/itick"
+	"wklive/services/itick/internal/bootstrap"
 	"wklive/services/itick/internal/config"
 	"wklive/services/itick/internal/server"
 	"wklive/services/itick/internal/svc"
@@ -20,7 +22,7 @@ import (
 )
 
 var (
-	endpoints = flag.String("etcd", "192.168.10.116:2379", "etcd endpoints")
+	endpoints = flag.String("etcd", "127.0.0.1:2379", "etcd endpoints")
 	configKey = flag.String("config", "/wklive/itick-rpc/config", "etcd config key")
 	commonKey = flag.String("common", "/wklive/common/config", "etcd common config key")
 )
@@ -39,6 +41,15 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+
+	// 预热的 categoryCode + interval，自行按你的业务改
+	if err := bootstrap.PreheatCoinKlineModels(svcCtx.Factory); err != nil {
+		log.Fatalf("preheat coin kline models failed: %v", err)
+	}
+
+	// 启动批量写入器
+	svcCtx.Writer.Start()
+	defer svcCtx.Writer.Stop()
 
 	// 加载 itick 分类数据并初始化 WebSocket 客户端
 	err := svcCtx.ItickManager.Load(ctx)

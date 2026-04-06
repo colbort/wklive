@@ -93,8 +93,6 @@ const (
 	KlineType_KLINE_TYPE_15M     KlineType = 3
 	KlineType_KLINE_TYPE_30M     KlineType = 4
 	KlineType_KLINE_TYPE_60M     KlineType = 5
-	KlineType_KLINE_TYPE_2H      KlineType = 6
-	KlineType_KLINE_TYPE_4H      KlineType = 7
 	KlineType_KLINE_TYPE_1D      KlineType = 8
 	KlineType_KLINE_TYPE_1W      KlineType = 9
 	KlineType_KLINE_TYPE_1MO     KlineType = 10
@@ -109,8 +107,6 @@ var (
 		3:  "KLINE_TYPE_15M",
 		4:  "KLINE_TYPE_30M",
 		5:  "KLINE_TYPE_60M",
-		6:  "KLINE_TYPE_2H",
-		7:  "KLINE_TYPE_4H",
 		8:  "KLINE_TYPE_1D",
 		9:  "KLINE_TYPE_1W",
 		10: "KLINE_TYPE_1MO",
@@ -122,8 +118,6 @@ var (
 		"KLINE_TYPE_15M":     3,
 		"KLINE_TYPE_30M":     4,
 		"KLINE_TYPE_60M":     5,
-		"KLINE_TYPE_2H":      6,
-		"KLINE_TYPE_4H":      7,
 		"KLINE_TYPE_1D":      8,
 		"KLINE_TYPE_1W":      9,
 		"KLINE_TYPE_1MO":     10,
@@ -410,7 +404,7 @@ const file_proto_itick_common_proto_rawDesc = "" +
 	"\x13CATEGORY_TYPE_STOCK\x10\x03\x12\x18\n" +
 	"\x14CATEGORY_TYPE_FUTURE\x10\x04\x12\x19\n" +
 	"\x15CATEGORY_TYPE_INDICES\x10\x05\x12\x16\n" +
-	"\x12CATEGORY_TYPE_FUND\x10\x06*\xe5\x01\n" +
+	"\x12CATEGORY_TYPE_FUND\x10\x06*\xbf\x01\n" +
 	"\tKlineType\x12\x16\n" +
 	"\x12KLINE_TYPE_UNKNOWN\x10\x00\x12\x11\n" +
 	"\rKLINE_TYPE_1M\x10\x01\x12\x11\n" +
@@ -418,8 +412,6 @@ const file_proto_itick_common_proto_rawDesc = "" +
 	"\x0eKLINE_TYPE_15M\x10\x03\x12\x12\n" +
 	"\x0eKLINE_TYPE_30M\x10\x04\x12\x12\n" +
 	"\x0eKLINE_TYPE_60M\x10\x05\x12\x11\n" +
-	"\rKLINE_TYPE_2H\x10\x06\x12\x11\n" +
-	"\rKLINE_TYPE_4H\x10\a\x12\x11\n" +
 	"\rKLINE_TYPE_1D\x10\b\x12\x11\n" +
 	"\rKLINE_TYPE_1W\x10\t\x12\x12\n" +
 	"\x0eKLINE_TYPE_1MO\x10\n" +

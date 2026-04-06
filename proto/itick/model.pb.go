@@ -330,16 +330,17 @@ func (x *ItickProduct) GetUpdateTimes() int64 {
 // K线
 type Kline struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Market        string                 `protobuf:"bytes,1,opt,name=market,proto3" json:"market,omitempty"`
-	Symbol        string                 `protobuf:"bytes,2,opt,name=symbol,proto3" json:"symbol,omitempty"`
-	KType         KlineType              `protobuf:"varint,3,opt,name=k_type,json=kType,proto3,enum=itick.KlineType" json:"k_type,omitempty"`
-	Ts            int64                  `protobuf:"varint,4,opt,name=ts,proto3" json:"ts,omitempty"`
-	Open          float64                `protobuf:"fixed64,5,opt,name=open,proto3" json:"open,omitempty"`
-	High          float64                `protobuf:"fixed64,6,opt,name=high,proto3" json:"high,omitempty"`
-	Low           float64                `protobuf:"fixed64,7,opt,name=low,proto3" json:"low,omitempty"`
-	Close         float64                `protobuf:"fixed64,8,opt,name=close,proto3" json:"close,omitempty"`
-	Volume        float64                `protobuf:"fixed64,9,opt,name=volume,proto3" json:"volume,omitempty"`
-	Turnover      float64                `protobuf:"fixed64,10,opt,name=turnover,proto3" json:"turnover,omitempty"`
+	CategoryCode  string                 `protobuf:"bytes,1,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"`
+	Market        string                 `protobuf:"bytes,2,opt,name=market,proto3" json:"market,omitempty"`
+	Symbol        string                 `protobuf:"bytes,3,opt,name=symbol,proto3" json:"symbol,omitempty"`
+	KType         KlineType              `protobuf:"varint,4,opt,name=k_type,json=kType,proto3,enum=itick.KlineType" json:"k_type,omitempty"`
+	Ts            int64                  `protobuf:"varint,5,opt,name=ts,proto3" json:"ts,omitempty"`
+	Open          float64                `protobuf:"fixed64,6,opt,name=open,proto3" json:"open,omitempty"`
+	High          float64                `protobuf:"fixed64,7,opt,name=high,proto3" json:"high,omitempty"`
+	Low           float64                `protobuf:"fixed64,8,opt,name=low,proto3" json:"low,omitempty"`
+	Close         float64                `protobuf:"fixed64,9,opt,name=close,proto3" json:"close,omitempty"`
+	Volume        float64                `protobuf:"fixed64,10,opt,name=volume,proto3" json:"volume,omitempty"`
+	Turnover      float64                `protobuf:"fixed64,11,opt,name=turnover,proto3" json:"turnover,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -372,6 +373,13 @@ func (x *Kline) ProtoReflect() protoreflect.Message {
 // Deprecated: Use Kline.ProtoReflect.Descriptor instead.
 func (*Kline) Descriptor() ([]byte, []int) {
 	return file_proto_itick_model_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *Kline) GetCategoryCode() string {
+	if x != nil {
+		return x.CategoryCode
+	}
+	return ""
 }
 
 func (x *Kline) GetMarket() string {
@@ -444,140 +452,10 @@ func (x *Kline) GetTurnover() float64 {
 	return 0
 }
 
-// 深度档位
-type DepthLevel struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Price         float64                `protobuf:"fixed64,1,opt,name=price,proto3" json:"price,omitempty"`
-	Volume        float64                `protobuf:"fixed64,2,opt,name=volume,proto3" json:"volume,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DepthLevel) Reset() {
-	*x = DepthLevel{}
-	mi := &file_proto_itick_model_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DepthLevel) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DepthLevel) ProtoMessage() {}
-
-func (x *DepthLevel) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_itick_model_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DepthLevel.ProtoReflect.Descriptor instead.
-func (*DepthLevel) Descriptor() ([]byte, []int) {
-	return file_proto_itick_model_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *DepthLevel) GetPrice() float64 {
-	if x != nil {
-		return x.Price
-	}
-	return 0
-}
-
-func (x *DepthLevel) GetVolume() float64 {
-	if x != nil {
-		return x.Volume
-	}
-	return 0
-}
-
-// 深度
-type Depth struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Market        string                 `protobuf:"bytes,1,opt,name=market,proto3" json:"market,omitempty"`
-	Symbol        string                 `protobuf:"bytes,2,opt,name=symbol,proto3" json:"symbol,omitempty"`
-	Asks          []*DepthLevel          `protobuf:"bytes,3,rep,name=asks,proto3" json:"asks,omitempty"`
-	Bids          []*DepthLevel          `protobuf:"bytes,4,rep,name=bids,proto3" json:"bids,omitempty"`
-	Ts            int64                  `protobuf:"varint,5,opt,name=ts,proto3" json:"ts,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Depth) Reset() {
-	*x = Depth{}
-	mi := &file_proto_itick_model_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Depth) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Depth) ProtoMessage() {}
-
-func (x *Depth) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_itick_model_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Depth.ProtoReflect.Descriptor instead.
-func (*Depth) Descriptor() ([]byte, []int) {
-	return file_proto_itick_model_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *Depth) GetMarket() string {
-	if x != nil {
-		return x.Market
-	}
-	return ""
-}
-
-func (x *Depth) GetSymbol() string {
-	if x != nil {
-		return x.Symbol
-	}
-	return ""
-}
-
-func (x *Depth) GetAsks() []*DepthLevel {
-	if x != nil {
-		return x.Asks
-	}
-	return nil
-}
-
-func (x *Depth) GetBids() []*DepthLevel {
-	if x != nil {
-		return x.Bids
-	}
-	return nil
-}
-
-func (x *Depth) GetTs() int64 {
-	if x != nil {
-		return x.Ts
-	}
-	return 0
-}
-
 // 实时报价
 type Quote struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	Market         string                 `protobuf:"bytes,1,opt,name=market,proto3" json:"market,omitempty"`
+	CategoryCode   string                 `protobuf:"bytes,1,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"`
 	Symbol         string                 `protobuf:"bytes,2,opt,name=symbol,proto3" json:"symbol,omitempty"`
 	LastPrice      float64                `protobuf:"fixed64,3,opt,name=last_price,json=lastPrice,proto3" json:"last_price,omitempty"`
 	OpenPrice      float64                `protobuf:"fixed64,4,opt,name=open_price,json=openPrice,proto3" json:"open_price,omitempty"`
@@ -590,13 +468,14 @@ type Quote struct {
 	Turnover       float64                `protobuf:"fixed64,11,opt,name=turnover,proto3" json:"turnover,omitempty"`
 	QuoteTs        int64                  `protobuf:"varint,12,opt,name=quote_ts,json=quoteTs,proto3" json:"quote_ts,omitempty"`
 	TradeStatus    int64                  `protobuf:"varint,13,opt,name=trade_status,json=tradeStatus,proto3" json:"trade_status,omitempty"`
+	Market         string                 `protobuf:"bytes,14,opt,name=market,proto3" json:"market,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
 
 func (x *Quote) Reset() {
 	*x = Quote{}
-	mi := &file_proto_itick_model_proto_msgTypes[5]
+	mi := &file_proto_itick_model_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -608,7 +487,7 @@ func (x *Quote) String() string {
 func (*Quote) ProtoMessage() {}
 
 func (x *Quote) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_itick_model_proto_msgTypes[5]
+	mi := &file_proto_itick_model_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -621,12 +500,12 @@ func (x *Quote) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Quote.ProtoReflect.Descriptor instead.
 func (*Quote) Descriptor() ([]byte, []int) {
-	return file_proto_itick_model_proto_rawDescGZIP(), []int{5}
+	return file_proto_itick_model_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *Quote) GetMarket() string {
+func (x *Quote) GetCategoryCode() string {
 	if x != nil {
-		return x.Market
+		return x.CategoryCode
 	}
 	return ""
 }
@@ -715,6 +594,13 @@ func (x *Quote) GetTradeStatus() int64 {
 	return 0
 }
 
+func (x *Quote) GetMarket() string {
+	if x != nil {
+		return x.Market
+	}
+	return ""
+}
+
 type ItickTenantCategory struct {
 	state       protoimpl.MessageState `protogen:"open.v1"`
 	Id          int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -736,7 +622,7 @@ type ItickTenantCategory struct {
 
 func (x *ItickTenantCategory) Reset() {
 	*x = ItickTenantCategory{}
-	mi := &file_proto_itick_model_proto_msgTypes[6]
+	mi := &file_proto_itick_model_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -748,7 +634,7 @@ func (x *ItickTenantCategory) String() string {
 func (*ItickTenantCategory) ProtoMessage() {}
 
 func (x *ItickTenantCategory) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_itick_model_proto_msgTypes[6]
+	mi := &file_proto_itick_model_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -761,7 +647,7 @@ func (x *ItickTenantCategory) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ItickTenantCategory.ProtoReflect.Descriptor instead.
 func (*ItickTenantCategory) Descriptor() ([]byte, []int) {
-	return file_proto_itick_model_proto_rawDescGZIP(), []int{6}
+	return file_proto_itick_model_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ItickTenantCategory) GetId() int64 {
@@ -876,7 +762,7 @@ type ItickTenantProduct struct {
 
 func (x *ItickTenantProduct) Reset() {
 	*x = ItickTenantProduct{}
-	mi := &file_proto_itick_model_proto_msgTypes[7]
+	mi := &file_proto_itick_model_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -888,7 +774,7 @@ func (x *ItickTenantProduct) String() string {
 func (*ItickTenantProduct) ProtoMessage() {}
 
 func (x *ItickTenantProduct) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_itick_model_proto_msgTypes[7]
+	mi := &file_proto_itick_model_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -901,7 +787,7 @@ func (x *ItickTenantProduct) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ItickTenantProduct.ProtoReflect.Descriptor instead.
 func (*ItickTenantProduct) Descriptor() ([]byte, []int) {
-	return file_proto_itick_model_proto_rawDescGZIP(), []int{7}
+	return file_proto_itick_model_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ItickTenantProduct) GetId() int64 {
@@ -1077,31 +963,22 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"\x04icon\x18\x0f \x01(\tR\x04icon\x12\x16\n" +
 	"\x06remark\x18\x10 \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\x11 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x12 \x01(\x03R\vupdateTimes\"\xf4\x01\n" +
-	"\x05Kline\x12\x16\n" +
-	"\x06market\x18\x01 \x01(\tR\x06market\x12\x16\n" +
-	"\x06symbol\x18\x02 \x01(\tR\x06symbol\x12'\n" +
-	"\x06k_type\x18\x03 \x01(\x0e2\x10.itick.KlineTypeR\x05kType\x12\x0e\n" +
-	"\x02ts\x18\x04 \x01(\x03R\x02ts\x12\x12\n" +
-	"\x04open\x18\x05 \x01(\x01R\x04open\x12\x12\n" +
-	"\x04high\x18\x06 \x01(\x01R\x04high\x12\x10\n" +
-	"\x03low\x18\a \x01(\x01R\x03low\x12\x14\n" +
-	"\x05close\x18\b \x01(\x01R\x05close\x12\x16\n" +
-	"\x06volume\x18\t \x01(\x01R\x06volume\x12\x1a\n" +
-	"\bturnover\x18\n" +
-	" \x01(\x01R\bturnover\":\n" +
-	"\n" +
-	"DepthLevel\x12\x14\n" +
-	"\x05price\x18\x01 \x01(\x01R\x05price\x12\x16\n" +
-	"\x06volume\x18\x02 \x01(\x01R\x06volume\"\x95\x01\n" +
-	"\x05Depth\x12\x16\n" +
-	"\x06market\x18\x01 \x01(\tR\x06market\x12\x16\n" +
-	"\x06symbol\x18\x02 \x01(\tR\x06symbol\x12%\n" +
-	"\x04asks\x18\x03 \x03(\v2\x11.itick.DepthLevelR\x04asks\x12%\n" +
-	"\x04bids\x18\x04 \x03(\v2\x11.itick.DepthLevelR\x04bids\x12\x0e\n" +
-	"\x02ts\x18\x05 \x01(\x03R\x02ts\"\x91\x03\n" +
-	"\x05Quote\x12\x16\n" +
-	"\x06market\x18\x01 \x01(\tR\x06market\x12\x16\n" +
+	"\fupdate_times\x18\x12 \x01(\x03R\vupdateTimes\"\x99\x02\n" +
+	"\x05Kline\x12#\n" +
+	"\rcategory_code\x18\x01 \x01(\tR\fcategoryCode\x12\x16\n" +
+	"\x06market\x18\x02 \x01(\tR\x06market\x12\x16\n" +
+	"\x06symbol\x18\x03 \x01(\tR\x06symbol\x12'\n" +
+	"\x06k_type\x18\x04 \x01(\x0e2\x10.itick.KlineTypeR\x05kType\x12\x0e\n" +
+	"\x02ts\x18\x05 \x01(\x03R\x02ts\x12\x12\n" +
+	"\x04open\x18\x06 \x01(\x01R\x04open\x12\x12\n" +
+	"\x04high\x18\a \x01(\x01R\x04high\x12\x10\n" +
+	"\x03low\x18\b \x01(\x01R\x03low\x12\x14\n" +
+	"\x05close\x18\t \x01(\x01R\x05close\x12\x16\n" +
+	"\x06volume\x18\n" +
+	" \x01(\x01R\x06volume\x12\x1a\n" +
+	"\bturnover\x18\v \x01(\x01R\bturnover\"\xb6\x03\n" +
+	"\x05Quote\x12#\n" +
+	"\rcategory_code\x18\x01 \x01(\tR\fcategoryCode\x12\x16\n" +
 	"\x06symbol\x18\x02 \x01(\tR\x06symbol\x12\x1d\n" +
 	"\n" +
 	"last_price\x18\x03 \x01(\x01R\tlastPrice\x12\x1d\n" +
@@ -1118,7 +995,8 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	" \x01(\x01R\x06volume\x12\x1a\n" +
 	"\bturnover\x18\v \x01(\x01R\bturnover\x12\x19\n" +
 	"\bquote_ts\x18\f \x01(\x03R\aquoteTs\x12!\n" +
-	"\ftrade_status\x18\r \x01(\x03R\vtradeStatus\"\x83\x03\n" +
+	"\ftrade_status\x18\r \x01(\x03R\vtradeStatus\x12\x16\n" +
+	"\x06market\x18\x0e \x01(\tR\x06market\"\x83\x03\n" +
 	"\x13ItickTenantCategory\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
@@ -1172,32 +1050,28 @@ func file_proto_itick_model_proto_rawDescGZIP() []byte {
 	return file_proto_itick_model_proto_rawDescData
 }
 
-var file_proto_itick_model_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_proto_itick_model_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_proto_itick_model_proto_goTypes = []any{
 	(*ItickCategory)(nil),       // 0: itick.ItickCategory
 	(*ItickProduct)(nil),        // 1: itick.ItickProduct
 	(*Kline)(nil),               // 2: itick.Kline
-	(*DepthLevel)(nil),          // 3: itick.DepthLevel
-	(*Depth)(nil),               // 4: itick.Depth
-	(*Quote)(nil),               // 5: itick.Quote
-	(*ItickTenantCategory)(nil), // 6: itick.ItickTenantCategory
-	(*ItickTenantProduct)(nil),  // 7: itick.ItickTenantProduct
-	(CategoryType)(0),           // 8: itick.CategoryType
-	(KlineType)(0),              // 9: itick.KlineType
+	(*Quote)(nil),               // 3: itick.Quote
+	(*ItickTenantCategory)(nil), // 4: itick.ItickTenantCategory
+	(*ItickTenantProduct)(nil),  // 5: itick.ItickTenantProduct
+	(CategoryType)(0),           // 6: itick.CategoryType
+	(KlineType)(0),              // 7: itick.KlineType
 }
 var file_proto_itick_model_proto_depIdxs = []int32{
-	8, // 0: itick.ItickCategory.category_type:type_name -> itick.CategoryType
-	8, // 1: itick.ItickProduct.category_type:type_name -> itick.CategoryType
-	9, // 2: itick.Kline.k_type:type_name -> itick.KlineType
-	3, // 3: itick.Depth.asks:type_name -> itick.DepthLevel
-	3, // 4: itick.Depth.bids:type_name -> itick.DepthLevel
-	8, // 5: itick.ItickTenantCategory.category_type:type_name -> itick.CategoryType
-	8, // 6: itick.ItickTenantProduct.category_type:type_name -> itick.CategoryType
-	7, // [7:7] is the sub-list for method output_type
-	7, // [7:7] is the sub-list for method input_type
-	7, // [7:7] is the sub-list for extension type_name
-	7, // [7:7] is the sub-list for extension extendee
-	0, // [0:7] is the sub-list for field type_name
+	6, // 0: itick.ItickCategory.category_type:type_name -> itick.CategoryType
+	6, // 1: itick.ItickProduct.category_type:type_name -> itick.CategoryType
+	7, // 2: itick.Kline.k_type:type_name -> itick.KlineType
+	6, // 3: itick.ItickTenantCategory.category_type:type_name -> itick.CategoryType
+	6, // 4: itick.ItickTenantProduct.category_type:type_name -> itick.CategoryType
+	5, // [5:5] is the sub-list for method output_type
+	5, // [5:5] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_proto_itick_model_proto_init() }
@@ -1212,7 +1086,7 @@ func file_proto_itick_model_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_itick_model_proto_rawDesc), len(file_proto_itick_model_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

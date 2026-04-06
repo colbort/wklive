@@ -35,6 +35,12 @@ func (s *UserAppServer) Login(ctx context.Context, in *user.LoginReq) (*user.Log
 	return l.Login(in)
 }
 
+// 游客登了
+func (s *UserAppServer) GuestLogin(ctx context.Context, in *user.GuestLoginReq) (*user.GuestLoginResp, error) {
+	l := logic.NewGuestLoginLogic(ctx, s.svcCtx)
+	return l.GuestLogin(in)
+}
+
 // 用户登出
 func (s *UserAppServer) Logout(ctx context.Context, in *user.LogoutReq) (*user.AppCommonResp, error) {
 	l := logic.NewLogoutLogic(ctx, s.svcCtx)

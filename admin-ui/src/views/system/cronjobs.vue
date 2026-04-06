@@ -241,12 +241,6 @@ async function handleStop(row: SysCronJobItem) {
   }
 }
 
-// Format date
-const formatDateFn = (date: number) => {
-  if (!date) return '-'
-  return formatDate(new Date(date * 1000).getTime())
-}
-
 // Load on mount
 onMounted(() => {
   fetchHandlers()
@@ -325,7 +319,7 @@ onMounted(() => {
       <el-table-column prop="createBy" :label="t('system.createBy')" width="100" />
       <el-table-column prop="createTimes" :label="t('common.createTimes')" width="170">
         <template #default="{ row }">
-          <span>{{ formatDateFn(row.createTimes) }}</span>
+          <span>{{ formatDate(row.createTimes) }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="t('common.actions')" width="280" fixed="right">

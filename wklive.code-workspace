@@ -26,7 +26,7 @@
     },
     {
       "path": ".",
-      "name":"root"
+      "name": "root"
     }
   ],
   "settings": {
@@ -48,9 +48,13 @@
       "GO111MODULE": "on"
     },
     "editor.fontSize": 10,
+    "editor.formatOnSave": false,
     "i18n-ally.localesPaths": [
       "./admin-ui/src/i18n/locales",
     ],
+    "cSpell.words": [
+      "Itick"
+    ]
   },
   "launch": {
     "version": "0.2.0",
@@ -61,71 +65,71 @@
         "request": "launch",
         "mode": "auto",
         "env": {
-            "DEBUG": "true",
-            "VSCODE": "true",
-            "test": "test"
+          "DEBUG": "true",
+          "VSCODE": "true",
+          "test": "test"
         },
         "program": "${workspaceFolder:admin-api}/"
       },
       {
-          "name": "app-api",
-          "type": "go",
-          "request": "launch",
-          "mode": "auto",
-          "env": {
-              "DEBUG": "true",
-              "VSCODE": "true",
-              "test": "test"
-          },
-          "program": "${workspaceFolder:app-api}/"
+        "name": "app-api",
+        "type": "go",
+        "request": "launch",
+        "mode": "auto",
+        "env": {
+          "DEBUG": "true",
+          "VSCODE": "true",
+          "test": "test"
+        },
+        "program": "${workspaceFolder:app-api}/"
       },
       {
-          "name": "system",
-          "type": "go",
-          "request": "launch",
-          "mode": "auto",
-          "env": {
-              "DEBUG": "true",
-              "VSCODE": "true",
-              "test": "test"
-          },
-          "program": "${workspaceFolder:services}/system/"
+        "name": "system",
+        "type": "go",
+        "request": "launch",
+        "mode": "auto",
+        "env": {
+          "DEBUG": "true",
+          "VSCODE": "true",
+          "test": "test"
+        },
+        "program": "${workspaceFolder:services}/system/"
       },
       {
-          "name": "user",
-          "type": "go",
-          "request": "launch",
-          "mode": "auto",
-          "env": {
-              "DEBUG": "true",
-              "VSCODE": "true",
-              "test": "test"
-          },
-          "program": "${workspaceFolder:services}/user/"
+        "name": "user",
+        "type": "go",
+        "request": "launch",
+        "mode": "auto",
+        "env": {
+          "DEBUG": "true",
+          "VSCODE": "true",
+          "test": "test"
+        },
+        "program": "${workspaceFolder:services}/user/"
       },
       {
-          "name": "payment",
-          "type": "go",
-          "request": "launch",
-          "mode": "auto",
-          "env": {
-              "DEBUG": "true",
-              "VSCODE": "true",
-              "test": "test"
-          },
-          "program": "${workspaceFolder:services}/payment/"
+        "name": "payment",
+        "type": "go",
+        "request": "launch",
+        "mode": "auto",
+        "env": {
+          "DEBUG": "true",
+          "VSCODE": "true",
+          "test": "test"
+        },
+        "program": "${workspaceFolder:services}/payment/"
       },
       {
-          "name": "itick",
-          "type": "go",
-          "request": "launch",
-          "mode": "auto",
-          "env": {
-              "DEBUG": "true",
-              "VSCODE": "true",
-              "test": "test"
-          },
-          "program": "${workspaceFolder:services}/itick/"
+        "name": "itick",
+        "type": "go",
+        "request": "launch",
+        "mode": "auto",
+        "env": {
+          "DEBUG": "true",
+          "VSCODE": "true",
+          "test": "test"
+        },
+        "program": "${workspaceFolder:services}/itick/"
       }
     ],
     "compounds": []

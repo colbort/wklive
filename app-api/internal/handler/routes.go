@@ -212,6 +212,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodPost,
+				Path:    "/guest-login",
+				Handler: user_public.GuestLoginHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
 				Path:    "/login",
 				Handler: user_public.LoginHandler(serverCtx),
 			},
@@ -227,7 +232,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
-				Path:    "/ws/tick",
+				Path:    "/ws/itick",
 				Handler: user_public.TickWsHandler(serverCtx),
 			},
 		},

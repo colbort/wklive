@@ -59,7 +59,7 @@ export type AliyunOssConfig = {
 
 // 腾讯云 COS配置
 export type TencentCosConfig = {
-  region: string
+  market: string
   secret_id: string
   secret_key: string
   bucket_name: string

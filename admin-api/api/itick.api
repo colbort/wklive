@@ -9,8 +9,8 @@ type ItickCategory {
 	sort         int64  `json:"sort"`
 	icon         string `json:"icon"`
 	remark       string `json:"remark"`
-	createTimes   int64  `json:"createTimes"`
-	updateTimes   int64  `json:"updateTimes"`
+	createTimes  int64  `json:"createTimes"`
+	updateTimes  int64  `json:"updateTimes"`
 }
 
 // 产品
@@ -31,22 +31,23 @@ type ItickProduct {
 	sort         int64  `json:"sort"`
 	icon         string `json:"icon"`
 	remark       string `json:"remark"`
-	createTimes   int64  `json:"createTimes"`
-	updateTimes   int64  `json:"updateTimes"`
+	createTimes  int64  `json:"createTimes"`
+	updateTimes  int64  `json:"updateTimes"`
 }
 
 // K线
 type Kline {
-	market   string  `json:"market"`
-	symbol   string  `json:"symbol"`
-	kType    int64   `json:"kType"`
-	ts       int64   `json:"ts"`
-	open     float64 `json:"open"`
-	high     float64 `json:"high"`
-	low      float64 `json:"low"`
-	close    float64 `json:"close"`
-	volume   float64 `json:"volume"`
-	turnover float64 `json:"turnover"`
+	categoryCode string  `json:"categoryCode"`
+	market       string  `json:"market"`
+	symbol       string  `json:"symbol"`
+	kType        int64   `json:"kType"`
+	ts           int64   `json:"ts"`
+	open         float64 `json:"open"`
+	high         float64 `json:"high"`
+	low          float64 `json:"low"`
+	close        float64 `json:"close"`
+	volume       float64 `json:"volume"`
+	turnover     float64 `json:"turnover"`
 }
 
 // 深度档位
@@ -82,13 +83,13 @@ type Quote {
 }
 
 type ItickTenantCategory {
-	id         int64  `json:"id"`
-	tenantId   int64  `json:"tenantId"`
-	categoryId int64  `json:"categoryId"`
-	enabled    int64  `json:"enabled"`
-	appVisible int64  `json:"appVisible"`
-	sort       int64  `json:"sort"`
-	remark     string `json:"remark"`
+	id          int64  `json:"id"`
+	tenantId    int64  `json:"tenantId"`
+	categoryId  int64  `json:"categoryId"`
+	enabled     int64  `json:"enabled"`
+	appVisible  int64  `json:"appVisible"`
+	sort        int64  `json:"sort"`
+	remark      string `json:"remark"`
 	createTimes int64  `json:"createTimes"`
 	updateTimes int64  `json:"updateTimes"`
 	// 冗余返回字段，方便前端展示
@@ -98,13 +99,13 @@ type ItickTenantCategory {
 }
 
 type ItickTenantProduct {
-	id         int64  `json:"id"`
-	tenantId   int64  `json:"tenantId"`
-	productId  int64  `json:"productId"`
-	enabled    int64  `json:"enabled"`
-	appVisible int64  `json:"appVisible"`
-	sort       int64  `json:"sort"`
-	remark     string `json:"remark"`
+	id          int64  `json:"id"`
+	tenantId    int64  `json:"tenantId"`
+	productId   int64  `json:"productId"`
+	enabled     int64  `json:"enabled"`
+	appVisible  int64  `json:"appVisible"`
+	sort        int64  `json:"sort"`
+	remark      string `json:"remark"`
 	createTimes int64  `json:"createTimes"`
 	updateTimes int64  `json:"updateTimes"`
 	// 冗余返回字段，方便前端展示
@@ -144,7 +145,7 @@ type UpdateCategoryReq {
 }
 
 type GetCategoryReq {
-	id int64 `path:"id"` 
+	id int64 `path:"id"`
 }
 
 type GetCategoryResp {
@@ -154,9 +155,9 @@ type GetCategoryResp {
 
 type ListCategoriesReq {
 	PageReq
-	categoryType int64   `json:"categoryType,optional"`
-	enabled      int32   `json:"enable,optional"` // 0全部 1启用 2禁用
-	appVisible   int32   `json:"appVisible,optional"`
+	categoryType int64 `json:"categoryType,optional"`
+	enabled      int32 `json:"enable,optional"` // 0全部 1启用 2禁用
+	appVisible   int32 `json:"appVisible,optional"`
 }
 
 type ListCategoriesResp {
@@ -227,12 +228,12 @@ type GetProductResp {
 
 type ListProductsReq {
 	PageReq
-	categoryType int64   `json:"categoryType,optional"`
-	categoryName string  `json:"categoryName,optional"`
-	market       string  `json:"market,optional"`
-	keyword      string  `json:"keyword,optional"`
-	enabled      int32   `json:"enabled,optional"` // 0全部 1启用 2禁用
-	appVisible   int32   `json:"appVisible,optional"` // 0全部 1显示 2隐藏
+	categoryType int64  `json:"categoryType,optional"`
+	categoryName string `json:"categoryName,optional"`
+	market       string `json:"market,optional"`
+	keyword      string `json:"keyword,optional"`
+	enabled      int32  `json:"enabled,optional"` // 0全部 1启用 2禁用
+	appVisible   int32  `json:"appVisible,optional"` // 0全部 1显示 2隐藏
 }
 
 type ListProductsResp {
@@ -244,11 +245,12 @@ type ListProductsResp {
 // K线
 // ====================
 type GetProductKlineReq {
-	market string `json:"market"`
-	symbol string `json:"symbol"`
-	kType  int64  `json:"kType"`
-	endTs  int64  `json:"endTs"`
-	limit  int64  `json:"limit"`
+	categoryCode string `json:"categoryCode"`
+	market       string `json:"market"`
+	symbol       string `json:"symbol"`
+	kType        int64  `json:"kType"`
+	endTs        int64  `json:"endTs"`
+	limit        int64  `json:"limit"`
 }
 
 type GetProductKlineResp {
@@ -303,10 +305,10 @@ type GetTenantCategoryResp {
 
 type ListTenantCategoriesReq {
 	PageReq
-	tenantId      int64   `json:"tenantId"`
-	categoryType  int64   `json:"categoryType"`
-	status        int32   `json:"status"` // 0全部 1启用 2禁用
-	visibleStatus int32   `json:"visibleStatus"` // 0全部 1显示 2隐藏
+	tenantId      int64 `json:"tenantId"`
+	categoryType  int64 `json:"categoryType"`
+	status        int32 `json:"status"` // 0全部 1启用 2禁用
+	visibleStatus int32 `json:"visibleStatus"` // 0全部 1显示 2隐藏
 }
 
 type ListTenantCategoriesResp {
@@ -361,12 +363,12 @@ type GetTenantProductResp {
 
 type ListTenantProductsReq {
 	PageReq
-	tenantId      int64   `json:"tenantId"`
-	categoryType  int64   `json:"categoryType"`
-	market        string  `json:"market"`
-	keyword       string  `json:"keyword"`
-	status        int32   `json:"status"` // 0全部 1启用 2禁用
-	visibleStatus int32   `json:"visibleStatus"` // 0全部 1显示 2隐藏
+	tenantId      int64  `json:"tenantId"`
+	categoryType  int64  `json:"categoryType"`
+	market        string `json:"market"`
+	keyword       string `json:"keyword"`
+	status        int32  `json:"status"` // 0全部 1启用 2禁用
+	visibleStatus int32  `json:"visibleStatus"` // 0全部 1显示 2隐藏
 }
 
 type ListTenantProductsResp {

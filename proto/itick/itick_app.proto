@@ -7,6 +7,9 @@ import "proto/itick/model.proto";
 
 option go_package = "wklive/proto/itick;itick";
 
+message AppEmpty {
+}
+
 message AppCommonResp {
   itick.RespBase base = 1;
 }
@@ -39,11 +42,12 @@ message ListVisibleProductsResp {
 // ====================
 
 message GetKlineReq {
-  string market = 1;
-  string symbol = 2;
-  itick.KlineType k_type = 3;
-  int64 end_ts = 4;
-  int64 limit = 5;
+  string category_code = 1;
+  string market = 2;
+  string symbol = 3;
+  itick.KlineType k_type = 4;
+  int64 end_ts = 5;
+  int64 limit = 6;
 }
 
 message GetKlineResp {
@@ -58,6 +62,7 @@ message GetKlineResp {
 message GetQuoteReq {
   string market = 1;
   string symbol = 2;
+  string category_code = 3;
 }
 
 message GetQuoteResp {
@@ -66,13 +71,15 @@ message GetQuoteResp {
 }
 
 message MarketSymbol {
-	string market = 1;
-	string symbol = 2;
+  string category_code = 1;
+	string market = 2;
+	string symbol = 3;
 }
 
 message BatchGetQuoteReq {
-  string market = 1;
-  repeated MarketSymbol data = 2;
+  string category_code = 1;
+  string market = 2;
+  repeated MarketSymbol data = 3;
 }
 
 message BatchGetQuoteResp {
@@ -86,25 +93,34 @@ message SubscribeRequest {
 
 message SubscribeTopic {
   string topic = 1; // quote depth tick kline
-  string market = 2; // crypto forex indices stock future fund
+  string category_code = 2; // crypto forex indices stock future fund
   string symbol = 3; // BTCUSDT / EURUSD / ...
-  string region = 4; // BA / US / HK ...
+  string market = 4; // BA / US / HK ...
   string interval = 5; // 1m 5m 1h 1d
 }
 
 message PushReply {
   string topic = 1;
-  string market = 2;
+  string category_code = 2;
   string symbol = 3;
-  string region = 4;
+  string market = 4;
   string interval = 5;
   bytes payload = 6;
+}
+
+message KlineInterval {
+  string name = 1;
+  int32 kType = 2;
+}
+
+message KlineIntervalsResp {
+  repeated KlineInterval data = 1;
 }
 
 // ====================
 // app service
 // ====================
-service ItickApp {
+service App {
   // 获取允许显示的产品类型
   rpc ListVisibleCategories(ListVisibleCategoriesReq) returns (ListVisibleCategoriesResp);
 
@@ -122,4 +138,7 @@ service ItickApp {
 
   // 订阅数据流
   rpc SubscribeStream(SubscribeRequest) returns (stream PushReply);
+
+  // 获取 kline 粒度
+  rpc GetKlineIntervals(AppEmpty) returns (KlineIntervalsResp);
 }

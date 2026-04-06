@@ -1179,11 +1179,12 @@ func (x *ListProductsResp) GetData() []*ItickProduct {
 
 type GetProductKlineReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Market        string                 `protobuf:"bytes,1,opt,name=market,proto3" json:"market,omitempty"`
-	Symbol        string                 `protobuf:"bytes,2,opt,name=symbol,proto3" json:"symbol,omitempty"`
-	KType         KlineType              `protobuf:"varint,3,opt,name=k_type,json=kType,proto3,enum=itick.KlineType" json:"k_type,omitempty"`
-	EndTs         int64                  `protobuf:"varint,4,opt,name=end_ts,json=endTs,proto3" json:"end_ts,omitempty"`
-	Limit         int64                  `protobuf:"varint,5,opt,name=limit,proto3" json:"limit,omitempty"`
+	CategoryCode  string                 `protobuf:"bytes,1,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"`
+	Market        string                 `protobuf:"bytes,2,opt,name=market,proto3" json:"market,omitempty"`
+	Symbol        string                 `protobuf:"bytes,3,opt,name=symbol,proto3" json:"symbol,omitempty"`
+	KType         KlineType              `protobuf:"varint,4,opt,name=k_type,json=kType,proto3,enum=itick.KlineType" json:"k_type,omitempty"`
+	EndTs         int64                  `protobuf:"varint,5,opt,name=end_ts,json=endTs,proto3" json:"end_ts,omitempty"`
+	Limit         int64                  `protobuf:"varint,6,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1216,6 +1217,13 @@ func (x *GetProductKlineReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetProductKlineReq.ProtoReflect.Descriptor instead.
 func (*GetProductKlineReq) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *GetProductKlineReq) GetCategoryCode() string {
+	if x != nil {
+		return x.CategoryCode
+	}
+	return ""
 }
 
 func (x *GetProductKlineReq) GetMarket() string {
@@ -2604,13 +2612,14 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"appVisible\"`\n" +
 	"\x10ListProductsResp\x12#\n" +
 	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12'\n" +
-	"\x04data\x18\x02 \x03(\v2\x13.itick.ItickProductR\x04data\"\x9a\x01\n" +
-	"\x12GetProductKlineReq\x12\x16\n" +
-	"\x06market\x18\x01 \x01(\tR\x06market\x12\x16\n" +
-	"\x06symbol\x18\x02 \x01(\tR\x06symbol\x12'\n" +
-	"\x06k_type\x18\x03 \x01(\x0e2\x10.itick.KlineTypeR\x05kType\x12\x15\n" +
-	"\x06end_ts\x18\x04 \x01(\x03R\x05endTs\x12\x14\n" +
-	"\x05limit\x18\x05 \x01(\x03R\x05limit\"\\\n" +
+	"\x04data\x18\x02 \x03(\v2\x13.itick.ItickProductR\x04data\"\xbf\x01\n" +
+	"\x12GetProductKlineReq\x12#\n" +
+	"\rcategory_code\x18\x01 \x01(\tR\fcategoryCode\x12\x16\n" +
+	"\x06market\x18\x02 \x01(\tR\x06market\x12\x16\n" +
+	"\x06symbol\x18\x03 \x01(\tR\x06symbol\x12'\n" +
+	"\x06k_type\x18\x04 \x01(\x0e2\x10.itick.KlineTypeR\x05kType\x12\x15\n" +
+	"\x06end_ts\x18\x05 \x01(\x03R\x05endTs\x12\x14\n" +
+	"\x05limit\x18\x06 \x01(\x03R\x05limit\"\\\n" +
 	"\x13GetProductKlineResp\x12#\n" +
 	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12 \n" +
 	"\x04data\x18\x02 \x03(\v2\f.itick.KlineR\x04data\"\xbe\x01\n" +

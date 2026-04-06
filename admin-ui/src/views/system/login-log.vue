@@ -5,6 +5,7 @@ import { ElMessage } from 'element-plus'
 import { usePagination } from '@/composables/usePagination'
 import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
+import { formatDate } from '@/utils'
 import { logService } from '@/services'
 import type { LoginLogItem } from '@/services/system/LogService'
 
@@ -122,12 +123,7 @@ onMounted(() => {
     </el-form>
 
     <!-- Table -->
-    <el-table
-      v-loading="loading"
-      :data="list_ref"
-      row-key="id"
-      style="margin-bottom: 16px"
-    >
+    <el-table v-loading="loading" :data="list_ref" row-key="id" style="margin-bottom: 16px">
       <el-table-column prop="id" :label="t('common.id')" width="70" />
       <el-table-column prop="username" :label="t('common.username')" min-width="120" />
       <el-table-column prop="ip" :label="t('common.loginIP')" min-width="130" />
@@ -157,9 +153,7 @@ onMounted(() => {
       </el-table-column>
       <el-table-column prop="loginAt" :label="t('common.loginTime')" min-width="170">
         <template #default="{ row }">
-          <span style="color: #666">{{
-            row.loginAt ? new Date(row.loginAt * 1000).toLocaleString() : '-'
-          }}</span>
+          <span style="color: #666">{{ formatDate(row.loginAt) }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -168,14 +162,10 @@ onMounted(() => {
     <div style="display: flex; justify-content: flex-end; gap: 10px; align-items: center">
       <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
       <el-button :disabled="!pagination.hasPrev" @click="prevPage">
-        {{
-          t('common.prevPage')
-        }}
+        {{ t('common.prevPage') }}
       </el-button>
       <el-button :disabled="!pagination.hasNext" @click="nextPage">
-        {{
-          t('common.nextPage')
-        }}
+        {{ t('common.nextPage') }}
       </el-button>
       <el-select
         v-model="pagination.limit"

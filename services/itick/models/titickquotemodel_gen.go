@@ -24,14 +24,14 @@ var (
 	tItickQuoteRowsWithPlaceHolder = strings.Join(stringx.Remove(tItickQuoteFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
 	cacheTItickQuoteIdPrefix           = "cache:tItickQuote:id:"
-	cacheTItickQuoteMarketSymbolPrefix = "cache:tItickQuote:market:symbol:"
+	cacheTItickQuoteRegionSymbolPrefix = "cache:tItickQuote:market:symbol:"
 )
 
 type (
 	tItickQuoteModel interface {
 		Insert(ctx context.Context, data *TItickQuote) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TItickQuote, error)
-		FindOneByMarketSymbol(ctx context.Context, market string, symbol string) (*TItickQuote, error)
+		FindOneByRegionSymbol(ctx context.Context, market string, symbol string) (*TItickQuote, error)
 		Update(ctx context.Context, data *TItickQuote) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -43,6 +43,7 @@ type (
 
 	TItickQuote struct {
 		Id             int64   `db:"id"`               // 主键ID
+		CategoryCode   string  `db:"category_code"`    // 产品类型标识, 如 forex/crypto/stock/future/indices/fund
 		Market         string  `db:"market"`           // 市场/地区，如 GB
 		Symbol         string  `db:"symbol"`           // 代码，如 EURUSD
 		LastPrice      float64 `db:"last_price"`       // 最新价，对应 ld
@@ -75,11 +76,11 @@ func (m *defaultTItickQuoteModel) Delete(ctx context.Context, id int64) error {
 	}
 
 	tItickQuoteIdKey := fmt.Sprintf("%s%v", cacheTItickQuoteIdPrefix, id)
-	tItickQuoteMarketSymbolKey := fmt.Sprintf("%s%v:%v", cacheTItickQuoteMarketSymbolPrefix, data.Market, data.Symbol)
+	tItickQuoteRegionSymbolKey := fmt.Sprintf("%s%v:%v", cacheTItickQuoteRegionSymbolPrefix, data.Market, data.Symbol)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tItickQuoteIdKey, tItickQuoteMarketSymbolKey)
+	}, tItickQuoteIdKey, tItickQuoteRegionSymbolKey)
 	return err
 }
 
@@ -100,10 +101,10 @@ func (m *defaultTItickQuoteModel) FindOne(ctx context.Context, id int64) (*TItic
 	}
 }
 
-func (m *defaultTItickQuoteModel) FindOneByMarketSymbol(ctx context.Context, market string, symbol string) (*TItickQuote, error) {
-	tItickQuoteMarketSymbolKey := fmt.Sprintf("%s%v:%v", cacheTItickQuoteMarketSymbolPrefix, market, symbol)
+func (m *defaultTItickQuoteModel) FindOneByRegionSymbol(ctx context.Context, market string, symbol string) (*TItickQuote, error) {
+	tItickQuoteRegionSymbolKey := fmt.Sprintf("%s%v:%v", cacheTItickQuoteRegionSymbolPrefix, market, symbol)
 	var resp TItickQuote
-	err := m.QueryRowIndexCtx(ctx, &resp, tItickQuoteMarketSymbolKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+	err := m.QueryRowIndexCtx(ctx, &resp, tItickQuoteRegionSymbolKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
 		query := fmt.Sprintf("select %s from %s where `market` = ? and `symbol` = ? limit 1", tItickQuoteRows, m.table)
 		if err := conn.QueryRowCtx(ctx, &resp, query, market, symbol); err != nil {
 			return nil, err
@@ -122,11 +123,11 @@ func (m *defaultTItickQuoteModel) FindOneByMarketSymbol(ctx context.Context, mar
 
 func (m *defaultTItickQuoteModel) Insert(ctx context.Context, data *TItickQuote) (sql.Result, error) {
 	tItickQuoteIdKey := fmt.Sprintf("%s%v", cacheTItickQuoteIdPrefix, data.Id)
-	tItickQuoteMarketSymbolKey := fmt.Sprintf("%s%v:%v", cacheTItickQuoteMarketSymbolPrefix, data.Market, data.Symbol)
+	tItickQuoteRegionSymbolKey := fmt.Sprintf("%s%v:%v", cacheTItickQuoteRegionSymbolPrefix, data.Market, data.Symbol)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickQuoteRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.Market, data.Symbol, data.LastPrice, data.OpenPrice, data.HighPrice, data.LowPrice, data.PrevClosePrice, data.ChangeValue, data.ChangeRate, data.Volume, data.Turnover, data.QuoteTs, data.TradeStatus, data.CreateTimes, data.UpdateTimes)
-	}, tItickQuoteIdKey, tItickQuoteMarketSymbolKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickQuoteRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.CategoryCode, data.Market, data.Symbol, data.LastPrice, data.OpenPrice, data.HighPrice, data.LowPrice, data.PrevClosePrice, data.ChangeValue, data.ChangeRate, data.Volume, data.Turnover, data.QuoteTs, data.TradeStatus, data.CreateTimes, data.UpdateTimes)
+	}, tItickQuoteIdKey, tItickQuoteRegionSymbolKey)
 	return ret, err
 }
 
@@ -137,11 +138,11 @@ func (m *defaultTItickQuoteModel) Update(ctx context.Context, newData *TItickQuo
 	}
 
 	tItickQuoteIdKey := fmt.Sprintf("%s%v", cacheTItickQuoteIdPrefix, data.Id)
-	tItickQuoteMarketSymbolKey := fmt.Sprintf("%s%v:%v", cacheTItickQuoteMarketSymbolPrefix, data.Market, data.Symbol)
+	tItickQuoteRegionSymbolKey := fmt.Sprintf("%s%v:%v", cacheTItickQuoteRegionSymbolPrefix, data.Market, data.Symbol)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickQuoteRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.Market, newData.Symbol, newData.LastPrice, newData.OpenPrice, newData.HighPrice, newData.LowPrice, newData.PrevClosePrice, newData.ChangeValue, newData.ChangeRate, newData.Volume, newData.Turnover, newData.QuoteTs, newData.TradeStatus, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tItickQuoteIdKey, tItickQuoteMarketSymbolKey)
+		return conn.ExecCtx(ctx, query, newData.CategoryCode, newData.Market, newData.Symbol, newData.LastPrice, newData.OpenPrice, newData.HighPrice, newData.LowPrice, newData.PrevClosePrice, newData.ChangeValue, newData.ChangeRate, newData.Volume, newData.Turnover, newData.QuoteTs, newData.TradeStatus, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tItickQuoteIdKey, tItickQuoteRegionSymbolKey)
 	return err
 }
 

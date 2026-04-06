@@ -55,9 +55,9 @@
         <el-card shadow="never" class="config-card">
           <el-row :gutter="20">
             <el-col :span="12">
-              <el-form-item :label="t('system.region')">
+              <el-form-item :label="t('system.market')">
                 <el-input
-                  v-model="form.tencent_cos.region"
+                  v-model="form.tencent_cos.market"
                   :placeholder="t('system.regionPlaceholder')"
                 />
               </el-form-item>

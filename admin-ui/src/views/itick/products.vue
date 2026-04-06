@@ -125,13 +125,13 @@
 
         <el-table-column :label="t('common.createTimes')" min-width="170">
           <template #default="{ row }">
-            {{ formatTime(row.createTimes) }}
+            {{ formatDate(row.createTimes) }}
           </template>
         </el-table-column>
 
         <el-table-column :label="t('itick.updateTimes')" min-width="170">
           <template #default="{ row }">
-            {{ formatTime(row.updateTimes) }}
+            {{ formatDate(row.updateTimes) }}
           </template>
         </el-table-column>
 
@@ -409,10 +409,10 @@
           detail.remark || '-'
         }}</el-descriptions-item>
         <el-descriptions-item :label="t('common.createTimes')">
-          {{ formatTime(detail.createTimes) }}
+          {{ formatDate(detail.createTimes) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('itick.updateTimes')">
-          {{ formatTime(detail.updateTimes) }}
+          {{ formatDate(detail.updateTimes) }}
         </el-descriptions-item>
       </el-descriptions>
 
@@ -437,6 +437,7 @@ import {
   type ItickProduct,
   type ListProductsReq,
 } from '@/services/itick/ProductsService'
+import { formatDate } from '@/utils'
 
 type FormData = {
   id?: number
@@ -708,20 +709,6 @@ const handleNextPage = () => {
     pagination.cursor = pagination.nextCursor
     getList()
   }
-}
-
-const formatTime = (timestamp?: number) => {
-  if (!timestamp) return '-'
-  let time = Number(timestamp)
-  if (String(time).length === 10) time = time * 1000
-  const date = new Date(time)
-  const YYYY = date.getFullYear()
-  const MM = String(date.getMonth() + 1).padStart(2, '0')
-  const DD = String(date.getDate()).padStart(2, '0')
-  const hh = String(date.getHours()).padStart(2, '0')
-  const mm = String(date.getMinutes()).padStart(2, '0')
-  const ss = String(date.getSeconds()).padStart(2, '0')
-  return `${YYYY}-${MM}-${DD} ${hh}:${mm}:${ss}`
 }
 
 onMounted(() => {

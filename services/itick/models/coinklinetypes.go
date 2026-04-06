@@ -11,6 +11,9 @@ type CoinKline struct {
 	ID bson.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
 
 	// 市场，例如：binance / okx
+	CategoryCode string `bson:"category,omitempty" json:"category,omitempty"`
+
+	// 市场，例如：binance / okx
 	Market string `bson:"market,omitempty" json:"market,omitempty"`
 
 	// 交易对，例如：BTCUSDT
@@ -41,12 +44,12 @@ type CoinKline struct {
 }
 
 func (m *CoinKline) Normalize() {
-	m.Market = normalizeMarket(m.Market)
+	m.CategoryCode = normalizeCategory(m.CategoryCode)
 	m.Symbol = normalizeSymbol(m.Symbol)
 	m.Interval = normalizeInterval(m.Interval)
 }
 
-func normalizeMarket(s string) string {
+func normalizeCategory(s string) string {
 	return strings.ToLower(strings.TrimSpace(s))
 }
 

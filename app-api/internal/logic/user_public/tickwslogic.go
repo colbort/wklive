@@ -38,10 +38,11 @@ func NewTickWsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *TickWsLogi
 //   "type": "subscribe",
 //   "topics": [
 //     {
-//       "topic": "depth",
-//       "market": "crypto",
+//       "topic": "depth",    // 参数类型，（depth：盘口、quote：报价、tick：成交、kline：K线）
+//       "categoryCode": "crypto",
 //       "symbol": "BTCUSDT",
-//       "region": "BA"
+//       "market": "BA",
+//       "interval": "1m"    //  kline 订阅必传。（1m，5m，15m，30m，1h，1d，1w，1mo）
 //     }
 //   ]
 // }
@@ -98,11 +99,11 @@ func (l *TickWsLogic) TickWs(conn *websocket.Conn, r *http.Request) error {
 	topics := make([]*itick.SubscribeTopic, 0, len(firstMsg.Topics))
 	for _, topic := range firstMsg.Topics {
 		topics = append(topics, &itick.SubscribeTopic{
-			Topic:    topic.Topic,
-			Market:   topic.Market,
-			Symbol:   topic.Symbol,
-			Region:   topic.Region,
-			Interval: topic.Interval,
+			Topic:        topic.Topic,
+			CategoryCode: topic.CategoryCode,
+			Symbol:       topic.Symbol,
+			Market:       topic.Market,
+			Interval:     topic.Interval,
 		})
 	}
 
@@ -193,7 +194,7 @@ func (l *TickWsLogic) TickWs(conn *websocket.Conn, r *http.Request) error {
 						case errCh <- fmt.Errorf("ping interval exceeded: %dms", interval.Milliseconds()):
 						default:
 						}
-						return
+
 					}
 				}
 
@@ -229,14 +230,14 @@ func (l *TickWsLogic) TickWs(conn *websocket.Conn, r *http.Request) error {
 
 		case reply := <-replyCh:
 			if err := conn.WriteJSON(map[string]any{
-				"type":     "push",
-				"topic":    reply.Topic,
-				"market":   reply.Market,
-				"symbol":   reply.Symbol,
-				"region":   reply.Region,
-				"interval": reply.Interval,
-				"payload":  json.RawMessage(reply.Payload),
-				"serverTs": nowMs(),
+				"type":         "push",
+				"topic":        reply.Topic,
+				"categoryCode": reply.CategoryCode,
+				"symbol":       reply.Symbol,
+				"market":       reply.Market,
+				"interval":     reply.Interval,
+				"payload":      json.RawMessage(reply.Payload),
+				"serverTs":     nowMs(),
 			}); err != nil {
 				cancel()
 				return err

@@ -31,14 +31,16 @@ func (l *BatchGetQuoteLogic) BatchGetQuote(req *types.BatchGetQuoteReq) (resp *t
 	data := make([]*itick.MarketSymbol, 0, len(req.Data))
 	for _, item := range req.Data {
 		data = append(data, &itick.MarketSymbol{
-			Market: item.Market,
-			Symbol: item.Symbol,
+			CategoryCode: item.CategoryCode,
+			Market:       item.Market,
+			Symbol:       item.Symbol,
 		})
 	}
 
 	result, err := l.svcCtx.ItickCli.BatchGetQuote(l.ctx, &itick.BatchGetQuoteReq{
-		Market: req.Market,
-		Data:   data,
+		CategoryCode: req.CategoryCode,
+		Market:       req.Market,
+		Data:         data,
 	})
 	if err != nil {
 		return nil, err
@@ -53,6 +55,7 @@ func (l *BatchGetQuoteLogic) BatchGetQuote(req *types.BatchGetQuoteReq) (resp *t
 	}
 	for _, item := range result.Data {
 		resp.Data = append(resp.Data, types.Quote{
+			CategoryCode:   item.CategoryCode,
 			Market:         item.Market,
 			Symbol:         item.Symbol,
 			LastPrice:      item.LastPrice,

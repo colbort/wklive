@@ -14,7 +14,7 @@ import (
 type ItickQuoteModel interface {
 	tItickQuoteModel
 	Upsert(ctx context.Context, data *TItickQuote) (sql.Result, error)
-	FindPage(ctx context.Context, market string, symbol string, cursor int64, limit int64) ([]*TItickQuote, int64, error)
+	FindPage(ctx context.Context, category string, symbol string, cursor int64, limit int64) ([]*TItickQuote, int64, error)
 	FindQuotes(ctx context.Context, data []*itick.MarketSymbol) ([]*TItickQuote, error)
 }
 
@@ -37,7 +37,7 @@ func (m *defaultTItickQuoteModel) Upsert(ctx context.Context, data *TItickQuote)
 			update_times = VALUES(update_times)
 	`, m.table, tItickQuoteRowsExpectAutoSet)
 
-	itickQuoteMarketSymbolKey := fmt.Sprintf("%s%v:%v", cacheTItickQuoteMarketSymbolPrefix, data.Market, data.Symbol)
+	itickQuoteMarketSymbolKey := fmt.Sprintf("%s%v:%v", cacheTItickQuoteRegionSymbolPrefix, data.Market, data.Symbol)
 
 	return m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
 		return conn.ExecCtx(ctx, query,
@@ -60,10 +60,10 @@ func (m *defaultTItickQuoteModel) Upsert(ctx context.Context, data *TItickQuote)
 	}, itickQuoteMarketSymbolKey)
 }
 
-func (m *defaultTItickQuoteModel) FindPage(ctx context.Context, market string, symbol string, cursor int64, limit int64) ([]*TItickQuote, int64, error) {
-	query := fmt.Sprintf("select %s from %s where market = ? and symbol = ? and quote_time < ? order by quote_time desc limit ?", tItickQuoteRows, m.table)
+func (m *defaultTItickQuoteModel) FindPage(ctx context.Context, category string, symbol string, cursor int64, limit int64) ([]*TItickQuote, int64, error) {
+	query := fmt.Sprintf("select %s from %s where category = ? and symbol = ? and quote_time < ? order by quote_time desc limit ?", tItickQuoteRows, m.table)
 	var resp []*TItickQuote
-	err := m.QueryRowsNoCacheCtx(ctx, &resp, query, market, symbol, cursor, limit)
+	err := m.QueryRowsNoCacheCtx(ctx, &resp, query, category, symbol, cursor, limit)
 	return resp, int64(len(resp)), err
 }
 
@@ -81,7 +81,7 @@ func (m *defaultTItickQuoteModel) FindQuotes(ctx context.Context, data []*itick.
 			continue
 		}
 
-		item, err := m.FindOneByMarketSymbol(ctx, market, symbol)
+		item, err := m.FindOneByRegionSymbol(ctx, market, symbol)
 		if err != nil {
 			if errors.Is(err, ErrNotFound) {
 				continue

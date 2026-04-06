@@ -73,18 +73,75 @@ func (SysConfigType) EnumDescriptor() ([]byte, []int) {
 	return file_proto_system_config_proto_rawDescGZIP(), []int{0}
 }
 
-// 系统配置
-type SystemCore struct {
+type Interval struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	SiteName      string                 `protobuf:"bytes,1,opt,name=site_name,json=siteName,proto3" json:"site_name,omitempty"` // 网站名称
-	SiteLogo      string                 `protobuf:"bytes,2,opt,name=site_logo,json=siteLogo,proto3" json:"site_logo,omitempty"` // 网站LOGO
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	KType         int32                  `protobuf:"varint,2,opt,name=kType,proto3" json:"kType,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
+func (x *Interval) Reset() {
+	*x = Interval{}
+	mi := &file_proto_system_config_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Interval) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Interval) ProtoMessage() {}
+
+func (x *Interval) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_system_config_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Interval.ProtoReflect.Descriptor instead.
+func (*Interval) Descriptor() ([]byte, []int) {
+	return file_proto_system_config_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *Interval) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Interval) GetKType() int32 {
+	if x != nil {
+		return x.KType
+	}
+	return 0
+}
+
+// 系统配置
+type SystemCore struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	SiteName          string                 `protobuf:"bytes,1,opt,name=site_name,json=siteName,proto3" json:"site_name,omitempty"`                               // 网站名称
+	SiteLogo          string                 `protobuf:"bytes,2,opt,name=site_logo,json=siteLogo,proto3" json:"site_logo,omitempty"`                               // 网站LOGO
+	IsCaptchaEnabled  bool                   `protobuf:"varint,3,opt,name=is_captcha_enabled,json=isCaptchaEnabled,proto3" json:"is_captcha_enabled,omitempty"`    // 是否开启验证码
+	IsRegisterEnabled bool                   `protobuf:"varint,4,opt,name=is_register_enabled,json=isRegisterEnabled,proto3" json:"is_register_enabled,omitempty"` // 是否开启注册
+	IsGuestEnabled    bool                   `protobuf:"varint,5,opt,name=is_guest_enabled,json=isGuestEnabled,proto3" json:"is_guest_enabled,omitempty"`          // 是否允许游客登录
+	IsCryptoEnabled   bool                   `protobuf:"varint,6,opt,name=is_crypto_enabled,json=isCryptoEnabled,proto3" json:"is_crypto_enabled,omitempty"`       // 是否加密接口提交数据
+	Intervals         []*Interval            `protobuf:"bytes,7,rep,name=intervals,proto3" json:"intervals,omitempty"`                                             // kline 支持粒度
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
 func (x *SystemCore) Reset() {
 	*x = SystemCore{}
-	mi := &file_proto_system_config_proto_msgTypes[0]
+	mi := &file_proto_system_config_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -96,7 +153,7 @@ func (x *SystemCore) String() string {
 func (*SystemCore) ProtoMessage() {}
 
 func (x *SystemCore) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_config_proto_msgTypes[0]
+	mi := &file_proto_system_config_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -109,7 +166,7 @@ func (x *SystemCore) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SystemCore.ProtoReflect.Descriptor instead.
 func (*SystemCore) Descriptor() ([]byte, []int) {
-	return file_proto_system_config_proto_rawDescGZIP(), []int{0}
+	return file_proto_system_config_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *SystemCore) GetSiteName() string {
@@ -126,6 +183,41 @@ func (x *SystemCore) GetSiteLogo() string {
 	return ""
 }
 
+func (x *SystemCore) GetIsCaptchaEnabled() bool {
+	if x != nil {
+		return x.IsCaptchaEnabled
+	}
+	return false
+}
+
+func (x *SystemCore) GetIsRegisterEnabled() bool {
+	if x != nil {
+		return x.IsRegisterEnabled
+	}
+	return false
+}
+
+func (x *SystemCore) GetIsGuestEnabled() bool {
+	if x != nil {
+		return x.IsGuestEnabled
+	}
+	return false
+}
+
+func (x *SystemCore) GetIsCryptoEnabled() bool {
+	if x != nil {
+		return x.IsCryptoEnabled
+	}
+	return false
+}
+
+func (x *SystemCore) GetIntervals() []*Interval {
+	if x != nil {
+		return x.Intervals
+	}
+	return nil
+}
+
 // 阿里云 OSS配置
 type AliyunOssConfig struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
@@ -140,7 +232,7 @@ type AliyunOssConfig struct {
 
 func (x *AliyunOssConfig) Reset() {
 	*x = AliyunOssConfig{}
-	mi := &file_proto_system_config_proto_msgTypes[1]
+	mi := &file_proto_system_config_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -152,7 +244,7 @@ func (x *AliyunOssConfig) String() string {
 func (*AliyunOssConfig) ProtoMessage() {}
 
 func (x *AliyunOssConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_config_proto_msgTypes[1]
+	mi := &file_proto_system_config_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -165,7 +257,7 @@ func (x *AliyunOssConfig) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AliyunOssConfig.ProtoReflect.Descriptor instead.
 func (*AliyunOssConfig) Descriptor() ([]byte, []int) {
-	return file_proto_system_config_proto_rawDescGZIP(), []int{1}
+	return file_proto_system_config_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *AliyunOssConfig) GetEndpoint() string {
@@ -206,7 +298,7 @@ func (x *AliyunOssConfig) GetBucketUrl() string {
 // 腾讯云 COS配置
 type TencentCosConfig struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Region        string                 `protobuf:"bytes,1,opt,name=region,proto3" json:"region,omitempty"`
+	Market        string                 `protobuf:"bytes,1,opt,name=market,proto3" json:"market,omitempty"`
 	SecretId      string                 `protobuf:"bytes,2,opt,name=secret_id,json=secretId,proto3" json:"secret_id,omitempty"`
 	SecretKey     string                 `protobuf:"bytes,3,opt,name=secret_key,json=secretKey,proto3" json:"secret_key,omitempty"`
 	BucketName    string                 `protobuf:"bytes,4,opt,name=bucket_name,json=bucketName,proto3" json:"bucket_name,omitempty"`
@@ -217,7 +309,7 @@ type TencentCosConfig struct {
 
 func (x *TencentCosConfig) Reset() {
 	*x = TencentCosConfig{}
-	mi := &file_proto_system_config_proto_msgTypes[2]
+	mi := &file_proto_system_config_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -229,7 +321,7 @@ func (x *TencentCosConfig) String() string {
 func (*TencentCosConfig) ProtoMessage() {}
 
 func (x *TencentCosConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_config_proto_msgTypes[2]
+	mi := &file_proto_system_config_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -242,12 +334,12 @@ func (x *TencentCosConfig) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TencentCosConfig.ProtoReflect.Descriptor instead.
 func (*TencentCosConfig) Descriptor() ([]byte, []int) {
-	return file_proto_system_config_proto_rawDescGZIP(), []int{2}
+	return file_proto_system_config_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *TencentCosConfig) GetRegion() string {
+func (x *TencentCosConfig) GetMarket() string {
 	if x != nil {
-		return x.Region
+		return x.Market
 	}
 	return ""
 }
@@ -294,7 +386,7 @@ type MinioConfig struct {
 
 func (x *MinioConfig) Reset() {
 	*x = MinioConfig{}
-	mi := &file_proto_system_config_proto_msgTypes[3]
+	mi := &file_proto_system_config_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -306,7 +398,7 @@ func (x *MinioConfig) String() string {
 func (*MinioConfig) ProtoMessage() {}
 
 func (x *MinioConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_config_proto_msgTypes[3]
+	mi := &file_proto_system_config_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -319,7 +411,7 @@ func (x *MinioConfig) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MinioConfig.ProtoReflect.Descriptor instead.
 func (*MinioConfig) Descriptor() ([]byte, []int) {
-	return file_proto_system_config_proto_rawDescGZIP(), []int{3}
+	return file_proto_system_config_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *MinioConfig) GetEndpoint() string {
@@ -371,7 +463,7 @@ type ObjectStorageConfig struct {
 
 func (x *ObjectStorageConfig) Reset() {
 	*x = ObjectStorageConfig{}
-	mi := &file_proto_system_config_proto_msgTypes[4]
+	mi := &file_proto_system_config_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -383,7 +475,7 @@ func (x *ObjectStorageConfig) String() string {
 func (*ObjectStorageConfig) ProtoMessage() {}
 
 func (x *ObjectStorageConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_config_proto_msgTypes[4]
+	mi := &file_proto_system_config_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -396,7 +488,7 @@ func (x *ObjectStorageConfig) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ObjectStorageConfig.ProtoReflect.Descriptor instead.
 func (*ObjectStorageConfig) Descriptor() ([]byte, []int) {
-	return file_proto_system_config_proto_rawDescGZIP(), []int{4}
+	return file_proto_system_config_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ObjectStorageConfig) GetAliyunOss() *AliyunOssConfig {
@@ -445,7 +537,7 @@ type ItickConfig struct {
 
 func (x *ItickConfig) Reset() {
 	*x = ItickConfig{}
-	mi := &file_proto_system_config_proto_msgTypes[5]
+	mi := &file_proto_system_config_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -457,7 +549,7 @@ func (x *ItickConfig) String() string {
 func (*ItickConfig) ProtoMessage() {}
 
 func (x *ItickConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_config_proto_msgTypes[5]
+	mi := &file_proto_system_config_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -470,7 +562,7 @@ func (x *ItickConfig) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ItickConfig.ProtoReflect.Descriptor instead.
 func (*ItickConfig) Descriptor() ([]byte, []int) {
-	return file_proto_system_config_proto_rawDescGZIP(), []int{5}
+	return file_proto_system_config_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ItickConfig) GetApiUrl() string {
@@ -498,11 +590,19 @@ var File_proto_system_config_proto protoreflect.FileDescriptor
 
 const file_proto_system_config_proto_rawDesc = "" +
 	"\n" +
-	"\x19proto/system/config.proto\x12\x06system\"F\n" +
+	"\x19proto/system/config.proto\x12\x06system\"4\n" +
+	"\bInterval\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +
+	"\x05kType\x18\x02 \x01(\x05R\x05kType\"\xaa\x02\n" +
 	"\n" +
 	"SystemCore\x12\x1b\n" +
 	"\tsite_name\x18\x01 \x01(\tR\bsiteName\x12\x1b\n" +
-	"\tsite_logo\x18\x02 \x01(\tR\bsiteLogo\"\xbd\x01\n" +
+	"\tsite_logo\x18\x02 \x01(\tR\bsiteLogo\x12,\n" +
+	"\x12is_captcha_enabled\x18\x03 \x01(\bR\x10isCaptchaEnabled\x12.\n" +
+	"\x13is_register_enabled\x18\x04 \x01(\bR\x11isRegisterEnabled\x12(\n" +
+	"\x10is_guest_enabled\x18\x05 \x01(\bR\x0eisGuestEnabled\x12*\n" +
+	"\x11is_crypto_enabled\x18\x06 \x01(\bR\x0fisCryptoEnabled\x12.\n" +
+	"\tintervals\x18\a \x03(\v2\x10.system.IntervalR\tintervals\"\xbd\x01\n" +
 	"\x0fAliyunOssConfig\x12\x1a\n" +
 	"\bendpoint\x18\x01 \x01(\tR\bendpoint\x12\"\n" +
 	"\raccess_key_id\x18\x02 \x01(\tR\vaccessKeyId\x12*\n" +
@@ -512,7 +612,7 @@ const file_proto_system_config_proto_rawDesc = "" +
 	"\n" +
 	"bucket_url\x18\x05 \x01(\tR\tbucketUrl\"\xa6\x01\n" +
 	"\x10TencentCosConfig\x12\x16\n" +
-	"\x06region\x18\x01 \x01(\tR\x06region\x12\x1b\n" +
+	"\x06market\x18\x01 \x01(\tR\x06market\x12\x1b\n" +
 	"\tsecret_id\x18\x02 \x01(\tR\bsecretId\x12\x1d\n" +
 	"\n" +
 	"secret_key\x18\x03 \x01(\tR\tsecretKey\x12\x1f\n" +
@@ -560,25 +660,27 @@ func file_proto_system_config_proto_rawDescGZIP() []byte {
 }
 
 var file_proto_system_config_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_proto_system_config_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_proto_system_config_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_proto_system_config_proto_goTypes = []any{
 	(SysConfigType)(0),          // 0: system.SysConfigType
-	(*SystemCore)(nil),          // 1: system.SystemCore
-	(*AliyunOssConfig)(nil),     // 2: system.AliyunOssConfig
-	(*TencentCosConfig)(nil),    // 3: system.TencentCosConfig
-	(*MinioConfig)(nil),         // 4: system.MinioConfig
-	(*ObjectStorageConfig)(nil), // 5: system.ObjectStorageConfig
-	(*ItickConfig)(nil),         // 6: system.ItickConfig
+	(*Interval)(nil),            // 1: system.Interval
+	(*SystemCore)(nil),          // 2: system.SystemCore
+	(*AliyunOssConfig)(nil),     // 3: system.AliyunOssConfig
+	(*TencentCosConfig)(nil),    // 4: system.TencentCosConfig
+	(*MinioConfig)(nil),         // 5: system.MinioConfig
+	(*ObjectStorageConfig)(nil), // 6: system.ObjectStorageConfig
+	(*ItickConfig)(nil),         // 7: system.ItickConfig
 }
 var file_proto_system_config_proto_depIdxs = []int32{
-	2, // 0: system.ObjectStorageConfig.aliyun_oss:type_name -> system.AliyunOssConfig
-	3, // 1: system.ObjectStorageConfig.tencent_cos:type_name -> system.TencentCosConfig
-	4, // 2: system.ObjectStorageConfig.minio:type_name -> system.MinioConfig
-	3, // [3:3] is the sub-list for method output_type
-	3, // [3:3] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	1, // 0: system.SystemCore.intervals:type_name -> system.Interval
+	3, // 1: system.ObjectStorageConfig.aliyun_oss:type_name -> system.AliyunOssConfig
+	4, // 2: system.ObjectStorageConfig.tencent_cos:type_name -> system.TencentCosConfig
+	5, // 3: system.ObjectStorageConfig.minio:type_name -> system.MinioConfig
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_proto_system_config_proto_init() }
@@ -592,7 +694,7 @@ func file_proto_system_config_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_system_config_proto_rawDesc), len(file_proto_system_config_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   6,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

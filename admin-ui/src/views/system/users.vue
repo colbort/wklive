@@ -10,6 +10,7 @@ import { usePagination } from '@/composables/usePagination'
 import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
 import { useConfirm } from '@/composables/useConfirm'
+import { formatDate } from '@/utils'
 
 const { t } = useI18n()
 
@@ -466,9 +467,7 @@ onMounted(async () => {
 
       <el-table-column :label="t('common.createTimes')" min-width="170">
         <template #default="{ row }">
-          <span style="color: #666">{{
-            row.createTimes ? new Date(row.createTimes * 1000).toLocaleString() : '-'
-          }}</span>
+          <span style="color: #666">{{ formatDate(row.createTimes) }}</span>
         </template>
       </el-table-column>
 

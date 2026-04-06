@@ -390,7 +390,7 @@ message SysConfigListResp {
 
 message SysConfigDetailReq {
   optional int64 id = 1;
-  optional SysConfigType config_key = 2;
+  optional system.SysConfigType config_key = 2;
 }
 
 message SysConfigDetailResp {
@@ -403,7 +403,7 @@ message SysConfigByKeysReq {
 }
 message SysConfigByKeysResp {
   RespBase base = 1;
-  repeated system.SysConfigItem data = 3;
+  repeated SysConfigItem data = 3;
 }
 
 message SysConfigKeysResp {
@@ -569,6 +569,15 @@ message SysTenantDeleteReq {
   int64 id = 1;
 }
 
+message SysTenantByCodeReq {
+  string tenant_code = 1;
+}
+
+message SysTenantByCodeResp {
+  RespBase base = 1;
+  SysTenantItem data = 2;
+}
+
 //////////////////////
 // Service
 //////////////////////
@@ -678,4 +687,6 @@ service System {
   rpc SysTenantDelete(SysTenantDeleteReq) returns (RespBase);
   // 获取租户列表
   rpc SysTenantList(SysTenantListReq) returns (SysTenantListResp);
+  // 根据 code 获取租户
+  rpc SysTenantByCode(SysTenantByCodeReq) returns (SysTenantByCodeResp);
 }

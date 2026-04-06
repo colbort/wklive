@@ -1,4 +1,3 @@
-
 ## 项目目录说明
 
 ```
@@ -64,7 +63,8 @@
 
 ## ETCD 配置如下
 
-### 公共配置  /wklive/common/config
+### 公共配置 /wklive/common/config
+
 ```
 Log:
   Mode: console
@@ -72,10 +72,10 @@ Log:
   Stat: false
 
 Mysql:
-  DataSource: root:123456@tcp(192.168.10.116:3306)/wklive?charset=utf8mb4&parseTime=true&loc=Local
+  DataSource: root:123456@tcp(127.0.0.1:3306)/wklive?charset=utf8mb4&parseTime=true&loc=Local
 
 CacheRedis:
-  - Host: 192.168.10.116:6379
+  - Host: 127.0.0.1:6379
     Type: node
     Pass:
 
@@ -84,8 +84,8 @@ Jwt:
   AccessExpire: 3600
 ```
 
-
 ### admin-api 网关配置 /wklive/admin-api/config
+
 ```
 Name: admin
 Host: 0.0.0.0
@@ -94,72 +94,101 @@ Port: 8888
 SystemRpc:
   rpcType: zrpc
   Etcd:
-    Hosts: 
-    - "192.168.10.116:2379"
+    Hosts:
+    - "127.0.0.1:2379"
     Key: system.rpc
 
 
 UserRpc:
   rpcType: zrpc
   Etcd:
-    Hosts: 
-    - "192.168.10.116:2379"
+    Hosts:
+    - "127.0.0.1:2379"
     Key: user.rpc
 
 PaymentRpc:
   rpcType: zrpc
   Etcd:
-    Hosts: 
-    - "192.168.10.116:2379"
+    Hosts:
+    - "127.0.0.1:2379"
     Key: payment.rpc
 
 ItickRpc:
   rpcType: zrpc
   Etcd:
-    Hosts: 
-    - "192.168.10.116:2379"
+    Hosts:
+    - "127.0.0.1:2379"
     Key: itick.rpc
 ```
 
+### app-api 网关配置 /wklive/app-api/config
+
+```
+Name: app
+Host: 0.0.0.0
+Port: 6666
+
+UserRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: user.rpc
+
+PaymentRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: payment.rpc
+
+ItickRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: itick.rpc
+```
 
 ### system-rpc 微服务配置 /wklive/system-rpc/config
+
 ```
 Name: system.rpc
 ListenOn: 0.0.0.0:8080
 Mode: dev
 Etcd:
   Hosts:
-  - 192.168.10.116:2379
+  - 127.0.0.1:2379
   Key: system.rpc
 ItickRpc:
   rpcType: zrpc
   Etcd:
-    Hosts: 
-    - "192.168.10.116:2379"
+    Hosts:
+    - "127.0.0.1:2379"
     Key: itick.rpc
 ```
 
-
 ### user-rpc 微服务配置 /wklive/user-rpc/config
+
 ```
 Name: user.rpc
 ListenOn: 0.0.0.0:8081
 Mode: dev
 Etcd:
   Hosts:
-  - 192.168.10.116:2379
+  - 127.0.0.1:2379
   Key: user.rpc
 ```
 
-
 ### itick-rpc 微服务配置 /wklive/itick-rpc/config
+
 ```
 Name: itick.rpc
 ListenOn: 0.0.0.0:8082
 Mode: dev
 Etcd:
   Hosts:
-  - 192.168.10.116:2379
+  - 127.0.0.1:2379
   Key: itick.rpc
 Itick:
   ApiUrl: https://api.itick.org
@@ -167,14 +196,14 @@ Itick:
   Token: 5093272afb5241dfa3fd5505937289804447d9d6941547b2ab45929024c0fd4b
 ```
 
-
 ### payment-rpc 微服务配置 /wklive/payment-rpc/config
+
 ```
 Name: payment.rpc
 ListenOn: 0.0.0.0:8083
 Mode: dev
 Etcd:
   Hosts:
-  - 192.168.10.116:2379
+  - 127.0.0.1:2379
   Key: payment.rpc
 ```

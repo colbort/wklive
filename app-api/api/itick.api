@@ -41,16 +41,17 @@ type ItickProduct {
 
 // K线
 type Kline {
-	market   string  `json:"market"`
-	symbol   string  `json:"symbol"`
-	kType    int64   `json:"kType"`
-	ts       int64   `json:"ts"`
-	open     float64 `json:"open"`
-	high     float64 `json:"high"`
-	low      float64 `json:"low"`
-	close    float64 `json:"close"`
-	volume   float64 `json:"volume"`
-	turnover float64 `json:"turnover"`
+	categoryCode string  `json:"categoryCode"`
+	market       string  `json:"market"`
+	symbol       string  `json:"symbol"`
+	kType        int64   `json:"kType"`
+	ts           int64   `json:"ts"`
+	open         float64 `json:"open"`
+	high         float64 `json:"high"`
+	low          float64 `json:"low"`
+	close        float64 `json:"close"`
+	volume       float64 `json:"volume"`
+	turnover     float64 `json:"turnover"`
 }
 
 // 深度档位
@@ -61,15 +62,17 @@ type DepthLevel {
 
 // 深度
 type Depth {
-	market string       `json:"market"`
-	symbol string       `json:"symbol"`
-	asks   []DepthLevel `json:"asks"`
-	bids   []DepthLevel `json:"bids"`
-	ts     int64        `json:"ts"`
+	categoryCode string       `json:"categoryCode"`
+	market       string       `json:"market"`
+	symbol       string       `json:"symbol"`
+	asks         []DepthLevel `json:"asks"`
+	bids         []DepthLevel `json:"bids"`
+	ts           int64        `json:"ts"`
 }
 
 // 实时报价
 type Quote {
+	categoryCode   string  `json:"categoryCode"`
 	market         string  `json:"market"`
 	symbol         string  `json:"symbol"`
 	lastPrice      float64 `json:"lastPrice"`
@@ -138,6 +141,7 @@ type ListVisibleCategoriesResp {
 
 type ListVisibleProductsReq {
 	categoryType int64  `json:"categoryType"`
+	categoryCode string `json:"categoryCode"`
 	market       string `json:"market"`
 	keyword      string `json:"keyword"`
 }
@@ -151,11 +155,12 @@ type ListVisibleProductsResp {
 // K线
 // ====================
 type GetKlineReq {
-	market string `json:"market"`
-	symbol string `json:"symbol"`
-	kType  int64  `json:"kType"`
-	endTs  int64  `json:"endTs"`
-	limit  int64  `json:"limit"`
+	categoryCode string `json:"categoryCode"`
+	market       string `json:"market"`
+	symbol       string `json:"symbol"`
+	kType        int64  `json:"kType"`
+	endTs        int64  `json:"endTs"`
+	limit        int64  `json:"limit"`
 }
 
 type GetKlineResp {
@@ -167,8 +172,9 @@ type GetKlineResp {
 // 实时报价
 // ====================
 type GetQuoteReq {
-	market string `json:"market"`
-	symbol string `json:"symbol"`
+	categoryCode string `json:"categoryCode"`
+	market       string `json:"market"`
+	symbol       string `json:"symbol"`
 }
 
 type GetQuoteResp {
@@ -177,13 +183,15 @@ type GetQuoteResp {
 }
 
 type MarketSymbol {
-	market string `json:"market"`
-	symbol string `json:"symbol"`
+	categoryCode string `json:"categoryCode"`
+	market       string `json:"market"`
+	symbol       string `json:"symbol"`
 }
 
 type BatchGetQuoteReq {
-	market string         `json:"market"`
-	data   []MarketSymbol `json:"data"`
+	categoryCode string         `json:"categoryCode"`
+	market       string         `json:"market"`
+	data         []MarketSymbol `json:"data"`
 }
 
 type BatchGetQuoteResp {

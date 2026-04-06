@@ -401,6 +401,186 @@ func (x *LoginResp) GetProfile() *UserProfile {
 	return nil
 }
 
+type GuestLoginReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DeviceId      string                 `protobuf:"bytes,1,opt,name=deviceId,proto3" json:"deviceId,omitempty"`
+	Fingerprint   string                 `protobuf:"bytes,2,opt,name=fingerprint,proto3" json:"fingerprint,omitempty"`
+	RegisterIp    string                 `protobuf:"bytes,3,opt,name=registerIp,proto3" json:"registerIp,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GuestLoginReq) Reset() {
+	*x = GuestLoginReq{}
+	mi := &file_proto_user_user_app_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GuestLoginReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GuestLoginReq) ProtoMessage() {}
+
+func (x *GuestLoginReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_user_app_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GuestLoginReq.ProtoReflect.Descriptor instead.
+func (*GuestLoginReq) Descriptor() ([]byte, []int) {
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *GuestLoginReq) GetDeviceId() string {
+	if x != nil {
+		return x.DeviceId
+	}
+	return ""
+}
+
+func (x *GuestLoginReq) GetFingerprint() string {
+	if x != nil {
+		return x.Fingerprint
+	}
+	return ""
+}
+
+func (x *GuestLoginReq) GetRegisterIp() string {
+	if x != nil {
+		return x.RegisterIp
+	}
+	return ""
+}
+
+type GuestLogin struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Uid           string                 `protobuf:"bytes,2,opt,name=uid,proto3" json:"uid,omitempty"`
+	IsNew         bool                   `protobuf:"varint,3,opt,name=isNew,proto3" json:"isNew,omitempty"`
+	Username      string                 `protobuf:"bytes,4,opt,name=username,proto3" json:"username,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GuestLogin) Reset() {
+	*x = GuestLogin{}
+	mi := &file_proto_user_user_app_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GuestLogin) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GuestLogin) ProtoMessage() {}
+
+func (x *GuestLogin) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_user_app_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GuestLogin.ProtoReflect.Descriptor instead.
+func (*GuestLogin) Descriptor() ([]byte, []int) {
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *GuestLogin) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+func (x *GuestLogin) GetUid() string {
+	if x != nil {
+		return x.Uid
+	}
+	return ""
+}
+
+func (x *GuestLogin) GetIsNew() bool {
+	if x != nil {
+		return x.IsNew
+	}
+	return false
+}
+
+func (x *GuestLogin) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
+}
+
+type GuestLoginResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          *GuestLogin            `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GuestLoginResp) Reset() {
+	*x = GuestLoginResp{}
+	mi := &file_proto_user_user_app_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GuestLoginResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GuestLoginResp) ProtoMessage() {}
+
+func (x *GuestLoginResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_user_app_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GuestLoginResp.ProtoReflect.Descriptor instead.
+func (*GuestLoginResp) Descriptor() ([]byte, []int) {
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *GuestLoginResp) GetBase() *RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *GuestLoginResp) GetData() *GuestLogin {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
 type LogoutReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -410,7 +590,7 @@ type LogoutReq struct {
 
 func (x *LogoutReq) Reset() {
 	*x = LogoutReq{}
-	mi := &file_proto_user_user_app_proto_msgTypes[5]
+	mi := &file_proto_user_user_app_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -422,7 +602,7 @@ func (x *LogoutReq) String() string {
 func (*LogoutReq) ProtoMessage() {}
 
 func (x *LogoutReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[5]
+	mi := &file_proto_user_user_app_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -435,7 +615,7 @@ func (x *LogoutReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LogoutReq.ProtoReflect.Descriptor instead.
 func (*LogoutReq) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{5}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *LogoutReq) GetUserId() int64 {
@@ -455,7 +635,7 @@ type RefreshTokenReq struct {
 
 func (x *RefreshTokenReq) Reset() {
 	*x = RefreshTokenReq{}
-	mi := &file_proto_user_user_app_proto_msgTypes[6]
+	mi := &file_proto_user_user_app_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -467,7 +647,7 @@ func (x *RefreshTokenReq) String() string {
 func (*RefreshTokenReq) ProtoMessage() {}
 
 func (x *RefreshTokenReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[6]
+	mi := &file_proto_user_user_app_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -480,7 +660,7 @@ func (x *RefreshTokenReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RefreshTokenReq.ProtoReflect.Descriptor instead.
 func (*RefreshTokenReq) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{6}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *RefreshTokenReq) GetTenantCode() string {
@@ -507,7 +687,7 @@ type RefreshTokenResp struct {
 
 func (x *RefreshTokenResp) Reset() {
 	*x = RefreshTokenResp{}
-	mi := &file_proto_user_user_app_proto_msgTypes[7]
+	mi := &file_proto_user_user_app_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -519,7 +699,7 @@ func (x *RefreshTokenResp) String() string {
 func (*RefreshTokenResp) ProtoMessage() {}
 
 func (x *RefreshTokenResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[7]
+	mi := &file_proto_user_user_app_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -532,7 +712,7 @@ func (x *RefreshTokenResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RefreshTokenResp.ProtoReflect.Descriptor instead.
 func (*RefreshTokenResp) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{7}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *RefreshTokenResp) GetBase() *RespBase {
@@ -558,7 +738,7 @@ type GetProfileReq struct {
 
 func (x *GetProfileReq) Reset() {
 	*x = GetProfileReq{}
-	mi := &file_proto_user_user_app_proto_msgTypes[8]
+	mi := &file_proto_user_user_app_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -570,7 +750,7 @@ func (x *GetProfileReq) String() string {
 func (*GetProfileReq) ProtoMessage() {}
 
 func (x *GetProfileReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[8]
+	mi := &file_proto_user_user_app_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -583,7 +763,7 @@ func (x *GetProfileReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetProfileReq.ProtoReflect.Descriptor instead.
 func (*GetProfileReq) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{8}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *GetProfileReq) GetUserId() int64 {
@@ -603,7 +783,7 @@ type GetProfileResp struct {
 
 func (x *GetProfileResp) Reset() {
 	*x = GetProfileResp{}
-	mi := &file_proto_user_user_app_proto_msgTypes[9]
+	mi := &file_proto_user_user_app_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -615,7 +795,7 @@ func (x *GetProfileResp) String() string {
 func (*GetProfileResp) ProtoMessage() {}
 
 func (x *GetProfileResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[9]
+	mi := &file_proto_user_user_app_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -628,7 +808,7 @@ func (x *GetProfileResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetProfileResp.ProtoReflect.Descriptor instead.
 func (*GetProfileResp) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{9}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *GetProfileResp) GetBase() *RespBase {
@@ -665,7 +845,7 @@ type UpdateProfileReq struct {
 
 func (x *UpdateProfileReq) Reset() {
 	*x = UpdateProfileReq{}
-	mi := &file_proto_user_user_app_proto_msgTypes[10]
+	mi := &file_proto_user_user_app_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -677,7 +857,7 @@ func (x *UpdateProfileReq) String() string {
 func (*UpdateProfileReq) ProtoMessage() {}
 
 func (x *UpdateProfileReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[10]
+	mi := &file_proto_user_user_app_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -690,7 +870,7 @@ func (x *UpdateProfileReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateProfileReq.ProtoReflect.Descriptor instead.
 func (*UpdateProfileReq) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{10}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *UpdateProfileReq) GetUserId() int64 {
@@ -787,7 +967,7 @@ type UpdateProfileResp struct {
 
 func (x *UpdateProfileResp) Reset() {
 	*x = UpdateProfileResp{}
-	mi := &file_proto_user_user_app_proto_msgTypes[11]
+	mi := &file_proto_user_user_app_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -799,7 +979,7 @@ func (x *UpdateProfileResp) String() string {
 func (*UpdateProfileResp) ProtoMessage() {}
 
 func (x *UpdateProfileResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[11]
+	mi := &file_proto_user_user_app_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -812,7 +992,7 @@ func (x *UpdateProfileResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateProfileResp.ProtoReflect.Descriptor instead.
 func (*UpdateProfileResp) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{11}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *UpdateProfileResp) GetBase() *RespBase {
@@ -841,7 +1021,7 @@ type ChangeLoginPasswordReq struct {
 
 func (x *ChangeLoginPasswordReq) Reset() {
 	*x = ChangeLoginPasswordReq{}
-	mi := &file_proto_user_user_app_proto_msgTypes[12]
+	mi := &file_proto_user_user_app_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -853,7 +1033,7 @@ func (x *ChangeLoginPasswordReq) String() string {
 func (*ChangeLoginPasswordReq) ProtoMessage() {}
 
 func (x *ChangeLoginPasswordReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[12]
+	mi := &file_proto_user_user_app_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -866,7 +1046,7 @@ func (x *ChangeLoginPasswordReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChangeLoginPasswordReq.ProtoReflect.Descriptor instead.
 func (*ChangeLoginPasswordReq) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{12}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *ChangeLoginPasswordReq) GetUserId() int64 {
@@ -906,7 +1086,7 @@ type GetIdentityReq struct {
 
 func (x *GetIdentityReq) Reset() {
 	*x = GetIdentityReq{}
-	mi := &file_proto_user_user_app_proto_msgTypes[13]
+	mi := &file_proto_user_user_app_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -918,7 +1098,7 @@ func (x *GetIdentityReq) String() string {
 func (*GetIdentityReq) ProtoMessage() {}
 
 func (x *GetIdentityReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[13]
+	mi := &file_proto_user_user_app_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -931,7 +1111,7 @@ func (x *GetIdentityReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetIdentityReq.ProtoReflect.Descriptor instead.
 func (*GetIdentityReq) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{13}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *GetIdentityReq) GetUserId() int64 {
@@ -951,7 +1131,7 @@ type GetIdentityResp struct {
 
 func (x *GetIdentityResp) Reset() {
 	*x = GetIdentityResp{}
-	mi := &file_proto_user_user_app_proto_msgTypes[14]
+	mi := &file_proto_user_user_app_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -963,7 +1143,7 @@ func (x *GetIdentityResp) String() string {
 func (*GetIdentityResp) ProtoMessage() {}
 
 func (x *GetIdentityResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[14]
+	mi := &file_proto_user_user_app_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -976,7 +1156,7 @@ func (x *GetIdentityResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetIdentityResp.ProtoReflect.Descriptor instead.
 func (*GetIdentityResp) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{14}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *GetIdentityResp) GetBase() *RespBase {
@@ -1017,7 +1197,7 @@ type SubmitIdentityReq struct {
 
 func (x *SubmitIdentityReq) Reset() {
 	*x = SubmitIdentityReq{}
-	mi := &file_proto_user_user_app_proto_msgTypes[15]
+	mi := &file_proto_user_user_app_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1029,7 +1209,7 @@ func (x *SubmitIdentityReq) String() string {
 func (*SubmitIdentityReq) ProtoMessage() {}
 
 func (x *SubmitIdentityReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[15]
+	mi := &file_proto_user_user_app_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1042,7 +1222,7 @@ func (x *SubmitIdentityReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SubmitIdentityReq.ProtoReflect.Descriptor instead.
 func (*SubmitIdentityReq) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{15}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *SubmitIdentityReq) GetUserId() int64 {
@@ -1167,7 +1347,7 @@ type SubmitIdentityResp struct {
 
 func (x *SubmitIdentityResp) Reset() {
 	*x = SubmitIdentityResp{}
-	mi := &file_proto_user_user_app_proto_msgTypes[16]
+	mi := &file_proto_user_user_app_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1179,7 +1359,7 @@ func (x *SubmitIdentityResp) String() string {
 func (*SubmitIdentityResp) ProtoMessage() {}
 
 func (x *SubmitIdentityResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[16]
+	mi := &file_proto_user_user_app_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1192,7 +1372,7 @@ func (x *SubmitIdentityResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SubmitIdentityResp.ProtoReflect.Descriptor instead.
 func (*SubmitIdentityResp) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{16}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *SubmitIdentityResp) GetBase() *RespBase {
@@ -1218,7 +1398,7 @@ type GetSecurityReq struct {
 
 func (x *GetSecurityReq) Reset() {
 	*x = GetSecurityReq{}
-	mi := &file_proto_user_user_app_proto_msgTypes[17]
+	mi := &file_proto_user_user_app_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1230,7 +1410,7 @@ func (x *GetSecurityReq) String() string {
 func (*GetSecurityReq) ProtoMessage() {}
 
 func (x *GetSecurityReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[17]
+	mi := &file_proto_user_user_app_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1243,7 +1423,7 @@ func (x *GetSecurityReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSecurityReq.ProtoReflect.Descriptor instead.
 func (*GetSecurityReq) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{17}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *GetSecurityReq) GetUserId() int64 {
@@ -1263,7 +1443,7 @@ type GetSecurityResp struct {
 
 func (x *GetSecurityResp) Reset() {
 	*x = GetSecurityResp{}
-	mi := &file_proto_user_user_app_proto_msgTypes[18]
+	mi := &file_proto_user_user_app_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1275,7 +1455,7 @@ func (x *GetSecurityResp) String() string {
 func (*GetSecurityResp) ProtoMessage() {}
 
 func (x *GetSecurityResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[18]
+	mi := &file_proto_user_user_app_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1288,7 +1468,7 @@ func (x *GetSecurityResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSecurityResp.ProtoReflect.Descriptor instead.
 func (*GetSecurityResp) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{18}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *GetSecurityResp) GetBase() *RespBase {
@@ -1316,7 +1496,7 @@ type SetPayPasswordReq struct {
 
 func (x *SetPayPasswordReq) Reset() {
 	*x = SetPayPasswordReq{}
-	mi := &file_proto_user_user_app_proto_msgTypes[19]
+	mi := &file_proto_user_user_app_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1328,7 +1508,7 @@ func (x *SetPayPasswordReq) String() string {
 func (*SetPayPasswordReq) ProtoMessage() {}
 
 func (x *SetPayPasswordReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[19]
+	mi := &file_proto_user_user_app_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1341,7 +1521,7 @@ func (x *SetPayPasswordReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetPayPasswordReq.ProtoReflect.Descriptor instead.
 func (*SetPayPasswordReq) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{19}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *SetPayPasswordReq) GetUserId() int64 {
@@ -1377,7 +1557,7 @@ type ChangePayPasswordReq struct {
 
 func (x *ChangePayPasswordReq) Reset() {
 	*x = ChangePayPasswordReq{}
-	mi := &file_proto_user_user_app_proto_msgTypes[20]
+	mi := &file_proto_user_user_app_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1389,7 +1569,7 @@ func (x *ChangePayPasswordReq) String() string {
 func (*ChangePayPasswordReq) ProtoMessage() {}
 
 func (x *ChangePayPasswordReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[20]
+	mi := &file_proto_user_user_app_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1402,7 +1582,7 @@ func (x *ChangePayPasswordReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChangePayPasswordReq.ProtoReflect.Descriptor instead.
 func (*ChangePayPasswordReq) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{20}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *ChangePayPasswordReq) GetUserId() int64 {
@@ -1442,7 +1622,7 @@ type InitGoogle2FAReq struct {
 
 func (x *InitGoogle2FAReq) Reset() {
 	*x = InitGoogle2FAReq{}
-	mi := &file_proto_user_user_app_proto_msgTypes[21]
+	mi := &file_proto_user_user_app_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1454,7 +1634,7 @@ func (x *InitGoogle2FAReq) String() string {
 func (*InitGoogle2FAReq) ProtoMessage() {}
 
 func (x *InitGoogle2FAReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[21]
+	mi := &file_proto_user_user_app_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1467,7 +1647,7 @@ func (x *InitGoogle2FAReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InitGoogle2FAReq.ProtoReflect.Descriptor instead.
 func (*InitGoogle2FAReq) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{21}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *InitGoogle2FAReq) GetUserId() int64 {
@@ -1488,7 +1668,7 @@ type InitGoogle2FAResp struct {
 
 func (x *InitGoogle2FAResp) Reset() {
 	*x = InitGoogle2FAResp{}
-	mi := &file_proto_user_user_app_proto_msgTypes[22]
+	mi := &file_proto_user_user_app_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1500,7 +1680,7 @@ func (x *InitGoogle2FAResp) String() string {
 func (*InitGoogle2FAResp) ProtoMessage() {}
 
 func (x *InitGoogle2FAResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[22]
+	mi := &file_proto_user_user_app_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1513,7 +1693,7 @@ func (x *InitGoogle2FAResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InitGoogle2FAResp.ProtoReflect.Descriptor instead.
 func (*InitGoogle2FAResp) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{22}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *InitGoogle2FAResp) GetBase() *RespBase {
@@ -1547,7 +1727,7 @@ type EnableGoogle2FAReq struct {
 
 func (x *EnableGoogle2FAReq) Reset() {
 	*x = EnableGoogle2FAReq{}
-	mi := &file_proto_user_user_app_proto_msgTypes[23]
+	mi := &file_proto_user_user_app_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1559,7 +1739,7 @@ func (x *EnableGoogle2FAReq) String() string {
 func (*EnableGoogle2FAReq) ProtoMessage() {}
 
 func (x *EnableGoogle2FAReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[23]
+	mi := &file_proto_user_user_app_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1572,7 +1752,7 @@ func (x *EnableGoogle2FAReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EnableGoogle2FAReq.ProtoReflect.Descriptor instead.
 func (*EnableGoogle2FAReq) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{23}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *EnableGoogle2FAReq) GetUserId() int64 {
@@ -1599,7 +1779,7 @@ type DisableGoogle2FAReq struct {
 
 func (x *DisableGoogle2FAReq) Reset() {
 	*x = DisableGoogle2FAReq{}
-	mi := &file_proto_user_user_app_proto_msgTypes[24]
+	mi := &file_proto_user_user_app_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1611,7 +1791,7 @@ func (x *DisableGoogle2FAReq) String() string {
 func (*DisableGoogle2FAReq) ProtoMessage() {}
 
 func (x *DisableGoogle2FAReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[24]
+	mi := &file_proto_user_user_app_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1624,7 +1804,7 @@ func (x *DisableGoogle2FAReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DisableGoogle2FAReq.ProtoReflect.Descriptor instead.
 func (*DisableGoogle2FAReq) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{24}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *DisableGoogle2FAReq) GetUserId() int64 {
@@ -1651,7 +1831,7 @@ type ListBanksReq struct {
 
 func (x *ListBanksReq) Reset() {
 	*x = ListBanksReq{}
-	mi := &file_proto_user_user_app_proto_msgTypes[25]
+	mi := &file_proto_user_user_app_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1663,7 +1843,7 @@ func (x *ListBanksReq) String() string {
 func (*ListBanksReq) ProtoMessage() {}
 
 func (x *ListBanksReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[25]
+	mi := &file_proto_user_user_app_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1676,7 +1856,7 @@ func (x *ListBanksReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListBanksReq.ProtoReflect.Descriptor instead.
 func (*ListBanksReq) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{25}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *ListBanksReq) GetUserId() int64 {
@@ -1703,7 +1883,7 @@ type ListBanksResp struct {
 
 func (x *ListBanksResp) Reset() {
 	*x = ListBanksResp{}
-	mi := &file_proto_user_user_app_proto_msgTypes[26]
+	mi := &file_proto_user_user_app_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1715,7 +1895,7 @@ func (x *ListBanksResp) String() string {
 func (*ListBanksResp) ProtoMessage() {}
 
 func (x *ListBanksResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[26]
+	mi := &file_proto_user_user_app_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1728,7 +1908,7 @@ func (x *ListBanksResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListBanksResp.ProtoReflect.Descriptor instead.
 func (*ListBanksResp) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{26}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *ListBanksResp) GetBase() *RespBase {
@@ -1761,7 +1941,7 @@ type AddBankReq struct {
 
 func (x *AddBankReq) Reset() {
 	*x = AddBankReq{}
-	mi := &file_proto_user_user_app_proto_msgTypes[27]
+	mi := &file_proto_user_user_app_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1773,7 +1953,7 @@ func (x *AddBankReq) String() string {
 func (*AddBankReq) ProtoMessage() {}
 
 func (x *AddBankReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[27]
+	mi := &file_proto_user_user_app_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1786,7 +1966,7 @@ func (x *AddBankReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddBankReq.ProtoReflect.Descriptor instead.
 func (*AddBankReq) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{27}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *AddBankReq) GetUserId() int64 {
@@ -1855,7 +2035,7 @@ type AddBankResp struct {
 
 func (x *AddBankResp) Reset() {
 	*x = AddBankResp{}
-	mi := &file_proto_user_user_app_proto_msgTypes[28]
+	mi := &file_proto_user_user_app_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1867,7 +2047,7 @@ func (x *AddBankResp) String() string {
 func (*AddBankResp) ProtoMessage() {}
 
 func (x *AddBankResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[28]
+	mi := &file_proto_user_user_app_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1880,7 +2060,7 @@ func (x *AddBankResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddBankResp.ProtoReflect.Descriptor instead.
 func (*AddBankResp) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{28}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *AddBankResp) GetBase() *RespBase {
@@ -1914,7 +2094,7 @@ type UpdateBankReq struct {
 
 func (x *UpdateBankReq) Reset() {
 	*x = UpdateBankReq{}
-	mi := &file_proto_user_user_app_proto_msgTypes[29]
+	mi := &file_proto_user_user_app_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1926,7 +2106,7 @@ func (x *UpdateBankReq) String() string {
 func (*UpdateBankReq) ProtoMessage() {}
 
 func (x *UpdateBankReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[29]
+	mi := &file_proto_user_user_app_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1939,7 +2119,7 @@ func (x *UpdateBankReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateBankReq.ProtoReflect.Descriptor instead.
 func (*UpdateBankReq) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{29}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *UpdateBankReq) GetId() int64 {
@@ -2015,7 +2195,7 @@ type UpdateBankResp struct {
 
 func (x *UpdateBankResp) Reset() {
 	*x = UpdateBankResp{}
-	mi := &file_proto_user_user_app_proto_msgTypes[30]
+	mi := &file_proto_user_user_app_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2027,7 +2207,7 @@ func (x *UpdateBankResp) String() string {
 func (*UpdateBankResp) ProtoMessage() {}
 
 func (x *UpdateBankResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[30]
+	mi := &file_proto_user_user_app_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2040,7 +2220,7 @@ func (x *UpdateBankResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateBankResp.ProtoReflect.Descriptor instead.
 func (*UpdateBankResp) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{30}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *UpdateBankResp) GetBase() *RespBase {
@@ -2067,7 +2247,7 @@ type DeleteBankReq struct {
 
 func (x *DeleteBankReq) Reset() {
 	*x = DeleteBankReq{}
-	mi := &file_proto_user_user_app_proto_msgTypes[31]
+	mi := &file_proto_user_user_app_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2079,7 +2259,7 @@ func (x *DeleteBankReq) String() string {
 func (*DeleteBankReq) ProtoMessage() {}
 
 func (x *DeleteBankReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[31]
+	mi := &file_proto_user_user_app_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2092,7 +2272,7 @@ func (x *DeleteBankReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteBankReq.ProtoReflect.Descriptor instead.
 func (*DeleteBankReq) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{31}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *DeleteBankReq) GetId() int64 {
@@ -2119,7 +2299,7 @@ type SetDefaultBankReq struct {
 
 func (x *SetDefaultBankReq) Reset() {
 	*x = SetDefaultBankReq{}
-	mi := &file_proto_user_user_app_proto_msgTypes[32]
+	mi := &file_proto_user_user_app_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2131,7 +2311,7 @@ func (x *SetDefaultBankReq) String() string {
 func (*SetDefaultBankReq) ProtoMessage() {}
 
 func (x *SetDefaultBankReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_user_app_proto_msgTypes[32]
+	mi := &file_proto_user_user_app_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2144,7 +2324,7 @@ func (x *SetDefaultBankReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetDefaultBankReq.ProtoReflect.Descriptor instead.
 func (*SetDefaultBankReq) Descriptor() ([]byte, []int) {
-	return file_proto_user_user_app_proto_rawDescGZIP(), []int{32}
+	return file_proto_user_user_app_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *SetDefaultBankReq) GetId() int64 {
@@ -2202,7 +2382,22 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12%\n" +
 	"\x05token\x18\x03 \x01(\v2\x0f.user.TokenInfoR\x05token\x12+\n" +
-	"\aprofile\x18\x04 \x01(\v2\x11.user.UserProfileR\aprofile\"$\n" +
+	"\aprofile\x18\x04 \x01(\v2\x11.user.UserProfileR\aprofile\"m\n" +
+	"\rGuestLoginReq\x12\x1a\n" +
+	"\bdeviceId\x18\x01 \x01(\tR\bdeviceId\x12 \n" +
+	"\vfingerprint\x18\x02 \x01(\tR\vfingerprint\x12\x1e\n" +
+	"\n" +
+	"registerIp\x18\x03 \x01(\tR\n" +
+	"registerIp\"f\n" +
+	"\n" +
+	"GuestLogin\x12\x14\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\x12\x10\n" +
+	"\x03uid\x18\x02 \x01(\tR\x03uid\x12\x14\n" +
+	"\x05isNew\x18\x03 \x01(\bR\x05isNew\x12\x1a\n" +
+	"\busername\x18\x04 \x01(\tR\busername\"Z\n" +
+	"\x0eGuestLoginResp\x12\"\n" +
+	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12$\n" +
+	"\x04data\x18\x02 \x01(\v2\x10.user.GuestLoginR\x04data\"$\n" +
 	"\tLogoutReq\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\"W\n" +
 	"\x0fRefreshTokenReq\x12\x1f\n" +
@@ -2338,10 +2533,12 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\"<\n" +
 	"\x11SetDefaultBankReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId2\xbc\t\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId2\xf5\t\n" +
 	"\aUserApp\x121\n" +
 	"\bRegister\x12\x11.user.RegisterReq\x1a\x12.user.RegisterResp\x12(\n" +
-	"\x05Login\x12\x0e.user.LoginReq\x1a\x0f.user.LoginResp\x12.\n" +
+	"\x05Login\x12\x0e.user.LoginReq\x1a\x0f.user.LoginResp\x127\n" +
+	"\n" +
+	"GuestLogin\x12\x13.user.GuestLoginReq\x1a\x14.user.GuestLoginResp\x12.\n" +
 	"\x06Logout\x12\x0f.user.LogoutReq\x1a\x13.user.AppCommonResp\x12=\n" +
 	"\fRefreshToken\x12\x15.user.RefreshTokenReq\x1a\x16.user.RefreshTokenResp\x127\n" +
 	"\n" +
@@ -2376,133 +2573,140 @@ func file_proto_user_user_app_proto_rawDescGZIP() []byte {
 	return file_proto_user_user_app_proto_rawDescData
 }
 
-var file_proto_user_user_app_proto_msgTypes = make([]protoimpl.MessageInfo, 33)
+var file_proto_user_user_app_proto_msgTypes = make([]protoimpl.MessageInfo, 36)
 var file_proto_user_user_app_proto_goTypes = []any{
 	(*AppCommonResp)(nil),          // 0: user.AppCommonResp
 	(*RegisterReq)(nil),            // 1: user.RegisterReq
 	(*RegisterResp)(nil),           // 2: user.RegisterResp
 	(*LoginReq)(nil),               // 3: user.LoginReq
 	(*LoginResp)(nil),              // 4: user.LoginResp
-	(*LogoutReq)(nil),              // 5: user.LogoutReq
-	(*RefreshTokenReq)(nil),        // 6: user.RefreshTokenReq
-	(*RefreshTokenResp)(nil),       // 7: user.RefreshTokenResp
-	(*GetProfileReq)(nil),          // 8: user.GetProfileReq
-	(*GetProfileResp)(nil),         // 9: user.GetProfileResp
-	(*UpdateProfileReq)(nil),       // 10: user.UpdateProfileReq
-	(*UpdateProfileResp)(nil),      // 11: user.UpdateProfileResp
-	(*ChangeLoginPasswordReq)(nil), // 12: user.ChangeLoginPasswordReq
-	(*GetIdentityReq)(nil),         // 13: user.GetIdentityReq
-	(*GetIdentityResp)(nil),        // 14: user.GetIdentityResp
-	(*SubmitIdentityReq)(nil),      // 15: user.SubmitIdentityReq
-	(*SubmitIdentityResp)(nil),     // 16: user.SubmitIdentityResp
-	(*GetSecurityReq)(nil),         // 17: user.GetSecurityReq
-	(*GetSecurityResp)(nil),        // 18: user.GetSecurityResp
-	(*SetPayPasswordReq)(nil),      // 19: user.SetPayPasswordReq
-	(*ChangePayPasswordReq)(nil),   // 20: user.ChangePayPasswordReq
-	(*InitGoogle2FAReq)(nil),       // 21: user.InitGoogle2FAReq
-	(*InitGoogle2FAResp)(nil),      // 22: user.InitGoogle2FAResp
-	(*EnableGoogle2FAReq)(nil),     // 23: user.EnableGoogle2FAReq
-	(*DisableGoogle2FAReq)(nil),    // 24: user.DisableGoogle2FAReq
-	(*ListBanksReq)(nil),           // 25: user.ListBanksReq
-	(*ListBanksResp)(nil),          // 26: user.ListBanksResp
-	(*AddBankReq)(nil),             // 27: user.AddBankReq
-	(*AddBankResp)(nil),            // 28: user.AddBankResp
-	(*UpdateBankReq)(nil),          // 29: user.UpdateBankReq
-	(*UpdateBankResp)(nil),         // 30: user.UpdateBankResp
-	(*DeleteBankReq)(nil),          // 31: user.DeleteBankReq
-	(*SetDefaultBankReq)(nil),      // 32: user.SetDefaultBankReq
-	(*RespBase)(nil),               // 33: user.RespBase
-	(RegisterType)(0),              // 34: user.RegisterType
-	(*TokenInfo)(nil),              // 35: user.TokenInfo
-	(*UserProfile)(nil),            // 36: user.UserProfile
-	(LoginType)(0),                 // 37: user.LoginType
-	(Gender)(0),                    // 38: user.Gender
-	(*UserIdentity)(nil),           // 39: user.UserIdentity
-	(IdType)(0),                    // 40: user.IdType
-	(KycLevel)(0),                  // 41: user.KycLevel
-	(*UserSecurity)(nil),           // 42: user.UserSecurity
-	(*PageReq)(nil),                // 43: user.PageReq
-	(*UserBank)(nil),               // 44: user.UserBank
+	(*GuestLoginReq)(nil),          // 5: user.GuestLoginReq
+	(*GuestLogin)(nil),             // 6: user.GuestLogin
+	(*GuestLoginResp)(nil),         // 7: user.GuestLoginResp
+	(*LogoutReq)(nil),              // 8: user.LogoutReq
+	(*RefreshTokenReq)(nil),        // 9: user.RefreshTokenReq
+	(*RefreshTokenResp)(nil),       // 10: user.RefreshTokenResp
+	(*GetProfileReq)(nil),          // 11: user.GetProfileReq
+	(*GetProfileResp)(nil),         // 12: user.GetProfileResp
+	(*UpdateProfileReq)(nil),       // 13: user.UpdateProfileReq
+	(*UpdateProfileResp)(nil),      // 14: user.UpdateProfileResp
+	(*ChangeLoginPasswordReq)(nil), // 15: user.ChangeLoginPasswordReq
+	(*GetIdentityReq)(nil),         // 16: user.GetIdentityReq
+	(*GetIdentityResp)(nil),        // 17: user.GetIdentityResp
+	(*SubmitIdentityReq)(nil),      // 18: user.SubmitIdentityReq
+	(*SubmitIdentityResp)(nil),     // 19: user.SubmitIdentityResp
+	(*GetSecurityReq)(nil),         // 20: user.GetSecurityReq
+	(*GetSecurityResp)(nil),        // 21: user.GetSecurityResp
+	(*SetPayPasswordReq)(nil),      // 22: user.SetPayPasswordReq
+	(*ChangePayPasswordReq)(nil),   // 23: user.ChangePayPasswordReq
+	(*InitGoogle2FAReq)(nil),       // 24: user.InitGoogle2FAReq
+	(*InitGoogle2FAResp)(nil),      // 25: user.InitGoogle2FAResp
+	(*EnableGoogle2FAReq)(nil),     // 26: user.EnableGoogle2FAReq
+	(*DisableGoogle2FAReq)(nil),    // 27: user.DisableGoogle2FAReq
+	(*ListBanksReq)(nil),           // 28: user.ListBanksReq
+	(*ListBanksResp)(nil),          // 29: user.ListBanksResp
+	(*AddBankReq)(nil),             // 30: user.AddBankReq
+	(*AddBankResp)(nil),            // 31: user.AddBankResp
+	(*UpdateBankReq)(nil),          // 32: user.UpdateBankReq
+	(*UpdateBankResp)(nil),         // 33: user.UpdateBankResp
+	(*DeleteBankReq)(nil),          // 34: user.DeleteBankReq
+	(*SetDefaultBankReq)(nil),      // 35: user.SetDefaultBankReq
+	(*RespBase)(nil),               // 36: user.RespBase
+	(RegisterType)(0),              // 37: user.RegisterType
+	(*TokenInfo)(nil),              // 38: user.TokenInfo
+	(*UserProfile)(nil),            // 39: user.UserProfile
+	(LoginType)(0),                 // 40: user.LoginType
+	(Gender)(0),                    // 41: user.Gender
+	(*UserIdentity)(nil),           // 42: user.UserIdentity
+	(IdType)(0),                    // 43: user.IdType
+	(KycLevel)(0),                  // 44: user.KycLevel
+	(*UserSecurity)(nil),           // 45: user.UserSecurity
+	(*PageReq)(nil),                // 46: user.PageReq
+	(*UserBank)(nil),               // 47: user.UserBank
 }
 var file_proto_user_user_app_proto_depIdxs = []int32{
-	33, // 0: user.AppCommonResp.base:type_name -> user.RespBase
-	34, // 1: user.RegisterReq.register_type:type_name -> user.RegisterType
-	33, // 2: user.RegisterResp.base:type_name -> user.RespBase
-	35, // 3: user.RegisterResp.token:type_name -> user.TokenInfo
-	36, // 4: user.RegisterResp.profile:type_name -> user.UserProfile
-	37, // 5: user.LoginReq.login_type:type_name -> user.LoginType
-	33, // 6: user.LoginResp.base:type_name -> user.RespBase
-	35, // 7: user.LoginResp.token:type_name -> user.TokenInfo
-	36, // 8: user.LoginResp.profile:type_name -> user.UserProfile
-	33, // 9: user.RefreshTokenResp.base:type_name -> user.RespBase
-	35, // 10: user.RefreshTokenResp.token:type_name -> user.TokenInfo
-	33, // 11: user.GetProfileResp.base:type_name -> user.RespBase
-	36, // 12: user.GetProfileResp.profile:type_name -> user.UserProfile
-	38, // 13: user.UpdateProfileReq.gender:type_name -> user.Gender
-	33, // 14: user.UpdateProfileResp.base:type_name -> user.RespBase
-	36, // 15: user.UpdateProfileResp.profile:type_name -> user.UserProfile
-	33, // 16: user.GetIdentityResp.base:type_name -> user.RespBase
-	39, // 17: user.GetIdentityResp.identity:type_name -> user.UserIdentity
-	38, // 18: user.SubmitIdentityReq.gender:type_name -> user.Gender
-	40, // 19: user.SubmitIdentityReq.id_type:type_name -> user.IdType
-	41, // 20: user.SubmitIdentityReq.kyc_level:type_name -> user.KycLevel
-	33, // 21: user.SubmitIdentityResp.base:type_name -> user.RespBase
-	39, // 22: user.SubmitIdentityResp.identity:type_name -> user.UserIdentity
-	33, // 23: user.GetSecurityResp.base:type_name -> user.RespBase
-	42, // 24: user.GetSecurityResp.security:type_name -> user.UserSecurity
-	33, // 25: user.InitGoogle2FAResp.base:type_name -> user.RespBase
-	43, // 26: user.ListBanksReq.page:type_name -> user.PageReq
-	33, // 27: user.ListBanksResp.base:type_name -> user.RespBase
-	44, // 28: user.ListBanksResp.list:type_name -> user.UserBank
-	33, // 29: user.AddBankResp.base:type_name -> user.RespBase
-	44, // 30: user.AddBankResp.bank:type_name -> user.UserBank
-	33, // 31: user.UpdateBankResp.base:type_name -> user.RespBase
-	44, // 32: user.UpdateBankResp.bank:type_name -> user.UserBank
-	1,  // 33: user.UserApp.Register:input_type -> user.RegisterReq
-	3,  // 34: user.UserApp.Login:input_type -> user.LoginReq
-	5,  // 35: user.UserApp.Logout:input_type -> user.LogoutReq
-	6,  // 36: user.UserApp.RefreshToken:input_type -> user.RefreshTokenReq
-	8,  // 37: user.UserApp.GetProfile:input_type -> user.GetProfileReq
-	10, // 38: user.UserApp.UpdateProfile:input_type -> user.UpdateProfileReq
-	12, // 39: user.UserApp.ChangeLoginPassword:input_type -> user.ChangeLoginPasswordReq
-	13, // 40: user.UserApp.GetIdentity:input_type -> user.GetIdentityReq
-	15, // 41: user.UserApp.SubmitIdentity:input_type -> user.SubmitIdentityReq
-	17, // 42: user.UserApp.GetSecurity:input_type -> user.GetSecurityReq
-	19, // 43: user.UserApp.SetPayPassword:input_type -> user.SetPayPasswordReq
-	20, // 44: user.UserApp.ChangePayPassword:input_type -> user.ChangePayPasswordReq
-	21, // 45: user.UserApp.InitGoogle2FA:input_type -> user.InitGoogle2FAReq
-	23, // 46: user.UserApp.EnableGoogle2FA:input_type -> user.EnableGoogle2FAReq
-	24, // 47: user.UserApp.DisableGoogle2FA:input_type -> user.DisableGoogle2FAReq
-	25, // 48: user.UserApp.ListBanks:input_type -> user.ListBanksReq
-	27, // 49: user.UserApp.AddBank:input_type -> user.AddBankReq
-	29, // 50: user.UserApp.UpdateBank:input_type -> user.UpdateBankReq
-	31, // 51: user.UserApp.DeleteBank:input_type -> user.DeleteBankReq
-	32, // 52: user.UserApp.SetDefaultBank:input_type -> user.SetDefaultBankReq
-	2,  // 53: user.UserApp.Register:output_type -> user.RegisterResp
-	4,  // 54: user.UserApp.Login:output_type -> user.LoginResp
-	0,  // 55: user.UserApp.Logout:output_type -> user.AppCommonResp
-	7,  // 56: user.UserApp.RefreshToken:output_type -> user.RefreshTokenResp
-	9,  // 57: user.UserApp.GetProfile:output_type -> user.GetProfileResp
-	11, // 58: user.UserApp.UpdateProfile:output_type -> user.UpdateProfileResp
-	0,  // 59: user.UserApp.ChangeLoginPassword:output_type -> user.AppCommonResp
-	14, // 60: user.UserApp.GetIdentity:output_type -> user.GetIdentityResp
-	16, // 61: user.UserApp.SubmitIdentity:output_type -> user.SubmitIdentityResp
-	18, // 62: user.UserApp.GetSecurity:output_type -> user.GetSecurityResp
-	0,  // 63: user.UserApp.SetPayPassword:output_type -> user.AppCommonResp
-	0,  // 64: user.UserApp.ChangePayPassword:output_type -> user.AppCommonResp
-	22, // 65: user.UserApp.InitGoogle2FA:output_type -> user.InitGoogle2FAResp
-	0,  // 66: user.UserApp.EnableGoogle2FA:output_type -> user.AppCommonResp
-	0,  // 67: user.UserApp.DisableGoogle2FA:output_type -> user.AppCommonResp
-	26, // 68: user.UserApp.ListBanks:output_type -> user.ListBanksResp
-	28, // 69: user.UserApp.AddBank:output_type -> user.AddBankResp
-	30, // 70: user.UserApp.UpdateBank:output_type -> user.UpdateBankResp
-	0,  // 71: user.UserApp.DeleteBank:output_type -> user.AppCommonResp
-	0,  // 72: user.UserApp.SetDefaultBank:output_type -> user.AppCommonResp
-	53, // [53:73] is the sub-list for method output_type
-	33, // [33:53] is the sub-list for method input_type
-	33, // [33:33] is the sub-list for extension type_name
-	33, // [33:33] is the sub-list for extension extendee
-	0,  // [0:33] is the sub-list for field type_name
+	36, // 0: user.AppCommonResp.base:type_name -> user.RespBase
+	37, // 1: user.RegisterReq.register_type:type_name -> user.RegisterType
+	36, // 2: user.RegisterResp.base:type_name -> user.RespBase
+	38, // 3: user.RegisterResp.token:type_name -> user.TokenInfo
+	39, // 4: user.RegisterResp.profile:type_name -> user.UserProfile
+	40, // 5: user.LoginReq.login_type:type_name -> user.LoginType
+	36, // 6: user.LoginResp.base:type_name -> user.RespBase
+	38, // 7: user.LoginResp.token:type_name -> user.TokenInfo
+	39, // 8: user.LoginResp.profile:type_name -> user.UserProfile
+	36, // 9: user.GuestLoginResp.base:type_name -> user.RespBase
+	6,  // 10: user.GuestLoginResp.data:type_name -> user.GuestLogin
+	36, // 11: user.RefreshTokenResp.base:type_name -> user.RespBase
+	38, // 12: user.RefreshTokenResp.token:type_name -> user.TokenInfo
+	36, // 13: user.GetProfileResp.base:type_name -> user.RespBase
+	39, // 14: user.GetProfileResp.profile:type_name -> user.UserProfile
+	41, // 15: user.UpdateProfileReq.gender:type_name -> user.Gender
+	36, // 16: user.UpdateProfileResp.base:type_name -> user.RespBase
+	39, // 17: user.UpdateProfileResp.profile:type_name -> user.UserProfile
+	36, // 18: user.GetIdentityResp.base:type_name -> user.RespBase
+	42, // 19: user.GetIdentityResp.identity:type_name -> user.UserIdentity
+	41, // 20: user.SubmitIdentityReq.gender:type_name -> user.Gender
+	43, // 21: user.SubmitIdentityReq.id_type:type_name -> user.IdType
+	44, // 22: user.SubmitIdentityReq.kyc_level:type_name -> user.KycLevel
+	36, // 23: user.SubmitIdentityResp.base:type_name -> user.RespBase
+	42, // 24: user.SubmitIdentityResp.identity:type_name -> user.UserIdentity
+	36, // 25: user.GetSecurityResp.base:type_name -> user.RespBase
+	45, // 26: user.GetSecurityResp.security:type_name -> user.UserSecurity
+	36, // 27: user.InitGoogle2FAResp.base:type_name -> user.RespBase
+	46, // 28: user.ListBanksReq.page:type_name -> user.PageReq
+	36, // 29: user.ListBanksResp.base:type_name -> user.RespBase
+	47, // 30: user.ListBanksResp.list:type_name -> user.UserBank
+	36, // 31: user.AddBankResp.base:type_name -> user.RespBase
+	47, // 32: user.AddBankResp.bank:type_name -> user.UserBank
+	36, // 33: user.UpdateBankResp.base:type_name -> user.RespBase
+	47, // 34: user.UpdateBankResp.bank:type_name -> user.UserBank
+	1,  // 35: user.UserApp.Register:input_type -> user.RegisterReq
+	3,  // 36: user.UserApp.Login:input_type -> user.LoginReq
+	5,  // 37: user.UserApp.GuestLogin:input_type -> user.GuestLoginReq
+	8,  // 38: user.UserApp.Logout:input_type -> user.LogoutReq
+	9,  // 39: user.UserApp.RefreshToken:input_type -> user.RefreshTokenReq
+	11, // 40: user.UserApp.GetProfile:input_type -> user.GetProfileReq
+	13, // 41: user.UserApp.UpdateProfile:input_type -> user.UpdateProfileReq
+	15, // 42: user.UserApp.ChangeLoginPassword:input_type -> user.ChangeLoginPasswordReq
+	16, // 43: user.UserApp.GetIdentity:input_type -> user.GetIdentityReq
+	18, // 44: user.UserApp.SubmitIdentity:input_type -> user.SubmitIdentityReq
+	20, // 45: user.UserApp.GetSecurity:input_type -> user.GetSecurityReq
+	22, // 46: user.UserApp.SetPayPassword:input_type -> user.SetPayPasswordReq
+	23, // 47: user.UserApp.ChangePayPassword:input_type -> user.ChangePayPasswordReq
+	24, // 48: user.UserApp.InitGoogle2FA:input_type -> user.InitGoogle2FAReq
+	26, // 49: user.UserApp.EnableGoogle2FA:input_type -> user.EnableGoogle2FAReq
+	27, // 50: user.UserApp.DisableGoogle2FA:input_type -> user.DisableGoogle2FAReq
+	28, // 51: user.UserApp.ListBanks:input_type -> user.ListBanksReq
+	30, // 52: user.UserApp.AddBank:input_type -> user.AddBankReq
+	32, // 53: user.UserApp.UpdateBank:input_type -> user.UpdateBankReq
+	34, // 54: user.UserApp.DeleteBank:input_type -> user.DeleteBankReq
+	35, // 55: user.UserApp.SetDefaultBank:input_type -> user.SetDefaultBankReq
+	2,  // 56: user.UserApp.Register:output_type -> user.RegisterResp
+	4,  // 57: user.UserApp.Login:output_type -> user.LoginResp
+	7,  // 58: user.UserApp.GuestLogin:output_type -> user.GuestLoginResp
+	0,  // 59: user.UserApp.Logout:output_type -> user.AppCommonResp
+	10, // 60: user.UserApp.RefreshToken:output_type -> user.RefreshTokenResp
+	12, // 61: user.UserApp.GetProfile:output_type -> user.GetProfileResp
+	14, // 62: user.UserApp.UpdateProfile:output_type -> user.UpdateProfileResp
+	0,  // 63: user.UserApp.ChangeLoginPassword:output_type -> user.AppCommonResp
+	17, // 64: user.UserApp.GetIdentity:output_type -> user.GetIdentityResp
+	19, // 65: user.UserApp.SubmitIdentity:output_type -> user.SubmitIdentityResp
+	21, // 66: user.UserApp.GetSecurity:output_type -> user.GetSecurityResp
+	0,  // 67: user.UserApp.SetPayPassword:output_type -> user.AppCommonResp
+	0,  // 68: user.UserApp.ChangePayPassword:output_type -> user.AppCommonResp
+	25, // 69: user.UserApp.InitGoogle2FA:output_type -> user.InitGoogle2FAResp
+	0,  // 70: user.UserApp.EnableGoogle2FA:output_type -> user.AppCommonResp
+	0,  // 71: user.UserApp.DisableGoogle2FA:output_type -> user.AppCommonResp
+	29, // 72: user.UserApp.ListBanks:output_type -> user.ListBanksResp
+	31, // 73: user.UserApp.AddBank:output_type -> user.AddBankResp
+	33, // 74: user.UserApp.UpdateBank:output_type -> user.UpdateBankResp
+	0,  // 75: user.UserApp.DeleteBank:output_type -> user.AppCommonResp
+	0,  // 76: user.UserApp.SetDefaultBank:output_type -> user.AppCommonResp
+	56, // [56:77] is the sub-list for method output_type
+	35, // [35:56] is the sub-list for method input_type
+	35, // [35:35] is the sub-list for extension type_name
+	35, // [35:35] is the sub-list for extension extendee
+	0,  // [0:35] is the sub-list for field type_name
 }
 
 func init() { file_proto_user_user_app_proto_init() }
@@ -2518,7 +2722,7 @@ func file_proto_user_user_app_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_user_user_app_proto_rawDesc), len(file_proto_user_user_app_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   33,
+			NumMessages:   36,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
