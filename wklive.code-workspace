@@ -53,7 +53,13 @@
       "./admin-ui/src/i18n/locales",
     ],
     "cSpell.words": [
-      "Itick"
+      "cronx",
+      "Infof",
+      "Itick",
+      "Klines",
+      "logx",
+      "sqlx",
+      "wklive"
     ]
   },
   "launch": {

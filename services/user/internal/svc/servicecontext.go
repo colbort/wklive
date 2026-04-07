@@ -29,7 +29,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
 	return &ServiceContext{
 		Config:            c,
-		Redis:             redis.New(c.CacheRedis[0].Host, redis.WithPass(c.CacheRedis[0].Pass)),
+		Redis:             redis.MustNewRedis(c.Redis.RedisConf),
 		Node:              node,
 		UserModel:         models.NewTUserModel(conn, c.CacheRedis).(models.UserModel),
 		UserSecurityModel: models.NewTUserSecurityModel(conn, c.CacheRedis).(models.UserSecurityModel),

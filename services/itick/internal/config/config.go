@@ -8,6 +8,8 @@ import (
 type Config struct {
 	zrpc.RpcServerConf
 	CacheRedis cache.CacheConf
+	BusRedis   cache.CacheConf
+	LockRedis  cache.CacheConf
 	Mysql      struct {
 		DataSource string
 	} `json:"Mysql" yaml:"Mysql"`

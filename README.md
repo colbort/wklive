@@ -79,6 +79,16 @@ CacheRedis:
     Type: node
     Pass:
 
+BusRedis:
+  - Host: 127.0.0.1:6379
+    Type: node
+    Pass:
+
+LockRedis:
+  - Host: 127.0.0.1:6379
+    Type: node
+    Pass:
+
 Jwt:
   AccessSecret: "your_access_secret"
   AccessExpire: 3600

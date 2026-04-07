@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	"wklive/proto/itick"
-	"wklive/services/itick/internal/bootstrap"
 	"wklive/services/itick/internal/config"
+	"wklive/services/itick/internal/pkg/bootstrap"
 	"wklive/services/itick/internal/server"
 	"wklive/services/itick/internal/svc"
 

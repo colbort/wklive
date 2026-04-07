@@ -37,7 +37,7 @@ func (m *defaultTItickQuoteModel) Upsert(ctx context.Context, data *TItickQuote)
 			update_times = VALUES(update_times)
 	`, m.table, tItickQuoteRowsExpectAutoSet)
 
-	itickQuoteMarketSymbolKey := fmt.Sprintf("%s%v:%v", cacheTItickQuoteRegionSymbolPrefix, data.Market, data.Symbol)
+	itickQuoteMarketSymbolKey := fmt.Sprintf("%s%v:%v", cacheTItickQuoteMarketSymbolPrefix, data.Market, data.Symbol)
 
 	return m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
 		return conn.ExecCtx(ctx, query,
@@ -81,7 +81,7 @@ func (m *defaultTItickQuoteModel) FindQuotes(ctx context.Context, data []*itick.
 			continue
 		}
 
-		item, err := m.FindOneByRegionSymbol(ctx, market, symbol)
+		item, err := m.FindOneByMarketSymbol(ctx, market, symbol)
 		if err != nil {
 			if errors.Is(err, ErrNotFound) {
 				continue

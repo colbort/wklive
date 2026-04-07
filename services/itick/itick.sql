@@ -132,3 +132,33 @@ CREATE TABLE `t_itick_quote` (
   KEY `idx_symbol` (`symbol`),
   KEY `idx_quote_ts` (`quote_ts`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='iTick实时报价表';
+
+CREATE TABLE `t_itick_kline_sync_progress` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+
+  `category_code` varchar(32) NOT NULL DEFAULT '' COMMENT '品类代码：stock/forex/indices/crypto/future/fund',
+  `market` varchar(32) NOT NULL DEFAULT '' COMMENT '市场代码：如 US、HK、CN、BA、GB',
+  `symbol` varchar(64) NOT NULL DEFAULT '' COMMENT '产品代码/交易代码，如 AAPL、BTCUSDT',
+  `interval` varchar(16) NOT NULL DEFAULT '' COMMENT 'K线周期：1m、5m、15m、30m、1h、1d、1w、1mo',
+
+  `latest_ts` bigint NOT NULL DEFAULT '0' COMMENT '最新已同步K线时间戳（毫秒）。历史补齐后，增量同步依赖该值过滤新增数据',
+  `oldest_ts` bigint NOT NULL DEFAULT '0' COMMENT '最早已同步K线时间戳（毫秒）。当 full_synced=0 时，从该值继续向前回补历史',
+
+  `full_synced` tinyint NOT NULL DEFAULT '0' COMMENT '历史是否补齐：0=未补齐，1=已补齐',
+  `sync_status` tinyint NOT NULL DEFAULT '0' COMMENT '同步状态：0=未开始，1=同步中，2=成功，3=失败',
+
+  `last_sync_mode` varchar(16) NOT NULL DEFAULT '' COMMENT '最近一次同步模式：history=历史回补，incremental=增量同步',
+  `last_sync_message` varchar(255) NOT NULL DEFAULT '' COMMENT '最近一次同步结果或错误信息',
+
+  `last_success_time` bigint NOT NULL DEFAULT '0' COMMENT '最近一次同步成功时间（毫秒时间戳）',
+  `last_fail_time` bigint NOT NULL DEFAULT '0' COMMENT '最近一次同步失败时间（毫秒时间戳）',
+
+  `create_times` bigint NOT NULL DEFAULT '0' COMMENT '创建时间（毫秒时间戳）',
+  `update_times` bigint NOT NULL DEFAULT '0' COMMENT '更新时间（毫秒时间戳）',
+
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_category_market_symbol_interval` (`category_code`, `market`, `symbol`, `interval`),
+  KEY `idx_sync_status` (`sync_status`),
+  KEY `idx_full_synced` (`full_synced`),
+  KEY `idx_update_times` (`update_times`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='iTick K线同步进度表';

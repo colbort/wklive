@@ -22,7 +22,7 @@ func syncItickKlines(ctx context.Context, job *models.SysJob) error {
 		Valid:  true,
 	})
 	var itickConfig system.ItickConfig
-	err = json.Unmarshal([]byte(config.ConfigKey.String), &itickConfig)
+	err = json.Unmarshal([]byte(config.ConfigValue.String), &itickConfig)
 	if err != nil {
 		return fmt.Errorf("failed to find itick config: %w", err)
 	}

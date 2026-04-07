@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"wklive/proto/itick"
+	"wklive/services/itick/internal/pkg/utils"
 	"wklive/services/itick/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -59,24 +60,5 @@ func (l *GetKlineLogic) GetKline(in *itick.GetKlineReq) (*itick.GetKlineResp, er
 }
 
 func (l *GetKlineLogic) buildInterval(kType itick.KlineType) string {
-	switch kType {
-	case itick.KlineType_KLINE_TYPE_1M:
-		return "1m"
-	case itick.KlineType_KLINE_TYPE_5M:
-		return "5m"
-	case itick.KlineType_KLINE_TYPE_15M:
-		return "15m"
-	case itick.KlineType_KLINE_TYPE_30M:
-		return "30m"
-	case itick.KlineType_KLINE_TYPE_60M:
-		return "1h"
-	case itick.KlineType_KLINE_TYPE_1D:
-		return "1d"
-	case itick.KlineType_KLINE_TYPE_1W:
-		return "1w"
-	case itick.KlineType_KLINE_TYPE_1MO:
-		return "1mo"
-	default:
-		return "1m"
-	}
+	return utils.KlineTypeToInterval(kType)
 }

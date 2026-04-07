@@ -23,7 +23,7 @@ func NewSyncProductsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sync
 	}
 }
 
-// 同步产品列表
+// 同步产品列表 （定时任务）
 func (l *SyncProductsLogic) SyncProducts(in *itick.SyncProductsReq) (*itick.SyncProductsResp, error) {
 	// todo: add your logic here and delete this line
 

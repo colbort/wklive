@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"time"
+	"wklive/services/itick/internal/pkg/utils"
 	"wklive/services/itick/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -14,30 +15,10 @@ type KlinePreheatItem struct {
 	Interval     string
 }
 
-var defaultKlineCategories = []string{
-	"forex",   // 外汇
-	"crypto",  // 加密货币
-	"stock",   // 股票
-	"future",  // 期货
-	"indices", // 指数
-	"fund",    // 基金
-}
-
-var defaultKlineIntervals = []string{
-	"1m",
-	"5m",
-	"15m",
-	"30m",
-	"1h",
-	"1d",
-	"1w",
-	"1mo",
-}
-
 func buildDefaultKlinePreheatItems() []KlinePreheatItem {
-	items := make([]KlinePreheatItem, 0, len(defaultKlineCategories)*len(defaultKlineIntervals))
-	for _, category := range defaultKlineCategories {
-		for _, interval := range defaultKlineIntervals {
+	items := make([]KlinePreheatItem, 0, len(utils.DefaultKlineCategories)*len(utils.DefaultKlineIntervals))
+	for _, category := range utils.DefaultKlineCategories {
+		for _, interval := range utils.DefaultKlineIntervals {
 			items = append(items, KlinePreheatItem{
 				CategoryCode: category,
 				Interval:     interval,

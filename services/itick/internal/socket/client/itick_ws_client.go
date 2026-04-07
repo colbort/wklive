@@ -9,8 +9,10 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
+	"wklive/services/itick/internal/pkg/utils"
 	"wklive/services/itick/internal/socket/server"
 
 	"github.com/gorilla/websocket"
@@ -22,28 +24,35 @@ const (
 	defaultPongWait       = 70 * time.Second
 	defaultPingPeriod     = 30 * time.Second
 	defaultReconnectDelay = 5 * time.Second
+
+	defaultLeaderTTL      = 15 * time.Second
+	defaultLeaderRenewGap = 5 * time.Second
 )
 
 type ItickWsClient struct {
 	url          string
 	token        string
-	categoryCode string // 固定 crypto
+	categoryCode string
 
 	dialer *websocket.Dialer
 
 	mu   sync.RWMutex
 	conn *websocket.Conn
 
-	closed bool
+	bus      *ClusterBus
+	registry *SubscriptionRegistry
+	locker   *RedisLeaderLock
 
-	hub *server.Hub
-
-	// 断线重连后恢复订阅
-	subMu       sync.RWMutex
-	subscribers map[string]SubscribeReq
+	leader int32
+	closed int32
 }
 
-func NewItickWsClient(url, token string, categoryCode string, hub *server.Hub) *ItickWsClient {
+func NewItickWsClient(
+	url, token, categoryCode string,
+	bus *ClusterBus,
+	registry *SubscriptionRegistry,
+	locker *RedisLeaderLock,
+) *ItickWsClient {
 	return &ItickWsClient{
 		url:          url,
 		token:        token,
@@ -51,44 +60,137 @@ func NewItickWsClient(url, token string, categoryCode string, hub *server.Hub) *
 		dialer: &websocket.Dialer{
 			HandshakeTimeout: 10 * time.Second,
 		},
-		hub:         hub,
-		subscribers: make(map[string]SubscribeReq),
+		bus:      bus,
+		registry: registry,
+		locker:   locker,
 	}
 }
 
 func (c *ItickWsClient) Start(ctx context.Context) {
-	go c.loop(ctx)
+	go c.leaderLoop(ctx)
 }
 
-func (c *ItickWsClient) loop(ctx context.Context) {
+func (c *ItickWsClient) leaderLoop(ctx context.Context) {
 	for {
 		if ctx.Err() != nil || c.IsClosed() {
 			return
 		}
 
-		if err := c.connect(); err != nil {
-			logx.Errorf("itick ws connect failed: %v  %s", err, c.url)
+		lockCtx, cancel := context.WithCancel(ctx)
+
+		token, err := c.locker.Acquire(lockCtx, defaultLeaderTTL)
+		if err != nil {
+			cancel()
+
+			if errors.Is(err, ErrLockNotObtained) {
+				select {
+				case <-ctx.Done():
+					return
+				case <-time.After(2 * time.Second):
+					continue
+				}
+			}
+
+			logx.Errorf("acquire itick leader lock failed, category=%s err=%v", c.categoryCode, err)
 			select {
 			case <-ctx.Done():
 				return
+			case <-time.After(2 * time.Second):
+				continue
+			}
+		}
+
+		atomic.StoreInt32(&c.leader, 1)
+		logx.Infof("itick ws become leader, category=%s, url=%s", c.categoryCode, c.url)
+
+		lostCh := make(chan struct{}, 1)
+
+		go c.renewLoop(lockCtx, token, lostCh)
+
+		if err := c.runAsLeader(lockCtx); err != nil && !errors.Is(err, context.Canceled) {
+			logx.Errorf("itick ws leader session stopped, category=%s err=%v", c.categoryCode, err)
+		}
+
+		cancel()
+		c.closeConn()
+		atomic.StoreInt32(&c.leader, 0)
+
+		select {
+		case <-lostCh:
+		default:
+		}
+
+		if err := c.locker.Release(context.Background(), token); err != nil {
+			logx.Errorf("release itick leader lock failed, category=%s err=%v", c.categoryCode, err)
+		}
+
+		select {
+		case <-ctx.Done():
+			return
+		case <-time.After(2 * time.Second):
+		}
+	}
+}
+
+func (c *ItickWsClient) renewLoop(ctx context.Context, token string, lostCh chan<- struct{}) {
+	ticker := time.NewTicker(defaultLeaderRenewGap)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-ticker.C:
+			ok, err := c.locker.Refresh(ctx, token, defaultLeaderTTL)
+			if err != nil {
+				logx.Errorf("refresh leader lock failed, category=%s err=%v", c.categoryCode, err)
+				select {
+				case lostCh <- struct{}{}:
+				default:
+				}
+				return
+			}
+			if !ok {
+				logx.Errorf("leader lock lost, category=%s", c.categoryCode)
+				select {
+				case lostCh <- struct{}{}:
+				default:
+				}
+				return
+			}
+		}
+	}
+}
+
+func (c *ItickWsClient) runAsLeader(ctx context.Context) error {
+	for {
+		if ctx.Err() != nil || c.IsClosed() {
+			return ctx.Err()
+		}
+
+		if err := c.connect(); err != nil {
+			logx.Errorf("itick ws connect failed: %v %s", err, c.url)
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
 			case <-time.After(defaultReconnectDelay):
 				continue
 			}
 		}
 
-		if err := c.restoreSubscriptions(); err != nil {
-			logx.Errorf("itick ws restore subscriptions failed: %v", err)
+		if err := c.restoreSubscriptions(ctx); err != nil {
+			logx.Errorf("itick ws restore subscriptions failed, category=%s err=%v", c.categoryCode, err)
 		}
 
 		if err := c.readLoop(ctx); err != nil {
-			logx.Errorf("itick ws read loop stopped: %v", err)
+			logx.Errorf("itick ws read loop stopped, category=%s err=%v", c.categoryCode, err)
 		}
 
 		c.closeConn()
 
 		select {
 		case <-ctx.Done():
-			return
+			return ctx.Err()
 		case <-time.After(defaultReconnectDelay):
 		}
 	}
@@ -166,24 +268,22 @@ func (c *ItickWsClient) readLoop(ctx context.Context) error {
 		}
 
 		_ = conn.SetReadDeadline(time.Now().Add(defaultPongWait))
-		c.handleUpstreamMessage(data)
+		c.handleUpstreamMessage(ctx, data)
 	}
 }
 
-func (c *ItickWsClient) handleUpstreamMessage(data []byte) {
+func (c *ItickWsClient) handleUpstreamMessage(ctx context.Context, data []byte) {
 	var env UpstreamEnvelope
 	if err := json.Unmarshal(data, &env); err != nil {
 		logx.Errorf("itick ws unmarshal envelope failed: %v", err)
 		return
 	}
 
-	// 控制消息
 	if env.ResAc != "" {
 		switch env.ResAc {
 		case "auth", "subscribe", "unsubscribe":
 			logx.Infof("itick control message: resAc=%s, code=%d, msg=%s", env.ResAc, env.Code, env.Msg)
 		case "pong":
-			// 心跳响应
 		default:
 			logx.Infof("itick unknown control message: resAc=%s, code=%d, msg=%s", env.ResAc, env.Code, env.Msg)
 		}
@@ -191,7 +291,6 @@ func (c *ItickWsClient) handleUpstreamMessage(data []byte) {
 	}
 
 	if len(env.Data) == 0 {
-		// Connected Successfully 之类
 		if env.Msg != "" {
 			logx.Infof("itick message: code=%d, msg=%s", env.Code, env.Msg)
 		}
@@ -232,7 +331,7 @@ func (c *ItickWsClient) handleUpstreamMessage(data []byte) {
 			Turnover:  d.TU,
 			Ts:        d.T,
 		}
-		c.hub.Broadcast(msg, &payload)
+		_ = c.bus.Publish(ctx, msg, &payload)
 
 	case server.TopicTick:
 		payload := TickPayload{
@@ -240,7 +339,7 @@ func (c *ItickWsClient) handleUpstreamMessage(data []byte) {
 			Volume:    d.V,
 			Ts:        d.T,
 		}
-		c.hub.Broadcast(msg, &payload)
+		_ = c.bus.Publish(ctx, msg, &payload)
 
 	case server.TopicDepth:
 		asks := make([]*DepthLevel, 0)
@@ -252,8 +351,7 @@ func (c *ItickWsClient) handleUpstreamMessage(data []byte) {
 			Asks: asks,
 			Bids: bids,
 		}
-
-		c.hub.Broadcast(msg, &payload)
+		_ = c.bus.Publish(ctx, msg, &payload)
 
 	case server.TopicKline:
 		payload := KlinePayload{
@@ -266,8 +364,45 @@ func (c *ItickWsClient) handleUpstreamMessage(data []byte) {
 			Turnover: d.TU,
 			Ts:       d.T,
 		}
-		c.hub.Broadcast(msg, &payload)
+		_ = c.bus.Publish(ctx, msg, &payload)
 	}
+}
+
+func (c *ItickWsClient) HandleSubscriptionChange(change SubscriptionChange) {
+	if !c.IsLeader() {
+		return
+	}
+	if strings.ToLower(strings.TrimSpace(change.CategoryCode)) != c.categoryCode {
+		return
+	}
+
+	msg := change.ToClientMessage()
+
+	switch change.Action {
+	case SubscriptionAdd:
+		if err := c.SubscribeByClientMessage(msg); err != nil {
+			logx.Errorf("leader subscribe upstream failed, category=%s topic=%s err=%v", c.categoryCode, server.BuildTopicKey(msg), err)
+		}
+	case SubscriptionRemove:
+		if err := c.UnsubscribeByClientMessage(msg); err != nil {
+			logx.Errorf("leader unsubscribe upstream failed, category=%s topic=%s err=%v", c.categoryCode, server.BuildTopicKey(msg), err)
+		}
+	}
+}
+
+func (c *ItickWsClient) restoreSubscriptions(ctx context.Context) error {
+	list, err := c.registry.ListActive(ctx, c.categoryCode)
+	if err != nil {
+		return err
+	}
+
+	for _, msg := range list {
+		if err := c.SubscribeByClientMessage(msg); err != nil {
+			logx.Errorf("restore subscribe failed, category=%s topic=%s err=%v", c.categoryCode, server.BuildTopicKey(msg), err)
+		}
+	}
+
+	return nil
 }
 
 func (c *ItickWsClient) SubscribeByClientMessage(msg server.ClientMessage) error {
@@ -283,7 +418,7 @@ func (c *ItickWsClient) UnsubscribeByClientMessage(msg server.ClientMessage) err
 	if err != nil {
 		return err
 	}
-	return c.Unsubscribe(params, types)
+	return c.unsubscribe(params, types)
 }
 
 func (c *ItickWsClient) buildItickSubscribe(msg server.ClientMessage) (params string, types string, err error) {
@@ -319,21 +454,15 @@ func (c *ItickWsClient) subscribe(params, types string) error {
 		Types:  types,
 	}
 
-	key := buildSubKey(params, types)
-
 	if err := c.writeJSON(req); err != nil {
 		return err
 	}
 
-	c.subMu.Lock()
-	c.subscribers[key] = req
-	c.subMu.Unlock()
-
-	logx.Infof("itick subscribe success, params=%s, types=%s", params, types)
+	logx.Infof("itick subscribe success, category=%s params=%s, types=%s", c.categoryCode, params, types)
 	return nil
 }
 
-func (c *ItickWsClient) Unsubscribe(params, types string) error {
+func (c *ItickWsClient) unsubscribe(params, types string) error {
 	req := UnsubscribeReq{
 		Ac:     "unsubscribe",
 		Params: params,
@@ -344,30 +473,7 @@ func (c *ItickWsClient) Unsubscribe(params, types string) error {
 		return err
 	}
 
-	key := buildSubKey(params, types)
-
-	c.subMu.Lock()
-	delete(c.subscribers, key)
-	c.subMu.Unlock()
-
-	logx.Infof("itick unsubscribe success, params=%s, types=%s", params, types)
-	return nil
-}
-
-func (c *ItickWsClient) restoreSubscriptions() error {
-	c.subMu.RLock()
-	list := make([]SubscribeReq, 0, len(c.subscribers))
-	for _, sub := range c.subscribers {
-		list = append(list, sub)
-	}
-	c.subMu.RUnlock()
-
-	for _, sub := range list {
-		if err := c.writeJSON(sub); err != nil {
-			return err
-		}
-	}
-
+	logx.Infof("itick unsubscribe success, category=%s params=%s, types=%s", c.categoryCode, params, types)
 	return nil
 }
 
@@ -385,22 +491,17 @@ func (c *ItickWsClient) writeJSON(v any) error {
 }
 
 func (c *ItickWsClient) Close() error {
-	c.mu.Lock()
-	c.closed = true
-	conn := c.conn
-	c.conn = nil
-	c.mu.Unlock()
-
-	if conn != nil {
-		return conn.Close()
-	}
+	atomic.StoreInt32(&c.closed, 1)
+	c.closeConn()
 	return nil
 }
 
 func (c *ItickWsClient) IsClosed() bool {
-	c.mu.RLock()
-	defer c.mu.RUnlock()
-	return c.closed
+	return atomic.LoadInt32(&c.closed) == 1
+}
+
+func (c *ItickWsClient) IsLeader() bool {
+	return atomic.LoadInt32(&c.leader) == 1
 }
 
 func (c *ItickWsClient) closeConn() {
@@ -414,35 +515,12 @@ func (c *ItickWsClient) closeConn() {
 	}
 }
 
-func buildSubKey(params, types string) string {
-	return params + "|" + types
-}
-
 func buildSymbolRegion(symbol, market string) string {
 	return strings.ToUpper(strings.TrimSpace(symbol)) + "$" + strings.ToUpper(strings.TrimSpace(market))
 }
 
 func intervalToItickKlineType(interval string) (string, error) {
-	switch strings.ToLower(strings.TrimSpace(interval)) {
-	case "1m":
-		return "kline@1", nil
-	case "5m":
-		return "kline@2", nil
-	case "15m":
-		return "kline@3", nil
-	case "30m":
-		return "kline@4", nil
-	case "1h", "60m":
-		return "kline@5", nil
-	case "1d":
-		return "kline@8", nil
-	case "1w":
-		return "kline@9", nil
-	case "1mo":
-		return "kline@10", nil
-	default:
-		return "", fmt.Errorf("unsupported interval: %s", interval)
-	}
+	return utils.IntervalToStream(interval)
 }
 
 func mapItickType(t string) (server.Topic, string) {
@@ -453,23 +531,10 @@ func mapItickType(t string) (server.Topic, string) {
 		return server.TopicDepth, ""
 	case "tick":
 		return server.TopicTick, ""
-	case "kline@1":
-		return server.TopicKline, "1m"
-	case "kline@2":
-		return server.TopicKline, "5m"
-	case "kline@3":
-		return server.TopicKline, "15m"
-	case "kline@4":
-		return server.TopicKline, "30m"
-	case "kline@5":
-		return server.TopicKline, "1h"
-	case "kline@8":
-		return server.TopicKline, "1d"
-	case "kline@9":
-		return server.TopicKline, "1w"
-	case "kline@10":
-		return server.TopicKline, "1mo"
 	default:
+		if interval, ok := utils.StreamToInterval(t); ok {
+			return server.TopicKline, interval
+		}
 		return "", ""
 	}
 }

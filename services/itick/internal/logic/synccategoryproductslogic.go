@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"wklive/proto/itick"
+	"wklive/services/itick/internal/pkg/utils"
 	"wklive/services/itick/internal/svc"
 	"wklive/services/itick/models"
 
@@ -32,7 +33,7 @@ func NewSyncCategoryProductsLogic(ctx context.Context, svcCtx *svc.ServiceContex
 	}
 }
 
-// 同步类型下的产品
+// 同步类型下的产品 (管理后台手动)
 func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryProductsReq) (*itick.SyncCategoryProductsResp, error) {
 	result, err := l.svcCtx.ItickCategoryModel.FindOne(l.ctx, in.Id)
 	if err != nil {
@@ -232,9 +233,7 @@ func (w *SyncCategoryProductsWorker) getSymbolList(ctx context.Context, apiURL, 
 		return nil, fmt.Errorf("market is required")
 	}
 
-	switch category {
-	case "stock", "forex", "indices", "crypto", "future", "fund":
-	default:
+	if !utils.IsSupportedKlineCategory(category) {
 		return nil, fmt.Errorf("unsupported category: %s", category)
 	}
 
@@ -290,23 +289,7 @@ func (w *SyncCategoryProductsWorker) getSymbolList(ctx context.Context, apiURL, 
 }
 
 func (lw *SyncCategoryProductsWorker) getRegion(category string) ([]string, error) {
-	// 市场代码 股票包括（HK、SZ、SH、US、SG、JP、TW、IN、TH、DE、MX、MY、TR、ES、NL、GB、ID、VN），外汇（GB），指数（GB），数字币（BA）、期货（US、HK、CN）、基金（US）
-	switch category {
-	case "stock":
-		return []string{"HK", "SZ", "SH", "US", "SG", "JP", "TW", "IN", "TH", "DE", "MX", "MY", "TR", "ES", "NL", "GB", "ID", "VN"}, nil
-	case "forex":
-		return []string{"GB"}, nil
-	case "indices":
-		return []string{"GB"}, nil
-	case "crypto":
-		return []string{"BA"}, nil
-	case "future":
-		return []string{"US", "HK", "CN"}, nil
-	case "fund":
-		return []string{"US"}, nil
-	default:
-		return nil, fmt.Errorf("unsupported category: %s", category)
-	}
+	return utils.GetKlineCategoryRegions(category)
 }
 
 func (w *SyncCategoryProductsWorker) updateTaskStatus(taskNo string, status int64, message string) error {

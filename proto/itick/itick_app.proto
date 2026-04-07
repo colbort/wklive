@@ -120,7 +120,7 @@ message KlineIntervalsResp {
 // ====================
 // app service
 // ====================
-service App {
+service ItickApp {
   // 获取允许显示的产品类型
   rpc ListVisibleCategories(ListVisibleCategoriesReq) returns (ListVisibleCategoriesResp);
 

@@ -2,6 +2,8 @@ package client
 
 import (
 	"context"
+	"crypto/sha1"
+	"encoding/hex"
 	"fmt"
 	"strings"
 	"sync"
@@ -9,31 +11,59 @@ import (
 	"wklive/services/itick/internal/socket/server"
 	"wklive/services/itick/models"
 
+	"github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type ItickManager struct {
-	wsurl string
+	wsUrl string
 	token string
-	hub   *server.Hub
+
 	model models.ItickCategoryModel
+	hub   *server.Hub
+
+	busRedis  *redis.Client
+	lockRedis *redis.Client
+	registry  *SubscriptionRegistry
+	bus       *ClusterBus
 
 	mu      sync.RWMutex
 	clients map[string]*ItickWsClient
 }
 
-func NewItickManager(wsurl string, token string, hub *server.Hub, model models.ItickCategoryModel) *ItickManager {
+func NewItickManager(
+	wsUrl string,
+	token string,
+	hub *server.Hub,
+	model models.ItickCategoryModel,
+	busRedis *redis.Client,
+	lockRedis *redis.Client,
+) *ItickManager {
+	registry := NewSubscriptionRegistry(
+		busRedis,
+		"itick:subs",
+		"itick:subs:changes",
+	)
+
+	bus := NewClusterBus(
+		busRedis,
+		"itick:cluster:bus",
+	)
+
 	return &ItickManager{
-		wsurl:   wsurl,
-		token:   token,
-		hub:     hub,
-		model:   model,
-		clients: make(map[string]*ItickWsClient),
+		wsUrl:     wsUrl,
+		token:     token,
+		model:     model,
+		hub:       hub,
+		busRedis:  busRedis,
+		lockRedis: lockRedis,
+		registry:  registry,
+		bus:       bus,
+		clients:   make(map[string]*ItickWsClient),
 	}
 }
 
 func (m *ItickManager) Load(ctx context.Context) error {
-	// 这里改成你自己的 model 查询方法
 	categories, err := m.model.FindAll(ctx)
 	if err != nil {
 		return err
@@ -43,14 +73,24 @@ func (m *ItickManager) Load(ctx context.Context) error {
 
 	for _, item := range categories {
 		categoryCode := strings.ToLower(strings.TrimSpace(item.CategoryCode))
-		wsURL := strings.TrimSpace(m.wsurl)
+		wsURL := strings.TrimSpace(m.wsUrl)
 
 		if categoryCode == "" || wsURL == "" {
-			logx.Errorf("skip invalid itick category, code=%s, wsURL=%s", item.CategoryCode, m.wsurl)
+			logx.Errorf("skip invalid itick category, code=%s, wsURL=%s", item.CategoryCode, m.wsUrl)
 			continue
 		}
 
-		newClients[categoryCode] = NewItickWsClient(fmt.Sprintf("%s/%s", wsURL, categoryCode), m.token, categoryCode, m.hub)
+		upstreamURL := fmt.Sprintf("%s/%s", wsURL, categoryCode)
+		lockKey := "itick:leader:" + sha1Hex(upstreamURL)
+
+		newClients[categoryCode] = NewItickWsClient(
+			upstreamURL,
+			m.token,
+			categoryCode,
+			m.bus,
+			m.registry,
+			NewRedisLeaderLock(m.lockRedis, lockKey),
+		)
 	}
 
 	if len(newClients) == 0 {
@@ -65,7 +105,25 @@ func (m *ItickManager) Load(ctx context.Context) error {
 	return nil
 }
 
-func (m *ItickManager) Start(ctx context.Context) {
+func (m *ItickManager) Start(ctx context.Context) error {
+	if err := m.bus.Subscribe(ctx, func(msg server.ClientMessage, payload any) {
+		m.hub.Broadcast(msg, payload)
+	}); err != nil {
+		return err
+	}
+
+	if err := m.registry.WatchChanges(ctx, func(change SubscriptionChange) {
+		m.mu.RLock()
+		cli := m.clients[strings.ToLower(strings.TrimSpace(change.CategoryCode))]
+		m.mu.RUnlock()
+
+		if cli != nil {
+			cli.HandleSubscriptionChange(change)
+		}
+	}); err != nil {
+		return err
+	}
+
 	m.mu.RLock()
 	clients := make([]*ItickWsClient, 0, len(m.clients))
 	for _, cli := range m.clients {
@@ -76,26 +134,19 @@ func (m *ItickManager) Start(ctx context.Context) {
 	for _, cli := range clients {
 		cli.Start(ctx)
 	}
+
+	return nil
 }
 
-func (m *ItickManager) Subscribe(msg server.ClientMessage) error {
-	m.mu.RLock()
-	cli, ok := m.clients[msg.CategoryCode]
-	m.mu.RUnlock()
-
-	if !ok {
-		return fmt.Errorf("unsupported categoryCode: %s", msg.CategoryCode)
-	}
-	return cli.SubscribeByClientMessage(msg)
+func (m *ItickManager) AddGlobalSubscription(ctx context.Context, msg server.ClientMessage) error {
+	return m.registry.Add(ctx, msg)
 }
 
-func (m *ItickManager) Unsubscribe(msg server.ClientMessage) error {
-	m.mu.RLock()
-	cli, ok := m.clients[msg.CategoryCode]
-	m.mu.RUnlock()
+func (m *ItickManager) RemoveGlobalSubscription(ctx context.Context, msg server.ClientMessage) error {
+	return m.registry.Remove(ctx, msg)
+}
 
-	if !ok {
-		return fmt.Errorf("unsupported categoryCode: %s", msg.CategoryCode)
-	}
-	return cli.UnsubscribeByClientMessage(msg)
+func sha1Hex(s string) string {
+	sum := sha1.Sum([]byte(s))
+	return hex.EncodeToString(sum[:])
 }
