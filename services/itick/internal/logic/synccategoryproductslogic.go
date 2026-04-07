@@ -16,6 +16,7 @@ import (
 	"wklive/services/itick/internal/svc"
 	"wklive/services/itick/models"
 
+	"github.com/gogo/protobuf/proto"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -78,7 +79,7 @@ func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryP
 	}
 
 	// 拷贝参数，避免直接引用请求对象
-	reqCopy := *in
+	reqCopy := proto.Clone(in).(*itick.SyncCategoryProductsReq)
 
 	// 后台异步执行
 	go func(taskNo string, reqCopy *itick.SyncCategoryProductsReq) {
@@ -87,7 +88,7 @@ func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryP
 
 		logic := NewSyncCategoryProductsWorker(bgCtx, l.svcCtx)
 		logic.Run(taskNo, reqCopy)
-	}(taskNo, &reqCopy)
+	}(taskNo, reqCopy)
 
 	return &itick.SyncCategoryProductsResp{
 		Base: &itick.RespBase{
@@ -116,7 +117,7 @@ func (w *SyncCategoryProductsWorker) Run(taskNo string, in *itick.SyncCategoryPr
 	defer func() {
 		if r := recover(); r != nil {
 			errMsg := fmt.Sprintf("同步任务panic: %v", r)
-			logx.Errorf(errMsg)
+			logx.Errorf("%s", errMsg)
 			_ = w.updateTaskStatus(taskNo, 3, errMsg)
 		}
 	}()

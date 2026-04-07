@@ -19,6 +19,7 @@ import (
 	"wklive/services/itick/internal/svc"
 	"wklive/services/itick/models"
 
+	"github.com/gogo/protobuf/proto"
 	"github.com/zeromicro/go-zero/core/logx"
 	"golang.org/x/time/rate"
 )
@@ -92,7 +93,7 @@ func (l *SyncKlinesLogic) SyncKlines(in *itick.SyncKlinesReq) (*itick.SyncKlines
 		}, nil
 	}
 
-	reqCopy := *in
+	reqCopy := proto.Clone(in).(*itick.SyncKlinesReq)
 
 	go func(taskNo string, reqCopy *itick.SyncKlinesReq, lockKey, lockValue string) {
 		bgCtx, cancel := context.WithTimeout(context.Background(), 12*time.Hour)
@@ -100,7 +101,7 @@ func (l *SyncKlinesLogic) SyncKlines(in *itick.SyncKlinesReq) (*itick.SyncKlines
 
 		worker := NewSyncKlinesWorker(bgCtx, l.svcCtx, distLock, lockKey, lockValue)
 		worker.Run(taskNo, reqCopy)
-	}(taskNo, &reqCopy, lockKey, lockValue)
+	}(taskNo, reqCopy, lockKey, lockValue)
 
 	return &itick.SyncKlinesResp{
 		Base: &itick.RespBase{
