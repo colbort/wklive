@@ -6,10 +6,10 @@ type ClientAction string
 type Topic string
 
 const (
-	TopicQuote Topic = "quote"
-	TopicDepth Topic = "depth"
-	TopicTick  Topic = "tick"
-	TopicKline Topic = "kline"
+	TopicQuote Topic = "quote" // 实时价格
+	TopicDepth Topic = "depth" // 盘口
+	TopicTick  Topic = "tick"  // 实时成交
+	TopicKline Topic = "kline" // kline
 )
 
 type ClientMessage struct {
