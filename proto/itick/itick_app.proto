@@ -111,7 +111,7 @@ message PushReply {
 
 message KlineInterval {
   string name = 1;
-  int32 kType = 2;
+  int32 k_type = 2;
 }
 
 message KlineIntervalsResp {

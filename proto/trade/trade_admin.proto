@@ -8,6 +8,7 @@ import "proto/common/common.proto";
 import "proto/trade/enum.proto";
 import "proto/trade/model.proto";
 
+// 
 service TradeAdmin {
   rpc CreateSymbol(CreateSymbolReq) returns (AdminCommonResp);
   rpc UpdateSymbol(UpdateSymbolReq) returns (AdminCommonResp);
