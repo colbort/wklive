@@ -8,30 +8,57 @@ import "proto/common/common.proto";
 import "proto/trade/enum.proto";
 import "proto/trade/model.proto";
 
-// 
+// 交易服务管理后台接口
 service TradeAdmin {
+  // 创建交易对
   rpc CreateSymbol(CreateSymbolReq) returns (AdminCommonResp);
+
+  // 更新交易对信息
   rpc UpdateSymbol(UpdateSymbolReq) returns (AdminCommonResp);
+
+  // 获取后台交易对列表
   rpc GetSymbolListAdmin(GetSymbolListAdminReq) returns (GetSymbolListAdminResp);
 
+  // 设置现货交易对配置
   rpc SetSpotSymbolConfig(SetSpotSymbolConfigReq) returns (AdminCommonResp);
+
+  // 设置合约交易对配置
   rpc SetContractSymbolConfig(SetContractSymbolConfigReq) returns (AdminCommonResp);
 
+  // 获取后台订单列表
   rpc GetOrderListAdmin(GetOrderListAdminReq) returns (GetOrderListAdminResp);
+
+  // 获取后台成交记录列表
   rpc GetFillListAdmin(GetFillListAdminReq) returns (GetFillListAdminResp);
+
+  // 获取后台持仓列表
   rpc GetPositionListAdmin(GetPositionListAdminReq) returns (GetPositionListAdminResp);
 
+  // 设置用户交易限制
   rpc SetUserTradeLimit(SetUserTradeLimitReq) returns (AdminCommonResp);
+
+  // 设置用户交易对限制
   rpc SetUserSymbolLimit(SetUserSymbolLimitReq) returns (AdminCommonResp);
+
+  // 获取用户交易限制
   rpc GetUserTradeLimit(GetUserTradeLimitReq) returns (GetUserTradeLimitResp);
+
+  // 获取用户交易对限制
   rpc GetUserSymbolLimit(GetUserSymbolLimitReq) returns (GetUserSymbolLimitResp);
 
+  // 获取风控订单校验日志列表
   rpc GetRiskOrderCheckLogList(GetRiskOrderCheckLogListReq) returns (GetRiskOrderCheckLogListResp);
 
+  // 设置用户杠杆配置
   rpc SetUserLeverageConfig(SetUserLeverageConfigReq) returns (AdminCommonResp);
+
+  // 获取用户杠杆配置
   rpc GetUserLeverageConfig(GetUserLeverageConfigReq) returns (GetUserLeverageConfigResp);
 
+  // 获取交易事件列表
   rpc GetTradeEventList(GetTradeEventListReq) returns (GetTradeEventListResp);
+
+  // 重试交易事件
   rpc RetryTradeEvent(RetryTradeEventReq) returns (AdminCommonResp);
 }
 

@@ -8,10 +8,18 @@ import "proto/common/common.proto";
 import "proto/trade/enum.proto";
 import "proto/trade/model.proto";
 
+// 交易服务内部接口
 service TradeInternal {
+  // 记录订单成交信息
   rpc RecordOrderFill(RecordOrderFillReq) returns (InternalCommonResp);
+
+  // 记录持仓历史信息
   rpc RecordPositionHistory(RecordPositionHistoryReq) returns (InternalCommonResp);
+
+  // 创建交易事件
   rpc CreateTradeEvent(CreateTradeEventReq) returns (InternalCommonResp);
+
+  // 校验订单风控
   rpc CheckOrderRisk(CheckOrderRiskReq) returns (CheckOrderRiskResp);
 }
 

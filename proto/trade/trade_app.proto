@@ -8,24 +8,45 @@ import "proto/common/common.proto";
 import "proto/trade/enum.proto";
 import "proto/trade/model.proto";
 
+// APP 交易服务接口
 service TradeApp {
+  // 获取交易对列表
   rpc GetSymbolList(GetSymbolListReq) returns (GetSymbolListResp);
+
+  // 获取指定交易对详情
   rpc GetSymbolDetail(GetSymbolDetailReq) returns (GetSymbolDetailResp);
 
+  // 下单
   rpc PlaceOrder(PlaceOrderReq) returns (PlaceOrderResp);
+
+  // 撤销指定订单
   rpc CancelOrder(CancelOrderReq) returns (AppCommonResp);
+
+  // 撤销当前用户全部订单
   rpc CancelAllOrders(CancelAllOrdersReq) returns (CancelAllOrdersResp);
 
+  // 获取订单列表
   rpc GetOrderList(GetOrderListReq) returns (GetOrderListResp);
+
+  // 获取订单详情
   rpc GetOrderDetail(GetOrderDetailReq) returns (GetOrderDetailResp);
 
+  // 获取成交记录列表
   rpc GetFillList(GetFillListReq) returns (GetFillListResp);
 
+  // 获取持仓列表
   rpc GetPositionList(GetPositionListReq) returns (GetPositionListResp);
+
+  // 获取保证金账户列表
   rpc GetMarginAccountList(GetMarginAccountListReq) returns (GetMarginAccountListResp);
 
+  // 设置杠杆倍数
   rpc SetLeverage(SetLeverageReq) returns (AppCommonResp);
+
+  // 设置用户交易配置
   rpc SetUserTradeConfig(SetUserTradeConfigReq) returns (AppCommonResp);
+
+  // 获取用户交易配置
   rpc GetUserTradeConfig(GetUserTradeConfigReq) returns (GetUserTradeConfigResp);
 }
 
