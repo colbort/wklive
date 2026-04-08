@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/common"
 	"wklive/proto/payment"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,7 +30,7 @@ func NewListWithdrawNotifyLogsLogic(ctx context.Context, svcCtx *svc.ServiceCont
 
 func (l *ListWithdrawNotifyLogsLogic) ListWithdrawNotifyLogs(req *types.ListWithdrawNotifyLogsReq) (resp *types.ListWithdrawNotifyLogsResp, err error) {
 	result, err := l.svcCtx.PaymentCli.ListWithdrawNotifyLogs(l.ctx, &payment.ListWithdrawNotifyLogsReq{
-		Page: &payment.PageReq{
+		Page: &common.PageReq{
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
 		},

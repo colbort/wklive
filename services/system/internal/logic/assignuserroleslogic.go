@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
@@ -26,10 +27,20 @@ func NewAssignUserRolesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *A
 
 func (l *AssignUserRolesLogic) AssignUserRoles(in *system.AssignUserRolesReq) (*system.RespBase, error) {
 	if in.UserId <= 0 {
-		return &system.RespBase{Code: 1, Msg: "用户ID错误"}, nil
+		return &system.RespBase{
+			Base: &common.RespBase{
+				Code: 1,
+				Msg:  "用户ID错误",
+			},
+		}, nil
 	}
 	if len(in.RoleIds) == 0 {
-		return &system.RespBase{Code: 1, Msg: "请选择角色"}, nil
+		return &system.RespBase{
+			Base: &common.RespBase{
+				Code: 1,
+				Msg:  "请选择角色",
+			},
+		}, nil
 	}
 
 	user, err := l.svcCtx.UserModel.FindOne(l.ctx, in.UserId)
@@ -37,7 +48,12 @@ func (l *AssignUserRolesLogic) AssignUserRoles(in *system.AssignUserRolesReq) (*
 		return nil, err
 	}
 	if user == nil {
-		return &system.RespBase{Code: 1, Msg: "用户不存在"}, nil
+		return &system.RespBase{
+			Base: &common.RespBase{
+				Code: 1,
+				Msg:  "用户不存在",
+			},
+		}, nil
 	}
 
 	// 1. 请求角色去重
@@ -55,7 +71,12 @@ func (l *AssignUserRolesLogic) AssignUserRoles(in *system.AssignUserRolesReq) (*
 	}
 
 	if len(roleIds) == 0 {
-		return &system.RespBase{Code: 1, Msg: "请选择有效角色"}, nil
+		return &system.RespBase{
+			Base: &common.RespBase{
+				Code: 1,
+				Msg:  "请选择有效角色",
+			},
+		}, nil
 	}
 
 	// 2. 校验这些角色是否存在
@@ -65,7 +86,12 @@ func (l *AssignUserRolesLogic) AssignUserRoles(in *system.AssignUserRolesReq) (*
 		return nil, err
 	}
 	if len(existRoleIds) != len(roleIds) {
-		return &system.RespBase{Code: 1, Msg: "部分角色不存在"}, nil
+		return &system.RespBase{
+			Base: &common.RespBase{
+				Code: 1,
+				Msg:  "部分角色不存在",
+			},
+		}, nil
 	}
 
 	// 3. 查用户当前已有角色

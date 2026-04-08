@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/common"
 	"wklive/proto/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,7 +30,7 @@ func NewLoginLogListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Logi
 
 func (l *LoginLogListLogic) LoginLogList(req *types.LoginLogListReq) (resp *types.LoginLogListResp, err error) {
 	result, err := l.svcCtx.SystemCli.LoginLogList(l.ctx, &system.LoginLogListReq{
-		Page: &system.PageReq{
+		Page: &common.PageReq{
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
 		},

@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package payment;
 
-import "proto/payment/common.proto";
+import "proto/payment/enum.proto";
 
 option go_package = "wklive/proto/payment;payment";
 

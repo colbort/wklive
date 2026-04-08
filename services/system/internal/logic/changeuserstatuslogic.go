@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -29,11 +30,21 @@ func (l *ChangeUserStatusLogic) ChangeUserStatus(in *system.ChangeUserStatusReq)
 		return nil, err
 	}
 	if user == nil {
-		return &system.RespBase{Code: 1, Msg: "用户不存在"}, nil
+		return &system.RespBase{
+			Base: &common.RespBase{
+				Code: 1,
+				Msg:  "用户不存在",
+			},
+		}, nil
 	}
 
 	if user.Status == in.Status {
-		return &system.RespBase{Code: 1, Msg: "用户状态未改变"}, nil
+		return &system.RespBase{
+			Base: &common.RespBase{
+				Code: 1,
+				Msg:  "用户状态未改变",
+			},
+		}, nil
 	}
 	user.Status = in.Status
 	if err = l.svcCtx.UserModel.Update(l.ctx, user); err != nil {
@@ -41,7 +52,9 @@ func (l *ChangeUserStatusLogic) ChangeUserStatus(in *system.ChangeUserStatusReq)
 	}
 
 	return &system.RespBase{
-		Code: 200,
-		Msg:  "用户状态修改成功",
+		Base: &common.RespBase{
+			Code: 200,
+			Msg:  "用户状态修改成功",
+		},
 	}, nil
 }

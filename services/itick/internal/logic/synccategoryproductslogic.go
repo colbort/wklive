@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"wklive/proto/common"
 	"wklive/proto/itick"
 	"wklive/services/itick/internal/pkg/utils"
 	"wklive/services/itick/internal/svc"
@@ -40,7 +41,7 @@ func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryP
 	if err != nil {
 		logx.Errorf("find category failed, err=%v", err)
 		return &itick.SyncCategoryProductsResp{
-			Base: &itick.RespBase{
+			Base: &common.RespBase{
 				Code: 1,
 				Msg:  err.Error(),
 			},
@@ -48,7 +49,7 @@ func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryP
 	}
 	if result == nil {
 		return &itick.SyncCategoryProductsResp{
-			Base: &itick.RespBase{
+			Base: &common.RespBase{
 				Code: 1,
 				Msg:  "分类不存在",
 			},
@@ -71,7 +72,7 @@ func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryP
 	if err != nil {
 		logx.Errorf("create sync task failed, err=%v", err)
 		return &itick.SyncCategoryProductsResp{
-			Base: &itick.RespBase{
+			Base: &common.RespBase{
 				Code: 1,
 				Msg:  "创建同步任务失败",
 			},
@@ -91,7 +92,7 @@ func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryP
 	}(taskNo, reqCopy)
 
 	return &itick.SyncCategoryProductsResp{
-		Base: &itick.RespBase{
+		Base: &common.RespBase{
 			Code: 0,
 			Msg:  "同步任务已提交",
 		},

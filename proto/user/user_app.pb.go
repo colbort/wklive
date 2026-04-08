@@ -12,6 +12,7 @@ import (
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+	common "wklive/proto/common"
 )
 
 const (
@@ -23,7 +24,7 @@ const (
 
 type AppCommonResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -58,7 +59,7 @@ func (*AppCommonResp) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_app_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *AppCommonResp) GetBase() *RespBase {
+func (x *AppCommonResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -183,9 +184,9 @@ func (x *RegisterReq) GetRegisterIp() string {
 
 type RegisterResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Token         *TokenInfo             `protobuf:"bytes,3,opt,name=token,proto3" json:"token,omitempty"`
+	Token         *common.TokenInfo      `protobuf:"bytes,3,opt,name=token,proto3" json:"token,omitempty"`
 	Profile       *UserProfile           `protobuf:"bytes,4,opt,name=profile,proto3" json:"profile,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -221,7 +222,7 @@ func (*RegisterResp) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_app_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *RegisterResp) GetBase() *RespBase {
+func (x *RegisterResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -235,7 +236,7 @@ func (x *RegisterResp) GetUserId() int64 {
 	return 0
 }
 
-func (x *RegisterResp) GetToken() *TokenInfo {
+func (x *RegisterResp) GetToken() *common.TokenInfo {
 	if x != nil {
 		return x.Token
 	}
@@ -335,9 +336,9 @@ func (x *LoginReq) GetLoginIp() string {
 
 type LoginResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Token         *TokenInfo             `protobuf:"bytes,3,opt,name=token,proto3" json:"token,omitempty"`
+	Token         *common.TokenInfo      `protobuf:"bytes,3,opt,name=token,proto3" json:"token,omitempty"`
 	Profile       *UserProfile           `protobuf:"bytes,4,opt,name=profile,proto3" json:"profile,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -373,7 +374,7 @@ func (*LoginResp) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_app_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *LoginResp) GetBase() *RespBase {
+func (x *LoginResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -387,7 +388,7 @@ func (x *LoginResp) GetUserId() int64 {
 	return 0
 }
 
-func (x *LoginResp) GetToken() *TokenInfo {
+func (x *LoginResp) GetToken() *common.TokenInfo {
 	if x != nil {
 		return x.Token
 	}
@@ -531,7 +532,7 @@ func (x *GuestLogin) GetUsername() string {
 
 type GuestLoginResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          *GuestLogin            `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -567,7 +568,7 @@ func (*GuestLoginResp) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_app_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *GuestLoginResp) GetBase() *RespBase {
+func (x *GuestLoginResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -679,8 +680,8 @@ func (x *RefreshTokenReq) GetRefreshToken() string {
 
 type RefreshTokenResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Token         *TokenInfo             `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Token         *common.TokenInfo      `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -715,14 +716,14 @@ func (*RefreshTokenResp) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_app_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *RefreshTokenResp) GetBase() *RespBase {
+func (x *RefreshTokenResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *RefreshTokenResp) GetToken() *TokenInfo {
+func (x *RefreshTokenResp) GetToken() *common.TokenInfo {
 	if x != nil {
 		return x.Token
 	}
@@ -775,7 +776,7 @@ func (x *GetProfileReq) GetUserId() int64 {
 
 type GetProfileResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Profile       *UserProfile           `protobuf:"bytes,2,opt,name=profile,proto3" json:"profile,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -811,7 +812,7 @@ func (*GetProfileResp) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_app_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *GetProfileResp) GetBase() *RespBase {
+func (x *GetProfileResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -959,7 +960,7 @@ func (x *UpdateProfileReq) GetAddress() string {
 
 type UpdateProfileResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Profile       *UserProfile           `protobuf:"bytes,2,opt,name=profile,proto3" json:"profile,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -995,7 +996,7 @@ func (*UpdateProfileResp) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_app_proto_rawDescGZIP(), []int{14}
 }
 
-func (x *UpdateProfileResp) GetBase() *RespBase {
+func (x *UpdateProfileResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -1123,7 +1124,7 @@ func (x *GetIdentityReq) GetUserId() int64 {
 
 type GetIdentityResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Identity      *UserIdentity          `protobuf:"bytes,2,opt,name=identity,proto3" json:"identity,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1159,7 +1160,7 @@ func (*GetIdentityResp) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_app_proto_rawDescGZIP(), []int{17}
 }
 
-func (x *GetIdentityResp) GetBase() *RespBase {
+func (x *GetIdentityResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -1339,7 +1340,7 @@ func (x *SubmitIdentityReq) GetKycLevel() KycLevel {
 
 type SubmitIdentityResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Identity      *UserIdentity          `protobuf:"bytes,2,opt,name=identity,proto3" json:"identity,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1375,7 +1376,7 @@ func (*SubmitIdentityResp) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_app_proto_rawDescGZIP(), []int{19}
 }
 
-func (x *SubmitIdentityResp) GetBase() *RespBase {
+func (x *SubmitIdentityResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -1435,7 +1436,7 @@ func (x *GetSecurityReq) GetUserId() int64 {
 
 type GetSecurityResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Security      *UserSecurity          `protobuf:"bytes,2,opt,name=security,proto3" json:"security,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1471,7 +1472,7 @@ func (*GetSecurityResp) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_app_proto_rawDescGZIP(), []int{21}
 }
 
-func (x *GetSecurityResp) GetBase() *RespBase {
+func (x *GetSecurityResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -1659,7 +1660,7 @@ func (x *InitGoogle2FAReq) GetUserId() int64 {
 
 type InitGoogle2FAResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Secret        string                 `protobuf:"bytes,2,opt,name=secret,proto3" json:"secret,omitempty"`
 	QrCodeUrl     string                 `protobuf:"bytes,3,opt,name=qr_code_url,json=qrCodeUrl,proto3" json:"qr_code_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1696,7 +1697,7 @@ func (*InitGoogle2FAResp) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_app_proto_rawDescGZIP(), []int{25}
 }
 
-func (x *InitGoogle2FAResp) GetBase() *RespBase {
+func (x *InitGoogle2FAResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -1824,7 +1825,7 @@ func (x *DisableGoogle2FAReq) GetGoogleCode() string {
 type ListBanksReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Page          *PageReq               `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
+	Page          *common.PageReq        `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1866,7 +1867,7 @@ func (x *ListBanksReq) GetUserId() int64 {
 	return 0
 }
 
-func (x *ListBanksReq) GetPage() *PageReq {
+func (x *ListBanksReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
@@ -1875,7 +1876,7 @@ func (x *ListBanksReq) GetPage() *PageReq {
 
 type ListBanksResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	List          []*UserBank            `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1911,7 +1912,7 @@ func (*ListBanksResp) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_app_proto_rawDescGZIP(), []int{29}
 }
 
-func (x *ListBanksResp) GetBase() *RespBase {
+func (x *ListBanksResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -2027,7 +2028,7 @@ func (x *AddBankReq) GetIsDefault() bool {
 
 type AddBankResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Bank          *UserBank              `protobuf:"bytes,2,opt,name=bank,proto3" json:"bank,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2063,7 +2064,7 @@ func (*AddBankResp) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_app_proto_rawDescGZIP(), []int{31}
 }
 
-func (x *AddBankResp) GetBase() *RespBase {
+func (x *AddBankResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -2187,7 +2188,7 @@ func (x *UpdateBankReq) GetIsDefault() bool {
 
 type UpdateBankResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Bank          *UserBank              `protobuf:"bytes,2,opt,name=bank,proto3" json:"bank,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2223,7 +2224,7 @@ func (*UpdateBankResp) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_app_proto_rawDescGZIP(), []int{33}
 }
 
-func (x *UpdateBankResp) GetBase() *RespBase {
+func (x *UpdateBankResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -2345,9 +2346,9 @@ var File_proto_user_user_app_proto protoreflect.FileDescriptor
 
 const file_proto_user_user_app_proto_rawDesc = "" +
 	"\n" +
-	"\x19proto/user/user_app.proto\x12\x04user\x1a\x17proto/user/common.proto\x1a\x16proto/user/model.proto\"3\n" +
-	"\rAppCommonResp\x12\"\n" +
-	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\"\xd0\x02\n" +
+	"\x19proto/user/user_app.proto\x12\x04user\x1a\x19proto/common/common.proto\x1a\x15proto/user/enum.proto\x1a\x16proto/user/model.proto\"5\n" +
+	"\rAppCommonResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\xd0\x02\n" +
 	"\vRegisterReq\x12\x1f\n" +
 	"\vtenant_code\x18\x01 \x01(\tR\n" +
 	"tenantCode\x127\n" +
@@ -2362,11 +2363,11 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\x06source\x18\t \x01(\tR\x06source\x12\x1f\n" +
 	"\vregister_ip\x18\n" +
 	" \x01(\tR\n" +
-	"registerIp\"\x9f\x01\n" +
-	"\fRegisterResp\x12\"\n" +
-	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12%\n" +
-	"\x05token\x18\x03 \x01(\v2\x0f.user.TokenInfoR\x05token\x12+\n" +
+	"registerIp\"\xa3\x01\n" +
+	"\fRegisterResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12'\n" +
+	"\x05token\x18\x03 \x01(\v2\x11.common.TokenInfoR\x05token\x12+\n" +
 	"\aprofile\x18\x04 \x01(\v2\x11.user.UserProfileR\aprofile\"\xcd\x01\n" +
 	"\bLoginReq\x12\x1f\n" +
 	"\vtenant_code\x18\x01 \x01(\tR\n" +
@@ -2377,11 +2378,11 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\bpassword\x18\x04 \x01(\tR\bpassword\x12\x1f\n" +
 	"\vgoogle_code\x18\x05 \x01(\tR\n" +
 	"googleCode\x12\x19\n" +
-	"\blogin_ip\x18\x06 \x01(\tR\aloginIp\"\x9c\x01\n" +
-	"\tLoginResp\x12\"\n" +
-	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12%\n" +
-	"\x05token\x18\x03 \x01(\v2\x0f.user.TokenInfoR\x05token\x12+\n" +
+	"\blogin_ip\x18\x06 \x01(\tR\aloginIp\"\xa0\x01\n" +
+	"\tLoginResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12'\n" +
+	"\x05token\x18\x03 \x01(\v2\x11.common.TokenInfoR\x05token\x12+\n" +
 	"\aprofile\x18\x04 \x01(\v2\x11.user.UserProfileR\aprofile\"m\n" +
 	"\rGuestLoginReq\x12\x1a\n" +
 	"\bdeviceId\x18\x01 \x01(\tR\bdeviceId\x12 \n" +
@@ -2394,23 +2395,23 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x12\x10\n" +
 	"\x03uid\x18\x02 \x01(\tR\x03uid\x12\x14\n" +
 	"\x05isNew\x18\x03 \x01(\bR\x05isNew\x12\x1a\n" +
-	"\busername\x18\x04 \x01(\tR\busername\"Z\n" +
-	"\x0eGuestLoginResp\x12\"\n" +
-	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12$\n" +
+	"\busername\x18\x04 \x01(\tR\busername\"\\\n" +
+	"\x0eGuestLoginResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12$\n" +
 	"\x04data\x18\x02 \x01(\v2\x10.user.GuestLoginR\x04data\"$\n" +
 	"\tLogoutReq\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\"W\n" +
 	"\x0fRefreshTokenReq\x12\x1f\n" +
 	"\vtenant_code\x18\x01 \x01(\tR\n" +
 	"tenantCode\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"]\n" +
-	"\x10RefreshTokenResp\x12\"\n" +
-	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12%\n" +
-	"\x05token\x18\x02 \x01(\v2\x0f.user.TokenInfoR\x05token\"(\n" +
+	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"a\n" +
+	"\x10RefreshTokenResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
+	"\x05token\x18\x02 \x01(\v2\x11.common.TokenInfoR\x05token\"(\n" +
 	"\rGetProfileReq\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"a\n" +
-	"\x0eGetProfileResp\x12\"\n" +
-	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12+\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"c\n" +
+	"\x0eGetProfileResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12+\n" +
 	"\aprofile\x18\x02 \x01(\v2\x11.user.UserProfileR\aprofile\"\xe4\x02\n" +
 	"\x10UpdateProfileReq\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1a\n" +
@@ -2425,9 +2426,9 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\bprovince\x18\n" +
 	" \x01(\tR\bprovince\x12\x12\n" +
 	"\x04city\x18\v \x01(\tR\x04city\x12\x18\n" +
-	"\aaddress\x18\f \x01(\tR\aaddress\"d\n" +
-	"\x11UpdateProfileResp\x12\"\n" +
-	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12+\n" +
+	"\aaddress\x18\f \x01(\tR\aaddress\"f\n" +
+	"\x11UpdateProfileResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12+\n" +
 	"\aprofile\x18\x02 \x01(\v2\x11.user.UserProfileR\aprofile\"\xa2\x01\n" +
 	"\x16ChangeLoginPasswordReq\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12!\n" +
@@ -2435,9 +2436,9 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\fnew_password\x18\x03 \x01(\tR\vnewPassword\x12)\n" +
 	"\x10confirm_password\x18\x04 \x01(\tR\x0fconfirmPassword\")\n" +
 	"\x0eGetIdentityReq\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"e\n" +
-	"\x0fGetIdentityResp\x12\"\n" +
-	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12.\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"g\n" +
+	"\x0fGetIdentityResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
 	"\bidentity\x18\x02 \x01(\v2\x12.user.UserIdentityR\bidentity\"\xf4\x03\n" +
 	"\x11SubmitIdentityReq\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x14\n" +
@@ -2458,14 +2459,14 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\n" +
 	"back_image\x18\x0e \x01(\tR\tbackImage\x12%\n" +
 	"\x0ehandheld_image\x18\x0f \x01(\tR\rhandheldImage\x12+\n" +
-	"\tkyc_level\x18\x10 \x01(\x0e2\x0e.user.KycLevelR\bkycLevel\"h\n" +
-	"\x12SubmitIdentityResp\x12\"\n" +
-	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12.\n" +
+	"\tkyc_level\x18\x10 \x01(\x0e2\x0e.user.KycLevelR\bkycLevel\"j\n" +
+	"\x12SubmitIdentityResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
 	"\bidentity\x18\x02 \x01(\v2\x12.user.UserIdentityR\bidentity\")\n" +
 	"\x0eGetSecurityReq\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"e\n" +
-	"\x0fGetSecurityResp\x12\"\n" +
-	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12.\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"g\n" +
+	"\x0fGetSecurityResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
 	"\bsecurity\x18\x02 \x01(\v2\x12.user.UserSecurityR\bsecurity\"s\n" +
 	"\x11SetPayPasswordReq\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1a\n" +
@@ -2477,9 +2478,9 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\fnew_password\x18\x03 \x01(\tR\vnewPassword\x12)\n" +
 	"\x10confirm_password\x18\x04 \x01(\tR\x0fconfirmPassword\"+\n" +
 	"\x10InitGoogle2FAReq\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"o\n" +
-	"\x11InitGoogle2FAResp\x12\"\n" +
-	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12\x16\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"q\n" +
+	"\x11InitGoogle2FAResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x16\n" +
 	"\x06secret\x18\x02 \x01(\tR\x06secret\x12\x1e\n" +
 	"\vqr_code_url\x18\x03 \x01(\tR\tqrCodeUrl\"N\n" +
 	"\x12EnableGoogle2FAReq\x12\x17\n" +
@@ -2489,12 +2490,12 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\x13DisableGoogle2FAReq\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1f\n" +
 	"\vgoogle_code\x18\x02 \x01(\tR\n" +
-	"googleCode\"J\n" +
+	"googleCode\"L\n" +
 	"\fListBanksReq\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12!\n" +
-	"\x04page\x18\x02 \x01(\v2\r.user.PageReqR\x04page\"W\n" +
-	"\rListBanksResp\x12\"\n" +
-	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12\"\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12#\n" +
+	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\"Y\n" +
+	"\rListBanksResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\"\n" +
 	"\x04list\x18\x02 \x03(\v2\x0e.user.UserBankR\x04list\"\x84\x02\n" +
 	"\n" +
 	"AddBankReq\x12\x17\n" +
@@ -2508,9 +2509,9 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"branchName\x12!\n" +
 	"\fcountry_code\x18\a \x01(\tR\vcountryCode\x12\x1d\n" +
 	"\n" +
-	"is_default\x18\b \x01(\bR\tisDefault\"U\n" +
-	"\vAddBankResp\x12\"\n" +
-	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12\"\n" +
+	"is_default\x18\b \x01(\bR\tisDefault\"W\n" +
+	"\vAddBankResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\"\n" +
 	"\x04bank\x18\x02 \x01(\v2\x0e.user.UserBankR\x04bank\"\x97\x02\n" +
 	"\rUpdateBankReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
@@ -2524,9 +2525,9 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"branchName\x12!\n" +
 	"\fcountry_code\x18\b \x01(\tR\vcountryCode\x12\x1d\n" +
 	"\n" +
-	"is_default\x18\t \x01(\bR\tisDefault\"X\n" +
-	"\x0eUpdateBankResp\x12\"\n" +
-	"\x04base\x18\x01 \x01(\v2\x0e.user.RespBaseR\x04base\x12\"\n" +
+	"is_default\x18\t \x01(\bR\tisDefault\"Z\n" +
+	"\x0eUpdateBankResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\"\n" +
 	"\x04bank\x18\x02 \x01(\v2\x0e.user.UserBankR\x04bank\"8\n" +
 	"\rDeleteBankReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
@@ -2611,9 +2612,9 @@ var file_proto_user_user_app_proto_goTypes = []any{
 	(*UpdateBankResp)(nil),         // 33: user.UpdateBankResp
 	(*DeleteBankReq)(nil),          // 34: user.DeleteBankReq
 	(*SetDefaultBankReq)(nil),      // 35: user.SetDefaultBankReq
-	(*RespBase)(nil),               // 36: user.RespBase
+	(*common.RespBase)(nil),        // 36: common.RespBase
 	(RegisterType)(0),              // 37: user.RegisterType
-	(*TokenInfo)(nil),              // 38: user.TokenInfo
+	(*common.TokenInfo)(nil),       // 38: common.TokenInfo
 	(*UserProfile)(nil),            // 39: user.UserProfile
 	(LoginType)(0),                 // 40: user.LoginType
 	(Gender)(0),                    // 41: user.Gender
@@ -2621,44 +2622,44 @@ var file_proto_user_user_app_proto_goTypes = []any{
 	(IdType)(0),                    // 43: user.IdType
 	(KycLevel)(0),                  // 44: user.KycLevel
 	(*UserSecurity)(nil),           // 45: user.UserSecurity
-	(*PageReq)(nil),                // 46: user.PageReq
+	(*common.PageReq)(nil),         // 46: common.PageReq
 	(*UserBank)(nil),               // 47: user.UserBank
 }
 var file_proto_user_user_app_proto_depIdxs = []int32{
-	36, // 0: user.AppCommonResp.base:type_name -> user.RespBase
+	36, // 0: user.AppCommonResp.base:type_name -> common.RespBase
 	37, // 1: user.RegisterReq.register_type:type_name -> user.RegisterType
-	36, // 2: user.RegisterResp.base:type_name -> user.RespBase
-	38, // 3: user.RegisterResp.token:type_name -> user.TokenInfo
+	36, // 2: user.RegisterResp.base:type_name -> common.RespBase
+	38, // 3: user.RegisterResp.token:type_name -> common.TokenInfo
 	39, // 4: user.RegisterResp.profile:type_name -> user.UserProfile
 	40, // 5: user.LoginReq.login_type:type_name -> user.LoginType
-	36, // 6: user.LoginResp.base:type_name -> user.RespBase
-	38, // 7: user.LoginResp.token:type_name -> user.TokenInfo
+	36, // 6: user.LoginResp.base:type_name -> common.RespBase
+	38, // 7: user.LoginResp.token:type_name -> common.TokenInfo
 	39, // 8: user.LoginResp.profile:type_name -> user.UserProfile
-	36, // 9: user.GuestLoginResp.base:type_name -> user.RespBase
+	36, // 9: user.GuestLoginResp.base:type_name -> common.RespBase
 	6,  // 10: user.GuestLoginResp.data:type_name -> user.GuestLogin
-	36, // 11: user.RefreshTokenResp.base:type_name -> user.RespBase
-	38, // 12: user.RefreshTokenResp.token:type_name -> user.TokenInfo
-	36, // 13: user.GetProfileResp.base:type_name -> user.RespBase
+	36, // 11: user.RefreshTokenResp.base:type_name -> common.RespBase
+	38, // 12: user.RefreshTokenResp.token:type_name -> common.TokenInfo
+	36, // 13: user.GetProfileResp.base:type_name -> common.RespBase
 	39, // 14: user.GetProfileResp.profile:type_name -> user.UserProfile
 	41, // 15: user.UpdateProfileReq.gender:type_name -> user.Gender
-	36, // 16: user.UpdateProfileResp.base:type_name -> user.RespBase
+	36, // 16: user.UpdateProfileResp.base:type_name -> common.RespBase
 	39, // 17: user.UpdateProfileResp.profile:type_name -> user.UserProfile
-	36, // 18: user.GetIdentityResp.base:type_name -> user.RespBase
+	36, // 18: user.GetIdentityResp.base:type_name -> common.RespBase
 	42, // 19: user.GetIdentityResp.identity:type_name -> user.UserIdentity
 	41, // 20: user.SubmitIdentityReq.gender:type_name -> user.Gender
 	43, // 21: user.SubmitIdentityReq.id_type:type_name -> user.IdType
 	44, // 22: user.SubmitIdentityReq.kyc_level:type_name -> user.KycLevel
-	36, // 23: user.SubmitIdentityResp.base:type_name -> user.RespBase
+	36, // 23: user.SubmitIdentityResp.base:type_name -> common.RespBase
 	42, // 24: user.SubmitIdentityResp.identity:type_name -> user.UserIdentity
-	36, // 25: user.GetSecurityResp.base:type_name -> user.RespBase
+	36, // 25: user.GetSecurityResp.base:type_name -> common.RespBase
 	45, // 26: user.GetSecurityResp.security:type_name -> user.UserSecurity
-	36, // 27: user.InitGoogle2FAResp.base:type_name -> user.RespBase
-	46, // 28: user.ListBanksReq.page:type_name -> user.PageReq
-	36, // 29: user.ListBanksResp.base:type_name -> user.RespBase
+	36, // 27: user.InitGoogle2FAResp.base:type_name -> common.RespBase
+	46, // 28: user.ListBanksReq.page:type_name -> common.PageReq
+	36, // 29: user.ListBanksResp.base:type_name -> common.RespBase
 	47, // 30: user.ListBanksResp.list:type_name -> user.UserBank
-	36, // 31: user.AddBankResp.base:type_name -> user.RespBase
+	36, // 31: user.AddBankResp.base:type_name -> common.RespBase
 	47, // 32: user.AddBankResp.bank:type_name -> user.UserBank
-	36, // 33: user.UpdateBankResp.base:type_name -> user.RespBase
+	36, // 33: user.UpdateBankResp.base:type_name -> common.RespBase
 	47, // 34: user.UpdateBankResp.bank:type_name -> user.UserBank
 	1,  // 35: user.UserApp.Register:input_type -> user.RegisterReq
 	3,  // 36: user.UserApp.Login:input_type -> user.LoginReq
@@ -2714,7 +2715,7 @@ func file_proto_user_user_app_proto_init() {
 	if File_proto_user_user_app_proto != nil {
 		return
 	}
-	file_proto_user_common_proto_init()
+	file_proto_user_enum_proto_init()
 	file_proto_user_model_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{

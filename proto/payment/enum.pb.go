@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v5.29.3
-// source: proto/payment/common.proto
+// source: proto/payment/enum.proto
 
 package payment
 
@@ -60,11 +60,11 @@ func (x PlatformType) String() string {
 }
 
 func (PlatformType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_payment_common_proto_enumTypes[0].Descriptor()
+	return file_proto_payment_enum_proto_enumTypes[0].Descriptor()
 }
 
 func (PlatformType) Type() protoreflect.EnumType {
-	return &file_proto_payment_common_proto_enumTypes[0]
+	return &file_proto_payment_enum_proto_enumTypes[0]
 }
 
 func (x PlatformType) Number() protoreflect.EnumNumber {
@@ -73,7 +73,7 @@ func (x PlatformType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use PlatformType.Descriptor instead.
 func (PlatformType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_payment_common_proto_rawDescGZIP(), []int{0}
+	return file_proto_payment_enum_proto_rawDescGZIP(), []int{0}
 }
 
 type CommonStatus int32
@@ -109,11 +109,11 @@ func (x CommonStatus) String() string {
 }
 
 func (CommonStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_payment_common_proto_enumTypes[1].Descriptor()
+	return file_proto_payment_enum_proto_enumTypes[1].Descriptor()
 }
 
 func (CommonStatus) Type() protoreflect.EnumType {
-	return &file_proto_payment_common_proto_enumTypes[1]
+	return &file_proto_payment_enum_proto_enumTypes[1]
 }
 
 func (x CommonStatus) Number() protoreflect.EnumNumber {
@@ -122,7 +122,7 @@ func (x CommonStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use CommonStatus.Descriptor instead.
 func (CommonStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_payment_common_proto_rawDescGZIP(), []int{1}
+	return file_proto_payment_enum_proto_rawDescGZIP(), []int{1}
 }
 
 type OpenStatus int32
@@ -164,11 +164,11 @@ func (x OpenStatus) String() string {
 }
 
 func (OpenStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_payment_common_proto_enumTypes[2].Descriptor()
+	return file_proto_payment_enum_proto_enumTypes[2].Descriptor()
 }
 
 func (OpenStatus) Type() protoreflect.EnumType {
-	return &file_proto_payment_common_proto_enumTypes[2]
+	return &file_proto_payment_enum_proto_enumTypes[2]
 }
 
 func (x OpenStatus) Number() protoreflect.EnumNumber {
@@ -177,7 +177,7 @@ func (x OpenStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use OpenStatus.Descriptor instead.
 func (OpenStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_payment_common_proto_rawDescGZIP(), []int{2}
+	return file_proto_payment_enum_proto_rawDescGZIP(), []int{2}
 }
 
 type SceneType int32
@@ -222,11 +222,11 @@ func (x SceneType) String() string {
 }
 
 func (SceneType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_payment_common_proto_enumTypes[3].Descriptor()
+	return file_proto_payment_enum_proto_enumTypes[3].Descriptor()
 }
 
 func (SceneType) Type() protoreflect.EnumType {
-	return &file_proto_payment_common_proto_enumTypes[3]
+	return &file_proto_payment_enum_proto_enumTypes[3]
 }
 
 func (x SceneType) Number() protoreflect.EnumNumber {
@@ -235,7 +235,7 @@ func (x SceneType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SceneType.Descriptor instead.
 func (SceneType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_payment_common_proto_rawDescGZIP(), []int{3}
+	return file_proto_payment_enum_proto_rawDescGZIP(), []int{3}
 }
 
 type FeeType int32
@@ -271,11 +271,11 @@ func (x FeeType) String() string {
 }
 
 func (FeeType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_payment_common_proto_enumTypes[4].Descriptor()
+	return file_proto_payment_enum_proto_enumTypes[4].Descriptor()
 }
 
 func (FeeType) Type() protoreflect.EnumType {
-	return &file_proto_payment_common_proto_enumTypes[4]
+	return &file_proto_payment_enum_proto_enumTypes[4]
 }
 
 func (x FeeType) Number() protoreflect.EnumNumber {
@@ -284,7 +284,7 @@ func (x FeeType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use FeeType.Descriptor instead.
 func (FeeType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_payment_common_proto_rawDescGZIP(), []int{4}
+	return file_proto_payment_enum_proto_rawDescGZIP(), []int{4}
 }
 
 type PayOrderStatus int32
@@ -332,11 +332,11 @@ func (x PayOrderStatus) String() string {
 }
 
 func (PayOrderStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_payment_common_proto_enumTypes[5].Descriptor()
+	return file_proto_payment_enum_proto_enumTypes[5].Descriptor()
 }
 
 func (PayOrderStatus) Type() protoreflect.EnumType {
-	return &file_proto_payment_common_proto_enumTypes[5]
+	return &file_proto_payment_enum_proto_enumTypes[5]
 }
 
 func (x PayOrderStatus) Number() protoreflect.EnumNumber {
@@ -345,7 +345,7 @@ func (x PayOrderStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use PayOrderStatus.Descriptor instead.
 func (PayOrderStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_payment_common_proto_rawDescGZIP(), []int{5}
+	return file_proto_payment_enum_proto_rawDescGZIP(), []int{5}
 }
 
 type NotifyProcessStatus int32
@@ -384,11 +384,11 @@ func (x NotifyProcessStatus) String() string {
 }
 
 func (NotifyProcessStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_payment_common_proto_enumTypes[6].Descriptor()
+	return file_proto_payment_enum_proto_enumTypes[6].Descriptor()
 }
 
 func (NotifyProcessStatus) Type() protoreflect.EnumType {
-	return &file_proto_payment_common_proto_enumTypes[6]
+	return &file_proto_payment_enum_proto_enumTypes[6]
 }
 
 func (x NotifyProcessStatus) Number() protoreflect.EnumNumber {
@@ -397,7 +397,7 @@ func (x NotifyProcessStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use NotifyProcessStatus.Descriptor instead.
 func (NotifyProcessStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_payment_common_proto_rawDescGZIP(), []int{6}
+	return file_proto_payment_enum_proto_rawDescGZIP(), []int{6}
 }
 
 type SignResult int32
@@ -436,11 +436,11 @@ func (x SignResult) String() string {
 }
 
 func (SignResult) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_payment_common_proto_enumTypes[7].Descriptor()
+	return file_proto_payment_enum_proto_enumTypes[7].Descriptor()
 }
 
 func (SignResult) Type() protoreflect.EnumType {
-	return &file_proto_payment_common_proto_enumTypes[7]
+	return &file_proto_payment_enum_proto_enumTypes[7]
 }
 
 func (x SignResult) Number() protoreflect.EnumNumber {
@@ -449,7 +449,7 @@ func (x SignResult) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SignResult.Descriptor instead.
 func (SignResult) EnumDescriptor() ([]byte, []int) {
-	return file_proto_payment_common_proto_rawDescGZIP(), []int{7}
+	return file_proto_payment_enum_proto_rawDescGZIP(), []int{7}
 }
 
 type ClientType int32
@@ -488,11 +488,11 @@ func (x ClientType) String() string {
 }
 
 func (ClientType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_payment_common_proto_enumTypes[8].Descriptor()
+	return file_proto_payment_enum_proto_enumTypes[8].Descriptor()
 }
 
 func (ClientType) Type() protoreflect.EnumType {
-	return &file_proto_payment_common_proto_enumTypes[8]
+	return &file_proto_payment_enum_proto_enumTypes[8]
 }
 
 func (x ClientType) Number() protoreflect.EnumNumber {
@@ -501,357 +501,14 @@ func (x ClientType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ClientType.Descriptor instead.
 func (ClientType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_payment_common_proto_rawDescGZIP(), []int{8}
+	return file_proto_payment_enum_proto_rawDescGZIP(), []int{8}
 }
 
-type Empty struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
+var File_proto_payment_enum_proto protoreflect.FileDescriptor
 
-func (x *Empty) Reset() {
-	*x = Empty{}
-	mi := &file_proto_payment_common_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Empty) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Empty) ProtoMessage() {}
-
-func (x *Empty) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_common_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Empty.ProtoReflect.Descriptor instead.
-func (*Empty) Descriptor() ([]byte, []int) {
-	return file_proto_payment_common_proto_rawDescGZIP(), []int{0}
-}
-
-type RespBase struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Code          int32                  `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
-	Msg           string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
-	Total         int64                  `protobuf:"varint,3,opt,name=total,proto3" json:"total,omitempty"`
-	HasNext       bool                   `protobuf:"varint,4,opt,name=has_next,json=hasNext,proto3" json:"has_next,omitempty"`
-	HasPrev       bool                   `protobuf:"varint,5,opt,name=has_prev,json=hasPrev,proto3" json:"has_prev,omitempty"`
-	NextCursor    int64                  `protobuf:"varint,6,opt,name=next_cursor,json=nextCursor,proto3" json:"next_cursor,omitempty"`
-	PrevCursor    int64                  `protobuf:"varint,7,opt,name=prev_cursor,json=prevCursor,proto3" json:"prev_cursor,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *RespBase) Reset() {
-	*x = RespBase{}
-	mi := &file_proto_payment_common_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *RespBase) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RespBase) ProtoMessage() {}
-
-func (x *RespBase) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_common_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RespBase.ProtoReflect.Descriptor instead.
-func (*RespBase) Descriptor() ([]byte, []int) {
-	return file_proto_payment_common_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *RespBase) GetCode() int32 {
-	if x != nil {
-		return x.Code
-	}
-	return 0
-}
-
-func (x *RespBase) GetMsg() string {
-	if x != nil {
-		return x.Msg
-	}
-	return ""
-}
-
-func (x *RespBase) GetTotal() int64 {
-	if x != nil {
-		return x.Total
-	}
-	return 0
-}
-
-func (x *RespBase) GetHasNext() bool {
-	if x != nil {
-		return x.HasNext
-	}
-	return false
-}
-
-func (x *RespBase) GetHasPrev() bool {
-	if x != nil {
-		return x.HasPrev
-	}
-	return false
-}
-
-func (x *RespBase) GetNextCursor() int64 {
-	if x != nil {
-		return x.NextCursor
-	}
-	return 0
-}
-
-func (x *RespBase) GetPrevCursor() int64 {
-	if x != nil {
-		return x.PrevCursor
-	}
-	return 0
-}
-
-type CommonResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CommonResp) Reset() {
-	*x = CommonResp{}
-	mi := &file_proto_payment_common_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CommonResp) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CommonResp) ProtoMessage() {}
-
-func (x *CommonResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_common_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CommonResp.ProtoReflect.Descriptor instead.
-func (*CommonResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_common_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *CommonResp) GetBase() *RespBase {
-	if x != nil {
-		return x.Base
-	}
-	return nil
-}
-
-type PageReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Cursor        int64                  `protobuf:"varint,1,opt,name=cursor,proto3" json:"cursor,omitempty"`
-	Limit         int64                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *PageReq) Reset() {
-	*x = PageReq{}
-	mi := &file_proto_payment_common_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *PageReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*PageReq) ProtoMessage() {}
-
-func (x *PageReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_common_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PageReq.ProtoReflect.Descriptor instead.
-func (*PageReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_common_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *PageReq) GetCursor() int64 {
-	if x != nil {
-		return x.Cursor
-	}
-	return 0
-}
-
-func (x *PageReq) GetLimit() int64 {
-	if x != nil {
-		return x.Limit
-	}
-	return 0
-}
-
-type IdReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *IdReq) Reset() {
-	*x = IdReq{}
-	mi := &file_proto_payment_common_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *IdReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*IdReq) ProtoMessage() {}
-
-func (x *IdReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_common_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use IdReq.ProtoReflect.Descriptor instead.
-func (*IdReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_common_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *IdReq) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-type TenantScope struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	TenantCode    string                 `protobuf:"bytes,2,opt,name=tenant_code,json=tenantCode,proto3" json:"tenant_code,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *TenantScope) Reset() {
-	*x = TenantScope{}
-	mi := &file_proto_payment_common_proto_msgTypes[5]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *TenantScope) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*TenantScope) ProtoMessage() {}
-
-func (x *TenantScope) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_common_proto_msgTypes[5]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use TenantScope.ProtoReflect.Descriptor instead.
-func (*TenantScope) Descriptor() ([]byte, []int) {
-	return file_proto_payment_common_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *TenantScope) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *TenantScope) GetTenantCode() string {
-	if x != nil {
-		return x.TenantCode
-	}
-	return ""
-}
-
-var File_proto_payment_common_proto protoreflect.FileDescriptor
-
-const file_proto_payment_common_proto_rawDesc = "" +
+const file_proto_payment_enum_proto_rawDesc = "" +
 	"\n" +
-	"\x1aproto/payment/common.proto\x12\apayment\"\a\n" +
-	"\x05Empty\"\xbe\x01\n" +
-	"\bRespBase\x12\x12\n" +
-	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x10\n" +
-	"\x03msg\x18\x02 \x01(\tR\x03msg\x12\x14\n" +
-	"\x05total\x18\x03 \x01(\x03R\x05total\x12\x19\n" +
-	"\bhas_next\x18\x04 \x01(\bR\ahasNext\x12\x19\n" +
-	"\bhas_prev\x18\x05 \x01(\bR\ahasPrev\x12\x1f\n" +
-	"\vnext_cursor\x18\x06 \x01(\x03R\n" +
-	"nextCursor\x12\x1f\n" +
-	"\vprev_cursor\x18\a \x01(\x03R\n" +
-	"prevCursor\"3\n" +
-	"\n" +
-	"CommonResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\"7\n" +
-	"\aPageReq\x12\x16\n" +
-	"\x06cursor\x18\x01 \x01(\x03R\x06cursor\x12\x14\n" +
-	"\x05limit\x18\x02 \x01(\x03R\x05limit\"\x17\n" +
-	"\x05IdReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"K\n" +
-	"\vTenantScope\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1f\n" +
-	"\vtenant_code\x18\x02 \x01(\tR\n" +
-	"tenantCode*\x8d\x01\n" +
+	"\x18proto/payment/enum.proto\x12\apayment*\x8d\x01\n" +
 	"\fPlatformType\x12\x19\n" +
 	"\x15PLATFORM_TYPE_UNKNOWN\x10\x00\x12\x17\n" +
 	"\x13PLATFORM_TYPE_THIRD\x10\x01\x12\x16\n" +
@@ -907,20 +564,19 @@ const file_proto_payment_common_proto_rawDesc = "" +
 	"\x0fCLIENT_TYPE_WEB\x10\x03B\x1eZ\x1cwklive/proto/payment;paymentb\x06proto3"
 
 var (
-	file_proto_payment_common_proto_rawDescOnce sync.Once
-	file_proto_payment_common_proto_rawDescData []byte
+	file_proto_payment_enum_proto_rawDescOnce sync.Once
+	file_proto_payment_enum_proto_rawDescData []byte
 )
 
-func file_proto_payment_common_proto_rawDescGZIP() []byte {
-	file_proto_payment_common_proto_rawDescOnce.Do(func() {
-		file_proto_payment_common_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_payment_common_proto_rawDesc), len(file_proto_payment_common_proto_rawDesc)))
+func file_proto_payment_enum_proto_rawDescGZIP() []byte {
+	file_proto_payment_enum_proto_rawDescOnce.Do(func() {
+		file_proto_payment_enum_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_payment_enum_proto_rawDesc), len(file_proto_payment_enum_proto_rawDesc)))
 	})
-	return file_proto_payment_common_proto_rawDescData
+	return file_proto_payment_enum_proto_rawDescData
 }
 
-var file_proto_payment_common_proto_enumTypes = make([]protoimpl.EnumInfo, 9)
-var file_proto_payment_common_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
-var file_proto_payment_common_proto_goTypes = []any{
+var file_proto_payment_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 9)
+var file_proto_payment_enum_proto_goTypes = []any{
 	(PlatformType)(0),        // 0: payment.PlatformType
 	(CommonStatus)(0),        // 1: payment.CommonStatus
 	(OpenStatus)(0),          // 2: payment.OpenStatus
@@ -930,43 +586,35 @@ var file_proto_payment_common_proto_goTypes = []any{
 	(NotifyProcessStatus)(0), // 6: payment.NotifyProcessStatus
 	(SignResult)(0),          // 7: payment.SignResult
 	(ClientType)(0),          // 8: payment.ClientType
-	(*Empty)(nil),            // 9: payment.Empty
-	(*RespBase)(nil),         // 10: payment.RespBase
-	(*CommonResp)(nil),       // 11: payment.CommonResp
-	(*PageReq)(nil),          // 12: payment.PageReq
-	(*IdReq)(nil),            // 13: payment.IdReq
-	(*TenantScope)(nil),      // 14: payment.TenantScope
 }
-var file_proto_payment_common_proto_depIdxs = []int32{
-	10, // 0: payment.CommonResp.base:type_name -> payment.RespBase
-	1,  // [1:1] is the sub-list for method output_type
-	1,  // [1:1] is the sub-list for method input_type
-	1,  // [1:1] is the sub-list for extension type_name
-	1,  // [1:1] is the sub-list for extension extendee
-	0,  // [0:1] is the sub-list for field type_name
+var file_proto_payment_enum_proto_depIdxs = []int32{
+	0, // [0:0] is the sub-list for method output_type
+	0, // [0:0] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
 }
 
-func init() { file_proto_payment_common_proto_init() }
-func file_proto_payment_common_proto_init() {
-	if File_proto_payment_common_proto != nil {
+func init() { file_proto_payment_enum_proto_init() }
+func file_proto_payment_enum_proto_init() {
+	if File_proto_payment_enum_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_payment_common_proto_rawDesc), len(file_proto_payment_common_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_payment_enum_proto_rawDesc), len(file_proto_payment_enum_proto_rawDesc)),
 			NumEnums:      9,
-			NumMessages:   6,
+			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_proto_payment_common_proto_goTypes,
-		DependencyIndexes: file_proto_payment_common_proto_depIdxs,
-		EnumInfos:         file_proto_payment_common_proto_enumTypes,
-		MessageInfos:      file_proto_payment_common_proto_msgTypes,
+		GoTypes:           file_proto_payment_enum_proto_goTypes,
+		DependencyIndexes: file_proto_payment_enum_proto_depIdxs,
+		EnumInfos:         file_proto_payment_enum_proto_enumTypes,
 	}.Build()
-	File_proto_payment_common_proto = out.File
-	file_proto_payment_common_proto_goTypes = nil
-	file_proto_payment_common_proto_depIdxs = nil
+	File_proto_payment_enum_proto = out.File
+	file_proto_payment_enum_proto_goTypes = nil
+	file_proto_payment_enum_proto_depIdxs = nil
 }

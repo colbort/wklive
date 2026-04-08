@@ -927,7 +927,7 @@ var File_proto_itick_model_proto protoreflect.FileDescriptor
 
 const file_proto_itick_model_proto_rawDesc = "" +
 	"\n" +
-	"\x17proto/itick/model.proto\x12\x05itick\x1a\x18proto/itick/common.proto\"\xe4\x02\n" +
+	"\x17proto/itick/model.proto\x12\x05itick\x1a\x16proto/itick/enum.proto\"\xe4\x02\n" +
 	"\rItickCategory\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x128\n" +
 	"\rcategory_type\x18\x02 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12#\n" +
@@ -1079,7 +1079,7 @@ func file_proto_itick_model_proto_init() {
 	if File_proto_itick_model_proto != nil {
 		return
 	}
-	file_proto_itick_common_proto_init()
+	file_proto_itick_enum_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

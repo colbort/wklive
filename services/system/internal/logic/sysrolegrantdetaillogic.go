@@ -4,6 +4,7 @@ import (
 	"context"
 	"strings"
 
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -42,7 +43,7 @@ func (l *SysRoleGrantDetailLogic) SysRoleGrantDetail(in *system.SysRoleGrantDeta
 	}
 
 	return &system.SysRoleGrantDetailResp{
-		Base: &system.RespBase{
+		Base: &common.RespBase{
 			Code: 200,
 			Msg:  "success",
 		},

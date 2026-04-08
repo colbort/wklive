@@ -34,7 +34,7 @@ func (l *UpdateProfileLogic) UpdateProfile(req *types.UpdateProfileReq) (resp *t
 	if err != nil {
 		return nil, errorx.Wrap(err, "获取用户信息失败")
 	}
-	out, err := l.svcCtx.SystemCli.UpdateProfile(l.ctx, &system.UpdateProfileReq{
+	result, err := l.svcCtx.SystemCli.UpdateProfile(l.ctx, &system.UpdateProfileReq{
 		Id:       uid,
 		Avatar:   &req.Avatar,
 		Nickname: &req.Nickname,
@@ -44,7 +44,7 @@ func (l *UpdateProfileLogic) UpdateProfile(req *types.UpdateProfileReq) (resp *t
 		return nil, err
 	}
 	return &types.RespBase{
-		Code: out.Code,
-		Msg:  out.Msg,
+		Code: result.Base.Code,
+		Msg:  result.Base.Msg,
 	}, nil
 }

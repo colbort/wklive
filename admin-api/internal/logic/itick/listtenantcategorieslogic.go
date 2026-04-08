@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/common"
 	"wklive/proto/itick"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,7 +30,7 @@ func NewListTenantCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 func (l *ListTenantCategoriesLogic) ListTenantCategories(req *types.ListTenantCategoriesReq) (resp *types.ListTenantCategoriesResp, err error) {
 	result, err := l.svcCtx.ItickCli.ListTenantCategories(l.ctx, &itick.ListTenantCategoriesReq{
-		Page: &itick.PageReq{
+		Page: &common.PageReq{
 			Cursor: req.PageReq.Cursor,
 			Limit:  req.PageReq.Limit,
 		},
@@ -51,8 +52,8 @@ func (l *ListTenantCategoriesLogic) ListTenantCategories(req *types.ListTenantCa
 			AppVisible:   item.AppVisible,
 			Sort:         item.Sort,
 			Remark:       item.Remark,
-			CreateTimes:   item.CreateTimes,
-			UpdateTimes:   item.UpdateTimes,
+			CreateTimes:  item.CreateTimes,
+			UpdateTimes:  item.UpdateTimes,
 			CategoryType: int64(item.CategoryType),
 			CategoryName: item.CategoryName,
 			Icon:         item.Icon,

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
@@ -43,7 +44,9 @@ func (l *SysRoleCreateLogic) SysRoleCreate(in *system.SysRoleCreateReq) (*system
 		return nil, err
 	}
 	return &system.RespBase{
-		Code: 200,
-		Msg:  "创建成功",
+		Base: &common.RespBase{
+			Code: 200,
+			Msg:  "创建成功",
+		},
 	}, nil
 }

@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package trade;
+
+option go_package = "wklive/proto/trade;trade";
+
+import "proto/common/common.proto";
+import "proto/trade/enum.proto";
+import "proto/trade/model.proto";
+
+service TradeInternal {
+  rpc RecordOrderFill(RecordOrderFillReq) returns (InternalCommonResp);
+  rpc RecordPositionHistory(RecordPositionHistoryReq) returns (InternalCommonResp);
+  rpc CreateTradeEvent(CreateTradeEventReq) returns (InternalCommonResp);
+  rpc CheckOrderRisk(CheckOrderRiskReq) returns (CheckOrderRiskResp);
+}
+
+message InternalCommonResp {
+  common.RespBase base = 1;
+}
+
+message RecordOrderFillReq {
+  TradeFill fill = 1;
+}
+
+message RecordPositionHistoryReq {
+  ContractPositionHistory history = 1;
+}
+
+message CreateTradeEventReq {
+  BizTradeEvent event = 1;
+}
+
+message CheckOrderRiskReq {
+  uint64 tenant_id = 1;
+  uint64 user_id = 2;
+  uint64 symbol_id = 3;
+  MarketType market_type = 4;
+  TradeSide side = 5;
+  PositionSide position_side = 6;
+  OrderType order_type = 7;
+  string price = 8;
+  string qty = 9;
+  string amount = 10;
+}
+
+message CheckOrderRiskResp {
+  bool passed = 1;
+  string reject_code = 2;
+  string reject_msg = 3;
+}

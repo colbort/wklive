@@ -4,50 +4,6 @@ package user;
 
 option go_package = "wklive/proto/user;user";
 
-message Empty {}
-
-message RespBase {
-  int32 code = 1;
-  string msg = 2;
-  int64 total = 3;
-  bool has_next = 4;
-  bool has_prev = 5;
-  int64 next_cursor = 6;
-  int64 prev_cursor = 7;
-}
-
-message PageReq {
-  int64 cursor = 1;
-  int64 limit = 2;
-}
-
-message IdReq {
-  int64 id = 1;
-}
-
-message UserIdReq {
-  int64 user_id = 1;
-}
-
-message TenantInfo {
-  int64 tenant_id = 1;
-  string tenant_code = 2;
-  string tenant_name = 3;
-  int32 tenant_status = 4;
-  int64 expire_time = 5;
-}
-
-message TenantScope {
-  int64 tenant_id = 1;
-  string tenant_code = 2;
-}
-
-message TokenInfo {
-  string access_token = 1;
-  string refresh_token = 2;
-  int64 expire_time = 3;
-}
-
 enum RegisterType {
   REGISTER_TYPE_UNKNOWN = 0;
   REGISTER_TYPE_USERNAME = 1;

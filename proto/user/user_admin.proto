@@ -2,13 +2,14 @@ syntax = "proto3";
 
 package user;
 
-import "proto/user/common.proto";
+import "proto/common/common.proto";
+import "proto/user/enum.proto";
 import "proto/user/model.proto";
 
 option go_package = "wklive/proto/user;user";
 
 message AdminCommonResp {
-  user.RespBase base = 1;
+  common.RespBase base = 1;
 }
 
 message CreateUserReq {
@@ -32,7 +33,7 @@ message CreateUserReq {
 }
 
 message CreateUserResp {
-  user.RespBase base = 1;
+  common.RespBase base = 1;
   int64 user_id = 2;
 }
 
@@ -42,12 +43,12 @@ message GetUserDetailReq {
 }
 
 message GetUserDetailResp {
-  user.RespBase base = 1;
+  common.RespBase base = 1;
   user.UserDetail detail = 2;
 }
 
 message ListUsersReq {
-  user.PageReq page = 1;
+  common.PageReq page = 1;
   int64 tenant_id = 2;
   string tenant_code = 3;
   string keyword = 4;
@@ -66,7 +67,7 @@ message ListUsersReq {
 }
 
 message ListUsersResp {
-  user.RespBase base = 1;
+  common.RespBase base = 1;
   repeated user.UserListItem list = 2;
 }
 
@@ -87,7 +88,7 @@ message UpdateUserBaseReq {
 }
 
 message UpdateUserBaseResp {
-  user.RespBase base = 1;
+  common.RespBase base = 1;
   user.UserDetail detail = 2;
 }
 
@@ -138,7 +139,7 @@ message GetUserSecurityReq {
 }
 
 message GetUserSecurityResp {
-  user.RespBase base = 1;
+  common.RespBase base = 1;
   user.UserSecurity security = 2;
 }
 
@@ -148,7 +149,7 @@ message ResetUserGoogle2FAReq {
 }
 
 message ListUserIdentitiesReq {
-  user.PageReq page = 1;
+  common.PageReq page = 1;
   int64 tenant_id = 2;
   string tenant_code = 3;
   string keyword = 4;
@@ -164,7 +165,7 @@ message ListUserIdentitiesReq {
 }
 
 message ListUserIdentitiesResp {
-  user.RespBase base = 1;
+  common.RespBase base = 1;
   repeated user.UserIdentityListItem list = 2;
 }
 
@@ -177,12 +178,12 @@ message ReviewUserIdentityReq {
 }
 
 message ReviewUserIdentityResp {
-  user.RespBase base = 1;
+  common.RespBase base = 1;
   user.UserIdentity identity = 2;
 }
 
 message ListUserBanksReq {
-  user.PageReq page = 1;
+  common.PageReq page = 1;
   int64 tenant_id = 2;
   int64 user_id = 3;
   string keyword = 4;
@@ -190,7 +191,7 @@ message ListUserBanksReq {
 }
 
 message ListUserBanksResp {
-  user.RespBase base = 1;
+  common.RespBase base = 1;
   repeated user.UserBankListItem list = 2;
 }
 
@@ -200,7 +201,7 @@ message GetUserBankReq {
 }
 
 message GetUserBankResp {
-  user.RespBase base = 1;
+  common.RespBase base = 1;
   user.UserBank bank = 2;
 }
 
@@ -218,7 +219,7 @@ message AddUserBankReq {
 }
 
 message AddUserBankResp {
-  user.RespBase base = 1;
+  common.RespBase base = 1;
   user.UserBank bank = 2;
 }
 
@@ -237,7 +238,7 @@ message UpdateUserBankReq {
 }
 
 message UpdateUserBankResp {
-  user.RespBase base = 1;
+  common.RespBase base = 1;
   user.UserBank bank = 2;
 }
 

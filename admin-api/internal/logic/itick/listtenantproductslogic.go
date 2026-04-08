@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/common"
 	"wklive/proto/itick"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,7 +30,7 @@ func NewListTenantProductsLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 func (l *ListTenantProductsLogic) ListTenantProducts(req *types.ListTenantProductsReq) (resp *types.ListTenantProductsResp, err error) {
 	result, err := l.svcCtx.ItickCli.ListTenantProducts(l.ctx, &itick.ListTenantProductsReq{
-		Page: &itick.PageReq{
+		Page: &common.PageReq{
 			Cursor: req.PageReq.Cursor,
 			Limit:  req.PageReq.Limit,
 		},

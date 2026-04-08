@@ -28,7 +28,7 @@ func NewSysConfigUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 }
 
 func (l *SysConfigUpdateLogic) SysConfigUpdate(req *types.SysConfigUpdateReq) (resp *types.RespBase, err error) {
-	out, err := l.svcCtx.SystemCli.SysConfigUpdate(l.ctx, &system.SysConfigUpdateReq{
+	result, err := l.svcCtx.SystemCli.SysConfigUpdate(l.ctx, &system.SysConfigUpdateReq{
 		Id:          req.Id,
 		ConfigKey:   req.ConfigKey,
 		ConfigValue: req.ConfigValue,
@@ -38,8 +38,8 @@ func (l *SysConfigUpdateLogic) SysConfigUpdate(req *types.SysConfigUpdateReq) (r
 		return nil, err
 	}
 	resp = &types.RespBase{
-		Code: out.Code,
-		Msg:  out.Msg,
+		Code: result.Base.Code,
+		Msg:  result.Base.Msg,
 	}
 	return
 }

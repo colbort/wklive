@@ -124,9 +124,12 @@ require (
 	google.golang.org/grpc v1.79.3 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
+	wklive/proto/common v0.0.0-00010101000000-000000000000 // indirect
 )
 
 replace wklive/common => ../common
+
+replace wklive/proto/common => ../proto/common
 
 replace wklive/proto/system => ../proto/system
 

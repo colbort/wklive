@@ -1885,7 +1885,7 @@ var File_proto_payment_model_proto protoreflect.FileDescriptor
 
 const file_proto_payment_model_proto_rawDesc = "" +
 	"\n" +
-	"\x19proto/payment/model.proto\x12\apayment\x1a\x1aproto/payment/common.proto\"\x82\x03\n" +
+	"\x19proto/payment/model.proto\x12\apayment\x1a\x18proto/payment/enum.proto\"\x82\x03\n" +
 	"\vPayPlatform\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rplatform_code\x18\x02 \x01(\tR\fplatformCode\x12#\n" +
@@ -2202,7 +2202,7 @@ func file_proto_payment_model_proto_init() {
 	if File_proto_payment_model_proto != nil {
 		return
 	}
-	file_proto_payment_common_proto_init()
+	file_proto_payment_enum_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

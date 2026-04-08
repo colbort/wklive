@@ -36,7 +36,7 @@ func (l *AssignUserRolesLogic) AssignUserRoles(req *types.AssignUserRolesReq) (r
 		return nil, err
 	}
 	return &types.RespBase{
-		Code: result.Code,
-		Msg:  result.Msg,
+		Code: result.Base.Code,
+		Msg:  result.Base.Msg,
 	}, nil
 }

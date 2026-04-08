@@ -9,6 +9,7 @@ import (
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/user"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -35,7 +36,7 @@ func (l *ListBanksLogic) ListBanks(req *types.ListBanksReq) (resp *types.ListBan
 	}
 	result, err := l.svcCtx.UserCli.ListBanks(l.ctx, &user.ListBanksReq{
 		UserId: userId,
-		Page: &user.PageReq{
+		Page: &common.PageReq{
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
 		},
@@ -58,8 +59,8 @@ func (l *ListBanksLogic) ListBanks(req *types.ListBanksReq) (resp *types.ListBan
 			CountryCode:     bank.CountryCode,
 			IsDefault:       bank.IsDefault,
 			Status:          int64(bank.Status.Number()),
-			CreateTimes:      bank.CreateTimes,
-			UpdateTimes:      bank.UpdateTimes,
+			CreateTimes:     bank.CreateTimes,
+			UpdateTimes:     bank.UpdateTimes,
 		}
 	}
 	return &types.ListBanksResp{

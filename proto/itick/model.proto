@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package itick;
 
-import "proto/itick/common.proto";
+import "proto/itick/enum.proto";
 
 option go_package = "wklive/proto/itick;itick";
 

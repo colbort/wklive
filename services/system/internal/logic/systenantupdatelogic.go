@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"time"
 
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -33,8 +34,10 @@ func (l *SysTenantUpdateLogic) SysTenantUpdate(in *system.SysTenantUpdateReq) (*
 	}
 	if tenant == nil {
 		return &system.RespBase{
-			Code: 400,
-			Msg:  "租户不存在",
+			Base: &common.RespBase{
+				Code: 400,
+				Msg:  "租户不存在",
+			},
 		}, nil
 	}
 	tenant.TenantName = in.TenantName
@@ -50,7 +53,9 @@ func (l *SysTenantUpdateLogic) SysTenantUpdate(in *system.SysTenantUpdateReq) (*
 	}
 
 	return &system.RespBase{
-		Code: 200,
-		Msg:  "更新成功",
+		Base: &common.RespBase{
+			Code: 200,
+			Msg:  "更新成功",
+		},
 	}, nil
 }

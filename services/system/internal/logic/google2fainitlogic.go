@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -32,7 +33,7 @@ func (l *Google2FAInitLogic) Google2FAInit(in *system.Google2FAInitReq) (*system
 	}
 	if user == nil {
 		return &system.Google2FAInitResp{
-			Base: &system.RespBase{
+			Base: &common.RespBase{
 				Code: 1,
 				Msg:  "用户不存在",
 			},
@@ -42,7 +43,7 @@ func (l *Google2FAInitLogic) Google2FAInit(in *system.Google2FAInitReq) (*system
 	secret, otpauthURL, _, err := utils.GenerateGoogle2FA(user.Username, utils.Default2FAIssuer, 256)
 	if err != nil {
 		return &system.Google2FAInitResp{
-			Base: &system.RespBase{
+			Base: &common.RespBase{
 				Code: 1,
 				Msg:  "生成2FA secret失败: " + err.Error(),
 			},
@@ -52,14 +53,14 @@ func (l *Google2FAInitLogic) Google2FAInit(in *system.Google2FAInitReq) (*system
 	// 将 secret 存储到 redis，设置过期时间，例如 10 分钟
 	if err := l.svcCtx.UserModel.InsertGoogle2FASecret(l.ctx, in.UserId, secret); err != nil {
 		return &system.Google2FAInitResp{
-			Base: &system.RespBase{
+			Base: &common.RespBase{
 				Code: 1,
 				Msg:  "存储2FA secret失败: " + err.Error(),
 			},
 		}, err
 	}
 	return &system.Google2FAInitResp{
-		Base: &system.RespBase{
+		Base: &common.RespBase{
 			Code: 200,
 			Msg:  "初始化成功",
 		},

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"time"
 
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
@@ -35,8 +36,10 @@ func (l *SysTenantCreateLogic) SysTenantCreate(in *system.SysTenantCreateReq) (*
 	}
 	if tenant != nil {
 		return &system.RespBase{
-			Code: 400,
-			Msg:  "租户编码已存在",
+			Base: &common.RespBase{
+				Code: 400,
+				Msg:  "租户编码已存在",
+			},
 		}, nil
 	}
 	_, err = l.svcCtx.TenantMode.Insert(l.ctx, &models.SysTenant{
@@ -54,7 +57,9 @@ func (l *SysTenantCreateLogic) SysTenantCreate(in *system.SysTenantCreateReq) (*
 		return nil, err
 	}
 	return &system.RespBase{
-		Code: 200,
-		Msg:  "创建成功",
+		Base: &common.RespBase{
+			Code: 200,
+			Msg:  "创建成功",
+		},
 	}, nil
 }

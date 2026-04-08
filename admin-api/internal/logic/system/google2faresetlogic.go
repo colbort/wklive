@@ -35,7 +35,7 @@ func (l *Google2FAResetLogic) Google2FAReset(req *types.Google2FAResetReq) (resp
 		return nil, err
 	}
 	return &types.RespBase{
-		Code: result.Code,
-		Msg:  result.Msg,
+		Code: result.Base.Code,
+		Msg:  result.Base.Msg,
 	}, nil
 }

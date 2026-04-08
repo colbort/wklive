@@ -35,7 +35,7 @@ func (l *SysRoleCreateLogic) SysRoleCreate(req *types.SysRoleCreateReq) (resp *t
 		Remark: req.Remark,
 	})
 	return &types.RespBase{
-		Code: result.Code,
-		Msg:  result.Msg,
+		Code: result.Base.Code,
+		Msg:  result.Base.Msg,
 	}, err
 }

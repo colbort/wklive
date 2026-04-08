@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -32,7 +33,7 @@ func NewGuestLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GuestL
 func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginResp, error) {
 	if in.DeviceId == "" && in.Fingerprint == "" {
 		return &user.GuestLoginResp{
-			Base: &user.RespBase{
+			Base: &common.RespBase{
 				Code: 201,
 				Msg:  "请确更换设备登录",
 			},
@@ -44,7 +45,7 @@ func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginRe
 	}
 	if u != nil {
 		return &user.GuestLoginResp{
-			Base: &user.RespBase{
+			Base: &common.RespBase{
 				Code: 201,
 				Msg:  "请确更换设备登录",
 			},
@@ -65,7 +66,7 @@ func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginRe
 		return nil, err
 	}
 	return &user.GuestLoginResp{
-		Base: &user.RespBase{
+		Base: &common.RespBase{
 			Code: 200,
 			Msg:  "游客注册成功",
 		},

@@ -2,14 +2,15 @@ syntax = "proto3";
 
 package user;
 
-import "proto/user/common.proto";
+import "proto/common/common.proto";
+import "proto/user/enum.proto";
 import "proto/user/model.proto";
 
 option go_package = "wklive/proto/user;user";
 
 
 message AppCommonResp {
-  user.RespBase base = 1;
+  common.RespBase base = 1;
 }
 
 message RegisterReq {
@@ -26,9 +27,9 @@ message RegisterReq {
 }
 
 message RegisterResp {
-  user.RespBase base = 1;
+  common.RespBase base = 1;
   int64 user_id = 2;
-  user.TokenInfo token = 3;
+  common.TokenInfo token = 3;
   user.UserProfile profile = 4;
 }
 
@@ -42,9 +43,9 @@ message LoginReq {
 }
 
 message LoginResp {
-  user.RespBase base = 1;
+  common.RespBase base = 1;
   int64 user_id = 2;
-  user.TokenInfo token = 3;
+  common.TokenInfo token = 3;
   user.UserProfile profile = 4;
 }
 
@@ -62,7 +63,7 @@ message GuestLogin {
 }
 
 message GuestLoginResp {
-	user.RespBase base = 1;
+	common.RespBase base = 1;
   GuestLogin data = 2;
 }
 
@@ -76,8 +77,8 @@ message RefreshTokenReq {
 }
 
 message RefreshTokenResp {
-  user.RespBase base = 1;
-  user.TokenInfo token = 2;
+  common.RespBase base = 1;
+  common.TokenInfo token = 2;
 }
 
 message GetProfileReq {
@@ -85,7 +86,7 @@ message GetProfileReq {
 }
 
 message GetProfileResp {
-  user.RespBase base = 1;
+  common.RespBase base = 1;
   user.UserProfile profile = 2;
 }
 
@@ -105,7 +106,7 @@ message UpdateProfileReq {
 }
 
 message UpdateProfileResp {
-  user.RespBase base = 1;
+  common.RespBase base = 1;
   user.UserProfile profile = 2;
 }
 
@@ -121,7 +122,7 @@ message GetIdentityReq {
 }
 
 message GetIdentityResp {
-  user.RespBase base = 1;
+  common.RespBase base = 1;
   user.UserIdentity identity = 2;
 }
 
@@ -145,7 +146,7 @@ message SubmitIdentityReq {
 }
 
 message SubmitIdentityResp {
-  user.RespBase base = 1;
+  common.RespBase base = 1;
   user.UserIdentity identity = 2;
 }
 
@@ -154,7 +155,7 @@ message GetSecurityReq {
 }
 
 message GetSecurityResp {
-  user.RespBase base = 1;
+  common.RespBase base = 1;
   user.UserSecurity security = 2;
 }
 
@@ -176,7 +177,7 @@ message InitGoogle2FAReq {
 }
 
 message InitGoogle2FAResp {
-  user.RespBase base = 1;
+  common.RespBase base = 1;
   string secret = 2;
   string qr_code_url = 3;
 }
@@ -193,11 +194,11 @@ message DisableGoogle2FAReq {
 
 message ListBanksReq {
   int64 user_id = 1;
-  user.PageReq page = 2;
+  common.PageReq page = 2;
 }
 
 message ListBanksResp {
-  user.RespBase base = 1;
+  common.RespBase base = 1;
   repeated user.UserBank list = 2;
 }
 
@@ -213,7 +214,7 @@ message AddBankReq {
 }
 
 message AddBankResp {
-  user.RespBase base = 1;
+  common.RespBase base = 1;
   user.UserBank bank = 2;
 }
 
@@ -230,7 +231,7 @@ message UpdateBankReq {
 }
 
 message UpdateBankResp {
-  user.RespBase base = 1;
+  common.RespBase base = 1;
   user.UserBank bank = 2;
 }
 

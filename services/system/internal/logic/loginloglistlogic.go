@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -63,7 +64,7 @@ func (l *LoginLogListLogic) LoginLogList(in *system.LoginLogListReq) (*system.Lo
 	}
 
 	return &system.LoginLogListResp{
-		Base: &system.RespBase{
+		Base: &common.RespBase{
 			Code:       200,
 			Msg:        "success",
 			Total:      total,

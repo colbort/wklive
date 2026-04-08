@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -31,8 +32,10 @@ func (l *SysMenuDeleteLogic) SysMenuDelete(in *system.SysMenuDeleteReq) (*system
 	}
 	if menu == nil {
 		return &system.RespBase{
-			Code: 400,
-			Msg:  "Menu not found",
+			Base: &common.RespBase{
+				Code: 400,
+				Msg:  "Menu not found",
+			},
 		}, nil
 	}
 	err = l.svcCtx.MenuModel.Delete(l.ctx, in.Id)
@@ -41,7 +44,9 @@ func (l *SysMenuDeleteLogic) SysMenuDelete(in *system.SysMenuDeleteReq) (*system
 	}
 
 	return &system.RespBase{
-		Code: 200,
-		Msg:  "Menu deleted successfully",
+		Base: &common.RespBase{
+			Code: 200,
+			Msg:  "Menu deleted successfully",
+		},
 	}, nil
 }

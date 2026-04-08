@@ -35,8 +35,8 @@ func (l *SysCronJobDeleteLogic) SysCronJobDelete(req *types.SysCronJobDeleteReq)
 		return nil, err
 	}
 	resp = &types.RespBase{
-		Code: result.Code,
-		Msg:  result.Msg,
+		Code: result.Base.Code,
+		Msg:  result.Base.Msg,
 	}
 	return
 }

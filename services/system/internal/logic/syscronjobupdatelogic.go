@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -32,21 +33,27 @@ func (l *SysCronJobUpdateLogic) SysCronJobUpdate(in *system.SysCronJobUpdateReq)
 	_, err := cron.ParseStandard(in.CronExpression)
 	if err != nil {
 		return &system.RespBase{
-			Code: 400,
-			Msg:  "无效的 Cron 表达式",
+			Base: &common.RespBase{
+				Code: 400,
+				Msg:  "无效的 Cron 表达式",
+			},
 		}, nil
 	}
 	job, err := l.svcCtx.JobModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		return &system.RespBase{
-			Code: 500,
-			Msg:  err.Error(),
+			Base: &common.RespBase{
+				Code: 500,
+				Msg:  err.Error(),
+			},
 		}, nil
 	}
 	if job == nil {
 		return &system.RespBase{
-			Code: 400,
-			Msg:  "定时任务不存在",
+			Base: &common.RespBase{
+				Code: 400,
+				Msg:  "定时任务不存在",
+			},
 		}, nil
 	}
 	job.JobName = in.JobName
@@ -58,8 +65,10 @@ func (l *SysCronJobUpdateLogic) SysCronJobUpdate(in *system.SysCronJobUpdateReq)
 	userName, err := utils.GetUsernameFromCtx(l.ctx)
 	if err != nil {
 		return &system.RespBase{
-			Code: 500,
-			Msg:  err.Error(),
+			Base: &common.RespBase{
+				Code: 500,
+				Msg:  err.Error(),
+			},
 		}, nil
 	}
 	job.UpdateBy = sql.NullString{String: userName, Valid: true}
@@ -68,21 +77,27 @@ func (l *SysCronJobUpdateLogic) SysCronJobUpdate(in *system.SysCronJobUpdateReq)
 	err = l.svcCtx.JobModel.Update(l.ctx, job)
 	if err != nil {
 		return &system.RespBase{
-			Code: 500,
-			Msg:  err.Error(),
+			Base: &common.RespBase{
+				Code: 500,
+				Msg:  err.Error(),
+			},
 		}, nil
 	}
 
 	err = l.svcCtx.Cron.ReloadJob(job)
 	if err != nil {
 		return &system.RespBase{
-			Code: 500,
-			Msg:  err.Error(),
+			Base: &common.RespBase{
+				Code: 500,
+				Msg:  err.Error(),
+			},
 		}, nil
 	}
 
 	return &system.RespBase{
-		Code: 200,
-		Msg:  "更新成功",
+		Base: &common.RespBase{
+			Code: 200,
+			Msg:  "更新成功",
+		},
 	}, nil
 }

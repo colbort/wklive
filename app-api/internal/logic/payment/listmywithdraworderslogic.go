@@ -9,6 +9,7 @@ import (
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/payment"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -45,7 +46,7 @@ func (l *ListMyWithdrawOrdersLogic) ListMyWithdrawOrders(req *types.ListMyWithdr
 	result, err := l.svcCtx.PaymentCli.ListMyWithdrawOrders(l.ctx, &payment.ListMyWithdrawOrdersReq{
 		TenantId: tenantId,
 		UserId:   userId,
-		Page: &payment.PageReq{
+		Page: &common.PageReq{
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
 		},
@@ -57,11 +58,11 @@ func (l *ListMyWithdrawOrdersLogic) ListMyWithdrawOrders(req *types.ListMyWithdr
 
 	resp = &types.ListMyWithdrawOrdersResp{
 		RespBase: types.RespBase{
-			Code:     result.Base.Code,
-			Msg:      result.Base.Msg,
-			Total:    result.Base.Total,
-			HasNext:  result.Base.HasNext,
-			HasPrev:  result.Base.HasPrev,
+			Code:       result.Base.Code,
+			Msg:        result.Base.Msg,
+			Total:      result.Base.Total,
+			HasNext:    result.Base.HasNext,
+			HasPrev:    result.Base.HasPrev,
 			NextCursor: result.Base.NextCursor,
 			PrevCursor: result.Base.PrevCursor,
 		},
@@ -90,8 +91,8 @@ func (l *ListMyWithdrawOrdersLogic) ListMyWithdrawOrders(req *types.ListMyWithdr
 			NotifyTime:   item.NotifyTime,
 			CloseTime:    item.CloseTime,
 			Remark:       item.Remark,
-			CreateTimes:   item.CreateTimes,
-			UpdateTimes:   item.UpdateTimes,
+			CreateTimes:  item.CreateTimes,
+			UpdateTimes:  item.UpdateTimes,
 		})
 	}
 

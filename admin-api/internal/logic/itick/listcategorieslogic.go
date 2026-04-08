@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/common"
 	"wklive/proto/itick"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,7 +30,7 @@ func NewListCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Li
 
 func (l *ListCategoriesLogic) ListCategories(req *types.ListCategoriesReq) (resp *types.ListCategoriesResp, err error) {
 	result, err := l.svcCtx.ItickCli.ListCategories(l.ctx, &itick.ListCategoriesReq{
-		Page: &itick.PageReq{
+		Page: &common.PageReq{
 			Cursor: req.PageReq.Cursor,
 			Limit:  req.PageReq.Limit,
 		},

@@ -2,7 +2,8 @@ syntax = "proto3";
 
 package itick;
 
-import "proto/itick/common.proto";
+import "proto/common/common.proto";
+import "proto/itick/enum.proto";
 import "proto/itick/model.proto";
 
 option go_package = "wklive/proto/itick;itick";
@@ -11,7 +12,7 @@ message AppEmpty {
 }
 
 message AppCommonResp {
-  itick.RespBase base = 1;
+  common.RespBase base = 1;
 }
 
 // ====================
@@ -22,7 +23,7 @@ message ListVisibleCategoriesReq {
 }
 
 message ListVisibleCategoriesResp {
-  itick.RespBase base = 1;
+  common.RespBase base = 1;
   repeated ItickTenantCategory data = 2;
 }
 
@@ -33,7 +34,7 @@ message ListVisibleProductsReq {
 }
 
 message ListVisibleProductsResp {
-  itick.RespBase base = 1;
+  common.RespBase base = 1;
   repeated ItickTenantProduct data = 2;
 }
 
@@ -51,7 +52,7 @@ message GetKlineReq {
 }
 
 message GetKlineResp {
-  itick.RespBase base = 1;
+  common.RespBase base = 1;
   repeated itick.Kline data = 2;
 }
 
@@ -66,7 +67,7 @@ message GetQuoteReq {
 }
 
 message GetQuoteResp {
-  itick.RespBase base = 1;
+  common.RespBase base = 1;
   itick.Quote data = 2;
 }
 
@@ -83,7 +84,7 @@ message BatchGetQuoteReq {
 }
 
 message BatchGetQuoteResp {
-  itick.RespBase base = 1;
+  common.RespBase base = 1;
   repeated itick.Quote data = 2;
 }
 

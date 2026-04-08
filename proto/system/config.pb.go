@@ -21,58 +21,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type SysConfigType int32
-
-const (
-	SysConfigType_UNKNOWN        SysConfigType = 0
-	SysConfigType_SYSTEM_CORE    SysConfigType = 1 // 系统配置
-	SysConfigType_OBJECT_STORAGE SysConfigType = 2 // 对象存储配置
-	SysConfigType_ITICK_CONFIG   SysConfigType = 3 // ITICK配置
-)
-
-// Enum value maps for SysConfigType.
-var (
-	SysConfigType_name = map[int32]string{
-		0: "UNKNOWN",
-		1: "SYSTEM_CORE",
-		2: "OBJECT_STORAGE",
-		3: "ITICK_CONFIG",
-	}
-	SysConfigType_value = map[string]int32{
-		"UNKNOWN":        0,
-		"SYSTEM_CORE":    1,
-		"OBJECT_STORAGE": 2,
-		"ITICK_CONFIG":   3,
-	}
-)
-
-func (x SysConfigType) Enum() *SysConfigType {
-	p := new(SysConfigType)
-	*p = x
-	return p
-}
-
-func (x SysConfigType) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (SysConfigType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_system_config_proto_enumTypes[0].Descriptor()
-}
-
-func (SysConfigType) Type() protoreflect.EnumType {
-	return &file_proto_system_config_proto_enumTypes[0]
-}
-
-func (x SysConfigType) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use SysConfigType.Descriptor instead.
-func (SysConfigType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_system_config_proto_rawDescGZIP(), []int{0}
-}
-
 type Interval struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -640,12 +588,7 @@ const file_proto_system_config_proto_rawDesc = "" +
 	"\vItickConfig\x12\x17\n" +
 	"\aapi_url\x18\x01 \x01(\tR\x06apiUrl\x12\x1b\n" +
 	"\tapi_token\x18\x02 \x01(\tR\bapiToken\x12\x15\n" +
-	"\x06ws_url\x18\x03 \x01(\tR\x05wsUrl*S\n" +
-	"\rSysConfigType\x12\v\n" +
-	"\aUNKNOWN\x10\x00\x12\x0f\n" +
-	"\vSYSTEM_CORE\x10\x01\x12\x12\n" +
-	"\x0eOBJECT_STORAGE\x10\x02\x12\x10\n" +
-	"\fITICK_CONFIG\x10\x03B\x1cZ\x1awklive/proto/system;systemb\x06proto3"
+	"\x06ws_url\x18\x03 \x01(\tR\x05wsUrlB\x1cZ\x1awklive/proto/system;systemb\x06proto3"
 
 var (
 	file_proto_system_config_proto_rawDescOnce sync.Once
@@ -659,23 +602,21 @@ func file_proto_system_config_proto_rawDescGZIP() []byte {
 	return file_proto_system_config_proto_rawDescData
 }
 
-var file_proto_system_config_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_proto_system_config_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_proto_system_config_proto_goTypes = []any{
-	(SysConfigType)(0),          // 0: system.SysConfigType
-	(*Interval)(nil),            // 1: system.Interval
-	(*SystemCore)(nil),          // 2: system.SystemCore
-	(*AliyunOssConfig)(nil),     // 3: system.AliyunOssConfig
-	(*TencentCosConfig)(nil),    // 4: system.TencentCosConfig
-	(*MinioConfig)(nil),         // 5: system.MinioConfig
-	(*ObjectStorageConfig)(nil), // 6: system.ObjectStorageConfig
-	(*ItickConfig)(nil),         // 7: system.ItickConfig
+	(*Interval)(nil),            // 0: system.Interval
+	(*SystemCore)(nil),          // 1: system.SystemCore
+	(*AliyunOssConfig)(nil),     // 2: system.AliyunOssConfig
+	(*TencentCosConfig)(nil),    // 3: system.TencentCosConfig
+	(*MinioConfig)(nil),         // 4: system.MinioConfig
+	(*ObjectStorageConfig)(nil), // 5: system.ObjectStorageConfig
+	(*ItickConfig)(nil),         // 6: system.ItickConfig
 }
 var file_proto_system_config_proto_depIdxs = []int32{
-	1, // 0: system.SystemCore.intervals:type_name -> system.Interval
-	3, // 1: system.ObjectStorageConfig.aliyun_oss:type_name -> system.AliyunOssConfig
-	4, // 2: system.ObjectStorageConfig.tencent_cos:type_name -> system.TencentCosConfig
-	5, // 3: system.ObjectStorageConfig.minio:type_name -> system.MinioConfig
+	0, // 0: system.SystemCore.intervals:type_name -> system.Interval
+	2, // 1: system.ObjectStorageConfig.aliyun_oss:type_name -> system.AliyunOssConfig
+	3, // 2: system.ObjectStorageConfig.tencent_cos:type_name -> system.TencentCosConfig
+	4, // 3: system.ObjectStorageConfig.minio:type_name -> system.MinioConfig
 	4, // [4:4] is the sub-list for method output_type
 	4, // [4:4] is the sub-list for method input_type
 	4, // [4:4] is the sub-list for extension type_name
@@ -693,14 +634,13 @@ func file_proto_system_config_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_system_config_proto_rawDesc), len(file_proto_system_config_proto_rawDesc)),
-			NumEnums:      1,
+			NumEnums:      0,
 			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_proto_system_config_proto_goTypes,
 		DependencyIndexes: file_proto_system_config_proto_depIdxs,
-		EnumInfos:         file_proto_system_config_proto_enumTypes,
 		MessageInfos:      file_proto_system_config_proto_msgTypes,
 	}.Build()
 	File_proto_system_config_proto = out.File

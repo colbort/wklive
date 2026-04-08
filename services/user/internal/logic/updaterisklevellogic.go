@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 
@@ -28,6 +29,6 @@ func (l *UpdateRiskLevelLogic) UpdateRiskLevel(in *user.UpdateRiskLevelReq) (*us
 	// todo: add your logic here and delete this line
 
 	return &user.AdminCommonResp{
-		Base: &user.RespBase{},
+		Base: &common.RespBase{},
 	}, nil
 }

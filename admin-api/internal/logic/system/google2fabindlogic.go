@@ -38,7 +38,7 @@ func (l *Google2FABindLogic) Google2FABind(req *types.Google2FABindReq) (resp *t
 	}
 
 	return &types.RespBase{
-		Code: result.Code,
-		Msg:  result.Msg,
+		Code: result.Base.Code,
+		Msg:  result.Base.Msg,
 	}, nil
 }

@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -30,7 +31,7 @@ func (l *SysTenantByCodeLogic) SysTenantByCode(in *system.SysTenantByCodeReq) (*
 		return nil, err
 	}
 	return &system.SysTenantByCodeResp{
-		Base: &system.RespBase{
+		Base: &common.RespBase{
 			Code: 200,
 			Msg:  "获取租户成功",
 		},

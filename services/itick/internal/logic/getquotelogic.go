@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"wklive/proto/common"
 	"wklive/proto/itick"
 	"wklive/services/itick/internal/socket/client"
 	"wklive/services/itick/internal/svc"
@@ -35,7 +36,7 @@ func (l *GetQuoteLogic) GetQuote(in *itick.GetQuoteReq) (*itick.GetQuoteResp, er
 	}
 
 	return &itick.GetQuoteResp{
-		Base: &itick.RespBase{
+		Base: &common.RespBase{
 			Code: 200,
 			Msg:  "获取报价成功",
 		},

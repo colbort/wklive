@@ -28,15 +28,15 @@ func NewSysCronJobStartLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 }
 
 func (l *SysCronJobStartLogic) SysCronJobStart(req *types.SysCronJobStartReq) (resp *types.RespBase, err error) {
-	reuslt, err := l.svcCtx.SystemCli.SysCronJobStart(l.ctx, &system.SysCronJobStartReq{
+	result, err := l.svcCtx.SystemCli.SysCronJobStart(l.ctx, &system.SysCronJobStartReq{
 		Id: req.Id,
 	})
 	if err != nil {
 		return nil, err
 	}
 	resp = &types.RespBase{
-		Code: reuslt.Code,
-		Msg:  reuslt.Msg,
+		Code: result.Base.Code,
+		Msg:  result.Base.Msg,
 	}
 	return
 }

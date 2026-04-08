@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/common"
 	"wklive/proto/user"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,7 +30,7 @@ func NewListUserIdentitiesLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 func (l *ListUserIdentitiesLogic) ListUserIdentities(req *types.ListUserIdentitiesReq) (resp *types.ListUserIdentitiesResp, err error) {
 	result, err := l.svcCtx.UserCli.ListUserIdentities(l.ctx, &user.ListUserIdentitiesReq{
-		Page: &user.PageReq{
+		Page: &common.PageReq{
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
 		},

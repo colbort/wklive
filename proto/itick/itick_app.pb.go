@@ -12,6 +12,7 @@ import (
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+	common "wklive/proto/common"
 )
 
 const (
@@ -59,7 +60,7 @@ func (*AppEmpty) Descriptor() ([]byte, []int) {
 
 type AppCommonResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -94,7 +95,7 @@ func (*AppCommonResp) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *AppCommonResp) GetBase() *RespBase {
+func (x *AppCommonResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -139,7 +140,7 @@ func (*ListVisibleCategoriesReq) Descriptor() ([]byte, []int) {
 
 type ListVisibleCategoriesResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*ItickTenantCategory `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -175,7 +176,7 @@ func (*ListVisibleCategoriesResp) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *ListVisibleCategoriesResp) GetBase() *RespBase {
+func (x *ListVisibleCategoriesResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -251,7 +252,7 @@ func (x *ListVisibleProductsReq) GetKeyword() string {
 
 type ListVisibleProductsResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*ItickTenantProduct  `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -287,7 +288,7 @@ func (*ListVisibleProductsResp) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *ListVisibleProductsResp) GetBase() *RespBase {
+func (x *ListVisibleProductsResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -387,7 +388,7 @@ func (x *GetKlineReq) GetLimit() int64 {
 
 type GetKlineResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*Kline               `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -423,7 +424,7 @@ func (*GetKlineResp) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *GetKlineResp) GetBase() *RespBase {
+func (x *GetKlineResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -499,7 +500,7 @@ func (x *GetQuoteReq) GetCategoryCode() string {
 
 type GetQuoteResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          *Quote                 `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -535,7 +536,7 @@ func (*GetQuoteResp) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *GetQuoteResp) GetBase() *RespBase {
+func (x *GetQuoteResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -671,7 +672,7 @@ func (x *BatchGetQuoteReq) GetData() []*MarketSymbol {
 
 type BatchGetQuoteResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*Quote               `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -707,7 +708,7 @@ func (*BatchGetQuoteResp) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *BatchGetQuoteResp) GetBase() *RespBase {
+func (x *BatchGetQuoteResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -1025,21 +1026,21 @@ var File_proto_itick_itick_app_proto protoreflect.FileDescriptor
 
 const file_proto_itick_itick_app_proto_rawDesc = "" +
 	"\n" +
-	"\x1bproto/itick/itick_app.proto\x12\x05itick\x1a\x18proto/itick/common.proto\x1a\x17proto/itick/model.proto\"\n" +
+	"\x1bproto/itick/itick_app.proto\x12\x05itick\x1a\x19proto/common/common.proto\x1a\x16proto/itick/enum.proto\x1a\x17proto/itick/model.proto\"\n" +
 	"\n" +
-	"\bAppEmpty\"4\n" +
-	"\rAppCommonResp\x12#\n" +
-	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\"\x1a\n" +
-	"\x18ListVisibleCategoriesReq\"p\n" +
-	"\x19ListVisibleCategoriesResp\x12#\n" +
-	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12.\n" +
+	"\bAppEmpty\"5\n" +
+	"\rAppCommonResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\x1a\n" +
+	"\x18ListVisibleCategoriesReq\"q\n" +
+	"\x19ListVisibleCategoriesResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
 	"\x04data\x18\x02 \x03(\v2\x1a.itick.ItickTenantCategoryR\x04data\"\x84\x01\n" +
 	"\x16ListVisibleProductsReq\x128\n" +
 	"\rcategory_type\x18\x01 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12\x16\n" +
 	"\x06market\x18\x02 \x01(\tR\x06market\x12\x18\n" +
-	"\akeyword\x18\x03 \x01(\tR\akeyword\"m\n" +
-	"\x17ListVisibleProductsResp\x12#\n" +
-	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12-\n" +
+	"\akeyword\x18\x03 \x01(\tR\akeyword\"n\n" +
+	"\x17ListVisibleProductsResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
 	"\x04data\x18\x02 \x03(\v2\x19.itick.ItickTenantProductR\x04data\"\xb8\x01\n" +
 	"\vGetKlineReq\x12#\n" +
 	"\rcategory_code\x18\x01 \x01(\tR\fcategoryCode\x12\x16\n" +
@@ -1047,16 +1048,16 @@ const file_proto_itick_itick_app_proto_rawDesc = "" +
 	"\x06symbol\x18\x03 \x01(\tR\x06symbol\x12'\n" +
 	"\x06k_type\x18\x04 \x01(\x0e2\x10.itick.KlineTypeR\x05kType\x12\x15\n" +
 	"\x06end_ts\x18\x05 \x01(\x03R\x05endTs\x12\x14\n" +
-	"\x05limit\x18\x06 \x01(\x03R\x05limit\"U\n" +
-	"\fGetKlineResp\x12#\n" +
-	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12 \n" +
+	"\x05limit\x18\x06 \x01(\x03R\x05limit\"V\n" +
+	"\fGetKlineResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12 \n" +
 	"\x04data\x18\x02 \x03(\v2\f.itick.KlineR\x04data\"b\n" +
 	"\vGetQuoteReq\x12\x16\n" +
 	"\x06market\x18\x01 \x01(\tR\x06market\x12\x16\n" +
 	"\x06symbol\x18\x02 \x01(\tR\x06symbol\x12#\n" +
-	"\rcategory_code\x18\x03 \x01(\tR\fcategoryCode\"U\n" +
-	"\fGetQuoteResp\x12#\n" +
-	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12 \n" +
+	"\rcategory_code\x18\x03 \x01(\tR\fcategoryCode\"V\n" +
+	"\fGetQuoteResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12 \n" +
 	"\x04data\x18\x02 \x01(\v2\f.itick.QuoteR\x04data\"c\n" +
 	"\fMarketSymbol\x12#\n" +
 	"\rcategory_code\x18\x01 \x01(\tR\fcategoryCode\x12\x16\n" +
@@ -1065,9 +1066,9 @@ const file_proto_itick_itick_app_proto_rawDesc = "" +
 	"\x10BatchGetQuoteReq\x12#\n" +
 	"\rcategory_code\x18\x01 \x01(\tR\fcategoryCode\x12\x16\n" +
 	"\x06market\x18\x02 \x01(\tR\x06market\x12'\n" +
-	"\x04data\x18\x03 \x03(\v2\x13.itick.MarketSymbolR\x04data\"Z\n" +
-	"\x11BatchGetQuoteResp\x12#\n" +
-	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12 \n" +
+	"\x04data\x18\x03 \x03(\v2\x13.itick.MarketSymbolR\x04data\"[\n" +
+	"\x11BatchGetQuoteResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12 \n" +
 	"\x04data\x18\x02 \x03(\v2\f.itick.QuoteR\x04data\"A\n" +
 	"\x10SubscribeRequest\x12-\n" +
 	"\x06topics\x18\x01 \x03(\v2\x15.itick.SubscribeTopicR\x06topics\"\x97\x01\n" +
@@ -1130,7 +1131,7 @@ var file_proto_itick_itick_app_proto_goTypes = []any{
 	(*PushReply)(nil),                 // 15: itick.PushReply
 	(*KlineInterval)(nil),             // 16: itick.KlineInterval
 	(*KlineIntervalsResp)(nil),        // 17: itick.KlineIntervalsResp
-	(*RespBase)(nil),                  // 18: itick.RespBase
+	(*common.RespBase)(nil),           // 18: common.RespBase
 	(*ItickTenantCategory)(nil),       // 19: itick.ItickTenantCategory
 	(CategoryType)(0),                 // 20: itick.CategoryType
 	(*ItickTenantProduct)(nil),        // 21: itick.ItickTenantProduct
@@ -1139,19 +1140,19 @@ var file_proto_itick_itick_app_proto_goTypes = []any{
 	(*Quote)(nil),                     // 24: itick.Quote
 }
 var file_proto_itick_itick_app_proto_depIdxs = []int32{
-	18, // 0: itick.AppCommonResp.base:type_name -> itick.RespBase
-	18, // 1: itick.ListVisibleCategoriesResp.base:type_name -> itick.RespBase
+	18, // 0: itick.AppCommonResp.base:type_name -> common.RespBase
+	18, // 1: itick.ListVisibleCategoriesResp.base:type_name -> common.RespBase
 	19, // 2: itick.ListVisibleCategoriesResp.data:type_name -> itick.ItickTenantCategory
 	20, // 3: itick.ListVisibleProductsReq.category_type:type_name -> itick.CategoryType
-	18, // 4: itick.ListVisibleProductsResp.base:type_name -> itick.RespBase
+	18, // 4: itick.ListVisibleProductsResp.base:type_name -> common.RespBase
 	21, // 5: itick.ListVisibleProductsResp.data:type_name -> itick.ItickTenantProduct
 	22, // 6: itick.GetKlineReq.k_type:type_name -> itick.KlineType
-	18, // 7: itick.GetKlineResp.base:type_name -> itick.RespBase
+	18, // 7: itick.GetKlineResp.base:type_name -> common.RespBase
 	23, // 8: itick.GetKlineResp.data:type_name -> itick.Kline
-	18, // 9: itick.GetQuoteResp.base:type_name -> itick.RespBase
+	18, // 9: itick.GetQuoteResp.base:type_name -> common.RespBase
 	24, // 10: itick.GetQuoteResp.data:type_name -> itick.Quote
 	10, // 11: itick.BatchGetQuoteReq.data:type_name -> itick.MarketSymbol
-	18, // 12: itick.BatchGetQuoteResp.base:type_name -> itick.RespBase
+	18, // 12: itick.BatchGetQuoteResp.base:type_name -> common.RespBase
 	24, // 13: itick.BatchGetQuoteResp.data:type_name -> itick.Quote
 	14, // 14: itick.SubscribeRequest.topics:type_name -> itick.SubscribeTopic
 	16, // 15: itick.KlineIntervalsResp.data:type_name -> itick.KlineInterval
@@ -1181,7 +1182,7 @@ func file_proto_itick_itick_app_proto_init() {
 	if File_proto_itick_itick_app_proto != nil {
 		return
 	}
-	file_proto_itick_common_proto_init()
+	file_proto_itick_enum_proto_init()
 	file_proto_itick_model_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{

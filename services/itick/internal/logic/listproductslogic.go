@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/proto/common"
 	"wklive/proto/itick"
 	"wklive/services/itick/internal/svc"
 
@@ -67,7 +68,7 @@ func (l *ListProductsLogic) ListProducts(in *itick.ListProductsReq) (*itick.List
 	}
 
 	return &itick.ListProductsResp{
-		Base: &itick.RespBase{
+		Base: &common.RespBase{
 			Code:       200,
 			Msg:        "查询成功",
 			Total:      count,

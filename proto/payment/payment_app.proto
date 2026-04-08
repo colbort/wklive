@@ -2,13 +2,14 @@ syntax = "proto3";
 
 package payment;
 
-import "proto/payment/common.proto";
+import "proto/common/common.proto";
+import "proto/payment/enum.proto";
 import "proto/payment/model.proto";
 
 option go_package = "wklive/proto/payment;payment";
 
 message AppCommonResp {
-  payment.RespBase base = 1;
+  common.RespBase base = 1;
 }
 
 // 当前用户累计充值统计
@@ -18,7 +19,7 @@ message GetMyRechargeStatReq {
 }
 
 message GetMyRechargeStatResp {
-  payment.RespBase base = 1;
+  common.RespBase base = 1;
   payment.UserRechargeStat stat = 2;
 }
 
@@ -32,7 +33,7 @@ message ListAvailableRechargeChannelsReq {
 }
 
 message ListAvailableRechargeChannelsResp {
-  payment.RespBase base = 1;
+  common.RespBase base = 1;
   repeated payment.VisiblePayChannel list = 2;
 }
 
@@ -51,7 +52,7 @@ message CreateRechargeOrderReq {
 }
 
 message CreateRechargeOrderResp {
-  payment.RespBase base = 1;
+  common.RespBase base = 1;
   payment.RechargeOrder order = 2;
 }
 
@@ -63,7 +64,7 @@ message GetMyRechargeOrderReq {
 }
 
 message GetMyRechargeOrderResp {
-  payment.RespBase base = 1;
+  common.RespBase base = 1;
   payment.RechargeOrder order = 2;
 }
 
@@ -71,7 +72,7 @@ message GetMyRechargeOrderResp {
 message ListMyRechargeOrdersReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
-  payment.PageReq page = 3;
+  common.PageReq page = 3;
   payment.PayOrderStatus status = 4;
   string order_no = 5;
   int64 create_time_start = 6;
@@ -79,7 +80,7 @@ message ListMyRechargeOrdersReq {
 }
 
 message ListMyRechargeOrdersResp {
-  payment.RespBase base = 1;
+  common.RespBase base = 1;
   repeated payment.RechargeOrder list = 2;
 }
 
@@ -98,7 +99,7 @@ message QueryMyRechargeOrderStatusReq {
 }
 
 message QueryMyRechargeOrderStatusResp {
-  payment.RespBase base = 1;
+  common.RespBase base = 1;
   payment.RechargeOrder order = 2;
 }
 
@@ -114,7 +115,7 @@ message CreateWithdrawOrderReq {
 }
 
 message CreateWithdrawOrderResp {
-  payment.RespBase base = 1;
+  common.RespBase base = 1;
   int64 id = 2;
 }
 
@@ -122,12 +123,12 @@ message CreateWithdrawOrderResp {
 message ListMyWithdrawOrdersReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
-  payment.PageReq page = 3;
+  common.PageReq page = 3;
   payment.PayOrderStatus status = 4;
 }
 
 message ListMyWithdrawOrdersResp {
-  payment.RespBase base = 1;
+  common.RespBase base = 1;
   repeated payment.WithdrawOrder data = 2;
 } 
 
@@ -138,7 +139,7 @@ message GetMyWithdrawOrderReq {
 }
 
 message GetMyWithdrawOrderResp {
-  payment.RespBase base = 1;
+  common.RespBase base = 1;
   payment.WithdrawOrder data = 2;
 }
 

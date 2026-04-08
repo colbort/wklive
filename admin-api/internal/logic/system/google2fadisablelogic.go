@@ -36,7 +36,7 @@ func (l *Google2FADisableLogic) Google2FADisable(req *types.Google2FADisableReq)
 		return nil, err
 	}
 	return &types.RespBase{
-		Code: result.Code,
-		Msg:  result.Msg,
+		Code: result.Base.Code,
+		Msg:  result.Base.Msg,
 	}, nil
 }

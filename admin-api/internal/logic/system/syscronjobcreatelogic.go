@@ -40,8 +40,8 @@ func (l *SysCronJobCreateLogic) SysCronJobCreate(req *types.SysCronJobCreateReq)
 		return nil, err
 	}
 	resp = &types.RespBase{
-		Code: result.Code,
-		Msg:  result.Msg,
+		Code: result.Base.Code,
+		Msg:  result.Base.Msg,
 	}
 	return
 }

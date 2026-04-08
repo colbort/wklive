@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/common"
 	"wklive/proto/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,7 +30,7 @@ func NewSysCronJobLogListLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 func (l *SysCronJobLogListLogic) SysCronJobLogList(req *types.SysCronJobLogListReq) (resp *types.SysCronJobLogListResp, err error) {
 	result, err := l.svcCtx.SystemCli.SysCronJobLogList(l.ctx, &system.SysCronJobLogListReq{
-		Page: &system.PageReq{
+		Page: &common.PageReq{
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
 		},

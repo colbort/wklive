@@ -2,13 +2,14 @@ syntax = "proto3";
 
 package itick;
 
-import "proto/itick/common.proto";
+import "proto/common/common.proto";
+import "proto/itick/enum.proto";
 import "proto/itick/model.proto";
 
 option go_package = "wklive/proto/itick;itick";
 
 message AdminCommonResp {
-  itick.RespBase base = 1;
+  common.RespBase base = 1;
 }
 
 // ====================
@@ -40,19 +41,19 @@ message GetCategoryReq {
 }
 
 message GetCategoryResp {
-  itick.RespBase base = 1;
+  common.RespBase base = 1;
   itick.ItickCategory data = 2;
 }
 
 message ListCategoriesReq {
-  itick.PageReq page = 1;
+  common.PageReq page = 1;
   itick.CategoryType category_type = 2;
   int32 enabled = 3; // 0全部 1启用 2禁用
   int32 app_visible = 4; // 0全部 1可见 2不可见
 }
 
 message ListCategoriesResp {
-  itick.RespBase base = 1;
+  common.RespBase base = 1;
   repeated itick.ItickCategory data = 2;
 }
 
@@ -61,7 +62,7 @@ message SyncCategoryProductsReq {
 }
 
 message SyncCategoryProductsResp {
-  itick.RespBase base = 1;
+  common.RespBase base = 1;
   string task_no = 2;
 }
 
@@ -70,7 +71,7 @@ message GetSyncTaskStatusReq {
 }
 
 message GetSyncTaskStatusResp {
-  itick.RespBase base = 1;
+  common.RespBase base = 1;
   string task_no = 2;
   int32 status = 3;
   string message = 4;
@@ -115,12 +116,12 @@ message GetProductReq {
 }
 
 message GetProductResp {
-  itick.RespBase base = 1;
+  common.RespBase base = 1;
   itick.ItickProduct data = 2;
 }
 
 message ListProductsReq {
-  itick.PageReq page = 1;
+  common.PageReq page = 1;
   itick.CategoryType category_type = 2;
   string category_name = 3;
   string market = 4;
@@ -130,7 +131,7 @@ message ListProductsReq {
 }
 
 message ListProductsResp {
-  itick.RespBase base = 1;
+  common.RespBase base = 1;
   repeated itick.ItickProduct data = 2;
 }
 
@@ -148,7 +149,7 @@ message GetProductKlineReq {
 }
 
 message GetProductKlineResp {
-  itick.RespBase base = 1;
+  common.RespBase base = 1;
   repeated itick.Kline data = 2;
 }
 
@@ -194,12 +195,12 @@ message GetTenantCategoryReq {
 }
 
 message GetTenantCategoryResp {
-  itick.RespBase base = 1;
+  common.RespBase base = 1;
   itick.ItickTenantCategory data = 2;
 }
 
 message ListTenantCategoriesReq {
-  itick.PageReq page = 1;
+  common.PageReq page = 1;
   int64 tenant_id = 2;
   itick.CategoryType category_type = 3;
   int32 status = 4; // 0全部 1启用 2禁用
@@ -207,7 +208,7 @@ message ListTenantCategoriesReq {
 }
 
 message ListTenantCategoriesResp {
-  itick.RespBase base = 1;
+  common.RespBase base = 1;
   repeated itick.ItickTenantCategory data = 2;
 }
 
@@ -253,12 +254,12 @@ message GetTenantProductReq {
 }
 
 message GetTenantProductResp {
-  itick.RespBase base = 1;
+  common.RespBase base = 1;
   itick.ItickTenantProduct data = 2;
 }
 
 message ListTenantProductsReq {
-  itick.PageReq page = 1;
+  common.PageReq page = 1;
   int64 tenant_id = 2;
   itick.CategoryType category_type = 3;
   string market = 4;
@@ -268,7 +269,7 @@ message ListTenantProductsReq {
 }
 
 message ListTenantProductsResp {
-  itick.RespBase base = 1;
+  common.RespBase base = 1;
   repeated itick.ItickTenantProduct data = 2;
 }
 
@@ -282,7 +283,7 @@ message InitTenantItickDisplayReq {
 }
 
 message InitTenantItickDisplayResp {
-  itick.RespBase base = 1;
+  common.RespBase base = 1;
   int64 category_count = 2;
   int64 product_count = 3;
 }

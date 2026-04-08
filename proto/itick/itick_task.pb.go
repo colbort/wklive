@@ -12,6 +12,7 @@ import (
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+	common "wklive/proto/common"
 )
 
 const (
@@ -83,7 +84,7 @@ func (x *SyncProductsReq) GetWsUrl() string {
 
 type SyncProductsResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -118,7 +119,7 @@ func (*SyncProductsResp) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_task_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *SyncProductsResp) GetBase() *RespBase {
+func (x *SyncProductsResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -187,7 +188,7 @@ func (x *SyncKlinesReq) GetWsUrl() string {
 
 type SyncKlinesResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -222,7 +223,7 @@ func (*SyncKlinesResp) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_task_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *SyncKlinesResp) GetBase() *RespBase {
+func (x *SyncKlinesResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -233,19 +234,19 @@ var File_proto_itick_itick_task_proto protoreflect.FileDescriptor
 
 const file_proto_itick_itick_task_proto_rawDesc = "" +
 	"\n" +
-	"\x1cproto/itick/itick_task.proto\x12\x05itick\x1a\x18proto/itick/common.proto\"^\n" +
+	"\x1cproto/itick/itick_task.proto\x12\x05itick\x1a\x19proto/common/common.proto\"^\n" +
 	"\x0fSyncProductsReq\x12\x17\n" +
 	"\aapi_url\x18\x01 \x01(\tR\x06apiUrl\x12\x1b\n" +
 	"\tapi_token\x18\x02 \x01(\tR\bapiToken\x12\x15\n" +
-	"\x06ws_url\x18\x03 \x01(\tR\x05wsUrl\"7\n" +
-	"\x10SyncProductsResp\x12#\n" +
-	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\"\\\n" +
+	"\x06ws_url\x18\x03 \x01(\tR\x05wsUrl\"8\n" +
+	"\x10SyncProductsResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\\\n" +
 	"\rSyncKlinesReq\x12\x17\n" +
 	"\aapi_url\x18\x01 \x01(\tR\x06apiUrl\x12\x1b\n" +
 	"\tapi_token\x18\x02 \x01(\tR\bapiToken\x12\x15\n" +
-	"\x06ws_url\x18\x03 \x01(\tR\x05wsUrl\"5\n" +
-	"\x0eSyncKlinesResp\x12#\n" +
-	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base2\x87\x01\n" +
+	"\x06ws_url\x18\x03 \x01(\tR\x05wsUrl\"6\n" +
+	"\x0eSyncKlinesResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base2\x87\x01\n" +
 	"\tItickTask\x12?\n" +
 	"\fSyncProducts\x12\x16.itick.SyncProductsReq\x1a\x17.itick.SyncProductsResp\x129\n" +
 	"\n" +
@@ -269,11 +270,11 @@ var file_proto_itick_itick_task_proto_goTypes = []any{
 	(*SyncProductsResp)(nil), // 1: itick.SyncProductsResp
 	(*SyncKlinesReq)(nil),    // 2: itick.SyncKlinesReq
 	(*SyncKlinesResp)(nil),   // 3: itick.SyncKlinesResp
-	(*RespBase)(nil),         // 4: itick.RespBase
+	(*common.RespBase)(nil),  // 4: common.RespBase
 }
 var file_proto_itick_itick_task_proto_depIdxs = []int32{
-	4, // 0: itick.SyncProductsResp.base:type_name -> itick.RespBase
-	4, // 1: itick.SyncKlinesResp.base:type_name -> itick.RespBase
+	4, // 0: itick.SyncProductsResp.base:type_name -> common.RespBase
+	4, // 1: itick.SyncKlinesResp.base:type_name -> common.RespBase
 	0, // 2: itick.ItickTask.SyncProducts:input_type -> itick.SyncProductsReq
 	2, // 3: itick.ItickTask.SyncKlines:input_type -> itick.SyncKlinesReq
 	1, // 4: itick.ItickTask.SyncProducts:output_type -> itick.SyncProductsResp
@@ -290,7 +291,6 @@ func file_proto_itick_itick_task_proto_init() {
 	if File_proto_itick_itick_task_proto != nil {
 		return
 	}
-	file_proto_itick_common_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

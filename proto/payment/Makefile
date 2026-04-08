@@ -8,7 +8,8 @@ gen:
 		-I . \
 		--go_out=. --go_opt=paths=source_relative \
 		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
-		proto/payment/common.proto \
+		proto/common/common.proto \
+		proto/payment/enum.proto \
 		proto/payment/model.proto \
 		proto/payment/payment_app.proto \
 		proto/payment/payment_admin.proto 

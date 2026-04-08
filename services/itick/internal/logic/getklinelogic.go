@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/proto/common"
 	"wklive/proto/itick"
 	"wklive/services/itick/internal/pkg/utils"
 	"wklive/services/itick/internal/svc"
@@ -51,7 +52,7 @@ func (l *GetKlineLogic) GetKline(in *itick.GetKlineReq) (*itick.GetKlineResp, er
 		})
 	}
 	return &itick.GetKlineResp{
-		Base: &itick.RespBase{
+		Base: &common.RespBase{
 			Code: 200,
 			Msg:  "获取kline成功",
 		},

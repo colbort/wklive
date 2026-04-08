@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -28,22 +29,32 @@ func (l *SysCronJobStartLogic) SysCronJobStart(in *system.SysCronJobStartReq) (*
 	job, err := l.svcCtx.JobModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		return &system.RespBase{
-			Code: 500,
-			Msg:  err.Error(),
+			Base: &common.RespBase{
+				Code: 500,
+				Msg:  err.Error(),
+			},
 		}, nil
 	}
 	if job == nil {
 		return &system.RespBase{
-			Code: 400,
-			Msg:  "定时任务不存在",
+			Base: &common.RespBase{
+				Code: 400,
+				Msg:  "定时任务不存在",
+			},
 		}, nil
 	}
 	err = l.svcCtx.Cron.StartJob(job)
 	if err != nil {
 		return &system.RespBase{
-			Code: 500,
-			Msg:  err.Error(),
+			Base: &common.RespBase{
+				Code: 500,
+				Msg:  err.Error(),
+			},
 		}, nil
 	}
-	return &system.RespBase{}, nil
+	return &system.RespBase{
+		Base: &common.RespBase{
+			Code: 200,
+		},
+	}, nil
 }

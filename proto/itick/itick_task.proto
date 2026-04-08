@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package itick;
 
-import "proto/itick/common.proto";
+import "proto/common/common.proto";
 
 option go_package = "wklive/proto/itick;itick";
 
@@ -14,7 +14,7 @@ message SyncProductsReq {
 }
 
 message SyncProductsResp {
-  itick.RespBase base = 1;
+  common.RespBase base = 1;
 }
 
 message SyncKlinesReq {
@@ -24,7 +24,7 @@ message SyncKlinesReq {
 }
 
 message SyncKlinesResp {
-  itick.RespBase base = 1;
+  common.RespBase base = 1;
 }
 
 

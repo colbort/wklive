@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/common"
 	"wklive/proto/payment"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,7 +30,7 @@ func NewListRechargeOrdersLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 func (l *ListRechargeOrdersLogic) ListRechargeOrders(req *types.ListRechargeOrdersReq) (resp *types.ListRechargeOrdersResp, err error) {
 	result, err := l.svcCtx.PaymentCli.ListRechargeOrders(l.ctx, &payment.ListRechargeOrdersReq{
-		Page: &payment.PageReq{
+		Page: &common.PageReq{
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
 		},

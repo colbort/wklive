@@ -11,6 +11,7 @@ require (
 	google.golang.org/grpc v1.79.3
 	google.golang.org/protobuf v1.36.11
 	wklive/common v0.0.0-00010101000000-000000000000
+	wklive/proto/common v0.0.0-00010101000000-000000000000
 	wklive/proto/itick v0.0.0-00010101000000-000000000000
 	wklive/proto/system v0.0.0-20251105000000-000000000000
 )
@@ -104,6 +105,8 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.4.1 // indirect
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
+
+replace wklive/proto/common => ../../proto/common
 
 replace wklive/proto/system => ../../proto/system
 

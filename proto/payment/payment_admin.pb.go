@@ -12,6 +12,7 @@ import (
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+	common "wklive/proto/common"
 )
 
 const (
@@ -23,7 +24,7 @@ const (
 
 type AdminCommonResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -58,7 +59,7 @@ func (*AdminCommonResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *AdminCommonResp) GetBase() *RespBase {
+func (x *AdminCommonResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -312,7 +313,7 @@ func (x *GetPayPlatformReq) GetId() int64 {
 
 type GetPayPlatformResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          *PayPlatform           `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -348,7 +349,7 @@ func (*GetPayPlatformResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *GetPayPlatformResp) GetBase() *RespBase {
+func (x *GetPayPlatformResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -364,7 +365,7 @@ func (x *GetPayPlatformResp) GetData() *PayPlatform {
 
 type ListPayPlatformsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Page          *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	Keyword       string                 `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"`
 	PlatformCode  string                 `protobuf:"bytes,3,opt,name=platform_code,json=platformCode,proto3" json:"platform_code,omitempty"`
 	Status        CommonStatus           `protobuf:"varint,4,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
@@ -403,7 +404,7 @@ func (*ListPayPlatformsReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *ListPayPlatformsReq) GetPage() *PageReq {
+func (x *ListPayPlatformsReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
@@ -440,7 +441,7 @@ func (x *ListPayPlatformsReq) GetPlatformType() PlatformType {
 
 type ListPayPlatformsResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*PayPlatform         `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -476,7 +477,7 @@ func (*ListPayPlatformsResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *ListPayPlatformsResp) GetBase() *RespBase {
+func (x *ListPayPlatformsResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -713,7 +714,7 @@ func (x *GetPayProductReq) GetId() int64 {
 
 type GetPayProductResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          *PayProduct            `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -749,7 +750,7 @@ func (*GetPayProductResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *GetPayProductResp) GetBase() *RespBase {
+func (x *GetPayProductResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -765,7 +766,7 @@ func (x *GetPayProductResp) GetData() *PayProduct {
 
 type ListPayProductsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Page          *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	PlatformId    int64                  `protobuf:"varint,2,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`
 	Keyword       string                 `protobuf:"bytes,3,opt,name=keyword,proto3" json:"keyword,omitempty"`
 	ProductCode   string                 `protobuf:"bytes,4,opt,name=product_code,json=productCode,proto3" json:"product_code,omitempty"`
@@ -805,7 +806,7 @@ func (*ListPayProductsReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *ListPayProductsReq) GetPage() *PageReq {
+func (x *ListPayProductsReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
@@ -849,7 +850,7 @@ func (x *ListPayProductsReq) GetSceneType() SceneType {
 
 type ListPayProductsResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*PayProduct          `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -885,7 +886,7 @@ func (*ListPayProductsResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *ListPayProductsResp) GetBase() *RespBase {
+func (x *ListPayProductsResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -1106,7 +1107,7 @@ func (x *GetTenantPayPlatformReq) GetTenantId() int64 {
 
 type GetTenantPayPlatformResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          *TenantPayPlatform     `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1142,7 +1143,7 @@ func (*GetTenantPayPlatformResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{16}
 }
 
-func (x *GetTenantPayPlatformResp) GetBase() *RespBase {
+func (x *GetTenantPayPlatformResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -1158,7 +1159,7 @@ func (x *GetTenantPayPlatformResp) GetData() *TenantPayPlatform {
 
 type ListTenantPayPlatformsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Page          *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	PlatformId    int64                  `protobuf:"varint,3,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`
 	Status        CommonStatus           `protobuf:"varint,4,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
@@ -1197,7 +1198,7 @@ func (*ListTenantPayPlatformsReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{17}
 }
 
-func (x *ListTenantPayPlatformsReq) GetPage() *PageReq {
+func (x *ListTenantPayPlatformsReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
@@ -1234,7 +1235,7 @@ func (x *ListTenantPayPlatformsReq) GetOpenStatus() OpenStatus {
 
 type ListTenantPayPlatformsResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*TenantPayPlatform   `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1270,7 +1271,7 @@ func (*ListTenantPayPlatformsResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *ListTenantPayPlatformsResp) GetBase() *RespBase {
+func (x *ListTenantPayPlatformsResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -1667,7 +1668,7 @@ func (x *GetTenantPayAccountReq) GetTenantId() int64 {
 
 type GetTenantPayAccountResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          *TenantPayAccount      `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1703,7 +1704,7 @@ func (*GetTenantPayAccountResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{22}
 }
 
-func (x *GetTenantPayAccountResp) GetBase() *RespBase {
+func (x *GetTenantPayAccountResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -1719,7 +1720,7 @@ func (x *GetTenantPayAccountResp) GetData() *TenantPayAccount {
 
 type ListTenantPayAccountsReq struct {
 	state               protoimpl.MessageState `protogen:"open.v1"`
-	Page                *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	Page                *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	TenantId            int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	PlatformId          int64                  `protobuf:"varint,3,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`
 	TenantPayPlatformId int64                  `protobuf:"varint,4,opt,name=tenant_pay_platform_id,json=tenantPayPlatformId,proto3" json:"tenant_pay_platform_id,omitempty"`
@@ -1759,7 +1760,7 @@ func (*ListTenantPayAccountsReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{23}
 }
 
-func (x *ListTenantPayAccountsReq) GetPage() *PageReq {
+func (x *ListTenantPayAccountsReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
@@ -1803,7 +1804,7 @@ func (x *ListTenantPayAccountsReq) GetStatus() CommonStatus {
 
 type ListTenantPayAccountsResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*TenantPayAccount    `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1839,7 +1840,7 @@ func (*ListTenantPayAccountsResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{24}
 }
 
-func (x *ListTenantPayAccountsResp) GetBase() *RespBase {
+func (x *ListTenantPayAccountsResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -2292,7 +2293,7 @@ func (x *GetTenantPayChannelReq) GetTenantId() int64 {
 
 type GetTenantPayChannelResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          *TenantPayChannel      `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2328,7 +2329,7 @@ func (*GetTenantPayChannelResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{28}
 }
 
-func (x *GetTenantPayChannelResp) GetBase() *RespBase {
+func (x *GetTenantPayChannelResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -2344,7 +2345,7 @@ func (x *GetTenantPayChannelResp) GetData() *TenantPayChannel {
 
 type ListTenantPayChannelsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Page          *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	PlatformId    int64                  `protobuf:"varint,3,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`
 	ProductId     int64                  `protobuf:"varint,4,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
@@ -2386,7 +2387,7 @@ func (*ListTenantPayChannelsReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{29}
 }
 
-func (x *ListTenantPayChannelsReq) GetPage() *PageReq {
+func (x *ListTenantPayChannelsReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
@@ -2444,7 +2445,7 @@ func (x *ListTenantPayChannelsReq) GetVisible() bool {
 
 type ListTenantPayChannelsResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*TenantPayChannel    `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2480,7 +2481,7 @@ func (*ListTenantPayChannelsResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{30}
 }
 
-func (x *ListTenantPayChannelsResp) GetBase() *RespBase {
+func (x *ListTenantPayChannelsResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -2909,7 +2910,7 @@ func (x *GetTenantPayChannelRuleReq) GetTenantId() int64 {
 
 type GetTenantPayChannelRuleResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          *TenantPayChannelRule  `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2945,7 +2946,7 @@ func (*GetTenantPayChannelRuleResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{34}
 }
 
-func (x *GetTenantPayChannelRuleResp) GetBase() *RespBase {
+func (x *GetTenantPayChannelRuleResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -2961,7 +2962,7 @@ func (x *GetTenantPayChannelRuleResp) GetData() *TenantPayChannelRule {
 
 type ListTenantPayChannelRulesReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Page          *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	ChannelId     int64                  `protobuf:"varint,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
 	Status        CommonStatus           `protobuf:"varint,4,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
@@ -2999,7 +3000,7 @@ func (*ListTenantPayChannelRulesReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{35}
 }
 
-func (x *ListTenantPayChannelRulesReq) GetPage() *PageReq {
+func (x *ListTenantPayChannelRulesReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
@@ -3029,7 +3030,7 @@ func (x *ListTenantPayChannelRulesReq) GetStatus() CommonStatus {
 
 type ListTenantPayChannelRulesResp struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
-	Base          *RespBase               `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase        `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*TenantPayChannelRule `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -3065,7 +3066,7 @@ func (*ListTenantPayChannelRulesResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{36}
 }
 
-func (x *ListTenantPayChannelRulesResp) GetBase() *RespBase {
+func (x *ListTenantPayChannelRulesResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -3134,7 +3135,7 @@ func (x *GetUserRechargeStatReq) GetUserId() int64 {
 
 type GetUserRechargeStatResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          *UserRechargeStat      `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -3170,7 +3171,7 @@ func (*GetUserRechargeStatResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{38}
 }
 
-func (x *GetUserRechargeStatResp) GetBase() *RespBase {
+func (x *GetUserRechargeStatResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -3186,7 +3187,7 @@ func (x *GetUserRechargeStatResp) GetData() *UserRechargeStat {
 
 type ListUserRechargeStatsReq struct {
 	state                 protoimpl.MessageState `protogen:"open.v1"`
-	Page                  *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	Page                  *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	TenantId              int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	UserId                int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	SuccessTotalAmountMin int64                  `protobuf:"varint,4,opt,name=success_total_amount_min,json=successTotalAmountMin,proto3" json:"success_total_amount_min,omitempty"`
@@ -3225,7 +3226,7 @@ func (*ListUserRechargeStatsReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{39}
 }
 
-func (x *ListUserRechargeStatsReq) GetPage() *PageReq {
+func (x *ListUserRechargeStatsReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
@@ -3262,7 +3263,7 @@ func (x *ListUserRechargeStatsReq) GetSuccessTotalAmountMax() int64 {
 
 type ListUserRechargeStatsResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*UserRechargeStat    `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -3298,7 +3299,7 @@ func (*ListUserRechargeStatsResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{40}
 }
 
-func (x *ListUserRechargeStatsResp) GetBase() *RespBase {
+func (x *ListUserRechargeStatsResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -3367,7 +3368,7 @@ func (x *GetRechargeOrderReq) GetOrderNo() string {
 
 type GetRechargeOrderResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          *RechargeOrder         `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -3403,7 +3404,7 @@ func (*GetRechargeOrderResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{42}
 }
 
-func (x *GetRechargeOrderResp) GetBase() *RespBase {
+func (x *GetRechargeOrderResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -3419,7 +3420,7 @@ func (x *GetRechargeOrderResp) GetData() *RechargeOrder {
 
 type ListRechargeOrdersReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	Page            *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	Page            *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	UserId          int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	PlatformId      int64                  `protobuf:"varint,4,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`
@@ -3466,7 +3467,7 @@ func (*ListRechargeOrdersReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{43}
 }
 
-func (x *ListRechargeOrdersReq) GetPage() *PageReq {
+func (x *ListRechargeOrdersReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
@@ -3559,7 +3560,7 @@ func (x *ListRechargeOrdersReq) GetCreateTimeEnd() int64 {
 
 type ListRechargeOrdersResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*RechargeOrder       `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -3595,7 +3596,7 @@ func (*ListRechargeOrdersResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{44}
 }
 
-func (x *ListRechargeOrdersResp) GetBase() *RespBase {
+func (x *ListRechargeOrdersResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -3852,7 +3853,7 @@ func (x *GetRechargeNotifyLogReq) GetId() int64 {
 
 type GetRechargeNotifyLogResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          *PayNotifyLog          `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -3888,7 +3889,7 @@ func (*GetRechargeNotifyLogResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{49}
 }
 
-func (x *GetRechargeNotifyLogResp) GetBase() *RespBase {
+func (x *GetRechargeNotifyLogResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -3904,7 +3905,7 @@ func (x *GetRechargeNotifyLogResp) GetData() *PayNotifyLog {
 
 type ListRechargeNotifyLogsReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	Page            *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	Page            *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	OrderNo         string                 `protobuf:"bytes,3,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
 	OrderId         int64                  `protobuf:"varint,4,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
@@ -3948,7 +3949,7 @@ func (*ListRechargeNotifyLogsReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{50}
 }
 
-func (x *ListRechargeNotifyLogsReq) GetPage() *PageReq {
+func (x *ListRechargeNotifyLogsReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
@@ -4020,7 +4021,7 @@ func (x *ListRechargeNotifyLogsReq) GetCreateTimeEnd() int64 {
 
 type ListRechargeNotifyLogsResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*PayNotifyLog        `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -4056,7 +4057,7 @@ func (*ListRechargeNotifyLogsResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{51}
 }
 
-func (x *ListRechargeNotifyLogsResp) GetBase() *RespBase {
+func (x *ListRechargeNotifyLogsResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -4073,7 +4074,7 @@ func (x *ListRechargeNotifyLogsResp) GetData() []*PayNotifyLog {
 // ---------- 提现订单 ----------
 type ListWithdrawOrdersReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Page          *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	OrderNo       string                 `protobuf:"bytes,4,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
@@ -4111,7 +4112,7 @@ func (*ListWithdrawOrdersReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{52}
 }
 
-func (x *ListWithdrawOrdersReq) GetPage() *PageReq {
+func (x *ListWithdrawOrdersReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
@@ -4141,7 +4142,7 @@ func (x *ListWithdrawOrdersReq) GetOrderNo() string {
 
 type ListWithdrawOrdersResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*WithdrawOrder       `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -4177,7 +4178,7 @@ func (*ListWithdrawOrdersResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{53}
 }
 
-func (x *ListWithdrawOrdersResp) GetBase() *RespBase {
+func (x *ListWithdrawOrdersResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -4245,7 +4246,7 @@ func (x *GetWithdrawOrderReq) GetOrderNo() string {
 
 type GetWithdrawOrderResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          *WithdrawOrder         `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -4281,7 +4282,7 @@ func (*GetWithdrawOrderResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{55}
 }
 
-func (x *GetWithdrawOrderResp) GetBase() *RespBase {
+func (x *GetWithdrawOrderResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -4365,7 +4366,7 @@ func (x *AuditWithdrawOrderReq) GetRemark() string {
 
 type ListWithdrawNotifyLogsReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	Page            *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	Page            *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	OrderNo         string                 `protobuf:"bytes,3,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
 	OrderId         int64                  `protobuf:"varint,4,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
@@ -4409,7 +4410,7 @@ func (*ListWithdrawNotifyLogsReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{57}
 }
 
-func (x *ListWithdrawNotifyLogsReq) GetPage() *PageReq {
+func (x *ListWithdrawNotifyLogsReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
@@ -4481,7 +4482,7 @@ func (x *ListWithdrawNotifyLogsReq) GetCreateTimeEnd() int64 {
 
 type ListWithdrawNotifyLogsResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*PayNotifyLog        `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -4517,7 +4518,7 @@ func (*ListWithdrawNotifyLogsResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{58}
 }
 
-func (x *ListWithdrawNotifyLogsResp) GetBase() *RespBase {
+func (x *ListWithdrawNotifyLogsResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -4585,7 +4586,7 @@ func (x *GetWithdrawNotifyLogReq) GetId() int64 {
 
 type GetWithdrawNotifyLogResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          *PayNotifyLog          `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -4621,7 +4622,7 @@ func (*GetWithdrawNotifyLogResp) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{60}
 }
 
-func (x *GetWithdrawNotifyLogResp) GetBase() *RespBase {
+func (x *GetWithdrawNotifyLogResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -4639,9 +4640,9 @@ var File_proto_payment_payment_admin_proto protoreflect.FileDescriptor
 
 const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\n" +
-	"!proto/payment/payment_admin.proto\x12\apayment\x1a\x1aproto/payment/common.proto\x1a\x19proto/payment/model.proto\"8\n" +
-	"\x0fAdminCommonResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\"\xb5\x02\n" +
+	"!proto/payment/payment_admin.proto\x12\apayment\x1a\x19proto/common/common.proto\x1a\x18proto/payment/enum.proto\x1a\x19proto/payment/model.proto\"7\n" +
+	"\x0fAdminCommonResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\xb5\x02\n" +
 	"\x14CreatePayPlatformReq\x12#\n" +
 	"\rplatform_code\x18\x01 \x01(\tR\fplatformCode\x12#\n" +
 	"\rplatform_name\x18\x02 \x01(\tR\fplatformName\x12:\n" +
@@ -4665,18 +4666,18 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\x06status\x18\a \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12\x16\n" +
 	"\x06remark\x18\b \x01(\tR\x06remark\"#\n" +
 	"\x11GetPayPlatformReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"e\n" +
-	"\x12GetPayPlatformResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12(\n" +
-	"\x04data\x18\x02 \x01(\v2\x14.payment.PayPlatformR\x04data\"\xe5\x01\n" +
-	"\x13ListPayPlatformsReq\x12$\n" +
-	"\x04page\x18\x01 \x01(\v2\x10.payment.PageReqR\x04page\x12\x18\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"d\n" +
+	"\x12GetPayPlatformResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12(\n" +
+	"\x04data\x18\x02 \x01(\v2\x14.payment.PayPlatformR\x04data\"\xe4\x01\n" +
+	"\x13ListPayPlatformsReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x18\n" +
 	"\akeyword\x18\x02 \x01(\tR\akeyword\x12#\n" +
 	"\rplatform_code\x18\x03 \x01(\tR\fplatformCode\x12-\n" +
 	"\x06status\x18\x04 \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12:\n" +
-	"\rplatform_type\x18\x05 \x01(\x0e2\x15.payment.PlatformTypeR\fplatformType\"g\n" +
-	"\x14ListPayPlatformsResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12(\n" +
+	"\rplatform_type\x18\x05 \x01(\x0e2\x15.payment.PlatformTypeR\fplatformType\"f\n" +
+	"\x14ListPayPlatformsResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12(\n" +
 	"\x04data\x18\x02 \x03(\v2\x14.payment.PayPlatformR\x04data\"\x92\x02\n" +
 	"\x13CreatePayProductReq\x12\x1f\n" +
 	"\vplatform_id\x18\x01 \x01(\x03R\n" +
@@ -4697,21 +4698,21 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\x06status\x18\x05 \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12\x16\n" +
 	"\x06remark\x18\x06 \x01(\tR\x06remark\"\"\n" +
 	"\x10GetPayProductReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"c\n" +
-	"\x11GetPayProductResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12'\n" +
-	"\x04data\x18\x02 \x01(\v2\x13.payment.PayProductR\x04data\"\xfa\x01\n" +
-	"\x12ListPayProductsReq\x12$\n" +
-	"\x04page\x18\x01 \x01(\v2\x10.payment.PageReqR\x04page\x12\x1f\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"b\n" +
+	"\x11GetPayProductResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
+	"\x04data\x18\x02 \x01(\v2\x13.payment.PayProductR\x04data\"\xf9\x01\n" +
+	"\x12ListPayProductsReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1f\n" +
 	"\vplatform_id\x18\x02 \x01(\x03R\n" +
 	"platformId\x12\x18\n" +
 	"\akeyword\x18\x03 \x01(\tR\akeyword\x12!\n" +
 	"\fproduct_code\x18\x04 \x01(\tR\vproductCode\x12-\n" +
 	"\x06status\x18\x05 \x01(\x0e2\x15.payment.CommonStatusR\x06status\x121\n" +
 	"\n" +
-	"scene_type\x18\x06 \x01(\x0e2\x12.payment.SceneTypeR\tsceneType\"e\n" +
-	"\x13ListPayProductsResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12'\n" +
+	"scene_type\x18\x06 \x01(\x0e2\x12.payment.SceneTypeR\tsceneType\"d\n" +
+	"\x13ListPayProductsResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
 	"\x04data\x18\x02 \x03(\v2\x13.payment.PayProductR\x04data\"\xd5\x01\n" +
 	"\x18OpenTenantPayPlatformReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1f\n" +
@@ -4730,20 +4731,20 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\x06remark\x18\x05 \x01(\tR\x06remark\"F\n" +
 	"\x17GetTenantPayPlatformReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\"q\n" +
-	"\x18GetTenantPayPlatformResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12.\n" +
-	"\x04data\x18\x02 \x01(\v2\x1a.payment.TenantPayPlatformR\x04data\"\xe4\x01\n" +
-	"\x19ListTenantPayPlatformsReq\x12$\n" +
-	"\x04page\x18\x01 \x01(\v2\x10.payment.PageReqR\x04page\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\"p\n" +
+	"\x18GetTenantPayPlatformResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
+	"\x04data\x18\x02 \x01(\v2\x1a.payment.TenantPayPlatformR\x04data\"\xe3\x01\n" +
+	"\x19ListTenantPayPlatformsReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
 	"\vplatform_id\x18\x03 \x01(\x03R\n" +
 	"platformId\x12-\n" +
 	"\x06status\x18\x04 \x01(\x0e2\x15.payment.CommonStatusR\x06status\x124\n" +
 	"\vopen_status\x18\x05 \x01(\x0e2\x13.payment.OpenStatusR\n" +
-	"openStatus\"s\n" +
-	"\x1aListTenantPayPlatformsResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12.\n" +
+	"openStatus\"r\n" +
+	"\x1aListTenantPayPlatformsResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
 	"\x04data\x18\x02 \x03(\v2\x1a.payment.TenantPayPlatformR\x04data\"\xf6\x04\n" +
 	"\x19CreateTenantPayAccountReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x123\n" +
@@ -4794,20 +4795,20 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\x06remark\x18\x0f \x01(\tR\x06remark\"E\n" +
 	"\x16GetTenantPayAccountReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\"o\n" +
-	"\x17GetTenantPayAccountResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x02 \x01(\v2\x19.payment.TenantPayAccountR\x04data\"\xfc\x01\n" +
-	"\x18ListTenantPayAccountsReq\x12$\n" +
-	"\x04page\x18\x01 \x01(\v2\x10.payment.PageReqR\x04page\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\"n\n" +
+	"\x17GetTenantPayAccountResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
+	"\x04data\x18\x02 \x01(\v2\x19.payment.TenantPayAccountR\x04data\"\xfb\x01\n" +
+	"\x18ListTenantPayAccountsReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
 	"\vplatform_id\x18\x03 \x01(\x03R\n" +
 	"platformId\x123\n" +
 	"\x16tenant_pay_platform_id\x18\x04 \x01(\x03R\x13tenantPayPlatformId\x12\x18\n" +
 	"\akeyword\x18\x05 \x01(\tR\akeyword\x12-\n" +
-	"\x06status\x18\x06 \x01(\x0e2\x15.payment.CommonStatusR\x06status\"q\n" +
-	"\x19ListTenantPayAccountsResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12-\n" +
+	"\x06status\x18\x06 \x01(\x0e2\x15.payment.CommonStatusR\x06status\"p\n" +
+	"\x19ListTenantPayAccountsResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
 	"\x04data\x18\x02 \x03(\v2\x19.payment.TenantPayAccountR\x04data\"\xe0\x05\n" +
 	"\x19CreateTenantPayChannelReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1f\n" +
@@ -4859,12 +4860,12 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\x06remark\x18\x12 \x01(\tR\x06remark\"E\n" +
 	"\x16GetTenantPayChannelReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\"o\n" +
-	"\x17GetTenantPayChannelResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x02 \x01(\v2\x19.payment.TenantPayChannelR\x04data\"\x9f\x02\n" +
-	"\x18ListTenantPayChannelsReq\x12$\n" +
-	"\x04page\x18\x01 \x01(\v2\x10.payment.PageReqR\x04page\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\"n\n" +
+	"\x17GetTenantPayChannelResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
+	"\x04data\x18\x02 \x01(\v2\x19.payment.TenantPayChannelR\x04data\"\x9e\x02\n" +
+	"\x18ListTenantPayChannelsReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
 	"\vplatform_id\x18\x03 \x01(\x03R\n" +
 	"platformId\x12\x1d\n" +
@@ -4874,9 +4875,9 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"account_id\x18\x05 \x01(\x03R\taccountId\x12\x18\n" +
 	"\akeyword\x18\x06 \x01(\tR\akeyword\x12-\n" +
 	"\x06status\x18\a \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12\x18\n" +
-	"\avisible\x18\b \x01(\bR\avisible\"q\n" +
-	"\x19ListTenantPayChannelsResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12-\n" +
+	"\avisible\x18\b \x01(\bR\avisible\"p\n" +
+	"\x19ListTenantPayChannelsResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
 	"\x04data\x18\x02 \x03(\v2\x19.payment.TenantPayChannelR\x04data\"\xc5\x05\n" +
 	"\x1dCreateTenantPayChannelRuleReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1d\n" +
@@ -4923,42 +4924,42 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\x06remark\x18\x12 \x01(\tR\x06remark\"I\n" +
 	"\x1aGetTenantPayChannelRuleReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\"w\n" +
-	"\x1bGetTenantPayChannelRuleResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x121\n" +
-	"\x04data\x18\x02 \x01(\v2\x1d.payment.TenantPayChannelRuleR\x04data\"\xaf\x01\n" +
-	"\x1cListTenantPayChannelRulesReq\x12$\n" +
-	"\x04page\x18\x01 \x01(\v2\x10.payment.PageReqR\x04page\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\"v\n" +
+	"\x1bGetTenantPayChannelRuleResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x121\n" +
+	"\x04data\x18\x02 \x01(\v2\x1d.payment.TenantPayChannelRuleR\x04data\"\xae\x01\n" +
+	"\x1cListTenantPayChannelRulesReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1d\n" +
 	"\n" +
 	"channel_id\x18\x03 \x01(\x03R\tchannelId\x12-\n" +
-	"\x06status\x18\x04 \x01(\x0e2\x15.payment.CommonStatusR\x06status\"y\n" +
-	"\x1dListTenantPayChannelRulesResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x121\n" +
+	"\x06status\x18\x04 \x01(\x0e2\x15.payment.CommonStatusR\x06status\"x\n" +
+	"\x1dListTenantPayChannelRulesResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x121\n" +
 	"\x04data\x18\x02 \x03(\v2\x1d.payment.TenantPayChannelRuleR\x04data\"N\n" +
 	"\x16GetUserRechargeStatReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\"o\n" +
-	"\x17GetUserRechargeStatResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x02 \x01(\v2\x19.payment.UserRechargeStatR\x04data\"\xe8\x01\n" +
-	"\x18ListUserRechargeStatsReq\x12$\n" +
-	"\x04page\x18\x01 \x01(\v2\x10.payment.PageReqR\x04page\x12\x1b\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\"n\n" +
+	"\x17GetUserRechargeStatResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
+	"\x04data\x18\x02 \x01(\v2\x19.payment.UserRechargeStatR\x04data\"\xe7\x01\n" +
+	"\x18ListUserRechargeStatsReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\x127\n" +
 	"\x18success_total_amount_min\x18\x04 \x01(\x03R\x15successTotalAmountMin\x127\n" +
-	"\x18success_total_amount_max\x18\x05 \x01(\x03R\x15successTotalAmountMax\"q\n" +
-	"\x19ListUserRechargeStatsResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12-\n" +
+	"\x18success_total_amount_max\x18\x05 \x01(\x03R\x15successTotalAmountMax\"p\n" +
+	"\x19ListUserRechargeStatsResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
 	"\x04data\x18\x02 \x03(\v2\x19.payment.UserRechargeStatR\x04data\"M\n" +
 	"\x13GetRechargeOrderReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
-	"\border_no\x18\x02 \x01(\tR\aorderNo\"i\n" +
-	"\x14GetRechargeOrderResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12*\n" +
-	"\x04data\x18\x02 \x01(\v2\x16.payment.RechargeOrderR\x04data\"\xd9\x03\n" +
-	"\x15ListRechargeOrdersReq\x12$\n" +
-	"\x04page\x18\x01 \x01(\v2\x10.payment.PageReqR\x04page\x12\x1b\n" +
+	"\border_no\x18\x02 \x01(\tR\aorderNo\"h\n" +
+	"\x14GetRechargeOrderResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
+	"\x04data\x18\x02 \x01(\v2\x16.payment.RechargeOrderR\x04data\"\xd8\x03\n" +
+	"\x15ListRechargeOrdersReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x1f\n" +
 	"\vplatform_id\x18\x04 \x01(\x03R\n" +
@@ -4976,9 +4977,9 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	" \x01(\tR\fthirdTradeNo\x12/\n" +
 	"\x06status\x18\v \x01(\x0e2\x17.payment.PayOrderStatusR\x06status\x12*\n" +
 	"\x11create_time_start\x18\f \x01(\x03R\x0fcreateTimeStart\x12&\n" +
-	"\x0fcreate_time_end\x18\r \x01(\x03R\rcreateTimeEnd\"k\n" +
-	"\x16ListRechargeOrdersResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12*\n" +
+	"\x0fcreate_time_end\x18\r \x01(\x03R\rcreateTimeEnd\"j\n" +
+	"\x16ListRechargeOrdersResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
 	"\x04data\x18\x02 \x03(\v2\x16.payment.RechargeOrderR\x04data\"g\n" +
 	"\x15CloseRechargeOrderReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
@@ -4996,12 +4997,12 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\border_no\x18\x02 \x01(\tR\aorderNo\"F\n" +
 	"\x17GetRechargeNotifyLogReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"l\n" +
-	"\x18GetRechargeNotifyLogResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12)\n" +
-	"\x04data\x18\x02 \x01(\v2\x15.payment.PayNotifyLogR\x04data\"\xa1\x03\n" +
-	"\x19ListRechargeNotifyLogsReq\x12$\n" +
-	"\x04page\x18\x01 \x01(\v2\x10.payment.PageReqR\x04page\x12\x1b\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"k\n" +
+	"\x18GetRechargeNotifyLogResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
+	"\x04data\x18\x02 \x01(\v2\x15.payment.PayNotifyLogR\x04data\"\xa0\x03\n" +
+	"\x19ListRechargeNotifyLogsReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
 	"\border_no\x18\x03 \x01(\tR\aorderNo\x12\x19\n" +
 	"\border_id\x18\x04 \x01(\x03R\aorderId\x12\x1f\n" +
@@ -5014,31 +5015,31 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"signResult\x12*\n" +
 	"\x11create_time_start\x18\t \x01(\x03R\x0fcreateTimeStart\x12&\n" +
 	"\x0fcreate_time_end\x18\n" +
-	" \x01(\x03R\rcreateTimeEnd\"n\n" +
-	"\x1aListRechargeNotifyLogsResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12)\n" +
-	"\x04data\x18\x02 \x03(\v2\x15.payment.PayNotifyLogR\x04data\"\x8e\x01\n" +
-	"\x15ListWithdrawOrdersReq\x12$\n" +
-	"\x04page\x18\x01 \x01(\v2\x10.payment.PageReqR\x04page\x12\x1b\n" +
+	" \x01(\x03R\rcreateTimeEnd\"m\n" +
+	"\x1aListRechargeNotifyLogsResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
+	"\x04data\x18\x02 \x03(\v2\x15.payment.PayNotifyLogR\x04data\"\x8d\x01\n" +
+	"\x15ListWithdrawOrdersReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x19\n" +
-	"\border_no\x18\x04 \x01(\tR\aorderNo\"k\n" +
-	"\x16ListWithdrawOrdersResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12*\n" +
+	"\border_no\x18\x04 \x01(\tR\aorderNo\"j\n" +
+	"\x16ListWithdrawOrdersResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
 	"\x04data\x18\x02 \x03(\v2\x16.payment.WithdrawOrderR\x04data\"M\n" +
 	"\x13GetWithdrawOrderReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
-	"\border_no\x18\x02 \x01(\tR\aorderNo\"i\n" +
-	"\x14GetWithdrawOrderResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12*\n" +
+	"\border_no\x18\x02 \x01(\tR\aorderNo\"h\n" +
+	"\x14GetWithdrawOrderResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
 	"\x04data\x18\x02 \x01(\v2\x16.payment.WithdrawOrderR\x04data\"\x81\x01\n" +
 	"\x15AuditWithdrawOrderReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
 	"\border_no\x18\x02 \x01(\tR\aorderNo\x12\x18\n" +
 	"\aapprove\x18\x03 \x01(\bR\aapprove\x12\x16\n" +
-	"\x06remark\x18\x04 \x01(\tR\x06remark\"\xa1\x03\n" +
-	"\x19ListWithdrawNotifyLogsReq\x12$\n" +
-	"\x04page\x18\x01 \x01(\v2\x10.payment.PageReqR\x04page\x12\x1b\n" +
+	"\x06remark\x18\x04 \x01(\tR\x06remark\"\xa0\x03\n" +
+	"\x19ListWithdrawNotifyLogsReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
 	"\border_no\x18\x03 \x01(\tR\aorderNo\x12\x19\n" +
 	"\border_id\x18\x04 \x01(\x03R\aorderId\x12\x1f\n" +
@@ -5051,15 +5052,15 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"signResult\x12*\n" +
 	"\x11create_time_start\x18\t \x01(\x03R\x0fcreateTimeStart\x12&\n" +
 	"\x0fcreate_time_end\x18\n" +
-	" \x01(\x03R\rcreateTimeEnd\"n\n" +
-	"\x1aListWithdrawNotifyLogsResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12)\n" +
+	" \x01(\x03R\rcreateTimeEnd\"m\n" +
+	"\x1aListWithdrawNotifyLogsResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
 	"\x04data\x18\x02 \x03(\v2\x15.payment.PayNotifyLogR\x04data\"F\n" +
 	"\x17GetWithdrawNotifyLogReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"l\n" +
-	"\x18GetWithdrawNotifyLogResp\x12%\n" +
-	"\x04base\x18\x01 \x01(\v2\x11.payment.RespBaseR\x04base\x12)\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"k\n" +
+	"\x18GetWithdrawNotifyLogResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
 	"\x04data\x18\x02 \x01(\v2\x15.payment.PayNotifyLogR\x04data2\x9e\x1a\n" +
 	"\fPaymentAdmin\x12L\n" +
 	"\x11CreatePayPlatform\x12\x1d.payment.CreatePayPlatformReq\x1a\x18.payment.AdminCommonResp\x12L\n" +
@@ -5176,11 +5177,11 @@ var file_proto_payment_payment_admin_proto_goTypes = []any{
 	(*ListWithdrawNotifyLogsResp)(nil),        // 58: payment.ListWithdrawNotifyLogsResp
 	(*GetWithdrawNotifyLogReq)(nil),           // 59: payment.GetWithdrawNotifyLogReq
 	(*GetWithdrawNotifyLogResp)(nil),          // 60: payment.GetWithdrawNotifyLogResp
-	(*RespBase)(nil),                          // 61: payment.RespBase
+	(*common.RespBase)(nil),                   // 61: common.RespBase
 	(PlatformType)(0),                         // 62: payment.PlatformType
 	(CommonStatus)(0),                         // 63: payment.CommonStatus
 	(*PayPlatform)(nil),                       // 64: payment.PayPlatform
-	(*PageReq)(nil),                           // 65: payment.PageReq
+	(*common.PageReq)(nil),                    // 65: common.PageReq
 	(SceneType)(0),                            // 66: payment.SceneType
 	(*PayProduct)(nil),                        // 67: payment.PayProduct
 	(OpenStatus)(0),                           // 68: payment.OpenStatus
@@ -5198,95 +5199,95 @@ var file_proto_payment_payment_admin_proto_goTypes = []any{
 	(*WithdrawOrder)(nil),                     // 80: payment.WithdrawOrder
 }
 var file_proto_payment_payment_admin_proto_depIdxs = []int32{
-	61,  // 0: payment.AdminCommonResp.base:type_name -> payment.RespBase
+	61,  // 0: payment.AdminCommonResp.base:type_name -> common.RespBase
 	62,  // 1: payment.CreatePayPlatformReq.platform_type:type_name -> payment.PlatformType
 	63,  // 2: payment.CreatePayPlatformReq.status:type_name -> payment.CommonStatus
 	62,  // 3: payment.UpdatePayPlatformReq.platform_type:type_name -> payment.PlatformType
 	63,  // 4: payment.UpdatePayPlatformReq.status:type_name -> payment.CommonStatus
-	61,  // 5: payment.GetPayPlatformResp.base:type_name -> payment.RespBase
+	61,  // 5: payment.GetPayPlatformResp.base:type_name -> common.RespBase
 	64,  // 6: payment.GetPayPlatformResp.data:type_name -> payment.PayPlatform
-	65,  // 7: payment.ListPayPlatformsReq.page:type_name -> payment.PageReq
+	65,  // 7: payment.ListPayPlatformsReq.page:type_name -> common.PageReq
 	63,  // 8: payment.ListPayPlatformsReq.status:type_name -> payment.CommonStatus
 	62,  // 9: payment.ListPayPlatformsReq.platform_type:type_name -> payment.PlatformType
-	61,  // 10: payment.ListPayPlatformsResp.base:type_name -> payment.RespBase
+	61,  // 10: payment.ListPayPlatformsResp.base:type_name -> common.RespBase
 	64,  // 11: payment.ListPayPlatformsResp.data:type_name -> payment.PayPlatform
 	66,  // 12: payment.CreatePayProductReq.scene_type:type_name -> payment.SceneType
 	63,  // 13: payment.CreatePayProductReq.status:type_name -> payment.CommonStatus
 	66,  // 14: payment.UpdatePayProductReq.scene_type:type_name -> payment.SceneType
 	63,  // 15: payment.UpdatePayProductReq.status:type_name -> payment.CommonStatus
-	61,  // 16: payment.GetPayProductResp.base:type_name -> payment.RespBase
+	61,  // 16: payment.GetPayProductResp.base:type_name -> common.RespBase
 	67,  // 17: payment.GetPayProductResp.data:type_name -> payment.PayProduct
-	65,  // 18: payment.ListPayProductsReq.page:type_name -> payment.PageReq
+	65,  // 18: payment.ListPayProductsReq.page:type_name -> common.PageReq
 	63,  // 19: payment.ListPayProductsReq.status:type_name -> payment.CommonStatus
 	66,  // 20: payment.ListPayProductsReq.scene_type:type_name -> payment.SceneType
-	61,  // 21: payment.ListPayProductsResp.base:type_name -> payment.RespBase
+	61,  // 21: payment.ListPayProductsResp.base:type_name -> common.RespBase
 	67,  // 22: payment.ListPayProductsResp.data:type_name -> payment.PayProduct
 	63,  // 23: payment.OpenTenantPayPlatformReq.status:type_name -> payment.CommonStatus
 	68,  // 24: payment.OpenTenantPayPlatformReq.open_status:type_name -> payment.OpenStatus
 	63,  // 25: payment.UpdateTenantPayPlatformReq.status:type_name -> payment.CommonStatus
 	68,  // 26: payment.UpdateTenantPayPlatformReq.open_status:type_name -> payment.OpenStatus
-	61,  // 27: payment.GetTenantPayPlatformResp.base:type_name -> payment.RespBase
+	61,  // 27: payment.GetTenantPayPlatformResp.base:type_name -> common.RespBase
 	69,  // 28: payment.GetTenantPayPlatformResp.data:type_name -> payment.TenantPayPlatform
-	65,  // 29: payment.ListTenantPayPlatformsReq.page:type_name -> payment.PageReq
+	65,  // 29: payment.ListTenantPayPlatformsReq.page:type_name -> common.PageReq
 	63,  // 30: payment.ListTenantPayPlatformsReq.status:type_name -> payment.CommonStatus
 	68,  // 31: payment.ListTenantPayPlatformsReq.open_status:type_name -> payment.OpenStatus
-	61,  // 32: payment.ListTenantPayPlatformsResp.base:type_name -> payment.RespBase
+	61,  // 32: payment.ListTenantPayPlatformsResp.base:type_name -> common.RespBase
 	69,  // 33: payment.ListTenantPayPlatformsResp.data:type_name -> payment.TenantPayPlatform
 	63,  // 34: payment.CreateTenantPayAccountReq.status:type_name -> payment.CommonStatus
 	63,  // 35: payment.UpdateTenantPayAccountReq.status:type_name -> payment.CommonStatus
-	61,  // 36: payment.GetTenantPayAccountResp.base:type_name -> payment.RespBase
+	61,  // 36: payment.GetTenantPayAccountResp.base:type_name -> common.RespBase
 	70,  // 37: payment.GetTenantPayAccountResp.data:type_name -> payment.TenantPayAccount
-	65,  // 38: payment.ListTenantPayAccountsReq.page:type_name -> payment.PageReq
+	65,  // 38: payment.ListTenantPayAccountsReq.page:type_name -> common.PageReq
 	63,  // 39: payment.ListTenantPayAccountsReq.status:type_name -> payment.CommonStatus
-	61,  // 40: payment.ListTenantPayAccountsResp.base:type_name -> payment.RespBase
+	61,  // 40: payment.ListTenantPayAccountsResp.base:type_name -> common.RespBase
 	70,  // 41: payment.ListTenantPayAccountsResp.data:type_name -> payment.TenantPayAccount
 	63,  // 42: payment.CreateTenantPayChannelReq.status:type_name -> payment.CommonStatus
 	71,  // 43: payment.CreateTenantPayChannelReq.fee_type:type_name -> payment.FeeType
 	63,  // 44: payment.UpdateTenantPayChannelReq.status:type_name -> payment.CommonStatus
 	71,  // 45: payment.UpdateTenantPayChannelReq.fee_type:type_name -> payment.FeeType
-	61,  // 46: payment.GetTenantPayChannelResp.base:type_name -> payment.RespBase
+	61,  // 46: payment.GetTenantPayChannelResp.base:type_name -> common.RespBase
 	72,  // 47: payment.GetTenantPayChannelResp.data:type_name -> payment.TenantPayChannel
-	65,  // 48: payment.ListTenantPayChannelsReq.page:type_name -> payment.PageReq
+	65,  // 48: payment.ListTenantPayChannelsReq.page:type_name -> common.PageReq
 	63,  // 49: payment.ListTenantPayChannelsReq.status:type_name -> payment.CommonStatus
-	61,  // 50: payment.ListTenantPayChannelsResp.base:type_name -> payment.RespBase
+	61,  // 50: payment.ListTenantPayChannelsResp.base:type_name -> common.RespBase
 	72,  // 51: payment.ListTenantPayChannelsResp.data:type_name -> payment.TenantPayChannel
 	63,  // 52: payment.CreateTenantPayChannelRuleReq.status:type_name -> payment.CommonStatus
 	63,  // 53: payment.UpdateTenantPayChannelRuleReq.status:type_name -> payment.CommonStatus
-	61,  // 54: payment.GetTenantPayChannelRuleResp.base:type_name -> payment.RespBase
+	61,  // 54: payment.GetTenantPayChannelRuleResp.base:type_name -> common.RespBase
 	73,  // 55: payment.GetTenantPayChannelRuleResp.data:type_name -> payment.TenantPayChannelRule
-	65,  // 56: payment.ListTenantPayChannelRulesReq.page:type_name -> payment.PageReq
+	65,  // 56: payment.ListTenantPayChannelRulesReq.page:type_name -> common.PageReq
 	63,  // 57: payment.ListTenantPayChannelRulesReq.status:type_name -> payment.CommonStatus
-	61,  // 58: payment.ListTenantPayChannelRulesResp.base:type_name -> payment.RespBase
+	61,  // 58: payment.ListTenantPayChannelRulesResp.base:type_name -> common.RespBase
 	73,  // 59: payment.ListTenantPayChannelRulesResp.data:type_name -> payment.TenantPayChannelRule
-	61,  // 60: payment.GetUserRechargeStatResp.base:type_name -> payment.RespBase
+	61,  // 60: payment.GetUserRechargeStatResp.base:type_name -> common.RespBase
 	74,  // 61: payment.GetUserRechargeStatResp.data:type_name -> payment.UserRechargeStat
-	65,  // 62: payment.ListUserRechargeStatsReq.page:type_name -> payment.PageReq
-	61,  // 63: payment.ListUserRechargeStatsResp.base:type_name -> payment.RespBase
+	65,  // 62: payment.ListUserRechargeStatsReq.page:type_name -> common.PageReq
+	61,  // 63: payment.ListUserRechargeStatsResp.base:type_name -> common.RespBase
 	74,  // 64: payment.ListUserRechargeStatsResp.data:type_name -> payment.UserRechargeStat
-	61,  // 65: payment.GetRechargeOrderResp.base:type_name -> payment.RespBase
+	61,  // 65: payment.GetRechargeOrderResp.base:type_name -> common.RespBase
 	75,  // 66: payment.GetRechargeOrderResp.data:type_name -> payment.RechargeOrder
-	65,  // 67: payment.ListRechargeOrdersReq.page:type_name -> payment.PageReq
+	65,  // 67: payment.ListRechargeOrdersReq.page:type_name -> common.PageReq
 	76,  // 68: payment.ListRechargeOrdersReq.status:type_name -> payment.PayOrderStatus
-	61,  // 69: payment.ListRechargeOrdersResp.base:type_name -> payment.RespBase
+	61,  // 69: payment.ListRechargeOrdersResp.base:type_name -> common.RespBase
 	75,  // 70: payment.ListRechargeOrdersResp.data:type_name -> payment.RechargeOrder
-	61,  // 71: payment.GetRechargeNotifyLogResp.base:type_name -> payment.RespBase
+	61,  // 71: payment.GetRechargeNotifyLogResp.base:type_name -> common.RespBase
 	77,  // 72: payment.GetRechargeNotifyLogResp.data:type_name -> payment.PayNotifyLog
-	65,  // 73: payment.ListRechargeNotifyLogsReq.page:type_name -> payment.PageReq
+	65,  // 73: payment.ListRechargeNotifyLogsReq.page:type_name -> common.PageReq
 	78,  // 74: payment.ListRechargeNotifyLogsReq.notify_status:type_name -> payment.NotifyProcessStatus
 	79,  // 75: payment.ListRechargeNotifyLogsReq.sign_result:type_name -> payment.SignResult
-	61,  // 76: payment.ListRechargeNotifyLogsResp.base:type_name -> payment.RespBase
+	61,  // 76: payment.ListRechargeNotifyLogsResp.base:type_name -> common.RespBase
 	77,  // 77: payment.ListRechargeNotifyLogsResp.data:type_name -> payment.PayNotifyLog
-	65,  // 78: payment.ListWithdrawOrdersReq.page:type_name -> payment.PageReq
-	61,  // 79: payment.ListWithdrawOrdersResp.base:type_name -> payment.RespBase
+	65,  // 78: payment.ListWithdrawOrdersReq.page:type_name -> common.PageReq
+	61,  // 79: payment.ListWithdrawOrdersResp.base:type_name -> common.RespBase
 	80,  // 80: payment.ListWithdrawOrdersResp.data:type_name -> payment.WithdrawOrder
-	61,  // 81: payment.GetWithdrawOrderResp.base:type_name -> payment.RespBase
+	61,  // 81: payment.GetWithdrawOrderResp.base:type_name -> common.RespBase
 	80,  // 82: payment.GetWithdrawOrderResp.data:type_name -> payment.WithdrawOrder
-	65,  // 83: payment.ListWithdrawNotifyLogsReq.page:type_name -> payment.PageReq
+	65,  // 83: payment.ListWithdrawNotifyLogsReq.page:type_name -> common.PageReq
 	78,  // 84: payment.ListWithdrawNotifyLogsReq.notify_status:type_name -> payment.NotifyProcessStatus
 	79,  // 85: payment.ListWithdrawNotifyLogsReq.sign_result:type_name -> payment.SignResult
-	61,  // 86: payment.ListWithdrawNotifyLogsResp.base:type_name -> payment.RespBase
+	61,  // 86: payment.ListWithdrawNotifyLogsResp.base:type_name -> common.RespBase
 	77,  // 87: payment.ListWithdrawNotifyLogsResp.data:type_name -> payment.PayNotifyLog
-	61,  // 88: payment.GetWithdrawNotifyLogResp.base:type_name -> payment.RespBase
+	61,  // 88: payment.GetWithdrawNotifyLogResp.base:type_name -> common.RespBase
 	77,  // 89: payment.GetWithdrawNotifyLogResp.data:type_name -> payment.PayNotifyLog
 	1,   // 90: payment.PaymentAdmin.CreatePayPlatform:input_type -> payment.CreatePayPlatformReq
 	2,   // 91: payment.PaymentAdmin.UpdatePayPlatform:input_type -> payment.UpdatePayPlatformReq
@@ -5376,7 +5377,7 @@ func file_proto_payment_payment_admin_proto_init() {
 	if File_proto_payment_payment_admin_proto != nil {
 		return
 	}
-	file_proto_payment_common_proto_init()
+	file_proto_payment_enum_proto_init()
 	file_proto_payment_model_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{

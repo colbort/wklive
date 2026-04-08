@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
@@ -36,14 +37,18 @@ func (l *SysConfigCreateLogic) SysConfigCreate(in *system.SysConfigCreateReq) (*
 	config, err := l.svcCtx.ConfigModel.FindOneByConfigKey(l.ctx, sql.NullString{String: in.ConfigKey, Valid: true})
 	if err != nil && err != models.ErrNotFound {
 		return &system.RespBase{
-			Code: 500,
-			Msg:  err.Error(),
+			Base: &common.RespBase{
+				Code: 500,
+				Msg:  err.Error(),
+			},
 		}, nil
 	}
 	if config != nil {
 		return &system.RespBase{
-			Code: 400,
-			Msg:  "配置项已存在",
+			Base: &common.RespBase{
+				Code: 400,
+				Msg:  "配置项已存在",
+			},
 		}, nil
 	}
 	_, err = l.svcCtx.ConfigModel.Insert(l.ctx, &models.SysConfig{
@@ -53,13 +58,17 @@ func (l *SysConfigCreateLogic) SysConfigCreate(in *system.SysConfigCreateReq) (*
 	})
 	if err != nil {
 		return &system.RespBase{
-			Code: 500,
-			Msg:  err.Error(),
+			Base: &common.RespBase{
+				Code: 500,
+				Msg:  err.Error(),
+			},
 		}, nil
 	}
 
 	return &system.RespBase{
-		Code: 200,
-		Msg:  "新增成功",
+		Base: &common.RespBase{
+			Code: 200,
+			Msg:  "新增成功",
+		},
 	}, nil
 }

@@ -8,7 +8,8 @@ gen:
 		-I . \
 		--go_out=. --go_opt=paths=source_relative \
 		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
-		proto/user/common.proto \
+		proto/common/common.proto \
+		proto/user/enum.proto \
 		proto/user/model.proto \
 		proto/user/user_app.proto \
 		proto/user/user_admin.proto 

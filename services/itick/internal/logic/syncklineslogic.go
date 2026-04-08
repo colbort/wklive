@@ -14,6 +14,7 @@ import (
 	"sync"
 	"time"
 
+	"wklive/proto/common"
 	"wklive/proto/itick"
 	"wklive/services/itick/internal/pkg/utils"
 	"wklive/services/itick/internal/svc"
@@ -42,12 +43,12 @@ func NewSyncKlinesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncKl
 func (l *SyncKlinesLogic) SyncKlines(in *itick.SyncKlinesReq) (*itick.SyncKlinesResp, error) {
 	if strings.TrimSpace(in.ApiUrl) == "" {
 		return &itick.SyncKlinesResp{
-			Base: &itick.RespBase{Code: 1, Msg: "ApiUrl 不能为空"},
+			Base: &common.RespBase{Code: 1, Msg: "ApiUrl 不能为空"},
 		}, nil
 	}
 	if strings.TrimSpace(in.ApiToken) == "" {
 		return &itick.SyncKlinesResp{
-			Base: &itick.RespBase{Code: 1, Msg: "ApiToken 不能为空"},
+			Base: &common.RespBase{Code: 1, Msg: "ApiToken 不能为空"},
 		}, nil
 	}
 
@@ -62,13 +63,13 @@ func (l *SyncKlinesLogic) SyncKlines(in *itick.SyncKlinesReq) (*itick.SyncKlines
 	if err := distLock.Acquire(l.ctx, lockKey, lockValue, 30*time.Second); err != nil {
 		if errors.Is(err, utils.ErrLockNotAcquired) {
 			return &itick.SyncKlinesResp{
-				Base: &itick.RespBase{Code: 1, Msg: "已有同步任务正在执行，请稍后再试"},
+				Base: &common.RespBase{Code: 1, Msg: "已有同步任务正在执行，请稍后再试"},
 			}, nil
 		}
 
 		logx.Errorf("acquire lock failed, key=%s err=%v", lockKey, err)
 		return &itick.SyncKlinesResp{
-			Base: &itick.RespBase{Code: 1, Msg: "获取分布式锁失败"},
+			Base: &common.RespBase{Code: 1, Msg: "获取分布式锁失败"},
 		}, nil
 	}
 
@@ -89,7 +90,7 @@ func (l *SyncKlinesLogic) SyncKlines(in *itick.SyncKlinesReq) (*itick.SyncKlines
 
 		logx.Errorf("create sync task failed, err=%v", err)
 		return &itick.SyncKlinesResp{
-			Base: &itick.RespBase{Code: 1, Msg: "创建同步任务失败"},
+			Base: &common.RespBase{Code: 1, Msg: "创建同步任务失败"},
 		}, nil
 	}
 
@@ -104,7 +105,7 @@ func (l *SyncKlinesLogic) SyncKlines(in *itick.SyncKlinesReq) (*itick.SyncKlines
 	}(taskNo, reqCopy, lockKey, lockValue)
 
 	return &itick.SyncKlinesResp{
-		Base: &itick.RespBase{
+		Base: &common.RespBase{
 			Code: 200,
 			Msg:  "同步任务已提交",
 		},

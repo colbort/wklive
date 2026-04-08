@@ -9,6 +9,7 @@ import (
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/payment"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -40,7 +41,7 @@ func (l *ListMyRechargeOrdersLogic) ListMyRechargeOrders(req *types.ListMyRechar
 	result, err := l.svcCtx.PaymentCli.ListMyRechargeOrders(l.ctx, &payment.ListMyRechargeOrdersReq{
 		UserId:   userId,
 		TenantId: tenantId,
-		Page: &payment.PageReq{
+		Page: &common.PageReq{
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
 		},

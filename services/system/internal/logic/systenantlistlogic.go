@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -57,7 +58,7 @@ func (l *SysTenantListLogic) SysTenantList(in *system.SysTenantListReq) (*system
 		})
 	}
 	return &system.SysTenantListResp{
-		Base: &system.RespBase{
+		Base: &common.RespBase{
 			Code:       200,
 			Msg:        "查询成功",
 			Total:      total,

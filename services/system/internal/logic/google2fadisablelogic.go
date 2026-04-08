@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -31,13 +32,20 @@ func (l *Google2FADisableLogic) Google2FADisable(in *system.Google2FADisableReq)
 	}
 	if user == nil {
 		return &system.RespBase{
-			Code: 1,
-			Msg:  "用户不存在",
+			Base: &common.RespBase{
+				Code: 1,
+				Msg:  "用户不存在",
+			},
 		}, nil
 	}
 	if in.Code != "" {
 		if user.GoogleSecret == "" || !utils.VerifyGoogle2FACode(user.GoogleSecret, in.Code) {
-			return &system.RespBase{Code: 1, Msg: "验证码错误"}, nil
+			return &system.RespBase{
+				Base: &common.RespBase{
+					Code: 1,
+					Msg:  "验证码错误",
+				},
+			}, nil
 		}
 	}
 
@@ -47,7 +55,9 @@ func (l *Google2FADisableLogic) Google2FADisable(in *system.Google2FADisableReq)
 	}
 
 	return &system.RespBase{
-		Code: 200,
-		Msg:  "禁用成功",
+		Base: &common.RespBase{
+			Code: 200,
+			Msg:  "禁用成功",
+		},
 	}, nil
 }

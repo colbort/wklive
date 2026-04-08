@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/common"
 	"wklive/proto/payment"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,7 +30,7 @@ func NewListPayProductsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *L
 
 func (l *ListPayProductsLogic) ListPayProducts(req *types.ListPayProductsReq) (resp *types.ListPayProductsResp, err error) {
 	result, err := l.svcCtx.PaymentCli.ListPayProducts(l.ctx, &payment.ListPayProductsReq{
-		Page: &payment.PageReq{
+		Page: &common.PageReq{
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
 		},

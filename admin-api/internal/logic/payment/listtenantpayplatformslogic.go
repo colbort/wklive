@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/common"
 	"wklive/proto/payment"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,7 +30,7 @@ func NewListTenantPayPlatformsLogic(ctx context.Context, svcCtx *svc.ServiceCont
 
 func (l *ListTenantPayPlatformsLogic) ListTenantPayPlatforms(req *types.ListTenantPayPlatformsReq) (resp *types.ListTenantPayPlatformsResp, err error) {
 	result, err := l.svcCtx.PaymentCli.ListTenantPayPlatforms(l.ctx, &payment.ListTenantPayPlatformsReq{
-		Page: &payment.PageReq{
+		Page: &common.PageReq{
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
 		},

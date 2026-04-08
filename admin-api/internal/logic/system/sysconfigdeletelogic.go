@@ -28,15 +28,15 @@ func NewSysConfigDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 }
 
 func (l *SysConfigDeleteLogic) SysConfigDelete(req *types.SysConfigDeleteReq) (resp *types.RespBase, err error) {
-	out, err := l.svcCtx.SystemCli.SysConfigDelete(l.ctx, &system.SysConfigDeleteReq{
+	result, err := l.svcCtx.SystemCli.SysConfigDelete(l.ctx, &system.SysConfigDeleteReq{
 		Id: req.Id,
 	})
 	if err != nil {
 		return nil, err
 	}
 	resp = &types.RespBase{
-		Code: out.Code,
-		Msg:  out.Msg,
+		Code: result.Base.Code,
+		Msg:  result.Base.Msg,
 	}
 	return
 }

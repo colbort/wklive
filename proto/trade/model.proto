@@ -1,0 +1,400 @@
+syntax = "proto3";
+
+package trade;
+
+option go_package = "wklive/proto/trade;trade";
+
+import "proto/trade/enum.proto";
+
+
+message TenantReq {
+  uint64 tenant_id = 1;
+}
+
+message UserReq {
+  uint64 tenant_id = 1;
+  uint64 user_id = 2;
+}
+
+message TimeRange {
+  int64 start_time = 1;
+  int64 end_time = 2;
+}
+
+message DecimalRange {
+  string min = 1;
+  string max = 2;
+}
+
+message StringValues {
+  repeated string values = 1;
+}
+
+message Uint64Values {
+  repeated uint64 values = 1;
+}
+
+message TradeSymbol {
+  uint64 id = 1;
+  uint64 tenant_id = 2;
+  string symbol = 3;
+  string display_symbol = 4;
+  MarketType market_type = 5;
+  string base_asset = 6;
+  string quote_asset = 7;
+  string settle_asset = 8;
+  ContractType contract_type = 9;
+  SymbolStatus status = 10;
+  uint32 price_scale = 11;
+  uint32 qty_scale = 12;
+  string min_price = 13;
+  string max_price = 14;
+  string price_tick = 15;
+  string min_qty = 16;
+  string max_qty = 17;
+  string qty_step = 18;
+  string min_notional = 19;
+  uint32 max_leverage = 20;
+  int64 open_time = 21;
+  int64 close_time = 22;
+  int32 sort = 23;
+  string remark = 24;
+  int64 create_times = 25;
+  int64 update_times = 26;
+}
+
+message TradeSymbolSpot {
+  uint64 id = 1;
+  uint64 tenant_id = 2;
+  uint64 symbol_id = 3;
+  string maker_fee_rate = 4;
+  string taker_fee_rate = 5;
+  bool buy_enabled = 6;
+  bool sell_enabled = 7;
+  int64 create_times = 8;
+  int64 update_times = 9;
+}
+
+message TradeSymbolContract {
+  uint64 id = 1;
+  uint64 tenant_id = 2;
+  uint64 symbol_id = 3;
+  string contract_size = 4;
+  string multiplier = 5;
+  string maintenance_margin_rate = 6;
+  string initial_margin_rate = 7;
+  string maker_fee_rate = 8;
+  string taker_fee_rate = 9;
+  uint32 funding_interval_minutes = 10;
+  int64 delivery_time = 11;
+  bool support_cross = 12;
+  bool support_isolated = 13;
+  bool buy_enabled = 14;
+  bool sell_enabled = 15;
+  int64 create_times = 16;
+  int64 update_times = 17;
+}
+
+message TradeUserConfig {
+  uint64 id = 1;
+  uint64 tenant_id = 2;
+  uint64 user_id = 3;
+  MarketType market_type = 4;
+  uint64 symbol_id = 5;
+  PositionMode position_mode = 6;
+  MarginMode margin_mode = 7;
+  uint32 default_leverage = 8;
+  bool trade_enabled = 9;
+  bool reduce_only_enabled = 10;
+  int64 create_times = 11;
+  int64 update_times = 12;
+}
+
+message TradeOrder {
+  uint64 id = 1;
+  uint64 tenant_id = 2;
+  string order_no = 3;
+  string client_order_id = 4;
+  uint64 user_id = 5;
+  uint64 symbol_id = 6;
+  MarketType market_type = 7;
+  TradeSide side = 8;
+  PositionSide position_side = 9;
+  OrderType order_type = 10;
+  TimeInForce time_in_force = 11;
+  OrderStatus status = 12;
+  string price = 13;
+  string qty = 14;
+  string amount = 15;
+  string filled_qty = 16;
+  string filled_amount = 17;
+  string avg_price = 18;
+  string fee = 19;
+  string fee_asset = 20;
+  OrderSourceType source = 21;
+  bool is_reduce_only = 22;
+  bool is_close_only = 23;
+  string trigger_price = 24;
+  uint32 trigger_type = 25;
+  string cancel_reason = 26;
+  string biz_ext = 27;
+  int64 create_times = 28;
+  int64 update_times = 29;
+}
+
+message TradeOrderSpot {
+  uint64 id = 1;
+  uint64 tenant_id = 2;
+  uint64 order_id = 3;
+  string frozen_asset = 4;
+  string frozen_amount = 5;
+  string settle_asset = 6;
+  string settle_amount = 7;
+  int64 create_times = 8;
+  int64 update_times = 9;
+}
+
+message TradeOrderContract {
+  uint64 id = 1;
+  uint64 tenant_id = 2;
+  uint64 order_id = 3;
+  MarginMode margin_mode = 4;
+  uint32 leverage = 5;
+  string margin_asset = 6;
+  string margin_amount = 7;
+  uint32 close_position_type = 8;
+  string liquidation_price = 9;
+  string take_profit_price = 10;
+  string stop_loss_price = 11;
+  int64 create_times = 12;
+  int64 update_times = 13;
+}
+
+message TradeFill {
+  uint64 id = 1;
+  uint64 tenant_id = 2;
+  string fill_no = 3;
+  uint64 order_id = 4;
+  string order_no = 5;
+  uint64 user_id = 6;
+  uint64 symbol_id = 7;
+  MarketType market_type = 8;
+  TradeSide side = 9;
+  PositionSide position_side = 10;
+  string price = 11;
+  string qty = 12;
+  string amount = 13;
+  string fee = 14;
+  string fee_asset = 15;
+  LiquidityType liquidity_type = 16;
+  string realized_pnl = 17;
+  int64 match_time = 18;
+  int64 create_times = 19;
+}
+
+message TradeCancelLog {
+  uint64 id = 1;
+  uint64 tenant_id = 2;
+  uint64 order_id = 3;
+  string order_no = 4;
+  uint64 user_id = 5;
+  uint32 cancel_source = 6;
+  string cancel_reason = 7;
+  int64 create_times = 8;
+}
+
+message ContractPosition {
+  uint64 id = 1;
+  uint64 tenant_id = 2;
+  uint64 user_id = 3;
+  uint64 symbol_id = 4;
+  MarketType market_type = 5;
+  PositionSide position_side = 6;
+  MarginMode margin_mode = 7;
+  uint32 leverage = 8;
+  string qty = 9;
+  string avail_qty = 10;
+  string frozen_qty = 11;
+  string open_avg_price = 12;
+  string mark_price = 13;
+  string margin_asset = 14;
+  string position_margin = 15;
+  string isolated_margin = 16;
+  string unrealized_pnl = 17;
+  string realized_pnl = 18;
+  string liquidation_price = 19;
+  int32 adl_rank = 20;
+  uint64 version = 21;
+  int64 create_times = 22;
+  int64 update_times = 23;
+}
+
+message ContractPositionHistory {
+  uint64 id = 1;
+  uint64 tenant_id = 2;
+  uint64 position_id = 3;
+  uint64 user_id = 4;
+  uint64 symbol_id = 5;
+  MarketType market_type = 6;
+  PositionSide position_side = 7;
+  PositionActionType action_type = 8;
+  string before_qty = 9;
+  string after_qty = 10;
+  string before_avail_qty = 11;
+  string after_avail_qty = 12;
+  string before_frozen_qty = 13;
+  string after_frozen_qty = 14;
+  string before_open_avg_price = 15;
+  string after_open_avg_price = 16;
+  string before_position_margin = 17;
+  string after_position_margin = 18;
+  string before_isolated_margin = 19;
+  string after_isolated_margin = 20;
+  string before_unrealized_pnl = 21;
+  string after_unrealized_pnl = 22;
+  string realized_pnl_delta = 23;
+  string fee_delta = 24;
+  string fee_asset = 25;
+  string mark_price = 26;
+  uint64 ref_order_id = 27;
+  uint64 ref_fill_id = 28;
+  uint64 operator_id = 29;
+  SourceType source = 30;
+  string remark = 31;
+  int64 create_times = 32;
+}
+
+message ContractMarginAccount {
+  uint64 id = 1;
+  uint64 tenant_id = 2;
+  uint64 user_id = 3;
+  MarketType market_type = 4;
+  string margin_asset = 5;
+  string balance = 6;
+  string available_balance = 7;
+  string frozen_balance = 8;
+  string position_margin = 9;
+  string order_margin = 10;
+  string unrealized_pnl = 11;
+  string realized_pnl = 12;
+  uint64 version = 13;
+  int64 create_times = 14;
+  int64 update_times = 15;
+}
+
+message ContractLeverageConfig {
+  uint64 id = 1;
+  uint64 tenant_id = 2;
+  uint64 user_id = 3;
+  uint64 symbol_id = 4;
+  MarketType market_type = 5;
+  MarginMode margin_mode = 6;
+  PositionMode position_mode = 7;
+  uint32 long_leverage = 8;
+  uint32 short_leverage = 9;
+  uint32 max_leverage = 10;
+  uint64 operator_id = 11;
+  SourceType source = 12;
+  uint32 status = 13;
+  string remark = 14;
+  int64 create_times = 15;
+  int64 update_times = 16;
+}
+
+message RiskUserTradeLimit {
+  uint64 id = 1;
+  uint64 tenant_id = 2;
+  uint64 user_id = 3;
+  MarketType market_type = 4;
+  bool can_open = 5;
+  bool can_close = 6;
+  bool can_cancel = 7;
+  bool can_trigger_order = 8;
+  bool can_api_trade = 9;
+  bool trade_enabled = 10;
+  bool only_reduce_only = 11;
+  uint32 max_open_order_count = 12;
+  uint32 max_order_count_per_day = 13;
+  uint32 max_cancel_count_per_day = 14;
+  string max_open_notional = 15;
+  string max_position_notional = 16;
+  uint32 risk_level = 17;
+  uint64 operator_id = 18;
+  SourceType source = 19;
+  uint32 status = 20;
+  int64 effective_start_time = 21;
+  int64 effective_end_time = 22;
+  string remark = 23;
+  int64 create_times = 24;
+  int64 update_times = 25;
+}
+
+message RiskUserSymbolLimit {
+  uint64 id = 1;
+  uint64 tenant_id = 2;
+  uint64 user_id = 3;
+  uint64 symbol_id = 4;
+  MarketType market_type = 5;
+  string max_position_qty = 6;
+  string max_position_notional = 7;
+  uint32 max_open_orders = 8;
+  string max_order_qty = 9;
+  string max_order_notional = 10;
+  string min_order_qty = 11;
+  string min_order_notional = 12;
+  string max_long_position_qty = 13;
+  string max_short_position_qty = 14;
+  string price_deviation_rate = 15;
+  uint64 operator_id = 16;
+  SourceType source = 17;
+  uint32 status = 18;
+  int64 effective_start_time = 19;
+  int64 effective_end_time = 20;
+  string remark = 21;
+  int64 create_times = 22;
+  int64 update_times = 23;
+}
+
+message RiskOrderCheckLog {
+  uint64 id = 1;
+  uint64 tenant_id = 2;
+  string order_no = 3;
+  string client_order_id = 4;
+  uint64 user_id = 5;
+  uint64 symbol_id = 6;
+  MarketType market_type = 7;
+  RiskCheckType check_type = 8;
+  RiskCheckResult check_result = 9;
+  string reject_code = 10;
+  string reject_msg = 11;
+  string request_price = 12;
+  string request_qty = 13;
+  string request_amount = 14;
+  uint64 operator_id = 15;
+  SourceType source = 16;
+  string check_snapshot = 17;
+  int64 create_times = 18;
+}
+
+message BizTradeEvent {
+  uint64 id = 1;
+  uint64 tenant_id = 2;
+  string event_no = 3;
+  string event_type = 4;
+  string biz_id = 5;
+  string biz_type = 6;
+  uint64 user_id = 7;
+  uint64 symbol_id = 8;
+  MarketType market_type = 9;
+  uint64 operator_id = 10;
+  SourceType source = 11;
+  EventStatus event_status = 12;
+  uint32 retry_count = 13;
+  uint32 max_retry_count = 14;
+  int64 next_retry_at = 15;
+  string last_error_msg = 16;
+  string payload = 17;
+  string ext_data = 18;
+  int64 create_times = 19;
+  int64 update_times = 20;
+}

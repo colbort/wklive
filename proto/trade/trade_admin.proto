@@ -1,0 +1,302 @@
+syntax = "proto3";
+
+package trade;
+
+option go_package = "wklive/proto/trade;trade";
+
+import "proto/common/common.proto";
+import "proto/trade/enum.proto";
+import "proto/trade/model.proto";
+
+service TradeAdmin {
+  rpc CreateSymbol(CreateSymbolReq) returns (AdminCommonResp);
+  rpc UpdateSymbol(UpdateSymbolReq) returns (AdminCommonResp);
+  rpc GetSymbolListAdmin(GetSymbolListAdminReq) returns (GetSymbolListAdminResp);
+
+  rpc SetSpotSymbolConfig(SetSpotSymbolConfigReq) returns (AdminCommonResp);
+  rpc SetContractSymbolConfig(SetContractSymbolConfigReq) returns (AdminCommonResp);
+
+  rpc GetOrderListAdmin(GetOrderListAdminReq) returns (GetOrderListAdminResp);
+  rpc GetFillListAdmin(GetFillListAdminReq) returns (GetFillListAdminResp);
+  rpc GetPositionListAdmin(GetPositionListAdminReq) returns (GetPositionListAdminResp);
+
+  rpc SetUserTradeLimit(SetUserTradeLimitReq) returns (AdminCommonResp);
+  rpc SetUserSymbolLimit(SetUserSymbolLimitReq) returns (AdminCommonResp);
+  rpc GetUserTradeLimit(GetUserTradeLimitReq) returns (GetUserTradeLimitResp);
+  rpc GetUserSymbolLimit(GetUserSymbolLimitReq) returns (GetUserSymbolLimitResp);
+
+  rpc GetRiskOrderCheckLogList(GetRiskOrderCheckLogListReq) returns (GetRiskOrderCheckLogListResp);
+
+  rpc SetUserLeverageConfig(SetUserLeverageConfigReq) returns (AdminCommonResp);
+  rpc GetUserLeverageConfig(GetUserLeverageConfigReq) returns (GetUserLeverageConfigResp);
+
+  rpc GetTradeEventList(GetTradeEventListReq) returns (GetTradeEventListResp);
+  rpc RetryTradeEvent(RetryTradeEventReq) returns (AdminCommonResp);
+}
+
+message AdminCommonResp {
+  common.RespBase base = 1;
+}
+
+message CreateSymbolReq {
+  uint64 tenant_id = 1;
+  string symbol = 2;
+  string display_symbol = 3;
+  MarketType market_type = 4;
+  string base_asset = 5;
+  string quote_asset = 6;
+  string settle_asset = 7;
+  ContractType contract_type = 8;
+  SymbolStatus status = 9;
+  uint32 price_scale = 10;
+  uint32 qty_scale = 11;
+  string min_price = 12;
+  string max_price = 13;
+  string price_tick = 14;
+  string min_qty = 15;
+  string max_qty = 16;
+  string qty_step = 17;
+  string min_notional = 18;
+  uint32 max_leverage = 19;
+  int64 open_time = 20;
+  int64 close_time = 21;
+  int32 sort = 22;
+  string remark = 23;
+}
+
+message UpdateSymbolReq {
+  uint64 tenant_id = 1;
+  uint64 id = 2;
+  string display_symbol = 3;
+  SymbolStatus status = 4;
+  uint32 price_scale = 5;
+  uint32 qty_scale = 6;
+  string min_price = 7;
+  string max_price = 8;
+  string price_tick = 9;
+  string min_qty = 10;
+  string max_qty = 11;
+  string qty_step = 12;
+  string min_notional = 13;
+  uint32 max_leverage = 14;
+  int64 open_time = 15;
+  int64 close_time = 16;
+  int32 sort = 17;
+  string remark = 18;
+}
+
+message GetSymbolListAdminReq {
+  uint64 tenant_id = 1;
+  common.PageReq page = 2;
+  MarketType market_type = 3;
+  SymbolStatus status = 4;
+  string keyword = 5;
+}
+
+message GetSymbolListAdminResp {
+  common.RespBase base = 1;
+  repeated TradeSymbol list = 2;
+}
+
+message SetSpotSymbolConfigReq {
+  uint64 tenant_id = 1;
+  uint64 symbol_id = 2;
+  string maker_fee_rate = 3;
+  string taker_fee_rate = 4;
+  bool buy_enabled = 5;
+  bool sell_enabled = 6;
+}
+
+message SetContractSymbolConfigReq {
+  uint64 tenant_id = 1;
+  uint64 symbol_id = 2;
+  string contract_size = 3;
+  string multiplier = 4;
+  string maintenance_margin_rate = 5;
+  string initial_margin_rate = 6;
+  string maker_fee_rate = 7;
+  string taker_fee_rate = 8;
+  uint32 funding_interval_minutes = 9;
+  int64 delivery_time = 10;
+  bool support_cross = 11;
+  bool support_isolated = 12;
+  bool buy_enabled = 13;
+  bool sell_enabled = 14;
+}
+
+message GetOrderListAdminReq {
+  uint64 tenant_id = 1;
+  common.PageReq page = 2;
+  uint64 user_id = 3;
+  MarketType market_type = 4;
+  uint64 symbol_id = 5;
+  OrderStatus status = 6;
+  string keyword = 7;
+  TimeRange time_range = 8;
+}
+
+message GetOrderListAdminResp {
+  common.RespBase base = 1;
+  repeated TradeOrder list = 2;
+}
+
+message GetFillListAdminReq {
+  uint64 tenant_id = 1;
+  common.PageReq page = 2;
+  uint64 user_id = 3;
+  MarketType market_type = 4;
+  uint64 symbol_id = 5;
+  TimeRange time_range = 6;
+}
+
+message GetFillListAdminResp {
+  common.RespBase base = 1;
+  repeated TradeFill list = 2;
+}
+
+message GetPositionListAdminReq {
+  uint64 tenant_id = 1;
+  common.PageReq page = 2;
+  uint64 user_id = 3;
+  MarketType market_type = 4;
+  uint64 symbol_id = 5;
+}
+
+message GetPositionListAdminResp {
+  common.RespBase base = 1;
+  repeated ContractPosition list = 2;
+}
+
+message SetUserTradeLimitReq {
+  uint64 tenant_id = 1;
+  uint64 user_id = 2;
+  MarketType market_type = 3;
+  bool can_open = 4;
+  bool can_close = 5;
+  bool can_cancel = 6;
+  bool can_trigger_order = 7;
+  bool can_api_trade = 8;
+  bool trade_enabled = 9;
+  bool only_reduce_only = 10;
+  uint32 max_open_order_count = 11;
+  uint32 max_order_count_per_day = 12;
+  uint32 max_cancel_count_per_day = 13;
+  string max_open_notional = 14;
+  string max_position_notional = 15;
+  uint32 risk_level = 16;
+  uint64 operator_id = 17;
+  SourceType source = 18;
+  uint32 status = 19;
+  int64 effective_start_time = 20;
+  int64 effective_end_time = 21;
+  string remark = 22;
+}
+
+message SetUserSymbolLimitReq {
+  uint64 tenant_id = 1;
+  uint64 user_id = 2;
+  uint64 symbol_id = 3;
+  MarketType market_type = 4;
+  string max_position_qty = 5;
+  string max_position_notional = 6;
+  uint32 max_open_orders = 7;
+  string max_order_qty = 8;
+  string max_order_notional = 9;
+  string min_order_qty = 10;
+  string min_order_notional = 11;
+  string max_long_position_qty = 12;
+  string max_short_position_qty = 13;
+  string price_deviation_rate = 14;
+  uint64 operator_id = 15;
+  SourceType source = 16;
+  uint32 status = 17;
+  int64 effective_start_time = 18;
+  int64 effective_end_time = 19;
+  string remark = 20;
+}
+
+message GetUserTradeLimitReq {
+  uint64 tenant_id = 1;
+  uint64 user_id = 2;
+  MarketType market_type = 3;
+}
+
+message GetUserTradeLimitResp {
+  RiskUserTradeLimit data = 1;
+}
+
+message GetUserSymbolLimitReq {
+  uint64 tenant_id = 1;
+  uint64 user_id = 2;
+  uint64 symbol_id = 3;
+  MarketType market_type = 4;
+}
+
+message GetUserSymbolLimitResp {
+  RiskUserSymbolLimit data = 1;
+}
+
+message GetRiskOrderCheckLogListReq {
+  uint64 tenant_id = 1;
+  common.PageReq page = 2;
+  uint64 user_id = 3;
+  uint64 symbol_id = 4;
+  MarketType market_type = 5;
+  RiskCheckType check_type = 6;
+  RiskCheckResult check_result = 7;
+  TimeRange time_range = 8;
+}
+
+message GetRiskOrderCheckLogListResp {
+  common.RespBase base = 1;
+  repeated RiskOrderCheckLog list = 2;
+}
+
+message SetUserLeverageConfigReq {
+  uint64 tenant_id = 1;
+  uint64 user_id = 2;
+  uint64 symbol_id = 3;
+  MarketType market_type = 4;
+  MarginMode margin_mode = 5;
+  PositionMode position_mode = 6;
+  uint32 long_leverage = 7;
+  uint32 short_leverage = 8;
+  uint32 max_leverage = 9;
+  uint64 operator_id = 10;
+  SourceType source = 11;
+  uint32 status = 12;
+  string remark = 13;
+}
+
+message GetUserLeverageConfigReq {
+  uint64 tenant_id = 1;
+  uint64 user_id = 2;
+  uint64 symbol_id = 3;
+  MarketType market_type = 4;
+  MarginMode margin_mode = 5;
+}
+
+message GetUserLeverageConfigResp {
+  ContractLeverageConfig data = 1;
+}
+
+message GetTradeEventListReq {
+  uint64 tenant_id = 1;
+  common.PageReq page = 2;
+  string event_type = 3;
+  string biz_type = 4;
+  string biz_id = 5;
+  EventStatus event_status = 6;
+  TimeRange time_range = 7;
+}
+
+message GetTradeEventListResp {
+  common.RespBase base = 1;
+  repeated BizTradeEvent list = 2;
+}
+
+message RetryTradeEventReq {
+  uint64 tenant_id = 1;
+  uint64 id = 2;
+  uint64 operator_id = 3;
+}

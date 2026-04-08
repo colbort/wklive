@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/common"
 	"wklive/proto/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,7 +30,7 @@ func NewSysTenantListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 
 func (l *SysTenantListLogic) SysTenantList(req *types.SysTenantListReq) (resp *types.SysTenantListResp, err error) {
 	result, err := l.svcCtx.SystemCli.SysTenantList(l.ctx, &system.SysTenantListReq{
-		Page: &system.PageReq{
+		Page: &common.PageReq{
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
 		},

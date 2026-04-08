@@ -4,13 +4,6 @@ package system;
 
 option go_package = "wklive/proto/system;system";
 
-enum SysConfigType {
-  UNKNOWN = 0;
-  SYSTEM_CORE = 1; // 系统配置
-  OBJECT_STORAGE = 2; // 对象存储配置
-  ITICK_CONFIG = 3; // ITICK配置
-}
-
 message Interval {
 	string name   = 1;
 	int32  kType  = 2;

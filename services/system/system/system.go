@@ -33,7 +33,6 @@ type (
 	OpLogItem              = system.OpLogItem
 	OpLogListReq           = system.OpLogListReq
 	OpLogListResp          = system.OpLogListResp
-	PageReq                = system.PageReq
 	ProfileReq             = system.ProfileReq
 	ProfileResp            = system.ProfileResp
 	ProfileUser            = system.ProfileUser

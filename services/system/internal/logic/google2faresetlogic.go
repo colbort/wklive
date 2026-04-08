@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -30,8 +31,10 @@ func (l *Google2FAResetLogic) Google2FAReset(in *system.Google2FAResetReq) (*sys
 	}
 	if user == nil {
 		return &system.RespBase{
-			Code: 1,
-			Msg:  "用户不存在",
+			Base: &common.RespBase{
+				Code: 1,
+				Msg:  "用户不存在",
+			},
 		}, nil
 	}
 	user.GoogleSecret = ""
@@ -40,7 +43,9 @@ func (l *Google2FAResetLogic) Google2FAReset(in *system.Google2FAResetReq) (*sys
 	}
 
 	return &system.RespBase{
-		Code: 200,
-		Msg:  "重置成功",
+		Base: &common.RespBase{
+			Code: 200,
+			Msg:  "重置成功",
+		},
 	}, nil
 }

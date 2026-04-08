@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/common"
 	"wklive/proto/payment"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,7 +30,7 @@ func NewListWithdrawOrdersLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 func (l *ListWithdrawOrdersLogic) ListWithdrawOrders(req *types.ListWithdrawOrdersReq) (resp *types.ListWithdrawOrdersResp, err error) {
 	result, err := l.svcCtx.PaymentCli.ListWithdrawOrders(l.ctx, &payment.ListWithdrawOrdersReq{
-		Page: &payment.PageReq{
+		Page: &common.PageReq{
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
 		},

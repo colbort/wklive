@@ -32,7 +32,7 @@ func (l *SysRoleDeleteLogic) SysRoleDelete(req *types.SysRoleDeleteReq) (resp *t
 		Id: req.Id,
 	})
 	return &types.RespBase{
-		Code: result.Code,
-		Msg:  result.Msg,
+		Code: result.Base.Code,
+		Msg:  result.Base.Msg,
 	}, err
 }

@@ -1341,7 +1341,7 @@ var File_proto_user_model_proto protoreflect.FileDescriptor
 
 const file_proto_user_model_proto_rawDesc = "" +
 	"\n" +
-	"\x16proto/user/model.proto\x12\x04user\x1a\x17proto/user/common.proto\"\xe9\x05\n" +
+	"\x16proto/user/model.proto\x12\x04user\x1a\x15proto/user/enum.proto\"\xe9\x05\n" +
 	"\bUserBase\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -1568,7 +1568,7 @@ func file_proto_user_model_proto_init() {
 	if File_proto_user_model_proto != nil {
 		return
 	}
-	file_proto_user_common_proto_init()
+	file_proto_user_enum_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

@@ -1,0 +1,201 @@
+syntax = "proto3";
+
+package trade;
+
+option go_package = "wklive/proto/trade;trade";
+
+import "proto/common/common.proto";
+import "proto/trade/enum.proto";
+import "proto/trade/model.proto";
+
+service TradeApp {
+  rpc GetSymbolList(GetSymbolListReq) returns (GetSymbolListResp);
+  rpc GetSymbolDetail(GetSymbolDetailReq) returns (GetSymbolDetailResp);
+
+  rpc PlaceOrder(PlaceOrderReq) returns (PlaceOrderResp);
+  rpc CancelOrder(CancelOrderReq) returns (AppCommonResp);
+  rpc CancelAllOrders(CancelAllOrdersReq) returns (CancelAllOrdersResp);
+
+  rpc GetOrderList(GetOrderListReq) returns (GetOrderListResp);
+  rpc GetOrderDetail(GetOrderDetailReq) returns (GetOrderDetailResp);
+
+  rpc GetFillList(GetFillListReq) returns (GetFillListResp);
+
+  rpc GetPositionList(GetPositionListReq) returns (GetPositionListResp);
+  rpc GetMarginAccountList(GetMarginAccountListReq) returns (GetMarginAccountListResp);
+
+  rpc SetLeverage(SetLeverageReq) returns (AppCommonResp);
+  rpc SetUserTradeConfig(SetUserTradeConfigReq) returns (AppCommonResp);
+  rpc GetUserTradeConfig(GetUserTradeConfigReq) returns (GetUserTradeConfigResp);
+}
+
+message AppCommonResp {
+  common.RespBase base = 1;
+}
+
+message GetSymbolListReq {
+  uint64 tenant_id = 1;
+  MarketType market_type = 2;
+  SymbolStatus status = 3;
+}
+
+message GetSymbolListResp {
+  repeated TradeSymbol list = 1;
+}
+
+message GetSymbolDetailReq {
+  uint64 tenant_id = 1;
+  uint64 symbol_id = 2;
+}
+
+message GetSymbolDetailResp {
+  TradeSymbol symbol = 1;
+  TradeSymbolSpot spot = 2;
+  TradeSymbolContract contract = 3;
+}
+
+message PlaceOrderReq {
+  uint64 tenant_id = 1;
+  uint64 user_id = 2;
+  uint64 symbol_id = 3;
+  MarketType market_type = 4;
+  TradeSide side = 5;
+  PositionSide position_side = 6;
+  OrderType order_type = 7;
+  TimeInForce time_in_force = 8;
+  string client_order_id = 9;
+  string price = 10;
+  string qty = 11;
+  string amount = 12;
+  bool is_reduce_only = 13;
+  bool is_close_only = 14;
+  string trigger_price = 15;
+  uint32 trigger_type = 16;
+  MarginMode margin_mode = 17;
+  uint32 leverage = 18;
+  string take_profit_price = 19;
+  string stop_loss_price = 20;
+  OrderSourceType order_source = 21;
+}
+
+message PlaceOrderResp {
+  TradeOrder order = 1;
+}
+
+message CancelOrderReq {
+  uint64 tenant_id = 1;
+  uint64 user_id = 2;
+  uint64 order_id = 3;
+  string order_no = 4;
+  string client_order_id = 5;
+}
+
+message CancelAllOrdersReq {
+  uint64 tenant_id = 1;
+  uint64 user_id = 2;
+  MarketType market_type = 3;
+  uint64 symbol_id = 4;
+}
+
+message CancelAllOrdersResp {
+  uint32 affected_count = 1;
+}
+
+message GetOrderListReq {
+  uint64 tenant_id = 1;
+  uint64 user_id = 2;
+  common.PageReq page = 3;
+  MarketType market_type = 4;
+  uint64 symbol_id = 5;
+  OrderStatus status = 6;
+  TradeSide side = 7;
+  TimeRange time_range = 8;
+}
+
+message GetOrderListResp {
+  common.RespBase base = 1;
+  repeated TradeOrder list = 2;
+}
+
+message GetOrderDetailReq {
+  uint64 tenant_id = 1;
+  uint64 user_id = 2;
+  uint64 order_id = 3;
+  string order_no = 4;
+}
+
+message GetOrderDetailResp {
+  TradeOrder order = 1;
+  TradeOrderSpot spot = 2;
+  TradeOrderContract contract = 3;
+}
+
+message GetFillListReq {
+  uint64 tenant_id = 1;
+  uint64 user_id = 2;
+  common.PageReq page = 3;
+  MarketType market_type = 4;
+  uint64 symbol_id = 5;
+  TimeRange time_range = 6;
+}
+
+message GetFillListResp {
+  common.RespBase base = 1;
+  repeated TradeFill list = 2;
+}
+
+message GetPositionListReq {
+  uint64 tenant_id = 1;
+  uint64 user_id = 2;
+  MarketType market_type = 3;
+  uint64 symbol_id = 4;
+}
+
+message GetPositionListResp {
+  repeated ContractPosition list = 1;
+}
+
+message GetMarginAccountListReq {
+  uint64 tenant_id = 1;
+  uint64 user_id = 2;
+  MarketType market_type = 3;
+}
+
+message GetMarginAccountListResp {
+  repeated ContractMarginAccount list = 1;
+}
+
+message SetLeverageReq {
+  uint64 tenant_id = 1;
+  uint64 user_id = 2;
+  uint64 symbol_id = 3;
+  MarketType market_type = 4;
+  MarginMode margin_mode = 5;
+  PositionMode position_mode = 6;
+  uint32 long_leverage = 7;
+  uint32 short_leverage = 8;
+}
+
+message SetUserTradeConfigReq {
+  uint64 tenant_id = 1;
+  uint64 user_id = 2;
+  MarketType market_type = 3;
+  uint64 symbol_id = 4;
+  PositionMode position_mode = 5;
+  MarginMode margin_mode = 6;
+  uint32 default_leverage = 7;
+  bool trade_enabled = 8;
+  bool reduce_only_enabled = 9;
+}
+
+message GetUserTradeConfigReq {
+  uint64 tenant_id = 1;
+  uint64 user_id = 2;
+  MarketType market_type = 3;
+  uint64 symbol_id = 4;
+}
+
+message GetUserTradeConfigResp {
+  TradeUserConfig config = 1;
+  ContractLeverageConfig leverage_config = 2;
+}

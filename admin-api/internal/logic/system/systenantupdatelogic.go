@@ -28,7 +28,7 @@ func NewSysTenantUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 }
 
 func (l *SysTenantUpdateLogic) SysTenantUpdate(req *types.SysTenantUpdateReq) (resp *types.RespBase, err error) {
-	reuslt, err := l.svcCtx.SystemCli.SysTenantUpdate(l.ctx, &system.SysTenantUpdateReq{
+	result, err := l.svcCtx.SystemCli.SysTenantUpdate(l.ctx, &system.SysTenantUpdateReq{
 		Id:           req.Id,
 		TenantName:   req.TenantName,
 		Status:       req.Status,
@@ -41,7 +41,7 @@ func (l *SysTenantUpdateLogic) SysTenantUpdate(req *types.SysTenantUpdateReq) (r
 		return nil, err
 	}
 	return &types.RespBase{
-		Code: reuslt.Code,
-		Msg:  reuslt.Msg,
+		Code: result.Base.Code,
+		Msg:  result.Base.Msg,
 	}, nil
 }

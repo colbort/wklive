@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
@@ -33,8 +34,10 @@ func (l *SysRoleUpdateLogic) SysRoleUpdate(in *system.SysRoleUpdateReq) (*system
 	}
 	if one == nil {
 		return &system.RespBase{
-			Code: 400,
-			Msg:  "角色不存在",
+			Base: &common.RespBase{
+				Code: 400,
+				Msg:  "角色不存在",
+			},
 		}, nil
 	}
 
@@ -47,7 +50,9 @@ func (l *SysRoleUpdateLogic) SysRoleUpdate(in *system.SysRoleUpdateReq) (*system
 		return nil, err
 	}
 	return &system.RespBase{
-		Code: 200,
-		Msg:  "更新成功",
+		Base: &common.RespBase{
+			Code: 200,
+			Msg:  "更新成功",
+		},
 	}, nil
 }

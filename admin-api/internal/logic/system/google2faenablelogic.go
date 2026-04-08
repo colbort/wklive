@@ -36,7 +36,7 @@ func (l *Google2FAEnableLogic) Google2FAEnable(req *types.Google2FAEnableReq) (r
 		return nil, err
 	}
 	return &types.RespBase{
-		Code: result.Code,
-		Msg:  result.Msg,
+		Code: result.Base.Code,
+		Msg:  result.Base.Msg,
 	}, nil
 }

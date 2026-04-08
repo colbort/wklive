@@ -2,25 +2,15 @@ syntax = "proto3";
 
 package system;
 
-import "proto/system/config.proto";
+import "proto/common/common.proto";
+import "proto/system/enum.proto";
 
 option go_package = "wklive/proto/system;system";
 
 message Empty {}
 
-message PageReq {
-  int64 cursor = 1;
-  int64 limit = 2;
-}
-
 message RespBase {
-  int32 code = 1;
-  string msg = 2;
-  int64 total = 3;
-  bool has_next = 4;
-  bool has_prev = 5;
-  int64 next_cursor = 6;
-  int64 prev_cursor = 7;
+  common.RespBase base = 1;
 }
 
 //////////////////////
@@ -35,7 +25,7 @@ message AdminLoginReq {
 }
 
 message AdminLoginResp {
-  RespBase base = 1;
+  common.RespBase base = 1;
   string token = 3;
   int64 exp = 4;
   int64 uid = 5;
@@ -104,7 +94,7 @@ message SysMenuItem {
 }
 
 message SysMenuTreeResp {
-  RespBase base = 1;
+  common.RespBase base = 1;
   repeated SysMenuItem data = 2;
 }
 
@@ -115,7 +105,7 @@ message Google2FAInitReq {
   int64 user_id = 1;
 }
 message Google2FAInitResp {
-  RespBase base = 1;
+  common.RespBase base = 1;
   string secret = 3;
   string otpauth_url = 4;
 }
@@ -152,12 +142,12 @@ message SysUserItem {
 }
 
 message SysUserListReq {
-  PageReq page = 1;
+  common.PageReq page = 1;
   string keyword = 2;
   int64 status = 3;
 }
 message SysUserListResp {
-  RespBase base = 1;
+  common.RespBase base = 1;
   repeated SysUserItem data = 4;
 }
 
@@ -165,7 +155,7 @@ message SysUserDetailReq {
   int64 id = 1;
 }
 message SysUserDetailResp {
-  RespBase base = 1;
+  common.RespBase base = 1;
   SysUserItem data = 3;
 }
 
@@ -210,12 +200,12 @@ message SysRoleItem {
   int64 create_times = 6;
 }
 message SysRoleListReq {
-  PageReq page = 1;
+  common.PageReq page = 1;
   string keyword = 2;
   int64 status = 3;
 }
 message SysRoleListResp {
-  RespBase base = 1;
+  common.RespBase base = 1;
   repeated SysRoleItem data = 4;
 }
 
@@ -243,7 +233,7 @@ message SysRoleGrantDetailReq {
   int64 role_id = 1;
 }
 message SysRoleGrantDetailResp {
-  RespBase base = 1;
+  common.RespBase base = 1;
   int64 role_id = 3;
   repeated int64 menu_ids = 4;
   repeated string perm_keys = 5;
@@ -257,7 +247,7 @@ message SysPermItem {
 }
 
 message SysPermListResp {
-  RespBase base = 1;
+  common.RespBase base = 1;
   repeated SysPermItem data = 3;
 }
 
@@ -296,14 +286,14 @@ message SysMenuDeleteReq {
 }
 
 message SysMenuListReq {
-  PageReq page = 1;
+  common.PageReq page = 1;
   string keyword = 2;
   int64 menu_type = 3;
   int64 status = 4;
   int64 visible = 5;
 }
 message SysMenuListResp {
-  RespBase base = 1;
+  common.RespBase base = 1;
   repeated SysMenuItem data = 4;
 }
 
@@ -321,12 +311,12 @@ message LoginLogItem {
   int64 login_at = 8;
 }
 message LoginLogListReq {
-  PageReq page = 1;
+  common.PageReq page = 1;
   string username = 2;
   int64 success = 3;
 }
 message LoginLogListResp {
-  RespBase base = 1;
+  common.RespBase base = 1;
   repeated LoginLogItem data = 4;
 }
 
@@ -344,13 +334,13 @@ message OpLogItem {
   int64 update_times = 11;
 }
 message OpLogListReq {
-  PageReq page = 1;
+  common.PageReq page = 1;
   string username = 2;
   string method = 3;
   string path = 4;
 }
 message OpLogListResp {
-  RespBase base = 1;
+  common.RespBase base = 1;
   repeated OpLogItem data = 4;
 }
 
@@ -380,11 +370,11 @@ message SysConfigItem {
 }
 
 message SysConfigListReq {
-  PageReq page = 1;
+  common.PageReq page = 1;
   string keyword = 2;
 }
 message SysConfigListResp {
-  RespBase base = 1;
+  common.RespBase base = 1;
   repeated SysConfigItem data = 4;
 }
 
@@ -394,7 +384,7 @@ message SysConfigDetailReq {
 }
 
 message SysConfigDetailResp {
-  RespBase base = 1;
+  common.RespBase base = 1;
   SysConfigItem data = 3;
 }
 
@@ -402,12 +392,12 @@ message SysConfigByKeysReq {
   repeated string config_keys = 1;
 }
 message SysConfigByKeysResp {
-  RespBase base = 1;
+  common.RespBase base = 1;
   repeated SysConfigItem data = 3;
 }
 
 message SysConfigKeysResp {
-  RespBase base = 1;
+  common.RespBase base = 1;
   repeated string data = 3;
 }
 
@@ -434,14 +424,14 @@ message SysCronJobItem {
 }
 
 message SysCronJobListReq {
-  PageReq page = 1;
+  common.PageReq page = 1;
   string keyword = 2;
   string job_name = 3;
   string job_group = 4;
   int64 status = 5;
 }
 message SysCronJobListResp {
-  RespBase base = 1;
+  common.RespBase base = 1;
   repeated SysCronJobItem data = 4;
 }
 
@@ -495,7 +485,7 @@ message SysCronJobLogItem {
 }
 
 message SysCronJobLogListReq {
-  PageReq page = 1;
+  common.PageReq page = 1;
   int64 job_id = 2;
   string job_name = 3;
   string invoke_target = 4;
@@ -508,12 +498,12 @@ message SysCronJobHander {
 }
 
 message SysCronJobHandlersResp {
-  RespBase base = 1;
+  common.RespBase base = 1;
   repeated SysCronJobHander data = 3;
 }
 
 message SysCronJobLogListResp {
-  RespBase base = 1;
+  common.RespBase base = 1;
   repeated SysCronJobLogItem data = 4;
 }
 
@@ -532,7 +522,7 @@ message SysTenantItem {
 }
 
 message SysTenantListReq {
-  PageReq page = 1;
+  common.PageReq page = 1;
   string keyword = 2;
   int64 status = 3;
   string tenant_code = 4;
@@ -541,7 +531,7 @@ message SysTenantListReq {
   string contact_phone = 7;
 }
 message SysTenantListResp {
-  RespBase base = 1;
+  common.RespBase base = 1;
   repeated SysTenantItem data = 4;
 }
 
@@ -574,7 +564,7 @@ message SysTenantByCodeReq {
 }
 
 message SysTenantByCodeResp {
-  RespBase base = 1;
+  common.RespBase base = 1;
   SysTenantItem data = 2;
 }
 

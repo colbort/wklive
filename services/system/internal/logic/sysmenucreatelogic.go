@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
@@ -38,8 +39,10 @@ func (l *SysMenuCreateLogic) SysMenuCreate(in *system.SysMenuCreateReq) (*system
 		menu, err = l.svcCtx.MenuModel.FindOneByPerms(l.ctx, in.Perms)
 	default:
 		return &system.RespBase{
-			Code: 400,
-			Msg:  "Invalid menu type",
+			Base: &common.RespBase{
+				Code: 400,
+				Msg:  "Invalid menu type",
+			},
 		}, nil
 	}
 	if err != nil && err != models.ErrNotFound {
@@ -47,8 +50,10 @@ func (l *SysMenuCreateLogic) SysMenuCreate(in *system.SysMenuCreateReq) (*system
 	}
 	if menu != nil {
 		return &system.RespBase{
-			Code: 400,
-			Msg:  "Menu already exists",
+			Base: &common.RespBase{
+				Code: 400,
+				Msg:  "Menu already exists",
+			},
 		}, nil
 	}
 	_, err = l.svcCtx.MenuModel.Insert(l.ctx, &models.SysMenu{
@@ -71,7 +76,9 @@ func (l *SysMenuCreateLogic) SysMenuCreate(in *system.SysMenuCreateReq) (*system
 	}
 
 	return &system.RespBase{
-		Code: 200,
-		Msg:  "Menu created successfully",
+		Base: &common.RespBase{
+			Code: 200,
+			Msg:  "Menu created successfully",
+		},
 	}, nil
 }

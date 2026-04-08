@@ -6,6 +6,7 @@ import (
 	"errors"
 	"time"
 
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
@@ -40,7 +41,7 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 	}
 	if tenant == nil {
 		return &user.RegisterResp{
-			Base: &user.RespBase{
+			Base: &common.RespBase{
 				Code: 401,
 				Msg:  "租户不存在",
 			},
@@ -48,7 +49,7 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 	}
 	if tenant.Base.Code != 200 {
 		return &user.RegisterResp{
-			Base: &user.RespBase{
+			Base: &common.RespBase{
 				Code: tenant.Base.Code,
 				Msg:  tenant.Base.Msg,
 			},
@@ -56,7 +57,7 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 	}
 	if tenant.Data.Status != 1 {
 		return &user.RegisterResp{
-			Base: &user.RespBase{
+			Base: &common.RespBase{
 				Code: 502,
 				Msg:  "租户被禁用",
 			},
@@ -64,7 +65,7 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 	}
 	if tenant.Data.ExpireTime < time.Now().UnixMilli() {
 		return &user.RegisterResp{
-			Base: &user.RespBase{
+			Base: &common.RespBase{
 				Code: 502,
 				Msg:  "租户已过期",
 			},
@@ -81,7 +82,7 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 	case user.RegisterType_REGISTER_TYPE_USERNAME:
 		if in.InviteCode == "" {
 			return &user.RegisterResp{
-				Base: &user.RespBase{
+				Base: &common.RespBase{
 					Code: 201,
 					Msg:  "邀请码不能为空",
 				},
@@ -93,7 +94,7 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 		}
 		if parent == nil {
 			return &user.RegisterResp{
-				Base: &user.RespBase{
+				Base: &common.RespBase{
 					Code: 201,
 					Msg:  "邀请用户不存在",
 				},
@@ -105,7 +106,7 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 		}
 		if count > 7 {
 			return &user.RegisterResp{
-				Base: &user.RespBase{
+				Base: &common.RespBase{
 					Code: 201,
 					Msg:  "不能频繁注册",
 				},
@@ -114,14 +115,14 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 		tuser, err = l.svcCtx.UserModel.FindByUsername(l.ctx, in.TenantCode, in.Username)
 		// 如果是用户名密码注册的 必须要邀请码，同一个 邀请码 的最近 一周内超过7个注册的用户如果没有一个充值的不给注册，直到 有用户充值
 	case user.RegisterType_REGISTER_TYPE_GUEST:
-		
+
 	}
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, nil
 	}
 	if tuser != nil || userIdentify != nil {
 		return &user.RegisterResp{
-			Base: &user.RespBase{
+			Base: &common.RespBase{
 				Code: 201,
 				Msg:  "用户已存在",
 			},
@@ -135,7 +136,7 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 		}
 		if parent == nil {
 			return &user.RegisterResp{
-				Base: &user.RespBase{
+				Base: &common.RespBase{
 					Code: 201,
 					Msg:  "邀请用户不存在",
 				},
@@ -189,16 +190,14 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 	}
 
 	return &user.RegisterResp{
-		Base: &user.RespBase{
+		Base: &common.RespBase{
 			Code: 200,
 			Msg:  "注册成功",
 		},
 		UserId: userId,
-		Token: &user.TokenInfo{
+		Token: &common.TokenInfo{
 			AccessToken: token,
 		},
 		Profile: &user.UserProfile{},
 	}, nil
 }
-
-

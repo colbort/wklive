@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/proto/common"
 	"wklive/proto/itick"
 	"wklive/services/itick/internal/svc"
 
@@ -31,14 +32,14 @@ func (l *GetCategoryLogic) GetCategory(in *itick.GetCategoryReq) (*itick.GetCate
 	}
 	if result == nil {
 		return &itick.GetCategoryResp{
-			Base: &itick.RespBase{
+			Base: &common.RespBase{
 				Code: 1,
 				Msg:  "数据不存在",
 			},
 		}, nil
 	}
 	return &itick.GetCategoryResp{
-		Base: &itick.RespBase{
+		Base: &common.RespBase{
 			Code: 200,
 			Msg:  "",
 		},

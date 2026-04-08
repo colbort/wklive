@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package user;
 
-import "proto/user/common.proto";
+import "proto/user/enum.proto";
 
 option go_package = "wklive/proto/user;user";
 

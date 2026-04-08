@@ -45,7 +45,7 @@ func (l *SysMenuCreateLogic) SysMenuCreate(req *types.SysMenuCreateReq) (resp *t
 		return nil, err
 	}
 	return &types.RespBase{
-		Code: result.Code,
-		Msg:  result.Msg,
+		Code: result.Base.Code,
+		Msg:  result.Base.Msg,
 	}, nil
 }

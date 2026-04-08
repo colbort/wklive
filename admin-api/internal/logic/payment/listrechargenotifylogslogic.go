@@ -8,6 +8,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/common"
 	"wklive/proto/payment"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,7 +30,7 @@ func NewListRechargeNotifyLogsLogic(ctx context.Context, svcCtx *svc.ServiceCont
 
 func (l *ListRechargeNotifyLogsLogic) ListRechargeNotifyLogs(req *types.ListRechargeNotifyLogsReq) (resp *types.ListRechargeNotifyLogsResp, err error) {
 	result, err := l.svcCtx.PaymentCli.ListRechargeNotifyLogs(l.ctx, &payment.ListRechargeNotifyLogsReq{
-		Page: &payment.PageReq{
+		Page: &common.PageReq{
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
 		},

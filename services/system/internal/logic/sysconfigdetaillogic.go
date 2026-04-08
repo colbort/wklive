@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
@@ -42,7 +43,7 @@ func (l *SysConfigDetailLogic) SysConfigDetail(in *system.SysConfigDetailReq) (*
 		return nil, err
 	}
 	return &system.SysConfigDetailResp{
-		Base: &system.RespBase{
+		Base: &common.RespBase{
 			Code: 200,
 			Msg:  "查询成功",
 		},

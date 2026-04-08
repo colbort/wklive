@@ -12,6 +12,7 @@ import (
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+	common "wklive/proto/common"
 )
 
 const (
@@ -23,7 +24,7 @@ const (
 
 type AdminCommonResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -58,7 +59,7 @@ func (*AdminCommonResp) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *AdminCommonResp) GetBase() *RespBase {
+func (x *AdminCommonResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -295,7 +296,7 @@ func (x *GetCategoryReq) GetId() int64 {
 
 type GetCategoryResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          *ItickCategory         `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -331,7 +332,7 @@ func (*GetCategoryResp) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *GetCategoryResp) GetBase() *RespBase {
+func (x *GetCategoryResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -347,7 +348,7 @@ func (x *GetCategoryResp) GetData() *ItickCategory {
 
 type ListCategoriesReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Page          *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	CategoryType  CategoryType           `protobuf:"varint,2,opt,name=category_type,json=categoryType,proto3,enum=itick.CategoryType" json:"category_type,omitempty"`
 	Enabled       int32                  `protobuf:"varint,3,opt,name=enabled,proto3" json:"enabled,omitempty"`                         // 0全部 1启用 2禁用
 	AppVisible    int32                  `protobuf:"varint,4,opt,name=app_visible,json=appVisible,proto3" json:"app_visible,omitempty"` // 0全部 1可见 2不可见
@@ -385,7 +386,7 @@ func (*ListCategoriesReq) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *ListCategoriesReq) GetPage() *PageReq {
+func (x *ListCategoriesReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
@@ -415,7 +416,7 @@ func (x *ListCategoriesReq) GetAppVisible() int32 {
 
 type ListCategoriesResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*ItickCategory       `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -451,7 +452,7 @@ func (*ListCategoriesResp) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *ListCategoriesResp) GetBase() *RespBase {
+func (x *ListCategoriesResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -511,7 +512,7 @@ func (x *SyncCategoryProductsReq) GetId() int64 {
 
 type SyncCategoryProductsResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	TaskNo        string                 `protobuf:"bytes,2,opt,name=task_no,json=taskNo,proto3" json:"task_no,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -547,7 +548,7 @@ func (*SyncCategoryProductsResp) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *SyncCategoryProductsResp) GetBase() *RespBase {
+func (x *SyncCategoryProductsResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -607,7 +608,7 @@ func (x *GetSyncTaskStatusReq) GetTaskNo() string {
 
 type GetSyncTaskStatusResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	TaskNo        string                 `protobuf:"bytes,2,opt,name=task_no,json=taskNo,proto3" json:"task_no,omitempty"`
 	Status        int32                  `protobuf:"varint,3,opt,name=status,proto3" json:"status,omitempty"`
 	Message       string                 `protobuf:"bytes,4,opt,name=message,proto3" json:"message,omitempty"`
@@ -645,7 +646,7 @@ func (*GetSyncTaskStatusResp) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *GetSyncTaskStatusResp) GetBase() *RespBase {
+func (x *GetSyncTaskStatusResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -983,7 +984,7 @@ func (x *GetProductReq) GetId() int64 {
 
 type GetProductResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          *ItickProduct          `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1019,7 +1020,7 @@ func (*GetProductResp) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{14}
 }
 
-func (x *GetProductResp) GetBase() *RespBase {
+func (x *GetProductResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -1035,7 +1036,7 @@ func (x *GetProductResp) GetData() *ItickProduct {
 
 type ListProductsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Page          *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	CategoryType  CategoryType           `protobuf:"varint,2,opt,name=category_type,json=categoryType,proto3,enum=itick.CategoryType" json:"category_type,omitempty"`
 	CategoryName  string                 `protobuf:"bytes,3,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"`
 	Market        string                 `protobuf:"bytes,4,opt,name=market,proto3" json:"market,omitempty"`
@@ -1076,7 +1077,7 @@ func (*ListProductsReq) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{15}
 }
 
-func (x *ListProductsReq) GetPage() *PageReq {
+func (x *ListProductsReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
@@ -1127,7 +1128,7 @@ func (x *ListProductsReq) GetAppVisible() int32 {
 
 type ListProductsResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*ItickProduct        `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1163,7 +1164,7 @@ func (*ListProductsResp) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{16}
 }
 
-func (x *ListProductsResp) GetBase() *RespBase {
+func (x *ListProductsResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -1263,7 +1264,7 @@ func (x *GetProductKlineReq) GetLimit() int64 {
 
 type GetProductKlineResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*Kline               `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1299,7 +1300,7 @@ func (*GetProductKlineResp) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *GetProductKlineResp) GetBase() *RespBase {
+func (x *GetProductKlineResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -1671,7 +1672,7 @@ func (x *GetTenantCategoryReq) GetTenantId() int64 {
 
 type GetTenantCategoryResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          *ItickTenantCategory   `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1707,7 +1708,7 @@ func (*GetTenantCategoryResp) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{24}
 }
 
-func (x *GetTenantCategoryResp) GetBase() *RespBase {
+func (x *GetTenantCategoryResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -1723,7 +1724,7 @@ func (x *GetTenantCategoryResp) GetData() *ItickTenantCategory {
 
 type ListTenantCategoriesReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Page          *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	CategoryType  CategoryType           `protobuf:"varint,3,opt,name=category_type,json=categoryType,proto3,enum=itick.CategoryType" json:"category_type,omitempty"`
 	Status        int32                  `protobuf:"varint,4,opt,name=status,proto3" json:"status,omitempty"`                                    // 0全部 1启用 2禁用
@@ -1762,7 +1763,7 @@ func (*ListTenantCategoriesReq) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{25}
 }
 
-func (x *ListTenantCategoriesReq) GetPage() *PageReq {
+func (x *ListTenantCategoriesReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
@@ -1799,7 +1800,7 @@ func (x *ListTenantCategoriesReq) GetVisibleStatus() int32 {
 
 type ListTenantCategoriesResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*ItickTenantCategory `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1835,7 +1836,7 @@ func (*ListTenantCategoriesResp) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{26}
 }
 
-func (x *ListTenantCategoriesResp) GetBase() *RespBase {
+func (x *ListTenantCategoriesResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -2207,7 +2208,7 @@ func (x *GetTenantProductReq) GetTenantId() int64 {
 
 type GetTenantProductResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          *ItickTenantProduct    `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2243,7 +2244,7 @@ func (*GetTenantProductResp) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{32}
 }
 
-func (x *GetTenantProductResp) GetBase() *RespBase {
+func (x *GetTenantProductResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -2259,7 +2260,7 @@ func (x *GetTenantProductResp) GetData() *ItickTenantProduct {
 
 type ListTenantProductsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Page          *PageReq               `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	CategoryType  CategoryType           `protobuf:"varint,3,opt,name=category_type,json=categoryType,proto3,enum=itick.CategoryType" json:"category_type,omitempty"`
 	Market        string                 `protobuf:"bytes,4,opt,name=market,proto3" json:"market,omitempty"`
@@ -2300,7 +2301,7 @@ func (*ListTenantProductsReq) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{33}
 }
 
-func (x *ListTenantProductsReq) GetPage() *PageReq {
+func (x *ListTenantProductsReq) GetPage() *common.PageReq {
 	if x != nil {
 		return x.Page
 	}
@@ -2351,7 +2352,7 @@ func (x *ListTenantProductsReq) GetVisibleStatus() int32 {
 
 type ListTenantProductsResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*ItickTenantProduct  `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2387,7 +2388,7 @@ func (*ListTenantProductsResp) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{34}
 }
 
-func (x *ListTenantProductsResp) GetBase() *RespBase {
+func (x *ListTenantProductsResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -2455,7 +2456,7 @@ func (x *InitTenantItickDisplayReq) GetOverwrite() int64 {
 
 type InitTenantItickDisplayResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	CategoryCount int64                  `protobuf:"varint,2,opt,name=category_count,json=categoryCount,proto3" json:"category_count,omitempty"`
 	ProductCount  int64                  `protobuf:"varint,3,opt,name=product_count,json=productCount,proto3" json:"product_count,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -2492,7 +2493,7 @@ func (*InitTenantItickDisplayResp) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_admin_proto_rawDescGZIP(), []int{36}
 }
 
-func (x *InitTenantItickDisplayResp) GetBase() *RespBase {
+func (x *InitTenantItickDisplayResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
@@ -2517,9 +2518,9 @@ var File_proto_itick_itick_admin_proto protoreflect.FileDescriptor
 
 const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\n" +
-	"\x1dproto/itick/itick_admin.proto\x12\x05itick\x1a\x18proto/itick/common.proto\x1a\x17proto/itick/model.proto\"6\n" +
-	"\x0fAdminCommonResp\x12#\n" +
-	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\"\xed\x01\n" +
+	"\x1dproto/itick/itick_admin.proto\x12\x05itick\x1a\x19proto/common/common.proto\x1a\x16proto/itick/enum.proto\x1a\x17proto/itick/model.proto\"7\n" +
+	"\x0fAdminCommonResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\xed\x01\n" +
 	"\x11CreateCategoryReq\x128\n" +
 	"\rcategory_type\x18\x01 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12#\n" +
 	"\rcategory_name\x18\x02 \x01(\tR\fcategoryName\x12\x18\n" +
@@ -2539,28 +2540,28 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\x04icon\x18\x06 \x01(\tR\x04icon\x12\x16\n" +
 	"\x06remark\x18\a \x01(\tR\x06remark\" \n" +
 	"\x0eGetCategoryReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"`\n" +
-	"\x0fGetCategoryResp\x12#\n" +
-	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12(\n" +
-	"\x04data\x18\x02 \x01(\v2\x14.itick.ItickCategoryR\x04data\"\xac\x01\n" +
-	"\x11ListCategoriesReq\x12\"\n" +
-	"\x04page\x18\x01 \x01(\v2\x0e.itick.PageReqR\x04page\x128\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"a\n" +
+	"\x0fGetCategoryResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12(\n" +
+	"\x04data\x18\x02 \x01(\v2\x14.itick.ItickCategoryR\x04data\"\xad\x01\n" +
+	"\x11ListCategoriesReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x128\n" +
 	"\rcategory_type\x18\x02 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12\x18\n" +
 	"\aenabled\x18\x03 \x01(\x05R\aenabled\x12\x1f\n" +
 	"\vapp_visible\x18\x04 \x01(\x05R\n" +
-	"appVisible\"c\n" +
-	"\x12ListCategoriesResp\x12#\n" +
-	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12(\n" +
+	"appVisible\"d\n" +
+	"\x12ListCategoriesResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12(\n" +
 	"\x04data\x18\x02 \x03(\v2\x14.itick.ItickCategoryR\x04data\")\n" +
 	"\x17SyncCategoryProductsReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"X\n" +
-	"\x18SyncCategoryProductsResp\x12#\n" +
-	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12\x17\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"Y\n" +
+	"\x18SyncCategoryProductsResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x17\n" +
 	"\atask_no\x18\x02 \x01(\tR\x06taskNo\"/\n" +
 	"\x14GetSyncTaskStatusReq\x12\x17\n" +
-	"\atask_no\x18\x01 \x01(\tR\x06taskNo\"\x87\x01\n" +
-	"\x15GetSyncTaskStatusResp\x12#\n" +
-	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12\x17\n" +
+	"\atask_no\x18\x01 \x01(\tR\x06taskNo\"\x88\x01\n" +
+	"\x15GetSyncTaskStatusResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x17\n" +
 	"\atask_no\x18\x02 \x01(\tR\x06taskNo\x12\x16\n" +
 	"\x06status\x18\x03 \x01(\x05R\x06status\x12\x18\n" +
 	"\amessage\x18\x04 \x01(\tR\amessage\"\xfe\x02\n" +
@@ -2597,21 +2598,21 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	" \x01(\tR\x04icon\x12\x16\n" +
 	"\x06remark\x18\v \x01(\tR\x06remark\"\x1f\n" +
 	"\rGetProductReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"^\n" +
-	"\x0eGetProductResp\x12#\n" +
-	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12'\n" +
-	"\x04data\x18\x02 \x01(\v2\x13.itick.ItickProductR\x04data\"\x81\x02\n" +
-	"\x0fListProductsReq\x12\"\n" +
-	"\x04page\x18\x01 \x01(\v2\x0e.itick.PageReqR\x04page\x128\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"_\n" +
+	"\x0eGetProductResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
+	"\x04data\x18\x02 \x01(\v2\x13.itick.ItickProductR\x04data\"\x82\x02\n" +
+	"\x0fListProductsReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x128\n" +
 	"\rcategory_type\x18\x02 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12#\n" +
 	"\rcategory_name\x18\x03 \x01(\tR\fcategoryName\x12\x16\n" +
 	"\x06market\x18\x04 \x01(\tR\x06market\x12\x18\n" +
 	"\akeyword\x18\x05 \x01(\tR\akeyword\x12\x18\n" +
 	"\aenabled\x18\x06 \x01(\x05R\aenabled\x12\x1f\n" +
 	"\vapp_visible\x18\a \x01(\x05R\n" +
-	"appVisible\"`\n" +
-	"\x10ListProductsResp\x12#\n" +
-	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12'\n" +
+	"appVisible\"a\n" +
+	"\x10ListProductsResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
 	"\x04data\x18\x02 \x03(\v2\x13.itick.ItickProductR\x04data\"\xbf\x01\n" +
 	"\x12GetProductKlineReq\x12#\n" +
 	"\rcategory_code\x18\x01 \x01(\tR\fcategoryCode\x12\x16\n" +
@@ -2619,9 +2620,9 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\x06symbol\x18\x03 \x01(\tR\x06symbol\x12'\n" +
 	"\x06k_type\x18\x04 \x01(\x0e2\x10.itick.KlineTypeR\x05kType\x12\x15\n" +
 	"\x06end_ts\x18\x05 \x01(\x03R\x05endTs\x12\x14\n" +
-	"\x05limit\x18\x06 \x01(\x03R\x05limit\"\\\n" +
-	"\x13GetProductKlineResp\x12#\n" +
-	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12 \n" +
+	"\x05limit\x18\x06 \x01(\x03R\x05limit\"]\n" +
+	"\x13GetProductKlineResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12 \n" +
 	"\x04data\x18\x02 \x03(\v2\f.itick.KlineR\x04data\"\xbe\x01\n" +
 	"\x17CreateTenantCategoryReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1f\n" +
@@ -2654,18 +2655,18 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\x06remark\x18\x06 \x01(\tR\x06remark\"C\n" +
 	"\x14GetTenantCategoryReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\"l\n" +
-	"\x15GetTenantCategoryResp\x12#\n" +
-	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12.\n" +
-	"\x04data\x18\x02 \x01(\v2\x1a.itick.ItickTenantCategoryR\x04data\"\xd3\x01\n" +
-	"\x17ListTenantCategoriesReq\x12\"\n" +
-	"\x04page\x18\x01 \x01(\v2\x0e.itick.PageReqR\x04page\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\"m\n" +
+	"\x15GetTenantCategoryResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
+	"\x04data\x18\x02 \x01(\v2\x1a.itick.ItickTenantCategoryR\x04data\"\xd4\x01\n" +
+	"\x17ListTenantCategoriesReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x128\n" +
 	"\rcategory_type\x18\x03 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12\x16\n" +
 	"\x06status\x18\x04 \x01(\x05R\x06status\x12%\n" +
-	"\x0evisible_status\x18\x05 \x01(\x05R\rvisibleStatus\"o\n" +
-	"\x18ListTenantCategoriesResp\x12#\n" +
-	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12.\n" +
+	"\x0evisible_status\x18\x05 \x01(\x05R\rvisibleStatus\"p\n" +
+	"\x18ListTenantCategoriesResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
 	"\x04data\x18\x02 \x03(\v2\x1a.itick.ItickTenantCategoryR\x04data\"\xbb\x01\n" +
 	"\x16CreateTenantProductReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1d\n" +
@@ -2698,26 +2699,26 @@ const file_proto_itick_itick_admin_proto_rawDesc = "" +
 	"\x06remark\x18\x06 \x01(\tR\x06remark\"B\n" +
 	"\x13GetTenantProductReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\"j\n" +
-	"\x14GetTenantProductResp\x12#\n" +
-	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x02 \x01(\v2\x19.itick.ItickTenantProductR\x04data\"\x83\x02\n" +
-	"\x15ListTenantProductsReq\x12\"\n" +
-	"\x04page\x18\x01 \x01(\v2\x0e.itick.PageReqR\x04page\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\"k\n" +
+	"\x14GetTenantProductResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
+	"\x04data\x18\x02 \x01(\v2\x19.itick.ItickTenantProductR\x04data\"\x84\x02\n" +
+	"\x15ListTenantProductsReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x128\n" +
 	"\rcategory_type\x18\x03 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12\x16\n" +
 	"\x06market\x18\x04 \x01(\tR\x06market\x12\x18\n" +
 	"\akeyword\x18\x05 \x01(\tR\akeyword\x12\x16\n" +
 	"\x06status\x18\x06 \x01(\x05R\x06status\x12%\n" +
-	"\x0evisible_status\x18\a \x01(\x05R\rvisibleStatus\"l\n" +
-	"\x16ListTenantProductsResp\x12#\n" +
-	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12-\n" +
+	"\x0evisible_status\x18\a \x01(\x05R\rvisibleStatus\"m\n" +
+	"\x16ListTenantProductsResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
 	"\x04data\x18\x02 \x03(\v2\x19.itick.ItickTenantProductR\x04data\"V\n" +
 	"\x19InitTenantItickDisplayReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1c\n" +
-	"\toverwrite\x18\x02 \x01(\x03R\toverwrite\"\x8d\x01\n" +
-	"\x1aInitTenantItickDisplayResp\x12#\n" +
-	"\x04base\x18\x01 \x01(\v2\x0f.itick.RespBaseR\x04base\x12%\n" +
+	"\toverwrite\x18\x02 \x01(\x03R\toverwrite\"\x8e\x01\n" +
+	"\x1aInitTenantItickDisplayResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12%\n" +
 	"\x0ecategory_count\x18\x02 \x01(\x03R\rcategoryCount\x12#\n" +
 	"\rproduct_count\x18\x03 \x01(\x03R\fproductCount2\xa8\r\n" +
 	"\n" +
@@ -2797,10 +2798,10 @@ var file_proto_itick_itick_admin_proto_goTypes = []any{
 	(*ListTenantProductsResp)(nil),         // 34: itick.ListTenantProductsResp
 	(*InitTenantItickDisplayReq)(nil),      // 35: itick.InitTenantItickDisplayReq
 	(*InitTenantItickDisplayResp)(nil),     // 36: itick.InitTenantItickDisplayResp
-	(*RespBase)(nil),                       // 37: itick.RespBase
+	(*common.RespBase)(nil),                // 37: common.RespBase
 	(CategoryType)(0),                      // 38: itick.CategoryType
 	(*ItickCategory)(nil),                  // 39: itick.ItickCategory
-	(*PageReq)(nil),                        // 40: itick.PageReq
+	(*common.PageReq)(nil),                 // 40: common.PageReq
 	(*ItickProduct)(nil),                   // 41: itick.ItickProduct
 	(KlineType)(0),                         // 42: itick.KlineType
 	(*Kline)(nil),                          // 43: itick.Kline
@@ -2808,41 +2809,41 @@ var file_proto_itick_itick_admin_proto_goTypes = []any{
 	(*ItickTenantProduct)(nil),             // 45: itick.ItickTenantProduct
 }
 var file_proto_itick_itick_admin_proto_depIdxs = []int32{
-	37, // 0: itick.AdminCommonResp.base:type_name -> itick.RespBase
+	37, // 0: itick.AdminCommonResp.base:type_name -> common.RespBase
 	38, // 1: itick.CreateCategoryReq.category_type:type_name -> itick.CategoryType
-	37, // 2: itick.GetCategoryResp.base:type_name -> itick.RespBase
+	37, // 2: itick.GetCategoryResp.base:type_name -> common.RespBase
 	39, // 3: itick.GetCategoryResp.data:type_name -> itick.ItickCategory
-	40, // 4: itick.ListCategoriesReq.page:type_name -> itick.PageReq
+	40, // 4: itick.ListCategoriesReq.page:type_name -> common.PageReq
 	38, // 5: itick.ListCategoriesReq.category_type:type_name -> itick.CategoryType
-	37, // 6: itick.ListCategoriesResp.base:type_name -> itick.RespBase
+	37, // 6: itick.ListCategoriesResp.base:type_name -> common.RespBase
 	39, // 7: itick.ListCategoriesResp.data:type_name -> itick.ItickCategory
-	37, // 8: itick.SyncCategoryProductsResp.base:type_name -> itick.RespBase
-	37, // 9: itick.GetSyncTaskStatusResp.base:type_name -> itick.RespBase
+	37, // 8: itick.SyncCategoryProductsResp.base:type_name -> common.RespBase
+	37, // 9: itick.GetSyncTaskStatusResp.base:type_name -> common.RespBase
 	38, // 10: itick.CreateProductReq.category_type:type_name -> itick.CategoryType
-	37, // 11: itick.GetProductResp.base:type_name -> itick.RespBase
+	37, // 11: itick.GetProductResp.base:type_name -> common.RespBase
 	41, // 12: itick.GetProductResp.data:type_name -> itick.ItickProduct
-	40, // 13: itick.ListProductsReq.page:type_name -> itick.PageReq
+	40, // 13: itick.ListProductsReq.page:type_name -> common.PageReq
 	38, // 14: itick.ListProductsReq.category_type:type_name -> itick.CategoryType
-	37, // 15: itick.ListProductsResp.base:type_name -> itick.RespBase
+	37, // 15: itick.ListProductsResp.base:type_name -> common.RespBase
 	41, // 16: itick.ListProductsResp.data:type_name -> itick.ItickProduct
 	42, // 17: itick.GetProductKlineReq.k_type:type_name -> itick.KlineType
-	37, // 18: itick.GetProductKlineResp.base:type_name -> itick.RespBase
+	37, // 18: itick.GetProductKlineResp.base:type_name -> common.RespBase
 	43, // 19: itick.GetProductKlineResp.data:type_name -> itick.Kline
 	22, // 20: itick.BatchUpsertTenantCategoriesReq.data:type_name -> itick.TenantCategoryItem
-	37, // 21: itick.GetTenantCategoryResp.base:type_name -> itick.RespBase
+	37, // 21: itick.GetTenantCategoryResp.base:type_name -> common.RespBase
 	44, // 22: itick.GetTenantCategoryResp.data:type_name -> itick.ItickTenantCategory
-	40, // 23: itick.ListTenantCategoriesReq.page:type_name -> itick.PageReq
+	40, // 23: itick.ListTenantCategoriesReq.page:type_name -> common.PageReq
 	38, // 24: itick.ListTenantCategoriesReq.category_type:type_name -> itick.CategoryType
-	37, // 25: itick.ListTenantCategoriesResp.base:type_name -> itick.RespBase
+	37, // 25: itick.ListTenantCategoriesResp.base:type_name -> common.RespBase
 	44, // 26: itick.ListTenantCategoriesResp.data:type_name -> itick.ItickTenantCategory
 	30, // 27: itick.BatchUpsertTenantProductsReq.data:type_name -> itick.TenantProductItem
-	37, // 28: itick.GetTenantProductResp.base:type_name -> itick.RespBase
+	37, // 28: itick.GetTenantProductResp.base:type_name -> common.RespBase
 	45, // 29: itick.GetTenantProductResp.data:type_name -> itick.ItickTenantProduct
-	40, // 30: itick.ListTenantProductsReq.page:type_name -> itick.PageReq
+	40, // 30: itick.ListTenantProductsReq.page:type_name -> common.PageReq
 	38, // 31: itick.ListTenantProductsReq.category_type:type_name -> itick.CategoryType
-	37, // 32: itick.ListTenantProductsResp.base:type_name -> itick.RespBase
+	37, // 32: itick.ListTenantProductsResp.base:type_name -> common.RespBase
 	45, // 33: itick.ListTenantProductsResp.data:type_name -> itick.ItickTenantProduct
-	37, // 34: itick.InitTenantItickDisplayResp.base:type_name -> itick.RespBase
+	37, // 34: itick.InitTenantItickDisplayResp.base:type_name -> common.RespBase
 	5,  // 35: itick.ItickAdmin.ListCategories:input_type -> itick.ListCategoriesReq
 	1,  // 36: itick.ItickAdmin.CreateCategory:input_type -> itick.CreateCategoryReq
 	2,  // 37: itick.ItickAdmin.UpdateCategory:input_type -> itick.UpdateCategoryReq
@@ -2899,7 +2900,7 @@ func file_proto_itick_itick_admin_proto_init() {
 	if File_proto_itick_itick_admin_proto != nil {
 		return
 	}
-	file_proto_itick_common_proto_init()
+	file_proto_itick_enum_proto_init()
 	file_proto_itick_model_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{

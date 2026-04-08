@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -60,7 +61,7 @@ func (l *SysCronJobListLogic) SysCronJobList(in *system.SysCronJobListReq) (*sys
 	}
 
 	return &system.SysCronJobListResp{
-		Base: &system.RespBase{
+		Base: &common.RespBase{
 			Code:       200,
 			Msg:        "success",
 			Total:      total,
