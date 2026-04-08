@@ -28,10 +28,16 @@ const (
 // TradeInternalClient is the client API for TradeInternal service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// 交易服务内部接口
 type TradeInternalClient interface {
+	// 记录订单成交信息
 	RecordOrderFill(ctx context.Context, in *RecordOrderFillReq, opts ...grpc.CallOption) (*InternalCommonResp, error)
+	// 记录持仓历史信息
 	RecordPositionHistory(ctx context.Context, in *RecordPositionHistoryReq, opts ...grpc.CallOption) (*InternalCommonResp, error)
+	// 创建交易事件
 	CreateTradeEvent(ctx context.Context, in *CreateTradeEventReq, opts ...grpc.CallOption) (*InternalCommonResp, error)
+	// 校验订单风控
 	CheckOrderRisk(ctx context.Context, in *CheckOrderRiskReq, opts ...grpc.CallOption) (*CheckOrderRiskResp, error)
 }
 
@@ -86,10 +92,16 @@ func (c *tradeInternalClient) CheckOrderRisk(ctx context.Context, in *CheckOrder
 // TradeInternalServer is the server API for TradeInternal service.
 // All implementations must embed UnimplementedTradeInternalServer
 // for forward compatibility.
+//
+// 交易服务内部接口
 type TradeInternalServer interface {
+	// 记录订单成交信息
 	RecordOrderFill(context.Context, *RecordOrderFillReq) (*InternalCommonResp, error)
+	// 记录持仓历史信息
 	RecordPositionHistory(context.Context, *RecordPositionHistoryReq) (*InternalCommonResp, error)
+	// 创建交易事件
 	CreateTradeEvent(context.Context, *CreateTradeEventReq) (*InternalCommonResp, error)
+	// 校验订单风控
 	CheckOrderRisk(context.Context, *CheckOrderRiskReq) (*CheckOrderRiskResp, error)
 	mustEmbedUnimplementedTradeInternalServer()
 }

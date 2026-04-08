@@ -1,0 +1,265 @@
+syntax = "proto3";
+
+package staking;
+
+option go_package = "wklive/proto/staking;staking";
+
+import "proto/common/common.proto";
+import "proto/staking/enum.proto";
+import "proto/staking/model.proto";
+
+// 
+service StakingAdmin {
+  // 获取质押产品列表
+  // 后台分页查询质押产品，支持按产品编号、产品名称、币种、产品类型、状态筛选。
+  rpc AdminProductList(AdminProductListReq) returns (AdminProductListResp);
+
+  // 获取质押产品详情
+  // 根据产品ID查询质押产品详细信息。
+  rpc AdminProductDetail(AdminProductDetailReq) returns (AdminProductDetailResp);
+
+  // 创建质押产品
+  // 后台新增一个质押产品配置。
+  rpc ProductCreate(AdminProductCreateReq) returns (AdminProductCreateResp);
+
+  // 更新质押产品
+  // 后台修改指定质押产品的配置参数。
+  rpc ProductUpdate(AdminProductUpdateReq) returns (AdminProductUpdateResp);
+
+  // 修改质押产品状态
+  // 启用、禁用或下架指定质押产品。
+  rpc ProductChangeStatus(AdminProductChangeStatusReq) returns (AdminProductChangeStatusResp);
+
+  // 获取质押订单列表
+  // 后台分页查询质押订单，支持按订单号、用户ID、产品、状态、赎回类型、来源、时间范围筛选。
+  rpc OrderList(AdminOrderListReq) returns (AdminOrderListResp);
+
+  // 获取质押订单详情
+  // 根据订单ID查询质押订单详细信息。
+  rpc OrderDetail(AdminOrderDetailReq) returns (AdminOrderDetailResp);
+
+  // 获取收益记录列表
+  // 后台分页查询收益发放记录，支持按订单号、用户ID、产品、收益类型、收益状态、发放时间筛选。
+  rpc RewardLogList(AdminRewardLogListReq) returns (AdminRewardLogListResp);
+
+  // 获取赎回记录列表
+  // 后台分页查询赎回记录，支持按订单号、赎回单号、用户ID、产品、赎回类型、赎回状态、赎回时间筛选。
+  rpc RedeemLogList(AdminRedeemLogListReq) returns (AdminRedeemLogListResp);
+
+  // 手动发放收益
+  // 后台对指定质押订单执行手动收益发放或补发收益。
+  rpc ManualReward(AdminManualRewardReq) returns (AdminManualRewardResp);
+
+  // 手动赎回
+  // 后台对指定质押订单执行手动赎回操作。
+  rpc ManualRedeem(AdminManualRedeemReq) returns (AdminManualRedeemResp);
+}
+
+// 产品列表
+message AdminProductListReq {
+  uint64 tenant_id = 1;
+  string product_no = 2;
+  string product_name = 3;
+  string coin_symbol = 4;
+  ProductType product_type = 5;
+  ProductStatus status = 6;
+  common.PageReq page = 7;
+}
+
+message AdminProductListResp {
+    common.RespBase page = 1;
+  repeated StakeProduct data = 2;
+}
+
+// 产品详情
+message AdminProductDetailReq {
+  uint64 tenant_id = 1;
+  uint64 id = 2;
+}
+
+message AdminProductDetailResp {
+    common.RespBase page = 1;
+  StakeProduct data = 2;
+}
+
+// 创建产品
+message AdminProductCreateReq {
+  uint64 tenant_id = 1;
+  string product_no = 2;
+  string product_name = 3;
+  ProductType product_type = 4;
+  string coin_name = 5;
+  string coin_symbol = 6;
+  string reward_coin_name = 7;
+  string reward_coin_symbol = 8;
+  string apr = 9;
+  int32 lock_days = 10;
+  string min_amount = 11;
+  string max_amount = 12;
+  string step_amount = 13;
+  string total_amount = 14;
+  string user_limit_amount = 15;
+  InterestMode interest_mode = 16;
+  RewardMode reward_mode = 17;
+  YesNo allow_early_redeem = 18;
+  string early_redeem_rate = 19;
+  ProductStatus status = 20;
+  int32 sort = 21;
+  string remark = 22;
+  uint64 operator_uid = 23;
+}
+
+message AdminProductCreateResp {
+    common.RespBase page = 1;
+  uint64 data = 2;
+}
+
+// 更新产品
+message AdminProductUpdateReq {
+  uint64 tenant_id = 1;
+  uint64 id = 2;
+  string product_name = 3;
+  ProductType product_type = 4;
+  string coin_name = 5;
+  string coin_symbol = 6;
+  string reward_coin_name = 7;
+  string reward_coin_symbol = 8;
+  string apr = 9;
+  int32 lock_days = 10;
+  string min_amount = 11;
+  string max_amount = 12;
+  string step_amount = 13;
+  string total_amount = 14;
+  string user_limit_amount = 15;
+  InterestMode interest_mode = 16;
+  RewardMode reward_mode = 17;
+  YesNo allow_early_redeem = 18;
+  string early_redeem_rate = 19;
+  ProductStatus status = 20;
+  int32 sort = 21;
+  string remark = 22;
+  uint64 operator_uid = 23;
+}
+
+message AdminProductUpdateResp {
+    common.RespBase page = 1;
+  bool data = 2;
+}
+
+// 修改产品状态
+message AdminProductChangeStatusReq {
+  uint64 tenant_id = 1;
+  uint64 id = 2;
+  ProductStatus status = 3;
+  uint64 operator_uid = 4;
+}
+
+message AdminProductChangeStatusResp {
+    common.RespBase page = 1;
+  bool data = 2;
+}
+
+// 订单列表
+message AdminOrderListReq {
+  uint64 tenant_id = 1;
+  string order_no = 2;
+  uint64 uid = 3;
+  uint64 product_id = 4;
+  string product_name = 5;
+  string coin_symbol = 6;
+  OrderStatus status = 7;
+  RedeemType redeem_type = 8;
+  SourceType source = 9;
+  int64 start_times_begin = 10;
+  int64 start_times_end = 11;
+  int64 end_times_begin = 12;
+  int64 end_times_end = 13;
+  common.PageReq page = 14;
+}
+
+message AdminOrderListResp {
+    common.RespBase page = 1;
+  repeated StakeOrder data = 2;
+}
+
+// 订单详情
+message AdminOrderDetailReq {
+  uint64 tenant_id = 1;
+  uint64 id = 2;
+}
+
+message AdminOrderDetailResp {
+    common.RespBase page = 1;
+  StakeOrder data = 2;
+}
+
+// 收益记录列表
+message AdminRewardLogListReq {
+  uint64 tenant_id = 1;
+  string order_no = 2;
+  uint64 uid = 3;
+  uint64 product_id = 4;
+  RewardType reward_type = 5;
+  RewardStatus reward_status = 6;
+  int64 reward_times_begin = 7;
+  int64 reward_times_end = 8;
+  common.PageReq page = 9;
+}
+
+message AdminRewardLogListResp {
+    common.RespBase page = 1;
+  repeated StakeRewardLog data = 2;
+}
+
+// 赎回记录列表
+message AdminRedeemLogListReq {
+  uint64 tenant_id = 1;
+  string order_no = 2;
+  string redeem_no = 3;
+  uint64 uid = 4;
+  uint64 product_id = 5;
+  RedeemType redeem_type = 6;
+  RedeemStatus redeem_status = 7;
+  int64 redeem_times_begin = 8;
+  int64 redeem_times_end = 9;
+  common.PageReq page = 10;
+}
+
+message AdminRedeemLogListResp {
+    common.RespBase page = 1;
+  repeated StakeRedeemLog data = 2;
+}
+
+// 手动发放收益
+message AdminManualRewardReq {
+  uint64 tenant_id = 1;
+  uint64 order_id = 2;
+  string reward_amount = 3;
+  RewardType reward_type = 4;
+  string remark = 5;
+  uint64 operator_uid = 6;
+}
+
+message AdminManualRewardResp {
+    common.RespBase page = 1;
+  bool data = 2;
+}
+
+// 手动赎回
+message AdminManualRedeemReq {
+  uint64 tenant_id = 1;
+  uint64 order_id = 2;
+  RedeemType redeem_type = 3;
+  string redeem_amount = 4;
+  string reward_amount = 5;
+  string fee_rate = 6;
+  string fee_amount = 7;
+  string remark = 8;
+  uint64 operator_uid = 9;
+}
+
+message AdminManualRedeemResp {
+    common.RespBase page = 1;
+  bool success = 2;
+  string redeem_no = 3;
+}

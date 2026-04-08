@@ -19,6 +19,9 @@ service TradeAdmin {
   // 获取后台交易对列表
   rpc GetSymbolListAdmin(GetSymbolListAdminReq) returns (GetSymbolListAdminResp);
 
+  // 获取交易对详情
+  rpc GetSymbolDetailAdmin(GetSymbolDetailAdminReq) returns (GetSymbolDetailAdminResp);
+
   // 设置现货交易对配置
   rpc SetSpotSymbolConfig(SetSpotSymbolConfigReq) returns (AdminCommonResp);
 
@@ -28,11 +31,29 @@ service TradeAdmin {
   // 获取后台订单列表
   rpc GetOrderListAdmin(GetOrderListAdminReq) returns (GetOrderListAdminResp);
 
+  // 获取订单详情
+  rpc GetOrderDetailAdmin(GetOrderDetailAdminReq) returns (GetOrderDetailAdminResp);
+
   // 获取后台成交记录列表
   rpc GetFillListAdmin(GetFillListAdminReq) returns (GetFillListAdminResp);
 
+  // 获取成交详情
+  rpc GetFillDetailAdmin(GetFillDetailAdminReq) returns (GetFillDetailAdminResp);
+
   // 获取后台持仓列表
   rpc GetPositionListAdmin(GetPositionListAdminReq) returns (GetPositionListAdminResp);
+
+  // 获取持仓详情
+  rpc GetPositionDetailAdmin(GetPositionDetailAdminReq) returns (GetPositionDetailAdminResp);
+
+  // 获取持仓历史列表
+  rpc GetPositionHistoryListAdmin(GetPositionHistoryListAdminReq) returns (GetPositionHistoryListAdminResp);
+
+  // 获取保证金账户列表
+  rpc GetMarginAccountListAdmin(GetMarginAccountListAdminReq) returns (GetMarginAccountListAdminResp);
+
+  // 获取撤单日志列表
+  rpc GetCancelLogListAdmin(GetCancelLogListAdminReq) returns (GetCancelLogListAdminResp);
 
   // 设置用户交易限制
   rpc SetUserTradeLimit(SetUserTradeLimitReq) returns (AdminCommonResp);
@@ -46,6 +67,12 @@ service TradeAdmin {
   // 获取用户交易对限制
   rpc GetUserSymbolLimit(GetUserSymbolLimitReq) returns (GetUserSymbolLimitResp);
 
+  // 设置用户交易配置
+  rpc SetUserTradeConfig(SetUserTradeConfigReq) returns (AdminCommonResp);
+
+  // 获取用户交易配置
+  rpc GetUserTradeConfig(GetUserTradeConfigReq) returns (GetUserTradeConfigResp);
+
   // 获取风控订单校验日志列表
   rpc GetRiskOrderCheckLogList(GetRiskOrderCheckLogListReq) returns (GetRiskOrderCheckLogListResp);
 
@@ -57,6 +84,9 @@ service TradeAdmin {
 
   // 获取交易事件列表
   rpc GetTradeEventList(GetTradeEventListReq) returns (GetTradeEventListResp);
+
+  // 获取交易事件详情
+  rpc GetTradeEventDetail(GetTradeEventDetailReq) returns (GetTradeEventDetailResp);
 
   // 重试交易事件
   rpc RetryTradeEvent(RetryTradeEventReq) returns (AdminCommonResp);
@@ -126,6 +156,16 @@ message GetSymbolListAdminResp {
   repeated TradeSymbol list = 2;
 }
 
+message GetSymbolDetailAdminReq {
+  uint64 tenant_id = 1;
+  uint64 id = 2;
+}
+
+message GetSymbolDetailAdminResp {
+  common.RespBase base = 1;
+  TradeSymbol data = 2;
+}
+
 message SetSpotSymbolConfigReq {
   uint64 tenant_id = 1;
   uint64 symbol_id = 2;
@@ -168,6 +208,16 @@ message GetOrderListAdminResp {
   repeated TradeOrder list = 2;
 }
 
+message GetOrderDetailAdminReq {
+  uint64 tenant_id = 1;
+  uint64 id = 2;
+}
+
+message GetOrderDetailAdminResp {
+  common.RespBase base = 1;
+  TradeOrder data = 2;
+}
+
 message GetFillListAdminReq {
   uint64 tenant_id = 1;
   common.PageReq page = 2;
@@ -182,6 +232,16 @@ message GetFillListAdminResp {
   repeated TradeFill list = 2;
 }
 
+message GetFillDetailAdminReq {
+  uint64 tenant_id = 1;
+  uint64 id = 2;
+}
+
+message GetFillDetailAdminResp {
+  common.RespBase base = 1;
+  TradeFill data = 2;
+}
+
 message GetPositionListAdminReq {
   uint64 tenant_id = 1;
   common.PageReq page = 2;
@@ -193,6 +253,60 @@ message GetPositionListAdminReq {
 message GetPositionListAdminResp {
   common.RespBase base = 1;
   repeated ContractPosition list = 2;
+}
+
+message GetPositionDetailAdminReq {
+  uint64 tenant_id = 1;
+  uint64 id = 2;
+}
+
+message GetPositionDetailAdminResp {
+  common.RespBase base = 1;
+  ContractPosition data = 2;
+}
+
+message GetPositionHistoryListAdminReq {
+  uint64 tenant_id = 1;
+  common.PageReq page = 2;
+  uint64 user_id = 3;
+  uint64 symbol_id = 4;
+  MarketType market_type = 5;
+  uint64 position_id = 6;
+  PositionActionType action_type = 7;
+  TimeRange time_range = 8;
+}
+
+message GetPositionHistoryListAdminResp {
+  common.RespBase base = 1;
+  repeated ContractPositionHistory list = 2;
+}
+
+message GetMarginAccountListAdminReq {
+  uint64 tenant_id = 1;
+  common.PageReq page = 2;
+  uint64 user_id = 3;
+  MarketType market_type = 4;
+  string margin_asset = 5;
+}
+
+message GetMarginAccountListAdminResp {
+  common.RespBase base = 1;
+  repeated ContractMarginAccount list = 2;
+}
+
+message GetCancelLogListAdminReq {
+  uint64 tenant_id = 1;
+  common.PageReq page = 2;
+  uint64 user_id = 3;
+  uint64 order_id = 4;
+  string order_no = 5;
+  CancelSource cancel_source = 6;
+  TimeRange time_range = 7;
+}
+
+message GetCancelLogListAdminResp {
+  common.RespBase base = 1;
+  repeated TradeCancelLog list = 2;
 }
 
 message SetUserTradeLimitReq {
@@ -250,7 +364,8 @@ message GetUserTradeLimitReq {
 }
 
 message GetUserTradeLimitResp {
-  RiskUserTradeLimit data = 1;
+  common.RespBase base = 1;
+  RiskUserTradeLimit data = 2;
 }
 
 message GetUserSymbolLimitReq {
@@ -261,7 +376,32 @@ message GetUserSymbolLimitReq {
 }
 
 message GetUserSymbolLimitResp {
-  RiskUserSymbolLimit data = 1;
+  common.RespBase base = 1;
+  RiskUserSymbolLimit data = 2;
+}
+
+message SetUserTradeConfigReq {
+  uint64 tenant_id = 1;
+  uint64 user_id = 2;
+  MarketType market_type = 3;
+  uint64 symbol_id = 4; // 0 表示该市场下的全局配置
+  PositionMode position_mode = 5;
+  MarginMode margin_mode = 6;
+  uint32 default_leverage = 7;
+  bool trade_enabled = 8;
+  bool reduce_only_enabled = 9;
+}
+
+message GetUserTradeConfigReq {
+  uint64 tenant_id = 1;
+  uint64 user_id = 2;
+  MarketType market_type = 3;
+  uint64 symbol_id = 4; // 0 表示该市场下的全局配置
+}
+
+message GetUserTradeConfigResp {
+  common.RespBase base = 1;
+  TradeUserConfig data = 2;
 }
 
 message GetRiskOrderCheckLogListReq {
@@ -305,7 +445,8 @@ message GetUserLeverageConfigReq {
 }
 
 message GetUserLeverageConfigResp {
-  ContractLeverageConfig data = 1;
+  common.RespBase base = 1;
+  ContractLeverageConfig data = 2;
 }
 
 message GetTradeEventListReq {
@@ -321,6 +462,16 @@ message GetTradeEventListReq {
 message GetTradeEventListResp {
   common.RespBase base = 1;
   repeated BizTradeEvent list = 2;
+}
+
+message GetTradeEventDetailReq {
+  uint64 tenant_id = 1;
+  uint64 id = 2;
+}
+
+message GetTradeEventDetailResp {
+  common.RespBase base = 1;
+  BizTradeEvent data = 2;
 }
 
 message RetryTradeEventReq {

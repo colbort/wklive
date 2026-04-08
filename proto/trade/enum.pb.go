@@ -892,39 +892,39 @@ func (EventStatus) EnumDescriptor() ([]byte, []int) {
 type PositionActionType int32
 
 const (
-	PositionActionType_POSITION_ACTION_TYPE_UNSPECIFIED   PositionActionType = 0
-	PositionActionType_POSITION_ACTION_TYPE_OPEN          PositionActionType = 1
-	PositionActionType_POSITION_ACTION_TYPE_ADD           PositionActionType = 2
-	PositionActionType_POSITION_ACTION_TYPE_REDUCE        PositionActionType = 3
-	PositionActionType_POSITION_ACTION_TYPE_CLOSE         PositionActionType = 4
-	PositionActionType_POSITION_ACTION_TYPE_LIQUIDATION   PositionActionType = 5
-	PositionActionType_POSITION_ACTION_TYPE_SETTLEMENT    PositionActionType = 6
-	PositionActionType_POSITION_ACTION_TYPE_FUNDING       PositionActionType = 7
-	PositionActionType_POSITION_ACTION_TYPE_MANUAL_ADJUST PositionActionType = 8
+	PositionActionType_POSITION_ACTION_TYPE_UNKNOWN       PositionActionType = 0 // 未知
+	PositionActionType_POSITION_ACTION_TYPE_OPEN          PositionActionType = 1 // 开仓
+	PositionActionType_POSITION_ACTION_TYPE_INCREASE      PositionActionType = 2 // 加仓
+	PositionActionType_POSITION_ACTION_TYPE_DECREASE      PositionActionType = 3 // 减仓
+	PositionActionType_POSITION_ACTION_TYPE_CLOSE         PositionActionType = 4 // 平仓
+	PositionActionType_POSITION_ACTION_TYPE_LIQUIDATION   PositionActionType = 5 // 强平
+	PositionActionType_POSITION_ACTION_TYPE_SETTLEMENT    PositionActionType = 6 // 结算
+	PositionActionType_POSITION_ACTION_TYPE_FUNDING_FEE   PositionActionType = 7 // 资金费结转
+	PositionActionType_POSITION_ACTION_TYPE_MANUAL_ADJUST PositionActionType = 8 // 手动调整
 )
 
 // Enum value maps for PositionActionType.
 var (
 	PositionActionType_name = map[int32]string{
-		0: "POSITION_ACTION_TYPE_UNSPECIFIED",
+		0: "POSITION_ACTION_TYPE_UNKNOWN",
 		1: "POSITION_ACTION_TYPE_OPEN",
-		2: "POSITION_ACTION_TYPE_ADD",
-		3: "POSITION_ACTION_TYPE_REDUCE",
+		2: "POSITION_ACTION_TYPE_INCREASE",
+		3: "POSITION_ACTION_TYPE_DECREASE",
 		4: "POSITION_ACTION_TYPE_CLOSE",
 		5: "POSITION_ACTION_TYPE_LIQUIDATION",
 		6: "POSITION_ACTION_TYPE_SETTLEMENT",
-		7: "POSITION_ACTION_TYPE_FUNDING",
+		7: "POSITION_ACTION_TYPE_FUNDING_FEE",
 		8: "POSITION_ACTION_TYPE_MANUAL_ADJUST",
 	}
 	PositionActionType_value = map[string]int32{
-		"POSITION_ACTION_TYPE_UNSPECIFIED":   0,
+		"POSITION_ACTION_TYPE_UNKNOWN":       0,
 		"POSITION_ACTION_TYPE_OPEN":          1,
-		"POSITION_ACTION_TYPE_ADD":           2,
-		"POSITION_ACTION_TYPE_REDUCE":        3,
+		"POSITION_ACTION_TYPE_INCREASE":      2,
+		"POSITION_ACTION_TYPE_DECREASE":      3,
 		"POSITION_ACTION_TYPE_CLOSE":         4,
 		"POSITION_ACTION_TYPE_LIQUIDATION":   5,
 		"POSITION_ACTION_TYPE_SETTLEMENT":    6,
-		"POSITION_ACTION_TYPE_FUNDING":       7,
+		"POSITION_ACTION_TYPE_FUNDING_FEE":   7,
 		"POSITION_ACTION_TYPE_MANUAL_ADJUST": 8,
 	}
 )
@@ -954,6 +954,208 @@ func (x PositionActionType) Number() protoreflect.EnumNumber {
 // Deprecated: Use PositionActionType.Descriptor instead.
 func (PositionActionType) EnumDescriptor() ([]byte, []int) {
 	return file_proto_trade_enum_proto_rawDescGZIP(), []int{16}
+}
+
+type CancelSource int32
+
+const (
+	CancelSource_CANCEL_SOURCE_UNKNOWN CancelSource = 0 // 未知
+	CancelSource_CANCEL_SOURCE_USER    CancelSource = 1 // 用户主动
+	CancelSource_CANCEL_SOURCE_SYSTEM  CancelSource = 2 // 系统撤单
+	CancelSource_CANCEL_SOURCE_RISK    CancelSource = 3 // 风控撤单
+	CancelSource_CANCEL_SOURCE_TIMEOUT CancelSource = 4 // 超时撤单
+)
+
+// Enum value maps for CancelSource.
+var (
+	CancelSource_name = map[int32]string{
+		0: "CANCEL_SOURCE_UNKNOWN",
+		1: "CANCEL_SOURCE_USER",
+		2: "CANCEL_SOURCE_SYSTEM",
+		3: "CANCEL_SOURCE_RISK",
+		4: "CANCEL_SOURCE_TIMEOUT",
+	}
+	CancelSource_value = map[string]int32{
+		"CANCEL_SOURCE_UNKNOWN": 0,
+		"CANCEL_SOURCE_USER":    1,
+		"CANCEL_SOURCE_SYSTEM":  2,
+		"CANCEL_SOURCE_RISK":    3,
+		"CANCEL_SOURCE_TIMEOUT": 4,
+	}
+)
+
+func (x CancelSource) Enum() *CancelSource {
+	p := new(CancelSource)
+	*p = x
+	return p
+}
+
+func (x CancelSource) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (CancelSource) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_trade_enum_proto_enumTypes[17].Descriptor()
+}
+
+func (CancelSource) Type() protoreflect.EnumType {
+	return &file_proto_trade_enum_proto_enumTypes[17]
+}
+
+func (x CancelSource) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use CancelSource.Descriptor instead.
+func (CancelSource) EnumDescriptor() ([]byte, []int) {
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{17}
+}
+
+type SwitchStatus int32
+
+const (
+	SwitchStatus_SWITCH_STATUS_UNKNOWN  SwitchStatus = 0 // 未知
+	SwitchStatus_SWITCH_STATUS_DISABLED SwitchStatus = 1 // 禁用
+	SwitchStatus_SWITCH_STATUS_ENABLED  SwitchStatus = 2 // 启用
+)
+
+// Enum value maps for SwitchStatus.
+var (
+	SwitchStatus_name = map[int32]string{
+		0: "SWITCH_STATUS_UNKNOWN",
+		1: "SWITCH_STATUS_DISABLED",
+		2: "SWITCH_STATUS_ENABLED",
+	}
+	SwitchStatus_value = map[string]int32{
+		"SWITCH_STATUS_UNKNOWN":  0,
+		"SWITCH_STATUS_DISABLED": 1,
+		"SWITCH_STATUS_ENABLED":  2,
+	}
+)
+
+func (x SwitchStatus) Enum() *SwitchStatus {
+	p := new(SwitchStatus)
+	*p = x
+	return p
+}
+
+func (x SwitchStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (SwitchStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_trade_enum_proto_enumTypes[18].Descriptor()
+}
+
+func (SwitchStatus) Type() protoreflect.EnumType {
+	return &file_proto_trade_enum_proto_enumTypes[18]
+}
+
+func (x SwitchStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use SwitchStatus.Descriptor instead.
+func (SwitchStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{18}
+}
+
+type EnableStatus int32
+
+const (
+	EnableStatus_ENABLE_STATUS_DISABLED EnableStatus = 0 // 禁用
+	EnableStatus_ENABLE_STATUS_ENABLED  EnableStatus = 1 // 启用
+)
+
+// Enum value maps for EnableStatus.
+var (
+	EnableStatus_name = map[int32]string{
+		0: "ENABLE_STATUS_DISABLED",
+		1: "ENABLE_STATUS_ENABLED",
+	}
+	EnableStatus_value = map[string]int32{
+		"ENABLE_STATUS_DISABLED": 0,
+		"ENABLE_STATUS_ENABLED":  1,
+	}
+)
+
+func (x EnableStatus) Enum() *EnableStatus {
+	p := new(EnableStatus)
+	*p = x
+	return p
+}
+
+func (x EnableStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (EnableStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_trade_enum_proto_enumTypes[19].Descriptor()
+}
+
+func (EnableStatus) Type() protoreflect.EnumType {
+	return &file_proto_trade_enum_proto_enumTypes[19]
+}
+
+func (x EnableStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use EnableStatus.Descriptor instead.
+func (EnableStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{19}
+}
+
+type TriggerType int32
+
+const (
+	TriggerType_TRIGGER_TYPE_UNKNOWN     TriggerType = 0 // 无
+	TriggerType_TRIGGER_TYPE_LAST_PRICE  TriggerType = 1 // 最新价
+	TriggerType_TRIGGER_TYPE_MARK_PRICE  TriggerType = 2 // 标记价
+	TriggerType_TRIGGER_TYPE_INDEX_PRICE TriggerType = 3 // 指数价
+)
+
+// Enum value maps for TriggerType.
+var (
+	TriggerType_name = map[int32]string{
+		0: "TRIGGER_TYPE_UNKNOWN",
+		1: "TRIGGER_TYPE_LAST_PRICE",
+		2: "TRIGGER_TYPE_MARK_PRICE",
+		3: "TRIGGER_TYPE_INDEX_PRICE",
+	}
+	TriggerType_value = map[string]int32{
+		"TRIGGER_TYPE_UNKNOWN":     0,
+		"TRIGGER_TYPE_LAST_PRICE":  1,
+		"TRIGGER_TYPE_MARK_PRICE":  2,
+		"TRIGGER_TYPE_INDEX_PRICE": 3,
+	}
+)
+
+func (x TriggerType) Enum() *TriggerType {
+	p := new(TriggerType)
+	*p = x
+	return p
+}
+
+func (x TriggerType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (TriggerType) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_trade_enum_proto_enumTypes[20].Descriptor()
+}
+
+func (TriggerType) Type() protoreflect.EnumType {
+	return &file_proto_trade_enum_proto_enumTypes[20]
+}
+
+func (x TriggerType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use TriggerType.Descriptor instead.
+func (TriggerType) EnumDescriptor() ([]byte, []int) {
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{20}
 }
 
 var File_proto_trade_enum_proto protoreflect.FileDescriptor
@@ -1055,17 +1257,35 @@ const file_proto_trade_enum_proto_rawDesc = "" +
 	"\x14EVENT_STATUS_PENDING\x10\x01\x12\x18\n" +
 	"\x14EVENT_STATUS_SUCCESS\x10\x02\x12\x17\n" +
 	"\x13EVENT_STATUS_FAILED\x10\x03\x12\x19\n" +
-	"\x15EVENT_STATUS_CANCELED\x10\x04*\xcd\x02\n" +
-	"\x12PositionActionType\x12$\n" +
-	" POSITION_ACTION_TYPE_UNSPECIFIED\x10\x00\x12\x1d\n" +
-	"\x19POSITION_ACTION_TYPE_OPEN\x10\x01\x12\x1c\n" +
-	"\x18POSITION_ACTION_TYPE_ADD\x10\x02\x12\x1f\n" +
-	"\x1bPOSITION_ACTION_TYPE_REDUCE\x10\x03\x12\x1e\n" +
+	"\x15EVENT_STATUS_CANCELED\x10\x04*\xd4\x02\n" +
+	"\x12PositionActionType\x12 \n" +
+	"\x1cPOSITION_ACTION_TYPE_UNKNOWN\x10\x00\x12\x1d\n" +
+	"\x19POSITION_ACTION_TYPE_OPEN\x10\x01\x12!\n" +
+	"\x1dPOSITION_ACTION_TYPE_INCREASE\x10\x02\x12!\n" +
+	"\x1dPOSITION_ACTION_TYPE_DECREASE\x10\x03\x12\x1e\n" +
 	"\x1aPOSITION_ACTION_TYPE_CLOSE\x10\x04\x12$\n" +
 	" POSITION_ACTION_TYPE_LIQUIDATION\x10\x05\x12#\n" +
-	"\x1fPOSITION_ACTION_TYPE_SETTLEMENT\x10\x06\x12 \n" +
-	"\x1cPOSITION_ACTION_TYPE_FUNDING\x10\a\x12&\n" +
-	"\"POSITION_ACTION_TYPE_MANUAL_ADJUST\x10\bB\x1aZ\x18wklive/proto/trade;tradeb\x06proto3"
+	"\x1fPOSITION_ACTION_TYPE_SETTLEMENT\x10\x06\x12$\n" +
+	" POSITION_ACTION_TYPE_FUNDING_FEE\x10\a\x12&\n" +
+	"\"POSITION_ACTION_TYPE_MANUAL_ADJUST\x10\b*\x8e\x01\n" +
+	"\fCancelSource\x12\x19\n" +
+	"\x15CANCEL_SOURCE_UNKNOWN\x10\x00\x12\x16\n" +
+	"\x12CANCEL_SOURCE_USER\x10\x01\x12\x18\n" +
+	"\x14CANCEL_SOURCE_SYSTEM\x10\x02\x12\x16\n" +
+	"\x12CANCEL_SOURCE_RISK\x10\x03\x12\x19\n" +
+	"\x15CANCEL_SOURCE_TIMEOUT\x10\x04*`\n" +
+	"\fSwitchStatus\x12\x19\n" +
+	"\x15SWITCH_STATUS_UNKNOWN\x10\x00\x12\x1a\n" +
+	"\x16SWITCH_STATUS_DISABLED\x10\x01\x12\x19\n" +
+	"\x15SWITCH_STATUS_ENABLED\x10\x02*E\n" +
+	"\fEnableStatus\x12\x1a\n" +
+	"\x16ENABLE_STATUS_DISABLED\x10\x00\x12\x19\n" +
+	"\x15ENABLE_STATUS_ENABLED\x10\x01*\x7f\n" +
+	"\vTriggerType\x12\x18\n" +
+	"\x14TRIGGER_TYPE_UNKNOWN\x10\x00\x12\x1b\n" +
+	"\x17TRIGGER_TYPE_LAST_PRICE\x10\x01\x12\x1b\n" +
+	"\x17TRIGGER_TYPE_MARK_PRICE\x10\x02\x12\x1c\n" +
+	"\x18TRIGGER_TYPE_INDEX_PRICE\x10\x03B\x1aZ\x18wklive/proto/trade;tradeb\x06proto3"
 
 var (
 	file_proto_trade_enum_proto_rawDescOnce sync.Once
@@ -1079,7 +1299,7 @@ func file_proto_trade_enum_proto_rawDescGZIP() []byte {
 	return file_proto_trade_enum_proto_rawDescData
 }
 
-var file_proto_trade_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 17)
+var file_proto_trade_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 21)
 var file_proto_trade_enum_proto_goTypes = []any{
 	(MarketType)(0),         // 0: trade.MarketType
 	(ContractType)(0),       // 1: trade.ContractType
@@ -1098,6 +1318,10 @@ var file_proto_trade_enum_proto_goTypes = []any{
 	(RiskCheckResult)(0),    // 14: trade.RiskCheckResult
 	(EventStatus)(0),        // 15: trade.EventStatus
 	(PositionActionType)(0), // 16: trade.PositionActionType
+	(CancelSource)(0),       // 17: trade.CancelSource
+	(SwitchStatus)(0),       // 18: trade.SwitchStatus
+	(EnableStatus)(0),       // 19: trade.EnableStatus
+	(TriggerType)(0),        // 20: trade.TriggerType
 }
 var file_proto_trade_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -1117,7 +1341,7 @@ func file_proto_trade_enum_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_trade_enum_proto_rawDesc), len(file_proto_trade_enum_proto_rawDesc)),
-			NumEnums:      17,
+			NumEnums:      21,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

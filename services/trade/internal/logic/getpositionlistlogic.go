@@ -23,6 +23,7 @@ func NewGetPositionListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 	}
 }
 
+// 获取持仓列表
 func (l *GetPositionListLogic) GetPositionList(in *trade.GetPositionListReq) (*trade.GetPositionListResp, error) {
 	// todo: add your logic here and delete this line
 

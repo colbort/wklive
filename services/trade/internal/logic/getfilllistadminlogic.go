@@ -23,6 +23,7 @@ func NewGetFillListAdminLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
+// 获取后台成交记录列表
 func (l *GetFillListAdminLogic) GetFillListAdmin(in *trade.GetFillListAdminReq) (*trade.GetFillListAdminResp, error) {
 	// todo: add your logic here and delete this line
 

@@ -23,6 +23,7 @@ func NewGetFillListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetFi
 	}
 }
 
+// 获取成交记录列表
 func (l *GetFillListLogic) GetFillList(in *trade.GetFillListReq) (*trade.GetFillListResp, error) {
 	// todo: add your logic here and delete this line
 

@@ -23,6 +23,7 @@ func NewSetSpotSymbolConfigLogic(ctx context.Context, svcCtx *svc.ServiceContext
 	}
 }
 
+// 设置现货交易对配置
 func (l *SetSpotSymbolConfigLogic) SetSpotSymbolConfig(in *trade.SetSpotSymbolConfigReq) (*trade.AdminCommonResp, error) {
 	// todo: add your logic here and delete this line
 

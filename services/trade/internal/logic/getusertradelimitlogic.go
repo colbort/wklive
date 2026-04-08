@@ -23,6 +23,7 @@ func NewGetUserTradeLimitLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 	}
 }
 
+// 获取用户交易限制
 func (l *GetUserTradeLimitLogic) GetUserTradeLimit(in *trade.GetUserTradeLimitReq) (*trade.GetUserTradeLimitResp, error) {
 	// todo: add your logic here and delete this line
 

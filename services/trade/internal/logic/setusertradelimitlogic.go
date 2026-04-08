@@ -23,6 +23,7 @@ func NewSetUserTradeLimitLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 	}
 }
 
+// 设置用户交易限制
 func (l *SetUserTradeLimitLogic) SetUserTradeLimit(in *trade.SetUserTradeLimitReq) (*trade.AdminCommonResp, error) {
 	// todo: add your logic here and delete this line
 

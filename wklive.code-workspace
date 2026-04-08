@@ -63,12 +63,14 @@
     "cSpell.words": [
       "Aliyun",
       "cronx",
+      "goctl",
       "Infof",
       "Itick",
       "Klines",
       "logx",
       "sqlx",
-      "wklive"
+      "wklive",
+      "zeromicro"
     ]
   },
   "launch": {

@@ -20,6 +20,8 @@ type (
 	CancelOrderReq           = trade.CancelOrderReq
 	GetFillListReq           = trade.GetFillListReq
 	GetFillListResp          = trade.GetFillListResp
+	GetLeverageConfigReq     = trade.GetLeverageConfigReq
+	GetLeverageConfigResp    = trade.GetLeverageConfigResp
 	GetMarginAccountListReq  = trade.GetMarginAccountListReq
 	GetMarginAccountListResp = trade.GetMarginAccountListResp
 	GetOrderDetailReq        = trade.GetOrderDetailReq
@@ -32,27 +34,35 @@ type (
 	GetSymbolDetailResp      = trade.GetSymbolDetailResp
 	GetSymbolListReq         = trade.GetSymbolListReq
 	GetSymbolListResp        = trade.GetSymbolListResp
-	GetUserTradeConfigReq    = trade.GetUserTradeConfigReq
-	GetUserTradeConfigResp   = trade.GetUserTradeConfigResp
 	PlaceOrderReq            = trade.PlaceOrderReq
 	PlaceOrderResp           = trade.PlaceOrderResp
 	SetLeverageReq           = trade.SetLeverageReq
-	SetUserTradeConfigReq    = trade.SetUserTradeConfigReq
 
 	TradeApp interface {
+		// 获取交易对列表
 		GetSymbolList(ctx context.Context, in *GetSymbolListReq, opts ...grpc.CallOption) (*GetSymbolListResp, error)
+		// 获取指定交易对详情
 		GetSymbolDetail(ctx context.Context, in *GetSymbolDetailReq, opts ...grpc.CallOption) (*GetSymbolDetailResp, error)
+		// 下单
 		PlaceOrder(ctx context.Context, in *PlaceOrderReq, opts ...grpc.CallOption) (*PlaceOrderResp, error)
+		// 撤销指定订单
 		CancelOrder(ctx context.Context, in *CancelOrderReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+		// 撤销当前用户全部订单
 		CancelAllOrders(ctx context.Context, in *CancelAllOrdersReq, opts ...grpc.CallOption) (*CancelAllOrdersResp, error)
+		// 获取订单列表
 		GetOrderList(ctx context.Context, in *GetOrderListReq, opts ...grpc.CallOption) (*GetOrderListResp, error)
+		// 获取订单详情
 		GetOrderDetail(ctx context.Context, in *GetOrderDetailReq, opts ...grpc.CallOption) (*GetOrderDetailResp, error)
+		// 获取成交记录列表
 		GetFillList(ctx context.Context, in *GetFillListReq, opts ...grpc.CallOption) (*GetFillListResp, error)
+		// 获取持仓列表
 		GetPositionList(ctx context.Context, in *GetPositionListReq, opts ...grpc.CallOption) (*GetPositionListResp, error)
+		// 获取保证金账户列表
 		GetMarginAccountList(ctx context.Context, in *GetMarginAccountListReq, opts ...grpc.CallOption) (*GetMarginAccountListResp, error)
+		// 获取当前杠杆配置
+		GetLeverageConfig(ctx context.Context, in *GetLeverageConfigReq, opts ...grpc.CallOption) (*GetLeverageConfigResp, error)
+		// 设置杠杆倍数
 		SetLeverage(ctx context.Context, in *SetLeverageReq, opts ...grpc.CallOption) (*AppCommonResp, error)
-		SetUserTradeConfig(ctx context.Context, in *SetUserTradeConfigReq, opts ...grpc.CallOption) (*AppCommonResp, error)
-		GetUserTradeConfig(ctx context.Context, in *GetUserTradeConfigReq, opts ...grpc.CallOption) (*GetUserTradeConfigResp, error)
 	}
 
 	defaultTradeApp struct {
@@ -66,67 +76,74 @@ func NewTradeApp(cli zrpc.Client) TradeApp {
 	}
 }
 
+// 获取交易对列表
 func (m *defaultTradeApp) GetSymbolList(ctx context.Context, in *GetSymbolListReq, opts ...grpc.CallOption) (*GetSymbolListResp, error) {
 	client := trade.NewTradeAppClient(m.cli.Conn())
 	return client.GetSymbolList(ctx, in, opts...)
 }
 
+// 获取指定交易对详情
 func (m *defaultTradeApp) GetSymbolDetail(ctx context.Context, in *GetSymbolDetailReq, opts ...grpc.CallOption) (*GetSymbolDetailResp, error) {
 	client := trade.NewTradeAppClient(m.cli.Conn())
 	return client.GetSymbolDetail(ctx, in, opts...)
 }
 
+// 下单
 func (m *defaultTradeApp) PlaceOrder(ctx context.Context, in *PlaceOrderReq, opts ...grpc.CallOption) (*PlaceOrderResp, error) {
 	client := trade.NewTradeAppClient(m.cli.Conn())
 	return client.PlaceOrder(ctx, in, opts...)
 }
 
+// 撤销指定订单
 func (m *defaultTradeApp) CancelOrder(ctx context.Context, in *CancelOrderReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
 	client := trade.NewTradeAppClient(m.cli.Conn())
 	return client.CancelOrder(ctx, in, opts...)
 }
 
+// 撤销当前用户全部订单
 func (m *defaultTradeApp) CancelAllOrders(ctx context.Context, in *CancelAllOrdersReq, opts ...grpc.CallOption) (*CancelAllOrdersResp, error) {
 	client := trade.NewTradeAppClient(m.cli.Conn())
 	return client.CancelAllOrders(ctx, in, opts...)
 }
 
+// 获取订单列表
 func (m *defaultTradeApp) GetOrderList(ctx context.Context, in *GetOrderListReq, opts ...grpc.CallOption) (*GetOrderListResp, error) {
 	client := trade.NewTradeAppClient(m.cli.Conn())
 	return client.GetOrderList(ctx, in, opts...)
 }
 
+// 获取订单详情
 func (m *defaultTradeApp) GetOrderDetail(ctx context.Context, in *GetOrderDetailReq, opts ...grpc.CallOption) (*GetOrderDetailResp, error) {
 	client := trade.NewTradeAppClient(m.cli.Conn())
 	return client.GetOrderDetail(ctx, in, opts...)
 }
 
+// 获取成交记录列表
 func (m *defaultTradeApp) GetFillList(ctx context.Context, in *GetFillListReq, opts ...grpc.CallOption) (*GetFillListResp, error) {
 	client := trade.NewTradeAppClient(m.cli.Conn())
 	return client.GetFillList(ctx, in, opts...)
 }
 
+// 获取持仓列表
 func (m *defaultTradeApp) GetPositionList(ctx context.Context, in *GetPositionListReq, opts ...grpc.CallOption) (*GetPositionListResp, error) {
 	client := trade.NewTradeAppClient(m.cli.Conn())
 	return client.GetPositionList(ctx, in, opts...)
 }
 
+// 获取保证金账户列表
 func (m *defaultTradeApp) GetMarginAccountList(ctx context.Context, in *GetMarginAccountListReq, opts ...grpc.CallOption) (*GetMarginAccountListResp, error) {
 	client := trade.NewTradeAppClient(m.cli.Conn())
 	return client.GetMarginAccountList(ctx, in, opts...)
 }
 
+// 获取当前杠杆配置
+func (m *defaultTradeApp) GetLeverageConfig(ctx context.Context, in *GetLeverageConfigReq, opts ...grpc.CallOption) (*GetLeverageConfigResp, error) {
+	client := trade.NewTradeAppClient(m.cli.Conn())
+	return client.GetLeverageConfig(ctx, in, opts...)
+}
+
+// 设置杠杆倍数
 func (m *defaultTradeApp) SetLeverage(ctx context.Context, in *SetLeverageReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
 	client := trade.NewTradeAppClient(m.cli.Conn())
 	return client.SetLeverage(ctx, in, opts...)
-}
-
-func (m *defaultTradeApp) SetUserTradeConfig(ctx context.Context, in *SetUserTradeConfigReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
-	client := trade.NewTradeAppClient(m.cli.Conn())
-	return client.SetUserTradeConfig(ctx, in, opts...)
-}
-
-func (m *defaultTradeApp) GetUserTradeConfig(ctx context.Context, in *GetUserTradeConfigReq, opts ...grpc.CallOption) (*GetUserTradeConfigResp, error) {
-	client := trade.NewTradeAppClient(m.cli.Conn())
-	return client.GetUserTradeConfig(ctx, in, opts...)
 }

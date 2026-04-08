@@ -23,6 +23,7 @@ func NewRetryTradeEventLogic(ctx context.Context, svcCtx *svc.ServiceContext) *R
 	}
 }
 
+// 重试交易事件
 func (l *RetryTradeEventLogic) RetryTradeEvent(in *trade.RetryTradeEventReq) (*trade.AdminCommonResp, error) {
 	// todo: add your logic here and delete this line
 

@@ -61,6 +61,10 @@
 └─ README.md      # 项目说明文档
 ```
 
+## VSCODE 插件
+- Protobuf VSC 
+- goctl
+
 ## ETCD 配置如下
 
 ### 公共配置 /wklive/common/config

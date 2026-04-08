@@ -14,51 +14,107 @@ import (
 )
 
 type (
-	AdminCommonResp              = trade.AdminCommonResp
-	CreateSymbolReq              = trade.CreateSymbolReq
-	GetFillListAdminReq          = trade.GetFillListAdminReq
-	GetFillListAdminResp         = trade.GetFillListAdminResp
-	GetOrderListAdminReq         = trade.GetOrderListAdminReq
-	GetOrderListAdminResp        = trade.GetOrderListAdminResp
-	GetPositionListAdminReq      = trade.GetPositionListAdminReq
-	GetPositionListAdminResp     = trade.GetPositionListAdminResp
-	GetRiskOrderCheckLogListReq  = trade.GetRiskOrderCheckLogListReq
-	GetRiskOrderCheckLogListResp = trade.GetRiskOrderCheckLogListResp
-	GetSymbolListAdminReq        = trade.GetSymbolListAdminReq
-	GetSymbolListAdminResp       = trade.GetSymbolListAdminResp
-	GetTradeEventListReq         = trade.GetTradeEventListReq
-	GetTradeEventListResp        = trade.GetTradeEventListResp
-	GetUserLeverageConfigReq     = trade.GetUserLeverageConfigReq
-	GetUserLeverageConfigResp    = trade.GetUserLeverageConfigResp
-	GetUserSymbolLimitReq        = trade.GetUserSymbolLimitReq
-	GetUserSymbolLimitResp       = trade.GetUserSymbolLimitResp
-	GetUserTradeLimitReq         = trade.GetUserTradeLimitReq
-	GetUserTradeLimitResp        = trade.GetUserTradeLimitResp
-	RetryTradeEventReq           = trade.RetryTradeEventReq
-	SetContractSymbolConfigReq   = trade.SetContractSymbolConfigReq
-	SetSpotSymbolConfigReq       = trade.SetSpotSymbolConfigReq
-	SetUserLeverageConfigReq     = trade.SetUserLeverageConfigReq
-	SetUserSymbolLimitReq        = trade.SetUserSymbolLimitReq
-	SetUserTradeLimitReq         = trade.SetUserTradeLimitReq
-	UpdateSymbolReq              = trade.UpdateSymbolReq
+	AdminCommonResp                 = trade.AdminCommonResp
+	CreateSymbolReq                 = trade.CreateSymbolReq
+	GetCancelLogListAdminReq        = trade.GetCancelLogListAdminReq
+	GetCancelLogListAdminResp       = trade.GetCancelLogListAdminResp
+	GetFillDetailAdminReq           = trade.GetFillDetailAdminReq
+	GetFillDetailAdminResp          = trade.GetFillDetailAdminResp
+	GetFillListAdminReq             = trade.GetFillListAdminReq
+	GetFillListAdminResp            = trade.GetFillListAdminResp
+	GetMarginAccountListAdminReq    = trade.GetMarginAccountListAdminReq
+	GetMarginAccountListAdminResp   = trade.GetMarginAccountListAdminResp
+	GetOrderDetailAdminReq          = trade.GetOrderDetailAdminReq
+	GetOrderDetailAdminResp         = trade.GetOrderDetailAdminResp
+	GetOrderListAdminReq            = trade.GetOrderListAdminReq
+	GetOrderListAdminResp           = trade.GetOrderListAdminResp
+	GetPositionDetailAdminReq       = trade.GetPositionDetailAdminReq
+	GetPositionDetailAdminResp      = trade.GetPositionDetailAdminResp
+	GetPositionHistoryListAdminReq  = trade.GetPositionHistoryListAdminReq
+	GetPositionHistoryListAdminResp = trade.GetPositionHistoryListAdminResp
+	GetPositionListAdminReq         = trade.GetPositionListAdminReq
+	GetPositionListAdminResp        = trade.GetPositionListAdminResp
+	GetRiskOrderCheckLogListReq     = trade.GetRiskOrderCheckLogListReq
+	GetRiskOrderCheckLogListResp    = trade.GetRiskOrderCheckLogListResp
+	GetSymbolDetailAdminReq         = trade.GetSymbolDetailAdminReq
+	GetSymbolDetailAdminResp        = trade.GetSymbolDetailAdminResp
+	GetSymbolListAdminReq           = trade.GetSymbolListAdminReq
+	GetSymbolListAdminResp          = trade.GetSymbolListAdminResp
+	GetTradeEventDetailReq          = trade.GetTradeEventDetailReq
+	GetTradeEventDetailResp         = trade.GetTradeEventDetailResp
+	GetTradeEventListReq            = trade.GetTradeEventListReq
+	GetTradeEventListResp           = trade.GetTradeEventListResp
+	GetUserLeverageConfigReq        = trade.GetUserLeverageConfigReq
+	GetUserLeverageConfigResp       = trade.GetUserLeverageConfigResp
+	GetUserSymbolLimitReq           = trade.GetUserSymbolLimitReq
+	GetUserSymbolLimitResp          = trade.GetUserSymbolLimitResp
+	GetUserTradeConfigReq           = trade.GetUserTradeConfigReq
+	GetUserTradeConfigResp          = trade.GetUserTradeConfigResp
+	GetUserTradeLimitReq            = trade.GetUserTradeLimitReq
+	GetUserTradeLimitResp           = trade.GetUserTradeLimitResp
+	RetryTradeEventReq              = trade.RetryTradeEventReq
+	SetContractSymbolConfigReq      = trade.SetContractSymbolConfigReq
+	SetSpotSymbolConfigReq          = trade.SetSpotSymbolConfigReq
+	SetUserLeverageConfigReq        = trade.SetUserLeverageConfigReq
+	SetUserSymbolLimitReq           = trade.SetUserSymbolLimitReq
+	SetUserTradeConfigReq           = trade.SetUserTradeConfigReq
+	SetUserTradeLimitReq            = trade.SetUserTradeLimitReq
+	UpdateSymbolReq                 = trade.UpdateSymbolReq
 
 	TradeAdmin interface {
+		// 创建交易对
 		CreateSymbol(ctx context.Context, in *CreateSymbolReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 更新交易对信息
 		UpdateSymbol(ctx context.Context, in *UpdateSymbolReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 获取后台交易对列表
 		GetSymbolListAdmin(ctx context.Context, in *GetSymbolListAdminReq, opts ...grpc.CallOption) (*GetSymbolListAdminResp, error)
+		// 获取交易对详情
+		GetSymbolDetailAdmin(ctx context.Context, in *GetSymbolDetailAdminReq, opts ...grpc.CallOption) (*GetSymbolDetailAdminResp, error)
+		// 设置现货交易对配置
 		SetSpotSymbolConfig(ctx context.Context, in *SetSpotSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 设置合约交易对配置
 		SetContractSymbolConfig(ctx context.Context, in *SetContractSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 获取后台订单列表
 		GetOrderListAdmin(ctx context.Context, in *GetOrderListAdminReq, opts ...grpc.CallOption) (*GetOrderListAdminResp, error)
+		// 获取订单详情
+		GetOrderDetailAdmin(ctx context.Context, in *GetOrderDetailAdminReq, opts ...grpc.CallOption) (*GetOrderDetailAdminResp, error)
+		// 获取后台成交记录列表
 		GetFillListAdmin(ctx context.Context, in *GetFillListAdminReq, opts ...grpc.CallOption) (*GetFillListAdminResp, error)
+		// 获取成交详情
+		GetFillDetailAdmin(ctx context.Context, in *GetFillDetailAdminReq, opts ...grpc.CallOption) (*GetFillDetailAdminResp, error)
+		// 获取后台持仓列表
 		GetPositionListAdmin(ctx context.Context, in *GetPositionListAdminReq, opts ...grpc.CallOption) (*GetPositionListAdminResp, error)
+		// 获取持仓详情
+		GetPositionDetailAdmin(ctx context.Context, in *GetPositionDetailAdminReq, opts ...grpc.CallOption) (*GetPositionDetailAdminResp, error)
+		// 获取持仓历史列表
+		GetPositionHistoryListAdmin(ctx context.Context, in *GetPositionHistoryListAdminReq, opts ...grpc.CallOption) (*GetPositionHistoryListAdminResp, error)
+		// 获取保证金账户列表
+		GetMarginAccountListAdmin(ctx context.Context, in *GetMarginAccountListAdminReq, opts ...grpc.CallOption) (*GetMarginAccountListAdminResp, error)
+		// 获取撤单日志列表
+		GetCancelLogListAdmin(ctx context.Context, in *GetCancelLogListAdminReq, opts ...grpc.CallOption) (*GetCancelLogListAdminResp, error)
+		// 设置用户交易限制
 		SetUserTradeLimit(ctx context.Context, in *SetUserTradeLimitReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 设置用户交易对限制
 		SetUserSymbolLimit(ctx context.Context, in *SetUserSymbolLimitReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 获取用户交易限制
 		GetUserTradeLimit(ctx context.Context, in *GetUserTradeLimitReq, opts ...grpc.CallOption) (*GetUserTradeLimitResp, error)
+		// 获取用户交易对限制
 		GetUserSymbolLimit(ctx context.Context, in *GetUserSymbolLimitReq, opts ...grpc.CallOption) (*GetUserSymbolLimitResp, error)
+		// 设置用户交易配置
+		SetUserTradeConfig(ctx context.Context, in *SetUserTradeConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 获取用户交易配置
+		GetUserTradeConfig(ctx context.Context, in *GetUserTradeConfigReq, opts ...grpc.CallOption) (*GetUserTradeConfigResp, error)
+		// 获取风控订单校验日志列表
 		GetRiskOrderCheckLogList(ctx context.Context, in *GetRiskOrderCheckLogListReq, opts ...grpc.CallOption) (*GetRiskOrderCheckLogListResp, error)
+		// 设置用户杠杆配置
 		SetUserLeverageConfig(ctx context.Context, in *SetUserLeverageConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 获取用户杠杆配置
 		GetUserLeverageConfig(ctx context.Context, in *GetUserLeverageConfigReq, opts ...grpc.CallOption) (*GetUserLeverageConfigResp, error)
+		// 获取交易事件列表
 		GetTradeEventList(ctx context.Context, in *GetTradeEventListReq, opts ...grpc.CallOption) (*GetTradeEventListResp, error)
+		// 获取交易事件详情
+		GetTradeEventDetail(ctx context.Context, in *GetTradeEventDetailReq, opts ...grpc.CallOption) (*GetTradeEventDetailResp, error)
+		// 重试交易事件
 		RetryTradeEvent(ctx context.Context, in *RetryTradeEventReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	}
 
@@ -73,86 +129,163 @@ func NewTradeAdmin(cli zrpc.Client) TradeAdmin {
 	}
 }
 
+// 创建交易对
 func (m *defaultTradeAdmin) CreateSymbol(ctx context.Context, in *CreateSymbolReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.CreateSymbol(ctx, in, opts...)
 }
 
+// 更新交易对信息
 func (m *defaultTradeAdmin) UpdateSymbol(ctx context.Context, in *UpdateSymbolReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.UpdateSymbol(ctx, in, opts...)
 }
 
+// 获取后台交易对列表
 func (m *defaultTradeAdmin) GetSymbolListAdmin(ctx context.Context, in *GetSymbolListAdminReq, opts ...grpc.CallOption) (*GetSymbolListAdminResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.GetSymbolListAdmin(ctx, in, opts...)
 }
 
+// 获取交易对详情
+func (m *defaultTradeAdmin) GetSymbolDetailAdmin(ctx context.Context, in *GetSymbolDetailAdminReq, opts ...grpc.CallOption) (*GetSymbolDetailAdminResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.GetSymbolDetailAdmin(ctx, in, opts...)
+}
+
+// 设置现货交易对配置
 func (m *defaultTradeAdmin) SetSpotSymbolConfig(ctx context.Context, in *SetSpotSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.SetSpotSymbolConfig(ctx, in, opts...)
 }
 
+// 设置合约交易对配置
 func (m *defaultTradeAdmin) SetContractSymbolConfig(ctx context.Context, in *SetContractSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.SetContractSymbolConfig(ctx, in, opts...)
 }
 
+// 获取后台订单列表
 func (m *defaultTradeAdmin) GetOrderListAdmin(ctx context.Context, in *GetOrderListAdminReq, opts ...grpc.CallOption) (*GetOrderListAdminResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.GetOrderListAdmin(ctx, in, opts...)
 }
 
+// 获取订单详情
+func (m *defaultTradeAdmin) GetOrderDetailAdmin(ctx context.Context, in *GetOrderDetailAdminReq, opts ...grpc.CallOption) (*GetOrderDetailAdminResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.GetOrderDetailAdmin(ctx, in, opts...)
+}
+
+// 获取后台成交记录列表
 func (m *defaultTradeAdmin) GetFillListAdmin(ctx context.Context, in *GetFillListAdminReq, opts ...grpc.CallOption) (*GetFillListAdminResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.GetFillListAdmin(ctx, in, opts...)
 }
 
+// 获取成交详情
+func (m *defaultTradeAdmin) GetFillDetailAdmin(ctx context.Context, in *GetFillDetailAdminReq, opts ...grpc.CallOption) (*GetFillDetailAdminResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.GetFillDetailAdmin(ctx, in, opts...)
+}
+
+// 获取后台持仓列表
 func (m *defaultTradeAdmin) GetPositionListAdmin(ctx context.Context, in *GetPositionListAdminReq, opts ...grpc.CallOption) (*GetPositionListAdminResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.GetPositionListAdmin(ctx, in, opts...)
 }
 
+// 获取持仓详情
+func (m *defaultTradeAdmin) GetPositionDetailAdmin(ctx context.Context, in *GetPositionDetailAdminReq, opts ...grpc.CallOption) (*GetPositionDetailAdminResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.GetPositionDetailAdmin(ctx, in, opts...)
+}
+
+// 获取持仓历史列表
+func (m *defaultTradeAdmin) GetPositionHistoryListAdmin(ctx context.Context, in *GetPositionHistoryListAdminReq, opts ...grpc.CallOption) (*GetPositionHistoryListAdminResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.GetPositionHistoryListAdmin(ctx, in, opts...)
+}
+
+// 获取保证金账户列表
+func (m *defaultTradeAdmin) GetMarginAccountListAdmin(ctx context.Context, in *GetMarginAccountListAdminReq, opts ...grpc.CallOption) (*GetMarginAccountListAdminResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.GetMarginAccountListAdmin(ctx, in, opts...)
+}
+
+// 获取撤单日志列表
+func (m *defaultTradeAdmin) GetCancelLogListAdmin(ctx context.Context, in *GetCancelLogListAdminReq, opts ...grpc.CallOption) (*GetCancelLogListAdminResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.GetCancelLogListAdmin(ctx, in, opts...)
+}
+
+// 设置用户交易限制
 func (m *defaultTradeAdmin) SetUserTradeLimit(ctx context.Context, in *SetUserTradeLimitReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.SetUserTradeLimit(ctx, in, opts...)
 }
 
+// 设置用户交易对限制
 func (m *defaultTradeAdmin) SetUserSymbolLimit(ctx context.Context, in *SetUserSymbolLimitReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.SetUserSymbolLimit(ctx, in, opts...)
 }
 
+// 获取用户交易限制
 func (m *defaultTradeAdmin) GetUserTradeLimit(ctx context.Context, in *GetUserTradeLimitReq, opts ...grpc.CallOption) (*GetUserTradeLimitResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.GetUserTradeLimit(ctx, in, opts...)
 }
 
+// 获取用户交易对限制
 func (m *defaultTradeAdmin) GetUserSymbolLimit(ctx context.Context, in *GetUserSymbolLimitReq, opts ...grpc.CallOption) (*GetUserSymbolLimitResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.GetUserSymbolLimit(ctx, in, opts...)
 }
 
+// 设置用户交易配置
+func (m *defaultTradeAdmin) SetUserTradeConfig(ctx context.Context, in *SetUserTradeConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.SetUserTradeConfig(ctx, in, opts...)
+}
+
+// 获取用户交易配置
+func (m *defaultTradeAdmin) GetUserTradeConfig(ctx context.Context, in *GetUserTradeConfigReq, opts ...grpc.CallOption) (*GetUserTradeConfigResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.GetUserTradeConfig(ctx, in, opts...)
+}
+
+// 获取风控订单校验日志列表
 func (m *defaultTradeAdmin) GetRiskOrderCheckLogList(ctx context.Context, in *GetRiskOrderCheckLogListReq, opts ...grpc.CallOption) (*GetRiskOrderCheckLogListResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.GetRiskOrderCheckLogList(ctx, in, opts...)
 }
 
+// 设置用户杠杆配置
 func (m *defaultTradeAdmin) SetUserLeverageConfig(ctx context.Context, in *SetUserLeverageConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.SetUserLeverageConfig(ctx, in, opts...)
 }
 
+// 获取用户杠杆配置
 func (m *defaultTradeAdmin) GetUserLeverageConfig(ctx context.Context, in *GetUserLeverageConfigReq, opts ...grpc.CallOption) (*GetUserLeverageConfigResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.GetUserLeverageConfig(ctx, in, opts...)
 }
 
+// 获取交易事件列表
 func (m *defaultTradeAdmin) GetTradeEventList(ctx context.Context, in *GetTradeEventListReq, opts ...grpc.CallOption) (*GetTradeEventListResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.GetTradeEventList(ctx, in, opts...)
 }
 
+// 获取交易事件详情
+func (m *defaultTradeAdmin) GetTradeEventDetail(ctx context.Context, in *GetTradeEventDetailReq, opts ...grpc.CallOption) (*GetTradeEventDetailResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.GetTradeEventDetail(ctx, in, opts...)
+}
+
+// 重试交易事件
 func (m *defaultTradeAdmin) RetryTradeEvent(ctx context.Context, in *RetryTradeEventReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.RetryTradeEvent(ctx, in, opts...)

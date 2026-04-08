@@ -29,28 +29,40 @@ const (
 	TradeApp_GetFillList_FullMethodName          = "/trade.TradeApp/GetFillList"
 	TradeApp_GetPositionList_FullMethodName      = "/trade.TradeApp/GetPositionList"
 	TradeApp_GetMarginAccountList_FullMethodName = "/trade.TradeApp/GetMarginAccountList"
+	TradeApp_GetLeverageConfig_FullMethodName    = "/trade.TradeApp/GetLeverageConfig"
 	TradeApp_SetLeverage_FullMethodName          = "/trade.TradeApp/SetLeverage"
-	TradeApp_SetUserTradeConfig_FullMethodName   = "/trade.TradeApp/SetUserTradeConfig"
-	TradeApp_GetUserTradeConfig_FullMethodName   = "/trade.TradeApp/GetUserTradeConfig"
 )
 
 // TradeAppClient is the client API for TradeApp service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// APP 交易服务接口
 type TradeAppClient interface {
+	// 获取交易对列表
 	GetSymbolList(ctx context.Context, in *GetSymbolListReq, opts ...grpc.CallOption) (*GetSymbolListResp, error)
+	// 获取指定交易对详情
 	GetSymbolDetail(ctx context.Context, in *GetSymbolDetailReq, opts ...grpc.CallOption) (*GetSymbolDetailResp, error)
+	// 下单
 	PlaceOrder(ctx context.Context, in *PlaceOrderReq, opts ...grpc.CallOption) (*PlaceOrderResp, error)
+	// 撤销指定订单
 	CancelOrder(ctx context.Context, in *CancelOrderReq, opts ...grpc.CallOption) (*AppCommonResp, error)
+	// 撤销当前用户全部订单
 	CancelAllOrders(ctx context.Context, in *CancelAllOrdersReq, opts ...grpc.CallOption) (*CancelAllOrdersResp, error)
+	// 获取订单列表
 	GetOrderList(ctx context.Context, in *GetOrderListReq, opts ...grpc.CallOption) (*GetOrderListResp, error)
+	// 获取订单详情
 	GetOrderDetail(ctx context.Context, in *GetOrderDetailReq, opts ...grpc.CallOption) (*GetOrderDetailResp, error)
+	// 获取成交记录列表
 	GetFillList(ctx context.Context, in *GetFillListReq, opts ...grpc.CallOption) (*GetFillListResp, error)
+	// 获取持仓列表
 	GetPositionList(ctx context.Context, in *GetPositionListReq, opts ...grpc.CallOption) (*GetPositionListResp, error)
+	// 获取保证金账户列表
 	GetMarginAccountList(ctx context.Context, in *GetMarginAccountListReq, opts ...grpc.CallOption) (*GetMarginAccountListResp, error)
+	// 获取当前杠杆配置
+	GetLeverageConfig(ctx context.Context, in *GetLeverageConfigReq, opts ...grpc.CallOption) (*GetLeverageConfigResp, error)
+	// 设置杠杆倍数
 	SetLeverage(ctx context.Context, in *SetLeverageReq, opts ...grpc.CallOption) (*AppCommonResp, error)
-	SetUserTradeConfig(ctx context.Context, in *SetUserTradeConfigReq, opts ...grpc.CallOption) (*AppCommonResp, error)
-	GetUserTradeConfig(ctx context.Context, in *GetUserTradeConfigReq, opts ...grpc.CallOption) (*GetUserTradeConfigResp, error)
 }
 
 type tradeAppClient struct {
@@ -161,6 +173,16 @@ func (c *tradeAppClient) GetMarginAccountList(ctx context.Context, in *GetMargin
 	return out, nil
 }
 
+func (c *tradeAppClient) GetLeverageConfig(ctx context.Context, in *GetLeverageConfigReq, opts ...grpc.CallOption) (*GetLeverageConfigResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetLeverageConfigResp)
+	err := c.cc.Invoke(ctx, TradeApp_GetLeverageConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *tradeAppClient) SetLeverage(ctx context.Context, in *SetLeverageReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AppCommonResp)
@@ -171,43 +193,36 @@ func (c *tradeAppClient) SetLeverage(ctx context.Context, in *SetLeverageReq, op
 	return out, nil
 }
 
-func (c *tradeAppClient) SetUserTradeConfig(ctx context.Context, in *SetUserTradeConfigReq, opts ...grpc.CallOption) (*AppCommonResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AppCommonResp)
-	err := c.cc.Invoke(ctx, TradeApp_SetUserTradeConfig_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *tradeAppClient) GetUserTradeConfig(ctx context.Context, in *GetUserTradeConfigReq, opts ...grpc.CallOption) (*GetUserTradeConfigResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetUserTradeConfigResp)
-	err := c.cc.Invoke(ctx, TradeApp_GetUserTradeConfig_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // TradeAppServer is the server API for TradeApp service.
 // All implementations must embed UnimplementedTradeAppServer
 // for forward compatibility.
+//
+// APP 交易服务接口
 type TradeAppServer interface {
+	// 获取交易对列表
 	GetSymbolList(context.Context, *GetSymbolListReq) (*GetSymbolListResp, error)
+	// 获取指定交易对详情
 	GetSymbolDetail(context.Context, *GetSymbolDetailReq) (*GetSymbolDetailResp, error)
+	// 下单
 	PlaceOrder(context.Context, *PlaceOrderReq) (*PlaceOrderResp, error)
+	// 撤销指定订单
 	CancelOrder(context.Context, *CancelOrderReq) (*AppCommonResp, error)
+	// 撤销当前用户全部订单
 	CancelAllOrders(context.Context, *CancelAllOrdersReq) (*CancelAllOrdersResp, error)
+	// 获取订单列表
 	GetOrderList(context.Context, *GetOrderListReq) (*GetOrderListResp, error)
+	// 获取订单详情
 	GetOrderDetail(context.Context, *GetOrderDetailReq) (*GetOrderDetailResp, error)
+	// 获取成交记录列表
 	GetFillList(context.Context, *GetFillListReq) (*GetFillListResp, error)
+	// 获取持仓列表
 	GetPositionList(context.Context, *GetPositionListReq) (*GetPositionListResp, error)
+	// 获取保证金账户列表
 	GetMarginAccountList(context.Context, *GetMarginAccountListReq) (*GetMarginAccountListResp, error)
+	// 获取当前杠杆配置
+	GetLeverageConfig(context.Context, *GetLeverageConfigReq) (*GetLeverageConfigResp, error)
+	// 设置杠杆倍数
 	SetLeverage(context.Context, *SetLeverageReq) (*AppCommonResp, error)
-	SetUserTradeConfig(context.Context, *SetUserTradeConfigReq) (*AppCommonResp, error)
-	GetUserTradeConfig(context.Context, *GetUserTradeConfigReq) (*GetUserTradeConfigResp, error)
 	mustEmbedUnimplementedTradeAppServer()
 }
 
@@ -248,14 +263,11 @@ func (UnimplementedTradeAppServer) GetPositionList(context.Context, *GetPosition
 func (UnimplementedTradeAppServer) GetMarginAccountList(context.Context, *GetMarginAccountListReq) (*GetMarginAccountListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMarginAccountList not implemented")
 }
+func (UnimplementedTradeAppServer) GetLeverageConfig(context.Context, *GetLeverageConfigReq) (*GetLeverageConfigResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetLeverageConfig not implemented")
+}
 func (UnimplementedTradeAppServer) SetLeverage(context.Context, *SetLeverageReq) (*AppCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetLeverage not implemented")
-}
-func (UnimplementedTradeAppServer) SetUserTradeConfig(context.Context, *SetUserTradeConfigReq) (*AppCommonResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method SetUserTradeConfig not implemented")
-}
-func (UnimplementedTradeAppServer) GetUserTradeConfig(context.Context, *GetUserTradeConfigReq) (*GetUserTradeConfigResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetUserTradeConfig not implemented")
 }
 func (UnimplementedTradeAppServer) mustEmbedUnimplementedTradeAppServer() {}
 func (UnimplementedTradeAppServer) testEmbeddedByValue()                  {}
@@ -458,6 +470,24 @@ func _TradeApp_GetMarginAccountList_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TradeApp_GetLeverageConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetLeverageConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAppServer).GetLeverageConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeApp_GetLeverageConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAppServer).GetLeverageConfig(ctx, req.(*GetLeverageConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _TradeApp_SetLeverage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetLeverageReq)
 	if err := dec(in); err != nil {
@@ -472,42 +502,6 @@ func _TradeApp_SetLeverage_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TradeAppServer).SetLeverage(ctx, req.(*SetLeverageReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _TradeApp_SetUserTradeConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetUserTradeConfigReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(TradeAppServer).SetUserTradeConfig(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: TradeApp_SetUserTradeConfig_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAppServer).SetUserTradeConfig(ctx, req.(*SetUserTradeConfigReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _TradeApp_GetUserTradeConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserTradeConfigReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(TradeAppServer).GetUserTradeConfig(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: TradeApp_GetUserTradeConfig_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAppServer).GetUserTradeConfig(ctx, req.(*GetUserTradeConfigReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -560,16 +554,12 @@ var TradeApp_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _TradeApp_GetMarginAccountList_Handler,
 		},
 		{
+			MethodName: "GetLeverageConfig",
+			Handler:    _TradeApp_GetLeverageConfig_Handler,
+		},
+		{
 			MethodName: "SetLeverage",
 			Handler:    _TradeApp_SetLeverage_Handler,
-		},
-		{
-			MethodName: "SetUserTradeConfig",
-			Handler:    _TradeApp_SetUserTradeConfig_Handler,
-		},
-		{
-			MethodName: "GetUserTradeConfig",
-			Handler:    _TradeApp_GetUserTradeConfig_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

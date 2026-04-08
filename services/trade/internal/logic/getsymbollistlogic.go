@@ -23,6 +23,7 @@ func NewGetSymbolListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Get
 	}
 }
 
+// 获取交易对列表
 func (l *GetSymbolListLogic) GetSymbolList(in *trade.GetSymbolListReq) (*trade.GetSymbolListResp, error) {
 	// todo: add your logic here and delete this line
 

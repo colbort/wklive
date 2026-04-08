@@ -1,0 +1,398 @@
+syntax = "proto3";
+
+package option;
+
+import "proto/common/common.proto";
+import "proto/option/enum.proto";
+import "proto/option/model.proto";
+
+option go_package = "wklive/proto/option;option";
+
+// 期权管理后台服务
+service OptionAdmin {
+  // 创建期权合约
+  rpc AdminCreateContract (CreateContractReq) returns (CreateContractResp);
+
+  // 更新期权合约
+  rpc AdminUpdateContract (UpdateContractReq) returns (AdminCommonResp);
+
+  // 获取单个期权合约详情
+  rpc AdminGetContract (GetContractReq) returns (GetContractResp);
+
+  // 分页查询期权合约列表
+  rpc AdminListContracts (ListContractsReq) returns (ListContractsResp);
+
+  // 更新期权行情数据
+  rpc AdminUpdateMarket (UpdateMarketReq) returns (AdminCommonResp);
+
+  // 获取单个期权当前行情
+  rpc AdminGetMarket (GetMarketReq) returns (GetMarketResp);
+
+  // 分页查询期权行情快照列表
+  rpc AdminListMarketSnapshots (ListMarketSnapshotsReq) returns (ListMarketSnapshotsResp);
+
+  // 获取单个委托订单详情
+  rpc AdminGetOrder (GetOrderReq) returns (GetOrderResp);
+
+  // 分页查询委托订单列表
+  rpc AdminListOrders (ListOrdersReq) returns (ListOrdersResp);
+
+  // 获取单个成交记录详情
+  rpc AdminGetTrade (GetTradeReq) returns (GetTradeResp);
+
+  // 分页查询成交记录列表
+  rpc AdminListTrades (ListTradesReq) returns (ListTradesResp);
+
+  // 获取单个持仓详情
+  rpc AdminGetPosition (GetPositionReq) returns (GetPositionResp);
+
+  // 分页查询持仓列表
+  rpc AdminListPositions (ListPositionsReq) returns (ListPositionsResp);
+
+  // 获取单个行权记录详情
+  rpc AdminGetExercise (GetExerciseReq) returns (GetExerciseResp);
+
+  // 分页查询行权记录列表
+  rpc AdminListExercises (ListExercisesReq) returns (ListExercisesResp);
+
+  // 获取单个到期结算记录详情
+  rpc AdminGetSettlement (GetSettlementReq) returns (GetSettlementResp);
+
+  // 分页查询到期结算记录列表
+  rpc AdminListSettlements (ListSettlementsReq) returns (ListSettlementsResp);
+
+  // 获取单个账户资产详情
+  rpc AdminGetAccount (GetAccountReq) returns (GetAccountResp);
+
+  // 分页查询账户资产列表
+  rpc AdminListAccounts (ListAccountsReq) returns (ListAccountsResp);
+
+  // 获取单个资金流水详情
+  rpc AdminGetBill (GetBillReq) returns (GetBillResp);
+
+  // 分页查询资金流水列表
+  rpc AdminListBills (ListBillsReq) returns (ListBillsResp);
+}
+
+message AdminCommonResp {
+  common.RespBase base = 1;
+}
+
+message CreateContractReq {
+  int64 tenant_id = 1;
+  string contract_code = 2;
+  string underlying_symbol = 3;
+  string settle_coin = 4;
+  string quote_coin = 5;
+  OptionType option_type = 6;
+  ExerciseStyle exercise_style = 7;
+  SettlementType settlement_type = 8;
+  string strike_price = 9;
+  string contract_unit = 10;
+  string min_order_qty = 11;
+  string max_order_qty = 12;
+  string price_tick = 13;
+  string qty_step = 14;
+  string multiplier = 15;
+  int64 list_time = 16;
+  int64 expire_time = 17;
+  int64 deliver_time = 18;
+  YesNo is_auto_exercise = 19;
+  ContractStatus status = 20;
+  int32 sort = 21;
+  string remark = 22;
+}
+
+message CreateContractResp {
+  int64 id = 1;
+  common.RespBase base = 2;
+}
+
+message UpdateContractReq {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string contract_code = 3;
+  string underlying_symbol = 4;
+  string settle_coin = 5;
+  string quote_coin = 6;
+  OptionType option_type = 7;
+  ExerciseStyle exercise_style = 8;
+  SettlementType settlement_type = 9;
+  string strike_price = 10;
+  string contract_unit = 11;
+  string min_order_qty = 12;
+  string max_order_qty = 13;
+  string price_tick = 14;
+  string qty_step = 15;
+  string multiplier = 16;
+  int64 list_time = 17;
+  int64 expire_time = 18;
+  int64 deliver_time = 19;
+  YesNo is_auto_exercise = 20;
+  ContractStatus status = 21;
+  int32 sort = 22;
+  string remark = 23;
+  YesNo is_deleted = 24;
+}
+
+message GetContractReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+  string contract_code = 3;
+}
+
+message GetContractResp {
+  common.RespBase base = 1;
+  OptionContractDetail data = 2;
+}
+
+message ListContractsReq {
+  int64 tenant_id = 1;
+  string contract_code = 2;
+  string underlying_symbol = 3;
+  OptionType option_type = 4;
+  ContractStatus status = 5;
+  common.TimeRange list_time_range = 6;
+  common.TimeRange expire_time_range = 7;
+  common.PageReq page = 8;
+}
+
+message ListContractsResp {
+  common.RespBase base = 1;
+  repeated OptionContractDetail list = 2;
+  common.PageReq page = 3;
+}
+
+message UpdateMarketReq {
+  int64 tenant_id = 1;
+  int64 contract_id = 2;
+  string underlying_price = 3;
+  string mark_price = 4;
+  string last_price = 5;
+  string bid_price = 6;
+  string ask_price = 7;
+  string theoretical_price = 8;
+  string intrinsic_value = 9;
+  string time_value = 10;
+  string iv = 11;
+  string delta = 12;
+  string gamma = 13;
+  string theta = 14;
+  string vega = 15;
+  string rho = 16;
+  string risk_free_rate = 17;
+  string pricing_model = 18;
+  int64 snapshot_time = 19;
+}
+
+message GetMarketReq {
+  int64 tenant_id = 1;
+  int64 contract_id = 2;
+}
+
+message GetMarketResp {
+  common.RespBase base = 1;
+  OptionMarket data = 2;
+}
+
+message ListMarketSnapshotsReq {
+  int64 tenant_id = 1;
+  int64 contract_id = 2;
+  common.TimeRange time_range = 3;
+  common.PageReq page = 4;
+}
+
+message ListMarketSnapshotsResp {
+  common.RespBase base = 1;
+  repeated OptionMarketSnapshot list = 2;
+  common.PageReq page = 3;
+}
+
+message GetOrderReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+  string order_no = 3;
+}
+
+message GetOrderResp {
+  common.RespBase base = 1;
+  OptionOrderDetail data = 2;
+}
+
+message ListOrdersReq {
+  int64 tenant_id = 1;
+  int64 uid = 2;
+  int64 account_id = 3;
+  int64 contract_id = 4;
+  string underlying_symbol = 5;
+  string order_no = 6;
+  Side side = 7;
+  PositionEffect position_effect = 8;
+  OrderType order_type = 9;
+  OrderStatus status = 10;
+  common.TimeRange create_time_range = 11;
+  common.PageReq page = 12;
+}
+
+message ListOrdersResp {
+  common.RespBase base = 1;
+  repeated OptionOrderDetail list = 2;
+  common.PageReq page = 3;
+}
+
+message GetTradeReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+  string trade_no = 3;
+}
+
+message GetTradeResp {
+  common.RespBase base = 1;
+  OptionTradeDetail data = 2;
+}
+
+message ListTradesReq {
+  int64 tenant_id = 1;
+  int64 contract_id = 2;
+  int64 uid = 3;
+  string trade_no = 4;
+  common.TimeRange trade_time_range = 5;
+  common.PageReq page = 6;
+}
+
+message ListTradesResp {
+  common.RespBase base = 1;
+  repeated OptionTradeDetail list = 2;
+  common.PageReq page = 3;
+}
+
+message GetPositionReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+}
+
+message GetPositionResp {
+  common.RespBase base = 1;
+  OptionPositionDetail data = 2;
+}
+
+message ListPositionsReq {
+  int64 tenant_id = 1;
+  int64 uid = 2;
+  int64 account_id = 3;
+  int64 contract_id = 4;
+  PositionSide side = 5;
+  PositionStatus status = 6;
+  common.PageReq page = 7;
+}
+
+message ListPositionsResp {
+  common.RespBase base = 1;
+  repeated OptionPositionDetail list = 2;
+  common.PageReq page = 3;
+}
+
+message GetExerciseReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+  string exercise_no = 3;
+}
+
+message GetExerciseResp {
+  common.RespBase base = 1;
+  OptionExerciseDetail data = 2;
+}
+
+message ListExercisesReq {
+  int64 tenant_id = 1;
+  int64 uid = 2;
+  int64 account_id = 3;
+  int64 contract_id = 4;
+  ExerciseType exercise_type = 5;
+  ExerciseStatus status = 6;
+  common.TimeRange exercise_time_range = 7;
+  common.PageReq page = 8;
+}
+
+message ListExercisesResp {
+  common.RespBase base = 1;
+  repeated OptionExerciseDetail list = 2;
+  common.PageReq page = 3;
+}
+
+message GetSettlementReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+  string settlement_no = 3;
+}
+
+message GetSettlementResp {
+  common.RespBase base = 1;
+  OptionSettlementDetail data = 2;
+}
+
+message ListSettlementsReq {
+  int64 tenant_id = 1;
+  int64 contract_id = 2;
+  SettlementStatus status = 3;
+  common.TimeRange settlement_time_range = 4;
+  common.PageReq page = 5;
+}
+
+message ListSettlementsResp {
+  common.RespBase base = 1;
+  repeated OptionSettlementDetail list = 2;
+  common.PageReq page = 3;
+}
+
+message GetAccountReq {
+  int64 tenant_id = 1;
+  int64 uid = 2;
+  int64 account_id = 3;
+  string margin_coin = 4;
+}
+
+message GetAccountResp {
+  common.RespBase base = 1;
+  OptionAccount data = 2;
+}
+
+message ListAccountsReq {
+  int64 tenant_id = 1;
+  int64 uid = 2;
+  int64 account_id = 3;
+  AccountStatus status = 4;
+  common.PageReq page = 5;
+}
+
+message ListAccountsResp {
+  common.RespBase base = 1;
+  repeated OptionAccount list = 2;
+  common.PageReq page = 3;
+}
+
+message GetBillReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+}
+
+message GetBillResp {
+  common.RespBase base = 1;
+  OptionBill data = 2;
+}
+
+message ListBillsReq {
+  int64 tenant_id = 1;
+  int64 uid = 2;
+  int64 account_id = 3;
+  string biz_no = 4;
+  BillRefType ref_type = 5;
+  common.TimeRange create_time_range = 6;
+  common.PageReq page = 7;
+}
+
+message ListBillsResp {
+  common.RespBase base = 1;
+  repeated OptionBill list = 2;
+  common.PageReq page = 3;
+}

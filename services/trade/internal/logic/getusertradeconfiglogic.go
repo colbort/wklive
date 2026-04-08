@@ -23,6 +23,7 @@ func NewGetUserTradeConfigLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
+// 获取用户交易配置
 func (l *GetUserTradeConfigLogic) GetUserTradeConfig(in *trade.GetUserTradeConfigReq) (*trade.GetUserTradeConfigResp, error) {
 	// todo: add your logic here and delete this line
 

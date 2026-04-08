@@ -23,6 +23,7 @@ func NewGetSymbolListAdminLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
+// 获取后台交易对列表
 func (l *GetSymbolListAdminLogic) GetSymbolListAdmin(in *trade.GetSymbolListAdminReq) (*trade.GetSymbolListAdminResp, error) {
 	// todo: add your logic here and delete this line
 

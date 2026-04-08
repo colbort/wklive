@@ -23,6 +23,7 @@ func NewSetUserSymbolLimitLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
+// 设置用户交易对限制
 func (l *SetUserSymbolLimitLogic) SetUserSymbolLimit(in *trade.SetUserSymbolLimitReq) (*trade.AdminCommonResp, error) {
 	// todo: add your logic here and delete this line
 

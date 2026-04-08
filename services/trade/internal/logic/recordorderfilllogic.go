@@ -23,6 +23,7 @@ func NewRecordOrderFillLogic(ctx context.Context, svcCtx *svc.ServiceContext) *R
 	}
 }
 
+// 记录订单成交信息
 func (l *RecordOrderFillLogic) RecordOrderFill(in *trade.RecordOrderFillReq) (*trade.InternalCommonResp, error) {
 	// todo: add your logic here and delete this line
 

@@ -23,6 +23,7 @@ func NewSetLeverageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SetLe
 	}
 }
 
+// 设置杠杆倍数
 func (l *SetLeverageLogic) SetLeverage(in *trade.SetLeverageReq) (*trade.AppCommonResp, error) {
 	// todo: add your logic here and delete this line
 

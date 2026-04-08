@@ -23,6 +23,7 @@ func NewGetMarginAccountListLogic(ctx context.Context, svcCtx *svc.ServiceContex
 	}
 }
 
+// 获取保证金账户列表
 func (l *GetMarginAccountListLogic) GetMarginAccountList(in *trade.GetMarginAccountListReq) (*trade.GetMarginAccountListResp, error) {
 	// todo: add your logic here and delete this line
 

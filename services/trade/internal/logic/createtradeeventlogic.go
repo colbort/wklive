@@ -23,6 +23,7 @@ func NewCreateTradeEventLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
+// 创建交易事件
 func (l *CreateTradeEventLogic) CreateTradeEvent(in *trade.CreateTradeEventReq) (*trade.InternalCommonResp, error) {
 	// todo: add your logic here and delete this line
 

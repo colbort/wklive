@@ -23,67 +23,74 @@ func NewTradeAppServer(svcCtx *svc.ServiceContext) *TradeAppServer {
 	}
 }
 
+// 获取交易对列表
 func (s *TradeAppServer) GetSymbolList(ctx context.Context, in *trade.GetSymbolListReq) (*trade.GetSymbolListResp, error) {
 	l := logic.NewGetSymbolListLogic(ctx, s.svcCtx)
 	return l.GetSymbolList(in)
 }
 
+// 获取指定交易对详情
 func (s *TradeAppServer) GetSymbolDetail(ctx context.Context, in *trade.GetSymbolDetailReq) (*trade.GetSymbolDetailResp, error) {
 	l := logic.NewGetSymbolDetailLogic(ctx, s.svcCtx)
 	return l.GetSymbolDetail(in)
 }
 
+// 下单
 func (s *TradeAppServer) PlaceOrder(ctx context.Context, in *trade.PlaceOrderReq) (*trade.PlaceOrderResp, error) {
 	l := logic.NewPlaceOrderLogic(ctx, s.svcCtx)
 	return l.PlaceOrder(in)
 }
 
+// 撤销指定订单
 func (s *TradeAppServer) CancelOrder(ctx context.Context, in *trade.CancelOrderReq) (*trade.AppCommonResp, error) {
 	l := logic.NewCancelOrderLogic(ctx, s.svcCtx)
 	return l.CancelOrder(in)
 }
 
+// 撤销当前用户全部订单
 func (s *TradeAppServer) CancelAllOrders(ctx context.Context, in *trade.CancelAllOrdersReq) (*trade.CancelAllOrdersResp, error) {
 	l := logic.NewCancelAllOrdersLogic(ctx, s.svcCtx)
 	return l.CancelAllOrders(in)
 }
 
+// 获取订单列表
 func (s *TradeAppServer) GetOrderList(ctx context.Context, in *trade.GetOrderListReq) (*trade.GetOrderListResp, error) {
 	l := logic.NewGetOrderListLogic(ctx, s.svcCtx)
 	return l.GetOrderList(in)
 }
 
+// 获取订单详情
 func (s *TradeAppServer) GetOrderDetail(ctx context.Context, in *trade.GetOrderDetailReq) (*trade.GetOrderDetailResp, error) {
 	l := logic.NewGetOrderDetailLogic(ctx, s.svcCtx)
 	return l.GetOrderDetail(in)
 }
 
+// 获取成交记录列表
 func (s *TradeAppServer) GetFillList(ctx context.Context, in *trade.GetFillListReq) (*trade.GetFillListResp, error) {
 	l := logic.NewGetFillListLogic(ctx, s.svcCtx)
 	return l.GetFillList(in)
 }
 
+// 获取持仓列表
 func (s *TradeAppServer) GetPositionList(ctx context.Context, in *trade.GetPositionListReq) (*trade.GetPositionListResp, error) {
 	l := logic.NewGetPositionListLogic(ctx, s.svcCtx)
 	return l.GetPositionList(in)
 }
 
+// 获取保证金账户列表
 func (s *TradeAppServer) GetMarginAccountList(ctx context.Context, in *trade.GetMarginAccountListReq) (*trade.GetMarginAccountListResp, error) {
 	l := logic.NewGetMarginAccountListLogic(ctx, s.svcCtx)
 	return l.GetMarginAccountList(in)
 }
 
+// 获取当前杠杆配置
+func (s *TradeAppServer) GetLeverageConfig(ctx context.Context, in *trade.GetLeverageConfigReq) (*trade.GetLeverageConfigResp, error) {
+	l := logic.NewGetLeverageConfigLogic(ctx, s.svcCtx)
+	return l.GetLeverageConfig(in)
+}
+
+// 设置杠杆倍数
 func (s *TradeAppServer) SetLeverage(ctx context.Context, in *trade.SetLeverageReq) (*trade.AppCommonResp, error) {
 	l := logic.NewSetLeverageLogic(ctx, s.svcCtx)
 	return l.SetLeverage(in)
-}
-
-func (s *TradeAppServer) SetUserTradeConfig(ctx context.Context, in *trade.SetUserTradeConfigReq) (*trade.AppCommonResp, error) {
-	l := logic.NewSetUserTradeConfigLogic(ctx, s.svcCtx)
-	return l.SetUserTradeConfig(in)
-}
-
-func (s *TradeAppServer) GetUserTradeConfig(ctx context.Context, in *trade.GetUserTradeConfigReq) (*trade.GetUserTradeConfigResp, error) {
-	l := logic.NewGetUserTradeConfigLogic(ctx, s.svcCtx)
-	return l.GetUserTradeConfig(in)
 }

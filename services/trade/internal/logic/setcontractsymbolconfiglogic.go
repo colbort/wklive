@@ -23,6 +23,7 @@ func NewSetContractSymbolConfigLogic(ctx context.Context, svcCtx *svc.ServiceCon
 	}
 }
 
+// 设置合约交易对配置
 func (l *SetContractSymbolConfigLogic) SetContractSymbolConfig(in *trade.SetContractSymbolConfigReq) (*trade.AdminCommonResp, error) {
 	// todo: add your logic here and delete this line
 

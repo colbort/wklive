@@ -19,45 +19,94 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	TradeAdmin_CreateSymbol_FullMethodName             = "/trade.TradeAdmin/CreateSymbol"
-	TradeAdmin_UpdateSymbol_FullMethodName             = "/trade.TradeAdmin/UpdateSymbol"
-	TradeAdmin_GetSymbolListAdmin_FullMethodName       = "/trade.TradeAdmin/GetSymbolListAdmin"
-	TradeAdmin_SetSpotSymbolConfig_FullMethodName      = "/trade.TradeAdmin/SetSpotSymbolConfig"
-	TradeAdmin_SetContractSymbolConfig_FullMethodName  = "/trade.TradeAdmin/SetContractSymbolConfig"
-	TradeAdmin_GetOrderListAdmin_FullMethodName        = "/trade.TradeAdmin/GetOrderListAdmin"
-	TradeAdmin_GetFillListAdmin_FullMethodName         = "/trade.TradeAdmin/GetFillListAdmin"
-	TradeAdmin_GetPositionListAdmin_FullMethodName     = "/trade.TradeAdmin/GetPositionListAdmin"
-	TradeAdmin_SetUserTradeLimit_FullMethodName        = "/trade.TradeAdmin/SetUserTradeLimit"
-	TradeAdmin_SetUserSymbolLimit_FullMethodName       = "/trade.TradeAdmin/SetUserSymbolLimit"
-	TradeAdmin_GetUserTradeLimit_FullMethodName        = "/trade.TradeAdmin/GetUserTradeLimit"
-	TradeAdmin_GetUserSymbolLimit_FullMethodName       = "/trade.TradeAdmin/GetUserSymbolLimit"
-	TradeAdmin_GetRiskOrderCheckLogList_FullMethodName = "/trade.TradeAdmin/GetRiskOrderCheckLogList"
-	TradeAdmin_SetUserLeverageConfig_FullMethodName    = "/trade.TradeAdmin/SetUserLeverageConfig"
-	TradeAdmin_GetUserLeverageConfig_FullMethodName    = "/trade.TradeAdmin/GetUserLeverageConfig"
-	TradeAdmin_GetTradeEventList_FullMethodName        = "/trade.TradeAdmin/GetTradeEventList"
-	TradeAdmin_RetryTradeEvent_FullMethodName          = "/trade.TradeAdmin/RetryTradeEvent"
+	TradeAdmin_CreateSymbol_FullMethodName                = "/trade.TradeAdmin/CreateSymbol"
+	TradeAdmin_UpdateSymbol_FullMethodName                = "/trade.TradeAdmin/UpdateSymbol"
+	TradeAdmin_GetSymbolListAdmin_FullMethodName          = "/trade.TradeAdmin/GetSymbolListAdmin"
+	TradeAdmin_GetSymbolDetailAdmin_FullMethodName        = "/trade.TradeAdmin/GetSymbolDetailAdmin"
+	TradeAdmin_SetSpotSymbolConfig_FullMethodName         = "/trade.TradeAdmin/SetSpotSymbolConfig"
+	TradeAdmin_SetContractSymbolConfig_FullMethodName     = "/trade.TradeAdmin/SetContractSymbolConfig"
+	TradeAdmin_GetOrderListAdmin_FullMethodName           = "/trade.TradeAdmin/GetOrderListAdmin"
+	TradeAdmin_GetOrderDetailAdmin_FullMethodName         = "/trade.TradeAdmin/GetOrderDetailAdmin"
+	TradeAdmin_GetFillListAdmin_FullMethodName            = "/trade.TradeAdmin/GetFillListAdmin"
+	TradeAdmin_GetFillDetailAdmin_FullMethodName          = "/trade.TradeAdmin/GetFillDetailAdmin"
+	TradeAdmin_GetPositionListAdmin_FullMethodName        = "/trade.TradeAdmin/GetPositionListAdmin"
+	TradeAdmin_GetPositionDetailAdmin_FullMethodName      = "/trade.TradeAdmin/GetPositionDetailAdmin"
+	TradeAdmin_GetPositionHistoryListAdmin_FullMethodName = "/trade.TradeAdmin/GetPositionHistoryListAdmin"
+	TradeAdmin_GetMarginAccountListAdmin_FullMethodName   = "/trade.TradeAdmin/GetMarginAccountListAdmin"
+	TradeAdmin_GetCancelLogListAdmin_FullMethodName       = "/trade.TradeAdmin/GetCancelLogListAdmin"
+	TradeAdmin_SetUserTradeLimit_FullMethodName           = "/trade.TradeAdmin/SetUserTradeLimit"
+	TradeAdmin_SetUserSymbolLimit_FullMethodName          = "/trade.TradeAdmin/SetUserSymbolLimit"
+	TradeAdmin_GetUserTradeLimit_FullMethodName           = "/trade.TradeAdmin/GetUserTradeLimit"
+	TradeAdmin_GetUserSymbolLimit_FullMethodName          = "/trade.TradeAdmin/GetUserSymbolLimit"
+	TradeAdmin_SetUserTradeConfig_FullMethodName          = "/trade.TradeAdmin/SetUserTradeConfig"
+	TradeAdmin_GetUserTradeConfig_FullMethodName          = "/trade.TradeAdmin/GetUserTradeConfig"
+	TradeAdmin_GetRiskOrderCheckLogList_FullMethodName    = "/trade.TradeAdmin/GetRiskOrderCheckLogList"
+	TradeAdmin_SetUserLeverageConfig_FullMethodName       = "/trade.TradeAdmin/SetUserLeverageConfig"
+	TradeAdmin_GetUserLeverageConfig_FullMethodName       = "/trade.TradeAdmin/GetUserLeverageConfig"
+	TradeAdmin_GetTradeEventList_FullMethodName           = "/trade.TradeAdmin/GetTradeEventList"
+	TradeAdmin_GetTradeEventDetail_FullMethodName         = "/trade.TradeAdmin/GetTradeEventDetail"
+	TradeAdmin_RetryTradeEvent_FullMethodName             = "/trade.TradeAdmin/RetryTradeEvent"
 )
 
 // TradeAdminClient is the client API for TradeAdmin service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// 交易服务管理后台接口
 type TradeAdminClient interface {
+	// 创建交易对
 	CreateSymbol(ctx context.Context, in *CreateSymbolReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	// 更新交易对信息
 	UpdateSymbol(ctx context.Context, in *UpdateSymbolReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	// 获取后台交易对列表
 	GetSymbolListAdmin(ctx context.Context, in *GetSymbolListAdminReq, opts ...grpc.CallOption) (*GetSymbolListAdminResp, error)
+	// 获取交易对详情
+	GetSymbolDetailAdmin(ctx context.Context, in *GetSymbolDetailAdminReq, opts ...grpc.CallOption) (*GetSymbolDetailAdminResp, error)
+	// 设置现货交易对配置
 	SetSpotSymbolConfig(ctx context.Context, in *SetSpotSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	// 设置合约交易对配置
 	SetContractSymbolConfig(ctx context.Context, in *SetContractSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	// 获取后台订单列表
 	GetOrderListAdmin(ctx context.Context, in *GetOrderListAdminReq, opts ...grpc.CallOption) (*GetOrderListAdminResp, error)
+	// 获取订单详情
+	GetOrderDetailAdmin(ctx context.Context, in *GetOrderDetailAdminReq, opts ...grpc.CallOption) (*GetOrderDetailAdminResp, error)
+	// 获取后台成交记录列表
 	GetFillListAdmin(ctx context.Context, in *GetFillListAdminReq, opts ...grpc.CallOption) (*GetFillListAdminResp, error)
+	// 获取成交详情
+	GetFillDetailAdmin(ctx context.Context, in *GetFillDetailAdminReq, opts ...grpc.CallOption) (*GetFillDetailAdminResp, error)
+	// 获取后台持仓列表
 	GetPositionListAdmin(ctx context.Context, in *GetPositionListAdminReq, opts ...grpc.CallOption) (*GetPositionListAdminResp, error)
+	// 获取持仓详情
+	GetPositionDetailAdmin(ctx context.Context, in *GetPositionDetailAdminReq, opts ...grpc.CallOption) (*GetPositionDetailAdminResp, error)
+	// 获取持仓历史列表
+	GetPositionHistoryListAdmin(ctx context.Context, in *GetPositionHistoryListAdminReq, opts ...grpc.CallOption) (*GetPositionHistoryListAdminResp, error)
+	// 获取保证金账户列表
+	GetMarginAccountListAdmin(ctx context.Context, in *GetMarginAccountListAdminReq, opts ...grpc.CallOption) (*GetMarginAccountListAdminResp, error)
+	// 获取撤单日志列表
+	GetCancelLogListAdmin(ctx context.Context, in *GetCancelLogListAdminReq, opts ...grpc.CallOption) (*GetCancelLogListAdminResp, error)
+	// 设置用户交易限制
 	SetUserTradeLimit(ctx context.Context, in *SetUserTradeLimitReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	// 设置用户交易对限制
 	SetUserSymbolLimit(ctx context.Context, in *SetUserSymbolLimitReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	// 获取用户交易限制
 	GetUserTradeLimit(ctx context.Context, in *GetUserTradeLimitReq, opts ...grpc.CallOption) (*GetUserTradeLimitResp, error)
+	// 获取用户交易对限制
 	GetUserSymbolLimit(ctx context.Context, in *GetUserSymbolLimitReq, opts ...grpc.CallOption) (*GetUserSymbolLimitResp, error)
+	// 设置用户交易配置
+	SetUserTradeConfig(ctx context.Context, in *SetUserTradeConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	// 获取用户交易配置
+	GetUserTradeConfig(ctx context.Context, in *GetUserTradeConfigReq, opts ...grpc.CallOption) (*GetUserTradeConfigResp, error)
+	// 获取风控订单校验日志列表
 	GetRiskOrderCheckLogList(ctx context.Context, in *GetRiskOrderCheckLogListReq, opts ...grpc.CallOption) (*GetRiskOrderCheckLogListResp, error)
+	// 设置用户杠杆配置
 	SetUserLeverageConfig(ctx context.Context, in *SetUserLeverageConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	// 获取用户杠杆配置
 	GetUserLeverageConfig(ctx context.Context, in *GetUserLeverageConfigReq, opts ...grpc.CallOption) (*GetUserLeverageConfigResp, error)
+	// 获取交易事件列表
 	GetTradeEventList(ctx context.Context, in *GetTradeEventListReq, opts ...grpc.CallOption) (*GetTradeEventListResp, error)
+	// 获取交易事件详情
+	GetTradeEventDetail(ctx context.Context, in *GetTradeEventDetailReq, opts ...grpc.CallOption) (*GetTradeEventDetailResp, error)
+	// 重试交易事件
 	RetryTradeEvent(ctx context.Context, in *RetryTradeEventReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 }
 
@@ -99,6 +148,16 @@ func (c *tradeAdminClient) GetSymbolListAdmin(ctx context.Context, in *GetSymbol
 	return out, nil
 }
 
+func (c *tradeAdminClient) GetSymbolDetailAdmin(ctx context.Context, in *GetSymbolDetailAdminReq, opts ...grpc.CallOption) (*GetSymbolDetailAdminResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSymbolDetailAdminResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_GetSymbolDetailAdmin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *tradeAdminClient) SetSpotSymbolConfig(ctx context.Context, in *SetSpotSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AdminCommonResp)
@@ -129,6 +188,16 @@ func (c *tradeAdminClient) GetOrderListAdmin(ctx context.Context, in *GetOrderLi
 	return out, nil
 }
 
+func (c *tradeAdminClient) GetOrderDetailAdmin(ctx context.Context, in *GetOrderDetailAdminReq, opts ...grpc.CallOption) (*GetOrderDetailAdminResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetOrderDetailAdminResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_GetOrderDetailAdmin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *tradeAdminClient) GetFillListAdmin(ctx context.Context, in *GetFillListAdminReq, opts ...grpc.CallOption) (*GetFillListAdminResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetFillListAdminResp)
@@ -139,10 +208,60 @@ func (c *tradeAdminClient) GetFillListAdmin(ctx context.Context, in *GetFillList
 	return out, nil
 }
 
+func (c *tradeAdminClient) GetFillDetailAdmin(ctx context.Context, in *GetFillDetailAdminReq, opts ...grpc.CallOption) (*GetFillDetailAdminResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetFillDetailAdminResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_GetFillDetailAdmin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *tradeAdminClient) GetPositionListAdmin(ctx context.Context, in *GetPositionListAdminReq, opts ...grpc.CallOption) (*GetPositionListAdminResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetPositionListAdminResp)
 	err := c.cc.Invoke(ctx, TradeAdmin_GetPositionListAdmin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeAdminClient) GetPositionDetailAdmin(ctx context.Context, in *GetPositionDetailAdminReq, opts ...grpc.CallOption) (*GetPositionDetailAdminResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetPositionDetailAdminResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_GetPositionDetailAdmin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeAdminClient) GetPositionHistoryListAdmin(ctx context.Context, in *GetPositionHistoryListAdminReq, opts ...grpc.CallOption) (*GetPositionHistoryListAdminResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetPositionHistoryListAdminResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_GetPositionHistoryListAdmin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeAdminClient) GetMarginAccountListAdmin(ctx context.Context, in *GetMarginAccountListAdminReq, opts ...grpc.CallOption) (*GetMarginAccountListAdminResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetMarginAccountListAdminResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_GetMarginAccountListAdmin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeAdminClient) GetCancelLogListAdmin(ctx context.Context, in *GetCancelLogListAdminReq, opts ...grpc.CallOption) (*GetCancelLogListAdminResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetCancelLogListAdminResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_GetCancelLogListAdmin_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -189,6 +308,26 @@ func (c *tradeAdminClient) GetUserSymbolLimit(ctx context.Context, in *GetUserSy
 	return out, nil
 }
 
+func (c *tradeAdminClient) SetUserTradeConfig(ctx context.Context, in *SetUserTradeConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminCommonResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_SetUserTradeConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeAdminClient) GetUserTradeConfig(ctx context.Context, in *GetUserTradeConfigReq, opts ...grpc.CallOption) (*GetUserTradeConfigResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetUserTradeConfigResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_GetUserTradeConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *tradeAdminClient) GetRiskOrderCheckLogList(ctx context.Context, in *GetRiskOrderCheckLogListReq, opts ...grpc.CallOption) (*GetRiskOrderCheckLogListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetRiskOrderCheckLogListResp)
@@ -229,6 +368,16 @@ func (c *tradeAdminClient) GetTradeEventList(ctx context.Context, in *GetTradeEv
 	return out, nil
 }
 
+func (c *tradeAdminClient) GetTradeEventDetail(ctx context.Context, in *GetTradeEventDetailReq, opts ...grpc.CallOption) (*GetTradeEventDetailResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTradeEventDetailResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_GetTradeEventDetail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *tradeAdminClient) RetryTradeEvent(ctx context.Context, in *RetryTradeEventReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AdminCommonResp)
@@ -242,23 +391,62 @@ func (c *tradeAdminClient) RetryTradeEvent(ctx context.Context, in *RetryTradeEv
 // TradeAdminServer is the server API for TradeAdmin service.
 // All implementations must embed UnimplementedTradeAdminServer
 // for forward compatibility.
+//
+// 交易服务管理后台接口
 type TradeAdminServer interface {
+	// 创建交易对
 	CreateSymbol(context.Context, *CreateSymbolReq) (*AdminCommonResp, error)
+	// 更新交易对信息
 	UpdateSymbol(context.Context, *UpdateSymbolReq) (*AdminCommonResp, error)
+	// 获取后台交易对列表
 	GetSymbolListAdmin(context.Context, *GetSymbolListAdminReq) (*GetSymbolListAdminResp, error)
+	// 获取交易对详情
+	GetSymbolDetailAdmin(context.Context, *GetSymbolDetailAdminReq) (*GetSymbolDetailAdminResp, error)
+	// 设置现货交易对配置
 	SetSpotSymbolConfig(context.Context, *SetSpotSymbolConfigReq) (*AdminCommonResp, error)
+	// 设置合约交易对配置
 	SetContractSymbolConfig(context.Context, *SetContractSymbolConfigReq) (*AdminCommonResp, error)
+	// 获取后台订单列表
 	GetOrderListAdmin(context.Context, *GetOrderListAdminReq) (*GetOrderListAdminResp, error)
+	// 获取订单详情
+	GetOrderDetailAdmin(context.Context, *GetOrderDetailAdminReq) (*GetOrderDetailAdminResp, error)
+	// 获取后台成交记录列表
 	GetFillListAdmin(context.Context, *GetFillListAdminReq) (*GetFillListAdminResp, error)
+	// 获取成交详情
+	GetFillDetailAdmin(context.Context, *GetFillDetailAdminReq) (*GetFillDetailAdminResp, error)
+	// 获取后台持仓列表
 	GetPositionListAdmin(context.Context, *GetPositionListAdminReq) (*GetPositionListAdminResp, error)
+	// 获取持仓详情
+	GetPositionDetailAdmin(context.Context, *GetPositionDetailAdminReq) (*GetPositionDetailAdminResp, error)
+	// 获取持仓历史列表
+	GetPositionHistoryListAdmin(context.Context, *GetPositionHistoryListAdminReq) (*GetPositionHistoryListAdminResp, error)
+	// 获取保证金账户列表
+	GetMarginAccountListAdmin(context.Context, *GetMarginAccountListAdminReq) (*GetMarginAccountListAdminResp, error)
+	// 获取撤单日志列表
+	GetCancelLogListAdmin(context.Context, *GetCancelLogListAdminReq) (*GetCancelLogListAdminResp, error)
+	// 设置用户交易限制
 	SetUserTradeLimit(context.Context, *SetUserTradeLimitReq) (*AdminCommonResp, error)
+	// 设置用户交易对限制
 	SetUserSymbolLimit(context.Context, *SetUserSymbolLimitReq) (*AdminCommonResp, error)
+	// 获取用户交易限制
 	GetUserTradeLimit(context.Context, *GetUserTradeLimitReq) (*GetUserTradeLimitResp, error)
+	// 获取用户交易对限制
 	GetUserSymbolLimit(context.Context, *GetUserSymbolLimitReq) (*GetUserSymbolLimitResp, error)
+	// 设置用户交易配置
+	SetUserTradeConfig(context.Context, *SetUserTradeConfigReq) (*AdminCommonResp, error)
+	// 获取用户交易配置
+	GetUserTradeConfig(context.Context, *GetUserTradeConfigReq) (*GetUserTradeConfigResp, error)
+	// 获取风控订单校验日志列表
 	GetRiskOrderCheckLogList(context.Context, *GetRiskOrderCheckLogListReq) (*GetRiskOrderCheckLogListResp, error)
+	// 设置用户杠杆配置
 	SetUserLeverageConfig(context.Context, *SetUserLeverageConfigReq) (*AdminCommonResp, error)
+	// 获取用户杠杆配置
 	GetUserLeverageConfig(context.Context, *GetUserLeverageConfigReq) (*GetUserLeverageConfigResp, error)
+	// 获取交易事件列表
 	GetTradeEventList(context.Context, *GetTradeEventListReq) (*GetTradeEventListResp, error)
+	// 获取交易事件详情
+	GetTradeEventDetail(context.Context, *GetTradeEventDetailReq) (*GetTradeEventDetailResp, error)
+	// 重试交易事件
 	RetryTradeEvent(context.Context, *RetryTradeEventReq) (*AdminCommonResp, error)
 	mustEmbedUnimplementedTradeAdminServer()
 }
@@ -279,6 +467,9 @@ func (UnimplementedTradeAdminServer) UpdateSymbol(context.Context, *UpdateSymbol
 func (UnimplementedTradeAdminServer) GetSymbolListAdmin(context.Context, *GetSymbolListAdminReq) (*GetSymbolListAdminResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSymbolListAdmin not implemented")
 }
+func (UnimplementedTradeAdminServer) GetSymbolDetailAdmin(context.Context, *GetSymbolDetailAdminReq) (*GetSymbolDetailAdminResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetSymbolDetailAdmin not implemented")
+}
 func (UnimplementedTradeAdminServer) SetSpotSymbolConfig(context.Context, *SetSpotSymbolConfigReq) (*AdminCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetSpotSymbolConfig not implemented")
 }
@@ -288,11 +479,29 @@ func (UnimplementedTradeAdminServer) SetContractSymbolConfig(context.Context, *S
 func (UnimplementedTradeAdminServer) GetOrderListAdmin(context.Context, *GetOrderListAdminReq) (*GetOrderListAdminResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetOrderListAdmin not implemented")
 }
+func (UnimplementedTradeAdminServer) GetOrderDetailAdmin(context.Context, *GetOrderDetailAdminReq) (*GetOrderDetailAdminResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetOrderDetailAdmin not implemented")
+}
 func (UnimplementedTradeAdminServer) GetFillListAdmin(context.Context, *GetFillListAdminReq) (*GetFillListAdminResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetFillListAdmin not implemented")
 }
+func (UnimplementedTradeAdminServer) GetFillDetailAdmin(context.Context, *GetFillDetailAdminReq) (*GetFillDetailAdminResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetFillDetailAdmin not implemented")
+}
 func (UnimplementedTradeAdminServer) GetPositionListAdmin(context.Context, *GetPositionListAdminReq) (*GetPositionListAdminResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPositionListAdmin not implemented")
+}
+func (UnimplementedTradeAdminServer) GetPositionDetailAdmin(context.Context, *GetPositionDetailAdminReq) (*GetPositionDetailAdminResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetPositionDetailAdmin not implemented")
+}
+func (UnimplementedTradeAdminServer) GetPositionHistoryListAdmin(context.Context, *GetPositionHistoryListAdminReq) (*GetPositionHistoryListAdminResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetPositionHistoryListAdmin not implemented")
+}
+func (UnimplementedTradeAdminServer) GetMarginAccountListAdmin(context.Context, *GetMarginAccountListAdminReq) (*GetMarginAccountListAdminResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMarginAccountListAdmin not implemented")
+}
+func (UnimplementedTradeAdminServer) GetCancelLogListAdmin(context.Context, *GetCancelLogListAdminReq) (*GetCancelLogListAdminResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetCancelLogListAdmin not implemented")
 }
 func (UnimplementedTradeAdminServer) SetUserTradeLimit(context.Context, *SetUserTradeLimitReq) (*AdminCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetUserTradeLimit not implemented")
@@ -306,6 +515,12 @@ func (UnimplementedTradeAdminServer) GetUserTradeLimit(context.Context, *GetUser
 func (UnimplementedTradeAdminServer) GetUserSymbolLimit(context.Context, *GetUserSymbolLimitReq) (*GetUserSymbolLimitResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUserSymbolLimit not implemented")
 }
+func (UnimplementedTradeAdminServer) SetUserTradeConfig(context.Context, *SetUserTradeConfigReq) (*AdminCommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetUserTradeConfig not implemented")
+}
+func (UnimplementedTradeAdminServer) GetUserTradeConfig(context.Context, *GetUserTradeConfigReq) (*GetUserTradeConfigResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetUserTradeConfig not implemented")
+}
 func (UnimplementedTradeAdminServer) GetRiskOrderCheckLogList(context.Context, *GetRiskOrderCheckLogListReq) (*GetRiskOrderCheckLogListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetRiskOrderCheckLogList not implemented")
 }
@@ -317,6 +532,9 @@ func (UnimplementedTradeAdminServer) GetUserLeverageConfig(context.Context, *Get
 }
 func (UnimplementedTradeAdminServer) GetTradeEventList(context.Context, *GetTradeEventListReq) (*GetTradeEventListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetTradeEventList not implemented")
+}
+func (UnimplementedTradeAdminServer) GetTradeEventDetail(context.Context, *GetTradeEventDetailReq) (*GetTradeEventDetailResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTradeEventDetail not implemented")
 }
 func (UnimplementedTradeAdminServer) RetryTradeEvent(context.Context, *RetryTradeEventReq) (*AdminCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RetryTradeEvent not implemented")
@@ -396,6 +614,24 @@ func _TradeAdmin_GetSymbolListAdmin_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TradeAdmin_GetSymbolDetailAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSymbolDetailAdminReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).GetSymbolDetailAdmin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_GetSymbolDetailAdmin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).GetSymbolDetailAdmin(ctx, req.(*GetSymbolDetailAdminReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _TradeAdmin_SetSpotSymbolConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetSpotSymbolConfigReq)
 	if err := dec(in); err != nil {
@@ -450,6 +686,24 @@ func _TradeAdmin_GetOrderListAdmin_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TradeAdmin_GetOrderDetailAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOrderDetailAdminReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).GetOrderDetailAdmin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_GetOrderDetailAdmin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).GetOrderDetailAdmin(ctx, req.(*GetOrderDetailAdminReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _TradeAdmin_GetFillListAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetFillListAdminReq)
 	if err := dec(in); err != nil {
@@ -468,6 +722,24 @@ func _TradeAdmin_GetFillListAdmin_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TradeAdmin_GetFillDetailAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetFillDetailAdminReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).GetFillDetailAdmin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_GetFillDetailAdmin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).GetFillDetailAdmin(ctx, req.(*GetFillDetailAdminReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _TradeAdmin_GetPositionListAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetPositionListAdminReq)
 	if err := dec(in); err != nil {
@@ -482,6 +754,78 @@ func _TradeAdmin_GetPositionListAdmin_Handler(srv interface{}, ctx context.Conte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TradeAdminServer).GetPositionListAdmin(ctx, req.(*GetPositionListAdminReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TradeAdmin_GetPositionDetailAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPositionDetailAdminReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).GetPositionDetailAdmin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_GetPositionDetailAdmin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).GetPositionDetailAdmin(ctx, req.(*GetPositionDetailAdminReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TradeAdmin_GetPositionHistoryListAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPositionHistoryListAdminReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).GetPositionHistoryListAdmin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_GetPositionHistoryListAdmin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).GetPositionHistoryListAdmin(ctx, req.(*GetPositionHistoryListAdminReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TradeAdmin_GetMarginAccountListAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMarginAccountListAdminReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).GetMarginAccountListAdmin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_GetMarginAccountListAdmin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).GetMarginAccountListAdmin(ctx, req.(*GetMarginAccountListAdminReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TradeAdmin_GetCancelLogListAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCancelLogListAdminReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).GetCancelLogListAdmin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_GetCancelLogListAdmin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).GetCancelLogListAdmin(ctx, req.(*GetCancelLogListAdminReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -558,6 +902,42 @@ func _TradeAdmin_GetUserSymbolLimit_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TradeAdmin_SetUserTradeConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetUserTradeConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).SetUserTradeConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_SetUserTradeConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).SetUserTradeConfig(ctx, req.(*SetUserTradeConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TradeAdmin_GetUserTradeConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserTradeConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).GetUserTradeConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_GetUserTradeConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).GetUserTradeConfig(ctx, req.(*GetUserTradeConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _TradeAdmin_GetRiskOrderCheckLogList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetRiskOrderCheckLogListReq)
 	if err := dec(in); err != nil {
@@ -630,6 +1010,24 @@ func _TradeAdmin_GetTradeEventList_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TradeAdmin_GetTradeEventDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTradeEventDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).GetTradeEventDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_GetTradeEventDetail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).GetTradeEventDetail(ctx, req.(*GetTradeEventDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _TradeAdmin_RetryTradeEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RetryTradeEventReq)
 	if err := dec(in); err != nil {
@@ -668,6 +1066,10 @@ var TradeAdmin_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _TradeAdmin_GetSymbolListAdmin_Handler,
 		},
 		{
+			MethodName: "GetSymbolDetailAdmin",
+			Handler:    _TradeAdmin_GetSymbolDetailAdmin_Handler,
+		},
+		{
 			MethodName: "SetSpotSymbolConfig",
 			Handler:    _TradeAdmin_SetSpotSymbolConfig_Handler,
 		},
@@ -680,12 +1082,36 @@ var TradeAdmin_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _TradeAdmin_GetOrderListAdmin_Handler,
 		},
 		{
+			MethodName: "GetOrderDetailAdmin",
+			Handler:    _TradeAdmin_GetOrderDetailAdmin_Handler,
+		},
+		{
 			MethodName: "GetFillListAdmin",
 			Handler:    _TradeAdmin_GetFillListAdmin_Handler,
 		},
 		{
+			MethodName: "GetFillDetailAdmin",
+			Handler:    _TradeAdmin_GetFillDetailAdmin_Handler,
+		},
+		{
 			MethodName: "GetPositionListAdmin",
 			Handler:    _TradeAdmin_GetPositionListAdmin_Handler,
+		},
+		{
+			MethodName: "GetPositionDetailAdmin",
+			Handler:    _TradeAdmin_GetPositionDetailAdmin_Handler,
+		},
+		{
+			MethodName: "GetPositionHistoryListAdmin",
+			Handler:    _TradeAdmin_GetPositionHistoryListAdmin_Handler,
+		},
+		{
+			MethodName: "GetMarginAccountListAdmin",
+			Handler:    _TradeAdmin_GetMarginAccountListAdmin_Handler,
+		},
+		{
+			MethodName: "GetCancelLogListAdmin",
+			Handler:    _TradeAdmin_GetCancelLogListAdmin_Handler,
 		},
 		{
 			MethodName: "SetUserTradeLimit",
@@ -704,6 +1130,14 @@ var TradeAdmin_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _TradeAdmin_GetUserSymbolLimit_Handler,
 		},
 		{
+			MethodName: "SetUserTradeConfig",
+			Handler:    _TradeAdmin_SetUserTradeConfig_Handler,
+		},
+		{
+			MethodName: "GetUserTradeConfig",
+			Handler:    _TradeAdmin_GetUserTradeConfig_Handler,
+		},
+		{
 			MethodName: "GetRiskOrderCheckLogList",
 			Handler:    _TradeAdmin_GetRiskOrderCheckLogList_Handler,
 		},
@@ -718,6 +1152,10 @@ var TradeAdmin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTradeEventList",
 			Handler:    _TradeAdmin_GetTradeEventList_Handler,
+		},
+		{
+			MethodName: "GetTradeEventDetail",
+			Handler:    _TradeAdmin_GetTradeEventDetail_Handler,
 		},
 		{
 			MethodName: "RetryTradeEvent",

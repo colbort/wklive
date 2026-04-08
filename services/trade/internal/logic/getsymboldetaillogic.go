@@ -23,6 +23,7 @@ func NewGetSymbolDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 	}
 }
 
+// 获取指定交易对详情
 func (l *GetSymbolDetailLogic) GetSymbolDetail(in *trade.GetSymbolDetailReq) (*trade.GetSymbolDetailResp, error) {
 	// todo: add your logic here and delete this line
 

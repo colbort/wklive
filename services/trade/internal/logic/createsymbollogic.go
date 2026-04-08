@@ -23,6 +23,7 @@ func NewCreateSymbolLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Crea
 	}
 }
 
+// 创建交易对
 func (l *CreateSymbolLogic) CreateSymbol(in *trade.CreateSymbolReq) (*trade.AdminCommonResp, error) {
 	// todo: add your logic here and delete this line
 

@@ -23,6 +23,7 @@ func NewUpdateSymbolLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upda
 	}
 }
 
+// 更新交易对信息
 func (l *UpdateSymbolLogic) UpdateSymbol(in *trade.UpdateSymbolReq) (*trade.AdminCommonResp, error) {
 	// todo: add your logic here and delete this line
 

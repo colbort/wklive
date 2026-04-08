@@ -1,0 +1,253 @@
+syntax = "proto3";
+
+package option;
+
+import "proto/common/common.proto";
+import "proto/option/enum.proto";
+import "proto/option/model.proto";
+
+option go_package = "wklive/proto/option;option";
+
+
+// 期权 APP 端服务
+service OptionApp {
+  // 获取可交易期权合约列表
+  rpc AppListContracts (AppListContractsReq) returns (AppListContractsResp);
+
+  // 获取期权合约详情
+  rpc AppGetContractDetail (AppGetContractDetailReq) returns (AppGetContractDetailResp);
+
+  // 提交期权下单请求
+  rpc AppPlaceOrder (AppPlaceOrderReq) returns (AppPlaceOrderResp);
+
+  // 撤销期权委托订单
+  rpc AppCancelOrder (AppCancelOrderReq) returns (AppCommonResp);
+
+  // 获取单个委托订单详情
+  rpc AppGetOrderDetail (AppGetOrderDetailReq) returns (AppGetOrderDetailResp);
+
+  // 获取当前委托列表
+  rpc AppListCurrentOrders (AppListCurrentOrdersReq) returns (AppListCurrentOrdersResp);
+
+  // 获取历史委托列表
+  rpc AppListHistoryOrders (AppListHistoryOrdersReq) returns (AppListHistoryOrdersResp);
+
+  // 获取成交记录列表
+  rpc AppListTrades (AppListTradesReq) returns (AppListTradesResp);
+
+  // 获取持仓列表
+  rpc AppListPositions (AppListPositionsReq) returns (AppListPositionsResp);
+
+  // 获取单个持仓详情
+  rpc AppGetPositionDetail (AppGetPositionDetailReq) returns (AppGetPositionDetailResp);
+
+  // 发起行权
+  rpc AppExercise (AppExerciseReq) returns (AppExerciseResp);
+
+  // 获取行权记录列表
+  rpc AppListExercises (AppListExercisesReq) returns (AppListExercisesResp);
+
+  // 获取账户资产列表
+  rpc AppListAccounts (AppListAccountsReq) returns (AppListAccountsResp);
+
+  // 获取资金流水列表
+  rpc AppListBills (AppListBillsReq) returns (AppListBillsResp);
+}
+
+message AppCommonResp {
+  common.RespBase base = 1;
+}
+
+message AppListContractsReq {
+  int64 tenant_id = 1;
+  string underlying_symbol = 2;
+  OptionType option_type = 3;
+  ContractStatus status = 4;
+  common.PageReq page = 5;
+}
+
+message AppListContractsResp {
+  common.RespBase base = 1;
+  repeated OptionContractDetail list = 2;
+}
+
+message AppGetContractDetailReq {
+  int64 tenant_id = 1;
+  int64 contract_id = 2;
+}
+
+message AppGetContractDetailResp {
+  common.RespBase base = 1;
+  OptionContractDetail data = 2;
+}
+
+message AppPlaceOrderReq {
+  int64 tenant_id = 1;
+  int64 uid = 2;
+  int64 account_id = 3;
+  int64 contract_id = 4;
+  Side side = 5;
+  PositionEffect position_effect = 6;
+  OrderType order_type = 7;
+  string price = 8;
+  string qty = 9;
+  string client_order_id = 10;
+  YesNo reduce_only = 11;
+  YesNo mmp = 12;
+}
+
+message AppPlaceOrderResp {
+  common.RespBase base = 1;
+  string order_no = 2;
+  int64 order_id = 3;
+}
+
+message AppCancelOrderReq {
+  int64 tenant_id = 1;
+  int64 uid = 2;
+  int64 account_id = 3;
+  int64 order_id = 4;
+  string order_no = 5;
+}
+
+message AppGetOrderDetailReq {
+  int64 tenant_id = 1;
+  int64 uid = 2;
+  int64 account_id = 3;
+  int64 order_id = 4;
+  string order_no = 5;
+}
+
+message AppGetOrderDetailResp {
+  common.RespBase base = 1;
+  OptionOrderDetail data = 2;
+}
+
+message AppListCurrentOrdersReq {
+  int64 tenant_id = 1;
+  int64 uid = 2;
+  int64 account_id = 3;
+  int64 contract_id = 4;
+  Side side = 5;
+  common.PageReq page = 6;
+}
+
+message AppListCurrentOrdersResp {
+  common.RespBase base = 1;
+  repeated OptionOrderDetail list = 2;
+  common.PageReq page = 3;
+}
+
+message AppListHistoryOrdersReq {
+  int64 tenant_id = 1;
+  int64 uid = 2;
+  int64 account_id = 3;
+  int64 contract_id = 4;
+  OrderStatus status = 5;
+  common.TimeRange create_time_range = 6;
+  common.PageReq page = 7;
+}
+
+message AppListHistoryOrdersResp {
+  common.RespBase base = 1;
+  repeated OptionOrderDetail list = 2;
+  common.PageReq page = 3;
+}
+
+message AppListTradesReq {
+  int64 tenant_id = 1;
+  int64 uid = 2;
+  int64 account_id = 3;
+  int64 contract_id = 4;
+  common.TimeRange trade_time_range = 5;
+  common.PageReq page = 6;
+}
+
+message AppListTradesResp {
+  common.RespBase base = 1;
+  repeated OptionTradeDetail list = 2;
+  common.PageReq page = 3;
+}
+
+message AppListPositionsReq {
+  int64 tenant_id = 1;
+  int64 uid = 2;
+  int64 account_id = 3;
+  PositionStatus status = 4;
+  common.PageReq page = 5;
+}
+
+message AppListPositionsResp {
+  common.RespBase base = 1;
+  repeated OptionPositionDetail list = 2;
+  common.PageReq page = 3;
+}
+
+message AppGetPositionDetailReq {
+  int64 tenant_id = 1;
+  int64 uid = 2;
+  int64 account_id = 3;
+  int64 position_id = 4;
+}
+
+message AppGetPositionDetailResp {
+  common.RespBase base = 1;
+  OptionPositionDetail data = 2;
+}
+
+message AppExerciseReq {
+  int64 tenant_id = 1;
+  int64 uid = 2;
+  int64 account_id = 3;
+  int64 position_id = 4;
+  int64 contract_id = 5;
+  string exercise_qty = 6;
+}
+
+message AppExerciseResp {
+  common.RespBase base = 1;
+  string exercise_no = 2;
+  int64 exercise_id = 3;
+}
+
+message AppListExercisesReq {
+  int64 tenant_id = 1;
+  int64 uid = 2;
+  int64 account_id = 3;
+  int64 contract_id = 4;
+  ExerciseStatus status = 5;
+  common.TimeRange exercise_time_range = 6;
+  common.PageReq page = 7;
+}
+
+message AppListExercisesResp {
+  common.RespBase base = 1;
+  repeated OptionExerciseDetail list = 2;
+  common.PageReq page = 3;
+}
+
+message AppListAccountsReq {
+  int64 tenant_id = 1;
+  int64 uid = 2;
+  int64 account_id = 3;
+}
+
+message AppListAccountsResp {
+  common.RespBase base = 1;
+  repeated OptionAccount list = 2;
+}
+
+message AppListBillsReq {
+  int64 tenant_id = 1;
+  int64 uid = 2;
+  int64 account_id = 3;
+  BillRefType ref_type = 4;
+  common.TimeRange create_time_range = 5;
+  common.PageReq page = 6;
+}
+
+message AppListBillsResp {
+  common.RespBase base = 1;
+  repeated OptionBill list = 2;
+  common.PageReq page = 3;
+}

@@ -1,0 +1,273 @@
+syntax = "proto3";
+
+package option;
+
+import "proto/option/enum.proto";
+
+option go_package = "wklive/proto/option;option";
+
+message OptionContract {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string contract_code = 3;
+  string underlying_symbol = 4;
+  string settle_coin = 5;
+  string quote_coin = 6;
+  OptionType option_type = 7;
+  ExerciseStyle exercise_style = 8;
+  SettlementType settlement_type = 9;
+  string strike_price = 10;
+  string contract_unit = 11;
+  string min_order_qty = 12;
+  string max_order_qty = 13;
+  string price_tick = 14;
+  string qty_step = 15;
+  string multiplier = 16;
+  int64 list_time = 17;
+  int64 expire_time = 18;
+  int64 deliver_time = 19;
+  YesNo is_auto_exercise = 20;
+  ContractStatus status = 21;
+  int32 sort = 22;
+  string remark = 23;
+  YesNo is_deleted = 24;
+  int64 create_times = 25;
+  int64 update_times = 26;
+}
+
+message OptionMarket {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 contract_id = 3;
+  string underlying_price = 4;
+  string mark_price = 5;
+  string last_price = 6;
+  string bid_price = 7;
+  string ask_price = 8;
+  string theoretical_price = 9;
+  string intrinsic_value = 10;
+  string time_value = 11;
+  string iv = 12;
+  string delta = 13;
+  string gamma = 14;
+  string theta = 15;
+  string vega = 16;
+  string rho = 17;
+  string risk_free_rate = 18;
+  string pricing_model = 19;
+  int64 snapshot_time = 20;
+  int64 create_times = 21;
+  int64 update_times = 22;
+}
+
+message OptionMarketSnapshot {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 contract_id = 3;
+  string underlying_price = 4;
+  string mark_price = 5;
+  string last_price = 6;
+  string bid_price = 7;
+  string ask_price = 8;
+  string theoretical_price = 9;
+  string iv = 10;
+  string delta = 11;
+  string gamma = 12;
+  string theta = 13;
+  string vega = 14;
+  string rho = 15;
+  int64 snapshot_time = 16;
+  int64 create_times = 17;
+}
+
+message OptionOrder {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string order_no = 3;
+  int64 uid = 4;
+  int64 account_id = 5;
+  int64 contract_id = 6;
+  string underlying_symbol = 7;
+  Side side = 8;
+  PositionEffect position_effect = 9;
+  OrderType order_type = 10;
+  string price = 11;
+  string qty = 12;
+  string filled_qty = 13;
+  string unfilled_qty = 14;
+  string avg_price = 15;
+  string turnover = 16;
+  string fee = 17;
+  string fee_coin = 18;
+  string margin_amount = 19;
+  OrderSource source = 20;
+  string client_order_id = 21;
+  YesNo reduce_only = 22;
+  YesNo mmp = 23;
+  OrderStatus status = 24;
+  string cancel_reason = 25;
+  int64 match_time = 26;
+  int64 cancel_time = 27;
+  int64 create_times = 28;
+  int64 update_times = 29;
+}
+
+message OptionTrade {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string trade_no = 3;
+  int64 contract_id = 4;
+  string underlying_symbol = 5;
+  int64 buy_order_id = 6;
+  string buy_order_no = 7;
+  int64 buy_uid = 8;
+  int64 buy_account_id = 9;
+  int64 sell_order_id = 10;
+  string sell_order_no = 11;
+  int64 sell_uid = 12;
+  int64 sell_account_id = 13;
+  string price = 14;
+  string qty = 15;
+  string turnover = 16;
+  string buy_fee = 17;
+  string sell_fee = 18;
+  string fee_coin = 19;
+  MakerSide maker_side = 20;
+  int64 trade_time = 21;
+  int64 create_times = 22;
+}
+
+message OptionPosition {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 uid = 3;
+  int64 account_id = 4;
+  int64 contract_id = 5;
+  string underlying_symbol = 6;
+  PositionSide side = 7;
+  string position_qty = 8;
+  string available_qty = 9;
+  string frozen_qty = 10;
+  string open_avg_price = 11;
+  string mark_price = 12;
+  string position_value = 13;
+  string margin_amount = 14;
+  string maintenance_margin = 15;
+  string unrealized_pnl = 16;
+  string realized_pnl = 17;
+  string exerciseable_qty = 18;
+  PositionStatus status = 19;
+  int64 last_calc_time = 20;
+  int64 create_times = 21;
+  int64 update_times = 22;
+}
+
+message OptionExercise {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string exercise_no = 3;
+  int64 uid = 4;
+  int64 account_id = 5;
+  int64 contract_id = 6;
+  int64 position_id = 7;
+  ExerciseType exercise_type = 8;
+  string exercise_qty = 9;
+  string strike_price = 10;
+  string settlement_price = 11;
+  string exercise_amount = 12;
+  string profit_amount = 13;
+  string fee = 14;
+  string fee_coin = 15;
+  ExerciseStatus status = 16;
+  string remark = 17;
+  int64 exercise_time = 18;
+  int64 finish_time = 19;
+  int64 create_times = 20;
+  int64 update_times = 21;
+}
+
+message OptionSettlement {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string settlement_no = 3;
+  int64 contract_id = 4;
+  string underlying_symbol = 5;
+  int64 expire_time = 6;
+  int64 settlement_time = 7;
+  string delivery_price = 8;
+  string theoretical_price = 9;
+  string iv = 10;
+  YesNo is_itm = 11;
+  ExerciseResult exercise_result = 12;
+  SettlementStatus status = 13;
+  string remark = 14;
+  int64 create_times = 15;
+  int64 update_times = 16;
+}
+
+message OptionAccount {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 uid = 3;
+  int64 account_id = 4;
+  string margin_coin = 5;
+  string balance = 6;
+  string available_balance = 7;
+  string frozen_balance = 8;
+  string position_margin = 9;
+  string order_margin = 10;
+  string unrealized_pnl = 11;
+  string realized_pnl = 12;
+  string risk_rate = 13;
+  AccountStatus status = 14;
+  int64 create_times = 15;
+  int64 update_times = 16;
+}
+
+message OptionBill {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 uid = 3;
+  int64 account_id = 4;
+  string biz_no = 5;
+  BillRefType ref_type = 6;
+  int64 ref_id = 7;
+  string coin = 8;
+  string change_amount = 9;
+  string balance_before = 10;
+  string balance_after = 11;
+  string remark = 12;
+  int64 create_times = 13;
+}
+
+message OptionContractDetail {
+  OptionContract contract = 1;
+  OptionMarket market = 2;
+}
+
+message OptionPositionDetail {
+  OptionPosition position = 1;
+  OptionContract contract = 2;
+  OptionMarket market = 3;
+}
+
+message OptionOrderDetail {
+  OptionOrder order = 1;
+  OptionContract contract = 2;
+}
+
+message OptionTradeDetail {
+  OptionTrade trade = 1;
+  OptionContract contract = 2;
+}
+
+message OptionExerciseDetail {
+  OptionExercise exercise = 1;
+  OptionContract contract = 2;
+}
+
+message OptionSettlementDetail {
+  OptionSettlement settlement = 1;
+  OptionContract contract = 2;
+}
+

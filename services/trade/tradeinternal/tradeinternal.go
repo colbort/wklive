@@ -22,9 +22,13 @@ type (
 	RecordPositionHistoryReq = trade.RecordPositionHistoryReq
 
 	TradeInternal interface {
+		// 记录订单成交信息
 		RecordOrderFill(ctx context.Context, in *RecordOrderFillReq, opts ...grpc.CallOption) (*InternalCommonResp, error)
+		// 记录持仓历史信息
 		RecordPositionHistory(ctx context.Context, in *RecordPositionHistoryReq, opts ...grpc.CallOption) (*InternalCommonResp, error)
+		// 创建交易事件
 		CreateTradeEvent(ctx context.Context, in *CreateTradeEventReq, opts ...grpc.CallOption) (*InternalCommonResp, error)
+		// 校验订单风控
 		CheckOrderRisk(ctx context.Context, in *CheckOrderRiskReq, opts ...grpc.CallOption) (*CheckOrderRiskResp, error)
 	}
 
@@ -39,21 +43,25 @@ func NewTradeInternal(cli zrpc.Client) TradeInternal {
 	}
 }
 
+// 记录订单成交信息
 func (m *defaultTradeInternal) RecordOrderFill(ctx context.Context, in *RecordOrderFillReq, opts ...grpc.CallOption) (*InternalCommonResp, error) {
 	client := trade.NewTradeInternalClient(m.cli.Conn())
 	return client.RecordOrderFill(ctx, in, opts...)
 }
 
+// 记录持仓历史信息
 func (m *defaultTradeInternal) RecordPositionHistory(ctx context.Context, in *RecordPositionHistoryReq, opts ...grpc.CallOption) (*InternalCommonResp, error) {
 	client := trade.NewTradeInternalClient(m.cli.Conn())
 	return client.RecordPositionHistory(ctx, in, opts...)
 }
 
+// 创建交易事件
 func (m *defaultTradeInternal) CreateTradeEvent(ctx context.Context, in *CreateTradeEventReq, opts ...grpc.CallOption) (*InternalCommonResp, error) {
 	client := trade.NewTradeInternalClient(m.cli.Conn())
 	return client.CreateTradeEvent(ctx, in, opts...)
 }
 
+// 校验订单风控
 func (m *defaultTradeInternal) CheckOrderRisk(ctx context.Context, in *CheckOrderRiskReq, opts ...grpc.CallOption) (*CheckOrderRiskResp, error) {
 	client := trade.NewTradeInternalClient(m.cli.Conn())
 	return client.CheckOrderRisk(ctx, in, opts...)

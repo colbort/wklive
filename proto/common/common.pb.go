@@ -261,6 +261,58 @@ func (x *TokenInfo) GetExpireTime() int64 {
 	return 0
 }
 
+type TimeRange struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	StartTime     int64                  `protobuf:"varint,1,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime       int64                  `protobuf:"varint,2,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TimeRange) Reset() {
+	*x = TimeRange{}
+	mi := &file_proto_common_common_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TimeRange) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TimeRange) ProtoMessage() {}
+
+func (x *TimeRange) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_common_common_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TimeRange.ProtoReflect.Descriptor instead.
+func (*TimeRange) Descriptor() ([]byte, []int) {
+	return file_proto_common_common_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *TimeRange) GetStartTime() int64 {
+	if x != nil {
+		return x.StartTime
+	}
+	return 0
+}
+
+func (x *TimeRange) GetEndTime() int64 {
+	if x != nil {
+		return x.EndTime
+	}
+	return 0
+}
+
 var File_proto_common_common_proto protoreflect.FileDescriptor
 
 const file_proto_common_common_proto_rawDesc = "" +
@@ -284,7 +336,11 @@ const file_proto_common_common_proto_rawDesc = "" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
 	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\x12\x1f\n" +
 	"\vexpire_time\x18\x03 \x01(\x03R\n" +
-	"expireTimeB\x1cZ\x1awklive/proto/common;commonb\x06proto3"
+	"expireTime\"E\n" +
+	"\tTimeRange\x12\x1d\n" +
+	"\n" +
+	"start_time\x18\x01 \x01(\x03R\tstartTime\x12\x19\n" +
+	"\bend_time\x18\x02 \x01(\x03R\aendTimeB\x1cZ\x1awklive/proto/common;commonb\x06proto3"
 
 var (
 	file_proto_common_common_proto_rawDescOnce sync.Once
@@ -298,12 +354,13 @@ func file_proto_common_common_proto_rawDescGZIP() []byte {
 	return file_proto_common_common_proto_rawDescData
 }
 
-var file_proto_common_common_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_proto_common_common_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_proto_common_common_proto_goTypes = []any{
 	(*Empty)(nil),     // 0: common.Empty
 	(*RespBase)(nil),  // 1: common.RespBase
 	(*PageReq)(nil),   // 2: common.PageReq
 	(*TokenInfo)(nil), // 3: common.TokenInfo
+	(*TimeRange)(nil), // 4: common.TimeRange
 }
 var file_proto_common_common_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -324,7 +381,7 @@ func file_proto_common_common_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_common_common_proto_rawDesc), len(file_proto_common_common_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

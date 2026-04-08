@@ -23,6 +23,7 @@ func NewPlaceOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PlaceO
 	}
 }
 
+// 下单
 func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrderResp, error) {
 	// todo: add your logic here and delete this line
 

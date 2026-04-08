@@ -23,6 +23,7 @@ func NewSetUserLeverageConfigLogic(ctx context.Context, svcCtx *svc.ServiceConte
 	}
 }
 
+// 设置用户杠杆配置
 func (l *SetUserLeverageConfigLogic) SetUserLeverageConfig(in *trade.SetUserLeverageConfigReq) (*trade.AdminCommonResp, error) {
 	// todo: add your logic here and delete this line
 

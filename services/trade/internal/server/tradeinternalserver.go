@@ -23,21 +23,25 @@ func NewTradeInternalServer(svcCtx *svc.ServiceContext) *TradeInternalServer {
 	}
 }
 
+// 记录订单成交信息
 func (s *TradeInternalServer) RecordOrderFill(ctx context.Context, in *trade.RecordOrderFillReq) (*trade.InternalCommonResp, error) {
 	l := logic.NewRecordOrderFillLogic(ctx, s.svcCtx)
 	return l.RecordOrderFill(in)
 }
 
+// 记录持仓历史信息
 func (s *TradeInternalServer) RecordPositionHistory(ctx context.Context, in *trade.RecordPositionHistoryReq) (*trade.InternalCommonResp, error) {
 	l := logic.NewRecordPositionHistoryLogic(ctx, s.svcCtx)
 	return l.RecordPositionHistory(in)
 }
 
+// 创建交易事件
 func (s *TradeInternalServer) CreateTradeEvent(ctx context.Context, in *trade.CreateTradeEventReq) (*trade.InternalCommonResp, error) {
 	l := logic.NewCreateTradeEventLogic(ctx, s.svcCtx)
 	return l.CreateTradeEvent(in)
 }
 
+// 校验订单风控
 func (s *TradeInternalServer) CheckOrderRisk(ctx context.Context, in *trade.CheckOrderRiskReq) (*trade.CheckOrderRiskResp, error) {
 	l := logic.NewCheckOrderRiskLogic(ctx, s.svcCtx)
 	return l.CheckOrderRisk(in)

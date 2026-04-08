@@ -23,6 +23,7 @@ func NewGetUserSymbolLimitLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
+// 获取用户交易对限制
 func (l *GetUserSymbolLimitLogic) GetUserSymbolLimit(in *trade.GetUserSymbolLimitReq) (*trade.GetUserSymbolLimitResp, error) {
 	// todo: add your logic here and delete this line
 

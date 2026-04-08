@@ -23,6 +23,7 @@ func NewRecordPositionHistoryLogic(ctx context.Context, svcCtx *svc.ServiceConte
 	}
 }
 
+// 记录持仓历史信息
 func (l *RecordPositionHistoryLogic) RecordPositionHistory(in *trade.RecordPositionHistoryReq) (*trade.InternalCommonResp, error) {
 	// todo: add your logic here and delete this line
 

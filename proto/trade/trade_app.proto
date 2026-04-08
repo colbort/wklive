@@ -40,14 +40,11 @@ service TradeApp {
   // 获取保证金账户列表
   rpc GetMarginAccountList(GetMarginAccountListReq) returns (GetMarginAccountListResp);
 
+  // 获取当前杠杆配置
+  rpc GetLeverageConfig(GetLeverageConfigReq) returns (GetLeverageConfigResp);
+
   // 设置杠杆倍数
   rpc SetLeverage(SetLeverageReq) returns (AppCommonResp);
-
-  // 设置用户交易配置
-  rpc SetUserTradeConfig(SetUserTradeConfigReq) returns (AppCommonResp);
-
-  // 获取用户交易配置
-  rpc GetUserTradeConfig(GetUserTradeConfigReq) returns (GetUserTradeConfigResp);
 }
 
 message AppCommonResp {
@@ -61,7 +58,8 @@ message GetSymbolListReq {
 }
 
 message GetSymbolListResp {
-  repeated TradeSymbol list = 1;
+  common.RespBase base = 1;
+  repeated TradeSymbol list = 2;
 }
 
 message GetSymbolDetailReq {
@@ -70,9 +68,10 @@ message GetSymbolDetailReq {
 }
 
 message GetSymbolDetailResp {
-  TradeSymbol symbol = 1;
-  TradeSymbolSpot spot = 2;
-  TradeSymbolContract contract = 3;
+  common.RespBase base = 1;
+  TradeSymbol symbol = 2;
+  TradeSymbolSpot spot = 3;
+  TradeSymbolContract contract = 4;
 }
 
 message PlaceOrderReq {
@@ -91,7 +90,7 @@ message PlaceOrderReq {
   bool is_reduce_only = 13;
   bool is_close_only = 14;
   string trigger_price = 15;
-  uint32 trigger_type = 16;
+  TriggerType trigger_type = 16;
   MarginMode margin_mode = 17;
   uint32 leverage = 18;
   string take_profit_price = 19;
@@ -100,7 +99,8 @@ message PlaceOrderReq {
 }
 
 message PlaceOrderResp {
-  TradeOrder order = 1;
+  common.RespBase base = 1;
+  TradeOrder order = 2;
 }
 
 message CancelOrderReq {
@@ -116,10 +116,13 @@ message CancelAllOrdersReq {
   uint64 user_id = 2;
   MarketType market_type = 3;
   uint64 symbol_id = 4;
+  TradeSide side = 5;
+  PositionSide position_side = 6;
 }
 
 message CancelAllOrdersResp {
-  uint32 affected_count = 1;
+  common.RespBase base = 1;
+  uint32 affected_count = 2;
 }
 
 message GetOrderListReq {
@@ -146,9 +149,10 @@ message GetOrderDetailReq {
 }
 
 message GetOrderDetailResp {
-  TradeOrder order = 1;
-  TradeOrderSpot spot = 2;
-  TradeOrderContract contract = 3;
+  common.RespBase base = 1;
+  TradeOrder order = 2;
+  TradeOrderSpot spot = 3;
+  TradeOrderContract contract = 4;
 }
 
 message GetFillListReq {
@@ -173,17 +177,33 @@ message GetPositionListReq {
 }
 
 message GetPositionListResp {
-  repeated ContractPosition list = 1;
+  common.RespBase base = 1;
+  repeated ContractPosition list = 2;
 }
 
 message GetMarginAccountListReq {
   uint64 tenant_id = 1;
   uint64 user_id = 2;
   MarketType market_type = 3;
+  string margin_asset = 4;
 }
 
 message GetMarginAccountListResp {
-  repeated ContractMarginAccount list = 1;
+  common.RespBase base = 1;
+  repeated ContractMarginAccount list = 2;
+}
+
+message GetLeverageConfigReq {
+  uint64 tenant_id = 1;
+  uint64 user_id = 2;
+  uint64 symbol_id = 3;
+  MarketType market_type = 4;
+  MarginMode margin_mode = 5;
+}
+
+message GetLeverageConfigResp {
+  common.RespBase base = 1;
+  ContractLeverageConfig data = 2;
 }
 
 message SetLeverageReq {
@@ -195,28 +215,4 @@ message SetLeverageReq {
   PositionMode position_mode = 6;
   uint32 long_leverage = 7;
   uint32 short_leverage = 8;
-}
-
-message SetUserTradeConfigReq {
-  uint64 tenant_id = 1;
-  uint64 user_id = 2;
-  MarketType market_type = 3;
-  uint64 symbol_id = 4;
-  PositionMode position_mode = 5;
-  MarginMode margin_mode = 6;
-  uint32 default_leverage = 7;
-  bool trade_enabled = 8;
-  bool reduce_only_enabled = 9;
-}
-
-message GetUserTradeConfigReq {
-  uint64 tenant_id = 1;
-  uint64 user_id = 2;
-  MarketType market_type = 3;
-  uint64 symbol_id = 4;
-}
-
-message GetUserTradeConfigResp {
-  TradeUserConfig config = 1;
-  ContractLeverageConfig leverage_config = 2;
 }

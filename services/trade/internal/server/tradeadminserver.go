@@ -23,86 +23,163 @@ func NewTradeAdminServer(svcCtx *svc.ServiceContext) *TradeAdminServer {
 	}
 }
 
+// 创建交易对
 func (s *TradeAdminServer) CreateSymbol(ctx context.Context, in *trade.CreateSymbolReq) (*trade.AdminCommonResp, error) {
 	l := logic.NewCreateSymbolLogic(ctx, s.svcCtx)
 	return l.CreateSymbol(in)
 }
 
+// 更新交易对信息
 func (s *TradeAdminServer) UpdateSymbol(ctx context.Context, in *trade.UpdateSymbolReq) (*trade.AdminCommonResp, error) {
 	l := logic.NewUpdateSymbolLogic(ctx, s.svcCtx)
 	return l.UpdateSymbol(in)
 }
 
+// 获取后台交易对列表
 func (s *TradeAdminServer) GetSymbolListAdmin(ctx context.Context, in *trade.GetSymbolListAdminReq) (*trade.GetSymbolListAdminResp, error) {
 	l := logic.NewGetSymbolListAdminLogic(ctx, s.svcCtx)
 	return l.GetSymbolListAdmin(in)
 }
 
+// 获取交易对详情
+func (s *TradeAdminServer) GetSymbolDetailAdmin(ctx context.Context, in *trade.GetSymbolDetailAdminReq) (*trade.GetSymbolDetailAdminResp, error) {
+	l := logic.NewGetSymbolDetailAdminLogic(ctx, s.svcCtx)
+	return l.GetSymbolDetailAdmin(in)
+}
+
+// 设置现货交易对配置
 func (s *TradeAdminServer) SetSpotSymbolConfig(ctx context.Context, in *trade.SetSpotSymbolConfigReq) (*trade.AdminCommonResp, error) {
 	l := logic.NewSetSpotSymbolConfigLogic(ctx, s.svcCtx)
 	return l.SetSpotSymbolConfig(in)
 }
 
+// 设置合约交易对配置
 func (s *TradeAdminServer) SetContractSymbolConfig(ctx context.Context, in *trade.SetContractSymbolConfigReq) (*trade.AdminCommonResp, error) {
 	l := logic.NewSetContractSymbolConfigLogic(ctx, s.svcCtx)
 	return l.SetContractSymbolConfig(in)
 }
 
+// 获取后台订单列表
 func (s *TradeAdminServer) GetOrderListAdmin(ctx context.Context, in *trade.GetOrderListAdminReq) (*trade.GetOrderListAdminResp, error) {
 	l := logic.NewGetOrderListAdminLogic(ctx, s.svcCtx)
 	return l.GetOrderListAdmin(in)
 }
 
+// 获取订单详情
+func (s *TradeAdminServer) GetOrderDetailAdmin(ctx context.Context, in *trade.GetOrderDetailAdminReq) (*trade.GetOrderDetailAdminResp, error) {
+	l := logic.NewGetOrderDetailAdminLogic(ctx, s.svcCtx)
+	return l.GetOrderDetailAdmin(in)
+}
+
+// 获取后台成交记录列表
 func (s *TradeAdminServer) GetFillListAdmin(ctx context.Context, in *trade.GetFillListAdminReq) (*trade.GetFillListAdminResp, error) {
 	l := logic.NewGetFillListAdminLogic(ctx, s.svcCtx)
 	return l.GetFillListAdmin(in)
 }
 
+// 获取成交详情
+func (s *TradeAdminServer) GetFillDetailAdmin(ctx context.Context, in *trade.GetFillDetailAdminReq) (*trade.GetFillDetailAdminResp, error) {
+	l := logic.NewGetFillDetailAdminLogic(ctx, s.svcCtx)
+	return l.GetFillDetailAdmin(in)
+}
+
+// 获取后台持仓列表
 func (s *TradeAdminServer) GetPositionListAdmin(ctx context.Context, in *trade.GetPositionListAdminReq) (*trade.GetPositionListAdminResp, error) {
 	l := logic.NewGetPositionListAdminLogic(ctx, s.svcCtx)
 	return l.GetPositionListAdmin(in)
 }
 
+// 获取持仓详情
+func (s *TradeAdminServer) GetPositionDetailAdmin(ctx context.Context, in *trade.GetPositionDetailAdminReq) (*trade.GetPositionDetailAdminResp, error) {
+	l := logic.NewGetPositionDetailAdminLogic(ctx, s.svcCtx)
+	return l.GetPositionDetailAdmin(in)
+}
+
+// 获取持仓历史列表
+func (s *TradeAdminServer) GetPositionHistoryListAdmin(ctx context.Context, in *trade.GetPositionHistoryListAdminReq) (*trade.GetPositionHistoryListAdminResp, error) {
+	l := logic.NewGetPositionHistoryListAdminLogic(ctx, s.svcCtx)
+	return l.GetPositionHistoryListAdmin(in)
+}
+
+// 获取保证金账户列表
+func (s *TradeAdminServer) GetMarginAccountListAdmin(ctx context.Context, in *trade.GetMarginAccountListAdminReq) (*trade.GetMarginAccountListAdminResp, error) {
+	l := logic.NewGetMarginAccountListAdminLogic(ctx, s.svcCtx)
+	return l.GetMarginAccountListAdmin(in)
+}
+
+// 获取撤单日志列表
+func (s *TradeAdminServer) GetCancelLogListAdmin(ctx context.Context, in *trade.GetCancelLogListAdminReq) (*trade.GetCancelLogListAdminResp, error) {
+	l := logic.NewGetCancelLogListAdminLogic(ctx, s.svcCtx)
+	return l.GetCancelLogListAdmin(in)
+}
+
+// 设置用户交易限制
 func (s *TradeAdminServer) SetUserTradeLimit(ctx context.Context, in *trade.SetUserTradeLimitReq) (*trade.AdminCommonResp, error) {
 	l := logic.NewSetUserTradeLimitLogic(ctx, s.svcCtx)
 	return l.SetUserTradeLimit(in)
 }
 
+// 设置用户交易对限制
 func (s *TradeAdminServer) SetUserSymbolLimit(ctx context.Context, in *trade.SetUserSymbolLimitReq) (*trade.AdminCommonResp, error) {
 	l := logic.NewSetUserSymbolLimitLogic(ctx, s.svcCtx)
 	return l.SetUserSymbolLimit(in)
 }
 
+// 获取用户交易限制
 func (s *TradeAdminServer) GetUserTradeLimit(ctx context.Context, in *trade.GetUserTradeLimitReq) (*trade.GetUserTradeLimitResp, error) {
 	l := logic.NewGetUserTradeLimitLogic(ctx, s.svcCtx)
 	return l.GetUserTradeLimit(in)
 }
 
+// 获取用户交易对限制
 func (s *TradeAdminServer) GetUserSymbolLimit(ctx context.Context, in *trade.GetUserSymbolLimitReq) (*trade.GetUserSymbolLimitResp, error) {
 	l := logic.NewGetUserSymbolLimitLogic(ctx, s.svcCtx)
 	return l.GetUserSymbolLimit(in)
 }
 
+// 设置用户交易配置
+func (s *TradeAdminServer) SetUserTradeConfig(ctx context.Context, in *trade.SetUserTradeConfigReq) (*trade.AdminCommonResp, error) {
+	l := logic.NewSetUserTradeConfigLogic(ctx, s.svcCtx)
+	return l.SetUserTradeConfig(in)
+}
+
+// 获取用户交易配置
+func (s *TradeAdminServer) GetUserTradeConfig(ctx context.Context, in *trade.GetUserTradeConfigReq) (*trade.GetUserTradeConfigResp, error) {
+	l := logic.NewGetUserTradeConfigLogic(ctx, s.svcCtx)
+	return l.GetUserTradeConfig(in)
+}
+
+// 获取风控订单校验日志列表
 func (s *TradeAdminServer) GetRiskOrderCheckLogList(ctx context.Context, in *trade.GetRiskOrderCheckLogListReq) (*trade.GetRiskOrderCheckLogListResp, error) {
 	l := logic.NewGetRiskOrderCheckLogListLogic(ctx, s.svcCtx)
 	return l.GetRiskOrderCheckLogList(in)
 }
 
+// 设置用户杠杆配置
 func (s *TradeAdminServer) SetUserLeverageConfig(ctx context.Context, in *trade.SetUserLeverageConfigReq) (*trade.AdminCommonResp, error) {
 	l := logic.NewSetUserLeverageConfigLogic(ctx, s.svcCtx)
 	return l.SetUserLeverageConfig(in)
 }
 
+// 获取用户杠杆配置
 func (s *TradeAdminServer) GetUserLeverageConfig(ctx context.Context, in *trade.GetUserLeverageConfigReq) (*trade.GetUserLeverageConfigResp, error) {
 	l := logic.NewGetUserLeverageConfigLogic(ctx, s.svcCtx)
 	return l.GetUserLeverageConfig(in)
 }
 
+// 获取交易事件列表
 func (s *TradeAdminServer) GetTradeEventList(ctx context.Context, in *trade.GetTradeEventListReq) (*trade.GetTradeEventListResp, error) {
 	l := logic.NewGetTradeEventListLogic(ctx, s.svcCtx)
 	return l.GetTradeEventList(in)
 }
 
+// 获取交易事件详情
+func (s *TradeAdminServer) GetTradeEventDetail(ctx context.Context, in *trade.GetTradeEventDetailReq) (*trade.GetTradeEventDetailResp, error) {
+	l := logic.NewGetTradeEventDetailLogic(ctx, s.svcCtx)
+	return l.GetTradeEventDetail(in)
+}
+
+// 重试交易事件
 func (s *TradeAdminServer) RetryTradeEvent(ctx context.Context, in *trade.RetryTradeEventReq) (*trade.AdminCommonResp, error) {
 	l := logic.NewRetryTradeEventLogic(ctx, s.svcCtx)
 	return l.RetryTradeEvent(in)

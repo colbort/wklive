@@ -23,6 +23,7 @@ func NewGetOrderListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetO
 	}
 }
 
+// 获取订单列表
 func (l *GetOrderListLogic) GetOrderList(in *trade.GetOrderListReq) (*trade.GetOrderListResp, error) {
 	// todo: add your logic here and delete this line
 

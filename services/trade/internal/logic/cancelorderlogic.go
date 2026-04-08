@@ -23,6 +23,7 @@ func NewCancelOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cance
 	}
 }
 
+// 撤销指定订单
 func (l *CancelOrderLogic) CancelOrder(in *trade.CancelOrderReq) (*trade.AppCommonResp, error) {
 	// todo: add your logic here and delete this line
 

@@ -23,6 +23,7 @@ func NewCheckOrderRiskLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ch
 	}
 }
 
+// 校验订单风控
 func (l *CheckOrderRiskLogic) CheckOrderRisk(in *trade.CheckOrderRiskReq) (*trade.CheckOrderRiskResp, error) {
 	// todo: add your logic here and delete this line
 

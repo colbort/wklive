@@ -1,0 +1,152 @@
+syntax = "proto3";
+
+package staking;
+
+option go_package = "wklive/proto/staking;staking";
+
+import "proto/common/common.proto";
+import "proto/staking/enum.proto";
+import "proto/staking/model.proto";
+
+// 
+service StakingApp {
+  // 获取质押产品列表
+  // 用户端查询可参与的质押产品，支持按产品类型、币种筛选。
+  rpc AppProductList(AppProductListReq) returns (AppProductListResp);
+
+  // 获取质押产品详情
+  // 根据产品ID查询单个质押产品的详细信息。
+  rpc AppProductDetail(AppProductDetailReq) returns (AppProductDetailResp);
+
+  // 创建质押订单
+  // 用户选择质押产品后发起质押，生成一笔新的质押订单。
+  rpc CreateOrder(AppCreateOrderReq) returns (AppCreateOrderResp);
+
+  // 获取我的质押订单列表
+  // 查询当前用户在当前租户下的质押订单，支持按状态筛选。
+  rpc MyOrderList(AppMyOrderListReq) returns (AppMyOrderListResp);
+
+  // 获取我的质押订单详情
+  // 根据订单ID查询当前用户的单笔质押订单详情。
+  rpc MyOrderDetail(AppMyOrderDetailReq) returns (AppMyOrderDetailResp);
+
+  // 获取我的收益记录列表
+  // 查询当前用户的收益发放记录，可按订单ID、收益类型筛选。
+  rpc MyRewardLogList(AppMyRewardLogListReq) returns (AppMyRewardLogListResp);
+
+  // 发起赎回
+  // 用户对指定质押订单发起赎回申请，支持到期赎回或提前赎回。
+  rpc Redeem(AppRedeemReq) returns (AppRedeemResp);
+
+  // 获取我的赎回记录列表
+  // 查询当前用户的赎回记录，可按订单ID筛选。
+  rpc MyRedeemLogList(AppMyRedeemLogListReq) returns (AppMyRedeemLogListResp);
+}
+
+// 产品列表
+message AppProductListReq {
+  uint64 tenant_id = 1;
+  ProductType product_type = 2;
+  string coin_symbol = 3;
+  common.PageReq page = 4;
+}
+
+message AppProductListResp {
+  common.RespBase base = 1;
+  repeated StakeProduct data = 2;
+}
+
+// 产品详情
+message AppProductDetailReq {
+  uint64 tenant_id = 1;
+  uint64 id = 2;
+}
+
+message AppProductDetailResp {
+  common.RespBase base = 1;
+  StakeProduct data = 2;
+}
+
+// 创建订单
+message AppCreateOrderReq {
+  uint64 tenant_id = 1;
+  uint64 uid = 2;
+  uint64 product_id = 3;
+  string stake_amount = 4;
+  SourceType source = 5;
+  string remark = 6;
+}
+
+message AppCreateOrderResp {
+    common.RespBase base = 1;
+  uint64 id = 2;
+  string order_no = 3;
+}
+
+// 我的订单列表
+message AppMyOrderListReq {
+  uint64 tenant_id = 1;
+  uint64 uid = 2;
+  OrderStatus status = 3;
+  RedeemType redeem_type = 4;
+  common.PageReq page = 5;
+}
+
+message AppMyOrderListResp {
+    common.RespBase base = 1;
+  repeated StakeOrder data = 2;
+}
+
+// 我的订单详情
+message AppMyOrderDetailReq {
+  uint64 tenant_id = 1;
+  uint64 uid = 2;
+  uint64 id = 3;
+}
+
+message AppMyOrderDetailResp {
+    common.RespBase base = 1;
+  StakeOrder data = 2;
+}
+
+// 我的收益记录
+message AppMyRewardLogListReq {
+  uint64 tenant_id = 1;
+  uint64 uid = 2;
+  uint64 order_id = 3;
+  RewardType reward_type = 4;
+  common.PageReq page = 5;
+}
+
+message AppMyRewardLogListResp {
+    common.RespBase base = 1;
+  repeated StakeRewardLog data = 2;
+}
+
+// 赎回
+message AppRedeemReq {
+  uint64 tenant_id = 1;
+  uint64 uid = 2;
+  uint64 order_id = 3;
+  RedeemType redeem_type = 4;
+  string remark = 5;
+}
+
+message AppRedeemResp {
+    common.RespBase base = 1;
+  bool success = 2;
+  string redeem_no = 3;
+}
+
+// 我的赎回记录
+message AppMyRedeemLogListReq {
+  uint64 tenant_id = 1;
+  uint64 uid = 2;
+  uint64 order_id = 3;
+  common.PageReq page = 4;
+}
+
+message AppMyRedeemLogListResp {
+    common.RespBase base = 1;
+  repeated StakeRedeemLog data = 2;
+}

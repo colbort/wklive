@@ -23,6 +23,7 @@ func NewGetRiskOrderCheckLogListLogic(ctx context.Context, svcCtx *svc.ServiceCo
 	}
 }
 
+// 获取风控订单校验日志列表
 func (l *GetRiskOrderCheckLogListLogic) GetRiskOrderCheckLogList(in *trade.GetRiskOrderCheckLogListReq) (*trade.GetRiskOrderCheckLogListResp, error) {
 	// todo: add your logic here and delete this line
 

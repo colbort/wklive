@@ -1,0 +1,151 @@
+syntax = "proto3";
+
+package option;
+
+option go_package = "wklive/proto/option;option";
+
+enum YesNo {
+  YES_NO_UNKNOWN = 0;
+  YES_NO_NO = 1;
+  YES_NO_YES = 2;
+}
+
+enum CommonStatus {
+  COMMON_STATUS_UNKNOWN = 0;
+  COMMON_STATUS_DISABLE = 1;
+  COMMON_STATUS_ENABLE = 2;
+}
+
+enum OptionType {
+  OPTION_TYPE_UNKNOWN = 0;
+  OPTION_TYPE_CALL = 1; // 看涨
+  OPTION_TYPE_PUT = 2; // 看跌
+}
+
+enum ExerciseStyle {
+  EXERCISE_STYLE_UNKNOWN = 0;
+  EXERCISE_STYLE_EUROPEAN = 1; // 欧式
+  EXERCISE_STYLE_AMERICAN = 2; // 美式
+}
+
+enum SettlementType {
+  SETTLEMENT_TYPE_UNKNOWN = 0;
+  SETTLEMENT_TYPE_CASH = 1; // 现金结算
+  SETTLEMENT_TYPE_PHYSICAL = 2; // 实物交割
+}
+
+enum ContractStatus {
+  CONTRACT_STATUS_UNKNOWN = 0;
+  CONTRACT_STATUS_PENDING = 1; // 待上市
+  CONTRACT_STATUS_TRADING = 2; // 可交易
+  CONTRACT_STATUS_PAUSED = 3; // 暂停交易
+  CONTRACT_STATUS_EXPIRED = 4; // 已到期
+  CONTRACT_STATUS_SETTLED = 5; // 已结算
+  CONTRACT_STATUS_OFFLINE = 6; // 已下线
+}
+
+enum Side {
+  SIDE_UNKNOWN = 0;
+  SIDE_BUY = 1;
+  SIDE_SELL = 2;
+}
+
+enum PositionEffect {
+  POSITION_EFFECT_UNKNOWN = 0;
+  POSITION_EFFECT_OPEN = 1; // 开仓
+  POSITION_EFFECT_CLOSE = 2; // 平仓
+}
+
+enum OrderType {
+  ORDER_TYPE_UNKNOWN = 0;
+  ORDER_TYPE_LIMIT = 1;
+  ORDER_TYPE_MARKET = 2;
+  ORDER_TYPE_POST_ONLY = 3;
+  ORDER_TYPE_IOC = 4;
+  ORDER_TYPE_FOK = 5;
+}
+
+enum OrderSource {
+  ORDER_SOURCE_UNKNOWN = 0;
+  ORDER_SOURCE_APP = 1;
+  ORDER_SOURCE_WEB = 2;
+  ORDER_SOURCE_API = 3;
+  ORDER_SOURCE_ADMIN = 4;
+}
+
+enum OrderStatus {
+  ORDER_STATUS_UNKNOWN = 0;
+  ORDER_STATUS_PENDING = 1; // 待撮合
+  ORDER_STATUS_PART_FILLED = 2; // 部分成交
+  ORDER_STATUS_FILLED = 3; // 完全成交
+  ORDER_STATUS_CANCELED = 4; // 已撤单
+  ORDER_STATUS_REJECTED = 5; // 拒单
+  ORDER_STATUS_EXPIRED = 6; // 已过期
+}
+
+enum MakerSide {
+  MAKER_SIDE_UNKNOWN = 0;
+  MAKER_SIDE_BUY = 1;
+  MAKER_SIDE_SELL = 2;
+}
+
+enum PositionSide {
+  POSITION_SIDE_UNKNOWN = 0;
+  POSITION_SIDE_LONG = 1; // 多头
+  POSITION_SIDE_SHORT = 2; // 空头
+}
+
+enum PositionStatus {
+  POSITION_STATUS_UNKNOWN = 0;
+  POSITION_STATUS_HOLDING = 1; // 持仓中
+  POSITION_STATUS_CLOSED = 2; // 已平仓
+  POSITION_STATUS_EXERCISED = 3; // 已行权
+  POSITION_STATUS_EXPIRED = 4; // 已到期
+  POSITION_STATUS_SETTLED = 5; // 已结算
+}
+
+enum ExerciseType {
+  EXERCISE_TYPE_UNKNOWN = 0;
+  EXERCISE_TYPE_USER = 1; // 用户主动
+  EXERCISE_TYPE_AUTO = 2; // 系统自动
+}
+
+enum ExerciseStatus {
+  EXERCISE_STATUS_UNKNOWN = 0;
+  EXERCISE_STATUS_PENDING = 1;
+  EXERCISE_STATUS_DONE = 2;
+  EXERCISE_STATUS_REJECTED = 3;
+  EXERCISE_STATUS_CANCELED = 4;
+}
+
+enum SettlementStatus {
+  SETTLEMENT_STATUS_UNKNOWN = 0;
+  SETTLEMENT_STATUS_PENDING = 1;
+  SETTLEMENT_STATUS_PROCESSING = 2;
+  SETTLEMENT_STATUS_DONE = 3;
+  SETTLEMENT_STATUS_FAILED = 4;
+}
+
+enum ExerciseResult {
+  EXERCISE_RESULT_UNKNOWN = 0;
+  EXERCISE_RESULT_NONE = 1; // 未执行
+  EXERCISE_RESULT_AUTO_EXERCISE = 2; // 自动行权
+  EXERCISE_RESULT_AUTO_ABANDON = 3; // 自动放弃
+}
+
+enum AccountStatus {
+  ACCOUNT_STATUS_UNKNOWN = 0;
+  ACCOUNT_STATUS_NORMAL = 1;
+  ACCOUNT_STATUS_FROZEN = 2;
+  ACCOUNT_STATUS_RESTRICTED = 3;
+}
+
+enum BillRefType {
+  BILL_REF_TYPE_UNKNOWN = 0;
+  BILL_REF_TYPE_ORDER = 1; // 下单
+  BILL_REF_TYPE_TRADE = 2; // 成交
+  BILL_REF_TYPE_CANCEL = 3; // 撤单
+  BILL_REF_TYPE_EXERCISE = 4; // 行权
+  BILL_REF_TYPE_SETTLEMENT = 5; // 结算
+  BILL_REF_TYPE_FEE = 6; // 手续费
+}

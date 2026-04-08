@@ -2110,7 +2110,7 @@ func (x *ContractPositionHistory) GetActionType() PositionActionType {
 	if x != nil {
 		return x.ActionType
 	}
-	return PositionActionType_POSITION_ACTION_TYPE_UNSPECIFIED
+	return PositionActionType_POSITION_ACTION_TYPE_UNKNOWN
 }
 
 func (x *ContractPositionHistory) GetBeforeQty() string {

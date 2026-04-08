@@ -594,6 +594,110 @@ func (x *GetSymbolListAdminResp) GetList() []*TradeSymbol {
 	return nil
 }
 
+type GetSymbolDetailAdminReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Id            uint64                 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetSymbolDetailAdminReq) Reset() {
+	*x = GetSymbolDetailAdminReq{}
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetSymbolDetailAdminReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSymbolDetailAdminReq) ProtoMessage() {}
+
+func (x *GetSymbolDetailAdminReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSymbolDetailAdminReq.ProtoReflect.Descriptor instead.
+func (*GetSymbolDetailAdminReq) Descriptor() ([]byte, []int) {
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *GetSymbolDetailAdminReq) GetTenantId() uint64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *GetSymbolDetailAdminReq) GetId() uint64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type GetSymbolDetailAdminResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          *TradeSymbol           `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetSymbolDetailAdminResp) Reset() {
+	*x = GetSymbolDetailAdminResp{}
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetSymbolDetailAdminResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSymbolDetailAdminResp) ProtoMessage() {}
+
+func (x *GetSymbolDetailAdminResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSymbolDetailAdminResp.ProtoReflect.Descriptor instead.
+func (*GetSymbolDetailAdminResp) Descriptor() ([]byte, []int) {
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *GetSymbolDetailAdminResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *GetSymbolDetailAdminResp) GetData() *TradeSymbol {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
 type SetSpotSymbolConfigReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
@@ -608,7 +712,7 @@ type SetSpotSymbolConfigReq struct {
 
 func (x *SetSpotSymbolConfigReq) Reset() {
 	*x = SetSpotSymbolConfigReq{}
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[5]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -620,7 +724,7 @@ func (x *SetSpotSymbolConfigReq) String() string {
 func (*SetSpotSymbolConfigReq) ProtoMessage() {}
 
 func (x *SetSpotSymbolConfigReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[5]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -633,7 +737,7 @@ func (x *SetSpotSymbolConfigReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetSpotSymbolConfigReq.ProtoReflect.Descriptor instead.
 func (*SetSpotSymbolConfigReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{5}
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *SetSpotSymbolConfigReq) GetTenantId() uint64 {
@@ -700,7 +804,7 @@ type SetContractSymbolConfigReq struct {
 
 func (x *SetContractSymbolConfigReq) Reset() {
 	*x = SetContractSymbolConfigReq{}
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[6]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -712,7 +816,7 @@ func (x *SetContractSymbolConfigReq) String() string {
 func (*SetContractSymbolConfigReq) ProtoMessage() {}
 
 func (x *SetContractSymbolConfigReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[6]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -725,7 +829,7 @@ func (x *SetContractSymbolConfigReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetContractSymbolConfigReq.ProtoReflect.Descriptor instead.
 func (*SetContractSymbolConfigReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{6}
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *SetContractSymbolConfigReq) GetTenantId() uint64 {
@@ -842,7 +946,7 @@ type GetOrderListAdminReq struct {
 
 func (x *GetOrderListAdminReq) Reset() {
 	*x = GetOrderListAdminReq{}
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[7]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -854,7 +958,7 @@ func (x *GetOrderListAdminReq) String() string {
 func (*GetOrderListAdminReq) ProtoMessage() {}
 
 func (x *GetOrderListAdminReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[7]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -867,7 +971,7 @@ func (x *GetOrderListAdminReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetOrderListAdminReq.ProtoReflect.Descriptor instead.
 func (*GetOrderListAdminReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{7}
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *GetOrderListAdminReq) GetTenantId() uint64 {
@@ -936,7 +1040,7 @@ type GetOrderListAdminResp struct {
 
 func (x *GetOrderListAdminResp) Reset() {
 	*x = GetOrderListAdminResp{}
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[8]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -948,7 +1052,7 @@ func (x *GetOrderListAdminResp) String() string {
 func (*GetOrderListAdminResp) ProtoMessage() {}
 
 func (x *GetOrderListAdminResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[8]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -961,7 +1065,7 @@ func (x *GetOrderListAdminResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetOrderListAdminResp.ProtoReflect.Descriptor instead.
 func (*GetOrderListAdminResp) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{8}
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *GetOrderListAdminResp) GetBase() *common.RespBase {
@@ -974,6 +1078,110 @@ func (x *GetOrderListAdminResp) GetBase() *common.RespBase {
 func (x *GetOrderListAdminResp) GetList() []*TradeOrder {
 	if x != nil {
 		return x.List
+	}
+	return nil
+}
+
+type GetOrderDetailAdminReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Id            uint64                 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetOrderDetailAdminReq) Reset() {
+	*x = GetOrderDetailAdminReq{}
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetOrderDetailAdminReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetOrderDetailAdminReq) ProtoMessage() {}
+
+func (x *GetOrderDetailAdminReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetOrderDetailAdminReq.ProtoReflect.Descriptor instead.
+func (*GetOrderDetailAdminReq) Descriptor() ([]byte, []int) {
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *GetOrderDetailAdminReq) GetTenantId() uint64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *GetOrderDetailAdminReq) GetId() uint64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type GetOrderDetailAdminResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          *TradeOrder            `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetOrderDetailAdminResp) Reset() {
+	*x = GetOrderDetailAdminResp{}
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetOrderDetailAdminResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetOrderDetailAdminResp) ProtoMessage() {}
+
+func (x *GetOrderDetailAdminResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetOrderDetailAdminResp.ProtoReflect.Descriptor instead.
+func (*GetOrderDetailAdminResp) Descriptor() ([]byte, []int) {
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *GetOrderDetailAdminResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *GetOrderDetailAdminResp) GetData() *TradeOrder {
+	if x != nil {
+		return x.Data
 	}
 	return nil
 }
@@ -992,7 +1200,7 @@ type GetFillListAdminReq struct {
 
 func (x *GetFillListAdminReq) Reset() {
 	*x = GetFillListAdminReq{}
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[9]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1004,7 +1212,7 @@ func (x *GetFillListAdminReq) String() string {
 func (*GetFillListAdminReq) ProtoMessage() {}
 
 func (x *GetFillListAdminReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[9]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1017,7 +1225,7 @@ func (x *GetFillListAdminReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetFillListAdminReq.ProtoReflect.Descriptor instead.
 func (*GetFillListAdminReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{9}
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *GetFillListAdminReq) GetTenantId() uint64 {
@@ -1072,7 +1280,7 @@ type GetFillListAdminResp struct {
 
 func (x *GetFillListAdminResp) Reset() {
 	*x = GetFillListAdminResp{}
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[10]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1084,7 +1292,7 @@ func (x *GetFillListAdminResp) String() string {
 func (*GetFillListAdminResp) ProtoMessage() {}
 
 func (x *GetFillListAdminResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[10]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1097,7 +1305,7 @@ func (x *GetFillListAdminResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetFillListAdminResp.ProtoReflect.Descriptor instead.
 func (*GetFillListAdminResp) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{10}
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *GetFillListAdminResp) GetBase() *common.RespBase {
@@ -1110,6 +1318,110 @@ func (x *GetFillListAdminResp) GetBase() *common.RespBase {
 func (x *GetFillListAdminResp) GetList() []*TradeFill {
 	if x != nil {
 		return x.List
+	}
+	return nil
+}
+
+type GetFillDetailAdminReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Id            uint64                 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetFillDetailAdminReq) Reset() {
+	*x = GetFillDetailAdminReq{}
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetFillDetailAdminReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetFillDetailAdminReq) ProtoMessage() {}
+
+func (x *GetFillDetailAdminReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetFillDetailAdminReq.ProtoReflect.Descriptor instead.
+func (*GetFillDetailAdminReq) Descriptor() ([]byte, []int) {
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *GetFillDetailAdminReq) GetTenantId() uint64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *GetFillDetailAdminReq) GetId() uint64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type GetFillDetailAdminResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          *TradeFill             `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetFillDetailAdminResp) Reset() {
+	*x = GetFillDetailAdminResp{}
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetFillDetailAdminResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetFillDetailAdminResp) ProtoMessage() {}
+
+func (x *GetFillDetailAdminResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetFillDetailAdminResp.ProtoReflect.Descriptor instead.
+func (*GetFillDetailAdminResp) Descriptor() ([]byte, []int) {
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *GetFillDetailAdminResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *GetFillDetailAdminResp) GetData() *TradeFill {
+	if x != nil {
+		return x.Data
 	}
 	return nil
 }
@@ -1127,7 +1439,7 @@ type GetPositionListAdminReq struct {
 
 func (x *GetPositionListAdminReq) Reset() {
 	*x = GetPositionListAdminReq{}
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[11]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1139,7 +1451,7 @@ func (x *GetPositionListAdminReq) String() string {
 func (*GetPositionListAdminReq) ProtoMessage() {}
 
 func (x *GetPositionListAdminReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[11]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1152,7 +1464,7 @@ func (x *GetPositionListAdminReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPositionListAdminReq.ProtoReflect.Descriptor instead.
 func (*GetPositionListAdminReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{11}
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *GetPositionListAdminReq) GetTenantId() uint64 {
@@ -1200,7 +1512,7 @@ type GetPositionListAdminResp struct {
 
 func (x *GetPositionListAdminResp) Reset() {
 	*x = GetPositionListAdminResp{}
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[12]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1212,7 +1524,7 @@ func (x *GetPositionListAdminResp) String() string {
 func (*GetPositionListAdminResp) ProtoMessage() {}
 
 func (x *GetPositionListAdminResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[12]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1225,7 +1537,7 @@ func (x *GetPositionListAdminResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPositionListAdminResp.ProtoReflect.Descriptor instead.
 func (*GetPositionListAdminResp) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{12}
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *GetPositionListAdminResp) GetBase() *common.RespBase {
@@ -1236,6 +1548,534 @@ func (x *GetPositionListAdminResp) GetBase() *common.RespBase {
 }
 
 func (x *GetPositionListAdminResp) GetList() []*ContractPosition {
+	if x != nil {
+		return x.List
+	}
+	return nil
+}
+
+type GetPositionDetailAdminReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Id            uint64                 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPositionDetailAdminReq) Reset() {
+	*x = GetPositionDetailAdminReq{}
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPositionDetailAdminReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPositionDetailAdminReq) ProtoMessage() {}
+
+func (x *GetPositionDetailAdminReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPositionDetailAdminReq.ProtoReflect.Descriptor instead.
+func (*GetPositionDetailAdminReq) Descriptor() ([]byte, []int) {
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *GetPositionDetailAdminReq) GetTenantId() uint64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *GetPositionDetailAdminReq) GetId() uint64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type GetPositionDetailAdminResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          *ContractPosition      `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPositionDetailAdminResp) Reset() {
+	*x = GetPositionDetailAdminResp{}
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPositionDetailAdminResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPositionDetailAdminResp) ProtoMessage() {}
+
+func (x *GetPositionDetailAdminResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPositionDetailAdminResp.ProtoReflect.Descriptor instead.
+func (*GetPositionDetailAdminResp) Descriptor() ([]byte, []int) {
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *GetPositionDetailAdminResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *GetPositionDetailAdminResp) GetData() *ContractPosition {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type GetPositionHistoryListAdminReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Page          *common.PageReq        `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
+	UserId        uint64                 `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	SymbolId      uint64                 `protobuf:"varint,4,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
+	MarketType    MarketType             `protobuf:"varint,5,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
+	PositionId    uint64                 `protobuf:"varint,6,opt,name=position_id,json=positionId,proto3" json:"position_id,omitempty"`
+	ActionType    PositionActionType     `protobuf:"varint,7,opt,name=action_type,json=actionType,proto3,enum=trade.PositionActionType" json:"action_type,omitempty"`
+	TimeRange     *TimeRange             `protobuf:"bytes,8,opt,name=time_range,json=timeRange,proto3" json:"time_range,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPositionHistoryListAdminReq) Reset() {
+	*x = GetPositionHistoryListAdminReq{}
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPositionHistoryListAdminReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPositionHistoryListAdminReq) ProtoMessage() {}
+
+func (x *GetPositionHistoryListAdminReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPositionHistoryListAdminReq.ProtoReflect.Descriptor instead.
+func (*GetPositionHistoryListAdminReq) Descriptor() ([]byte, []int) {
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *GetPositionHistoryListAdminReq) GetTenantId() uint64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *GetPositionHistoryListAdminReq) GetPage() *common.PageReq {
+	if x != nil {
+		return x.Page
+	}
+	return nil
+}
+
+func (x *GetPositionHistoryListAdminReq) GetUserId() uint64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *GetPositionHistoryListAdminReq) GetSymbolId() uint64 {
+	if x != nil {
+		return x.SymbolId
+	}
+	return 0
+}
+
+func (x *GetPositionHistoryListAdminReq) GetMarketType() MarketType {
+	if x != nil {
+		return x.MarketType
+	}
+	return MarketType_MARKET_TYPE_UNSPECIFIED
+}
+
+func (x *GetPositionHistoryListAdminReq) GetPositionId() uint64 {
+	if x != nil {
+		return x.PositionId
+	}
+	return 0
+}
+
+func (x *GetPositionHistoryListAdminReq) GetActionType() PositionActionType {
+	if x != nil {
+		return x.ActionType
+	}
+	return PositionActionType_POSITION_ACTION_TYPE_UNKNOWN
+}
+
+func (x *GetPositionHistoryListAdminReq) GetTimeRange() *TimeRange {
+	if x != nil {
+		return x.TimeRange
+	}
+	return nil
+}
+
+type GetPositionHistoryListAdminResp struct {
+	state         protoimpl.MessageState     `protogen:"open.v1"`
+	Base          *common.RespBase           `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	List          []*ContractPositionHistory `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPositionHistoryListAdminResp) Reset() {
+	*x = GetPositionHistoryListAdminResp{}
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPositionHistoryListAdminResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPositionHistoryListAdminResp) ProtoMessage() {}
+
+func (x *GetPositionHistoryListAdminResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPositionHistoryListAdminResp.ProtoReflect.Descriptor instead.
+func (*GetPositionHistoryListAdminResp) Descriptor() ([]byte, []int) {
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *GetPositionHistoryListAdminResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *GetPositionHistoryListAdminResp) GetList() []*ContractPositionHistory {
+	if x != nil {
+		return x.List
+	}
+	return nil
+}
+
+type GetMarginAccountListAdminReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Page          *common.PageReq        `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
+	UserId        uint64                 `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	MarketType    MarketType             `protobuf:"varint,4,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
+	MarginAsset   string                 `protobuf:"bytes,5,opt,name=margin_asset,json=marginAsset,proto3" json:"margin_asset,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetMarginAccountListAdminReq) Reset() {
+	*x = GetMarginAccountListAdminReq{}
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetMarginAccountListAdminReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMarginAccountListAdminReq) ProtoMessage() {}
+
+func (x *GetMarginAccountListAdminReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMarginAccountListAdminReq.ProtoReflect.Descriptor instead.
+func (*GetMarginAccountListAdminReq) Descriptor() ([]byte, []int) {
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *GetMarginAccountListAdminReq) GetTenantId() uint64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *GetMarginAccountListAdminReq) GetPage() *common.PageReq {
+	if x != nil {
+		return x.Page
+	}
+	return nil
+}
+
+func (x *GetMarginAccountListAdminReq) GetUserId() uint64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *GetMarginAccountListAdminReq) GetMarketType() MarketType {
+	if x != nil {
+		return x.MarketType
+	}
+	return MarketType_MARKET_TYPE_UNSPECIFIED
+}
+
+func (x *GetMarginAccountListAdminReq) GetMarginAsset() string {
+	if x != nil {
+		return x.MarginAsset
+	}
+	return ""
+}
+
+type GetMarginAccountListAdminResp struct {
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Base          *common.RespBase         `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	List          []*ContractMarginAccount `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetMarginAccountListAdminResp) Reset() {
+	*x = GetMarginAccountListAdminResp{}
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetMarginAccountListAdminResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMarginAccountListAdminResp) ProtoMessage() {}
+
+func (x *GetMarginAccountListAdminResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMarginAccountListAdminResp.ProtoReflect.Descriptor instead.
+func (*GetMarginAccountListAdminResp) Descriptor() ([]byte, []int) {
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *GetMarginAccountListAdminResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *GetMarginAccountListAdminResp) GetList() []*ContractMarginAccount {
+	if x != nil {
+		return x.List
+	}
+	return nil
+}
+
+type GetCancelLogListAdminReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Page          *common.PageReq        `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
+	UserId        uint64                 `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	OrderId       uint64                 `protobuf:"varint,4,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	OrderNo       string                 `protobuf:"bytes,5,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
+	CancelSource  CancelSource           `protobuf:"varint,6,opt,name=cancel_source,json=cancelSource,proto3,enum=trade.CancelSource" json:"cancel_source,omitempty"`
+	TimeRange     *TimeRange             `protobuf:"bytes,7,opt,name=time_range,json=timeRange,proto3" json:"time_range,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetCancelLogListAdminReq) Reset() {
+	*x = GetCancelLogListAdminReq{}
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetCancelLogListAdminReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetCancelLogListAdminReq) ProtoMessage() {}
+
+func (x *GetCancelLogListAdminReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetCancelLogListAdminReq.ProtoReflect.Descriptor instead.
+func (*GetCancelLogListAdminReq) Descriptor() ([]byte, []int) {
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *GetCancelLogListAdminReq) GetTenantId() uint64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *GetCancelLogListAdminReq) GetPage() *common.PageReq {
+	if x != nil {
+		return x.Page
+	}
+	return nil
+}
+
+func (x *GetCancelLogListAdminReq) GetUserId() uint64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *GetCancelLogListAdminReq) GetOrderId() uint64 {
+	if x != nil {
+		return x.OrderId
+	}
+	return 0
+}
+
+func (x *GetCancelLogListAdminReq) GetOrderNo() string {
+	if x != nil {
+		return x.OrderNo
+	}
+	return ""
+}
+
+func (x *GetCancelLogListAdminReq) GetCancelSource() CancelSource {
+	if x != nil {
+		return x.CancelSource
+	}
+	return CancelSource_CANCEL_SOURCE_UNKNOWN
+}
+
+func (x *GetCancelLogListAdminReq) GetTimeRange() *TimeRange {
+	if x != nil {
+		return x.TimeRange
+	}
+	return nil
+}
+
+type GetCancelLogListAdminResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	List          []*TradeCancelLog      `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetCancelLogListAdminResp) Reset() {
+	*x = GetCancelLogListAdminResp{}
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetCancelLogListAdminResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetCancelLogListAdminResp) ProtoMessage() {}
+
+func (x *GetCancelLogListAdminResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetCancelLogListAdminResp.ProtoReflect.Descriptor instead.
+func (*GetCancelLogListAdminResp) Descriptor() ([]byte, []int) {
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *GetCancelLogListAdminResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *GetCancelLogListAdminResp) GetList() []*TradeCancelLog {
 	if x != nil {
 		return x.List
 	}
@@ -1272,7 +2112,7 @@ type SetUserTradeLimitReq struct {
 
 func (x *SetUserTradeLimitReq) Reset() {
 	*x = SetUserTradeLimitReq{}
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[13]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1284,7 +2124,7 @@ func (x *SetUserTradeLimitReq) String() string {
 func (*SetUserTradeLimitReq) ProtoMessage() {}
 
 func (x *SetUserTradeLimitReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[13]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1297,7 +2137,7 @@ func (x *SetUserTradeLimitReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetUserTradeLimitReq.ProtoReflect.Descriptor instead.
 func (*SetUserTradeLimitReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{13}
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *SetUserTradeLimitReq) GetTenantId() uint64 {
@@ -1482,7 +2322,7 @@ type SetUserSymbolLimitReq struct {
 
 func (x *SetUserSymbolLimitReq) Reset() {
 	*x = SetUserSymbolLimitReq{}
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[14]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1494,7 +2334,7 @@ func (x *SetUserSymbolLimitReq) String() string {
 func (*SetUserSymbolLimitReq) ProtoMessage() {}
 
 func (x *SetUserSymbolLimitReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[14]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1507,7 +2347,7 @@ func (x *SetUserSymbolLimitReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetUserSymbolLimitReq.ProtoReflect.Descriptor instead.
 func (*SetUserSymbolLimitReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{14}
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *SetUserSymbolLimitReq) GetTenantId() uint64 {
@@ -1661,7 +2501,7 @@ type GetUserTradeLimitReq struct {
 
 func (x *GetUserTradeLimitReq) Reset() {
 	*x = GetUserTradeLimitReq{}
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[15]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1673,7 +2513,7 @@ func (x *GetUserTradeLimitReq) String() string {
 func (*GetUserTradeLimitReq) ProtoMessage() {}
 
 func (x *GetUserTradeLimitReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[15]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1686,7 +2526,7 @@ func (x *GetUserTradeLimitReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserTradeLimitReq.ProtoReflect.Descriptor instead.
 func (*GetUserTradeLimitReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{15}
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *GetUserTradeLimitReq) GetTenantId() uint64 {
@@ -1712,14 +2552,15 @@ func (x *GetUserTradeLimitReq) GetMarketType() MarketType {
 
 type GetUserTradeLimitResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          *RiskUserTradeLimit    `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          *RiskUserTradeLimit    `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetUserTradeLimitResp) Reset() {
 	*x = GetUserTradeLimitResp{}
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[16]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1731,7 +2572,7 @@ func (x *GetUserTradeLimitResp) String() string {
 func (*GetUserTradeLimitResp) ProtoMessage() {}
 
 func (x *GetUserTradeLimitResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[16]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1744,7 +2585,14 @@ func (x *GetUserTradeLimitResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserTradeLimitResp.ProtoReflect.Descriptor instead.
 func (*GetUserTradeLimitResp) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{16}
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *GetUserTradeLimitResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
 }
 
 func (x *GetUserTradeLimitResp) GetData() *RiskUserTradeLimit {
@@ -1766,7 +2614,7 @@ type GetUserSymbolLimitReq struct {
 
 func (x *GetUserSymbolLimitReq) Reset() {
 	*x = GetUserSymbolLimitReq{}
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[17]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1778,7 +2626,7 @@ func (x *GetUserSymbolLimitReq) String() string {
 func (*GetUserSymbolLimitReq) ProtoMessage() {}
 
 func (x *GetUserSymbolLimitReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[17]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1791,7 +2639,7 @@ func (x *GetUserSymbolLimitReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserSymbolLimitReq.ProtoReflect.Descriptor instead.
 func (*GetUserSymbolLimitReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{17}
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *GetUserSymbolLimitReq) GetTenantId() uint64 {
@@ -1824,14 +2672,15 @@ func (x *GetUserSymbolLimitReq) GetMarketType() MarketType {
 
 type GetUserSymbolLimitResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          *RiskUserSymbolLimit   `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          *RiskUserSymbolLimit   `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetUserSymbolLimitResp) Reset() {
 	*x = GetUserSymbolLimitResp{}
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[18]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1843,7 +2692,7 @@ func (x *GetUserSymbolLimitResp) String() string {
 func (*GetUserSymbolLimitResp) ProtoMessage() {}
 
 func (x *GetUserSymbolLimitResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[18]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1856,10 +2705,245 @@ func (x *GetUserSymbolLimitResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserSymbolLimitResp.ProtoReflect.Descriptor instead.
 func (*GetUserSymbolLimitResp) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{18}
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{32}
+}
+
+func (x *GetUserSymbolLimitResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
 }
 
 func (x *GetUserSymbolLimitResp) GetData() *RiskUserSymbolLimit {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type SetUserTradeConfigReq struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	TenantId          uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId            uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	MarketType        MarketType             `protobuf:"varint,3,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
+	SymbolId          uint64                 `protobuf:"varint,4,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"` // 0 表示该市场下的全局配置
+	PositionMode      PositionMode           `protobuf:"varint,5,opt,name=position_mode,json=positionMode,proto3,enum=trade.PositionMode" json:"position_mode,omitempty"`
+	MarginMode        MarginMode             `protobuf:"varint,6,opt,name=margin_mode,json=marginMode,proto3,enum=trade.MarginMode" json:"margin_mode,omitempty"`
+	DefaultLeverage   uint32                 `protobuf:"varint,7,opt,name=default_leverage,json=defaultLeverage,proto3" json:"default_leverage,omitempty"`
+	TradeEnabled      bool                   `protobuf:"varint,8,opt,name=trade_enabled,json=tradeEnabled,proto3" json:"trade_enabled,omitempty"`
+	ReduceOnlyEnabled bool                   `protobuf:"varint,9,opt,name=reduce_only_enabled,json=reduceOnlyEnabled,proto3" json:"reduce_only_enabled,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *SetUserTradeConfigReq) Reset() {
+	*x = SetUserTradeConfigReq{}
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetUserTradeConfigReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetUserTradeConfigReq) ProtoMessage() {}
+
+func (x *SetUserTradeConfigReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetUserTradeConfigReq.ProtoReflect.Descriptor instead.
+func (*SetUserTradeConfigReq) Descriptor() ([]byte, []int) {
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *SetUserTradeConfigReq) GetTenantId() uint64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *SetUserTradeConfigReq) GetUserId() uint64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *SetUserTradeConfigReq) GetMarketType() MarketType {
+	if x != nil {
+		return x.MarketType
+	}
+	return MarketType_MARKET_TYPE_UNSPECIFIED
+}
+
+func (x *SetUserTradeConfigReq) GetSymbolId() uint64 {
+	if x != nil {
+		return x.SymbolId
+	}
+	return 0
+}
+
+func (x *SetUserTradeConfigReq) GetPositionMode() PositionMode {
+	if x != nil {
+		return x.PositionMode
+	}
+	return PositionMode_POSITION_MODE_UNSPECIFIED
+}
+
+func (x *SetUserTradeConfigReq) GetMarginMode() MarginMode {
+	if x != nil {
+		return x.MarginMode
+	}
+	return MarginMode_MARGIN_MODE_UNSPECIFIED
+}
+
+func (x *SetUserTradeConfigReq) GetDefaultLeverage() uint32 {
+	if x != nil {
+		return x.DefaultLeverage
+	}
+	return 0
+}
+
+func (x *SetUserTradeConfigReq) GetTradeEnabled() bool {
+	if x != nil {
+		return x.TradeEnabled
+	}
+	return false
+}
+
+func (x *SetUserTradeConfigReq) GetReduceOnlyEnabled() bool {
+	if x != nil {
+		return x.ReduceOnlyEnabled
+	}
+	return false
+}
+
+type GetUserTradeConfigReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	MarketType    MarketType             `protobuf:"varint,3,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
+	SymbolId      uint64                 `protobuf:"varint,4,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"` // 0 表示该市场下的全局配置
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUserTradeConfigReq) Reset() {
+	*x = GetUserTradeConfigReq{}
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUserTradeConfigReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUserTradeConfigReq) ProtoMessage() {}
+
+func (x *GetUserTradeConfigReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUserTradeConfigReq.ProtoReflect.Descriptor instead.
+func (*GetUserTradeConfigReq) Descriptor() ([]byte, []int) {
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *GetUserTradeConfigReq) GetTenantId() uint64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *GetUserTradeConfigReq) GetUserId() uint64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *GetUserTradeConfigReq) GetMarketType() MarketType {
+	if x != nil {
+		return x.MarketType
+	}
+	return MarketType_MARKET_TYPE_UNSPECIFIED
+}
+
+func (x *GetUserTradeConfigReq) GetSymbolId() uint64 {
+	if x != nil {
+		return x.SymbolId
+	}
+	return 0
+}
+
+type GetUserTradeConfigResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          *TradeUserConfig       `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUserTradeConfigResp) Reset() {
+	*x = GetUserTradeConfigResp{}
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUserTradeConfigResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUserTradeConfigResp) ProtoMessage() {}
+
+func (x *GetUserTradeConfigResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUserTradeConfigResp.ProtoReflect.Descriptor instead.
+func (*GetUserTradeConfigResp) Descriptor() ([]byte, []int) {
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *GetUserTradeConfigResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *GetUserTradeConfigResp) GetData() *TradeUserConfig {
 	if x != nil {
 		return x.Data
 	}
@@ -1882,7 +2966,7 @@ type GetRiskOrderCheckLogListReq struct {
 
 func (x *GetRiskOrderCheckLogListReq) Reset() {
 	*x = GetRiskOrderCheckLogListReq{}
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[19]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1894,7 +2978,7 @@ func (x *GetRiskOrderCheckLogListReq) String() string {
 func (*GetRiskOrderCheckLogListReq) ProtoMessage() {}
 
 func (x *GetRiskOrderCheckLogListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[19]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1907,7 +2991,7 @@ func (x *GetRiskOrderCheckLogListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRiskOrderCheckLogListReq.ProtoReflect.Descriptor instead.
 func (*GetRiskOrderCheckLogListReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{19}
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *GetRiskOrderCheckLogListReq) GetTenantId() uint64 {
@@ -1976,7 +3060,7 @@ type GetRiskOrderCheckLogListResp struct {
 
 func (x *GetRiskOrderCheckLogListResp) Reset() {
 	*x = GetRiskOrderCheckLogListResp{}
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[20]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1988,7 +3072,7 @@ func (x *GetRiskOrderCheckLogListResp) String() string {
 func (*GetRiskOrderCheckLogListResp) ProtoMessage() {}
 
 func (x *GetRiskOrderCheckLogListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[20]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2001,7 +3085,7 @@ func (x *GetRiskOrderCheckLogListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRiskOrderCheckLogListResp.ProtoReflect.Descriptor instead.
 func (*GetRiskOrderCheckLogListResp) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{20}
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *GetRiskOrderCheckLogListResp) GetBase() *common.RespBase {
@@ -2039,7 +3123,7 @@ type SetUserLeverageConfigReq struct {
 
 func (x *SetUserLeverageConfigReq) Reset() {
 	*x = SetUserLeverageConfigReq{}
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[21]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2051,7 +3135,7 @@ func (x *SetUserLeverageConfigReq) String() string {
 func (*SetUserLeverageConfigReq) ProtoMessage() {}
 
 func (x *SetUserLeverageConfigReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[21]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2064,7 +3148,7 @@ func (x *SetUserLeverageConfigReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetUserLeverageConfigReq.ProtoReflect.Descriptor instead.
 func (*SetUserLeverageConfigReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{21}
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *SetUserLeverageConfigReq) GetTenantId() uint64 {
@@ -2171,7 +3255,7 @@ type GetUserLeverageConfigReq struct {
 
 func (x *GetUserLeverageConfigReq) Reset() {
 	*x = GetUserLeverageConfigReq{}
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[22]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2183,7 +3267,7 @@ func (x *GetUserLeverageConfigReq) String() string {
 func (*GetUserLeverageConfigReq) ProtoMessage() {}
 
 func (x *GetUserLeverageConfigReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[22]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2196,7 +3280,7 @@ func (x *GetUserLeverageConfigReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserLeverageConfigReq.ProtoReflect.Descriptor instead.
 func (*GetUserLeverageConfigReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{22}
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *GetUserLeverageConfigReq) GetTenantId() uint64 {
@@ -2236,14 +3320,15 @@ func (x *GetUserLeverageConfigReq) GetMarginMode() MarginMode {
 
 type GetUserLeverageConfigResp struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
-	Data          *ContractLeverageConfig `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	Base          *common.RespBase        `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          *ContractLeverageConfig `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetUserLeverageConfigResp) Reset() {
 	*x = GetUserLeverageConfigResp{}
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[23]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2255,7 +3340,7 @@ func (x *GetUserLeverageConfigResp) String() string {
 func (*GetUserLeverageConfigResp) ProtoMessage() {}
 
 func (x *GetUserLeverageConfigResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[23]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2268,7 +3353,14 @@ func (x *GetUserLeverageConfigResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserLeverageConfigResp.ProtoReflect.Descriptor instead.
 func (*GetUserLeverageConfigResp) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{23}
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{40}
+}
+
+func (x *GetUserLeverageConfigResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
 }
 
 func (x *GetUserLeverageConfigResp) GetData() *ContractLeverageConfig {
@@ -2293,7 +3385,7 @@ type GetTradeEventListReq struct {
 
 func (x *GetTradeEventListReq) Reset() {
 	*x = GetTradeEventListReq{}
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[24]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2305,7 +3397,7 @@ func (x *GetTradeEventListReq) String() string {
 func (*GetTradeEventListReq) ProtoMessage() {}
 
 func (x *GetTradeEventListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[24]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2318,7 +3410,7 @@ func (x *GetTradeEventListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTradeEventListReq.ProtoReflect.Descriptor instead.
 func (*GetTradeEventListReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{24}
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *GetTradeEventListReq) GetTenantId() uint64 {
@@ -2380,7 +3472,7 @@ type GetTradeEventListResp struct {
 
 func (x *GetTradeEventListResp) Reset() {
 	*x = GetTradeEventListResp{}
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[25]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2392,7 +3484,7 @@ func (x *GetTradeEventListResp) String() string {
 func (*GetTradeEventListResp) ProtoMessage() {}
 
 func (x *GetTradeEventListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[25]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2405,7 +3497,7 @@ func (x *GetTradeEventListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTradeEventListResp.ProtoReflect.Descriptor instead.
 func (*GetTradeEventListResp) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{25}
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *GetTradeEventListResp) GetBase() *common.RespBase {
@@ -2422,6 +3514,110 @@ func (x *GetTradeEventListResp) GetList() []*BizTradeEvent {
 	return nil
 }
 
+type GetTradeEventDetailReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Id            uint64                 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTradeEventDetailReq) Reset() {
+	*x = GetTradeEventDetailReq{}
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[43]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTradeEventDetailReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTradeEventDetailReq) ProtoMessage() {}
+
+func (x *GetTradeEventDetailReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[43]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTradeEventDetailReq.ProtoReflect.Descriptor instead.
+func (*GetTradeEventDetailReq) Descriptor() ([]byte, []int) {
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{43}
+}
+
+func (x *GetTradeEventDetailReq) GetTenantId() uint64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *GetTradeEventDetailReq) GetId() uint64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type GetTradeEventDetailResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          *BizTradeEvent         `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTradeEventDetailResp) Reset() {
+	*x = GetTradeEventDetailResp{}
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[44]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTradeEventDetailResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTradeEventDetailResp) ProtoMessage() {}
+
+func (x *GetTradeEventDetailResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[44]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTradeEventDetailResp.ProtoReflect.Descriptor instead.
+func (*GetTradeEventDetailResp) Descriptor() ([]byte, []int) {
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{44}
+}
+
+func (x *GetTradeEventDetailResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *GetTradeEventDetailResp) GetData() *BizTradeEvent {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
 type RetryTradeEventReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
@@ -2433,7 +3629,7 @@ type RetryTradeEventReq struct {
 
 func (x *RetryTradeEventReq) Reset() {
 	*x = RetryTradeEventReq{}
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[26]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2445,7 +3641,7 @@ func (x *RetryTradeEventReq) String() string {
 func (*RetryTradeEventReq) ProtoMessage() {}
 
 func (x *RetryTradeEventReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_admin_proto_msgTypes[26]
+	mi := &file_proto_trade_trade_admin_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2458,7 +3654,7 @@ func (x *RetryTradeEventReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RetryTradeEventReq.ProtoReflect.Descriptor instead.
 func (*RetryTradeEventReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{26}
+	return file_proto_trade_trade_admin_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *RetryTradeEventReq) GetTenantId() uint64 {
@@ -2552,7 +3748,13 @@ const file_proto_trade_trade_admin_proto_rawDesc = "" +
 	"\akeyword\x18\x05 \x01(\tR\akeyword\"f\n" +
 	"\x16GetSymbolListAdminResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
-	"\x04list\x18\x02 \x03(\v2\x12.trade.TradeSymbolR\x04list\"\xe2\x01\n" +
+	"\x04list\x18\x02 \x03(\v2\x12.trade.TradeSymbolR\x04list\"F\n" +
+	"\x17GetSymbolDetailAdminReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x04R\x02id\"h\n" +
+	"\x18GetSymbolDetailAdminResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
+	"\x04data\x18\x02 \x01(\v2\x12.trade.TradeSymbolR\x04data\"\xe2\x01\n" +
 	"\x16SetSpotSymbolConfigReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x1b\n" +
 	"\tsymbol_id\x18\x02 \x01(\x04R\bsymbolId\x12$\n" +
@@ -2593,7 +3795,13 @@ const file_proto_trade_trade_admin_proto_rawDesc = "" +
 	"time_range\x18\b \x01(\v2\x10.trade.TimeRangeR\ttimeRange\"d\n" +
 	"\x15GetOrderListAdminResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12%\n" +
-	"\x04list\x18\x02 \x03(\v2\x11.trade.TradeOrderR\x04list\"\xf2\x01\n" +
+	"\x04list\x18\x02 \x03(\v2\x11.trade.TradeOrderR\x04list\"E\n" +
+	"\x16GetOrderDetailAdminReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x04R\x02id\"f\n" +
+	"\x17GetOrderDetailAdminResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12%\n" +
+	"\x04data\x18\x02 \x01(\v2\x11.trade.TradeOrderR\x04data\"\xf2\x01\n" +
 	"\x13GetFillListAdminReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12#\n" +
 	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\x12\x17\n" +
@@ -2605,7 +3813,13 @@ const file_proto_trade_trade_admin_proto_rawDesc = "" +
 	"time_range\x18\x06 \x01(\v2\x10.trade.TimeRangeR\ttimeRange\"b\n" +
 	"\x14GetFillListAdminResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12$\n" +
-	"\x04list\x18\x02 \x03(\v2\x10.trade.TradeFillR\x04list\"\xc5\x01\n" +
+	"\x04list\x18\x02 \x03(\v2\x10.trade.TradeFillR\x04list\"D\n" +
+	"\x15GetFillDetailAdminReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x04R\x02id\"d\n" +
+	"\x16GetFillDetailAdminResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12$\n" +
+	"\x04data\x18\x02 \x01(\v2\x10.trade.TradeFillR\x04data\"\xc5\x01\n" +
 	"\x17GetPositionListAdminReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12#\n" +
 	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\x12\x17\n" +
@@ -2615,7 +3829,51 @@ const file_proto_trade_trade_admin_proto_rawDesc = "" +
 	"\tsymbol_id\x18\x05 \x01(\x04R\bsymbolId\"m\n" +
 	"\x18GetPositionListAdminResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12+\n" +
-	"\x04list\x18\x02 \x03(\v2\x17.trade.ContractPositionR\x04list\"\xf0\x06\n" +
+	"\x04list\x18\x02 \x03(\v2\x17.trade.ContractPositionR\x04list\"H\n" +
+	"\x19GetPositionDetailAdminReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x04R\x02id\"o\n" +
+	"\x1aGetPositionDetailAdminResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12+\n" +
+	"\x04data\x18\x02 \x01(\v2\x17.trade.ContractPositionR\x04data\"\xda\x02\n" +
+	"\x1eGetPositionHistoryListAdminReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12#\n" +
+	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x04R\x06userId\x12\x1b\n" +
+	"\tsymbol_id\x18\x04 \x01(\x04R\bsymbolId\x122\n" +
+	"\vmarket_type\x18\x05 \x01(\x0e2\x11.trade.MarketTypeR\n" +
+	"marketType\x12\x1f\n" +
+	"\vposition_id\x18\x06 \x01(\x04R\n" +
+	"positionId\x12:\n" +
+	"\vaction_type\x18\a \x01(\x0e2\x19.trade.PositionActionTypeR\n" +
+	"actionType\x12/\n" +
+	"\n" +
+	"time_range\x18\b \x01(\v2\x10.trade.TimeRangeR\ttimeRange\"{\n" +
+	"\x1fGetPositionHistoryListAdminResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x122\n" +
+	"\x04list\x18\x02 \x03(\v2\x1e.trade.ContractPositionHistoryR\x04list\"\xd0\x01\n" +
+	"\x1cGetMarginAccountListAdminReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12#\n" +
+	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x04R\x06userId\x122\n" +
+	"\vmarket_type\x18\x04 \x01(\x0e2\x11.trade.MarketTypeR\n" +
+	"marketType\x12!\n" +
+	"\fmargin_asset\x18\x05 \x01(\tR\vmarginAsset\"w\n" +
+	"\x1dGetMarginAccountListAdminResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x120\n" +
+	"\x04list\x18\x02 \x03(\v2\x1c.trade.ContractMarginAccountR\x04list\"\x96\x02\n" +
+	"\x18GetCancelLogListAdminReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12#\n" +
+	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x04R\x06userId\x12\x19\n" +
+	"\border_id\x18\x04 \x01(\x04R\aorderId\x12\x19\n" +
+	"\border_no\x18\x05 \x01(\tR\aorderNo\x128\n" +
+	"\rcancel_source\x18\x06 \x01(\x0e2\x13.trade.CancelSourceR\fcancelSource\x12/\n" +
+	"\n" +
+	"time_range\x18\a \x01(\v2\x10.trade.TimeRangeR\ttimeRange\"l\n" +
+	"\x19GetCancelLogListAdminResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
+	"\x04list\x18\x02 \x03(\v2\x15.trade.TradeCancelLogR\x04list\"\xf0\x06\n" +
 	"\x14SetUserTradeLimitReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x04R\x06userId\x122\n" +
@@ -2672,17 +3930,40 @@ const file_proto_trade_trade_admin_proto_rawDesc = "" +
 	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x04R\x06userId\x122\n" +
 	"\vmarket_type\x18\x03 \x01(\x0e2\x11.trade.MarketTypeR\n" +
-	"marketType\"F\n" +
-	"\x15GetUserTradeLimitResp\x12-\n" +
-	"\x04data\x18\x01 \x01(\v2\x19.trade.RiskUserTradeLimitR\x04data\"\x9e\x01\n" +
+	"marketType\"l\n" +
+	"\x15GetUserTradeLimitResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
+	"\x04data\x18\x02 \x01(\v2\x19.trade.RiskUserTradeLimitR\x04data\"\x9e\x01\n" +
 	"\x15GetUserSymbolLimitReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x04R\x06userId\x12\x1b\n" +
 	"\tsymbol_id\x18\x03 \x01(\x04R\bsymbolId\x122\n" +
 	"\vmarket_type\x18\x04 \x01(\x0e2\x11.trade.MarketTypeR\n" +
-	"marketType\"H\n" +
-	"\x16GetUserSymbolLimitResp\x12.\n" +
-	"\x04data\x18\x01 \x01(\v2\x1a.trade.RiskUserSymbolLimitR\x04data\"\xea\x02\n" +
+	"marketType\"n\n" +
+	"\x16GetUserSymbolLimitResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
+	"\x04data\x18\x02 \x01(\v2\x1a.trade.RiskUserSymbolLimitR\x04data\"\x8c\x03\n" +
+	"\x15SetUserTradeConfigReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x04R\x06userId\x122\n" +
+	"\vmarket_type\x18\x03 \x01(\x0e2\x11.trade.MarketTypeR\n" +
+	"marketType\x12\x1b\n" +
+	"\tsymbol_id\x18\x04 \x01(\x04R\bsymbolId\x128\n" +
+	"\rposition_mode\x18\x05 \x01(\x0e2\x13.trade.PositionModeR\fpositionMode\x122\n" +
+	"\vmargin_mode\x18\x06 \x01(\x0e2\x11.trade.MarginModeR\n" +
+	"marginMode\x12)\n" +
+	"\x10default_leverage\x18\a \x01(\rR\x0fdefaultLeverage\x12#\n" +
+	"\rtrade_enabled\x18\b \x01(\bR\ftradeEnabled\x12.\n" +
+	"\x13reduce_only_enabled\x18\t \x01(\bR\x11reduceOnlyEnabled\"\x9e\x01\n" +
+	"\x15GetUserTradeConfigReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x04R\x06userId\x122\n" +
+	"\vmarket_type\x18\x03 \x01(\x0e2\x11.trade.MarketTypeR\n" +
+	"marketType\x12\x1b\n" +
+	"\tsymbol_id\x18\x04 \x01(\x04R\bsymbolId\"j\n" +
+	"\x16GetUserTradeConfigResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
+	"\x04data\x18\x02 \x01(\v2\x16.trade.TradeUserConfigR\x04data\"\xea\x02\n" +
 	"\x1bGetRiskOrderCheckLogListReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12#\n" +
 	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\x12\x17\n" +
@@ -2723,9 +4004,10 @@ const file_proto_trade_trade_admin_proto_rawDesc = "" +
 	"\vmarket_type\x18\x04 \x01(\x0e2\x11.trade.MarketTypeR\n" +
 	"marketType\x122\n" +
 	"\vmargin_mode\x18\x05 \x01(\x0e2\x11.trade.MarginModeR\n" +
-	"marginMode\"N\n" +
-	"\x19GetUserLeverageConfigResp\x121\n" +
-	"\x04data\x18\x01 \x01(\v2\x1d.trade.ContractLeverageConfigR\x04data\"\x91\x02\n" +
+	"marginMode\"t\n" +
+	"\x19GetUserLeverageConfigResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x121\n" +
+	"\x04data\x18\x02 \x01(\v2\x1d.trade.ContractLeverageConfigR\x04data\"\x91\x02\n" +
 	"\x14GetTradeEventListReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12#\n" +
 	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1d\n" +
@@ -2738,31 +4020,46 @@ const file_proto_trade_trade_admin_proto_rawDesc = "" +
 	"time_range\x18\a \x01(\v2\x10.trade.TimeRangeR\ttimeRange\"g\n" +
 	"\x15GetTradeEventListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12(\n" +
-	"\x04list\x18\x02 \x03(\v2\x14.trade.BizTradeEventR\x04list\"b\n" +
+	"\x04list\x18\x02 \x03(\v2\x14.trade.BizTradeEventR\x04list\"E\n" +
+	"\x16GetTradeEventDetailReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x04R\x02id\"i\n" +
+	"\x17GetTradeEventDetailResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12(\n" +
+	"\x04data\x18\x02 \x01(\v2\x14.trade.BizTradeEventR\x04data\"b\n" +
 	"\x12RetryTradeEventReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x04R\x02id\x12\x1f\n" +
 	"\voperator_id\x18\x03 \x01(\x04R\n" +
-	"operatorId2\xdb\n" +
-	"\n" +
+	"operatorId2\xe3\x11\n" +
 	"\n" +
 	"TradeAdmin\x12>\n" +
 	"\fCreateSymbol\x12\x16.trade.CreateSymbolReq\x1a\x16.trade.AdminCommonResp\x12>\n" +
 	"\fUpdateSymbol\x12\x16.trade.UpdateSymbolReq\x1a\x16.trade.AdminCommonResp\x12Q\n" +
-	"\x12GetSymbolListAdmin\x12\x1c.trade.GetSymbolListAdminReq\x1a\x1d.trade.GetSymbolListAdminResp\x12L\n" +
+	"\x12GetSymbolListAdmin\x12\x1c.trade.GetSymbolListAdminReq\x1a\x1d.trade.GetSymbolListAdminResp\x12W\n" +
+	"\x14GetSymbolDetailAdmin\x12\x1e.trade.GetSymbolDetailAdminReq\x1a\x1f.trade.GetSymbolDetailAdminResp\x12L\n" +
 	"\x13SetSpotSymbolConfig\x12\x1d.trade.SetSpotSymbolConfigReq\x1a\x16.trade.AdminCommonResp\x12T\n" +
 	"\x17SetContractSymbolConfig\x12!.trade.SetContractSymbolConfigReq\x1a\x16.trade.AdminCommonResp\x12N\n" +
-	"\x11GetOrderListAdmin\x12\x1b.trade.GetOrderListAdminReq\x1a\x1c.trade.GetOrderListAdminResp\x12K\n" +
-	"\x10GetFillListAdmin\x12\x1a.trade.GetFillListAdminReq\x1a\x1b.trade.GetFillListAdminResp\x12W\n" +
-	"\x14GetPositionListAdmin\x12\x1e.trade.GetPositionListAdminReq\x1a\x1f.trade.GetPositionListAdminResp\x12H\n" +
+	"\x11GetOrderListAdmin\x12\x1b.trade.GetOrderListAdminReq\x1a\x1c.trade.GetOrderListAdminResp\x12T\n" +
+	"\x13GetOrderDetailAdmin\x12\x1d.trade.GetOrderDetailAdminReq\x1a\x1e.trade.GetOrderDetailAdminResp\x12K\n" +
+	"\x10GetFillListAdmin\x12\x1a.trade.GetFillListAdminReq\x1a\x1b.trade.GetFillListAdminResp\x12Q\n" +
+	"\x12GetFillDetailAdmin\x12\x1c.trade.GetFillDetailAdminReq\x1a\x1d.trade.GetFillDetailAdminResp\x12W\n" +
+	"\x14GetPositionListAdmin\x12\x1e.trade.GetPositionListAdminReq\x1a\x1f.trade.GetPositionListAdminResp\x12]\n" +
+	"\x16GetPositionDetailAdmin\x12 .trade.GetPositionDetailAdminReq\x1a!.trade.GetPositionDetailAdminResp\x12l\n" +
+	"\x1bGetPositionHistoryListAdmin\x12%.trade.GetPositionHistoryListAdminReq\x1a&.trade.GetPositionHistoryListAdminResp\x12f\n" +
+	"\x19GetMarginAccountListAdmin\x12#.trade.GetMarginAccountListAdminReq\x1a$.trade.GetMarginAccountListAdminResp\x12Z\n" +
+	"\x15GetCancelLogListAdmin\x12\x1f.trade.GetCancelLogListAdminReq\x1a .trade.GetCancelLogListAdminResp\x12H\n" +
 	"\x11SetUserTradeLimit\x12\x1b.trade.SetUserTradeLimitReq\x1a\x16.trade.AdminCommonResp\x12J\n" +
 	"\x12SetUserSymbolLimit\x12\x1c.trade.SetUserSymbolLimitReq\x1a\x16.trade.AdminCommonResp\x12N\n" +
 	"\x11GetUserTradeLimit\x12\x1b.trade.GetUserTradeLimitReq\x1a\x1c.trade.GetUserTradeLimitResp\x12Q\n" +
-	"\x12GetUserSymbolLimit\x12\x1c.trade.GetUserSymbolLimitReq\x1a\x1d.trade.GetUserSymbolLimitResp\x12c\n" +
+	"\x12GetUserSymbolLimit\x12\x1c.trade.GetUserSymbolLimitReq\x1a\x1d.trade.GetUserSymbolLimitResp\x12J\n" +
+	"\x12SetUserTradeConfig\x12\x1c.trade.SetUserTradeConfigReq\x1a\x16.trade.AdminCommonResp\x12Q\n" +
+	"\x12GetUserTradeConfig\x12\x1c.trade.GetUserTradeConfigReq\x1a\x1d.trade.GetUserTradeConfigResp\x12c\n" +
 	"\x18GetRiskOrderCheckLogList\x12\".trade.GetRiskOrderCheckLogListReq\x1a#.trade.GetRiskOrderCheckLogListResp\x12P\n" +
 	"\x15SetUserLeverageConfig\x12\x1f.trade.SetUserLeverageConfigReq\x1a\x16.trade.AdminCommonResp\x12Z\n" +
 	"\x15GetUserLeverageConfig\x12\x1f.trade.GetUserLeverageConfigReq\x1a .trade.GetUserLeverageConfigResp\x12N\n" +
-	"\x11GetTradeEventList\x12\x1b.trade.GetTradeEventListReq\x1a\x1c.trade.GetTradeEventListResp\x12D\n" +
+	"\x11GetTradeEventList\x12\x1b.trade.GetTradeEventListReq\x1a\x1c.trade.GetTradeEventListResp\x12T\n" +
+	"\x13GetTradeEventDetail\x12\x1d.trade.GetTradeEventDetailReq\x1a\x1e.trade.GetTradeEventDetailResp\x12D\n" +
 	"\x0fRetryTradeEvent\x12\x19.trade.RetryTradeEventReq\x1a\x16.trade.AdminCommonRespB\x1aZ\x18wklive/proto/trade;tradeb\x06proto3"
 
 var (
@@ -2777,150 +4074,229 @@ func file_proto_trade_trade_admin_proto_rawDescGZIP() []byte {
 	return file_proto_trade_trade_admin_proto_rawDescData
 }
 
-var file_proto_trade_trade_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
+var file_proto_trade_trade_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 46)
 var file_proto_trade_trade_admin_proto_goTypes = []any{
-	(*AdminCommonResp)(nil),              // 0: trade.AdminCommonResp
-	(*CreateSymbolReq)(nil),              // 1: trade.CreateSymbolReq
-	(*UpdateSymbolReq)(nil),              // 2: trade.UpdateSymbolReq
-	(*GetSymbolListAdminReq)(nil),        // 3: trade.GetSymbolListAdminReq
-	(*GetSymbolListAdminResp)(nil),       // 4: trade.GetSymbolListAdminResp
-	(*SetSpotSymbolConfigReq)(nil),       // 5: trade.SetSpotSymbolConfigReq
-	(*SetContractSymbolConfigReq)(nil),   // 6: trade.SetContractSymbolConfigReq
-	(*GetOrderListAdminReq)(nil),         // 7: trade.GetOrderListAdminReq
-	(*GetOrderListAdminResp)(nil),        // 8: trade.GetOrderListAdminResp
-	(*GetFillListAdminReq)(nil),          // 9: trade.GetFillListAdminReq
-	(*GetFillListAdminResp)(nil),         // 10: trade.GetFillListAdminResp
-	(*GetPositionListAdminReq)(nil),      // 11: trade.GetPositionListAdminReq
-	(*GetPositionListAdminResp)(nil),     // 12: trade.GetPositionListAdminResp
-	(*SetUserTradeLimitReq)(nil),         // 13: trade.SetUserTradeLimitReq
-	(*SetUserSymbolLimitReq)(nil),        // 14: trade.SetUserSymbolLimitReq
-	(*GetUserTradeLimitReq)(nil),         // 15: trade.GetUserTradeLimitReq
-	(*GetUserTradeLimitResp)(nil),        // 16: trade.GetUserTradeLimitResp
-	(*GetUserSymbolLimitReq)(nil),        // 17: trade.GetUserSymbolLimitReq
-	(*GetUserSymbolLimitResp)(nil),       // 18: trade.GetUserSymbolLimitResp
-	(*GetRiskOrderCheckLogListReq)(nil),  // 19: trade.GetRiskOrderCheckLogListReq
-	(*GetRiskOrderCheckLogListResp)(nil), // 20: trade.GetRiskOrderCheckLogListResp
-	(*SetUserLeverageConfigReq)(nil),     // 21: trade.SetUserLeverageConfigReq
-	(*GetUserLeverageConfigReq)(nil),     // 22: trade.GetUserLeverageConfigReq
-	(*GetUserLeverageConfigResp)(nil),    // 23: trade.GetUserLeverageConfigResp
-	(*GetTradeEventListReq)(nil),         // 24: trade.GetTradeEventListReq
-	(*GetTradeEventListResp)(nil),        // 25: trade.GetTradeEventListResp
-	(*RetryTradeEventReq)(nil),           // 26: trade.RetryTradeEventReq
-	(*common.RespBase)(nil),              // 27: common.RespBase
-	(MarketType)(0),                      // 28: trade.MarketType
-	(ContractType)(0),                    // 29: trade.ContractType
-	(SymbolStatus)(0),                    // 30: trade.SymbolStatus
-	(*common.PageReq)(nil),               // 31: common.PageReq
-	(*TradeSymbol)(nil),                  // 32: trade.TradeSymbol
-	(OrderStatus)(0),                     // 33: trade.OrderStatus
-	(*TimeRange)(nil),                    // 34: trade.TimeRange
-	(*TradeOrder)(nil),                   // 35: trade.TradeOrder
-	(*TradeFill)(nil),                    // 36: trade.TradeFill
-	(*ContractPosition)(nil),             // 37: trade.ContractPosition
-	(SourceType)(0),                      // 38: trade.SourceType
-	(*RiskUserTradeLimit)(nil),           // 39: trade.RiskUserTradeLimit
-	(*RiskUserSymbolLimit)(nil),          // 40: trade.RiskUserSymbolLimit
-	(RiskCheckType)(0),                   // 41: trade.RiskCheckType
-	(RiskCheckResult)(0),                 // 42: trade.RiskCheckResult
-	(*RiskOrderCheckLog)(nil),            // 43: trade.RiskOrderCheckLog
-	(MarginMode)(0),                      // 44: trade.MarginMode
-	(PositionMode)(0),                    // 45: trade.PositionMode
-	(*ContractLeverageConfig)(nil),       // 46: trade.ContractLeverageConfig
-	(EventStatus)(0),                     // 47: trade.EventStatus
-	(*BizTradeEvent)(nil),                // 48: trade.BizTradeEvent
+	(*AdminCommonResp)(nil),                 // 0: trade.AdminCommonResp
+	(*CreateSymbolReq)(nil),                 // 1: trade.CreateSymbolReq
+	(*UpdateSymbolReq)(nil),                 // 2: trade.UpdateSymbolReq
+	(*GetSymbolListAdminReq)(nil),           // 3: trade.GetSymbolListAdminReq
+	(*GetSymbolListAdminResp)(nil),          // 4: trade.GetSymbolListAdminResp
+	(*GetSymbolDetailAdminReq)(nil),         // 5: trade.GetSymbolDetailAdminReq
+	(*GetSymbolDetailAdminResp)(nil),        // 6: trade.GetSymbolDetailAdminResp
+	(*SetSpotSymbolConfigReq)(nil),          // 7: trade.SetSpotSymbolConfigReq
+	(*SetContractSymbolConfigReq)(nil),      // 8: trade.SetContractSymbolConfigReq
+	(*GetOrderListAdminReq)(nil),            // 9: trade.GetOrderListAdminReq
+	(*GetOrderListAdminResp)(nil),           // 10: trade.GetOrderListAdminResp
+	(*GetOrderDetailAdminReq)(nil),          // 11: trade.GetOrderDetailAdminReq
+	(*GetOrderDetailAdminResp)(nil),         // 12: trade.GetOrderDetailAdminResp
+	(*GetFillListAdminReq)(nil),             // 13: trade.GetFillListAdminReq
+	(*GetFillListAdminResp)(nil),            // 14: trade.GetFillListAdminResp
+	(*GetFillDetailAdminReq)(nil),           // 15: trade.GetFillDetailAdminReq
+	(*GetFillDetailAdminResp)(nil),          // 16: trade.GetFillDetailAdminResp
+	(*GetPositionListAdminReq)(nil),         // 17: trade.GetPositionListAdminReq
+	(*GetPositionListAdminResp)(nil),        // 18: trade.GetPositionListAdminResp
+	(*GetPositionDetailAdminReq)(nil),       // 19: trade.GetPositionDetailAdminReq
+	(*GetPositionDetailAdminResp)(nil),      // 20: trade.GetPositionDetailAdminResp
+	(*GetPositionHistoryListAdminReq)(nil),  // 21: trade.GetPositionHistoryListAdminReq
+	(*GetPositionHistoryListAdminResp)(nil), // 22: trade.GetPositionHistoryListAdminResp
+	(*GetMarginAccountListAdminReq)(nil),    // 23: trade.GetMarginAccountListAdminReq
+	(*GetMarginAccountListAdminResp)(nil),   // 24: trade.GetMarginAccountListAdminResp
+	(*GetCancelLogListAdminReq)(nil),        // 25: trade.GetCancelLogListAdminReq
+	(*GetCancelLogListAdminResp)(nil),       // 26: trade.GetCancelLogListAdminResp
+	(*SetUserTradeLimitReq)(nil),            // 27: trade.SetUserTradeLimitReq
+	(*SetUserSymbolLimitReq)(nil),           // 28: trade.SetUserSymbolLimitReq
+	(*GetUserTradeLimitReq)(nil),            // 29: trade.GetUserTradeLimitReq
+	(*GetUserTradeLimitResp)(nil),           // 30: trade.GetUserTradeLimitResp
+	(*GetUserSymbolLimitReq)(nil),           // 31: trade.GetUserSymbolLimitReq
+	(*GetUserSymbolLimitResp)(nil),          // 32: trade.GetUserSymbolLimitResp
+	(*SetUserTradeConfigReq)(nil),           // 33: trade.SetUserTradeConfigReq
+	(*GetUserTradeConfigReq)(nil),           // 34: trade.GetUserTradeConfigReq
+	(*GetUserTradeConfigResp)(nil),          // 35: trade.GetUserTradeConfigResp
+	(*GetRiskOrderCheckLogListReq)(nil),     // 36: trade.GetRiskOrderCheckLogListReq
+	(*GetRiskOrderCheckLogListResp)(nil),    // 37: trade.GetRiskOrderCheckLogListResp
+	(*SetUserLeverageConfigReq)(nil),        // 38: trade.SetUserLeverageConfigReq
+	(*GetUserLeverageConfigReq)(nil),        // 39: trade.GetUserLeverageConfigReq
+	(*GetUserLeverageConfigResp)(nil),       // 40: trade.GetUserLeverageConfigResp
+	(*GetTradeEventListReq)(nil),            // 41: trade.GetTradeEventListReq
+	(*GetTradeEventListResp)(nil),           // 42: trade.GetTradeEventListResp
+	(*GetTradeEventDetailReq)(nil),          // 43: trade.GetTradeEventDetailReq
+	(*GetTradeEventDetailResp)(nil),         // 44: trade.GetTradeEventDetailResp
+	(*RetryTradeEventReq)(nil),              // 45: trade.RetryTradeEventReq
+	(*common.RespBase)(nil),                 // 46: common.RespBase
+	(MarketType)(0),                         // 47: trade.MarketType
+	(ContractType)(0),                       // 48: trade.ContractType
+	(SymbolStatus)(0),                       // 49: trade.SymbolStatus
+	(*common.PageReq)(nil),                  // 50: common.PageReq
+	(*TradeSymbol)(nil),                     // 51: trade.TradeSymbol
+	(OrderStatus)(0),                        // 52: trade.OrderStatus
+	(*TimeRange)(nil),                       // 53: trade.TimeRange
+	(*TradeOrder)(nil),                      // 54: trade.TradeOrder
+	(*TradeFill)(nil),                       // 55: trade.TradeFill
+	(*ContractPosition)(nil),                // 56: trade.ContractPosition
+	(PositionActionType)(0),                 // 57: trade.PositionActionType
+	(*ContractPositionHistory)(nil),         // 58: trade.ContractPositionHistory
+	(*ContractMarginAccount)(nil),           // 59: trade.ContractMarginAccount
+	(CancelSource)(0),                       // 60: trade.CancelSource
+	(*TradeCancelLog)(nil),                  // 61: trade.TradeCancelLog
+	(SourceType)(0),                         // 62: trade.SourceType
+	(*RiskUserTradeLimit)(nil),              // 63: trade.RiskUserTradeLimit
+	(*RiskUserSymbolLimit)(nil),             // 64: trade.RiskUserSymbolLimit
+	(PositionMode)(0),                       // 65: trade.PositionMode
+	(MarginMode)(0),                         // 66: trade.MarginMode
+	(*TradeUserConfig)(nil),                 // 67: trade.TradeUserConfig
+	(RiskCheckType)(0),                      // 68: trade.RiskCheckType
+	(RiskCheckResult)(0),                    // 69: trade.RiskCheckResult
+	(*RiskOrderCheckLog)(nil),               // 70: trade.RiskOrderCheckLog
+	(*ContractLeverageConfig)(nil),          // 71: trade.ContractLeverageConfig
+	(EventStatus)(0),                        // 72: trade.EventStatus
+	(*BizTradeEvent)(nil),                   // 73: trade.BizTradeEvent
 }
 var file_proto_trade_trade_admin_proto_depIdxs = []int32{
-	27, // 0: trade.AdminCommonResp.base:type_name -> common.RespBase
-	28, // 1: trade.CreateSymbolReq.market_type:type_name -> trade.MarketType
-	29, // 2: trade.CreateSymbolReq.contract_type:type_name -> trade.ContractType
-	30, // 3: trade.CreateSymbolReq.status:type_name -> trade.SymbolStatus
-	30, // 4: trade.UpdateSymbolReq.status:type_name -> trade.SymbolStatus
-	31, // 5: trade.GetSymbolListAdminReq.page:type_name -> common.PageReq
-	28, // 6: trade.GetSymbolListAdminReq.market_type:type_name -> trade.MarketType
-	30, // 7: trade.GetSymbolListAdminReq.status:type_name -> trade.SymbolStatus
-	27, // 8: trade.GetSymbolListAdminResp.base:type_name -> common.RespBase
-	32, // 9: trade.GetSymbolListAdminResp.list:type_name -> trade.TradeSymbol
-	31, // 10: trade.GetOrderListAdminReq.page:type_name -> common.PageReq
-	28, // 11: trade.GetOrderListAdminReq.market_type:type_name -> trade.MarketType
-	33, // 12: trade.GetOrderListAdminReq.status:type_name -> trade.OrderStatus
-	34, // 13: trade.GetOrderListAdminReq.time_range:type_name -> trade.TimeRange
-	27, // 14: trade.GetOrderListAdminResp.base:type_name -> common.RespBase
-	35, // 15: trade.GetOrderListAdminResp.list:type_name -> trade.TradeOrder
-	31, // 16: trade.GetFillListAdminReq.page:type_name -> common.PageReq
-	28, // 17: trade.GetFillListAdminReq.market_type:type_name -> trade.MarketType
-	34, // 18: trade.GetFillListAdminReq.time_range:type_name -> trade.TimeRange
-	27, // 19: trade.GetFillListAdminResp.base:type_name -> common.RespBase
-	36, // 20: trade.GetFillListAdminResp.list:type_name -> trade.TradeFill
-	31, // 21: trade.GetPositionListAdminReq.page:type_name -> common.PageReq
-	28, // 22: trade.GetPositionListAdminReq.market_type:type_name -> trade.MarketType
-	27, // 23: trade.GetPositionListAdminResp.base:type_name -> common.RespBase
-	37, // 24: trade.GetPositionListAdminResp.list:type_name -> trade.ContractPosition
-	28, // 25: trade.SetUserTradeLimitReq.market_type:type_name -> trade.MarketType
-	38, // 26: trade.SetUserTradeLimitReq.source:type_name -> trade.SourceType
-	28, // 27: trade.SetUserSymbolLimitReq.market_type:type_name -> trade.MarketType
-	38, // 28: trade.SetUserSymbolLimitReq.source:type_name -> trade.SourceType
-	28, // 29: trade.GetUserTradeLimitReq.market_type:type_name -> trade.MarketType
-	39, // 30: trade.GetUserTradeLimitResp.data:type_name -> trade.RiskUserTradeLimit
-	28, // 31: trade.GetUserSymbolLimitReq.market_type:type_name -> trade.MarketType
-	40, // 32: trade.GetUserSymbolLimitResp.data:type_name -> trade.RiskUserSymbolLimit
-	31, // 33: trade.GetRiskOrderCheckLogListReq.page:type_name -> common.PageReq
-	28, // 34: trade.GetRiskOrderCheckLogListReq.market_type:type_name -> trade.MarketType
-	41, // 35: trade.GetRiskOrderCheckLogListReq.check_type:type_name -> trade.RiskCheckType
-	42, // 36: trade.GetRiskOrderCheckLogListReq.check_result:type_name -> trade.RiskCheckResult
-	34, // 37: trade.GetRiskOrderCheckLogListReq.time_range:type_name -> trade.TimeRange
-	27, // 38: trade.GetRiskOrderCheckLogListResp.base:type_name -> common.RespBase
-	43, // 39: trade.GetRiskOrderCheckLogListResp.list:type_name -> trade.RiskOrderCheckLog
-	28, // 40: trade.SetUserLeverageConfigReq.market_type:type_name -> trade.MarketType
-	44, // 41: trade.SetUserLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
-	45, // 42: trade.SetUserLeverageConfigReq.position_mode:type_name -> trade.PositionMode
-	38, // 43: trade.SetUserLeverageConfigReq.source:type_name -> trade.SourceType
-	28, // 44: trade.GetUserLeverageConfigReq.market_type:type_name -> trade.MarketType
-	44, // 45: trade.GetUserLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
-	46, // 46: trade.GetUserLeverageConfigResp.data:type_name -> trade.ContractLeverageConfig
-	31, // 47: trade.GetTradeEventListReq.page:type_name -> common.PageReq
-	47, // 48: trade.GetTradeEventListReq.event_status:type_name -> trade.EventStatus
-	34, // 49: trade.GetTradeEventListReq.time_range:type_name -> trade.TimeRange
-	27, // 50: trade.GetTradeEventListResp.base:type_name -> common.RespBase
-	48, // 51: trade.GetTradeEventListResp.list:type_name -> trade.BizTradeEvent
-	1,  // 52: trade.TradeAdmin.CreateSymbol:input_type -> trade.CreateSymbolReq
-	2,  // 53: trade.TradeAdmin.UpdateSymbol:input_type -> trade.UpdateSymbolReq
-	3,  // 54: trade.TradeAdmin.GetSymbolListAdmin:input_type -> trade.GetSymbolListAdminReq
-	5,  // 55: trade.TradeAdmin.SetSpotSymbolConfig:input_type -> trade.SetSpotSymbolConfigReq
-	6,  // 56: trade.TradeAdmin.SetContractSymbolConfig:input_type -> trade.SetContractSymbolConfigReq
-	7,  // 57: trade.TradeAdmin.GetOrderListAdmin:input_type -> trade.GetOrderListAdminReq
-	9,  // 58: trade.TradeAdmin.GetFillListAdmin:input_type -> trade.GetFillListAdminReq
-	11, // 59: trade.TradeAdmin.GetPositionListAdmin:input_type -> trade.GetPositionListAdminReq
-	13, // 60: trade.TradeAdmin.SetUserTradeLimit:input_type -> trade.SetUserTradeLimitReq
-	14, // 61: trade.TradeAdmin.SetUserSymbolLimit:input_type -> trade.SetUserSymbolLimitReq
-	15, // 62: trade.TradeAdmin.GetUserTradeLimit:input_type -> trade.GetUserTradeLimitReq
-	17, // 63: trade.TradeAdmin.GetUserSymbolLimit:input_type -> trade.GetUserSymbolLimitReq
-	19, // 64: trade.TradeAdmin.GetRiskOrderCheckLogList:input_type -> trade.GetRiskOrderCheckLogListReq
-	21, // 65: trade.TradeAdmin.SetUserLeverageConfig:input_type -> trade.SetUserLeverageConfigReq
-	22, // 66: trade.TradeAdmin.GetUserLeverageConfig:input_type -> trade.GetUserLeverageConfigReq
-	24, // 67: trade.TradeAdmin.GetTradeEventList:input_type -> trade.GetTradeEventListReq
-	26, // 68: trade.TradeAdmin.RetryTradeEvent:input_type -> trade.RetryTradeEventReq
-	0,  // 69: trade.TradeAdmin.CreateSymbol:output_type -> trade.AdminCommonResp
-	0,  // 70: trade.TradeAdmin.UpdateSymbol:output_type -> trade.AdminCommonResp
-	4,  // 71: trade.TradeAdmin.GetSymbolListAdmin:output_type -> trade.GetSymbolListAdminResp
-	0,  // 72: trade.TradeAdmin.SetSpotSymbolConfig:output_type -> trade.AdminCommonResp
-	0,  // 73: trade.TradeAdmin.SetContractSymbolConfig:output_type -> trade.AdminCommonResp
-	8,  // 74: trade.TradeAdmin.GetOrderListAdmin:output_type -> trade.GetOrderListAdminResp
-	10, // 75: trade.TradeAdmin.GetFillListAdmin:output_type -> trade.GetFillListAdminResp
-	12, // 76: trade.TradeAdmin.GetPositionListAdmin:output_type -> trade.GetPositionListAdminResp
-	0,  // 77: trade.TradeAdmin.SetUserTradeLimit:output_type -> trade.AdminCommonResp
-	0,  // 78: trade.TradeAdmin.SetUserSymbolLimit:output_type -> trade.AdminCommonResp
-	16, // 79: trade.TradeAdmin.GetUserTradeLimit:output_type -> trade.GetUserTradeLimitResp
-	18, // 80: trade.TradeAdmin.GetUserSymbolLimit:output_type -> trade.GetUserSymbolLimitResp
-	20, // 81: trade.TradeAdmin.GetRiskOrderCheckLogList:output_type -> trade.GetRiskOrderCheckLogListResp
-	0,  // 82: trade.TradeAdmin.SetUserLeverageConfig:output_type -> trade.AdminCommonResp
-	23, // 83: trade.TradeAdmin.GetUserLeverageConfig:output_type -> trade.GetUserLeverageConfigResp
-	25, // 84: trade.TradeAdmin.GetTradeEventList:output_type -> trade.GetTradeEventListResp
-	0,  // 85: trade.TradeAdmin.RetryTradeEvent:output_type -> trade.AdminCommonResp
-	69, // [69:86] is the sub-list for method output_type
-	52, // [52:69] is the sub-list for method input_type
-	52, // [52:52] is the sub-list for extension type_name
-	52, // [52:52] is the sub-list for extension extendee
-	0,  // [0:52] is the sub-list for field type_name
+	46,  // 0: trade.AdminCommonResp.base:type_name -> common.RespBase
+	47,  // 1: trade.CreateSymbolReq.market_type:type_name -> trade.MarketType
+	48,  // 2: trade.CreateSymbolReq.contract_type:type_name -> trade.ContractType
+	49,  // 3: trade.CreateSymbolReq.status:type_name -> trade.SymbolStatus
+	49,  // 4: trade.UpdateSymbolReq.status:type_name -> trade.SymbolStatus
+	50,  // 5: trade.GetSymbolListAdminReq.page:type_name -> common.PageReq
+	47,  // 6: trade.GetSymbolListAdminReq.market_type:type_name -> trade.MarketType
+	49,  // 7: trade.GetSymbolListAdminReq.status:type_name -> trade.SymbolStatus
+	46,  // 8: trade.GetSymbolListAdminResp.base:type_name -> common.RespBase
+	51,  // 9: trade.GetSymbolListAdminResp.list:type_name -> trade.TradeSymbol
+	46,  // 10: trade.GetSymbolDetailAdminResp.base:type_name -> common.RespBase
+	51,  // 11: trade.GetSymbolDetailAdminResp.data:type_name -> trade.TradeSymbol
+	50,  // 12: trade.GetOrderListAdminReq.page:type_name -> common.PageReq
+	47,  // 13: trade.GetOrderListAdminReq.market_type:type_name -> trade.MarketType
+	52,  // 14: trade.GetOrderListAdminReq.status:type_name -> trade.OrderStatus
+	53,  // 15: trade.GetOrderListAdminReq.time_range:type_name -> trade.TimeRange
+	46,  // 16: trade.GetOrderListAdminResp.base:type_name -> common.RespBase
+	54,  // 17: trade.GetOrderListAdminResp.list:type_name -> trade.TradeOrder
+	46,  // 18: trade.GetOrderDetailAdminResp.base:type_name -> common.RespBase
+	54,  // 19: trade.GetOrderDetailAdminResp.data:type_name -> trade.TradeOrder
+	50,  // 20: trade.GetFillListAdminReq.page:type_name -> common.PageReq
+	47,  // 21: trade.GetFillListAdminReq.market_type:type_name -> trade.MarketType
+	53,  // 22: trade.GetFillListAdminReq.time_range:type_name -> trade.TimeRange
+	46,  // 23: trade.GetFillListAdminResp.base:type_name -> common.RespBase
+	55,  // 24: trade.GetFillListAdminResp.list:type_name -> trade.TradeFill
+	46,  // 25: trade.GetFillDetailAdminResp.base:type_name -> common.RespBase
+	55,  // 26: trade.GetFillDetailAdminResp.data:type_name -> trade.TradeFill
+	50,  // 27: trade.GetPositionListAdminReq.page:type_name -> common.PageReq
+	47,  // 28: trade.GetPositionListAdminReq.market_type:type_name -> trade.MarketType
+	46,  // 29: trade.GetPositionListAdminResp.base:type_name -> common.RespBase
+	56,  // 30: trade.GetPositionListAdminResp.list:type_name -> trade.ContractPosition
+	46,  // 31: trade.GetPositionDetailAdminResp.base:type_name -> common.RespBase
+	56,  // 32: trade.GetPositionDetailAdminResp.data:type_name -> trade.ContractPosition
+	50,  // 33: trade.GetPositionHistoryListAdminReq.page:type_name -> common.PageReq
+	47,  // 34: trade.GetPositionHistoryListAdminReq.market_type:type_name -> trade.MarketType
+	57,  // 35: trade.GetPositionHistoryListAdminReq.action_type:type_name -> trade.PositionActionType
+	53,  // 36: trade.GetPositionHistoryListAdminReq.time_range:type_name -> trade.TimeRange
+	46,  // 37: trade.GetPositionHistoryListAdminResp.base:type_name -> common.RespBase
+	58,  // 38: trade.GetPositionHistoryListAdminResp.list:type_name -> trade.ContractPositionHistory
+	50,  // 39: trade.GetMarginAccountListAdminReq.page:type_name -> common.PageReq
+	47,  // 40: trade.GetMarginAccountListAdminReq.market_type:type_name -> trade.MarketType
+	46,  // 41: trade.GetMarginAccountListAdminResp.base:type_name -> common.RespBase
+	59,  // 42: trade.GetMarginAccountListAdminResp.list:type_name -> trade.ContractMarginAccount
+	50,  // 43: trade.GetCancelLogListAdminReq.page:type_name -> common.PageReq
+	60,  // 44: trade.GetCancelLogListAdminReq.cancel_source:type_name -> trade.CancelSource
+	53,  // 45: trade.GetCancelLogListAdminReq.time_range:type_name -> trade.TimeRange
+	46,  // 46: trade.GetCancelLogListAdminResp.base:type_name -> common.RespBase
+	61,  // 47: trade.GetCancelLogListAdminResp.list:type_name -> trade.TradeCancelLog
+	47,  // 48: trade.SetUserTradeLimitReq.market_type:type_name -> trade.MarketType
+	62,  // 49: trade.SetUserTradeLimitReq.source:type_name -> trade.SourceType
+	47,  // 50: trade.SetUserSymbolLimitReq.market_type:type_name -> trade.MarketType
+	62,  // 51: trade.SetUserSymbolLimitReq.source:type_name -> trade.SourceType
+	47,  // 52: trade.GetUserTradeLimitReq.market_type:type_name -> trade.MarketType
+	46,  // 53: trade.GetUserTradeLimitResp.base:type_name -> common.RespBase
+	63,  // 54: trade.GetUserTradeLimitResp.data:type_name -> trade.RiskUserTradeLimit
+	47,  // 55: trade.GetUserSymbolLimitReq.market_type:type_name -> trade.MarketType
+	46,  // 56: trade.GetUserSymbolLimitResp.base:type_name -> common.RespBase
+	64,  // 57: trade.GetUserSymbolLimitResp.data:type_name -> trade.RiskUserSymbolLimit
+	47,  // 58: trade.SetUserTradeConfigReq.market_type:type_name -> trade.MarketType
+	65,  // 59: trade.SetUserTradeConfigReq.position_mode:type_name -> trade.PositionMode
+	66,  // 60: trade.SetUserTradeConfigReq.margin_mode:type_name -> trade.MarginMode
+	47,  // 61: trade.GetUserTradeConfigReq.market_type:type_name -> trade.MarketType
+	46,  // 62: trade.GetUserTradeConfigResp.base:type_name -> common.RespBase
+	67,  // 63: trade.GetUserTradeConfigResp.data:type_name -> trade.TradeUserConfig
+	50,  // 64: trade.GetRiskOrderCheckLogListReq.page:type_name -> common.PageReq
+	47,  // 65: trade.GetRiskOrderCheckLogListReq.market_type:type_name -> trade.MarketType
+	68,  // 66: trade.GetRiskOrderCheckLogListReq.check_type:type_name -> trade.RiskCheckType
+	69,  // 67: trade.GetRiskOrderCheckLogListReq.check_result:type_name -> trade.RiskCheckResult
+	53,  // 68: trade.GetRiskOrderCheckLogListReq.time_range:type_name -> trade.TimeRange
+	46,  // 69: trade.GetRiskOrderCheckLogListResp.base:type_name -> common.RespBase
+	70,  // 70: trade.GetRiskOrderCheckLogListResp.list:type_name -> trade.RiskOrderCheckLog
+	47,  // 71: trade.SetUserLeverageConfigReq.market_type:type_name -> trade.MarketType
+	66,  // 72: trade.SetUserLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
+	65,  // 73: trade.SetUserLeverageConfigReq.position_mode:type_name -> trade.PositionMode
+	62,  // 74: trade.SetUserLeverageConfigReq.source:type_name -> trade.SourceType
+	47,  // 75: trade.GetUserLeverageConfigReq.market_type:type_name -> trade.MarketType
+	66,  // 76: trade.GetUserLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
+	46,  // 77: trade.GetUserLeverageConfigResp.base:type_name -> common.RespBase
+	71,  // 78: trade.GetUserLeverageConfigResp.data:type_name -> trade.ContractLeverageConfig
+	50,  // 79: trade.GetTradeEventListReq.page:type_name -> common.PageReq
+	72,  // 80: trade.GetTradeEventListReq.event_status:type_name -> trade.EventStatus
+	53,  // 81: trade.GetTradeEventListReq.time_range:type_name -> trade.TimeRange
+	46,  // 82: trade.GetTradeEventListResp.base:type_name -> common.RespBase
+	73,  // 83: trade.GetTradeEventListResp.list:type_name -> trade.BizTradeEvent
+	46,  // 84: trade.GetTradeEventDetailResp.base:type_name -> common.RespBase
+	73,  // 85: trade.GetTradeEventDetailResp.data:type_name -> trade.BizTradeEvent
+	1,   // 86: trade.TradeAdmin.CreateSymbol:input_type -> trade.CreateSymbolReq
+	2,   // 87: trade.TradeAdmin.UpdateSymbol:input_type -> trade.UpdateSymbolReq
+	3,   // 88: trade.TradeAdmin.GetSymbolListAdmin:input_type -> trade.GetSymbolListAdminReq
+	5,   // 89: trade.TradeAdmin.GetSymbolDetailAdmin:input_type -> trade.GetSymbolDetailAdminReq
+	7,   // 90: trade.TradeAdmin.SetSpotSymbolConfig:input_type -> trade.SetSpotSymbolConfigReq
+	8,   // 91: trade.TradeAdmin.SetContractSymbolConfig:input_type -> trade.SetContractSymbolConfigReq
+	9,   // 92: trade.TradeAdmin.GetOrderListAdmin:input_type -> trade.GetOrderListAdminReq
+	11,  // 93: trade.TradeAdmin.GetOrderDetailAdmin:input_type -> trade.GetOrderDetailAdminReq
+	13,  // 94: trade.TradeAdmin.GetFillListAdmin:input_type -> trade.GetFillListAdminReq
+	15,  // 95: trade.TradeAdmin.GetFillDetailAdmin:input_type -> trade.GetFillDetailAdminReq
+	17,  // 96: trade.TradeAdmin.GetPositionListAdmin:input_type -> trade.GetPositionListAdminReq
+	19,  // 97: trade.TradeAdmin.GetPositionDetailAdmin:input_type -> trade.GetPositionDetailAdminReq
+	21,  // 98: trade.TradeAdmin.GetPositionHistoryListAdmin:input_type -> trade.GetPositionHistoryListAdminReq
+	23,  // 99: trade.TradeAdmin.GetMarginAccountListAdmin:input_type -> trade.GetMarginAccountListAdminReq
+	25,  // 100: trade.TradeAdmin.GetCancelLogListAdmin:input_type -> trade.GetCancelLogListAdminReq
+	27,  // 101: trade.TradeAdmin.SetUserTradeLimit:input_type -> trade.SetUserTradeLimitReq
+	28,  // 102: trade.TradeAdmin.SetUserSymbolLimit:input_type -> trade.SetUserSymbolLimitReq
+	29,  // 103: trade.TradeAdmin.GetUserTradeLimit:input_type -> trade.GetUserTradeLimitReq
+	31,  // 104: trade.TradeAdmin.GetUserSymbolLimit:input_type -> trade.GetUserSymbolLimitReq
+	33,  // 105: trade.TradeAdmin.SetUserTradeConfig:input_type -> trade.SetUserTradeConfigReq
+	34,  // 106: trade.TradeAdmin.GetUserTradeConfig:input_type -> trade.GetUserTradeConfigReq
+	36,  // 107: trade.TradeAdmin.GetRiskOrderCheckLogList:input_type -> trade.GetRiskOrderCheckLogListReq
+	38,  // 108: trade.TradeAdmin.SetUserLeverageConfig:input_type -> trade.SetUserLeverageConfigReq
+	39,  // 109: trade.TradeAdmin.GetUserLeverageConfig:input_type -> trade.GetUserLeverageConfigReq
+	41,  // 110: trade.TradeAdmin.GetTradeEventList:input_type -> trade.GetTradeEventListReq
+	43,  // 111: trade.TradeAdmin.GetTradeEventDetail:input_type -> trade.GetTradeEventDetailReq
+	45,  // 112: trade.TradeAdmin.RetryTradeEvent:input_type -> trade.RetryTradeEventReq
+	0,   // 113: trade.TradeAdmin.CreateSymbol:output_type -> trade.AdminCommonResp
+	0,   // 114: trade.TradeAdmin.UpdateSymbol:output_type -> trade.AdminCommonResp
+	4,   // 115: trade.TradeAdmin.GetSymbolListAdmin:output_type -> trade.GetSymbolListAdminResp
+	6,   // 116: trade.TradeAdmin.GetSymbolDetailAdmin:output_type -> trade.GetSymbolDetailAdminResp
+	0,   // 117: trade.TradeAdmin.SetSpotSymbolConfig:output_type -> trade.AdminCommonResp
+	0,   // 118: trade.TradeAdmin.SetContractSymbolConfig:output_type -> trade.AdminCommonResp
+	10,  // 119: trade.TradeAdmin.GetOrderListAdmin:output_type -> trade.GetOrderListAdminResp
+	12,  // 120: trade.TradeAdmin.GetOrderDetailAdmin:output_type -> trade.GetOrderDetailAdminResp
+	14,  // 121: trade.TradeAdmin.GetFillListAdmin:output_type -> trade.GetFillListAdminResp
+	16,  // 122: trade.TradeAdmin.GetFillDetailAdmin:output_type -> trade.GetFillDetailAdminResp
+	18,  // 123: trade.TradeAdmin.GetPositionListAdmin:output_type -> trade.GetPositionListAdminResp
+	20,  // 124: trade.TradeAdmin.GetPositionDetailAdmin:output_type -> trade.GetPositionDetailAdminResp
+	22,  // 125: trade.TradeAdmin.GetPositionHistoryListAdmin:output_type -> trade.GetPositionHistoryListAdminResp
+	24,  // 126: trade.TradeAdmin.GetMarginAccountListAdmin:output_type -> trade.GetMarginAccountListAdminResp
+	26,  // 127: trade.TradeAdmin.GetCancelLogListAdmin:output_type -> trade.GetCancelLogListAdminResp
+	0,   // 128: trade.TradeAdmin.SetUserTradeLimit:output_type -> trade.AdminCommonResp
+	0,   // 129: trade.TradeAdmin.SetUserSymbolLimit:output_type -> trade.AdminCommonResp
+	30,  // 130: trade.TradeAdmin.GetUserTradeLimit:output_type -> trade.GetUserTradeLimitResp
+	32,  // 131: trade.TradeAdmin.GetUserSymbolLimit:output_type -> trade.GetUserSymbolLimitResp
+	0,   // 132: trade.TradeAdmin.SetUserTradeConfig:output_type -> trade.AdminCommonResp
+	35,  // 133: trade.TradeAdmin.GetUserTradeConfig:output_type -> trade.GetUserTradeConfigResp
+	37,  // 134: trade.TradeAdmin.GetRiskOrderCheckLogList:output_type -> trade.GetRiskOrderCheckLogListResp
+	0,   // 135: trade.TradeAdmin.SetUserLeverageConfig:output_type -> trade.AdminCommonResp
+	40,  // 136: trade.TradeAdmin.GetUserLeverageConfig:output_type -> trade.GetUserLeverageConfigResp
+	42,  // 137: trade.TradeAdmin.GetTradeEventList:output_type -> trade.GetTradeEventListResp
+	44,  // 138: trade.TradeAdmin.GetTradeEventDetail:output_type -> trade.GetTradeEventDetailResp
+	0,   // 139: trade.TradeAdmin.RetryTradeEvent:output_type -> trade.AdminCommonResp
+	113, // [113:140] is the sub-list for method output_type
+	86,  // [86:113] is the sub-list for method input_type
+	86,  // [86:86] is the sub-list for extension type_name
+	86,  // [86:86] is the sub-list for extension extendee
+	0,   // [0:86] is the sub-list for field type_name
 }
 
 func init() { file_proto_trade_trade_admin_proto_init() }
@@ -2936,7 +4312,7 @@ func file_proto_trade_trade_admin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_trade_trade_admin_proto_rawDesc), len(file_proto_trade_trade_admin_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   27,
+			NumMessages:   46,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

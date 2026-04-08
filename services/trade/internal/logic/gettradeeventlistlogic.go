@@ -23,6 +23,7 @@ func NewGetTradeEventListLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 	}
 }
 
+// 获取交易事件列表
 func (l *GetTradeEventListLogic) GetTradeEventList(in *trade.GetTradeEventListReq) (*trade.GetTradeEventListResp, error) {
 	// todo: add your logic here and delete this line
 

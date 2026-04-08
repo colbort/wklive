@@ -23,6 +23,7 @@ func NewGetOrderListAdminLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 	}
 }
 
+// 获取后台订单列表
 func (l *GetOrderListAdminLogic) GetOrderListAdmin(in *trade.GetOrderListAdminReq) (*trade.GetOrderListAdminResp, error) {
 	// todo: add your logic here and delete this line
 
