@@ -50,15 +50,15 @@ message LoginResp {
 }
 
 message GuestLoginReq {
-	string deviceId = 1;
+	string device_id = 1;
 	string fingerprint = 2;
-  string registerIp = 3;
+  string register_ip = 3;
 }
 
 message GuestLogin {
   string token = 1;
 	string uid = 2;
-	bool   isNew = 3;
+	bool   is_new = 3;
   string username = 4;
 }
 
