@@ -1,0 +1,108 @@
+syntax = "proto3";
+
+package asset;
+
+option go_package = "wklive/proto/asset;asset";
+
+// 钱包类型
+enum WalletType {
+  WALLET_TYPE_UNSPECIFIED = 0;
+  WALLET_TYPE_SPOT = 1; // 现货钱包
+  WALLET_TYPE_FUNDING = 2; // 资金钱包
+  WALLET_TYPE_CONTRACT = 3; // 合约钱包
+  WALLET_TYPE_EARN = 4; // 理财钱包
+  WALLET_TYPE_OPTION = 5; // 期权钱包
+}
+
+// 资产状态
+enum AssetStatus {
+  ASSET_STATUS_UNSPECIFIED = 0;
+  ASSET_STATUS_DISABLED = 1; // 禁用
+  ASSET_STATUS_ENABLED = 2; // 正常
+}
+
+// 变动方向
+enum AssetOpType {
+  ASSET_OP_TYPE_UNSPECIFIED = 0;
+  ASSET_OP_TYPE_ADD = 1; // 增加
+  ASSET_OP_TYPE_SUB = 2; // 减少
+  ASSET_OP_TYPE_FREEZE = 3; // 冻结
+  ASSET_OP_TYPE_UNFREEZE = 4; // 解冻
+  ASSET_OP_TYPE_LOCK = 5; // 锁定
+  ASSET_OP_TYPE_UNLOCK = 6; // 解锁
+  ASSET_OP_TYPE_FREEZE_DEDUCT = 7; // 扣减冻结
+  ASSET_OP_TYPE_LOCK_DEDUCT = 8; // 扣减锁定
+  ASSET_OP_TYPE_TRANSFER_IN = 9; // 划转转入
+  ASSET_OP_TYPE_TRANSFER_OUT = 10; // 划转转出
+}
+
+// 业务类型
+enum BizType {
+  BIZ_TYPE_UNSPECIFIED = 0;
+  BIZ_TYPE_PAYMENT = 1; // 充值提现
+  BIZ_TYPE_TRADE = 2; // 交易
+  BIZ_TYPE_STAKING = 3; // 锁仓
+  BIZ_TYPE_OPTION = 4; // 期权
+  BIZ_TYPE_TRANSFER = 5; // 划转
+  BIZ_TYPE_SYSTEM = 6; // 系统调账
+  BIZ_TYPE_ACTIVITY = 7; // 活动
+  BIZ_TYPE_EARN = 8; // 理财
+}
+
+// 业务场景
+enum SceneType {
+  SCENE_TYPE_UNSPECIFIED = 0;
+
+  // payment
+  SCENE_TYPE_RECHARGE = 1; // 充值入账
+  SCENE_TYPE_WITHDRAW_APPLY = 2; // 提现申请
+  SCENE_TYPE_WITHDRAW_REJECT = 3; // 提现驳回
+  SCENE_TYPE_WITHDRAW_SUCCESS = 4; // 提现成功
+
+  // trade
+  SCENE_TYPE_PLACE_ORDER = 11; // 下单冻结
+  SCENE_TYPE_CANCEL_ORDER = 12; // 撤单解冻
+  SCENE_TYPE_TRADE_MATCH = 13; // 成交扣减
+  SCENE_TYPE_TRADE_FEE = 14; // 手续费
+
+  // staking / earn
+  SCENE_TYPE_STAKING_JOIN = 21; // 参与锁仓
+  SCENE_TYPE_STAKING_RELEASE = 22; // 锁仓释放
+  SCENE_TYPE_STAKING_REWARD = 23; // 锁仓收益
+
+  // transfer
+  SCENE_TYPE_TRANSFER = 31; // 划转
+
+  // system
+  SCENE_TYPE_MANUAL_ADD = 41; // 人工加币
+  SCENE_TYPE_MANUAL_SUB = 42; // 人工减币
+  SCENE_TYPE_SYSTEM_ADJUST = 43; // 系统调账
+  SCENE_TYPE_AIRDROP = 44; // 空投
+}
+
+// 冻结状态
+enum FreezeStatus {
+  FREEZE_STATUS_UNSPECIFIED = 0;
+  FREEZE_STATUS_FREEZING = 1; // 冻结中
+  FREEZE_STATUS_PARTIAL_RELEASED = 2; // 部分释放
+  FREEZE_STATUS_UNFROZEN = 3; // 已解冻
+  FREEZE_STATUS_DEDUCTED = 4; // 已扣完
+  FREEZE_STATUS_CLOSED = 5; // 已关闭
+}
+
+// 锁仓状态
+enum LockStatus {
+  LOCK_STATUS_UNSPECIFIED = 0;
+  LOCK_STATUS_LOCKING = 1; // 锁仓中
+  LOCK_STATUS_PARTIAL_UNLOCKED = 2; // 部分解锁
+  LOCK_STATUS_UNLOCKED = 3; // 已解锁
+  LOCK_STATUS_CLOSED = 4; // 已关闭
+}
+
+// 幂等状态
+enum IdempotentStatus {
+  IDEMPOTENT_STATUS_UNSPECIFIED = 0;
+  IDEMPOTENT_STATUS_PROCESSING = 1; // 处理中
+  IDEMPOTENT_STATUS_SUCCESS = 2; // 成功
+  IDEMPOTENT_STATUS_FAILED = 3; // 失败
+}

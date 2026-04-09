@@ -1,0 +1,130 @@
+syntax = "proto3";
+
+package asset;
+
+import "google/protobuf/struct.proto";
+import "proto/asset/enum.proto";
+
+option go_package = "wklive/proto/asset;asset";
+
+
+// 用户资产
+message UserAsset {
+  int64 id = 1; // 主键ID
+  int64 tenant_id = 2; // 租户ID
+  int64 user_id = 3; // 用户ID
+  WalletType wallet_type = 4; // 钱包类型
+  string coin = 5; // 币种
+  string total_amount = 6; // 总资产
+  string available_amount = 7; // 可用资产
+  string frozen_amount = 8; // 冻结资产
+  string locked_amount = 9; // 锁定资产
+  AssetStatus status = 10; // 状态
+  int32 version = 11; // 乐观锁版本号
+  string remark = 12; // 备注
+  int64 create_time = 13; // 创建时间戳(毫秒)
+  int64 update_time = 14; // 更新时间戳(毫秒)
+}
+
+// 资产流水
+message AssetFlow {
+  int64 id = 1; // 主键ID
+  string flow_no = 2; // 流水单号
+  int64 tenant_id = 3; // 租户ID
+  int64 user_id = 4; // 用户ID
+  WalletType wallet_type = 5; // 钱包类型
+  string coin = 6; // 币种
+  BizType biz_type = 7; // 业务类型
+  SceneType scene_type = 8; // 业务场景
+  AssetOpType op_type = 9; // 操作方向
+  int64 biz_id = 10; // 业务ID
+  string biz_no = 11; // 业务单号
+  string change_amount = 12; // 变动金额
+
+  string before_total_amount = 13; // 变动前总资产
+  string after_total_amount = 14; // 变动后总资产
+  string before_available_amount = 15; // 变动前可用资产
+  string after_available_amount = 16; // 变动后可用资产
+  string before_frozen_amount = 17; // 变动前冻结资产
+  string after_frozen_amount = 18; // 变动后冻结资产
+  string before_locked_amount = 19; // 变动前锁定资产
+  string after_locked_amount = 20; // 变动后锁定资产
+
+  int32 balance_snapshot_version = 21; // 快照版本号
+  string remark = 22; // 备注
+  google.protobuf.Struct ext_json = 23; // 扩展字段
+  int64 create_time = 24; // 创建时间戳(毫秒)
+  int64 update_time = 25; // 更新时间戳(毫秒)
+}
+
+// 冻结明细
+message AssetFreeze {
+  int64 id = 1; // 主键ID
+  string freeze_no = 2; // 冻结单号
+  int64 tenant_id = 3; // 租户ID
+  int64 user_id = 4; // 用户ID
+  WalletType wallet_type = 5; // 钱包类型
+  string coin = 6; // 币种
+  BizType biz_type = 7; // 业务类型
+  SceneType scene_type = 8; // 业务场景
+  int64 biz_id = 9; // 业务ID
+  string biz_no = 10; // 业务单号
+  string amount = 11; // 冻结总金额
+  string used_amount = 12; // 已使用金额
+  string unfreeze_amount = 13; // 已解冻金额
+  string remain_amount = 14; // 剩余冻结金额
+  FreezeStatus status = 15; // 状态
+  int64 expire_time = 16; // 过期时间
+  string remark = 17; // 备注
+  google.protobuf.Struct ext_json = 18; // 扩展字段
+  int64 create_time = 19; // 创建时间戳
+  int64 update_time = 20; // 更新时间戳
+}
+
+// 锁仓明细
+message AssetLock {
+  int64 id = 1; // 主键ID
+  string lock_no = 2; // 锁仓单号
+  int64 tenant_id = 3; // 租户ID
+  int64 user_id = 4; // 用户ID
+  WalletType wallet_type = 5; // 钱包类型
+  string coin = 6; // 币种
+  BizType biz_type = 7; // 业务类型
+  SceneType scene_type = 8; // 业务场景
+  int64 biz_id = 9; // 业务ID
+  string biz_no = 10; // 业务单号
+  string amount = 11; // 锁仓总金额
+  string unlock_amount = 12; // 已解锁金额
+  string remain_amount = 13; // 剩余锁仓金额
+  LockStatus status = 14; // 状态
+  int64 start_time = 15; // 开始时间
+  int64 end_time = 16; // 结束时间
+  string remark = 17; // 备注
+  google.protobuf.Struct ext_json = 18; // 扩展字段
+  int64 create_time = 19; // 创建时间
+  int64 update_time = 20; // 更新时间
+}
+
+// 幂等记录
+message AssetIdempotent {
+  int64 id = 1; // 主键ID
+  int64 tenant_id = 2; // 租户ID
+  BizType biz_type = 3; // 业务类型
+  SceneType scene_type = 4; // 业务场景
+  string biz_no = 5; // 业务单号
+  IdempotentStatus status = 6; // 状态
+  string remark = 7; // 备注
+  int64 create_time = 8; // 创建时间
+  int64 update_time = 9; // 更新时间
+}
+
+// 用户资产汇总
+message UserAssetSummary {
+  int64 tenant_id = 1; // 租户ID
+  int64 user_id = 2; // 用户ID
+  string total_asset_usdt = 3; // 按USDT折算总资产
+  string total_available_usdt = 4; // 按USDT折算可用资产
+  string total_frozen_usdt = 5; // 按USDT折算冻结资产
+  string total_locked_usdt = 6; // 按USDT折算锁定资产
+  repeated UserAsset assets = 7; // 资产列表
+}

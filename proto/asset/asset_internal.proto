@@ -1,0 +1,177 @@
+syntax = "proto3";
+
+package asset;
+
+import "proto/common/common.proto";
+import "proto/asset/enum.proto";
+import "proto/asset/model.proto";
+
+option go_package = "wklive/proto/asset;asset";
+
+
+// 内部资产服务
+service AssetInternal {
+  // 增加可用余额
+  rpc AddAvailable(AddAvailableReq) returns (ChangeAssetResp);
+
+  // 扣减可用余额
+  rpc SubAvailable(SubAvailableReq) returns (ChangeAssetResp);
+
+  // 冻结余额
+  rpc FreezeAsset(FreezeAssetReq) returns (FreezeAssetResp);
+
+  // 解冻余额
+  rpc UnfreezeAsset(UnfreezeAssetReq) returns (ChangeAssetResp);
+
+  // 扣减冻结余额
+  rpc DeductFrozenAsset(DeductFrozenAssetReq) returns (ChangeAssetResp);
+
+  // 锁仓
+  rpc LockAsset(LockAssetReq) returns (LockAssetResp);
+
+  // 解锁
+  rpc UnlockAsset(UnlockAssetReq) returns (ChangeAssetResp);
+
+  // 扣减锁仓余额
+  rpc DeductLockedAsset(DeductLockedAssetReq) returns (ChangeAssetResp);
+
+  // 钱包划转
+  rpc TransferAsset(TransferAssetReq) returns (TransferAssetResp);
+}
+
+message AddAvailableReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  WalletType wallet_type = 3;
+  string coin = 4;
+  string amount = 5;
+  BizType biz_type = 6;
+  SceneType scene_type = 7;
+  int64 biz_id = 8;
+  string biz_no = 9;
+  string remark = 10;
+}
+
+message SubAvailableReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  WalletType wallet_type = 3;
+  string coin = 4;
+  string amount = 5;
+  BizType biz_type = 6;
+  SceneType scene_type = 7;
+  int64 biz_id = 8;
+  string biz_no = 9;
+  string remark = 10;
+}
+
+message FreezeAssetReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  WalletType wallet_type = 3;
+  string coin = 4;
+  string amount = 5;
+  BizType biz_type = 6;
+  SceneType scene_type = 7;
+  int64 biz_id = 8;
+  string biz_no = 9;
+  int64 expire_time = 10;
+  string remark = 11;
+}
+
+message FreezeAssetResp {
+    common.RespBase base = 1;
+  string freeze_no = 2;
+  UserAsset asset = 3;
+}
+
+message UnfreezeAssetReq {
+  int64 tenant_id = 1;
+  string freeze_no = 2;
+  string amount = 3;
+  BizType biz_type = 4;
+  SceneType scene_type = 5;
+  int64 biz_id = 6;
+  string biz_no = 7;
+  string remark = 8;
+}
+
+message DeductFrozenAssetReq {
+  int64 tenant_id = 1;
+  string freeze_no = 2;
+  string amount = 3;
+  BizType biz_type = 4;
+  SceneType scene_type = 5;
+  int64 biz_id = 6;
+  string biz_no = 7;
+  string remark = 8;
+}
+
+message LockAssetReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  WalletType wallet_type = 3;
+  string coin = 4;
+  string amount = 5;
+  BizType biz_type = 6;
+  SceneType scene_type = 7;
+  int64 biz_id = 8;
+  string biz_no = 9;
+  int64 start_time = 10;
+  int64 end_time = 11;
+  string remark = 12;
+}
+
+message LockAssetResp {
+    common.RespBase base = 1;
+  string lock_no = 2;
+  UserAsset asset = 3;
+}
+
+message UnlockAssetReq {
+  int64 tenant_id = 1;
+  string lock_no = 2;
+  string amount = 3;
+  BizType biz_type = 4;
+  SceneType scene_type = 5;
+  int64 biz_id = 6;
+  string biz_no = 7;
+  string remark = 8;
+}
+
+message DeductLockedAssetReq {
+  int64 tenant_id = 1;
+  string lock_no = 2;
+  string amount = 3;
+  BizType biz_type = 4;
+  SceneType scene_type = 5;
+  int64 biz_id = 6;
+  string biz_no = 7;
+  string remark = 8;
+}
+
+message TransferAssetReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  WalletType from_wallet_type = 3;
+  WalletType to_wallet_type = 4;
+  string coin = 5;
+  string amount = 6;
+  BizType biz_type = 7;
+  SceneType scene_type = 8;
+  int64 biz_id = 9;
+  string biz_no = 10;
+  string remark = 11;
+}
+
+message TransferAssetResp {
+    common.RespBase base = 1;
+  UserAsset from_asset = 2;
+  UserAsset to_asset = 3;
+}
+
+message ChangeAssetResp {
+    common.RespBase base = 1;
+  string biz_no = 2;
+  UserAsset asset = 3;
+}

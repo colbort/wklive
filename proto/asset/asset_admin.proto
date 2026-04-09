@@ -1,0 +1,189 @@
+syntax = "proto3";
+
+package asset;
+
+import "proto/common/common.proto";
+import "proto/asset/enum.proto";
+import "proto/asset/model.proto";
+
+option go_package = "wklive/proto/asset;asset";
+
+
+// 后台资产服务
+service AssetAdmin {
+  // 分页查询资产
+  rpc PageUserAssets(PageUserAssetsReq) returns (PageUserAssetsResp);
+
+  // 查询用户资产详情
+  rpc GetUserAssetDetail(GetUserAssetDetailReq) returns (GetUserAssetDetailResp);
+
+  // 分页查询资产流水
+  rpc PageAssetFlows(PageAssetFlowsReq) returns (PageAssetFlowsResp);
+
+  // 分页查询冻结明细
+  rpc PageAssetFreezes(PageAssetFreezesReq) returns (PageAssetFreezesResp);
+
+  // 分页查询锁仓明细
+  rpc PageAssetLocks(PageAssetLocksReq) returns (PageAssetLocksResp);
+
+  // 后台人工加币
+  rpc AdminAddAsset(AdminAddAssetReq) returns (AdminChangeAssetResp);
+
+  // 后台人工减币
+  rpc AdminSubAsset(AdminSubAssetReq) returns (AdminChangeAssetResp);
+
+  // 后台冻结资产
+  rpc AdminFreezeAsset(AdminFreezeAssetReq) returns (AdminChangeAssetResp);
+
+  // 后台解冻资产
+  rpc AdminUnfreezeAsset(AdminUnfreezeAssetReq) returns (AdminChangeAssetResp);
+
+  // 后台锁仓资产
+  rpc AdminLockAsset(AdminLockAssetReq) returns (AdminChangeAssetResp);
+
+  // 后台解锁资产
+  rpc AdminUnlockAsset(AdminUnlockAssetReq) returns (AdminChangeAssetResp);
+}
+
+message PageUserAssetsReq {
+  int64 tenant_id = 1; // 租户ID,0表示全部
+  int64 user_id = 2; // 用户ID,0表示全部
+  WalletType wallet_type = 3; // 钱包类型
+  string coin = 4; // 币种
+  AssetStatus status = 5; // 状态
+  common.PageReq page = 6; // 分页
+}
+
+message PageUserAssetsResp {
+    common.RespBase base = 1;
+  repeated UserAsset data = 2; // 资产列表
+}
+
+message GetUserAssetDetailReq {
+  int64 tenant_id = 1; // 租户ID
+  int64 user_id = 2; // 用户ID
+  WalletType wallet_type = 3; // 钱包类型
+  string coin = 4; // 币种
+}
+
+message GetUserAssetDetailResp {
+    common.RespBase base = 1;
+  UserAsset data = 2; // 资产详情
+}
+
+message PageAssetFlowsReq {
+  int64 tenant_id = 1; // 租户ID,0表示全部
+  int64 user_id = 2; // 用户ID,0表示全部
+  WalletType wallet_type = 3; // 钱包类型
+  string coin = 4; // 币种
+  BizType biz_type = 5; // 业务类型
+  SceneType scene_type = 6; // 业务场景
+  string biz_no = 7; // 业务单号
+  common.TimeRange time_range = 8; // 时间范围
+  common.PageReq page = 9; // 分页
+}
+
+message PageAssetFlowsResp {
+    common.RespBase base = 1;
+  repeated AssetFlow data = 2; // 流水列表
+}
+
+message PageAssetFreezesReq {
+  int64 tenant_id = 1; // 租户ID
+  int64 user_id = 2; // 用户ID
+  WalletType wallet_type = 3; // 钱包类型
+  string coin = 4; // 币种
+  BizType biz_type = 5; // 业务类型
+  string biz_no = 6; // 业务单号
+  FreezeStatus status = 7; // 状态
+  common.PageReq page = 8; // 分页
+}
+
+message PageAssetFreezesResp {
+    common.RespBase base = 1;
+  repeated AssetFreeze data = 2; // 冻结列表
+}
+
+message PageAssetLocksReq {
+  int64 tenant_id = 1; // 租户ID
+  int64 user_id = 2; // 用户ID
+  WalletType wallet_type = 3; // 钱包类型
+  string coin = 4; // 币种
+  BizType biz_type = 5; // 业务类型
+  string biz_no = 6; // 业务单号
+  LockStatus status = 7; // 状态
+  common.PageReq page = 8; // 分页
+}
+
+message PageAssetLocksResp {
+    common.RespBase base = 1;
+  repeated AssetLock data = 2; // 锁仓列表
+}
+
+message AdminAddAssetReq {
+  int64 tenant_id = 1; // 租户ID
+  int64 user_id = 2; // 用户ID
+  WalletType wallet_type = 3; // 钱包类型
+  string coin = 4; // 币种
+  string amount = 5; // 金额
+  string biz_no = 6; // 业务单号,建议传唯一值
+  string remark = 7; // 备注
+  int64 operator_id = 8; // 操作人ID
+}
+
+message AdminSubAssetReq {
+  int64 tenant_id = 1; // 租户ID
+  int64 user_id = 2; // 用户ID
+  WalletType wallet_type = 3; // 钱包类型
+  string coin = 4; // 币种
+  string amount = 5; // 金额
+  string biz_no = 6; // 业务单号,建议传唯一值
+  string remark = 7; // 备注
+  int64 operator_id = 8; // 操作人ID
+}
+
+message AdminFreezeAssetReq {
+  int64 tenant_id = 1; // 租户ID
+  int64 user_id = 2; // 用户ID
+  WalletType wallet_type = 3; // 钱包类型
+  string coin = 4; // 币种
+  string amount = 5; // 金额
+  string biz_no = 6; // 业务单号
+  string remark = 7; // 备注
+  int64 operator_id = 8; // 操作人ID
+}
+
+message AdminUnfreezeAssetReq {
+  int64 tenant_id = 1; // 租户ID
+  string freeze_no = 2; // 冻结单号
+  string amount = 3; // 解冻金额
+  string biz_no = 4; // 业务单号
+  string remark = 5; // 备注
+  int64 operator_id = 6; // 操作人ID
+}
+
+message AdminLockAssetReq {
+  int64 tenant_id = 1; // 租户ID
+  int64 user_id = 2; // 用户ID
+  WalletType wallet_type = 3; // 钱包类型
+  string coin = 4; // 币种
+  string amount = 5; // 金额
+  string biz_no = 6; // 业务单号
+  string remark = 7; // 备注
+  int64 operator_id = 8; // 操作人ID
+}
+
+message AdminUnlockAssetReq {
+  int64 tenant_id = 1; // 租户ID
+  string lock_no = 2; // 锁仓单号
+  string amount = 3; // 解锁金额
+  string biz_no = 4; // 业务单号
+  string remark = 5; // 备注
+  int64 operator_id = 6; // 操作人ID
+}
+
+message AdminChangeAssetResp {
+    common.RespBase base = 1;
+  string biz_no = 2; // 业务单号
+  UserAsset asset = 3; // 最新资产
+}
