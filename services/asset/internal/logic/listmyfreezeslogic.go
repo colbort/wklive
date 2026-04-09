@@ -3,7 +3,9 @@ package logic
 import (
 	"context"
 
+	"wklive/common/helper"
 	"wklive/proto/asset"
+	"wklive/services/asset/internal/helpers"
 	"wklive/services/asset/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -25,7 +27,13 @@ func NewListMyFreezesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Lis
 
 // 查询我的冻结明细
 func (l *ListMyFreezesLogic) ListMyFreezes(in *asset.ListMyFreezesReq) (*asset.ListMyFreezesResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &asset.ListMyFreezesResp{}, nil
+	freezes, _, err := l.svcCtx.AssetFreezeModel.FindPageByFilter(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "", "", int64(in.Status), in.Page.Cursor, in.Page.Limit)
+	if err != nil {
+		return nil, err
+	}
+	resp := &asset.ListMyFreezesResp{Base: helper.OkResp()}
+	for _, item := range freezes {
+		resp.Data = append(resp.Data, helpers.ToAssetFreezeProto(item))
+	}
+	return resp, nil
 }

@@ -11,8 +11,11 @@ import (
 type AssetLockModel interface {
 	tAssetLockModel
 	FindPage(ctx context.Context, cursor int64, limit int64) ([]*TAssetLock, int64, error)
+	FindPageByFilter(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, bizType string, bizNo string, status int64, cursor int64, limit int64) ([]*TAssetLock, int64, error)
 	// 解锁时更新锁仓记录
 	UpdateUnlock(ctx context.Context, lockNo string, amount float64, updateTimes int64) (bool, error)
+	// 扣减锁仓记录
+	UpdateDeduct(ctx context.Context, lockNo string, amount float64, updateTimes int64) (bool, error)
 }
 
 func (m *defaultTAssetLockModel) FindPage(ctx context.Context, cursor int64, limit int64) ([]*TAssetLock, int64, error) {
@@ -66,6 +69,83 @@ func (m *defaultTAssetLockModel) FindPage(ctx context.Context, cursor int64, lim
 	return list, total, nil
 }
 
+func (m *defaultTAssetLockModel) FindPageByFilter(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, bizType string, bizNo string, status int64, cursor int64, limit int64) ([]*TAssetLock, int64, error) {
+	if limit <= 0 {
+		limit = 10
+	}
+	if limit > 100 {
+		limit = 100
+	}
+
+	where := "1=1"
+	args := make([]any, 0, 10)
+	if tenantId > 0 {
+		where += " AND tenant_id = ?"
+		args = append(args, tenantId)
+	}
+	if userId > 0 {
+		where += " AND user_id = ?"
+		args = append(args, userId)
+	}
+	if walletType > 0 {
+		where += " AND wallet_type = ?"
+		args = append(args, walletType)
+	}
+	if coin != "" {
+		where += " AND coin = ?"
+		args = append(args, coin)
+	}
+	if bizType != "" {
+		where += " AND biz_type = ?"
+		args = append(args, bizType)
+	}
+	if bizNo != "" {
+		where += " AND biz_no = ?"
+		args = append(args, bizNo)
+	}
+	if status > 0 {
+		where += " AND status = ?"
+		args = append(args, status)
+	}
+
+	var total int64
+	countSql := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
+	if err := m.QueryRowNoCacheCtx(ctx, &total, countSql, args...); err != nil {
+		return nil, 0, err
+	}
+
+	listArgs := append([]any{}, args...)
+	var listSql string
+	if cursor <= 0 {
+		listSql = fmt.Sprintf(
+			`SELECT %s
+            FROM %s
+            WHERE %s
+            ORDER BY id DESC
+            LIMIT ?`,
+			tAssetLockRows, m.table, where,
+		)
+		listArgs = append(listArgs, limit)
+	} else {
+		listSql = fmt.Sprintf(
+			`SELECT %s
+            FROM %s
+            WHERE %s AND id < ?
+            ORDER BY id DESC
+            LIMIT ?`,
+			tAssetLockRows, m.table, where,
+		)
+		listArgs = append(listArgs, cursor, limit)
+	}
+
+	var list []*TAssetLock
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, listSql, listArgs...); err != nil {
+		return nil, 0, err
+	}
+
+	return list, total, nil
+}
+
 // 解锁时更新锁仓记录：unlock_amount += amount，remain_amount -= amount
 // 当 remain_amount 为 0 时，状态改为 3（已解锁）；否则为 2（部分解锁）
 func (m *defaultTAssetLockModel) UpdateUnlock(ctx context.Context, lockNo string, amount float64, updateTimes int64) (bool, error) {
@@ -84,6 +164,32 @@ func (m *defaultTAssetLockModel) UpdateUnlock(ctx context.Context, lockNo string
 
 	result, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
 		return conn.ExecCtx(ctx, query, amount, amount, amount, updateTimes, lockNo)
+	})
+
+	if err != nil {
+		return false, err
+	}
+	affected, _ := result.RowsAffected()
+	return affected > 0, nil
+}
+
+// 扣减锁仓记录：remain_amount -= amount
+// 当 remain_amount 为 0 时，状态改为 4（已关闭）；否则为 2（部分解锁）
+func (m *defaultTAssetLockModel) UpdateDeduct(ctx context.Context, lockNo string, amount float64, updateTimes int64) (bool, error) {
+	query := fmt.Sprintf(`
+		UPDATE %s
+		SET 
+			remain_amount = remain_amount - ?,
+			status = CASE
+				WHEN remain_amount - ? = 0 THEN 4
+				ELSE 2
+			END,
+			update_times = ?
+		WHERE lock_no = ?
+	`, m.table)
+
+	result, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
+		return conn.ExecCtx(ctx, query, amount, amount, updateTimes, lockNo)
 	})
 
 	if err != nil {

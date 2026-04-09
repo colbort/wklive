@@ -3,7 +3,9 @@ package logic
 import (
 	"context"
 
+	"wklive/common/helper"
 	"wklive/proto/asset"
+	"wklive/services/asset/internal/helpers"
 	"wklive/services/asset/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -25,7 +27,25 @@ func NewPageUserAssetsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pa
 
 // 分页查询资产
 func (l *PageUserAssetsLogic) PageUserAssets(in *asset.PageUserAssetsReq) (*asset.PageUserAssetsResp, error) {
-	// todo: add your logic here and delete this line
+	status := int64(0)
+	if in.Status != asset.AssetStatus_ASSET_STATUS_UNSPECIFIED {
+		status = helpers.AssetStatusFilter(in.Status)
+	}
 
-	return &asset.PageUserAssetsResp{}, nil
+	list, total, err := l.svcCtx.UserAssetModel.FindPageByFilter(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, status, in.Page.Cursor, in.Page.Limit)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &asset.PageUserAssetsResp{Base: helper.OkResp()}
+	resp.Base.Total = total
+	if int64(len(list)) == in.Page.Limit && in.Page.Limit > 0 {
+		resp.Base.HasNext = true
+		resp.Base.NextCursor = list[len(list)-1].Id
+	}
+
+	for _, item := range list {
+		resp.Data = append(resp.Data, helpers.ToUserAssetProto(item))
+	}
+	return resp, nil
 }
