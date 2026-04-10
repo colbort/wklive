@@ -2,9 +2,12 @@ package logic
 
 import (
 	"context"
+	"errors"
 
+	"wklive/common/helper"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
+	"wklive/services/option/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +28,13 @@ func NewAdminGetMarketLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ad
 
 // 获取单个期权当前行情
 func (l *AdminGetMarketLogic) AdminGetMarket(in *option.GetMarketReq) (*option.GetMarketResp, error) {
-	// todo: add your logic here and delete this line
+	item, err := l.svcCtx.OptionMarketModel.FindOneByTenantIdContractId(l.ctx, in.TenantId, in.ContractId)
+	if err != nil {
+		if errors.Is(err, models.ErrNotFound) {
+			return &option.GetMarketResp{Base: helper.GetErrResp(404, "行情不存在")}, nil
+		}
+		return nil, err
+	}
 
-	return &option.GetMarketResp{}, nil
+	return &option.GetMarketResp{Base: helper.OkResp(), Data: toMarketProto(item)}, nil
 }

@@ -2,9 +2,12 @@ package logic
 
 import (
 	"context"
+	"errors"
 
+	"wklive/common/helper"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
+	"wklive/services/option/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +28,17 @@ func NewAdminGetSettlementLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 获取单个到期结算记录详情
 func (l *AdminGetSettlementLogic) AdminGetSettlement(in *option.GetSettlementReq) (*option.GetSettlementResp, error) {
-	// todo: add your logic here and delete this line
+	item, err := findSettlementByNoOrID(l.ctx, l.svcCtx, in.TenantId, in.Id, in.SettlementNo)
+	if err != nil {
+		if errors.Is(err, models.ErrNotFound) {
+			return &option.GetSettlementResp{Base: helper.GetErrResp(404, "结算记录不存在")}, nil
+		}
+		return nil, err
+	}
+	data, err := buildSettlementDetail(l.ctx, l.svcCtx, item)
+	if err != nil {
+		return nil, err
+	}
 
-	return &option.GetSettlementResp{}, nil
+	return &option.GetSettlementResp{Base: helper.OkResp(), Data: data}, nil
 }

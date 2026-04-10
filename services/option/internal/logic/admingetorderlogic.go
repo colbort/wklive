@@ -2,9 +2,12 @@ package logic
 
 import (
 	"context"
+	"errors"
 
+	"wklive/common/helper"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
+	"wklive/services/option/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +28,17 @@ func NewAdminGetOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Adm
 
 // 获取单个委托订单详情
 func (l *AdminGetOrderLogic) AdminGetOrder(in *option.GetOrderReq) (*option.GetOrderResp, error) {
-	// todo: add your logic here and delete this line
+	item, err := findOrderByNoOrID(l.ctx, l.svcCtx, in.TenantId, in.Id, in.OrderNo)
+	if err != nil {
+		if errors.Is(err, models.ErrNotFound) {
+			return &option.GetOrderResp{Base: helper.GetErrResp(404, "订单不存在")}, nil
+		}
+		return nil, err
+	}
+	data, err := buildOrderDetail(l.ctx, l.svcCtx, item)
+	if err != nil {
+		return nil, err
+	}
 
-	return &option.GetOrderResp{}, nil
+	return &option.GetOrderResp{Base: helper.OkResp(), Data: data}, nil
 }

@@ -1,62 +1,62 @@
 package models
 
 import (
-    "context"
-    "fmt"
+	"context"
+	"fmt"
 )
 
 type OptionMarketModel interface {
-    tOptionMarketModel
-    FindPage(ctx context.Context, cursor int64, limit int64) ([]*TOptionMarket, int64, error)
+	tOptionMarketModel
+	FindPage(ctx context.Context, cursor int64, limit int64) ([]*TOptionMarket, int64, error)
 }
 
 func (m *defaultTOptionMarketModel) FindPage(ctx context.Context, cursor int64, limit int64) ([]*TOptionMarket, int64, error) {
-    if limit <= 0 {
-        limit = 10
-    }
-    if limit > 100 {
-        limit = 100
-    }
+	if limit <= 0 {
+		limit = 10
+	}
+	if limit > 100 {
+		limit = 100
+	}
 
-    where := "1=1"
-    args := make([]any, 0, 2)
+	where := "1=1"
+	args := make([]any, 0, 2)
 
-    // ---- total ----
-    var total int64
-    countSql := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
-    if err := m.QueryRowNoCacheCtx(ctx, &total, countSql, args...); err != nil {
-        return nil, 0, err
-    }
+	// ---- total ----
+	var total int64
+	countSql := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
+	if err := m.QueryRowNoCacheCtx(ctx, &total, countSql, args...); err != nil {
+		return nil, 0, err
+	}
 
-    listArgs := append([]any{}, args...)
-    var listSql string
+	listArgs := append([]any{}, args...)
+	var listSql string
 
-    if cursor <= 0 {
-        listSql = fmt.Sprintf(
-            `SELECT %s
+	if cursor <= 0 {
+		listSql = fmt.Sprintf(
+			`SELECT %s
             FROM %s
             WHERE %s
             ORDER BY id DESC
             LIMIT ?`,
-            tOptionMarketRows, m.table, where,
-        )
-        listArgs = append(listArgs, limit)
-    } else {
-        listSql = fmt.Sprintf(
-            `SELECT %s
+			tOptionMarketRows, m.table, where,
+		)
+		listArgs = append(listArgs, limit)
+	} else {
+		listSql = fmt.Sprintf(
+			`SELECT %s
             FROM %s
             WHERE %s AND id < ?
             ORDER BY id DESC
             LIMIT ?`,
-            tOptionMarketRows, m.table, where,
-        )
-        listArgs = append(listArgs, cursor, limit)
-    }
+			tOptionMarketRows, m.table, where,
+		)
+		listArgs = append(listArgs, cursor, limit)
+	}
 
-    var list []*TOptionMarket
-    if err := m.QueryRowsNoCacheCtx(ctx, &list, listSql, listArgs...); err != nil {
-        return nil, 0, err
-    }
+	var list []*TOptionMarket
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, listSql, listArgs...); err != nil {
+		return nil, 0, err
+	}
 
-    return list, total, nil
+	return list, total, nil
 }
