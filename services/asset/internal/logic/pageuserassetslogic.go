@@ -32,17 +32,23 @@ func (l *PageUserAssetsLogic) PageUserAssets(in *asset.PageUserAssetsReq) (*asse
 		status = helpers.AssetStatusFilter(in.Status)
 	}
 
-	list, total, err := l.svcCtx.UserAssetModel.FindPageByFilter(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, status, in.Page.Cursor, in.Page.Limit)
+	list, total, err := l.svcCtx.UserAssetModel.FindPage(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, status, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}
 
-	resp := &asset.PageUserAssetsResp{Base: helper.OkResp()}
-	resp.Base.Total = total
-	if int64(len(list)) == in.Page.Limit && in.Page.Limit > 0 {
-		resp.Base.HasNext = true
-		resp.Base.NextCursor = list[len(list)-1].Id
+	prevCursor := in.Page.Cursor
+	if prevCursor < 0 {
+		prevCursor = 0
 	}
+	nextCursor := int64(0)
+	if int64(len(list)) == in.Page.Limit && in.Page.Limit > 0 {
+		nextCursor = list[len(list)-1].Id
+	}
+	hasPrev := prevCursor > 0
+	hasNext := int64(len(list)) == in.Page.Limit && in.Page.Limit > 0
+
+	resp := &asset.PageUserAssetsResp{Base: helper.OkWithOthers(total, hasNext, hasPrev, nextCursor, prevCursor)}
 
 	for _, item := range list {
 		resp.Data = append(resp.Data, helpers.ToUserAssetProto(item))

@@ -2,7 +2,10 @@ package logic
 
 import (
 	"context"
+	"database/sql"
+	"time"
 
+	"wklive/common/helper"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 
@@ -25,7 +28,56 @@ func NewUpdatePayPlatformLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 // 更新平台
 func (l *UpdatePayPlatformLogic) UpdatePayPlatform(in *payment.UpdatePayPlatformReq) (*payment.AdminCommonResp, error) {
-	// todo: add your logic here and delete this line
+	var (
+		errLogic = "UpdatePayPlatform"
+	)
 
-	return &payment.AdminCommonResp{}, nil
+	// 査询平台是否存在
+	platform, err := l.svcCtx.PayPlatformModel.FindOne(l.ctx, in.Id)
+	if err != nil {
+		l.Logger.Errorf("%s error: %s", errLogic, err.Error())
+		return nil, err
+	}
+
+	if platform == nil {
+		return &payment.AdminCommonResp{
+			Base: helper.GetErrResp(404, "平台不存在"),
+		}, nil
+	}
+
+	now := time.Now().UnixMilli()
+	if in.PlatformName != "" {
+		platform.PlatformName = in.PlatformName
+	}
+	if in.PlatformType != 0 {
+		platform.PlatformType = int64(in.PlatformType)
+	}
+	if in.NotifyUrl != "" {
+		platform.NotifyUrl = sql.NullString{String: in.NotifyUrl, Valid: true}
+	}
+	if in.ReturnUrl != "" {
+		platform.ReturnUrl = sql.NullString{String: in.ReturnUrl, Valid: true}
+	}
+	if in.Icon != "" {
+		platform.Icon = sql.NullString{String: in.Icon, Valid: true}
+	}
+	if in.Status != 0 {
+		platform.Status = int64(in.Status)
+	}
+	if in.Remark != "" {
+		platform.Remark = sql.NullString{String: in.Remark, Valid: true}
+	}
+	platform.UpdateTimes = now
+
+	err = l.svcCtx.PayPlatformModel.Update(l.ctx, platform)
+	if err != nil {
+		l.Logger.Errorf("%s error: %s", errLogic, err.Error())
+		return nil, err
+	}
+
+	l.Logger.Infof("Update pay platform success: %d", in.Id)
+
+	return &payment.AdminCommonResp{
+		Base: helper.OkResp(),
+	}, nil
 }

@@ -66,14 +66,30 @@ func (l *UpdateUserBankLogic) UpdateUserBank(in *user.UpdateUserBankReq) (*user.
 	}
 
 	// 更新银行卡信息
-	bank.BankName = in.BankName
-	bank.BankCode = sql.NullString{String: in.BankCode, Valid: in.BankCode != ""}
-	bank.AccountName = in.AccountName
-	bank.AccountNo = in.AccountNo
-	bank.BranchName = sql.NullString{String: in.BranchName, Valid: in.BranchName != ""}
-	bank.CountryCode = sql.NullString{String: in.CountryCode, Valid: in.CountryCode != ""}
-	bank.IsDefault = isDefault
-	bank.Status = int64(in.Status)
+	if in.BankName != "" {
+		bank.BankName = in.BankName
+	}
+	if in.BankCode != "" {
+		bank.BankCode = sql.NullString{String: in.BankCode, Valid: true}
+	}
+	if in.AccountName != "" {
+		bank.AccountName = in.AccountName
+	}
+	if in.AccountNo != "" {
+		bank.AccountNo = in.AccountNo
+	}
+	if in.BranchName != "" {
+		bank.BranchName = sql.NullString{String: in.BranchName, Valid: true}
+	}
+	if in.CountryCode != "" {
+		bank.CountryCode = sql.NullString{String: in.CountryCode, Valid: true}
+	}
+	if in.IsDefault {
+		bank.IsDefault = isDefault
+	}
+	if in.Status != 0 {
+		bank.Status = int64(in.Status)
+	}
 	bank.UpdateTimes = now
 
 	err = l.svcCtx.UserBankModel.Update(l.ctx, bank)

@@ -34,17 +34,23 @@ func (l *PageAssetFlowsLogic) PageAssetFlows(in *asset.PageAssetFlowsReq) (*asse
 		endTime = in.TimeRange.EndTime
 	}
 
-	flows, total, err := l.svcCtx.AssetFlowModel.FindPageByFilter(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, helpers.AssetBizType(in.BizType), helpers.AssetSceneType(in.SceneType), in.BizNo, startTime, endTime, in.Page.Cursor, in.Page.Limit)
+	flows, total, err := l.svcCtx.AssetFlowModel.FindPage(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, helpers.AssetBizType(in.BizType), helpers.AssetSceneType(in.SceneType), in.BizNo, startTime, endTime, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}
 
-	resp := &asset.PageAssetFlowsResp{Base: helper.OkResp()}
-	resp.Base.Total = total
-	if int64(len(flows)) == in.Page.Limit && in.Page.Limit > 0 {
-		resp.Base.HasNext = true
-		resp.Base.NextCursor = flows[len(flows)-1].Id
+	prevCursor := in.Page.Cursor
+	if prevCursor < 0 {
+		prevCursor = 0
 	}
+	nextCursor := int64(0)
+	if int64(len(flows)) == in.Page.Limit && in.Page.Limit > 0 {
+		nextCursor = flows[len(flows)-1].Id
+	}
+	hasPrev := prevCursor > 0
+	hasNext := int64(len(flows)) == in.Page.Limit && in.Page.Limit > 0
+
+	resp := &asset.PageAssetFlowsResp{Base: helper.OkWithOthers(total, hasNext, hasPrev, nextCursor, prevCursor)}
 
 	for _, item := range flows {
 		resp.Data = append(resp.Data, helpers.ToAssetFlowProto(item))

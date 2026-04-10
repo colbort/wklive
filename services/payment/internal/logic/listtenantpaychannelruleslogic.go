@@ -2,9 +2,12 @@ package logic
 
 import (
 	"context"
+	"errors"
 
+	"wklive/common/helper"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
+	"wklive/services/payment/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +28,52 @@ func NewListTenantPayChannelRulesLogic(ctx context.Context, svcCtx *svc.ServiceC
 
 // 通道规则列表
 func (l *ListTenantPayChannelRulesLogic) ListTenantPayChannelRules(in *payment.ListTenantPayChannelRulesReq) (*payment.ListTenantPayChannelRulesResp, error) {
-	// todo: add your logic here and delete this line
+	rules, total, err := l.svcCtx.TenantPayChannelRuleModel.FindPage(l.ctx, in.ChannelId, in.Page.Cursor, in.Page.Limit)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
 
-	return &payment.ListTenantPayChannelRulesResp{}, nil
+	prevCursor := in.Page.Cursor
+	if prevCursor < 0 {
+		prevCursor = 0
+	}
+	nextCursor := int64(0)
+	if int64(len(rules)) == in.Page.Limit {
+		lastItem := rules[len(rules)-1]
+		nextCursor = lastItem.Id
+	}
+	hasPrev := prevCursor > 0
+	hasNext := int64(len(rules)) == in.Page.Limit
+
+	data := make([]*payment.TenantPayChannelRule, 0, len(rules))
+	for _, r := range rules {
+		data = append(data, &payment.TenantPayChannelRule{
+			Id:                   r.Id,
+			TenantId:             r.TenantId,
+			ChannelId:            r.ChannelId,
+			RuleName:             r.RuleName,
+			Priority:             r.Priority,
+			Status:               payment.CommonStatus(r.Status),
+			SingleAmountMin:      r.SingleAmountMin,
+			SingleAmountMax:      r.SingleAmountMax,
+			UserTotalRechargeMin: r.UserTotalRechargeMin,
+			UserTotalRechargeMax: r.UserTotalRechargeMax,
+			MemberLevelMin:       r.MemberLevelMin,
+			MemberLevelMax:       r.MemberLevelMax,
+			KycLevelMin:          r.KycLevelMin,
+			KycLevelMax:          r.KycLevelMax,
+			AllowNewUser:         r.AllowNewUser,
+			AllowOldUser:         r.AllowOldUser,
+			AllowTags:            r.AllowTags.String,
+			DenyTags:             r.DenyTags.String,
+			Remark:               r.Remark.String,
+			CreateTimes:          r.CreateTimes,
+			UpdateTimes:          r.UpdateTimes,
+		})
+	}
+
+	return &payment.ListTenantPayChannelRulesResp{
+		Base: helper.OkWithOthers(total, hasNext, hasPrev, nextCursor, prevCursor),
+		Data: data,
+	}, nil
 }

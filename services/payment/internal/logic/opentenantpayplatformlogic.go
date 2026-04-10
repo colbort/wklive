@@ -2,9 +2,13 @@ package logic
 
 import (
 	"context"
+	"database/sql"
+	"time"
 
+	"wklive/common/helper"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
+	"wklive/services/payment/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +29,30 @@ func NewOpenTenantPayPlatformLogic(ctx context.Context, svcCtx *svc.ServiceConte
 
 // 租户开通平台
 func (l *OpenTenantPayPlatformLogic) OpenTenantPayPlatform(in *payment.OpenTenantPayPlatformReq) (*payment.AdminCommonResp, error) {
-	// todo: add your logic here and delete this line
+	var (
+		errLogic = "OpenTenantPayPlatform"
+	)
 
-	return &payment.AdminCommonResp{}, nil
+	now := time.Now().UnixMilli()
+	tenantPlatform := &models.TTenantPayPlatform{
+		TenantId:    in.TenantId,
+		PlatformId:  in.PlatformId,
+		Status:      int64(in.Status),
+		OpenStatus:  int64(in.OpenStatus),
+		Remark:      sql.NullString{String: in.Remark, Valid: true},
+		CreateTimes: now,
+		UpdateTimes: now,
+	}
+
+	_, err := l.svcCtx.TenantPayPlatformModel.Insert(l.ctx, tenantPlatform)
+	if err != nil {
+		l.Logger.Errorf("%s error: %s", errLogic, err.Error())
+		return nil, err
+	}
+
+	l.Logger.Infof("Open tenant pay platform success: %d", in.TenantId)
+
+	return &payment.AdminCommonResp{
+		Base: helper.OkResp(),
+	}, nil
 }

@@ -49,9 +49,29 @@ func (l *GetUserDetailLogic) GetUserDetail(in *user.GetUserDetailReq) (*user.Get
 	// 查询安全信息
 	userSecurity, _ := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, in.TenantId, in.UserId)
 
-	// TODO: 查询银行卡列表
-	// 需要使用 FindPage 或自定义查询方法
-	var bankList []*user.UserBank
+	userBanks, _, err := l.svcCtx.UserBankModel.FindPage(l.ctx, in.TenantId, in.UserId, 0, 100)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
+	bankList := make([]*user.UserBank, 0, len(userBanks))
+	for _, bank := range userBanks {
+		bankList = append(bankList, &user.UserBank{
+			Id:              bank.Id,
+			TenantId:        bank.TenantId,
+			UserId:          bank.UserId,
+			BankName:        bank.BankName,
+			BankCode:        bank.BankCode.String,
+			AccountName:     bank.AccountName,
+			AccountNo:       bank.AccountNo,
+			MaskedAccountNo: maskAccountNo(bank.AccountNo),
+			BranchName:      bank.BranchName.String,
+			CountryCode:     bank.CountryCode.String,
+			IsDefault:       bank.IsDefault == 1,
+			Status:          user.BankStatus(bank.Status),
+			CreateTimes:     bank.CreateTimes,
+			UpdateTimes:     bank.UpdateTimes,
+		})
+	}
 
 	userBase := &user.UserBase{
 		Id:             tuser.Id,
@@ -136,4 +156,11 @@ func (l *GetUserDetailLogic) GetUserDetail(in *user.GetUserDetailReq) (*user.Get
 			Banks:    bankList,
 		},
 	}, nil
+}
+
+func maskAccountNo(accountNo string) string {
+	if len(accountNo) <= 4 {
+		return accountNo
+	}
+	return "****" + accountNo[len(accountNo)-4:]
 }

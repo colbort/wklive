@@ -27,17 +27,23 @@ func NewPageAssetFreezesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 分页查询冻结明细
 func (l *PageAssetFreezesLogic) PageAssetFreezes(in *asset.PageAssetFreezesReq) (*asset.PageAssetFreezesResp, error) {
-	freezes, total, err := l.svcCtx.AssetFreezeModel.FindPageByFilter(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, helpers.AssetBizType(in.BizType), in.BizNo, int64(in.Status), in.Page.Cursor, in.Page.Limit)
+	freezes, total, err := l.svcCtx.AssetFreezeModel.FindPage(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, helpers.AssetBizType(in.BizType), in.BizNo, int64(in.Status), in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}
 
-	resp := &asset.PageAssetFreezesResp{Base: helper.OkResp()}
-	resp.Base.Total = total
-	if int64(len(freezes)) == in.Page.Limit && in.Page.Limit > 0 {
-		resp.Base.HasNext = true
-		resp.Base.NextCursor = freezes[len(freezes)-1].Id
+	prevCursor := in.Page.Cursor
+	if prevCursor < 0 {
+		prevCursor = 0
 	}
+	nextCursor := int64(0)
+	if int64(len(freezes)) == in.Page.Limit && in.Page.Limit > 0 {
+		nextCursor = freezes[len(freezes)-1].Id
+	}
+	hasPrev := prevCursor > 0
+	hasNext := int64(len(freezes)) == in.Page.Limit && in.Page.Limit > 0
+
+	resp := &asset.PageAssetFreezesResp{Base: helper.OkWithOthers(total, hasNext, hasPrev, nextCursor, prevCursor)}
 
 	for _, item := range freezes {
 		resp.Data = append(resp.Data, helpers.ToAssetFreezeProto(item))

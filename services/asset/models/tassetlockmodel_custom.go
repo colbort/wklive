@@ -10,66 +10,14 @@ import (
 
 type AssetLockModel interface {
 	tAssetLockModel
-	FindPage(ctx context.Context, cursor int64, limit int64) ([]*TAssetLock, int64, error)
-	FindPageByFilter(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, bizType string, bizNo string, status int64, cursor int64, limit int64) ([]*TAssetLock, int64, error)
+	FindPage(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, bizType string, bizNo string, status int64, cursor int64, limit int64) ([]*TAssetLock, int64, error)
 	// 解锁时更新锁仓记录
 	UpdateUnlock(ctx context.Context, lockNo string, amount float64, updateTimes int64) (bool, error)
 	// 扣减锁仓记录
 	UpdateDeduct(ctx context.Context, lockNo string, amount float64, updateTimes int64) (bool, error)
 }
 
-func (m *defaultTAssetLockModel) FindPage(ctx context.Context, cursor int64, limit int64) ([]*TAssetLock, int64, error) {
-	if limit <= 0 {
-		limit = 10
-	}
-	if limit > 100 {
-		limit = 100
-	}
-
-	where := "1=1"
-	args := make([]any, 0, 2)
-
-	// ---- total ----
-	var total int64
-	countSql := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
-	if err := m.QueryRowNoCacheCtx(ctx, &total, countSql, args...); err != nil {
-		return nil, 0, err
-	}
-
-	listArgs := append([]any{}, args...)
-	var listSql string
-
-	if cursor <= 0 {
-		listSql = fmt.Sprintf(
-			`SELECT %s
-            FROM %s
-            WHERE %s
-            ORDER BY id DESC
-            LIMIT ?`,
-			tAssetLockRows, m.table, where,
-		)
-		listArgs = append(listArgs, limit)
-	} else {
-		listSql = fmt.Sprintf(
-			`SELECT %s
-            FROM %s
-            WHERE %s AND id < ?
-            ORDER BY id DESC
-            LIMIT ?`,
-			tAssetLockRows, m.table, where,
-		)
-		listArgs = append(listArgs, cursor, limit)
-	}
-
-	var list []*TAssetLock
-	if err := m.QueryRowsNoCacheCtx(ctx, &list, listSql, listArgs...); err != nil {
-		return nil, 0, err
-	}
-
-	return list, total, nil
-}
-
-func (m *defaultTAssetLockModel) FindPageByFilter(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, bizType string, bizNo string, status int64, cursor int64, limit int64) ([]*TAssetLock, int64, error) {
+func (m *defaultTAssetLockModel) FindPage(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, bizType string, bizNo string, status int64, cursor int64, limit int64) ([]*TAssetLock, int64, error) {
 	if limit <= 0 {
 		limit = 10
 	}

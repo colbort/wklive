@@ -2,9 +2,12 @@ package logic
 
 import (
 	"context"
+	"errors"
 
+	"wklive/common/helper"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
+	"wklive/services/payment/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +28,36 @@ func NewGetUserRechargeStatLogic(ctx context.Context, svcCtx *svc.ServiceContext
 
 // 用户充值统计
 func (l *GetUserRechargeStatLogic) GetUserRechargeStat(in *payment.GetUserRechargeStatReq) (*payment.GetUserRechargeStatResp, error) {
-	// todo: add your logic here and delete this line
+	var (
+		errLogic = "GetUserRechargeStat"
+	)
 
-	return &payment.GetUserRechargeStatResp{}, nil
+	stat, err := l.svcCtx.UserRechargeStatModel.FindOneByTenantIdUserId(l.ctx, in.TenantId, in.UserId)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		l.Logger.Errorf("%s error: %s", errLogic, err.Error())
+		return nil, err
+	}
+
+	if stat == nil {
+		return &payment.GetUserRechargeStatResp{
+			Base: helper.GetErrResp(404, "执折杰不存在"),
+		}, nil
+	}
+
+	return &payment.GetUserRechargeStatResp{
+		Base: helper.OkResp(),
+		Data: &payment.UserRechargeStat{
+			Id:                 stat.Id,
+			TenantId:           stat.TenantId,
+			UserId:             stat.UserId,
+			SuccessOrderCount:  stat.SuccessOrderCount,
+			SuccessTotalAmount: stat.SuccessTotalAmount,
+			TodaySuccessAmount: stat.TodaySuccessAmount,
+			TodaySuccessCount:  stat.TodaySuccessCount,
+			FirstSuccessTime:   stat.FirstSuccessTime.Int64,
+			LastSuccessTime:    stat.LastSuccessTime.Int64,
+			CreateTimes:        stat.CreateTimes,
+			UpdateTimes:        stat.UpdateTimes,
+		},
+	}, nil
 }

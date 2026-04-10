@@ -2,9 +2,12 @@ package logic
 
 import (
 	"context"
+	"errors"
 
+	"wklive/common/helper"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
+	"wklive/services/payment/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +28,35 @@ func NewGetWithdrawOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 获取提现订单详情
 func (l *GetWithdrawOrderLogic) GetWithdrawOrder(in *payment.GetWithdrawOrderReq) (*payment.GetWithdrawOrderResp, error) {
-	// todo: add your logic here and delete this line
+	var (
+		errLogic = "GetWithdrawOrder"
+	)
 
-	return &payment.GetWithdrawOrderResp{}, nil
+	order, err := l.svcCtx.WithdrawOrderModel.FindOneByOrderNo(l.ctx, in.OrderNo)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		l.Logger.Errorf("%s error: %s", errLogic, err.Error())
+		return nil, err
+	}
+
+	if order == nil {
+		return &payment.GetWithdrawOrderResp{
+			Base: helper.GetErrResp(404, "订单不存在"),
+		}, nil
+	}
+
+	return &payment.GetWithdrawOrderResp{
+		Base: helper.OkResp(),
+		Data: &payment.WithdrawOrder{
+			Id:           order.Id,
+			TenantId:     order.TenantId,
+			UserId:       order.UserId,
+			OrderNo:      order.OrderNo,
+			Currency:     order.Currency,
+			FeeAmount:    order.FeeAmount,
+			Status:       payment.PayOrderStatus(order.Status),
+			ThirdTradeNo: order.ThirdTradeNo.String,
+			CreateTimes:  order.CreateTimes,
+			UpdateTimes:  order.UpdateTimes,
+		},
+	}, nil
 }

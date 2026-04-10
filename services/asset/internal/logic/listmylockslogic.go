@@ -27,7 +27,7 @@ func NewListMyLocksLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListM
 
 // 查询我的锁仓明细
 func (l *ListMyLocksLogic) ListMyLocks(in *asset.ListMyLocksReq) (*asset.ListMyLocksResp, error) {
-	items, total, err := l.svcCtx.AssetLockModel.FindPageByFilter(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "", "", int64(in.Status), in.Page.Cursor, in.Page.Limit)
+	items, total, err := l.svcCtx.AssetLockModel.FindPage(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "", "", int64(in.Status), in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}

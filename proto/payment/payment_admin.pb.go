@@ -1303,7 +1303,7 @@ type CreateTenantPayAccountReq struct {
 	CertCipher          string                 `protobuf:"bytes,13,opt,name=cert_cipher,json=certCipher,proto3" json:"cert_cipher,omitempty"`
 	ExtConfig           string                 `protobuf:"bytes,14,opt,name=ext_config,json=extConfig,proto3" json:"ext_config,omitempty"`
 	Status              CommonStatus           `protobuf:"varint,15,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
-	IsDefault           bool                   `protobuf:"varint,16,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
+	IsDefault           int64                  `protobuf:"varint,16,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
 	Remark              string                 `protobuf:"bytes,17,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
@@ -1444,11 +1444,11 @@ func (x *CreateTenantPayAccountReq) GetStatus() CommonStatus {
 	return CommonStatus_COMMON_STATUS_UNKNOWN
 }
 
-func (x *CreateTenantPayAccountReq) GetIsDefault() bool {
+func (x *CreateTenantPayAccountReq) GetIsDefault() int64 {
 	if x != nil {
 		return x.IsDefault
 	}
-	return false
+	return 0
 }
 
 func (x *CreateTenantPayAccountReq) GetRemark() string {
@@ -1473,7 +1473,7 @@ type UpdateTenantPayAccountReq struct {
 	CertCipher       string                 `protobuf:"bytes,11,opt,name=cert_cipher,json=certCipher,proto3" json:"cert_cipher,omitempty"`
 	ExtConfig        string                 `protobuf:"bytes,12,opt,name=ext_config,json=extConfig,proto3" json:"ext_config,omitempty"`
 	Status           CommonStatus           `protobuf:"varint,13,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
-	IsDefault        bool                   `protobuf:"varint,14,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
+	IsDefault        int64                  `protobuf:"varint,14,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
 	Remark           string                 `protobuf:"bytes,15,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
@@ -1600,11 +1600,11 @@ func (x *UpdateTenantPayAccountReq) GetStatus() CommonStatus {
 	return CommonStatus_COMMON_STATUS_UNKNOWN
 }
 
-func (x *UpdateTenantPayAccountReq) GetIsDefault() bool {
+func (x *UpdateTenantPayAccountReq) GetIsDefault() int64 {
 	if x != nil {
 		return x.IsDefault
 	}
-	return false
+	return 0
 }
 
 func (x *UpdateTenantPayAccountReq) GetRemark() string {
@@ -1866,13 +1866,13 @@ type CreateTenantPayChannelReq struct {
 	DisplayName     string                 `protobuf:"bytes,7,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
 	Icon            string                 `protobuf:"bytes,8,opt,name=icon,proto3" json:"icon,omitempty"`
 	Currency        string                 `protobuf:"bytes,9,opt,name=currency,proto3" json:"currency,omitempty"`
-	Sort            int32                  `protobuf:"varint,10,opt,name=sort,proto3" json:"sort,omitempty"`
-	Visible         bool                   `protobuf:"varint,11,opt,name=visible,proto3" json:"visible,omitempty"`
+	Sort            int64                  `protobuf:"varint,10,opt,name=sort,proto3" json:"sort,omitempty"`
+	Visible         int64                  `protobuf:"varint,11,opt,name=visible,proto3" json:"visible,omitempty"`
 	Status          CommonStatus           `protobuf:"varint,12,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
 	SingleMinAmount int64                  `protobuf:"varint,13,opt,name=single_min_amount,json=singleMinAmount,proto3" json:"single_min_amount,omitempty"`
 	SingleMaxAmount int64                  `protobuf:"varint,14,opt,name=single_max_amount,json=singleMaxAmount,proto3" json:"single_max_amount,omitempty"`
 	DailyMaxAmount  int64                  `protobuf:"varint,15,opt,name=daily_max_amount,json=dailyMaxAmount,proto3" json:"daily_max_amount,omitempty"`
-	DailyMaxCount   int32                  `protobuf:"varint,16,opt,name=daily_max_count,json=dailyMaxCount,proto3" json:"daily_max_count,omitempty"`
+	DailyMaxCount   int64                  `protobuf:"varint,16,opt,name=daily_max_count,json=dailyMaxCount,proto3" json:"daily_max_count,omitempty"`
 	FeeType         FeeType                `protobuf:"varint,17,opt,name=fee_type,json=feeType,proto3,enum=payment.FeeType" json:"fee_type,omitempty"`
 	FeeRate         string                 `protobuf:"bytes,18,opt,name=fee_rate,json=feeRate,proto3" json:"fee_rate,omitempty"`
 	FeeFixedAmount  int64                  `protobuf:"varint,19,opt,name=fee_fixed_amount,json=feeFixedAmount,proto3" json:"fee_fixed_amount,omitempty"`
@@ -1975,18 +1975,18 @@ func (x *CreateTenantPayChannelReq) GetCurrency() string {
 	return ""
 }
 
-func (x *CreateTenantPayChannelReq) GetSort() int32 {
+func (x *CreateTenantPayChannelReq) GetSort() int64 {
 	if x != nil {
 		return x.Sort
 	}
 	return 0
 }
 
-func (x *CreateTenantPayChannelReq) GetVisible() bool {
+func (x *CreateTenantPayChannelReq) GetVisible() int64 {
 	if x != nil {
 		return x.Visible
 	}
-	return false
+	return 0
 }
 
 func (x *CreateTenantPayChannelReq) GetStatus() CommonStatus {
@@ -2017,7 +2017,7 @@ func (x *CreateTenantPayChannelReq) GetDailyMaxAmount() int64 {
 	return 0
 }
 
-func (x *CreateTenantPayChannelReq) GetDailyMaxCount() int32 {
+func (x *CreateTenantPayChannelReq) GetDailyMaxCount() int64 {
 	if x != nil {
 		return x.DailyMaxCount
 	}
@@ -2067,13 +2067,13 @@ type UpdateTenantPayChannelReq struct {
 	DisplayName     string                 `protobuf:"bytes,4,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
 	Icon            string                 `protobuf:"bytes,5,opt,name=icon,proto3" json:"icon,omitempty"`
 	Currency        string                 `protobuf:"bytes,6,opt,name=currency,proto3" json:"currency,omitempty"`
-	Sort            int32                  `protobuf:"varint,7,opt,name=sort,proto3" json:"sort,omitempty"`
-	Visible         bool                   `protobuf:"varint,8,opt,name=visible,proto3" json:"visible,omitempty"`
+	Sort            int64                  `protobuf:"varint,7,opt,name=sort,proto3" json:"sort,omitempty"`
+	Visible         int64                  `protobuf:"varint,8,opt,name=visible,proto3" json:"visible,omitempty"`
 	Status          CommonStatus           `protobuf:"varint,9,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
 	SingleMinAmount int64                  `protobuf:"varint,10,opt,name=single_min_amount,json=singleMinAmount,proto3" json:"single_min_amount,omitempty"`
 	SingleMaxAmount int64                  `protobuf:"varint,11,opt,name=single_max_amount,json=singleMaxAmount,proto3" json:"single_max_amount,omitempty"`
 	DailyMaxAmount  int64                  `protobuf:"varint,12,opt,name=daily_max_amount,json=dailyMaxAmount,proto3" json:"daily_max_amount,omitempty"`
-	DailyMaxCount   int32                  `protobuf:"varint,13,opt,name=daily_max_count,json=dailyMaxCount,proto3" json:"daily_max_count,omitempty"`
+	DailyMaxCount   int64                  `protobuf:"varint,13,opt,name=daily_max_count,json=dailyMaxCount,proto3" json:"daily_max_count,omitempty"`
 	FeeType         FeeType                `protobuf:"varint,14,opt,name=fee_type,json=feeType,proto3,enum=payment.FeeType" json:"fee_type,omitempty"`
 	FeeRate         string                 `protobuf:"bytes,15,opt,name=fee_rate,json=feeRate,proto3" json:"fee_rate,omitempty"`
 	FeeFixedAmount  int64                  `protobuf:"varint,16,opt,name=fee_fixed_amount,json=feeFixedAmount,proto3" json:"fee_fixed_amount,omitempty"`
@@ -2155,18 +2155,18 @@ func (x *UpdateTenantPayChannelReq) GetCurrency() string {
 	return ""
 }
 
-func (x *UpdateTenantPayChannelReq) GetSort() int32 {
+func (x *UpdateTenantPayChannelReq) GetSort() int64 {
 	if x != nil {
 		return x.Sort
 	}
 	return 0
 }
 
-func (x *UpdateTenantPayChannelReq) GetVisible() bool {
+func (x *UpdateTenantPayChannelReq) GetVisible() int64 {
 	if x != nil {
 		return x.Visible
 	}
-	return false
+	return 0
 }
 
 func (x *UpdateTenantPayChannelReq) GetStatus() CommonStatus {
@@ -2197,7 +2197,7 @@ func (x *UpdateTenantPayChannelReq) GetDailyMaxAmount() int64 {
 	return 0
 }
 
-func (x *UpdateTenantPayChannelReq) GetDailyMaxCount() int32 {
+func (x *UpdateTenantPayChannelReq) GetDailyMaxCount() int64 {
 	if x != nil {
 		return x.DailyMaxCount
 	}
@@ -2352,7 +2352,7 @@ type ListTenantPayChannelsReq struct {
 	AccountId     int64                  `protobuf:"varint,5,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	Keyword       string                 `protobuf:"bytes,6,opt,name=keyword,proto3" json:"keyword,omitempty"`
 	Status        CommonStatus           `protobuf:"varint,7,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
-	Visible       bool                   `protobuf:"varint,8,opt,name=visible,proto3" json:"visible,omitempty"`
+	Visible       int64                  `protobuf:"varint,8,opt,name=visible,proto3" json:"visible,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2436,11 +2436,11 @@ func (x *ListTenantPayChannelsReq) GetStatus() CommonStatus {
 	return CommonStatus_COMMON_STATUS_UNKNOWN
 }
 
-func (x *ListTenantPayChannelsReq) GetVisible() bool {
+func (x *ListTenantPayChannelsReq) GetVisible() int64 {
 	if x != nil {
 		return x.Visible
 	}
-	return false
+	return 0
 }
 
 type ListTenantPayChannelsResp struct {
@@ -2501,18 +2501,18 @@ type CreateTenantPayChannelRuleReq struct {
 	TenantId             int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	ChannelId            int64                  `protobuf:"varint,2,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
 	RuleName             string                 `protobuf:"bytes,3,opt,name=rule_name,json=ruleName,proto3" json:"rule_name,omitempty"`
-	Priority             int32                  `protobuf:"varint,4,opt,name=priority,proto3" json:"priority,omitempty"`
+	Priority             int64                  `protobuf:"varint,4,opt,name=priority,proto3" json:"priority,omitempty"`
 	Status               CommonStatus           `protobuf:"varint,5,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
 	SingleAmountMin      int64                  `protobuf:"varint,6,opt,name=single_amount_min,json=singleAmountMin,proto3" json:"single_amount_min,omitempty"`
 	SingleAmountMax      int64                  `protobuf:"varint,7,opt,name=single_amount_max,json=singleAmountMax,proto3" json:"single_amount_max,omitempty"`
 	UserTotalRechargeMin int64                  `protobuf:"varint,8,opt,name=user_total_recharge_min,json=userTotalRechargeMin,proto3" json:"user_total_recharge_min,omitempty"`
 	UserTotalRechargeMax int64                  `protobuf:"varint,9,opt,name=user_total_recharge_max,json=userTotalRechargeMax,proto3" json:"user_total_recharge_max,omitempty"`
-	MemberLevelMin       int32                  `protobuf:"varint,10,opt,name=member_level_min,json=memberLevelMin,proto3" json:"member_level_min,omitempty"`
-	MemberLevelMax       int32                  `protobuf:"varint,11,opt,name=member_level_max,json=memberLevelMax,proto3" json:"member_level_max,omitempty"`
-	KycLevelMin          int32                  `protobuf:"varint,12,opt,name=kyc_level_min,json=kycLevelMin,proto3" json:"kyc_level_min,omitempty"`
-	KycLevelMax          int32                  `protobuf:"varint,13,opt,name=kyc_level_max,json=kycLevelMax,proto3" json:"kyc_level_max,omitempty"`
-	AllowNewUser         bool                   `protobuf:"varint,14,opt,name=allow_new_user,json=allowNewUser,proto3" json:"allow_new_user,omitempty"`
-	AllowOldUser         bool                   `protobuf:"varint,15,opt,name=allow_old_user,json=allowOldUser,proto3" json:"allow_old_user,omitempty"`
+	MemberLevelMin       int64                  `protobuf:"varint,10,opt,name=member_level_min,json=memberLevelMin,proto3" json:"member_level_min,omitempty"`
+	MemberLevelMax       int64                  `protobuf:"varint,11,opt,name=member_level_max,json=memberLevelMax,proto3" json:"member_level_max,omitempty"`
+	KycLevelMin          int64                  `protobuf:"varint,12,opt,name=kyc_level_min,json=kycLevelMin,proto3" json:"kyc_level_min,omitempty"`
+	KycLevelMax          int64                  `protobuf:"varint,13,opt,name=kyc_level_max,json=kycLevelMax,proto3" json:"kyc_level_max,omitempty"`
+	AllowNewUser         int64                  `protobuf:"varint,14,opt,name=allow_new_user,json=allowNewUser,proto3" json:"allow_new_user,omitempty"`
+	AllowOldUser         int64                  `protobuf:"varint,15,opt,name=allow_old_user,json=allowOldUser,proto3" json:"allow_old_user,omitempty"`
 	AllowTags            string                 `protobuf:"bytes,16,opt,name=allow_tags,json=allowTags,proto3" json:"allow_tags,omitempty"`
 	DenyTags             string                 `protobuf:"bytes,17,opt,name=deny_tags,json=denyTags,proto3" json:"deny_tags,omitempty"`
 	Remark               string                 `protobuf:"bytes,18,opt,name=remark,proto3" json:"remark,omitempty"`
@@ -2571,7 +2571,7 @@ func (x *CreateTenantPayChannelRuleReq) GetRuleName() string {
 	return ""
 }
 
-func (x *CreateTenantPayChannelRuleReq) GetPriority() int32 {
+func (x *CreateTenantPayChannelRuleReq) GetPriority() int64 {
 	if x != nil {
 		return x.Priority
 	}
@@ -2613,46 +2613,46 @@ func (x *CreateTenantPayChannelRuleReq) GetUserTotalRechargeMax() int64 {
 	return 0
 }
 
-func (x *CreateTenantPayChannelRuleReq) GetMemberLevelMin() int32 {
+func (x *CreateTenantPayChannelRuleReq) GetMemberLevelMin() int64 {
 	if x != nil {
 		return x.MemberLevelMin
 	}
 	return 0
 }
 
-func (x *CreateTenantPayChannelRuleReq) GetMemberLevelMax() int32 {
+func (x *CreateTenantPayChannelRuleReq) GetMemberLevelMax() int64 {
 	if x != nil {
 		return x.MemberLevelMax
 	}
 	return 0
 }
 
-func (x *CreateTenantPayChannelRuleReq) GetKycLevelMin() int32 {
+func (x *CreateTenantPayChannelRuleReq) GetKycLevelMin() int64 {
 	if x != nil {
 		return x.KycLevelMin
 	}
 	return 0
 }
 
-func (x *CreateTenantPayChannelRuleReq) GetKycLevelMax() int32 {
+func (x *CreateTenantPayChannelRuleReq) GetKycLevelMax() int64 {
 	if x != nil {
 		return x.KycLevelMax
 	}
 	return 0
 }
 
-func (x *CreateTenantPayChannelRuleReq) GetAllowNewUser() bool {
+func (x *CreateTenantPayChannelRuleReq) GetAllowNewUser() int64 {
 	if x != nil {
 		return x.AllowNewUser
 	}
-	return false
+	return 0
 }
 
-func (x *CreateTenantPayChannelRuleReq) GetAllowOldUser() bool {
+func (x *CreateTenantPayChannelRuleReq) GetAllowOldUser() int64 {
 	if x != nil {
 		return x.AllowOldUser
 	}
-	return false
+	return 0
 }
 
 func (x *CreateTenantPayChannelRuleReq) GetAllowTags() string {
@@ -2681,18 +2681,18 @@ type UpdateTenantPayChannelRuleReq struct {
 	Id                   int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	TenantId             int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	RuleName             string                 `protobuf:"bytes,3,opt,name=rule_name,json=ruleName,proto3" json:"rule_name,omitempty"`
-	Priority             int32                  `protobuf:"varint,4,opt,name=priority,proto3" json:"priority,omitempty"`
+	Priority             int64                  `protobuf:"varint,4,opt,name=priority,proto3" json:"priority,omitempty"`
 	Status               CommonStatus           `protobuf:"varint,5,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
 	SingleAmountMin      int64                  `protobuf:"varint,6,opt,name=single_amount_min,json=singleAmountMin,proto3" json:"single_amount_min,omitempty"`
 	SingleAmountMax      int64                  `protobuf:"varint,7,opt,name=single_amount_max,json=singleAmountMax,proto3" json:"single_amount_max,omitempty"`
 	UserTotalRechargeMin int64                  `protobuf:"varint,8,opt,name=user_total_recharge_min,json=userTotalRechargeMin,proto3" json:"user_total_recharge_min,omitempty"`
 	UserTotalRechargeMax int64                  `protobuf:"varint,9,opt,name=user_total_recharge_max,json=userTotalRechargeMax,proto3" json:"user_total_recharge_max,omitempty"`
-	MemberLevelMin       int32                  `protobuf:"varint,10,opt,name=member_level_min,json=memberLevelMin,proto3" json:"member_level_min,omitempty"`
-	MemberLevelMax       int32                  `protobuf:"varint,11,opt,name=member_level_max,json=memberLevelMax,proto3" json:"member_level_max,omitempty"`
-	KycLevelMin          int32                  `protobuf:"varint,12,opt,name=kyc_level_min,json=kycLevelMin,proto3" json:"kyc_level_min,omitempty"`
-	KycLevelMax          int32                  `protobuf:"varint,13,opt,name=kyc_level_max,json=kycLevelMax,proto3" json:"kyc_level_max,omitempty"`
-	AllowNewUser         bool                   `protobuf:"varint,14,opt,name=allow_new_user,json=allowNewUser,proto3" json:"allow_new_user,omitempty"`
-	AllowOldUser         bool                   `protobuf:"varint,15,opt,name=allow_old_user,json=allowOldUser,proto3" json:"allow_old_user,omitempty"`
+	MemberLevelMin       int64                  `protobuf:"varint,10,opt,name=member_level_min,json=memberLevelMin,proto3" json:"member_level_min,omitempty"`
+	MemberLevelMax       int64                  `protobuf:"varint,11,opt,name=member_level_max,json=memberLevelMax,proto3" json:"member_level_max,omitempty"`
+	KycLevelMin          int64                  `protobuf:"varint,12,opt,name=kyc_level_min,json=kycLevelMin,proto3" json:"kyc_level_min,omitempty"`
+	KycLevelMax          int64                  `protobuf:"varint,13,opt,name=kyc_level_max,json=kycLevelMax,proto3" json:"kyc_level_max,omitempty"`
+	AllowNewUser         int64                  `protobuf:"varint,14,opt,name=allow_new_user,json=allowNewUser,proto3" json:"allow_new_user,omitempty"`
+	AllowOldUser         int64                  `protobuf:"varint,15,opt,name=allow_old_user,json=allowOldUser,proto3" json:"allow_old_user,omitempty"`
 	AllowTags            string                 `protobuf:"bytes,16,opt,name=allow_tags,json=allowTags,proto3" json:"allow_tags,omitempty"`
 	DenyTags             string                 `protobuf:"bytes,17,opt,name=deny_tags,json=denyTags,proto3" json:"deny_tags,omitempty"`
 	Remark               string                 `protobuf:"bytes,18,opt,name=remark,proto3" json:"remark,omitempty"`
@@ -2751,7 +2751,7 @@ func (x *UpdateTenantPayChannelRuleReq) GetRuleName() string {
 	return ""
 }
 
-func (x *UpdateTenantPayChannelRuleReq) GetPriority() int32 {
+func (x *UpdateTenantPayChannelRuleReq) GetPriority() int64 {
 	if x != nil {
 		return x.Priority
 	}
@@ -2793,46 +2793,46 @@ func (x *UpdateTenantPayChannelRuleReq) GetUserTotalRechargeMax() int64 {
 	return 0
 }
 
-func (x *UpdateTenantPayChannelRuleReq) GetMemberLevelMin() int32 {
+func (x *UpdateTenantPayChannelRuleReq) GetMemberLevelMin() int64 {
 	if x != nil {
 		return x.MemberLevelMin
 	}
 	return 0
 }
 
-func (x *UpdateTenantPayChannelRuleReq) GetMemberLevelMax() int32 {
+func (x *UpdateTenantPayChannelRuleReq) GetMemberLevelMax() int64 {
 	if x != nil {
 		return x.MemberLevelMax
 	}
 	return 0
 }
 
-func (x *UpdateTenantPayChannelRuleReq) GetKycLevelMin() int32 {
+func (x *UpdateTenantPayChannelRuleReq) GetKycLevelMin() int64 {
 	if x != nil {
 		return x.KycLevelMin
 	}
 	return 0
 }
 
-func (x *UpdateTenantPayChannelRuleReq) GetKycLevelMax() int32 {
+func (x *UpdateTenantPayChannelRuleReq) GetKycLevelMax() int64 {
 	if x != nil {
 		return x.KycLevelMax
 	}
 	return 0
 }
 
-func (x *UpdateTenantPayChannelRuleReq) GetAllowNewUser() bool {
+func (x *UpdateTenantPayChannelRuleReq) GetAllowNewUser() int64 {
 	if x != nil {
 		return x.AllowNewUser
 	}
-	return false
+	return 0
 }
 
-func (x *UpdateTenantPayChannelRuleReq) GetAllowOldUser() bool {
+func (x *UpdateTenantPayChannelRuleReq) GetAllowOldUser() int64 {
 	if x != nil {
 		return x.AllowOldUser
 	}
-	return false
+	return 0
 }
 
 func (x *UpdateTenantPayChannelRuleReq) GetAllowTags() string {
@@ -4300,7 +4300,7 @@ type AuditWithdrawOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	OrderNo       string                 `protobuf:"bytes,2,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
-	Approve       bool                   `protobuf:"varint,3,opt,name=approve,proto3" json:"approve,omitempty"`
+	Approve       int64                  `protobuf:"varint,3,opt,name=approve,proto3" json:"approve,omitempty"`
 	Remark        string                 `protobuf:"bytes,4,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -4350,11 +4350,11 @@ func (x *AuditWithdrawOrderReq) GetOrderNo() string {
 	return ""
 }
 
-func (x *AuditWithdrawOrderReq) GetApprove() bool {
+func (x *AuditWithdrawOrderReq) GetApprove() int64 {
 	if x != nil {
 		return x.Approve
 	}
-	return false
+	return 0
 }
 
 func (x *AuditWithdrawOrderReq) GetRemark() string {
@@ -4769,7 +4769,7 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"ext_config\x18\x0e \x01(\tR\textConfig\x12-\n" +
 	"\x06status\x18\x0f \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12\x1d\n" +
 	"\n" +
-	"is_default\x18\x10 \x01(\bR\tisDefault\x12\x16\n" +
+	"is_default\x18\x10 \x01(\x03R\tisDefault\x12\x16\n" +
 	"\x06remark\x18\x11 \x01(\tR\x06remark\"\x8d\x04\n" +
 	"\x19UpdateTenantPayAccountReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
@@ -4791,7 +4791,7 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"ext_config\x18\f \x01(\tR\textConfig\x12-\n" +
 	"\x06status\x18\r \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12\x1d\n" +
 	"\n" +
-	"is_default\x18\x0e \x01(\bR\tisDefault\x12\x16\n" +
+	"is_default\x18\x0e \x01(\x03R\tisDefault\x12\x16\n" +
 	"\x06remark\x18\x0f \x01(\tR\x06remark\"E\n" +
 	"\x16GetTenantPayAccountReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
@@ -4824,13 +4824,13 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\x04icon\x18\b \x01(\tR\x04icon\x12\x1a\n" +
 	"\bcurrency\x18\t \x01(\tR\bcurrency\x12\x12\n" +
 	"\x04sort\x18\n" +
-	" \x01(\x05R\x04sort\x12\x18\n" +
-	"\avisible\x18\v \x01(\bR\avisible\x12-\n" +
+	" \x01(\x03R\x04sort\x12\x18\n" +
+	"\avisible\x18\v \x01(\x03R\avisible\x12-\n" +
 	"\x06status\x18\f \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12*\n" +
 	"\x11single_min_amount\x18\r \x01(\x03R\x0fsingleMinAmount\x12*\n" +
 	"\x11single_max_amount\x18\x0e \x01(\x03R\x0fsingleMaxAmount\x12(\n" +
 	"\x10daily_max_amount\x18\x0f \x01(\x03R\x0edailyMaxAmount\x12&\n" +
-	"\x0fdaily_max_count\x18\x10 \x01(\x05R\rdailyMaxCount\x12+\n" +
+	"\x0fdaily_max_count\x18\x10 \x01(\x03R\rdailyMaxCount\x12+\n" +
 	"\bfee_type\x18\x11 \x01(\x0e2\x10.payment.FeeTypeR\afeeType\x12\x19\n" +
 	"\bfee_rate\x18\x12 \x01(\tR\afeeRate\x12(\n" +
 	"\x10fee_fixed_amount\x18\x13 \x01(\x03R\x0efeeFixedAmount\x12\x1d\n" +
@@ -4844,14 +4844,14 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\fdisplay_name\x18\x04 \x01(\tR\vdisplayName\x12\x12\n" +
 	"\x04icon\x18\x05 \x01(\tR\x04icon\x12\x1a\n" +
 	"\bcurrency\x18\x06 \x01(\tR\bcurrency\x12\x12\n" +
-	"\x04sort\x18\a \x01(\x05R\x04sort\x12\x18\n" +
-	"\avisible\x18\b \x01(\bR\avisible\x12-\n" +
+	"\x04sort\x18\a \x01(\x03R\x04sort\x12\x18\n" +
+	"\avisible\x18\b \x01(\x03R\avisible\x12-\n" +
 	"\x06status\x18\t \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12*\n" +
 	"\x11single_min_amount\x18\n" +
 	" \x01(\x03R\x0fsingleMinAmount\x12*\n" +
 	"\x11single_max_amount\x18\v \x01(\x03R\x0fsingleMaxAmount\x12(\n" +
 	"\x10daily_max_amount\x18\f \x01(\x03R\x0edailyMaxAmount\x12&\n" +
-	"\x0fdaily_max_count\x18\r \x01(\x05R\rdailyMaxCount\x12+\n" +
+	"\x0fdaily_max_count\x18\r \x01(\x03R\rdailyMaxCount\x12+\n" +
 	"\bfee_type\x18\x0e \x01(\x0e2\x10.payment.FeeTypeR\afeeType\x12\x19\n" +
 	"\bfee_rate\x18\x0f \x01(\tR\afeeRate\x12(\n" +
 	"\x10fee_fixed_amount\x18\x10 \x01(\x03R\x0efeeFixedAmount\x12\x1d\n" +
@@ -4875,7 +4875,7 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"account_id\x18\x05 \x01(\x03R\taccountId\x12\x18\n" +
 	"\akeyword\x18\x06 \x01(\tR\akeyword\x12-\n" +
 	"\x06status\x18\a \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12\x18\n" +
-	"\avisible\x18\b \x01(\bR\avisible\"p\n" +
+	"\avisible\x18\b \x01(\x03R\avisible\"p\n" +
 	"\x19ListTenantPayChannelsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
 	"\x04data\x18\x02 \x03(\v2\x19.payment.TenantPayChannelR\x04data\"\xc5\x05\n" +
@@ -4884,19 +4884,19 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\n" +
 	"channel_id\x18\x02 \x01(\x03R\tchannelId\x12\x1b\n" +
 	"\trule_name\x18\x03 \x01(\tR\bruleName\x12\x1a\n" +
-	"\bpriority\x18\x04 \x01(\x05R\bpriority\x12-\n" +
+	"\bpriority\x18\x04 \x01(\x03R\bpriority\x12-\n" +
 	"\x06status\x18\x05 \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12*\n" +
 	"\x11single_amount_min\x18\x06 \x01(\x03R\x0fsingleAmountMin\x12*\n" +
 	"\x11single_amount_max\x18\a \x01(\x03R\x0fsingleAmountMax\x125\n" +
 	"\x17user_total_recharge_min\x18\b \x01(\x03R\x14userTotalRechargeMin\x125\n" +
 	"\x17user_total_recharge_max\x18\t \x01(\x03R\x14userTotalRechargeMax\x12(\n" +
 	"\x10member_level_min\x18\n" +
-	" \x01(\x05R\x0ememberLevelMin\x12(\n" +
-	"\x10member_level_max\x18\v \x01(\x05R\x0ememberLevelMax\x12\"\n" +
-	"\rkyc_level_min\x18\f \x01(\x05R\vkycLevelMin\x12\"\n" +
-	"\rkyc_level_max\x18\r \x01(\x05R\vkycLevelMax\x12$\n" +
-	"\x0eallow_new_user\x18\x0e \x01(\bR\fallowNewUser\x12$\n" +
-	"\x0eallow_old_user\x18\x0f \x01(\bR\fallowOldUser\x12\x1d\n" +
+	" \x01(\x03R\x0ememberLevelMin\x12(\n" +
+	"\x10member_level_max\x18\v \x01(\x03R\x0ememberLevelMax\x12\"\n" +
+	"\rkyc_level_min\x18\f \x01(\x03R\vkycLevelMin\x12\"\n" +
+	"\rkyc_level_max\x18\r \x01(\x03R\vkycLevelMax\x12$\n" +
+	"\x0eallow_new_user\x18\x0e \x01(\x03R\fallowNewUser\x12$\n" +
+	"\x0eallow_old_user\x18\x0f \x01(\x03R\fallowOldUser\x12\x1d\n" +
 	"\n" +
 	"allow_tags\x18\x10 \x01(\tR\tallowTags\x12\x1b\n" +
 	"\tdeny_tags\x18\x11 \x01(\tR\bdenyTags\x12\x16\n" +
@@ -4905,19 +4905,19 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1b\n" +
 	"\trule_name\x18\x03 \x01(\tR\bruleName\x12\x1a\n" +
-	"\bpriority\x18\x04 \x01(\x05R\bpriority\x12-\n" +
+	"\bpriority\x18\x04 \x01(\x03R\bpriority\x12-\n" +
 	"\x06status\x18\x05 \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12*\n" +
 	"\x11single_amount_min\x18\x06 \x01(\x03R\x0fsingleAmountMin\x12*\n" +
 	"\x11single_amount_max\x18\a \x01(\x03R\x0fsingleAmountMax\x125\n" +
 	"\x17user_total_recharge_min\x18\b \x01(\x03R\x14userTotalRechargeMin\x125\n" +
 	"\x17user_total_recharge_max\x18\t \x01(\x03R\x14userTotalRechargeMax\x12(\n" +
 	"\x10member_level_min\x18\n" +
-	" \x01(\x05R\x0ememberLevelMin\x12(\n" +
-	"\x10member_level_max\x18\v \x01(\x05R\x0ememberLevelMax\x12\"\n" +
-	"\rkyc_level_min\x18\f \x01(\x05R\vkycLevelMin\x12\"\n" +
-	"\rkyc_level_max\x18\r \x01(\x05R\vkycLevelMax\x12$\n" +
-	"\x0eallow_new_user\x18\x0e \x01(\bR\fallowNewUser\x12$\n" +
-	"\x0eallow_old_user\x18\x0f \x01(\bR\fallowOldUser\x12\x1d\n" +
+	" \x01(\x03R\x0ememberLevelMin\x12(\n" +
+	"\x10member_level_max\x18\v \x01(\x03R\x0ememberLevelMax\x12\"\n" +
+	"\rkyc_level_min\x18\f \x01(\x03R\vkycLevelMin\x12\"\n" +
+	"\rkyc_level_max\x18\r \x01(\x03R\vkycLevelMax\x12$\n" +
+	"\x0eallow_new_user\x18\x0e \x01(\x03R\fallowNewUser\x12$\n" +
+	"\x0eallow_old_user\x18\x0f \x01(\x03R\fallowOldUser\x12\x1d\n" +
 	"\n" +
 	"allow_tags\x18\x10 \x01(\tR\tallowTags\x12\x1b\n" +
 	"\tdeny_tags\x18\x11 \x01(\tR\bdenyTags\x12\x16\n" +
@@ -5036,7 +5036,7 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\x15AuditWithdrawOrderReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
 	"\border_no\x18\x02 \x01(\tR\aorderNo\x12\x18\n" +
-	"\aapprove\x18\x03 \x01(\bR\aapprove\x12\x16\n" +
+	"\aapprove\x18\x03 \x01(\x03R\aapprove\x12\x16\n" +
 	"\x06remark\x18\x04 \x01(\tR\x06remark\"\xa0\x03\n" +
 	"\x19ListWithdrawNotifyLogsReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +

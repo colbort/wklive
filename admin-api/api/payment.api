@@ -54,7 +54,7 @@ type TenantPayAccount {
 	publicKey           string `json:"publicKey"`
 	extConfig           string `json:"extConfig"`
 	status              int64  `json:"status"` // 0未知 1启用 2禁用
-	isDefault           bool   `json:"isDefault"`
+	isDefault           int64   `json:"isDefault"`
 	remark              string `json:"remark"`
 	createTimes         int64  `json:"createTimes"`
 	updateTimes         int64  `json:"updateTimes"`
@@ -72,7 +72,7 @@ type TenantPayChannel {
 	icon            string `json:"icon"`
 	currency        string `json:"currency"`
 	sort            int64  `json:"sort"`
-	visible         bool   `json:"visible"`
+	visible         int64   `json:"visible"`
 	status          int64  `json:"status"` // 0未知 1启用 2禁用
 	singleMinAmount int64  `json:"singleMinAmount"`
 	singleMaxAmount int64  `json:"singleMaxAmount"`
@@ -102,8 +102,8 @@ type TenantPayChannelRule {
 	memberLevelMax       int64  `json:"memberLevelMax"`
 	kycLevelMin          int64  `json:"kycLevelMin"`
 	kycLevelMax          int64  `json:"kycLevelMax"`
-	allowNewUser         bool   `json:"allowNewUser"`
-	allowOldUser         bool   `json:"allowOldUser"`
+	allowNewUser         int64   `json:"allowNewUser"`
+	allowOldUser         int64   `json:"allowOldUser"`
 	allowTags            string `json:"allowTags"`
 	denyTags             string `json:"denyTags"`
 	remark               string `json:"remark"`
@@ -329,7 +329,7 @@ type CreateTenantPayAccountReq {
 	certCipher          string `json:"certCipher,optional"`
 	extConfig           string `json:"extConfig,optional"`
 	status              int64  `json:"status"`
-	isDefault           bool   `json:"isDefault"`
+	isDefault           int64   `json:"isDefault"`
 	remark              string `json:"remark,optional"`
 }
 
@@ -347,7 +347,7 @@ type UpdateTenantPayAccountReq {
 	certCipher       string `json:"certCipher,optional"`
 	extConfig        string `json:"extConfig,optional"`
 	status           int64  `json:"status"`
-	isDefault        bool   `json:"isDefault"`
+	isDefault        int64   `json:"isDefault"`
 	remark           string `json:"remark,optional"`
 }
 
@@ -389,7 +389,7 @@ type CreateTenantPayChannelReq {
 	icon            string `json:"icon,optional"`
 	currency        string `json:"currency"`
 	sort            int64  `json:"sort"`
-	visible         bool   `json:"visible"`
+	visible         int64   `json:"visible"`
 	status          int64  `json:"status"`
 	singleMinAmount int64  `json:"singleMinAmount"`
 	singleMaxAmount int64  `json:"singleMaxAmount"`
@@ -410,7 +410,7 @@ type UpdateTenantPayChannelReq {
 	icon            string `json:"icon,optional"`
 	currency        string `json:"currency"`
 	sort            int64  `json:"sort"`
-	visible         bool   `json:"visible"`
+	visible         int64   `json:"visible"`
 	status          int64  `json:"status"`
 	singleMinAmount int64  `json:"singleMinAmount"`
 	singleMaxAmount int64  `json:"singleMaxAmount"`
@@ -441,7 +441,7 @@ type ListTenantPayChannelsReq {
 	accountId  int64  `form:"accountId,optional"`
 	keyword    string `form:"keyword,optional"`
 	status     int64  `form:"status,optional"`
-	visible    bool   `form:"visible,optional"`
+	visible    int64   `form:"visible,optional"`
 }
 
 type ListTenantPayChannelsResp {
@@ -466,8 +466,8 @@ type CreateTenantPayChannelRuleReq {
 	memberLevelMax       int64  `json:"memberLevelMax"`
 	kycLevelMin          int64  `json:"kycLevelMin"`
 	kycLevelMax          int64  `json:"kycLevelMax"`
-	allowNewUser         bool   `json:"allowNewUser"`
-	allowOldUser         bool   `json:"allowOldUser"`
+	allowNewUser         int64   `json:"allowNewUser"`
+	allowOldUser         int64   `json:"allowOldUser"`
 	allowTags            string `json:"allowTags,optional"`
 	denyTags             string `json:"denyTags,optional"`
 	remark               string `json:"remark,optional"`
@@ -487,8 +487,8 @@ type UpdateTenantPayChannelRuleReq {
 	memberLevelMax       int64  `json:"memberLevelMax"`
 	kycLevelMin          int64  `json:"kycLevelMin"`
 	kycLevelMax          int64  `json:"kycLevelMax"`
-	allowNewUser         bool   `json:"allowNewUser"`
-	allowOldUser         bool   `json:"allowOldUser"`
+	allowNewUser         int64   `json:"allowNewUser"`
+	allowOldUser         int64   `json:"allowOldUser"`
 	allowTags            string `json:"allowTags,optional"`
 	denyTags             string `json:"denyTags,optional"`
 	remark               string `json:"remark,optional"`
@@ -678,7 +678,7 @@ type GetWithdrawOrderResp {
 type AuditWithdrawOrderReq {
 	tenantId int64  `json:"tenantId"`
 	orderNo  string `json:"orderNo"`
-	approve  bool   `json:"approve"`
+	approve  int64   `json:"approve"`
 	remark   string `json:"remark,optional"`
 }
 

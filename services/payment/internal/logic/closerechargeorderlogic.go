@@ -2,9 +2,13 @@ package logic
 
 import (
 	"context"
+	"errors"
+	"time"
 
+	"wklive/common/helper"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
+	"wklive/services/payment/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +29,43 @@ func NewCloseRechargeOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 关闭充值订单
 func (l *CloseRechargeOrderLogic) CloseRechargeOrder(in *payment.CloseRechargeOrderReq) (*payment.AdminCommonResp, error) {
-	// todo: add your logic here and delete this line
+	var (
+		errLogic = "CloseRechargeOrder"
+	)
 
-	return &payment.AdminCommonResp{}, nil
+	// 査询订单是否存在
+	order, err := l.svcCtx.RechargeOrderModel.FindOneByOrderNo(l.ctx, in.OrderNo)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		l.Logger.Errorf("%s error: %s", errLogic, err.Error())
+		return nil, err
+	}
+
+	if order == nil {
+		return &payment.AdminCommonResp{
+			Base: helper.GetErrResp(404, "订单不存在"),
+		}, nil
+	}
+
+	// 仅有pending状态的订单才能关闭
+	if order.Status != int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PENDING) {
+		return &payment.AdminCommonResp{
+			Base: helper.GetErrResp(201, "只有未付款订单才能关闭"),
+		}, nil
+	}
+
+	now := time.Now().UnixMilli()
+	order.Status = int64(payment.PayOrderStatus_PAY_ORDER_STATUS_CLOSED)
+	order.UpdateTimes = now
+
+	err = l.svcCtx.RechargeOrderModel.Update(l.ctx, order)
+	if err != nil {
+		l.Logger.Errorf("%s error: %s", errLogic, err.Error())
+		return nil, err
+	}
+
+	l.Logger.Infof("Close recharge order success: %s", in.OrderNo)
+
+	return &payment.AdminCommonResp{
+		Base: helper.OkResp(),
+	}, nil
 }

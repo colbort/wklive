@@ -41,13 +41,19 @@ func (l *UpdateUserLevelLogic) UpdateUserLevel(in *user.UpdateUserLevelReq) (*us
 			Base: &common.RespBase{Code: 404, Msg: "用户不存在"},
 		}, nil
 	}
+	if tuser.TenantId != in.TenantId {
+		return &user.AdminCommonResp{
+			Base: &common.RespBase{Code: 403, Msg: "无权操作此用户"},
+		}, nil
+	}
 
 	// 更新会员等级
-	err = l.svcCtx.UserModel.Update(l.ctx, &models.TUser{
-		Id:          in.UserId,
-		MemberLevel: in.MemberLevel,
-		UpdateTimes: time.Now().UnixMilli(),
-	})
+	if in.MemberLevel != 0 {
+		tuser.MemberLevel = in.MemberLevel
+	}
+	tuser.UpdateTimes = time.Now().UnixMilli()
+
+	err = l.svcCtx.UserModel.Update(l.ctx, tuser)
 	if err != nil {
 		return nil, err
 	}

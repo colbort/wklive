@@ -31,7 +31,7 @@ func NewUnlockUserLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Unlock
 // 解锁用户（解除登录锁定）
 func (l *UnlockUserLogic) UnlockUser(in *user.UnlockUserReq) (*user.AdminCommonResp, error) {
 	// 获取用户安全信息
-	userSecurity, err := l.svcCtx.UserSecurityModel.FindOne(l.ctx, in.UserId)
+	userSecurity, err := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, in.TenantId, in.UserId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
@@ -43,12 +43,11 @@ func (l *UnlockUserLogic) UnlockUser(in *user.UnlockUserReq) (*user.AdminCommonR
 	}
 
 	// 重置登录失败计数和解除锁定
-	err = l.svcCtx.UserSecurityModel.Update(l.ctx, &models.TUserSecurity{
-		Id:              userSecurity.Id,
-		LoginErrorCount: 0,
-		LockUntil:       0,
-		UpdateTimes:     time.Now().UnixMilli(),
-	})
+	userSecurity.LoginErrorCount = 0
+	userSecurity.LockUntil = 0
+	userSecurity.UpdateTimes = time.Now().UnixMilli()
+
+	err = l.svcCtx.UserSecurityModel.Update(l.ctx, userSecurity)
 	if err != nil {
 		return nil, err
 	}

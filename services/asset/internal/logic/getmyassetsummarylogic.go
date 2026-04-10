@@ -27,7 +27,7 @@ func NewGetMyAssetSummaryLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 // 查询我的资产汇总
 func (l *GetMyAssetSummaryLogic) GetMyAssetSummary(in *asset.GetMyAssetSummaryReq) (*asset.GetMyAssetSummaryResp, error) {
-	list, err := l.svcCtx.UserAssetModel.FindListByFilter(l.ctx, in.TenantId, in.UserId, 0, "")
+	list, err := l.svcCtx.UserAssetModel.FindAll(l.ctx, in.TenantId, in.UserId, 0, "", 0)
 	if err != nil {
 		return nil, err
 	}

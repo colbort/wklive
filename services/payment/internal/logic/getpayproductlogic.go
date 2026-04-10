@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/common/helper"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 
@@ -25,7 +26,35 @@ func NewGetPayProductLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Get
 
 // 获取产品详情
 func (l *GetPayProductLogic) GetPayProduct(in *payment.GetPayProductReq) (*payment.GetPayProductResp, error) {
-	// todo: add your logic here and delete this line
+	var (
+		errLogic = "GetPayProduct"
+	)
 
-	return &payment.GetPayProductResp{}, nil
+	product, err := l.svcCtx.PayProductModel.FindOne(l.ctx, in.Id)
+	if err != nil {
+		l.Logger.Errorf("%s error: %s", errLogic, err.Error())
+		return nil, err
+	}
+
+	if product == nil {
+		return &payment.GetPayProductResp{
+			Base: helper.GetErrResp(404, "产品不存在"),
+		}, nil
+	}
+
+	return &payment.GetPayProductResp{
+		Base: helper.OkResp(),
+		Data: &payment.PayProduct{
+			Id:          product.Id,
+			PlatformId:  product.PlatformId,
+			ProductCode: product.ProductCode,
+			ProductName: product.ProductName,
+			SceneType:   payment.SceneType(product.SceneType),
+			Currency:    product.Currency,
+			Status:      payment.CommonStatus(product.Status),
+			Remark:      product.Remark.String,
+			CreateTimes: product.CreateTimes,
+			UpdateTimes: product.UpdateTimes,
+		},
+	}, nil
 }

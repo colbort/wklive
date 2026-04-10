@@ -2,9 +2,13 @@ package logic
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
+	"wklive/common/helper"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
+	"wklive/services/payment/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +29,49 @@ func NewGetTenantPayChannelLogic(ctx context.Context, svcCtx *svc.ServiceContext
 
 // 获取租户支付通道详情
 func (l *GetTenantPayChannelLogic) GetTenantPayChannel(in *payment.GetTenantPayChannelReq) (*payment.GetTenantPayChannelResp, error) {
-	// todo: add your logic here and delete this line
+	var (
+		errLogic = "GetTenantPayChannel"
+	)
 
-	return &payment.GetTenantPayChannelResp{}, nil
+	channel, err := l.svcCtx.TenantPayChannelModel.FindOne(l.ctx, in.Id)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		l.Logger.Errorf("%s error: %s", errLogic, err.Error())
+		return nil, err
+	}
+
+	if channel == nil {
+		return &payment.GetTenantPayChannelResp{
+			Base: helper.GetErrResp(404, "通道不存在"),
+		}, nil
+	}
+
+	return &payment.GetTenantPayChannelResp{
+		Base: helper.OkResp(),
+		Data: &payment.TenantPayChannel{
+			Id:              channel.Id,
+			TenantId:        channel.TenantId,
+			PlatformId:      channel.PlatformId,
+			ProductId:       channel.ProductId,
+			AccountId:       channel.AccountId,
+			ChannelCode:     channel.ChannelCode,
+			ChannelName:     channel.ChannelName,
+			DisplayName:     channel.DisplayName.String,
+			Icon:            channel.Icon.String,
+			Currency:        channel.Currency,
+			Sort:            channel.Sort,
+			Visible:         channel.Visible,
+			Status:          payment.CommonStatus(channel.Status),
+			SingleMinAmount: channel.SingleMinAmount,
+			SingleMaxAmount: channel.SingleMaxAmount,
+			DailyMaxAmount:  channel.DailyMaxAmount,
+			DailyMaxCount:   channel.DailyMaxCount,
+			FeeType:         payment.FeeType(channel.FeeType),
+			FeeRate:         fmt.Sprintf("%f", channel.FeeRate),
+			FeeFixedAmount:  channel.FeeFixedAmount,
+			ExtConfig:       channel.ExtConfig.String,
+			Remark:          channel.Remark.String,
+			CreateTimes:     channel.CreateTimes,
+			UpdateTimes:     channel.UpdateTimes,
+		},
+	}, nil
 }

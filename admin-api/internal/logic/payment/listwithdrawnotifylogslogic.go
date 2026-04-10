@@ -63,14 +63,19 @@ func (l *ListWithdrawNotifyLogsLogic) ListWithdrawNotifyLogs(req *types.ListWith
 			ProcessResult: item.ProcessResult,
 			ErrorMessage:  item.ErrorMessage,
 			NotifyTime:    item.NotifyTime,
-			CreateTimes:    item.CreateTimes,
+			CreateTimes:   item.CreateTimes,
 		}
 	}
 
 	return &types.ListWithdrawNotifyLogsResp{
 		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
+			Code:       result.Base.Code,
+			Msg:        result.Base.Msg,
+			Total:      result.Base.Total,
+			HasNext:    result.Base.HasNext,
+			HasPrev:    result.Base.HasPrev,
+			NextCursor: result.Base.NextCursor,
+			PrevCursor: result.Base.PrevCursor,
 		},
 		Data: data,
 	}, nil

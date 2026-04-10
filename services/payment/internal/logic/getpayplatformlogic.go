@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/common/helper"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 
@@ -25,7 +26,36 @@ func NewGetPayPlatformLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ge
 
 // 获取平台详情
 func (l *GetPayPlatformLogic) GetPayPlatform(in *payment.GetPayPlatformReq) (*payment.GetPayPlatformResp, error) {
-	// todo: add your logic here and delete this line
+	var (
+		errLogic = "GetPayPlatform"
+	)
 
-	return &payment.GetPayPlatformResp{}, nil
+	platform, err := l.svcCtx.PayPlatformModel.FindOne(l.ctx, in.Id)
+	if err != nil {
+		l.Logger.Errorf("%s error: %s", errLogic, err.Error())
+		return nil, err
+	}
+
+	if platform == nil {
+		return &payment.GetPayPlatformResp{
+			Base: helper.GetErrResp(404, "平台不存在"),
+		}, nil
+	}
+
+	return &payment.GetPayPlatformResp{
+		Base: helper.OkResp(),
+		Data: &payment.PayPlatform{
+			Id:          platform.Id,
+			PlatformCode: platform.PlatformCode,
+			PlatformName: platform.PlatformName,
+			PlatformType: payment.PlatformType(platform.PlatformType),
+			NotifyUrl:    platform.NotifyUrl.String,
+			ReturnUrl:    platform.ReturnUrl.String,
+			Icon:         platform.Icon.String,
+			Status:       payment.CommonStatus(platform.Status),
+			Remark:       platform.Remark.String,
+			CreateTimes:  platform.CreateTimes,
+			UpdateTimes:  platform.UpdateTimes,
+		},
+	}, nil
 }

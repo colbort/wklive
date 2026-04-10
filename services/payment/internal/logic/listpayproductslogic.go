@@ -2,9 +2,12 @@ package logic
 
 import (
 	"context"
+	"errors"
 
+	"wklive/common/helper"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
+	"wklive/services/payment/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +28,41 @@ func NewListPayProductsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *L
 
 // 产品列表
 func (l *ListPayProductsLogic) ListPayProducts(in *payment.ListPayProductsReq) (*payment.ListPayProductsResp, error) {
-	// todo: add your logic here and delete this line
+	items, total, err := l.svcCtx.PayProductModel.FindPage(l.ctx, in.PlatformId, in.Page.Cursor, in.Page.Limit)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
 
-	return &payment.ListPayProductsResp{}, nil
+	prevCursor := in.Page.Cursor
+	if prevCursor < 0 {
+		prevCursor = 0
+	}
+	nextCursor := int64(0)
+	if int64(len(items)) == in.Page.Limit {
+		lastItem := items[len(items)-1]
+		nextCursor = lastItem.Id
+	}
+	hasPrev := prevCursor > 0
+	hasNext := int64(len(items)) == in.Page.Limit
+
+	data := make([]*payment.PayProduct, 0, len(items))
+	for _, p := range items {
+		data = append(data, &payment.PayProduct{
+			Id:          p.Id,
+			PlatformId:  p.PlatformId,
+			ProductCode: p.ProductCode,
+			ProductName: p.ProductName,
+			SceneType:   payment.SceneType(p.SceneType),
+			Currency:    p.Currency,
+			Status:      payment.CommonStatus(p.Status),
+			Remark:      p.Remark.String,
+			CreateTimes: p.CreateTimes,
+			UpdateTimes: p.UpdateTimes,
+		})
+	}
+
+	return &payment.ListPayProductsResp{
+		Base: helper.OkWithOthers(total, hasNext, hasPrev, nextCursor, prevCursor),
+		Data: data,
+	}, nil
 }

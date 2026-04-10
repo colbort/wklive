@@ -2,11 +2,13 @@ package logic
 
 import (
 	"context"
+	"errors"
 
 	"wklive/common/helper"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/helpers"
 	"wklive/services/asset/internal/svc"
+	"wklive/services/asset/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,6 +31,9 @@ func NewGetUserAssetDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 func (l *GetUserAssetDetailLogic) GetUserAssetDetail(in *asset.GetUserAssetDetailReq) (*asset.GetUserAssetDetailResp, error) {
 	item, err := l.svcCtx.UserAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin)
 	if err != nil {
+		if errors.Is(err, models.ErrNotFound) {
+			return &asset.GetUserAssetDetailResp{Base: helper.GetErrResp(404, "资产不存在")}, nil
+		}
 		return nil, err
 	}
 

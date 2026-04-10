@@ -2,9 +2,13 @@ package logic
 
 import (
 	"context"
+	"errors"
 
+	"wklive/common/helper"
+	"wklive/proto/common"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
+	"wklive/services/payment/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +29,43 @@ func NewGetMyWithdrawOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 获取提现订单详情
 func (l *GetMyWithdrawOrderLogic) GetMyWithdrawOrder(in *payment.GetMyWithdrawOrderReq) (*payment.GetMyWithdrawOrderResp, error) {
-	// todo: add your logic here and delete this line
+	order, err := l.svcCtx.WithdrawOrderModel.FindOne(l.ctx, in.Id)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
 
-	return &payment.GetMyWithdrawOrderResp{}, nil
+	if order == nil {
+		return &payment.GetMyWithdrawOrderResp{
+			Base: &common.RespBase{
+				Code: 404,
+				Msg:  "订单不存在",
+			},
+		}, nil
+	}
+
+	// Check permission
+	if order.UserId != in.UserId {
+		return &payment.GetMyWithdrawOrderResp{
+			Base: &common.RespBase{
+				Code: 403,
+				Msg:  "无权访问该订单",
+			},
+		}, nil
+	}
+
+	return &payment.GetMyWithdrawOrderResp{
+		Base: helper.OkResp(),
+		Data: &payment.WithdrawOrder{
+			Id:          order.Id,
+			TenantId:    order.TenantId,
+			UserId:      order.UserId,
+			OrderNo:     order.OrderNo,
+			Amount:      order.Amount,
+			Currency:    order.Currency,
+			Status:      payment.PayOrderStatus(order.Status),
+			Remark:      order.Remark.String,
+			CreateTimes: order.CreateTimes,
+			UpdateTimes: order.UpdateTimes,
+		},
+	}, nil
 }

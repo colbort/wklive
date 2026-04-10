@@ -66,15 +66,20 @@ func (l *ListWithdrawOrdersLogic) ListWithdrawOrders(req *types.ListWithdrawOrde
 			NotifyTime:   item.NotifyTime,
 			CloseTime:    item.CloseTime,
 			Remark:       item.Remark,
-			CreateTimes:   item.CreateTimes,
-			UpdateTimes:   item.UpdateTimes,
+			CreateTimes:  item.CreateTimes,
+			UpdateTimes:  item.UpdateTimes,
 		}
 	}
 
 	return &types.ListWithdrawOrdersResp{
 		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
+			Code:       result.Base.Code,
+			Msg:        result.Base.Msg,
+			Total:      result.Base.Total,
+			HasNext:    result.Base.HasNext,
+			HasPrev:    result.Base.HasPrev,
+			NextCursor: result.Base.NextCursor,
+			PrevCursor: result.Base.PrevCursor,
 		},
 		Data: data,
 	}, nil

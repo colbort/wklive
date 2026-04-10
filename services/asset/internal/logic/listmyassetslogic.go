@@ -27,7 +27,7 @@ func NewListMyAssetsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *List
 
 // 查询我的资产列表
 func (l *ListMyAssetsLogic) ListMyAssets(in *asset.ListMyAssetsReq) (*asset.ListMyAssetsResp, error) {
-	list, err := l.svcCtx.UserAssetModel.FindListByFilter(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin)
+	list, err := l.svcCtx.UserAssetModel.FindAll(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, 0)
 	if err != nil {
 		return nil, err
 	}

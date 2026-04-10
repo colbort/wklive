@@ -48,11 +48,21 @@ func (l *UpdateProfileLogic) UpdateProfile(in *user.UpdateProfileReq) (*user.Upd
 
 	// 更新用户基本信息
 	now := time.Now().UnixMilli()
-	tuser.Nickname = sql.NullString{String: in.Nickname, Valid: in.Nickname != ""}
-	tuser.Avatar = sql.NullString{String: in.Avatar, Valid: in.Avatar != ""}
-	tuser.Language = sql.NullString{String: in.Language, Valid: in.Language != ""}
-	tuser.Timezone = sql.NullString{String: in.Timezone, Valid: in.Timezone != ""}
-	tuser.Signature = sql.NullString{String: in.Signature, Valid: in.Signature != ""}
+	if in.Nickname != "" {
+		tuser.Nickname = sql.NullString{String: in.Nickname, Valid: true}
+	}
+	if in.Avatar != "" {
+		tuser.Avatar = sql.NullString{String: in.Avatar, Valid: true}
+	}
+	if in.Language != "" {
+		tuser.Language = sql.NullString{String: in.Language, Valid: true}
+	}
+	if in.Timezone != "" {
+		tuser.Timezone = sql.NullString{String: in.Timezone, Valid: true}
+	}
+	if in.Signature != "" {
+		tuser.Signature = sql.NullString{String: in.Signature, Valid: true}
+	}
 	tuser.UpdateTimes = now
 
 	err = l.svcCtx.UserModel.Update(l.ctx, tuser)
@@ -61,24 +71,36 @@ func (l *UpdateProfileLogic) UpdateProfile(in *user.UpdateProfileReq) (*user.Upd
 	}
 
 	// 更新或创建身份信息
-	userIdentity, err := l.svcCtx.UserIdentityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, in.UserId)
+	identity, err := l.svcCtx.UserIdentityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, in.UserId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 
-	if userIdentity != nil {
-		userIdentity.Gender = int64(in.Gender)
-		userIdentity.Birthday = sql.NullTime{
-			Time:  parseDate(in.Birthday),
-			Valid: in.Birthday != "",
+	if identity != nil {
+		if in.Gender != 0 {
+			identity.Gender = int64(in.Gender)
 		}
-		userIdentity.CountryCode = sql.NullString{String: in.CountryCode, Valid: in.CountryCode != ""}
-		userIdentity.Province = sql.NullString{String: in.Province, Valid: in.Province != ""}
-		userIdentity.City = sql.NullString{String: in.City, Valid: in.City != ""}
-		userIdentity.Address = sql.NullString{String: in.Address, Valid: in.Address != ""}
-		userIdentity.UpdateTimes = now
+		if in.Birthday != "" {
+			identity.Birthday = sql.NullTime{
+				Time:  parseDate(in.Birthday),
+				Valid: true,
+			}
+		}
+		if in.CountryCode != "" {
+			identity.CountryCode = sql.NullString{String: in.CountryCode, Valid: true}
+		}
+		if in.Province != "" {
+			identity.Province = sql.NullString{String: in.Province, Valid: true}
+		}
+		if in.City != "" {
+			identity.City = sql.NullString{String: in.City, Valid: true}
+		}
+		if in.Address != "" {
+			identity.Address = sql.NullString{String: in.Address, Valid: true}
+		}
+		identity.UpdateTimes = now
 
-		err = l.svcCtx.UserIdentityModel.Update(l.ctx, userIdentity)
+		err = l.svcCtx.UserIdentityModel.Update(l.ctx, identity)
 		if err != nil {
 			return nil, err
 		}
@@ -87,85 +109,84 @@ func (l *UpdateProfileLogic) UpdateProfile(in *user.UpdateProfileReq) (*user.Upd
 	l.Logger.Infof("用户 %d 更新资料成功", in.UserId)
 
 	// 返回更新后的资料
-	return l.buildUpdateProfileResp(tuser, userIdentity)
+	return l.buildUpdateProfileResp(tuser, identity)
 }
 
-func (l *UpdateProfileLogic) buildUpdateProfileResp(tuser *models.TUser, userIdentity *models.TUserIdentity) (*user.UpdateProfileResp, error) {
-	tuser2, _ := l.svcCtx.UserModel.FindOne(l.ctx, tuser.Id)
-	userIdentity2, _ := l.svcCtx.UserIdentityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, tuser.Id)
-	userSecurity, _ := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, tuser.Id)
+func (l *UpdateProfileLogic) buildUpdateProfileResp(tuser *models.TUser, _ *models.TUserIdentity) (*user.UpdateProfileResp, error) {
+	identity, _ := l.svcCtx.UserIdentityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, tuser.Id)
+	security, _ := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, tuser.Id)
 
 	userBase := &user.UserBase{
-		Id:            tuser2.Id,
-		TenantId:      tuser2.TenantId,
-		UserNo:        tuser2.UserNo,
-		Username:      tuser2.Username,
-		Nickname:      tuser2.Nickname.String,
-		Avatar:        tuser2.Avatar.String,
-		Language:      tuser2.Language.String,
-		Timezone:      tuser2.Timezone.String,
-		InviteCode:    tuser2.InviteCode.String,
-		Signature:     tuser2.Signature.String,
-		RegisterType:  user.RegisterType(tuser2.RegisterType),
-		Status:        user.UserStatus(tuser2.Status),
-		MemberLevel:   int32(tuser2.MemberLevel),
-		Source:        tuser2.Source.String,
-		ReferrerUserId: tuser2.ReferrerUserId.Int64,
-		LastLoginIp:   tuser2.LastLoginIp.String,
-		LastLoginTime: tuser2.LastLoginTime,
-		RegisterIp:    tuser2.RegisterIp.String,
-		RegisterTime:  tuser2.RegisterTime,
-		Remark:        tuser2.Remark.String,
-		Deleted:       tuser2.Deleted == 1,
-		CreateTimes:   tuser2.CreateTimes,
-		UpdateTimes:   tuser2.UpdateTimes,
+		Id:             tuser.Id,
+		TenantId:       tuser.TenantId,
+		UserNo:         tuser.UserNo,
+		Username:       tuser.Username,
+		Nickname:       tuser.Nickname.String,
+		Avatar:         tuser.Avatar.String,
+		Language:       tuser.Language.String,
+		Timezone:       tuser.Timezone.String,
+		InviteCode:     tuser.InviteCode.String,
+		Signature:      tuser.Signature.String,
+		RegisterType:   user.RegisterType(tuser.RegisterType),
+		Status:         user.UserStatus(tuser.Status),
+		MemberLevel:    int32(tuser.MemberLevel),
+		Source:         tuser.Source.String,
+		ReferrerUserId: tuser.ReferrerUserId.Int64,
+		LastLoginIp:    tuser.LastLoginIp.String,
+		LastLoginTime:  tuser.LastLoginTime,
+		RegisterIp:     tuser.RegisterIp.String,
+		RegisterTime:   tuser.RegisterTime,
+		Remark:         tuser.Remark.String,
+		Deleted:        tuser.Deleted == 1,
+		CreateTimes:    tuser.CreateTimes,
+		UpdateTimes:    tuser.UpdateTimes,
 	}
 
 	userIdentityProto := &user.UserIdentity{}
-	if userIdentity2 != nil {
+	if identity != nil {
 		userIdentityProto = &user.UserIdentity{
-			Id:            userIdentity2.Id,
-			TenantId:      userIdentity2.TenantId,
-			UserId:        userIdentity2.UserId,
-			Phone:         userIdentity2.Phone.String,
-			Email:         userIdentity2.Email.String,
-			RealName:      userIdentity2.RealName.String,
-			Gender:        user.Gender(userIdentity2.Gender),
-			Birthday:      userIdentity2.Birthday.Time.Format("2006-01-02"),
-			CountryCode:   userIdentity2.CountryCode.String,
-			Province:      userIdentity2.Province.String,
-			City:          userIdentity2.City.String,
-			Address:       userIdentity2.Address.String,
-			IdType:        user.IdType(userIdentity2.IdType),
-			IdNo:          userIdentity2.IdNo.String,
-			FrontImage:    userIdentity2.FrontImage.String,
-			BackImage:     userIdentity2.BackImage.String,
-			HandheldImage: userIdentity2.HandheldImage.String,
-			KycLevel:      user.KycLevel(userIdentity2.KycLevel),
-			VerifyStatus:  user.VerifyStatus(userIdentity2.VerifyStatus),
-			RejectReason:  userIdentity2.RejectReason.String,
-			SubmitTime:    userIdentity2.SubmitTime,
-			VerifyTime:    userIdentity2.VerifyTime,
-			VerifyBy:      userIdentity2.VerifyBy.Int64,
-			CreateTimes:   userIdentity2.CreateTimes,
-			UpdateTimes:   userIdentity2.UpdateTimes,
+			Id:            identity.Id,
+			TenantId:      identity.TenantId,
+			UserId:        identity.UserId,
+			Phone:         identity.Phone.String,
+			Email:         identity.Email.String,
+			RealName:      identity.RealName.String,
+			Gender:        user.Gender(identity.Gender),
+			Birthday:      identity.Birthday.Time.Format("2006-01-02"),
+			CountryCode:   identity.CountryCode.String,
+			Province:      identity.Province.String,
+			City:          identity.City.String,
+			Address:       identity.Address.String,
+			IdType:        user.IdType(identity.IdType),
+			IdNo:          identity.IdNo.String,
+			FrontImage:    identity.FrontImage.String,
+			BackImage:     identity.BackImage.String,
+			HandheldImage: identity.HandheldImage.String,
+			KycLevel:      user.KycLevel(identity.KycLevel),
+			VerifyStatus:  user.VerifyStatus(identity.VerifyStatus),
+			RejectReason:  identity.RejectReason.String,
+			SubmitTime:    identity.SubmitTime,
+			VerifyTime:    identity.VerifyTime,
+			VerifyBy:      identity.VerifyBy.Int64,
+			CreateTimes:   identity.CreateTimes,
+			UpdateTimes:   identity.UpdateTimes,
 		}
 	}
 
 	userSecurityProto := &user.UserSecurity{}
-	if userSecurity != nil {
+	if security != nil {
 		userSecurityProto = &user.UserSecurity{
-			Id:              userSecurity.Id,
-			TenantId:        userSecurity.TenantId,
-			UserId:          userSecurity.UserId,
-			HasPayPassword:  userSecurity.PayPasswordHash.Valid && userSecurity.PayPasswordHash.String != "",
-			GoogleEnabled:   userSecurity.GoogleEnabled == 1,
-			LoginErrorCount: userSecurity.LoginErrorCount,
-			PayErrorCount:   userSecurity.PayErrorCount,
-			LockUntil:       userSecurity.LockUntil,
-			RiskLevel:       user.RiskLevel(userSecurity.RiskLevel),
-			CreateTimes:     userSecurity.CreateTimes,
-			UpdateTimes:     userSecurity.UpdateTimes,
+			Id:              security.Id,
+			TenantId:        security.TenantId,
+			UserId:          security.UserId,
+			HasPayPassword:  security.PayPasswordHash.Valid && security.PayPasswordHash.String != "",
+			GoogleEnabled:   security.GoogleEnabled == 1,
+			LoginErrorCount: security.LoginErrorCount,
+			PayErrorCount:   security.PayErrorCount,
+			LockUntil:       security.LockUntil,
+			RiskLevel:       user.RiskLevel(security.RiskLevel),
+			CreateTimes:     security.CreateTimes,
+			UpdateTimes:     security.UpdateTimes,
 		}
 	}
 

@@ -55,15 +55,20 @@ func (l *ListUserRechargeStatsLogic) ListUserRechargeStats(req *types.ListUserRe
 			TodaySuccessCount:  int64(item.TodaySuccessCount),
 			FirstSuccessTime:   item.FirstSuccessTime,
 			LastSuccessTime:    item.LastSuccessTime,
-			CreateTimes:         item.CreateTimes,
-			UpdateTimes:         item.UpdateTimes,
+			CreateTimes:        item.CreateTimes,
+			UpdateTimes:        item.UpdateTimes,
 		}
 	}
 
 	return &types.ListUserRechargeStatsResp{
 		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
+			Code:       result.Base.Code,
+			Msg:        result.Base.Msg,
+			Total:      result.Base.Total,
+			HasNext:    result.Base.HasNext,
+			HasPrev:    result.Base.HasPrev,
+			NextCursor: result.Base.NextCursor,
+			PrevCursor: result.Base.PrevCursor,
 		},
 		Data: data,
 	}, nil

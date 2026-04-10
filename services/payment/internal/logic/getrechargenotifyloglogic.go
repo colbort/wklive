@@ -2,9 +2,12 @@ package logic
 
 import (
 	"context"
+	"errors"
 
+	"wklive/common/helper"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
+	"wklive/services/payment/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +28,37 @@ func NewGetRechargeNotifyLogLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 // 充值回调日志
 func (l *GetRechargeNotifyLogLogic) GetRechargeNotifyLog(in *payment.GetRechargeNotifyLogReq) (*payment.GetRechargeNotifyLogResp, error) {
-	// todo: add your logic here and delete this line
+	var (
+		errLogic = "GetRechargeNotifyLog"
+	)
 
-	return &payment.GetRechargeNotifyLogResp{}, nil
+	notifyLog, err := l.svcCtx.RechargeNotifyLogModel.FindOne(l.ctx, in.Id)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		l.Logger.Errorf("%s error: %s", errLogic, err.Error())
+		return nil, err
+	}
+
+	if notifyLog == nil {
+		return &payment.GetRechargeNotifyLogResp{
+			Base: helper.GetErrResp(404, "回调日志不存在"),
+		}, nil
+	}
+
+	return &payment.GetRechargeNotifyLogResp{
+		Base: helper.OkResp(),
+		Data: &payment.PayNotifyLog{
+			Id:            notifyLog.Id,
+			OrderId:       notifyLog.OrderId.Int64,
+			OrderNo:       notifyLog.OrderNo.String,
+			PlatformId:    notifyLog.PlatformId,
+			ChannelId:     notifyLog.ChannelId.Int64,
+			NotifyStatus:  payment.NotifyProcessStatus(notifyLog.NotifyStatus),
+			NotifyBody:    notifyLog.NotifyBody.String,
+			SignResult:    payment.SignResult(notifyLog.SignResult),
+			ProcessResult: notifyLog.ProcessResult.String,
+			ErrorMessage:  notifyLog.ErrorMessage.String,
+			NotifyTime:    notifyLog.NotifyTime.Int64,
+			CreateTimes:   notifyLog.CreateTimes,
+		},
+	}, nil
 }

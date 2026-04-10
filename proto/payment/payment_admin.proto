@@ -157,7 +157,7 @@ message CreateTenantPayAccountReq {
   string cert_cipher = 13;
   string ext_config = 14;
   payment.CommonStatus status = 15;
-  bool is_default = 16;
+  int64 is_default = 16;
   string remark = 17;
 }
 
@@ -175,7 +175,7 @@ message UpdateTenantPayAccountReq {
   string cert_cipher = 11;
   string ext_config = 12;
   payment.CommonStatus status = 13;
-  bool is_default = 14;
+  int64 is_default = 14;
   string remark = 15;
 }
 
@@ -214,13 +214,13 @@ message CreateTenantPayChannelReq {
   string display_name = 7;
   string icon = 8;
   string currency = 9;
-  int32 sort = 10;
-  bool visible = 11;
+  int64 sort = 10;
+  int64 visible = 11;
   payment.CommonStatus status = 12;
   int64 single_min_amount = 13;
   int64 single_max_amount = 14;
   int64 daily_max_amount = 15;
-  int32 daily_max_count = 16;
+  int64 daily_max_count = 16;
   payment.FeeType fee_type = 17;
   string fee_rate = 18;
   int64 fee_fixed_amount = 19;
@@ -235,13 +235,13 @@ message UpdateTenantPayChannelReq {
   string display_name = 4;
   string icon = 5;
   string currency = 6;
-  int32 sort = 7;
-  bool visible = 8;
+  int64 sort = 7;
+  int64 visible = 8;
   payment.CommonStatus status = 9;
   int64 single_min_amount = 10;
   int64 single_max_amount = 11;
   int64 daily_max_amount = 12;
-  int32 daily_max_count = 13;
+  int64 daily_max_count = 13;
   payment.FeeType fee_type = 14;
   string fee_rate = 15;
   int64 fee_fixed_amount = 16;
@@ -267,7 +267,7 @@ message ListTenantPayChannelsReq {
   int64 account_id = 5;
   string keyword = 6;
   payment.CommonStatus status = 7;
-  bool visible = 8;
+  int64 visible = 8;
 }
 
 message ListTenantPayChannelsResp {
@@ -280,18 +280,18 @@ message CreateTenantPayChannelRuleReq {
   int64 tenant_id = 1;
   int64 channel_id = 2;
   string rule_name = 3;
-  int32 priority = 4;
+  int64 priority = 4;
   payment.CommonStatus status = 5;
   int64 single_amount_min = 6;
   int64 single_amount_max = 7;
   int64 user_total_recharge_min = 8;
   int64 user_total_recharge_max = 9;
-  int32 member_level_min = 10;
-  int32 member_level_max = 11;
-  int32 kyc_level_min = 12;
-  int32 kyc_level_max = 13;
-  bool allow_new_user = 14;
-  bool allow_old_user = 15;
+  int64 member_level_min = 10;
+  int64 member_level_max = 11;
+  int64 kyc_level_min = 12;
+  int64 kyc_level_max = 13;
+  int64 allow_new_user = 14;
+  int64 allow_old_user = 15;
   string allow_tags = 16;
   string deny_tags = 17;
   string remark = 18;
@@ -301,18 +301,18 @@ message UpdateTenantPayChannelRuleReq {
   int64 id = 1;
   int64 tenant_id = 2;
   string rule_name = 3;
-  int32 priority = 4;
+  int64 priority = 4;
   payment.CommonStatus status = 5;
   int64 single_amount_min = 6;
   int64 single_amount_max = 7;
   int64 user_total_recharge_min = 8;
   int64 user_total_recharge_max = 9;
-  int32 member_level_min = 10;
-  int32 member_level_max = 11;
-  int32 kyc_level_min = 12;
-  int32 kyc_level_max = 13;
-  bool allow_new_user = 14;
-  bool allow_old_user = 15;
+  int64 member_level_min = 10;
+  int64 member_level_max = 11;
+  int64 kyc_level_min = 12;
+  int64 kyc_level_max = 13;
+  int64 allow_new_user = 14;
+  int64 allow_old_user = 15;
   string allow_tags = 16;
   string deny_tags = 17;
   string remark = 18;
@@ -470,7 +470,7 @@ message GetWithdrawOrderResp {
 message AuditWithdrawOrderReq {
   int64 tenant_id = 1;
   string order_no = 2;
-  bool approve = 3;
+  int64 approve = 3;
   string remark = 4;
 }
 

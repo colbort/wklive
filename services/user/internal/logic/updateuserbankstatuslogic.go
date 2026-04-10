@@ -41,13 +41,19 @@ func (l *UpdateUserBankStatusLogic) UpdateUserBankStatus(in *user.UpdateUserBank
 			Base: &common.RespBase{Code: 404, Msg: "银行卡不存在"},
 		}, nil
 	}
+	if userBank.TenantId != in.TenantId {
+		return &user.AdminCommonResp{
+			Base: &common.RespBase{Code: 403, Msg: "无权操作此银行卡"},
+		}, nil
+	}
 
 	// 更新银行卡状态
-	err = l.svcCtx.UserBankModel.Update(l.ctx, &models.TUserBank{
-		Id:          in.Id,
-		Status:      int64(in.Status),
-		UpdateTimes: time.Now().UnixMilli(),
-	})
+	if in.Status != 0 {
+		userBank.Status = int64(in.Status)
+	}
+	userBank.UpdateTimes = time.Now().UnixMilli()
+
+	err = l.svcCtx.UserBankModel.Update(l.ctx, userBank)
 	if err != nil {
 		return nil, err
 	}

@@ -29,7 +29,7 @@ type AssignUserRolesReq struct {
 type AuditWithdrawOrderReq struct {
 	TenantId int64  `json:"tenantId"`
 	OrderNo  string `json:"orderNo"`
-	Approve  bool   `json:"approve"`
+	Approve  int64  `json:"approve"`
 	Remark   string `json:"remark,optional"`
 }
 
@@ -126,7 +126,7 @@ type CreateTenantPayAccountReq struct {
 	CertCipher          string `json:"certCipher,optional"`
 	ExtConfig           string `json:"extConfig,optional"`
 	Status              int64  `json:"status"`
-	IsDefault           bool   `json:"isDefault"`
+	IsDefault           int64  `json:"isDefault"`
 	Remark              string `json:"remark,optional"`
 }
 
@@ -141,7 +141,7 @@ type CreateTenantPayChannelReq struct {
 	Icon            string `json:"icon,optional"`
 	Currency        string `json:"currency"`
 	Sort            int64  `json:"sort"`
-	Visible         bool   `json:"visible"`
+	Visible         int64  `json:"visible"`
 	Status          int64  `json:"status"`
 	SingleMinAmount int64  `json:"singleMinAmount"`
 	SingleMaxAmount int64  `json:"singleMaxAmount"`
@@ -168,8 +168,8 @@ type CreateTenantPayChannelRuleReq struct {
 	MemberLevelMax       int64  `json:"memberLevelMax"`
 	KycLevelMin          int64  `json:"kycLevelMin"`
 	KycLevelMax          int64  `json:"kycLevelMax"`
-	AllowNewUser         bool   `json:"allowNewUser"`
-	AllowOldUser         bool   `json:"allowOldUser"`
+	AllowNewUser         int64  `json:"allowNewUser"`
+	AllowOldUser         int64  `json:"allowOldUser"`
 	AllowTags            string `json:"allowTags,optional"`
 	DenyTags             string `json:"denyTags,optional"`
 	Remark               string `json:"remark,optional"`
@@ -715,7 +715,7 @@ type ListTenantPayChannelsReq struct {
 	AccountId  int64  `form:"accountId,optional"`
 	Keyword    string `form:"keyword,optional"`
 	Status     int64  `form:"status,optional"`
-	Visible    bool   `form:"visible,optional"`
+	Visible    int64  `form:"visible,optional"`
 }
 
 type ListTenantPayChannelsResp struct {
@@ -1526,7 +1526,7 @@ type TenantPayAccount struct {
 	PublicKey           string `json:"publicKey"`
 	ExtConfig           string `json:"extConfig"`
 	Status              int64  `json:"status"` // 0未知 1启用 2禁用
-	IsDefault           bool   `json:"isDefault"`
+	IsDefault           int64  `json:"isDefault"`
 	Remark              string `json:"remark"`
 	CreateTimes         int64  `json:"createTimes"`
 	UpdateTimes         int64  `json:"updateTimes"`
@@ -1544,7 +1544,7 @@ type TenantPayChannel struct {
 	Icon            string `json:"icon"`
 	Currency        string `json:"currency"`
 	Sort            int64  `json:"sort"`
-	Visible         bool   `json:"visible"`
+	Visible         int64  `json:"visible"`
 	Status          int64  `json:"status"` // 0未知 1启用 2禁用
 	SingleMinAmount int64  `json:"singleMinAmount"`
 	SingleMaxAmount int64  `json:"singleMaxAmount"`
@@ -1574,8 +1574,8 @@ type TenantPayChannelRule struct {
 	MemberLevelMax       int64  `json:"memberLevelMax"`
 	KycLevelMin          int64  `json:"kycLevelMin"`
 	KycLevelMax          int64  `json:"kycLevelMax"`
-	AllowNewUser         bool   `json:"allowNewUser"`
-	AllowOldUser         bool   `json:"allowOldUser"`
+	AllowNewUser         int64  `json:"allowNewUser"`
+	AllowOldUser         int64  `json:"allowOldUser"`
 	AllowTags            string `json:"allowTags"`
 	DenyTags             string `json:"denyTags"`
 	Remark               string `json:"remark"`
@@ -1691,7 +1691,7 @@ type UpdateTenantPayAccountReq struct {
 	CertCipher       string `json:"certCipher,optional"`
 	ExtConfig        string `json:"extConfig,optional"`
 	Status           int64  `json:"status"`
-	IsDefault        bool   `json:"isDefault"`
+	IsDefault        int64  `json:"isDefault"`
 	Remark           string `json:"remark,optional"`
 }
 
@@ -1703,7 +1703,7 @@ type UpdateTenantPayChannelReq struct {
 	Icon            string `json:"icon,optional"`
 	Currency        string `json:"currency"`
 	Sort            int64  `json:"sort"`
-	Visible         bool   `json:"visible"`
+	Visible         int64  `json:"visible"`
 	Status          int64  `json:"status"`
 	SingleMinAmount int64  `json:"singleMinAmount"`
 	SingleMaxAmount int64  `json:"singleMaxAmount"`
@@ -1730,8 +1730,8 @@ type UpdateTenantPayChannelRuleReq struct {
 	MemberLevelMax       int64  `json:"memberLevelMax"`
 	KycLevelMin          int64  `json:"kycLevelMin"`
 	KycLevelMax          int64  `json:"kycLevelMax"`
-	AllowNewUser         bool   `json:"allowNewUser"`
-	AllowOldUser         bool   `json:"allowOldUser"`
+	AllowNewUser         int64  `json:"allowNewUser"`
+	AllowOldUser         int64  `json:"allowOldUser"`
 	AllowTags            string `json:"allowTags,optional"`
 	DenyTags             string `json:"denyTags,optional"`
 	Remark               string `json:"remark,optional"`

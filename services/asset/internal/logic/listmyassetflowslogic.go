@@ -34,7 +34,7 @@ func (l *ListMyAssetFlowsLogic) ListMyAssetFlows(in *asset.ListMyAssetFlowsReq) 
 		endTime = in.TimeRange.EndTime
 	}
 
-	items, total, err := l.svcCtx.AssetFlowModel.FindPageByFilter(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, helpers.AssetBizType(in.BizType), helpers.AssetSceneType(in.SceneType), "", startTime, endTime, in.Page.Cursor, in.Page.Limit)
+	items, total, err := l.svcCtx.AssetFlowModel.FindPage(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, helpers.AssetBizType(in.BizType), helpers.AssetSceneType(in.SceneType), "", startTime, endTime, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}

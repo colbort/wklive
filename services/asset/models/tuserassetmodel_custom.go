@@ -11,9 +11,8 @@ import (
 
 type UserAssetModel interface {
 	tUserAssetModel
-	FindPage(ctx context.Context, cursor int64, limit int64) ([]*TUserAsset, int64, error)
-	FindListByFilter(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string) ([]*TUserAsset, error)
-	FindPageByFilter(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, status int64, cursor int64, limit int64) ([]*TUserAsset, int64, error)
+	FindPage(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, status int64, cursor int64, limit int64) ([]*TUserAsset, int64, error)
+	FindAll(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, status int64) ([]*TUserAsset, error)
 	// 增加可用资产（充值等），如果不存在则先插入初始化记录
 	AddAvailableAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount float64, version int64, updateTimes int64) (int64, error)
 	SubAvailableAmount(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (bool, error)
@@ -31,78 +30,7 @@ type UserAssetModel interface {
 	UnlockAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (bool, error)
 }
 
-func (m *defaultTUserAssetModel) FindPage(ctx context.Context, cursor int64, limit int64) ([]*TUserAsset, int64, error) {
-	if limit <= 0 {
-		limit = 10
-	}
-	if limit > 100 {
-		limit = 100
-	}
-
-	where := "1=1"
-	args := make([]any, 0, 2)
-
-	// ---- total ----
-	var total int64
-	countSql := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
-	if err := m.QueryRowNoCacheCtx(ctx, &total, countSql, args...); err != nil {
-		return nil, 0, err
-	}
-
-	listArgs := append([]any{}, args...)
-	var listSql string
-
-	if cursor <= 0 {
-		listSql = fmt.Sprintf(
-			`SELECT %s
-            FROM %s
-            WHERE %s
-            ORDER BY id DESC
-            LIMIT ?`,
-			tUserAssetRows, m.table, where,
-		)
-		listArgs = append(listArgs, limit)
-	} else {
-		listSql = fmt.Sprintf(
-			`SELECT %s
-            FROM %s
-            WHERE %s AND id < ?
-            ORDER BY id DESC
-            LIMIT ?`,
-			tUserAssetRows, m.table, where,
-		)
-		listArgs = append(listArgs, cursor, limit)
-	}
-
-	var list []*TUserAsset
-	if err := m.QueryRowsNoCacheCtx(ctx, &list, listSql, listArgs...); err != nil {
-		return nil, 0, err
-	}
-
-	return list, total, nil
-}
-
-func (m *defaultTUserAssetModel) FindListByFilter(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string) ([]*TUserAsset, error) {
-	where := "tenant_id = ? AND user_id = ?"
-	args := []any{tenantId, userId}
-	if walletType > 0 {
-		where += " AND wallet_type = ?"
-		args = append(args, walletType)
-	}
-	if coin != "" {
-		where += " AND coin = ?"
-		args = append(args, coin)
-	}
-
-	query := fmt.Sprintf("SELECT %s FROM %s WHERE %s ORDER BY id DESC", tUserAssetRows, m.table, where)
-	var list []*TUserAsset
-	if err := m.QueryRowsNoCacheCtx(ctx, &list, query, args...); err != nil {
-		return nil, err
-	}
-	return list, nil
-}
-
-func (m *defaultTUserAssetModel) FindPageByFilter(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, status int64, cursor int64, limit int64) ([]*TUserAsset, int64, error) {
+func (m *defaultTUserAssetModel) FindPage(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, status int64, cursor int64, limit int64) ([]*TUserAsset, int64, error) {
 	if limit <= 0 {
 		limit = 10
 	}
@@ -169,6 +97,46 @@ func (m *defaultTUserAssetModel) FindPageByFilter(ctx context.Context, tenantId 
 	}
 
 	return list, total, nil
+}
+
+func (m *defaultTUserAssetModel) FindAll(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, status int64) ([]*TUserAsset, error) {
+	where := "1=1"
+	args := make([]any, 0, 5)
+	if tenantId > 0 {
+		where += " AND tenant_id = ?"
+		args = append(args, tenantId)
+	}
+	if userId > 0 {
+		where += " AND user_id = ?"
+		args = append(args, userId)
+	}
+	if walletType > 0 {
+		where += " AND wallet_type = ?"
+		args = append(args, walletType)
+	}
+	if coin != "" {
+		where += " AND coin = ?"
+		args = append(args, coin)
+	}
+	if status > 0 {
+		where += " AND status = ?"
+		args = append(args, status)
+	}
+
+	query := fmt.Sprintf(
+		`SELECT %s
+		FROM %s
+		WHERE %s
+		ORDER BY id DESC`,
+		tUserAssetRows, m.table, where,
+	)
+
+	var list []*TUserAsset
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, query, args...); err != nil {
+		return nil, err
+	}
+
+	return list, nil
 }
 
 // 增加可用资产（充值等）

@@ -46,9 +46,13 @@ func (l *UpdateUserStatusLogic) UpdateUserStatus(in *user.UpdateUserStatusReq) (
 	}
 
 	// 更新用户状态
-	tuser.Status = int64(in.Status)
-	tuser.Remark.String = in.Remark
-	tuser.Remark.Valid = in.Remark != ""
+	if in.Status != 0 {
+		tuser.Status = int64(in.Status)
+	}
+	if in.Remark != "" {
+		tuser.Remark.String = in.Remark
+		tuser.Remark.Valid = true
+	}
 	tuser.UpdateTimes = time.Now().UnixMilli()
 
 	err = l.svcCtx.UserModel.Update(l.ctx, tuser)
