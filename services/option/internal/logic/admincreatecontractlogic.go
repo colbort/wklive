@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	commonconv "wklive/common/conv"
+	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
@@ -36,31 +36,31 @@ func (l *AdminCreateContractLogic) AdminCreateContract(in *option.CreateContract
 		return nil, err
 	}
 
-	strikePrice, err := commonconv.ParseFloatField(in.StrikePrice)
+	strikePrice, err := conv.ParseFloatField(in.StrikePrice)
 	if err != nil {
 		return &option.CreateContractResp{Base: helper.GetErrResp(400, "strike_price格式错误")}, nil
 	}
-	contractUnit, err := commonconv.ParseFloatField(in.ContractUnit)
+	contractUnit, err := conv.ParseFloatField(in.ContractUnit)
 	if err != nil {
 		return &option.CreateContractResp{Base: helper.GetErrResp(400, "contract_unit格式错误")}, nil
 	}
-	minOrderQty, err := commonconv.ParseFloatField(in.MinOrderQty)
+	minOrderQty, err := conv.ParseFloatField(in.MinOrderQty)
 	if err != nil {
 		return &option.CreateContractResp{Base: helper.GetErrResp(400, "min_order_qty格式错误")}, nil
 	}
-	maxOrderQty, err := commonconv.ParseFloatField(in.MaxOrderQty)
+	maxOrderQty, err := conv.ParseFloatField(in.MaxOrderQty)
 	if err != nil {
 		return &option.CreateContractResp{Base: helper.GetErrResp(400, "max_order_qty格式错误")}, nil
 	}
-	priceTick, err := commonconv.ParseFloatField(in.PriceTick)
+	priceTick, err := conv.ParseFloatField(in.PriceTick)
 	if err != nil {
 		return &option.CreateContractResp{Base: helper.GetErrResp(400, "price_tick格式错误")}, nil
 	}
-	qtyStep, err := commonconv.ParseFloatField(in.QtyStep)
+	qtyStep, err := conv.ParseFloatField(in.QtyStep)
 	if err != nil {
 		return &option.CreateContractResp{Base: helper.GetErrResp(400, "qty_step格式错误")}, nil
 	}
-	multiplier, err := commonconv.ParseFloatField(in.Multiplier)
+	multiplier, err := conv.ParseFloatField(in.Multiplier)
 	if err != nil {
 		return &option.CreateContractResp{Base: helper.GetErrResp(400, "multiplier格式错误")}, nil
 	}

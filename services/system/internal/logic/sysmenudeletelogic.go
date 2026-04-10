@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"wklive/common/helper"
-	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -33,10 +32,7 @@ func (l *SysMenuDeleteLogic) SysMenuDelete(in *system.SysMenuDeleteReq) (*system
 	}
 	if menu == nil {
 		return &system.RespBase{
-			Base: &common.RespBase{
-				Code: 400,
-				Msg:  "Menu not found",
-			},
+			Base: helper.GetErrResp(400, "Menu not found"),
 		}, nil
 	}
 	err = l.svcCtx.MenuModel.Delete(l.ctx, in.Id)

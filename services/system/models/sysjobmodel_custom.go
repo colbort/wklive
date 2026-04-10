@@ -7,6 +7,7 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
 )
 
 type JobModel interface {
@@ -17,35 +18,19 @@ type JobModel interface {
 }
 
 func (m *customSysJobModel) FindPage(ctx context.Context, cursor, limit int64, keyword, jobName, jobGroup string, status int64) ([]*SysJob, int64, error) {
-	if limit <= 0 {
-		limit = 10
-	}
-	if limit > 100 {
-		limit = 100
-	}
+	limit = sqlutil.NormalizeLimit(limit)
 
-	where := "1=1"
-	args := make([]any, 0, 2)
-
+	builder := sqlutil.NewPageQueryBuilder()
 	if keyword != "" {
-		where += " AND (job_name LIKE ? OR job_group LIKE ?)"
-		args = append(args, "%"+keyword+"%", "%"+keyword+"%")
+		like := "%" + keyword + "%"
+		builder.And("(job_name LIKE ? OR job_group LIKE ?)", like, like)
 	}
+	builder.LikeString("job_name", "%"+jobName+"%")
+	builder.LikeString("job_group", "%"+jobGroup+"%")
+	builder.EqInt64("status", status)
 
-	if jobName != "" {
-		where += " AND job_name LIKE ?"
-		args = append(args, "%"+jobName+"%")
-	}
-
-	if jobGroup != "" {
-		where += " AND job_group LIKE ?"
-		args = append(args, "%"+jobGroup+"%")
-	}
-
-	if status > 0 {
-		where += " AND status = ?"
-		args = append(args, status)
-	}
+	where := builder.Where()
+	args := builder.Args()
 
 	// ---- total ----
 	var total int64

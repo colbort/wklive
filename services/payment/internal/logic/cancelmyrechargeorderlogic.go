@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"wklive/common/helper"
-	"wklive/proto/common"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -37,30 +36,21 @@ func (l *CancelMyRechargeOrderLogic) CancelMyRechargeOrder(in *payment.CancelMyR
 
 	if order == nil {
 		return &payment.AppCommonResp{
-			Base: &common.RespBase{
-				Code: 404,
-				Msg:  "订单不存在",
-			},
+			Base: helper.GetErrResp(404, "订单不存在"),
 		}, nil
 	}
 
 	// Check permission
 	if order.UserId != in.UserId || order.TenantId != in.TenantId {
 		return &payment.AppCommonResp{
-			Base: &common.RespBase{
-				Code: 403,
-				Msg:  "无权取消该订单",
-			},
+			Base: helper.GetErrResp(403, "无权取消该订单"),
 		}, nil
 	}
 
 	// Can only cancel unpaid orders
 	if order.Status != int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PENDING) {
 		return &payment.AppCommonResp{
-			Base: &common.RespBase{
-				Code: 201,
-				Msg:  "只能取消待支付的订单",
-			},
+			Base: helper.GetErrResp(201, "只能取消待支付的订单"),
 		}, nil
 	}
 

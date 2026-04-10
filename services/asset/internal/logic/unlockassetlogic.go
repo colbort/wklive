@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/helpers"
@@ -29,7 +30,7 @@ func NewUnlockAssetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Unloc
 
 // 解锁
 func (l *UnlockAssetLogic) UnlockAsset(in *asset.UnlockAssetReq) (*asset.ChangeAssetResp, error) {
-	amount, err := helpers.ParseAmount(in.Amount)
+	amount, err := conv.ParseFloatField(in.Amount)
 	if err != nil {
 		return nil, err
 	}

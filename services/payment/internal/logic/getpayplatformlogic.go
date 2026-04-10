@@ -45,7 +45,7 @@ func (l *GetPayPlatformLogic) GetPayPlatform(in *payment.GetPayPlatformReq) (*pa
 	return &payment.GetPayPlatformResp{
 		Base: helper.OkResp(),
 		Data: &payment.PayPlatform{
-			Id:          platform.Id,
+			Id:           platform.Id,
 			PlatformCode: platform.PlatformCode,
 			PlatformName: platform.PlatformName,
 			PlatformType: payment.PlatformType(platform.PlatformType),

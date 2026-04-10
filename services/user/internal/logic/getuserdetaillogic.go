@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"wklive/proto/common"
+	"wklive/common/helper"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -36,10 +36,7 @@ func (l *GetUserDetailLogic) GetUserDetail(in *user.GetUserDetailReq) (*user.Get
 
 	if tuser == nil {
 		return &user.GetUserDetailResp{
-			Base: &common.RespBase{
-				Code: 404,
-				Msg:  "用户不存在",
-			},
+			Base: helper.GetErrResp(404, "用户不存在"),
 		}, nil
 	}
 
@@ -148,7 +145,7 @@ func (l *GetUserDetailLogic) GetUserDetail(in *user.GetUserDetailReq) (*user.Get
 	}
 
 	return &user.GetUserDetailResp{
-		Base: &common.RespBase{Code: 200, Msg: "OK"},
+		Base: helper.OkResp(),
 		Detail: &user.UserDetail{
 			Base:     userBase,
 			Identity: userIdentityProto,

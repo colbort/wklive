@@ -6,7 +6,6 @@ import (
 
 	"wklive/common/helper"
 	"wklive/common/utils"
-	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -38,10 +37,7 @@ func (l *InitGoogle2FALogic) InitGoogle2FA(in *user.InitGoogle2FAReq) (*user.Ini
 
 	if tuser == nil {
 		return &user.InitGoogle2FAResp{
-			Base: &common.RespBase{
-				Code: 404,
-				Msg:  "用户不存在",
-			},
+			Base: helper.GetErrResp(404, "用户不存在"),
 		}, nil
 	}
 
@@ -52,10 +48,7 @@ func (l *InitGoogle2FALogic) InitGoogle2FA(in *user.InitGoogle2FAReq) (*user.Ini
 	}
 	if secret == "" {
 		return &user.InitGoogle2FAResp{
-			Base: &common.RespBase{
-				Code: 500,
-				Msg:  "生成密钥失败",
-			},
+			Base: helper.GetErrResp(500, "生成密钥失败"),
 		}, nil
 	}
 

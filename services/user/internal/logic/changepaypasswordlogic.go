@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"wklive/common/helper"
-	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -39,20 +38,14 @@ func (l *ChangePayPasswordLogic) ChangePayPassword(in *user.ChangePayPasswordReq
 
 	if tuser == nil {
 		return &user.AppCommonResp{
-			Base: &common.RespBase{
-				Code: 404,
-				Msg:  "用户不存在",
-			},
+			Base: helper.GetErrResp(404, "用户不存在"),
 		}, nil
 	}
 
 	// 验证密码是否一致
 	if in.NewPassword != in.ConfirmPassword {
 		return &user.AppCommonResp{
-			Base: &common.RespBase{
-				Code: 400,
-				Msg:  "两次密码输入不一致",
-			},
+			Base: helper.GetErrResp(400, "两次密码输入不一致"),
 		}, nil
 	}
 
@@ -64,10 +57,7 @@ func (l *ChangePayPasswordLogic) ChangePayPassword(in *user.ChangePayPasswordReq
 
 	if userSecurity == nil {
 		return &user.AppCommonResp{
-			Base: &common.RespBase{
-				Code: 404,
-				Msg:  "支付密码未设置",
-			},
+			Base: helper.GetErrResp(404, "支付密码未设置"),
 		}, nil
 	}
 

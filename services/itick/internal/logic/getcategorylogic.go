@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"wklive/common/helper"
-	"wklive/proto/common"
 	"wklive/proto/itick"
 	"wklive/services/itick/internal/svc"
 
@@ -33,10 +32,7 @@ func (l *GetCategoryLogic) GetCategory(in *itick.GetCategoryReq) (*itick.GetCate
 	}
 	if result == nil {
 		return &itick.GetCategoryResp{
-			Base: &common.RespBase{
-				Code: 1,
-				Msg:  "数据不存在",
-			},
+			Base: helper.GetErrResp(1, "数据不存在"),
 		}, nil
 	}
 	return &itick.GetCategoryResp{

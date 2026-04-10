@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	commonconv "wklive/common/conv"
+	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
@@ -70,49 +70,49 @@ func (l *AdminUpdateContractLogic) AdminUpdateContract(in *option.UpdateContract
 		item.SettlementType = int64(in.SettlementType)
 	}
 	if in.StrikePrice != "" {
-		value, err := commonconv.ParseFloatField(in.StrikePrice)
+		value, err := conv.ParseFloatField(in.StrikePrice)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.GetErrResp(400, "strike_price格式错误")}, nil
 		}
 		item.StrikePrice = value
 	}
 	if in.ContractUnit != "" {
-		value, err := commonconv.ParseFloatField(in.ContractUnit)
+		value, err := conv.ParseFloatField(in.ContractUnit)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.GetErrResp(400, "contract_unit格式错误")}, nil
 		}
 		item.ContractUnit = value
 	}
 	if in.MinOrderQty != "" {
-		value, err := commonconv.ParseFloatField(in.MinOrderQty)
+		value, err := conv.ParseFloatField(in.MinOrderQty)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.GetErrResp(400, "min_order_qty格式错误")}, nil
 		}
 		item.MinOrderQty = value
 	}
 	if in.MaxOrderQty != "" {
-		value, err := commonconv.ParseFloatField(in.MaxOrderQty)
+		value, err := conv.ParseFloatField(in.MaxOrderQty)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.GetErrResp(400, "max_order_qty格式错误")}, nil
 		}
 		item.MaxOrderQty = value
 	}
 	if in.PriceTick != "" {
-		value, err := commonconv.ParseFloatField(in.PriceTick)
+		value, err := conv.ParseFloatField(in.PriceTick)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.GetErrResp(400, "price_tick格式错误")}, nil
 		}
 		item.PriceTick = value
 	}
 	if in.QtyStep != "" {
-		value, err := commonconv.ParseFloatField(in.QtyStep)
+		value, err := conv.ParseFloatField(in.QtyStep)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.GetErrResp(400, "qty_step格式错误")}, nil
 		}
 		item.QtyStep = value
 	}
 	if in.Multiplier != "" {
-		value, err := commonconv.ParseFloatField(in.Multiplier)
+		value, err := conv.ParseFloatField(in.Multiplier)
 		if err != nil {
 			return &option.AdminCommonResp{Base: helper.GetErrResp(400, "multiplier格式错误")}, nil
 		}

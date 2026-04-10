@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	commonconv "wklive/common/conv"
+	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
@@ -52,7 +52,7 @@ func (l *AppExerciseLogic) AppExercise(in *option.AppExerciseReq) (*option.AppEx
 		return nil, err
 	}
 
-	exerciseQty, err := commonconv.ParseFloatField(in.ExerciseQty)
+	exerciseQty, err := conv.ParseFloatField(in.ExerciseQty)
 	if err != nil || exerciseQty <= 0 {
 		return &option.AppExerciseResp{Base: helper.GetErrResp(400, "exercise_qty格式错误")}, nil
 	}
@@ -63,7 +63,7 @@ func (l *AppExerciseLogic) AppExercise(in *option.AppExerciseReq) (*option.AppEx
 	now := time.Now().Unix()
 	item := &models.TOptionExercise{
 		TenantId:        in.TenantId,
-		ExerciseNo:      commonconv.GenerateBizNo("EX"),
+		ExerciseNo:      conv.GenerateBizNo("EX"),
 		Uid:             in.Uid,
 		AccountId:       in.AccountId,
 		ContractId:      position.ContractId,

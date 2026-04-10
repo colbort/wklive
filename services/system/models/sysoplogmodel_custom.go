@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"wklive/common/sqlutil"
 )
 
 type OpLogModel interface {
@@ -17,31 +18,16 @@ func (m *defaultSysOpLogModel) FindPage(
 	cursor, limit int64,
 ) ([]*SysOpLog, int64, error) {
 
-	if limit <= 0 {
-		limit = 10
-	}
-	if limit > 100 {
-		limit = 100
-	}
+	limit = sqlutil.NormalizeLimit(limit)
 
 	// ---- WHERE 条件 ----
-	where := "1=1"
-	args := make([]any, 0, 4)
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.LikeString("username", "%"+username+"%")
+	builder.LikeString("method", "%"+method+"%")
+	builder.LikeString("path", "%"+path+"%")
 
-	if username != "" {
-		where += " AND username LIKE ?"
-		args = append(args, "%"+username+"%")
-	}
-
-	if method != "" {
-		where += " AND method LIKE ?"
-		args = append(args, "%"+method+"%")
-	}
-
-	if path != "" {
-		where += " AND path LIKE ?"
-		args = append(args, "%"+path+"%")
-	}
+	where := builder.Where()
+	args := builder.Args()
 
 	// ---- total ----
 	var total int64

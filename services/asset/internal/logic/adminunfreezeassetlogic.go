@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/helpers"
@@ -29,7 +30,7 @@ func NewAdminUnfreezeAssetLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 后台解冻资产
 func (l *AdminUnfreezeAssetLogic) AdminUnfreezeAsset(in *asset.AdminUnfreezeAssetReq) (*asset.AdminChangeAssetResp, error) {
-	amount, err := helpers.ParseAmount(in.Amount)
+	amount, err := conv.ParseFloatField(in.Amount)
 	if err != nil {
 		return nil, err
 	}

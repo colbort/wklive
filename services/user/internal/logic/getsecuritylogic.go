@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"wklive/common/helper"
-	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -37,10 +36,7 @@ func (l *GetSecurityLogic) GetSecurity(in *user.GetSecurityReq) (*user.GetSecuri
 
 	if tuser == nil {
 		return &user.GetSecurityResp{
-			Base: &common.RespBase{
-				Code: 404,
-				Msg:  "用户不存在",
-			},
+			Base: helper.GetErrResp(404, "用户不存在"),
 		}, nil
 	}
 
@@ -52,10 +48,7 @@ func (l *GetSecurityLogic) GetSecurity(in *user.GetSecurityReq) (*user.GetSecuri
 
 	if userSecurity == nil {
 		return &user.GetSecurityResp{
-			Base: &common.RespBase{
-				Code: 404,
-				Msg:  "安全设置不存在",
-			},
+			Base: helper.GetErrResp(404, "安全设置不存在"),
 		}, nil
 	}
 

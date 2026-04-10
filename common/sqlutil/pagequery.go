@@ -33,6 +33,14 @@ func (b *PageQueryBuilder) EqString(column string, value string) {
 	b.args = append(b.args, value)
 }
 
+func (b *PageQueryBuilder) LikeString(column string, value string) {
+	if value == "" {
+		return
+	}
+	b.parts = append(b.parts, fmt.Sprintf("%s LIKE ?", column))
+	b.args = append(b.args, value)
+}
+
 func (b *PageQueryBuilder) GteInt64(column string, value int64) {
 	if value == 0 {
 		return
@@ -59,6 +67,14 @@ func (b *PageQueryBuilder) InInt64(column string, values []int64) {
 		b.args = append(b.args, value)
 	}
 	b.parts = append(b.parts, fmt.Sprintf("%s IN (%s)", column, strings.Join(holders, ",")))
+}
+
+func (b *PageQueryBuilder) And(clause string, args ...any) {
+	if clause == "" {
+		return
+	}
+	b.parts = append(b.parts, clause)
+	b.args = append(b.args, args...)
 }
 
 func (b *PageQueryBuilder) Where() string {

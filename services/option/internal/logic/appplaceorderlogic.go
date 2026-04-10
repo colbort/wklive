@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	commonconv "wklive/common/conv"
+	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
@@ -44,11 +44,11 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 		return &option.AppPlaceOrderResp{Base: helper.GetErrResp(400, "合约当前不可交易")}, nil
 	}
 
-	price, err := commonconv.ParseFloatField(in.Price)
+	price, err := conv.ParseFloatField(in.Price)
 	if err != nil {
 		return &option.AppPlaceOrderResp{Base: helper.GetErrResp(400, "price格式错误")}, nil
 	}
-	qty, err := commonconv.ParseFloatField(in.Qty)
+	qty, err := conv.ParseFloatField(in.Qty)
 	if err != nil || qty <= 0 {
 		return &option.AppPlaceOrderResp{Base: helper.GetErrResp(400, "qty格式错误")}, nil
 	}
@@ -66,7 +66,7 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 	now := time.Now().Unix()
 	order := &models.TOptionOrder{
 		TenantId:         in.TenantId,
-		OrderNo:          commonconv.GenerateBizNo("OP"),
+		OrderNo:          conv.GenerateBizNo("OP"),
 		Uid:              in.Uid,
 		AccountId:        in.AccountId,
 		ContractId:       in.ContractId,

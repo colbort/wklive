@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"wklive/common/helper"
-	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -38,10 +37,7 @@ func (l *ReviewUserIdentityLogic) ReviewUserIdentity(in *user.ReviewUserIdentity
 
 	if userIdentity == nil {
 		return &user.ReviewUserIdentityResp{
-			Base: &common.RespBase{
-				Code: 404,
-				Msg:  "用户身份信息不存在",
-			},
+			Base: helper.GetErrResp(404, "用户身份信息不存在"),
 		}, nil
 	}
 

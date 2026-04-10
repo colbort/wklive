@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/helpers"
@@ -29,7 +30,7 @@ func NewDeductFrozenAssetLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 // 扣减冻结余额
 func (l *DeductFrozenAssetLogic) DeductFrozenAsset(in *asset.DeductFrozenAssetReq) (*asset.ChangeAssetResp, error) {
-	amount, err := helpers.ParseAmount(in.Amount)
+	amount, err := conv.ParseFloatField(in.Amount)
 	if err != nil {
 		return nil, err
 	}

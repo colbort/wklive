@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"wklive/common/helper"
-	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
@@ -40,10 +39,7 @@ func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system
 	}
 	if one != nil {
 		return &system.RespBase{
-			Base: &common.RespBase{
-				Code: 400,
-				Msg:  "用户名已存在",
-			},
+			Base: helper.GetErrResp(400, "用户名已存在"),
 		}, nil
 	}
 
@@ -117,10 +113,7 @@ func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system
 	if err != nil {
 		if strings.HasPrefix(err.Error(), "role_not_found:") {
 			return &system.RespBase{
-				Base: &common.RespBase{
-					Code: 400,
-					Msg:  "角色不存在",
-				},
+				Base: helper.GetErrResp(400, "角色不存在"),
 			}, nil
 		}
 		return nil, err

@@ -3,9 +3,9 @@ package logic
 import (
 	"context"
 	"database/sql"
-	"strconv"
 	"time"
 
+	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
@@ -34,7 +34,7 @@ func (l *CreateTenantPayChannelLogic) CreateTenantPayChannel(in *payment.CreateT
 		errLogic = "CreateTenantPayChannel"
 	)
 
-	feeRate, err := strconv.ParseFloat(in.FeeRate, 10)
+	feeRate, err := conv.ParseFloatField(in.FeeRate)
 	if err != nil {
 		return nil, err
 	}

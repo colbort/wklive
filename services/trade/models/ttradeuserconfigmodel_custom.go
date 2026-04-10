@@ -1,62 +1,59 @@
 package models
 
 import (
-    "context"
-    "fmt"
+	"context"
+	"fmt"
+	"wklive/common/sqlutil"
 )
 
 type TradeUserConfigModel interface {
-    tTradeUserConfigModel
-    FindPage(ctx context.Context, cursor int64, limit int64) ([]*TTradeUserConfig, int64, error)
+	tTradeUserConfigModel
+	FindPage(ctx context.Context, cursor int64, limit int64) ([]*TTradeUserConfig, int64, error)
 }
 
 func (m *defaultTTradeUserConfigModel) FindPage(ctx context.Context, cursor int64, limit int64) ([]*TTradeUserConfig, int64, error) {
-    if limit <= 0 {
-        limit = 10
-    }
-    if limit > 100 {
-        limit = 100
-    }
+	limit = sqlutil.NormalizeLimit(limit)
 
-    where := "1=1"
-    args := make([]any, 0, 2)
+	builder := sqlutil.NewPageQueryBuilder()
+	where := builder.Where()
+	args := builder.Args()
 
-    // ---- total ----
-    var total int64
-    countSql := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
-    if err := m.QueryRowNoCacheCtx(ctx, &total, countSql, args...); err != nil {
-        return nil, 0, err
-    }
+	// ---- total ----
+	var total int64
+	countSql := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
+	if err := m.QueryRowNoCacheCtx(ctx, &total, countSql, args...); err != nil {
+		return nil, 0, err
+	}
 
-    listArgs := append([]any{}, args...)
-    var listSql string
+	listArgs := append([]any{}, args...)
+	var listSql string
 
-    if cursor <= 0 {
-        listSql = fmt.Sprintf(
-            `SELECT %s
+	if cursor <= 0 {
+		listSql = fmt.Sprintf(
+			`SELECT %s
             FROM %s
             WHERE %s
             ORDER BY id DESC
             LIMIT ?`,
-            tTradeUserConfigRows, m.table, where,
-        )
-        listArgs = append(listArgs, limit)
-    } else {
-        listSql = fmt.Sprintf(
-            `SELECT %s
+			tTradeUserConfigRows, m.table, where,
+		)
+		listArgs = append(listArgs, limit)
+	} else {
+		listSql = fmt.Sprintf(
+			`SELECT %s
             FROM %s
             WHERE %s AND id < ?
             ORDER BY id DESC
             LIMIT ?`,
-            tTradeUserConfigRows, m.table, where,
-        )
-        listArgs = append(listArgs, cursor, limit)
-    }
+			tTradeUserConfigRows, m.table, where,
+		)
+		listArgs = append(listArgs, cursor, limit)
+	}
 
-    var list []*TTradeUserConfig
-    if err := m.QueryRowsNoCacheCtx(ctx, &list, listSql, listArgs...); err != nil {
-        return nil, 0, err
-    }
+	var list []*TTradeUserConfig
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, listSql, listArgs...); err != nil {
+		return nil, 0, err
+	}
 
-    return list, total, nil
+	return list, total, nil
 }

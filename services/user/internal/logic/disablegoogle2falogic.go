@@ -7,7 +7,6 @@ import (
 
 	"wklive/common/helper"
 	"wklive/common/utils"
-	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -39,10 +38,7 @@ func (l *DisableGoogle2FALogic) DisableGoogle2FA(in *user.DisableGoogle2FAReq) (
 
 	if tuser == nil {
 		return &user.AppCommonResp{
-			Base: &common.RespBase{
-				Code: 404,
-				Msg:  "用户不存在",
-			},
+			Base: helper.GetErrResp(404, "用户不存在"),
 		}, nil
 	}
 
@@ -54,20 +50,14 @@ func (l *DisableGoogle2FALogic) DisableGoogle2FA(in *user.DisableGoogle2FAReq) (
 
 	if userSecurity == nil {
 		return &user.AppCommonResp{
-			Base: &common.RespBase{
-				Code: 404,
-				Msg:  "安全设置不存在",
-			},
+			Base: helper.GetErrResp(404, "安全设置不存在"),
 		}, nil
 	}
 
 	// 验证Google 2FA code
 	if !utils.VerifyGoogle2FACode(userSecurity.GoogleSecret.String, in.GoogleCode) {
 		return &user.AppCommonResp{
-			Base: &common.RespBase{
-				Code: 400,
-				Msg:  "验证码错误",
-			},
+			Base: helper.GetErrResp(400, "验证码错误"),
 		}, nil
 	}
 

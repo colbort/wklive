@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"wklive/common/helper"
-	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -32,19 +31,13 @@ func (l *ChangeUserStatusLogic) ChangeUserStatus(in *system.ChangeUserStatusReq)
 	}
 	if user == nil {
 		return &system.RespBase{
-			Base: &common.RespBase{
-				Code: 1,
-				Msg:  "用户不存在",
-			},
+			Base: helper.GetErrResp(1, "用户不存在"),
 		}, nil
 	}
 
 	if user.Status == in.Status {
 		return &system.RespBase{
-			Base: &common.RespBase{
-				Code: 1,
-				Msg:  "用户状态未改变",
-			},
+			Base: helper.GetErrResp(1, "用户状态未改变"),
 		}, nil
 	}
 	user.Status = in.Status

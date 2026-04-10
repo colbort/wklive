@@ -5,7 +5,6 @@ import (
 
 	"wklive/common/helper"
 	"wklive/common/utils"
-	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -34,38 +33,26 @@ func (l *Google2FABindLogic) Google2FABind(in *system.Google2FABindReq) (*system
 	}
 	if user == nil {
 		return &system.RespBase{
-			Base: &common.RespBase{
-				Code: 1,
-				Msg:  "用户不存在",
-			},
+			Base: helper.GetErrResp(1, "用户不存在"),
 		}, nil
 	}
 	// 从 Redis 获取之前存储的 secret
 	secret, err := l.svcCtx.UserModel.GetGoogle2FASecret(l.ctx, user.Id)
 	if err != nil {
 		return &system.RespBase{
-			Base: &common.RespBase{
-				Code: 1,
-				Msg:  "获取2FA secret失败: " + err.Error(),
-			},
+			Base: helper.GetErrResp(1, "获取2FA secret失败: "+err.Error()),
 		}, err
 	}
 
 	if secret == "" {
 		return &system.RespBase{
-			Base: &common.RespBase{
-				Code: 1,
-				Msg:  "2FA secret已过期，请重新初始化",
-			},
+			Base: helper.GetErrResp(1, "2FA secret已过期，请重新初始化"),
 		}, nil
 	}
 
 	if !utils.VerifyGoogle2FACode(secret, in.Code) {
 		return &system.RespBase{
-			Base: &common.RespBase{
-				Code: 1,
-				Msg:  "验证码错误",
-			},
+			Base: helper.GetErrResp(1, "验证码错误"),
 		}, nil
 	}
 

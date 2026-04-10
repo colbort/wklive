@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"wklive/common/helper"
-	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -38,7 +37,7 @@ func (l *UnlockUserLogic) UnlockUser(in *user.UnlockUserReq) (*user.AdminCommonR
 
 	if userSecurity == nil {
 		return &user.AdminCommonResp{
-			Base: &common.RespBase{Code: 404, Msg: "用户安全信息不存在"},
+			Base: helper.GetErrResp(404, "用户安全信息不存在"),
 		}, nil
 	}
 

@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"wklive/common/helper"
-	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -40,12 +39,12 @@ func (l *SysUserListLogic) SysUserList(in *system.SysUserListReq) (*system.SysUs
 	}
 
 	if len(items) == 0 {
+		prevCursor := in.Page.Cursor
+		if prevCursor < 0 {
+			prevCursor = 0
+		}
 		return &system.SysUserListResp{
-			Base: &common.RespBase{
-				Code:  200,
-				Msg:   "success",
-				Total: total,
-			},
+			Base: helper.OkWithOthers(total, false, prevCursor > 0, 0, prevCursor),
 			Data: []*system.SysUserItem{},
 		}, nil
 	}

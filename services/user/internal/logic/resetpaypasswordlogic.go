@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"wklive/common/helper"
-	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -39,10 +38,7 @@ func (l *ResetPayPasswordLogic) ResetPayPassword(in *user.ResetPayPasswordReq) (
 
 	if tuser == nil {
 		return &user.AdminCommonResp{
-			Base: &common.RespBase{
-				Code: 404,
-				Msg:  "用户不存在",
-			},
+			Base: helper.GetErrResp(404, "用户不存在"),
 		}, nil
 	}
 
@@ -67,8 +63,8 @@ func (l *ResetPayPasswordLogic) ResetPayPassword(in *user.ResetPayPasswordReq) (
 			TenantId:        in.TenantId,
 			UserId:          in.UserId,
 			PayPasswordHash: sql.NullString{String: in.NewPassword, Valid: true},
-			CreateTimes:    now,
-			UpdateTimes:    now,
+			CreateTimes:     now,
+			UpdateTimes:     now,
 		}
 
 		_, err = l.svcCtx.UserSecurityModel.Insert(l.ctx, userSecurity)

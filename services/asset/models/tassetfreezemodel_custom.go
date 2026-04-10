@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"wklive/common/sqlutil"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -18,43 +19,19 @@ type AssetFreezeModel interface {
 }
 
 func (m *defaultTAssetFreezeModel) FindPage(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, bizType string, bizNo string, status int64, cursor int64, limit int64) ([]*TAssetFreeze, int64, error) {
-	if limit <= 0 {
-		limit = 10
-	}
-	if limit > 100 {
-		limit = 100
-	}
+	limit = sqlutil.NormalizeLimit(limit)
 
-	where := "1=1"
-	args := make([]any, 0, 10)
-	if tenantId > 0 {
-		where += " AND tenant_id = ?"
-		args = append(args, tenantId)
-	}
-	if userId > 0 {
-		where += " AND user_id = ?"
-		args = append(args, userId)
-	}
-	if walletType > 0 {
-		where += " AND wallet_type = ?"
-		args = append(args, walletType)
-	}
-	if coin != "" {
-		where += " AND coin = ?"
-		args = append(args, coin)
-	}
-	if bizType != "" {
-		where += " AND biz_type = ?"
-		args = append(args, bizType)
-	}
-	if bizNo != "" {
-		where += " AND biz_no = ?"
-		args = append(args, bizNo)
-	}
-	if status > 0 {
-		where += " AND status = ?"
-		args = append(args, status)
-	}
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.EqInt64("tenant_id", tenantId)
+	builder.EqInt64("user_id", userId)
+	builder.EqInt64("wallet_type", walletType)
+	builder.EqString("coin", coin)
+	builder.EqString("biz_type", bizType)
+	builder.EqString("biz_no", bizNo)
+	builder.EqInt64("status", status)
+
+	where := builder.Where()
+	args := builder.Args()
 
 	var total int64
 	countSql := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)

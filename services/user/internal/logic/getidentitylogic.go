@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"wklive/common/helper"
-	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -37,10 +36,7 @@ func (l *GetIdentityLogic) GetIdentity(in *user.GetIdentityReq) (*user.GetIdenti
 
 	if tuser == nil {
 		return &user.GetIdentityResp{
-			Base: &common.RespBase{
-				Code: 404,
-				Msg:  "用户不存在",
-			},
+			Base: helper.GetErrResp(404, "用户不存在"),
 		}, nil
 	}
 

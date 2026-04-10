@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"wklive/common/helper"
-	"wklive/proto/common"
 	"wklive/proto/itick"
 	"wklive/services/itick/internal/pkg/utils"
 	"wklive/services/itick/internal/svc"
@@ -42,18 +41,12 @@ func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryP
 	if err != nil {
 		logx.Errorf("find category failed, err=%v", err)
 		return &itick.SyncCategoryProductsResp{
-			Base: &common.RespBase{
-				Code: 1,
-				Msg:  err.Error(),
-			},
+			Base: helper.GetErrResp(1, err.Error()),
 		}, nil
 	}
 	if result == nil {
 		return &itick.SyncCategoryProductsResp{
-			Base: &common.RespBase{
-				Code: 1,
-				Msg:  "分类不存在",
-			},
+			Base: helper.GetErrResp(1, "分类不存在"),
 		}, nil
 	}
 
@@ -73,10 +66,7 @@ func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryP
 	if err != nil {
 		logx.Errorf("create sync task failed, err=%v", err)
 		return &itick.SyncCategoryProductsResp{
-			Base: &common.RespBase{
-				Code: 1,
-				Msg:  "创建同步任务失败",
-			},
+			Base: helper.GetErrResp(1, "创建同步任务失败"),
 		}, nil
 	}
 
@@ -93,7 +83,7 @@ func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryP
 	}(taskNo, reqCopy)
 
 	return &itick.SyncCategoryProductsResp{
-		Base: helper.OkResp(),
+		Base:   helper.OkResp(),
 		TaskNo: taskNo,
 	}, nil
 }

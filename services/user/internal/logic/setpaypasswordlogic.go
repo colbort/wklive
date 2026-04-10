@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"wklive/common/helper"
-	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -39,20 +38,14 @@ func (l *SetPayPasswordLogic) SetPayPassword(in *user.SetPayPasswordReq) (*user.
 
 	if tuser == nil {
 		return &user.AppCommonResp{
-			Base: &common.RespBase{
-				Code: 404,
-				Msg:  "用户不存在",
-			},
+			Base: helper.GetErrResp(404, "用户不存在"),
 		}, nil
 	}
 
 	// 验证密码是否一致
 	if in.Password != in.ConfirmPassword {
 		return &user.AppCommonResp{
-			Base: &common.RespBase{
-				Code: 400,
-				Msg:  "两次密码输入不一致",
-			},
+			Base: helper.GetErrResp(400, "两次密码输入不一致"),
 		}, nil
 	}
 
@@ -78,8 +71,8 @@ func (l *SetPayPasswordLogic) SetPayPassword(in *user.SetPayPasswordReq) (*user.
 			TenantId:        tuser.TenantId,
 			UserId:          in.UserId,
 			PayPasswordHash: sql.NullString{String: in.Password, Valid: true},
-			CreateTimes:    now,
-			UpdateTimes:    now,
+			CreateTimes:     now,
+			UpdateTimes:     now,
 		}
 
 		_, err = l.svcCtx.UserSecurityModel.Insert(l.ctx, userSecurity)

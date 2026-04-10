@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"wklive/common/helper"
-	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -38,13 +37,13 @@ func (l *SetDefaultUserBankLogic) SetDefaultUserBank(in *user.SetDefaultUserBank
 
 	if userBank == nil {
 		return &user.AdminCommonResp{
-			Base: &common.RespBase{Code: 404, Msg: "银行卡不存在"},
+			Base: helper.GetErrResp(404, "银行卡不存在"),
 		}, nil
 	}
 
 	if userBank.UserId != in.UserId {
 		return &user.AdminCommonResp{
-			Base: &common.RespBase{Code: 403, Msg: "无权限修改"},
+			Base: helper.GetErrResp(403, "无权限修改"),
 		}, nil
 	}
 

@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 
-	"wklive/proto/common"
+	"wklive/common/helper"
 	"wklive/proto/itick"
 	"wklive/services/itick/internal/svc"
 
@@ -68,15 +68,7 @@ func (l *ListProductsLogic) ListProducts(in *itick.ListProductsReq) (*itick.List
 	}
 
 	return &itick.ListProductsResp{
-		Base: &common.RespBase{
-			Code:       200,
-			Msg:        "查询成功",
-			Total:      count,
-			HasNext:    hasNext,
-			HasPrev:    hasPrev,
-			NextCursor: nextCursor,
-			PrevCursor: prevCursor,
-		},
+		Base: helper.OkWithOthers(count, hasNext, hasPrev, nextCursor, prevCursor),
 		Data: data,
 	}, nil
 }

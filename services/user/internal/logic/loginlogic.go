@@ -40,10 +40,7 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 	}
 	if tenant == nil || tenant.Base.Code != 200 {
 		return &user.LoginResp{
-			Base: &common.RespBase{
-				Code: 401,
-				Msg:  "租户不存在",
-			},
+			Base: helper.GetErrResp(401, "租户不存在"),
 		}, nil
 	}
 
@@ -80,19 +77,13 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 
 	if tuser == nil {
 		return &user.LoginResp{
-			Base: &common.RespBase{
-				Code: 401,
-				Msg:  "用户不存在或密码错误",
-			},
+			Base: helper.GetErrResp(401, "用户不存在或密码错误"),
 		}, nil
 	}
 
 	if tuser.Status != 1 {
 		return &user.LoginResp{
-			Base: &common.RespBase{
-				Code: 403,
-				Msg:  "账户被禁用",
-			},
+			Base: helper.GetErrResp(403, "账户被禁用"),
 		}, nil
 	}
 

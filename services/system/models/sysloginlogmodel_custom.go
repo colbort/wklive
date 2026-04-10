@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
 )
 
 type LoginLogModel interface {
@@ -17,27 +18,14 @@ func (m *defaultSysLoginLogModel) FindPage(
 	cursor, limit int64,
 ) ([]*SysLoginLog, int64, error) {
 
-	if limit <= 0 {
-		limit = 10
-	}
-	if limit > 100 {
-		limit = 100
-	}
+	limit = sqlutil.NormalizeLimit(limit)
 
-	where := "1=1"
-	args := make([]any, 0, 4)
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.LikeString("username", "%"+username+"%")
+	builder.EqInt64("success", success)
 
-	if username != "" {
-		where += " AND username LIKE ?"
-		args = append(args, "%"+username+"%")
-	}
-
-	// 假设 success=0 表示全部，不筛选
-	// 如果 0 是有效值，这里要改
-	if success != 0 {
-		where += " AND success = ?"
-		args = append(args, success)
-	}
+	where := builder.Where()
+	args := builder.Args()
 
 	// ---- total ----
 	var total int64

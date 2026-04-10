@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"wklive/common/helper"
-	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -32,10 +31,7 @@ func (l *Google2FAResetLogic) Google2FAReset(in *system.Google2FAResetReq) (*sys
 	}
 	if user == nil {
 		return &system.RespBase{
-			Base: &common.RespBase{
-				Code: 1,
-				Msg:  "用户不存在",
-			},
+			Base: helper.GetErrResp(1, "用户不存在"),
 		}, nil
 	}
 	user.GoogleSecret = ""

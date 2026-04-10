@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
 )
 
 type StakeOrderModel interface {
@@ -11,15 +12,11 @@ type StakeOrderModel interface {
 }
 
 func (m *defaultTStakeOrderModel) FindPage(ctx context.Context, cursor int64, limit int64) ([]*TStakeOrder, int64, error) {
-	if limit <= 0 {
-		limit = 10
-	}
-	if limit > 100 {
-		limit = 100
-	}
+	limit = sqlutil.NormalizeLimit(limit)
 
-	where := "1=1"
-	args := make([]any, 0, 2)
+	builder := sqlutil.NewPageQueryBuilder()
+	where := builder.Where()
+	args := builder.Args()
 
 	// ---- total ----
 	var total int64

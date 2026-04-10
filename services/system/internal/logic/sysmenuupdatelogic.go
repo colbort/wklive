@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"wklive/common/helper"
-	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
@@ -34,10 +33,7 @@ func (l *SysMenuUpdateLogic) SysMenuUpdate(in *system.SysMenuUpdateReq) (*system
 	}
 	if one == nil {
 		return &system.RespBase{
-			Base: &common.RespBase{
-				Code: 400,
-				Msg:  "菜单不存在",
-			},
+			Base: helper.GetErrResp(400, "菜单不存在"),
 		}, nil
 	}
 

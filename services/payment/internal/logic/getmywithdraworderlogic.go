@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"wklive/common/helper"
-	"wklive/proto/common"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -36,20 +35,14 @@ func (l *GetMyWithdrawOrderLogic) GetMyWithdrawOrder(in *payment.GetMyWithdrawOr
 
 	if order == nil {
 		return &payment.GetMyWithdrawOrderResp{
-			Base: &common.RespBase{
-				Code: 404,
-				Msg:  "订单不存在",
-			},
+			Base: helper.GetErrResp(404, "订单不存在"),
 		}, nil
 	}
 
 	// Check permission
 	if order.UserId != in.UserId {
 		return &payment.GetMyWithdrawOrderResp{
-			Base: &common.RespBase{
-				Code: 403,
-				Msg:  "无权访问该订单",
-			},
+			Base: helper.GetErrResp(403, "无权访问该订单"),
 		}, nil
 	}
 

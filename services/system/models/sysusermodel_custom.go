@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"time"
+	"wklive/common/sqlutil"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -30,28 +31,18 @@ func (m *defaultSysUserModel) FindPage(
 	cursor, limit int64,
 ) ([]*SysUser, int64, error) {
 
-	if limit <= 0 {
-		limit = 10
-	}
-	if limit > 100 {
-		limit = 100
-	}
+	limit = sqlutil.NormalizeLimit(limit)
 
 	// ---- WHERE 条件 ----
-	where := "1=1"
-	args := make([]any, 0, 4)
-
+	builder := sqlutil.NewPageQueryBuilder()
 	if keyword != "" {
-		where += " AND (username LIKE ? OR nickname LIKE ?)"
 		like := "%" + keyword + "%"
-		args = append(args, like, like)
+		builder.And("(username LIKE ? OR nickname LIKE ?)", like, like)
 	}
+	builder.EqInt64("status", status)
 
-	// 假设 status < 0 表示全部
-	if status > 0 {
-		where += " AND status = ?"
-		args = append(args, status)
-	}
+	where := builder.Where()
+	args := builder.Args()
 
 	// ---- total ----
 	var total int64

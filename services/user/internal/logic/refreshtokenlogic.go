@@ -33,10 +33,7 @@ func (l *RefreshTokenLogic) RefreshToken(in *user.RefreshTokenReq) (*user.Refres
 	claims, err := utils.ParseToken(in.RefreshToken, l.svcCtx.Config.Jwt.AccessSecret)
 	if err != nil {
 		return &user.RefreshTokenResp{
-			Base: &common.RespBase{
-				Code: 401,
-				Msg:  "Token已过期或无效",
-			},
+			Base: helper.GetErrResp(401, "Token已过期或无效"),
 		}, nil
 	}
 
@@ -48,19 +45,13 @@ func (l *RefreshTokenLogic) RefreshToken(in *user.RefreshTokenReq) (*user.Refres
 
 	if tuser == nil {
 		return &user.RefreshTokenResp{
-			Base: &common.RespBase{
-				Code: 404,
-				Msg:  "用户不存在",
-			},
+			Base: helper.GetErrResp(404, "用户不存在"),
 		}, nil
 	}
 
 	if tuser.Status != 1 {
 		return &user.RefreshTokenResp{
-			Base: &common.RespBase{
-				Code: 403,
-				Msg:  "账户被禁用",
-			},
+			Base: helper.GetErrResp(403, "账户被禁用"),
 		}, nil
 	}
 

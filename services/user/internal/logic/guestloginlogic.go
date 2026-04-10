@@ -8,7 +8,6 @@ import (
 
 	"wklive/common/helper"
 	"wklive/common/utils"
-	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -34,10 +33,7 @@ func NewGuestLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GuestL
 func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginResp, error) {
 	if in.DeviceId == "" && in.Fingerprint == "" {
 		return &user.GuestLoginResp{
-			Base: &common.RespBase{
-				Code: 201,
-				Msg:  "请确更换设备登录",
-			},
+			Base: helper.GetErrResp(201, "请确更换设备登录"),
 		}, nil
 	}
 	u, err := l.svcCtx.UserModel.FindByDeviceIdOrFingerprint(l.ctx, in.DeviceId, in.Fingerprint)
@@ -46,10 +42,7 @@ func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginRe
 	}
 	if u != nil {
 		return &user.GuestLoginResp{
-			Base: &common.RespBase{
-				Code: 201,
-				Msg:  "请确更换设备登录",
-			},
+			Base: helper.GetErrResp(201, "请确更换设备登录"),
 		}, nil
 	}
 

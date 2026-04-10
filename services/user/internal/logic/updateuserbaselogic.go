@@ -6,7 +6,7 @@ import (
 	"errors"
 	"time"
 
-	"wklive/proto/common"
+	"wklive/common/helper"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -38,10 +38,7 @@ func (l *UpdateUserBaseLogic) UpdateUserBase(in *user.UpdateUserBaseReq) (*user.
 
 	if tuser == nil {
 		return &user.UpdateUserBaseResp{
-			Base: &common.RespBase{
-				Code: 404,
-				Msg:  "用户不存在",
-			},
+			Base: helper.GetErrResp(404, "用户不存在"),
 		}, nil
 	}
 
@@ -112,7 +109,7 @@ func (l *UpdateUserBaseLogic) UpdateUserBase(in *user.UpdateUserBaseReq) (*user.
 	userDetailResp := buildUserDetail(tuser, userIdentity, userSecurity)
 
 	return &user.UpdateUserBaseResp{
-		Base:   &common.RespBase{Code: 200, Msg: "OK"},
+		Base:   helper.OkResp(),
 		Detail: userDetailResp,
 	}, nil
 }

@@ -7,6 +7,7 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
 )
 
 type ItickCategoryModel interface {
@@ -23,30 +24,15 @@ func (m *defaultTItickCategoryModel) FindAll(ctx context.Context) ([]*TItickCate
 }
 
 func (m *defaultTItickCategoryModel) FindPage(ctx context.Context, categoryType int32, enabled int32, appVisible int32, cursor int64, limit int64) ([]*TItickCategory, int64, error) {
-	if limit <= 0 {
-		limit = 10
-	}
-	if limit > 100 {
-		limit = 100
-	}
+	limit = sqlutil.NormalizeLimit(limit)
 
-	where := "1=1"
-	args := make([]any, 0, 2)
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.EqInt64("category_type", int64(categoryType))
+	builder.EqInt64("enabled", int64(enabled))
+	builder.EqInt64("app_visible", int64(appVisible))
 
-	if categoryType != 0 {
-		where += " AND category_type = ?"
-		args = append(args, categoryType)
-	}
-
-	if enabled != 0 {
-		where += " AND enabled = ?"
-		args = append(args, enabled)
-	}
-
-	if appVisible != 0 {
-		where += " AND app_visible = ?"
-		args = append(args, appVisible)
-	}
+	where := builder.Where()
+	args := builder.Args()
 
 	// ---- total ----
 	var total int64

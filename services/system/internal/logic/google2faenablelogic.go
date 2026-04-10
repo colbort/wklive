@@ -5,7 +5,6 @@ import (
 
 	"wklive/common/helper"
 	"wklive/common/utils"
-	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -33,26 +32,17 @@ func (l *Google2FAEnableLogic) Google2FAEnable(in *system.Google2FAEnableReq) (*
 	}
 	if user == nil {
 		return &system.RespBase{
-			Base: &common.RespBase{
-				Code: 1,
-				Msg:  "用户不存在",
-			},
+			Base: helper.GetErrResp(1, "用户不存在"),
 		}, nil
 	}
 	if user.GoogleSecret == "" {
 		return &system.RespBase{
-			Base: &common.RespBase{
-				Code: 1,
-				Msg:  "Google 2FA 尚未初始化",
-			},
+			Base: helper.GetErrResp(1, "Google 2FA 尚未初始化"),
 		}, nil
 	}
 	if !utils.VerifyGoogle2FACode(user.GoogleSecret, in.Code) {
 		return &system.RespBase{
-			Base: &common.RespBase{
-				Code: 1,
-				Msg:  "验证码错误",
-			},
+			Base: helper.GetErrResp(1, "验证码错误"),
 		}, nil
 	}
 

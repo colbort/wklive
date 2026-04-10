@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"wklive/common/helper"
-	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -39,10 +38,7 @@ func (l *SubmitIdentityLogic) SubmitIdentity(in *user.SubmitIdentityReq) (*user.
 
 	if tuser == nil {
 		return &user.SubmitIdentityResp{
-			Base: &common.RespBase{
-				Code: 404,
-				Msg:  "用户不存在",
-			},
+			Base: helper.GetErrResp(404, "用户不存在"),
 		}, nil
 	}
 
@@ -83,13 +79,13 @@ func (l *SubmitIdentityLogic) SubmitIdentity(in *user.SubmitIdentityReq) (*user.
 	} else {
 		// 创建新的身份信息
 		userIdentity = &models.TUserIdentity{
-			Id:            l.svcCtx.Node.Generate().Int64(),
-			TenantId:      tuser.TenantId,
-			UserId:        in.UserId,
-			Phone:         sql.NullString{String: in.Phone, Valid: in.Phone != ""},
-			Email:         sql.NullString{String: in.Email, Valid: in.Email != ""},
-			RealName:      sql.NullString{String: in.RealName, Valid: in.RealName != ""},
-			Gender:        int64(in.Gender),
+			Id:       l.svcCtx.Node.Generate().Int64(),
+			TenantId: tuser.TenantId,
+			UserId:   in.UserId,
+			Phone:    sql.NullString{String: in.Phone, Valid: in.Phone != ""},
+			Email:    sql.NullString{String: in.Email, Valid: in.Email != ""},
+			RealName: sql.NullString{String: in.RealName, Valid: in.RealName != ""},
+			Gender:   int64(in.Gender),
 			Birthday: sql.NullTime{
 				Time:  parseDate(in.Birthday),
 				Valid: in.Birthday != "",

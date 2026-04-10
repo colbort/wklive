@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -81,30 +82,17 @@ func (m *defaultSysMenuModel) FindPage(
 		limit = 10000
 	}
 
-	where := "1=1"
-	args := make([]any, 0, 6)
-
+	builder := sqlutil.NewPageQueryBuilder()
 	if keyword != "" {
 		like := "%" + keyword + "%"
-		where += " AND (name LIKE ? OR code LIKE ?)"
-		args = append(args, like, like)
+		builder.And("(name LIKE ? OR code LIKE ?)", like, like)
 	}
+	builder.EqInt64("menu_type", menuType)
+	builder.EqInt64("status", status)
+	builder.EqInt64("visible", visible)
 
-	// 假设 0 表示全部，不筛选
-	if menuType != 0 {
-		where += " AND menu_type = ?"
-		args = append(args, menuType)
-	}
-
-	if status != 0 {
-		where += " AND status = ?"
-		args = append(args, status)
-	}
-
-	if visible != 0 {
-		where += " AND visible = ?"
-		args = append(args, visible)
-	}
+	where := builder.Where()
+	args := builder.Args()
 
 	// total
 	var total int64

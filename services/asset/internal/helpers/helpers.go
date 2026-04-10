@@ -3,27 +3,16 @@ package helpers
 import (
 	"fmt"
 	"math/rand"
-	"strconv"
 	"strings"
 	"time"
 
+	"wklive/common/conv"
 	"wklive/proto/asset"
 	"wklive/services/asset/models"
 )
 
 func init() {
 	rand.Seed(time.Now().UnixNano())
-}
-
-func FormatAmount(amount float64) string {
-	return strconv.FormatFloat(amount, 'f', -1, 64)
-}
-
-func ParseAmount(amount string) (float64, error) {
-	if amount == "" {
-		return 0, nil
-	}
-	return strconv.ParseFloat(amount, 64)
 }
 
 func RandomNo(prefix, bizNo string) string {
@@ -232,10 +221,10 @@ func ToUserAssetProto(data *models.TUserAsset) *asset.UserAsset {
 		UserId:          data.UserId,
 		WalletType:      asset.WalletType(data.WalletType),
 		Coin:            data.Coin,
-		TotalAmount:     FormatAmount(data.TotalAmount),
-		AvailableAmount: FormatAmount(data.AvailableAmount),
-		FrozenAmount:    FormatAmount(data.FrozenAmount),
-		LockedAmount:    FormatAmount(data.LockedAmount),
+		TotalAmount:     conv.FloatString(data.TotalAmount),
+		AvailableAmount: conv.FloatString(data.AvailableAmount),
+		FrozenAmount:    conv.FloatString(data.FrozenAmount),
+		LockedAmount:    conv.FloatString(data.LockedAmount),
 		Status:          ToAssetStatus(data.Status),
 		Version:         int32(data.Version),
 		Remark:          data.Remark,
@@ -260,15 +249,15 @@ func ToAssetFlowProto(data *models.TAssetFlow) *asset.AssetFlow {
 		OpType:                 asset.AssetOpType(data.OpType),
 		BizId:                  data.BizId,
 		BizNo:                  data.BizNo,
-		ChangeAmount:           FormatAmount(data.ChangeAmount),
-		BeforeTotalAmount:      FormatAmount(data.BeforeTotalAmount),
-		AfterTotalAmount:       FormatAmount(data.AfterTotalAmount),
-		BeforeAvailableAmount:  FormatAmount(data.BeforeAvailableAmount),
-		AfterAvailableAmount:   FormatAmount(data.AfterAvailableAmount),
-		BeforeFrozenAmount:     FormatAmount(data.BeforeFrozenAmount),
-		AfterFrozenAmount:      FormatAmount(data.AfterFrozenAmount),
-		BeforeLockedAmount:     FormatAmount(data.BeforeLockedAmount),
-		AfterLockedAmount:      FormatAmount(data.AfterLockedAmount),
+		ChangeAmount:           conv.FloatString(data.ChangeAmount),
+		BeforeTotalAmount:      conv.FloatString(data.BeforeTotalAmount),
+		AfterTotalAmount:       conv.FloatString(data.AfterTotalAmount),
+		BeforeAvailableAmount:  conv.FloatString(data.BeforeAvailableAmount),
+		AfterAvailableAmount:   conv.FloatString(data.AfterAvailableAmount),
+		BeforeFrozenAmount:     conv.FloatString(data.BeforeFrozenAmount),
+		AfterFrozenAmount:      conv.FloatString(data.AfterFrozenAmount),
+		BeforeLockedAmount:     conv.FloatString(data.BeforeLockedAmount),
+		AfterLockedAmount:      conv.FloatString(data.AfterLockedAmount),
 		BalanceSnapshotVersion: int32(data.BalanceSnapshotVersion),
 		Remark:                 data.Remark,
 		CreateTime:             data.CreateTimes,
@@ -291,10 +280,10 @@ func ToAssetFreezeProto(data *models.TAssetFreeze) *asset.AssetFreeze {
 		SceneType:      ToSceneTypeValue(data.SceneType),
 		BizId:          data.BizId,
 		BizNo:          data.BizNo,
-		Amount:         FormatAmount(data.Amount),
-		UsedAmount:     FormatAmount(data.UsedAmount),
-		UnfreezeAmount: FormatAmount(data.UnfreezeAmount),
-		RemainAmount:   FormatAmount(data.RemainAmount),
+		Amount:         conv.FloatString(data.Amount),
+		UsedAmount:     conv.FloatString(data.UsedAmount),
+		UnfreezeAmount: conv.FloatString(data.UnfreezeAmount),
+		RemainAmount:   conv.FloatString(data.RemainAmount),
 		Status:         ToFreezeStatus(data.Status),
 		ExpireTime:     data.ExpireTime,
 		Remark:         data.Remark,
@@ -318,9 +307,9 @@ func ToAssetLockProto(data *models.TAssetLock) *asset.AssetLock {
 		SceneType:    ToSceneTypeValue(data.SceneType),
 		BizId:        data.BizId,
 		BizNo:        data.BizNo,
-		Amount:       FormatAmount(data.Amount),
-		UnlockAmount: FormatAmount(data.UnlockAmount),
-		RemainAmount: FormatAmount(data.RemainAmount),
+		Amount:       conv.FloatString(data.Amount),
+		UnlockAmount: conv.FloatString(data.UnlockAmount),
+		RemainAmount: conv.FloatString(data.RemainAmount),
 		Status:       ToLockStatus(data.Status),
 		StartTime:    data.StartTime,
 		EndTime:      data.EndTime,

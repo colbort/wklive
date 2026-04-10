@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/helpers"
@@ -45,10 +46,10 @@ func (l *GetMyAssetSummaryLogic) GetMyAssetSummary(in *asset.GetMyAssetSummaryRe
 		resp.Data.Assets = append(resp.Data.Assets, helpers.ToUserAssetProto(item))
 	}
 
-	resp.Data.TotalAssetUsdt = helpers.FormatAmount(totalAsset)
-	resp.Data.TotalAvailableUsdt = helpers.FormatAmount(totalAvailable)
-	resp.Data.TotalFrozenUsdt = helpers.FormatAmount(totalFrozen)
-	resp.Data.TotalLockedUsdt = helpers.FormatAmount(totalLocked)
+	resp.Data.TotalAssetUsdt = conv.FloatString(totalAsset)
+	resp.Data.TotalAvailableUsdt = conv.FloatString(totalAvailable)
+	resp.Data.TotalFrozenUsdt = conv.FloatString(totalFrozen)
+	resp.Data.TotalLockedUsdt = conv.FloatString(totalLocked)
 
 	return resp, nil
 }

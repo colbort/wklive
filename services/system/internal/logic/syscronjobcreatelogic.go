@@ -7,7 +7,6 @@ import (
 
 	"wklive/common/helper"
 	"wklive/common/utils"
-	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
@@ -35,36 +34,24 @@ func (l *SysCronJobCreateLogic) SysCronJobCreate(in *system.SysCronJobCreateReq)
 	_, err := cron.ParseStandard(in.CronExpression)
 	if err != nil {
 		return &system.RespBase{
-			Base: &common.RespBase{
-				Code: 400,
-				Msg:  "无效的 Cron 表达式",
-			},
+			Base: helper.GetErrResp(400, "无效的 Cron 表达式"),
 		}, nil
 	}
 	job, err := l.svcCtx.JobModel.FindByInvokeTarget(l.ctx, in.InvokeTarget)
 	if err != nil {
 		return &system.RespBase{
-			Base: &common.RespBase{
-				Code: 500,
-				Msg:  err.Error(),
-			},
+			Base: helper.GetErrResp(500, err.Error()),
 		}, nil
 	}
 	if job != nil {
 		return &system.RespBase{
-			Base: &common.RespBase{
-				Code: 400,
-				Msg:  "定时任务已存在",
-			},
+			Base: helper.GetErrResp(400, "定时任务已存在"),
 		}, nil
 	}
 	userName, err := utils.GetUsernameFromCtx(l.ctx)
 	if err != nil {
 		return &system.RespBase{
-			Base: &common.RespBase{
-				Code: 500,
-				Msg:  err.Error(),
-			},
+			Base: helper.GetErrResp(500, err.Error()),
 		}, nil
 	}
 	_, err = l.svcCtx.JobModel.Insert(l.ctx, &models.SysJob{
@@ -79,10 +66,7 @@ func (l *SysCronJobCreateLogic) SysCronJobCreate(in *system.SysCronJobCreateReq)
 	})
 	if err != nil {
 		return &system.RespBase{
-			Base: &common.RespBase{
-				Code: 500,
-				Msg:  err.Error(),
-			},
+			Base: helper.GetErrResp(500, err.Error()),
 		}, nil
 	}
 

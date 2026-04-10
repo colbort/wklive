@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"wklive/common/helper"
-	"wklive/proto/common"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -47,30 +46,21 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 
 	if channel == nil {
 		return &payment.CreateRechargeOrderResp{
-			Base: &common.RespBase{
-				Code: 404,
-				Msg:  "支付通道不存在",
-			},
+			Base: helper.GetErrResp(404, "支付通道不存在"),
 		}, nil
 	}
 
 	// 验证通道可用性
 	if channel.Status != 1 {
 		return &payment.CreateRechargeOrderResp{
-			Base: &common.RespBase{
-				Code: 201,
-				Msg:  "支付通道暂不可用",
-			},
+			Base: helper.GetErrResp(201, "支付通道暂不可用"),
 		}, nil
 	}
 
 	// 验证金额限制
 	if in.RechargeAmount < channel.SingleMinAmount || in.RechargeAmount > channel.SingleMaxAmount {
 		return &payment.CreateRechargeOrderResp{
-			Base: &common.RespBase{
-				Code: 201,
-				Msg:  "充值金额超出限制",
-			},
+			Base: helper.GetErrResp(201, "充值金额超出限制"),
 		}, nil
 	}
 

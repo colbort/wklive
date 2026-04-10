@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"wklive/common/helper"
-	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -33,10 +32,7 @@ func (l *SysTenantDeleteLogic) SysTenantDelete(in *system.SysTenantDeleteReq) (*
 	}
 	if tenant == nil {
 		return &system.RespBase{
-			Base: &common.RespBase{
-				Code: 400,
-				Msg:  "租户不存在",
-			},
+			Base: helper.GetErrResp(400, "租户不存在"),
 		}, nil
 	}
 	err = l.svcCtx.TenantMode.Delete(l.ctx, in.Id)

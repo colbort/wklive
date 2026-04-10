@@ -4,9 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"strconv"
 	"time"
 
+	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
@@ -86,7 +86,7 @@ func (l *UpdateTenantPayChannelLogic) UpdateTenantPayChannel(in *payment.UpdateT
 		channel.FeeType = int64(in.FeeType)
 	}
 	if in.FeeRate != "" {
-		feeRate, err := strconv.ParseFloat(in.FeeRate, 10)
+		feeRate, err := conv.ParseFloatField(in.FeeRate)
 		if err != nil {
 			return nil, err
 		}

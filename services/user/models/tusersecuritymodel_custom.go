@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
 )
 
 type UserSecurityModel interface {
@@ -11,20 +12,13 @@ type UserSecurityModel interface {
 }
 
 func (m *defaultTUserSecurityModel) FindPage(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TUserSecurity, int64, error) {
-	if limit <= 0 {
-		limit = 10
-	}
-	if limit > 100 {
-		limit = 100
-	}
+	limit = sqlutil.NormalizeLimit(limit)
 
-	where := "1=1"
-	args := make([]any, 0, 2)
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.EqInt64("tenant_id", tenantId)
 
-	if tenantId != 0 {
-		where += " AND tenant_id = ?"
-		args = append(args, tenantId)
-	}
+	where := builder.Where()
+	args := builder.Args()
 
 	// ---- total ----
 	var total int64

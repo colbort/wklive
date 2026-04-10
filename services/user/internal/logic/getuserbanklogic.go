@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"wklive/common/helper"
-	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -37,10 +36,7 @@ func (l *GetUserBankLogic) GetUserBank(in *user.GetUserBankReq) (*user.GetUserBa
 
 	if bank == nil {
 		return &user.GetUserBankResp{
-			Base: &common.RespBase{
-				Code: 404,
-				Msg:  "银行卡不存在",
-			},
+			Base: helper.GetErrResp(404, "银行卡不存在"),
 		}, nil
 	}
 

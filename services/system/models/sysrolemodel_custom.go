@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"wklive/common/sqlutil"
 )
 
 type RoleModel interface {
@@ -19,28 +20,18 @@ func (m *defaultSysRoleModel) FindPage(
 	cursor, limit int64,
 ) ([]*SysRole, int64, error) {
 
-	if limit <= 0 {
-		limit = 10
-	}
-	if limit > 100 {
-		limit = 100
-	}
+	limit = sqlutil.NormalizeLimit(limit)
 
 	// ---- WHERE 条件 ----
-	where := "1=1"
-	args := make([]any, 0, 4)
-
+	builder := sqlutil.NewPageQueryBuilder()
 	if keyword != "" {
 		like := "%" + keyword + "%"
-		where += " AND (name LIKE ? OR code LIKE ?)"
-		args = append(args, like, like)
+		builder.And("(name LIKE ? OR code LIKE ?)", like, like)
 	}
+	builder.EqInt64("status", status)
 
-	// 假设 status < 0 表示全部
-	if status > 0 {
-		where += " AND status = ?"
-		args = append(args, status)
-	}
+	where := builder.Where()
+	args := builder.Args()
 
 	// ---- total ----
 	var total int64

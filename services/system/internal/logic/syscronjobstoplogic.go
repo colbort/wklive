@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"wklive/common/helper"
-	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -30,18 +29,12 @@ func (l *SysCronJobStopLogic) SysCronJobStop(in *system.SysCronJobStopReq) (*sys
 	job, err := l.svcCtx.JobModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		return &system.RespBase{
-			Base: &common.RespBase{
-				Code: 500,
-				Msg:  err.Error(),
-			},
+			Base: helper.GetErrResp(500, err.Error()),
 		}, nil
 	}
 	if job == nil {
 		return &system.RespBase{
-			Base: &common.RespBase{
-				Code: 400,
-				Msg:  "定时任务不存在",
-			},
+			Base: helper.GetErrResp(400, "定时任务不存在"),
 		}, nil
 	}
 	l.svcCtx.Cron.PauseJob(job.Id)
