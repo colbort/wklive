@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/common/helper"
 	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
@@ -45,8 +46,6 @@ func (l *SysCronJobStopLogic) SysCronJobStop(in *system.SysCronJobStopReq) (*sys
 	}
 	l.svcCtx.Cron.PauseJob(job.Id)
 	return &system.RespBase{
-		Base: &common.RespBase{
-			Code: 200,
-		},
+		Base: helper.OkResp(),
 	}, nil
 }

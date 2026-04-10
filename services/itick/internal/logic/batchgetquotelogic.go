@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 
-	"wklive/proto/common"
+	"wklive/common/helper"
 	"wklive/proto/itick"
 	"wklive/services/itick/internal/svc"
 
@@ -51,10 +51,7 @@ func (l *BatchGetQuoteLogic) BatchGetQuote(in *itick.BatchGetQuoteReq) (*itick.B
 	}
 
 	return &itick.BatchGetQuoteResp{
-		Base: &common.RespBase{
-			Code: 200,
-			Msg:  "获取成功",
-		},
+		Base: helper.OkResp(),
 		Data: data,
 	}, nil
 }

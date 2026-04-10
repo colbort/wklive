@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 
-	"wklive/proto/common"
+	"wklive/common/helper"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -58,15 +58,7 @@ func (l *SysRoleListLogic) SysRoleList(in *system.SysRoleListReq) (*system.SysRo
 	}
 
 	return &system.SysRoleListResp{
-		Base: &common.RespBase{
-			Code:       200,
-			Msg:        "success",
-			Total:      total,
-			HasNext:    hasNext,
-			HasPrev:    hasPrev,
-			NextCursor: nextCursor,
-			PrevCursor: prevCursor,
-		},
+		Base: helper.OkWithOthers(total, hasNext, hasPrev, nextCursor, prevCursor),
 		Data: data,
 	}, nil
 }

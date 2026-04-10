@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/common/helper"
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/system"
@@ -55,9 +56,6 @@ func (l *Google2FADisableLogic) Google2FADisable(in *system.Google2FADisableReq)
 	}
 
 	return &system.RespBase{
-		Base: &common.RespBase{
-			Code: 200,
-			Msg:  "禁用成功",
-		},
+		Base: helper.OkResp(),
 	}, nil
 }

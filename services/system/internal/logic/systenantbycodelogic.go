@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 
-	"wklive/proto/common"
+	"wklive/common/helper"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -31,10 +31,7 @@ func (l *SysTenantByCodeLogic) SysTenantByCode(in *system.SysTenantByCodeReq) (*
 		return nil, err
 	}
 	return &system.SysTenantByCodeResp{
-		Base: &common.RespBase{
-			Code: 200,
-			Msg:  "获取租户成功",
-		},
+		Base: helper.OkResp(),
 		Data: &system.SysTenantItem{
 			Id:           result.Id,
 			TenantCode:   result.TenantCode,

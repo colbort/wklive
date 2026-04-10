@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/common/helper"
 	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
@@ -52,9 +53,6 @@ func (l *ChangeUserStatusLogic) ChangeUserStatus(in *system.ChangeUserStatusReq)
 	}
 
 	return &system.RespBase{
-		Base: &common.RespBase{
-			Code: 200,
-			Msg:  "用户状态修改成功",
-		},
+		Base: helper.OkResp(),
 	}, nil
 }

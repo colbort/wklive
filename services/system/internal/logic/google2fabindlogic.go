@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/common/helper"
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/system"
@@ -80,9 +81,6 @@ func (l *Google2FABindLogic) Google2FABind(in *system.Google2FABindReq) (*system
 	}
 
 	return &system.RespBase{
-		Base: &common.RespBase{
-			Code: 200,
-			Msg:  "绑定成功",
-		},
+		Base: helper.OkResp(),
 	}, nil
 }

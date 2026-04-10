@@ -14,6 +14,7 @@ import (
 	"sync"
 	"time"
 
+	"wklive/common/helper"
 	"wklive/proto/common"
 	"wklive/proto/itick"
 	"wklive/services/itick/internal/pkg/utils"
@@ -105,10 +106,7 @@ func (l *SyncKlinesLogic) SyncKlines(in *itick.SyncKlinesReq) (*itick.SyncKlines
 	}(taskNo, reqCopy, lockKey, lockValue)
 
 	return &itick.SyncKlinesResp{
-		Base: &common.RespBase{
-			Code: 200,
-			Msg:  "同步任务已提交",
-		},
+		Base: helper.OkResp(),
 	}, nil
 }
 

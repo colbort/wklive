@@ -190,10 +190,7 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 	}
 
 	return &user.RegisterResp{
-		Base: &common.RespBase{
-			Code: 200,
-			Msg:  "注册成功",
-		},
+		Base: helper.OkResp(),
 		UserId: userId,
 		Token: &common.TokenInfo{
 			AccessToken: token,

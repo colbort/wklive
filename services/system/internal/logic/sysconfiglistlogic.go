@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 
-	"wklive/proto/common"
+	"wklive/common/helper"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -26,7 +26,7 @@ func NewSysConfigListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 
 // 获取系统配置列表
 func (l *SysConfigListLogic) SysConfigList(in *system.SysConfigListReq) (*system.SysConfigListResp, error) {
-	items, count, err := l.svcCtx.ConfigModel.FindPage(l.ctx, "", in.Page.Cursor, in.Page.Limit)
+	items, total, err := l.svcCtx.ConfigModel.FindPage(l.ctx, "", in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -55,15 +55,7 @@ func (l *SysConfigListLogic) SysConfigList(in *system.SysConfigListReq) (*system
 	}
 
 	return &system.SysConfigListResp{
-		Base: &common.RespBase{
-			Code:       200,
-			Msg:        "查询成功",
-			Total:      count,
-			HasNext:    hasNext,
-			HasPrev:    hasPrev,
-			NextCursor: nextCursor,
-			PrevCursor: prevCursor,
-		},
+		Base: helper.OkWithOthers(total, hasNext, hasPrev, nextCursor, prevCursor),
 		Data: data,
 	}, nil
 }

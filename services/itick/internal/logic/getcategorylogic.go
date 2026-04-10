@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/common/helper"
 	"wklive/proto/common"
 	"wklive/proto/itick"
 	"wklive/services/itick/internal/svc"
@@ -39,10 +40,7 @@ func (l *GetCategoryLogic) GetCategory(in *itick.GetCategoryReq) (*itick.GetCate
 		}, nil
 	}
 	return &itick.GetCategoryResp{
-		Base: &common.RespBase{
-			Code: 200,
-			Msg:  "",
-		},
+		Base: helper.OkResp(),
 		Data: &itick.ItickCategory{
 			Id:           result.Id,
 			CategoryType: itick.CategoryType(result.CategoryType),

@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"wklive/common/helper"
 	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
@@ -76,9 +77,6 @@ func (l *SysMenuCreateLogic) SysMenuCreate(in *system.SysMenuCreateReq) (*system
 	}
 
 	return &system.RespBase{
-		Base: &common.RespBase{
-			Code: 200,
-			Msg:  "Menu created successfully",
-		},
+		Base: helper.OkResp(),
 	}, nil
 }

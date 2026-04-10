@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/common/helper"
 	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
@@ -54,9 +55,6 @@ func (l *SysCronJobRunLogic) SysCronJobRun(in *system.SysCronJobRunReq) (*system
 	}
 
 	return &system.RespBase{
-		Base: &common.RespBase{
-			Code: 200,
-			Msg:  "执行成功",
-		},
+		Base: helper.OkResp(),
 	}, nil
 }

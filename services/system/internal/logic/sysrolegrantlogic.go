@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"wklive/proto/common"
+	"wklive/common/helper"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
@@ -91,9 +91,6 @@ func (l *SysRoleGrantLogic) SysRoleGrant(in *system.SysRoleGrantReq) (*system.Re
 	}
 
 	return &system.RespBase{
-		Base: &common.RespBase{
-			Code: 200,
-			Msg:  "授权成功",
-		},
+		Base: helper.OkResp(),
 	}, nil
 }

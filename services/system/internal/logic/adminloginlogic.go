@@ -6,6 +6,7 @@ import (
 	"errors"
 	"time"
 
+	"wklive/common/helper"
 	"wklive/common/utils"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
@@ -92,6 +93,7 @@ func (l *AdminLoginLogic) AdminLogin(in *system.AdminLoginReq) (*system.AdminLog
 	}
 
 	return &system.AdminLoginResp{
+		Base:             helper.OkResp(),
 		Token:            token,
 		Uid:              user.Id,
 		Nickname:         user.Nickname,

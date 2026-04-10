@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"time"
 
+	"wklive/common/helper"
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/system"
@@ -95,9 +96,6 @@ func (l *SysCronJobUpdateLogic) SysCronJobUpdate(in *system.SysCronJobUpdateReq)
 	}
 
 	return &system.RespBase{
-		Base: &common.RespBase{
-			Code: 200,
-			Msg:  "更新成功",
-		},
+		Base: helper.OkResp(),
 	}, nil
 }

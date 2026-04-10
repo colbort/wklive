@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/common/helper"
 	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
@@ -49,9 +50,6 @@ func (l *SysMenuUpdateLogic) SysMenuUpdate(in *system.SysMenuUpdateReq) (*system
 		return nil, err
 	}
 	return &system.RespBase{
-		Base: &common.RespBase{
-			Code: 200,
-			Msg:  "更新成功",
-		},
+		Base: helper.OkResp(),
 	}, nil
 }

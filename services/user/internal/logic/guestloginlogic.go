@@ -66,10 +66,7 @@ func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginRe
 		return nil, err
 	}
 	return &user.GuestLoginResp{
-		Base: &common.RespBase{
-			Code: 200,
-			Msg:  "游客注册成功",
-		},
+		Base: helper.OkResp(),
 		Data: &user.GuestLogin{
 			Token:    token,
 			Uid:      fmt.Sprintf("%d", userId),

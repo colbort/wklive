@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/common/helper"
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/system"
@@ -61,9 +62,6 @@ func (l *Google2FAEnableLogic) Google2FAEnable(in *system.Google2FAEnableReq) (*
 	}
 
 	return &system.RespBase{
-		Base: &common.RespBase{
-			Code: 200,
-			Msg:  "启用成功",
-		},
+		Base: helper.OkResp(),
 	}, nil
 }

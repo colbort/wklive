@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 
-	"wklive/proto/common"
+	"wklive/common/helper"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -28,6 +28,6 @@ func (l *ResetUserPwdLogic) ResetUserPwd(in *system.ResetUserPwdReq) (*system.Re
 	// todo: add your logic here and delete this line
 
 	return &system.RespBase{
-		Base: &common.RespBase{},
+		Base: helper.OkResp(),
 	}, nil
 }

@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 
-	"wklive/proto/common"
+	"wklive/common/helper"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -30,9 +30,6 @@ func (l *SysRoleDeleteLogic) SysRoleDelete(in *system.SysRoleDeleteReq) (*system
 		return nil, err
 	}
 	return &system.RespBase{
-		Base: &common.RespBase{
-			Code: 200,
-			Msg:  "删除成功",
-		},
+		Base: helper.OkResp(),
 	}, nil
 }

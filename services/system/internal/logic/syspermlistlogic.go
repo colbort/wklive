@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	"wklive/proto/common"
+	"wklive/common/helper"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -68,10 +68,7 @@ func (l *SysPermListLogic) SysPermList(in *system.Empty) (*system.SysPermListRes
 	})
 
 	return &system.SysPermListResp{
-		Base: &common.RespBase{
-			Code: 200,
-			Msg:  "success",
-		},
+		Base: helper.OkResp(),
 		Data: data,
 	}, nil
 }

@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 
-	"wklive/proto/common"
+	"wklive/common/helper"
 	"wklive/proto/system"
 	"wklive/services/system/internal/plugins/cronx"
 	"wklive/services/system/internal/svc"
@@ -36,10 +36,7 @@ func (l *SysCronJobHandlersLogic) SysCronJobHandlers(in *system.Empty) (*system.
 		})
 	}
 	return &system.SysCronJobHandlersResp{
-		Base: &common.RespBase{
-			Code: 200,
-			Msg:  "success",
-		},
+		Base: helper.OkResp(),
 		Data: data,
 	}, nil
 }

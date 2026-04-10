@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"wklive/proto/common"
+	"wklive/common/helper"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/internal/utils"
@@ -52,9 +52,6 @@ func (l *SysConfigUpdateLogic) SysConfigUpdate(in *system.SysConfigUpdateReq) (*
 	}
 
 	return &system.RespBase{
-		Base: &common.RespBase{
-			Code: 200,
-			Msg:  "更新成功",
-		},
+		Base: helper.OkResp(),
 	}, nil
 }

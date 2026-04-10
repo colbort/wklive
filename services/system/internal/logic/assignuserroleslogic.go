@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/common/helper"
 	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
@@ -119,5 +120,7 @@ func (l *AssignUserRolesLogic) AssignUserRoles(in *system.AssignUserRolesReq) (*
 		}
 	}
 
-	return &system.RespBase{}, nil
+	return &system.RespBase{
+		Base: helper.OkResp(),
+	}, nil
 }

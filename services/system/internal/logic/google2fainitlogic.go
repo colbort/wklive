@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/common/helper"
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/system"
@@ -60,10 +61,7 @@ func (l *Google2FAInitLogic) Google2FAInit(in *system.Google2FAInitReq) (*system
 		}, err
 	}
 	return &system.Google2FAInitResp{
-		Base: &common.RespBase{
-			Code: 200,
-			Msg:  "初始化成功",
-		},
+		Base: helper.OkResp(),
 		Secret:     secret,
 		OtpauthUrl: otpauthURL,
 	}, nil

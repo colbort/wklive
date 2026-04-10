@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"wklive/proto/common"
+	"wklive/common/helper"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -55,9 +55,6 @@ func (l *UpdateProfileLogic) UpdateProfile(in *system.UpdateProfileReq) (*system
 	}
 
 	return &system.RespBase{
-		Base: &common.RespBase{
-			Code: 200,
-			Msg:  "success",
-		},
+		Base: helper.OkResp(),
 	}, nil
 }

@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"wklive/common/helper"
 	"wklive/proto/common"
 	"wklive/proto/itick"
 	"wklive/services/itick/internal/pkg/utils"
@@ -92,10 +93,7 @@ func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryP
 	}(taskNo, reqCopy)
 
 	return &itick.SyncCategoryProductsResp{
-		Base: &common.RespBase{
-			Code: 0,
-			Msg:  "同步任务已提交",
-		},
+		Base: helper.OkResp(),
 		TaskNo: taskNo,
 	}, nil
 }
