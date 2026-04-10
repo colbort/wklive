@@ -68,8 +68,8 @@ type UserSecurity {
 	userId          int64 `json:"userId"`
 	hasPayPassword  bool  `json:"hasPayPassword"`
 	googleEnabled   bool  `json:"googleEnabled"`
-	loginErrorCount int32 `json:"loginErrorCount"`
-	payErrorCount   int32 `json:"payErrorCount"`
+	loginErrorCount int64 `json:"loginErrorCount"`
+	payErrorCount   int64 `json:"payErrorCount"`
 	lockUntil       int64 `json:"lockUntil,optional"`
 	riskLevel       int64 `json:"riskLevel"`
 	createTimes     int64 `json:"createTimes,optional"`
@@ -243,7 +243,7 @@ type UpdateUserStatusReq {
 type UpdateUserLevelReq {
 	tenantId    int64 `json:"tenantId"`
 	userId      int64 `path:"userId"`
-	memberLevel int32 `json:"memberLevel"`
+	memberLevel int64 `json:"memberLevel"`
 }
 
 type ResetLoginPasswordReq {

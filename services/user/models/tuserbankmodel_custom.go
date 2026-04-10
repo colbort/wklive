@@ -7,10 +7,10 @@ import (
 
 type UserBankModel interface {
 	tUserBankModel
-	FindPage(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TUserBank, int64, error)
+	FindPage(ctx context.Context, tenantId int64, userId int64, cursor int64, limit int64) ([]*TUserBank, int64, error)
 }
 
-func (m *defaultTUserBankModel) FindPage(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TUserBank, int64, error) {
+func (m *defaultTUserBankModel) FindPage(ctx context.Context, tenantId int64, userId int64, cursor int64, limit int64) ([]*TUserBank, int64, error) {
 	if limit <= 0 {
 		limit = 10
 	}
@@ -24,6 +24,11 @@ func (m *defaultTUserBankModel) FindPage(ctx context.Context, tenantId int64, cu
 	if tenantId != 0 {
 		where += " AND tenant_id = ?"
 		args = append(args, tenantId)
+	}
+
+	if userId != 0 {
+		where += " AND user_id = ?"
+		args = append(args, userId)
 	}
 
 	// ---- total ----

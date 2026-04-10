@@ -66,8 +66,8 @@ message UserSecurity {
   int64 user_id = 3;
   bool has_pay_password = 4;
   bool google_enabled = 5;
-  int32 login_error_count = 6;
-  int32 pay_error_count = 7;
+  int64 login_error_count = 6;
+  int64 pay_error_count = 7;
   int64 lock_until = 8;
   user.RiskLevel risk_level = 9;
   int64 create_times = 10;

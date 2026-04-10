@@ -484,8 +484,8 @@ type UserSecurity struct {
 	UserId          int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	HasPayPassword  bool                   `protobuf:"varint,4,opt,name=has_pay_password,json=hasPayPassword,proto3" json:"has_pay_password,omitempty"`
 	GoogleEnabled   bool                   `protobuf:"varint,5,opt,name=google_enabled,json=googleEnabled,proto3" json:"google_enabled,omitempty"`
-	LoginErrorCount int32                  `protobuf:"varint,6,opt,name=login_error_count,json=loginErrorCount,proto3" json:"login_error_count,omitempty"`
-	PayErrorCount   int32                  `protobuf:"varint,7,opt,name=pay_error_count,json=payErrorCount,proto3" json:"pay_error_count,omitempty"`
+	LoginErrorCount int64                  `protobuf:"varint,6,opt,name=login_error_count,json=loginErrorCount,proto3" json:"login_error_count,omitempty"`
+	PayErrorCount   int64                  `protobuf:"varint,7,opt,name=pay_error_count,json=payErrorCount,proto3" json:"pay_error_count,omitempty"`
 	LockUntil       int64                  `protobuf:"varint,8,opt,name=lock_until,json=lockUntil,proto3" json:"lock_until,omitempty"`
 	RiskLevel       RiskLevel              `protobuf:"varint,9,opt,name=risk_level,json=riskLevel,proto3,enum=user.RiskLevel" json:"risk_level,omitempty"`
 	CreateTimes     int64                  `protobuf:"varint,10,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
@@ -559,14 +559,14 @@ func (x *UserSecurity) GetGoogleEnabled() bool {
 	return false
 }
 
-func (x *UserSecurity) GetLoginErrorCount() int32 {
+func (x *UserSecurity) GetLoginErrorCount() int64 {
 	if x != nil {
 		return x.LoginErrorCount
 	}
 	return 0
 }
 
-func (x *UserSecurity) GetPayErrorCount() int32 {
+func (x *UserSecurity) GetPayErrorCount() int64 {
 	if x != nil {
 		return x.PayErrorCount
 	}
@@ -1406,8 +1406,8 @@ const file_proto_user_model_proto_rawDesc = "" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12(\n" +
 	"\x10has_pay_password\x18\x04 \x01(\bR\x0ehasPayPassword\x12%\n" +
 	"\x0egoogle_enabled\x18\x05 \x01(\bR\rgoogleEnabled\x12*\n" +
-	"\x11login_error_count\x18\x06 \x01(\x05R\x0floginErrorCount\x12&\n" +
-	"\x0fpay_error_count\x18\a \x01(\x05R\rpayErrorCount\x12\x1d\n" +
+	"\x11login_error_count\x18\x06 \x01(\x03R\x0floginErrorCount\x12&\n" +
+	"\x0fpay_error_count\x18\a \x01(\x03R\rpayErrorCount\x12\x1d\n" +
 	"\n" +
 	"lock_until\x18\b \x01(\x03R\tlockUntil\x12.\n" +
 	"\n" +

@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/common/helper"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 
@@ -25,7 +26,6 @@ func NewLogoutLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LogoutLogi
 
 // 用户登出
 func (l *LogoutLogic) Logout(in *user.LogoutReq) (*user.AppCommonResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &user.AppCommonResp{}, nil
+	// 可以在这里执行登出逻辑，如删除 session 或 token 黑名单
+	return &user.AppCommonResp{Base: helper.OkResp()}, nil
 }

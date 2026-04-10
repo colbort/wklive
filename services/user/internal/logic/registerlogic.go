@@ -12,6 +12,7 @@ import (
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
 
+	"wklive/common/helper"
 	"wklive/common/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -190,7 +191,7 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 	}
 
 	return &user.RegisterResp{
-		Base: helper.OkResp(),
+		Base:   helper.OkResp(),
 		UserId: userId,
 		Token: &common.TokenInfo{
 			AccessToken: token,

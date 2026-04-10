@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/common/helper"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 
@@ -25,7 +26,11 @@ func NewDeleteUserBankLogic(ctx context.Context, svcCtx *svc.ServiceContext) *De
 
 // 删除用户银行卡
 func (l *DeleteUserBankLogic) DeleteUserBank(in *user.DeleteUserBankReq) (*user.AdminCommonResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &user.AdminCommonResp{}, nil
+	err := l.svcCtx.UserBankModel.Delete(l.ctx, in.Id)
+	if err != nil {
+		return nil, err
+	}
+	return &user.AdminCommonResp{
+		Base: helper.OkResp(),
+	}, nil
 }

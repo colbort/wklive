@@ -874,7 +874,7 @@ type UpdateUserLevelReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	MemberLevel   int32                  `protobuf:"varint,3,opt,name=member_level,json=memberLevel,proto3" json:"member_level,omitempty"`
+	MemberLevel   int64                  `protobuf:"varint,3,opt,name=member_level,json=memberLevel,proto3" json:"member_level,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -923,7 +923,7 @@ func (x *UpdateUserLevelReq) GetUserId() int64 {
 	return 0
 }
 
-func (x *UpdateUserLevelReq) GetMemberLevel() int32 {
+func (x *UpdateUserLevelReq) GetMemberLevel() int64 {
 	if x != nil {
 		return x.MemberLevel
 	}
@@ -2523,7 +2523,7 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	"\x12UpdateUserLevelReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12!\n" +
-	"\fmember_level\x18\x03 \x01(\x05R\vmemberLevel\"p\n" +
+	"\fmember_level\x18\x03 \x01(\x03R\vmemberLevel\"p\n" +
 	"\x15ResetLoginPasswordReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12!\n" +

@@ -404,9 +404,9 @@ func (x *LoginResp) GetProfile() *UserProfile {
 
 type GuestLoginReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	DeviceId      string                 `protobuf:"bytes,1,opt,name=deviceId,proto3" json:"deviceId,omitempty"`
+	DeviceId      string                 `protobuf:"bytes,1,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
 	Fingerprint   string                 `protobuf:"bytes,2,opt,name=fingerprint,proto3" json:"fingerprint,omitempty"`
-	RegisterIp    string                 `protobuf:"bytes,3,opt,name=registerIp,proto3" json:"registerIp,omitempty"`
+	RegisterIp    string                 `protobuf:"bytes,3,opt,name=register_ip,json=registerIp,proto3" json:"register_ip,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -466,7 +466,7 @@ type GuestLogin struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	Uid           string                 `protobuf:"bytes,2,opt,name=uid,proto3" json:"uid,omitempty"`
-	IsNew         bool                   `protobuf:"varint,3,opt,name=isNew,proto3" json:"isNew,omitempty"`
+	IsNew         bool                   `protobuf:"varint,3,opt,name=is_new,json=isNew,proto3" json:"is_new,omitempty"`
 	Username      string                 `protobuf:"bytes,4,opt,name=username,proto3" json:"username,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2383,18 +2383,17 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12'\n" +
 	"\x05token\x18\x03 \x01(\v2\x11.common.TokenInfoR\x05token\x12+\n" +
-	"\aprofile\x18\x04 \x01(\v2\x11.user.UserProfileR\aprofile\"m\n" +
-	"\rGuestLoginReq\x12\x1a\n" +
-	"\bdeviceId\x18\x01 \x01(\tR\bdeviceId\x12 \n" +
-	"\vfingerprint\x18\x02 \x01(\tR\vfingerprint\x12\x1e\n" +
-	"\n" +
-	"registerIp\x18\x03 \x01(\tR\n" +
-	"registerIp\"f\n" +
+	"\aprofile\x18\x04 \x01(\v2\x11.user.UserProfileR\aprofile\"o\n" +
+	"\rGuestLoginReq\x12\x1b\n" +
+	"\tdevice_id\x18\x01 \x01(\tR\bdeviceId\x12 \n" +
+	"\vfingerprint\x18\x02 \x01(\tR\vfingerprint\x12\x1f\n" +
+	"\vregister_ip\x18\x03 \x01(\tR\n" +
+	"registerIp\"g\n" +
 	"\n" +
 	"GuestLogin\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x12\x10\n" +
-	"\x03uid\x18\x02 \x01(\tR\x03uid\x12\x14\n" +
-	"\x05isNew\x18\x03 \x01(\bR\x05isNew\x12\x1a\n" +
+	"\x03uid\x18\x02 \x01(\tR\x03uid\x12\x15\n" +
+	"\x06is_new\x18\x03 \x01(\bR\x05isNew\x12\x1a\n" +
 	"\busername\x18\x04 \x01(\tR\busername\"\\\n" +
 	"\x0eGuestLoginResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12$\n" +

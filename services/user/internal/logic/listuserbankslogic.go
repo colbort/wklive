@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 
@@ -23,9 +24,20 @@ func NewListUserBanksLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Lis
 	}
 }
 
-// 银行卡相关接口
+// 管理员查询用户银行卡列表
 func (l *ListUserBanksLogic) ListUserBanks(in *user.ListUserBanksReq) (*user.ListUserBanksResp, error) {
-	// todo: add your logic here and delete this line
+	// TODO: 实现复杂查询逻辑
+	// 需要支持多个过滤条件：keyword, status
+	// 使用 FindPage 或自定义查询方法
 
-	return &user.ListUserBanksResp{}, nil
+	bankList := []*user.UserBankListItem{}
+
+	return &user.ListUserBanksResp{
+		Base: &common.RespBase{
+			Code:  200,
+			Msg:   "OK",
+			Total: int64(len(bankList)),
+		},
+		List: bankList,
+	}, nil
 }

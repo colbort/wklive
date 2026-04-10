@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"wklive/common/helper"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 
@@ -25,7 +26,25 @@ func NewGetUserSecurityLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 
 // 获取用户安全设置
 func (l *GetUserSecurityLogic) GetUserSecurity(in *user.GetUserSecurityReq) (*user.GetUserSecurityResp, error) {
-	// todo: add your logic here and delete this line
+	result, err := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, in.TenantId, in.UserId)
+	if err != nil {
+		return nil, err
+	}
 
-	return &user.GetUserSecurityResp{}, nil
+	return &user.GetUserSecurityResp{
+		Base: helper.OkResp(),
+		Security: &user.UserSecurity{
+			Id:              result.Id,
+			TenantId:        result.TenantId,
+			UserId:          result.UserId,
+			HasPayPassword:  result.PayPasswordHash.Valid && result.PayPasswordHash.String != "",
+			GoogleEnabled:   result.GoogleEnabled == 1,
+			LoginErrorCount: result.LoginErrorCount,
+			PayErrorCount:   result.PayErrorCount,
+			LockUntil:       result.LockUntil,
+			RiskLevel:       user.RiskLevel(result.RiskLevel),
+			CreateTimes:     result.CreateTimes,
+			UpdateTimes:     result.UpdateTimes,
+		},
+	}, nil
 }

@@ -2,9 +2,14 @@ package logic
 
 import (
 	"context"
+	"errors"
+	"time"
 
+	"wklive/common/helper"
+	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
+	"wklive/services/user/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -23,9 +28,35 @@ func NewResetLoginPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-// 重置登录密码
+// 管理员重置登录密码
 func (l *ResetLoginPasswordLogic) ResetLoginPassword(in *user.ResetLoginPasswordReq) (*user.AdminCommonResp, error) {
-	// todo: add your logic here and delete this line
+	// 获取用户信息
+	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, in.UserId)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
 
-	return &user.AdminCommonResp{}, nil
+	if tuser == nil {
+		return &user.AdminCommonResp{
+			Base: &common.RespBase{
+				Code: 404,
+				Msg:  "用户不存在",
+			},
+		}, nil
+	}
+
+	// 重置登录密码
+	tuser.PasswordHash = in.NewPassword
+	tuser.UpdateTimes = time.Now().UnixMilli()
+
+	err = l.svcCtx.UserModel.Update(l.ctx, tuser)
+	if err != nil {
+		return nil, err
+	}
+
+	l.Logger.Infof("管理员为用户 %d 重置登录密码成功", in.UserId)
+
+	return &user.AdminCommonResp{
+		Base: helper.OkResp(),
+	}, nil
 }

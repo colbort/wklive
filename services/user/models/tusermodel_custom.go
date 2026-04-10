@@ -15,6 +15,7 @@ type UserModel interface {
 	CountRecentNoRecharge(ctx context.Context, id int64) (int64, error)
 	FindByUsername(ctx context.Context, tenantCode string, username string) (*TUser, error)
 	FindByDeviceIdOrFingerprint(ctx context.Context, deviceId string, fingerprint string) (*TUser, error)
+	FindByTenantIdUserId(ctx context.Context, tenantId int64, userId int64) (*TUser, error)
 }
 
 func (m *defaultTUserModel) FindPage(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TUser, int64, error) {
@@ -154,6 +155,29 @@ func (m *defaultTUserModel) FindByDeviceIdOrFingerprint(ctx context.Context, dev
 	`, tUserRows, m.table)
 
 	err := m.QueryRowNoCacheCtx(ctx, &resp, query, deviceId, fingerprint)
+	if err != nil {
+		if err == sqlx.ErrNotFound {
+			return nil, ErrNotFound
+		}
+		return nil, err
+	}
+
+	return &resp, nil
+}
+
+func (m *defaultTUserModel) FindByTenantIdUserId(ctx context.Context, tenantId int64, userId int64) (*TUser, error) {
+	var resp TUser
+
+	query := fmt.Sprintf(`
+		SELECT %s 
+		FROM %s 
+		WHERE tenant_id = ? 
+		AND user_id = ?
+		ORDER BY id DESC
+		LIMIT 1
+	`, tUserRows, m.table)
+
+	err := m.QueryRowNoCacheCtx(ctx, &resp, query, tenantId, userId)
 	if err != nil {
 		if err == sqlx.ErrNotFound {
 			return nil, ErrNotFound

@@ -2,9 +2,13 @@ package logic
 
 import (
 	"context"
+	"errors"
 
+	"wklive/common/helper"
+	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
+	"wklive/services/user/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -23,9 +27,54 @@ func NewGetSecurityLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetSe
 	}
 }
 
-// 安全设置相关接口
+// 获取安全设置
 func (l *GetSecurityLogic) GetSecurity(in *user.GetSecurityReq) (*user.GetSecurityResp, error) {
-	// todo: add your logic here and delete this line
+	// 获取用户信息
+	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, in.UserId)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
 
-	return &user.GetSecurityResp{}, nil
+	if tuser == nil {
+		return &user.GetSecurityResp{
+			Base: &common.RespBase{
+				Code: 404,
+				Msg:  "用户不存在",
+			},
+		}, nil
+	}
+
+	// 查询用户安全信息
+	userSecurity, err := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, in.UserId)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
+
+	if userSecurity == nil {
+		return &user.GetSecurityResp{
+			Base: &common.RespBase{
+				Code: 404,
+				Msg:  "安全设置不存在",
+			},
+		}, nil
+	}
+
+	securityProto := &user.UserSecurity{
+		Id:              userSecurity.Id,
+		TenantId:        userSecurity.TenantId,
+		UserId:          userSecurity.UserId,
+		HasPayPassword:  userSecurity.PayPasswordHash.Valid && userSecurity.PayPasswordHash.String != "",
+		GoogleEnabled:   userSecurity.GoogleEnabled == 1,
+		LoginErrorCount: userSecurity.LoginErrorCount,
+		PayErrorCount:   userSecurity.PayErrorCount,
+		LockUntil:       userSecurity.LockUntil,
+		RiskLevel:       user.RiskLevel(userSecurity.RiskLevel),
+		CreateTimes:     userSecurity.CreateTimes,
+		UpdateTimes:     userSecurity.UpdateTimes,
+	}
+
+	return &user.GetSecurityResp{
+		Base:     helper.OkResp(),
+		Security: securityProto,
+	}, nil
 }

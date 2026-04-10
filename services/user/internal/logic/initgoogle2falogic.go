@@ -2,9 +2,14 @@ package logic
 
 import (
 	"context"
+	"errors"
 
+	"wklive/common/helper"
+	"wklive/common/utils"
+	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
+	"wklive/services/user/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -23,9 +28,42 @@ func NewInitGoogle2FALogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ini
 	}
 }
 
-// 初始化谷歌2FA
+// 初始化Google 2FA
 func (l *InitGoogle2FALogic) InitGoogle2FA(in *user.InitGoogle2FAReq) (*user.InitGoogle2FAResp, error) {
-	// todo: add your logic here and delete this line
+	// 获取用户信息
+	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, in.UserId)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
 
-	return &user.InitGoogle2FAResp{}, nil
+	if tuser == nil {
+		return &user.InitGoogle2FAResp{
+			Base: &common.RespBase{
+				Code: 404,
+				Msg:  "用户不存在",
+			},
+		}, nil
+	}
+
+	// 生成Google 2FA密钥
+	secret, _, qrCodeUrl, err := utils.GenerateGoogle2FA(tuser.Username, "", 100)
+	if err != nil {
+		return nil, err
+	}
+	if secret == "" {
+		return &user.InitGoogle2FAResp{
+			Base: &common.RespBase{
+				Code: 500,
+				Msg:  "生成密钥失败",
+			},
+		}, nil
+	}
+
+	l.Logger.Infof("用户 %d 初始化Google 2FA成功", in.UserId)
+
+	return &user.InitGoogle2FAResp{
+		Base:      helper.OkResp(),
+		Secret:    secret,
+		QrCodeUrl: qrCodeUrl,
+	}, nil
 }

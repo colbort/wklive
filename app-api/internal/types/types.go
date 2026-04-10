@@ -764,8 +764,8 @@ type UserSecurity struct {
 	UserId          int64 `json:"userId"`
 	HasPayPassword  bool  `json:"hasPayPassword"`
 	GoogleEnabled   bool  `json:"googleEnabled"`
-	LoginErrorCount int32 `json:"loginErrorCount"`
-	PayErrorCount   int32 `json:"payErrorCount"`
+	LoginErrorCount int64 `json:"loginErrorCount"`
+	PayErrorCount   int64 `json:"payErrorCount"`
 	LockUntil       int64 `json:"lockUntil,optional"`
 	RiskLevel       int64 `json:"riskLevel"`
 	CreateTimes     int64 `json:"createTimes,optional"`
