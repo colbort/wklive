@@ -5,7 +5,7 @@ import (
 	"errors"
 	"strings"
 
-	"wklive/common/helper"
+	"wklive/common/pageutil"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -34,16 +34,10 @@ func (l *ListUserIdentitiesLogic) ListUserIdentities(in *user.ListUserIdentities
 		return nil, err
 	}
 
-	prevCursor := in.Page.Cursor
-	if prevCursor < 0 {
-		prevCursor = 0
+	lastID := int64(0)
+	if len(items) > 0 {
+		lastID = items[len(items)-1].Id
 	}
-	nextCursor := int64(0)
-	if int64(len(items)) == in.Page.Limit {
-		nextCursor = items[len(items)-1].Id
-	}
-	hasPrev := prevCursor > 0
-	hasNext := int64(len(items)) == in.Page.Limit
 
 	identityList := make([]*user.UserIdentityListItem, 0, len(items))
 	for _, item := range items {
@@ -74,7 +68,7 @@ func (l *ListUserIdentitiesLogic) ListUserIdentities(in *user.ListUserIdentities
 	}
 
 	return &user.ListUserIdentitiesResp{
-		Base: helper.OkWithOthers(total, hasNext, hasPrev, nextCursor, prevCursor),
+		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(items), total, lastID),
 		List: identityList,
 	}, nil
 }

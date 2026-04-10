@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 
-	"wklive/common/helper"
+	"wklive/common/pageutil"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/helpers"
 	"wklive/services/asset/internal/svc"
@@ -39,18 +39,12 @@ func (l *PageAssetFlowsLogic) PageAssetFlows(in *asset.PageAssetFlowsReq) (*asse
 		return nil, err
 	}
 
-	prevCursor := in.Page.Cursor
-	if prevCursor < 0 {
-		prevCursor = 0
+	lastID := int64(0)
+	if len(flows) > 0 {
+		lastID = flows[len(flows)-1].Id
 	}
-	nextCursor := int64(0)
-	if int64(len(flows)) == in.Page.Limit && in.Page.Limit > 0 {
-		nextCursor = flows[len(flows)-1].Id
-	}
-	hasPrev := prevCursor > 0
-	hasNext := int64(len(flows)) == in.Page.Limit && in.Page.Limit > 0
 
-	resp := &asset.PageAssetFlowsResp{Base: helper.OkWithOthers(total, hasNext, hasPrev, nextCursor, prevCursor)}
+	resp := &asset.PageAssetFlowsResp{Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(flows), total, lastID)}
 
 	for _, item := range flows {
 		resp.Data = append(resp.Data, helpers.ToAssetFlowProto(item))

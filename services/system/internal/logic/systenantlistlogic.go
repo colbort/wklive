@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 
-	"wklive/common/helper"
+	"wklive/common/pageutil"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -30,17 +30,10 @@ func (l *SysTenantListLogic) SysTenantList(in *system.SysTenantListReq) (*system
 	if err != nil {
 		return nil, err
 	}
-	prevCursor := in.Page.Cursor
-	if prevCursor < 0 {
-		prevCursor = 0
+	lastID := int64(0)
+	if len(items) > 0 {
+		lastID = items[len(items)-1].Id
 	}
-	nextCursor := int64(0)
-	if int64(len(items)) == in.Page.Limit {
-		lastItem := items[len(items)-1]
-		nextCursor = lastItem.Id
-	}
-	hasPrev := prevCursor > 0
-	hasNext := int64(len(items)) == in.Page.Limit
 
 	data := make([]*system.SysTenantItem, 0)
 	for _, v := range items {
@@ -58,7 +51,7 @@ func (l *SysTenantListLogic) SysTenantList(in *system.SysTenantListReq) (*system
 		})
 	}
 	return &system.SysTenantListResp{
-		Base: helper.OkWithOthers(total, hasNext, hasPrev, nextCursor, prevCursor),
+		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(items), total, lastID),
 		Data: data,
 	}, nil
 }

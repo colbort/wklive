@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 
-	"wklive/common/helper"
+	"wklive/common/pageutil"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -39,12 +39,8 @@ func (l *SysUserListLogic) SysUserList(in *system.SysUserListReq) (*system.SysUs
 	}
 
 	if len(items) == 0 {
-		prevCursor := in.Page.Cursor
-		if prevCursor < 0 {
-			prevCursor = 0
-		}
 		return &system.SysUserListResp{
-			Base: helper.OkWithOthers(total, false, prevCursor > 0, 0, prevCursor),
+			Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, 0, total, 0),
 			Data: []*system.SysUserItem{},
 		}, nil
 	}
@@ -61,17 +57,10 @@ func (l *SysUserListLogic) SysUserList(in *system.SysUserListReq) (*system.SysUs
 		return nil, err
 	}
 
-	prevCursor := in.Page.Cursor
-	if prevCursor < 0 {
-		prevCursor = 0
+	lastID := int64(0)
+	if len(items) > 0 {
+		lastID = items[len(items)-1].Id
 	}
-	nextCursor := int64(0)
-	if int64(len(items)) == in.Page.Limit {
-		lastItem := items[len(items)-1]
-		nextCursor = lastItem.Id
-	}
-	hasPrev := prevCursor > 0
-	hasNext := int64(len(items)) == in.Page.Limit
 
 	// 5️⃣ 组装返回
 	data := make([]*system.SysUserItem, 0, len(items))
@@ -88,7 +77,7 @@ func (l *SysUserListLogic) SysUserList(in *system.SysUserListReq) (*system.SysUs
 	}
 
 	return &system.SysUserListResp{
-		Base: helper.OkWithOthers(total, hasNext, hasPrev, nextCursor, prevCursor),
+		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(items), total, lastID),
 		Data: data,
 	}, nil
 }

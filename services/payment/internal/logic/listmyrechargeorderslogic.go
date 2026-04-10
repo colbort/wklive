@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"wklive/common/helper"
+	"wklive/common/pageutil"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -33,17 +33,10 @@ func (l *ListMyRechargeOrdersLogic) ListMyRechargeOrders(in *payment.ListMyRecha
 		return nil, err
 	}
 
-	prevCursor := in.Page.Cursor
-	if prevCursor < 0 {
-		prevCursor = 0
+	lastID := int64(0)
+	if len(items) > 0 {
+		lastID = items[len(items)-1].Id
 	}
-	nextCursor := int64(0)
-	if int64(len(items)) == in.Page.Limit {
-		lastItem := items[len(items)-1]
-		nextCursor = lastItem.Id
-	}
-	hasPrev := prevCursor > 0
-	hasNext := int64(len(items)) == in.Page.Limit
 
 	data := make([]*payment.RechargeOrder, 0)
 	for _, order := range items {
@@ -73,7 +66,7 @@ func (l *ListMyRechargeOrdersLogic) ListMyRechargeOrders(in *payment.ListMyRecha
 	}
 
 	return &payment.ListMyRechargeOrdersResp{
-		Base: helper.OkWithOthers(total, hasNext, hasPrev, nextCursor, prevCursor),
+		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(items), total, lastID),
 		List: data,
 	}, nil
 }

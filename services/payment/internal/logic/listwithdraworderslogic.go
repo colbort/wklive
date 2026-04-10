@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"wklive/common/helper"
+	"wklive/common/pageutil"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -41,17 +41,10 @@ func (l *ListWithdrawOrdersLogic) ListWithdrawOrders(in *payment.ListWithdrawOrd
 		return nil, err
 	}
 
-	prevCursor := in.Page.Cursor
-	if prevCursor < 0 {
-		prevCursor = 0
+	lastID := int64(0)
+	if len(orders) > 0 {
+		lastID = orders[len(orders)-1].Id
 	}
-	nextCursor := int64(0)
-	if int64(len(orders)) == in.Page.Limit {
-		lastItem := orders[len(orders)-1]
-		nextCursor = lastItem.Id
-	}
-	hasPrev := prevCursor > 0
-	hasNext := int64(len(orders)) == in.Page.Limit
 
 	data := make([]*payment.WithdrawOrder, 0, len(orders))
 	for _, o := range orders {
@@ -83,7 +76,7 @@ func (l *ListWithdrawOrdersLogic) ListWithdrawOrders(in *payment.ListWithdrawOrd
 	}
 
 	return &payment.ListWithdrawOrdersResp{
-		Base: helper.OkWithOthers(total, hasNext, hasPrev, nextCursor, prevCursor),
+		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(orders), total, lastID),
 		Data: data,
 	}, nil
 }

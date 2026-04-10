@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 
-	"wklive/common/helper"
+	"wklive/common/pageutil"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/helpers"
 	"wklive/services/asset/internal/svc"
@@ -37,18 +37,12 @@ func (l *PageUserAssetsLogic) PageUserAssets(in *asset.PageUserAssetsReq) (*asse
 		return nil, err
 	}
 
-	prevCursor := in.Page.Cursor
-	if prevCursor < 0 {
-		prevCursor = 0
+	lastID := int64(0)
+	if len(list) > 0 {
+		lastID = list[len(list)-1].Id
 	}
-	nextCursor := int64(0)
-	if int64(len(list)) == in.Page.Limit && in.Page.Limit > 0 {
-		nextCursor = list[len(list)-1].Id
-	}
-	hasPrev := prevCursor > 0
-	hasNext := int64(len(list)) == in.Page.Limit && in.Page.Limit > 0
 
-	resp := &asset.PageUserAssetsResp{Base: helper.OkWithOthers(total, hasNext, hasPrev, nextCursor, prevCursor)}
+	resp := &asset.PageUserAssetsResp{Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(list), total, lastID)}
 
 	for _, item := range list {
 		resp.Data = append(resp.Data, helpers.ToUserAssetProto(item))

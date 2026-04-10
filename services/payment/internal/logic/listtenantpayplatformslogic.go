@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"wklive/common/helper"
+	"wklive/common/pageutil"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -41,17 +41,10 @@ func (l *ListTenantPayPlatformsLogic) ListTenantPayPlatforms(in *payment.ListTen
 		return nil, err
 	}
 
-	prevCursor := in.Page.Cursor
-	if prevCursor < 0 {
-		prevCursor = 0
+	lastID := int64(0)
+	if len(tenantPlatforms) > 0 {
+		lastID = tenantPlatforms[len(tenantPlatforms)-1].Id
 	}
-	nextCursor := int64(0)
-	if int64(len(tenantPlatforms)) == in.Page.Limit {
-		lastItem := tenantPlatforms[len(tenantPlatforms)-1]
-		nextCursor = lastItem.Id
-	}
-	hasPrev := prevCursor > 0
-	hasNext := int64(len(tenantPlatforms)) == in.Page.Limit
 
 	data := make([]*payment.TenantPayPlatform, 0, len(tenantPlatforms))
 	for _, p := range tenantPlatforms {
@@ -68,7 +61,7 @@ func (l *ListTenantPayPlatformsLogic) ListTenantPayPlatforms(in *payment.ListTen
 	}
 
 	return &payment.ListTenantPayPlatformsResp{
-		Base: helper.OkWithOthers(total, hasNext, hasPrev, nextCursor, prevCursor),
+		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(tenantPlatforms), total, lastID),
 		Data: data,
 	}, nil
 }

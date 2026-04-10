@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"wklive/common/helper"
+	"wklive/common/pageutil"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -46,17 +46,10 @@ func (l *ListWithdrawNotifyLogsLogic) ListWithdrawNotifyLogs(in *payment.ListWit
 		return nil, err
 	}
 
-	prevCursor := in.Page.Cursor
-	if prevCursor < 0 {
-		prevCursor = 0
+	lastID := int64(0)
+	if len(logs) > 0 {
+		lastID = logs[len(logs)-1].Id
 	}
-	nextCursor := int64(0)
-	if int64(len(logs)) == in.Page.Limit {
-		lastItem := logs[len(logs)-1]
-		nextCursor = lastItem.Id
-	}
-	hasPrev := prevCursor > 0
-	hasNext := int64(len(logs)) == in.Page.Limit
 
 	data := make([]*payment.PayNotifyLog, 0, len(logs))
 	for _, log := range logs {
@@ -78,7 +71,7 @@ func (l *ListWithdrawNotifyLogsLogic) ListWithdrawNotifyLogs(in *payment.ListWit
 	}
 
 	return &payment.ListWithdrawNotifyLogsResp{
-		Base: helper.OkWithOthers(total, hasNext, hasPrev, nextCursor, prevCursor),
+		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(logs), total, lastID),
 		Data: data,
 	}, nil
 }

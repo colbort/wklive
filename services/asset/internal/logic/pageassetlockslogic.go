@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 
-	"wklive/common/helper"
+	"wklive/common/pageutil"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/helpers"
 	"wklive/services/asset/internal/svc"
@@ -32,18 +32,12 @@ func (l *PageAssetLocksLogic) PageAssetLocks(in *asset.PageAssetLocksReq) (*asse
 		return nil, err
 	}
 
-	prevCursor := in.Page.Cursor
-	if prevCursor < 0 {
-		prevCursor = 0
+	lastID := int64(0)
+	if len(locks) > 0 {
+		lastID = locks[len(locks)-1].Id
 	}
-	nextCursor := int64(0)
-	if int64(len(locks)) == in.Page.Limit && in.Page.Limit > 0 {
-		nextCursor = locks[len(locks)-1].Id
-	}
-	hasPrev := prevCursor > 0
-	hasNext := int64(len(locks)) == in.Page.Limit && in.Page.Limit > 0
 
-	resp := &asset.PageAssetLocksResp{Base: helper.OkWithOthers(total, hasNext, hasPrev, nextCursor, prevCursor)}
+	resp := &asset.PageAssetLocksResp{Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(locks), total, lastID)}
 
 	for _, item := range locks {
 		resp.Data = append(resp.Data, helpers.ToAssetLockProto(item))

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"strings"
 
-	"wklive/common/helper"
+	"wklive/common/pageutil"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -29,24 +29,18 @@ func NewListUserBanksLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Lis
 
 // 管理员查询用户银行卡列表
 func (l *ListUserBanksLogic) ListUserBanks(in *user.ListUserBanksReq) (*user.ListUserBanksResp, error) {
-	banks, total, err := l.svcCtx.UserBankModel.FindPage(l.ctx, in.TenantId, in.UserId, in.Page.Cursor, in.Page.Limit)
+	items, total, err := l.svcCtx.UserBankModel.FindPage(l.ctx, in.TenantId, in.UserId, in.Page.Cursor, in.Page.Limit)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 
-	prevCursor := in.Page.Cursor
-	if prevCursor < 0 {
-		prevCursor = 0
+	lastID := int64(0)
+	if len(items) > 0 {
+		lastID = items[len(items)-1].Id
 	}
-	nextCursor := int64(0)
-	if int64(len(banks)) == in.Page.Limit {
-		nextCursor = banks[len(banks)-1].Id
-	}
-	hasPrev := prevCursor > 0
-	hasNext := int64(len(banks)) == in.Page.Limit
 
-	bankList := make([]*user.UserBankListItem, 0, len(banks))
-	for _, bank := range banks {
+	data := make([]*user.UserBankListItem, 0)
+	for _, bank := range items {
 		if in.Status != 0 && bank.Status != int64(in.Status) {
 			continue
 		}
@@ -68,7 +62,7 @@ func (l *ListUserBanksLogic) ListUserBanks(in *user.ListUserBanksReq) (*user.Lis
 			}
 		}
 
-		bankList = append(bankList, &user.UserBankListItem{
+		data = append(data, &user.UserBankListItem{
 			Id:              bank.Id,
 			UserId:          bank.UserId,
 			UserNo:          u.UserNo,
@@ -87,7 +81,7 @@ func (l *ListUserBanksLogic) ListUserBanks(in *user.ListUserBanksReq) (*user.Lis
 	}
 
 	return &user.ListUserBanksResp{
-		Base: helper.OkWithOthers(total, hasNext, hasPrev, nextCursor, prevCursor),
-		List: bankList,
+		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(items), total, lastID),
+		List: data,
 	}, nil
 }
