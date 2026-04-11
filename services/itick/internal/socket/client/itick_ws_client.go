@@ -11,7 +11,7 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
-
+	cutils "wklive/common/utils"
 	"wklive/services/itick/internal/pkg/utils"
 	"wklive/services/itick/internal/socket/server"
 
@@ -234,7 +234,7 @@ func (c *ItickWsClient) keepaliveLoop(conn *websocket.Conn) {
 			return
 		}
 
-		ts := strconv.FormatInt(utils.NowMillis(), 10)
+		ts := strconv.FormatInt(cutils.NowMillis(), 10)
 		req := PingReq{
 			Ac:     "ping",
 			Params: ts,

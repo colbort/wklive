@@ -96,6 +96,12 @@ CacheRedis:
     Type: node
     Pass:
 
+Redis:
+  Key: test123
+  Host: 127.0.0.1:6379
+  Type: node
+  Pass:
+
 BusRedis:
   - Host: 127.0.0.1:6379
     Type: node
@@ -146,6 +152,34 @@ ItickRpc:
     Hosts:
     - "127.0.0.1:2379"
     Key: itick.rpc
+
+AssetRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: asset.rpc   
+
+OptionRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: option.rpc   
+
+StakingRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: staking.rpc   
+
+TradeRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: trade.rpc   
 ```
 
 ### app-api 网关配置 /wklive/app-api/config
@@ -175,6 +209,34 @@ ItickRpc:
     Hosts:
     - "127.0.0.1:2379"
     Key: itick.rpc
+
+AssetRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: asset.rpc   
+
+OptionRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: option.rpc   
+
+StakingRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: staking.rpc   
+
+TradeRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: trade.rpc   
 ```
 
 ### system-rpc 微服务配置 /wklive/system-rpc/config
@@ -254,6 +316,13 @@ Etcd:
   Hosts:
   - 127.0.0.1:2379
   Key: option.rpc
+
+AssetRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: asset.rpc   
 ```
 
 ### staking-rpc 微服务配置 /wklive/staking-rpc/config
@@ -265,6 +334,13 @@ Etcd:
   Hosts:
   - 127.0.0.1:2379
   Key: staking.rpc
+
+AssetRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: asset.rpc   
 ```
 
 ### trade-rpc 微服务配置 /wklive/trade-rpc/config
@@ -276,4 +352,11 @@ Etcd:
   Hosts:
   - 127.0.0.1:2379
   Key: trade.rpc
+
+AssetRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: asset.rpc   
 ```

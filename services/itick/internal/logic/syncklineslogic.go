@@ -15,6 +15,7 @@ import (
 	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	cutils "wklive/common/utils"
 	"wklive/proto/itick"
 	"wklive/services/itick/internal/pkg/utils"
 	"wklive/services/itick/internal/svc"
@@ -74,7 +75,7 @@ func (l *SyncKlinesLogic) SyncKlines(in *itick.SyncKlinesReq) (*itick.SyncKlines
 	}
 
 	taskNo := fmt.Sprintf("sync_klines_%d", time.Now().UnixNano())
-	now := utils.NowMillis()
+	now := cutils.NowMillis()
 
 	_, err := l.svcCtx.ItickSyncTaskModel.Insert(l.ctx, &models.TItickSyncTask{
 		TaskNo:      taskNo,
@@ -288,7 +289,7 @@ func (w *SyncKlinesWorker) syncOneJob(apiURL, token string, job KlineJob) error 
 		return fmt.Errorf("find or create progress failed: %w", err)
 	}
 
-	now := utils.NowMillis()
+	now := cutils.NowMillis()
 
 	mode := "incremental"
 	et := now
@@ -333,7 +334,7 @@ func (w *SyncKlinesWorker) syncOneJob(apiURL, token string, job KlineJob) error 
 				w.ctx,
 				progress.Id,
 				mode,
-				utils.NowMillis(),
+				cutils.NowMillis(),
 				err.Error(),
 			)
 			return err
@@ -424,7 +425,7 @@ func (w *SyncKlinesWorker) syncOneJob(apiURL, token string, job KlineJob) error 
 		latestTs,
 		oldestTs,
 		fullSynced,
-		utils.NowMillis(),
+		cutils.NowMillis(),
 		msg,
 	)
 }
@@ -544,6 +545,6 @@ func (w *SyncKlinesWorker) updateTaskStatus(taskNo string, status int64, message
 		taskNo,
 		status,
 		message,
-		utils.NowMillis(),
+		cutils.NowMillis(),
 	)
 }

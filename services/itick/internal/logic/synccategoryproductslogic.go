@@ -12,6 +12,7 @@ import (
 	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	cutils "wklive/common/utils"
 	"wklive/proto/itick"
 	"wklive/services/itick/internal/pkg/utils"
 	"wklive/services/itick/internal/svc"
@@ -51,7 +52,7 @@ func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryP
 	}
 
 	taskNo := fmt.Sprintf("sync_category_products_%d_%d", in.Id, time.Now().UnixNano())
-	now := utils.NowMillis()
+	now := cutils.NowMillis()
 
 	// 创建任务记录
 	_, err = l.svcCtx.ItickSyncTaskModel.Insert(l.ctx, &models.TItickSyncTask{
@@ -169,8 +170,8 @@ func (w *SyncCategoryProductsWorker) doSync(in *itick.SyncCategoryProductsReq) e
 				Sort:         0,
 				Icon:         "",
 				Remark:       fmt.Sprintf("同步自 iTick，分类：%s，地区：%s", result.CategoryCode, market),
-				CreateTimes:  utils.NowMillis(),
-				UpdateTimes:  utils.NowMillis(),
+				CreateTimes:  cutils.NowMillis(),
+				UpdateTimes:  cutils.NowMillis(),
 			})
 			if err != nil {
 				logx.Errorf("insert product failed, code=%s, err=%v", item.Code, err)
@@ -283,5 +284,5 @@ func (lw *SyncCategoryProductsWorker) getRegion(category string) ([]string, erro
 }
 
 func (w *SyncCategoryProductsWorker) updateTaskStatus(taskNo string, status int64, message string) error {
-	return w.svcCtx.ItickSyncTaskModel.UpdateStatusByTaskNo(w.ctx, taskNo, status, message, utils.NowMillis())
+	return w.svcCtx.ItickSyncTaskModel.UpdateStatusByTaskNo(w.ctx, taskNo, status, message, cutils.NowMillis())
 }
