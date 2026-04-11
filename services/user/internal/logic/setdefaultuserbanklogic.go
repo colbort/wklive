@@ -3,13 +3,14 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
-	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SetDefaultUserBankLogic struct {
@@ -60,7 +61,7 @@ func (l *SetDefaultUserBankLogic) SetDefaultUserBank(in *user.SetDefaultUserBank
 	err = l.svcCtx.UserBankModel.Update(l.ctx, &models.TUserBank{
 		Id:          in.Id,
 		IsDefault:   1,
-		UpdateTimes: time.Now().UnixMilli(),
+		UpdateTimes: utils.NowMillis(),
 	})
 	if err != nil {
 		return nil, err

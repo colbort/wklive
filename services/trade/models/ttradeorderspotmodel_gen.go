@@ -30,10 +30,10 @@ var (
 type (
 	tTradeOrderSpotModel interface {
 		Insert(ctx context.Context, data *TTradeOrderSpot) (sql.Result, error)
-		FindOne(ctx context.Context, id uint64) (*TTradeOrderSpot, error)
-		FindOneByTenantIdOrderId(ctx context.Context, tenantId uint64, orderId uint64) (*TTradeOrderSpot, error)
+		FindOne(ctx context.Context, id int64) (*TTradeOrderSpot, error)
+		FindOneByTenantIdOrderId(ctx context.Context, tenantId int64, orderId int64) (*TTradeOrderSpot, error)
 		Update(ctx context.Context, data *TTradeOrderSpot) error
-		Delete(ctx context.Context, id uint64) error
+		Delete(ctx context.Context, id int64) error
 	}
 
 	defaultTTradeOrderSpotModel struct {
@@ -42,9 +42,9 @@ type (
 	}
 
 	TTradeOrderSpot struct {
-		Id           uint64  `db:"id"`            // 主键ID
-		TenantId     uint64  `db:"tenant_id"`     // 租户ID
-		OrderId      uint64  `db:"order_id"`      // 订单ID，对应t_trade_order.id
+		Id           int64   `db:"id"`            // 主键ID
+		TenantId     int64   `db:"tenant_id"`     // 租户ID
+		OrderId      int64   `db:"order_id"`      // 订单ID，对应t_trade_order.id
 		FrozenAsset  string  `db:"frozen_asset"`  // 下单冻结的资产币种
 		FrozenAmount float64 `db:"frozen_amount"` // 下单冻结的资产数量
 		SettleAsset  string  `db:"settle_asset"`  // 结算币种
@@ -61,7 +61,7 @@ func newTTradeOrderSpotModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache
 	}
 }
 
-func (m *defaultTTradeOrderSpotModel) Delete(ctx context.Context, id uint64) error {
+func (m *defaultTTradeOrderSpotModel) Delete(ctx context.Context, id int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
@@ -76,7 +76,7 @@ func (m *defaultTTradeOrderSpotModel) Delete(ctx context.Context, id uint64) err
 	return err
 }
 
-func (m *defaultTTradeOrderSpotModel) FindOne(ctx context.Context, id uint64) (*TTradeOrderSpot, error) {
+func (m *defaultTTradeOrderSpotModel) FindOne(ctx context.Context, id int64) (*TTradeOrderSpot, error) {
 	tTradeOrderSpotIdKey := fmt.Sprintf("%s%v", cacheTTradeOrderSpotIdPrefix, id)
 	var resp TTradeOrderSpot
 	err := m.QueryRowCtx(ctx, &resp, tTradeOrderSpotIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
@@ -93,7 +93,7 @@ func (m *defaultTTradeOrderSpotModel) FindOne(ctx context.Context, id uint64) (*
 	}
 }
 
-func (m *defaultTTradeOrderSpotModel) FindOneByTenantIdOrderId(ctx context.Context, tenantId uint64, orderId uint64) (*TTradeOrderSpot, error) {
+func (m *defaultTTradeOrderSpotModel) FindOneByTenantIdOrderId(ctx context.Context, tenantId int64, orderId int64) (*TTradeOrderSpot, error) {
 	tTradeOrderSpotTenantIdOrderIdKey := fmt.Sprintf("%s%v:%v", cacheTTradeOrderSpotTenantIdOrderIdPrefix, tenantId, orderId)
 	var resp TTradeOrderSpot
 	err := m.QueryRowIndexCtx(ctx, &resp, tTradeOrderSpotTenantIdOrderIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {

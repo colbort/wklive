@@ -30,10 +30,10 @@ var (
 type (
 	tContractLeverageConfigModel interface {
 		Insert(ctx context.Context, data *TContractLeverageConfig) (sql.Result, error)
-		FindOne(ctx context.Context, id uint64) (*TContractLeverageConfig, error)
-		FindOneByTenantIdUserIdSymbolIdMarketTypeMarginMode(ctx context.Context, tenantId uint64, userId uint64, symbolId uint64, marketType int64, marginMode int64) (*TContractLeverageConfig, error)
+		FindOne(ctx context.Context, id int64) (*TContractLeverageConfig, error)
+		FindOneByTenantIdUserIdSymbolIdMarketTypeMarginMode(ctx context.Context, tenantId int64, userId int64, symbolId int64, marketType int64, marginMode int64) (*TContractLeverageConfig, error)
 		Update(ctx context.Context, data *TContractLeverageConfig) error
-		Delete(ctx context.Context, id uint64) error
+		Delete(ctx context.Context, id int64) error
 	}
 
 	defaultTContractLeverageConfigModel struct {
@@ -42,17 +42,17 @@ type (
 	}
 
 	TContractLeverageConfig struct {
-		Id            uint64 `db:"id"`             // 主键ID
-		TenantId      uint64 `db:"tenant_id"`      // 租户ID
-		UserId        uint64 `db:"user_id"`        // 用户ID
-		SymbolId      uint64 `db:"symbol_id"`      // 交易标的ID
+		Id            int64  `db:"id"`             // 主键ID
+		TenantId      int64  `db:"tenant_id"`      // 租户ID
+		UserId        int64  `db:"user_id"`        // 用户ID
+		SymbolId      int64  `db:"symbol_id"`      // 交易标的ID
 		MarketType    int64  `db:"market_type"`    // 市场类型：2秒合约 3U本位 4币本位
 		MarginMode    int64  `db:"margin_mode"`    // 保证金模式：1全仓 2逐仓
 		PositionMode  int64  `db:"position_mode"`  // 持仓模式：1单向持仓 2双向持仓
 		LongLeverage  int64  `db:"long_leverage"`  // 做多杠杆倍数
 		ShortLeverage int64  `db:"short_leverage"` // 做空杠杆倍数
 		MaxLeverage   int64  `db:"max_leverage"`   // 当前允许的最大杠杆倍数
-		OperatorId    uint64 `db:"operator_id"`    // 操作人ID，系统操作时可为0
+		OperatorId    int64  `db:"operator_id"`    // 操作人ID，系统操作时可为0
 		Source        int64  `db:"source"`         // 来源：1系统 2用户 3后台管理 4任务
 		Status        int64  `db:"status"`         // 状态：1启用 0禁用
 		Remark        string `db:"remark"`         // 备注
@@ -68,7 +68,7 @@ func newTContractLeverageConfigModel(conn sqlx.SqlConn, c cache.CacheConf, opts 
 	}
 }
 
-func (m *defaultTContractLeverageConfigModel) Delete(ctx context.Context, id uint64) error {
+func (m *defaultTContractLeverageConfigModel) Delete(ctx context.Context, id int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
@@ -83,7 +83,7 @@ func (m *defaultTContractLeverageConfigModel) Delete(ctx context.Context, id uin
 	return err
 }
 
-func (m *defaultTContractLeverageConfigModel) FindOne(ctx context.Context, id uint64) (*TContractLeverageConfig, error) {
+func (m *defaultTContractLeverageConfigModel) FindOne(ctx context.Context, id int64) (*TContractLeverageConfig, error) {
 	tContractLeverageConfigIdKey := fmt.Sprintf("%s%v", cacheTContractLeverageConfigIdPrefix, id)
 	var resp TContractLeverageConfig
 	err := m.QueryRowCtx(ctx, &resp, tContractLeverageConfigIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
@@ -100,7 +100,7 @@ func (m *defaultTContractLeverageConfigModel) FindOne(ctx context.Context, id ui
 	}
 }
 
-func (m *defaultTContractLeverageConfigModel) FindOneByTenantIdUserIdSymbolIdMarketTypeMarginMode(ctx context.Context, tenantId uint64, userId uint64, symbolId uint64, marketType int64, marginMode int64) (*TContractLeverageConfig, error) {
+func (m *defaultTContractLeverageConfigModel) FindOneByTenantIdUserIdSymbolIdMarketTypeMarginMode(ctx context.Context, tenantId int64, userId int64, symbolId int64, marketType int64, marginMode int64) (*TContractLeverageConfig, error) {
 	tContractLeverageConfigTenantIdUserIdSymbolIdMarketTypeMarginModeKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTContractLeverageConfigTenantIdUserIdSymbolIdMarketTypeMarginModePrefix, tenantId, userId, symbolId, marketType, marginMode)
 	var resp TContractLeverageConfig
 	err := m.QueryRowIndexCtx(ctx, &resp, tContractLeverageConfigTenantIdUserIdSymbolIdMarketTypeMarginModeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {

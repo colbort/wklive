@@ -2,13 +2,14 @@ package logic
 
 import (
 	"context"
-	"github.com/zeromicro/go-zero/core/logx"
-	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SysMenuCreateLogic struct {
@@ -61,8 +62,8 @@ func (l *SysMenuCreateLogic) SysMenuCreate(in *system.SysMenuCreateReq) (*system
 		Sort:        in.Sort,
 		Visible:     in.Visible,
 		Status:      in.Status,
-		CreateTimes: time.Now().UnixMilli(),
-		UpdateTimes: time.Now().UnixMilli(),
+		CreateTimes: utils.NowMillis(),
+		UpdateTimes: utils.NowMillis(),
 	})
 	if err != nil {
 		return nil, err

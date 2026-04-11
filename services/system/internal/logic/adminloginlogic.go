@@ -4,8 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
-	"golang.org/x/crypto/bcrypt"
 	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -13,6 +11,9 @@ import (
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type AdminLoginLogic struct {
@@ -64,7 +65,7 @@ func (l *AdminLoginLogic) AdminLogin(in *system.AdminLoginReq) (*system.AdminLog
 
 	// 3️⃣ 更新登录时间
 	user.LastLoginIp = sql.NullString{String: in.Ip, Valid: true}
-	now := time.Now().UnixMilli()
+	now := utils.NowMillis()
 	user.LastLoginAt = now
 	_ = l.svcCtx.UserModel.Update(l.ctx, user)
 

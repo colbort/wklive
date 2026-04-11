@@ -3,13 +3,14 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
-	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type ChangeLoginPasswordLogic struct {
@@ -52,7 +53,7 @@ func (l *ChangeLoginPasswordLogic) ChangeLoginPassword(in *user.ChangeLoginPassw
 
 	// 更新密码
 	tuser.PasswordHash = in.NewPassword
-	tuser.UpdateTimes = time.Now().UnixMilli()
+	tuser.UpdateTimes = utils.NowMillis()
 
 	err = l.svcCtx.UserModel.Update(l.ctx, tuser)
 	if err != nil {

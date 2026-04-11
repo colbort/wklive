@@ -4,13 +4,15 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
 	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type UpdateProfileLogic struct {
@@ -42,7 +44,7 @@ func (l *UpdateProfileLogic) UpdateProfile(in *user.UpdateProfileReq) (*user.Upd
 	}
 
 	// 更新用户基本信息
-	now := time.Now().UnixMilli()
+	now := utils.NowMillis()
 	if in.Nickname != "" {
 		tuser.Nickname = sql.NullString{String: in.Nickname, Valid: true}
 	}

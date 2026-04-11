@@ -1,6 +1,6 @@
 CREATE TABLE `t_trade_symbol` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
   `symbol` VARCHAR(64) NOT NULL COMMENT '统一交易标的代码，如BTCUSDT、ETHUSD-PERP',
   `display_symbol` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '前端展示名称',
   `market_type` TINYINT NOT NULL COMMENT '市场类型：1现货 2秒合约 3U本位 4币本位',
@@ -31,9 +31,9 @@ CREATE TABLE `t_trade_symbol` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='交易标的主表';
 
 CREATE TABLE `t_trade_symbol_spot` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '租户ID',
-  `symbol_id` BIGINT UNSIGNED NOT NULL COMMENT '交易标的ID，对应t_trade_symbol.id',
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `symbol_id` BIGINT NOT NULL COMMENT '交易标的ID，对应t_trade_symbol.id',
   `maker_fee_rate` DECIMAL(20,10) NOT NULL DEFAULT 0 COMMENT 'Maker手续费率',
   `taker_fee_rate` DECIMAL(20,10) NOT NULL DEFAULT 0 COMMENT 'Taker手续费率',
   `buy_enabled` TINYINT NOT NULL DEFAULT 1 COMMENT '是否允许买入：1允许 0禁止',
@@ -45,9 +45,9 @@ CREATE TABLE `t_trade_symbol_spot` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='现货交易对扩展表';
 
 CREATE TABLE `t_trade_symbol_contract` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '租户ID',
-  `symbol_id` BIGINT UNSIGNED NOT NULL COMMENT '交易标的ID，对应t_trade_symbol.id',
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `symbol_id` BIGINT NOT NULL COMMENT '交易标的ID，对应t_trade_symbol.id',
   `contract_size` DECIMAL(36,18) NOT NULL DEFAULT 1 COMMENT '每张合约面值',
   `multiplier` DECIMAL(36,18) NOT NULL DEFAULT 1 COMMENT '合约乘数',
   `maintenance_margin_rate` DECIMAL(20,10) NOT NULL DEFAULT 0 COMMENT '维持保证金率',
@@ -67,11 +67,11 @@ CREATE TABLE `t_trade_symbol_contract` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='合约交易对扩展表';
 
 CREATE TABLE `t_trade_user_config` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '租户ID',
-  `user_id` BIGINT UNSIGNED NOT NULL COMMENT '用户ID',
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `user_id` BIGINT NOT NULL COMMENT '用户ID',
   `market_type` TINYINT NOT NULL COMMENT '市场类型：1现货 2秒合约 3U本位 4币本位',
-  `symbol_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '交易标的ID，0表示该市场下的全局配置',
+  `symbol_id` BIGINT NOT NULL DEFAULT 0 COMMENT '交易标的ID，0表示该市场下的全局配置',
   `position_mode` TINYINT NOT NULL DEFAULT 1 COMMENT '持仓模式：1单向持仓 2双向持仓',
   `margin_mode` TINYINT NOT NULL DEFAULT 1 COMMENT '保证金模式：1全仓 2逐仓',
   `default_leverage` INT NOT NULL DEFAULT 1 COMMENT '默认杠杆倍数',
@@ -84,12 +84,12 @@ CREATE TABLE `t_trade_user_config` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户交易配置表';
 
 CREATE TABLE `t_trade_order` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
   `order_no` VARCHAR(64) NOT NULL COMMENT '平台订单号，全租户内唯一',
   `client_order_id` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '客户端订单号，用于幂等控制',
-  `user_id` BIGINT UNSIGNED NOT NULL COMMENT '用户ID',
-  `symbol_id` BIGINT UNSIGNED NOT NULL COMMENT '交易标的ID',
+  `user_id` BIGINT NOT NULL COMMENT '用户ID',
+  `symbol_id` BIGINT NOT NULL COMMENT '交易标的ID',
   `market_type` TINYINT NOT NULL COMMENT '市场类型：1现货 2秒合约 3U本位 4币本位',
   `side` TINYINT NOT NULL COMMENT '买卖方向：1买 2卖',
   `position_side` TINYINT NOT NULL DEFAULT 0 COMMENT '持仓方向：0无 1多 2空，现货一般为0',
@@ -122,9 +122,9 @@ CREATE TABLE `t_trade_order` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='交易订单主表';
 
 CREATE TABLE `t_trade_order_spot` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '租户ID',
-  `order_id` BIGINT UNSIGNED NOT NULL COMMENT '订单ID，对应t_trade_order.id',
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `order_id` BIGINT NOT NULL COMMENT '订单ID，对应t_trade_order.id',
   `frozen_asset` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '下单冻结的资产币种',
   `frozen_amount` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '下单冻结的资产数量',
   `settle_asset` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '结算币种',
@@ -136,9 +136,9 @@ CREATE TABLE `t_trade_order_spot` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='现货订单明细表';
 
 CREATE TABLE `t_trade_order_contract` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '租户ID',
-  `order_id` BIGINT UNSIGNED NOT NULL COMMENT '订单ID，对应t_trade_order.id',
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `order_id` BIGINT NOT NULL COMMENT '订单ID，对应t_trade_order.id',
   `margin_mode` TINYINT NOT NULL COMMENT '保证金模式：1全仓 2逐仓',
   `leverage` INT NOT NULL DEFAULT 1 COMMENT '下单时杠杆倍数',
   `margin_asset` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '保证金币种',
@@ -154,13 +154,13 @@ CREATE TABLE `t_trade_order_contract` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='合约订单明细表';
 
 CREATE TABLE `t_trade_fill` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
   `fill_no` VARCHAR(64) NOT NULL COMMENT '成交号',
-  `order_id` BIGINT UNSIGNED NOT NULL COMMENT '订单ID',
+  `order_id` BIGINT NOT NULL COMMENT '订单ID',
   `order_no` VARCHAR(64) NOT NULL COMMENT '平台订单号',
-  `user_id` BIGINT UNSIGNED NOT NULL COMMENT '用户ID',
-  `symbol_id` BIGINT UNSIGNED NOT NULL COMMENT '交易标的ID',
+  `user_id` BIGINT NOT NULL COMMENT '用户ID',
+  `symbol_id` BIGINT NOT NULL COMMENT '交易标的ID',
   `market_type` TINYINT NOT NULL COMMENT '市场类型：1现货 2秒合约 3U本位 4币本位',
   `side` TINYINT NOT NULL COMMENT '买卖方向：1买 2卖',
   `position_side` TINYINT NOT NULL DEFAULT 0 COMMENT '持仓方向：0无 1多 2空',
@@ -180,11 +180,11 @@ CREATE TABLE `t_trade_fill` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='成交明细表';
 
 CREATE TABLE `t_trade_cancel_log` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '租户ID',
-  `order_id` BIGINT UNSIGNED NOT NULL COMMENT '订单ID',
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `order_id` BIGINT NOT NULL COMMENT '订单ID',
   `order_no` VARCHAR(64) NOT NULL COMMENT '平台订单号',
-  `user_id` BIGINT UNSIGNED NOT NULL COMMENT '用户ID',
+  `user_id` BIGINT NOT NULL COMMENT '用户ID',
   `cancel_source` TINYINT NOT NULL COMMENT '撤单来源：1用户主动 2系统撤单 3风控撤单 4超时撤单',
   `cancel_reason` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '撤单原因',
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间，毫秒时间戳',
@@ -194,10 +194,10 @@ CREATE TABLE `t_trade_cancel_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='撤单日志表';
 
 CREATE TABLE `t_contract_position` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '租户ID',
-  `user_id` BIGINT UNSIGNED NOT NULL COMMENT '用户ID',
-  `symbol_id` BIGINT UNSIGNED NOT NULL COMMENT '交易标的ID',
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `user_id` BIGINT NOT NULL COMMENT '用户ID',
+  `symbol_id` BIGINT NOT NULL COMMENT '交易标的ID',
   `market_type` TINYINT NOT NULL COMMENT '市场类型：2秒合约 3U本位 4币本位',
   `position_side` TINYINT NOT NULL COMMENT '持仓方向：1多 2空',
   `margin_mode` TINYINT NOT NULL COMMENT '保证金模式：1全仓 2逐仓',
@@ -224,9 +224,9 @@ CREATE TABLE `t_contract_position` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='合约当前持仓表';
 
 CREATE TABLE `t_contract_margin_account` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '租户ID',
-  `user_id` BIGINT UNSIGNED NOT NULL COMMENT '用户ID',
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `user_id` BIGINT NOT NULL COMMENT '用户ID',
   `market_type` TINYINT NOT NULL COMMENT '市场类型：2秒合约 3U本位 4币本位',
   `margin_asset` VARCHAR(32) NOT NULL COMMENT '保证金币种',
   `balance` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '账户权益余额',
@@ -244,11 +244,11 @@ CREATE TABLE `t_contract_margin_account` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='合约保证金账户表';
 
 CREATE TABLE `t_contract_position_history` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '租户ID',
-  `position_id` BIGINT UNSIGNED NOT NULL COMMENT '持仓ID，对应t_contract_position.id',
-  `user_id` BIGINT UNSIGNED NOT NULL COMMENT '用户ID',
-  `symbol_id` BIGINT UNSIGNED NOT NULL COMMENT '交易标的ID',
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `position_id` BIGINT NOT NULL COMMENT '持仓ID，对应t_contract_position.id',
+  `user_id` BIGINT NOT NULL COMMENT '用户ID',
+  `symbol_id` BIGINT NOT NULL COMMENT '交易标的ID',
   `market_type` TINYINT NOT NULL COMMENT '市场类型：2秒合约 3U本位 4币本位',
   `position_side` TINYINT NOT NULL COMMENT '持仓方向：1多 2空',
   `action_type` TINYINT NOT NULL COMMENT '变更动作类型：1开仓 2加仓 3减仓 4平仓 5强平 6结算 7资金费结转 8手动调整',
@@ -270,9 +270,9 @@ CREATE TABLE `t_contract_position_history` (
   `fee_delta` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '本次变更产生的手续费增量',
   `fee_asset` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '手续费币种',
   `mark_price` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '本次记录时的标记价格',
-  `ref_order_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '关联订单ID，没有则为0',
-  `ref_fill_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '关联成交ID，没有则为0',
-  `operator_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '操作人ID，系统操作时可为0',
+  `ref_order_id` BIGINT NOT NULL DEFAULT 0 COMMENT '关联订单ID，没有则为0',
+  `ref_fill_id` BIGINT NOT NULL DEFAULT 0 COMMENT '关联成交ID，没有则为0',
+  `operator_id` BIGINT NOT NULL DEFAULT 0 COMMENT '操作人ID，系统操作时可为0',
   `source` TINYINT NOT NULL DEFAULT 1 COMMENT '来源：1系统 2用户 3后台管理 4任务',
   `remark` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '备注',
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间，毫秒时间戳',
@@ -284,17 +284,17 @@ CREATE TABLE `t_contract_position_history` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='合约持仓历史表';
 
 CREATE TABLE `t_contract_leverage_config` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '租户ID',
-  `user_id` BIGINT UNSIGNED NOT NULL COMMENT '用户ID',
-  `symbol_id` BIGINT UNSIGNED NOT NULL COMMENT '交易标的ID',
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `user_id` BIGINT NOT NULL COMMENT '用户ID',
+  `symbol_id` BIGINT NOT NULL COMMENT '交易标的ID',
   `market_type` TINYINT NOT NULL COMMENT '市场类型：2秒合约 3U本位 4币本位',
   `margin_mode` TINYINT NOT NULL COMMENT '保证金模式：1全仓 2逐仓',
   `position_mode` TINYINT NOT NULL DEFAULT 1 COMMENT '持仓模式：1单向持仓 2双向持仓',
   `long_leverage` INT NOT NULL DEFAULT 1 COMMENT '做多杠杆倍数',
   `short_leverage` INT NOT NULL DEFAULT 1 COMMENT '做空杠杆倍数',
   `max_leverage` INT NOT NULL DEFAULT 1 COMMENT '当前允许的最大杠杆倍数',
-  `operator_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '操作人ID，系统操作时可为0',
+  `operator_id` BIGINT NOT NULL DEFAULT 0 COMMENT '操作人ID，系统操作时可为0',
   `source` TINYINT NOT NULL DEFAULT 1 COMMENT '来源：1系统 2用户 3后台管理 4任务',
   `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1启用 0禁用',
   `remark` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '备注',
@@ -307,9 +307,9 @@ CREATE TABLE `t_contract_leverage_config` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户合约杠杆配置表';
 
 CREATE TABLE `t_risk_user_trade_limit` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '租户ID',
-  `user_id` BIGINT UNSIGNED NOT NULL COMMENT '用户ID',
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `user_id` BIGINT NOT NULL COMMENT '用户ID',
   `market_type` TINYINT NOT NULL COMMENT '市场类型：1现货 2秒合约 3U本位 4币本位',
   `can_open` TINYINT NOT NULL DEFAULT 1 COMMENT '是否允许开仓/开单：1允许 0禁止',
   `can_close` TINYINT NOT NULL DEFAULT 1 COMMENT '是否允许平仓/卖出：1允许 0禁止',
@@ -324,7 +324,7 @@ CREATE TABLE `t_risk_user_trade_limit` (
   `max_open_notional` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '最大可开仓名义价值，0表示不限',
   `max_position_notional` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '最大持仓名义价值，0表示不限',
   `risk_level` TINYINT NOT NULL DEFAULT 0 COMMENT '风险等级：0默认 1低风险限制 2中风险限制 3高风险限制',
-  `operator_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '操作人ID，系统操作时可为0',
+  `operator_id` BIGINT NOT NULL DEFAULT 0 COMMENT '操作人ID，系统操作时可为0',
   `source` TINYINT NOT NULL DEFAULT 1 COMMENT '来源：1系统 2用户 3后台管理 4任务',
   `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1启用 0禁用',
   `effective_start_time` BIGINT NOT NULL DEFAULT 0 COMMENT '限制生效开始时间，毫秒时间戳，0表示立即生效',
@@ -339,10 +339,10 @@ CREATE TABLE `t_risk_user_trade_limit` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户交易限制表';
 
 CREATE TABLE `t_risk_user_symbol_limit` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '租户ID',
-  `user_id` BIGINT UNSIGNED NOT NULL COMMENT '用户ID',
-  `symbol_id` BIGINT UNSIGNED NOT NULL COMMENT '交易标的ID',
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `user_id` BIGINT NOT NULL COMMENT '用户ID',
+  `symbol_id` BIGINT NOT NULL COMMENT '交易标的ID',
   `market_type` TINYINT NOT NULL COMMENT '市场类型：1现货 2秒合约 3U本位 4币本位',
   `max_position_qty` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '最大持仓数量，0表示不限',
   `max_position_notional` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '最大持仓名义价值，0表示不限',
@@ -354,7 +354,7 @@ CREATE TABLE `t_risk_user_symbol_limit` (
   `max_long_position_qty` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '最大多头持仓数量，0表示不限',
   `max_short_position_qty` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '最大空头持仓数量，0表示不限',
   `price_deviation_rate` DECIMAL(20,10) NOT NULL DEFAULT 0 COMMENT '允许价格偏离率，0表示不限制',
-  `operator_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '操作人ID，系统操作时可为0',
+  `operator_id` BIGINT NOT NULL DEFAULT 0 COMMENT '操作人ID，系统操作时可为0',
   `source` TINYINT NOT NULL DEFAULT 1 COMMENT '来源：1系统 2用户 3后台管理 4任务',
   `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1启用 0禁用',
   `effective_start_time` BIGINT NOT NULL DEFAULT 0 COMMENT '限制生效开始时间，毫秒时间戳',
@@ -369,12 +369,12 @@ CREATE TABLE `t_risk_user_symbol_limit` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户单标的限制表';
 
 CREATE TABLE `t_risk_order_check_log` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
   `order_no` VARCHAR(64) NOT NULL COMMENT '平台订单号',
   `client_order_id` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '客户端订单号',
-  `user_id` BIGINT UNSIGNED NOT NULL COMMENT '用户ID',
-  `symbol_id` BIGINT UNSIGNED NOT NULL COMMENT '交易标的ID',
+  `user_id` BIGINT NOT NULL COMMENT '用户ID',
+  `symbol_id` BIGINT NOT NULL COMMENT '交易标的ID',
   `market_type` TINYINT NOT NULL COMMENT '市场类型：1现货 2秒合约 3U本位 4币本位',
   `check_type` TINYINT NOT NULL COMMENT '检查类型：1余额检查 2保证金检查 3仓位检查 4交易权限检查 5价格保护检查 6数量限制检查 7名义价值限制检查 8频率限制检查',
   `check_result` TINYINT NOT NULL COMMENT '检查结果：1通过 2拒绝 3告警放行',
@@ -383,7 +383,7 @@ CREATE TABLE `t_risk_order_check_log` (
   `request_price` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '请求价格',
   `request_qty` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '请求数量',
   `request_amount` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '请求名义价值或金额',
-  `operator_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '操作人ID，系统操作时可为0',
+  `operator_id` BIGINT NOT NULL DEFAULT 0 COMMENT '操作人ID，系统操作时可为0',
   `source` TINYINT NOT NULL DEFAULT 1 COMMENT '来源：1系统 2用户 3后台管理 4任务',
   `check_snapshot` JSON DEFAULT NULL COMMENT '检查时的上下文快照，JSON格式',
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间，毫秒时间戳',
@@ -394,16 +394,16 @@ CREATE TABLE `t_risk_order_check_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单风控检查日志表';
 
 CREATE TABLE `t_biz_trade_event` (
-  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
   `event_no` VARCHAR(64) NOT NULL COMMENT '事件号',
   `event_type` VARCHAR(64) NOT NULL COMMENT '事件类型，如ORDER_CREATED、ORDER_FILLED、ORDER_CANCELED、POSITION_CHANGED、MARGIN_CHANGED',
   `biz_id` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '业务主键，如订单号、成交号、持仓ID等',
   `biz_type` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '业务类型，如order、fill、position、margin',
-  `user_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '用户ID',
-  `symbol_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '交易标的ID，没有则为0',
+  `user_id` BIGINT NOT NULL DEFAULT 0 COMMENT '用户ID',
+  `symbol_id` BIGINT NOT NULL DEFAULT 0 COMMENT '交易标的ID，没有则为0',
   `market_type` TINYINT NOT NULL DEFAULT 0 COMMENT '市场类型：0无 1现货 2秒合约 3U本位 4币本位',
-  `operator_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '操作人ID，系统操作时可为0',
+  `operator_id` BIGINT NOT NULL DEFAULT 0 COMMENT '操作人ID，系统操作时可为0',
   `source` TINYINT NOT NULL DEFAULT 1 COMMENT '来源：1系统 2用户 3后台管理 4任务',
   `event_status` TINYINT NOT NULL DEFAULT 1 COMMENT '事件状态：1待投递 2投递成功 3投递失败 4已取消',
   `retry_count` INT NOT NULL DEFAULT 0 COMMENT '重试次数',

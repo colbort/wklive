@@ -3,12 +3,11 @@ package logic
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
+	"wklive/common/utils"
 	"wklive/proto/asset"
-	"wklive/services/asset/internal/helpers"
 	"wklive/services/asset/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -43,7 +42,7 @@ func (l *AdminFreezeAssetLogic) AdminFreezeAsset(in *asset.AdminFreezeAssetReq) 
 		return nil, err
 	}
 
-	ts := time.Now().UnixMilli()
+	ts := utils.NowMillis()
 	ok, err := l.svcCtx.UserAssetModel.FreezeAmount(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, amount, ts)
 	if err != nil {
 		return nil, err
@@ -57,15 +56,15 @@ func (l *AdminFreezeAssetLogic) AdminFreezeAsset(in *asset.AdminFreezeAssetReq) 
 		return nil, err
 	}
 
-	freeze := helpers.BuildAssetFreezeRecord(in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "system", "manual_add", in.BizNo, in.Remark, amount, 0, ts)
+	freeze := buildAssetFreezeRecord(l.svcCtx, l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "system", "manual_add", in.BizNo, in.Remark, amount, 0, ts)
 	if _, err := l.svcCtx.AssetFreezeModel.Insert(l.ctx, freeze); err != nil {
 		return nil, err
 	}
 
-	flow := helpers.BuildAssetFlowRecord(in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "manual_add", "system", "manual_add", 0, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_FREEZE, amount, before, after, in.Remark, ts)
+	flow := buildAssetFlowRecord(l.svcCtx, l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "manual_add", "system", "manual_add", 0, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_FREEZE, amount, before, after, in.Remark, ts)
 	if _, err := l.svcCtx.AssetFlowModel.Insert(l.ctx, flow); err != nil {
 		return nil, err
 	}
 
-	return &asset.AdminChangeAssetResp{Base: helper.OkResp(), BizNo: in.BizNo, Asset: helpers.ToUserAssetProto(after)}, nil
+	return &asset.AdminChangeAssetResp{Base: helper.OkResp(), BizNo: in.BizNo, Asset: toUserAssetProto(after)}, nil
 }

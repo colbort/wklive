@@ -3,15 +3,15 @@ package logic
 import (
 	"context"
 	"database/sql"
-	"github.com/robfig/cron/v3"
-	"github.com/zeromicro/go-zero/core/logx"
-	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
+
+	"github.com/robfig/cron/v3"
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SysCronJobCreateLogic struct {
@@ -61,7 +61,7 @@ func (l *SysCronJobCreateLogic) SysCronJobCreate(in *system.SysCronJobCreateReq)
 		Status:         in.Status,
 		Remark:         sql.NullString{String: in.Remark, Valid: true},
 		CreateBy:       sql.NullString{String: userName, Valid: true},
-		CreateTimes:    time.Now().UnixMilli(),
+		CreateTimes:    utils.NowMillis(),
 	})
 	if err != nil {
 		return &system.RespBase{

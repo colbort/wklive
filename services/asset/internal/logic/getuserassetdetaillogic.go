@@ -3,13 +3,13 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/asset"
-	"wklive/services/asset/internal/helpers"
 	"wklive/services/asset/internal/svc"
 	"wklive/services/asset/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type GetUserAssetDetailLogic struct {
@@ -36,5 +36,5 @@ func (l *GetUserAssetDetailLogic) GetUserAssetDetail(in *asset.GetUserAssetDetai
 		return nil, err
 	}
 
-	return &asset.GetUserAssetDetailResp{Base: helper.OkResp(), Data: helpers.ToUserAssetProto(item)}, nil
+	return &asset.GetUserAssetDetailResp{Base: helper.OkResp(), Data: toUserAssetProto(item)}, nil
 }

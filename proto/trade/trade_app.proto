@@ -51,7 +51,7 @@ service TradeApp {
 message AppCommonResp { common.RespBase base = 1; }
 
 message GetSymbolListReq {
-  uint64 tenant_id = 1;
+  int64 tenant_id = 1;
   MarketType market_type = 2;
   SymbolStatus status = 3;
 }
@@ -62,8 +62,8 @@ message GetSymbolListResp {
 }
 
 message GetSymbolDetailReq {
-  uint64 tenant_id = 1;
-  uint64 symbol_id = 2;
+  int64 tenant_id = 1;
+  int64 symbol_id = 2;
 }
 
 message GetSymbolDetailResp {
@@ -74,9 +74,9 @@ message GetSymbolDetailResp {
 }
 
 message PlaceOrderReq {
-  uint64 tenant_id = 1;
-  uint64 user_id = 2;
-  uint64 symbol_id = 3;
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  int64 symbol_id = 3;
   MarketType market_type = 4;
   TradeSide side = 5;
   PositionSide position_side = 6;
@@ -103,18 +103,18 @@ message PlaceOrderResp {
 }
 
 message CancelOrderReq {
-  uint64 tenant_id = 1;
-  uint64 user_id = 2;
-  uint64 order_id = 3;
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  int64 order_id = 3;
   string order_no = 4;
   string client_order_id = 5;
 }
 
 message CancelAllOrdersReq {
-  uint64 tenant_id = 1;
-  uint64 user_id = 2;
+  int64 tenant_id = 1;
+  int64 user_id = 2;
   MarketType market_type = 3;
-  uint64 symbol_id = 4;
+  int64 symbol_id = 4;
   TradeSide side = 5;
   PositionSide position_side = 6;
 }
@@ -125,11 +125,11 @@ message CancelAllOrdersResp {
 }
 
 message GetOrderListReq {
-  uint64 tenant_id = 1;
-  uint64 user_id = 2;
+  int64 tenant_id = 1;
+  int64 user_id = 2;
   common.PageReq page = 3;
   MarketType market_type = 4;
-  uint64 symbol_id = 5;
+  int64 symbol_id = 5;
   OrderStatus status = 6;
   TradeSide side = 7;
   TimeRange time_range = 8;
@@ -141,9 +141,9 @@ message GetOrderListResp {
 }
 
 message GetOrderDetailReq {
-  uint64 tenant_id = 1;
-  uint64 user_id = 2;
-  uint64 order_id = 3;
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  int64 order_id = 3;
   string order_no = 4;
 }
 
@@ -155,11 +155,11 @@ message GetOrderDetailResp {
 }
 
 message GetFillListReq {
-  uint64 tenant_id = 1;
-  uint64 user_id = 2;
+  int64 tenant_id = 1;
+  int64 user_id = 2;
   common.PageReq page = 3;
   MarketType market_type = 4;
-  uint64 symbol_id = 5;
+  int64 symbol_id = 5;
   TimeRange time_range = 6;
 }
 
@@ -169,10 +169,10 @@ message GetFillListResp {
 }
 
 message GetPositionListReq {
-  uint64 tenant_id = 1;
-  uint64 user_id = 2;
+  int64 tenant_id = 1;
+  int64 user_id = 2;
   MarketType market_type = 3;
-  uint64 symbol_id = 4;
+  int64 symbol_id = 4;
 }
 
 message GetPositionListResp {
@@ -181,8 +181,8 @@ message GetPositionListResp {
 }
 
 message GetMarginAccountListReq {
-  uint64 tenant_id = 1;
-  uint64 user_id = 2;
+  int64 tenant_id = 1;
+  int64 user_id = 2;
   MarketType market_type = 3;
   string margin_asset = 4;
 }
@@ -193,9 +193,9 @@ message GetMarginAccountListResp {
 }
 
 message GetLeverageConfigReq {
-  uint64 tenant_id = 1;
-  uint64 user_id = 2;
-  uint64 symbol_id = 3;
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  int64 symbol_id = 3;
   MarketType market_type = 4;
   MarginMode margin_mode = 5;
 }
@@ -206,9 +206,9 @@ message GetLeverageConfigResp {
 }
 
 message SetLeverageReq {
-  uint64 tenant_id = 1;
-  uint64 user_id = 2;
-  uint64 symbol_id = 3;
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  int64 symbol_id = 3;
   MarketType market_type = 4;
   MarginMode margin_mode = 5;
   PositionMode position_mode = 6;

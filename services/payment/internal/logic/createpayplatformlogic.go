@@ -3,9 +3,9 @@ package logic
 import (
 	"context"
 	"database/sql"
-	"time"
 
 	"wklive/common/helper"
+	"wklive/common/utils"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -33,7 +33,7 @@ func (l *CreatePayPlatformLogic) CreatePayPlatform(in *payment.CreatePayPlatform
 		errLogic = "CreatePayPlatform"
 	)
 
-	now := time.Now().UnixMilli()
+	now := utils.NowMillis()
 	platform := &models.TPayPlatform{
 		PlatformCode: in.PlatformCode,
 		PlatformName: in.PlatformName,

@@ -30,10 +30,10 @@ var (
 type (
 	tTradeUserConfigModel interface {
 		Insert(ctx context.Context, data *TTradeUserConfig) (sql.Result, error)
-		FindOne(ctx context.Context, id uint64) (*TTradeUserConfig, error)
-		FindOneByTenantIdUserIdMarketTypeSymbolId(ctx context.Context, tenantId uint64, userId uint64, marketType int64, symbolId uint64) (*TTradeUserConfig, error)
+		FindOne(ctx context.Context, id int64) (*TTradeUserConfig, error)
+		FindOneByTenantIdUserIdMarketTypeSymbolId(ctx context.Context, tenantId int64, userId int64, marketType int64, symbolId int64) (*TTradeUserConfig, error)
 		Update(ctx context.Context, data *TTradeUserConfig) error
-		Delete(ctx context.Context, id uint64) error
+		Delete(ctx context.Context, id int64) error
 	}
 
 	defaultTTradeUserConfigModel struct {
@@ -42,18 +42,18 @@ type (
 	}
 
 	TTradeUserConfig struct {
-		Id                uint64 `db:"id"`                  // 主键ID
-		TenantId          uint64 `db:"tenant_id"`           // 租户ID
-		UserId            uint64 `db:"user_id"`             // 用户ID
-		MarketType        int64  `db:"market_type"`         // 市场类型：1现货 2秒合约 3U本位 4币本位
-		SymbolId          uint64 `db:"symbol_id"`           // 交易标的ID，0表示该市场下的全局配置
-		PositionMode      int64  `db:"position_mode"`       // 持仓模式：1单向持仓 2双向持仓
-		MarginMode        int64  `db:"margin_mode"`         // 保证金模式：1全仓 2逐仓
-		DefaultLeverage   int64  `db:"default_leverage"`    // 默认杠杆倍数
-		TradeEnabled      int64  `db:"trade_enabled"`       // 是否允许交易：1允许 0禁止
-		ReduceOnlyEnabled int64  `db:"reduce_only_enabled"` // 是否仅允许减仓：1是 0否
-		CreateTimes       int64  `db:"create_times"`        // 创建时间，毫秒时间戳
-		UpdateTimes       int64  `db:"update_times"`        // 更新时间，毫秒时间戳
+		Id                int64 `db:"id"`                  // 主键ID
+		TenantId          int64 `db:"tenant_id"`           // 租户ID
+		UserId            int64 `db:"user_id"`             // 用户ID
+		MarketType        int64 `db:"market_type"`         // 市场类型：1现货 2秒合约 3U本位 4币本位
+		SymbolId          int64 `db:"symbol_id"`           // 交易标的ID，0表示该市场下的全局配置
+		PositionMode      int64 `db:"position_mode"`       // 持仓模式：1单向持仓 2双向持仓
+		MarginMode        int64 `db:"margin_mode"`         // 保证金模式：1全仓 2逐仓
+		DefaultLeverage   int64 `db:"default_leverage"`    // 默认杠杆倍数
+		TradeEnabled      int64 `db:"trade_enabled"`       // 是否允许交易：1允许 0禁止
+		ReduceOnlyEnabled int64 `db:"reduce_only_enabled"` // 是否仅允许减仓：1是 0否
+		CreateTimes       int64 `db:"create_times"`        // 创建时间，毫秒时间戳
+		UpdateTimes       int64 `db:"update_times"`        // 更新时间，毫秒时间戳
 	}
 )
 
@@ -64,7 +64,7 @@ func newTTradeUserConfigModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cach
 	}
 }
 
-func (m *defaultTTradeUserConfigModel) Delete(ctx context.Context, id uint64) error {
+func (m *defaultTTradeUserConfigModel) Delete(ctx context.Context, id int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
@@ -79,7 +79,7 @@ func (m *defaultTTradeUserConfigModel) Delete(ctx context.Context, id uint64) er
 	return err
 }
 
-func (m *defaultTTradeUserConfigModel) FindOne(ctx context.Context, id uint64) (*TTradeUserConfig, error) {
+func (m *defaultTTradeUserConfigModel) FindOne(ctx context.Context, id int64) (*TTradeUserConfig, error) {
 	tTradeUserConfigIdKey := fmt.Sprintf("%s%v", cacheTTradeUserConfigIdPrefix, id)
 	var resp TTradeUserConfig
 	err := m.QueryRowCtx(ctx, &resp, tTradeUserConfigIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
@@ -96,7 +96,7 @@ func (m *defaultTTradeUserConfigModel) FindOne(ctx context.Context, id uint64) (
 	}
 }
 
-func (m *defaultTTradeUserConfigModel) FindOneByTenantIdUserIdMarketTypeSymbolId(ctx context.Context, tenantId uint64, userId uint64, marketType int64, symbolId uint64) (*TTradeUserConfig, error) {
+func (m *defaultTTradeUserConfigModel) FindOneByTenantIdUserIdMarketTypeSymbolId(ctx context.Context, tenantId int64, userId int64, marketType int64, symbolId int64) (*TTradeUserConfig, error) {
 	tTradeUserConfigTenantIdUserIdMarketTypeSymbolIdKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTTradeUserConfigTenantIdUserIdMarketTypeSymbolIdPrefix, tenantId, userId, marketType, symbolId)
 	var resp TTradeUserConfig
 	err := m.QueryRowIndexCtx(ctx, &resp, tTradeUserConfigTenantIdUserIdMarketTypeSymbolIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {

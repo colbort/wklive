@@ -3,14 +3,14 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
-	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type EnableGoogle2FALogic struct {
@@ -68,7 +68,7 @@ func (l *EnableGoogle2FALogic) EnableGoogle2FA(in *user.EnableGoogle2FAReq) (*us
 
 	// 启用Google 2FA
 	userSecurity.GoogleEnabled = 1
-	userSecurity.UpdateTimes = time.Now().UnixMilli()
+	userSecurity.UpdateTimes = utils.NowMillis()
 
 	err = l.svcCtx.UserSecurityModel.Update(l.ctx, userSecurity)
 	if err != nil {

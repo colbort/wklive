@@ -5,7 +5,6 @@ import (
 
 	"wklive/common/pageutil"
 	"wklive/proto/asset"
-	"wklive/services/asset/internal/helpers"
 	"wklive/services/asset/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -27,7 +26,7 @@ func NewPageAssetLocksLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pa
 
 // 分页查询锁仓明细
 func (l *PageAssetLocksLogic) PageAssetLocks(in *asset.PageAssetLocksReq) (*asset.PageAssetLocksResp, error) {
-	locks, total, err := l.svcCtx.AssetLockModel.FindPage(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, helpers.AssetBizType(in.BizType), in.BizNo, int64(in.Status), in.Page.Cursor, in.Page.Limit)
+	locks, total, err := l.svcCtx.AssetLockModel.FindPage(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, assetBizType(in.BizType), in.BizNo, int64(in.Status), in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +39,7 @@ func (l *PageAssetLocksLogic) PageAssetLocks(in *asset.PageAssetLocksReq) (*asse
 	resp := &asset.PageAssetLocksResp{Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(locks), total, lastID)}
 
 	for _, item := range locks {
-		resp.Data = append(resp.Data, helpers.ToAssetLockProto(item))
+		resp.Data = append(resp.Data, toAssetLockProto(item))
 	}
 	return resp, nil
 }

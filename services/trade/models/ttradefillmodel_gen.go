@@ -30,10 +30,10 @@ var (
 type (
 	tTradeFillModel interface {
 		Insert(ctx context.Context, data *TTradeFill) (sql.Result, error)
-		FindOne(ctx context.Context, id uint64) (*TTradeFill, error)
-		FindOneByTenantIdFillNo(ctx context.Context, tenantId uint64, fillNo string) (*TTradeFill, error)
+		FindOne(ctx context.Context, id int64) (*TTradeFill, error)
+		FindOneByTenantIdFillNo(ctx context.Context, tenantId int64, fillNo string) (*TTradeFill, error)
 		Update(ctx context.Context, data *TTradeFill) error
-		Delete(ctx context.Context, id uint64) error
+		Delete(ctx context.Context, id int64) error
 	}
 
 	defaultTTradeFillModel struct {
@@ -42,13 +42,13 @@ type (
 	}
 
 	TTradeFill struct {
-		Id            uint64  `db:"id"`             // 主键ID
-		TenantId      uint64  `db:"tenant_id"`      // 租户ID
+		Id            int64   `db:"id"`             // 主键ID
+		TenantId      int64   `db:"tenant_id"`      // 租户ID
 		FillNo        string  `db:"fill_no"`        // 成交号
-		OrderId       uint64  `db:"order_id"`       // 订单ID
+		OrderId       int64   `db:"order_id"`       // 订单ID
 		OrderNo       string  `db:"order_no"`       // 平台订单号
-		UserId        uint64  `db:"user_id"`        // 用户ID
-		SymbolId      uint64  `db:"symbol_id"`      // 交易标的ID
+		UserId        int64   `db:"user_id"`        // 用户ID
+		SymbolId      int64   `db:"symbol_id"`      // 交易标的ID
 		MarketType    int64   `db:"market_type"`    // 市场类型：1现货 2秒合约 3U本位 4币本位
 		Side          int64   `db:"side"`           // 买卖方向：1买 2卖
 		PositionSide  int64   `db:"position_side"`  // 持仓方向：0无 1多 2空
@@ -71,7 +71,7 @@ func newTTradeFillModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Opti
 	}
 }
 
-func (m *defaultTTradeFillModel) Delete(ctx context.Context, id uint64) error {
+func (m *defaultTTradeFillModel) Delete(ctx context.Context, id int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
@@ -86,7 +86,7 @@ func (m *defaultTTradeFillModel) Delete(ctx context.Context, id uint64) error {
 	return err
 }
 
-func (m *defaultTTradeFillModel) FindOne(ctx context.Context, id uint64) (*TTradeFill, error) {
+func (m *defaultTTradeFillModel) FindOne(ctx context.Context, id int64) (*TTradeFill, error) {
 	tTradeFillIdKey := fmt.Sprintf("%s%v", cacheTTradeFillIdPrefix, id)
 	var resp TTradeFill
 	err := m.QueryRowCtx(ctx, &resp, tTradeFillIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
@@ -103,7 +103,7 @@ func (m *defaultTTradeFillModel) FindOne(ctx context.Context, id uint64) (*TTrad
 	}
 }
 
-func (m *defaultTTradeFillModel) FindOneByTenantIdFillNo(ctx context.Context, tenantId uint64, fillNo string) (*TTradeFill, error) {
+func (m *defaultTTradeFillModel) FindOneByTenantIdFillNo(ctx context.Context, tenantId int64, fillNo string) (*TTradeFill, error) {
 	tTradeFillTenantIdFillNoKey := fmt.Sprintf("%s%v:%v", cacheTTradeFillTenantIdFillNoPrefix, tenantId, fillNo)
 	var resp TTradeFill
 	err := m.QueryRowIndexCtx(ctx, &resp, tTradeFillTenantIdFillNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {

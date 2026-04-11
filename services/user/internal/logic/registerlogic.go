@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
 	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -14,6 +13,8 @@ import (
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type RegisterLogic struct {
@@ -53,7 +54,7 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 			Base: helper.GetErrResp(502, i18n.Translate(i18n.TenantDisabled, l.ctx)),
 		}, nil
 	}
-	if tenant.Data.ExpireTime < time.Now().UnixMilli() {
+	if tenant.Data.ExpireTime < utils.NowMillis() {
 		return &user.RegisterResp{
 			Base: helper.GetErrResp(502, i18n.Translate(i18n.TenantExpired, l.ctx)),
 		}, nil
@@ -133,14 +134,14 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 		Source:         sql.NullString{String: "", Valid: true},
 		ReferrerUserId: sql.NullInt64{Int64: referrerUserId, Valid: true},
 		LastLoginIp:    sql.NullString{String: in.RegisterIp, Valid: true},
-		LastLoginTime:  time.Now().UnixMilli(),
+		LastLoginTime:  utils.NowMillis(),
 		RegisterIp:     sql.NullString{String: in.RegisterIp, Valid: true},
 		IsGuest:        1,
 		IsRecharge:     0,
 		Remark:         sql.NullString{String: "", Valid: true},
 		Deleted:        0,
-		CreateTimes:    time.Now().UnixMilli(),
-		UpdateTimes:    time.Now().UnixMilli(),
+		CreateTimes:    utils.NowMillis(),
+		UpdateTimes:    utils.NowMillis(),
 	})
 	if err != nil {
 		return nil, err

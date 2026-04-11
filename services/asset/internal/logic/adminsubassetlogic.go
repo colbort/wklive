@@ -3,12 +3,11 @@ package logic
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
+	"wklive/common/utils"
 	"wklive/proto/asset"
-	"wklive/services/asset/internal/helpers"
 	"wklive/services/asset/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -43,7 +42,7 @@ func (l *AdminSubAssetLogic) AdminSubAsset(in *asset.AdminSubAssetReq) (*asset.A
 		return nil, err
 	}
 
-	ok, err := l.svcCtx.UserAssetModel.SubAvailableAmount(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, amount, time.Now().UnixMilli())
+	ok, err := l.svcCtx.UserAssetModel.SubAvailableAmount(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, amount, utils.NowMillis())
 	if err != nil {
 		return nil, err
 	}
@@ -56,10 +55,10 @@ func (l *AdminSubAssetLogic) AdminSubAsset(in *asset.AdminSubAssetReq) (*asset.A
 		return nil, err
 	}
 
-	flow := helpers.BuildAssetFlowRecord(in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "manual_sub", "system", "manual_sub", 0, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_SUB, amount, before, after, in.Remark, time.Now().UnixMilli())
+	flow := buildAssetFlowRecord(l.svcCtx, l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "manual_sub", "system", "manual_sub", 0, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_SUB, amount, before, after, in.Remark, utils.NowMillis())
 	if _, err := l.svcCtx.AssetFlowModel.Insert(l.ctx, flow); err != nil {
 		return nil, err
 	}
 
-	return &asset.AdminChangeAssetResp{Base: helper.OkResp(), BizNo: in.BizNo, Asset: helpers.ToUserAssetProto(after)}, nil
+	return &asset.AdminChangeAssetResp{Base: helper.OkResp(), BizNo: in.BizNo, Asset: toUserAssetProto(after)}, nil
 }

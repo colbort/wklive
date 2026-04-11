@@ -5,7 +5,6 @@ import (
 
 	"wklive/common/helper"
 	"wklive/proto/asset"
-	"wklive/services/asset/internal/helpers"
 	"wklive/services/asset/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -34,7 +33,7 @@ func (l *ListMyAssetsLogic) ListMyAssets(in *asset.ListMyAssetsReq) (*asset.List
 
 	resp := &asset.ListMyAssetsResp{Base: helper.OkResp()}
 	for _, item := range list {
-		resp.Data = append(resp.Data, helpers.ToUserAssetProto(item))
+		resp.Data = append(resp.Data, toUserAssetProto(item))
 	}
 	return resp, nil
 }

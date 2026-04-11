@@ -4,13 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
-	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SysTenantCreateLogic struct {
@@ -46,8 +47,8 @@ func (l *SysTenantCreateLogic) SysTenantCreate(in *system.SysTenantCreateReq) (*
 		ContactName:  sql.NullString{String: in.ContactName, Valid: true},
 		ContactPhone: sql.NullString{String: in.ContactPhone, Valid: true},
 		Remark:       sql.NullString{String: in.Remark, Valid: true},
-		CreateTimes:  time.Now().UnixMilli(),
-		UpdateTimes:  time.Now().UnixMilli(),
+		CreateTimes:  utils.NowMillis(),
+		UpdateTimes:  utils.NowMillis(),
 	})
 	if err != nil {
 		return nil, err

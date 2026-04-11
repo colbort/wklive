@@ -3,12 +3,13 @@ package logic
 import (
 	"context"
 	"database/sql"
-	"github.com/zeromicro/go-zero/core/logx"
-	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type UpdatePayPlatformLogic struct {
@@ -44,7 +45,7 @@ func (l *UpdatePayPlatformLogic) UpdatePayPlatform(in *payment.UpdatePayPlatform
 		}, nil
 	}
 
-	now := time.Now().UnixMilli()
+	now := utils.NowMillis()
 	if in.PlatformName != "" {
 		platform.PlatformName = in.PlatformName
 	}

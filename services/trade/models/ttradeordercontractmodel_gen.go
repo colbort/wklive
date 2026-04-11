@@ -30,10 +30,10 @@ var (
 type (
 	tTradeOrderContractModel interface {
 		Insert(ctx context.Context, data *TTradeOrderContract) (sql.Result, error)
-		FindOne(ctx context.Context, id uint64) (*TTradeOrderContract, error)
-		FindOneByTenantIdOrderId(ctx context.Context, tenantId uint64, orderId uint64) (*TTradeOrderContract, error)
+		FindOne(ctx context.Context, id int64) (*TTradeOrderContract, error)
+		FindOneByTenantIdOrderId(ctx context.Context, tenantId int64, orderId int64) (*TTradeOrderContract, error)
 		Update(ctx context.Context, data *TTradeOrderContract) error
-		Delete(ctx context.Context, id uint64) error
+		Delete(ctx context.Context, id int64) error
 	}
 
 	defaultTTradeOrderContractModel struct {
@@ -42,9 +42,9 @@ type (
 	}
 
 	TTradeOrderContract struct {
-		Id                uint64  `db:"id"`                  // 主键ID
-		TenantId          uint64  `db:"tenant_id"`           // 租户ID
-		OrderId           uint64  `db:"order_id"`            // 订单ID，对应t_trade_order.id
+		Id                int64   `db:"id"`                  // 主键ID
+		TenantId          int64   `db:"tenant_id"`           // 租户ID
+		OrderId           int64   `db:"order_id"`            // 订单ID，对应t_trade_order.id
 		MarginMode        int64   `db:"margin_mode"`         // 保证金模式：1全仓 2逐仓
 		Leverage          int64   `db:"leverage"`            // 下单时杠杆倍数
 		MarginAsset       string  `db:"margin_asset"`        // 保证金币种
@@ -65,7 +65,7 @@ func newTTradeOrderContractModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...c
 	}
 }
 
-func (m *defaultTTradeOrderContractModel) Delete(ctx context.Context, id uint64) error {
+func (m *defaultTTradeOrderContractModel) Delete(ctx context.Context, id int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
@@ -80,7 +80,7 @@ func (m *defaultTTradeOrderContractModel) Delete(ctx context.Context, id uint64)
 	return err
 }
 
-func (m *defaultTTradeOrderContractModel) FindOne(ctx context.Context, id uint64) (*TTradeOrderContract, error) {
+func (m *defaultTTradeOrderContractModel) FindOne(ctx context.Context, id int64) (*TTradeOrderContract, error) {
 	tTradeOrderContractIdKey := fmt.Sprintf("%s%v", cacheTTradeOrderContractIdPrefix, id)
 	var resp TTradeOrderContract
 	err := m.QueryRowCtx(ctx, &resp, tTradeOrderContractIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
@@ -97,7 +97,7 @@ func (m *defaultTTradeOrderContractModel) FindOne(ctx context.Context, id uint64
 	}
 }
 
-func (m *defaultTTradeOrderContractModel) FindOneByTenantIdOrderId(ctx context.Context, tenantId uint64, orderId uint64) (*TTradeOrderContract, error) {
+func (m *defaultTTradeOrderContractModel) FindOneByTenantIdOrderId(ctx context.Context, tenantId int64, orderId int64) (*TTradeOrderContract, error) {
 	tTradeOrderContractTenantIdOrderIdKey := fmt.Sprintf("%s%v:%v", cacheTTradeOrderContractTenantIdOrderIdPrefix, tenantId, orderId)
 	var resp TTradeOrderContract
 	err := m.QueryRowIndexCtx(ctx, &resp, tTradeOrderContractTenantIdOrderIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {

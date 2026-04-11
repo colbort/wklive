@@ -161,6 +161,18 @@ const (
 	MarketRequired                         = 2132
 	SymbolRequired                         = 2133
 	UserNotFoundOrPasswordIncorrect        = 2134
+	StakingProductUnavailable              = 2135
+	StakeAmountInvalid                     = 2136
+	StakeAmountBelowMinimum                = 2137
+	StakeAmountAboveMaximum                = 2138
+	StakeAmountStepInvalid                 = 2139
+	ProductQuotaInsufficient               = 2140
+	UserStakeLimitExceeded                 = 2141
+	ProductNoAlreadyExists                 = 2142
+	StakingOrderCannotRedeem               = 2143
+	EarlyRedeemNotAllowed                  = 2144
+	RedeemAmountInvalid                    = 2145
+	RewardAmountInvalid                    = 2146
 )
 
 // MessageMap 定义所有支持的错误消息翻译
@@ -768,5 +780,53 @@ var MessageMap = map[int32]map[Language]string{
 	UserNotFoundOrPasswordIncorrect: {
 		EN: "User not found or password incorrect",
 		ZH: "用户不存在或密码错误",
+	},
+	StakingProductUnavailable: {
+		EN: "Staking product is unavailable",
+		ZH: "质押产品当前不可用",
+	},
+	StakeAmountInvalid: {
+		EN: "Invalid stake amount",
+		ZH: "质押数量无效",
+	},
+	StakeAmountBelowMinimum: {
+		EN: "Stake amount is below the minimum",
+		ZH: "质押数量低于最小限制",
+	},
+	StakeAmountAboveMaximum: {
+		EN: "Stake amount exceeds the maximum",
+		ZH: "质押数量超过最大限制",
+	},
+	StakeAmountStepInvalid: {
+		EN: "Stake amount does not match the step size",
+		ZH: "质押数量不符合递增步长",
+	},
+	ProductQuotaInsufficient: {
+		EN: "Insufficient product quota",
+		ZH: "产品可质押额度不足",
+	},
+	UserStakeLimitExceeded: {
+		EN: "User stake limit exceeded",
+		ZH: "超过用户可质押额度限制",
+	},
+	ProductNoAlreadyExists: {
+		EN: "Product number already exists",
+		ZH: "产品编号已存在",
+	},
+	StakingOrderCannotRedeem: {
+		EN: "The staking order cannot be redeemed",
+		ZH: "当前质押订单不可赎回",
+	},
+	EarlyRedeemNotAllowed: {
+		EN: "Early redeem is not allowed",
+		ZH: "当前订单不允许提前赎回",
+	},
+	RedeemAmountInvalid: {
+		EN: "Invalid redeem amount",
+		ZH: "赎回数量无效",
+	},
+	RewardAmountInvalid: {
+		EN: "Invalid reward amount",
+		ZH: "收益数量无效",
 	},
 }

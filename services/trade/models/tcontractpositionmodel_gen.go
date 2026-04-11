@@ -30,10 +30,10 @@ var (
 type (
 	tContractPositionModel interface {
 		Insert(ctx context.Context, data *TContractPosition) (sql.Result, error)
-		FindOne(ctx context.Context, id uint64) (*TContractPosition, error)
-		FindOneByTenantIdUserIdSymbolIdPositionSideMarginMode(ctx context.Context, tenantId uint64, userId uint64, symbolId uint64, positionSide int64, marginMode int64) (*TContractPosition, error)
+		FindOne(ctx context.Context, id int64) (*TContractPosition, error)
+		FindOneByTenantIdUserIdSymbolIdPositionSideMarginMode(ctx context.Context, tenantId int64, userId int64, symbolId int64, positionSide int64, marginMode int64) (*TContractPosition, error)
 		Update(ctx context.Context, data *TContractPosition) error
-		Delete(ctx context.Context, id uint64) error
+		Delete(ctx context.Context, id int64) error
 	}
 
 	defaultTContractPositionModel struct {
@@ -42,10 +42,10 @@ type (
 	}
 
 	TContractPosition struct {
-		Id               uint64  `db:"id"`                // 主键ID
-		TenantId         uint64  `db:"tenant_id"`         // 租户ID
-		UserId           uint64  `db:"user_id"`           // 用户ID
-		SymbolId         uint64  `db:"symbol_id"`         // 交易标的ID
+		Id               int64   `db:"id"`                // 主键ID
+		TenantId         int64   `db:"tenant_id"`         // 租户ID
+		UserId           int64   `db:"user_id"`           // 用户ID
+		SymbolId         int64   `db:"symbol_id"`         // 交易标的ID
 		MarketType       int64   `db:"market_type"`       // 市场类型：2秒合约 3U本位 4币本位
 		PositionSide     int64   `db:"position_side"`     // 持仓方向：1多 2空
 		MarginMode       int64   `db:"margin_mode"`       // 保证金模式：1全仓 2逐仓
@@ -75,7 +75,7 @@ func newTContractPositionModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cac
 	}
 }
 
-func (m *defaultTContractPositionModel) Delete(ctx context.Context, id uint64) error {
+func (m *defaultTContractPositionModel) Delete(ctx context.Context, id int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
@@ -90,7 +90,7 @@ func (m *defaultTContractPositionModel) Delete(ctx context.Context, id uint64) e
 	return err
 }
 
-func (m *defaultTContractPositionModel) FindOne(ctx context.Context, id uint64) (*TContractPosition, error) {
+func (m *defaultTContractPositionModel) FindOne(ctx context.Context, id int64) (*TContractPosition, error) {
 	tContractPositionIdKey := fmt.Sprintf("%s%v", cacheTContractPositionIdPrefix, id)
 	var resp TContractPosition
 	err := m.QueryRowCtx(ctx, &resp, tContractPositionIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
@@ -107,7 +107,7 @@ func (m *defaultTContractPositionModel) FindOne(ctx context.Context, id uint64) 
 	}
 }
 
-func (m *defaultTContractPositionModel) FindOneByTenantIdUserIdSymbolIdPositionSideMarginMode(ctx context.Context, tenantId uint64, userId uint64, symbolId uint64, positionSide int64, marginMode int64) (*TContractPosition, error) {
+func (m *defaultTContractPositionModel) FindOneByTenantIdUserIdSymbolIdPositionSideMarginMode(ctx context.Context, tenantId int64, userId int64, symbolId int64, positionSide int64, marginMode int64) (*TContractPosition, error) {
 	tContractPositionTenantIdUserIdSymbolIdPositionSideMarginModeKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTContractPositionTenantIdUserIdSymbolIdPositionSideMarginModePrefix, tenantId, userId, symbolId, positionSide, marginMode)
 	var resp TContractPosition
 	err := m.QueryRowIndexCtx(ctx, &resp, tContractPositionTenantIdUserIdSymbolIdPositionSideMarginModeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {

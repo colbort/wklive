@@ -3,8 +3,13 @@ package logic
 import (
 	"context"
 
+	"wklive/common/conv"
+	"wklive/common/helper"
+	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/staking"
 	"wklive/services/staking/internal/svc"
+	"wklive/services/staking/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +30,95 @@ func NewRedeemLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RedeemLogi
 
 // 发起赎回
 func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, error) {
-	// todo: add your logic here and delete this line
+	order, err := l.svcCtx.StakeOrderModel.FindOne(l.ctx, in.OrderId)
+	if err != nil {
+		return nil, err
+	}
+	if order == nil || order.TenantId != in.TenantId {
+		return &staking.AppRedeemResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
+	}
+	if order.Uid != in.Uid {
+		return &staking.AppRedeemResp{Base: helper.GetErrResp(403, i18n.Translate(i18n.NoPermissionAccessOrder, l.ctx))}, nil
+	}
+	if order.Status == int64(staking.OrderStatus_ORDER_STATUS_REDEEMED) || order.Status == int64(staking.OrderStatus_ORDER_STATUS_EARLY_REDEEMED) || order.Status == int64(staking.OrderStatus_ORDER_STATUS_CANCELLED) {
+		return &staking.AppRedeemResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.StakingOrderCannotRedeem, l.ctx))}, nil
+	}
 
-	return &staking.AppRedeemResp{}, nil
+	redeemType := in.RedeemType
+	if redeemType == staking.RedeemType_REDEEM_TYPE_UNSPECIFIED {
+		if order.Status == int64(staking.OrderStatus_ORDER_STATUS_EXPIRED) {
+			redeemType = staking.RedeemType_REDEEM_TYPE_MATURITY
+		} else {
+			redeemType = staking.RedeemType_REDEEM_TYPE_EARLY
+		}
+	}
+	if redeemType == staking.RedeemType_REDEEM_TYPE_EARLY && order.AllowEarlyRedeem != int64(staking.YesNo_YES_NO_YES) {
+		return &staking.AppRedeemResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.EarlyRedeemNotAllowed, l.ctx))}, nil
+	}
+
+	redeemAmount := order.StakeAmount
+	feeRate := 0.0
+	if redeemType == staking.RedeemType_REDEEM_TYPE_EARLY {
+		feeRate = order.EarlyRedeemRate
+	}
+	feeAmount := redeemAmount * feeRate / 100
+	rewardAmount := order.PendingReward
+	redeemNo := conv.GenerateBizNo("SKR")
+	now := utils.NowMillis()
+	if _, err := l.svcCtx.StakeRedeemLogModel.Insert(l.ctx, &models.TStakeRedeemLog{
+		TenantId:     order.TenantId,
+		OrderId:      order.Id,
+		OrderNo:      order.OrderNo,
+		Uid:          order.Uid,
+		ProductId:    order.ProductId,
+		RedeemNo:     redeemNo,
+		RedeemType:   int64(redeemType),
+		StakeAmount:  order.StakeAmount,
+		RedeemAmount: redeemAmount,
+		RewardAmount: rewardAmount,
+		FeeRate:      feeRate,
+		FeeAmount:    feeAmount,
+		RedeemStatus: int64(staking.RedeemStatus_REDEEM_STATUS_SUCCESS),
+		RedeemTimes:  now,
+		Remark:       in.Remark,
+		CreateUserId: in.Uid,
+		UpdateUserId: in.Uid,
+		CreateTimes:  now,
+		UpdateTimes:  now,
+	}); err != nil {
+		return nil, err
+	}
+
+	product, err := l.svcCtx.StakeProductModel.FindOne(l.ctx, order.ProductId)
+	if err == nil && product != nil {
+		if product.StakedAmount >= order.StakeAmount {
+			product.StakedAmount -= order.StakeAmount
+		} else {
+			product.StakedAmount = 0
+		}
+		product.UpdateUserId = in.Uid
+		product.UpdateTimes = now
+		_ = l.svcCtx.StakeProductModel.Update(l.ctx, product)
+	}
+
+	order.RedeemAmount = redeemAmount
+	order.RedeemFee = feeAmount
+	order.TotalReward += rewardAmount
+	order.PendingReward = 0
+	order.RedeemType = int64(redeemType)
+	order.RedeemApplyTimes = now
+	order.RedeemTimes = now
+	if redeemType == staking.RedeemType_REDEEM_TYPE_EARLY {
+		order.Status = int64(staking.OrderStatus_ORDER_STATUS_EARLY_REDEEMED)
+	} else {
+		order.Status = int64(staking.OrderStatus_ORDER_STATUS_REDEEMED)
+	}
+	order.Remark = in.Remark
+	order.UpdateUserId = in.Uid
+	order.UpdateTimes = now
+	if err := l.svcCtx.StakeOrderModel.Update(l.ctx, order); err != nil {
+		return nil, err
+	}
+
+	return &staking.AppRedeemResp{Base: helper.OkResp(), Success: true, RedeemNo: redeemNo}, nil
 }

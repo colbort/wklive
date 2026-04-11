@@ -30,10 +30,10 @@ var (
 type (
 	tRiskUserSymbolLimitModel interface {
 		Insert(ctx context.Context, data *TRiskUserSymbolLimit) (sql.Result, error)
-		FindOne(ctx context.Context, id uint64) (*TRiskUserSymbolLimit, error)
-		FindOneByTenantIdUserIdSymbolIdMarketType(ctx context.Context, tenantId uint64, userId uint64, symbolId uint64, marketType int64) (*TRiskUserSymbolLimit, error)
+		FindOne(ctx context.Context, id int64) (*TRiskUserSymbolLimit, error)
+		FindOneByTenantIdUserIdSymbolIdMarketType(ctx context.Context, tenantId int64, userId int64, symbolId int64, marketType int64) (*TRiskUserSymbolLimit, error)
 		Update(ctx context.Context, data *TRiskUserSymbolLimit) error
-		Delete(ctx context.Context, id uint64) error
+		Delete(ctx context.Context, id int64) error
 	}
 
 	defaultTRiskUserSymbolLimitModel struct {
@@ -42,10 +42,10 @@ type (
 	}
 
 	TRiskUserSymbolLimit struct {
-		Id                  uint64  `db:"id"`                     // 主键ID
-		TenantId            uint64  `db:"tenant_id"`              // 租户ID
-		UserId              uint64  `db:"user_id"`                // 用户ID
-		SymbolId            uint64  `db:"symbol_id"`              // 交易标的ID
+		Id                  int64   `db:"id"`                     // 主键ID
+		TenantId            int64   `db:"tenant_id"`              // 租户ID
+		UserId              int64   `db:"user_id"`                // 用户ID
+		SymbolId            int64   `db:"symbol_id"`              // 交易标的ID
 		MarketType          int64   `db:"market_type"`            // 市场类型：1现货 2秒合约 3U本位 4币本位
 		MaxPositionQty      float64 `db:"max_position_qty"`       // 最大持仓数量，0表示不限
 		MaxPositionNotional float64 `db:"max_position_notional"`  // 最大持仓名义价值，0表示不限
@@ -57,7 +57,7 @@ type (
 		MaxLongPositionQty  float64 `db:"max_long_position_qty"`  // 最大多头持仓数量，0表示不限
 		MaxShortPositionQty float64 `db:"max_short_position_qty"` // 最大空头持仓数量，0表示不限
 		PriceDeviationRate  float64 `db:"price_deviation_rate"`   // 允许价格偏离率，0表示不限制
-		OperatorId          uint64  `db:"operator_id"`            // 操作人ID，系统操作时可为0
+		OperatorId          int64   `db:"operator_id"`            // 操作人ID，系统操作时可为0
 		Source              int64   `db:"source"`                 // 来源：1系统 2用户 3后台管理 4任务
 		Status              int64   `db:"status"`                 // 状态：1启用 0禁用
 		EffectiveStartTime  int64   `db:"effective_start_time"`   // 限制生效开始时间，毫秒时间戳
@@ -75,7 +75,7 @@ func newTRiskUserSymbolLimitModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...
 	}
 }
 
-func (m *defaultTRiskUserSymbolLimitModel) Delete(ctx context.Context, id uint64) error {
+func (m *defaultTRiskUserSymbolLimitModel) Delete(ctx context.Context, id int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
@@ -90,7 +90,7 @@ func (m *defaultTRiskUserSymbolLimitModel) Delete(ctx context.Context, id uint64
 	return err
 }
 
-func (m *defaultTRiskUserSymbolLimitModel) FindOne(ctx context.Context, id uint64) (*TRiskUserSymbolLimit, error) {
+func (m *defaultTRiskUserSymbolLimitModel) FindOne(ctx context.Context, id int64) (*TRiskUserSymbolLimit, error) {
 	tRiskUserSymbolLimitIdKey := fmt.Sprintf("%s%v", cacheTRiskUserSymbolLimitIdPrefix, id)
 	var resp TRiskUserSymbolLimit
 	err := m.QueryRowCtx(ctx, &resp, tRiskUserSymbolLimitIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
@@ -107,7 +107,7 @@ func (m *defaultTRiskUserSymbolLimitModel) FindOne(ctx context.Context, id uint6
 	}
 }
 
-func (m *defaultTRiskUserSymbolLimitModel) FindOneByTenantIdUserIdSymbolIdMarketType(ctx context.Context, tenantId uint64, userId uint64, symbolId uint64, marketType int64) (*TRiskUserSymbolLimit, error) {
+func (m *defaultTRiskUserSymbolLimitModel) FindOneByTenantIdUserIdSymbolIdMarketType(ctx context.Context, tenantId int64, userId int64, symbolId int64, marketType int64) (*TRiskUserSymbolLimit, error) {
 	tRiskUserSymbolLimitTenantIdUserIdSymbolIdMarketTypeKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTRiskUserSymbolLimitTenantIdUserIdSymbolIdMarketTypePrefix, tenantId, userId, symbolId, marketType)
 	var resp TRiskUserSymbolLimit
 	err := m.QueryRowIndexCtx(ctx, &resp, tRiskUserSymbolLimitTenantIdUserIdSymbolIdMarketTypeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {

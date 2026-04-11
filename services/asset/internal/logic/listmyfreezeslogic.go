@@ -5,7 +5,6 @@ import (
 
 	"wklive/common/pageutil"
 	"wklive/proto/asset"
-	"wklive/services/asset/internal/helpers"
 	"wklive/services/asset/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -37,7 +36,7 @@ func (l *ListMyFreezesLogic) ListMyFreezes(in *asset.ListMyFreezesReq) (*asset.L
 	}
 	resp := &asset.ListMyFreezesResp{Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(items), total, lastID)}
 	for _, item := range items {
-		resp.Data = append(resp.Data, helpers.ToAssetFreezeProto(item))
+		resp.Data = append(resp.Data, toAssetFreezeProto(item))
 	}
 	return resp, nil
 }

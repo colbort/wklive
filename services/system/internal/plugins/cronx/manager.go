@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 	"sync"
-	"time"
+	"wklive/common/utils"
 	"wklive/services/system/models"
 
 	"github.com/robfig/cron/v3"
@@ -229,7 +229,7 @@ func (m *CronManager) ListStartedJobIDs() []int64 {
 // execute 实际执行任务
 // 默认同一个任务不允许并发执行
 func (m *CronManager) execute(job *models.SysJob, handler JobHandler) error {
-	startTime := time.Now().UnixMilli()
+	startTime := utils.NowMillis()
 	if _, loaded := m.runningMap.LoadOrStore(job.Id, struct{}{}); loaded {
 		log.Printf("job[%d-%s] is already running, skip this time", job.Id, job.JobName)
 		return nil
@@ -245,7 +245,7 @@ func (m *CronManager) execute(job *models.SysJob, handler JobHandler) error {
 
 	log.Printf("job start: id=%d, name=%s, target=%s", job.Id, job.JobName, job.InvokeTarget)
 	err := handler(ctx, job)
-	endTime := time.Now().UnixMilli()
+	endTime := utils.NowMillis()
 	status := int64(1)
 	message := "success"
 	exceptionInfo := ""
@@ -267,7 +267,7 @@ func (m *CronManager) execute(job *models.SysJob, handler JobHandler) error {
 		ExceptionInfo:  sql.NullString{String: exceptionInfo},
 		StartTime:      startTime,
 		EndTime:        endTime,
-		CreateTimes:    time.Now().UnixMilli(),
+		CreateTimes:    utils.NowMillis(),
 	})
 	return err
 }

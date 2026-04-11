@@ -3,13 +3,14 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
-	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type CloseRechargeOrderLogic struct {
@@ -52,7 +53,7 @@ func (l *CloseRechargeOrderLogic) CloseRechargeOrder(in *payment.CloseRechargeOr
 		}, nil
 	}
 
-	now := time.Now().UnixMilli()
+	now := utils.NowMillis()
 	order.Status = int64(payment.PayOrderStatus_PAY_ORDER_STATUS_CLOSED)
 	order.UpdateTimes = now
 

@@ -4,13 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
-	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type AddUserBankLogic struct {
@@ -41,7 +42,7 @@ func (l *AddUserBankLogic) AddUserBank(in *user.AddUserBankReq) (*user.AddUserBa
 		}, nil
 	}
 
-	now := time.Now().UnixMilli()
+	now := utils.NowMillis()
 	isDefault := int64(0)
 	if in.IsDefault {
 		isDefault = 1

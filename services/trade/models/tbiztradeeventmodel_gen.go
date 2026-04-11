@@ -30,10 +30,10 @@ var (
 type (
 	tBizTradeEventModel interface {
 		Insert(ctx context.Context, data *TBizTradeEvent) (sql.Result, error)
-		FindOne(ctx context.Context, id uint64) (*TBizTradeEvent, error)
-		FindOneByTenantIdEventNo(ctx context.Context, tenantId uint64, eventNo string) (*TBizTradeEvent, error)
+		FindOne(ctx context.Context, id int64) (*TBizTradeEvent, error)
+		FindOneByTenantIdEventNo(ctx context.Context, tenantId int64, eventNo string) (*TBizTradeEvent, error)
 		Update(ctx context.Context, data *TBizTradeEvent) error
-		Delete(ctx context.Context, id uint64) error
+		Delete(ctx context.Context, id int64) error
 	}
 
 	defaultTBizTradeEventModel struct {
@@ -42,16 +42,16 @@ type (
 	}
 
 	TBizTradeEvent struct {
-		Id            uint64         `db:"id"`              // 主键ID
-		TenantId      uint64         `db:"tenant_id"`       // 租户ID
+		Id            int64          `db:"id"`              // 主键ID
+		TenantId      int64          `db:"tenant_id"`       // 租户ID
 		EventNo       string         `db:"event_no"`        // 事件号
 		EventType     string         `db:"event_type"`      // 事件类型，如ORDER_CREATED、ORDER_FILLED、ORDER_CANCELED、POSITION_CHANGED、MARGIN_CHANGED
 		BizId         string         `db:"biz_id"`          // 业务主键，如订单号、成交号、持仓ID等
 		BizType       string         `db:"biz_type"`        // 业务类型，如order、fill、position、margin
-		UserId        uint64         `db:"user_id"`         // 用户ID
-		SymbolId      uint64         `db:"symbol_id"`       // 交易标的ID，没有则为0
+		UserId        int64          `db:"user_id"`         // 用户ID
+		SymbolId      int64          `db:"symbol_id"`       // 交易标的ID，没有则为0
 		MarketType    int64          `db:"market_type"`     // 市场类型：0无 1现货 2秒合约 3U本位 4币本位
-		OperatorId    uint64         `db:"operator_id"`     // 操作人ID，系统操作时可为0
+		OperatorId    int64          `db:"operator_id"`     // 操作人ID，系统操作时可为0
 		Source        int64          `db:"source"`          // 来源：1系统 2用户 3后台管理 4任务
 		EventStatus   int64          `db:"event_status"`    // 事件状态：1待投递 2投递成功 3投递失败 4已取消
 		RetryCount    int64          `db:"retry_count"`     // 重试次数
@@ -72,7 +72,7 @@ func newTBizTradeEventModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.
 	}
 }
 
-func (m *defaultTBizTradeEventModel) Delete(ctx context.Context, id uint64) error {
+func (m *defaultTBizTradeEventModel) Delete(ctx context.Context, id int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
@@ -87,7 +87,7 @@ func (m *defaultTBizTradeEventModel) Delete(ctx context.Context, id uint64) erro
 	return err
 }
 
-func (m *defaultTBizTradeEventModel) FindOne(ctx context.Context, id uint64) (*TBizTradeEvent, error) {
+func (m *defaultTBizTradeEventModel) FindOne(ctx context.Context, id int64) (*TBizTradeEvent, error) {
 	tBizTradeEventIdKey := fmt.Sprintf("%s%v", cacheTBizTradeEventIdPrefix, id)
 	var resp TBizTradeEvent
 	err := m.QueryRowCtx(ctx, &resp, tBizTradeEventIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
@@ -104,7 +104,7 @@ func (m *defaultTBizTradeEventModel) FindOne(ctx context.Context, id uint64) (*T
 	}
 }
 
-func (m *defaultTBizTradeEventModel) FindOneByTenantIdEventNo(ctx context.Context, tenantId uint64, eventNo string) (*TBizTradeEvent, error) {
+func (m *defaultTBizTradeEventModel) FindOneByTenantIdEventNo(ctx context.Context, tenantId int64, eventNo string) (*TBizTradeEvent, error) {
 	tBizTradeEventTenantIdEventNoKey := fmt.Sprintf("%s%v:%v", cacheTBizTradeEventTenantIdEventNoPrefix, tenantId, eventNo)
 	var resp TBizTradeEvent
 	err := m.QueryRowIndexCtx(ctx, &resp, tBizTradeEventTenantIdEventNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {

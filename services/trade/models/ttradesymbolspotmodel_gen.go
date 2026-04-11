@@ -30,10 +30,10 @@ var (
 type (
 	tTradeSymbolSpotModel interface {
 		Insert(ctx context.Context, data *TTradeSymbolSpot) (sql.Result, error)
-		FindOne(ctx context.Context, id uint64) (*TTradeSymbolSpot, error)
-		FindOneByTenantIdSymbolId(ctx context.Context, tenantId uint64, symbolId uint64) (*TTradeSymbolSpot, error)
+		FindOne(ctx context.Context, id int64) (*TTradeSymbolSpot, error)
+		FindOneByTenantIdSymbolId(ctx context.Context, tenantId int64, symbolId int64) (*TTradeSymbolSpot, error)
 		Update(ctx context.Context, data *TTradeSymbolSpot) error
-		Delete(ctx context.Context, id uint64) error
+		Delete(ctx context.Context, id int64) error
 	}
 
 	defaultTTradeSymbolSpotModel struct {
@@ -42,9 +42,9 @@ type (
 	}
 
 	TTradeSymbolSpot struct {
-		Id           uint64  `db:"id"`             // 主键ID
-		TenantId     uint64  `db:"tenant_id"`      // 租户ID
-		SymbolId     uint64  `db:"symbol_id"`      // 交易标的ID，对应t_trade_symbol.id
+		Id           int64   `db:"id"`             // 主键ID
+		TenantId     int64   `db:"tenant_id"`      // 租户ID
+		SymbolId     int64   `db:"symbol_id"`      // 交易标的ID，对应t_trade_symbol.id
 		MakerFeeRate float64 `db:"maker_fee_rate"` // Maker手续费率
 		TakerFeeRate float64 `db:"taker_fee_rate"` // Taker手续费率
 		BuyEnabled   int64   `db:"buy_enabled"`    // 是否允许买入：1允许 0禁止
@@ -61,7 +61,7 @@ func newTTradeSymbolSpotModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cach
 	}
 }
 
-func (m *defaultTTradeSymbolSpotModel) Delete(ctx context.Context, id uint64) error {
+func (m *defaultTTradeSymbolSpotModel) Delete(ctx context.Context, id int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
@@ -76,7 +76,7 @@ func (m *defaultTTradeSymbolSpotModel) Delete(ctx context.Context, id uint64) er
 	return err
 }
 
-func (m *defaultTTradeSymbolSpotModel) FindOne(ctx context.Context, id uint64) (*TTradeSymbolSpot, error) {
+func (m *defaultTTradeSymbolSpotModel) FindOne(ctx context.Context, id int64) (*TTradeSymbolSpot, error) {
 	tTradeSymbolSpotIdKey := fmt.Sprintf("%s%v", cacheTTradeSymbolSpotIdPrefix, id)
 	var resp TTradeSymbolSpot
 	err := m.QueryRowCtx(ctx, &resp, tTradeSymbolSpotIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
@@ -93,7 +93,7 @@ func (m *defaultTTradeSymbolSpotModel) FindOne(ctx context.Context, id uint64) (
 	}
 }
 
-func (m *defaultTTradeSymbolSpotModel) FindOneByTenantIdSymbolId(ctx context.Context, tenantId uint64, symbolId uint64) (*TTradeSymbolSpot, error) {
+func (m *defaultTTradeSymbolSpotModel) FindOneByTenantIdSymbolId(ctx context.Context, tenantId int64, symbolId int64) (*TTradeSymbolSpot, error) {
 	tTradeSymbolSpotTenantIdSymbolIdKey := fmt.Sprintf("%s%v:%v", cacheTTradeSymbolSpotTenantIdSymbolIdPrefix, tenantId, symbolId)
 	var resp TTradeSymbolSpot
 	err := m.QueryRowIndexCtx(ctx, &resp, tTradeSymbolSpotTenantIdSymbolIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {

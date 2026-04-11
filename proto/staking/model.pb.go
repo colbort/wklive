@@ -24,8 +24,8 @@ const (
 // 质押产品
 type StakeProduct struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	Id               uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId         uint64                 `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId         int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	ProductNo        string                 `protobuf:"bytes,3,opt,name=product_no,json=productNo,proto3" json:"product_no,omitempty"`
 	ProductName      string                 `protobuf:"bytes,4,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`
 	ProductType      ProductType            `protobuf:"varint,5,opt,name=product_type,json=productType,proto3,enum=staking.ProductType" json:"product_type,omitempty"`
@@ -48,8 +48,8 @@ type StakeProduct struct {
 	Status           ProductStatus          `protobuf:"varint,22,opt,name=status,proto3,enum=staking.ProductStatus" json:"status,omitempty"`
 	Sort             int32                  `protobuf:"varint,23,opt,name=sort,proto3" json:"sort,omitempty"`
 	Remark           string                 `protobuf:"bytes,24,opt,name=remark,proto3" json:"remark,omitempty"`
-	CreateUserId     uint64                 `protobuf:"varint,25,opt,name=create_user_id,json=createUserId,proto3" json:"create_user_id,omitempty"`
-	UpdateUserId     uint64                 `protobuf:"varint,26,opt,name=update_user_id,json=updateUserId,proto3" json:"update_user_id,omitempty"`
+	CreateUserId     int64                  `protobuf:"varint,25,opt,name=create_user_id,json=createUserId,proto3" json:"create_user_id,omitempty"`
+	UpdateUserId     int64                  `protobuf:"varint,26,opt,name=update_user_id,json=updateUserId,proto3" json:"update_user_id,omitempty"`
 	CreateTimes      int64                  `protobuf:"varint,27,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes      int64                  `protobuf:"varint,28,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
 	unknownFields    protoimpl.UnknownFields
@@ -86,14 +86,14 @@ func (*StakeProduct) Descriptor() ([]byte, []int) {
 	return file_proto_staking_model_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *StakeProduct) GetId() uint64 {
+func (x *StakeProduct) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *StakeProduct) GetTenantId() uint64 {
+func (x *StakeProduct) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
@@ -254,14 +254,14 @@ func (x *StakeProduct) GetRemark() string {
 	return ""
 }
 
-func (x *StakeProduct) GetCreateUserId() uint64 {
+func (x *StakeProduct) GetCreateUserId() int64 {
 	if x != nil {
 		return x.CreateUserId
 	}
 	return 0
 }
 
-func (x *StakeProduct) GetUpdateUserId() uint64 {
+func (x *StakeProduct) GetUpdateUserId() int64 {
 	if x != nil {
 		return x.UpdateUserId
 	}
@@ -285,11 +285,11 @@ func (x *StakeProduct) GetUpdateTimes() int64 {
 // 质押订单
 type StakeOrder struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	Id               uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId         uint64                 `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId         int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	OrderNo          string                 `protobuf:"bytes,3,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
-	Uid              uint64                 `protobuf:"varint,4,opt,name=uid,proto3" json:"uid,omitempty"`
-	ProductId        uint64                 `protobuf:"varint,5,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	Uid              int64                  `protobuf:"varint,4,opt,name=uid,proto3" json:"uid,omitempty"`
+	ProductId        int64                  `protobuf:"varint,5,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	ProductNo        string                 `protobuf:"bytes,6,opt,name=product_no,json=productNo,proto3" json:"product_no,omitempty"`
 	ProductName      string                 `protobuf:"bytes,7,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`
 	ProductType      ProductType            `protobuf:"varint,8,opt,name=product_type,json=productType,proto3,enum=staking.ProductType" json:"product_type,omitempty"`
@@ -319,8 +319,8 @@ type StakeOrder struct {
 	RedeemTimes      int64                  `protobuf:"varint,32,opt,name=redeem_times,json=redeemTimes,proto3" json:"redeem_times,omitempty"`
 	Source           SourceType             `protobuf:"varint,33,opt,name=source,proto3,enum=staking.SourceType" json:"source,omitempty"`
 	Remark           string                 `protobuf:"bytes,34,opt,name=remark,proto3" json:"remark,omitempty"`
-	CreateUserId     uint64                 `protobuf:"varint,35,opt,name=create_user_id,json=createUserId,proto3" json:"create_user_id,omitempty"`
-	UpdateUserId     uint64                 `protobuf:"varint,36,opt,name=update_user_id,json=updateUserId,proto3" json:"update_user_id,omitempty"`
+	CreateUserId     int64                  `protobuf:"varint,35,opt,name=create_user_id,json=createUserId,proto3" json:"create_user_id,omitempty"`
+	UpdateUserId     int64                  `protobuf:"varint,36,opt,name=update_user_id,json=updateUserId,proto3" json:"update_user_id,omitempty"`
 	CreateTimes      int64                  `protobuf:"varint,37,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes      int64                  `protobuf:"varint,38,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
 	unknownFields    protoimpl.UnknownFields
@@ -357,14 +357,14 @@ func (*StakeOrder) Descriptor() ([]byte, []int) {
 	return file_proto_staking_model_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *StakeOrder) GetId() uint64 {
+func (x *StakeOrder) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *StakeOrder) GetTenantId() uint64 {
+func (x *StakeOrder) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
@@ -378,14 +378,14 @@ func (x *StakeOrder) GetOrderNo() string {
 	return ""
 }
 
-func (x *StakeOrder) GetUid() uint64 {
+func (x *StakeOrder) GetUid() int64 {
 	if x != nil {
 		return x.Uid
 	}
 	return 0
 }
 
-func (x *StakeOrder) GetProductId() uint64 {
+func (x *StakeOrder) GetProductId() int64 {
 	if x != nil {
 		return x.ProductId
 	}
@@ -595,14 +595,14 @@ func (x *StakeOrder) GetRemark() string {
 	return ""
 }
 
-func (x *StakeOrder) GetCreateUserId() uint64 {
+func (x *StakeOrder) GetCreateUserId() int64 {
 	if x != nil {
 		return x.CreateUserId
 	}
 	return 0
 }
 
-func (x *StakeOrder) GetUpdateUserId() uint64 {
+func (x *StakeOrder) GetUpdateUserId() int64 {
 	if x != nil {
 		return x.UpdateUserId
 	}
@@ -626,12 +626,12 @@ func (x *StakeOrder) GetUpdateTimes() int64 {
 // 收益记录
 type StakeRewardLog struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	Id               uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId         uint64                 `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	OrderId          uint64                 `protobuf:"varint,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId         int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	OrderId          int64                  `protobuf:"varint,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
 	OrderNo          string                 `protobuf:"bytes,4,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
-	Uid              uint64                 `protobuf:"varint,5,opt,name=uid,proto3" json:"uid,omitempty"`
-	ProductId        uint64                 `protobuf:"varint,6,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	Uid              int64                  `protobuf:"varint,5,opt,name=uid,proto3" json:"uid,omitempty"`
+	ProductId        int64                  `protobuf:"varint,6,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	ProductName      string                 `protobuf:"bytes,7,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`
 	CoinSymbol       string                 `protobuf:"bytes,8,opt,name=coin_symbol,json=coinSymbol,proto3" json:"coin_symbol,omitempty"`
 	RewardCoinSymbol string                 `protobuf:"bytes,9,opt,name=reward_coin_symbol,json=rewardCoinSymbol,proto3" json:"reward_coin_symbol,omitempty"`
@@ -642,8 +642,8 @@ type StakeRewardLog struct {
 	RewardStatus     RewardStatus           `protobuf:"varint,14,opt,name=reward_status,json=rewardStatus,proto3,enum=staking.RewardStatus" json:"reward_status,omitempty"`
 	RewardTimes      int64                  `protobuf:"varint,15,opt,name=reward_times,json=rewardTimes,proto3" json:"reward_times,omitempty"`
 	Remark           string                 `protobuf:"bytes,16,opt,name=remark,proto3" json:"remark,omitempty"`
-	CreateUserId     uint64                 `protobuf:"varint,17,opt,name=create_user_id,json=createUserId,proto3" json:"create_user_id,omitempty"`
-	UpdateUserId     uint64                 `protobuf:"varint,18,opt,name=update_user_id,json=updateUserId,proto3" json:"update_user_id,omitempty"`
+	CreateUserId     int64                  `protobuf:"varint,17,opt,name=create_user_id,json=createUserId,proto3" json:"create_user_id,omitempty"`
+	UpdateUserId     int64                  `protobuf:"varint,18,opt,name=update_user_id,json=updateUserId,proto3" json:"update_user_id,omitempty"`
 	CreateTimes      int64                  `protobuf:"varint,19,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes      int64                  `protobuf:"varint,20,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
 	unknownFields    protoimpl.UnknownFields
@@ -680,21 +680,21 @@ func (*StakeRewardLog) Descriptor() ([]byte, []int) {
 	return file_proto_staking_model_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *StakeRewardLog) GetId() uint64 {
+func (x *StakeRewardLog) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *StakeRewardLog) GetTenantId() uint64 {
+func (x *StakeRewardLog) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *StakeRewardLog) GetOrderId() uint64 {
+func (x *StakeRewardLog) GetOrderId() int64 {
 	if x != nil {
 		return x.OrderId
 	}
@@ -708,14 +708,14 @@ func (x *StakeRewardLog) GetOrderNo() string {
 	return ""
 }
 
-func (x *StakeRewardLog) GetUid() uint64 {
+func (x *StakeRewardLog) GetUid() int64 {
 	if x != nil {
 		return x.Uid
 	}
 	return 0
 }
 
-func (x *StakeRewardLog) GetProductId() uint64 {
+func (x *StakeRewardLog) GetProductId() int64 {
 	if x != nil {
 		return x.ProductId
 	}
@@ -792,14 +792,14 @@ func (x *StakeRewardLog) GetRemark() string {
 	return ""
 }
 
-func (x *StakeRewardLog) GetCreateUserId() uint64 {
+func (x *StakeRewardLog) GetCreateUserId() int64 {
 	if x != nil {
 		return x.CreateUserId
 	}
 	return 0
 }
 
-func (x *StakeRewardLog) GetUpdateUserId() uint64 {
+func (x *StakeRewardLog) GetUpdateUserId() int64 {
 	if x != nil {
 		return x.UpdateUserId
 	}
@@ -823,12 +823,12 @@ func (x *StakeRewardLog) GetUpdateTimes() int64 {
 // 赎回记录
 type StakeRedeemLog struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId      uint64                 `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	OrderId       uint64                 `protobuf:"varint,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	OrderId       int64                  `protobuf:"varint,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
 	OrderNo       string                 `protobuf:"bytes,4,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
-	Uid           uint64                 `protobuf:"varint,5,opt,name=uid,proto3" json:"uid,omitempty"`
-	ProductId     uint64                 `protobuf:"varint,6,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	Uid           int64                  `protobuf:"varint,5,opt,name=uid,proto3" json:"uid,omitempty"`
+	ProductId     int64                  `protobuf:"varint,6,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	RedeemNo      string                 `protobuf:"bytes,7,opt,name=redeem_no,json=redeemNo,proto3" json:"redeem_no,omitempty"`
 	RedeemType    RedeemType             `protobuf:"varint,8,opt,name=redeem_type,json=redeemType,proto3,enum=staking.RedeemType" json:"redeem_type,omitempty"`
 	StakeAmount   string                 `protobuf:"bytes,9,opt,name=stake_amount,json=stakeAmount,proto3" json:"stake_amount,omitempty"`
@@ -839,8 +839,8 @@ type StakeRedeemLog struct {
 	RedeemStatus  RedeemStatus           `protobuf:"varint,14,opt,name=redeem_status,json=redeemStatus,proto3,enum=staking.RedeemStatus" json:"redeem_status,omitempty"`
 	RedeemTimes   int64                  `protobuf:"varint,15,opt,name=redeem_times,json=redeemTimes,proto3" json:"redeem_times,omitempty"`
 	Remark        string                 `protobuf:"bytes,16,opt,name=remark,proto3" json:"remark,omitempty"`
-	CreateUserId  uint64                 `protobuf:"varint,17,opt,name=create_user_id,json=createUserId,proto3" json:"create_user_id,omitempty"`
-	UpdateUserId  uint64                 `protobuf:"varint,18,opt,name=update_user_id,json=updateUserId,proto3" json:"update_user_id,omitempty"`
+	CreateUserId  int64                  `protobuf:"varint,17,opt,name=create_user_id,json=createUserId,proto3" json:"create_user_id,omitempty"`
+	UpdateUserId  int64                  `protobuf:"varint,18,opt,name=update_user_id,json=updateUserId,proto3" json:"update_user_id,omitempty"`
 	CreateTimes   int64                  `protobuf:"varint,19,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes   int64                  `protobuf:"varint,20,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -877,21 +877,21 @@ func (*StakeRedeemLog) Descriptor() ([]byte, []int) {
 	return file_proto_staking_model_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *StakeRedeemLog) GetId() uint64 {
+func (x *StakeRedeemLog) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *StakeRedeemLog) GetTenantId() uint64 {
+func (x *StakeRedeemLog) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *StakeRedeemLog) GetOrderId() uint64 {
+func (x *StakeRedeemLog) GetOrderId() int64 {
 	if x != nil {
 		return x.OrderId
 	}
@@ -905,14 +905,14 @@ func (x *StakeRedeemLog) GetOrderNo() string {
 	return ""
 }
 
-func (x *StakeRedeemLog) GetUid() uint64 {
+func (x *StakeRedeemLog) GetUid() int64 {
 	if x != nil {
 		return x.Uid
 	}
 	return 0
 }
 
-func (x *StakeRedeemLog) GetProductId() uint64 {
+func (x *StakeRedeemLog) GetProductId() int64 {
 	if x != nil {
 		return x.ProductId
 	}
@@ -989,14 +989,14 @@ func (x *StakeRedeemLog) GetRemark() string {
 	return ""
 }
 
-func (x *StakeRedeemLog) GetCreateUserId() uint64 {
+func (x *StakeRedeemLog) GetCreateUserId() int64 {
 	if x != nil {
 		return x.CreateUserId
 	}
 	return 0
 }
 
-func (x *StakeRedeemLog) GetUpdateUserId() uint64 {
+func (x *StakeRedeemLog) GetUpdateUserId() int64 {
 	if x != nil {
 		return x.UpdateUserId
 	}
@@ -1023,8 +1023,8 @@ const file_proto_staking_model_proto_rawDesc = "" +
 	"\n" +
 	"\x19proto/staking/model.proto\x12\astaking\x1a\x18proto/staking/enum.proto\"\x98\b\n" +
 	"\fStakeProduct\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x04R\btenantId\x12\x1d\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1d\n" +
 	"\n" +
 	"product_no\x18\x03 \x01(\tR\tproductNo\x12!\n" +
 	"\fproduct_name\x18\x04 \x01(\tR\vproductName\x127\n" +
@@ -1054,18 +1054,18 @@ const file_proto_staking_model_proto_rawDesc = "" +
 	"\x06status\x18\x16 \x01(\x0e2\x16.staking.ProductStatusR\x06status\x12\x12\n" +
 	"\x04sort\x18\x17 \x01(\x05R\x04sort\x12\x16\n" +
 	"\x06remark\x18\x18 \x01(\tR\x06remark\x12$\n" +
-	"\x0ecreate_user_id\x18\x19 \x01(\x04R\fcreateUserId\x12$\n" +
-	"\x0eupdate_user_id\x18\x1a \x01(\x04R\fupdateUserId\x12!\n" +
+	"\x0ecreate_user_id\x18\x19 \x01(\x03R\fcreateUserId\x12$\n" +
+	"\x0eupdate_user_id\x18\x1a \x01(\x03R\fupdateUserId\x12!\n" +
 	"\fcreate_times\x18\x1b \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\x1c \x01(\x03R\vupdateTimes\"\x99\v\n" +
 	"\n" +
 	"StakeOrder\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x04R\btenantId\x12\x19\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
 	"\border_no\x18\x03 \x01(\tR\aorderNo\x12\x10\n" +
-	"\x03uid\x18\x04 \x01(\x04R\x03uid\x12\x1d\n" +
+	"\x03uid\x18\x04 \x01(\x03R\x03uid\x12\x1d\n" +
 	"\n" +
-	"product_id\x18\x05 \x01(\x04R\tproductId\x12\x1d\n" +
+	"product_id\x18\x05 \x01(\x03R\tproductId\x12\x1d\n" +
 	"\n" +
 	"product_no\x18\x06 \x01(\tR\tproductNo\x12!\n" +
 	"\fproduct_name\x18\a \x01(\tR\vproductName\x127\n" +
@@ -1102,18 +1102,18 @@ const file_proto_staking_model_proto_rawDesc = "" +
 	"\fredeem_times\x18  \x01(\x03R\vredeemTimes\x12+\n" +
 	"\x06source\x18! \x01(\x0e2\x13.staking.SourceTypeR\x06source\x12\x16\n" +
 	"\x06remark\x18\" \x01(\tR\x06remark\x12$\n" +
-	"\x0ecreate_user_id\x18# \x01(\x04R\fcreateUserId\x12$\n" +
-	"\x0eupdate_user_id\x18$ \x01(\x04R\fupdateUserId\x12!\n" +
+	"\x0ecreate_user_id\x18# \x01(\x03R\fcreateUserId\x12$\n" +
+	"\x0eupdate_user_id\x18$ \x01(\x03R\fupdateUserId\x12!\n" +
 	"\fcreate_times\x18% \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18& \x01(\x03R\vupdateTimes\"\xc2\x05\n" +
 	"\x0eStakeRewardLog\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x04R\btenantId\x12\x19\n" +
-	"\border_id\x18\x03 \x01(\x04R\aorderId\x12\x19\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
+	"\border_id\x18\x03 \x01(\x03R\aorderId\x12\x19\n" +
 	"\border_no\x18\x04 \x01(\tR\aorderNo\x12\x10\n" +
-	"\x03uid\x18\x05 \x01(\x04R\x03uid\x12\x1d\n" +
+	"\x03uid\x18\x05 \x01(\x03R\x03uid\x12\x1d\n" +
 	"\n" +
-	"product_id\x18\x06 \x01(\x04R\tproductId\x12!\n" +
+	"product_id\x18\x06 \x01(\x03R\tproductId\x12!\n" +
 	"\fproduct_name\x18\a \x01(\tR\vproductName\x12\x1f\n" +
 	"\vcoin_symbol\x18\b \x01(\tR\n" +
 	"coinSymbol\x12,\n" +
@@ -1127,18 +1127,18 @@ const file_proto_staking_model_proto_rawDesc = "" +
 	"\rreward_status\x18\x0e \x01(\x0e2\x15.staking.RewardStatusR\frewardStatus\x12!\n" +
 	"\freward_times\x18\x0f \x01(\x03R\vrewardTimes\x12\x16\n" +
 	"\x06remark\x18\x10 \x01(\tR\x06remark\x12$\n" +
-	"\x0ecreate_user_id\x18\x11 \x01(\x04R\fcreateUserId\x12$\n" +
-	"\x0eupdate_user_id\x18\x12 \x01(\x04R\fupdateUserId\x12!\n" +
+	"\x0ecreate_user_id\x18\x11 \x01(\x03R\fcreateUserId\x12$\n" +
+	"\x0eupdate_user_id\x18\x12 \x01(\x03R\fupdateUserId\x12!\n" +
 	"\fcreate_times\x18\x13 \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\x14 \x01(\x03R\vupdateTimes\"\xa7\x05\n" +
 	"\x0eStakeRedeemLog\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x04R\btenantId\x12\x19\n" +
-	"\border_id\x18\x03 \x01(\x04R\aorderId\x12\x19\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
+	"\border_id\x18\x03 \x01(\x03R\aorderId\x12\x19\n" +
 	"\border_no\x18\x04 \x01(\tR\aorderNo\x12\x10\n" +
-	"\x03uid\x18\x05 \x01(\x04R\x03uid\x12\x1d\n" +
+	"\x03uid\x18\x05 \x01(\x03R\x03uid\x12\x1d\n" +
 	"\n" +
-	"product_id\x18\x06 \x01(\x04R\tproductId\x12\x1b\n" +
+	"product_id\x18\x06 \x01(\x03R\tproductId\x12\x1b\n" +
 	"\tredeem_no\x18\a \x01(\tR\bredeemNo\x124\n" +
 	"\vredeem_type\x18\b \x01(\x0e2\x13.staking.RedeemTypeR\n" +
 	"redeemType\x12!\n" +
@@ -1152,8 +1152,8 @@ const file_proto_staking_model_proto_rawDesc = "" +
 	"\rredeem_status\x18\x0e \x01(\x0e2\x15.staking.RedeemStatusR\fredeemStatus\x12!\n" +
 	"\fredeem_times\x18\x0f \x01(\x03R\vredeemTimes\x12\x16\n" +
 	"\x06remark\x18\x10 \x01(\tR\x06remark\x12$\n" +
-	"\x0ecreate_user_id\x18\x11 \x01(\x04R\fcreateUserId\x12$\n" +
-	"\x0eupdate_user_id\x18\x12 \x01(\x04R\fupdateUserId\x12!\n" +
+	"\x0ecreate_user_id\x18\x11 \x01(\x03R\fcreateUserId\x12$\n" +
+	"\x0eupdate_user_id\x18\x12 \x01(\x03R\fupdateUserId\x12!\n" +
 	"\fcreate_times\x18\x13 \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\x14 \x01(\x03R\vupdateTimesB\x1eZ\x1cwklive/proto/staking;stakingb\x06proto3"
 

@@ -3,13 +3,14 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
-	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type UnlockUserLogic struct {
@@ -43,7 +44,7 @@ func (l *UnlockUserLogic) UnlockUser(in *user.UnlockUserReq) (*user.AdminCommonR
 	// 重置登录失败计数和解除锁定
 	userSecurity.LoginErrorCount = 0
 	userSecurity.LockUntil = 0
-	userSecurity.UpdateTimes = time.Now().UnixMilli()
+	userSecurity.UpdateTimes = utils.NowMillis()
 
 	err = l.svcCtx.UserSecurityModel.Update(l.ctx, userSecurity)
 	if err != nil {

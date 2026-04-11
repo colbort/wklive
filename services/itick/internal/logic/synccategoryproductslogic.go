@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/gogo/protobuf/proto"
-	"github.com/zeromicro/go-zero/core/logx"
 	"net/http"
 	"net/url"
 	"path"
@@ -18,6 +16,9 @@ import (
 	"wklive/services/itick/internal/pkg/utils"
 	"wklive/services/itick/internal/svc"
 	"wklive/services/itick/models"
+
+	"github.com/gogo/protobuf/proto"
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SyncCategoryProductsLogic struct {
@@ -50,7 +51,7 @@ func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryP
 	}
 
 	taskNo := fmt.Sprintf("sync_category_products_%d_%d", in.Id, time.Now().UnixNano())
-	now := time.Now().UnixMilli()
+	now := utils.NowMillis()
 
 	// 创建任务记录
 	_, err = l.svcCtx.ItickSyncTaskModel.Insert(l.ctx, &models.TItickSyncTask{
@@ -168,8 +169,8 @@ func (w *SyncCategoryProductsWorker) doSync(in *itick.SyncCategoryProductsReq) e
 				Sort:         0,
 				Icon:         "",
 				Remark:       fmt.Sprintf("同步自 iTick，分类：%s，地区：%s", result.CategoryCode, market),
-				CreateTimes:  time.Now().UnixMilli(),
-				UpdateTimes:  time.Now().UnixMilli(),
+				CreateTimes:  utils.NowMillis(),
+				UpdateTimes:  utils.NowMillis(),
 			})
 			if err != nil {
 				logx.Errorf("insert product failed, code=%s, err=%v", item.Code, err)
@@ -282,5 +283,5 @@ func (lw *SyncCategoryProductsWorker) getRegion(category string) ([]string, erro
 }
 
 func (w *SyncCategoryProductsWorker) updateTaskStatus(taskNo string, status int64, message string) error {
-	return w.svcCtx.ItickSyncTaskModel.UpdateStatusByTaskNo(w.ctx, taskNo, status, message, time.Now().UnixMilli())
+	return w.svcCtx.ItickSyncTaskModel.UpdateStatusByTaskNo(w.ctx, taskNo, status, message, utils.NowMillis())
 }

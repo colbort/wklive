@@ -2,9 +2,14 @@ package logic
 
 import (
 	"context"
+	"errors"
 
+	"wklive/common/helper"
+	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
+	"wklive/services/trade/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +30,21 @@ func NewRetryTradeEventLogic(ctx context.Context, svcCtx *svc.ServiceContext) *R
 
 // 重试交易事件
 func (l *RetryTradeEventLogic) RetryTradeEvent(in *trade.RetryTradeEventReq) (*trade.AdminCommonResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &trade.AdminCommonResp{}, nil
+	item, err := l.svcCtx.BizTradeEventModel.FindOne(l.ctx, in.Id)
+	if errors.Is(err, models.ErrNotFound) || (err == nil && item.TenantId != in.TenantId) {
+		return &trade.AdminCommonResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.TradeNotFound, l.ctx))}, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	item.EventStatus = int64(trade.EventStatus_EVENT_STATUS_PENDING)
+	item.RetryCount++
+	item.NextRetryAt = utils.NowMillis()
+	item.OperatorId = in.OperatorId
+	item.LastErrorMsg = ""
+	item.UpdateTimes = utils.NowMillis()
+	if err = l.svcCtx.BizTradeEventModel.Update(l.ctx, item); err != nil {
+		return nil, err
+	}
+	return &trade.AdminCommonResp{Base: helper.OkResp()}, nil
 }

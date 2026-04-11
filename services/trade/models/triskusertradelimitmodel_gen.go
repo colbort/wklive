@@ -30,10 +30,10 @@ var (
 type (
 	tRiskUserTradeLimitModel interface {
 		Insert(ctx context.Context, data *TRiskUserTradeLimit) (sql.Result, error)
-		FindOne(ctx context.Context, id uint64) (*TRiskUserTradeLimit, error)
-		FindOneByTenantIdUserIdMarketType(ctx context.Context, tenantId uint64, userId uint64, marketType int64) (*TRiskUserTradeLimit, error)
+		FindOne(ctx context.Context, id int64) (*TRiskUserTradeLimit, error)
+		FindOneByTenantIdUserIdMarketType(ctx context.Context, tenantId int64, userId int64, marketType int64) (*TRiskUserTradeLimit, error)
 		Update(ctx context.Context, data *TRiskUserTradeLimit) error
-		Delete(ctx context.Context, id uint64) error
+		Delete(ctx context.Context, id int64) error
 	}
 
 	defaultTRiskUserTradeLimitModel struct {
@@ -42,9 +42,9 @@ type (
 	}
 
 	TRiskUserTradeLimit struct {
-		Id                   uint64  `db:"id"`                       // 主键ID
-		TenantId             uint64  `db:"tenant_id"`                // 租户ID
-		UserId               uint64  `db:"user_id"`                  // 用户ID
+		Id                   int64   `db:"id"`                       // 主键ID
+		TenantId             int64   `db:"tenant_id"`                // 租户ID
+		UserId               int64   `db:"user_id"`                  // 用户ID
 		MarketType           int64   `db:"market_type"`              // 市场类型：1现货 2秒合约 3U本位 4币本位
 		CanOpen              int64   `db:"can_open"`                 // 是否允许开仓/开单：1允许 0禁止
 		CanClose             int64   `db:"can_close"`                // 是否允许平仓/卖出：1允许 0禁止
@@ -59,7 +59,7 @@ type (
 		MaxOpenNotional      float64 `db:"max_open_notional"`        // 最大可开仓名义价值，0表示不限
 		MaxPositionNotional  float64 `db:"max_position_notional"`    // 最大持仓名义价值，0表示不限
 		RiskLevel            int64   `db:"risk_level"`               // 风险等级：0默认 1低风险限制 2中风险限制 3高风险限制
-		OperatorId           uint64  `db:"operator_id"`              // 操作人ID，系统操作时可为0
+		OperatorId           int64   `db:"operator_id"`              // 操作人ID，系统操作时可为0
 		Source               int64   `db:"source"`                   // 来源：1系统 2用户 3后台管理 4任务
 		Status               int64   `db:"status"`                   // 状态：1启用 0禁用
 		EffectiveStartTime   int64   `db:"effective_start_time"`     // 限制生效开始时间，毫秒时间戳，0表示立即生效
@@ -77,7 +77,7 @@ func newTRiskUserTradeLimitModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...c
 	}
 }
 
-func (m *defaultTRiskUserTradeLimitModel) Delete(ctx context.Context, id uint64) error {
+func (m *defaultTRiskUserTradeLimitModel) Delete(ctx context.Context, id int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
@@ -92,7 +92,7 @@ func (m *defaultTRiskUserTradeLimitModel) Delete(ctx context.Context, id uint64)
 	return err
 }
 
-func (m *defaultTRiskUserTradeLimitModel) FindOne(ctx context.Context, id uint64) (*TRiskUserTradeLimit, error) {
+func (m *defaultTRiskUserTradeLimitModel) FindOne(ctx context.Context, id int64) (*TRiskUserTradeLimit, error) {
 	tRiskUserTradeLimitIdKey := fmt.Sprintf("%s%v", cacheTRiskUserTradeLimitIdPrefix, id)
 	var resp TRiskUserTradeLimit
 	err := m.QueryRowCtx(ctx, &resp, tRiskUserTradeLimitIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
@@ -109,7 +109,7 @@ func (m *defaultTRiskUserTradeLimitModel) FindOne(ctx context.Context, id uint64
 	}
 }
 
-func (m *defaultTRiskUserTradeLimitModel) FindOneByTenantIdUserIdMarketType(ctx context.Context, tenantId uint64, userId uint64, marketType int64) (*TRiskUserTradeLimit, error) {
+func (m *defaultTRiskUserTradeLimitModel) FindOneByTenantIdUserIdMarketType(ctx context.Context, tenantId int64, userId int64, marketType int64) (*TRiskUserTradeLimit, error) {
 	tRiskUserTradeLimitTenantIdUserIdMarketTypeKey := fmt.Sprintf("%s%v:%v:%v", cacheTRiskUserTradeLimitTenantIdUserIdMarketTypePrefix, tenantId, userId, marketType)
 	var resp TRiskUserTradeLimit
 	err := m.QueryRowIndexCtx(ctx, &resp, tRiskUserTradeLimitTenantIdUserIdMarketTypeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {

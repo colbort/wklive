@@ -3,12 +3,11 @@ package logic
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
+	"wklive/common/utils"
 	"wklive/proto/asset"
-	"wklive/services/asset/internal/helpers"
 	"wklive/services/asset/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -54,7 +53,7 @@ func (l *UnfreezeAssetLogic) UnfreezeAsset(in *asset.UnfreezeAssetReq) (*asset.C
 		return nil, err
 	}
 
-	ts := time.Now().UnixMilli()
+	ts := utils.NowMillis()
 	ok, err := l.svcCtx.UserAssetModel.UnfreezeAmount(l.ctx, freeze.TenantId, freeze.UserId, freeze.WalletType, freeze.Coin, amount, ts)
 	if err != nil {
 		return nil, err
@@ -76,10 +75,10 @@ func (l *UnfreezeAssetLogic) UnfreezeAsset(in *asset.UnfreezeAssetReq) (*asset.C
 		return nil, err
 	}
 
-	flow := helpers.BuildAssetFlowRecord(freeze.TenantId, freeze.UserId, freeze.WalletType, freeze.Coin, helpers.AssetSceneType(in.SceneType), helpers.AssetBizType(in.BizType), helpers.AssetSceneType(in.SceneType), in.BizId, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_UNFREEZE, amount, before, after, in.Remark, ts)
+	flow := buildAssetFlowRecord(l.svcCtx, l.ctx, freeze.TenantId, freeze.UserId, freeze.WalletType, freeze.Coin, assetSceneType(in.SceneType), assetBizType(in.BizType), assetSceneType(in.SceneType), in.BizId, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_UNFREEZE, amount, before, after, in.Remark, ts)
 	if _, err := l.svcCtx.AssetFlowModel.Insert(l.ctx, flow); err != nil {
 		return nil, err
 	}
 
-	return &asset.ChangeAssetResp{Base: helper.OkResp(), BizNo: in.BizNo, Asset: helpers.ToUserAssetProto(after)}, nil
+	return &asset.ChangeAssetResp{Base: helper.OkResp(), BizNo: in.BizNo, Asset: toUserAssetProto(after)}, nil
 }

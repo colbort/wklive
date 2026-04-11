@@ -3,13 +3,14 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
-	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type UpdateUserLevelLogic struct {
@@ -49,7 +50,7 @@ func (l *UpdateUserLevelLogic) UpdateUserLevel(in *user.UpdateUserLevelReq) (*us
 	if in.MemberLevel != 0 {
 		tuser.MemberLevel = in.MemberLevel
 	}
-	tuser.UpdateTimes = time.Now().UnixMilli()
+	tuser.UpdateTimes = utils.NowMillis()
 
 	err = l.svcCtx.UserModel.Update(l.ctx, tuser)
 	if err != nil {

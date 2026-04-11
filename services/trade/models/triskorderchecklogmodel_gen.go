@@ -29,9 +29,9 @@ var (
 type (
 	tRiskOrderCheckLogModel interface {
 		Insert(ctx context.Context, data *TRiskOrderCheckLog) (sql.Result, error)
-		FindOne(ctx context.Context, id uint64) (*TRiskOrderCheckLog, error)
+		FindOne(ctx context.Context, id int64) (*TRiskOrderCheckLog, error)
 		Update(ctx context.Context, data *TRiskOrderCheckLog) error
-		Delete(ctx context.Context, id uint64) error
+		Delete(ctx context.Context, id int64) error
 	}
 
 	defaultTRiskOrderCheckLogModel struct {
@@ -40,12 +40,12 @@ type (
 	}
 
 	TRiskOrderCheckLog struct {
-		Id            uint64         `db:"id"`              // 主键ID
-		TenantId      uint64         `db:"tenant_id"`       // 租户ID
+		Id            int64          `db:"id"`              // 主键ID
+		TenantId      int64          `db:"tenant_id"`       // 租户ID
 		OrderNo       string         `db:"order_no"`        // 平台订单号
 		ClientOrderId string         `db:"client_order_id"` // 客户端订单号
-		UserId        uint64         `db:"user_id"`         // 用户ID
-		SymbolId      uint64         `db:"symbol_id"`       // 交易标的ID
+		UserId        int64          `db:"user_id"`         // 用户ID
+		SymbolId      int64          `db:"symbol_id"`       // 交易标的ID
 		MarketType    int64          `db:"market_type"`     // 市场类型：1现货 2秒合约 3U本位 4币本位
 		CheckType     int64          `db:"check_type"`      // 检查类型：1余额检查 2保证金检查 3仓位检查 4交易权限检查 5价格保护检查 6数量限制检查 7名义价值限制检查 8频率限制检查
 		CheckResult   int64          `db:"check_result"`    // 检查结果：1通过 2拒绝 3告警放行
@@ -54,7 +54,7 @@ type (
 		RequestPrice  float64        `db:"request_price"`   // 请求价格
 		RequestQty    float64        `db:"request_qty"`     // 请求数量
 		RequestAmount float64        `db:"request_amount"`  // 请求名义价值或金额
-		OperatorId    uint64         `db:"operator_id"`     // 操作人ID，系统操作时可为0
+		OperatorId    int64          `db:"operator_id"`     // 操作人ID，系统操作时可为0
 		Source        int64          `db:"source"`          // 来源：1系统 2用户 3后台管理 4任务
 		CheckSnapshot sql.NullString `db:"check_snapshot"`  // 检查时的上下文快照，JSON格式
 		CreateTimes   int64          `db:"create_times"`    // 创建时间，毫秒时间戳
@@ -68,7 +68,7 @@ func newTRiskOrderCheckLogModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...ca
 	}
 }
 
-func (m *defaultTRiskOrderCheckLogModel) Delete(ctx context.Context, id uint64) error {
+func (m *defaultTRiskOrderCheckLogModel) Delete(ctx context.Context, id int64) error {
 	tRiskOrderCheckLogIdKey := fmt.Sprintf("%s%v", cacheTRiskOrderCheckLogIdPrefix, id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
@@ -77,7 +77,7 @@ func (m *defaultTRiskOrderCheckLogModel) Delete(ctx context.Context, id uint64) 
 	return err
 }
 
-func (m *defaultTRiskOrderCheckLogModel) FindOne(ctx context.Context, id uint64) (*TRiskOrderCheckLog, error) {
+func (m *defaultTRiskOrderCheckLogModel) FindOne(ctx context.Context, id int64) (*TRiskOrderCheckLog, error) {
 	tRiskOrderCheckLogIdKey := fmt.Sprintf("%s%v", cacheTRiskOrderCheckLogIdPrefix, id)
 	var resp TRiskOrderCheckLog
 	err := m.QueryRowCtx(ctx, &resp, tRiskOrderCheckLogIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {

@@ -5,7 +5,6 @@ import (
 
 	"wklive/common/pageutil"
 	"wklive/proto/asset"
-	"wklive/services/asset/internal/helpers"
 	"wklive/services/asset/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -37,7 +36,7 @@ func (l *ListMyLocksLogic) ListMyLocks(in *asset.ListMyLocksReq) (*asset.ListMyL
 	}
 	resp := &asset.ListMyLocksResp{Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(items), total, lastID)}
 	for _, item := range items {
-		resp.Data = append(resp.Data, helpers.ToAssetLockProto(item))
+		resp.Data = append(resp.Data, toAssetLockProto(item))
 	}
 	return resp, nil
 }

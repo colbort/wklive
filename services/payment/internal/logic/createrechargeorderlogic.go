@@ -4,13 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
-	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type CreateRechargeOrderLogic struct {
@@ -29,7 +30,7 @@ func NewCreateRechargeOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext
 
 // 创建充值订单
 func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRechargeOrderReq) (*payment.CreateRechargeOrderResp, error) {
-	now := time.Now().UnixMilli()
+	now := utils.NowMillis()
 
 	// 生成订单号
 	orderNo, err := l.svcCtx.GenerateOrderNo(l.ctx, "RC")
@@ -140,7 +141,7 @@ func (l *CreateRechargeOrderLogic) updateUserRechargeStat(tenantId, userId int64
 		return
 	}
 
-	now := time.Now().UnixMilli()
+	now := utils.NowMillis()
 	if stat == nil {
 		// Create new stat
 		newStat := &models.TUserRechargeStat{

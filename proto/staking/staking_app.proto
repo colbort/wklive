@@ -45,7 +45,7 @@ service StakingApp {
 
 // 产品列表
 message AppProductListReq {
-  uint64 tenant_id = 1;
+  int64 tenant_id = 1;
   ProductType product_type = 2;
   string coin_symbol = 3;
   common.PageReq page = 4;
@@ -58,8 +58,8 @@ message AppProductListResp {
 
 // 产品详情
 message AppProductDetailReq {
-  uint64 tenant_id = 1;
-  uint64 id = 2;
+  int64 tenant_id = 1;
+  int64 id = 2;
 }
 
 message AppProductDetailResp {
@@ -69,9 +69,9 @@ message AppProductDetailResp {
 
 // 创建订单
 message AppCreateOrderReq {
-  uint64 tenant_id = 1;
-  uint64 uid = 2;
-  uint64 product_id = 3;
+  int64 tenant_id = 1;
+  int64 uid = 2;
+  int64 product_id = 3;
   string stake_amount = 4;
   SourceType source = 5;
   string remark = 6;
@@ -79,14 +79,14 @@ message AppCreateOrderReq {
 
 message AppCreateOrderResp {
   common.RespBase base = 1;
-  uint64 id = 2;
+  int64 id = 2;
   string order_no = 3;
 }
 
 // 我的订单列表
 message AppMyOrderListReq {
-  uint64 tenant_id = 1;
-  uint64 uid = 2;
+  int64 tenant_id = 1;
+  int64 uid = 2;
   OrderStatus status = 3;
   RedeemType redeem_type = 4;
   common.PageReq page = 5;
@@ -99,9 +99,9 @@ message AppMyOrderListResp {
 
 // 我的订单详情
 message AppMyOrderDetailReq {
-  uint64 tenant_id = 1;
-  uint64 uid = 2;
-  uint64 id = 3;
+  int64 tenant_id = 1;
+  int64 uid = 2;
+  int64 id = 3;
 }
 
 message AppMyOrderDetailResp {
@@ -111,9 +111,9 @@ message AppMyOrderDetailResp {
 
 // 我的收益记录
 message AppMyRewardLogListReq {
-  uint64 tenant_id = 1;
-  uint64 uid = 2;
-  uint64 order_id = 3;
+  int64 tenant_id = 1;
+  int64 uid = 2;
+  int64 order_id = 3;
   RewardType reward_type = 4;
   common.PageReq page = 5;
 }
@@ -125,9 +125,9 @@ message AppMyRewardLogListResp {
 
 // 赎回
 message AppRedeemReq {
-  uint64 tenant_id = 1;
-  uint64 uid = 2;
-  uint64 order_id = 3;
+  int64 tenant_id = 1;
+  int64 uid = 2;
+  int64 order_id = 3;
   RedeemType redeem_type = 4;
   string remark = 5;
 }
@@ -140,9 +140,9 @@ message AppRedeemResp {
 
 // 我的赎回记录
 message AppMyRedeemLogListReq {
-  uint64 tenant_id = 1;
-  uint64 uid = 2;
-  uint64 order_id = 3;
+  int64 tenant_id = 1;
+  int64 uid = 2;
+  int64 order_id = 3;
   common.PageReq page = 4;
 }
 

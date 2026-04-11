@@ -5,7 +5,6 @@ import (
 
 	"wklive/common/pageutil"
 	"wklive/proto/asset"
-	"wklive/services/asset/internal/helpers"
 	"wklive/services/asset/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,7 +28,7 @@ func NewPageUserAssetsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pa
 func (l *PageUserAssetsLogic) PageUserAssets(in *asset.PageUserAssetsReq) (*asset.PageUserAssetsResp, error) {
 	status := int64(0)
 	if in.Status != asset.AssetStatus_ASSET_STATUS_UNSPECIFIED {
-		status = helpers.AssetStatusFilter(in.Status)
+		status = assetStatusFilter(in.Status)
 	}
 
 	list, total, err := l.svcCtx.UserAssetModel.FindPage(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, status, in.Page.Cursor, in.Page.Limit)
@@ -45,7 +44,7 @@ func (l *PageUserAssetsLogic) PageUserAssets(in *asset.PageUserAssetsReq) (*asse
 	resp := &asset.PageUserAssetsResp{Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(list), total, lastID)}
 
 	for _, item := range list {
-		resp.Data = append(resp.Data, helpers.ToUserAssetProto(item))
+		resp.Data = append(resp.Data, toUserAssetProto(item))
 	}
 	return resp, nil
 }

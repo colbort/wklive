@@ -6,9 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/gogo/protobuf/proto"
-	"github.com/zeromicro/go-zero/core/logx"
-	"golang.org/x/time/rate"
 	"io"
 	"net/http"
 	"net/url"
@@ -22,6 +19,10 @@ import (
 	"wklive/services/itick/internal/pkg/utils"
 	"wklive/services/itick/internal/svc"
 	"wklive/services/itick/models"
+
+	"github.com/gogo/protobuf/proto"
+	"github.com/zeromicro/go-zero/core/logx"
+	"golang.org/x/time/rate"
 )
 
 type SyncKlinesLogic struct {
@@ -73,7 +74,7 @@ func (l *SyncKlinesLogic) SyncKlines(in *itick.SyncKlinesReq) (*itick.SyncKlines
 	}
 
 	taskNo := fmt.Sprintf("sync_klines_%d", time.Now().UnixNano())
-	now := time.Now().UnixMilli()
+	now := utils.NowMillis()
 
 	_, err := l.svcCtx.ItickSyncTaskModel.Insert(l.ctx, &models.TItickSyncTask{
 		TaskNo:      taskNo,
@@ -287,7 +288,7 @@ func (w *SyncKlinesWorker) syncOneJob(apiURL, token string, job KlineJob) error 
 		return fmt.Errorf("find or create progress failed: %w", err)
 	}
 
-	now := time.Now().UnixMilli()
+	now := utils.NowMillis()
 
 	mode := "incremental"
 	et := now
@@ -332,7 +333,7 @@ func (w *SyncKlinesWorker) syncOneJob(apiURL, token string, job KlineJob) error 
 				w.ctx,
 				progress.Id,
 				mode,
-				time.Now().UnixMilli(),
+				utils.NowMillis(),
 				err.Error(),
 			)
 			return err
@@ -423,7 +424,7 @@ func (w *SyncKlinesWorker) syncOneJob(apiURL, token string, job KlineJob) error 
 		latestTs,
 		oldestTs,
 		fullSynced,
-		time.Now().UnixMilli(),
+		utils.NowMillis(),
 		msg,
 	)
 }
@@ -543,6 +544,6 @@ func (w *SyncKlinesWorker) updateTaskStatus(taskNo string, status int64, message
 		taskNo,
 		status,
 		message,
-		time.Now().UnixMilli(),
+		utils.NowMillis(),
 	)
 }

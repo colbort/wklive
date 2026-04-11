@@ -1,48 +1,12 @@
-package helpers
+package logic
 
 import (
-	"fmt"
-	"math/rand"
-	"strings"
-	"time"
-
+	"context"
 	"wklive/common/conv"
 	"wklive/proto/asset"
+	"wklive/services/asset/internal/svc"
 	"wklive/services/asset/models"
 )
-
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
-
-func RandomNo(prefix, bizNo string) string {
-	if prefix == "" {
-		prefix = "NO"
-	}
-	base := fmt.Sprintf("%s_%d_%04d", prefix, time.Now().UnixMilli(), rand.Intn(10000))
-	if bizNo != "" {
-		return fmt.Sprintf("%s_%s", base, SanitizeBizNo(bizNo))
-	}
-	return base
-}
-
-func SanitizeBizNo(bizNo string) string {
-	return strings.Map(func(r rune) rune {
-		if r == '_' || r == '-' || r == '.' || r == '/' || r == ':' {
-			return '_'
-		}
-		if r >= '0' && r <= '9' {
-			return r
-		}
-		if r >= 'a' && r <= 'z' {
-			return r
-		}
-		if r >= 'A' && r <= 'Z' {
-			return r
-		}
-		return -1
-	}, bizNo)
-}
 
 func ToAssetStatus(status int64) asset.AssetStatus {
 	switch status {
@@ -211,7 +175,7 @@ func FromSceneTypeEnum(sceneType asset.SceneType) string {
 	}
 }
 
-func ToUserAssetProto(data *models.TUserAsset) *asset.UserAsset {
+func toUserAssetProto(data *models.TUserAsset) *asset.UserAsset {
 	if data == nil {
 		return nil
 	}
@@ -233,7 +197,7 @@ func ToUserAssetProto(data *models.TUserAsset) *asset.UserAsset {
 	}
 }
 
-func ToAssetFlowProto(data *models.TAssetFlow) *asset.AssetFlow {
+func toAssetFlowProto(data *models.TAssetFlow) *asset.AssetFlow {
 	if data == nil {
 		return nil
 	}
@@ -265,7 +229,7 @@ func ToAssetFlowProto(data *models.TAssetFlow) *asset.AssetFlow {
 	}
 }
 
-func ToAssetFreezeProto(data *models.TAssetFreeze) *asset.AssetFreeze {
+func toAssetFreezeProto(data *models.TAssetFreeze) *asset.AssetFreeze {
 	if data == nil {
 		return nil
 	}
@@ -292,7 +256,7 @@ func ToAssetFreezeProto(data *models.TAssetFreeze) *asset.AssetFreeze {
 	}
 }
 
-func ToAssetLockProto(data *models.TAssetLock) *asset.AssetLock {
+func toAssetLockProto(data *models.TAssetLock) *asset.AssetLock {
 	if data == nil {
 		return nil
 	}
@@ -319,7 +283,7 @@ func ToAssetLockProto(data *models.TAssetLock) *asset.AssetLock {
 	}
 }
 
-func BuildAssetFlowRecord(tenantId, userId, walletType int64, coin, changeType, bizType, sceneType string, bizId int64, bizNo string, opType asset.AssetOpType, amount float64, before *models.TUserAsset, after *models.TUserAsset, remark string, ts int64) *models.TAssetFlow {
+func buildAssetFlowRecord(svcCtx *svc.ServiceContext, ctx context.Context, tenantId, userId, walletType int64, coin, changeType, bizType, sceneType string, bizId int64, bizNo string, opType asset.AssetOpType, amount float64, before *models.TUserAsset, after *models.TUserAsset, remark string, ts int64) *models.TAssetFlow {
 	beforeTotal, beforeAvailable, beforeFrozen, beforeLocked := 0.0, 0.0, 0.0, 0.0
 	afterTotal, afterAvailable, afterFrozen, afterLocked := 0.0, 0.0, 0.0, 0.0
 	if before != nil {
@@ -334,8 +298,12 @@ func BuildAssetFlowRecord(tenantId, userId, walletType int64, coin, changeType, 
 		afterFrozen = after.FrozenAmount
 		afterLocked = after.LockedAmount
 	}
+	flowNo, err := svcCtx.GenerateOrderNo(ctx, "FLOW", bizNo)
+	if err != nil {
+		return nil
+	}
 	return &models.TAssetFlow{
-		FlowNo:                 RandomNo("FLOW", bizNo),
+		FlowNo:                 flowNo,
 		TenantId:               tenantId,
 		UserId:                 userId,
 		WalletType:             walletType,
@@ -362,9 +330,13 @@ func BuildAssetFlowRecord(tenantId, userId, walletType int64, coin, changeType, 
 	}
 }
 
-func BuildAssetFreezeRecord(tenantId, userId, walletType int64, coin, bizType, sceneType, bizNo, remark string, amount float64, expireTime, ts int64) *models.TAssetFreeze {
+func buildAssetFreezeRecord(svcCtx *svc.ServiceContext, ctx context.Context, tenantId, userId, walletType int64, coin, bizType, sceneType, bizNo, remark string, amount float64, expireTime, ts int64) *models.TAssetFreeze {
+	freezeNo, err := svcCtx.GenerateOrderNo(ctx, "FREEZE", bizNo)
+	if err != nil {
+		return nil
+	}
 	return &models.TAssetFreeze{
-		FreezeNo:       RandomNo("FREEZE", bizNo),
+		FreezeNo:       freezeNo,
 		TenantId:       tenantId,
 		UserId:         userId,
 		WalletType:     walletType,
@@ -384,9 +356,13 @@ func BuildAssetFreezeRecord(tenantId, userId, walletType int64, coin, bizType, s
 	}
 }
 
-func BuildAssetLockRecord(tenantId, userId, walletType int64, coin, bizType, sceneType, bizNo, remark string, amount float64, startTime, endTime, ts int64) *models.TAssetLock {
+func buildAssetLockRecord(svcCtx *svc.ServiceContext, ctx context.Context, tenantId, userId, walletType int64, coin, bizType, sceneType, bizNo, remark string, amount float64, startTime, endTime, ts int64) *models.TAssetLock {
+	lockNo, err := svcCtx.GenerateOrderNo(ctx, "FREEZE", bizNo)
+	if err != nil {
+		return nil
+	}
 	return &models.TAssetLock{
-		LockNo:       RandomNo("LOCK", bizNo),
+		LockNo:       lockNo,
 		TenantId:     tenantId,
 		UserId:       userId,
 		WalletType:   walletType,
@@ -406,15 +382,15 @@ func BuildAssetLockRecord(tenantId, userId, walletType int64, coin, bizType, sce
 	}
 }
 
-func AssetBizType(in asset.BizType) string {
+func assetBizType(in asset.BizType) string {
 	return FromBizTypeEnum(in)
 }
 
-func AssetSceneType(in asset.SceneType) string {
+func assetSceneType(in asset.SceneType) string {
 	return FromSceneTypeEnum(in)
 }
 
-func AssetStatusFilter(status asset.AssetStatus) int64 {
+func assetStatusFilter(status asset.AssetStatus) int64 {
 	switch status {
 	case asset.AssetStatus_ASSET_STATUS_ENABLED:
 		return 1
@@ -426,5 +402,5 @@ func AssetStatusFilter(status asset.AssetStatus) int64 {
 }
 
 func EnumToFilterString(bizType asset.BizType, sceneType asset.SceneType) (string, string) {
-	return AssetBizType(bizType), AssetSceneType(sceneType)
+	return assetBizType(bizType), assetSceneType(sceneType)
 }

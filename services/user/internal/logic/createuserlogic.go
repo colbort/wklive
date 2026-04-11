@@ -3,9 +3,9 @@ package logic
 import (
 	"context"
 	"database/sql"
-	"time"
 
 	"wklive/common/helper"
+	"wklive/common/utils"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -29,7 +29,7 @@ func NewCreateUserLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Create
 
 // 管理员创建用户
 func (l *CreateUserLogic) CreateUser(in *user.CreateUserReq) (*user.CreateUserResp, error) {
-	now := time.Now().UnixMilli()
+	now := utils.NowMillis()
 	userId := l.svcCtx.Node.Generate().Int64()
 
 	// 创建用户基本信息

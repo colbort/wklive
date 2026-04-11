@@ -4,13 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
-	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type ChangePayPasswordLogic struct {
@@ -65,7 +66,7 @@ func (l *ChangePayPasswordLogic) ChangePayPassword(in *user.ChangePayPasswordReq
 
 	// 更新支付密码
 	userSecurity.PayPasswordHash = sql.NullString{String: in.NewPassword, Valid: true}
-	userSecurity.UpdateTimes = time.Now().UnixMilli()
+	userSecurity.UpdateTimes = utils.NowMillis()
 
 	err = l.svcCtx.UserSecurityModel.Update(l.ctx, userSecurity)
 	if err != nil {

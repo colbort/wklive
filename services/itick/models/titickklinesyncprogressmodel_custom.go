@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -27,7 +26,7 @@ func (m *defaultTItickKlineSyncProgressModel) FindOrCreate(ctx context.Context, 
 		return exist, nil
 	}
 
-	now := time.Now().UnixMilli()
+	now := utils.NowMillis()
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
 		return conn.ExecCtx(ctx, fmt.Sprintf(`
 		insert ignore into %s

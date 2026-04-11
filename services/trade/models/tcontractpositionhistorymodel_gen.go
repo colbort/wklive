@@ -29,9 +29,9 @@ var (
 type (
 	tContractPositionHistoryModel interface {
 		Insert(ctx context.Context, data *TContractPositionHistory) (sql.Result, error)
-		FindOne(ctx context.Context, id uint64) (*TContractPositionHistory, error)
+		FindOne(ctx context.Context, id int64) (*TContractPositionHistory, error)
 		Update(ctx context.Context, data *TContractPositionHistory) error
-		Delete(ctx context.Context, id uint64) error
+		Delete(ctx context.Context, id int64) error
 	}
 
 	defaultTContractPositionHistoryModel struct {
@@ -40,11 +40,11 @@ type (
 	}
 
 	TContractPositionHistory struct {
-		Id                   uint64  `db:"id"`                     // 主键ID
-		TenantId             uint64  `db:"tenant_id"`              // 租户ID
-		PositionId           uint64  `db:"position_id"`            // 持仓ID，对应t_contract_position.id
-		UserId               uint64  `db:"user_id"`                // 用户ID
-		SymbolId             uint64  `db:"symbol_id"`              // 交易标的ID
+		Id                   int64   `db:"id"`                     // 主键ID
+		TenantId             int64   `db:"tenant_id"`              // 租户ID
+		PositionId           int64   `db:"position_id"`            // 持仓ID，对应t_contract_position.id
+		UserId               int64   `db:"user_id"`                // 用户ID
+		SymbolId             int64   `db:"symbol_id"`              // 交易标的ID
 		MarketType           int64   `db:"market_type"`            // 市场类型：2秒合约 3U本位 4币本位
 		PositionSide         int64   `db:"position_side"`          // 持仓方向：1多 2空
 		ActionType           int64   `db:"action_type"`            // 变更动作类型：1开仓 2加仓 3减仓 4平仓 5强平 6结算 7资金费结转 8手动调整
@@ -66,9 +66,9 @@ type (
 		FeeDelta             float64 `db:"fee_delta"`              // 本次变更产生的手续费增量
 		FeeAsset             string  `db:"fee_asset"`              // 手续费币种
 		MarkPrice            float64 `db:"mark_price"`             // 本次记录时的标记价格
-		RefOrderId           uint64  `db:"ref_order_id"`           // 关联订单ID，没有则为0
-		RefFillId            uint64  `db:"ref_fill_id"`            // 关联成交ID，没有则为0
-		OperatorId           uint64  `db:"operator_id"`            // 操作人ID，系统操作时可为0
+		RefOrderId           int64   `db:"ref_order_id"`           // 关联订单ID，没有则为0
+		RefFillId            int64   `db:"ref_fill_id"`            // 关联成交ID，没有则为0
+		OperatorId           int64   `db:"operator_id"`            // 操作人ID，系统操作时可为0
 		Source               int64   `db:"source"`                 // 来源：1系统 2用户 3后台管理 4任务
 		Remark               string  `db:"remark"`                 // 备注
 		CreateTimes          int64   `db:"create_times"`           // 创建时间，毫秒时间戳
@@ -82,7 +82,7 @@ func newTContractPositionHistoryModel(conn sqlx.SqlConn, c cache.CacheConf, opts
 	}
 }
 
-func (m *defaultTContractPositionHistoryModel) Delete(ctx context.Context, id uint64) error {
+func (m *defaultTContractPositionHistoryModel) Delete(ctx context.Context, id int64) error {
 	tContractPositionHistoryIdKey := fmt.Sprintf("%s%v", cacheTContractPositionHistoryIdPrefix, id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
@@ -91,7 +91,7 @@ func (m *defaultTContractPositionHistoryModel) Delete(ctx context.Context, id ui
 	return err
 }
 
-func (m *defaultTContractPositionHistoryModel) FindOne(ctx context.Context, id uint64) (*TContractPositionHistory, error) {
+func (m *defaultTContractPositionHistoryModel) FindOne(ctx context.Context, id int64) (*TContractPositionHistory, error) {
 	tContractPositionHistoryIdKey := fmt.Sprintf("%s%v", cacheTContractPositionHistoryIdPrefix, id)
 	var resp TContractPositionHistory
 	err := m.QueryRowCtx(ctx, &resp, tContractPositionHistoryIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {

@@ -25,7 +25,7 @@ const (
 // 产品列表
 type AdminProductListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	ProductNo     string                 `protobuf:"bytes,2,opt,name=product_no,json=productNo,proto3" json:"product_no,omitempty"`
 	ProductName   string                 `protobuf:"bytes,3,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`
 	CoinSymbol    string                 `protobuf:"bytes,4,opt,name=coin_symbol,json=coinSymbol,proto3" json:"coin_symbol,omitempty"`
@@ -66,7 +66,7 @@ func (*AdminProductListReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_admin_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *AdminProductListReq) GetTenantId() uint64 {
+func (x *AdminProductListReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
@@ -170,8 +170,8 @@ func (x *AdminProductListResp) GetData() []*StakeProduct {
 // 产品详情
 type AdminProductDetailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Id            uint64                 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -206,14 +206,14 @@ func (*AdminProductDetailReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_admin_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *AdminProductDetailReq) GetTenantId() uint64 {
+func (x *AdminProductDetailReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *AdminProductDetailReq) GetId() uint64 {
+func (x *AdminProductDetailReq) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -275,7 +275,7 @@ func (x *AdminProductDetailResp) GetData() *StakeProduct {
 // 创建产品
 type AdminProductCreateReq struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	TenantId         uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	TenantId         int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	ProductNo        string                 `protobuf:"bytes,2,opt,name=product_no,json=productNo,proto3" json:"product_no,omitempty"`
 	ProductName      string                 `protobuf:"bytes,3,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`
 	ProductType      ProductType            `protobuf:"varint,4,opt,name=product_type,json=productType,proto3,enum=staking.ProductType" json:"product_type,omitempty"`
@@ -297,7 +297,7 @@ type AdminProductCreateReq struct {
 	Status           ProductStatus          `protobuf:"varint,20,opt,name=status,proto3,enum=staking.ProductStatus" json:"status,omitempty"`
 	Sort             int32                  `protobuf:"varint,21,opt,name=sort,proto3" json:"sort,omitempty"`
 	Remark           string                 `protobuf:"bytes,22,opt,name=remark,proto3" json:"remark,omitempty"`
-	OperatorUid      uint64                 `protobuf:"varint,23,opt,name=operator_uid,json=operatorUid,proto3" json:"operator_uid,omitempty"`
+	OperatorUid      int64                  `protobuf:"varint,23,opt,name=operator_uid,json=operatorUid,proto3" json:"operator_uid,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -332,7 +332,7 @@ func (*AdminProductCreateReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_admin_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *AdminProductCreateReq) GetTenantId() uint64 {
+func (x *AdminProductCreateReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
@@ -486,7 +486,7 @@ func (x *AdminProductCreateReq) GetRemark() string {
 	return ""
 }
 
-func (x *AdminProductCreateReq) GetOperatorUid() uint64 {
+func (x *AdminProductCreateReq) GetOperatorUid() int64 {
 	if x != nil {
 		return x.OperatorUid
 	}
@@ -496,7 +496,7 @@ func (x *AdminProductCreateReq) GetOperatorUid() uint64 {
 type AdminProductCreateResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *common.RespBase       `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
-	Data          uint64                 `protobuf:"varint,2,opt,name=data,proto3" json:"data,omitempty"`
+	Data          int64                  `protobuf:"varint,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -538,7 +538,7 @@ func (x *AdminProductCreateResp) GetPage() *common.RespBase {
 	return nil
 }
 
-func (x *AdminProductCreateResp) GetData() uint64 {
+func (x *AdminProductCreateResp) GetData() int64 {
 	if x != nil {
 		return x.Data
 	}
@@ -548,8 +548,8 @@ func (x *AdminProductCreateResp) GetData() uint64 {
 // 更新产品
 type AdminProductUpdateReq struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	TenantId         uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Id               uint64                 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId         int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Id               int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	ProductName      string                 `protobuf:"bytes,3,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`
 	ProductType      ProductType            `protobuf:"varint,4,opt,name=product_type,json=productType,proto3,enum=staking.ProductType" json:"product_type,omitempty"`
 	CoinName         string                 `protobuf:"bytes,5,opt,name=coin_name,json=coinName,proto3" json:"coin_name,omitempty"`
@@ -570,7 +570,7 @@ type AdminProductUpdateReq struct {
 	Status           ProductStatus          `protobuf:"varint,20,opt,name=status,proto3,enum=staking.ProductStatus" json:"status,omitempty"`
 	Sort             int32                  `protobuf:"varint,21,opt,name=sort,proto3" json:"sort,omitempty"`
 	Remark           string                 `protobuf:"bytes,22,opt,name=remark,proto3" json:"remark,omitempty"`
-	OperatorUid      uint64                 `protobuf:"varint,23,opt,name=operator_uid,json=operatorUid,proto3" json:"operator_uid,omitempty"`
+	OperatorUid      int64                  `protobuf:"varint,23,opt,name=operator_uid,json=operatorUid,proto3" json:"operator_uid,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -605,14 +605,14 @@ func (*AdminProductUpdateReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_admin_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *AdminProductUpdateReq) GetTenantId() uint64 {
+func (x *AdminProductUpdateReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *AdminProductUpdateReq) GetId() uint64 {
+func (x *AdminProductUpdateReq) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -759,7 +759,7 @@ func (x *AdminProductUpdateReq) GetRemark() string {
 	return ""
 }
 
-func (x *AdminProductUpdateReq) GetOperatorUid() uint64 {
+func (x *AdminProductUpdateReq) GetOperatorUid() int64 {
 	if x != nil {
 		return x.OperatorUid
 	}
@@ -821,10 +821,10 @@ func (x *AdminProductUpdateResp) GetData() bool {
 // 修改产品状态
 type AdminProductChangeStatusReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Id            uint64                 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	Status        ProductStatus          `protobuf:"varint,3,opt,name=status,proto3,enum=staking.ProductStatus" json:"status,omitempty"`
-	OperatorUid   uint64                 `protobuf:"varint,4,opt,name=operator_uid,json=operatorUid,proto3" json:"operator_uid,omitempty"`
+	OperatorUid   int64                  `protobuf:"varint,4,opt,name=operator_uid,json=operatorUid,proto3" json:"operator_uid,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -859,14 +859,14 @@ func (*AdminProductChangeStatusReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_admin_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *AdminProductChangeStatusReq) GetTenantId() uint64 {
+func (x *AdminProductChangeStatusReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *AdminProductChangeStatusReq) GetId() uint64 {
+func (x *AdminProductChangeStatusReq) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -880,7 +880,7 @@ func (x *AdminProductChangeStatusReq) GetStatus() ProductStatus {
 	return ProductStatus_PRODUCT_STATUS_UNSPECIFIED
 }
 
-func (x *AdminProductChangeStatusReq) GetOperatorUid() uint64 {
+func (x *AdminProductChangeStatusReq) GetOperatorUid() int64 {
 	if x != nil {
 		return x.OperatorUid
 	}
@@ -942,10 +942,10 @@ func (x *AdminProductChangeStatusResp) GetData() bool {
 // 订单列表
 type AdminOrderListReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	TenantId        uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	TenantId        int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	OrderNo         string                 `protobuf:"bytes,2,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
-	Uid             uint64                 `protobuf:"varint,3,opt,name=uid,proto3" json:"uid,omitempty"`
-	ProductId       uint64                 `protobuf:"varint,4,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	Uid             int64                  `protobuf:"varint,3,opt,name=uid,proto3" json:"uid,omitempty"`
+	ProductId       int64                  `protobuf:"varint,4,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	ProductName     string                 `protobuf:"bytes,5,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`
 	CoinSymbol      string                 `protobuf:"bytes,6,opt,name=coin_symbol,json=coinSymbol,proto3" json:"coin_symbol,omitempty"`
 	Status          OrderStatus            `protobuf:"varint,7,opt,name=status,proto3,enum=staking.OrderStatus" json:"status,omitempty"`
@@ -990,7 +990,7 @@ func (*AdminOrderListReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_admin_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *AdminOrderListReq) GetTenantId() uint64 {
+func (x *AdminOrderListReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
@@ -1004,14 +1004,14 @@ func (x *AdminOrderListReq) GetOrderNo() string {
 	return ""
 }
 
-func (x *AdminOrderListReq) GetUid() uint64 {
+func (x *AdminOrderListReq) GetUid() int64 {
 	if x != nil {
 		return x.Uid
 	}
 	return 0
 }
 
-func (x *AdminOrderListReq) GetProductId() uint64 {
+func (x *AdminOrderListReq) GetProductId() int64 {
 	if x != nil {
 		return x.ProductId
 	}
@@ -1143,8 +1143,8 @@ func (x *AdminOrderListResp) GetData() []*StakeOrder {
 // 订单详情
 type AdminOrderDetailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Id            uint64                 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1179,14 +1179,14 @@ func (*AdminOrderDetailReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_admin_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *AdminOrderDetailReq) GetTenantId() uint64 {
+func (x *AdminOrderDetailReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *AdminOrderDetailReq) GetId() uint64 {
+func (x *AdminOrderDetailReq) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -1248,10 +1248,10 @@ func (x *AdminOrderDetailResp) GetData() *StakeOrder {
 // 收益记录列表
 type AdminRewardLogListReq struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	TenantId         uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	TenantId         int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	OrderNo          string                 `protobuf:"bytes,2,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
-	Uid              uint64                 `protobuf:"varint,3,opt,name=uid,proto3" json:"uid,omitempty"`
-	ProductId        uint64                 `protobuf:"varint,4,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	Uid              int64                  `protobuf:"varint,3,opt,name=uid,proto3" json:"uid,omitempty"`
+	ProductId        int64                  `protobuf:"varint,4,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	RewardType       RewardType             `protobuf:"varint,5,opt,name=reward_type,json=rewardType,proto3,enum=staking.RewardType" json:"reward_type,omitempty"`
 	RewardStatus     RewardStatus           `protobuf:"varint,6,opt,name=reward_status,json=rewardStatus,proto3,enum=staking.RewardStatus" json:"reward_status,omitempty"`
 	RewardTimesBegin int64                  `protobuf:"varint,7,opt,name=reward_times_begin,json=rewardTimesBegin,proto3" json:"reward_times_begin,omitempty"`
@@ -1291,7 +1291,7 @@ func (*AdminRewardLogListReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_admin_proto_rawDescGZIP(), []int{14}
 }
 
-func (x *AdminRewardLogListReq) GetTenantId() uint64 {
+func (x *AdminRewardLogListReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
@@ -1305,14 +1305,14 @@ func (x *AdminRewardLogListReq) GetOrderNo() string {
 	return ""
 }
 
-func (x *AdminRewardLogListReq) GetUid() uint64 {
+func (x *AdminRewardLogListReq) GetUid() int64 {
 	if x != nil {
 		return x.Uid
 	}
 	return 0
 }
 
-func (x *AdminRewardLogListReq) GetProductId() uint64 {
+func (x *AdminRewardLogListReq) GetProductId() int64 {
 	if x != nil {
 		return x.ProductId
 	}
@@ -1409,11 +1409,11 @@ func (x *AdminRewardLogListResp) GetData() []*StakeRewardLog {
 // 赎回记录列表
 type AdminRedeemLogListReq struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	TenantId         uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	TenantId         int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	OrderNo          string                 `protobuf:"bytes,2,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
 	RedeemNo         string                 `protobuf:"bytes,3,opt,name=redeem_no,json=redeemNo,proto3" json:"redeem_no,omitempty"`
-	Uid              uint64                 `protobuf:"varint,4,opt,name=uid,proto3" json:"uid,omitempty"`
-	ProductId        uint64                 `protobuf:"varint,5,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	Uid              int64                  `protobuf:"varint,4,opt,name=uid,proto3" json:"uid,omitempty"`
+	ProductId        int64                  `protobuf:"varint,5,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	RedeemType       RedeemType             `protobuf:"varint,6,opt,name=redeem_type,json=redeemType,proto3,enum=staking.RedeemType" json:"redeem_type,omitempty"`
 	RedeemStatus     RedeemStatus           `protobuf:"varint,7,opt,name=redeem_status,json=redeemStatus,proto3,enum=staking.RedeemStatus" json:"redeem_status,omitempty"`
 	RedeemTimesBegin int64                  `protobuf:"varint,8,opt,name=redeem_times_begin,json=redeemTimesBegin,proto3" json:"redeem_times_begin,omitempty"`
@@ -1453,7 +1453,7 @@ func (*AdminRedeemLogListReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_admin_proto_rawDescGZIP(), []int{16}
 }
 
-func (x *AdminRedeemLogListReq) GetTenantId() uint64 {
+func (x *AdminRedeemLogListReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
@@ -1474,14 +1474,14 @@ func (x *AdminRedeemLogListReq) GetRedeemNo() string {
 	return ""
 }
 
-func (x *AdminRedeemLogListReq) GetUid() uint64 {
+func (x *AdminRedeemLogListReq) GetUid() int64 {
 	if x != nil {
 		return x.Uid
 	}
 	return 0
 }
 
-func (x *AdminRedeemLogListReq) GetProductId() uint64 {
+func (x *AdminRedeemLogListReq) GetProductId() int64 {
 	if x != nil {
 		return x.ProductId
 	}
@@ -1578,12 +1578,12 @@ func (x *AdminRedeemLogListResp) GetData() []*StakeRedeemLog {
 // 手动发放收益
 type AdminManualRewardReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	OrderId       uint64                 `protobuf:"varint,2,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	OrderId       int64                  `protobuf:"varint,2,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
 	RewardAmount  string                 `protobuf:"bytes,3,opt,name=reward_amount,json=rewardAmount,proto3" json:"reward_amount,omitempty"`
 	RewardType    RewardType             `protobuf:"varint,4,opt,name=reward_type,json=rewardType,proto3,enum=staking.RewardType" json:"reward_type,omitempty"`
 	Remark        string                 `protobuf:"bytes,5,opt,name=remark,proto3" json:"remark,omitempty"`
-	OperatorUid   uint64                 `protobuf:"varint,6,opt,name=operator_uid,json=operatorUid,proto3" json:"operator_uid,omitempty"`
+	OperatorUid   int64                  `protobuf:"varint,6,opt,name=operator_uid,json=operatorUid,proto3" json:"operator_uid,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1618,14 +1618,14 @@ func (*AdminManualRewardReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_admin_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *AdminManualRewardReq) GetTenantId() uint64 {
+func (x *AdminManualRewardReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *AdminManualRewardReq) GetOrderId() uint64 {
+func (x *AdminManualRewardReq) GetOrderId() int64 {
 	if x != nil {
 		return x.OrderId
 	}
@@ -1653,7 +1653,7 @@ func (x *AdminManualRewardReq) GetRemark() string {
 	return ""
 }
 
-func (x *AdminManualRewardReq) GetOperatorUid() uint64 {
+func (x *AdminManualRewardReq) GetOperatorUid() int64 {
 	if x != nil {
 		return x.OperatorUid
 	}
@@ -1715,15 +1715,15 @@ func (x *AdminManualRewardResp) GetData() bool {
 // 手动赎回
 type AdminManualRedeemReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	OrderId       uint64                 `protobuf:"varint,2,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	OrderId       int64                  `protobuf:"varint,2,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
 	RedeemType    RedeemType             `protobuf:"varint,3,opt,name=redeem_type,json=redeemType,proto3,enum=staking.RedeemType" json:"redeem_type,omitempty"`
 	RedeemAmount  string                 `protobuf:"bytes,4,opt,name=redeem_amount,json=redeemAmount,proto3" json:"redeem_amount,omitempty"`
 	RewardAmount  string                 `protobuf:"bytes,5,opt,name=reward_amount,json=rewardAmount,proto3" json:"reward_amount,omitempty"`
 	FeeRate       string                 `protobuf:"bytes,6,opt,name=fee_rate,json=feeRate,proto3" json:"fee_rate,omitempty"`
 	FeeAmount     string                 `protobuf:"bytes,7,opt,name=fee_amount,json=feeAmount,proto3" json:"fee_amount,omitempty"`
 	Remark        string                 `protobuf:"bytes,8,opt,name=remark,proto3" json:"remark,omitempty"`
-	OperatorUid   uint64                 `protobuf:"varint,9,opt,name=operator_uid,json=operatorUid,proto3" json:"operator_uid,omitempty"`
+	OperatorUid   int64                  `protobuf:"varint,9,opt,name=operator_uid,json=operatorUid,proto3" json:"operator_uid,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1758,14 +1758,14 @@ func (*AdminManualRedeemReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_admin_proto_rawDescGZIP(), []int{20}
 }
 
-func (x *AdminManualRedeemReq) GetTenantId() uint64 {
+func (x *AdminManualRedeemReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *AdminManualRedeemReq) GetOrderId() uint64 {
+func (x *AdminManualRedeemReq) GetOrderId() int64 {
 	if x != nil {
 		return x.OrderId
 	}
@@ -1814,7 +1814,7 @@ func (x *AdminManualRedeemReq) GetRemark() string {
 	return ""
 }
 
-func (x *AdminManualRedeemReq) GetOperatorUid() uint64 {
+func (x *AdminManualRedeemReq) GetOperatorUid() int64 {
 	if x != nil {
 		return x.OperatorUid
 	}
@@ -1887,7 +1887,7 @@ const file_proto_staking_staking_admin_proto_rawDesc = "" +
 	"\n" +
 	"!proto/staking/staking_admin.proto\x12\astaking\x1a\x19proto/common/common.proto\x1a\x18proto/staking/enum.proto\x1a\x19proto/staking/model.proto\"\xa3\x02\n" +
 	"\x13AdminProductListReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x1d\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1d\n" +
 	"\n" +
 	"product_no\x18\x02 \x01(\tR\tproductNo\x12!\n" +
 	"\fproduct_name\x18\x03 \x01(\tR\vproductName\x12\x1f\n" +
@@ -1900,13 +1900,13 @@ const file_proto_staking_staking_admin_proto_rawDesc = "" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12)\n" +
 	"\x04data\x18\x02 \x03(\v2\x15.staking.StakeProductR\x04data\"D\n" +
 	"\x15AdminProductDetailReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x04R\x02id\"i\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"i\n" +
 	"\x16AdminProductDetailResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12)\n" +
 	"\x04data\x18\x02 \x01(\v2\x15.staking.StakeProductR\x04data\"\xfd\x06\n" +
 	"\x15AdminProductCreateReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x1d\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1d\n" +
 	"\n" +
 	"product_no\x18\x02 \x01(\tR\tproductNo\x12!\n" +
 	"\fproduct_name\x18\x03 \x01(\tR\vproductName\x127\n" +
@@ -1935,13 +1935,13 @@ const file_proto_staking_staking_admin_proto_rawDesc = "" +
 	"\x06status\x18\x14 \x01(\x0e2\x16.staking.ProductStatusR\x06status\x12\x12\n" +
 	"\x04sort\x18\x15 \x01(\x05R\x04sort\x12\x16\n" +
 	"\x06remark\x18\x16 \x01(\tR\x06remark\x12!\n" +
-	"\foperator_uid\x18\x17 \x01(\x04R\voperatorUid\"R\n" +
+	"\foperator_uid\x18\x17 \x01(\x03R\voperatorUid\"R\n" +
 	"\x16AdminProductCreateResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12\x12\n" +
-	"\x04data\x18\x02 \x01(\x04R\x04data\"\xee\x06\n" +
+	"\x04data\x18\x02 \x01(\x03R\x04data\"\xee\x06\n" +
 	"\x15AdminProductUpdateReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x04R\x02id\x12!\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\x12!\n" +
 	"\fproduct_name\x18\x03 \x01(\tR\vproductName\x127\n" +
 	"\fproduct_type\x18\x04 \x01(\x0e2\x14.staking.ProductTypeR\vproductType\x12\x1b\n" +
 	"\tcoin_name\x18\x05 \x01(\tR\bcoinName\x12\x1f\n" +
@@ -1968,24 +1968,24 @@ const file_proto_staking_staking_admin_proto_rawDesc = "" +
 	"\x06status\x18\x14 \x01(\x0e2\x16.staking.ProductStatusR\x06status\x12\x12\n" +
 	"\x04sort\x18\x15 \x01(\x05R\x04sort\x12\x16\n" +
 	"\x06remark\x18\x16 \x01(\tR\x06remark\x12!\n" +
-	"\foperator_uid\x18\x17 \x01(\x04R\voperatorUid\"R\n" +
+	"\foperator_uid\x18\x17 \x01(\x03R\voperatorUid\"R\n" +
 	"\x16AdminProductUpdateResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12\x12\n" +
 	"\x04data\x18\x02 \x01(\bR\x04data\"\x9d\x01\n" +
 	"\x1bAdminProductChangeStatusReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x04R\x02id\x12.\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\x12.\n" +
 	"\x06status\x18\x03 \x01(\x0e2\x16.staking.ProductStatusR\x06status\x12!\n" +
-	"\foperator_uid\x18\x04 \x01(\x04R\voperatorUid\"X\n" +
+	"\foperator_uid\x18\x04 \x01(\x03R\voperatorUid\"X\n" +
 	"\x1cAdminProductChangeStatusResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12\x12\n" +
 	"\x04data\x18\x02 \x01(\bR\x04data\"\x96\x04\n" +
 	"\x11AdminOrderListReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x19\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
 	"\border_no\x18\x02 \x01(\tR\aorderNo\x12\x10\n" +
-	"\x03uid\x18\x03 \x01(\x04R\x03uid\x12\x1d\n" +
+	"\x03uid\x18\x03 \x01(\x03R\x03uid\x12\x1d\n" +
 	"\n" +
-	"product_id\x18\x04 \x01(\x04R\tproductId\x12!\n" +
+	"product_id\x18\x04 \x01(\x03R\tproductId\x12!\n" +
 	"\fproduct_name\x18\x05 \x01(\tR\vproductName\x12\x1f\n" +
 	"\vcoin_symbol\x18\x06 \x01(\tR\n" +
 	"coinSymbol\x12,\n" +
@@ -2003,17 +2003,17 @@ const file_proto_staking_staking_admin_proto_rawDesc = "" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12'\n" +
 	"\x04data\x18\x02 \x03(\v2\x13.staking.StakeOrderR\x04data\"B\n" +
 	"\x13AdminOrderDetailReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x04R\x02id\"e\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"e\n" +
 	"\x14AdminOrderDetailResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12'\n" +
 	"\x04data\x18\x02 \x01(\v2\x13.staking.StakeOrderR\x04data\"\xef\x02\n" +
 	"\x15AdminRewardLogListReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x19\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
 	"\border_no\x18\x02 \x01(\tR\aorderNo\x12\x10\n" +
-	"\x03uid\x18\x03 \x01(\x04R\x03uid\x12\x1d\n" +
+	"\x03uid\x18\x03 \x01(\x03R\x03uid\x12\x1d\n" +
 	"\n" +
-	"product_id\x18\x04 \x01(\x04R\tproductId\x124\n" +
+	"product_id\x18\x04 \x01(\x03R\tproductId\x124\n" +
 	"\vreward_type\x18\x05 \x01(\x0e2\x13.staking.RewardTypeR\n" +
 	"rewardType\x12:\n" +
 	"\rreward_status\x18\x06 \x01(\x0e2\x15.staking.RewardStatusR\frewardStatus\x12,\n" +
@@ -2024,12 +2024,12 @@ const file_proto_staking_staking_admin_proto_rawDesc = "" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12+\n" +
 	"\x04data\x18\x02 \x03(\v2\x17.staking.StakeRewardLogR\x04data\"\x8c\x03\n" +
 	"\x15AdminRedeemLogListReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x19\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
 	"\border_no\x18\x02 \x01(\tR\aorderNo\x12\x1b\n" +
 	"\tredeem_no\x18\x03 \x01(\tR\bredeemNo\x12\x10\n" +
-	"\x03uid\x18\x04 \x01(\x04R\x03uid\x12\x1d\n" +
+	"\x03uid\x18\x04 \x01(\x03R\x03uid\x12\x1d\n" +
 	"\n" +
-	"product_id\x18\x05 \x01(\x04R\tproductId\x124\n" +
+	"product_id\x18\x05 \x01(\x03R\tproductId\x124\n" +
 	"\vredeem_type\x18\x06 \x01(\x0e2\x13.staking.RedeemTypeR\n" +
 	"redeemType\x12:\n" +
 	"\rredeem_status\x18\a \x01(\x0e2\x15.staking.RedeemStatusR\fredeemStatus\x12,\n" +
@@ -2041,19 +2041,19 @@ const file_proto_staking_staking_admin_proto_rawDesc = "" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12+\n" +
 	"\x04data\x18\x02 \x03(\v2\x17.staking.StakeRedeemLogR\x04data\"\xe4\x01\n" +
 	"\x14AdminManualRewardReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x19\n" +
-	"\border_id\x18\x02 \x01(\x04R\aorderId\x12#\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
+	"\border_id\x18\x02 \x01(\x03R\aorderId\x12#\n" +
 	"\rreward_amount\x18\x03 \x01(\tR\frewardAmount\x124\n" +
 	"\vreward_type\x18\x04 \x01(\x0e2\x13.staking.RewardTypeR\n" +
 	"rewardType\x12\x16\n" +
 	"\x06remark\x18\x05 \x01(\tR\x06remark\x12!\n" +
-	"\foperator_uid\x18\x06 \x01(\x04R\voperatorUid\"Q\n" +
+	"\foperator_uid\x18\x06 \x01(\x03R\voperatorUid\"Q\n" +
 	"\x15AdminManualRewardResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12\x12\n" +
 	"\x04data\x18\x02 \x01(\bR\x04data\"\xc3\x02\n" +
 	"\x14AdminManualRedeemReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x19\n" +
-	"\border_id\x18\x02 \x01(\x04R\aorderId\x124\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
+	"\border_id\x18\x02 \x01(\x03R\aorderId\x124\n" +
 	"\vredeem_type\x18\x03 \x01(\x0e2\x13.staking.RedeemTypeR\n" +
 	"redeemType\x12#\n" +
 	"\rredeem_amount\x18\x04 \x01(\tR\fredeemAmount\x12#\n" +
@@ -2062,7 +2062,7 @@ const file_proto_staking_staking_admin_proto_rawDesc = "" +
 	"\n" +
 	"fee_amount\x18\a \x01(\tR\tfeeAmount\x12\x16\n" +
 	"\x06remark\x18\b \x01(\tR\x06remark\x12!\n" +
-	"\foperator_uid\x18\t \x01(\x04R\voperatorUid\"t\n" +
+	"\foperator_uid\x18\t \x01(\x03R\voperatorUid\"t\n" +
 	"\x15AdminManualRedeemResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12\x18\n" +
 	"\asuccess\x18\x02 \x01(\bR\asuccess\x12\x1b\n" +

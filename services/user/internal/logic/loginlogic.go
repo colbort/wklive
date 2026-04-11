@@ -3,7 +3,6 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
 	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -13,6 +12,8 @@ import (
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type LoginLogic struct {
@@ -104,8 +105,8 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 	_ = l.svcCtx.UserModel.Update(l.ctx, &models.TUser{
 		Id:            tuser.Id,
 		LastLoginIp:   tuser.LastLoginIp,
-		LastLoginTime: time.Now().UnixMilli(),
-		UpdateTimes:   time.Now().UnixMilli(),
+		LastLoginTime: utils.NowMillis(),
+		UpdateTimes:   utils.NowMillis(),
 	})
 
 	// userIdentity, _ := l.svcCtx.UserIdentityModel.FindOne(l.ctx, tuser.Id)

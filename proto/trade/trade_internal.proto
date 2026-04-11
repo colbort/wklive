@@ -33,9 +33,9 @@ message RecordPositionHistoryReq { ContractPositionHistory history = 1; }
 message CreateTradeEventReq { BizTradeEvent event = 1; }
 
 message CheckOrderRiskReq {
-  uint64 tenant_id = 1;
-  uint64 user_id = 2;
-  uint64 symbol_id = 3;
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  int64 symbol_id = 3;
   MarketType market_type = 4;
   TradeSide side = 5;
   PositionSide position_side = 6;

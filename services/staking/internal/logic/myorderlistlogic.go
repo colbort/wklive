@@ -3,6 +3,8 @@ package logic
 import (
 	"context"
 
+	"wklive/common/helper"
+	"wklive/common/pageutil"
 	"wklive/proto/staking"
 	"wklive/services/staking/internal/svc"
 
@@ -25,7 +27,25 @@ func NewMyOrderListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *MyOrd
 
 // 获取我的质押订单列表
 func (l *MyOrderListLogic) MyOrderList(in *staking.AppMyOrderListReq) (*staking.AppMyOrderListResp, error) {
-	// todo: add your logic here and delete this line
+	page := in.GetPage()
+	cursor, limit := int64(0), int64(10)
+	if page != nil {
+		cursor, limit = page.Cursor, page.Limit
+	}
+	items, total, err := l.svcCtx.StakeOrderModel.FindPage(l.ctx, in.TenantId, cursor, limit, in.Uid, 0, "", "", "", int64(in.Status), int64(in.RedeemType), 0, 0, 0, 0, 0)
+	if err != nil {
+		return nil, err
+	}
 
-	return &staking.AppMyOrderListResp{}, nil
+	resp := &staking.AppMyOrderListResp{Base: helper.OkResp()}
+	if len(items) == 0 {
+		resp.Base = pageutil.Base(cursor, limit, 0, total, 0)
+		return resp, nil
+	}
+	resp.Data = make([]*staking.StakeOrder, 0, len(items))
+	for _, item := range items {
+		resp.Data = append(resp.Data, orderToProto(item))
+	}
+	resp.Base = pageutil.Base(cursor, limit, len(items), total, int64(items[len(items)-1].Id))
+	return resp, nil
 }

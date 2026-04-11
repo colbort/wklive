@@ -3,9 +3,9 @@ package logic
 import (
 	"context"
 	"database/sql"
-	"time"
 
 	"wklive/common/helper"
+	"wklive/common/utils"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -29,7 +29,7 @@ func NewCreateWithdrawOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext
 
 // 提现
 func (l *CreateWithdrawOrderLogic) CreateWithdrawOrder(in *payment.CreateWithdrawOrderReq) (*payment.CreateWithdrawOrderResp, error) {
-	now := time.Now().UnixMilli()
+	now := utils.NowMillis()
 	orderNo, err := l.svcCtx.GenerateOrderNo(l.ctx, "WD")
 	if err != nil {
 		return nil, err

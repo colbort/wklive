@@ -5,7 +5,6 @@ import (
 
 	"wklive/common/pageutil"
 	"wklive/proto/asset"
-	"wklive/services/asset/internal/helpers"
 	"wklive/services/asset/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -34,7 +33,7 @@ func (l *ListMyAssetFlowsLogic) ListMyAssetFlows(in *asset.ListMyAssetFlowsReq) 
 		endTime = in.TimeRange.EndTime
 	}
 
-	items, total, err := l.svcCtx.AssetFlowModel.FindPage(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, helpers.AssetBizType(in.BizType), helpers.AssetSceneType(in.SceneType), "", startTime, endTime, in.Page.Cursor, in.Page.Limit)
+	items, total, err := l.svcCtx.AssetFlowModel.FindPage(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, assetBizType(in.BizType), assetSceneType(in.SceneType), "", startTime, endTime, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +46,7 @@ func (l *ListMyAssetFlowsLogic) ListMyAssetFlows(in *asset.ListMyAssetFlowsReq) 
 	resp := &asset.ListMyAssetFlowsResp{Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(items), total, lastID)}
 
 	for _, item := range items {
-		resp.Data = append(resp.Data, helpers.ToAssetFlowProto(item))
+		resp.Data = append(resp.Data, toAssetFlowProto(item))
 	}
 
 	return resp, nil

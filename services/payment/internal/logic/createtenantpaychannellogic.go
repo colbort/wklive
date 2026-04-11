@@ -3,10 +3,10 @@ package logic
 import (
 	"context"
 	"database/sql"
-	"time"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
+	"wklive/common/utils"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -39,7 +39,7 @@ func (l *CreateTenantPayChannelLogic) CreateTenantPayChannel(in *payment.CreateT
 		return nil, err
 	}
 
-	now := time.Now().UnixMilli()
+	now := utils.NowMillis()
 	channel := &models.TTenantPayChannel{
 		TenantId:        in.TenantId,
 		PlatformId:      in.PlatformId,

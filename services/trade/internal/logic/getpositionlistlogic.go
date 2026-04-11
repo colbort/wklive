@@ -2,9 +2,12 @@ package logic
 
 import (
 	"context"
+	"errors"
 
+	"wklive/common/helper"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
+	"wklive/services/trade/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +28,19 @@ func NewGetPositionListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 
 // 获取持仓列表
 func (l *GetPositionListLogic) GetPositionList(in *trade.GetPositionListReq) (*trade.GetPositionListResp, error) {
-	// todo: add your logic here and delete this line
+	list, err := l.svcCtx.ContractPositionModel.FindList(l.ctx, models.ContractPositionPageFilter{
+		TenantId:   int64(in.TenantId),
+		UserId:     int64(in.UserId),
+		SymbolId:   int64(in.SymbolId),
+		MarketType: int64(in.MarketType),
+	})
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
 
-	return &trade.GetPositionListResp{}, nil
+	resp := &trade.GetPositionListResp{Base: helper.OkResp()}
+	for _, item := range list {
+		resp.List = append(resp.List, positionToProto(item))
+	}
+	return resp, nil
 }

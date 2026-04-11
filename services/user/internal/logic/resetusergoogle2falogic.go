@@ -3,13 +3,14 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
-	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type ResetUserGoogle2FALogic struct {
@@ -44,7 +45,7 @@ func (l *ResetUserGoogle2FALogic) ResetUserGoogle2FA(in *user.ResetUserGoogle2FA
 	err = l.svcCtx.UserSecurityModel.Update(l.ctx, &models.TUserSecurity{
 		Id:            userSecurity.Id,
 		GoogleEnabled: 0,
-		UpdateTimes:   time.Now().UnixMilli(),
+		UpdateTimes:   utils.NowMillis(),
 	})
 	if err != nil {
 		return nil, err

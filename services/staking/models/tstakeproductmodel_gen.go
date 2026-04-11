@@ -30,10 +30,10 @@ var (
 type (
 	tStakeProductModel interface {
 		Insert(ctx context.Context, data *TStakeProduct) (sql.Result, error)
-		FindOne(ctx context.Context, id uint64) (*TStakeProduct, error)
-		FindOneByTenantIdProductNo(ctx context.Context, tenantId uint64, productNo string) (*TStakeProduct, error)
+		FindOne(ctx context.Context, id int64) (*TStakeProduct, error)
+		FindOneByTenantIdProductNo(ctx context.Context, tenantId int64, productNo string) (*TStakeProduct, error)
 		Update(ctx context.Context, data *TStakeProduct) error
-		Delete(ctx context.Context, id uint64) error
+		Delete(ctx context.Context, id int64) error
 	}
 
 	defaultTStakeProductModel struct {
@@ -42,8 +42,8 @@ type (
 	}
 
 	TStakeProduct struct {
-		Id               uint64  `db:"id"`                 // 主键ID
-		TenantId         uint64  `db:"tenant_id"`          // 租户ID
+		Id               int64   `db:"id"`                 // 主键ID
+		TenantId         int64   `db:"tenant_id"`          // 租户ID
 		ProductNo        string  `db:"product_no"`         // 质押产品编号
 		ProductName      string  `db:"product_name"`       // 质押产品名称
 		ProductType      int64   `db:"product_type"`       // 产品类型：1活期 2定期
@@ -66,10 +66,10 @@ type (
 		Status           int64   `db:"status"`             // 状态：0禁用 1启用 2下架
 		Sort             int64   `db:"sort"`               // 排序值，越大越靠前
 		Remark           string  `db:"remark"`             // 备注
-		CreateUserId     uint64  `db:"create_user_id"`     // 创建人ID
-		UpdateUserId     uint64  `db:"update_user_id"`     // 更新人ID
-		CreateTimes      uint64  `db:"create_times"`       // 创建时间戳
-		UpdateTimes      uint64  `db:"update_times"`       // 更新时间戳
+		CreateUserId     int64   `db:"create_user_id"`     // 创建人ID
+		UpdateUserId     int64   `db:"update_user_id"`     // 更新人ID
+		CreateTimes      int64   `db:"create_times"`       // 创建时间戳
+		UpdateTimes      int64   `db:"update_times"`       // 更新时间戳
 	}
 )
 
@@ -80,7 +80,7 @@ func newTStakeProductModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.O
 	}
 }
 
-func (m *defaultTStakeProductModel) Delete(ctx context.Context, id uint64) error {
+func (m *defaultTStakeProductModel) Delete(ctx context.Context, id int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
@@ -95,7 +95,7 @@ func (m *defaultTStakeProductModel) Delete(ctx context.Context, id uint64) error
 	return err
 }
 
-func (m *defaultTStakeProductModel) FindOne(ctx context.Context, id uint64) (*TStakeProduct, error) {
+func (m *defaultTStakeProductModel) FindOne(ctx context.Context, id int64) (*TStakeProduct, error) {
 	tStakeProductIdKey := fmt.Sprintf("%s%v", cacheTStakeProductIdPrefix, id)
 	var resp TStakeProduct
 	err := m.QueryRowCtx(ctx, &resp, tStakeProductIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
@@ -112,7 +112,7 @@ func (m *defaultTStakeProductModel) FindOne(ctx context.Context, id uint64) (*TS
 	}
 }
 
-func (m *defaultTStakeProductModel) FindOneByTenantIdProductNo(ctx context.Context, tenantId uint64, productNo string) (*TStakeProduct, error) {
+func (m *defaultTStakeProductModel) FindOneByTenantIdProductNo(ctx context.Context, tenantId int64, productNo string) (*TStakeProduct, error) {
 	tStakeProductTenantIdProductNoKey := fmt.Sprintf("%s%v:%v", cacheTStakeProductTenantIdProductNoPrefix, tenantId, productNo)
 	var resp TStakeProduct
 	err := m.QueryRowIndexCtx(ctx, &resp, tStakeProductTenantIdProductNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {

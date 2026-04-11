@@ -4,17 +4,18 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
+	"wklive/common/helper"
+	"wklive/common/i18n"
+	"wklive/common/utils"
+	"wklive/proto/system"
+	"wklive/services/system/internal/svc"
+	"wklive/services/system/models"
+
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"golang.org/x/crypto/bcrypt"
-	"strings"
-	"time"
-	"wklive/common/helper"
-	"wklive/common/i18n"
-	"wklive/proto/system"
-	"wklive/services/system/internal/svc"
-	"wklive/services/system/models"
 )
 
 type SysUserCreateLogic struct {
@@ -57,8 +58,8 @@ func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system
 		GoogleEnabled: 0,
 		LastLoginIp:   sql.NullString{},
 		LastLoginAt:   0,
-		CreateTimes:   time.Now().UnixMilli(),
-		UpdateTimes:   time.Now().UnixMilli(),
+		CreateTimes:   utils.NowMillis(),
+		UpdateTimes:   utils.NowMillis(),
 	}
 
 	roleIds := make([]int64, 0, len(in.RoleIds))

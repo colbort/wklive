@@ -68,7 +68,7 @@ func (x *AppCommonResp) GetBase() *common.RespBase {
 
 type GetSymbolListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	MarketType    MarketType             `protobuf:"varint,2,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
 	Status        SymbolStatus           `protobuf:"varint,3,opt,name=status,proto3,enum=trade.SymbolStatus" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -105,7 +105,7 @@ func (*GetSymbolListReq) Descriptor() ([]byte, []int) {
 	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *GetSymbolListReq) GetTenantId() uint64 {
+func (x *GetSymbolListReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
@@ -180,8 +180,8 @@ func (x *GetSymbolListResp) GetList() []*TradeSymbol {
 
 type GetSymbolDetailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	SymbolId      uint64                 `protobuf:"varint,2,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	SymbolId      int64                  `protobuf:"varint,2,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -216,14 +216,14 @@ func (*GetSymbolDetailReq) Descriptor() ([]byte, []int) {
 	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *GetSymbolDetailReq) GetTenantId() uint64 {
+func (x *GetSymbolDetailReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *GetSymbolDetailReq) GetSymbolId() uint64 {
+func (x *GetSymbolDetailReq) GetSymbolId() int64 {
 	if x != nil {
 		return x.SymbolId
 	}
@@ -300,9 +300,9 @@ func (x *GetSymbolDetailResp) GetContract() *TradeSymbolContract {
 
 type PlaceOrderReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	TenantId        uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId          uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	SymbolId        uint64                 `protobuf:"varint,3,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
+	TenantId        int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId          int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	SymbolId        int64                  `protobuf:"varint,3,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	MarketType      MarketType             `protobuf:"varint,4,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
 	Side            TradeSide              `protobuf:"varint,5,opt,name=side,proto3,enum=trade.TradeSide" json:"side,omitempty"`
 	PositionSide    PositionSide           `protobuf:"varint,6,opt,name=position_side,json=positionSide,proto3,enum=trade.PositionSide" json:"position_side,omitempty"`
@@ -355,21 +355,21 @@ func (*PlaceOrderReq) Descriptor() ([]byte, []int) {
 	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *PlaceOrderReq) GetTenantId() uint64 {
+func (x *PlaceOrderReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *PlaceOrderReq) GetUserId() uint64 {
+func (x *PlaceOrderReq) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
 	}
 	return 0
 }
 
-func (x *PlaceOrderReq) GetSymbolId() uint64 {
+func (x *PlaceOrderReq) GetSymbolId() int64 {
 	if x != nil {
 		return x.SymbolId
 	}
@@ -556,9 +556,9 @@ func (x *PlaceOrderResp) GetOrder() *TradeOrder {
 
 type CancelOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId        uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrderId       uint64                 `protobuf:"varint,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	OrderId       int64                  `protobuf:"varint,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
 	OrderNo       string                 `protobuf:"bytes,4,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
 	ClientOrderId string                 `protobuf:"bytes,5,opt,name=client_order_id,json=clientOrderId,proto3" json:"client_order_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -595,21 +595,21 @@ func (*CancelOrderReq) Descriptor() ([]byte, []int) {
 	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *CancelOrderReq) GetTenantId() uint64 {
+func (x *CancelOrderReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *CancelOrderReq) GetUserId() uint64 {
+func (x *CancelOrderReq) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
 	}
 	return 0
 }
 
-func (x *CancelOrderReq) GetOrderId() uint64 {
+func (x *CancelOrderReq) GetOrderId() int64 {
 	if x != nil {
 		return x.OrderId
 	}
@@ -632,10 +632,10 @@ func (x *CancelOrderReq) GetClientOrderId() string {
 
 type CancelAllOrdersReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId        uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	MarketType    MarketType             `protobuf:"varint,3,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
-	SymbolId      uint64                 `protobuf:"varint,4,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
+	SymbolId      int64                  `protobuf:"varint,4,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	Side          TradeSide              `protobuf:"varint,5,opt,name=side,proto3,enum=trade.TradeSide" json:"side,omitempty"`
 	PositionSide  PositionSide           `protobuf:"varint,6,opt,name=position_side,json=positionSide,proto3,enum=trade.PositionSide" json:"position_side,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -672,14 +672,14 @@ func (*CancelAllOrdersReq) Descriptor() ([]byte, []int) {
 	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *CancelAllOrdersReq) GetTenantId() uint64 {
+func (x *CancelAllOrdersReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *CancelAllOrdersReq) GetUserId() uint64 {
+func (x *CancelAllOrdersReq) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
 	}
@@ -693,7 +693,7 @@ func (x *CancelAllOrdersReq) GetMarketType() MarketType {
 	return MarketType_MARKET_TYPE_UNSPECIFIED
 }
 
-func (x *CancelAllOrdersReq) GetSymbolId() uint64 {
+func (x *CancelAllOrdersReq) GetSymbolId() int64 {
 	if x != nil {
 		return x.SymbolId
 	}
@@ -768,11 +768,11 @@ func (x *CancelAllOrdersResp) GetAffectedCount() uint32 {
 
 type GetOrderListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId        uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Page          *common.PageReq        `protobuf:"bytes,3,opt,name=page,proto3" json:"page,omitempty"`
 	MarketType    MarketType             `protobuf:"varint,4,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
-	SymbolId      uint64                 `protobuf:"varint,5,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
+	SymbolId      int64                  `protobuf:"varint,5,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	Status        OrderStatus            `protobuf:"varint,6,opt,name=status,proto3,enum=trade.OrderStatus" json:"status,omitempty"`
 	Side          TradeSide              `protobuf:"varint,7,opt,name=side,proto3,enum=trade.TradeSide" json:"side,omitempty"`
 	TimeRange     *TimeRange             `protobuf:"bytes,8,opt,name=time_range,json=timeRange,proto3" json:"time_range,omitempty"`
@@ -810,14 +810,14 @@ func (*GetOrderListReq) Descriptor() ([]byte, []int) {
 	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *GetOrderListReq) GetTenantId() uint64 {
+func (x *GetOrderListReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *GetOrderListReq) GetUserId() uint64 {
+func (x *GetOrderListReq) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
 	}
@@ -838,7 +838,7 @@ func (x *GetOrderListReq) GetMarketType() MarketType {
 	return MarketType_MARKET_TYPE_UNSPECIFIED
 }
 
-func (x *GetOrderListReq) GetSymbolId() uint64 {
+func (x *GetOrderListReq) GetSymbolId() int64 {
 	if x != nil {
 		return x.SymbolId
 	}
@@ -920,9 +920,9 @@ func (x *GetOrderListResp) GetList() []*TradeOrder {
 
 type GetOrderDetailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId        uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrderId       uint64                 `protobuf:"varint,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	OrderId       int64                  `protobuf:"varint,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
 	OrderNo       string                 `protobuf:"bytes,4,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -958,21 +958,21 @@ func (*GetOrderDetailReq) Descriptor() ([]byte, []int) {
 	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *GetOrderDetailReq) GetTenantId() uint64 {
+func (x *GetOrderDetailReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *GetOrderDetailReq) GetUserId() uint64 {
+func (x *GetOrderDetailReq) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
 	}
 	return 0
 }
 
-func (x *GetOrderDetailReq) GetOrderId() uint64 {
+func (x *GetOrderDetailReq) GetOrderId() int64 {
 	if x != nil {
 		return x.OrderId
 	}
@@ -1056,11 +1056,11 @@ func (x *GetOrderDetailResp) GetContract() *TradeOrderContract {
 
 type GetFillListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId        uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Page          *common.PageReq        `protobuf:"bytes,3,opt,name=page,proto3" json:"page,omitempty"`
 	MarketType    MarketType             `protobuf:"varint,4,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
-	SymbolId      uint64                 `protobuf:"varint,5,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
+	SymbolId      int64                  `protobuf:"varint,5,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	TimeRange     *TimeRange             `protobuf:"bytes,6,opt,name=time_range,json=timeRange,proto3" json:"time_range,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1096,14 +1096,14 @@ func (*GetFillListReq) Descriptor() ([]byte, []int) {
 	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{14}
 }
 
-func (x *GetFillListReq) GetTenantId() uint64 {
+func (x *GetFillListReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *GetFillListReq) GetUserId() uint64 {
+func (x *GetFillListReq) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
 	}
@@ -1124,7 +1124,7 @@ func (x *GetFillListReq) GetMarketType() MarketType {
 	return MarketType_MARKET_TYPE_UNSPECIFIED
 }
 
-func (x *GetFillListReq) GetSymbolId() uint64 {
+func (x *GetFillListReq) GetSymbolId() int64 {
 	if x != nil {
 		return x.SymbolId
 	}
@@ -1192,10 +1192,10 @@ func (x *GetFillListResp) GetList() []*TradeFill {
 
 type GetPositionListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId        uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	MarketType    MarketType             `protobuf:"varint,3,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
-	SymbolId      uint64                 `protobuf:"varint,4,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
+	SymbolId      int64                  `protobuf:"varint,4,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1230,14 +1230,14 @@ func (*GetPositionListReq) Descriptor() ([]byte, []int) {
 	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{16}
 }
 
-func (x *GetPositionListReq) GetTenantId() uint64 {
+func (x *GetPositionListReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *GetPositionListReq) GetUserId() uint64 {
+func (x *GetPositionListReq) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
 	}
@@ -1251,7 +1251,7 @@ func (x *GetPositionListReq) GetMarketType() MarketType {
 	return MarketType_MARKET_TYPE_UNSPECIFIED
 }
 
-func (x *GetPositionListReq) GetSymbolId() uint64 {
+func (x *GetPositionListReq) GetSymbolId() int64 {
 	if x != nil {
 		return x.SymbolId
 	}
@@ -1312,8 +1312,8 @@ func (x *GetPositionListResp) GetList() []*ContractPosition {
 
 type GetMarginAccountListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId        uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	MarketType    MarketType             `protobuf:"varint,3,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
 	MarginAsset   string                 `protobuf:"bytes,4,opt,name=margin_asset,json=marginAsset,proto3" json:"margin_asset,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1350,14 +1350,14 @@ func (*GetMarginAccountListReq) Descriptor() ([]byte, []int) {
 	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *GetMarginAccountListReq) GetTenantId() uint64 {
+func (x *GetMarginAccountListReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *GetMarginAccountListReq) GetUserId() uint64 {
+func (x *GetMarginAccountListReq) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
 	}
@@ -1432,9 +1432,9 @@ func (x *GetMarginAccountListResp) GetList() []*ContractMarginAccount {
 
 type GetLeverageConfigReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId        uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	SymbolId      uint64                 `protobuf:"varint,3,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	SymbolId      int64                  `protobuf:"varint,3,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	MarketType    MarketType             `protobuf:"varint,4,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
 	MarginMode    MarginMode             `protobuf:"varint,5,opt,name=margin_mode,json=marginMode,proto3,enum=trade.MarginMode" json:"margin_mode,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1471,21 +1471,21 @@ func (*GetLeverageConfigReq) Descriptor() ([]byte, []int) {
 	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{20}
 }
 
-func (x *GetLeverageConfigReq) GetTenantId() uint64 {
+func (x *GetLeverageConfigReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *GetLeverageConfigReq) GetUserId() uint64 {
+func (x *GetLeverageConfigReq) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
 	}
 	return 0
 }
 
-func (x *GetLeverageConfigReq) GetSymbolId() uint64 {
+func (x *GetLeverageConfigReq) GetSymbolId() int64 {
 	if x != nil {
 		return x.SymbolId
 	}
@@ -1560,9 +1560,9 @@ func (x *GetLeverageConfigResp) GetData() *ContractLeverageConfig {
 
 type SetLeverageReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId        uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	SymbolId      uint64                 `protobuf:"varint,3,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	SymbolId      int64                  `protobuf:"varint,3,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	MarketType    MarketType             `protobuf:"varint,4,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
 	MarginMode    MarginMode             `protobuf:"varint,5,opt,name=margin_mode,json=marginMode,proto3,enum=trade.MarginMode" json:"margin_mode,omitempty"`
 	PositionMode  PositionMode           `protobuf:"varint,6,opt,name=position_mode,json=positionMode,proto3,enum=trade.PositionMode" json:"position_mode,omitempty"`
@@ -1602,21 +1602,21 @@ func (*SetLeverageReq) Descriptor() ([]byte, []int) {
 	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{22}
 }
 
-func (x *SetLeverageReq) GetTenantId() uint64 {
+func (x *SetLeverageReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *SetLeverageReq) GetUserId() uint64 {
+func (x *SetLeverageReq) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
 	}
 	return 0
 }
 
-func (x *SetLeverageReq) GetSymbolId() uint64 {
+func (x *SetLeverageReq) GetSymbolId() int64 {
 	if x != nil {
 		return x.SymbolId
 	}
@@ -1666,7 +1666,7 @@ const file_proto_trade_trade_app_proto_rawDesc = "" +
 	"\rAppCommonResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\x90\x01\n" +
 	"\x10GetSymbolListReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x122\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x122\n" +
 	"\vmarket_type\x18\x02 \x01(\x0e2\x11.trade.MarketTypeR\n" +
 	"marketType\x12+\n" +
 	"\x06status\x18\x03 \x01(\x0e2\x13.trade.SymbolStatusR\x06status\"a\n" +
@@ -1674,17 +1674,17 @@ const file_proto_trade_trade_app_proto_rawDesc = "" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
 	"\x04list\x18\x02 \x03(\v2\x12.trade.TradeSymbolR\x04list\"N\n" +
 	"\x12GetSymbolDetailReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x1b\n" +
-	"\tsymbol_id\x18\x02 \x01(\x04R\bsymbolId\"\xcb\x01\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1b\n" +
+	"\tsymbol_id\x18\x02 \x01(\x03R\bsymbolId\"\xcb\x01\n" +
 	"\x13GetSymbolDetailResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
 	"\x06symbol\x18\x02 \x01(\v2\x12.trade.TradeSymbolR\x06symbol\x12*\n" +
 	"\x04spot\x18\x03 \x01(\v2\x16.trade.TradeSymbolSpotR\x04spot\x126\n" +
 	"\bcontract\x18\x04 \x01(\v2\x1a.trade.TradeSymbolContractR\bcontract\"\xcc\x06\n" +
 	"\rPlaceOrderReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x04R\x06userId\x12\x1b\n" +
-	"\tsymbol_id\x18\x03 \x01(\x04R\bsymbolId\x122\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1b\n" +
+	"\tsymbol_id\x18\x03 \x01(\x03R\bsymbolId\x122\n" +
 	"\vmarket_type\x18\x04 \x01(\x0e2\x11.trade.MarketTypeR\n" +
 	"marketType\x12$\n" +
 	"\x04side\x18\x05 \x01(\x0e2\x10.trade.TradeSideR\x04side\x128\n" +
@@ -1711,29 +1711,29 @@ const file_proto_trade_trade_app_proto_rawDesc = "" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
 	"\x05order\x18\x02 \x01(\v2\x11.trade.TradeOrderR\x05order\"\xa4\x01\n" +
 	"\x0eCancelOrderReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x04R\x06userId\x12\x19\n" +
-	"\border_id\x18\x03 \x01(\x04R\aorderId\x12\x19\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x19\n" +
+	"\border_id\x18\x03 \x01(\x03R\aorderId\x12\x19\n" +
 	"\border_no\x18\x04 \x01(\tR\aorderNo\x12&\n" +
 	"\x0fclient_order_id\x18\x05 \x01(\tR\rclientOrderId\"\xfb\x01\n" +
 	"\x12CancelAllOrdersReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x04R\x06userId\x122\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x122\n" +
 	"\vmarket_type\x18\x03 \x01(\x0e2\x11.trade.MarketTypeR\n" +
 	"marketType\x12\x1b\n" +
-	"\tsymbol_id\x18\x04 \x01(\x04R\bsymbolId\x12$\n" +
+	"\tsymbol_id\x18\x04 \x01(\x03R\bsymbolId\x12$\n" +
 	"\x04side\x18\x05 \x01(\x0e2\x10.trade.TradeSideR\x04side\x128\n" +
 	"\rposition_side\x18\x06 \x01(\x0e2\x13.trade.PositionSideR\fpositionSide\"b\n" +
 	"\x13CancelAllOrdersResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12%\n" +
 	"\x0eaffected_count\x18\x02 \x01(\rR\raffectedCount\"\xc0\x02\n" +
 	"\x0fGetOrderListReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x04R\x06userId\x12#\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12#\n" +
 	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\x122\n" +
 	"\vmarket_type\x18\x04 \x01(\x0e2\x11.trade.MarketTypeR\n" +
 	"marketType\x12\x1b\n" +
-	"\tsymbol_id\x18\x05 \x01(\x04R\bsymbolId\x12*\n" +
+	"\tsymbol_id\x18\x05 \x01(\x03R\bsymbolId\x12*\n" +
 	"\x06status\x18\x06 \x01(\x0e2\x12.trade.OrderStatusR\x06status\x12$\n" +
 	"\x04side\x18\a \x01(\x0e2\x10.trade.TradeSideR\x04side\x12/\n" +
 	"\n" +
@@ -1742,9 +1742,9 @@ const file_proto_trade_trade_app_proto_rawDesc = "" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12%\n" +
 	"\x04list\x18\x02 \x03(\v2\x11.trade.TradeOrderR\x04list\"\x7f\n" +
 	"\x11GetOrderDetailReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x04R\x06userId\x12\x19\n" +
-	"\border_id\x18\x03 \x01(\x04R\aorderId\x12\x19\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x19\n" +
+	"\border_id\x18\x03 \x01(\x03R\aorderId\x12\x19\n" +
 	"\border_no\x18\x04 \x01(\tR\aorderNo\"\xc5\x01\n" +
 	"\x12GetOrderDetailResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
@@ -1752,29 +1752,29 @@ const file_proto_trade_trade_app_proto_rawDesc = "" +
 	"\x04spot\x18\x03 \x01(\v2\x15.trade.TradeOrderSpotR\x04spot\x125\n" +
 	"\bcontract\x18\x04 \x01(\v2\x19.trade.TradeOrderContractR\bcontract\"\xed\x01\n" +
 	"\x0eGetFillListReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x04R\x06userId\x12#\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12#\n" +
 	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\x122\n" +
 	"\vmarket_type\x18\x04 \x01(\x0e2\x11.trade.MarketTypeR\n" +
 	"marketType\x12\x1b\n" +
-	"\tsymbol_id\x18\x05 \x01(\x04R\bsymbolId\x12/\n" +
+	"\tsymbol_id\x18\x05 \x01(\x03R\bsymbolId\x12/\n" +
 	"\n" +
 	"time_range\x18\x06 \x01(\v2\x10.trade.TimeRangeR\ttimeRange\"]\n" +
 	"\x0fGetFillListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12$\n" +
 	"\x04list\x18\x02 \x03(\v2\x10.trade.TradeFillR\x04list\"\x9b\x01\n" +
 	"\x12GetPositionListReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x04R\x06userId\x122\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x122\n" +
 	"\vmarket_type\x18\x03 \x01(\x0e2\x11.trade.MarketTypeR\n" +
 	"marketType\x12\x1b\n" +
-	"\tsymbol_id\x18\x04 \x01(\x04R\bsymbolId\"h\n" +
+	"\tsymbol_id\x18\x04 \x01(\x03R\bsymbolId\"h\n" +
 	"\x13GetPositionListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12+\n" +
 	"\x04list\x18\x02 \x03(\v2\x17.trade.ContractPositionR\x04list\"\xa6\x01\n" +
 	"\x17GetMarginAccountListReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x04R\x06userId\x122\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x122\n" +
 	"\vmarket_type\x18\x03 \x01(\x0e2\x11.trade.MarketTypeR\n" +
 	"marketType\x12!\n" +
 	"\fmargin_asset\x18\x04 \x01(\tR\vmarginAsset\"r\n" +
@@ -1782,9 +1782,9 @@ const file_proto_trade_trade_app_proto_rawDesc = "" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x120\n" +
 	"\x04list\x18\x02 \x03(\v2\x1c.trade.ContractMarginAccountR\x04list\"\xd1\x01\n" +
 	"\x14GetLeverageConfigReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x04R\x06userId\x12\x1b\n" +
-	"\tsymbol_id\x18\x03 \x01(\x04R\bsymbolId\x122\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1b\n" +
+	"\tsymbol_id\x18\x03 \x01(\x03R\bsymbolId\x122\n" +
 	"\vmarket_type\x18\x04 \x01(\x0e2\x11.trade.MarketTypeR\n" +
 	"marketType\x122\n" +
 	"\vmargin_mode\x18\x05 \x01(\x0e2\x11.trade.MarginModeR\n" +
@@ -1793,9 +1793,9 @@ const file_proto_trade_trade_app_proto_rawDesc = "" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x121\n" +
 	"\x04data\x18\x02 \x01(\v2\x1d.trade.ContractLeverageConfigR\x04data\"\xd1\x02\n" +
 	"\x0eSetLeverageReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x04R\x06userId\x12\x1b\n" +
-	"\tsymbol_id\x18\x03 \x01(\x04R\bsymbolId\x122\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1b\n" +
+	"\tsymbol_id\x18\x03 \x01(\x03R\bsymbolId\x122\n" +
 	"\vmarket_type\x18\x04 \x01(\x0e2\x11.trade.MarketTypeR\n" +
 	"marketType\x122\n" +
 	"\vmargin_mode\x18\x05 \x01(\x0e2\x11.trade.MarginModeR\n" +

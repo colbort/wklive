@@ -5,7 +5,6 @@ import (
 
 	"wklive/common/pageutil"
 	"wklive/proto/asset"
-	"wklive/services/asset/internal/helpers"
 	"wklive/services/asset/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -27,7 +26,7 @@ func NewPageAssetFreezesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 分页查询冻结明细
 func (l *PageAssetFreezesLogic) PageAssetFreezes(in *asset.PageAssetFreezesReq) (*asset.PageAssetFreezesResp, error) {
-	freezes, total, err := l.svcCtx.AssetFreezeModel.FindPage(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, helpers.AssetBizType(in.BizType), in.BizNo, int64(in.Status), in.Page.Cursor, in.Page.Limit)
+	freezes, total, err := l.svcCtx.AssetFreezeModel.FindPage(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, assetBizType(in.BizType), in.BizNo, int64(in.Status), in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +39,7 @@ func (l *PageAssetFreezesLogic) PageAssetFreezes(in *asset.PageAssetFreezesReq) 
 	resp := &asset.PageAssetFreezesResp{Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(freezes), total, lastID)}
 
 	for _, item := range freezes {
-		resp.Data = append(resp.Data, helpers.ToAssetFreezeProto(item))
+		resp.Data = append(resp.Data, toAssetFreezeProto(item))
 	}
 	return resp, nil
 }

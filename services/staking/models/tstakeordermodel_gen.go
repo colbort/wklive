@@ -30,10 +30,10 @@ var (
 type (
 	tStakeOrderModel interface {
 		Insert(ctx context.Context, data *TStakeOrder) (sql.Result, error)
-		FindOne(ctx context.Context, id uint64) (*TStakeOrder, error)
-		FindOneByTenantIdOrderNo(ctx context.Context, tenantId uint64, orderNo string) (*TStakeOrder, error)
+		FindOne(ctx context.Context, id int64) (*TStakeOrder, error)
+		FindOneByTenantIdOrderNo(ctx context.Context, tenantId int64, orderNo string) (*TStakeOrder, error)
 		Update(ctx context.Context, data *TStakeOrder) error
-		Delete(ctx context.Context, id uint64) error
+		Delete(ctx context.Context, id int64) error
 	}
 
 	defaultTStakeOrderModel struct {
@@ -42,11 +42,11 @@ type (
 	}
 
 	TStakeOrder struct {
-		Id               uint64  `db:"id"`                 // 主键ID
-		TenantId         uint64  `db:"tenant_id"`          // 租户ID
+		Id               int64   `db:"id"`                 // 主键ID
+		TenantId         int64   `db:"tenant_id"`          // 租户ID
 		OrderNo          string  `db:"order_no"`           // 质押订单号
-		Uid              uint64  `db:"uid"`                // 用户ID
-		ProductId        uint64  `db:"product_id"`         // 质押产品ID
+		Uid              int64   `db:"uid"`                // 用户ID
+		ProductId        int64   `db:"product_id"`         // 质押产品ID
 		ProductNo        string  `db:"product_no"`         // 质押产品编号快照
 		ProductName      string  `db:"product_name"`       // 质押产品名称快照
 		ProductType      int64   `db:"product_type"`       // 产品类型快照：1活期 2定期
@@ -62,24 +62,24 @@ type (
 		AllowEarlyRedeem int64   `db:"allow_early_redeem"` // 是否允许提前赎回快照：0否 1是
 		EarlyRedeemRate  float64 `db:"early_redeem_rate"`  // 提前赎回手续费率快照
 		InterestDays     int64   `db:"interest_days"`      // 已计息天数
-		StartTimes       uint64  `db:"start_times"`        // 起息时间戳
-		EndTimes         uint64  `db:"end_times"`          // 到期时间戳，活期可为0
-		LastRewardTimes  uint64  `db:"last_reward_times"`  // 最后一次收益发放时间戳
-		NextRewardTimes  uint64  `db:"next_reward_times"`  // 下一次收益发放时间戳
+		StartTimes       int64   `db:"start_times"`        // 起息时间戳
+		EndTimes         int64   `db:"end_times"`          // 到期时间戳，活期可为0
+		LastRewardTimes  int64   `db:"last_reward_times"`  // 最后一次收益发放时间戳
+		NextRewardTimes  int64   `db:"next_reward_times"`  // 下一次收益发放时间戳
 		TotalReward      float64 `db:"total_reward"`       // 累计收益
 		PendingReward    float64 `db:"pending_reward"`     // 待发放收益
 		RedeemAmount     float64 `db:"redeem_amount"`      // 赎回本金数量
 		RedeemFee        float64 `db:"redeem_fee"`         // 赎回手续费
 		Status           int64   `db:"status"`             // 订单状态：1质押中 2已到期 3已赎回 4提前赎回 5已取消
 		RedeemType       int64   `db:"redeem_type"`        // 赎回类型：0未赎回 1到期赎回 2提前赎回
-		RedeemApplyTimes uint64  `db:"redeem_apply_times"` // 申请赎回时间戳
-		RedeemTimes      uint64  `db:"redeem_times"`       // 实际赎回时间戳
+		RedeemApplyTimes int64   `db:"redeem_apply_times"` // 申请赎回时间戳
+		RedeemTimes      int64   `db:"redeem_times"`       // 实际赎回时间戳
 		Source           int64   `db:"source"`             // 来源：1后台 2H5 3APP 4API
 		Remark           string  `db:"remark"`             // 备注
-		CreateUserId     uint64  `db:"create_user_id"`     // 创建人ID
-		UpdateUserId     uint64  `db:"update_user_id"`     // 更新人ID
-		CreateTimes      uint64  `db:"create_times"`       // 创建时间戳
-		UpdateTimes      uint64  `db:"update_times"`       // 更新时间戳
+		CreateUserId     int64   `db:"create_user_id"`     // 创建人ID
+		UpdateUserId     int64   `db:"update_user_id"`     // 更新人ID
+		CreateTimes      int64   `db:"create_times"`       // 创建时间戳
+		UpdateTimes      int64   `db:"update_times"`       // 更新时间戳
 	}
 )
 
@@ -90,7 +90,7 @@ func newTStakeOrderModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Opt
 	}
 }
 
-func (m *defaultTStakeOrderModel) Delete(ctx context.Context, id uint64) error {
+func (m *defaultTStakeOrderModel) Delete(ctx context.Context, id int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
@@ -105,7 +105,7 @@ func (m *defaultTStakeOrderModel) Delete(ctx context.Context, id uint64) error {
 	return err
 }
 
-func (m *defaultTStakeOrderModel) FindOne(ctx context.Context, id uint64) (*TStakeOrder, error) {
+func (m *defaultTStakeOrderModel) FindOne(ctx context.Context, id int64) (*TStakeOrder, error) {
 	tStakeOrderIdKey := fmt.Sprintf("%s%v", cacheTStakeOrderIdPrefix, id)
 	var resp TStakeOrder
 	err := m.QueryRowCtx(ctx, &resp, tStakeOrderIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
@@ -122,7 +122,7 @@ func (m *defaultTStakeOrderModel) FindOne(ctx context.Context, id uint64) (*TSta
 	}
 }
 
-func (m *defaultTStakeOrderModel) FindOneByTenantIdOrderNo(ctx context.Context, tenantId uint64, orderNo string) (*TStakeOrder, error) {
+func (m *defaultTStakeOrderModel) FindOneByTenantIdOrderNo(ctx context.Context, tenantId int64, orderNo string) (*TStakeOrder, error) {
 	tStakeOrderTenantIdOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTStakeOrderTenantIdOrderNoPrefix, tenantId, orderNo)
 	var resp TStakeOrder
 	err := m.QueryRowIndexCtx(ctx, &resp, tStakeOrderTenantIdOrderNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {

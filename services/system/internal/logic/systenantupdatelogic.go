@@ -3,12 +3,13 @@ package logic
 import (
 	"context"
 	"database/sql"
-	"github.com/zeromicro/go-zero/core/logx"
-	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SysTenantUpdateLogic struct {
@@ -42,7 +43,7 @@ func (l *SysTenantUpdateLogic) SysTenantUpdate(in *system.SysTenantUpdateReq) (*
 	tenant.ContactName = sql.NullString{String: in.ContactName, Valid: true}
 	tenant.ContactPhone = sql.NullString{String: in.ContactPhone, Valid: true}
 	tenant.Remark = sql.NullString{String: in.Remark, Valid: true}
-	tenant.UpdateTimes = time.Now().UnixMilli()
+	tenant.UpdateTimes = utils.NowMillis()
 	err = l.svcCtx.TenantMode.Update(l.ctx, tenant)
 	if err != nil {
 		return nil, err

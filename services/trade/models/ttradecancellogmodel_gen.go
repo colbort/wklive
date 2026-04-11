@@ -29,9 +29,9 @@ var (
 type (
 	tTradeCancelLogModel interface {
 		Insert(ctx context.Context, data *TTradeCancelLog) (sql.Result, error)
-		FindOne(ctx context.Context, id uint64) (*TTradeCancelLog, error)
+		FindOne(ctx context.Context, id int64) (*TTradeCancelLog, error)
 		Update(ctx context.Context, data *TTradeCancelLog) error
-		Delete(ctx context.Context, id uint64) error
+		Delete(ctx context.Context, id int64) error
 	}
 
 	defaultTTradeCancelLogModel struct {
@@ -40,11 +40,11 @@ type (
 	}
 
 	TTradeCancelLog struct {
-		Id           uint64 `db:"id"`            // 主键ID
-		TenantId     uint64 `db:"tenant_id"`     // 租户ID
-		OrderId      uint64 `db:"order_id"`      // 订单ID
+		Id           int64  `db:"id"`            // 主键ID
+		TenantId     int64  `db:"tenant_id"`     // 租户ID
+		OrderId      int64  `db:"order_id"`      // 订单ID
 		OrderNo      string `db:"order_no"`      // 平台订单号
-		UserId       uint64 `db:"user_id"`       // 用户ID
+		UserId       int64  `db:"user_id"`       // 用户ID
 		CancelSource int64  `db:"cancel_source"` // 撤单来源：1用户主动 2系统撤单 3风控撤单 4超时撤单
 		CancelReason string `db:"cancel_reason"` // 撤单原因
 		CreateTimes  int64  `db:"create_times"`  // 创建时间，毫秒时间戳
@@ -58,7 +58,7 @@ func newTTradeCancelLogModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache
 	}
 }
 
-func (m *defaultTTradeCancelLogModel) Delete(ctx context.Context, id uint64) error {
+func (m *defaultTTradeCancelLogModel) Delete(ctx context.Context, id int64) error {
 	tTradeCancelLogIdKey := fmt.Sprintf("%s%v", cacheTTradeCancelLogIdPrefix, id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
@@ -67,7 +67,7 @@ func (m *defaultTTradeCancelLogModel) Delete(ctx context.Context, id uint64) err
 	return err
 }
 
-func (m *defaultTTradeCancelLogModel) FindOne(ctx context.Context, id uint64) (*TTradeCancelLog, error) {
+func (m *defaultTTradeCancelLogModel) FindOne(ctx context.Context, id int64) (*TTradeCancelLog, error) {
 	tTradeCancelLogIdKey := fmt.Sprintf("%s%v", cacheTTradeCancelLogIdPrefix, id)
 	var resp TTradeCancelLog
 	err := m.QueryRowCtx(ctx, &resp, tTradeCancelLogIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {

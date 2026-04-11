@@ -3,13 +3,14 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
-	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SetDefaultBankLogic struct {
@@ -47,7 +48,7 @@ func (l *SetDefaultBankLogic) SetDefaultBank(in *user.SetDefaultBankReq) (*user.
 		}, nil
 	}
 
-	now := time.Now().UnixMilli()
+	now := utils.NowMillis()
 
 	// 将其他所有卡设置为非默认
 	// TODO: 自定义查询方法，找出该用户的所有银行卡并更新

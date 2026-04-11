@@ -4,13 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
-	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type ManualMarkRechargeOrderSuccessLogic struct {
@@ -53,7 +54,7 @@ func (l *ManualMarkRechargeOrderSuccessLogic) ManualMarkRechargeOrderSuccess(in 
 		}, nil
 	}
 
-	now := time.Now().UnixMilli()
+	now := utils.NowMillis()
 	order.Status = int64(payment.PayOrderStatus_PAY_ORDER_STATUS_SUCCESS)
 	order.PayAmount = in.PayAmount
 	order.ThirdTradeNo = sql.NullString{String: in.ThirdTradeNo, Valid: in.ThirdTradeNo != ""}

@@ -30,10 +30,10 @@ var (
 type (
 	tStakeRedeemLogModel interface {
 		Insert(ctx context.Context, data *TStakeRedeemLog) (sql.Result, error)
-		FindOne(ctx context.Context, id uint64) (*TStakeRedeemLog, error)
-		FindOneByTenantIdRedeemNo(ctx context.Context, tenantId uint64, redeemNo string) (*TStakeRedeemLog, error)
+		FindOne(ctx context.Context, id int64) (*TStakeRedeemLog, error)
+		FindOneByTenantIdRedeemNo(ctx context.Context, tenantId int64, redeemNo string) (*TStakeRedeemLog, error)
 		Update(ctx context.Context, data *TStakeRedeemLog) error
-		Delete(ctx context.Context, id uint64) error
+		Delete(ctx context.Context, id int64) error
 	}
 
 	defaultTStakeRedeemLogModel struct {
@@ -42,12 +42,12 @@ type (
 	}
 
 	TStakeRedeemLog struct {
-		Id           uint64  `db:"id"`             // 主键ID
-		TenantId     uint64  `db:"tenant_id"`      // 租户ID
-		OrderId      uint64  `db:"order_id"`       // 质押订单ID
+		Id           int64   `db:"id"`             // 主键ID
+		TenantId     int64   `db:"tenant_id"`      // 租户ID
+		OrderId      int64   `db:"order_id"`       // 质押订单ID
 		OrderNo      string  `db:"order_no"`       // 质押订单号
-		Uid          uint64  `db:"uid"`            // 用户ID
-		ProductId    uint64  `db:"product_id"`     // 质押产品ID
+		Uid          int64   `db:"uid"`            // 用户ID
+		ProductId    int64   `db:"product_id"`     // 质押产品ID
 		RedeemNo     string  `db:"redeem_no"`      // 赎回单号
 		RedeemType   int64   `db:"redeem_type"`    // 赎回类型：1到期赎回 2提前赎回 3手动赎回
 		StakeAmount  float64 `db:"stake_amount"`   // 原始质押数量
@@ -56,12 +56,12 @@ type (
 		FeeRate      float64 `db:"fee_rate"`       // 手续费率
 		FeeAmount    float64 `db:"fee_amount"`     // 手续费数量
 		RedeemStatus int64   `db:"redeem_status"`  // 赎回状态：0失败 1成功 2处理中
-		RedeemTimes  uint64  `db:"redeem_times"`   // 赎回时间戳
+		RedeemTimes  int64   `db:"redeem_times"`   // 赎回时间戳
 		Remark       string  `db:"remark"`         // 备注
-		CreateUserId uint64  `db:"create_user_id"` // 创建人ID
-		UpdateUserId uint64  `db:"update_user_id"` // 更新人ID
-		CreateTimes  uint64  `db:"create_times"`   // 创建时间戳
-		UpdateTimes  uint64  `db:"update_times"`   // 更新时间戳
+		CreateUserId int64   `db:"create_user_id"` // 创建人ID
+		UpdateUserId int64   `db:"update_user_id"` // 更新人ID
+		CreateTimes  int64   `db:"create_times"`   // 创建时间戳
+		UpdateTimes  int64   `db:"update_times"`   // 更新时间戳
 	}
 )
 
@@ -72,7 +72,7 @@ func newTStakeRedeemLogModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache
 	}
 }
 
-func (m *defaultTStakeRedeemLogModel) Delete(ctx context.Context, id uint64) error {
+func (m *defaultTStakeRedeemLogModel) Delete(ctx context.Context, id int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
@@ -87,7 +87,7 @@ func (m *defaultTStakeRedeemLogModel) Delete(ctx context.Context, id uint64) err
 	return err
 }
 
-func (m *defaultTStakeRedeemLogModel) FindOne(ctx context.Context, id uint64) (*TStakeRedeemLog, error) {
+func (m *defaultTStakeRedeemLogModel) FindOne(ctx context.Context, id int64) (*TStakeRedeemLog, error) {
 	tStakeRedeemLogIdKey := fmt.Sprintf("%s%v", cacheTStakeRedeemLogIdPrefix, id)
 	var resp TStakeRedeemLog
 	err := m.QueryRowCtx(ctx, &resp, tStakeRedeemLogIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
@@ -104,7 +104,7 @@ func (m *defaultTStakeRedeemLogModel) FindOne(ctx context.Context, id uint64) (*
 	}
 }
 
-func (m *defaultTStakeRedeemLogModel) FindOneByTenantIdRedeemNo(ctx context.Context, tenantId uint64, redeemNo string) (*TStakeRedeemLog, error) {
+func (m *defaultTStakeRedeemLogModel) FindOneByTenantIdRedeemNo(ctx context.Context, tenantId int64, redeemNo string) (*TStakeRedeemLog, error) {
 	tStakeRedeemLogTenantIdRedeemNoKey := fmt.Sprintf("%s%v:%v", cacheTStakeRedeemLogTenantIdRedeemNoPrefix, tenantId, redeemNo)
 	var resp TStakeRedeemLog
 	err := m.QueryRowIndexCtx(ctx, &resp, tStakeRedeemLogTenantIdRedeemNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {

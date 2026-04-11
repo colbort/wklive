@@ -4,13 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
-	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type UpdateTenantPayChannelRuleLogic struct {
@@ -46,7 +47,7 @@ func (l *UpdateTenantPayChannelRuleLogic) UpdateTenantPayChannelRule(in *payment
 		}, nil
 	}
 
-	now := time.Now().UnixMilli()
+	now := utils.NowMillis()
 	if in.RuleName != "" {
 		rule.RuleName = in.RuleName
 	}

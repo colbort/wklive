@@ -6,7 +6,6 @@ import (
 	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/proto/asset"
-	"wklive/services/asset/internal/helpers"
 	"wklive/services/asset/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -43,7 +42,7 @@ func (l *GetMyAssetSummaryLogic) GetMyAssetSummary(in *asset.GetMyAssetSummaryRe
 		totalAvailable += item.AvailableAmount
 		totalFrozen += item.FrozenAmount
 		totalLocked += item.LockedAmount
-		resp.Data.Assets = append(resp.Data.Assets, helpers.ToUserAssetProto(item))
+		resp.Data.Assets = append(resp.Data.Assets, toUserAssetProto(item))
 	}
 
 	resp.Data.TotalAssetUsdt = conv.FloatString(totalAsset)

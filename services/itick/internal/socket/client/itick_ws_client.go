@@ -234,7 +234,7 @@ func (c *ItickWsClient) keepaliveLoop(conn *websocket.Conn) {
 			return
 		}
 
-		ts := strconv.FormatInt(time.Now().UnixMilli(), 10)
+		ts := strconv.FormatInt(utils.NowMillis(), 10)
 		req := PingReq{
 			Ac:     "ping",
 			Params: ts,

@@ -6,11 +6,11 @@ option go_package = "wklive/proto/trade;trade";
 
 import "proto/trade/enum.proto";
 
-message TenantReq { uint64 tenant_id = 1; }
+message TenantReq { int64 tenant_id = 1; }
 
 message UserReq {
-  uint64 tenant_id = 1;
-  uint64 user_id = 2;
+  int64 tenant_id = 1;
+  int64 user_id = 2;
 }
 
 message TimeRange {
@@ -25,11 +25,11 @@ message DecimalRange {
 
 message StringValues { repeated string values = 1; }
 
-message Uint64Values { repeated uint64 values = 1; }
+message Uint64Values { repeated int64 values = 1; }
 
 message TradeSymbol {
-  uint64 id = 1;
-  uint64 tenant_id = 2;
+  int64 id = 1;
+  int64 tenant_id = 2;
   string symbol = 3;
   string display_symbol = 4;
   MarketType market_type = 5;
@@ -57,9 +57,9 @@ message TradeSymbol {
 }
 
 message TradeSymbolSpot {
-  uint64 id = 1;
-  uint64 tenant_id = 2;
-  uint64 symbol_id = 3;
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 symbol_id = 3;
   string maker_fee_rate = 4;
   string taker_fee_rate = 5;
   bool buy_enabled = 6;
@@ -69,9 +69,9 @@ message TradeSymbolSpot {
 }
 
 message TradeSymbolContract {
-  uint64 id = 1;
-  uint64 tenant_id = 2;
-  uint64 symbol_id = 3;
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 symbol_id = 3;
   string contract_size = 4;
   string multiplier = 5;
   string maintenance_margin_rate = 6;
@@ -89,11 +89,11 @@ message TradeSymbolContract {
 }
 
 message TradeUserConfig {
-  uint64 id = 1;
-  uint64 tenant_id = 2;
-  uint64 user_id = 3;
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 user_id = 3;
   MarketType market_type = 4;
-  uint64 symbol_id = 5;
+  int64 symbol_id = 5;
   PositionMode position_mode = 6;
   MarginMode margin_mode = 7;
   uint32 default_leverage = 8;
@@ -104,12 +104,12 @@ message TradeUserConfig {
 }
 
 message TradeOrder {
-  uint64 id = 1;
-  uint64 tenant_id = 2;
+  int64 id = 1;
+  int64 tenant_id = 2;
   string order_no = 3;
   string client_order_id = 4;
-  uint64 user_id = 5;
-  uint64 symbol_id = 6;
+  int64 user_id = 5;
+  int64 symbol_id = 6;
   MarketType market_type = 7;
   TradeSide side = 8;
   PositionSide position_side = 9;
@@ -136,9 +136,9 @@ message TradeOrder {
 }
 
 message TradeOrderSpot {
-  uint64 id = 1;
-  uint64 tenant_id = 2;
-  uint64 order_id = 3;
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 order_id = 3;
   string frozen_asset = 4;
   string frozen_amount = 5;
   string settle_asset = 6;
@@ -148,9 +148,9 @@ message TradeOrderSpot {
 }
 
 message TradeOrderContract {
-  uint64 id = 1;
-  uint64 tenant_id = 2;
-  uint64 order_id = 3;
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 order_id = 3;
   MarginMode margin_mode = 4;
   uint32 leverage = 5;
   string margin_asset = 6;
@@ -164,13 +164,13 @@ message TradeOrderContract {
 }
 
 message TradeFill {
-  uint64 id = 1;
-  uint64 tenant_id = 2;
+  int64 id = 1;
+  int64 tenant_id = 2;
   string fill_no = 3;
-  uint64 order_id = 4;
+  int64 order_id = 4;
   string order_no = 5;
-  uint64 user_id = 6;
-  uint64 symbol_id = 7;
+  int64 user_id = 6;
+  int64 symbol_id = 7;
   MarketType market_type = 8;
   TradeSide side = 9;
   PositionSide position_side = 10;
@@ -186,21 +186,21 @@ message TradeFill {
 }
 
 message TradeCancelLog {
-  uint64 id = 1;
-  uint64 tenant_id = 2;
-  uint64 order_id = 3;
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 order_id = 3;
   string order_no = 4;
-  uint64 user_id = 5;
+  int64 user_id = 5;
   uint32 cancel_source = 6;
   string cancel_reason = 7;
   int64 create_times = 8;
 }
 
 message ContractPosition {
-  uint64 id = 1;
-  uint64 tenant_id = 2;
-  uint64 user_id = 3;
-  uint64 symbol_id = 4;
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 user_id = 3;
+  int64 symbol_id = 4;
   MarketType market_type = 5;
   PositionSide position_side = 6;
   MarginMode margin_mode = 7;
@@ -217,17 +217,17 @@ message ContractPosition {
   string realized_pnl = 18;
   string liquidation_price = 19;
   int32 adl_rank = 20;
-  uint64 version = 21;
+  int64 version = 21;
   int64 create_times = 22;
   int64 update_times = 23;
 }
 
 message ContractPositionHistory {
-  uint64 id = 1;
-  uint64 tenant_id = 2;
-  uint64 position_id = 3;
-  uint64 user_id = 4;
-  uint64 symbol_id = 5;
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 position_id = 3;
+  int64 user_id = 4;
+  int64 symbol_id = 5;
   MarketType market_type = 6;
   PositionSide position_side = 7;
   PositionActionType action_type = 8;
@@ -249,18 +249,18 @@ message ContractPositionHistory {
   string fee_delta = 24;
   string fee_asset = 25;
   string mark_price = 26;
-  uint64 ref_order_id = 27;
-  uint64 ref_fill_id = 28;
-  uint64 operator_id = 29;
+  int64 ref_order_id = 27;
+  int64 ref_fill_id = 28;
+  int64 operator_id = 29;
   SourceType source = 30;
   string remark = 31;
   int64 create_times = 32;
 }
 
 message ContractMarginAccount {
-  uint64 id = 1;
-  uint64 tenant_id = 2;
-  uint64 user_id = 3;
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 user_id = 3;
   MarketType market_type = 4;
   string margin_asset = 5;
   string balance = 6;
@@ -270,23 +270,23 @@ message ContractMarginAccount {
   string order_margin = 10;
   string unrealized_pnl = 11;
   string realized_pnl = 12;
-  uint64 version = 13;
+  int64 version = 13;
   int64 create_times = 14;
   int64 update_times = 15;
 }
 
 message ContractLeverageConfig {
-  uint64 id = 1;
-  uint64 tenant_id = 2;
-  uint64 user_id = 3;
-  uint64 symbol_id = 4;
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 user_id = 3;
+  int64 symbol_id = 4;
   MarketType market_type = 5;
   MarginMode margin_mode = 6;
   PositionMode position_mode = 7;
   uint32 long_leverage = 8;
   uint32 short_leverage = 9;
   uint32 max_leverage = 10;
-  uint64 operator_id = 11;
+  int64 operator_id = 11;
   SourceType source = 12;
   uint32 status = 13;
   string remark = 14;
@@ -295,9 +295,9 @@ message ContractLeverageConfig {
 }
 
 message RiskUserTradeLimit {
-  uint64 id = 1;
-  uint64 tenant_id = 2;
-  uint64 user_id = 3;
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 user_id = 3;
   MarketType market_type = 4;
   bool can_open = 5;
   bool can_close = 6;
@@ -312,7 +312,7 @@ message RiskUserTradeLimit {
   string max_open_notional = 15;
   string max_position_notional = 16;
   uint32 risk_level = 17;
-  uint64 operator_id = 18;
+  int64 operator_id = 18;
   SourceType source = 19;
   uint32 status = 20;
   int64 effective_start_time = 21;
@@ -323,10 +323,10 @@ message RiskUserTradeLimit {
 }
 
 message RiskUserSymbolLimit {
-  uint64 id = 1;
-  uint64 tenant_id = 2;
-  uint64 user_id = 3;
-  uint64 symbol_id = 4;
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 user_id = 3;
+  int64 symbol_id = 4;
   MarketType market_type = 5;
   string max_position_qty = 6;
   string max_position_notional = 7;
@@ -338,7 +338,7 @@ message RiskUserSymbolLimit {
   string max_long_position_qty = 13;
   string max_short_position_qty = 14;
   string price_deviation_rate = 15;
-  uint64 operator_id = 16;
+  int64 operator_id = 16;
   SourceType source = 17;
   uint32 status = 18;
   int64 effective_start_time = 19;
@@ -349,12 +349,12 @@ message RiskUserSymbolLimit {
 }
 
 message RiskOrderCheckLog {
-  uint64 id = 1;
-  uint64 tenant_id = 2;
+  int64 id = 1;
+  int64 tenant_id = 2;
   string order_no = 3;
   string client_order_id = 4;
-  uint64 user_id = 5;
-  uint64 symbol_id = 6;
+  int64 user_id = 5;
+  int64 symbol_id = 6;
   MarketType market_type = 7;
   RiskCheckType check_type = 8;
   RiskCheckResult check_result = 9;
@@ -363,23 +363,23 @@ message RiskOrderCheckLog {
   string request_price = 12;
   string request_qty = 13;
   string request_amount = 14;
-  uint64 operator_id = 15;
+  int64 operator_id = 15;
   SourceType source = 16;
   string check_snapshot = 17;
   int64 create_times = 18;
 }
 
 message BizTradeEvent {
-  uint64 id = 1;
-  uint64 tenant_id = 2;
+  int64 id = 1;
+  int64 tenant_id = 2;
   string event_no = 3;
   string event_type = 4;
   string biz_id = 5;
   string biz_type = 6;
-  uint64 user_id = 7;
-  uint64 symbol_id = 8;
+  int64 user_id = 7;
+  int64 symbol_id = 8;
   MarketType market_type = 9;
-  uint64 operator_id = 10;
+  int64 operator_id = 10;
   SourceType source = 11;
   EventStatus event_status = 12;
   uint32 retry_count = 13;

@@ -31,11 +31,11 @@ var (
 type (
 	tTradeOrderModel interface {
 		Insert(ctx context.Context, data *TTradeOrder) (sql.Result, error)
-		FindOne(ctx context.Context, id uint64) (*TTradeOrder, error)
-		FindOneByTenantIdOrderNo(ctx context.Context, tenantId uint64, orderNo string) (*TTradeOrder, error)
-		FindOneByTenantIdUserIdClientOrderId(ctx context.Context, tenantId uint64, userId uint64, clientOrderId string) (*TTradeOrder, error)
+		FindOne(ctx context.Context, id int64) (*TTradeOrder, error)
+		FindOneByTenantIdOrderNo(ctx context.Context, tenantId int64, orderNo string) (*TTradeOrder, error)
+		FindOneByTenantIdUserIdClientOrderId(ctx context.Context, tenantId int64, userId int64, clientOrderId string) (*TTradeOrder, error)
 		Update(ctx context.Context, data *TTradeOrder) error
-		Delete(ctx context.Context, id uint64) error
+		Delete(ctx context.Context, id int64) error
 	}
 
 	defaultTTradeOrderModel struct {
@@ -44,12 +44,12 @@ type (
 	}
 
 	TTradeOrder struct {
-		Id            uint64         `db:"id"`              // 主键ID
-		TenantId      uint64         `db:"tenant_id"`       // 租户ID
+		Id            int64          `db:"id"`              // 主键ID
+		TenantId      int64          `db:"tenant_id"`       // 租户ID
 		OrderNo       string         `db:"order_no"`        // 平台订单号，全租户内唯一
 		ClientOrderId string         `db:"client_order_id"` // 客户端订单号，用于幂等控制
-		UserId        uint64         `db:"user_id"`         // 用户ID
-		SymbolId      uint64         `db:"symbol_id"`       // 交易标的ID
+		UserId        int64          `db:"user_id"`         // 用户ID
+		SymbolId      int64          `db:"symbol_id"`       // 交易标的ID
 		MarketType    int64          `db:"market_type"`     // 市场类型：1现货 2秒合约 3U本位 4币本位
 		Side          int64          `db:"side"`            // 买卖方向：1买 2卖
 		PositionSide  int64          `db:"position_side"`   // 持仓方向：0无 1多 2空，现货一般为0
@@ -83,7 +83,7 @@ func newTTradeOrderModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Opt
 	}
 }
 
-func (m *defaultTTradeOrderModel) Delete(ctx context.Context, id uint64) error {
+func (m *defaultTTradeOrderModel) Delete(ctx context.Context, id int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
@@ -99,7 +99,7 @@ func (m *defaultTTradeOrderModel) Delete(ctx context.Context, id uint64) error {
 	return err
 }
 
-func (m *defaultTTradeOrderModel) FindOne(ctx context.Context, id uint64) (*TTradeOrder, error) {
+func (m *defaultTTradeOrderModel) FindOne(ctx context.Context, id int64) (*TTradeOrder, error) {
 	tTradeOrderIdKey := fmt.Sprintf("%s%v", cacheTTradeOrderIdPrefix, id)
 	var resp TTradeOrder
 	err := m.QueryRowCtx(ctx, &resp, tTradeOrderIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
@@ -116,7 +116,7 @@ func (m *defaultTTradeOrderModel) FindOne(ctx context.Context, id uint64) (*TTra
 	}
 }
 
-func (m *defaultTTradeOrderModel) FindOneByTenantIdOrderNo(ctx context.Context, tenantId uint64, orderNo string) (*TTradeOrder, error) {
+func (m *defaultTTradeOrderModel) FindOneByTenantIdOrderNo(ctx context.Context, tenantId int64, orderNo string) (*TTradeOrder, error) {
 	tTradeOrderTenantIdOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTTradeOrderTenantIdOrderNoPrefix, tenantId, orderNo)
 	var resp TTradeOrder
 	err := m.QueryRowIndexCtx(ctx, &resp, tTradeOrderTenantIdOrderNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
@@ -136,7 +136,7 @@ func (m *defaultTTradeOrderModel) FindOneByTenantIdOrderNo(ctx context.Context, 
 	}
 }
 
-func (m *defaultTTradeOrderModel) FindOneByTenantIdUserIdClientOrderId(ctx context.Context, tenantId uint64, userId uint64, clientOrderId string) (*TTradeOrder, error) {
+func (m *defaultTTradeOrderModel) FindOneByTenantIdUserIdClientOrderId(ctx context.Context, tenantId int64, userId int64, clientOrderId string) (*TTradeOrder, error) {
 	tTradeOrderTenantIdUserIdClientOrderIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTTradeOrderTenantIdUserIdClientOrderIdPrefix, tenantId, userId, clientOrderId)
 	var resp TTradeOrder
 	err := m.QueryRowIndexCtx(ctx, &resp, tTradeOrderTenantIdUserIdClientOrderIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {

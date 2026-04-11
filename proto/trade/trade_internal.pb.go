@@ -200,9 +200,9 @@ func (x *CreateTradeEventReq) GetEvent() *BizTradeEvent {
 
 type CheckOrderRiskReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId        uint64                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	SymbolId      uint64                 `protobuf:"varint,3,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	SymbolId      int64                  `protobuf:"varint,3,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	MarketType    MarketType             `protobuf:"varint,4,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
 	Side          TradeSide              `protobuf:"varint,5,opt,name=side,proto3,enum=trade.TradeSide" json:"side,omitempty"`
 	PositionSide  PositionSide           `protobuf:"varint,6,opt,name=position_side,json=positionSide,proto3,enum=trade.PositionSide" json:"position_side,omitempty"`
@@ -244,21 +244,21 @@ func (*CheckOrderRiskReq) Descriptor() ([]byte, []int) {
 	return file_proto_trade_trade_internal_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *CheckOrderRiskReq) GetTenantId() uint64 {
+func (x *CheckOrderRiskReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
 	return 0
 }
 
-func (x *CheckOrderRiskReq) GetUserId() uint64 {
+func (x *CheckOrderRiskReq) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
 	}
 	return 0
 }
 
-func (x *CheckOrderRiskReq) GetSymbolId() uint64 {
+func (x *CheckOrderRiskReq) GetSymbolId() int64 {
 	if x != nil {
 		return x.SymbolId
 	}
@@ -388,9 +388,9 @@ const file_proto_trade_trade_internal_proto_rawDesc = "" +
 	"\x13CreateTradeEventReq\x12*\n" +
 	"\x05event\x18\x01 \x01(\v2\x14.trade.BizTradeEventR\x05event\"\xeb\x02\n" +
 	"\x11CheckOrderRiskReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x04R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x04R\x06userId\x12\x1b\n" +
-	"\tsymbol_id\x18\x03 \x01(\x04R\bsymbolId\x122\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1b\n" +
+	"\tsymbol_id\x18\x03 \x01(\x03R\bsymbolId\x122\n" +
 	"\vmarket_type\x18\x04 \x01(\x0e2\x11.trade.MarketTypeR\n" +
 	"marketType\x12$\n" +
 	"\x04side\x18\x05 \x01(\x0e2\x10.trade.TradeSideR\x04side\x128\n" +

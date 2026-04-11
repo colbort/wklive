@@ -3,12 +3,11 @@ package logic
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
+	"wklive/common/utils"
 	"wklive/proto/asset"
-	"wklive/services/asset/internal/helpers"
 	"wklive/services/asset/internal/svc"
 	"wklive/services/asset/models"
 
@@ -39,7 +38,7 @@ func (l *AddAvailableLogic) AddAvailable(in *asset.AddAvailableReq) (*asset.Chan
 		return nil, fmt.Errorf("amount must be positive")
 	}
 
-	ts := time.Now().UnixMilli()
+	ts := utils.NowMillis()
 	before, err := l.svcCtx.UserAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin)
 	if err != nil && err != models.ErrNotFound {
 		return nil, err
@@ -54,15 +53,15 @@ func (l *AddAvailableLogic) AddAvailable(in *asset.AddAvailableReq) (*asset.Chan
 		return nil, err
 	}
 
-	changeType := helpers.AssetSceneType(in.SceneType)
+	changeType := assetSceneType(in.SceneType)
 	if changeType == "" {
-		changeType = helpers.AssetBizType(in.BizType)
+		changeType = assetBizType(in.BizType)
 	}
 
-	flow := helpers.BuildAssetFlowRecord(in.TenantId, in.UserId, int64(in.WalletType), in.Coin, changeType, helpers.AssetBizType(in.BizType), helpers.AssetSceneType(in.SceneType), in.BizId, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_ADD, amount, before, after, in.Remark, ts)
+	flow := buildAssetFlowRecord(l.svcCtx, l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, changeType, assetBizType(in.BizType), assetSceneType(in.SceneType), in.BizId, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_ADD, amount, before, after, in.Remark, ts)
 	if _, err := l.svcCtx.AssetFlowModel.Insert(l.ctx, flow); err != nil {
 		return nil, err
 	}
 
-	return &asset.ChangeAssetResp{Base: helper.OkResp(), BizNo: in.BizNo, Asset: helpers.ToUserAssetProto(after)}, nil
+	return &asset.ChangeAssetResp{Base: helper.OkResp(), BizNo: in.BizNo, Asset: toUserAssetProto(after)}, nil
 }

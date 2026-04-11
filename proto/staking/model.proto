@@ -8,8 +8,8 @@ import "proto/staking/enum.proto";
 
 // 质押产品
 message StakeProduct {
-  uint64 id = 1;
-  uint64 tenant_id = 2;
+  int64 id = 1;
+  int64 tenant_id = 2;
   string product_no = 3;
   string product_name = 4;
   ProductType product_type = 5;
@@ -32,19 +32,19 @@ message StakeProduct {
   ProductStatus status = 22;
   int32 sort = 23;
   string remark = 24;
-  uint64 create_user_id = 25;
-  uint64 update_user_id = 26;
+  int64 create_user_id = 25;
+  int64 update_user_id = 26;
   int64 create_times = 27;
   int64 update_times = 28;
 }
 
 // 质押订单
 message StakeOrder {
-  uint64 id = 1;
-  uint64 tenant_id = 2;
+  int64 id = 1;
+  int64 tenant_id = 2;
   string order_no = 3;
-  uint64 uid = 4;
-  uint64 product_id = 5;
+  int64 uid = 4;
+  int64 product_id = 5;
   string product_no = 6;
   string product_name = 7;
   ProductType product_type = 8;
@@ -74,20 +74,20 @@ message StakeOrder {
   int64 redeem_times = 32;
   SourceType source = 33;
   string remark = 34;
-  uint64 create_user_id = 35;
-  uint64 update_user_id = 36;
+  int64 create_user_id = 35;
+  int64 update_user_id = 36;
   int64 create_times = 37;
   int64 update_times = 38;
 }
 
 // 收益记录
 message StakeRewardLog {
-  uint64 id = 1;
-  uint64 tenant_id = 2;
-  uint64 order_id = 3;
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 order_id = 3;
   string order_no = 4;
-  uint64 uid = 5;
-  uint64 product_id = 6;
+  int64 uid = 5;
+  int64 product_id = 6;
   string product_name = 7;
   string coin_symbol = 8;
   string reward_coin_symbol = 9;
@@ -98,20 +98,20 @@ message StakeRewardLog {
   RewardStatus reward_status = 14;
   int64 reward_times = 15;
   string remark = 16;
-  uint64 create_user_id = 17;
-  uint64 update_user_id = 18;
+  int64 create_user_id = 17;
+  int64 update_user_id = 18;
   int64 create_times = 19;
   int64 update_times = 20;
 }
 
 // 赎回记录
 message StakeRedeemLog {
-  uint64 id = 1;
-  uint64 tenant_id = 2;
-  uint64 order_id = 3;
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 order_id = 3;
   string order_no = 4;
-  uint64 uid = 5;
-  uint64 product_id = 6;
+  int64 uid = 5;
+  int64 product_id = 6;
   string redeem_no = 7;
   RedeemType redeem_type = 8;
   string stake_amount = 9;
@@ -122,8 +122,8 @@ message StakeRedeemLog {
   RedeemStatus redeem_status = 14;
   int64 redeem_times = 15;
   string remark = 16;
-  uint64 create_user_id = 17;
-  uint64 update_user_id = 18;
+  int64 create_user_id = 17;
+  int64 update_user_id = 18;
   int64 create_times = 19;
   int64 update_times = 20;
 }

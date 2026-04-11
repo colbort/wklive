@@ -30,10 +30,10 @@ var (
 type (
 	tContractMarginAccountModel interface {
 		Insert(ctx context.Context, data *TContractMarginAccount) (sql.Result, error)
-		FindOne(ctx context.Context, id uint64) (*TContractMarginAccount, error)
-		FindOneByTenantIdUserIdMarketTypeMarginAsset(ctx context.Context, tenantId uint64, userId uint64, marketType int64, marginAsset string) (*TContractMarginAccount, error)
+		FindOne(ctx context.Context, id int64) (*TContractMarginAccount, error)
+		FindOneByTenantIdUserIdMarketTypeMarginAsset(ctx context.Context, tenantId int64, userId int64, marketType int64, marginAsset string) (*TContractMarginAccount, error)
 		Update(ctx context.Context, data *TContractMarginAccount) error
-		Delete(ctx context.Context, id uint64) error
+		Delete(ctx context.Context, id int64) error
 	}
 
 	defaultTContractMarginAccountModel struct {
@@ -42,9 +42,9 @@ type (
 	}
 
 	TContractMarginAccount struct {
-		Id               uint64  `db:"id"`                // 主键ID
-		TenantId         uint64  `db:"tenant_id"`         // 租户ID
-		UserId           uint64  `db:"user_id"`           // 用户ID
+		Id               int64   `db:"id"`                // 主键ID
+		TenantId         int64   `db:"tenant_id"`         // 租户ID
+		UserId           int64   `db:"user_id"`           // 用户ID
 		MarketType       int64   `db:"market_type"`       // 市场类型：2秒合约 3U本位 4币本位
 		MarginAsset      string  `db:"margin_asset"`      // 保证金币种
 		Balance          float64 `db:"balance"`           // 账户权益余额
@@ -67,7 +67,7 @@ func newTContractMarginAccountModel(conn sqlx.SqlConn, c cache.CacheConf, opts .
 	}
 }
 
-func (m *defaultTContractMarginAccountModel) Delete(ctx context.Context, id uint64) error {
+func (m *defaultTContractMarginAccountModel) Delete(ctx context.Context, id int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
@@ -82,7 +82,7 @@ func (m *defaultTContractMarginAccountModel) Delete(ctx context.Context, id uint
 	return err
 }
 
-func (m *defaultTContractMarginAccountModel) FindOne(ctx context.Context, id uint64) (*TContractMarginAccount, error) {
+func (m *defaultTContractMarginAccountModel) FindOne(ctx context.Context, id int64) (*TContractMarginAccount, error) {
 	tContractMarginAccountIdKey := fmt.Sprintf("%s%v", cacheTContractMarginAccountIdPrefix, id)
 	var resp TContractMarginAccount
 	err := m.QueryRowCtx(ctx, &resp, tContractMarginAccountIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
@@ -99,7 +99,7 @@ func (m *defaultTContractMarginAccountModel) FindOne(ctx context.Context, id uin
 	}
 }
 
-func (m *defaultTContractMarginAccountModel) FindOneByTenantIdUserIdMarketTypeMarginAsset(ctx context.Context, tenantId uint64, userId uint64, marketType int64, marginAsset string) (*TContractMarginAccount, error) {
+func (m *defaultTContractMarginAccountModel) FindOneByTenantIdUserIdMarketTypeMarginAsset(ctx context.Context, tenantId int64, userId int64, marketType int64, marginAsset string) (*TContractMarginAccount, error) {
 	tContractMarginAccountTenantIdUserIdMarketTypeMarginAssetKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTContractMarginAccountTenantIdUserIdMarketTypeMarginAssetPrefix, tenantId, userId, marketType, marginAsset)
 	var resp TContractMarginAccount
 	err := m.QueryRowIndexCtx(ctx, &resp, tContractMarginAccountTenantIdUserIdMarketTypeMarginAssetKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {

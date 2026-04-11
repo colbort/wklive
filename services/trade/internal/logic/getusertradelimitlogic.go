@@ -2,9 +2,12 @@ package logic
 
 import (
 	"context"
+	"errors"
 
+	"wklive/common/helper"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
+	"wklive/services/trade/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +28,13 @@ func NewGetUserTradeLimitLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 // 获取用户交易限制
 func (l *GetUserTradeLimitLogic) GetUserTradeLimit(in *trade.GetUserTradeLimitReq) (*trade.GetUserTradeLimitResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &trade.GetUserTradeLimitResp{}, nil
+	item, err := l.svcCtx.RiskUserTradeLimitModel.FindOneByTenantIdUserIdMarketType(l.ctx, in.TenantId, in.UserId, int64(in.MarketType))
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
+	resp := &trade.GetUserTradeLimitResp{Base: helper.OkResp()}
+	if item != nil {
+		resp.Data = riskUserTradeLimitToProto(item)
+	}
+	return resp, nil
 }

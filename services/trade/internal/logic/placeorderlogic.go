@@ -2,9 +2,16 @@ package logic
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 
+	"wklive/common/conv"
+	"wklive/common/helper"
+	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
+	"wklive/services/trade/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,7 +32,112 @@ func NewPlaceOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PlaceO
 
 // 下单
 func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrderResp, error) {
-	// todo: add your logic here and delete this line
+	symbol, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, in.SymbolId)
+	if errors.Is(err, models.ErrNotFound) || (err == nil && symbol.TenantId != in.TenantId) {
+		return &trade.PlaceOrderResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	if in.ClientOrderId != "" {
+		exists, err := l.svcCtx.TradeOrderModel.FindOneByTenantIdUserIdClientOrderId(l.ctx, in.TenantId, in.UserId, in.ClientOrderId)
+		if err != nil && !errors.Is(err, models.ErrNotFound) {
+			return nil, err
+		}
+		if exists != nil {
+			return &trade.PlaceOrderResp{Base: helper.OkResp(), Order: orderToProto(exists)}, nil
+		}
+	}
 
-	return &trade.PlaceOrderResp{}, nil
+	price := mustParseFloat(in.Price)
+	qty := mustParseFloat(in.Qty)
+	amount := mustParseFloat(in.Amount)
+	if amount == 0 {
+		if price > 0 && qty > 0 {
+			amount = price * qty
+		} else {
+			amount = qty
+		}
+	}
+	if qty <= 0 && amount <= 0 {
+		return &trade.PlaceOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
+
+	orderNo, err := l.svcCtx.GenerateBizNo(l.ctx, "TRD")
+	if err != nil {
+		return nil, err
+	}
+	now := utils.NowMillis()
+	order := &models.TTradeOrder{
+		TenantId:      in.TenantId,
+		OrderNo:       orderNo,
+		ClientOrderId: in.ClientOrderId,
+		UserId:        in.UserId,
+		SymbolId:      in.SymbolId,
+		MarketType:    int64(in.MarketType),
+		Side:          int64(in.Side),
+		PositionSide:  int64(in.PositionSide),
+		OrderType:     int64(in.OrderType),
+		TimeInForce:   int64(in.TimeInForce),
+		Status:        int64(trade.OrderStatus_ORDER_STATUS_PENDING),
+		Price:         price,
+		Qty:           qty,
+		Amount:        amount,
+		FilledQty:     0,
+		FilledAmount:  0,
+		AvgPrice:      0,
+		Fee:           0,
+		FeeAsset:      marginAssetForSymbol(symbol),
+		Source:        int64(in.OrderSource),
+		IsReduceOnly:  conv.BoolInt64(in.IsReduceOnly),
+		IsCloseOnly:   conv.BoolInt64(in.IsCloseOnly),
+		TriggerPrice:  mustParseFloat(in.TriggerPrice),
+		TriggerType:   int64(in.TriggerType),
+		BizExt:        sql.NullString{String: "", Valid: false},
+		CreateTimes:   now,
+		UpdateTimes:   now,
+	}
+	res, err := l.svcCtx.TradeOrderModel.Insert(l.ctx, order)
+	if err != nil {
+		return nil, err
+	}
+	id, _ := res.LastInsertId()
+	order.Id = id
+
+	if in.MarketType == trade.MarketType_MARKET_TYPE_SPOT {
+		spot := &models.TTradeOrderSpot{
+			TenantId:     in.TenantId,
+			OrderId:      order.Id,
+			FrozenAsset:  symbol.QuoteAsset,
+			FrozenAmount: amount,
+			SettleAsset:  symbol.SettleAsset,
+			SettleAmount: amount,
+			CreateTimes:  now,
+			UpdateTimes:  now,
+		}
+		if _, err = l.svcCtx.TradeOrderSpotModel.Insert(l.ctx, spot); err != nil {
+			return nil, err
+		}
+	} else {
+		marginAsset := marginAssetForSymbol(symbol)
+		contract := &models.TTradeOrderContract{
+			TenantId:          in.TenantId,
+			OrderId:           order.Id,
+			MarginMode:        int64(in.MarginMode),
+			Leverage:          int64(ensureLeverage(symbol, in.Leverage)),
+			MarginAsset:       marginAsset,
+			MarginAmount:      amount,
+			ClosePositionType: 0,
+			LiquidationPrice:  0,
+			TakeProfitPrice:   mustParseFloat(in.TakeProfitPrice),
+			StopLossPrice:     mustParseFloat(in.StopLossPrice),
+			CreateTimes:       now,
+			UpdateTimes:       now,
+		}
+		if _, err = l.svcCtx.TradeOrderContractModel.Insert(l.ctx, contract); err != nil {
+			return nil, err
+		}
+	}
+
+	return &trade.PlaceOrderResp{Base: helper.OkResp(), Order: orderToProto(order)}, nil
 }

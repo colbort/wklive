@@ -29,9 +29,9 @@ var (
 type (
 	tStakeRewardLogModel interface {
 		Insert(ctx context.Context, data *TStakeRewardLog) (sql.Result, error)
-		FindOne(ctx context.Context, id uint64) (*TStakeRewardLog, error)
+		FindOne(ctx context.Context, id int64) (*TStakeRewardLog, error)
 		Update(ctx context.Context, data *TStakeRewardLog) error
-		Delete(ctx context.Context, id uint64) error
+		Delete(ctx context.Context, id int64) error
 	}
 
 	defaultTStakeRewardLogModel struct {
@@ -40,12 +40,12 @@ type (
 	}
 
 	TStakeRewardLog struct {
-		Id               uint64  `db:"id"`                 // 主键ID
-		TenantId         uint64  `db:"tenant_id"`          // 租户ID
-		OrderId          uint64  `db:"order_id"`           // 质押订单ID
+		Id               int64   `db:"id"`                 // 主键ID
+		TenantId         int64   `db:"tenant_id"`          // 租户ID
+		OrderId          int64   `db:"order_id"`           // 质押订单ID
 		OrderNo          string  `db:"order_no"`           // 质押订单号
-		Uid              uint64  `db:"uid"`                // 用户ID
-		ProductId        uint64  `db:"product_id"`         // 质押产品ID
+		Uid              int64   `db:"uid"`                // 用户ID
+		ProductId        int64   `db:"product_id"`         // 质押产品ID
 		ProductName      string  `db:"product_name"`       // 质押产品名称快照
 		CoinSymbol       string  `db:"coin_symbol"`        // 质押币种符号快照
 		RewardCoinSymbol string  `db:"reward_coin_symbol"` // 收益币种符号快照
@@ -54,12 +54,12 @@ type (
 		AfterReward      float64 `db:"after_reward"`       // 发放后累计收益
 		RewardType       int64   `db:"reward_type"`        // 收益类型：1日收益 2到期收益 3补发收益 4手动发放
 		RewardStatus     int64   `db:"reward_status"`      // 发放状态：0失败 1成功
-		RewardTimes      uint64  `db:"reward_times"`       // 收益发放时间戳
+		RewardTimes      int64   `db:"reward_times"`       // 收益发放时间戳
 		Remark           string  `db:"remark"`             // 备注
-		CreateUserId     uint64  `db:"create_user_id"`     // 创建人ID
-		UpdateUserId     uint64  `db:"update_user_id"`     // 更新人ID
-		CreateTimes      uint64  `db:"create_times"`       // 创建时间戳
-		UpdateTimes      uint64  `db:"update_times"`       // 更新时间戳
+		CreateUserId     int64   `db:"create_user_id"`     // 创建人ID
+		UpdateUserId     int64   `db:"update_user_id"`     // 更新人ID
+		CreateTimes      int64   `db:"create_times"`       // 创建时间戳
+		UpdateTimes      int64   `db:"update_times"`       // 更新时间戳
 	}
 )
 
@@ -70,7 +70,7 @@ func newTStakeRewardLogModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache
 	}
 }
 
-func (m *defaultTStakeRewardLogModel) Delete(ctx context.Context, id uint64) error {
+func (m *defaultTStakeRewardLogModel) Delete(ctx context.Context, id int64) error {
 	tStakeRewardLogIdKey := fmt.Sprintf("%s%v", cacheTStakeRewardLogIdPrefix, id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
@@ -79,7 +79,7 @@ func (m *defaultTStakeRewardLogModel) Delete(ctx context.Context, id uint64) err
 	return err
 }
 
-func (m *defaultTStakeRewardLogModel) FindOne(ctx context.Context, id uint64) (*TStakeRewardLog, error) {
+func (m *defaultTStakeRewardLogModel) FindOne(ctx context.Context, id int64) (*TStakeRewardLog, error) {
 	tStakeRewardLogIdKey := fmt.Sprintf("%s%v", cacheTStakeRewardLogIdPrefix, id)
 	var resp TStakeRewardLog
 	err := m.QueryRowCtx(ctx, &resp, tStakeRewardLogIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {

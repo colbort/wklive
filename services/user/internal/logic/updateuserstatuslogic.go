@@ -3,13 +3,14 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
-	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type UpdateUserStatusLogic struct {
@@ -48,7 +49,7 @@ func (l *UpdateUserStatusLogic) UpdateUserStatus(in *user.UpdateUserStatusReq) (
 		tuser.Remark.String = in.Remark
 		tuser.Remark.Valid = true
 	}
-	tuser.UpdateTimes = time.Now().UnixMilli()
+	tuser.UpdateTimes = utils.NowMillis()
 
 	err = l.svcCtx.UserModel.Update(l.ctx, tuser)
 	if err != nil {
