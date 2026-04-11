@@ -7,8 +7,11 @@ import (
 	"wklive/services/trade/internal/config"
 	"wklive/services/trade/models"
 
+	"wklive/proto/asset"
+
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
+	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type ServiceContext struct {
@@ -31,10 +34,12 @@ type ServiceContext struct {
 	RiskUserSymbolLimitModel  models.RiskUserSymbolLimitModel
 	RiskOrderCheckLogModel    models.RiskOrderCheckLogModel
 	BizTradeEventModel        models.BizTradeEventModel
+	AssetClient               asset.AssetInternalClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
+	assetCli := zrpc.MustNewClient(c.AssetRpc)
 	return &ServiceContext{
 		Config:                    c,
 		Redis:                     redis.MustNewRedis(c.Redis.RedisConf),
@@ -55,6 +60,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		RiskUserSymbolLimitModel:  models.NewTRiskUserSymbolLimitModel(conn, c.CacheRedis).(models.RiskUserSymbolLimitModel),
 		RiskOrderCheckLogModel:    models.NewTRiskOrderCheckLogModel(conn, c.CacheRedis).(models.RiskOrderCheckLogModel),
 		BizTradeEventModel:        models.NewTBizTradeEventModel(conn, c.CacheRedis).(models.BizTradeEventModel),
+		AssetClient:               asset.NewAssetInternalClient(assetCli.Conn()),
 	}
 }
 

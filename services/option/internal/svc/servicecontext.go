@@ -1,10 +1,12 @@
 package svc
 
 import (
+	"wklive/proto/asset"
 	"wklive/services/option/internal/config"
 	"wklive/services/option/models"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
+	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type ServiceContext struct {
@@ -19,10 +21,12 @@ type ServiceContext struct {
 	OptionSettlementModel     models.OptionSettlementModel
 	OptionAccountModel        models.OptionAccountModel
 	OptionBillModel           models.OptionBillModel
+	AssetClient               asset.AssetInternalClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
+	assetCli := zrpc.MustNewClient(c.AssetRpc)
 	return &ServiceContext{
 		Config:                    c,
 		OptionContractModel:       models.NewTOptionContractModel(conn, c.CacheRedis).(models.OptionContractModel),
@@ -35,5 +39,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		OptionSettlementModel:     models.NewTOptionSettlementModel(conn, c.CacheRedis).(models.OptionSettlementModel),
 		OptionAccountModel:        models.NewTOptionAccountModel(conn, c.CacheRedis).(models.OptionAccountModel),
 		OptionBillModel:           models.NewTOptionBillModel(conn, c.CacheRedis).(models.OptionBillModel),
+		AssetClient:               asset.NewAssetInternalClient(assetCli.Conn()),
 	}
 }

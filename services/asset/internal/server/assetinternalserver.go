@@ -47,6 +47,12 @@ func (s *AssetInternalServer) UnfreezeAsset(ctx context.Context, in *asset.Unfre
 	return l.UnfreezeAsset(in)
 }
 
+// 按业务单号解冻余额
+func (s *AssetInternalServer) UnfreezeAssetByBizNo(ctx context.Context, in *asset.UnfreezeAssetByBizNoReq) (*asset.ChangeAssetResp, error) {
+	l := logic.NewUnfreezeAssetByBizNoLogic(ctx, s.svcCtx)
+	return l.UnfreezeAssetByBizNo(in)
+}
+
 // 扣减冻结余额
 func (s *AssetInternalServer) DeductFrozenAsset(ctx context.Context, in *asset.DeductFrozenAssetReq) (*asset.ChangeAssetResp, error) {
 	l := logic.NewDeductFrozenAssetLogic(ctx, s.svcCtx)
@@ -65,10 +71,22 @@ func (s *AssetInternalServer) UnlockAsset(ctx context.Context, in *asset.UnlockA
 	return l.UnlockAsset(in)
 }
 
+// 按业务单号解锁
+func (s *AssetInternalServer) UnlockAssetByBizNo(ctx context.Context, in *asset.UnlockAssetByBizNoReq) (*asset.ChangeAssetResp, error) {
+	l := logic.NewUnlockAssetByBizNoLogic(ctx, s.svcCtx)
+	return l.UnlockAssetByBizNo(in)
+}
+
 // 扣减锁仓余额
 func (s *AssetInternalServer) DeductLockedAsset(ctx context.Context, in *asset.DeductLockedAssetReq) (*asset.ChangeAssetResp, error) {
 	l := logic.NewDeductLockedAssetLogic(ctx, s.svcCtx)
 	return l.DeductLockedAsset(in)
+}
+
+// 按业务单号扣减锁仓余额
+func (s *AssetInternalServer) DeductLockedAssetByBizNo(ctx context.Context, in *asset.DeductLockedAssetByBizNoReq) (*asset.ChangeAssetResp, error) {
+	l := logic.NewDeductLockedAssetByBizNoLogic(ctx, s.svcCtx)
+	return l.DeductLockedAssetByBizNo(in)
 }
 
 // 钱包划转

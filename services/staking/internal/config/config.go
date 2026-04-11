@@ -11,4 +11,5 @@ type Config struct {
 	Mysql      struct {
 		DataSource string
 	} `json:"Mysql" yaml:"Mysql"`
+	AssetRpc zrpc.RpcClientConf
 }

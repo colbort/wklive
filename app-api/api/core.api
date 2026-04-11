@@ -4,6 +4,10 @@ import "user_public.api"
 import "user_private.api"
 import "payment.api"
 import "itick.api"
+import "asset.api"
+import "option.api"
+import "staking.api"
+import "trade.api"
 
 //
 type Interval {

@@ -1,9 +1,11 @@
 package logic
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"wklive/common/conv"
+	"wklive/proto/asset"
 	"wklive/proto/trade"
 	"wklive/services/trade/models"
 )
@@ -11,6 +13,10 @@ import (
 func mustParseFloat(v string) float64 {
 	value, _ := conv.ParseFloatField(v)
 	return value
+}
+
+type orderAssetExt struct {
+	FreezeNo string `json:"freezeNo,omitempty"`
 }
 
 func symbolToProto(item *models.TTradeSymbol) *trade.TradeSymbol {
@@ -500,5 +506,46 @@ func openOrderStatuses() []int64 {
 	return []int64{
 		int64(trade.OrderStatus_ORDER_STATUS_PENDING),
 		int64(trade.OrderStatus_ORDER_STATUS_PART_FILLED),
+	}
+}
+
+func marshalOrderAssetExt(ext orderAssetExt) (string, error) {
+	if ext.FreezeNo == "" {
+		return "", nil
+	}
+	buf, err := json.Marshal(ext)
+	if err != nil {
+		return "", err
+	}
+	return string(buf), nil
+}
+
+func parseOrderAssetExt(raw string) (orderAssetExt, error) {
+	if raw == "" {
+		return orderAssetExt{}, nil
+	}
+	var ext orderAssetExt
+	if err := json.Unmarshal([]byte(raw), &ext); err != nil {
+		return orderAssetExt{}, err
+	}
+	return ext, nil
+}
+
+func spotFrozenAssetAndAmount(symbol *models.TTradeSymbol, side trade.TradeSide, qty, amount float64) (string, float64) {
+	if symbol == nil {
+		return "", 0
+	}
+	if side == trade.TradeSide_TRADE_SIDE_SELL {
+		return symbol.BaseAsset, qty
+	}
+	return symbol.QuoteAsset, amount
+}
+
+func walletTypeForMarket(marketType trade.MarketType) asset.WalletType {
+	switch marketType {
+	case trade.MarketType_MARKET_TYPE_SPOT:
+		return asset.WalletType_WALLET_TYPE_SPOT
+	default:
+		return asset.WalletType_WALLET_TYPE_CONTRACT
 	}
 }

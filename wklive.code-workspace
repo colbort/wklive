@@ -80,7 +80,8 @@
       "totp",
       "tuser",
       "wklive",
-      "zeromicro"
+      "zeromicro",
+      "zrpc"
     ]
   },
   "launch": {

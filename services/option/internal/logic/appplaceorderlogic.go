@@ -8,6 +8,7 @@ import (
 	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/proto/asset"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
@@ -52,6 +53,18 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 		return &option.AppPlaceOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.QuantityFormatError, l.ctx))}, nil
 	}
 
+	marginAmount := 0.0
+	if in.PositionEffect == option.PositionEffect_POSITION_EFFECT_OPEN {
+		multiplier := contract.Multiplier
+		if multiplier <= 0 {
+			multiplier = contract.ContractUnit
+		}
+		if multiplier <= 0 {
+			multiplier = 1
+		}
+		marginAmount = price * qty * multiplier
+	}
+
 	if in.ClientOrderId != "" {
 		exists, err := l.svcCtx.OptionOrderModel.FindOneByTenantIdUidClientOrderId(l.ctx, in.TenantId, in.Uid, in.ClientOrderId)
 		if err != nil && !errors.Is(err, models.ErrNotFound) {
@@ -81,7 +94,7 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 		Turnover:         0,
 		Fee:              0,
 		FeeCoin:          contract.SettleCoin,
-		MarginAmount:     0,
+		MarginAmount:     marginAmount,
 		Source:           int64(option.OrderSource_ORDER_SOURCE_APP),
 		ClientOrderId:    in.ClientOrderId,
 		ReduceOnly:       int64(in.ReduceOnly),
@@ -97,6 +110,40 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 	id, err := result.LastInsertId()
 	if err != nil {
 		return nil, err
+	}
+
+	if marginAmount > 0 {
+		resp, err := l.svcCtx.AssetClient.FreezeAsset(l.ctx, &asset.FreezeAssetReq{
+			TenantId:   in.TenantId,
+			UserId:     in.Uid,
+			WalletType: asset.WalletType_WALLET_TYPE_OPTION,
+			Coin:       contract.SettleCoin,
+			Amount:     conv.FloatString(marginAmount),
+			BizType:    asset.BizType_BIZ_TYPE_OPTION,
+			SceneType:  asset.SceneType_SCENE_TYPE_PLACE_ORDER,
+			BizId:      id,
+			BizNo:      order.OrderNo,
+			Remark:     "option place order freeze",
+		})
+		if err != nil {
+			order.Status = int64(option.OrderStatus_ORDER_STATUS_REJECTED)
+			order.CancelReason = err.Error()
+			order.UpdateTimes = time.Now().Unix()
+			_ = l.svcCtx.OptionOrderModel.Update(l.ctx, order)
+			return nil, err
+		}
+		if resp == nil || resp.Base == nil || resp.Base.Code != 0 {
+			order.Status = int64(option.OrderStatus_ORDER_STATUS_REJECTED)
+			if resp != nil && resp.Base != nil {
+				order.CancelReason = resp.Base.Msg
+			}
+			order.UpdateTimes = time.Now().Unix()
+			_ = l.svcCtx.OptionOrderModel.Update(l.ctx, order)
+			if resp != nil && resp.Base != nil {
+				return &option.AppPlaceOrderResp{Base: resp.Base, OrderNo: order.OrderNo, OrderId: id}, nil
+			}
+			return nil, err
+		}
 	}
 
 	return &option.AppPlaceOrderResp{Base: helper.OkResp(), OrderNo: order.OrderNo, OrderId: id}, nil

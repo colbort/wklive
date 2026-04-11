@@ -7,6 +7,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/asset"
 	"wklive/proto/staking"
 	"wklive/services/staking/internal/svc"
 	"wklive/services/staking/models"
@@ -65,6 +66,78 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 	rewardAmount := order.PendingReward
 	redeemNo := conv.GenerateBizNo("SKR")
 	now := utils.NowMillis()
+	unlockAmount := redeemAmount - feeAmount
+	if unlockAmount < 0 {
+		unlockAmount = 0
+	}
+	if unlockAmount > 0 {
+		resp, err := l.svcCtx.AssetClient.UnlockAssetByBizNo(l.ctx, &asset.UnlockAssetByBizNoReq{
+			TenantId:      order.TenantId,
+			TargetBizType: asset.BizType_BIZ_TYPE_STAKING,
+			TargetBizNo:   order.OrderNo,
+			Amount:        conv.FloatString(unlockAmount),
+			BizType:       asset.BizType_BIZ_TYPE_STAKING,
+			SceneType:     asset.SceneType_SCENE_TYPE_STAKING_RELEASE,
+			BizId:         order.Id,
+			BizNo:         redeemNo,
+			Remark:        in.Remark,
+		})
+		if err != nil {
+			return nil, err
+		}
+		if resp == nil || resp.Base == nil || resp.Base.Code != 0 {
+			if resp != nil && resp.Base != nil {
+				return &staking.AppRedeemResp{Base: resp.Base}, nil
+			}
+			return nil, err
+		}
+	}
+	if feeAmount > 0 {
+		resp, err := l.svcCtx.AssetClient.DeductLockedAssetByBizNo(l.ctx, &asset.DeductLockedAssetByBizNoReq{
+			TenantId:      order.TenantId,
+			TargetBizType: asset.BizType_BIZ_TYPE_STAKING,
+			TargetBizNo:   order.OrderNo,
+			Amount:        conv.FloatString(feeAmount),
+			BizType:       asset.BizType_BIZ_TYPE_STAKING,
+			SceneType:     asset.SceneType_SCENE_TYPE_STAKING_RELEASE,
+			BizId:         order.Id,
+			BizNo:         redeemNo,
+			Remark:        "staking redeem fee deduct",
+		})
+		if err != nil {
+			return nil, err
+		}
+		if resp == nil || resp.Base == nil || resp.Base.Code != 0 {
+			if resp != nil && resp.Base != nil {
+				return &staking.AppRedeemResp{Base: resp.Base}, nil
+			}
+			return nil, err
+		}
+	}
+	if rewardAmount > 0 {
+		resp, err := l.svcCtx.AssetClient.AddAvailable(l.ctx, &asset.AddAvailableReq{
+			TenantId:   order.TenantId,
+			UserId:     order.Uid,
+			WalletType: asset.WalletType_WALLET_TYPE_EARN,
+			Coin:       order.RewardCoinSymbol,
+			Amount:     conv.FloatString(rewardAmount),
+			BizType:    asset.BizType_BIZ_TYPE_STAKING,
+			SceneType:  asset.SceneType_SCENE_TYPE_STAKING_REWARD,
+			BizId:      order.Id,
+			BizNo:      redeemNo,
+			Remark:     in.Remark,
+		})
+		if err != nil {
+			return nil, err
+		}
+		if resp == nil || resp.Base == nil || resp.Base.Code != 0 {
+			if resp != nil && resp.Base != nil {
+				return &staking.AppRedeemResp{Base: resp.Base}, nil
+			}
+			return nil, err
+		}
+	}
+
 	if _, err := l.svcCtx.StakeRedeemLogModel.Insert(l.ctx, &models.TStakeRedeemLog{
 		TenantId:     order.TenantId,
 		OrderId:      order.Id,

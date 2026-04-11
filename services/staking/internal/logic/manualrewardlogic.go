@@ -7,6 +7,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/asset"
 	"wklive/proto/staking"
 	"wklive/services/staking/internal/svc"
 	"wklive/services/staking/models"
@@ -44,6 +45,28 @@ func (l *ManualRewardLogic) ManualReward(in *staking.AdminManualRewardReq) (*sta
 	}
 
 	now := utils.NowMillis()
+	resp, err := l.svcCtx.AssetClient.AddAvailable(l.ctx, &asset.AddAvailableReq{
+		TenantId:   order.TenantId,
+		UserId:     order.Uid,
+		WalletType: asset.WalletType_WALLET_TYPE_EARN,
+		Coin:       order.RewardCoinSymbol,
+		Amount:     conv.FloatString(rewardAmount),
+		BizType:    asset.BizType_BIZ_TYPE_STAKING,
+		SceneType:  asset.SceneType_SCENE_TYPE_STAKING_REWARD,
+		BizId:      order.Id,
+		BizNo:      order.OrderNo,
+		Remark:     in.Remark,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if resp == nil || resp.Base == nil || resp.Base.Code != 0 {
+		if resp != nil && resp.Base != nil {
+			return &staking.AdminManualRewardResp{Page: resp.Base}, nil
+		}
+		return nil, err
+	}
+
 	if _, err := l.svcCtx.StakeRewardLogModel.Insert(l.ctx, &models.TStakeRewardLog{
 		TenantId:         order.TenantId,
 		OrderId:          order.Id,

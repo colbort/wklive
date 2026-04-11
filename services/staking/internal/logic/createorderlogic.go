@@ -8,6 +8,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/asset"
 	"wklive/proto/staking"
 	"wklive/services/staking/internal/svc"
 	"wklive/services/staking/models"
@@ -115,6 +116,29 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.AppCreateOrderReq) (*staking.
 		UpdateUserId:     in.Uid,
 		CreateTimes:      now,
 		UpdateTimes:      now,
+	}
+
+	lockResp, err := l.svcCtx.AssetClient.LockAsset(l.ctx, &asset.LockAssetReq{
+		TenantId:   in.TenantId,
+		UserId:     in.Uid,
+		WalletType: asset.WalletType_WALLET_TYPE_EARN,
+		Coin:       product.CoinSymbol,
+		Amount:     conv.FloatString(amount),
+		BizType:    asset.BizType_BIZ_TYPE_STAKING,
+		SceneType:  asset.SceneType_SCENE_TYPE_STAKING_JOIN,
+		BizNo:      orderNo,
+		StartTime:  now,
+		EndTime:    endTimes,
+		Remark:     in.Remark,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if lockResp == nil || lockResp.Base == nil || lockResp.Base.Code != 0 {
+		if lockResp != nil && lockResp.Base != nil {
+			return &staking.AppCreateOrderResp{Base: lockResp.Base}, nil
+		}
+		return nil, err
 	}
 
 	product.StakedAmount += amount

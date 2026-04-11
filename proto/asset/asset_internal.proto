@@ -22,6 +22,9 @@ service AssetInternal {
   // 解冻余额
   rpc UnfreezeAsset(UnfreezeAssetReq) returns (ChangeAssetResp);
 
+  // 按业务单号解冻余额
+  rpc UnfreezeAssetByBizNo(UnfreezeAssetByBizNoReq) returns (ChangeAssetResp);
+
   // 扣减冻结余额
   rpc DeductFrozenAsset(DeductFrozenAssetReq) returns (ChangeAssetResp);
 
@@ -31,8 +34,15 @@ service AssetInternal {
   // 解锁
   rpc UnlockAsset(UnlockAssetReq) returns (ChangeAssetResp);
 
+  // 按业务单号解锁
+  rpc UnlockAssetByBizNo(UnlockAssetByBizNoReq) returns (ChangeAssetResp);
+
   // 扣减锁仓余额
   rpc DeductLockedAsset(DeductLockedAssetReq) returns (ChangeAssetResp);
+
+  // 按业务单号扣减锁仓余额
+  rpc DeductLockedAssetByBizNo(DeductLockedAssetByBizNoReq)
+      returns (ChangeAssetResp);
 
   // 钱包划转
   rpc TransferAsset(TransferAssetReq) returns (TransferAssetResp);
@@ -95,6 +105,18 @@ message UnfreezeAssetReq {
   string remark = 8;
 }
 
+message UnfreezeAssetByBizNoReq {
+  int64 tenant_id = 1;
+  BizType target_biz_type = 2;
+  string target_biz_no = 3;
+  string amount = 4;
+  BizType biz_type = 5;
+  SceneType scene_type = 6;
+  int64 biz_id = 7;
+  string biz_no = 8;
+  string remark = 9;
+}
+
 message DeductFrozenAssetReq {
   int64 tenant_id = 1;
   string freeze_no = 2;
@@ -138,6 +160,18 @@ message UnlockAssetReq {
   string remark = 8;
 }
 
+message UnlockAssetByBizNoReq {
+  int64 tenant_id = 1;
+  BizType target_biz_type = 2;
+  string target_biz_no = 3;
+  string amount = 4;
+  BizType biz_type = 5;
+  SceneType scene_type = 6;
+  int64 biz_id = 7;
+  string biz_no = 8;
+  string remark = 9;
+}
+
 message DeductLockedAssetReq {
   int64 tenant_id = 1;
   string lock_no = 2;
@@ -147,6 +181,18 @@ message DeductLockedAssetReq {
   int64 biz_id = 6;
   string biz_no = 7;
   string remark = 8;
+}
+
+message DeductLockedAssetByBizNoReq {
+  int64 tenant_id = 1;
+  BizType target_biz_type = 2;
+  string target_biz_no = 3;
+  string amount = 4;
+  BizType biz_type = 5;
+  SceneType scene_type = 6;
+  int64 biz_id = 7;
+  string biz_no = 8;
+  string remark = 9;
 }
 
 message TransferAssetReq {

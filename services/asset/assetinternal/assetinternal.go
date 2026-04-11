@@ -14,19 +14,22 @@ import (
 )
 
 type (
-	AddAvailableReq      = asset.AddAvailableReq
-	ChangeAssetResp      = asset.ChangeAssetResp
-	DeductFrozenAssetReq = asset.DeductFrozenAssetReq
-	DeductLockedAssetReq = asset.DeductLockedAssetReq
-	FreezeAssetReq       = asset.FreezeAssetReq
-	FreezeAssetResp      = asset.FreezeAssetResp
-	LockAssetReq         = asset.LockAssetReq
-	LockAssetResp        = asset.LockAssetResp
-	SubAvailableReq      = asset.SubAvailableReq
-	TransferAssetReq     = asset.TransferAssetReq
-	TransferAssetResp    = asset.TransferAssetResp
-	UnfreezeAssetReq     = asset.UnfreezeAssetReq
-	UnlockAssetReq       = asset.UnlockAssetReq
+	AddAvailableReq             = asset.AddAvailableReq
+	ChangeAssetResp             = asset.ChangeAssetResp
+	DeductFrozenAssetReq        = asset.DeductFrozenAssetReq
+	DeductLockedAssetByBizNoReq = asset.DeductLockedAssetByBizNoReq
+	DeductLockedAssetReq        = asset.DeductLockedAssetReq
+	FreezeAssetReq              = asset.FreezeAssetReq
+	FreezeAssetResp             = asset.FreezeAssetResp
+	LockAssetReq                = asset.LockAssetReq
+	LockAssetResp               = asset.LockAssetResp
+	SubAvailableReq             = asset.SubAvailableReq
+	TransferAssetReq            = asset.TransferAssetReq
+	TransferAssetResp           = asset.TransferAssetResp
+	UnfreezeAssetByBizNoReq     = asset.UnfreezeAssetByBizNoReq
+	UnfreezeAssetReq            = asset.UnfreezeAssetReq
+	UnlockAssetByBizNoReq       = asset.UnlockAssetByBizNoReq
+	UnlockAssetReq              = asset.UnlockAssetReq
 
 	AssetInternal interface {
 		// 增加可用余额
@@ -37,14 +40,20 @@ type (
 		FreezeAsset(ctx context.Context, in *FreezeAssetReq, opts ...grpc.CallOption) (*FreezeAssetResp, error)
 		// 解冻余额
 		UnfreezeAsset(ctx context.Context, in *UnfreezeAssetReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
+		// 按业务单号解冻余额
+		UnfreezeAssetByBizNo(ctx context.Context, in *UnfreezeAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
 		// 扣减冻结余额
 		DeductFrozenAsset(ctx context.Context, in *DeductFrozenAssetReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
 		// 锁仓
 		LockAsset(ctx context.Context, in *LockAssetReq, opts ...grpc.CallOption) (*LockAssetResp, error)
 		// 解锁
 		UnlockAsset(ctx context.Context, in *UnlockAssetReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
+		// 按业务单号解锁
+		UnlockAssetByBizNo(ctx context.Context, in *UnlockAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
 		// 扣减锁仓余额
 		DeductLockedAsset(ctx context.Context, in *DeductLockedAssetReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
+		// 按业务单号扣减锁仓余额
+		DeductLockedAssetByBizNo(ctx context.Context, in *DeductLockedAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
 		// 钱包划转
 		TransferAsset(ctx context.Context, in *TransferAssetReq, opts ...grpc.CallOption) (*TransferAssetResp, error)
 	}
@@ -84,6 +93,12 @@ func (m *defaultAssetInternal) UnfreezeAsset(ctx context.Context, in *UnfreezeAs
 	return client.UnfreezeAsset(ctx, in, opts...)
 }
 
+// 按业务单号解冻余额
+func (m *defaultAssetInternal) UnfreezeAssetByBizNo(ctx context.Context, in *UnfreezeAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
+	client := asset.NewAssetInternalClient(m.cli.Conn())
+	return client.UnfreezeAssetByBizNo(ctx, in, opts...)
+}
+
 // 扣减冻结余额
 func (m *defaultAssetInternal) DeductFrozenAsset(ctx context.Context, in *DeductFrozenAssetReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
 	client := asset.NewAssetInternalClient(m.cli.Conn())
@@ -102,10 +117,22 @@ func (m *defaultAssetInternal) UnlockAsset(ctx context.Context, in *UnlockAssetR
 	return client.UnlockAsset(ctx, in, opts...)
 }
 
+// 按业务单号解锁
+func (m *defaultAssetInternal) UnlockAssetByBizNo(ctx context.Context, in *UnlockAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
+	client := asset.NewAssetInternalClient(m.cli.Conn())
+	return client.UnlockAssetByBizNo(ctx, in, opts...)
+}
+
 // 扣减锁仓余额
 func (m *defaultAssetInternal) DeductLockedAsset(ctx context.Context, in *DeductLockedAssetReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
 	client := asset.NewAssetInternalClient(m.cli.Conn())
 	return client.DeductLockedAsset(ctx, in, opts...)
+}
+
+// 按业务单号扣减锁仓余额
+func (m *defaultAssetInternal) DeductLockedAssetByBizNo(ctx context.Context, in *DeductLockedAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
+	client := asset.NewAssetInternalClient(m.cli.Conn())
+	return client.DeductLockedAssetByBizNo(ctx, in, opts...)
 }
 
 // 钱包划转

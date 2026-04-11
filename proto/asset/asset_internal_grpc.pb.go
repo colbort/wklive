@@ -19,15 +19,18 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AssetInternal_AddAvailable_FullMethodName      = "/asset.AssetInternal/AddAvailable"
-	AssetInternal_SubAvailable_FullMethodName      = "/asset.AssetInternal/SubAvailable"
-	AssetInternal_FreezeAsset_FullMethodName       = "/asset.AssetInternal/FreezeAsset"
-	AssetInternal_UnfreezeAsset_FullMethodName     = "/asset.AssetInternal/UnfreezeAsset"
-	AssetInternal_DeductFrozenAsset_FullMethodName = "/asset.AssetInternal/DeductFrozenAsset"
-	AssetInternal_LockAsset_FullMethodName         = "/asset.AssetInternal/LockAsset"
-	AssetInternal_UnlockAsset_FullMethodName       = "/asset.AssetInternal/UnlockAsset"
-	AssetInternal_DeductLockedAsset_FullMethodName = "/asset.AssetInternal/DeductLockedAsset"
-	AssetInternal_TransferAsset_FullMethodName     = "/asset.AssetInternal/TransferAsset"
+	AssetInternal_AddAvailable_FullMethodName             = "/asset.AssetInternal/AddAvailable"
+	AssetInternal_SubAvailable_FullMethodName             = "/asset.AssetInternal/SubAvailable"
+	AssetInternal_FreezeAsset_FullMethodName              = "/asset.AssetInternal/FreezeAsset"
+	AssetInternal_UnfreezeAsset_FullMethodName            = "/asset.AssetInternal/UnfreezeAsset"
+	AssetInternal_UnfreezeAssetByBizNo_FullMethodName     = "/asset.AssetInternal/UnfreezeAssetByBizNo"
+	AssetInternal_DeductFrozenAsset_FullMethodName        = "/asset.AssetInternal/DeductFrozenAsset"
+	AssetInternal_LockAsset_FullMethodName                = "/asset.AssetInternal/LockAsset"
+	AssetInternal_UnlockAsset_FullMethodName              = "/asset.AssetInternal/UnlockAsset"
+	AssetInternal_UnlockAssetByBizNo_FullMethodName       = "/asset.AssetInternal/UnlockAssetByBizNo"
+	AssetInternal_DeductLockedAsset_FullMethodName        = "/asset.AssetInternal/DeductLockedAsset"
+	AssetInternal_DeductLockedAssetByBizNo_FullMethodName = "/asset.AssetInternal/DeductLockedAssetByBizNo"
+	AssetInternal_TransferAsset_FullMethodName            = "/asset.AssetInternal/TransferAsset"
 )
 
 // AssetInternalClient is the client API for AssetInternal service.
@@ -44,14 +47,20 @@ type AssetInternalClient interface {
 	FreezeAsset(ctx context.Context, in *FreezeAssetReq, opts ...grpc.CallOption) (*FreezeAssetResp, error)
 	// 解冻余额
 	UnfreezeAsset(ctx context.Context, in *UnfreezeAssetReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
+	// 按业务单号解冻余额
+	UnfreezeAssetByBizNo(ctx context.Context, in *UnfreezeAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
 	// 扣减冻结余额
 	DeductFrozenAsset(ctx context.Context, in *DeductFrozenAssetReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
 	// 锁仓
 	LockAsset(ctx context.Context, in *LockAssetReq, opts ...grpc.CallOption) (*LockAssetResp, error)
 	// 解锁
 	UnlockAsset(ctx context.Context, in *UnlockAssetReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
+	// 按业务单号解锁
+	UnlockAssetByBizNo(ctx context.Context, in *UnlockAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
 	// 扣减锁仓余额
 	DeductLockedAsset(ctx context.Context, in *DeductLockedAssetReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
+	// 按业务单号扣减锁仓余额
+	DeductLockedAssetByBizNo(ctx context.Context, in *DeductLockedAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
 	// 钱包划转
 	TransferAsset(ctx context.Context, in *TransferAssetReq, opts ...grpc.CallOption) (*TransferAssetResp, error)
 }
@@ -104,6 +113,16 @@ func (c *assetInternalClient) UnfreezeAsset(ctx context.Context, in *UnfreezeAss
 	return out, nil
 }
 
+func (c *assetInternalClient) UnfreezeAssetByBizNo(ctx context.Context, in *UnfreezeAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ChangeAssetResp)
+	err := c.cc.Invoke(ctx, AssetInternal_UnfreezeAssetByBizNo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *assetInternalClient) DeductFrozenAsset(ctx context.Context, in *DeductFrozenAssetReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ChangeAssetResp)
@@ -134,10 +153,30 @@ func (c *assetInternalClient) UnlockAsset(ctx context.Context, in *UnlockAssetRe
 	return out, nil
 }
 
+func (c *assetInternalClient) UnlockAssetByBizNo(ctx context.Context, in *UnlockAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ChangeAssetResp)
+	err := c.cc.Invoke(ctx, AssetInternal_UnlockAssetByBizNo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *assetInternalClient) DeductLockedAsset(ctx context.Context, in *DeductLockedAssetReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ChangeAssetResp)
 	err := c.cc.Invoke(ctx, AssetInternal_DeductLockedAsset_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *assetInternalClient) DeductLockedAssetByBizNo(ctx context.Context, in *DeductLockedAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ChangeAssetResp)
+	err := c.cc.Invoke(ctx, AssetInternal_DeductLockedAssetByBizNo_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -168,14 +207,20 @@ type AssetInternalServer interface {
 	FreezeAsset(context.Context, *FreezeAssetReq) (*FreezeAssetResp, error)
 	// 解冻余额
 	UnfreezeAsset(context.Context, *UnfreezeAssetReq) (*ChangeAssetResp, error)
+	// 按业务单号解冻余额
+	UnfreezeAssetByBizNo(context.Context, *UnfreezeAssetByBizNoReq) (*ChangeAssetResp, error)
 	// 扣减冻结余额
 	DeductFrozenAsset(context.Context, *DeductFrozenAssetReq) (*ChangeAssetResp, error)
 	// 锁仓
 	LockAsset(context.Context, *LockAssetReq) (*LockAssetResp, error)
 	// 解锁
 	UnlockAsset(context.Context, *UnlockAssetReq) (*ChangeAssetResp, error)
+	// 按业务单号解锁
+	UnlockAssetByBizNo(context.Context, *UnlockAssetByBizNoReq) (*ChangeAssetResp, error)
 	// 扣减锁仓余额
 	DeductLockedAsset(context.Context, *DeductLockedAssetReq) (*ChangeAssetResp, error)
+	// 按业务单号扣减锁仓余额
+	DeductLockedAssetByBizNo(context.Context, *DeductLockedAssetByBizNoReq) (*ChangeAssetResp, error)
 	// 钱包划转
 	TransferAsset(context.Context, *TransferAssetReq) (*TransferAssetResp, error)
 	mustEmbedUnimplementedAssetInternalServer()
@@ -200,6 +245,9 @@ func (UnimplementedAssetInternalServer) FreezeAsset(context.Context, *FreezeAsse
 func (UnimplementedAssetInternalServer) UnfreezeAsset(context.Context, *UnfreezeAssetReq) (*ChangeAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UnfreezeAsset not implemented")
 }
+func (UnimplementedAssetInternalServer) UnfreezeAssetByBizNo(context.Context, *UnfreezeAssetByBizNoReq) (*ChangeAssetResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method UnfreezeAssetByBizNo not implemented")
+}
 func (UnimplementedAssetInternalServer) DeductFrozenAsset(context.Context, *DeductFrozenAssetReq) (*ChangeAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeductFrozenAsset not implemented")
 }
@@ -209,8 +257,14 @@ func (UnimplementedAssetInternalServer) LockAsset(context.Context, *LockAssetReq
 func (UnimplementedAssetInternalServer) UnlockAsset(context.Context, *UnlockAssetReq) (*ChangeAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UnlockAsset not implemented")
 }
+func (UnimplementedAssetInternalServer) UnlockAssetByBizNo(context.Context, *UnlockAssetByBizNoReq) (*ChangeAssetResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method UnlockAssetByBizNo not implemented")
+}
 func (UnimplementedAssetInternalServer) DeductLockedAsset(context.Context, *DeductLockedAssetReq) (*ChangeAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeductLockedAsset not implemented")
+}
+func (UnimplementedAssetInternalServer) DeductLockedAssetByBizNo(context.Context, *DeductLockedAssetByBizNoReq) (*ChangeAssetResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeductLockedAssetByBizNo not implemented")
 }
 func (UnimplementedAssetInternalServer) TransferAsset(context.Context, *TransferAssetReq) (*TransferAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method TransferAsset not implemented")
@@ -308,6 +362,24 @@ func _AssetInternal_UnfreezeAsset_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AssetInternal_UnfreezeAssetByBizNo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnfreezeAssetByBizNoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AssetInternalServer).UnfreezeAssetByBizNo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AssetInternal_UnfreezeAssetByBizNo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AssetInternalServer).UnfreezeAssetByBizNo(ctx, req.(*UnfreezeAssetByBizNoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _AssetInternal_DeductFrozenAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeductFrozenAssetReq)
 	if err := dec(in); err != nil {
@@ -362,6 +434,24 @@ func _AssetInternal_UnlockAsset_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AssetInternal_UnlockAssetByBizNo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnlockAssetByBizNoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AssetInternalServer).UnlockAssetByBizNo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AssetInternal_UnlockAssetByBizNo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AssetInternalServer).UnlockAssetByBizNo(ctx, req.(*UnlockAssetByBizNoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _AssetInternal_DeductLockedAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeductLockedAssetReq)
 	if err := dec(in); err != nil {
@@ -376,6 +466,24 @@ func _AssetInternal_DeductLockedAsset_Handler(srv interface{}, ctx context.Conte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AssetInternalServer).DeductLockedAsset(ctx, req.(*DeductLockedAssetReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AssetInternal_DeductLockedAssetByBizNo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeductLockedAssetByBizNoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AssetInternalServer).DeductLockedAssetByBizNo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AssetInternal_DeductLockedAssetByBizNo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AssetInternalServer).DeductLockedAssetByBizNo(ctx, req.(*DeductLockedAssetByBizNoReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -422,6 +530,10 @@ var AssetInternal_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AssetInternal_UnfreezeAsset_Handler,
 		},
 		{
+			MethodName: "UnfreezeAssetByBizNo",
+			Handler:    _AssetInternal_UnfreezeAssetByBizNo_Handler,
+		},
+		{
 			MethodName: "DeductFrozenAsset",
 			Handler:    _AssetInternal_DeductFrozenAsset_Handler,
 		},
@@ -434,8 +546,16 @@ var AssetInternal_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AssetInternal_UnlockAsset_Handler,
 		},
 		{
+			MethodName: "UnlockAssetByBizNo",
+			Handler:    _AssetInternal_UnlockAssetByBizNo_Handler,
+		},
+		{
 			MethodName: "DeductLockedAsset",
 			Handler:    _AssetInternal_DeductLockedAsset_Handler,
+		},
+		{
+			MethodName: "DeductLockedAssetByBizNo",
+			Handler:    _AssetInternal_DeductLockedAssetByBizNo_Handler,
 		},
 		{
 			MethodName: "TransferAsset",

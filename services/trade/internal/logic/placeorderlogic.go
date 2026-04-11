@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -104,12 +105,17 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 	id, _ := res.LastInsertId()
 	order.Id = id
 
+	var (
+		frozenAsset  string
+		frozenAmount float64
+	)
 	if in.MarketType == trade.MarketType_MARKET_TYPE_SPOT {
+		frozenAsset, frozenAmount = spotFrozenAssetAndAmount(symbol, in.Side, qty, amount)
 		spot := &models.TTradeOrderSpot{
 			TenantId:     in.TenantId,
 			OrderId:      order.Id,
-			FrozenAsset:  symbol.QuoteAsset,
-			FrozenAmount: amount,
+			FrozenAsset:  frozenAsset,
+			FrozenAmount: frozenAmount,
 			SettleAsset:  symbol.SettleAsset,
 			SettleAmount: amount,
 			CreateTimes:  now,
@@ -120,6 +126,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		}
 	} else {
 		marginAsset := marginAssetForSymbol(symbol)
+		frozenAsset, frozenAmount = marginAsset, amount
 		contract := &models.TTradeOrderContract{
 			TenantId:          in.TenantId,
 			OrderId:           order.Id,
@@ -137,6 +144,16 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		if _, err = l.svcCtx.TradeOrderContractModel.Insert(l.ctx, contract); err != nil {
 			return nil, err
 		}
+	}
+
+	if _, err = freezeOrderAsset(l.svcCtx, l.ctx, order, symbol, frozenAsset, frozenAmount); err != nil {
+		order.Status = int64(trade.OrderStatus_ORDER_STATUS_REJECTED)
+		order.CancelReason = fmt.Sprintf("asset freeze failed: %v", err)
+		order.UpdateTimes = utils.NowMillis()
+		if updateErr := l.svcCtx.TradeOrderModel.Update(l.ctx, order); updateErr != nil {
+			l.Errorf("update rejected order failed, orderNo=%s err=%v", order.OrderNo, updateErr)
+		}
+		return nil, err
 	}
 
 	return &trade.PlaceOrderResp{Base: helper.OkResp(), Order: orderToProto(order)}, nil

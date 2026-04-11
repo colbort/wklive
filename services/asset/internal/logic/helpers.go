@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	"wklive/common/conv"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/svc"
@@ -403,4 +404,26 @@ func assetStatusFilter(status asset.AssetStatus) int64 {
 
 func EnumToFilterString(bizType asset.BizType, sceneType asset.SceneType) (string, string) {
 	return assetBizType(bizType), assetSceneType(sceneType)
+}
+
+func findFreezeByBizNo(ctx context.Context, svcCtx *svc.ServiceContext, tenantId int64, bizType asset.BizType, bizNo string) (*models.TAssetFreeze, error) {
+	list, _, err := svcCtx.AssetFreezeModel.FindPage(ctx, tenantId, 0, 0, "", FromBizTypeEnum(bizType), bizNo, 0, 0, 1)
+	if err != nil {
+		return nil, err
+	}
+	if len(list) == 0 {
+		return nil, fmt.Errorf("freeze record not found for bizNo=%s", bizNo)
+	}
+	return list[0], nil
+}
+
+func findLockByBizNo(ctx context.Context, svcCtx *svc.ServiceContext, tenantId int64, bizType asset.BizType, bizNo string) (*models.TAssetLock, error) {
+	list, _, err := svcCtx.AssetLockModel.FindPage(ctx, tenantId, 0, 0, "", FromBizTypeEnum(bizType), bizNo, 0, 0, 1)
+	if err != nil {
+		return nil, err
+	}
+	if len(list) == 0 {
+		return nil, fmt.Errorf("lock record not found for bizNo=%s", bizNo)
+	}
+	return list[0], nil
 }
