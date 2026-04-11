@@ -6,6 +6,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/gogo/protobuf/proto"
+	"github.com/zeromicro/go-zero/core/logx"
+	"golang.org/x/time/rate"
 	"io"
 	"net/http"
 	"net/url"
@@ -13,16 +16,12 @@ import (
 	"strings"
 	"sync"
 	"time"
-
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/itick"
 	"wklive/services/itick/internal/pkg/utils"
 	"wklive/services/itick/internal/svc"
 	"wklive/services/itick/models"
-
-	"github.com/gogo/protobuf/proto"
-	"github.com/zeromicro/go-zero/core/logx"
-	"golang.org/x/time/rate"
 )
 
 type SyncKlinesLogic struct {
@@ -43,12 +42,12 @@ func NewSyncKlinesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncKl
 func (l *SyncKlinesLogic) SyncKlines(in *itick.SyncKlinesReq) (*itick.SyncKlinesResp, error) {
 	if strings.TrimSpace(in.ApiUrl) == "" {
 		return &itick.SyncKlinesResp{
-			Base: helper.GetErrResp(1, "ApiUrl 不能为空"),
+			Base: helper.GetErrResp(1, i18n.Translate(i18n.ApiURLRequired, l.ctx)),
 		}, nil
 	}
 	if strings.TrimSpace(in.ApiToken) == "" {
 		return &itick.SyncKlinesResp{
-			Base: helper.GetErrResp(1, "ApiToken 不能为空"),
+			Base: helper.GetErrResp(1, i18n.Translate(i18n.ApiTokenRequired, l.ctx)),
 		}, nil
 	}
 
@@ -63,13 +62,13 @@ func (l *SyncKlinesLogic) SyncKlines(in *itick.SyncKlinesReq) (*itick.SyncKlines
 	if err := distLock.Acquire(l.ctx, lockKey, lockValue, 30*time.Second); err != nil {
 		if errors.Is(err, utils.ErrLockNotAcquired) {
 			return &itick.SyncKlinesResp{
-				Base: helper.GetErrResp(1, "已有同步任务正在执行，请稍后再试"),
+				Base: helper.GetErrResp(1, i18n.Translate(i18n.SyncTaskAlreadyRunning, l.ctx)),
 			}, nil
 		}
 
 		logx.Errorf("acquire lock failed, key=%s err=%v", lockKey, err)
 		return &itick.SyncKlinesResp{
-			Base: helper.GetErrResp(1, "获取分布式锁失败"),
+			Base: helper.GetErrResp(1, i18n.Translate(i18n.DistributedLockAcquireFailed, l.ctx)),
 		}, nil
 	}
 
@@ -90,7 +89,7 @@ func (l *SyncKlinesLogic) SyncKlines(in *itick.SyncKlinesReq) (*itick.SyncKlines
 
 		logx.Errorf("create sync task failed, err=%v", err)
 		return &itick.SyncKlinesResp{
-			Base: helper.GetErrResp(1, "创建同步任务失败"),
+			Base: helper.GetErrResp(1, i18n.Translate(i18n.SyncTaskCreateFailed, l.ctx)),
 		}, nil
 	}
 
@@ -470,19 +469,19 @@ func (w *SyncKlinesWorker) getKlineFromItick(
 	symbol = strings.TrimSpace(symbol)
 
 	if apiURL == "" {
-		return nil, errors.New("apiURL is required")
+		return nil, errors.New(i18n.Translate(i18n.APIURLIsRequired, ctx))
 	}
 	if token == "" {
-		return nil, errors.New("token is required")
+		return nil, errors.New(i18n.Translate(i18n.TokenRequired, ctx))
 	}
 	if category == "" {
-		return nil, errors.New("category is required")
+		return nil, errors.New(i18n.Translate(i18n.CategoryRequired, ctx))
 	}
 	if market == "" {
-		return nil, errors.New("market is required")
+		return nil, errors.New(i18n.Translate(i18n.MarketRequired, ctx))
 	}
 	if symbol == "" {
-		return nil, errors.New("symbol is required")
+		return nil, errors.New(i18n.Translate(i18n.SymbolRequired, ctx))
 	}
 
 	base, err := url.Parse(apiURL)

@@ -270,4 +270,3 @@ message OptionSettlementDetail {
   OptionSettlement settlement = 1;
   OptionContract contract = 2;
 }
-

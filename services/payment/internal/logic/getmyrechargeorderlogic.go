@@ -3,13 +3,12 @@ package logic
 import (
 	"context"
 	"errors"
-
+	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type GetMyRechargeOrderLogic struct {
@@ -35,14 +34,14 @@ func (l *GetMyRechargeOrderLogic) GetMyRechargeOrder(in *payment.GetMyRechargeOr
 
 	if order == nil {
 		return &payment.GetMyRechargeOrderResp{
-			Base: helper.GetErrResp(404, "订单不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.OrderNotFound, l.ctx)),
 		}, nil
 	}
 
 	// Check permission - user can only see their own orders
 	if order.UserId != in.UserId || order.TenantId != in.TenantId {
 		return &payment.GetMyRechargeOrderResp{
-			Base: helper.GetErrResp(403, "无权访问该订单"),
+			Base: helper.GetErrResp(403, i18n.Translate(i18n.NoPermissionAccessOrder, l.ctx)),
 		}, nil
 	}
 

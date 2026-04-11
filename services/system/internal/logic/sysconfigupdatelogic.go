@@ -3,14 +3,13 @@ package logic
 import (
 	"context"
 	"database/sql"
-
+	"github.com/zeromicro/go-zero/core/errorx"
+	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/internal/utils"
-
-	"github.com/zeromicro/go-zero/core/errorx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SysConfigUpdateLogic struct {
@@ -30,7 +29,7 @@ func NewSysConfigUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 // 更新系统配置
 func (l *SysConfigUpdateLogic) SysConfigUpdate(in *system.SysConfigUpdateReq) (*system.RespBase, error) {
 	if err := utils.CheckConfig(in.ConfigKey, in.ConfigValue); err != nil {
-		return nil, errorx.Wrap(err, "配置项校验失败")
+		return nil, errorx.Wrap(err, i18n.Translate(i18n.ConfigValidationFailed, l.ctx))
 	}
 	config, err := l.svcCtx.ConfigModel.FindOne(l.ctx, in.Id)
 	if err != nil {

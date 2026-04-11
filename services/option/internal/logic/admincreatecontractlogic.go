@@ -3,15 +3,14 @@ package logic
 import (
 	"context"
 	"errors"
+	"github.com/zeromicro/go-zero/core/logx"
 	"time"
-
 	"wklive/common/conv"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type AdminCreateContractLogic struct {
@@ -31,38 +30,38 @@ func NewAdminCreateContractLogic(ctx context.Context, svcCtx *svc.ServiceContext
 // 创建期权合约
 func (l *AdminCreateContractLogic) AdminCreateContract(in *option.CreateContractReq) (*option.CreateContractResp, error) {
 	if _, err := l.svcCtx.OptionContractModel.FindOneByTenantIdContractCode(l.ctx, in.TenantId, in.ContractCode); err == nil {
-		return &option.CreateContractResp{Base: helper.GetErrResp(400, "合约编码已存在")}, nil
+		return &option.CreateContractResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ContractCodeAlreadyExists, l.ctx))}, nil
 	} else if !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 
 	strikePrice, err := conv.ParseFloatField(in.StrikePrice)
 	if err != nil {
-		return &option.CreateContractResp{Base: helper.GetErrResp(400, "strike_price格式错误")}, nil
+		return &option.CreateContractResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.StrikePriceFormatError, l.ctx))}, nil
 	}
 	contractUnit, err := conv.ParseFloatField(in.ContractUnit)
 	if err != nil {
-		return &option.CreateContractResp{Base: helper.GetErrResp(400, "contract_unit格式错误")}, nil
+		return &option.CreateContractResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ContractUnitFormatError, l.ctx))}, nil
 	}
 	minOrderQty, err := conv.ParseFloatField(in.MinOrderQty)
 	if err != nil {
-		return &option.CreateContractResp{Base: helper.GetErrResp(400, "min_order_qty格式错误")}, nil
+		return &option.CreateContractResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.MinOrderQuantityFormatError, l.ctx))}, nil
 	}
 	maxOrderQty, err := conv.ParseFloatField(in.MaxOrderQty)
 	if err != nil {
-		return &option.CreateContractResp{Base: helper.GetErrResp(400, "max_order_qty格式错误")}, nil
+		return &option.CreateContractResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.MaxOrderQuantityFormatError, l.ctx))}, nil
 	}
 	priceTick, err := conv.ParseFloatField(in.PriceTick)
 	if err != nil {
-		return &option.CreateContractResp{Base: helper.GetErrResp(400, "price_tick格式错误")}, nil
+		return &option.CreateContractResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.PriceTickFormatError, l.ctx))}, nil
 	}
 	qtyStep, err := conv.ParseFloatField(in.QtyStep)
 	if err != nil {
-		return &option.CreateContractResp{Base: helper.GetErrResp(400, "qty_step格式错误")}, nil
+		return &option.CreateContractResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.QuantityStepFormatError, l.ctx))}, nil
 	}
 	multiplier, err := conv.ParseFloatField(in.Multiplier)
 	if err != nil {
-		return &option.CreateContractResp{Base: helper.GetErrResp(400, "multiplier格式错误")}, nil
+		return &option.CreateContractResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.MultiplierFormatError, l.ctx))}, nil
 	}
 
 	now := time.Now().Unix()

@@ -3,16 +3,15 @@ package logic
 import (
 	"context"
 	"database/sql"
+	"github.com/robfig/cron/v3"
+	"github.com/zeromicro/go-zero/core/logx"
 	"time"
-
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
-
-	"github.com/robfig/cron/v3"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SysCronJobCreateLogic struct {
@@ -34,7 +33,7 @@ func (l *SysCronJobCreateLogic) SysCronJobCreate(in *system.SysCronJobCreateReq)
 	_, err := cron.ParseStandard(in.CronExpression)
 	if err != nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(400, "无效的 Cron 表达式"),
+			Base: helper.GetErrResp(400, i18n.Translate(i18n.InvalidCronExpression, l.ctx)),
 		}, nil
 	}
 	job, err := l.svcCtx.JobModel.FindByInvokeTarget(l.ctx, in.InvokeTarget)
@@ -45,7 +44,7 @@ func (l *SysCronJobCreateLogic) SysCronJobCreate(in *system.SysCronJobCreateReq)
 	}
 	if job != nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(400, "定时任务已存在"),
+			Base: helper.GetErrResp(400, i18n.Translate(i18n.CronJobAlreadyExists, l.ctx)),
 		}, nil
 	}
 	userName, err := utils.GetUsernameFromCtx(l.ctx)

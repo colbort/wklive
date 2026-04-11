@@ -6,34 +6,28 @@ import "proto/common/common.proto";
 
 option go_package = "wklive/proto/itick;itick";
 
-
 message SyncProductsReq {
-  string api_url = 1; // ITICK API地址
+  string api_url = 1;   // ITICK API地址
   string api_token = 2; // ITICK API密钥
-  string ws_url = 3; // ITICK WebSocket地址
+  string ws_url = 3;    // ITICK WebSocket地址
 }
 
-message SyncProductsResp {
-  common.RespBase base = 1;
-}
+message SyncProductsResp { common.RespBase base = 1; }
 
 message SyncKlinesReq {
-  string api_url = 1; // ITICK API地址
+  string api_url = 1;   // ITICK API地址
   string api_token = 2; // ITICK API密钥
-  string ws_url = 3; // ITICK WebSocket地址
+  string ws_url = 3;    // ITICK WebSocket地址
 }
 
-message SyncKlinesResp {
-  common.RespBase base = 1;
-}
-
+message SyncKlinesResp { common.RespBase base = 1; }
 
 // ====================
 // 定时任务
 // ====================
 service ItickTask {
   // 同步产品列表
-  rpc SyncProducts (SyncProductsReq) returns (SyncProductsResp);
+  rpc SyncProducts(SyncProductsReq) returns (SyncProductsResp);
   // 同步K线数据
-  rpc SyncKlines (SyncKlinesReq) returns (SyncKlinesResp);
+  rpc SyncKlines(SyncKlinesReq) returns (SyncKlinesResp);
 }

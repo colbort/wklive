@@ -8,19 +8,15 @@ import "proto/itick/model.proto";
 
 option go_package = "wklive/proto/itick;itick";
 
-message AppEmpty {
-}
+message AppEmpty {}
 
-message AppCommonResp {
-  common.RespBase base = 1;
-}
+message AppCommonResp { common.RespBase base = 1; }
 
 // ====================
 // 产品类型 & 产品
 // ====================
 
-message ListVisibleCategoriesReq {
-}
+message ListVisibleCategoriesReq {}
 
 message ListVisibleCategoriesResp {
   common.RespBase base = 1;
@@ -73,8 +69,8 @@ message GetQuoteResp {
 
 message MarketSymbol {
   string category_code = 1;
-	string market = 2;
-	string symbol = 3;
+  string market = 2;
+  string symbol = 3;
 }
 
 message BatchGetQuoteReq {
@@ -88,16 +84,14 @@ message BatchGetQuoteResp {
   repeated itick.Quote data = 2;
 }
 
-message SubscribeRequest {
-  repeated SubscribeTopic topics = 1;
-}
+message SubscribeRequest { repeated SubscribeTopic topics = 1; }
 
 message SubscribeTopic {
-  string topic = 1; // quote depth tick kline
+  string topic = 1;         // quote depth tick kline
   string category_code = 2; // crypto forex indices stock future fund
-  string symbol = 3; // BTCUSDT / EURUSD / ...
-  string market = 4; // BA / US / HK ...
-  string interval = 5; // 1m 5m 1h 1d
+  string symbol = 3;        // BTCUSDT / EURUSD / ...
+  string market = 4;        // BA / US / HK ...
+  string interval = 5;      // 1m 5m 1h 1d
 }
 
 message PushReply {
@@ -114,19 +108,19 @@ message KlineInterval {
   int32 k_type = 2;
 }
 
-message KlineIntervalsResp {
-  repeated KlineInterval data = 1;
-}
+message KlineIntervalsResp { repeated KlineInterval data = 1; }
 
 // ====================
 // app service
 // ====================
 service ItickApp {
   // 获取允许显示的产品类型
-  rpc ListVisibleCategories(ListVisibleCategoriesReq) returns (ListVisibleCategoriesResp);
+  rpc ListVisibleCategories(ListVisibleCategoriesReq)
+      returns (ListVisibleCategoriesResp);
 
   // 获取允许显示的产品
-  rpc ListVisibleProducts(ListVisibleProductsReq) returns (ListVisibleProductsResp);
+  rpc ListVisibleProducts(ListVisibleProductsReq)
+      returns (ListVisibleProductsResp);
 
   // 获取K线
   rpc GetKline(GetKlineReq) returns (GetKlineResp);

@@ -8,55 +8,56 @@ import "proto/option/model.proto";
 
 option go_package = "wklive/proto/option;option";
 
-
 // 期权 APP 端服务
 service OptionApp {
   // 获取可交易期权合约列表
-  rpc AppListContracts (AppListContractsReq) returns (AppListContractsResp);
+  rpc AppListContracts(AppListContractsReq) returns (AppListContractsResp);
 
   // 获取期权合约详情
-  rpc AppGetContractDetail (AppGetContractDetailReq) returns (AppGetContractDetailResp);
+  rpc AppGetContractDetail(AppGetContractDetailReq)
+      returns (AppGetContractDetailResp);
 
   // 提交期权下单请求
-  rpc AppPlaceOrder (AppPlaceOrderReq) returns (AppPlaceOrderResp);
+  rpc AppPlaceOrder(AppPlaceOrderReq) returns (AppPlaceOrderResp);
 
   // 撤销期权委托订单
-  rpc AppCancelOrder (AppCancelOrderReq) returns (AppCommonResp);
+  rpc AppCancelOrder(AppCancelOrderReq) returns (AppCommonResp);
 
   // 获取单个委托订单详情
-  rpc AppGetOrderDetail (AppGetOrderDetailReq) returns (AppGetOrderDetailResp);
+  rpc AppGetOrderDetail(AppGetOrderDetailReq) returns (AppGetOrderDetailResp);
 
   // 获取当前委托列表
-  rpc AppListCurrentOrders (AppListCurrentOrdersReq) returns (AppListCurrentOrdersResp);
+  rpc AppListCurrentOrders(AppListCurrentOrdersReq)
+      returns (AppListCurrentOrdersResp);
 
   // 获取历史委托列表
-  rpc AppListHistoryOrders (AppListHistoryOrdersReq) returns (AppListHistoryOrdersResp);
+  rpc AppListHistoryOrders(AppListHistoryOrdersReq)
+      returns (AppListHistoryOrdersResp);
 
   // 获取成交记录列表
-  rpc AppListTrades (AppListTradesReq) returns (AppListTradesResp);
+  rpc AppListTrades(AppListTradesReq) returns (AppListTradesResp);
 
   // 获取持仓列表
-  rpc AppListPositions (AppListPositionsReq) returns (AppListPositionsResp);
+  rpc AppListPositions(AppListPositionsReq) returns (AppListPositionsResp);
 
   // 获取单个持仓详情
-  rpc AppGetPositionDetail (AppGetPositionDetailReq) returns (AppGetPositionDetailResp);
+  rpc AppGetPositionDetail(AppGetPositionDetailReq)
+      returns (AppGetPositionDetailResp);
 
   // 发起行权
-  rpc AppExercise (AppExerciseReq) returns (AppExerciseResp);
+  rpc AppExercise(AppExerciseReq) returns (AppExerciseResp);
 
   // 获取行权记录列表
-  rpc AppListExercises (AppListExercisesReq) returns (AppListExercisesResp);
+  rpc AppListExercises(AppListExercisesReq) returns (AppListExercisesResp);
 
   // 获取账户资产列表
-  rpc AppListAccounts (AppListAccountsReq) returns (AppListAccountsResp);
+  rpc AppListAccounts(AppListAccountsReq) returns (AppListAccountsResp);
 
   // 获取资金流水列表
-  rpc AppListBills (AppListBillsReq) returns (AppListBillsResp);
+  rpc AppListBills(AppListBillsReq) returns (AppListBillsResp);
 }
 
-message AppCommonResp {
-  common.RespBase base = 1;
-}
+message AppCommonResp { common.RespBase base = 1; }
 
 message AppListContractsReq {
   int64 tenant_id = 1;

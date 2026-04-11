@@ -3,13 +3,12 @@ package logic
 import (
 	"context"
 	"errors"
-
+	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type GetRechargeNotifyLogLogic struct {
@@ -40,7 +39,7 @@ func (l *GetRechargeNotifyLogLogic) GetRechargeNotifyLog(in *payment.GetRecharge
 
 	if notifyLog == nil {
 		return &payment.GetRechargeNotifyLogResp{
-			Base: helper.GetErrResp(404, "回调日志不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.NotifyLogNotFound, l.ctx)),
 		}, nil
 	}
 

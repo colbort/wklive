@@ -4,13 +4,11 @@ package payment;
 
 import "proto/common/common.proto";
 import "proto/payment/enum.proto";
-import "proto/payment/model.proto"; 
+import "proto/payment/model.proto";
 
 option go_package = "wklive/proto/payment;payment";
 
-message AdminCommonResp {
-  common.RespBase base = 1;
-}
+message AdminCommonResp { common.RespBase base = 1; }
 
 // ---------- 平台 ----------
 message CreatePayPlatformReq {
@@ -35,9 +33,7 @@ message UpdatePayPlatformReq {
   string remark = 8;
 }
 
-message GetPayPlatformReq {
-  int64 id = 1;
-}
+message GetPayPlatformReq { int64 id = 1; }
 
 message GetPayPlatformResp {
   common.RespBase base = 1;
@@ -77,9 +73,7 @@ message UpdatePayProductReq {
   string remark = 6;
 }
 
-message GetPayProductReq {
-  int64 id = 1;
-}
+message GetPayProductReq { int64 id = 1; }
 
 message GetPayProductResp {
   common.RespBase base = 1;
@@ -501,7 +495,6 @@ message GetWithdrawNotifyLogResp {
   common.RespBase base = 1;
   payment.PayNotifyLog data = 2;
 }
-  
 
 // Admin 接口
 service PaymentAdmin {
@@ -516,7 +509,7 @@ service PaymentAdmin {
 
   // 创建产品
   rpc CreatePayProduct(CreatePayProductReq) returns (AdminCommonResp);
-    // 更新产品
+  // 更新产品
   rpc UpdatePayProduct(UpdatePayProductReq) returns (AdminCommonResp);
   // 获取产品详情
   rpc GetPayProduct(GetPayProductReq) returns (GetPayProductResp);
@@ -526,69 +519,93 @@ service PaymentAdmin {
   // 租户开通平台
   rpc OpenTenantPayPlatform(OpenTenantPayPlatformReq) returns (AdminCommonResp);
   // 更新租户开通平台
-  rpc UpdateTenantPayPlatform(UpdateTenantPayPlatformReq) returns (AdminCommonResp);
+  rpc UpdateTenantPayPlatform(UpdateTenantPayPlatformReq)
+      returns (AdminCommonResp);
   // 获取租户开通平台详情
-  rpc GetTenantPayPlatform(GetTenantPayPlatformReq) returns (GetTenantPayPlatformResp);
+  rpc GetTenantPayPlatform(GetTenantPayPlatformReq)
+      returns (GetTenantPayPlatformResp);
   // 租户开通平台列表
-  rpc ListTenantPayPlatforms(ListTenantPayPlatformsReq) returns (ListTenantPayPlatformsResp);
+  rpc ListTenantPayPlatforms(ListTenantPayPlatformsReq)
+      returns (ListTenantPayPlatformsResp);
 
   // 租户支付账号
-  rpc CreateTenantPayAccount(CreateTenantPayAccountReq) returns (AdminCommonResp);
+  rpc CreateTenantPayAccount(CreateTenantPayAccountReq)
+      returns (AdminCommonResp);
   // 更新租户支付账号
-  rpc UpdateTenantPayAccount(UpdateTenantPayAccountReq) returns (AdminCommonResp);
+  rpc UpdateTenantPayAccount(UpdateTenantPayAccountReq)
+      returns (AdminCommonResp);
   // 获取租户支付账号详情
-  rpc GetTenantPayAccount(GetTenantPayAccountReq) returns (GetTenantPayAccountResp);
+  rpc GetTenantPayAccount(GetTenantPayAccountReq)
+      returns (GetTenantPayAccountResp);
   // 租户支付账号列表
-  rpc ListTenantPayAccounts(ListTenantPayAccountsReq) returns (ListTenantPayAccountsResp);
+  rpc ListTenantPayAccounts(ListTenantPayAccountsReq)
+      returns (ListTenantPayAccountsResp);
 
   // 创建租户支付通道
-  rpc CreateTenantPayChannel(CreateTenantPayChannelReq) returns (AdminCommonResp);
+  rpc CreateTenantPayChannel(CreateTenantPayChannelReq)
+      returns (AdminCommonResp);
   // 更新租户支付通道
-  rpc UpdateTenantPayChannel(UpdateTenantPayChannelReq) returns (AdminCommonResp);
+  rpc UpdateTenantPayChannel(UpdateTenantPayChannelReq)
+      returns (AdminCommonResp);
   // 获取租户支付通道详情
-  rpc GetTenantPayChannel(GetTenantPayChannelReq) returns (GetTenantPayChannelResp);
+  rpc GetTenantPayChannel(GetTenantPayChannelReq)
+      returns (GetTenantPayChannelResp);
   // 租户支付通道列表
-  rpc ListTenantPayChannels(ListTenantPayChannelsReq) returns (ListTenantPayChannelsResp);
+  rpc ListTenantPayChannels(ListTenantPayChannelsReq)
+      returns (ListTenantPayChannelsResp);
 
   // 创建通道规则
-  rpc CreateTenantPayChannelRule(CreateTenantPayChannelRuleReq) returns (AdminCommonResp);
+  rpc CreateTenantPayChannelRule(CreateTenantPayChannelRuleReq)
+      returns (AdminCommonResp);
   // 更新通道规则
-  rpc UpdateTenantPayChannelRule(UpdateTenantPayChannelRuleReq) returns (AdminCommonResp);
+  rpc UpdateTenantPayChannelRule(UpdateTenantPayChannelRuleReq)
+      returns (AdminCommonResp);
   // 获取通道规则详情
-  rpc GetTenantPayChannelRule(GetTenantPayChannelRuleReq) returns (GetTenantPayChannelRuleResp);
+  rpc GetTenantPayChannelRule(GetTenantPayChannelRuleReq)
+      returns (GetTenantPayChannelRuleResp);
   // 通道规则列表
-  rpc ListTenantPayChannelRules(ListTenantPayChannelRulesReq) returns (ListTenantPayChannelRulesResp);
+  rpc ListTenantPayChannelRules(ListTenantPayChannelRulesReq)
+      returns (ListTenantPayChannelRulesResp);
 
   // 用户充值统计
-  rpc GetUserRechargeStat(GetUserRechargeStatReq) returns (GetUserRechargeStatResp);
+  rpc GetUserRechargeStat(GetUserRechargeStatReq)
+      returns (GetUserRechargeStatResp);
   // 用户充值统计列表
-  rpc ListUserRechargeStats(ListUserRechargeStatsReq) returns (ListUserRechargeStatsResp);
+  rpc ListUserRechargeStats(ListUserRechargeStatsReq)
+      returns (ListUserRechargeStatsResp);
 
   // 充值订单列表
-  rpc ListRechargeOrders(ListRechargeOrdersReq) returns (ListRechargeOrdersResp);
+  rpc ListRechargeOrders(ListRechargeOrdersReq)
+      returns (ListRechargeOrdersResp);
   // 获取充值订单
   rpc GetRechargeOrder(GetRechargeOrderReq) returns (GetRechargeOrderResp);
   // 关闭充值订单
   rpc CloseRechargeOrder(CloseRechargeOrderReq) returns (AdminCommonResp);
   // 人工标记充值订单支付成功
-  rpc ManualMarkRechargeOrderSuccess(ManualMarkRechargeOrderSuccessReq) returns (AdminCommonResp);
+  rpc ManualMarkRechargeOrderSuccess(ManualMarkRechargeOrderSuccessReq)
+      returns (AdminCommonResp);
   // 重试回调
   rpc RetryNotify(RetryNotifyReq) returns (AdminCommonResp);
 
   // 充值回调日志列表
-  rpc ListRechargeNotifyLogs(ListRechargeNotifyLogsReq) returns (ListRechargeNotifyLogsResp);
+  rpc ListRechargeNotifyLogs(ListRechargeNotifyLogsReq)
+      returns (ListRechargeNotifyLogsResp);
   // 充值回调日志
-  rpc GetRechargeNotifyLog(GetRechargeNotifyLogReq) returns (GetRechargeNotifyLogResp);
+  rpc GetRechargeNotifyLog(GetRechargeNotifyLogReq)
+      returns (GetRechargeNotifyLogResp);
 
   // 获取提现订单列表
-  rpc ListWithdrawOrders(ListWithdrawOrdersReq) returns (ListWithdrawOrdersResp);
+  rpc ListWithdrawOrders(ListWithdrawOrdersReq)
+      returns (ListWithdrawOrdersResp);
   // 获取提现订单详情
   rpc GetWithdrawOrder(GetWithdrawOrderReq) returns (GetWithdrawOrderResp);
   // 审核提现订单
   rpc AuditWithdrawOrder(AuditWithdrawOrderReq) returns (AdminCommonResp);
-  
+
   // 提现回调日志列表
-  rpc ListWithdrawNotifyLogs(ListWithdrawNotifyLogsReq) returns (ListWithdrawNotifyLogsResp);
+  rpc ListWithdrawNotifyLogs(ListWithdrawNotifyLogsReq)
+      returns (ListWithdrawNotifyLogsResp);
   // 获取提现回调日志详情
-  rpc GetWithdrawNotifyLog(GetWithdrawNotifyLogReq) returns (GetWithdrawNotifyLogResp);
+  rpc GetWithdrawNotifyLog(GetWithdrawNotifyLogReq)
+      returns (GetWithdrawNotifyLogResp);
 }

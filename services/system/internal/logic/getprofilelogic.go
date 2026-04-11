@@ -3,14 +3,12 @@ package logic
 import (
 	"context"
 	"errors"
+	"github.com/zeromicro/go-zero/core/logx"
 	"sort"
-
+	"wklive/common/i18n"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
-
-	"github.com/zeromicro/go-zero/core/errorx"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type GetProfileLogic struct {
@@ -35,7 +33,7 @@ func (l *GetProfileLogic) GetProfile(in *system.ProfileReq) (*system.ProfileResp
 		return nil, err
 	}
 	if u.Status != 1 {
-		return nil, errorx.Wrap(errors.New("用户已禁用"), "用户已禁用")
+		return nil, errors.New(i18n.Translate(i18n.UserDisabled, l.ctx))
 	}
 
 	// 2) roleIds

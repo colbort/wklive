@@ -3,13 +3,12 @@ package logic
 import (
 	"context"
 	"errors"
-
+	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type GetUserRechargeStatLogic struct {
@@ -40,7 +39,7 @@ func (l *GetUserRechargeStatLogic) GetUserRechargeStat(in *payment.GetUserRechar
 
 	if stat == nil {
 		return &payment.GetUserRechargeStatResp{
-			Base: helper.GetErrResp(404, "执折杰不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.RechargeStatNotFound, l.ctx)),
 		}, nil
 	}
 

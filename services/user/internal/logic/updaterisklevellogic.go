@@ -3,14 +3,13 @@ package logic
 import (
 	"context"
 	"errors"
+	"github.com/zeromicro/go-zero/core/logx"
 	"time"
-
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type UpdateRiskLevelLogic struct {
@@ -37,7 +36,7 @@ func (l *UpdateRiskLevelLogic) UpdateRiskLevel(in *user.UpdateRiskLevelReq) (*us
 
 	if userSecurity == nil {
 		return &user.AdminCommonResp{
-			Base: helper.GetErrResp(404, "用户安全信息不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.UserSecurityInfoNotFound, l.ctx)),
 		}, nil
 	}
 

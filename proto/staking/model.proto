@@ -6,7 +6,6 @@ option go_package = "wklive/proto/staking;staking";
 
 import "proto/staking/enum.proto";
 
-
 // 质押产品
 message StakeProduct {
   uint64 id = 1;

@@ -3,15 +3,14 @@ package logic
 import (
 	"context"
 	"errors"
+	"github.com/zeromicro/go-zero/core/logx"
 	"time"
-
 	"wklive/common/conv"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type AppExerciseLogic struct {
@@ -33,31 +32,31 @@ func (l *AppExerciseLogic) AppExercise(in *option.AppExerciseReq) (*option.AppEx
 	position, err := l.svcCtx.OptionPositionModel.FindOne(l.ctx, in.PositionId)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &option.AppExerciseResp{Base: helper.GetErrResp(404, "持仓不存在")}, nil
+			return &option.AppExerciseResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.PositionNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
 	if position.TenantId != in.TenantId || position.Uid != in.Uid || position.AccountId != in.AccountId {
-		return &option.AppExerciseResp{Base: helper.GetErrResp(403, "无权操作该持仓")}, nil
+		return &option.AppExerciseResp{Base: helper.GetErrResp(403, i18n.Translate(i18n.NoPermissionOperatePosition, l.ctx))}, nil
 	}
 	if in.ContractId != 0 && position.ContractId != in.ContractId {
-		return &option.AppExerciseResp{Base: helper.GetErrResp(400, "contract_id与持仓不匹配")}, nil
+		return &option.AppExerciseResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ContractPositionMismatch, l.ctx))}, nil
 	}
 
 	contract, err := l.svcCtx.OptionContractModel.FindOne(l.ctx, position.ContractId)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &option.AppExerciseResp{Base: helper.GetErrResp(404, "合约不存在")}, nil
+			return &option.AppExerciseResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
 
 	exerciseQty, err := conv.ParseFloatField(in.ExerciseQty)
 	if err != nil || exerciseQty <= 0 {
-		return &option.AppExerciseResp{Base: helper.GetErrResp(400, "exercise_qty格式错误")}, nil
+		return &option.AppExerciseResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ExerciseQuantityFormatError, l.ctx))}, nil
 	}
 	if position.ExerciseableQty > 0 && exerciseQty > position.ExerciseableQty {
-		return &option.AppExerciseResp{Base: helper.GetErrResp(400, "超过可行权数量")}, nil
+		return &option.AppExerciseResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ExercisableQuantityExceeded, l.ctx))}, nil
 	}
 
 	now := time.Now().Unix()

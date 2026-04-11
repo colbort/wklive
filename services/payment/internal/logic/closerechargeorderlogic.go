@@ -3,14 +3,13 @@ package logic
 import (
 	"context"
 	"errors"
+	"github.com/zeromicro/go-zero/core/logx"
 	"time"
-
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type CloseRechargeOrderLogic struct {
@@ -42,14 +41,14 @@ func (l *CloseRechargeOrderLogic) CloseRechargeOrder(in *payment.CloseRechargeOr
 
 	if order == nil {
 		return &payment.AdminCommonResp{
-			Base: helper.GetErrResp(404, "订单不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.OrderNotFound, l.ctx)),
 		}, nil
 	}
 
 	// 仅有pending状态的订单才能关闭
 	if order.Status != int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PENDING) {
 		return &payment.AdminCommonResp{
-			Base: helper.GetErrResp(201, "只有未付款订单才能关闭"),
+			Base: helper.GetErrResp(201, i18n.Translate(i18n.OnlyUnpaidOrdersCanClose, l.ctx)),
 		}, nil
 	}
 

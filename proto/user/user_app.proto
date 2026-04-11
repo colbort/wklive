@@ -8,10 +8,7 @@ import "proto/user/model.proto";
 
 option go_package = "wklive/proto/user;user";
 
-
-message AppCommonResp {
-  common.RespBase base = 1;
-}
+message AppCommonResp { common.RespBase base = 1; }
 
 message RegisterReq {
   string tenant_code = 1;
@@ -50,26 +47,24 @@ message LoginResp {
 }
 
 message GuestLoginReq {
-	string device_id = 1;
-	string fingerprint = 2;
+  string device_id = 1;
+  string fingerprint = 2;
   string register_ip = 3;
 }
 
 message GuestLogin {
   string token = 1;
-	string uid = 2;
-	bool   is_new = 3;
+  string uid = 2;
+  bool is_new = 3;
   string username = 4;
 }
 
 message GuestLoginResp {
-	common.RespBase base = 1;
+  common.RespBase base = 1;
   GuestLogin data = 2;
 }
 
-message LogoutReq {
-  int64 user_id = 1;
-}
+message LogoutReq { int64 user_id = 1; }
 
 message RefreshTokenReq {
   string tenant_code = 1;
@@ -81,9 +76,7 @@ message RefreshTokenResp {
   common.TokenInfo token = 2;
 }
 
-message GetProfileReq {
-  int64 user_id = 1;
-}
+message GetProfileReq { int64 user_id = 1; }
 
 message GetProfileResp {
   common.RespBase base = 1;
@@ -117,9 +110,7 @@ message ChangeLoginPasswordReq {
   string confirm_password = 4;
 }
 
-message GetIdentityReq {
-  int64 user_id = 1;
-}
+message GetIdentityReq { int64 user_id = 1; }
 
 message GetIdentityResp {
   common.RespBase base = 1;
@@ -150,9 +141,7 @@ message SubmitIdentityResp {
   user.UserIdentity identity = 2;
 }
 
-message GetSecurityReq {
-  int64 user_id = 1;
-}
+message GetSecurityReq { int64 user_id = 1; }
 
 message GetSecurityResp {
   common.RespBase base = 1;
@@ -172,9 +161,7 @@ message ChangePayPasswordReq {
   string confirm_password = 4;
 }
 
-message InitGoogle2FAReq {
-  int64 user_id = 1;
-}
+message InitGoogle2FAReq { int64 user_id = 1; }
 
 message InitGoogle2FAResp {
   common.RespBase base = 1;

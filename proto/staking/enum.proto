@@ -7,15 +7,15 @@ option go_package = "wklive/proto/staking;staking";
 // 是否
 enum YesNo {
   YES_NO_UNSPECIFIED = 0;
-  YES_NO_NO = 1; // 否
+  YES_NO_NO = 1;  // 否
   YES_NO_YES = 2; // 是
 }
 
 // 产品状态
 enum ProductStatus {
   PRODUCT_STATUS_UNSPECIFIED = 0;
-  PRODUCT_STATUS_DISABLE = 1; // 禁用
-  PRODUCT_STATUS_ENABLE = 2; // 启用
+  PRODUCT_STATUS_DISABLE = 1;   // 禁用
+  PRODUCT_STATUS_ENABLE = 2;    // 启用
   PRODUCT_STATUS_OFF_SHELF = 3; // 下架
 }
 
@@ -23,63 +23,63 @@ enum ProductStatus {
 enum ProductType {
   PRODUCT_TYPE_UNSPECIFIED = 0;
   PRODUCT_TYPE_CURRENT = 1; // 活期
-  PRODUCT_TYPE_FIXED = 2; // 定期
+  PRODUCT_TYPE_FIXED = 2;   // 定期
 }
 
 // 计息方式
 enum InterestMode {
   INTEREST_MODE_UNSPECIFIED = 0;
-  INTEREST_MODE_DAILY = 1; // 按天计息
+  INTEREST_MODE_DAILY = 1;    // 按天计息
   INTEREST_MODE_MATURITY = 2; // 到期一次性计息
 }
 
 // 发息方式
 enum RewardMode {
   REWARD_MODE_UNSPECIFIED = 0;
-  REWARD_MODE_DAILY = 1; // 每日发放
+  REWARD_MODE_DAILY = 1;    // 每日发放
   REWARD_MODE_MATURITY = 2; // 到期发放
 }
 
 // 订单状态
 enum OrderStatus {
   ORDER_STATUS_UNSPECIFIED = 0;
-  ORDER_STATUS_STAKING = 1; // 质押中
-  ORDER_STATUS_EXPIRED = 2; // 已到期
-  ORDER_STATUS_REDEEMED = 3; // 已赎回
+  ORDER_STATUS_STAKING = 1;        // 质押中
+  ORDER_STATUS_EXPIRED = 2;        // 已到期
+  ORDER_STATUS_REDEEMED = 3;       // 已赎回
   ORDER_STATUS_EARLY_REDEEMED = 4; // 提前赎回
-  ORDER_STATUS_CANCELLED = 5; // 已取消
+  ORDER_STATUS_CANCELLED = 5;      // 已取消
 }
 
 // 赎回类型
 enum RedeemType {
   REDEEM_TYPE_UNSPECIFIED = 0;
-  REDEEM_TYPE_NONE = 1; // 未赎回
+  REDEEM_TYPE_NONE = 1;     // 未赎回
   REDEEM_TYPE_MATURITY = 2; // 到期赎回
-  REDEEM_TYPE_EARLY = 3; // 提前赎回
-  REDEEM_TYPE_MANUAL = 4; // 手动赎回
+  REDEEM_TYPE_EARLY = 3;    // 提前赎回
+  REDEEM_TYPE_MANUAL = 4;   // 手动赎回
 }
 
 // 收益类型
 enum RewardType {
   REWARD_TYPE_UNSPECIFIED = 0;
-  REWARD_TYPE_DAILY = 1; // 日收益
+  REWARD_TYPE_DAILY = 1;    // 日收益
   REWARD_TYPE_MATURITY = 2; // 到期收益
-  REWARD_TYPE_REISSUE = 3; // 补发收益
-  REWARD_TYPE_MANUAL = 4; // 手动发放
+  REWARD_TYPE_REISSUE = 3;  // 补发收益
+  REWARD_TYPE_MANUAL = 4;   // 手动发放
 }
 
 // 收益状态
 enum RewardStatus {
   REWARD_STATUS_UNSPECIFIED = 0;
-  REWARD_STATUS_FAIL = 1; // 失败
+  REWARD_STATUS_FAIL = 1;    // 失败
   REWARD_STATUS_SUCCESS = 2; // 成功
 }
 
 // 赎回状态
 enum RedeemStatus {
   REDEEM_STATUS_UNSPECIFIED = 0;
-  REDEEM_STATUS_FAIL = 1; // 失败
-  REDEEM_STATUS_SUCCESS = 2; // 成功
+  REDEEM_STATUS_FAIL = 1;       // 失败
+  REDEEM_STATUS_SUCCESS = 2;    // 成功
   REDEEM_STATUS_PROCESSING = 3; // 处理中
 }
 
@@ -87,7 +87,7 @@ enum RedeemStatus {
 enum SourceType {
   SOURCE_TYPE_UNSPECIFIED = 0;
   SOURCE_TYPE_ADMIN = 1; // 后台
-  SOURCE_TYPE_H5 = 2; // H5
-  SOURCE_TYPE_APP = 3; // APP
-  SOURCE_TYPE_API = 4; // API
+  SOURCE_TYPE_H5 = 2;    // H5
+  SOURCE_TYPE_APP = 3;   // APP
+  SOURCE_TYPE_API = 4;   // API
 }

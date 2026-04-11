@@ -3,13 +3,12 @@ package logic
 import (
 	"context"
 	"errors"
-
+	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type AdminGetBillLogic struct {
@@ -31,12 +30,12 @@ func (l *AdminGetBillLogic) AdminGetBill(in *option.GetBillReq) (*option.GetBill
 	item, err := l.svcCtx.OptionBillModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &option.GetBillResp{Base: helper.GetErrResp(404, "资金流水不存在")}, nil
+			return &option.GetBillResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.BillNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
 	if in.TenantId != 0 && item.TenantId != in.TenantId {
-		return &option.GetBillResp{Base: helper.GetErrResp(404, "资金流水不存在")}, nil
+		return &option.GetBillResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.BillNotFound, l.ctx))}, nil
 	}
 
 	return &option.GetBillResp{Base: helper.OkResp(), Data: toBillProto(item)}, nil

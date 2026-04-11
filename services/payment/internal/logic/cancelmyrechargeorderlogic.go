@@ -3,14 +3,13 @@ package logic
 import (
 	"context"
 	"errors"
+	"github.com/zeromicro/go-zero/core/logx"
 	"time"
-
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type CancelMyRechargeOrderLogic struct {
@@ -36,21 +35,21 @@ func (l *CancelMyRechargeOrderLogic) CancelMyRechargeOrder(in *payment.CancelMyR
 
 	if order == nil {
 		return &payment.AppCommonResp{
-			Base: helper.GetErrResp(404, "订单不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.OrderNotFound, l.ctx)),
 		}, nil
 	}
 
 	// Check permission
 	if order.UserId != in.UserId || order.TenantId != in.TenantId {
 		return &payment.AppCommonResp{
-			Base: helper.GetErrResp(403, "无权取消该订单"),
+			Base: helper.GetErrResp(403, i18n.Translate(i18n.NoPermissionCancelOrder, l.ctx)),
 		}, nil
 	}
 
 	// Can only cancel unpaid orders
 	if order.Status != int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PENDING) {
 		return &payment.AppCommonResp{
-			Base: helper.GetErrResp(201, "只能取消待支付的订单"),
+			Base: helper.GetErrResp(201, i18n.Translate(i18n.OnlyPendingPaymentOrdersCanCancel, l.ctx)),
 		}, nil
 	}
 

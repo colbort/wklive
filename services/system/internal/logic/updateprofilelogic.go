@@ -3,13 +3,12 @@ package logic
 import (
 	"context"
 	"errors"
-
-	"wklive/common/helper"
-	"wklive/proto/system"
-	"wklive/services/system/internal/svc"
-
 	"github.com/zeromicro/go-zero/core/logx"
 	"golang.org/x/crypto/bcrypt"
+	"wklive/common/helper"
+	"wklive/common/i18n"
+	"wklive/proto/system"
+	"wklive/services/system/internal/svc"
 )
 
 type UpdateProfileLogic struct {
@@ -34,7 +33,7 @@ func (l *UpdateProfileLogic) UpdateProfile(in *system.UpdateProfileReq) (*system
 	}
 
 	if user == nil {
-		return nil, errors.New("user not found")
+		return nil, errors.New(i18n.Translate(i18n.UserNotFound, l.ctx))
 	}
 	if in.Avatar != nil && *in.Avatar != "" {
 		user.Avatar = *in.Avatar

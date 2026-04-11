@@ -3,17 +3,16 @@ package logic
 import (
 	"context"
 	"errors"
+	"github.com/zeromicro/go-zero/core/logx"
 	"time"
-
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type LoginLogic struct {
@@ -40,7 +39,7 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 	}
 	if tenant == nil || tenant.Base.Code != 200 {
 		return &user.LoginResp{
-			Base: helper.GetErrResp(401, "租户不存在"),
+			Base: helper.GetErrResp(401, i18n.Translate(i18n.TenantNotFound, l.ctx)),
 		}, nil
 	}
 
@@ -77,13 +76,13 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 
 	if tuser == nil {
 		return &user.LoginResp{
-			Base: helper.GetErrResp(401, "用户不存在或密码错误"),
+			Base: helper.GetErrResp(401, i18n.Translate(i18n.UserNotFoundOrPasswordIncorrect, l.ctx)),
 		}, nil
 	}
 
 	if tuser.Status != 1 {
 		return &user.LoginResp{
-			Base: helper.GetErrResp(403, "账户被禁用"),
+			Base: helper.GetErrResp(403, i18n.Translate(i18n.AccountDisabled, l.ctx)),
 		}, nil
 	}
 

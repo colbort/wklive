@@ -3,13 +3,12 @@ package logic
 import (
 	"context"
 	"errors"
-
+	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type GetSecurityLogic struct {
@@ -36,7 +35,7 @@ func (l *GetSecurityLogic) GetSecurity(in *user.GetSecurityReq) (*user.GetSecuri
 
 	if tuser == nil {
 		return &user.GetSecurityResp{
-			Base: helper.GetErrResp(404, "用户不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 
@@ -48,7 +47,7 @@ func (l *GetSecurityLogic) GetSecurity(in *user.GetSecurityReq) (*user.GetSecuri
 
 	if userSecurity == nil {
 		return &user.GetSecurityResp{
-			Base: helper.GetErrResp(404, "安全设置不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.SecuritySettingsNotFound, l.ctx)),
 		}, nil
 	}
 

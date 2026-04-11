@@ -4,14 +4,13 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"github.com/zeromicro/go-zero/core/logx"
 	"time"
-
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type UpdateTenantPayChannelRuleLogic struct {
@@ -43,7 +42,7 @@ func (l *UpdateTenantPayChannelRuleLogic) UpdateTenantPayChannelRule(in *payment
 
 	if rule == nil {
 		return &payment.AdminCommonResp{
-			Base: helper.GetErrResp(404, "规则不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.ChannelRuleNotFound, l.ctx)),
 		}, nil
 	}
 

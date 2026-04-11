@@ -38,7 +38,8 @@ service TradeApp {
   rpc GetPositionList(GetPositionListReq) returns (GetPositionListResp);
 
   // 获取保证金账户列表
-  rpc GetMarginAccountList(GetMarginAccountListReq) returns (GetMarginAccountListResp);
+  rpc GetMarginAccountList(GetMarginAccountListReq)
+      returns (GetMarginAccountListResp);
 
   // 获取当前杠杆配置
   rpc GetLeverageConfig(GetLeverageConfigReq) returns (GetLeverageConfigResp);
@@ -47,9 +48,7 @@ service TradeApp {
   rpc SetLeverage(SetLeverageReq) returns (AppCommonResp);
 }
 
-message AppCommonResp {
-  common.RespBase base = 1;
-}
+message AppCommonResp { common.RespBase base = 1; }
 
 message GetSymbolListReq {
   uint64 tenant_id = 1;

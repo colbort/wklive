@@ -4,14 +4,13 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"github.com/zeromicro/go-zero/core/logx"
 	"time"
-
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type ChangePayPasswordLogic struct {
@@ -38,14 +37,14 @@ func (l *ChangePayPasswordLogic) ChangePayPassword(in *user.ChangePayPasswordReq
 
 	if tuser == nil {
 		return &user.AppCommonResp{
-			Base: helper.GetErrResp(404, "用户不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 
 	// 验证密码是否一致
 	if in.NewPassword != in.ConfirmPassword {
 		return &user.AppCommonResp{
-			Base: helper.GetErrResp(400, "两次密码输入不一致"),
+			Base: helper.GetErrResp(400, i18n.Translate(i18n.PasswordsDoNotMatch, l.ctx)),
 		}, nil
 	}
 
@@ -57,7 +56,7 @@ func (l *ChangePayPasswordLogic) ChangePayPassword(in *user.ChangePayPasswordReq
 
 	if userSecurity == nil {
 		return &user.AppCommonResp{
-			Base: helper.GetErrResp(404, "支付密码未设置"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.PayPasswordNotSet, l.ctx)),
 		}, nil
 	}
 

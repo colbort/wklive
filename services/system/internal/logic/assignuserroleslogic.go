@@ -2,13 +2,12 @@ package logic
 
 import (
 	"context"
-
+	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type AssignUserRolesLogic struct {
@@ -28,12 +27,12 @@ func NewAssignUserRolesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *A
 func (l *AssignUserRolesLogic) AssignUserRoles(in *system.AssignUserRolesReq) (*system.RespBase, error) {
 	if in.UserId <= 0 {
 		return &system.RespBase{
-			Base: helper.GetErrResp(1, "用户ID错误"),
+			Base: helper.GetErrResp(1, i18n.Translate(i18n.UserIDInvalid, l.ctx)),
 		}, nil
 	}
 	if len(in.RoleIds) == 0 {
 		return &system.RespBase{
-			Base: helper.GetErrResp(1, "请选择角色"),
+			Base: helper.GetErrResp(1, i18n.Translate(i18n.RoleSelectionRequired, l.ctx)),
 		}, nil
 	}
 
@@ -43,7 +42,7 @@ func (l *AssignUserRolesLogic) AssignUserRoles(in *system.AssignUserRolesReq) (*
 	}
 	if user == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(1, "用户不存在"),
+			Base: helper.GetErrResp(1, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 
@@ -63,7 +62,7 @@ func (l *AssignUserRolesLogic) AssignUserRoles(in *system.AssignUserRolesReq) (*
 
 	if len(roleIds) == 0 {
 		return &system.RespBase{
-			Base: helper.GetErrResp(1, "请选择有效角色"),
+			Base: helper.GetErrResp(1, i18n.Translate(i18n.ValidRoleSelectionRequired, l.ctx)),
 		}, nil
 	}
 
@@ -75,7 +74,7 @@ func (l *AssignUserRolesLogic) AssignUserRoles(in *system.AssignUserRolesReq) (*
 	}
 	if len(existRoleIds) != len(roleIds) {
 		return &system.RespBase{
-			Base: helper.GetErrResp(1, "部分角色不存在"),
+			Base: helper.GetErrResp(1, i18n.Translate(i18n.SomeRolesNotFound, l.ctx)),
 		}, nil
 	}
 

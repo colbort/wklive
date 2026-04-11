@@ -2,12 +2,11 @@ package logic
 
 import (
 	"context"
-
+	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SysCronJobStopLogic struct {
@@ -34,7 +33,7 @@ func (l *SysCronJobStopLogic) SysCronJobStop(in *system.SysCronJobStopReq) (*sys
 	}
 	if job == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(400, "定时任务不存在"),
+			Base: helper.GetErrResp(400, i18n.Translate(i18n.CronJobNotFound, l.ctx)),
 		}, nil
 	}
 	l.svcCtx.Cron.PauseJob(job.Id)

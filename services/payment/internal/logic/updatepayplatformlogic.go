@@ -3,13 +3,12 @@ package logic
 import (
 	"context"
 	"database/sql"
+	"github.com/zeromicro/go-zero/core/logx"
 	"time"
-
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type UpdatePayPlatformLogic struct {
@@ -41,7 +40,7 @@ func (l *UpdatePayPlatformLogic) UpdatePayPlatform(in *payment.UpdatePayPlatform
 
 	if platform == nil {
 		return &payment.AdminCommonResp{
-			Base: helper.GetErrResp(404, "平台不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.PlatformNotFound, l.ctx)),
 		}, nil
 	}
 

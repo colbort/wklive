@@ -5,20 +5,19 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/gogo/protobuf/proto"
+	"github.com/zeromicro/go-zero/core/logx"
 	"net/http"
 	"net/url"
 	"path"
 	"strings"
 	"time"
-
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/itick"
 	"wklive/services/itick/internal/pkg/utils"
 	"wklive/services/itick/internal/svc"
 	"wklive/services/itick/models"
-
-	"github.com/gogo/protobuf/proto"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SyncCategoryProductsLogic struct {
@@ -46,7 +45,7 @@ func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryP
 	}
 	if result == nil {
 		return &itick.SyncCategoryProductsResp{
-			Base: helper.GetErrResp(1, "分类不存在"),
+			Base: helper.GetErrResp(1, i18n.Translate(i18n.CategoryNotFound, l.ctx)),
 		}, nil
 	}
 
@@ -66,7 +65,7 @@ func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryP
 	if err != nil {
 		logx.Errorf("create sync task failed, err=%v", err)
 		return &itick.SyncCategoryProductsResp{
-			Base: helper.GetErrResp(1, "创建同步任务失败"),
+			Base: helper.GetErrResp(1, i18n.Translate(i18n.SyncTaskCreateFailed, l.ctx)),
 		}, nil
 	}
 
@@ -129,7 +128,7 @@ func (w *SyncCategoryProductsWorker) doSync(in *itick.SyncCategoryProductsReq) e
 		return fmt.Errorf("find category failed: %w", err)
 	}
 	if result == nil {
-		return errors.New("分类不存在")
+		return errors.New(i18n.Translate(i18n.CategoryNotFound, w.ctx))
 	}
 
 	regions, err := w.getRegion(result.CategoryCode)

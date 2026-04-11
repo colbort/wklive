@@ -3,13 +3,12 @@ package logic
 import (
 	"context"
 	"errors"
-
+	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type GetTenantPayPlatformLogic struct {
@@ -40,7 +39,7 @@ func (l *GetTenantPayPlatformLogic) GetTenantPayPlatform(in *payment.GetTenantPa
 
 	if tenantPlatform == nil {
 		return &payment.GetTenantPayPlatformResp{
-			Base: helper.GetErrResp(404, "租户平台不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.TenantPlatformNotFound, l.ctx)),
 		}, nil
 	}
 

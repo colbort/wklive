@@ -3,14 +3,13 @@ package logic
 import (
 	"context"
 	"errors"
+	"github.com/zeromicro/go-zero/core/logx"
 	"time"
-
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type UpdateUserLevelLogic struct {
@@ -37,12 +36,12 @@ func (l *UpdateUserLevelLogic) UpdateUserLevel(in *user.UpdateUserLevelReq) (*us
 
 	if tuser == nil {
 		return &user.AdminCommonResp{
-			Base: helper.GetErrResp(404, "用户不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 	if tuser.TenantId != in.TenantId {
 		return &user.AdminCommonResp{
-			Base: helper.GetErrResp(403, "无权操作此用户"),
+			Base: helper.GetErrResp(403, i18n.Translate(i18n.NoPermissionOperateThisUser, l.ctx)),
 		}, nil
 	}
 

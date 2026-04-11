@@ -9,9 +9,7 @@ option go_package = "wklive/proto/system;system";
 
 message Empty {}
 
-message RespBase {
-  common.RespBase base = 1;
-}
+message RespBase { common.RespBase base = 1; }
 
 //////////////////////
 // Auth / 登录
@@ -35,9 +33,7 @@ message AdminLoginResp {
   int64 perms_ver = 9;
 }
 
-message ProfileReq {
-  int64 uid = 1;
-}
+message ProfileReq { int64 uid = 1; }
 
 message ProfileUser {
   int64 id = 1;
@@ -83,7 +79,7 @@ message SysMenuItem {
   int64 parent_id = 2;
   string name = 3;
   int64 menu_type = 4; // 1目录 2菜单 3按钮
-  string method = 5; // GET POST PUT DELETE
+  string method = 5;   // GET POST PUT DELETE
   string path = 6;
   string component = 7;
   string icon = 8;
@@ -101,9 +97,7 @@ message SysMenuTreeResp {
 //////////////////////
 // Google 2FA
 //////////////////////
-message Google2FAInitReq {
-  int64 user_id = 1;
-}
+message Google2FAInitReq { int64 user_id = 1; }
 message Google2FAInitResp {
   common.RespBase base = 1;
   string secret = 3;
@@ -124,9 +118,7 @@ message Google2FADisableReq {
   int64 user_id = 1;
   string code = 2;
 } // 可选强校验
-message Google2FAResetReq {
-  int64 user_id = 1;
-}
+message Google2FAResetReq { int64 user_id = 1; }
 
 //////////////////////
 // RBAC - 用户
@@ -151,9 +143,7 @@ message SysUserListResp {
   repeated SysUserItem data = 4;
 }
 
-message SysUserDetailReq {
-  int64 id = 1;
-}
+message SysUserDetailReq { int64 id = 1; }
 message SysUserDetailResp {
   common.RespBase base = 1;
   SysUserItem data = 3;
@@ -172,9 +162,7 @@ message SysUserUpdateReq {
   int64 status = 3;
   repeated int64 role_ids = 4;
 }
-message SysUserDeleteReq {
-  int64 id = 1;
-}
+message SysUserDeleteReq { int64 id = 1; }
 message ChangeUserStatusReq {
   int64 id = 1;
   int64 status = 2;
@@ -221,17 +209,13 @@ message SysRoleUpdateReq {
   int64 status = 3;
   string remark = 4;
 }
-message SysRoleDeleteReq {
-  int64 id = 1;
-}
+message SysRoleDeleteReq { int64 id = 1; }
 message SysRoleGrantReq {
   int64 role_id = 1;
   repeated int64 menu_ids = 2;
 }
 
-message SysRoleGrantDetailReq {
-  int64 role_id = 1;
-}
+message SysRoleGrantDetailReq { int64 role_id = 1; }
 message SysRoleGrantDetailResp {
   common.RespBase base = 1;
   int64 role_id = 3;
@@ -281,9 +265,7 @@ message SysMenuUpdateReq {
   int64 status = 11;
   string perms = 12;
 }
-message SysMenuDeleteReq {
-  int64 id = 1;
-}
+message SysMenuDeleteReq { int64 id = 1; }
 
 message SysMenuListReq {
   common.PageReq page = 1;
@@ -357,9 +339,7 @@ message SysConfigUpdateReq {
   string remark = 4;
 }
 
-message SysConfigDeleteReq {
-  int64 id = 1;
-}
+message SysConfigDeleteReq { int64 id = 1; }
 
 message SysConfigItem {
   int64 id = 1;
@@ -388,9 +368,7 @@ message SysConfigDetailResp {
   SysConfigItem data = 3;
 }
 
-message SysConfigByKeysReq {
-  repeated string config_keys = 1;
-}
+message SysConfigByKeysReq { repeated string config_keys = 1; }
 message SysConfigByKeysResp {
   common.RespBase base = 1;
   repeated SysConfigItem data = 3;
@@ -401,12 +379,8 @@ message SysConfigKeysResp {
   repeated string data = 3;
 }
 
-message LoginUserPermsReq {
-  int64 user_id = 1;
-}
-message LoginUserPermsResp {
-  repeated string perms = 1;
-}
+message LoginUserPermsReq { int64 user_id = 1; }
+message LoginUserPermsResp { repeated string perms = 1; }
 
 // 系统定时任务
 message SysCronJobItem {
@@ -454,21 +428,13 @@ message SysCronJobUpdateReq {
   string remark = 7;
 }
 
-message SysCronJobDeleteReq {
-  int64 id = 1;
-}
+message SysCronJobDeleteReq { int64 id = 1; }
 
-message SysCronJobRunReq {
-  int64 id = 1;
-}
+message SysCronJobRunReq { int64 id = 1; }
 
-message SysCronJobStartReq {
-  int64 id = 1;
-}
+message SysCronJobStartReq { int64 id = 1; }
 
-message SysCronJobStopReq {
-  int64 id = 1;
-}
+message SysCronJobStopReq { int64 id = 1; }
 
 message SysCronJobLogItem {
   int64 id = 1;
@@ -555,13 +521,9 @@ message SysTenantUpdateReq {
   string remark = 7;
 }
 
-message SysTenantDeleteReq {
-  int64 id = 1;
-}
+message SysTenantDeleteReq { int64 id = 1; }
 
-message SysTenantByCodeReq {
-  string tenant_code = 1;
-}
+message SysTenantByCodeReq { string tenant_code = 1; }
 
 message SysTenantByCodeResp {
   common.RespBase base = 1;
@@ -618,7 +580,8 @@ service System {
   // 角色授权
   rpc SysRoleGrant(SysRoleGrantReq) returns (RespBase);
   // 获取角色授权详情
-  rpc SysRoleGrantDetail(SysRoleGrantDetailReq) returns (SysRoleGrantDetailResp);
+  rpc SysRoleGrantDetail(SysRoleGrantDetailReq)
+      returns (SysRoleGrantDetailResp);
   // 获取权限列表
   rpc SysPermList(Empty) returns (SysPermListResp);
   // 获取菜单树

@@ -2,12 +2,11 @@ package logic
 
 import (
 	"context"
-
+	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SysTenantDeleteLogic struct {
@@ -32,7 +31,7 @@ func (l *SysTenantDeleteLogic) SysTenantDelete(in *system.SysTenantDeleteReq) (*
 	}
 	if tenant == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(400, "租户不存在"),
+			Base: helper.GetErrResp(400, i18n.Translate(i18n.TenantNotFound, l.ctx)),
 		}, nil
 	}
 	err = l.svcCtx.TenantMode.Delete(l.ctx, in.Id)

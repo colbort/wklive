@@ -2,13 +2,12 @@ package logic
 
 import (
 	"context"
-
+	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type Google2FAInitLogic struct {
@@ -33,21 +32,21 @@ func (l *Google2FAInitLogic) Google2FAInit(in *system.Google2FAInitReq) (*system
 	}
 	if user == nil {
 		return &system.Google2FAInitResp{
-			Base: helper.GetErrResp(1, "用户不存在"),
+			Base: helper.GetErrResp(1, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 
 	secret, otpauthURL, _, err := utils.GenerateGoogle2FA(user.Username, utils.Default2FAIssuer, 256)
 	if err != nil {
 		return &system.Google2FAInitResp{
-			Base: helper.GetErrResp(1, "生成2FA secret失败: "+err.Error()),
+			Base: helper.GetErrResp(1, i18n.Translate(i18n.Generate2FASecretFailed, l.ctx)+": "+err.Error()),
 		}, err
 	}
 
 	// 将 secret 存储到 redis，设置过期时间，例如 10 分钟
 	if err := l.svcCtx.UserModel.InsertGoogle2FASecret(l.ctx, in.UserId, secret); err != nil {
 		return &system.Google2FAInitResp{
-			Base: helper.GetErrResp(1, "存储2FA secret失败: "+err.Error()),
+			Base: helper.GetErrResp(1, i18n.Translate(i18n.Store2FASecretFailed, l.ctx)+": "+err.Error()),
 		}, err
 	}
 	return &system.Google2FAInitResp{

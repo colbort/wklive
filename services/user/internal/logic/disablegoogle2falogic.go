@@ -3,15 +3,14 @@ package logic
 import (
 	"context"
 	"errors"
+	"github.com/zeromicro/go-zero/core/logx"
 	"time"
-
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type DisableGoogle2FALogic struct {
@@ -38,7 +37,7 @@ func (l *DisableGoogle2FALogic) DisableGoogle2FA(in *user.DisableGoogle2FAReq) (
 
 	if tuser == nil {
 		return &user.AppCommonResp{
-			Base: helper.GetErrResp(404, "用户不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 
@@ -50,14 +49,14 @@ func (l *DisableGoogle2FALogic) DisableGoogle2FA(in *user.DisableGoogle2FAReq) (
 
 	if userSecurity == nil {
 		return &user.AppCommonResp{
-			Base: helper.GetErrResp(404, "安全设置不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.SecuritySettingsNotFound, l.ctx)),
 		}, nil
 	}
 
 	// 验证Google 2FA code
 	if !utils.VerifyGoogle2FACode(userSecurity.GoogleSecret.String, in.GoogleCode) {
 		return &user.AppCommonResp{
-			Base: helper.GetErrResp(400, "验证码错误"),
+			Base: helper.GetErrResp(400, i18n.Translate(i18n.VerificationCodeInvalid, l.ctx)),
 		}, nil
 	}
 

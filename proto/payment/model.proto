@@ -108,7 +108,7 @@ message TenantPayChannelRule {
   int64 allow_new_user = 15;
   int64 allow_old_user = 16;
   string allow_tags = 17; // JSON string
-  string deny_tags = 18; // JSON string
+  string deny_tags = 18;  // JSON string
   string remark = 19;
   int64 create_times = 20;
   int64 update_times = 21;

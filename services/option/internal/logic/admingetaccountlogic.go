@@ -3,13 +3,12 @@ package logic
 import (
 	"context"
 	"errors"
-
+	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type AdminGetAccountLogic struct {
@@ -38,7 +37,7 @@ func (l *AdminGetAccountLogic) AdminGetAccount(in *option.GetAccountReq) (*optio
 		return nil, err
 	}
 	if len(items) == 0 {
-		return &option.GetAccountResp{Base: helper.GetErrResp(404, "账户资产不存在")}, nil
+		return &option.GetAccountResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.AccountAssetNotFound, l.ctx))}, nil
 	}
 
 	return &option.GetAccountResp{Base: helper.OkResp(), Data: toAccountProto(items[0])}, nil

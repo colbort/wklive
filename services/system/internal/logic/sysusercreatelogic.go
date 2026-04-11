@@ -4,18 +4,17 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"strings"
-	"time"
-
-	"wklive/common/helper"
-	"wklive/proto/system"
-	"wklive/services/system/internal/svc"
-	"wklive/services/system/models"
-
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"golang.org/x/crypto/bcrypt"
+	"strings"
+	"time"
+	"wklive/common/helper"
+	"wklive/common/i18n"
+	"wklive/proto/system"
+	"wklive/services/system/internal/svc"
+	"wklive/services/system/models"
 )
 
 type SysUserCreateLogic struct {
@@ -39,7 +38,7 @@ func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system
 	}
 	if one != nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(400, "用户名已存在"),
+			Base: helper.GetErrResp(400, i18n.Translate(i18n.UsernameAlreadyExists, l.ctx)),
 		}, nil
 	}
 
@@ -113,7 +112,7 @@ func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system
 	if err != nil {
 		if strings.HasPrefix(err.Error(), "role_not_found:") {
 			return &system.RespBase{
-				Base: helper.GetErrResp(400, "角色不存在"),
+				Base: helper.GetErrResp(400, i18n.Translate(i18n.RoleNotFound, l.ctx)),
 			}, nil
 		}
 		return nil, err

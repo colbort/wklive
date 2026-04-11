@@ -3,13 +3,12 @@ package logic
 import (
 	"context"
 	"errors"
-
+	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type GetTenantPayAccountLogic struct {
@@ -40,7 +39,7 @@ func (l *GetTenantPayAccountLogic) GetTenantPayAccount(in *payment.GetTenantPayA
 
 	if account == nil {
 		return &payment.GetTenantPayAccountResp{
-			Base: helper.GetErrResp(404, "账户不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.TenantPayAccountNotFound, l.ctx)),
 		}, nil
 	}
 

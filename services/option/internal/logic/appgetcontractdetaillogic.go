@@ -3,13 +3,12 @@ package logic
 import (
 	"context"
 	"errors"
-
+	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type AppGetContractDetailLogic struct {
@@ -31,12 +30,12 @@ func (l *AppGetContractDetailLogic) AppGetContractDetail(in *option.AppGetContra
 	item, err := l.svcCtx.OptionContractModel.FindOne(l.ctx, in.ContractId)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &option.AppGetContractDetailResp{Base: helper.GetErrResp(404, "合约不存在")}, nil
+			return &option.AppGetContractDetailResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
 	if in.TenantId != 0 && item.TenantId != in.TenantId {
-		return &option.AppGetContractDetailResp{Base: helper.GetErrResp(404, "合约不存在")}, nil
+		return &option.AppGetContractDetailResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
 	}
 	data, err := buildContractDetail(l.ctx, l.svcCtx, item)
 	if err != nil {

@@ -3,13 +3,12 @@ package logic
 import (
 	"context"
 	"errors"
-
+	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type AppGetOrderDetailLogic struct {
@@ -31,12 +30,12 @@ func (l *AppGetOrderDetailLogic) AppGetOrderDetail(in *option.AppGetOrderDetailR
 	item, err := findOrderByNoOrID(l.ctx, l.svcCtx, in.TenantId, in.OrderId, in.OrderNo)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &option.AppGetOrderDetailResp{Base: helper.GetErrResp(404, "订单不存在")}, nil
+			return &option.AppGetOrderDetailResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
 	if item.Uid != in.Uid || item.AccountId != in.AccountId {
-		return &option.AppGetOrderDetailResp{Base: helper.GetErrResp(403, "无权查看该订单")}, nil
+		return &option.AppGetOrderDetailResp{Base: helper.GetErrResp(403, i18n.Translate(i18n.NoPermissionViewOrder, l.ctx))}, nil
 	}
 	data, err := buildOrderDetail(l.ctx, l.svcCtx, item)
 	if err != nil {

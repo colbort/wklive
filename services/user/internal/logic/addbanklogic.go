@@ -4,14 +4,13 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"github.com/zeromicro/go-zero/core/logx"
 	"time"
-
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type AddBankLogic struct {
@@ -38,7 +37,7 @@ func (l *AddBankLogic) AddBank(in *user.AddBankReq) (*user.AddBankResp, error) {
 
 	if tuser == nil {
 		return &user.AddBankResp{
-			Base: helper.GetErrResp(404, "用户不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 

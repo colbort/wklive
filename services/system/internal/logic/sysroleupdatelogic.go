@@ -2,15 +2,13 @@ package logic
 
 import (
 	"context"
-
+	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
-
-	"github.com/jinzhu/copier"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SysRoleUpdateLogic struct {
@@ -34,7 +32,7 @@ func (l *SysRoleUpdateLogic) SysRoleUpdate(in *system.SysRoleUpdateReq) (*system
 	}
 	if one == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(400, "角色不存在"),
+			Base: helper.GetErrResp(400, i18n.Translate(i18n.RoleNotFound, l.ctx)),
 		}, nil
 	}
 

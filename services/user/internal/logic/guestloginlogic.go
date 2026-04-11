@@ -4,15 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/zeromicro/go-zero/core/logx"
 	"time"
-
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type GuestLoginLogic struct {
@@ -33,7 +32,7 @@ func NewGuestLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GuestL
 func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginResp, error) {
 	if in.DeviceId == "" && in.Fingerprint == "" {
 		return &user.GuestLoginResp{
-			Base: helper.GetErrResp(201, "请确更换设备登录"),
+			Base: helper.GetErrResp(201, i18n.Translate(i18n.PleaseSwitchDeviceToLogin, l.ctx)),
 		}, nil
 	}
 	u, err := l.svcCtx.UserModel.FindByDeviceIdOrFingerprint(l.ctx, in.DeviceId, in.Fingerprint)
@@ -42,7 +41,7 @@ func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginRe
 	}
 	if u != nil {
 		return &user.GuestLoginResp{
-			Base: helper.GetErrResp(201, "请确更换设备登录"),
+			Base: helper.GetErrResp(201, i18n.Translate(i18n.PleaseSwitchDeviceToLogin, l.ctx)),
 		}, nil
 	}
 
@@ -89,7 +88,7 @@ func (l *GuestLoginLogic) checkGuestLimit(ip string) error {
 
 	// 限制 2 次
 	if count > 2 {
-		return errors.New("注册过于频繁，请稍后再试")
+		return errors.New(i18n.Translate(i18n.RegistrationTooFrequentRetry, l.ctx))
 	}
 
 	return nil

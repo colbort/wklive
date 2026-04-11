@@ -6,10 +6,7 @@ option go_package = "wklive/proto/trade;trade";
 
 import "proto/trade/enum.proto";
 
-
-message TenantReq {
-  uint64 tenant_id = 1;
-}
+message TenantReq { uint64 tenant_id = 1; }
 
 message UserReq {
   uint64 tenant_id = 1;
@@ -26,13 +23,9 @@ message DecimalRange {
   string max = 2;
 }
 
-message StringValues {
-  repeated string values = 1;
-}
+message StringValues { repeated string values = 1; }
 
-message Uint64Values {
-  repeated uint64 values = 1;
-}
+message Uint64Values { repeated uint64 values = 1; }
 
 message TradeSymbol {
   uint64 id = 1;

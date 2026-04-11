@@ -3,14 +3,13 @@ package logic
 import (
 	"context"
 	"errors"
+	"github.com/zeromicro/go-zero/core/logx"
 	"time"
-
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SetDefaultBankLogic struct {
@@ -37,14 +36,14 @@ func (l *SetDefaultBankLogic) SetDefaultBank(in *user.SetDefaultBankReq) (*user.
 
 	if bank == nil {
 		return &user.AppCommonResp{
-			Base: helper.GetErrResp(404, "银行卡不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.BankCardNotFound, l.ctx)),
 		}, nil
 	}
 
 	// 验证银行卡是否属于该用户
 	if bank.UserId != in.UserId {
 		return &user.AppCommonResp{
-			Base: helper.GetErrResp(403, "无权设置此银行卡"),
+			Base: helper.GetErrResp(403, i18n.Translate(i18n.PermissionDeniedForBankCard, l.ctx)),
 		}, nil
 	}
 

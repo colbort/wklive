@@ -4,14 +4,13 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"github.com/zeromicro/go-zero/core/logx"
 	"time"
-
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type UpdateTenantPayAccountLogic struct {
@@ -43,7 +42,7 @@ func (l *UpdateTenantPayAccountLogic) UpdateTenantPayAccount(in *payment.UpdateT
 
 	if account == nil {
 		return &payment.AdminCommonResp{
-			Base: helper.GetErrResp(404, "账户不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.TenantPayAccountNotFound, l.ctx)),
 		}, nil
 	}
 

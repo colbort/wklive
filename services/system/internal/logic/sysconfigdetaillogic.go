@@ -4,13 +4,12 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-
+	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SysConfigDetailLogic struct {
@@ -37,7 +36,7 @@ func (l *SysConfigDetailLogic) SysConfigDetail(in *system.SysConfigDetailReq) (*
 	} else if in.ConfigKey != nil {
 		config, err = l.svcCtx.ConfigModel.FindOneByConfigKey(l.ctx, sql.NullString{String: in.ConfigKey.String(), Valid: true})
 	} else {
-		err = errors.New("无效的查询条件")
+		err = errors.New(i18n.Translate(i18n.InvalidQueryCondition, l.ctx))
 	}
 	if err != nil {
 		return nil, err

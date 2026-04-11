@@ -3,14 +3,13 @@ package logic
 import (
 	"context"
 	"errors"
-
+	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/pageutil"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type ListBanksLogic struct {
@@ -37,11 +36,11 @@ func (l *ListBanksLogic) ListBanks(in *user.ListBanksReq) (*user.ListBanksResp, 
 
 	if tuser == nil {
 		return &user.ListBanksResp{
-			Base: helper.GetErrResp(404, "用户不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 	items, total, err := l.svcCtx.UserBankModel.FindPage(l.ctx, tuser.TenantId, tuser.Id, in.Page.Cursor, in.Page.Limit)
-	
+
 	lastID := int64(0)
 	if len(items) > 0 {
 		lastID = items[len(items)-1].Id

@@ -8,9 +8,7 @@ import "proto/payment/model.proto";
 
 option go_package = "wklive/proto/payment;payment";
 
-message AppCommonResp {
-  common.RespBase base = 1;
-}
+message AppCommonResp { common.RespBase base = 1; }
 
 // 当前用户累计充值统计
 message GetMyRechargeStatReq {
@@ -110,7 +108,7 @@ message CreateWithdrawOrderReq {
   int64 amount = 3; // 单位：分
   string currency = 4;
   string address = 5; // 提现地址（钱包地址等）
-  int64 bank_id = 6; // 银行ID（如果是提现到银行卡）
+  int64 bank_id = 6;  // 银行ID（如果是提现到银行卡）
   string remark = 7;
 }
 
@@ -130,7 +128,7 @@ message ListMyWithdrawOrdersReq {
 message ListMyWithdrawOrdersResp {
   common.RespBase base = 1;
   repeated payment.WithdrawOrder data = 2;
-} 
+}
 
 // 获取提现订单详情
 message GetMyWithdrawOrderReq {
@@ -149,29 +147,37 @@ service PaymentApp {
   rpc GetMyRechargeStat(GetMyRechargeStatReq) returns (GetMyRechargeStatResp);
 
   // 获取当前登录用户在指定充值金额下可用的充值通道
-  rpc ListAvailableRechargeChannels(ListAvailableRechargeChannelsReq) returns (ListAvailableRechargeChannelsResp);
+  rpc ListAvailableRechargeChannels(ListAvailableRechargeChannelsReq)
+      returns (ListAvailableRechargeChannelsResp);
 
   // 创建充值订单（服务端需要再次校验通道与用户规则）
-  rpc CreateRechargeOrder(CreateRechargeOrderReq) returns (CreateRechargeOrderResp);
+  rpc CreateRechargeOrder(CreateRechargeOrderReq)
+      returns (CreateRechargeOrderResp);
 
   // 查询我的订单详情
-  rpc GetMyRechargeOrder(GetMyRechargeOrderReq) returns (GetMyRechargeOrderResp);
+  rpc GetMyRechargeOrder(GetMyRechargeOrderReq)
+      returns (GetMyRechargeOrderResp);
 
   // 查询我的充值订单列表
-  rpc ListMyRechargeOrders(ListMyRechargeOrdersReq) returns (ListMyRechargeOrdersResp);
+  rpc ListMyRechargeOrders(ListMyRechargeOrdersReq)
+      returns (ListMyRechargeOrdersResp);
 
   // 取消未支付订单
   rpc CancelMyRechargeOrder(CancelMyRechargeOrderReq) returns (AppCommonResp);
 
   // 轮询订单状态
-  rpc QueryMyRechargeOrderStatus(QueryMyRechargeOrderStatusReq) returns (QueryMyRechargeOrderStatusResp);
+  rpc QueryMyRechargeOrderStatus(QueryMyRechargeOrderStatusReq)
+      returns (QueryMyRechargeOrderStatusResp);
 
   // 提现
-  rpc CreateWithdrawOrder(CreateWithdrawOrderReq) returns (CreateWithdrawOrderResp);
+  rpc CreateWithdrawOrder(CreateWithdrawOrderReq)
+      returns (CreateWithdrawOrderResp);
 
   // 获取提现订单列表
-  rpc ListMyWithdrawOrders(ListMyWithdrawOrdersReq) returns (ListMyWithdrawOrdersResp);
+  rpc ListMyWithdrawOrders(ListMyWithdrawOrdersReq)
+      returns (ListMyWithdrawOrdersResp);
 
   // 获取提现订单详情
-  rpc GetMyWithdrawOrder(GetMyWithdrawOrderReq) returns (GetMyWithdrawOrderResp);
+  rpc GetMyWithdrawOrder(GetMyWithdrawOrderReq)
+      returns (GetMyWithdrawOrderResp);
 }

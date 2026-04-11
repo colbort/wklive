@@ -4,14 +4,13 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"github.com/zeromicro/go-zero/core/logx"
 	"time"
-
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type ManualMarkRechargeOrderSuccessLogic struct {
@@ -43,14 +42,14 @@ func (l *ManualMarkRechargeOrderSuccessLogic) ManualMarkRechargeOrderSuccess(in 
 
 	if order == nil {
 		return &payment.AdminCommonResp{
-			Base: helper.GetErrResp(404, "订单不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.OrderNotFound, l.ctx)),
 		}, nil
 	}
 
 	// 只有pending状态的订单才能标记为成功
 	if order.Status != int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PENDING) {
 		return &payment.AdminCommonResp{
-			Base: helper.GetErrResp(201, "只有待支付订单才能标记为成功"),
+			Base: helper.GetErrResp(201, i18n.Translate(i18n.OnlyPendingPaymentOrdersCanMarkSuccess, l.ctx)),
 		}, nil
 	}
 

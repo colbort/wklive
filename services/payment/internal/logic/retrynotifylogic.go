@@ -3,13 +3,12 @@ package logic
 import (
 	"context"
 	"errors"
-
+	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type RetryNotifyLogic struct {
@@ -41,14 +40,14 @@ func (l *RetryNotifyLogic) RetryNotify(in *payment.RetryNotifyReq) (*payment.Adm
 
 	if order == nil {
 		return &payment.AdminCommonResp{
-			Base: helper.GetErrResp(404, "订单不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.OrderNotFound, l.ctx)),
 		}, nil
 	}
 
 	// 只有已支付的订单才需要重试回调
 	if order.Status != int64(payment.PayOrderStatus_PAY_ORDER_STATUS_SUCCESS) {
 		return &payment.AdminCommonResp{
-			Base: helper.GetErrResp(201, "只有已支付订单才能重试回调"),
+			Base: helper.GetErrResp(201, i18n.Translate(i18n.OnlyPaidOrdersCanRetryNotify, l.ctx)),
 		}, nil
 	}
 
@@ -61,7 +60,7 @@ func (l *RetryNotifyLogic) RetryNotify(in *payment.RetryNotifyReq) (*payment.Adm
 
 	if notifyLog == nil {
 		return &payment.AdminCommonResp{
-			Base: helper.GetErrResp(404, "回调记录不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.NotifyRecordNotFound, l.ctx)),
 		}, nil
 	}
 

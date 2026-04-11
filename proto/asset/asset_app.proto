@@ -31,78 +31,78 @@ service AssetApp {
 
 message GetMyAssetSummaryReq {
   int64 tenant_id = 1; // 租户ID
-  int64 user_id = 2; // 用户ID
+  int64 user_id = 2;   // 用户ID
 }
 
 message GetMyAssetSummaryResp {
-    common.RespBase base = 1;
+  common.RespBase base = 1;
   UserAssetSummary data = 2; // 资产汇总
 }
 
 message ListMyAssetsReq {
-  int64 tenant_id = 1; // 租户ID
-  int64 user_id = 2; // 用户ID
+  int64 tenant_id = 1;        // 租户ID
+  int64 user_id = 2;          // 用户ID
   WalletType wallet_type = 3; // 钱包类型,0表示全部
-  string coin = 4; // 币种,空表示全部
+  string coin = 4;            // 币种,空表示全部
 }
 
 message ListMyAssetsResp {
-    common.RespBase base = 1;
+  common.RespBase base = 1;
   repeated UserAsset data = 2; // 资产列表
 }
 
 message GetMyAssetReq {
-  int64 tenant_id = 1; // 租户ID
-  int64 user_id = 2; // 用户ID
+  int64 tenant_id = 1;        // 租户ID
+  int64 user_id = 2;          // 用户ID
   WalletType wallet_type = 3; // 钱包类型
-  string coin = 4; // 币种
+  string coin = 4;            // 币种
 }
 
 message GetMyAssetResp {
-    common.RespBase base = 1;
+  common.RespBase base = 1;
   UserAsset asset = 2; // 用户资产
 }
 
 message ListMyAssetFlowsReq {
-  int64 tenant_id = 1; // 租户ID
-  int64 user_id = 2; // 用户ID
-  WalletType wallet_type = 3; // 钱包类型,0表示全部
-  string coin = 4; // 币种
-  BizType biz_type = 5; // 业务类型,0表示全部
-  SceneType scene_type = 6; // 业务场景,0表示全部
+  int64 tenant_id = 1;             // 租户ID
+  int64 user_id = 2;               // 用户ID
+  WalletType wallet_type = 3;      // 钱包类型,0表示全部
+  string coin = 4;                 // 币种
+  BizType biz_type = 5;            // 业务类型,0表示全部
+  SceneType scene_type = 6;        // 业务场景,0表示全部
   common.TimeRange time_range = 7; // 时间范围
-  common.PageReq page = 8; // 分页
+  common.PageReq page = 8;         // 分页
 }
 
 message ListMyAssetFlowsResp {
-    common.RespBase base = 1;
+  common.RespBase base = 1;
   repeated AssetFlow data = 2; // 流水列表
 }
 
 message ListMyFreezesReq {
-  int64 tenant_id = 1; // 租户ID
-  int64 user_id = 2; // 用户ID
+  int64 tenant_id = 1;        // 租户ID
+  int64 user_id = 2;          // 用户ID
   WalletType wallet_type = 3; // 钱包类型
-  string coin = 4; // 币种
-  FreezeStatus status = 5; // 冻结状态
-  common.PageReq page = 6; // 分页
+  string coin = 4;            // 币种
+  FreezeStatus status = 5;    // 冻结状态
+  common.PageReq page = 6;    // 分页
 }
 
 message ListMyFreezesResp {
-    common.RespBase base = 1;
+  common.RespBase base = 1;
   repeated AssetFreeze data = 2; // 冻结列表
 }
 
 message ListMyLocksReq {
-  int64 tenant_id = 1; // 租户ID
-  int64 user_id = 2; // 用户ID
+  int64 tenant_id = 1;        // 租户ID
+  int64 user_id = 2;          // 用户ID
   WalletType wallet_type = 3; // 钱包类型
-  string coin = 4; // 币种
-  LockStatus status = 5; // 锁仓状态
-  common.PageReq page = 6; // 分页
+  string coin = 4;            // 币种
+  LockStatus status = 5;      // 锁仓状态
+  common.PageReq page = 6;    // 分页
 }
 
 message ListMyLocksResp {
-    common.RespBase base = 1;
+  common.RespBase base = 1;
   repeated AssetLock data = 2; // 锁仓列表
 }

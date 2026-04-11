@@ -3,13 +3,12 @@ package logic
 import (
 	"context"
 	"errors"
-
+	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type AdminGetOrderLogic struct {
@@ -31,7 +30,7 @@ func (l *AdminGetOrderLogic) AdminGetOrder(in *option.GetOrderReq) (*option.GetO
 	item, err := findOrderByNoOrID(l.ctx, l.svcCtx, in.TenantId, in.Id, in.OrderNo)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &option.GetOrderResp{Base: helper.GetErrResp(404, "订单不存在")}, nil
+			return &option.GetOrderResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}

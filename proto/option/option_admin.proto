@@ -11,72 +11,71 @@ option go_package = "wklive/proto/option;option";
 // 期权管理后台服务
 service OptionAdmin {
   // 创建期权合约
-  rpc AdminCreateContract (CreateContractReq) returns (CreateContractResp);
+  rpc AdminCreateContract(CreateContractReq) returns (CreateContractResp);
 
   // 更新期权合约
-  rpc AdminUpdateContract (UpdateContractReq) returns (AdminCommonResp);
+  rpc AdminUpdateContract(UpdateContractReq) returns (AdminCommonResp);
 
   // 获取单个期权合约详情
-  rpc AdminGetContract (GetContractReq) returns (GetContractResp);
+  rpc AdminGetContract(GetContractReq) returns (GetContractResp);
 
   // 分页查询期权合约列表
-  rpc AdminListContracts (ListContractsReq) returns (ListContractsResp);
+  rpc AdminListContracts(ListContractsReq) returns (ListContractsResp);
 
   // 更新期权行情数据
-  rpc AdminUpdateMarket (UpdateMarketReq) returns (AdminCommonResp);
+  rpc AdminUpdateMarket(UpdateMarketReq) returns (AdminCommonResp);
 
   // 获取单个期权当前行情
-  rpc AdminGetMarket (GetMarketReq) returns (GetMarketResp);
+  rpc AdminGetMarket(GetMarketReq) returns (GetMarketResp);
 
   // 分页查询期权行情快照列表
-  rpc AdminListMarketSnapshots (ListMarketSnapshotsReq) returns (ListMarketSnapshotsResp);
+  rpc AdminListMarketSnapshots(ListMarketSnapshotsReq)
+      returns (ListMarketSnapshotsResp);
 
   // 获取单个委托订单详情
-  rpc AdminGetOrder (GetOrderReq) returns (GetOrderResp);
+  rpc AdminGetOrder(GetOrderReq) returns (GetOrderResp);
 
   // 分页查询委托订单列表
-  rpc AdminListOrders (ListOrdersReq) returns (ListOrdersResp);
+  rpc AdminListOrders(ListOrdersReq) returns (ListOrdersResp);
 
   // 获取单个成交记录详情
-  rpc AdminGetTrade (GetTradeReq) returns (GetTradeResp);
+  rpc AdminGetTrade(GetTradeReq) returns (GetTradeResp);
 
   // 分页查询成交记录列表
-  rpc AdminListTrades (ListTradesReq) returns (ListTradesResp);
+  rpc AdminListTrades(ListTradesReq) returns (ListTradesResp);
 
   // 获取单个持仓详情
-  rpc AdminGetPosition (GetPositionReq) returns (GetPositionResp);
+  rpc AdminGetPosition(GetPositionReq) returns (GetPositionResp);
 
   // 分页查询持仓列表
-  rpc AdminListPositions (ListPositionsReq) returns (ListPositionsResp);
+  rpc AdminListPositions(ListPositionsReq) returns (ListPositionsResp);
 
   // 获取单个行权记录详情
-  rpc AdminGetExercise (GetExerciseReq) returns (GetExerciseResp);
+  rpc AdminGetExercise(GetExerciseReq) returns (GetExerciseResp);
 
   // 分页查询行权记录列表
-  rpc AdminListExercises (ListExercisesReq) returns (ListExercisesResp);
+  rpc AdminListExercises(ListExercisesReq) returns (ListExercisesResp);
 
   // 获取单个到期结算记录详情
-  rpc AdminGetSettlement (GetSettlementReq) returns (GetSettlementResp);
+  rpc AdminGetSettlement(GetSettlementReq) returns (GetSettlementResp);
 
   // 分页查询到期结算记录列表
-  rpc AdminListSettlements (ListSettlementsReq) returns (ListSettlementsResp);
+  rpc AdminListSettlements(ListSettlementsReq) returns (ListSettlementsResp);
 
   // 获取单个账户资产详情
-  rpc AdminGetAccount (GetAccountReq) returns (GetAccountResp);
+  rpc AdminGetAccount(GetAccountReq) returns (GetAccountResp);
 
   // 分页查询账户资产列表
-  rpc AdminListAccounts (ListAccountsReq) returns (ListAccountsResp);
+  rpc AdminListAccounts(ListAccountsReq) returns (ListAccountsResp);
 
   // 获取单个资金流水详情
-  rpc AdminGetBill (GetBillReq) returns (GetBillResp);
+  rpc AdminGetBill(GetBillReq) returns (GetBillResp);
 
   // 分页查询资金流水列表
-  rpc AdminListBills (ListBillsReq) returns (ListBillsResp);
+  rpc AdminListBills(ListBillsReq) returns (ListBillsResp);
 }
 
-message AdminCommonResp {
-  common.RespBase base = 1;
-}
+message AdminCommonResp { common.RespBase base = 1; }
 
 message CreateContractReq {
   int64 tenant_id = 1;

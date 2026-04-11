@@ -2,15 +2,14 @@ package logic
 
 import (
 	"context"
+	"github.com/zeromicro/go-zero/core/logx"
 	"time"
-
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type RefreshTokenLogic struct {
@@ -33,7 +32,7 @@ func (l *RefreshTokenLogic) RefreshToken(in *user.RefreshTokenReq) (*user.Refres
 	claims, err := utils.ParseToken(in.RefreshToken, l.svcCtx.Config.Jwt.AccessSecret)
 	if err != nil {
 		return &user.RefreshTokenResp{
-			Base: helper.GetErrResp(401, "Token已过期或无效"),
+			Base: helper.GetErrResp(401, i18n.Translate(i18n.TokenExpiredOrInvalid, l.ctx)),
 		}, nil
 	}
 
@@ -45,13 +44,13 @@ func (l *RefreshTokenLogic) RefreshToken(in *user.RefreshTokenReq) (*user.Refres
 
 	if tuser == nil {
 		return &user.RefreshTokenResp{
-			Base: helper.GetErrResp(404, "用户不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 
 	if tuser.Status != 1 {
 		return &user.RefreshTokenResp{
-			Base: helper.GetErrResp(403, "账户被禁用"),
+			Base: helper.GetErrResp(403, i18n.Translate(i18n.AccountDisabled, l.ctx)),
 		}, nil
 	}
 

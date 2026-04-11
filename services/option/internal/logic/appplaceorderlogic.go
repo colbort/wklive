@@ -3,15 +3,14 @@ package logic
 import (
 	"context"
 	"errors"
+	"github.com/zeromicro/go-zero/core/logx"
 	"time"
-
 	"wklive/common/conv"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type AppPlaceOrderLogic struct {
@@ -33,24 +32,24 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 	contract, err := l.svcCtx.OptionContractModel.FindOne(l.ctx, in.ContractId)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &option.AppPlaceOrderResp{Base: helper.GetErrResp(404, "合约不存在")}, nil
+			return &option.AppPlaceOrderResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
 	if contract.TenantId != in.TenantId {
-		return &option.AppPlaceOrderResp{Base: helper.GetErrResp(404, "合约不存在")}, nil
+		return &option.AppPlaceOrderResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
 	}
 	if contract.Status != int64(option.ContractStatus_CONTRACT_STATUS_TRADING) {
-		return &option.AppPlaceOrderResp{Base: helper.GetErrResp(400, "合约当前不可交易")}, nil
+		return &option.AppPlaceOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ContractNotTradable, l.ctx))}, nil
 	}
 
 	price, err := conv.ParseFloatField(in.Price)
 	if err != nil {
-		return &option.AppPlaceOrderResp{Base: helper.GetErrResp(400, "price格式错误")}, nil
+		return &option.AppPlaceOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.PriceFormatError, l.ctx))}, nil
 	}
 	qty, err := conv.ParseFloatField(in.Qty)
 	if err != nil || qty <= 0 {
-		return &option.AppPlaceOrderResp{Base: helper.GetErrResp(400, "qty格式错误")}, nil
+		return &option.AppPlaceOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.QuantityFormatError, l.ctx))}, nil
 	}
 
 	if in.ClientOrderId != "" {
@@ -59,7 +58,7 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 			return nil, err
 		}
 		if exists != nil {
-			return &option.AppPlaceOrderResp{Base: helper.GetErrResp(400, "client_order_id已存在"), OrderNo: exists.OrderNo, OrderId: exists.Id}, nil
+			return &option.AppPlaceOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ClientOrderIDAlreadyExists, l.ctx)), OrderNo: exists.OrderNo, OrderId: exists.Id}, nil
 		}
 	}
 

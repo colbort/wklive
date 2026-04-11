@@ -3,15 +3,14 @@ package logic
 import (
 	"context"
 	"database/sql"
+	"github.com/robfig/cron/v3"
+	"github.com/zeromicro/go-zero/core/logx"
 	"time"
-
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
-
-	"github.com/robfig/cron/v3"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SysCronJobUpdateLogic struct {
@@ -33,7 +32,7 @@ func (l *SysCronJobUpdateLogic) SysCronJobUpdate(in *system.SysCronJobUpdateReq)
 	_, err := cron.ParseStandard(in.CronExpression)
 	if err != nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(400, "无效的 Cron 表达式"),
+			Base: helper.GetErrResp(400, i18n.Translate(i18n.InvalidCronExpression, l.ctx)),
 		}, nil
 	}
 	job, err := l.svcCtx.JobModel.FindOne(l.ctx, in.Id)
@@ -44,7 +43,7 @@ func (l *SysCronJobUpdateLogic) SysCronJobUpdate(in *system.SysCronJobUpdateReq)
 	}
 	if job == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(400, "定时任务不存在"),
+			Base: helper.GetErrResp(400, i18n.Translate(i18n.CronJobNotFound, l.ctx)),
 		}, nil
 	}
 	job.JobName = in.JobName

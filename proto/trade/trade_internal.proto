@@ -14,7 +14,8 @@ service TradeInternal {
   rpc RecordOrderFill(RecordOrderFillReq) returns (InternalCommonResp);
 
   // 记录持仓历史信息
-  rpc RecordPositionHistory(RecordPositionHistoryReq) returns (InternalCommonResp);
+  rpc RecordPositionHistory(RecordPositionHistoryReq)
+      returns (InternalCommonResp);
 
   // 创建交易事件
   rpc CreateTradeEvent(CreateTradeEventReq) returns (InternalCommonResp);
@@ -23,21 +24,13 @@ service TradeInternal {
   rpc CheckOrderRisk(CheckOrderRiskReq) returns (CheckOrderRiskResp);
 }
 
-message InternalCommonResp {
-  common.RespBase base = 1;
-}
+message InternalCommonResp { common.RespBase base = 1; }
 
-message RecordOrderFillReq {
-  TradeFill fill = 1;
-}
+message RecordOrderFillReq { TradeFill fill = 1; }
 
-message RecordPositionHistoryReq {
-  ContractPositionHistory history = 1;
-}
+message RecordPositionHistoryReq { ContractPositionHistory history = 1; }
 
-message CreateTradeEventReq {
-  BizTradeEvent event = 1;
-}
+message CreateTradeEventReq { BizTradeEvent event = 1; }
 
 message CheckOrderRiskReq {
   uint64 tenant_id = 1;

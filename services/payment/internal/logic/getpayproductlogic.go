@@ -2,12 +2,11 @@ package logic
 
 import (
 	"context"
-
+	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type GetPayProductLogic struct {
@@ -38,7 +37,7 @@ func (l *GetPayProductLogic) GetPayProduct(in *payment.GetPayProductReq) (*payme
 
 	if product == nil {
 		return &payment.GetPayProductResp{
-			Base: helper.GetErrResp(404, "产品不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.ProductNotFound, l.ctx)),
 		}, nil
 	}
 

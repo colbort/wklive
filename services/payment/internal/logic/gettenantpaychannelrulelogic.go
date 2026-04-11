@@ -3,13 +3,12 @@ package logic
 import (
 	"context"
 	"errors"
-
+	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type GetTenantPayChannelRuleLogic struct {
@@ -40,7 +39,7 @@ func (l *GetTenantPayChannelRuleLogic) GetTenantPayChannelRule(in *payment.GetTe
 
 	if rule == nil {
 		return &payment.GetTenantPayChannelRuleResp{
-			Base: helper.GetErrResp(404, "通道规则不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.NotifyChannelRuleNotFound, l.ctx)),
 		}, nil
 	}
 

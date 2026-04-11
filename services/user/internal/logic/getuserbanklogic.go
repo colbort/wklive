@@ -3,13 +3,12 @@ package logic
 import (
 	"context"
 	"errors"
-
+	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type GetUserBankLogic struct {
@@ -36,7 +35,7 @@ func (l *GetUserBankLogic) GetUserBank(in *user.GetUserBankReq) (*user.GetUserBa
 
 	if bank == nil {
 		return &user.GetUserBankResp{
-			Base: helper.GetErrResp(404, "银行卡不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.BankCardNotFound, l.ctx)),
 		}, nil
 	}
 

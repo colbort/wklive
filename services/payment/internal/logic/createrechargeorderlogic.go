@@ -4,14 +4,13 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"github.com/zeromicro/go-zero/core/logx"
 	"time"
-
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type CreateRechargeOrderLogic struct {
@@ -46,21 +45,21 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 
 	if channel == nil {
 		return &payment.CreateRechargeOrderResp{
-			Base: helper.GetErrResp(404, "支付通道不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.PaymentChannelNotFound, l.ctx)),
 		}, nil
 	}
 
 	// 验证通道可用性
 	if channel.Status != 1 {
 		return &payment.CreateRechargeOrderResp{
-			Base: helper.GetErrResp(201, "支付通道暂不可用"),
+			Base: helper.GetErrResp(201, i18n.Translate(i18n.PaymentChannelUnavailable, l.ctx)),
 		}, nil
 	}
 
 	// 验证金额限制
 	if in.RechargeAmount < channel.SingleMinAmount || in.RechargeAmount > channel.SingleMaxAmount {
 		return &payment.CreateRechargeOrderResp{
-			Base: helper.GetErrResp(201, "充值金额超出限制"),
+			Base: helper.GetErrResp(201, i18n.Translate(i18n.RechargeAmountOutOfLimit, l.ctx)),
 		}, nil
 	}
 

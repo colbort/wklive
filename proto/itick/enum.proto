@@ -4,7 +4,6 @@ package itick;
 
 option go_package = "wklive/proto/itick;itick";
 
-
 // 产品类型
 enum CategoryType {
   CATEGORY_TYPE_UNKNOWN = 0;

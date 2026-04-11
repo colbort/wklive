@@ -3,14 +3,13 @@ package logic
 import (
 	"context"
 	"errors"
-
+	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type InitGoogle2FALogic struct {
@@ -37,7 +36,7 @@ func (l *InitGoogle2FALogic) InitGoogle2FA(in *user.InitGoogle2FAReq) (*user.Ini
 
 	if tuser == nil {
 		return &user.InitGoogle2FAResp{
-			Base: helper.GetErrResp(404, "用户不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 
@@ -48,7 +47,7 @@ func (l *InitGoogle2FALogic) InitGoogle2FA(in *user.InitGoogle2FAReq) (*user.Ini
 	}
 	if secret == "" {
 		return &user.InitGoogle2FAResp{
-			Base: helper.GetErrResp(500, "生成密钥失败"),
+			Base: helper.GetErrResp(500, i18n.Translate(i18n.SecretGenerationFailed, l.ctx)),
 		}, nil
 	}
 

@@ -2,12 +2,11 @@ package logic
 
 import (
 	"context"
-
+	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/itick"
 	"wklive/services/itick/internal/svc"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type GetCategoryLogic struct {
@@ -32,7 +31,7 @@ func (l *GetCategoryLogic) GetCategory(in *itick.GetCategoryReq) (*itick.GetCate
 	}
 	if result == nil {
 		return &itick.GetCategoryResp{
-			Base: helper.GetErrResp(1, "数据不存在"),
+			Base: helper.GetErrResp(1, i18n.Translate(i18n.BusinessDataNotFound, l.ctx)),
 		}, nil
 	}
 	return &itick.GetCategoryResp{

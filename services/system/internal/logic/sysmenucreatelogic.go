@@ -2,14 +2,13 @@ package logic
 
 import (
 	"context"
+	"github.com/zeromicro/go-zero/core/logx"
 	"time"
-
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SysMenuCreateLogic struct {
@@ -39,7 +38,7 @@ func (l *SysMenuCreateLogic) SysMenuCreate(in *system.SysMenuCreateReq) (*system
 		menu, err = l.svcCtx.MenuModel.FindOneByPerms(l.ctx, in.Perms)
 	default:
 		return &system.RespBase{
-			Base: helper.GetErrResp(400, "Invalid menu type"),
+			Base: helper.GetErrResp(400, i18n.Translate(i18n.InvalidMenuType, l.ctx)),
 		}, nil
 	}
 	if err != nil && err != models.ErrNotFound {
@@ -47,7 +46,7 @@ func (l *SysMenuCreateLogic) SysMenuCreate(in *system.SysMenuCreateReq) (*system
 	}
 	if menu != nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(400, "Menu already exists"),
+			Base: helper.GetErrResp(400, i18n.Translate(i18n.MenuAlreadyExists, l.ctx)),
 		}, nil
 	}
 	_, err = l.svcCtx.MenuModel.Insert(l.ctx, &models.SysMenu{

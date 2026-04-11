@@ -3,14 +3,13 @@ package logic
 import (
 	"context"
 	"errors"
-
+	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/helpers"
 	"wklive/services/asset/internal/svc"
 	"wklive/services/asset/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type GetUserAssetDetailLogic struct {
@@ -32,7 +31,7 @@ func (l *GetUserAssetDetailLogic) GetUserAssetDetail(in *asset.GetUserAssetDetai
 	item, err := l.svcCtx.UserAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &asset.GetUserAssetDetailResp{Base: helper.GetErrResp(404, "资产不存在")}, nil
+			return &asset.GetUserAssetDetailResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.AssetNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}

@@ -8,7 +8,7 @@ import "proto/common/common.proto";
 import "proto/staking/enum.proto";
 import "proto/staking/model.proto";
 
-// 
+//
 service StakingAdmin {
   // 获取质押产品列表
   // 后台分页查询质押产品，支持按产品编号、产品名称、币种、产品类型、状态筛选。
@@ -16,7 +16,8 @@ service StakingAdmin {
 
   // 获取质押产品详情
   // 根据产品ID查询质押产品详细信息。
-  rpc AdminProductDetail(AdminProductDetailReq) returns (AdminProductDetailResp);
+  rpc AdminProductDetail(AdminProductDetailReq)
+      returns (AdminProductDetailResp);
 
   // 创建质押产品
   // 后台新增一个质押产品配置。
@@ -28,7 +29,8 @@ service StakingAdmin {
 
   // 修改质押产品状态
   // 启用、禁用或下架指定质押产品。
-  rpc ProductChangeStatus(AdminProductChangeStatusReq) returns (AdminProductChangeStatusResp);
+  rpc ProductChangeStatus(AdminProductChangeStatusReq)
+      returns (AdminProductChangeStatusResp);
 
   // 获取质押订单列表
   // 后台分页查询质押订单，支持按订单号、用户ID、产品、状态、赎回类型、来源、时间范围筛选。
@@ -67,7 +69,7 @@ message AdminProductListReq {
 }
 
 message AdminProductListResp {
-    common.RespBase page = 1;
+  common.RespBase page = 1;
   repeated StakeProduct data = 2;
 }
 
@@ -78,7 +80,7 @@ message AdminProductDetailReq {
 }
 
 message AdminProductDetailResp {
-    common.RespBase page = 1;
+  common.RespBase page = 1;
   StakeProduct data = 2;
 }
 
@@ -110,7 +112,7 @@ message AdminProductCreateReq {
 }
 
 message AdminProductCreateResp {
-    common.RespBase page = 1;
+  common.RespBase page = 1;
   uint64 data = 2;
 }
 
@@ -142,7 +144,7 @@ message AdminProductUpdateReq {
 }
 
 message AdminProductUpdateResp {
-    common.RespBase page = 1;
+  common.RespBase page = 1;
   bool data = 2;
 }
 
@@ -155,7 +157,7 @@ message AdminProductChangeStatusReq {
 }
 
 message AdminProductChangeStatusResp {
-    common.RespBase page = 1;
+  common.RespBase page = 1;
   bool data = 2;
 }
 
@@ -178,7 +180,7 @@ message AdminOrderListReq {
 }
 
 message AdminOrderListResp {
-    common.RespBase page = 1;
+  common.RespBase page = 1;
   repeated StakeOrder data = 2;
 }
 
@@ -189,7 +191,7 @@ message AdminOrderDetailReq {
 }
 
 message AdminOrderDetailResp {
-    common.RespBase page = 1;
+  common.RespBase page = 1;
   StakeOrder data = 2;
 }
 
@@ -207,7 +209,7 @@ message AdminRewardLogListReq {
 }
 
 message AdminRewardLogListResp {
-    common.RespBase page = 1;
+  common.RespBase page = 1;
   repeated StakeRewardLog data = 2;
 }
 
@@ -226,7 +228,7 @@ message AdminRedeemLogListReq {
 }
 
 message AdminRedeemLogListResp {
-    common.RespBase page = 1;
+  common.RespBase page = 1;
   repeated StakeRedeemLog data = 2;
 }
 
@@ -241,7 +243,7 @@ message AdminManualRewardReq {
 }
 
 message AdminManualRewardResp {
-    common.RespBase page = 1;
+  common.RespBase page = 1;
   bool data = 2;
 }
 
@@ -259,7 +261,7 @@ message AdminManualRedeemReq {
 }
 
 message AdminManualRedeemResp {
-    common.RespBase page = 1;
+  common.RespBase page = 1;
   bool success = 2;
   string redeem_no = 3;
 }

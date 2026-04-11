@@ -4,14 +4,13 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"github.com/zeromicro/go-zero/core/logx"
 	"time"
-
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SysTenantCreateLogic struct {
@@ -36,7 +35,7 @@ func (l *SysTenantCreateLogic) SysTenantCreate(in *system.SysTenantCreateReq) (*
 	}
 	if tenant != nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(400, "租户编码已存在"),
+			Base: helper.GetErrResp(400, i18n.Translate(i18n.TenantCodeAlreadyExists, l.ctx)),
 		}, nil
 	}
 	_, err = l.svcCtx.TenantMode.Insert(l.ctx, &models.SysTenant{

@@ -4,14 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-
+	"github.com/zeromicro/go-zero/core/logx"
+	g "github.com/zeromicro/go-zero/core/stores/sqlx"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
-	g "github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type SysRoleGrantLogic struct {
@@ -47,7 +46,7 @@ func (l *SysRoleGrantLogic) SysRoleGrant(in *system.SysRoleGrantReq) (*system.Re
 		return nil, err
 	}
 	if role == nil {
-		return nil, errors.New("角色不存在")
+		return nil, errors.New(i18n.Translate(i18n.RoleNotFound, l.ctx))
 	}
 
 	if len(menuIds) > 0 {
@@ -66,7 +65,7 @@ func (l *SysRoleGrantLogic) SysRoleGrant(in *system.SysRoleGrantReq) (*system.Re
 					missing = append(missing, id)
 				}
 			}
-			return nil, fmt.Errorf("菜单不存在: %v", missing)
+			return nil, fmt.Errorf("%s: %v", i18n.Translate(i18n.MenuNotFound, l.ctx), missing)
 		}
 	}
 

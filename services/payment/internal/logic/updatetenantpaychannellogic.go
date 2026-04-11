@@ -4,15 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"github.com/zeromicro/go-zero/core/logx"
 	"time"
-
 	"wklive/common/conv"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type UpdateTenantPayChannelLogic struct {
@@ -44,7 +43,7 @@ func (l *UpdateTenantPayChannelLogic) UpdateTenantPayChannel(in *payment.UpdateT
 
 	if channel == nil {
 		return &payment.AdminCommonResp{
-			Base: helper.GetErrResp(404, "支付通道不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.PaymentChannelNotFound, l.ctx)),
 		}, nil
 	}
 

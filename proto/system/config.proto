@@ -5,19 +5,19 @@ package system;
 option go_package = "wklive/proto/system;system";
 
 message Interval {
-	string name   = 1;
-	int32  k_type  = 2;
+  string name = 1;
+  int32 k_type = 2;
 }
 
 // 系统配置
 message SystemCore {
-  string site_name = 1; // 网站名称
-  string site_logo = 2; // 网站LOGO
-  bool       is_captcha_enabled  = 3; // 是否开启验证码
-	bool       is_register_enabled = 4; // 是否开启注册
-	bool       is_guest_enabled    = 5; // 是否允许游客登录
-	bool       is_crypto_enabled   = 6; // 是否加密接口提交数据
-	repeated Interval intervals  = 7; // kline 支持粒度
+  string site_name = 1;            // 网站名称
+  string site_logo = 2;            // 网站LOGO
+  bool is_captcha_enabled = 3;     // 是否开启验证码
+  bool is_register_enabled = 4;    // 是否开启注册
+  bool is_guest_enabled = 5;       // 是否允许游客登录
+  bool is_crypto_enabled = 6;      // 是否加密接口提交数据
+  repeated Interval intervals = 7; // kline 支持粒度
 }
 
 // 阿里云 OSS配置
@@ -52,12 +52,12 @@ message ObjectStorageConfig {
   AliyunOssConfig aliyun_oss = 1;
   TencentCosConfig tencent_cos = 2;
   MinioConfig minio = 3;
-  int64 oss_type = 4; // 1阿里云OSS 2腾讯云COS 3MINIO
+  int64 oss_type = 4;    // 1阿里云OSS 2腾讯云COS 3MINIO
   string oss_domain = 5; // 对象存储访问域名（可选，优先使用bucket_url）
 }
 
 message ItickConfig {
-  string api_url = 1; // ITICK API地址
+  string api_url = 1;   // ITICK API地址
   string api_token = 2; // ITICK API密钥
-  string ws_url = 3; // ITICK WebSocket地址
+  string ws_url = 3;    // ITICK WebSocket地址
 }

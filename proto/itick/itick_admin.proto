@@ -8,9 +8,7 @@ import "proto/itick/model.proto";
 
 option go_package = "wklive/proto/itick;itick";
 
-message AdminCommonResp {
-  common.RespBase base = 1;
-}
+message AdminCommonResp { common.RespBase base = 1; }
 
 // ====================
 // 产品类型
@@ -36,9 +34,7 @@ message UpdateCategoryReq {
   string remark = 7;
 }
 
-message GetCategoryReq {
-  int64 id = 1;
-}
+message GetCategoryReq { int64 id = 1; }
 
 message GetCategoryResp {
   common.RespBase base = 1;
@@ -48,7 +44,7 @@ message GetCategoryResp {
 message ListCategoriesReq {
   common.PageReq page = 1;
   itick.CategoryType category_type = 2;
-  int32 enabled = 3; // 0全部 1启用 2禁用
+  int32 enabled = 3;     // 0全部 1启用 2禁用
   int32 app_visible = 4; // 0全部 1可见 2不可见
 }
 
@@ -57,18 +53,14 @@ message ListCategoriesResp {
   repeated itick.ItickCategory data = 2;
 }
 
-message SyncCategoryProductsReq {
-  int64 id = 1;
-}
+message SyncCategoryProductsReq { int64 id = 1; }
 
 message SyncCategoryProductsResp {
   common.RespBase base = 1;
   string task_no = 2;
 }
 
-message GetSyncTaskStatusReq {
-  string task_no = 1;
-}
+message GetSyncTaskStatusReq { string task_no = 1; }
 
 message GetSyncTaskStatusResp {
   common.RespBase base = 1;
@@ -111,9 +103,7 @@ message UpdateProductReq {
   string remark = 11;
 }
 
-message GetProductReq {
-  int64 id = 1;
-}
+message GetProductReq { int64 id = 1; }
 
 message GetProductResp {
   common.RespBase base = 1;
@@ -126,7 +116,7 @@ message ListProductsReq {
   string category_name = 3;
   string market = 4;
   string keyword = 5;
-  int32 enabled = 6; // 0全部 1启用 2禁用
+  int32 enabled = 6;     // 0全部 1启用 2禁用
   int32 app_visible = 7; // 0全部 1显示 2隐藏
 }
 
@@ -203,7 +193,7 @@ message ListTenantCategoriesReq {
   common.PageReq page = 1;
   int64 tenant_id = 2;
   itick.CategoryType category_type = 3;
-  int32 status = 4; // 0全部 1启用 2禁用
+  int32 status = 4;         // 0全部 1启用 2禁用
   int32 visible_status = 5; // 0全部 1显示 2隐藏
 }
 
@@ -264,7 +254,7 @@ message ListTenantProductsReq {
   itick.CategoryType category_type = 3;
   string market = 4;
   string keyword = 5;
-  int32 status = 6; // 0全部 1启用 2禁用
+  int32 status = 6;         // 0全部 1启用 2禁用
   int32 visible_status = 7; // 0全部 1显示 2隐藏
 }
 
@@ -301,7 +291,8 @@ service ItickAdmin {
   // 获取产品类型详情
   rpc GetCategory(GetCategoryReq) returns (GetCategoryResp);
   // 同步类型下的产品
-  rpc SyncCategoryProducts(SyncCategoryProductsReq) returns (SyncCategoryProductsResp);
+  rpc SyncCategoryProducts(SyncCategoryProductsReq)
+      returns (SyncCategoryProductsResp);
   // 获取同步任务状态
   rpc GetSyncTaskStatus(GetSyncTaskStatusReq) returns (GetSyncTaskStatusResp);
 
@@ -318,27 +309,32 @@ service ItickAdmin {
   rpc GetProductKline(GetProductKlineReq) returns (GetProductKlineResp);
 
   // 租户产品类型列表
-  rpc ListTenantCategories(ListTenantCategoriesReq) returns (ListTenantCategoriesResp);
+  rpc ListTenantCategories(ListTenantCategoriesReq)
+      returns (ListTenantCategoriesResp);
   // 租户产品类型
   rpc CreateTenantCategory(CreateTenantCategoryReq) returns (AdminCommonResp);
   // 更新租户产品类型仅允许更新状态、排序和备注，关联的产品类型不允许修改
   rpc UpdateTenantCategory(UpdateTenantCategoryReq) returns (AdminCommonResp);
   // 批量更新租户产品类型，已关联的修改状态、排序和备注，未关联的新增，未提交的删除
-  rpc BatchUpsertTenantCategories(BatchUpsertTenantCategoriesReq) returns (AdminCommonResp);
+  rpc BatchUpsertTenantCategories(BatchUpsertTenantCategoriesReq)
+      returns (AdminCommonResp);
   // 获取租户产品类型详情
   rpc GetTenantCategory(GetTenantCategoryReq) returns (GetTenantCategoryResp);
 
   // 租户产品列表
-  rpc ListTenantProducts(ListTenantProductsReq) returns (ListTenantProductsResp);
+  rpc ListTenantProducts(ListTenantProductsReq)
+      returns (ListTenantProductsResp);
   // 租户产品
   rpc CreateTenantProduct(CreateTenantProductReq) returns (AdminCommonResp);
   // 更新租户产品仅允许更新状态、排序和备注，关联的产品不允许修改
   rpc UpdateTenantProduct(UpdateTenantProductReq) returns (AdminCommonResp);
   // 批量更新租户产品，已关联的修改状态、排序和备注，未关联的新增，未提交的删除
-  rpc BatchUpsertTenantProducts(BatchUpsertTenantProductsReq) returns (AdminCommonResp);
+  rpc BatchUpsertTenantProducts(BatchUpsertTenantProductsReq)
+      returns (AdminCommonResp);
   // 获取租户产品详情
   rpc GetTenantProduct(GetTenantProductReq) returns (GetTenantProductResp);
 
   // 初始化租户展示配置
-  rpc InitTenantItickDisplay(InitTenantItickDisplayReq) returns (InitTenantItickDisplayResp);
+  rpc InitTenantItickDisplay(InitTenantItickDisplayReq)
+      returns (InitTenantItickDisplayResp);
 }

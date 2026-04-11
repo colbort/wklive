@@ -3,13 +3,12 @@ package logic
 import (
 	"context"
 	"database/sql"
+	"github.com/zeromicro/go-zero/core/logx"
 	"time"
-
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type UpdatePayProductLogic struct {
@@ -41,7 +40,7 @@ func (l *UpdatePayProductLogic) UpdatePayProduct(in *payment.UpdatePayProductReq
 
 	if product == nil {
 		return &payment.AdminCommonResp{
-			Base: helper.GetErrResp(404, "产品不存在"),
+			Base: helper.GetErrResp(404, i18n.Translate(i18n.ProductNotFound, l.ctx)),
 		}, nil
 	}
 

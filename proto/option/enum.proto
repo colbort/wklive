@@ -19,7 +19,7 @@ enum CommonStatus {
 enum OptionType {
   OPTION_TYPE_UNKNOWN = 0;
   OPTION_TYPE_CALL = 1; // 看涨
-  OPTION_TYPE_PUT = 2; // 看跌
+  OPTION_TYPE_PUT = 2;  // 看跌
 }
 
 enum ExerciseStyle {
@@ -30,7 +30,7 @@ enum ExerciseStyle {
 
 enum SettlementType {
   SETTLEMENT_TYPE_UNKNOWN = 0;
-  SETTLEMENT_TYPE_CASH = 1; // 现金结算
+  SETTLEMENT_TYPE_CASH = 1;     // 现金结算
   SETTLEMENT_TYPE_PHYSICAL = 2; // 实物交割
 }
 
@@ -38,7 +38,7 @@ enum ContractStatus {
   CONTRACT_STATUS_UNKNOWN = 0;
   CONTRACT_STATUS_PENDING = 1; // 待上市
   CONTRACT_STATUS_TRADING = 2; // 可交易
-  CONTRACT_STATUS_PAUSED = 3; // 暂停交易
+  CONTRACT_STATUS_PAUSED = 3;  // 暂停交易
   CONTRACT_STATUS_EXPIRED = 4; // 已到期
   CONTRACT_STATUS_SETTLED = 5; // 已结算
   CONTRACT_STATUS_OFFLINE = 6; // 已下线
@@ -52,7 +52,7 @@ enum Side {
 
 enum PositionEffect {
   POSITION_EFFECT_UNKNOWN = 0;
-  POSITION_EFFECT_OPEN = 1; // 开仓
+  POSITION_EFFECT_OPEN = 1;  // 开仓
   POSITION_EFFECT_CLOSE = 2; // 平仓
 }
 
@@ -75,12 +75,12 @@ enum OrderSource {
 
 enum OrderStatus {
   ORDER_STATUS_UNKNOWN = 0;
-  ORDER_STATUS_PENDING = 1; // 待撮合
+  ORDER_STATUS_PENDING = 1;     // 待撮合
   ORDER_STATUS_PART_FILLED = 2; // 部分成交
-  ORDER_STATUS_FILLED = 3; // 完全成交
-  ORDER_STATUS_CANCELED = 4; // 已撤单
-  ORDER_STATUS_REJECTED = 5; // 拒单
-  ORDER_STATUS_EXPIRED = 6; // 已过期
+  ORDER_STATUS_FILLED = 3;      // 完全成交
+  ORDER_STATUS_CANCELED = 4;    // 已撤单
+  ORDER_STATUS_REJECTED = 5;    // 拒单
+  ORDER_STATUS_EXPIRED = 6;     // 已过期
 }
 
 enum MakerSide {
@@ -91,17 +91,17 @@ enum MakerSide {
 
 enum PositionSide {
   POSITION_SIDE_UNKNOWN = 0;
-  POSITION_SIDE_LONG = 1; // 多头
+  POSITION_SIDE_LONG = 1;  // 多头
   POSITION_SIDE_SHORT = 2; // 空头
 }
 
 enum PositionStatus {
   POSITION_STATUS_UNKNOWN = 0;
-  POSITION_STATUS_HOLDING = 1; // 持仓中
-  POSITION_STATUS_CLOSED = 2; // 已平仓
+  POSITION_STATUS_HOLDING = 1;   // 持仓中
+  POSITION_STATUS_CLOSED = 2;    // 已平仓
   POSITION_STATUS_EXERCISED = 3; // 已行权
-  POSITION_STATUS_EXPIRED = 4; // 已到期
-  POSITION_STATUS_SETTLED = 5; // 已结算
+  POSITION_STATUS_EXPIRED = 4;   // 已到期
+  POSITION_STATUS_SETTLED = 5;   // 已结算
 }
 
 enum ExerciseType {
@@ -128,9 +128,9 @@ enum SettlementStatus {
 
 enum ExerciseResult {
   EXERCISE_RESULT_UNKNOWN = 0;
-  EXERCISE_RESULT_NONE = 1; // 未执行
+  EXERCISE_RESULT_NONE = 1;          // 未执行
   EXERCISE_RESULT_AUTO_EXERCISE = 2; // 自动行权
-  EXERCISE_RESULT_AUTO_ABANDON = 3; // 自动放弃
+  EXERCISE_RESULT_AUTO_ABANDON = 3;  // 自动放弃
 }
 
 enum AccountStatus {
@@ -142,10 +142,10 @@ enum AccountStatus {
 
 enum BillRefType {
   BILL_REF_TYPE_UNKNOWN = 0;
-  BILL_REF_TYPE_ORDER = 1; // 下单
-  BILL_REF_TYPE_TRADE = 2; // 成交
-  BILL_REF_TYPE_CANCEL = 3; // 撤单
-  BILL_REF_TYPE_EXERCISE = 4; // 行权
+  BILL_REF_TYPE_ORDER = 1;      // 下单
+  BILL_REF_TYPE_TRADE = 2;      // 成交
+  BILL_REF_TYPE_CANCEL = 3;     // 撤单
+  BILL_REF_TYPE_EXERCISE = 4;   // 行权
   BILL_REF_TYPE_SETTLEMENT = 5; // 结算
-  BILL_REF_TYPE_FEE = 6; // 手续费
+  BILL_REF_TYPE_FEE = 6;        // 手续费
 }
