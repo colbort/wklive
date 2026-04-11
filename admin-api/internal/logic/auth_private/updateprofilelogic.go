@@ -5,13 +5,14 @@ package auth_private
 
 import (
 	"context"
+	"fmt"
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/system"
 
-	"github.com/zeromicro/go-zero/core/errorx"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -32,7 +33,7 @@ func NewUpdateProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upd
 func (l *UpdateProfileLogic) UpdateProfile(req *types.UpdateProfileReq) (resp *types.RespBase, err error) {
 	uid, err := utils.GetUidFromCtx(l.ctx)
 	if err != nil {
-		return nil, errorx.Wrap(err, "获取用户信息失败")
+		return nil, fmt.Errorf("%s: %w", i18n.Translate(i18n.InternalServerError, l.ctx), err)
 	}
 	result, err := l.svcCtx.SystemCli.UpdateProfile(l.ctx, &system.UpdateProfileReq{
 		Id:       uid,

@@ -6,16 +6,17 @@ package auth_private
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"mime/multipart"
 	"strings"
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/common/i18n"
 	"wklive/common/storage"
 	"wklive/proto/system"
 
 	"github.com/jinzhu/copier"
-	"github.com/zeromicro/go-zero/core/errorx"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -48,7 +49,7 @@ func (l *UploadFileLogic) UploadFile(file multipart.File, header *multipart.File
 		return &types.UploadFileResp{
 			RespBase: types.RespBase{
 				Code: 400,
-				Msg:  "只允许上传图片文件",
+				Msg:  i18n.Translate(i18n.ParamError, l.ctx),
 			},
 		}, nil
 	}
@@ -75,11 +76,11 @@ func (l *UploadFileLogic) UploadFile(file multipart.File, header *multipart.File
 	}
 	url, err := storage.UploadFile(l.ctx, file, header, storageCfg)
 	if err != nil {
-		return nil, errorx.Wrap(err, "上传文件失败")
+		return nil, fmt.Errorf("%s: %w", i18n.Translate(i18n.InternalServerError, l.ctx), err)
 	}
 
 	resp = &types.UploadFileResp{
-		RespBase: types.RespBase{Code: 200, Msg: "上传成功"},
+		RespBase: types.RespBase{Code: i18n.OK, Msg: i18n.Translate(i18n.OK, l.ctx)},
 		Data: struct {
 			Url string `json:"url"`
 		}{Url: url},

@@ -15,6 +15,7 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/common/i18n"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -38,7 +39,7 @@ func (l *UploadAvatarLogic) UploadAvatar(file multipart.File, header *multipart.
 		return &types.UploadFileResp{
 			RespBase: types.RespBase{
 				Code: 400,
-				Msg:  "只允许上传图片文件",
+				Msg:  i18n.Translate(i18n.ParamError, l.ctx),
 			},
 		}, nil
 	}
@@ -49,7 +50,7 @@ func (l *UploadAvatarLogic) UploadAvatar(file multipart.File, header *multipart.
 		return &types.UploadFileResp{
 			RespBase: types.RespBase{
 				Code: 500,
-				Msg:  "读取文件失败",
+				Msg:  i18n.Translate(i18n.InternalServerError, l.ctx),
 			},
 		}, nil
 	}
@@ -66,7 +67,7 @@ func (l *UploadAvatarLogic) UploadAvatar(file multipart.File, header *multipart.
 			return &types.UploadFileResp{
 				RespBase: types.RespBase{
 					Code: 500,
-					Msg:  "创建目录失败",
+					Msg:  i18n.Translate(i18n.InternalServerError, l.ctx),
 				},
 			}, nil
 		}
@@ -80,7 +81,7 @@ func (l *UploadAvatarLogic) UploadAvatar(file multipart.File, header *multipart.
 		return &types.UploadFileResp{
 			RespBase: types.RespBase{
 				Code: 200,
-				Msg:  "文件已存在",
+				Msg:  i18n.Translate(i18n.OK, l.ctx),
 			},
 			Data: struct {
 				Url string `json:"url"`
@@ -96,15 +97,15 @@ func (l *UploadAvatarLogic) UploadAvatar(file multipart.File, header *multipart.
 		return &types.UploadFileResp{
 			RespBase: types.RespBase{
 				Code: 500,
-				Msg:  "文件保存失败",
+				Msg:  i18n.Translate(i18n.InternalServerError, l.ctx),
 			},
 		}, nil
 	}
 
 	return &types.UploadFileResp{
 		RespBase: types.RespBase{
-			Code: 200,
-			Msg:  "上传成功",
+			Code: i18n.OK,
+			Msg:  i18n.Translate(i18n.OK, l.ctx),
 		},
 		Data: struct {
 			Url string `json:"url"`
