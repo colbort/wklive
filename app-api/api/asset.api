@@ -1,0 +1,198 @@
+syntax = "v1"
+
+import "common.api"
+
+type AssetUserAsset {
+	id              int64  `json:"id"`
+	tenantId        int64  `json:"tenantId"`
+	userId          int64  `json:"userId"`
+	walletType      int64  `json:"walletType"`
+	coin            string `json:"coin"`
+	totalAmount     string `json:"totalAmount"`
+	availableAmount string `json:"availableAmount"`
+	frozenAmount    string `json:"frozenAmount"`
+	lockedAmount    string `json:"lockedAmount"`
+	status          int64  `json:"status"`
+	version         int32  `json:"version"`
+	remark          string `json:"remark"`
+	createTime      int64  `json:"createTime"`
+	updateTime      int64  `json:"updateTime"`
+}
+
+type AssetFlow {
+	id                    int64  `json:"id"`
+	flowNo                string `json:"flowNo"`
+	tenantId              int64  `json:"tenantId"`
+	userId                int64  `json:"userId"`
+	walletType            int64  `json:"walletType"`
+	coin                  string `json:"coin"`
+	bizType               int64  `json:"bizType"`
+	sceneType             int64  `json:"sceneType"`
+	opType                int64  `json:"opType"`
+	bizId                 int64  `json:"bizId"`
+	bizNo                 string `json:"bizNo"`
+	changeAmount          string `json:"changeAmount"`
+	beforeTotalAmount     string `json:"beforeTotalAmount"`
+	afterTotalAmount      string `json:"afterTotalAmount"`
+	beforeAvailableAmount string `json:"beforeAvailableAmount"`
+	afterAvailableAmount  string `json:"afterAvailableAmount"`
+	beforeFrozenAmount    string `json:"beforeFrozenAmount"`
+	afterFrozenAmount     string `json:"afterFrozenAmount"`
+	beforeLockedAmount    string `json:"beforeLockedAmount"`
+	afterLockedAmount     string `json:"afterLockedAmount"`
+	balanceSnapshotVersion int32 `json:"balanceSnapshotVersion"`
+	remark                string `json:"remark"`
+	createTime            int64  `json:"createTime"`
+	updateTime            int64  `json:"updateTime"`
+}
+
+type AssetFreeze {
+	id             int64  `json:"id"`
+	freezeNo       string `json:"freezeNo"`
+	tenantId       int64  `json:"tenantId"`
+	userId         int64  `json:"userId"`
+	walletType     int64  `json:"walletType"`
+	coin           string `json:"coin"`
+	bizType        int64  `json:"bizType"`
+	sceneType      int64  `json:"sceneType"`
+	bizId          int64  `json:"bizId"`
+	bizNo          string `json:"bizNo"`
+	amount         string `json:"amount"`
+	usedAmount     string `json:"usedAmount"`
+	unfreezeAmount string `json:"unfreezeAmount"`
+	remainAmount   string `json:"remainAmount"`
+	status         int64  `json:"status"`
+	expireTime     int64  `json:"expireTime"`
+	remark         string `json:"remark"`
+	createTime     int64  `json:"createTime"`
+	updateTime     int64  `json:"updateTime"`
+}
+
+type AssetLock {
+	id           int64  `json:"id"`
+	lockNo       string `json:"lockNo"`
+	tenantId     int64  `json:"tenantId"`
+	userId       int64  `json:"userId"`
+	walletType   int64  `json:"walletType"`
+	coin         string `json:"coin"`
+	bizType      int64  `json:"bizType"`
+	sceneType    int64  `json:"sceneType"`
+	bizId        int64  `json:"bizId"`
+	bizNo        string `json:"bizNo"`
+	amount       string `json:"amount"`
+	unlockAmount string `json:"unlockAmount"`
+	remainAmount string `json:"remainAmount"`
+	status       int64  `json:"status"`
+	startTime    int64  `json:"startTime"`
+	endTime      int64  `json:"endTime"`
+	remark       string `json:"remark"`
+	createTime   int64  `json:"createTime"`
+	updateTime   int64  `json:"updateTime"`
+}
+
+type UserAssetSummary {
+	tenantId           int64             `json:"tenantId"`
+	userId             int64             `json:"userId"`
+	totalAssetUsdt     string            `json:"totalAssetUsdt"`
+	totalAvailableUsdt string            `json:"totalAvailableUsdt"`
+	totalFrozenUsdt    string            `json:"totalFrozenUsdt"`
+	totalLockedUsdt    string            `json:"totalLockedUsdt"`
+	assets             []AssetUserAsset  `json:"assets"`
+}
+
+type GetMyAssetSummaryReq {
+	tenantId int64 `form:"tenantId,optional"`
+}
+
+type GetMyAssetSummaryResp {
+	RespBase
+	data UserAssetSummary `json:"data"`
+}
+
+type ListMyAssetsReq {
+	tenantId   int64  `form:"tenantId,optional"`
+	walletType int64  `form:"walletType,optional"`
+	coin       string `form:"coin,optional"`
+}
+
+type ListMyAssetsResp {
+	RespBase
+	data []AssetUserAsset `json:"data"`
+}
+
+type GetMyAssetReq {
+	tenantId   int64  `form:"tenantId,optional"`
+	walletType int64  `form:"walletType"`
+	coin       string `form:"coin"`
+}
+
+type GetMyAssetResp {
+	RespBase
+	asset AssetUserAsset `json:"asset"`
+}
+
+type ListMyAssetFlowsReq {
+	PageReq
+	tenantId   int64     `form:"tenantId,optional"`
+	walletType int64     `form:"walletType,optional"`
+	coin       string    `form:"coin,optional"`
+	bizType    int64     `form:"bizType,optional"`
+	sceneType  int64     `form:"sceneType,optional"`
+	timeRange  TimeRange `form:"timeRange,optional"`
+}
+
+type ListMyAssetFlowsResp {
+	RespBase
+	data []AssetFlow `json:"data"`
+}
+
+type ListMyFreezesReq {
+	PageReq
+	tenantId   int64 `form:"tenantId,optional"`
+	walletType int64 `form:"walletType"`
+	coin       string `form:"coin,optional"`
+	status     int64 `form:"status,optional"`
+}
+
+type ListMyFreezesResp {
+	RespBase
+	data []AssetFreeze `json:"data"`
+}
+
+type ListMyLocksReq {
+	PageReq
+	tenantId   int64 `form:"tenantId,optional"`
+	walletType int64 `form:"walletType"`
+	coin       string `form:"coin,optional"`
+	status     int64 `form:"status,optional"`
+}
+
+type ListMyLocksResp {
+	RespBase
+	data []AssetLock `json:"data"`
+}
+
+@server (
+	prefix: /app/asset
+	group:  asset
+	jwt:    Jwt
+)
+service app {
+	@handler GetMyAssetSummary
+	get /summary (GetMyAssetSummaryReq) returns (GetMyAssetSummaryResp)
+
+	@handler ListMyAssets
+	get /assets (ListMyAssetsReq) returns (ListMyAssetsResp)
+
+	@handler GetMyAsset
+	get /assets/detail (GetMyAssetReq) returns (GetMyAssetResp)
+
+	@handler ListMyAssetFlows
+	get /flows (ListMyAssetFlowsReq) returns (ListMyAssetFlowsResp)
+
+	@handler ListMyFreezes
+	get /freezes (ListMyFreezesReq) returns (ListMyFreezesResp)
+
+	@handler ListMyLocks
+	get /locks (ListMyLocksReq) returns (ListMyLocksResp)
+}

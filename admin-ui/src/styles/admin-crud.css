@@ -1,0 +1,168 @@
+:root {
+  --admin-page-gap: 16px;
+  --admin-card-radius: 14px;
+  --admin-card-border: var(--el-border-color-light);
+  --admin-muted-bg: #f8fafc;
+}
+
+.module-page,
+.payment-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-page-gap);
+  padding: 4px 0 12px;
+}
+
+.module-page .page-header,
+.payment-page .page-header,
+.itick-tenant-categories .page-header,
+.itick-tenant-products .page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.module-page .page-header h2,
+.payment-page .page-header h2,
+.itick-tenant-categories .page-header h2,
+.itick-tenant-products .page-header h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--el-text-color-primary);
+}
+
+.module-page .page-header > div,
+.payment-page .page-header > div,
+.module-page .header-actions,
+.payment-page .header-actions,
+.itick-tenant-categories .header-actions,
+.itick-tenant-products .header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.module-page .query-card,
+.payment-page .query-card,
+.module-page .table-card,
+.payment-page .table-card,
+.module-page > .el-card:not(.query-card),
+.payment-page > .el-card:not(.query-card),
+.module-page .el-tab-pane > .el-card,
+.payment-page .el-tab-pane > .el-card {
+  border-radius: var(--admin-card-radius);
+  border-color: var(--admin-card-border);
+  box-shadow: none;
+}
+
+.module-page .query-card,
+.payment-page .query-card {
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+}
+
+.module-page .query-card .el-form,
+.payment-page .query-card .el-form,
+.module-page .query-card-inner,
+.payment-page .query-card-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 0;
+}
+
+.module-page .query-card .el-form-item,
+.payment-page .query-card .el-form-item {
+  margin-bottom: 12px;
+}
+
+.module-page .el-tabs,
+.payment-page .el-tabs {
+  margin-top: -4px;
+}
+
+.module-page .el-tabs__header,
+.payment-page .el-tabs__header {
+  margin-bottom: 0;
+}
+
+.module-page .el-tabs__nav-wrap::after,
+.payment-page .el-tabs__nav-wrap::after {
+  background-color: var(--el-border-color-lighter);
+}
+
+.module-page .el-table,
+.payment-page .el-table {
+  --el-table-border-color: var(--el-border-color-lighter);
+}
+
+.module-page .el-dialog__body,
+.payment-page .el-dialog__body {
+  max-height: 70vh;
+  overflow: auto;
+}
+
+.module-page .detail-pre,
+.payment-page .detail-pre {
+  margin: 0;
+  padding: 16px 18px;
+  border-radius: 12px;
+  background: var(--admin-muted-bg);
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: var(--el-text-color-regular);
+  line-height: 1.6;
+  font-size: 13px;
+}
+
+.module-page .el-descriptions,
+.payment-page .el-descriptions {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.module-page .pagination-bar,
+.payment-page .pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.module-page .risk-grid,
+.payment-page .risk-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .module-page,
+  .payment-page {
+    gap: 12px;
+  }
+
+  .module-page .page-header h2,
+  .payment-page .page-header h2 {
+    font-size: 20px;
+  }
+
+  .module-page .page-header,
+  .payment-page .page-header {
+    align-items: flex-start;
+  }
+
+  .module-page .page-header > div,
+  .payment-page .page-header > div {
+    width: 100%;
+  }
+
+  .module-page .page-header > div .el-button,
+  .payment-page .page-header > div .el-button {
+    flex: 1 1 auto;
+  }
+}

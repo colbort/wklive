@@ -1,0 +1,272 @@
+import "common.api"
+
+type AssetUserAsset {
+	id              int64  `json:"id"`
+	tenantId        int64  `json:"tenantId"`
+	userId          int64  `json:"userId"`
+	walletType      int64  `json:"walletType"`
+	coin            string `json:"coin"`
+	totalAmount     string `json:"totalAmount"`
+	availableAmount string `json:"availableAmount"`
+	frozenAmount    string `json:"frozenAmount"`
+	lockedAmount    string `json:"lockedAmount"`
+	status          int64  `json:"status"`
+	version         int32  `json:"version"`
+	remark          string `json:"remark"`
+	createTime      int64  `json:"createTime"`
+	updateTime      int64  `json:"updateTime"`
+}
+
+type AssetFlow {
+	id                    int64          `json:"id"`
+	flowNo                string         `json:"flowNo"`
+	tenantId              int64          `json:"tenantId"`
+	userId                int64          `json:"userId"`
+	walletType            int64          `json:"walletType"`
+	coin                  string         `json:"coin"`
+	bizType               int64          `json:"bizType"`
+	sceneType             int64          `json:"sceneType"`
+	opType                int64          `json:"opType"`
+	bizId                 int64          `json:"bizId"`
+	bizNo                 string         `json:"bizNo"`
+	changeAmount          string         `json:"changeAmount"`
+	beforeTotalAmount     string         `json:"beforeTotalAmount"`
+	afterTotalAmount      string         `json:"afterTotalAmount"`
+	beforeAvailableAmount string         `json:"beforeAvailableAmount"`
+	afterAvailableAmount  string         `json:"afterAvailableAmount"`
+	beforeFrozenAmount    string         `json:"beforeFrozenAmount"`
+	afterFrozenAmount     string         `json:"afterFrozenAmount"`
+	beforeLockedAmount    string         `json:"beforeLockedAmount"`
+	afterLockedAmount     string         `json:"afterLockedAmount"`
+	balanceSnapshotVersion int32         `json:"balanceSnapshotVersion"`
+	remark                string         `json:"remark"`
+	createTime            int64          `json:"createTime"`
+	updateTime            int64          `json:"updateTime"`
+}
+
+type AssetFreeze {
+	id             int64  `json:"id"`
+	freezeNo       string `json:"freezeNo"`
+	tenantId       int64  `json:"tenantId"`
+	userId         int64  `json:"userId"`
+	walletType     int64  `json:"walletType"`
+	coin           string `json:"coin"`
+	bizType        int64  `json:"bizType"`
+	sceneType      int64  `json:"sceneType"`
+	bizId          int64  `json:"bizId"`
+	bizNo          string `json:"bizNo"`
+	amount         string `json:"amount"`
+	usedAmount     string `json:"usedAmount"`
+	unfreezeAmount string `json:"unfreezeAmount"`
+	remainAmount   string `json:"remainAmount"`
+	status         int64  `json:"status"`
+	expireTime     int64  `json:"expireTime"`
+	remark         string `json:"remark"`
+	createTime     int64  `json:"createTime"`
+	updateTime     int64  `json:"updateTime"`
+}
+
+type AssetLock {
+	id           int64  `json:"id"`
+	lockNo       string `json:"lockNo"`
+	tenantId     int64  `json:"tenantId"`
+	userId       int64  `json:"userId"`
+	walletType   int64  `json:"walletType"`
+	coin         string `json:"coin"`
+	bizType      int64  `json:"bizType"`
+	sceneType    int64  `json:"sceneType"`
+	bizId        int64  `json:"bizId"`
+	bizNo        string `json:"bizNo"`
+	amount       string `json:"amount"`
+	unlockAmount string `json:"unlockAmount"`
+	remainAmount string `json:"remainAmount"`
+	status       int64  `json:"status"`
+	startTime    int64  `json:"startTime"`
+	endTime      int64  `json:"endTime"`
+	remark       string `json:"remark"`
+	createTime   int64  `json:"createTime"`
+	updateTime   int64  `json:"updateTime"`
+}
+
+type PageUserAssetsReq {
+	PageReq
+	tenantId   int64  `form:"tenantId,optional"`
+	userId     int64  `form:"userId,optional"`
+	walletType int64  `form:"walletType,optional"`
+	coin       string `form:"coin,optional"`
+	status     int64  `form:"status,optional"`
+}
+
+type PageUserAssetsResp {
+	RespBase
+	data []AssetUserAsset `json:"data"`
+}
+
+type GetUserAssetDetailReq {
+	tenantId   int64  `form:"tenantId"`
+	userId     int64  `form:"userId"`
+	walletType int64  `form:"walletType"`
+	coin       string `form:"coin"`
+}
+
+type GetUserAssetDetailResp {
+	RespBase
+	data AssetUserAsset `json:"data"`
+}
+
+type PageAssetFlowsReq {
+	PageReq
+	tenantId   int64     `form:"tenantId,optional"`
+	userId     int64     `form:"userId,optional"`
+	walletType int64     `form:"walletType,optional"`
+	coin       string    `form:"coin,optional"`
+	bizType    int64     `form:"bizType,optional"`
+	sceneType  int64     `form:"sceneType,optional"`
+	bizNo      string    `form:"bizNo,optional"`
+	timeRange  TimeRange `form:"timeRange,optional"`
+}
+
+type PageAssetFlowsResp {
+	RespBase
+	data []AssetFlow `json:"data"`
+}
+
+type PageAssetFreezesReq {
+	PageReq
+	tenantId   int64  `form:"tenantId,optional"`
+	userId     int64  `form:"userId,optional"`
+	walletType int64  `form:"walletType,optional"`
+	coin       string `form:"coin,optional"`
+	bizType    int64  `form:"bizType,optional"`
+	bizNo      string `form:"bizNo,optional"`
+	status     int64  `form:"status,optional"`
+}
+
+type PageAssetFreezesResp {
+	RespBase
+	data []AssetFreeze `json:"data"`
+}
+
+type PageAssetLocksReq {
+	PageReq
+	tenantId   int64  `form:"tenantId,optional"`
+	userId     int64  `form:"userId,optional"`
+	walletType int64  `form:"walletType,optional"`
+	coin       string `form:"coin,optional"`
+	bizType    int64  `form:"bizType,optional"`
+	bizNo      string `form:"bizNo,optional"`
+	status     int64  `form:"status,optional"`
+}
+
+type PageAssetLocksResp {
+	RespBase
+	data []AssetLock `json:"data"`
+}
+
+type AdminAddAssetReq {
+	tenantId   int64  `json:"tenantId"`
+	userId     int64  `json:"userId"`
+	walletType int64  `json:"walletType"`
+	coin       string `json:"coin"`
+	amount     string `json:"amount"`
+	bizNo      string `json:"bizNo"`
+	remark     string `json:"remark,optional"`
+	operatorId int64  `json:"operatorId"`
+}
+
+type AdminSubAssetReq {
+	tenantId   int64  `json:"tenantId"`
+	userId     int64  `json:"userId"`
+	walletType int64  `json:"walletType"`
+	coin       string `json:"coin"`
+	amount     string `json:"amount"`
+	bizNo      string `json:"bizNo"`
+	remark     string `json:"remark,optional"`
+	operatorId int64  `json:"operatorId"`
+}
+
+type AdminFreezeAssetReq {
+	tenantId   int64  `json:"tenantId"`
+	userId     int64  `json:"userId"`
+	walletType int64  `json:"walletType"`
+	coin       string `json:"coin"`
+	amount     string `json:"amount"`
+	bizNo      string `json:"bizNo"`
+	remark     string `json:"remark,optional"`
+	operatorId int64  `json:"operatorId"`
+}
+
+type AdminUnfreezeAssetReq {
+	tenantId   int64  `json:"tenantId"`
+	freezeNo   string `json:"freezeNo"`
+	amount     string `json:"amount"`
+	bizNo      string `json:"bizNo"`
+	remark     string `json:"remark,optional"`
+	operatorId int64  `json:"operatorId"`
+}
+
+type AdminLockAssetReq {
+	tenantId   int64  `json:"tenantId"`
+	userId     int64  `json:"userId"`
+	walletType int64  `json:"walletType"`
+	coin       string `json:"coin"`
+	amount     string `json:"amount"`
+	bizNo      string `json:"bizNo"`
+	remark     string `json:"remark,optional"`
+	operatorId int64  `json:"operatorId"`
+}
+
+type AdminUnlockAssetReq {
+	tenantId   int64  `json:"tenantId"`
+	lockNo     string `json:"lockNo"`
+	amount     string `json:"amount"`
+	bizNo      string `json:"bizNo"`
+	remark     string `json:"remark,optional"`
+	operatorId int64  `json:"operatorId"`
+}
+
+type AdminChangeAssetResp {
+	RespBase
+	bizNo string         `json:"bizNo"`
+	asset AssetUserAsset `json:"asset"`
+}
+
+@server (
+	prefix: /admin/asset
+	group:  asset
+	jwt:    Jwt
+)
+service admin {
+	@handler PageUserAssets
+	get /user-assets (PageUserAssetsReq) returns (PageUserAssetsResp)
+
+	@handler GetUserAssetDetail
+	get /user-assets/detail (GetUserAssetDetailReq) returns (GetUserAssetDetailResp)
+
+	@handler PageAssetFlows
+	get /flows (PageAssetFlowsReq) returns (PageAssetFlowsResp)
+
+	@handler PageAssetFreezes
+	get /freezes (PageAssetFreezesReq) returns (PageAssetFreezesResp)
+
+	@handler PageAssetLocks
+	get /locks (PageAssetLocksReq) returns (PageAssetLocksResp)
+
+	@handler AdminAddAsset
+	post /add (AdminAddAssetReq) returns (AdminChangeAssetResp)
+
+	@handler AdminSubAsset
+	post /sub (AdminSubAssetReq) returns (AdminChangeAssetResp)
+
+	@handler AdminFreezeAsset
+	post /freeze (AdminFreezeAssetReq) returns (AdminChangeAssetResp)
+
+	@handler AdminUnfreezeAsset
+	post /unfreeze (AdminUnfreezeAssetReq) returns (AdminChangeAssetResp)
+
+	@handler AdminLockAsset
+	post /lock (AdminLockAssetReq) returns (AdminChangeAssetResp)
+
+	@handler AdminUnlockAsset
+	post /unlock (AdminUnlockAssetReq) returns (AdminChangeAssetResp)
+}

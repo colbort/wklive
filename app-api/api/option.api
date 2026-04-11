@@ -1,0 +1,459 @@
+syntax = "v1"
+
+import "common.api"
+
+type OptionContract {
+	id               int64  `json:"id"`
+	tenantId         int64  `json:"tenantId"`
+	contractCode     string `json:"contractCode"`
+	underlyingSymbol string `json:"underlyingSymbol"`
+	settleCoin       string `json:"settleCoin"`
+	quoteCoin        string `json:"quoteCoin"`
+	optionType       int64  `json:"optionType"`
+	exerciseStyle    int64  `json:"exerciseStyle"`
+	settlementType   int64  `json:"settlementType"`
+	strikePrice      string `json:"strikePrice"`
+	contractUnit     string `json:"contractUnit"`
+	minOrderQty      string `json:"minOrderQty"`
+	maxOrderQty      string `json:"maxOrderQty"`
+	priceTick        string `json:"priceTick"`
+	qtyStep          string `json:"qtyStep"`
+	multiplier       string `json:"multiplier"`
+	listTime         int64  `json:"listTime"`
+	expireTime       int64  `json:"expireTime"`
+	deliverTime      int64  `json:"deliverTime"`
+	isAutoExercise   int64  `json:"isAutoExercise"`
+	status           int64  `json:"status"`
+	sort             int32  `json:"sort"`
+	remark           string `json:"remark"`
+	isDeleted        int64  `json:"isDeleted"`
+	createTimes      int64  `json:"createTimes"`
+	updateTimes      int64  `json:"updateTimes"`
+}
+
+type OptionMarket {
+	id               int64  `json:"id"`
+	tenantId         int64  `json:"tenantId"`
+	contractId       int64  `json:"contractId"`
+	underlyingPrice  string `json:"underlyingPrice"`
+	markPrice        string `json:"markPrice"`
+	lastPrice        string `json:"lastPrice"`
+	bidPrice         string `json:"bidPrice"`
+	askPrice         string `json:"askPrice"`
+	theoreticalPrice string `json:"theoreticalPrice"`
+	intrinsicValue   string `json:"intrinsicValue"`
+	timeValue        string `json:"timeValue"`
+	iv               string `json:"iv"`
+	delta            string `json:"delta"`
+	gamma            string `json:"gamma"`
+	theta            string `json:"theta"`
+	vega             string `json:"vega"`
+	rho              string `json:"rho"`
+	riskFreeRate     string `json:"riskFreeRate"`
+	pricingModel     string `json:"pricingModel"`
+	snapshotTime     int64  `json:"snapshotTime"`
+	createTimes      int64  `json:"createTimes"`
+	updateTimes      int64  `json:"updateTimes"`
+}
+
+type OptionOrder {
+	id               int64  `json:"id"`
+	tenantId         int64  `json:"tenantId"`
+	orderNo          string `json:"orderNo"`
+	uid              int64  `json:"uid"`
+	accountId        int64  `json:"accountId"`
+	contractId       int64  `json:"contractId"`
+	underlyingSymbol string `json:"underlyingSymbol"`
+	side             int64  `json:"side"`
+	positionEffect   int64  `json:"positionEffect"`
+	orderType        int64  `json:"orderType"`
+	price            string `json:"price"`
+	qty              string `json:"qty"`
+	filledQty        string `json:"filledQty"`
+	unfilledQty      string `json:"unfilledQty"`
+	avgPrice         string `json:"avgPrice"`
+	turnover         string `json:"turnover"`
+	fee              string `json:"fee"`
+	feeCoin          string `json:"feeCoin"`
+	marginAmount     string `json:"marginAmount"`
+	source           int64  `json:"source"`
+	clientOrderId    string `json:"clientOrderId"`
+	reduceOnly       int64  `json:"reduceOnly"`
+	mmp              int64  `json:"mmp"`
+	status           int64  `json:"status"`
+	cancelReason     string `json:"cancelReason"`
+	matchTime        int64  `json:"matchTime"`
+	cancelTime       int64  `json:"cancelTime"`
+	createTimes      int64  `json:"createTimes"`
+	updateTimes      int64  `json:"updateTimes"`
+}
+
+type OptionTrade {
+	id               int64  `json:"id"`
+	tenantId         int64  `json:"tenantId"`
+	tradeNo          string `json:"tradeNo"`
+	contractId       int64  `json:"contractId"`
+	underlyingSymbol string `json:"underlyingSymbol"`
+	buyOrderId       int64  `json:"buyOrderId"`
+	buyOrderNo       string `json:"buyOrderNo"`
+	buyUid           int64  `json:"buyUid"`
+	buyAccountId     int64  `json:"buyAccountId"`
+	sellOrderId      int64  `json:"sellOrderId"`
+	sellOrderNo      string `json:"sellOrderNo"`
+	sellUid          int64  `json:"sellUid"`
+	sellAccountId    int64  `json:"sellAccountId"`
+	price            string `json:"price"`
+	qty              string `json:"qty"`
+	turnover         string `json:"turnover"`
+	buyFee           string `json:"buyFee"`
+	sellFee          string `json:"sellFee"`
+	feeCoin          string `json:"feeCoin"`
+	makerSide        int64  `json:"makerSide"`
+	tradeTime        int64  `json:"tradeTime"`
+	createTimes      int64  `json:"createTimes"`
+}
+
+type OptionPosition {
+	id                int64  `json:"id"`
+	tenantId          int64  `json:"tenantId"`
+	uid               int64  `json:"uid"`
+	accountId         int64  `json:"accountId"`
+	contractId        int64  `json:"contractId"`
+	underlyingSymbol  string `json:"underlyingSymbol"`
+	side              int64  `json:"side"`
+	positionQty       string `json:"positionQty"`
+	availableQty      string `json:"availableQty"`
+	frozenQty         string `json:"frozenQty"`
+	openAvgPrice      string `json:"openAvgPrice"`
+	markPrice         string `json:"markPrice"`
+	positionValue     string `json:"positionValue"`
+	marginAmount      string `json:"marginAmount"`
+	maintenanceMargin string `json:"maintenanceMargin"`
+	unrealizedPnl     string `json:"unrealizedPnl"`
+	realizedPnl       string `json:"realizedPnl"`
+	exerciseableQty   string `json:"exerciseableQty"`
+	status            int64  `json:"status"`
+	lastCalcTime      int64  `json:"lastCalcTime"`
+	createTimes       int64  `json:"createTimes"`
+	updateTimes       int64  `json:"updateTimes"`
+}
+
+type OptionExercise {
+	id              int64  `json:"id"`
+	tenantId        int64  `json:"tenantId"`
+	exerciseNo      string `json:"exerciseNo"`
+	uid             int64  `json:"uid"`
+	accountId       int64  `json:"accountId"`
+	contractId      int64  `json:"contractId"`
+	positionId      int64  `json:"positionId"`
+	exerciseType    int64  `json:"exerciseType"`
+	exerciseQty     string `json:"exerciseQty"`
+	strikePrice     string `json:"strikePrice"`
+	settlementPrice string `json:"settlementPrice"`
+	exerciseAmount  string `json:"exerciseAmount"`
+	profitAmount    string `json:"profitAmount"`
+	fee             string `json:"fee"`
+	feeCoin         string `json:"feeCoin"`
+	status          int64  `json:"status"`
+	remark          string `json:"remark"`
+	exerciseTime    int64  `json:"exerciseTime"`
+	finishTime      int64  `json:"finishTime"`
+	createTimes     int64  `json:"createTimes"`
+	updateTimes     int64  `json:"updateTimes"`
+}
+
+type OptionAccount {
+	id               int64  `json:"id"`
+	tenantId         int64  `json:"tenantId"`
+	uid              int64  `json:"uid"`
+	accountId        int64  `json:"accountId"`
+	marginCoin       string `json:"marginCoin"`
+	balance          string `json:"balance"`
+	availableBalance string `json:"availableBalance"`
+	frozenBalance    string `json:"frozenBalance"`
+	positionMargin   string `json:"positionMargin"`
+	orderMargin      string `json:"orderMargin"`
+	unrealizedPnl    string `json:"unrealizedPnl"`
+	realizedPnl      string `json:"realizedPnl"`
+	riskRate         string `json:"riskRate"`
+	status           int64  `json:"status"`
+	createTimes      int64  `json:"createTimes"`
+	updateTimes      int64  `json:"updateTimes"`
+}
+
+type OptionBill {
+	id            int64  `json:"id"`
+	tenantId      int64  `json:"tenantId"`
+	uid           int64  `json:"uid"`
+	accountId     int64  `json:"accountId"`
+	bizNo         string `json:"bizNo"`
+	refType       int64  `json:"refType"`
+	refId         int64  `json:"refId"`
+	coin          string `json:"coin"`
+	changeAmount  string `json:"changeAmount"`
+	balanceBefore string `json:"balanceBefore"`
+	balanceAfter  string `json:"balanceAfter"`
+	remark        string `json:"remark"`
+	createTimes   int64  `json:"createTimes"`
+}
+
+type OptionContractDetail {
+	contract OptionContract `json:"contract"`
+	market   OptionMarket   `json:"market"`
+}
+
+type OptionPositionDetail {
+	position OptionPosition `json:"position"`
+	contract OptionContract `json:"contract"`
+	market   OptionMarket   `json:"market"`
+}
+
+type OptionOrderDetail {
+	order    OptionOrder    `json:"order"`
+	contract OptionContract `json:"contract"`
+}
+
+type OptionTradeDetail {
+	trade    OptionTrade    `json:"trade"`
+	contract OptionContract `json:"contract"`
+}
+
+type OptionExerciseDetail {
+	exercise OptionExercise `json:"exercise"`
+	contract OptionContract `json:"contract"`
+}
+
+type AppCommonResp {
+	RespBase
+}
+
+type AppListContractsReq {
+	PageReq
+	tenantId         int64 `form:"tenantId,optional"`
+	underlyingSymbol string `form:"underlyingSymbol,optional"`
+	optionType       int64 `form:"optionType,optional"`
+	status           int64 `form:"status,optional"`
+}
+
+type AppListContractsResp {
+	RespBase
+	list []OptionContractDetail `json:"list"`
+}
+
+type AppGetContractDetailReq {
+	tenantId   int64 `form:"tenantId,optional"`
+	contractId int64 `form:"contractId"`
+}
+
+type AppGetContractDetailResp {
+	RespBase
+	data OptionContractDetail `json:"data"`
+}
+
+type AppPlaceOrderReq {
+	tenantId      int64  `json:"tenantId,optional"`
+	accountId     int64  `json:"accountId"`
+	contractId    int64  `json:"contractId"`
+	side          int64  `json:"side"`
+	positionEffect int64 `json:"positionEffect"`
+	orderType     int64  `json:"orderType"`
+	price         string `json:"price"`
+	qty           string `json:"qty"`
+	clientOrderId string `json:"clientOrderId,optional"`
+	reduceOnly    int64  `json:"reduceOnly,optional"`
+	mmp           int64  `json:"mmp,optional"`
+}
+
+type AppPlaceOrderResp {
+	RespBase
+	orderNo string `json:"orderNo"`
+	orderId int64  `json:"orderId"`
+}
+
+type AppCancelOrderReq {
+	tenantId  int64  `json:"tenantId,optional"`
+	accountId int64  `json:"accountId"`
+	orderId   int64  `json:"orderId,optional"`
+	orderNo   string `json:"orderNo,optional"`
+}
+
+type AppGetOrderDetailReq {
+	tenantId  int64  `form:"tenantId,optional"`
+	accountId int64  `form:"accountId"`
+	orderId   int64  `form:"orderId,optional"`
+	orderNo   string `form:"orderNo,optional"`
+}
+
+type AppGetOrderDetailResp {
+	RespBase
+	data OptionOrderDetail `json:"data"`
+}
+
+type AppListCurrentOrdersReq {
+	PageReq
+	tenantId   int64 `form:"tenantId,optional"`
+	accountId  int64 `form:"accountId"`
+	contractId int64 `form:"contractId,optional"`
+	side       int64 `form:"side,optional"`
+}
+
+type AppListCurrentOrdersResp {
+	RespBase
+	list []OptionOrderDetail `json:"list"`
+	page PageReq             `json:"page"`
+}
+
+type AppListHistoryOrdersReq {
+	PageReq
+	tenantId        int64     `form:"tenantId,optional"`
+	accountId       int64     `form:"accountId"`
+	contractId      int64     `form:"contractId,optional"`
+	status          int64     `form:"status,optional"`
+	createTimeRange TimeRange `form:"createTimeRange,optional"`
+}
+
+type AppListHistoryOrdersResp {
+	RespBase
+	list []OptionOrderDetail `json:"list"`
+	page PageReq             `json:"page"`
+}
+
+type AppListTradesReq {
+	PageReq
+	tenantId       int64     `form:"tenantId,optional"`
+	accountId      int64     `form:"accountId"`
+	contractId     int64     `form:"contractId,optional"`
+	tradeTimeRange TimeRange `form:"tradeTimeRange,optional"`
+}
+
+type AppListTradesResp {
+	RespBase
+	list []OptionTradeDetail `json:"list"`
+	page PageReq             `json:"page"`
+}
+
+type AppListPositionsReq {
+	PageReq
+	tenantId  int64 `form:"tenantId,optional"`
+	accountId int64 `form:"accountId"`
+	status    int64 `form:"status,optional"`
+}
+
+type AppListPositionsResp {
+	RespBase
+	list []OptionPositionDetail `json:"list"`
+	page PageReq                `json:"page"`
+}
+
+type AppGetPositionDetailReq {
+	tenantId   int64 `form:"tenantId,optional"`
+	accountId  int64 `form:"accountId"`
+	positionId int64 `form:"positionId"`
+}
+
+type AppGetPositionDetailResp {
+	RespBase
+	data OptionPositionDetail `json:"data"`
+}
+
+type AppExerciseReq {
+	tenantId    int64  `json:"tenantId,optional"`
+	accountId   int64  `json:"accountId"`
+	positionId  int64  `json:"positionId"`
+	contractId  int64  `json:"contractId"`
+	exerciseQty string `json:"exerciseQty"`
+}
+
+type AppExerciseResp {
+	RespBase
+	exerciseNo string `json:"exerciseNo"`
+	exerciseId int64  `json:"exerciseId"`
+}
+
+type AppListExercisesReq {
+	PageReq
+	tenantId          int64     `form:"tenantId,optional"`
+	accountId         int64     `form:"accountId"`
+	contractId        int64     `form:"contractId,optional"`
+	status            int64     `form:"status,optional"`
+	exerciseTimeRange TimeRange `form:"exerciseTimeRange,optional"`
+}
+
+type AppListExercisesResp {
+	RespBase
+	list []OptionExerciseDetail `json:"list"`
+	page PageReq                `json:"page"`
+}
+
+type AppListAccountsReq {
+	tenantId  int64 `form:"tenantId,optional"`
+	accountId int64 `form:"accountId,optional"`
+}
+
+type AppListAccountsResp {
+	RespBase
+	list []OptionAccount `json:"list"`
+}
+
+type AppListBillsReq {
+	PageReq
+	tenantId        int64     `form:"tenantId,optional"`
+	accountId       int64     `form:"accountId,optional"`
+	refType         int64     `form:"refType,optional"`
+	createTimeRange TimeRange `form:"createTimeRange,optional"`
+}
+
+type AppListBillsResp {
+	RespBase
+	list []OptionBill `json:"list"`
+	page PageReq      `json:"page"`
+}
+
+@server (
+	prefix: /app/option
+	group:  option
+	jwt:    Jwt
+)
+service app {
+	@handler AppListContracts
+	get /contracts (AppListContractsReq) returns (AppListContractsResp)
+
+	@handler AppGetContractDetail
+	get /contracts/detail (AppGetContractDetailReq) returns (AppGetContractDetailResp)
+
+	@handler AppPlaceOrder
+	post /orders (AppPlaceOrderReq) returns (AppPlaceOrderResp)
+
+	@handler AppCancelOrder
+	post /orders/cancel (AppCancelOrderReq) returns (AppCommonResp)
+
+	@handler AppGetOrderDetail
+	get /orders/detail (AppGetOrderDetailReq) returns (AppGetOrderDetailResp)
+
+	@handler AppListCurrentOrders
+	get /orders/current (AppListCurrentOrdersReq) returns (AppListCurrentOrdersResp)
+
+	@handler AppListHistoryOrders
+	get /orders/history (AppListHistoryOrdersReq) returns (AppListHistoryOrdersResp)
+
+	@handler AppListTrades
+	get /trades (AppListTradesReq) returns (AppListTradesResp)
+
+	@handler AppListPositions
+	get /positions (AppListPositionsReq) returns (AppListPositionsResp)
+
+	@handler AppGetPositionDetail
+	get /positions/detail (AppGetPositionDetailReq) returns (AppGetPositionDetailResp)
+
+	@handler AppExercise
+	post /exercise (AppExerciseReq) returns (AppExerciseResp)
+
+	@handler AppListExercises
+	get /exercises (AppListExercisesReq) returns (AppListExercisesResp)
+
+	@handler AppListAccounts
+	get /accounts (AppListAccountsReq) returns (AppListAccountsResp)
+
+	@handler AppListBills
+	get /bills (AppListBillsReq) returns (AppListBillsResp)
+}

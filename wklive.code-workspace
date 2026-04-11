@@ -67,10 +67,12 @@
       "Exerciseable",
       "FAQR",
       "goctl",
+      "httpx",
       "Infof",
       "issuser",
       "Itick",
       "Klines",
+      "logicutil",
       "logx",
       "otpauth",
       "pageutil",
@@ -158,6 +160,54 @@
           "test": "test"
         },
         "program": "${workspaceFolder:services}/itick/"
+      },
+      {
+        "name": "asset",
+        "type": "go",
+        "request": "launch",
+        "mode": "auto",
+        "env": {
+          "DEBUG": "true",
+          "VSCODE": "true",
+          "test": "test"
+        },
+        "program": "${workspaceFolder:services}/asset/"
+      },
+      {
+        "name": "option",
+        "type": "go",
+        "request": "launch",
+        "mode": "auto",
+        "env": {
+          "DEBUG": "true",
+          "VSCODE": "true",
+          "test": "test"
+        },
+        "program": "${workspaceFolder:services}/option/"
+      },
+      {
+        "name": "staking",
+        "type": "go",
+        "request": "launch",
+        "mode": "auto",
+        "env": {
+          "DEBUG": "true",
+          "VSCODE": "true",
+          "test": "test"
+        },
+        "program": "${workspaceFolder:services}/staking/"
+      },
+      {
+        "name": "trade",
+        "type": "go",
+        "request": "launch",
+        "mode": "auto",
+        "env": {
+          "DEBUG": "true",
+          "VSCODE": "true",
+          "test": "test"
+        },
+        "program": "${workspaceFolder:services}/trade/"
       }
     ],
     "compounds": []

@@ -7,9 +7,14 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/zeromicro/go-zero v1.9.4
 	wklive/common v0.0.0-00010101000000-000000000000
+	wklive/proto/asset v0.0.0-00010101000000-000000000000
+	wklive/proto/common v0.0.0-00010101000000-000000000000
 	wklive/proto/itick v0.0.0-00010101000000-000000000000
+	wklive/proto/option v0.0.0-00010101000000-000000000000
 	wklive/proto/payment v0.0.0-00010101000000-000000000000
+	wklive/proto/staking v0.0.0-00010101000000-000000000000
 	wklive/proto/system v0.0.0-20251105000000-000000000000
+	wklive/proto/trade v0.0.0-00010101000000-000000000000
 	wklive/proto/user v0.0.0-00010101000000-000000000000
 )
 
@@ -64,9 +69,9 @@ require (
 	go.uber.org/multierr v1.9.0 // indirect
 	go.uber.org/zap v1.24.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
-	golang.org/x/crypto v0.46.0 // indirect
+	golang.org/x/crypto v0.47.0 // indirect
 	golang.org/x/oauth2 v0.34.0 // indirect
-	golang.org/x/term v0.38.0 // indirect
+	golang.org/x/term v0.39.0 // indirect
 	golang.org/x/time v0.10.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
@@ -116,15 +121,14 @@ require (
 	go.opentelemetry.io/otel/trace v1.39.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.3.1 // indirect
 	go.uber.org/automaxprocs v1.6.0 // indirect
-	golang.org/x/net v0.48.0 // indirect
-	golang.org/x/sys v0.39.0 // indirect
-	golang.org/x/text v0.32.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20251202230838-ff82c1b0f217 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20251202230838-ff82c1b0f217 // indirect
-	google.golang.org/grpc v1.79.3 // indirect
+	golang.org/x/net v0.49.0 // indirect
+	golang.org/x/sys v0.40.0 // indirect
+	golang.org/x/text v0.33.0 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20260120221211-b8f7ae30c516 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260120221211-b8f7ae30c516 // indirect
+	google.golang.org/grpc v1.80.0 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	wklive/proto/common v0.0.0-00010101000000-000000000000 // indirect
 )
 
 replace wklive/common => ../common
@@ -138,3 +142,11 @@ replace wklive/proto/user => ../proto/user
 replace wklive/proto/payment => ../proto/payment
 
 replace wklive/proto/itick => ../proto/itick
+
+replace wklive/proto/asset => ../proto/asset
+
+replace wklive/proto/option => ../proto/option
+
+replace wklive/proto/staking => ../proto/staking
+
+replace wklive/proto/trade => ../proto/trade

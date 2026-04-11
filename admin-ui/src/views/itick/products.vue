@@ -73,8 +73,12 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="handleQuery">{{ t('common.search') }}</el-button>
-          <el-button @click="resetQuery">{{ t('common.reset') }}</el-button>
+          <el-button type="primary" @click="handleQuery">
+            {{ t('common.search') }}
+          </el-button>
+          <el-button @click="resetQuery">
+            {{ t('common.reset') }}
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -137,12 +141,16 @@
 
         <el-table-column :label="t('common.actions')" width="180" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="handleDetail(row)">{{
-              t('itick.detail')
-            }}</el-button>
-            <el-button link type="primary" @click="handleEdit(row)">{{
-              t('common.edit')
-            }}</el-button>
+            <el-button link type="primary" @click="handleDetail(row)">
+              {{
+                t('itick.detail')
+              }}
+            </el-button>
+            <el-button link type="primary" @click="handleEdit(row)">
+              {{
+                t('common.edit')
+              }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -169,7 +177,12 @@
       :title="formMode === 'add' ? t('itick.addProduct') : t('itick.editProduct')"
       width="700px"
     >
-      <el-form ref="formRef" :model="form" :rules="rules" label-width="120px">
+      <el-form
+        ref="formRef"
+        :model="form"
+        :rules="rules"
+        label-width="120px"
+      >
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item
@@ -294,16 +307,24 @@
           <el-col :span="12">
             <el-form-item :label="t('itick.enabledStatus')" prop="enabled">
               <el-radio-group v-model="form.enabled">
-                <el-radio :value="1">{{ t('common.enabled') }}</el-radio>
-                <el-radio :value="2">{{ t('common.disabled') }}</el-radio>
+                <el-radio :value="1">
+                  {{ t('common.enabled') }}
+                </el-radio>
+                <el-radio :value="2">
+                  {{ t('common.disabled') }}
+                </el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item :label="t('itick.appVisible')" prop="appVisible">
               <el-radio-group v-model="form.appVisible">
-                <el-radio :value="1">{{ t('itick.show') }}</el-radio>
-                <el-radio :value="2">{{ t('itick.hide') }}</el-radio>
+                <el-radio :value="1">
+                  {{ t('itick.show') }}
+                </el-radio>
+                <el-radio :value="2">
+                  {{ t('itick.hide') }}
+                </el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -341,53 +362,79 @@
       </el-form>
 
       <template #footer>
-        <el-button @click="formDialogVisible = false">{{ t('common.cancel') }}</el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitForm">{{
-          t('common.confirm')
-        }}</el-button>
+        <el-button @click="formDialogVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
+        <el-button type="primary" :loading="submitLoading" @click="submitForm">
+          {{
+            t('common.confirm')
+          }}
+        </el-button>
       </template>
     </el-dialog>
 
     <el-dialog v-model="detailDialogVisible" :title="t('itick.productDetail')" width="800px">
-      <el-descriptions :column="2" border v-loading="detailLoading">
-        <el-descriptions-item :label="t('common.id')">{{ detail.id ?? '-' }}</el-descriptions-item>
-        <el-descriptions-item :label="t('itick.categoryType')">{{
-          detail.categoryType ?? '-'
-        }}</el-descriptions-item>
-        <el-descriptions-item :label="t('itick.categoryName')">{{
-          detail.categoryName || '-'
-        }}</el-descriptions-item>
-        <el-descriptions-item :label="t('itick.categoryCode')">{{
-          detail.categoryCode || '-'
-        }}</el-descriptions-item>
-        <el-descriptions-item :label="t('itick.market')">{{
-          detail.market || '-'
-        }}</el-descriptions-item>
-        <el-descriptions-item :label="t('itick.symbol')">{{
-          detail.symbol || '-'
-        }}</el-descriptions-item>
-        <el-descriptions-item :label="t('itick.code')">{{
-          detail.code || '-'
-        }}</el-descriptions-item>
-        <el-descriptions-item :label="t('itick.name')">{{
-          detail.name || '-'
-        }}</el-descriptions-item>
-        <el-descriptions-item :label="t('itick.displayName')">{{
-          detail.displayName || '-'
-        }}</el-descriptions-item>
-        <el-descriptions-item :label="t('itick.baseCoin')">{{
-          detail.baseCoin || '-'
-        }}</el-descriptions-item>
-        <el-descriptions-item :label="t('itick.quoteCoin')">{{
-          detail.quoteCoin || '-'
-        }}</el-descriptions-item>
+      <el-descriptions v-loading="detailLoading" :column="2" border>
+        <el-descriptions-item :label="t('common.id')">
+          {{ detail.id ?? '-' }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('itick.categoryType')">
+          {{
+            detail.categoryType ?? '-'
+          }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('itick.categoryName')">
+          {{
+            detail.categoryName || '-'
+          }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('itick.categoryCode')">
+          {{
+            detail.categoryCode || '-'
+          }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('itick.market')">
+          {{
+            detail.market || '-'
+          }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('itick.symbol')">
+          {{
+            detail.symbol || '-'
+          }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('itick.code')">
+          {{
+            detail.code || '-'
+          }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('itick.name')">
+          {{
+            detail.name || '-'
+          }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('itick.displayName')">
+          {{
+            detail.displayName || '-'
+          }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('itick.baseCoin')">
+          {{
+            detail.baseCoin || '-'
+          }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('itick.quoteCoin')">
+          {{
+            detail.quoteCoin || '-'
+          }}
+        </el-descriptions-item>
         <el-descriptions-item :label="t('itick.enabledStatus')">
           {{
             detail.enabled === 1
               ? t('common.enabled')
               : detail.enabled === 2
-              ? t('common.disabled')
-              : '-'
+                ? t('common.disabled')
+                : '-'
           }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('itick.appVisible')">
@@ -395,19 +442,25 @@
             detail.appVisible === 1
               ? t('itick.show')
               : detail.appVisible === 2
-              ? t('itick.hide')
-              : '-'
+                ? t('itick.hide')
+                : '-'
           }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('common.sort')">{{
-          detail.sort ?? '-'
-        }}</el-descriptions-item>
-        <el-descriptions-item :label="t('common.icon')">{{
-          detail.icon || '-'
-        }}</el-descriptions-item>
-        <el-descriptions-item :label="t('common.remark')" :span="2">{{
-          detail.remark || '-'
-        }}</el-descriptions-item>
+        <el-descriptions-item :label="t('common.sort')">
+          {{
+            detail.sort ?? '-'
+          }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.icon')">
+          {{
+            detail.icon || '-'
+          }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.remark')" :span="2">
+          {{
+            detail.remark || '-'
+          }}
+        </el-descriptions-item>
         <el-descriptions-item :label="t('common.createTimes')">
           {{ formatDate(detail.createTimes) }}
         </el-descriptions-item>
@@ -417,9 +470,11 @@
       </el-descriptions>
 
       <template #footer>
-        <el-button type="primary" @click="detailDialogVisible = false">{{
-          t('common.close')
-        }}</el-button>
+        <el-button type="primary" @click="detailDialogVisible = false">
+          {{
+            t('common.close')
+          }}
+        </el-button>
       </template>
     </el-dialog>
   </div>

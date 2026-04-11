@@ -1,0 +1,246 @@
+syntax = "v1"
+
+import "common.api"
+
+type StakeProduct {
+	id               int64  `json:"id"`
+	tenantId         int64  `json:"tenantId"`
+	productNo        string `json:"productNo"`
+	productName      string `json:"productName"`
+	productType      int64  `json:"productType"`
+	coinName         string `json:"coinName"`
+	coinSymbol       string `json:"coinSymbol"`
+	rewardCoinName   string `json:"rewardCoinName"`
+	rewardCoinSymbol string `json:"rewardCoinSymbol"`
+	apr              string `json:"apr"`
+	lockDays         int32  `json:"lockDays"`
+	minAmount        string `json:"minAmount"`
+	maxAmount        string `json:"maxAmount"`
+	stepAmount       string `json:"stepAmount"`
+	totalAmount      string `json:"totalAmount"`
+	stakedAmount     string `json:"stakedAmount"`
+	userLimitAmount  string `json:"userLimitAmount"`
+	interestMode     int64  `json:"interestMode"`
+	rewardMode       int64  `json:"rewardMode"`
+	allowEarlyRedeem int64  `json:"allowEarlyRedeem"`
+	earlyRedeemRate  string `json:"earlyRedeemRate"`
+	status           int64  `json:"status"`
+	sort             int32  `json:"sort"`
+	remark           string `json:"remark"`
+	createUserId     int64  `json:"createUserId"`
+	updateUserId     int64  `json:"updateUserId"`
+	createTimes      int64  `json:"createTimes"`
+	updateTimes      int64  `json:"updateTimes"`
+}
+
+type StakeOrder {
+	id               int64  `json:"id"`
+	tenantId         int64  `json:"tenantId"`
+	orderNo          string `json:"orderNo"`
+	uid              int64  `json:"uid"`
+	productId        int64  `json:"productId"`
+	productNo        string `json:"productNo"`
+	productName      string `json:"productName"`
+	productType      int64  `json:"productType"`
+	coinName         string `json:"coinName"`
+	coinSymbol       string `json:"coinSymbol"`
+	rewardCoinName   string `json:"rewardCoinName"`
+	rewardCoinSymbol string `json:"rewardCoinSymbol"`
+	stakeAmount      string `json:"stakeAmount"`
+	apr              string `json:"apr"`
+	lockDays         int32  `json:"lockDays"`
+	interestMode     int64  `json:"interestMode"`
+	rewardMode       int64  `json:"rewardMode"`
+	allowEarlyRedeem int64  `json:"allowEarlyRedeem"`
+	earlyRedeemRate  string `json:"earlyRedeemRate"`
+	interestDays     int32  `json:"interestDays"`
+	startTimes       int64  `json:"startTimes"`
+	endTimes         int64  `json:"endTimes"`
+	lastRewardTimes  int64  `json:"lastRewardTimes"`
+	nextRewardTimes  int64  `json:"nextRewardTimes"`
+	totalReward      string `json:"totalReward"`
+	pendingReward    string `json:"pendingReward"`
+	redeemAmount     string `json:"redeemAmount"`
+	redeemFee        string `json:"redeemFee"`
+	status           int64  `json:"status"`
+	redeemType       int64  `json:"redeemType"`
+	redeemApplyTimes int64  `json:"redeemApplyTimes"`
+	redeemTimes      int64  `json:"redeemTimes"`
+	source           int64  `json:"source"`
+	remark           string `json:"remark"`
+	createUserId     int64  `json:"createUserId"`
+	updateUserId     int64  `json:"updateUserId"`
+	createTimes      int64  `json:"createTimes"`
+	updateTimes      int64  `json:"updateTimes"`
+}
+
+type StakeRewardLog {
+	id               int64  `json:"id"`
+	tenantId         int64  `json:"tenantId"`
+	orderId          int64  `json:"orderId"`
+	orderNo          string `json:"orderNo"`
+	uid              int64  `json:"uid"`
+	productId        int64  `json:"productId"`
+	productName      string `json:"productName"`
+	coinSymbol       string `json:"coinSymbol"`
+	rewardCoinSymbol string `json:"rewardCoinSymbol"`
+	rewardAmount     string `json:"rewardAmount"`
+	beforeReward     string `json:"beforeReward"`
+	afterReward      string `json:"afterReward"`
+	rewardType       int64  `json:"rewardType"`
+	rewardStatus     int64  `json:"rewardStatus"`
+	rewardTimes      int64  `json:"rewardTimes"`
+	remark           string `json:"remark"`
+	createUserId     int64  `json:"createUserId"`
+	updateUserId     int64  `json:"updateUserId"`
+	createTimes      int64  `json:"createTimes"`
+	updateTimes      int64  `json:"updateTimes"`
+}
+
+type StakeRedeemLog {
+	id           int64  `json:"id"`
+	tenantId     int64  `json:"tenantId"`
+	orderId      int64  `json:"orderId"`
+	orderNo      string `json:"orderNo"`
+	uid          int64  `json:"uid"`
+	productId    int64  `json:"productId"`
+	redeemNo     string `json:"redeemNo"`
+	redeemType   int64  `json:"redeemType"`
+	stakeAmount  string `json:"stakeAmount"`
+	redeemAmount string `json:"redeemAmount"`
+	rewardAmount string `json:"rewardAmount"`
+	feeRate      string `json:"feeRate"`
+	feeAmount    string `json:"feeAmount"`
+	redeemStatus int64  `json:"redeemStatus"`
+	redeemTimes  int64  `json:"redeemTimes"`
+	remark       string `json:"remark"`
+	createUserId int64  `json:"createUserId"`
+	updateUserId int64  `json:"updateUserId"`
+	createTimes  int64  `json:"createTimes"`
+	updateTimes  int64  `json:"updateTimes"`
+}
+
+type AppProductListReq {
+	PageReq
+	tenantId    int64  `form:"tenantId,optional"`
+	productType int64  `form:"productType,optional"`
+	coinSymbol  string `form:"coinSymbol,optional"`
+}
+
+type AppProductListResp {
+	RespBase
+	data []StakeProduct `json:"data"`
+}
+
+type AppProductDetailReq {
+	tenantId int64 `form:"tenantId,optional"`
+	id       int64 `form:"id"`
+}
+
+type AppProductDetailResp {
+	RespBase
+	data StakeProduct `json:"data"`
+}
+
+type AppCreateOrderReq {
+	tenantId    int64  `json:"tenantId,optional"`
+	productId   int64  `json:"productId"`
+	stakeAmount string `json:"stakeAmount"`
+	source      int64  `json:"source"`
+	remark      string `json:"remark,optional"`
+}
+
+type AppCreateOrderResp {
+	RespBase
+	id      int64  `json:"id"`
+	orderNo string `json:"orderNo"`
+}
+
+type AppMyOrderListReq {
+	PageReq
+	tenantId   int64 `form:"tenantId,optional"`
+	status     int64 `form:"status,optional"`
+	redeemType int64 `form:"redeemType,optional"`
+}
+
+type AppMyOrderListResp {
+	RespBase
+	data []StakeOrder `json:"data"`
+}
+
+type AppMyOrderDetailReq {
+	tenantId int64 `form:"tenantId,optional"`
+	id       int64 `form:"id"`
+}
+
+type AppMyOrderDetailResp {
+	RespBase
+	data StakeOrder `json:"data"`
+}
+
+type AppMyRewardLogListReq {
+	PageReq
+	tenantId   int64 `form:"tenantId,optional"`
+	orderId    int64 `form:"orderId,optional"`
+	rewardType int64 `form:"rewardType,optional"`
+}
+
+type AppMyRewardLogListResp {
+	RespBase
+	data []StakeRewardLog `json:"data"`
+}
+
+type AppRedeemReq {
+	tenantId   int64  `json:"tenantId,optional"`
+	orderId    int64  `json:"orderId"`
+	redeemType int64  `json:"redeemType"`
+	remark     string `json:"remark,optional"`
+}
+
+type AppRedeemResp {
+	RespBase
+	success  bool   `json:"success"`
+	redeemNo string `json:"redeemNo"`
+}
+
+type AppMyRedeemLogListReq {
+	PageReq
+	tenantId int64 `form:"tenantId,optional"`
+	orderId  int64 `form:"orderId,optional"`
+}
+
+type AppMyRedeemLogListResp {
+	RespBase
+	data []StakeRedeemLog `json:"data"`
+}
+
+@server (
+	prefix: /app/staking
+	group:  staking
+	jwt:    Jwt
+)
+service app {
+	@handler AppProductList
+	get /products (AppProductListReq) returns (AppProductListResp)
+
+	@handler AppProductDetail
+	get /products/detail (AppProductDetailReq) returns (AppProductDetailResp)
+
+	@handler CreateOrder
+	post /orders (AppCreateOrderReq) returns (AppCreateOrderResp)
+
+	@handler MyOrderList
+	get /my/orders (AppMyOrderListReq) returns (AppMyOrderListResp)
+
+	@handler MyOrderDetail
+	get /my/orders/detail (AppMyOrderDetailReq) returns (AppMyOrderDetailResp)
+
+	@handler MyRewardLogList
+	get /my/reward-logs (AppMyRewardLogListReq) returns (AppMyRewardLogListResp)
+
+	@handler Redeem
+	post /redeem (AppRedeemReq) returns (AppRedeemResp)
+
+	@handler MyRedeemLogList
+	get /my/redeem-logs (AppMyRedeemLogListReq) returns (AppMyRedeemLogListResp)
+}

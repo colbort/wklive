@@ -61,6 +61,19 @@
 └─ README.md      # 项目说明文档
 ```
 
+## 修复 go 文件中的 import
+```
+// 安装 goimports
+go install golang.org/x/tools/cmd/goimports@latest
+find . -name "*.go" -print0 | xargs -0 goimports -w
+```
+
+## 格式化 proto
+```
+// 安装 brew install clang-format
+find . -name "*.proto" -exec clang-format -i {} \;
+```
+
 ## VSCODE 插件
 - Protobuf VSC 
 - goctl
@@ -211,7 +224,6 @@ Itick:
 ```
 
 ### payment-rpc 微服务配置 /wklive/payment-rpc/config
-
 ```
 Name: payment.rpc
 ListenOn: 0.0.0.0:8083
@@ -220,4 +232,48 @@ Etcd:
   Hosts:
   - 127.0.0.1:2379
   Key: payment.rpc
+```
+
+### asset-rpc 微服务配置 /wklive/asset-rpc/config
+```
+Name: asset.rpc
+ListenOn: 0.0.0.0:8084
+Mode: dev
+Etcd:
+  Hosts:
+  - 127.0.0.1:2379
+  Key: asset.rpc
+```
+
+### option-rpc 微服务配置 /wklive/option-rpc/config
+```
+Name: option.rpc
+ListenOn: 0.0.0.0:8085
+Mode: dev
+Etcd:
+  Hosts:
+  - 127.0.0.1:2379
+  Key: option.rpc
+```
+
+### staking-rpc 微服务配置 /wklive/staking-rpc/config
+```
+Name: staking.rpc
+ListenOn: 0.0.0.0:8086
+Mode: dev
+Etcd:
+  Hosts:
+  - 127.0.0.1:2379
+  Key: staking.rpc
+```
+
+### trade-rpc 微服务配置 /wklive/trade-rpc/config
+```
+Name: trade.rpc
+ListenOn: 0.0.0.0:8087
+Mode: dev
+Etcd:
+  Hosts:
+  - 127.0.0.1:2379
+  Key: trade.rpc
 ```

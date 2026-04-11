@@ -21,6 +21,363 @@ type AddUserBankResp struct {
 	Bank UserBank `json:"bank"`
 }
 
+type AdminAddAssetReq struct {
+	TenantId   int64  `json:"tenantId"`
+	UserId     int64  `json:"userId"`
+	WalletType int64  `json:"walletType"`
+	Coin       string `json:"coin"`
+	Amount     string `json:"amount"`
+	BizNo      string `json:"bizNo"`
+	Remark     string `json:"remark,optional"`
+	OperatorId int64  `json:"operatorId"`
+}
+
+type AdminChangeAssetResp struct {
+	RespBase
+	BizNo string         `json:"bizNo"`
+	Asset AssetUserAsset `json:"asset"`
+}
+
+type AdminCommonResp struct {
+	RespBase
+}
+
+type AdminFreezeAssetReq struct {
+	TenantId   int64  `json:"tenantId"`
+	UserId     int64  `json:"userId"`
+	WalletType int64  `json:"walletType"`
+	Coin       string `json:"coin"`
+	Amount     string `json:"amount"`
+	BizNo      string `json:"bizNo"`
+	Remark     string `json:"remark,optional"`
+	OperatorId int64  `json:"operatorId"`
+}
+
+type AdminLockAssetReq struct {
+	TenantId   int64  `json:"tenantId"`
+	UserId     int64  `json:"userId"`
+	WalletType int64  `json:"walletType"`
+	Coin       string `json:"coin"`
+	Amount     string `json:"amount"`
+	BizNo      string `json:"bizNo"`
+	Remark     string `json:"remark,optional"`
+	OperatorId int64  `json:"operatorId"`
+}
+
+type AdminManualRedeemReq struct {
+	TenantId     int64  `json:"tenantId"`
+	OrderId      int64  `json:"orderId"`
+	RedeemType   int64  `json:"redeemType"`
+	RedeemAmount string `json:"redeemAmount"`
+	RewardAmount string `json:"rewardAmount"`
+	FeeRate      string `json:"feeRate"`
+	FeeAmount    string `json:"feeAmount"`
+	Remark       string `json:"remark,optional"`
+	OperatorUid  int64  `json:"operatorUid"`
+}
+
+type AdminManualRedeemResp struct {
+	RespBase
+	Data bool `json:"data"`
+}
+
+type AdminManualRewardReq struct {
+	TenantId     int64  `json:"tenantId"`
+	OrderId      int64  `json:"orderId"`
+	RewardAmount string `json:"rewardAmount"`
+	RewardType   int64  `json:"rewardType"`
+	Remark       string `json:"remark,optional"`
+	OperatorUid  int64  `json:"operatorUid"`
+}
+
+type AdminManualRewardResp struct {
+	RespBase
+	Data bool `json:"data"`
+}
+
+type AdminOrderDetailReq struct {
+	TenantId int64 `form:"tenantId,optional"`
+	Id       int64 `form:"id"`
+}
+
+type AdminOrderDetailResp struct {
+	RespBase
+	Data StakeOrder `json:"data"`
+}
+
+type AdminOrderListReq struct {
+	PageReq
+	TenantId        int64  `form:"tenantId,optional"`
+	OrderNo         string `form:"orderNo,optional"`
+	Uid             int64  `form:"uid,optional"`
+	ProductId       int64  `form:"productId,optional"`
+	ProductName     string `form:"productName,optional"`
+	CoinSymbol      string `form:"coinSymbol,optional"`
+	Status          int64  `form:"status,optional"`
+	RedeemType      int64  `form:"redeemType,optional"`
+	Source          int64  `form:"source,optional"`
+	StartTimesBegin int64  `form:"startTimesBegin,optional"`
+	StartTimesEnd   int64  `form:"startTimesEnd,optional"`
+	EndTimesBegin   int64  `form:"endTimesBegin,optional"`
+	EndTimesEnd     int64  `form:"endTimesEnd,optional"`
+}
+
+type AdminOrderListResp struct {
+	RespBase
+	Data []StakeOrder `json:"data"`
+}
+
+type AdminProductChangeStatusReq struct {
+	TenantId    int64 `json:"tenantId"`
+	Id          int64 `json:"id"`
+	Status      int64 `json:"status"`
+	OperatorUid int64 `json:"operatorUid"`
+}
+
+type AdminProductChangeStatusResp struct {
+	RespBase
+	Data bool `json:"data"`
+}
+
+type AdminProductCreateReq struct {
+	TenantId         int64  `json:"tenantId"`
+	ProductNo        string `json:"productNo"`
+	ProductName      string `json:"productName"`
+	ProductType      int64  `json:"productType"`
+	CoinName         string `json:"coinName"`
+	CoinSymbol       string `json:"coinSymbol"`
+	RewardCoinName   string `json:"rewardCoinName"`
+	RewardCoinSymbol string `json:"rewardCoinSymbol"`
+	Apr              string `json:"apr"`
+	LockDays         int32  `json:"lockDays"`
+	MinAmount        string `json:"minAmount"`
+	MaxAmount        string `json:"maxAmount"`
+	StepAmount       string `json:"stepAmount"`
+	TotalAmount      string `json:"totalAmount"`
+	UserLimitAmount  string `json:"userLimitAmount"`
+	InterestMode     int64  `json:"interestMode"`
+	RewardMode       int64  `json:"rewardMode"`
+	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"`
+	EarlyRedeemRate  string `json:"earlyRedeemRate"`
+	Status           int64  `json:"status"`
+	Sort             int32  `json:"sort"`
+	Remark           string `json:"remark,optional"`
+	OperatorUid      int64  `json:"operatorUid"`
+}
+
+type AdminProductCreateResp struct {
+	RespBase
+	Data int64 `json:"data"`
+}
+
+type AdminProductDetailReq struct {
+	TenantId int64 `form:"tenantId,optional"`
+	Id       int64 `form:"id"`
+}
+
+type AdminProductDetailResp struct {
+	RespBase
+	Data StakeProduct `json:"data"`
+}
+
+type AdminProductListReq struct {
+	PageReq
+	TenantId    int64  `form:"tenantId,optional"`
+	ProductNo   string `form:"productNo,optional"`
+	ProductName string `form:"productName,optional"`
+	CoinSymbol  string `form:"coinSymbol,optional"`
+	ProductType int64  `form:"productType,optional"`
+	Status      int64  `form:"status,optional"`
+}
+
+type AdminProductListResp struct {
+	RespBase
+	Data []StakeProduct `json:"data"`
+}
+
+type AdminProductUpdateReq struct {
+	TenantId         int64  `json:"tenantId"`
+	Id               int64  `json:"id"`
+	ProductName      string `json:"productName"`
+	ProductType      int64  `json:"productType"`
+	CoinName         string `json:"coinName"`
+	CoinSymbol       string `json:"coinSymbol"`
+	RewardCoinName   string `json:"rewardCoinName"`
+	RewardCoinSymbol string `json:"rewardCoinSymbol"`
+	Apr              string `json:"apr"`
+	LockDays         int32  `json:"lockDays"`
+	MinAmount        string `json:"minAmount"`
+	MaxAmount        string `json:"maxAmount"`
+	StepAmount       string `json:"stepAmount"`
+	TotalAmount      string `json:"totalAmount"`
+	UserLimitAmount  string `json:"userLimitAmount"`
+	InterestMode     int64  `json:"interestMode"`
+	RewardMode       int64  `json:"rewardMode"`
+	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"`
+	EarlyRedeemRate  string `json:"earlyRedeemRate"`
+	Status           int64  `json:"status"`
+	Sort             int32  `json:"sort"`
+	Remark           string `json:"remark,optional"`
+	OperatorUid      int64  `json:"operatorUid"`
+}
+
+type AdminProductUpdateResp struct {
+	RespBase
+	Data bool `json:"data"`
+}
+
+type AdminRedeemLogListReq struct {
+	PageReq
+	TenantId         int64  `form:"tenantId,optional"`
+	OrderNo          string `form:"orderNo,optional"`
+	RedeemNo         string `form:"redeemNo,optional"`
+	Uid              int64  `form:"uid,optional"`
+	ProductId        int64  `form:"productId,optional"`
+	RedeemType       int64  `form:"redeemType,optional"`
+	RedeemStatus     int64  `form:"redeemStatus,optional"`
+	RedeemTimesBegin int64  `form:"redeemTimesBegin,optional"`
+	RedeemTimesEnd   int64  `form:"redeemTimesEnd,optional"`
+}
+
+type AdminRedeemLogListResp struct {
+	RespBase
+	Data []StakeRedeemLog `json:"data"`
+}
+
+type AdminRewardLogListReq struct {
+	PageReq
+	TenantId         int64  `form:"tenantId,optional"`
+	OrderNo          string `form:"orderNo,optional"`
+	Uid              int64  `form:"uid,optional"`
+	ProductId        int64  `form:"productId,optional"`
+	RewardType       int64  `form:"rewardType,optional"`
+	RewardStatus     int64  `form:"rewardStatus,optional"`
+	RewardTimesBegin int64  `form:"rewardTimesBegin,optional"`
+	RewardTimesEnd   int64  `form:"rewardTimesEnd,optional"`
+}
+
+type AdminRewardLogListResp struct {
+	RespBase
+	Data []StakeRewardLog `json:"data"`
+}
+
+type AdminSubAssetReq struct {
+	TenantId   int64  `json:"tenantId"`
+	UserId     int64  `json:"userId"`
+	WalletType int64  `json:"walletType"`
+	Coin       string `json:"coin"`
+	Amount     string `json:"amount"`
+	BizNo      string `json:"bizNo"`
+	Remark     string `json:"remark,optional"`
+	OperatorId int64  `json:"operatorId"`
+}
+
+type AdminUnfreezeAssetReq struct {
+	TenantId   int64  `json:"tenantId"`
+	FreezeNo   string `json:"freezeNo"`
+	Amount     string `json:"amount"`
+	BizNo      string `json:"bizNo"`
+	Remark     string `json:"remark,optional"`
+	OperatorId int64  `json:"operatorId"`
+}
+
+type AdminUnlockAssetReq struct {
+	TenantId   int64  `json:"tenantId"`
+	LockNo     string `json:"lockNo"`
+	Amount     string `json:"amount"`
+	BizNo      string `json:"bizNo"`
+	Remark     string `json:"remark,optional"`
+	OperatorId int64  `json:"operatorId"`
+}
+
+type AssetFlow struct {
+	Id                     int64  `json:"id"`
+	FlowNo                 string `json:"flowNo"`
+	TenantId               int64  `json:"tenantId"`
+	UserId                 int64  `json:"userId"`
+	WalletType             int64  `json:"walletType"`
+	Coin                   string `json:"coin"`
+	BizType                int64  `json:"bizType"`
+	SceneType              int64  `json:"sceneType"`
+	OpType                 int64  `json:"opType"`
+	BizId                  int64  `json:"bizId"`
+	BizNo                  string `json:"bizNo"`
+	ChangeAmount           string `json:"changeAmount"`
+	BeforeTotalAmount      string `json:"beforeTotalAmount"`
+	AfterTotalAmount       string `json:"afterTotalAmount"`
+	BeforeAvailableAmount  string `json:"beforeAvailableAmount"`
+	AfterAvailableAmount   string `json:"afterAvailableAmount"`
+	BeforeFrozenAmount     string `json:"beforeFrozenAmount"`
+	AfterFrozenAmount      string `json:"afterFrozenAmount"`
+	BeforeLockedAmount     string `json:"beforeLockedAmount"`
+	AfterLockedAmount      string `json:"afterLockedAmount"`
+	BalanceSnapshotVersion int32  `json:"balanceSnapshotVersion"`
+	Remark                 string `json:"remark"`
+	CreateTime             int64  `json:"createTime"`
+	UpdateTime             int64  `json:"updateTime"`
+}
+
+type AssetFreeze struct {
+	Id             int64  `json:"id"`
+	FreezeNo       string `json:"freezeNo"`
+	TenantId       int64  `json:"tenantId"`
+	UserId         int64  `json:"userId"`
+	WalletType     int64  `json:"walletType"`
+	Coin           string `json:"coin"`
+	BizType        int64  `json:"bizType"`
+	SceneType      int64  `json:"sceneType"`
+	BizId          int64  `json:"bizId"`
+	BizNo          string `json:"bizNo"`
+	Amount         string `json:"amount"`
+	UsedAmount     string `json:"usedAmount"`
+	UnfreezeAmount string `json:"unfreezeAmount"`
+	RemainAmount   string `json:"remainAmount"`
+	Status         int64  `json:"status"`
+	ExpireTime     int64  `json:"expireTime"`
+	Remark         string `json:"remark"`
+	CreateTime     int64  `json:"createTime"`
+	UpdateTime     int64  `json:"updateTime"`
+}
+
+type AssetLock struct {
+	Id           int64  `json:"id"`
+	LockNo       string `json:"lockNo"`
+	TenantId     int64  `json:"tenantId"`
+	UserId       int64  `json:"userId"`
+	WalletType   int64  `json:"walletType"`
+	Coin         string `json:"coin"`
+	BizType      int64  `json:"bizType"`
+	SceneType    int64  `json:"sceneType"`
+	BizId        int64  `json:"bizId"`
+	BizNo        string `json:"bizNo"`
+	Amount       string `json:"amount"`
+	UnlockAmount string `json:"unlockAmount"`
+	RemainAmount string `json:"remainAmount"`
+	Status       int64  `json:"status"`
+	StartTime    int64  `json:"startTime"`
+	EndTime      int64  `json:"endTime"`
+	Remark       string `json:"remark"`
+	CreateTime   int64  `json:"createTime"`
+	UpdateTime   int64  `json:"updateTime"`
+}
+
+type AssetUserAsset struct {
+	Id              int64  `json:"id"`
+	TenantId        int64  `json:"tenantId"`
+	UserId          int64  `json:"userId"`
+	WalletType      int64  `json:"walletType"`
+	Coin            string `json:"coin"`
+	TotalAmount     string `json:"totalAmount"`
+	AvailableAmount string `json:"availableAmount"`
+	FrozenAmount    string `json:"frozenAmount"`
+	LockedAmount    string `json:"lockedAmount"`
+	Status          int64  `json:"status"`
+	Version         int32  `json:"version"`
+	Remark          string `json:"remark"`
+	CreateTime      int64  `json:"createTime"`
+	UpdateTime      int64  `json:"updateTime"`
+}
+
 type AssignUserRolesReq struct {
 	UserId  int64   `json:"userId"`
 	RoleIds []int64 `json:"roleIds"`
@@ -43,6 +400,29 @@ type BatchUpsertTenantProductsReq struct {
 	Data     []TenantProductItem `json:"data"`
 }
 
+type BizTradeEvent struct {
+	Id            int64  `json:"id"`
+	TenantId      int64  `json:"tenantId"`
+	EventNo       string `json:"eventNo"`
+	EventType     string `json:"eventType"`
+	BizId         string `json:"bizId"`
+	BizType       string `json:"bizType"`
+	UserId        int64  `json:"userId"`
+	SymbolId      int64  `json:"symbolId"`
+	MarketType    int64  `json:"marketType"`
+	OperatorId    int64  `json:"operatorId"`
+	Source        int64  `json:"source"`
+	EventStatus   int64  `json:"eventStatus"`
+	RetryCount    uint32 `json:"retryCount"`
+	MaxRetryCount uint32 `json:"maxRetryCount"`
+	NextRetryAt   int64  `json:"nextRetryAt"`
+	LastErrorMsg  string `json:"lastErrorMsg"`
+	Payload       string `json:"payload"`
+	ExtData       string `json:"extData"`
+	CreateTimes   int64  `json:"createTimes"`
+	UpdateTimes   int64  `json:"updateTimes"`
+}
+
 type ChangeUserStatusReq struct {
 	Id     int64 `json:"id"`
 	Status int64 `json:"status"` // 1启用 0禁用
@@ -54,6 +434,104 @@ type CloseRechargeOrderReq struct {
 	Remark   string `json:"remark,optional"`
 }
 
+type ContractLeverageConfig struct {
+	Id            int64  `json:"id"`
+	TenantId      int64  `json:"tenantId"`
+	UserId        int64  `json:"userId"`
+	SymbolId      int64  `json:"symbolId"`
+	MarketType    int64  `json:"marketType"`
+	MarginMode    int64  `json:"marginMode"`
+	PositionMode  int64  `json:"positionMode"`
+	LongLeverage  uint32 `json:"longLeverage"`
+	ShortLeverage uint32 `json:"shortLeverage"`
+	MaxLeverage   uint32 `json:"maxLeverage"`
+	OperatorId    int64  `json:"operatorId"`
+	Source        int64  `json:"source"`
+	Status        uint32 `json:"status"`
+	Remark        string `json:"remark"`
+	CreateTimes   int64  `json:"createTimes"`
+	UpdateTimes   int64  `json:"updateTimes"`
+}
+
+type ContractMarginAccount struct {
+	Id               int64  `json:"id"`
+	TenantId         int64  `json:"tenantId"`
+	UserId           int64  `json:"userId"`
+	MarketType       int64  `json:"marketType"`
+	MarginAsset      string `json:"marginAsset"`
+	Balance          string `json:"balance"`
+	AvailableBalance string `json:"availableBalance"`
+	FrozenBalance    string `json:"frozenBalance"`
+	PositionMargin   string `json:"positionMargin"`
+	OrderMargin      string `json:"orderMargin"`
+	UnrealizedPnl    string `json:"unrealizedPnl"`
+	RealizedPnl      string `json:"realizedPnl"`
+	Version          int64  `json:"version"`
+	CreateTimes      int64  `json:"createTimes"`
+	UpdateTimes      int64  `json:"updateTimes"`
+}
+
+type ContractPosition struct {
+	Id               int64  `json:"id"`
+	TenantId         int64  `json:"tenantId"`
+	UserId           int64  `json:"userId"`
+	SymbolId         int64  `json:"symbolId"`
+	MarketType       int64  `json:"marketType"`
+	PositionSide     int64  `json:"positionSide"`
+	MarginMode       int64  `json:"marginMode"`
+	Leverage         uint32 `json:"leverage"`
+	Qty              string `json:"qty"`
+	AvailQty         string `json:"availQty"`
+	FrozenQty        string `json:"frozenQty"`
+	OpenAvgPrice     string `json:"openAvgPrice"`
+	MarkPrice        string `json:"markPrice"`
+	MarginAsset      string `json:"marginAsset"`
+	PositionMargin   string `json:"positionMargin"`
+	IsolatedMargin   string `json:"isolatedMargin"`
+	UnrealizedPnl    string `json:"unrealizedPnl"`
+	RealizedPnl      string `json:"realizedPnl"`
+	LiquidationPrice string `json:"liquidationPrice"`
+	AdlRank          int32  `json:"adlRank"`
+	Version          int64  `json:"version"`
+	CreateTimes      int64  `json:"createTimes"`
+	UpdateTimes      int64  `json:"updateTimes"`
+}
+
+type ContractPositionHistory struct {
+	Id                   int64  `json:"id"`
+	TenantId             int64  `json:"tenantId"`
+	PositionId           int64  `json:"positionId"`
+	UserId               int64  `json:"userId"`
+	SymbolId             int64  `json:"symbolId"`
+	MarketType           int64  `json:"marketType"`
+	PositionSide         int64  `json:"positionSide"`
+	ActionType           int64  `json:"actionType"`
+	BeforeQty            string `json:"beforeQty"`
+	AfterQty             string `json:"afterQty"`
+	BeforeAvailQty       string `json:"beforeAvailQty"`
+	AfterAvailQty        string `json:"afterAvailQty"`
+	BeforeFrozenQty      string `json:"beforeFrozenQty"`
+	AfterFrozenQty       string `json:"afterFrozenQty"`
+	BeforeOpenAvgPrice   string `json:"beforeOpenAvgPrice"`
+	AfterOpenAvgPrice    string `json:"afterOpenAvgPrice"`
+	BeforePositionMargin string `json:"beforePositionMargin"`
+	AfterPositionMargin  string `json:"afterPositionMargin"`
+	BeforeIsolatedMargin string `json:"beforeIsolatedMargin"`
+	AfterIsolatedMargin  string `json:"afterIsolatedMargin"`
+	BeforeUnrealizedPnl  string `json:"beforeUnrealizedPnl"`
+	AfterUnrealizedPnl   string `json:"afterUnrealizedPnl"`
+	RealizedPnlDelta     string `json:"realizedPnlDelta"`
+	FeeDelta             string `json:"feeDelta"`
+	FeeAsset             string `json:"feeAsset"`
+	MarkPrice            string `json:"markPrice"`
+	RefOrderId           int64  `json:"refOrderId"`
+	RefFillId            int64  `json:"refFillId"`
+	OperatorId           int64  `json:"operatorId"`
+	Source               int64  `json:"source"`
+	Remark               string `json:"remark"`
+	CreateTimes          int64  `json:"createTimes"`
+}
+
 type CreateCategoryReq struct {
 	CategoryType int64  `json:"categoryType"`
 	CategoryName string `json:"categoryName"`
@@ -62,6 +540,36 @@ type CreateCategoryReq struct {
 	Sort         int64  `json:"sort"`
 	Icon         string `json:"icon"`
 	Remark       string `json:"remark"`
+}
+
+type CreateContractReq struct {
+	TenantId         int64  `json:"tenantId"`
+	ContractCode     string `json:"contractCode"`
+	UnderlyingSymbol string `json:"underlyingSymbol"`
+	SettleCoin       string `json:"settleCoin"`
+	QuoteCoin        string `json:"quoteCoin"`
+	OptionType       int64  `json:"optionType"`
+	ExerciseStyle    int64  `json:"exerciseStyle"`
+	SettlementType   int64  `json:"settlementType"`
+	StrikePrice      string `json:"strikePrice"`
+	ContractUnit     string `json:"contractUnit"`
+	MinOrderQty      string `json:"minOrderQty"`
+	MaxOrderQty      string `json:"maxOrderQty"`
+	PriceTick        string `json:"priceTick"`
+	QtyStep          string `json:"qtyStep"`
+	Multiplier       string `json:"multiplier"`
+	ListTime         int64  `json:"listTime"`
+	ExpireTime       int64  `json:"expireTime"`
+	DeliverTime      int64  `json:"deliverTime"`
+	IsAutoExercise   int64  `json:"isAutoExercise"`
+	Status           int64  `json:"status"`
+	Sort             int32  `json:"sort"`
+	Remark           string `json:"remark,optional"`
+}
+
+type CreateContractResp struct {
+	RespBase
+	Id int64 `json:"id"`
 }
 
 type CreatePayPlatformReq struct {
@@ -99,6 +607,32 @@ type CreateProductReq struct {
 	Sort         int64  `json:"sort"`
 	Icon         string `json:"icon"`
 	Remark       string `json:"remark"`
+}
+
+type CreateSymbolReq struct {
+	TenantId      int64  `json:"tenantId"`
+	Symbol        string `json:"symbol"`
+	DisplaySymbol string `json:"displaySymbol"`
+	MarketType    int64  `json:"marketType"`
+	BaseAsset     string `json:"baseAsset"`
+	QuoteAsset    string `json:"quoteAsset"`
+	SettleAsset   string `json:"settleAsset"`
+	ContractType  int64  `json:"contractType"`
+	Status        int64  `json:"status"`
+	PriceScale    uint32 `json:"priceScale"`
+	QtyScale      uint32 `json:"qtyScale"`
+	MinPrice      string `json:"minPrice"`
+	MaxPrice      string `json:"maxPrice"`
+	PriceTick     string `json:"priceTick"`
+	MinQty        string `json:"minQty"`
+	MaxQty        string `json:"maxQty"`
+	QtyStep       string `json:"qtyStep"`
+	MinNotional   string `json:"minNotional"`
+	MaxLeverage   uint32 `json:"maxLeverage"`
+	OpenTime      int64  `json:"openTime"`
+	CloseTime     int64  `json:"closeTime"`
+	Sort          int32  `json:"sort"`
+	Remark        string `json:"remark,optional"`
 }
 
 type CreateTenantCategoryReq struct {
@@ -232,6 +766,44 @@ type DepthLevel struct {
 	Volume float64 `json:"volume"`
 }
 
+type GetAccountReq struct {
+	TenantId  int64 `form:"tenantId,optional"`
+	Id        int64 `form:"id,optional"`
+	Uid       int64 `form:"uid,optional"`
+	AccountId int64 `form:"accountId,optional"`
+}
+
+type GetAccountResp struct {
+	RespBase
+	Data OptionAccount `json:"data"`
+}
+
+type GetBillReq struct {
+	TenantId int64  `form:"tenantId,optional"`
+	Id       int64  `form:"id,optional"`
+	BizNo    string `form:"bizNo,optional"`
+}
+
+type GetBillResp struct {
+	RespBase
+	Data OptionBill `json:"data"`
+}
+
+type GetCancelLogListAdminReq struct {
+	PageReq
+	TenantId     int64     `form:"tenantId,optional"`
+	UserId       int64     `form:"userId,optional"`
+	OrderId      int64     `form:"orderId,optional"`
+	OrderNo      string    `form:"orderNo,optional"`
+	CancelSource int64     `form:"cancelSource,optional"`
+	TimeRange    TimeRange `form:"timeRange,optional"`
+}
+
+type GetCancelLogListAdminResp struct {
+	RespBase
+	List []TradeCancelLog `json:"list"`
+}
+
 type GetCategoryReq struct {
 	Id int64 `path:"id"`
 }
@@ -239,6 +811,112 @@ type GetCategoryReq struct {
 type GetCategoryResp struct {
 	RespBase
 	Data ItickCategory `json:"data"`
+}
+
+type GetContractReq struct {
+	TenantId     int64  `form:"tenantId,optional"`
+	Id           int64  `form:"id,optional"`
+	ContractCode string `form:"contractCode,optional"`
+}
+
+type GetContractResp struct {
+	RespBase
+	Data OptionContractDetail `json:"data"`
+}
+
+type GetExerciseReq struct {
+	TenantId   int64  `form:"tenantId,optional"`
+	Id         int64  `form:"id,optional"`
+	ExerciseNo string `form:"exerciseNo,optional"`
+}
+
+type GetExerciseResp struct {
+	RespBase
+	Data OptionExerciseDetail `json:"data"`
+}
+
+type GetFillDetailAdminReq struct {
+	TenantId int64 `form:"tenantId,optional"`
+	Id       int64 `form:"id"`
+}
+
+type GetFillDetailAdminResp struct {
+	RespBase
+	Data TradeFill `json:"data"`
+}
+
+type GetFillListAdminReq struct {
+	PageReq
+	TenantId   int64     `form:"tenantId,optional"`
+	UserId     int64     `form:"userId,optional"`
+	MarketType int64     `form:"marketType,optional"`
+	SymbolId   int64     `form:"symbolId,optional"`
+	TimeRange  TimeRange `form:"timeRange,optional"`
+}
+
+type GetFillListAdminResp struct {
+	RespBase
+	List []TradeFill `json:"list"`
+}
+
+type GetMarginAccountListAdminReq struct {
+	PageReq
+	TenantId    int64  `form:"tenantId,optional"`
+	UserId      int64  `form:"userId,optional"`
+	MarketType  int64  `form:"marketType,optional"`
+	MarginAsset string `form:"marginAsset,optional"`
+}
+
+type GetMarginAccountListAdminResp struct {
+	RespBase
+	List []ContractMarginAccount `json:"list"`
+}
+
+type GetMarketReq struct {
+	TenantId   int64 `form:"tenantId,optional"`
+	ContractId int64 `form:"contractId"`
+}
+
+type GetMarketResp struct {
+	RespBase
+	Data OptionMarket `json:"data"`
+}
+
+type GetOrderDetailAdminReq struct {
+	TenantId int64 `form:"tenantId,optional"`
+	Id       int64 `form:"id"`
+}
+
+type GetOrderDetailAdminResp struct {
+	RespBase
+	Data TradeOrder `json:"data"`
+}
+
+type GetOrderListAdminReq struct {
+	PageReq
+	TenantId   int64     `form:"tenantId,optional"`
+	UserId     int64     `form:"userId,optional"`
+	MarketType int64     `form:"marketType,optional"`
+	SymbolId   int64     `form:"symbolId,optional"`
+	Status     int64     `form:"status,optional"`
+	Keyword    string    `form:"keyword,optional"`
+	TimeRange  TimeRange `form:"timeRange,optional"`
+}
+
+type GetOrderListAdminResp struct {
+	RespBase
+	List []TradeOrder `json:"list"`
+}
+
+type GetOrderReq struct {
+	TenantId int64  `form:"tenantId,optional"`
+	Id       int64  `form:"id,optional"`
+	OrderNo  string `form:"orderNo,optional"`
+}
+
+type GetOrderResp struct {
+	RespBase
+	Data OptionOrderDetail `json:"data"`
 }
 
 type GetPayPlatformReq struct {
@@ -257,6 +935,56 @@ type GetPayProductReq struct {
 type GetPayProductResp struct {
 	RespBase
 	Data PayProduct `json:"data"`
+}
+
+type GetPositionDetailAdminReq struct {
+	TenantId int64 `form:"tenantId,optional"`
+	Id       int64 `form:"id"`
+}
+
+type GetPositionDetailAdminResp struct {
+	RespBase
+	Data ContractPosition `json:"data"`
+}
+
+type GetPositionHistoryListAdminReq struct {
+	PageReq
+	TenantId   int64     `form:"tenantId,optional"`
+	UserId     int64     `form:"userId,optional"`
+	SymbolId   int64     `form:"symbolId,optional"`
+	MarketType int64     `form:"marketType,optional"`
+	PositionId int64     `form:"positionId,optional"`
+	ActionType int64     `form:"actionType,optional"`
+	TimeRange  TimeRange `form:"timeRange,optional"`
+}
+
+type GetPositionHistoryListAdminResp struct {
+	RespBase
+	List []ContractPositionHistory `json:"list"`
+}
+
+type GetPositionListAdminReq struct {
+	PageReq
+	TenantId   int64 `form:"tenantId,optional"`
+	UserId     int64 `form:"userId,optional"`
+	MarketType int64 `form:"marketType,optional"`
+	SymbolId   int64 `form:"symbolId,optional"`
+}
+
+type GetPositionListAdminResp struct {
+	RespBase
+	List []ContractPosition `json:"list"`
+}
+
+type GetPositionReq struct {
+	TenantId   int64 `form:"tenantId,optional"`
+	Id         int64 `form:"id,optional"`
+	PositionId int64 `form:"positionId,optional"`
+}
+
+type GetPositionResp struct {
+	RespBase
+	Data OptionPositionDetail `json:"data"`
 }
 
 type GetProductKlineReq struct {
@@ -300,6 +1028,56 @@ type GetRechargeOrderReq struct {
 type GetRechargeOrderResp struct {
 	RespBase
 	Data RechargeOrder `json:"data"`
+}
+
+type GetRiskOrderCheckLogListReq struct {
+	PageReq
+	TenantId    int64     `form:"tenantId,optional"`
+	UserId      int64     `form:"userId,optional"`
+	SymbolId    int64     `form:"symbolId,optional"`
+	MarketType  int64     `form:"marketType,optional"`
+	CheckType   int64     `form:"checkType,optional"`
+	CheckResult int64     `form:"checkResult,optional"`
+	TimeRange   TimeRange `form:"timeRange,optional"`
+}
+
+type GetRiskOrderCheckLogListResp struct {
+	RespBase
+	List []RiskOrderCheckLog `json:"list"`
+}
+
+type GetSettlementReq struct {
+	TenantId     int64  `form:"tenantId,optional"`
+	Id           int64  `form:"id,optional"`
+	SettlementNo string `form:"settlementNo,optional"`
+}
+
+type GetSettlementResp struct {
+	RespBase
+	Data OptionSettlementDetail `json:"data"`
+}
+
+type GetSymbolDetailAdminReq struct {
+	TenantId int64 `form:"tenantId,optional"`
+	Id       int64 `form:"id"`
+}
+
+type GetSymbolDetailAdminResp struct {
+	RespBase
+	Data TradeSymbol `json:"data"`
+}
+
+type GetSymbolListAdminReq struct {
+	PageReq
+	TenantId   int64  `form:"tenantId,optional"`
+	MarketType int64  `form:"marketType,optional"`
+	Status     int64  `form:"status,optional"`
+	Keyword    string `form:"keyword,optional"`
+}
+
+type GetSymbolListAdminResp struct {
+	RespBase
+	List []TradeSymbol `json:"list"`
 }
 
 type GetSyncTaskStatusReq struct {
@@ -383,6 +1161,54 @@ type GetTenantProductResp struct {
 	Data ItickTenantProduct `json:"data"`
 }
 
+type GetTradeEventDetailReq struct {
+	TenantId int64 `form:"tenantId,optional"`
+	Id       int64 `form:"id"`
+}
+
+type GetTradeEventDetailResp struct {
+	RespBase
+	Data BizTradeEvent `json:"data"`
+}
+
+type GetTradeEventListReq struct {
+	PageReq
+	TenantId    int64     `form:"tenantId,optional"`
+	EventType   string    `form:"eventType,optional"`
+	BizType     string    `form:"bizType,optional"`
+	BizId       string    `form:"bizId,optional"`
+	EventStatus int64     `form:"eventStatus,optional"`
+	TimeRange   TimeRange `form:"timeRange,optional"`
+}
+
+type GetTradeEventListResp struct {
+	RespBase
+	List []BizTradeEvent `json:"list"`
+}
+
+type GetTradeReq struct {
+	TenantId int64  `form:"tenantId,optional"`
+	Id       int64  `form:"id,optional"`
+	TradeNo  string `form:"tradeNo,optional"`
+}
+
+type GetTradeResp struct {
+	RespBase
+	Data OptionTradeDetail `json:"data"`
+}
+
+type GetUserAssetDetailReq struct {
+	TenantId   int64  `form:"tenantId"`
+	UserId     int64  `form:"userId"`
+	WalletType int64  `form:"walletType"`
+	Coin       string `form:"coin"`
+}
+
+type GetUserAssetDetailResp struct {
+	RespBase
+	Data AssetUserAsset `json:"data"`
+}
+
 type GetUserBankReq struct {
 	TenantId int64 `form:"tenantId"`
 	Id       int64 `path:"id"`
@@ -403,6 +1229,19 @@ type GetUserDetailResp struct {
 	Detail UserDetail `json:"detail"`
 }
 
+type GetUserLeverageConfigReq struct {
+	TenantId   int64 `form:"tenantId,optional"`
+	UserId     int64 `form:"userId"`
+	SymbolId   int64 `form:"symbolId"`
+	MarketType int64 `form:"marketType"`
+	MarginMode int64 `form:"marginMode"`
+}
+
+type GetUserLeverageConfigResp struct {
+	RespBase
+	Data ContractLeverageConfig `json:"data"`
+}
+
 type GetUserRechargeStatReq struct {
 	TenantId int64 `form:"tenantId"`
 	UserId   int64 `form:"userId"`
@@ -421,6 +1260,41 @@ type GetUserSecurityReq struct {
 type GetUserSecurityResp struct {
 	RespBase
 	Security UserSecurity `json:"security"`
+}
+
+type GetUserSymbolLimitReq struct {
+	TenantId   int64 `form:"tenantId,optional"`
+	UserId     int64 `form:"userId"`
+	SymbolId   int64 `form:"symbolId"`
+	MarketType int64 `form:"marketType"`
+}
+
+type GetUserSymbolLimitResp struct {
+	RespBase
+	Data RiskUserSymbolLimit `json:"data"`
+}
+
+type GetUserTradeConfigReq struct {
+	TenantId   int64 `form:"tenantId,optional"`
+	UserId     int64 `form:"userId"`
+	MarketType int64 `form:"marketType"`
+	SymbolId   int64 `form:"symbolId,optional"`
+}
+
+type GetUserTradeConfigResp struct {
+	RespBase
+	Data TradeUserConfig `json:"data"`
+}
+
+type GetUserTradeLimitReq struct {
+	TenantId   int64 `form:"tenantId,optional"`
+	UserId     int64 `form:"userId"`
+	MarketType int64 `form:"marketType"`
+}
+
+type GetUserTradeLimitResp struct {
+	RespBase
+	Data RiskUserTradeLimit `json:"data"`
 }
 
 type GetWithdrawNotifyLogReq struct {
@@ -575,6 +1449,36 @@ type Kline struct {
 	Turnover     float64 `json:"turnover"`
 }
 
+type ListAccountsReq struct {
+	PageReq
+	TenantId   int64  `form:"tenantId,optional"`
+	Uid        int64  `form:"uid,optional"`
+	AccountId  int64  `form:"accountId,optional"`
+	MarginCoin string `form:"marginCoin,optional"`
+	Status     int64  `form:"status,optional"`
+}
+
+type ListAccountsResp struct {
+	RespBase
+	List []OptionAccount `json:"list"`
+	Page PageReq         `json:"page"`
+}
+
+type ListBillsReq struct {
+	PageReq
+	TenantId        int64     `form:"tenantId,optional"`
+	Uid             int64     `form:"uid,optional"`
+	AccountId       int64     `form:"accountId,optional"`
+	RefType         int64     `form:"refType,optional"`
+	CreateTimeRange TimeRange `form:"createTimeRange,optional"`
+}
+
+type ListBillsResp struct {
+	RespBase
+	List []OptionBill `json:"list"`
+	Page PageReq      `json:"page"`
+}
+
 type ListCategoriesReq struct {
 	PageReq
 	CategoryType int64 `json:"categoryType,optional"`
@@ -585,6 +1489,73 @@ type ListCategoriesReq struct {
 type ListCategoriesResp struct {
 	RespBase
 	Data []ItickCategory `json:"data"`
+}
+
+type ListContractsReq struct {
+	PageReq
+	TenantId         int64     `form:"tenantId,optional"`
+	ContractCode     string    `form:"contractCode,optional"`
+	UnderlyingSymbol string    `form:"underlyingSymbol,optional"`
+	OptionType       int64     `form:"optionType,optional"`
+	Status           int64     `form:"status,optional"`
+	ListTimeRange    TimeRange `form:"listTimeRange,optional"`
+	ExpireTimeRange  TimeRange `form:"expireTimeRange,optional"`
+}
+
+type ListContractsResp struct {
+	RespBase
+	List []OptionContractDetail `json:"list"`
+	Page PageReq                `json:"page"`
+}
+
+type ListExercisesReq struct {
+	PageReq
+	TenantId          int64     `form:"tenantId,optional"`
+	Uid               int64     `form:"uid,optional"`
+	AccountId         int64     `form:"accountId,optional"`
+	ContractId        int64     `form:"contractId,optional"`
+	Status            int64     `form:"status,optional"`
+	ExerciseTimeRange TimeRange `form:"exerciseTimeRange,optional"`
+}
+
+type ListExercisesResp struct {
+	RespBase
+	List []OptionExerciseDetail `json:"list"`
+	Page PageReq                `json:"page"`
+}
+
+type ListMarketSnapshotsReq struct {
+	PageReq
+	TenantId   int64     `form:"tenantId,optional"`
+	ContractId int64     `form:"contractId"`
+	TimeRange  TimeRange `form:"timeRange,optional"`
+}
+
+type ListMarketSnapshotsResp struct {
+	RespBase
+	List []OptionMarketSnapshot `json:"list"`
+	Page PageReq                `json:"page"`
+}
+
+type ListOrdersReq struct {
+	PageReq
+	TenantId         int64     `form:"tenantId,optional"`
+	Uid              int64     `form:"uid,optional"`
+	AccountId        int64     `form:"accountId,optional"`
+	ContractId       int64     `form:"contractId,optional"`
+	UnderlyingSymbol string    `form:"underlyingSymbol,optional"`
+	OrderNo          string    `form:"orderNo,optional"`
+	Side             int64     `form:"side,optional"`
+	PositionEffect   int64     `form:"positionEffect,optional"`
+	OrderType        int64     `form:"orderType,optional"`
+	Status           int64     `form:"status,optional"`
+	CreateTimeRange  TimeRange `form:"createTimeRange,optional"`
+}
+
+type ListOrdersResp struct {
+	RespBase
+	List []OptionOrderDetail `json:"list"`
+	Page PageReq             `json:"page"`
 }
 
 type ListPayPlatformsReq struct {
@@ -612,6 +1583,21 @@ type ListPayProductsReq struct {
 type ListPayProductsResp struct {
 	RespBase
 	Data []PayProduct `json:"data"`
+}
+
+type ListPositionsReq struct {
+	PageReq
+	TenantId   int64 `form:"tenantId,optional"`
+	Uid        int64 `form:"uid,optional"`
+	AccountId  int64 `form:"accountId,optional"`
+	ContractId int64 `form:"contractId,optional"`
+	Status     int64 `form:"status,optional"`
+}
+
+type ListPositionsResp struct {
+	RespBase
+	List []OptionPositionDetail `json:"list"`
+	Page PageReq                `json:"page"`
 }
 
 type ListProductsReq struct {
@@ -666,6 +1652,20 @@ type ListRechargeOrdersReq struct {
 type ListRechargeOrdersResp struct {
 	RespBase
 	Data []RechargeOrder `json:"data"`
+}
+
+type ListSettlementsReq struct {
+	PageReq
+	TenantId        int64     `form:"tenantId,optional"`
+	ContractId      int64     `form:"contractId,optional"`
+	Status          int64     `form:"status,optional"`
+	ExpireTimeRange TimeRange `form:"expireTimeRange,optional"`
+}
+
+type ListSettlementsResp struct {
+	RespBase
+	List []OptionSettlementDetail `json:"list"`
+	Page PageReq                  `json:"page"`
 }
 
 type ListTenantCategoriesReq struct {
@@ -749,6 +1749,21 @@ type ListTenantProductsReq struct {
 type ListTenantProductsResp struct {
 	RespBase
 	Data []ItickTenantProduct `json:"data"`
+}
+
+type ListTradesReq struct {
+	PageReq
+	TenantId       int64     `form:"tenantId,optional"`
+	ContractId     int64     `form:"contractId,optional"`
+	Uid            int64     `form:"uid,optional"`
+	TradeNo        string    `form:"tradeNo,optional"`
+	TradeTimeRange TimeRange `form:"tradeTimeRange,optional"`
+}
+
+type ListTradesResp struct {
+	RespBase
+	List []OptionTradeDetail `json:"list"`
+	Page PageReq             `json:"page"`
 }
 
 type ListUserBanksReq struct {
@@ -945,9 +1960,341 @@ type OpenTenantPayPlatformReq struct {
 	Remark     string `json:"remark,optional"`
 }
 
+type OptionAccount struct {
+	Id               int64  `json:"id"`
+	TenantId         int64  `json:"tenantId"`
+	Uid              int64  `json:"uid"`
+	AccountId        int64  `json:"accountId"`
+	MarginCoin       string `json:"marginCoin"`
+	Balance          string `json:"balance"`
+	AvailableBalance string `json:"availableBalance"`
+	FrozenBalance    string `json:"frozenBalance"`
+	PositionMargin   string `json:"positionMargin"`
+	OrderMargin      string `json:"orderMargin"`
+	UnrealizedPnl    string `json:"unrealizedPnl"`
+	RealizedPnl      string `json:"realizedPnl"`
+	RiskRate         string `json:"riskRate"`
+	Status           int64  `json:"status"`
+	CreateTimes      int64  `json:"createTimes"`
+	UpdateTimes      int64  `json:"updateTimes"`
+}
+
+type OptionAdminCommonResp struct {
+	RespBase
+}
+
+type OptionBill struct {
+	Id            int64  `json:"id"`
+	TenantId      int64  `json:"tenantId"`
+	Uid           int64  `json:"uid"`
+	AccountId     int64  `json:"accountId"`
+	BizNo         string `json:"bizNo"`
+	RefType       int64  `json:"refType"`
+	RefId         int64  `json:"refId"`
+	Coin          string `json:"coin"`
+	ChangeAmount  string `json:"changeAmount"`
+	BalanceBefore string `json:"balanceBefore"`
+	BalanceAfter  string `json:"balanceAfter"`
+	Remark        string `json:"remark"`
+	CreateTimes   int64  `json:"createTimes"`
+}
+
+type OptionContract struct {
+	Id               int64  `json:"id"`
+	TenantId         int64  `json:"tenantId"`
+	ContractCode     string `json:"contractCode"`
+	UnderlyingSymbol string `json:"underlyingSymbol"`
+	SettleCoin       string `json:"settleCoin"`
+	QuoteCoin        string `json:"quoteCoin"`
+	OptionType       int64  `json:"optionType"`
+	ExerciseStyle    int64  `json:"exerciseStyle"`
+	SettlementType   int64  `json:"settlementType"`
+	StrikePrice      string `json:"strikePrice"`
+	ContractUnit     string `json:"contractUnit"`
+	MinOrderQty      string `json:"minOrderQty"`
+	MaxOrderQty      string `json:"maxOrderQty"`
+	PriceTick        string `json:"priceTick"`
+	QtyStep          string `json:"qtyStep"`
+	Multiplier       string `json:"multiplier"`
+	ListTime         int64  `json:"listTime"`
+	ExpireTime       int64  `json:"expireTime"`
+	DeliverTime      int64  `json:"deliverTime"`
+	IsAutoExercise   int64  `json:"isAutoExercise"`
+	Status           int64  `json:"status"`
+	Sort             int32  `json:"sort"`
+	Remark           string `json:"remark"`
+	IsDeleted        int64  `json:"isDeleted"`
+	CreateTimes      int64  `json:"createTimes"`
+	UpdateTimes      int64  `json:"updateTimes"`
+}
+
+type OptionContractDetail struct {
+	Contract OptionContract `json:"contract"`
+	Market   OptionMarket   `json:"market"`
+}
+
+type OptionExercise struct {
+	Id              int64  `json:"id"`
+	TenantId        int64  `json:"tenantId"`
+	ExerciseNo      string `json:"exerciseNo"`
+	Uid             int64  `json:"uid"`
+	AccountId       int64  `json:"accountId"`
+	ContractId      int64  `json:"contractId"`
+	PositionId      int64  `json:"positionId"`
+	ExerciseType    int64  `json:"exerciseType"`
+	ExerciseQty     string `json:"exerciseQty"`
+	StrikePrice     string `json:"strikePrice"`
+	SettlementPrice string `json:"settlementPrice"`
+	ExerciseAmount  string `json:"exerciseAmount"`
+	ProfitAmount    string `json:"profitAmount"`
+	Fee             string `json:"fee"`
+	FeeCoin         string `json:"feeCoin"`
+	Status          int64  `json:"status"`
+	Remark          string `json:"remark"`
+	ExerciseTime    int64  `json:"exerciseTime"`
+	FinishTime      int64  `json:"finishTime"`
+	CreateTimes     int64  `json:"createTimes"`
+	UpdateTimes     int64  `json:"updateTimes"`
+}
+
+type OptionExerciseDetail struct {
+	Exercise OptionExercise `json:"exercise"`
+	Contract OptionContract `json:"contract"`
+}
+
+type OptionMarket struct {
+	Id               int64  `json:"id"`
+	TenantId         int64  `json:"tenantId"`
+	ContractId       int64  `json:"contractId"`
+	UnderlyingPrice  string `json:"underlyingPrice"`
+	MarkPrice        string `json:"markPrice"`
+	LastPrice        string `json:"lastPrice"`
+	BidPrice         string `json:"bidPrice"`
+	AskPrice         string `json:"askPrice"`
+	TheoreticalPrice string `json:"theoreticalPrice"`
+	IntrinsicValue   string `json:"intrinsicValue"`
+	TimeValue        string `json:"timeValue"`
+	Iv               string `json:"iv"`
+	Delta            string `json:"delta"`
+	Gamma            string `json:"gamma"`
+	Theta            string `json:"theta"`
+	Vega             string `json:"vega"`
+	Rho              string `json:"rho"`
+	RiskFreeRate     string `json:"riskFreeRate"`
+	PricingModel     string `json:"pricingModel"`
+	SnapshotTime     int64  `json:"snapshotTime"`
+	CreateTimes      int64  `json:"createTimes"`
+	UpdateTimes      int64  `json:"updateTimes"`
+}
+
+type OptionMarketSnapshot struct {
+	Id               int64  `json:"id"`
+	TenantId         int64  `json:"tenantId"`
+	ContractId       int64  `json:"contractId"`
+	UnderlyingPrice  string `json:"underlyingPrice"`
+	MarkPrice        string `json:"markPrice"`
+	LastPrice        string `json:"lastPrice"`
+	BidPrice         string `json:"bidPrice"`
+	AskPrice         string `json:"askPrice"`
+	TheoreticalPrice string `json:"theoreticalPrice"`
+	Iv               string `json:"iv"`
+	Delta            string `json:"delta"`
+	Gamma            string `json:"gamma"`
+	Theta            string `json:"theta"`
+	Vega             string `json:"vega"`
+	Rho              string `json:"rho"`
+	SnapshotTime     int64  `json:"snapshotTime"`
+	CreateTimes      int64  `json:"createTimes"`
+}
+
+type OptionOrder struct {
+	Id               int64  `json:"id"`
+	TenantId         int64  `json:"tenantId"`
+	OrderNo          string `json:"orderNo"`
+	Uid              int64  `json:"uid"`
+	AccountId        int64  `json:"accountId"`
+	ContractId       int64  `json:"contractId"`
+	UnderlyingSymbol string `json:"underlyingSymbol"`
+	Side             int64  `json:"side"`
+	PositionEffect   int64  `json:"positionEffect"`
+	OrderType        int64  `json:"orderType"`
+	Price            string `json:"price"`
+	Qty              string `json:"qty"`
+	FilledQty        string `json:"filledQty"`
+	UnfilledQty      string `json:"unfilledQty"`
+	AvgPrice         string `json:"avgPrice"`
+	Turnover         string `json:"turnover"`
+	Fee              string `json:"fee"`
+	FeeCoin          string `json:"feeCoin"`
+	MarginAmount     string `json:"marginAmount"`
+	Source           int64  `json:"source"`
+	ClientOrderId    string `json:"clientOrderId"`
+	ReduceOnly       int64  `json:"reduceOnly"`
+	Mmp              int64  `json:"mmp"`
+	Status           int64  `json:"status"`
+	CancelReason     string `json:"cancelReason"`
+	MatchTime        int64  `json:"matchTime"`
+	CancelTime       int64  `json:"cancelTime"`
+	CreateTimes      int64  `json:"createTimes"`
+	UpdateTimes      int64  `json:"updateTimes"`
+}
+
+type OptionOrderDetail struct {
+	Order    OptionOrder    `json:"order"`
+	Contract OptionContract `json:"contract"`
+}
+
+type OptionPosition struct {
+	Id                int64  `json:"id"`
+	TenantId          int64  `json:"tenantId"`
+	Uid               int64  `json:"uid"`
+	AccountId         int64  `json:"accountId"`
+	ContractId        int64  `json:"contractId"`
+	UnderlyingSymbol  string `json:"underlyingSymbol"`
+	Side              int64  `json:"side"`
+	PositionQty       string `json:"positionQty"`
+	AvailableQty      string `json:"availableQty"`
+	FrozenQty         string `json:"frozenQty"`
+	OpenAvgPrice      string `json:"openAvgPrice"`
+	MarkPrice         string `json:"markPrice"`
+	PositionValue     string `json:"positionValue"`
+	MarginAmount      string `json:"marginAmount"`
+	MaintenanceMargin string `json:"maintenanceMargin"`
+	UnrealizedPnl     string `json:"unrealizedPnl"`
+	RealizedPnl       string `json:"realizedPnl"`
+	ExerciseableQty   string `json:"exerciseableQty"`
+	Status            int64  `json:"status"`
+	LastCalcTime      int64  `json:"lastCalcTime"`
+	CreateTimes       int64  `json:"createTimes"`
+	UpdateTimes       int64  `json:"updateTimes"`
+}
+
+type OptionPositionDetail struct {
+	Position OptionPosition `json:"position"`
+	Contract OptionContract `json:"contract"`
+	Market   OptionMarket   `json:"market"`
+}
+
+type OptionSettlement struct {
+	Id               int64  `json:"id"`
+	TenantId         int64  `json:"tenantId"`
+	SettlementNo     string `json:"settlementNo"`
+	ContractId       int64  `json:"contractId"`
+	UnderlyingSymbol string `json:"underlyingSymbol"`
+	ExpireTime       int64  `json:"expireTime"`
+	SettlementTime   int64  `json:"settlementTime"`
+	DeliveryPrice    string `json:"deliveryPrice"`
+	TheoreticalPrice string `json:"theoreticalPrice"`
+	Iv               string `json:"iv"`
+	IsItm            int64  `json:"isItm"`
+	ExerciseResult   int64  `json:"exerciseResult"`
+	Status           int64  `json:"status"`
+	Remark           string `json:"remark"`
+	CreateTimes      int64  `json:"createTimes"`
+	UpdateTimes      int64  `json:"updateTimes"`
+}
+
+type OptionSettlementDetail struct {
+	Settlement OptionSettlement `json:"settlement"`
+	Contract   OptionContract   `json:"contract"`
+}
+
+type OptionTrade struct {
+	Id               int64  `json:"id"`
+	TenantId         int64  `json:"tenantId"`
+	TradeNo          string `json:"tradeNo"`
+	ContractId       int64  `json:"contractId"`
+	UnderlyingSymbol string `json:"underlyingSymbol"`
+	BuyOrderId       int64  `json:"buyOrderId"`
+	BuyOrderNo       string `json:"buyOrderNo"`
+	BuyUid           int64  `json:"buyUid"`
+	BuyAccountId     int64  `json:"buyAccountId"`
+	SellOrderId      int64  `json:"sellOrderId"`
+	SellOrderNo      string `json:"sellOrderNo"`
+	SellUid          int64  `json:"sellUid"`
+	SellAccountId    int64  `json:"sellAccountId"`
+	Price            string `json:"price"`
+	Qty              string `json:"qty"`
+	Turnover         string `json:"turnover"`
+	BuyFee           string `json:"buyFee"`
+	SellFee          string `json:"sellFee"`
+	FeeCoin          string `json:"feeCoin"`
+	MakerSide        int64  `json:"makerSide"`
+	TradeTime        int64  `json:"tradeTime"`
+	CreateTimes      int64  `json:"createTimes"`
+}
+
+type OptionTradeDetail struct {
+	Trade    OptionTrade    `json:"trade"`
+	Contract OptionContract `json:"contract"`
+}
+
+type PageAssetFlowsReq struct {
+	PageReq
+	TenantId   int64     `form:"tenantId,optional"`
+	UserId     int64     `form:"userId,optional"`
+	WalletType int64     `form:"walletType,optional"`
+	Coin       string    `form:"coin,optional"`
+	BizType    int64     `form:"bizType,optional"`
+	SceneType  int64     `form:"sceneType,optional"`
+	BizNo      string    `form:"bizNo,optional"`
+	TimeRange  TimeRange `form:"timeRange,optional"`
+}
+
+type PageAssetFlowsResp struct {
+	RespBase
+	Data []AssetFlow `json:"data"`
+}
+
+type PageAssetFreezesReq struct {
+	PageReq
+	TenantId   int64  `form:"tenantId,optional"`
+	UserId     int64  `form:"userId,optional"`
+	WalletType int64  `form:"walletType,optional"`
+	Coin       string `form:"coin,optional"`
+	BizType    int64  `form:"bizType,optional"`
+	BizNo      string `form:"bizNo,optional"`
+	Status     int64  `form:"status,optional"`
+}
+
+type PageAssetFreezesResp struct {
+	RespBase
+	Data []AssetFreeze `json:"data"`
+}
+
+type PageAssetLocksReq struct {
+	PageReq
+	TenantId   int64  `form:"tenantId,optional"`
+	UserId     int64  `form:"userId,optional"`
+	WalletType int64  `form:"walletType,optional"`
+	Coin       string `form:"coin,optional"`
+	BizType    int64  `form:"bizType,optional"`
+	BizNo      string `form:"bizNo,optional"`
+	Status     int64  `form:"status,optional"`
+}
+
+type PageAssetLocksResp struct {
+	RespBase
+	Data []AssetLock `json:"data"`
+}
+
 type PageReq struct {
 	Cursor int64 `form:"cursor,optional"`
 	Limit  int64 `form:"limit,optional"`
+}
+
+type PageUserAssetsReq struct {
+	PageReq
+	TenantId   int64  `form:"tenantId,optional"`
+	UserId     int64  `form:"userId,optional"`
+	WalletType int64  `form:"walletType,optional"`
+	Coin       string `form:"coin,optional"`
+	Status     int64  `form:"status,optional"`
+}
+
+type PageUserAssetsResp struct {
+	RespBase
+	Data []AssetUserAsset `json:"data"`
 }
 
 type PayNotifyLog struct {
@@ -1100,6 +2447,12 @@ type RetryNotifyReq struct {
 	OrderNo  string `path:"orderNo"`
 }
 
+type RetryTradeEventReq struct {
+	TenantId   int64 `json:"tenantId"`
+	Id         int64 `json:"id"`
+	OperatorId int64 `json:"operatorId"`
+}
+
 type ReviewUserIdentityReq struct {
 	TenantId     int64  `json:"tenantId"`
 	UserId       int64  `path:"userId"`
@@ -1113,10 +2466,305 @@ type ReviewUserIdentityResp struct {
 	Identity UserIdentity `json:"identity"`
 }
 
+type RiskOrderCheckLog struct {
+	Id            int64  `json:"id"`
+	TenantId      int64  `json:"tenantId"`
+	OrderNo       string `json:"orderNo"`
+	ClientOrderId string `json:"clientOrderId"`
+	UserId        int64  `json:"userId"`
+	SymbolId      int64  `json:"symbolId"`
+	MarketType    int64  `json:"marketType"`
+	CheckType     int64  `json:"checkType"`
+	CheckResult   int64  `json:"checkResult"`
+	RejectCode    string `json:"rejectCode"`
+	RejectMsg     string `json:"rejectMsg"`
+	RequestPrice  string `json:"requestPrice"`
+	RequestQty    string `json:"requestQty"`
+	RequestAmount string `json:"requestAmount"`
+	OperatorId    int64  `json:"operatorId"`
+	Source        int64  `json:"source"`
+	CheckSnapshot string `json:"checkSnapshot"`
+	CreateTimes   int64  `json:"createTimes"`
+}
+
+type RiskUserSymbolLimit struct {
+	Id                  int64  `json:"id"`
+	TenantId            int64  `json:"tenantId"`
+	UserId              int64  `json:"userId"`
+	SymbolId            int64  `json:"symbolId"`
+	MarketType          int64  `json:"marketType"`
+	MaxPositionQty      string `json:"maxPositionQty"`
+	MaxPositionNotional string `json:"maxPositionNotional"`
+	MaxOpenOrders       uint32 `json:"maxOpenOrders"`
+	MaxOrderQty         string `json:"maxOrderQty"`
+	MaxOrderNotional    string `json:"maxOrderNotional"`
+	MinOrderQty         string `json:"minOrderQty"`
+	MinOrderNotional    string `json:"minOrderNotional"`
+	MaxLongPositionQty  string `json:"maxLongPositionQty"`
+	MaxShortPositionQty string `json:"maxShortPositionQty"`
+	PriceDeviationRate  string `json:"priceDeviationRate"`
+	OperatorId          int64  `json:"operatorId"`
+	Source              int64  `json:"source"`
+	Status              uint32 `json:"status"`
+	EffectiveStartTime  int64  `json:"effectiveStartTime"`
+	EffectiveEndTime    int64  `json:"effectiveEndTime"`
+	Remark              string `json:"remark"`
+	CreateTimes         int64  `json:"createTimes"`
+	UpdateTimes         int64  `json:"updateTimes"`
+}
+
+type RiskUserTradeLimit struct {
+	Id                   int64  `json:"id"`
+	TenantId             int64  `json:"tenantId"`
+	UserId               int64  `json:"userId"`
+	MarketType           int64  `json:"marketType"`
+	CanOpen              bool   `json:"canOpen"`
+	CanClose             bool   `json:"canClose"`
+	CanCancel            bool   `json:"canCancel"`
+	CanTriggerOrder      bool   `json:"canTriggerOrder"`
+	CanApiTrade          bool   `json:"canApiTrade"`
+	TradeEnabled         bool   `json:"tradeEnabled"`
+	OnlyReduceOnly       bool   `json:"onlyReduceOnly"`
+	MaxOpenOrderCount    uint32 `json:"maxOpenOrderCount"`
+	MaxOrderCountPerDay  uint32 `json:"maxOrderCountPerDay"`
+	MaxCancelCountPerDay uint32 `json:"maxCancelCountPerDay"`
+	MaxOpenNotional      string `json:"maxOpenNotional"`
+	MaxPositionNotional  string `json:"maxPositionNotional"`
+	RiskLevel            uint32 `json:"riskLevel"`
+	OperatorId           int64  `json:"operatorId"`
+	Source               int64  `json:"source"`
+	Status               uint32 `json:"status"`
+	EffectiveStartTime   int64  `json:"effectiveStartTime"`
+	EffectiveEndTime     int64  `json:"effectiveEndTime"`
+	Remark               string `json:"remark"`
+	CreateTimes          int64  `json:"createTimes"`
+	UpdateTimes          int64  `json:"updateTimes"`
+}
+
+type SetContractSymbolConfigReq struct {
+	TenantId               int64  `json:"tenantId"`
+	SymbolId               int64  `json:"symbolId"`
+	ContractSize           string `json:"contractSize"`
+	Multiplier             string `json:"multiplier"`
+	MaintenanceMarginRate  string `json:"maintenanceMarginRate"`
+	InitialMarginRate      string `json:"initialMarginRate"`
+	MakerFeeRate           string `json:"makerFeeRate"`
+	TakerFeeRate           string `json:"takerFeeRate"`
+	FundingIntervalMinutes uint32 `json:"fundingIntervalMinutes"`
+	DeliveryTime           int64  `json:"deliveryTime"`
+	SupportCross           bool   `json:"supportCross"`
+	SupportIsolated        bool   `json:"supportIsolated"`
+	BuyEnabled             bool   `json:"buyEnabled"`
+	SellEnabled            bool   `json:"sellEnabled"`
+}
+
 type SetDefaultUserBankReq struct {
 	TenantId int64 `json:"tenantId"`
 	Id       int64 `path:"id"`
 	UserId   int64 `json:"userId"`
+}
+
+type SetSpotSymbolConfigReq struct {
+	TenantId     int64  `json:"tenantId"`
+	SymbolId     int64  `json:"symbolId"`
+	MakerFeeRate string `json:"makerFeeRate"`
+	TakerFeeRate string `json:"takerFeeRate"`
+	BuyEnabled   bool   `json:"buyEnabled"`
+	SellEnabled  bool   `json:"sellEnabled"`
+}
+
+type SetUserLeverageConfigReq struct {
+	TenantId      int64  `json:"tenantId"`
+	UserId        int64  `json:"userId"`
+	SymbolId      int64  `json:"symbolId"`
+	MarketType    int64  `json:"marketType"`
+	MarginMode    int64  `json:"marginMode"`
+	PositionMode  int64  `json:"positionMode"`
+	LongLeverage  uint32 `json:"longLeverage"`
+	ShortLeverage uint32 `json:"shortLeverage"`
+	MaxLeverage   uint32 `json:"maxLeverage"`
+	OperatorId    int64  `json:"operatorId"`
+	Source        int64  `json:"source"`
+	Status        uint32 `json:"status"`
+	Remark        string `json:"remark,optional"`
+}
+
+type SetUserSymbolLimitReq struct {
+	TenantId            int64  `json:"tenantId"`
+	UserId              int64  `json:"userId"`
+	SymbolId            int64  `json:"symbolId"`
+	MarketType          int64  `json:"marketType"`
+	MaxPositionQty      string `json:"maxPositionQty"`
+	MaxPositionNotional string `json:"maxPositionNotional"`
+	MaxOpenOrders       uint32 `json:"maxOpenOrders"`
+	MaxOrderQty         string `json:"maxOrderQty"`
+	MaxOrderNotional    string `json:"maxOrderNotional"`
+	MinOrderQty         string `json:"minOrderQty"`
+	MinOrderNotional    string `json:"minOrderNotional"`
+	MaxLongPositionQty  string `json:"maxLongPositionQty"`
+	MaxShortPositionQty string `json:"maxShortPositionQty"`
+	PriceDeviationRate  string `json:"priceDeviationRate"`
+	OperatorId          int64  `json:"operatorId"`
+	Source              int64  `json:"source"`
+	Status              uint32 `json:"status"`
+	EffectiveStartTime  int64  `json:"effectiveStartTime"`
+	EffectiveEndTime    int64  `json:"effectiveEndTime"`
+	Remark              string `json:"remark,optional"`
+}
+
+type SetUserTradeConfigReq struct {
+	TenantId          int64  `json:"tenantId"`
+	UserId            int64  `json:"userId"`
+	MarketType        int64  `json:"marketType"`
+	SymbolId          int64  `json:"symbolId"`
+	PositionMode      int64  `json:"positionMode"`
+	MarginMode        int64  `json:"marginMode"`
+	DefaultLeverage   uint32 `json:"defaultLeverage"`
+	TradeEnabled      bool   `json:"tradeEnabled"`
+	ReduceOnlyEnabled bool   `json:"reduceOnlyEnabled"`
+}
+
+type SetUserTradeLimitReq struct {
+	TenantId             int64  `json:"tenantId"`
+	UserId               int64  `json:"userId"`
+	MarketType           int64  `json:"marketType"`
+	CanOpen              bool   `json:"canOpen"`
+	CanClose             bool   `json:"canClose"`
+	CanCancel            bool   `json:"canCancel"`
+	CanTriggerOrder      bool   `json:"canTriggerOrder"`
+	CanApiTrade          bool   `json:"canApiTrade"`
+	TradeEnabled         bool   `json:"tradeEnabled"`
+	OnlyReduceOnly       bool   `json:"onlyReduceOnly"`
+	MaxOpenOrderCount    uint32 `json:"maxOpenOrderCount"`
+	MaxOrderCountPerDay  uint32 `json:"maxOrderCountPerDay"`
+	MaxCancelCountPerDay uint32 `json:"maxCancelCountPerDay"`
+	MaxOpenNotional      string `json:"maxOpenNotional"`
+	MaxPositionNotional  string `json:"maxPositionNotional"`
+	RiskLevel            uint32 `json:"riskLevel"`
+	OperatorId           int64  `json:"operatorId"`
+	Source               int64  `json:"source"`
+	Status               uint32 `json:"status"`
+	EffectiveStartTime   int64  `json:"effectiveStartTime"`
+	EffectiveEndTime     int64  `json:"effectiveEndTime"`
+	Remark               string `json:"remark,optional"`
+}
+
+type StakeOrder struct {
+	Id               int64  `json:"id"`
+	TenantId         int64  `json:"tenantId"`
+	OrderNo          string `json:"orderNo"`
+	Uid              int64  `json:"uid"`
+	ProductId        int64  `json:"productId"`
+	ProductNo        string `json:"productNo"`
+	ProductName      string `json:"productName"`
+	ProductType      int64  `json:"productType"`
+	CoinName         string `json:"coinName"`
+	CoinSymbol       string `json:"coinSymbol"`
+	RewardCoinName   string `json:"rewardCoinName"`
+	RewardCoinSymbol string `json:"rewardCoinSymbol"`
+	StakeAmount      string `json:"stakeAmount"`
+	Apr              string `json:"apr"`
+	LockDays         int32  `json:"lockDays"`
+	InterestMode     int64  `json:"interestMode"`
+	RewardMode       int64  `json:"rewardMode"`
+	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"`
+	EarlyRedeemRate  string `json:"earlyRedeemRate"`
+	InterestDays     int32  `json:"interestDays"`
+	StartTimes       int64  `json:"startTimes"`
+	EndTimes         int64  `json:"endTimes"`
+	LastRewardTimes  int64  `json:"lastRewardTimes"`
+	NextRewardTimes  int64  `json:"nextRewardTimes"`
+	TotalReward      string `json:"totalReward"`
+	PendingReward    string `json:"pendingReward"`
+	RedeemAmount     string `json:"redeemAmount"`
+	RedeemFee        string `json:"redeemFee"`
+	Status           int64  `json:"status"`
+	RedeemType       int64  `json:"redeemType"`
+	RedeemApplyTimes int64  `json:"redeemApplyTimes"`
+	RedeemTimes      int64  `json:"redeemTimes"`
+	Source           int64  `json:"source"`
+	Remark           string `json:"remark"`
+	CreateUserId     int64  `json:"createUserId"`
+	UpdateUserId     int64  `json:"updateUserId"`
+	CreateTimes      int64  `json:"createTimes"`
+	UpdateTimes      int64  `json:"updateTimes"`
+}
+
+type StakeProduct struct {
+	Id               int64  `json:"id"`
+	TenantId         int64  `json:"tenantId"`
+	ProductNo        string `json:"productNo"`
+	ProductName      string `json:"productName"`
+	ProductType      int64  `json:"productType"`
+	CoinName         string `json:"coinName"`
+	CoinSymbol       string `json:"coinSymbol"`
+	RewardCoinName   string `json:"rewardCoinName"`
+	RewardCoinSymbol string `json:"rewardCoinSymbol"`
+	Apr              string `json:"apr"`
+	LockDays         int32  `json:"lockDays"`
+	MinAmount        string `json:"minAmount"`
+	MaxAmount        string `json:"maxAmount"`
+	StepAmount       string `json:"stepAmount"`
+	TotalAmount      string `json:"totalAmount"`
+	StakedAmount     string `json:"stakedAmount"`
+	UserLimitAmount  string `json:"userLimitAmount"`
+	InterestMode     int64  `json:"interestMode"`
+	RewardMode       int64  `json:"rewardMode"`
+	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"`
+	EarlyRedeemRate  string `json:"earlyRedeemRate"`
+	Status           int64  `json:"status"`
+	Sort             int32  `json:"sort"`
+	Remark           string `json:"remark"`
+	CreateUserId     int64  `json:"createUserId"`
+	UpdateUserId     int64  `json:"updateUserId"`
+	CreateTimes      int64  `json:"createTimes"`
+	UpdateTimes      int64  `json:"updateTimes"`
+}
+
+type StakeRedeemLog struct {
+	Id           int64  `json:"id"`
+	TenantId     int64  `json:"tenantId"`
+	OrderId      int64  `json:"orderId"`
+	OrderNo      string `json:"orderNo"`
+	Uid          int64  `json:"uid"`
+	ProductId    int64  `json:"productId"`
+	RedeemNo     string `json:"redeemNo"`
+	RedeemType   int64  `json:"redeemType"`
+	StakeAmount  string `json:"stakeAmount"`
+	RedeemAmount string `json:"redeemAmount"`
+	RewardAmount string `json:"rewardAmount"`
+	FeeRate      string `json:"feeRate"`
+	FeeAmount    string `json:"feeAmount"`
+	RedeemStatus int64  `json:"redeemStatus"`
+	RedeemTimes  int64  `json:"redeemTimes"`
+	Remark       string `json:"remark"`
+	CreateUserId int64  `json:"createUserId"`
+	UpdateUserId int64  `json:"updateUserId"`
+	CreateTimes  int64  `json:"createTimes"`
+	UpdateTimes  int64  `json:"updateTimes"`
+}
+
+type StakeRewardLog struct {
+	Id               int64  `json:"id"`
+	TenantId         int64  `json:"tenantId"`
+	OrderId          int64  `json:"orderId"`
+	OrderNo          string `json:"orderNo"`
+	Uid              int64  `json:"uid"`
+	ProductId        int64  `json:"productId"`
+	ProductName      string `json:"productName"`
+	CoinSymbol       string `json:"coinSymbol"`
+	RewardCoinSymbol string `json:"rewardCoinSymbol"`
+	RewardAmount     string `json:"rewardAmount"`
+	BeforeReward     string `json:"beforeReward"`
+	AfterReward      string `json:"afterReward"`
+	RewardType       int64  `json:"rewardType"`
+	RewardStatus     int64  `json:"rewardStatus"`
+	RewardTimes      int64  `json:"rewardTimes"`
+	Remark           string `json:"remark"`
+	CreateUserId     int64  `json:"createUserId"`
+	UpdateUserId     int64  `json:"updateUserId"`
+	CreateTimes      int64  `json:"createTimes"`
+	UpdateTimes      int64  `json:"updateTimes"`
 }
 
 type SyncCategoryProductsReq struct {
@@ -1608,6 +3256,152 @@ type TenantScope struct {
 	TenantCode string `form:"tenantCode,optional"`
 }
 
+type TimeRange struct {
+	StartTime int64 `form:"startTime,optional"`
+	EndTime   int64 `form:"endTime,optional"`
+}
+
+type TradeCancelLog struct {
+	Id           int64  `json:"id"`
+	TenantId     int64  `json:"tenantId"`
+	OrderId      int64  `json:"orderId"`
+	OrderNo      string `json:"orderNo"`
+	UserId       int64  `json:"userId"`
+	CancelSource uint32 `json:"cancelSource"`
+	CancelReason string `json:"cancelReason"`
+	CreateTimes  int64  `json:"createTimes"`
+}
+
+type TradeFill struct {
+	Id            int64  `json:"id"`
+	TenantId      int64  `json:"tenantId"`
+	FillNo        string `json:"fillNo"`
+	OrderId       int64  `json:"orderId"`
+	OrderNo       string `json:"orderNo"`
+	UserId        int64  `json:"userId"`
+	SymbolId      int64  `json:"symbolId"`
+	MarketType    int64  `json:"marketType"`
+	Side          int64  `json:"side"`
+	PositionSide  int64  `json:"positionSide"`
+	Price         string `json:"price"`
+	Qty           string `json:"qty"`
+	Amount        string `json:"amount"`
+	Fee           string `json:"fee"`
+	FeeAsset      string `json:"feeAsset"`
+	LiquidityType int64  `json:"liquidityType"`
+	RealizedPnl   string `json:"realizedPnl"`
+	MatchTime     int64  `json:"matchTime"`
+	CreateTimes   int64  `json:"createTimes"`
+}
+
+type TradeOrder struct {
+	Id            int64  `json:"id"`
+	TenantId      int64  `json:"tenantId"`
+	OrderNo       string `json:"orderNo"`
+	ClientOrderId string `json:"clientOrderId"`
+	UserId        int64  `json:"userId"`
+	SymbolId      int64  `json:"symbolId"`
+	MarketType    int64  `json:"marketType"`
+	Side          int64  `json:"side"`
+	PositionSide  int64  `json:"positionSide"`
+	OrderType     int64  `json:"orderType"`
+	TimeInForce   int64  `json:"timeInForce"`
+	Status        int64  `json:"status"`
+	Price         string `json:"price"`
+	Qty           string `json:"qty"`
+	Amount        string `json:"amount"`
+	FilledQty     string `json:"filledQty"`
+	FilledAmount  string `json:"filledAmount"`
+	AvgPrice      string `json:"avgPrice"`
+	Fee           string `json:"fee"`
+	FeeAsset      string `json:"feeAsset"`
+	Source        int64  `json:"source"`
+	IsReduceOnly  bool   `json:"isReduceOnly"`
+	IsCloseOnly   bool   `json:"isCloseOnly"`
+	TriggerPrice  string `json:"triggerPrice"`
+	TriggerType   uint32 `json:"triggerType"`
+	CancelReason  string `json:"cancelReason"`
+	BizExt        string `json:"bizExt"`
+	CreateTimes   int64  `json:"createTimes"`
+	UpdateTimes   int64  `json:"updateTimes"`
+}
+
+type TradeSymbol struct {
+	Id            int64  `json:"id"`
+	TenantId      int64  `json:"tenantId"`
+	Symbol        string `json:"symbol"`
+	DisplaySymbol string `json:"displaySymbol"`
+	MarketType    int64  `json:"marketType"`
+	BaseAsset     string `json:"baseAsset"`
+	QuoteAsset    string `json:"quoteAsset"`
+	SettleAsset   string `json:"settleAsset"`
+	ContractType  int64  `json:"contractType"`
+	Status        int64  `json:"status"`
+	PriceScale    uint32 `json:"priceScale"`
+	QtyScale      uint32 `json:"qtyScale"`
+	MinPrice      string `json:"minPrice"`
+	MaxPrice      string `json:"maxPrice"`
+	PriceTick     string `json:"priceTick"`
+	MinQty        string `json:"minQty"`
+	MaxQty        string `json:"maxQty"`
+	QtyStep       string `json:"qtyStep"`
+	MinNotional   string `json:"minNotional"`
+	MaxLeverage   uint32 `json:"maxLeverage"`
+	OpenTime      int64  `json:"openTime"`
+	CloseTime     int64  `json:"closeTime"`
+	Sort          int32  `json:"sort"`
+	Remark        string `json:"remark"`
+	CreateTimes   int64  `json:"createTimes"`
+	UpdateTimes   int64  `json:"updateTimes"`
+}
+
+type TradeSymbolContract struct {
+	Id                     int64  `json:"id"`
+	TenantId               int64  `json:"tenantId"`
+	SymbolId               int64  `json:"symbolId"`
+	ContractSize           string `json:"contractSize"`
+	Multiplier             string `json:"multiplier"`
+	MaintenanceMarginRate  string `json:"maintenanceMarginRate"`
+	InitialMarginRate      string `json:"initialMarginRate"`
+	MakerFeeRate           string `json:"makerFeeRate"`
+	TakerFeeRate           string `json:"takerFeeRate"`
+	FundingIntervalMinutes uint32 `json:"fundingIntervalMinutes"`
+	DeliveryTime           int64  `json:"deliveryTime"`
+	SupportCross           bool   `json:"supportCross"`
+	SupportIsolated        bool   `json:"supportIsolated"`
+	BuyEnabled             bool   `json:"buyEnabled"`
+	SellEnabled            bool   `json:"sellEnabled"`
+	CreateTimes            int64  `json:"createTimes"`
+	UpdateTimes            int64  `json:"updateTimes"`
+}
+
+type TradeSymbolSpot struct {
+	Id           int64  `json:"id"`
+	TenantId     int64  `json:"tenantId"`
+	SymbolId     int64  `json:"symbolId"`
+	MakerFeeRate string `json:"makerFeeRate"`
+	TakerFeeRate string `json:"takerFeeRate"`
+	BuyEnabled   bool   `json:"buyEnabled"`
+	SellEnabled  bool   `json:"sellEnabled"`
+	CreateTimes  int64  `json:"createTimes"`
+	UpdateTimes  int64  `json:"updateTimes"`
+}
+
+type TradeUserConfig struct {
+	Id                int64  `json:"id"`
+	TenantId          int64  `json:"tenantId"`
+	UserId            int64  `json:"userId"`
+	MarketType        int64  `json:"marketType"`
+	SymbolId          int64  `json:"symbolId"`
+	PositionMode      int64  `json:"positionMode"`
+	MarginMode        int64  `json:"marginMode"`
+	DefaultLeverage   uint32 `json:"defaultLeverage"`
+	TradeEnabled      bool   `json:"tradeEnabled"`
+	ReduceOnlyEnabled bool   `json:"reduceOnlyEnabled"`
+	CreateTimes       int64  `json:"createTimes"`
+	UpdateTimes       int64  `json:"updateTimes"`
+}
+
 type UnlockUserReq struct {
 	TenantId int64 `json:"tenantId"`
 	UserId   int64 `path:"userId"`
@@ -1621,6 +3415,55 @@ type UpdateCategoryReq struct {
 	Sort         int64  `json:"sort"`
 	Icon         string `json:"icon"`
 	Remark       string `json:"remark"`
+}
+
+type UpdateContractReq struct {
+	Id               int64  `json:"id"`
+	TenantId         int64  `json:"tenantId"`
+	ContractCode     string `json:"contractCode"`
+	UnderlyingSymbol string `json:"underlyingSymbol"`
+	SettleCoin       string `json:"settleCoin"`
+	QuoteCoin        string `json:"quoteCoin"`
+	OptionType       int64  `json:"optionType"`
+	ExerciseStyle    int64  `json:"exerciseStyle"`
+	SettlementType   int64  `json:"settlementType"`
+	StrikePrice      string `json:"strikePrice"`
+	ContractUnit     string `json:"contractUnit"`
+	MinOrderQty      string `json:"minOrderQty"`
+	MaxOrderQty      string `json:"maxOrderQty"`
+	PriceTick        string `json:"priceTick"`
+	QtyStep          string `json:"qtyStep"`
+	Multiplier       string `json:"multiplier"`
+	ListTime         int64  `json:"listTime"`
+	ExpireTime       int64  `json:"expireTime"`
+	DeliverTime      int64  `json:"deliverTime"`
+	IsAutoExercise   int64  `json:"isAutoExercise"`
+	Status           int64  `json:"status"`
+	Sort             int32  `json:"sort"`
+	Remark           string `json:"remark,optional"`
+	IsDeleted        int64  `json:"isDeleted"`
+}
+
+type UpdateMarketReq struct {
+	TenantId         int64  `json:"tenantId"`
+	ContractId       int64  `json:"contractId"`
+	UnderlyingPrice  string `json:"underlyingPrice"`
+	MarkPrice        string `json:"markPrice"`
+	LastPrice        string `json:"lastPrice"`
+	BidPrice         string `json:"bidPrice"`
+	AskPrice         string `json:"askPrice"`
+	TheoreticalPrice string `json:"theoreticalPrice"`
+	IntrinsicValue   string `json:"intrinsicValue"`
+	TimeValue        string `json:"timeValue"`
+	Iv               string `json:"iv"`
+	Delta            string `json:"delta"`
+	Gamma            string `json:"gamma"`
+	Theta            string `json:"theta"`
+	Vega             string `json:"vega"`
+	Rho              string `json:"rho"`
+	RiskFreeRate     string `json:"riskFreeRate"`
+	PricingModel     string `json:"pricingModel"`
+	SnapshotTime     int64  `json:"snapshotTime"`
 }
 
 type UpdatePayPlatformReq struct {
@@ -1666,6 +3509,27 @@ type UpdateRiskLevelReq struct {
 	TenantId  int64 `json:"tenantId"`
 	UserId    int64 `path:"userId"`
 	RiskLevel int64 `json:"riskLevel"`
+}
+
+type UpdateSymbolReq struct {
+	TenantId      int64  `json:"tenantId"`
+	Id            int64  `json:"id"`
+	DisplaySymbol string `json:"displaySymbol"`
+	Status        int64  `json:"status"`
+	PriceScale    uint32 `json:"priceScale"`
+	QtyScale      uint32 `json:"qtyScale"`
+	MinPrice      string `json:"minPrice"`
+	MaxPrice      string `json:"maxPrice"`
+	PriceTick     string `json:"priceTick"`
+	MinQty        string `json:"minQty"`
+	MaxQty        string `json:"maxQty"`
+	QtyStep       string `json:"qtyStep"`
+	MinNotional   string `json:"minNotional"`
+	MaxLeverage   uint32 `json:"maxLeverage"`
+	OpenTime      int64  `json:"openTime"`
+	CloseTime     int64  `json:"closeTime"`
+	Sort          int32  `json:"sort"`
+	Remark        string `json:"remark,optional"`
 }
 
 type UpdateTenantCategoryReq struct {

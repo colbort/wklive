@@ -5,9 +5,13 @@ package svc
 
 import (
 	"wklive/admin-api/internal/config"
+	"wklive/proto/asset"
 	"wklive/proto/itick"
+	"wklive/proto/option"
 	"wklive/proto/payment"
+	"wklive/proto/staking"
 	"wklive/proto/system"
+	"wklive/proto/trade"
 	"wklive/proto/user"
 
 	"github.com/zeromicro/go-zero/zrpc"
@@ -19,6 +23,10 @@ type ServiceContext struct {
 	UserCli    user.UserAdminClient
 	PaymentCli payment.PaymentAdminClient
 	ItickCli   itick.ItickAdminClient
+	AssetCli   asset.AssetAdminClient
+	OptionCli  option.OptionAdminClient
+	StakingCli staking.StakingAdminClient
+	TradeCli   trade.TradeAdminClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -26,11 +34,19 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	userCli := zrpc.MustNewClient(c.UserRpc)
 	paymentCli := zrpc.MustNewClient(c.PaymentRpc)
 	itickCli := zrpc.MustNewClient(c.ItickRpc)
+	assetCli := zrpc.MustNewClient(c.AssetRpc)
+	optionCli := zrpc.MustNewClient(c.OptionRpc)
+	stakingCli := zrpc.MustNewClient(c.StakingRpc)
+	tradeCli := zrpc.MustNewClient(c.TradeRpc)
 	return &ServiceContext{
 		Config:     c,
 		SystemCli:  system.NewSystemClient(systemCli.Conn()),
 		UserCli:    user.NewUserAdminClient(userCli.Conn()),
 		PaymentCli: payment.NewPaymentAdminClient(paymentCli.Conn()),
 		ItickCli:   itick.NewItickAdminClient(itickCli.Conn()),
+		AssetCli:   asset.NewAssetAdminClient(assetCli.Conn()),
+		OptionCli:  option.NewOptionAdminClient(optionCli.Conn()),
+		StakingCli: staking.NewStakingAdminClient(stakingCli.Conn()),
+		TradeCli:   trade.NewTradeAdminClient(tradeCli.Conn()),
 	}
 }

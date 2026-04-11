@@ -22,7 +22,12 @@
           :preview-teleported="true"
         />
         <div>
-          <el-upload action="#" :auto-upload="false" :on-change="handleLogoSelect" accept="image/*">
+          <el-upload
+            action="#"
+            :auto-upload="false"
+            :on-change="handleLogoSelect"
+            accept="image/*"
+          >
             <el-button type="primary">
               {{ t('app.pleaseSelectImageFile') }}
             </el-button>
@@ -50,7 +55,7 @@
           :src="previewImageUrl"
           alt="Crop preview"
           @load="initCropper"
-        />
+        >
       </div>
 
       <template #footer>

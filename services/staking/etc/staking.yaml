@@ -1,0 +1,14 @@
+Name: staking.rpc
+ListenOn: 0.0.0.0:8086
+Mode: dev
+Etcd:
+  Hosts:
+  - 127.0.0.1:2379
+  Key: staking.rpc
+
+AssetRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - 127.0.0.1:2379
+    Key: asset.rpc

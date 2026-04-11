@@ -1,0 +1,814 @@
+import "common.api"
+
+type TradeSymbol {
+	id            int64  `json:"id"`
+	tenantId      int64  `json:"tenantId"`
+	symbol        string `json:"symbol"`
+	displaySymbol string `json:"displaySymbol"`
+	marketType    int64  `json:"marketType"`
+	baseAsset     string `json:"baseAsset"`
+	quoteAsset    string `json:"quoteAsset"`
+	settleAsset   string `json:"settleAsset"`
+	contractType  int64  `json:"contractType"`
+	status        int64  `json:"status"`
+	priceScale    uint32 `json:"priceScale"`
+	qtyScale      uint32 `json:"qtyScale"`
+	minPrice      string `json:"minPrice"`
+	maxPrice      string `json:"maxPrice"`
+	priceTick     string `json:"priceTick"`
+	minQty        string `json:"minQty"`
+	maxQty        string `json:"maxQty"`
+	qtyStep       string `json:"qtyStep"`
+	minNotional   string `json:"minNotional"`
+	maxLeverage   uint32 `json:"maxLeverage"`
+	openTime      int64  `json:"openTime"`
+	closeTime     int64  `json:"closeTime"`
+	sort          int32  `json:"sort"`
+	remark        string `json:"remark"`
+	createTimes   int64  `json:"createTimes"`
+	updateTimes   int64  `json:"updateTimes"`
+}
+
+type TradeSymbolSpot {
+	id            int64  `json:"id"`
+	tenantId      int64  `json:"tenantId"`
+	symbolId      int64  `json:"symbolId"`
+	makerFeeRate  string `json:"makerFeeRate"`
+	takerFeeRate  string `json:"takerFeeRate"`
+	buyEnabled    bool   `json:"buyEnabled"`
+	sellEnabled   bool   `json:"sellEnabled"`
+	createTimes   int64  `json:"createTimes"`
+	updateTimes   int64  `json:"updateTimes"`
+}
+
+type TradeSymbolContract {
+	id                     int64  `json:"id"`
+	tenantId               int64  `json:"tenantId"`
+	symbolId               int64  `json:"symbolId"`
+	contractSize           string `json:"contractSize"`
+	multiplier             string `json:"multiplier"`
+	maintenanceMarginRate  string `json:"maintenanceMarginRate"`
+	initialMarginRate      string `json:"initialMarginRate"`
+	makerFeeRate           string `json:"makerFeeRate"`
+	takerFeeRate           string `json:"takerFeeRate"`
+	fundingIntervalMinutes uint32 `json:"fundingIntervalMinutes"`
+	deliveryTime           int64  `json:"deliveryTime"`
+	supportCross           bool   `json:"supportCross"`
+	supportIsolated        bool   `json:"supportIsolated"`
+	buyEnabled             bool   `json:"buyEnabled"`
+	sellEnabled            bool   `json:"sellEnabled"`
+	createTimes            int64  `json:"createTimes"`
+	updateTimes            int64  `json:"updateTimes"`
+}
+
+type TradeUserConfig {
+	id                int64  `json:"id"`
+	tenantId          int64  `json:"tenantId"`
+	userId            int64  `json:"userId"`
+	marketType        int64  `json:"marketType"`
+	symbolId          int64  `json:"symbolId"`
+	positionMode      int64  `json:"positionMode"`
+	marginMode        int64  `json:"marginMode"`
+	defaultLeverage   uint32 `json:"defaultLeverage"`
+	tradeEnabled      bool   `json:"tradeEnabled"`
+	reduceOnlyEnabled bool   `json:"reduceOnlyEnabled"`
+	createTimes       int64  `json:"createTimes"`
+	updateTimes       int64  `json:"updateTimes"`
+}
+
+type TradeOrder {
+	id             int64  `json:"id"`
+	tenantId       int64  `json:"tenantId"`
+	orderNo        string `json:"orderNo"`
+	clientOrderId  string `json:"clientOrderId"`
+	userId         int64  `json:"userId"`
+	symbolId       int64  `json:"symbolId"`
+	marketType     int64  `json:"marketType"`
+	side           int64  `json:"side"`
+	positionSide   int64  `json:"positionSide"`
+	orderType      int64  `json:"orderType"`
+	timeInForce    int64  `json:"timeInForce"`
+	status         int64  `json:"status"`
+	price          string `json:"price"`
+	qty            string `json:"qty"`
+	amount         string `json:"amount"`
+	filledQty      string `json:"filledQty"`
+	filledAmount   string `json:"filledAmount"`
+	avgPrice       string `json:"avgPrice"`
+	fee            string `json:"fee"`
+	feeAsset       string `json:"feeAsset"`
+	source         int64  `json:"source"`
+	isReduceOnly   bool   `json:"isReduceOnly"`
+	isCloseOnly    bool   `json:"isCloseOnly"`
+	triggerPrice   string `json:"triggerPrice"`
+	triggerType    uint32 `json:"triggerType"`
+	cancelReason   string `json:"cancelReason"`
+	bizExt         string `json:"bizExt"`
+	createTimes    int64  `json:"createTimes"`
+	updateTimes    int64  `json:"updateTimes"`
+}
+
+type TradeFill {
+	id            int64  `json:"id"`
+	tenantId      int64  `json:"tenantId"`
+	fillNo        string `json:"fillNo"`
+	orderId       int64  `json:"orderId"`
+	orderNo       string `json:"orderNo"`
+	userId        int64  `json:"userId"`
+	symbolId      int64  `json:"symbolId"`
+	marketType    int64  `json:"marketType"`
+	side          int64  `json:"side"`
+	positionSide  int64  `json:"positionSide"`
+	price         string `json:"price"`
+	qty           string `json:"qty"`
+	amount        string `json:"amount"`
+	fee           string `json:"fee"`
+	feeAsset      string `json:"feeAsset"`
+	liquidityType int64  `json:"liquidityType"`
+	realizedPnl   string `json:"realizedPnl"`
+	matchTime     int64  `json:"matchTime"`
+	createTimes   int64  `json:"createTimes"`
+}
+
+type TradeCancelLog {
+	id           int64  `json:"id"`
+	tenantId     int64  `json:"tenantId"`
+	orderId      int64  `json:"orderId"`
+	orderNo      string `json:"orderNo"`
+	userId       int64  `json:"userId"`
+	cancelSource uint32 `json:"cancelSource"`
+	cancelReason string `json:"cancelReason"`
+	createTimes  int64  `json:"createTimes"`
+}
+
+type ContractPosition {
+	id               int64  `json:"id"`
+	tenantId         int64  `json:"tenantId"`
+	userId           int64  `json:"userId"`
+	symbolId         int64  `json:"symbolId"`
+	marketType       int64  `json:"marketType"`
+	positionSide     int64  `json:"positionSide"`
+	marginMode       int64  `json:"marginMode"`
+	leverage         uint32 `json:"leverage"`
+	qty              string `json:"qty"`
+	availQty         string `json:"availQty"`
+	frozenQty        string `json:"frozenQty"`
+	openAvgPrice     string `json:"openAvgPrice"`
+	markPrice        string `json:"markPrice"`
+	marginAsset      string `json:"marginAsset"`
+	positionMargin   string `json:"positionMargin"`
+	isolatedMargin   string `json:"isolatedMargin"`
+	unrealizedPnl    string `json:"unrealizedPnl"`
+	realizedPnl      string `json:"realizedPnl"`
+	liquidationPrice string `json:"liquidationPrice"`
+	adlRank          int32  `json:"adlRank"`
+	version          int64  `json:"version"`
+	createTimes      int64  `json:"createTimes"`
+	updateTimes      int64  `json:"updateTimes"`
+}
+
+type ContractPositionHistory {
+	id                  int64  `json:"id"`
+	tenantId            int64  `json:"tenantId"`
+	positionId          int64  `json:"positionId"`
+	userId              int64  `json:"userId"`
+	symbolId            int64  `json:"symbolId"`
+	marketType          int64  `json:"marketType"`
+	positionSide        int64  `json:"positionSide"`
+	actionType          int64  `json:"actionType"`
+	beforeQty           string `json:"beforeQty"`
+	afterQty            string `json:"afterQty"`
+	beforeAvailQty      string `json:"beforeAvailQty"`
+	afterAvailQty       string `json:"afterAvailQty"`
+	beforeFrozenQty     string `json:"beforeFrozenQty"`
+	afterFrozenQty      string `json:"afterFrozenQty"`
+	beforeOpenAvgPrice  string `json:"beforeOpenAvgPrice"`
+	afterOpenAvgPrice   string `json:"afterOpenAvgPrice"`
+	beforePositionMargin string `json:"beforePositionMargin"`
+	afterPositionMargin string `json:"afterPositionMargin"`
+	beforeIsolatedMargin string `json:"beforeIsolatedMargin"`
+	afterIsolatedMargin string `json:"afterIsolatedMargin"`
+	beforeUnrealizedPnl string `json:"beforeUnrealizedPnl"`
+	afterUnrealizedPnl  string `json:"afterUnrealizedPnl"`
+	realizedPnlDelta    string `json:"realizedPnlDelta"`
+	feeDelta            string `json:"feeDelta"`
+	feeAsset            string `json:"feeAsset"`
+	markPrice           string `json:"markPrice"`
+	refOrderId          int64  `json:"refOrderId"`
+	refFillId           int64  `json:"refFillId"`
+	operatorId          int64  `json:"operatorId"`
+	source              int64  `json:"source"`
+	remark              string `json:"remark"`
+	createTimes         int64  `json:"createTimes"`
+}
+
+type ContractMarginAccount {
+	id               int64  `json:"id"`
+	tenantId         int64  `json:"tenantId"`
+	userId           int64  `json:"userId"`
+	marketType       int64  `json:"marketType"`
+	marginAsset      string `json:"marginAsset"`
+	balance          string `json:"balance"`
+	availableBalance string `json:"availableBalance"`
+	frozenBalance    string `json:"frozenBalance"`
+	positionMargin   string `json:"positionMargin"`
+	orderMargin      string `json:"orderMargin"`
+	unrealizedPnl    string `json:"unrealizedPnl"`
+	realizedPnl      string `json:"realizedPnl"`
+	version          int64  `json:"version"`
+	createTimes      int64  `json:"createTimes"`
+	updateTimes      int64  `json:"updateTimes"`
+}
+
+type ContractLeverageConfig {
+	id            int64  `json:"id"`
+	tenantId      int64  `json:"tenantId"`
+	userId        int64  `json:"userId"`
+	symbolId      int64  `json:"symbolId"`
+	marketType    int64  `json:"marketType"`
+	marginMode    int64  `json:"marginMode"`
+	positionMode  int64  `json:"positionMode"`
+	longLeverage  uint32 `json:"longLeverage"`
+	shortLeverage uint32 `json:"shortLeverage"`
+	maxLeverage   uint32 `json:"maxLeverage"`
+	operatorId    int64  `json:"operatorId"`
+	source        int64  `json:"source"`
+	status        uint32 `json:"status"`
+	remark        string `json:"remark"`
+	createTimes   int64  `json:"createTimes"`
+	updateTimes   int64  `json:"updateTimes"`
+}
+
+type RiskUserTradeLimit {
+	id                   int64  `json:"id"`
+	tenantId             int64  `json:"tenantId"`
+	userId               int64  `json:"userId"`
+	marketType           int64  `json:"marketType"`
+	canOpen              bool   `json:"canOpen"`
+	canClose             bool   `json:"canClose"`
+	canCancel            bool   `json:"canCancel"`
+	canTriggerOrder      bool   `json:"canTriggerOrder"`
+	canApiTrade          bool   `json:"canApiTrade"`
+	tradeEnabled         bool   `json:"tradeEnabled"`
+	onlyReduceOnly       bool   `json:"onlyReduceOnly"`
+	maxOpenOrderCount    uint32 `json:"maxOpenOrderCount"`
+	maxOrderCountPerDay  uint32 `json:"maxOrderCountPerDay"`
+	maxCancelCountPerDay uint32 `json:"maxCancelCountPerDay"`
+	maxOpenNotional      string `json:"maxOpenNotional"`
+	maxPositionNotional  string `json:"maxPositionNotional"`
+	riskLevel            uint32 `json:"riskLevel"`
+	operatorId           int64  `json:"operatorId"`
+	source               int64  `json:"source"`
+	status               uint32 `json:"status"`
+	effectiveStartTime   int64  `json:"effectiveStartTime"`
+	effectiveEndTime     int64  `json:"effectiveEndTime"`
+	remark               string `json:"remark"`
+	createTimes          int64  `json:"createTimes"`
+	updateTimes          int64  `json:"updateTimes"`
+}
+
+type RiskUserSymbolLimit {
+	id                 int64  `json:"id"`
+	tenantId           int64  `json:"tenantId"`
+	userId             int64  `json:"userId"`
+	symbolId           int64  `json:"symbolId"`
+	marketType         int64  `json:"marketType"`
+	maxPositionQty     string `json:"maxPositionQty"`
+	maxPositionNotional string `json:"maxPositionNotional"`
+	maxOpenOrders      uint32 `json:"maxOpenOrders"`
+	maxOrderQty        string `json:"maxOrderQty"`
+	maxOrderNotional   string `json:"maxOrderNotional"`
+	minOrderQty        string `json:"minOrderQty"`
+	minOrderNotional   string `json:"minOrderNotional"`
+	maxLongPositionQty string `json:"maxLongPositionQty"`
+	maxShortPositionQty string `json:"maxShortPositionQty"`
+	priceDeviationRate string `json:"priceDeviationRate"`
+	operatorId         int64  `json:"operatorId"`
+	source             int64  `json:"source"`
+	status             uint32 `json:"status"`
+	effectiveStartTime int64  `json:"effectiveStartTime"`
+	effectiveEndTime   int64  `json:"effectiveEndTime"`
+	remark             string `json:"remark"`
+	createTimes        int64  `json:"createTimes"`
+	updateTimes        int64  `json:"updateTimes"`
+}
+
+type RiskOrderCheckLog {
+	id             int64  `json:"id"`
+	tenantId       int64  `json:"tenantId"`
+	orderNo        string `json:"orderNo"`
+	clientOrderId  string `json:"clientOrderId"`
+	userId         int64  `json:"userId"`
+	symbolId       int64  `json:"symbolId"`
+	marketType     int64  `json:"marketType"`
+	checkType      int64  `json:"checkType"`
+	checkResult    int64  `json:"checkResult"`
+	rejectCode     string `json:"rejectCode"`
+	rejectMsg      string `json:"rejectMsg"`
+	requestPrice   string `json:"requestPrice"`
+	requestQty     string `json:"requestQty"`
+	requestAmount  string `json:"requestAmount"`
+	operatorId     int64  `json:"operatorId"`
+	source         int64  `json:"source"`
+	checkSnapshot  string `json:"checkSnapshot"`
+	createTimes    int64  `json:"createTimes"`
+}
+
+type BizTradeEvent {
+	id            int64  `json:"id"`
+	tenantId      int64  `json:"tenantId"`
+	eventNo       string `json:"eventNo"`
+	eventType     string `json:"eventType"`
+	bizId         string `json:"bizId"`
+	bizType       string `json:"bizType"`
+	userId        int64  `json:"userId"`
+	symbolId      int64  `json:"symbolId"`
+	marketType    int64  `json:"marketType"`
+	operatorId    int64  `json:"operatorId"`
+	source        int64  `json:"source"`
+	eventStatus   int64  `json:"eventStatus"`
+	retryCount    uint32 `json:"retryCount"`
+	maxRetryCount uint32 `json:"maxRetryCount"`
+	nextRetryAt   int64  `json:"nextRetryAt"`
+	lastErrorMsg  string `json:"lastErrorMsg"`
+	payload       string `json:"payload"`
+	extData       string `json:"extData"`
+	createTimes   int64  `json:"createTimes"`
+	updateTimes   int64  `json:"updateTimes"`
+}
+
+type AdminCommonResp {
+	RespBase
+}
+
+type CreateSymbolReq {
+	tenantId      int64  `json:"tenantId"`
+	symbol        string `json:"symbol"`
+	displaySymbol string `json:"displaySymbol"`
+	marketType    int64  `json:"marketType"`
+	baseAsset     string `json:"baseAsset"`
+	quoteAsset    string `json:"quoteAsset"`
+	settleAsset   string `json:"settleAsset"`
+	contractType  int64  `json:"contractType"`
+	status        int64  `json:"status"`
+	priceScale    uint32 `json:"priceScale"`
+	qtyScale      uint32 `json:"qtyScale"`
+	minPrice      string `json:"minPrice"`
+	maxPrice      string `json:"maxPrice"`
+	priceTick     string `json:"priceTick"`
+	minQty        string `json:"minQty"`
+	maxQty        string `json:"maxQty"`
+	qtyStep       string `json:"qtyStep"`
+	minNotional   string `json:"minNotional"`
+	maxLeverage   uint32 `json:"maxLeverage"`
+	openTime      int64  `json:"openTime"`
+	closeTime     int64  `json:"closeTime"`
+	sort          int32  `json:"sort"`
+	remark        string `json:"remark,optional"`
+}
+
+type UpdateSymbolReq {
+	tenantId      int64  `json:"tenantId"`
+	id            int64  `json:"id"`
+	displaySymbol string `json:"displaySymbol"`
+	status        int64  `json:"status"`
+	priceScale    uint32 `json:"priceScale"`
+	qtyScale      uint32 `json:"qtyScale"`
+	minPrice      string `json:"minPrice"`
+	maxPrice      string `json:"maxPrice"`
+	priceTick     string `json:"priceTick"`
+	minQty        string `json:"minQty"`
+	maxQty        string `json:"maxQty"`
+	qtyStep       string `json:"qtyStep"`
+	minNotional   string `json:"minNotional"`
+	maxLeverage   uint32 `json:"maxLeverage"`
+	openTime      int64  `json:"openTime"`
+	closeTime     int64  `json:"closeTime"`
+	sort          int32  `json:"sort"`
+	remark        string `json:"remark,optional"`
+}
+
+type GetSymbolListAdminReq {
+	PageReq
+	tenantId   int64  `form:"tenantId,optional"`
+	marketType int64  `form:"marketType,optional"`
+	status     int64  `form:"status,optional"`
+	keyword    string `form:"keyword,optional"`
+}
+
+type GetSymbolListAdminResp {
+	RespBase
+	list []TradeSymbol `json:"list"`
+}
+
+type GetSymbolDetailAdminReq {
+	tenantId int64 `form:"tenantId,optional"`
+	id       int64 `form:"id"`
+}
+
+type GetSymbolDetailAdminResp {
+	RespBase
+	data TradeSymbol `json:"data"`
+}
+
+type SetSpotSymbolConfigReq {
+	tenantId      int64  `json:"tenantId"`
+	symbolId      int64  `json:"symbolId"`
+	makerFeeRate  string `json:"makerFeeRate"`
+	takerFeeRate  string `json:"takerFeeRate"`
+	buyEnabled    bool   `json:"buyEnabled"`
+	sellEnabled   bool   `json:"sellEnabled"`
+}
+
+type SetContractSymbolConfigReq {
+	tenantId               int64  `json:"tenantId"`
+	symbolId               int64  `json:"symbolId"`
+	contractSize           string `json:"contractSize"`
+	multiplier             string `json:"multiplier"`
+	maintenanceMarginRate  string `json:"maintenanceMarginRate"`
+	initialMarginRate      string `json:"initialMarginRate"`
+	makerFeeRate           string `json:"makerFeeRate"`
+	takerFeeRate           string `json:"takerFeeRate"`
+	fundingIntervalMinutes uint32 `json:"fundingIntervalMinutes"`
+	deliveryTime           int64  `json:"deliveryTime"`
+	supportCross           bool   `json:"supportCross"`
+	supportIsolated        bool   `json:"supportIsolated"`
+	buyEnabled             bool   `json:"buyEnabled"`
+	sellEnabled            bool   `json:"sellEnabled"`
+}
+
+type GetOrderListAdminReq {
+	PageReq
+	tenantId   int64     `form:"tenantId,optional"`
+	userId     int64     `form:"userId,optional"`
+	marketType int64     `form:"marketType,optional"`
+	symbolId   int64     `form:"symbolId,optional"`
+	status     int64     `form:"status,optional"`
+	keyword    string    `form:"keyword,optional"`
+	timeRange  TimeRange `form:"timeRange,optional"`
+}
+
+type GetOrderListAdminResp {
+	RespBase
+	list []TradeOrder `json:"list"`
+}
+
+type GetOrderDetailAdminReq {
+	tenantId int64 `form:"tenantId,optional"`
+	id       int64 `form:"id"`
+}
+
+type GetOrderDetailAdminResp {
+	RespBase
+	data TradeOrder `json:"data"`
+}
+
+type GetFillListAdminReq {
+	PageReq
+	tenantId   int64     `form:"tenantId,optional"`
+	userId     int64     `form:"userId,optional"`
+	marketType int64     `form:"marketType,optional"`
+	symbolId   int64     `form:"symbolId,optional"`
+	timeRange  TimeRange `form:"timeRange,optional"`
+}
+
+type GetFillListAdminResp {
+	RespBase
+	list []TradeFill `json:"list"`
+}
+
+type GetFillDetailAdminReq {
+	tenantId int64 `form:"tenantId,optional"`
+	id       int64 `form:"id"`
+}
+
+type GetFillDetailAdminResp {
+	RespBase
+	data TradeFill `json:"data"`
+}
+
+type GetPositionListAdminReq {
+	PageReq
+	tenantId   int64 `form:"tenantId,optional"`
+	userId     int64 `form:"userId,optional"`
+	marketType int64 `form:"marketType,optional"`
+	symbolId   int64 `form:"symbolId,optional"`
+}
+
+type GetPositionListAdminResp {
+	RespBase
+	list []ContractPosition `json:"list"`
+}
+
+type GetPositionDetailAdminReq {
+	tenantId int64 `form:"tenantId,optional"`
+	id       int64 `form:"id"`
+}
+
+type GetPositionDetailAdminResp {
+	RespBase
+	data ContractPosition `json:"data"`
+}
+
+type GetPositionHistoryListAdminReq {
+	PageReq
+	tenantId   int64     `form:"tenantId,optional"`
+	userId     int64     `form:"userId,optional"`
+	symbolId   int64     `form:"symbolId,optional"`
+	marketType int64     `form:"marketType,optional"`
+	positionId int64     `form:"positionId,optional"`
+	actionType int64     `form:"actionType,optional"`
+	timeRange  TimeRange `form:"timeRange,optional"`
+}
+
+type GetPositionHistoryListAdminResp {
+	RespBase
+	list []ContractPositionHistory `json:"list"`
+}
+
+type GetMarginAccountListAdminReq {
+	PageReq
+	tenantId    int64  `form:"tenantId,optional"`
+	userId      int64  `form:"userId,optional"`
+	marketType  int64  `form:"marketType,optional"`
+	marginAsset string `form:"marginAsset,optional"`
+}
+
+type GetMarginAccountListAdminResp {
+	RespBase
+	list []ContractMarginAccount `json:"list"`
+}
+
+type GetCancelLogListAdminReq {
+	PageReq
+	tenantId     int64     `form:"tenantId,optional"`
+	userId       int64     `form:"userId,optional"`
+	orderId      int64     `form:"orderId,optional"`
+	orderNo      string    `form:"orderNo,optional"`
+	cancelSource int64     `form:"cancelSource,optional"`
+	timeRange    TimeRange `form:"timeRange,optional"`
+}
+
+type GetCancelLogListAdminResp {
+	RespBase
+	list []TradeCancelLog `json:"list"`
+}
+
+type SetUserTradeLimitReq {
+	tenantId               int64  `json:"tenantId"`
+	userId                 int64  `json:"userId"`
+	marketType             int64  `json:"marketType"`
+	canOpen                bool   `json:"canOpen"`
+	canClose               bool   `json:"canClose"`
+	canCancel              bool   `json:"canCancel"`
+	canTriggerOrder        bool   `json:"canTriggerOrder"`
+	canApiTrade            bool   `json:"canApiTrade"`
+	tradeEnabled           bool   `json:"tradeEnabled"`
+	onlyReduceOnly         bool   `json:"onlyReduceOnly"`
+	maxOpenOrderCount      uint32 `json:"maxOpenOrderCount"`
+	maxOrderCountPerDay    uint32 `json:"maxOrderCountPerDay"`
+	maxCancelCountPerDay   uint32 `json:"maxCancelCountPerDay"`
+	maxOpenNotional        string `json:"maxOpenNotional"`
+	maxPositionNotional    string `json:"maxPositionNotional"`
+	riskLevel              uint32 `json:"riskLevel"`
+	operatorId             int64  `json:"operatorId"`
+	source                 int64  `json:"source"`
+	status                 uint32 `json:"status"`
+	effectiveStartTime     int64  `json:"effectiveStartTime"`
+	effectiveEndTime       int64  `json:"effectiveEndTime"`
+	remark                 string `json:"remark,optional"`
+}
+
+type SetUserSymbolLimitReq {
+	tenantId           int64  `json:"tenantId"`
+	userId             int64  `json:"userId"`
+	symbolId           int64  `json:"symbolId"`
+	marketType         int64  `json:"marketType"`
+	maxPositionQty     string `json:"maxPositionQty"`
+	maxPositionNotional string `json:"maxPositionNotional"`
+	maxOpenOrders      uint32 `json:"maxOpenOrders"`
+	maxOrderQty        string `json:"maxOrderQty"`
+	maxOrderNotional   string `json:"maxOrderNotional"`
+	minOrderQty        string `json:"minOrderQty"`
+	minOrderNotional   string `json:"minOrderNotional"`
+	maxLongPositionQty string `json:"maxLongPositionQty"`
+	maxShortPositionQty string `json:"maxShortPositionQty"`
+	priceDeviationRate string `json:"priceDeviationRate"`
+	operatorId         int64  `json:"operatorId"`
+	source             int64  `json:"source"`
+	status             uint32 `json:"status"`
+	effectiveStartTime int64  `json:"effectiveStartTime"`
+	effectiveEndTime   int64  `json:"effectiveEndTime"`
+	remark             string `json:"remark,optional"`
+}
+
+type GetUserTradeLimitReq {
+	tenantId   int64 `form:"tenantId,optional"`
+	userId     int64 `form:"userId"`
+	marketType int64 `form:"marketType"`
+}
+
+type GetUserTradeLimitResp {
+	RespBase
+	data RiskUserTradeLimit `json:"data"`
+}
+
+type GetUserSymbolLimitReq {
+	tenantId   int64 `form:"tenantId,optional"`
+	userId     int64 `form:"userId"`
+	symbolId   int64 `form:"symbolId"`
+	marketType int64 `form:"marketType"`
+}
+
+type GetUserSymbolLimitResp {
+	RespBase
+	data RiskUserSymbolLimit `json:"data"`
+}
+
+type SetUserTradeConfigReq {
+	tenantId          int64 `json:"tenantId"`
+	userId            int64 `json:"userId"`
+	marketType        int64 `json:"marketType"`
+	symbolId          int64 `json:"symbolId"`
+	positionMode      int64 `json:"positionMode"`
+	marginMode        int64 `json:"marginMode"`
+	defaultLeverage   uint32 `json:"defaultLeverage"`
+	tradeEnabled      bool  `json:"tradeEnabled"`
+	reduceOnlyEnabled bool  `json:"reduceOnlyEnabled"`
+}
+
+type GetUserTradeConfigReq {
+	tenantId   int64 `form:"tenantId,optional"`
+	userId     int64 `form:"userId"`
+	marketType int64 `form:"marketType"`
+	symbolId   int64 `form:"symbolId,optional"`
+}
+
+type GetUserTradeConfigResp {
+	RespBase
+	data TradeUserConfig `json:"data"`
+}
+
+type GetRiskOrderCheckLogListReq {
+	PageReq
+	tenantId    int64     `form:"tenantId,optional"`
+	userId      int64     `form:"userId,optional"`
+	symbolId    int64     `form:"symbolId,optional"`
+	marketType  int64     `form:"marketType,optional"`
+	checkType   int64     `form:"checkType,optional"`
+	checkResult int64     `form:"checkResult,optional"`
+	timeRange   TimeRange `form:"timeRange,optional"`
+}
+
+type GetRiskOrderCheckLogListResp {
+	RespBase
+	list []RiskOrderCheckLog `json:"list"`
+}
+
+type SetUserLeverageConfigReq {
+	tenantId      int64  `json:"tenantId"`
+	userId        int64  `json:"userId"`
+	symbolId      int64  `json:"symbolId"`
+	marketType    int64  `json:"marketType"`
+	marginMode    int64  `json:"marginMode"`
+	positionMode  int64  `json:"positionMode"`
+	longLeverage  uint32 `json:"longLeverage"`
+	shortLeverage uint32 `json:"shortLeverage"`
+	maxLeverage   uint32 `json:"maxLeverage"`
+	operatorId    int64  `json:"operatorId"`
+	source        int64  `json:"source"`
+	status        uint32 `json:"status"`
+	remark        string `json:"remark,optional"`
+}
+
+type GetUserLeverageConfigReq {
+	tenantId   int64 `form:"tenantId,optional"`
+	userId     int64 `form:"userId"`
+	symbolId   int64 `form:"symbolId"`
+	marketType int64 `form:"marketType"`
+	marginMode int64 `form:"marginMode"`
+}
+
+type GetUserLeverageConfigResp {
+	RespBase
+	data ContractLeverageConfig `json:"data"`
+}
+
+type GetTradeEventListReq {
+	PageReq
+	tenantId    int64     `form:"tenantId,optional"`
+	eventType   string    `form:"eventType,optional"`
+	bizType     string    `form:"bizType,optional"`
+	bizId       string    `form:"bizId,optional"`
+	eventStatus int64     `form:"eventStatus,optional"`
+	timeRange   TimeRange `form:"timeRange,optional"`
+}
+
+type GetTradeEventListResp {
+	RespBase
+	list []BizTradeEvent `json:"list"`
+}
+
+type GetTradeEventDetailReq {
+	tenantId int64 `form:"tenantId,optional"`
+	id       int64 `form:"id"`
+}
+
+type GetTradeEventDetailResp {
+	RespBase
+	data BizTradeEvent `json:"data"`
+}
+
+type RetryTradeEventReq {
+	tenantId   int64 `json:"tenantId"`
+	id         int64 `json:"id"`
+	operatorId int64 `json:"operatorId"`
+}
+
+@server (
+	prefix: /admin/trade
+	group:  trade
+	jwt:    Jwt
+)
+service admin {
+	@handler CreateSymbol
+	post /symbols (CreateSymbolReq) returns (AdminCommonResp)
+
+	@handler UpdateSymbol
+	post /symbols/update (UpdateSymbolReq) returns (AdminCommonResp)
+
+	@handler GetSymbolListAdmin
+	get /symbols (GetSymbolListAdminReq) returns (GetSymbolListAdminResp)
+
+	@handler GetSymbolDetailAdmin
+	get /symbols/detail (GetSymbolDetailAdminReq) returns (GetSymbolDetailAdminResp)
+
+	@handler SetSpotSymbolConfig
+	post /symbols/spot-config (SetSpotSymbolConfigReq) returns (AdminCommonResp)
+
+	@handler SetContractSymbolConfig
+	post /symbols/contract-config (SetContractSymbolConfigReq) returns (AdminCommonResp)
+
+	@handler GetOrderListAdmin
+	get /orders (GetOrderListAdminReq) returns (GetOrderListAdminResp)
+
+	@handler GetOrderDetailAdmin
+	get /orders/detail (GetOrderDetailAdminReq) returns (GetOrderDetailAdminResp)
+
+	@handler GetFillListAdmin
+	get /fills (GetFillListAdminReq) returns (GetFillListAdminResp)
+
+	@handler GetFillDetailAdmin
+	get /fills/detail (GetFillDetailAdminReq) returns (GetFillDetailAdminResp)
+
+	@handler GetPositionListAdmin
+	get /positions (GetPositionListAdminReq) returns (GetPositionListAdminResp)
+
+	@handler GetPositionDetailAdmin
+	get /positions/detail (GetPositionDetailAdminReq) returns (GetPositionDetailAdminResp)
+
+	@handler GetPositionHistoryListAdmin
+	get /position-histories (GetPositionHistoryListAdminReq) returns (GetPositionHistoryListAdminResp)
+
+	@handler GetMarginAccountListAdmin
+	get /margin-accounts (GetMarginAccountListAdminReq) returns (GetMarginAccountListAdminResp)
+
+	@handler GetCancelLogListAdmin
+	get /cancel-logs (GetCancelLogListAdminReq) returns (GetCancelLogListAdminResp)
+
+	@handler SetUserTradeLimit
+	post /user-trade-limit (SetUserTradeLimitReq) returns (AdminCommonResp)
+
+	@handler SetUserSymbolLimit
+	post /user-symbol-limit (SetUserSymbolLimitReq) returns (AdminCommonResp)
+
+	@handler GetUserTradeLimit
+	get /user-trade-limit (GetUserTradeLimitReq) returns (GetUserTradeLimitResp)
+
+	@handler GetUserSymbolLimit
+	get /user-symbol-limit (GetUserSymbolLimitReq) returns (GetUserSymbolLimitResp)
+
+	@handler SetUserTradeConfig
+	post /user-trade-config (SetUserTradeConfigReq) returns (AdminCommonResp)
+
+	@handler GetUserTradeConfig
+	get /user-trade-config (GetUserTradeConfigReq) returns (GetUserTradeConfigResp)
+
+	@handler GetRiskOrderCheckLogList
+	get /risk-order-check-logs (GetRiskOrderCheckLogListReq) returns (GetRiskOrderCheckLogListResp)
+
+	@handler SetUserLeverageConfig
+	post /user-leverage-config (SetUserLeverageConfigReq) returns (AdminCommonResp)
+
+	@handler GetUserLeverageConfig
+	get /user-leverage-config (GetUserLeverageConfigReq) returns (GetUserLeverageConfigResp)
+
+	@handler GetTradeEventList
+	get /events (GetTradeEventListReq) returns (GetTradeEventListResp)
+
+	@handler GetTradeEventDetail
+	get /events/detail (GetTradeEventDetailReq) returns (GetTradeEventDetailResp)
+
+	@handler RetryTradeEvent
+	post /events/retry (RetryTradeEventReq) returns (AdminCommonResp)
+}

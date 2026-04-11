@@ -1,5 +1,6 @@
 Name: asset.rpc
-ListenOn: 0.0.0.0:8080
+ListenOn: 0.0.0.0:8084
+Mode: dev
 Etcd:
   Hosts:
   - 127.0.0.1:2379

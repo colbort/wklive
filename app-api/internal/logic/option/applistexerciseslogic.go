@@ -1,0 +1,32 @@
+// Code scaffolded by goctl. Safe to edit.
+// goctl 1.9.2
+
+package option
+
+import (
+	"context"
+
+	"wklive/app-api/internal/logicutil"
+	"wklive/app-api/internal/svc"
+	"wklive/app-api/internal/types"
+
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+type AppListExercisesLogic struct {
+	logx.Logger
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+}
+
+func NewAppListExercisesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AppListExercisesLogic {
+	return &AppListExercisesLogic{
+		Logger: logx.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+	}
+}
+
+func (l *AppListExercisesLogic) AppListExercises(req *types.AppListExercisesReq) (resp *types.AppListExercisesResp, err error) {
+	return logicutil.Proxy[types.AppListExercisesResp](l.ctx, req, l.svcCtx.OptionCli.AppListExercises)
+}

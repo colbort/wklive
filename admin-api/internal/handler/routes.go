@@ -6,11 +6,15 @@ package handler
 import (
 	"net/http"
 
+	asset "wklive/admin-api/internal/handler/asset"
 	auth_private "wklive/admin-api/internal/handler/auth_private"
 	auth_public "wklive/admin-api/internal/handler/auth_public"
 	itick "wklive/admin-api/internal/handler/itick"
+	option "wklive/admin-api/internal/handler/option"
 	payment "wklive/admin-api/internal/handler/payment"
+	staking "wklive/admin-api/internal/handler/staking"
 	system "wklive/admin-api/internal/handler/system"
+	trade "wklive/admin-api/internal/handler/trade"
 	user "wklive/admin-api/internal/handler/user"
 	"wklive/admin-api/internal/svc"
 
@@ -18,6 +22,68 @@ import (
 )
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodPost,
+				Path:    "/add",
+				Handler: asset.AdminAddAssetHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/flows",
+				Handler: asset.PageAssetFlowsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/freeze",
+				Handler: asset.AdminFreezeAssetHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/freezes",
+				Handler: asset.PageAssetFreezesHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/lock",
+				Handler: asset.AdminLockAssetHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/locks",
+				Handler: asset.PageAssetLocksHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/sub",
+				Handler: asset.AdminSubAssetHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/unfreeze",
+				Handler: asset.AdminUnfreezeAssetHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/unlock",
+				Handler: asset.AdminUnlockAssetHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/user-assets",
+				Handler: asset.PageUserAssetsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/user-assets/detail",
+				Handler: asset.GetUserAssetDetailHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
+		rest.WithPrefix("/admin/asset"),
+	)
+
 	server.AddRoutes(
 		[]rest.Route{
 			{
@@ -166,6 +232,118 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		},
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
 		rest.WithPrefix("/admin/itick"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/accounts",
+				Handler: option.AdminListAccountsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/accounts/detail",
+				Handler: option.AdminGetAccountHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/bills",
+				Handler: option.AdminListBillsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/bills/detail",
+				Handler: option.AdminGetBillHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/contracts",
+				Handler: option.AdminCreateContractHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/contracts",
+				Handler: option.AdminListContractsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/contracts/detail",
+				Handler: option.AdminGetContractHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/contracts/update",
+				Handler: option.AdminUpdateContractHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/exercises",
+				Handler: option.AdminListExercisesHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/exercises/detail",
+				Handler: option.AdminGetExerciseHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/market/detail",
+				Handler: option.AdminGetMarketHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/market/snapshots",
+				Handler: option.AdminListMarketSnapshotsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/market/update",
+				Handler: option.AdminUpdateMarketHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/orders",
+				Handler: option.AdminListOrdersHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/orders/detail",
+				Handler: option.AdminGetOrderHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/positions",
+				Handler: option.AdminListPositionsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/positions/detail",
+				Handler: option.AdminGetPositionHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/settlements",
+				Handler: option.AdminListSettlementsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/settlements/detail",
+				Handler: option.AdminGetSettlementHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/trades",
+				Handler: option.AdminListTradesHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/trades/detail",
+				Handler: option.AdminGetTradeHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
+		rest.WithPrefix("/admin/option"),
 	)
 
 	server.AddRoutes(
@@ -363,6 +541,68 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		},
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
 		rest.WithPrefix("/admin/payment"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodPost,
+				Path:    "/manual-redeem",
+				Handler: staking.ManualRedeemHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/manual-reward",
+				Handler: staking.ManualRewardHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/orders",
+				Handler: staking.OrderListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/orders/detail",
+				Handler: staking.OrderDetailHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/products",
+				Handler: staking.AdminProductListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/products",
+				Handler: staking.ProductCreateHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/products/detail",
+				Handler: staking.AdminProductDetailHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/products/status",
+				Handler: staking.ProductChangeStatusHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/products/update",
+				Handler: staking.ProductUpdateHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/redeem-logs",
+				Handler: staking.RedeemLogListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/reward-logs",
+				Handler: staking.RewardLogListHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
+		rest.WithPrefix("/admin/staking"),
 	)
 
 	server.AddRoutes(
@@ -595,6 +835,148 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		},
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
 		rest.WithPrefix("/admin/system"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/cancel-logs",
+				Handler: trade.GetCancelLogListAdminHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/events",
+				Handler: trade.GetTradeEventListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/events/detail",
+				Handler: trade.GetTradeEventDetailHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/events/retry",
+				Handler: trade.RetryTradeEventHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/fills",
+				Handler: trade.GetFillListAdminHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/fills/detail",
+				Handler: trade.GetFillDetailAdminHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/margin-accounts",
+				Handler: trade.GetMarginAccountListAdminHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/orders",
+				Handler: trade.GetOrderListAdminHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/orders/detail",
+				Handler: trade.GetOrderDetailAdminHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/position-histories",
+				Handler: trade.GetPositionHistoryListAdminHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/positions",
+				Handler: trade.GetPositionListAdminHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/positions/detail",
+				Handler: trade.GetPositionDetailAdminHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/risk-order-check-logs",
+				Handler: trade.GetRiskOrderCheckLogListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/symbols",
+				Handler: trade.CreateSymbolHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/symbols",
+				Handler: trade.GetSymbolListAdminHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/symbols/contract-config",
+				Handler: trade.SetContractSymbolConfigHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/symbols/detail",
+				Handler: trade.GetSymbolDetailAdminHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/symbols/spot-config",
+				Handler: trade.SetSpotSymbolConfigHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/symbols/update",
+				Handler: trade.UpdateSymbolHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/user-leverage-config",
+				Handler: trade.SetUserLeverageConfigHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/user-leverage-config",
+				Handler: trade.GetUserLeverageConfigHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/user-symbol-limit",
+				Handler: trade.SetUserSymbolLimitHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/user-symbol-limit",
+				Handler: trade.GetUserSymbolLimitHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/user-trade-config",
+				Handler: trade.SetUserTradeConfigHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/user-trade-config",
+				Handler: trade.GetUserTradeConfigHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/user-trade-limit",
+				Handler: trade.SetUserTradeLimitHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/user-trade-limit",
+				Handler: trade.GetUserTradeLimitHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
+		rest.WithPrefix("/admin/trade"),
 	)
 
 	server.AddRoutes(

@@ -53,8 +53,12 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="handleQuery">搜索</el-button>
-          <el-button @click="resetQuery">重置</el-button>
+          <el-button type="primary" @click="handleQuery">
+            搜索
+          </el-button>
+          <el-button @click="resetQuery">
+            重置
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -110,9 +114,15 @@
 
         <el-table-column label="操作" width="180" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="handleDetail(row)">详情</el-button>
-            <el-button link type="primary" @click="handleEdit(row)">编辑</el-button>
-            <el-button link type="warning" @click="handleSync(row)">同步产品</el-button>
+            <el-button link type="primary" @click="handleDetail(row)">
+              详情
+            </el-button>
+            <el-button link type="primary" @click="handleEdit(row)">
+              编辑
+            </el-button>
+            <el-button link type="warning" @click="handleSync(row)">
+              同步产品
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -166,15 +176,23 @@
 
         <el-form-item label="启用状态" prop="enabled">
           <el-radio-group v-model="form.enabled">
-            <el-radio :value="1">启用</el-radio>
-            <el-radio :value="2">禁用</el-radio>
+            <el-radio :value="1">
+              启用
+            </el-radio>
+            <el-radio :value="2">
+              禁用
+            </el-radio>
           </el-radio-group>
         </el-form-item>
 
         <el-form-item label="APP显示" prop="appVisible">
           <el-radio-group v-model="form.appVisible">
-            <el-radio :value="1">显示</el-radio>
-            <el-radio :value="2">隐藏</el-radio>
+            <el-radio :value="1">
+              显示
+            </el-radio>
+            <el-radio :value="2">
+              隐藏
+            </el-radio>
           </el-radio-group>
         </el-form-item>
 
@@ -205,34 +223,52 @@
       </el-form>
 
       <template #footer>
-        <el-button @click="formDialogVisible = false">取消</el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitForm"> 确定 </el-button>
+        <el-button @click="formDialogVisible = false">
+          取消
+        </el-button>
+        <el-button type="primary" :loading="submitLoading" @click="submitForm">
+          确定
+        </el-button>
       </template>
     </el-dialog>
 
     <el-dialog v-model="detailDialogVisible" title="分类详情" width="700px">
-      <el-descriptions :column="2" border v-loading="detailLoading">
-        <el-descriptions-item label="ID">{{ detail.id ?? '-' }}</el-descriptions-item>
-        <el-descriptions-item label="分类类型">{{
-          detail.categoryType ?? '-'
-        }}</el-descriptions-item>
-        <el-descriptions-item label="分类编码">{{
-          detail.categoryCode || '-'
-        }}</el-descriptions-item>
-        <el-descriptions-item label="分类名称">{{
-          detail.categoryName || '-'
-        }}</el-descriptions-item>
+      <el-descriptions v-loading="detailLoading" :column="2" border>
+        <el-descriptions-item label="ID">
+          {{ detail.id ?? '-' }}
+        </el-descriptions-item>
+        <el-descriptions-item label="分类类型">
+          {{
+            detail.categoryType ?? '-'
+          }}
+        </el-descriptions-item>
+        <el-descriptions-item label="分类编码">
+          {{
+            detail.categoryCode || '-'
+          }}
+        </el-descriptions-item>
+        <el-descriptions-item label="分类名称">
+          {{
+            detail.categoryName || '-'
+          }}
+        </el-descriptions-item>
         <el-descriptions-item label="启用状态">
           {{ detail.enabled === 1 ? '启用' : detail.enabled === 2 ? '禁用' : '-' }}
         </el-descriptions-item>
         <el-descriptions-item label="APP显示">
           {{ detail.appVisible === 1 ? '显示' : detail.appVisible === 2 ? '隐藏' : '-' }}
         </el-descriptions-item>
-        <el-descriptions-item label="排序">{{ detail.sort ?? '-' }}</el-descriptions-item>
-        <el-descriptions-item label="图标">{{ detail.icon || '-' }}</el-descriptions-item>
-        <el-descriptions-item label="备注" :span="2">{{
-          detail.remark || '-'
-        }}</el-descriptions-item>
+        <el-descriptions-item label="排序">
+          {{ detail.sort ?? '-' }}
+        </el-descriptions-item>
+        <el-descriptions-item label="图标">
+          {{ detail.icon || '-' }}
+        </el-descriptions-item>
+        <el-descriptions-item label="备注" :span="2">
+          {{
+            detail.remark || '-'
+          }}
+        </el-descriptions-item>
         <el-descriptions-item label="创建时间">
           {{ formatDate(detail?.createTimes??0) }}
         </el-descriptions-item>
@@ -242,7 +278,9 @@
       </el-descriptions>
 
       <template #footer>
-        <el-button type="primary" @click="detailDialogVisible = false">关闭</el-button>
+        <el-button type="primary" @click="detailDialogVisible = false">
+          关闭
+        </el-button>
       </template>
     </el-dialog>
   </div>

@@ -4,6 +4,7 @@ import ElementPlus from 'element-plus'
 import elZhCN from 'element-plus/es/locale/lang/zh-cn'
 import elEnUS from 'element-plus/es/locale/lang/en'
 import 'element-plus/dist/index.css'
+import '@/styles/admin-crud.css'
 
 import App from '@/App.vue'
 import { router } from '@/router'
@@ -25,7 +26,7 @@ function setFavicon(href: string) {
   icon.href = href
 }
 
-;(async () => {
+(async () => {
   try {
     const res = await getSystemCore()
     if (res?.code === 200 && res.data) {

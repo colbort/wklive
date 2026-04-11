@@ -1,4 +1,4 @@
-import { get, post, put, del } from '@/utils/request'
+import { get, post, put } from '@/utils/request'
 
 import type {
   RespBase,
@@ -13,15 +13,15 @@ import type {
 export function apiItickCategoryList(
   params: ListCategoriesReq,
 ): Promise<RespBase<ItickCategory[]>> {
-  return get<ItickCategory[]>(`/admin/itick/categories`, params)
+  return get<ItickCategory[]>('/admin/itick/categories', params)
 }
 
 export function apiItickCategoryCreate(params: CreateCategoryReq): Promise<RespBase> {
-  return post(`/admin/itick/categories`, params)
+  return post('/admin/itick/categories', params)
 }
 
 export function apiItickCategoryUpdate(params: UpdateCategoryReq): Promise<RespBase> {
-  return put(`/admin/itick/categories`, params)
+  return put('/admin/itick/categories', params)
 }
 
 export function apiItickCategoryDetail(id: number): Promise<RespBase<ItickCategory>> {
@@ -31,5 +31,5 @@ export function apiItickCategoryDetail(id: number): Promise<RespBase<ItickCatego
 export function apiSyncCategoryProducts(
   params: SyncCategoryProductsReq,
 ): Promise<RespBase<SyncCategoryProductsResp>> {
-  return post<SyncCategoryProductsResp>(`/admin/itick/categories/sync-products`, params)
+  return post<SyncCategoryProductsResp>('/admin/itick/categories/sync-products', params)
 }

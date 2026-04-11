@@ -463,7 +463,7 @@ onBeforeUnmount(() => {
   >
     <div class="cropper-dialog-body">
       <div class="cropper-stage" />
-      <img ref="cropperImage" alt="avatar preview" style="display: none" />
+      <img ref="cropperImage" alt="avatar preview" style="display: none">
     </div>
 
     <template #footer>

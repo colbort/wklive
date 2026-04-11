@@ -15,6 +15,11 @@ type PageReq {
 	limit  int64 `form:"limit,optional"`
 }
 
+type TimeRange {
+	startTime int64 `form:"startTime,optional"`
+	endTime   int64 `form:"endTime,optional"`
+}
+
 type IdReq {
 	id int64 `path:"id"`
 }
@@ -32,4 +37,3 @@ type TenantJsonScope {
 	tenantId   int64  `json:"tenantId,optional"`
 	tenantCode string `json:"tenantCode,optional"`
 }
-

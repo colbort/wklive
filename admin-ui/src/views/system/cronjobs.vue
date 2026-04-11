@@ -303,7 +303,12 @@ onMounted(() => {
     </el-form>
 
     <!-- Table -->
-    <el-table v-loading="loading" :data="list" row-key="id" style="margin-bottom: 16px">
+    <el-table
+      v-loading="loading"
+      :data="list"
+      row-key="id"
+      style="margin-bottom: 16px"
+    >
       <el-table-column prop="id" :label="t('common.id')" width="70" />
       <el-table-column prop="jobName" :label="t('system.jobName')" min-width="120" />
       <el-table-column prop="jobGroup" :label="t('system.jobGroup')" width="100" />
@@ -328,15 +333,30 @@ onMounted(() => {
             <el-icon><VideoPlay /></el-icon>
             {{ t('system.run') }}
           </el-button>
-          <el-button v-if="row.status === 0" type="success" size="small" @click="handleStart(row)">
+          <el-button
+            v-if="row.status === 0"
+            type="success"
+            size="small"
+            @click="handleStart(row)"
+          >
             <el-icon><CircleCheck /></el-icon>
             {{ t('system.start') }}
           </el-button>
-          <el-button v-if="row.status === 1" type="warning" size="small" @click="handleStop(row)">
+          <el-button
+            v-if="row.status === 1"
+            type="warning"
+            size="small"
+            @click="handleStop(row)"
+          >
             <el-icon><CircleCloseFilled /></el-icon>
             {{ t('system.stop') }}
           </el-button>
-          <el-button v-perm="'sys:job:update'" type="primary" size="small" @click="handleEdit(row)">
+          <el-button
+            v-perm="'sys:job:update'"
+            type="primary"
+            size="small"
+            @click="handleEdit(row)"
+          >
             <el-icon><Edit /></el-icon>
             {{ t('common.edit') }}
           </el-button>
@@ -386,7 +406,12 @@ onMounted(() => {
       width="600px"
       :close-on-click-modal="false"
     >
-      <el-form ref="formRef" :model="formData" :rules="formRules" label-width="140px">
+      <el-form
+        ref="formRef"
+        :model="formData"
+        :rules="formRules"
+        label-width="140px"
+      >
         <el-form-item :label="t('system.jobName')" prop="jobName">
           <el-input
             v-model="formData.jobName"

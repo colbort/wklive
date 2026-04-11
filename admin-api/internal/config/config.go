@@ -18,4 +18,8 @@ type Config struct {
 	UserRpc    zrpc.RpcClientConf
 	PaymentRpc zrpc.RpcClientConf
 	ItickRpc   zrpc.RpcClientConf
+	AssetRpc   zrpc.RpcClientConf
+	OptionRpc  zrpc.RpcClientConf
+	StakingRpc zrpc.RpcClientConf
+	TradeRpc   zrpc.RpcClientConf
 }

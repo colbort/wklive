@@ -13,3 +13,7 @@ type PageReq {
 	limit  int64 `form:"limit,optional"`
 }
 
+type TimeRange {
+	startTime int64 `form:"startTime,optional"`
+	endTime   int64 `form:"endTime,optional"`
+}
