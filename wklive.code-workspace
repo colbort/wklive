@@ -13,6 +13,10 @@
       "name": "app-api"
     },
     {
+      "path": "app-ui",
+      "name": "app-ui"
+    },
+    {
       "path": "services",
       "name": "services"
     },
