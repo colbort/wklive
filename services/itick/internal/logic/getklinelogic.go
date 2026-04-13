@@ -37,19 +37,7 @@ func (l *GetKlineLogic) GetKline(in *itick.GetKlineReq) (*itick.GetKlineResp, er
 	}
 	data := make([]*itick.Kline, 0)
 	for _, item := range result {
-		data = append(data, &itick.Kline{
-			CategoryCode: item.CategoryCode,
-			Market:       item.Market,
-			Symbol:       item.Symbol,
-			KType:        in.KType,
-			Ts:           item.Ts,
-			Open:         item.Open,
-			High:         item.High,
-			Low:          item.Low,
-			Close:        item.Close,
-			Volume:       item.Volume,
-			Turnover:     item.Turnover,
-		})
+		data = append(data, toKlineProto(in.KType, item))
 	}
 	return &itick.GetKlineResp{
 		Base: helper.OkResp(),

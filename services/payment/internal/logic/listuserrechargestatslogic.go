@@ -48,19 +48,7 @@ func (l *ListUserRechargeStatsLogic) ListUserRechargeStats(in *payment.ListUserR
 
 	data := make([]*payment.UserRechargeStat, 0, len(stats))
 	for _, s := range stats {
-		data = append(data, &payment.UserRechargeStat{
-			Id:                 s.Id,
-			TenantId:           s.TenantId,
-			UserId:             s.UserId,
-			SuccessOrderCount:  s.SuccessOrderCount,
-			SuccessTotalAmount: s.SuccessTotalAmount,
-			TodaySuccessAmount: s.TodaySuccessAmount,
-			TodaySuccessCount:  s.TodaySuccessCount,
-			FirstSuccessTime:   s.FirstSuccessTime.Int64,
-			LastSuccessTime:    s.LastSuccessTime.Int64,
-			CreateTimes:        s.CreateTimes,
-			UpdateTimes:        s.UpdateTimes,
-		})
+		data = append(data, toUserRechargeStatProto(s))
 	}
 
 	return &payment.ListUserRechargeStatsResp{

@@ -109,48 +109,12 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 		UpdateTimes:   utils.NowMillis(),
 	})
 
-	// userIdentity, _ := l.svcCtx.UserIdentityModel.FindOne(l.ctx, tuser.Id)
-	// userSecurity, _ := l.svcCtx.UserSecurityModel.FindOne(l.ctx, tuser.Id)
-
 	return &user.LoginResp{
 		Base:   helper.OkResp(),
 		UserId: tuser.Id,
 		Token: &common.TokenInfo{
 			AccessToken: token,
 		},
-		Profile: &user.UserProfile{
-			Base: &user.UserBase{
-				Id:             tuser.Id,
-				TenantId:       tuser.TenantId,
-				UserNo:         tuser.UserNo,
-				Username:       tuser.Username,
-				Nickname:       tuser.Nickname.String,
-				Avatar:         tuser.Avatar.String,
-				PasswordHash:   tuser.PasswordHash,
-				RegisterType:   user.RegisterType(tuser.RegisterType),
-				Status:         user.UserStatus(tuser.Status),
-				MemberLevel:    tuser.MemberLevel,
-				Language:       tuser.Language.String,
-				Timezone:       tuser.Timezone.String,
-				InviteCode:     tuser.InviteCode.String,
-				Signature:      tuser.Signature.String,
-				Source:         tuser.Source.String,
-				ReferrerUserId: tuser.ReferrerUserId.Int64,
-				LastLoginIp:    tuser.LastLoginIp.String,
-				LastLoginTime:  tuser.LastLoginTime,
-				RegisterIp:     tuser.RegisterIp.String,
-				RegisterTime:   tuser.RegisterTime,
-				IsGuest:        tuser.IsGuest,
-				IsRecharge:     tuser.IsRecharge,
-				DeviceId:       tuser.DeviceId,
-				Fingerprint:    tuser.Fingerprint,
-				Remark:         tuser.Remark.String,
-				Deleted:        tuser.Deleted,
-				CreateTimes:    tuser.CreateTimes,
-				UpdateTimes:    tuser.UpdateTimes,
-			},
-			Identity: &user.UserIdentity{},
-			Security: &user.UserSecurity{},
-		},
+		Profile: toUserProfileProto(tuser, nil, nil),
 	}, nil
 }

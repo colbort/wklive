@@ -41,34 +41,19 @@ func (l *GetSecurityLogic) GetSecurity(in *user.GetSecurityReq) (*user.GetSecuri
 	}
 
 	// 查询用户安全信息
-	userSecurity, err := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, in.UserId)
+	security, err := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, in.UserId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 
-	if userSecurity == nil {
+	if security == nil {
 		return &user.GetSecurityResp{
 			Base: helper.GetErrResp(404, i18n.Translate(i18n.SecuritySettingsNotFound, l.ctx)),
 		}, nil
 	}
 
-	securityProto := &user.UserSecurity{
-		Id:              userSecurity.Id,
-		TenantId:        userSecurity.TenantId,
-		UserId:          userSecurity.UserId,
-		PayPasswordHash: userSecurity.PayPasswordHash.String,
-		GoogleSecret:    userSecurity.GoogleSecret.String,
-		GoogleEnabled:   userSecurity.GoogleEnabled,
-		LoginErrorCount: userSecurity.LoginErrorCount,
-		PayErrorCount:   userSecurity.PayErrorCount,
-		LockUntil:       userSecurity.LockUntil,
-		RiskLevel:       user.RiskLevel(userSecurity.RiskLevel),
-		CreateTimes:     userSecurity.CreateTimes,
-		UpdateTimes:     userSecurity.UpdateTimes,
-	}
-
 	return &user.GetSecurityResp{
 		Base:     helper.OkResp(),
-		Security: securityProto,
+		Security: toUserSecurityProto(security),
 	}, nil
 }

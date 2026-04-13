@@ -48,40 +48,7 @@ func (l *ListRechargeOrdersLogic) ListRechargeOrders(in *payment.ListRechargeOrd
 
 	data := make([]*payment.RechargeOrder, 0, len(orders))
 	for _, o := range orders {
-		data = append(data, &payment.RechargeOrder{
-			Id:           o.Id,
-			TenantId:     o.TenantId,
-			UserId:       o.UserId,
-			OrderNo:      o.OrderNo,
-			BizOrderNo:   o.BizOrderNo.String,
-			PlatformId:   o.PlatformId,
-			ProductId:    o.ProductId,
-			AccountId:    o.AccountId,
-			ChannelId:    o.ChannelId,
-			Currency:     o.Currency,
-			OrderAmount:  o.OrderAmount,
-			PayAmount:    o.PayAmount,
-			FeeAmount:    o.FeeAmount,
-			Subject:      o.Subject.String,
-			Body:         o.Body.String,
-			ClientType:   payment.ClientType(o.ClientType),
-			ClientIp:     o.ClientIp.String,
-			Status:       payment.PayOrderStatus(o.Status),
-			ThirdTradeNo: o.ThirdTradeNo.String,
-			ThirdOrderNo: o.ThirdOrderNo.String,
-			PayUrl:       o.PayUrl.String,
-			QrContent:    o.QrContent.String,
-			RequestData:  o.RequestData.String,
-			ResponseData: o.ResponseData.String,
-			NotifyData:   o.NotifyData.String,
-			ExpireTime:   o.ExpireTime.Int64,
-			PaidTime:     o.PaidTime.Int64,
-			NotifyTime:   o.NotifyTime.Int64,
-			CloseTime:    o.CloseTime.Int64,
-			Remark:       o.Remark.String,
-			CreateTimes:  o.CreateTimes,
-			UpdateTimes:  o.UpdateTimes,
-		})
+		data = append(data, toRechargeOrderProto(o))
 	}
 
 	return &payment.ListRechargeOrdersResp{

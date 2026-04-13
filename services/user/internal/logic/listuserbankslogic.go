@@ -62,21 +62,7 @@ func (l *ListUserBanksLogic) ListUserBanks(in *user.ListUserBanksReq) (*user.Lis
 			}
 		}
 
-		data = append(data, &user.UserBankItem{
-			Id:          bank.Id,
-			TenantId:    bank.TenantId,
-			UserId:      bank.UserId,
-			BankName:    bank.BankName,
-			BankCode:    bank.BankCode.String,
-			AccountName: bank.AccountName,
-			AccountNo:   bank.AccountNo,
-			BranchName:  bank.BranchName.String,
-			CountryCode: bank.CountryCode.String,
-			IsDefault:   bank.IsDefault,
-			Status:      user.BankStatus(bank.Status),
-			CreateTimes: bank.CreateTimes,
-			UpdateTimes: bank.UpdateTimes,
-		})
+		data = append(data, toUserBankItemProto(bank))
 	}
 
 	return &user.ListUserBanksResp{

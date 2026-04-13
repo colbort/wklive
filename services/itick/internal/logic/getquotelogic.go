@@ -37,17 +37,6 @@ func (l *GetQuoteLogic) GetQuote(in *itick.GetQuoteReq) (*itick.GetQuoteResp, er
 
 	return &itick.GetQuoteResp{
 		Base: helper.OkResp(),
-		Data: &itick.Quote{
-			CategoryCode: in.CategoryCode,
-			Market:       in.Market,
-			Symbol:       in.Symbol,
-			LastPrice:    data.LastPrice,
-			OpenPrice:    data.Open,
-			HighPrice:    data.High,
-			LowPrice:     data.LastPrice,
-			Volume:       data.Volume,
-			Turnover:     data.Turnover,
-			QuoteTs:      data.Ts,
-		},
+		Data: toQuotePayloadProto(in.CategoryCode, in.Market, in.Symbol, &data),
 	}, nil
 }

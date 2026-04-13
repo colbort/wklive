@@ -38,26 +38,7 @@ func (l *ListProductsLogic) ListProducts(in *itick.ListProductsReq) (*itick.List
 
 	var data []*itick.ItickProduct
 	for _, item := range items {
-		data = append(data, &itick.ItickProduct{
-			Id:           item.Id,
-			CategoryType: itick.CategoryType(item.CategoryType),
-			CategoryName: item.CategoryName,
-			CategoryCode: item.CategoryCode,
-			Market:       item.Market,
-			Symbol:       item.Symbol,
-			Code:         item.Code,
-			Name:         item.Name,
-			DisplayName:  item.DisplayName,
-			BaseCoin:     item.BaseCoin,
-			QuoteCoin:    item.QuoteCoin,
-			Enabled:      item.Enabled,
-			AppVisible:   item.AppVisible,
-			Sort:         item.Sort,
-			Icon:         item.Icon,
-			Remark:       item.Remark,
-			CreateTimes:  item.CreateTimes,
-			UpdateTimes:  item.UpdateTimes,
-		})
+		data = append(data, toProductProto(item))
 	}
 
 	return &itick.ListProductsResp{

@@ -46,15 +46,6 @@ func (l *GetTenantPayPlatformLogic) GetTenantPayPlatform(in *payment.GetTenantPa
 
 	return &payment.GetTenantPayPlatformResp{
 		Base: helper.OkResp(),
-		Data: &payment.TenantPayPlatform{
-			Id:          tenantPlatform.Id,
-			TenantId:    tenantPlatform.TenantId,
-			PlatformId:  tenantPlatform.PlatformId,
-			Status:      payment.CommonStatus(tenantPlatform.Status),
-			OpenStatus:  payment.OpenStatus(tenantPlatform.OpenStatus),
-			Remark:      tenantPlatform.Remark.String,
-			CreateTimes: tenantPlatform.CreateTimes,
-			UpdateTimes: tenantPlatform.UpdateTimes,
-		},
+		Data: toTenantPayPlatformProto(tenantPlatform),
 	}, nil
 }

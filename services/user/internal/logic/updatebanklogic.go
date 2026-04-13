@@ -85,24 +85,8 @@ func (l *UpdateBankLogic) UpdateBank(in *user.UpdateBankReq) (*user.UpdateBankRe
 
 	l.Logger.Infof("用户 %d 更新银行卡 %d 成功", in.UserId, in.Id)
 
-	bankProto := &user.UserBankItem{
-		Id:          bank.Id,
-		TenantId:    bank.TenantId,
-		UserId:      bank.UserId,
-		BankName:    bank.BankName,
-		BankCode:    bank.BankCode.String,
-		AccountName: bank.AccountName,
-		AccountNo:   bank.AccountNo,
-		BranchName:  bank.BranchName.String,
-		CountryCode: bank.CountryCode.String,
-		IsDefault:   isDefault,
-		Status:      user.BankStatus(bank.Status),
-		CreateTimes: bank.CreateTimes,
-		UpdateTimes: bank.UpdateTimes,
-	}
-
 	return &user.UpdateBankResp{
 		Base: helper.OkResp(),
-		Bank: bankProto,
+		Bank: toUserBankItemProto(bank),
 	}, nil
 }

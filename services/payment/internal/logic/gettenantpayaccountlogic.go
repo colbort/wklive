@@ -46,27 +46,6 @@ func (l *GetTenantPayAccountLogic) GetTenantPayAccount(in *payment.GetTenantPayA
 
 	return &payment.GetTenantPayAccountResp{
 		Base: helper.OkResp(),
-		Data: &payment.TenantPayAccount{
-			Id:                  account.Id,
-			TenantId:            account.TenantId,
-			TenantPayPlatformId: account.TenantPayPlatformId,
-			PlatformId:          account.PlatformId,
-			AccountCode:         account.AccountCode,
-			AccountName:         account.AccountName,
-			AppId:               account.AppId.String,
-			MerchantId:          account.MerchantId.String,
-			MerchantName:        account.MerchantName.String,
-			ApiKeyCipher:        account.ApiKeyCipher.String,
-			ApiSecretCipher:     account.ApiSecretCipher.String,
-			PrivateKeyCipher:    account.PrivateKeyCipher.String,
-			PublicKey:           account.PublicKey.String,
-			CertCipher:          account.CertCipher.String,
-			ExtConfig:           account.ExtConfig.String,
-			Status:              payment.CommonStatus(account.Status),
-			IsDefault:           account.IsDefault,
-			Remark:              account.Remark.String,
-			CreateTimes:         account.CreateTimes,
-			UpdateTimes:         account.UpdateTimes,
-		},
+		Data: toTenantPayAccountProto(account),
 	}, nil
 }

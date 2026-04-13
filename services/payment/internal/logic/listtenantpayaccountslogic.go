@@ -40,28 +40,7 @@ func (l *ListTenantPayAccountsLogic) ListTenantPayAccounts(in *payment.ListTenan
 
 	data := make([]*payment.TenantPayAccount, 0, len(items))
 	for _, acc := range items {
-		data = append(data, &payment.TenantPayAccount{
-			Id:                  acc.Id,
-			TenantId:            acc.TenantId,
-			TenantPayPlatformId: acc.TenantPayPlatformId,
-			PlatformId:          acc.PlatformId,
-			AccountCode:         acc.AccountCode,
-			AccountName:         acc.AccountName,
-			AppId:               acc.AppId.String,
-			MerchantId:          acc.MerchantId.String,
-			MerchantName:        acc.MerchantName.String,
-			ApiKeyCipher:        acc.ApiKeyCipher.String,
-			ApiSecretCipher:     acc.ApiSecretCipher.String,
-			PrivateKeyCipher:    acc.PrivateKeyCipher.String,
-			PublicKey:           acc.PublicKey.String,
-			CertCipher:          acc.CertCipher.String,
-			ExtConfig:           acc.ExtConfig.String,
-			Status:              payment.CommonStatus(acc.Status),
-			IsDefault:           acc.IsDefault,
-			Remark:              acc.Remark.String,
-			CreateTimes:         acc.CreateTimes,
-			UpdateTimes:         acc.UpdateTimes,
-		})
+		data = append(data, toTenantPayAccountProto(acc))
 	}
 
 	return &payment.ListTenantPayAccountsResp{

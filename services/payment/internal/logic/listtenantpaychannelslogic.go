@@ -3,7 +3,6 @@ package logic
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"wklive/common/pageutil"
 	"wklive/proto/payment"
@@ -41,32 +40,7 @@ func (l *ListTenantPayChannelsLogic) ListTenantPayChannels(in *payment.ListTenan
 
 	data := make([]*payment.TenantPayChannel, 0, len(channels))
 	for _, c := range channels {
-		data = append(data, &payment.TenantPayChannel{
-			Id:              c.Id,
-			TenantId:        c.TenantId,
-			PlatformId:      c.PlatformId,
-			ProductId:       c.ProductId,
-			AccountId:       c.AccountId,
-			ChannelCode:     c.ChannelCode,
-			ChannelName:     c.ChannelName,
-			DisplayName:     c.DisplayName.String,
-			Icon:            c.Icon.String,
-			Currency:        c.Currency,
-			Sort:            c.Sort,
-			Visible:         c.Visible,
-			Status:          payment.CommonStatus(c.Status),
-			SingleMinAmount: c.SingleMinAmount,
-			SingleMaxAmount: c.SingleMaxAmount,
-			DailyMaxAmount:  c.DailyMaxAmount,
-			DailyMaxCount:   c.DailyMaxCount,
-			FeeType:         payment.FeeType(c.FeeType),
-			FeeRate:         fmt.Sprintf("%f", c.FeeRate),
-			FeeFixedAmount:  c.FeeFixedAmount,
-			ExtConfig:       c.ExtConfig.String,
-			Remark:          c.Remark.String,
-			CreateTimes:     c.CreateTimes,
-			UpdateTimes:     c.UpdateTimes,
-		})
+		data = append(data, toTenantPayChannelProto(c))
 	}
 
 	return &payment.ListTenantPayChannelsResp{

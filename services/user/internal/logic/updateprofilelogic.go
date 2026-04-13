@@ -117,96 +117,18 @@ func (l *UpdateProfileLogic) UpdateProfile(in *user.UpdateProfileReq) (*user.Upd
 }
 
 func (l *UpdateProfileLogic) buildUpdateProfileResp(tuser *models.TUser, _ *models.TUserIdentity) (*user.UpdateProfileResp, error) {
-	identity, _ := l.svcCtx.UserIdentityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, tuser.Id)
-	security, _ := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, tuser.Id)
-
-	userBase := &user.UserBase{
-		Id:             tuser.Id,
-		TenantId:       tuser.TenantId,
-		UserNo:         tuser.UserNo,
-		Username:       tuser.Username,
-		Nickname:       tuser.Nickname.String,
-		Avatar:         tuser.Avatar.String,
-		PasswordHash:   tuser.PasswordHash,
-		Language:       tuser.Language.String,
-		Timezone:       tuser.Timezone.String,
-		InviteCode:     tuser.InviteCode.String,
-		Signature:      tuser.Signature.String,
-		RegisterType:   user.RegisterType(tuser.RegisterType),
-		Status:         user.UserStatus(tuser.Status),
-		MemberLevel:    tuser.MemberLevel,
-		Source:         tuser.Source.String,
-		ReferrerUserId: tuser.ReferrerUserId.Int64,
-		LastLoginIp:    tuser.LastLoginIp.String,
-		LastLoginTime:  tuser.LastLoginTime,
-		RegisterIp:     tuser.RegisterIp.String,
-		RegisterTime:   tuser.RegisterTime,
-		IsGuest:        tuser.IsGuest,
-		IsRecharge:     tuser.IsRecharge,
-		DeviceId:       tuser.DeviceId,
-		Fingerprint:    tuser.Fingerprint,
-		Remark:         tuser.Remark.String,
-		Deleted:        tuser.Deleted,
-		CreateTimes:    tuser.CreateTimes,
-		UpdateTimes:    tuser.UpdateTimes,
+	identity, err := l.svcCtx.UserIdentityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, tuser.Id)
+	if err != nil {
+		return nil, err
 	}
-
-	userIdentityProto := &user.UserIdentity{}
-	if identity != nil {
-		userIdentityProto = &user.UserIdentity{
-			Id:            identity.Id,
-			TenantId:      identity.TenantId,
-			UserId:        identity.UserId,
-			Phone:         identity.Phone.String,
-			Email:         identity.Email.String,
-			RealName:      identity.RealName.String,
-			Gender:        user.Gender(identity.Gender),
-			Birthday:      identity.Birthday,
-			CountryCode:   identity.CountryCode.String,
-			Province:      identity.Province.String,
-			City:          identity.City.String,
-			Address:       identity.Address.String,
-			IdType:        user.IdType(identity.IdType),
-			IdNo:          identity.IdNo.String,
-			FrontImage:    identity.FrontImage.String,
-			BackImage:     identity.BackImage.String,
-			HandheldImage: identity.HandheldImage.String,
-			KycLevel:      user.KycLevel(identity.KycLevel),
-			VerifyStatus:  user.VerifyStatus(identity.VerifyStatus),
-			RejectReason:  identity.RejectReason.String,
-			SubmitTime:    identity.SubmitTime,
-			VerifyTime:    identity.VerifyTime,
-			VerifyBy:      identity.VerifyBy.Int64,
-			CreateTimes:   identity.CreateTimes,
-			UpdateTimes:   identity.UpdateTimes,
-		}
-	}
-
-	userSecurity := &user.UserSecurity{}
-	if security != nil {
-		userSecurity = &user.UserSecurity{
-			Id:              security.Id,
-			TenantId:        security.TenantId,
-			UserId:          security.UserId,
-			PayPasswordHash: security.PayPasswordHash.String,
-			GoogleSecret:    security.GoogleSecret.String,
-			GoogleEnabled:   security.GoogleEnabled,
-			LoginErrorCount: security.LoginErrorCount,
-			PayErrorCount:   security.PayErrorCount,
-			LockUntil:       security.LockUntil,
-			RiskLevel:       user.RiskLevel(security.RiskLevel),
-			CreateTimes:     security.CreateTimes,
-			UpdateTimes:     security.UpdateTimes,
-		}
+	security, err := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, tuser.Id)
+	if err != nil {
+		return nil, err
 	}
 
 	return &user.UpdateProfileResp{
 		Base: helper.OkResp(),
-		Profile: &user.UserProfile{
-			Base:     userBase,
-			Identity: userIdentityProto,
-			Security: userSecurity,
-		},
+		Profile: toUserProfileProto(tuser, identity, security),
 	}, nil
 }
 

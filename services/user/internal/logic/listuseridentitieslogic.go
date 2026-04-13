@@ -39,40 +39,14 @@ func (l *ListUserIdentitiesLogic) ListUserIdentities(in *user.ListUserIdentities
 		lastID = items[len(items)-1].Id
 	}
 
-	identityList := make([]*user.UserIdentityItem, 0, len(items))
+	data := make([]*user.UserIdentityItem, 0, len(items))
 	for _, item := range items {
-		identityList = append(identityList, &user.UserIdentityItem{
-			Id:            item.Id,
-			TenantId:      item.TenantId,
-			UserId:        item.UserId,
-			Phone:         item.Phone.String,
-			Email:         item.Email.String,
-			RealName:      item.RealName.String,
-			Gender:        user.Gender(item.Gender),
-			Birthday:      item.Birthday,
-			CountryCode:   item.CountryCode.String,
-			Province:      item.Province.String,
-			City:          item.City.String,
-			Address:       item.Address.String,
-			IdType:        user.IdType(item.IdType),
-			IdNo:          item.IdNo.String,
-			FrontImage:    item.FrontImage.String,
-			BackImage:     item.BackImage.String,
-			HandheldImage: item.HandheldImage.String,
-			KycLevel:      user.KycLevel(item.KycLevel),
-			VerifyStatus:  user.VerifyStatus(item.VerifyStatus),
-			RejectReason:  item.RejectReason.String,
-			SubmitTime:    item.SubmitTime,
-			VerifyTime:    item.VerifyTime,
-			VerifyBy:      item.VerifyBy.Int64,
-			CreateTimes:   item.CreateTimes,
-			UpdateTimes:   item.UpdateTimes,
-		})
+		data = append(data, toUserIdentityItemProto(item))
 	}
 
 	return &user.ListUserIdentitiesResp{
 		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(items), total, lastID),
-		List: identityList,
+		List: data,
 	}, nil
 }
 

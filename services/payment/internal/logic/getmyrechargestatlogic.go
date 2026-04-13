@@ -46,18 +46,6 @@ func (l *GetMyRechargeStatLogic) GetMyRechargeStat(in *payment.GetMyRechargeStat
 
 	return &payment.GetMyRechargeStatResp{
 		Base: helper.OkResp(),
-		Stat: &payment.UserRechargeStat{
-			Id:                 stat.Id,
-			TenantId:           stat.TenantId,
-			UserId:             stat.UserId,
-			SuccessOrderCount:  stat.SuccessOrderCount,
-			SuccessTotalAmount: stat.SuccessTotalAmount,
-			TodaySuccessAmount: stat.TodaySuccessAmount,
-			TodaySuccessCount:  stat.TodaySuccessCount,
-			FirstSuccessTime:   stat.FirstSuccessTime.Int64,
-			LastSuccessTime:    stat.LastSuccessTime.Int64,
-			CreateTimes:        stat.CreateTimes,
-			UpdateTimes:        stat.UpdateTimes,
-		},
+		Stat: toUserRechargeStatProto(stat),
 	}, nil
 }

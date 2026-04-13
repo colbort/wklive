@@ -44,17 +44,6 @@ func (l *GetPayProductLogic) GetPayProduct(in *payment.GetPayProductReq) (*payme
 
 	return &payment.GetPayProductResp{
 		Base: helper.OkResp(),
-		Data: &payment.PayProduct{
-			Id:          product.Id,
-			PlatformId:  product.PlatformId,
-			ProductCode: product.ProductCode,
-			ProductName: product.ProductName,
-			SceneType:   payment.SceneType(product.SceneType),
-			Currency:    product.Currency,
-			Status:      payment.CommonStatus(product.Status),
-			Remark:      product.Remark.String,
-			CreateTimes: product.CreateTimes,
-			UpdateTimes: product.UpdateTimes,
-		},
+		Data: toPayProductProto(product),
 	}, nil
 }

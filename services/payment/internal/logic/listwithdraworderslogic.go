@@ -48,35 +48,7 @@ func (l *ListWithdrawOrdersLogic) ListWithdrawOrders(in *payment.ListWithdrawOrd
 
 	data := make([]*payment.WithdrawOrder, 0, len(orders))
 	for _, o := range orders {
-		data = append(data, &payment.WithdrawOrder{
-			Id:           o.Id,
-			TenantId:     o.TenantId,
-			UserId:       o.UserId,
-			OrderNo:      o.OrderNo,
-			BizOrderNo:   o.BizOrderNo.String,
-			PlatformId:   o.PlatformId,
-			ProductId:    o.ProductId,
-			AccountId:    o.AccountId,
-			ChannelId:    o.ChannelId,
-			Currency:     o.Currency,
-			Amount:       o.Amount,
-			FeeAmount:    o.FeeAmount,
-			ActualAmount: o.ActualAmount,
-			ClientType:   payment.ClientType(o.ClientType),
-			ClientIp:     o.ClientIp.String,
-			Status:       payment.PayOrderStatus(o.Status),
-			ThirdTradeNo: o.ThirdTradeNo.String,
-			ThirdOrderNo: o.ThirdOrderNo.String,
-			RequestData:  o.RequestData.String,
-			ResponseData: o.ResponseData.String,
-			NotifyData:   o.NotifyData.String,
-			ProcessTime:  o.ProcessTime.Int64,
-			NotifyTime:   o.NotifyTime.Int64,
-			CloseTime:    o.CloseTime.Int64,
-			Remark:       o.Remark.String,
-			CreateTimes:  o.CreateTimes,
-			UpdateTimes:  o.UpdateTimes,
-		})
+		data = append(data, toWithdrawOrderProto(o))
 	}
 
 	return &payment.ListWithdrawOrdersResp{

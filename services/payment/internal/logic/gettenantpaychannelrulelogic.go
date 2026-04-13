@@ -46,28 +46,6 @@ func (l *GetTenantPayChannelRuleLogic) GetTenantPayChannelRule(in *payment.GetTe
 
 	return &payment.GetTenantPayChannelRuleResp{
 		Base: helper.OkResp(),
-		Data: &payment.TenantPayChannelRule{
-			Id:                   rule.Id,
-			TenantId:             rule.TenantId,
-			ChannelId:            rule.ChannelId,
-			RuleName:             rule.RuleName,
-			Priority:             rule.Priority,
-			Status:               payment.CommonStatus(rule.Status),
-			SingleAmountMin:      rule.SingleAmountMin,
-			SingleAmountMax:      rule.SingleAmountMax,
-			UserTotalRechargeMin: rule.UserTotalRechargeMin,
-			UserTotalRechargeMax: rule.UserTotalRechargeMax,
-			MemberLevelMin:       rule.MemberLevelMin,
-			MemberLevelMax:       rule.MemberLevelMax,
-			KycLevelMin:          rule.KycLevelMin,
-			KycLevelMax:          rule.KycLevelMax,
-			AllowNewUser:         rule.AllowNewUser,
-			AllowOldUser:         rule.AllowOldUser,
-			AllowTags:            rule.AllowTags.String,
-			DenyTags:             rule.DenyTags.String,
-			Remark:               rule.Remark.String,
-			CreateTimes:          rule.CreateTimes,
-			UpdateTimes:          rule.UpdateTimes,
-		},
+		Data: toTenantPayChannelRuleProto(rule),
 	}, nil
 }

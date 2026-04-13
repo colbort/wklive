@@ -38,19 +38,7 @@ func (l *ListCategoriesLogic) ListCategories(in *itick.ListCategoriesReq) (*itic
 
 	var data []*itick.ItickCategory
 	for _, item := range items {
-		data = append(data, &itick.ItickCategory{
-			Id:           item.Id,
-			CategoryType: itick.CategoryType(item.CategoryType),
-			CategoryCode: item.CategoryCode,
-			CategoryName: item.CategoryName,
-			Enabled:      item.Enabled,
-			AppVisible:   item.AppVisible,
-			Sort:         item.Sort,
-			Icon:         item.Icon,
-			Remark:       item.Remark,
-			CreateTimes:  item.CreateTimes,
-			UpdateTimes:  item.UpdateTimes,
-		})
+		data = append(data, toCategoryProto(item))
 	}
 
 	return &itick.ListCategoriesResp{

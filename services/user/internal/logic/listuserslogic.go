@@ -39,43 +39,14 @@ func (l *ListUsersLogic) ListUsers(in *user.ListUsersReq) (*user.ListUsersResp, 
 		lastID = items[len(items)-1].Id
 	}
 
-	userList := make([]*user.UserItem, 0, len(items))
+	data := make([]*user.UserItem, 0, len(items))
 	for _, item := range items {
-		userList = append(userList, &user.UserItem{
-			Id:             item.Id,
-			TenantId:       item.TenantId,
-			UserNo:         item.UserNo,
-			Username:       item.Username,
-			Nickname:       item.Nickname.String,
-			Avatar:         item.Avatar.String,
-			PasswordHash:   item.PasswordHash,
-			RegisterType:   user.RegisterType(item.RegisterType),
-			Status:         user.UserStatus(item.Status),
-			MemberLevel:    item.MemberLevel,
-			Language:       item.Language.String,
-			Timezone:       item.Timezone.String,
-			InviteCode:     item.InviteCode.String,
-			Signature:      item.Signature.String,
-			Source:         item.Source.String,
-			ReferrerUserId: item.ReferrerUserId.Int64,
-			LastLoginIp:    item.LastLoginIp.String,
-			LastLoginTime:  item.LastLoginTime,
-			RegisterIp:     item.RegisterIp.String,
-			RegisterTime:   item.RegisterTime,
-			IsGuest:        item.IsGuest,
-			IsRecharge:     item.IsRecharge,
-			DeviceId:       item.DeviceId,
-			Fingerprint:    item.Fingerprint,
-			Remark:         item.Remark.String,
-			Deleted:        item.Deleted,
-			CreateTimes:    item.CreateTimes,
-			UpdateTimes:    item.UpdateTimes,
-		})
+		data = append(data, toUserItemProto(item))
 	}
 
 	return &user.ListUsersResp{
 		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(items), total, lastID),
-		List: userList,
+		List: data,
 	}, nil
 }
 

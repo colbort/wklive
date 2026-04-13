@@ -2,9 +2,7 @@ package conv
 
 import (
 	"database/sql"
-	"fmt"
 	"strconv"
-	"time"
 )
 
 func ParseFloatField(value string) (float64, error) {
@@ -23,19 +21,4 @@ func NullStringValue(value sql.NullString) string {
 		return value.String
 	}
 	return ""
-}
-
-func BoolInt64(value bool) int64 {
-	if value {
-		return 1
-	}
-	return 0
-}
-
-func Int64Bool(value int64) bool {
-	return value > 0
-}
-
-func GenerateBizNo(prefix string) string {
-	return fmt.Sprintf("%s%s%06d", prefix, time.Now().Format("20060102150405"), time.Now().UnixNano()%1000000)
 }

@@ -47,24 +47,7 @@ func (l *ListBanksLogic) ListBanks(in *user.ListBanksReq) (*user.ListBanksResp, 
 		lastID = items[len(items)-1].Id
 	}
 
-	data := make([]*user.UserBankItem, 0)
-	for _, item := range items {
-		data = append(data, &user.UserBankItem{
-			Id:          item.Id,
-			TenantId:    item.TenantId,
-			UserId:      item.UserId,
-			BankName:    item.BankName,
-			BankCode:    item.BankCode.String,
-			AccountName: item.AccountName,
-			AccountNo:   item.AccountNo,
-			BranchName:  item.BranchName.String,
-			CountryCode: item.CountryCode.String,
-			IsDefault:   item.IsDefault,
-			Status:      user.BankStatus(item.Status),
-			CreateTimes: item.CreateTimes,
-			UpdateTimes: item.UpdateTimes,
-		})
-	}
+	data := toUserBankItemListProto(items)
 
 	return &user.ListBanksResp{
 		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(items), total, lastID),

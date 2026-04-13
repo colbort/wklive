@@ -132,27 +132,6 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 
 	return &payment.CreateRechargeOrderResp{
 		Base: helper.OkResp(),
-		Order: &payment.RechargeOrder{
-			Id:          rechargeOrder.Id,
-			TenantId:    rechargeOrder.TenantId,
-			UserId:      rechargeOrder.UserId,
-			OrderNo:     rechargeOrder.OrderNo,
-			BizOrderNo:  rechargeOrder.BizOrderNo.String,
-			PlatformId:  rechargeOrder.PlatformId,
-			ProductId:   rechargeOrder.ProductId,
-			AccountId:   rechargeOrder.AccountId,
-			ChannelId:   rechargeOrder.ChannelId,
-			Currency:    rechargeOrder.Currency,
-			OrderAmount: rechargeOrder.OrderAmount,
-			PayAmount:   rechargeOrder.PayAmount,
-			FeeAmount:   rechargeOrder.FeeAmount,
-			Subject:     rechargeOrder.Subject.String,
-			Body:        rechargeOrder.Body.String,
-			ClientType:  payment.ClientType(rechargeOrder.ClientType),
-			ClientIp:    rechargeOrder.ClientIp.String,
-			Status:      payment.PayOrderStatus(rechargeOrder.Status),
-			CreateTimes: rechargeOrder.CreateTimes,
-			UpdateTimes: rechargeOrder.UpdateTimes,
-		},
+		Order: toRechargeOrderProto(rechargeOrder),
 	}, nil
 }

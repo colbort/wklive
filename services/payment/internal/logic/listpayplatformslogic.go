@@ -36,19 +36,7 @@ func (l *ListPayPlatformsLogic) ListPayPlatforms(in *payment.ListPayPlatformsReq
 	}
 	data := make([]*payment.PayPlatform, 0)
 	for _, p := range items {
-		data = append(data, &payment.PayPlatform{
-			Id:           p.Id,
-			PlatformCode: p.PlatformCode,
-			PlatformName: p.PlatformName,
-			PlatformType: payment.PlatformType(p.PlatformType),
-			NotifyUrl:    p.NotifyUrl.String,
-			ReturnUrl:    p.ReturnUrl.String,
-			Icon:         p.Icon.String,
-			Status:       payment.CommonStatus(p.Status),
-			Remark:       p.Remark.String,
-			CreateTimes:  p.CreateTimes,
-			UpdateTimes:  p.UpdateTimes,
-		})
+		data = append(data, toPayPlatformProto(p))
 	}
 
 	return &payment.ListPayPlatformsResp{

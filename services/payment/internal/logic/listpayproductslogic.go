@@ -40,18 +40,7 @@ func (l *ListPayProductsLogic) ListPayProducts(in *payment.ListPayProductsReq) (
 
 	data := make([]*payment.PayProduct, 0, len(items))
 	for _, p := range items {
-		data = append(data, &payment.PayProduct{
-			Id:          p.Id,
-			PlatformId:  p.PlatformId,
-			ProductCode: p.ProductCode,
-			ProductName: p.ProductName,
-			SceneType:   payment.SceneType(p.SceneType),
-			Currency:    p.Currency,
-			Status:      payment.CommonStatus(p.Status),
-			Remark:      p.Remark.String,
-			CreateTimes: p.CreateTimes,
-			UpdateTimes: p.UpdateTimes,
-		})
+		data = append(data, toPayProductProto(p))
 	}
 
 	return &payment.ListPayProductsResp{

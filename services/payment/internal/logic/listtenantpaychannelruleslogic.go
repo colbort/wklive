@@ -40,29 +40,7 @@ func (l *ListTenantPayChannelRulesLogic) ListTenantPayChannelRules(in *payment.L
 
 	data := make([]*payment.TenantPayChannelRule, 0, len(rules))
 	for _, r := range rules {
-		data = append(data, &payment.TenantPayChannelRule{
-			Id:                   r.Id,
-			TenantId:             r.TenantId,
-			ChannelId:            r.ChannelId,
-			RuleName:             r.RuleName,
-			Priority:             r.Priority,
-			Status:               payment.CommonStatus(r.Status),
-			SingleAmountMin:      r.SingleAmountMin,
-			SingleAmountMax:      r.SingleAmountMax,
-			UserTotalRechargeMin: r.UserTotalRechargeMin,
-			UserTotalRechargeMax: r.UserTotalRechargeMax,
-			MemberLevelMin:       r.MemberLevelMin,
-			MemberLevelMax:       r.MemberLevelMax,
-			KycLevelMin:          r.KycLevelMin,
-			KycLevelMax:          r.KycLevelMax,
-			AllowNewUser:         r.AllowNewUser,
-			AllowOldUser:         r.AllowOldUser,
-			AllowTags:            r.AllowTags.String,
-			DenyTags:             r.DenyTags.String,
-			Remark:               r.Remark.String,
-			CreateTimes:          r.CreateTimes,
-			UpdateTimes:          r.UpdateTimes,
-		})
+		data = append(data, toTenantPayChannelRuleProto(r))
 	}
 
 	return &payment.ListTenantPayChannelRulesResp{

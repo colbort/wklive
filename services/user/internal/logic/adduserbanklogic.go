@@ -74,24 +74,8 @@ func (l *AddUserBankLogic) AddUserBank(in *user.AddUserBankReq) (*user.AddUserBa
 
 	l.Logger.Infof("管理员为用户 %d 添加银行卡成功，卡号后4位：%s", in.UserId, getLastFourDigits(in.AccountNo))
 
-	bankProto := &user.UserBankItem{
-		Id:          bank.Id,
-		TenantId:    bank.TenantId,
-		UserId:      bank.UserId,
-		BankName:    bank.BankName,
-		BankCode:    bank.BankCode.String,
-		AccountName: bank.AccountName,
-		AccountNo:   bank.AccountNo,
-		BranchName:  bank.BranchName.String,
-		CountryCode: bank.CountryCode.String,
-		IsDefault:   isDefault,
-		Status:      user.BankStatus(bank.Status),
-		CreateTimes: bank.CreateTimes,
-		UpdateTimes: bank.UpdateTimes,
-	}
-
 	return &user.AddUserBankResp{
 		Base: helper.OkResp(),
-		Bank: bankProto,
+		Bank: toUserBankItemProto(bank),
 	}, nil
 }

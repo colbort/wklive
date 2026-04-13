@@ -78,7 +78,11 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.AppCreateOrderReq) (*staking.
 	if product.ProductType == int64(staking.ProductType_PRODUCT_TYPE_FIXED) && product.LockDays > 0 {
 		endTimes = now + product.LockDays*24*3600*1000
 	}
-	orderNo := conv.GenerateBizNo("SKO")
+
+	orderNo, err := l.svcCtx.GenerateBizNo(l.ctx, "SKO")
+	if err != nil {
+		return nil, err
+	}
 	order := &models.TStakeOrder{
 		TenantId:         in.TenantId,
 		OrderNo:          orderNo,

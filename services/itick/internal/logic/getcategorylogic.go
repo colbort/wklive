@@ -36,18 +36,6 @@ func (l *GetCategoryLogic) GetCategory(in *itick.GetCategoryReq) (*itick.GetCate
 	}
 	return &itick.GetCategoryResp{
 		Base: helper.OkResp(),
-		Data: &itick.ItickCategory{
-			Id:           result.Id,
-			CategoryType: itick.CategoryType(result.CategoryType),
-			CategoryCode: result.CategoryCode,
-			CategoryName: result.CategoryName,
-			Enabled:      result.Enabled,
-			AppVisible:   result.AppVisible,
-			Sort:         result.Sort,
-			Icon:         result.Icon,
-			Remark:       result.Remark,
-			CreateTimes:  result.CreateTimes,
-			UpdateTimes:  result.UpdateTimes,
-		},
+		Data: toCategoryProto(result),
 	}, nil
 }

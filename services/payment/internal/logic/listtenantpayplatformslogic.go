@@ -48,16 +48,7 @@ func (l *ListTenantPayPlatformsLogic) ListTenantPayPlatforms(in *payment.ListTen
 
 	data := make([]*payment.TenantPayPlatform, 0, len(tenantPlatforms))
 	for _, p := range tenantPlatforms {
-		data = append(data, &payment.TenantPayPlatform{
-			Id:          p.Id,
-			TenantId:    p.TenantId,
-			PlatformId:  p.PlatformId,
-			Status:      payment.CommonStatus(p.Status),
-			OpenStatus:  payment.OpenStatus(p.OpenStatus),
-			Remark:      p.Remark.String,
-			CreateTimes: p.CreateTimes,
-			UpdateTimes: p.UpdateTimes,
-		})
+		data = append(data, toTenantPayPlatformProto(p))
 	}
 
 	return &payment.ListTenantPayPlatformsResp{

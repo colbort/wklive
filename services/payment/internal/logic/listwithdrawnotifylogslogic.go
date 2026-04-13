@@ -53,21 +53,7 @@ func (l *ListWithdrawNotifyLogsLogic) ListWithdrawNotifyLogs(in *payment.ListWit
 
 	data := make([]*payment.PayNotifyLog, 0, len(logs))
 	for _, log := range logs {
-		data = append(data, &payment.PayNotifyLog{
-			Id:            log.Id,
-			TenantId:      log.TenantId,
-			OrderId:       log.OrderId.Int64,
-			OrderNo:       log.OrderNo.String,
-			PlatformId:    log.PlatformId,
-			ChannelId:     log.ChannelId.Int64,
-			NotifyStatus:  payment.NotifyProcessStatus(log.NotifyStatus),
-			NotifyBody:    log.NotifyBody.String,
-			SignResult:    payment.SignResult(log.SignResult),
-			ProcessResult: log.ProcessResult.String,
-			ErrorMessage:  log.ErrorMessage.String,
-			NotifyTime:    log.NotifyTime.Int64,
-			CreateTimes:   log.CreateTimes,
-		})
+		data = append(data, toWithdrawNotifyLogProto(log))
 	}
 
 	return &payment.ListWithdrawNotifyLogsResp{

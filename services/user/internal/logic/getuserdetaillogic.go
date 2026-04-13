@@ -41,12 +41,12 @@ func (l *GetUserDetailLogic) GetUserDetail(in *user.GetUserDetailReq) (*user.Get
 	}
 
 	// 查询身份信息
-	userIdentity, err := l.svcCtx.UserIdentityModel.FindOneByTenantIdUserId(l.ctx, in.TenantId, in.UserId)
+	identity, err := l.svcCtx.UserIdentityModel.FindOneByTenantIdUserId(l.ctx, in.TenantId, in.UserId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 	// 查询安全信息
-	userSecurity, err := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, in.TenantId, in.UserId)
+	security, err := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, in.TenantId, in.UserId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
@@ -54,114 +54,8 @@ func (l *GetUserDetailLogic) GetUserDetail(in *user.GetUserDetailReq) (*user.Get
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
-	bankList := make([]*user.UserBankItem, 0, len(userBanks))
-	for _, bank := range userBanks {
-		bankList = append(bankList, &user.UserBankItem{
-			Id:          bank.Id,
-			TenantId:    bank.TenantId,
-			UserId:      bank.UserId,
-			BankName:    bank.BankName,
-			BankCode:    bank.BankCode.String,
-			AccountName: bank.AccountName,
-			AccountNo:   bank.AccountNo,
-			BranchName:  bank.BranchName.String,
-			CountryCode: bank.CountryCode.String,
-			IsDefault:   bank.IsDefault,
-			Status:      user.BankStatus(bank.Status),
-			CreateTimes: bank.CreateTimes,
-			UpdateTimes: bank.UpdateTimes,
-		})
-	}
-
-	userBase := &user.UserBase{
-		Id:             tuser.Id,
-		TenantId:       tuser.TenantId,
-		UserNo:         tuser.UserNo,
-		Username:       tuser.Username,
-		Nickname:       tuser.Nickname.String,
-		Avatar:         tuser.Avatar.String,
-		Language:       tuser.Language.String,
-		Timezone:       tuser.Timezone.String,
-		InviteCode:     tuser.InviteCode.String,
-		Signature:      tuser.Signature.String,
-		RegisterType:   user.RegisterType(tuser.RegisterType),
-		Status:         user.UserStatus(tuser.Status),
-		MemberLevel:    tuser.MemberLevel,
-		Source:         tuser.Source.String,
-		ReferrerUserId: tuser.ReferrerUserId.Int64,
-		LastLoginIp:    tuser.LastLoginIp.String,
-		LastLoginTime:  tuser.LastLoginTime,
-		RegisterIp:     tuser.RegisterIp.String,
-		RegisterTime:   tuser.RegisterTime,
-		Remark:         tuser.Remark.String,
-		Deleted:        tuser.Deleted,
-		CreateTimes:    tuser.CreateTimes,
-		UpdateTimes:    tuser.UpdateTimes,
-	}
-
-	userIdentityProto := &user.UserIdentity{}
-	if userIdentity != nil {
-		userIdentityProto = &user.UserIdentity{
-			Id:            userIdentity.Id,
-			TenantId:      userIdentity.TenantId,
-			UserId:        userIdentity.UserId,
-			Phone:         userIdentity.Phone.String,
-			Email:         userIdentity.Email.String,
-			RealName:      userIdentity.RealName.String,
-			Gender:        user.Gender(userIdentity.Gender),
-			Birthday:      userIdentity.Birthday,
-			CountryCode:   userIdentity.CountryCode.String,
-			Province:      userIdentity.Province.String,
-			City:          userIdentity.City.String,
-			Address:       userIdentity.Address.String,
-			IdType:        user.IdType(userIdentity.IdType),
-			IdNo:          userIdentity.IdNo.String,
-			FrontImage:    userIdentity.FrontImage.String,
-			BackImage:     userIdentity.BackImage.String,
-			HandheldImage: userIdentity.HandheldImage.String,
-			KycLevel:      user.KycLevel(userIdentity.KycLevel),
-			VerifyStatus:  user.VerifyStatus(userIdentity.VerifyStatus),
-			RejectReason:  userIdentity.RejectReason.String,
-			SubmitTime:    userIdentity.SubmitTime,
-			VerifyTime:    userIdentity.VerifyTime,
-			VerifyBy:      userIdentity.VerifyBy.Int64,
-			CreateTimes:   userIdentity.CreateTimes,
-			UpdateTimes:   userIdentity.UpdateTimes,
-		}
-	}
-
-	userSecurityProto := &user.UserSecurity{}
-	if userSecurity != nil {
-		userSecurityProto = &user.UserSecurity{
-			Id:              userSecurity.Id,
-			TenantId:        userSecurity.TenantId,
-			UserId:          userSecurity.UserId,
-			PayPasswordHash: userSecurity.PayPasswordHash.String,
-			GoogleSecret:    userSecurity.GoogleSecret.String,
-			GoogleEnabled:   userSecurity.GoogleEnabled,
-			LoginErrorCount: userSecurity.LoginErrorCount,
-			PayErrorCount:   userSecurity.PayErrorCount,
-			LockUntil:       userSecurity.LockUntil,
-			RiskLevel:       user.RiskLevel(userSecurity.RiskLevel),
-			CreateTimes:     userSecurity.CreateTimes,
-			UpdateTimes:     userSecurity.UpdateTimes,
-		}
-	}
-
 	return &user.GetUserDetailResp{
-		Base: helper.OkResp(),
-		Detail: &user.UserDetail{
-			Base:     userBase,
-			Identity: userIdentityProto,
-			Security: userSecurityProto,
-			Banks:    bankList,
-		},
+		Base:   helper.OkResp(),
+		Detail: toUserDetailProto(tuser, identity, security, userBanks),
 	}, nil
-}
-
-func maskAccountNo(accountNo string) string {
-	if len(accountNo) <= 4 {
-		return accountNo
-	}
-	return "****" + accountNo[len(accountNo)-4:]
 }

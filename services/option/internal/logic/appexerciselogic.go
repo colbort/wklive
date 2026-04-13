@@ -3,7 +3,6 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
 	"time"
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -11,6 +10,8 @@ import (
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type AppExerciseLogic struct {
@@ -59,10 +60,15 @@ func (l *AppExerciseLogic) AppExercise(in *option.AppExerciseReq) (*option.AppEx
 		return &option.AppExerciseResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ExercisableQuantityExceeded, l.ctx))}, nil
 	}
 
+	exerciseNo, err := l.svcCtx.GenerateBizNo(l.ctx, "EX")
+	if err != nil {
+		return nil, err
+	}
+
 	now := time.Now().Unix()
 	item := &models.TOptionExercise{
 		TenantId:        in.TenantId,
-		ExerciseNo:      conv.GenerateBizNo("EX"),
+		ExerciseNo:      exerciseNo,
 		Uid:             in.Uid,
 		AccountId:       in.AccountId,
 		ContractId:      position.ContractId,

@@ -33,19 +33,6 @@ func (l *GetUserSecurityLogic) GetUserSecurity(in *user.GetUserSecurityReq) (*us
 
 	return &user.GetUserSecurityResp{
 		Base: helper.OkResp(),
-		Security: &user.UserSecurity{
-			Id:              result.Id,
-			TenantId:        result.TenantId,
-			UserId:          result.UserId,
-			PayPasswordHash: result.PayPasswordHash.String,
-			GoogleSecret:    result.GoogleSecret.String,
-			GoogleEnabled:   result.GoogleEnabled,
-			LoginErrorCount: result.LoginErrorCount,
-			PayErrorCount:   result.PayErrorCount,
-			LockUntil:       result.LockUntil,
-			RiskLevel:       user.RiskLevel(result.RiskLevel),
-			CreateTimes:     result.CreateTimes,
-			UpdateTimes:     result.UpdateTimes,
-		},
+		Security: toUserSecurityProto(result),
 	}, nil
 }

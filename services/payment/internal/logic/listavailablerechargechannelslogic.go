@@ -35,20 +35,7 @@ func (l *ListAvailableRechargeChannelsLogic) ListAvailableRechargeChannels(in *p
 
 	data := make([]*payment.VisiblePayChannel, 0)
 	for _, ch := range channels {
-		visibleChannel := &payment.VisiblePayChannel{
-			ChannelId:   ch.Id,
-			ChannelName: ch.ChannelName,
-			// DisplayName: ch.DisplayName,
-			// Icon:        ch.Icon,
-			// Currency:    ch.Currency,
-			// Sort:        ch.Sort,
-			// FeeType:     payment.FeeType(ch.FeeType),
-			// FeeRate:     ch.FeeRate,
-			// FeeFixed:    ch.FeeFixedAmount,
-			// MinAmount:   ch.SingleMinAmount,
-			// MaxAmount:   ch.SingleMaxAmount,
-		}
-		data = append(data, visibleChannel)
+		data = append(data, toVisiblePayChannelProto(ch))
 	}
 
 	return &payment.ListAvailableRechargeChannelsResp{

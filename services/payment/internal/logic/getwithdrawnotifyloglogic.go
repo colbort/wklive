@@ -46,19 +46,6 @@ func (l *GetWithdrawNotifyLogLogic) GetWithdrawNotifyLog(in *payment.GetWithdraw
 
 	return &payment.GetWithdrawNotifyLogResp{
 		Base: helper.OkResp(),
-		Data: &payment.PayNotifyLog{
-			Id:            notifyLog.Id,
-			OrderId:       notifyLog.OrderId.Int64,
-			OrderNo:       notifyLog.OrderNo.String,
-			PlatformId:    notifyLog.PlatformId,
-			ChannelId:     notifyLog.ChannelId.Int64,
-			NotifyStatus:  payment.NotifyProcessStatus(notifyLog.NotifyStatus),
-			NotifyBody:    notifyLog.NotifyBody.String,
-			SignResult:    payment.SignResult(notifyLog.SignResult),
-			ProcessResult: notifyLog.ProcessResult.String,
-			ErrorMessage:  notifyLog.ErrorMessage.String,
-			NotifyTime:    notifyLog.NotifyTime.Int64,
-			CreateTimes:   notifyLog.CreateTimes,
-		},
+		Data: toWithdrawNotifyLogProto(notifyLog),
 	}, nil
 }

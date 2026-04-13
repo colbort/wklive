@@ -64,7 +64,10 @@ func (l *ManualRedeemLogic) ManualRedeem(in *staking.AdminManualRedeemReq) (*sta
 		return &staking.AdminManualRedeemResp{Page: helper.GetErrResp(400, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 
-	redeemNo := conv.GenerateBizNo("SKR")
+	redeemNo, err := l.svcCtx.GenerateBizNo(l.ctx, "SKR")
+	if err != nil {
+		return nil, err
+	}
 	now := utils.NowMillis()
 	unlockAmount := redeemAmount - feeAmount
 	if unlockAmount < 0 {

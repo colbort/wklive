@@ -3,7 +3,6 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
 	"time"
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -12,6 +11,8 @@ import (
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -77,10 +78,15 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 		}
 	}
 
+	orderNo, err := l.svcCtx.GenerateBizNo(l.ctx, "OP")
+	if err != nil {
+		return nil, err
+	}
+
 	now := time.Now().Unix()
 	order := &models.TOptionOrder{
 		TenantId:         in.TenantId,
-		OrderNo:          conv.GenerateBizNo("OP"),
+		OrderNo:          orderNo,
 		Uid:              in.Uid,
 		AccountId:        in.AccountId,
 		ContractId:       in.ContractId,

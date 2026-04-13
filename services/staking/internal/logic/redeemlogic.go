@@ -66,7 +66,10 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 	}
 	feeAmount := redeemAmount * feeRate / 100
 	rewardAmount := order.PendingReward
-	redeemNo := conv.GenerateBizNo("SKR")
+	redeemNo, err := l.svcCtx.GenerateBizNo(l.ctx, "SKR")
+	if err != nil {
+		return nil, err
+	}
 	now := utils.NowMillis()
 	unlockAmount := redeemAmount - feeAmount
 	if unlockAmount < 0 {
