@@ -7,29 +7,34 @@ import "proto/user/enum.proto";
 option go_package = "wklive/proto/user;user";
 
 message UserBase {
-  int64 id = 1;
-  int64 tenant_id = 2;
-  string user_no = 3;
-  string username = 4;
-  string nickname = 5;
-  string avatar = 6;
-  string language = 7;
-  string timezone = 8;
-  string invite_code = 9;
-  string signature = 10;
-  user.RegisterType register_type = 11;
-  user.UserStatus status = 12;
-  int32 member_level = 13;
-  string source = 14;
-  int64 referrer_user_id = 15;
-  string last_login_ip = 16;
-  int64 last_login_time = 17;
-  string register_ip = 18;
-  int64 register_time = 19;
-  string remark = 20;
-  bool deleted = 21;
-  int64 create_times = 22;
-  int64 update_times = 23;
+  int64 id = 1; // 用户ID
+  int64 tenant_id = 2; // 租户ID
+  string user_no = 3; // 用户编号
+  string username = 4; // 用户名
+  string nickname = 5; // 昵称
+  string avatar = 6; // 头像
+  string password_hash = 7; // 登录密码哈希
+  user.RegisterType register_type = 8; // 注册方式：1用户名 2手机号 3邮箱 4游客
+  user.UserStatus status = 9; // 状态：1正常 2禁用 3冻结 4注销
+  int64 member_level = 10; // 会员等级
+  string language = 11; // 语言
+  string timezone = 12; // 时区
+  string invite_code = 13; // 邀请码
+  string signature = 14; // 个性签名
+  string source = 15; // 注册来源
+  int64 referrer_user_id = 16; // 邀请人ID
+  string last_login_ip = 17; // 最后登录IP
+  int64 last_login_time = 18; // 最后登录时间
+  string register_ip = 19; // 注册IP
+  int64 register_time = 20; // 注册时间
+  int64 is_guest = 21; // 是否游客；1正常用户，2游客
+  int64 is_recharge = 22; // 是否充值；0没有充值，1已充值
+  string device_id = 23; // 设备唯一ID
+  string fingerprint = 24; // 浏览器指纹
+  string remark = 25; // 备注
+  int64 deleted = 26; // 是否删除：0否 1是
+  int64 create_times = 27; // 创建时间
+  int64 update_times = 28; // 更新时间
 }
 
 message UserIdentity {

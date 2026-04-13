@@ -5,14 +5,14 @@ import {
   memberUserService,
   tenantsService,
   type AddUserBankReq,
-  type MemberUserBankItem,
+  type UserBankItem,
   type UpdateMemberUserBankReq,
 } from '@/services'
 import { formatDate } from '@/utils'
 
 const loading = ref(false)
 const submitLoading = ref(false)
-const list = ref<MemberUserBankItem[]>([])
+const list = ref<UserBankItem[]>([])
 const editVisible = ref(false)
 const statusVisible = ref(false)
 const detailVisible = ref(false)
@@ -214,7 +214,7 @@ function openCreate() {
   editVisible.value = true
 }
 
-async function openEdit(row: MemberUserBankItem) {
+async function openEdit(row: UserBankItem) {
   const tenantId = Number(row.tenantId || query.tenantId || 0)
   if (!tenantId) {
     ElMessage.warning('请先输入租户ID')
@@ -231,7 +231,7 @@ async function openEdit(row: MemberUserBankItem) {
   editVisible.value = true
 }
 
-async function showDetail(row: MemberUserBankItem) {
+async function showDetail(row: UserBankItem) {
   const tenantId = Number(row.tenantId || query.tenantId || 0)
   if (!tenantId) {
     ElMessage.warning('请先输入租户ID')
@@ -298,7 +298,7 @@ async function submitEdit() {
   }
 }
 
-function openStatus(row: MemberUserBankItem) {
+function openStatus(row: UserBankItem) {
   const tenantId = Number(row.tenantId || query.tenantId || 0)
   if (!tenantId) {
     ElMessage.warning('请先输入租户ID')
@@ -327,7 +327,7 @@ async function submitStatus() {
   }
 }
 
-async function setDefault(row: MemberUserBankItem) {
+async function setDefault(row: UserBankItem) {
   const tenantId = Number(row.tenantId || query.tenantId || 0)
   try {
     const res = await memberUserService.setDefaultBank(row.id, { tenantId, userId: row.userId })
@@ -339,7 +339,7 @@ async function setDefault(row: MemberUserBankItem) {
   }
 }
 
-async function remove(row: MemberUserBankItem) {
+async function remove(row: UserBankItem) {
   const tenantId = Number(row.tenantId || query.tenantId || 0)
   try {
     await ElMessageBox.confirm(`确认删除银行卡 ${row.bankName} ?`, '提示', { type: 'warning' })

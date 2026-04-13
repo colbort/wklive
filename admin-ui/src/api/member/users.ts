@@ -5,13 +5,12 @@ import type {
   ListMemberUserBanksReq,
   ListMemberUserIdentitiesReq,
   ListMemberUsersReq,
-  MemberUserItem,
-  MemberUserBank,
-  MemberUserBankItem,
-  MemberUserDetail,
-  MemberUserIdentity,
+  UserItem,
+  UserBankItem,
+  UserDetail,
+  UserIdentity,
   UserIdentityItem,
-  MemberUserSecurity,
+  UserSecurity,
   MemberRespBase,
   ReviewUserIdentityReq,
   SetDefaultUserBankReq,
@@ -23,20 +22,20 @@ import type {
   UpdateMemberUserStatusReq,
 } from '@/services/member/MemberUserService'
 
-export function apiMemberUserList(params: ListMemberUsersReq): Promise<MemberRespBase<MemberUserItem[]>> {
-  return get<MemberUserItem[]>('/admin/member/users', params)
+export function apiMemberUserList(params: ListMemberUsersReq): Promise<MemberRespBase<UserItem[]>> {
+  return get<UserItem[]>('/admin/member/users', params)
 }
 
-export function apiMemberUserDetail(userId: number, tenantId: number): Promise<MemberRespBase<MemberUserDetail>> {
-  return get<MemberUserDetail>(`/admin/member/users/${userId}`, { tenantId })
+export function apiMemberUserDetail(userId: number, tenantId: number): Promise<MemberRespBase<UserDetail>> {
+  return get<UserDetail>(`/admin/member/users/${userId}`, { tenantId })
 }
 
 export function apiMemberUserCreate(data: CreateMemberUserReq): Promise<MemberRespBase<{ userId: number }>> {
   return post<{ userId: number }>('/admin/member/users', data)
 }
 
-export function apiMemberUserUpdateBase(userId: number, data: UpdateMemberUserBaseReq): Promise<MemberRespBase<MemberUserDetail>> {
-  return put<MemberUserDetail>(`/admin/member/users/${userId}/base`, data)
+export function apiMemberUserUpdateBase(userId: number, data: UpdateMemberUserBaseReq): Promise<MemberRespBase<UserDetail>> {
+  return put<UserDetail>(`/admin/member/users/${userId}/base`, data)
 }
 
 export function apiMemberUserUpdateStatus(userId: number, data: UpdateMemberUserStatusReq): Promise<MemberRespBase> {
@@ -67,8 +66,8 @@ export function apiMemberUserDelete(userId: number, tenantId: number): Promise<M
   return del(`/admin/member/users/${userId}`, { tenantId })
 }
 
-export function apiMemberUserSecurity(userId: number, tenantId: number): Promise<MemberRespBase<MemberUserSecurity>> {
-  return get<MemberUserSecurity>(`/admin/member/users/${userId}/security`, { tenantId })
+export function apiMemberUserSecurity(userId: number, tenantId: number): Promise<MemberRespBase<UserSecurity>> {
+  return get<UserSecurity>(`/admin/member/users/${userId}/security`, { tenantId })
 }
 
 export function apiMemberUserReset2fa(userId: number, data: { tenantId: number }): Promise<MemberRespBase> {
@@ -79,24 +78,24 @@ export function apiMemberUserIdentityList(params: ListMemberUserIdentitiesReq): 
   return get<UserIdentityItem[]>('/admin/member/user-identities', params)
 }
 
-export function apiMemberUserIdentityReview(userId: number, data: ReviewUserIdentityReq): Promise<MemberRespBase<MemberUserIdentity>> {
-  return put<MemberUserIdentity>(`/admin/member/user-identities/${userId}/review`, data)
+export function apiMemberUserIdentityReview(userId: number, data: ReviewUserIdentityReq): Promise<MemberRespBase<UserIdentity>> {
+  return put<UserIdentity>(`/admin/member/user-identities/${userId}/review`, data)
 }
 
-export function apiMemberUserBankList(params: ListMemberUserBanksReq): Promise<MemberRespBase<MemberUserBankItem[]>> {
-  return get<MemberUserBankItem[]>('/admin/member/user-banks', params)
+export function apiMemberUserBankList(params: ListMemberUserBanksReq): Promise<MemberRespBase<UserBankItem[]>> {
+  return get<UserBankItem[]>('/admin/member/user-banks', params)
 }
 
-export function apiMemberUserBankDetail(id: number, tenantId: number): Promise<MemberRespBase<MemberUserBank>> {
-  return get<MemberUserBank>(`/admin/member/user-banks/${id}`, { tenantId })
+export function apiMemberUserBankDetail(id: number, tenantId: number): Promise<MemberRespBase<UserBankItem>> {
+  return get<UserBankItem>(`/admin/member/user-banks/${id}`, { tenantId })
 }
 
-export function apiMemberUserBankAdd(data: AddUserBankReq): Promise<MemberRespBase<MemberUserBank>> {
-  return post<MemberUserBank>('/admin/member/user-banks', data)
+export function apiMemberUserBankAdd(data: AddUserBankReq): Promise<MemberRespBase<UserBankItem>> {
+  return post<UserBankItem>('/admin/member/user-banks', data)
 }
 
-export function apiMemberUserBankUpdate(id: number, data: UpdateMemberUserBankReq): Promise<MemberRespBase<MemberUserBank>> {
-  return put<MemberUserBank>(`/admin/member/user-banks/${id}`, data)
+export function apiMemberUserBankUpdate(id: number, data: UpdateMemberUserBankReq): Promise<MemberRespBase<UserBankItem>> {
+  return put<UserBankItem>(`/admin/member/user-banks/${id}`, data)
 }
 
 export function apiMemberUserBankDelete(id: number, tenantId: number): Promise<MemberRespBase> {

@@ -6,17 +6,17 @@ import {
   memberUserService,
   tenantsService,
   type CreateMemberUserReq,
-  type MemberUserDetail,
-  type MemberUserItem,
+  type UserDetail,
+  type UserItem,
   type UpdateMemberUserBaseReq,
 } from '@/services'
 import { formatDate } from '@/utils'
 
 const loading = ref(false)
 const submitLoading = ref(false)
-const list = ref<MemberUserItem[]>([])
+const list = ref<UserItem[]>([])
 const detailVisible = ref(false)
-const detail = ref<MemberUserDetail | null>(null)
+const detail = ref<UserDetail | null>(null)
 const detailActiveTab = ref('identity')
 const editVisible = ref(false)
 const pwdVisible = ref(false)
@@ -214,12 +214,12 @@ function resetQuery() {
   fetchList()
 }
 
-async function showDetail(row: MemberUserItem) {
+async function showDetail(row: UserItem) {
   loading.value = true
   try {
     const res = await memberUserService.getDetail(row.id, row.tenantId)
     if (!checkCode(res.code)) throw new Error(res.msg || '加载详情失败')
-    detail.value = (res.detail || res.data) as MemberUserDetail
+    detail.value = (res.detail || res.data) as UserDetail
     detailActiveTab.value = 'identity'
     detailVisible.value = true
   } catch (error: any) {
@@ -254,7 +254,7 @@ function openCreate() {
   editVisible.value = true
 }
 
-async function openEdit(row: MemberUserItem) {
+async function openEdit(row: UserItem) {
   const tenantId = Number(row.tenantId || query.tenantId || 0)
   if (!tenantId) {
     ElMessage.warning('请先输入租户ID')
@@ -265,7 +265,7 @@ async function openEdit(row: MemberUserItem) {
     ElMessage.error(res.msg || '加载详情失败')
     return
   }
-  const data = (res.detail || res.data) as MemberUserDetail
+  const data = (res.detail || res.data) as UserDetail
   Object.assign(editForm, {
     userId: data.base.id,
     tenantId: data.base.tenantId,
@@ -354,7 +354,7 @@ async function submitEdit() {
   }
 }
 
-function openPassword(row: MemberUserItem, mode: 'login' | 'pay') {
+function openPassword(row: UserItem, mode: 'login' | 'pay') {
   pwdMode.value = mode
   pwdForm.userId = row.id
   pwdForm.tenantId = Number(row.tenantId || query.tenantId || 0)
@@ -381,7 +381,7 @@ async function submitPassword() {
   }
 }
 
-async function quickAction(row: MemberUserItem, action: 'unlock' | 'reset2fa' | 'delete') {
+async function quickAction(row: UserItem, action: 'unlock' | 'reset2fa' | 'delete') {
   try {
     if (action === 'delete') {
       await ElMessageBox.confirm(`确认删除用户 ${row.username} ?`, '提示', { type: 'warning' })
@@ -404,7 +404,7 @@ async function quickAction(row: MemberUserItem, action: 'unlock' | 'reset2fa' | 
   }
 }
 
-async function updateSimpleValue(row: MemberUserItem, field: 'status' | 'memberLevel' | 'riskLevel') {
+async function updateSimpleValue(row: UserItem, field: 'status' | 'memberLevel' | 'riskLevel') {
   const tenantId = Number(row.tenantId || query.tenantId || 0)
   if (!tenantId) {
     ElMessage.warning('请先输入租户ID')

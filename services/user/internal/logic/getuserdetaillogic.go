@@ -86,7 +86,7 @@ func (l *GetUserDetailLogic) GetUserDetail(in *user.GetUserDetailReq) (*user.Get
 		Signature:      tuser.Signature.String,
 		RegisterType:   user.RegisterType(tuser.RegisterType),
 		Status:         user.UserStatus(tuser.Status),
-		MemberLevel:    int32(tuser.MemberLevel),
+		MemberLevel:    tuser.MemberLevel,
 		Source:         tuser.Source.String,
 		ReferrerUserId: tuser.ReferrerUserId.Int64,
 		LastLoginIp:    tuser.LastLoginIp.String,
@@ -94,7 +94,7 @@ func (l *GetUserDetailLogic) GetUserDetail(in *user.GetUserDetailReq) (*user.Get
 		RegisterIp:     tuser.RegisterIp.String,
 		RegisterTime:   tuser.RegisterTime,
 		Remark:         tuser.Remark.String,
-		Deleted:        tuser.Deleted == 1,
+		Deleted:        tuser.Deleted,
 		CreateTimes:    tuser.CreateTimes,
 		UpdateTimes:    tuser.UpdateTimes,
 	}

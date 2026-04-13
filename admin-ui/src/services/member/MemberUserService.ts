@@ -25,295 +25,292 @@ import {
 } from '@/api/member/users'
 
 export type MemberRespBase<T = any> = RespBase<T> & {
-  detail?: T
-  security?: T
-  identity?: T
-  bank?: T
+  detail?: T // 详情数据
+  security?: T // 安全信息数据
+  identity?: T // 实名信息数据
+  bank?: T // 银行卡数据
 }
 
-export type MemberUserBase = {
-  id: number
-  tenantId: number
-  userNo: string
-  username: string
-  nickname: string
-  avatar: string
-  language: string
-  timezone: string
-  inviteCode: string
-  signature: string
-  registerType: number
-  status: number
-  memberLevel: number
-  source: string
-  referrerUserId: number
-  lastLoginIp: string
-  lastLoginTime: number
-  registerIp: string
-  registerTime: number
-  remark: string
-  deleted: boolean
-  createTimes: number
-  updateTimes: number
+export type UserBase = {
+  id: number // 用户ID
+  tenantId: number // 租户ID
+  userNo: string // 用户编号
+  username: string // 用户名
+  nickname: string // 昵称
+  avatar: string // 头像
+  passwordHash: string // 登录密码哈希
+  language: string // 语言
+  timezone: string // 时区
+  inviteCode: string // 邀请码
+  signature: string // 个性签名
+  registerType: number // 注册方式
+  status: number // 用户状态
+  memberLevel: number // 会员等级
+  source: string // 注册来源
+  referrerUserId: number // 邀请人ID
+  lastLoginIp: string // 最后登录IP
+  lastLoginTime: number // 最后登录时间
+  registerIp: string // 注册IP
+  registerTime: number // 注册时间
+  isGuest: number // 是否游客
+  isRecharge: number // 是否已充值
+  deviceId: string // 设备ID
+  fingerprint: string // 浏览器指纹
+  remark: string // 备注
+  deleted: number // 是否删除
+  createTimes: number // 创建时间
+  updateTimes: number // 更新时间
 }
 
-export type MemberUserIdentity = {
-  id: number
-  tenantId: number
-  userId: number
-  phone: string
-  email: string
-  realName: string
-  gender: number
-  birthday: number
-  countryCode: string
-  province: string
-  city: string
-  address: string
-  idType: number
-  idNo: string
-  frontImage: string
-  backImage: string
-  handheldImage: string
-  kycLevel: number
-  verifyStatus: number
-  rejectReason: string
-  submitTime: number
-  verifyTime: number
-  verifyBy: number
-  createTimes: number
-  updateTimes: number
+export type UserIdentity = {
+  id: number // 主键ID
+  tenantId: number // 租户ID
+  userId: number // 用户ID
+  phone: string // 手机号
+  email: string // 邮箱
+  realName: string // 真实姓名
+  gender: number // 性别
+  birthday: number // 生日
+  countryCode: string // 国家/地区代码
+  province: string // 省/州
+  city: string // 城市
+  address: string // 地址
+  idType: number // 证件类型
+  idNo: string // 证件号码
+  frontImage: string // 证件正面
+  backImage: string // 证件反面
+  handheldImage: string // 手持证件照
+  kycLevel: number // KYC等级
+  verifyStatus: number // 实名状态
+  rejectReason: string // 驳回原因
+  submitTime: number // 提交时间
+  verifyTime: number // 审核时间
+  verifyBy: number // 审核人
+  createTimes: number // 创建时间
+  updateTimes: number // 更新时间
 }
 
-export type MemberUserSecurity = {
-  id: number
-  tenantId: number
-  userId: number
-  payPasswordHash: string
-  googleSecret: string
-  googleEnabled: number
-  loginErrorCount: number
-  payErrorCount: number
-  lockUntil: number
-  riskLevel: number
-  createTimes: number
-  updateTimes: number
+export type UserSecurity = {
+  id: number // 主键ID
+  tenantId: number // 租户ID
+  userId: number // 用户ID
+  payPasswordHash: string // 支付密码哈希
+  googleSecret: string // Google 密钥
+  googleEnabled: number // Google 2FA 是否启用
+  loginErrorCount: number // 登录错误次数
+  payErrorCount: number // 支付密码错误次数
+  lockUntil: number // 锁定到期时间
+  riskLevel: number // 风控等级
+  createTimes: number // 创建时间
+  updateTimes: number // 更新时间
 }
 
-export type MemberUserBank = {
-  id: number
-  tenantId: number
-  userId: number
-  bankName: string
-  bankCode: string
-  accountName: string
-  accountNo: string
-  branchName: string
-  countryCode: string
-  isDefault: number
-  status: number
-  createTimes: number
-  updateTimes: number
+export type UserBankItem = {
+  id: number // 主键ID
+  tenantId: number // 租户ID
+  userId: number // 用户ID
+  bankName: string // 银行名称
+  bankCode: string // 银行编码
+  accountName: string // 开户名
+  accountNo: string // 银行卡号
+  branchName: string // 支行名称
+  countryCode: string // 国家/地区
+  isDefault: number // 是否默认：0否 1是
+  status: number // 状态：1正常 2禁用
+  createTimes: number // 创建时间
+  updateTimes: number // 更新时间
 }
 
-export type MemberUserDetail = {
-  base: MemberUserBase
-  identity: MemberUserIdentity
-  security: MemberUserSecurity
-  banks: MemberUserBank[]
+export type UserDetail = {
+  base: UserBase // 用户基础信息
+  identity: UserIdentity // 实名信息
+  security: UserSecurity // 安全信息
+  banks: UserBankItem[] // 银行卡列表
 }
 
-export type MemberUserItem = {
-  id: number
-  tenantId: number
-  userNo: string
-  username: string
-  nickname: string
-  avatar: string
-  passwordHash: string
-  registerType: number
-  status: number
-  memberLevel: number
-  language: string
-  timezone: string
-  inviteCode: string
-  signature: string
-  source: string
-  referrerUserId: number
-  lastLoginIp: string
-  lastLoginTime: number
-  registerIp: string
-  registerTime: number
-  isGuest: number
-  isRecharge: number
-  deviceId: string
-  fingerprint: string
-  remark: string
-  deleted: number
-  createTimes: number
-  updateTimes: number
+export type UserItem = {
+  id: number // 用户ID
+  tenantId: number // 租户ID
+  userNo: string // 用户编号
+  username: string // 用户名
+  nickname: string // 昵称
+  avatar: string // 头像
+  passwordHash: string // 登录密码哈希
+  registerType: number // 注册方式
+  status: number // 用户状态
+  memberLevel: number // 会员等级
+  language: string // 语言
+  timezone: string // 时区
+  inviteCode: string // 邀请码
+  signature: string // 个性签名
+  source: string // 注册来源
+  referrerUserId: number // 邀请人ID
+  lastLoginIp: string // 最后登录IP
+  lastLoginTime: number // 最后登录时间
+  registerIp: string // 注册IP
+  registerTime: number // 注册时间
+  isGuest: number // 是否游客
+  isRecharge: number // 是否已充值
+  deviceId: string // 设备ID
+  fingerprint: string // 浏览器指纹
+  remark: string // 备注
+  deleted: number // 是否删除
+  createTimes: number // 创建时间
+  updateTimes: number // 更新时间
 }
 
 export type UserIdentityItem = {
-  userId: number
-  userNo: string
-  username: string
-  phone: string
-  email: string
-  realName: string
-  idType: number
-  idNo: string
-  kycLevel: number
-  verifyStatus: number
-  rejectReason: string
-  submitTime: number
-  verifyTime: number
-  verifyBy: number
+  userId: number // 用户ID
+  userNo: string // 用户编号
+  username: string // 用户名
+  phone: string // 手机号
+  email: string // 邮箱
+  realName: string // 真实姓名
+  idType: number // 证件类型
+  idNo: string // 证件号码
+  kycLevel: number // KYC等级
+  verifyStatus: number // 实名状态
+  rejectReason: string // 驳回原因
+  submitTime: number // 提交时间
+  verifyTime: number // 审核时间
+  verifyBy: number // 审核人
 }
 
-export type MemberUserBankItem = {
-  id: number
-  tenantId: number
-  userId: number
-  bankName: string
-  bankCode: string
-  accountName: string
-  accountNo: string
-  branchName: string
-  countryCode: string
-  isDefault: number
-  status: number
-  createTimes: number
-  updateTimes: number
-}
+export type MemberUserBase = UserBase
+export type MemberUserIdentity = UserIdentity
+export type MemberUserSecurity = UserSecurity
+export type MemberUserBank = UserBankItem
+export type MemberUserBankItem = UserBankItem
+export type MemberUserDetail = UserDetail
+export type MemberUserItem = UserItem
 
 export type ListMemberUsersReq = {
-  cursor?: number | string | null
-  limit?: number
-  tenantId?: number
-  tenantCode?: string
-  keyword?: string
-  userId?: number
-  userNo?: string
-  username?: string
-  phone?: string
-  email?: string
-  status?: number
-  memberLevel?: number
-  verifyStatus?: number
-  kycLevel?: number
-  inviteCode?: string
-  registerTimeStart?: number
-  registerTimeEnd?: number
+  cursor?: number | string | null // 游标
+  limit?: number // 条数限制
+  tenantId?: number // 租户ID
+  tenantCode?: string // 租户编码
+  keyword?: string // 关键字
+  userId?: number // 用户ID
+  userNo?: string // 用户编号
+  username?: string // 用户名
+  phone?: string // 手机号
+  email?: string // 邮箱
+  status?: number // 用户状态
+  memberLevel?: number // 会员等级
+  verifyStatus?: number // 实名状态
+  kycLevel?: number // KYC等级
+  inviteCode?: string // 邀请码
+  registerTimeStart?: number // 注册开始时间
+  registerTimeEnd?: number // 注册结束时间
 }
 
 export type CreateMemberUserReq = {
-  tenantCode: string
-  username: string
-  nickname?: string
-  avatar?: string
-  phone?: string
-  email?: string
-  password: string
-  registerType: number
-  status: number
-  memberLevel?: number
-  language?: string
-  timezone?: string
-  inviteCode?: string
-  signature?: string
-  source?: string
-  referrerUserId?: number
-  remark?: string
+  tenantCode: string // 租户编码
+  username: string // 用户名
+  nickname?: string // 昵称
+  avatar?: string // 头像
+  phone?: string // 手机号
+  email?: string // 邮箱
+  password: string // 登录密码
+  registerType: number // 注册方式
+  status: number // 用户状态
+  memberLevel?: number // 会员等级
+  language?: string // 语言
+  timezone?: string // 时区
+  inviteCode?: string // 邀请码
+  signature?: string // 个性签名
+  source?: string // 注册来源
+  referrerUserId?: number // 邀请人ID
+  remark?: string // 备注
 }
 
 export type UpdateMemberUserBaseReq = {
-  tenantId: number
-  username?: string
-  nickname?: string
-  avatar?: string
-  language?: string
-  timezone?: string
-  signature?: string
-  source?: string
-  referrerUserId?: number
-  remark?: string
-  phone?: string
-  email?: string
+  tenantId: number // 租户ID
+  username?: string // 用户名
+  nickname?: string // 昵称
+  avatar?: string // 头像
+  language?: string // 语言
+  timezone?: string // 时区
+  signature?: string // 个性签名
+  source?: string // 注册来源
+  referrerUserId?: number // 邀请人ID
+  remark?: string // 备注
+  phone?: string // 手机号
+  email?: string // 邮箱
 }
 
 export type UpdateMemberUserStatusReq = {
-  tenantId: number
-  status: number
-  remark?: string
+  tenantId: number // 租户ID
+  status: number // 用户状态
+  remark?: string // 备注
 }
 
 export type UpdateMemberUserLevelReq = {
-  tenantId: number
-  memberLevel: number
+  tenantId: number // 租户ID
+  memberLevel: number // 会员等级
 }
 
 export type UpdateMemberUserRiskLevelReq = {
-  tenantId: number
-  riskLevel: number
+  tenantId: number // 租户ID
+  riskLevel: number // 风控等级
 }
 
 export type ListMemberUserIdentitiesReq = {
-  cursor?: number | string | null
-  limit?: number
-  tenantId?: number
-  tenantCode?: string
-  keyword?: string
-  userId?: number
-  userNo?: string
-  username?: string
-  phone?: string
-  email?: string
-  realName?: string
-  verifyStatus?: number
-  kycLevel?: number
-  idType?: number
+  cursor?: number | string | null // 游标
+  limit?: number // 条数限制
+  tenantId?: number // 租户ID
+  tenantCode?: string // 租户编码
+  keyword?: string // 关键字
+  userId?: number // 用户ID
+  userNo?: string // 用户编号
+  username?: string // 用户名
+  phone?: string // 手机号
+  email?: string // 邮箱
+  realName?: string // 真实姓名
+  verifyStatus?: number // 实名状态
+  kycLevel?: number // KYC等级
+  idType?: number // 证件类型
 }
 
 export type ReviewUserIdentityReq = {
-  tenantId: number
-  verifyStatus: number
-  rejectReason?: string
-  verifyBy: number
+  tenantId: number // 租户ID
+  verifyStatus: number // 审核状态
+  rejectReason?: string // 驳回原因
+  verifyBy: number // 审核人
 }
 
 export type ListMemberUserBanksReq = {
-  cursor?: number | string | null
-  limit?: number
-  tenantId?: number
-  userId?: number
-  keyword?: string
-  status?: number
+  cursor?: number | string | null // 游标
+  limit?: number // 条数限制
+  tenantId?: number // 租户ID
+  userId?: number // 用户ID
+  keyword?: string // 关键字
+  status?: number // 银行卡状态
 }
 
 export type AddUserBankReq = {
-  tenantId: number
-  userId: number
-  bankName: string
-  bankCode?: string
-  accountName: string
-  accountNo: string
-  branchName?: string
-  countryCode?: string
-  isDefault: number
-  status: number
+  tenantId: number // 租户ID
+  userId: number // 用户ID
+  bankName: string // 银行名称
+  bankCode?: string // 银行编码
+  accountName: string // 开户名
+  accountNo: string // 银行卡号
+  branchName?: string // 支行名称
+  countryCode?: string // 国家/地区
+  isDefault: number // 是否默认：0否 1是
+  status: number // 状态：1正常 2禁用
 }
 
 export type UpdateMemberUserBankReq = AddUserBankReq
 
 export type UpdateMemberUserBankStatusReq = {
-  tenantId: number
-  status: number
+  tenantId: number // 租户ID
+  status: number // 银行卡状态
 }
 
 export type SetDefaultUserBankReq = {
-  tenantId: number
-  userId: number
+  tenantId: number // 租户ID
+  userId: number // 用户ID
 }
 
 export class MemberUserService {

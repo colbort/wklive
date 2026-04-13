@@ -301,6 +301,12 @@ export type {
 } from './trade/TradeService'
 export type {
   MemberRespBase,
+  UserBase,
+  UserIdentity,
+  UserSecurity,
+  UserBankItem,
+  UserDetail,
+  UserItem,
   MemberUserBase,
   MemberUserIdentity,
   MemberUserSecurity,

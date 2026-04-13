@@ -3720,21 +3720,26 @@ type UserBase struct {
 	Username       string `json:"username"`
 	Nickname       string `json:"nickname,optional"`
 	Avatar         string `json:"avatar,optional"`
+	PasswordHash   string `json:"passwordHash"`
 	Language       string `json:"language,optional"`
 	Timezone       string `json:"timezone,optional"`
 	InviteCode     string `json:"inviteCode,optional"`
 	Signature      string `json:"signature,optional"`
 	RegisterType   int64  `json:"registerType"`
 	Status         int64  `json:"status"`
-	MemberLevel    int32  `json:"memberLevel"`
+	MemberLevel    int64  `json:"memberLevel"`
 	Source         string `json:"source,optional"`
 	ReferrerUserId int64  `json:"referrerUserId,optional"`
 	LastLoginIp    string `json:"lastLoginIp,optional"`
 	LastLoginTime  int64  `json:"lastLoginTime,optional"`
 	RegisterIp     string `json:"registerIp,optional"`
 	RegisterTime   int64  `json:"registerTime,optional"`
+	IsGuest        int64  `json:"isGuest"`
+	IsRecharge     int64  `json:"isRecharge"`
+	DeviceId       string `json:"deviceId"`
+	Fingerprint    string `json:"fingerprint"`
 	Remark         string `json:"remark,optional"`
-	Deleted        bool   `json:"deleted"`
+	Deleted        int64  `json:"deleted"`
 	CreateTimes    int64  `json:"createTimes,optional"`
 	UpdateTimes    int64  `json:"updateTimes,optional"`
 }

@@ -23,29 +23,34 @@ const (
 
 type UserBase struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId       int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserNo         string                 `protobuf:"bytes,3,opt,name=user_no,json=userNo,proto3" json:"user_no,omitempty"`
-	Username       string                 `protobuf:"bytes,4,opt,name=username,proto3" json:"username,omitempty"`
-	Nickname       string                 `protobuf:"bytes,5,opt,name=nickname,proto3" json:"nickname,omitempty"`
-	Avatar         string                 `protobuf:"bytes,6,opt,name=avatar,proto3" json:"avatar,omitempty"`
-	Language       string                 `protobuf:"bytes,7,opt,name=language,proto3" json:"language,omitempty"`
-	Timezone       string                 `protobuf:"bytes,8,opt,name=timezone,proto3" json:"timezone,omitempty"`
-	InviteCode     string                 `protobuf:"bytes,9,opt,name=invite_code,json=inviteCode,proto3" json:"invite_code,omitempty"`
-	Signature      string                 `protobuf:"bytes,10,opt,name=signature,proto3" json:"signature,omitempty"`
-	RegisterType   RegisterType           `protobuf:"varint,11,opt,name=register_type,json=registerType,proto3,enum=user.RegisterType" json:"register_type,omitempty"`
-	Status         UserStatus             `protobuf:"varint,12,opt,name=status,proto3,enum=user.UserStatus" json:"status,omitempty"`
-	MemberLevel    int32                  `protobuf:"varint,13,opt,name=member_level,json=memberLevel,proto3" json:"member_level,omitempty"`
-	Source         string                 `protobuf:"bytes,14,opt,name=source,proto3" json:"source,omitempty"`
-	ReferrerUserId int64                  `protobuf:"varint,15,opt,name=referrer_user_id,json=referrerUserId,proto3" json:"referrer_user_id,omitempty"`
-	LastLoginIp    string                 `protobuf:"bytes,16,opt,name=last_login_ip,json=lastLoginIp,proto3" json:"last_login_ip,omitempty"`
-	LastLoginTime  int64                  `protobuf:"varint,17,opt,name=last_login_time,json=lastLoginTime,proto3" json:"last_login_time,omitempty"`
-	RegisterIp     string                 `protobuf:"bytes,18,opt,name=register_ip,json=registerIp,proto3" json:"register_ip,omitempty"`
-	RegisterTime   int64                  `protobuf:"varint,19,opt,name=register_time,json=registerTime,proto3" json:"register_time,omitempty"`
-	Remark         string                 `protobuf:"bytes,20,opt,name=remark,proto3" json:"remark,omitempty"`
-	Deleted        bool                   `protobuf:"varint,21,opt,name=deleted,proto3" json:"deleted,omitempty"`
-	CreateTimes    int64                  `protobuf:"varint,22,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
-	UpdateTimes    int64                  `protobuf:"varint,23,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                // 用户ID
+	TenantId       int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                    // 租户ID
+	UserNo         string                 `protobuf:"bytes,3,opt,name=user_no,json=userNo,proto3" json:"user_no,omitempty"`                                           // 用户编号
+	Username       string                 `protobuf:"bytes,4,opt,name=username,proto3" json:"username,omitempty"`                                                     // 用户名
+	Nickname       string                 `protobuf:"bytes,5,opt,name=nickname,proto3" json:"nickname,omitempty"`                                                     // 昵称
+	Avatar         string                 `protobuf:"bytes,6,opt,name=avatar,proto3" json:"avatar,omitempty"`                                                         // 头像
+	PasswordHash   string                 `protobuf:"bytes,7,opt,name=password_hash,json=passwordHash,proto3" json:"password_hash,omitempty"`                         // 登录密码哈希
+	RegisterType   RegisterType           `protobuf:"varint,8,opt,name=register_type,json=registerType,proto3,enum=user.RegisterType" json:"register_type,omitempty"` // 注册方式：1用户名 2手机号 3邮箱 4游客
+	Status         UserStatus             `protobuf:"varint,9,opt,name=status,proto3,enum=user.UserStatus" json:"status,omitempty"`                                   // 状态：1正常 2禁用 3冻结 4注销
+	MemberLevel    int64                  `protobuf:"varint,10,opt,name=member_level,json=memberLevel,proto3" json:"member_level,omitempty"`                          // 会员等级
+	Language       string                 `protobuf:"bytes,11,opt,name=language,proto3" json:"language,omitempty"`                                                    // 语言
+	Timezone       string                 `protobuf:"bytes,12,opt,name=timezone,proto3" json:"timezone,omitempty"`                                                    // 时区
+	InviteCode     string                 `protobuf:"bytes,13,opt,name=invite_code,json=inviteCode,proto3" json:"invite_code,omitempty"`                              // 邀请码
+	Signature      string                 `protobuf:"bytes,14,opt,name=signature,proto3" json:"signature,omitempty"`                                                  // 个性签名
+	Source         string                 `protobuf:"bytes,15,opt,name=source,proto3" json:"source,omitempty"`                                                        // 注册来源
+	ReferrerUserId int64                  `protobuf:"varint,16,opt,name=referrer_user_id,json=referrerUserId,proto3" json:"referrer_user_id,omitempty"`               // 邀请人ID
+	LastLoginIp    string                 `protobuf:"bytes,17,opt,name=last_login_ip,json=lastLoginIp,proto3" json:"last_login_ip,omitempty"`                         // 最后登录IP
+	LastLoginTime  int64                  `protobuf:"varint,18,opt,name=last_login_time,json=lastLoginTime,proto3" json:"last_login_time,omitempty"`                  // 最后登录时间
+	RegisterIp     string                 `protobuf:"bytes,19,opt,name=register_ip,json=registerIp,proto3" json:"register_ip,omitempty"`                              // 注册IP
+	RegisterTime   int64                  `protobuf:"varint,20,opt,name=register_time,json=registerTime,proto3" json:"register_time,omitempty"`                       // 注册时间
+	IsGuest        int64                  `protobuf:"varint,21,opt,name=is_guest,json=isGuest,proto3" json:"is_guest,omitempty"`                                      // 是否游客；1正常用户，2游客
+	IsRecharge     int64                  `protobuf:"varint,22,opt,name=is_recharge,json=isRecharge,proto3" json:"is_recharge,omitempty"`                             // 是否充值；0没有充值，1已充值
+	DeviceId       string                 `protobuf:"bytes,23,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`                                    // 设备唯一ID
+	Fingerprint    string                 `protobuf:"bytes,24,opt,name=fingerprint,proto3" json:"fingerprint,omitempty"`                                              // 浏览器指纹
+	Remark         string                 `protobuf:"bytes,25,opt,name=remark,proto3" json:"remark,omitempty"`                                                        // 备注
+	Deleted        int64                  `protobuf:"varint,26,opt,name=deleted,proto3" json:"deleted,omitempty"`                                                     // 是否删除：0否 1是
+	CreateTimes    int64                  `protobuf:"varint,27,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                          // 创建时间
+	UpdateTimes    int64                  `protobuf:"varint,28,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                          // 更新时间
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -122,6 +127,34 @@ func (x *UserBase) GetAvatar() string {
 	return ""
 }
 
+func (x *UserBase) GetPasswordHash() string {
+	if x != nil {
+		return x.PasswordHash
+	}
+	return ""
+}
+
+func (x *UserBase) GetRegisterType() RegisterType {
+	if x != nil {
+		return x.RegisterType
+	}
+	return RegisterType_REGISTER_TYPE_UNKNOWN
+}
+
+func (x *UserBase) GetStatus() UserStatus {
+	if x != nil {
+		return x.Status
+	}
+	return UserStatus_USER_STATUS_UNKNOWN
+}
+
+func (x *UserBase) GetMemberLevel() int64 {
+	if x != nil {
+		return x.MemberLevel
+	}
+	return 0
+}
+
 func (x *UserBase) GetLanguage() string {
 	if x != nil {
 		return x.Language
@@ -148,27 +181,6 @@ func (x *UserBase) GetSignature() string {
 		return x.Signature
 	}
 	return ""
-}
-
-func (x *UserBase) GetRegisterType() RegisterType {
-	if x != nil {
-		return x.RegisterType
-	}
-	return RegisterType_REGISTER_TYPE_UNKNOWN
-}
-
-func (x *UserBase) GetStatus() UserStatus {
-	if x != nil {
-		return x.Status
-	}
-	return UserStatus_USER_STATUS_UNKNOWN
-}
-
-func (x *UserBase) GetMemberLevel() int32 {
-	if x != nil {
-		return x.MemberLevel
-	}
-	return 0
 }
 
 func (x *UserBase) GetSource() string {
@@ -213,6 +225,34 @@ func (x *UserBase) GetRegisterTime() int64 {
 	return 0
 }
 
+func (x *UserBase) GetIsGuest() int64 {
+	if x != nil {
+		return x.IsGuest
+	}
+	return 0
+}
+
+func (x *UserBase) GetIsRecharge() int64 {
+	if x != nil {
+		return x.IsRecharge
+	}
+	return 0
+}
+
+func (x *UserBase) GetDeviceId() string {
+	if x != nil {
+		return x.DeviceId
+	}
+	return ""
+}
+
+func (x *UserBase) GetFingerprint() string {
+	if x != nil {
+		return x.Fingerprint
+	}
+	return ""
+}
+
 func (x *UserBase) GetRemark() string {
 	if x != nil {
 		return x.Remark
@@ -220,11 +260,11 @@ func (x *UserBase) GetRemark() string {
 	return ""
 }
 
-func (x *UserBase) GetDeleted() bool {
+func (x *UserBase) GetDeleted() int64 {
 	if x != nil {
 		return x.Deleted
 	}
-	return false
+	return 0
 }
 
 func (x *UserBase) GetCreateTimes() int64 {
@@ -1377,34 +1417,40 @@ var File_proto_user_model_proto protoreflect.FileDescriptor
 
 const file_proto_user_model_proto_rawDesc = "" +
 	"\n" +
-	"\x16proto/user/model.proto\x12\x04user\x1a\x15proto/user/enum.proto\"\xe9\x05\n" +
+	"\x16proto/user/model.proto\x12\x04user\x1a\x15proto/user/enum.proto\"\x89\a\n" +
 	"\bUserBase\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_no\x18\x03 \x01(\tR\x06userNo\x12\x1a\n" +
 	"\busername\x18\x04 \x01(\tR\busername\x12\x1a\n" +
 	"\bnickname\x18\x05 \x01(\tR\bnickname\x12\x16\n" +
-	"\x06avatar\x18\x06 \x01(\tR\x06avatar\x12\x1a\n" +
-	"\blanguage\x18\a \x01(\tR\blanguage\x12\x1a\n" +
-	"\btimezone\x18\b \x01(\tR\btimezone\x12\x1f\n" +
-	"\vinvite_code\x18\t \x01(\tR\n" +
+	"\x06avatar\x18\x06 \x01(\tR\x06avatar\x12#\n" +
+	"\rpassword_hash\x18\a \x01(\tR\fpasswordHash\x127\n" +
+	"\rregister_type\x18\b \x01(\x0e2\x12.user.RegisterTypeR\fregisterType\x12(\n" +
+	"\x06status\x18\t \x01(\x0e2\x10.user.UserStatusR\x06status\x12!\n" +
+	"\fmember_level\x18\n" +
+	" \x01(\x03R\vmemberLevel\x12\x1a\n" +
+	"\blanguage\x18\v \x01(\tR\blanguage\x12\x1a\n" +
+	"\btimezone\x18\f \x01(\tR\btimezone\x12\x1f\n" +
+	"\vinvite_code\x18\r \x01(\tR\n" +
 	"inviteCode\x12\x1c\n" +
-	"\tsignature\x18\n" +
-	" \x01(\tR\tsignature\x127\n" +
-	"\rregister_type\x18\v \x01(\x0e2\x12.user.RegisterTypeR\fregisterType\x12(\n" +
-	"\x06status\x18\f \x01(\x0e2\x10.user.UserStatusR\x06status\x12!\n" +
-	"\fmember_level\x18\r \x01(\x05R\vmemberLevel\x12\x16\n" +
-	"\x06source\x18\x0e \x01(\tR\x06source\x12(\n" +
-	"\x10referrer_user_id\x18\x0f \x01(\x03R\x0ereferrerUserId\x12\"\n" +
-	"\rlast_login_ip\x18\x10 \x01(\tR\vlastLoginIp\x12&\n" +
-	"\x0flast_login_time\x18\x11 \x01(\x03R\rlastLoginTime\x12\x1f\n" +
-	"\vregister_ip\x18\x12 \x01(\tR\n" +
+	"\tsignature\x18\x0e \x01(\tR\tsignature\x12\x16\n" +
+	"\x06source\x18\x0f \x01(\tR\x06source\x12(\n" +
+	"\x10referrer_user_id\x18\x10 \x01(\x03R\x0ereferrerUserId\x12\"\n" +
+	"\rlast_login_ip\x18\x11 \x01(\tR\vlastLoginIp\x12&\n" +
+	"\x0flast_login_time\x18\x12 \x01(\x03R\rlastLoginTime\x12\x1f\n" +
+	"\vregister_ip\x18\x13 \x01(\tR\n" +
 	"registerIp\x12#\n" +
-	"\rregister_time\x18\x13 \x01(\x03R\fregisterTime\x12\x16\n" +
-	"\x06remark\x18\x14 \x01(\tR\x06remark\x12\x18\n" +
-	"\adeleted\x18\x15 \x01(\bR\adeleted\x12!\n" +
-	"\fcreate_times\x18\x16 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x17 \x01(\x03R\vupdateTimes\"\x9f\x06\n" +
+	"\rregister_time\x18\x14 \x01(\x03R\fregisterTime\x12\x19\n" +
+	"\bis_guest\x18\x15 \x01(\x03R\aisGuest\x12\x1f\n" +
+	"\vis_recharge\x18\x16 \x01(\x03R\n" +
+	"isRecharge\x12\x1b\n" +
+	"\tdevice_id\x18\x17 \x01(\tR\bdeviceId\x12 \n" +
+	"\vfingerprint\x18\x18 \x01(\tR\vfingerprint\x12\x16\n" +
+	"\x06remark\x18\x19 \x01(\tR\x06remark\x12\x18\n" +
+	"\adeleted\x18\x1a \x01(\x03R\adeleted\x12!\n" +
+	"\fcreate_times\x18\x1b \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18\x1c \x01(\x03R\vupdateTimes\"\x9f\x06\n" +
 	"\fUserIdentity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +

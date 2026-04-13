@@ -15,21 +15,26 @@ type UserBase {
 	username       string `json:"username"`
 	nickname       string `json:"nickname,optional"`
 	avatar         string `json:"avatar,optional"`
+	passwordHash   string `json:"passwordHash"`
 	language       string `json:"language,optional"`
 	timezone       string `json:"timezone,optional"`
 	inviteCode     string `json:"inviteCode,optional"`
 	signature      string `json:"signature,optional"`
 	registerType   int64  `json:"registerType"`
 	status         int64  `json:"status"`
-	memberLevel    int32  `json:"memberLevel"`
+	memberLevel    int64  `json:"memberLevel"`
 	source         string `json:"source,optional"`
 	referrerUserId int64  `json:"referrerUserId,optional"`
 	lastLoginIp    string `json:"lastLoginIp,optional"`
 	lastLoginTime  int64  `json:"lastLoginTime,optional"`
 	registerIp     string `json:"registerIp,optional"`
 	registerTime   int64  `json:"registerTime,optional"`
+	isGuest        int64  `json:"isGuest"`
+	isRecharge     int64  `json:"isRecharge"`
+	deviceId       string `json:"deviceId"`
+	fingerprint    string `json:"fingerprint"`
 	remark         string `json:"remark,optional"`
-	deleted        bool   `json:"deleted"`
+	deleted        int64  `json:"deleted"`
 	createTimes    int64  `json:"createTimes,optional"`
 	updateTimes    int64  `json:"updateTimes,optional"`
 }
@@ -81,7 +86,7 @@ type UserDetail {
 	base     UserBase     `json:"base"`
 	identity UserIdentity `json:"identity"`
 	security UserSecurity `json:"security"`
-	banks    []UserBankItem   `json:"banks"`
+	banks    []UserBankItem `json:"banks"`
 }
 
 type UserItem {
