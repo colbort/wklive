@@ -13,6 +13,7 @@ type UserIdentityModel interface {
 	FindPage(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TUserIdentity, int64, error)
 	FindByEmail(ctx context.Context, tenantId int64, email string) (*TUserIdentity, error)
 	FindByPhone(ctx context.Context, tenantId int64, phone string) (*TUserIdentity, error)
+	DeleteByUserId(ctx context.Context, userId int64) error
 }
 
 func (m *defaultTUserIdentityModel) FindPage(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TUserIdentity, int64, error) {
@@ -109,4 +110,25 @@ func (m *defaultTUserIdentityModel) FindByPhone(ctx context.Context, tenantId in
 	}
 
 	return &resp, nil
+}
+
+func (m *defaultTUserIdentityModel) DeleteByUserId(ctx context.Context, userId int64) error {
+	var resp TUserIdentity
+
+	query := fmt.Sprintf(`
+		SELECT %s
+		FROM %s
+		WHERE user_id = ?
+		LIMIT 1
+	`, tUserIdentityRows, m.table)
+
+	err := m.QueryRowNoCacheCtx(ctx, &resp, query, userId)
+	if err != nil {
+		if err == sqlx.ErrNotFound {
+			return nil
+		}
+		return err
+	}
+
+	return m.Delete(ctx, resp.Id)
 }

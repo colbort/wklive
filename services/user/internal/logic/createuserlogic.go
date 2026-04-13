@@ -3,14 +3,19 @@ package logic
 import (
 	"context"
 	"database/sql"
+	"errors"
+	"fmt"
 
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/system"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type CreateUserLogic struct {
@@ -29,14 +34,25 @@ func NewCreateUserLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Create
 
 // 管理员创建用户
 func (l *CreateUserLogic) CreateUser(in *user.CreateUserReq) (*user.CreateUserResp, error) {
+	tenant, err := l.svcCtx.SystemCli.SysTenantDetail(l.ctx, &system.SysTenantDetailReq{
+		TenantCode: &in.TenantCode,
+	})
+	if err != nil && errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
+	if tenant.Base.Code != 200 {
+		return &user.CreateUserResp{
+			Base: helper.FailWithCode(i18n.TenantNotFound),
+		}, nil
+	}
+
 	now := utils.NowMillis()
-	userId := l.svcCtx.Node.Generate().Int64()
+	userNo := l.svcCtx.Node.Generate().Int64()
 
 	// 创建用户基本信息
 	tuser := &models.TUser{
-		Id:             userId,
-		TenantId:       in.TenantId,
-		UserNo:         generateUserNo(userId),
+		TenantId:       tenant.Data.Id,
+		UserNo:         generateUserNo(userNo),
 		Username:       in.Username,
 		Nickname:       sql.NullString{String: in.Nickname, Valid: in.Nickname != ""},
 		Avatar:         sql.NullString{String: in.Avatar, Valid: in.Avatar != ""},
@@ -62,35 +78,47 @@ func (l *CreateUserLogic) CreateUser(in *user.CreateUserReq) (*user.CreateUserRe
 		Fingerprint:    "",
 	}
 
-	_, err := l.svcCtx.UserModel.Insert(l.ctx, tuser)
-	if err != nil {
-		return nil, err
-	}
-
-	// 创建用户身份信息
 	userIdentity := &models.TUserIdentity{
 		Id:          l.svcCtx.Node.Generate().Int64(),
-		TenantId:    in.TenantId,
-		UserId:      userId,
 		CreateTimes: now,
 		UpdateTimes: now,
 	}
 
-	_, err = l.svcCtx.UserIdentityModel.Insert(l.ctx, userIdentity)
-	if err != nil {
-		return nil, err
-	}
-
-	// 创建用户安全信息
 	userSecurity := &models.TUserSecurity{
 		Id:          l.svcCtx.Node.Generate().Int64(),
-		TenantId:    in.TenantId,
-		UserId:      userId,
+		TenantId:    tenant.Data.Id,
 		CreateTimes: now,
 		UpdateTimes: now,
 	}
 
-	_, err = l.svcCtx.UserSecurityModel.Insert(l.ctx, userSecurity)
+	userId := int64(0)
+
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		userModel := models.NewTUserModel(conn, l.svcCtx.Config.CacheRedis).(models.UserModel)
+		userIdentityModel := models.NewTUserIdentityModel(conn, l.svcCtx.Config.CacheRedis).(models.UserIdentityModel)
+		userSecurityModel := models.NewTUserSecurityModel(conn, l.svcCtx.Config.CacheRedis).(models.UserSecurityModel)
+
+		result, err := userModel.Insert(ctx, tuser)
+
+		if err != nil {
+			return err
+		}
+
+		userId, err = result.LastInsertId()
+		if err != nil {
+			return err
+		}
+		userIdentity.UserId = userId
+		userSecurity.UserId = userId
+		if _, err := userIdentityModel.Insert(ctx, userIdentity); err != nil {
+			return err
+		}
+		if _, err := userSecurityModel.Insert(ctx, userSecurity); err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -104,6 +132,5 @@ func (l *CreateUserLogic) CreateUser(in *user.CreateUserReq) (*user.CreateUserRe
 }
 
 func generateUserNo(userId int64) string {
-	// TODO: 实现用户编号生成逻辑
-	return ""
+	return fmt.Sprintf("%06d", userId)
 }

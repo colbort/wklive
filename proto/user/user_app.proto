@@ -91,7 +91,7 @@ message UpdateProfileReq {
   string timezone = 5;
   string signature = 6;
   user.Gender gender = 7;
-  string birthday = 8;
+  int64 birthday = 8;
   string country_code = 9;
   string province = 10;
   string city = 11;
@@ -123,7 +123,7 @@ message SubmitIdentityReq {
   string email = 3;
   string real_name = 4;
   user.Gender gender = 5;
-  string birthday = 6;
+  int64 birthday = 6;
   string country_code = 7;
   string province = 8;
   string city = 9;
@@ -186,7 +186,7 @@ message ListBanksReq {
 
 message ListBanksResp {
   common.RespBase base = 1;
-  repeated user.UserBank list = 2;
+  repeated user.UserBankItem list = 2;
 }
 
 message AddBankReq {
@@ -197,12 +197,12 @@ message AddBankReq {
   string account_no = 5;
   string branch_name = 6;
   string country_code = 7;
-  bool is_default = 8;
+  int64 is_default = 8;
 }
 
 message AddBankResp {
   common.RespBase base = 1;
-  user.UserBank bank = 2;
+  user.UserBankItem bank = 2;
 }
 
 message UpdateBankReq {
@@ -214,12 +214,12 @@ message UpdateBankReq {
   string account_no = 6;
   string branch_name = 7;
   string country_code = 8;
-  bool is_default = 9;
+  int64 is_default = 9;
 }
 
 message UpdateBankResp {
   common.RespBase base = 1;
-  user.UserBank bank = 2;
+  user.UserBankItem bank = 2;
 }
 
 message DeleteBankReq {

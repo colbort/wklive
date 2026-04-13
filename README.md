@@ -267,6 +267,13 @@ Etcd:
   Hosts:
   - 127.0.0.1:2379
   Key: user.rpc
+
+SystemRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: system.rpc   
 ```
 
 ### itick-rpc 微服务配置 /wklive/itick-rpc/config

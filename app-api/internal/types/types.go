@@ -10,7 +10,7 @@ type AddBankReq struct {
 	AccountNo   string `json:"accountNo"`
 	BranchName  string `json:"branchName,optional"`
 	CountryCode string `json:"countryCode,optional"`
-	IsDefault   bool   `json:"isDefault,optional"`
+	IsDefault   int64  `json:"isDefault,optional"`
 }
 
 type AddBankResp struct {
@@ -1515,7 +1515,7 @@ type SubmitIdentityReq struct {
 	Email         string `json:"email,optional"`
 	RealName      string `json:"realName"`
 	Gender        int64  `json:"gender,optional"`
-	Birthday      string `json:"birthday,optional"`
+	Birthday      int64  `json:"birthday,optional"`
 	CountryCode   string `json:"countryCode,optional"`
 	Province      string `json:"province,optional"`
 	City          string `json:"city,optional"`
@@ -1697,7 +1697,7 @@ type UpdateBankReq struct {
 	AccountNo   string `json:"accountNo"`
 	BranchName  string `json:"branchName,optional"`
 	CountryCode string `json:"countryCode,optional"`
-	IsDefault   bool   `json:"isDefault,optional"`
+	IsDefault   int64  `json:"isDefault,optional"`
 }
 
 type UpdateBankResp struct {
@@ -1712,7 +1712,7 @@ type UpdateProfileReq struct {
 	Timezone    string `json:"timezone,optional"`
 	Signature   string `json:"signature,optional"`
 	Gender      int64  `json:"gender,optional"`
-	Birthday    string `json:"birthday,optional"`
+	Birthday    int64  `json:"birthday,optional"`
 	CountryCode string `json:"countryCode,optional"`
 	Province    string `json:"province,optional"`
 	City        string `json:"city,optional"`
@@ -1735,38 +1735,35 @@ type UserAssetSummary struct {
 }
 
 type UserBank struct {
-	Id              int64  `json:"id"`
-	TenantId        int64  `json:"tenantId"`
-	UserId          int64  `json:"userId"`
-	BankName        string `json:"bankName"`
-	BankCode        string `json:"bankCode,optional"`
-	AccountName     string `json:"accountName"`
-	AccountNo       string `json:"accountNo"`
-	MaskedAccountNo string `json:"maskedAccountNo,optional"`
-	BranchName      string `json:"branchName,optional"`
-	CountryCode     string `json:"countryCode,optional"`
-	IsDefault       bool   `json:"isDefault"`
-	Status          int64  `json:"status"`
-	CreateTimes     int64  `json:"createTimes,optional"`
-	UpdateTimes     int64  `json:"updateTimes,optional"`
+	Id          int64  `json:"id"`
+	TenantId    int64  `json:"tenantId"`
+	UserId      int64  `json:"userId"`
+	BankName    string `json:"bankName"`
+	BankCode    string `json:"bankCode,optional"`
+	AccountName string `json:"accountName"`
+	AccountNo   string `json:"accountNo"`
+	BranchName  string `json:"branchName,optional"`
+	CountryCode string `json:"countryCode,optional"`
+	IsDefault   int64  `json:"isDefault"`
+	Status      int64  `json:"status"`
+	CreateTimes int64  `json:"createTimes,optional"`
+	UpdateTimes int64  `json:"updateTimes,optional"`
 }
 
 type UserBankListItem struct {
-	Id              int64  `json:"id"`
-	TenantId        int64  `json:"tenantId"`
-	UserId          int64  `json:"userId"`
-	UserNo          string `json:"userNo"`
-	Username        string `json:"username"`
-	BankName        string `json:"bankName"`
-	BankCode        string `json:"bankCode,optional"`
-	AccountName     string `json:"accountName"`
-	AccountNo       string `json:"accountNo"`
-	MaskedAccountNo string `json:"maskedAccountNo,optional"`
-	BranchName      string `json:"branchName,optional"`
-	CountryCode     string `json:"countryCode,optional"`
-	IsDefault       bool   `json:"isDefault"`
-	Status          int64  `json:"status"`
-	CreateTimes     int64  `json:"createTimes,optional"`
+	Id          int64  `json:"id"`
+	TenantId    int64  `json:"tenantId"`
+	UserId      int64  `json:"userId"`
+	BankName    string `json:"bankName"`
+	BankCode    string `json:"bankCode,optional"`
+	AccountName string `json:"accountName"`
+	AccountNo   string `json:"accountNo"`
+	BranchName  string `json:"branchName,optional"`
+	CountryCode string `json:"countryCode,optional"`
+	IsDefault   int64  `json:"isDefault"`
+	Status      int64  `json:"status"`
+	CreateTimes int64  `json:"createTimes,optional"`
+	UpdateTimes int64  `json:"updateTimes,optional"`
 }
 
 type UserBase struct {
@@ -1814,7 +1811,7 @@ type UserIdentity struct {
 	Email         string `json:"email,optional"`
 	RealName      string `json:"realName,optional"`
 	Gender        int64  `json:"gender,optional"`
-	Birthday      string `json:"birthday,optional"`
+	Birthday      int64  `json:"birthday,optional"`
 	CountryCode   string `json:"countryCode,optional"`
 	Province      string `json:"province,optional"`
 	City          string `json:"city,optional"`
@@ -1895,7 +1892,7 @@ type UserSecurity struct {
 	TenantId        int64 `json:"tenantId"`
 	UserId          int64 `json:"userId"`
 	HasPayPassword  bool  `json:"hasPayPassword"`
-	GoogleEnabled   bool  `json:"googleEnabled"`
+	GoogleEnabled   int64 `json:"googleEnabled"`
 	LoginErrorCount int64 `json:"loginErrorCount"`
 	PayErrorCount   int64 `json:"payErrorCount"`
 	LockUntil       int64 `json:"lockUntil,optional"`

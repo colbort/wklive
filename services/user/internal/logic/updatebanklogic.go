@@ -50,10 +50,8 @@ func (l *UpdateBankLogic) UpdateBank(in *user.UpdateBankReq) (*user.UpdateBankRe
 	}
 
 	now := utils.NowMillis()
-	isDefault := int64(0)
-	if in.IsDefault {
-		isDefault = 1
-
+	isDefault := in.IsDefault
+	if isDefault == 1 {
 		// 如果设置为默认，需要取消其他卡的默认设置
 		// TODO: 更新其他卡的默认状态
 	}
@@ -77,9 +75,7 @@ func (l *UpdateBankLogic) UpdateBank(in *user.UpdateBankReq) (*user.UpdateBankRe
 	if in.CountryCode != "" {
 		bank.CountryCode = sql.NullString{String: in.CountryCode, Valid: true}
 	}
-	if in.IsDefault {
-		bank.IsDefault = isDefault
-	}
+	bank.IsDefault = isDefault
 	bank.UpdateTimes = now
 
 	err = l.svcCtx.UserBankModel.Update(l.ctx, bank)
@@ -89,7 +85,7 @@ func (l *UpdateBankLogic) UpdateBank(in *user.UpdateBankReq) (*user.UpdateBankRe
 
 	l.Logger.Infof("用户 %d 更新银行卡 %d 成功", in.UserId, in.Id)
 
-	bankProto := &user.UserBank{
+	bankProto := &user.UserBankItem{
 		Id:          bank.Id,
 		TenantId:    bank.TenantId,
 		UserId:      bank.UserId,
@@ -99,7 +95,7 @@ func (l *UpdateBankLogic) UpdateBank(in *user.UpdateBankReq) (*user.UpdateBankRe
 		AccountNo:   bank.AccountNo,
 		BranchName:  bank.BranchName.String,
 		CountryCode: bank.CountryCode.String,
-		IsDefault:   isDefault == 1,
+		IsDefault:   isDefault,
 		Status:      user.BankStatus(bank.Status),
 		CreateTimes: bank.CreateTimes,
 		UpdateTimes: bank.UpdateTimes,

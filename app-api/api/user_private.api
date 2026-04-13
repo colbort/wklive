@@ -15,7 +15,7 @@ type UpdateProfileReq {
 	timezone    string `json:"timezone,optional"`
 	signature   string `json:"signature,optional"`
 	gender      int64  `json:"gender,optional"`
-	birthday    string `json:"birthday,optional"`
+	birthday    int64 `json:"birthday,optional"`
 	countryCode string `json:"countryCode,optional"`
 	province    string `json:"province,optional"`
 	city        string `json:"city,optional"`
@@ -43,7 +43,7 @@ type SubmitIdentityReq {
 	email         string `json:"email,optional"`
 	realName      string `json:"realName"`
 	gender        int64  `json:"gender,optional"`
-	birthday      string `json:"birthday,optional"`
+	birthday      int64 `json:"birthday,optional"`
 	countryCode   string `json:"countryCode,optional"`
 	province      string `json:"province,optional"`
 	city          string `json:"city,optional"`
@@ -103,7 +103,7 @@ type AddBankReq {
 	accountNo   string `json:"accountNo"`
 	branchName  string `json:"branchName,optional"`
 	countryCode string `json:"countryCode,optional"`
-	isDefault   bool   `json:"isDefault,optional"`
+	isDefault   int64  `json:"isDefault,optional"`
 }
 
 type AddBankResp {
@@ -119,7 +119,7 @@ type UpdateBankReq {
 	accountNo   string `json:"accountNo"`
 	branchName  string `json:"branchName,optional"`
 	countryCode string `json:"countryCode,optional"`
-	isDefault   bool   `json:"isDefault,optional"`
+	isDefault   int64  `json:"isDefault,optional"`
 }
 
 type UpdateBankResp {
@@ -192,4 +192,3 @@ service app {
 	@handler SetDefaultBank
 	put /banks/:id/default (SetDefaultBankReq) returns (RespBase)
 }
-

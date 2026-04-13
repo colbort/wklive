@@ -474,6 +474,16 @@ type SysTenantListResp {
 	data []SysTenantItem `json:"data"`
 }
 
+type SysTenantDetailReq {
+	tenantId *int64 `form:"tenantId,optional"`
+	tenantCode *string `form:"tenantCode,optional"`
+}
+
+type SysTenantDetailResp {
+	RespBase
+	data SysTenantItem `json:"data"`
+}
+
 @server (
 	prefix: /admin/system
 	group:  system
@@ -631,5 +641,8 @@ service admin {
 
 	@handler SysTenantList
 	get /tenants (SysTenantListReq) returns (SysTenantListResp)
+
+	@handler SysTenantDetail
+	get /tenant/detail(SysTenantDetailReq) returns (SysTenantDetailResp)
 }
 

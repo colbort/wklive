@@ -5,6 +5,7 @@ import type {
   SysTenantItem,
   SysTenantCreateReq,
   SysTenantUpdateReq,
+  SysTenantDetailReq,
 } from '@/services'
 
 // ===== API 函数 =====
@@ -23,4 +24,8 @@ export function apiSysTenantUpdate(data: SysTenantUpdateReq): Promise<RespBase> 
 
 export function apiSysTenantDelete(id: number): Promise<RespBase> {
   return del(`/admin/system/tenants/${id}`)
+}
+
+export function apiSysTenantDetail(params: SysTenantDetailReq): Promise<RespBase<SysTenantItem>> {
+  return get<SysTenantItem>('/admin/system/tenant/detail', params)
 }

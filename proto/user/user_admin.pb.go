@@ -68,7 +68,7 @@ func (x *AdminCommonResp) GetBase() *common.RespBase {
 
 type CreateUserReq struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	TenantId       int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	TenantCode     string                 `protobuf:"bytes,1,opt,name=tenant_code,json=tenantCode,proto3" json:"tenant_code,omitempty"`
 	Username       string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
 	Nickname       string                 `protobuf:"bytes,3,opt,name=nickname,proto3" json:"nickname,omitempty"`
 	Avatar         string                 `protobuf:"bytes,4,opt,name=avatar,proto3" json:"avatar,omitempty"`
@@ -119,11 +119,11 @@ func (*CreateUserReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_admin_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *CreateUserReq) GetTenantId() int64 {
+func (x *CreateUserReq) GetTenantCode() string {
 	if x != nil {
-		return x.TenantId
+		return x.TenantCode
 	}
-	return 0
+	return ""
 }
 
 func (x *CreateUserReq) GetUsername() string {
@@ -561,7 +561,7 @@ func (x *ListUsersReq) GetRegisterTimeEnd() int64 {
 type ListUsersResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	List          []*UserListItem        `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
+	List          []*UserItem            `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -603,7 +603,7 @@ func (x *ListUsersResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *ListUsersResp) GetList() []*UserListItem {
+func (x *ListUsersResp) GetList() []*UserItem {
 	if x != nil {
 		return x.List
 	}
@@ -1511,9 +1511,9 @@ func (x *ListUserIdentitiesReq) GetIdType() IdType {
 }
 
 type ListUserIdentitiesResp struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
-	Base          *common.RespBase        `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	List          []*UserIdentityListItem `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	List          []*UserIdentityItem    `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1555,7 +1555,7 @@ func (x *ListUserIdentitiesResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *ListUserIdentitiesResp) GetList() []*UserIdentityListItem {
+func (x *ListUserIdentitiesResp) GetList() []*UserIdentityItem {
 	if x != nil {
 		return x.List
 	}
@@ -1769,7 +1769,7 @@ func (x *ListUserBanksReq) GetStatus() BankStatus {
 type ListUserBanksResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	List          []*UserBankListItem    `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
+	List          []*UserBankItem        `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1811,7 +1811,7 @@ func (x *ListUserBanksResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *ListUserBanksResp) GetList() []*UserBankListItem {
+func (x *ListUserBanksResp) GetList() []*UserBankItem {
 	if x != nil {
 		return x.List
 	}
@@ -1873,7 +1873,7 @@ func (x *GetUserBankReq) GetId() int64 {
 type GetUserBankResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Bank          *UserBank              `protobuf:"bytes,2,opt,name=bank,proto3" json:"bank,omitempty"`
+	Bank          *UserBankItem          `protobuf:"bytes,2,opt,name=bank,proto3" json:"bank,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1915,7 +1915,7 @@ func (x *GetUserBankResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *GetUserBankResp) GetBank() *UserBank {
+func (x *GetUserBankResp) GetBank() *UserBankItem {
 	if x != nil {
 		return x.Bank
 	}
@@ -1932,7 +1932,7 @@ type AddUserBankReq struct {
 	AccountNo     string                 `protobuf:"bytes,6,opt,name=account_no,json=accountNo,proto3" json:"account_no,omitempty"`
 	BranchName    string                 `protobuf:"bytes,7,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`
 	CountryCode   string                 `protobuf:"bytes,8,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
-	IsDefault     bool                   `protobuf:"varint,9,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
+	IsDefault     int64                  `protobuf:"varint,9,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
 	Status        BankStatus             `protobuf:"varint,10,opt,name=status,proto3,enum=user.BankStatus" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2024,11 +2024,11 @@ func (x *AddUserBankReq) GetCountryCode() string {
 	return ""
 }
 
-func (x *AddUserBankReq) GetIsDefault() bool {
+func (x *AddUserBankReq) GetIsDefault() int64 {
 	if x != nil {
 		return x.IsDefault
 	}
-	return false
+	return 0
 }
 
 func (x *AddUserBankReq) GetStatus() BankStatus {
@@ -2041,7 +2041,7 @@ func (x *AddUserBankReq) GetStatus() BankStatus {
 type AddUserBankResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Bank          *UserBank              `protobuf:"bytes,2,opt,name=bank,proto3" json:"bank,omitempty"`
+	Bank          *UserBankItem          `protobuf:"bytes,2,opt,name=bank,proto3" json:"bank,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2083,7 +2083,7 @@ func (x *AddUserBankResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *AddUserBankResp) GetBank() *UserBank {
+func (x *AddUserBankResp) GetBank() *UserBankItem {
 	if x != nil {
 		return x.Bank
 	}
@@ -2101,7 +2101,7 @@ type UpdateUserBankReq struct {
 	AccountNo     string                 `protobuf:"bytes,7,opt,name=account_no,json=accountNo,proto3" json:"account_no,omitempty"`
 	BranchName    string                 `protobuf:"bytes,8,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`
 	CountryCode   string                 `protobuf:"bytes,9,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
-	IsDefault     bool                   `protobuf:"varint,10,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
+	IsDefault     int64                  `protobuf:"varint,10,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
 	Status        BankStatus             `protobuf:"varint,11,opt,name=status,proto3,enum=user.BankStatus" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2200,11 +2200,11 @@ func (x *UpdateUserBankReq) GetCountryCode() string {
 	return ""
 }
 
-func (x *UpdateUserBankReq) GetIsDefault() bool {
+func (x *UpdateUserBankReq) GetIsDefault() int64 {
 	if x != nil {
 		return x.IsDefault
 	}
-	return false
+	return 0
 }
 
 func (x *UpdateUserBankReq) GetStatus() BankStatus {
@@ -2217,7 +2217,7 @@ func (x *UpdateUserBankReq) GetStatus() BankStatus {
 type UpdateUserBankResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Bank          *UserBank              `protobuf:"bytes,2,opt,name=bank,proto3" json:"bank,omitempty"`
+	Bank          *UserBankItem          `protobuf:"bytes,2,opt,name=bank,proto3" json:"bank,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2259,7 +2259,7 @@ func (x *UpdateUserBankResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *UpdateUserBankResp) GetBank() *UserBank {
+func (x *UpdateUserBankResp) GetBank() *UserBankItem {
 	if x != nil {
 		return x.Bank
 	}
@@ -2444,9 +2444,10 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	"\n" +
 	"\x1bproto/user/user_admin.proto\x12\x04user\x1a\x19proto/common/common.proto\x1a\x15proto/user/enum.proto\x1a\x16proto/user/model.proto\"7\n" +
 	"\x0fAdminCommonResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\x9b\x04\n" +
-	"\rCreateUserReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1a\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\x9f\x04\n" +
+	"\rCreateUserReq\x12\x1f\n" +
+	"\vtenant_code\x18\x01 \x01(\tR\n" +
+	"tenantCode\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x12\x1a\n" +
 	"\bnickname\x18\x03 \x01(\tR\bnickname\x12\x16\n" +
 	"\x06avatar\x18\x04 \x01(\tR\x06avatar\x12\x14\n" +
@@ -2493,10 +2494,10 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	"\vinvite_code\x18\x0e \x01(\tR\n" +
 	"inviteCode\x12.\n" +
 	"\x13register_time_start\x18\x0f \x01(\x03R\x11registerTimeStart\x12*\n" +
-	"\x11register_time_end\x18\x10 \x01(\x03R\x0fregisterTimeEnd\"]\n" +
+	"\x11register_time_end\x18\x10 \x01(\x03R\x0fregisterTimeEnd\"Y\n" +
 	"\rListUsersResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
-	"\x04list\x18\x02 \x03(\v2\x12.user.UserListItemR\x04list\"\xf5\x02\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\"\n" +
+	"\x04list\x18\x02 \x03(\v2\x0e.user.UserItemR\x04list\"\xf5\x02\n" +
 	"\x11UpdateUserBaseReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1a\n" +
@@ -2567,10 +2568,10 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	" \x01(\tR\brealName\x127\n" +
 	"\rverify_status\x18\v \x01(\x0e2\x12.user.VerifyStatusR\fverifyStatus\x12+\n" +
 	"\tkyc_level\x18\f \x01(\x0e2\x0e.user.KycLevelR\bkycLevel\x12%\n" +
-	"\aid_type\x18\r \x01(\x0e2\f.user.IdTypeR\x06idType\"n\n" +
+	"\aid_type\x18\r \x01(\x0e2\f.user.IdTypeR\x06idType\"j\n" +
 	"\x16ListUserIdentitiesResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
-	"\x04list\x18\x02 \x03(\v2\x1a.user.UserIdentityListItemR\x04list\"\xc8\x01\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
+	"\x04list\x18\x02 \x03(\v2\x16.user.UserIdentityItemR\x04list\"\xc8\x01\n" +
 	"\x15ReviewUserIdentityReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x127\n" +
@@ -2585,16 +2586,16 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x18\n" +
 	"\akeyword\x18\x04 \x01(\tR\akeyword\x12(\n" +
-	"\x06status\x18\x05 \x01(\x0e2\x10.user.BankStatusR\x06status\"e\n" +
+	"\x06status\x18\x05 \x01(\x0e2\x10.user.BankStatusR\x06status\"a\n" +
 	"\x11ListUserBanksResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
-	"\x04list\x18\x02 \x03(\v2\x16.user.UserBankListItemR\x04list\"=\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
+	"\x04list\x18\x02 \x03(\v2\x12.user.UserBankItemR\x04list\"=\n" +
 	"\x0eGetUserBankReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"[\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"_\n" +
 	"\x0fGetUserBankResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\"\n" +
-	"\x04bank\x18\x02 \x01(\v2\x0e.user.UserBankR\x04bank\"\xcf\x02\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
+	"\x04bank\x18\x02 \x01(\v2\x12.user.UserBankItemR\x04bank\"\xcf\x02\n" +
 	"\x0eAddUserBankReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1b\n" +
@@ -2607,12 +2608,12 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	"branchName\x12!\n" +
 	"\fcountry_code\x18\b \x01(\tR\vcountryCode\x12\x1d\n" +
 	"\n" +
-	"is_default\x18\t \x01(\bR\tisDefault\x12(\n" +
+	"is_default\x18\t \x01(\x03R\tisDefault\x12(\n" +
 	"\x06status\x18\n" +
-	" \x01(\x0e2\x10.user.BankStatusR\x06status\"[\n" +
+	" \x01(\x0e2\x10.user.BankStatusR\x06status\"_\n" +
 	"\x0fAddUserBankResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\"\n" +
-	"\x04bank\x18\x02 \x01(\v2\x0e.user.UserBankR\x04bank\"\xe2\x02\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
+	"\x04bank\x18\x02 \x01(\v2\x12.user.UserBankItemR\x04bank\"\xe2\x02\n" +
 	"\x11UpdateUserBankReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\x12\x17\n" +
@@ -2627,11 +2628,11 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	"\fcountry_code\x18\t \x01(\tR\vcountryCode\x12\x1d\n" +
 	"\n" +
 	"is_default\x18\n" +
-	" \x01(\bR\tisDefault\x12(\n" +
-	"\x06status\x18\v \x01(\x0e2\x10.user.BankStatusR\x06status\"^\n" +
+	" \x01(\x03R\tisDefault\x12(\n" +
+	"\x06status\x18\v \x01(\x0e2\x10.user.BankStatusR\x06status\"b\n" +
 	"\x12UpdateUserBankResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\"\n" +
-	"\x04bank\x18\x02 \x01(\v2\x0e.user.UserBankR\x04bank\"@\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
+	"\x04bank\x18\x02 \x01(\v2\x12.user.UserBankItemR\x04bank\"@\n" +
 	"\x11DeleteUserBankReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\"p\n" +
@@ -2725,15 +2726,14 @@ var file_proto_user_user_admin_proto_goTypes = []any{
 	(*common.PageReq)(nil),          // 38: common.PageReq
 	(VerifyStatus)(0),               // 39: user.VerifyStatus
 	(KycLevel)(0),                   // 40: user.KycLevel
-	(*UserListItem)(nil),            // 41: user.UserListItem
+	(*UserItem)(nil),                // 41: user.UserItem
 	(RiskLevel)(0),                  // 42: user.RiskLevel
 	(*UserSecurity)(nil),            // 43: user.UserSecurity
 	(IdType)(0),                     // 44: user.IdType
-	(*UserIdentityListItem)(nil),    // 45: user.UserIdentityListItem
+	(*UserIdentityItem)(nil),        // 45: user.UserIdentityItem
 	(*UserIdentity)(nil),            // 46: user.UserIdentity
 	(BankStatus)(0),                 // 47: user.BankStatus
-	(*UserBankListItem)(nil),        // 48: user.UserBankListItem
-	(*UserBank)(nil),                // 49: user.UserBank
+	(*UserBankItem)(nil),            // 48: user.UserBankItem
 }
 var file_proto_user_user_admin_proto_depIdxs = []int32{
 	34, // 0: user.AdminCommonResp.base:type_name -> common.RespBase
@@ -2747,7 +2747,7 @@ var file_proto_user_user_admin_proto_depIdxs = []int32{
 	39, // 8: user.ListUsersReq.verify_status:type_name -> user.VerifyStatus
 	40, // 9: user.ListUsersReq.kyc_level:type_name -> user.KycLevel
 	34, // 10: user.ListUsersResp.base:type_name -> common.RespBase
-	41, // 11: user.ListUsersResp.list:type_name -> user.UserListItem
+	41, // 11: user.ListUsersResp.list:type_name -> user.UserItem
 	34, // 12: user.UpdateUserBaseResp.base:type_name -> common.RespBase
 	37, // 13: user.UpdateUserBaseResp.detail:type_name -> user.UserDetail
 	36, // 14: user.UpdateUserStatusReq.status:type_name -> user.UserStatus
@@ -2759,22 +2759,22 @@ var file_proto_user_user_admin_proto_depIdxs = []int32{
 	40, // 20: user.ListUserIdentitiesReq.kyc_level:type_name -> user.KycLevel
 	44, // 21: user.ListUserIdentitiesReq.id_type:type_name -> user.IdType
 	34, // 22: user.ListUserIdentitiesResp.base:type_name -> common.RespBase
-	45, // 23: user.ListUserIdentitiesResp.list:type_name -> user.UserIdentityListItem
+	45, // 23: user.ListUserIdentitiesResp.list:type_name -> user.UserIdentityItem
 	39, // 24: user.ReviewUserIdentityReq.verify_status:type_name -> user.VerifyStatus
 	34, // 25: user.ReviewUserIdentityResp.base:type_name -> common.RespBase
 	46, // 26: user.ReviewUserIdentityResp.identity:type_name -> user.UserIdentity
 	38, // 27: user.ListUserBanksReq.page:type_name -> common.PageReq
 	47, // 28: user.ListUserBanksReq.status:type_name -> user.BankStatus
 	34, // 29: user.ListUserBanksResp.base:type_name -> common.RespBase
-	48, // 30: user.ListUserBanksResp.list:type_name -> user.UserBankListItem
+	48, // 30: user.ListUserBanksResp.list:type_name -> user.UserBankItem
 	34, // 31: user.GetUserBankResp.base:type_name -> common.RespBase
-	49, // 32: user.GetUserBankResp.bank:type_name -> user.UserBank
+	48, // 32: user.GetUserBankResp.bank:type_name -> user.UserBankItem
 	47, // 33: user.AddUserBankReq.status:type_name -> user.BankStatus
 	34, // 34: user.AddUserBankResp.base:type_name -> common.RespBase
-	49, // 35: user.AddUserBankResp.bank:type_name -> user.UserBank
+	48, // 35: user.AddUserBankResp.bank:type_name -> user.UserBankItem
 	47, // 36: user.UpdateUserBankReq.status:type_name -> user.BankStatus
 	34, // 37: user.UpdateUserBankResp.base:type_name -> common.RespBase
-	49, // 38: user.UpdateUserBankResp.bank:type_name -> user.UserBank
+	48, // 38: user.UpdateUserBankResp.bank:type_name -> user.UserBankItem
 	47, // 39: user.UpdateUserBankStatusReq.status:type_name -> user.BankStatus
 	1,  // 40: user.UserAdmin.CreateUser:input_type -> user.CreateUserReq
 	3,  // 41: user.UserAdmin.GetUserDetail:input_type -> user.GetUserDetailReq

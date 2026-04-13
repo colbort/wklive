@@ -4,11 +4,14 @@ import (
 	"context"
 	"fmt"
 	"wklive/common/sqlutil"
+
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type UserSecurityModel interface {
 	tUserSecurityModel
 	FindPage(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TUserSecurity, int64, error)
+	DeleteByUserId(ctx context.Context, userId int64) error
 }
 
 func (m *defaultTUserSecurityModel) FindPage(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TUserSecurity, int64, error) {
@@ -61,4 +64,25 @@ func (m *defaultTUserSecurityModel) FindPage(ctx context.Context, tenantId int64
 	}
 
 	return list, total, nil
+}
+
+func (m *defaultTUserSecurityModel) DeleteByUserId(ctx context.Context, userId int64) error {
+	var resp TUserSecurity
+
+	query := fmt.Sprintf(`
+		SELECT %s
+		FROM %s
+		WHERE user_id = ?
+		LIMIT 1
+	`, tUserSecurityRows, m.table)
+
+	err := m.QueryRowNoCacheCtx(ctx, &resp, query, userId)
+	if err != nil {
+		if err == sqlx.ErrNotFound {
+			return nil
+		}
+		return err
+	}
+
+	return m.Delete(ctx, resp.Id)
 }

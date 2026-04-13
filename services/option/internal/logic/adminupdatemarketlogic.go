@@ -11,6 +11,8 @@ import (
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
+
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type AdminUpdateMarketLogic struct {
@@ -167,33 +169,40 @@ func (l *AdminUpdateMarketLogic) AdminUpdateMarket(in *option.UpdateMarketReq) (
 	}
 	market.UpdateTimes = now
 
-	if market.Id == 0 {
-		result, err := l.svcCtx.OptionMarketModel.Insert(l.ctx, market)
-		if err != nil {
-			return nil, err
-		}
-		market.Id, _ = result.LastInsertId()
-	} else if err := l.svcCtx.OptionMarketModel.Update(l.ctx, market); err != nil {
-		return nil, err
-	}
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		marketModel := models.NewTOptionMarketModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionMarketModel)
+		snapshotModel := models.NewTOptionMarketSnapshotModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionMarketSnapshotModel)
 
-	_, err = l.svcCtx.OptionMarketSnapshotModel.Insert(l.ctx, &models.TOptionMarketSnapshot{
-		TenantId:         contract.TenantId,
-		ContractId:       in.ContractId,
-		UnderlyingPrice:  market.UnderlyingPrice,
-		MarkPrice:        market.MarkPrice,
-		LastPrice:        market.LastPrice,
-		BidPrice:         market.BidPrice,
-		AskPrice:         market.AskPrice,
-		TheoreticalPrice: market.TheoreticalPrice,
-		Iv:               market.Iv,
-		Delta:            market.Delta,
-		Gamma:            market.Gamma,
-		Theta:            market.Theta,
-		Vega:             market.Vega,
-		Rho:              market.Rho,
-		SnapshotTime:     market.SnapshotTime,
-		CreateTimes:      now,
+		if market.Id == 0 {
+			result, err := marketModel.Insert(ctx, market)
+			if err != nil {
+				return err
+			}
+			market.Id, _ = result.LastInsertId()
+		} else if err := marketModel.Update(ctx, market); err != nil {
+			return err
+		}
+
+		_, err := snapshotModel.Insert(ctx, &models.TOptionMarketSnapshot{
+			TenantId:         contract.TenantId,
+			ContractId:       in.ContractId,
+			UnderlyingPrice:  market.UnderlyingPrice,
+			MarkPrice:        market.MarkPrice,
+			LastPrice:        market.LastPrice,
+			BidPrice:         market.BidPrice,
+			AskPrice:         market.AskPrice,
+			TheoreticalPrice: market.TheoreticalPrice,
+			Iv:               market.Iv,
+			Delta:            market.Delta,
+			Gamma:            market.Gamma,
+			Theta:            market.Theta,
+			Vega:             market.Vega,
+			Rho:              market.Rho,
+			SnapshotTime:     market.SnapshotTime,
+			CreateTimes:      now,
+		})
+		return err
 	})
 	if err != nil {
 		return nil, err

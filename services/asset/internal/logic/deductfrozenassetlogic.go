@@ -9,8 +9,10 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/svc"
+	"wklive/services/asset/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type DeductFrozenAssetLogic struct {
@@ -48,35 +50,47 @@ func (l *DeductFrozenAssetLogic) DeductFrozenAsset(in *asset.DeductFrozenAssetRe
 		return nil, fmt.Errorf("deduct amount exceeds remaining frozen amount")
 	}
 
-	before, err := l.svcCtx.UserAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(l.ctx, freeze.TenantId, freeze.UserId, freeze.WalletType, freeze.Coin)
-	if err != nil {
-		return nil, err
-	}
-
 	ts := utils.NowMillis()
-	ok, err := l.svcCtx.UserAssetModel.DeductFromFrozen(l.ctx, freeze.TenantId, freeze.UserId, freeze.WalletType, freeze.Coin, amount, ts)
-	if err != nil {
-		return nil, err
-	}
-	if !ok {
-		return nil, fmt.Errorf("deduct from frozen failed")
-	}
+	var after *models.TUserAsset
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		userAssetModel := models.NewTUserAssetModel(conn, l.svcCtx.Config.CacheRedis).(models.UserAssetModel)
+		assetFreezeModel := models.NewTAssetFreezeModel(conn, l.svcCtx.Config.CacheRedis).(models.AssetFreezeModel)
+		assetFlowModel := models.NewTAssetFlowModel(conn, l.svcCtx.Config.CacheRedis).(models.AssetFlowModel)
 
-	ok, err = l.svcCtx.AssetFreezeModel.UpdateDeduct(l.ctx, freeze.FreezeNo, amount, ts)
-	if err != nil {
-		return nil, err
-	}
-	if !ok {
-		return nil, fmt.Errorf("freeze record deduct update failed")
-	}
+		before, err := userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, freeze.TenantId, freeze.UserId, freeze.WalletType, freeze.Coin)
+		if err != nil {
+			return err
+		}
 
-	after, err := l.svcCtx.UserAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(l.ctx, freeze.TenantId, freeze.UserId, freeze.WalletType, freeze.Coin)
-	if err != nil {
-		return nil, err
-	}
+		ok, err := userAssetModel.DeductFromFrozen(ctx, freeze.TenantId, freeze.UserId, freeze.WalletType, freeze.Coin, amount, ts)
+		if err != nil {
+			return err
+		}
+		if !ok {
+			return fmt.Errorf("deduct from frozen failed")
+		}
 
-	flow := buildAssetFlowRecord(l.svcCtx, l.ctx, freeze.TenantId, freeze.UserId, freeze.WalletType, freeze.Coin, assetSceneType(in.SceneType), assetBizType(in.BizType), assetSceneType(in.SceneType), in.BizId, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_FREEZE_DEDUCT, amount, before, after, in.Remark, ts)
-	if _, err := l.svcCtx.AssetFlowModel.Insert(l.ctx, flow); err != nil {
+		ok, err = assetFreezeModel.UpdateDeduct(ctx, freeze.FreezeNo, amount, ts)
+		if err != nil {
+			return err
+		}
+		if !ok {
+			return fmt.Errorf("freeze record deduct update failed")
+		}
+
+		after, err = userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, freeze.TenantId, freeze.UserId, freeze.WalletType, freeze.Coin)
+		if err != nil {
+			return err
+		}
+
+		flow := buildAssetFlowRecord(l.svcCtx, ctx, freeze.TenantId, freeze.UserId, freeze.WalletType, freeze.Coin, assetSceneType(in.SceneType), assetBizType(in.BizType), assetSceneType(in.SceneType), in.BizId, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_FREEZE_DEDUCT, amount, before, after, in.Remark, ts)
+		if _, err := assetFlowModel.Insert(ctx, flow); err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
 		return nil, err
 	}
 

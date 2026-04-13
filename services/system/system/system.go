@@ -82,10 +82,10 @@ type (
 	SysRoleListReq         = system.SysRoleListReq
 	SysRoleListResp        = system.SysRoleListResp
 	SysRoleUpdateReq       = system.SysRoleUpdateReq
-	SysTenantByCodeReq     = system.SysTenantByCodeReq
-	SysTenantByCodeResp    = system.SysTenantByCodeResp
 	SysTenantCreateReq     = system.SysTenantCreateReq
 	SysTenantDeleteReq     = system.SysTenantDeleteReq
+	SysTenantDetailReq     = system.SysTenantDetailReq
+	SysTenantDetailResp    = system.SysTenantDetailResp
 	SysTenantItem          = system.SysTenantItem
 	SysTenantListReq       = system.SysTenantListReq
 	SysTenantListResp      = system.SysTenantListResp
@@ -204,7 +204,7 @@ type (
 		// 获取租户列表
 		SysTenantList(ctx context.Context, in *SysTenantListReq, opts ...grpc.CallOption) (*SysTenantListResp, error)
 		// 根据 code 获取租户
-		SysTenantByCode(ctx context.Context, in *SysTenantByCodeReq, opts ...grpc.CallOption) (*SysTenantByCodeResp, error)
+		SysTenantDetail(ctx context.Context, in *SysTenantDetailReq, opts ...grpc.CallOption) (*SysTenantDetailResp, error)
 	}
 
 	defaultSystem struct {
@@ -525,7 +525,7 @@ func (m *defaultSystem) SysTenantList(ctx context.Context, in *SysTenantListReq,
 }
 
 // 根据 code 获取租户
-func (m *defaultSystem) SysTenantByCode(ctx context.Context, in *SysTenantByCodeReq, opts ...grpc.CallOption) (*SysTenantByCodeResp, error) {
+func (m *defaultSystem) SysTenantDetail(ctx context.Context, in *SysTenantDetailReq, opts ...grpc.CallOption) (*SysTenantDetailResp, error) {
 	client := system.NewSystemClient(m.cli.Conn())
-	return client.SysTenantByCode(ctx, in, opts...)
+	return client.SysTenantDetail(ctx, in, opts...)
 }

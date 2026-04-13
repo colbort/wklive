@@ -11,6 +11,7 @@ import (
 
 type ServiceContext struct {
 	Config                    config.Config
+	DB                        sqlx.SqlConn
 	OptionContractModel       models.OptionContractModel
 	OptionMarketModel         models.OptionMarketModel
 	OptionMarketSnapshotModel models.OptionMarketSnapshotModel
@@ -29,6 +30,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	assetCli := zrpc.MustNewClient(c.AssetRpc)
 	return &ServiceContext{
 		Config:                    c,
+		DB:                        conn,
 		OptionContractModel:       models.NewTOptionContractModel(conn, c.CacheRedis).(models.OptionContractModel),
 		OptionMarketModel:         models.NewTOptionMarketModel(conn, c.CacheRedis).(models.OptionMarketModel),
 		OptionMarketSnapshotModel: models.NewTOptionMarketSnapshotModel(conn, c.CacheRedis).(models.OptionMarketSnapshotModel),

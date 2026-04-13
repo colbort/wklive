@@ -48,14 +48,14 @@ func (l *GetSecurityLogic) GetSecurity() (resp *types.GetSecurityResp, err error
 			Id:              result.Security.Id,
 			TenantId:        result.Security.TenantId,
 			UserId:          result.Security.UserId,
-			HasPayPassword:  result.Security.HasPayPassword,
+			HasPayPassword:  result.Security.PayPasswordHash != "",
 			GoogleEnabled:   result.Security.GoogleEnabled,
 			LoginErrorCount: result.Security.LoginErrorCount,
 			PayErrorCount:   result.Security.PayErrorCount,
 			LockUntil:       result.Security.LockUntil,
 			RiskLevel:       int64(result.Security.RiskLevel.Number()),
-			CreateTimes:      result.Security.CreateTimes,
-			UpdateTimes:      result.Security.UpdateTimes,
+			CreateTimes:     result.Security.CreateTimes,
+			UpdateTimes:     result.Security.UpdateTimes,
 		},
 	}, nil
 }

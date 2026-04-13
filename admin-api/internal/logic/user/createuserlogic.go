@@ -29,7 +29,7 @@ func NewCreateUserLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Create
 
 func (l *CreateUserLogic) CreateUser(req *types.CreateUserReq) (resp *types.CreateUserResp, err error) {
 	result, err := l.svcCtx.UserCli.CreateUser(l.ctx, &user.CreateUserReq{
-		TenantId:       req.TenantId,
+		TenantCode:     req.TenantCode,
 		Username:       req.Username,
 		Nickname:       req.Nickname,
 		Avatar:         req.Avatar,

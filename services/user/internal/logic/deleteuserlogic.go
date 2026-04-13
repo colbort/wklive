@@ -10,6 +10,7 @@ import (
 	"wklive/services/user/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type DeleteUserLogic struct {
@@ -37,7 +38,24 @@ func (l *DeleteUserLogic) DeleteUser(in *user.DeleteUserReq) (*user.AdminCommonR
 			Base: helper.FailWithCode(401),
 		}, nil
 	}
-	err = l.svcCtx.UserModel.Delete(l.ctx, tuser.Id)
+
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		userIdentityModel := models.NewTUserIdentityModel(conn, l.svcCtx.Config.CacheRedis).(models.UserIdentityModel)
+		userSecurityModel := models.NewTUserSecurityModel(conn, l.svcCtx.Config.CacheRedis).(models.UserSecurityModel)
+		userModel := models.NewTUserModel(conn, l.svcCtx.Config.CacheRedis).(models.UserModel)
+
+		if err := userIdentityModel.DeleteByUserId(ctx, tuser.Id); err != nil {
+			return err
+		}
+		if err := userSecurityModel.DeleteByUserId(ctx, tuser.Id); err != nil {
+			return err
+		}
+		if err := userModel.Delete(ctx, tuser.Id); err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}

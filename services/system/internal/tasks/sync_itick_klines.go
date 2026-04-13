@@ -35,7 +35,7 @@ func syncItickKlines(ctx context.Context, job *models.SysJob) error {
 		return err
 	}
 	if result.Base.Code != 0 {
-		err = fmt.Errorf("sync klines failed, code: %d, message: %s", result.Base.Code, result.Base.Msg,)
+		err = fmt.Errorf("sync klines failed, code: %d, message: %s", result.Base.Code, result.Base.Msg)
 	}
 	return nil
 }

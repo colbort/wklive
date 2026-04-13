@@ -13,6 +13,7 @@ import (
 
 type ServiceContext struct {
 	Config        config.Config
+	DB            sqlx.SqlConn
 	Cron          *cronx.CronManager
 	UserModel     models.UserModel
 	RoleModel     models.RoleModel
@@ -39,6 +40,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	cron.StartScheduler()
 	return &ServiceContext{
 		Config:        c,
+		DB:            conn,
 		Cron:          cron,
 		UserModel:     models.NewSysUserModel(conn, c.CacheRedis).(models.UserModel),
 		RoleModel:     models.NewSysRoleModel(conn, c.CacheRedis).(models.RoleModel),

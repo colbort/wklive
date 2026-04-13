@@ -13,6 +13,7 @@ import (
 	"wklive/services/user/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type UpdateProfileLogic struct {
@@ -62,12 +63,6 @@ func (l *UpdateProfileLogic) UpdateProfile(in *user.UpdateProfileReq) (*user.Upd
 	}
 	tuser.UpdateTimes = now
 
-	err = l.svcCtx.UserModel.Update(l.ctx, tuser)
-	if err != nil {
-		return nil, err
-	}
-
-	// 更新或创建身份信息
 	identity, err := l.svcCtx.UserIdentityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, in.UserId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
@@ -77,11 +72,8 @@ func (l *UpdateProfileLogic) UpdateProfile(in *user.UpdateProfileReq) (*user.Upd
 		if in.Gender != 0 {
 			identity.Gender = int64(in.Gender)
 		}
-		if in.Birthday != "" {
-			identity.Birthday = sql.NullTime{
-				Time:  parseDate(in.Birthday),
-				Valid: true,
-			}
+		if in.Birthday != 0 {
+			identity.Birthday = in.Birthday
 		}
 		if in.CountryCode != "" {
 			identity.CountryCode = sql.NullString{String: in.CountryCode, Valid: true}
@@ -97,10 +89,25 @@ func (l *UpdateProfileLogic) UpdateProfile(in *user.UpdateProfileReq) (*user.Upd
 		}
 		identity.UpdateTimes = now
 
-		err = l.svcCtx.UserIdentityModel.Update(l.ctx, identity)
-		if err != nil {
-			return nil, err
+	}
+
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		userModel := models.NewTUserModel(conn, l.svcCtx.Config.CacheRedis).(models.UserModel)
+		userIdentityModel := models.NewTUserIdentityModel(conn, l.svcCtx.Config.CacheRedis).(models.UserIdentityModel)
+
+		if err := userModel.Update(ctx, tuser); err != nil {
+			return err
 		}
+		if identity != nil {
+			if err := userIdentityModel.Update(ctx, identity); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
 	}
 
 	l.Logger.Infof("用户 %d 更新资料成功", in.UserId)
@@ -149,7 +156,7 @@ func (l *UpdateProfileLogic) buildUpdateProfileResp(tuser *models.TUser, _ *mode
 			Email:         identity.Email.String,
 			RealName:      identity.RealName.String,
 			Gender:        user.Gender(identity.Gender),
-			Birthday:      identity.Birthday.Time.Format("2006-01-02"),
+			Birthday:      identity.Birthday,
 			CountryCode:   identity.CountryCode.String,
 			Province:      identity.Province.String,
 			City:          identity.City.String,
@@ -170,14 +177,15 @@ func (l *UpdateProfileLogic) buildUpdateProfileResp(tuser *models.TUser, _ *mode
 		}
 	}
 
-	userSecurityProto := &user.UserSecurity{}
+	userSecurity := &user.UserSecurity{}
 	if security != nil {
-		userSecurityProto = &user.UserSecurity{
+		userSecurity = &user.UserSecurity{
 			Id:              security.Id,
 			TenantId:        security.TenantId,
 			UserId:          security.UserId,
-			HasPayPassword:  security.PayPasswordHash.Valid && security.PayPasswordHash.String != "",
-			GoogleEnabled:   security.GoogleEnabled == 1,
+			PayPasswordHash: security.PayPasswordHash.String,
+			GoogleSecret:    security.GoogleSecret.String,
+			GoogleEnabled:   security.GoogleEnabled,
 			LoginErrorCount: security.LoginErrorCount,
 			PayErrorCount:   security.PayErrorCount,
 			LockUntil:       security.LockUntil,
@@ -192,7 +200,7 @@ func (l *UpdateProfileLogic) buildUpdateProfileResp(tuser *models.TUser, _ *mode
 		Profile: &user.UserProfile{
 			Base:     userBase,
 			Identity: userIdentityProto,
-			Security: userSecurityProto,
+			Security: userSecurity,
 		},
 	}, nil
 }

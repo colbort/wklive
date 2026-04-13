@@ -12,6 +12,8 @@ import (
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
+
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type AppPlaceOrderLogic struct {
@@ -103,11 +105,21 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 		CreateTimes:      now,
 		UpdateTimes:      now,
 	}
-	result, err := l.svcCtx.OptionOrderModel.Insert(l.ctx, order)
-	if err != nil {
-		return nil, err
-	}
-	id, err := result.LastInsertId()
+	var id int64
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		orderModel := models.NewTOptionOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionOrderModel)
+		result, err := orderModel.Insert(ctx, order)
+		if err != nil {
+			return err
+		}
+		id, err = result.LastInsertId()
+		if err != nil {
+			return err
+		}
+		order.Id = id
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -129,7 +141,9 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 			order.Status = int64(option.OrderStatus_ORDER_STATUS_REJECTED)
 			order.CancelReason = err.Error()
 			order.UpdateTimes = time.Now().Unix()
-			_ = l.svcCtx.OptionOrderModel.Update(l.ctx, order)
+			if updateErr := l.svcCtx.OptionOrderModel.Update(l.ctx, order); updateErr != nil {
+				l.Errorf("update rejected option order failed, orderNo=%s err=%v", order.OrderNo, updateErr)
+			}
 			return nil, err
 		}
 		if resp == nil || resp.Base == nil || resp.Base.Code != 0 {
@@ -138,7 +152,9 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 				order.CancelReason = resp.Base.Msg
 			}
 			order.UpdateTimes = time.Now().Unix()
-			_ = l.svcCtx.OptionOrderModel.Update(l.ctx, order)
+			if updateErr := l.svcCtx.OptionOrderModel.Update(l.ctx, order); updateErr != nil {
+				l.Errorf("update rejected option order failed, orderNo=%s err=%v", order.OrderNo, updateErr)
+			}
 			if resp != nil && resp.Base != nil {
 				return &option.AppPlaceOrderResp{Base: resp.Base, OrderNo: order.OrderNo, OrderId: id}, nil
 			}

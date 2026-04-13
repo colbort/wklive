@@ -14,6 +14,7 @@ import (
 	"wklive/services/staking/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type CreateOrderLogic struct {
@@ -144,15 +145,36 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.AppCreateOrderReq) (*staking.
 	product.StakedAmount += amount
 	product.UpdateUserId = in.Uid
 	product.UpdateTimes = now
-	if err := l.svcCtx.StakeProductModel.Update(l.ctx, product); err != nil {
-		return nil, err
-	}
-	result, err := l.svcCtx.StakeOrderModel.Insert(l.ctx, order)
+	var id int64
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		productModel := models.NewTStakeProductModel(conn, l.svcCtx.Config.CacheRedis).(models.StakeProductModel)
+		orderModel := models.NewTStakeOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.StakeOrderModel)
+
+		if err := productModel.Update(ctx, product); err != nil {
+			return err
+		}
+		result, err := orderModel.Insert(ctx, order)
+		if err != nil {
+			return err
+		}
+		id, err = result.LastInsertId()
+		return err
+	})
 	if err != nil {
-		return nil, err
-	}
-	id, err := result.LastInsertId()
-	if err != nil {
+		_, unlockErr := l.svcCtx.AssetClient.UnlockAssetByBizNo(l.ctx, &asset.UnlockAssetByBizNoReq{
+			TenantId:      in.TenantId,
+			TargetBizType: asset.BizType_BIZ_TYPE_STAKING,
+			TargetBizNo:   orderNo,
+			Amount:        conv.FloatString(amount),
+			BizType:       asset.BizType_BIZ_TYPE_STAKING,
+			SceneType:     asset.SceneType_SCENE_TYPE_STAKING_RELEASE,
+			BizNo:         orderNo + "_rollback",
+			Remark:        "staking create order rollback",
+		})
+		if unlockErr != nil {
+			l.Errorf("rollback staking lock asset failed, orderNo=%s err=%v", orderNo, unlockErr)
+		}
 		return nil, err
 	}
 

@@ -48,11 +48,19 @@ func freezeOrderAsset(
 
 	extValue, err := marshalOrderAssetExt(orderAssetExt{FreezeNo: resp.FreezeNo})
 	if err != nil {
+		compensateErr := unfreezeOrderAsset(svcCtx, ctx, order, resp.FreezeNo, frozenAmount, "trade place order compensate unfreeze")
+		if compensateErr != nil {
+			return "", fmt.Errorf("marshal order asset ext failed: %w; unfreeze compensation failed: %v", err, compensateErr)
+		}
 		return "", err
 	}
 	order.BizExt = sql.NullString{String: extValue, Valid: extValue != ""}
 	order.UpdateTimes = utils.NowMillis()
 	if err := svcCtx.TradeOrderModel.Update(ctx, order); err != nil {
+		compensateErr := unfreezeOrderAsset(svcCtx, ctx, order, resp.FreezeNo, frozenAmount, "trade place order compensate unfreeze")
+		if compensateErr != nil {
+			return "", fmt.Errorf("update order after freeze failed: %w; unfreeze compensation failed: %v", err, compensateErr)
+		}
 		return "", err
 	}
 

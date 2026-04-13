@@ -65,7 +65,7 @@ export type MemberUserIdentity = {
   email: string
   realName: string
   gender: number
-  birthday: string
+  birthday: number
   countryCode: string
   province: string
   city: string
@@ -89,8 +89,9 @@ export type MemberUserSecurity = {
   id: number
   tenantId: number
   userId: number
-  hasPayPassword: boolean
-  googleEnabled: boolean
+  payPasswordHash: string
+  googleSecret: string
+  googleEnabled: number
   loginErrorCount: number
   payErrorCount: number
   lockUntil: number
@@ -107,10 +108,9 @@ export type MemberUserBank = {
   bankCode: string
   accountName: string
   accountNo: string
-  maskedAccountNo: string
   branchName: string
   countryCode: string
-  isDefault: boolean
+  isDefault: number
   status: number
   createTimes: number
   updateTimes: number
@@ -124,25 +124,37 @@ export type MemberUserDetail = {
 }
 
 export type MemberUserItem = {
-  userId: number
+  id: number
+  tenantId: number
   userNo: string
   username: string
   nickname: string
   avatar: string
-  phone: string
-  email: string
-  realName: string
+  passwordHash: string
+  registerType: number
   status: number
   memberLevel: number
-  kycLevel: number
-  verifyStatus: number
+  language: string
+  timezone: string
   inviteCode: string
+  signature: string
+  source: string
+  referrerUserId: number
   lastLoginIp: string
   lastLoginTime: number
+  registerIp: string
   registerTime: number
+  isGuest: number
+  isRecharge: number
+  deviceId: string
+  fingerprint: string
+  remark: string
+  deleted: number
+  createTimes: number
+  updateTimes: number
 }
 
-export type MemberUserIdentityItem = {
+export type UserIdentityItem = {
   userId: number
   userNo: string
   username: string
@@ -161,19 +173,18 @@ export type MemberUserIdentityItem = {
 
 export type MemberUserBankItem = {
   id: number
+  tenantId: number
   userId: number
-  userNo: string
-  username: string
   bankName: string
   bankCode: string
   accountName: string
   accountNo: string
-  maskedAccountNo: string
   branchName: string
   countryCode: string
-  isDefault: boolean
+  isDefault: number
   status: number
   createTimes: number
+  updateTimes: number
 }
 
 export type ListMemberUsersReq = {
@@ -197,7 +208,7 @@ export type ListMemberUsersReq = {
 }
 
 export type CreateMemberUserReq = {
-  tenantId: number
+  tenantCode: string
   username: string
   nickname?: string
   avatar?: string
@@ -289,7 +300,7 @@ export type AddUserBankReq = {
   accountNo: string
   branchName?: string
   countryCode?: string
-  isDefault: boolean
+  isDefault: number
   status: number
 }
 

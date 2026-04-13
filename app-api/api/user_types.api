@@ -48,7 +48,7 @@ type UserIdentity {
 	email         string `json:"email,optional"`
 	realName      string `json:"realName,optional"`
 	gender        int64  `json:"gender,optional"`
-	birthday      string `json:"birthday,optional"`
+	birthday      int64 `json:"birthday,optional"`
 	countryCode   string `json:"countryCode,optional"`
 	province      string `json:"province,optional"`
 	city          string `json:"city,optional"`
@@ -73,7 +73,7 @@ type UserSecurity {
 	tenantId        int64 `json:"tenantId"`
 	userId          int64 `json:"userId"`
 	hasPayPassword  bool  `json:"hasPayPassword"`
-	googleEnabled   bool  `json:"googleEnabled"`
+	googleEnabled   int64  `json:"googleEnabled"`
 	loginErrorCount int64 `json:"loginErrorCount"`
 	payErrorCount   int64 `json:"payErrorCount"`
 	lockUntil       int64 `json:"lockUntil,optional"`
@@ -90,10 +90,9 @@ type UserBank {
 	bankCode        string `json:"bankCode,optional"`
 	accountName     string `json:"accountName"`
 	accountNo       string `json:"accountNo"`
-	maskedAccountNo string `json:"maskedAccountNo,optional"`
 	branchName      string `json:"branchName,optional"`
 	countryCode     string `json:"countryCode,optional"`
-	isDefault       bool   `json:"isDefault"`
+	isDefault       int64   `json:"isDefault"`
 	status          int64  `json:"status"`
 	createTimes     int64  `json:"createTimes,optional"`
 	updateTimes     int64  `json:"updateTimes,optional"`
@@ -149,20 +148,17 @@ type UserIdentityListItem {
 }
 
 type UserBankListItem {
-	id              int64  `json:"id"`
-	tenantId        int64  `json:"tenantId"`
-	userId          int64  `json:"userId"`
-	userNo          string `json:"userNo"`
-	username        string `json:"username"`
-	bankName        string `json:"bankName"`
-	bankCode        string `json:"bankCode,optional"`
-	accountName     string `json:"accountName"`
-	accountNo       string `json:"accountNo"`
-	maskedAccountNo string `json:"maskedAccountNo,optional"`
-	branchName      string `json:"branchName,optional"`
-	countryCode     string `json:"countryCode,optional"`
-	isDefault       bool   `json:"isDefault"`
-	status          int64  `json:"status"`
-	createTimes     int64  `json:"createTimes,optional"`
+	id          int64  `json:"id"`
+	tenantId    int64  `json:"tenantId"`
+	userId      int64  `json:"userId"`
+	bankName    string `json:"bankName"`
+	bankCode    string `json:"bankCode,optional"`
+	accountName string `json:"accountName"`
+	accountNo   string `json:"accountNo"`
+	branchName  string `json:"branchName,optional"`
+	countryCode string `json:"countryCode,optional"`
+	isDefault   int64  `json:"isDefault"`
+	status      int64  `json:"status"`
+	createTimes int64  `json:"createTimes,optional"`
+	updateTimes int64  `json:"updateTimes,optional"`
 }
-

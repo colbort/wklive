@@ -69,8 +69,8 @@ func (l *UpdateUserBaseLogic) UpdateUserBase(req *types.UpdateUserBaseReq) (resp
 			RegisterIp:     result.Detail.Base.RegisterIp,
 			LastLoginTime:  result.Detail.Base.LastLoginTime,
 			LastLoginIp:    result.Detail.Base.LastLoginIp,
-			CreateTimes:     result.Detail.Base.CreateTimes,
-			UpdateTimes:     result.Detail.Base.UpdateTimes,
+			CreateTimes:    result.Detail.Base.CreateTimes,
+			UpdateTimes:    result.Detail.Base.UpdateTimes,
 		},
 		Identity: types.UserIdentity{
 			Id:            result.Detail.Identity.Id,
@@ -96,28 +96,29 @@ func (l *UpdateUserBaseLogic) UpdateUserBase(req *types.UpdateUserBaseReq) (resp
 			SubmitTime:    result.Detail.Identity.SubmitTime,
 			VerifyTime:    result.Detail.Identity.VerifyTime,
 			VerifyBy:      result.Detail.Identity.VerifyBy,
-			CreateTimes:    result.Detail.Identity.CreateTimes,
-			UpdateTimes:    result.Detail.Identity.UpdateTimes,
+			CreateTimes:   result.Detail.Identity.CreateTimes,
+			UpdateTimes:   result.Detail.Identity.UpdateTimes,
 		},
 		Security: types.UserSecurity{
 			Id:              result.Detail.Security.Id,
 			TenantId:        result.Detail.Security.TenantId,
 			UserId:          result.Detail.Security.UserId,
-			HasPayPassword:  result.Detail.Security.HasPayPassword,
+			PayPasswordHash: result.Detail.Security.PayPasswordHash,
+			GoogleSecret:    result.Detail.Security.GoogleSecret,
 			GoogleEnabled:   result.Detail.Security.GoogleEnabled,
 			LoginErrorCount: result.Detail.Security.LoginErrorCount,
 			PayErrorCount:   result.Detail.Security.PayErrorCount,
 			LockUntil:       result.Detail.Security.LockUntil,
 			RiskLevel:       int64(result.Detail.Security.RiskLevel),
-			CreateTimes:      result.Detail.Security.CreateTimes,
-			UpdateTimes:      result.Detail.Security.UpdateTimes,
+			CreateTimes:     result.Detail.Security.CreateTimes,
+			UpdateTimes:     result.Detail.Security.UpdateTimes,
 		},
 	}
 
 	// Map banks
-	detail.Banks = make([]types.UserBank, len(result.Detail.Banks))
+	detail.Banks = make([]types.UserBankItem, len(result.Detail.Banks))
 	for i, bank := range result.Detail.Banks {
-		detail.Banks[i] = types.UserBank{
+		detail.Banks[i] = types.UserBankItem{
 			Id:          bank.Id,
 			TenantId:    bank.TenantId,
 			UserId:      bank.UserId,
@@ -129,8 +130,8 @@ func (l *UpdateUserBaseLogic) UpdateUserBase(req *types.UpdateUserBaseReq) (resp
 			CountryCode: bank.CountryCode,
 			IsDefault:   bank.IsDefault,
 			Status:      int64(bank.Status),
-			CreateTimes:  bank.CreateTimes,
-			UpdateTimes:  bank.UpdateTimes,
+			CreateTimes: bank.CreateTimes,
+			UpdateTimes: bank.UpdateTimes,
 		}
 	}
 

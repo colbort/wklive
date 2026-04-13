@@ -1,7 +1,15 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { memberUserService, type CreateMemberUserReq, type MemberUserDetail, type MemberUserItem, type UpdateMemberUserBaseReq } from '@/services'
+import { ArrowDown } from '@element-plus/icons-vue'
+import {
+  memberUserService,
+  tenantsService,
+  type CreateMemberUserReq,
+  type MemberUserDetail,
+  type MemberUserItem,
+  type UpdateMemberUserBaseReq,
+} from '@/services'
 import { formatDate } from '@/utils'
 
 const loading = ref(false)
@@ -9,9 +17,15 @@ const submitLoading = ref(false)
 const list = ref<MemberUserItem[]>([])
 const detailVisible = ref(false)
 const detail = ref<MemberUserDetail | null>(null)
+const detailActiveTab = ref('identity')
 const editVisible = ref(false)
 const pwdVisible = ref(false)
 const pwdMode = ref<'login' | 'pay'>('login')
+const tenantChecking = ref(false)
+const tenantChecked = ref(false)
+const tenantExists = ref(false)
+const tenantCheckName = ref('')
+const tenantCheckCode = ref('')
 
 const query = reactive({
   tenantId: undefined as number | undefined,
@@ -52,9 +66,120 @@ const pwdForm = reactive({
 })
 
 const isCreate = computed(() => !editForm.userId)
+const canSubmitCreate = computed(() => !isCreate.value || (tenantChecked.value && tenantExists.value))
 
 function checkCode(code: number) {
   return code === 0 || code === 200
+}
+
+function displayText(value: unknown) {
+  if (value === null || value === undefined || value === '') return '-'
+  return String(value)
+}
+
+function formatTimeValue(value?: number | null) {
+  if (!value) return '-'
+  return formatDate(value)
+}
+
+function getGenderLabel(value?: number) {
+  const map: Record<number, string> = {
+    0: '未知',
+    1: '男',
+    2: '女',
+  }
+  return map[value || 0] || String(value)
+}
+
+function getIdTypeLabel(value?: number) {
+  const map: Record<number, string> = {
+    0: '未提交',
+    1: '身份证',
+    2: '护照',
+    3: '驾驶证',
+  }
+  return map[value || 0] || String(value)
+}
+
+function getKycLevelLabel(value?: number) {
+  const map: Record<number, string> = {
+    0: '未认证',
+    1: '初级',
+    2: '高级',
+  }
+  return map[value || 0] || String(value)
+}
+
+function getVerifyStatusLabel(value?: number) {
+  const map: Record<number, string> = {
+    0: '未提交',
+    1: '审核中',
+    2: '通过',
+    3: '拒绝',
+  }
+  return map[value || 0] || String(value)
+}
+
+function getRiskLevelLabel(value?: number) {
+  const map: Record<number, string> = {
+    0: '正常',
+    1: '关注',
+    2: '高风险',
+  }
+  return map[value || 0] || String(value)
+}
+
+function getEnabledLabel(value?: number) {
+  return Number(value) === 1 ? '是' : '否'
+}
+
+function getBankStatusLabel(value?: number) {
+  const map: Record<number, string> = {
+    1: '正常',
+    2: '禁用',
+  }
+  return map[value || 0] || String(value)
+}
+
+function resetTenantCheck() {
+  tenantChecked.value = false
+  tenantExists.value = false
+  tenantCheckName.value = ''
+  tenantCheckCode.value = ''
+}
+
+async function verifyTenant() {
+  const tenantId = Number(editForm.tenantId || 0)
+  if (!tenantId) {
+    resetTenantCheck()
+    ElMessage.warning('请输入租户ID')
+    return false
+  }
+
+  tenantChecking.value = true
+  try {
+    const res = await tenantsService.detail({ tenantId })
+    if (!checkCode(res.code)) throw new Error(res.msg || '查询租户失败')
+
+    const tenant = res.data
+    tenantChecked.value = true
+    tenantExists.value = Boolean(tenant)
+    tenantCheckName.value = tenant?.tenantName || ''
+    tenantCheckCode.value = tenant?.tenantCode || ''
+
+    if (!tenant) {
+      ElMessage.warning('租户不存在，请确认租户ID')
+      return false
+    }
+    ElMessage.success(`已找到租户：${tenant.tenantName}`)
+    return true
+  } catch (error: any) {
+    resetTenantCheck()
+    ElMessage.error(error?.message || '查询租户失败')
+    return false
+  } finally {
+    tenantChecking.value = false
+  }
 }
 
 async function fetchList() {
@@ -90,16 +215,12 @@ function resetQuery() {
 }
 
 async function showDetail(row: MemberUserItem) {
-  const tenantId = Number(query.tenantId || 0)
-  if (!tenantId) {
-    ElMessage.warning('请先输入租户ID')
-    return
-  }
   loading.value = true
   try {
-    const res = await memberUserService.getDetail(row.userId, tenantId)
+    const res = await memberUserService.getDetail(row.id, row.tenantId)
     if (!checkCode(res.code)) throw new Error(res.msg || '加载详情失败')
     detail.value = (res.detail || res.data) as MemberUserDetail
+    detailActiveTab.value = 'identity'
     detailVisible.value = true
   } catch (error: any) {
     ElMessage.error(error?.message || '加载详情失败')
@@ -129,16 +250,17 @@ function openCreate() {
     referrerUserId: 0,
     remark: '',
   })
+  resetTenantCheck()
   editVisible.value = true
 }
 
 async function openEdit(row: MemberUserItem) {
-  const tenantId = Number(query.tenantId || 0)
+  const tenantId = Number(row.tenantId || query.tenantId || 0)
   if (!tenantId) {
     ElMessage.warning('请先输入租户ID')
     return
   }
-  const res = await memberUserService.getDetail(row.userId, tenantId)
+  const res = await memberUserService.getDetail(row.id, tenantId)
   if (!checkCode(res.code)) {
     ElMessage.error(res.msg || '加载详情失败')
     return
@@ -171,8 +293,12 @@ async function submitEdit() {
   submitLoading.value = true
   try {
     if (isCreate.value) {
+      if (!tenantChecked.value || !tenantExists.value) {
+        const verified = await verifyTenant()
+        if (!verified) return
+      }
       const payload: CreateMemberUserReq = {
-        tenantId: Number(editForm.tenantId),
+        tenantCode: tenantCheckCode.value,
         username: editForm.username,
         nickname: editForm.nickname || undefined,
         avatar: editForm.avatar || undefined,
@@ -230,8 +356,8 @@ async function submitEdit() {
 
 function openPassword(row: MemberUserItem, mode: 'login' | 'pay') {
   pwdMode.value = mode
-  pwdForm.userId = row.userId
-  pwdForm.tenantId = Number(query.tenantId || 0)
+  pwdForm.userId = row.id
+  pwdForm.tenantId = Number(row.tenantId || query.tenantId || 0)
   pwdForm.password = ''
   pwdVisible.value = true
 }
@@ -256,23 +382,18 @@ async function submitPassword() {
 }
 
 async function quickAction(row: MemberUserItem, action: 'unlock' | 'reset2fa' | 'delete') {
-  const tenantId = Number(query.tenantId || 0)
-  if (!tenantId) {
-    ElMessage.warning('请先输入租户ID')
-    return
-  }
   try {
     if (action === 'delete') {
       await ElMessageBox.confirm(`确认删除用户 ${row.username} ?`, '提示', { type: 'warning' })
-      const res = await memberUserService.delete(row.userId, tenantId)
+      const res = await memberUserService.delete(row.id, row.tenantId)
       if (!checkCode(res.code)) throw new Error(res.msg || '删除失败')
     }
     if (action === 'unlock') {
-      const res = await memberUserService.unlock(row.userId, tenantId)
+      const res = await memberUserService.unlock(row.id, row.tenantId)
       if (!checkCode(res.code)) throw new Error(res.msg || '解锁失败')
     }
     if (action === 'reset2fa') {
-      const res = await memberUserService.reset2fa(row.userId, tenantId)
+      const res = await memberUserService.reset2fa(row.id, row.tenantId)
       if (!checkCode(res.code)) throw new Error(res.msg || '重置失败')
     }
     ElMessage.success('操作成功')
@@ -284,7 +405,7 @@ async function quickAction(row: MemberUserItem, action: 'unlock' | 'reset2fa' | 
 }
 
 async function updateSimpleValue(row: MemberUserItem, field: 'status' | 'memberLevel' | 'riskLevel') {
-  const tenantId = Number(query.tenantId || 0)
+  const tenantId = Number(row.tenantId || query.tenantId || 0)
   if (!tenantId) {
     ElMessage.warning('请先输入租户ID')
     return
@@ -294,15 +415,15 @@ async function updateSimpleValue(row: MemberUserItem, field: 'status' | 'memberL
   const { value } = await ElMessageBox.prompt(`请输入新的${titleMap[field]}`, titleMap[field], { inputValue: String(current) })
   try {
     if (field === 'status') {
-      const res = await memberUserService.updateStatus(row.userId, { tenantId, status: Number(value) })
+      const res = await memberUserService.updateStatus(row.id, { tenantId, status: Number(value) })
       if (!checkCode(res.code)) throw new Error(res.msg || '更新失败')
     }
     if (field === 'memberLevel') {
-      const res = await memberUserService.updateLevel(row.userId, { tenantId, memberLevel: Number(value) })
+      const res = await memberUserService.updateLevel(row.id, { tenantId, memberLevel: Number(value) })
       if (!checkCode(res.code)) throw new Error(res.msg || '更新失败')
     }
     if (field === 'riskLevel') {
-      const res = await memberUserService.updateRiskLevel(row.userId, { tenantId, riskLevel: Number(value) })
+      const res = await memberUserService.updateRiskLevel(row.id, { tenantId, riskLevel: Number(value) })
       if (!checkCode(res.code)) throw new Error(res.msg || '更新失败')
     }
     ElMessage.success('更新成功')
@@ -365,7 +486,8 @@ onMounted(fetchList)
 
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="list" stripe>
-        <el-table-column prop="userId" label="用户ID" width="100" />
+        <el-table-column prop="id" label="用户ID" width="100" />
+        <el-table-column prop="tenantId" label="租户ID" width="100" />
         <el-table-column
           prop="userNo"
           label="用户编号"
@@ -373,54 +495,75 @@ onMounted(fetchList)
           show-overflow-tooltip
         />
         <el-table-column prop="username" label="用户名" min-width="140" />
-        <el-table-column prop="phone" label="手机号" min-width="140" />
         <el-table-column
-          prop="email"
-          label="邮箱"
-          min-width="180"
+          prop="nickname"
+          label="昵称"
+          min-width="140"
           show-overflow-tooltip
         />
-        <el-table-column prop="realName" label="实名" min-width="120" />
+        <el-table-column prop="registerType" label="注册方式" width="100" />
         <el-table-column prop="memberLevel" label="会员等级" width="100" />
         <el-table-column prop="status" label="状态" width="80" />
-        <el-table-column prop="verifyStatus" label="认证状态" width="100" />
+        <el-table-column prop="isGuest" label="游客" width="80" />
+        <el-table-column prop="isRecharge" label="已充值" width="90" />
+        <el-table-column
+          prop="lastLoginIp"
+          label="最后登录IP"
+          min-width="150"
+          show-overflow-tooltip
+        />
         <el-table-column label="注册时间" min-width="170">
           <template #default="{ row }">
             {{ formatDate(row.registerTime) }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="420" fixed="right">
+        <el-table-column label="操作" width="120" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">
-              详情
-            </el-button>
-            <el-button link type="primary" @click="openEdit(row)">
-              编辑
-            </el-button>
-            <el-button link type="warning" @click="updateSimpleValue(row, 'status')">
-              状态
-            </el-button>
-            <el-button link type="warning" @click="updateSimpleValue(row, 'memberLevel')">
-              等级
-            </el-button>
-            <el-button link type="warning" @click="updateSimpleValue(row, 'riskLevel')">
-              风控
-            </el-button>
-            <el-button link type="primary" @click="openPassword(row, 'login')">
-              登录密码
-            </el-button>
-            <el-button link type="primary" @click="openPassword(row, 'pay')">
-              支付密码
-            </el-button>
-            <el-button link type="success" @click="quickAction(row, 'unlock')">
-              解锁
-            </el-button>
-            <el-button link type="warning" @click="quickAction(row, 'reset2fa')">
-              重置2FA
-            </el-button>
-            <el-button link type="danger" @click="quickAction(row, 'delete')">
-              删除
-            </el-button>
+            <el-dropdown trigger="click">
+              <el-button size="small">
+                操作
+                <el-icon class="el-icon--right">
+                  <ArrowDown />
+                </el-icon>
+              </el-button>
+
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item @click="showDetail(row)">
+                    详情
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="openEdit(row)">
+                    编辑
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="updateSimpleValue(row, 'status')">
+                    修改状态
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="updateSimpleValue(row, 'memberLevel')">
+                    修改等级
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="updateSimpleValue(row, 'riskLevel')">
+                    修改风控
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="openPassword(row, 'login')">
+                    重置登录密码
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="openPassword(row, 'pay')">
+                    重置支付密码
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="quickAction(row, 'unlock')">
+                    解锁
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="quickAction(row, 'reset2fa')">
+                    重置2FA
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="quickAction(row, 'delete')">
+                    <span style="color: var(--el-color-danger)">
+                      删除
+                    </span>
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
@@ -429,7 +572,34 @@ onMounted(fetchList)
     <el-dialog v-model="editVisible" :title="isCreate ? '新增用户' : '编辑用户'" width="720px">
       <el-form label-width="110px">
         <el-form-item label="租户ID">
-          <el-input-number v-model="editForm.tenantId" :min="0" :precision="0" />
+          <div class="tenant-check-row">
+            <el-input-number
+              v-model="editForm.tenantId"
+              :min="0"
+              :precision="0"
+              @change="resetTenantCheck"
+            />
+            <el-button
+              v-if="isCreate"
+              type="primary"
+              plain
+              :loading="tenantChecking"
+              @click="verifyTenant"
+            >
+              查询租户
+            </el-button>
+          </div>
+          <div v-if="isCreate" class="tenant-check-tip">
+            <span v-if="tenantChecked && tenantExists" class="tenant-check-tip tenant-check-tip--success">
+              已验证租户：{{ tenantCheckName || editForm.tenantId }}
+            </span>
+            <span v-else-if="tenantChecked" class="tenant-check-tip tenant-check-tip--error">
+              租户不存在，请重新输入
+            </span>
+            <span v-else class="tenant-check-tip tenant-check-tip--muted">
+              输入租户ID后请先查询，验证通过才可提交
+            </span>
+          </div>
         </el-form-item>
         <el-form-item label="用户名">
           <el-input v-model="editForm.username" />
@@ -484,7 +654,7 @@ onMounted(fetchList)
         <el-button @click="editVisible = false">
           取消
         </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitEdit">
+        <el-button type="primary" :loading="submitLoading" :disabled="!canSubmitCreate" @click="submitEdit">
           确定
         </el-button>
       </template>
@@ -506,10 +676,190 @@ onMounted(fetchList)
       </template>
     </el-dialog>
 
-    <el-dialog v-model="detailVisible" title="用户详情" width="820px">
-      <pre class="detail-pre">{{ JSON.stringify(detail, null, 2) }}</pre>
+    <el-dialog v-model="detailVisible" title="用户详情" width="960px">
+      <div v-if="detail" class="detail-sections">
+        <el-tabs v-model="detailActiveTab">
+          <el-tab-pane label="实名信息" name="identity">
+            <el-card shadow="never">
+              <el-descriptions :column="2" border>
+                <el-descriptions-item label="手机号">
+                  {{ displayText(detail.identity.phone) }}
+                </el-descriptions-item>
+                <el-descriptions-item label="邮箱">
+                  {{ displayText(detail.identity.email) }}
+                </el-descriptions-item>
+                <el-descriptions-item label="真实姓名">
+                  {{ displayText(detail.identity.realName) }}
+                </el-descriptions-item>
+                <el-descriptions-item label="性别">
+                  {{ getGenderLabel(detail.identity.gender) }}
+                </el-descriptions-item>
+                <el-descriptions-item label="生日">
+                  {{ formatTimeValue(detail.identity.birthday) }}
+                </el-descriptions-item>
+                <el-descriptions-item label="国家/地区">
+                  {{ displayText(detail.identity.countryCode) }}
+                </el-descriptions-item>
+                <el-descriptions-item label="省/州">
+                  {{ displayText(detail.identity.province) }}
+                </el-descriptions-item>
+                <el-descriptions-item label="城市">
+                  {{ displayText(detail.identity.city) }}
+                </el-descriptions-item>
+                <el-descriptions-item label="地址" :span="2">
+                  {{ displayText(detail.identity.address) }}
+                </el-descriptions-item>
+                <el-descriptions-item label="证件类型">
+                  {{ getIdTypeLabel(detail.identity.idType) }}
+                </el-descriptions-item>
+                <el-descriptions-item label="证件号码">
+                  {{ displayText(detail.identity.idNo) }}
+                </el-descriptions-item>
+                <el-descriptions-item label="KYC等级">
+                  {{ getKycLevelLabel(detail.identity.kycLevel) }}
+                </el-descriptions-item>
+                <el-descriptions-item label="实名状态">
+                  {{ getVerifyStatusLabel(detail.identity.verifyStatus) }}
+                </el-descriptions-item>
+                <el-descriptions-item label="提交时间">
+                  {{ formatTimeValue(detail.identity.submitTime) }}
+                </el-descriptions-item>
+                <el-descriptions-item label="审核时间">
+                  {{ formatTimeValue(detail.identity.verifyTime) }}
+                </el-descriptions-item>
+                <el-descriptions-item label="审核人">
+                  {{ displayText(detail.identity.verifyBy) }}
+                </el-descriptions-item>
+                <el-descriptions-item label="驳回原因">
+                  {{ displayText(detail.identity.rejectReason) }}
+                </el-descriptions-item>
+                <el-descriptions-item label="证件正面">
+                  <a v-if="detail.identity.frontImage" :href="detail.identity.frontImage" target="_blank" rel="noreferrer">
+                    查看图片
+                  </a>
+                  <span v-else>-</span>
+                </el-descriptions-item>
+                <el-descriptions-item label="证件反面">
+                  <a v-if="detail.identity.backImage" :href="detail.identity.backImage" target="_blank" rel="noreferrer">
+                    查看图片
+                  </a>
+                  <span v-else>-</span>
+                </el-descriptions-item>
+                <el-descriptions-item label="手持证件照" :span="2">
+                  <a v-if="detail.identity.handheldImage" :href="detail.identity.handheldImage" target="_blank" rel="noreferrer">
+                    查看图片
+                  </a>
+                  <span v-else>-</span>
+                </el-descriptions-item>
+              </el-descriptions>
+            </el-card>
+          </el-tab-pane>
+
+          <el-tab-pane label="安全信息" name="security">
+            <el-card shadow="never">
+              <el-descriptions :column="2" border>
+                <el-descriptions-item label="支付密码哈希">
+                  {{ displayText(detail.security.payPasswordHash) }}
+                </el-descriptions-item>
+                <el-descriptions-item label="Google密钥">
+                  {{ displayText(detail.security.googleSecret) }}
+                </el-descriptions-item>
+                <el-descriptions-item label="Google 2FA已启用">
+                  {{ getEnabledLabel(detail.security.googleEnabled) }}
+                </el-descriptions-item>
+                <el-descriptions-item label="登录错误次数">
+                  {{ displayText(detail.security.loginErrorCount) }}
+                </el-descriptions-item>
+                <el-descriptions-item label="支付密码错误次数">
+                  {{ displayText(detail.security.payErrorCount) }}
+                </el-descriptions-item>
+                <el-descriptions-item label="锁定到期时间">
+                  {{ formatTimeValue(detail.security.lockUntil) }}
+                </el-descriptions-item>
+                <el-descriptions-item label="风控等级">
+                  {{ getRiskLevelLabel(detail.security.riskLevel) }}
+                </el-descriptions-item>
+                <el-descriptions-item label="创建时间">
+                  {{ formatTimeValue(detail.security.createTimes) }}
+                </el-descriptions-item>
+                <el-descriptions-item label="更新时间">
+                  {{ formatTimeValue(detail.security.updateTimes) }}
+                </el-descriptions-item>
+              </el-descriptions>
+            </el-card>
+          </el-tab-pane>
+
+          <el-tab-pane label="银行卡" name="banks">
+            <el-card shadow="never">
+              <el-table v-if="detail.banks?.length" :data="detail.banks" stripe>
+                <el-table-column prop="bankName" label="银行名称" min-width="140" />
+                <el-table-column prop="bankCode" label="银行编码" min-width="120" />
+                <el-table-column prop="accountName" label="开户名" min-width="140" />
+                <el-table-column label="银行卡号" min-width="180" show-overflow-tooltip>
+                  <template #default="{ row }">
+                    {{ displayText(row.maskedAccountNo || row.accountNo) }}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="branchName" label="支行名称" min-width="160" show-overflow-tooltip />
+                <el-table-column prop="countryCode" label="国家/地区" min-width="110" />
+                <el-table-column label="默认卡" width="90">
+                  <template #default="{ row }">
+                    {{ row.isDefault ? '是' : '否' }}
+                  </template>
+                </el-table-column>
+                <el-table-column label="状态" width="90">
+                  <template #default="{ row }">
+                    {{ getBankStatusLabel(row.status) }}
+                  </template>
+                </el-table-column>
+                <el-table-column label="创建时间" min-width="170">
+                  <template #default="{ row }">
+                    {{ formatTimeValue(row.createTimes) }}
+                  </template>
+                </el-table-column>
+              </el-table>
+              <el-empty v-else description="暂无银行卡" />
+            </el-card>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
     </el-dialog>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.tenant-check-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.tenant-check-tip {
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.tenant-check-tip--success {
+  color: #16a34a;
+}
+
+.tenant-check-tip--error {
+  color: #dc2626;
+}
+
+.tenant-check-tip--muted {
+  color: #909399;
+}
+
+.detail-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.detail-section-title {
+  font-weight: 600;
+}
+</style>

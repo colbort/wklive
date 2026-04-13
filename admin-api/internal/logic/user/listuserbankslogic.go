@@ -47,16 +47,18 @@ func (l *ListUserBanksLogic) ListUserBanks(req *types.ListUserBanksReq) (resp *t
 	for i, item := range result.List {
 		data[i] = types.UserBankItem{
 			Id:          item.Id,
+			TenantId:    item.TenantId,
 			UserId:      item.UserId,
-			UserNo:      item.UserNo,
-			Username:    item.Username,
 			BankName:    item.BankName,
 			BankCode:    item.BankCode,
 			AccountName: item.AccountName,
 			AccountNo:   item.AccountNo,
+			BranchName:  item.BranchName,
+			CountryCode: item.CountryCode,
 			IsDefault:   item.IsDefault,
 			Status:      int64(item.Status),
 			CreateTimes: item.CreateTimes,
+			UpdateTimes: item.UpdateTimes,
 		}
 	}
 

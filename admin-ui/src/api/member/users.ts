@@ -5,12 +5,12 @@ import type {
   ListMemberUserBanksReq,
   ListMemberUserIdentitiesReq,
   ListMemberUsersReq,
+  MemberUserItem,
   MemberUserBank,
   MemberUserBankItem,
   MemberUserDetail,
   MemberUserIdentity,
-  MemberUserIdentityItem,
-  MemberUserItem,
+  UserIdentityItem,
   MemberUserSecurity,
   MemberRespBase,
   ReviewUserIdentityReq,
@@ -75,8 +75,8 @@ export function apiMemberUserReset2fa(userId: number, data: { tenantId: number }
   return put(`/admin/member/users/${userId}/reset2fa`, data)
 }
 
-export function apiMemberUserIdentityList(params: ListMemberUserIdentitiesReq): Promise<MemberRespBase<MemberUserIdentityItem[]>> {
-  return get<MemberUserIdentityItem[]>('/admin/member/user-identities', params)
+export function apiMemberUserIdentityList(params: ListMemberUserIdentitiesReq): Promise<MemberRespBase<UserIdentityItem[]>> {
+  return get<UserIdentityItem[]>('/admin/member/user-identities', params)
 }
 
 export function apiMemberUserIdentityReview(userId: number, data: ReviewUserIdentityReq): Promise<MemberRespBase<MemberUserIdentity>> {

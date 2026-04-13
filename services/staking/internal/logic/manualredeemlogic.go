@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"errors"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -13,6 +14,7 @@ import (
 	"wklive/services/staking/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type ManualRedeemLogic struct {
@@ -136,32 +138,11 @@ func (l *ManualRedeemLogic) ManualRedeem(in *staking.AdminManualRedeemReq) (*sta
 		}
 	}
 
-	if _, err := l.svcCtx.StakeRedeemLogModel.Insert(l.ctx, &models.TStakeRedeemLog{
-		TenantId:     order.TenantId,
-		OrderId:      order.Id,
-		OrderNo:      order.OrderNo,
-		Uid:          order.Uid,
-		ProductId:    order.ProductId,
-		RedeemNo:     redeemNo,
-		RedeemType:   int64(in.RedeemType),
-		StakeAmount:  order.StakeAmount,
-		RedeemAmount: redeemAmount,
-		RewardAmount: rewardAmount,
-		FeeRate:      feeRate,
-		FeeAmount:    feeAmount,
-		RedeemStatus: int64(staking.RedeemStatus_REDEEM_STATUS_SUCCESS),
-		RedeemTimes:  now,
-		Remark:       in.Remark,
-		CreateUserId: in.OperatorUid,
-		UpdateUserId: in.OperatorUid,
-		CreateTimes:  now,
-		UpdateTimes:  now,
-	}); err != nil {
+	product, err := l.svcCtx.StakeProductModel.FindOne(l.ctx, order.ProductId)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
-
-	product, err := l.svcCtx.StakeProductModel.FindOne(l.ctx, order.ProductId)
-	if err == nil && product != nil {
+	if product != nil {
 		if product.StakedAmount >= order.StakeAmount {
 			product.StakedAmount -= order.StakeAmount
 		} else {
@@ -169,7 +150,6 @@ func (l *ManualRedeemLogic) ManualRedeem(in *staking.AdminManualRedeemReq) (*sta
 		}
 		product.UpdateUserId = in.OperatorUid
 		product.UpdateTimes = now
-		_ = l.svcCtx.StakeProductModel.Update(l.ctx, product)
 	}
 
 	order.RedeemAmount = redeemAmount
@@ -187,7 +167,43 @@ func (l *ManualRedeemLogic) ManualRedeem(in *staking.AdminManualRedeemReq) (*sta
 	order.Remark = in.Remark
 	order.UpdateUserId = in.OperatorUid
 	order.UpdateTimes = now
-	if err := l.svcCtx.StakeOrderModel.Update(l.ctx, order); err != nil {
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		redeemLogModel := models.NewTStakeRedeemLogModel(conn, l.svcCtx.Config.CacheRedis).(models.StakeRedeemLogModel)
+		productModel := models.NewTStakeProductModel(conn, l.svcCtx.Config.CacheRedis).(models.StakeProductModel)
+		orderModel := models.NewTStakeOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.StakeOrderModel)
+
+		if _, err := redeemLogModel.Insert(ctx, &models.TStakeRedeemLog{
+			TenantId:     order.TenantId,
+			OrderId:      order.Id,
+			OrderNo:      order.OrderNo,
+			Uid:          order.Uid,
+			ProductId:    order.ProductId,
+			RedeemNo:     redeemNo,
+			RedeemType:   int64(in.RedeemType),
+			StakeAmount:  order.StakeAmount,
+			RedeemAmount: redeemAmount,
+			RewardAmount: rewardAmount,
+			FeeRate:      feeRate,
+			FeeAmount:    feeAmount,
+			RedeemStatus: int64(staking.RedeemStatus_REDEEM_STATUS_SUCCESS),
+			RedeemTimes:  now,
+			Remark:       in.Remark,
+			CreateUserId: in.OperatorUid,
+			UpdateUserId: in.OperatorUid,
+			CreateTimes:  now,
+			UpdateTimes:  now,
+		}); err != nil {
+			return err
+		}
+		if product != nil {
+			if err := productModel.Update(ctx, product); err != nil {
+				return err
+			}
+		}
+		return orderModel.Update(ctx, order)
+	})
+	if err != nil {
 		return nil, err
 	}
 

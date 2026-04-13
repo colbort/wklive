@@ -70,7 +70,7 @@ const (
 	System_SysTenantUpdate_FullMethodName    = "/system.System/SysTenantUpdate"
 	System_SysTenantDelete_FullMethodName    = "/system.System/SysTenantDelete"
 	System_SysTenantList_FullMethodName      = "/system.System/SysTenantList"
-	System_SysTenantByCode_FullMethodName    = "/system.System/SysTenantByCode"
+	System_SysTenantDetail_FullMethodName    = "/system.System/SysTenantDetail"
 )
 
 // SystemClient is the client API for System service.
@@ -184,7 +184,7 @@ type SystemClient interface {
 	// 获取租户列表
 	SysTenantList(ctx context.Context, in *SysTenantListReq, opts ...grpc.CallOption) (*SysTenantListResp, error)
 	// 根据 code 获取租户
-	SysTenantByCode(ctx context.Context, in *SysTenantByCodeReq, opts ...grpc.CallOption) (*SysTenantByCodeResp, error)
+	SysTenantDetail(ctx context.Context, in *SysTenantDetailReq, opts ...grpc.CallOption) (*SysTenantDetailResp, error)
 }
 
 type systemClient struct {
@@ -705,10 +705,10 @@ func (c *systemClient) SysTenantList(ctx context.Context, in *SysTenantListReq, 
 	return out, nil
 }
 
-func (c *systemClient) SysTenantByCode(ctx context.Context, in *SysTenantByCodeReq, opts ...grpc.CallOption) (*SysTenantByCodeResp, error) {
+func (c *systemClient) SysTenantDetail(ctx context.Context, in *SysTenantDetailReq, opts ...grpc.CallOption) (*SysTenantDetailResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SysTenantByCodeResp)
-	err := c.cc.Invoke(ctx, System_SysTenantByCode_FullMethodName, in, out, cOpts...)
+	out := new(SysTenantDetailResp)
+	err := c.cc.Invoke(ctx, System_SysTenantDetail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -826,7 +826,7 @@ type SystemServer interface {
 	// 获取租户列表
 	SysTenantList(context.Context, *SysTenantListReq) (*SysTenantListResp, error)
 	// 根据 code 获取租户
-	SysTenantByCode(context.Context, *SysTenantByCodeReq) (*SysTenantByCodeResp, error)
+	SysTenantDetail(context.Context, *SysTenantDetailReq) (*SysTenantDetailResp, error)
 	mustEmbedUnimplementedSystemServer()
 }
 
@@ -990,8 +990,8 @@ func (UnimplementedSystemServer) SysTenantDelete(context.Context, *SysTenantDele
 func (UnimplementedSystemServer) SysTenantList(context.Context, *SysTenantListReq) (*SysTenantListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysTenantList not implemented")
 }
-func (UnimplementedSystemServer) SysTenantByCode(context.Context, *SysTenantByCodeReq) (*SysTenantByCodeResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method SysTenantByCode not implemented")
+func (UnimplementedSystemServer) SysTenantDetail(context.Context, *SysTenantDetailReq) (*SysTenantDetailResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method SysTenantDetail not implemented")
 }
 func (UnimplementedSystemServer) mustEmbedUnimplementedSystemServer() {}
 func (UnimplementedSystemServer) testEmbeddedByValue()                {}
@@ -1932,20 +1932,20 @@ func _System_SysTenantList_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysTenantByCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SysTenantByCodeReq)
+func _System_SysTenantDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SysTenantDetailReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SystemServer).SysTenantByCode(ctx, in)
+		return srv.(SystemServer).SysTenantDetail(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: System_SysTenantByCode_FullMethodName,
+		FullMethod: System_SysTenantDetail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysTenantByCode(ctx, req.(*SysTenantByCodeReq))
+		return srv.(SystemServer).SysTenantDetail(ctx, req.(*SysTenantDetailReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2162,8 +2162,8 @@ var System_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _System_SysTenantList_Handler,
 		},
 		{
-			MethodName: "SysTenantByCode",
-			Handler:    _System_SysTenantByCode_Handler,
+			MethodName: "SysTenantDetail",
+			Handler:    _System_SysTenantDetail_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

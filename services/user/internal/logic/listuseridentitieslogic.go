@@ -39,31 +39,34 @@ func (l *ListUserIdentitiesLogic) ListUserIdentities(in *user.ListUserIdentities
 		lastID = items[len(items)-1].Id
 	}
 
-	identityList := make([]*user.UserIdentityListItem, 0, len(items))
+	identityList := make([]*user.UserIdentityItem, 0, len(items))
 	for _, item := range items {
-		u, err := l.svcCtx.UserModel.FindOne(l.ctx, item.UserId)
-		if err != nil && !errors.Is(err, models.ErrNotFound) {
-			return nil, err
-		}
-		if u == nil || !matchIdentityFilters(in, item, u) {
-			continue
-		}
-
-		identityList = append(identityList, &user.UserIdentityListItem{
-			UserId:       item.UserId,
-			UserNo:       u.UserNo,
-			Username:     u.Username,
-			Phone:        item.Phone.String,
-			Email:        item.Email.String,
-			RealName:     item.RealName.String,
-			IdType:       user.IdType(item.IdType),
-			IdNo:         item.IdNo.String,
-			KycLevel:     user.KycLevel(item.KycLevel),
-			VerifyStatus: user.VerifyStatus(item.VerifyStatus),
-			RejectReason: item.RejectReason.String,
-			SubmitTime:   item.SubmitTime,
-			VerifyTime:   item.VerifyTime,
-			VerifyBy:     item.VerifyBy.Int64,
+		identityList = append(identityList, &user.UserIdentityItem{
+			Id:            item.Id,
+			TenantId:      item.TenantId,
+			UserId:        item.UserId,
+			Phone:         item.Phone.String,
+			Email:         item.Email.String,
+			RealName:      item.RealName.String,
+			Gender:        user.Gender(item.Gender),
+			Birthday:      item.Birthday,
+			CountryCode:   item.CountryCode.String,
+			Province:      item.Province.String,
+			City:          item.City.String,
+			Address:       item.Address.String,
+			IdType:        user.IdType(item.IdType),
+			IdNo:          item.IdNo.String,
+			FrontImage:    item.FrontImage.String,
+			BackImage:     item.BackImage.String,
+			HandheldImage: item.HandheldImage.String,
+			KycLevel:      user.KycLevel(item.KycLevel),
+			VerifyStatus:  user.VerifyStatus(item.VerifyStatus),
+			RejectReason:  item.RejectReason.String,
+			SubmitTime:    item.SubmitTime,
+			VerifyTime:    item.VerifyTime,
+			VerifyBy:      item.VerifyBy.Int64,
+			CreateTimes:   item.CreateTimes,
+			UpdateTimes:   item.UpdateTimes,
 		})
 	}
 

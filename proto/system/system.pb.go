@@ -5505,27 +5505,28 @@ func (x *SysTenantDeleteReq) GetId() int64 {
 	return 0
 }
 
-type SysTenantByCodeReq struct {
+type SysTenantDetailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantCode    string                 `protobuf:"bytes,1,opt,name=tenant_code,json=tenantCode,proto3" json:"tenant_code,omitempty"`
+	TenantId      *int64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`
+	TenantCode    *string                `protobuf:"bytes,2,opt,name=tenant_code,json=tenantCode,proto3,oneof" json:"tenant_code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SysTenantByCodeReq) Reset() {
-	*x = SysTenantByCodeReq{}
+func (x *SysTenantDetailReq) Reset() {
+	*x = SysTenantDetailReq{}
 	mi := &file_proto_system_system_proto_msgTypes[83]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SysTenantByCodeReq) String() string {
+func (x *SysTenantDetailReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SysTenantByCodeReq) ProtoMessage() {}
+func (*SysTenantDetailReq) ProtoMessage() {}
 
-func (x *SysTenantByCodeReq) ProtoReflect() protoreflect.Message {
+func (x *SysTenantDetailReq) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_system_system_proto_msgTypes[83]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -5537,19 +5538,26 @@ func (x *SysTenantByCodeReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SysTenantByCodeReq.ProtoReflect.Descriptor instead.
-func (*SysTenantByCodeReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use SysTenantDetailReq.ProtoReflect.Descriptor instead.
+func (*SysTenantDetailReq) Descriptor() ([]byte, []int) {
 	return file_proto_system_system_proto_rawDescGZIP(), []int{83}
 }
 
-func (x *SysTenantByCodeReq) GetTenantCode() string {
-	if x != nil {
-		return x.TenantCode
+func (x *SysTenantDetailReq) GetTenantId() int64 {
+	if x != nil && x.TenantId != nil {
+		return *x.TenantId
+	}
+	return 0
+}
+
+func (x *SysTenantDetailReq) GetTenantCode() string {
+	if x != nil && x.TenantCode != nil {
+		return *x.TenantCode
 	}
 	return ""
 }
 
-type SysTenantByCodeResp struct {
+type SysTenantDetailResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          *SysTenantItem         `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
@@ -5557,20 +5565,20 @@ type SysTenantByCodeResp struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SysTenantByCodeResp) Reset() {
-	*x = SysTenantByCodeResp{}
+func (x *SysTenantDetailResp) Reset() {
+	*x = SysTenantDetailResp{}
 	mi := &file_proto_system_system_proto_msgTypes[84]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SysTenantByCodeResp) String() string {
+func (x *SysTenantDetailResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SysTenantByCodeResp) ProtoMessage() {}
+func (*SysTenantDetailResp) ProtoMessage() {}
 
-func (x *SysTenantByCodeResp) ProtoReflect() protoreflect.Message {
+func (x *SysTenantDetailResp) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_system_system_proto_msgTypes[84]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -5582,19 +5590,19 @@ func (x *SysTenantByCodeResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SysTenantByCodeResp.ProtoReflect.Descriptor instead.
-func (*SysTenantByCodeResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use SysTenantDetailResp.ProtoReflect.Descriptor instead.
+func (*SysTenantDetailResp) Descriptor() ([]byte, []int) {
 	return file_proto_system_system_proto_rawDescGZIP(), []int{84}
 }
 
-func (x *SysTenantByCodeResp) GetBase() *common.RespBase {
+func (x *SysTenantDetailResp) GetBase() *common.RespBase {
 	if x != nil {
 		return x.Base
 	}
 	return nil
 }
 
-func (x *SysTenantByCodeResp) GetData() *SysTenantItem {
+func (x *SysTenantDetailResp) GetData() *SysTenantItem {
 	if x != nil {
 		return x.Data
 	}
@@ -6029,11 +6037,15 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\rcontact_phone\x18\x06 \x01(\tR\fcontactPhone\x12\x16\n" +
 	"\x06remark\x18\a \x01(\tR\x06remark\"$\n" +
 	"\x12SysTenantDeleteReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"5\n" +
-	"\x12SysTenantByCodeReq\x12\x1f\n" +
-	"\vtenant_code\x18\x01 \x01(\tR\n" +
-	"tenantCode\"f\n" +
-	"\x13SysTenantByCodeResp\x12$\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"z\n" +
+	"\x12SysTenantDetailReq\x12 \n" +
+	"\ttenant_id\x18\x01 \x01(\x03H\x00R\btenantId\x88\x01\x01\x12$\n" +
+	"\vtenant_code\x18\x02 \x01(\tH\x01R\n" +
+	"tenantCode\x88\x01\x01B\f\n" +
+	"\n" +
+	"_tenant_idB\x0e\n" +
+	"\f_tenant_code\"f\n" +
+	"\x13SysTenantDetailResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
 	"\x04data\x18\x02 \x01(\v2\x15.system.SysTenantItemR\x04data2\xc4\x1a\n" +
 	"\x06System\x12;\n" +
@@ -6090,7 +6102,7 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x0fSysTenantUpdate\x12\x1a.system.SysTenantUpdateReq\x1a\x10.system.RespBase\x12?\n" +
 	"\x0fSysTenantDelete\x12\x1a.system.SysTenantDeleteReq\x1a\x10.system.RespBase\x12D\n" +
 	"\rSysTenantList\x12\x18.system.SysTenantListReq\x1a\x19.system.SysTenantListResp\x12J\n" +
-	"\x0fSysTenantByCode\x12\x1a.system.SysTenantByCodeReq\x1a\x1b.system.SysTenantByCodeRespB\x1cZ\x1awklive/proto/system;systemb\x06proto3"
+	"\x0fSysTenantDetail\x12\x1a.system.SysTenantDetailReq\x1a\x1b.system.SysTenantDetailRespB\x1cZ\x1awklive/proto/system;systemb\x06proto3"
 
 var (
 	file_proto_system_system_proto_rawDescOnce sync.Once
@@ -6189,8 +6201,8 @@ var file_proto_system_system_proto_goTypes = []any{
 	(*SysTenantCreateReq)(nil),     // 80: system.SysTenantCreateReq
 	(*SysTenantUpdateReq)(nil),     // 81: system.SysTenantUpdateReq
 	(*SysTenantDeleteReq)(nil),     // 82: system.SysTenantDeleteReq
-	(*SysTenantByCodeReq)(nil),     // 83: system.SysTenantByCodeReq
-	(*SysTenantByCodeResp)(nil),    // 84: system.SysTenantByCodeResp
+	(*SysTenantDetailReq)(nil),     // 83: system.SysTenantDetailReq
+	(*SysTenantDetailResp)(nil),    // 84: system.SysTenantDetailResp
 	(*common.RespBase)(nil),        // 85: common.RespBase
 	(*common.PageReq)(nil),         // 86: common.PageReq
 	(SysConfigType)(0),             // 87: system.SysConfigType
@@ -6244,8 +6256,8 @@ var file_proto_system_system_proto_depIdxs = []int32{
 	86,  // 45: system.SysTenantListReq.page:type_name -> common.PageReq
 	85,  // 46: system.SysTenantListResp.base:type_name -> common.RespBase
 	77,  // 47: system.SysTenantListResp.data:type_name -> system.SysTenantItem
-	85,  // 48: system.SysTenantByCodeResp.base:type_name -> common.RespBase
-	77,  // 49: system.SysTenantByCodeResp.data:type_name -> system.SysTenantItem
+	85,  // 48: system.SysTenantDetailResp.base:type_name -> common.RespBase
+	77,  // 49: system.SysTenantDetailResp.data:type_name -> system.SysTenantItem
 	2,   // 50: system.System.AdminLogin:input_type -> system.AdminLoginReq
 	4,   // 51: system.System.GetProfile:input_type -> system.ProfileReq
 	8,   // 52: system.System.UpdateProfile:input_type -> system.UpdateProfileReq
@@ -6297,7 +6309,7 @@ var file_proto_system_system_proto_depIdxs = []int32{
 	81,  // 98: system.System.SysTenantUpdate:input_type -> system.SysTenantUpdateReq
 	82,  // 99: system.System.SysTenantDelete:input_type -> system.SysTenantDeleteReq
 	78,  // 100: system.System.SysTenantList:input_type -> system.SysTenantListReq
-	83,  // 101: system.System.SysTenantByCode:input_type -> system.SysTenantByCodeReq
+	83,  // 101: system.System.SysTenantDetail:input_type -> system.SysTenantDetailReq
 	3,   // 102: system.System.AdminLogin:output_type -> system.AdminLoginResp
 	7,   // 103: system.System.GetProfile:output_type -> system.ProfileResp
 	1,   // 104: system.System.UpdateProfile:output_type -> system.RespBase
@@ -6349,7 +6361,7 @@ var file_proto_system_system_proto_depIdxs = []int32{
 	1,   // 150: system.System.SysTenantUpdate:output_type -> system.RespBase
 	1,   // 151: system.System.SysTenantDelete:output_type -> system.RespBase
 	79,  // 152: system.System.SysTenantList:output_type -> system.SysTenantListResp
-	84,  // 153: system.System.SysTenantByCode:output_type -> system.SysTenantByCodeResp
+	84,  // 153: system.System.SysTenantDetail:output_type -> system.SysTenantDetailResp
 	102, // [102:154] is the sub-list for method output_type
 	50,  // [50:102] is the sub-list for method input_type
 	50,  // [50:50] is the sub-list for extension type_name
@@ -6365,6 +6377,7 @@ func file_proto_system_system_proto_init() {
 	file_proto_system_enum_proto_init()
 	file_proto_system_system_proto_msgTypes[8].OneofWrappers = []any{}
 	file_proto_system_system_proto_msgTypes[56].OneofWrappers = []any{}
+	file_proto_system_system_proto_msgTypes[83].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

@@ -5,6 +5,7 @@ import {
   apiSysTenantCreate,
   apiSysTenantUpdate,
   apiSysTenantDelete,
+  apiSysTenantDetail,
 } from '@/api/system/tenants'
 
 export type SysTenantCreateReq = {
@@ -52,6 +53,11 @@ export type SysTenantListReq = {
   limit?: number
 }
 
+export type SysTenantDetailReq = {
+  tenantId?: number
+  tenantCode?: string
+}
+
 // ========= 租户服务 =========
 export class TenantsService implements BaseService {
   async getList(params: SysTenantListReq): Promise<RespBase<SysTenantItem[]>> {
@@ -68,6 +74,10 @@ export class TenantsService implements BaseService {
 
   async delete(id: string | number): Promise<RespBase> {
     return apiSysTenantDelete(Number(id))
+  }
+
+  async detail(params: SysTenantDetailReq): Promise<RespBase<SysTenantItem>> {
+    return apiSysTenantDetail(params)
   }
 }
 

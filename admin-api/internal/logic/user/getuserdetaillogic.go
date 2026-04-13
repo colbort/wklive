@@ -92,7 +92,8 @@ func (l *GetUserDetailLogic) GetUserDetail(req *types.GetUserDetailReq) (resp *t
 			Id:              result.Detail.Security.Id,
 			TenantId:        result.Detail.Security.TenantId,
 			UserId:          result.Detail.Security.UserId,
-			HasPayPassword:  result.Detail.Security.HasPayPassword,
+			PayPasswordHash: result.Detail.Security.PayPasswordHash,
+			GoogleSecret:    result.Detail.Security.GoogleSecret,
 			GoogleEnabled:   result.Detail.Security.GoogleEnabled,
 			LoginErrorCount: result.Detail.Security.LoginErrorCount,
 			PayErrorCount:   result.Detail.Security.PayErrorCount,
@@ -104,9 +105,9 @@ func (l *GetUserDetailLogic) GetUserDetail(req *types.GetUserDetailReq) (resp *t
 	}
 
 	// Map banks
-	detail.Banks = make([]types.UserBank, len(result.Detail.Banks))
+	detail.Banks = make([]types.UserBankItem, len(result.Detail.Banks))
 	for i, bank := range result.Detail.Banks {
-		detail.Banks[i] = types.UserBank{
+		detail.Banks[i] = types.UserBankItem{
 			Id:          bank.Id,
 			TenantId:    bank.TenantId,
 			UserId:      bank.UserId,

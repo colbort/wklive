@@ -47,7 +47,7 @@ CREATE TABLE `t_user_identity` (
   `email` varchar(128) DEFAULT NULL COMMENT '邮箱',
   `real_name` varchar(64) DEFAULT NULL COMMENT '真实姓名',
   `gender` tinyint NOT NULL DEFAULT 0 COMMENT '性别：0未知 1男 2女',
-  `birthday` date DEFAULT NULL COMMENT '生日',
+  `birthday` bigint NOT NULL DEFAULT 0 COMMENT '生日',
   `country_code` varchar(16) DEFAULT NULL COMMENT '国家/地区代码',
   `province` varchar(64) DEFAULT NULL COMMENT '省/州',
   `city` varchar(64) DEFAULT NULL COMMENT '城市',

@@ -14,6 +14,7 @@ import (
 
 type ServiceContext struct {
 	Config               config.Config
+	DB                   sqlx.SqlConn
 	Redis                *redis.Redis
 	UserAssetModel       models.UserAssetModel
 	AssetLockModel       models.AssetLockModel
@@ -26,6 +27,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
 	return &ServiceContext{
 		Config:               c,
+		DB:                   conn,
 		Redis:                redis.MustNewRedis(c.Redis.RedisConf),
 		UserAssetModel:       models.NewTUserAssetModel(conn, c.CacheRedis).(models.UserAssetModel),
 		AssetLockModel:       models.NewTAssetLockModel(conn, c.CacheRedis).(models.AssetLockModel),

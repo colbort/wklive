@@ -53,7 +53,7 @@ type (
 		Email         sql.NullString `db:"email"`          // 邮箱
 		RealName      sql.NullString `db:"real_name"`      // 真实姓名
 		Gender        int64          `db:"gender"`         // 性别：0未知 1男 2女
-		Birthday      sql.NullTime   `db:"birthday"`       // 生日
+		Birthday      int64          `db:"birthday"`       // 生日
 		CountryCode   sql.NullString `db:"country_code"`   // 国家/地区代码
 		Province      sql.NullString `db:"province"`       // 省/州
 		City          sql.NullString `db:"city"`           // 城市

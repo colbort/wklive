@@ -166,7 +166,7 @@ func (m *defaultTUserModel) FindByTenantIdUserId(ctx context.Context, tenantId i
 		SELECT %s 
 		FROM %s 
 		WHERE tenant_id = ? 
-		AND user_id = ?
+		AND id = ?
 		ORDER BY id DESC
 		LIMIT 1
 	`, tUserRows, m.table)

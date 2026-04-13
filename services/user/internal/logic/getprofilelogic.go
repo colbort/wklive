@@ -3,12 +3,13 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type GetProfileLogic struct {
@@ -87,7 +88,7 @@ func (l *GetProfileLogic) GetProfile(in *user.GetProfileReq) (*user.GetProfileRe
 			Email:         userIdentity.Email.String,
 			RealName:      userIdentity.RealName.String,
 			Gender:        user.Gender(userIdentity.Gender),
-			Birthday:      userIdentity.Birthday.Time.Format("2006-01-02"),
+			Birthday:      userIdentity.Birthday,
 			CountryCode:   userIdentity.CountryCode.String,
 			Province:      userIdentity.Province.String,
 			City:          userIdentity.City.String,
@@ -114,8 +115,9 @@ func (l *GetProfileLogic) GetProfile(in *user.GetProfileReq) (*user.GetProfileRe
 			Id:              userSecurity.Id,
 			TenantId:        userSecurity.TenantId,
 			UserId:          userSecurity.UserId,
-			HasPayPassword:  userSecurity.PayPasswordHash.Valid && userSecurity.PayPasswordHash.String != "",
-			GoogleEnabled:   userSecurity.GoogleEnabled == 1,
+			PayPasswordHash: userSecurity.PayPasswordHash.String,
+			GoogleSecret:    userSecurity.GoogleSecret.String,
+			GoogleEnabled:   userSecurity.GoogleEnabled,
 			LoginErrorCount: userSecurity.LoginErrorCount,
 			PayErrorCount:   userSecurity.PayErrorCount,
 			LockUntil:       userSecurity.LockUntil,

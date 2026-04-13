@@ -12,6 +12,7 @@ import (
 	"wklive/services/user/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type UpdateUserBaseLogic struct {
@@ -75,12 +76,6 @@ func (l *UpdateUserBaseLogic) UpdateUserBase(in *user.UpdateUserBaseReq) (*user.
 
 	tuser.UpdateTimes = now
 
-	err = l.svcCtx.UserModel.Update(l.ctx, tuser)
-	if err != nil {
-		return nil, err
-	}
-
-	// 更新或创建身份信息
 	userIdentity, err := l.svcCtx.UserIdentityModel.FindOneByTenantIdUserId(l.ctx, in.TenantId, in.UserId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
@@ -95,10 +90,25 @@ func (l *UpdateUserBaseLogic) UpdateUserBase(in *user.UpdateUserBaseReq) (*user.
 		}
 		userIdentity.UpdateTimes = now
 
-		err = l.svcCtx.UserIdentityModel.Update(l.ctx, userIdentity)
-		if err != nil {
-			return nil, err
+	}
+
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		userModel := models.NewTUserModel(conn, l.svcCtx.Config.CacheRedis).(models.UserModel)
+		userIdentityModel := models.NewTUserIdentityModel(conn, l.svcCtx.Config.CacheRedis).(models.UserIdentityModel)
+
+		if err := userModel.Update(ctx, tuser); err != nil {
+			return err
 		}
+		if userIdentity != nil {
+			if err := userIdentityModel.Update(ctx, userIdentity); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
 	}
 
 	l.Logger.Infof("管理员更新用户 %d 基本信息成功", in.UserId)
@@ -151,7 +161,7 @@ func buildUserDetail(tuser *models.TUser, userIdentity *models.TUserIdentity, us
 			Email:         userIdentity.Email.String,
 			RealName:      userIdentity.RealName.String,
 			Gender:        user.Gender(userIdentity.Gender),
-			Birthday:      userIdentity.Birthday.Time.Format("2006-01-02"),
+			Birthday:      userIdentity.Birthday,
 			CountryCode:   userIdentity.CountryCode.String,
 			Province:      userIdentity.Province.String,
 			City:          userIdentity.City.String,
@@ -178,8 +188,9 @@ func buildUserDetail(tuser *models.TUser, userIdentity *models.TUserIdentity, us
 			Id:              userSecurity.Id,
 			TenantId:        userSecurity.TenantId,
 			UserId:          userSecurity.UserId,
-			HasPayPassword:  userSecurity.PayPasswordHash.Valid && userSecurity.PayPasswordHash.String != "",
-			GoogleEnabled:   userSecurity.GoogleEnabled == 1,
+			PayPasswordHash: userSecurity.PayPasswordHash.String,
+			GoogleSecret:    userSecurity.GoogleSecret.String,
+			GoogleEnabled:   userSecurity.GoogleEnabled,
 			LoginErrorCount: userSecurity.LoginErrorCount,
 			PayErrorCount:   userSecurity.PayErrorCount,
 			LockUntil:       userSecurity.LockUntil,
@@ -193,6 +204,6 @@ func buildUserDetail(tuser *models.TUser, userIdentity *models.TUserIdentity, us
 		Base:     userBase,
 		Identity: userIdentityProto,
 		Security: userSecurityProto,
-		Banks:    []*user.UserBank{},
+		Banks:    []*user.UserBankItem{},
 	}
 }

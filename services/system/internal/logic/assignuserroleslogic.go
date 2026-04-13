@@ -8,6 +8,8 @@ import (
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
+
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type AssignUserRolesLogic struct {
@@ -90,17 +92,25 @@ func (l *AssignUserRolesLogic) AssignUserRoles(in *system.AssignUserRolesReq) (*
 	}
 
 	// 4. 插入缺少的角色
-	for _, roleId := range roleIds {
-		if _, ok := currentMap[roleId]; ok {
-			continue
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		userRoleModel := models.NewSysUserRoleModel(conn, l.svcCtx.Config.CacheRedis).(models.UserRoleModel)
+
+		for _, roleId := range roleIds {
+			if _, ok := currentMap[roleId]; ok {
+				continue
+			}
+			if _, err := userRoleModel.Insert(ctx, &models.SysUserRole{
+				UserId: in.UserId,
+				RoleId: roleId,
+			}); err != nil {
+				return err
+			}
 		}
-		_, err := l.svcCtx.UserRoleModel.Insert(l.ctx, &models.SysUserRole{
-			UserId: in.UserId,
-			RoleId: roleId,
-		})
-		if err != nil {
-			return nil, err
-		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
 	}
 
 	return &system.RespBase{

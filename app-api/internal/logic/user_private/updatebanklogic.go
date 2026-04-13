@@ -52,5 +52,20 @@ func (l *UpdateBankLogic) UpdateBank(req *types.UpdateBankReq) (resp *types.Upda
 			Code: result.Base.Code,
 			Msg:  result.Base.Msg,
 		},
+		Bank: types.UserBank{
+			Id:          result.Bank.Id,
+			TenantId:    result.Bank.TenantId,
+			UserId:      result.Bank.UserId,
+			BankName:    result.Bank.BankName,
+			BankCode:    result.Bank.BankCode,
+			AccountName: result.Bank.AccountName,
+			AccountNo:   result.Bank.AccountNo,
+			BranchName:  result.Bank.BranchName,
+			CountryCode: result.Bank.CountryCode,
+			IsDefault:   result.Bank.IsDefault,
+			Status:      int64(result.Bank.Status),
+			CreateTimes: result.Bank.CreateTimes,
+			UpdateTimes: result.Bank.UpdateTimes,
+		},
 	}, nil
 }

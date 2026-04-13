@@ -32,8 +32,8 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 
 // 用户登录
 func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
-	tenant, err := l.svcCtx.SystemCli.SysTenantByCode(l.ctx, &system.SysTenantByCodeReq{
-		TenantCode: in.TenantCode,
+	tenant, err := l.svcCtx.SystemCli.SysTenantDetail(l.ctx, &system.SysTenantDetailReq{
+		TenantCode: &in.TenantCode,
 	})
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err

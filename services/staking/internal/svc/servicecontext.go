@@ -11,6 +11,7 @@ import (
 
 type ServiceContext struct {
 	Config              config.Config
+	DB                  sqlx.SqlConn
 	StakeOrderModel     models.StakeOrderModel
 	StakeProductModel   models.StakeProductModel
 	StakeRedeemLogModel models.StakeRedeemLogModel
@@ -23,6 +24,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	assetCli := zrpc.MustNewClient(c.AssetRpc)
 	return &ServiceContext{
 		Config:              c,
+		DB:                  conn,
 		StakeOrderModel:     models.NewTStakeOrderModel(conn, c.CacheRedis).(models.StakeOrderModel),
 		StakeProductModel:   models.NewTStakeProductModel(conn, c.CacheRedis).(models.StakeProductModel),
 		StakeRedeemLogModel: models.NewTStakeRedeemLogModel(conn, c.CacheRedis).(models.StakeRedeemLogModel),

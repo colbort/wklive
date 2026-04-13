@@ -3,12 +3,13 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type GetUserDetailLogic struct {
@@ -40,32 +41,35 @@ func (l *GetUserDetailLogic) GetUserDetail(in *user.GetUserDetailReq) (*user.Get
 	}
 
 	// 查询身份信息
-	userIdentity, _ := l.svcCtx.UserIdentityModel.FindOneByTenantIdUserId(l.ctx, in.TenantId, in.UserId)
-
+	userIdentity, err := l.svcCtx.UserIdentityModel.FindOneByTenantIdUserId(l.ctx, in.TenantId, in.UserId)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
 	// 查询安全信息
-	userSecurity, _ := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, in.TenantId, in.UserId)
-
+	userSecurity, err := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, in.TenantId, in.UserId)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
 	userBanks, _, err := l.svcCtx.UserBankModel.FindPage(l.ctx, in.TenantId, in.UserId, 0, 100)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
-	bankList := make([]*user.UserBank, 0, len(userBanks))
+	bankList := make([]*user.UserBankItem, 0, len(userBanks))
 	for _, bank := range userBanks {
-		bankList = append(bankList, &user.UserBank{
-			Id:              bank.Id,
-			TenantId:        bank.TenantId,
-			UserId:          bank.UserId,
-			BankName:        bank.BankName,
-			BankCode:        bank.BankCode.String,
-			AccountName:     bank.AccountName,
-			AccountNo:       bank.AccountNo,
-			MaskedAccountNo: maskAccountNo(bank.AccountNo),
-			BranchName:      bank.BranchName.String,
-			CountryCode:     bank.CountryCode.String,
-			IsDefault:       bank.IsDefault == 1,
-			Status:          user.BankStatus(bank.Status),
-			CreateTimes:     bank.CreateTimes,
-			UpdateTimes:     bank.UpdateTimes,
+		bankList = append(bankList, &user.UserBankItem{
+			Id:          bank.Id,
+			TenantId:    bank.TenantId,
+			UserId:      bank.UserId,
+			BankName:    bank.BankName,
+			BankCode:    bank.BankCode.String,
+			AccountName: bank.AccountName,
+			AccountNo:   bank.AccountNo,
+			BranchName:  bank.BranchName.String,
+			CountryCode: bank.CountryCode.String,
+			IsDefault:   bank.IsDefault,
+			Status:      user.BankStatus(bank.Status),
+			CreateTimes: bank.CreateTimes,
+			UpdateTimes: bank.UpdateTimes,
 		})
 	}
 
@@ -105,7 +109,7 @@ func (l *GetUserDetailLogic) GetUserDetail(in *user.GetUserDetailReq) (*user.Get
 			Email:         userIdentity.Email.String,
 			RealName:      userIdentity.RealName.String,
 			Gender:        user.Gender(userIdentity.Gender),
-			Birthday:      userIdentity.Birthday.Time.Format("2006-01-02"),
+			Birthday:      userIdentity.Birthday,
 			CountryCode:   userIdentity.CountryCode.String,
 			Province:      userIdentity.Province.String,
 			City:          userIdentity.City.String,
@@ -132,8 +136,9 @@ func (l *GetUserDetailLogic) GetUserDetail(in *user.GetUserDetailReq) (*user.Get
 			Id:              userSecurity.Id,
 			TenantId:        userSecurity.TenantId,
 			UserId:          userSecurity.UserId,
-			HasPayPassword:  userSecurity.PayPasswordHash.Valid && userSecurity.PayPasswordHash.String != "",
-			GoogleEnabled:   userSecurity.GoogleEnabled == 1,
+			PayPasswordHash: userSecurity.PayPasswordHash.String,
+			GoogleSecret:    userSecurity.GoogleSecret.String,
+			GoogleEnabled:   userSecurity.GoogleEnabled,
 			LoginErrorCount: userSecurity.LoginErrorCount,
 			PayErrorCount:   userSecurity.PayErrorCount,
 			LockUntil:       userSecurity.LockUntil,

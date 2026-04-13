@@ -12,13 +12,13 @@ type AddUserBankReq struct {
 	AccountNo   string `json:"accountNo"`
 	BranchName  string `json:"branchName,optional"`
 	CountryCode string `json:"countryCode,optional"`
-	IsDefault   bool   `json:"isDefault"`
+	IsDefault   int64  `json:"isDefault"`
 	Status      int64  `json:"status"`
 }
 
 type AddUserBankResp struct {
 	RespBase
-	Bank UserBank `json:"bank"`
+	Bank UserBankItem `json:"bank"`
 }
 
 type AdminAddAssetReq struct {
@@ -719,7 +719,7 @@ type CreateTenantProductReq struct {
 }
 
 type CreateUserReq struct {
-	TenantId       int64  `json:"tenantId"`
+	TenantCode     string `json:"tenantCode"`
 	Username       string `json:"username"`
 	Nickname       string `json:"nickname,optional"`
 	Avatar         string `json:"avatar,optional"`
@@ -1216,7 +1216,7 @@ type GetUserBankReq struct {
 
 type GetUserBankResp struct {
 	RespBase
-	Bank UserBank `json:"bank"`
+	Bank UserBankItem `json:"bank"`
 }
 
 type GetUserDetailReq struct {
@@ -3063,6 +3063,16 @@ type SysTenantDeleteReq struct {
 	Id int64 `path:"id"`
 }
 
+type SysTenantDetailReq struct {
+	TenantId   *int64  `form:"tenantId,optional"`
+	TenantCode *string `form:"tenantCode,optional"`
+}
+
+type SysTenantDetailResp struct {
+	RespBase
+	Data SysTenantItem `json:"data"`
+}
+
 type SysTenantItem struct {
 	Id           int64  `json:"id"`
 	TenantCode   string `json:"tenantCode"`
@@ -3628,13 +3638,13 @@ type UpdateUserBankReq struct {
 	AccountNo   string `json:"accountNo"`
 	BranchName  string `json:"branchName,optional"`
 	CountryCode string `json:"countryCode,optional"`
-	IsDefault   bool   `json:"isDefault"`
+	IsDefault   int64  `json:"isDefault"`
 	Status      int64  `json:"status"`
 }
 
 type UpdateUserBankResp struct {
 	RespBase
-	Bank UserBank `json:"bank"`
+	Bank UserBankItem `json:"bank"`
 }
 
 type UpdateUserBankStatusReq struct {
@@ -3687,38 +3697,20 @@ type UploadFileResp struct {
 	} `json:"data"`
 }
 
-type UserBank struct {
-	Id              int64  `json:"id"`
-	TenantId        int64  `json:"tenantId"`
-	UserId          int64  `json:"userId"`
-	BankName        string `json:"bankName"`
-	BankCode        string `json:"bankCode,optional"`
-	AccountName     string `json:"accountName"`
-	AccountNo       string `json:"accountNo"`
-	MaskedAccountNo string `json:"maskedAccountNo,optional"`
-	BranchName      string `json:"branchName,optional"`
-	CountryCode     string `json:"countryCode,optional"`
-	IsDefault       bool   `json:"isDefault"`
-	Status          int64  `json:"status"`
-	CreateTimes     int64  `json:"createTimes,optional"`
-	UpdateTimes     int64  `json:"updateTimes,optional"`
-}
-
 type UserBankItem struct {
-	Id              int64  `json:"id"`
-	UserId          int64  `json:"userId"`
-	UserNo          string `json:"userNo"`
-	Username        string `json:"username"`
-	BankName        string `json:"bankName"`
-	BankCode        string `json:"bankCode,optional"`
-	AccountName     string `json:"accountName"`
-	AccountNo       string `json:"accountNo"`
-	MaskedAccountNo string `json:"maskedAccountNo,optional"`
-	BranchName      string `json:"branchName,optional"`
-	CountryCode     string `json:"countryCode,optional"`
-	IsDefault       bool   `json:"isDefault"`
-	Status          int64  `json:"status"`
-	CreateTimes     int64  `json:"createTimes,optional"`
+	Id          int64  `json:"id"`          // 主键ID
+	TenantId    int64  `json:"tenantId"`    // 租户ID
+	UserId      int64  `json:"userId"`      // 用户ID
+	BankName    string `json:"bankName"`    // 银行名称
+	BankCode    string `json:"bankCode"`    // 银行编码
+	AccountName string `json:"accountName"` // 开户名
+	AccountNo   string `json:"accountNo"`   // 银行卡号
+	BranchName  string `json:"branchName"`  // 支行名称
+	CountryCode string `json:"countryCode"` // 国家地区
+	IsDefault   int64  `json:"isDefault"`   // 是否默认：0否 1是
+	Status      int64  `json:"status"`      // 状态：1正常 2禁用
+	CreateTimes int64  `json:"createTimes"` // 创建时间
+	UpdateTimes int64  `json:"updateTimes"` // 更新时间
 }
 
 type UserBase struct {
@@ -3748,10 +3740,10 @@ type UserBase struct {
 }
 
 type UserDetail struct {
-	Base     UserBase     `json:"base"`
-	Identity UserIdentity `json:"identity"`
-	Security UserSecurity `json:"security"`
-	Banks    []UserBank   `json:"banks"`
+	Base     UserBase       `json:"base"`
+	Identity UserIdentity   `json:"identity"`
+	Security UserSecurity   `json:"security"`
+	Banks    []UserBankItem `json:"banks"`
 }
 
 type UserIdentity struct {
@@ -3762,7 +3754,7 @@ type UserIdentity struct {
 	Email         string `json:"email,optional"`
 	RealName      string `json:"realName,optional"`
 	Gender        int64  `json:"gender,optional"`
-	Birthday      string `json:"birthday,optional"`
+	Birthday      int64  `json:"birthday,optional"`
 	CountryCode   string `json:"countryCode,optional"`
 	Province      string `json:"province,optional"`
 	City          string `json:"city,optional"`
@@ -3783,39 +3775,62 @@ type UserIdentity struct {
 }
 
 type UserIdentityItem struct {
-	UserId       int64  `json:"userId"`
-	UserNo       string `json:"userNo"`
-	Username     string `json:"username"`
-	Phone        string `json:"phone,optional"`
-	Email        string `json:"email,optional"`
-	RealName     string `json:"realName,optional"`
-	IdType       int64  `json:"idType,optional"`
-	IdNo         string `json:"idNo,optional"`
-	KycLevel     int64  `json:"kycLevel,optional"`
-	VerifyStatus int64  `json:"verifyStatus,optional"`
-	RejectReason string `json:"rejectReason,optional"`
-	SubmitTime   int64  `json:"submitTime,optional"`
-	VerifyTime   int64  `json:"verifyTime,optional"`
-	VerifyBy     int64  `json:"verifyBy,optional"`
+	Id            int64  `json:"id"`            // 主键ID
+	TenantId      int64  `json:"tenantId"`      // 租户ID
+	UserId        int64  `json:"userId"`        // 用户ID
+	Phone         string `json:"phone"`         // 手机号
+	Email         string `json:"email"`         // 邮箱
+	RealName      string `json:"realName"`      // 真实姓名
+	Gender        int64  `json:"gender"`        // 性别：0未知 1男 2女
+	Birthday      int64  `json:"birthday"`      // 生日
+	CountryCode   string `json:"countryCode"`   // 国家/地区代码
+	Province      string `json:"province"`      // 省/州
+	City          string `json:"city"`          // 城市
+	Address       string `json:"address"`       // 地址
+	IdType        int64  `json:"idType"`        // 证件类型：0未提交 1身份证 2护照 3驾驶证
+	IdNo          string `json:"idNo"`          // 证件号码
+	FrontImage    string `json:"frontImage"`    // 证件正面
+	BackImage     string `json:"backImage"`     // 证件反面
+	HandheldImage string `json:"handheldImage"` // 手持证件照
+	KycLevel      int64  `json:"kycLevel"`      // KYC等级：0未认证 1初级 2高级
+	VerifyStatus  int64  `json:"verifyStatus"`  // 实名状态：0未提交 1审核中 2通过 3拒绝
+	RejectReason  string `json:"rejectReason"`  // 驳回原因
+	SubmitTime    int64  `json:"submitTime"`    // 提交时间
+	VerifyTime    int64  `json:"verifyTime"`    // 审核时间
+	VerifyBy      int64  `json:"verifyBy"`      // 审核人
+	CreateTimes   int64  `json:"createTimes"`   // 创建时间
+	UpdateTimes   int64  `json:"updateTimes"`   // 更新时间
 }
 
 type UserItem struct {
-	UserId        int64  `json:"userId"`
-	UserNo        string `json:"userNo"`
-	Username      string `json:"username"`
-	Nickname      string `json:"nickname,optional"`
-	Avatar        string `json:"avatar,optional"`
-	Phone         string `json:"phone,optional"`
-	Email         string `json:"email,optional"`
-	RealName      string `json:"realName,optional"`
-	Status        int64  `json:"status"`
-	MemberLevel   int32  `json:"memberLevel"`
-	KycLevel      int64  `json:"kycLevel,optional"`
-	VerifyStatus  int64  `json:"verifyStatus,optional"`
-	InviteCode    string `json:"inviteCode,optional"`
-	LastLoginIp   string `json:"lastLoginIp,optional"`
-	LastLoginTime int64  `json:"lastLoginTime,optional"`
-	RegisterTime  int64  `json:"registerTime,optional"`
+	Id             int64  `json:"id"`             // 用户ID
+	TenantId       int64  `json:"tenantId"`       // 租户ID
+	UserNo         string `json:"userNo"`         // 用户编号
+	Username       string `json:"username"`       // 用户名
+	Nickname       string `json:"nickname"`       // 昵称
+	Avatar         string `json:"avatar"`         // 头像
+	PasswordHash   string `json:"passwordHash"`   // 登录密码哈希
+	RegisterType   int64  `json:"registerType"`   // 注册方式：1用户名 2手机号 3邮箱 4游客
+	Status         int64  `json:"status"`         // 状态：1正常 2禁用 3冻结 4注销
+	MemberLevel    int64  `json:"memberLevel"`    // 会员等级
+	Language       string `json:"language"`       // 语言
+	Timezone       string `json:"timezone"`       // 时区
+	InviteCode     string `json:"inviteCode"`     // 邀请码
+	Signature      string `json:"signature"`      // 个性签名
+	Source         string `json:"source"`         // 注册来源
+	ReferrerUserId int64  `json:"referrerUserId"` // 邀请人ID
+	LastLoginIp    string `json:"lastLoginIp"`    // 最后登录IP
+	LastLoginTime  int64  `json:"lastLoginTime"`  // 最后登录时间
+	RegisterIp     string `json:"registerIp"`     // 注册IP
+	RegisterTime   int64  `json:"registerTime"`   // 注册时间
+	IsGuest        int64  `json:"isGuest"`        // 是否游客；1正常用户，2游客
+	IsRecharge     int64  `json:"isRecharge"`     // 是否充值；0没有充值，1已充值
+	DeviceId       string `json:"deviceId"`       // 设备唯一ID
+	Fingerprint    string `json:"fingerprint"`    // 浏览器指纹
+	Remark         string `json:"remark"`         // 备注
+	Deleted        int64  `json:"deleted"`        // 是否删除：0否 1是
+	CreateTimes    int64  `json:"createTimes"`    // 创建时间
+	UpdateTimes    int64  `json:"updateTimes"`    // 更新时间
 }
 
 type UserRechargeStat struct {
@@ -3833,17 +3848,18 @@ type UserRechargeStat struct {
 }
 
 type UserSecurity struct {
-	Id              int64 `json:"id"`
-	TenantId        int64 `json:"tenantId"`
-	UserId          int64 `json:"userId"`
-	HasPayPassword  bool  `json:"hasPayPassword"`
-	GoogleEnabled   bool  `json:"googleEnabled"`
-	LoginErrorCount int64 `json:"loginErrorCount"`
-	PayErrorCount   int64 `json:"payErrorCount"`
-	LockUntil       int64 `json:"lockUntil,optional"`
-	RiskLevel       int64 `json:"riskLevel"`
-	CreateTimes     int64 `json:"createTimes,optional"`
-	UpdateTimes     int64 `json:"updateTimes,optional"`
+	Id              int64  `json:"id"`              // 主键ID
+	TenantId        int64  `json:"tenantId"`        // 租户ID
+	UserId          int64  `json:"userId"`          // 用户ID
+	PayPasswordHash string `json:"payPasswordHash"` // 支付密码哈希
+	GoogleSecret    string `json:"googleSecret"`    // Google密钥
+	GoogleEnabled   int64  `json:"googleEnabled"`   // Google2FA是否启用：0否 1是
+	LoginErrorCount int64  `json:"loginErrorCount"` // 登录错误次数
+	PayErrorCount   int64  `json:"payErrorCount"`   // 支付密码错误次数
+	LockUntil       int64  `json:"lockUntil"`       // 锁定到期时间
+	RiskLevel       int64  `json:"riskLevel"`       // 风控等级：0正常 1关注 2高风险
+	CreateTimes     int64  `json:"createTimes"`     // 创建时间
+	UpdateTimes     int64  `json:"updateTimes"`     // 更新时间
 }
 
 type WithdrawOrder struct {

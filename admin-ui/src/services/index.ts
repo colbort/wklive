@@ -98,6 +98,7 @@ export type {
   SysTenantListReq,
   SysTenantCreateReq,
   SysTenantUpdateReq,
+  SysTenantDetailReq,
 } from './system/TenantsService'
 
 export type {
@@ -306,7 +307,7 @@ export type {
   MemberUserBank,
   MemberUserDetail,
   MemberUserItem,
-  MemberUserIdentityItem,
+  UserIdentityItem,
   MemberUserBankItem,
   ListMemberUsersReq,
   CreateMemberUserReq,

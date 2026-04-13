@@ -3,13 +3,14 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/pageutil"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type ListBanksLogic struct {
@@ -46,23 +47,22 @@ func (l *ListBanksLogic) ListBanks(in *user.ListBanksReq) (*user.ListBanksResp, 
 		lastID = items[len(items)-1].Id
 	}
 
-	data := make([]*user.UserBank, 0)
+	data := make([]*user.UserBankItem, 0)
 	for _, item := range items {
-		data = append(data, &user.UserBank{
-			Id:              item.Id,
-			TenantId:        item.TenantId,
-			UserId:          item.UserId,
-			BankName:        item.BankName,
-			BankCode:        item.BankCode.String,
-			AccountName:     item.AccountName,
-			AccountNo:       item.AccountNo,
-			MaskedAccountNo: "",
-			BranchName:      item.BranchName.String,
-			CountryCode:     item.CountryCode.String,
-			IsDefault:       item.IsDefault == 1,
-			Status:          user.BankStatus(item.Status),
-			CreateTimes:     item.CreateTimes,
-			UpdateTimes:     item.UpdateTimes,
+		data = append(data, &user.UserBankItem{
+			Id:          item.Id,
+			TenantId:    item.TenantId,
+			UserId:      item.UserId,
+			BankName:    item.BankName,
+			BankCode:    item.BankCode.String,
+			AccountName: item.AccountName,
+			AccountNo:   item.AccountNo,
+			BranchName:  item.BranchName.String,
+			CountryCode: item.CountryCode.String,
+			IsDefault:   item.IsDefault,
+			Status:      user.BankStatus(item.Status),
+			CreateTimes: item.CreateTimes,
+			UpdateTimes: item.UpdateTimes,
 		})
 	}
 

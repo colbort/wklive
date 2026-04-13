@@ -54,10 +54,7 @@ func (l *SubmitIdentityLogic) SubmitIdentity(in *user.SubmitIdentityReq) (*user.
 		userIdentity.Email = sql.NullString{String: in.Email, Valid: in.Email != ""}
 		userIdentity.RealName = sql.NullString{String: in.RealName, Valid: in.RealName != ""}
 		userIdentity.Gender = int64(in.Gender)
-		userIdentity.Birthday = sql.NullTime{
-			Time:  parseDate(in.Birthday),
-			Valid: in.Birthday != "",
-		}
+		userIdentity.Birthday = in.Birthday
 		userIdentity.CountryCode = sql.NullString{String: in.CountryCode, Valid: in.CountryCode != ""}
 		userIdentity.Province = sql.NullString{String: in.Province, Valid: in.Province != ""}
 		userIdentity.City = sql.NullString{String: in.City, Valid: in.City != ""}
@@ -79,17 +76,14 @@ func (l *SubmitIdentityLogic) SubmitIdentity(in *user.SubmitIdentityReq) (*user.
 	} else {
 		// 创建新的身份信息
 		userIdentity = &models.TUserIdentity{
-			Id:       l.svcCtx.Node.Generate().Int64(),
-			TenantId: tuser.TenantId,
-			UserId:   in.UserId,
-			Phone:    sql.NullString{String: in.Phone, Valid: in.Phone != ""},
-			Email:    sql.NullString{String: in.Email, Valid: in.Email != ""},
-			RealName: sql.NullString{String: in.RealName, Valid: in.RealName != ""},
-			Gender:   int64(in.Gender),
-			Birthday: sql.NullTime{
-				Time:  parseDate(in.Birthday),
-				Valid: in.Birthday != "",
-			},
+			Id:            l.svcCtx.Node.Generate().Int64(),
+			TenantId:      tuser.TenantId,
+			UserId:        in.UserId,
+			Phone:         sql.NullString{String: in.Phone, Valid: in.Phone != ""},
+			Email:         sql.NullString{String: in.Email, Valid: in.Email != ""},
+			RealName:      sql.NullString{String: in.RealName, Valid: in.RealName != ""},
+			Gender:        int64(in.Gender),
+			Birthday:      in.Birthday,
 			CountryCode:   sql.NullString{String: in.CountryCode, Valid: in.CountryCode != ""},
 			Province:      sql.NullString{String: in.Province, Valid: in.Province != ""},
 			City:          sql.NullString{String: in.City, Valid: in.City != ""},
@@ -122,7 +116,7 @@ func (l *SubmitIdentityLogic) SubmitIdentity(in *user.SubmitIdentityReq) (*user.
 		Email:         userIdentity.Email.String,
 		RealName:      userIdentity.RealName.String,
 		Gender:        user.Gender(userIdentity.Gender),
-		Birthday:      userIdentity.Birthday.Time.Format("2006-01-02"),
+		Birthday:      userIdentity.Birthday,
 		CountryCode:   userIdentity.CountryCode.String,
 		Province:      userIdentity.Province.String,
 		City:          userIdentity.City.String,

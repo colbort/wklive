@@ -45,14 +45,15 @@ func (l *GetUserSecurityLogic) GetUserSecurity(req *types.GetUserSecurityReq) (r
 			Id:              result.Security.Id,
 			TenantId:        result.Security.TenantId,
 			UserId:          result.Security.UserId,
-			HasPayPassword:  result.Security.HasPayPassword,
+			PayPasswordHash: result.Security.PayPasswordHash,
+			GoogleSecret:    result.Security.GoogleSecret,
 			GoogleEnabled:   result.Security.GoogleEnabled,
 			LoginErrorCount: result.Security.LoginErrorCount,
 			PayErrorCount:   result.Security.PayErrorCount,
 			LockUntil:       result.Security.LockUntil,
 			RiskLevel:       int64(result.Security.RiskLevel),
-			CreateTimes:      result.Security.CreateTimes,
-			UpdateTimes:      result.Security.UpdateTimes,
+			CreateTimes:     result.Security.CreateTimes,
+			UpdateTimes:     result.Security.UpdateTimes,
 		},
 	}, nil
 }

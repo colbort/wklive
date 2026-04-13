@@ -39,34 +39,37 @@ func (l *ListUsersLogic) ListUsers(in *user.ListUsersReq) (*user.ListUsersResp, 
 		lastID = items[len(items)-1].Id
 	}
 
-	userList := make([]*user.UserListItem, 0, len(items))
+	userList := make([]*user.UserItem, 0, len(items))
 	for _, item := range items {
-		identity, err := l.svcCtx.UserIdentityModel.FindOneByTenantIdUserId(l.ctx, item.TenantId, item.Id)
-		if err != nil && !errors.Is(err, models.ErrNotFound) {
-			return nil, err
-		}
-
-		if !matchUserFilters(in, item, identity) {
-			continue
-		}
-
-		userList = append(userList, &user.UserListItem{
-			UserId:        item.Id,
-			UserNo:        item.UserNo,
-			Username:      item.Username,
-			Nickname:      item.Nickname.String,
-			Avatar:        item.Avatar.String,
-			Phone:         identityString(identity, func(i *models.TUserIdentity) string { return i.Phone.String }),
-			Email:         identityString(identity, func(i *models.TUserIdentity) string { return i.Email.String }),
-			RealName:      identityString(identity, func(i *models.TUserIdentity) string { return i.RealName.String }),
-			Status:        user.UserStatus(item.Status),
-			MemberLevel:   int32(item.MemberLevel),
-			KycLevel:      user.KycLevel(identityInt(identity, func(i *models.TUserIdentity) int64 { return i.KycLevel })),
-			VerifyStatus:  user.VerifyStatus(identityInt(identity, func(i *models.TUserIdentity) int64 { return i.VerifyStatus })),
-			InviteCode:    item.InviteCode.String,
-			LastLoginIp:   item.LastLoginIp.String,
-			LastLoginTime: item.LastLoginTime,
-			RegisterTime:  item.RegisterTime,
+		userList = append(userList, &user.UserItem{
+			Id:             item.Id,
+			TenantId:       item.TenantId,
+			UserNo:         item.UserNo,
+			Username:       item.Username,
+			Nickname:       item.Nickname.String,
+			Avatar:         item.Avatar.String,
+			PasswordHash:   item.PasswordHash,
+			RegisterType:   user.RegisterType(item.RegisterType),
+			Status:         user.UserStatus(item.Status),
+			MemberLevel:    item.MemberLevel,
+			Language:       item.Language.String,
+			Timezone:       item.Timezone.String,
+			InviteCode:     item.InviteCode.String,
+			Signature:      item.Signature.String,
+			Source:         item.Source.String,
+			ReferrerUserId: item.ReferrerUserId.Int64,
+			LastLoginIp:    item.LastLoginIp.String,
+			LastLoginTime:  item.LastLoginTime,
+			RegisterIp:     item.RegisterIp.String,
+			RegisterTime:   item.RegisterTime,
+			IsGuest:        item.IsGuest,
+			IsRecharge:     item.IsRecharge,
+			DeviceId:       item.DeviceId,
+			Fingerprint:    item.Fingerprint,
+			Remark:         item.Remark.String,
+			Deleted:        item.Deleted,
+			CreateTimes:    item.CreateTimes,
+			UpdateTimes:    item.UpdateTimes,
 		})
 	}
 

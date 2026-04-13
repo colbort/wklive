@@ -13,6 +13,7 @@ import (
 
 type ServiceContext struct {
 	Config                    config.Config
+	DB                        sqlx.SqlConn
 	Redis                     *redis.Redis
 	PayPlatformModel          models.PayPlatformModel
 	PayProductModel           models.PayProductModel
@@ -31,6 +32,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
 	return &ServiceContext{
 		Config:                    c,
+		DB:                        conn,
 		Redis:                     redis.MustNewRedis(c.Redis.RedisConf),
 		PayPlatformModel:          models.NewTPayPlatformModel(conn, c.CacheRedis).(models.PayPlatformModel),
 		PayProductModel:           models.NewTPayProductModel(conn, c.CacheRedis).(models.PayProductModel),

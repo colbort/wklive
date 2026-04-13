@@ -79,7 +79,7 @@ message SysMenuItem {
   int64 parent_id = 2;
   string name = 3;
   int64 menu_type = 4; // 1目录 2菜单 3按钮
-  string method = 5;   // GET POST PUT DELETE
+  string method = 5; // GET POST PUT DELETE
   string path = 6;
   string component = 7;
   string icon = 8;
@@ -523,9 +523,9 @@ message SysTenantUpdateReq {
 
 message SysTenantDeleteReq { int64 id = 1; }
 
-message SysTenantByCodeReq { string tenant_code = 1; }
+message SysTenantDetailReq { optional int64 tenant_id = 1; optional string tenant_code = 2; }
 
-message SysTenantByCodeResp {
+message SysTenantDetailResp {
   common.RespBase base = 1;
   SysTenantItem data = 2;
 }
@@ -641,5 +641,5 @@ service System {
   // 获取租户列表
   rpc SysTenantList(SysTenantListReq) returns (SysTenantListResp);
   // 根据 code 获取租户
-  rpc SysTenantByCode(SysTenantByCodeReq) returns (SysTenantByCodeResp);
+  rpc SysTenantDetail(SysTenantDetailReq) returns (SysTenantDetailResp);
 }

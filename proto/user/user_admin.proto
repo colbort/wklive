@@ -11,7 +11,7 @@ option go_package = "wklive/proto/user;user";
 message AdminCommonResp { common.RespBase base = 1; }
 
 message CreateUserReq {
-  int64 tenant_id = 1;
+  string tenant_code = 1;
   string username = 2;
   string nickname = 3;
   string avatar = 4;
@@ -66,7 +66,7 @@ message ListUsersReq {
 
 message ListUsersResp {
   common.RespBase base = 1;
-  repeated user.UserListItem list = 2;
+  repeated user.UserItem list = 2;
 }
 
 message UpdateUserBaseReq {
@@ -164,7 +164,7 @@ message ListUserIdentitiesReq {
 
 message ListUserIdentitiesResp {
   common.RespBase base = 1;
-  repeated user.UserIdentityListItem list = 2;
+  repeated user.UserIdentityItem list = 2;
 }
 
 message ReviewUserIdentityReq {
@@ -190,7 +190,7 @@ message ListUserBanksReq {
 
 message ListUserBanksResp {
   common.RespBase base = 1;
-  repeated user.UserBankListItem list = 2;
+  repeated user.UserBankItem list = 2;
 }
 
 message GetUserBankReq {
@@ -200,7 +200,7 @@ message GetUserBankReq {
 
 message GetUserBankResp {
   common.RespBase base = 1;
-  user.UserBank bank = 2;
+  user.UserBankItem bank = 2;
 }
 
 message AddUserBankReq {
@@ -212,13 +212,13 @@ message AddUserBankReq {
   string account_no = 6;
   string branch_name = 7;
   string country_code = 8;
-  bool is_default = 9;
+  int64 is_default = 9;
   user.BankStatus status = 10;
 }
 
 message AddUserBankResp {
   common.RespBase base = 1;
-  user.UserBank bank = 2;
+  user.UserBankItem bank = 2;
 }
 
 message UpdateUserBankReq {
@@ -231,13 +231,13 @@ message UpdateUserBankReq {
   string account_no = 7;
   string branch_name = 8;
   string country_code = 9;
-  bool is_default = 10;
+  int64 is_default = 10;
   user.BankStatus status = 11;
 }
 
 message UpdateUserBankResp {
   common.RespBase base = 1;
-  user.UserBank bank = 2;
+  user.UserBankItem bank = 2;
 }
 
 message DeleteUserBankReq {

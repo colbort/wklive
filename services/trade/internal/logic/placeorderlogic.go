@@ -15,6 +15,7 @@ import (
 	"wklive/services/trade/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type PlaceOrderLogic struct {
@@ -98,33 +99,41 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		CreateTimes:   now,
 		UpdateTimes:   now,
 	}
-	res, err := l.svcCtx.TradeOrderModel.Insert(l.ctx, order)
-	if err != nil {
-		return nil, err
-	}
-	id, _ := res.LastInsertId()
-	order.Id = id
-
 	var (
 		frozenAsset  string
 		frozenAmount float64
 	)
-	if in.MarketType == trade.MarketType_MARKET_TYPE_SPOT {
-		frozenAsset, frozenAmount = spotFrozenAssetAndAmount(symbol, in.Side, qty, amount)
-		spot := &models.TTradeOrderSpot{
-			TenantId:     in.TenantId,
-			OrderId:      order.Id,
-			FrozenAsset:  frozenAsset,
-			FrozenAmount: frozenAmount,
-			SettleAsset:  symbol.SettleAsset,
-			SettleAmount: amount,
-			CreateTimes:  now,
-			UpdateTimes:  now,
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.TradeOrderModel)
+		spotModel := models.NewTTradeOrderSpotModel(conn, l.svcCtx.Config.CacheRedis).(models.TradeOrderSpotModel)
+		contractModel := models.NewTTradeOrderContractModel(conn, l.svcCtx.Config.CacheRedis).(models.TradeOrderContractModel)
+
+		res, err := orderModel.Insert(ctx, order)
+		if err != nil {
+			return err
 		}
-		if _, err = l.svcCtx.TradeOrderSpotModel.Insert(l.ctx, spot); err != nil {
-			return nil, err
+		id, _ := res.LastInsertId()
+		order.Id = id
+
+		if in.MarketType == trade.MarketType_MARKET_TYPE_SPOT {
+			frozenAsset, frozenAmount = spotFrozenAssetAndAmount(symbol, in.Side, qty, amount)
+			spot := &models.TTradeOrderSpot{
+				TenantId:     in.TenantId,
+				OrderId:      order.Id,
+				FrozenAsset:  frozenAsset,
+				FrozenAmount: frozenAmount,
+				SettleAsset:  symbol.SettleAsset,
+				SettleAmount: amount,
+				CreateTimes:  now,
+				UpdateTimes:  now,
+			}
+			if _, err = spotModel.Insert(ctx, spot); err != nil {
+				return err
+			}
+			return nil
 		}
-	} else {
+
 		marginAsset := marginAssetForSymbol(symbol)
 		frozenAsset, frozenAmount = marginAsset, amount
 		contract := &models.TTradeOrderContract{
@@ -141,9 +150,13 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 			CreateTimes:       now,
 			UpdateTimes:       now,
 		}
-		if _, err = l.svcCtx.TradeOrderContractModel.Insert(l.ctx, contract); err != nil {
-			return nil, err
+		if _, err = contractModel.Insert(ctx, contract); err != nil {
+			return err
 		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
 	}
 
 	if _, err = freezeOrderAsset(l.svcCtx, l.ctx, order, symbol, frozenAsset, frozenAmount); err != nil {

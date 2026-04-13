@@ -16,6 +16,7 @@ import (
 
 type ServiceContext struct {
 	Config                    config.Config
+	DB                        sqlx.SqlConn
 	Redis                     *redis.Redis
 	TradeSymbolModel          models.TradeSymbolModel
 	TradeSymbolSpotModel      models.TradeSymbolSpotModel
@@ -42,6 +43,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	assetCli := zrpc.MustNewClient(c.AssetRpc)
 	return &ServiceContext{
 		Config:                    c,
+		DB:                        conn,
 		Redis:                     redis.MustNewRedis(c.Redis.RedisConf),
 		TradeSymbolModel:          models.NewTTradeSymbolModel(conn, c.CacheRedis).(models.TradeSymbolModel),
 		TradeSymbolSpotModel:      models.NewTTradeSymbolSpotModel(conn, c.CacheRedis).(models.TradeSymbolSpotModel),

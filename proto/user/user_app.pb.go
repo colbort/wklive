@@ -835,7 +835,7 @@ type UpdateProfileReq struct {
 	Timezone      string                 `protobuf:"bytes,5,opt,name=timezone,proto3" json:"timezone,omitempty"`
 	Signature     string                 `protobuf:"bytes,6,opt,name=signature,proto3" json:"signature,omitempty"`
 	Gender        Gender                 `protobuf:"varint,7,opt,name=gender,proto3,enum=user.Gender" json:"gender,omitempty"`
-	Birthday      string                 `protobuf:"bytes,8,opt,name=birthday,proto3" json:"birthday,omitempty"`
+	Birthday      int64                  `protobuf:"varint,8,opt,name=birthday,proto3" json:"birthday,omitempty"`
 	CountryCode   string                 `protobuf:"bytes,9,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
 	Province      string                 `protobuf:"bytes,10,opt,name=province,proto3" json:"province,omitempty"`
 	City          string                 `protobuf:"bytes,11,opt,name=city,proto3" json:"city,omitempty"`
@@ -923,11 +923,11 @@ func (x *UpdateProfileReq) GetGender() Gender {
 	return Gender_GENDER_UNKNOWN
 }
 
-func (x *UpdateProfileReq) GetBirthday() string {
+func (x *UpdateProfileReq) GetBirthday() int64 {
 	if x != nil {
 		return x.Birthday
 	}
-	return ""
+	return 0
 }
 
 func (x *UpdateProfileReq) GetCountryCode() string {
@@ -1181,7 +1181,7 @@ type SubmitIdentityReq struct {
 	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
 	RealName      string                 `protobuf:"bytes,4,opt,name=real_name,json=realName,proto3" json:"real_name,omitempty"`
 	Gender        Gender                 `protobuf:"varint,5,opt,name=gender,proto3,enum=user.Gender" json:"gender,omitempty"`
-	Birthday      string                 `protobuf:"bytes,6,opt,name=birthday,proto3" json:"birthday,omitempty"`
+	Birthday      int64                  `protobuf:"varint,6,opt,name=birthday,proto3" json:"birthday,omitempty"`
 	CountryCode   string                 `protobuf:"bytes,7,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
 	Province      string                 `protobuf:"bytes,8,opt,name=province,proto3" json:"province,omitempty"`
 	City          string                 `protobuf:"bytes,9,opt,name=city,proto3" json:"city,omitempty"`
@@ -1261,11 +1261,11 @@ func (x *SubmitIdentityReq) GetGender() Gender {
 	return Gender_GENDER_UNKNOWN
 }
 
-func (x *SubmitIdentityReq) GetBirthday() string {
+func (x *SubmitIdentityReq) GetBirthday() int64 {
 	if x != nil {
 		return x.Birthday
 	}
-	return ""
+	return 0
 }
 
 func (x *SubmitIdentityReq) GetCountryCode() string {
@@ -1877,7 +1877,7 @@ func (x *ListBanksReq) GetPage() *common.PageReq {
 type ListBanksResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	List          []*UserBank            `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
+	List          []*UserBankItem        `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1919,7 +1919,7 @@ func (x *ListBanksResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *ListBanksResp) GetList() []*UserBank {
+func (x *ListBanksResp) GetList() []*UserBankItem {
 	if x != nil {
 		return x.List
 	}
@@ -1935,7 +1935,7 @@ type AddBankReq struct {
 	AccountNo     string                 `protobuf:"bytes,5,opt,name=account_no,json=accountNo,proto3" json:"account_no,omitempty"`
 	BranchName    string                 `protobuf:"bytes,6,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`
 	CountryCode   string                 `protobuf:"bytes,7,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
-	IsDefault     bool                   `protobuf:"varint,8,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
+	IsDefault     int64                  `protobuf:"varint,8,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2019,17 +2019,17 @@ func (x *AddBankReq) GetCountryCode() string {
 	return ""
 }
 
-func (x *AddBankReq) GetIsDefault() bool {
+func (x *AddBankReq) GetIsDefault() int64 {
 	if x != nil {
 		return x.IsDefault
 	}
-	return false
+	return 0
 }
 
 type AddBankResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Bank          *UserBank              `protobuf:"bytes,2,opt,name=bank,proto3" json:"bank,omitempty"`
+	Bank          *UserBankItem          `protobuf:"bytes,2,opt,name=bank,proto3" json:"bank,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2071,7 +2071,7 @@ func (x *AddBankResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *AddBankResp) GetBank() *UserBank {
+func (x *AddBankResp) GetBank() *UserBankItem {
 	if x != nil {
 		return x.Bank
 	}
@@ -2088,7 +2088,7 @@ type UpdateBankReq struct {
 	AccountNo     string                 `protobuf:"bytes,6,opt,name=account_no,json=accountNo,proto3" json:"account_no,omitempty"`
 	BranchName    string                 `protobuf:"bytes,7,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`
 	CountryCode   string                 `protobuf:"bytes,8,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
-	IsDefault     bool                   `protobuf:"varint,9,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
+	IsDefault     int64                  `protobuf:"varint,9,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2179,17 +2179,17 @@ func (x *UpdateBankReq) GetCountryCode() string {
 	return ""
 }
 
-func (x *UpdateBankReq) GetIsDefault() bool {
+func (x *UpdateBankReq) GetIsDefault() int64 {
 	if x != nil {
 		return x.IsDefault
 	}
-	return false
+	return 0
 }
 
 type UpdateBankResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Bank          *UserBank              `protobuf:"bytes,2,opt,name=bank,proto3" json:"bank,omitempty"`
+	Bank          *UserBankItem          `protobuf:"bytes,2,opt,name=bank,proto3" json:"bank,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2231,7 +2231,7 @@ func (x *UpdateBankResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *UpdateBankResp) GetBank() *UserBank {
+func (x *UpdateBankResp) GetBank() *UserBankItem {
 	if x != nil {
 		return x.Bank
 	}
@@ -2420,7 +2420,7 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\btimezone\x18\x05 \x01(\tR\btimezone\x12\x1c\n" +
 	"\tsignature\x18\x06 \x01(\tR\tsignature\x12$\n" +
 	"\x06gender\x18\a \x01(\x0e2\f.user.GenderR\x06gender\x12\x1a\n" +
-	"\bbirthday\x18\b \x01(\tR\bbirthday\x12!\n" +
+	"\bbirthday\x18\b \x01(\x03R\bbirthday\x12!\n" +
 	"\fcountry_code\x18\t \x01(\tR\vcountryCode\x12\x1a\n" +
 	"\bprovince\x18\n" +
 	" \x01(\tR\bprovince\x12\x12\n" +
@@ -2445,7 +2445,7 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\x05email\x18\x03 \x01(\tR\x05email\x12\x1b\n" +
 	"\treal_name\x18\x04 \x01(\tR\brealName\x12$\n" +
 	"\x06gender\x18\x05 \x01(\x0e2\f.user.GenderR\x06gender\x12\x1a\n" +
-	"\bbirthday\x18\x06 \x01(\tR\bbirthday\x12!\n" +
+	"\bbirthday\x18\x06 \x01(\x03R\bbirthday\x12!\n" +
 	"\fcountry_code\x18\a \x01(\tR\vcountryCode\x12\x1a\n" +
 	"\bprovince\x18\b \x01(\tR\bprovince\x12\x12\n" +
 	"\x04city\x18\t \x01(\tR\x04city\x12\x18\n" +
@@ -2492,10 +2492,10 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"googleCode\"L\n" +
 	"\fListBanksReq\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12#\n" +
-	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\"Y\n" +
+	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\"]\n" +
 	"\rListBanksResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\"\n" +
-	"\x04list\x18\x02 \x03(\v2\x0e.user.UserBankR\x04list\"\x84\x02\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
+	"\x04list\x18\x02 \x03(\v2\x12.user.UserBankItemR\x04list\"\x84\x02\n" +
 	"\n" +
 	"AddBankReq\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1b\n" +
@@ -2508,10 +2508,10 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"branchName\x12!\n" +
 	"\fcountry_code\x18\a \x01(\tR\vcountryCode\x12\x1d\n" +
 	"\n" +
-	"is_default\x18\b \x01(\bR\tisDefault\"W\n" +
+	"is_default\x18\b \x01(\x03R\tisDefault\"[\n" +
 	"\vAddBankResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\"\n" +
-	"\x04bank\x18\x02 \x01(\v2\x0e.user.UserBankR\x04bank\"\x97\x02\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
+	"\x04bank\x18\x02 \x01(\v2\x12.user.UserBankItemR\x04bank\"\x97\x02\n" +
 	"\rUpdateBankReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1b\n" +
@@ -2524,10 +2524,10 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"branchName\x12!\n" +
 	"\fcountry_code\x18\b \x01(\tR\vcountryCode\x12\x1d\n" +
 	"\n" +
-	"is_default\x18\t \x01(\bR\tisDefault\"Z\n" +
+	"is_default\x18\t \x01(\x03R\tisDefault\"^\n" +
 	"\x0eUpdateBankResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\"\n" +
-	"\x04bank\x18\x02 \x01(\v2\x0e.user.UserBankR\x04bank\"8\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
+	"\x04bank\x18\x02 \x01(\v2\x12.user.UserBankItemR\x04bank\"8\n" +
 	"\rDeleteBankReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\"<\n" +
@@ -2622,7 +2622,7 @@ var file_proto_user_user_app_proto_goTypes = []any{
 	(KycLevel)(0),                  // 44: user.KycLevel
 	(*UserSecurity)(nil),           // 45: user.UserSecurity
 	(*common.PageReq)(nil),         // 46: common.PageReq
-	(*UserBank)(nil),               // 47: user.UserBank
+	(*UserBankItem)(nil),           // 47: user.UserBankItem
 }
 var file_proto_user_user_app_proto_depIdxs = []int32{
 	36, // 0: user.AppCommonResp.base:type_name -> common.RespBase
@@ -2655,11 +2655,11 @@ var file_proto_user_user_app_proto_depIdxs = []int32{
 	36, // 27: user.InitGoogle2FAResp.base:type_name -> common.RespBase
 	46, // 28: user.ListBanksReq.page:type_name -> common.PageReq
 	36, // 29: user.ListBanksResp.base:type_name -> common.RespBase
-	47, // 30: user.ListBanksResp.list:type_name -> user.UserBank
+	47, // 30: user.ListBanksResp.list:type_name -> user.UserBankItem
 	36, // 31: user.AddBankResp.base:type_name -> common.RespBase
-	47, // 32: user.AddBankResp.bank:type_name -> user.UserBank
+	47, // 32: user.AddBankResp.bank:type_name -> user.UserBankItem
 	36, // 33: user.UpdateBankResp.base:type_name -> common.RespBase
-	47, // 34: user.UpdateBankResp.bank:type_name -> user.UserBank
+	47, // 34: user.UpdateBankResp.bank:type_name -> user.UserBankItem
 	1,  // 35: user.UserApp.Register:input_type -> user.RegisterReq
 	3,  // 36: user.UserApp.Login:input_type -> user.LoginReq
 	5,  // 37: user.UserApp.GuestLogin:input_type -> user.GuestLoginReq

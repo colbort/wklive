@@ -12,6 +12,7 @@ import (
 	"wklive/services/trade/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type CancelAllOrdersLogic struct {
@@ -75,17 +76,24 @@ func (l *CancelAllOrdersLogic) CancelAllOrders(in *trade.CancelAllOrdersReq) (*t
 		item.Status = int64(trade.OrderStatus_ORDER_STATUS_CANCELED)
 		item.CancelReason = orderCancelReason("user")
 		item.UpdateTimes = utils.NowMillis()
-		if err = l.svcCtx.TradeOrderModel.Update(l.ctx, item); err != nil {
-			return nil, err
-		}
-		if _, err = l.svcCtx.TradeCancelLogModel.Insert(l.ctx, &models.TTradeCancelLog{
-			TenantId:     item.TenantId,
-			OrderId:      item.Id,
-			OrderNo:      item.OrderNo,
-			UserId:       item.UserId,
-			CancelSource: int64(trade.CancelSource_CANCEL_SOURCE_USER),
-			CancelReason: item.CancelReason,
-			CreateTimes:  utils.NowMillis(),
+		if err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+			conn := sqlx.NewSqlConnFromSession(session)
+			orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.TradeOrderModel)
+			cancelLogModel := models.NewTTradeCancelLogModel(conn, l.svcCtx.Config.CacheRedis).(models.TradeCancelLogModel)
+
+			if err := orderModel.Update(ctx, item); err != nil {
+				return err
+			}
+			_, err := cancelLogModel.Insert(ctx, &models.TTradeCancelLog{
+				TenantId:     item.TenantId,
+				OrderId:      item.Id,
+				OrderNo:      item.OrderNo,
+				UserId:       item.UserId,
+				CancelSource: int64(trade.CancelSource_CANCEL_SOURCE_USER),
+				CancelReason: item.CancelReason,
+				CreateTimes:  utils.NowMillis(),
+			})
+			return err
 		}); err != nil {
 			return nil, err
 		}

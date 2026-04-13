@@ -47,20 +47,19 @@ func (l *ListBanksLogic) ListBanks(req *types.ListBanksReq) (resp *types.ListBan
 	data := make([]types.UserBank, len(result.List))
 	for i, bank := range result.List {
 		data[i] = types.UserBank{
-			Id:              bank.Id,
-			TenantId:        bank.TenantId,
-			UserId:          bank.UserId,
-			BankName:        bank.BankName,
-			BankCode:        bank.BankCode,
-			AccountName:     bank.AccountName,
-			AccountNo:       bank.AccountNo,
-			MaskedAccountNo: bank.MaskedAccountNo,
-			BranchName:      bank.BranchName,
-			CountryCode:     bank.CountryCode,
-			IsDefault:       bank.IsDefault,
-			Status:          int64(bank.Status.Number()),
-			CreateTimes:     bank.CreateTimes,
-			UpdateTimes:     bank.UpdateTimes,
+			Id:          bank.Id,
+			TenantId:    bank.TenantId,
+			UserId:      bank.UserId,
+			BankName:    bank.BankName,
+			BankCode:    bank.BankCode,
+			AccountName: bank.AccountName,
+			AccountNo:   bank.AccountNo,
+			BranchName:  bank.BranchName,
+			CountryCode: bank.CountryCode,
+			IsDefault:   bank.IsDefault,
+			Status:      int64(bank.Status),
+			CreateTimes: bank.CreateTimes,
+			UpdateTimes: bank.UpdateTimes,
 		}
 	}
 	return &types.ListBanksResp{

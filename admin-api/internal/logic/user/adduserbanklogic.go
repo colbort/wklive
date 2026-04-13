@@ -49,7 +49,7 @@ func (l *AddUserBankLogic) AddUserBank(req *types.AddUserBankReq) (resp *types.A
 			Code: result.Base.Code,
 			Msg:  result.Base.Msg,
 		},
-		Bank: types.UserBank{
+		Bank: types.UserBankItem{
 			Id:          result.Bank.Id,
 			TenantId:    result.Bank.TenantId,
 			UserId:      result.Bank.UserId,
@@ -61,8 +61,8 @@ func (l *AddUserBankLogic) AddUserBank(req *types.AddUserBankReq) (resp *types.A
 			CountryCode: result.Bank.CountryCode,
 			IsDefault:   result.Bank.IsDefault,
 			Status:      int64(result.Bank.Status),
-			CreateTimes:  result.Bank.CreateTimes,
-			UpdateTimes:  result.Bank.UpdateTimes,
+			CreateTimes: result.Bank.CreateTimes,
+			UpdateTimes: result.Bank.UpdateTimes,
 		},
 	}, nil
 }

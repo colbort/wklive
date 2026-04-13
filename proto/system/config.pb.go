@@ -24,7 +24,7 @@ const (
 type Interval struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	KType         int32                  `protobuf:"varint,2,opt,name=kType,proto3" json:"kType,omitempty"`
+	KType         int32                  `protobuf:"varint,2,opt,name=k_type,json=kType,proto3" json:"k_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -538,10 +538,10 @@ var File_proto_system_config_proto protoreflect.FileDescriptor
 
 const file_proto_system_config_proto_rawDesc = "" +
 	"\n" +
-	"\x19proto/system/config.proto\x12\x06system\"4\n" +
+	"\x19proto/system/config.proto\x12\x06system\"5\n" +
 	"\bInterval\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +
-	"\x05kType\x18\x02 \x01(\x05R\x05kType\"\xaa\x02\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x15\n" +
+	"\x06k_type\x18\x02 \x01(\x05R\x05kType\"\xaa\x02\n" +
 	"\n" +
 	"SystemCore\x12\x1b\n" +
 	"\tsite_name\x18\x01 \x01(\tR\bsiteName\x12\x1b\n" +

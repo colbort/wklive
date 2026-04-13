@@ -39,7 +39,7 @@ func (l *ListUserBanksLogic) ListUserBanks(in *user.ListUserBanksReq) (*user.Lis
 		lastID = items[len(items)-1].Id
 	}
 
-	data := make([]*user.UserBankListItem, 0)
+	data := make([]*user.UserBankItem, 0)
 	for _, bank := range items {
 		if in.Status != 0 && bank.Status != int64(in.Status) {
 			continue
@@ -62,21 +62,20 @@ func (l *ListUserBanksLogic) ListUserBanks(in *user.ListUserBanksReq) (*user.Lis
 			}
 		}
 
-		data = append(data, &user.UserBankListItem{
-			Id:              bank.Id,
-			UserId:          bank.UserId,
-			UserNo:          u.UserNo,
-			Username:        u.Username,
-			BankName:        bank.BankName,
-			BankCode:        bank.BankCode.String,
-			AccountName:     bank.AccountName,
-			AccountNo:       bank.AccountNo,
-			MaskedAccountNo: maskAccountNo(bank.AccountNo),
-			BranchName:      bank.BranchName.String,
-			CountryCode:     bank.CountryCode.String,
-			IsDefault:       bank.IsDefault == 1,
-			Status:          user.BankStatus(bank.Status),
-			CreateTimes:     bank.CreateTimes,
+		data = append(data, &user.UserBankItem{
+			Id:          bank.Id,
+			TenantId:    bank.TenantId,
+			UserId:      bank.UserId,
+			BankName:    bank.BankName,
+			BankCode:    bank.BankCode.String,
+			AccountName: bank.AccountName,
+			AccountNo:   bank.AccountNo,
+			BranchName:  bank.BranchName.String,
+			CountryCode: bank.CountryCode.String,
+			IsDefault:   bank.IsDefault,
+			Status:      user.BankStatus(bank.Status),
+			CreateTimes: bank.CreateTimes,
+			UpdateTimes: bank.UpdateTimes,
 		})
 	}
 

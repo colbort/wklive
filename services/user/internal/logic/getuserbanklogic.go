@@ -3,12 +3,13 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type GetUserBankLogic struct {
@@ -39,7 +40,7 @@ func (l *GetUserBankLogic) GetUserBank(in *user.GetUserBankReq) (*user.GetUserBa
 		}, nil
 	}
 
-	bankProto := &user.UserBank{
+	bankProto := &user.UserBankItem{
 		Id:          bank.Id,
 		TenantId:    bank.TenantId,
 		UserId:      bank.UserId,
@@ -49,7 +50,7 @@ func (l *GetUserBankLogic) GetUserBank(in *user.GetUserBankReq) (*user.GetUserBa
 		AccountNo:   bank.AccountNo,
 		BranchName:  bank.BranchName.String,
 		CountryCode: bank.CountryCode.String,
-		IsDefault:   bank.IsDefault == 1,
+		IsDefault:   bank.IsDefault,
 		Status:      user.BankStatus(bank.Status),
 		CreateTimes: bank.CreateTimes,
 		UpdateTimes: bank.UpdateTimes,

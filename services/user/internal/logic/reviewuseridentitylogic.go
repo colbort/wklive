@@ -67,7 +67,7 @@ func (l *ReviewUserIdentityLogic) ReviewUserIdentity(in *user.ReviewUserIdentity
 		Email:         userIdentity.Email.String,
 		RealName:      userIdentity.RealName.String,
 		Gender:        user.Gender(userIdentity.Gender),
-		Birthday:      userIdentity.Birthday.Time.Format("2006-01-02"),
+		Birthday:      userIdentity.Birthday,
 		CountryCode:   userIdentity.CountryCode.String,
 		Province:      userIdentity.Province.String,
 		City:          userIdentity.City.String,

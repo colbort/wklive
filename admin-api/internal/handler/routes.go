@@ -748,6 +748,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: system.SysRoleGrantHandler(serverCtx),
 			},
 			{
+				Method:  http.MethodGet,
+				Path:    "/tenant/detail",
+				Handler: system.SysTenantDetailHandler(serverCtx),
+			},
+			{
 				Method:  http.MethodPost,
 				Path:    "/tenants",
 				Handler: system.SysTenantCreateHandler(serverCtx),

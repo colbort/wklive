@@ -330,7 +330,7 @@ func (s *SystemServer) SysTenantList(ctx context.Context, in *system.SysTenantLi
 }
 
 // 根据 code 获取租户
-func (s *SystemServer) SysTenantByCode(ctx context.Context, in *system.SysTenantByCodeReq) (*system.SysTenantByCodeResp, error) {
-	l := logic.NewSysTenantByCodeLogic(ctx, s.svcCtx)
-	return l.SysTenantByCode(in)
+func (s *SystemServer) SysTenantDetail(ctx context.Context, in *system.SysTenantDetailReq) (*system.SysTenantDetailResp, error) {
+	l := logic.NewSysTenantDetailLogic(ctx, s.svcCtx)
+	return l.SysTenantDetail(in)
 }

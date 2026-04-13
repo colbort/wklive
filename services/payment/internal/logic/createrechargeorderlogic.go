@@ -12,6 +12,7 @@ import (
 	"wklive/services/payment/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type CreateRechargeOrderLogic struct {
@@ -97,13 +98,35 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 		UpdateTimes: now,
 	}
 
-	_, err = l.svcCtx.RechargeOrderModel.Insert(l.ctx, rechargeOrder)
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		rechargeOrderModel := models.NewTRechargeOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.RechargeOrderModel)
+		userRechargeStatModel := models.NewTUserRechargeStatModel(conn, l.svcCtx.Config.CacheRedis).(models.UserRechargeStatModel)
+
+		if _, err := rechargeOrderModel.Insert(ctx, rechargeOrder); err != nil {
+			return err
+		}
+
+		stat, err := userRechargeStatModel.FindOneByTenantIdUserId(ctx, in.TenantId, in.UserId)
+		if err != nil && !errors.Is(err, models.ErrNotFound) {
+			return err
+		}
+		if stat == nil {
+			_, err = userRechargeStatModel.Insert(ctx, &models.TUserRechargeStat{
+				TenantId:    in.TenantId,
+				UserId:      in.UserId,
+				CreateTimes: now,
+				UpdateTimes: now,
+			})
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}
-
-	// 更新用户充值统计
-	l.updateUserRechargeStat(in.TenantId, in.UserId)
 
 	l.Logger.Infof("Create recharge order success: %s, user_id: %d", orderNo, in.UserId)
 
@@ -132,27 +155,4 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 			UpdateTimes: rechargeOrder.UpdateTimes,
 		},
 	}, nil
-}
-
-func (l *CreateRechargeOrderLogic) updateUserRechargeStat(tenantId, userId int64) {
-	stat, err := l.svcCtx.UserRechargeStatModel.FindOneByTenantIdUserId(l.ctx, tenantId, userId)
-	if err != nil && !errors.Is(err, models.ErrNotFound) {
-		l.Logger.Errorf("Find user recharge stat error: %v", err)
-		return
-	}
-
-	now := utils.NowMillis()
-	if stat == nil {
-		// Create new stat
-		newStat := &models.TUserRechargeStat{
-			TenantId:    tenantId,
-			UserId:      userId,
-			CreateTimes: now,
-			UpdateTimes: now,
-		}
-		_, err = l.svcCtx.UserRechargeStatModel.Insert(l.ctx, newStat)
-		if err != nil {
-			l.Logger.Errorf("Insert user recharge stat error: %v", err)
-		}
-	}
 }

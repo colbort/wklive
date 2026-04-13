@@ -9,8 +9,10 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/svc"
+	"wklive/services/asset/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type DeductLockedAssetLogic struct {
@@ -48,35 +50,47 @@ func (l *DeductLockedAssetLogic) DeductLockedAsset(in *asset.DeductLockedAssetRe
 		return nil, fmt.Errorf("deduct amount exceeds locked amount")
 	}
 
-	before, err := l.svcCtx.UserAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(l.ctx, lock.TenantId, lock.UserId, lock.WalletType, lock.Coin)
-	if err != nil {
-		return nil, err
-	}
-
 	ts := utils.NowMillis()
-	ok, err := l.svcCtx.UserAssetModel.DeductLockedAmount(l.ctx, lock.TenantId, lock.UserId, lock.WalletType, lock.Coin, amount, ts)
-	if err != nil {
-		return nil, err
-	}
-	if !ok {
-		return nil, fmt.Errorf("deduct locked balance failed")
-	}
+	var after *models.TUserAsset
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		userAssetModel := models.NewTUserAssetModel(conn, l.svcCtx.Config.CacheRedis).(models.UserAssetModel)
+		assetLockModel := models.NewTAssetLockModel(conn, l.svcCtx.Config.CacheRedis).(models.AssetLockModel)
+		assetFlowModel := models.NewTAssetFlowModel(conn, l.svcCtx.Config.CacheRedis).(models.AssetFlowModel)
 
-	ok, err = l.svcCtx.AssetLockModel.UpdateDeduct(l.ctx, lock.LockNo, amount, ts)
-	if err != nil {
-		return nil, err
-	}
-	if !ok {
-		return nil, fmt.Errorf("lock record update failed")
-	}
+		before, err := userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, lock.TenantId, lock.UserId, lock.WalletType, lock.Coin)
+		if err != nil {
+			return err
+		}
 
-	after, err := l.svcCtx.UserAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(l.ctx, lock.TenantId, lock.UserId, lock.WalletType, lock.Coin)
-	if err != nil {
-		return nil, err
-	}
+		ok, err := userAssetModel.DeductLockedAmount(ctx, lock.TenantId, lock.UserId, lock.WalletType, lock.Coin, amount, ts)
+		if err != nil {
+			return err
+		}
+		if !ok {
+			return fmt.Errorf("deduct locked balance failed")
+		}
 
-	flow := buildAssetFlowRecord(l.svcCtx, l.ctx, lock.TenantId, lock.UserId, lock.WalletType, lock.Coin, assetSceneType(in.SceneType), assetBizType(in.BizType), assetSceneType(in.SceneType), in.BizId, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_LOCK_DEDUCT, amount, before, after, in.Remark, ts)
-	if _, err := l.svcCtx.AssetFlowModel.Insert(l.ctx, flow); err != nil {
+		ok, err = assetLockModel.UpdateDeduct(ctx, lock.LockNo, amount, ts)
+		if err != nil {
+			return err
+		}
+		if !ok {
+			return fmt.Errorf("lock record update failed")
+		}
+
+		after, err = userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, lock.TenantId, lock.UserId, lock.WalletType, lock.Coin)
+		if err != nil {
+			return err
+		}
+
+		flow := buildAssetFlowRecord(l.svcCtx, ctx, lock.TenantId, lock.UserId, lock.WalletType, lock.Coin, assetSceneType(in.SceneType), assetBizType(in.BizType), assetSceneType(in.SceneType), in.BizId, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_LOCK_DEDUCT, amount, before, after, in.Remark, ts)
+		if _, err := assetFlowModel.Insert(ctx, flow); err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
 		return nil, err
 	}
 

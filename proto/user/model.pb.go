@@ -250,7 +250,7 @@ type UserIdentity struct {
 	Email         string                 `protobuf:"bytes,5,opt,name=email,proto3" json:"email,omitempty"`
 	RealName      string                 `protobuf:"bytes,6,opt,name=real_name,json=realName,proto3" json:"real_name,omitempty"`
 	Gender        Gender                 `protobuf:"varint,7,opt,name=gender,proto3,enum=user.Gender" json:"gender,omitempty"`
-	Birthday      string                 `protobuf:"bytes,8,opt,name=birthday,proto3" json:"birthday,omitempty"`
+	Birthday      int64                  `protobuf:"varint,8,opt,name=birthday,proto3" json:"birthday,omitempty"`
 	CountryCode   string                 `protobuf:"bytes,9,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
 	Province      string                 `protobuf:"bytes,10,opt,name=province,proto3" json:"province,omitempty"`
 	City          string                 `protobuf:"bytes,11,opt,name=city,proto3" json:"city,omitempty"`
@@ -351,11 +351,11 @@ func (x *UserIdentity) GetGender() Gender {
 	return Gender_GENDER_UNKNOWN
 }
 
-func (x *UserIdentity) GetBirthday() string {
+func (x *UserIdentity) GetBirthday() int64 {
 	if x != nil {
 		return x.Birthday
 	}
-	return ""
+	return 0
 }
 
 func (x *UserIdentity) GetCountryCode() string {
@@ -479,17 +479,18 @@ func (x *UserIdentity) GetUpdateTimes() int64 {
 
 type UserSecurity struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId          int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	HasPayPassword  bool                   `protobuf:"varint,4,opt,name=has_pay_password,json=hasPayPassword,proto3" json:"has_pay_password,omitempty"`
-	GoogleEnabled   bool                   `protobuf:"varint,5,opt,name=google_enabled,json=googleEnabled,proto3" json:"google_enabled,omitempty"`
-	LoginErrorCount int64                  `protobuf:"varint,6,opt,name=login_error_count,json=loginErrorCount,proto3" json:"login_error_count,omitempty"`
-	PayErrorCount   int64                  `protobuf:"varint,7,opt,name=pay_error_count,json=payErrorCount,proto3" json:"pay_error_count,omitempty"`
-	LockUntil       int64                  `protobuf:"varint,8,opt,name=lock_until,json=lockUntil,proto3" json:"lock_until,omitempty"`
-	RiskLevel       RiskLevel              `protobuf:"varint,9,opt,name=risk_level,json=riskLevel,proto3,enum=user.RiskLevel" json:"risk_level,omitempty"`
-	CreateTimes     int64                  `protobuf:"varint,10,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
-	UpdateTimes     int64                  `protobuf:"varint,11,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                     // 主键ID
+	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                         // 租户ID
+	UserId          int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                               // 用户ID
+	PayPasswordHash string                 `protobuf:"bytes,4,opt,name=pay_password_hash,json=payPasswordHash,proto3" json:"pay_password_hash,omitempty"`   // 支付密码哈希
+	GoogleSecret    string                 `protobuf:"bytes,5,opt,name=google_secret,json=googleSecret,proto3" json:"google_secret,omitempty"`              // Google密钥
+	GoogleEnabled   int64                  `protobuf:"varint,6,opt,name=google_enabled,json=googleEnabled,proto3" json:"google_enabled,omitempty"`          // Google2FA是否启用：0否 1是
+	LoginErrorCount int64                  `protobuf:"varint,7,opt,name=login_error_count,json=loginErrorCount,proto3" json:"login_error_count,omitempty"`  // 登录错误次数
+	PayErrorCount   int64                  `protobuf:"varint,8,opt,name=pay_error_count,json=payErrorCount,proto3" json:"pay_error_count,omitempty"`        // 支付密码错误次数
+	LockUntil       int64                  `protobuf:"varint,9,opt,name=lock_until,json=lockUntil,proto3" json:"lock_until,omitempty"`                      // 锁定到期时间
+	RiskLevel       RiskLevel              `protobuf:"varint,10,opt,name=risk_level,json=riskLevel,proto3,enum=user.RiskLevel" json:"risk_level,omitempty"` // 风控等级：0正常 1关注 2高风险
+	CreateTimes     int64                  `protobuf:"varint,11,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`               // 创建时间
+	UpdateTimes     int64                  `protobuf:"varint,12,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`               // 更新时间
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -545,18 +546,25 @@ func (x *UserSecurity) GetUserId() int64 {
 	return 0
 }
 
-func (x *UserSecurity) GetHasPayPassword() bool {
+func (x *UserSecurity) GetPayPasswordHash() string {
 	if x != nil {
-		return x.HasPayPassword
+		return x.PayPasswordHash
 	}
-	return false
+	return ""
 }
 
-func (x *UserSecurity) GetGoogleEnabled() bool {
+func (x *UserSecurity) GetGoogleSecret() string {
+	if x != nil {
+		return x.GoogleSecret
+	}
+	return ""
+}
+
+func (x *UserSecurity) GetGoogleEnabled() int64 {
 	if x != nil {
 		return x.GoogleEnabled
 	}
-	return false
+	return 0
 }
 
 func (x *UserSecurity) GetLoginErrorCount() int64 {
@@ -601,154 +609,6 @@ func (x *UserSecurity) GetUpdateTimes() int64 {
 	return 0
 }
 
-type UserBank struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId          int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	BankName        string                 `protobuf:"bytes,4,opt,name=bank_name,json=bankName,proto3" json:"bank_name,omitempty"`
-	BankCode        string                 `protobuf:"bytes,5,opt,name=bank_code,json=bankCode,proto3" json:"bank_code,omitempty"`
-	AccountName     string                 `protobuf:"bytes,6,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`
-	AccountNo       string                 `protobuf:"bytes,7,opt,name=account_no,json=accountNo,proto3" json:"account_no,omitempty"`
-	MaskedAccountNo string                 `protobuf:"bytes,8,opt,name=masked_account_no,json=maskedAccountNo,proto3" json:"masked_account_no,omitempty"`
-	BranchName      string                 `protobuf:"bytes,9,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`
-	CountryCode     string                 `protobuf:"bytes,10,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
-	IsDefault       bool                   `protobuf:"varint,11,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
-	Status          BankStatus             `protobuf:"varint,12,opt,name=status,proto3,enum=user.BankStatus" json:"status,omitempty"`
-	CreateTimes     int64                  `protobuf:"varint,13,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
-	UpdateTimes     int64                  `protobuf:"varint,14,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
-}
-
-func (x *UserBank) Reset() {
-	*x = UserBank{}
-	mi := &file_proto_user_model_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UserBank) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UserBank) ProtoMessage() {}
-
-func (x *UserBank) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_model_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UserBank.ProtoReflect.Descriptor instead.
-func (*UserBank) Descriptor() ([]byte, []int) {
-	return file_proto_user_model_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *UserBank) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *UserBank) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *UserBank) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *UserBank) GetBankName() string {
-	if x != nil {
-		return x.BankName
-	}
-	return ""
-}
-
-func (x *UserBank) GetBankCode() string {
-	if x != nil {
-		return x.BankCode
-	}
-	return ""
-}
-
-func (x *UserBank) GetAccountName() string {
-	if x != nil {
-		return x.AccountName
-	}
-	return ""
-}
-
-func (x *UserBank) GetAccountNo() string {
-	if x != nil {
-		return x.AccountNo
-	}
-	return ""
-}
-
-func (x *UserBank) GetMaskedAccountNo() string {
-	if x != nil {
-		return x.MaskedAccountNo
-	}
-	return ""
-}
-
-func (x *UserBank) GetBranchName() string {
-	if x != nil {
-		return x.BranchName
-	}
-	return ""
-}
-
-func (x *UserBank) GetCountryCode() string {
-	if x != nil {
-		return x.CountryCode
-	}
-	return ""
-}
-
-func (x *UserBank) GetIsDefault() bool {
-	if x != nil {
-		return x.IsDefault
-	}
-	return false
-}
-
-func (x *UserBank) GetStatus() BankStatus {
-	if x != nil {
-		return x.Status
-	}
-	return BankStatus_BANK_STATUS_UNKNOWN
-}
-
-func (x *UserBank) GetCreateTimes() int64 {
-	if x != nil {
-		return x.CreateTimes
-	}
-	return 0
-}
-
-func (x *UserBank) GetUpdateTimes() int64 {
-	if x != nil {
-		return x.UpdateTimes
-	}
-	return 0
-}
-
 type UserProfile struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *UserBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
@@ -760,7 +620,7 @@ type UserProfile struct {
 
 func (x *UserProfile) Reset() {
 	*x = UserProfile{}
-	mi := &file_proto_user_model_proto_msgTypes[4]
+	mi := &file_proto_user_model_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -772,7 +632,7 @@ func (x *UserProfile) String() string {
 func (*UserProfile) ProtoMessage() {}
 
 func (x *UserProfile) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_model_proto_msgTypes[4]
+	mi := &file_proto_user_model_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -785,7 +645,7 @@ func (x *UserProfile) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserProfile.ProtoReflect.Descriptor instead.
 func (*UserProfile) Descriptor() ([]byte, []int) {
-	return file_proto_user_model_proto_rawDescGZIP(), []int{4}
+	return file_proto_user_model_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *UserProfile) GetBase() *UserBase {
@@ -814,14 +674,14 @@ type UserDetail struct {
 	Base          *UserBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Identity      *UserIdentity          `protobuf:"bytes,2,opt,name=identity,proto3" json:"identity,omitempty"`
 	Security      *UserSecurity          `protobuf:"bytes,3,opt,name=security,proto3" json:"security,omitempty"`
-	Banks         []*UserBank            `protobuf:"bytes,4,rep,name=banks,proto3" json:"banks,omitempty"`
+	Banks         []*UserBankItem        `protobuf:"bytes,4,rep,name=banks,proto3" json:"banks,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UserDetail) Reset() {
 	*x = UserDetail{}
-	mi := &file_proto_user_model_proto_msgTypes[5]
+	mi := &file_proto_user_model_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -833,7 +693,7 @@ func (x *UserDetail) String() string {
 func (*UserDetail) ProtoMessage() {}
 
 func (x *UserDetail) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_model_proto_msgTypes[5]
+	mi := &file_proto_user_model_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -846,7 +706,7 @@ func (x *UserDetail) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserDetail.ProtoReflect.Descriptor instead.
 func (*UserDetail) Descriptor() ([]byte, []int) {
-	return file_proto_user_model_proto_rawDescGZIP(), []int{5}
+	return file_proto_user_model_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *UserDetail) GetBase() *UserBase {
@@ -870,50 +730,62 @@ func (x *UserDetail) GetSecurity() *UserSecurity {
 	return nil
 }
 
-func (x *UserDetail) GetBanks() []*UserBank {
+func (x *UserDetail) GetBanks() []*UserBankItem {
 	if x != nil {
 		return x.Banks
 	}
 	return nil
 }
 
-type UserListItem struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	UserNo        string                 `protobuf:"bytes,2,opt,name=user_no,json=userNo,proto3" json:"user_no,omitempty"`
-	Username      string                 `protobuf:"bytes,3,opt,name=username,proto3" json:"username,omitempty"`
-	Nickname      string                 `protobuf:"bytes,4,opt,name=nickname,proto3" json:"nickname,omitempty"`
-	Avatar        string                 `protobuf:"bytes,5,opt,name=avatar,proto3" json:"avatar,omitempty"`
-	Phone         string                 `protobuf:"bytes,6,opt,name=phone,proto3" json:"phone,omitempty"`
-	Email         string                 `protobuf:"bytes,7,opt,name=email,proto3" json:"email,omitempty"`
-	RealName      string                 `protobuf:"bytes,8,opt,name=real_name,json=realName,proto3" json:"real_name,omitempty"`
-	Status        UserStatus             `protobuf:"varint,9,opt,name=status,proto3,enum=user.UserStatus" json:"status,omitempty"`
-	MemberLevel   int32                  `protobuf:"varint,10,opt,name=member_level,json=memberLevel,proto3" json:"member_level,omitempty"`
-	KycLevel      KycLevel               `protobuf:"varint,11,opt,name=kyc_level,json=kycLevel,proto3,enum=user.KycLevel" json:"kyc_level,omitempty"`
-	VerifyStatus  VerifyStatus           `protobuf:"varint,12,opt,name=verify_status,json=verifyStatus,proto3,enum=user.VerifyStatus" json:"verify_status,omitempty"`
-	InviteCode    string                 `protobuf:"bytes,13,opt,name=invite_code,json=inviteCode,proto3" json:"invite_code,omitempty"`
-	LastLoginIp   string                 `protobuf:"bytes,14,opt,name=last_login_ip,json=lastLoginIp,proto3" json:"last_login_ip,omitempty"`
-	LastLoginTime int64                  `protobuf:"varint,15,opt,name=last_login_time,json=lastLoginTime,proto3" json:"last_login_time,omitempty"`
-	RegisterTime  int64                  `protobuf:"varint,16,opt,name=register_time,json=registerTime,proto3" json:"register_time,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+type UserItem struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                // 用户ID
+	TenantId       int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                    // 租户ID
+	UserNo         string                 `protobuf:"bytes,3,opt,name=user_no,json=userNo,proto3" json:"user_no,omitempty"`                                           // 用户编号
+	Username       string                 `protobuf:"bytes,4,opt,name=username,proto3" json:"username,omitempty"`                                                     // 用户名
+	Nickname       string                 `protobuf:"bytes,5,opt,name=nickname,proto3" json:"nickname,omitempty"`                                                     // 昵称
+	Avatar         string                 `protobuf:"bytes,6,opt,name=avatar,proto3" json:"avatar,omitempty"`                                                         // 头像
+	PasswordHash   string                 `protobuf:"bytes,7,opt,name=password_hash,json=passwordHash,proto3" json:"password_hash,omitempty"`                         // 登录密码哈希
+	RegisterType   RegisterType           `protobuf:"varint,8,opt,name=register_type,json=registerType,proto3,enum=user.RegisterType" json:"register_type,omitempty"` // 注册方式：1用户名 2手机号 3邮箱 4游客
+	Status         UserStatus             `protobuf:"varint,9,opt,name=status,proto3,enum=user.UserStatus" json:"status,omitempty"`                                   // 状态：1正常 2禁用 3冻结 4注销
+	MemberLevel    int64                  `protobuf:"varint,10,opt,name=member_level,json=memberLevel,proto3" json:"member_level,omitempty"`                          // 会员等级
+	Language       string                 `protobuf:"bytes,11,opt,name=language,proto3" json:"language,omitempty"`                                                    // 语言
+	Timezone       string                 `protobuf:"bytes,12,opt,name=timezone,proto3" json:"timezone,omitempty"`                                                    // 时区
+	InviteCode     string                 `protobuf:"bytes,13,opt,name=invite_code,json=inviteCode,proto3" json:"invite_code,omitempty"`                              // 邀请码
+	Signature      string                 `protobuf:"bytes,14,opt,name=signature,proto3" json:"signature,omitempty"`                                                  // 个性签名
+	Source         string                 `protobuf:"bytes,15,opt,name=source,proto3" json:"source,omitempty"`                                                        // 注册来源
+	ReferrerUserId int64                  `protobuf:"varint,16,opt,name=referrer_user_id,json=referrerUserId,proto3" json:"referrer_user_id,omitempty"`               // 邀请人ID
+	LastLoginIp    string                 `protobuf:"bytes,17,opt,name=last_login_ip,json=lastLoginIp,proto3" json:"last_login_ip,omitempty"`                         // 最后登录IP
+	LastLoginTime  int64                  `protobuf:"varint,18,opt,name=last_login_time,json=lastLoginTime,proto3" json:"last_login_time,omitempty"`                  // 最后登录时间
+	RegisterIp     string                 `protobuf:"bytes,19,opt,name=register_ip,json=registerIp,proto3" json:"register_ip,omitempty"`                              // 注册IP
+	RegisterTime   int64                  `protobuf:"varint,20,opt,name=register_time,json=registerTime,proto3" json:"register_time,omitempty"`                       // 注册时间
+	IsGuest        int64                  `protobuf:"varint,21,opt,name=is_guest,json=isGuest,proto3" json:"is_guest,omitempty"`                                      // 是否游客；1正常用户，2游客
+	IsRecharge     int64                  `protobuf:"varint,22,opt,name=is_recharge,json=isRecharge,proto3" json:"is_recharge,omitempty"`                             // 是否充值；0没有充值，1已充值
+	DeviceId       string                 `protobuf:"bytes,23,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`                                    // 设备唯一ID
+	Fingerprint    string                 `protobuf:"bytes,24,opt,name=fingerprint,proto3" json:"fingerprint,omitempty"`                                              // 浏览器指纹
+	Remark         string                 `protobuf:"bytes,25,opt,name=remark,proto3" json:"remark,omitempty"`                                                        // 备注
+	Deleted        int64                  `protobuf:"varint,26,opt,name=deleted,proto3" json:"deleted,omitempty"`                                                     // 是否删除：0否 1是
+	CreateTimes    int64                  `protobuf:"varint,27,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                          // 创建时间
+	UpdateTimes    int64                  `protobuf:"varint,28,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                          // 更新时间
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
-func (x *UserListItem) Reset() {
-	*x = UserListItem{}
-	mi := &file_proto_user_model_proto_msgTypes[6]
+func (x *UserItem) Reset() {
+	*x = UserItem{}
+	mi := &file_proto_user_model_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserListItem) String() string {
+func (x *UserItem) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserListItem) ProtoMessage() {}
+func (*UserItem) ProtoMessage() {}
 
-func (x *UserListItem) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_model_proto_msgTypes[6]
+func (x *UserItem) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_model_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -924,415 +796,579 @@ func (x *UserListItem) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserListItem.ProtoReflect.Descriptor instead.
-func (*UserListItem) Descriptor() ([]byte, []int) {
-	return file_proto_user_model_proto_rawDescGZIP(), []int{6}
+// Deprecated: Use UserItem.ProtoReflect.Descriptor instead.
+func (*UserItem) Descriptor() ([]byte, []int) {
+	return file_proto_user_model_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *UserListItem) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *UserListItem) GetUserNo() string {
-	if x != nil {
-		return x.UserNo
-	}
-	return ""
-}
-
-func (x *UserListItem) GetUsername() string {
-	if x != nil {
-		return x.Username
-	}
-	return ""
-}
-
-func (x *UserListItem) GetNickname() string {
-	if x != nil {
-		return x.Nickname
-	}
-	return ""
-}
-
-func (x *UserListItem) GetAvatar() string {
-	if x != nil {
-		return x.Avatar
-	}
-	return ""
-}
-
-func (x *UserListItem) GetPhone() string {
-	if x != nil {
-		return x.Phone
-	}
-	return ""
-}
-
-func (x *UserListItem) GetEmail() string {
-	if x != nil {
-		return x.Email
-	}
-	return ""
-}
-
-func (x *UserListItem) GetRealName() string {
-	if x != nil {
-		return x.RealName
-	}
-	return ""
-}
-
-func (x *UserListItem) GetStatus() UserStatus {
-	if x != nil {
-		return x.Status
-	}
-	return UserStatus_USER_STATUS_UNKNOWN
-}
-
-func (x *UserListItem) GetMemberLevel() int32 {
-	if x != nil {
-		return x.MemberLevel
-	}
-	return 0
-}
-
-func (x *UserListItem) GetKycLevel() KycLevel {
-	if x != nil {
-		return x.KycLevel
-	}
-	return KycLevel_KYC_LEVEL_NONE
-}
-
-func (x *UserListItem) GetVerifyStatus() VerifyStatus {
-	if x != nil {
-		return x.VerifyStatus
-	}
-	return VerifyStatus_VERIFY_STATUS_NONE
-}
-
-func (x *UserListItem) GetInviteCode() string {
-	if x != nil {
-		return x.InviteCode
-	}
-	return ""
-}
-
-func (x *UserListItem) GetLastLoginIp() string {
-	if x != nil {
-		return x.LastLoginIp
-	}
-	return ""
-}
-
-func (x *UserListItem) GetLastLoginTime() int64 {
-	if x != nil {
-		return x.LastLoginTime
-	}
-	return 0
-}
-
-func (x *UserListItem) GetRegisterTime() int64 {
-	if x != nil {
-		return x.RegisterTime
-	}
-	return 0
-}
-
-type UserIdentityListItem struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	UserNo        string                 `protobuf:"bytes,2,opt,name=user_no,json=userNo,proto3" json:"user_no,omitempty"`
-	Username      string                 `protobuf:"bytes,3,opt,name=username,proto3" json:"username,omitempty"`
-	Phone         string                 `protobuf:"bytes,4,opt,name=phone,proto3" json:"phone,omitempty"`
-	Email         string                 `protobuf:"bytes,5,opt,name=email,proto3" json:"email,omitempty"`
-	RealName      string                 `protobuf:"bytes,6,opt,name=real_name,json=realName,proto3" json:"real_name,omitempty"`
-	IdType        IdType                 `protobuf:"varint,7,opt,name=id_type,json=idType,proto3,enum=user.IdType" json:"id_type,omitempty"`
-	IdNo          string                 `protobuf:"bytes,8,opt,name=id_no,json=idNo,proto3" json:"id_no,omitempty"`
-	KycLevel      KycLevel               `protobuf:"varint,9,opt,name=kyc_level,json=kycLevel,proto3,enum=user.KycLevel" json:"kyc_level,omitempty"`
-	VerifyStatus  VerifyStatus           `protobuf:"varint,10,opt,name=verify_status,json=verifyStatus,proto3,enum=user.VerifyStatus" json:"verify_status,omitempty"`
-	RejectReason  string                 `protobuf:"bytes,11,opt,name=reject_reason,json=rejectReason,proto3" json:"reject_reason,omitempty"`
-	SubmitTime    int64                  `protobuf:"varint,12,opt,name=submit_time,json=submitTime,proto3" json:"submit_time,omitempty"`
-	VerifyTime    int64                  `protobuf:"varint,13,opt,name=verify_time,json=verifyTime,proto3" json:"verify_time,omitempty"`
-	VerifyBy      int64                  `protobuf:"varint,14,opt,name=verify_by,json=verifyBy,proto3" json:"verify_by,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UserIdentityListItem) Reset() {
-	*x = UserIdentityListItem{}
-	mi := &file_proto_user_model_proto_msgTypes[7]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UserIdentityListItem) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UserIdentityListItem) ProtoMessage() {}
-
-func (x *UserIdentityListItem) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_model_proto_msgTypes[7]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UserIdentityListItem.ProtoReflect.Descriptor instead.
-func (*UserIdentityListItem) Descriptor() ([]byte, []int) {
-	return file_proto_user_model_proto_rawDescGZIP(), []int{7}
-}
-
-func (x *UserIdentityListItem) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *UserIdentityListItem) GetUserNo() string {
-	if x != nil {
-		return x.UserNo
-	}
-	return ""
-}
-
-func (x *UserIdentityListItem) GetUsername() string {
-	if x != nil {
-		return x.Username
-	}
-	return ""
-}
-
-func (x *UserIdentityListItem) GetPhone() string {
-	if x != nil {
-		return x.Phone
-	}
-	return ""
-}
-
-func (x *UserIdentityListItem) GetEmail() string {
-	if x != nil {
-		return x.Email
-	}
-	return ""
-}
-
-func (x *UserIdentityListItem) GetRealName() string {
-	if x != nil {
-		return x.RealName
-	}
-	return ""
-}
-
-func (x *UserIdentityListItem) GetIdType() IdType {
-	if x != nil {
-		return x.IdType
-	}
-	return IdType_ID_TYPE_NONE
-}
-
-func (x *UserIdentityListItem) GetIdNo() string {
-	if x != nil {
-		return x.IdNo
-	}
-	return ""
-}
-
-func (x *UserIdentityListItem) GetKycLevel() KycLevel {
-	if x != nil {
-		return x.KycLevel
-	}
-	return KycLevel_KYC_LEVEL_NONE
-}
-
-func (x *UserIdentityListItem) GetVerifyStatus() VerifyStatus {
-	if x != nil {
-		return x.VerifyStatus
-	}
-	return VerifyStatus_VERIFY_STATUS_NONE
-}
-
-func (x *UserIdentityListItem) GetRejectReason() string {
-	if x != nil {
-		return x.RejectReason
-	}
-	return ""
-}
-
-func (x *UserIdentityListItem) GetSubmitTime() int64 {
-	if x != nil {
-		return x.SubmitTime
-	}
-	return 0
-}
-
-func (x *UserIdentityListItem) GetVerifyTime() int64 {
-	if x != nil {
-		return x.VerifyTime
-	}
-	return 0
-}
-
-func (x *UserIdentityListItem) GetVerifyBy() int64 {
-	if x != nil {
-		return x.VerifyBy
-	}
-	return 0
-}
-
-type UserBankListItem struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId          int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	UserNo          string                 `protobuf:"bytes,3,opt,name=user_no,json=userNo,proto3" json:"user_no,omitempty"`
-	Username        string                 `protobuf:"bytes,4,opt,name=username,proto3" json:"username,omitempty"`
-	BankName        string                 `protobuf:"bytes,5,opt,name=bank_name,json=bankName,proto3" json:"bank_name,omitempty"`
-	BankCode        string                 `protobuf:"bytes,6,opt,name=bank_code,json=bankCode,proto3" json:"bank_code,omitempty"`
-	AccountName     string                 `protobuf:"bytes,7,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`
-	AccountNo       string                 `protobuf:"bytes,8,opt,name=account_no,json=accountNo,proto3" json:"account_no,omitempty"`
-	MaskedAccountNo string                 `protobuf:"bytes,9,opt,name=masked_account_no,json=maskedAccountNo,proto3" json:"masked_account_no,omitempty"`
-	BranchName      string                 `protobuf:"bytes,10,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`
-	CountryCode     string                 `protobuf:"bytes,11,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
-	IsDefault       bool                   `protobuf:"varint,12,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
-	Status          BankStatus             `protobuf:"varint,13,opt,name=status,proto3,enum=user.BankStatus" json:"status,omitempty"`
-	CreateTimes     int64                  `protobuf:"varint,14,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
-}
-
-func (x *UserBankListItem) Reset() {
-	*x = UserBankListItem{}
-	mi := &file_proto_user_model_proto_msgTypes[8]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UserBankListItem) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UserBankListItem) ProtoMessage() {}
-
-func (x *UserBankListItem) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_user_model_proto_msgTypes[8]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UserBankListItem.ProtoReflect.Descriptor instead.
-func (*UserBankListItem) Descriptor() ([]byte, []int) {
-	return file_proto_user_model_proto_rawDescGZIP(), []int{8}
-}
-
-func (x *UserBankListItem) GetId() int64 {
+func (x *UserItem) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *UserBankListItem) GetUserId() int64 {
+func (x *UserItem) GetTenantId() int64 {
 	if x != nil {
-		return x.UserId
+		return x.TenantId
 	}
 	return 0
 }
 
-func (x *UserBankListItem) GetUserNo() string {
+func (x *UserItem) GetUserNo() string {
 	if x != nil {
 		return x.UserNo
 	}
 	return ""
 }
 
-func (x *UserBankListItem) GetUsername() string {
+func (x *UserItem) GetUsername() string {
 	if x != nil {
 		return x.Username
 	}
 	return ""
 }
 
-func (x *UserBankListItem) GetBankName() string {
+func (x *UserItem) GetNickname() string {
 	if x != nil {
-		return x.BankName
+		return x.Nickname
 	}
 	return ""
 }
 
-func (x *UserBankListItem) GetBankCode() string {
+func (x *UserItem) GetAvatar() string {
 	if x != nil {
-		return x.BankCode
+		return x.Avatar
 	}
 	return ""
 }
 
-func (x *UserBankListItem) GetAccountName() string {
+func (x *UserItem) GetPasswordHash() string {
 	if x != nil {
-		return x.AccountName
+		return x.PasswordHash
 	}
 	return ""
 }
 
-func (x *UserBankListItem) GetAccountNo() string {
+func (x *UserItem) GetRegisterType() RegisterType {
 	if x != nil {
-		return x.AccountNo
+		return x.RegisterType
+	}
+	return RegisterType_REGISTER_TYPE_UNKNOWN
+}
+
+func (x *UserItem) GetStatus() UserStatus {
+	if x != nil {
+		return x.Status
+	}
+	return UserStatus_USER_STATUS_UNKNOWN
+}
+
+func (x *UserItem) GetMemberLevel() int64 {
+	if x != nil {
+		return x.MemberLevel
+	}
+	return 0
+}
+
+func (x *UserItem) GetLanguage() string {
+	if x != nil {
+		return x.Language
 	}
 	return ""
 }
 
-func (x *UserBankListItem) GetMaskedAccountNo() string {
+func (x *UserItem) GetTimezone() string {
 	if x != nil {
-		return x.MaskedAccountNo
+		return x.Timezone
 	}
 	return ""
 }
 
-func (x *UserBankListItem) GetBranchName() string {
+func (x *UserItem) GetInviteCode() string {
 	if x != nil {
-		return x.BranchName
+		return x.InviteCode
 	}
 	return ""
 }
 
-func (x *UserBankListItem) GetCountryCode() string {
+func (x *UserItem) GetSignature() string {
+	if x != nil {
+		return x.Signature
+	}
+	return ""
+}
+
+func (x *UserItem) GetSource() string {
+	if x != nil {
+		return x.Source
+	}
+	return ""
+}
+
+func (x *UserItem) GetReferrerUserId() int64 {
+	if x != nil {
+		return x.ReferrerUserId
+	}
+	return 0
+}
+
+func (x *UserItem) GetLastLoginIp() string {
+	if x != nil {
+		return x.LastLoginIp
+	}
+	return ""
+}
+
+func (x *UserItem) GetLastLoginTime() int64 {
+	if x != nil {
+		return x.LastLoginTime
+	}
+	return 0
+}
+
+func (x *UserItem) GetRegisterIp() string {
+	if x != nil {
+		return x.RegisterIp
+	}
+	return ""
+}
+
+func (x *UserItem) GetRegisterTime() int64 {
+	if x != nil {
+		return x.RegisterTime
+	}
+	return 0
+}
+
+func (x *UserItem) GetIsGuest() int64 {
+	if x != nil {
+		return x.IsGuest
+	}
+	return 0
+}
+
+func (x *UserItem) GetIsRecharge() int64 {
+	if x != nil {
+		return x.IsRecharge
+	}
+	return 0
+}
+
+func (x *UserItem) GetDeviceId() string {
+	if x != nil {
+		return x.DeviceId
+	}
+	return ""
+}
+
+func (x *UserItem) GetFingerprint() string {
+	if x != nil {
+		return x.Fingerprint
+	}
+	return ""
+}
+
+func (x *UserItem) GetRemark() string {
+	if x != nil {
+		return x.Remark
+	}
+	return ""
+}
+
+func (x *UserItem) GetDeleted() int64 {
+	if x != nil {
+		return x.Deleted
+	}
+	return 0
+}
+
+func (x *UserItem) GetCreateTimes() int64 {
+	if x != nil {
+		return x.CreateTimes
+	}
+	return 0
+}
+
+func (x *UserItem) GetUpdateTimes() int64 {
+	if x != nil {
+		return x.UpdateTimes
+	}
+	return 0
+}
+
+type UserIdentityItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                 // 主键ID
+	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                     // 租户ID
+	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                           // 用户ID
+	Phone         string                 `protobuf:"bytes,4,opt,name=phone,proto3" json:"phone,omitempty"`                                                            // 手机号
+	Email         string                 `protobuf:"bytes,5,opt,name=email,proto3" json:"email,omitempty"`                                                            // 邮箱
+	RealName      string                 `protobuf:"bytes,6,opt,name=real_name,json=realName,proto3" json:"real_name,omitempty"`                                      // 真实姓名
+	Gender        Gender                 `protobuf:"varint,7,opt,name=gender,proto3,enum=user.Gender" json:"gender,omitempty"`                                        // 性别：0未知 1男 2女
+	Birthday      int64                  `protobuf:"varint,8,opt,name=birthday,proto3" json:"birthday,omitempty"`                                                     // 生日
+	CountryCode   string                 `protobuf:"bytes,9,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`                             // 国家/地区代码
+	Province      string                 `protobuf:"bytes,10,opt,name=province,proto3" json:"province,omitempty"`                                                     // 省/州
+	City          string                 `protobuf:"bytes,11,opt,name=city,proto3" json:"city,omitempty"`                                                             // 城市
+	Address       string                 `protobuf:"bytes,12,opt,name=address,proto3" json:"address,omitempty"`                                                       // 地址
+	IdType        IdType                 `protobuf:"varint,13,opt,name=id_type,json=idType,proto3,enum=user.IdType" json:"id_type,omitempty"`                         // 证件类型：0未提交 1身份证 2护照 3驾驶证
+	IdNo          string                 `protobuf:"bytes,14,opt,name=id_no,json=idNo,proto3" json:"id_no,omitempty"`                                                 // 证件号码
+	FrontImage    string                 `protobuf:"bytes,15,opt,name=front_image,json=frontImage,proto3" json:"front_image,omitempty"`                               // 证件正面
+	BackImage     string                 `protobuf:"bytes,16,opt,name=back_image,json=backImage,proto3" json:"back_image,omitempty"`                                  // 证件反面
+	HandheldImage string                 `protobuf:"bytes,17,opt,name=handheld_image,json=handheldImage,proto3" json:"handheld_image,omitempty"`                      // 手持证件照
+	KycLevel      KycLevel               `protobuf:"varint,18,opt,name=kyc_level,json=kycLevel,proto3,enum=user.KycLevel" json:"kyc_level,omitempty"`                 // KYC等级：0未认证 1初级 2高级
+	VerifyStatus  VerifyStatus           `protobuf:"varint,19,opt,name=verify_status,json=verifyStatus,proto3,enum=user.VerifyStatus" json:"verify_status,omitempty"` // 实名状态：0未提交 1审核中 2通过 3拒绝
+	RejectReason  string                 `protobuf:"bytes,20,opt,name=reject_reason,json=rejectReason,proto3" json:"reject_reason,omitempty"`                         // 驳回原因
+	SubmitTime    int64                  `protobuf:"varint,21,opt,name=submit_time,json=submitTime,proto3" json:"submit_time,omitempty"`                              // 提交时间
+	VerifyTime    int64                  `protobuf:"varint,22,opt,name=verify_time,json=verifyTime,proto3" json:"verify_time,omitempty"`                              // 审核时间
+	VerifyBy      int64                  `protobuf:"varint,23,opt,name=verify_by,json=verifyBy,proto3" json:"verify_by,omitempty"`                                    // 审核人
+	CreateTimes   int64                  `protobuf:"varint,24,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                           // 创建时间
+	UpdateTimes   int64                  `protobuf:"varint,25,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                           // 更新时间
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserIdentityItem) Reset() {
+	*x = UserIdentityItem{}
+	mi := &file_proto_user_model_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserIdentityItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserIdentityItem) ProtoMessage() {}
+
+func (x *UserIdentityItem) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_model_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserIdentityItem.ProtoReflect.Descriptor instead.
+func (*UserIdentityItem) Descriptor() ([]byte, []int) {
+	return file_proto_user_model_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *UserIdentityItem) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UserIdentityItem) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *UserIdentityItem) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *UserIdentityItem) GetPhone() string {
+	if x != nil {
+		return x.Phone
+	}
+	return ""
+}
+
+func (x *UserIdentityItem) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *UserIdentityItem) GetRealName() string {
+	if x != nil {
+		return x.RealName
+	}
+	return ""
+}
+
+func (x *UserIdentityItem) GetGender() Gender {
+	if x != nil {
+		return x.Gender
+	}
+	return Gender_GENDER_UNKNOWN
+}
+
+func (x *UserIdentityItem) GetBirthday() int64 {
+	if x != nil {
+		return x.Birthday
+	}
+	return 0
+}
+
+func (x *UserIdentityItem) GetCountryCode() string {
 	if x != nil {
 		return x.CountryCode
 	}
 	return ""
 }
 
-func (x *UserBankListItem) GetIsDefault() bool {
+func (x *UserIdentityItem) GetProvince() string {
+	if x != nil {
+		return x.Province
+	}
+	return ""
+}
+
+func (x *UserIdentityItem) GetCity() string {
+	if x != nil {
+		return x.City
+	}
+	return ""
+}
+
+func (x *UserIdentityItem) GetAddress() string {
+	if x != nil {
+		return x.Address
+	}
+	return ""
+}
+
+func (x *UserIdentityItem) GetIdType() IdType {
+	if x != nil {
+		return x.IdType
+	}
+	return IdType_ID_TYPE_NONE
+}
+
+func (x *UserIdentityItem) GetIdNo() string {
+	if x != nil {
+		return x.IdNo
+	}
+	return ""
+}
+
+func (x *UserIdentityItem) GetFrontImage() string {
+	if x != nil {
+		return x.FrontImage
+	}
+	return ""
+}
+
+func (x *UserIdentityItem) GetBackImage() string {
+	if x != nil {
+		return x.BackImage
+	}
+	return ""
+}
+
+func (x *UserIdentityItem) GetHandheldImage() string {
+	if x != nil {
+		return x.HandheldImage
+	}
+	return ""
+}
+
+func (x *UserIdentityItem) GetKycLevel() KycLevel {
+	if x != nil {
+		return x.KycLevel
+	}
+	return KycLevel_KYC_LEVEL_NONE
+}
+
+func (x *UserIdentityItem) GetVerifyStatus() VerifyStatus {
+	if x != nil {
+		return x.VerifyStatus
+	}
+	return VerifyStatus_VERIFY_STATUS_NONE
+}
+
+func (x *UserIdentityItem) GetRejectReason() string {
+	if x != nil {
+		return x.RejectReason
+	}
+	return ""
+}
+
+func (x *UserIdentityItem) GetSubmitTime() int64 {
+	if x != nil {
+		return x.SubmitTime
+	}
+	return 0
+}
+
+func (x *UserIdentityItem) GetVerifyTime() int64 {
+	if x != nil {
+		return x.VerifyTime
+	}
+	return 0
+}
+
+func (x *UserIdentityItem) GetVerifyBy() int64 {
+	if x != nil {
+		return x.VerifyBy
+	}
+	return 0
+}
+
+func (x *UserIdentityItem) GetCreateTimes() int64 {
+	if x != nil {
+		return x.CreateTimes
+	}
+	return 0
+}
+
+func (x *UserIdentityItem) GetUpdateTimes() int64 {
+	if x != nil {
+		return x.UpdateTimes
+	}
+	return 0
+}
+
+type UserBankItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                       // 主键ID
+	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`           // 租户ID
+	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                 // 用户ID
+	BankName      string                 `protobuf:"bytes,4,opt,name=bank_name,json=bankName,proto3" json:"bank_name,omitempty"`            // 银行名称
+	BankCode      string                 `protobuf:"bytes,5,opt,name=bank_code,json=bankCode,proto3" json:"bank_code,omitempty"`            // 银行编码
+	AccountName   string                 `protobuf:"bytes,6,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`   // 开户名
+	AccountNo     string                 `protobuf:"bytes,7,opt,name=account_no,json=accountNo,proto3" json:"account_no,omitempty"`         // 银行卡号
+	BranchName    string                 `protobuf:"bytes,8,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`      // 支行名称
+	CountryCode   string                 `protobuf:"bytes,9,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`   // 国家地区
+	IsDefault     int64                  `protobuf:"varint,10,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`       // 是否默认：0否 1是
+	Status        BankStatus             `protobuf:"varint,11,opt,name=status,proto3,enum=user.BankStatus" json:"status,omitempty"`         // 状态：1正常 2禁用
+	CreateTimes   int64                  `protobuf:"varint,12,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"` // 创建时间
+	UpdateTimes   int64                  `protobuf:"varint,13,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"` // 更新时间
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserBankItem) Reset() {
+	*x = UserBankItem{}
+	mi := &file_proto_user_model_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserBankItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserBankItem) ProtoMessage() {}
+
+func (x *UserBankItem) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_model_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserBankItem.ProtoReflect.Descriptor instead.
+func (*UserBankItem) Descriptor() ([]byte, []int) {
+	return file_proto_user_model_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *UserBankItem) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UserBankItem) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *UserBankItem) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *UserBankItem) GetBankName() string {
+	if x != nil {
+		return x.BankName
+	}
+	return ""
+}
+
+func (x *UserBankItem) GetBankCode() string {
+	if x != nil {
+		return x.BankCode
+	}
+	return ""
+}
+
+func (x *UserBankItem) GetAccountName() string {
+	if x != nil {
+		return x.AccountName
+	}
+	return ""
+}
+
+func (x *UserBankItem) GetAccountNo() string {
+	if x != nil {
+		return x.AccountNo
+	}
+	return ""
+}
+
+func (x *UserBankItem) GetBranchName() string {
+	if x != nil {
+		return x.BranchName
+	}
+	return ""
+}
+
+func (x *UserBankItem) GetCountryCode() string {
+	if x != nil {
+		return x.CountryCode
+	}
+	return ""
+}
+
+func (x *UserBankItem) GetIsDefault() int64 {
 	if x != nil {
 		return x.IsDefault
 	}
-	return false
+	return 0
 }
 
-func (x *UserBankListItem) GetStatus() BankStatus {
+func (x *UserBankItem) GetStatus() BankStatus {
 	if x != nil {
 		return x.Status
 	}
 	return BankStatus_BANK_STATUS_UNKNOWN
 }
 
-func (x *UserBankListItem) GetCreateTimes() int64 {
+func (x *UserBankItem) GetCreateTimes() int64 {
 	if x != nil {
 		return x.CreateTimes
+	}
+	return 0
+}
+
+func (x *UserBankItem) GetUpdateTimes() int64 {
+	if x != nil {
+		return x.UpdateTimes
 	}
 	return 0
 }
@@ -1377,7 +1413,7 @@ const file_proto_user_model_proto_rawDesc = "" +
 	"\x05email\x18\x05 \x01(\tR\x05email\x12\x1b\n" +
 	"\treal_name\x18\x06 \x01(\tR\brealName\x12$\n" +
 	"\x06gender\x18\a \x01(\x0e2\f.user.GenderR\x06gender\x12\x1a\n" +
-	"\bbirthday\x18\b \x01(\tR\bbirthday\x12!\n" +
+	"\bbirthday\x18\b \x01(\x03R\bbirthday\x12!\n" +
 	"\fcountry_code\x18\t \x01(\tR\vcountryCode\x12\x1a\n" +
 	"\bprovince\x18\n" +
 	" \x01(\tR\bprovince\x12\x12\n" +
@@ -1399,23 +1435,98 @@ const file_proto_user_model_proto_rawDesc = "" +
 	"verifyTime\x12\x1b\n" +
 	"\tverify_by\x18\x17 \x01(\x03R\bverifyBy\x12!\n" +
 	"\fcreate_times\x18\x18 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x19 \x01(\x03R\vupdateTimes\"\x8e\x03\n" +
+	"\fupdate_times\x18\x19 \x01(\x03R\vupdateTimes\"\xb5\x03\n" +
 	"\fUserSecurity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12(\n" +
-	"\x10has_pay_password\x18\x04 \x01(\bR\x0ehasPayPassword\x12%\n" +
-	"\x0egoogle_enabled\x18\x05 \x01(\bR\rgoogleEnabled\x12*\n" +
-	"\x11login_error_count\x18\x06 \x01(\x03R\x0floginErrorCount\x12&\n" +
-	"\x0fpay_error_count\x18\a \x01(\x03R\rpayErrorCount\x12\x1d\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12*\n" +
+	"\x11pay_password_hash\x18\x04 \x01(\tR\x0fpayPasswordHash\x12#\n" +
+	"\rgoogle_secret\x18\x05 \x01(\tR\fgoogleSecret\x12%\n" +
+	"\x0egoogle_enabled\x18\x06 \x01(\x03R\rgoogleEnabled\x12*\n" +
+	"\x11login_error_count\x18\a \x01(\x03R\x0floginErrorCount\x12&\n" +
+	"\x0fpay_error_count\x18\b \x01(\x03R\rpayErrorCount\x12\x1d\n" +
 	"\n" +
-	"lock_until\x18\b \x01(\x03R\tlockUntil\x12.\n" +
+	"lock_until\x18\t \x01(\x03R\tlockUntil\x12.\n" +
 	"\n" +
-	"risk_level\x18\t \x01(\x0e2\x0f.user.RiskLevelR\triskLevel\x12!\n" +
-	"\fcreate_times\x18\n" +
-	" \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\v \x01(\x03R\vupdateTimes\"\xcb\x03\n" +
-	"\bUserBank\x12\x0e\n" +
+	"risk_level\x18\n" +
+	" \x01(\x0e2\x0f.user.RiskLevelR\triskLevel\x12!\n" +
+	"\fcreate_times\x18\v \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18\f \x01(\x03R\vupdateTimes\"\x91\x01\n" +
+	"\vUserProfile\x12\"\n" +
+	"\x04base\x18\x01 \x01(\v2\x0e.user.UserBaseR\x04base\x12.\n" +
+	"\bidentity\x18\x02 \x01(\v2\x12.user.UserIdentityR\bidentity\x12.\n" +
+	"\bsecurity\x18\x03 \x01(\v2\x12.user.UserSecurityR\bsecurity\"\xba\x01\n" +
+	"\n" +
+	"UserDetail\x12\"\n" +
+	"\x04base\x18\x01 \x01(\v2\x0e.user.UserBaseR\x04base\x12.\n" +
+	"\bidentity\x18\x02 \x01(\v2\x12.user.UserIdentityR\bidentity\x12.\n" +
+	"\bsecurity\x18\x03 \x01(\v2\x12.user.UserSecurityR\bsecurity\x12(\n" +
+	"\x05banks\x18\x04 \x03(\v2\x12.user.UserBankItemR\x05banks\"\x89\a\n" +
+	"\bUserItem\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_no\x18\x03 \x01(\tR\x06userNo\x12\x1a\n" +
+	"\busername\x18\x04 \x01(\tR\busername\x12\x1a\n" +
+	"\bnickname\x18\x05 \x01(\tR\bnickname\x12\x16\n" +
+	"\x06avatar\x18\x06 \x01(\tR\x06avatar\x12#\n" +
+	"\rpassword_hash\x18\a \x01(\tR\fpasswordHash\x127\n" +
+	"\rregister_type\x18\b \x01(\x0e2\x12.user.RegisterTypeR\fregisterType\x12(\n" +
+	"\x06status\x18\t \x01(\x0e2\x10.user.UserStatusR\x06status\x12!\n" +
+	"\fmember_level\x18\n" +
+	" \x01(\x03R\vmemberLevel\x12\x1a\n" +
+	"\blanguage\x18\v \x01(\tR\blanguage\x12\x1a\n" +
+	"\btimezone\x18\f \x01(\tR\btimezone\x12\x1f\n" +
+	"\vinvite_code\x18\r \x01(\tR\n" +
+	"inviteCode\x12\x1c\n" +
+	"\tsignature\x18\x0e \x01(\tR\tsignature\x12\x16\n" +
+	"\x06source\x18\x0f \x01(\tR\x06source\x12(\n" +
+	"\x10referrer_user_id\x18\x10 \x01(\x03R\x0ereferrerUserId\x12\"\n" +
+	"\rlast_login_ip\x18\x11 \x01(\tR\vlastLoginIp\x12&\n" +
+	"\x0flast_login_time\x18\x12 \x01(\x03R\rlastLoginTime\x12\x1f\n" +
+	"\vregister_ip\x18\x13 \x01(\tR\n" +
+	"registerIp\x12#\n" +
+	"\rregister_time\x18\x14 \x01(\x03R\fregisterTime\x12\x19\n" +
+	"\bis_guest\x18\x15 \x01(\x03R\aisGuest\x12\x1f\n" +
+	"\vis_recharge\x18\x16 \x01(\x03R\n" +
+	"isRecharge\x12\x1b\n" +
+	"\tdevice_id\x18\x17 \x01(\tR\bdeviceId\x12 \n" +
+	"\vfingerprint\x18\x18 \x01(\tR\vfingerprint\x12\x16\n" +
+	"\x06remark\x18\x19 \x01(\tR\x06remark\x12\x18\n" +
+	"\adeleted\x18\x1a \x01(\x03R\adeleted\x12!\n" +
+	"\fcreate_times\x18\x1b \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18\x1c \x01(\x03R\vupdateTimes\"\xa3\x06\n" +
+	"\x10UserIdentityItem\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x14\n" +
+	"\x05phone\x18\x04 \x01(\tR\x05phone\x12\x14\n" +
+	"\x05email\x18\x05 \x01(\tR\x05email\x12\x1b\n" +
+	"\treal_name\x18\x06 \x01(\tR\brealName\x12$\n" +
+	"\x06gender\x18\a \x01(\x0e2\f.user.GenderR\x06gender\x12\x1a\n" +
+	"\bbirthday\x18\b \x01(\x03R\bbirthday\x12!\n" +
+	"\fcountry_code\x18\t \x01(\tR\vcountryCode\x12\x1a\n" +
+	"\bprovince\x18\n" +
+	" \x01(\tR\bprovince\x12\x12\n" +
+	"\x04city\x18\v \x01(\tR\x04city\x12\x18\n" +
+	"\aaddress\x18\f \x01(\tR\aaddress\x12%\n" +
+	"\aid_type\x18\r \x01(\x0e2\f.user.IdTypeR\x06idType\x12\x13\n" +
+	"\x05id_no\x18\x0e \x01(\tR\x04idNo\x12\x1f\n" +
+	"\vfront_image\x18\x0f \x01(\tR\n" +
+	"frontImage\x12\x1d\n" +
+	"\n" +
+	"back_image\x18\x10 \x01(\tR\tbackImage\x12%\n" +
+	"\x0ehandheld_image\x18\x11 \x01(\tR\rhandheldImage\x12+\n" +
+	"\tkyc_level\x18\x12 \x01(\x0e2\x0e.user.KycLevelR\bkycLevel\x127\n" +
+	"\rverify_status\x18\x13 \x01(\x0e2\x12.user.VerifyStatusR\fverifyStatus\x12#\n" +
+	"\rreject_reason\x18\x14 \x01(\tR\frejectReason\x12\x1f\n" +
+	"\vsubmit_time\x18\x15 \x01(\x03R\n" +
+	"submitTime\x12\x1f\n" +
+	"\vverify_time\x18\x16 \x01(\x03R\n" +
+	"verifyTime\x12\x1b\n" +
+	"\tverify_by\x18\x17 \x01(\x03R\bverifyBy\x12!\n" +
+	"\fcreate_times\x18\x18 \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18\x19 \x01(\x03R\vupdateTimes\"\xa3\x03\n" +
+	"\fUserBankItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x1b\n" +
@@ -1423,83 +1534,16 @@ const file_proto_user_model_proto_rawDesc = "" +
 	"\tbank_code\x18\x05 \x01(\tR\bbankCode\x12!\n" +
 	"\faccount_name\x18\x06 \x01(\tR\vaccountName\x12\x1d\n" +
 	"\n" +
-	"account_no\x18\a \x01(\tR\taccountNo\x12*\n" +
-	"\x11masked_account_no\x18\b \x01(\tR\x0fmaskedAccountNo\x12\x1f\n" +
-	"\vbranch_name\x18\t \x01(\tR\n" +
+	"account_no\x18\a \x01(\tR\taccountNo\x12\x1f\n" +
+	"\vbranch_name\x18\b \x01(\tR\n" +
 	"branchName\x12!\n" +
-	"\fcountry_code\x18\n" +
-	" \x01(\tR\vcountryCode\x12\x1d\n" +
+	"\fcountry_code\x18\t \x01(\tR\vcountryCode\x12\x1d\n" +
 	"\n" +
-	"is_default\x18\v \x01(\bR\tisDefault\x12(\n" +
-	"\x06status\x18\f \x01(\x0e2\x10.user.BankStatusR\x06status\x12!\n" +
-	"\fcreate_times\x18\r \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x0e \x01(\x03R\vupdateTimes\"\x91\x01\n" +
-	"\vUserProfile\x12\"\n" +
-	"\x04base\x18\x01 \x01(\v2\x0e.user.UserBaseR\x04base\x12.\n" +
-	"\bidentity\x18\x02 \x01(\v2\x12.user.UserIdentityR\bidentity\x12.\n" +
-	"\bsecurity\x18\x03 \x01(\v2\x12.user.UserSecurityR\bsecurity\"\xb6\x01\n" +
-	"\n" +
-	"UserDetail\x12\"\n" +
-	"\x04base\x18\x01 \x01(\v2\x0e.user.UserBaseR\x04base\x12.\n" +
-	"\bidentity\x18\x02 \x01(\v2\x12.user.UserIdentityR\bidentity\x12.\n" +
-	"\bsecurity\x18\x03 \x01(\v2\x12.user.UserSecurityR\bsecurity\x12$\n" +
-	"\x05banks\x18\x04 \x03(\v2\x0e.user.UserBankR\x05banks\"\x9e\x04\n" +
-	"\fUserListItem\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x17\n" +
-	"\auser_no\x18\x02 \x01(\tR\x06userNo\x12\x1a\n" +
-	"\busername\x18\x03 \x01(\tR\busername\x12\x1a\n" +
-	"\bnickname\x18\x04 \x01(\tR\bnickname\x12\x16\n" +
-	"\x06avatar\x18\x05 \x01(\tR\x06avatar\x12\x14\n" +
-	"\x05phone\x18\x06 \x01(\tR\x05phone\x12\x14\n" +
-	"\x05email\x18\a \x01(\tR\x05email\x12\x1b\n" +
-	"\treal_name\x18\b \x01(\tR\brealName\x12(\n" +
-	"\x06status\x18\t \x01(\x0e2\x10.user.UserStatusR\x06status\x12!\n" +
-	"\fmember_level\x18\n" +
-	" \x01(\x05R\vmemberLevel\x12+\n" +
-	"\tkyc_level\x18\v \x01(\x0e2\x0e.user.KycLevelR\bkycLevel\x127\n" +
-	"\rverify_status\x18\f \x01(\x0e2\x12.user.VerifyStatusR\fverifyStatus\x12\x1f\n" +
-	"\vinvite_code\x18\r \x01(\tR\n" +
-	"inviteCode\x12\"\n" +
-	"\rlast_login_ip\x18\x0e \x01(\tR\vlastLoginIp\x12&\n" +
-	"\x0flast_login_time\x18\x0f \x01(\x03R\rlastLoginTime\x12#\n" +
-	"\rregister_time\x18\x10 \x01(\x03R\fregisterTime\"\xd3\x03\n" +
-	"\x14UserIdentityListItem\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x17\n" +
-	"\auser_no\x18\x02 \x01(\tR\x06userNo\x12\x1a\n" +
-	"\busername\x18\x03 \x01(\tR\busername\x12\x14\n" +
-	"\x05phone\x18\x04 \x01(\tR\x05phone\x12\x14\n" +
-	"\x05email\x18\x05 \x01(\tR\x05email\x12\x1b\n" +
-	"\treal_name\x18\x06 \x01(\tR\brealName\x12%\n" +
-	"\aid_type\x18\a \x01(\x0e2\f.user.IdTypeR\x06idType\x12\x13\n" +
-	"\x05id_no\x18\b \x01(\tR\x04idNo\x12+\n" +
-	"\tkyc_level\x18\t \x01(\x0e2\x0e.user.KycLevelR\bkycLevel\x127\n" +
-	"\rverify_status\x18\n" +
-	" \x01(\x0e2\x12.user.VerifyStatusR\fverifyStatus\x12#\n" +
-	"\rreject_reason\x18\v \x01(\tR\frejectReason\x12\x1f\n" +
-	"\vsubmit_time\x18\f \x01(\x03R\n" +
-	"submitTime\x12\x1f\n" +
-	"\vverify_time\x18\r \x01(\x03R\n" +
-	"verifyTime\x12\x1b\n" +
-	"\tverify_by\x18\x0e \x01(\x03R\bverifyBy\"\xc8\x03\n" +
-	"\x10UserBankListItem\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x17\n" +
-	"\auser_no\x18\x03 \x01(\tR\x06userNo\x12\x1a\n" +
-	"\busername\x18\x04 \x01(\tR\busername\x12\x1b\n" +
-	"\tbank_name\x18\x05 \x01(\tR\bbankName\x12\x1b\n" +
-	"\tbank_code\x18\x06 \x01(\tR\bbankCode\x12!\n" +
-	"\faccount_name\x18\a \x01(\tR\vaccountName\x12\x1d\n" +
-	"\n" +
-	"account_no\x18\b \x01(\tR\taccountNo\x12*\n" +
-	"\x11masked_account_no\x18\t \x01(\tR\x0fmaskedAccountNo\x12\x1f\n" +
-	"\vbranch_name\x18\n" +
-	" \x01(\tR\n" +
-	"branchName\x12!\n" +
-	"\fcountry_code\x18\v \x01(\tR\vcountryCode\x12\x1d\n" +
-	"\n" +
-	"is_default\x18\f \x01(\bR\tisDefault\x12(\n" +
-	"\x06status\x18\r \x01(\x0e2\x10.user.BankStatusR\x06status\x12!\n" +
-	"\fcreate_times\x18\x0e \x01(\x03R\vcreateTimesB\x18Z\x16wklive/proto/user;userb\x06proto3"
+	"is_default\x18\n" +
+	" \x01(\x03R\tisDefault\x12(\n" +
+	"\x06status\x18\v \x01(\x0e2\x10.user.BankStatusR\x06status\x12!\n" +
+	"\fcreate_times\x18\f \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18\r \x01(\x03R\vupdateTimesB\x18Z\x16wklive/proto/user;userb\x06proto3"
 
 var (
 	file_proto_user_model_proto_rawDescOnce sync.Once
@@ -1513,54 +1557,52 @@ func file_proto_user_model_proto_rawDescGZIP() []byte {
 	return file_proto_user_model_proto_rawDescData
 }
 
-var file_proto_user_model_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_proto_user_model_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_proto_user_model_proto_goTypes = []any{
-	(*UserBase)(nil),             // 0: user.UserBase
-	(*UserIdentity)(nil),         // 1: user.UserIdentity
-	(*UserSecurity)(nil),         // 2: user.UserSecurity
-	(*UserBank)(nil),             // 3: user.UserBank
-	(*UserProfile)(nil),          // 4: user.UserProfile
-	(*UserDetail)(nil),           // 5: user.UserDetail
-	(*UserListItem)(nil),         // 6: user.UserListItem
-	(*UserIdentityListItem)(nil), // 7: user.UserIdentityListItem
-	(*UserBankListItem)(nil),     // 8: user.UserBankListItem
-	(RegisterType)(0),            // 9: user.RegisterType
-	(UserStatus)(0),              // 10: user.UserStatus
-	(Gender)(0),                  // 11: user.Gender
-	(IdType)(0),                  // 12: user.IdType
-	(KycLevel)(0),                // 13: user.KycLevel
-	(VerifyStatus)(0),            // 14: user.VerifyStatus
-	(RiskLevel)(0),               // 15: user.RiskLevel
-	(BankStatus)(0),              // 16: user.BankStatus
+	(*UserBase)(nil),         // 0: user.UserBase
+	(*UserIdentity)(nil),     // 1: user.UserIdentity
+	(*UserSecurity)(nil),     // 2: user.UserSecurity
+	(*UserProfile)(nil),      // 3: user.UserProfile
+	(*UserDetail)(nil),       // 4: user.UserDetail
+	(*UserItem)(nil),         // 5: user.UserItem
+	(*UserIdentityItem)(nil), // 6: user.UserIdentityItem
+	(*UserBankItem)(nil),     // 7: user.UserBankItem
+	(RegisterType)(0),        // 8: user.RegisterType
+	(UserStatus)(0),          // 9: user.UserStatus
+	(Gender)(0),              // 10: user.Gender
+	(IdType)(0),              // 11: user.IdType
+	(KycLevel)(0),            // 12: user.KycLevel
+	(VerifyStatus)(0),        // 13: user.VerifyStatus
+	(RiskLevel)(0),           // 14: user.RiskLevel
+	(BankStatus)(0),          // 15: user.BankStatus
 }
 var file_proto_user_model_proto_depIdxs = []int32{
-	9,  // 0: user.UserBase.register_type:type_name -> user.RegisterType
-	10, // 1: user.UserBase.status:type_name -> user.UserStatus
-	11, // 2: user.UserIdentity.gender:type_name -> user.Gender
-	12, // 3: user.UserIdentity.id_type:type_name -> user.IdType
-	13, // 4: user.UserIdentity.kyc_level:type_name -> user.KycLevel
-	14, // 5: user.UserIdentity.verify_status:type_name -> user.VerifyStatus
-	15, // 6: user.UserSecurity.risk_level:type_name -> user.RiskLevel
-	16, // 7: user.UserBank.status:type_name -> user.BankStatus
-	0,  // 8: user.UserProfile.base:type_name -> user.UserBase
-	1,  // 9: user.UserProfile.identity:type_name -> user.UserIdentity
-	2,  // 10: user.UserProfile.security:type_name -> user.UserSecurity
-	0,  // 11: user.UserDetail.base:type_name -> user.UserBase
-	1,  // 12: user.UserDetail.identity:type_name -> user.UserIdentity
-	2,  // 13: user.UserDetail.security:type_name -> user.UserSecurity
-	3,  // 14: user.UserDetail.banks:type_name -> user.UserBank
-	10, // 15: user.UserListItem.status:type_name -> user.UserStatus
-	13, // 16: user.UserListItem.kyc_level:type_name -> user.KycLevel
-	14, // 17: user.UserListItem.verify_status:type_name -> user.VerifyStatus
-	12, // 18: user.UserIdentityListItem.id_type:type_name -> user.IdType
-	13, // 19: user.UserIdentityListItem.kyc_level:type_name -> user.KycLevel
-	14, // 20: user.UserIdentityListItem.verify_status:type_name -> user.VerifyStatus
-	16, // 21: user.UserBankListItem.status:type_name -> user.BankStatus
-	22, // [22:22] is the sub-list for method output_type
-	22, // [22:22] is the sub-list for method input_type
-	22, // [22:22] is the sub-list for extension type_name
-	22, // [22:22] is the sub-list for extension extendee
-	0,  // [0:22] is the sub-list for field type_name
+	8,  // 0: user.UserBase.register_type:type_name -> user.RegisterType
+	9,  // 1: user.UserBase.status:type_name -> user.UserStatus
+	10, // 2: user.UserIdentity.gender:type_name -> user.Gender
+	11, // 3: user.UserIdentity.id_type:type_name -> user.IdType
+	12, // 4: user.UserIdentity.kyc_level:type_name -> user.KycLevel
+	13, // 5: user.UserIdentity.verify_status:type_name -> user.VerifyStatus
+	14, // 6: user.UserSecurity.risk_level:type_name -> user.RiskLevel
+	0,  // 7: user.UserProfile.base:type_name -> user.UserBase
+	1,  // 8: user.UserProfile.identity:type_name -> user.UserIdentity
+	2,  // 9: user.UserProfile.security:type_name -> user.UserSecurity
+	0,  // 10: user.UserDetail.base:type_name -> user.UserBase
+	1,  // 11: user.UserDetail.identity:type_name -> user.UserIdentity
+	2,  // 12: user.UserDetail.security:type_name -> user.UserSecurity
+	7,  // 13: user.UserDetail.banks:type_name -> user.UserBankItem
+	8,  // 14: user.UserItem.register_type:type_name -> user.RegisterType
+	9,  // 15: user.UserItem.status:type_name -> user.UserStatus
+	10, // 16: user.UserIdentityItem.gender:type_name -> user.Gender
+	11, // 17: user.UserIdentityItem.id_type:type_name -> user.IdType
+	12, // 18: user.UserIdentityItem.kyc_level:type_name -> user.KycLevel
+	13, // 19: user.UserIdentityItem.verify_status:type_name -> user.VerifyStatus
+	15, // 20: user.UserBankItem.status:type_name -> user.BankStatus
+	21, // [21:21] is the sub-list for method output_type
+	21, // [21:21] is the sub-list for method input_type
+	21, // [21:21] is the sub-list for extension type_name
+	21, // [21:21] is the sub-list for extension extendee
+	0,  // [0:21] is the sub-list for field type_name
 }
 
 func init() { file_proto_user_model_proto_init() }
@@ -1575,7 +1617,7 @@ func file_proto_user_model_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_user_model_proto_rawDesc), len(file_proto_user_model_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

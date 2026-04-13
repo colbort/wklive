@@ -40,7 +40,7 @@ message UserIdentity {
   string email = 5;
   string real_name = 6;
   user.Gender gender = 7;
-  string birthday = 8;
+  int64 birthday = 8;
   string country_code = 9;
   string province = 10;
   string city = 11;
@@ -61,34 +61,18 @@ message UserIdentity {
 }
 
 message UserSecurity {
-  int64 id = 1;
-  int64 tenant_id = 2;
-  int64 user_id = 3;
-  bool has_pay_password = 4;
-  bool google_enabled = 5;
-  int64 login_error_count = 6;
-  int64 pay_error_count = 7;
-  int64 lock_until = 8;
-  user.RiskLevel risk_level = 9;
-  int64 create_times = 10;
-  int64 update_times = 11;
-}
-
-message UserBank {
-  int64 id = 1;
-  int64 tenant_id = 2;
-  int64 user_id = 3;
-  string bank_name = 4;
-  string bank_code = 5;
-  string account_name = 6;
-  string account_no = 7;
-  string masked_account_no = 8;
-  string branch_name = 9;
-  string country_code = 10;
-  bool is_default = 11;
-  user.BankStatus status = 12;
-  int64 create_times = 13;
-  int64 update_times = 14;
+  int64 id = 1; // 主键ID
+  int64 tenant_id = 2; // 租户ID
+  int64 user_id = 3; // 用户ID
+  string pay_password_hash = 4; // 支付密码哈希
+  string google_secret = 5; // Google密钥
+  int64 google_enabled = 6; // Google2FA是否启用：0否 1是
+  int64 login_error_count = 7; // 登录错误次数
+  int64 pay_error_count = 8; // 支付密码错误次数
+  int64 lock_until = 9; // 锁定到期时间
+  user.RiskLevel risk_level = 10; // 风控等级：0正常 1关注 2高风险
+  int64 create_times = 11; // 创建时间
+  int64 update_times = 12; // 更新时间
 }
 
 message UserProfile {
@@ -101,58 +85,80 @@ message UserDetail {
   user.UserBase base = 1;
   user.UserIdentity identity = 2;
   user.UserSecurity security = 3;
-  repeated user.UserBank banks = 4;
+  repeated user.UserBankItem banks = 4;
 }
 
-message UserListItem {
-  int64 user_id = 1;
-  string user_no = 2;
-  string username = 3;
-  string nickname = 4;
-  string avatar = 5;
-  string phone = 6;
-  string email = 7;
-  string real_name = 8;
-  user.UserStatus status = 9;
-  int32 member_level = 10;
-  user.KycLevel kyc_level = 11;
-  user.VerifyStatus verify_status = 12;
-  string invite_code = 13;
-  string last_login_ip = 14;
-  int64 last_login_time = 15;
-  int64 register_time = 16;
+message UserItem {
+  int64 id = 1; // 用户ID
+  int64 tenant_id = 2; // 租户ID
+  string user_no = 3; // 用户编号
+  string username = 4; // 用户名
+  string nickname = 5; // 昵称
+  string avatar = 6; // 头像
+  string password_hash = 7; // 登录密码哈希
+  user.RegisterType register_type = 8; // 注册方式：1用户名 2手机号 3邮箱 4游客
+  user.UserStatus status = 9; // 状态：1正常 2禁用 3冻结 4注销
+  int64 member_level = 10; // 会员等级
+  string language = 11; // 语言
+  string timezone = 12; // 时区
+  string invite_code = 13; // 邀请码
+  string signature = 14; // 个性签名
+  string source = 15; // 注册来源
+  int64 referrer_user_id = 16; // 邀请人ID
+  string last_login_ip = 17; // 最后登录IP
+  int64 last_login_time = 18; // 最后登录时间
+  string register_ip = 19; // 注册IP
+  int64 register_time = 20; // 注册时间
+  int64 is_guest = 21; // 是否游客；1正常用户，2游客
+  int64 is_recharge = 22; // 是否充值；0没有充值，1已充值
+  string device_id = 23; // 设备唯一ID
+  string fingerprint = 24; // 浏览器指纹
+  string remark = 25; // 备注
+  int64 deleted = 26; // 是否删除：0否 1是
+  int64 create_times = 27; // 创建时间
+  int64 update_times = 28; // 更新时间
 }
 
-message UserIdentityListItem {
-  int64 user_id = 1;
-  string user_no = 2;
-  string username = 3;
-  string phone = 4;
-  string email = 5;
-  string real_name = 6;
-  user.IdType id_type = 7;
-  string id_no = 8;
-  user.KycLevel kyc_level = 9;
-  user.VerifyStatus verify_status = 10;
-  string reject_reason = 11;
-  int64 submit_time = 12;
-  int64 verify_time = 13;
-  int64 verify_by = 14;
+message UserIdentityItem {
+  int64 id = 1; // 主键ID
+  int64 tenant_id = 2; // 租户ID
+  int64 user_id = 3; // 用户ID
+  string phone = 4; // 手机号
+  string email = 5; // 邮箱
+  string real_name = 6; // 真实姓名
+  user.Gender gender = 7; // 性别：0未知 1男 2女
+  int64 birthday = 8; // 生日
+  string country_code = 9; // 国家/地区代码
+  string province = 10; // 省/州
+  string city = 11; // 城市
+  string address = 12; // 地址
+  user.IdType id_type = 13; // 证件类型：0未提交 1身份证 2护照 3驾驶证
+  string id_no = 14; // 证件号码
+  string front_image = 15; // 证件正面
+  string back_image = 16; // 证件反面
+  string handheld_image = 17; // 手持证件照
+  user.KycLevel kyc_level = 18; // KYC等级：0未认证 1初级 2高级
+  user.VerifyStatus verify_status = 19; // 实名状态：0未提交 1审核中 2通过 3拒绝
+  string reject_reason = 20; // 驳回原因
+  int64 submit_time = 21; // 提交时间
+  int64 verify_time = 22; // 审核时间
+  int64 verify_by = 23; // 审核人
+  int64 create_times = 24; // 创建时间
+  int64 update_times = 25; // 更新时间
 }
 
-message UserBankListItem {
-  int64 id = 1;
-  int64 user_id = 2;
-  string user_no = 3;
-  string username = 4;
-  string bank_name = 5;
-  string bank_code = 6;
-  string account_name = 7;
-  string account_no = 8;
-  string masked_account_no = 9;
-  string branch_name = 10;
-  string country_code = 11;
-  bool is_default = 12;
-  user.BankStatus status = 13;
-  int64 create_times = 14;
+message UserBankItem {
+  int64 id = 1; // 主键ID
+  int64 tenant_id = 2; // 租户ID
+  int64 user_id = 3; // 用户ID
+  string bank_name = 4; // 银行名称
+  string bank_code = 5; // 银行编码
+  string account_name = 6; // 开户名
+  string account_no = 7; // 银行卡号
+  string branch_name = 8; // 支行名称
+  string country_code = 9; // 国家地区
+  int64 is_default = 10; // 是否默认：0否 1是
+  user.BankStatus status = 11; // 状态：1正常 2禁用
+  int64 create_times = 12; // 创建时间
+  int64 update_times = 13; // 更新时间
 }

@@ -43,10 +43,7 @@ func (l *AddUserBankLogic) AddUserBank(in *user.AddUserBankReq) (*user.AddUserBa
 	}
 
 	now := utils.NowMillis()
-	isDefault := int64(0)
-	if in.IsDefault {
-		isDefault = 1
-	}
+	isDefault := in.IsDefault
 
 	// 如果设置为默认，需要取消其他卡的默认设置
 	if isDefault == 1 {
@@ -77,7 +74,7 @@ func (l *AddUserBankLogic) AddUserBank(in *user.AddUserBankReq) (*user.AddUserBa
 
 	l.Logger.Infof("管理员为用户 %d 添加银行卡成功，卡号后4位：%s", in.UserId, getLastFourDigits(in.AccountNo))
 
-	bankProto := &user.UserBank{
+	bankProto := &user.UserBankItem{
 		Id:          bank.Id,
 		TenantId:    bank.TenantId,
 		UserId:      bank.UserId,
@@ -87,7 +84,7 @@ func (l *AddUserBankLogic) AddUserBank(in *user.AddUserBankReq) (*user.AddUserBa
 		AccountNo:   bank.AccountNo,
 		BranchName:  bank.BranchName.String,
 		CountryCode: bank.CountryCode.String,
-		IsDefault:   isDefault == 1,
+		IsDefault:   isDefault,
 		Status:      user.BankStatus(bank.Status),
 		CreateTimes: bank.CreateTimes,
 		UpdateTimes: bank.UpdateTimes,

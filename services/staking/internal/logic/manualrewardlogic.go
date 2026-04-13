@@ -13,6 +13,7 @@ import (
 	"wklive/services/staking/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type ManualRewardLogic struct {
@@ -67,36 +68,42 @@ func (l *ManualRewardLogic) ManualReward(in *staking.AdminManualRewardReq) (*sta
 		return nil, err
 	}
 
-	if _, err := l.svcCtx.StakeRewardLogModel.Insert(l.ctx, &models.TStakeRewardLog{
-		TenantId:         order.TenantId,
-		OrderId:          order.Id,
-		OrderNo:          order.OrderNo,
-		Uid:              order.Uid,
-		ProductId:        order.ProductId,
-		ProductName:      order.ProductName,
-		CoinSymbol:       order.CoinSymbol,
-		RewardCoinSymbol: order.RewardCoinSymbol,
-		RewardAmount:     rewardAmount,
-		BeforeReward:     order.TotalReward,
-		AfterReward:      order.TotalReward + rewardAmount,
-		RewardType:       int64(in.RewardType),
-		RewardStatus:     int64(staking.RewardStatus_REWARD_STATUS_SUCCESS),
-		RewardTimes:      now,
-		Remark:           in.Remark,
-		CreateUserId:     in.OperatorUid,
-		UpdateUserId:     in.OperatorUid,
-		CreateTimes:      now,
-		UpdateTimes:      now,
-	}); err != nil {
-		return nil, err
-	}
-
 	order.TotalReward += rewardAmount
 	order.LastRewardTimes = now
 	order.NextRewardTimes = calcNextRewardTime(int64(now), staking.RewardMode(order.RewardMode), int64(order.EndTimes))
 	order.UpdateUserId = in.OperatorUid
 	order.UpdateTimes = now
-	if err := l.svcCtx.StakeOrderModel.Update(l.ctx, order); err != nil {
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		rewardLogModel := models.NewTStakeRewardLogModel(conn, l.svcCtx.Config.CacheRedis).(models.StakeRewardLogModel)
+		orderModel := models.NewTStakeOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.StakeOrderModel)
+
+		if _, err := rewardLogModel.Insert(ctx, &models.TStakeRewardLog{
+			TenantId:         order.TenantId,
+			OrderId:          order.Id,
+			OrderNo:          order.OrderNo,
+			Uid:              order.Uid,
+			ProductId:        order.ProductId,
+			ProductName:      order.ProductName,
+			CoinSymbol:       order.CoinSymbol,
+			RewardCoinSymbol: order.RewardCoinSymbol,
+			RewardAmount:     rewardAmount,
+			BeforeReward:     order.TotalReward,
+			AfterReward:      order.TotalReward + rewardAmount,
+			RewardType:       int64(in.RewardType),
+			RewardStatus:     int64(staking.RewardStatus_REWARD_STATUS_SUCCESS),
+			RewardTimes:      now,
+			Remark:           in.Remark,
+			CreateUserId:     in.OperatorUid,
+			UpdateUserId:     in.OperatorUid,
+			CreateTimes:      now,
+			UpdateTimes:      now,
+		}); err != nil {
+			return err
+		}
+		return orderModel.Update(ctx, order)
+	})
+	if err != nil {
 		return nil, err
 	}
 

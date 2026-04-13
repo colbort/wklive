@@ -12,6 +12,7 @@ import (
 	"wklive/services/asset/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type TransferAssetLogic struct {
@@ -37,45 +38,61 @@ func (l *TransferAssetLogic) TransferAsset(in *asset.TransferAssetReq) (*asset.T
 	if amount <= 0 {
 		return nil, fmt.Errorf("amount must be positive")
 	}
-
-	beforeFrom, err := l.svcCtx.UserAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(l.ctx, in.TenantId, in.UserId, int64(in.FromWalletType), in.Coin)
-	if err != nil {
-		return nil, err
-	}
-
-	if ok, err := l.svcCtx.UserAssetModel.SubAvailableAmount(l.ctx, in.TenantId, in.UserId, int64(in.FromWalletType), in.Coin, amount, utils.NowMillis()); err != nil {
-		return nil, err
-	} else if !ok {
-		return nil, fmt.Errorf("insufficient available balance")
-	}
-
-	if _, err := l.svcCtx.UserAssetModel.AddAvailableAmount(l.ctx, in.TenantId, in.UserId, int64(in.ToWalletType), in.Coin, amount, 0, utils.NowMillis()); err != nil {
-		return nil, err
-	}
-
-	beforeTo, err := l.svcCtx.UserAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(l.ctx, in.TenantId, in.UserId, int64(in.ToWalletType), in.Coin)
-	if err != nil && err != models.ErrNotFound {
-		return nil, err
-	}
-
-	afterFrom, err := l.svcCtx.UserAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(l.ctx, in.TenantId, in.UserId, int64(in.FromWalletType), in.Coin)
-	if err != nil {
-		return nil, err
-	}
-	afterTo, err := l.svcCtx.UserAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(l.ctx, in.TenantId, in.UserId, int64(in.ToWalletType), in.Coin)
-	if err != nil {
-		return nil, err
-	}
-
+	ts := utils.NowMillis()
+	var (
+		beforeFrom *models.TUserAsset
+		beforeTo   *models.TUserAsset
+		afterFrom  *models.TUserAsset
+		afterTo    *models.TUserAsset
+	)
 	sceneType := assetSceneType(in.SceneType)
 	bizType := assetBizType(in.BizType)
-	flowOut := buildAssetFlowRecord(l.svcCtx, l.ctx, in.TenantId, in.UserId, int64(in.FromWalletType), in.Coin, sceneType, bizType, sceneType, in.BizId, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_TRANSFER_OUT, amount, beforeFrom, afterFrom, in.Remark, utils.NowMillis())
-	if _, err := l.svcCtx.AssetFlowModel.Insert(l.ctx, flowOut); err != nil {
-		return nil, err
-	}
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		userAssetModel := models.NewTUserAssetModel(conn, l.svcCtx.Config.CacheRedis).(models.UserAssetModel)
+		assetFlowModel := models.NewTAssetFlowModel(conn, l.svcCtx.Config.CacheRedis).(models.AssetFlowModel)
 
-	flowIn := buildAssetFlowRecord(l.svcCtx, l.ctx, in.TenantId, in.UserId, int64(in.ToWalletType), in.Coin, sceneType, bizType, sceneType, in.BizId, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_TRANSFER_IN, amount, beforeTo, afterTo, in.Remark, utils.NowMillis())
-	if _, err := l.svcCtx.AssetFlowModel.Insert(l.ctx, flowIn); err != nil {
+		beforeFrom, err = userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, in.TenantId, in.UserId, int64(in.FromWalletType), in.Coin)
+		if err != nil {
+			return err
+		}
+
+		beforeTo, err = userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, in.TenantId, in.UserId, int64(in.ToWalletType), in.Coin)
+		if err != nil && err != models.ErrNotFound {
+			return err
+		}
+
+		if ok, err := userAssetModel.SubAvailableAmount(ctx, in.TenantId, in.UserId, int64(in.FromWalletType), in.Coin, amount, ts); err != nil {
+			return err
+		} else if !ok {
+			return fmt.Errorf("insufficient available balance")
+		}
+
+		if _, err := userAssetModel.AddAvailableAmount(ctx, in.TenantId, in.UserId, int64(in.ToWalletType), in.Coin, amount, 0, ts); err != nil {
+			return err
+		}
+
+		afterFrom, err = userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, in.TenantId, in.UserId, int64(in.FromWalletType), in.Coin)
+		if err != nil {
+			return err
+		}
+		afterTo, err = userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, in.TenantId, in.UserId, int64(in.ToWalletType), in.Coin)
+		if err != nil {
+			return err
+		}
+
+		flowOut := buildAssetFlowRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.FromWalletType), in.Coin, sceneType, bizType, sceneType, in.BizId, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_TRANSFER_OUT, amount, beforeFrom, afterFrom, in.Remark, ts)
+		if _, err := assetFlowModel.Insert(ctx, flowOut); err != nil {
+			return err
+		}
+
+		flowIn := buildAssetFlowRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.ToWalletType), in.Coin, sceneType, bizType, sceneType, in.BizId, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_TRANSFER_IN, amount, beforeTo, afterTo, in.Remark, ts)
+		if _, err := assetFlowModel.Insert(ctx, flowIn); err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
 		return nil, err
 	}
 

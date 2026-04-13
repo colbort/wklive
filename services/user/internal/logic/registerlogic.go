@@ -33,8 +33,8 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 
 // 用户注册
 func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, error) {
-	tenant, err := l.svcCtx.SystemCli.SysTenantByCode(l.ctx, &system.SysTenantByCodeReq{
-		TenantCode: in.TenantCode,
+	tenant, err := l.svcCtx.SystemCli.SysTenantDetail(l.ctx, &system.SysTenantDetailReq{
+		TenantCode: &in.TenantCode,
 	})
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
