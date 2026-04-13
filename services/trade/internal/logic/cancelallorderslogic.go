@@ -43,7 +43,7 @@ func (l *CancelAllOrdersLogic) CancelAllOrders(in *trade.CancelAllOrdersReq) (*t
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
-	affected := uint32(0)
+	affected := int64(0)
 	for _, item := range list {
 		ext, parseErr := parseOrderAssetExt(conv.NullStringValue(item.BizExt))
 		if parseErr != nil {

@@ -18,7 +18,7 @@ message StakeProduct {
   string reward_coin_name = 8;
   string reward_coin_symbol = 9;
   string apr = 10;
-  int32 lock_days = 11;
+  int64 lock_days = 11;
   string min_amount = 12;
   string max_amount = 13;
   string step_amount = 14;
@@ -30,7 +30,7 @@ message StakeProduct {
   YesNo allow_early_redeem = 20;
   string early_redeem_rate = 21;
   ProductStatus status = 22;
-  int32 sort = 23;
+  int64 sort = 23;
   string remark = 24;
   int64 create_user_id = 25;
   int64 update_user_id = 26;
@@ -54,12 +54,12 @@ message StakeOrder {
   string reward_coin_symbol = 12;
   string stake_amount = 13;
   string apr = 14;
-  int32 lock_days = 15;
+  int64 lock_days = 15;
   InterestMode interest_mode = 16;
   RewardMode reward_mode = 17;
   YesNo allow_early_redeem = 18;
   string early_redeem_rate = 19;
-  int32 interest_days = 20;
+  int64 interest_days = 20;
   int64 start_times = 21;
   int64 end_times = 22;
   int64 last_reward_times = 23;

@@ -47,6 +47,10 @@ func (l *GetWithdrawOrderLogic) GetWithdrawOrder(req *types.GetWithdrawOrderReq)
 			UserId:       result.Data.UserId,
 			OrderNo:      result.Data.OrderNo,
 			BizOrderNo:   result.Data.BizOrderNo,
+			PlatformId:   result.Data.PlatformId,
+			ProductId:    result.Data.ProductId,
+			AccountId:    result.Data.AccountId,
+			ChannelId:    result.Data.ChannelId,
 			Currency:     result.Data.Currency,
 			Amount:       result.Data.Amount,
 			FeeAmount:    result.Data.FeeAmount,
@@ -63,8 +67,8 @@ func (l *GetWithdrawOrderLogic) GetWithdrawOrder(req *types.GetWithdrawOrderReq)
 			NotifyTime:   result.Data.NotifyTime,
 			CloseTime:    result.Data.CloseTime,
 			Remark:       result.Data.Remark,
-			CreateTimes:   result.Data.CreateTimes,
-			UpdateTimes:   result.Data.UpdateTimes,
+			CreateTimes:  result.Data.CreateTimes,
+			UpdateTimes:  result.Data.UpdateTimes,
 		},
 	}, nil
 }

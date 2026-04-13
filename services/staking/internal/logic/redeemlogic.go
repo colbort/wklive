@@ -209,5 +209,5 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 		return nil, err
 	}
 
-	return &staking.AppRedeemResp{Base: helper.OkResp(), Success: true, RedeemNo: redeemNo}, nil
+	return &staking.AppRedeemResp{Base: helper.OkResp(), Success: 1, RedeemNo: redeemNo}, nil
 }

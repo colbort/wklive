@@ -131,7 +131,7 @@ func toContractProto(item *models.TOptionContract) *option.OptionContract {
 		DeliverTime:      item.DeliverTime,
 		IsAutoExercise:   option.YesNo(item.IsAutoExercise),
 		Status:           option.ContractStatus(item.Status),
-		Sort:             int32(item.Sort),
+		Sort:             item.Sort,
 		Remark:           item.Remark,
 		IsDeleted:        option.YesNo(item.IsDeleted),
 		CreateTimes:      item.CreateTimes,

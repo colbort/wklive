@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/common/utils"
 	"wklive/proto/trade"
@@ -40,9 +39,9 @@ func (l *SetUserTradeConfigLogic) SetUserTradeConfig(in *trade.SetUserTradeConfi
 	}
 	item.PositionMode = int64(in.PositionMode)
 	item.MarginMode = int64(in.MarginMode)
-	item.DefaultLeverage = int64(in.DefaultLeverage)
-	item.TradeEnabled = conv.BoolInt64(in.TradeEnabled)
-	item.ReduceOnlyEnabled = conv.BoolInt64(in.ReduceOnlyEnabled)
+	item.DefaultLeverage = in.DefaultLeverage
+	item.TradeEnabled = in.TradeEnabled
+	item.ReduceOnlyEnabled = in.ReduceOnlyEnabled
 	item.UpdateTimes = now
 	if item.Id == 0 {
 		_, err = l.svcCtx.TradeUserConfigModel.Insert(l.ctx, item)

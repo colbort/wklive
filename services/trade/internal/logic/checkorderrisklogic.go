@@ -29,7 +29,7 @@ func NewCheckOrderRiskLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ch
 
 // 校验订单风控
 func (l *CheckOrderRiskLogic) CheckOrderRisk(in *trade.CheckOrderRiskReq) (*trade.CheckOrderRiskResp, error) {
-	resp := &trade.CheckOrderRiskResp{Passed: true}
+	resp := &trade.CheckOrderRiskResp{Passed: 1}
 	rejectCode := ""
 	rejectMsg := ""
 	checkResult := trade.RiskCheckResult_RISK_CHECK_RESULT_PASS
@@ -39,11 +39,11 @@ func (l *CheckOrderRiskLogic) CheckOrderRisk(in *trade.CheckOrderRiskReq) (*trad
 	}
 	if limitCfg != nil {
 		if limitCfg.TradeEnabled == 0 {
-			resp.Passed = false
+			resp.Passed = 0
 			rejectCode = "TRADE_DISABLED"
 			rejectMsg = "trade disabled"
 		} else if in.Side == trade.TradeSide_TRADE_SIDE_BUY && limitCfg.CanOpen == 0 {
-			resp.Passed = false
+			resp.Passed = 0
 			rejectCode = "OPEN_DISABLED"
 			rejectMsg = "open disabled"
 		}
@@ -54,29 +54,29 @@ func (l *CheckOrderRiskLogic) CheckOrderRisk(in *trade.CheckOrderRiskReq) (*trad
 	}
 	qty := mustParseFloat(in.Qty)
 	amount := mustParseFloat(in.Amount)
-	if symbolLimit != nil && resp.Passed {
+	if symbolLimit != nil && resp.Passed == 1 {
 		if symbolLimit.MinOrderQty > 0 && qty > 0 && qty < symbolLimit.MinOrderQty {
-			resp.Passed = false
+			resp.Passed = 0
 			rejectCode = "MIN_QTY"
 			rejectMsg = "quantity below minimum"
 		}
 		if symbolLimit.MaxOrderQty > 0 && qty > 0 && qty > symbolLimit.MaxOrderQty {
-			resp.Passed = false
+			resp.Passed = 0
 			rejectCode = "MAX_QTY"
 			rejectMsg = "quantity exceeds maximum"
 		}
 		if symbolLimit.MinOrderNotional > 0 && amount > 0 && amount < symbolLimit.MinOrderNotional {
-			resp.Passed = false
+			resp.Passed = 0
 			rejectCode = "MIN_NOTIONAL"
 			rejectMsg = "amount below minimum"
 		}
 		if symbolLimit.MaxOrderNotional > 0 && amount > 0 && amount > symbolLimit.MaxOrderNotional {
-			resp.Passed = false
+			resp.Passed = 0
 			rejectCode = "MAX_NOTIONAL"
 			rejectMsg = "amount exceeds maximum"
 		}
 	}
-	if !resp.Passed {
+	if resp.Passed == 0 {
 		checkResult = trade.RiskCheckResult_RISK_CHECK_RESULT_REJECT
 	}
 	resp.RejectCode = rejectCode

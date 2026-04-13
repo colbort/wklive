@@ -35,10 +35,10 @@ type UserAsset struct {
 	FrozenAmount    string                 `protobuf:"bytes,8,opt,name=frozen_amount,json=frozenAmount,proto3" json:"frozen_amount,omitempty"`                  // 冻结资产
 	LockedAmount    string                 `protobuf:"bytes,9,opt,name=locked_amount,json=lockedAmount,proto3" json:"locked_amount,omitempty"`                  // 锁定资产
 	Status          AssetStatus            `protobuf:"varint,10,opt,name=status,proto3,enum=asset.AssetStatus" json:"status,omitempty"`                         // 状态
-	Version         int32                  `protobuf:"varint,11,opt,name=version,proto3" json:"version,omitempty"`                                              // 乐观锁版本号
+	Version         int64                  `protobuf:"varint,11,opt,name=version,proto3" json:"version,omitempty"`                                              // 乐观锁版本号
 	Remark          string                 `protobuf:"bytes,12,opt,name=remark,proto3" json:"remark,omitempty"`                                                 // 备注
-	CreateTime      int64                  `protobuf:"varint,13,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`                      // 创建时间戳(毫秒)
-	UpdateTime      int64                  `protobuf:"varint,14,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`                      // 更新时间戳(毫秒)
+	CreateTimes     int64                  `protobuf:"varint,13,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                   // 创建时间戳(毫秒)
+	UpdateTimes     int64                  `protobuf:"varint,14,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                   // 更新时间戳(毫秒)
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -143,7 +143,7 @@ func (x *UserAsset) GetStatus() AssetStatus {
 	return AssetStatus_ASSET_STATUS_UNSPECIFIED
 }
 
-func (x *UserAsset) GetVersion() int32 {
+func (x *UserAsset) GetVersion() int64 {
 	if x != nil {
 		return x.Version
 	}
@@ -157,16 +157,16 @@ func (x *UserAsset) GetRemark() string {
 	return ""
 }
 
-func (x *UserAsset) GetCreateTime() int64 {
+func (x *UserAsset) GetCreateTimes() int64 {
 	if x != nil {
-		return x.CreateTime
+		return x.CreateTimes
 	}
 	return 0
 }
 
-func (x *UserAsset) GetUpdateTime() int64 {
+func (x *UserAsset) GetUpdateTimes() int64 {
 	if x != nil {
-		return x.UpdateTime
+		return x.UpdateTimes
 	}
 	return 0
 }
@@ -194,11 +194,12 @@ type AssetFlow struct {
 	AfterFrozenAmount      string                 `protobuf:"bytes,18,opt,name=after_frozen_amount,json=afterFrozenAmount,proto3" json:"after_frozen_amount,omitempty"`                 // 变动后冻结资产
 	BeforeLockedAmount     string                 `protobuf:"bytes,19,opt,name=before_locked_amount,json=beforeLockedAmount,proto3" json:"before_locked_amount,omitempty"`              // 变动前锁定资产
 	AfterLockedAmount      string                 `protobuf:"bytes,20,opt,name=after_locked_amount,json=afterLockedAmount,proto3" json:"after_locked_amount,omitempty"`                 // 变动后锁定资产
-	BalanceSnapshotVersion int32                  `protobuf:"varint,21,opt,name=balance_snapshot_version,json=balanceSnapshotVersion,proto3" json:"balance_snapshot_version,omitempty"` // 快照版本号
-	Remark                 string                 `protobuf:"bytes,22,opt,name=remark,proto3" json:"remark,omitempty"`                                                                  // 备注
-	ExtJson                *structpb.Struct       `protobuf:"bytes,23,opt,name=ext_json,json=extJson,proto3" json:"ext_json,omitempty"`                                                 // 扩展字段
-	CreateTime             int64                  `protobuf:"varint,24,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`                                       // 创建时间戳(毫秒)
-	UpdateTime             int64                  `protobuf:"varint,25,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`                                       // 更新时间戳(毫秒)
+	BalanceSnapshotVersion int64                  `protobuf:"varint,21,opt,name=balance_snapshot_version,json=balanceSnapshotVersion,proto3" json:"balance_snapshot_version,omitempty"` // 快照版本号
+	ChangeType             string                 `protobuf:"bytes,22,opt,name=change_type,json=changeType,proto3" json:"change_type,omitempty"`                                        // 变更类型
+	Remark                 string                 `protobuf:"bytes,23,opt,name=remark,proto3" json:"remark,omitempty"`                                                                  // 备注
+	ExtJson                *structpb.Struct       `protobuf:"bytes,24,opt,name=ext_json,json=extJson,proto3" json:"ext_json,omitempty"`                                                 // 扩展字段
+	CreateTimes            int64                  `protobuf:"varint,25,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                                    // 创建时间戳(毫秒)
+	UpdateTimes            int64                  `protobuf:"varint,26,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                                    // 更新时间戳(毫秒)
 	unknownFields          protoimpl.UnknownFields
 	sizeCache              protoimpl.SizeCache
 }
@@ -373,11 +374,18 @@ func (x *AssetFlow) GetAfterLockedAmount() string {
 	return ""
 }
 
-func (x *AssetFlow) GetBalanceSnapshotVersion() int32 {
+func (x *AssetFlow) GetBalanceSnapshotVersion() int64 {
 	if x != nil {
 		return x.BalanceSnapshotVersion
 	}
 	return 0
+}
+
+func (x *AssetFlow) GetChangeType() string {
+	if x != nil {
+		return x.ChangeType
+	}
+	return ""
 }
 
 func (x *AssetFlow) GetRemark() string {
@@ -394,16 +402,16 @@ func (x *AssetFlow) GetExtJson() *structpb.Struct {
 	return nil
 }
 
-func (x *AssetFlow) GetCreateTime() int64 {
+func (x *AssetFlow) GetCreateTimes() int64 {
 	if x != nil {
-		return x.CreateTime
+		return x.CreateTimes
 	}
 	return 0
 }
 
-func (x *AssetFlow) GetUpdateTime() int64 {
+func (x *AssetFlow) GetUpdateTimes() int64 {
 	if x != nil {
-		return x.UpdateTime
+		return x.UpdateTimes
 	}
 	return 0
 }
@@ -429,8 +437,8 @@ type AssetFreeze struct {
 	ExpireTime     int64                  `protobuf:"varint,16,opt,name=expire_time,json=expireTime,proto3" json:"expire_time,omitempty"`                      // 过期时间
 	Remark         string                 `protobuf:"bytes,17,opt,name=remark,proto3" json:"remark,omitempty"`                                                 // 备注
 	ExtJson        *structpb.Struct       `protobuf:"bytes,18,opt,name=ext_json,json=extJson,proto3" json:"ext_json,omitempty"`                                // 扩展字段
-	CreateTime     int64                  `protobuf:"varint,19,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`                      // 创建时间戳
-	UpdateTime     int64                  `protobuf:"varint,20,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`                      // 更新时间戳
+	CreateTimes    int64                  `protobuf:"varint,19,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                   // 创建时间戳
+	UpdateTimes    int64                  `protobuf:"varint,20,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                   // 更新时间戳
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -591,16 +599,16 @@ func (x *AssetFreeze) GetExtJson() *structpb.Struct {
 	return nil
 }
 
-func (x *AssetFreeze) GetCreateTime() int64 {
+func (x *AssetFreeze) GetCreateTimes() int64 {
 	if x != nil {
-		return x.CreateTime
+		return x.CreateTimes
 	}
 	return 0
 }
 
-func (x *AssetFreeze) GetUpdateTime() int64 {
+func (x *AssetFreeze) GetUpdateTimes() int64 {
 	if x != nil {
-		return x.UpdateTime
+		return x.UpdateTimes
 	}
 	return 0
 }
@@ -626,8 +634,8 @@ type AssetLock struct {
 	EndTime       int64                  `protobuf:"varint,16,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`                               // 结束时间
 	Remark        string                 `protobuf:"bytes,17,opt,name=remark,proto3" json:"remark,omitempty"`                                                 // 备注
 	ExtJson       *structpb.Struct       `protobuf:"bytes,18,opt,name=ext_json,json=extJson,proto3" json:"ext_json,omitempty"`                                // 扩展字段
-	CreateTime    int64                  `protobuf:"varint,19,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`                      // 创建时间
-	UpdateTime    int64                  `protobuf:"varint,20,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`                      // 更新时间
+	CreateTimes   int64                  `protobuf:"varint,19,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                   // 创建时间
+	UpdateTimes   int64                  `protobuf:"varint,20,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                   // 更新时间
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -788,16 +796,16 @@ func (x *AssetLock) GetExtJson() *structpb.Struct {
 	return nil
 }
 
-func (x *AssetLock) GetCreateTime() int64 {
+func (x *AssetLock) GetCreateTimes() int64 {
 	if x != nil {
-		return x.CreateTime
+		return x.CreateTimes
 	}
 	return 0
 }
 
-func (x *AssetLock) GetUpdateTime() int64 {
+func (x *AssetLock) GetUpdateTimes() int64 {
 	if x != nil {
-		return x.UpdateTime
+		return x.UpdateTimes
 	}
 	return 0
 }
@@ -812,8 +820,8 @@ type AssetIdempotent struct {
 	BizNo         string                 `protobuf:"bytes,5,opt,name=biz_no,json=bizNo,proto3" json:"biz_no,omitempty"`                                   // 业务单号
 	Status        IdempotentStatus       `protobuf:"varint,6,opt,name=status,proto3,enum=asset.IdempotentStatus" json:"status,omitempty"`                 // 状态
 	Remark        string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`                                              // 备注
-	CreateTime    int64                  `protobuf:"varint,8,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`                   // 创建时间
-	UpdateTime    int64                  `protobuf:"varint,9,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`                   // 更新时间
+	CreateTimes   int64                  `protobuf:"varint,8,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                // 创建时间
+	UpdateTimes   int64                  `protobuf:"varint,9,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                // 更新时间
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -897,16 +905,16 @@ func (x *AssetIdempotent) GetRemark() string {
 	return ""
 }
 
-func (x *AssetIdempotent) GetCreateTime() int64 {
+func (x *AssetIdempotent) GetCreateTimes() int64 {
 	if x != nil {
-		return x.CreateTime
+		return x.CreateTimes
 	}
 	return 0
 }
 
-func (x *AssetIdempotent) GetUpdateTime() int64 {
+func (x *AssetIdempotent) GetUpdateTimes() int64 {
 	if x != nil {
-		return x.UpdateTime
+		return x.UpdateTimes
 	}
 	return 0
 }
@@ -1008,7 +1016,7 @@ var File_proto_asset_model_proto protoreflect.FileDescriptor
 
 const file_proto_asset_model_proto_rawDesc = "" +
 	"\n" +
-	"\x17proto/asset/model.proto\x12\x05asset\x1a\x1cgoogle/protobuf/struct.proto\x1a\x16proto/asset/enum.proto\"\xd1\x03\n" +
+	"\x17proto/asset/model.proto\x12\x05asset\x1a\x1cgoogle/protobuf/struct.proto\x1a\x16proto/asset/enum.proto\"\xd5\x03\n" +
 	"\tUserAsset\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -1022,12 +1030,10 @@ const file_proto_asset_model_proto_rawDesc = "" +
 	"\rlocked_amount\x18\t \x01(\tR\flockedAmount\x12*\n" +
 	"\x06status\x18\n" +
 	" \x01(\x0e2\x12.asset.AssetStatusR\x06status\x12\x18\n" +
-	"\aversion\x18\v \x01(\x05R\aversion\x12\x16\n" +
-	"\x06remark\x18\f \x01(\tR\x06remark\x12\x1f\n" +
-	"\vcreate_time\x18\r \x01(\x03R\n" +
-	"createTime\x12\x1f\n" +
-	"\vupdate_time\x18\x0e \x01(\x03R\n" +
-	"updateTime\"\xe6\a\n" +
+	"\aversion\x18\v \x01(\x03R\aversion\x12\x16\n" +
+	"\x06remark\x18\f \x01(\tR\x06remark\x12!\n" +
+	"\fcreate_times\x18\r \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18\x0e \x01(\x03R\vupdateTimes\"\x8b\b\n" +
 	"\tAssetFlow\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\aflow_no\x18\x02 \x01(\tR\x06flowNo\x12\x1b\n" +
@@ -1052,13 +1058,13 @@ const file_proto_asset_model_proto_rawDesc = "" +
 	"\x13after_frozen_amount\x18\x12 \x01(\tR\x11afterFrozenAmount\x120\n" +
 	"\x14before_locked_amount\x18\x13 \x01(\tR\x12beforeLockedAmount\x12.\n" +
 	"\x13after_locked_amount\x18\x14 \x01(\tR\x11afterLockedAmount\x128\n" +
-	"\x18balance_snapshot_version\x18\x15 \x01(\x05R\x16balanceSnapshotVersion\x12\x16\n" +
-	"\x06remark\x18\x16 \x01(\tR\x06remark\x122\n" +
-	"\bext_json\x18\x17 \x01(\v2\x17.google.protobuf.StructR\aextJson\x12\x1f\n" +
-	"\vcreate_time\x18\x18 \x01(\x03R\n" +
-	"createTime\x12\x1f\n" +
-	"\vupdate_time\x18\x19 \x01(\x03R\n" +
-	"updateTime\"\xa5\x05\n" +
+	"\x18balance_snapshot_version\x18\x15 \x01(\x03R\x16balanceSnapshotVersion\x12\x1f\n" +
+	"\vchange_type\x18\x16 \x01(\tR\n" +
+	"changeType\x12\x16\n" +
+	"\x06remark\x18\x17 \x01(\tR\x06remark\x122\n" +
+	"\bext_json\x18\x18 \x01(\v2\x17.google.protobuf.StructR\aextJson\x12!\n" +
+	"\fcreate_times\x18\x19 \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18\x1a \x01(\x03R\vupdateTimes\"\xa9\x05\n" +
 	"\vAssetFreeze\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tfreeze_no\x18\x02 \x01(\tR\bfreezeNo\x12\x1b\n" +
@@ -1082,11 +1088,9 @@ const file_proto_asset_model_proto_rawDesc = "" +
 	"\vexpire_time\x18\x10 \x01(\x03R\n" +
 	"expireTime\x12\x16\n" +
 	"\x06remark\x18\x11 \x01(\tR\x06remark\x122\n" +
-	"\bext_json\x18\x12 \x01(\v2\x17.google.protobuf.StructR\aextJson\x12\x1f\n" +
-	"\vcreate_time\x18\x13 \x01(\x03R\n" +
-	"createTime\x12\x1f\n" +
-	"\vupdate_time\x18\x14 \x01(\x03R\n" +
-	"updateTime\"\x91\x05\n" +
+	"\bext_json\x18\x12 \x01(\v2\x17.google.protobuf.StructR\aextJson\x12!\n" +
+	"\fcreate_times\x18\x13 \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18\x14 \x01(\x03R\vupdateTimes\"\x95\x05\n" +
 	"\tAssetLock\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\alock_no\x18\x02 \x01(\tR\x06lockNo\x12\x1b\n" +
@@ -1109,11 +1113,9 @@ const file_proto_asset_model_proto_rawDesc = "" +
 	"start_time\x18\x0f \x01(\x03R\tstartTime\x12\x19\n" +
 	"\bend_time\x18\x10 \x01(\x03R\aendTime\x12\x16\n" +
 	"\x06remark\x18\x11 \x01(\tR\x06remark\x122\n" +
-	"\bext_json\x18\x12 \x01(\v2\x17.google.protobuf.StructR\aextJson\x12\x1f\n" +
-	"\vcreate_time\x18\x13 \x01(\x03R\n" +
-	"createTime\x12\x1f\n" +
-	"\vupdate_time\x18\x14 \x01(\x03R\n" +
-	"updateTime\"\xbc\x02\n" +
+	"\bext_json\x18\x12 \x01(\v2\x17.google.protobuf.StructR\aextJson\x12!\n" +
+	"\fcreate_times\x18\x13 \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18\x14 \x01(\x03R\vupdateTimes\"\xc0\x02\n" +
 	"\x0fAssetIdempotent\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12)\n" +
@@ -1122,11 +1124,9 @@ const file_proto_asset_model_proto_rawDesc = "" +
 	"scene_type\x18\x04 \x01(\x0e2\x10.asset.SceneTypeR\tsceneType\x12\x15\n" +
 	"\x06biz_no\x18\x05 \x01(\tR\x05bizNo\x12/\n" +
 	"\x06status\x18\x06 \x01(\x0e2\x17.asset.IdempotentStatusR\x06status\x12\x16\n" +
-	"\x06remark\x18\a \x01(\tR\x06remark\x12\x1f\n" +
-	"\vcreate_time\x18\b \x01(\x03R\n" +
-	"createTime\x12\x1f\n" +
-	"\vupdate_time\x18\t \x01(\x03R\n" +
-	"updateTime\"\xa6\x02\n" +
+	"\x06remark\x18\a \x01(\tR\x06remark\x12!\n" +
+	"\fcreate_times\x18\b \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18\t \x01(\x03R\vupdateTimes\"\xa6\x02\n" +
 	"\x10UserAssetSummary\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12(\n" +

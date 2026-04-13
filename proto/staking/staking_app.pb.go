@@ -844,7 +844,7 @@ func (x *AppRedeemReq) GetRemark() string {
 type AppRedeemResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Success       bool                   `protobuf:"varint,2,opt,name=success,proto3" json:"success,omitempty"`
+	Success       int64                  `protobuf:"varint,2,opt,name=success,proto3" json:"success,omitempty"`
 	RedeemNo      string                 `protobuf:"bytes,3,opt,name=redeem_no,json=redeemNo,proto3" json:"redeem_no,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -887,11 +887,11 @@ func (x *AppRedeemResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *AppRedeemResp) GetSuccess() bool {
+func (x *AppRedeemResp) GetSuccess() int64 {
 	if x != nil {
 		return x.Success
 	}
-	return false
+	return 0
 }
 
 func (x *AppRedeemResp) GetRedeemNo() string {
@@ -1090,7 +1090,7 @@ const file_proto_staking_staking_app_proto_rawDesc = "" +
 	"\x06remark\x18\x05 \x01(\tR\x06remark\"l\n" +
 	"\rAppRedeemResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x18\n" +
-	"\asuccess\x18\x02 \x01(\bR\asuccess\x12\x1b\n" +
+	"\asuccess\x18\x02 \x01(\x03R\asuccess\x12\x1b\n" +
 	"\tredeem_no\x18\x03 \x01(\tR\bredeemNo\"\x86\x01\n" +
 	"\x15AppMyRedeemLogListReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x10\n" +

@@ -316,7 +316,7 @@ func (x *CheckOrderRiskReq) GetAmount() string {
 
 type CheckOrderRiskResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Passed        bool                   `protobuf:"varint,1,opt,name=passed,proto3" json:"passed,omitempty"`
+	Passed        int64                  `protobuf:"varint,1,opt,name=passed,proto3" json:"passed,omitempty"`
 	RejectCode    string                 `protobuf:"bytes,2,opt,name=reject_code,json=rejectCode,proto3" json:"reject_code,omitempty"`
 	RejectMsg     string                 `protobuf:"bytes,3,opt,name=reject_msg,json=rejectMsg,proto3" json:"reject_msg,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -353,11 +353,11 @@ func (*CheckOrderRiskResp) Descriptor() ([]byte, []int) {
 	return file_proto_trade_trade_internal_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *CheckOrderRiskResp) GetPassed() bool {
+func (x *CheckOrderRiskResp) GetPassed() int64 {
 	if x != nil {
 		return x.Passed
 	}
-	return false
+	return 0
 }
 
 func (x *CheckOrderRiskResp) GetRejectCode() string {
@@ -402,7 +402,7 @@ const file_proto_trade_trade_internal_proto_rawDesc = "" +
 	"\x06amount\x18\n" +
 	" \x01(\tR\x06amount\"l\n" +
 	"\x12CheckOrderRiskResp\x12\x16\n" +
-	"\x06passed\x18\x01 \x01(\bR\x06passed\x12\x1f\n" +
+	"\x06passed\x18\x01 \x01(\x03R\x06passed\x12\x1f\n" +
 	"\vreject_code\x18\x02 \x01(\tR\n" +
 	"rejectCode\x12\x1d\n" +
 	"\n" +

@@ -22,7 +22,7 @@ type OptionContract {
 	deliverTime      int64  `json:"deliverTime"`
 	isAutoExercise   int64  `json:"isAutoExercise"`
 	status           int64  `json:"status"`
-	sort             int32  `json:"sort"`
+	sort             int64  `json:"sort"`
 	remark           string `json:"remark"`
 	isDeleted        int64  `json:"isDeleted"`
 	createTimes      int64  `json:"createTimes"`
@@ -286,7 +286,7 @@ type CreateContractReq {
 	deliverTime      int64  `json:"deliverTime"`
 	isAutoExercise   int64  `json:"isAutoExercise"`
 	status           int64  `json:"status"`
-	sort             int32  `json:"sort"`
+	sort             int64  `json:"sort"`
 	remark           string `json:"remark,optional"`
 }
 
@@ -317,7 +317,7 @@ type UpdateContractReq {
 	deliverTime      int64  `json:"deliverTime"`
 	isAutoExercise   int64  `json:"isAutoExercise"`
 	status           int64  `json:"status"`
-	sort             int32  `json:"sort"`
+	sort             int64  `json:"sort"`
 	remark           string `json:"remark,optional"`
 	isDeleted        int64  `json:"isDeleted"`
 }

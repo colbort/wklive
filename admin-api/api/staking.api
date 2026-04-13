@@ -11,7 +11,7 @@ type StakeProduct {
 	rewardCoinName   string `json:"rewardCoinName"`
 	rewardCoinSymbol string `json:"rewardCoinSymbol"`
 	apr              string `json:"apr"`
-	lockDays         int32  `json:"lockDays"`
+	lockDays         int64  `json:"lockDays"`
 	minAmount        string `json:"minAmount"`
 	maxAmount        string `json:"maxAmount"`
 	stepAmount       string `json:"stepAmount"`
@@ -23,7 +23,7 @@ type StakeProduct {
 	allowEarlyRedeem int64  `json:"allowEarlyRedeem"`
 	earlyRedeemRate  string `json:"earlyRedeemRate"`
 	status           int64  `json:"status"`
-	sort             int32  `json:"sort"`
+	sort             int64  `json:"sort"`
 	remark           string `json:"remark"`
 	createUserId     int64  `json:"createUserId"`
 	updateUserId     int64  `json:"updateUserId"`
@@ -46,12 +46,12 @@ type StakeOrder {
 	rewardCoinSymbol string `json:"rewardCoinSymbol"`
 	stakeAmount      string `json:"stakeAmount"`
 	apr              string `json:"apr"`
-	lockDays         int32  `json:"lockDays"`
+	lockDays         int64  `json:"lockDays"`
 	interestMode     int64  `json:"interestMode"`
 	rewardMode       int64  `json:"rewardMode"`
 	allowEarlyRedeem int64  `json:"allowEarlyRedeem"`
 	earlyRedeemRate  string `json:"earlyRedeemRate"`
-	interestDays     int32  `json:"interestDays"`
+	interestDays     int64  `json:"interestDays"`
 	startTimes       int64  `json:"startTimes"`
 	endTimes         int64  `json:"endTimes"`
 	lastRewardTimes  int64  `json:"lastRewardTimes"`
@@ -153,7 +153,7 @@ type AdminProductCreateReq {
 	rewardCoinName   string `json:"rewardCoinName"`
 	rewardCoinSymbol string `json:"rewardCoinSymbol"`
 	apr              string `json:"apr"`
-	lockDays         int32  `json:"lockDays"`
+	lockDays         int64  `json:"lockDays"`
 	minAmount        string `json:"minAmount"`
 	maxAmount        string `json:"maxAmount"`
 	stepAmount       string `json:"stepAmount"`
@@ -164,7 +164,7 @@ type AdminProductCreateReq {
 	allowEarlyRedeem int64  `json:"allowEarlyRedeem"`
 	earlyRedeemRate  string `json:"earlyRedeemRate"`
 	status           int64  `json:"status"`
-	sort             int32  `json:"sort"`
+	sort             int64  `json:"sort"`
 	remark           string `json:"remark,optional"`
 	operatorUid      int64  `json:"operatorUid"`
 }
@@ -184,7 +184,7 @@ type AdminProductUpdateReq {
 	rewardCoinName   string `json:"rewardCoinName"`
 	rewardCoinSymbol string `json:"rewardCoinSymbol"`
 	apr              string `json:"apr"`
-	lockDays         int32  `json:"lockDays"`
+	lockDays         int64  `json:"lockDays"`
 	minAmount        string `json:"minAmount"`
 	maxAmount        string `json:"maxAmount"`
 	stepAmount       string `json:"stepAmount"`
@@ -195,14 +195,14 @@ type AdminProductUpdateReq {
 	allowEarlyRedeem int64  `json:"allowEarlyRedeem"`
 	earlyRedeemRate  string `json:"earlyRedeemRate"`
 	status           int64  `json:"status"`
-	sort             int32  `json:"sort"`
+	sort             int64  `json:"sort"`
 	remark           string `json:"remark,optional"`
 	operatorUid      int64  `json:"operatorUid"`
 }
 
 type AdminProductUpdateResp {
 	RespBase
-	data bool `json:"data"`
+	data int64 `json:"data"`
 }
 
 type AdminProductChangeStatusReq {
@@ -214,7 +214,7 @@ type AdminProductChangeStatusReq {
 
 type AdminProductChangeStatusResp {
 	RespBase
-	data bool `json:"data"`
+	data int64 `json:"data"`
 }
 
 type AdminOrderListReq {
@@ -295,7 +295,7 @@ type AdminManualRewardReq {
 
 type AdminManualRewardResp {
 	RespBase
-	data bool `json:"data"`
+	data int64 `json:"data"`
 }
 
 type AdminManualRedeemReq {
@@ -312,7 +312,8 @@ type AdminManualRedeemReq {
 
 type AdminManualRedeemResp {
 	RespBase
-	data bool `json:"data"`
+	success int64 `json:"success"`
+	redeemNo string `json:"redeemNo"`
 }
 
 @server (

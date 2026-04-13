@@ -97,5 +97,5 @@ func (l *ProductUpdateLogic) ProductUpdate(in *staking.AdminProductUpdateReq) (*
 		return nil, err
 	}
 
-	return &staking.AdminProductUpdateResp{Page: helper.OkResp(), Data: true}, nil
+	return &staking.AdminProductUpdateResp{Page: helper.OkResp(), Data: 1}, nil
 }

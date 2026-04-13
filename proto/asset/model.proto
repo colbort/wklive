@@ -19,10 +19,10 @@ message UserAsset {
   string frozen_amount = 8;    // 冻结资产
   string locked_amount = 9;    // 锁定资产
   AssetStatus status = 10;     // 状态
-  int32 version = 11;          // 乐观锁版本号
+  int64 version = 11;          // 乐观锁版本号
   string remark = 12;          // 备注
-  int64 create_time = 13;      // 创建时间戳(毫秒)
-  int64 update_time = 14;      // 更新时间戳(毫秒)
+  int64 create_times = 13;     // 创建时间戳(毫秒)
+  int64 update_times = 14;     // 更新时间戳(毫秒)
 }
 
 // 资产流水
@@ -49,11 +49,12 @@ message AssetFlow {
   string before_locked_amount = 19;    // 变动前锁定资产
   string after_locked_amount = 20;     // 变动后锁定资产
 
-  int32 balance_snapshot_version = 21;  // 快照版本号
-  string remark = 22;                   // 备注
-  google.protobuf.Struct ext_json = 23; // 扩展字段
-  int64 create_time = 24;               // 创建时间戳(毫秒)
-  int64 update_time = 25;               // 更新时间戳(毫秒)
+  int64 balance_snapshot_version = 21;  // 快照版本号
+  string change_type = 22;              // 变更类型
+  string remark = 23;                   // 备注
+  google.protobuf.Struct ext_json = 24; // 扩展字段
+  int64 create_times = 25;              // 创建时间戳(毫秒)
+  int64 update_times = 26;              // 更新时间戳(毫秒)
 }
 
 // 冻结明细
@@ -76,8 +77,8 @@ message AssetFreeze {
   int64 expire_time = 16;               // 过期时间
   string remark = 17;                   // 备注
   google.protobuf.Struct ext_json = 18; // 扩展字段
-  int64 create_time = 19;               // 创建时间戳
-  int64 update_time = 20;               // 更新时间戳
+  int64 create_times = 19;              // 创建时间戳
+  int64 update_times = 20;              // 更新时间戳
 }
 
 // 锁仓明细
@@ -100,8 +101,8 @@ message AssetLock {
   int64 end_time = 16;                  // 结束时间
   string remark = 17;                   // 备注
   google.protobuf.Struct ext_json = 18; // 扩展字段
-  int64 create_time = 19;               // 创建时间
-  int64 update_time = 20;               // 更新时间
+  int64 create_times = 19;              // 创建时间
+  int64 update_times = 20;              // 更新时间
 }
 
 // 幂等记录
@@ -113,8 +114,8 @@ message AssetIdempotent {
   string biz_no = 5;           // 业务单号
   IdempotentStatus status = 6; // 状态
   string remark = 7;           // 备注
-  int64 create_time = 8;       // 创建时间
-  int64 update_time = 9;       // 更新时间
+  int64 create_times = 8;      // 创建时间
+  int64 update_times = 9;      // 更新时间
 }
 
 // 用户资产汇总

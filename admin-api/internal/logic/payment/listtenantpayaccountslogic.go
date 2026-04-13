@@ -56,13 +56,17 @@ func (l *ListTenantPayAccountsLogic) ListTenantPayAccounts(req *types.ListTenant
 			AppId:               item.AppId,
 			MerchantId:          item.MerchantId,
 			MerchantName:        item.MerchantName,
+			ApiKeyCipher:        item.ApiKeyCipher,
+			ApiSecretCipher:     item.ApiSecretCipher,
+			PrivateKeyCipher:    item.PrivateKeyCipher,
 			PublicKey:           item.PublicKey,
+			CertCipher:          item.CertCipher,
 			ExtConfig:           item.ExtConfig,
 			Status:              int64(item.Status),
 			IsDefault:           item.IsDefault,
 			Remark:              item.Remark,
-			CreateTimes:          item.CreateTimes,
-			UpdateTimes:          item.UpdateTimes,
+			CreateTimes:         item.CreateTimes,
+			UpdateTimes:         item.UpdateTimes,
 		}
 	}
 

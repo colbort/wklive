@@ -86,12 +86,12 @@ message PlaceOrderReq {
   string price = 10;
   string qty = 11;
   string amount = 12;
-  bool is_reduce_only = 13;
-  bool is_close_only = 14;
+  int64 is_reduce_only = 13;
+  int64 is_close_only = 14;
   string trigger_price = 15;
   TriggerType trigger_type = 16;
   MarginMode margin_mode = 17;
-  uint32 leverage = 18;
+  int64 leverage = 18;
   string take_profit_price = 19;
   string stop_loss_price = 20;
   OrderSourceType order_source = 21;
@@ -121,7 +121,7 @@ message CancelAllOrdersReq {
 
 message CancelAllOrdersResp {
   common.RespBase base = 1;
-  uint32 affected_count = 2;
+  int64 affected_count = 2;
 }
 
 message GetOrderListReq {
@@ -212,6 +212,6 @@ message SetLeverageReq {
   MarketType market_type = 4;
   MarginMode margin_mode = 5;
   PositionMode position_mode = 6;
-  uint32 long_leverage = 7;
-  uint32 short_leverage = 8;
+  int64 long_leverage = 7;
+  int64 short_leverage = 8;
 }

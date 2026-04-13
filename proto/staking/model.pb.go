@@ -34,7 +34,7 @@ type StakeProduct struct {
 	RewardCoinName   string                 `protobuf:"bytes,8,opt,name=reward_coin_name,json=rewardCoinName,proto3" json:"reward_coin_name,omitempty"`
 	RewardCoinSymbol string                 `protobuf:"bytes,9,opt,name=reward_coin_symbol,json=rewardCoinSymbol,proto3" json:"reward_coin_symbol,omitempty"`
 	Apr              string                 `protobuf:"bytes,10,opt,name=apr,proto3" json:"apr,omitempty"`
-	LockDays         int32                  `protobuf:"varint,11,opt,name=lock_days,json=lockDays,proto3" json:"lock_days,omitempty"`
+	LockDays         int64                  `protobuf:"varint,11,opt,name=lock_days,json=lockDays,proto3" json:"lock_days,omitempty"`
 	MinAmount        string                 `protobuf:"bytes,12,opt,name=min_amount,json=minAmount,proto3" json:"min_amount,omitempty"`
 	MaxAmount        string                 `protobuf:"bytes,13,opt,name=max_amount,json=maxAmount,proto3" json:"max_amount,omitempty"`
 	StepAmount       string                 `protobuf:"bytes,14,opt,name=step_amount,json=stepAmount,proto3" json:"step_amount,omitempty"`
@@ -46,7 +46,7 @@ type StakeProduct struct {
 	AllowEarlyRedeem YesNo                  `protobuf:"varint,20,opt,name=allow_early_redeem,json=allowEarlyRedeem,proto3,enum=staking.YesNo" json:"allow_early_redeem,omitempty"`
 	EarlyRedeemRate  string                 `protobuf:"bytes,21,opt,name=early_redeem_rate,json=earlyRedeemRate,proto3" json:"early_redeem_rate,omitempty"`
 	Status           ProductStatus          `protobuf:"varint,22,opt,name=status,proto3,enum=staking.ProductStatus" json:"status,omitempty"`
-	Sort             int32                  `protobuf:"varint,23,opt,name=sort,proto3" json:"sort,omitempty"`
+	Sort             int64                  `protobuf:"varint,23,opt,name=sort,proto3" json:"sort,omitempty"`
 	Remark           string                 `protobuf:"bytes,24,opt,name=remark,proto3" json:"remark,omitempty"`
 	CreateUserId     int64                  `protobuf:"varint,25,opt,name=create_user_id,json=createUserId,proto3" json:"create_user_id,omitempty"`
 	UpdateUserId     int64                  `protobuf:"varint,26,opt,name=update_user_id,json=updateUserId,proto3" json:"update_user_id,omitempty"`
@@ -156,7 +156,7 @@ func (x *StakeProduct) GetApr() string {
 	return ""
 }
 
-func (x *StakeProduct) GetLockDays() int32 {
+func (x *StakeProduct) GetLockDays() int64 {
 	if x != nil {
 		return x.LockDays
 	}
@@ -240,7 +240,7 @@ func (x *StakeProduct) GetStatus() ProductStatus {
 	return ProductStatus_PRODUCT_STATUS_UNSPECIFIED
 }
 
-func (x *StakeProduct) GetSort() int32 {
+func (x *StakeProduct) GetSort() int64 {
 	if x != nil {
 		return x.Sort
 	}
@@ -299,12 +299,12 @@ type StakeOrder struct {
 	RewardCoinSymbol string                 `protobuf:"bytes,12,opt,name=reward_coin_symbol,json=rewardCoinSymbol,proto3" json:"reward_coin_symbol,omitempty"`
 	StakeAmount      string                 `protobuf:"bytes,13,opt,name=stake_amount,json=stakeAmount,proto3" json:"stake_amount,omitempty"`
 	Apr              string                 `protobuf:"bytes,14,opt,name=apr,proto3" json:"apr,omitempty"`
-	LockDays         int32                  `protobuf:"varint,15,opt,name=lock_days,json=lockDays,proto3" json:"lock_days,omitempty"`
+	LockDays         int64                  `protobuf:"varint,15,opt,name=lock_days,json=lockDays,proto3" json:"lock_days,omitempty"`
 	InterestMode     InterestMode           `protobuf:"varint,16,opt,name=interest_mode,json=interestMode,proto3,enum=staking.InterestMode" json:"interest_mode,omitempty"`
 	RewardMode       RewardMode             `protobuf:"varint,17,opt,name=reward_mode,json=rewardMode,proto3,enum=staking.RewardMode" json:"reward_mode,omitempty"`
 	AllowEarlyRedeem YesNo                  `protobuf:"varint,18,opt,name=allow_early_redeem,json=allowEarlyRedeem,proto3,enum=staking.YesNo" json:"allow_early_redeem,omitempty"`
 	EarlyRedeemRate  string                 `protobuf:"bytes,19,opt,name=early_redeem_rate,json=earlyRedeemRate,proto3" json:"early_redeem_rate,omitempty"`
-	InterestDays     int32                  `protobuf:"varint,20,opt,name=interest_days,json=interestDays,proto3" json:"interest_days,omitempty"`
+	InterestDays     int64                  `protobuf:"varint,20,opt,name=interest_days,json=interestDays,proto3" json:"interest_days,omitempty"`
 	StartTimes       int64                  `protobuf:"varint,21,opt,name=start_times,json=startTimes,proto3" json:"start_times,omitempty"`
 	EndTimes         int64                  `protobuf:"varint,22,opt,name=end_times,json=endTimes,proto3" json:"end_times,omitempty"`
 	LastRewardTimes  int64                  `protobuf:"varint,23,opt,name=last_reward_times,json=lastRewardTimes,proto3" json:"last_reward_times,omitempty"`
@@ -455,7 +455,7 @@ func (x *StakeOrder) GetApr() string {
 	return ""
 }
 
-func (x *StakeOrder) GetLockDays() int32 {
+func (x *StakeOrder) GetLockDays() int64 {
 	if x != nil {
 		return x.LockDays
 	}
@@ -490,7 +490,7 @@ func (x *StakeOrder) GetEarlyRedeemRate() string {
 	return ""
 }
 
-func (x *StakeOrder) GetInterestDays() int32 {
+func (x *StakeOrder) GetInterestDays() int64 {
 	if x != nil {
 		return x.InterestDays
 	}
@@ -1036,7 +1036,7 @@ const file_proto_staking_model_proto_rawDesc = "" +
 	"\x12reward_coin_symbol\x18\t \x01(\tR\x10rewardCoinSymbol\x12\x10\n" +
 	"\x03apr\x18\n" +
 	" \x01(\tR\x03apr\x12\x1b\n" +
-	"\tlock_days\x18\v \x01(\x05R\blockDays\x12\x1d\n" +
+	"\tlock_days\x18\v \x01(\x03R\blockDays\x12\x1d\n" +
 	"\n" +
 	"min_amount\x18\f \x01(\tR\tminAmount\x12\x1d\n" +
 	"\n" +
@@ -1052,7 +1052,7 @@ const file_proto_staking_model_proto_rawDesc = "" +
 	"\x12allow_early_redeem\x18\x14 \x01(\x0e2\x0e.staking.YesNoR\x10allowEarlyRedeem\x12*\n" +
 	"\x11early_redeem_rate\x18\x15 \x01(\tR\x0fearlyRedeemRate\x12.\n" +
 	"\x06status\x18\x16 \x01(\x0e2\x16.staking.ProductStatusR\x06status\x12\x12\n" +
-	"\x04sort\x18\x17 \x01(\x05R\x04sort\x12\x16\n" +
+	"\x04sort\x18\x17 \x01(\x03R\x04sort\x12\x16\n" +
 	"\x06remark\x18\x18 \x01(\tR\x06remark\x12$\n" +
 	"\x0ecreate_user_id\x18\x19 \x01(\x03R\fcreateUserId\x12$\n" +
 	"\x0eupdate_user_id\x18\x1a \x01(\x03R\fupdateUserId\x12!\n" +
@@ -1078,13 +1078,13 @@ const file_proto_staking_model_proto_rawDesc = "" +
 	"\x12reward_coin_symbol\x18\f \x01(\tR\x10rewardCoinSymbol\x12!\n" +
 	"\fstake_amount\x18\r \x01(\tR\vstakeAmount\x12\x10\n" +
 	"\x03apr\x18\x0e \x01(\tR\x03apr\x12\x1b\n" +
-	"\tlock_days\x18\x0f \x01(\x05R\blockDays\x12:\n" +
+	"\tlock_days\x18\x0f \x01(\x03R\blockDays\x12:\n" +
 	"\rinterest_mode\x18\x10 \x01(\x0e2\x15.staking.InterestModeR\finterestMode\x124\n" +
 	"\vreward_mode\x18\x11 \x01(\x0e2\x13.staking.RewardModeR\n" +
 	"rewardMode\x12<\n" +
 	"\x12allow_early_redeem\x18\x12 \x01(\x0e2\x0e.staking.YesNoR\x10allowEarlyRedeem\x12*\n" +
 	"\x11early_redeem_rate\x18\x13 \x01(\tR\x0fearlyRedeemRate\x12#\n" +
-	"\rinterest_days\x18\x14 \x01(\x05R\finterestDays\x12\x1f\n" +
+	"\rinterest_days\x18\x14 \x01(\x03R\finterestDays\x12\x1f\n" +
 	"\vstart_times\x18\x15 \x01(\x03R\n" +
 	"startTimes\x12\x1b\n" +
 	"\tend_times\x18\x16 \x01(\x03R\bendTimes\x12*\n" +

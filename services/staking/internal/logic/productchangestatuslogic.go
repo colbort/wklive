@@ -48,5 +48,5 @@ func (l *ProductChangeStatusLogic) ProductChangeStatus(in *staking.AdminProductC
 		return nil, err
 	}
 
-	return &staking.AdminProductChangeStatusResp{Page: helper.OkResp(), Data: true}, nil
+	return &staking.AdminProductChangeStatusResp{Page: helper.OkResp(), Data: 1}, nil
 }

@@ -3,12 +3,12 @@ syntax = "v1"
 import "common.api"
 
 type OptionContract {
-	id               int64  `json:"id"`
-	tenantId         int64  `json:"tenantId"`
-	contractCode     string `json:"contractCode"`
-	underlyingSymbol string `json:"underlyingSymbol"`
-	settleCoin       string `json:"settleCoin"`
-	quoteCoin        string `json:"quoteCoin"`
+	id               int64  `json:"id"` // 主键ID
+	tenantId         int64  `json:"tenantId"` // 租户ID
+	contractCode     string `json:"contractCode"` // 合约编码
+	underlyingSymbol string `json:"underlyingSymbol"` // 标的符号
+	settleCoin       string `json:"settleCoin"` // 结算币种
+	quoteCoin        string `json:"quoteCoin"` // 计价币种
 	optionType       int64  `json:"optionType"`
 	exerciseStyle    int64  `json:"exerciseStyle"`
 	settlementType   int64  `json:"settlementType"`
@@ -24,17 +24,17 @@ type OptionContract {
 	deliverTime      int64  `json:"deliverTime"`
 	isAutoExercise   int64  `json:"isAutoExercise"`
 	status           int64  `json:"status"`
-	sort             int32  `json:"sort"`
-	remark           string `json:"remark"`
-	isDeleted        int64  `json:"isDeleted"`
-	createTimes      int64  `json:"createTimes"`
-	updateTimes      int64  `json:"updateTimes"`
+	sort             int64  `json:"sort"` // 排序
+	remark           string `json:"remark"` // 备注
+	isDeleted        int64  `json:"isDeleted"` // 是否删除
+	createTimes      int64  `json:"createTimes"` // 创建时间
+	updateTimes      int64  `json:"updateTimes"` // 更新时间
 }
 
 type OptionMarket {
-	id               int64  `json:"id"`
-	tenantId         int64  `json:"tenantId"`
-	contractId       int64  `json:"contractId"`
+	id               int64  `json:"id"` // 主键ID
+	tenantId         int64  `json:"tenantId"` // 租户ID
+	contractId       int64  `json:"contractId"` // 合约ID
 	underlyingPrice  string `json:"underlyingPrice"`
 	markPrice        string `json:"markPrice"`
 	lastPrice        string `json:"lastPrice"`
@@ -51,15 +51,15 @@ type OptionMarket {
 	rho              string `json:"rho"`
 	riskFreeRate     string `json:"riskFreeRate"`
 	pricingModel     string `json:"pricingModel"`
-	snapshotTime     int64  `json:"snapshotTime"`
-	createTimes      int64  `json:"createTimes"`
-	updateTimes      int64  `json:"updateTimes"`
+	snapshotTime     int64  `json:"snapshotTime"` // 快照时间
+	createTimes      int64  `json:"createTimes"` // 创建时间
+	updateTimes      int64  `json:"updateTimes"` // 更新时间
 }
 
 type OptionOrder {
-	id               int64  `json:"id"`
-	tenantId         int64  `json:"tenantId"`
-	orderNo          string `json:"orderNo"`
+	id               int64  `json:"id"` // 主键ID
+	tenantId         int64  `json:"tenantId"` // 租户ID
+	orderNo          string `json:"orderNo"` // 订单号
 	uid              int64  `json:"uid"`
 	accountId        int64  `json:"accountId"`
 	contractId       int64  `json:"contractId"`
@@ -84,14 +84,14 @@ type OptionOrder {
 	cancelReason     string `json:"cancelReason"`
 	matchTime        int64  `json:"matchTime"`
 	cancelTime       int64  `json:"cancelTime"`
-	createTimes      int64  `json:"createTimes"`
-	updateTimes      int64  `json:"updateTimes"`
+	createTimes      int64  `json:"createTimes"` // 创建时间
+	updateTimes      int64  `json:"updateTimes"` // 更新时间
 }
 
 type OptionTrade {
-	id               int64  `json:"id"`
-	tenantId         int64  `json:"tenantId"`
-	tradeNo          string `json:"tradeNo"`
+	id               int64  `json:"id"` // 主键ID
+	tenantId         int64  `json:"tenantId"` // 租户ID
+	tradeNo          string `json:"tradeNo"` // 成交号
 	contractId       int64  `json:"contractId"`
 	underlyingSymbol string `json:"underlyingSymbol"`
 	buyOrderId       int64  `json:"buyOrderId"`
@@ -110,7 +110,7 @@ type OptionTrade {
 	feeCoin          string `json:"feeCoin"`
 	makerSide        int64  `json:"makerSide"`
 	tradeTime        int64  `json:"tradeTime"`
-	createTimes      int64  `json:"createTimes"`
+	createTimes      int64  `json:"createTimes"` // 创建时间
 }
 
 type OptionPosition {
@@ -229,10 +229,10 @@ type AppCommonResp {
 
 type AppListContractsReq {
 	PageReq
-	tenantId         int64 `form:"tenantId,optional"`
-	underlyingSymbol string `form:"underlyingSymbol,optional"`
-	optionType       int64 `form:"optionType,optional"`
-	status           int64 `form:"status,optional"`
+	tenantId         int64 `form:"tenantId,optional"` // 租户ID
+	underlyingSymbol string `form:"underlyingSymbol,optional"` // 标的符号
+	optionType       int64 `form:"optionType,optional"` // 期权类型
+	status           int64 `form:"status,optional"` // 状态
 }
 
 type AppListContractsResp {
@@ -241,8 +241,8 @@ type AppListContractsResp {
 }
 
 type AppGetContractDetailReq {
-	tenantId   int64 `form:"tenantId,optional"`
-	contractId int64 `form:"contractId"`
+	tenantId   int64 `form:"tenantId,optional"` // 租户ID
+	contractId int64 `form:"contractId"` // 合约ID
 }
 
 type AppGetContractDetailResp {
@@ -251,17 +251,17 @@ type AppGetContractDetailResp {
 }
 
 type AppPlaceOrderReq {
-	tenantId      int64  `json:"tenantId,optional"`
-	accountId     int64  `json:"accountId"`
-	contractId    int64  `json:"contractId"`
+	tenantId      int64  `json:"tenantId,optional"` // 租户ID
+	accountId     int64  `json:"accountId"` // 账户ID
+	contractId    int64  `json:"contractId"` // 合约ID
 	side          int64  `json:"side"`
 	positionEffect int64 `json:"positionEffect"`
 	orderType     int64  `json:"orderType"`
 	price         string `json:"price"`
 	qty           string `json:"qty"`
-	clientOrderId string `json:"clientOrderId,optional"`
-	reduceOnly    int64  `json:"reduceOnly,optional"`
-	mmp           int64  `json:"mmp,optional"`
+	clientOrderId string `json:"clientOrderId,optional"` // 客户端订单号
+	reduceOnly    int64  `json:"reduceOnly,optional"` // 是否只减仓
+	mmp           int64  `json:"mmp,optional"` // 是否做市商保护
 }
 
 type AppPlaceOrderResp {

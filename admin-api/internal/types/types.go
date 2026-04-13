@@ -78,7 +78,8 @@ type AdminManualRedeemReq struct {
 
 type AdminManualRedeemResp struct {
 	RespBase
-	Data bool `json:"data"`
+	Success  int64  `json:"success"`
+	RedeemNo string `json:"redeemNo"`
 }
 
 type AdminManualRewardReq struct {
@@ -92,7 +93,7 @@ type AdminManualRewardReq struct {
 
 type AdminManualRewardResp struct {
 	RespBase
-	Data bool `json:"data"`
+	Data int64 `json:"data"`
 }
 
 type AdminOrderDetailReq struct {
@@ -136,7 +137,7 @@ type AdminProductChangeStatusReq struct {
 
 type AdminProductChangeStatusResp struct {
 	RespBase
-	Data bool `json:"data"`
+	Data int64 `json:"data"`
 }
 
 type AdminProductCreateReq struct {
@@ -149,7 +150,7 @@ type AdminProductCreateReq struct {
 	RewardCoinName   string `json:"rewardCoinName"`
 	RewardCoinSymbol string `json:"rewardCoinSymbol"`
 	Apr              string `json:"apr"`
-	LockDays         int32  `json:"lockDays"`
+	LockDays         int64  `json:"lockDays"`
 	MinAmount        string `json:"minAmount"`
 	MaxAmount        string `json:"maxAmount"`
 	StepAmount       string `json:"stepAmount"`
@@ -160,7 +161,7 @@ type AdminProductCreateReq struct {
 	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"`
 	EarlyRedeemRate  string `json:"earlyRedeemRate"`
 	Status           int64  `json:"status"`
-	Sort             int32  `json:"sort"`
+	Sort             int64  `json:"sort"`
 	Remark           string `json:"remark,optional"`
 	OperatorUid      int64  `json:"operatorUid"`
 }
@@ -205,7 +206,7 @@ type AdminProductUpdateReq struct {
 	RewardCoinName   string `json:"rewardCoinName"`
 	RewardCoinSymbol string `json:"rewardCoinSymbol"`
 	Apr              string `json:"apr"`
-	LockDays         int32  `json:"lockDays"`
+	LockDays         int64  `json:"lockDays"`
 	MinAmount        string `json:"minAmount"`
 	MaxAmount        string `json:"maxAmount"`
 	StepAmount       string `json:"stepAmount"`
@@ -216,14 +217,14 @@ type AdminProductUpdateReq struct {
 	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"`
 	EarlyRedeemRate  string `json:"earlyRedeemRate"`
 	Status           int64  `json:"status"`
-	Sort             int32  `json:"sort"`
+	Sort             int64  `json:"sort"`
 	Remark           string `json:"remark,optional"`
 	OperatorUid      int64  `json:"operatorUid"`
 }
 
 type AdminProductUpdateResp struct {
 	RespBase
-	Data bool `json:"data"`
+	Data int64 `json:"data"`
 }
 
 type AdminRedeemLogListReq struct {
@@ -311,10 +312,11 @@ type AssetFlow struct {
 	AfterFrozenAmount      string `json:"afterFrozenAmount"`
 	BeforeLockedAmount     string `json:"beforeLockedAmount"`
 	AfterLockedAmount      string `json:"afterLockedAmount"`
-	BalanceSnapshotVersion int32  `json:"balanceSnapshotVersion"`
+	BalanceSnapshotVersion int64  `json:"balanceSnapshotVersion"`
+	ChangeType             string `json:"changeType"`
 	Remark                 string `json:"remark"`
-	CreateTime             int64  `json:"createTime"`
-	UpdateTime             int64  `json:"updateTime"`
+	CreateTimes            int64  `json:"createTimes"`
+	UpdateTimes            int64  `json:"updateTimes"`
 }
 
 type AssetFreeze struct {
@@ -335,8 +337,8 @@ type AssetFreeze struct {
 	Status         int64  `json:"status"`
 	ExpireTime     int64  `json:"expireTime"`
 	Remark         string `json:"remark"`
-	CreateTime     int64  `json:"createTime"`
-	UpdateTime     int64  `json:"updateTime"`
+	CreateTimes    int64  `json:"createTimes"`
+	UpdateTimes    int64  `json:"updateTimes"`
 }
 
 type AssetLock struct {
@@ -357,8 +359,8 @@ type AssetLock struct {
 	StartTime    int64  `json:"startTime"`
 	EndTime      int64  `json:"endTime"`
 	Remark       string `json:"remark"`
-	CreateTime   int64  `json:"createTime"`
-	UpdateTime   int64  `json:"updateTime"`
+	CreateTimes  int64  `json:"createTimes"`
+	UpdateTimes  int64  `json:"updateTimes"`
 }
 
 type AssetUserAsset struct {
@@ -372,10 +374,10 @@ type AssetUserAsset struct {
 	FrozenAmount    string `json:"frozenAmount"`
 	LockedAmount    string `json:"lockedAmount"`
 	Status          int64  `json:"status"`
-	Version         int32  `json:"version"`
+	Version         int64  `json:"version"`
 	Remark          string `json:"remark"`
-	CreateTime      int64  `json:"createTime"`
-	UpdateTime      int64  `json:"updateTime"`
+	CreateTimes     int64  `json:"createTimes"`
+	UpdateTimes     int64  `json:"updateTimes"`
 }
 
 type AssignUserRolesReq struct {
@@ -413,8 +415,8 @@ type BizTradeEvent struct {
 	OperatorId    int64  `json:"operatorId"`
 	Source        int64  `json:"source"`
 	EventStatus   int64  `json:"eventStatus"`
-	RetryCount    uint32 `json:"retryCount"`
-	MaxRetryCount uint32 `json:"maxRetryCount"`
+	RetryCount    int64  `json:"retryCount"`
+	MaxRetryCount int64  `json:"maxRetryCount"`
 	NextRetryAt   int64  `json:"nextRetryAt"`
 	LastErrorMsg  string `json:"lastErrorMsg"`
 	Payload       string `json:"payload"`
@@ -442,12 +444,12 @@ type ContractLeverageConfig struct {
 	MarketType    int64  `json:"marketType"`
 	MarginMode    int64  `json:"marginMode"`
 	PositionMode  int64  `json:"positionMode"`
-	LongLeverage  uint32 `json:"longLeverage"`
-	ShortLeverage uint32 `json:"shortLeverage"`
-	MaxLeverage   uint32 `json:"maxLeverage"`
+	LongLeverage  int64  `json:"longLeverage"`
+	ShortLeverage int64  `json:"shortLeverage"`
+	MaxLeverage   int64  `json:"maxLeverage"`
 	OperatorId    int64  `json:"operatorId"`
 	Source        int64  `json:"source"`
-	Status        uint32 `json:"status"`
+	Status        int64  `json:"status"`
 	Remark        string `json:"remark"`
 	CreateTimes   int64  `json:"createTimes"`
 	UpdateTimes   int64  `json:"updateTimes"`
@@ -479,7 +481,7 @@ type ContractPosition struct {
 	MarketType       int64  `json:"marketType"`
 	PositionSide     int64  `json:"positionSide"`
 	MarginMode       int64  `json:"marginMode"`
-	Leverage         uint32 `json:"leverage"`
+	Leverage         int64  `json:"leverage"`
 	Qty              string `json:"qty"`
 	AvailQty         string `json:"availQty"`
 	FrozenQty        string `json:"frozenQty"`
@@ -491,7 +493,7 @@ type ContractPosition struct {
 	UnrealizedPnl    string `json:"unrealizedPnl"`
 	RealizedPnl      string `json:"realizedPnl"`
 	LiquidationPrice string `json:"liquidationPrice"`
-	AdlRank          int32  `json:"adlRank"`
+	AdlRank          int64  `json:"adlRank"`
 	Version          int64  `json:"version"`
 	CreateTimes      int64  `json:"createTimes"`
 	UpdateTimes      int64  `json:"updateTimes"`
@@ -563,7 +565,7 @@ type CreateContractReq struct {
 	DeliverTime      int64  `json:"deliverTime"`
 	IsAutoExercise   int64  `json:"isAutoExercise"`
 	Status           int64  `json:"status"`
-	Sort             int32  `json:"sort"`
+	Sort             int64  `json:"sort"`
 	Remark           string `json:"remark,optional"`
 }
 
@@ -619,8 +621,8 @@ type CreateSymbolReq struct {
 	SettleAsset   string `json:"settleAsset"`
 	ContractType  int64  `json:"contractType"`
 	Status        int64  `json:"status"`
-	PriceScale    uint32 `json:"priceScale"`
-	QtyScale      uint32 `json:"qtyScale"`
+	PriceScale    int64  `json:"priceScale"`
+	QtyScale      int64  `json:"qtyScale"`
 	MinPrice      string `json:"minPrice"`
 	MaxPrice      string `json:"maxPrice"`
 	PriceTick     string `json:"priceTick"`
@@ -628,10 +630,10 @@ type CreateSymbolReq struct {
 	MaxQty        string `json:"maxQty"`
 	QtyStep       string `json:"qtyStep"`
 	MinNotional   string `json:"minNotional"`
-	MaxLeverage   uint32 `json:"maxLeverage"`
+	MaxLeverage   int64  `json:"maxLeverage"`
 	OpenTime      int64  `json:"openTime"`
 	CloseTime     int64  `json:"closeTime"`
-	Sort          int32  `json:"sort"`
+	Sort          int64  `json:"sort"`
 	Remark        string `json:"remark,optional"`
 }
 
@@ -2021,7 +2023,7 @@ type OptionContract struct {
 	DeliverTime      int64  `json:"deliverTime"`
 	IsAutoExercise   int64  `json:"isAutoExercise"`
 	Status           int64  `json:"status"`
-	Sort             int32  `json:"sort"`
+	Sort             int64  `json:"sort"`
 	Remark           string `json:"remark"`
 	IsDeleted        int64  `json:"isDeleted"`
 	CreateTimes      int64  `json:"createTimes"`
@@ -2495,7 +2497,7 @@ type RiskUserSymbolLimit struct {
 	MarketType          int64  `json:"marketType"`
 	MaxPositionQty      string `json:"maxPositionQty"`
 	MaxPositionNotional string `json:"maxPositionNotional"`
-	MaxOpenOrders       uint32 `json:"maxOpenOrders"`
+	MaxOpenOrders       int64  `json:"maxOpenOrders"`
 	MaxOrderQty         string `json:"maxOrderQty"`
 	MaxOrderNotional    string `json:"maxOrderNotional"`
 	MinOrderQty         string `json:"minOrderQty"`
@@ -2505,7 +2507,7 @@ type RiskUserSymbolLimit struct {
 	PriceDeviationRate  string `json:"priceDeviationRate"`
 	OperatorId          int64  `json:"operatorId"`
 	Source              int64  `json:"source"`
-	Status              uint32 `json:"status"`
+	Status              int64  `json:"status"`
 	EffectiveStartTime  int64  `json:"effectiveStartTime"`
 	EffectiveEndTime    int64  `json:"effectiveEndTime"`
 	Remark              string `json:"remark"`
@@ -2518,22 +2520,22 @@ type RiskUserTradeLimit struct {
 	TenantId             int64  `json:"tenantId"`
 	UserId               int64  `json:"userId"`
 	MarketType           int64  `json:"marketType"`
-	CanOpen              bool   `json:"canOpen"`
-	CanClose             bool   `json:"canClose"`
-	CanCancel            bool   `json:"canCancel"`
-	CanTriggerOrder      bool   `json:"canTriggerOrder"`
-	CanApiTrade          bool   `json:"canApiTrade"`
-	TradeEnabled         bool   `json:"tradeEnabled"`
-	OnlyReduceOnly       bool   `json:"onlyReduceOnly"`
-	MaxOpenOrderCount    uint32 `json:"maxOpenOrderCount"`
-	MaxOrderCountPerDay  uint32 `json:"maxOrderCountPerDay"`
-	MaxCancelCountPerDay uint32 `json:"maxCancelCountPerDay"`
+	CanOpen              int64  `json:"canOpen"`
+	CanClose             int64  `json:"canClose"`
+	CanCancel            int64  `json:"canCancel"`
+	CanTriggerOrder      int64  `json:"canTriggerOrder"`
+	CanApiTrade          int64  `json:"canApiTrade"`
+	TradeEnabled         int64  `json:"tradeEnabled"`
+	OnlyReduceOnly       int64  `json:"onlyReduceOnly"`
+	MaxOpenOrderCount    int64  `json:"maxOpenOrderCount"`
+	MaxOrderCountPerDay  int64  `json:"maxOrderCountPerDay"`
+	MaxCancelCountPerDay int64  `json:"maxCancelCountPerDay"`
 	MaxOpenNotional      string `json:"maxOpenNotional"`
 	MaxPositionNotional  string `json:"maxPositionNotional"`
-	RiskLevel            uint32 `json:"riskLevel"`
+	RiskLevel            int64  `json:"riskLevel"`
 	OperatorId           int64  `json:"operatorId"`
 	Source               int64  `json:"source"`
-	Status               uint32 `json:"status"`
+	Status               int64  `json:"status"`
 	EffectiveStartTime   int64  `json:"effectiveStartTime"`
 	EffectiveEndTime     int64  `json:"effectiveEndTime"`
 	Remark               string `json:"remark"`
@@ -2550,12 +2552,12 @@ type SetContractSymbolConfigReq struct {
 	InitialMarginRate      string `json:"initialMarginRate"`
 	MakerFeeRate           string `json:"makerFeeRate"`
 	TakerFeeRate           string `json:"takerFeeRate"`
-	FundingIntervalMinutes uint32 `json:"fundingIntervalMinutes"`
+	FundingIntervalMinutes int64  `json:"fundingIntervalMinutes"`
 	DeliveryTime           int64  `json:"deliveryTime"`
-	SupportCross           bool   `json:"supportCross"`
-	SupportIsolated        bool   `json:"supportIsolated"`
-	BuyEnabled             bool   `json:"buyEnabled"`
-	SellEnabled            bool   `json:"sellEnabled"`
+	SupportCross           int64  `json:"supportCross"`
+	SupportIsolated        int64  `json:"supportIsolated"`
+	BuyEnabled             int64  `json:"buyEnabled"`
+	SellEnabled            int64  `json:"sellEnabled"`
 }
 
 type SetDefaultUserBankReq struct {
@@ -2569,8 +2571,8 @@ type SetSpotSymbolConfigReq struct {
 	SymbolId     int64  `json:"symbolId"`
 	MakerFeeRate string `json:"makerFeeRate"`
 	TakerFeeRate string `json:"takerFeeRate"`
-	BuyEnabled   bool   `json:"buyEnabled"`
-	SellEnabled  bool   `json:"sellEnabled"`
+	BuyEnabled   int64  `json:"buyEnabled"`
+	SellEnabled  int64  `json:"sellEnabled"`
 }
 
 type SetUserLeverageConfigReq struct {
@@ -2580,12 +2582,12 @@ type SetUserLeverageConfigReq struct {
 	MarketType    int64  `json:"marketType"`
 	MarginMode    int64  `json:"marginMode"`
 	PositionMode  int64  `json:"positionMode"`
-	LongLeverage  uint32 `json:"longLeverage"`
-	ShortLeverage uint32 `json:"shortLeverage"`
-	MaxLeverage   uint32 `json:"maxLeverage"`
+	LongLeverage  int64  `json:"longLeverage"`
+	ShortLeverage int64  `json:"shortLeverage"`
+	MaxLeverage   int64  `json:"maxLeverage"`
 	OperatorId    int64  `json:"operatorId"`
 	Source        int64  `json:"source"`
-	Status        uint32 `json:"status"`
+	Status        int64  `json:"status"`
 	Remark        string `json:"remark,optional"`
 }
 
@@ -2596,7 +2598,7 @@ type SetUserSymbolLimitReq struct {
 	MarketType          int64  `json:"marketType"`
 	MaxPositionQty      string `json:"maxPositionQty"`
 	MaxPositionNotional string `json:"maxPositionNotional"`
-	MaxOpenOrders       uint32 `json:"maxOpenOrders"`
+	MaxOpenOrders       int64  `json:"maxOpenOrders"`
 	MaxOrderQty         string `json:"maxOrderQty"`
 	MaxOrderNotional    string `json:"maxOrderNotional"`
 	MinOrderQty         string `json:"minOrderQty"`
@@ -2606,44 +2608,44 @@ type SetUserSymbolLimitReq struct {
 	PriceDeviationRate  string `json:"priceDeviationRate"`
 	OperatorId          int64  `json:"operatorId"`
 	Source              int64  `json:"source"`
-	Status              uint32 `json:"status"`
+	Status              int64  `json:"status"`
 	EffectiveStartTime  int64  `json:"effectiveStartTime"`
 	EffectiveEndTime    int64  `json:"effectiveEndTime"`
 	Remark              string `json:"remark,optional"`
 }
 
 type SetUserTradeConfigReq struct {
-	TenantId          int64  `json:"tenantId"`
-	UserId            int64  `json:"userId"`
-	MarketType        int64  `json:"marketType"`
-	SymbolId          int64  `json:"symbolId"`
-	PositionMode      int64  `json:"positionMode"`
-	MarginMode        int64  `json:"marginMode"`
-	DefaultLeverage   uint32 `json:"defaultLeverage"`
-	TradeEnabled      bool   `json:"tradeEnabled"`
-	ReduceOnlyEnabled bool   `json:"reduceOnlyEnabled"`
+	TenantId          int64 `json:"tenantId"`
+	UserId            int64 `json:"userId"`
+	MarketType        int64 `json:"marketType"`
+	SymbolId          int64 `json:"symbolId"`
+	PositionMode      int64 `json:"positionMode"`
+	MarginMode        int64 `json:"marginMode"`
+	DefaultLeverage   int64 `json:"defaultLeverage"`
+	TradeEnabled      int64 `json:"tradeEnabled"`
+	ReduceOnlyEnabled int64 `json:"reduceOnlyEnabled"`
 }
 
 type SetUserTradeLimitReq struct {
 	TenantId             int64  `json:"tenantId"`
 	UserId               int64  `json:"userId"`
 	MarketType           int64  `json:"marketType"`
-	CanOpen              bool   `json:"canOpen"`
-	CanClose             bool   `json:"canClose"`
-	CanCancel            bool   `json:"canCancel"`
-	CanTriggerOrder      bool   `json:"canTriggerOrder"`
-	CanApiTrade          bool   `json:"canApiTrade"`
-	TradeEnabled         bool   `json:"tradeEnabled"`
-	OnlyReduceOnly       bool   `json:"onlyReduceOnly"`
-	MaxOpenOrderCount    uint32 `json:"maxOpenOrderCount"`
-	MaxOrderCountPerDay  uint32 `json:"maxOrderCountPerDay"`
-	MaxCancelCountPerDay uint32 `json:"maxCancelCountPerDay"`
+	CanOpen              int64  `json:"canOpen"`
+	CanClose             int64  `json:"canClose"`
+	CanCancel            int64  `json:"canCancel"`
+	CanTriggerOrder      int64  `json:"canTriggerOrder"`
+	CanApiTrade          int64  `json:"canApiTrade"`
+	TradeEnabled         int64  `json:"tradeEnabled"`
+	OnlyReduceOnly       int64  `json:"onlyReduceOnly"`
+	MaxOpenOrderCount    int64  `json:"maxOpenOrderCount"`
+	MaxOrderCountPerDay  int64  `json:"maxOrderCountPerDay"`
+	MaxCancelCountPerDay int64  `json:"maxCancelCountPerDay"`
 	MaxOpenNotional      string `json:"maxOpenNotional"`
 	MaxPositionNotional  string `json:"maxPositionNotional"`
-	RiskLevel            uint32 `json:"riskLevel"`
+	RiskLevel            int64  `json:"riskLevel"`
 	OperatorId           int64  `json:"operatorId"`
 	Source               int64  `json:"source"`
-	Status               uint32 `json:"status"`
+	Status               int64  `json:"status"`
 	EffectiveStartTime   int64  `json:"effectiveStartTime"`
 	EffectiveEndTime     int64  `json:"effectiveEndTime"`
 	Remark               string `json:"remark,optional"`
@@ -2664,12 +2666,12 @@ type StakeOrder struct {
 	RewardCoinSymbol string `json:"rewardCoinSymbol"`
 	StakeAmount      string `json:"stakeAmount"`
 	Apr              string `json:"apr"`
-	LockDays         int32  `json:"lockDays"`
+	LockDays         int64  `json:"lockDays"`
 	InterestMode     int64  `json:"interestMode"`
 	RewardMode       int64  `json:"rewardMode"`
 	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"`
 	EarlyRedeemRate  string `json:"earlyRedeemRate"`
-	InterestDays     int32  `json:"interestDays"`
+	InterestDays     int64  `json:"interestDays"`
 	StartTimes       int64  `json:"startTimes"`
 	EndTimes         int64  `json:"endTimes"`
 	LastRewardTimes  int64  `json:"lastRewardTimes"`
@@ -2701,7 +2703,7 @@ type StakeProduct struct {
 	RewardCoinName   string `json:"rewardCoinName"`
 	RewardCoinSymbol string `json:"rewardCoinSymbol"`
 	Apr              string `json:"apr"`
-	LockDays         int32  `json:"lockDays"`
+	LockDays         int64  `json:"lockDays"`
 	MinAmount        string `json:"minAmount"`
 	MaxAmount        string `json:"maxAmount"`
 	StepAmount       string `json:"stepAmount"`
@@ -2713,7 +2715,7 @@ type StakeProduct struct {
 	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"`
 	EarlyRedeemRate  string `json:"earlyRedeemRate"`
 	Status           int64  `json:"status"`
-	Sort             int32  `json:"sort"`
+	Sort             int64  `json:"sort"`
 	Remark           string `json:"remark"`
 	CreateUserId     int64  `json:"createUserId"`
 	UpdateUserId     int64  `json:"updateUserId"`
@@ -3181,7 +3183,11 @@ type TenantPayAccount struct {
 	AppId               string `json:"appId"`
 	MerchantId          string `json:"merchantId"`
 	MerchantName        string `json:"merchantName"`
+	ApiKeyCipher        string `json:"apiKeyCipher"`
+	ApiSecretCipher     string `json:"apiSecretCipher"`
+	PrivateKeyCipher    string `json:"privateKeyCipher"`
 	PublicKey           string `json:"publicKey"`
+	CertCipher          string `json:"certCipher"`
 	ExtConfig           string `json:"extConfig"`
 	Status              int64  `json:"status"` // 0未知 1启用 2禁用
 	IsDefault           int64  `json:"isDefault"`
@@ -3277,7 +3283,7 @@ type TradeCancelLog struct {
 	OrderId      int64  `json:"orderId"`
 	OrderNo      string `json:"orderNo"`
 	UserId       int64  `json:"userId"`
-	CancelSource uint32 `json:"cancelSource"`
+	CancelSource int64  `json:"cancelSource"`
 	CancelReason string `json:"cancelReason"`
 	CreateTimes  int64  `json:"createTimes"`
 }
@@ -3326,10 +3332,10 @@ type TradeOrder struct {
 	Fee           string `json:"fee"`
 	FeeAsset      string `json:"feeAsset"`
 	Source        int64  `json:"source"`
-	IsReduceOnly  bool   `json:"isReduceOnly"`
-	IsCloseOnly   bool   `json:"isCloseOnly"`
+	IsReduceOnly  int64  `json:"isReduceOnly"`
+	IsCloseOnly   int64  `json:"isCloseOnly"`
 	TriggerPrice  string `json:"triggerPrice"`
-	TriggerType   uint32 `json:"triggerType"`
+	TriggerType   int64  `json:"triggerType"`
 	CancelReason  string `json:"cancelReason"`
 	BizExt        string `json:"bizExt"`
 	CreateTimes   int64  `json:"createTimes"`
@@ -3347,8 +3353,8 @@ type TradeSymbol struct {
 	SettleAsset   string `json:"settleAsset"`
 	ContractType  int64  `json:"contractType"`
 	Status        int64  `json:"status"`
-	PriceScale    uint32 `json:"priceScale"`
-	QtyScale      uint32 `json:"qtyScale"`
+	PriceScale    int64  `json:"priceScale"`
+	QtyScale      int64  `json:"qtyScale"`
 	MinPrice      string `json:"minPrice"`
 	MaxPrice      string `json:"maxPrice"`
 	PriceTick     string `json:"priceTick"`
@@ -3356,10 +3362,10 @@ type TradeSymbol struct {
 	MaxQty        string `json:"maxQty"`
 	QtyStep       string `json:"qtyStep"`
 	MinNotional   string `json:"minNotional"`
-	MaxLeverage   uint32 `json:"maxLeverage"`
+	MaxLeverage   int64  `json:"maxLeverage"`
 	OpenTime      int64  `json:"openTime"`
 	CloseTime     int64  `json:"closeTime"`
-	Sort          int32  `json:"sort"`
+	Sort          int64  `json:"sort"`
 	Remark        string `json:"remark"`
 	CreateTimes   int64  `json:"createTimes"`
 	UpdateTimes   int64  `json:"updateTimes"`
@@ -3375,12 +3381,12 @@ type TradeSymbolContract struct {
 	InitialMarginRate      string `json:"initialMarginRate"`
 	MakerFeeRate           string `json:"makerFeeRate"`
 	TakerFeeRate           string `json:"takerFeeRate"`
-	FundingIntervalMinutes uint32 `json:"fundingIntervalMinutes"`
+	FundingIntervalMinutes int64  `json:"fundingIntervalMinutes"`
 	DeliveryTime           int64  `json:"deliveryTime"`
-	SupportCross           bool   `json:"supportCross"`
-	SupportIsolated        bool   `json:"supportIsolated"`
-	BuyEnabled             bool   `json:"buyEnabled"`
-	SellEnabled            bool   `json:"sellEnabled"`
+	SupportCross           int64  `json:"supportCross"`
+	SupportIsolated        int64  `json:"supportIsolated"`
+	BuyEnabled             int64  `json:"buyEnabled"`
+	SellEnabled            int64  `json:"sellEnabled"`
 	CreateTimes            int64  `json:"createTimes"`
 	UpdateTimes            int64  `json:"updateTimes"`
 }
@@ -3391,25 +3397,25 @@ type TradeSymbolSpot struct {
 	SymbolId     int64  `json:"symbolId"`
 	MakerFeeRate string `json:"makerFeeRate"`
 	TakerFeeRate string `json:"takerFeeRate"`
-	BuyEnabled   bool   `json:"buyEnabled"`
-	SellEnabled  bool   `json:"sellEnabled"`
+	BuyEnabled   int64  `json:"buyEnabled"`
+	SellEnabled  int64  `json:"sellEnabled"`
 	CreateTimes  int64  `json:"createTimes"`
 	UpdateTimes  int64  `json:"updateTimes"`
 }
 
 type TradeUserConfig struct {
-	Id                int64  `json:"id"`
-	TenantId          int64  `json:"tenantId"`
-	UserId            int64  `json:"userId"`
-	MarketType        int64  `json:"marketType"`
-	SymbolId          int64  `json:"symbolId"`
-	PositionMode      int64  `json:"positionMode"`
-	MarginMode        int64  `json:"marginMode"`
-	DefaultLeverage   uint32 `json:"defaultLeverage"`
-	TradeEnabled      bool   `json:"tradeEnabled"`
-	ReduceOnlyEnabled bool   `json:"reduceOnlyEnabled"`
-	CreateTimes       int64  `json:"createTimes"`
-	UpdateTimes       int64  `json:"updateTimes"`
+	Id                int64 `json:"id"`
+	TenantId          int64 `json:"tenantId"`
+	UserId            int64 `json:"userId"`
+	MarketType        int64 `json:"marketType"`
+	SymbolId          int64 `json:"symbolId"`
+	PositionMode      int64 `json:"positionMode"`
+	MarginMode        int64 `json:"marginMode"`
+	DefaultLeverage   int64 `json:"defaultLeverage"`
+	TradeEnabled      int64 `json:"tradeEnabled"`
+	ReduceOnlyEnabled int64 `json:"reduceOnlyEnabled"`
+	CreateTimes       int64 `json:"createTimes"`
+	UpdateTimes       int64 `json:"updateTimes"`
 }
 
 type UnlockUserReq struct {
@@ -3449,7 +3455,7 @@ type UpdateContractReq struct {
 	DeliverTime      int64  `json:"deliverTime"`
 	IsAutoExercise   int64  `json:"isAutoExercise"`
 	Status           int64  `json:"status"`
-	Sort             int32  `json:"sort"`
+	Sort             int64  `json:"sort"`
 	Remark           string `json:"remark,optional"`
 	IsDeleted        int64  `json:"isDeleted"`
 }
@@ -3526,8 +3532,8 @@ type UpdateSymbolReq struct {
 	Id            int64  `json:"id"`
 	DisplaySymbol string `json:"displaySymbol"`
 	Status        int64  `json:"status"`
-	PriceScale    uint32 `json:"priceScale"`
-	QtyScale      uint32 `json:"qtyScale"`
+	PriceScale    int64  `json:"priceScale"`
+	QtyScale      int64  `json:"qtyScale"`
 	MinPrice      string `json:"minPrice"`
 	MaxPrice      string `json:"maxPrice"`
 	PriceTick     string `json:"priceTick"`
@@ -3535,10 +3541,10 @@ type UpdateSymbolReq struct {
 	MaxQty        string `json:"maxQty"`
 	QtyStep       string `json:"qtyStep"`
 	MinNotional   string `json:"minNotional"`
-	MaxLeverage   uint32 `json:"maxLeverage"`
+	MaxLeverage   int64  `json:"maxLeverage"`
 	OpenTime      int64  `json:"openTime"`
 	CloseTime     int64  `json:"closeTime"`
-	Sort          int32  `json:"sort"`
+	Sort          int64  `json:"sort"`
 	Remark        string `json:"remark,optional"`
 }
 
@@ -3873,6 +3879,10 @@ type WithdrawOrder struct {
 	UserId       int64  `json:"userId"`
 	OrderNo      string `json:"orderNo"`
 	BizOrderNo   string `json:"bizOrderNo"`
+	PlatformId   int64  `json:"platformId"`
+	ProductId    int64  `json:"productId"`
+	AccountId    int64  `json:"accountId"`
+	ChannelId    int64  `json:"channelId"`
 	Currency     string `json:"currency"`
 	Amount       int64  `json:"amount"`
 	FeeAmount    int64  `json:"feeAmount"`

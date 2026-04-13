@@ -51,7 +51,11 @@ type TenantPayAccount {
 	appId               string `json:"appId"`
 	merchantId          string `json:"merchantId"`
 	merchantName        string `json:"merchantName"`
+	apiKeyCipher        string `json:"apiKeyCipher"`
+	apiSecretCipher     string `json:"apiSecretCipher"`
+	privateKeyCipher    string `json:"privateKeyCipher"`
 	publicKey           string `json:"publicKey"`
+	certCipher          string `json:"certCipher"`
 	extConfig           string `json:"extConfig"`
 	status              int64  `json:"status"` // 0未知 1启用 2禁用
 	isDefault           int64   `json:"isDefault"`
@@ -633,6 +637,10 @@ type WithdrawOrder {
 	userId       int64  `json:"userId"`
 	orderNo      string `json:"orderNo"`
 	bizOrderNo   string `json:"bizOrderNo"`
+	platformId   int64  `json:"platformId"`
+	productId    int64  `json:"productId"`
+	accountId    int64  `json:"accountId"`
+	channelId    int64  `json:"channelId"`
 	currency     string `json:"currency"`
 	amount       int64  `json:"amount"`
 	feeAmount    int64  `json:"feeAmount"`
@@ -844,4 +852,3 @@ service admin {
 	@handler GetWithdrawNotifyLog
 	get /withdraw-notify-logs/:id (GetWithdrawNotifyLogReq) returns (GetWithdrawNotifyLogResp)
 }
-

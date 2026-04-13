@@ -11,10 +11,10 @@ type AssetUserAsset {
 	frozenAmount    string `json:"frozenAmount"`
 	lockedAmount    string `json:"lockedAmount"`
 	status          int64  `json:"status"`
-	version         int32  `json:"version"`
+	version         int64  `json:"version"`
 	remark          string `json:"remark"`
-	createTime      int64  `json:"createTime"`
-	updateTime      int64  `json:"updateTime"`
+	createTimes     int64  `json:"createTimes"`
+	updateTimes     int64  `json:"updateTimes"`
 }
 
 type AssetFlow {
@@ -38,10 +38,11 @@ type AssetFlow {
 	afterFrozenAmount     string         `json:"afterFrozenAmount"`
 	beforeLockedAmount    string         `json:"beforeLockedAmount"`
 	afterLockedAmount     string         `json:"afterLockedAmount"`
-	balanceSnapshotVersion int32         `json:"balanceSnapshotVersion"`
-	remark                string         `json:"remark"`
-	createTime            int64          `json:"createTime"`
-	updateTime            int64          `json:"updateTime"`
+	balanceSnapshotVersion int64         `json:"balanceSnapshotVersion"`
+	changeType             string        `json:"changeType"`
+	remark                 string        `json:"remark"`
+	createTimes            int64         `json:"createTimes"`
+	updateTimes            int64         `json:"updateTimes"`
 }
 
 type AssetFreeze {
@@ -62,8 +63,8 @@ type AssetFreeze {
 	status         int64  `json:"status"`
 	expireTime     int64  `json:"expireTime"`
 	remark         string `json:"remark"`
-	createTime     int64  `json:"createTime"`
-	updateTime     int64  `json:"updateTime"`
+	createTimes    int64  `json:"createTimes"`
+	updateTimes    int64  `json:"updateTimes"`
 }
 
 type AssetLock {
@@ -84,8 +85,8 @@ type AssetLock {
 	startTime    int64  `json:"startTime"`
 	endTime      int64  `json:"endTime"`
 	remark       string `json:"remark"`
-	createTime   int64  `json:"createTime"`
-	updateTime   int64  `json:"updateTime"`
+	createTimes  int64  `json:"createTimes"`
+	updateTimes  int64  `json:"updateTimes"`
 }
 
 type PageUserAssetsReq {

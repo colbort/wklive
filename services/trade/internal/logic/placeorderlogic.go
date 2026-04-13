@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 
-	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -91,8 +90,8 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		Fee:           0,
 		FeeAsset:      marginAssetForSymbol(symbol),
 		Source:        int64(in.OrderSource),
-		IsReduceOnly:  conv.BoolInt64(in.IsReduceOnly),
-		IsCloseOnly:   conv.BoolInt64(in.IsCloseOnly),
+		IsReduceOnly:  in.IsReduceOnly,
+		IsCloseOnly:   in.IsCloseOnly,
 		TriggerPrice:  mustParseFloat(in.TriggerPrice),
 		TriggerType:   int64(in.TriggerType),
 		BizExt:        sql.NullString{String: "", Valid: false},
@@ -140,7 +139,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 			TenantId:          in.TenantId,
 			OrderId:           order.Id,
 			MarginMode:        int64(in.MarginMode),
-			Leverage:          int64(ensureLeverage(symbol, in.Leverage)),
+			Leverage:          ensureLeverage(symbol, in.Leverage),
 			MarginAsset:       marginAsset,
 			MarginAmount:      amount,
 			ClosePositionType: 0,

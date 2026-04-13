@@ -44,7 +44,7 @@ type OptionContract struct {
 	DeliverTime      int64                  `protobuf:"varint,19,opt,name=deliver_time,json=deliverTime,proto3" json:"deliver_time,omitempty"`
 	IsAutoExercise   YesNo                  `protobuf:"varint,20,opt,name=is_auto_exercise,json=isAutoExercise,proto3,enum=option.YesNo" json:"is_auto_exercise,omitempty"`
 	Status           ContractStatus         `protobuf:"varint,21,opt,name=status,proto3,enum=option.ContractStatus" json:"status,omitempty"`
-	Sort             int32                  `protobuf:"varint,22,opt,name=sort,proto3" json:"sort,omitempty"`
+	Sort             int64                  `protobuf:"varint,22,opt,name=sort,proto3" json:"sort,omitempty"`
 	Remark           string                 `protobuf:"bytes,23,opt,name=remark,proto3" json:"remark,omitempty"`
 	IsDeleted        YesNo                  `protobuf:"varint,24,opt,name=is_deleted,json=isDeleted,proto3,enum=option.YesNo" json:"is_deleted,omitempty"`
 	CreateTimes      int64                  `protobuf:"varint,25,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
@@ -230,7 +230,7 @@ func (x *OptionContract) GetStatus() ContractStatus {
 	return ContractStatus_CONTRACT_STATUS_UNKNOWN
 }
 
-func (x *OptionContract) GetSort() int32 {
+func (x *OptionContract) GetSort() int64 {
 	if x != nil {
 		return x.Sort
 	}
@@ -2368,7 +2368,7 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\fdeliver_time\x18\x13 \x01(\x03R\vdeliverTime\x127\n" +
 	"\x10is_auto_exercise\x18\x14 \x01(\x0e2\r.option.YesNoR\x0eisAutoExercise\x12.\n" +
 	"\x06status\x18\x15 \x01(\x0e2\x16.option.ContractStatusR\x06status\x12\x12\n" +
-	"\x04sort\x18\x16 \x01(\x05R\x04sort\x12\x16\n" +
+	"\x04sort\x18\x16 \x01(\x03R\x04sort\x12\x16\n" +
 	"\x06remark\x18\x17 \x01(\tR\x06remark\x12,\n" +
 	"\n" +
 	"is_deleted\x18\x18 \x01(\x0e2\r.option.YesNoR\tisDeleted\x12!\n" +

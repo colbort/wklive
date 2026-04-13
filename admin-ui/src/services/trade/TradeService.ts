@@ -29,15 +29,15 @@ import {
 } from '@/api/trade'
 
 export type TimeRange = {
-  startTime?: number
-  endTime?: number
+  startTime?: number // 开始时间
+  endTime?: number // 结束时间
 }
 
 export type TradeSymbol = {
-  id: number
-  tenantId: number
-  symbol: string
-  displaySymbol: string
+  id: number // 主键ID
+  tenantId: number // 租户ID
+  symbol: string // 交易对编码
+  displaySymbol: string // 展示名称
   marketType: number
   baseAsset: string
   quoteAsset: string
@@ -53,13 +53,13 @@ export type TradeSymbol = {
   maxQty: string
   qtyStep: string
   minNotional: string
-  maxLeverage: number
-  openTime: number
-  closeTime: number
-  sort: number
-  remark: string
-  createTimes: number
-  updateTimes: number
+  maxLeverage: number // 最大杠杆
+  openTime: number // 开盘时间
+  closeTime: number // 收盘时间
+  sort: number // 排序
+  remark: string // 备注
+  createTimes: number // 创建时间
+  updateTimes: number // 更新时间
 }
 
 export type TradeSymbolSpot = {
@@ -68,10 +68,10 @@ export type TradeSymbolSpot = {
   symbolId: number
   makerFeeRate: string
   takerFeeRate: string
-  buyEnabled: boolean
-  sellEnabled: boolean
-  createTimes: number
-  updateTimes: number
+  buyEnabled: number // 是否允许买入：0否 1是
+  sellEnabled: number // 是否允许卖出：0否 1是
+  createTimes: number // 创建时间
+  updateTimes: number // 更新时间
 }
 
 export type TradeSymbolContract = {
@@ -84,14 +84,14 @@ export type TradeSymbolContract = {
   initialMarginRate: string
   makerFeeRate: string
   takerFeeRate: string
-  fundingIntervalMinutes: number
-  deliveryTime: number
-  supportCross: boolean
-  supportIsolated: boolean
-  buyEnabled: boolean
-  sellEnabled: boolean
-  createTimes: number
-  updateTimes: number
+  fundingIntervalMinutes: number // 资金费率间隔分钟数
+  deliveryTime: number // 交割时间
+  supportCross: number // 是否支持全仓：0否 1是
+  supportIsolated: number // 是否支持逐仓：0否 1是
+  buyEnabled: number // 是否允许买入：0否 1是
+  sellEnabled: number // 是否允许卖出：0否 1是
+  createTimes: number // 创建时间
+  updateTimes: number // 更新时间
 }
 
 export type TradeUserConfig = {
@@ -102,11 +102,11 @@ export type TradeUserConfig = {
   symbolId: number
   positionMode: number
   marginMode: number
-  defaultLeverage: number
-  tradeEnabled: boolean
-  reduceOnlyEnabled: boolean
-  createTimes: number
-  updateTimes: number
+  defaultLeverage: number // 默认杠杆
+  tradeEnabled: number // 是否允许交易：0否 1是
+  reduceOnlyEnabled: number // 是否只允许减仓：0否 1是
+  createTimes: number // 创建时间
+  updateTimes: number // 更新时间
 }
 
 export type TradeOrder = {
@@ -131,14 +131,14 @@ export type TradeOrder = {
   fee: string
   feeAsset: string
   source: number
-  isReduceOnly: boolean
-  isCloseOnly: boolean
+  isReduceOnly: number // 是否只减仓：0否 1是
+  isCloseOnly: number // 是否只平仓：0否 1是
   triggerPrice: string
   triggerType: number
   cancelReason: string
   bizExt: string
-  createTimes: number
-  updateTimes: number
+  createTimes: number // 创建时间
+  updateTimes: number // 更新时间
 }
 
 export type TradeFill = {
@@ -266,10 +266,10 @@ export type ContractLeverageConfig = {
   maxLeverage: number
   operatorId: number
   source: number
-  status: number
-  remark: string
-  createTimes: number
-  updateTimes: number
+  status: number // 状态
+  remark: string // 备注
+  createTimes: number // 创建时间
+  updateTimes: number // 更新时间
 }
 
 export type RiskUserTradeLimit = {
@@ -277,13 +277,13 @@ export type RiskUserTradeLimit = {
   tenantId: number
   userId: number
   marketType: number
-  canOpen: boolean
-  canClose: boolean
-  canCancel: boolean
-  canTriggerOrder: boolean
-  canApiTrade: boolean
-  tradeEnabled: boolean
-  onlyReduceOnly: boolean
+  canOpen: number // 是否允许开仓：0否 1是
+  canClose: number // 是否允许平仓：0否 1是
+  canCancel: number // 是否允许撤单：0否 1是
+  canTriggerOrder: number // 是否允许条件单：0否 1是
+  canApiTrade: number // 是否允许 API 交易：0否 1是
+  tradeEnabled: number // 交易开关：0关 1开
+  onlyReduceOnly: number // 是否仅允许减仓：0否 1是
   maxOpenOrderCount: number
   maxOrderCountPerDay: number
   maxCancelCountPerDay: number
@@ -292,7 +292,7 @@ export type RiskUserTradeLimit = {
   riskLevel: number
   operatorId: number
   source: number
-  status: number
+  status: number // 状态
   effectiveStartTime: number
   effectiveEndTime: number
   remark: string
@@ -373,8 +373,8 @@ export type BizTradeEvent = {
 export type CreateSymbolReq = Omit<TradeSymbol, 'id' | 'createTimes' | 'updateTimes'>
 
 export type UpdateSymbolReq = {
-  tenantId: number
-  id: number
+  tenantId: number // 租户ID
+  id: number // 交易对ID
   displaySymbol: string
   status: number
   priceScale: number
@@ -390,21 +390,21 @@ export type UpdateSymbolReq = {
   openTime: number
   closeTime: number
   sort: number
-  remark?: string
+  remark?: string // 备注
 }
 
 export type GetSymbolListAdminReq = {
-  cursor?: number
-  limit?: number
-  tenantId?: number
-  marketType?: number
-  status?: number
-  keyword?: string
+  cursor?: number // 游标
+  limit?: number // 每页条数
+  tenantId?: number // 租户ID
+  marketType?: number // 市场类型
+  status?: number // 状态
+  keyword?: string // 关键字
 }
 
 export type GetSymbolDetailAdminReq = {
-  tenantId?: number
-  id: number
+  tenantId?: number // 租户ID
+  id: number // 交易对ID
 }
 
 export type SetSpotSymbolConfigReq = Omit<TradeSymbolSpot, 'id' | 'createTimes' | 'updateTimes'>
@@ -507,15 +507,15 @@ export type GetUserSymbolLimitReq = {
 }
 
 export type SetUserTradeConfigReq = {
-  tenantId: number
-  userId: number
-  marketType: number
-  symbolId: number
-  positionMode: number
-  marginMode: number
-  defaultLeverage: number
-  tradeEnabled: boolean
-  reduceOnlyEnabled: boolean
+  tenantId: number // 租户ID
+  userId: number // 用户ID
+  marketType: number // 市场类型
+  symbolId: number // 交易对ID
+  positionMode: number // 仓位模式
+  marginMode: number // 保证金模式
+  defaultLeverage: number // 默认杠杆
+  tradeEnabled: number // 是否允许交易：0否 1是
+  reduceOnlyEnabled: number // 是否只允许减仓：0否 1是
 }
 
 export type GetUserTradeConfigReq = {
@@ -564,9 +564,9 @@ export type GetTradeEventDetailReq = {
 }
 
 export type RetryTradeEventReq = {
-  tenantId: number
-  id: number
-  operatorId: number
+  tenantId: number // 租户ID
+  id: number // 事件ID
+  operatorId: number // 操作人ID
 }
 
 export class TradeService {

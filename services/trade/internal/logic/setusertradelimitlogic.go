@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/common/utils"
 	"wklive/proto/trade"
@@ -38,22 +37,22 @@ func (l *SetUserTradeLimitLogic) SetUserTradeLimit(in *trade.SetUserTradeLimitRe
 	if item == nil {
 		item = &models.TRiskUserTradeLimit{TenantId: in.TenantId, UserId: in.UserId, MarketType: int64(in.MarketType), CreateTimes: now}
 	}
-	item.CanOpen = conv.BoolInt64(in.CanOpen)
-	item.CanClose = conv.BoolInt64(in.CanClose)
-	item.CanCancel = conv.BoolInt64(in.CanCancel)
-	item.CanTriggerOrder = conv.BoolInt64(in.CanTriggerOrder)
-	item.CanApiTrade = conv.BoolInt64(in.CanApiTrade)
-	item.TradeEnabled = conv.BoolInt64(in.TradeEnabled)
-	item.OnlyReduceOnly = conv.BoolInt64(in.OnlyReduceOnly)
-	item.MaxOpenOrderCount = int64(in.MaxOpenOrderCount)
-	item.MaxOrderCountPerDay = int64(in.MaxOrderCountPerDay)
-	item.MaxCancelCountPerDay = int64(in.MaxCancelCountPerDay)
+	item.CanOpen = in.CanOpen
+	item.CanClose = in.CanClose
+	item.CanCancel = in.CanCancel
+	item.CanTriggerOrder = in.CanTriggerOrder
+	item.CanApiTrade = in.CanApiTrade
+	item.TradeEnabled = in.TradeEnabled
+	item.OnlyReduceOnly = in.OnlyReduceOnly
+	item.MaxOpenOrderCount = in.MaxOpenOrderCount
+	item.MaxOrderCountPerDay = in.MaxOrderCountPerDay
+	item.MaxCancelCountPerDay = in.MaxCancelCountPerDay
 	item.MaxOpenNotional = mustParseFloat(in.MaxOpenNotional)
 	item.MaxPositionNotional = mustParseFloat(in.MaxPositionNotional)
-	item.RiskLevel = int64(in.RiskLevel)
+	item.RiskLevel = in.RiskLevel
 	item.OperatorId = in.OperatorId
 	item.Source = int64(in.Source)
-	item.Status = int64(in.Status)
+	item.Status = in.Status
 	item.EffectiveStartTime = in.EffectiveStartTime
 	item.EffectiveEndTime = in.EffectiveEndTime
 	item.Remark = in.Remark

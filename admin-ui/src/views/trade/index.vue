@@ -133,19 +133,19 @@
           </template>
           <el-form label-width="120px">
             <el-form-item label="可开仓">
-              <el-switch v-model="tradeLimitForm.canOpen" />
+              <el-switch v-model="tradeLimitForm.canOpen" :active-value="1" :inactive-value="0" />
             </el-form-item>
             <el-form-item label="可平仓">
-              <el-switch v-model="tradeLimitForm.canClose" />
+              <el-switch v-model="tradeLimitForm.canClose" :active-value="1" :inactive-value="0" />
             </el-form-item>
             <el-form-item label="可撤单">
-              <el-switch v-model="tradeLimitForm.canCancel" />
+              <el-switch v-model="tradeLimitForm.canCancel" :active-value="1" :inactive-value="0" />
             </el-form-item>
             <el-form-item label="仅减仓">
-              <el-switch v-model="tradeLimitForm.onlyReduceOnly" />
+              <el-switch v-model="tradeLimitForm.onlyReduceOnly" :active-value="1" :inactive-value="0" />
             </el-form-item>
             <el-form-item label="交易开关">
-              <el-switch v-model="tradeLimitForm.tradeEnabled" />
+              <el-switch v-model="tradeLimitForm.tradeEnabled" :active-value="1" :inactive-value="0" />
             </el-form-item>
             <el-form-item label="最大开单数">
               <el-input-number v-model="tradeLimitForm.maxOpenOrderCount" :min="0" :precision="0" />
@@ -203,10 +203,10 @@
               <el-input-number v-model="tradeConfigForm.defaultLeverage" :min="0" :precision="0" />
             </el-form-item>
             <el-form-item label="允许交易">
-              <el-switch v-model="tradeConfigForm.tradeEnabled" />
+              <el-switch v-model="tradeConfigForm.tradeEnabled" :active-value="1" :inactive-value="0" />
             </el-form-item>
             <el-form-item label="只减仓">
-              <el-switch v-model="tradeConfigForm.reduceOnlyEnabled" />
+              <el-switch v-model="tradeConfigForm.reduceOnlyEnabled" :active-value="1" :inactive-value="0" />
             </el-form-item>
             <el-button type="primary" :loading="submitLoading" @click="submitTradeConfig">
               保存
@@ -397,10 +397,10 @@
           <el-input v-model="spotForm.takerFeeRate" />
         </el-form-item>
         <el-form-item label="允许买入">
-          <el-switch v-model="spotForm.buyEnabled" />
+          <el-switch v-model="spotForm.buyEnabled" :active-value="1" :inactive-value="0" />
         </el-form-item>
         <el-form-item label="允许卖出">
-          <el-switch v-model="spotForm.sellEnabled" />
+          <el-switch v-model="spotForm.sellEnabled" :active-value="1" :inactive-value="0" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -446,16 +446,16 @@
           <el-input-number v-model="contractForm.deliveryTime" :min="0" :precision="0" />
         </el-form-item>
         <el-form-item label="支持全仓">
-          <el-switch v-model="contractForm.supportCross" />
+          <el-switch v-model="contractForm.supportCross" :active-value="1" :inactive-value="0" />
         </el-form-item>
         <el-form-item label="支持逐仓">
-          <el-switch v-model="contractForm.supportIsolated" />
+          <el-switch v-model="contractForm.supportIsolated" :active-value="1" :inactive-value="0" />
         </el-form-item>
         <el-form-item label="允许买入">
-          <el-switch v-model="contractForm.buyEnabled" />
+          <el-switch v-model="contractForm.buyEnabled" :active-value="1" :inactive-value="0" />
         </el-form-item>
         <el-form-item label="允许卖出">
-          <el-switch v-model="contractForm.sellEnabled" />
+          <el-switch v-model="contractForm.sellEnabled" :active-value="1" :inactive-value="0" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -631,13 +631,13 @@ const symbolForm = reactive<Record<string, any>>({
   remark: '',
 })
 
-const spotForm = reactive<Record<string, any>>({ tenantId: 0, symbolId: 0, makerFeeRate: '', takerFeeRate: '', buyEnabled: true, sellEnabled: true })
-const contractForm = reactive<Record<string, any>>({ tenantId: 0, symbolId: 0, contractSize: '', multiplier: '', maintenanceMarginRate: '', initialMarginRate: '', makerFeeRate: '', takerFeeRate: '', fundingIntervalMinutes: 0, deliveryTime: 0, supportCross: true, supportIsolated: true, buyEnabled: true, sellEnabled: true })
+const spotForm = reactive<Record<string, any>>({ tenantId: 0, symbolId: 0, makerFeeRate: '', takerFeeRate: '', buyEnabled: 1, sellEnabled: 1 })
+const contractForm = reactive<Record<string, any>>({ tenantId: 0, symbolId: 0, contractSize: '', multiplier: '', maintenanceMarginRate: '', initialMarginRate: '', makerFeeRate: '', takerFeeRate: '', fundingIntervalMinutes: 0, deliveryTime: 0, supportCross: 1, supportIsolated: 1, buyEnabled: 1, sellEnabled: 1 })
 const riskQuery = reactive<Record<string, any>>({ tenantId: 0, userId: 0, symbolId: 0, marketType: 0 })
 const riskLogQuery = reactive<Record<string, any>>({ tenantId: 0, userId: 0, symbolId: 0, orderNo: '', limit: 100 })
-const tradeLimitForm = reactive<Record<string, any>>({ tenantId: 0, userId: 0, marketType: 0, canOpen: true, canClose: true, canCancel: true, onlyReduceOnly: false, tradeEnabled: true, maxOpenOrderCount: 0, maxPositionNotional: '', operatorId: 0 })
+const tradeLimitForm = reactive<Record<string, any>>({ tenantId: 0, userId: 0, marketType: 0, canOpen: 1, canClose: 1, canCancel: 1, onlyReduceOnly: 0, tradeEnabled: 1, maxOpenOrderCount: 0, maxPositionNotional: '', operatorId: 0 })
 const symbolLimitForm = reactive<Record<string, any>>({ tenantId: 0, userId: 0, symbolId: 0, marketType: 0, maxPositionQty: '', maxOrderQty: '', minOrderQty: '', priceDeviationRate: '', operatorId: 0 })
-const tradeConfigForm = reactive<Record<string, any>>({ tenantId: 0, userId: 0, marketType: 0, symbolId: 0, positionMode: 0, marginMode: 0, defaultLeverage: 1, tradeEnabled: true, reduceOnlyEnabled: false })
+const tradeConfigForm = reactive<Record<string, any>>({ tenantId: 0, userId: 0, marketType: 0, symbolId: 0, positionMode: 0, marginMode: 0, defaultLeverage: 1, tradeEnabled: 1, reduceOnlyEnabled: 0 })
 const leverageForm = reactive<Record<string, any>>({ tenantId: 0, userId: 0, symbolId: 0, marketType: 0, marginMode: 0, positionMode: 0, longLeverage: 1, shortLeverage: 1, maxLeverage: 1, operatorId: 0 })
 
 const currentQuery = computed(() => queries[activeTab.value as keyof typeof queries])
@@ -727,7 +727,7 @@ const submitSymbol = async () => {
 }
 
 const openSpotDialog = (row: Record<string, any>) => {
-  Object.assign(spotForm, { tenantId: row.tenantId || 0, symbolId: row.id || row.symbolId || 0, makerFeeRate: '', takerFeeRate: '', buyEnabled: true, sellEnabled: true })
+  Object.assign(spotForm, { tenantId: row.tenantId || 0, symbolId: row.id || row.symbolId || 0, makerFeeRate: '', takerFeeRate: '', buyEnabled: 1, sellEnabled: 1 })
   spotVisible.value = true
 }
 
@@ -743,7 +743,7 @@ const submitSpotConfig = async () => {
 }
 
 const openContractDialog = (row: Record<string, any>) => {
-  Object.assign(contractForm, { tenantId: row.tenantId || 0, symbolId: row.id || row.symbolId || 0, contractSize: '', multiplier: '', maintenanceMarginRate: '', initialMarginRate: '', makerFeeRate: '', takerFeeRate: '', fundingIntervalMinutes: 0, deliveryTime: 0, supportCross: true, supportIsolated: true, buyEnabled: true, sellEnabled: true })
+  Object.assign(contractForm, { tenantId: row.tenantId || 0, symbolId: row.id || row.symbolId || 0, contractSize: '', multiplier: '', maintenanceMarginRate: '', initialMarginRate: '', makerFeeRate: '', takerFeeRate: '', fundingIntervalMinutes: 0, deliveryTime: 0, supportCross: 1, supportIsolated: 1, buyEnabled: 1, sellEnabled: 1 })
   contractVisible.value = true
 }
 

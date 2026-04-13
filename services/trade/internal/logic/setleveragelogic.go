@@ -59,9 +59,9 @@ func (l *SetLeverageLogic) SetLeverage(in *trade.SetLeverageReq) (*trade.AppComm
 		}
 	}
 	cfg.PositionMode = int64(in.PositionMode)
-	cfg.LongLeverage = int64(ensureLeverage(symbol, in.LongLeverage))
-	cfg.ShortLeverage = int64(ensureLeverage(symbol, in.ShortLeverage))
-	cfg.MaxLeverage = int64(symbol.MaxLeverage)
+	cfg.LongLeverage = ensureLeverage(symbol, in.LongLeverage)
+	cfg.ShortLeverage = ensureLeverage(symbol, in.ShortLeverage)
+	cfg.MaxLeverage = symbol.MaxLeverage
 	cfg.OperatorId = in.UserId
 	cfg.UpdateTimes = now
 	if cfg.Id == 0 {

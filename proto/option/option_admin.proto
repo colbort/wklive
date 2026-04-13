@@ -98,7 +98,7 @@ message CreateContractReq {
   int64 deliver_time = 18;
   YesNo is_auto_exercise = 19;
   ContractStatus status = 20;
-  int32 sort = 21;
+  int64 sort = 21;
   string remark = 22;
 }
 
@@ -129,7 +129,7 @@ message UpdateContractReq {
   int64 deliver_time = 19;
   YesNo is_auto_exercise = 20;
   ContractStatus status = 21;
-  int32 sort = 22;
+  int64 sort = 22;
   string remark = 23;
   YesNo is_deleted = 24;
 }

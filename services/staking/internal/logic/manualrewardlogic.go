@@ -107,5 +107,5 @@ func (l *ManualRewardLogic) ManualReward(in *staking.AdminManualRewardReq) (*sta
 		return nil, err
 	}
 
-	return &staking.AdminManualRewardResp{Page: helper.OkResp(), Data: true}, nil
+	return &staking.AdminManualRewardResp{Page: helper.OkResp(), Data: 1}, nil
 }

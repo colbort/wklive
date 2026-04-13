@@ -38,12 +38,12 @@ func (l *SetUserLeverageConfigLogic) SetUserLeverageConfig(in *trade.SetUserLeve
 		item = &models.TContractLeverageConfig{TenantId: in.TenantId, UserId: in.UserId, SymbolId: in.SymbolId, MarketType: int64(in.MarketType), MarginMode: int64(in.MarginMode), CreateTimes: now}
 	}
 	item.PositionMode = int64(in.PositionMode)
-	item.LongLeverage = int64(in.LongLeverage)
-	item.ShortLeverage = int64(in.ShortLeverage)
-	item.MaxLeverage = int64(in.MaxLeverage)
+	item.LongLeverage = in.LongLeverage
+	item.ShortLeverage = in.ShortLeverage
+	item.MaxLeverage = in.MaxLeverage
 	item.OperatorId = in.OperatorId
 	item.Source = int64(in.Source)
-	item.Status = int64(in.Status)
+	item.Status = in.Status
 	item.Remark = in.Remark
 	item.UpdateTimes = now
 	if item.Id == 0 {

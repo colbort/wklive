@@ -11,90 +11,90 @@ import {
 } from '@/api/payment/catalog'
 
 export type PayPlatform = {
-  id: number
-  platformCode: string
-  platformName: string
-  platformType: number
-  notifyUrl: string
-  returnUrl: string
-  icon: string
-  status: number
-  remark: string
-  createTimes: number
-  updateTimes: number
+  id: number // 平台ID
+  platformCode: string // 平台编码
+  platformName: string // 平台名称
+  platformType: number // 平台类型：1三方支付 2银行转账 3链上支付 4人工代收
+  notifyUrl: string // 统一异步通知地址
+  returnUrl: string // 默认同步跳转地址
+  icon: string // 图标
+  status: number // 状态：1启用 2停用
+  remark: string // 备注
+  createTimes: number // 创建时间
+  updateTimes: number // 更新时间
 }
 
 export type PayProduct = {
-  id: number
-  platformId: number
-  productCode: string
-  productName: string
-  sceneType: number
-  currency: string
-  status: number
-  remark: string
-  createTimes: number
-  updateTimes: number
+  id: number // 产品ID
+  platformId: number // 平台ID
+  productCode: string // 产品编码
+  productName: string // 产品名称
+  sceneType: number // 场景：1APP 2H5 3WEB 4收银台 5链上
+  currency: string // 币种
+  status: number // 状态：1启用 2停用
+  remark: string // 备注
+  createTimes: number // 创建时间
+  updateTimes: number // 更新时间
 }
 
 export type CreatePayPlatformReq = {
-  platformCode: string
-  platformName: string
-  platformType: number
-  notifyUrl?: string
-  returnUrl?: string
-  icon?: string
-  status: number
-  remark?: string
+  platformCode: string // 平台编码
+  platformName: string // 平台名称
+  platformType: number // 平台类型：1三方支付 2银行转账 3链上支付 4人工代收
+  notifyUrl?: string // 统一异步通知地址
+  returnUrl?: string // 默认同步跳转地址
+  icon?: string // 图标
+  status: number // 状态：1启用 2停用
+  remark?: string // 备注
 }
 
 export type UpdatePayPlatformReq = {
-  id: number
-  platformName: string
-  platformType: number
-  notifyUrl?: string
-  returnUrl?: string
-  icon?: string
-  status: number
-  remark?: string
+  id: number // 平台ID
+  platformName: string // 平台名称
+  platformType: number // 平台类型：1三方支付 2银行转账 3链上支付 4人工代收
+  notifyUrl?: string // 统一异步通知地址
+  returnUrl?: string // 默认同步跳转地址
+  icon?: string // 图标
+  status: number // 状态：1启用 2停用
+  remark?: string // 备注
 }
 
 export type ListPayPlatformsReq = {
-  keyword?: string
-  platformCode?: string
-  status?: number
-  platformType?: number
-  cursor?: string | null
-  limit?: number
+  keyword?: string // 关键字
+  platformCode?: string // 平台编码
+  status?: number // 状态：1启用 2停用
+  platformType?: number // 平台类型
+  cursor?: string | null // 分页游标
+  limit?: number // 分页大小
 }
 
 export type CreatePayProductReq = {
-  platformId: number
-  productCode: string
-  productName: string
-  sceneType: number
-  currency: string
-  status: number
-  remark?: string
+  platformId: number // 平台ID
+  productCode: string // 产品编码
+  productName: string // 产品名称
+  sceneType: number // 场景：1APP 2H5 3WEB 4收银台 5链上
+  currency: string // 币种
+  status: number // 状态：1启用 2停用
+  remark?: string // 备注
 }
 
 export type UpdatePayProductReq = {
-  id: number
-  productName: string
-  sceneType: number
-  currency: string
-  status: number
-  remark?: string
+  id: number // 产品ID
+  productName: string // 产品名称
+  sceneType: number // 场景：1APP 2H5 3WEB 4收银台 5链上
+  currency: string // 币种
+  status: number // 状态：1启用 2停用
+  remark?: string // 备注
 }
 
 export type ListPayProductsReq = {
-  platformId?: number
-  keyword?: string
-  productCode?: string
-  status?: number
-  sceneType?: number
-  cursor?: string | null
-  limit?: number
+  platformId?: number // 平台ID
+  keyword?: string // 关键字
+  productCode?: string // 产品编码
+  status?: number // 状态：1启用 2停用
+  sceneType?: number // 场景类型
+  cursor?: string | null // 分页游标
+  limit?: number // 分页大小
 }
 
 export class CatalogService {

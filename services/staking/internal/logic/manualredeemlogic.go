@@ -207,5 +207,5 @@ func (l *ManualRedeemLogic) ManualRedeem(in *staking.AdminManualRedeemReq) (*sta
 		return nil, err
 	}
 
-	return &staking.AdminManualRedeemResp{Page: helper.OkResp(), Success: true, RedeemNo: redeemNo}, nil
+	return &staking.AdminManualRedeemResp{Page: helper.OkResp(), Success: 1, RedeemNo: redeemNo}, nil
 }

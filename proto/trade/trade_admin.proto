@@ -119,8 +119,8 @@ message CreateSymbolReq {
   string settle_asset = 7;
   ContractType contract_type = 8;
   SymbolStatus status = 9;
-  uint32 price_scale = 10;
-  uint32 qty_scale = 11;
+  int64 price_scale = 10;
+  int64 qty_scale = 11;
   string min_price = 12;
   string max_price = 13;
   string price_tick = 14;
@@ -128,10 +128,10 @@ message CreateSymbolReq {
   string max_qty = 16;
   string qty_step = 17;
   string min_notional = 18;
-  uint32 max_leverage = 19;
+  int64 max_leverage = 19;
   int64 open_time = 20;
   int64 close_time = 21;
-  int32 sort = 22;
+  int64 sort = 22;
   string remark = 23;
 }
 
@@ -140,8 +140,8 @@ message UpdateSymbolReq {
   int64 id = 2;
   string display_symbol = 3;
   SymbolStatus status = 4;
-  uint32 price_scale = 5;
-  uint32 qty_scale = 6;
+  int64 price_scale = 5;
+  int64 qty_scale = 6;
   string min_price = 7;
   string max_price = 8;
   string price_tick = 9;
@@ -149,10 +149,10 @@ message UpdateSymbolReq {
   string max_qty = 11;
   string qty_step = 12;
   string min_notional = 13;
-  uint32 max_leverage = 14;
+  int64 max_leverage = 14;
   int64 open_time = 15;
   int64 close_time = 16;
-  int32 sort = 17;
+  int64 sort = 17;
   string remark = 18;
 }
 
@@ -184,8 +184,8 @@ message SetSpotSymbolConfigReq {
   int64 symbol_id = 2;
   string maker_fee_rate = 3;
   string taker_fee_rate = 4;
-  bool buy_enabled = 5;
-  bool sell_enabled = 6;
+  int64 buy_enabled = 5;
+  int64 sell_enabled = 6;
 }
 
 message SetContractSymbolConfigReq {
@@ -197,12 +197,12 @@ message SetContractSymbolConfigReq {
   string initial_margin_rate = 6;
   string maker_fee_rate = 7;
   string taker_fee_rate = 8;
-  uint32 funding_interval_minutes = 9;
+  int64 funding_interval_minutes = 9;
   int64 delivery_time = 10;
-  bool support_cross = 11;
-  bool support_isolated = 12;
-  bool buy_enabled = 13;
-  bool sell_enabled = 14;
+  int64 support_cross = 11;
+  int64 support_isolated = 12;
+  int64 buy_enabled = 13;
+  int64 sell_enabled = 14;
 }
 
 message GetOrderListAdminReq {
@@ -326,22 +326,22 @@ message SetUserTradeLimitReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
   MarketType market_type = 3;
-  bool can_open = 4;
-  bool can_close = 5;
-  bool can_cancel = 6;
-  bool can_trigger_order = 7;
-  bool can_api_trade = 8;
-  bool trade_enabled = 9;
-  bool only_reduce_only = 10;
-  uint32 max_open_order_count = 11;
-  uint32 max_order_count_per_day = 12;
-  uint32 max_cancel_count_per_day = 13;
+  int64 can_open = 4;
+  int64 can_close = 5;
+  int64 can_cancel = 6;
+  int64 can_trigger_order = 7;
+  int64 can_api_trade = 8;
+  int64 trade_enabled = 9;
+  int64 only_reduce_only = 10;
+  int64 max_open_order_count = 11;
+  int64 max_order_count_per_day = 12;
+  int64 max_cancel_count_per_day = 13;
   string max_open_notional = 14;
   string max_position_notional = 15;
-  uint32 risk_level = 16;
+  int64 risk_level = 16;
   int64 operator_id = 17;
   SourceType source = 18;
-  uint32 status = 19;
+  int64 status = 19;
   int64 effective_start_time = 20;
   int64 effective_end_time = 21;
   string remark = 22;
@@ -354,7 +354,7 @@ message SetUserSymbolLimitReq {
   MarketType market_type = 4;
   string max_position_qty = 5;
   string max_position_notional = 6;
-  uint32 max_open_orders = 7;
+  int64 max_open_orders = 7;
   string max_order_qty = 8;
   string max_order_notional = 9;
   string min_order_qty = 10;
@@ -364,7 +364,7 @@ message SetUserSymbolLimitReq {
   string price_deviation_rate = 14;
   int64 operator_id = 15;
   SourceType source = 16;
-  uint32 status = 17;
+  int64 status = 17;
   int64 effective_start_time = 18;
   int64 effective_end_time = 19;
   string remark = 20;
@@ -400,9 +400,9 @@ message SetUserTradeConfigReq {
   int64 symbol_id = 4; // 0 表示该市场下的全局配置
   PositionMode position_mode = 5;
   MarginMode margin_mode = 6;
-  uint32 default_leverage = 7;
-  bool trade_enabled = 8;
-  bool reduce_only_enabled = 9;
+  int64 default_leverage = 7;
+  int64 trade_enabled = 8;
+  int64 reduce_only_enabled = 9;
 }
 
 message GetUserTradeConfigReq {
@@ -440,12 +440,12 @@ message SetUserLeverageConfigReq {
   MarketType market_type = 4;
   MarginMode margin_mode = 5;
   PositionMode position_mode = 6;
-  uint32 long_leverage = 7;
-  uint32 short_leverage = 8;
-  uint32 max_leverage = 9;
+  int64 long_leverage = 7;
+  int64 short_leverage = 8;
+  int64 max_leverage = 9;
   int64 operator_id = 10;
   SourceType source = 11;
-  uint32 status = 12;
+  int64 status = 12;
   string remark = 13;
 }
 

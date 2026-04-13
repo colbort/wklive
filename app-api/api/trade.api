@@ -3,18 +3,18 @@ syntax = "v1"
 import "common.api"
 
 type TradeSymbol {
-	id            int64  `json:"id"`
-	tenantId      int64  `json:"tenantId"`
-	symbol        string `json:"symbol"`
-	displaySymbol string `json:"displaySymbol"`
+	id            int64  `json:"id"` // 主键ID
+	tenantId      int64  `json:"tenantId"` // 租户ID
+	symbol        string `json:"symbol"` // 交易对编码
+	displaySymbol string `json:"displaySymbol"` // 展示名称
 	marketType    int64  `json:"marketType"`
 	baseAsset     string `json:"baseAsset"`
 	quoteAsset    string `json:"quoteAsset"`
 	settleAsset   string `json:"settleAsset"`
 	contractType  int64  `json:"contractType"`
 	status        int64  `json:"status"`
-	priceScale    uint32 `json:"priceScale"`
-	qtyScale      uint32 `json:"qtyScale"`
+	priceScale    int64  `json:"priceScale"` // 价格精度
+	qtyScale      int64  `json:"qtyScale"` // 数量精度
 	minPrice      string `json:"minPrice"`
 	maxPrice      string `json:"maxPrice"`
 	priceTick     string `json:"priceTick"`
@@ -22,13 +22,13 @@ type TradeSymbol {
 	maxQty        string `json:"maxQty"`
 	qtyStep       string `json:"qtyStep"`
 	minNotional   string `json:"minNotional"`
-	maxLeverage   uint32 `json:"maxLeverage"`
+	maxLeverage   int64  `json:"maxLeverage"` // 最大杠杆
 	openTime      int64  `json:"openTime"`
 	closeTime     int64  `json:"closeTime"`
-	sort          int32  `json:"sort"`
-	remark        string `json:"remark"`
-	createTimes   int64  `json:"createTimes"`
-	updateTimes   int64  `json:"updateTimes"`
+	sort          int64  `json:"sort"` // 排序
+	remark        string `json:"remark"` // 备注
+	createTimes   int64  `json:"createTimes"` // 创建时间
+	updateTimes   int64  `json:"updateTimes"` // 更新时间
 }
 
 type TradeSymbolSpot {
@@ -37,8 +37,8 @@ type TradeSymbolSpot {
 	symbolId     int64  `json:"symbolId"`
 	makerFeeRate string `json:"makerFeeRate"`
 	takerFeeRate string `json:"takerFeeRate"`
-	buyEnabled   bool   `json:"buyEnabled"`
-	sellEnabled  bool   `json:"sellEnabled"`
+	buyEnabled   int64  `json:"buyEnabled"` // 是否允许买入：0否 1是
+	sellEnabled  int64  `json:"sellEnabled"` // 是否允许卖出：0否 1是
 	createTimes  int64  `json:"createTimes"`
 	updateTimes  int64  `json:"updateTimes"`
 }
@@ -53,12 +53,12 @@ type TradeSymbolContract {
 	initialMarginRate      string `json:"initialMarginRate"`
 	makerFeeRate           string `json:"makerFeeRate"`
 	takerFeeRate           string `json:"takerFeeRate"`
-	fundingIntervalMinutes uint32 `json:"fundingIntervalMinutes"`
+	fundingIntervalMinutes int64  `json:"fundingIntervalMinutes"` // 资金费率间隔分钟数
 	deliveryTime           int64  `json:"deliveryTime"`
-	supportCross           bool   `json:"supportCross"`
-	supportIsolated        bool   `json:"supportIsolated"`
-	buyEnabled             bool   `json:"buyEnabled"`
-	sellEnabled            bool   `json:"sellEnabled"`
+	supportCross           int64  `json:"supportCross"` // 是否支持全仓：0否 1是
+	supportIsolated        int64  `json:"supportIsolated"` // 是否支持逐仓：0否 1是
+	buyEnabled             int64  `json:"buyEnabled"` // 是否允许买入：0否 1是
+	sellEnabled            int64  `json:"sellEnabled"` // 是否允许卖出：0否 1是
 	createTimes            int64  `json:"createTimes"`
 	updateTimes            int64  `json:"updateTimes"`
 }
@@ -85,10 +85,10 @@ type TradeOrder {
 	fee           string `json:"fee"`
 	feeAsset      string `json:"feeAsset"`
 	source        int64  `json:"source"`
-	isReduceOnly  bool   `json:"isReduceOnly"`
-	isCloseOnly   bool   `json:"isCloseOnly"`
+	isReduceOnly  int64  `json:"isReduceOnly"` // 是否只减仓：0否 1是
+	isCloseOnly   int64  `json:"isCloseOnly"` // 是否只平仓：0否 1是
 	triggerPrice  string `json:"triggerPrice"`
-	triggerType   uint32 `json:"triggerType"`
+	triggerType   int64  `json:"triggerType"` // 触发类型
 	cancelReason  string `json:"cancelReason"`
 	bizExt        string `json:"bizExt"`
 	createTimes   int64  `json:"createTimes"`
@@ -125,7 +125,7 @@ type ContractPosition {
 	marketType       int64  `json:"marketType"`
 	positionSide     int64  `json:"positionSide"`
 	marginMode       int64  `json:"marginMode"`
-	leverage         uint32 `json:"leverage"`
+	leverage         int64  `json:"leverage"` // 杠杆倍数
 	qty              string `json:"qty"`
 	availQty         string `json:"availQty"`
 	frozenQty        string `json:"frozenQty"`
@@ -137,7 +137,7 @@ type ContractPosition {
 	unrealizedPnl    string `json:"unrealizedPnl"`
 	realizedPnl      string `json:"realizedPnl"`
 	liquidationPrice string `json:"liquidationPrice"`
-	adlRank          int32  `json:"adlRank"`
+	adlRank          int64  `json:"adlRank"` // ADL等级
 	version          int64  `json:"version"`
 	createTimes      int64  `json:"createTimes"`
 	updateTimes      int64  `json:"updateTimes"`
@@ -169,15 +169,15 @@ type ContractLeverageConfig {
 	marketType    int64  `json:"marketType"`
 	marginMode    int64  `json:"marginMode"`
 	positionMode  int64  `json:"positionMode"`
-	longLeverage  uint32 `json:"longLeverage"`
-	shortLeverage uint32 `json:"shortLeverage"`
-	maxLeverage   uint32 `json:"maxLeverage"`
+	longLeverage  int64  `json:"longLeverage"` // 多头杠杆
+	shortLeverage int64  `json:"shortLeverage"` // 空头杠杆
+	maxLeverage   int64  `json:"maxLeverage"` // 最大杠杆
 	operatorId    int64  `json:"operatorId"`
 	source        int64  `json:"source"`
-	status        uint32 `json:"status"`
-	remark        string `json:"remark"`
-	createTimes   int64  `json:"createTimes"`
-	updateTimes   int64  `json:"updateTimes"`
+	status        int64  `json:"status"` // 状态
+	remark        string `json:"remark"` // 备注
+	createTimes   int64  `json:"createTimes"` // 创建时间
+	updateTimes   int64  `json:"updateTimes"` // 更新时间
 }
 
 type TradeAppCommonResp {
@@ -185,9 +185,9 @@ type TradeAppCommonResp {
 }
 
 type GetSymbolListReq {
-	tenantId   int64 `form:"tenantId,optional"`
-	marketType int64 `form:"marketType,optional"`
-	status     int64 `form:"status,optional"`
+	tenantId   int64 `form:"tenantId,optional"` // 租户ID
+	marketType int64 `form:"marketType,optional"` // 市场类型
+	status     int64 `form:"status,optional"` // 状态
 }
 
 type GetSymbolListResp {
@@ -196,8 +196,8 @@ type GetSymbolListResp {
 }
 
 type GetSymbolDetailReq {
-	tenantId int64 `form:"tenantId,optional"`
-	symbolId int64 `form:"symbolId"`
+	tenantId int64 `form:"tenantId,optional"` // 租户ID
+	symbolId int64 `form:"symbolId"` // 交易对ID
 }
 
 type GetSymbolDetailResp {
@@ -208,9 +208,9 @@ type GetSymbolDetailResp {
 }
 
 type PlaceOrderReq {
-	tenantId        int64  `json:"tenantId,optional"`
-	symbolId        int64  `json:"symbolId"`
-	marketType      int64  `json:"marketType"`
+	tenantId        int64  `json:"tenantId,optional"` // 租户ID
+	symbolId        int64  `json:"symbolId"` // 交易对ID
+	marketType      int64  `json:"marketType"` // 市场类型
 	side            int64  `json:"side"`
 	positionSide    int64  `json:"positionSide"`
 	orderType       int64  `json:"orderType"`
@@ -219,12 +219,12 @@ type PlaceOrderReq {
 	price           string `json:"price,optional"`
 	qty             string `json:"qty,optional"`
 	amount          string `json:"amount,optional"`
-	isReduceOnly    bool   `json:"isReduceOnly,optional"`
-	isCloseOnly     bool   `json:"isCloseOnly,optional"`
+	isReduceOnly    int64  `json:"isReduceOnly,optional"` // 是否只减仓：0否 1是
+	isCloseOnly     int64  `json:"isCloseOnly,optional"` // 是否只平仓：0否 1是
 	triggerPrice    string `json:"triggerPrice,optional"`
 	triggerType     int64  `json:"triggerType,optional"`
 	marginMode      int64  `json:"marginMode,optional"`
-	leverage        uint32 `json:"leverage,optional"`
+	leverage        int64  `json:"leverage,optional"` // 杠杆倍数
 	takeProfitPrice string `json:"takeProfitPrice,optional"`
 	stopLossPrice   string `json:"stopLossPrice,optional"`
 	orderSource     int64  `json:"orderSource,optional"`
@@ -252,7 +252,7 @@ type CancelAllOrdersReq {
 
 type CancelAllOrdersResp {
 	RespBase
-	affectedCount uint32 `json:"affectedCount"`
+	affectedCount int64 `json:"affectedCount"` // 影响订单数
 }
 
 type GetOrderListReq {
@@ -331,13 +331,13 @@ type GetLeverageConfigResp {
 }
 
 type SetLeverageReq {
-	tenantId      int64  `json:"tenantId,optional"`
-	symbolId      int64  `json:"symbolId"`
+	tenantId      int64  `json:"tenantId,optional"` // 租户ID
+	symbolId      int64  `json:"symbolId"` // 交易对ID
 	marketType    int64  `json:"marketType"`
 	marginMode    int64  `json:"marginMode"`
 	positionMode  int64  `json:"positionMode"`
-	longLeverage  uint32 `json:"longLeverage"`
-	shortLeverage uint32 `json:"shortLeverage"`
+	longLeverage  int64 `json:"longLeverage"` // 多头杠杆
+	shortLeverage int64 `json:"shortLeverage"` // 空头杠杆
 }
 
 @server (

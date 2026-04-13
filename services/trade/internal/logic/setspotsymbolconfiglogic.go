@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -52,8 +51,8 @@ func (l *SetSpotSymbolConfigLogic) SetSpotSymbolConfig(in *trade.SetSpotSymbolCo
 	}
 	cfg.MakerFeeRate = mustParseFloat(in.MakerFeeRate)
 	cfg.TakerFeeRate = mustParseFloat(in.TakerFeeRate)
-	cfg.BuyEnabled = conv.BoolInt64(in.BuyEnabled)
-	cfg.SellEnabled = conv.BoolInt64(in.SellEnabled)
+	cfg.BuyEnabled = in.BuyEnabled
+	cfg.SellEnabled = in.SellEnabled
 	cfg.UpdateTimes = now
 	if cfg.Id == 0 {
 		if _, err = l.svcCtx.TradeSymbolSpotModel.Insert(l.ctx, cfg); err != nil {

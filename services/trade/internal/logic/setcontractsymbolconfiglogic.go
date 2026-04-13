@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -58,10 +57,10 @@ func (l *SetContractSymbolConfigLogic) SetContractSymbolConfig(in *trade.SetCont
 	cfg.TakerFeeRate = mustParseFloat(in.TakerFeeRate)
 	cfg.FundingIntervalMinutes = int64(in.FundingIntervalMinutes)
 	cfg.DeliveryTime = in.DeliveryTime
-	cfg.SupportCross = conv.BoolInt64(in.SupportCross)
-	cfg.SupportIsolated = conv.BoolInt64(in.SupportIsolated)
-	cfg.BuyEnabled = conv.BoolInt64(in.BuyEnabled)
-	cfg.SellEnabled = conv.BoolInt64(in.SellEnabled)
+	cfg.SupportCross = in.SupportCross
+	cfg.SupportIsolated = in.SupportIsolated
+	cfg.BuyEnabled = in.BuyEnabled
+	cfg.SellEnabled = in.SellEnabled
 	cfg.UpdateTimes = now
 	if cfg.Id == 0 {
 		if _, err = l.svcCtx.TradeSymbolContractModel.Insert(l.ctx, cfg); err != nil {

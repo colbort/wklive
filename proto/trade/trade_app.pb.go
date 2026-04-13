@@ -312,12 +312,12 @@ type PlaceOrderReq struct {
 	Price           string                 `protobuf:"bytes,10,opt,name=price,proto3" json:"price,omitempty"`
 	Qty             string                 `protobuf:"bytes,11,opt,name=qty,proto3" json:"qty,omitempty"`
 	Amount          string                 `protobuf:"bytes,12,opt,name=amount,proto3" json:"amount,omitempty"`
-	IsReduceOnly    bool                   `protobuf:"varint,13,opt,name=is_reduce_only,json=isReduceOnly,proto3" json:"is_reduce_only,omitempty"`
-	IsCloseOnly     bool                   `protobuf:"varint,14,opt,name=is_close_only,json=isCloseOnly,proto3" json:"is_close_only,omitempty"`
+	IsReduceOnly    int64                  `protobuf:"varint,13,opt,name=is_reduce_only,json=isReduceOnly,proto3" json:"is_reduce_only,omitempty"`
+	IsCloseOnly     int64                  `protobuf:"varint,14,opt,name=is_close_only,json=isCloseOnly,proto3" json:"is_close_only,omitempty"`
 	TriggerPrice    string                 `protobuf:"bytes,15,opt,name=trigger_price,json=triggerPrice,proto3" json:"trigger_price,omitempty"`
 	TriggerType     TriggerType            `protobuf:"varint,16,opt,name=trigger_type,json=triggerType,proto3,enum=trade.TriggerType" json:"trigger_type,omitempty"`
 	MarginMode      MarginMode             `protobuf:"varint,17,opt,name=margin_mode,json=marginMode,proto3,enum=trade.MarginMode" json:"margin_mode,omitempty"`
-	Leverage        uint32                 `protobuf:"varint,18,opt,name=leverage,proto3" json:"leverage,omitempty"`
+	Leverage        int64                  `protobuf:"varint,18,opt,name=leverage,proto3" json:"leverage,omitempty"`
 	TakeProfitPrice string                 `protobuf:"bytes,19,opt,name=take_profit_price,json=takeProfitPrice,proto3" json:"take_profit_price,omitempty"`
 	StopLossPrice   string                 `protobuf:"bytes,20,opt,name=stop_loss_price,json=stopLossPrice,proto3" json:"stop_loss_price,omitempty"`
 	OrderSource     OrderSourceType        `protobuf:"varint,21,opt,name=order_source,json=orderSource,proto3,enum=trade.OrderSourceType" json:"order_source,omitempty"`
@@ -439,18 +439,18 @@ func (x *PlaceOrderReq) GetAmount() string {
 	return ""
 }
 
-func (x *PlaceOrderReq) GetIsReduceOnly() bool {
+func (x *PlaceOrderReq) GetIsReduceOnly() int64 {
 	if x != nil {
 		return x.IsReduceOnly
 	}
-	return false
+	return 0
 }
 
-func (x *PlaceOrderReq) GetIsCloseOnly() bool {
+func (x *PlaceOrderReq) GetIsCloseOnly() int64 {
 	if x != nil {
 		return x.IsCloseOnly
 	}
-	return false
+	return 0
 }
 
 func (x *PlaceOrderReq) GetTriggerPrice() string {
@@ -474,7 +474,7 @@ func (x *PlaceOrderReq) GetMarginMode() MarginMode {
 	return MarginMode_MARGIN_MODE_UNSPECIFIED
 }
 
-func (x *PlaceOrderReq) GetLeverage() uint32 {
+func (x *PlaceOrderReq) GetLeverage() int64 {
 	if x != nil {
 		return x.Leverage
 	}
@@ -717,7 +717,7 @@ func (x *CancelAllOrdersReq) GetPositionSide() PositionSide {
 type CancelAllOrdersResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	AffectedCount uint32                 `protobuf:"varint,2,opt,name=affected_count,json=affectedCount,proto3" json:"affected_count,omitempty"`
+	AffectedCount int64                  `protobuf:"varint,2,opt,name=affected_count,json=affectedCount,proto3" json:"affected_count,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -759,7 +759,7 @@ func (x *CancelAllOrdersResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *CancelAllOrdersResp) GetAffectedCount() uint32 {
+func (x *CancelAllOrdersResp) GetAffectedCount() int64 {
 	if x != nil {
 		return x.AffectedCount
 	}
@@ -1566,8 +1566,8 @@ type SetLeverageReq struct {
 	MarketType    MarketType             `protobuf:"varint,4,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
 	MarginMode    MarginMode             `protobuf:"varint,5,opt,name=margin_mode,json=marginMode,proto3,enum=trade.MarginMode" json:"margin_mode,omitempty"`
 	PositionMode  PositionMode           `protobuf:"varint,6,opt,name=position_mode,json=positionMode,proto3,enum=trade.PositionMode" json:"position_mode,omitempty"`
-	LongLeverage  uint32                 `protobuf:"varint,7,opt,name=long_leverage,json=longLeverage,proto3" json:"long_leverage,omitempty"`
-	ShortLeverage uint32                 `protobuf:"varint,8,opt,name=short_leverage,json=shortLeverage,proto3" json:"short_leverage,omitempty"`
+	LongLeverage  int64                  `protobuf:"varint,7,opt,name=long_leverage,json=longLeverage,proto3" json:"long_leverage,omitempty"`
+	ShortLeverage int64                  `protobuf:"varint,8,opt,name=short_leverage,json=shortLeverage,proto3" json:"short_leverage,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1644,14 +1644,14 @@ func (x *SetLeverageReq) GetPositionMode() PositionMode {
 	return PositionMode_POSITION_MODE_UNSPECIFIED
 }
 
-func (x *SetLeverageReq) GetLongLeverage() uint32 {
+func (x *SetLeverageReq) GetLongLeverage() int64 {
 	if x != nil {
 		return x.LongLeverage
 	}
 	return 0
 }
 
-func (x *SetLeverageReq) GetShortLeverage() uint32 {
+func (x *SetLeverageReq) GetShortLeverage() int64 {
 	if x != nil {
 		return x.ShortLeverage
 	}
@@ -1697,13 +1697,13 @@ const file_proto_trade_trade_app_proto_rawDesc = "" +
 	" \x01(\tR\x05price\x12\x10\n" +
 	"\x03qty\x18\v \x01(\tR\x03qty\x12\x16\n" +
 	"\x06amount\x18\f \x01(\tR\x06amount\x12$\n" +
-	"\x0eis_reduce_only\x18\r \x01(\bR\fisReduceOnly\x12\"\n" +
-	"\ris_close_only\x18\x0e \x01(\bR\visCloseOnly\x12#\n" +
+	"\x0eis_reduce_only\x18\r \x01(\x03R\fisReduceOnly\x12\"\n" +
+	"\ris_close_only\x18\x0e \x01(\x03R\visCloseOnly\x12#\n" +
 	"\rtrigger_price\x18\x0f \x01(\tR\ftriggerPrice\x125\n" +
 	"\ftrigger_type\x18\x10 \x01(\x0e2\x12.trade.TriggerTypeR\vtriggerType\x122\n" +
 	"\vmargin_mode\x18\x11 \x01(\x0e2\x11.trade.MarginModeR\n" +
 	"marginMode\x12\x1a\n" +
-	"\bleverage\x18\x12 \x01(\rR\bleverage\x12*\n" +
+	"\bleverage\x18\x12 \x01(\x03R\bleverage\x12*\n" +
 	"\x11take_profit_price\x18\x13 \x01(\tR\x0ftakeProfitPrice\x12&\n" +
 	"\x0fstop_loss_price\x18\x14 \x01(\tR\rstopLossPrice\x129\n" +
 	"\forder_source\x18\x15 \x01(\x0e2\x16.trade.OrderSourceTypeR\vorderSource\"_\n" +
@@ -1726,7 +1726,7 @@ const file_proto_trade_trade_app_proto_rawDesc = "" +
 	"\rposition_side\x18\x06 \x01(\x0e2\x13.trade.PositionSideR\fpositionSide\"b\n" +
 	"\x13CancelAllOrdersResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12%\n" +
-	"\x0eaffected_count\x18\x02 \x01(\rR\raffectedCount\"\xc0\x02\n" +
+	"\x0eaffected_count\x18\x02 \x01(\x03R\raffectedCount\"\xc0\x02\n" +
 	"\x0fGetOrderListReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12#\n" +
@@ -1801,8 +1801,8 @@ const file_proto_trade_trade_app_proto_rawDesc = "" +
 	"\vmargin_mode\x18\x05 \x01(\x0e2\x11.trade.MarginModeR\n" +
 	"marginMode\x128\n" +
 	"\rposition_mode\x18\x06 \x01(\x0e2\x13.trade.PositionModeR\fpositionMode\x12#\n" +
-	"\rlong_leverage\x18\a \x01(\rR\flongLeverage\x12%\n" +
-	"\x0eshort_leverage\x18\b \x01(\rR\rshortLeverage2\xce\x06\n" +
+	"\rlong_leverage\x18\a \x01(\x03R\flongLeverage\x12%\n" +
+	"\x0eshort_leverage\x18\b \x01(\x03R\rshortLeverage2\xce\x06\n" +
 	"\bTradeApp\x12B\n" +
 	"\rGetSymbolList\x12\x17.trade.GetSymbolListReq\x1a\x18.trade.GetSymbolListResp\x12H\n" +
 	"\x0fGetSymbolDetail\x12\x19.trade.GetSymbolDetailReq\x1a\x1a.trade.GetSymbolDetailResp\x129\n" +

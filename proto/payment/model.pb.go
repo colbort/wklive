@@ -23,17 +23,17 @@ const (
 
 type PayPlatform struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	PlatformCode  string                 `protobuf:"bytes,2,opt,name=platform_code,json=platformCode,proto3" json:"platform_code,omitempty"`
-	PlatformName  string                 `protobuf:"bytes,3,opt,name=platform_name,json=platformName,proto3" json:"platform_name,omitempty"`
-	PlatformType  PlatformType           `protobuf:"varint,4,opt,name=platform_type,json=platformType,proto3,enum=payment.PlatformType" json:"platform_type,omitempty"`
-	NotifyUrl     string                 `protobuf:"bytes,5,opt,name=notify_url,json=notifyUrl,proto3" json:"notify_url,omitempty"`
-	ReturnUrl     string                 `protobuf:"bytes,6,opt,name=return_url,json=returnUrl,proto3" json:"return_url,omitempty"`
-	Icon          string                 `protobuf:"bytes,7,opt,name=icon,proto3" json:"icon,omitempty"`
-	Status        CommonStatus           `protobuf:"varint,8,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
-	Remark        string                 `protobuf:"bytes,9,opt,name=remark,proto3" json:"remark,omitempty"`
-	CreateTimes   int64                  `protobuf:"varint,10,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
-	UpdateTimes   int64                  `protobuf:"varint,11,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                   // 平台ID
+	PlatformCode  string                 `protobuf:"bytes,2,opt,name=platform_code,json=platformCode,proto3" json:"platform_code,omitempty"`                            // 平台编码，如 alipay/wechat/stripe/usdt/bank
+	PlatformName  string                 `protobuf:"bytes,3,opt,name=platform_name,json=platformName,proto3" json:"platform_name,omitempty"`                            // 平台名称
+	PlatformType  PlatformType           `protobuf:"varint,4,opt,name=platform_type,json=platformType,proto3,enum=payment.PlatformType" json:"platform_type,omitempty"` // 类型：1三方支付 2银行转账 3链上支付 4人工代收
+	NotifyUrl     string                 `protobuf:"bytes,5,opt,name=notify_url,json=notifyUrl,proto3" json:"notify_url,omitempty"`                                     // 统一异步通知地址
+	ReturnUrl     string                 `protobuf:"bytes,6,opt,name=return_url,json=returnUrl,proto3" json:"return_url,omitempty"`                                     // 默认同步跳转地址
+	Icon          string                 `protobuf:"bytes,7,opt,name=icon,proto3" json:"icon,omitempty"`                                                                // 图标
+	Status        CommonStatus           `protobuf:"varint,8,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`                                 // 状态：1启用 2停用
+	Remark        string                 `protobuf:"bytes,9,opt,name=remark,proto3" json:"remark,omitempty"`                                                            // 备注
+	CreateTimes   int64                  `protobuf:"varint,10,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                             // 创建时间
+	UpdateTimes   int64                  `protobuf:"varint,11,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                             // 更新时间
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -147,16 +147,16 @@ func (x *PayPlatform) GetUpdateTimes() int64 {
 
 type PayProduct struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	PlatformId    int64                  `protobuf:"varint,2,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`
-	ProductCode   string                 `protobuf:"bytes,3,opt,name=product_code,json=productCode,proto3" json:"product_code,omitempty"`
-	ProductName   string                 `protobuf:"bytes,4,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`
-	SceneType     SceneType              `protobuf:"varint,5,opt,name=scene_type,json=sceneType,proto3,enum=payment.SceneType" json:"scene_type,omitempty"`
-	Currency      string                 `protobuf:"bytes,6,opt,name=currency,proto3" json:"currency,omitempty"`
-	Status        CommonStatus           `protobuf:"varint,7,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
-	Remark        string                 `protobuf:"bytes,8,opt,name=remark,proto3" json:"remark,omitempty"`
-	CreateTimes   int64                  `protobuf:"varint,9,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
-	UpdateTimes   int64                  `protobuf:"varint,10,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                       // 产品ID
+	PlatformId    int64                  `protobuf:"varint,2,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`                     // 平台ID
+	ProductCode   string                 `protobuf:"bytes,3,opt,name=product_code,json=productCode,proto3" json:"product_code,omitempty"`                   // 产品编码
+	ProductName   string                 `protobuf:"bytes,4,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`                   // 产品名称
+	SceneType     SceneType              `protobuf:"varint,5,opt,name=scene_type,json=sceneType,proto3,enum=payment.SceneType" json:"scene_type,omitempty"` // 场景：1APP 2H5 3WEB 4收银台 5链上
+	Currency      string                 `protobuf:"bytes,6,opt,name=currency,proto3" json:"currency,omitempty"`                                            // 币种
+	Status        CommonStatus           `protobuf:"varint,7,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`                     // 状态：1启用 2停用
+	Remark        string                 `protobuf:"bytes,8,opt,name=remark,proto3" json:"remark,omitempty"`                                                // 备注
+	CreateTimes   int64                  `protobuf:"varint,9,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                  // 创建时间
+	UpdateTimes   int64                  `protobuf:"varint,10,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                 // 更新时间
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -263,14 +263,14 @@ func (x *PayProduct) GetUpdateTimes() int64 {
 
 type TenantPayPlatform struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	PlatformId    int64                  `protobuf:"varint,3,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`
-	Status        CommonStatus           `protobuf:"varint,4,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
-	OpenStatus    OpenStatus             `protobuf:"varint,5,opt,name=open_status,json=openStatus,proto3,enum=payment.OpenStatus" json:"open_status,omitempty"`
-	Remark        string                 `protobuf:"bytes,6,opt,name=remark,proto3" json:"remark,omitempty"`
-	CreateTimes   int64                  `protobuf:"varint,7,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
-	UpdateTimes   int64                  `protobuf:"varint,8,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                           // 主键ID
+	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                               // 租户ID
+	PlatformId    int64                  `protobuf:"varint,3,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`                         // 平台ID
+	Status        CommonStatus           `protobuf:"varint,4,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`                         // 状态：1启用 2停用
+	OpenStatus    OpenStatus             `protobuf:"varint,5,opt,name=open_status,json=openStatus,proto3,enum=payment.OpenStatus" json:"open_status,omitempty"` // 开通状态：1待配置 2已开通 3审核中 4驳回
+	Remark        string                 `protobuf:"bytes,6,opt,name=remark,proto3" json:"remark,omitempty"`                                                    // 备注
+	CreateTimes   int64                  `protobuf:"varint,7,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                      // 创建时间
+	UpdateTimes   int64                  `protobuf:"varint,8,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                      // 更新时间
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -363,22 +363,26 @@ func (x *TenantPayPlatform) GetUpdateTimes() int64 {
 
 type TenantPayAccount struct {
 	state               protoimpl.MessageState `protogen:"open.v1"`
-	Id                  int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId            int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	TenantPayPlatformId int64                  `protobuf:"varint,3,opt,name=tenant_pay_platform_id,json=tenantPayPlatformId,proto3" json:"tenant_pay_platform_id,omitempty"`
-	PlatformId          int64                  `protobuf:"varint,4,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`
-	AccountCode         string                 `protobuf:"bytes,5,opt,name=account_code,json=accountCode,proto3" json:"account_code,omitempty"`
-	AccountName         string                 `protobuf:"bytes,6,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`
-	AppId               string                 `protobuf:"bytes,7,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
-	MerchantId          string                 `protobuf:"bytes,8,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`
-	MerchantName        string                 `protobuf:"bytes,9,opt,name=merchant_name,json=merchantName,proto3" json:"merchant_name,omitempty"`
-	PublicKey           string                 `protobuf:"bytes,10,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
-	ExtConfig           string                 `protobuf:"bytes,11,opt,name=ext_config,json=extConfig,proto3" json:"ext_config,omitempty"` // JSON string
-	Status              CommonStatus           `protobuf:"varint,12,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
-	IsDefault           int64                  `protobuf:"varint,13,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
-	Remark              string                 `protobuf:"bytes,14,opt,name=remark,proto3" json:"remark,omitempty"`
-	CreateTimes         int64                  `protobuf:"varint,15,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
-	UpdateTimes         int64                  `protobuf:"varint,16,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	Id                  int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                  // 账号ID
+	TenantId            int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                      // 租户ID
+	TenantPayPlatformId int64                  `protobuf:"varint,3,opt,name=tenant_pay_platform_id,json=tenantPayPlatformId,proto3" json:"tenant_pay_platform_id,omitempty"` // 租户开通平台ID
+	PlatformId          int64                  `protobuf:"varint,4,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`                                // 平台ID
+	AccountCode         string                 `protobuf:"bytes,5,opt,name=account_code,json=accountCode,proto3" json:"account_code,omitempty"`                              // 账号编码
+	AccountName         string                 `protobuf:"bytes,6,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`                              // 账号名称
+	AppId               string                 `protobuf:"bytes,7,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`                                                // 应用ID
+	MerchantId          string                 `protobuf:"bytes,8,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                                 // 商户号
+	MerchantName        string                 `protobuf:"bytes,9,opt,name=merchant_name,json=merchantName,proto3" json:"merchant_name,omitempty"`                           // 商户名称
+	PublicKey           string                 `protobuf:"bytes,10,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`                                   // 公钥
+	ExtConfig           string                 `protobuf:"bytes,11,opt,name=ext_config,json=extConfig,proto3" json:"ext_config,omitempty"`                                   // 扩展配置(JSON)
+	Status              CommonStatus           `protobuf:"varint,12,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`                               // 状态：1启用 2停用
+	IsDefault           int64                  `protobuf:"varint,13,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`                                  // 是否默认账号：0否 1是
+	Remark              string                 `protobuf:"bytes,14,opt,name=remark,proto3" json:"remark,omitempty"`                                                          // 备注
+	CreateTimes         int64                  `protobuf:"varint,15,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                            // 创建时间
+	UpdateTimes         int64                  `protobuf:"varint,16,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                            // 更新时间
+	ApiKeyCipher        string                 `protobuf:"bytes,17,opt,name=api_key_cipher,json=apiKeyCipher,proto3" json:"api_key_cipher,omitempty"`                        // API Key密文
+	ApiSecretCipher     string                 `protobuf:"bytes,18,opt,name=api_secret_cipher,json=apiSecretCipher,proto3" json:"api_secret_cipher,omitempty"`               // API Secret密文
+	PrivateKeyCipher    string                 `protobuf:"bytes,19,opt,name=private_key_cipher,json=privateKeyCipher,proto3" json:"private_key_cipher,omitempty"`            // 私钥密文
+	CertCipher          string                 `protobuf:"bytes,20,opt,name=cert_cipher,json=certCipher,proto3" json:"cert_cipher,omitempty"`                                // 证书密文
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -525,32 +529,60 @@ func (x *TenantPayAccount) GetUpdateTimes() int64 {
 	return 0
 }
 
+func (x *TenantPayAccount) GetApiKeyCipher() string {
+	if x != nil {
+		return x.ApiKeyCipher
+	}
+	return ""
+}
+
+func (x *TenantPayAccount) GetApiSecretCipher() string {
+	if x != nil {
+		return x.ApiSecretCipher
+	}
+	return ""
+}
+
+func (x *TenantPayAccount) GetPrivateKeyCipher() string {
+	if x != nil {
+		return x.PrivateKeyCipher
+	}
+	return ""
+}
+
+func (x *TenantPayAccount) GetCertCipher() string {
+	if x != nil {
+		return x.CertCipher
+	}
+	return ""
+}
+
 type TenantPayChannel struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	PlatformId      int64                  `protobuf:"varint,3,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`
-	ProductId       int64                  `protobuf:"varint,4,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
-	AccountId       int64                  `protobuf:"varint,5,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
-	ChannelCode     string                 `protobuf:"bytes,6,opt,name=channel_code,json=channelCode,proto3" json:"channel_code,omitempty"`
-	ChannelName     string                 `protobuf:"bytes,7,opt,name=channel_name,json=channelName,proto3" json:"channel_name,omitempty"`
-	DisplayName     string                 `protobuf:"bytes,8,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
-	Icon            string                 `protobuf:"bytes,9,opt,name=icon,proto3" json:"icon,omitempty"`
-	Currency        string                 `protobuf:"bytes,10,opt,name=currency,proto3" json:"currency,omitempty"`
-	Sort            int64                  `protobuf:"varint,11,opt,name=sort,proto3" json:"sort,omitempty"`
-	Visible         int64                  `protobuf:"varint,12,opt,name=visible,proto3" json:"visible,omitempty"`
-	Status          CommonStatus           `protobuf:"varint,13,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
-	SingleMinAmount int64                  `protobuf:"varint,14,opt,name=single_min_amount,json=singleMinAmount,proto3" json:"single_min_amount,omitempty"`
-	SingleMaxAmount int64                  `protobuf:"varint,15,opt,name=single_max_amount,json=singleMaxAmount,proto3" json:"single_max_amount,omitempty"`
-	DailyMaxAmount  int64                  `protobuf:"varint,16,opt,name=daily_max_amount,json=dailyMaxAmount,proto3" json:"daily_max_amount,omitempty"`
-	DailyMaxCount   int64                  `protobuf:"varint,17,opt,name=daily_max_count,json=dailyMaxCount,proto3" json:"daily_max_count,omitempty"`
-	FeeType         FeeType                `protobuf:"varint,18,opt,name=fee_type,json=feeType,proto3,enum=payment.FeeType" json:"fee_type,omitempty"`
-	FeeRate         string                 `protobuf:"bytes,19,opt,name=fee_rate,json=feeRate,proto3" json:"fee_rate,omitempty"`
-	FeeFixedAmount  int64                  `protobuf:"varint,20,opt,name=fee_fixed_amount,json=feeFixedAmount,proto3" json:"fee_fixed_amount,omitempty"`
-	ExtConfig       string                 `protobuf:"bytes,21,opt,name=ext_config,json=extConfig,proto3" json:"ext_config,omitempty"` // JSON string
-	Remark          string                 `protobuf:"bytes,22,opt,name=remark,proto3" json:"remark,omitempty"`
-	CreateTimes     int64                  `protobuf:"varint,23,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
-	UpdateTimes     int64                  `protobuf:"varint,24,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                     // 通道ID
+	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                         // 租户ID
+	PlatformId      int64                  `protobuf:"varint,3,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`                   // 平台ID
+	ProductId       int64                  `protobuf:"varint,4,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`                      // 产品ID
+	AccountId       int64                  `protobuf:"varint,5,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`                      // 租户支付账号ID
+	ChannelCode     string                 `protobuf:"bytes,6,opt,name=channel_code,json=channelCode,proto3" json:"channel_code,omitempty"`                 // 通道编码
+	ChannelName     string                 `protobuf:"bytes,7,opt,name=channel_name,json=channelName,proto3" json:"channel_name,omitempty"`                 // 通道名称
+	DisplayName     string                 `protobuf:"bytes,8,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`                 // 前端展示名称
+	Icon            string                 `protobuf:"bytes,9,opt,name=icon,proto3" json:"icon,omitempty"`                                                  // 图标
+	Currency        string                 `protobuf:"bytes,10,opt,name=currency,proto3" json:"currency,omitempty"`                                         // 币种
+	Sort            int64                  `protobuf:"varint,11,opt,name=sort,proto3" json:"sort,omitempty"`                                                // 排序
+	Visible         int64                  `protobuf:"varint,12,opt,name=visible,proto3" json:"visible,omitempty"`                                          // 是否显示：0否 1是
+	Status          CommonStatus           `protobuf:"varint,13,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`                  // 状态：1启用 2停用
+	SingleMinAmount int64                  `protobuf:"varint,14,opt,name=single_min_amount,json=singleMinAmount,proto3" json:"single_min_amount,omitempty"` // 单笔最小金额，单位分
+	SingleMaxAmount int64                  `protobuf:"varint,15,opt,name=single_max_amount,json=singleMaxAmount,proto3" json:"single_max_amount,omitempty"` // 单笔最大金额，0表示不限制，单位分
+	DailyMaxAmount  int64                  `protobuf:"varint,16,opt,name=daily_max_amount,json=dailyMaxAmount,proto3" json:"daily_max_amount,omitempty"`    // 单日最大金额，0表示不限制，单位分
+	DailyMaxCount   int64                  `protobuf:"varint,17,opt,name=daily_max_count,json=dailyMaxCount,proto3" json:"daily_max_count,omitempty"`       // 单日最大次数，0表示不限制
+	FeeType         FeeType                `protobuf:"varint,18,opt,name=fee_type,json=feeType,proto3,enum=payment.FeeType" json:"fee_type,omitempty"`      // 手续费类型：1比例 2固定
+	FeeRate         string                 `protobuf:"bytes,19,opt,name=fee_rate,json=feeRate,proto3" json:"fee_rate,omitempty"`                            // 手续费比例
+	FeeFixedAmount  int64                  `protobuf:"varint,20,opt,name=fee_fixed_amount,json=feeFixedAmount,proto3" json:"fee_fixed_amount,omitempty"`    // 固定手续费，单位分
+	ExtConfig       string                 `protobuf:"bytes,21,opt,name=ext_config,json=extConfig,proto3" json:"ext_config,omitempty"`                      // 扩展配置(JSON)
+	Remark          string                 `protobuf:"bytes,22,opt,name=remark,proto3" json:"remark,omitempty"`                                             // 备注
+	CreateTimes     int64                  `protobuf:"varint,23,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`               // 创建时间
+	UpdateTimes     int64                  `protobuf:"varint,24,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`               // 更新时间
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -755,27 +787,27 @@ func (x *TenantPayChannel) GetUpdateTimes() int64 {
 
 type TenantPayChannelRule struct {
 	state                protoimpl.MessageState `protogen:"open.v1"`
-	Id                   int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId             int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	ChannelId            int64                  `protobuf:"varint,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
-	RuleName             string                 `protobuf:"bytes,4,opt,name=rule_name,json=ruleName,proto3" json:"rule_name,omitempty"`
-	Priority             int64                  `protobuf:"varint,5,opt,name=priority,proto3" json:"priority,omitempty"`
-	Status               CommonStatus           `protobuf:"varint,6,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`
-	SingleAmountMin      int64                  `protobuf:"varint,7,opt,name=single_amount_min,json=singleAmountMin,proto3" json:"single_amount_min,omitempty"`
-	SingleAmountMax      int64                  `protobuf:"varint,8,opt,name=single_amount_max,json=singleAmountMax,proto3" json:"single_amount_max,omitempty"`
-	UserTotalRechargeMin int64                  `protobuf:"varint,9,opt,name=user_total_recharge_min,json=userTotalRechargeMin,proto3" json:"user_total_recharge_min,omitempty"`
-	UserTotalRechargeMax int64                  `protobuf:"varint,10,opt,name=user_total_recharge_max,json=userTotalRechargeMax,proto3" json:"user_total_recharge_max,omitempty"`
-	MemberLevelMin       int64                  `protobuf:"varint,11,opt,name=member_level_min,json=memberLevelMin,proto3" json:"member_level_min,omitempty"`
-	MemberLevelMax       int64                  `protobuf:"varint,12,opt,name=member_level_max,json=memberLevelMax,proto3" json:"member_level_max,omitempty"`
-	KycLevelMin          int64                  `protobuf:"varint,13,opt,name=kyc_level_min,json=kycLevelMin,proto3" json:"kyc_level_min,omitempty"`
-	KycLevelMax          int64                  `protobuf:"varint,14,opt,name=kyc_level_max,json=kycLevelMax,proto3" json:"kyc_level_max,omitempty"`
-	AllowNewUser         int64                  `protobuf:"varint,15,opt,name=allow_new_user,json=allowNewUser,proto3" json:"allow_new_user,omitempty"`
-	AllowOldUser         int64                  `protobuf:"varint,16,opt,name=allow_old_user,json=allowOldUser,proto3" json:"allow_old_user,omitempty"`
-	AllowTags            string                 `protobuf:"bytes,17,opt,name=allow_tags,json=allowTags,proto3" json:"allow_tags,omitempty"` // JSON string
-	DenyTags             string                 `protobuf:"bytes,18,opt,name=deny_tags,json=denyTags,proto3" json:"deny_tags,omitempty"`    // JSON string
-	Remark               string                 `protobuf:"bytes,19,opt,name=remark,proto3" json:"remark,omitempty"`
-	CreateTimes          int64                  `protobuf:"varint,20,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
-	UpdateTimes          int64                  `protobuf:"varint,21,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	Id                   int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                      // 规则ID
+	TenantId             int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                          // 租户ID
+	ChannelId            int64                  `protobuf:"varint,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`                                       // 通道ID
+	RuleName             string                 `protobuf:"bytes,4,opt,name=rule_name,json=ruleName,proto3" json:"rule_name,omitempty"`                                           // 规则名称
+	Priority             int64                  `protobuf:"varint,5,opt,name=priority,proto3" json:"priority,omitempty"`                                                          // 优先级，越小越优先
+	Status               CommonStatus           `protobuf:"varint,6,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`                                    // 状态：1启用 2停用
+	SingleAmountMin      int64                  `protobuf:"varint,7,opt,name=single_amount_min,json=singleAmountMin,proto3" json:"single_amount_min,omitempty"`                   // 单笔充值最小金额，单位分
+	SingleAmountMax      int64                  `protobuf:"varint,8,opt,name=single_amount_max,json=singleAmountMax,proto3" json:"single_amount_max,omitempty"`                   // 单笔充值最大金额，0表示不限制，单位分
+	UserTotalRechargeMin int64                  `protobuf:"varint,9,opt,name=user_total_recharge_min,json=userTotalRechargeMin,proto3" json:"user_total_recharge_min,omitempty"`  // 用户累计充值最小金额，单位分
+	UserTotalRechargeMax int64                  `protobuf:"varint,10,opt,name=user_total_recharge_max,json=userTotalRechargeMax,proto3" json:"user_total_recharge_max,omitempty"` // 用户累计充值最大金额，0表示不限制，单位分
+	MemberLevelMin       int64                  `protobuf:"varint,11,opt,name=member_level_min,json=memberLevelMin,proto3" json:"member_level_min,omitempty"`                     // 会员等级最小值
+	MemberLevelMax       int64                  `protobuf:"varint,12,opt,name=member_level_max,json=memberLevelMax,proto3" json:"member_level_max,omitempty"`                     // 会员等级最大值，0表示不限制
+	KycLevelMin          int64                  `protobuf:"varint,13,opt,name=kyc_level_min,json=kycLevelMin,proto3" json:"kyc_level_min,omitempty"`                              // KYC等级最小值
+	KycLevelMax          int64                  `protobuf:"varint,14,opt,name=kyc_level_max,json=kycLevelMax,proto3" json:"kyc_level_max,omitempty"`                              // KYC等级最大值，0表示不限制
+	AllowNewUser         int64                  `protobuf:"varint,15,opt,name=allow_new_user,json=allowNewUser,proto3" json:"allow_new_user,omitempty"`                           // 是否允许新用户：0否 1是
+	AllowOldUser         int64                  `protobuf:"varint,16,opt,name=allow_old_user,json=allowOldUser,proto3" json:"allow_old_user,omitempty"`                           // 是否允许老用户：0否 1是
+	AllowTags            string                 `protobuf:"bytes,17,opt,name=allow_tags,json=allowTags,proto3" json:"allow_tags,omitempty"`                                       // 允许的用户标签(JSON数组)
+	DenyTags             string                 `protobuf:"bytes,18,opt,name=deny_tags,json=denyTags,proto3" json:"deny_tags,omitempty"`                                          // 禁止的用户标签(JSON数组)
+	Remark               string                 `protobuf:"bytes,19,opt,name=remark,proto3" json:"remark,omitempty"`                                                              // 备注
+	CreateTimes          int64                  `protobuf:"varint,20,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                                // 创建时间
+	UpdateTimes          int64                  `protobuf:"varint,21,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                                // 更新时间
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -959,17 +991,17 @@ func (x *TenantPayChannelRule) GetUpdateTimes() int64 {
 
 type UserRechargeStat struct {
 	state              protoimpl.MessageState `protogen:"open.v1"`
-	Id                 int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId           int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId             int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	SuccessOrderCount  int64                  `protobuf:"varint,4,opt,name=success_order_count,json=successOrderCount,proto3" json:"success_order_count,omitempty"`
-	SuccessTotalAmount int64                  `protobuf:"varint,5,opt,name=success_total_amount,json=successTotalAmount,proto3" json:"success_total_amount,omitempty"`
-	TodaySuccessAmount int64                  `protobuf:"varint,6,opt,name=today_success_amount,json=todaySuccessAmount,proto3" json:"today_success_amount,omitempty"`
-	TodaySuccessCount  int64                  `protobuf:"varint,7,opt,name=today_success_count,json=todaySuccessCount,proto3" json:"today_success_count,omitempty"`
-	FirstSuccessTime   int64                  `protobuf:"varint,8,opt,name=first_success_time,json=firstSuccessTime,proto3" json:"first_success_time,omitempty"`
-	LastSuccessTime    int64                  `protobuf:"varint,9,opt,name=last_success_time,json=lastSuccessTime,proto3" json:"last_success_time,omitempty"`
-	CreateTimes        int64                  `protobuf:"varint,10,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
-	UpdateTimes        int64                  `protobuf:"varint,11,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	Id                 int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                             // 主键ID
+	TenantId           int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                 // 租户ID
+	UserId             int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                       // 用户ID
+	SuccessOrderCount  int64                  `protobuf:"varint,4,opt,name=success_order_count,json=successOrderCount,proto3" json:"success_order_count,omitempty"`    // 成功充值笔数
+	SuccessTotalAmount int64                  `protobuf:"varint,5,opt,name=success_total_amount,json=successTotalAmount,proto3" json:"success_total_amount,omitempty"` // 成功累计充值金额，单位分
+	TodaySuccessAmount int64                  `protobuf:"varint,6,opt,name=today_success_amount,json=todaySuccessAmount,proto3" json:"today_success_amount,omitempty"` // 今日成功充值金额，单位分
+	TodaySuccessCount  int64                  `protobuf:"varint,7,opt,name=today_success_count,json=todaySuccessCount,proto3" json:"today_success_count,omitempty"`    // 今日成功充值次数
+	FirstSuccessTime   int64                  `protobuf:"varint,8,opt,name=first_success_time,json=firstSuccessTime,proto3" json:"first_success_time,omitempty"`       // 首次成功充值时间
+	LastSuccessTime    int64                  `protobuf:"varint,9,opt,name=last_success_time,json=lastSuccessTime,proto3" json:"last_success_time,omitempty"`          // 最近成功充值时间
+	CreateTimes        int64                  `protobuf:"varint,10,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                       // 创建时间
+	UpdateTimes        int64                  `protobuf:"varint,11,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                       // 更新时间
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -1083,38 +1115,38 @@ func (x *UserRechargeStat) GetUpdateTimes() int64 {
 
 type RechargeOrder struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrderNo       string                 `protobuf:"bytes,4,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
-	BizOrderNo    string                 `protobuf:"bytes,5,opt,name=biz_order_no,json=bizOrderNo,proto3" json:"biz_order_no,omitempty"`
-	PlatformId    int64                  `protobuf:"varint,6,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`
-	ProductId     int64                  `protobuf:"varint,7,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
-	AccountId     int64                  `protobuf:"varint,8,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
-	ChannelId     int64                  `protobuf:"varint,9,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
-	Currency      string                 `protobuf:"bytes,10,opt,name=currency,proto3" json:"currency,omitempty"`
-	OrderAmount   int64                  `protobuf:"varint,11,opt,name=order_amount,json=orderAmount,proto3" json:"order_amount,omitempty"`
-	PayAmount     int64                  `protobuf:"varint,12,opt,name=pay_amount,json=payAmount,proto3" json:"pay_amount,omitempty"`
-	FeeAmount     int64                  `protobuf:"varint,13,opt,name=fee_amount,json=feeAmount,proto3" json:"fee_amount,omitempty"`
-	Subject       string                 `protobuf:"bytes,14,opt,name=subject,proto3" json:"subject,omitempty"`
-	Body          string                 `protobuf:"bytes,15,opt,name=body,proto3" json:"body,omitempty"`
-	ClientType    ClientType             `protobuf:"varint,16,opt,name=client_type,json=clientType,proto3,enum=payment.ClientType" json:"client_type,omitempty"`
-	ClientIp      string                 `protobuf:"bytes,17,opt,name=client_ip,json=clientIp,proto3" json:"client_ip,omitempty"`
-	Status        PayOrderStatus         `protobuf:"varint,18,opt,name=status,proto3,enum=payment.PayOrderStatus" json:"status,omitempty"`
-	ThirdTradeNo  string                 `protobuf:"bytes,19,opt,name=third_trade_no,json=thirdTradeNo,proto3" json:"third_trade_no,omitempty"`
-	ThirdOrderNo  string                 `protobuf:"bytes,20,opt,name=third_order_no,json=thirdOrderNo,proto3" json:"third_order_no,omitempty"`
-	PayUrl        string                 `protobuf:"bytes,21,opt,name=pay_url,json=payUrl,proto3" json:"pay_url,omitempty"`
-	QrContent     string                 `protobuf:"bytes,22,opt,name=qr_content,json=qrContent,proto3" json:"qr_content,omitempty"`
-	RequestData   string                 `protobuf:"bytes,23,opt,name=request_data,json=requestData,proto3" json:"request_data,omitempty"`
-	ResponseData  string                 `protobuf:"bytes,24,opt,name=response_data,json=responseData,proto3" json:"response_data,omitempty"`
-	NotifyData    string                 `protobuf:"bytes,25,opt,name=notify_data,json=notifyData,proto3" json:"notify_data,omitempty"`
-	ExpireTime    int64                  `protobuf:"varint,26,opt,name=expire_time,json=expireTime,proto3" json:"expire_time,omitempty"`
-	PaidTime      int64                  `protobuf:"varint,27,opt,name=paid_time,json=paidTime,proto3" json:"paid_time,omitempty"`
-	NotifyTime    int64                  `protobuf:"varint,28,opt,name=notify_time,json=notifyTime,proto3" json:"notify_time,omitempty"`
-	CloseTime     int64                  `protobuf:"varint,29,opt,name=close_time,json=closeTime,proto3" json:"close_time,omitempty"`
-	Remark        string                 `protobuf:"bytes,30,opt,name=remark,proto3" json:"remark,omitempty"`
-	CreateTimes   int64                  `protobuf:"varint,31,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
-	UpdateTimes   int64                  `protobuf:"varint,32,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                            // 充值订单ID
+	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                // 租户ID
+	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                      // 用户ID
+	OrderNo       string                 `protobuf:"bytes,4,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`                                    // 平台订单号
+	BizOrderNo    string                 `protobuf:"bytes,5,opt,name=biz_order_no,json=bizOrderNo,proto3" json:"biz_order_no,omitempty"`                         // 业务订单号
+	PlatformId    int64                  `protobuf:"varint,6,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`                          // 平台ID
+	ProductId     int64                  `protobuf:"varint,7,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`                             // 产品ID
+	AccountId     int64                  `protobuf:"varint,8,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`                             // 账号ID
+	ChannelId     int64                  `protobuf:"varint,9,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`                             // 通道ID
+	Currency      string                 `protobuf:"bytes,10,opt,name=currency,proto3" json:"currency,omitempty"`                                                // 币种
+	OrderAmount   int64                  `protobuf:"varint,11,opt,name=order_amount,json=orderAmount,proto3" json:"order_amount,omitempty"`                      // 订单金额，单位分
+	PayAmount     int64                  `protobuf:"varint,12,opt,name=pay_amount,json=payAmount,proto3" json:"pay_amount,omitempty"`                            // 实际支付金额，单位分
+	FeeAmount     int64                  `protobuf:"varint,13,opt,name=fee_amount,json=feeAmount,proto3" json:"fee_amount,omitempty"`                            // 手续费金额，单位分
+	Subject       string                 `protobuf:"bytes,14,opt,name=subject,proto3" json:"subject,omitempty"`                                                  // 标题
+	Body          string                 `protobuf:"bytes,15,opt,name=body,proto3" json:"body,omitempty"`                                                        // 描述
+	ClientType    ClientType             `protobuf:"varint,16,opt,name=client_type,json=clientType,proto3,enum=payment.ClientType" json:"client_type,omitempty"` // 客户端类型：1APP 2H5 3WEB
+	ClientIp      string                 `protobuf:"bytes,17,opt,name=client_ip,json=clientIp,proto3" json:"client_ip,omitempty"`                                // 客户端IP
+	Status        PayOrderStatus         `protobuf:"varint,18,opt,name=status,proto3,enum=payment.PayOrderStatus" json:"status,omitempty"`                       // 状态：1待支付 2支付中 3成功 4失败 5已关闭 6已退款
+	ThirdTradeNo  string                 `protobuf:"bytes,19,opt,name=third_trade_no,json=thirdTradeNo,proto3" json:"third_trade_no,omitempty"`                  // 三方交易号
+	ThirdOrderNo  string                 `protobuf:"bytes,20,opt,name=third_order_no,json=thirdOrderNo,proto3" json:"third_order_no,omitempty"`                  // 三方订单号
+	PayUrl        string                 `protobuf:"bytes,21,opt,name=pay_url,json=payUrl,proto3" json:"pay_url,omitempty"`                                      // 支付链接
+	QrContent     string                 `protobuf:"bytes,22,opt,name=qr_content,json=qrContent,proto3" json:"qr_content,omitempty"`                             // 二维码内容
+	RequestData   string                 `protobuf:"bytes,23,opt,name=request_data,json=requestData,proto3" json:"request_data,omitempty"`                       // 请求快照(JSON)
+	ResponseData  string                 `protobuf:"bytes,24,opt,name=response_data,json=responseData,proto3" json:"response_data,omitempty"`                    // 响应快照(JSON)
+	NotifyData    string                 `protobuf:"bytes,25,opt,name=notify_data,json=notifyData,proto3" json:"notify_data,omitempty"`                          // 回调数据(JSON)
+	ExpireTime    int64                  `protobuf:"varint,26,opt,name=expire_time,json=expireTime,proto3" json:"expire_time,omitempty"`                         // 过期时间
+	PaidTime      int64                  `protobuf:"varint,27,opt,name=paid_time,json=paidTime,proto3" json:"paid_time,omitempty"`                               // 支付时间
+	NotifyTime    int64                  `protobuf:"varint,28,opt,name=notify_time,json=notifyTime,proto3" json:"notify_time,omitempty"`                         // 回调时间
+	CloseTime     int64                  `protobuf:"varint,29,opt,name=close_time,json=closeTime,proto3" json:"close_time,omitempty"`                            // 关闭时间
+	Remark        string                 `protobuf:"bytes,30,opt,name=remark,proto3" json:"remark,omitempty"`                                                    // 备注
+	CreateTimes   int64                  `protobuf:"varint,31,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                      // 创建时间
+	UpdateTimes   int64                  `protobuf:"varint,32,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                      // 更新时间
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1375,19 +1407,19 @@ func (x *RechargeOrder) GetUpdateTimes() int64 {
 
 type PayNotifyLog struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	OrderId       int64                  `protobuf:"varint,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
-	OrderNo       string                 `protobuf:"bytes,4,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
-	PlatformId    int64                  `protobuf:"varint,5,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`
-	ChannelId     int64                  `protobuf:"varint,6,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
-	NotifyStatus  NotifyProcessStatus    `protobuf:"varint,7,opt,name=notify_status,json=notifyStatus,proto3,enum=payment.NotifyProcessStatus" json:"notify_status,omitempty"`
-	NotifyBody    string                 `protobuf:"bytes,8,opt,name=notify_body,json=notifyBody,proto3" json:"notify_body,omitempty"`
-	SignResult    SignResult             `protobuf:"varint,9,opt,name=sign_result,json=signResult,proto3,enum=payment.SignResult" json:"sign_result,omitempty"`
-	ProcessResult string                 `protobuf:"bytes,10,opt,name=process_result,json=processResult,proto3" json:"process_result,omitempty"`
-	ErrorMessage  string                 `protobuf:"bytes,11,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
-	NotifyTime    int64                  `protobuf:"varint,12,opt,name=notify_time,json=notifyTime,proto3" json:"notify_time,omitempty"`
-	CreateTimes   int64                  `protobuf:"varint,13,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                          // 回调日志ID
+	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                              // 租户ID
+	OrderId       int64                  `protobuf:"varint,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`                                                 // 订单ID
+	OrderNo       string                 `protobuf:"bytes,4,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`                                                  // 平台订单号
+	PlatformId    int64                  `protobuf:"varint,5,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`                                        // 平台ID
+	ChannelId     int64                  `protobuf:"varint,6,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`                                           // 通道ID
+	NotifyStatus  NotifyProcessStatus    `protobuf:"varint,7,opt,name=notify_status,json=notifyStatus,proto3,enum=payment.NotifyProcessStatus" json:"notify_status,omitempty"` // 处理状态：1待处理 2成功 3失败
+	NotifyBody    string                 `protobuf:"bytes,8,opt,name=notify_body,json=notifyBody,proto3" json:"notify_body,omitempty"`                                         // 回调原文
+	SignResult    SignResult             `protobuf:"varint,9,opt,name=sign_result,json=signResult,proto3,enum=payment.SignResult" json:"sign_result,omitempty"`                // 验签结果：0未验 1通过 2失败
+	ProcessResult string                 `protobuf:"bytes,10,opt,name=process_result,json=processResult,proto3" json:"process_result,omitempty"`                               // 处理结果
+	ErrorMessage  string                 `protobuf:"bytes,11,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`                                  // 错误信息
+	NotifyTime    int64                  `protobuf:"varint,12,opt,name=notify_time,json=notifyTime,proto3" json:"notify_time,omitempty"`                                       // 回调时间
+	CreateTimes   int64                  `protobuf:"varint,13,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                                    // 创建时间
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1515,20 +1547,20 @@ func (x *PayNotifyLog) GetCreateTimes() int64 {
 
 type VisiblePayChannel struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	ChannelId       int64                  `protobuf:"varint,1,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
-	ChannelCode     string                 `protobuf:"bytes,2,opt,name=channel_code,json=channelCode,proto3" json:"channel_code,omitempty"`
-	ChannelName     string                 `protobuf:"bytes,3,opt,name=channel_name,json=channelName,proto3" json:"channel_name,omitempty"`
-	DisplayName     string                 `protobuf:"bytes,4,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
-	Icon            string                 `protobuf:"bytes,5,opt,name=icon,proto3" json:"icon,omitempty"`
-	Currency        string                 `protobuf:"bytes,6,opt,name=currency,proto3" json:"currency,omitempty"`
-	SingleMinAmount int64                  `protobuf:"varint,7,opt,name=single_min_amount,json=singleMinAmount,proto3" json:"single_min_amount,omitempty"`
-	SingleMaxAmount int64                  `protobuf:"varint,8,opt,name=single_max_amount,json=singleMaxAmount,proto3" json:"single_max_amount,omitempty"`
-	FeeType         FeeType                `protobuf:"varint,9,opt,name=fee_type,json=feeType,proto3,enum=payment.FeeType" json:"fee_type,omitempty"`
-	FeeRate         string                 `protobuf:"bytes,10,opt,name=fee_rate,json=feeRate,proto3" json:"fee_rate,omitempty"`
-	FeeFixedAmount  int64                  `protobuf:"varint,11,opt,name=fee_fixed_amount,json=feeFixedAmount,proto3" json:"fee_fixed_amount,omitempty"`
-	PlatformId      int64                  `protobuf:"varint,12,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`
-	ProductId       int64                  `protobuf:"varint,13,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
-	AccountId       int64                  `protobuf:"varint,14,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	ChannelId       int64                  `protobuf:"varint,1,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`                     // 通道ID
+	ChannelCode     string                 `protobuf:"bytes,2,opt,name=channel_code,json=channelCode,proto3" json:"channel_code,omitempty"`                // 通道编码
+	ChannelName     string                 `protobuf:"bytes,3,opt,name=channel_name,json=channelName,proto3" json:"channel_name,omitempty"`                // 通道名称
+	DisplayName     string                 `protobuf:"bytes,4,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`                // 前端展示名称
+	Icon            string                 `protobuf:"bytes,5,opt,name=icon,proto3" json:"icon,omitempty"`                                                 // 图标
+	Currency        string                 `protobuf:"bytes,6,opt,name=currency,proto3" json:"currency,omitempty"`                                         // 币种
+	SingleMinAmount int64                  `protobuf:"varint,7,opt,name=single_min_amount,json=singleMinAmount,proto3" json:"single_min_amount,omitempty"` // 单笔最小金额，单位分
+	SingleMaxAmount int64                  `protobuf:"varint,8,opt,name=single_max_amount,json=singleMaxAmount,proto3" json:"single_max_amount,omitempty"` // 单笔最大金额，单位分
+	FeeType         FeeType                `protobuf:"varint,9,opt,name=fee_type,json=feeType,proto3,enum=payment.FeeType" json:"fee_type,omitempty"`      // 手续费类型：1比例 2固定
+	FeeRate         string                 `protobuf:"bytes,10,opt,name=fee_rate,json=feeRate,proto3" json:"fee_rate,omitempty"`                           // 手续费比例
+	FeeFixedAmount  int64                  `protobuf:"varint,11,opt,name=fee_fixed_amount,json=feeFixedAmount,proto3" json:"fee_fixed_amount,omitempty"`   // 固定手续费，单位分
+	PlatformId      int64                  `protobuf:"varint,12,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`                 // 平台ID
+	ProductId       int64                  `protobuf:"varint,13,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`                    // 产品ID
+	AccountId       int64                  `protobuf:"varint,14,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`                    // 账号ID
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -1663,29 +1695,33 @@ func (x *VisiblePayChannel) GetAccountId() int64 {
 
 type WithdrawOrder struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	OrderNo       string                 `protobuf:"bytes,4,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
-	BizOrderNo    string                 `protobuf:"bytes,5,opt,name=biz_order_no,json=bizOrderNo,proto3" json:"biz_order_no,omitempty"`
-	Currency      string                 `protobuf:"bytes,6,opt,name=currency,proto3" json:"currency,omitempty"`
-	Amount        int64                  `protobuf:"varint,7,opt,name=amount,proto3" json:"amount,omitempty"`
-	FeeAmount     int64                  `protobuf:"varint,8,opt,name=fee_amount,json=feeAmount,proto3" json:"fee_amount,omitempty"`
-	ActualAmount  int64                  `protobuf:"varint,9,opt,name=actual_amount,json=actualAmount,proto3" json:"actual_amount,omitempty"`
-	ClientType    ClientType             `protobuf:"varint,10,opt,name=client_type,json=clientType,proto3,enum=payment.ClientType" json:"client_type,omitempty"`
-	ClientIp      string                 `protobuf:"bytes,11,opt,name=client_ip,json=clientIp,proto3" json:"client_ip,omitempty"`
-	Status        PayOrderStatus         `protobuf:"varint,12,opt,name=status,proto3,enum=payment.PayOrderStatus" json:"status,omitempty"`
-	ThirdTradeNo  string                 `protobuf:"bytes,13,opt,name=third_trade_no,json=thirdTradeNo,proto3" json:"third_trade_no,omitempty"`
-	ThirdOrderNo  string                 `protobuf:"bytes,14,opt,name=third_order_no,json=thirdOrderNo,proto3" json:"third_order_no,omitempty"`
-	RequestData   string                 `protobuf:"bytes,15,opt,name=request_data,json=requestData,proto3" json:"request_data,omitempty"`
-	ResponseData  string                 `protobuf:"bytes,16,opt,name=response_data,json=responseData,proto3" json:"response_data,omitempty"`
-	NotifyData    string                 `protobuf:"bytes,17,opt,name=notify_data,json=notifyData,proto3" json:"notify_data,omitempty"`
-	ProcessTime   int64                  `protobuf:"varint,18,opt,name=process_time,json=processTime,proto3" json:"process_time,omitempty"`
-	NotifyTime    int64                  `protobuf:"varint,19,opt,name=notify_time,json=notifyTime,proto3" json:"notify_time,omitempty"`
-	CloseTime     int64                  `protobuf:"varint,20,opt,name=close_time,json=closeTime,proto3" json:"close_time,omitempty"`
-	Remark        string                 `protobuf:"bytes,21,opt,name=remark,proto3" json:"remark,omitempty"`
-	CreateTimes   int64                  `protobuf:"varint,22,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
-	UpdateTimes   int64                  `protobuf:"varint,23,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                            // 提现订单ID
+	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                // 租户ID
+	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                      // 用户ID
+	OrderNo       string                 `protobuf:"bytes,4,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`                                    // 平台订单号
+	BizOrderNo    string                 `protobuf:"bytes,5,opt,name=biz_order_no,json=bizOrderNo,proto3" json:"biz_order_no,omitempty"`                         // 业务订单号
+	Currency      string                 `protobuf:"bytes,6,opt,name=currency,proto3" json:"currency,omitempty"`                                                 // 币种
+	Amount        int64                  `protobuf:"varint,7,opt,name=amount,proto3" json:"amount,omitempty"`                                                    // 订单金额，单位分
+	FeeAmount     int64                  `protobuf:"varint,8,opt,name=fee_amount,json=feeAmount,proto3" json:"fee_amount,omitempty"`                             // 手续费金额，单位分
+	ActualAmount  int64                  `protobuf:"varint,9,opt,name=actual_amount,json=actualAmount,proto3" json:"actual_amount,omitempty"`                    // 实际到账金额，单位分
+	ClientType    ClientType             `protobuf:"varint,10,opt,name=client_type,json=clientType,proto3,enum=payment.ClientType" json:"client_type,omitempty"` // 客户端类型：1APP 2H5 3WEB
+	ClientIp      string                 `protobuf:"bytes,11,opt,name=client_ip,json=clientIp,proto3" json:"client_ip,omitempty"`                                // 客户端IP
+	Status        PayOrderStatus         `protobuf:"varint,12,opt,name=status,proto3,enum=payment.PayOrderStatus" json:"status,omitempty"`                       // 状态：1待处理 2处理中 3成功 4失败 5已关闭
+	ThirdTradeNo  string                 `protobuf:"bytes,13,opt,name=third_trade_no,json=thirdTradeNo,proto3" json:"third_trade_no,omitempty"`                  // 三方交易号
+	ThirdOrderNo  string                 `protobuf:"bytes,14,opt,name=third_order_no,json=thirdOrderNo,proto3" json:"third_order_no,omitempty"`                  // 三方订单号
+	RequestData   string                 `protobuf:"bytes,15,opt,name=request_data,json=requestData,proto3" json:"request_data,omitempty"`                       // 请求快照(JSON)
+	ResponseData  string                 `protobuf:"bytes,16,opt,name=response_data,json=responseData,proto3" json:"response_data,omitempty"`                    // 响应快照(JSON)
+	NotifyData    string                 `protobuf:"bytes,17,opt,name=notify_data,json=notifyData,proto3" json:"notify_data,omitempty"`                          // 回调数据(JSON)
+	ProcessTime   int64                  `protobuf:"varint,18,opt,name=process_time,json=processTime,proto3" json:"process_time,omitempty"`                      // 处理时间
+	NotifyTime    int64                  `protobuf:"varint,19,opt,name=notify_time,json=notifyTime,proto3" json:"notify_time,omitempty"`                         // 回调时间
+	CloseTime     int64                  `protobuf:"varint,20,opt,name=close_time,json=closeTime,proto3" json:"close_time,omitempty"`                            // 关闭时间
+	Remark        string                 `protobuf:"bytes,21,opt,name=remark,proto3" json:"remark,omitempty"`                                                    // 备注
+	CreateTimes   int64                  `protobuf:"varint,22,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                      // 创建时间
+	UpdateTimes   int64                  `protobuf:"varint,23,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                      // 更新时间
+	PlatformId    int64                  `protobuf:"varint,24,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`                         // 平台ID
+	ProductId     int64                  `protobuf:"varint,25,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`                            // 产品ID
+	AccountId     int64                  `protobuf:"varint,26,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`                            // 账号ID
+	ChannelId     int64                  `protobuf:"varint,27,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`                            // 通道ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1881,6 +1917,34 @@ func (x *WithdrawOrder) GetUpdateTimes() int64 {
 	return 0
 }
 
+func (x *WithdrawOrder) GetPlatformId() int64 {
+	if x != nil {
+		return x.PlatformId
+	}
+	return 0
+}
+
+func (x *WithdrawOrder) GetProductId() int64 {
+	if x != nil {
+		return x.ProductId
+	}
+	return 0
+}
+
+func (x *WithdrawOrder) GetAccountId() int64 {
+	if x != nil {
+		return x.AccountId
+	}
+	return 0
+}
+
+func (x *WithdrawOrder) GetChannelId() int64 {
+	if x != nil {
+		return x.ChannelId
+	}
+	return 0
+}
+
 var File_proto_payment_model_proto protoreflect.FileDescriptor
 
 const file_proto_payment_model_proto_rawDesc = "" +
@@ -1926,7 +1990,7 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"openStatus\x12\x16\n" +
 	"\x06remark\x18\x06 \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\a \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\b \x01(\x03R\vupdateTimes\"\xa2\x04\n" +
+	"\fupdate_times\x18\b \x01(\x03R\vupdateTimes\"\xc3\x05\n" +
 	"\x10TenantPayAccount\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x123\n" +
@@ -1949,7 +2013,12 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"is_default\x18\r \x01(\x03R\tisDefault\x12\x16\n" +
 	"\x06remark\x18\x0e \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\x0f \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x10 \x01(\x03R\vupdateTimes\"\xad\x06\n" +
+	"\fupdate_times\x18\x10 \x01(\x03R\vupdateTimes\x12$\n" +
+	"\x0eapi_key_cipher\x18\x11 \x01(\tR\fapiKeyCipher\x12*\n" +
+	"\x11api_secret_cipher\x18\x12 \x01(\tR\x0fapiSecretCipher\x12,\n" +
+	"\x12private_key_cipher\x18\x13 \x01(\tR\x10privateKeyCipher\x12\x1f\n" +
+	"\vcert_cipher\x18\x14 \x01(\tR\n" +
+	"certCipher\"\xad\x06\n" +
 	"\x10TenantPayChannel\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
@@ -2104,7 +2173,7 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\n" +
 	"product_id\x18\r \x01(\x03R\tproductId\x12\x1d\n" +
 	"\n" +
-	"account_id\x18\x0e \x01(\x03R\taccountId\"\x84\x06\n" +
+	"account_id\x18\x0e \x01(\x03R\taccountId\"\x82\a\n" +
 	"\rWithdrawOrder\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -2135,7 +2204,15 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"close_time\x18\x14 \x01(\x03R\tcloseTime\x12\x16\n" +
 	"\x06remark\x18\x15 \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\x16 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x17 \x01(\x03R\vupdateTimesB\x1eZ\x1cwklive/proto/payment;paymentb\x06proto3"
+	"\fupdate_times\x18\x17 \x01(\x03R\vupdateTimes\x12\x1f\n" +
+	"\vplatform_id\x18\x18 \x01(\x03R\n" +
+	"platformId\x12\x1d\n" +
+	"\n" +
+	"product_id\x18\x19 \x01(\x03R\tproductId\x12\x1d\n" +
+	"\n" +
+	"account_id\x18\x1a \x01(\x03R\taccountId\x12\x1d\n" +
+	"\n" +
+	"channel_id\x18\x1b \x01(\x03R\tchannelIdB\x1eZ\x1cwklive/proto/payment;paymentb\x06proto3"
 
 var (
 	file_proto_payment_model_proto_rawDescOnce sync.Once

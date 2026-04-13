@@ -3,17 +3,17 @@ syntax = "v1"
 import "common.api"
 
 type StakeProduct {
-	id               int64  `json:"id"`
-	tenantId         int64  `json:"tenantId"`
-	productNo        string `json:"productNo"`
-	productName      string `json:"productName"`
-	productType      int64  `json:"productType"`
+	id               int64  `json:"id"` // 主键ID
+	tenantId         int64  `json:"tenantId"` // 租户ID
+	productNo        string `json:"productNo"` // 产品编号
+	productName      string `json:"productName"` // 产品名称
+	productType      int64  `json:"productType"` // 产品类型
 	coinName         string `json:"coinName"`
 	coinSymbol       string `json:"coinSymbol"`
 	rewardCoinName   string `json:"rewardCoinName"`
 	rewardCoinSymbol string `json:"rewardCoinSymbol"`
 	apr              string `json:"apr"`
-	lockDays         int32  `json:"lockDays"`
+	lockDays         int64  `json:"lockDays"` // 锁仓天数
 	minAmount        string `json:"minAmount"`
 	maxAmount        string `json:"maxAmount"`
 	stepAmount       string `json:"stepAmount"`
@@ -25,18 +25,18 @@ type StakeProduct {
 	allowEarlyRedeem int64  `json:"allowEarlyRedeem"`
 	earlyRedeemRate  string `json:"earlyRedeemRate"`
 	status           int64  `json:"status"`
-	sort             int32  `json:"sort"`
-	remark           string `json:"remark"`
-	createUserId     int64  `json:"createUserId"`
-	updateUserId     int64  `json:"updateUserId"`
-	createTimes      int64  `json:"createTimes"`
-	updateTimes      int64  `json:"updateTimes"`
+	sort             int64  `json:"sort"` // 排序
+	remark           string `json:"remark"` // 备注
+	createUserId     int64  `json:"createUserId"` // 创建人ID
+	updateUserId     int64  `json:"updateUserId"` // 更新人ID
+	createTimes      int64  `json:"createTimes"` // 创建时间
+	updateTimes      int64  `json:"updateTimes"` // 更新时间
 }
 
 type StakeOrder {
-	id               int64  `json:"id"`
-	tenantId         int64  `json:"tenantId"`
-	orderNo          string `json:"orderNo"`
+	id               int64  `json:"id"` // 主键ID
+	tenantId         int64  `json:"tenantId"` // 租户ID
+	orderNo          string `json:"orderNo"` // 订单号
 	uid              int64  `json:"uid"`
 	productId        int64  `json:"productId"`
 	productNo        string `json:"productNo"`
@@ -48,12 +48,12 @@ type StakeOrder {
 	rewardCoinSymbol string `json:"rewardCoinSymbol"`
 	stakeAmount      string `json:"stakeAmount"`
 	apr              string `json:"apr"`
-	lockDays         int32  `json:"lockDays"`
+	lockDays         int64  `json:"lockDays"` // 锁仓天数
 	interestMode     int64  `json:"interestMode"`
 	rewardMode       int64  `json:"rewardMode"`
 	allowEarlyRedeem int64  `json:"allowEarlyRedeem"`
 	earlyRedeemRate  string `json:"earlyRedeemRate"`
-	interestDays     int32  `json:"interestDays"`
+	interestDays     int64  `json:"interestDays"` // 已计息天数
 	startTimes       int64  `json:"startTimes"`
 	endTimes         int64  `json:"endTimes"`
 	lastRewardTimes  int64  `json:"lastRewardTimes"`
@@ -70,8 +70,8 @@ type StakeOrder {
 	remark           string `json:"remark"`
 	createUserId     int64  `json:"createUserId"`
 	updateUserId     int64  `json:"updateUserId"`
-	createTimes      int64  `json:"createTimes"`
-	updateTimes      int64  `json:"updateTimes"`
+	createTimes      int64  `json:"createTimes"` // 创建时间
+	updateTimes      int64  `json:"updateTimes"` // 更新时间
 }
 
 type StakeRewardLog {
@@ -199,8 +199,8 @@ type AppRedeemReq {
 
 type AppRedeemResp {
 	RespBase
-	success  bool   `json:"success"`
-	redeemNo string `json:"redeemNo"`
+	success  int64  `json:"success"` // 是否成功：0否 1是
+	redeemNo string `json:"redeemNo"` // 赎回单号
 }
 
 type AppMyRedeemLogListReq {

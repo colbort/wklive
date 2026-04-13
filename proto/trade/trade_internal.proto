@@ -46,7 +46,7 @@ message CheckOrderRiskReq {
 }
 
 message CheckOrderRiskResp {
-  bool passed = 1;
+  int64 passed = 1;
   string reject_code = 2;
   string reject_msg = 3;
 }

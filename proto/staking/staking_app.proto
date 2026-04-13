@@ -134,7 +134,7 @@ message AppRedeemReq {
 
 message AppRedeemResp {
   common.RespBase base = 1;
-  bool success = 2;
+  int64 success = 2;
   string redeem_no = 3;
 }
 

@@ -321,8 +321,8 @@ type TradeSymbol struct {
 	SettleAsset   string                 `protobuf:"bytes,8,opt,name=settle_asset,json=settleAsset,proto3" json:"settle_asset,omitempty"`
 	ContractType  ContractType           `protobuf:"varint,9,opt,name=contract_type,json=contractType,proto3,enum=trade.ContractType" json:"contract_type,omitempty"`
 	Status        SymbolStatus           `protobuf:"varint,10,opt,name=status,proto3,enum=trade.SymbolStatus" json:"status,omitempty"`
-	PriceScale    uint32                 `protobuf:"varint,11,opt,name=price_scale,json=priceScale,proto3" json:"price_scale,omitempty"`
-	QtyScale      uint32                 `protobuf:"varint,12,opt,name=qty_scale,json=qtyScale,proto3" json:"qty_scale,omitempty"`
+	PriceScale    int64                  `protobuf:"varint,11,opt,name=price_scale,json=priceScale,proto3" json:"price_scale,omitempty"`
+	QtyScale      int64                  `protobuf:"varint,12,opt,name=qty_scale,json=qtyScale,proto3" json:"qty_scale,omitempty"`
 	MinPrice      string                 `protobuf:"bytes,13,opt,name=min_price,json=minPrice,proto3" json:"min_price,omitempty"`
 	MaxPrice      string                 `protobuf:"bytes,14,opt,name=max_price,json=maxPrice,proto3" json:"max_price,omitempty"`
 	PriceTick     string                 `protobuf:"bytes,15,opt,name=price_tick,json=priceTick,proto3" json:"price_tick,omitempty"`
@@ -330,10 +330,10 @@ type TradeSymbol struct {
 	MaxQty        string                 `protobuf:"bytes,17,opt,name=max_qty,json=maxQty,proto3" json:"max_qty,omitempty"`
 	QtyStep       string                 `protobuf:"bytes,18,opt,name=qty_step,json=qtyStep,proto3" json:"qty_step,omitempty"`
 	MinNotional   string                 `protobuf:"bytes,19,opt,name=min_notional,json=minNotional,proto3" json:"min_notional,omitempty"`
-	MaxLeverage   uint32                 `protobuf:"varint,20,opt,name=max_leverage,json=maxLeverage,proto3" json:"max_leverage,omitempty"`
+	MaxLeverage   int64                  `protobuf:"varint,20,opt,name=max_leverage,json=maxLeverage,proto3" json:"max_leverage,omitempty"`
 	OpenTime      int64                  `protobuf:"varint,21,opt,name=open_time,json=openTime,proto3" json:"open_time,omitempty"`
 	CloseTime     int64                  `protobuf:"varint,22,opt,name=close_time,json=closeTime,proto3" json:"close_time,omitempty"`
-	Sort          int32                  `protobuf:"varint,23,opt,name=sort,proto3" json:"sort,omitempty"`
+	Sort          int64                  `protobuf:"varint,23,opt,name=sort,proto3" json:"sort,omitempty"`
 	Remark        string                 `protobuf:"bytes,24,opt,name=remark,proto3" json:"remark,omitempty"`
 	CreateTimes   int64                  `protobuf:"varint,25,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes   int64                  `protobuf:"varint,26,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
@@ -441,14 +441,14 @@ func (x *TradeSymbol) GetStatus() SymbolStatus {
 	return SymbolStatus_SYMBOL_STATUS_UNSPECIFIED
 }
 
-func (x *TradeSymbol) GetPriceScale() uint32 {
+func (x *TradeSymbol) GetPriceScale() int64 {
 	if x != nil {
 		return x.PriceScale
 	}
 	return 0
 }
 
-func (x *TradeSymbol) GetQtyScale() uint32 {
+func (x *TradeSymbol) GetQtyScale() int64 {
 	if x != nil {
 		return x.QtyScale
 	}
@@ -504,7 +504,7 @@ func (x *TradeSymbol) GetMinNotional() string {
 	return ""
 }
 
-func (x *TradeSymbol) GetMaxLeverage() uint32 {
+func (x *TradeSymbol) GetMaxLeverage() int64 {
 	if x != nil {
 		return x.MaxLeverage
 	}
@@ -525,7 +525,7 @@ func (x *TradeSymbol) GetCloseTime() int64 {
 	return 0
 }
 
-func (x *TradeSymbol) GetSort() int32 {
+func (x *TradeSymbol) GetSort() int64 {
 	if x != nil {
 		return x.Sort
 	}
@@ -560,8 +560,8 @@ type TradeSymbolSpot struct {
 	SymbolId      int64                  `protobuf:"varint,3,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	MakerFeeRate  string                 `protobuf:"bytes,4,opt,name=maker_fee_rate,json=makerFeeRate,proto3" json:"maker_fee_rate,omitempty"`
 	TakerFeeRate  string                 `protobuf:"bytes,5,opt,name=taker_fee_rate,json=takerFeeRate,proto3" json:"taker_fee_rate,omitempty"`
-	BuyEnabled    bool                   `protobuf:"varint,6,opt,name=buy_enabled,json=buyEnabled,proto3" json:"buy_enabled,omitempty"`
-	SellEnabled   bool                   `protobuf:"varint,7,opt,name=sell_enabled,json=sellEnabled,proto3" json:"sell_enabled,omitempty"`
+	BuyEnabled    int64                  `protobuf:"varint,6,opt,name=buy_enabled,json=buyEnabled,proto3" json:"buy_enabled,omitempty"`
+	SellEnabled   int64                  `protobuf:"varint,7,opt,name=sell_enabled,json=sellEnabled,proto3" json:"sell_enabled,omitempty"`
 	CreateTimes   int64                  `protobuf:"varint,8,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes   int64                  `protobuf:"varint,9,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -633,18 +633,18 @@ func (x *TradeSymbolSpot) GetTakerFeeRate() string {
 	return ""
 }
 
-func (x *TradeSymbolSpot) GetBuyEnabled() bool {
+func (x *TradeSymbolSpot) GetBuyEnabled() int64 {
 	if x != nil {
 		return x.BuyEnabled
 	}
-	return false
+	return 0
 }
 
-func (x *TradeSymbolSpot) GetSellEnabled() bool {
+func (x *TradeSymbolSpot) GetSellEnabled() int64 {
 	if x != nil {
 		return x.SellEnabled
 	}
-	return false
+	return 0
 }
 
 func (x *TradeSymbolSpot) GetCreateTimes() int64 {
@@ -672,12 +672,12 @@ type TradeSymbolContract struct {
 	InitialMarginRate      string                 `protobuf:"bytes,7,opt,name=initial_margin_rate,json=initialMarginRate,proto3" json:"initial_margin_rate,omitempty"`
 	MakerFeeRate           string                 `protobuf:"bytes,8,opt,name=maker_fee_rate,json=makerFeeRate,proto3" json:"maker_fee_rate,omitempty"`
 	TakerFeeRate           string                 `protobuf:"bytes,9,opt,name=taker_fee_rate,json=takerFeeRate,proto3" json:"taker_fee_rate,omitempty"`
-	FundingIntervalMinutes uint32                 `protobuf:"varint,10,opt,name=funding_interval_minutes,json=fundingIntervalMinutes,proto3" json:"funding_interval_minutes,omitempty"`
+	FundingIntervalMinutes int64                  `protobuf:"varint,10,opt,name=funding_interval_minutes,json=fundingIntervalMinutes,proto3" json:"funding_interval_minutes,omitempty"`
 	DeliveryTime           int64                  `protobuf:"varint,11,opt,name=delivery_time,json=deliveryTime,proto3" json:"delivery_time,omitempty"`
-	SupportCross           bool                   `protobuf:"varint,12,opt,name=support_cross,json=supportCross,proto3" json:"support_cross,omitempty"`
-	SupportIsolated        bool                   `protobuf:"varint,13,opt,name=support_isolated,json=supportIsolated,proto3" json:"support_isolated,omitempty"`
-	BuyEnabled             bool                   `protobuf:"varint,14,opt,name=buy_enabled,json=buyEnabled,proto3" json:"buy_enabled,omitempty"`
-	SellEnabled            bool                   `protobuf:"varint,15,opt,name=sell_enabled,json=sellEnabled,proto3" json:"sell_enabled,omitempty"`
+	SupportCross           int64                  `protobuf:"varint,12,opt,name=support_cross,json=supportCross,proto3" json:"support_cross,omitempty"`
+	SupportIsolated        int64                  `protobuf:"varint,13,opt,name=support_isolated,json=supportIsolated,proto3" json:"support_isolated,omitempty"`
+	BuyEnabled             int64                  `protobuf:"varint,14,opt,name=buy_enabled,json=buyEnabled,proto3" json:"buy_enabled,omitempty"`
+	SellEnabled            int64                  `protobuf:"varint,15,opt,name=sell_enabled,json=sellEnabled,proto3" json:"sell_enabled,omitempty"`
 	CreateTimes            int64                  `protobuf:"varint,16,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes            int64                  `protobuf:"varint,17,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
 	unknownFields          protoimpl.UnknownFields
@@ -777,7 +777,7 @@ func (x *TradeSymbolContract) GetTakerFeeRate() string {
 	return ""
 }
 
-func (x *TradeSymbolContract) GetFundingIntervalMinutes() uint32 {
+func (x *TradeSymbolContract) GetFundingIntervalMinutes() int64 {
 	if x != nil {
 		return x.FundingIntervalMinutes
 	}
@@ -791,32 +791,32 @@ func (x *TradeSymbolContract) GetDeliveryTime() int64 {
 	return 0
 }
 
-func (x *TradeSymbolContract) GetSupportCross() bool {
+func (x *TradeSymbolContract) GetSupportCross() int64 {
 	if x != nil {
 		return x.SupportCross
 	}
-	return false
+	return 0
 }
 
-func (x *TradeSymbolContract) GetSupportIsolated() bool {
+func (x *TradeSymbolContract) GetSupportIsolated() int64 {
 	if x != nil {
 		return x.SupportIsolated
 	}
-	return false
+	return 0
 }
 
-func (x *TradeSymbolContract) GetBuyEnabled() bool {
+func (x *TradeSymbolContract) GetBuyEnabled() int64 {
 	if x != nil {
 		return x.BuyEnabled
 	}
-	return false
+	return 0
 }
 
-func (x *TradeSymbolContract) GetSellEnabled() bool {
+func (x *TradeSymbolContract) GetSellEnabled() int64 {
 	if x != nil {
 		return x.SellEnabled
 	}
-	return false
+	return 0
 }
 
 func (x *TradeSymbolContract) GetCreateTimes() int64 {
@@ -842,9 +842,9 @@ type TradeUserConfig struct {
 	SymbolId          int64                  `protobuf:"varint,5,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	PositionMode      PositionMode           `protobuf:"varint,6,opt,name=position_mode,json=positionMode,proto3,enum=trade.PositionMode" json:"position_mode,omitempty"`
 	MarginMode        MarginMode             `protobuf:"varint,7,opt,name=margin_mode,json=marginMode,proto3,enum=trade.MarginMode" json:"margin_mode,omitempty"`
-	DefaultLeverage   uint32                 `protobuf:"varint,8,opt,name=default_leverage,json=defaultLeverage,proto3" json:"default_leverage,omitempty"`
-	TradeEnabled      bool                   `protobuf:"varint,9,opt,name=trade_enabled,json=tradeEnabled,proto3" json:"trade_enabled,omitempty"`
-	ReduceOnlyEnabled bool                   `protobuf:"varint,10,opt,name=reduce_only_enabled,json=reduceOnlyEnabled,proto3" json:"reduce_only_enabled,omitempty"`
+	DefaultLeverage   int64                  `protobuf:"varint,8,opt,name=default_leverage,json=defaultLeverage,proto3" json:"default_leverage,omitempty"`
+	TradeEnabled      int64                  `protobuf:"varint,9,opt,name=trade_enabled,json=tradeEnabled,proto3" json:"trade_enabled,omitempty"`
+	ReduceOnlyEnabled int64                  `protobuf:"varint,10,opt,name=reduce_only_enabled,json=reduceOnlyEnabled,proto3" json:"reduce_only_enabled,omitempty"`
 	CreateTimes       int64                  `protobuf:"varint,11,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes       int64                  `protobuf:"varint,12,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
 	unknownFields     protoimpl.UnknownFields
@@ -930,25 +930,25 @@ func (x *TradeUserConfig) GetMarginMode() MarginMode {
 	return MarginMode_MARGIN_MODE_UNSPECIFIED
 }
 
-func (x *TradeUserConfig) GetDefaultLeverage() uint32 {
+func (x *TradeUserConfig) GetDefaultLeverage() int64 {
 	if x != nil {
 		return x.DefaultLeverage
 	}
 	return 0
 }
 
-func (x *TradeUserConfig) GetTradeEnabled() bool {
+func (x *TradeUserConfig) GetTradeEnabled() int64 {
 	if x != nil {
 		return x.TradeEnabled
 	}
-	return false
+	return 0
 }
 
-func (x *TradeUserConfig) GetReduceOnlyEnabled() bool {
+func (x *TradeUserConfig) GetReduceOnlyEnabled() int64 {
 	if x != nil {
 		return x.ReduceOnlyEnabled
 	}
-	return false
+	return 0
 }
 
 func (x *TradeUserConfig) GetCreateTimes() int64 {
@@ -988,10 +988,10 @@ type TradeOrder struct {
 	Fee           string                 `protobuf:"bytes,19,opt,name=fee,proto3" json:"fee,omitempty"`
 	FeeAsset      string                 `protobuf:"bytes,20,opt,name=fee_asset,json=feeAsset,proto3" json:"fee_asset,omitempty"`
 	Source        OrderSourceType        `protobuf:"varint,21,opt,name=source,proto3,enum=trade.OrderSourceType" json:"source,omitempty"`
-	IsReduceOnly  bool                   `protobuf:"varint,22,opt,name=is_reduce_only,json=isReduceOnly,proto3" json:"is_reduce_only,omitempty"`
-	IsCloseOnly   bool                   `protobuf:"varint,23,opt,name=is_close_only,json=isCloseOnly,proto3" json:"is_close_only,omitempty"`
+	IsReduceOnly  int64                  `protobuf:"varint,22,opt,name=is_reduce_only,json=isReduceOnly,proto3" json:"is_reduce_only,omitempty"`
+	IsCloseOnly   int64                  `protobuf:"varint,23,opt,name=is_close_only,json=isCloseOnly,proto3" json:"is_close_only,omitempty"`
 	TriggerPrice  string                 `protobuf:"bytes,24,opt,name=trigger_price,json=triggerPrice,proto3" json:"trigger_price,omitempty"`
-	TriggerType   uint32                 `protobuf:"varint,25,opt,name=trigger_type,json=triggerType,proto3" json:"trigger_type,omitempty"`
+	TriggerType   int64                  `protobuf:"varint,25,opt,name=trigger_type,json=triggerType,proto3" json:"trigger_type,omitempty"`
 	CancelReason  string                 `protobuf:"bytes,26,opt,name=cancel_reason,json=cancelReason,proto3" json:"cancel_reason,omitempty"`
 	BizExt        string                 `protobuf:"bytes,27,opt,name=biz_ext,json=bizExt,proto3" json:"biz_ext,omitempty"`
 	CreateTimes   int64                  `protobuf:"varint,28,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
@@ -1177,18 +1177,18 @@ func (x *TradeOrder) GetSource() OrderSourceType {
 	return OrderSourceType_ORDER_SOURCE_TYPE_UNSPECIFIED
 }
 
-func (x *TradeOrder) GetIsReduceOnly() bool {
+func (x *TradeOrder) GetIsReduceOnly() int64 {
 	if x != nil {
 		return x.IsReduceOnly
 	}
-	return false
+	return 0
 }
 
-func (x *TradeOrder) GetIsCloseOnly() bool {
+func (x *TradeOrder) GetIsCloseOnly() int64 {
 	if x != nil {
 		return x.IsCloseOnly
 	}
-	return false
+	return 0
 }
 
 func (x *TradeOrder) GetTriggerPrice() string {
@@ -1198,7 +1198,7 @@ func (x *TradeOrder) GetTriggerPrice() string {
 	return ""
 }
 
-func (x *TradeOrder) GetTriggerType() uint32 {
+func (x *TradeOrder) GetTriggerType() int64 {
 	if x != nil {
 		return x.TriggerType
 	}
@@ -1347,10 +1347,10 @@ type TradeOrderContract struct {
 	TenantId          int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	OrderId           int64                  `protobuf:"varint,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
 	MarginMode        MarginMode             `protobuf:"varint,4,opt,name=margin_mode,json=marginMode,proto3,enum=trade.MarginMode" json:"margin_mode,omitempty"`
-	Leverage          uint32                 `protobuf:"varint,5,opt,name=leverage,proto3" json:"leverage,omitempty"`
+	Leverage          int64                  `protobuf:"varint,5,opt,name=leverage,proto3" json:"leverage,omitempty"`
 	MarginAsset       string                 `protobuf:"bytes,6,opt,name=margin_asset,json=marginAsset,proto3" json:"margin_asset,omitempty"`
 	MarginAmount      string                 `protobuf:"bytes,7,opt,name=margin_amount,json=marginAmount,proto3" json:"margin_amount,omitempty"`
-	ClosePositionType uint32                 `protobuf:"varint,8,opt,name=close_position_type,json=closePositionType,proto3" json:"close_position_type,omitempty"`
+	ClosePositionType int64                  `protobuf:"varint,8,opt,name=close_position_type,json=closePositionType,proto3" json:"close_position_type,omitempty"`
 	LiquidationPrice  string                 `protobuf:"bytes,9,opt,name=liquidation_price,json=liquidationPrice,proto3" json:"liquidation_price,omitempty"`
 	TakeProfitPrice   string                 `protobuf:"bytes,10,opt,name=take_profit_price,json=takeProfitPrice,proto3" json:"take_profit_price,omitempty"`
 	StopLossPrice     string                 `protobuf:"bytes,11,opt,name=stop_loss_price,json=stopLossPrice,proto3" json:"stop_loss_price,omitempty"`
@@ -1418,7 +1418,7 @@ func (x *TradeOrderContract) GetMarginMode() MarginMode {
 	return MarginMode_MARGIN_MODE_UNSPECIFIED
 }
 
-func (x *TradeOrderContract) GetLeverage() uint32 {
+func (x *TradeOrderContract) GetLeverage() int64 {
 	if x != nil {
 		return x.Leverage
 	}
@@ -1439,7 +1439,7 @@ func (x *TradeOrderContract) GetMarginAmount() string {
 	return ""
 }
 
-func (x *TradeOrderContract) GetClosePositionType() uint32 {
+func (x *TradeOrderContract) GetClosePositionType() int64 {
 	if x != nil {
 		return x.ClosePositionType
 	}
@@ -1676,7 +1676,7 @@ type TradeCancelLog struct {
 	OrderId       int64                  `protobuf:"varint,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
 	OrderNo       string                 `protobuf:"bytes,4,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
 	UserId        int64                  `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	CancelSource  uint32                 `protobuf:"varint,6,opt,name=cancel_source,json=cancelSource,proto3" json:"cancel_source,omitempty"`
+	CancelSource  int64                  `protobuf:"varint,6,opt,name=cancel_source,json=cancelSource,proto3" json:"cancel_source,omitempty"`
 	CancelReason  string                 `protobuf:"bytes,7,opt,name=cancel_reason,json=cancelReason,proto3" json:"cancel_reason,omitempty"`
 	CreateTimes   int64                  `protobuf:"varint,8,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1748,7 +1748,7 @@ func (x *TradeCancelLog) GetUserId() int64 {
 	return 0
 }
 
-func (x *TradeCancelLog) GetCancelSource() uint32 {
+func (x *TradeCancelLog) GetCancelSource() int64 {
 	if x != nil {
 		return x.CancelSource
 	}
@@ -1778,7 +1778,7 @@ type ContractPosition struct {
 	MarketType       MarketType             `protobuf:"varint,5,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
 	PositionSide     PositionSide           `protobuf:"varint,6,opt,name=position_side,json=positionSide,proto3,enum=trade.PositionSide" json:"position_side,omitempty"`
 	MarginMode       MarginMode             `protobuf:"varint,7,opt,name=margin_mode,json=marginMode,proto3,enum=trade.MarginMode" json:"margin_mode,omitempty"`
-	Leverage         uint32                 `protobuf:"varint,8,opt,name=leverage,proto3" json:"leverage,omitempty"`
+	Leverage         int64                  `protobuf:"varint,8,opt,name=leverage,proto3" json:"leverage,omitempty"`
 	Qty              string                 `protobuf:"bytes,9,opt,name=qty,proto3" json:"qty,omitempty"`
 	AvailQty         string                 `protobuf:"bytes,10,opt,name=avail_qty,json=availQty,proto3" json:"avail_qty,omitempty"`
 	FrozenQty        string                 `protobuf:"bytes,11,opt,name=frozen_qty,json=frozenQty,proto3" json:"frozen_qty,omitempty"`
@@ -1790,7 +1790,7 @@ type ContractPosition struct {
 	UnrealizedPnl    string                 `protobuf:"bytes,17,opt,name=unrealized_pnl,json=unrealizedPnl,proto3" json:"unrealized_pnl,omitempty"`
 	RealizedPnl      string                 `protobuf:"bytes,18,opt,name=realized_pnl,json=realizedPnl,proto3" json:"realized_pnl,omitempty"`
 	LiquidationPrice string                 `protobuf:"bytes,19,opt,name=liquidation_price,json=liquidationPrice,proto3" json:"liquidation_price,omitempty"`
-	AdlRank          int32                  `protobuf:"varint,20,opt,name=adl_rank,json=adlRank,proto3" json:"adl_rank,omitempty"`
+	AdlRank          int64                  `protobuf:"varint,20,opt,name=adl_rank,json=adlRank,proto3" json:"adl_rank,omitempty"`
 	Version          int64                  `protobuf:"varint,21,opt,name=version,proto3" json:"version,omitempty"`
 	CreateTimes      int64                  `protobuf:"varint,22,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes      int64                  `protobuf:"varint,23,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
@@ -1877,7 +1877,7 @@ func (x *ContractPosition) GetMarginMode() MarginMode {
 	return MarginMode_MARGIN_MODE_UNSPECIFIED
 }
 
-func (x *ContractPosition) GetLeverage() uint32 {
+func (x *ContractPosition) GetLeverage() int64 {
 	if x != nil {
 		return x.Leverage
 	}
@@ -1961,7 +1961,7 @@ func (x *ContractPosition) GetLiquidationPrice() string {
 	return ""
 }
 
-func (x *ContractPosition) GetAdlRank() int32 {
+func (x *ContractPosition) GetAdlRank() int64 {
 	if x != nil {
 		return x.AdlRank
 	}
@@ -2446,12 +2446,12 @@ type ContractLeverageConfig struct {
 	MarketType    MarketType             `protobuf:"varint,5,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
 	MarginMode    MarginMode             `protobuf:"varint,6,opt,name=margin_mode,json=marginMode,proto3,enum=trade.MarginMode" json:"margin_mode,omitempty"`
 	PositionMode  PositionMode           `protobuf:"varint,7,opt,name=position_mode,json=positionMode,proto3,enum=trade.PositionMode" json:"position_mode,omitempty"`
-	LongLeverage  uint32                 `protobuf:"varint,8,opt,name=long_leverage,json=longLeverage,proto3" json:"long_leverage,omitempty"`
-	ShortLeverage uint32                 `protobuf:"varint,9,opt,name=short_leverage,json=shortLeverage,proto3" json:"short_leverage,omitempty"`
-	MaxLeverage   uint32                 `protobuf:"varint,10,opt,name=max_leverage,json=maxLeverage,proto3" json:"max_leverage,omitempty"`
+	LongLeverage  int64                  `protobuf:"varint,8,opt,name=long_leverage,json=longLeverage,proto3" json:"long_leverage,omitempty"`
+	ShortLeverage int64                  `protobuf:"varint,9,opt,name=short_leverage,json=shortLeverage,proto3" json:"short_leverage,omitempty"`
+	MaxLeverage   int64                  `protobuf:"varint,10,opt,name=max_leverage,json=maxLeverage,proto3" json:"max_leverage,omitempty"`
 	OperatorId    int64                  `protobuf:"varint,11,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`
 	Source        SourceType             `protobuf:"varint,12,opt,name=source,proto3,enum=trade.SourceType" json:"source,omitempty"`
-	Status        uint32                 `protobuf:"varint,13,opt,name=status,proto3" json:"status,omitempty"`
+	Status        int64                  `protobuf:"varint,13,opt,name=status,proto3" json:"status,omitempty"`
 	Remark        string                 `protobuf:"bytes,14,opt,name=remark,proto3" json:"remark,omitempty"`
 	CreateTimes   int64                  `protobuf:"varint,15,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes   int64                  `protobuf:"varint,16,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
@@ -2538,21 +2538,21 @@ func (x *ContractLeverageConfig) GetPositionMode() PositionMode {
 	return PositionMode_POSITION_MODE_UNSPECIFIED
 }
 
-func (x *ContractLeverageConfig) GetLongLeverage() uint32 {
+func (x *ContractLeverageConfig) GetLongLeverage() int64 {
 	if x != nil {
 		return x.LongLeverage
 	}
 	return 0
 }
 
-func (x *ContractLeverageConfig) GetShortLeverage() uint32 {
+func (x *ContractLeverageConfig) GetShortLeverage() int64 {
 	if x != nil {
 		return x.ShortLeverage
 	}
 	return 0
 }
 
-func (x *ContractLeverageConfig) GetMaxLeverage() uint32 {
+func (x *ContractLeverageConfig) GetMaxLeverage() int64 {
 	if x != nil {
 		return x.MaxLeverage
 	}
@@ -2573,7 +2573,7 @@ func (x *ContractLeverageConfig) GetSource() SourceType {
 	return SourceType_SOURCE_TYPE_UNSPECIFIED
 }
 
-func (x *ContractLeverageConfig) GetStatus() uint32 {
+func (x *ContractLeverageConfig) GetStatus() int64 {
 	if x != nil {
 		return x.Status
 	}
@@ -2607,22 +2607,22 @@ type RiskUserTradeLimit struct {
 	TenantId             int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	UserId               int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	MarketType           MarketType             `protobuf:"varint,4,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
-	CanOpen              bool                   `protobuf:"varint,5,opt,name=can_open,json=canOpen,proto3" json:"can_open,omitempty"`
-	CanClose             bool                   `protobuf:"varint,6,opt,name=can_close,json=canClose,proto3" json:"can_close,omitempty"`
-	CanCancel            bool                   `protobuf:"varint,7,opt,name=can_cancel,json=canCancel,proto3" json:"can_cancel,omitempty"`
-	CanTriggerOrder      bool                   `protobuf:"varint,8,opt,name=can_trigger_order,json=canTriggerOrder,proto3" json:"can_trigger_order,omitempty"`
-	CanApiTrade          bool                   `protobuf:"varint,9,opt,name=can_api_trade,json=canApiTrade,proto3" json:"can_api_trade,omitempty"`
-	TradeEnabled         bool                   `protobuf:"varint,10,opt,name=trade_enabled,json=tradeEnabled,proto3" json:"trade_enabled,omitempty"`
-	OnlyReduceOnly       bool                   `protobuf:"varint,11,opt,name=only_reduce_only,json=onlyReduceOnly,proto3" json:"only_reduce_only,omitempty"`
-	MaxOpenOrderCount    uint32                 `protobuf:"varint,12,opt,name=max_open_order_count,json=maxOpenOrderCount,proto3" json:"max_open_order_count,omitempty"`
-	MaxOrderCountPerDay  uint32                 `protobuf:"varint,13,opt,name=max_order_count_per_day,json=maxOrderCountPerDay,proto3" json:"max_order_count_per_day,omitempty"`
-	MaxCancelCountPerDay uint32                 `protobuf:"varint,14,opt,name=max_cancel_count_per_day,json=maxCancelCountPerDay,proto3" json:"max_cancel_count_per_day,omitempty"`
+	CanOpen              int64                  `protobuf:"varint,5,opt,name=can_open,json=canOpen,proto3" json:"can_open,omitempty"`
+	CanClose             int64                  `protobuf:"varint,6,opt,name=can_close,json=canClose,proto3" json:"can_close,omitempty"`
+	CanCancel            int64                  `protobuf:"varint,7,opt,name=can_cancel,json=canCancel,proto3" json:"can_cancel,omitempty"`
+	CanTriggerOrder      int64                  `protobuf:"varint,8,opt,name=can_trigger_order,json=canTriggerOrder,proto3" json:"can_trigger_order,omitempty"`
+	CanApiTrade          int64                  `protobuf:"varint,9,opt,name=can_api_trade,json=canApiTrade,proto3" json:"can_api_trade,omitempty"`
+	TradeEnabled         int64                  `protobuf:"varint,10,opt,name=trade_enabled,json=tradeEnabled,proto3" json:"trade_enabled,omitempty"`
+	OnlyReduceOnly       int64                  `protobuf:"varint,11,opt,name=only_reduce_only,json=onlyReduceOnly,proto3" json:"only_reduce_only,omitempty"`
+	MaxOpenOrderCount    int64                  `protobuf:"varint,12,opt,name=max_open_order_count,json=maxOpenOrderCount,proto3" json:"max_open_order_count,omitempty"`
+	MaxOrderCountPerDay  int64                  `protobuf:"varint,13,opt,name=max_order_count_per_day,json=maxOrderCountPerDay,proto3" json:"max_order_count_per_day,omitempty"`
+	MaxCancelCountPerDay int64                  `protobuf:"varint,14,opt,name=max_cancel_count_per_day,json=maxCancelCountPerDay,proto3" json:"max_cancel_count_per_day,omitempty"`
 	MaxOpenNotional      string                 `protobuf:"bytes,15,opt,name=max_open_notional,json=maxOpenNotional,proto3" json:"max_open_notional,omitempty"`
 	MaxPositionNotional  string                 `protobuf:"bytes,16,opt,name=max_position_notional,json=maxPositionNotional,proto3" json:"max_position_notional,omitempty"`
-	RiskLevel            uint32                 `protobuf:"varint,17,opt,name=risk_level,json=riskLevel,proto3" json:"risk_level,omitempty"`
+	RiskLevel            int64                  `protobuf:"varint,17,opt,name=risk_level,json=riskLevel,proto3" json:"risk_level,omitempty"`
 	OperatorId           int64                  `protobuf:"varint,18,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`
 	Source               SourceType             `protobuf:"varint,19,opt,name=source,proto3,enum=trade.SourceType" json:"source,omitempty"`
-	Status               uint32                 `protobuf:"varint,20,opt,name=status,proto3" json:"status,omitempty"`
+	Status               int64                  `protobuf:"varint,20,opt,name=status,proto3" json:"status,omitempty"`
 	EffectiveStartTime   int64                  `protobuf:"varint,21,opt,name=effective_start_time,json=effectiveStartTime,proto3" json:"effective_start_time,omitempty"`
 	EffectiveEndTime     int64                  `protobuf:"varint,22,opt,name=effective_end_time,json=effectiveEndTime,proto3" json:"effective_end_time,omitempty"`
 	Remark               string                 `protobuf:"bytes,23,opt,name=remark,proto3" json:"remark,omitempty"`
@@ -2690,70 +2690,70 @@ func (x *RiskUserTradeLimit) GetMarketType() MarketType {
 	return MarketType_MARKET_TYPE_UNSPECIFIED
 }
 
-func (x *RiskUserTradeLimit) GetCanOpen() bool {
+func (x *RiskUserTradeLimit) GetCanOpen() int64 {
 	if x != nil {
 		return x.CanOpen
 	}
-	return false
+	return 0
 }
 
-func (x *RiskUserTradeLimit) GetCanClose() bool {
+func (x *RiskUserTradeLimit) GetCanClose() int64 {
 	if x != nil {
 		return x.CanClose
 	}
-	return false
+	return 0
 }
 
-func (x *RiskUserTradeLimit) GetCanCancel() bool {
+func (x *RiskUserTradeLimit) GetCanCancel() int64 {
 	if x != nil {
 		return x.CanCancel
 	}
-	return false
+	return 0
 }
 
-func (x *RiskUserTradeLimit) GetCanTriggerOrder() bool {
+func (x *RiskUserTradeLimit) GetCanTriggerOrder() int64 {
 	if x != nil {
 		return x.CanTriggerOrder
 	}
-	return false
+	return 0
 }
 
-func (x *RiskUserTradeLimit) GetCanApiTrade() bool {
+func (x *RiskUserTradeLimit) GetCanApiTrade() int64 {
 	if x != nil {
 		return x.CanApiTrade
 	}
-	return false
+	return 0
 }
 
-func (x *RiskUserTradeLimit) GetTradeEnabled() bool {
+func (x *RiskUserTradeLimit) GetTradeEnabled() int64 {
 	if x != nil {
 		return x.TradeEnabled
 	}
-	return false
+	return 0
 }
 
-func (x *RiskUserTradeLimit) GetOnlyReduceOnly() bool {
+func (x *RiskUserTradeLimit) GetOnlyReduceOnly() int64 {
 	if x != nil {
 		return x.OnlyReduceOnly
 	}
-	return false
+	return 0
 }
 
-func (x *RiskUserTradeLimit) GetMaxOpenOrderCount() uint32 {
+func (x *RiskUserTradeLimit) GetMaxOpenOrderCount() int64 {
 	if x != nil {
 		return x.MaxOpenOrderCount
 	}
 	return 0
 }
 
-func (x *RiskUserTradeLimit) GetMaxOrderCountPerDay() uint32 {
+func (x *RiskUserTradeLimit) GetMaxOrderCountPerDay() int64 {
 	if x != nil {
 		return x.MaxOrderCountPerDay
 	}
 	return 0
 }
 
-func (x *RiskUserTradeLimit) GetMaxCancelCountPerDay() uint32 {
+func (x *RiskUserTradeLimit) GetMaxCancelCountPerDay() int64 {
 	if x != nil {
 		return x.MaxCancelCountPerDay
 	}
@@ -2774,7 +2774,7 @@ func (x *RiskUserTradeLimit) GetMaxPositionNotional() string {
 	return ""
 }
 
-func (x *RiskUserTradeLimit) GetRiskLevel() uint32 {
+func (x *RiskUserTradeLimit) GetRiskLevel() int64 {
 	if x != nil {
 		return x.RiskLevel
 	}
@@ -2795,7 +2795,7 @@ func (x *RiskUserTradeLimit) GetSource() SourceType {
 	return SourceType_SOURCE_TYPE_UNSPECIFIED
 }
 
-func (x *RiskUserTradeLimit) GetStatus() uint32 {
+func (x *RiskUserTradeLimit) GetStatus() int64 {
 	if x != nil {
 		return x.Status
 	}
@@ -2846,7 +2846,7 @@ type RiskUserSymbolLimit struct {
 	MarketType          MarketType             `protobuf:"varint,5,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
 	MaxPositionQty      string                 `protobuf:"bytes,6,opt,name=max_position_qty,json=maxPositionQty,proto3" json:"max_position_qty,omitempty"`
 	MaxPositionNotional string                 `protobuf:"bytes,7,opt,name=max_position_notional,json=maxPositionNotional,proto3" json:"max_position_notional,omitempty"`
-	MaxOpenOrders       uint32                 `protobuf:"varint,8,opt,name=max_open_orders,json=maxOpenOrders,proto3" json:"max_open_orders,omitempty"`
+	MaxOpenOrders       int64                  `protobuf:"varint,8,opt,name=max_open_orders,json=maxOpenOrders,proto3" json:"max_open_orders,omitempty"`
 	MaxOrderQty         string                 `protobuf:"bytes,9,opt,name=max_order_qty,json=maxOrderQty,proto3" json:"max_order_qty,omitempty"`
 	MaxOrderNotional    string                 `protobuf:"bytes,10,opt,name=max_order_notional,json=maxOrderNotional,proto3" json:"max_order_notional,omitempty"`
 	MinOrderQty         string                 `protobuf:"bytes,11,opt,name=min_order_qty,json=minOrderQty,proto3" json:"min_order_qty,omitempty"`
@@ -2856,7 +2856,7 @@ type RiskUserSymbolLimit struct {
 	PriceDeviationRate  string                 `protobuf:"bytes,15,opt,name=price_deviation_rate,json=priceDeviationRate,proto3" json:"price_deviation_rate,omitempty"`
 	OperatorId          int64                  `protobuf:"varint,16,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`
 	Source              SourceType             `protobuf:"varint,17,opt,name=source,proto3,enum=trade.SourceType" json:"source,omitempty"`
-	Status              uint32                 `protobuf:"varint,18,opt,name=status,proto3" json:"status,omitempty"`
+	Status              int64                  `protobuf:"varint,18,opt,name=status,proto3" json:"status,omitempty"`
 	EffectiveStartTime  int64                  `protobuf:"varint,19,opt,name=effective_start_time,json=effectiveStartTime,proto3" json:"effective_start_time,omitempty"`
 	EffectiveEndTime    int64                  `protobuf:"varint,20,opt,name=effective_end_time,json=effectiveEndTime,proto3" json:"effective_end_time,omitempty"`
 	Remark              string                 `protobuf:"bytes,21,opt,name=remark,proto3" json:"remark,omitempty"`
@@ -2945,7 +2945,7 @@ func (x *RiskUserSymbolLimit) GetMaxPositionNotional() string {
 	return ""
 }
 
-func (x *RiskUserSymbolLimit) GetMaxOpenOrders() uint32 {
+func (x *RiskUserSymbolLimit) GetMaxOpenOrders() int64 {
 	if x != nil {
 		return x.MaxOpenOrders
 	}
@@ -3015,7 +3015,7 @@ func (x *RiskUserSymbolLimit) GetSource() SourceType {
 	return SourceType_SOURCE_TYPE_UNSPECIFIED
 }
 
-func (x *RiskUserSymbolLimit) GetStatus() uint32 {
+func (x *RiskUserSymbolLimit) GetStatus() int64 {
 	if x != nil {
 		return x.Status
 	}
@@ -3251,8 +3251,8 @@ type BizTradeEvent struct {
 	OperatorId    int64                  `protobuf:"varint,10,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`
 	Source        SourceType             `protobuf:"varint,11,opt,name=source,proto3,enum=trade.SourceType" json:"source,omitempty"`
 	EventStatus   EventStatus            `protobuf:"varint,12,opt,name=event_status,json=eventStatus,proto3,enum=trade.EventStatus" json:"event_status,omitempty"`
-	RetryCount    uint32                 `protobuf:"varint,13,opt,name=retry_count,json=retryCount,proto3" json:"retry_count,omitempty"`
-	MaxRetryCount uint32                 `protobuf:"varint,14,opt,name=max_retry_count,json=maxRetryCount,proto3" json:"max_retry_count,omitempty"`
+	RetryCount    int64                  `protobuf:"varint,13,opt,name=retry_count,json=retryCount,proto3" json:"retry_count,omitempty"`
+	MaxRetryCount int64                  `protobuf:"varint,14,opt,name=max_retry_count,json=maxRetryCount,proto3" json:"max_retry_count,omitempty"`
 	NextRetryAt   int64                  `protobuf:"varint,15,opt,name=next_retry_at,json=nextRetryAt,proto3" json:"next_retry_at,omitempty"`
 	LastErrorMsg  string                 `protobuf:"bytes,16,opt,name=last_error_msg,json=lastErrorMsg,proto3" json:"last_error_msg,omitempty"`
 	Payload       string                 `protobuf:"bytes,17,opt,name=payload,proto3" json:"payload,omitempty"`
@@ -3377,14 +3377,14 @@ func (x *BizTradeEvent) GetEventStatus() EventStatus {
 	return EventStatus_EVENT_STATUS_UNSPECIFIED
 }
 
-func (x *BizTradeEvent) GetRetryCount() uint32 {
+func (x *BizTradeEvent) GetRetryCount() int64 {
 	if x != nil {
 		return x.RetryCount
 	}
 	return 0
 }
 
-func (x *BizTradeEvent) GetMaxRetryCount() uint32 {
+func (x *BizTradeEvent) GetMaxRetryCount() int64 {
 	if x != nil {
 		return x.MaxRetryCount
 	}
@@ -3469,9 +3469,9 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\rcontract_type\x18\t \x01(\x0e2\x13.trade.ContractTypeR\fcontractType\x12+\n" +
 	"\x06status\x18\n" +
 	" \x01(\x0e2\x13.trade.SymbolStatusR\x06status\x12\x1f\n" +
-	"\vprice_scale\x18\v \x01(\rR\n" +
+	"\vprice_scale\x18\v \x01(\x03R\n" +
 	"priceScale\x12\x1b\n" +
-	"\tqty_scale\x18\f \x01(\rR\bqtyScale\x12\x1b\n" +
+	"\tqty_scale\x18\f \x01(\x03R\bqtyScale\x12\x1b\n" +
 	"\tmin_price\x18\r \x01(\tR\bminPrice\x12\x1b\n" +
 	"\tmax_price\x18\x0e \x01(\tR\bmaxPrice\x12\x1d\n" +
 	"\n" +
@@ -3480,11 +3480,11 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\amax_qty\x18\x11 \x01(\tR\x06maxQty\x12\x19\n" +
 	"\bqty_step\x18\x12 \x01(\tR\aqtyStep\x12!\n" +
 	"\fmin_notional\x18\x13 \x01(\tR\vminNotional\x12!\n" +
-	"\fmax_leverage\x18\x14 \x01(\rR\vmaxLeverage\x12\x1b\n" +
+	"\fmax_leverage\x18\x14 \x01(\x03R\vmaxLeverage\x12\x1b\n" +
 	"\topen_time\x18\x15 \x01(\x03R\bopenTime\x12\x1d\n" +
 	"\n" +
 	"close_time\x18\x16 \x01(\x03R\tcloseTime\x12\x12\n" +
-	"\x04sort\x18\x17 \x01(\x05R\x04sort\x12\x16\n" +
+	"\x04sort\x18\x17 \x01(\x03R\x04sort\x12\x16\n" +
 	"\x06remark\x18\x18 \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\x19 \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\x1a \x01(\x03R\vupdateTimes\"\xb1\x02\n" +
@@ -3494,9 +3494,9 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\tsymbol_id\x18\x03 \x01(\x03R\bsymbolId\x12$\n" +
 	"\x0emaker_fee_rate\x18\x04 \x01(\tR\fmakerFeeRate\x12$\n" +
 	"\x0etaker_fee_rate\x18\x05 \x01(\tR\ftakerFeeRate\x12\x1f\n" +
-	"\vbuy_enabled\x18\x06 \x01(\bR\n" +
+	"\vbuy_enabled\x18\x06 \x01(\x03R\n" +
 	"buyEnabled\x12!\n" +
-	"\fsell_enabled\x18\a \x01(\bR\vsellEnabled\x12!\n" +
+	"\fsell_enabled\x18\a \x01(\x03R\vsellEnabled\x12!\n" +
 	"\fcreate_times\x18\b \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\t \x01(\x03R\vupdateTimes\"\x91\x05\n" +
 	"\x13TradeSymbolContract\x12\x0e\n" +
@@ -3512,13 +3512,13 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\x0emaker_fee_rate\x18\b \x01(\tR\fmakerFeeRate\x12$\n" +
 	"\x0etaker_fee_rate\x18\t \x01(\tR\ftakerFeeRate\x128\n" +
 	"\x18funding_interval_minutes\x18\n" +
-	" \x01(\rR\x16fundingIntervalMinutes\x12#\n" +
+	" \x01(\x03R\x16fundingIntervalMinutes\x12#\n" +
 	"\rdelivery_time\x18\v \x01(\x03R\fdeliveryTime\x12#\n" +
-	"\rsupport_cross\x18\f \x01(\bR\fsupportCross\x12)\n" +
-	"\x10support_isolated\x18\r \x01(\bR\x0fsupportIsolated\x12\x1f\n" +
-	"\vbuy_enabled\x18\x0e \x01(\bR\n" +
+	"\rsupport_cross\x18\f \x01(\x03R\fsupportCross\x12)\n" +
+	"\x10support_isolated\x18\r \x01(\x03R\x0fsupportIsolated\x12\x1f\n" +
+	"\vbuy_enabled\x18\x0e \x01(\x03R\n" +
 	"buyEnabled\x12!\n" +
-	"\fsell_enabled\x18\x0f \x01(\bR\vsellEnabled\x12!\n" +
+	"\fsell_enabled\x18\x0f \x01(\x03R\vsellEnabled\x12!\n" +
 	"\fcreate_times\x18\x10 \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\x11 \x01(\x03R\vupdateTimes\"\xdc\x03\n" +
 	"\x0fTradeUserConfig\x12\x0e\n" +
@@ -3531,10 +3531,10 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\rposition_mode\x18\x06 \x01(\x0e2\x13.trade.PositionModeR\fpositionMode\x122\n" +
 	"\vmargin_mode\x18\a \x01(\x0e2\x11.trade.MarginModeR\n" +
 	"marginMode\x12)\n" +
-	"\x10default_leverage\x18\b \x01(\rR\x0fdefaultLeverage\x12#\n" +
-	"\rtrade_enabled\x18\t \x01(\bR\ftradeEnabled\x12.\n" +
+	"\x10default_leverage\x18\b \x01(\x03R\x0fdefaultLeverage\x12#\n" +
+	"\rtrade_enabled\x18\t \x01(\x03R\ftradeEnabled\x12.\n" +
 	"\x13reduce_only_enabled\x18\n" +
-	" \x01(\bR\x11reduceOnlyEnabled\x12!\n" +
+	" \x01(\x03R\x11reduceOnlyEnabled\x12!\n" +
 	"\fcreate_times\x18\v \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\f \x01(\x03R\vupdateTimes\"\xf1\a\n" +
 	"\n" +
@@ -3564,10 +3564,10 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\x03fee\x18\x13 \x01(\tR\x03fee\x12\x1b\n" +
 	"\tfee_asset\x18\x14 \x01(\tR\bfeeAsset\x12.\n" +
 	"\x06source\x18\x15 \x01(\x0e2\x16.trade.OrderSourceTypeR\x06source\x12$\n" +
-	"\x0eis_reduce_only\x18\x16 \x01(\bR\fisReduceOnly\x12\"\n" +
-	"\ris_close_only\x18\x17 \x01(\bR\visCloseOnly\x12#\n" +
+	"\x0eis_reduce_only\x18\x16 \x01(\x03R\fisReduceOnly\x12\"\n" +
+	"\ris_close_only\x18\x17 \x01(\x03R\visCloseOnly\x12#\n" +
 	"\rtrigger_price\x18\x18 \x01(\tR\ftriggerPrice\x12!\n" +
-	"\ftrigger_type\x18\x19 \x01(\rR\vtriggerType\x12#\n" +
+	"\ftrigger_type\x18\x19 \x01(\x03R\vtriggerType\x12#\n" +
 	"\rcancel_reason\x18\x1a \x01(\tR\fcancelReason\x12\x17\n" +
 	"\abiz_ext\x18\x1b \x01(\tR\x06bizExt\x12!\n" +
 	"\fcreate_times\x18\x1c \x01(\x03R\vcreateTimes\x12!\n" +
@@ -3588,10 +3588,10 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\border_id\x18\x03 \x01(\x03R\aorderId\x122\n" +
 	"\vmargin_mode\x18\x04 \x01(\x0e2\x11.trade.MarginModeR\n" +
 	"marginMode\x12\x1a\n" +
-	"\bleverage\x18\x05 \x01(\rR\bleverage\x12!\n" +
+	"\bleverage\x18\x05 \x01(\x03R\bleverage\x12!\n" +
 	"\fmargin_asset\x18\x06 \x01(\tR\vmarginAsset\x12#\n" +
 	"\rmargin_amount\x18\a \x01(\tR\fmarginAmount\x12.\n" +
-	"\x13close_position_type\x18\b \x01(\rR\x11closePositionType\x12+\n" +
+	"\x13close_position_type\x18\b \x01(\x03R\x11closePositionType\x12+\n" +
 	"\x11liquidation_price\x18\t \x01(\tR\x10liquidationPrice\x12*\n" +
 	"\x11take_profit_price\x18\n" +
 	" \x01(\tR\x0ftakeProfitPrice\x12&\n" +
@@ -3627,7 +3627,7 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\border_id\x18\x03 \x01(\x03R\aorderId\x12\x19\n" +
 	"\border_no\x18\x04 \x01(\tR\aorderNo\x12\x17\n" +
 	"\auser_id\x18\x05 \x01(\x03R\x06userId\x12#\n" +
-	"\rcancel_source\x18\x06 \x01(\rR\fcancelSource\x12#\n" +
+	"\rcancel_source\x18\x06 \x01(\x03R\fcancelSource\x12#\n" +
 	"\rcancel_reason\x18\a \x01(\tR\fcancelReason\x12!\n" +
 	"\fcreate_times\x18\b \x01(\x03R\vcreateTimes\"\xad\x06\n" +
 	"\x10ContractPosition\x12\x0e\n" +
@@ -3640,7 +3640,7 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\rposition_side\x18\x06 \x01(\x0e2\x13.trade.PositionSideR\fpositionSide\x122\n" +
 	"\vmargin_mode\x18\a \x01(\x0e2\x11.trade.MarginModeR\n" +
 	"marginMode\x12\x1a\n" +
-	"\bleverage\x18\b \x01(\rR\bleverage\x12\x10\n" +
+	"\bleverage\x18\b \x01(\x03R\bleverage\x12\x10\n" +
 	"\x03qty\x18\t \x01(\tR\x03qty\x12\x1b\n" +
 	"\tavail_qty\x18\n" +
 	" \x01(\tR\bavailQty\x12\x1d\n" +
@@ -3655,7 +3655,7 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\x0eunrealized_pnl\x18\x11 \x01(\tR\runrealizedPnl\x12!\n" +
 	"\frealized_pnl\x18\x12 \x01(\tR\vrealizedPnl\x12+\n" +
 	"\x11liquidation_price\x18\x13 \x01(\tR\x10liquidationPrice\x12\x19\n" +
-	"\badl_rank\x18\x14 \x01(\x05R\aadlRank\x12\x18\n" +
+	"\badl_rank\x18\x14 \x01(\x03R\aadlRank\x12\x18\n" +
 	"\aversion\x18\x15 \x01(\x03R\aversion\x12!\n" +
 	"\fcreate_times\x18\x16 \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\x17 \x01(\x03R\vupdateTimes\"\x99\n" +
@@ -3729,14 +3729,14 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\vmargin_mode\x18\x06 \x01(\x0e2\x11.trade.MarginModeR\n" +
 	"marginMode\x128\n" +
 	"\rposition_mode\x18\a \x01(\x0e2\x13.trade.PositionModeR\fpositionMode\x12#\n" +
-	"\rlong_leverage\x18\b \x01(\rR\flongLeverage\x12%\n" +
-	"\x0eshort_leverage\x18\t \x01(\rR\rshortLeverage\x12!\n" +
+	"\rlong_leverage\x18\b \x01(\x03R\flongLeverage\x12%\n" +
+	"\x0eshort_leverage\x18\t \x01(\x03R\rshortLeverage\x12!\n" +
 	"\fmax_leverage\x18\n" +
-	" \x01(\rR\vmaxLeverage\x12\x1f\n" +
+	" \x01(\x03R\vmaxLeverage\x12\x1f\n" +
 	"\voperator_id\x18\v \x01(\x03R\n" +
 	"operatorId\x12)\n" +
 	"\x06source\x18\f \x01(\x0e2\x11.trade.SourceTypeR\x06source\x12\x16\n" +
-	"\x06status\x18\r \x01(\rR\x06status\x12\x16\n" +
+	"\x06status\x18\r \x01(\x03R\x06status\x12\x16\n" +
 	"\x06remark\x18\x0e \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\x0f \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\x10 \x01(\x03R\vupdateTimes\"\xc4\a\n" +
@@ -3746,26 +3746,26 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\x122\n" +
 	"\vmarket_type\x18\x04 \x01(\x0e2\x11.trade.MarketTypeR\n" +
 	"marketType\x12\x19\n" +
-	"\bcan_open\x18\x05 \x01(\bR\acanOpen\x12\x1b\n" +
-	"\tcan_close\x18\x06 \x01(\bR\bcanClose\x12\x1d\n" +
+	"\bcan_open\x18\x05 \x01(\x03R\acanOpen\x12\x1b\n" +
+	"\tcan_close\x18\x06 \x01(\x03R\bcanClose\x12\x1d\n" +
 	"\n" +
-	"can_cancel\x18\a \x01(\bR\tcanCancel\x12*\n" +
-	"\x11can_trigger_order\x18\b \x01(\bR\x0fcanTriggerOrder\x12\"\n" +
-	"\rcan_api_trade\x18\t \x01(\bR\vcanApiTrade\x12#\n" +
+	"can_cancel\x18\a \x01(\x03R\tcanCancel\x12*\n" +
+	"\x11can_trigger_order\x18\b \x01(\x03R\x0fcanTriggerOrder\x12\"\n" +
+	"\rcan_api_trade\x18\t \x01(\x03R\vcanApiTrade\x12#\n" +
 	"\rtrade_enabled\x18\n" +
-	" \x01(\bR\ftradeEnabled\x12(\n" +
-	"\x10only_reduce_only\x18\v \x01(\bR\x0eonlyReduceOnly\x12/\n" +
-	"\x14max_open_order_count\x18\f \x01(\rR\x11maxOpenOrderCount\x124\n" +
-	"\x17max_order_count_per_day\x18\r \x01(\rR\x13maxOrderCountPerDay\x126\n" +
-	"\x18max_cancel_count_per_day\x18\x0e \x01(\rR\x14maxCancelCountPerDay\x12*\n" +
+	" \x01(\x03R\ftradeEnabled\x12(\n" +
+	"\x10only_reduce_only\x18\v \x01(\x03R\x0eonlyReduceOnly\x12/\n" +
+	"\x14max_open_order_count\x18\f \x01(\x03R\x11maxOpenOrderCount\x124\n" +
+	"\x17max_order_count_per_day\x18\r \x01(\x03R\x13maxOrderCountPerDay\x126\n" +
+	"\x18max_cancel_count_per_day\x18\x0e \x01(\x03R\x14maxCancelCountPerDay\x12*\n" +
 	"\x11max_open_notional\x18\x0f \x01(\tR\x0fmaxOpenNotional\x122\n" +
 	"\x15max_position_notional\x18\x10 \x01(\tR\x13maxPositionNotional\x12\x1d\n" +
 	"\n" +
-	"risk_level\x18\x11 \x01(\rR\triskLevel\x12\x1f\n" +
+	"risk_level\x18\x11 \x01(\x03R\triskLevel\x12\x1f\n" +
 	"\voperator_id\x18\x12 \x01(\x03R\n" +
 	"operatorId\x12)\n" +
 	"\x06source\x18\x13 \x01(\x0e2\x11.trade.SourceTypeR\x06source\x12\x16\n" +
-	"\x06status\x18\x14 \x01(\rR\x06status\x120\n" +
+	"\x06status\x18\x14 \x01(\x03R\x06status\x120\n" +
 	"\x14effective_start_time\x18\x15 \x01(\x03R\x12effectiveStartTime\x12,\n" +
 	"\x12effective_end_time\x18\x16 \x01(\x03R\x10effectiveEndTime\x12\x16\n" +
 	"\x06remark\x18\x17 \x01(\tR\x06remark\x12!\n" +
@@ -3780,7 +3780,7 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"marketType\x12(\n" +
 	"\x10max_position_qty\x18\x06 \x01(\tR\x0emaxPositionQty\x122\n" +
 	"\x15max_position_notional\x18\a \x01(\tR\x13maxPositionNotional\x12&\n" +
-	"\x0fmax_open_orders\x18\b \x01(\rR\rmaxOpenOrders\x12\"\n" +
+	"\x0fmax_open_orders\x18\b \x01(\x03R\rmaxOpenOrders\x12\"\n" +
 	"\rmax_order_qty\x18\t \x01(\tR\vmaxOrderQty\x12,\n" +
 	"\x12max_order_notional\x18\n" +
 	" \x01(\tR\x10maxOrderNotional\x12\"\n" +
@@ -3792,7 +3792,7 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\voperator_id\x18\x10 \x01(\x03R\n" +
 	"operatorId\x12)\n" +
 	"\x06source\x18\x11 \x01(\x0e2\x11.trade.SourceTypeR\x06source\x12\x16\n" +
-	"\x06status\x18\x12 \x01(\rR\x06status\x120\n" +
+	"\x06status\x18\x12 \x01(\x03R\x06status\x120\n" +
 	"\x14effective_start_time\x18\x13 \x01(\x03R\x12effectiveStartTime\x12,\n" +
 	"\x12effective_end_time\x18\x14 \x01(\x03R\x10effectiveEndTime\x12\x16\n" +
 	"\x06remark\x18\x15 \x01(\tR\x06remark\x12!\n" +
@@ -3841,9 +3841,9 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"operatorId\x12)\n" +
 	"\x06source\x18\v \x01(\x0e2\x11.trade.SourceTypeR\x06source\x125\n" +
 	"\fevent_status\x18\f \x01(\x0e2\x12.trade.EventStatusR\veventStatus\x12\x1f\n" +
-	"\vretry_count\x18\r \x01(\rR\n" +
+	"\vretry_count\x18\r \x01(\x03R\n" +
 	"retryCount\x12&\n" +
-	"\x0fmax_retry_count\x18\x0e \x01(\rR\rmaxRetryCount\x12\"\n" +
+	"\x0fmax_retry_count\x18\x0e \x01(\x03R\rmaxRetryCount\x12\"\n" +
 	"\rnext_retry_at\x18\x0f \x01(\x03R\vnextRetryAt\x12$\n" +
 	"\x0elast_error_msg\x18\x10 \x01(\tR\flastErrorMsg\x12\x18\n" +
 	"\apayload\x18\x11 \x01(\tR\apayload\x12\x19\n" +

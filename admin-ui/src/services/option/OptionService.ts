@@ -26,15 +26,15 @@ import {
 export type OptionAdminCommonResp = RespBase
 
 export type TimeRange = {
-  startTime?: number
-  endTime?: number
+  startTime?: number // 开始时间
+  endTime?: number // 结束时间
 }
 
 export type OptionContract = {
-  id: number
-  tenantId: number
-  contractCode: string
-  underlyingSymbol: string
+  id: number // 主键ID
+  tenantId: number // 租户ID
+  contractCode: string // 合约编码
+  underlyingSymbol: string // 标的符号
   settleCoin: string
   quoteCoin: string
   optionType: number
@@ -52,17 +52,17 @@ export type OptionContract = {
   deliverTime: number
   isAutoExercise: number
   status: number
-  sort: number
-  remark: string
-  isDeleted: number
-  createTimes: number
-  updateTimes: number
+  sort: number // 排序
+  remark: string // 备注
+  isDeleted: number // 是否删除
+  createTimes: number // 创建时间
+  updateTimes: number // 更新时间
 }
 
 export type OptionMarket = {
-  id: number
-  tenantId: number
-  contractId: number
+  id: number // 主键ID
+  tenantId: number // 租户ID
+  contractId: number // 合约ID
   underlyingPrice: string
   markPrice: string
   lastPrice: string
@@ -79,9 +79,9 @@ export type OptionMarket = {
   rho: string
   riskFreeRate: string
   pricingModel: string
-  snapshotTime: number
-  createTimes: number
-  updateTimes: number
+  snapshotTime: number // 快照时间
+  createTimes: number // 创建时间
+  updateTimes: number // 更新时间
 }
 
 export type OptionMarketSnapshot = {
@@ -105,9 +105,9 @@ export type OptionMarketSnapshot = {
 }
 
 export type OptionOrder = {
-  id: number
-  tenantId: number
-  orderNo: string
+  id: number // 主键ID
+  tenantId: number // 租户ID
+  orderNo: string // 订单号
   uid: number
   accountId: number
   contractId: number
@@ -132,14 +132,14 @@ export type OptionOrder = {
   cancelReason: string
   matchTime: number
   cancelTime: number
-  createTimes: number
-  updateTimes: number
+  createTimes: number // 创建时间
+  updateTimes: number // 更新时间
 }
 
 export type OptionTrade = {
-  id: number
-  tenantId: number
-  tradeNo: string
+  id: number // 主键ID
+  tenantId: number // 租户ID
+  tradeNo: string // 成交号
   contractId: number
   underlyingSymbol: string
   buyOrderId: number
@@ -158,7 +158,7 @@ export type OptionTrade = {
   feeCoin: string
   makerSide: number
   tradeTime: number
-  createTimes: number
+  createTimes: number // 创建时间
 }
 
 export type OptionPosition = {
@@ -300,21 +300,21 @@ export type CreateContractReq = Omit<OptionContract, 'id' | 'isDeleted' | 'creat
 export type UpdateContractReq = Omit<OptionContract, 'createTimes' | 'updateTimes'>
 
 export type GetContractReq = {
-  tenantId?: number
-  id?: number
-  contractCode?: string
+  tenantId?: number // 租户ID
+  id?: number // 合约ID
+  contractCode?: string // 合约编码
 }
 
 export type ListContractsReq = {
-  cursor?: number
-  limit?: number
-  tenantId?: number
+  cursor?: number // 游标
+  limit?: number // 每页条数
+  tenantId?: number // 租户ID
   contractCode?: string
   underlyingSymbol?: string
   optionType?: number
   status?: number
-  listTimeRange?: TimeRange
-  expireTimeRange?: TimeRange
+  listTimeRange?: TimeRange // 上线时间范围
+  expireTimeRange?: TimeRange // 到期时间范围
 }
 
 export type UpdateMarketReq = Omit<OptionMarket, 'id' | 'createTimes' | 'updateTimes'>

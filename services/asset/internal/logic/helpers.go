@@ -191,10 +191,10 @@ func toUserAssetProto(data *models.TUserAsset) *asset.UserAsset {
 		FrozenAmount:    conv.FloatString(data.FrozenAmount),
 		LockedAmount:    conv.FloatString(data.LockedAmount),
 		Status:          ToAssetStatus(data.Status),
-		Version:         int32(data.Version),
+		Version:         data.Version,
 		Remark:          data.Remark,
-		CreateTime:      data.CreateTimes,
-		UpdateTime:      data.UpdateTimes,
+		CreateTimes:     data.CreateTimes,
+		UpdateTimes:     data.UpdateTimes,
 	}
 }
 
@@ -223,10 +223,11 @@ func toAssetFlowProto(data *models.TAssetFlow) *asset.AssetFlow {
 		AfterFrozenAmount:      conv.FloatString(data.AfterFrozenAmount),
 		BeforeLockedAmount:     conv.FloatString(data.BeforeLockedAmount),
 		AfterLockedAmount:      conv.FloatString(data.AfterLockedAmount),
-		BalanceSnapshotVersion: int32(data.BalanceSnapshotVersion),
+		BalanceSnapshotVersion: data.BalanceSnapshotVersion,
+		ChangeType:             data.ChangeType,
 		Remark:                 data.Remark,
-		CreateTime:             data.CreateTimes,
-		UpdateTime:             data.UpdateTimes,
+		CreateTimes:            data.CreateTimes,
+		UpdateTimes:            data.UpdateTimes,
 	}
 }
 
@@ -252,8 +253,8 @@ func toAssetFreezeProto(data *models.TAssetFreeze) *asset.AssetFreeze {
 		Status:         ToFreezeStatus(data.Status),
 		ExpireTime:     data.ExpireTime,
 		Remark:         data.Remark,
-		CreateTime:     data.CreateTimes,
-		UpdateTime:     data.UpdateTimes,
+		CreateTimes:    data.CreateTimes,
+		UpdateTimes:    data.UpdateTimes,
 	}
 }
 
@@ -279,8 +280,8 @@ func toAssetLockProto(data *models.TAssetLock) *asset.AssetLock {
 		StartTime:    data.StartTime,
 		EndTime:      data.EndTime,
 		Remark:       data.Remark,
-		CreateTime:   data.CreateTimes,
-		UpdateTime:   data.UpdateTimes,
+		CreateTimes:  data.CreateTimes,
+		UpdateTimes:  data.UpdateTimes,
 	}
 }
 

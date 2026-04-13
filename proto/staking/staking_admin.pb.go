@@ -284,7 +284,7 @@ type AdminProductCreateReq struct {
 	RewardCoinName   string                 `protobuf:"bytes,7,opt,name=reward_coin_name,json=rewardCoinName,proto3" json:"reward_coin_name,omitempty"`
 	RewardCoinSymbol string                 `protobuf:"bytes,8,opt,name=reward_coin_symbol,json=rewardCoinSymbol,proto3" json:"reward_coin_symbol,omitempty"`
 	Apr              string                 `protobuf:"bytes,9,opt,name=apr,proto3" json:"apr,omitempty"`
-	LockDays         int32                  `protobuf:"varint,10,opt,name=lock_days,json=lockDays,proto3" json:"lock_days,omitempty"`
+	LockDays         int64                  `protobuf:"varint,10,opt,name=lock_days,json=lockDays,proto3" json:"lock_days,omitempty"`
 	MinAmount        string                 `protobuf:"bytes,11,opt,name=min_amount,json=minAmount,proto3" json:"min_amount,omitempty"`
 	MaxAmount        string                 `protobuf:"bytes,12,opt,name=max_amount,json=maxAmount,proto3" json:"max_amount,omitempty"`
 	StepAmount       string                 `protobuf:"bytes,13,opt,name=step_amount,json=stepAmount,proto3" json:"step_amount,omitempty"`
@@ -295,7 +295,7 @@ type AdminProductCreateReq struct {
 	AllowEarlyRedeem YesNo                  `protobuf:"varint,18,opt,name=allow_early_redeem,json=allowEarlyRedeem,proto3,enum=staking.YesNo" json:"allow_early_redeem,omitempty"`
 	EarlyRedeemRate  string                 `protobuf:"bytes,19,opt,name=early_redeem_rate,json=earlyRedeemRate,proto3" json:"early_redeem_rate,omitempty"`
 	Status           ProductStatus          `protobuf:"varint,20,opt,name=status,proto3,enum=staking.ProductStatus" json:"status,omitempty"`
-	Sort             int32                  `protobuf:"varint,21,opt,name=sort,proto3" json:"sort,omitempty"`
+	Sort             int64                  `protobuf:"varint,21,opt,name=sort,proto3" json:"sort,omitempty"`
 	Remark           string                 `protobuf:"bytes,22,opt,name=remark,proto3" json:"remark,omitempty"`
 	OperatorUid      int64                  `protobuf:"varint,23,opt,name=operator_uid,json=operatorUid,proto3" json:"operator_uid,omitempty"`
 	unknownFields    protoimpl.UnknownFields
@@ -395,7 +395,7 @@ func (x *AdminProductCreateReq) GetApr() string {
 	return ""
 }
 
-func (x *AdminProductCreateReq) GetLockDays() int32 {
+func (x *AdminProductCreateReq) GetLockDays() int64 {
 	if x != nil {
 		return x.LockDays
 	}
@@ -472,7 +472,7 @@ func (x *AdminProductCreateReq) GetStatus() ProductStatus {
 	return ProductStatus_PRODUCT_STATUS_UNSPECIFIED
 }
 
-func (x *AdminProductCreateReq) GetSort() int32 {
+func (x *AdminProductCreateReq) GetSort() int64 {
 	if x != nil {
 		return x.Sort
 	}
@@ -557,7 +557,7 @@ type AdminProductUpdateReq struct {
 	RewardCoinName   string                 `protobuf:"bytes,7,opt,name=reward_coin_name,json=rewardCoinName,proto3" json:"reward_coin_name,omitempty"`
 	RewardCoinSymbol string                 `protobuf:"bytes,8,opt,name=reward_coin_symbol,json=rewardCoinSymbol,proto3" json:"reward_coin_symbol,omitempty"`
 	Apr              string                 `protobuf:"bytes,9,opt,name=apr,proto3" json:"apr,omitempty"`
-	LockDays         int32                  `protobuf:"varint,10,opt,name=lock_days,json=lockDays,proto3" json:"lock_days,omitempty"`
+	LockDays         int64                  `protobuf:"varint,10,opt,name=lock_days,json=lockDays,proto3" json:"lock_days,omitempty"`
 	MinAmount        string                 `protobuf:"bytes,11,opt,name=min_amount,json=minAmount,proto3" json:"min_amount,omitempty"`
 	MaxAmount        string                 `protobuf:"bytes,12,opt,name=max_amount,json=maxAmount,proto3" json:"max_amount,omitempty"`
 	StepAmount       string                 `protobuf:"bytes,13,opt,name=step_amount,json=stepAmount,proto3" json:"step_amount,omitempty"`
@@ -568,7 +568,7 @@ type AdminProductUpdateReq struct {
 	AllowEarlyRedeem YesNo                  `protobuf:"varint,18,opt,name=allow_early_redeem,json=allowEarlyRedeem,proto3,enum=staking.YesNo" json:"allow_early_redeem,omitempty"`
 	EarlyRedeemRate  string                 `protobuf:"bytes,19,opt,name=early_redeem_rate,json=earlyRedeemRate,proto3" json:"early_redeem_rate,omitempty"`
 	Status           ProductStatus          `protobuf:"varint,20,opt,name=status,proto3,enum=staking.ProductStatus" json:"status,omitempty"`
-	Sort             int32                  `protobuf:"varint,21,opt,name=sort,proto3" json:"sort,omitempty"`
+	Sort             int64                  `protobuf:"varint,21,opt,name=sort,proto3" json:"sort,omitempty"`
 	Remark           string                 `protobuf:"bytes,22,opt,name=remark,proto3" json:"remark,omitempty"`
 	OperatorUid      int64                  `protobuf:"varint,23,opt,name=operator_uid,json=operatorUid,proto3" json:"operator_uid,omitempty"`
 	unknownFields    protoimpl.UnknownFields
@@ -668,7 +668,7 @@ func (x *AdminProductUpdateReq) GetApr() string {
 	return ""
 }
 
-func (x *AdminProductUpdateReq) GetLockDays() int32 {
+func (x *AdminProductUpdateReq) GetLockDays() int64 {
 	if x != nil {
 		return x.LockDays
 	}
@@ -745,7 +745,7 @@ func (x *AdminProductUpdateReq) GetStatus() ProductStatus {
 	return ProductStatus_PRODUCT_STATUS_UNSPECIFIED
 }
 
-func (x *AdminProductUpdateReq) GetSort() int32 {
+func (x *AdminProductUpdateReq) GetSort() int64 {
 	if x != nil {
 		return x.Sort
 	}
@@ -769,7 +769,7 @@ func (x *AdminProductUpdateReq) GetOperatorUid() int64 {
 type AdminProductUpdateResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *common.RespBase       `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
-	Data          bool                   `protobuf:"varint,2,opt,name=data,proto3" json:"data,omitempty"`
+	Data          int64                  `protobuf:"varint,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -811,11 +811,11 @@ func (x *AdminProductUpdateResp) GetPage() *common.RespBase {
 	return nil
 }
 
-func (x *AdminProductUpdateResp) GetData() bool {
+func (x *AdminProductUpdateResp) GetData() int64 {
 	if x != nil {
 		return x.Data
 	}
-	return false
+	return 0
 }
 
 // 修改产品状态
@@ -890,7 +890,7 @@ func (x *AdminProductChangeStatusReq) GetOperatorUid() int64 {
 type AdminProductChangeStatusResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *common.RespBase       `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
-	Data          bool                   `protobuf:"varint,2,opt,name=data,proto3" json:"data,omitempty"`
+	Data          int64                  `protobuf:"varint,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -932,11 +932,11 @@ func (x *AdminProductChangeStatusResp) GetPage() *common.RespBase {
 	return nil
 }
 
-func (x *AdminProductChangeStatusResp) GetData() bool {
+func (x *AdminProductChangeStatusResp) GetData() int64 {
 	if x != nil {
 		return x.Data
 	}
-	return false
+	return 0
 }
 
 // 订单列表
@@ -1663,7 +1663,7 @@ func (x *AdminManualRewardReq) GetOperatorUid() int64 {
 type AdminManualRewardResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *common.RespBase       `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
-	Data          bool                   `protobuf:"varint,2,opt,name=data,proto3" json:"data,omitempty"`
+	Data          int64                  `protobuf:"varint,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1705,11 +1705,11 @@ func (x *AdminManualRewardResp) GetPage() *common.RespBase {
 	return nil
 }
 
-func (x *AdminManualRewardResp) GetData() bool {
+func (x *AdminManualRewardResp) GetData() int64 {
 	if x != nil {
 		return x.Data
 	}
-	return false
+	return 0
 }
 
 // 手动赎回
@@ -1824,7 +1824,7 @@ func (x *AdminManualRedeemReq) GetOperatorUid() int64 {
 type AdminManualRedeemResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *common.RespBase       `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
-	Success       bool                   `protobuf:"varint,2,opt,name=success,proto3" json:"success,omitempty"`
+	Success       int64                  `protobuf:"varint,2,opt,name=success,proto3" json:"success,omitempty"`
 	RedeemNo      string                 `protobuf:"bytes,3,opt,name=redeem_no,json=redeemNo,proto3" json:"redeem_no,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1867,11 +1867,11 @@ func (x *AdminManualRedeemResp) GetPage() *common.RespBase {
 	return nil
 }
 
-func (x *AdminManualRedeemResp) GetSuccess() bool {
+func (x *AdminManualRedeemResp) GetSuccess() int64 {
 	if x != nil {
 		return x.Success
 	}
-	return false
+	return 0
 }
 
 func (x *AdminManualRedeemResp) GetRedeemNo() string {
@@ -1918,7 +1918,7 @@ const file_proto_staking_staking_admin_proto_rawDesc = "" +
 	"\x12reward_coin_symbol\x18\b \x01(\tR\x10rewardCoinSymbol\x12\x10\n" +
 	"\x03apr\x18\t \x01(\tR\x03apr\x12\x1b\n" +
 	"\tlock_days\x18\n" +
-	" \x01(\x05R\blockDays\x12\x1d\n" +
+	" \x01(\x03R\blockDays\x12\x1d\n" +
 	"\n" +
 	"min_amount\x18\v \x01(\tR\tminAmount\x12\x1d\n" +
 	"\n" +
@@ -1933,7 +1933,7 @@ const file_proto_staking_staking_admin_proto_rawDesc = "" +
 	"\x12allow_early_redeem\x18\x12 \x01(\x0e2\x0e.staking.YesNoR\x10allowEarlyRedeem\x12*\n" +
 	"\x11early_redeem_rate\x18\x13 \x01(\tR\x0fearlyRedeemRate\x12.\n" +
 	"\x06status\x18\x14 \x01(\x0e2\x16.staking.ProductStatusR\x06status\x12\x12\n" +
-	"\x04sort\x18\x15 \x01(\x05R\x04sort\x12\x16\n" +
+	"\x04sort\x18\x15 \x01(\x03R\x04sort\x12\x16\n" +
 	"\x06remark\x18\x16 \x01(\tR\x06remark\x12!\n" +
 	"\foperator_uid\x18\x17 \x01(\x03R\voperatorUid\"R\n" +
 	"\x16AdminProductCreateResp\x12$\n" +
@@ -1951,7 +1951,7 @@ const file_proto_staking_staking_admin_proto_rawDesc = "" +
 	"\x12reward_coin_symbol\x18\b \x01(\tR\x10rewardCoinSymbol\x12\x10\n" +
 	"\x03apr\x18\t \x01(\tR\x03apr\x12\x1b\n" +
 	"\tlock_days\x18\n" +
-	" \x01(\x05R\blockDays\x12\x1d\n" +
+	" \x01(\x03R\blockDays\x12\x1d\n" +
 	"\n" +
 	"min_amount\x18\v \x01(\tR\tminAmount\x12\x1d\n" +
 	"\n" +
@@ -1966,12 +1966,12 @@ const file_proto_staking_staking_admin_proto_rawDesc = "" +
 	"\x12allow_early_redeem\x18\x12 \x01(\x0e2\x0e.staking.YesNoR\x10allowEarlyRedeem\x12*\n" +
 	"\x11early_redeem_rate\x18\x13 \x01(\tR\x0fearlyRedeemRate\x12.\n" +
 	"\x06status\x18\x14 \x01(\x0e2\x16.staking.ProductStatusR\x06status\x12\x12\n" +
-	"\x04sort\x18\x15 \x01(\x05R\x04sort\x12\x16\n" +
+	"\x04sort\x18\x15 \x01(\x03R\x04sort\x12\x16\n" +
 	"\x06remark\x18\x16 \x01(\tR\x06remark\x12!\n" +
 	"\foperator_uid\x18\x17 \x01(\x03R\voperatorUid\"R\n" +
 	"\x16AdminProductUpdateResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12\x12\n" +
-	"\x04data\x18\x02 \x01(\bR\x04data\"\x9d\x01\n" +
+	"\x04data\x18\x02 \x01(\x03R\x04data\"\x9d\x01\n" +
 	"\x1bAdminProductChangeStatusReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\x12.\n" +
@@ -1979,7 +1979,7 @@ const file_proto_staking_staking_admin_proto_rawDesc = "" +
 	"\foperator_uid\x18\x04 \x01(\x03R\voperatorUid\"X\n" +
 	"\x1cAdminProductChangeStatusResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12\x12\n" +
-	"\x04data\x18\x02 \x01(\bR\x04data\"\x96\x04\n" +
+	"\x04data\x18\x02 \x01(\x03R\x04data\"\x96\x04\n" +
 	"\x11AdminOrderListReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
 	"\border_no\x18\x02 \x01(\tR\aorderNo\x12\x10\n" +
@@ -2050,7 +2050,7 @@ const file_proto_staking_staking_admin_proto_rawDesc = "" +
 	"\foperator_uid\x18\x06 \x01(\x03R\voperatorUid\"Q\n" +
 	"\x15AdminManualRewardResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12\x12\n" +
-	"\x04data\x18\x02 \x01(\bR\x04data\"\xc3\x02\n" +
+	"\x04data\x18\x02 \x01(\x03R\x04data\"\xc3\x02\n" +
 	"\x14AdminManualRedeemReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
 	"\border_id\x18\x02 \x01(\x03R\aorderId\x124\n" +
@@ -2065,7 +2065,7 @@ const file_proto_staking_staking_admin_proto_rawDesc = "" +
 	"\foperator_uid\x18\t \x01(\x03R\voperatorUid\"t\n" +
 	"\x15AdminManualRedeemResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12\x18\n" +
-	"\asuccess\x18\x02 \x01(\bR\asuccess\x12\x1b\n" +
+	"\asuccess\x18\x02 \x01(\x03R\asuccess\x12\x1b\n" +
 	"\tredeem_no\x18\x03 \x01(\tR\bredeemNo2\x92\a\n" +
 	"\fStakingAdmin\x12O\n" +
 	"\x10AdminProductList\x12\x1c.staking.AdminProductListReq\x1a\x1d.staking.AdminProductListResp\x12U\n" +
