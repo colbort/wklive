@@ -4636,6 +4636,146 @@ func (x *GetWithdrawNotifyLogResp) GetData() *PayNotifyLog {
 	return nil
 }
 
+type AdminEmpty struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdminEmpty) Reset() {
+	*x = AdminEmpty{}
+	mi := &file_proto_payment_payment_admin_proto_msgTypes[61]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminEmpty) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminEmpty) ProtoMessage() {}
+
+func (x *AdminEmpty) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_payment_payment_admin_proto_msgTypes[61]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminEmpty.ProtoReflect.Descriptor instead.
+func (*AdminEmpty) Descriptor() ([]byte, []int) {
+	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{61}
+}
+
+type PayPlatformItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PlatformCode  string                 `protobuf:"bytes,1,opt,name=platform_code,json=platformCode,proto3" json:"platform_code,omitempty"`
+	PlatformName  string                 `protobuf:"bytes,2,opt,name=platform_name,json=platformName,proto3" json:"platform_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PayPlatformItem) Reset() {
+	*x = PayPlatformItem{}
+	mi := &file_proto_payment_payment_admin_proto_msgTypes[62]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PayPlatformItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PayPlatformItem) ProtoMessage() {}
+
+func (x *PayPlatformItem) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_payment_payment_admin_proto_msgTypes[62]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PayPlatformItem.ProtoReflect.Descriptor instead.
+func (*PayPlatformItem) Descriptor() ([]byte, []int) {
+	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{62}
+}
+
+func (x *PayPlatformItem) GetPlatformCode() string {
+	if x != nil {
+		return x.PlatformCode
+	}
+	return ""
+}
+
+func (x *PayPlatformItem) GetPlatformName() string {
+	if x != nil {
+		return x.PlatformName
+	}
+	return ""
+}
+
+type PayPlatformsResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          []*PayPlatformItem     `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PayPlatformsResp) Reset() {
+	*x = PayPlatformsResp{}
+	mi := &file_proto_payment_payment_admin_proto_msgTypes[63]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PayPlatformsResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PayPlatformsResp) ProtoMessage() {}
+
+func (x *PayPlatformsResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_payment_payment_admin_proto_msgTypes[63]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PayPlatformsResp.ProtoReflect.Descriptor instead.
+func (*PayPlatformsResp) Descriptor() ([]byte, []int) {
+	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{63}
+}
+
+func (x *PayPlatformsResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *PayPlatformsResp) GetData() []*PayPlatformItem {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
 var File_proto_payment_payment_admin_proto protoreflect.FileDescriptor
 
 const file_proto_payment_payment_admin_proto_rawDesc = "" +
@@ -5061,8 +5201,17 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\"k\n" +
 	"\x18GetWithdrawNotifyLogResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
-	"\x04data\x18\x02 \x01(\v2\x15.payment.PayNotifyLogR\x04data2\x9e\x1a\n" +
-	"\fPaymentAdmin\x12L\n" +
+	"\x04data\x18\x02 \x01(\v2\x15.payment.PayNotifyLogR\x04data\"\f\n" +
+	"\n" +
+	"AdminEmpty\"[\n" +
+	"\x0fPayPlatformItem\x12#\n" +
+	"\rplatform_code\x18\x01 \x01(\tR\fplatformCode\x12#\n" +
+	"\rplatform_name\x18\x02 \x01(\tR\fplatformName\"f\n" +
+	"\x10PayPlatformsResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12,\n" +
+	"\x04data\x18\x02 \x03(\v2\x18.payment.PayPlatformItemR\x04data2\xe1\x1a\n" +
+	"\fPaymentAdmin\x12A\n" +
+	"\x0fGetPayPlatforms\x12\x13.payment.AdminEmpty\x1a\x19.payment.PayPlatformsResp\x12L\n" +
 	"\x11CreatePayPlatform\x12\x1d.payment.CreatePayPlatformReq\x1a\x18.payment.AdminCommonResp\x12L\n" +
 	"\x11UpdatePayPlatform\x12\x1d.payment.UpdatePayPlatformReq\x1a\x18.payment.AdminCommonResp\x12I\n" +
 	"\x0eGetPayPlatform\x12\x1a.payment.GetPayPlatformReq\x1a\x1b.payment.GetPayPlatformResp\x12O\n" +
@@ -5114,7 +5263,7 @@ func file_proto_payment_payment_admin_proto_rawDescGZIP() []byte {
 	return file_proto_payment_payment_admin_proto_rawDescData
 }
 
-var file_proto_payment_payment_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 61)
+var file_proto_payment_payment_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 64)
 var file_proto_payment_payment_admin_proto_goTypes = []any{
 	(*AdminCommonResp)(nil),                   // 0: payment.AdminCommonResp
 	(*CreatePayPlatformReq)(nil),              // 1: payment.CreatePayPlatformReq
@@ -5177,199 +5326,206 @@ var file_proto_payment_payment_admin_proto_goTypes = []any{
 	(*ListWithdrawNotifyLogsResp)(nil),        // 58: payment.ListWithdrawNotifyLogsResp
 	(*GetWithdrawNotifyLogReq)(nil),           // 59: payment.GetWithdrawNotifyLogReq
 	(*GetWithdrawNotifyLogResp)(nil),          // 60: payment.GetWithdrawNotifyLogResp
-	(*common.RespBase)(nil),                   // 61: common.RespBase
-	(PlatformType)(0),                         // 62: payment.PlatformType
-	(CommonStatus)(0),                         // 63: payment.CommonStatus
-	(*PayPlatform)(nil),                       // 64: payment.PayPlatform
-	(*common.PageReq)(nil),                    // 65: common.PageReq
-	(SceneType)(0),                            // 66: payment.SceneType
-	(*PayProduct)(nil),                        // 67: payment.PayProduct
-	(OpenStatus)(0),                           // 68: payment.OpenStatus
-	(*TenantPayPlatform)(nil),                 // 69: payment.TenantPayPlatform
-	(*TenantPayAccount)(nil),                  // 70: payment.TenantPayAccount
-	(FeeType)(0),                              // 71: payment.FeeType
-	(*TenantPayChannel)(nil),                  // 72: payment.TenantPayChannel
-	(*TenantPayChannelRule)(nil),              // 73: payment.TenantPayChannelRule
-	(*UserRechargeStat)(nil),                  // 74: payment.UserRechargeStat
-	(*RechargeOrder)(nil),                     // 75: payment.RechargeOrder
-	(PayOrderStatus)(0),                       // 76: payment.PayOrderStatus
-	(*PayNotifyLog)(nil),                      // 77: payment.PayNotifyLog
-	(NotifyProcessStatus)(0),                  // 78: payment.NotifyProcessStatus
-	(SignResult)(0),                           // 79: payment.SignResult
-	(*WithdrawOrder)(nil),                     // 80: payment.WithdrawOrder
+	(*AdminEmpty)(nil),                        // 61: payment.AdminEmpty
+	(*PayPlatformItem)(nil),                   // 62: payment.PayPlatformItem
+	(*PayPlatformsResp)(nil),                  // 63: payment.PayPlatformsResp
+	(*common.RespBase)(nil),                   // 64: common.RespBase
+	(PlatformType)(0),                         // 65: payment.PlatformType
+	(CommonStatus)(0),                         // 66: payment.CommonStatus
+	(*PayPlatform)(nil),                       // 67: payment.PayPlatform
+	(*common.PageReq)(nil),                    // 68: common.PageReq
+	(SceneType)(0),                            // 69: payment.SceneType
+	(*PayProduct)(nil),                        // 70: payment.PayProduct
+	(OpenStatus)(0),                           // 71: payment.OpenStatus
+	(*TenantPayPlatform)(nil),                 // 72: payment.TenantPayPlatform
+	(*TenantPayAccount)(nil),                  // 73: payment.TenantPayAccount
+	(FeeType)(0),                              // 74: payment.FeeType
+	(*TenantPayChannel)(nil),                  // 75: payment.TenantPayChannel
+	(*TenantPayChannelRule)(nil),              // 76: payment.TenantPayChannelRule
+	(*UserRechargeStat)(nil),                  // 77: payment.UserRechargeStat
+	(*RechargeOrder)(nil),                     // 78: payment.RechargeOrder
+	(PayOrderStatus)(0),                       // 79: payment.PayOrderStatus
+	(*PayNotifyLog)(nil),                      // 80: payment.PayNotifyLog
+	(NotifyProcessStatus)(0),                  // 81: payment.NotifyProcessStatus
+	(SignResult)(0),                           // 82: payment.SignResult
+	(*WithdrawOrder)(nil),                     // 83: payment.WithdrawOrder
 }
 var file_proto_payment_payment_admin_proto_depIdxs = []int32{
-	61,  // 0: payment.AdminCommonResp.base:type_name -> common.RespBase
-	62,  // 1: payment.CreatePayPlatformReq.platform_type:type_name -> payment.PlatformType
-	63,  // 2: payment.CreatePayPlatformReq.status:type_name -> payment.CommonStatus
-	62,  // 3: payment.UpdatePayPlatformReq.platform_type:type_name -> payment.PlatformType
-	63,  // 4: payment.UpdatePayPlatformReq.status:type_name -> payment.CommonStatus
-	61,  // 5: payment.GetPayPlatformResp.base:type_name -> common.RespBase
-	64,  // 6: payment.GetPayPlatformResp.data:type_name -> payment.PayPlatform
-	65,  // 7: payment.ListPayPlatformsReq.page:type_name -> common.PageReq
-	63,  // 8: payment.ListPayPlatformsReq.status:type_name -> payment.CommonStatus
-	62,  // 9: payment.ListPayPlatformsReq.platform_type:type_name -> payment.PlatformType
-	61,  // 10: payment.ListPayPlatformsResp.base:type_name -> common.RespBase
-	64,  // 11: payment.ListPayPlatformsResp.data:type_name -> payment.PayPlatform
-	66,  // 12: payment.CreatePayProductReq.scene_type:type_name -> payment.SceneType
-	63,  // 13: payment.CreatePayProductReq.status:type_name -> payment.CommonStatus
-	66,  // 14: payment.UpdatePayProductReq.scene_type:type_name -> payment.SceneType
-	63,  // 15: payment.UpdatePayProductReq.status:type_name -> payment.CommonStatus
-	61,  // 16: payment.GetPayProductResp.base:type_name -> common.RespBase
-	67,  // 17: payment.GetPayProductResp.data:type_name -> payment.PayProduct
-	65,  // 18: payment.ListPayProductsReq.page:type_name -> common.PageReq
-	63,  // 19: payment.ListPayProductsReq.status:type_name -> payment.CommonStatus
-	66,  // 20: payment.ListPayProductsReq.scene_type:type_name -> payment.SceneType
-	61,  // 21: payment.ListPayProductsResp.base:type_name -> common.RespBase
-	67,  // 22: payment.ListPayProductsResp.data:type_name -> payment.PayProduct
-	63,  // 23: payment.OpenTenantPayPlatformReq.status:type_name -> payment.CommonStatus
-	68,  // 24: payment.OpenTenantPayPlatformReq.open_status:type_name -> payment.OpenStatus
-	63,  // 25: payment.UpdateTenantPayPlatformReq.status:type_name -> payment.CommonStatus
-	68,  // 26: payment.UpdateTenantPayPlatformReq.open_status:type_name -> payment.OpenStatus
-	61,  // 27: payment.GetTenantPayPlatformResp.base:type_name -> common.RespBase
-	69,  // 28: payment.GetTenantPayPlatformResp.data:type_name -> payment.TenantPayPlatform
-	65,  // 29: payment.ListTenantPayPlatformsReq.page:type_name -> common.PageReq
-	63,  // 30: payment.ListTenantPayPlatformsReq.status:type_name -> payment.CommonStatus
-	68,  // 31: payment.ListTenantPayPlatformsReq.open_status:type_name -> payment.OpenStatus
-	61,  // 32: payment.ListTenantPayPlatformsResp.base:type_name -> common.RespBase
-	69,  // 33: payment.ListTenantPayPlatformsResp.data:type_name -> payment.TenantPayPlatform
-	63,  // 34: payment.CreateTenantPayAccountReq.status:type_name -> payment.CommonStatus
-	63,  // 35: payment.UpdateTenantPayAccountReq.status:type_name -> payment.CommonStatus
-	61,  // 36: payment.GetTenantPayAccountResp.base:type_name -> common.RespBase
-	70,  // 37: payment.GetTenantPayAccountResp.data:type_name -> payment.TenantPayAccount
-	65,  // 38: payment.ListTenantPayAccountsReq.page:type_name -> common.PageReq
-	63,  // 39: payment.ListTenantPayAccountsReq.status:type_name -> payment.CommonStatus
-	61,  // 40: payment.ListTenantPayAccountsResp.base:type_name -> common.RespBase
-	70,  // 41: payment.ListTenantPayAccountsResp.data:type_name -> payment.TenantPayAccount
-	63,  // 42: payment.CreateTenantPayChannelReq.status:type_name -> payment.CommonStatus
-	71,  // 43: payment.CreateTenantPayChannelReq.fee_type:type_name -> payment.FeeType
-	63,  // 44: payment.UpdateTenantPayChannelReq.status:type_name -> payment.CommonStatus
-	71,  // 45: payment.UpdateTenantPayChannelReq.fee_type:type_name -> payment.FeeType
-	61,  // 46: payment.GetTenantPayChannelResp.base:type_name -> common.RespBase
-	72,  // 47: payment.GetTenantPayChannelResp.data:type_name -> payment.TenantPayChannel
-	65,  // 48: payment.ListTenantPayChannelsReq.page:type_name -> common.PageReq
-	63,  // 49: payment.ListTenantPayChannelsReq.status:type_name -> payment.CommonStatus
-	61,  // 50: payment.ListTenantPayChannelsResp.base:type_name -> common.RespBase
-	72,  // 51: payment.ListTenantPayChannelsResp.data:type_name -> payment.TenantPayChannel
-	63,  // 52: payment.CreateTenantPayChannelRuleReq.status:type_name -> payment.CommonStatus
-	63,  // 53: payment.UpdateTenantPayChannelRuleReq.status:type_name -> payment.CommonStatus
-	61,  // 54: payment.GetTenantPayChannelRuleResp.base:type_name -> common.RespBase
-	73,  // 55: payment.GetTenantPayChannelRuleResp.data:type_name -> payment.TenantPayChannelRule
-	65,  // 56: payment.ListTenantPayChannelRulesReq.page:type_name -> common.PageReq
-	63,  // 57: payment.ListTenantPayChannelRulesReq.status:type_name -> payment.CommonStatus
-	61,  // 58: payment.ListTenantPayChannelRulesResp.base:type_name -> common.RespBase
-	73,  // 59: payment.ListTenantPayChannelRulesResp.data:type_name -> payment.TenantPayChannelRule
-	61,  // 60: payment.GetUserRechargeStatResp.base:type_name -> common.RespBase
-	74,  // 61: payment.GetUserRechargeStatResp.data:type_name -> payment.UserRechargeStat
-	65,  // 62: payment.ListUserRechargeStatsReq.page:type_name -> common.PageReq
-	61,  // 63: payment.ListUserRechargeStatsResp.base:type_name -> common.RespBase
-	74,  // 64: payment.ListUserRechargeStatsResp.data:type_name -> payment.UserRechargeStat
-	61,  // 65: payment.GetRechargeOrderResp.base:type_name -> common.RespBase
-	75,  // 66: payment.GetRechargeOrderResp.data:type_name -> payment.RechargeOrder
-	65,  // 67: payment.ListRechargeOrdersReq.page:type_name -> common.PageReq
-	76,  // 68: payment.ListRechargeOrdersReq.status:type_name -> payment.PayOrderStatus
-	61,  // 69: payment.ListRechargeOrdersResp.base:type_name -> common.RespBase
-	75,  // 70: payment.ListRechargeOrdersResp.data:type_name -> payment.RechargeOrder
-	61,  // 71: payment.GetRechargeNotifyLogResp.base:type_name -> common.RespBase
-	77,  // 72: payment.GetRechargeNotifyLogResp.data:type_name -> payment.PayNotifyLog
-	65,  // 73: payment.ListRechargeNotifyLogsReq.page:type_name -> common.PageReq
-	78,  // 74: payment.ListRechargeNotifyLogsReq.notify_status:type_name -> payment.NotifyProcessStatus
-	79,  // 75: payment.ListRechargeNotifyLogsReq.sign_result:type_name -> payment.SignResult
-	61,  // 76: payment.ListRechargeNotifyLogsResp.base:type_name -> common.RespBase
-	77,  // 77: payment.ListRechargeNotifyLogsResp.data:type_name -> payment.PayNotifyLog
-	65,  // 78: payment.ListWithdrawOrdersReq.page:type_name -> common.PageReq
-	61,  // 79: payment.ListWithdrawOrdersResp.base:type_name -> common.RespBase
-	80,  // 80: payment.ListWithdrawOrdersResp.data:type_name -> payment.WithdrawOrder
-	61,  // 81: payment.GetWithdrawOrderResp.base:type_name -> common.RespBase
-	80,  // 82: payment.GetWithdrawOrderResp.data:type_name -> payment.WithdrawOrder
-	65,  // 83: payment.ListWithdrawNotifyLogsReq.page:type_name -> common.PageReq
-	78,  // 84: payment.ListWithdrawNotifyLogsReq.notify_status:type_name -> payment.NotifyProcessStatus
-	79,  // 85: payment.ListWithdrawNotifyLogsReq.sign_result:type_name -> payment.SignResult
-	61,  // 86: payment.ListWithdrawNotifyLogsResp.base:type_name -> common.RespBase
-	77,  // 87: payment.ListWithdrawNotifyLogsResp.data:type_name -> payment.PayNotifyLog
-	61,  // 88: payment.GetWithdrawNotifyLogResp.base:type_name -> common.RespBase
-	77,  // 89: payment.GetWithdrawNotifyLogResp.data:type_name -> payment.PayNotifyLog
-	1,   // 90: payment.PaymentAdmin.CreatePayPlatform:input_type -> payment.CreatePayPlatformReq
-	2,   // 91: payment.PaymentAdmin.UpdatePayPlatform:input_type -> payment.UpdatePayPlatformReq
-	3,   // 92: payment.PaymentAdmin.GetPayPlatform:input_type -> payment.GetPayPlatformReq
-	5,   // 93: payment.PaymentAdmin.ListPayPlatforms:input_type -> payment.ListPayPlatformsReq
-	7,   // 94: payment.PaymentAdmin.CreatePayProduct:input_type -> payment.CreatePayProductReq
-	8,   // 95: payment.PaymentAdmin.UpdatePayProduct:input_type -> payment.UpdatePayProductReq
-	9,   // 96: payment.PaymentAdmin.GetPayProduct:input_type -> payment.GetPayProductReq
-	11,  // 97: payment.PaymentAdmin.ListPayProducts:input_type -> payment.ListPayProductsReq
-	13,  // 98: payment.PaymentAdmin.OpenTenantPayPlatform:input_type -> payment.OpenTenantPayPlatformReq
-	14,  // 99: payment.PaymentAdmin.UpdateTenantPayPlatform:input_type -> payment.UpdateTenantPayPlatformReq
-	15,  // 100: payment.PaymentAdmin.GetTenantPayPlatform:input_type -> payment.GetTenantPayPlatformReq
-	17,  // 101: payment.PaymentAdmin.ListTenantPayPlatforms:input_type -> payment.ListTenantPayPlatformsReq
-	19,  // 102: payment.PaymentAdmin.CreateTenantPayAccount:input_type -> payment.CreateTenantPayAccountReq
-	20,  // 103: payment.PaymentAdmin.UpdateTenantPayAccount:input_type -> payment.UpdateTenantPayAccountReq
-	21,  // 104: payment.PaymentAdmin.GetTenantPayAccount:input_type -> payment.GetTenantPayAccountReq
-	23,  // 105: payment.PaymentAdmin.ListTenantPayAccounts:input_type -> payment.ListTenantPayAccountsReq
-	25,  // 106: payment.PaymentAdmin.CreateTenantPayChannel:input_type -> payment.CreateTenantPayChannelReq
-	26,  // 107: payment.PaymentAdmin.UpdateTenantPayChannel:input_type -> payment.UpdateTenantPayChannelReq
-	27,  // 108: payment.PaymentAdmin.GetTenantPayChannel:input_type -> payment.GetTenantPayChannelReq
-	29,  // 109: payment.PaymentAdmin.ListTenantPayChannels:input_type -> payment.ListTenantPayChannelsReq
-	31,  // 110: payment.PaymentAdmin.CreateTenantPayChannelRule:input_type -> payment.CreateTenantPayChannelRuleReq
-	32,  // 111: payment.PaymentAdmin.UpdateTenantPayChannelRule:input_type -> payment.UpdateTenantPayChannelRuleReq
-	33,  // 112: payment.PaymentAdmin.GetTenantPayChannelRule:input_type -> payment.GetTenantPayChannelRuleReq
-	35,  // 113: payment.PaymentAdmin.ListTenantPayChannelRules:input_type -> payment.ListTenantPayChannelRulesReq
-	37,  // 114: payment.PaymentAdmin.GetUserRechargeStat:input_type -> payment.GetUserRechargeStatReq
-	39,  // 115: payment.PaymentAdmin.ListUserRechargeStats:input_type -> payment.ListUserRechargeStatsReq
-	43,  // 116: payment.PaymentAdmin.ListRechargeOrders:input_type -> payment.ListRechargeOrdersReq
-	41,  // 117: payment.PaymentAdmin.GetRechargeOrder:input_type -> payment.GetRechargeOrderReq
-	45,  // 118: payment.PaymentAdmin.CloseRechargeOrder:input_type -> payment.CloseRechargeOrderReq
-	46,  // 119: payment.PaymentAdmin.ManualMarkRechargeOrderSuccess:input_type -> payment.ManualMarkRechargeOrderSuccessReq
-	47,  // 120: payment.PaymentAdmin.RetryNotify:input_type -> payment.RetryNotifyReq
-	50,  // 121: payment.PaymentAdmin.ListRechargeNotifyLogs:input_type -> payment.ListRechargeNotifyLogsReq
-	48,  // 122: payment.PaymentAdmin.GetRechargeNotifyLog:input_type -> payment.GetRechargeNotifyLogReq
-	52,  // 123: payment.PaymentAdmin.ListWithdrawOrders:input_type -> payment.ListWithdrawOrdersReq
-	54,  // 124: payment.PaymentAdmin.GetWithdrawOrder:input_type -> payment.GetWithdrawOrderReq
-	56,  // 125: payment.PaymentAdmin.AuditWithdrawOrder:input_type -> payment.AuditWithdrawOrderReq
-	57,  // 126: payment.PaymentAdmin.ListWithdrawNotifyLogs:input_type -> payment.ListWithdrawNotifyLogsReq
-	59,  // 127: payment.PaymentAdmin.GetWithdrawNotifyLog:input_type -> payment.GetWithdrawNotifyLogReq
-	0,   // 128: payment.PaymentAdmin.CreatePayPlatform:output_type -> payment.AdminCommonResp
-	0,   // 129: payment.PaymentAdmin.UpdatePayPlatform:output_type -> payment.AdminCommonResp
-	4,   // 130: payment.PaymentAdmin.GetPayPlatform:output_type -> payment.GetPayPlatformResp
-	6,   // 131: payment.PaymentAdmin.ListPayPlatforms:output_type -> payment.ListPayPlatformsResp
-	0,   // 132: payment.PaymentAdmin.CreatePayProduct:output_type -> payment.AdminCommonResp
-	0,   // 133: payment.PaymentAdmin.UpdatePayProduct:output_type -> payment.AdminCommonResp
-	10,  // 134: payment.PaymentAdmin.GetPayProduct:output_type -> payment.GetPayProductResp
-	12,  // 135: payment.PaymentAdmin.ListPayProducts:output_type -> payment.ListPayProductsResp
-	0,   // 136: payment.PaymentAdmin.OpenTenantPayPlatform:output_type -> payment.AdminCommonResp
-	0,   // 137: payment.PaymentAdmin.UpdateTenantPayPlatform:output_type -> payment.AdminCommonResp
-	16,  // 138: payment.PaymentAdmin.GetTenantPayPlatform:output_type -> payment.GetTenantPayPlatformResp
-	18,  // 139: payment.PaymentAdmin.ListTenantPayPlatforms:output_type -> payment.ListTenantPayPlatformsResp
-	0,   // 140: payment.PaymentAdmin.CreateTenantPayAccount:output_type -> payment.AdminCommonResp
-	0,   // 141: payment.PaymentAdmin.UpdateTenantPayAccount:output_type -> payment.AdminCommonResp
-	22,  // 142: payment.PaymentAdmin.GetTenantPayAccount:output_type -> payment.GetTenantPayAccountResp
-	24,  // 143: payment.PaymentAdmin.ListTenantPayAccounts:output_type -> payment.ListTenantPayAccountsResp
-	0,   // 144: payment.PaymentAdmin.CreateTenantPayChannel:output_type -> payment.AdminCommonResp
-	0,   // 145: payment.PaymentAdmin.UpdateTenantPayChannel:output_type -> payment.AdminCommonResp
-	28,  // 146: payment.PaymentAdmin.GetTenantPayChannel:output_type -> payment.GetTenantPayChannelResp
-	30,  // 147: payment.PaymentAdmin.ListTenantPayChannels:output_type -> payment.ListTenantPayChannelsResp
-	0,   // 148: payment.PaymentAdmin.CreateTenantPayChannelRule:output_type -> payment.AdminCommonResp
-	0,   // 149: payment.PaymentAdmin.UpdateTenantPayChannelRule:output_type -> payment.AdminCommonResp
-	34,  // 150: payment.PaymentAdmin.GetTenantPayChannelRule:output_type -> payment.GetTenantPayChannelRuleResp
-	36,  // 151: payment.PaymentAdmin.ListTenantPayChannelRules:output_type -> payment.ListTenantPayChannelRulesResp
-	38,  // 152: payment.PaymentAdmin.GetUserRechargeStat:output_type -> payment.GetUserRechargeStatResp
-	40,  // 153: payment.PaymentAdmin.ListUserRechargeStats:output_type -> payment.ListUserRechargeStatsResp
-	44,  // 154: payment.PaymentAdmin.ListRechargeOrders:output_type -> payment.ListRechargeOrdersResp
-	42,  // 155: payment.PaymentAdmin.GetRechargeOrder:output_type -> payment.GetRechargeOrderResp
-	0,   // 156: payment.PaymentAdmin.CloseRechargeOrder:output_type -> payment.AdminCommonResp
-	0,   // 157: payment.PaymentAdmin.ManualMarkRechargeOrderSuccess:output_type -> payment.AdminCommonResp
-	0,   // 158: payment.PaymentAdmin.RetryNotify:output_type -> payment.AdminCommonResp
-	51,  // 159: payment.PaymentAdmin.ListRechargeNotifyLogs:output_type -> payment.ListRechargeNotifyLogsResp
-	49,  // 160: payment.PaymentAdmin.GetRechargeNotifyLog:output_type -> payment.GetRechargeNotifyLogResp
-	53,  // 161: payment.PaymentAdmin.ListWithdrawOrders:output_type -> payment.ListWithdrawOrdersResp
-	55,  // 162: payment.PaymentAdmin.GetWithdrawOrder:output_type -> payment.GetWithdrawOrderResp
-	0,   // 163: payment.PaymentAdmin.AuditWithdrawOrder:output_type -> payment.AdminCommonResp
-	58,  // 164: payment.PaymentAdmin.ListWithdrawNotifyLogs:output_type -> payment.ListWithdrawNotifyLogsResp
-	60,  // 165: payment.PaymentAdmin.GetWithdrawNotifyLog:output_type -> payment.GetWithdrawNotifyLogResp
-	128, // [128:166] is the sub-list for method output_type
-	90,  // [90:128] is the sub-list for method input_type
-	90,  // [90:90] is the sub-list for extension type_name
-	90,  // [90:90] is the sub-list for extension extendee
-	0,   // [0:90] is the sub-list for field type_name
+	64,  // 0: payment.AdminCommonResp.base:type_name -> common.RespBase
+	65,  // 1: payment.CreatePayPlatformReq.platform_type:type_name -> payment.PlatformType
+	66,  // 2: payment.CreatePayPlatformReq.status:type_name -> payment.CommonStatus
+	65,  // 3: payment.UpdatePayPlatformReq.platform_type:type_name -> payment.PlatformType
+	66,  // 4: payment.UpdatePayPlatformReq.status:type_name -> payment.CommonStatus
+	64,  // 5: payment.GetPayPlatformResp.base:type_name -> common.RespBase
+	67,  // 6: payment.GetPayPlatformResp.data:type_name -> payment.PayPlatform
+	68,  // 7: payment.ListPayPlatformsReq.page:type_name -> common.PageReq
+	66,  // 8: payment.ListPayPlatformsReq.status:type_name -> payment.CommonStatus
+	65,  // 9: payment.ListPayPlatformsReq.platform_type:type_name -> payment.PlatformType
+	64,  // 10: payment.ListPayPlatformsResp.base:type_name -> common.RespBase
+	67,  // 11: payment.ListPayPlatformsResp.data:type_name -> payment.PayPlatform
+	69,  // 12: payment.CreatePayProductReq.scene_type:type_name -> payment.SceneType
+	66,  // 13: payment.CreatePayProductReq.status:type_name -> payment.CommonStatus
+	69,  // 14: payment.UpdatePayProductReq.scene_type:type_name -> payment.SceneType
+	66,  // 15: payment.UpdatePayProductReq.status:type_name -> payment.CommonStatus
+	64,  // 16: payment.GetPayProductResp.base:type_name -> common.RespBase
+	70,  // 17: payment.GetPayProductResp.data:type_name -> payment.PayProduct
+	68,  // 18: payment.ListPayProductsReq.page:type_name -> common.PageReq
+	66,  // 19: payment.ListPayProductsReq.status:type_name -> payment.CommonStatus
+	69,  // 20: payment.ListPayProductsReq.scene_type:type_name -> payment.SceneType
+	64,  // 21: payment.ListPayProductsResp.base:type_name -> common.RespBase
+	70,  // 22: payment.ListPayProductsResp.data:type_name -> payment.PayProduct
+	66,  // 23: payment.OpenTenantPayPlatformReq.status:type_name -> payment.CommonStatus
+	71,  // 24: payment.OpenTenantPayPlatformReq.open_status:type_name -> payment.OpenStatus
+	66,  // 25: payment.UpdateTenantPayPlatformReq.status:type_name -> payment.CommonStatus
+	71,  // 26: payment.UpdateTenantPayPlatformReq.open_status:type_name -> payment.OpenStatus
+	64,  // 27: payment.GetTenantPayPlatformResp.base:type_name -> common.RespBase
+	72,  // 28: payment.GetTenantPayPlatformResp.data:type_name -> payment.TenantPayPlatform
+	68,  // 29: payment.ListTenantPayPlatformsReq.page:type_name -> common.PageReq
+	66,  // 30: payment.ListTenantPayPlatformsReq.status:type_name -> payment.CommonStatus
+	71,  // 31: payment.ListTenantPayPlatformsReq.open_status:type_name -> payment.OpenStatus
+	64,  // 32: payment.ListTenantPayPlatformsResp.base:type_name -> common.RespBase
+	72,  // 33: payment.ListTenantPayPlatformsResp.data:type_name -> payment.TenantPayPlatform
+	66,  // 34: payment.CreateTenantPayAccountReq.status:type_name -> payment.CommonStatus
+	66,  // 35: payment.UpdateTenantPayAccountReq.status:type_name -> payment.CommonStatus
+	64,  // 36: payment.GetTenantPayAccountResp.base:type_name -> common.RespBase
+	73,  // 37: payment.GetTenantPayAccountResp.data:type_name -> payment.TenantPayAccount
+	68,  // 38: payment.ListTenantPayAccountsReq.page:type_name -> common.PageReq
+	66,  // 39: payment.ListTenantPayAccountsReq.status:type_name -> payment.CommonStatus
+	64,  // 40: payment.ListTenantPayAccountsResp.base:type_name -> common.RespBase
+	73,  // 41: payment.ListTenantPayAccountsResp.data:type_name -> payment.TenantPayAccount
+	66,  // 42: payment.CreateTenantPayChannelReq.status:type_name -> payment.CommonStatus
+	74,  // 43: payment.CreateTenantPayChannelReq.fee_type:type_name -> payment.FeeType
+	66,  // 44: payment.UpdateTenantPayChannelReq.status:type_name -> payment.CommonStatus
+	74,  // 45: payment.UpdateTenantPayChannelReq.fee_type:type_name -> payment.FeeType
+	64,  // 46: payment.GetTenantPayChannelResp.base:type_name -> common.RespBase
+	75,  // 47: payment.GetTenantPayChannelResp.data:type_name -> payment.TenantPayChannel
+	68,  // 48: payment.ListTenantPayChannelsReq.page:type_name -> common.PageReq
+	66,  // 49: payment.ListTenantPayChannelsReq.status:type_name -> payment.CommonStatus
+	64,  // 50: payment.ListTenantPayChannelsResp.base:type_name -> common.RespBase
+	75,  // 51: payment.ListTenantPayChannelsResp.data:type_name -> payment.TenantPayChannel
+	66,  // 52: payment.CreateTenantPayChannelRuleReq.status:type_name -> payment.CommonStatus
+	66,  // 53: payment.UpdateTenantPayChannelRuleReq.status:type_name -> payment.CommonStatus
+	64,  // 54: payment.GetTenantPayChannelRuleResp.base:type_name -> common.RespBase
+	76,  // 55: payment.GetTenantPayChannelRuleResp.data:type_name -> payment.TenantPayChannelRule
+	68,  // 56: payment.ListTenantPayChannelRulesReq.page:type_name -> common.PageReq
+	66,  // 57: payment.ListTenantPayChannelRulesReq.status:type_name -> payment.CommonStatus
+	64,  // 58: payment.ListTenantPayChannelRulesResp.base:type_name -> common.RespBase
+	76,  // 59: payment.ListTenantPayChannelRulesResp.data:type_name -> payment.TenantPayChannelRule
+	64,  // 60: payment.GetUserRechargeStatResp.base:type_name -> common.RespBase
+	77,  // 61: payment.GetUserRechargeStatResp.data:type_name -> payment.UserRechargeStat
+	68,  // 62: payment.ListUserRechargeStatsReq.page:type_name -> common.PageReq
+	64,  // 63: payment.ListUserRechargeStatsResp.base:type_name -> common.RespBase
+	77,  // 64: payment.ListUserRechargeStatsResp.data:type_name -> payment.UserRechargeStat
+	64,  // 65: payment.GetRechargeOrderResp.base:type_name -> common.RespBase
+	78,  // 66: payment.GetRechargeOrderResp.data:type_name -> payment.RechargeOrder
+	68,  // 67: payment.ListRechargeOrdersReq.page:type_name -> common.PageReq
+	79,  // 68: payment.ListRechargeOrdersReq.status:type_name -> payment.PayOrderStatus
+	64,  // 69: payment.ListRechargeOrdersResp.base:type_name -> common.RespBase
+	78,  // 70: payment.ListRechargeOrdersResp.data:type_name -> payment.RechargeOrder
+	64,  // 71: payment.GetRechargeNotifyLogResp.base:type_name -> common.RespBase
+	80,  // 72: payment.GetRechargeNotifyLogResp.data:type_name -> payment.PayNotifyLog
+	68,  // 73: payment.ListRechargeNotifyLogsReq.page:type_name -> common.PageReq
+	81,  // 74: payment.ListRechargeNotifyLogsReq.notify_status:type_name -> payment.NotifyProcessStatus
+	82,  // 75: payment.ListRechargeNotifyLogsReq.sign_result:type_name -> payment.SignResult
+	64,  // 76: payment.ListRechargeNotifyLogsResp.base:type_name -> common.RespBase
+	80,  // 77: payment.ListRechargeNotifyLogsResp.data:type_name -> payment.PayNotifyLog
+	68,  // 78: payment.ListWithdrawOrdersReq.page:type_name -> common.PageReq
+	64,  // 79: payment.ListWithdrawOrdersResp.base:type_name -> common.RespBase
+	83,  // 80: payment.ListWithdrawOrdersResp.data:type_name -> payment.WithdrawOrder
+	64,  // 81: payment.GetWithdrawOrderResp.base:type_name -> common.RespBase
+	83,  // 82: payment.GetWithdrawOrderResp.data:type_name -> payment.WithdrawOrder
+	68,  // 83: payment.ListWithdrawNotifyLogsReq.page:type_name -> common.PageReq
+	81,  // 84: payment.ListWithdrawNotifyLogsReq.notify_status:type_name -> payment.NotifyProcessStatus
+	82,  // 85: payment.ListWithdrawNotifyLogsReq.sign_result:type_name -> payment.SignResult
+	64,  // 86: payment.ListWithdrawNotifyLogsResp.base:type_name -> common.RespBase
+	80,  // 87: payment.ListWithdrawNotifyLogsResp.data:type_name -> payment.PayNotifyLog
+	64,  // 88: payment.GetWithdrawNotifyLogResp.base:type_name -> common.RespBase
+	80,  // 89: payment.GetWithdrawNotifyLogResp.data:type_name -> payment.PayNotifyLog
+	64,  // 90: payment.PayPlatformsResp.base:type_name -> common.RespBase
+	62,  // 91: payment.PayPlatformsResp.data:type_name -> payment.PayPlatformItem
+	61,  // 92: payment.PaymentAdmin.GetPayPlatforms:input_type -> payment.AdminEmpty
+	1,   // 93: payment.PaymentAdmin.CreatePayPlatform:input_type -> payment.CreatePayPlatformReq
+	2,   // 94: payment.PaymentAdmin.UpdatePayPlatform:input_type -> payment.UpdatePayPlatformReq
+	3,   // 95: payment.PaymentAdmin.GetPayPlatform:input_type -> payment.GetPayPlatformReq
+	5,   // 96: payment.PaymentAdmin.ListPayPlatforms:input_type -> payment.ListPayPlatformsReq
+	7,   // 97: payment.PaymentAdmin.CreatePayProduct:input_type -> payment.CreatePayProductReq
+	8,   // 98: payment.PaymentAdmin.UpdatePayProduct:input_type -> payment.UpdatePayProductReq
+	9,   // 99: payment.PaymentAdmin.GetPayProduct:input_type -> payment.GetPayProductReq
+	11,  // 100: payment.PaymentAdmin.ListPayProducts:input_type -> payment.ListPayProductsReq
+	13,  // 101: payment.PaymentAdmin.OpenTenantPayPlatform:input_type -> payment.OpenTenantPayPlatformReq
+	14,  // 102: payment.PaymentAdmin.UpdateTenantPayPlatform:input_type -> payment.UpdateTenantPayPlatformReq
+	15,  // 103: payment.PaymentAdmin.GetTenantPayPlatform:input_type -> payment.GetTenantPayPlatformReq
+	17,  // 104: payment.PaymentAdmin.ListTenantPayPlatforms:input_type -> payment.ListTenantPayPlatformsReq
+	19,  // 105: payment.PaymentAdmin.CreateTenantPayAccount:input_type -> payment.CreateTenantPayAccountReq
+	20,  // 106: payment.PaymentAdmin.UpdateTenantPayAccount:input_type -> payment.UpdateTenantPayAccountReq
+	21,  // 107: payment.PaymentAdmin.GetTenantPayAccount:input_type -> payment.GetTenantPayAccountReq
+	23,  // 108: payment.PaymentAdmin.ListTenantPayAccounts:input_type -> payment.ListTenantPayAccountsReq
+	25,  // 109: payment.PaymentAdmin.CreateTenantPayChannel:input_type -> payment.CreateTenantPayChannelReq
+	26,  // 110: payment.PaymentAdmin.UpdateTenantPayChannel:input_type -> payment.UpdateTenantPayChannelReq
+	27,  // 111: payment.PaymentAdmin.GetTenantPayChannel:input_type -> payment.GetTenantPayChannelReq
+	29,  // 112: payment.PaymentAdmin.ListTenantPayChannels:input_type -> payment.ListTenantPayChannelsReq
+	31,  // 113: payment.PaymentAdmin.CreateTenantPayChannelRule:input_type -> payment.CreateTenantPayChannelRuleReq
+	32,  // 114: payment.PaymentAdmin.UpdateTenantPayChannelRule:input_type -> payment.UpdateTenantPayChannelRuleReq
+	33,  // 115: payment.PaymentAdmin.GetTenantPayChannelRule:input_type -> payment.GetTenantPayChannelRuleReq
+	35,  // 116: payment.PaymentAdmin.ListTenantPayChannelRules:input_type -> payment.ListTenantPayChannelRulesReq
+	37,  // 117: payment.PaymentAdmin.GetUserRechargeStat:input_type -> payment.GetUserRechargeStatReq
+	39,  // 118: payment.PaymentAdmin.ListUserRechargeStats:input_type -> payment.ListUserRechargeStatsReq
+	43,  // 119: payment.PaymentAdmin.ListRechargeOrders:input_type -> payment.ListRechargeOrdersReq
+	41,  // 120: payment.PaymentAdmin.GetRechargeOrder:input_type -> payment.GetRechargeOrderReq
+	45,  // 121: payment.PaymentAdmin.CloseRechargeOrder:input_type -> payment.CloseRechargeOrderReq
+	46,  // 122: payment.PaymentAdmin.ManualMarkRechargeOrderSuccess:input_type -> payment.ManualMarkRechargeOrderSuccessReq
+	47,  // 123: payment.PaymentAdmin.RetryNotify:input_type -> payment.RetryNotifyReq
+	50,  // 124: payment.PaymentAdmin.ListRechargeNotifyLogs:input_type -> payment.ListRechargeNotifyLogsReq
+	48,  // 125: payment.PaymentAdmin.GetRechargeNotifyLog:input_type -> payment.GetRechargeNotifyLogReq
+	52,  // 126: payment.PaymentAdmin.ListWithdrawOrders:input_type -> payment.ListWithdrawOrdersReq
+	54,  // 127: payment.PaymentAdmin.GetWithdrawOrder:input_type -> payment.GetWithdrawOrderReq
+	56,  // 128: payment.PaymentAdmin.AuditWithdrawOrder:input_type -> payment.AuditWithdrawOrderReq
+	57,  // 129: payment.PaymentAdmin.ListWithdrawNotifyLogs:input_type -> payment.ListWithdrawNotifyLogsReq
+	59,  // 130: payment.PaymentAdmin.GetWithdrawNotifyLog:input_type -> payment.GetWithdrawNotifyLogReq
+	63,  // 131: payment.PaymentAdmin.GetPayPlatforms:output_type -> payment.PayPlatformsResp
+	0,   // 132: payment.PaymentAdmin.CreatePayPlatform:output_type -> payment.AdminCommonResp
+	0,   // 133: payment.PaymentAdmin.UpdatePayPlatform:output_type -> payment.AdminCommonResp
+	4,   // 134: payment.PaymentAdmin.GetPayPlatform:output_type -> payment.GetPayPlatformResp
+	6,   // 135: payment.PaymentAdmin.ListPayPlatforms:output_type -> payment.ListPayPlatformsResp
+	0,   // 136: payment.PaymentAdmin.CreatePayProduct:output_type -> payment.AdminCommonResp
+	0,   // 137: payment.PaymentAdmin.UpdatePayProduct:output_type -> payment.AdminCommonResp
+	10,  // 138: payment.PaymentAdmin.GetPayProduct:output_type -> payment.GetPayProductResp
+	12,  // 139: payment.PaymentAdmin.ListPayProducts:output_type -> payment.ListPayProductsResp
+	0,   // 140: payment.PaymentAdmin.OpenTenantPayPlatform:output_type -> payment.AdminCommonResp
+	0,   // 141: payment.PaymentAdmin.UpdateTenantPayPlatform:output_type -> payment.AdminCommonResp
+	16,  // 142: payment.PaymentAdmin.GetTenantPayPlatform:output_type -> payment.GetTenantPayPlatformResp
+	18,  // 143: payment.PaymentAdmin.ListTenantPayPlatforms:output_type -> payment.ListTenantPayPlatformsResp
+	0,   // 144: payment.PaymentAdmin.CreateTenantPayAccount:output_type -> payment.AdminCommonResp
+	0,   // 145: payment.PaymentAdmin.UpdateTenantPayAccount:output_type -> payment.AdminCommonResp
+	22,  // 146: payment.PaymentAdmin.GetTenantPayAccount:output_type -> payment.GetTenantPayAccountResp
+	24,  // 147: payment.PaymentAdmin.ListTenantPayAccounts:output_type -> payment.ListTenantPayAccountsResp
+	0,   // 148: payment.PaymentAdmin.CreateTenantPayChannel:output_type -> payment.AdminCommonResp
+	0,   // 149: payment.PaymentAdmin.UpdateTenantPayChannel:output_type -> payment.AdminCommonResp
+	28,  // 150: payment.PaymentAdmin.GetTenantPayChannel:output_type -> payment.GetTenantPayChannelResp
+	30,  // 151: payment.PaymentAdmin.ListTenantPayChannels:output_type -> payment.ListTenantPayChannelsResp
+	0,   // 152: payment.PaymentAdmin.CreateTenantPayChannelRule:output_type -> payment.AdminCommonResp
+	0,   // 153: payment.PaymentAdmin.UpdateTenantPayChannelRule:output_type -> payment.AdminCommonResp
+	34,  // 154: payment.PaymentAdmin.GetTenantPayChannelRule:output_type -> payment.GetTenantPayChannelRuleResp
+	36,  // 155: payment.PaymentAdmin.ListTenantPayChannelRules:output_type -> payment.ListTenantPayChannelRulesResp
+	38,  // 156: payment.PaymentAdmin.GetUserRechargeStat:output_type -> payment.GetUserRechargeStatResp
+	40,  // 157: payment.PaymentAdmin.ListUserRechargeStats:output_type -> payment.ListUserRechargeStatsResp
+	44,  // 158: payment.PaymentAdmin.ListRechargeOrders:output_type -> payment.ListRechargeOrdersResp
+	42,  // 159: payment.PaymentAdmin.GetRechargeOrder:output_type -> payment.GetRechargeOrderResp
+	0,   // 160: payment.PaymentAdmin.CloseRechargeOrder:output_type -> payment.AdminCommonResp
+	0,   // 161: payment.PaymentAdmin.ManualMarkRechargeOrderSuccess:output_type -> payment.AdminCommonResp
+	0,   // 162: payment.PaymentAdmin.RetryNotify:output_type -> payment.AdminCommonResp
+	51,  // 163: payment.PaymentAdmin.ListRechargeNotifyLogs:output_type -> payment.ListRechargeNotifyLogsResp
+	49,  // 164: payment.PaymentAdmin.GetRechargeNotifyLog:output_type -> payment.GetRechargeNotifyLogResp
+	53,  // 165: payment.PaymentAdmin.ListWithdrawOrders:output_type -> payment.ListWithdrawOrdersResp
+	55,  // 166: payment.PaymentAdmin.GetWithdrawOrder:output_type -> payment.GetWithdrawOrderResp
+	0,   // 167: payment.PaymentAdmin.AuditWithdrawOrder:output_type -> payment.AdminCommonResp
+	58,  // 168: payment.PaymentAdmin.ListWithdrawNotifyLogs:output_type -> payment.ListWithdrawNotifyLogsResp
+	60,  // 169: payment.PaymentAdmin.GetWithdrawNotifyLog:output_type -> payment.GetWithdrawNotifyLogResp
+	131, // [131:170] is the sub-list for method output_type
+	92,  // [92:131] is the sub-list for method input_type
+	92,  // [92:92] is the sub-list for extension type_name
+	92,  // [92:92] is the sub-list for extension extendee
+	0,   // [0:92] is the sub-list for field type_name
 }
 
 func init() { file_proto_payment_payment_admin_proto_init() }
@@ -5385,7 +5541,7 @@ func file_proto_payment_payment_admin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_payment_payment_admin_proto_rawDesc), len(file_proto_payment_payment_admin_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   61,
+			NumMessages:   64,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

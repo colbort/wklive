@@ -61,8 +61,8 @@ func (l *GetTenantPayChannelRuleLogic) GetTenantPayChannelRule(req *types.GetTen
 			AllowTags:            result.Data.AllowTags,
 			DenyTags:             result.Data.DenyTags,
 			Remark:               result.Data.Remark,
-			CreateTimes:           result.Data.CreateTimes,
-			UpdateTimes:           result.Data.UpdateTimes,
+			CreateTimes:          result.Data.CreateTimes,
+			UpdateTimes:          result.Data.UpdateTimes,
 		},
 	}
 	return resp, nil

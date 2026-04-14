@@ -1,6 +1,7 @@
 import { get, post, put } from '@/utils/request'
 import type {
   RespBase,
+  PayPlatformItem,
   PayPlatform,
   PayProduct,
   CreatePayPlatformReq,
@@ -10,6 +11,10 @@ import type {
   UpdatePayProductReq,
   ListPayProductsReq,
 } from '@/services'
+
+export function apiPayPlatforms(): Promise<RespBase<PayPlatformItem[]>> {
+  return get<PayPlatformItem[]>('/admin/payment/platforms/options')
+}
 
 export function apiPayPlatformList(params: ListPayPlatformsReq): Promise<RespBase<PayPlatform[]>> {
   return get<PayPlatform[]>('/admin/payment/platforms/list', params)

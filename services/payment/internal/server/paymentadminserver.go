@@ -23,6 +23,12 @@ func NewPaymentAdminServer(svcCtx *svc.ServiceContext) *PaymentAdminServer {
 	}
 }
 
+// 获取系统支持的平台
+func (s *PaymentAdminServer) GetPayPlatforms(ctx context.Context, in *payment.AdminEmpty) (*payment.PayPlatformsResp, error) {
+	l := logic.NewGetPayPlatformsLogic(ctx, s.svcCtx)
+	return l.GetPayPlatforms(in)
+}
+
 // 创建平台
 func (s *PaymentAdminServer) CreatePayPlatform(ctx context.Context, in *payment.CreatePayPlatformReq) (*payment.AdminCommonResp, error) {
 	l := logic.NewCreatePayPlatformLogic(ctx, s.svcCtx)

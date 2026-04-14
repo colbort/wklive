@@ -55,8 +55,8 @@ func (l *SysTenantListLogic) SysTenantList(req *types.SysTenantListReq) (resp *t
 			ContactName:  v.ContactName,
 			ContactPhone: v.ContactPhone,
 			Remark:       v.Remark,
-			CreateTimes:   v.CreateTimes,
-			UpdateTimes:   v.UpdateTimes,
+			CreateTimes:  v.CreateTimes,
+			UpdateTimes:  v.UpdateTimes,
 		})
 	}
 	return &types.SysTenantListResp{

@@ -84,8 +84,8 @@ func (l *ListRechargeOrdersLogic) ListRechargeOrders(req *types.ListRechargeOrde
 			NotifyTime:   item.NotifyTime,
 			CloseTime:    item.CloseTime,
 			Remark:       item.Remark,
-			CreateTimes:   item.CreateTimes,
-			UpdateTimes:   item.UpdateTimes,
+			CreateTimes:  item.CreateTimes,
+			UpdateTimes:  item.UpdateTimes,
 		}
 	}
 

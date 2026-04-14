@@ -1,5 +1,5 @@
 import type { RespBase } from '@/services'
-import { apiUploadAvatar } from '@/api/system/upload'
+import { apiUploadAvatar, apiUploadFile } from '@/api/system/upload'
 
 // ===== 文件上传相关类型定义 =====
 
@@ -23,13 +23,11 @@ export class UploadService {
    * 通用文件上传（如果需要扩展）
    */
   async uploadFile(file: File, type: string = 'general'): Promise<RespBase<UploadFileResp>> {
-    // 这里可以根据 type 调用不同的上传接口
-    // 目前只有头像上传，未来可以扩展其他类型
     switch (type) {
       case 'avatar':
         return this.uploadAvatar(file)
       default:
-        return this.uploadAvatar(file) // 默认使用头像上传
+        return apiUploadFile(file)
     }
   }
 }

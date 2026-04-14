@@ -17,6 +17,11 @@ type PayPlatform {
 	updateTimes  int64  `json:"updateTimes"`
 }
 
+type PayPlatformItem {
+	platformCode string `json:"platformCode"`
+	platformName string `json:"platformName"`
+}
+
 type PayProduct {
 	id          int64  `json:"id"`
 	platformId  int64  `json:"platformId"`
@@ -58,7 +63,7 @@ type TenantPayAccount {
 	certCipher          string `json:"certCipher"`
 	extConfig           string `json:"extConfig"`
 	status              int64  `json:"status"` // 0未知 1启用 2禁用
-	isDefault           int64   `json:"isDefault"`
+	isDefault           int64  `json:"isDefault"`
 	remark              string `json:"remark"`
 	createTimes         int64  `json:"createTimes"`
 	updateTimes         int64  `json:"updateTimes"`
@@ -76,7 +81,7 @@ type TenantPayChannel {
 	icon            string `json:"icon"`
 	currency        string `json:"currency"`
 	sort            int64  `json:"sort"`
-	visible         int64   `json:"visible"`
+	visible         int64  `json:"visible"`
 	status          int64  `json:"status"` // 0未知 1启用 2禁用
 	singleMinAmount int64  `json:"singleMinAmount"`
 	singleMaxAmount int64  `json:"singleMaxAmount"`
@@ -106,8 +111,8 @@ type TenantPayChannelRule {
 	memberLevelMax       int64  `json:"memberLevelMax"`
 	kycLevelMin          int64  `json:"kycLevelMin"`
 	kycLevelMax          int64  `json:"kycLevelMax"`
-	allowNewUser         int64   `json:"allowNewUser"`
-	allowOldUser         int64   `json:"allowOldUser"`
+	allowNewUser         int64  `json:"allowNewUser"`
+	allowOldUser         int64  `json:"allowOldUser"`
 	allowTags            string `json:"allowTags"`
 	denyTags             string `json:"denyTags"`
 	remark               string `json:"remark"`
@@ -214,6 +219,11 @@ type GetPayPlatformResp {
 	data PayPlatform `json:"data"`
 }
 
+type GetPayPlatformsResp {
+	RespBase
+	data []PayPlatformItem `json:"data"`
+}
+
 type ListPayPlatformsReq {
 	PageReq
 	keyword      string `form:"keyword,optional"`
@@ -225,6 +235,11 @@ type ListPayPlatformsReq {
 type ListPayPlatformsResp {
 	RespBase
 	data []PayPlatform `json:"data"`
+}
+
+type DeletePayPlatformReq {
+	tenantId int64 `form:"tenantId"`
+	id       int64 `path:"id"`
 }
 
 // ====================
@@ -272,6 +287,11 @@ type ListPayProductsResp {
 	data []PayProduct `json:"data"`
 }
 
+type DeletePayProductReq {
+	tenantId int64 `form:"tenantId"`
+	id       int64 `path:"id"`
+}
+
 // ====================
 // tenant pay platform
 // ====================
@@ -314,6 +334,11 @@ type ListTenantPayPlatformsResp {
 	data []TenantPayPlatform `json:"data"`
 }
 
+type DeleteTenantPayPlatformReq {
+	tenantId int64 `form:"tenantId"`
+	id       int64 `path:"id"`
+}
+
 // ====================
 // tenant pay account
 // ====================
@@ -333,7 +358,7 @@ type CreateTenantPayAccountReq {
 	certCipher          string `json:"certCipher,optional"`
 	extConfig           string `json:"extConfig,optional"`
 	status              int64  `json:"status"`
-	isDefault           int64   `json:"isDefault"`
+	isDefault           int64  `json:"isDefault"`
 	remark              string `json:"remark,optional"`
 }
 
@@ -351,7 +376,7 @@ type UpdateTenantPayAccountReq {
 	certCipher       string `json:"certCipher,optional"`
 	extConfig        string `json:"extConfig,optional"`
 	status           int64  `json:"status"`
-	isDefault        int64   `json:"isDefault"`
+	isDefault        int64  `json:"isDefault"`
 	remark           string `json:"remark,optional"`
 }
 
@@ -379,6 +404,11 @@ type ListTenantPayAccountsResp {
 	data []TenantPayAccount `json:"data"`
 }
 
+type DeleteTenantPayAccountReq {
+	tenantId int64 `form:"tenantId"`
+	id       int64 `path:"id"`
+}
+
 // ====================
 // tenant pay channel
 // ====================
@@ -393,7 +423,7 @@ type CreateTenantPayChannelReq {
 	icon            string `json:"icon,optional"`
 	currency        string `json:"currency"`
 	sort            int64  `json:"sort"`
-	visible         int64   `json:"visible"`
+	visible         int64  `json:"visible"`
 	status          int64  `json:"status"`
 	singleMinAmount int64  `json:"singleMinAmount"`
 	singleMaxAmount int64  `json:"singleMaxAmount"`
@@ -414,7 +444,7 @@ type UpdateTenantPayChannelReq {
 	icon            string `json:"icon,optional"`
 	currency        string `json:"currency"`
 	sort            int64  `json:"sort"`
-	visible         int64   `json:"visible"`
+	visible         int64  `json:"visible"`
 	status          int64  `json:"status"`
 	singleMinAmount int64  `json:"singleMinAmount"`
 	singleMaxAmount int64  `json:"singleMaxAmount"`
@@ -445,12 +475,17 @@ type ListTenantPayChannelsReq {
 	accountId  int64  `form:"accountId,optional"`
 	keyword    string `form:"keyword,optional"`
 	status     int64  `form:"status,optional"`
-	visible    int64   `form:"visible,optional"`
+	visible    int64  `form:"visible,optional"`
 }
 
 type ListTenantPayChannelsResp {
 	RespBase
 	data []TenantPayChannel `json:"data"`
+}
+
+type DeleteTenantPayChannelReq {
+	tenantId int64 `form:"tenantId"`
+	id       int64 `path:"id"`
 }
 
 // ====================
@@ -470,8 +505,8 @@ type CreateTenantPayChannelRuleReq {
 	memberLevelMax       int64  `json:"memberLevelMax"`
 	kycLevelMin          int64  `json:"kycLevelMin"`
 	kycLevelMax          int64  `json:"kycLevelMax"`
-	allowNewUser         int64   `json:"allowNewUser"`
-	allowOldUser         int64   `json:"allowOldUser"`
+	allowNewUser         int64  `json:"allowNewUser"`
+	allowOldUser         int64  `json:"allowOldUser"`
 	allowTags            string `json:"allowTags,optional"`
 	denyTags             string `json:"denyTags,optional"`
 	remark               string `json:"remark,optional"`
@@ -491,8 +526,8 @@ type UpdateTenantPayChannelRuleReq {
 	memberLevelMax       int64  `json:"memberLevelMax"`
 	kycLevelMin          int64  `json:"kycLevelMin"`
 	kycLevelMax          int64  `json:"kycLevelMax"`
-	allowNewUser         int64   `json:"allowNewUser"`
-	allowOldUser         int64   `json:"allowOldUser"`
+	allowNewUser         int64  `json:"allowNewUser"`
+	allowOldUser         int64  `json:"allowOldUser"`
 	allowTags            string `json:"allowTags,optional"`
 	denyTags             string `json:"denyTags,optional"`
 	remark               string `json:"remark,optional"`
@@ -518,6 +553,11 @@ type ListTenantPayChannelRulesReq {
 type ListTenantPayChannelRulesResp {
 	RespBase
 	data []TenantPayChannelRule `json:"data"`
+}
+
+type DeleteTenantPayChannelRuleReq {
+	tenantId int64 `form:"tenantId"`
+	id       int64 `path:"id"`
 }
 
 // ====================
@@ -686,7 +726,7 @@ type GetWithdrawOrderResp {
 type AuditWithdrawOrderReq {
 	tenantId int64  `json:"tenantId"`
 	orderNo  string `json:"orderNo"`
-	approve  int64   `json:"approve"`
+	approve  int64  `json:"approve"`
 	remark   string `json:"remark,optional"`
 }
 
@@ -724,131 +764,184 @@ type GetWithdrawNotifyLogResp {
 	jwt:    Jwt
 )
 service admin {
-	// 平台
+	// 添加平台
 	@handler CreatePayPlatform
-	post /platforms (CreatePayPlatformReq) returns (RespBase)
+	post /platform (CreatePayPlatformReq) returns (RespBase)
 
+	// 更新平台
 	@handler UpdatePayPlatform
-	put /platforms (UpdatePayPlatformReq) returns (RespBase)
+	put /platform (UpdatePayPlatformReq) returns (RespBase)
 
+	// 获取平台详情
 	@handler GetPayPlatform
-	get /platforms (GetPayPlatformReq) returns (GetPayPlatformResp)
+	get /platform (GetPayPlatformReq) returns (GetPayPlatformResp)
 
+	// 获取系统支持的平台
+	@handler GetPayPlatforms
+	get /platforms/options returns (GetPayPlatformsResp)
+
+	// 获取平台列表
 	@handler ListPayPlatforms
-	get /platforms/list (ListPayPlatformsReq) returns (ListPayPlatformsResp)
+	get /platforms (ListPayPlatformsReq) returns (ListPayPlatformsResp)
 
-	// 产品
+	// 删除平台
+	@handler DeletePayPlatform
+	delete /platform/:id (DeletePayPlatformReq) returns (RespBase)
+
+	// 添加产品
 	@handler CreatePayProduct
-	post /products (CreatePayProductReq) returns (RespBase)
+	post /product (CreatePayProductReq) returns (RespBase)
 
+	// 更新产品
 	@handler UpdatePayProduct
-	put /products (UpdatePayProductReq) returns (RespBase)
+	put /product (UpdatePayProductReq) returns (RespBase)
 
+	// 获取产品详情
 	@handler GetPayProduct
-	get /products (GetPayProductReq) returns (GetPayProductResp)
+	get /product (GetPayProductReq) returns (GetPayProductResp)
 
+	// 获取产品列表
 	@handler ListPayProducts
-	get /products/list (ListPayProductsReq) returns (ListPayProductsResp)
+	get /products (ListPayProductsReq) returns (ListPayProductsResp)
 
-	// 租户开通平台
+	// 删除产品
+	@handler DeletePayProduct
+	delete /product/:id (DeletePayProductReq) returns (RespBase)
+
+	// 添加租户平台
 	@handler OpenTenantPayPlatform
-	post /tenant-platforms/open (OpenTenantPayPlatformReq) returns (RespBase)
+	post /tenant-platform (OpenTenantPayPlatformReq) returns (RespBase)
 
+	// 更新租户平台
 	@handler UpdateTenantPayPlatform
-	put /tenant-platforms (UpdateTenantPayPlatformReq) returns (RespBase)
+	put /tenant-platform (UpdateTenantPayPlatformReq) returns (RespBase)
 
+	// 获取租户平台详情
 	@handler GetTenantPayPlatform
-	get /tenant-platforms (GetTenantPayPlatformReq) returns (GetTenantPayPlatformResp)
+	get /tenant-platform (GetTenantPayPlatformReq) returns (GetTenantPayPlatformResp)
 
+	// 获取租户平台列表
 	@handler ListTenantPayPlatforms
-	get /tenant-platforms/list (ListTenantPayPlatformsReq) returns (ListTenantPayPlatformsResp)
+	get /tenant-platforms (ListTenantPayPlatformsReq) returns (ListTenantPayPlatformsResp)
 
-	// 租户支付账号
+	// 删除租户平台
+	@handler DeleteTenantPayPlatform
+	delete /tenant-platform/:id (DeleteTenantPayPlatformReq) returns (RespBase)
+
+	// 添加租户支付账号
 	@handler CreateTenantPayAccount
-	post /tenant-accounts (CreateTenantPayAccountReq) returns (RespBase)
+	post /tenant-account (CreateTenantPayAccountReq) returns (RespBase)
 
+	// 更新租户支付账号
 	@handler UpdateTenantPayAccount
-	put /tenant-accounts (UpdateTenantPayAccountReq) returns (RespBase)
+	put /tenant-account (UpdateTenantPayAccountReq) returns (RespBase)
 
+	//
 	@handler GetTenantPayAccount
-	get /tenant-accounts (GetTenantPayAccountReq) returns (GetTenantPayAccountResp)
+	get /tenant-account (GetTenantPayAccountReq) returns (GetTenantPayAccountResp)
 
+	//
 	@handler ListTenantPayAccounts
-	get /tenant-accounts/list (ListTenantPayAccountsReq) returns (ListTenantPayAccountsResp)
+	get /tenant-accounts (ListTenantPayAccountsReq) returns (ListTenantPayAccountsResp)
 
-	// 租户支付通道
+	// 删除租户支付账号
+	@handler DeleteTenantPayAccount
+	delete /tenant-account/:id (DeleteTenantPayAccountReq) returns (RespBase)
+
+	// 添加租户支付通道
 	@handler CreateTenantPayChannel
-	post /tenant-channels (CreateTenantPayChannelReq) returns (RespBase)
+	post /tenant-channel (CreateTenantPayChannelReq) returns (RespBase)
 
+	//
 	@handler UpdateTenantPayChannel
-	put /tenant-channels (UpdateTenantPayChannelReq) returns (RespBase)
+	put /tenant-channel (UpdateTenantPayChannelReq) returns (RespBase)
 
+	//
 	@handler GetTenantPayChannel
-	get /tenant-channels (GetTenantPayChannelReq) returns (GetTenantPayChannelResp)
+	get /tenant-channel (GetTenantPayChannelReq) returns (GetTenantPayChannelResp)
 
+	//
 	@handler ListTenantPayChannels
-	get /tenant-channels/list (ListTenantPayChannelsReq) returns (ListTenantPayChannelsResp)
+	get /tenant-channels (ListTenantPayChannelsReq) returns (ListTenantPayChannelsResp)
 
-	// 通道规则
+	// 删除租户支付通道
+	@handler DeleteTenantPayChannel
+	delete /tenant-channel/:id (DeleteTenantPayChannelReq) returns (RespBase)
+
+	// 添加租户通道规则
 	@handler CreateTenantPayChannelRule
-	post /tenant-channel-rules (CreateTenantPayChannelRuleReq) returns (RespBase)
+	post /tenant-channel-rule (CreateTenantPayChannelRuleReq) returns (RespBase)
 
+	// 更新租户通道规则
 	@handler UpdateTenantPayChannelRule
-	put /tenant-channel-rules (UpdateTenantPayChannelRuleReq) returns (RespBase)
+	put /tenant-channel-rule (UpdateTenantPayChannelRuleReq) returns (RespBase)
 
+	// 获取租户通道规则详情
 	@handler GetTenantPayChannelRule
-	get /tenant-channel-rules (GetTenantPayChannelRuleReq) returns (GetTenantPayChannelRuleResp)
+	get /tenant-channel-rule (GetTenantPayChannelRuleReq) returns (GetTenantPayChannelRuleResp)
 
+	// 租户通道规则列表
 	@handler ListTenantPayChannelRules
-	get /tenant-channel-rules/list (ListTenantPayChannelRulesReq) returns (ListTenantPayChannelRulesResp)
+	get /tenant-channel-rules (ListTenantPayChannelRulesReq) returns (ListTenantPayChannelRulesResp)
 
-	// 用户充值统计
+	// 删除租户通道规则
+	@handler DeleteTenantPayChannelRule
+	delete /tenant-channel-rule/:id (DeleteTenantPayChannelRuleReq) returns (RespBase)
+
+	// 获取用户充值统计
 	@handler GetUserRechargeStat
-	get /user-recharge-stats (GetUserRechargeStatReq) returns (GetUserRechargeStatResp)
+	get /user-recharge-stat (GetUserRechargeStatReq) returns (GetUserRechargeStatResp)
 
+	// 用户充值统计列表
 	@handler ListUserRechargeStats
-	get /user-recharge-stats/list (ListUserRechargeStatsReq) returns (ListUserRechargeStatsResp)
+	get /user-recharge-stats (ListUserRechargeStatsReq) returns (ListUserRechargeStatsResp)
 
-	// 订单
+	// 获取充值订单列表
 	@handler ListRechargeOrders
-	get /recharge-orders/list (ListRechargeOrdersReq) returns (ListRechargeOrdersResp)
+	get /recharge-orders (ListRechargeOrdersReq) returns (ListRechargeOrdersResp)
 
+	// 获取充值订单详情
 	@handler GetRechargeOrder
-	get /recharge-orders/:orderNo (GetRechargeOrderReq) returns (GetRechargeOrderResp)
+	get /recharge-order/:orderNo (GetRechargeOrderReq) returns (GetRechargeOrderResp)
 
+	// 关闭充值订单
 	@handler CloseRechargeOrder
-	post /recharge-orders/:orderNo/close (CloseRechargeOrderReq) returns (RespBase)
+	post /recharge-order/:orderNo/close (CloseRechargeOrderReq) returns (RespBase)
 
+	// 手动确认充值订单
 	@handler ManualMarkRechargeOrderSuccess
-	post /recharge-orders/:orderNo/manual-success (ManualMarkRechargeOrderSuccessReq) returns (RespBase)
+	post /recharge-order/:orderNo/manual-success (ManualMarkRechargeOrderSuccessReq) returns (RespBase)
 
+	// 重试充值订单通知
 	@handler RetryNotify
-	post /recharge-orders/:orderNo/retry-notify (RetryNotifyReq) returns (RespBase)
+	post /recharge-order/:orderNo/retry-notify (RetryNotifyReq) returns (RespBase)
 
-	// 充值回调日志
+	// 充值回调日志列表
 	@handler ListRechargeNotifyLogs
-	get /recharge-notify-logs/list (ListRechargeNotifyLogsReq) returns (ListRechargeNotifyLogsResp)
+	get /recharge-notify-logs (ListRechargeNotifyLogsReq) returns (ListRechargeNotifyLogsResp)
 
+	// 充值回调详情
 	@handler GetRechargeNotifyLog
-	get /recharge-notify-logs/:id (GetRechargeNotifyLogReq) returns (GetRechargeNotifyLogResp)
+	get /recharge-notify-log/:id (GetRechargeNotifyLogReq) returns (GetRechargeNotifyLogResp)
 
 	// 获取提现订单列表
 	@handler ListWithdrawOrders
-	get /withdraw-orders/list (ListWithdrawOrdersReq) returns (ListWithdrawOrdersResp)
+	get /withdraw-orders (ListWithdrawOrdersReq) returns (ListWithdrawOrdersResp)
 
 	// 获取提现订单详情
 	@handler GetWithdrawOrder
-	get /withdraw-orders/:id (GetWithdrawOrderReq) returns (GetWithdrawOrderResp)
+	get /withdraw-order/:id (GetWithdrawOrderReq) returns (GetWithdrawOrderResp)
 
 	// 审核提现订单
 	@handler AuditWithdrawOrder
-	post /withdraw-orders/:orderNo/audit (AuditWithdrawOrderReq) returns (RespBase)
+	post /withdraw-order/:orderNo/audit (AuditWithdrawOrderReq) returns (RespBase)
 
 	// 提现回调日志列表
 	@handler ListWithdrawNotifyLogs
-	get /withdraw-notify-logs/list (ListWithdrawNotifyLogsReq) returns (ListWithdrawNotifyLogsResp)
+	get /withdraw-notify-logs (ListWithdrawNotifyLogsReq) returns (ListWithdrawNotifyLogsResp)
 
 	// 获取提现回调日志详情
 	@handler GetWithdrawNotifyLog
-	get /withdraw-notify-logs/:id (GetWithdrawNotifyLogReq) returns (GetWithdrawNotifyLogResp)
+	get /withdraw-notify-log/:id (GetWithdrawNotifyLogReq) returns (GetWithdrawNotifyLogResp)
 }
+

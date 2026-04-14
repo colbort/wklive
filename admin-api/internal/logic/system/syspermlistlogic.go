@@ -41,11 +41,11 @@ func (l *SysPermListLogic) SysPermList() (resp *types.SysPermListResp, err error
 	}
 	return &types.SysPermListResp{
 		RespBase: types.RespBase{
-			Code:    result.Base.Code,
-			Msg:     result.Base.Msg,
-			Total:   result.Base.Total,
-			HasNext: result.Base.HasNext,
-			HasPrev: result.Base.HasPrev,
+			Code:       result.Base.Code,
+			Msg:        result.Base.Msg,
+			Total:      result.Base.Total,
+			HasNext:    result.Base.HasNext,
+			HasPrev:    result.Base.HasPrev,
 			NextCursor: result.Base.NextCursor,
 			PrevCursor: result.Base.PrevCursor,
 		},

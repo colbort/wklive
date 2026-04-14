@@ -131,7 +131,7 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 	l.Logger.Infof("Create recharge order success: %s, user_id: %d", orderNo, in.UserId)
 
 	return &payment.CreateRechargeOrderResp{
-		Base: helper.OkResp(),
+		Base:  helper.OkResp(),
 		Order: toRechargeOrderProto(rechargeOrder),
 	}, nil
 }

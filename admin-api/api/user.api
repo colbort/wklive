@@ -47,7 +47,7 @@ type UserIdentity {
 	email         string `json:"email,optional"`
 	realName      string `json:"realName,optional"`
 	gender        int64  `json:"gender,optional"`
-	birthday      int64 `json:"birthday,optional"`
+	birthday      int64  `json:"birthday,optional"`
 	countryCode   string `json:"countryCode,optional"`
 	province      string `json:"province,optional"`
 	city          string `json:"city,optional"`
@@ -68,98 +68,98 @@ type UserIdentity {
 }
 
 type UserSecurity {
-	id               int64  `json:"id"`               // 主键ID
-	tenantId         int64  `json:"tenantId"`         // 租户ID
-	userId           int64  `json:"userId"`           // 用户ID
-	payPasswordHash  string `json:"payPasswordHash"`  // 支付密码哈希
-	googleSecret     string `json:"googleSecret"`     // Google密钥
-	googleEnabled    int64  `json:"googleEnabled"`    // Google2FA是否启用：0否 1是
-	loginErrorCount  int64  `json:"loginErrorCount"`  // 登录错误次数
-	payErrorCount    int64  `json:"payErrorCount"`    // 支付密码错误次数
-	lockUntil        int64  `json:"lockUntil"`        // 锁定到期时间
-	riskLevel        int64  `json:"riskLevel"`        // 风控等级：0正常 1关注 2高风险
-	createTimes      int64  `json:"createTimes"`      // 创建时间
-	updateTimes      int64  `json:"updateTimes"`      // 更新时间
+	id              int64  `json:"id"` // 主键ID
+	tenantId        int64  `json:"tenantId"` // 租户ID
+	userId          int64  `json:"userId"` // 用户ID
+	payPasswordHash string `json:"payPasswordHash"` // 支付密码哈希
+	googleSecret    string `json:"googleSecret"` // Google密钥
+	googleEnabled   int64  `json:"googleEnabled"` // Google2FA是否启用：0否 1是
+	loginErrorCount int64  `json:"loginErrorCount"` // 登录错误次数
+	payErrorCount   int64  `json:"payErrorCount"` // 支付密码错误次数
+	lockUntil       int64  `json:"lockUntil"` // 锁定到期时间
+	riskLevel       int64  `json:"riskLevel"` // 风控等级：0正常 1关注 2高风险
+	createTimes     int64  `json:"createTimes"` // 创建时间
+	updateTimes     int64  `json:"updateTimes"` // 更新时间
 }
 
 type UserDetail {
-	base     UserBase     `json:"base"`
-	identity UserIdentity `json:"identity"`
-	security UserSecurity `json:"security"`
+	base     UserBase       `json:"base"`
+	identity UserIdentity   `json:"identity"`
+	security UserSecurity   `json:"security"`
 	banks    []UserBankItem `json:"banks"`
 }
 
 type UserItem {
-	id             int64  `json:"id"`             // 用户ID
-	tenantId       int64  `json:"tenantId"`       // 租户ID
-	userNo         string `json:"userNo"`         // 用户编号
-	username       string `json:"username"`       // 用户名
-	nickname       string `json:"nickname"`       // 昵称
-	avatar         string `json:"avatar"`         // 头像
-	passwordHash   string `json:"passwordHash"`   // 登录密码哈希
-	registerType   int64  `json:"registerType"`   // 注册方式：1用户名 2手机号 3邮箱 4游客
-	status         int64  `json:"status"`         // 状态：1正常 2禁用 3冻结 4注销
-	memberLevel    int64  `json:"memberLevel"`    // 会员等级
-	language       string `json:"language"`       // 语言
-	timezone       string `json:"timezone"`       // 时区
-	inviteCode     string `json:"inviteCode"`     // 邀请码
-	signature      string `json:"signature"`      // 个性签名
-	source         string `json:"source"`         // 注册来源
+	id             int64  `json:"id"` // 用户ID
+	tenantId       int64  `json:"tenantId"` // 租户ID
+	userNo         string `json:"userNo"` // 用户编号
+	username       string `json:"username"` // 用户名
+	nickname       string `json:"nickname"` // 昵称
+	avatar         string `json:"avatar"` // 头像
+	passwordHash   string `json:"passwordHash"` // 登录密码哈希
+	registerType   int64  `json:"registerType"` // 注册方式：1用户名 2手机号 3邮箱 4游客
+	status         int64  `json:"status"` // 状态：1正常 2禁用 3冻结 4注销
+	memberLevel    int64  `json:"memberLevel"` // 会员等级
+	language       string `json:"language"` // 语言
+	timezone       string `json:"timezone"` // 时区
+	inviteCode     string `json:"inviteCode"` // 邀请码
+	signature      string `json:"signature"` // 个性签名
+	source         string `json:"source"` // 注册来源
 	referrerUserId int64  `json:"referrerUserId"` // 邀请人ID
-	lastLoginIp    string `json:"lastLoginIp"`    // 最后登录IP
-	lastLoginTime  int64  `json:"lastLoginTime"`  // 最后登录时间
-	registerIp     string `json:"registerIp"`     // 注册IP
-	registerTime   int64  `json:"registerTime"`   // 注册时间
-	isGuest        int64  `json:"isGuest"`        // 是否游客；1正常用户，2游客
-	isRecharge     int64  `json:"isRecharge"`     // 是否充值；0没有充值，1已充值
-	deviceId       string `json:"deviceId"`       // 设备唯一ID
-	fingerprint    string `json:"fingerprint"`    // 浏览器指纹
-	remark         string `json:"remark"`         // 备注
-	deleted        int64  `json:"deleted"`        // 是否删除：0否 1是
-	createTimes    int64  `json:"createTimes"`    // 创建时间
-	updateTimes    int64  `json:"updateTimes"`    // 更新时间
+	lastLoginIp    string `json:"lastLoginIp"` // 最后登录IP
+	lastLoginTime  int64  `json:"lastLoginTime"` // 最后登录时间
+	registerIp     string `json:"registerIp"` // 注册IP
+	registerTime   int64  `json:"registerTime"` // 注册时间
+	isGuest        int64  `json:"isGuest"` // 是否游客；1正常用户，2游客
+	isRecharge     int64  `json:"isRecharge"` // 是否充值；0没有充值，1已充值
+	deviceId       string `json:"deviceId"` // 设备唯一ID
+	fingerprint    string `json:"fingerprint"` // 浏览器指纹
+	remark         string `json:"remark"` // 备注
+	deleted        int64  `json:"deleted"` // 是否删除：0否 1是
+	createTimes    int64  `json:"createTimes"` // 创建时间
+	updateTimes    int64  `json:"updateTimes"` // 更新时间
 }
 
 type UserIdentityItem {
-	id            int64  `json:"id"`            // 主键ID
-	tenantId      int64  `json:"tenantId"`      // 租户ID
-	userId        int64  `json:"userId"`        // 用户ID
-	phone         string `json:"phone"`         // 手机号
-	email         string `json:"email"`         // 邮箱
-	realName      string `json:"realName"`      // 真实姓名
-	gender        int64  `json:"gender"`        // 性别：0未知 1男 2女
-	birthday      int64 `json:"birthday"`      // 生日
-	countryCode   string `json:"countryCode"`   // 国家/地区代码
-	province      string `json:"province"`      // 省/州
-	city          string `json:"city"`          // 城市
-	address       string `json:"address"`       // 地址
-	idType        int64  `json:"idType"`        // 证件类型：0未提交 1身份证 2护照 3驾驶证
-	idNo          string `json:"idNo"`          // 证件号码
-	frontImage    string `json:"frontImage"`    // 证件正面
-	backImage     string `json:"backImage"`     // 证件反面
+	id            int64  `json:"id"` // 主键ID
+	tenantId      int64  `json:"tenantId"` // 租户ID
+	userId        int64  `json:"userId"` // 用户ID
+	phone         string `json:"phone"` // 手机号
+	email         string `json:"email"` // 邮箱
+	realName      string `json:"realName"` // 真实姓名
+	gender        int64  `json:"gender"` // 性别：0未知 1男 2女
+	birthday      int64  `json:"birthday"` // 生日
+	countryCode   string `json:"countryCode"` // 国家/地区代码
+	province      string `json:"province"` // 省/州
+	city          string `json:"city"` // 城市
+	address       string `json:"address"` // 地址
+	idType        int64  `json:"idType"` // 证件类型：0未提交 1身份证 2护照 3驾驶证
+	idNo          string `json:"idNo"` // 证件号码
+	frontImage    string `json:"frontImage"` // 证件正面
+	backImage     string `json:"backImage"` // 证件反面
 	handheldImage string `json:"handheldImage"` // 手持证件照
-	kycLevel      int64  `json:"kycLevel"`      // KYC等级：0未认证 1初级 2高级
-	verifyStatus  int64  `json:"verifyStatus"`  // 实名状态：0未提交 1审核中 2通过 3拒绝
-	rejectReason  string `json:"rejectReason"`  // 驳回原因
-	submitTime    int64  `json:"submitTime"`    // 提交时间
-	verifyTime    int64  `json:"verifyTime"`    // 审核时间
-	verifyBy      int64  `json:"verifyBy"`      // 审核人
-	createTimes   int64  `json:"createTimes"`   // 创建时间
-	updateTimes   int64  `json:"updateTimes"`   // 更新时间
+	kycLevel      int64  `json:"kycLevel"` // KYC等级：0未认证 1初级 2高级
+	verifyStatus  int64  `json:"verifyStatus"` // 实名状态：0未提交 1审核中 2通过 3拒绝
+	rejectReason  string `json:"rejectReason"` // 驳回原因
+	submitTime    int64  `json:"submitTime"` // 提交时间
+	verifyTime    int64  `json:"verifyTime"` // 审核时间
+	verifyBy      int64  `json:"verifyBy"` // 审核人
+	createTimes   int64  `json:"createTimes"` // 创建时间
+	updateTimes   int64  `json:"updateTimes"` // 更新时间
 }
 
 type UserBankItem {
-	id          int64  `json:"id"`          // 主键ID
-	tenantId    int64  `json:"tenantId"`    // 租户ID
-	userId      int64  `json:"userId"`      // 用户ID
-	bankName    string `json:"bankName"`    // 银行名称
-	bankCode    string `json:"bankCode"`    // 银行编码
+	id          int64  `json:"id"` // 主键ID
+	tenantId    int64  `json:"tenantId"` // 租户ID
+	userId      int64  `json:"userId"` // 用户ID
+	bankName    string `json:"bankName"` // 银行名称
+	bankCode    string `json:"bankCode"` // 银行编码
 	accountName string `json:"accountName"` // 开户名
-	accountNo   string `json:"accountNo"`   // 银行卡号
-	branchName  string `json:"branchName"`  // 支行名称
+	accountNo   string `json:"accountNo"` // 银行卡号
+	branchName  string `json:"branchName"` // 支行名称
 	countryCode string `json:"countryCode"` // 国家地区
-	isDefault   int64  `json:"isDefault"`   // 是否默认：0否 1是
-	status      int64  `json:"status"`      // 状态：1正常 2禁用
+	isDefault   int64  `json:"isDefault"` // 是否默认：0否 1是
+	status      int64  `json:"status"` // 状态：1正常 2禁用
 	createTimes int64  `json:"createTimes"` // 创建时间
 	updateTimes int64  `json:"updateTimes"` // 更新时间
 }
@@ -483,3 +483,4 @@ service admin {
 	@handler SetDefaultUserBank
 	put /user-banks/:id/default (SetDefaultUserBankReq) returns (RespBase)
 }
+

@@ -224,7 +224,8 @@ INSERT INTO `sys_role_menu` (`role_id`, `menu_id`) VALUES
 (1, 11003),
 (1, 11004),
 (1, 11005),
-(1, 11006);
+(1, 11006),
+(1, 11007);
 
 
 
@@ -233,27 +234,27 @@ VALUES (10, 0, '用户管理', 1, 'Users', 10);
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
 VALUES 
 (11, 10, '用户列表', 2, 'GET', '/member/users', 'users:user:list', 'users/user', 'User', 11),
-(12, 10, '创建用户', 3, 'POST', '/member/users', 'users:user:add', '', '', 12),
-(13, 10, '获取用户详情', 3, 'GET', '/member/users/{id}', 'users:user:detail', '', '', 13),
-(14, 10, '更新用户基本信息', 3, 'PUT', '/member/users/{id}', 'users:user:update', '', '', 14),
-(15, 10, '更新用户状态', 3, 'PUT', '/member/users/{id}/status', 'users:user:update:status', '', '', 15),
-(16, 10, '更新用户会员等级', 3, 'PUT', '/member/users/{id}/level', 'users:user:update:level', '', '', 16),
-(17, 10, '重置登录密码', 3, 'POST', '/member/users/{id}/reset-loginpwd', 'users:user:reset:loginpwd', '', '', 17),
-(18, 10, '重置支付密码', 3, 'POST', '/member/users/{id}/reset-paypwd', 'users:user:reset:paypwd', '', '', 18),
-(19, 10, '解锁用户', 3, 'POST', '/member/users/{id}/unlock', 'users:user:unlock', '', '', 19),
-(20, 10, '更新用户风险等级', 3, 'PUT', '/member/users/{id}/risk-level', 'users:user:update:risklevel', '', '', 20),
-(21, 10, '删除用户', 3, 'DELETE', '/member/users/{id}', 'users:user:delete', '', '', 21),
-(22, 10, '获取用户安全设置', 3, 'GET', '/member/users/{id}/security', 'users:user:security:detail', '', '', 22),
-(23, 10, '重置用户谷歌2FA', 3, 'POST', '/member/users/{id}/reset-google2fa', 'users:user:reset:google2fa', '', '', 23),
-(24, 10, '实名认证信息列表', 2, 'GET', '/member/users/{id}/identities', 'users:user:identities:list', 'users/identity', '', 24),
-(25, 10, '审核实名认证信息', 3, 'POST', '/member/users/{id}/identities/review', 'users:user:identities:review', '', '', 25),
-(26, 10, '用户银行卡列表', 2, 'GET', '/member/users/{id}/banks', 'users:user:banks:list', 'users/bank', '', 26),
-(27, 10, '获取用户银行卡详情', 3, 'GET', '/member/users/{id}/banks/{bankId}', 'users:user:bank:detail', '', '', 27),
-(28, 10, '添加用户银行卡', 3, 'POST', '/member/users/{id}/banks', 'users:user:bank:add', '', '', 28),
-(29, 10, '更新用户银行卡', 3, 'PUT', '/member/users/{id}/banks/{bankId}', 'users:user:bank:update', '', '', 29),
-(30, 10, '删除用户银行卡', 3, 'DELETE', '/member/users/{id}/banks/{bankId}', 'users:user:bank:delete', '', '', 30),
-(31, 10, '更新用户银行卡状态', 3, 'PUT', '/member/users/{id}/banks/{bankId}/status', 'users:user:bank:update:status', '', '', 31),
-(32, 10, '设置默认用户银行卡', 3, 'POST', '/member/users/{id}/banks/{bankId}/default', 'users:user:bank:setdefault', '', '', 32);
+(12, 10, '创建用户', 3, 'POST', '/member/user', 'users:user:add', '', '', 12),
+(13, 10, '获取用户详情', 3, 'GET', '/member/user/{id}', 'users:user:detail', '', '', 13),
+(14, 10, '更新用户基本信息', 3, 'PUT', '/member/user/{id}/base', 'users:user:update', '', '', 14),
+(15, 10, '更新用户状态', 3, 'PUT', '/member/user/{id}/status', 'users:user:update:status', '', '', 15),
+(16, 10, '更新用户会员等级', 3, 'PUT', '/member/user/{id}/level', 'users:user:update:level', '', '', 16),
+(17, 10, '重置登录密码', 3, 'POST', '/member/user/{id}/reset-login-password', 'users:user:reset:loginpwd', '', '', 17),
+(18, 10, '重置支付密码', 3, 'POST', '/member/user/{id}/reset-pay-password', 'users:user:reset:paypwd', '', '', 18),
+(19, 10, '解锁用户', 3, 'POST', '/member/user/{id}/unlock', 'users:user:unlock', '', '', 19),
+(20, 10, '更新用户风险等级', 3, 'PUT', '/member/user/{id}/risk-level', 'users:user:update:risklevel', '', '', 20),
+(21, 10, '删除用户', 3, 'DELETE', '/member/user/{id}', 'users:user:delete', '', '', 21),
+(22, 10, '获取用户安全设置', 3, 'GET', '/member/user/{id}/security', 'users:user:security:detail', '', '', 22),
+(23, 10, '重置用户谷歌2FA', 3, 'POST', '/member/user/{id}/reset2fa', 'users:user:reset:google2fa', '', '', 23),
+(24, 10, '实名认证信息列表', 2, 'GET', '/member/user-identities', 'users:user:identities:list', 'users/identity', '', 24),
+(25, 10, '审核实名认证信息', 3, 'POST', '/member/user-identities/{id}/review', 'users:user:identities:review', '', '', 25),
+(26, 10, '用户银行卡列表', 2, 'GET', '/member/user-banks', 'users:user:banks:list', 'users/bank', '', 26),
+(27, 10, '获取用户银行卡详情', 3, 'GET', '/member/user-banks/{id}', 'users:user:bank:detail', '', '', 27),
+(28, 10, '添加用户银行卡', 3, 'POST', '/member/user-banks', 'users:user:bank:add', '', '', 28),
+(29, 10, '更新用户银行卡', 3, 'PUT', '/member/user-banks/{id}', 'users:user:bank:update', '', '', 29),
+(30, 10, '删除用户银行卡', 3, 'DELETE', '/member/user-banks/{id}', 'users:user:bank:delete', '', '', 30),
+(31, 10, '更新用户银行卡状态', 3, 'PUT', '/member/user-banks/{id}/status', 'users:user:bank:update:status', '', '', 31),
+(32, 10, '设置默认用户银行卡', 3, 'POST', '/member/user-banks/{id}/default', 'users:user:bank:setdefault', '', '', 32);
 
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, icon, sort)
@@ -262,9 +263,9 @@ VALUES (100, 0, '支付管理', 1, 'Payment', 40);
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
 VALUES
 (101, 100, '平台管理', 2, 'GET', '/payment/platforms', 'payment:platform:list', 'payment/platforms', 'Bank', 41),
-(102, 101, '创建支付平台', 3, 'POST', '/payment/platforms', 'payment:platform:add', '', '', 42),
-(103, 101, '更新支付平台', 3, 'PUT', '/payment/platforms/{id}', 'payment:platform:update', '', '', 43),
-(104, 101, '获取支付平台详情', 3, 'GET', '/payment/platforms/{id}', 'payment:platform:detail', '', '', 44),
+(102, 101, '创建支付平台', 3, 'POST', '/payment/platform', 'payment:platform:add', '', '', 42),
+(103, 101, '更新支付平台', 3, 'PUT', '/payment/platform/{id}', 'payment:platform:update', '', '', 43),
+(104, 101, '获取支付平台详情', 3, 'GET', '/payment/platform/{id}', 'payment:platform:detail', '', '', 44),
 
 (105, 100, '产品管理', 2, 'GET', '/payment/products', 'payment:itick:list', 'payment/products', 'Gold', 45),
 (106, 105, '创建支付产品', 3, 'POST', '/payment/products', 'payment:itick:add', '', '', 46),
@@ -354,20 +355,20 @@ VALUES (400, 0, '资产管理', 1, 'Wallet', 400);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
 VALUES
-(401, 400, '用户资产列表', 2, 'GET', '/admin/asset/user-assets', 'asset:user-asset:list', 'asset/user-assets', 'Wallet', 401),
-(403, 400, '资产流水列表', 2, 'GET', '/admin/asset/flows', 'asset:flow:list', 'asset/flows', 'Tickets', 403),
-(404, 400, '资产冻结列表', 2, 'GET', '/admin/asset/freezes', 'asset:freeze:list', 'asset/freezes', 'Lock', 404),
-(405, 400, '资产锁定列表', 2, 'GET', '/admin/asset/locks', 'asset:lock:list', 'asset/locks', 'Lock', 405);
+(401, 400, '用户资产列表', 2, 'GET', '/asset/user-assets', 'asset:user-asset:list', 'asset/user-assets', 'Wallet', 401),
+(403, 400, '资产流水列表', 2, 'GET', '/asset/flows', 'asset:flow:list', 'asset/flows', 'Tickets', 403),
+(404, 400, '资产冻结列表', 2, 'GET', '/asset/freezes', 'asset:freeze:list', 'asset/freezes', 'Lock', 404),
+(405, 400, '资产锁定列表', 2, 'GET', '/asset/locks', 'asset:lock:list', 'asset/locks', 'Lock', 405);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, sort)
 VALUES
-(402, 401, '获取用户资产详情', 3, 'GET', '/admin/asset/user-assets/detail', 'asset:user-asset:detail', 402),
-(406, 401, '管理员加资产', 3, 'POST', '/admin/asset/add', 'asset:user-asset:add', 406),
-(407, 401, '管理员减资产', 3, 'POST', '/admin/asset/sub', 'asset:user-asset:sub', 407),
-(408, 404, '管理员冻结资产', 3, 'POST', '/admin/asset/freeze', 'asset:freeze:add', 408),
-(409, 404, '管理员解冻资产', 3, 'POST', '/admin/asset/unfreeze', 'asset:freeze:unfreeze', 409),
-(410, 405, '管理员锁定资产', 3, 'POST', '/admin/asset/lock', 'asset:lock:add', 410),
-(411, 405, '管理员解锁资产', 3, 'POST', '/admin/asset/unlock', 'asset:lock:unlock', 411);
+(402, 401, '获取用户资产详情', 3, 'GET', '/asset/user-assets/detail', 'asset:user-asset:detail', 402),
+(406, 401, '管理员加资产', 3, 'POST', '/asset/add', 'asset:user-asset:add', 406),
+(407, 401, '管理员减资产', 3, 'POST', '/asset/sub', 'asset:user-asset:sub', 407),
+(408, 404, '管理员冻结资产', 3, 'POST', '/asset/freeze', 'asset:freeze:add', 408),
+(409, 404, '管理员解冻资产', 3, 'POST', '/asset/unfreeze', 'asset:freeze:unfreeze', 409),
+(410, 405, '管理员锁定资产', 3, 'POST', '/asset/lock', 'asset:lock:add', 410),
+(411, 405, '管理员解锁资产', 3, 'POST', '/asset/unlock', 'asset:lock:unlock', 411);
 
 -- 期权（option）
 INSERT INTO sys_menu (id, parent_id, name, menu_type, icon, sort)
@@ -375,30 +376,30 @@ VALUES (500, 0, '期权管理', 1, 'TrendCharts', 500);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
 VALUES
-(501, 500, '合约列表', 2, 'GET', '/admin/option/contracts', 'option:contract:list', 'option/contracts', 'Tickets', 501),
-(505, 500, '行情详情', 2, 'GET', '/admin/option/market/detail', 'option:market:detail', 'option/market-detail', 'TrendCharts', 505),
-(507, 500, '行情快照列表', 2, 'GET', '/admin/option/market/snapshots', 'option:market-snapshot:list', 'option/market-snapshots', 'Histogram', 507),
-(508, 500, '订单列表', 2, 'GET', '/admin/option/orders', 'option:order:list', 'option/orders', 'List', 508),
-(510, 500, '成交列表', 2, 'GET', '/admin/option/trades', 'option:trade:list', 'option/trades', 'DataLine', 510),
-(512, 500, '持仓列表', 2, 'GET', '/admin/option/positions', 'option:position:list', 'option/positions', 'PieChart', 512),
-(514, 500, '行权列表', 2, 'GET', '/admin/option/exercises', 'option:exercise:list', 'option/exercises', 'Operation', 514),
-(516, 500, '结算列表', 2, 'GET', '/admin/option/settlements', 'option:settlement:list', 'option/settlements', 'Checked', 516),
-(518, 500, '账户列表', 2, 'GET', '/admin/option/accounts', 'option:account:list', 'option/accounts', 'Avatar', 518),
-(520, 500, '账单列表', 2, 'GET', '/admin/option/bills', 'option:bill:list', 'option/bills', 'Document', 520);
+(501, 500, '合约列表', 2, 'GET', '/option/contracts', 'option:contract:list', 'option/contracts', 'Tickets', 501),
+(505, 500, '行情详情', 2, 'GET', '/option/market/detail', 'option:market:detail', 'option/market-detail', 'TrendCharts', 505),
+(507, 500, '行情快照列表', 2, 'GET', '/option/market/snapshots', 'option:market-snapshot:list', 'option/market-snapshots', 'Histogram', 507),
+(508, 500, '订单列表', 2, 'GET', '/option/orders', 'option:order:list', 'option/orders', 'List', 508),
+(510, 500, '成交列表', 2, 'GET', '/option/trades', 'option:trade:list', 'option/trades', 'DataLine', 510),
+(512, 500, '持仓列表', 2, 'GET', '/option/positions', 'option:position:list', 'option/positions', 'PieChart', 512),
+(514, 500, '行权列表', 2, 'GET', '/option/exercises', 'option:exercise:list', 'option/exercises', 'Operation', 514),
+(516, 500, '结算列表', 2, 'GET', '/option/settlements', 'option:settlement:list', 'option/settlements', 'Checked', 516),
+(518, 500, '账户列表', 2, 'GET', '/option/accounts', 'option:account:list', 'option/accounts', 'Avatar', 518),
+(520, 500, '账单列表', 2, 'GET', '/option/bills', 'option:bill:list', 'option/bills', 'Document', 520);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, sort)
 VALUES
-(502, 501, '创建合约', 3, 'POST', '/admin/option/contracts', 'option:contract:add', 502),
-(503, 501, '更新合约', 3, 'POST', '/admin/option/contracts/update', 'option:contract:update', 503),
-(504, 501, '获取合约详情', 3, 'GET', '/admin/option/contracts/detail', 'option:contract:detail', 504),
-(506, 505, '更新行情', 3, 'POST', '/admin/option/market/update', 'option:market:update', 506),
-(509, 508, '获取订单详情', 3, 'GET', '/admin/option/orders/detail', 'option:order:detail', 509),
-(511, 510, '获取成交详情', 3, 'GET', '/admin/option/trades/detail', 'option:trade:detail', 511),
-(513, 512, '获取持仓详情', 3, 'GET', '/admin/option/positions/detail', 'option:position:detail', 513),
-(515, 514, '获取行权详情', 3, 'GET', '/admin/option/exercises/detail', 'option:exercise:detail', 515),
-(517, 516, '获取结算详情', 3, 'GET', '/admin/option/settlements/detail', 'option:settlement:detail', 517),
-(519, 518, '获取账户详情', 3, 'GET', '/admin/option/accounts/detail', 'option:account:detail', 519),
-(521, 520, '获取账单详情', 3, 'GET', '/admin/option/bills/detail', 'option:bill:detail', 521);
+(502, 501, '创建合约', 3, 'POST', '/option/contracts', 'option:contract:add', 502),
+(503, 501, '更新合约', 3, 'POST', '/option/contracts/update', 'option:contract:update', 503),
+(504, 501, '获取合约详情', 3, 'GET', '/option/contracts/detail', 'option:contract:detail', 504),
+(506, 505, '更新行情', 3, 'POST', '/option/market/update', 'option:market:update', 506),
+(509, 508, '获取订单详情', 3, 'GET', '/option/orders/detail', 'option:order:detail', 509),
+(511, 510, '获取成交详情', 3, 'GET', '/option/trades/detail', 'option:trade:detail', 511),
+(513, 512, '获取持仓详情', 3, 'GET', '/option/positions/detail', 'option:position:detail', 513),
+(515, 514, '获取行权详情', 3, 'GET', '/option/exercises/detail', 'option:exercise:detail', 515),
+(517, 516, '获取结算详情', 3, 'GET', '/option/settlements/detail', 'option:settlement:detail', 517),
+(519, 518, '获取账户详情', 3, 'GET', '/option/accounts/detail', 'option:account:detail', 519),
+(521, 520, '获取账单详情', 3, 'GET', '/option/bills/detail', 'option:bill:detail', 521);
 
 -- 质押（staking）
 INSERT INTO sys_menu (id, parent_id, name, menu_type, icon, sort)
@@ -406,20 +407,20 @@ VALUES (600, 0, '质押管理', 1, 'Coin', 600);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
 VALUES
-(601, 600, '质押产品列表', 2, 'GET', '/admin/staking/products', 'staking:product:list', 'staking/products', 'Coin', 601),
-(606, 600, '质押订单列表', 2, 'GET', '/admin/staking/orders', 'staking:order:list', 'staking/orders', 'List', 606),
-(608, 600, '奖励记录列表', 2, 'GET', '/admin/staking/reward-logs', 'staking:reward-log:list', 'staking/reward-logs', 'Medal', 608),
-(609, 600, '赎回记录列表', 2, 'GET', '/admin/staking/redeem-logs', 'staking:redeem-log:list', 'staking/redeem-logs', 'RefreshLeft', 609);
+(601, 600, '质押产品列表', 2, 'GET', '/staking/products', 'staking:product:list', 'staking/products', 'Coin', 601),
+(606, 600, '质押订单列表', 2, 'GET', '/staking/orders', 'staking:order:list', 'staking/orders', 'List', 606),
+(608, 600, '奖励记录列表', 2, 'GET', '/staking/reward-logs', 'staking:reward-log:list', 'staking/reward-logs', 'Medal', 608),
+(609, 600, '赎回记录列表', 2, 'GET', '/staking/redeem-logs', 'staking:redeem-log:list', 'staking/redeem-logs', 'RefreshLeft', 609);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, sort)
 VALUES
-(602, 601, '获取质押产品详情', 3, 'GET', '/admin/staking/products/detail', 'staking:product:detail', 602),
-(603, 601, '创建质押产品', 3, 'POST', '/admin/staking/products', 'staking:product:add', 603),
-(604, 601, '更新质押产品', 3, 'POST', '/admin/staking/products/update', 'staking:product:update', 604),
-(605, 601, '更新质押产品状态', 3, 'POST', '/admin/staking/products/status', 'staking:product:update:status', 605),
-(607, 606, '获取质押订单详情', 3, 'GET', '/admin/staking/orders/detail', 'staking:order:detail', 607),
-(610, 608, '手动发放奖励', 3, 'POST', '/admin/staking/manual-reward', 'staking:reward-log:manual', 610),
-(611, 609, '手动赎回', 3, 'POST', '/admin/staking/manual-redeem', 'staking:redeem-log:manual', 611);
+(602, 601, '获取质押产品详情', 3, 'GET', '/staking/products/detail', 'staking:product:detail', 602),
+(603, 601, '创建质押产品', 3, 'POST', '/staking/products', 'staking:product:add', 603),
+(604, 601, '更新质押产品', 3, 'POST', '/staking/products/update', 'staking:product:update', 604),
+(605, 601, '更新质押产品状态', 3, 'POST', '/staking/products/status', 'staking:product:update:status', 605),
+(607, 606, '获取质押订单详情', 3, 'GET', '/staking/orders/detail', 'staking:order:detail', 607),
+(610, 608, '手动发放奖励', 3, 'POST', '/staking/manual-reward', 'staking:reward-log:manual', 610),
+(611, 609, '手动赎回', 3, 'POST', '/staking/manual-redeem', 'staking:redeem-log:manual', 611);
 
 -- 币币交易（trade）
 INSERT INTO sys_menu (id, parent_id, name, menu_type, icon, sort)
@@ -427,36 +428,36 @@ VALUES (700, 0, '交易管理', 1, 'DataBoard', 700);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
 VALUES
-(701, 700, '交易对列表', 2, 'GET', '/admin/trade/symbols', 'trade:symbol:list', 'trade/symbols', 'Switch', 701),
-(707, 700, '订单列表', 2, 'GET', '/admin/trade/orders', 'trade:order:list', 'trade/orders', 'List', 707),
-(709, 700, '成交明细列表', 2, 'GET', '/admin/trade/fills', 'trade:fill:list', 'trade/fills', 'DataLine', 709),
-(711, 700, '持仓列表', 2, 'GET', '/admin/trade/positions', 'trade:position:list', 'trade/positions', 'PieChart', 711),
-(713, 700, '持仓历史列表', 2, 'GET', '/admin/trade/position-histories', 'trade:position-history:list', 'trade/position-histories', 'Histogram', 713),
-(714, 700, '保证金账户列表', 2, 'GET', '/admin/trade/margin-accounts', 'trade:margin-account:list', 'trade/margin-accounts', 'Wallet', 714),
-(715, 700, '撤单日志列表', 2, 'GET', '/admin/trade/cancel-logs', 'trade:cancel-log:list', 'trade/cancel-logs', 'DocumentDelete', 715),
-(716, 700, '用户交易限制', 2, 'GET', '/admin/trade/user-trade-limit', 'trade:user-trade-limit:detail', 'trade/user-trade-limit', 'Warning', 716),
-(718, 700, '用户交易对限制', 2, 'GET', '/admin/trade/user-symbol-limit', 'trade:user-symbol-limit:detail', 'trade/user-symbol-limit', 'WarningFilled', 718),
-(720, 700, '用户交易配置', 2, 'GET', '/admin/trade/user-trade-config', 'trade:user-trade-config:detail', 'trade/user-trade-config', 'Tools', 720),
-(722, 700, '风控校验日志列表', 2, 'GET', '/admin/trade/risk-order-check-logs', 'trade:risk-order-check-log:list', 'trade/risk-order-check-logs', 'Memo', 722),
-(723, 700, '用户杠杆配置', 2, 'GET', '/admin/trade/user-leverage-config', 'trade:user-leverage-config:detail', 'trade/user-leverage-config', 'TrendCharts', 723),
-(725, 700, '交易事件列表', 2, 'GET', '/admin/trade/events', 'trade:event:list', 'trade/events', 'Bell', 725);
+(701, 700, '交易对列表', 2, 'GET', '/trade/symbols', 'trade:symbol:list', 'trade/symbols', 'Switch', 701),
+(707, 700, '订单列表', 2, 'GET', '/trade/orders', 'trade:order:list', 'trade/orders', 'List', 707),
+(709, 700, '成交明细列表', 2, 'GET', '/trade/fills', 'trade:fill:list', 'trade/fills', 'DataLine', 709),
+(711, 700, '持仓列表', 2, 'GET', '/trade/positions', 'trade:position:list', 'trade/positions', 'PieChart', 711),
+(713, 700, '持仓历史列表', 2, 'GET', '/trade/position-histories', 'trade:position-history:list', 'trade/position-histories', 'Histogram', 713),
+(714, 700, '保证金账户列表', 2, 'GET', '/trade/margin-accounts', 'trade:margin-account:list', 'trade/margin-accounts', 'Wallet', 714),
+(715, 700, '撤单日志列表', 2, 'GET', '/trade/cancel-logs', 'trade:cancel-log:list', 'trade/cancel-logs', 'DocumentDelete', 715),
+(716, 700, '用户交易限制', 2, 'GET', '/trade/user-trade-limit', 'trade:user-trade-limit:detail', 'trade/user-trade-limit', 'Warning', 716),
+(718, 700, '用户交易对限制', 2, 'GET', '/trade/user-symbol-limit', 'trade:user-symbol-limit:detail', 'trade/user-symbol-limit', 'WarningFilled', 718),
+(720, 700, '用户交易配置', 2, 'GET', '/trade/user-trade-config', 'trade:user-trade-config:detail', 'trade/user-trade-config', 'Tools', 720),
+(722, 700, '风控校验日志列表', 2, 'GET', '/trade/risk-order-check-logs', 'trade:risk-order-check-log:list', 'trade/risk-order-check-logs', 'Memo', 722),
+(723, 700, '用户杠杆配置', 2, 'GET', '/trade/user-leverage-config', 'trade:user-leverage-config:detail', 'trade/user-leverage-config', 'TrendCharts', 723),
+(725, 700, '交易事件列表', 2, 'GET', '/trade/events', 'trade:event:list', 'trade/events', 'Bell', 725);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, sort)
 VALUES
-(702, 701, '获取交易对详情', 3, 'GET', '/admin/trade/symbols/detail', 'trade:symbol:detail', 702),
-(703, 701, '创建交易对', 3, 'POST', '/admin/trade/symbols', 'trade:symbol:add', 703),
-(704, 701, '更新交易对', 3, 'POST', '/admin/trade/symbols/update', 'trade:symbol:update', 704),
-(705, 701, '设置现货交易对配置', 3, 'POST', '/admin/trade/symbols/spot-config', 'trade:symbol:spot-config', 705),
-(706, 701, '设置合约交易对配置', 3, 'POST', '/admin/trade/symbols/contract-config', 'trade:symbol:contract-config', 706),
-(708, 707, '获取订单详情', 3, 'GET', '/admin/trade/orders/detail', 'trade:order:detail', 708),
-(710, 709, '获取成交明细详情', 3, 'GET', '/admin/trade/fills/detail', 'trade:fill:detail', 710),
-(712, 711, '获取持仓详情', 3, 'GET', '/admin/trade/positions/detail', 'trade:position:detail', 712),
-(717, 716, '设置用户交易限制', 3, 'POST', '/admin/trade/user-trade-limit', 'trade:user-trade-limit:update', 717),
-(719, 718, '设置用户交易对限制', 3, 'POST', '/admin/trade/user-symbol-limit', 'trade:user-symbol-limit:update', 719),
-(721, 720, '设置用户交易配置', 3, 'POST', '/admin/trade/user-trade-config', 'trade:user-trade-config:update', 721),
-(724, 723, '设置用户杠杆配置', 3, 'POST', '/admin/trade/user-leverage-config', 'trade:user-leverage-config:update', 724),
-(726, 725, '获取交易事件详情', 3, 'GET', '/admin/trade/events/detail', 'trade:event:detail', 726),
-(727, 725, '重试交易事件', 3, 'POST', '/admin/trade/events/retry', 'trade:event:retry', 727);
+(702, 701, '获取交易对详情', 3, 'GET', '/trade/symbols/detail', 'trade:symbol:detail', 702),
+(703, 701, '创建交易对', 3, 'POST', '/trade/symbols', 'trade:symbol:add', 703),
+(704, 701, '更新交易对', 3, 'POST', '/trade/symbols/update', 'trade:symbol:update', 704),
+(705, 701, '设置现货交易对配置', 3, 'POST', '/trade/symbols/spot-config', 'trade:symbol:spot-config', 705),
+(706, 701, '设置合约交易对配置', 3, 'POST', '/trade/symbols/contract-config', 'trade:symbol:contract-config', 706),
+(708, 707, '获取订单详情', 3, 'GET', '/trade/orders/detail', 'trade:order:detail', 708),
+(710, 709, '获取成交明细详情', 3, 'GET', '/trade/fills/detail', 'trade:fill:detail', 710),
+(712, 711, '获取持仓详情', 3, 'GET', '/trade/positions/detail', 'trade:position:detail', 712),
+(717, 716, '设置用户交易限制', 3, 'POST', '/trade/user-trade-limit', 'trade:user-trade-limit:update', 717),
+(719, 718, '设置用户交易对限制', 3, 'POST', '/trade/user-symbol-limit', 'trade:user-symbol-limit:update', 719),
+(721, 720, '设置用户交易配置', 3, 'POST', '/trade/user-trade-config', 'trade:user-trade-config:update', 721),
+(724, 723, '设置用户杠杆配置', 3, 'POST', '/trade/user-leverage-config', 'trade:user-leverage-config:update', 724),
+(726, 725, '获取交易事件详情', 3, 'GET', '/trade/events/detail', 'trade:event:detail', 726),
+(727, 725, '重试交易事件', 3, 'POST', '/trade/events/retry', 'trade:event:retry', 727);
 
 
 
@@ -539,4 +540,5 @@ VALUES
 (11003, 11000, '删除租户', 3, 'DELETE', '/system/tenants', 'sys:tenant:delete', 11003),
 (11004, 11000, '重置密码', 3, 'POST', '/system/tenants/resetPwd', 'sys:tenant:resetpwd', 11004),
 (11005, 11000, '禁用租户', 3, 'POST', '/system/tenants/disable', 'sys:tenant:disable', 11005),
-(11006, 11000, '启用租户', 3, 'POST', '/system/tenants/enable', 'sys:tenant:enable', 11006);
+(11006, 11000, '启用租户', 3, 'POST', '/system/tenants/enable', 'sys:tenant:enable', 11006),
+(11007, 11000, '获取租户详情', 3, 'GET', '/system/tenant/detail', 'sys:tenant:detail', 11007);

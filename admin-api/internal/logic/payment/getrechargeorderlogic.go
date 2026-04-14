@@ -72,8 +72,8 @@ func (l *GetRechargeOrderLogic) GetRechargeOrder(req *types.GetRechargeOrderReq)
 			NotifyTime:   result.Data.NotifyTime,
 			CloseTime:    result.Data.CloseTime,
 			Remark:       result.Data.Remark,
-			CreateTimes:   result.Data.CreateTimes,
-			UpdateTimes:   result.Data.UpdateTimes,
+			CreateTimes:  result.Data.CreateTimes,
+			UpdateTimes:  result.Data.UpdateTimes,
 		},
 	}
 	return resp, nil

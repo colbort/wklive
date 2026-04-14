@@ -49,8 +49,8 @@ func (l *GetPayProductLogic) GetPayProduct(req *types.GetPayProductReq) (resp *t
 			Currency:    result.Data.Currency,
 			Status:      int64(result.Data.Status),
 			Remark:      result.Data.Remark,
-			CreateTimes:  result.Data.CreateTimes,
-			UpdateTimes:  result.Data.UpdateTimes,
+			CreateTimes: result.Data.CreateTimes,
+			UpdateTimes: result.Data.UpdateTimes,
 		},
 	}
 	return resp, nil

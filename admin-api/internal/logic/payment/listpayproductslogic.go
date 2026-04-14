@@ -55,8 +55,8 @@ func (l *ListPayProductsLogic) ListPayProducts(req *types.ListPayProductsReq) (r
 			Currency:    item.Currency,
 			Status:      int64(item.Status),
 			Remark:      item.Remark,
-			CreateTimes:  item.CreateTimes,
-			UpdateTimes:  item.UpdateTimes,
+			CreateTimes: item.CreateTimes,
+			UpdateTimes: item.UpdateTimes,
 		}
 	}
 

@@ -496,8 +496,24 @@ message GetWithdrawNotifyLogResp {
   payment.PayNotifyLog data = 2;
 }
 
+message AdminEmpty {
+  
+}
+
+message PayPlatformItem {
+  string platform_code = 1;
+  string platform_name = 2;
+}
+
+message PayPlatformsResp {
+  common.RespBase base = 1;
+  repeated PayPlatformItem data = 2;
+}
+
 // Admin 接口
 service PaymentAdmin {
+  // 获取系统支持的平台
+  rpc GetPayPlatforms(AdminEmpty) returns (PayPlatformsResp);
   // 创建平台
   rpc CreatePayPlatform(CreatePayPlatformReq) returns (AdminCommonResp);
   // 更新平台

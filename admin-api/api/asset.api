@@ -18,31 +18,31 @@ type AssetUserAsset {
 }
 
 type AssetFlow {
-	id                    int64          `json:"id"`
-	flowNo                string         `json:"flowNo"`
-	tenantId              int64          `json:"tenantId"`
-	userId                int64          `json:"userId"`
-	walletType            int64          `json:"walletType"`
-	coin                  string         `json:"coin"`
-	bizType               int64          `json:"bizType"`
-	sceneType             int64          `json:"sceneType"`
-	opType                int64          `json:"opType"`
-	bizId                 int64          `json:"bizId"`
-	bizNo                 string         `json:"bizNo"`
-	changeAmount          string         `json:"changeAmount"`
-	beforeTotalAmount     string         `json:"beforeTotalAmount"`
-	afterTotalAmount      string         `json:"afterTotalAmount"`
-	beforeAvailableAmount string         `json:"beforeAvailableAmount"`
-	afterAvailableAmount  string         `json:"afterAvailableAmount"`
-	beforeFrozenAmount    string         `json:"beforeFrozenAmount"`
-	afterFrozenAmount     string         `json:"afterFrozenAmount"`
-	beforeLockedAmount    string         `json:"beforeLockedAmount"`
-	afterLockedAmount     string         `json:"afterLockedAmount"`
-	balanceSnapshotVersion int64         `json:"balanceSnapshotVersion"`
-	changeType             string        `json:"changeType"`
-	remark                 string        `json:"remark"`
-	createTimes            int64         `json:"createTimes"`
-	updateTimes            int64         `json:"updateTimes"`
+	id                     int64  `json:"id"`
+	flowNo                 string `json:"flowNo"`
+	tenantId               int64  `json:"tenantId"`
+	userId                 int64  `json:"userId"`
+	walletType             int64  `json:"walletType"`
+	coin                   string `json:"coin"`
+	bizType                int64  `json:"bizType"`
+	sceneType              int64  `json:"sceneType"`
+	opType                 int64  `json:"opType"`
+	bizId                  int64  `json:"bizId"`
+	bizNo                  string `json:"bizNo"`
+	changeAmount           string `json:"changeAmount"`
+	beforeTotalAmount      string `json:"beforeTotalAmount"`
+	afterTotalAmount       string `json:"afterTotalAmount"`
+	beforeAvailableAmount  string `json:"beforeAvailableAmount"`
+	afterAvailableAmount   string `json:"afterAvailableAmount"`
+	beforeFrozenAmount     string `json:"beforeFrozenAmount"`
+	afterFrozenAmount      string `json:"afterFrozenAmount"`
+	beforeLockedAmount     string `json:"beforeLockedAmount"`
+	afterLockedAmount      string `json:"afterLockedAmount"`
+	balanceSnapshotVersion int64  `json:"balanceSnapshotVersion"`
+	changeType             string `json:"changeType"`
+	remark                 string `json:"remark"`
+	createTimes            int64  `json:"createTimes"`
+	updateTimes            int64  `json:"updateTimes"`
 }
 
 type AssetFreeze {
@@ -271,3 +271,4 @@ service admin {
 	@handler AdminUnlockAsset
 	post /unlock (AdminUnlockAssetReq) returns (AdminChangeAssetResp)
 }
+

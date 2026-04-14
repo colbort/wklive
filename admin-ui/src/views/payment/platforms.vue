@@ -1,157 +1,134 @@
 <template>
   <div class="payment-page module-page">
     <div class="page-header">
-      <h2>支付基础配置</h2>
+      <h2>平台管理</h2>
       <div class="header-actions">
-        <el-button @click="refreshCurrentPage">
+        <el-button @click="loadPlatforms">
           <el-icon><Refresh /></el-icon>
           刷新
         </el-button>
       </div>
     </div>
 
-    <el-tabs v-model="activeTab">
-      <el-tab-pane label="支付平台" name="platforms">
-        <el-card shadow="never" class="query-card">
-          <el-form :model="platformQuery" inline label-width="90px">
-            <el-form-item label="平台编码">
-              <el-input v-model="platformQuery.platformCode" clearable />
-            </el-form-item>
-            <el-form-item label="关键字">
-              <el-input v-model="platformQuery.keyword" clearable />
-            </el-form-item>
-            <el-form-item label="状态">
-              <el-select v-model="platformQuery.status" clearable style="width: 160px">
-                <el-option label="全部" :value="0" />
-                <el-option label="启用" :value="1" />
-                <el-option label="禁用" :value="2" />
-              </el-select>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="loadPlatforms">
-                查询
-              </el-button>
-              <el-button @click="resetPlatformQuery">
-                重置
-              </el-button>
-              <el-button type="primary" @click="openPlatformDialog()">
-                新增平台
-              </el-button>
-            </el-form-item>
-          </el-form>
-        </el-card>
-
-        <el-card shadow="never" class="table-card">
-          <el-table v-loading="platformLoading" :data="platforms" stripe>
-            <el-table-column prop="id" label="ID" width="80" />
-            <el-table-column prop="platformCode" label="平台编码" min-width="140" />
-            <el-table-column prop="platformName" label="平台名称" min-width="160" />
-            <el-table-column prop="platformType" label="平台类型" width="100" />
-            <el-table-column
-              prop="notifyUrl"
-              label="回调地址"
-              min-width="220"
-              show-overflow-tooltip
+    <el-card shadow="never" class="query-card">
+      <el-form :model="platformQuery" inline label-width="90px">
+        <el-form-item label="平台编码">
+          <el-input v-model="platformQuery.platformCode" clearable />
+        </el-form-item>
+        <el-form-item label="关键字">
+          <el-input v-model="platformQuery.keyword" clearable />
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-select v-model="platformQuery.status" clearable style="width: 160px">
+            <el-option label="全部" :value="0" />
+            <el-option
+              v-for="item in statusOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
             />
-            <el-table-column label="状态" width="100">
-              <template #default="{ row }">
-                <el-tag :type="row.status === 1 ? 'success' : 'info'">
-                  {{ row.status === 1 ? '启用' : '禁用' }}
-                </el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="remark"
-              label="备注"
-              min-width="180"
-              show-overflow-tooltip
-            />
-            <el-table-column label="操作" width="160" fixed="right">
-              <template #default="{ row }">
-                <el-button link type="primary" @click="showPlatformDetail(row)">
-                  详情
-                </el-button>
-                <el-button link type="primary" @click="openPlatformDialog(row)">
-                  编辑
-                </el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-card>
-      </el-tab-pane>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="loadPlatforms">
+            查询
+          </el-button>
+          <el-button @click="resetPlatformQuery">
+            重置
+          </el-button>
+          <el-button type="primary" @click="openPlatformDialog()">
+            新增平台
+          </el-button>
+        </el-form-item>
+      </el-form>
+    </el-card>
 
-      <el-tab-pane label="支付产品" name="products">
-        <el-card shadow="never" class="query-card">
-          <el-form :model="productQuery" inline label-width="90px">
-            <el-form-item label="平台ID">
-              <el-input-number v-model="productQuery.platformId" :min="0" :precision="0" />
-            </el-form-item>
-            <el-form-item label="产品编码">
-              <el-input v-model="productQuery.productCode" clearable />
-            </el-form-item>
-            <el-form-item label="关键字">
-              <el-input v-model="productQuery.keyword" clearable />
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="loadProducts">
-                查询
-              </el-button>
-              <el-button @click="resetProductQuery">
-                重置
-              </el-button>
-              <el-button type="primary" @click="openProductDialog()">
-                新增产品
-              </el-button>
-            </el-form-item>
-          </el-form>
-        </el-card>
-
-        <el-card shadow="never" class="table-card">
-          <el-table v-loading="productLoading" :data="products" stripe>
-            <el-table-column prop="id" label="ID" width="80" />
-            <el-table-column prop="platformId" label="平台ID" width="100" />
-            <el-table-column prop="productCode" label="产品编码" min-width="140" />
-            <el-table-column prop="productName" label="产品名称" min-width="160" />
-            <el-table-column prop="sceneType" label="场景类型" width="100" />
-            <el-table-column prop="currency" label="币种" width="100" />
-            <el-table-column label="状态" width="100">
-              <template #default="{ row }">
-                <el-tag :type="row.status === 1 ? 'success' : 'info'">
-                  {{ row.status === 1 ? '启用' : '禁用' }}
-                </el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="remark"
-              label="备注"
-              min-width="180"
-              show-overflow-tooltip
+    <el-card shadow="never" class="table-card">
+      <el-table v-loading="platformLoading" :data="platforms" stripe>
+        <el-table-column prop="id" label="ID" width="80" />
+        <el-table-column prop="platformCode" label="平台编码" min-width="140" />
+        <el-table-column prop="platformName" label="平台名称" min-width="160" />
+        <el-table-column label="平台类型" width="120">
+          <template #default="{ row }">
+            {{ getPlatformTypeLabel(row.platformType) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="icon" label="图标" width="100" align="center">
+          <template #default="{ row }">
+            <el-image
+              v-if="row.icon"
+              :src="buildAssetUrl(row.icon)"
+              class="platform-icon-preview"
+              :preview-teleported="true"
             />
-            <el-table-column label="操作" width="160" fixed="right">
-              <template #default="{ row }">
-                <el-button link type="primary" @click="showProductDetail(row)">
-                  详情
-                </el-button>
-                <el-button link type="primary" @click="openProductDialog(row)">
-                  编辑
-                </el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-card>
-      </el-tab-pane>
-    </el-tabs>
+            <span v-else>-</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="notifyUrl"
+          label="回调地址"
+          min-width="220"
+          show-overflow-tooltip
+        />
+        <el-table-column label="状态" width="100">
+          <template #default="{ row }">
+            <el-tag :type="row.status === 1 ? 'success' : 'info'">
+              {{ row.status === 1 ? '启用' : '禁用' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="remark"
+          label="备注"
+          min-width="180"
+          show-overflow-tooltip
+        />
+        <el-table-column label="操作" width="160" fixed="right">
+          <template #default="{ row }">
+            <el-button link type="primary" @click="showPlatformDetail(row)">
+              详情
+            </el-button>
+            <el-button link type="primary" @click="openPlatformDialog(row)">
+              编辑
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-card>
 
     <el-dialog v-model="platformDialogVisible" :title="platformForm.id ? '编辑平台' : '新增平台'" width="640px">
       <el-form label-width="100px">
+        <el-form-item v-if="!platformForm.id" label="系统平台">
+          <el-select
+            v-model="selectedPlatformCode"
+            filterable
+            placeholder="请选择系统平台"
+            style="width: 100%"
+            @change="handlePlatformChange"
+          >
+            <el-option
+              v-for="item in supportedPlatforms"
+              :key="item.platformCode"
+              :label="`${item.platformName} (${item.platformCode})`"
+              :value="item.platformCode"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item v-if="!platformForm.id" label="平台编码">
-          <el-input v-model="platformForm.platformCode" />
+          <el-input v-model="platformForm.platformCode" disabled />
         </el-form-item>
         <el-form-item label="平台名称">
-          <el-input v-model="platformForm.platformName" />
+          <el-input v-model="platformForm.platformName" :disabled="!platformForm.id" />
         </el-form-item>
         <el-form-item label="平台类型">
-          <el-input-number v-model="platformForm.platformType" :min="1" :precision="0" />
+          <el-select v-model="platformForm.platformType" style="width: 100%">
+            <el-option
+              v-for="item in platformTypeOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="通知地址">
           <el-input v-model="platformForm.notifyUrl" />
@@ -160,17 +137,35 @@
           <el-input v-model="platformForm.returnUrl" />
         </el-form-item>
         <el-form-item label="图标">
-          <el-input v-model="platformForm.icon" />
+          <div class="platform-icon-upload">
+            <el-image
+              v-if="platformForm.icon"
+              :src="buildAssetUrl(platformForm.icon)"
+              class="platform-icon-preview"
+              :preview-teleported="true"
+            />
+            <el-upload
+              action="#"
+              :auto-upload="false"
+              :show-file-list="false"
+              :on-change="handlePlatformIconSelect"
+              accept="image/*"
+            >
+              <el-button type="primary">
+                上传图片
+              </el-button>
+            </el-upload>
+          </div>
         </el-form-item>
         <el-form-item label="状态">
-          <el-radio-group v-model="platformForm.status">
-            <el-radio :value="1">
-              启用
-            </el-radio>
-            <el-radio :value="2">
-              禁用
-            </el-radio>
-          </el-radio-group>
+          <el-select v-model="platformForm.status" style="width: 100%">
+            <el-option
+              v-for="item in statusOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="备注">
           <el-input v-model="platformForm.remark" type="textarea" :rows="3" />
@@ -186,47 +181,6 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="productDialogVisible" :title="productForm.id ? '编辑产品' : '新增产品'" width="640px">
-      <el-form label-width="100px">
-        <el-form-item v-if="!productForm.id" label="平台ID">
-          <el-input-number v-model="productForm.platformId" :min="1" :precision="0" />
-        </el-form-item>
-        <el-form-item v-if="!productForm.id" label="产品编码">
-          <el-input v-model="productForm.productCode" />
-        </el-form-item>
-        <el-form-item label="产品名称">
-          <el-input v-model="productForm.productName" />
-        </el-form-item>
-        <el-form-item label="场景类型">
-          <el-input-number v-model="productForm.sceneType" :min="1" :precision="0" />
-        </el-form-item>
-        <el-form-item label="币种">
-          <el-input v-model="productForm.currency" />
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-radio-group v-model="productForm.status">
-            <el-radio :value="1">
-              启用
-            </el-radio>
-            <el-radio :value="2">
-              禁用
-            </el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="备注">
-          <el-input v-model="productForm.remark" type="textarea" :rows="3" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="productDialogVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitProduct">
-          确定
-        </el-button>
-      </template>
-    </el-dialog>
-
     <el-dialog v-model="detailVisible" :title="detailTitle" width="720px">
       <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
     </el-dialog>
@@ -237,22 +191,34 @@
 import { onMounted, reactive, ref } from 'vue'
 import { Refresh } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-import { catalogService, type PayPlatform, type PayProduct } from '@/services'
+import type { UploadFile } from 'element-plus'
+import { catalogService, type PayPlatform, type PayPlatformItem } from '@/services'
+import { apiUploadFile } from '@/api/system/upload'
+import { buildAssetUrl } from '@/utils/file-url'
 
-const activeTab = ref('platforms')
 const submitLoading = ref(false)
 const platformLoading = ref(false)
-const productLoading = ref(false)
 const platforms = ref<PayPlatform[]>([])
-const products = ref<PayProduct[]>([])
+const supportedPlatforms = ref<PayPlatformItem[]>([])
 const detailVisible = ref(false)
 const detailTitle = ref('详情')
 const detailData = ref<Record<string, any>>({})
 const platformDialogVisible = ref(false)
-const productDialogVisible = ref(false)
+const selectedPlatformCode = ref('')
+
+const platformTypeOptions = [
+  { label: '三方支付', value: 1 },
+  { label: '银行转账', value: 2 },
+  { label: '链上支付', value: 3 },
+  { label: '人工代收', value: 4 },
+]
+
+const statusOptions = [
+  { label: '启用', value: 1 },
+  { label: '禁用', value: 2 },
+]
 
 const platformQuery = reactive({ platformCode: '', keyword: '', status: 0 })
-const productQuery = reactive({ platformId: 0, productCode: '', keyword: '' })
 
 const platformForm = reactive({
   id: 0,
@@ -262,17 +228,6 @@ const platformForm = reactive({
   notifyUrl: '',
   returnUrl: '',
   icon: '',
-  status: 1,
-  remark: '',
-})
-
-const productForm = reactive({
-  id: 0,
-  platformId: 0,
-  productCode: '',
-  productName: '',
-  sceneType: 1,
-  currency: '',
   status: 1,
   remark: '',
 })
@@ -287,23 +242,9 @@ const loadPlatforms = async () => {
   }
 }
 
-const loadProducts = async () => {
-  productLoading.value = true
-  try {
-    const res = await catalogService.getProductList({
-      ...productQuery,
-      platformId: productQuery.platformId || undefined,
-      limit: 100,
-    })
-    products.value = res.data || []
-  } finally {
-    productLoading.value = false
-  }
-}
-
-const refreshCurrentPage = () => {
-  loadPlatforms()
-  loadProducts()
+const loadSupportedPlatforms = async () => {
+  const res = await catalogService.getPayPlatforms()
+  supportedPlatforms.value = res.data || []
 }
 
 const resetPlatformQuery = () => {
@@ -311,12 +252,8 @@ const resetPlatformQuery = () => {
   loadPlatforms()
 }
 
-const resetProductQuery = () => {
-  Object.assign(productQuery, { platformId: 0, productCode: '', keyword: '' })
-  loadProducts()
-}
-
 const openPlatformDialog = (row?: PayPlatform) => {
+  selectedPlatformCode.value = ''
   Object.assign(platformForm, row || {
     id: 0,
     platformCode: '',
@@ -331,21 +268,52 @@ const openPlatformDialog = (row?: PayPlatform) => {
   platformDialogVisible.value = true
 }
 
-const openProductDialog = (row?: PayProduct) => {
-  Object.assign(productForm, row || {
-    id: 0,
-    platformId: 0,
-    productCode: '',
-    productName: '',
-    sceneType: 1,
-    currency: '',
-    status: 1,
-    remark: '',
-  })
-  productDialogVisible.value = true
+const handlePlatformChange = (platformCode: string) => {
+  const matched = supportedPlatforms.value.find(item => item.platformCode === platformCode)
+  if (!matched) return
+  platformForm.platformCode = matched.platformCode
+  platformForm.platformName = matched.platformName
+}
+
+const getPlatformTypeLabel = (value: number) => {
+  return platformTypeOptions.find(item => item.value === value)?.label || String(value || '')
+}
+
+const handlePlatformIconSelect = async (uploadFile: UploadFile) => {
+  if (!uploadFile.raw) return
+
+  if (!uploadFile.raw.type.startsWith('image/')) {
+    ElMessage.error('请选择图片文件')
+    return
+  }
+
+  if (uploadFile.raw.size > 5 * 1024 * 1024) {
+    ElMessage.error('图片大小不能超过 5MB')
+    return
+  }
+
+  submitLoading.value = true
+  try {
+    const res = await apiUploadFile(uploadFile.raw)
+    if (res.code === 0 || res.code === 200) {
+      platformForm.icon = res.data?.url || ''
+      ElMessage.success('上传成功')
+      return
+    }
+    throw new Error(res.msg || '上传失败')
+  } catch (error: any) {
+    ElMessage.error(error?.message || '上传失败')
+  } finally {
+    submitLoading.value = false
+  }
 }
 
 const submitPlatform = async () => {
+  if (!platformForm.id && !platformForm.platformCode) {
+    ElMessage.warning('请先选择系统平台')
+    return
+  }
+
   submitLoading.value = true
   try {
     if (platformForm.id) {
@@ -361,22 +329,6 @@ const submitPlatform = async () => {
   }
 }
 
-const submitProduct = async () => {
-  submitLoading.value = true
-  try {
-    if (productForm.id) {
-      await catalogService.updateProduct(productForm.id, { ...productForm })
-    } else {
-      await catalogService.createProduct({ ...productForm })
-    }
-    ElMessage.success('操作成功')
-    productDialogVisible.value = false
-    loadProducts()
-  } finally {
-    submitLoading.value = false
-  }
-}
-
 const showPlatformDetail = async (row: PayPlatform) => {
   const res = await catalogService.getPlatformDetail(row.id)
   detailTitle.value = '平台详情'
@@ -384,18 +336,28 @@ const showPlatformDetail = async (row: PayPlatform) => {
   detailVisible.value = true
 }
 
-const showProductDetail = async (row: PayProduct) => {
-  const res = await catalogService.getProductDetail(row.id)
-  detailTitle.value = '产品详情'
-  detailData.value = res.data || row
-  detailVisible.value = true
-}
-
-onMounted(refreshCurrentPage)
+onMounted(async () => {
+  await Promise.all([loadPlatforms(), loadSupportedPlatforms()])
+})
 </script>
 
 <style scoped>
 .query-card :deep(.el-form-item) {
   margin-bottom: 12px;
+}
+
+.platform-icon-upload {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.platform-icon-preview {
+  width: 72px;
+  height: 72px;
+  border: 1px solid var(--el-border-color);
+  border-radius: 6px;
+  object-fit: contain;
+  background: var(--el-fill-color-light);
 }
 </style>

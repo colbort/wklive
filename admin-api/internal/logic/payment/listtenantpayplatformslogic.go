@@ -46,12 +46,12 @@ func (l *ListTenantPayPlatformsLogic) ListTenantPayPlatforms(req *types.ListTena
 	data := make([]types.TenantPayPlatform, len(result.Data))
 	for i, item := range result.Data {
 		data[i] = types.TenantPayPlatform{
-			Id:         item.Id,
-			TenantId:   item.TenantId,
-			PlatformId: item.PlatformId,
-			Status:     int64(item.Status),
-			OpenStatus: int64(item.OpenStatus),
-			Remark:     item.Remark,
+			Id:          item.Id,
+			TenantId:    item.TenantId,
+			PlatformId:  item.PlatformId,
+			Status:      int64(item.Status),
+			OpenStatus:  int64(item.OpenStatus),
+			Remark:      item.Remark,
 			CreateTimes: item.CreateTimes,
 			UpdateTimes: item.UpdateTimes,
 		}

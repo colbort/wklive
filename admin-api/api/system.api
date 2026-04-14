@@ -475,7 +475,7 @@ type SysTenantListResp {
 }
 
 type SysTenantDetailReq {
-	tenantId *int64 `form:"tenantId,optional"`
+	tenantId   *int64  `form:"tenantId,optional"`
 	tenantCode *string `form:"tenantCode,optional"`
 }
 
@@ -643,6 +643,6 @@ service admin {
 	get /tenants (SysTenantListReq) returns (SysTenantListResp)
 
 	@handler SysTenantDetail
-	get /tenant/detail(SysTenantDetailReq) returns (SysTenantDetailResp)
+	get /tenant/detail (SysTenantDetailReq) returns (SysTenantDetailResp)
 }
 

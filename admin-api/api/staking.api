@@ -219,19 +219,19 @@ type AdminProductChangeStatusResp {
 
 type AdminOrderListReq {
 	PageReq
-	tenantId       int64  `form:"tenantId,optional"`
-	orderNo        string `form:"orderNo,optional"`
-	uid            int64  `form:"uid,optional"`
-	productId      int64  `form:"productId,optional"`
-	productName    string `form:"productName,optional"`
-	coinSymbol     string `form:"coinSymbol,optional"`
-	status         int64  `form:"status,optional"`
-	redeemType     int64  `form:"redeemType,optional"`
-	source         int64  `form:"source,optional"`
-	startTimesBegin int64 `form:"startTimesBegin,optional"`
-	startTimesEnd   int64 `form:"startTimesEnd,optional"`
-	endTimesBegin   int64 `form:"endTimesBegin,optional"`
-	endTimesEnd     int64 `form:"endTimesEnd,optional"`
+	tenantId        int64  `form:"tenantId,optional"`
+	orderNo         string `form:"orderNo,optional"`
+	uid             int64  `form:"uid,optional"`
+	productId       int64  `form:"productId,optional"`
+	productName     string `form:"productName,optional"`
+	coinSymbol      string `form:"coinSymbol,optional"`
+	status          int64  `form:"status,optional"`
+	redeemType      int64  `form:"redeemType,optional"`
+	source          int64  `form:"source,optional"`
+	startTimesBegin int64  `form:"startTimesBegin,optional"`
+	startTimesEnd   int64  `form:"startTimesEnd,optional"`
+	endTimesBegin   int64  `form:"endTimesBegin,optional"`
+	endTimesEnd     int64  `form:"endTimesEnd,optional"`
 }
 
 type AdminOrderListResp {
@@ -251,14 +251,14 @@ type AdminOrderDetailResp {
 
 type AdminRewardLogListReq {
 	PageReq
-	tenantId         int64 `form:"tenantId,optional"`
+	tenantId         int64  `form:"tenantId,optional"`
 	orderNo          string `form:"orderNo,optional"`
-	uid              int64 `form:"uid,optional"`
-	productId        int64 `form:"productId,optional"`
-	rewardType       int64 `form:"rewardType,optional"`
-	rewardStatus     int64 `form:"rewardStatus,optional"`
-	rewardTimesBegin int64 `form:"rewardTimesBegin,optional"`
-	rewardTimesEnd   int64 `form:"rewardTimesEnd,optional"`
+	uid              int64  `form:"uid,optional"`
+	productId        int64  `form:"productId,optional"`
+	rewardType       int64  `form:"rewardType,optional"`
+	rewardStatus     int64  `form:"rewardStatus,optional"`
+	rewardTimesBegin int64  `form:"rewardTimesBegin,optional"`
+	rewardTimesEnd   int64  `form:"rewardTimesEnd,optional"`
 }
 
 type AdminRewardLogListResp {
@@ -312,7 +312,7 @@ type AdminManualRedeemReq {
 
 type AdminManualRedeemResp {
 	RespBase
-	success int64 `json:"success"`
+	success  int64  `json:"success"`
 	redeemNo string `json:"redeemNo"`
 }
 
@@ -355,3 +355,4 @@ service admin {
 	@handler ManualRedeem
 	post /manual-redeem (AdminManualRedeemReq) returns (AdminManualRedeemResp)
 }
+

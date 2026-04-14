@@ -745,6 +745,36 @@ type CreateUserResp struct {
 	UserId int64 `json:"userId"`
 }
 
+type DeletePayPlatformReq struct {
+	TenantId int64 `form:"tenantId"`
+	Id       int64 `path:"id"`
+}
+
+type DeletePayProductReq struct {
+	TenantId int64 `form:"tenantId"`
+	Id       int64 `path:"id"`
+}
+
+type DeleteTenantPayAccountReq struct {
+	TenantId int64 `form:"tenantId"`
+	Id       int64 `path:"id"`
+}
+
+type DeleteTenantPayChannelReq struct {
+	TenantId int64 `form:"tenantId"`
+	Id       int64 `path:"id"`
+}
+
+type DeleteTenantPayChannelRuleReq struct {
+	TenantId int64 `form:"tenantId"`
+	Id       int64 `path:"id"`
+}
+
+type DeleteTenantPayPlatformReq struct {
+	TenantId int64 `form:"tenantId"`
+	Id       int64 `path:"id"`
+}
+
 type DeleteUserBankReq struct {
 	TenantId int64 `form:"tenantId"`
 	Id       int64 `path:"id"`
@@ -928,6 +958,11 @@ type GetPayPlatformReq struct {
 type GetPayPlatformResp struct {
 	RespBase
 	Data PayPlatform `json:"data"`
+}
+
+type GetPayPlatformsResp struct {
+	RespBase
+	Data []PayPlatformItem `json:"data"`
 }
 
 type GetPayProductReq struct {
@@ -2327,6 +2362,11 @@ type PayPlatform struct {
 	Remark       string `json:"remark"`
 	CreateTimes  int64  `json:"createTimes"`
 	UpdateTimes  int64  `json:"updateTimes"`
+}
+
+type PayPlatformItem struct {
+	PlatformCode string `json:"platformCode"`
+	PlatformName string `json:"platformName"`
 }
 
 type PayProduct struct {

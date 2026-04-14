@@ -1,5 +1,6 @@
 import type { RespBase } from '@/services'
 import {
+  apiPayPlatforms,
   apiPayPlatformCreate,
   apiPayPlatformDetail,
   apiPayPlatformList,
@@ -22,6 +23,11 @@ export type PayPlatform = {
   remark: string // 备注
   createTimes: number // 创建时间
   updateTimes: number // 更新时间
+}
+
+export type PayPlatformItem = {
+  platformCode: string // 平台编码
+  platformName: string // 平台名称
 }
 
 export type PayProduct = {
@@ -98,6 +104,10 @@ export type ListPayProductsReq = {
 }
 
 export class CatalogService {
+  async getPayPlatforms(): Promise<RespBase<PayPlatformItem[]>> {
+    return apiPayPlatforms()
+  }
+
   async getPlatformList(params: ListPayPlatformsReq): Promise<RespBase<PayPlatform[]>> {
     return apiPayPlatformList(params)
   }

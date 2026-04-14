@@ -57,7 +57,7 @@ func (l *SysConfigListLogic) SysConfigList(req *types.SysConfigListReq) (resp *t
 			ConfigKey:   v.ConfigKey,
 			ConfigValue: v.ConfigValue,
 			Remark:      v.Remark,
-			CreateTimes:   v.CreateTimes,
+			CreateTimes: v.CreateTimes,
 		}
 	}
 	return

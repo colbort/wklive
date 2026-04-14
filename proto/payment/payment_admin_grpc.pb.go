@@ -19,6 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	PaymentAdmin_GetPayPlatforms_FullMethodName                = "/payment.PaymentAdmin/GetPayPlatforms"
 	PaymentAdmin_CreatePayPlatform_FullMethodName              = "/payment.PaymentAdmin/CreatePayPlatform"
 	PaymentAdmin_UpdatePayPlatform_FullMethodName              = "/payment.PaymentAdmin/UpdatePayPlatform"
 	PaymentAdmin_GetPayPlatform_FullMethodName                 = "/payment.PaymentAdmin/GetPayPlatform"
@@ -65,6 +66,8 @@ const (
 //
 // Admin 接口
 type PaymentAdminClient interface {
+	// 获取系统支持的平台
+	GetPayPlatforms(ctx context.Context, in *AdminEmpty, opts ...grpc.CallOption) (*PayPlatformsResp, error)
 	// 创建平台
 	CreatePayPlatform(ctx context.Context, in *CreatePayPlatformReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	// 更新平台
@@ -149,6 +152,16 @@ type paymentAdminClient struct {
 
 func NewPaymentAdminClient(cc grpc.ClientConnInterface) PaymentAdminClient {
 	return &paymentAdminClient{cc}
+}
+
+func (c *paymentAdminClient) GetPayPlatforms(ctx context.Context, in *AdminEmpty, opts ...grpc.CallOption) (*PayPlatformsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PayPlatformsResp)
+	err := c.cc.Invoke(ctx, PaymentAdmin_GetPayPlatforms_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *paymentAdminClient) CreatePayPlatform(ctx context.Context, in *CreatePayPlatformReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
@@ -537,6 +550,8 @@ func (c *paymentAdminClient) GetWithdrawNotifyLog(ctx context.Context, in *GetWi
 //
 // Admin 接口
 type PaymentAdminServer interface {
+	// 获取系统支持的平台
+	GetPayPlatforms(context.Context, *AdminEmpty) (*PayPlatformsResp, error)
 	// 创建平台
 	CreatePayPlatform(context.Context, *CreatePayPlatformReq) (*AdminCommonResp, error)
 	// 更新平台
@@ -623,6 +638,9 @@ type PaymentAdminServer interface {
 // pointer dereference when methods are called.
 type UnimplementedPaymentAdminServer struct{}
 
+func (UnimplementedPaymentAdminServer) GetPayPlatforms(context.Context, *AdminEmpty) (*PayPlatformsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetPayPlatforms not implemented")
+}
 func (UnimplementedPaymentAdminServer) CreatePayPlatform(context.Context, *CreatePayPlatformReq) (*AdminCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreatePayPlatform not implemented")
 }
@@ -756,6 +774,24 @@ func RegisterPaymentAdminServer(s grpc.ServiceRegistrar, srv PaymentAdminServer)
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&PaymentAdmin_ServiceDesc, srv)
+}
+
+func _PaymentAdmin_GetPayPlatforms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminEmpty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentAdminServer).GetPayPlatforms(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentAdmin_GetPayPlatforms_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentAdminServer).GetPayPlatforms(ctx, req.(*AdminEmpty))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _PaymentAdmin_CreatePayPlatform_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -1449,6 +1485,10 @@ var PaymentAdmin_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "payment.PaymentAdmin",
 	HandlerType: (*PaymentAdminServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetPayPlatforms",
+			Handler:    _PaymentAdmin_GetPayPlatforms_Handler,
+		},
 		{
 			MethodName: "CreatePayPlatform",
 			Handler:    _PaymentAdmin_CreatePayPlatform_Handler,

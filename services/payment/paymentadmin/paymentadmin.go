@@ -15,6 +15,7 @@ import (
 
 type (
 	AdminCommonResp                   = payment.AdminCommonResp
+	AdminEmpty                        = payment.AdminEmpty
 	AuditWithdrawOrderReq             = payment.AuditWithdrawOrderReq
 	CloseRechargeOrderReq             = payment.CloseRechargeOrderReq
 	CreatePayPlatformReq              = payment.CreatePayPlatformReq
@@ -68,6 +69,8 @@ type (
 	ListWithdrawOrdersResp            = payment.ListWithdrawOrdersResp
 	ManualMarkRechargeOrderSuccessReq = payment.ManualMarkRechargeOrderSuccessReq
 	OpenTenantPayPlatformReq          = payment.OpenTenantPayPlatformReq
+	PayPlatformItem                   = payment.PayPlatformItem
+	PayPlatformsResp                  = payment.PayPlatformsResp
 	RetryNotifyReq                    = payment.RetryNotifyReq
 	UpdatePayPlatformReq              = payment.UpdatePayPlatformReq
 	UpdatePayProductReq               = payment.UpdatePayProductReq
@@ -77,6 +80,8 @@ type (
 	UpdateTenantPayPlatformReq        = payment.UpdateTenantPayPlatformReq
 
 	PaymentAdmin interface {
+		// 获取系统支持的平台
+		GetPayPlatforms(ctx context.Context, in *AdminEmpty, opts ...grpc.CallOption) (*PayPlatformsResp, error)
 		// 创建平台
 		CreatePayPlatform(ctx context.Context, in *CreatePayPlatformReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 		// 更新平台
@@ -164,6 +169,12 @@ func NewPaymentAdmin(cli zrpc.Client) PaymentAdmin {
 	return &defaultPaymentAdmin{
 		cli: cli,
 	}
+}
+
+// 获取系统支持的平台
+func (m *defaultPaymentAdmin) GetPayPlatforms(ctx context.Context, in *AdminEmpty, opts ...grpc.CallOption) (*PayPlatformsResp, error) {
+	client := payment.NewPaymentAdminClient(m.cli.Conn())
+	return client.GetPayPlatforms(ctx, in, opts...)
 }
 
 // 创建平台

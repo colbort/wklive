@@ -26,9 +26,6 @@ func NewRbacMiddleware(svcCtx *svc.ServiceContext) *RbacMiddleware {
 		logx.Errorf("fetch system permissions failed: %v", err)
 	}
 	perms := make(map[string]string, 0)
-	perms["GET /system/core"] = ""
-	perms["GET /system/auth/profile"] = ""
-	perms["POST /system/auth/profile"] = ""
 	for _, item := range result.Data {
 		perms[fmt.Sprintf("%s %s", item.Method, item.Path)] = item.PermKey
 	}
@@ -40,8 +37,10 @@ func NewRbacMiddleware(svcCtx *svc.ServiceContext) *RbacMiddleware {
 
 func (m *RbacMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		path := r.URL.Path
+		method := r.Method
 		// 1. 放行登录接口
-		if isWhitePath(r.URL.Path) {
+		if isWhitePath(path) {
 			next(w, r)
 			return
 		}
@@ -65,12 +64,13 @@ func (m *RbacMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		// 4. 根据 path + method 映射出需要的权限
-		requiredPerm := getRequiredPermission(m.perms, r.URL.Path, r.Method)
+		requiredPerm := getRequiredPermission(m.perms, path, method)
 
 		// 没配权限映射的接口，默认放过
 		// 如果你想改成“没配置就拒绝”，可以改这里
 		if requiredPerm == "" {
-			next(w, r)
+			logx.Errorf("==============  method=%s  path=%s", method, path)
+			http.Error(w, "Internal Server Error", http.StatusMethodNotAllowed)
 			return
 		}
 
@@ -100,7 +100,7 @@ func (m *RbacMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 
 		if !allowed {
 			logx.Errorf("forbidden, uid=%d method=%s path=%s required=%s userPerms=%v",
-				uid, r.Method, r.URL.Path, requiredPerm, resp.Perms)
+				uid, method, path, requiredPerm, resp.Perms)
 			http.Error(w, "Forbidden", http.StatusForbidden)
 			return
 		}
@@ -178,6 +178,7 @@ func isWhitePath(path string) bool {
 	whiteList := map[string]struct{}{
 		"/admin/system/core":         {},
 		"/admin/system/auth/login":   {},
+		"/admin/system/auth/profile": {},
 		"/admin/system/auth/captcha": {},
 		"/health":                    {},
 	}

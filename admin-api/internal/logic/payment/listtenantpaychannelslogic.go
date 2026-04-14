@@ -71,8 +71,8 @@ func (l *ListTenantPayChannelsLogic) ListTenantPayChannels(req *types.ListTenant
 			FeeFixedAmount:  item.FeeFixedAmount,
 			ExtConfig:       item.ExtConfig,
 			Remark:          item.Remark,
-			CreateTimes:      item.CreateTimes,
-			UpdateTimes:      item.UpdateTimes,
+			CreateTimes:     item.CreateTimes,
+			UpdateTimes:     item.UpdateTimes,
 		}
 	}
 
