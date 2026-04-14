@@ -26,7 +26,7 @@ func NewDeleteTenantPayPlatformLogic(ctx context.Context, svcCtx *svc.ServiceCon
 	}
 }
 
-func (l *DeleteTenantPayPlatformLogic) DeleteTenantPayPlatform() (resp *types.RespBase, err error) {
+func (l *DeleteTenantPayPlatformLogic) DeleteTenantPayPlatform(req *types.DeleteTenantPayPlatformReq) (resp *types.RespBase, err error) {
 	// todo: add your logic here and delete this line
 
 	return

@@ -19,52 +19,52 @@ export function apiUserRechargeStatDetail(
 export function apiUserRechargeStatList(
   params: ListUserRechargeStatsReq,
 ): Promise<RespBase<UserRechargeStat[]>> {
-  return get<UserRechargeStat[]>('/admin/payment/user-recharge-stats/list', params)
+  return get<UserRechargeStat[]>('/admin/payment/user-recharge-stats', params)
 }
 
 export function apiRechargeOrderList(
   params: ListRechargeOrdersReq,
 ): Promise<RespBase<RechargeOrder[]>> {
-  return get<RechargeOrder[]>('/admin/payment/recharge-orders/list', params)
+  return get<RechargeOrder[]>('/admin/payment/recharge-orders', params)
 }
 
 export function apiRechargeOrderDetail(
   orderNo: string,
   tenantId: number,
 ): Promise<RespBase<RechargeOrder>> {
-  return get<RechargeOrder>(`/admin/payment/recharge-orders/${orderNo}`, { tenantId })
+  return get<RechargeOrder>(`/admin/payment/recharge-order/${orderNo}`, { tenantId })
 }
 
 export function apiCloseRechargeOrder(
   orderNo: string,
   params: { tenantId: number; remark?: string },
 ): Promise<RespBase> {
-  return post(`/admin/payment/recharge-orders/${orderNo}/close`, params)
+  return post(`/admin/payment/recharge-order/${orderNo}/close`, params)
 }
 
 export function apiManualSuccessRechargeOrder(
   orderNo: string,
   params: { tenantId: number; thirdTradeNo?: string; payAmount: number; remark?: string },
 ): Promise<RespBase> {
-  return post(`/admin/payment/recharge-orders/${orderNo}/manual-success`, params)
+  return post(`/admin/payment/recharge-order/${orderNo}/manual-success`, params)
 }
 
 export function apiRetryRechargeNotify(
   orderNo: string,
   params: { tenantId: number },
 ): Promise<RespBase> {
-  return post(`/admin/payment/recharge-orders/${orderNo}/retry-notify`, params)
+  return post(`/admin/payment/recharge-order/${orderNo}/retry-notify`, params)
 }
 
 export function apiRechargeNotifyLogList(
   params: ListRechargeNotifyLogsReq,
 ): Promise<RespBase<PayNotifyLog[]>> {
-  return get<PayNotifyLog[]>('/admin/payment/recharge-notify-logs/list', params)
+  return get<PayNotifyLog[]>('/admin/payment/recharge-notify-logs', params)
 }
 
 export function apiRechargeNotifyLogDetail(
   id: number,
   tenantId: number,
 ): Promise<RespBase<PayNotifyLog>> {
-  return get<PayNotifyLog>(`/admin/payment/recharge-notify-logs/${id}`, { tenantId })
+  return get<PayNotifyLog>(`/admin/payment/recharge-notify-log/${id}`, { tenantId })
 }

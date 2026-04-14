@@ -84,6 +84,7 @@
       "qrcode",
       "sqlutil",
       "sqlx",
+      "syncx",
       "totp",
       "tuser",
       "wklive",

@@ -94,7 +94,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	if err := itickManager.Start(ctx); err != nil {
 		logx.Errorf("itick manager start failed: %v", err)
 	}
-	cache.New(c.CacheRedis, syncx.NewSingleFlight(), cache.NewStat(""), redis.Nil)
 	return &ServiceContext{
 		Config:                      c,
 		ItickManager:                itickManager,

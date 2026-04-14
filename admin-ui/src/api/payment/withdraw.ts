@@ -10,14 +10,14 @@ import type {
 export function apiWithdrawOrderList(
   params: ListWithdrawOrdersReq,
 ): Promise<RespBase<WithdrawOrder[]>> {
-  return get<WithdrawOrder[]>('/admin/payment/withdraw-orders/list', params)
+  return get<WithdrawOrder[]>('/admin/payment/withdraw-orders', params)
 }
 
 export function apiWithdrawOrderDetail(
   orderNo: string,
   tenantId: number,
 ): Promise<RespBase<WithdrawOrder>> {
-  return get<WithdrawOrder>(`/admin/payment/withdraw-orders/${orderNo}`, { tenantId })
+  return get<WithdrawOrder>(`/admin/payment/withdraw-order/${orderNo}`, { tenantId })
 }
 
 export function apiAuditWithdrawOrder(params: {
@@ -26,18 +26,18 @@ export function apiAuditWithdrawOrder(params: {
   approve: number
   remark?: string
 }): Promise<RespBase> {
-  return post(`/admin/payment/withdraw-orders/${params.orderNo}/audit`, params)
+  return post(`/admin/payment/withdraw-order/${params.orderNo}/audit`, params)
 }
 
 export function apiWithdrawNotifyLogList(
   params: ListWithdrawNotifyLogsReq,
 ): Promise<RespBase<PayNotifyLog[]>> {
-  return get<PayNotifyLog[]>('/admin/payment/withdraw-notify-logs/list', params)
+  return get<PayNotifyLog[]>('/admin/payment/withdraw-notify-logs', params)
 }
 
 export function apiWithdrawNotifyLogDetail(
   id: number,
   tenantId: number,
 ): Promise<RespBase<PayNotifyLog>> {
-  return get<PayNotifyLog>(`/admin/payment/withdraw-notify-logs/${id}`, { tenantId })
+  return get<PayNotifyLog>(`/admin/payment/withdraw-notify-log/${id}`, { tenantId })
 }

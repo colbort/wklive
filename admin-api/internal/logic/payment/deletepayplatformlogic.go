@@ -26,8 +26,6 @@ func NewDeletePayPlatformLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 	}
 }
 
-func (l *DeletePayPlatformLogic) DeletePayPlatform() (resp *types.RespBase, err error) {
-	// todo: add your logic here and delete this line
-
+func (l *DeletePayPlatformLogic) DeletePayPlatform(req *types.DeletePayPlatformReq) (resp *types.RespBase, err error) {
 	return
 }

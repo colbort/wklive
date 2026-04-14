@@ -4,20 +4,28 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"regexp"
 	"strings"
-
 	"wklive/admin-api/internal/svc"
 	"wklive/common/utils"
 	"wklive/proto/system"
 
 	"github.com/casbin/casbin/v2"
-	casbinModel "github.com/casbin/casbin/v2/model"
+	"github.com/casbin/casbin/v2/model"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
+type PermissionRule struct {
+	Method     string
+	Path       string
+	PermKey    string
+	Pattern    *regexp.Regexp
+	StaticSegs int
+}
+
 type RbacMiddleware struct {
 	svcCtx *svc.ServiceContext
-	perms  map[string]string // path+method -> permKey
+	rules  []PermissionRule
 }
 
 func NewRbacMiddleware(svcCtx *svc.ServiceContext) *RbacMiddleware {
@@ -25,13 +33,30 @@ func NewRbacMiddleware(svcCtx *svc.ServiceContext) *RbacMiddleware {
 	if err != nil {
 		logx.Errorf("fetch system permissions failed: %v", err)
 	}
-	perms := make(map[string]string, 0)
-	for _, item := range result.Data {
-		perms[fmt.Sprintf("%s %s", item.Method, item.Path)] = item.PermKey
+
+	rules := make([]PermissionRule, 0)
+	if result != nil {
+		rules = make([]PermissionRule, 0, len(result.Data))
+		for _, item := range result.Data {
+			pattern, staticSegs, err := compilePathPattern(item.Path)
+			if err != nil {
+				logx.Errorf("compile path pattern failed: method=%s path=%s err=%v", item.Method, item.Path, err)
+				continue
+			}
+
+			rules = append(rules, PermissionRule{
+				Method:     strings.ToUpper(strings.TrimSpace(item.Method)),
+				Path:       normalizePath(item.Path),
+				PermKey:    item.PermKey,
+				Pattern:    pattern,
+				StaticSegs: staticSegs,
+			})
+		}
 	}
+
 	return &RbacMiddleware{
 		svcCtx: svcCtx,
-		perms:  perms,
+		rules:  rules,
 	}
 }
 
@@ -39,13 +64,12 @@ func (m *RbacMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		path := r.URL.Path
 		method := r.Method
-		// 1. 放行登录接口
+
 		if isWhitePath(path) {
 			next(w, r)
 			return
 		}
 
-		// 2. 获取并解析 JWT
 		uid, err := utils.GetUidFromCtx(r.Context())
 		if err != nil {
 			logx.Errorf("invalid token: %v", err)
@@ -53,7 +77,6 @@ func (m *RbacMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		// 3. 查询当前用户权限列表
 		resp, err := m.svcCtx.SystemCli.LoginUserPerms(r.Context(), &system.LoginUserPermsReq{
 			UserId: uid,
 		})
@@ -63,18 +86,13 @@ func (m *RbacMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		// 4. 根据 path + method 映射出需要的权限
-		requiredPerm := getRequiredPermission(m.perms, path, method)
-
-		// 没配权限映射的接口，默认放过
-		// 如果你想改成“没配置就拒绝”，可以改这里
+		requiredPerm := getRequiredPermission(m.rules, path, method)
 		if requiredPerm == "" {
-			logx.Errorf("==============  method=%s  path=%s", method, path)
-			http.Error(w, "Internal Server Error", http.StatusMethodNotAllowed)
+			logx.Errorf("permission route not found, method=%s path=%s", method, path)
+			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 			return
 		}
 
-		// 5. 创建当前请求专属的 Casbin Enforcer
 		enforcer, err := newUserPermEnforcer(fmt.Sprintf("%d", uid), resp.Perms)
 		if err != nil {
 			logx.Errorf("create casbin enforcer failed: %v", err)
@@ -82,7 +100,6 @@ func (m *RbacMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		// 6. 解析 requiredPerm
 		obj, act, ok := parsePerm(requiredPerm)
 		if !ok {
 			logx.Errorf("invalid required permission format: %s", requiredPerm)
@@ -90,7 +107,6 @@ func (m *RbacMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		// 7. 权限校验
 		allowed, err := enforcer.Enforce(fmt.Sprintf("%d", uid), obj, act)
 		if err != nil {
 			logx.Errorf("casbin enforce failed, uid=%d perm=%s err=%v", uid, requiredPerm, err)
@@ -125,7 +141,7 @@ e = some(where (p.eft == allow))
 m = r.sub == p.sub && r.obj == p.obj && r.act == p.act
 `
 
-	m, err := casbinModel.NewModelFromString(modelText)
+	m, err := model.NewModelFromString(modelText)
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +151,6 @@ m = r.sub == p.sub && r.obj == p.obj && r.act == p.act
 		return nil, err
 	}
 
-	// 把当前用户最终权限直接挂到 userID 上
 	for _, perm := range perms {
 		obj, act, ok := parsePerm(perm)
 		if !ok {
@@ -173,7 +188,6 @@ func parsePerm(perm string) (obj string, act string, ok bool) {
 	return obj, act, true
 }
 
-// isWhitePath 白名单接口
 func isWhitePath(path string) bool {
 	whiteList := map[string]struct{}{
 		"/admin/system/core":         {},
@@ -187,29 +201,41 @@ func isWhitePath(path string) bool {
 	return ok
 }
 
-// getRequiredPermission 根据 path + method 映射权限
-func getRequiredPermission(perms map[string]string, path, method string) string {
-	// 去掉 query 参数影响（通常 URL.Path 本身不带 query，这里只是保险）
+func getRequiredPermission(rules []PermissionRule, path, method string) string {
 	path = strings.TrimSpace(path)
 
-	// 去掉 /admin 前缀
 	if strings.HasPrefix(path, "/admin/") {
 		path = strings.TrimPrefix(path, "/admin")
 	} else if path == "/admin" {
 		path = "/"
 	}
 
-	// 标准化 path，移除末尾 /
 	path = normalizePath(path)
+	method = strings.ToUpper(strings.TrimSpace(method))
 
-	// 某些带 id 的路径可做归一化
-	path = normalizeDynamicPath(path)
+	var matched *PermissionRule
 
-	key := strings.ToUpper(method) + " " + path
-	return perms[key]
+	for i := range rules {
+		rule := &rules[i]
+		if rule.Method != method {
+			continue
+		}
+		if !rule.Pattern.MatchString(path) {
+			continue
+		}
+
+		if matched == nil || rule.StaticSegs > matched.StaticSegs {
+			matched = rule
+		}
+	}
+
+	if matched == nil {
+		return ""
+	}
+
+	return matched.PermKey
 }
 
-// normalizePath 统一 path 格式
 func normalizePath(path string) string {
 	if path == "" {
 		return "/"
@@ -226,43 +252,33 @@ func normalizePath(path string) string {
 	return path
 }
 
-// normalizeDynamicPath 把常见动态参数路径归一化
-// 例如：
-// /users/123         -> /users
-// /roles/999         -> /roles
-// /users/123/detail  -> /users/detail
-func normalizeDynamicPath(path string) string {
-	parts := strings.Split(path, "/")
-	clean := make([]string, 0, len(parts))
+// compilePathPattern
+// /member/users/{id}            -> ^/member/users/[^/]+$
+// /member/users/{id}/status     -> ^/member/users/[^/]+/status$
+// /dept/{deptId}/users/{userId} -> ^/dept/[^/]+/users/[^/]+$
+func compilePathPattern(route string) (*regexp.Regexp, int, error) {
+	route = normalizePath(route)
 
-	for _, part := range parts {
+	parts := strings.Split(route, "/")
+	staticSegs := 0
+
+	for i, part := range parts {
 		if part == "" {
 			continue
 		}
 
-		// 纯数字 ID
-		if isNumeric(part) {
-			continue
-		}
-
-		clean = append(clean, part)
-	}
-
-	if len(clean) == 0 {
-		return "/"
-	}
-
-	return "/" + strings.Join(clean, "/")
-}
-
-func isNumeric(s string) bool {
-	if s == "" {
-		return false
-	}
-	for _, r := range s {
-		if r < '0' || r > '9' {
-			return false
+		if strings.HasPrefix(part, "{") && strings.HasSuffix(part, "}") {
+			parts[i] = `[^/]+`
+		} else {
+			staticSegs++
 		}
 	}
-	return true
+
+	pattern := "^" + strings.Join(parts, "/") + "$"
+	reg, err := regexp.Compile(pattern)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return reg, staticSegs, nil
 }

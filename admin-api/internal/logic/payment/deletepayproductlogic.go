@@ -26,7 +26,7 @@ func NewDeletePayProductLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-func (l *DeletePayProductLogic) DeletePayProduct() (resp *types.RespBase, err error) {
+func (l *DeletePayProductLogic) DeletePayProduct(req *types.DeletePayProductReq) (resp *types.RespBase, err error) {
 	// todo: add your logic here and delete this line
 
 	return

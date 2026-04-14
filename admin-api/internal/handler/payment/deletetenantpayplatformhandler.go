@@ -9,12 +9,19 @@ import (
 	"github.com/zeromicro/go-zero/rest/httpx"
 	"wklive/admin-api/internal/logic/payment"
 	"wklive/admin-api/internal/svc"
+	"wklive/admin-api/internal/types"
 )
 
 func DeleteTenantPayPlatformHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var req types.DeleteTenantPayPlatformReq
+		if err := httpx.Parse(r, &req); err != nil {
+			httpx.ErrorCtx(r.Context(), w, err)
+			return
+		}
+
 		l := payment.NewDeleteTenantPayPlatformLogic(r.Context(), svcCtx)
-		resp, err := l.DeleteTenantPayPlatform()
+		resp, err := l.DeleteTenantPayPlatform(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

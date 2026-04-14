@@ -90,6 +90,7 @@ func (m *defaultSysUserRoleModel) FindLoginUserPerms(ctx context.Context, uid in
 	if err != nil {
 		return nil, err
 	}
+	m.SetCacheCtx(ctx, "", perms)
 	return perms, nil
 }
 

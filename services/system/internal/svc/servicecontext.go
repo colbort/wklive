@@ -7,13 +7,17 @@ import (
 	"wklive/services/system/internal/plugins/cronx"
 	"wklive/services/system/models"
 
+	"github.com/redis/go-redis/v9"
+	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
+	"github.com/zeromicro/go-zero/core/syncx"
 	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type ServiceContext struct {
 	Config        config.Config
 	DB            sqlx.SqlConn
+	Cache         cache.Cache
 	Cron          *cronx.CronManager
 	UserModel     models.UserModel
 	RoleModel     models.RoleModel
@@ -41,6 +45,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config:        c,
 		DB:            conn,
+		Cache:         cache.New(c.CacheRedis, syncx.NewSingleFlight(), cache.NewStat(""), redis.Nil),
 		Cron:          cron,
 		UserModel:     models.NewSysUserModel(conn, c.CacheRedis).(models.UserModel),
 		RoleModel:     models.NewSysRoleModel(conn, c.CacheRedis).(models.RoleModel),

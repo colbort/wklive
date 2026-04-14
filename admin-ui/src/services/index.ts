@@ -141,6 +141,7 @@ export type {
 export type {
   PayPlatform,
   PayProduct,
+  PayPlatformItem,
   CreatePayPlatformReq,
   UpdatePayPlatformReq,
   ListPayPlatformsReq,
