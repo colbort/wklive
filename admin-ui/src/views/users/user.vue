@@ -183,8 +183,8 @@ async function fetchCreateOptions() {
       registerTypes: findGroupOptions('registerType'),
       statuses: findGroupOptions('userStatus'),
     })
-  } catch (error: any) {
-    ElMessage.error(error?.message || '加载选项失败')
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : '加载选项失败')
   }
 }
 
@@ -214,9 +214,9 @@ async function verifyTenant() {
     }
     ElMessage.success(`已找到租户：${tenant.tenantName}`)
     return true
-  } catch (error: any) {
+  } catch (error: unknown) {
     resetTenantCheck()
-    ElMessage.error(error?.message || '查询租户失败')
+    ElMessage.error(error instanceof Error ? error.message : '查询租户失败')
     return false
   } finally {
     tenantChecking.value = false
@@ -242,9 +242,9 @@ async function verifyReferrer() {
     referrerDisplay.value = info?.nickname ? `${info.username} (${info.nickname})` : (info?.username || referrerInviteCode)
     ElMessage.success(`已找到推荐人：${referrerDisplay.value}`)
     return true
-  } catch (error: any) {
+  } catch (error: unknown) {
     resetReferrerCheck()
-    ElMessage.error(error?.message || '推荐人不存在')
+    ElMessage.error(error instanceof Error ? error.message : '推荐人不存在')
     return false
   } finally {
     referrerChecking.value = false
@@ -262,8 +262,8 @@ async function fetchList() {
     })
     if (!checkCode(res.code)) throw new Error(res.msg || '加载失败')
     list.value = res.data || []
-  } catch (error: any) {
-    ElMessage.error(error?.message || '加载失败')
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : '加载失败')
   } finally {
     loading.value = false
   }
@@ -291,8 +291,8 @@ async function showDetail(row: UserItem) {
     detail.value = (res.detail || res.data) as UserDetail
     detailActiveTab.value = 'identity'
     detailVisible.value = true
-  } catch (error: any) {
-    ElMessage.error(error?.message || '加载详情失败')
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : '加载详情失败')
   } finally {
     loading.value = false
   }
@@ -442,8 +442,8 @@ async function submitEdit() {
     ElMessage.success('保存成功')
     editVisible.value = false
     fetchList()
-  } catch (error: any) {
-    ElMessage.error(error?.message || '保存失败')
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : '保存失败')
   } finally {
     submitLoading.value = false
   }
@@ -469,8 +469,8 @@ async function submitPassword() {
     }
     ElMessage.success('重置成功')
     pwdVisible.value = false
-  } catch (error: any) {
-    ElMessage.error(error?.message || '重置失败')
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : '重置失败')
   } finally {
     submitLoading.value = false
   }
@@ -493,9 +493,9 @@ async function quickAction(row: UserItem, action: 'unlock' | 'reset2fa' | 'delet
     }
     ElMessage.success('操作成功')
     fetchList()
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error === 'cancel') return
-    ElMessage.error(error?.message || '操作失败')
+    ElMessage.error(error instanceof Error ? error.message : '操作失败')
   }
 }
 
@@ -523,8 +523,8 @@ async function updateSimpleValue(row: UserItem, field: 'status' | 'memberLevel' 
     }
     ElMessage.success('更新成功')
     fetchList()
-  } catch (error: any) {
-    ElMessage.error(error?.message || '更新失败')
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : '更新失败')
   }
 }
 

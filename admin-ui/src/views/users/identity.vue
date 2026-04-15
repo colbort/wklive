@@ -45,8 +45,8 @@ async function fetchOptions() {
     const res = await memberUserService.getOptions()
     if (!checkCode(res.code)) throw new Error(res.msg || '加载选项失败')
     optionGroups.value = res.data || []
-  } catch (error: any) {
-    ElMessage.error(error?.message || '加载选项失败')
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : '加载选项失败')
   }
 }
 
@@ -56,8 +56,8 @@ async function fetchList() {
     const res = await memberUserService.listIdentities(query)
     if (!checkCode(res.code)) throw new Error(res.msg || '加载失败')
     list.value = res.data || []
-  } catch (error: any) {
-    ElMessage.error(error?.message || '加载失败')
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : '加载失败')
   } finally {
     loading.value = false
   }
@@ -116,8 +116,8 @@ async function submitReview() {
     ElMessage.success('审核成功')
     reviewVisible.value = false
     fetchList()
-  } catch (error: any) {
-    ElMessage.error(error?.message || '审核失败')
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : '审核失败')
   } finally {
     submitLoading.value = false
   }

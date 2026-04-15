@@ -4,7 +4,7 @@ import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { userService, roleService, type OptionGroup } from '@/services'
 import { ArrowDown } from '@element-plus/icons-vue'
-import type { SysUserItem, CreateUserRequest, UpdateUserRequest } from '@/services'
+import type { SysUserItem } from '@/services'
 import { SysRole } from '@/services/system/RoleService'
 import { usePagination } from '@/composables/usePagination'
 import { useLoading } from '@/composables/useLoading'
@@ -40,8 +40,8 @@ async function fetchOptions() {
     const res = await userService.getOptions()
     if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'options failed')
     optionGroups.value = res.data || []
-  } catch (e: any) {
-    ElMessage.error(e?.message || t('common.loadFailed'))
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
   }
 }
 
@@ -64,8 +64,8 @@ async function fetchList() {
         res.nextCursor || null,
         res.prevCursor || null,
       )
-    } catch (e: any) {
-      ElMessage.error(e?.message || t('common.loadFailed'))
+    } catch (error: unknown) {
+      ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
     }
   })
 }
@@ -102,8 +102,8 @@ async function fetchRoles() {
       const res = await roleService.getList({ cursor: null, limit: 9999, status: 1 })
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'role list failed')
       roles.value = res.data || []
-    } catch (e: any) {
-      ElMessage.error(e?.message || t('common.loadFailed'))
+    } catch (error: unknown) {
+      ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
     }
   })
 }
@@ -173,8 +173,8 @@ async function submitEdit() {
       }
       editVisible.value = false
       fetchList()
-    } catch (e: any) {
-      ElMessage.error(e?.message || t('common.failed'))
+    } catch (error: unknown) {
+      ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
     }
   })
 }
@@ -189,9 +189,9 @@ async function onDelete(row: SysUserItem) {
     if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'delete failed')
     ElMessage.success(t('common.success'))
     fetchList()
-  } catch (e: any) {
-    if (e === 'cancel') return
-    ElMessage.error(e?.message || t('common.failed'))
+  } catch (error: unknown) {
+    if ((error instanceof Error ? error.message : '')  === 'cancel') return
+    ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
   }
 }
 
@@ -203,8 +203,8 @@ async function onToggleStatus(row: SysUserItem) {
     if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'status failed')
     ElMessage.success(t('common.success'))
     fetchList()
-  } catch (e: any) {
-    ElMessage.error(e?.message || t('common.failed'))
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
   }
 }
 
@@ -233,8 +233,8 @@ async function submitResetPwd() {
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'reset pwd failed')
       ElMessage.success(t('common.success'))
       pwdVisible.value = false
-    } catch (e: any) {
-      ElMessage.error(e?.message || t('common.failed'))
+    } catch (error: unknown) {
+      ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
     }
   })
 }
@@ -261,8 +261,8 @@ async function submitAssignRoles() {
       ElMessage.success(t('common.success'))
       roleVisible.value = false
       fetchList()
-    } catch (e: any) {
-      ElMessage.error(e?.message || t('common.failed'))
+    } catch (error: unknown) {
+      ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
     }
   })
 }
@@ -301,8 +301,8 @@ async function doG2Init() {
       g2Init.otpauthUrl = res.data?.otpauthUrl || ''
       g2Init.qrCode = res.data?.qrCode || ''
       ElMessage.success(t('common.success'))
-    } catch (e: any) {
-      ElMessage.error(e?.message || t('common.failed'))
+    } catch (error: unknown) {
+      ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
     }
   })
 }
@@ -317,8 +317,8 @@ async function doG2Bind() {
     if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'bind failed')
     ElMessage.success(t('common.success'))
     fetchList()
-  } catch (e: any) {
-    ElMessage.error(e?.message || t('common.failed'))
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
   }
 }
 
@@ -359,8 +359,8 @@ async function doG2Enable() {
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'enable failed')
       ElMessage.success(t('common.success'))
       fetchList()
-    } catch (e: any) {
-      ElMessage.error(e?.message || t('common.failed'))
+    } catch (error: unknown) {
+      ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
     }
   })
 }
@@ -372,8 +372,8 @@ async function doG2Disable() {
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'disable failed')
       ElMessage.success(t('common.success'))
       fetchList()
-    } catch (e: any) {
-      ElMessage.error(e?.message || t('common.failed'))
+    } catch (error: unknown) {
+      ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
     }
   })
 }
@@ -385,9 +385,9 @@ async function doG2Reset() {
     if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'reset failed')
     ElMessage.success(t('common.success'))
     fetchList()
-  } catch (e: any) {
-    if (e === 'cancel') return
-    ElMessage.error(e?.message || t('common.failed'))
+  } catch (error: unknown) {
+    if ((error instanceof Error ? error.message : '')  === 'cancel') return
+    ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
   }
 }
 

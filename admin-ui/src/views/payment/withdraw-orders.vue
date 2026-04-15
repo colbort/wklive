@@ -2,7 +2,9 @@
   <div class="payment-page">
     <div class="page-header">
       <h2>提现订单</h2>
-      <el-button @click="loadList">刷新</el-button>
+      <el-button @click="loadList">
+        刷新
+      </el-button>
     </div>
 
     <el-card shadow="never" class="query-card">
@@ -17,7 +19,9 @@
           <el-input v-model="query.orderNo" clearable />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="loadList">查询</el-button>
+          <el-button type="primary" @click="loadList">
+            查询
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -35,8 +39,12 @@
         <el-table-column prop="status" label="状态" width="90" />
         <el-table-column label="操作" width="180">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">详情</el-button>
-            <el-button link type="warning" @click="openAudit(row)">审核</el-button>
+            <el-button link type="primary" @click="showDetail(row)">
+              详情
+            </el-button>
+            <el-button link type="warning" @click="openAudit(row)">
+              审核
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -50,8 +58,12 @@
       <el-form label-width="110px">
         <el-form-item label="审核结果">
           <el-radio-group v-model="auditForm.approve">
-            <el-radio :value="1">通过</el-radio>
-            <el-radio :value="2">拒绝</el-radio>
+            <el-radio :value="1">
+              通过
+            </el-radio>
+            <el-radio :value="2">
+              拒绝
+            </el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="备注">
@@ -59,8 +71,12 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="auditVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitAudit">确定</el-button>
+        <el-button @click="auditVisible = false">
+          取消
+        </el-button>
+        <el-button type="primary" @click="submitAudit">
+          确定
+        </el-button>
       </template>
     </el-dialog>
   </div>

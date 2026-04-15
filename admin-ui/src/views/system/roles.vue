@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, ref, onMounted, nextTick } from 'vue'
+import { computed, ref, onMounted, nextTick } from 'vue'
 import { ElMessage, type FormInstance, type TreeInstance } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import type { OptionGroup } from '@/services'
@@ -57,8 +57,8 @@ async function fetchList() {
         resp.nextCursor || null,
         resp.prevCursor || null,
       )
-    } catch (e: any) {
-      ElMessage.error(e?.message || t('common.failed'))
+    } catch (error: unknown) {
+      ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
     }
   })
 }
@@ -67,8 +67,8 @@ async function fetchOptions() {
   try {
     const resp = await roleService.getOptions()
     optionGroups.value = resp.data || []
-  } catch (e: any) {
-    ElMessage.error(e?.message || t('common.failed'))
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
   }
 }
 
@@ -182,8 +182,8 @@ async function submitEdit() {
       } else {
         ElMessage.error(resp.msg || t('common.failed'))
       }
-    } catch (e: any) {
-      ElMessage.error(e?.message || t('common.failed'))
+    } catch (error: unknown) {
+      ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
     }
   })
 }
@@ -199,9 +199,9 @@ async function onDelete(row: SysRole) {
     } else {
       ElMessage.error(resp.msg || t('common.failed'))
     }
-  } catch (e: any) {
-    if (e === 'cancel') return
-    ElMessage.error(e?.message || t('common.failed'))
+  } catch (error: unknown) {
+    if ((error instanceof Error ? error.message : '')  === 'cancel') return
+    ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
   }
 }
 
@@ -297,8 +297,8 @@ async function initGrant(roleId: number) {
       await nextTick()
       menuTreeRef.value?.setCheckedKeys([...menuIds, ...buttonIds] as any)
       checkedPermKeys.value = permKeys as string[]
-    } catch (e: any) {
-      ElMessage.error(e?.message || t('common.failed'))
+    } catch (error: unknown) {
+      ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
     }
   })
 }
@@ -339,8 +339,8 @@ async function submitGrant() {
     } else {
       ElMessage.error(resp.msg || t('common.failed'))
     }
-  } catch (e: any) {
-    ElMessage.error(e?.message || t('common.failed'))
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
   }
 }
 

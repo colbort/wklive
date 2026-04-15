@@ -54,8 +54,8 @@ async function fetchList() {
         res.nextCursor || null,
         res.prevCursor || null,
       )
-    } catch (e: any) {
-      ElMessage.error(e?.message || t('common.loadFailed'))
+    } catch (error: unknown) {
+      ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
     }
   })
 }

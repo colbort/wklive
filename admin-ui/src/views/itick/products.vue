@@ -462,10 +462,10 @@
           }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('common.createTimes')">
-          {{ formatDate(detail.createTimes) }}
+          {{ formatDate(detail.createTimes??0) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('itick.updateTimes')">
-          {{ formatDate(detail.updateTimes) }}
+          {{ formatDate(detail.updateTimes??0) }}
         </el-descriptions-item>
       </el-descriptions>
 

@@ -31,6 +31,8 @@ export type ItickProduct = {
 
 export type CreateProductReq = {
   categoryType: number
+  categoryName: string
+  categoryCode: string
   market: string
   symbol: string
   code: string

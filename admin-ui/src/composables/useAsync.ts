@@ -10,7 +10,7 @@ export interface UseAsyncOptions<T> {
   initialData?: T
   immediate?: boolean
   onSuccess?: (data: T) => void
-  onError?: (error: any) => void
+  onError?: (error: unknown) => void
 }
 
 export function useAsync<T = any>(asyncFn: () => Promise<T>, options?: UseAsyncOptions<T>) {

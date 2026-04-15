@@ -204,7 +204,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { Plus, Search, Refresh } from '@element-plus/icons-vue'
@@ -212,14 +212,12 @@ import { configService } from '@/services'
 import type {
   SysConfigItem,
   SysConfigCreateReq,
-  SysConfigUpdateReq,
   OptionItem,
 } from '@/services'
 import type { SystemCore, ObjectStorageConfig } from '@/services/system/ConfigService'
 import { usePagination } from '@/composables/usePagination'
 import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
-import { useConfirm } from '@/composables/useConfirm'
 import { formatDate } from '@/utils'
 import SystemCoreConfig from './components/SystemCoreConfig.vue'
 import ObjectStorageConfigComponent from './components/ObjectStorageConfig.vue'
@@ -308,8 +306,8 @@ async function loadKeys() {
     const res = await configService.getKeys()
     if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'Failed to load keys')
     keys.value = res.data || []
-  } catch (e: any) {
-    ElMessage.error(e?.message || 'Failed to load keys')
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : 'Failed to load keys')
   }
 }
 
@@ -331,18 +329,10 @@ async function fetchList() {
         res.nextCursor || null,
         res.prevCursor || null,
       )
-    } catch (e: any) {
-      ElMessage.error(e?.message || t('common.loadFailed'))
+    } catch (error: unknown) {
+      ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
     }
   })
-}
-
-// Handle pagination
-function handleSizeChange(size: number) {
-  pagination.limit = size
-  pagination.cursor = null
-  pagination.hasPrev = false
-  fetchList()
 }
 
 // Handle reset
@@ -422,14 +412,6 @@ function handleConfigKeyChange(value: string) {
   }
 }
 
-function handleTabClick(_tab: any) {
-  // 仅切换视图选项卡，不修改 oss_type
-}
-
-function handleOssTypeChange(_value: number) {
-  // 仅修改 oss_type，不切换选项卡
-}
-
 function nextPage() {
   paginationNextPage()
   fetchList()
@@ -507,9 +489,9 @@ async function handleDelete(row: SysConfigItem) {
 
     ElMessage.success(t('common.deleteSuccess'))
     fetchList()
-  } catch (e: any) {
-    if (e !== 'cancel') {
-      ElMessage.error(e?.message || t('common.deleteFailed'))
+  } catch (error: unknown) {
+    if ((error instanceof Error ? error.message : '') !== 'cancel') {
+      ElMessage.error(error instanceof Error ? error.message : t('common.deleteFailed'))
     }
   }
 }
@@ -553,8 +535,8 @@ async function handleSubmit() {
 
     dialogVisible.value = false
     fetchList()
-  } catch (e: any) {
-    ElMessage.error(e?.message || t('common.operationFailed'))
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : t('common.operationFailed'))
   } finally {
     submitLoading.value = false
   }

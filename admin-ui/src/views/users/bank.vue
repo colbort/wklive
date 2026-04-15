@@ -117,9 +117,9 @@ async function verifyTenant() {
     }
     ElMessage.success(`已找到租户：${tenant.tenantName}`)
     return true
-  } catch (error: any) {
+  } catch (error: unknown) {
     resetTenantCheck()
-    ElMessage.error(error?.message || '查询租户失败')
+    ElMessage.error(error instanceof Error ? error.message : '查询租户失败')
     return false
   } finally {
     tenantChecking.value = false
@@ -162,9 +162,9 @@ async function verifyUser() {
     }
     ElMessage.success(`已找到用户：${base.username}`)
     return true
-  } catch (error: any) {
+  } catch (error: unknown) {
     resetUserCheck()
-    ElMessage.error(error?.message || '查询用户失败')
+    ElMessage.error(error instanceof Error ? error.message : '查询用户失败')
     return false
   } finally {
     userChecking.value = false
@@ -177,8 +177,8 @@ async function fetchList() {
     const res = await memberUserService.listBanks(query)
     if (!checkCode(res.code)) throw new Error(res.msg || '加载失败')
     list.value = res.data || []
-  } catch (error: any) {
-    ElMessage.error(error?.message || '加载失败')
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : '加载失败')
   } finally {
     loading.value = false
   }
@@ -291,8 +291,8 @@ async function submitEdit() {
     ElMessage.success('保存成功')
     editVisible.value = false
     fetchList()
-  } catch (error: any) {
-    ElMessage.error(error?.message || '保存失败')
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : '保存失败')
   } finally {
     submitLoading.value = false
   }
@@ -322,8 +322,8 @@ async function submitStatus() {
     ElMessage.success('修改成功')
     statusVisible.value = false
     fetchList()
-  } catch (error: any) {
-    ElMessage.error(error?.message || '修改失败')
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : '修改失败')
   }
 }
 
@@ -334,8 +334,8 @@ async function setDefault(row: UserBankItem) {
     if (!checkCode(res.code)) throw new Error(res.msg || '设置失败')
     ElMessage.success('设置成功')
     fetchList()
-  } catch (error: any) {
-    ElMessage.error(error?.message || '设置失败')
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : '设置失败')
   }
 }
 
@@ -347,9 +347,9 @@ async function remove(row: UserBankItem) {
     if (!checkCode(res.code)) throw new Error(res.msg || '删除失败')
     ElMessage.success('删除成功')
     fetchList()
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error === 'cancel') return
-    ElMessage.error(error?.message || '删除失败')
+    ElMessage.error(error instanceof Error ? error.message : '删除失败')
   }
 }
 

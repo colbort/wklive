@@ -779,7 +779,7 @@ async function handleDelete(row: SysMenuItem) {
 
     ElMessage.success(t('common.success'))
     await getList()
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error === 'cancel') {
       return
     }

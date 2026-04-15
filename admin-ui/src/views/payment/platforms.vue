@@ -306,8 +306,8 @@ const handlePlatformIconSelect = async (uploadFile: UploadFile) => {
       return
     }
     throw new Error(res.msg || '上传失败')
-  } catch (error: any) {
-    ElMessage.error(error?.message || '上传失败')
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : '上传失败')
   } finally {
     submitLoading.value = false
   }

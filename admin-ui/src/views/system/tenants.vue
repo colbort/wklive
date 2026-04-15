@@ -284,7 +284,6 @@ import type { OptionGroup } from '@/services'
 import type {
   SysTenantItem,
   SysTenantCreateReq,
-  SysTenantUpdateReq,
 } from '@/services/system/TenantsService'
 import { usePagination } from '@/composables/usePagination'
 import { useLoading } from '@/composables/useLoading'
@@ -367,8 +366,8 @@ async function fetchList() {
         res.nextCursor || null,
         res.prevCursor || null,
       )
-    } catch (e: any) {
-      ElMessage.error(e?.message || t('common.loadFailed'))
+    } catch (error: unknown) {
+      ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
     }
   })
 }
@@ -378,8 +377,8 @@ async function fetchOptions() {
     const res = await tenantsService.getOptions()
     if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'options failed')
     optionGroups.value = res.data || []
-  } catch (e: any) {
-    ElMessage.error(e?.message || t('common.loadFailed'))
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
   }
 }
 
@@ -450,9 +449,9 @@ async function handleDelete(row: SysTenantItem) {
 
     ElMessage.success(t('common.deleteSuccess'))
     fetchList()
-  } catch (e: any) {
-    if (e !== 'cancel') {
-      ElMessage.error(e?.message || t('common.deleteFailed'))
+  } catch (error: unknown) {
+    if ((error instanceof Error ? error.message : '')  !== 'cancel') {
+      ElMessage.error(error instanceof Error ? error.message : t('common.deleteFailed'))
     }
   }
 }
@@ -488,8 +487,8 @@ async function handleSubmit() {
 
     dialogVisible.value = false
     fetchList()
-  } catch (e: any) {
-    ElMessage.error(e?.message || t('common.operationFailed'))
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : t('common.operationFailed'))
   } finally {
     submitLoading.value = false
   }

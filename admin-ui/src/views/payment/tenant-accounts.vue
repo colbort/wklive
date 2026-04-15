@@ -3,8 +3,12 @@
     <div class="page-header">
       <h2>租户支付账号</h2>
       <div>
-        <el-button type="primary" @click="openDialog()">新增账号</el-button>
-        <el-button @click="loadList">刷新</el-button>
+        <el-button type="primary" @click="openDialog()">
+          新增账号
+        </el-button>
+        <el-button @click="loadList">
+          刷新
+        </el-button>
       </div>
     </div>
 
@@ -20,7 +24,9 @@
           <el-input v-model="query.keyword" clearable />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="loadList">查询</el-button>
+          <el-button type="primary" @click="loadList">
+            查询
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -37,8 +43,12 @@
         <el-table-column prop="isDefault" label="默认" width="80" />
         <el-table-column label="操作" width="160">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">详情</el-button>
-            <el-button link type="primary" @click="openDialog(row)">编辑</el-button>
+            <el-button link type="primary" @click="showDetail(row)">
+              详情
+            </el-button>
+            <el-button link type="primary" @click="openDialog(row)">
+              编辑
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -47,7 +57,12 @@
     <el-dialog v-model="dialogVisible" :title="form.id ? '编辑账号' : '新增账号'" width="760px">
       <el-form label-width="120px">
         <el-form-item label="租户ID">
-          <el-input-number v-model="form.tenantId" :min="1" :precision="0" :disabled="!!form.id" />
+          <el-input-number
+            v-model="form.tenantId"
+            :min="1"
+            :precision="0"
+            :disabled="!!form.id"
+          />
         </el-form-item>
         <el-form-item v-if="!form.id" label="开通平台ID">
           <el-input-number v-model="form.tenantPayPlatformId" :min="1" :precision="0" />
@@ -89,10 +104,20 @@
           <el-input v-model="form.extConfig" type="textarea" :rows="3" />
         </el-form-item>
         <el-form-item label="状态">
-          <el-input-number v-model="form.status" :min="1" :max="2" :precision="0" />
+          <el-input-number
+            v-model="form.status"
+            :min="1"
+            :max="2"
+            :precision="0"
+          />
         </el-form-item>
         <el-form-item label="默认">
-          <el-input-number v-model="form.isDefault" :min="0" :max="1" :precision="0" />
+          <el-input-number
+            v-model="form.isDefault"
+            :min="0"
+            :max="1"
+            :precision="0"
+          />
         </el-form-item>
         <el-form-item label="备注">
           <el-input v-model="form.remark" type="textarea" :rows="3" />
@@ -100,8 +125,12 @@
       </el-form>
 
       <template #footer>
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="submit">确定</el-button>
+        <el-button @click="dialogVisible = false">
+          取消
+        </el-button>
+        <el-button type="primary" @click="submit">
+          确定
+        </el-button>
       </template>
     </el-dialog>
 

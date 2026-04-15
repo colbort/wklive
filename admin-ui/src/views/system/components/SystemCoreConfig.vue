@@ -245,8 +245,8 @@ async function confirmCrop() {
     } else {
       throw new Error(res.msg || 'Upload failed')
     }
-  } catch (e: any) {
-    ElMessage.error(e?.message || t('common.uploadFailed') || 'Upload failed')
+  } catch (e: unknown) {
+    ElMessage.error(e instanceof Error ? e.message : t('common.uploadFailed') || 'Upload failed')
   } finally {
     uploading.value = false
   }

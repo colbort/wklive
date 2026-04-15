@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import {
   Plus,
   Edit,
@@ -99,8 +99,8 @@ async function fetchList() {
         res.nextCursor || null,
         res.prevCursor || null,
       )
-    } catch (e: any) {
-      ElMessage.error(e?.message || t('common.loadFailed'))
+    } catch (error: unknown) {
+      ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
     }
   })
 }
@@ -111,8 +111,8 @@ async function fetchHandlers() {
     const res = await cronJobService.handlers()
     if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
     handlers.value = res.data || []
-  } catch (e: any) {
-    ElMessage.error(e?.message || t('common.loadFailed'))
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
   }
 }
 
@@ -121,8 +121,8 @@ async function fetchOptions() {
     const res = await cronJobService.getOptions()
     if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
     optionGroups.value = res.data || []
-  } catch (e: any) {
-    ElMessage.error(e?.message || t('common.loadFailed'))
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
   }
 }
 
@@ -196,8 +196,8 @@ async function handleSubmit() {
     } finally {
       submitLoading.value = false
     }
-  } catch (e: any) {
-    ElMessage.error(e?.message || 'Error')
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : 'Error')
   }
 }
 
@@ -209,9 +209,9 @@ async function handleDelete(row: SysCronJobItem) {
     if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
     ElMessage.success(t('common.success'))
     fetchList()
-  } catch (e: any) {
-    if (e.message !== 'Cancel') {
-      ElMessage.error(e?.message || t('common.failed'))
+  } catch (error: unknown) {
+    if ((error instanceof Error ? error.message : '')  !== 'cancel') {
+      ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
     }
   }
 }
@@ -223,9 +223,9 @@ async function handleRun(row: SysCronJobItem) {
     const res = await cronJobService.run(row.id)
     if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
     ElMessage.success(t('common.success'))
-  } catch (e: any) {
-    if (e.message !== 'Cancel') {
-      ElMessage.error(e?.message || t('common.failed'))
+  } catch (error: unknown) {
+    if ((error instanceof Error ? error.message : '') !== 'cancel') {
+      ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
     }
   }
 }
@@ -237,8 +237,8 @@ async function handleStart(row: SysCronJobItem) {
     if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
     ElMessage.success(t('common.success'))
     fetchList()
-  } catch (e: any) {
-    ElMessage.error(e?.message || t('common.failed'))
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
   }
 }
 
@@ -249,8 +249,8 @@ async function handleStop(row: SysCronJobItem) {
     if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
     ElMessage.success(t('common.success'))
     fetchList()
-  } catch (e: any) {
-    ElMessage.error(e?.message || t('common.failed'))
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
   }
 }
 

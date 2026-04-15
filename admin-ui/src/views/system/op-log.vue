@@ -53,8 +53,8 @@ async function fetchList() {
         res.nextCursor || null,
         res.prevCursor || null,
       )
-    } catch (e: any) {
-      ElMessage.error(e?.message || t('common.loadFailed'))
+    } catch (error: unknown) {
+      ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
     }
   })
 }
@@ -64,8 +64,8 @@ async function fetchOptions() {
     const res = await logService.getOptions()
     if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
     optionGroups.value = res.data || []
-  } catch (e: any) {
-    ElMessage.error(e?.message || t('common.loadFailed'))
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
   }
 }
 
