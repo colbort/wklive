@@ -108,7 +108,7 @@ export class ConfigService implements BaseService {
     const group = (res.data || []).find((item) => item.key === 'sysConfigType')
     return {
       ...res,
-      data: group?.options??[],
+      data: group?.options ?? [],
     }
   }
 }

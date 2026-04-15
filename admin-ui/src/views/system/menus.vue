@@ -19,9 +19,12 @@
             :placeholder="t('common.all')"
             style="width: 140px"
           >
-            <el-option :label="t('system.directory')" :value="1" />
-            <el-option :label="t('system.menu')" :value="2" />
-            <el-option :label="t('system.button')" :value="3" />
+            <el-option
+              v-for="item in menuTypeOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
 
@@ -32,8 +35,12 @@
             :placeholder="t('common.all')"
             style="width: 140px"
           >
-            <el-option :label="t('common.enabled')" :value="1" />
-            <el-option :label="t('common.disabled')" :value="0" />
+            <el-option
+              v-for="item in statusOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
 
@@ -44,8 +51,12 @@
             :placeholder="t('common.all')"
             style="width: 140px"
           >
-            <el-option :label="t('common.visible')" :value="1" />
-            <el-option :label="t('common.hidden')" :value="0" />
+            <el-option
+              v-for="item in visibleOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
 
@@ -92,14 +103,8 @@
 
         <el-table-column :label="t('system.menuType')" width="100" align="center">
           <template #default="{ row }">
-            <el-tag v-if="row.menuType === 1" type="warning">
-              {{ t('system.directory') }}
-            </el-tag>
-            <el-tag v-else-if="row.menuType === 2" type="success">
-              {{ t('system.menu') }}
-            </el-tag>
-            <el-tag v-else type="info">
-              {{ t('system.button') }}
+            <el-tag type="info">
+              {{ getOptionValueLabel(optionGroups, 'menuType', row.menuType, t) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -145,7 +150,7 @@
         <el-table-column :label="t('common.visible')" width="90" align="center">
           <template #default="{ row }">
             <el-tag :type="row.visible === 1 ? 'success' : 'info'">
-              {{ row.visible === 1 ? t('common.visible') : t('common.hidden') }}
+              {{ getOptionValueLabel(optionGroups, 'visible', row.visible, t) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -153,7 +158,7 @@
         <el-table-column :label="t('common.status')" width="90" align="center">
           <template #default="{ row }">
             <el-tag :type="row.status === 1 ? 'success' : 'danger'">
-              {{ row.status === 1 ? t('common.enabled') : t('common.disabled') }}
+              {{ getOptionValueLabel(optionGroups, 'status', row.status, t) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -215,14 +220,12 @@
 
         <el-form-item :label="t('system.menuType')" prop="menuType">
           <el-radio-group v-model="formData.menuType" @change="handleMenuTypeChange">
-            <el-radio :label="1">
-              {{ t('system.directory') }}
-            </el-radio>
-            <el-radio :label="2">
-              {{ t('system.menu') }}
-            </el-radio>
-            <el-radio :label="3">
-              {{ t('system.button') }}
+            <el-radio
+              v-for="item in menuTypeOptions"
+              :key="item.value"
+              :label="item.value"
+            >
+              {{ getOptionLabel(t, item.code, item.value) }}
             </el-radio>
           </el-radio-group>
         </el-form-item>
@@ -334,11 +337,12 @@
           <el-col :span="12">
             <el-form-item :label="t('common.visible')" prop="visible">
               <el-radio-group v-model="formData.visible">
-                <el-radio :label="1">
-                  {{ t('common.visible') }}
-                </el-radio>
-                <el-radio :label="0">
-                  {{ t('common.hidden') }}
+                <el-radio
+                  v-for="item in visibleOptions"
+                  :key="item.value"
+                  :label="item.value"
+                >
+                  {{ getOptionLabel(t, item.code, item.value) }}
                 </el-radio>
               </el-radio-group>
             </el-form-item>
@@ -347,11 +351,12 @@
           <el-col :span="12">
             <el-form-item :label="t('common.status')" prop="status">
               <el-radio-group v-model="formData.status">
-                <el-radio :label="1">
-                  {{ t('common.enabled') }}
-                </el-radio>
-                <el-radio :label="0">
-                  {{ t('common.disabled') }}
+                <el-radio
+                  v-for="item in statusOptions"
+                  :key="item.value"
+                  :label="item.value"
+                >
+                  {{ getOptionLabel(t, item.code, item.value) }}
                 </el-radio>
               </el-radio-group>
             </el-form-item>
@@ -376,10 +381,11 @@ import { computed, nextTick, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
-import { menuService } from '@/services'
+import { menuService, type OptionGroup } from '@/services'
 import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
 import { useConfirm } from '@/composables/useConfirm'
+import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 import type {
   SysMenuCreateReq,
   SysMenuItem,
@@ -426,6 +432,10 @@ type ApiResp<T = any> = {
 
 const iconMap = ElementPlusIconsVue as Record<string, any>
 const iconNames = Object.keys(iconMap).sort()
+const optionGroups = ref<OptionGroup[]>([])
+const menuTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'menuType'))
+const statusOptions = computed(() => findOptionGroup(optionGroups.value, 'status'))
+const visibleOptions = computed(() => findOptionGroup(optionGroups.value, 'visible'))
 
 // Composables
 const { loading, withLoading: withMainLoading } = useLoading()
@@ -701,6 +711,11 @@ async function getList() {
   })
 }
 
+async function loadOptions() {
+  const res = await menuService.getOptions()
+  optionGroups.value = res.data || []
+}
+
 function handleSearch() {
   queryPage.cursor = null
   getList()
@@ -823,6 +838,7 @@ async function handleSubmit() {
 }
 
 onMounted(() => {
+  loadOptions()
   getList()
 })
 </script>

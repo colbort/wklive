@@ -41,12 +41,16 @@
         <el-table-column prop="platformId" label="平台ID" width="100" />
         <el-table-column prop="productCode" label="产品编码" min-width="140" />
         <el-table-column prop="productName" label="产品名称" min-width="160" />
-        <el-table-column prop="sceneType" label="场景类型" width="100" />
+        <el-table-column label="场景类型" width="120">
+          <template #default="{ row }">
+            {{ getOptionValueLabel(optionGroups, 'sceneType', row.sceneType, t) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="currency" label="币种" width="100" />
         <el-table-column label="状态" width="100">
           <template #default="{ row }">
             <el-tag :type="row.status === 1 ? 'success' : 'info'">
-              {{ row.status === 1 ? '启用' : '禁用' }}
+              {{ getOptionValueLabel(optionGroups, 'status', row.status, t) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -81,15 +85,26 @@
           <el-input v-model="productForm.productName" />
         </el-form-item>
         <el-form-item label="场景类型">
-          <el-input-number v-model="productForm.sceneType" :min="1" :precision="0" />
+          <el-select v-model="productForm.sceneType" style="width: 100%">
+            <el-option
+              v-for="item in sceneTypeOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="币种">
           <el-input v-model="productForm.currency" />
         </el-form-item>
         <el-form-item label="状态">
           <el-select v-model="productForm.status" style="width: 100%">
-            <el-option label="启用" :value="1" />
-            <el-option label="禁用" :value="2" />
+            <el-option
+              v-for="item in statusOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="备注">
@@ -113,10 +128,14 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Refresh } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-import { catalogService, type PayProduct } from '@/services'
+import { catalogService, type OptionGroup, type PayProduct } from '@/services'
+import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+
+const { t } = useI18n()
 
 const submitLoading = ref(false)
 const productLoading = ref(false)
@@ -125,6 +144,9 @@ const detailVisible = ref(false)
 const detailTitle = ref('详情')
 const detailData = ref<Record<string, any>>({})
 const productDialogVisible = ref(false)
+const optionGroups = ref<OptionGroup[]>([])
+const statusOptions = computed(() => findOptionGroup(optionGroups.value, 'status'))
+const sceneTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'sceneType'))
 
 const productQuery = reactive({ platformId: 0, productCode: '', keyword: '' })
 
@@ -151,6 +173,11 @@ const loadProducts = async () => {
   } finally {
     productLoading.value = false
   }
+}
+
+const loadOptions = async () => {
+  const res = await catalogService.getOptions()
+  optionGroups.value = res.data || []
 }
 
 const resetProductQuery = () => {
@@ -195,7 +222,9 @@ const showProductDetail = async (row: PayProduct) => {
   detailVisible.value = true
 }
 
-onMounted(loadProducts)
+onMounted(async () => {
+  await Promise.all([loadProducts(), loadOptions()])
+})
 </script>
 
 <style scoped>

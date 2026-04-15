@@ -6,12 +6,15 @@ import { ArrowDown } from '@element-plus/icons-vue'
 import {
   memberUserService,
   tenantsService,
+  type OptionGroup,
+  type OptionItem,
   type CreateMemberUserReq,
   type UserDetail,
   type UserItem,
   type UpdateMemberUserBaseReq,
 } from '@/services'
 import { formatDate } from '@/utils'
+import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 const { t } = useI18n()
 const loading = ref(false)
@@ -28,11 +31,10 @@ const tenantChecked = ref(false)
 const tenantExists = ref(false)
 const tenantCheckName = ref('')
 const tenantCheckCode = ref('')
-const createOptions = reactive<CreateUserOptionsResp>({
-  registerTypes: [],
-  statuses: [],
-  code: 0,
-  msg: '',
+const optionGroups = ref<OptionGroup[]>([])
+const createOptions = reactive({
+  registerTypes: [] as OptionItem[],
+  statuses: [] as OptionItem[],
 })
 const referrerChecking = ref(false)
 const referrerChecked = ref(false)
@@ -93,18 +95,6 @@ function checkCode(code: number) {
 function displayText(value: unknown) {
   if (value === null || value === undefined || value === '') return '-'
   return String(value)
-}
-
-function getOptionLabel(code?: string, fallback?: string) {
-  if (!code) return fallback || ''
-  const key = `options.${code}`
-  const translated = t(key)
-  return translated === key ? (fallback || code) : translated
-}
-
-function formatTimeValue(value?: number | null) {
-  if (!value) return '-'
-  return formatDate(value)
 }
 
 function getGenderLabel(value?: number) {
@@ -184,9 +174,14 @@ async function fetchCreateOptions() {
   try {
     const res = await memberUserService.getOptions()
     if (!checkCode(res.code)) throw new Error(res.msg || '加载选项失败')
+    const groups = res.data || []
+    optionGroups.value = groups
+    const findGroupOptions = (key: string) =>
+      (groups.find((item: OptionGroup) => item.key === key)?.options || []) as OptionItem[]
+
     Object.assign(createOptions, {
-      registerTypes: res.registerTypes || res.data?.registerTypes || [],
-      statuses: res.statuses || res.data?.statuses || [],
+      registerTypes: findGroupOptions('registerType'),
+      statuses: findGroupOptions('userStatus'),
     })
   } catch (error: any) {
     ElMessage.error(error?.message || '加载选项失败')
@@ -569,10 +564,24 @@ onMounted(fetchCreateOptions)
           <el-input v-model="query.email" clearable />
         </el-form-item>
         <el-form-item label="状态">
-          <el-input-number v-model="query.status" :min="0" :precision="0" />
+          <el-select v-model="query.status" clearable style="width: 140px">
+            <el-option
+              v-for="item in createOptions.statuses"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="认证状态">
-          <el-input-number v-model="query.verifyStatus" :min="0" :precision="0" />
+          <el-select v-model="query.verifyStatus" clearable style="width: 140px">
+            <el-option
+              v-for="item in findOptionGroup(optionGroups, 'verifyStatus')"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="fetchList">
@@ -602,11 +611,27 @@ onMounted(fetchCreateOptions)
           min-width="140"
           show-overflow-tooltip
         />
-        <el-table-column prop="registerType" label="注册方式" width="100" />
+        <el-table-column label="注册方式" width="120">
+          <template #default="{ row }">
+            {{ getOptionValueLabel(optionGroups, 'registerType', row.registerType, t) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="memberLevel" label="会员等级" width="100" />
-        <el-table-column prop="status" label="状态" width="80" />
-        <el-table-column prop="isGuest" label="游客" width="80" />
-        <el-table-column prop="isRecharge" label="已充值" width="90" />
+        <el-table-column label="状态" width="100">
+          <template #default="{ row }">
+            {{ getOptionValueLabel(optionGroups, 'userStatus', row.status, t) }}
+          </template>
+        </el-table-column>
+        <el-table-column label="游客" width="80">
+          <template #default="{ row }">
+            {{ getEnabledLabel(row.isGuest) }}
+          </template>
+        </el-table-column>
+        <el-table-column label="已充值" width="90">
+          <template #default="{ row }">
+            {{ getEnabledLabel(row.isRecharge) }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="lastLoginIp"
           label="最后登录IP"
@@ -675,8 +700,8 @@ onMounted(fetchCreateOptions)
         <el-form-item label="租户ID">
           <div class="tenant-check-row">
             <el-input-number
-              class="form-control"
               v-model="editForm.tenantId"
+              class="form-control"
               :min="0"
               :precision="0"
               @change="resetTenantCheck"
@@ -737,30 +762,35 @@ onMounted(fetchCreateOptions)
           <el-col :span="12">
             <el-form-item label="注册类型">
               <el-select v-model="editForm.registerType" style="width: 100%">
-                    <el-option
-                      v-for="item in createOptions.registerTypes"
-                      :key="item.value"
-                      :label="getOptionLabel(item.code, item.label)"
-                      :value="item.value"
-                    />
+                <el-option
+                  v-for="item in createOptions.registerTypes"
+                  :key="item.value"
+                  :label="getOptionLabel(t, item.code, item.value)"
+                  :value="item.value"
+                />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="状态">
               <el-select v-model="editForm.status" style="width: 100%">
-                    <el-option
-                      v-for="item in createOptions.statuses"
-                      :key="item.value"
-                      :label="getOptionLabel(item.code, item.label)"
-                      :value="item.value"
-                    />
+                <el-option
+                  v-for="item in createOptions.statuses"
+                  :key="item.value"
+                  :label="getOptionLabel(t, item.code, item.value)"
+                  :value="item.value"
+                />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="会员等级">
-              <el-input-number class="form-control" v-model="editForm.memberLevel" :min="0" :precision="0" />
+              <el-input-number
+                v-model="editForm.memberLevel"
+                class="form-control"
+                :min="0"
+                :precision="0"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -823,7 +853,12 @@ onMounted(fetchCreateOptions)
         <el-button @click="editVisible = false">
           取消
         </el-button>
-        <el-button type="primary" :loading="submitLoading" :disabled="!canSubmitCreate" @click="submitEdit">
+        <el-button
+          type="primary"
+          :loading="submitLoading"
+          :disabled="!canSubmitCreate"
+          @click="submitEdit"
+        >
           确定
         </el-button>
       </template>
@@ -864,7 +899,7 @@ onMounted(fetchCreateOptions)
                   {{ getGenderLabel(detail.identity.gender) }}
                 </el-descriptions-item>
                 <el-descriptions-item label="生日">
-                  {{ formatTimeValue(detail.identity.birthday) }}
+                  {{ formatDate(detail.identity.birthday) }}
                 </el-descriptions-item>
                 <el-descriptions-item label="国家/地区">
                   {{ displayText(detail.identity.countryCode) }}
@@ -891,10 +926,10 @@ onMounted(fetchCreateOptions)
                   {{ getVerifyStatusLabel(detail.identity.verifyStatus) }}
                 </el-descriptions-item>
                 <el-descriptions-item label="提交时间">
-                  {{ formatTimeValue(detail.identity.submitTime) }}
+                  {{ formatDate(detail.identity.submitTime) }}
                 </el-descriptions-item>
                 <el-descriptions-item label="审核时间">
-                  {{ formatTimeValue(detail.identity.verifyTime) }}
+                  {{ formatDate(detail.identity.verifyTime) }}
                 </el-descriptions-item>
                 <el-descriptions-item label="审核人">
                   {{ displayText(detail.identity.verifyBy) }}
@@ -903,19 +938,34 @@ onMounted(fetchCreateOptions)
                   {{ displayText(detail.identity.rejectReason) }}
                 </el-descriptions-item>
                 <el-descriptions-item label="证件正面">
-                  <a v-if="detail.identity.frontImage" :href="detail.identity.frontImage" target="_blank" rel="noreferrer">
+                  <a
+                    v-if="detail.identity.frontImage"
+                    :href="detail.identity.frontImage"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     查看图片
                   </a>
                   <span v-else>-</span>
                 </el-descriptions-item>
                 <el-descriptions-item label="证件反面">
-                  <a v-if="detail.identity.backImage" :href="detail.identity.backImage" target="_blank" rel="noreferrer">
+                  <a
+                    v-if="detail.identity.backImage"
+                    :href="detail.identity.backImage"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     查看图片
                   </a>
                   <span v-else>-</span>
                 </el-descriptions-item>
                 <el-descriptions-item label="手持证件照" :span="2">
-                  <a v-if="detail.identity.handheldImage" :href="detail.identity.handheldImage" target="_blank" rel="noreferrer">
+                  <a
+                    v-if="detail.identity.handheldImage"
+                    :href="detail.identity.handheldImage"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     查看图片
                   </a>
                   <span v-else>-</span>
@@ -943,16 +993,16 @@ onMounted(fetchCreateOptions)
                   {{ displayText(detail.security.payErrorCount) }}
                 </el-descriptions-item>
                 <el-descriptions-item label="锁定到期时间">
-                  {{ formatTimeValue(detail.security.lockUntil) }}
+                  {{ formatDate(detail.security.lockUntil) }}
                 </el-descriptions-item>
                 <el-descriptions-item label="风控等级">
                   {{ getRiskLevelLabel(detail.security.riskLevel) }}
                 </el-descriptions-item>
                 <el-descriptions-item label="创建时间">
-                  {{ formatTimeValue(detail.security.createTimes) }}
+                  {{ formatDate(detail.security.createTimes) }}
                 </el-descriptions-item>
                 <el-descriptions-item label="更新时间">
-                  {{ formatTimeValue(detail.security.updateTimes) }}
+                  {{ formatDate(detail.security.updateTimes) }}
                 </el-descriptions-item>
               </el-descriptions>
             </el-card>
@@ -969,7 +1019,12 @@ onMounted(fetchCreateOptions)
                     {{ displayText(row.maskedAccountNo || row.accountNo) }}
                   </template>
                 </el-table-column>
-                <el-table-column prop="branchName" label="支行名称" min-width="160" show-overflow-tooltip />
+                <el-table-column
+                  prop="branchName"
+                  label="支行名称"
+                  min-width="160"
+                  show-overflow-tooltip
+                />
                 <el-table-column prop="countryCode" label="国家/地区" min-width="110" />
                 <el-table-column label="默认卡" width="90">
                   <template #default="{ row }">
@@ -983,7 +1038,7 @@ onMounted(fetchCreateOptions)
                 </el-table-column>
                 <el-table-column label="创建时间" min-width="170">
                   <template #default="{ row }">
-                    {{ formatTimeValue(row.createTimes) }}
+                    {{ formatDate(row.createTimes) }}
                   </template>
                 </el-table-column>
               </el-table>

@@ -56,7 +56,20 @@
     <el-card shadow="never" class="query-card">
       <el-form :model="currentQuery" inline label-width="88px">
         <el-form-item v-for="field in currentFields" :key="field.key" :label="field.label">
-          <el-input v-if="field.type !== 'number'" v-model="currentQuery[field.key]" clearable />
+          <el-select
+            v-if="field.type === 'select'"
+            v-model="currentQuery[field.key]"
+            clearable
+            style="width: 160px"
+          >
+            <el-option
+              v-for="item in getFieldOptions(field.optionsKey)"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
+          </el-select>
+          <el-input v-else-if="field.type !== 'number'" v-model="currentQuery[field.key]" clearable />
           <el-input-number
             v-else
             v-model="currentQuery[field.key]"
@@ -104,7 +117,14 @@
           <el-input-number v-model="changeForm.userId" :min="0" :precision="0" />
         </el-form-item>
         <el-form-item v-if="!['unfreeze', 'unlock'].includes(changeMode)" label="钱包类型">
-          <el-input-number v-model="changeForm.walletType" :min="0" :precision="0" />
+          <el-select v-model="changeForm.walletType" style="width: 100%">
+            <el-option
+              v-for="item in walletTypeOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item v-if="!['unfreeze', 'unlock'].includes(changeMode)" label="币种">
           <el-input v-model="changeForm.coin" />
@@ -146,8 +166,12 @@
 
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { assetService } from '@/services'
+import { assetService, type OptionGroup } from '@/services'
+import { findOptionGroup, getOptionLabel } from '@/utils/options'
+
+const { t } = useI18n()
 
 const props = withDefaults(defineProps<{
   mode?: 'user-assets' | 'flows' | 'freezes' | 'locks'
@@ -170,6 +194,7 @@ const activeTab = ref<'user-assets' | 'flows' | 'freezes' | 'locks'>(props.mode)
 const loading = ref(false)
 const submitLoading = ref(false)
 const rows = ref<Record<string, any>[]>([])
+const optionGroups = ref<OptionGroup[]>([])
 const detailVisible = ref(false)
 const detailData = ref<Record<string, any>>({})
 const detailTitle = computed(() => `${titleMap[activeTab.value]}详情`)
@@ -196,30 +221,41 @@ const changeForm = reactive<Record<string, any>>({
   lockNo: '',
 })
 
-const fieldMap: Record<string, Array<{ key: string; label: string; type?: string }>> = {
+const walletTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'walletType'))
+const assetStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'assetStatus'))
+const freezeStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'freezeStatus'))
+const lockStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'lockStatus'))
+
+const fieldMap: Record<string, Array<{ key: string; label: string; type?: string; optionsKey?: string }>> = {
   'user-assets': [
     { key: 'tenantId', label: '租户ID', type: 'number' },
     { key: 'userId', label: '用户ID', type: 'number' },
-    { key: 'walletType', label: '钱包类型', type: 'number' },
+    { key: 'walletType', label: '钱包类型', type: 'select', optionsKey: 'walletType' },
     { key: 'coin', label: '币种' },
+    { key: 'status', label: '状态', type: 'select', optionsKey: 'assetStatus' },
   ],
   flows: [
     { key: 'tenantId', label: '租户ID', type: 'number' },
     { key: 'userId', label: '用户ID', type: 'number' },
+    { key: 'walletType', label: '钱包类型', type: 'select', optionsKey: 'walletType' },
     { key: 'coin', label: '币种' },
     { key: 'bizNo', label: '业务单号' },
   ],
   freezes: [
     { key: 'tenantId', label: '租户ID', type: 'number' },
     { key: 'userId', label: '用户ID', type: 'number' },
+    { key: 'walletType', label: '钱包类型', type: 'select', optionsKey: 'walletType' },
     { key: 'coin', label: '币种' },
     { key: 'bizNo', label: '业务单号' },
+    { key: 'status', label: '状态', type: 'select', optionsKey: 'freezeStatus' },
   ],
   locks: [
     { key: 'tenantId', label: '租户ID', type: 'number' },
     { key: 'userId', label: '用户ID', type: 'number' },
+    { key: 'walletType', label: '钱包类型', type: 'select', optionsKey: 'walletType' },
     { key: 'coin', label: '币种' },
     { key: 'bizNo', label: '业务单号' },
+    { key: 'status', label: '状态', type: 'select', optionsKey: 'lockStatus' },
   ],
 }
 
@@ -279,6 +315,13 @@ const changeTitle = computed(() => ({
 }[changeMode.value]))
 
 const pickList = (res: any) => res?.data || res?.list || []
+const getFieldOptions = (key?: string) => {
+  if (key === 'walletType') return walletTypeOptions.value
+  if (key === 'assetStatus') return assetStatusOptions.value
+  if (key === 'freezeStatus') return freezeStatusOptions.value
+  if (key === 'lockStatus') return lockStatusOptions.value
+  return []
+}
 
 const loadCurrent = async () => {
   loading.value = true
@@ -290,6 +333,11 @@ const loadCurrent = async () => {
   } finally {
     loading.value = false
   }
+}
+
+const loadOptions = async () => {
+  const res = await assetService.getOptions()
+  optionGroups.value = res.data || []
 }
 
 const resetCurrent = () => {
@@ -358,6 +406,7 @@ watch(
 )
 
 onMounted(loadCurrent)
+onMounted(loadOptions)
 </script>
 
 <style scoped>

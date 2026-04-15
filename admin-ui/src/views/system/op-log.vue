@@ -1,15 +1,18 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { usePagination } from '@/composables/usePagination'
 import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
 import { formatDate } from '@/utils'
-import { logService } from '@/services'
+import { logService, type OptionGroup } from '@/services'
 import type { OpLogItem } from '@/services/system/LogService'
+import { findOptionGroup, getOptionLabel } from '@/utils/options'
 
 const { t } = useI18n()
+const optionGroups = ref<OptionGroup[]>([])
+const methodOptions = computed(() => findOptionGroup(optionGroups.value, 'method'))
 
 // Pagination and list
 const {
@@ -56,6 +59,16 @@ async function fetchList() {
   })
 }
 
+async function fetchOptions() {
+  try {
+    const res = await logService.getOptions()
+    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
+    optionGroups.value = res.data || []
+  } catch (e: any) {
+    ElMessage.error(e?.message || t('common.loadFailed'))
+  }
+}
+
 function onSearch() {
   pagination.cursor = null
   pagination.hasPrev = false
@@ -82,6 +95,7 @@ function prevPage() {
 }
 
 onMounted(() => {
+  fetchOptions()
   fetchList()
 })
 </script>
@@ -104,12 +118,19 @@ onMounted(() => {
       </el-form-item>
 
       <el-form-item :label="t('common.method')">
-        <el-input
+        <el-select
           v-model="queryForm.method"
-          :placeholder="t('common.pleaseInputMethod')"
+          :placeholder="t('common.pleaseSelect')"
           clearable
           style="width: 200px"
-        />
+        >
+          <el-option
+            v-for="item in methodOptions"
+            :key="item.value"
+            :label="getOptionLabel(t, item.code, item.value)"
+            :value="item.code"
+          />
+        </el-select>
       </el-form-item>
 
       <el-form-item :label="t('common.path')">

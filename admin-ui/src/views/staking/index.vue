@@ -105,7 +105,14 @@
           <el-input v-model="productForm.productName" />
         </el-form-item>
         <el-form-item label="产品类型">
-          <el-input-number v-model="productForm.productType" :min="0" :precision="0" />
+          <el-select v-model="productForm.productType" style="width: 100%">
+            <el-option
+              v-for="item in productTypeOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="币种名称">
           <el-input v-model="productForm.coinName" />
@@ -141,19 +148,47 @@
           <el-input v-model="productForm.userLimitAmount" />
         </el-form-item>
         <el-form-item label="计息模式">
-          <el-input-number v-model="productForm.interestMode" :min="0" :precision="0" />
+          <el-select v-model="productForm.interestMode" style="width: 100%">
+            <el-option
+              v-for="item in interestModeOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="奖励模式">
-          <el-input-number v-model="productForm.rewardMode" :min="0" :precision="0" />
+          <el-select v-model="productForm.rewardMode" style="width: 100%">
+            <el-option
+              v-for="item in rewardModeOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="允许提前赎回">
-          <el-input-number v-model="productForm.allowEarlyRedeem" :min="0" :precision="0" />
+          <el-select v-model="productForm.allowEarlyRedeem" style="width: 100%">
+            <el-option
+              v-for="item in yesNoOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="提前赎回费率">
           <el-input v-model="productForm.earlyRedeemRate" />
         </el-form-item>
         <el-form-item label="状态">
-          <el-input-number v-model="productForm.status" :min="0" :precision="0" />
+          <el-select v-model="productForm.status" style="width: 100%">
+            <el-option
+              v-for="item in productStatusOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="排序">
           <el-input-number v-model="productForm.sort" :min="0" :precision="0" />
@@ -254,11 +289,21 @@
 
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { stakingService } from '@/services'
+import { stakingService, type OptionGroup } from '@/services'
+import { findOptionGroup, getOptionLabel } from '@/utils/options'
+
+const { t } = useI18n()
 
 const props = defineProps<{ initialTab?: string }>()
 const activeTab = ref(props.initialTab || 'products')
+const optionGroups = ref<OptionGroup[]>([])
+const productTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'productType'))
+const productStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'productStatus'))
+const interestModeOptions = computed(() => findOptionGroup(optionGroups.value, 'interestMode'))
+const rewardModeOptions = computed(() => findOptionGroup(optionGroups.value, 'rewardMode'))
+const yesNoOptions = computed(() => findOptionGroup(optionGroups.value, 'yesNo'))
 const loading = ref(false)
 const submitLoading = ref(false)
 const rows = ref<Record<string, any>[]>([])
@@ -379,6 +424,11 @@ const loadCurrent = async () => {
   }
 }
 
+const loadOptions = async () => {
+  const res = await stakingService.getOptions()
+  optionGroups.value = res.data || []
+}
+
 const resetCurrent = () => {
   Object.keys(currentQuery.value).forEach((key) => {
     currentQuery.value[key] = key === 'limit' ? 100 : ''
@@ -478,7 +528,9 @@ const submitRedeem = async () => {
   }
 }
 
-onMounted(loadCurrent)
+onMounted(async () => {
+  await Promise.all([loadCurrent(), loadOptions()])
+})
 </script>
 
 <style scoped></style>

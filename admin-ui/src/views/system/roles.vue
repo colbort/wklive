@@ -2,14 +2,18 @@
 import { computed, reactive, ref, onMounted, nextTick } from 'vue'
 import { ElMessage, type FormInstance, type TreeInstance } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import type { OptionGroup } from '@/services'
 import type { SysRole } from '@/services/system/RoleService'
 import type { MenuNode, PermItem } from '@/services/system/MenuService'
 import { usePagination, useLoading, useConfirm, useForm } from '@/composables'
 
 import { roleService, menuService } from '@/services'
+import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 // ===== i18n =====
 const { t } = useI18n()
+const optionGroups = ref<OptionGroup[]>([])
+const statusOptions = computed(() => findOptionGroup(optionGroups.value, 'status'))
 
 // ===== helpers =====
 function isSuperRole(r: SysRole | null | undefined) {
@@ -57,6 +61,15 @@ async function fetchList() {
       ElMessage.error(e?.message || t('common.failed'))
     }
   })
+}
+
+async function fetchOptions() {
+  try {
+    const resp = await roleService.getOptions()
+    optionGroups.value = resp.data || []
+  } catch (e: any) {
+    ElMessage.error(e?.message || t('common.failed'))
+  }
 }
 
 function unwrapList(resp: any): any[] {
@@ -340,7 +353,9 @@ function onGrantClosed() {
 }
 
 // ===== init =====
-onMounted(fetchList)
+onMounted(async () => {
+  await Promise.all([fetchList(), fetchOptions()])
+})
 </script>
 
 <template>
@@ -372,8 +387,12 @@ onMounted(fetchList)
         @change="onSearch"
       >
         <el-option :label="t('common.all')" :value="0" />
-        <el-option :label="t('common.enabled')" :value="1" />
-        <el-option :label="t('common.disabled')" :value="2" />
+        <el-option
+          v-for="item in statusOptions"
+          :key="item.value"
+          :label="getOptionLabel(t, item.code, item.value)"
+          :value="item.value"
+        />
       </el-select>
 
       <el-button @click="onSearch">
@@ -393,11 +412,8 @@ onMounted(fetchList)
       <!-- 状态 -->
       <el-table-column :label="t('common.status')" width="110">
         <template #default="{ row }">
-          <el-tag v-if="(row as any).status === 1" type="success">
-            {{ t('common.enabled') }}
-          </el-tag>
-          <el-tag v-else type="info">
-            {{ t('common.disabled') }}
+          <el-tag :type="(row as any).status === 1 ? 'success' : 'info'">
+            {{ getOptionValueLabel(optionGroups, 'status', (row as any).status, t) }}
           </el-tag>
         </template>
       </el-table-column>
@@ -508,11 +524,12 @@ onMounted(fetchList)
         :rules="[{ required: true, message: t('common.required') }]"
       >
         <el-radio-group v-model="editForm.status">
-          <el-radio :label="1">
-            {{ t('common.enabled') }}
-          </el-radio>
-          <el-radio :label="2">
-            {{ t('common.disabled') }}
+          <el-radio
+            v-for="item in statusOptions"
+            :key="item.value"
+            :label="item.value"
+          >
+            {{ getOptionLabel(t, item.code, item.value) }}
           </el-radio>
         </el-radio-group>
       </el-form-item>

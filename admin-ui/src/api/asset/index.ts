@@ -52,11 +52,15 @@ export function apiAdminSubAsset(params: AdminSubAssetReq): Promise<RespBase<Ass
   return post<AssetChangeResp>('/admin/asset/sub', params)
 }
 
-export function apiAdminFreezeAsset(params: AdminFreezeAssetReq): Promise<RespBase<AssetChangeResp>> {
+export function apiAdminFreezeAsset(
+  params: AdminFreezeAssetReq,
+): Promise<RespBase<AssetChangeResp>> {
   return post<AssetChangeResp>('/admin/asset/freeze', params)
 }
 
-export function apiAdminUnfreezeAsset(params: AdminUnfreezeAssetReq): Promise<RespBase<AssetChangeResp>> {
+export function apiAdminUnfreezeAsset(
+  params: AdminUnfreezeAssetReq,
+): Promise<RespBase<AssetChangeResp>> {
   return post<AssetChangeResp>('/admin/asset/unfreeze', params)
 }
 
@@ -64,7 +68,9 @@ export function apiAdminLockAsset(params: AdminLockAssetReq): Promise<RespBase<A
   return post<AssetChangeResp>('/admin/asset/lock', params)
 }
 
-export function apiAdminUnlockAsset(params: AdminUnlockAssetReq): Promise<RespBase<AssetChangeResp>> {
+export function apiAdminUnlockAsset(
+  params: AdminUnlockAssetReq,
+): Promise<RespBase<AssetChangeResp>> {
   return post<AssetChangeResp>('/admin/asset/unlock', params)
 }
 

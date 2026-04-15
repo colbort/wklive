@@ -125,9 +125,7 @@ export class RechargeService {
   getUserRechargeStat(params: GetUserRechargeStatReq): Promise<RespBase<UserRechargeStat>> {
     return apiUserRechargeStatDetail(params)
   }
-  getUserRechargeStatList(
-    params: ListUserRechargeStatsReq,
-  ): Promise<RespBase<UserRechargeStat[]>> {
+  getUserRechargeStatList(params: ListUserRechargeStatsReq): Promise<RespBase<UserRechargeStat[]>> {
     return apiUserRechargeStatList(params)
   }
   getRechargeOrderList(params: ListRechargeOrdersReq): Promise<RespBase<RechargeOrder[]>> {
@@ -148,9 +146,7 @@ export class RechargeService {
   retryRechargeNotify(orderNo: string, tenantId: number): Promise<RespBase> {
     return apiRetryRechargeNotify(orderNo, { tenantId })
   }
-  getRechargeNotifyLogList(
-    params: ListRechargeNotifyLogsReq,
-  ): Promise<RespBase<PayNotifyLog[]>> {
+  getRechargeNotifyLogList(params: ListRechargeNotifyLogsReq): Promise<RespBase<PayNotifyLog[]>> {
     return apiRechargeNotifyLogList(params)
   }
   getRechargeNotifyLogDetail(id: number, tenantId: number): Promise<RespBase<PayNotifyLog>> {

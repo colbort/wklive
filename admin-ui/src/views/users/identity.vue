@@ -1,15 +1,21 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { memberUserService, type MemberUserIdentityItem } from '@/services'
+import { memberUserService, type UserIdentityItem, type OptionGroup, UserDetail } from '@/services'
 import { formatDate } from '@/utils'
+import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
+const { t } = useI18n()
 const loading = ref(false)
 const submitLoading = ref(false)
-const list = ref<MemberUserIdentityItem[]>([])
+const list = ref<UserIdentityItem[]>([])
 const reviewVisible = ref(false)
 const detailVisible = ref(false)
-const detailData = ref<any>(null)
+const detailData = ref<UserDetail>()
+const optionGroups = ref<OptionGroup[]>([])
+const verifyStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'verifyStatus'))
+const kycLevelOptions = computed(() => findOptionGroup(optionGroups.value, 'kycLevel'))
 
 const query = reactive({
   tenantId: undefined as number | undefined,
@@ -32,6 +38,16 @@ const reviewForm = reactive({
 
 function checkCode(code: number) {
   return code === 0 || code === 200
+}
+
+async function fetchOptions() {
+  try {
+    const res = await memberUserService.getOptions()
+    if (!checkCode(res.code)) throw new Error(res.msg || '加载选项失败')
+    optionGroups.value = res.data || []
+  } catch (error: any) {
+    ElMessage.error(error?.message || '加载选项失败')
+  }
 }
 
 async function fetchList() {
@@ -61,7 +77,7 @@ function resetQuery() {
   fetchList()
 }
 
-async function showDetail(row: MemberUserIdentityItem) {
+async function showDetail(row: UserIdentityItem) {
   const tenantId = Number(query.tenantId || 0)
   if (!tenantId) {
     ElMessage.warning('请先输入租户ID')
@@ -76,7 +92,7 @@ async function showDetail(row: MemberUserIdentityItem) {
   detailVisible.value = true
 }
 
-function openReview(row: MemberUserIdentityItem) {
+function openReview(row: UserIdentityItem) {
   Object.assign(reviewForm, {
     userId: row.userId,
     tenantId: Number(query.tenantId || 0),
@@ -108,6 +124,7 @@ async function submitReview() {
 }
 
 onMounted(fetchList)
+onMounted(fetchOptions)
 </script>
 
 <template>
@@ -137,10 +154,24 @@ onMounted(fetchList)
           <el-input v-model="query.realName" clearable />
         </el-form-item>
         <el-form-item label="认证状态">
-          <el-input-number v-model="query.verifyStatus" :min="0" :precision="0" />
+          <el-select v-model="query.verifyStatus" clearable style="width: 140px">
+            <el-option
+              v-for="item in verifyStatusOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="KYC等级">
-          <el-input-number v-model="query.kycLevel" :min="0" :precision="0" />
+          <el-select v-model="query.kycLevel" clearable style="width: 140px">
+            <el-option
+              v-for="item in kycLevelOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="fetchList">
@@ -161,9 +192,21 @@ onMounted(fetchList)
         <el-table-column prop="phone" label="手机号" min-width="140" />
         <el-table-column prop="email" label="邮箱" min-width="180" />
         <el-table-column prop="realName" label="实名" min-width="120" />
-        <el-table-column prop="idType" label="证件类型" width="100" />
-        <el-table-column prop="kycLevel" label="KYC等级" width="100" />
-        <el-table-column prop="verifyStatus" label="认证状态" width="100" />
+        <el-table-column label="证件类型" width="110">
+          <template #default="{ row }">
+            {{ getOptionValueLabel(optionGroups, 'idType', row.idType, t) }}
+          </template>
+        </el-table-column>
+        <el-table-column label="KYC等级" width="100">
+          <template #default="{ row }">
+            {{ getOptionValueLabel(optionGroups, 'kycLevel', row.kycLevel, t) }}
+          </template>
+        </el-table-column>
+        <el-table-column label="认证状态" width="110">
+          <template #default="{ row }">
+            {{ getOptionValueLabel(optionGroups, 'verifyStatus', row.verifyStatus, t) }}
+          </template>
+        </el-table-column>
         <el-table-column label="提交时间" min-width="170">
           <template #default="{ row }">
             {{ formatDate(row.submitTime) }}
@@ -188,7 +231,14 @@ onMounted(fetchList)
           <el-input-number v-model="reviewForm.tenantId" :min="0" :precision="0" />
         </el-form-item>
         <el-form-item label="审核状态">
-          <el-input-number v-model="reviewForm.verifyStatus" :min="0" :precision="0" />
+          <el-select v-model="reviewForm.verifyStatus" style="width: 100%">
+            <el-option
+              v-for="item in verifyStatusOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="审核人ID">
           <el-input-number v-model="reviewForm.verifyBy" :min="0" :precision="0" />

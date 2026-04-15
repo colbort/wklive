@@ -190,11 +190,6 @@ type CreateUserResp {
 	userId int64 `json:"userId"`
 }
 
-type UserOptionItem {
-	label string `json:"label"`
-	value int64  `json:"value"`
-}
-
 type CheckUserReferrerReq {
 	inviteCode string `form:"inviteCode"`
 }

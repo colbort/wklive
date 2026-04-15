@@ -1,4 +1,4 @@
-import type { RespBase, BaseService } from '@/services'
+import type { RespBase, BaseService, OptionGroup } from '@/services'
 
 import {
   apiSysTenantList,
@@ -7,6 +7,7 @@ import {
   apiSysTenantDelete,
   apiSysTenantDetail,
 } from '@/api/system/tenants'
+import { apiOptions } from '@/api/system/options'
 
 export type SysTenantCreateReq = {
   tenantCode: string
@@ -60,6 +61,10 @@ export type SysTenantDetailReq = {
 
 // ========= 租户服务 =========
 export class TenantsService implements BaseService {
+  async getOptions(): Promise<RespBase<OptionGroup[]>> {
+    return apiOptions()
+  }
+
   async getList(params: SysTenantListReq): Promise<RespBase<SysTenantItem[]>> {
     return apiSysTenantList(params)
   }

@@ -108,10 +108,24 @@
           <el-input v-model="contractForm.quoteCoin" />
         </el-form-item>
         <el-form-item label="期权类型">
-          <el-input-number v-model="contractForm.optionType" :min="0" :precision="0" />
+          <el-select v-model="contractForm.optionType" style="width: 100%">
+            <el-option
+              v-for="item in optionTypeOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="行权方式">
-          <el-input-number v-model="contractForm.exerciseStyle" :min="0" :precision="0" />
+          <el-select v-model="contractForm.exerciseStyle" style="width: 100%">
+            <el-option
+              v-for="item in exerciseStyleOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="结算方式">
           <el-input-number v-model="contractForm.settlementType" :min="0" :precision="0" />
@@ -150,7 +164,14 @@
           <el-input-number v-model="contractForm.isAutoExercise" :min="0" :precision="0" />
         </el-form-item>
         <el-form-item label="状态">
-          <el-input-number v-model="contractForm.status" :min="0" :precision="0" />
+          <el-select v-model="contractForm.status" style="width: 100%">
+            <el-option
+              v-for="item in contractStatusOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="排序">
           <el-input-number v-model="contractForm.sort" :min="0" :precision="0" />
@@ -247,8 +268,12 @@
 
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { optionService } from '@/services'
+import { optionService, type OptionGroup } from '@/services'
+import { findOptionGroup, getOptionLabel } from '@/utils/options'
+
+const { t } = useI18n()
 
 const props = defineProps<{ initialTab?: string }>()
 const activeTab = ref(props.initialTab || 'contracts')
@@ -259,6 +284,10 @@ const detailVisible = ref(false)
 const detailData = ref<Record<string, any>>({})
 const contractVisible = ref(false)
 const marketVisible = ref(false)
+const optionGroups = ref<OptionGroup[]>([])
+const optionTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'optionType'))
+const exerciseStyleOptions = computed(() => findOptionGroup(optionGroups.value, 'exerciseStyle'))
+const contractStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'contractStatus'))
 
 const queries = reactive({
   contracts: { tenantId: undefined, contractCode: '', underlyingSymbol: '', status: undefined, limit: 100 },
@@ -457,6 +486,11 @@ const loadCurrent = async () => {
   }
 }
 
+const loadOptions = async () => {
+  const res = await optionService.getOptions()
+  optionGroups.value = res.data || []
+}
+
 const resetCurrent = () => {
   Object.keys(currentQuery.value).forEach((key) => {
     currentQuery.value[key] = key === 'limit' ? 100 : ''
@@ -559,7 +593,9 @@ const submitMarket = async () => {
   }
 }
 
-onMounted(loadCurrent)
+onMounted(async () => {
+  await Promise.all([loadCurrent(), loadOptions()])
+})
 </script>
 
 <style scoped></style>

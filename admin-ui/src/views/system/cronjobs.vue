@@ -10,7 +10,7 @@ import {
   CircleCheck,
   CircleCloseFilled,
 } from '@element-plus/icons-vue'
-import { cronJobService } from '@/services'
+import { cronJobService, type OptionGroup } from '@/services'
 import type {
   SysCronJobItem,
   SysCronJobCreateReq,
@@ -21,9 +21,12 @@ import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
 import { useConfirm } from '@/composables/useConfirm'
 import { formatDate } from '@/utils'
+import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 const { t } = useI18n()
 const { confirm } = useConfirm()
+const optionGroups = ref<OptionGroup[]>([])
+const jobStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'jobStatus'))
 
 // Pagination and main list
 const {
@@ -108,6 +111,16 @@ async function fetchHandlers() {
     const res = await cronJobService.handlers()
     if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
     handlers.value = res.data || []
+  } catch (e: any) {
+    ElMessage.error(e?.message || t('common.loadFailed'))
+  }
+}
+
+async function fetchOptions() {
+  try {
+    const res = await cronJobService.getOptions()
+    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
+    optionGroups.value = res.data || []
   } catch (e: any) {
     ElMessage.error(e?.message || t('common.loadFailed'))
   }
@@ -243,6 +256,7 @@ async function handleStop(row: SysCronJobItem) {
 
 // Load on mount
 onMounted(() => {
+  fetchOptions()
   fetchHandlers()
   fetchList()
 })
@@ -287,8 +301,12 @@ onMounted(() => {
           clearable
           style="width: 140px"
         >
-          <el-option :label="t('common.enabled')" :value="1" />
-          <el-option :label="t('common.disabled')" :value="0" />
+          <el-option
+            v-for="item in jobStatusOptions"
+            :key="item.value"
+            :label="getOptionLabel(t, item.code, item.value)"
+            :value="item.value"
+          />
         </el-select>
       </el-form-item>
 
@@ -317,7 +335,7 @@ onMounted(() => {
       <el-table-column prop="status" :label="t('common.status')" width="100">
         <template #default="{ row }">
           <el-tag :type="row.status === 1 ? 'success' : 'info'">
-            {{ row.status === 1 ? t('common.enabled') : t('common.disabled') }}
+            {{ getOptionValueLabel(optionGroups, 'jobStatus', row.status, t) }}
           </el-tag>
         </template>
       </el-table-column>
@@ -454,11 +472,12 @@ onMounted(() => {
 
         <el-form-item :label="t('common.status')">
           <el-radio-group v-model="formData.status">
-            <el-radio :label="1">
-              {{ t('common.enabled') }}
-            </el-radio>
-            <el-radio :label="0">
-              {{ t('common.disabled') }}
+            <el-radio
+              v-for="item in jobStatusOptions"
+              :key="item.value"
+              :label="item.value"
+            >
+              {{ getOptionLabel(t, item.code, item.value) }}
             </el-radio>
           </el-radio-group>
         </el-form-item>

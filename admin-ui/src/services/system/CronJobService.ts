@@ -1,4 +1,4 @@
-import type { RespBase, BaseService } from '@/services'
+import type { RespBase, BaseService, OptionGroup } from '@/services'
 import {
   apiSysCronJobList,
   apiSysCronJobCreate,
@@ -10,6 +10,7 @@ import {
   apiSysCronJobHandlers,
   apiSysCronJobLogList,
 } from '@/api/system/cronjob'
+import { apiOptions } from '@/api/system/options'
 
 export type SysCronJobItem = {
   id: number
@@ -104,6 +105,10 @@ export type SysCronJobLogListReq = {
 export type SysCronJobLogListResp = RespBase<SysCronJobLogItem[]>
 
 export class CronJobService implements BaseService {
+  async getOptions(): Promise<RespBase<OptionGroup[]>> {
+    return apiOptions()
+  }
+
   async getList(params: SysCronJobListReq): Promise<RespBase<SysCronJobItem[]>> {
     return apiSysCronJobList(params)
   }

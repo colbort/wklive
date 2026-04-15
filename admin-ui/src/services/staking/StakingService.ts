@@ -1,4 +1,6 @@
+import type { OptionGroup, RespBase } from '@/services'
 import {
+  apiOptions,
   apiStakingChangeProductStatus,
   apiStakingCreateProduct,
   apiStakingGetOrder,
@@ -255,6 +257,10 @@ export type AdminManualRedeemReq = {
 }
 
 export class StakingService {
+  getOptions(): Promise<RespBase<OptionGroup[]>> {
+    return apiOptions()
+  }
+
   listProducts(params: AdminProductListReq) {
     return apiStakingListProducts(params)
   }

@@ -1,5 +1,6 @@
-import type { RespBase } from '@/services'
+import type { OptionGroup, RespBase } from '@/services'
 import { apiLoginLogList, apiOpLogList } from '@/api/system/logs'
+import { apiOptions } from '@/api/system/options'
 
 // ===== 日志相关类型定义 =====
 
@@ -93,6 +94,10 @@ export class LogService {
    */
   async getOperationLogs(params?: OperationLogQueryParams): Promise<RespBase<OperationLog[]>> {
     return apiOpLogList(params || {})
+  }
+
+  async getOptions(): Promise<RespBase<OptionGroup[]>> {
+    return apiOptions()
   }
 }
 

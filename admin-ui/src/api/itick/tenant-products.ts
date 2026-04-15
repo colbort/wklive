@@ -17,15 +17,11 @@ export function apiItickTenantProductList(
   return get<ItickTenantProduct[]>('/admin/itick/tenant-products', params)
 }
 
-export function apiItickTenantProductCreate(
-  params: CreateTenantProductReq,
-): Promise<RespBase> {
+export function apiItickTenantProductCreate(params: CreateTenantProductReq): Promise<RespBase> {
   return post('/admin/itick/tenant-products', params)
 }
 
-export function apiItickTenantProductUpdate(
-  params: UpdateTenantProductReq,
-): Promise<RespBase> {
+export function apiItickTenantProductUpdate(params: UpdateTenantProductReq): Promise<RespBase> {
   return put('/admin/itick/tenant-products', params)
 }
 

@@ -1,4 +1,4 @@
-import type { RespBase, BaseService } from '@/services'
+import type { RespBase, BaseService, OptionGroup } from '@/services'
 import {
   apiRoleList,
   apiRoleCreate,
@@ -7,6 +7,7 @@ import {
   apiRoleGrant,
   apiRoleGrantDetail,
 } from '@/api/system/roles'
+import { apiOptions } from '@/api/system/options'
 
 // ===== 角色相关类型定义 =====
 
@@ -66,6 +67,10 @@ export interface RoleGrantRequest {
  * 实现 BaseService 接口，使用现有的 API 函数
  */
 export class RoleService implements BaseService {
+  async getOptions(): Promise<RespBase<OptionGroup[]>> {
+    return apiOptions()
+  }
+
   /**
    * 获取角色列表（支持分页和筛选）
    */

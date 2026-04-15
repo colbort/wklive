@@ -1,4 +1,4 @@
-import type { RespBase } from '@/services'
+import type { OptionGroup, RespBase } from '@/services'
 import {
   apiAdminAddAsset,
   apiAdminFreezeAsset,
@@ -10,6 +10,7 @@ import {
   apiPageAssetFlows,
   apiPageAssetFreezes,
   apiPageAssetLocks,
+  apiOptions,
   apiPageUserAssets,
 } from '@/api/asset'
 
@@ -201,6 +202,10 @@ export type AdminUnlockAssetReq = {
 }
 
 export class AssetService {
+  getOptions(): Promise<RespBase<OptionGroup[]>> {
+    return apiOptions()
+  }
+
   getUserAssets(params: PageUserAssetsReq): Promise<RespBase<AssetUserAsset[]>> {
     return apiPageUserAssets(params)
   }

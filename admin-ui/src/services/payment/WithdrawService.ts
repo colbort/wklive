@@ -75,9 +75,7 @@ export class WithdrawService {
   }): Promise<RespBase> {
     return apiAuditWithdrawOrder(params)
   }
-  getWithdrawNotifyLogList(
-    params: ListWithdrawNotifyLogsReq,
-  ): Promise<RespBase<PayNotifyLog[]>> {
+  getWithdrawNotifyLogList(params: ListWithdrawNotifyLogsReq): Promise<RespBase<PayNotifyLog[]>> {
     return apiWithdrawNotifyLogList(params)
   }
   getWithdrawNotifyLogDetail(id: number, tenantId: number): Promise<RespBase<PayNotifyLog>> {

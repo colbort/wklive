@@ -2,11 +2,13 @@ import type { RespBase, BaseService } from '@/services'
 import {
   apiMenuTree,
   apiPermList,
-  sysMenuCreate,
-  sysMenuUpdate,
-  sysMenuDelete,
   sysMenuList,
+  sysMenuCreate,
+  sysMenuDelete,
+  sysMenuUpdate,
 } from '@/api/system/menus'
+import { apiOptions } from '@/api/system/options'
+import type { OptionGroup } from '@/services'
 
 // ===== 菜单相关类型定义 =====
 
@@ -110,6 +112,10 @@ export class MenuService implements BaseService {
    */
   async getList(params?: MenuQueryParams): Promise<RespBase<SysMenuListResp>> {
     return sysMenuList(params || ({} as SysMenuListReq))
+  }
+
+  async getOptions(): Promise<RespBase<OptionGroup[]>> {
+    return apiOptions()
   }
 
   /**

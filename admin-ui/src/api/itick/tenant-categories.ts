@@ -15,15 +15,11 @@ export function apiItickTenantCategoryList(
   return get<ItickTenantCategory[]>('/admin/itick/tenant-categories', params)
 }
 
-export function apiItickTenantCategoryCreate(
-  params: CreateTenantCategoryReq,
-): Promise<RespBase> {
+export function apiItickTenantCategoryCreate(params: CreateTenantCategoryReq): Promise<RespBase> {
   return post('/admin/itick/tenant-categories', params)
 }
 
-export function apiItickTenantCategoryUpdate(
-  params: UpdateTenantCategoryReq,
-): Promise<RespBase> {
+export function apiItickTenantCategoryUpdate(params: UpdateTenantCategoryReq): Promise<RespBase> {
   return put('/admin/itick/tenant-categories', params)
 }
 

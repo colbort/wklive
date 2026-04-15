@@ -24,7 +24,7 @@
             <el-option
               v-for="item in statusOptions"
               :key="item.value"
-              :label="item.label"
+              :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
             />
           </el-select>
@@ -53,7 +53,12 @@
             {{ getPlatformTypeLabel(row.platformType) }}
           </template>
         </el-table-column>
-        <el-table-column prop="icon" label="图标" width="100" align="center">
+        <el-table-column
+          prop="icon"
+          label="图标"
+          width="100"
+          align="center"
+        >
           <template #default="{ row }">
             <el-image
               v-if="row.icon"
@@ -125,7 +130,7 @@
             <el-option
               v-for="item in platformTypeOptions"
               :key="item.value"
-              :label="item.label"
+              :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
             />
           </el-select>
@@ -162,7 +167,7 @@
             <el-option
               v-for="item in statusOptions"
               :key="item.value"
-              :label="item.label"
+              :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
             />
           </el-select>
@@ -188,13 +193,17 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Refresh } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import type { UploadFile } from 'element-plus'
-import { catalogService, type PayPlatform, type PayPlatformItem } from '@/services'
+import { catalogService, type OptionGroup, type PayPlatform, type PayPlatformItem } from '@/services'
 import { apiUploadFile } from '@/api/system/upload'
 import { buildAssetUrl } from '@/utils/file-url'
+import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+
+const { t } = useI18n()
 
 const submitLoading = ref(false)
 const platformLoading = ref(false)
@@ -205,18 +214,9 @@ const detailTitle = ref('详情')
 const detailData = ref<Record<string, any>>({})
 const platformDialogVisible = ref(false)
 const selectedPlatformCode = ref('')
-
-const platformTypeOptions = [
-  { label: '三方支付', value: 1 },
-  { label: '银行转账', value: 2 },
-  { label: '链上支付', value: 3 },
-  { label: '人工代收', value: 4 },
-]
-
-const statusOptions = [
-  { label: '启用', value: 1 },
-  { label: '禁用', value: 2 },
-]
+const optionGroups = ref<OptionGroup[]>([])
+const platformTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'platformType'))
+const statusOptions = computed(() => findOptionGroup(optionGroups.value, 'status'))
 
 const platformQuery = reactive({ platformCode: '', keyword: '', status: 0 })
 
@@ -247,6 +247,11 @@ const loadSupportedPlatforms = async () => {
   supportedPlatforms.value = res.data || []
 }
 
+const loadOptions = async () => {
+  const res = await catalogService.getOptions()
+  optionGroups.value = res.data || []
+}
+
 const resetPlatformQuery = () => {
   Object.assign(platformQuery, { platformCode: '', keyword: '', status: 0 })
   loadPlatforms()
@@ -269,14 +274,14 @@ const openPlatformDialog = (row?: PayPlatform) => {
 }
 
 const handlePlatformChange = (platformCode: string) => {
-  const matched = supportedPlatforms.value.find(item => item.platformCode === platformCode)
+  const matched = supportedPlatforms.value.find((item: { platformCode: string }) => item.platformCode === platformCode)
   if (!matched) return
   platformForm.platformCode = matched.platformCode
   platformForm.platformName = matched.platformName
 }
 
 const getPlatformTypeLabel = (value: number) => {
-  return platformTypeOptions.find(item => item.value === value)?.label || String(value || '')
+  return getOptionValueLabel(optionGroups.value, 'platformType', value, t)
 }
 
 const handlePlatformIconSelect = async (uploadFile: UploadFile) => {
@@ -337,7 +342,7 @@ const showPlatformDetail = async (row: PayPlatform) => {
 }
 
 onMounted(async () => {
-  await Promise.all([loadPlatforms(), loadSupportedPlatforms()])
+  await Promise.all([loadPlatforms(), loadSupportedPlatforms(), loadOptions()])
 })
 </script>
 

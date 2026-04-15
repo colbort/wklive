@@ -266,7 +266,7 @@ VALUES
 (21, 11, '删除用户', 3, 'DELETE', '/member/users/{id}', 'users:user:delete', '', '', 21),
 (22, 11, '获取用户安全设置', 3, 'GET', '/member/users/{id}/security', 'users:user:security:detail', '', '', 22),
 (23, 11, '重置用户谷歌2FA', 3, 'PUT', '/member/users/{id}/reset2fa', 'users:user:reset:google2fa', '', '', 23),
-(24, 11, '获取用户创建选项', 3, 'GET', '/member/users/options', 'users:user:options', '', '', 24),
+(24, 11, '获取用户选项', 3, 'GET', '/member/options', 'users:user:options', '', '', 24),
 (25, 11, '校验推荐人', 3, 'GET', '/member/users/referrer/check', 'users:user:referrer:check', '', '', 25),
 (26, 10, '实名认证信息列表', 2, 'GET', '/member/user-identities', 'users:user:identities:list', 'users/identity', '', 26),
 (27, 26, '审核实名认证信息', 3, 'PUT', '/member/user-identities/{id}/review', 'users:user:identities:review', '', '', 27),

@@ -1,4 +1,6 @@
+import type { OptionGroup, RespBase } from '@/services'
 import {
+  apiOptions,
   apiTradeCreateSymbol,
   apiTradeGetEvent,
   apiTradeGetFill,
@@ -409,7 +411,10 @@ export type GetSymbolDetailAdminReq = {
 
 export type SetSpotSymbolConfigReq = Omit<TradeSymbolSpot, 'id' | 'createTimes' | 'updateTimes'>
 
-export type SetContractSymbolConfigReq = Omit<TradeSymbolContract, 'id' | 'createTimes' | 'updateTimes'>
+export type SetContractSymbolConfigReq = Omit<
+  TradeSymbolContract,
+  'id' | 'createTimes' | 'updateTimes'
+>
 
 export type GetOrderListAdminReq = {
   cursor?: number
@@ -537,7 +542,10 @@ export type GetRiskOrderCheckLogListReq = {
   timeRange?: TimeRange
 }
 
-export type SetUserLeverageConfigReq = Omit<ContractLeverageConfig, 'id' | 'createTimes' | 'updateTimes'>
+export type SetUserLeverageConfigReq = Omit<
+  ContractLeverageConfig,
+  'id' | 'createTimes' | 'updateTimes'
+>
 
 export type GetUserLeverageConfigReq = {
   tenantId?: number
@@ -570,6 +578,10 @@ export type RetryTradeEventReq = {
 }
 
 export class TradeService {
+  getOptions(): Promise<RespBase<OptionGroup[]>> {
+    return apiOptions()
+  }
+
   listSymbols(params: GetSymbolListAdminReq) {
     return apiTradeListSymbols(params)
   }

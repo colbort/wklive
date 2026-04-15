@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import { userService, roleService } from '@/services'
+import { userService, roleService, type OptionGroup } from '@/services'
 import { ArrowDown } from '@element-plus/icons-vue'
 import type { SysUserItem, CreateUserRequest, UpdateUserRequest } from '@/services'
 import { SysRole } from '@/services/system/RoleService'
@@ -11,8 +11,11 @@ import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
 import { useConfirm } from '@/composables/useConfirm'
 import { formatDate } from '@/utils'
+import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 const { t } = useI18n()
+const optionGroups = ref<OptionGroup[]>([])
+const statusOptions = computed(() => findOptionGroup(optionGroups.value, 'status'))
 
 // Pagination and main list
 const {
@@ -32,10 +35,15 @@ const { form: queryForm } = useForm({
   },
 })
 
-const statusOptions = [
-  { label: t('common.enabled'), value: 1 },
-  { label: t('common.disabled'), value: 2 },
-]
+async function fetchOptions() {
+  try {
+    const res = await userService.getOptions()
+    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'options failed')
+    optionGroups.value = res.data || []
+  } catch (e: any) {
+    ElMessage.error(e?.message || t('common.loadFailed'))
+  }
+}
 
 async function fetchList() {
   await withMainLoading(async () => {
@@ -190,7 +198,7 @@ async function onDelete(row: SysUserItem) {
 // ---------- 启用/禁用 ----------
 async function onToggleStatus(row: SysUserItem) {
   try {
-    const next = row.status === 1 ? 0 : 1
+    const next = row.status === 1 ? 2 : 1
     const res = await userService.updateUserStatus(row.id, next)
     if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'status failed')
     ElMessage.success(t('common.success'))
@@ -390,7 +398,7 @@ const roleNameMap = computed(() => {
 })
 
 onMounted(async () => {
-  await Promise.all([fetchRoles(), fetchList()])
+  await Promise.all([fetchRoles(), fetchList(), fetchOptions()])
 })
 </script>
 
@@ -417,7 +425,7 @@ onMounted(async () => {
             <el-option
               v-for="o in statusOptions"
               :key="o.value"
-              :label="o.label"
+              :label="getOptionLabel(t, o.code)"
               :value="o.value"
             />
           </el-select>
@@ -460,7 +468,7 @@ onMounted(async () => {
       <el-table-column :label="t('common.status')" width="110">
         <template #default="{ row }">
           <el-tag :type="row.status === 1 ? 'success' : 'danger'">
-            {{ row.status === 1 ? t('common.enabled') : t('common.disabled') }}
+            {{ getOptionValueLabel(optionGroups, 'status', row.status, t) }}
           </el-tag>
         </template>
       </el-table-column>
@@ -566,7 +574,15 @@ onMounted(async () => {
         <el-input v-model="editForm.nickname" />
       </el-form-item>
       <el-form-item :label="t('common.status')">
-        <el-switch v-model="editForm.status" :active-value="1" :inactive-value="0" />
+        <el-radio-group v-model="editForm.status">
+          <el-radio
+            v-for="item in statusOptions"
+            :key="item.value"
+            :label="item.value"
+          >
+            {{ getOptionLabel(t, item.code, item.value) }}
+          </el-radio>
+        </el-radio-group>
       </el-form-item>
       <el-form-item :label="t('common.role')">
         <el-select

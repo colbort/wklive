@@ -1,4 +1,4 @@
-import type { RespBase } from '@/services'
+import type { OptionGroup, RespBase } from '@/services'
 import {
   apiPayPlatforms,
   apiPayPlatformCreate,
@@ -10,6 +10,7 @@ import {
   apiPayProductList,
   apiPayProductUpdate,
 } from '@/api/payment/catalog'
+import { apiOptions } from '@/api/payment/tenant'
 
 export type PayPlatform = {
   id: number // 平台ID
@@ -104,6 +105,10 @@ export type ListPayProductsReq = {
 }
 
 export class CatalogService {
+  async getOptions(): Promise<RespBase<OptionGroup[]>> {
+    return apiOptions()
+  }
+
   async getPayPlatforms(): Promise<RespBase<PayPlatformItem[]>> {
     return apiPayPlatforms()
   }
@@ -120,7 +125,10 @@ export class CatalogService {
     return apiPayPlatformCreate(params)
   }
 
-  async updatePlatform(id: string | number, params: Omit<UpdatePayPlatformReq, 'id'>): Promise<RespBase> {
+  async updatePlatform(
+    id: string | number,
+    params: Omit<UpdatePayPlatformReq, 'id'>,
+  ): Promise<RespBase> {
     return apiPayPlatformUpdate({ id: Number(id), ...params })
   }
 
@@ -136,7 +144,10 @@ export class CatalogService {
     return apiPayProductCreate(params)
   }
 
-  async updateProduct(id: string | number, params: Omit<UpdatePayProductReq, 'id'>): Promise<RespBase> {
+  async updateProduct(
+    id: string | number,
+    params: Omit<UpdatePayProductReq, 'id'>,
+  ): Promise<RespBase> {
     return apiPayProductUpdate({ id: Number(id), ...params })
   }
 }

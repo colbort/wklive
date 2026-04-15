@@ -43,8 +43,12 @@
             @change="fetchList"
           >
             <el-option :label="t('common.all')" :value="0" />
-            <el-option :label="t('common.enabled')" :value="1" />
-            <el-option :label="t('common.disabled')" :value="2" />
+            <el-option
+              v-for="item in statusOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -81,7 +85,7 @@
         <el-table-column :label="t('system.status')" width="100" align="center">
           <template #default="{ row }">
             <el-tag :type="row.status === 1 ? 'success' : 'info'">
-              {{ row.status === 1 ? t('common.enabled') : t('common.disabled') }}
+              {{ getOptionValueLabel(optionGroups, 'status', row.status, t) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -222,11 +226,12 @@
           <el-col :span="12">
             <el-form-item :label="t('system.status')" prop="status">
               <el-radio-group v-model="formData.status">
-                <el-radio :value="1">
-                  {{ t('common.enabled') }}
-                </el-radio>
-                <el-radio :value="2">
-                  {{ t('common.disabled') }}
+                <el-radio
+                  v-for="item in statusOptions"
+                  :key="item.value"
+                  :value="item.value"
+                >
+                  {{ getOptionLabel(t, item.code, item.value) }}
                 </el-radio>
               </el-radio-group>
             </el-form-item>
@@ -275,6 +280,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { Plus, Search, Refresh } from '@element-plus/icons-vue'
 import { tenantsService } from '@/services/system/TenantsService'
+import type { OptionGroup } from '@/services'
 import type {
   SysTenantItem,
   SysTenantCreateReq,
@@ -284,8 +290,11 @@ import { usePagination } from '@/composables/usePagination'
 import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
 import { formatDate } from '@/utils'
+import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 const { t } = useI18n()
+const optionGroups = ref<OptionGroup[]>([])
+const statusOptions = computed(() => findOptionGroup(optionGroups.value, 'status'))
 
 // Pagination and main list
 const {
@@ -362,6 +371,16 @@ async function fetchList() {
       ElMessage.error(e?.message || t('common.loadFailed'))
     }
   })
+}
+
+async function fetchOptions() {
+  try {
+    const res = await tenantsService.getOptions()
+    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'options failed')
+    optionGroups.value = res.data || []
+  } catch (e: any) {
+    ElMessage.error(e?.message || t('common.loadFailed'))
+  }
 }
 
 // Handle pagination
@@ -478,6 +497,7 @@ async function handleSubmit() {
 
 // Initialize
 onMounted(() => {
+  fetchOptions()
   fetchList()
 })
 </script>

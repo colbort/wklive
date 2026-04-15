@@ -409,7 +409,12 @@ onMounted(fetchList)
         <el-table-column prop="userId" label="用户ID" width="100" />
         <el-table-column prop="bankName" label="银行名" min-width="140" />
         <el-table-column prop="accountName" label="户名" min-width="120" />
-        <el-table-column prop="accountNo" label="卡号" min-width="160" show-overflow-tooltip />
+        <el-table-column
+          prop="accountNo"
+          label="卡号"
+          min-width="160"
+          show-overflow-tooltip
+        />
         <el-table-column prop="isDefault" label="默认" width="80">
           <template #default="{ row }">
             <el-tag :type="Number(row.isDefault) === 1 ? 'success' : 'info'">
@@ -555,7 +560,12 @@ onMounted(fetchList)
         <el-button @click="editVisible = false">
           取消
         </el-button>
-        <el-button type="primary" :loading="submitLoading" :disabled="!canSubmitCreate" @click="submitEdit">
+        <el-button
+          type="primary"
+          :loading="submitLoading"
+          :disabled="!canSubmitCreate"
+          @click="submitEdit"
+        >
           确定
         </el-button>
       </template>
