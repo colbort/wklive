@@ -70,3 +70,14 @@ export abstract class BaseServiceImpl {
     this.timeout = options.timeout || 10000
   }
 }
+
+export type OptionItem = {
+  value: number
+  code: string
+}
+
+export type OptionGroup = {
+  key: string
+  label: string
+  options: OptionItem[]
+}

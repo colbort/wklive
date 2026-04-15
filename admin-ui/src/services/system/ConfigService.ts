@@ -1,10 +1,10 @@
-import type { RespBase, BaseService } from '@/services'
+import type { RespBase, BaseService, OptionItem } from '@/services'
 import {
   apiSysConfigList,
   apiSysConfigCreate,
   apiSysConfigUpdate,
   apiSysConfigDelete,
-  apiSystemOptions,
+  apiOptions,
 } from '@/api/system/config'
 
 // ===== 系统配置类型定义 =====
@@ -40,12 +40,6 @@ export type SysConfigUpdateReq = {
 
 export type SysConfigDeleteReq = {
   id: number
-}
-
-export type SysConfigKeyOption = {
-  label: string
-  value: string
-  code?: string
 }
 
 // 系统配置
@@ -109,16 +103,12 @@ export class ConfigService implements BaseService {
     return apiSysConfigDelete(Number(id))
   }
 
-  async getKeys(): Promise<RespBase<SysConfigKeyOption[]>> {
-    const res = await apiSystemOptions()
+  async getKeys(): Promise<RespBase<OptionItem[]>> {
+    const res = await apiOptions()
     const group = (res.data || []).find((item) => item.key === 'sysConfigType')
     return {
       ...res,
-      data: (group?.options || []).map((item) => ({
-        label: item.label,
-        value: item.code || item.value,
-        code: item.code,
-      })),
+      data: group?.options??[],
     }
   }
 }

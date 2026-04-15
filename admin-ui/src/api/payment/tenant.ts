@@ -17,6 +17,7 @@ import type {
   CreateTenantPayChannelRuleReq,
   UpdateTenantPayChannelRuleReq,
   ListTenantPayChannelRulesReq,
+  OptionGroup,
 } from '@/services'
 
 export function apiTenantPayPlatformList(
@@ -29,9 +30,7 @@ export function apiTenantPayPlatformDetail(
   id: number,
   tenantId: number,
 ): Promise<RespBase<TenantPayPlatform>> {
-  return get<TenantPayPlatform[]>('/admin/payment/tenant-platform', { id, tenantId }) as Promise<
-    RespBase<TenantPayPlatform>
-  >
+  return get<TenantPayPlatform>('/admin/payment/tenant-platform', { id, tenantId })
 }
 
 export function apiOpenTenantPayPlatform(params: OpenTenantPayPlatformReq): Promise<RespBase> {
@@ -107,4 +106,8 @@ export function apiTenantPayChannelRuleUpdate(
   params: UpdateTenantPayChannelRuleReq,
 ): Promise<RespBase> {
   return put('/admin/payment/tenant-channel-rule', params)
+}
+
+export function apiOptions(): Promise<RespBase<OptionGroup[]>> {
+  return get('/admin/payment/options')
 }

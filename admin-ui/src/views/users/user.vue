@@ -6,7 +6,6 @@ import { ArrowDown } from '@element-plus/icons-vue'
 import {
   memberUserService,
   tenantsService,
-  type CreateUserOptionsResp,
   type CreateMemberUserReq,
   type UserDetail,
   type UserItem,
@@ -183,7 +182,7 @@ function resetReferrerCheck() {
 
 async function fetchCreateOptions() {
   try {
-    const res = await memberUserService.createOptions()
+    const res = await memberUserService.getOptions()
     if (!checkCode(res.code)) throw new Error(res.msg || '加载选项失败')
     Object.assign(createOptions, {
       registerTypes: res.registerTypes || res.data?.registerTypes || [],

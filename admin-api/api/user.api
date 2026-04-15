@@ -195,12 +195,6 @@ type UserOptionItem {
 	value int64  `json:"value"`
 }
 
-type GetUserCreateOptionsResp {
-	RespBase
-	registerTypes []UserOptionItem `json:"registerTypes"`
-	statuses      []UserOptionItem `json:"statuses"`
-}
-
 type CheckUserReferrerReq {
 	inviteCode string `form:"inviteCode"`
 }
@@ -457,9 +451,6 @@ service admin {
 
 	@handler CreateUser
 	post /users (CreateUserReq) returns (CreateUserResp)
-
-	@handler GetUserCreateOptions
-	get /users/options returns (GetUserCreateOptionsResp)
 
 	@handler CheckUserReferrer
 	get /users/referrer/check (CheckUserReferrerReq) returns (CheckUserReferrerResp)

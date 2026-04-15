@@ -22,7 +22,7 @@
             <el-option
               v-for="key in keys"
               :key="key.value"
-              :label="getOptionLabel(key.code, key.label)"
+              :label="getOptionLabel(key.code, key.value)"
               :value="key.value"
             />
           </el-select>
@@ -160,7 +160,7 @@
             <el-option
               v-for="key in keys"
               :key="key.value"
-              :label="getOptionLabel(key.code, key.label)"
+              :label="getOptionLabel(key.code, key.value)"
               :value="key.value"
             />
           </el-select>
@@ -213,7 +213,7 @@ import type {
   SysConfigItem,
   SysConfigCreateReq,
   SysConfigUpdateReq,
-  SysConfigKeyOption,
+  SysOptionItem,
 } from '@/services'
 import type { SystemCore, ObjectStorageConfig } from '@/services/system/ConfigService'
 import { usePagination } from '@/composables/usePagination'
@@ -226,11 +226,13 @@ import ObjectStorageConfigComponent from './components/ObjectStorageConfig.vue'
 
 const { t } = useI18n()
 
-function getOptionLabel(code?: string, fallback?: string) {
-  if (!code) return fallback || ''
+function getOptionLabel(code?: string, value?: number) {
+  if (!code) return value || ''
   const key = `options.${code}`
   const translated = t(key)
-  return translated === key ? (fallback || code) : translated
+  console.log(translated)
+  console.log(key)
+  return translated === key ? (value || code) : translated
 }
 
 // Pagination and main list
@@ -266,7 +268,7 @@ const { form: formData, reset: resetForm } = useForm({
 })
 
 // Keys for configKey selection
-const keys = ref<SysConfigKeyOption[]>([])
+const keys = ref<SysOptionItem[]>([])
 
 // Config type special forms
 const systemCoreForm = ref<SystemCore>({

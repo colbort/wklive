@@ -1302,12 +1302,6 @@ type GetUserBankResp struct {
 	Bank UserBankItem `json:"bank"`
 }
 
-type GetUserCreateOptionsResp struct {
-	RespBase
-	RegisterTypes []UserOptionItem `json:"registerTypes"`
-	Statuses      []UserOptionItem `json:"statuses"`
-}
-
 type GetUserDetailReq struct {
 	TenantId int64 `form:"tenantId"`
 	UserId   int64 `path:"userId"`

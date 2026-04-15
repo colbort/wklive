@@ -1,9 +1,11 @@
 import { del, get, post, put } from '@/utils/request'
-import type {
+
+import {
+  OptionGroup,
+  RespBase,
   AddUserBankReq,
   CheckUserReferrerResp,
   CreateMemberUserReq,
-  CreateUserOptionsResp,
   ListMemberUserBanksReq,
   ListMemberUserIdentitiesReq,
   ListMemberUsersReq,
@@ -22,7 +24,7 @@ import type {
   UpdateMemberUserLevelReq,
   UpdateMemberUserRiskLevelReq,
   UpdateMemberUserStatusReq,
-} from '@/services/member/MemberUserService'
+ } from '@/services'
 
 export function apiMemberUserList(params: ListMemberUsersReq): Promise<MemberRespBase<UserItem[]>> {
   return get<UserItem[]>('/admin/member/users', params)
@@ -34,10 +36,6 @@ export function apiMemberUserDetail(userId: number, tenantId: number): Promise<M
 
 export function apiMemberUserCreate(data: CreateMemberUserReq): Promise<MemberRespBase<{ userId: number }>> {
   return post<{ userId: number }>('/admin/member/users', data)
-}
-
-export function apiMemberUserCreateOptions(): Promise<CreateUserOptionsResp> {
-  return get<CreateUserOptionsResp>('/admin/member/users/options') as Promise<CreateUserOptionsResp>
 }
 
 export function apiMemberUserCheckReferrer(inviteCode: string): Promise<CheckUserReferrerResp> {
@@ -118,4 +116,8 @@ export function apiMemberUserBankUpdateStatus(id: number, data: UpdateMemberUser
 
 export function apiMemberUserBankSetDefault(id: number, data: SetDefaultUserBankReq): Promise<MemberRespBase> {
   return put(`/admin/member/user-banks/${id}/default`, data)
+}
+
+export function apiOptions(): Promise<RespBase<OptionGroup[]>> {
+  return get('/admin/member/options')
 }

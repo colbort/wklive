@@ -1,5 +1,5 @@
 import { get, post } from '@/utils/request'
-import type { RespBase, StakeOrder, StakeProduct, StakeRedeemLog, StakeRewardLog } from '@/services'
+import type { OptionGroup, RespBase, StakeOrder, StakeProduct, StakeRedeemLog, StakeRewardLog } from '@/services'
 
 export function apiStakingListProducts(params: Record<string, any>): Promise<RespBase<StakeProduct[]>> {
   return get<StakeProduct[]>('/admin/staking/products', params)
@@ -43,4 +43,8 @@ export function apiStakingManualReward(params: Record<string, any>): Promise<Res
 
 export function apiStakingManualRedeem(params: Record<string, any>): Promise<RespBase<boolean>> {
   return post<boolean>('/admin/staking/manual-redeem', params)
+}
+
+export function apiOptions(): Promise<RespBase<OptionGroup[]>> {
+  return get('/admin/staking/options')
 }

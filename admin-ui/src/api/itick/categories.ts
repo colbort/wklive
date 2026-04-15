@@ -8,6 +8,7 @@ import type {
   UpdateCategoryReq,
   SyncCategoryProductsReq,
   SyncCategoryProductsResp,
+  OptionGroup,
 } from '@/services'
 
 export function apiItickCategoryList(
@@ -32,4 +33,8 @@ export function apiSyncCategoryProducts(
   params: SyncCategoryProductsReq,
 ): Promise<RespBase<SyncCategoryProductsResp>> {
   return post<SyncCategoryProductsResp>('/admin/itick/categories/sync-products', params)
+}
+
+export function apiOptions(): Promise<RespBase<OptionGroup[]>> {
+  return get('/admin/itick/options')
 }

@@ -1,4 +1,4 @@
-import type { RespBase } from '@/services/BaseService'
+import type { OptionGroup, RespBase } from '@/services/BaseService'
 import {
   apiMemberUserBankAdd,
   apiMemberUserBankDelete,
@@ -9,7 +9,6 @@ import {
   apiMemberUserBankUpdateStatus,
   apiMemberUserCheckReferrer,
   apiMemberUserCreate,
-  apiMemberUserCreateOptions,
   apiMemberUserDelete,
   apiMemberUserDetail,
   apiMemberUserIdentityList,
@@ -24,6 +23,7 @@ import {
   apiMemberUserUpdateLevel,
   apiMemberUserUpdateRiskLevel,
   apiMemberUserUpdateStatus,
+  apiOptions,
 } from '@/api/member/users'
 
 export type MemberRespBase<T = any> = RespBase<T> & {
@@ -259,17 +259,6 @@ export type UpdateMemberUserRiskLevelReq = {
   riskLevel: number // 风控等级
 }
 
-export type UserOptionItem = {
-  label: string
-  value: number
-  code?: string
-}
-
-export type CreateUserOptionsResp = MemberRespBase & {
-  registerTypes: UserOptionItem[]
-  statuses: UserOptionItem[]
-}
-
 export type CheckUserReferrerResp = MemberRespBase<{
   userId: number
   username: string
@@ -350,10 +339,6 @@ export class MemberUserService {
     return apiMemberUserCreate(data)
   }
 
-  createOptions() {
-    return apiMemberUserCreateOptions()
-  }
-
   checkReferrer(inviteCode: string) {
     return apiMemberUserCheckReferrer(inviteCode)
   }
@@ -432,6 +417,9 @@ export class MemberUserService {
 
   setDefaultBank(id: number, data: SetDefaultUserBankReq) {
     return apiMemberUserBankSetDefault(id, data)
+  }
+  getOptions(): Promise<RespBase<OptionGroup[]>> {
+    return apiOptions()
   }
 }
 

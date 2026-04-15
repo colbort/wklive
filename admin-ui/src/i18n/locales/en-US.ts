@@ -139,6 +139,12 @@ export default {
     perPage50: '50/page',
     perPage100: '100/page',
   },
+  options: {
+    UNKNOWN: 'All',
+    SYSTEM_CORE: 'System Config',
+    OBJECT_STORAGE: 'Object Storage',
+    ITICK_CONFIG: 'ITICK Config',
+  },
   system: {
     mgmt: 'System',
     users: 'Users',
@@ -235,9 +241,6 @@ export default {
     secretIdPlaceholder: 'Please enter Secret ID',
     secretKeyPlaceholder: 'Please enter Secret Key',
     ossTypePlaceholder: 'Please select OSS type',
-
-    SYSTEM_CORE: 'System Config',
-    OBJECT_STORAGE: 'Object Storage',
 
     // Cron Job
     cronJobs: 'Scheduled Tasks',

@@ -1,5 +1,5 @@
 import { get, post } from '@/utils/request'
-import type { RespBase, TradeOrder, TradeSymbol } from '@/services'
+import type { OptionGroup, RespBase, TradeOrder, TradeSymbol } from '@/services'
 
 export function apiTradeListSymbols(params: Record<string, any>): Promise<RespBase<TradeSymbol[]>> {
   return get<TradeSymbol[]>('/admin/trade/symbols', params)
@@ -107,4 +107,8 @@ export function apiTradeGetEvent(params: Record<string, any>): Promise<RespBase<
 
 export function apiTradeRetryEvent(params: Record<string, any>): Promise<RespBase> {
   return post('/admin/trade/events/retry', params)
+}
+
+export function apiOptions(): Promise<RespBase<OptionGroup[]>> {
+  return get('/admin/trade/options')
 }

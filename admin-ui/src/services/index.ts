@@ -24,7 +24,7 @@ export { TradeService, tradeService } from './trade/TradeService'
 export { MemberUserService, memberUserService } from './member/MemberUserService'
 
 // 类型导出
-export type { RespBase } from './BaseService'
+export type { RespBase, OptionItem, OptionGroup } from './BaseService'
 export type {
   User,
   CreateUserRequest,
@@ -76,7 +76,6 @@ export type {
   SysConfigListReq,
   SysConfigCreateReq,
   SysConfigUpdateReq,
-  SysConfigKeyOption,
 } from './system/ConfigService'
 export type {
   SysCronJobItem,
@@ -318,14 +317,12 @@ export type {
   UserIdentityItem,
   MemberUserBankItem,
   ListMemberUsersReq,
-  CreateUserOptionsResp,
   CreateMemberUserReq,
   CheckUserReferrerResp,
   UpdateMemberUserBaseReq,
   UpdateMemberUserStatusReq,
   UpdateMemberUserLevelReq,
   UpdateMemberUserRiskLevelReq,
-  UserOptionItem,
   ListMemberUserIdentitiesReq,
   ReviewUserIdentityReq,
   ListMemberUserBanksReq,

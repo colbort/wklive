@@ -11,6 +11,7 @@ import type {
   AssetFreeze,
   AssetLock,
   AssetUserAsset,
+  OptionGroup,
   PageAssetFlowsReq,
   PageAssetFreezesReq,
   PageAssetLocksReq,
@@ -65,4 +66,8 @@ export function apiAdminLockAsset(params: AdminLockAssetReq): Promise<RespBase<A
 
 export function apiAdminUnlockAsset(params: AdminUnlockAssetReq): Promise<RespBase<AssetChangeResp>> {
   return post<AssetChangeResp>('/admin/asset/unlock', params)
+}
+
+export function apiOptions(): Promise<RespBase<OptionGroup[]>> {
+  return get('/admin/asset/options')
 }

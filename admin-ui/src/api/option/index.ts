@@ -1,5 +1,12 @@
 import { get, post } from '@/utils/request'
-import type { OptionAdminCommonResp, OptionContract, OptionContractDetail, OptionMarket, OptionMarketSnapshot, RespBase } from '@/services'
+import type {
+  OptionAdminCommonResp,
+  OptionContractDetail,
+  OptionGroup,
+  OptionMarket,
+  OptionMarketSnapshot,
+  RespBase,
+} from '@/services'
 
 export function apiOptionListContracts(params: Record<string, any>): Promise<RespBase<OptionContractDetail[]>> {
   return get<OptionContractDetail[]>('/admin/option/contracts', params)
@@ -83,4 +90,8 @@ export function apiOptionListBills(params: Record<string, any>): Promise<RespBas
 
 export function apiOptionGetBill(params: Record<string, any>): Promise<RespBase<any>> {
   return get<any>('/admin/option/bills/detail', params)
+}
+
+export function apiOptions(): Promise<RespBase<OptionGroup[]>> {
+  return get('/admin/option/options')
 }

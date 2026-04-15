@@ -134,6 +134,12 @@ export default {
     perPage50: '50条/页',
     perPage100: '100条/页',
   },
+  options: {
+    UNKNOWN: '全部',
+    SYSTEM_CORE: '系统配置',
+    OBJECT_STORAGE: '对象存储',
+    ITICK_CONFIG: 'ITICK配置',
+  },
   system: {
     mgmt: '系统管理',
     users: '用户管理',
@@ -230,9 +236,6 @@ export default {
     secretIdPlaceholder: '请输入Secret ID',
     secretKeyPlaceholder: '请输入Secret Key',
     ossTypePlaceholder: '请选择对象存储类型',
-
-    SYSTEM_CORE: '系统配置',
-    OBJECT_STORAGE: '对象存储',
 
     // Cron Job
     cronJobs: '定时任务',
