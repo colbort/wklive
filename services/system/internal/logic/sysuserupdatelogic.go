@@ -38,6 +38,7 @@ func (l *SysUserUpdateLogic) SysUserUpdate(in *system.SysUserUpdateReq) (*system
 	var data models.SysUser
 	_ = copier.Copy(&data, one)
 	_ = copier.Copy(&data, in)
+	data.Status = commonStatusToModel(in.Status)
 
 	err = l.svcCtx.UserModel.Update(l.ctx, &data)
 	if err != nil {

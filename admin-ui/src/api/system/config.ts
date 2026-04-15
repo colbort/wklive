@@ -7,6 +7,18 @@ import type {
   SysConfigUpdateReq,
 } from '@/services'
 
+type OptionItem = {
+  label: string
+  value: string
+  code?: string
+}
+
+type OptionGroup = {
+  key: string
+  label: string
+  options: OptionItem[]
+}
+
 // ===== API 函数 =====
 
 export function apiSysConfigList(params: SysConfigListReq): Promise<RespBase<SysConfigItem[]>> {
@@ -25,6 +37,6 @@ export function apiSysConfigDelete(id: number): Promise<RespBase> {
   return del(`/admin/system/configs/${id}`)
 }
 
-export function apiSysConfigKeys(): Promise<RespBase<string[]>> {
-  return get<string[]>('/admin/system/configs/keys')
+export function apiSystemOptions(): Promise<RespBase<OptionGroup[]>> {
+  return get<OptionGroup[]>('/admin/system/options')
 }

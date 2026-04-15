@@ -45,7 +45,6 @@ type (
 	SysConfigDetailReq     = system.SysConfigDetailReq
 	SysConfigDetailResp    = system.SysConfigDetailResp
 	SysConfigItem          = system.SysConfigItem
-	SysConfigKeysResp      = system.SysConfigKeysResp
 	SysConfigListReq       = system.SysConfigListReq
 	SysConfigListResp      = system.SysConfigListResp
 	SysConfigUpdateReq     = system.SysConfigUpdateReq
@@ -173,8 +172,6 @@ type (
 		SysConfigDetail(ctx context.Context, in *SysConfigDetailReq, opts ...grpc.CallOption) (*SysConfigDetailResp, error)
 		// 获取系统配置根据keys
 		SysConfigByKeys(ctx context.Context, in *SysConfigByKeysReq, opts ...grpc.CallOption) (*SysConfigByKeysResp, error)
-		// 获取系统配置所有的key
-		SysConfigKeys(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysConfigKeysResp, error)
 		// 获取登录用户的权限列表
 		LoginUserPerms(ctx context.Context, in *LoginUserPermsReq, opts ...grpc.CallOption) (*LoginUserPermsResp, error)
 		// 系统定时任务列表
@@ -432,12 +429,6 @@ func (m *defaultSystem) SysConfigDetail(ctx context.Context, in *SysConfigDetail
 func (m *defaultSystem) SysConfigByKeys(ctx context.Context, in *SysConfigByKeysReq, opts ...grpc.CallOption) (*SysConfigByKeysResp, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.SysConfigByKeys(ctx, in, opts...)
-}
-
-// 获取系统配置所有的key
-func (m *defaultSystem) SysConfigKeys(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysConfigKeysResp, error) {
-	client := system.NewSystemClient(m.cli.Conn())
-	return client.SysConfigKeys(ctx, in, opts...)
 }
 
 // 获取登录用户的权限列表

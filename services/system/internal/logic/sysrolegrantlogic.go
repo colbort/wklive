@@ -90,6 +90,14 @@ func (l *SysRoleGrantLogic) SysRoleGrant(in *system.SysRoleGrantReq) (*system.Re
 		return nil, err
 	}
 
+	userIds, err := l.svcCtx.UserRoleModel.FindByRoleId(l.ctx, in.RoleId)
+	if err != nil {
+		return nil, err
+	}
+	for _, id := range userIds {
+		l.svcCtx.UserRoleModel.FindLoginUserPerms(l.ctx, id, true)
+	}
+
 	return &system.RespBase{
 		Base: helper.OkResp(),
 	}, nil

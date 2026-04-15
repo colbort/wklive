@@ -5,6 +5,7 @@ package user
 
 import (
 	"context"
+	"strings"
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
@@ -28,6 +29,23 @@ func NewUpdateUserBaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Up
 }
 
 func (l *UpdateUserBaseLogic) UpdateUserBase(req *types.UpdateUserBaseReq) (resp *types.UpdateUserBaseResp, err error) {
+	referrerUserId := req.ReferrerUserId
+	if strings.TrimSpace(req.ReferrerInviteCode) != "" {
+		referrer, err := resolveReferrerByInviteCode(l.svcCtx, l.ctx, req.TenantId, req.ReferrerInviteCode)
+		if err != nil {
+			return nil, err
+		}
+		if referrer == nil {
+			return &types.UpdateUserBaseResp{
+				RespBase: types.RespBase{
+					Code: 404,
+					Msg:  "推荐人不存在",
+				},
+			}, nil
+		}
+		referrerUserId = referrer.Id
+	}
+
 	result, err := l.svcCtx.UserCli.UpdateUserBase(l.ctx, &user.UpdateUserBaseReq{
 		TenantId:       req.TenantId,
 		UserId:         req.UserId,
@@ -38,7 +56,7 @@ func (l *UpdateUserBaseLogic) UpdateUserBase(req *types.UpdateUserBaseReq) (resp
 		Timezone:       req.Timezone,
 		Signature:      req.Signature,
 		Source:         req.Source,
-		ReferrerUserId: req.ReferrerUserId,
+		ReferrerUserId: referrerUserId,
 		Remark:         req.Remark,
 		Phone:          req.Phone,
 		Email:          req.Email,

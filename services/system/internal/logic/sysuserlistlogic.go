@@ -30,7 +30,7 @@ func (l *SysUserListLogic) SysUserList(in *system.SysUserListReq) (*system.SysUs
 	items, total, err := l.svcCtx.UserModel.FindPage(
 		l.ctx,
 		in.Keyword,
-		in.Status,
+		commonStatusToModel(in.Status),
 		in.Page.Cursor,
 		in.Page.Limit,
 	)
@@ -69,7 +69,7 @@ func (l *SysUserListLogic) SysUserList(in *system.SysUserListReq) (*system.SysUs
 			Id:               u.Id,
 			Username:         u.Username,
 			Nickname:         u.Nickname,
-			Status:           u.Status,
+			Status:           commonStatusToProto(u.Status),
 			RoleIds:          roleMap[u.Id],
 			CreateTimes:      u.CreateTimes,
 			Google2FaEnabled: u.GoogleEnabled,

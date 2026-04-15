@@ -26,7 +26,7 @@ func NewSysTenantListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 
 // 获取租户列表
 func (l *SysTenantListLogic) SysTenantList(in *system.SysTenantListReq) (*system.SysTenantListResp, error) {
-	items, total, err := l.svcCtx.TenantMode.FindPage(l.ctx, in.Keyword, in.Status, in.TenantName, in.TenantCode, in.ContactName, in.ContactPhone, in.Page.Cursor, in.Page.Limit)
+	items, total, err := l.svcCtx.TenantMode.FindPage(l.ctx, in.Keyword, commonStatusToModel(in.Status), in.TenantName, in.TenantCode, in.ContactName, in.ContactPhone, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func (l *SysTenantListLogic) SysTenantList(in *system.SysTenantListReq) (*system
 			Id:           v.Id,
 			TenantCode:   v.TenantCode,
 			TenantName:   v.TenantName,
-			Status:       v.Status,
+			Status:       commonStatusToProto(v.Status),
 			ExpireTime:   v.ExpireTime,
 			ContactName:  v.ContactName.String,
 			ContactPhone: v.ContactPhone.String,

@@ -430,6 +430,16 @@ type ChangeUserStatusReq struct {
 	Status int64 `json:"status"` // 1启用 0禁用
 }
 
+type CheckUserReferrerReq struct {
+	InviteCode string `form:"inviteCode"`
+}
+
+type CheckUserReferrerResp struct {
+	RespBase
+	Exists bool             `json:"exists"`
+	Data   UserReferrerInfo `json:"data,optional"`
+}
+
 type CloseRechargeOrderReq struct {
 	TenantId int64  `json:"tenantId"`
 	OrderNo  string `path:"orderNo"`
@@ -721,23 +731,24 @@ type CreateTenantProductReq struct {
 }
 
 type CreateUserReq struct {
-	TenantCode     string `json:"tenantCode"`
-	Username       string `json:"username"`
-	Nickname       string `json:"nickname,optional"`
-	Avatar         string `json:"avatar,optional"`
-	Phone          string `json:"phone,optional"`
-	Email          string `json:"email,optional"`
-	Password       string `json:"password"`
-	RegisterType   int64  `json:"registerType"`
-	Status         int64  `json:"status"`
-	MemberLevel    int32  `json:"memberLevel,optional"`
-	Language       string `json:"language,optional"`
-	Timezone       string `json:"timezone,optional"`
-	InviteCode     string `json:"inviteCode,optional"`
-	Signature      string `json:"signature,optional"`
-	Source         string `json:"source,optional"`
-	ReferrerUserId int64  `json:"referrerUserId,optional"`
-	Remark         string `json:"remark,optional"`
+	TenantCode         string `json:"tenantCode"`
+	Username           string `json:"username"`
+	Nickname           string `json:"nickname,optional"`
+	Avatar             string `json:"avatar,optional"`
+	Phone              string `json:"phone,optional"`
+	Email              string `json:"email,optional"`
+	Password           string `json:"password"`
+	RegisterType       int64  `json:"registerType"`
+	Status             int64  `json:"status"`
+	MemberLevel        int32  `json:"memberLevel,optional"`
+	Language           string `json:"language,optional"`
+	Timezone           string `json:"timezone,optional"`
+	InviteCode         string `json:"inviteCode,optional"`
+	Signature          string `json:"signature,optional"`
+	Source             string `json:"source,optional"`
+	ReferrerUserId     int64  `json:"referrerUserId,optional"`
+	ReferrerInviteCode string `json:"referrerInviteCode,optional"`
+	Remark             string `json:"remark,optional"`
 }
 
 type CreateUserResp struct {
@@ -808,6 +819,11 @@ type GetAccountReq struct {
 type GetAccountResp struct {
 	RespBase
 	Data OptionAccount `json:"data"`
+}
+
+type GetAssetOptionsResp struct {
+	RespBase
+	Data []OptionsGroup `json:"data"`
 }
 
 type GetBillReq struct {
@@ -891,6 +907,11 @@ type GetFillListAdminResp struct {
 	List []TradeFill `json:"list"`
 }
 
+type GetItickOptionsResp struct {
+	RespBase
+	Data []OptionsGroup `json:"data"`
+}
+
 type GetMarginAccountListAdminReq struct {
 	PageReq
 	TenantId    int64  `form:"tenantId,optional"`
@@ -912,6 +933,11 @@ type GetMarketReq struct {
 type GetMarketResp struct {
 	RespBase
 	Data OptionMarket `json:"data"`
+}
+
+type GetOptionOptionsResp struct {
+	RespBase
+	Data []OptionsGroup `json:"data"`
 }
 
 type GetOrderDetailAdminReq struct {
@@ -972,6 +998,11 @@ type GetPayProductReq struct {
 type GetPayProductResp struct {
 	RespBase
 	Data PayProduct `json:"data"`
+}
+
+type GetPaymentOptionsResp struct {
+	RespBase
+	Data []OptionsGroup `json:"data"`
 }
 
 type GetPositionDetailAdminReq struct {
@@ -1094,6 +1125,11 @@ type GetSettlementResp struct {
 	Data OptionSettlementDetail `json:"data"`
 }
 
+type GetStakingOptionsResp struct {
+	RespBase
+	Data []OptionsGroup `json:"data"`
+}
+
 type GetSymbolDetailAdminReq struct {
 	TenantId int64 `form:"tenantId,optional"`
 	Id       int64 `form:"id"`
@@ -1136,6 +1172,11 @@ type GetSystemCore struct {
 type GetSystemCoreResp struct {
 	RespBase
 	Data GetSystemCore `json:"data"`
+}
+
+type GetSystemOptionsResp struct {
+	RespBase
+	Data []OptionsGroup `json:"data"`
 }
 
 type GetTenantCategoryReq struct {
@@ -1223,6 +1264,11 @@ type GetTradeEventListResp struct {
 	List []BizTradeEvent `json:"list"`
 }
 
+type GetTradeOptionsResp struct {
+	RespBase
+	Data []OptionsGroup `json:"data"`
+}
+
 type GetTradeReq struct {
 	TenantId int64  `form:"tenantId,optional"`
 	Id       int64  `form:"id,optional"`
@@ -1256,6 +1302,12 @@ type GetUserBankResp struct {
 	Bank UserBankItem `json:"bank"`
 }
 
+type GetUserCreateOptionsResp struct {
+	RespBase
+	RegisterTypes []UserOptionItem `json:"registerTypes"`
+	Statuses      []UserOptionItem `json:"statuses"`
+}
+
 type GetUserDetailReq struct {
 	TenantId int64 `form:"tenantId"`
 	UserId   int64 `path:"userId"`
@@ -1277,6 +1329,11 @@ type GetUserLeverageConfigReq struct {
 type GetUserLeverageConfigResp struct {
 	RespBase
 	Data ContractLeverageConfig `json:"data"`
+}
+
+type GetUserOptionsResp struct {
+	RespBase
+	Data []OptionsGroup `json:"data"`
 }
 
 type GetUserRechargeStatReq struct {
@@ -2266,6 +2323,17 @@ type OptionTradeDetail struct {
 	Contract OptionContract `json:"contract"`
 }
 
+type OptionsGroup struct {
+	Key     string        `json:"key"`
+	Label   string        `json:"label"`
+	Options []OptionsItem `json:"options"`
+}
+
+type OptionsItem struct {
+	Value int32  `json:"value"`
+	Code  string `json:"code"`
+}
+
 type PageAssetFlowsReq struct {
 	PageReq
 	TenantId   int64     `form:"tenantId,optional"`
@@ -2834,11 +2902,6 @@ type SysConfigItem struct {
 	ConfigValue string `json:"configValue"`
 	Remark      string `json:"remark,optional"`
 	CreateTimes int64  `json:"createTimes"`
-}
-
-type SysConfigKeysResp struct {
-	RespBase
-	Data []string `json:"data"`
 }
 
 type SysConfigListReq struct {
@@ -3700,19 +3763,20 @@ type UpdateUserBankStatusReq struct {
 }
 
 type UpdateUserBaseReq struct {
-	TenantId       int64  `json:"tenantId"`
-	UserId         int64  `path:"userId"`
-	Username       string `json:"username,optional"`
-	Nickname       string `json:"nickname,optional"`
-	Avatar         string `json:"avatar,optional"`
-	Language       string `json:"language,optional"`
-	Timezone       string `json:"timezone,optional"`
-	Signature      string `json:"signature,optional"`
-	Source         string `json:"source,optional"`
-	ReferrerUserId int64  `json:"referrerUserId,optional"`
-	Remark         string `json:"remark,optional"`
-	Phone          string `json:"phone,optional"`
-	Email          string `json:"email,optional"`
+	TenantId           int64  `json:"tenantId"`
+	UserId             int64  `path:"userId"`
+	Username           string `json:"username,optional"`
+	Nickname           string `json:"nickname,optional"`
+	Avatar             string `json:"avatar,optional"`
+	Language           string `json:"language,optional"`
+	Timezone           string `json:"timezone,optional"`
+	Signature          string `json:"signature,optional"`
+	Source             string `json:"source,optional"`
+	ReferrerUserId     int64  `json:"referrerUserId,optional"`
+	ReferrerInviteCode string `json:"referrerInviteCode,optional"`
+	Remark             string `json:"remark,optional"`
+	Phone              string `json:"phone,optional"`
+	Email              string `json:"email,optional"`
 }
 
 type UpdateUserBaseResp struct {
@@ -3884,6 +3948,11 @@ type UserItem struct {
 	UpdateTimes    int64  `json:"updateTimes"`    // 更新时间
 }
 
+type UserOptionItem struct {
+	Label string `json:"label"`
+	Value int64  `json:"value"`
+}
+
 type UserRechargeStat struct {
 	Id                 int64 `json:"id"`
 	TenantId           int64 `json:"tenantId"`
@@ -3896,6 +3965,13 @@ type UserRechargeStat struct {
 	LastSuccessTime    int64 `json:"lastSuccessTime"`
 	CreateTimes        int64 `json:"createTimes"`
 	UpdateTimes        int64 `json:"updateTimes"`
+}
+
+type UserReferrerInfo struct {
+	UserId     int64  `json:"userId"`
+	Username   string `json:"username"`
+	Nickname   string `json:"nickname,optional"`
+	InviteCode string `json:"inviteCode,optional"`
 }
 
 type UserSecurity struct {

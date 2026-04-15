@@ -35,7 +35,7 @@ func (l *OpLogListLogic) OpLogList(req *types.OpLogListReq) (resp *types.OpLogLi
 			Limit:  req.Limit,
 		},
 		Username: req.Username,
-		Method:   req.Method,
+		Method:   toRequestMethod(req.Method),
 		Path:     req.Path,
 	})
 	if err != nil {
@@ -47,7 +47,7 @@ func (l *OpLogListLogic) OpLogList(req *types.OpLogListReq) (resp *types.OpLogLi
 			Id:          item.Id,
 			UserId:      item.UserId,
 			Username:    item.Username,
-			Method:      item.Method,
+			Method:      fromRequestMethod(item.Method),
 			Path:        item.Path,
 			Req:         item.Req,
 			Resp:        item.Resp,

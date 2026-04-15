@@ -55,7 +55,6 @@ const (
 	System_SysConfigList_FullMethodName      = "/system.System/SysConfigList"
 	System_SysConfigDetail_FullMethodName    = "/system.System/SysConfigDetail"
 	System_SysConfigByKeys_FullMethodName    = "/system.System/SysConfigByKeys"
-	System_SysConfigKeys_FullMethodName      = "/system.System/SysConfigKeys"
 	System_LoginUserPerms_FullMethodName     = "/system.System/LoginUserPerms"
 	System_SysCronJobList_FullMethodName     = "/system.System/SysCronJobList"
 	System_SysCronJobCreate_FullMethodName   = "/system.System/SysCronJobCreate"
@@ -153,8 +152,6 @@ type SystemClient interface {
 	SysConfigDetail(ctx context.Context, in *SysConfigDetailReq, opts ...grpc.CallOption) (*SysConfigDetailResp, error)
 	// 获取系统配置根据keys
 	SysConfigByKeys(ctx context.Context, in *SysConfigByKeysReq, opts ...grpc.CallOption) (*SysConfigByKeysResp, error)
-	// 获取系统配置所有的key
-	SysConfigKeys(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysConfigKeysResp, error)
 	// 获取登录用户的权限列表
 	LoginUserPerms(ctx context.Context, in *LoginUserPermsReq, opts ...grpc.CallOption) (*LoginUserPermsResp, error)
 	// 系统定时任务列表
@@ -555,16 +552,6 @@ func (c *systemClient) SysConfigByKeys(ctx context.Context, in *SysConfigByKeysR
 	return out, nil
 }
 
-func (c *systemClient) SysConfigKeys(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysConfigKeysResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SysConfigKeysResp)
-	err := c.cc.Invoke(ctx, System_SysConfigKeys_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *systemClient) LoginUserPerms(ctx context.Context, in *LoginUserPermsReq, opts ...grpc.CallOption) (*LoginUserPermsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(LoginUserPermsResp)
@@ -795,8 +782,6 @@ type SystemServer interface {
 	SysConfigDetail(context.Context, *SysConfigDetailReq) (*SysConfigDetailResp, error)
 	// 获取系统配置根据keys
 	SysConfigByKeys(context.Context, *SysConfigByKeysReq) (*SysConfigByKeysResp, error)
-	// 获取系统配置所有的key
-	SysConfigKeys(context.Context, *Empty) (*SysConfigKeysResp, error)
 	// 获取登录用户的权限列表
 	LoginUserPerms(context.Context, *LoginUserPermsReq) (*LoginUserPermsResp, error)
 	// 系统定时任务列表
@@ -944,9 +929,6 @@ func (UnimplementedSystemServer) SysConfigDetail(context.Context, *SysConfigDeta
 }
 func (UnimplementedSystemServer) SysConfigByKeys(context.Context, *SysConfigByKeysReq) (*SysConfigByKeysResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysConfigByKeys not implemented")
-}
-func (UnimplementedSystemServer) SysConfigKeys(context.Context, *Empty) (*SysConfigKeysResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method SysConfigKeys not implemented")
 }
 func (UnimplementedSystemServer) LoginUserPerms(context.Context, *LoginUserPermsReq) (*LoginUserPermsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method LoginUserPerms not implemented")
@@ -1662,24 +1644,6 @@ func _System_SysConfigByKeys_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_SysConfigKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SystemServer).SysConfigKeys(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: System_SysConfigKeys_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).SysConfigKeys(ctx, req.(*Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _System_LoginUserPerms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LoginUserPermsReq)
 	if err := dec(in); err != nil {
@@ -2100,10 +2064,6 @@ var System_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SysConfigByKeys",
 			Handler:    _System_SysConfigByKeys_Handler,
-		},
-		{
-			MethodName: "SysConfigKeys",
-			Handler:    _System_SysConfigKeys_Handler,
 		},
 		{
 			MethodName: "LoginUserPerms",

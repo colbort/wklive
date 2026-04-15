@@ -98,14 +98,14 @@ func (x *AdminProductListReq) GetProductType() ProductType {
 	if x != nil {
 		return x.ProductType
 	}
-	return ProductType_PRODUCT_TYPE_UNSPECIFIED
+	return ProductType_PRODUCT_TYPE_UNKNOWN
 }
 
 func (x *AdminProductListReq) GetStatus() ProductStatus {
 	if x != nil {
 		return x.Status
 	}
-	return ProductStatus_PRODUCT_STATUS_UNSPECIFIED
+	return ProductStatus_PRODUCT_STATUS_UNKNOWN
 }
 
 func (x *AdminProductListReq) GetPage() *common.PageReq {
@@ -357,7 +357,7 @@ func (x *AdminProductCreateReq) GetProductType() ProductType {
 	if x != nil {
 		return x.ProductType
 	}
-	return ProductType_PRODUCT_TYPE_UNSPECIFIED
+	return ProductType_PRODUCT_TYPE_UNKNOWN
 }
 
 func (x *AdminProductCreateReq) GetCoinName() string {
@@ -441,21 +441,21 @@ func (x *AdminProductCreateReq) GetInterestMode() InterestMode {
 	if x != nil {
 		return x.InterestMode
 	}
-	return InterestMode_INTEREST_MODE_UNSPECIFIED
+	return InterestMode_INTEREST_MODE_UNKNOWN
 }
 
 func (x *AdminProductCreateReq) GetRewardMode() RewardMode {
 	if x != nil {
 		return x.RewardMode
 	}
-	return RewardMode_REWARD_MODE_UNSPECIFIED
+	return RewardMode_REWARD_MODE_UNKNOWN
 }
 
 func (x *AdminProductCreateReq) GetAllowEarlyRedeem() YesNo {
 	if x != nil {
 		return x.AllowEarlyRedeem
 	}
-	return YesNo_YES_NO_UNSPECIFIED
+	return YesNo_YES_NO_UNKNOWN
 }
 
 func (x *AdminProductCreateReq) GetEarlyRedeemRate() string {
@@ -469,7 +469,7 @@ func (x *AdminProductCreateReq) GetStatus() ProductStatus {
 	if x != nil {
 		return x.Status
 	}
-	return ProductStatus_PRODUCT_STATUS_UNSPECIFIED
+	return ProductStatus_PRODUCT_STATUS_UNKNOWN
 }
 
 func (x *AdminProductCreateReq) GetSort() int64 {
@@ -630,7 +630,7 @@ func (x *AdminProductUpdateReq) GetProductType() ProductType {
 	if x != nil {
 		return x.ProductType
 	}
-	return ProductType_PRODUCT_TYPE_UNSPECIFIED
+	return ProductType_PRODUCT_TYPE_UNKNOWN
 }
 
 func (x *AdminProductUpdateReq) GetCoinName() string {
@@ -714,21 +714,21 @@ func (x *AdminProductUpdateReq) GetInterestMode() InterestMode {
 	if x != nil {
 		return x.InterestMode
 	}
-	return InterestMode_INTEREST_MODE_UNSPECIFIED
+	return InterestMode_INTEREST_MODE_UNKNOWN
 }
 
 func (x *AdminProductUpdateReq) GetRewardMode() RewardMode {
 	if x != nil {
 		return x.RewardMode
 	}
-	return RewardMode_REWARD_MODE_UNSPECIFIED
+	return RewardMode_REWARD_MODE_UNKNOWN
 }
 
 func (x *AdminProductUpdateReq) GetAllowEarlyRedeem() YesNo {
 	if x != nil {
 		return x.AllowEarlyRedeem
 	}
-	return YesNo_YES_NO_UNSPECIFIED
+	return YesNo_YES_NO_UNKNOWN
 }
 
 func (x *AdminProductUpdateReq) GetEarlyRedeemRate() string {
@@ -742,7 +742,7 @@ func (x *AdminProductUpdateReq) GetStatus() ProductStatus {
 	if x != nil {
 		return x.Status
 	}
-	return ProductStatus_PRODUCT_STATUS_UNSPECIFIED
+	return ProductStatus_PRODUCT_STATUS_UNKNOWN
 }
 
 func (x *AdminProductUpdateReq) GetSort() int64 {
@@ -877,7 +877,7 @@ func (x *AdminProductChangeStatusReq) GetStatus() ProductStatus {
 	if x != nil {
 		return x.Status
 	}
-	return ProductStatus_PRODUCT_STATUS_UNSPECIFIED
+	return ProductStatus_PRODUCT_STATUS_UNKNOWN
 }
 
 func (x *AdminProductChangeStatusReq) GetOperatorUid() int64 {
@@ -1036,21 +1036,21 @@ func (x *AdminOrderListReq) GetStatus() OrderStatus {
 	if x != nil {
 		return x.Status
 	}
-	return OrderStatus_ORDER_STATUS_UNSPECIFIED
+	return OrderStatus_ORDER_STATUS_UNKNOWN
 }
 
 func (x *AdminOrderListReq) GetRedeemType() RedeemType {
 	if x != nil {
 		return x.RedeemType
 	}
-	return RedeemType_REDEEM_TYPE_UNSPECIFIED
+	return RedeemType_REDEEM_TYPE_UNKNOWN
 }
 
 func (x *AdminOrderListReq) GetSource() SourceType {
 	if x != nil {
 		return x.Source
 	}
-	return SourceType_SOURCE_TYPE_UNSPECIFIED
+	return SourceType_SOURCE_TYPE_UNKNOWN
 }
 
 func (x *AdminOrderListReq) GetStartTimesBegin() int64 {
@@ -1323,14 +1323,14 @@ func (x *AdminRewardLogListReq) GetRewardType() RewardType {
 	if x != nil {
 		return x.RewardType
 	}
-	return RewardType_REWARD_TYPE_UNSPECIFIED
+	return RewardType_REWARD_TYPE_UNKNOWN
 }
 
 func (x *AdminRewardLogListReq) GetRewardStatus() RewardStatus {
 	if x != nil {
 		return x.RewardStatus
 	}
-	return RewardStatus_REWARD_STATUS_UNSPECIFIED
+	return RewardStatus_REWARD_STATUS_UNKNOWN
 }
 
 func (x *AdminRewardLogListReq) GetRewardTimesBegin() int64 {
@@ -1492,14 +1492,14 @@ func (x *AdminRedeemLogListReq) GetRedeemType() RedeemType {
 	if x != nil {
 		return x.RedeemType
 	}
-	return RedeemType_REDEEM_TYPE_UNSPECIFIED
+	return RedeemType_REDEEM_TYPE_UNKNOWN
 }
 
 func (x *AdminRedeemLogListReq) GetRedeemStatus() RedeemStatus {
 	if x != nil {
 		return x.RedeemStatus
 	}
-	return RedeemStatus_REDEEM_STATUS_UNSPECIFIED
+	return RedeemStatus_REDEEM_STATUS_UNKNOWN
 }
 
 func (x *AdminRedeemLogListReq) GetRedeemTimesBegin() int64 {
@@ -1643,7 +1643,7 @@ func (x *AdminManualRewardReq) GetRewardType() RewardType {
 	if x != nil {
 		return x.RewardType
 	}
-	return RewardType_REWARD_TYPE_UNSPECIFIED
+	return RewardType_REWARD_TYPE_UNKNOWN
 }
 
 func (x *AdminManualRewardReq) GetRemark() string {
@@ -1776,7 +1776,7 @@ func (x *AdminManualRedeemReq) GetRedeemType() RedeemType {
 	if x != nil {
 		return x.RedeemType
 	}
-	return RedeemType_REDEEM_TYPE_UNSPECIFIED
+	return RedeemType_REDEEM_TYPE_UNKNOWN
 }
 
 func (x *AdminManualRedeemReq) GetRedeemAmount() string {

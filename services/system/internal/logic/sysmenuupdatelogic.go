@@ -39,6 +39,10 @@ func (l *SysMenuUpdateLogic) SysMenuUpdate(in *system.SysMenuUpdateReq) (*system
 	var data models.SysMenu
 	_ = copier.Copy(&data, one)
 	_ = copier.Copy(&data, in)
+	data.MenuType = menuTypeToModel(in.MenuType)
+	data.Method = requestMethodToString(in.Method)
+	data.Visible = visibleStatusToModel(in.Visible)
+	data.Status = commonStatusToModel(in.Status)
 
 	err = l.svcCtx.MenuModel.Update(l.ctx, &data)
 	if err != nil {

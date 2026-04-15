@@ -24,7 +24,7 @@ const (
 type MarketType int32
 
 const (
-	MarketType_MARKET_TYPE_UNSPECIFIED      MarketType = 0
+	MarketType_MARKET_TYPE_UNKNOWN          MarketType = 0
 	MarketType_MARKET_TYPE_SPOT             MarketType = 1
 	MarketType_MARKET_TYPE_SECONDS_CONTRACT MarketType = 2
 	MarketType_MARKET_TYPE_USDT_CONTRACT    MarketType = 3
@@ -34,14 +34,14 @@ const (
 // Enum value maps for MarketType.
 var (
 	MarketType_name = map[int32]string{
-		0: "MARKET_TYPE_UNSPECIFIED",
+		0: "MARKET_TYPE_UNKNOWN",
 		1: "MARKET_TYPE_SPOT",
 		2: "MARKET_TYPE_SECONDS_CONTRACT",
 		3: "MARKET_TYPE_USDT_CONTRACT",
 		4: "MARKET_TYPE_COIN_CONTRACT",
 	}
 	MarketType_value = map[string]int32{
-		"MARKET_TYPE_UNSPECIFIED":      0,
+		"MARKET_TYPE_UNKNOWN":          0,
 		"MARKET_TYPE_SPOT":             1,
 		"MARKET_TYPE_SECONDS_CONTRACT": 2,
 		"MARKET_TYPE_USDT_CONTRACT":    3,
@@ -79,28 +79,28 @@ func (MarketType) EnumDescriptor() ([]byte, []int) {
 type ContractType int32
 
 const (
-	ContractType_CONTRACT_TYPE_UNSPECIFIED ContractType = 0
-	ContractType_CONTRACT_TYPE_NONE        ContractType = 1
-	ContractType_CONTRACT_TYPE_PERPETUAL   ContractType = 2
-	ContractType_CONTRACT_TYPE_DELIVERY    ContractType = 3
-	ContractType_CONTRACT_TYPE_SECONDS     ContractType = 4
+	ContractType_CONTRACT_TYPE_UNKNOWN   ContractType = 0
+	ContractType_CONTRACT_TYPE_NONE      ContractType = 1
+	ContractType_CONTRACT_TYPE_PERPETUAL ContractType = 2
+	ContractType_CONTRACT_TYPE_DELIVERY  ContractType = 3
+	ContractType_CONTRACT_TYPE_SECONDS   ContractType = 4
 )
 
 // Enum value maps for ContractType.
 var (
 	ContractType_name = map[int32]string{
-		0: "CONTRACT_TYPE_UNSPECIFIED",
+		0: "CONTRACT_TYPE_UNKNOWN",
 		1: "CONTRACT_TYPE_NONE",
 		2: "CONTRACT_TYPE_PERPETUAL",
 		3: "CONTRACT_TYPE_DELIVERY",
 		4: "CONTRACT_TYPE_SECONDS",
 	}
 	ContractType_value = map[string]int32{
-		"CONTRACT_TYPE_UNSPECIFIED": 0,
-		"CONTRACT_TYPE_NONE":        1,
-		"CONTRACT_TYPE_PERPETUAL":   2,
-		"CONTRACT_TYPE_DELIVERY":    3,
-		"CONTRACT_TYPE_SECONDS":     4,
+		"CONTRACT_TYPE_UNKNOWN":   0,
+		"CONTRACT_TYPE_NONE":      1,
+		"CONTRACT_TYPE_PERPETUAL": 2,
+		"CONTRACT_TYPE_DELIVERY":  3,
+		"CONTRACT_TYPE_SECONDS":   4,
 	}
 )
 
@@ -134,25 +134,25 @@ func (ContractType) EnumDescriptor() ([]byte, []int) {
 type SymbolStatus int32
 
 const (
-	SymbolStatus_SYMBOL_STATUS_UNSPECIFIED SymbolStatus = 0
-	SymbolStatus_SYMBOL_STATUS_ENABLED     SymbolStatus = 1
-	SymbolStatus_SYMBOL_STATUS_DISABLED    SymbolStatus = 2
-	SymbolStatus_SYMBOL_STATUS_CLOSE_ONLY  SymbolStatus = 3
+	SymbolStatus_SYMBOL_STATUS_UNKNOWN    SymbolStatus = 0
+	SymbolStatus_SYMBOL_STATUS_ENABLED    SymbolStatus = 1
+	SymbolStatus_SYMBOL_STATUS_DISABLED   SymbolStatus = 2
+	SymbolStatus_SYMBOL_STATUS_CLOSE_ONLY SymbolStatus = 3
 )
 
 // Enum value maps for SymbolStatus.
 var (
 	SymbolStatus_name = map[int32]string{
-		0: "SYMBOL_STATUS_UNSPECIFIED",
+		0: "SYMBOL_STATUS_UNKNOWN",
 		1: "SYMBOL_STATUS_ENABLED",
 		2: "SYMBOL_STATUS_DISABLED",
 		3: "SYMBOL_STATUS_CLOSE_ONLY",
 	}
 	SymbolStatus_value = map[string]int32{
-		"SYMBOL_STATUS_UNSPECIFIED": 0,
-		"SYMBOL_STATUS_ENABLED":     1,
-		"SYMBOL_STATUS_DISABLED":    2,
-		"SYMBOL_STATUS_CLOSE_ONLY":  3,
+		"SYMBOL_STATUS_UNKNOWN":    0,
+		"SYMBOL_STATUS_ENABLED":    1,
+		"SYMBOL_STATUS_DISABLED":   2,
+		"SYMBOL_STATUS_CLOSE_ONLY": 3,
 	}
 )
 
@@ -186,22 +186,22 @@ func (SymbolStatus) EnumDescriptor() ([]byte, []int) {
 type TradeSide int32
 
 const (
-	TradeSide_TRADE_SIDE_UNSPECIFIED TradeSide = 0
-	TradeSide_TRADE_SIDE_BUY         TradeSide = 1
-	TradeSide_TRADE_SIDE_SELL        TradeSide = 2
+	TradeSide_TRADE_SIDE_UNKNOWN TradeSide = 0
+	TradeSide_TRADE_SIDE_BUY     TradeSide = 1
+	TradeSide_TRADE_SIDE_SELL    TradeSide = 2
 )
 
 // Enum value maps for TradeSide.
 var (
 	TradeSide_name = map[int32]string{
-		0: "TRADE_SIDE_UNSPECIFIED",
+		0: "TRADE_SIDE_UNKNOWN",
 		1: "TRADE_SIDE_BUY",
 		2: "TRADE_SIDE_SELL",
 	}
 	TradeSide_value = map[string]int32{
-		"TRADE_SIDE_UNSPECIFIED": 0,
-		"TRADE_SIDE_BUY":         1,
-		"TRADE_SIDE_SELL":        2,
+		"TRADE_SIDE_UNKNOWN": 0,
+		"TRADE_SIDE_BUY":     1,
+		"TRADE_SIDE_SELL":    2,
 	}
 )
 
@@ -235,25 +235,25 @@ func (TradeSide) EnumDescriptor() ([]byte, []int) {
 type PositionSide int32
 
 const (
-	PositionSide_POSITION_SIDE_UNSPECIFIED PositionSide = 0
-	PositionSide_POSITION_SIDE_NET         PositionSide = 1
-	PositionSide_POSITION_SIDE_LONG        PositionSide = 2
-	PositionSide_POSITION_SIDE_SHORT       PositionSide = 3
+	PositionSide_POSITION_SIDE_UNKNOWN PositionSide = 0
+	PositionSide_POSITION_SIDE_NET     PositionSide = 1
+	PositionSide_POSITION_SIDE_LONG    PositionSide = 2
+	PositionSide_POSITION_SIDE_SHORT   PositionSide = 3
 )
 
 // Enum value maps for PositionSide.
 var (
 	PositionSide_name = map[int32]string{
-		0: "POSITION_SIDE_UNSPECIFIED",
+		0: "POSITION_SIDE_UNKNOWN",
 		1: "POSITION_SIDE_NET",
 		2: "POSITION_SIDE_LONG",
 		3: "POSITION_SIDE_SHORT",
 	}
 	PositionSide_value = map[string]int32{
-		"POSITION_SIDE_UNSPECIFIED": 0,
-		"POSITION_SIDE_NET":         1,
-		"POSITION_SIDE_LONG":        2,
-		"POSITION_SIDE_SHORT":       3,
+		"POSITION_SIDE_UNKNOWN": 0,
+		"POSITION_SIDE_NET":     1,
+		"POSITION_SIDE_LONG":    2,
+		"POSITION_SIDE_SHORT":   3,
 	}
 )
 
@@ -287,7 +287,7 @@ func (PositionSide) EnumDescriptor() ([]byte, []int) {
 type OrderType int32
 
 const (
-	OrderType_ORDER_TYPE_UNSPECIFIED OrderType = 0
+	OrderType_ORDER_TYPE_UNKNOWN     OrderType = 0
 	OrderType_ORDER_TYPE_LIMIT       OrderType = 1
 	OrderType_ORDER_TYPE_MARKET      OrderType = 2
 	OrderType_ORDER_TYPE_CONDITIONAL OrderType = 3
@@ -298,7 +298,7 @@ const (
 // Enum value maps for OrderType.
 var (
 	OrderType_name = map[int32]string{
-		0: "ORDER_TYPE_UNSPECIFIED",
+		0: "ORDER_TYPE_UNKNOWN",
 		1: "ORDER_TYPE_LIMIT",
 		2: "ORDER_TYPE_MARKET",
 		3: "ORDER_TYPE_CONDITIONAL",
@@ -306,7 +306,7 @@ var (
 		5: "ORDER_TYPE_STOP_LOSS",
 	}
 	OrderType_value = map[string]int32{
-		"ORDER_TYPE_UNSPECIFIED": 0,
+		"ORDER_TYPE_UNKNOWN":     0,
 		"ORDER_TYPE_LIMIT":       1,
 		"ORDER_TYPE_MARKET":      2,
 		"ORDER_TYPE_CONDITIONAL": 3,
@@ -345,28 +345,28 @@ func (OrderType) EnumDescriptor() ([]byte, []int) {
 type TimeInForce int32
 
 const (
-	TimeInForce_TIME_IN_FORCE_UNSPECIFIED TimeInForce = 0
-	TimeInForce_TIME_IN_FORCE_GTC         TimeInForce = 1
-	TimeInForce_TIME_IN_FORCE_IOC         TimeInForce = 2
-	TimeInForce_TIME_IN_FORCE_FOK         TimeInForce = 3
-	TimeInForce_TIME_IN_FORCE_POST_ONLY   TimeInForce = 4
+	TimeInForce_TIME_IN_FORCE_UNKNOWN   TimeInForce = 0
+	TimeInForce_TIME_IN_FORCE_GTC       TimeInForce = 1
+	TimeInForce_TIME_IN_FORCE_IOC       TimeInForce = 2
+	TimeInForce_TIME_IN_FORCE_FOK       TimeInForce = 3
+	TimeInForce_TIME_IN_FORCE_POST_ONLY TimeInForce = 4
 )
 
 // Enum value maps for TimeInForce.
 var (
 	TimeInForce_name = map[int32]string{
-		0: "TIME_IN_FORCE_UNSPECIFIED",
+		0: "TIME_IN_FORCE_UNKNOWN",
 		1: "TIME_IN_FORCE_GTC",
 		2: "TIME_IN_FORCE_IOC",
 		3: "TIME_IN_FORCE_FOK",
 		4: "TIME_IN_FORCE_POST_ONLY",
 	}
 	TimeInForce_value = map[string]int32{
-		"TIME_IN_FORCE_UNSPECIFIED": 0,
-		"TIME_IN_FORCE_GTC":         1,
-		"TIME_IN_FORCE_IOC":         2,
-		"TIME_IN_FORCE_FOK":         3,
-		"TIME_IN_FORCE_POST_ONLY":   4,
+		"TIME_IN_FORCE_UNKNOWN":   0,
+		"TIME_IN_FORCE_GTC":       1,
+		"TIME_IN_FORCE_IOC":       2,
+		"TIME_IN_FORCE_FOK":       3,
+		"TIME_IN_FORCE_POST_ONLY": 4,
 	}
 )
 
@@ -400,7 +400,7 @@ func (TimeInForce) EnumDescriptor() ([]byte, []int) {
 type OrderStatus int32
 
 const (
-	OrderStatus_ORDER_STATUS_UNSPECIFIED OrderStatus = 0
+	OrderStatus_ORDER_STATUS_UNKNOWN     OrderStatus = 0
 	OrderStatus_ORDER_STATUS_PENDING     OrderStatus = 1
 	OrderStatus_ORDER_STATUS_PART_FILLED OrderStatus = 2
 	OrderStatus_ORDER_STATUS_FILLED      OrderStatus = 3
@@ -412,7 +412,7 @@ const (
 // Enum value maps for OrderStatus.
 var (
 	OrderStatus_name = map[int32]string{
-		0: "ORDER_STATUS_UNSPECIFIED",
+		0: "ORDER_STATUS_UNKNOWN",
 		1: "ORDER_STATUS_PENDING",
 		2: "ORDER_STATUS_PART_FILLED",
 		3: "ORDER_STATUS_FILLED",
@@ -421,7 +421,7 @@ var (
 		6: "ORDER_STATUS_EXPIRED",
 	}
 	OrderStatus_value = map[string]int32{
-		"ORDER_STATUS_UNSPECIFIED": 0,
+		"ORDER_STATUS_UNKNOWN":     0,
 		"ORDER_STATUS_PENDING":     1,
 		"ORDER_STATUS_PART_FILLED": 2,
 		"ORDER_STATUS_FILLED":      3,
@@ -461,22 +461,22 @@ func (OrderStatus) EnumDescriptor() ([]byte, []int) {
 type MarginMode int32
 
 const (
-	MarginMode_MARGIN_MODE_UNSPECIFIED MarginMode = 0
-	MarginMode_MARGIN_MODE_CROSS       MarginMode = 1
-	MarginMode_MARGIN_MODE_ISOLATED    MarginMode = 2
+	MarginMode_MARGIN_MODE_UNKNOWN  MarginMode = 0
+	MarginMode_MARGIN_MODE_CROSS    MarginMode = 1
+	MarginMode_MARGIN_MODE_ISOLATED MarginMode = 2
 )
 
 // Enum value maps for MarginMode.
 var (
 	MarginMode_name = map[int32]string{
-		0: "MARGIN_MODE_UNSPECIFIED",
+		0: "MARGIN_MODE_UNKNOWN",
 		1: "MARGIN_MODE_CROSS",
 		2: "MARGIN_MODE_ISOLATED",
 	}
 	MarginMode_value = map[string]int32{
-		"MARGIN_MODE_UNSPECIFIED": 0,
-		"MARGIN_MODE_CROSS":       1,
-		"MARGIN_MODE_ISOLATED":    2,
+		"MARGIN_MODE_UNKNOWN":  0,
+		"MARGIN_MODE_CROSS":    1,
+		"MARGIN_MODE_ISOLATED": 2,
 	}
 )
 
@@ -510,22 +510,22 @@ func (MarginMode) EnumDescriptor() ([]byte, []int) {
 type PositionMode int32
 
 const (
-	PositionMode_POSITION_MODE_UNSPECIFIED PositionMode = 0
-	PositionMode_POSITION_MODE_ONE_WAY     PositionMode = 1
-	PositionMode_POSITION_MODE_HEDGE       PositionMode = 2
+	PositionMode_POSITION_MODE_UNKNOWN PositionMode = 0
+	PositionMode_POSITION_MODE_ONE_WAY PositionMode = 1
+	PositionMode_POSITION_MODE_HEDGE   PositionMode = 2
 )
 
 // Enum value maps for PositionMode.
 var (
 	PositionMode_name = map[int32]string{
-		0: "POSITION_MODE_UNSPECIFIED",
+		0: "POSITION_MODE_UNKNOWN",
 		1: "POSITION_MODE_ONE_WAY",
 		2: "POSITION_MODE_HEDGE",
 	}
 	PositionMode_value = map[string]int32{
-		"POSITION_MODE_UNSPECIFIED": 0,
-		"POSITION_MODE_ONE_WAY":     1,
-		"POSITION_MODE_HEDGE":       2,
+		"POSITION_MODE_UNKNOWN": 0,
+		"POSITION_MODE_ONE_WAY": 1,
+		"POSITION_MODE_HEDGE":   2,
 	}
 )
 
@@ -559,22 +559,22 @@ func (PositionMode) EnumDescriptor() ([]byte, []int) {
 type LiquidityType int32
 
 const (
-	LiquidityType_LIQUIDITY_TYPE_UNSPECIFIED LiquidityType = 0
-	LiquidityType_LIQUIDITY_TYPE_MAKER       LiquidityType = 1
-	LiquidityType_LIQUIDITY_TYPE_TAKER       LiquidityType = 2
+	LiquidityType_LIQUIDITY_TYPE_UNKNOWN LiquidityType = 0
+	LiquidityType_LIQUIDITY_TYPE_MAKER   LiquidityType = 1
+	LiquidityType_LIQUIDITY_TYPE_TAKER   LiquidityType = 2
 )
 
 // Enum value maps for LiquidityType.
 var (
 	LiquidityType_name = map[int32]string{
-		0: "LIQUIDITY_TYPE_UNSPECIFIED",
+		0: "LIQUIDITY_TYPE_UNKNOWN",
 		1: "LIQUIDITY_TYPE_MAKER",
 		2: "LIQUIDITY_TYPE_TAKER",
 	}
 	LiquidityType_value = map[string]int32{
-		"LIQUIDITY_TYPE_UNSPECIFIED": 0,
-		"LIQUIDITY_TYPE_MAKER":       1,
-		"LIQUIDITY_TYPE_TAKER":       2,
+		"LIQUIDITY_TYPE_UNKNOWN": 0,
+		"LIQUIDITY_TYPE_MAKER":   1,
+		"LIQUIDITY_TYPE_TAKER":   2,
 	}
 )
 
@@ -608,28 +608,28 @@ func (LiquidityType) EnumDescriptor() ([]byte, []int) {
 type SourceType int32
 
 const (
-	SourceType_SOURCE_TYPE_UNSPECIFIED SourceType = 0
-	SourceType_SOURCE_TYPE_SYSTEM      SourceType = 1
-	SourceType_SOURCE_TYPE_USER        SourceType = 2
-	SourceType_SOURCE_TYPE_ADMIN       SourceType = 3
-	SourceType_SOURCE_TYPE_TASK        SourceType = 4
+	SourceType_SOURCE_TYPE_UNKNOWN SourceType = 0
+	SourceType_SOURCE_TYPE_SYSTEM  SourceType = 1
+	SourceType_SOURCE_TYPE_USER    SourceType = 2
+	SourceType_SOURCE_TYPE_ADMIN   SourceType = 3
+	SourceType_SOURCE_TYPE_TASK    SourceType = 4
 )
 
 // Enum value maps for SourceType.
 var (
 	SourceType_name = map[int32]string{
-		0: "SOURCE_TYPE_UNSPECIFIED",
+		0: "SOURCE_TYPE_UNKNOWN",
 		1: "SOURCE_TYPE_SYSTEM",
 		2: "SOURCE_TYPE_USER",
 		3: "SOURCE_TYPE_ADMIN",
 		4: "SOURCE_TYPE_TASK",
 	}
 	SourceType_value = map[string]int32{
-		"SOURCE_TYPE_UNSPECIFIED": 0,
-		"SOURCE_TYPE_SYSTEM":      1,
-		"SOURCE_TYPE_USER":        2,
-		"SOURCE_TYPE_ADMIN":       3,
-		"SOURCE_TYPE_TASK":        4,
+		"SOURCE_TYPE_UNKNOWN": 0,
+		"SOURCE_TYPE_SYSTEM":  1,
+		"SOURCE_TYPE_USER":    2,
+		"SOURCE_TYPE_ADMIN":   3,
+		"SOURCE_TYPE_TASK":    4,
 	}
 )
 
@@ -663,28 +663,28 @@ func (SourceType) EnumDescriptor() ([]byte, []int) {
 type OrderSourceType int32
 
 const (
-	OrderSourceType_ORDER_SOURCE_TYPE_UNSPECIFIED OrderSourceType = 0
-	OrderSourceType_ORDER_SOURCE_TYPE_APP         OrderSourceType = 1
-	OrderSourceType_ORDER_SOURCE_TYPE_WEB         OrderSourceType = 2
-	OrderSourceType_ORDER_SOURCE_TYPE_API         OrderSourceType = 3
-	OrderSourceType_ORDER_SOURCE_TYPE_SYSTEM      OrderSourceType = 4
+	OrderSourceType_ORDER_SOURCE_TYPE_UNKNOWN OrderSourceType = 0
+	OrderSourceType_ORDER_SOURCE_TYPE_APP     OrderSourceType = 1
+	OrderSourceType_ORDER_SOURCE_TYPE_WEB     OrderSourceType = 2
+	OrderSourceType_ORDER_SOURCE_TYPE_API     OrderSourceType = 3
+	OrderSourceType_ORDER_SOURCE_TYPE_SYSTEM  OrderSourceType = 4
 )
 
 // Enum value maps for OrderSourceType.
 var (
 	OrderSourceType_name = map[int32]string{
-		0: "ORDER_SOURCE_TYPE_UNSPECIFIED",
+		0: "ORDER_SOURCE_TYPE_UNKNOWN",
 		1: "ORDER_SOURCE_TYPE_APP",
 		2: "ORDER_SOURCE_TYPE_WEB",
 		3: "ORDER_SOURCE_TYPE_API",
 		4: "ORDER_SOURCE_TYPE_SYSTEM",
 	}
 	OrderSourceType_value = map[string]int32{
-		"ORDER_SOURCE_TYPE_UNSPECIFIED": 0,
-		"ORDER_SOURCE_TYPE_APP":         1,
-		"ORDER_SOURCE_TYPE_WEB":         2,
-		"ORDER_SOURCE_TYPE_API":         3,
-		"ORDER_SOURCE_TYPE_SYSTEM":      4,
+		"ORDER_SOURCE_TYPE_UNKNOWN": 0,
+		"ORDER_SOURCE_TYPE_APP":     1,
+		"ORDER_SOURCE_TYPE_WEB":     2,
+		"ORDER_SOURCE_TYPE_API":     3,
+		"ORDER_SOURCE_TYPE_SYSTEM":  4,
 	}
 )
 
@@ -718,7 +718,7 @@ func (OrderSourceType) EnumDescriptor() ([]byte, []int) {
 type RiskCheckType int32
 
 const (
-	RiskCheckType_RISK_CHECK_TYPE_UNSPECIFIED      RiskCheckType = 0
+	RiskCheckType_RISK_CHECK_TYPE_UNKNOWN          RiskCheckType = 0
 	RiskCheckType_RISK_CHECK_TYPE_BALANCE          RiskCheckType = 1
 	RiskCheckType_RISK_CHECK_TYPE_MARGIN           RiskCheckType = 2
 	RiskCheckType_RISK_CHECK_TYPE_POSITION         RiskCheckType = 3
@@ -732,7 +732,7 @@ const (
 // Enum value maps for RiskCheckType.
 var (
 	RiskCheckType_name = map[int32]string{
-		0: "RISK_CHECK_TYPE_UNSPECIFIED",
+		0: "RISK_CHECK_TYPE_UNKNOWN",
 		1: "RISK_CHECK_TYPE_BALANCE",
 		2: "RISK_CHECK_TYPE_MARGIN",
 		3: "RISK_CHECK_TYPE_POSITION",
@@ -743,7 +743,7 @@ var (
 		8: "RISK_CHECK_TYPE_FREQUENCY_LIMIT",
 	}
 	RiskCheckType_value = map[string]int32{
-		"RISK_CHECK_TYPE_UNSPECIFIED":      0,
+		"RISK_CHECK_TYPE_UNKNOWN":          0,
 		"RISK_CHECK_TYPE_BALANCE":          1,
 		"RISK_CHECK_TYPE_MARGIN":           2,
 		"RISK_CHECK_TYPE_POSITION":         3,
@@ -785,25 +785,25 @@ func (RiskCheckType) EnumDescriptor() ([]byte, []int) {
 type RiskCheckResult int32
 
 const (
-	RiskCheckResult_RISK_CHECK_RESULT_UNSPECIFIED RiskCheckResult = 0
-	RiskCheckResult_RISK_CHECK_RESULT_PASS        RiskCheckResult = 1
-	RiskCheckResult_RISK_CHECK_RESULT_REJECT      RiskCheckResult = 2
-	RiskCheckResult_RISK_CHECK_RESULT_WARN_PASS   RiskCheckResult = 3
+	RiskCheckResult_RISK_CHECK_RESULT_UNKNOWN   RiskCheckResult = 0
+	RiskCheckResult_RISK_CHECK_RESULT_PASS      RiskCheckResult = 1
+	RiskCheckResult_RISK_CHECK_RESULT_REJECT    RiskCheckResult = 2
+	RiskCheckResult_RISK_CHECK_RESULT_WARN_PASS RiskCheckResult = 3
 )
 
 // Enum value maps for RiskCheckResult.
 var (
 	RiskCheckResult_name = map[int32]string{
-		0: "RISK_CHECK_RESULT_UNSPECIFIED",
+		0: "RISK_CHECK_RESULT_UNKNOWN",
 		1: "RISK_CHECK_RESULT_PASS",
 		2: "RISK_CHECK_RESULT_REJECT",
 		3: "RISK_CHECK_RESULT_WARN_PASS",
 	}
 	RiskCheckResult_value = map[string]int32{
-		"RISK_CHECK_RESULT_UNSPECIFIED": 0,
-		"RISK_CHECK_RESULT_PASS":        1,
-		"RISK_CHECK_RESULT_REJECT":      2,
-		"RISK_CHECK_RESULT_WARN_PASS":   3,
+		"RISK_CHECK_RESULT_UNKNOWN":   0,
+		"RISK_CHECK_RESULT_PASS":      1,
+		"RISK_CHECK_RESULT_REJECT":    2,
+		"RISK_CHECK_RESULT_WARN_PASS": 3,
 	}
 )
 
@@ -837,28 +837,28 @@ func (RiskCheckResult) EnumDescriptor() ([]byte, []int) {
 type EventStatus int32
 
 const (
-	EventStatus_EVENT_STATUS_UNSPECIFIED EventStatus = 0
-	EventStatus_EVENT_STATUS_PENDING     EventStatus = 1
-	EventStatus_EVENT_STATUS_SUCCESS     EventStatus = 2
-	EventStatus_EVENT_STATUS_FAILED      EventStatus = 3
-	EventStatus_EVENT_STATUS_CANCELED    EventStatus = 4
+	EventStatus_EVENT_STATUS_UNKNOWN  EventStatus = 0
+	EventStatus_EVENT_STATUS_PENDING  EventStatus = 1
+	EventStatus_EVENT_STATUS_SUCCESS  EventStatus = 2
+	EventStatus_EVENT_STATUS_FAILED   EventStatus = 3
+	EventStatus_EVENT_STATUS_CANCELED EventStatus = 4
 )
 
 // Enum value maps for EventStatus.
 var (
 	EventStatus_name = map[int32]string{
-		0: "EVENT_STATUS_UNSPECIFIED",
+		0: "EVENT_STATUS_UNKNOWN",
 		1: "EVENT_STATUS_PENDING",
 		2: "EVENT_STATUS_SUCCESS",
 		3: "EVENT_STATUS_FAILED",
 		4: "EVENT_STATUS_CANCELED",
 	}
 	EventStatus_value = map[string]int32{
-		"EVENT_STATUS_UNSPECIFIED": 0,
-		"EVENT_STATUS_PENDING":     1,
-		"EVENT_STATUS_SUCCESS":     2,
-		"EVENT_STATUS_FAILED":      3,
-		"EVENT_STATUS_CANCELED":    4,
+		"EVENT_STATUS_UNKNOWN":  0,
+		"EVENT_STATUS_PENDING":  1,
+		"EVENT_STATUS_SUCCESS":  2,
+		"EVENT_STATUS_FAILED":   3,
+		"EVENT_STATUS_CANCELED": 4,
 	}
 )
 
@@ -1162,83 +1162,83 @@ var File_proto_trade_enum_proto protoreflect.FileDescriptor
 
 const file_proto_trade_enum_proto_rawDesc = "" +
 	"\n" +
-	"\x16proto/trade/enum.proto\x12\x05trade*\x9f\x01\n" +
+	"\x16proto/trade/enum.proto\x12\x05trade*\x9b\x01\n" +
 	"\n" +
-	"MarketType\x12\x1b\n" +
-	"\x17MARKET_TYPE_UNSPECIFIED\x10\x00\x12\x14\n" +
+	"MarketType\x12\x17\n" +
+	"\x13MARKET_TYPE_UNKNOWN\x10\x00\x12\x14\n" +
 	"\x10MARKET_TYPE_SPOT\x10\x01\x12 \n" +
 	"\x1cMARKET_TYPE_SECONDS_CONTRACT\x10\x02\x12\x1d\n" +
 	"\x19MARKET_TYPE_USDT_CONTRACT\x10\x03\x12\x1d\n" +
-	"\x19MARKET_TYPE_COIN_CONTRACT\x10\x04*\x99\x01\n" +
-	"\fContractType\x12\x1d\n" +
-	"\x19CONTRACT_TYPE_UNSPECIFIED\x10\x00\x12\x16\n" +
+	"\x19MARKET_TYPE_COIN_CONTRACT\x10\x04*\x95\x01\n" +
+	"\fContractType\x12\x19\n" +
+	"\x15CONTRACT_TYPE_UNKNOWN\x10\x00\x12\x16\n" +
 	"\x12CONTRACT_TYPE_NONE\x10\x01\x12\x1b\n" +
 	"\x17CONTRACT_TYPE_PERPETUAL\x10\x02\x12\x1a\n" +
 	"\x16CONTRACT_TYPE_DELIVERY\x10\x03\x12\x19\n" +
-	"\x15CONTRACT_TYPE_SECONDS\x10\x04*\x82\x01\n" +
-	"\fSymbolStatus\x12\x1d\n" +
-	"\x19SYMBOL_STATUS_UNSPECIFIED\x10\x00\x12\x19\n" +
+	"\x15CONTRACT_TYPE_SECONDS\x10\x04*~\n" +
+	"\fSymbolStatus\x12\x19\n" +
+	"\x15SYMBOL_STATUS_UNKNOWN\x10\x00\x12\x19\n" +
 	"\x15SYMBOL_STATUS_ENABLED\x10\x01\x12\x1a\n" +
 	"\x16SYMBOL_STATUS_DISABLED\x10\x02\x12\x1c\n" +
-	"\x18SYMBOL_STATUS_CLOSE_ONLY\x10\x03*P\n" +
-	"\tTradeSide\x12\x1a\n" +
-	"\x16TRADE_SIDE_UNSPECIFIED\x10\x00\x12\x12\n" +
+	"\x18SYMBOL_STATUS_CLOSE_ONLY\x10\x03*L\n" +
+	"\tTradeSide\x12\x16\n" +
+	"\x12TRADE_SIDE_UNKNOWN\x10\x00\x12\x12\n" +
 	"\x0eTRADE_SIDE_BUY\x10\x01\x12\x13\n" +
-	"\x0fTRADE_SIDE_SELL\x10\x02*u\n" +
-	"\fPositionSide\x12\x1d\n" +
-	"\x19POSITION_SIDE_UNSPECIFIED\x10\x00\x12\x15\n" +
+	"\x0fTRADE_SIDE_SELL\x10\x02*q\n" +
+	"\fPositionSide\x12\x19\n" +
+	"\x15POSITION_SIDE_UNKNOWN\x10\x00\x12\x15\n" +
 	"\x11POSITION_SIDE_NET\x10\x01\x12\x16\n" +
 	"\x12POSITION_SIDE_LONG\x10\x02\x12\x17\n" +
-	"\x13POSITION_SIDE_SHORT\x10\x03*\xa6\x01\n" +
-	"\tOrderType\x12\x1a\n" +
-	"\x16ORDER_TYPE_UNSPECIFIED\x10\x00\x12\x14\n" +
+	"\x13POSITION_SIDE_SHORT\x10\x03*\xa2\x01\n" +
+	"\tOrderType\x12\x16\n" +
+	"\x12ORDER_TYPE_UNKNOWN\x10\x00\x12\x14\n" +
 	"\x10ORDER_TYPE_LIMIT\x10\x01\x12\x15\n" +
 	"\x11ORDER_TYPE_MARKET\x10\x02\x12\x1a\n" +
 	"\x16ORDER_TYPE_CONDITIONAL\x10\x03\x12\x1a\n" +
 	"\x16ORDER_TYPE_TAKE_PROFIT\x10\x04\x12\x18\n" +
-	"\x14ORDER_TYPE_STOP_LOSS\x10\x05*\x8e\x01\n" +
-	"\vTimeInForce\x12\x1d\n" +
-	"\x19TIME_IN_FORCE_UNSPECIFIED\x10\x00\x12\x15\n" +
+	"\x14ORDER_TYPE_STOP_LOSS\x10\x05*\x8a\x01\n" +
+	"\vTimeInForce\x12\x19\n" +
+	"\x15TIME_IN_FORCE_UNKNOWN\x10\x00\x12\x15\n" +
 	"\x11TIME_IN_FORCE_GTC\x10\x01\x12\x15\n" +
 	"\x11TIME_IN_FORCE_IOC\x10\x02\x12\x15\n" +
 	"\x11TIME_IN_FORCE_FOK\x10\x03\x12\x1b\n" +
-	"\x17TIME_IN_FORCE_POST_ONLY\x10\x04*\xcc\x01\n" +
-	"\vOrderStatus\x12\x1c\n" +
-	"\x18ORDER_STATUS_UNSPECIFIED\x10\x00\x12\x18\n" +
+	"\x17TIME_IN_FORCE_POST_ONLY\x10\x04*\xc8\x01\n" +
+	"\vOrderStatus\x12\x18\n" +
+	"\x14ORDER_STATUS_UNKNOWN\x10\x00\x12\x18\n" +
 	"\x14ORDER_STATUS_PENDING\x10\x01\x12\x1c\n" +
 	"\x18ORDER_STATUS_PART_FILLED\x10\x02\x12\x17\n" +
 	"\x13ORDER_STATUS_FILLED\x10\x03\x12\x19\n" +
 	"\x15ORDER_STATUS_CANCELED\x10\x04\x12\x19\n" +
 	"\x15ORDER_STATUS_REJECTED\x10\x05\x12\x18\n" +
-	"\x14ORDER_STATUS_EXPIRED\x10\x06*Z\n" +
+	"\x14ORDER_STATUS_EXPIRED\x10\x06*V\n" +
 	"\n" +
-	"MarginMode\x12\x1b\n" +
-	"\x17MARGIN_MODE_UNSPECIFIED\x10\x00\x12\x15\n" +
+	"MarginMode\x12\x17\n" +
+	"\x13MARGIN_MODE_UNKNOWN\x10\x00\x12\x15\n" +
 	"\x11MARGIN_MODE_CROSS\x10\x01\x12\x18\n" +
-	"\x14MARGIN_MODE_ISOLATED\x10\x02*a\n" +
-	"\fPositionMode\x12\x1d\n" +
-	"\x19POSITION_MODE_UNSPECIFIED\x10\x00\x12\x19\n" +
+	"\x14MARGIN_MODE_ISOLATED\x10\x02*]\n" +
+	"\fPositionMode\x12\x19\n" +
+	"\x15POSITION_MODE_UNKNOWN\x10\x00\x12\x19\n" +
 	"\x15POSITION_MODE_ONE_WAY\x10\x01\x12\x17\n" +
-	"\x13POSITION_MODE_HEDGE\x10\x02*c\n" +
-	"\rLiquidityType\x12\x1e\n" +
-	"\x1aLIQUIDITY_TYPE_UNSPECIFIED\x10\x00\x12\x18\n" +
+	"\x13POSITION_MODE_HEDGE\x10\x02*_\n" +
+	"\rLiquidityType\x12\x1a\n" +
+	"\x16LIQUIDITY_TYPE_UNKNOWN\x10\x00\x12\x18\n" +
 	"\x14LIQUIDITY_TYPE_MAKER\x10\x01\x12\x18\n" +
-	"\x14LIQUIDITY_TYPE_TAKER\x10\x02*\x84\x01\n" +
+	"\x14LIQUIDITY_TYPE_TAKER\x10\x02*\x80\x01\n" +
 	"\n" +
-	"SourceType\x12\x1b\n" +
-	"\x17SOURCE_TYPE_UNSPECIFIED\x10\x00\x12\x16\n" +
+	"SourceType\x12\x17\n" +
+	"\x13SOURCE_TYPE_UNKNOWN\x10\x00\x12\x16\n" +
 	"\x12SOURCE_TYPE_SYSTEM\x10\x01\x12\x14\n" +
 	"\x10SOURCE_TYPE_USER\x10\x02\x12\x15\n" +
 	"\x11SOURCE_TYPE_ADMIN\x10\x03\x12\x14\n" +
-	"\x10SOURCE_TYPE_TASK\x10\x04*\xa3\x01\n" +
-	"\x0fOrderSourceType\x12!\n" +
-	"\x1dORDER_SOURCE_TYPE_UNSPECIFIED\x10\x00\x12\x19\n" +
+	"\x10SOURCE_TYPE_TASK\x10\x04*\x9f\x01\n" +
+	"\x0fOrderSourceType\x12\x1d\n" +
+	"\x19ORDER_SOURCE_TYPE_UNKNOWN\x10\x00\x12\x19\n" +
 	"\x15ORDER_SOURCE_TYPE_APP\x10\x01\x12\x19\n" +
 	"\x15ORDER_SOURCE_TYPE_WEB\x10\x02\x12\x19\n" +
 	"\x15ORDER_SOURCE_TYPE_API\x10\x03\x12\x1c\n" +
-	"\x18ORDER_SOURCE_TYPE_SYSTEM\x10\x04*\xb8\x02\n" +
-	"\rRiskCheckType\x12\x1f\n" +
-	"\x1bRISK_CHECK_TYPE_UNSPECIFIED\x10\x00\x12\x1b\n" +
+	"\x18ORDER_SOURCE_TYPE_SYSTEM\x10\x04*\xb4\x02\n" +
+	"\rRiskCheckType\x12\x1b\n" +
+	"\x17RISK_CHECK_TYPE_UNKNOWN\x10\x00\x12\x1b\n" +
 	"\x17RISK_CHECK_TYPE_BALANCE\x10\x01\x12\x1a\n" +
 	"\x16RISK_CHECK_TYPE_MARGIN\x10\x02\x12\x1c\n" +
 	"\x18RISK_CHECK_TYPE_POSITION\x10\x03\x12$\n" +
@@ -1246,14 +1246,14 @@ const file_proto_trade_enum_proto_rawDesc = "" +
 	"\x1dRISK_CHECK_TYPE_PRICE_PROTECT\x10\x05\x12\x1d\n" +
 	"\x19RISK_CHECK_TYPE_QTY_LIMIT\x10\x06\x12\"\n" +
 	"\x1eRISK_CHECK_TYPE_NOTIONAL_LIMIT\x10\a\x12#\n" +
-	"\x1fRISK_CHECK_TYPE_FREQUENCY_LIMIT\x10\b*\x8f\x01\n" +
-	"\x0fRiskCheckResult\x12!\n" +
-	"\x1dRISK_CHECK_RESULT_UNSPECIFIED\x10\x00\x12\x1a\n" +
+	"\x1fRISK_CHECK_TYPE_FREQUENCY_LIMIT\x10\b*\x8b\x01\n" +
+	"\x0fRiskCheckResult\x12\x1d\n" +
+	"\x19RISK_CHECK_RESULT_UNKNOWN\x10\x00\x12\x1a\n" +
 	"\x16RISK_CHECK_RESULT_PASS\x10\x01\x12\x1c\n" +
 	"\x18RISK_CHECK_RESULT_REJECT\x10\x02\x12\x1f\n" +
-	"\x1bRISK_CHECK_RESULT_WARN_PASS\x10\x03*\x93\x01\n" +
-	"\vEventStatus\x12\x1c\n" +
-	"\x18EVENT_STATUS_UNSPECIFIED\x10\x00\x12\x18\n" +
+	"\x1bRISK_CHECK_RESULT_WARN_PASS\x10\x03*\x8f\x01\n" +
+	"\vEventStatus\x12\x18\n" +
+	"\x14EVENT_STATUS_UNKNOWN\x10\x00\x12\x18\n" +
 	"\x14EVENT_STATUS_PENDING\x10\x01\x12\x18\n" +
 	"\x14EVENT_STATUS_SUCCESS\x10\x02\x12\x17\n" +
 	"\x13EVENT_STATUS_FAILED\x10\x03\x12\x19\n" +

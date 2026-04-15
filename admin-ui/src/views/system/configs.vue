@@ -21,9 +21,9 @@
           >
             <el-option
               v-for="key in keys"
-              :key="key"
-              :label="t('system.' + key) || key"
-              :value="key"
+              :key="key.value"
+              :label="getOptionLabel(key.code, key.label)"
+              :value="key.value"
             />
           </el-select>
         </el-form-item>
@@ -159,9 +159,9 @@
           >
             <el-option
               v-for="key in keys"
-              :key="key"
-              :label="t('system.' + key) || key"
-              :value="key"
+              :key="key.value"
+              :label="getOptionLabel(key.code, key.label)"
+              :value="key.value"
             />
           </el-select>
           <el-input
@@ -209,7 +209,12 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { Plus, Search, Refresh } from '@element-plus/icons-vue'
 import { configService } from '@/services'
-import type { SysConfigItem, SysConfigCreateReq, SysConfigUpdateReq } from '@/services'
+import type {
+  SysConfigItem,
+  SysConfigCreateReq,
+  SysConfigUpdateReq,
+  SysConfigKeyOption,
+} from '@/services'
 import type { SystemCore, ObjectStorageConfig } from '@/services/system/ConfigService'
 import { usePagination } from '@/composables/usePagination'
 import { useLoading } from '@/composables/useLoading'
@@ -220,6 +225,13 @@ import SystemCoreConfig from './components/SystemCoreConfig.vue'
 import ObjectStorageConfigComponent from './components/ObjectStorageConfig.vue'
 
 const { t } = useI18n()
+
+function getOptionLabel(code?: string, fallback?: string) {
+  if (!code) return fallback || ''
+  const key = `options.${code}`
+  const translated = t(key)
+  return translated === key ? (fallback || code) : translated
+}
 
 // Pagination and main list
 const {
@@ -254,7 +266,7 @@ const { form: formData, reset: resetForm } = useForm({
 })
 
 // Keys for configKey selection
-const keys = ref<string[]>([])
+const keys = ref<SysConfigKeyOption[]>([])
 
 // Config type special forms
 const systemCoreForm = ref<SystemCore>({

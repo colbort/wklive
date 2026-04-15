@@ -38,7 +38,7 @@ func (l *SysTenantUpdateLogic) SysTenantUpdate(in *system.SysTenantUpdateReq) (*
 		}, nil
 	}
 	tenant.TenantName = in.TenantName
-	tenant.Status = in.Status
+	tenant.Status = commonStatusToModel(in.Status)
 	tenant.ExpireTime = in.ExpireTime
 	tenant.ContactName = sql.NullString{String: in.ContactName, Valid: true}
 	tenant.ContactPhone = sql.NullString{String: in.ContactPhone, Valid: true}

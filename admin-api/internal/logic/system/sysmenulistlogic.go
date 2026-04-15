@@ -35,9 +35,9 @@ func (l *SysMenuListLogic) SysMenuList(req *types.SysMenuListReq) (resp *types.S
 			Limit:  req.Limit,
 		},
 		Keyword:  req.Keyword,
-		Status:   req.Status,
-		Visible:  req.Visible,
-		MenuType: req.MenuType,
+		Status:   toCommonStatus(req.Status),
+		Visible:  toVisibleStatus(req.Visible),
+		MenuType: toMenuType(req.MenuType),
 	})
 	if err != nil {
 		return nil, err
@@ -48,14 +48,14 @@ func (l *SysMenuListLogic) SysMenuList(req *types.SysMenuListReq) (resp *types.S
 			Id:        v.Id,
 			ParentId:  v.ParentId,
 			Name:      v.Name,
-			MenuType:  v.MenuType,
-			Method:    v.Method,
+			MenuType:  fromMenuType(v.MenuType),
+			Method:    fromRequestMethod(v.Method),
 			Path:      v.Path,
 			Component: v.Component,
 			Icon:      v.Icon,
 			Sort:      v.Sort,
-			Visible:   v.Visible,
-			Status:    v.Status,
+			Visible:   fromVisibleStatus(v.Visible),
+			Status:    fromCommonStatus(v.Status),
 			Perms:     v.Perms,
 		})
 	}

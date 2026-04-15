@@ -31,7 +31,7 @@ func (l *SysRoleCreateLogic) SysRoleCreate(req *types.SysRoleCreateReq) (resp *t
 	result, err := l.svcCtx.SystemCli.SysRoleCreate(l.ctx, &system.SysRoleCreateReq{
 		Name:   req.Name,
 		Code:   req.Code,
-		Status: req.Status,
+		Status: toCommonStatus(req.Status),
 		Remark: req.Remark,
 	})
 	return &types.RespBase{

@@ -76,6 +76,7 @@ export type {
   SysConfigListReq,
   SysConfigCreateReq,
   SysConfigUpdateReq,
+  SysConfigKeyOption,
 } from './system/ConfigService'
 export type {
   SysCronJobItem,
@@ -317,11 +318,14 @@ export type {
   UserIdentityItem,
   MemberUserBankItem,
   ListMemberUsersReq,
+  CreateUserOptionsResp,
   CreateMemberUserReq,
+  CheckUserReferrerResp,
   UpdateMemberUserBaseReq,
   UpdateMemberUserStatusReq,
   UpdateMemberUserLevelReq,
   UpdateMemberUserRiskLevelReq,
+  UserOptionItem,
   ListMemberUserIdentitiesReq,
   ReviewUserIdentityReq,
   ListMemberUserBanksReq,

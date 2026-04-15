@@ -31,7 +31,7 @@ func (l *SysTenantUpdateLogic) SysTenantUpdate(req *types.SysTenantUpdateReq) (r
 	result, err := l.svcCtx.SystemCli.SysTenantUpdate(l.ctx, &system.SysTenantUpdateReq{
 		Id:           req.Id,
 		TenantName:   req.TenantName,
-		Status:       req.Status,
+		Status:       toCommonStatus(req.Status),
 		ExpireTime:   req.ExpireTime,
 		ContactName:  req.ContactName,
 		ContactPhone: req.ContactPhone,

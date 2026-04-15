@@ -18,3 +18,13 @@ type TimeRange {
 	endTime   int64 `form:"endTime,optional"`
 }
 
+type OptionsItem {
+	value int32 `json:"value"`
+	code string `json:"code"`
+}
+
+type OptionsGroup {
+	key     string        `json:"key"`
+	label   string        `json:"label"`
+	options []OptionsItem `json:"options"`
+}

@@ -30,7 +30,7 @@ func NewChangeUserStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 func (l *ChangeUserStatusLogic) ChangeUserStatus(req *types.ChangeUserStatusReq) (resp *types.RespBase, err error) {
 	result, err := l.svcCtx.SystemCli.ChangeUserStatus(l.ctx, &system.ChangeUserStatusReq{
 		Id:     req.Id,
-		Status: req.Status,
+		Status: toCommonStatus(req.Status),
 	})
 	if err != nil {
 		return nil, err

@@ -74,7 +74,7 @@ func (x *AppProductListReq) GetProductType() ProductType {
 	if x != nil {
 		return x.ProductType
 	}
-	return ProductType_PRODUCT_TYPE_UNSPECIFIED
+	return ProductType_PRODUCT_TYPE_UNKNOWN
 }
 
 func (x *AppProductListReq) GetCoinSymbol() string {
@@ -323,7 +323,7 @@ func (x *AppCreateOrderReq) GetSource() SourceType {
 	if x != nil {
 		return x.Source
 	}
-	return SourceType_SOURCE_TYPE_UNSPECIFIED
+	return SourceType_SOURCE_TYPE_UNKNOWN
 }
 
 func (x *AppCreateOrderReq) GetRemark() string {
@@ -453,14 +453,14 @@ func (x *AppMyOrderListReq) GetStatus() OrderStatus {
 	if x != nil {
 		return x.Status
 	}
-	return OrderStatus_ORDER_STATUS_UNSPECIFIED
+	return OrderStatus_ORDER_STATUS_UNKNOWN
 }
 
 func (x *AppMyOrderListReq) GetRedeemType() RedeemType {
 	if x != nil {
 		return x.RedeemType
 	}
-	return RedeemType_REDEEM_TYPE_UNSPECIFIED
+	return RedeemType_REDEEM_TYPE_UNKNOWN
 }
 
 func (x *AppMyOrderListReq) GetPage() *common.PageReq {
@@ -702,7 +702,7 @@ func (x *AppMyRewardLogListReq) GetRewardType() RewardType {
 	if x != nil {
 		return x.RewardType
 	}
-	return RewardType_REWARD_TYPE_UNSPECIFIED
+	return RewardType_REWARD_TYPE_UNKNOWN
 }
 
 func (x *AppMyRewardLogListReq) GetPage() *common.PageReq {
@@ -831,7 +831,7 @@ func (x *AppRedeemReq) GetRedeemType() RedeemType {
 	if x != nil {
 		return x.RedeemType
 	}
-	return RedeemType_REDEEM_TYPE_UNSPECIFIED
+	return RedeemType_REDEEM_TYPE_UNKNOWN
 }
 
 func (x *AppRedeemReq) GetRemark() string {

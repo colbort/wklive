@@ -86,7 +86,7 @@ func (x *AddAvailableReq) GetWalletType() WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNSPECIFIED
+	return WalletType_WALLET_TYPE_UNKNOWN
 }
 
 func (x *AddAvailableReq) GetCoin() string {
@@ -107,14 +107,14 @@ func (x *AddAvailableReq) GetBizType() BizType {
 	if x != nil {
 		return x.BizType
 	}
-	return BizType_BIZ_TYPE_UNSPECIFIED
+	return BizType_BIZ_TYPE_UNKNOWN
 }
 
 func (x *AddAvailableReq) GetSceneType() SceneType {
 	if x != nil {
 		return x.SceneType
 	}
-	return SceneType_SCENE_TYPE_UNSPECIFIED
+	return SceneType_SCENE_TYPE_UNKNOWN
 }
 
 func (x *AddAvailableReq) GetBizId() int64 {
@@ -202,7 +202,7 @@ func (x *SubAvailableReq) GetWalletType() WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNSPECIFIED
+	return WalletType_WALLET_TYPE_UNKNOWN
 }
 
 func (x *SubAvailableReq) GetCoin() string {
@@ -223,14 +223,14 @@ func (x *SubAvailableReq) GetBizType() BizType {
 	if x != nil {
 		return x.BizType
 	}
-	return BizType_BIZ_TYPE_UNSPECIFIED
+	return BizType_BIZ_TYPE_UNKNOWN
 }
 
 func (x *SubAvailableReq) GetSceneType() SceneType {
 	if x != nil {
 		return x.SceneType
 	}
-	return SceneType_SCENE_TYPE_UNSPECIFIED
+	return SceneType_SCENE_TYPE_UNKNOWN
 }
 
 func (x *SubAvailableReq) GetBizId() int64 {
@@ -319,7 +319,7 @@ func (x *FreezeAssetReq) GetWalletType() WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNSPECIFIED
+	return WalletType_WALLET_TYPE_UNKNOWN
 }
 
 func (x *FreezeAssetReq) GetCoin() string {
@@ -340,14 +340,14 @@ func (x *FreezeAssetReq) GetBizType() BizType {
 	if x != nil {
 		return x.BizType
 	}
-	return BizType_BIZ_TYPE_UNSPECIFIED
+	return BizType_BIZ_TYPE_UNKNOWN
 }
 
 func (x *FreezeAssetReq) GetSceneType() SceneType {
 	if x != nil {
 		return x.SceneType
 	}
-	return SceneType_SCENE_TYPE_UNSPECIFIED
+	return SceneType_SCENE_TYPE_UNKNOWN
 }
 
 func (x *FreezeAssetReq) GetBizId() int64 {
@@ -507,14 +507,14 @@ func (x *UnfreezeAssetReq) GetBizType() BizType {
 	if x != nil {
 		return x.BizType
 	}
-	return BizType_BIZ_TYPE_UNSPECIFIED
+	return BizType_BIZ_TYPE_UNKNOWN
 }
 
 func (x *UnfreezeAssetReq) GetSceneType() SceneType {
 	if x != nil {
 		return x.SceneType
 	}
-	return SceneType_SCENE_TYPE_UNSPECIFIED
+	return SceneType_SCENE_TYPE_UNKNOWN
 }
 
 func (x *UnfreezeAssetReq) GetBizId() int64 {
@@ -594,7 +594,7 @@ func (x *UnfreezeAssetByBizNoReq) GetTargetBizType() BizType {
 	if x != nil {
 		return x.TargetBizType
 	}
-	return BizType_BIZ_TYPE_UNSPECIFIED
+	return BizType_BIZ_TYPE_UNKNOWN
 }
 
 func (x *UnfreezeAssetByBizNoReq) GetTargetBizNo() string {
@@ -615,14 +615,14 @@ func (x *UnfreezeAssetByBizNoReq) GetBizType() BizType {
 	if x != nil {
 		return x.BizType
 	}
-	return BizType_BIZ_TYPE_UNSPECIFIED
+	return BizType_BIZ_TYPE_UNKNOWN
 }
 
 func (x *UnfreezeAssetByBizNoReq) GetSceneType() SceneType {
 	if x != nil {
 		return x.SceneType
 	}
-	return SceneType_SCENE_TYPE_UNSPECIFIED
+	return SceneType_SCENE_TYPE_UNKNOWN
 }
 
 func (x *UnfreezeAssetByBizNoReq) GetBizId() int64 {
@@ -715,14 +715,14 @@ func (x *DeductFrozenAssetReq) GetBizType() BizType {
 	if x != nil {
 		return x.BizType
 	}
-	return BizType_BIZ_TYPE_UNSPECIFIED
+	return BizType_BIZ_TYPE_UNKNOWN
 }
 
 func (x *DeductFrozenAssetReq) GetSceneType() SceneType {
 	if x != nil {
 		return x.SceneType
 	}
-	return SceneType_SCENE_TYPE_UNSPECIFIED
+	return SceneType_SCENE_TYPE_UNKNOWN
 }
 
 func (x *DeductFrozenAssetReq) GetBizId() int64 {
@@ -812,7 +812,7 @@ func (x *LockAssetReq) GetWalletType() WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNSPECIFIED
+	return WalletType_WALLET_TYPE_UNKNOWN
 }
 
 func (x *LockAssetReq) GetCoin() string {
@@ -833,14 +833,14 @@ func (x *LockAssetReq) GetBizType() BizType {
 	if x != nil {
 		return x.BizType
 	}
-	return BizType_BIZ_TYPE_UNSPECIFIED
+	return BizType_BIZ_TYPE_UNKNOWN
 }
 
 func (x *LockAssetReq) GetSceneType() SceneType {
 	if x != nil {
 		return x.SceneType
 	}
-	return SceneType_SCENE_TYPE_UNSPECIFIED
+	return SceneType_SCENE_TYPE_UNKNOWN
 }
 
 func (x *LockAssetReq) GetBizId() int64 {
@@ -1007,14 +1007,14 @@ func (x *UnlockAssetReq) GetBizType() BizType {
 	if x != nil {
 		return x.BizType
 	}
-	return BizType_BIZ_TYPE_UNSPECIFIED
+	return BizType_BIZ_TYPE_UNKNOWN
 }
 
 func (x *UnlockAssetReq) GetSceneType() SceneType {
 	if x != nil {
 		return x.SceneType
 	}
-	return SceneType_SCENE_TYPE_UNSPECIFIED
+	return SceneType_SCENE_TYPE_UNKNOWN
 }
 
 func (x *UnlockAssetReq) GetBizId() int64 {
@@ -1094,7 +1094,7 @@ func (x *UnlockAssetByBizNoReq) GetTargetBizType() BizType {
 	if x != nil {
 		return x.TargetBizType
 	}
-	return BizType_BIZ_TYPE_UNSPECIFIED
+	return BizType_BIZ_TYPE_UNKNOWN
 }
 
 func (x *UnlockAssetByBizNoReq) GetTargetBizNo() string {
@@ -1115,14 +1115,14 @@ func (x *UnlockAssetByBizNoReq) GetBizType() BizType {
 	if x != nil {
 		return x.BizType
 	}
-	return BizType_BIZ_TYPE_UNSPECIFIED
+	return BizType_BIZ_TYPE_UNKNOWN
 }
 
 func (x *UnlockAssetByBizNoReq) GetSceneType() SceneType {
 	if x != nil {
 		return x.SceneType
 	}
-	return SceneType_SCENE_TYPE_UNSPECIFIED
+	return SceneType_SCENE_TYPE_UNKNOWN
 }
 
 func (x *UnlockAssetByBizNoReq) GetBizId() int64 {
@@ -1215,14 +1215,14 @@ func (x *DeductLockedAssetReq) GetBizType() BizType {
 	if x != nil {
 		return x.BizType
 	}
-	return BizType_BIZ_TYPE_UNSPECIFIED
+	return BizType_BIZ_TYPE_UNKNOWN
 }
 
 func (x *DeductLockedAssetReq) GetSceneType() SceneType {
 	if x != nil {
 		return x.SceneType
 	}
-	return SceneType_SCENE_TYPE_UNSPECIFIED
+	return SceneType_SCENE_TYPE_UNKNOWN
 }
 
 func (x *DeductLockedAssetReq) GetBizId() int64 {
@@ -1302,7 +1302,7 @@ func (x *DeductLockedAssetByBizNoReq) GetTargetBizType() BizType {
 	if x != nil {
 		return x.TargetBizType
 	}
-	return BizType_BIZ_TYPE_UNSPECIFIED
+	return BizType_BIZ_TYPE_UNKNOWN
 }
 
 func (x *DeductLockedAssetByBizNoReq) GetTargetBizNo() string {
@@ -1323,14 +1323,14 @@ func (x *DeductLockedAssetByBizNoReq) GetBizType() BizType {
 	if x != nil {
 		return x.BizType
 	}
-	return BizType_BIZ_TYPE_UNSPECIFIED
+	return BizType_BIZ_TYPE_UNKNOWN
 }
 
 func (x *DeductLockedAssetByBizNoReq) GetSceneType() SceneType {
 	if x != nil {
 		return x.SceneType
 	}
-	return SceneType_SCENE_TYPE_UNSPECIFIED
+	return SceneType_SCENE_TYPE_UNKNOWN
 }
 
 func (x *DeductLockedAssetByBizNoReq) GetBizId() int64 {
@@ -1419,14 +1419,14 @@ func (x *TransferAssetReq) GetFromWalletType() WalletType {
 	if x != nil {
 		return x.FromWalletType
 	}
-	return WalletType_WALLET_TYPE_UNSPECIFIED
+	return WalletType_WALLET_TYPE_UNKNOWN
 }
 
 func (x *TransferAssetReq) GetToWalletType() WalletType {
 	if x != nil {
 		return x.ToWalletType
 	}
-	return WalletType_WALLET_TYPE_UNSPECIFIED
+	return WalletType_WALLET_TYPE_UNKNOWN
 }
 
 func (x *TransferAssetReq) GetCoin() string {
@@ -1447,14 +1447,14 @@ func (x *TransferAssetReq) GetBizType() BizType {
 	if x != nil {
 		return x.BizType
 	}
-	return BizType_BIZ_TYPE_UNSPECIFIED
+	return BizType_BIZ_TYPE_UNKNOWN
 }
 
 func (x *TransferAssetReq) GetSceneType() SceneType {
 	if x != nil {
 		return x.SceneType
 	}
-	return SceneType_SCENE_TYPE_UNSPECIFIED
+	return SceneType_SCENE_TYPE_UNKNOWN
 }
 
 func (x *TransferAssetReq) GetBizId() int64 {

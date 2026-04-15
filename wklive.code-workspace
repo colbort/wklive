@@ -81,6 +81,7 @@
       "logx",
       "otpauth",
       "pageutil",
+      "protoreflect",
       "qrcode",
       "sqlutil",
       "sqlx",

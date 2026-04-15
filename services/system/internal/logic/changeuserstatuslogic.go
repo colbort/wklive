@@ -2,11 +2,12 @@ package logic
 
 import (
 	"context"
-	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type ChangeUserStatusLogic struct {
@@ -34,12 +35,12 @@ func (l *ChangeUserStatusLogic) ChangeUserStatus(in *system.ChangeUserStatusReq)
 		}, nil
 	}
 
-	if user.Status == in.Status {
+	if user.Status == commonStatusToModel(in.Status) {
 		return &system.RespBase{
 			Base: helper.GetErrResp(1, i18n.Translate(i18n.UserStatusUnchanged, l.ctx)),
 		}, nil
 	}
-	user.Status = in.Status
+	user.Status = commonStatusToModel(in.Status)
 	if err = l.svcCtx.UserModel.Update(l.ctx, user); err != nil {
 		return nil, err
 	}

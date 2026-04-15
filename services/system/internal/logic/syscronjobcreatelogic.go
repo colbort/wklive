@@ -58,7 +58,7 @@ func (l *SysCronJobCreateLogic) SysCronJobCreate(in *system.SysCronJobCreateReq)
 		JobGroup:       in.JobGroup,
 		InvokeTarget:   in.InvokeTarget,
 		CronExpression: in.CronExpression,
-		Status:         in.Status,
+		Status:         jobStatusToModel(in.Status),
 		Remark:         sql.NullString{String: in.Remark, Valid: true},
 		CreateBy:       sql.NullString{String: userName, Valid: true},
 		CreateTimes:    utils.NowMillis(),

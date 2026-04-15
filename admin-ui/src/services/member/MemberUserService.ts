@@ -7,7 +7,9 @@ import {
   apiMemberUserBankSetDefault,
   apiMemberUserBankUpdate,
   apiMemberUserBankUpdateStatus,
+  apiMemberUserCheckReferrer,
   apiMemberUserCreate,
+  apiMemberUserCreateOptions,
   apiMemberUserDelete,
   apiMemberUserDetail,
   apiMemberUserIdentityList,
@@ -221,6 +223,7 @@ export type CreateMemberUserReq = {
   signature?: string // 个性签名
   source?: string // 注册来源
   referrerUserId?: number // 邀请人ID
+  referrerInviteCode?: string // 推荐人邀请码
   remark?: string // 备注
 }
 
@@ -234,6 +237,7 @@ export type UpdateMemberUserBaseReq = {
   signature?: string // 个性签名
   source?: string // 注册来源
   referrerUserId?: number // 邀请人ID
+  referrerInviteCode?: string // 推荐人邀请码
   remark?: string // 备注
   phone?: string // 手机号
   email?: string // 邮箱
@@ -253,6 +257,26 @@ export type UpdateMemberUserLevelReq = {
 export type UpdateMemberUserRiskLevelReq = {
   tenantId: number // 租户ID
   riskLevel: number // 风控等级
+}
+
+export type UserOptionItem = {
+  label: string
+  value: number
+  code?: string
+}
+
+export type CreateUserOptionsResp = MemberRespBase & {
+  registerTypes: UserOptionItem[]
+  statuses: UserOptionItem[]
+}
+
+export type CheckUserReferrerResp = MemberRespBase<{
+  userId: number
+  username: string
+  nickname: string
+  inviteCode: string
+}> & {
+  exists: boolean
 }
 
 export type ListMemberUserIdentitiesReq = {
@@ -324,6 +348,14 @@ export class MemberUserService {
 
   create(data: CreateMemberUserReq) {
     return apiMemberUserCreate(data)
+  }
+
+  createOptions() {
+    return apiMemberUserCreateOptions()
+  }
+
+  checkReferrer(inviteCode: string) {
+    return apiMemberUserCheckReferrer(inviteCode)
   }
 
   updateBase(userId: number, data: UpdateMemberUserBaseReq) {

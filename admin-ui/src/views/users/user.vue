@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ArrowDown } from '@element-plus/icons-vue'
 import {
   memberUserService,
   tenantsService,
+  type CreateUserOptionsResp,
   type CreateMemberUserReq,
   type UserDetail,
   type UserItem,
@@ -12,6 +14,7 @@ import {
 } from '@/services'
 import { formatDate } from '@/utils'
 
+const { t } = useI18n()
 const loading = ref(false)
 const submitLoading = ref(false)
 const list = ref<UserItem[]>([])
@@ -26,6 +29,16 @@ const tenantChecked = ref(false)
 const tenantExists = ref(false)
 const tenantCheckName = ref('')
 const tenantCheckCode = ref('')
+const createOptions = reactive<CreateUserOptionsResp>({
+  registerTypes: [],
+  statuses: [],
+  code: 0,
+  msg: '',
+})
+const referrerChecking = ref(false)
+const referrerChecked = ref(false)
+const referrerExists = ref(false)
+const referrerDisplay = ref('')
 
 const query = reactive({
   tenantId: undefined as number | undefined,
@@ -56,6 +69,7 @@ const editForm = reactive<any>({
   signature: '',
   source: '',
   referrerUserId: 0,
+  referrerInviteCode: '',
   remark: '',
 })
 
@@ -66,7 +80,12 @@ const pwdForm = reactive({
 })
 
 const isCreate = computed(() => !editForm.userId)
-const canSubmitCreate = computed(() => !isCreate.value || (tenantChecked.value && tenantExists.value))
+const canSubmitCreate = computed(() => {
+  if (!isCreate.value) return true
+  if (!tenantChecked.value || !tenantExists.value) return false
+  if (!String(editForm.referrerInviteCode || '').trim()) return true
+  return referrerChecked.value && referrerExists.value
+})
 
 function checkCode(code: number) {
   return code === 0 || code === 200
@@ -75,6 +94,13 @@ function checkCode(code: number) {
 function displayText(value: unknown) {
   if (value === null || value === undefined || value === '') return '-'
   return String(value)
+}
+
+function getOptionLabel(code?: string, fallback?: string) {
+  if (!code) return fallback || ''
+  const key = `options.${code}`
+  const translated = t(key)
+  return translated === key ? (fallback || code) : translated
 }
 
 function formatTimeValue(value?: number | null) {
@@ -146,6 +172,26 @@ function resetTenantCheck() {
   tenantExists.value = false
   tenantCheckName.value = ''
   tenantCheckCode.value = ''
+  resetReferrerCheck()
+}
+
+function resetReferrerCheck() {
+  referrerChecked.value = false
+  referrerExists.value = false
+  referrerDisplay.value = ''
+}
+
+async function fetchCreateOptions() {
+  try {
+    const res = await memberUserService.createOptions()
+    if (!checkCode(res.code)) throw new Error(res.msg || '加载选项失败')
+    Object.assign(createOptions, {
+      registerTypes: res.registerTypes || res.data?.registerTypes || [],
+      statuses: res.statuses || res.data?.statuses || [],
+    })
+  } catch (error: any) {
+    ElMessage.error(error?.message || '加载选项失败')
+  }
 }
 
 async function verifyTenant() {
@@ -166,6 +212,7 @@ async function verifyTenant() {
     tenantExists.value = Boolean(tenant)
     tenantCheckName.value = tenant?.tenantName || ''
     tenantCheckCode.value = tenant?.tenantCode || ''
+    resetReferrerCheck()
 
     if (!tenant) {
       ElMessage.warning('租户不存在，请确认租户ID')
@@ -179,6 +226,34 @@ async function verifyTenant() {
     return false
   } finally {
     tenantChecking.value = false
+  }
+}
+
+async function verifyReferrer() {
+  const referrerInviteCode = String(editForm.referrerInviteCode || '').trim()
+  if (!referrerInviteCode) {
+    resetReferrerCheck()
+    return true
+  }
+
+  referrerChecking.value = true
+  try {
+    const res = await memberUserService.checkReferrer(referrerInviteCode)
+    if (!checkCode(res.code) || !res.exists) {
+      throw new Error(res.msg || '推荐人不存在')
+    }
+    const info = res.data
+    referrerChecked.value = true
+    referrerExists.value = true
+    referrerDisplay.value = info?.nickname ? `${info.username} (${info.nickname})` : (info?.username || referrerInviteCode)
+    ElMessage.success(`已找到推荐人：${referrerDisplay.value}`)
+    return true
+  } catch (error: any) {
+    resetReferrerCheck()
+    ElMessage.error(error?.message || '推荐人不存在')
+    return false
+  } finally {
+    referrerChecking.value = false
   }
 }
 
@@ -248,9 +323,11 @@ function openCreate() {
     signature: '',
     source: '',
     referrerUserId: 0,
+    referrerInviteCode: '',
     remark: '',
   })
   resetTenantCheck()
+  resetReferrerCheck()
   editVisible.value = true
 }
 
@@ -284,8 +361,26 @@ async function openEdit(row: UserItem) {
     signature: data.base.signature,
     source: data.base.source,
     referrerUserId: data.base.referrerUserId,
+    referrerInviteCode: '',
     remark: data.base.remark,
   })
+  resetReferrerCheck()
+  if (Number(data.base.referrerUserId || 0) > 0) {
+    try {
+      const referrerRes = await memberUserService.getDetail(Number(data.base.referrerUserId), data.base.tenantId)
+      if (checkCode(referrerRes.code)) {
+        const referrerDetail = (referrerRes.detail || referrerRes.data) as UserDetail
+        editForm.referrerInviteCode = referrerDetail.base.inviteCode || ''
+        referrerChecked.value = true
+        referrerExists.value = true
+        referrerDisplay.value = referrerDetail.base.nickname
+          ? `${referrerDetail.base.username} (${referrerDetail.base.nickname})`
+          : referrerDetail.base.username
+      }
+    } catch {
+      resetReferrerCheck()
+    }
+  }
   editVisible.value = true
 }
 
@@ -297,6 +392,10 @@ async function submitEdit() {
         const verified = await verifyTenant()
         if (!verified) return
       }
+    }
+    const referrerOk = await verifyReferrer()
+    if (!referrerOk) return
+    if (isCreate.value) {
       const payload: CreateMemberUserReq = {
         tenantCode: tenantCheckCode.value,
         username: editForm.username,
@@ -313,7 +412,8 @@ async function submitEdit() {
         inviteCode: editForm.inviteCode || undefined,
         signature: editForm.signature || undefined,
         source: editForm.source || undefined,
-        referrerUserId: Number(editForm.referrerUserId || 0) || undefined,
+        referrerUserId: undefined,
+        referrerInviteCode: editForm.referrerInviteCode || undefined,
         remark: editForm.remark || undefined,
       }
       const res = await memberUserService.create(payload)
@@ -328,7 +428,8 @@ async function submitEdit() {
         timezone: editForm.timezone || undefined,
         signature: editForm.signature || undefined,
         source: editForm.source || undefined,
-        referrerUserId: Number(editForm.referrerUserId || 0) || undefined,
+        referrerUserId: undefined,
+        referrerInviteCode: editForm.referrerInviteCode || undefined,
         remark: editForm.remark || undefined,
         phone: editForm.phone || undefined,
         email: editForm.email || undefined,
@@ -434,6 +535,7 @@ async function updateSimpleValue(row: UserItem, field: 'status' | 'memberLevel' 
 }
 
 onMounted(fetchList)
+onMounted(fetchCreateOptions)
 </script>
 
 <template>
@@ -570,10 +672,11 @@ onMounted(fetchList)
     </el-card>
 
     <el-dialog v-model="editVisible" :title="isCreate ? '新增用户' : '编辑用户'" width="720px">
-      <el-form label-width="110px">
+      <el-form label-width="110px" class="edit-form-grid">
         <el-form-item label="租户ID">
           <div class="tenant-check-row">
             <el-input-number
+              class="form-control"
               v-model="editForm.tenantId"
               :min="0"
               :precision="0"
@@ -601,50 +704,117 @@ onMounted(fetchList)
             </span>
           </div>
         </el-form-item>
-        <el-form-item label="用户名">
-          <el-input v-model="editForm.username" />
-        </el-form-item>
-        <el-form-item v-if="isCreate" label="密码">
-          <el-input v-model="editForm.password" show-password />
-        </el-form-item>
-        <el-form-item label="昵称">
-          <el-input v-model="editForm.nickname" />
-        </el-form-item>
-        <el-form-item label="手机号">
-          <el-input v-model="editForm.phone" />
-        </el-form-item>
-        <el-form-item label="邮箱">
-          <el-input v-model="editForm.email" />
-        </el-form-item>
-        <el-form-item label="头像">
-          <el-input v-model="editForm.avatar" />
-        </el-form-item>
-        <el-form-item label="注册类型">
-          <el-input-number v-model="editForm.registerType" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-input-number v-model="editForm.status" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item label="会员等级">
-          <el-input-number v-model="editForm.memberLevel" :min="0" :precision="0" />
-        </el-form-item>
-        <el-form-item label="语言">
-          <el-input v-model="editForm.language" />
-        </el-form-item>
-        <el-form-item label="时区">
-          <el-input v-model="editForm.timezone" />
-        </el-form-item>
-        <el-form-item label="邀请码">
-          <el-input v-model="editForm.inviteCode" />
-        </el-form-item>
-        <el-form-item label="签名">
-          <el-input v-model="editForm.signature" />
-        </el-form-item>
-        <el-form-item label="来源">
-          <el-input v-model="editForm.source" />
-        </el-form-item>
-        <el-form-item label="推荐人ID">
-          <el-input-number v-model="editForm.referrerUserId" :min="0" :precision="0" />
+        <el-row :gutter="16">
+          <el-col :span="12">
+            <el-form-item label="用户名">
+              <el-input v-model="editForm.username" />
+            </el-form-item>
+          </el-col>
+          <el-col v-if="isCreate" :span="12">
+            <el-form-item label="密码">
+              <el-input v-model="editForm.password" show-password />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="昵称">
+              <el-input v-model="editForm.nickname" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="手机号">
+              <el-input v-model="editForm.phone" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="邮箱">
+              <el-input v-model="editForm.email" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="头像">
+              <el-input v-model="editForm.avatar" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="注册类型">
+              <el-select v-model="editForm.registerType" style="width: 100%">
+                    <el-option
+                      v-for="item in createOptions.registerTypes"
+                      :key="item.value"
+                      :label="getOptionLabel(item.code, item.label)"
+                      :value="item.value"
+                    />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="状态">
+              <el-select v-model="editForm.status" style="width: 100%">
+                    <el-option
+                      v-for="item in createOptions.statuses"
+                      :key="item.value"
+                      :label="getOptionLabel(item.code, item.label)"
+                      :value="item.value"
+                    />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="会员等级">
+              <el-input-number class="form-control" v-model="editForm.memberLevel" :min="0" :precision="0" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="语言">
+              <el-input v-model="editForm.language" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="时区">
+              <el-input v-model="editForm.timezone" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="邀请码">
+              <el-input v-model="editForm.inviteCode" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="签名">
+              <el-input v-model="editForm.signature" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="来源">
+              <el-input v-model="editForm.source" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item label="推荐人邀请码">
+          <div class="tenant-check-row">
+            <el-input
+              v-model="editForm.referrerInviteCode"
+              @change="resetReferrerCheck"
+            />
+            <el-button
+              plain
+              :loading="referrerChecking"
+              @click="verifyReferrer"
+            >
+              校验推荐人
+            </el-button>
+          </div>
+          <div class="tenant-check-tip">
+            <span v-if="referrerChecked && referrerExists" class="tenant-check-tip tenant-check-tip--success">
+              推荐人存在：{{ referrerDisplay }}
+            </span>
+            <span v-else-if="referrerChecked" class="tenant-check-tip tenant-check-tip--error">
+              推荐人不存在，请重新确认
+            </span>
+            <span v-else class="tenant-check-tip tenant-check-tip--muted">
+              选填，填写推荐人邀请码后建议先校验是否存在
+            </span>
+          </div>
         </el-form-item>
         <el-form-item label="备注">
           <el-input v-model="editForm.remark" type="textarea" :rows="3" />
@@ -828,6 +998,14 @@ onMounted(fetchList)
 </template>
 
 <style scoped>
+.edit-form-grid :deep(.el-form-item) {
+  margin-bottom: 18px;
+}
+
+.form-control {
+  width: 100%;
+}
+
 .tenant-check-row {
   display: flex;
   align-items: center;

@@ -31,7 +31,7 @@ func (l *SysRoleUpdateLogic) SysRoleUpdate(req *types.SysRoleUpdateReq) (resp *t
 	result, err := l.svcCtx.SystemCli.SysRoleUpdate(l.ctx, &system.SysRoleUpdateReq{
 		Id:     req.Id,
 		Name:   req.Name,
-		Status: req.Status,
+		Status: toCommonStatus(req.Status),
 		Remark: req.Remark,
 	})
 	if err != nil {

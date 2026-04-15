@@ -315,11 +315,6 @@ type SysConfigListResp {
 	data []SysConfigItem `json:"data"`
 }
 
-type SysConfigKeysResp {
-	RespBase
-	data []string `json:"data"`
-}
-
 // 系统定时任务
 type SysCronJobItem {
 	id             int64  `json:"id"`
@@ -484,12 +479,20 @@ type SysTenantDetailResp {
 	data SysTenantItem `json:"data"`
 }
 
+type GetSystemOptionsResp {
+	RespBase
+	data []OptionsGroup `json:"data"`
+}
+
 @server (
 	prefix: /admin/system
 	group:  system
 	jwt:    Jwt
 )
 service admin {
+	@handler GetSystemOptions
+	get /options returns (GetSystemOptionsResp)
+
 	// --- 后台用户 ---
 	@handler SysUserList
 	get /users (SysUserListReq) returns (SysUserListResp)
@@ -590,9 +593,6 @@ service admin {
 	@handler SysConfigDelete
 	delete /configs/:id (SysConfigDeleteReq) returns (RespBase)
 
-	@handler SysConfigKeys
-	get /configs/keys returns (SysConfigKeysResp)
-
 	// 系统定时任务列表
 	@handler SysCronJobList
 	get /jobs (SysCronJobListReq) returns (SysCronJobListResp)
@@ -645,4 +645,3 @@ service admin {
 	@handler SysTenantDetail
 	get /tenant/detail (SysTenantDetailReq) returns (SysTenantDetailResp)
 }
-

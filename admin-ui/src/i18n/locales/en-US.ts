@@ -291,8 +291,8 @@ export default {
     // ===== User =====
     '10': 'Users',
     '11': 'User List',
-    '24': 'KYC List',
-    '26': 'User Banks',
+    '26': 'KYC List',
+    '28': 'User Banks',
 
     // ===== Payment =====
     '100': 'Payments',

@@ -82,7 +82,7 @@ func (x *PageUserAssetsReq) GetWalletType() WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNSPECIFIED
+	return WalletType_WALLET_TYPE_UNKNOWN
 }
 
 func (x *PageUserAssetsReq) GetCoin() string {
@@ -96,7 +96,7 @@ func (x *PageUserAssetsReq) GetStatus() AssetStatus {
 	if x != nil {
 		return x.Status
 	}
-	return AssetStatus_ASSET_STATUS_UNSPECIFIED
+	return AssetStatus_ASSET_STATUS_UNKNOWN
 }
 
 func (x *PageUserAssetsReq) GetPage() *common.PageReq {
@@ -216,7 +216,7 @@ func (x *GetUserAssetDetailReq) GetWalletType() WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNSPECIFIED
+	return WalletType_WALLET_TYPE_UNKNOWN
 }
 
 func (x *GetUserAssetDetailReq) GetCoin() string {
@@ -341,7 +341,7 @@ func (x *PageAssetFlowsReq) GetWalletType() WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNSPECIFIED
+	return WalletType_WALLET_TYPE_UNKNOWN
 }
 
 func (x *PageAssetFlowsReq) GetCoin() string {
@@ -355,14 +355,14 @@ func (x *PageAssetFlowsReq) GetBizType() BizType {
 	if x != nil {
 		return x.BizType
 	}
-	return BizType_BIZ_TYPE_UNSPECIFIED
+	return BizType_BIZ_TYPE_UNKNOWN
 }
 
 func (x *PageAssetFlowsReq) GetSceneType() SceneType {
 	if x != nil {
 		return x.SceneType
 	}
-	return SceneType_SCENE_TYPE_UNSPECIFIED
+	return SceneType_SCENE_TYPE_UNKNOWN
 }
 
 func (x *PageAssetFlowsReq) GetBizNo() string {
@@ -500,7 +500,7 @@ func (x *PageAssetFreezesReq) GetWalletType() WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNSPECIFIED
+	return WalletType_WALLET_TYPE_UNKNOWN
 }
 
 func (x *PageAssetFreezesReq) GetCoin() string {
@@ -514,7 +514,7 @@ func (x *PageAssetFreezesReq) GetBizType() BizType {
 	if x != nil {
 		return x.BizType
 	}
-	return BizType_BIZ_TYPE_UNSPECIFIED
+	return BizType_BIZ_TYPE_UNKNOWN
 }
 
 func (x *PageAssetFreezesReq) GetBizNo() string {
@@ -528,7 +528,7 @@ func (x *PageAssetFreezesReq) GetStatus() FreezeStatus {
 	if x != nil {
 		return x.Status
 	}
-	return FreezeStatus_FREEZE_STATUS_UNSPECIFIED
+	return FreezeStatus_FREEZE_STATUS_UNKNOWN
 }
 
 func (x *PageAssetFreezesReq) GetPage() *common.PageReq {
@@ -652,7 +652,7 @@ func (x *PageAssetLocksReq) GetWalletType() WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNSPECIFIED
+	return WalletType_WALLET_TYPE_UNKNOWN
 }
 
 func (x *PageAssetLocksReq) GetCoin() string {
@@ -666,7 +666,7 @@ func (x *PageAssetLocksReq) GetBizType() BizType {
 	if x != nil {
 		return x.BizType
 	}
-	return BizType_BIZ_TYPE_UNSPECIFIED
+	return BizType_BIZ_TYPE_UNKNOWN
 }
 
 func (x *PageAssetLocksReq) GetBizNo() string {
@@ -680,7 +680,7 @@ func (x *PageAssetLocksReq) GetStatus() LockStatus {
 	if x != nil {
 		return x.Status
 	}
-	return LockStatus_LOCK_STATUS_UNSPECIFIED
+	return LockStatus_LOCK_STATUS_UNKNOWN
 }
 
 func (x *PageAssetLocksReq) GetPage() *common.PageReq {
@@ -804,7 +804,7 @@ func (x *AdminAddAssetReq) GetWalletType() WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNSPECIFIED
+	return WalletType_WALLET_TYPE_UNKNOWN
 }
 
 func (x *AdminAddAssetReq) GetCoin() string {
@@ -904,7 +904,7 @@ func (x *AdminSubAssetReq) GetWalletType() WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNSPECIFIED
+	return WalletType_WALLET_TYPE_UNKNOWN
 }
 
 func (x *AdminSubAssetReq) GetCoin() string {
@@ -1004,7 +1004,7 @@ func (x *AdminFreezeAssetReq) GetWalletType() WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNSPECIFIED
+	return WalletType_WALLET_TYPE_UNKNOWN
 }
 
 func (x *AdminFreezeAssetReq) GetCoin() string {
@@ -1188,7 +1188,7 @@ func (x *AdminLockAssetReq) GetWalletType() WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNSPECIFIED
+	return WalletType_WALLET_TYPE_UNKNOWN
 }
 
 func (x *AdminLockAssetReq) GetCoin() string {

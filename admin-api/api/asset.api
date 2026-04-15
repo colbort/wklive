@@ -232,12 +232,20 @@ type AdminChangeAssetResp {
 	asset AssetUserAsset `json:"asset"`
 }
 
+type GetAssetOptionsResp {
+	RespBase
+	data []OptionsGroup `json:"data"`
+}
+
 @server (
 	prefix: /admin/asset
 	group:  asset
 	jwt:    Jwt
 )
 service admin {
+	@handler GetAssetOptions
+	get /options returns (GetAssetOptionsResp)
+
 	@handler PageUserAssets
 	get /user-assets (PageUserAssetsReq) returns (PageUserAssetsResp)
 
@@ -271,4 +279,3 @@ service admin {
 	@handler AdminUnlockAsset
 	post /unlock (AdminUnlockAssetReq) returns (AdminChangeAssetResp)
 }
-

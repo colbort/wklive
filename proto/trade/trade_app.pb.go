@@ -116,14 +116,14 @@ func (x *GetSymbolListReq) GetMarketType() MarketType {
 	if x != nil {
 		return x.MarketType
 	}
-	return MarketType_MARKET_TYPE_UNSPECIFIED
+	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
 func (x *GetSymbolListReq) GetStatus() SymbolStatus {
 	if x != nil {
 		return x.Status
 	}
-	return SymbolStatus_SYMBOL_STATUS_UNSPECIFIED
+	return SymbolStatus_SYMBOL_STATUS_UNKNOWN
 }
 
 type GetSymbolListResp struct {
@@ -380,35 +380,35 @@ func (x *PlaceOrderReq) GetMarketType() MarketType {
 	if x != nil {
 		return x.MarketType
 	}
-	return MarketType_MARKET_TYPE_UNSPECIFIED
+	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
 func (x *PlaceOrderReq) GetSide() TradeSide {
 	if x != nil {
 		return x.Side
 	}
-	return TradeSide_TRADE_SIDE_UNSPECIFIED
+	return TradeSide_TRADE_SIDE_UNKNOWN
 }
 
 func (x *PlaceOrderReq) GetPositionSide() PositionSide {
 	if x != nil {
 		return x.PositionSide
 	}
-	return PositionSide_POSITION_SIDE_UNSPECIFIED
+	return PositionSide_POSITION_SIDE_UNKNOWN
 }
 
 func (x *PlaceOrderReq) GetOrderType() OrderType {
 	if x != nil {
 		return x.OrderType
 	}
-	return OrderType_ORDER_TYPE_UNSPECIFIED
+	return OrderType_ORDER_TYPE_UNKNOWN
 }
 
 func (x *PlaceOrderReq) GetTimeInForce() TimeInForce {
 	if x != nil {
 		return x.TimeInForce
 	}
-	return TimeInForce_TIME_IN_FORCE_UNSPECIFIED
+	return TimeInForce_TIME_IN_FORCE_UNKNOWN
 }
 
 func (x *PlaceOrderReq) GetClientOrderId() string {
@@ -471,7 +471,7 @@ func (x *PlaceOrderReq) GetMarginMode() MarginMode {
 	if x != nil {
 		return x.MarginMode
 	}
-	return MarginMode_MARGIN_MODE_UNSPECIFIED
+	return MarginMode_MARGIN_MODE_UNKNOWN
 }
 
 func (x *PlaceOrderReq) GetLeverage() int64 {
@@ -499,7 +499,7 @@ func (x *PlaceOrderReq) GetOrderSource() OrderSourceType {
 	if x != nil {
 		return x.OrderSource
 	}
-	return OrderSourceType_ORDER_SOURCE_TYPE_UNSPECIFIED
+	return OrderSourceType_ORDER_SOURCE_TYPE_UNKNOWN
 }
 
 type PlaceOrderResp struct {
@@ -690,7 +690,7 @@ func (x *CancelAllOrdersReq) GetMarketType() MarketType {
 	if x != nil {
 		return x.MarketType
 	}
-	return MarketType_MARKET_TYPE_UNSPECIFIED
+	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
 func (x *CancelAllOrdersReq) GetSymbolId() int64 {
@@ -704,14 +704,14 @@ func (x *CancelAllOrdersReq) GetSide() TradeSide {
 	if x != nil {
 		return x.Side
 	}
-	return TradeSide_TRADE_SIDE_UNSPECIFIED
+	return TradeSide_TRADE_SIDE_UNKNOWN
 }
 
 func (x *CancelAllOrdersReq) GetPositionSide() PositionSide {
 	if x != nil {
 		return x.PositionSide
 	}
-	return PositionSide_POSITION_SIDE_UNSPECIFIED
+	return PositionSide_POSITION_SIDE_UNKNOWN
 }
 
 type CancelAllOrdersResp struct {
@@ -835,7 +835,7 @@ func (x *GetOrderListReq) GetMarketType() MarketType {
 	if x != nil {
 		return x.MarketType
 	}
-	return MarketType_MARKET_TYPE_UNSPECIFIED
+	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
 func (x *GetOrderListReq) GetSymbolId() int64 {
@@ -849,14 +849,14 @@ func (x *GetOrderListReq) GetStatus() OrderStatus {
 	if x != nil {
 		return x.Status
 	}
-	return OrderStatus_ORDER_STATUS_UNSPECIFIED
+	return OrderStatus_ORDER_STATUS_UNKNOWN
 }
 
 func (x *GetOrderListReq) GetSide() TradeSide {
 	if x != nil {
 		return x.Side
 	}
-	return TradeSide_TRADE_SIDE_UNSPECIFIED
+	return TradeSide_TRADE_SIDE_UNKNOWN
 }
 
 func (x *GetOrderListReq) GetTimeRange() *TimeRange {
@@ -1121,7 +1121,7 @@ func (x *GetFillListReq) GetMarketType() MarketType {
 	if x != nil {
 		return x.MarketType
 	}
-	return MarketType_MARKET_TYPE_UNSPECIFIED
+	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
 func (x *GetFillListReq) GetSymbolId() int64 {
@@ -1248,7 +1248,7 @@ func (x *GetPositionListReq) GetMarketType() MarketType {
 	if x != nil {
 		return x.MarketType
 	}
-	return MarketType_MARKET_TYPE_UNSPECIFIED
+	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
 func (x *GetPositionListReq) GetSymbolId() int64 {
@@ -1368,7 +1368,7 @@ func (x *GetMarginAccountListReq) GetMarketType() MarketType {
 	if x != nil {
 		return x.MarketType
 	}
-	return MarketType_MARKET_TYPE_UNSPECIFIED
+	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
 func (x *GetMarginAccountListReq) GetMarginAsset() string {
@@ -1496,14 +1496,14 @@ func (x *GetLeverageConfigReq) GetMarketType() MarketType {
 	if x != nil {
 		return x.MarketType
 	}
-	return MarketType_MARKET_TYPE_UNSPECIFIED
+	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
 func (x *GetLeverageConfigReq) GetMarginMode() MarginMode {
 	if x != nil {
 		return x.MarginMode
 	}
-	return MarginMode_MARGIN_MODE_UNSPECIFIED
+	return MarginMode_MARGIN_MODE_UNKNOWN
 }
 
 type GetLeverageConfigResp struct {
@@ -1627,21 +1627,21 @@ func (x *SetLeverageReq) GetMarketType() MarketType {
 	if x != nil {
 		return x.MarketType
 	}
-	return MarketType_MARKET_TYPE_UNSPECIFIED
+	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
 func (x *SetLeverageReq) GetMarginMode() MarginMode {
 	if x != nil {
 		return x.MarginMode
 	}
-	return MarginMode_MARGIN_MODE_UNSPECIFIED
+	return MarginMode_MARGIN_MODE_UNKNOWN
 }
 
 func (x *SetLeverageReq) GetPositionMode() PositionMode {
 	if x != nil {
 		return x.PositionMode
 	}
-	return PositionMode_POSITION_MODE_UNSPECIFIED
+	return PositionMode_POSITION_MODE_UNKNOWN
 }
 
 func (x *SetLeverageReq) GetLongLeverage() int64 {

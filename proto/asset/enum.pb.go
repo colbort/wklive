@@ -25,18 +25,18 @@ const (
 type WalletType int32
 
 const (
-	WalletType_WALLET_TYPE_UNSPECIFIED WalletType = 0
-	WalletType_WALLET_TYPE_SPOT        WalletType = 1 // 现货钱包
-	WalletType_WALLET_TYPE_FUNDING     WalletType = 2 // 资金钱包
-	WalletType_WALLET_TYPE_CONTRACT    WalletType = 3 // 合约钱包
-	WalletType_WALLET_TYPE_EARN        WalletType = 4 // 理财钱包
-	WalletType_WALLET_TYPE_OPTION      WalletType = 5 // 期权钱包
+	WalletType_WALLET_TYPE_UNKNOWN  WalletType = 0
+	WalletType_WALLET_TYPE_SPOT     WalletType = 1 // 现货钱包
+	WalletType_WALLET_TYPE_FUNDING  WalletType = 2 // 资金钱包
+	WalletType_WALLET_TYPE_CONTRACT WalletType = 3 // 合约钱包
+	WalletType_WALLET_TYPE_EARN     WalletType = 4 // 理财钱包
+	WalletType_WALLET_TYPE_OPTION   WalletType = 5 // 期权钱包
 )
 
 // Enum value maps for WalletType.
 var (
 	WalletType_name = map[int32]string{
-		0: "WALLET_TYPE_UNSPECIFIED",
+		0: "WALLET_TYPE_UNKNOWN",
 		1: "WALLET_TYPE_SPOT",
 		2: "WALLET_TYPE_FUNDING",
 		3: "WALLET_TYPE_CONTRACT",
@@ -44,12 +44,12 @@ var (
 		5: "WALLET_TYPE_OPTION",
 	}
 	WalletType_value = map[string]int32{
-		"WALLET_TYPE_UNSPECIFIED": 0,
-		"WALLET_TYPE_SPOT":        1,
-		"WALLET_TYPE_FUNDING":     2,
-		"WALLET_TYPE_CONTRACT":    3,
-		"WALLET_TYPE_EARN":        4,
-		"WALLET_TYPE_OPTION":      5,
+		"WALLET_TYPE_UNKNOWN":  0,
+		"WALLET_TYPE_SPOT":     1,
+		"WALLET_TYPE_FUNDING":  2,
+		"WALLET_TYPE_CONTRACT": 3,
+		"WALLET_TYPE_EARN":     4,
+		"WALLET_TYPE_OPTION":   5,
 	}
 )
 
@@ -84,22 +84,22 @@ func (WalletType) EnumDescriptor() ([]byte, []int) {
 type AssetStatus int32
 
 const (
-	AssetStatus_ASSET_STATUS_UNSPECIFIED AssetStatus = 0
-	AssetStatus_ASSET_STATUS_DISABLED    AssetStatus = 1 // 禁用
-	AssetStatus_ASSET_STATUS_ENABLED     AssetStatus = 2 // 正常
+	AssetStatus_ASSET_STATUS_UNKNOWN  AssetStatus = 0
+	AssetStatus_ASSET_STATUS_DISABLED AssetStatus = 1 // 禁用
+	AssetStatus_ASSET_STATUS_ENABLED  AssetStatus = 2 // 正常
 )
 
 // Enum value maps for AssetStatus.
 var (
 	AssetStatus_name = map[int32]string{
-		0: "ASSET_STATUS_UNSPECIFIED",
+		0: "ASSET_STATUS_UNKNOWN",
 		1: "ASSET_STATUS_DISABLED",
 		2: "ASSET_STATUS_ENABLED",
 	}
 	AssetStatus_value = map[string]int32{
-		"ASSET_STATUS_UNSPECIFIED": 0,
-		"ASSET_STATUS_DISABLED":    1,
-		"ASSET_STATUS_ENABLED":     2,
+		"ASSET_STATUS_UNKNOWN":  0,
+		"ASSET_STATUS_DISABLED": 1,
+		"ASSET_STATUS_ENABLED":  2,
 	}
 )
 
@@ -134,7 +134,7 @@ func (AssetStatus) EnumDescriptor() ([]byte, []int) {
 type AssetOpType int32
 
 const (
-	AssetOpType_ASSET_OP_TYPE_UNSPECIFIED   AssetOpType = 0
+	AssetOpType_ASSET_OP_TYPE_UNKNOWN       AssetOpType = 0
 	AssetOpType_ASSET_OP_TYPE_ADD           AssetOpType = 1  // 增加
 	AssetOpType_ASSET_OP_TYPE_SUB           AssetOpType = 2  // 减少
 	AssetOpType_ASSET_OP_TYPE_FREEZE        AssetOpType = 3  // 冻结
@@ -150,7 +150,7 @@ const (
 // Enum value maps for AssetOpType.
 var (
 	AssetOpType_name = map[int32]string{
-		0:  "ASSET_OP_TYPE_UNSPECIFIED",
+		0:  "ASSET_OP_TYPE_UNKNOWN",
 		1:  "ASSET_OP_TYPE_ADD",
 		2:  "ASSET_OP_TYPE_SUB",
 		3:  "ASSET_OP_TYPE_FREEZE",
@@ -163,7 +163,7 @@ var (
 		10: "ASSET_OP_TYPE_TRANSFER_OUT",
 	}
 	AssetOpType_value = map[string]int32{
-		"ASSET_OP_TYPE_UNSPECIFIED":   0,
+		"ASSET_OP_TYPE_UNKNOWN":       0,
 		"ASSET_OP_TYPE_ADD":           1,
 		"ASSET_OP_TYPE_SUB":           2,
 		"ASSET_OP_TYPE_FREEZE":        3,
@@ -208,21 +208,21 @@ func (AssetOpType) EnumDescriptor() ([]byte, []int) {
 type BizType int32
 
 const (
-	BizType_BIZ_TYPE_UNSPECIFIED BizType = 0
-	BizType_BIZ_TYPE_PAYMENT     BizType = 1 // 充值提现
-	BizType_BIZ_TYPE_TRADE       BizType = 2 // 交易
-	BizType_BIZ_TYPE_STAKING     BizType = 3 // 锁仓
-	BizType_BIZ_TYPE_OPTION      BizType = 4 // 期权
-	BizType_BIZ_TYPE_TRANSFER    BizType = 5 // 划转
-	BizType_BIZ_TYPE_SYSTEM      BizType = 6 // 系统调账
-	BizType_BIZ_TYPE_ACTIVITY    BizType = 7 // 活动
-	BizType_BIZ_TYPE_EARN        BizType = 8 // 理财
+	BizType_BIZ_TYPE_UNKNOWN  BizType = 0
+	BizType_BIZ_TYPE_PAYMENT  BizType = 1 // 充值提现
+	BizType_BIZ_TYPE_TRADE    BizType = 2 // 交易
+	BizType_BIZ_TYPE_STAKING  BizType = 3 // 锁仓
+	BizType_BIZ_TYPE_OPTION   BizType = 4 // 期权
+	BizType_BIZ_TYPE_TRANSFER BizType = 5 // 划转
+	BizType_BIZ_TYPE_SYSTEM   BizType = 6 // 系统调账
+	BizType_BIZ_TYPE_ACTIVITY BizType = 7 // 活动
+	BizType_BIZ_TYPE_EARN     BizType = 8 // 理财
 )
 
 // Enum value maps for BizType.
 var (
 	BizType_name = map[int32]string{
-		0: "BIZ_TYPE_UNSPECIFIED",
+		0: "BIZ_TYPE_UNKNOWN",
 		1: "BIZ_TYPE_PAYMENT",
 		2: "BIZ_TYPE_TRADE",
 		3: "BIZ_TYPE_STAKING",
@@ -233,15 +233,15 @@ var (
 		8: "BIZ_TYPE_EARN",
 	}
 	BizType_value = map[string]int32{
-		"BIZ_TYPE_UNSPECIFIED": 0,
-		"BIZ_TYPE_PAYMENT":     1,
-		"BIZ_TYPE_TRADE":       2,
-		"BIZ_TYPE_STAKING":     3,
-		"BIZ_TYPE_OPTION":      4,
-		"BIZ_TYPE_TRANSFER":    5,
-		"BIZ_TYPE_SYSTEM":      6,
-		"BIZ_TYPE_ACTIVITY":    7,
-		"BIZ_TYPE_EARN":        8,
+		"BIZ_TYPE_UNKNOWN":  0,
+		"BIZ_TYPE_PAYMENT":  1,
+		"BIZ_TYPE_TRADE":    2,
+		"BIZ_TYPE_STAKING":  3,
+		"BIZ_TYPE_OPTION":   4,
+		"BIZ_TYPE_TRANSFER": 5,
+		"BIZ_TYPE_SYSTEM":   6,
+		"BIZ_TYPE_ACTIVITY": 7,
+		"BIZ_TYPE_EARN":     8,
 	}
 )
 
@@ -276,7 +276,7 @@ func (BizType) EnumDescriptor() ([]byte, []int) {
 type SceneType int32
 
 const (
-	SceneType_SCENE_TYPE_UNSPECIFIED SceneType = 0
+	SceneType_SCENE_TYPE_UNKNOWN SceneType = 0
 	// payment
 	SceneType_SCENE_TYPE_RECHARGE         SceneType = 1 // 充值入账
 	SceneType_SCENE_TYPE_WITHDRAW_APPLY   SceneType = 2 // 提现申请
@@ -303,7 +303,7 @@ const (
 // Enum value maps for SceneType.
 var (
 	SceneType_name = map[int32]string{
-		0:  "SCENE_TYPE_UNSPECIFIED",
+		0:  "SCENE_TYPE_UNKNOWN",
 		1:  "SCENE_TYPE_RECHARGE",
 		2:  "SCENE_TYPE_WITHDRAW_APPLY",
 		3:  "SCENE_TYPE_WITHDRAW_REJECT",
@@ -322,7 +322,7 @@ var (
 		44: "SCENE_TYPE_AIRDROP",
 	}
 	SceneType_value = map[string]int32{
-		"SCENE_TYPE_UNSPECIFIED":      0,
+		"SCENE_TYPE_UNKNOWN":          0,
 		"SCENE_TYPE_RECHARGE":         1,
 		"SCENE_TYPE_WITHDRAW_APPLY":   2,
 		"SCENE_TYPE_WITHDRAW_REJECT":  3,
@@ -373,7 +373,7 @@ func (SceneType) EnumDescriptor() ([]byte, []int) {
 type FreezeStatus int32
 
 const (
-	FreezeStatus_FREEZE_STATUS_UNSPECIFIED      FreezeStatus = 0
+	FreezeStatus_FREEZE_STATUS_UNKNOWN          FreezeStatus = 0
 	FreezeStatus_FREEZE_STATUS_FREEZING         FreezeStatus = 1 // 冻结中
 	FreezeStatus_FREEZE_STATUS_PARTIAL_RELEASED FreezeStatus = 2 // 部分释放
 	FreezeStatus_FREEZE_STATUS_UNFROZEN         FreezeStatus = 3 // 已解冻
@@ -384,7 +384,7 @@ const (
 // Enum value maps for FreezeStatus.
 var (
 	FreezeStatus_name = map[int32]string{
-		0: "FREEZE_STATUS_UNSPECIFIED",
+		0: "FREEZE_STATUS_UNKNOWN",
 		1: "FREEZE_STATUS_FREEZING",
 		2: "FREEZE_STATUS_PARTIAL_RELEASED",
 		3: "FREEZE_STATUS_UNFROZEN",
@@ -392,7 +392,7 @@ var (
 		5: "FREEZE_STATUS_CLOSED",
 	}
 	FreezeStatus_value = map[string]int32{
-		"FREEZE_STATUS_UNSPECIFIED":      0,
+		"FREEZE_STATUS_UNKNOWN":          0,
 		"FREEZE_STATUS_FREEZING":         1,
 		"FREEZE_STATUS_PARTIAL_RELEASED": 2,
 		"FREEZE_STATUS_UNFROZEN":         3,
@@ -432,7 +432,7 @@ func (FreezeStatus) EnumDescriptor() ([]byte, []int) {
 type LockStatus int32
 
 const (
-	LockStatus_LOCK_STATUS_UNSPECIFIED      LockStatus = 0
+	LockStatus_LOCK_STATUS_UNKNOWN          LockStatus = 0
 	LockStatus_LOCK_STATUS_LOCKING          LockStatus = 1 // 锁仓中
 	LockStatus_LOCK_STATUS_PARTIAL_UNLOCKED LockStatus = 2 // 部分解锁
 	LockStatus_LOCK_STATUS_UNLOCKED         LockStatus = 3 // 已解锁
@@ -442,14 +442,14 @@ const (
 // Enum value maps for LockStatus.
 var (
 	LockStatus_name = map[int32]string{
-		0: "LOCK_STATUS_UNSPECIFIED",
+		0: "LOCK_STATUS_UNKNOWN",
 		1: "LOCK_STATUS_LOCKING",
 		2: "LOCK_STATUS_PARTIAL_UNLOCKED",
 		3: "LOCK_STATUS_UNLOCKED",
 		4: "LOCK_STATUS_CLOSED",
 	}
 	LockStatus_value = map[string]int32{
-		"LOCK_STATUS_UNSPECIFIED":      0,
+		"LOCK_STATUS_UNKNOWN":          0,
 		"LOCK_STATUS_LOCKING":          1,
 		"LOCK_STATUS_PARTIAL_UNLOCKED": 2,
 		"LOCK_STATUS_UNLOCKED":         3,
@@ -488,25 +488,25 @@ func (LockStatus) EnumDescriptor() ([]byte, []int) {
 type IdempotentStatus int32
 
 const (
-	IdempotentStatus_IDEMPOTENT_STATUS_UNSPECIFIED IdempotentStatus = 0
-	IdempotentStatus_IDEMPOTENT_STATUS_PROCESSING  IdempotentStatus = 1 // 处理中
-	IdempotentStatus_IDEMPOTENT_STATUS_SUCCESS     IdempotentStatus = 2 // 成功
-	IdempotentStatus_IDEMPOTENT_STATUS_FAILED      IdempotentStatus = 3 // 失败
+	IdempotentStatus_IDEMPOTENT_STATUS_UNKNOWN    IdempotentStatus = 0
+	IdempotentStatus_IDEMPOTENT_STATUS_PROCESSING IdempotentStatus = 1 // 处理中
+	IdempotentStatus_IDEMPOTENT_STATUS_SUCCESS    IdempotentStatus = 2 // 成功
+	IdempotentStatus_IDEMPOTENT_STATUS_FAILED     IdempotentStatus = 3 // 失败
 )
 
 // Enum value maps for IdempotentStatus.
 var (
 	IdempotentStatus_name = map[int32]string{
-		0: "IDEMPOTENT_STATUS_UNSPECIFIED",
+		0: "IDEMPOTENT_STATUS_UNKNOWN",
 		1: "IDEMPOTENT_STATUS_PROCESSING",
 		2: "IDEMPOTENT_STATUS_SUCCESS",
 		3: "IDEMPOTENT_STATUS_FAILED",
 	}
 	IdempotentStatus_value = map[string]int32{
-		"IDEMPOTENT_STATUS_UNSPECIFIED": 0,
-		"IDEMPOTENT_STATUS_PROCESSING":  1,
-		"IDEMPOTENT_STATUS_SUCCESS":     2,
-		"IDEMPOTENT_STATUS_FAILED":      3,
+		"IDEMPOTENT_STATUS_UNKNOWN":    0,
+		"IDEMPOTENT_STATUS_PROCESSING": 1,
+		"IDEMPOTENT_STATUS_SUCCESS":    2,
+		"IDEMPOTENT_STATUS_FAILED":     3,
 	}
 )
 
@@ -541,21 +541,21 @@ var File_proto_asset_enum_proto protoreflect.FileDescriptor
 
 const file_proto_asset_enum_proto_rawDesc = "" +
 	"\n" +
-	"\x16proto/asset/enum.proto\x12\x05asset*\xa0\x01\n" +
+	"\x16proto/asset/enum.proto\x12\x05asset*\x9c\x01\n" +
 	"\n" +
-	"WalletType\x12\x1b\n" +
-	"\x17WALLET_TYPE_UNSPECIFIED\x10\x00\x12\x14\n" +
+	"WalletType\x12\x17\n" +
+	"\x13WALLET_TYPE_UNKNOWN\x10\x00\x12\x14\n" +
 	"\x10WALLET_TYPE_SPOT\x10\x01\x12\x17\n" +
 	"\x13WALLET_TYPE_FUNDING\x10\x02\x12\x18\n" +
 	"\x14WALLET_TYPE_CONTRACT\x10\x03\x12\x14\n" +
 	"\x10WALLET_TYPE_EARN\x10\x04\x12\x16\n" +
-	"\x12WALLET_TYPE_OPTION\x10\x05*`\n" +
-	"\vAssetStatus\x12\x1c\n" +
-	"\x18ASSET_STATUS_UNSPECIFIED\x10\x00\x12\x19\n" +
+	"\x12WALLET_TYPE_OPTION\x10\x05*\\\n" +
+	"\vAssetStatus\x12\x18\n" +
+	"\x14ASSET_STATUS_UNKNOWN\x10\x00\x12\x19\n" +
 	"\x15ASSET_STATUS_DISABLED\x10\x01\x12\x18\n" +
-	"\x14ASSET_STATUS_ENABLED\x10\x02*\xc1\x02\n" +
-	"\vAssetOpType\x12\x1d\n" +
-	"\x19ASSET_OP_TYPE_UNSPECIFIED\x10\x00\x12\x15\n" +
+	"\x14ASSET_STATUS_ENABLED\x10\x02*\xbd\x02\n" +
+	"\vAssetOpType\x12\x19\n" +
+	"\x15ASSET_OP_TYPE_UNKNOWN\x10\x00\x12\x15\n" +
 	"\x11ASSET_OP_TYPE_ADD\x10\x01\x12\x15\n" +
 	"\x11ASSET_OP_TYPE_SUB\x10\x02\x12\x18\n" +
 	"\x14ASSET_OP_TYPE_FREEZE\x10\x03\x12\x1a\n" +
@@ -566,9 +566,9 @@ const file_proto_asset_enum_proto_rawDesc = "" +
 	"\x19ASSET_OP_TYPE_LOCK_DEDUCT\x10\b\x12\x1d\n" +
 	"\x19ASSET_OP_TYPE_TRANSFER_IN\x10\t\x12\x1e\n" +
 	"\x1aASSET_OP_TYPE_TRANSFER_OUT\x10\n" +
-	"*\xce\x01\n" +
-	"\aBizType\x12\x18\n" +
-	"\x14BIZ_TYPE_UNSPECIFIED\x10\x00\x12\x14\n" +
+	"*\xca\x01\n" +
+	"\aBizType\x12\x14\n" +
+	"\x10BIZ_TYPE_UNKNOWN\x10\x00\x12\x14\n" +
 	"\x10BIZ_TYPE_PAYMENT\x10\x01\x12\x12\n" +
 	"\x0eBIZ_TYPE_TRADE\x10\x02\x12\x14\n" +
 	"\x10BIZ_TYPE_STAKING\x10\x03\x12\x13\n" +
@@ -576,9 +576,9 @@ const file_proto_asset_enum_proto_rawDesc = "" +
 	"\x11BIZ_TYPE_TRANSFER\x10\x05\x12\x13\n" +
 	"\x0fBIZ_TYPE_SYSTEM\x10\x06\x12\x15\n" +
 	"\x11BIZ_TYPE_ACTIVITY\x10\a\x12\x11\n" +
-	"\rBIZ_TYPE_EARN\x10\b*\xf0\x03\n" +
-	"\tSceneType\x12\x1a\n" +
-	"\x16SCENE_TYPE_UNSPECIFIED\x10\x00\x12\x17\n" +
+	"\rBIZ_TYPE_EARN\x10\b*\xec\x03\n" +
+	"\tSceneType\x12\x16\n" +
+	"\x12SCENE_TYPE_UNKNOWN\x10\x00\x12\x17\n" +
 	"\x13SCENE_TYPE_RECHARGE\x10\x01\x12\x1d\n" +
 	"\x19SCENE_TYPE_WITHDRAW_APPLY\x10\x02\x12\x1e\n" +
 	"\x1aSCENE_TYPE_WITHDRAW_REJECT\x10\x03\x12\x1f\n" +
@@ -594,23 +594,23 @@ const file_proto_asset_enum_proto_rawDesc = "" +
 	"\x15SCENE_TYPE_MANUAL_ADD\x10)\x12\x19\n" +
 	"\x15SCENE_TYPE_MANUAL_SUB\x10*\x12\x1c\n" +
 	"\x18SCENE_TYPE_SYSTEM_ADJUST\x10+\x12\x16\n" +
-	"\x12SCENE_TYPE_AIRDROP\x10,*\xbf\x01\n" +
-	"\fFreezeStatus\x12\x1d\n" +
-	"\x19FREEZE_STATUS_UNSPECIFIED\x10\x00\x12\x1a\n" +
+	"\x12SCENE_TYPE_AIRDROP\x10,*\xbb\x01\n" +
+	"\fFreezeStatus\x12\x19\n" +
+	"\x15FREEZE_STATUS_UNKNOWN\x10\x00\x12\x1a\n" +
 	"\x16FREEZE_STATUS_FREEZING\x10\x01\x12\"\n" +
 	"\x1eFREEZE_STATUS_PARTIAL_RELEASED\x10\x02\x12\x1a\n" +
 	"\x16FREEZE_STATUS_UNFROZEN\x10\x03\x12\x1a\n" +
 	"\x16FREEZE_STATUS_DEDUCTED\x10\x04\x12\x18\n" +
-	"\x14FREEZE_STATUS_CLOSED\x10\x05*\x96\x01\n" +
+	"\x14FREEZE_STATUS_CLOSED\x10\x05*\x92\x01\n" +
 	"\n" +
-	"LockStatus\x12\x1b\n" +
-	"\x17LOCK_STATUS_UNSPECIFIED\x10\x00\x12\x17\n" +
+	"LockStatus\x12\x17\n" +
+	"\x13LOCK_STATUS_UNKNOWN\x10\x00\x12\x17\n" +
 	"\x13LOCK_STATUS_LOCKING\x10\x01\x12 \n" +
 	"\x1cLOCK_STATUS_PARTIAL_UNLOCKED\x10\x02\x12\x18\n" +
 	"\x14LOCK_STATUS_UNLOCKED\x10\x03\x12\x16\n" +
-	"\x12LOCK_STATUS_CLOSED\x10\x04*\x94\x01\n" +
-	"\x10IdempotentStatus\x12!\n" +
-	"\x1dIDEMPOTENT_STATUS_UNSPECIFIED\x10\x00\x12 \n" +
+	"\x12LOCK_STATUS_CLOSED\x10\x04*\x90\x01\n" +
+	"\x10IdempotentStatus\x12\x1d\n" +
+	"\x19IDEMPOTENT_STATUS_UNKNOWN\x10\x00\x12 \n" +
 	"\x1cIDEMPOTENT_STATUS_PROCESSING\x10\x01\x12\x1d\n" +
 	"\x19IDEMPOTENT_STATUS_SUCCESS\x10\x02\x12\x1c\n" +
 	"\x18IDEMPOTENT_STATUS_FAILED\x10\x03B\x1aZ\x18wklive/proto/asset;assetb\x06proto3"

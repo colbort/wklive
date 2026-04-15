@@ -34,7 +34,7 @@ func (l *SysUserListLogic) SysUserList(req *types.SysUserListReq) (resp *types.S
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
 		},
-		Status: req.Status,
+		Status: toCommonStatus(req.Status),
 	})
 	if err != nil {
 		return nil, err
@@ -46,7 +46,7 @@ func (l *SysUserListLogic) SysUserList(req *types.SysUserListReq) (resp *types.S
 			Id:               item.Id,
 			Username:         item.Username,
 			Nickname:         item.Nickname,
-			Status:           item.Status,
+			Status:           fromCommonStatus(item.Status),
 			RoleIds:          item.RoleIds,
 			CreateTimes:      item.CreateTimes,
 			Google2faEnabled: item.Google2FaEnabled,

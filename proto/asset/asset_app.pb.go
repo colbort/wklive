@@ -184,7 +184,7 @@ func (x *ListMyAssetsReq) GetWalletType() WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNSPECIFIED
+	return WalletType_WALLET_TYPE_UNKNOWN
 }
 
 func (x *ListMyAssetsReq) GetCoin() string {
@@ -304,7 +304,7 @@ func (x *GetMyAssetReq) GetWalletType() WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNSPECIFIED
+	return WalletType_WALLET_TYPE_UNKNOWN
 }
 
 func (x *GetMyAssetReq) GetCoin() string {
@@ -428,7 +428,7 @@ func (x *ListMyAssetFlowsReq) GetWalletType() WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNSPECIFIED
+	return WalletType_WALLET_TYPE_UNKNOWN
 }
 
 func (x *ListMyAssetFlowsReq) GetCoin() string {
@@ -442,14 +442,14 @@ func (x *ListMyAssetFlowsReq) GetBizType() BizType {
 	if x != nil {
 		return x.BizType
 	}
-	return BizType_BIZ_TYPE_UNSPECIFIED
+	return BizType_BIZ_TYPE_UNKNOWN
 }
 
 func (x *ListMyAssetFlowsReq) GetSceneType() SceneType {
 	if x != nil {
 		return x.SceneType
 	}
-	return SceneType_SCENE_TYPE_UNSPECIFIED
+	return SceneType_SCENE_TYPE_UNKNOWN
 }
 
 func (x *ListMyAssetFlowsReq) GetTimeRange() *common.TimeRange {
@@ -578,7 +578,7 @@ func (x *ListMyFreezesReq) GetWalletType() WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNSPECIFIED
+	return WalletType_WALLET_TYPE_UNKNOWN
 }
 
 func (x *ListMyFreezesReq) GetCoin() string {
@@ -592,7 +592,7 @@ func (x *ListMyFreezesReq) GetStatus() FreezeStatus {
 	if x != nil {
 		return x.Status
 	}
-	return FreezeStatus_FREEZE_STATUS_UNSPECIFIED
+	return FreezeStatus_FREEZE_STATUS_UNKNOWN
 }
 
 func (x *ListMyFreezesReq) GetPage() *common.PageReq {
@@ -714,7 +714,7 @@ func (x *ListMyLocksReq) GetWalletType() WalletType {
 	if x != nil {
 		return x.WalletType
 	}
-	return WalletType_WALLET_TYPE_UNSPECIFIED
+	return WalletType_WALLET_TYPE_UNKNOWN
 }
 
 func (x *ListMyLocksReq) GetCoin() string {
@@ -728,7 +728,7 @@ func (x *ListMyLocksReq) GetStatus() LockStatus {
 	if x != nil {
 		return x.Status
 	}
-	return LockStatus_LOCK_STATUS_UNSPECIFIED
+	return LockStatus_LOCK_STATUS_UNKNOWN
 }
 
 func (x *ListMyLocksReq) GetPage() *common.PageReq {

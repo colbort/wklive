@@ -1,7 +1,9 @@
 import { del, get, post, put } from '@/utils/request'
 import type {
   AddUserBankReq,
+  CheckUserReferrerResp,
   CreateMemberUserReq,
+  CreateUserOptionsResp,
   ListMemberUserBanksReq,
   ListMemberUserIdentitiesReq,
   ListMemberUsersReq,
@@ -32,6 +34,14 @@ export function apiMemberUserDetail(userId: number, tenantId: number): Promise<M
 
 export function apiMemberUserCreate(data: CreateMemberUserReq): Promise<MemberRespBase<{ userId: number }>> {
   return post<{ userId: number }>('/admin/member/users', data)
+}
+
+export function apiMemberUserCreateOptions(): Promise<CreateUserOptionsResp> {
+  return get<CreateUserOptionsResp>('/admin/member/users/options') as Promise<CreateUserOptionsResp>
+}
+
+export function apiMemberUserCheckReferrer(inviteCode: string): Promise<CheckUserReferrerResp> {
+  return get<CheckUserReferrerResp>('/admin/member/users/referrer/check', { inviteCode }) as Promise<CheckUserReferrerResp>
 }
 
 export function apiMemberUserUpdateBase(userId: number, data: UpdateMemberUserBaseReq): Promise<MemberRespBase<UserDetail>> {

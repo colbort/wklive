@@ -105,7 +105,7 @@ func buildMenuTreeAndPerms(rows []*models.SysMenu) ([]*system.SysMenuNode, []str
 	// 1. 创建节点；按钮只收集 perms，不放入 tree
 	for _, r := range rows {
 		// 收集按钮权限
-		if r.MenuType == 3 {
+		if r.MenuType == int64(system.MenuType_MENU_TYPE_BUTTON) {
 			if r.Perms != "" {
 				permsSet[r.Perms] = struct{}{}
 			}
@@ -116,13 +116,13 @@ func buildMenuTreeAndPerms(rows []*models.SysMenu) ([]*system.SysMenuNode, []str
 			Id:        r.Id,
 			ParentId:  r.ParentId,
 			Name:      r.Name,
-			MenuType:  r.MenuType,
+			MenuType:  menuTypeToProto(r.MenuType),
 			Path:      r.Path,
 			Component: r.Component,
 			Icon:      r.Icon,
 			Sort:      r.Sort,
-			Visible:   r.Visible,
-			Status:    r.Status,
+			Visible:   visibleStatusToProto(r.Visible),
+			Status:    commonStatusToProto(r.Status),
 			Perms:     r.Perms,
 			Children:  nil,
 		}

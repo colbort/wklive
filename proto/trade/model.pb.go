@@ -403,7 +403,7 @@ func (x *TradeSymbol) GetMarketType() MarketType {
 	if x != nil {
 		return x.MarketType
 	}
-	return MarketType_MARKET_TYPE_UNSPECIFIED
+	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
 func (x *TradeSymbol) GetBaseAsset() string {
@@ -431,14 +431,14 @@ func (x *TradeSymbol) GetContractType() ContractType {
 	if x != nil {
 		return x.ContractType
 	}
-	return ContractType_CONTRACT_TYPE_UNSPECIFIED
+	return ContractType_CONTRACT_TYPE_UNKNOWN
 }
 
 func (x *TradeSymbol) GetStatus() SymbolStatus {
 	if x != nil {
 		return x.Status
 	}
-	return SymbolStatus_SYMBOL_STATUS_UNSPECIFIED
+	return SymbolStatus_SYMBOL_STATUS_UNKNOWN
 }
 
 func (x *TradeSymbol) GetPriceScale() int64 {
@@ -906,7 +906,7 @@ func (x *TradeUserConfig) GetMarketType() MarketType {
 	if x != nil {
 		return x.MarketType
 	}
-	return MarketType_MARKET_TYPE_UNSPECIFIED
+	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
 func (x *TradeUserConfig) GetSymbolId() int64 {
@@ -920,14 +920,14 @@ func (x *TradeUserConfig) GetPositionMode() PositionMode {
 	if x != nil {
 		return x.PositionMode
 	}
-	return PositionMode_POSITION_MODE_UNSPECIFIED
+	return PositionMode_POSITION_MODE_UNKNOWN
 }
 
 func (x *TradeUserConfig) GetMarginMode() MarginMode {
 	if x != nil {
 		return x.MarginMode
 	}
-	return MarginMode_MARGIN_MODE_UNSPECIFIED
+	return MarginMode_MARGIN_MODE_UNKNOWN
 }
 
 func (x *TradeUserConfig) GetDefaultLeverage() int64 {
@@ -1076,42 +1076,42 @@ func (x *TradeOrder) GetMarketType() MarketType {
 	if x != nil {
 		return x.MarketType
 	}
-	return MarketType_MARKET_TYPE_UNSPECIFIED
+	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
 func (x *TradeOrder) GetSide() TradeSide {
 	if x != nil {
 		return x.Side
 	}
-	return TradeSide_TRADE_SIDE_UNSPECIFIED
+	return TradeSide_TRADE_SIDE_UNKNOWN
 }
 
 func (x *TradeOrder) GetPositionSide() PositionSide {
 	if x != nil {
 		return x.PositionSide
 	}
-	return PositionSide_POSITION_SIDE_UNSPECIFIED
+	return PositionSide_POSITION_SIDE_UNKNOWN
 }
 
 func (x *TradeOrder) GetOrderType() OrderType {
 	if x != nil {
 		return x.OrderType
 	}
-	return OrderType_ORDER_TYPE_UNSPECIFIED
+	return OrderType_ORDER_TYPE_UNKNOWN
 }
 
 func (x *TradeOrder) GetTimeInForce() TimeInForce {
 	if x != nil {
 		return x.TimeInForce
 	}
-	return TimeInForce_TIME_IN_FORCE_UNSPECIFIED
+	return TimeInForce_TIME_IN_FORCE_UNKNOWN
 }
 
 func (x *TradeOrder) GetStatus() OrderStatus {
 	if x != nil {
 		return x.Status
 	}
-	return OrderStatus_ORDER_STATUS_UNSPECIFIED
+	return OrderStatus_ORDER_STATUS_UNKNOWN
 }
 
 func (x *TradeOrder) GetPrice() string {
@@ -1174,7 +1174,7 @@ func (x *TradeOrder) GetSource() OrderSourceType {
 	if x != nil {
 		return x.Source
 	}
-	return OrderSourceType_ORDER_SOURCE_TYPE_UNSPECIFIED
+	return OrderSourceType_ORDER_SOURCE_TYPE_UNKNOWN
 }
 
 func (x *TradeOrder) GetIsReduceOnly() int64 {
@@ -1415,7 +1415,7 @@ func (x *TradeOrderContract) GetMarginMode() MarginMode {
 	if x != nil {
 		return x.MarginMode
 	}
-	return MarginMode_MARGIN_MODE_UNSPECIFIED
+	return MarginMode_MARGIN_MODE_UNKNOWN
 }
 
 func (x *TradeOrderContract) GetLeverage() int64 {
@@ -1589,21 +1589,21 @@ func (x *TradeFill) GetMarketType() MarketType {
 	if x != nil {
 		return x.MarketType
 	}
-	return MarketType_MARKET_TYPE_UNSPECIFIED
+	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
 func (x *TradeFill) GetSide() TradeSide {
 	if x != nil {
 		return x.Side
 	}
-	return TradeSide_TRADE_SIDE_UNSPECIFIED
+	return TradeSide_TRADE_SIDE_UNKNOWN
 }
 
 func (x *TradeFill) GetPositionSide() PositionSide {
 	if x != nil {
 		return x.PositionSide
 	}
-	return PositionSide_POSITION_SIDE_UNSPECIFIED
+	return PositionSide_POSITION_SIDE_UNKNOWN
 }
 
 func (x *TradeFill) GetPrice() string {
@@ -1645,7 +1645,7 @@ func (x *TradeFill) GetLiquidityType() LiquidityType {
 	if x != nil {
 		return x.LiquidityType
 	}
-	return LiquidityType_LIQUIDITY_TYPE_UNSPECIFIED
+	return LiquidityType_LIQUIDITY_TYPE_UNKNOWN
 }
 
 func (x *TradeFill) GetRealizedPnl() string {
@@ -1860,21 +1860,21 @@ func (x *ContractPosition) GetMarketType() MarketType {
 	if x != nil {
 		return x.MarketType
 	}
-	return MarketType_MARKET_TYPE_UNSPECIFIED
+	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
 func (x *ContractPosition) GetPositionSide() PositionSide {
 	if x != nil {
 		return x.PositionSide
 	}
-	return PositionSide_POSITION_SIDE_UNSPECIFIED
+	return PositionSide_POSITION_SIDE_UNKNOWN
 }
 
 func (x *ContractPosition) GetMarginMode() MarginMode {
 	if x != nil {
 		return x.MarginMode
 	}
-	return MarginMode_MARGIN_MODE_UNSPECIFIED
+	return MarginMode_MARGIN_MODE_UNKNOWN
 }
 
 func (x *ContractPosition) GetLeverage() int64 {
@@ -2096,14 +2096,14 @@ func (x *ContractPositionHistory) GetMarketType() MarketType {
 	if x != nil {
 		return x.MarketType
 	}
-	return MarketType_MARKET_TYPE_UNSPECIFIED
+	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
 func (x *ContractPositionHistory) GetPositionSide() PositionSide {
 	if x != nil {
 		return x.PositionSide
 	}
-	return PositionSide_POSITION_SIDE_UNSPECIFIED
+	return PositionSide_POSITION_SIDE_UNKNOWN
 }
 
 func (x *ContractPositionHistory) GetActionType() PositionActionType {
@@ -2264,7 +2264,7 @@ func (x *ContractPositionHistory) GetSource() SourceType {
 	if x != nil {
 		return x.Source
 	}
-	return SourceType_SOURCE_TYPE_UNSPECIFIED
+	return SourceType_SOURCE_TYPE_UNKNOWN
 }
 
 func (x *ContractPositionHistory) GetRemark() string {
@@ -2357,7 +2357,7 @@ func (x *ContractMarginAccount) GetMarketType() MarketType {
 	if x != nil {
 		return x.MarketType
 	}
-	return MarketType_MARKET_TYPE_UNSPECIFIED
+	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
 func (x *ContractMarginAccount) GetMarginAsset() string {
@@ -2521,21 +2521,21 @@ func (x *ContractLeverageConfig) GetMarketType() MarketType {
 	if x != nil {
 		return x.MarketType
 	}
-	return MarketType_MARKET_TYPE_UNSPECIFIED
+	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
 func (x *ContractLeverageConfig) GetMarginMode() MarginMode {
 	if x != nil {
 		return x.MarginMode
 	}
-	return MarginMode_MARGIN_MODE_UNSPECIFIED
+	return MarginMode_MARGIN_MODE_UNKNOWN
 }
 
 func (x *ContractLeverageConfig) GetPositionMode() PositionMode {
 	if x != nil {
 		return x.PositionMode
 	}
-	return PositionMode_POSITION_MODE_UNSPECIFIED
+	return PositionMode_POSITION_MODE_UNKNOWN
 }
 
 func (x *ContractLeverageConfig) GetLongLeverage() int64 {
@@ -2570,7 +2570,7 @@ func (x *ContractLeverageConfig) GetSource() SourceType {
 	if x != nil {
 		return x.Source
 	}
-	return SourceType_SOURCE_TYPE_UNSPECIFIED
+	return SourceType_SOURCE_TYPE_UNKNOWN
 }
 
 func (x *ContractLeverageConfig) GetStatus() int64 {
@@ -2687,7 +2687,7 @@ func (x *RiskUserTradeLimit) GetMarketType() MarketType {
 	if x != nil {
 		return x.MarketType
 	}
-	return MarketType_MARKET_TYPE_UNSPECIFIED
+	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
 func (x *RiskUserTradeLimit) GetCanOpen() int64 {
@@ -2792,7 +2792,7 @@ func (x *RiskUserTradeLimit) GetSource() SourceType {
 	if x != nil {
 		return x.Source
 	}
-	return SourceType_SOURCE_TYPE_UNSPECIFIED
+	return SourceType_SOURCE_TYPE_UNKNOWN
 }
 
 func (x *RiskUserTradeLimit) GetStatus() int64 {
@@ -2928,7 +2928,7 @@ func (x *RiskUserSymbolLimit) GetMarketType() MarketType {
 	if x != nil {
 		return x.MarketType
 	}
-	return MarketType_MARKET_TYPE_UNSPECIFIED
+	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
 func (x *RiskUserSymbolLimit) GetMaxPositionQty() string {
@@ -3012,7 +3012,7 @@ func (x *RiskUserSymbolLimit) GetSource() SourceType {
 	if x != nil {
 		return x.Source
 	}
-	return SourceType_SOURCE_TYPE_UNSPECIFIED
+	return SourceType_SOURCE_TYPE_UNKNOWN
 }
 
 func (x *RiskUserSymbolLimit) GetStatus() int64 {
@@ -3157,21 +3157,21 @@ func (x *RiskOrderCheckLog) GetMarketType() MarketType {
 	if x != nil {
 		return x.MarketType
 	}
-	return MarketType_MARKET_TYPE_UNSPECIFIED
+	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
 func (x *RiskOrderCheckLog) GetCheckType() RiskCheckType {
 	if x != nil {
 		return x.CheckType
 	}
-	return RiskCheckType_RISK_CHECK_TYPE_UNSPECIFIED
+	return RiskCheckType_RISK_CHECK_TYPE_UNKNOWN
 }
 
 func (x *RiskOrderCheckLog) GetCheckResult() RiskCheckResult {
 	if x != nil {
 		return x.CheckResult
 	}
-	return RiskCheckResult_RISK_CHECK_RESULT_UNSPECIFIED
+	return RiskCheckResult_RISK_CHECK_RESULT_UNKNOWN
 }
 
 func (x *RiskOrderCheckLog) GetRejectCode() string {
@@ -3220,7 +3220,7 @@ func (x *RiskOrderCheckLog) GetSource() SourceType {
 	if x != nil {
 		return x.Source
 	}
-	return SourceType_SOURCE_TYPE_UNSPECIFIED
+	return SourceType_SOURCE_TYPE_UNKNOWN
 }
 
 func (x *RiskOrderCheckLog) GetCheckSnapshot() string {
@@ -3353,7 +3353,7 @@ func (x *BizTradeEvent) GetMarketType() MarketType {
 	if x != nil {
 		return x.MarketType
 	}
-	return MarketType_MARKET_TYPE_UNSPECIFIED
+	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
 func (x *BizTradeEvent) GetOperatorId() int64 {
@@ -3367,14 +3367,14 @@ func (x *BizTradeEvent) GetSource() SourceType {
 	if x != nil {
 		return x.Source
 	}
-	return SourceType_SOURCE_TYPE_UNSPECIFIED
+	return SourceType_SOURCE_TYPE_UNKNOWN
 }
 
 func (x *BizTradeEvent) GetEventStatus() EventStatus {
 	if x != nil {
 		return x.EventStatus
 	}
-	return EventStatus_EVENT_STATUS_UNSPECIFIED
+	return EventStatus_EVENT_STATUS_UNKNOWN
 }
 
 func (x *BizTradeEvent) GetRetryCount() int64 {

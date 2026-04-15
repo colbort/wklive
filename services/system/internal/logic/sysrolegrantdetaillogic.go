@@ -66,7 +66,7 @@ func (l *SysRoleGrantDetailLogic) permKeysFromMenuIds(menuIds []int64) ([]string
 			continue
 		}
 		// 只取按钮
-		if int32(menu.MenuType) != 3 {
+		if int32(menu.MenuType) != int32(system.MenuType_MENU_TYPE_BUTTON) {
 			continue
 		}
 		key := strings.TrimSpace(menu.Perms)

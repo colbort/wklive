@@ -14,8 +14,9 @@ type UserRoleModel interface {
 	FindRoleIdsByUserId(ctx context.Context, uid int64) ([]int64, error)
 	FindRoleIdsByUserIds(ctx context.Context, userIds []int64) (map[int64][]int64, error)
 	InsertCtx(ctx context.Context, session sqlx.Session, data *SysUserRole) (sql.Result, error)
-	FindLoginUserPerms(ctx context.Context, uid int64) ([]string, error)
+	FindLoginUserPerms(ctx context.Context, uid int64, clear bool) ([]string, error)
 	FindByIds(ctx context.Context, userId int64, roleIds []int64) ([]int64, error)
+	FindByRoleId(ctx context.Context, roleId int64) ([]int64, error)
 }
 
 func (m *defaultSysUserRoleModel) FindRoleIdsByUserId(ctx context.Context, uid int64) ([]int64, error) {
@@ -76,7 +77,21 @@ func (m *defaultSysUserRoleModel) InsertCtx(ctx context.Context, session sqlx.Se
 	return ret, err
 }
 
-func (m *defaultSysUserRoleModel) FindLoginUserPerms(ctx context.Context, uid int64) ([]string, error) {
+func (m *defaultSysUserRoleModel) FindLoginUserPerms(ctx context.Context, uid int64, clear bool) ([]string, error) {
+	key := fmt.Sprintf("system:user:perms:%d", uid)
+	var perms []string
+	if clear {
+		return m.findLoginUserPermsFromDB(ctx, uid, key)
+	} else {
+		err := m.GetCacheCtx(ctx, key, &perms)
+		if err != nil {
+			return m.findLoginUserPermsFromDB(ctx, uid, key)
+		}
+	}
+	return perms, nil
+}
+
+func (m *defaultSysUserRoleModel) findLoginUserPermsFromDB(ctx context.Context, uid int64, key string) ([]string, error) {
 	query := fmt.Sprintf(`
 		SELECT DISTINCT m.perms
 		FROM %s ur
@@ -84,13 +99,12 @@ func (m *defaultSysUserRoleModel) FindLoginUserPerms(ctx context.Context, uid in
 		INNER JOIN sys_menu m ON rm.menu_id = m.id
 		WHERE ur.user_id = ? AND m.perms != ''
 	`, m.table)
-
 	var perms []string
 	err := m.QueryRowsNoCacheCtx(ctx, &perms, query, uid)
 	if err != nil {
 		return nil, err
 	}
-	m.SetCacheCtx(ctx, "", perms)
+	m.SetCacheCtx(ctx, key, perms)
 	return perms, nil
 }
 
@@ -115,6 +129,20 @@ func (m *defaultSysUserRoleModel) FindByIds(ctx context.Context, userId int64, r
 
 	var ids []int64
 	err := m.QueryRowsNoCacheCtx(ctx, &ids, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	return ids, nil
+}
+
+func (m *defaultSysUserRoleModel) FindByRoleId(ctx context.Context, roleId int64) ([]int64, error) {
+	query := fmt.Sprintf(
+		"SELECT user_id FROM %s WHERE role_id = ?",
+		m.table,
+	)
+
+	var ids []int64
+	err := m.QueryRowsNoCacheCtx(ctx, &ids, query, roleId)
 	if err != nil {
 		return nil, err
 	}

@@ -1,6 +1,3 @@
-// Code scaffolded by goctl. Safe to edit.
-// goctl 1.9.2
-
 package system
 
 import (
@@ -11,10 +8,10 @@ import (
 	"wklive/admin-api/internal/svc"
 )
 
-func SysConfigKeysHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func GetSystemOptionsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		l := system.NewSysConfigKeysLogic(r.Context(), svcCtx)
-		resp, err := l.SysConfigKeys()
+		l := system.NewGetSystemOptionsLogic(r.Context(), svcCtx)
+		resp, err := l.GetSystemOptions()
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

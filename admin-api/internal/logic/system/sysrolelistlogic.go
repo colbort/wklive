@@ -34,7 +34,7 @@ func (l *SysRoleListLogic) SysRoleList(req *types.SysRoleListReq) (resp *types.S
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
 		},
-		Status: req.Status,
+		Status: toCommonStatus(req.Status),
 	})
 	if err != nil {
 		return nil, err
@@ -46,7 +46,7 @@ func (l *SysRoleListLogic) SysRoleList(req *types.SysRoleListReq) (resp *types.S
 			Id:          item.Id,
 			Name:        item.Name,
 			Code:        item.Code,
-			Status:      item.Status,
+			Status:      fromCommonStatus(item.Status),
 			Remark:      item.Remark,
 			CreateTimes: item.CreateTimes,
 		})

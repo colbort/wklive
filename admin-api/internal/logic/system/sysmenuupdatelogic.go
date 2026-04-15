@@ -32,14 +32,14 @@ func (l *SysMenuUpdateLogic) SysMenuUpdate(req *types.SysMenuUpdateReq) (resp *t
 		Id:        req.Id,
 		ParentId:  req.ParentId,
 		Name:      req.Name,
-		MenuType:  req.MenuType,
-		Method:    req.Method,
+		MenuType:  toMenuType(req.MenuType),
+		Method:    toRequestMethod(req.Method),
 		Path:      req.Path,
 		Component: req.Component,
 		Icon:      req.Icon,
 		Sort:      req.Sort,
-		Visible:   req.Visible,
-		Status:    req.Status,
+		Visible:   toVisibleStatus(req.Visible),
+		Status:    toCommonStatus(req.Status),
 		Perms:     req.Perms,
 	})
 	if err != nil {

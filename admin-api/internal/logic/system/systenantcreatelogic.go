@@ -31,7 +31,7 @@ func (l *SysTenantCreateLogic) SysTenantCreate(req *types.SysTenantCreateReq) (r
 	result, err := l.svcCtx.SystemCli.SysTenantCreate(l.ctx, &system.SysTenantCreateReq{
 		TenantCode:   req.TenantCode,
 		TenantName:   req.TenantName,
-		Status:       req.Status,
+		Status:       toCommonStatus(req.Status),
 		ExpireTime:   req.ExpireTime,
 		ContactName:  req.ContactName,
 		ContactPhone: req.ContactPhone,

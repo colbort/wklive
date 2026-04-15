@@ -31,14 +31,14 @@ func (l *SysMenuCreateLogic) SysMenuCreate(req *types.SysMenuCreateReq) (resp *t
 	result, err := l.svcCtx.SystemCli.SysMenuCreate(l.ctx, &system.SysMenuCreateReq{
 		ParentId:  req.ParentId,
 		Name:      req.Name,
-		MenuType:  req.MenuType,
-		Method:    req.Method,
+		MenuType:  toMenuType(req.MenuType),
+		Method:    toRequestMethod(req.Method),
 		Path:      req.Path,
 		Component: req.Component,
 		Icon:      req.Icon,
 		Sort:      req.Sort,
-		Visible:   req.Visible,
-		Status:    req.Status,
+		Visible:   toVisibleStatus(req.Visible),
+		Status:    toCommonStatus(req.Status),
 		Perms:     req.Perms,
 	})
 	if err != nil {

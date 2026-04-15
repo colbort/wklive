@@ -50,7 +50,7 @@ func (l *SysCronJobUpdateLogic) SysCronJobUpdate(in *system.SysCronJobUpdateReq)
 	job.JobGroup = in.JobGroup
 	job.InvokeTarget = in.InvokeTarget
 	job.CronExpression = in.CronExpression
-	job.Status = in.Status
+	job.Status = jobStatusToModel(in.Status)
 	job.Remark = sql.NullString{String: in.Remark, Valid: true}
 	userName, err := utils.GetUsernameFromCtx(l.ctx)
 	if err != nil {

@@ -35,10 +35,10 @@ func (l *SysPermListLogic) SysPermList(in *system.Empty) (*system.SysPermListRes
 
 	data := make([]*system.SysPermItem, 0)
 	for _, menu := range menus {
-		if int32(menu.MenuType) == 1 {
+		if int32(menu.MenuType) == int32(system.MenuType_MENU_TYPE_DIR) {
 			continue
 		}
-		if int32(menu.Status) != 1 {
+		if int32(menu.Status) != int32(system.CommonStatus_COMMON_STATUS_ENABLED) {
 			continue
 		}
 
@@ -57,7 +57,7 @@ func (l *SysPermListLogic) SysPermList(in *system.Empty) (*system.SysPermListRes
 		}
 		data = append(data, &system.SysPermItem{
 			PermKey: key,
-			Method:  method,
+			Method:  requestMethodToProto(method),
 			Path:    path,
 			Name:    menu.Name,
 		})

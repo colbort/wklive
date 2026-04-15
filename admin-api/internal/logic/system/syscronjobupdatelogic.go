@@ -34,7 +34,7 @@ func (l *SysCronJobUpdateLogic) SysCronJobUpdate(req *types.SysCronJobUpdateReq)
 		JobGroup:       req.JobGroup,
 		InvokeTarget:   req.InvokeTarget,
 		CronExpression: req.CronExpression,
-		Status:         req.Status,
+		Status:         toJobStatus(req.Status),
 		Remark:         req.Remark,
 	})
 	if err != nil {

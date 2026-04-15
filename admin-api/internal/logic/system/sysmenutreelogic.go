@@ -38,14 +38,14 @@ func (l *SysMenuTreeLogic) SysMenuTree() (resp *types.SysMenuTreeResp, err error
 			Id:        item.Id,
 			ParentId:  item.ParentId,
 			Name:      item.Name,
-			MenuType:  item.MenuType,
-			Method:    item.Method,
+			MenuType:  fromMenuType(item.MenuType),
+			Method:    fromRequestMethod(item.Method),
 			Icon:      item.Icon,
 			Path:      item.Path,
 			Component: item.Component,
 			Sort:      item.Sort,
-			Visible:   item.Visible,
-			Status:    item.Status,
+			Visible:   fromVisibleStatus(item.Visible),
+			Status:    fromCommonStatus(item.Status),
 			Perms:     item.Perms,
 		})
 	}

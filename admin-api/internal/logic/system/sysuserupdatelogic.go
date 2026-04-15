@@ -31,7 +31,7 @@ func (l *SysUserUpdateLogic) SysUserUpdate(req *types.SysUserUpdateReq) (resp *t
 	result, err := l.svcCtx.SystemCli.SysUserUpdate(l.ctx, &system.SysUserUpdateReq{
 		Id:       req.Id,
 		Nickname: req.Nickname,
-		Status:   req.Status,
+		Status:   toCommonStatus(req.Status),
 		RoleIds:  req.RoleIds,
 	})
 	if err != nil {

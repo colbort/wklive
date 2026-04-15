@@ -269,28 +269,28 @@ func (x *CheckOrderRiskReq) GetMarketType() MarketType {
 	if x != nil {
 		return x.MarketType
 	}
-	return MarketType_MARKET_TYPE_UNSPECIFIED
+	return MarketType_MARKET_TYPE_UNKNOWN
 }
 
 func (x *CheckOrderRiskReq) GetSide() TradeSide {
 	if x != nil {
 		return x.Side
 	}
-	return TradeSide_TRADE_SIDE_UNSPECIFIED
+	return TradeSide_TRADE_SIDE_UNKNOWN
 }
 
 func (x *CheckOrderRiskReq) GetPositionSide() PositionSide {
 	if x != nil {
 		return x.PositionSide
 	}
-	return PositionSide_POSITION_SIDE_UNSPECIFIED
+	return PositionSide_POSITION_SIDE_UNKNOWN
 }
 
 func (x *CheckOrderRiskReq) GetOrderType() OrderType {
 	if x != nil {
 		return x.OrderType
 	}
-	return OrderType_ORDER_TYPE_UNSPECIFIED
+	return OrderType_ORDER_TYPE_UNKNOWN
 }
 
 func (x *CheckOrderRiskReq) GetPrice() string {

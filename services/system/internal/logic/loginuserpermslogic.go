@@ -25,7 +25,7 @@ func NewLoginUserPermsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Lo
 
 // 获取登录用户的权限列表
 func (l *LoginUserPermsLogic) LoginUserPerms(in *system.LoginUserPermsReq) (*system.LoginUserPermsResp, error) {
-	perms, err := l.svcCtx.UserRoleModel.FindLoginUserPerms(l.ctx, in.UserId)
+	perms, err := l.svcCtx.UserRoleModel.FindLoginUserPerms(l.ctx, in.UserId, false)
 	if err != nil {
 		return nil, err
 	}

@@ -26,7 +26,7 @@ func NewSysCronJobListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sy
 
 // 系统定时任务列表
 func (l *SysCronJobListLogic) SysCronJobList(in *system.SysCronJobListReq) (*system.SysCronJobListResp, error) {
-	items, total, err := l.svcCtx.JobModel.FindPage(l.ctx, in.Page.Cursor, in.Page.Limit, in.Keyword, in.JobName, in.JobGroup, in.Status)
+	items, total, err := l.svcCtx.JobModel.FindPage(l.ctx, in.Page.Cursor, in.Page.Limit, in.Keyword, in.JobName, in.JobGroup, jobStatusToModel(in.Status))
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func (l *SysCronJobListLogic) SysCronJobList(in *system.SysCronJobListReq) (*sys
 			JobGroup:       item.JobGroup,
 			InvokeTarget:   item.InvokeTarget,
 			CronExpression: item.CronExpression,
-			Status:         item.Status,
+			Status:         jobStatusToProto(item.Status),
 			Remark:         item.Remark.String,
 			CreateBy:       item.CreateBy.String,
 			CreateTimes:    item.CreateTimes,

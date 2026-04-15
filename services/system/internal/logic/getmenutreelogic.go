@@ -36,13 +36,13 @@ func (l *GetMenuTreeLogic) GetMenuTree(in *system.Empty) (*system.SysMenuTreeRes
 			Id:        m.Id,
 			ParentId:  m.ParentId,
 			Name:      m.Name,
-			MenuType:  m.MenuType,
+			MenuType:  menuTypeToProto(m.MenuType),
 			Path:      m.Path,
 			Component: m.Component,
 			Icon:      m.Icon,
 			Sort:      m.Sort,
-			Visible:   m.Visible,
-			Status:    m.Status,
+			Visible:   visibleStatusToProto(m.Visible),
+			Status:    commonStatusToProto(m.Status),
 			Perms:     m.Perms,
 		}
 		data = append(data, item)

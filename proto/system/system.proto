@@ -46,13 +46,13 @@ message SysMenuNode {
   int64 id = 1;
   int64 parent_id = 2;
   string name = 3;
-  int64 menu_type = 4; // 1目录 2菜单 3按钮
+  system.MenuType menu_type = 4;
   string path = 5;
   string component = 6;
   string icon = 7;
   int64 sort = 8;
-  int64 visible = 9;
-  int64 status = 10;
+  system.VisibleStatus visible = 9;
+  system.CommonStatus status = 10;
   string perms = 11;
   repeated SysMenuNode children = 12;
 }
@@ -78,14 +78,14 @@ message SysMenuItem {
   int64 id = 1;
   int64 parent_id = 2;
   string name = 3;
-  int64 menu_type = 4; // 1目录 2菜单 3按钮
-  string method = 5; // GET POST PUT DELETE
+  system.MenuType menu_type = 4;
+  system.RequestMethod method = 5;
   string path = 6;
   string component = 7;
   string icon = 8;
   int64 sort = 9;
-  int64 visible = 10;
-  int64 status = 11;
+  system.VisibleStatus visible = 10;
+  system.CommonStatus status = 11;
   string perms = 12; // 按钮必须有，例如 sys:user:add
 }
 
@@ -127,7 +127,7 @@ message SysUserItem {
   int64 id = 1;
   string username = 2;
   string nickname = 3;
-  int64 status = 4;
+  system.CommonStatus status = 4;
   repeated int64 role_ids = 5;
   int64 create_times = 6;
   int64 google2fa_enabled = 7;
@@ -136,7 +136,7 @@ message SysUserItem {
 message SysUserListReq {
   common.PageReq page = 1;
   string keyword = 2;
-  int64 status = 3;
+  system.CommonStatus status = 3;
 }
 message SysUserListResp {
   common.RespBase base = 1;
@@ -153,19 +153,19 @@ message SysUserCreateReq {
   string username = 1;
   string password = 2;
   string nickname = 3;
-  int64 status = 4;
+  system.CommonStatus status = 4;
   repeated int64 role_ids = 5;
 }
 message SysUserUpdateReq {
   int64 id = 1;
   string nickname = 2;
-  int64 status = 3;
+  system.CommonStatus status = 3;
   repeated int64 role_ids = 4;
 }
 message SysUserDeleteReq { int64 id = 1; }
 message ChangeUserStatusReq {
   int64 id = 1;
-  int64 status = 2;
+  system.CommonStatus status = 2;
 }
 message ResetUserPwdReq {
   int64 id = 1;
@@ -183,14 +183,14 @@ message SysRoleItem {
   int64 id = 1;
   string name = 2;
   string code = 3;
-  int64 status = 4;
+  system.CommonStatus status = 4;
   string remark = 5;
   int64 create_times = 6;
 }
 message SysRoleListReq {
   common.PageReq page = 1;
   string keyword = 2;
-  int64 status = 3;
+  system.CommonStatus status = 3;
 }
 message SysRoleListResp {
   common.RespBase base = 1;
@@ -200,13 +200,13 @@ message SysRoleListResp {
 message SysRoleCreateReq {
   string name = 1;
   string code = 2;
-  int64 status = 3;
+  system.CommonStatus status = 3;
   string remark = 4;
 }
 message SysRoleUpdateReq {
   int64 id = 1;
   string name = 2;
-  int64 status = 3;
+  system.CommonStatus status = 3;
   string remark = 4;
 }
 message SysRoleDeleteReq { int64 id = 1; }
@@ -225,7 +225,7 @@ message SysRoleGrantDetailResp {
 
 message SysPermItem {
   string perm_key = 1;
-  string method = 2;
+  system.RequestMethod method = 2;
   string path = 3;
   string name = 4;
 }
@@ -241,28 +241,28 @@ message SysPermListResp {
 message SysMenuCreateReq {
   int64 parent_id = 1;
   string name = 2;
-  int64 menu_type = 3;
-  string method = 4;
+  system.MenuType menu_type = 3;
+  system.RequestMethod method = 4;
   string path = 5;
   string component = 6;
   string icon = 7;
   int64 sort = 8;
-  int64 visible = 9;
-  int64 status = 10;
+  system.VisibleStatus visible = 9;
+  system.CommonStatus status = 10;
   string perms = 12;
 }
 message SysMenuUpdateReq {
   int64 id = 1;
   int64 parent_id = 2;
   string name = 3;
-  int64 menu_type = 4;
-  string method = 5;
+  system.MenuType menu_type = 4;
+  system.RequestMethod method = 5;
   string path = 6;
   string component = 7;
   string icon = 8;
   int64 sort = 9;
-  int64 visible = 10;
-  int64 status = 11;
+  system.VisibleStatus visible = 10;
+  system.CommonStatus status = 11;
   string perms = 12;
 }
 message SysMenuDeleteReq { int64 id = 1; }
@@ -270,9 +270,9 @@ message SysMenuDeleteReq { int64 id = 1; }
 message SysMenuListReq {
   common.PageReq page = 1;
   string keyword = 2;
-  int64 menu_type = 3;
-  int64 status = 4;
-  int64 visible = 5;
+  system.MenuType menu_type = 3;
+  system.CommonStatus status = 4;
+  system.VisibleStatus visible = 5;
 }
 message SysMenuListResp {
   common.RespBase base = 1;
@@ -306,7 +306,7 @@ message OpLogItem {
   int64 id = 1;
   int64 user_id = 2;
   string username = 3;
-  string method = 4;
+  system.RequestMethod method = 4;
   string path = 5;
   string req = 6;
   string resp = 7;
@@ -318,7 +318,7 @@ message OpLogItem {
 message OpLogListReq {
   common.PageReq page = 1;
   string username = 2;
-  string method = 3;
+  system.RequestMethod method = 3;
   string path = 4;
 }
 message OpLogListResp {
@@ -374,11 +374,6 @@ message SysConfigByKeysResp {
   repeated SysConfigItem data = 3;
 }
 
-message SysConfigKeysResp {
-  common.RespBase base = 1;
-  repeated string data = 3;
-}
-
 message LoginUserPermsReq { int64 user_id = 1; }
 message LoginUserPermsResp { repeated string perms = 1; }
 
@@ -389,7 +384,7 @@ message SysCronJobItem {
   string job_group = 3;
   string invoke_target = 4;
   string cron_expression = 5;
-  int64 status = 6;
+  system.JobStatus status = 6;
   string remark = 7;
   string create_by = 8;
   int64 create_times = 9;
@@ -402,7 +397,7 @@ message SysCronJobListReq {
   string keyword = 2;
   string job_name = 3;
   string job_group = 4;
-  int64 status = 5;
+  system.JobStatus status = 5;
 }
 message SysCronJobListResp {
   common.RespBase base = 1;
@@ -414,7 +409,7 @@ message SysCronJobCreateReq {
   string job_group = 2;
   string invoke_target = 3;
   string cron_expression = 4;
-  int64 status = 5;
+  system.JobStatus status = 5;
   string remark = 6;
 }
 
@@ -424,7 +419,7 @@ message SysCronJobUpdateReq {
   string job_group = 3;
   string invoke_target = 4;
   string cron_expression = 5;
-  int64 status = 6;
+  system.JobStatus status = 6;
   string remark = 7;
 }
 
@@ -478,7 +473,7 @@ message SysTenantItem {
   int64 id = 1;
   string tenant_code = 2;
   string tenant_name = 3;
-  int64 status = 4;
+  system.CommonStatus status = 4;
   int64 expire_time = 5;
   string contact_name = 6;
   string contact_phone = 7;
@@ -490,7 +485,7 @@ message SysTenantItem {
 message SysTenantListReq {
   common.PageReq page = 1;
   string keyword = 2;
-  int64 status = 3;
+  system.CommonStatus status = 3;
   string tenant_code = 4;
   string tenant_name = 5;
   string contact_name = 6;
@@ -504,7 +499,7 @@ message SysTenantListResp {
 message SysTenantCreateReq {
   string tenant_code = 1;
   string tenant_name = 2;
-  int64 status = 3;
+  system.CommonStatus status = 3;
   int64 expire_time = 4;
   string contact_name = 5;
   string contact_phone = 6;
@@ -514,7 +509,7 @@ message SysTenantCreateReq {
 message SysTenantUpdateReq {
   int64 id = 1;
   string tenant_name = 2;
-  int64 status = 3;
+  system.CommonStatus status = 3;
   int64 expire_time = 4;
   string contact_name = 5;
   string contact_phone = 6;
@@ -610,8 +605,6 @@ service System {
   rpc SysConfigDetail(SysConfigDetailReq) returns (SysConfigDetailResp);
   // 获取系统配置根据keys
   rpc SysConfigByKeys(SysConfigByKeysReq) returns (SysConfigByKeysResp);
-  // 获取系统配置所有的key
-  rpc SysConfigKeys(Empty) returns (SysConfigKeysResp);
   // 获取登录用户的权限列表
   rpc LoginUserPerms(LoginUserPermsReq) returns (LoginUserPermsResp);
   // 系统定时任务列表

@@ -48,7 +48,7 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 	}
 
 	redeemType := in.RedeemType
-	if redeemType == staking.RedeemType_REDEEM_TYPE_UNSPECIFIED {
+	if redeemType == staking.RedeemType_REDEEM_TYPE_UNKNOWN {
 		if order.Status == int64(staking.OrderStatus_ORDER_STATUS_EXPIRED) {
 			redeemType = staking.RedeemType_REDEEM_TYPE_MATURITY
 		} else {

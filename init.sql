@@ -33,6 +33,9 @@ INSERT INTO `sys_role_menu` (`role_id`, `menu_id`) VALUES
 (1, 30),
 (1, 31),
 (1, 32),
+(1, 33),
+(1, 34),
+(1, 35),
 
 (1, 100),
 (1, 101),
@@ -77,6 +80,9 @@ INSERT INTO `sys_role_menu` (`role_id`, `menu_id`) VALUES
 (1, 140),
 (1, 141),
 (1, 142),
+(1, 143),
+(1, 144),
+(1, 145),
 
 (1, 300),
 (1, 301),
@@ -101,6 +107,7 @@ INSERT INTO `sys_role_menu` (`role_id`, `menu_id`) VALUES
 (1, 320),
 (1, 321),
 (1, 322),
+(1, 323),
 
 (1, 400),
 (1, 401),
@@ -114,6 +121,7 @@ INSERT INTO `sys_role_menu` (`role_id`, `menu_id`) VALUES
 (1, 409),
 (1, 410),
 (1, 411),
+(1, 412),
 
 (1, 500),
 (1, 501),
@@ -137,6 +145,7 @@ INSERT INTO `sys_role_menu` (`role_id`, `menu_id`) VALUES
 (1, 519),
 (1, 520),
 (1, 521),
+(1, 522),
 
 (1, 600),
 (1, 601),
@@ -150,6 +159,7 @@ INSERT INTO `sys_role_menu` (`role_id`, `menu_id`) VALUES
 (1, 609),
 (1, 610),
 (1, 611),
+(1, 612),
 
 (1, 700),
 (1, 701),
@@ -179,6 +189,7 @@ INSERT INTO `sys_role_menu` (`role_id`, `menu_id`) VALUES
 (1, 725),
 (1, 726),
 (1, 727),
+(1, 728),
 
 (1, 10000),
 (1, 10100),
@@ -193,17 +204,22 @@ INSERT INTO `sys_role_menu` (`role_id`, `menu_id`) VALUES
 (1, 10109),
 (1, 10110),
 (1, 10111),
+(1, 10112),
+(1, 10113),
 
 (1, 10200),
 (1, 10201),
 (1, 10202),
 (1, 10203),
 (1, 10204),
+(1, 10205),
+(1, 10206),
 
 (1, 10300),
 (1, 10301),
 (1, 10302),
 (1, 10303),
+(1, 10304),
 
 (1, 10400),
 (1, 10401),
@@ -229,9 +245,7 @@ INSERT INTO `sys_role_menu` (`role_id`, `menu_id`) VALUES
 (1, 11002),
 (1, 11003),
 (1, 11004),
-(1, 11005),
-(1, 11006),
-(1, 11007);
+(1, 11005);
 
 
 
@@ -240,27 +254,30 @@ VALUES (10, 0, '用户管理', 1, 'Users', 10);
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
 VALUES 
 (11, 10, '用户列表', 2, 'GET', '/member/users', 'users:user:list', 'users/user', 'User', 11),
-(12, 10, '创建用户', 3, 'POST', '/member/users', 'users:user:add', '', '', 12),
-(13, 10, '获取用户详情', 3, 'GET', '/member/users/{id}', 'users:user:detail', '', '', 13),
-(14, 10, '更新用户基本信息', 3, 'PUT', '/member/users/{id}/base', 'users:user:update', '', '', 14),
-(15, 10, '更新用户状态', 3, 'PUT', '/member/users/{id}/status', 'users:user:update:status', '', '', 15),
-(16, 10, '更新用户会员等级', 3, 'PUT', '/member/users/{id}/level', 'users:user:update:level', '', '', 16),
-(17, 10, '重置登录密码', 3, 'PUT', '/member/users/{id}/reset-login-password', 'users:user:reset:loginpwd', '', '', 17),
-(18, 10, '重置支付密码', 3, 'PUT', '/member/users/{id}/reset-pay-password', 'users:user:reset:paypwd', '', '', 18),
-(19, 10, '解锁用户', 3, 'PUT', '/member/users/{id}/unlock', 'users:user:unlock', '', '', 19),
-(20, 10, '更新用户风险等级', 3, 'PUT', '/member/users/{id}/risk-level', 'users:user:update:risklevel', '', '', 20),
-(21, 10, '删除用户', 3, 'DELETE', '/member/users/{id}', 'users:user:delete', '', '', 21),
-(22, 10, '获取用户安全设置', 3, 'GET', '/member/users/{id}/security', 'users:user:security:detail', '', '', 22),
-(23, 10, '重置用户谷歌2FA', 3, 'PUT', '/member/users/{id}/reset2fa', 'users:user:reset:google2fa', '', '', 23),
-(24, 10, '实名认证信息列表', 2, 'GET', '/member/user-identities', 'users:user:identities:list', 'users/identity', '', 24),
-(25, 10, '审核实名认证信息', 3, 'PUT', '/member/user-identities/{id}/review', 'users:user:identities:review', '', '', 25),
-(26, 10, '用户银行卡列表', 2, 'GET', '/member/user-banks', 'users:user:banks:list', 'users/bank', '', 26),
-(27, 10, '获取用户银行卡详情', 3, 'GET', '/member/user-banks/{id}', 'users:user:bank:detail', '', '', 27),
-(28, 10, '添加用户银行卡', 3, 'POST', '/member/user-banks', 'users:user:bank:add', '', '', 28),
-(29, 10, '更新用户银行卡', 3, 'PUT', '/member/user-banks/{id}', 'users:user:bank:update', '', '', 29),
-(30, 10, '删除用户银行卡', 3, 'DELETE', '/member/user-banks/{id}', 'users:user:bank:delete', '', '', 30),
-(31, 10, '更新用户银行卡状态', 3, 'PUT', '/member/user-banks/{id}/status', 'users:user:bank:update:status', '', '', 31),
-(32, 10, '设置默认用户银行卡', 3, 'PUT', '/member/user-banks/{id}/default', 'users:user:bank:setdefault', '', '', 32);
+(12, 11, '创建用户', 3, 'POST', '/member/users', 'users:user:add', '', '', 12),
+(13, 11, '获取用户详情', 3, 'GET', '/member/users/{id}', 'users:user:detail', '', '', 13),
+(14, 11, '更新用户基本信息', 3, 'PUT', '/member/users/{id}/base', 'users:user:update', '', '', 14),
+(15, 11, '更新用户状态', 3, 'PUT', '/member/users/{id}/status', 'users:user:update:status', '', '', 15),
+(16, 11, '更新用户会员等级', 3, 'PUT', '/member/users/{id}/level', 'users:user:update:level', '', '', 16),
+(17, 11, '重置登录密码', 3, 'PUT', '/member/users/{id}/reset-login-password', 'users:user:reset:loginpwd', '', '', 17),
+(18, 11, '重置支付密码', 3, 'PUT', '/member/users/{id}/reset-pay-password', 'users:user:reset:paypwd', '', '', 18),
+(19, 11, '解锁用户', 3, 'PUT', '/member/users/{id}/unlock', 'users:user:unlock', '', '', 19),
+(20, 11, '更新用户风险等级', 3, 'PUT', '/member/users/{id}/risk-level', 'users:user:update:risklevel', '', '', 20),
+(21, 11, '删除用户', 3, 'DELETE', '/member/users/{id}', 'users:user:delete', '', '', 21),
+(22, 11, '获取用户安全设置', 3, 'GET', '/member/users/{id}/security', 'users:user:security:detail', '', '', 22),
+(23, 11, '重置用户谷歌2FA', 3, 'PUT', '/member/users/{id}/reset2fa', 'users:user:reset:google2fa', '', '', 23),
+(24, 11, '获取用户创建选项', 3, 'GET', '/member/users/options', 'users:user:options', '', '', 24),
+(25, 11, '校验推荐人', 3, 'GET', '/member/users/referrer/check', 'users:user:referrer:check', '', '', 25),
+(26, 10, '实名认证信息列表', 2, 'GET', '/member/user-identities', 'users:user:identities:list', 'users/identity', '', 26),
+(27, 26, '审核实名认证信息', 3, 'PUT', '/member/user-identities/{id}/review', 'users:user:identities:review', '', '', 27),
+(28, 10, '用户银行卡列表', 2, 'GET', '/member/user-banks', 'users:user:banks:list', 'users/bank', '', 28),
+(29, 28, '获取用户银行卡详情', 3, 'GET', '/member/user-banks/{id}', 'users:user:bank:detail', '', '', 29),
+(30, 28, '添加用户银行卡', 3, 'POST', '/member/user-banks', 'users:user:bank:add', '', '', 30),
+(31, 28, '更新用户银行卡', 3, 'PUT', '/member/user-banks/{id}', 'users:user:bank:update', '', '', 31),
+(32, 28, '删除用户银行卡', 3, 'DELETE', '/member/user-banks/{id}', 'users:user:bank:delete', '', '', 32),
+(33, 28, '更新用户银行卡状态', 3, 'PUT', '/member/user-banks/{id}/status', 'users:user:bank:update:status', '', '', 33),
+(34, 28, '设置默认用户银行卡', 3, 'PUT', '/member/user-banks/{id}/default', 'users:user:bank:setdefault', '', '', 34),
+(35, 10, '会员服务选项', 3, 'GET', '/member/options', 'users:options', '', '', 35);
 
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, icon, sort)
@@ -273,53 +290,56 @@ VALUES
 (103, 101, '更新支付平台', 3, 'PUT', '/payment/platform', 'payment:platform:update', '', '', 103),
 (104, 101, '获取支付平台详情', 3, 'GET', '/payment/platform', 'payment:platform:detail', '', '', 104),
 (105, 101, '删除支付平台', 3, 'DELETE', '/payment/platform/{id}', 'payment:platform:delete', '', '', 105),
+(106, 101, '平台选项列表', 3, 'GET', '/payment/platforms/options', 'payment:platform:options', '', '', 106),
 
-(106, 100, '产品管理', 2, 'GET', '/payment/products', 'payment:itick:list', 'payment/products', 'Gold', 106),
-(107, 106, '创建支付产品', 3, 'POST', '/payment/product', 'payment:itick:add', '', '', 107),
-(108, 106, '更新支付产品', 3, 'PUT', '/payment/product', 'payment:itick:update', '', '', 108),
-(109, 106, '获取支付产品详情', 3, 'GET', '/payment/product', 'payment:itick:detail', '', '', 109),
-(110, 106, '删除支付产品', 3, 'DELETE', '/payment/product/{id}', 'payment:itick:delete', '', '', 110),
+(107, 100, '产品管理', 2, 'GET', '/payment/products', 'payment:itick:list', 'payment/products', 'Gold', 107),
+(108, 107, '创建支付产品', 3, 'POST', '/payment/product', 'payment:itick:add', '', '', 108),
+(109, 107, '更新支付产品', 3, 'PUT', '/payment/product', 'payment:itick:update', '', '', 109),
+(110, 107, '获取支付产品详情', 3, 'GET', '/payment/product', 'payment:itick:detail', '', '', 110),
+(111, 107, '删除支付产品', 3, 'DELETE', '/payment/product/{id}', 'payment:itick:delete', '', '', 111),
 
-(111, 100, '租户开通平台列表', 2, 'GET', '/payment/tenant-platforms', 'payment:tenantplatform:list', 'payment/tenant-platforms', 'Gold', 111),
-(112, 111, '开通租户平台', 3, 'POST', '/payment/tenant-platform', 'payment:tenantplatform:add', '', '', 112),
-(113, 111, '更新租户平台', 3, 'PUT', '/payment/tenant-platform', 'payment:tenantplatform:update', '', '', 113),
-(114, 111, '获取租户平台详情', 3, 'GET', '/payment/tenant-platform', 'payment:tenantplatform:detail', '', '', 114),
-(115, 111, '删除租户平台', 3, 'DELETE', '/payment/tenant-platform/{id}', 'payment:tenantplatform:delete', '', '', 115),
+(112, 100, '租户开通平台列表', 2, 'GET', '/payment/tenant-platforms', 'payment:tenantplatform:list', 'payment/tenant-platforms', 'Gold', 112),
+(113, 112, '开通租户平台', 3, 'POST', '/payment/tenant-platform', 'payment:tenantplatform:add', '', '', 113),
+(114, 112, '更新租户平台', 3, 'PUT', '/payment/tenant-platform', 'payment:tenantplatform:update', '', '', 114),
+(115, 112, '获取租户平台详情', 3, 'GET', '/payment/tenant-platform', 'payment:tenantplatform:detail', '', '', 115),
+(116, 112, '删除租户平台', 3, 'DELETE', '/payment/tenant-platform/{id}', 'payment:tenantplatform:delete', '', '', 116),
 
-(116, 100, '租户支付账号列表', 2, 'GET', '/payment/tenant-accounts', 'payment:tenantaccount:list', 'payment/tenant-accounts', 'Gold', 116),
-(117, 116, '创建租户支付账号', 3, 'POST', '/payment/tenant-account', 'payment:tenantaccount:add', '', '', 117),
-(118, 116, '更新租户支付账号', 3, 'PUT', '/payment/tenant-account', 'payment:tenantaccount:update', '', '', 118),
-(119, 116, '获取租户支付账号详情', 3, 'GET', '/payment/tenant-account', 'payment:tenantaccount:detail', '', '', 119),
-(120, 116, '删除租户支付账号', 3, 'DELETE', '/payment/tenant-account/{id}', 'payment:tenantaccount:delete', '', '', 120),
+(117, 100, '租户支付账号列表', 2, 'GET', '/payment/tenant-accounts', 'payment:tenantaccount:list', 'payment/tenant-accounts', 'Gold', 117),
+(118, 117, '创建租户支付账号', 3, 'POST', '/payment/tenant-account', 'payment:tenantaccount:add', '', '', 118),
+(119, 117, '更新租户支付账号', 3, 'PUT', '/payment/tenant-account', 'payment:tenantaccount:update', '', '', 119),
+(120, 117, '获取租户支付账号详情', 3, 'GET', '/payment/tenant-account', 'payment:tenantaccount:detail', '', '', 120),
+(121, 117, '删除租户支付账号', 3, 'DELETE', '/payment/tenant-account/{id}', 'payment:tenantaccount:delete', '', '', 121),
 
-(121, 100, '租户支付通道列表', 2, 'GET', '/payment/tenant-channels', 'payment:tenantchannel:list', 'payment/tenant-channels', 'Gold', 121),
-(122, 121, '创建租户支付通道', 3, 'POST', '/payment/tenant-channel', 'payment:tenantchannel:add', '', '', 122),
-(123, 121, '更新租户支付通道', 3, 'PUT', '/payment/tenant-channel', 'payment:tenantchannel:update', '', '', 123),
-(124, 121, '获取租户支付通道详情', 3, 'GET', '/payment/tenant-channel', 'payment:tenantchannel:detail', '', '', 124),
-(125, 121, '删除租户支付通道', 3, 'DELETE', '/payment/tenant-channel/{id}', 'payment:tenantchannel:delete', '', '', 125),
+(122, 100, '租户支付通道列表', 2, 'GET', '/payment/tenant-channels', 'payment:tenantchannel:list', 'payment/tenant-channels', 'Gold', 122),
+(123, 122, '创建租户支付通道', 3, 'POST', '/payment/tenant-channel', 'payment:tenantchannel:add', '', '', 123),
+(124, 122, '更新租户支付通道', 3, 'PUT', '/payment/tenant-channel', 'payment:tenantchannel:update', '', '', 124),
+(125, 122, '获取租户支付通道详情', 3, 'GET', '/payment/tenant-channel', 'payment:tenantchannel:detail', '', '', 125),
+(126, 122, '删除租户支付通道', 3, 'DELETE', '/payment/tenant-channel/{id}', 'payment:tenantchannel:delete', '', '', 126),
 
-(126, 100, '通道规则列表', 2, 'GET', '/payment/tenant-channel-rules', 'payment:channelrule:list', 'payment/channel-rules', 'Gold', 126),
-(127, 126, '创建通道规则', 3, 'POST', '/payment/tenant-channel-rule', 'payment:channelrule:add', '', '', 127),
-(128, 126, '更新通道规则', 3, 'PUT', '/payment/tenant-channel-rule', 'payment:channelrule:update', '', '', 128),
-(129, 126, '删除通道规则', 3, 'DELETE', '/payment/tenant-channel-rule/{id}', 'payment:channelrule:delete', '', '', 129),
+(127, 100, '通道规则列表', 2, 'GET', '/payment/tenant-channel-rules', 'payment:channelrule:list', 'payment/channel-rules', 'Gold', 127),
+(128, 127, '创建通道规则', 3, 'POST', '/payment/tenant-channel-rule', 'payment:channelrule:add', '', '', 128),
+(129, 127, '更新通道规则', 3, 'PUT', '/payment/tenant-channel-rule', 'payment:channelrule:update', '', '', 129),
+(130, 127, '删除通道规则', 3, 'DELETE', '/payment/tenant-channel-rule/{id}', 'payment:channelrule:delete', '', '', 130),
 
-(130, 100, '用户充值统计', 2, 'GET', '/payment/user-recharge-stats', 'payment:userrechargestat:list', 'payment/user-recharge-stats', 'Gold', 130),
+(131, 100, '用户充值统计', 2, 'GET', '/payment/user-recharge-stats', 'payment:userrechargestat:list', 'payment/user-recharge-stats', 'Gold', 131),
+(132, 131, '用户充值统计详情', 3, 'GET', '/payment/user-recharge-stat', 'payment:userrechargestat:detail', '', '', 132),
 
-(131, 100, '充值管理', 2, 'GET', '/payment/recharge-orders', 'payment:recharge-order:list', 'payment/recharge-orders', 'Gold', 131),
-(132, 131, '获取充值订单详情', 3, 'GET', '/payment/recharge-order/{orderNo}', 'payment:recharge-order:detail', '', '', 132),
-(133, 131, '关闭充值订单', 3, 'POST', '/payment/recharge-order/{orderNo}/close', 'payment:recharge-order:close', '', '', 133),
-(134, 131, '人工标记充值订单支付成功', 3, 'POST', '/payment/recharge-order/{orderNo}/manual-success', 'payment:recharge-order:manualsuccess', '', '', 134),
-(135, 131, '重试充值回调', 3, 'POST', '/payment/recharge-order/{orderNo}/retry-notify', 'payment:recharge-order:retrynotify', '', '', 135),
+(133, 100, '充值管理', 2, 'GET', '/payment/recharge-orders', 'payment:recharge-order:list', 'payment/recharge-orders', 'Gold', 133),
+(134, 133, '获取充值订单详情', 3, 'GET', '/payment/recharge-order/{orderNo}', 'payment:recharge-order:detail', '', '', 134),
+(135, 133, '关闭充值订单', 3, 'POST', '/payment/recharge-order/{orderNo}/close', 'payment:recharge-order:close', '', '', 135),
+(136, 133, '人工标记充值订单支付成功', 3, 'POST', '/payment/recharge-order/{orderNo}/manual-success', 'payment:recharge-order:manualsuccess', '', '', 136),
+(137, 133, '重试充值回调', 3, 'POST', '/payment/recharge-order/{orderNo}/retry-notify', 'payment:recharge-order:retrynotify', '', '', 137),
 
-(136, 100, '充值回调日志列表', 2, 'GET', '/payment/recharge-notify-logs', 'payment:recharge-notifylog:list', 'payment/recharge-notify-logs', 'Gold', 136),
-(137, 136, '获取充值回调日志详情', 3, 'GET', '/payment/recharge-notify-log/{id}', 'payment:recharge-notifylog:detail', '', '', 137),
+(138, 100, '充值回调日志列表', 2, 'GET', '/payment/recharge-notify-logs', 'payment:recharge-notifylog:list', 'payment/recharge-notify-logs', 'Gold', 138),
+(139, 138, '获取充值回调日志详情', 3, 'GET', '/payment/recharge-notify-log/{id}', 'payment:recharge-notifylog:detail', '', '', 139),
 
-(138, 100, '提现管理', 2, 'GET', '/payment/withdraw-orders', 'payment:withdraw-order:list', 'payment/withdraw-orders', 'Gold', 138),
-(139, 138, '获取提现订单详情', 3, 'GET', '/payment/withdraw-order/{orderNo}', 'payment:withdraw-order:detail', '', '', 139),
-(140, 138, '审核提现订单', 3, 'POST', '/payment/withdraw-order/{orderNo}/audit', 'payment:withdraw-order:audit', '', '', 140),
+(140, 100, '提现管理', 2, 'GET', '/payment/withdraw-orders', 'payment:withdraw-order:list', 'payment/withdraw-orders', 'Gold', 140),
+(141, 140, '获取提现订单详情', 3, 'GET', '/payment/withdraw-order/{id}', 'payment:withdraw-order:detail', '', '', 141),
+(142, 140, '审核提现订单', 3, 'POST', '/payment/withdraw-order/{orderNo}/audit', 'payment:withdraw-order:audit', '', '', 142),
 
-(141, 100, '提现回调日志列表', 2, 'GET', '/payment/withdraw-notify-logs', 'payment:withdraw-notifylog:list', 'payment/withdraw-notify-logs', 'Gold', 141),
-(142, 141, '获取提现回调日志详情', 3, 'GET', '/payment/withdraw-notify-log/{id}', 'payment:withdraw-notifylog:detail', '', '', 142);
+(143, 100, '提现回调日志列表', 2, 'GET', '/payment/withdraw-notify-logs', 'payment:withdraw-notifylog:list', 'payment/withdraw-notify-logs', 'Gold', 143),
+(144, 143, '获取提现回调日志详情', 3, 'GET', '/payment/withdraw-notify-log/{id}', 'payment:withdraw-notifylog:detail', '', '', 144),
+(145, 100, '支付服务选项', 3, 'GET', '/payment/options', 'payment:options', '', '', 145);
 
 
 
@@ -358,7 +378,8 @@ VALUES
 (321, 317, '获取租户产品详情', 3, 'GET', '/itick/tenant-products/:id', 'itick:tenant-itick:detail', '', '', 321),
 
 -- 初始化租户展示配置
-(322, 300, '初始化租户展示配置', 2, 'POST', '/itick/tenant-display/init', 'itick:tenant-display:init', 'itick/tenant-display-init', 'Setting', 322);
+(322, 300, '初始化租户展示配置', 2, 'POST', '/itick/tenant-display/init', 'itick:tenant-display:init', 'itick/tenant-display-init', 'Setting', 322),
+(323, 300, 'ITICK服务选项', 3, 'GET', '/itick/options', 'itick:options', '', '', 323);
 
 
 -- 资产（asset）
@@ -380,7 +401,8 @@ VALUES
 (408, 404, '管理员冻结资产', 3, 'POST', '/asset/freeze', 'asset:freeze:add', 408),
 (409, 404, '管理员解冻资产', 3, 'POST', '/asset/unfreeze', 'asset:freeze:unfreeze', 409),
 (410, 405, '管理员锁定资产', 3, 'POST', '/asset/lock', 'asset:lock:add', 410),
-(411, 405, '管理员解锁资产', 3, 'POST', '/asset/unlock', 'asset:lock:unlock', 411);
+(411, 405, '管理员解锁资产', 3, 'POST', '/asset/unlock', 'asset:lock:unlock', 411),
+(412, 400, '资产服务选项', 3, 'GET', '/asset/options', 'asset:options', 412);
 
 -- 期权（option）
 INSERT INTO sys_menu (id, parent_id, name, menu_type, icon, sort)
@@ -411,7 +433,8 @@ VALUES
 (515, 514, '获取行权详情', 3, 'GET', '/option/exercises/detail', 'option:exercise:detail', 515),
 (517, 516, '获取结算详情', 3, 'GET', '/option/settlements/detail', 'option:settlement:detail', 517),
 (519, 518, '获取账户详情', 3, 'GET', '/option/accounts/detail', 'option:account:detail', 519),
-(521, 520, '获取账单详情', 3, 'GET', '/option/bills/detail', 'option:bill:detail', 521);
+(521, 520, '获取账单详情', 3, 'GET', '/option/bills/detail', 'option:bill:detail', 521),
+(522, 500, '期权服务选项', 3, 'GET', '/option/options', 'option:options', 522);
 
 -- 质押（staking）
 INSERT INTO sys_menu (id, parent_id, name, menu_type, icon, sort)
@@ -432,7 +455,8 @@ VALUES
 (605, 601, '更新质押产品状态', 3, 'POST', '/staking/products/status', 'staking:product:update:status', 605),
 (607, 606, '获取质押订单详情', 3, 'GET', '/staking/orders/detail', 'staking:order:detail', 607),
 (610, 608, '手动发放奖励', 3, 'POST', '/staking/manual-reward', 'staking:reward-log:manual', 610),
-(611, 609, '手动赎回', 3, 'POST', '/staking/manual-redeem', 'staking:redeem-log:manual', 611);
+(611, 609, '手动赎回', 3, 'POST', '/staking/manual-redeem', 'staking:redeem-log:manual', 611),
+(612, 600, '质押服务选项', 3, 'GET', '/staking/options', 'staking:options', 612);
 
 -- 币币交易（trade）
 INSERT INTO sys_menu (id, parent_id, name, menu_type, icon, sort)
@@ -469,7 +493,8 @@ VALUES
 (721, 720, '设置用户交易配置', 3, 'POST', '/trade/user-trade-config', 'trade:user-trade-config:update', 721),
 (724, 723, '设置用户杠杆配置', 3, 'POST', '/trade/user-leverage-config', 'trade:user-leverage-config:update', 724),
 (726, 725, '获取交易事件详情', 3, 'GET', '/trade/events/detail', 'trade:event:detail', 726),
-(727, 725, '重试交易事件', 3, 'POST', '/trade/events/retry', 'trade:event:retry', 727);
+(727, 725, '重试交易事件', 3, 'POST', '/trade/events/retry', 'trade:event:retry', 727),
+(728, 700, '交易服务选项', 3, 'GET', '/trade/options', 'trade:options', 728);
 
 
 
@@ -486,12 +511,14 @@ VALUES
 (10103, 10100, '删除用户', 3, 'DELETE', '/system/users', 'sys:user:delete', 10103),
 (10104, 10100, '重置密码', 3, 'POST', '/system/users/resetPwd', 'sys:user:resetpwd', 10104),
 (10105, 10100, '分配角色', 3, 'POST', '/system/users/assignRoles', 'sys:user:assignrole', 10105),
-(10106, 10100, 'Google2FA管理', 3, 'GET', '/system/users/google2fa', 'sys:user:google2fa', 10106),
-(10107, 10100, '2FA初始化', 3, 'POST', '/system/users/google2fa/init', 'sys:user:2fa:init', 10107),
-(10108, 10100, '2FA绑定', 3, 'POST', '/system/users/google2fa/bind', 'sys:user:2fa:bind', 10108),
-(10109, 10100, '2FA启用', 3, 'POST', '/system/users/google2fa/enable', 'sys:user:2fa:enable', 10109),
-(10110, 10100, '2FA禁用', 3, 'POST', '/system/users/google2fa/disable', 'sys:user:2fa:disable', 10110),
-(10111, 10100, '2FA重置', 3, 'POST', '/system/users/google2fa/reset', 'sys:user:2fa:reset', 10111);
+(10106, 10100, '用户详情', 3, 'GET', '/system/users/{id}', 'sys:user:detail', 10106),
+(10107, 10100, '修改用户状态', 3, 'POST', '/system/users/status', 'sys:user:status', 10107),
+(10108, 10100, 'Google2FA管理', 3, 'GET', '/system/users/google2fa', 'sys:user:google2fa', 10108),
+(10109, 10100, '2FA初始化', 3, 'POST', '/system/users/google2fa/init', 'sys:user:2fa:init', 10109),
+(10110, 10100, '2FA绑定', 3, 'POST', '/system/users/google2fa/bind', 'sys:user:2fa:bind', 10110),
+(10111, 10100, '2FA启用', 3, 'POST', '/system/users/google2fa/enable', 'sys:user:2fa:enable', 10111),
+(10112, 10100, '2FA禁用', 3, 'POST', '/system/users/google2fa/disable', 'sys:user:2fa:disable', 10112),
+(10113, 10100, '2FA重置', 3, 'POST', '/system/users/google2fa/reset', 'sys:user:2fa:reset', 10113);
 
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
@@ -502,7 +529,9 @@ VALUES
 (10201, 10200, '新增角色', 3, 'POST', '/system/roles', 'sys:role:add', 10201),
 (10202, 10200, '编辑角色', 3, 'PUT', '/system/roles', 'sys:role:update', 10202),
 (10203, 10200, '删除角色', 3, 'DELETE', '/system/roles', 'sys:role:delete', 10203),
-(10204, 10200, '菜单授权', 3, 'POST', '/system/roles/grant', 'sys:role:grant', 10204);
+(10204, 10200, '菜单授权', 3, 'POST', '/system/roles/grant', 'sys:role:grant', 10204),
+(10205, 10200, '授权详情', 3, 'GET', '/system/roles/{id}/grant', 'sys:role:grant:detail', 10205),
+(10206, 10000, '权限列表', 3, 'GET', '/system/perms', 'sys:perm:list', 10206);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
 VALUES (10300, 10000, '菜单管理', 2, 'GET', '/system/menus', 'sys:menu:list', 'system/menus', 'Menu', 10300);
@@ -511,7 +540,8 @@ INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, sort)
 VALUES
 (10301, 10300, '新增菜单', 3, 'POST', '/system/menus', 'sys:menu:add', 10301),
 (10302, 10300, '编辑菜单', 3, 'PUT', '/system/menus', 'sys:menu:update', 10302),
-(10303, 10300, '删除菜单', 3, 'DELETE', '/system/menus', 'sys:menu:delete', 10303);
+(10303, 10300, '删除菜单', 3, 'DELETE', '/system/menus', 'sys:menu:delete', 10303),
+(10304, 10300, '菜单树', 3, 'GET', '/system/menus/tree', 'sys:menu:tree', 10304);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
 VALUES (10400, 10000, '系统配置', 2, 'GET', '/system/configs', 'sys:config:list', 'system/configs', 'Cpu', 10400);
@@ -524,18 +554,18 @@ VALUES
 INSERT INTO sys_menu (id, parent_id, name, menu_type, path, component, icon, sort)
 VALUES (10500, 10000, '定时任务', 1, '', '', 'AlarmClock', 10500);
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
-VALUES (10600, 10500, '定时任务列表', 2, 'GET', '/system/cronjobs', 'sys:job:list', 'system/cronjobs', 'Clock', 10600);
+VALUES (10600, 10500, '定时任务列表', 2, 'GET', '/system/jobs', 'sys:job:list', 'system/cronjobs', 'Clock', 10600);
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, sort)
 VALUES
 (10601, 10600, '新增任务', 3, 'POST', '/system/jobs', 'sys:job:add', 10601),
 (10602, 10600, '编辑任务', 3, 'PUT', '/system/jobs', 'sys:job:update', 10602),
-(10603, 10600, '删除任务', 3, 'DELETE', '/system/jobs', 'sys:job:delete', 10603),
-(10604, 10600, '运行任务', 3, 'POST', '/system/jobs/run', 'sys:job:run', 10604),
-(10605, 10600, '启动任务', 3, 'POST', '/system/jobs/start', 'sys:job:start', 10605),
-(10606, 10600, '停止任务', 3, 'POST', '/system/jobs/stop', 'sys:job:stop', 10606),
+(10603, 10600, '删除任务', 3, 'DELETE', '/system/jobs/{id}', 'sys:job:delete', 10603),
+(10604, 10600, '运行任务', 3, 'POST', '/system/jobs/{id}/run', 'sys:job:run', 10604),
+(10605, 10600, '启动任务', 3, 'POST', '/system/jobs/{id}/start', 'sys:job:start', 10605),
+(10606, 10600, '停止任务', 3, 'POST', '/system/jobs/{id}/stop', 'sys:job:stop', 10606),
 (10607, 10600, '任务处理器', 3, 'GET', '/system/jobs/handlers', 'sys:job:handlers', 10607);
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
-VALUES (10700, 10500, '定时任务日志', 2, 'GET', '/system/cronjobs-log', 'sys:job:log:list', 'system/cronjobs-log', 'Paperclip', 10700);
+VALUES (10700, 10500, '定时任务日志', 2, 'GET', '/system/logs/job', 'sys:job:log:list', 'system/cronjobs-log', 'Paperclip', 10700);
 
 INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
 VALUES (10800, 10000, '登录日志', 2, 'GET', '/system/logs/login', 'sys:log:login:list', 'system/login-log', 'Reading', 10800);
@@ -550,7 +580,5 @@ VALUES
 (11001, 11000, '新增租户', 3, 'POST', '/system/tenants', 'sys:tenant:add', 11001),
 (11002, 11000, '编辑租户', 3, 'PUT', '/system/tenants', 'sys:tenant:update', 11002),
 (11003, 11000, '删除租户', 3, 'DELETE', '/system/tenants', 'sys:tenant:delete', 11003),
-(11004, 11000, '重置密码', 3, 'POST', '/system/tenants/resetPwd', 'sys:tenant:resetpwd', 11004),
-(11005, 11000, '禁用租户', 3, 'POST', '/system/tenants/disable', 'sys:tenant:disable', 11005),
-(11006, 11000, '启用租户', 3, 'POST', '/system/tenants/enable', 'sys:tenant:enable', 11006),
-(11007, 11000, '获取租户详情', 3, 'GET', '/system/tenant/detail', 'sys:tenant:detail', 11007);
+(11004, 11000, '获取租户详情', 3, 'GET', '/system/tenant/detail', 'sys:tenant:detail', 11004),
+(11005, 10000, '系统服务选项', 3, 'GET', '/system/options', 'sys:options', 11005);

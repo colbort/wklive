@@ -16,7 +16,7 @@ func ToAssetStatus(status int64) asset.AssetStatus {
 	case 0:
 		return asset.AssetStatus_ASSET_STATUS_DISABLED
 	default:
-		return asset.AssetStatus_ASSET_STATUS_UNSPECIFIED
+		return asset.AssetStatus_ASSET_STATUS_UNKNOWN
 	}
 }
 
@@ -33,7 +33,7 @@ func ToFreezeStatus(status int64) asset.FreezeStatus {
 	case 5:
 		return asset.FreezeStatus_FREEZE_STATUS_CLOSED
 	default:
-		return asset.FreezeStatus_FREEZE_STATUS_UNSPECIFIED
+		return asset.FreezeStatus_FREEZE_STATUS_UNKNOWN
 	}
 }
 
@@ -48,7 +48,7 @@ func ToLockStatus(status int64) asset.LockStatus {
 	case 4:
 		return asset.LockStatus_LOCK_STATUS_CLOSED
 	default:
-		return asset.LockStatus_LOCK_STATUS_UNSPECIFIED
+		return asset.LockStatus_LOCK_STATUS_UNKNOWN
 	}
 }
 
@@ -71,7 +71,7 @@ func ToBizTypeValue(bizType string) asset.BizType {
 	case "earn":
 		return asset.BizType_BIZ_TYPE_EARN
 	default:
-		return asset.BizType_BIZ_TYPE_UNSPECIFIED
+		return asset.BizType_BIZ_TYPE_UNKNOWN
 	}
 }
 
@@ -110,7 +110,7 @@ func ToSceneTypeValue(sceneType string) asset.SceneType {
 	case "airdrop":
 		return asset.SceneType_SCENE_TYPE_AIRDROP
 	default:
-		return asset.SceneType_SCENE_TYPE_UNSPECIFIED
+		return asset.SceneType_SCENE_TYPE_UNKNOWN
 	}
 }
 

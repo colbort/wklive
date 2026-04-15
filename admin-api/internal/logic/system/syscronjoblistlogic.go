@@ -37,7 +37,7 @@ func (l *SysCronJobListLogic) SysCronJobList(req *types.SysCronJobListReq) (resp
 		Keyword:  req.Keyword,
 		JobName:  req.JobName,
 		JobGroup: req.JobGroup,
-		Status:   req.Status,
+		Status:   toJobStatus(req.Status),
 	})
 	if err != nil {
 		return nil, err
@@ -50,7 +50,7 @@ func (l *SysCronJobListLogic) SysCronJobList(req *types.SysCronJobListReq) (resp
 			JobGroup:       item.JobGroup,
 			InvokeTarget:   item.InvokeTarget,
 			CronExpression: item.CronExpression,
-			Status:         item.Status,
+			Status:         fromJobStatus(item.Status),
 			Remark:         item.Remark,
 			CreateBy:       item.CreateBy,
 			CreateTimes:    item.CreateTimes,

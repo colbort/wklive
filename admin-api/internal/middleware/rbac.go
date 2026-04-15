@@ -44,8 +44,13 @@ func NewRbacMiddleware(svcCtx *svc.ServiceContext) *RbacMiddleware {
 				continue
 			}
 
+			method := strings.TrimPrefix(item.Method.String(), "REQUEST_METHOD_")
+			if item.Method == system.RequestMethod_REQUEST_METHOD_UNKNOWN {
+				method = ""
+			}
+
 			rules = append(rules, PermissionRule{
-				Method:     strings.ToUpper(strings.TrimSpace(item.Method)),
+				Method:     strings.ToUpper(strings.TrimSpace(method)),
 				Path:       normalizePath(item.Path),
 				PermKey:    item.PermKey,
 				Pattern:    pattern,

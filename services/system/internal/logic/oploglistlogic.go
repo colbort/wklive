@@ -28,7 +28,7 @@ func (l *OpLogListLogic) OpLogList(in *system.OpLogListReq) (*system.OpLogListRe
 	items, total, err := l.svcCtx.OpLogModel.FindPage(
 		l.ctx,
 		in.Username,
-		in.Method,
+		requestMethodToString(in.Method),
 		in.Path,
 		in.Page.Cursor,
 		in.Page.Limit,
@@ -48,7 +48,7 @@ func (l *OpLogListLogic) OpLogList(in *system.OpLogListReq) (*system.OpLogListRe
 			Id:          item.Id,
 			UserId:      item.UserId.Int64,
 			Username:    item.Username.String,
-			Method:      item.Method.String,
+			Method:      requestMethodToProto(item.Method.String),
 			Path:        item.Path.String,
 			Req:         item.Req.String,
 			Resp:        item.Resp.String,

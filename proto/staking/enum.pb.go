@@ -25,22 +25,22 @@ const (
 type YesNo int32
 
 const (
-	YesNo_YES_NO_UNSPECIFIED YesNo = 0
-	YesNo_YES_NO_NO          YesNo = 1 // 否
-	YesNo_YES_NO_YES         YesNo = 2 // 是
+	YesNo_YES_NO_UNKNOWN YesNo = 0
+	YesNo_YES_NO_NO      YesNo = 1 // 否
+	YesNo_YES_NO_YES     YesNo = 2 // 是
 )
 
 // Enum value maps for YesNo.
 var (
 	YesNo_name = map[int32]string{
-		0: "YES_NO_UNSPECIFIED",
+		0: "YES_NO_UNKNOWN",
 		1: "YES_NO_NO",
 		2: "YES_NO_YES",
 	}
 	YesNo_value = map[string]int32{
-		"YES_NO_UNSPECIFIED": 0,
-		"YES_NO_NO":          1,
-		"YES_NO_YES":         2,
+		"YES_NO_UNKNOWN": 0,
+		"YES_NO_NO":      1,
+		"YES_NO_YES":     2,
 	}
 )
 
@@ -75,25 +75,25 @@ func (YesNo) EnumDescriptor() ([]byte, []int) {
 type ProductStatus int32
 
 const (
-	ProductStatus_PRODUCT_STATUS_UNSPECIFIED ProductStatus = 0
-	ProductStatus_PRODUCT_STATUS_DISABLE     ProductStatus = 1 // 禁用
-	ProductStatus_PRODUCT_STATUS_ENABLE      ProductStatus = 2 // 启用
-	ProductStatus_PRODUCT_STATUS_OFF_SHELF   ProductStatus = 3 // 下架
+	ProductStatus_PRODUCT_STATUS_UNKNOWN   ProductStatus = 0
+	ProductStatus_PRODUCT_STATUS_DISABLE   ProductStatus = 1 // 禁用
+	ProductStatus_PRODUCT_STATUS_ENABLE    ProductStatus = 2 // 启用
+	ProductStatus_PRODUCT_STATUS_OFF_SHELF ProductStatus = 3 // 下架
 )
 
 // Enum value maps for ProductStatus.
 var (
 	ProductStatus_name = map[int32]string{
-		0: "PRODUCT_STATUS_UNSPECIFIED",
+		0: "PRODUCT_STATUS_UNKNOWN",
 		1: "PRODUCT_STATUS_DISABLE",
 		2: "PRODUCT_STATUS_ENABLE",
 		3: "PRODUCT_STATUS_OFF_SHELF",
 	}
 	ProductStatus_value = map[string]int32{
-		"PRODUCT_STATUS_UNSPECIFIED": 0,
-		"PRODUCT_STATUS_DISABLE":     1,
-		"PRODUCT_STATUS_ENABLE":      2,
-		"PRODUCT_STATUS_OFF_SHELF":   3,
+		"PRODUCT_STATUS_UNKNOWN":   0,
+		"PRODUCT_STATUS_DISABLE":   1,
+		"PRODUCT_STATUS_ENABLE":    2,
+		"PRODUCT_STATUS_OFF_SHELF": 3,
 	}
 )
 
@@ -128,22 +128,22 @@ func (ProductStatus) EnumDescriptor() ([]byte, []int) {
 type ProductType int32
 
 const (
-	ProductType_PRODUCT_TYPE_UNSPECIFIED ProductType = 0
-	ProductType_PRODUCT_TYPE_CURRENT     ProductType = 1 // 活期
-	ProductType_PRODUCT_TYPE_FIXED       ProductType = 2 // 定期
+	ProductType_PRODUCT_TYPE_UNKNOWN ProductType = 0
+	ProductType_PRODUCT_TYPE_CURRENT ProductType = 1 // 活期
+	ProductType_PRODUCT_TYPE_FIXED   ProductType = 2 // 定期
 )
 
 // Enum value maps for ProductType.
 var (
 	ProductType_name = map[int32]string{
-		0: "PRODUCT_TYPE_UNSPECIFIED",
+		0: "PRODUCT_TYPE_UNKNOWN",
 		1: "PRODUCT_TYPE_CURRENT",
 		2: "PRODUCT_TYPE_FIXED",
 	}
 	ProductType_value = map[string]int32{
-		"PRODUCT_TYPE_UNSPECIFIED": 0,
-		"PRODUCT_TYPE_CURRENT":     1,
-		"PRODUCT_TYPE_FIXED":       2,
+		"PRODUCT_TYPE_UNKNOWN": 0,
+		"PRODUCT_TYPE_CURRENT": 1,
+		"PRODUCT_TYPE_FIXED":   2,
 	}
 )
 
@@ -178,22 +178,22 @@ func (ProductType) EnumDescriptor() ([]byte, []int) {
 type InterestMode int32
 
 const (
-	InterestMode_INTEREST_MODE_UNSPECIFIED InterestMode = 0
-	InterestMode_INTEREST_MODE_DAILY       InterestMode = 1 // 按天计息
-	InterestMode_INTEREST_MODE_MATURITY    InterestMode = 2 // 到期一次性计息
+	InterestMode_INTEREST_MODE_UNKNOWN  InterestMode = 0
+	InterestMode_INTEREST_MODE_DAILY    InterestMode = 1 // 按天计息
+	InterestMode_INTEREST_MODE_MATURITY InterestMode = 2 // 到期一次性计息
 )
 
 // Enum value maps for InterestMode.
 var (
 	InterestMode_name = map[int32]string{
-		0: "INTEREST_MODE_UNSPECIFIED",
+		0: "INTEREST_MODE_UNKNOWN",
 		1: "INTEREST_MODE_DAILY",
 		2: "INTEREST_MODE_MATURITY",
 	}
 	InterestMode_value = map[string]int32{
-		"INTEREST_MODE_UNSPECIFIED": 0,
-		"INTEREST_MODE_DAILY":       1,
-		"INTEREST_MODE_MATURITY":    2,
+		"INTEREST_MODE_UNKNOWN":  0,
+		"INTEREST_MODE_DAILY":    1,
+		"INTEREST_MODE_MATURITY": 2,
 	}
 )
 
@@ -228,22 +228,22 @@ func (InterestMode) EnumDescriptor() ([]byte, []int) {
 type RewardMode int32
 
 const (
-	RewardMode_REWARD_MODE_UNSPECIFIED RewardMode = 0
-	RewardMode_REWARD_MODE_DAILY       RewardMode = 1 // 每日发放
-	RewardMode_REWARD_MODE_MATURITY    RewardMode = 2 // 到期发放
+	RewardMode_REWARD_MODE_UNKNOWN  RewardMode = 0
+	RewardMode_REWARD_MODE_DAILY    RewardMode = 1 // 每日发放
+	RewardMode_REWARD_MODE_MATURITY RewardMode = 2 // 到期发放
 )
 
 // Enum value maps for RewardMode.
 var (
 	RewardMode_name = map[int32]string{
-		0: "REWARD_MODE_UNSPECIFIED",
+		0: "REWARD_MODE_UNKNOWN",
 		1: "REWARD_MODE_DAILY",
 		2: "REWARD_MODE_MATURITY",
 	}
 	RewardMode_value = map[string]int32{
-		"REWARD_MODE_UNSPECIFIED": 0,
-		"REWARD_MODE_DAILY":       1,
-		"REWARD_MODE_MATURITY":    2,
+		"REWARD_MODE_UNKNOWN":  0,
+		"REWARD_MODE_DAILY":    1,
+		"REWARD_MODE_MATURITY": 2,
 	}
 )
 
@@ -278,7 +278,7 @@ func (RewardMode) EnumDescriptor() ([]byte, []int) {
 type OrderStatus int32
 
 const (
-	OrderStatus_ORDER_STATUS_UNSPECIFIED    OrderStatus = 0
+	OrderStatus_ORDER_STATUS_UNKNOWN        OrderStatus = 0
 	OrderStatus_ORDER_STATUS_STAKING        OrderStatus = 1 // 质押中
 	OrderStatus_ORDER_STATUS_EXPIRED        OrderStatus = 2 // 已到期
 	OrderStatus_ORDER_STATUS_REDEEMED       OrderStatus = 3 // 已赎回
@@ -289,7 +289,7 @@ const (
 // Enum value maps for OrderStatus.
 var (
 	OrderStatus_name = map[int32]string{
-		0: "ORDER_STATUS_UNSPECIFIED",
+		0: "ORDER_STATUS_UNKNOWN",
 		1: "ORDER_STATUS_STAKING",
 		2: "ORDER_STATUS_EXPIRED",
 		3: "ORDER_STATUS_REDEEMED",
@@ -297,7 +297,7 @@ var (
 		5: "ORDER_STATUS_CANCELLED",
 	}
 	OrderStatus_value = map[string]int32{
-		"ORDER_STATUS_UNSPECIFIED":    0,
+		"ORDER_STATUS_UNKNOWN":        0,
 		"ORDER_STATUS_STAKING":        1,
 		"ORDER_STATUS_EXPIRED":        2,
 		"ORDER_STATUS_REDEEMED":       3,
@@ -337,28 +337,28 @@ func (OrderStatus) EnumDescriptor() ([]byte, []int) {
 type RedeemType int32
 
 const (
-	RedeemType_REDEEM_TYPE_UNSPECIFIED RedeemType = 0
-	RedeemType_REDEEM_TYPE_NONE        RedeemType = 1 // 未赎回
-	RedeemType_REDEEM_TYPE_MATURITY    RedeemType = 2 // 到期赎回
-	RedeemType_REDEEM_TYPE_EARLY       RedeemType = 3 // 提前赎回
-	RedeemType_REDEEM_TYPE_MANUAL      RedeemType = 4 // 手动赎回
+	RedeemType_REDEEM_TYPE_UNKNOWN  RedeemType = 0
+	RedeemType_REDEEM_TYPE_NONE     RedeemType = 1 // 未赎回
+	RedeemType_REDEEM_TYPE_MATURITY RedeemType = 2 // 到期赎回
+	RedeemType_REDEEM_TYPE_EARLY    RedeemType = 3 // 提前赎回
+	RedeemType_REDEEM_TYPE_MANUAL   RedeemType = 4 // 手动赎回
 )
 
 // Enum value maps for RedeemType.
 var (
 	RedeemType_name = map[int32]string{
-		0: "REDEEM_TYPE_UNSPECIFIED",
+		0: "REDEEM_TYPE_UNKNOWN",
 		1: "REDEEM_TYPE_NONE",
 		2: "REDEEM_TYPE_MATURITY",
 		3: "REDEEM_TYPE_EARLY",
 		4: "REDEEM_TYPE_MANUAL",
 	}
 	RedeemType_value = map[string]int32{
-		"REDEEM_TYPE_UNSPECIFIED": 0,
-		"REDEEM_TYPE_NONE":        1,
-		"REDEEM_TYPE_MATURITY":    2,
-		"REDEEM_TYPE_EARLY":       3,
-		"REDEEM_TYPE_MANUAL":      4,
+		"REDEEM_TYPE_UNKNOWN":  0,
+		"REDEEM_TYPE_NONE":     1,
+		"REDEEM_TYPE_MATURITY": 2,
+		"REDEEM_TYPE_EARLY":    3,
+		"REDEEM_TYPE_MANUAL":   4,
 	}
 )
 
@@ -393,28 +393,28 @@ func (RedeemType) EnumDescriptor() ([]byte, []int) {
 type RewardType int32
 
 const (
-	RewardType_REWARD_TYPE_UNSPECIFIED RewardType = 0
-	RewardType_REWARD_TYPE_DAILY       RewardType = 1 // 日收益
-	RewardType_REWARD_TYPE_MATURITY    RewardType = 2 // 到期收益
-	RewardType_REWARD_TYPE_REISSUE     RewardType = 3 // 补发收益
-	RewardType_REWARD_TYPE_MANUAL      RewardType = 4 // 手动发放
+	RewardType_REWARD_TYPE_UNKNOWN  RewardType = 0
+	RewardType_REWARD_TYPE_DAILY    RewardType = 1 // 日收益
+	RewardType_REWARD_TYPE_MATURITY RewardType = 2 // 到期收益
+	RewardType_REWARD_TYPE_REISSUE  RewardType = 3 // 补发收益
+	RewardType_REWARD_TYPE_MANUAL   RewardType = 4 // 手动发放
 )
 
 // Enum value maps for RewardType.
 var (
 	RewardType_name = map[int32]string{
-		0: "REWARD_TYPE_UNSPECIFIED",
+		0: "REWARD_TYPE_UNKNOWN",
 		1: "REWARD_TYPE_DAILY",
 		2: "REWARD_TYPE_MATURITY",
 		3: "REWARD_TYPE_REISSUE",
 		4: "REWARD_TYPE_MANUAL",
 	}
 	RewardType_value = map[string]int32{
-		"REWARD_TYPE_UNSPECIFIED": 0,
-		"REWARD_TYPE_DAILY":       1,
-		"REWARD_TYPE_MATURITY":    2,
-		"REWARD_TYPE_REISSUE":     3,
-		"REWARD_TYPE_MANUAL":      4,
+		"REWARD_TYPE_UNKNOWN":  0,
+		"REWARD_TYPE_DAILY":    1,
+		"REWARD_TYPE_MATURITY": 2,
+		"REWARD_TYPE_REISSUE":  3,
+		"REWARD_TYPE_MANUAL":   4,
 	}
 )
 
@@ -449,22 +449,22 @@ func (RewardType) EnumDescriptor() ([]byte, []int) {
 type RewardStatus int32
 
 const (
-	RewardStatus_REWARD_STATUS_UNSPECIFIED RewardStatus = 0
-	RewardStatus_REWARD_STATUS_FAIL        RewardStatus = 1 // 失败
-	RewardStatus_REWARD_STATUS_SUCCESS     RewardStatus = 2 // 成功
+	RewardStatus_REWARD_STATUS_UNKNOWN RewardStatus = 0
+	RewardStatus_REWARD_STATUS_FAIL    RewardStatus = 1 // 失败
+	RewardStatus_REWARD_STATUS_SUCCESS RewardStatus = 2 // 成功
 )
 
 // Enum value maps for RewardStatus.
 var (
 	RewardStatus_name = map[int32]string{
-		0: "REWARD_STATUS_UNSPECIFIED",
+		0: "REWARD_STATUS_UNKNOWN",
 		1: "REWARD_STATUS_FAIL",
 		2: "REWARD_STATUS_SUCCESS",
 	}
 	RewardStatus_value = map[string]int32{
-		"REWARD_STATUS_UNSPECIFIED": 0,
-		"REWARD_STATUS_FAIL":        1,
-		"REWARD_STATUS_SUCCESS":     2,
+		"REWARD_STATUS_UNKNOWN": 0,
+		"REWARD_STATUS_FAIL":    1,
+		"REWARD_STATUS_SUCCESS": 2,
 	}
 )
 
@@ -499,25 +499,25 @@ func (RewardStatus) EnumDescriptor() ([]byte, []int) {
 type RedeemStatus int32
 
 const (
-	RedeemStatus_REDEEM_STATUS_UNSPECIFIED RedeemStatus = 0
-	RedeemStatus_REDEEM_STATUS_FAIL        RedeemStatus = 1 // 失败
-	RedeemStatus_REDEEM_STATUS_SUCCESS     RedeemStatus = 2 // 成功
-	RedeemStatus_REDEEM_STATUS_PROCESSING  RedeemStatus = 3 // 处理中
+	RedeemStatus_REDEEM_STATUS_UNKNOWN    RedeemStatus = 0
+	RedeemStatus_REDEEM_STATUS_FAIL       RedeemStatus = 1 // 失败
+	RedeemStatus_REDEEM_STATUS_SUCCESS    RedeemStatus = 2 // 成功
+	RedeemStatus_REDEEM_STATUS_PROCESSING RedeemStatus = 3 // 处理中
 )
 
 // Enum value maps for RedeemStatus.
 var (
 	RedeemStatus_name = map[int32]string{
-		0: "REDEEM_STATUS_UNSPECIFIED",
+		0: "REDEEM_STATUS_UNKNOWN",
 		1: "REDEEM_STATUS_FAIL",
 		2: "REDEEM_STATUS_SUCCESS",
 		3: "REDEEM_STATUS_PROCESSING",
 	}
 	RedeemStatus_value = map[string]int32{
-		"REDEEM_STATUS_UNSPECIFIED": 0,
-		"REDEEM_STATUS_FAIL":        1,
-		"REDEEM_STATUS_SUCCESS":     2,
-		"REDEEM_STATUS_PROCESSING":  3,
+		"REDEEM_STATUS_UNKNOWN":    0,
+		"REDEEM_STATUS_FAIL":       1,
+		"REDEEM_STATUS_SUCCESS":    2,
+		"REDEEM_STATUS_PROCESSING": 3,
 	}
 )
 
@@ -552,28 +552,28 @@ func (RedeemStatus) EnumDescriptor() ([]byte, []int) {
 type SourceType int32
 
 const (
-	SourceType_SOURCE_TYPE_UNSPECIFIED SourceType = 0
-	SourceType_SOURCE_TYPE_ADMIN       SourceType = 1 // 后台
-	SourceType_SOURCE_TYPE_H5          SourceType = 2 // H5
-	SourceType_SOURCE_TYPE_APP         SourceType = 3 // APP
-	SourceType_SOURCE_TYPE_API         SourceType = 4 // API
+	SourceType_SOURCE_TYPE_UNKNOWN SourceType = 0
+	SourceType_SOURCE_TYPE_ADMIN   SourceType = 1 // 后台
+	SourceType_SOURCE_TYPE_H5      SourceType = 2 // H5
+	SourceType_SOURCE_TYPE_APP     SourceType = 3 // APP
+	SourceType_SOURCE_TYPE_API     SourceType = 4 // API
 )
 
 // Enum value maps for SourceType.
 var (
 	SourceType_name = map[int32]string{
-		0: "SOURCE_TYPE_UNSPECIFIED",
+		0: "SOURCE_TYPE_UNKNOWN",
 		1: "SOURCE_TYPE_ADMIN",
 		2: "SOURCE_TYPE_H5",
 		3: "SOURCE_TYPE_APP",
 		4: "SOURCE_TYPE_API",
 	}
 	SourceType_value = map[string]int32{
-		"SOURCE_TYPE_UNSPECIFIED": 0,
-		"SOURCE_TYPE_ADMIN":       1,
-		"SOURCE_TYPE_H5":          2,
-		"SOURCE_TYPE_APP":         3,
-		"SOURCE_TYPE_API":         4,
+		"SOURCE_TYPE_UNKNOWN": 0,
+		"SOURCE_TYPE_ADMIN":   1,
+		"SOURCE_TYPE_H5":      2,
+		"SOURCE_TYPE_APP":     3,
+		"SOURCE_TYPE_API":     4,
 	}
 )
 
@@ -608,63 +608,63 @@ var File_proto_staking_enum_proto protoreflect.FileDescriptor
 
 const file_proto_staking_enum_proto_rawDesc = "" +
 	"\n" +
-	"\x18proto/staking/enum.proto\x12\astaking*>\n" +
-	"\x05YesNo\x12\x16\n" +
-	"\x12YES_NO_UNSPECIFIED\x10\x00\x12\r\n" +
+	"\x18proto/staking/enum.proto\x12\astaking*:\n" +
+	"\x05YesNo\x12\x12\n" +
+	"\x0eYES_NO_UNKNOWN\x10\x00\x12\r\n" +
 	"\tYES_NO_NO\x10\x01\x12\x0e\n" +
 	"\n" +
-	"YES_NO_YES\x10\x02*\x84\x01\n" +
-	"\rProductStatus\x12\x1e\n" +
-	"\x1aPRODUCT_STATUS_UNSPECIFIED\x10\x00\x12\x1a\n" +
+	"YES_NO_YES\x10\x02*\x80\x01\n" +
+	"\rProductStatus\x12\x1a\n" +
+	"\x16PRODUCT_STATUS_UNKNOWN\x10\x00\x12\x1a\n" +
 	"\x16PRODUCT_STATUS_DISABLE\x10\x01\x12\x19\n" +
 	"\x15PRODUCT_STATUS_ENABLE\x10\x02\x12\x1c\n" +
-	"\x18PRODUCT_STATUS_OFF_SHELF\x10\x03*]\n" +
-	"\vProductType\x12\x1c\n" +
-	"\x18PRODUCT_TYPE_UNSPECIFIED\x10\x00\x12\x18\n" +
+	"\x18PRODUCT_STATUS_OFF_SHELF\x10\x03*Y\n" +
+	"\vProductType\x12\x18\n" +
+	"\x14PRODUCT_TYPE_UNKNOWN\x10\x00\x12\x18\n" +
 	"\x14PRODUCT_TYPE_CURRENT\x10\x01\x12\x16\n" +
-	"\x12PRODUCT_TYPE_FIXED\x10\x02*b\n" +
-	"\fInterestMode\x12\x1d\n" +
-	"\x19INTEREST_MODE_UNSPECIFIED\x10\x00\x12\x17\n" +
+	"\x12PRODUCT_TYPE_FIXED\x10\x02*^\n" +
+	"\fInterestMode\x12\x19\n" +
+	"\x15INTEREST_MODE_UNKNOWN\x10\x00\x12\x17\n" +
 	"\x13INTEREST_MODE_DAILY\x10\x01\x12\x1a\n" +
-	"\x16INTEREST_MODE_MATURITY\x10\x02*Z\n" +
+	"\x16INTEREST_MODE_MATURITY\x10\x02*V\n" +
 	"\n" +
-	"RewardMode\x12\x1b\n" +
-	"\x17REWARD_MODE_UNSPECIFIED\x10\x00\x12\x15\n" +
+	"RewardMode\x12\x17\n" +
+	"\x13REWARD_MODE_UNKNOWN\x10\x00\x12\x15\n" +
 	"\x11REWARD_MODE_DAILY\x10\x01\x12\x18\n" +
-	"\x14REWARD_MODE_MATURITY\x10\x02*\xb7\x01\n" +
-	"\vOrderStatus\x12\x1c\n" +
-	"\x18ORDER_STATUS_UNSPECIFIED\x10\x00\x12\x18\n" +
+	"\x14REWARD_MODE_MATURITY\x10\x02*\xb3\x01\n" +
+	"\vOrderStatus\x12\x18\n" +
+	"\x14ORDER_STATUS_UNKNOWN\x10\x00\x12\x18\n" +
 	"\x14ORDER_STATUS_STAKING\x10\x01\x12\x18\n" +
 	"\x14ORDER_STATUS_EXPIRED\x10\x02\x12\x19\n" +
 	"\x15ORDER_STATUS_REDEEMED\x10\x03\x12\x1f\n" +
 	"\x1bORDER_STATUS_EARLY_REDEEMED\x10\x04\x12\x1a\n" +
-	"\x16ORDER_STATUS_CANCELLED\x10\x05*\x88\x01\n" +
+	"\x16ORDER_STATUS_CANCELLED\x10\x05*\x84\x01\n" +
 	"\n" +
-	"RedeemType\x12\x1b\n" +
-	"\x17REDEEM_TYPE_UNSPECIFIED\x10\x00\x12\x14\n" +
+	"RedeemType\x12\x17\n" +
+	"\x13REDEEM_TYPE_UNKNOWN\x10\x00\x12\x14\n" +
 	"\x10REDEEM_TYPE_NONE\x10\x01\x12\x18\n" +
 	"\x14REDEEM_TYPE_MATURITY\x10\x02\x12\x15\n" +
 	"\x11REDEEM_TYPE_EARLY\x10\x03\x12\x16\n" +
-	"\x12REDEEM_TYPE_MANUAL\x10\x04*\x8b\x01\n" +
+	"\x12REDEEM_TYPE_MANUAL\x10\x04*\x87\x01\n" +
 	"\n" +
-	"RewardType\x12\x1b\n" +
-	"\x17REWARD_TYPE_UNSPECIFIED\x10\x00\x12\x15\n" +
+	"RewardType\x12\x17\n" +
+	"\x13REWARD_TYPE_UNKNOWN\x10\x00\x12\x15\n" +
 	"\x11REWARD_TYPE_DAILY\x10\x01\x12\x18\n" +
 	"\x14REWARD_TYPE_MATURITY\x10\x02\x12\x17\n" +
 	"\x13REWARD_TYPE_REISSUE\x10\x03\x12\x16\n" +
-	"\x12REWARD_TYPE_MANUAL\x10\x04*`\n" +
-	"\fRewardStatus\x12\x1d\n" +
-	"\x19REWARD_STATUS_UNSPECIFIED\x10\x00\x12\x16\n" +
+	"\x12REWARD_TYPE_MANUAL\x10\x04*\\\n" +
+	"\fRewardStatus\x12\x19\n" +
+	"\x15REWARD_STATUS_UNKNOWN\x10\x00\x12\x16\n" +
 	"\x12REWARD_STATUS_FAIL\x10\x01\x12\x19\n" +
-	"\x15REWARD_STATUS_SUCCESS\x10\x02*~\n" +
-	"\fRedeemStatus\x12\x1d\n" +
-	"\x19REDEEM_STATUS_UNSPECIFIED\x10\x00\x12\x16\n" +
+	"\x15REWARD_STATUS_SUCCESS\x10\x02*z\n" +
+	"\fRedeemStatus\x12\x19\n" +
+	"\x15REDEEM_STATUS_UNKNOWN\x10\x00\x12\x16\n" +
 	"\x12REDEEM_STATUS_FAIL\x10\x01\x12\x19\n" +
 	"\x15REDEEM_STATUS_SUCCESS\x10\x02\x12\x1c\n" +
-	"\x18REDEEM_STATUS_PROCESSING\x10\x03*~\n" +
+	"\x18REDEEM_STATUS_PROCESSING\x10\x03*z\n" +
 	"\n" +
-	"SourceType\x12\x1b\n" +
-	"\x17SOURCE_TYPE_UNSPECIFIED\x10\x00\x12\x15\n" +
+	"SourceType\x12\x17\n" +
+	"\x13SOURCE_TYPE_UNKNOWN\x10\x00\x12\x15\n" +
 	"\x11SOURCE_TYPE_ADMIN\x10\x01\x12\x12\n" +
 	"\x0eSOURCE_TYPE_H5\x10\x02\x12\x13\n" +
 	"\x0fSOURCE_TYPE_APP\x10\x03\x12\x13\n" +

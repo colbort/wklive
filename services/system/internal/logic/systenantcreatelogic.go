@@ -42,7 +42,7 @@ func (l *SysTenantCreateLogic) SysTenantCreate(in *system.SysTenantCreateReq) (*
 	_, err = l.svcCtx.TenantMode.Insert(l.ctx, &models.SysTenant{
 		TenantCode:   in.TenantCode,
 		TenantName:   in.TenantName,
-		Status:       in.Status,
+		Status:       commonStatusToModel(in.Status),
 		ExpireTime:   in.ExpireTime,
 		ContactName:  sql.NullString{String: in.ContactName, Valid: true},
 		ContactPhone: sql.NullString{String: in.ContactPhone, Valid: true},

@@ -316,12 +316,20 @@ type AdminManualRedeemResp {
 	redeemNo string `json:"redeemNo"`
 }
 
+type GetStakingOptionsResp {
+	RespBase
+	data []OptionsGroup `json:"data"`
+}
+
 @server (
 	prefix: /admin/staking
 	group:  staking
 	jwt:    Jwt
 )
 service admin {
+	@handler GetStakingOptions
+	get /options returns (GetStakingOptionsResp)
+
 	@handler AdminProductList
 	get /products (AdminProductListReq) returns (AdminProductListResp)
 
@@ -355,4 +363,3 @@ service admin {
 	@handler ManualRedeem
 	post /manual-redeem (AdminManualRedeemReq) returns (AdminManualRedeemResp)
 }
-

@@ -32,7 +32,7 @@ func (l *SysUserCreateLogic) SysUserCreate(req *types.SysUserCreateReq) (resp *t
 		Username: req.Username,
 		Nickname: req.Nickname,
 		Password: req.Password,
-		Status:   req.Status,
+		Status:   toCommonStatus(req.Status),
 		RoleIds:  req.RoleIds,
 	})
 	if err != nil {

@@ -390,12 +390,20 @@ type InitTenantItickDisplayResp {
 	productCount  int64 `json:"productCount"`
 }
 
+type GetItickOptionsResp {
+	RespBase
+	data []OptionsGroup `json:"data"`
+}
+
 @server (
 	prefix: /admin/itick
 	group:  itick
 	jwt:    Jwt
 )
 service admin {
+	@handler GetItickOptions
+	get /options returns (GetItickOptionsResp)
+
 	// 产品类型列表
 	@handler ListCategories
 	get /categories (ListCategoriesReq) returns (ListCategoriesResp)
@@ -484,4 +492,3 @@ service admin {
 	@handler InitTenantItickDisplay
 	post /tenant-display/init (InitTenantItickDisplayReq) returns (InitTenantItickDisplayResp)
 }
-

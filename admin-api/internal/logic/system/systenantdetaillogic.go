@@ -44,7 +44,7 @@ func (l *SysTenantDetailLogic) SysTenantDetail(req *types.SysTenantDetailReq) (r
 			Id:           result.Data.Id,
 			TenantCode:   result.Data.TenantCode,
 			TenantName:   result.Data.TenantName,
-			Status:       result.Data.Status,
+			Status:       fromCommonStatus(result.Data.Status),
 			ExpireTime:   result.Data.ExpireTime,
 			ContactName:  result.Data.ContactName,
 			ContactPhone: result.Data.ContactPhone,

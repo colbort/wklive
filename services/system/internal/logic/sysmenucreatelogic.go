@@ -30,7 +30,7 @@ func NewSysMenuCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 func (l *SysMenuCreateLogic) SysMenuCreate(in *system.SysMenuCreateReq) (*system.RespBase, error) {
 	var menu *models.SysMenu
 	var err error
-	switch in.MenuType {
+	switch menuTypeToModel(in.MenuType) {
 	case 1:
 		menu, err = l.svcCtx.MenuModel.FindOneByName(l.ctx, in.Name)
 	case 2:
@@ -53,15 +53,15 @@ func (l *SysMenuCreateLogic) SysMenuCreate(in *system.SysMenuCreateReq) (*system
 	_, err = l.svcCtx.MenuModel.Insert(l.ctx, &models.SysMenu{
 		ParentId:    in.ParentId,
 		Name:        in.Name,
-		MenuType:    in.MenuType,
-		Method:      in.Method,
+		MenuType:    menuTypeToModel(in.MenuType),
+		Method:      requestMethodToString(in.Method),
 		Path:        in.Path,
 		Component:   in.Component,
 		Perms:       in.Perms,
 		Icon:        in.Icon,
 		Sort:        in.Sort,
-		Visible:     in.Visible,
-		Status:      in.Status,
+		Visible:     visibleStatusToModel(in.Visible),
+		Status:      commonStatusToModel(in.Status),
 		CreateTimes: utils.NowMillis(),
 		UpdateTimes: utils.NowMillis(),
 	})

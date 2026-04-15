@@ -27,7 +27,7 @@ func NewPageUserAssetsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pa
 // 分页查询资产
 func (l *PageUserAssetsLogic) PageUserAssets(in *asset.PageUserAssetsReq) (*asset.PageUserAssetsResp, error) {
 	status := int64(0)
-	if in.Status != asset.AssetStatus_ASSET_STATUS_UNSPECIFIED {
+	if in.Status != asset.AssetStatus_ASSET_STATUS_UNKNOWN {
 		status = assetStatusFilter(in.Status)
 	}
 

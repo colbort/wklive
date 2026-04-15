@@ -73,6 +73,257 @@ func (SysConfigType) EnumDescriptor() ([]byte, []int) {
 	return file_proto_system_enum_proto_rawDescGZIP(), []int{0}
 }
 
+type CommonStatus int32
+
+const (
+	CommonStatus_COMMON_STATUS_UNKNOWN  CommonStatus = 0
+	CommonStatus_COMMON_STATUS_ENABLED  CommonStatus = 1 // 启用
+	CommonStatus_COMMON_STATUS_DISABLED CommonStatus = 2 // 禁用
+)
+
+// Enum value maps for CommonStatus.
+var (
+	CommonStatus_name = map[int32]string{
+		0: "COMMON_STATUS_UNKNOWN",
+		1: "COMMON_STATUS_ENABLED",
+		2: "COMMON_STATUS_DISABLED",
+	}
+	CommonStatus_value = map[string]int32{
+		"COMMON_STATUS_UNKNOWN":  0,
+		"COMMON_STATUS_ENABLED":  1,
+		"COMMON_STATUS_DISABLED": 2,
+	}
+)
+
+func (x CommonStatus) Enum() *CommonStatus {
+	p := new(CommonStatus)
+	*p = x
+	return p
+}
+
+func (x CommonStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (CommonStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_system_enum_proto_enumTypes[1].Descriptor()
+}
+
+func (CommonStatus) Type() protoreflect.EnumType {
+	return &file_proto_system_enum_proto_enumTypes[1]
+}
+
+func (x CommonStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use CommonStatus.Descriptor instead.
+func (CommonStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_system_enum_proto_rawDescGZIP(), []int{1}
+}
+
+type MenuType int32
+
+const (
+	MenuType_MENU_TYPE_UNKNOWN MenuType = 0
+	MenuType_MENU_TYPE_DIR     MenuType = 1 // 目录
+	MenuType_MENU_TYPE_MENU    MenuType = 2 // 菜单
+	MenuType_MENU_TYPE_BUTTON  MenuType = 3 // 按钮
+)
+
+// Enum value maps for MenuType.
+var (
+	MenuType_name = map[int32]string{
+		0: "MENU_TYPE_UNKNOWN",
+		1: "MENU_TYPE_DIR",
+		2: "MENU_TYPE_MENU",
+		3: "MENU_TYPE_BUTTON",
+	}
+	MenuType_value = map[string]int32{
+		"MENU_TYPE_UNKNOWN": 0,
+		"MENU_TYPE_DIR":     1,
+		"MENU_TYPE_MENU":    2,
+		"MENU_TYPE_BUTTON":  3,
+	}
+)
+
+func (x MenuType) Enum() *MenuType {
+	p := new(MenuType)
+	*p = x
+	return p
+}
+
+func (x MenuType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (MenuType) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_system_enum_proto_enumTypes[2].Descriptor()
+}
+
+func (MenuType) Type() protoreflect.EnumType {
+	return &file_proto_system_enum_proto_enumTypes[2]
+}
+
+func (x MenuType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use MenuType.Descriptor instead.
+func (MenuType) EnumDescriptor() ([]byte, []int) {
+	return file_proto_system_enum_proto_rawDescGZIP(), []int{2}
+}
+
+type VisibleStatus int32
+
+const (
+	VisibleStatus_VISIBLE_STATUS_UNKNOWN VisibleStatus = 0
+	VisibleStatus_VISIBLE_STATUS_VISIBLE VisibleStatus = 1 // 显示
+	VisibleStatus_VISIBLE_STATUS_HIDDEN  VisibleStatus = 2 // 隐藏
+)
+
+// Enum value maps for VisibleStatus.
+var (
+	VisibleStatus_name = map[int32]string{
+		0: "VISIBLE_STATUS_UNKNOWN",
+		1: "VISIBLE_STATUS_VISIBLE",
+		2: "VISIBLE_STATUS_HIDDEN",
+	}
+	VisibleStatus_value = map[string]int32{
+		"VISIBLE_STATUS_UNKNOWN": 0,
+		"VISIBLE_STATUS_VISIBLE": 1,
+		"VISIBLE_STATUS_HIDDEN":  2,
+	}
+)
+
+func (x VisibleStatus) Enum() *VisibleStatus {
+	p := new(VisibleStatus)
+	*p = x
+	return p
+}
+
+func (x VisibleStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (VisibleStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_system_enum_proto_enumTypes[3].Descriptor()
+}
+
+func (VisibleStatus) Type() protoreflect.EnumType {
+	return &file_proto_system_enum_proto_enumTypes[3]
+}
+
+func (x VisibleStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use VisibleStatus.Descriptor instead.
+func (VisibleStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_system_enum_proto_rawDescGZIP(), []int{3}
+}
+
+type RequestMethod int32
+
+const (
+	RequestMethod_REQUEST_METHOD_UNKNOWN RequestMethod = 0
+	RequestMethod_REQUEST_METHOD_GET     RequestMethod = 1
+	RequestMethod_REQUEST_METHOD_POST    RequestMethod = 2
+	RequestMethod_REQUEST_METHOD_PUT     RequestMethod = 3
+	RequestMethod_REQUEST_METHOD_DELETE  RequestMethod = 4
+)
+
+// Enum value maps for RequestMethod.
+var (
+	RequestMethod_name = map[int32]string{
+		0: "REQUEST_METHOD_UNKNOWN",
+		1: "REQUEST_METHOD_GET",
+		2: "REQUEST_METHOD_POST",
+		3: "REQUEST_METHOD_PUT",
+		4: "REQUEST_METHOD_DELETE",
+	}
+	RequestMethod_value = map[string]int32{
+		"REQUEST_METHOD_UNKNOWN": 0,
+		"REQUEST_METHOD_GET":     1,
+		"REQUEST_METHOD_POST":    2,
+		"REQUEST_METHOD_PUT":     3,
+		"REQUEST_METHOD_DELETE":  4,
+	}
+)
+
+func (x RequestMethod) Enum() *RequestMethod {
+	p := new(RequestMethod)
+	*p = x
+	return p
+}
+
+func (x RequestMethod) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (RequestMethod) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_system_enum_proto_enumTypes[4].Descriptor()
+}
+
+func (RequestMethod) Type() protoreflect.EnumType {
+	return &file_proto_system_enum_proto_enumTypes[4]
+}
+
+func (x RequestMethod) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use RequestMethod.Descriptor instead.
+func (RequestMethod) EnumDescriptor() ([]byte, []int) {
+	return file_proto_system_enum_proto_rawDescGZIP(), []int{4}
+}
+
+type JobStatus int32
+
+const (
+	JobStatus_JOB_STATUS_DISABLED JobStatus = 0 // 停用
+	JobStatus_JOB_STATUS_ENABLED  JobStatus = 1 // 启用
+)
+
+// Enum value maps for JobStatus.
+var (
+	JobStatus_name = map[int32]string{
+		0: "JOB_STATUS_DISABLED",
+		1: "JOB_STATUS_ENABLED",
+	}
+	JobStatus_value = map[string]int32{
+		"JOB_STATUS_DISABLED": 0,
+		"JOB_STATUS_ENABLED":  1,
+	}
+)
+
+func (x JobStatus) Enum() *JobStatus {
+	p := new(JobStatus)
+	*p = x
+	return p
+}
+
+func (x JobStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (JobStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_system_enum_proto_enumTypes[5].Descriptor()
+}
+
+func (JobStatus) Type() protoreflect.EnumType {
+	return &file_proto_system_enum_proto_enumTypes[5]
+}
+
+func (x JobStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use JobStatus.Descriptor instead.
+func (JobStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_system_enum_proto_rawDescGZIP(), []int{5}
+}
+
 var File_proto_system_enum_proto protoreflect.FileDescriptor
 
 const file_proto_system_enum_proto_rawDesc = "" +
@@ -82,7 +333,29 @@ const file_proto_system_enum_proto_rawDesc = "" +
 	"\aUNKNOWN\x10\x00\x12\x0f\n" +
 	"\vSYSTEM_CORE\x10\x01\x12\x12\n" +
 	"\x0eOBJECT_STORAGE\x10\x02\x12\x10\n" +
-	"\fITICK_CONFIG\x10\x03B\x1cZ\x1awklive/proto/system;systemb\x06proto3"
+	"\fITICK_CONFIG\x10\x03*`\n" +
+	"\fCommonStatus\x12\x19\n" +
+	"\x15COMMON_STATUS_UNKNOWN\x10\x00\x12\x19\n" +
+	"\x15COMMON_STATUS_ENABLED\x10\x01\x12\x1a\n" +
+	"\x16COMMON_STATUS_DISABLED\x10\x02*^\n" +
+	"\bMenuType\x12\x15\n" +
+	"\x11MENU_TYPE_UNKNOWN\x10\x00\x12\x11\n" +
+	"\rMENU_TYPE_DIR\x10\x01\x12\x12\n" +
+	"\x0eMENU_TYPE_MENU\x10\x02\x12\x14\n" +
+	"\x10MENU_TYPE_BUTTON\x10\x03*b\n" +
+	"\rVisibleStatus\x12\x1a\n" +
+	"\x16VISIBLE_STATUS_UNKNOWN\x10\x00\x12\x1a\n" +
+	"\x16VISIBLE_STATUS_VISIBLE\x10\x01\x12\x19\n" +
+	"\x15VISIBLE_STATUS_HIDDEN\x10\x02*\x8f\x01\n" +
+	"\rRequestMethod\x12\x1a\n" +
+	"\x16REQUEST_METHOD_UNKNOWN\x10\x00\x12\x16\n" +
+	"\x12REQUEST_METHOD_GET\x10\x01\x12\x17\n" +
+	"\x13REQUEST_METHOD_POST\x10\x02\x12\x16\n" +
+	"\x12REQUEST_METHOD_PUT\x10\x03\x12\x19\n" +
+	"\x15REQUEST_METHOD_DELETE\x10\x04*<\n" +
+	"\tJobStatus\x12\x17\n" +
+	"\x13JOB_STATUS_DISABLED\x10\x00\x12\x16\n" +
+	"\x12JOB_STATUS_ENABLED\x10\x01B\x1cZ\x1awklive/proto/system;systemb\x06proto3"
 
 var (
 	file_proto_system_enum_proto_rawDescOnce sync.Once
@@ -96,9 +369,14 @@ func file_proto_system_enum_proto_rawDescGZIP() []byte {
 	return file_proto_system_enum_proto_rawDescData
 }
 
-var file_proto_system_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_proto_system_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 6)
 var file_proto_system_enum_proto_goTypes = []any{
 	(SysConfigType)(0), // 0: system.SysConfigType
+	(CommonStatus)(0),  // 1: system.CommonStatus
+	(MenuType)(0),      // 2: system.MenuType
+	(VisibleStatus)(0), // 3: system.VisibleStatus
+	(RequestMethod)(0), // 4: system.RequestMethod
+	(JobStatus)(0),     // 5: system.JobStatus
 }
 var file_proto_system_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -118,7 +396,7 @@ func file_proto_system_enum_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_system_enum_proto_rawDesc), len(file_proto_system_enum_proto_rawDesc)),
-			NumEnums:      1,
+			NumEnums:      6,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,
