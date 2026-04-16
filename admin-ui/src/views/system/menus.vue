@@ -169,7 +169,7 @@
           fixed="right"
           align="center"
         >
-          <template #default="{ row }" align="right">
+          <template #default="{ row }">
             <el-button
               v-if="row.menuType !== 3"
               link
@@ -632,13 +632,6 @@ function buildTree(list: SysMenuItem[]): SysMenuTreeItem[] {
 
   sortTree(roots)
   return roots
-}
-
-function resetForm() {
-  Object.assign(formData, createDefaultForm())
-  nextTick(() => {
-    formRef.value?.clearValidate()
-  })
 }
 
 function normalizeFormByType() {

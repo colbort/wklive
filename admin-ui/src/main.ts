@@ -1,8 +1,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import ElementPlus from 'element-plus'
-import elZhCN from 'element-plus/es/locale/lang/zh-cn'
-import elEnUS from 'element-plus/es/locale/lang/en'
 import 'element-plus/dist/index.css'
 import '@/styles/admin-crud.css'
 
@@ -11,7 +9,6 @@ import { router } from '@/router'
 import { i18n, elLocaleMap } from '@/i18n'
 import { setupPermDirective } from '@/directives/perm'
 import { getSystemCore } from '@/stores/core'
-import { http } from '@/utils/request'
 import { buildAssetUrl } from '@/utils/file-url'
 
 const app = createApp(App)

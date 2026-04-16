@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   memberUserService,
   tenantsService,
   type AddUserBankReq,
+  type OptionGroup,
   type UserBankItem,
   type UpdateMemberUserBankReq,
 } from '@/services'
 import { formatDate } from '@/utils'
+import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
+const { t } = useI18n()
 const loading = ref(false)
 const submitLoading = ref(false)
 const list = ref<UserBankItem[]>([])
@@ -26,6 +30,8 @@ const userChecked = ref(false)
 const userExists = ref(false)
 const userCheckName = ref('')
 const userCheckUserNo = ref('')
+const optionGroups = ref<OptionGroup[]>([])
+const bankStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'bankStatus'))
 
 const query = reactive({
   tenantId: undefined as number | undefined,
@@ -55,11 +61,6 @@ const statusForm = reactive({
   status: 1,
 })
 
-const bankStatusOptions = [
-  { label: '正常', value: 1 },
-  { label: '禁用', value: 2 },
-]
-
 const isCreate = computed(() => !form.id)
 const canSubmitCreate = computed(() => !isCreate.value || (tenantChecked.value && tenantExists.value && userChecked.value && userExists.value))
 
@@ -67,8 +68,34 @@ function checkCode(code: number) {
   return code === 0 || code === 200
 }
 
+function getBooleanLabel(value?: number) {
+  return Number(value) === 1 ? '是' : '否'
+}
+
+function getBooleanTagClass(value?: number) {
+  return Number(value) === 1 ? 'option-tag option-tag--green' : 'option-tag option-tag--red'
+}
+
+function getBankStatusTagClass(value?: number) {
+  const bankStatusMap: Record<number, string> = {
+    1: 'option-tag option-tag--green',
+    2: 'option-tag option-tag--red',
+  }
+  return bankStatusMap[Number(value ?? 0)] || 'option-tag'
+}
+
 function getBankStatusLabel(value?: number) {
-  return bankStatusOptions.find((item) => item.value === Number(value))?.label || String(value ?? '-')
+  return getOptionValueLabel(optionGroups.value, 'bankStatus', value, t)
+}
+
+async function fetchOptions() {
+  try {
+    const res = await memberUserService.getOptions()
+    if (!checkCode(res.code)) throw new Error(res.msg || '加载选项失败')
+    optionGroups.value = res.data || []
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : '加载选项失败')
+  }
 }
 
 function resetTenantCheck() {
@@ -354,6 +381,7 @@ async function remove(row: UserBankItem) {
 }
 
 onMounted(fetchList)
+onMounted(fetchOptions)
 </script>
 
 <template>
@@ -386,7 +414,7 @@ onMounted(fetchList)
             <el-option
               v-for="item in bankStatusOptions"
               :key="item.value"
-              :label="item.label"
+              :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
             />
           </el-select>
@@ -417,16 +445,16 @@ onMounted(fetchList)
         />
         <el-table-column prop="isDefault" label="默认" width="80">
           <template #default="{ row }">
-            <el-tag :type="Number(row.isDefault) === 1 ? 'success' : 'info'">
-              {{ Number(row.isDefault) === 1 ? '是' : '否' }}
-            </el-tag>
+            <span :class="getBooleanTagClass(row.isDefault)">
+              {{ getBooleanLabel(row.isDefault) }}
+            </span>
           </template>
         </el-table-column>
         <el-table-column label="状态" width="90">
           <template #default="{ row }">
-            <el-tag :type="row.status === 1 ? 'success' : 'warning'">
+            <span :class="getBankStatusTagClass(row.status)">
               {{ getBankStatusLabel(row.status) }}
-            </el-tag>
+            </span>
           </template>
         </el-table-column>
         <el-table-column label="创建时间" min-width="170">
@@ -550,7 +578,7 @@ onMounted(fetchList)
             <el-option
               v-for="item in bankStatusOptions"
               :key="item.value"
-              :label="item.label"
+              :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
             />
           </el-select>
@@ -578,7 +606,7 @@ onMounted(fetchList)
             <el-option
               v-for="item in bankStatusOptions"
               :key="item.value"
-              :label="item.label"
+              :label="getOptionLabel(t, item.code, item.value)"
               :value="item.value"
             />
           </el-select>
@@ -601,6 +629,29 @@ onMounted(fetchList)
 </template>
 
 <style scoped>
+.option-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 600;
+  white-space: nowrap;
+  background: #f3f4f6;
+  color: #475467;
+}
+
+.option-tag--green {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.option-tag--red {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
 .verify-row {
   display: flex;
   align-items: center;

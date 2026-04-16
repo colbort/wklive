@@ -40,6 +40,41 @@ function checkCode(code: number) {
   return code === 0 || code === 200
 }
 
+function getOptionTagClass(groupKey: string, value?: number) {
+  const normalizedValue = Number(value ?? 0)
+
+  if (groupKey === 'idType') {
+    const idTypeMap: Record<number, string> = {
+      0: 'option-tag option-tag--slate',
+      1: 'option-tag option-tag--blue',
+      2: 'option-tag option-tag--green',
+      3: 'option-tag option-tag--orange',
+    }
+    return idTypeMap[normalizedValue] || 'option-tag'
+  }
+
+  if (groupKey === 'kycLevel') {
+    const kycLevelMap: Record<number, string> = {
+      0: 'option-tag option-tag--slate',
+      1: 'option-tag option-tag--blue',
+      2: 'option-tag option-tag--green',
+    }
+    return kycLevelMap[normalizedValue] || 'option-tag'
+  }
+
+  if (groupKey === 'verifyStatus') {
+    const verifyStatusMap: Record<number, string> = {
+      0: 'option-tag option-tag--slate',
+      1: 'option-tag option-tag--orange',
+      2: 'option-tag option-tag--green',
+      3: 'option-tag option-tag--red',
+    }
+    return verifyStatusMap[normalizedValue] || 'option-tag'
+  }
+
+  return 'option-tag'
+}
+
 async function fetchOptions() {
   try {
     const res = await memberUserService.getOptions()
@@ -194,17 +229,23 @@ onMounted(fetchOptions)
         <el-table-column prop="realName" label="实名" min-width="120" />
         <el-table-column label="证件类型" width="110">
           <template #default="{ row }">
-            {{ getOptionValueLabel(optionGroups, 'idType', row.idType, t) }}
+            <span :class="getOptionTagClass('idType', row.idType)">
+              {{ getOptionValueLabel(optionGroups, 'idType', row.idType, t) }}
+            </span>
           </template>
         </el-table-column>
         <el-table-column label="KYC等级" width="100">
           <template #default="{ row }">
-            {{ getOptionValueLabel(optionGroups, 'kycLevel', row.kycLevel, t) }}
+            <span :class="getOptionTagClass('kycLevel', row.kycLevel)">
+              {{ getOptionValueLabel(optionGroups, 'kycLevel', row.kycLevel, t) }}
+            </span>
           </template>
         </el-table-column>
         <el-table-column label="认证状态" width="110">
           <template #default="{ row }">
-            {{ getOptionValueLabel(optionGroups, 'verifyStatus', row.verifyStatus, t) }}
+            <span :class="getOptionTagClass('verifyStatus', row.verifyStatus)">
+              {{ getOptionValueLabel(optionGroups, 'verifyStatus', row.verifyStatus, t) }}
+            </span>
           </template>
         </el-table-column>
         <el-table-column label="提交时间" min-width="170">
@@ -263,4 +304,42 @@ onMounted(fetchOptions)
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.option-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 600;
+  white-space: nowrap;
+  background: #f3f4f6;
+  color: #475467;
+}
+
+.option-tag--blue {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.option-tag--green {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.option-tag--orange {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.option-tag--red {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.option-tag--slate {
+  background: #e5e7eb;
+  color: #475467;
+}
+</style>

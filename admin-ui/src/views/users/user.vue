@@ -98,62 +98,69 @@ function displayText(value: unknown) {
 }
 
 function getGenderLabel(value?: number) {
-  const map: Record<number, string> = {
-    0: '未知',
-    1: '男',
-    2: '女',
-  }
-  return map[value || 0] || String(value)
+  return getOptionValueLabel(optionGroups.value, 'gender', value, t)
 }
 
 function getIdTypeLabel(value?: number) {
-  const map: Record<number, string> = {
-    0: '未提交',
-    1: '身份证',
-    2: '护照',
-    3: '驾驶证',
-  }
-  return map[value || 0] || String(value)
+  return getOptionValueLabel(optionGroups.value, 'idType', value, t)
 }
 
 function getKycLevelLabel(value?: number) {
-  const map: Record<number, string> = {
-    0: '未认证',
-    1: '初级',
-    2: '高级',
-  }
-  return map[value || 0] || String(value)
+  return getOptionValueLabel(optionGroups.value, 'kycLevel', value, t)
 }
 
 function getVerifyStatusLabel(value?: number) {
-  const map: Record<number, string> = {
-    0: '未提交',
-    1: '审核中',
-    2: '通过',
-    3: '拒绝',
-  }
-  return map[value || 0] || String(value)
+  return getOptionValueLabel(optionGroups.value, 'verifyStatus', value, t)
 }
 
 function getRiskLevelLabel(value?: number) {
-  const map: Record<number, string> = {
-    0: '正常',
-    1: '关注',
-    2: '高风险',
-  }
-  return map[value || 0] || String(value)
+  return getOptionValueLabel(optionGroups.value, 'riskLevel', value, t)
 }
 
 function getEnabledLabel(value?: number) {
   return Number(value) === 1 ? '是' : '否'
 }
 
-function getBankStatusLabel(value?: number) {
-  const map: Record<number, string> = {
-    1: '正常',
-    2: '禁用',
+function getOptionTagClass(groupKey: string, value?: number) {
+  const normalizedValue = Number(value ?? 0)
+
+  if (groupKey === 'registerType') {
+    const registerTypeMap: Record<number, string> = {
+      1: 'option-tag option-tag--blue',
+      2: 'option-tag option-tag--green',
+      3: 'option-tag option-tag--orange',
+      4: 'option-tag option-tag--slate',
+    }
+    return registerTypeMap[normalizedValue] || 'option-tag'
   }
-  return map[value || 0] || String(value)
+
+  if (groupKey === 'userStatus') {
+    const userStatusMap: Record<number, string> = {
+      1: 'option-tag option-tag--green',
+      2: 'option-tag option-tag--slate',
+      3: 'option-tag option-tag--orange',
+      4: 'option-tag option-tag--red',
+    }
+    return userStatusMap[normalizedValue] || 'option-tag'
+  }
+
+  return 'option-tag'
+}
+
+function getBooleanTagClass(value?: number) {
+  return Number(value) === 1 ? 'option-tag option-tag--green' : 'option-tag option-tag--red'
+}
+
+function getBankStatusTagClass(value?: number) {
+  const bankStatusMap: Record<number, string> = {
+    1: 'option-tag option-tag--green',
+    2: 'option-tag option-tag--red',
+  }
+  return bankStatusMap[Number(value ?? 0)] || 'option-tag'
+}
+
+function getBankStatusLabel(value?: number) {
+  return getOptionValueLabel(optionGroups.value, 'bankStatus', value, t)
 }
 
 function resetTenantCheck() {
@@ -613,23 +620,31 @@ onMounted(fetchCreateOptions)
         />
         <el-table-column label="注册方式" width="120">
           <template #default="{ row }">
-            {{ getOptionValueLabel(optionGroups, 'registerType', row.registerType, t) }}
+            <span :class="getOptionTagClass('registerType', row.registerType)">
+              {{ getOptionValueLabel(optionGroups, 'registerType', row.registerType, t) }}
+            </span>
           </template>
         </el-table-column>
         <el-table-column prop="memberLevel" label="会员等级" width="100" />
         <el-table-column label="状态" width="100">
           <template #default="{ row }">
-            {{ getOptionValueLabel(optionGroups, 'userStatus', row.status, t) }}
+            <span :class="getOptionTagClass('userStatus', row.status)">
+              {{ getOptionValueLabel(optionGroups, 'userStatus', row.status, t) }}
+            </span>
           </template>
         </el-table-column>
         <el-table-column label="游客" width="80">
           <template #default="{ row }">
-            {{ getEnabledLabel(row.isGuest) }}
+            <span :class="getBooleanTagClass(row.isGuest)">
+              {{ getEnabledLabel(row.isGuest) }}
+            </span>
           </template>
         </el-table-column>
         <el-table-column label="已充值" width="90">
           <template #default="{ row }">
-            {{ getEnabledLabel(row.isRecharge) }}
+            <span :class="getBooleanTagClass(row.isRecharge)">
+              {{ getEnabledLabel(row.isRecharge) }}
+            </span>
           </template>
         </el-table-column>
         <el-table-column
@@ -1028,12 +1043,16 @@ onMounted(fetchCreateOptions)
                 <el-table-column prop="countryCode" label="国家/地区" min-width="110" />
                 <el-table-column label="默认卡" width="90">
                   <template #default="{ row }">
-                    {{ row.isDefault ? '是' : '否' }}
+                    <span :class="getBooleanTagClass(row.isDefault)">
+                      {{ getEnabledLabel(row.isDefault) }}
+                    </span>
                   </template>
                 </el-table-column>
                 <el-table-column label="状态" width="90">
                   <template #default="{ row }">
-                    {{ getBankStatusLabel(row.status) }}
+                    <span :class="getBankStatusTagClass(row.status)">
+                      {{ getBankStatusLabel(row.status) }}
+                    </span>
                   </template>
                 </el-table-column>
                 <el-table-column label="创建时间" min-width="170">
@@ -1052,6 +1071,44 @@ onMounted(fetchCreateOptions)
 </template>
 
 <style scoped>
+.option-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 600;
+  white-space: nowrap;
+  background: #f3f4f6;
+  color: #475467;
+}
+
+.option-tag--blue {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.option-tag--green {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.option-tag--orange {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.option-tag--red {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.option-tag--slate {
+  background: #e5e7eb;
+  color: #475467;
+}
+
 .edit-form-grid :deep(.el-form-item) {
   margin-bottom: 18px;
 }

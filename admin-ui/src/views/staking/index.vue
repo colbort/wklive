@@ -291,7 +291,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { stakingService, type OptionGroup } from '@/services'
+import { AdminManualRedeemReq, AdminManualRewardReq, AdminProductUpdateReq, stakingService, type OptionGroup } from '@/services'
 import { findOptionGroup, getOptionLabel } from '@/utils/options'
 
 const { t } = useI18n()
@@ -377,7 +377,7 @@ const columnMap: Record<string, Array<{ prop: string; label: string; width?: num
   ],
 }
 
-const productForm = reactive<Record<string, any>>({
+const productForm = reactive<AdminProductUpdateReq>({
   id: 0,
   tenantId: 0,
   productNo: '',
@@ -404,8 +404,8 @@ const productForm = reactive<Record<string, any>>({
   remark: '',
 })
 
-const rewardForm = reactive<Record<string, any>>({ tenantId: 0, orderId: 0, rewardAmount: '', rewardType: 1, operatorUid: 0, remark: '' })
-const redeemForm = reactive<Record<string, any>>({ tenantId: 0, orderId: 0, redeemType: 1, redeemAmount: '', rewardAmount: '', feeRate: '', feeAmount: '', operatorUid: 0, remark: '' })
+const rewardForm = reactive<AdminManualRewardReq>({ tenantId: 0, orderId: 0, rewardAmount: '', rewardType: 1, operatorUid: 0, remark: '' })
+const redeemForm = reactive<AdminManualRedeemReq>({ tenantId: 0, orderId: 0, redeemType: 1, redeemAmount: '', rewardAmount: '', feeRate: '', feeAmount: '', operatorUid: 0, remark: '' })
 
 const currentQuery = computed(() => queries[activeTab.value as keyof typeof queries])
 const currentFields = computed(() => fieldMap[activeTab.value] || [])

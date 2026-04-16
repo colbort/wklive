@@ -270,7 +270,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { optionService, type OptionGroup } from '@/services'
+import { optionService, UpdateContractReq, UpdateMarketReq, type OptionGroup } from '@/services'
 import { findOptionGroup, getOptionLabel } from '@/utils/options'
 
 const { t } = useI18n()
@@ -415,7 +415,7 @@ const columnMap: Record<string, Array<{ prop: string; label: string; width?: num
   ],
 }
 
-const contractForm = reactive<Record<string, any>>({
+const contractForm = reactive<UpdateContractReq>({
   id: 0,
   tenantId: 0,
   contractCode: '',
@@ -442,7 +442,7 @@ const contractForm = reactive<Record<string, any>>({
   isDeleted: 0,
 })
 
-const marketForm = reactive<Record<string, any>>({
+const marketForm = reactive<UpdateMarketReq>({
   tenantId: 0,
   contractId: 0,
   underlyingPrice: '',
