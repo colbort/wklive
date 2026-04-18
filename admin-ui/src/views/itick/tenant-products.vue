@@ -1,30 +1,30 @@
 <template>
   <div class="itick-tenant-products">
     <div class="page-header">
-      <h2>租户产品配置</h2>
+      <h2>{{ t('itick.tenantProducts') }}</h2>
       <div class="header-actions">
         <el-button type="primary" :disabled="!queryParams.tenantId" @click="handleAdd">
           <el-icon><Plus /></el-icon>
-          新增
+          {{ t('common.add') }}
         </el-button>
         <el-button :disabled="!queryParams.tenantId" @click="openBatchDialog">
           <el-icon><EditPen /></el-icon>
-          批量配置
+          {{ t('itick.batchTenantProducts') }}
         </el-button>
         <el-button :disabled="!queryParams.tenantId" type="warning" @click="openInitDialog">
           <el-icon><Operation /></el-icon>
-          初始化展示
+          {{ t('itick.initDisplay') }}
         </el-button>
         <el-button @click="refreshCurrentPage">
           <el-icon><Refresh /></el-icon>
-          刷新
+          {{ t('common.refresh') }}
         </el-button>
       </div>
     </div>
 
     <el-card class="query-card" shadow="never">
       <el-form :model="queryParams" inline label-width="90px">
-        <el-form-item label="租户ID">
+        <el-form-item :label="t('common.tenantId')">
           <el-input-number
             v-model="queryParams.tenantId"
             :min="1"
@@ -34,59 +34,62 @@
           />
         </el-form-item>
 
-        <el-form-item label="分类类型">
-          <el-input-number
-            v-model="queryParams.categoryType"
-            :min="0"
-            :precision="0"
-            controls-position="right"
-            style="width: 180px"
-          />
-        </el-form-item>
-
-        <el-form-item label="市场">
-          <el-input
-            v-model="queryParams.market"
-            placeholder="请输入市场"
-            clearable
-            style="width: 180px"
-            @keyup.enter="handleQuery"
-          />
-        </el-form-item>
-
-        <el-form-item label="关键字">
-          <el-input
-            v-model="queryParams.keyword"
-            placeholder="名称 / symbol / code"
-            clearable
-            style="width: 180px"
-            @keyup.enter="handleQuery"
-          />
-        </el-form-item>
-
-        <el-form-item label="启用状态">
-          <el-select v-model="queryParams.status" clearable style="width: 180px">
-            <el-option label="全部" :value="0" />
-            <el-option label="启用" :value="1" />
-            <el-option label="禁用" :value="2" />
+        <el-form-item :label="t('itick.categoryType')">
+          <el-select v-model="queryParams.categoryType" clearable style="width: 180px">
+            <el-option
+              v-for="item in categoryTypeOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
 
-        <el-form-item label="显示状态">
+        <el-form-item :label="t('itick.market')">
+          <el-input
+            v-model="queryParams.market"
+            :placeholder="t('itick.pleaseInputMarket')"
+            clearable
+            style="width: 180px"
+            @keyup.enter="handleQuery"
+          />
+        </el-form-item>
+
+        <el-form-item :label="t('itick.keyword')">
+          <el-input
+            v-model="queryParams.keyword"
+            placeholder="name / symbol / code"
+            clearable
+            style="width: 180px"
+            @keyup.enter="handleQuery"
+          />
+        </el-form-item>
+
+        <el-form-item :label="t('itick.enabledStatus')">
+          <el-select v-model="queryParams.status" clearable style="width: 180px">
+            <el-option
+              v-for="item in statusOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item :label="t('itick.appVisible')">
           <el-select v-model="queryParams.visibleStatus" clearable style="width: 180px">
-            <el-option label="全部" :value="0" />
-            <el-option label="显示" :value="1" />
-            <el-option label="隐藏" :value="2" />
+            <el-option
+              v-for="item in visibleOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="handleQuery">
-            搜索
-          </el-button>
-          <el-button @click="resetQuery">
-            重置
-          </el-button>
+          <el-button type="primary" @click="handleQuery"> {{ t('common.search') }} </el-button>
+          <el-button @click="resetQuery"> {{ t('common.reset') }} </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -94,90 +97,91 @@
     <el-card class="table-card" shadow="never">
       <el-table v-loading="loading" :data="list" stripe>
         <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="tenantId" label="租户ID" width="100" />
-        <el-table-column prop="productId" label="产品ID" width="100" />
-        <el-table-column prop="categoryType" label="分类类型" width="100" />
-        <el-table-column prop="categoryName" label="分类名称" min-width="120" />
-        <el-table-column prop="market" label="市场" width="100" />
-        <el-table-column prop="symbol" label="Symbol" min-width="120" />
-        <el-table-column prop="code" label="Code" min-width="120" />
-        <el-table-column prop="name" label="名称" min-width="140" />
-        <el-table-column prop="displayName" label="展示名称" min-width="140" />
+        <el-table-column prop="tenantId" :label="t('common.tenantId')" width="100" />
+        <el-table-column prop="productId" :label="t('itick.productId')" width="100" />
+        <el-table-column :label="t('itick.categoryType')" width="120">
+          <template #default="{ row }">
+            {{ getOptionValueLabel(optionGroups, 'categoryType', row.categoryType, t) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="categoryName" :label="t('itick.categoryName')" min-width="120" />
+        <el-table-column prop="market" :label="t('itick.market')" width="100" />
+        <el-table-column prop="symbol" :label="t('itick.symbol')" min-width="120" />
+        <el-table-column prop="code" :label="t('itick.code')" min-width="120" />
+        <el-table-column prop="name" :label="t('itick.name')" min-width="140" />
+        <el-table-column prop="displayName" :label="t('itick.displayName')" min-width="140" />
 
-        <el-table-column label="启用状态" width="100">
+        <el-table-column :label="t('itick.enabledStatus')" width="100">
           <template #default="{ row }">
             <el-tag :type="row.enabled === 1 ? 'success' : 'info'">
-              {{ row.enabled === 1 ? '启用' : '禁用' }}
+              {{ getOptionValueLabel(optionGroups, 'status', row.enabled, t) }}
             </el-tag>
           </template>
         </el-table-column>
 
-        <el-table-column label="APP显示" width="100">
+        <el-table-column :label="t('itick.appVisible')" width="100">
           <template #default="{ row }">
             <el-tag :type="row.appVisible === 1 ? 'success' : 'warning'">
-              {{ row.appVisible === 1 ? '显示' : '隐藏' }}
+              {{ getOptionValueLabel(optionGroups, 'visible', row.appVisible, t) }}
             </el-tag>
           </template>
         </el-table-column>
 
-        <el-table-column prop="sort" label="排序" width="90" />
-        <el-table-column
-          prop="remark"
-          label="备注"
-          min-width="180"
-          show-overflow-tooltip
-        />
-        <el-table-column label="创建时间" min-width="170">
+        <el-table-column prop="sort" :label="t('common.sort')" width="90" />
+        <el-table-column :label="t('common.icon')" min-width="180">
+          <template #default="{ row }">
+            <div v-if="row.icon" class="icon-cell">
+              <el-image
+                :src="resolveAssetUrl(row.icon)"
+                class="icon-preview"
+                :preview-teleported="true"
+              />
+              <span class="icon-url">{{ row.icon }}</span>
+            </div>
+            <span v-else>-</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="remark" :label="t('common.remark')" min-width="180" show-overflow-tooltip />
+        <el-table-column :label="t('common.createTimes')" min-width="170">
           <template #default="{ row }">
             {{ formatDate(row.createTimes) }}
           </template>
         </el-table-column>
-        <el-table-column label="更新时间" min-width="170">
+        <el-table-column :label="t('itick.updateTimes')" min-width="170">
           <template #default="{ row }">
             {{ formatDate(row.updateTimes) }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="180" fixed="right">
+        <el-table-column :label="t('common.actions')" width="180" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="handleDetail(row)">
-              详情
-            </el-button>
-            <el-button link type="primary" @click="handleEdit(row)">
-              编辑
-            </el-button>
+            <el-button link type="primary" @click="handleDetail(row)"> {{ t('common.detail') }} </el-button>
+            <el-button link type="primary" @click="handleEdit(row)"> {{ t('common.edit') }} </el-button>
           </template>
         </el-table-column>
       </el-table>
 
       <div class="pagination-bar">
-        <span>共 {{ pagination.total }} 条</span>
-        <el-button :disabled="!pagination.hasPrev" @click="handlePrevPage">
-          上一页
-        </el-button>
+        <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
+        <el-button :disabled="!pagination.hasPrev" @click="handlePrevPage"> {{ t('common.prevPage') }} </el-button>
         <el-button :disabled="!pagination.hasNext" type="primary" @click="handleNextPage">
-          下一页
+          {{ t('common.nextPage') }}
         </el-button>
         <el-select v-model="pagination.limit" style="width: 100px" @change="handleLimitChange">
-          <el-option :value="10" label="10条/页" />
-          <el-option :value="20" label="20条/页" />
-          <el-option :value="50" label="50条/页" />
-          <el-option :value="100" label="100条/页" />
+          <el-option :value="10" :label="t('common.perPage10')" />
+          <el-option :value="20" :label="t('common.perPage20')" />
+          <el-option :value="50" :label="t('common.perPage50')" />
+          <el-option :value="100" :label="t('common.perPage100')" />
         </el-select>
       </div>
     </el-card>
 
     <el-dialog
       v-model="formDialogVisible"
-      :title="formMode === 'add' ? '新增租户产品' : '编辑租户产品'"
+      :title="formMode === 'add' ? t('itick.addTenantProduct') : t('itick.editTenantProduct')"
       width="640px"
     >
-      <el-form
-        ref="formRef"
-        :model="form"
-        :rules="rules"
-        label-width="110px"
-      >
-        <el-form-item label="租户ID" prop="tenantId">
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="110px">
+        <el-form-item :label="t('common.tenantId')" prop="tenantId">
           <el-input-number
             v-model="form.tenantId"
             :min="1"
@@ -188,39 +192,40 @@
           />
         </el-form-item>
 
-        <el-form-item v-if="formMode === 'add'" label="产品ID" prop="productId">
-          <el-input-number
+        <el-form-item v-if="formMode === 'add'" :label="t('itick.product')" prop="productId">
+          <el-select
             v-model="form.productId"
-            :min="1"
-            :precision="0"
-            controls-position="right"
+            filterable
+            clearable
+            :placeholder="t('itick.pleaseSelectProduct')"
             style="width: 100%"
-          />
+          >
+            <el-option
+              v-for="item in productOptions"
+              :key="item.id"
+              :label="`${item.id} - ${item.name || item.displayName} (${item.symbol})`"
+              :value="item.id"
+            />
+          </el-select>
         </el-form-item>
 
-        <el-form-item label="启用状态" prop="enabled">
+        <el-form-item :label="t('itick.enabledStatus')" prop="enabled">
           <el-radio-group v-model="form.enabled">
-            <el-radio :value="1">
-              启用
-            </el-radio>
-            <el-radio :value="2">
-              禁用
+            <el-radio v-for="item in statusOptions" :key="item.value" :value="item.value">
+              {{ getOptionLabel(t, item.code, item.value) }}
             </el-radio>
           </el-radio-group>
         </el-form-item>
 
-        <el-form-item label="APP显示" prop="appVisible">
+        <el-form-item :label="t('itick.appVisible')" prop="appVisible">
           <el-radio-group v-model="form.appVisible">
-            <el-radio :value="1">
-              显示
-            </el-radio>
-            <el-radio :value="2">
-              隐藏
+            <el-radio v-for="item in visibleOptions" :key="item.value" :value="item.value">
+              {{ getOptionLabel(t, item.code, item.value) }}
             </el-radio>
           </el-radio-group>
         </el-form-item>
 
-        <el-form-item label="排序" prop="sort">
+        <el-form-item :label="t('common.sort')" prop="sort">
           <el-input-number
             v-model="form.sort"
             :min="0"
@@ -230,143 +235,153 @@
           />
         </el-form-item>
 
-        <el-form-item label="备注" prop="remark">
+        <el-form-item :label="t('common.remark')" prop="remark">
           <el-input
             v-model="form.remark"
             type="textarea"
             :rows="4"
             maxlength="200"
             show-word-limit
-            placeholder="请输入备注"
+            :placeholder="t('common.remark')"
           />
         </el-form-item>
       </el-form>
 
       <template #footer>
-        <el-button @click="formDialogVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitForm">
-          确定
-        </el-button>
+        <el-button @click="formDialogVisible = false"> {{ t('common.cancel') }} </el-button>
+        <el-button type="primary" :loading="submitLoading" @click="submitForm"> {{ t('common.confirm') }} </el-button>
       </template>
     </el-dialog>
 
-    <el-dialog v-model="detailDialogVisible" title="租户产品详情" width="840px">
+    <el-dialog v-model="detailDialogVisible" :title="t('itick.tenantProductDetail')" width="840px">
       <el-descriptions v-loading="detailLoading" :column="2" border>
         <el-descriptions-item label="ID">
           {{ detail.id ?? '-' }}
         </el-descriptions-item>
-        <el-descriptions-item label="租户ID">
+        <el-descriptions-item :label="t('common.tenantId')">
           {{ detail.tenantId ?? '-' }}
         </el-descriptions-item>
-        <el-descriptions-item label="产品ID">
+        <el-descriptions-item :label="t('itick.productId')">
           {{ detail.productId ?? '-' }}
         </el-descriptions-item>
-        <el-descriptions-item label="分类类型">
-          {{
-            detail.categoryType ?? '-'
-          }}
+        <el-descriptions-item :label="t('itick.categoryType')">
+          {{ getOptionValueLabel(optionGroups, 'categoryType', detail.categoryType, t) || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item label="分类名称">
-          {{
-            detail.categoryName || '-'
-          }}
+        <el-descriptions-item :label="t('itick.categoryName')">
+          {{ detail.categoryName || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item label="市场">
+        <el-descriptions-item :label="t('itick.market')">
           {{ detail.market || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item label="Symbol">
+        <el-descriptions-item :label="t('itick.symbol')">
           {{ detail.symbol || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item label="Code">
+        <el-descriptions-item :label="t('itick.code')">
           {{ detail.code || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item label="名称">
+        <el-descriptions-item :label="t('itick.name')">
           {{ detail.name || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item label="展示名称">
-          {{
-            detail.displayName || '-'
-          }}
+        <el-descriptions-item :label="t('itick.displayName')">
+          {{ detail.displayName || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item label="Base Coin">
+        <el-descriptions-item :label="t('itick.baseCoin')">
           {{ detail.baseCoin || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item label="Quote Coin">
+        <el-descriptions-item :label="t('itick.quoteCoin')">
           {{ detail.quoteCoin || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item label="启用状态">
-          {{ detail.enabled === 1 ? '启用' : detail.enabled === 2 ? '禁用' : '-' }}
+        <el-descriptions-item :label="t('common.icon')">
+          <div v-if="detail.icon" class="icon-detail">
+            <el-image
+              :src="resolveAssetUrl(detail.icon)"
+              class="icon-preview-large"
+              :preview-teleported="true"
+            />
+            <div class="icon-url">{{ detail.icon }}</div>
+          </div>
+          <span v-else>-</span>
         </el-descriptions-item>
-        <el-descriptions-item label="APP显示">
-          {{ detail.appVisible === 1 ? '显示' : detail.appVisible === 2 ? '隐藏' : '-' }}
+        <el-descriptions-item :label="t('itick.enabledStatus')">
+          {{ getOptionValueLabel(optionGroups, 'status', detail.enabled, t) || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item label="排序">
+        <el-descriptions-item :label="t('itick.appVisible')">
+          {{ getOptionValueLabel(optionGroups, 'visible', detail.appVisible, t) || '-' }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.sort')">
           {{ detail.sort ?? '-' }}
         </el-descriptions-item>
-        <el-descriptions-item label="备注">
+        <el-descriptions-item :label="t('common.remark')">
           {{ detail.remark || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item label="创建时间">
-          {{ formatDate(detail.createTimes??0) }}
+        <el-descriptions-item :label="t('common.createTimes')">
+          {{ formatDate(detail.createTimes ?? 0) }}
         </el-descriptions-item>
-        <el-descriptions-item label="更新时间">
-          {{ formatDate(detail.updateTimes??0) }}
+        <el-descriptions-item :label="t('itick.updateTimes')">
+          {{ formatDate(detail.updateTimes ?? 0) }}
         </el-descriptions-item>
       </el-descriptions>
 
       <template #footer>
-        <el-button type="primary" @click="detailDialogVisible = false">
-          关闭
-        </el-button>
+        <el-button type="primary" @click="detailDialogVisible = false"> {{ t('common.close') }} </el-button>
       </template>
     </el-dialog>
 
-    <el-dialog v-model="batchDialogVisible" title="批量配置租户产品" width="980px">
+    <el-dialog v-model="batchDialogVisible" :title="t('itick.batchTenantProducts')" width="980px">
       <div class="batch-toolbar">
-        <div class="batch-tip">
-          未提交的记录会被视为删除，请确认后再保存。
-        </div>
+        <div class="batch-tip">{{ t('itick.batchSaveTip') }}</div>
         <div class="batch-actions">
-          <el-button @click="appendBatchRow">
-            新增一行
-          </el-button>
+          <el-button @click="appendBatchRow"> {{ t('common.add') }} </el-button>
           <el-button type="primary" :loading="batchSubmitting" @click="submitBatch">
-            保存批量配置
+            {{ t('common.save') }}
           </el-button>
         </div>
       </div>
 
       <el-table :data="batchRows" border>
-        <el-table-column label="产品ID" min-width="120">
+        <el-table-column :label="t('itick.product')" min-width="260">
           <template #default="{ row }">
-            <el-input-number
+            <el-select
               v-model="row.productId"
-              :min="1"
-              :precision="0"
-              controls-position="right"
+              filterable
+              clearable
+              :placeholder="t('itick.pleaseSelectProduct')"
               style="width: 100%"
-            />
+            >
+              <el-option
+                v-for="item in productOptions"
+                :key="item.id"
+                :label="`${item.id} - ${item.name || item.displayName} (${item.symbol})`"
+                :value="item.id"
+              />
+            </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="启用状态" min-width="130">
+        <el-table-column :label="t('itick.enabledStatus')" min-width="130">
           <template #default="{ row }">
             <el-select v-model="row.enabled" style="width: 100%">
-              <el-option label="启用" :value="1" />
-              <el-option label="禁用" :value="2" />
+              <el-option
+                v-for="item in statusOptions"
+                :key="item.value"
+                :label="getOptionLabel(t, item.code, item.value)"
+                :value="item.value"
+              />
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="APP显示" min-width="130">
+        <el-table-column :label="t('itick.appVisible')" min-width="130">
           <template #default="{ row }">
             <el-select v-model="row.appVisible" style="width: 100%">
-              <el-option label="显示" :value="1" />
-              <el-option label="隐藏" :value="2" />
+              <el-option
+                v-for="item in visibleOptions"
+                :key="item.value"
+                :label="getOptionLabel(t, item.code, item.value)"
+                :value="item.value"
+              />
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="排序" min-width="120">
+        <el-table-column :label="t('common.sort')" min-width="120">
           <template #default="{ row }">
             <el-input-number
               v-model="row.sort"
@@ -377,24 +392,22 @@
             />
           </template>
         </el-table-column>
-        <el-table-column label="备注" min-width="220">
+        <el-table-column :label="t('common.remark')" min-width="220">
           <template #default="{ row }">
             <el-input v-model="row.remark" maxlength="200" show-word-limit />
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="90" fixed="right">
+        <el-table-column :label="t('common.actions')" width="90" fixed="right">
           <template #default="{ $index }">
-            <el-button link type="danger" @click="removeBatchRow($index)">
-              删除
-            </el-button>
+            <el-button link type="danger" @click="removeBatchRow($index)"> {{ t('common.delete') }} </el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-dialog>
 
-    <el-dialog v-model="initDialogVisible" title="初始化租户展示配置" width="520px">
+    <el-dialog v-model="initDialogVisible" :title="t('itick.initTenantDisplay')" width="520px">
       <el-form label-width="110px">
-        <el-form-item label="租户ID">
+        <el-form-item :label="t('common.tenantId')">
           <el-input-number
             v-model="initForm.tenantId"
             :min="1"
@@ -403,24 +416,18 @@
             style="width: 100%"
           />
         </el-form-item>
-        <el-form-item label="覆盖已有配置">
+        <el-form-item :label="t('itick.overwriteExistingConfig')">
           <el-radio-group v-model="initForm.overwrite">
-            <el-radio :value="0">
-              否
-            </el-radio>
-            <el-radio :value="1">
-              是
-            </el-radio>
+            <el-radio :value="0"> {{ t('common.no') }} </el-radio>
+            <el-radio :value="1"> {{ t('common.yes') }} </el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
 
       <template #footer>
-        <el-button @click="initDialogVisible = false">
-          取消
-        </el-button>
+        <el-button @click="initDialogVisible = false"> {{ t('common.cancel') }} </el-button>
         <el-button type="primary" :loading="initSubmitting" @click="submitInit">
-          开始初始化
+          {{ t('itick.startInit') }}
         </el-button>
       </template>
     </el-dialog>
@@ -431,9 +438,16 @@
 import { computed, nextTick, onMounted, reactive, ref } from 'vue'
 import { EditPen, Operation, Plus, Refresh } from '@element-plus/icons-vue'
 import { ElMessage, type FormRules } from 'element-plus'
+import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables/usePagination'
 import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
+import { buildSystemAssetUrl, useSystemCore } from '@/composables/useSystemCore'
+import type { OptionGroup } from '@/services'
+import {
+  productsService,
+  type ItickProduct as BaseItickProduct,
+} from '@/services/itick/ProductsService'
 import {
   tenantProductsService,
   type ItickTenantProduct,
@@ -441,6 +455,7 @@ import {
   type TenantProductItem,
 } from '@/services/itick/TenantProductsService'
 import { formatDate } from '@/utils'
+import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 type FormData = {
   id?: number
@@ -452,6 +467,8 @@ type FormData = {
   remark: string
 }
 
+const { t } = useI18n()
+const { systemCore, loadSystemCore } = useSystemCore()
 const { pagination, updatePagination, reset: resetPagination } = usePagination(20)
 const { loading, withLoading } = useLoading()
 
@@ -468,7 +485,11 @@ const { form: queryParams, reset: resetQueryParams } = useForm<ListTenantProduct
   },
 })
 
-const { form, formRef, reset: resetForm } = useForm<FormData>({
+const {
+  form,
+  formRef,
+  reset: resetForm,
+} = useForm<FormData>({
   initialData: {
     id: undefined,
     tenantId: undefined,
@@ -482,6 +503,8 @@ const { form, formRef, reset: resetForm } = useForm<FormData>({
 
 const list = ref<ItickTenantProduct[]>([])
 const detail = ref<Partial<ItickTenantProduct>>({})
+const productOptions = ref<BaseItickProduct[]>([])
+const optionGroups = ref<OptionGroup[]>([])
 const detailLoading = ref(false)
 const submitLoading = ref(false)
 const batchSubmitting = ref(false)
@@ -492,16 +515,20 @@ const batchDialogVisible = ref(false)
 const initDialogVisible = ref(false)
 const formMode = ref<'add' | 'edit'>('add')
 const batchRows = ref<TenantProductItem[]>([])
+const categoryTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'categoryType'))
+const statusOptions = computed(() => findOptionGroup(optionGroups.value, 'status'))
+const visibleOptions = computed(() => findOptionGroup(optionGroups.value, 'visible'))
+const resolveAssetUrl = (url?: string) => buildSystemAssetUrl(systemCore.value.assetUrl, url)
 const initForm = reactive({
   tenantId: 0,
   overwrite: 0,
 })
 
 const rules: FormRules<FormData> = {
-  tenantId: [{ required: true, message: '请输入租户ID', trigger: 'blur' }],
-  productId: [{ required: true, message: '请输入产品ID', trigger: 'blur' }],
-  enabled: [{ required: true, message: '请选择启用状态', trigger: 'change' }],
-  appVisible: [{ required: true, message: '请选择显示状态', trigger: 'change' }],
+  tenantId: [{ required: true, message: t('itick.pleaseInputTenantId'), trigger: 'blur' }],
+  productId: [{ required: true, message: t('itick.pleaseSelectProduct'), trigger: 'change' }],
+  enabled: [{ required: true, message: t('itick.pleaseSelectEnabledStatus'), trigger: 'change' }],
+  appVisible: [{ required: true, message: t('itick.pleaseSelectAppVisible'), trigger: 'change' }],
 }
 
 const cleanedQueryParams = computed<ListTenantProductsReq | null>(() => {
@@ -542,7 +569,9 @@ const getList = async () => {
   }
 
   await withLoading(async () => {
-    const res = await tenantProductsService.getList(cleanedQueryParams.value as ListTenantProductsReq)
+    const res = await tenantProductsService.getList(
+      cleanedQueryParams.value as ListTenantProductsReq,
+    )
     list.value = res?.data || []
     updatePagination(
       res?.total || 0,
@@ -552,8 +581,32 @@ const getList = async () => {
       res?.prevCursor || null,
     )
   }).catch(() => {
-    ElMessage.error('加载失败')
+    ElMessage.error(t('itick.loadFailed'))
   })
+}
+
+const loadOptions = async () => {
+  try {
+    const res = await tenantProductsService.getOptions()
+    optionGroups.value = res.data || []
+  } catch {
+    ElMessage.error(t('itick.loadOptionsFailed'))
+  }
+}
+
+const loadProductOptions = async (keyword = '') => {
+  try {
+    const res = await productsService.getList({
+      limit: 100,
+      cursor: null,
+      categoryType: queryParams.categoryType || undefined,
+      market: queryParams.market?.trim() || undefined,
+      keyword: keyword.trim() || undefined,
+    })
+    productOptions.value = res.data || []
+  } catch {
+    ElMessage.error(t('itick.loadOptionsFailed'))
+  }
 }
 
 const handleQuery = () => {
@@ -594,6 +647,7 @@ const handleAdd = async () => {
   formMode.value = 'add'
   resetForm()
   form.tenantId = Number(queryParams.tenantId) || undefined
+  await loadProductOptions()
   formDialogVisible.value = true
   await nextTick()
   formRef.value?.clearValidate()
@@ -618,7 +672,7 @@ const handleEdit = async (row: ItickTenantProduct) => {
     await nextTick()
     formRef.value?.clearValidate()
   } catch {
-    ElMessage.error('加载详情失败')
+    ElMessage.error(t('itick.loadDetailFailed'))
   }
 }
 
@@ -630,7 +684,7 @@ const handleDetail = async (row: ItickTenantProduct) => {
     const res = await tenantProductsService.detail(row.id, row.tenantId)
     detail.value = res?.data || {}
   } catch {
-    ElMessage.error('加载详情失败')
+    ElMessage.error(t('itick.loadDetailFailed'))
   } finally {
     detailLoading.value = false
   }
@@ -652,7 +706,7 @@ const submitForm = async () => {
         sort: form.sort,
         remark: form.remark,
       })
-      ElMessage.success('创建成功')
+      ElMessage.success(t('itick.createdSuccess'))
     } else {
       await tenantProductsService.update(form.id as number, {
         tenantId: Number(form.tenantId),
@@ -661,19 +715,20 @@ const submitForm = async () => {
         sort: form.sort,
         remark: form.remark,
       })
-      ElMessage.success('更新成功')
+      ElMessage.success(t('itick.updatedSuccess'))
     }
 
     formDialogVisible.value = false
     getList()
   } catch {
-    ElMessage.error(formMode.value === 'add' ? '创建失败' : '更新失败')
+    ElMessage.error(t(formMode.value === 'add' ? 'itick.createdFailed' : 'itick.updatedFailed'))
   } finally {
     submitLoading.value = false
   }
 }
 
 const openBatchDialog = () => {
+  loadProductOptions()
   batchRows.value = list.value.map((item) => ({
     id: item.id,
     productId: item.productId,
@@ -702,7 +757,7 @@ const removeBatchRow = (index: number) => {
 const submitBatch = async () => {
   const tenantId = Number(queryParams.tenantId)
   if (!tenantId) {
-    ElMessage.warning('请先输入租户ID')
+    ElMessage.warning(t('itick.pleaseInputTenantFirst'))
     return
   }
 
@@ -723,11 +778,11 @@ const submitBatch = async () => {
       tenantId,
       data: cleaned,
     })
-    ElMessage.success('批量保存成功')
+    ElMessage.success(t('itick.batchSavedSuccess'))
     batchDialogVisible.value = false
     getList()
   } catch {
-    ElMessage.error('批量保存失败')
+    ElMessage.error(t('itick.batchSavedFailed'))
   } finally {
     batchSubmitting.value = false
   }
@@ -741,7 +796,7 @@ const openInitDialog = () => {
 
 const submitInit = async () => {
   if (!initForm.tenantId) {
-    ElMessage.warning('请输入租户ID')
+    ElMessage.warning(t('itick.pleaseInputTenantId'))
     return
   }
 
@@ -752,18 +807,23 @@ const submitInit = async () => {
       overwrite: Number(initForm.overwrite),
     })
     ElMessage.success(
-      `初始化成功，分类 ${res?.data?.categoryCount || 0} 个，产品 ${res?.data?.productCount || 0} 个`,
+      t('itick.initSuccess', {
+        categoryCount: res?.data?.categoryCount || 0,
+        productCount: res?.data?.productCount || 0,
+      }),
     )
     initDialogVisible.value = false
     getList()
   } catch {
-    ElMessage.error('初始化失败')
+    ElMessage.error(t('itick.initFailed'))
   } finally {
     initSubmitting.value = false
   }
 }
 
 onMounted(() => {
+  loadSystemCore()
+  loadOptions()
   if (queryParams.tenantId) {
     getList()
   }
@@ -822,5 +882,31 @@ onMounted(() => {
 .batch-actions {
   display: flex;
   gap: 8px;
+}
+
+.icon-cell,
+.icon-detail {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icon-preview {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.icon-preview-large {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.icon-url {
+  color: #606266;
+  word-break: break-all;
 }
 </style>

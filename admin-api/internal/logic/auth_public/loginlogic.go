@@ -28,7 +28,7 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 }
 
 func (l *LoginLogic) Login(req *types.LoginReq, ip string) (resp *types.LoginResp, err error) {
-	response, err := l.svcCtx.SystemCli.AdminLogin(l.ctx, &system.AdminLoginReq{
+	result, err := l.svcCtx.SystemCli.AdminLogin(l.ctx, &system.AdminLoginReq{
 		Username:   req.Username,
 		Password:   req.Password,
 		GoogleCode: req.GoogleCode,
@@ -40,9 +40,9 @@ func (l *LoginLogic) Login(req *types.LoginReq, ip string) (resp *types.LoginRes
 	}
 
 	resp = new(types.LoginResp)
-	resp.Code = 200
-	resp.Msg = "登录成功"
-	resp.Data.Token = response.Token
-	resp.Data.Exp = response.Exp
+	resp.Code = result.Base.Code
+	resp.Msg = result.Base.Msg
+	resp.Data.Token = result.Token
+	resp.Data.Exp = result.Exp
 	return
 }

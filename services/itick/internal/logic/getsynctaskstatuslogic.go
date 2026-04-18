@@ -3,6 +3,8 @@ package logic
 import (
 	"context"
 
+	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/itick"
 	"wklive/services/itick/internal/svc"
 
@@ -25,7 +27,20 @@ func NewGetSyncTaskStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 // 获取同步任务状态
 func (l *GetSyncTaskStatusLogic) GetSyncTaskStatus(in *itick.GetSyncTaskStatusReq) (*itick.GetSyncTaskStatusResp, error) {
-	// todo: add your logic here and delete this line
+	item, err := l.svcCtx.ItickSyncTaskModel.FindOneByTaskNo(l.ctx, in.TaskNo)
+	if err != nil {
+		return nil, err
+	}
+	if item == nil {
+		return &itick.GetSyncTaskStatusResp{
+			Base: helper.GetErrResp(1, i18n.Translate(i18n.BusinessDataNotFound, l.ctx)),
+		}, nil
+	}
 
-	return &itick.GetSyncTaskStatusResp{}, nil
+	return &itick.GetSyncTaskStatusResp{
+		Base:    helper.OkResp(),
+		TaskNo:  item.TaskNo,
+		Status:  int32(item.Status),
+		Message: item.Message,
+	}, nil
 }

@@ -1,6 +1,8 @@
 package logic
 
 import (
+	"strings"
+
 	"wklive/proto/itick"
 	"wklive/services/itick/internal/socket/client"
 	"wklive/services/itick/models"
@@ -108,4 +110,104 @@ func toKlineProto(kType itick.KlineType, item *models.CoinKline) *itick.Kline {
 		Volume:       item.Volume,
 		Turnover:     item.Turnover,
 	}
+}
+
+func toTenantCategoryProto(item *models.TItickTenantCategory, category *models.TItickCategory) *itick.ItickTenantCategory {
+	if item == nil {
+		return nil
+	}
+
+	data := &itick.ItickTenantCategory{
+		Id:          item.Id,
+		TenantId:    item.TenantId,
+		CategoryId:  item.CategoryId,
+		Enabled:     item.Enabled,
+		AppVisible:  item.AppVisible,
+		Sort:        item.Sort,
+		Remark:      item.Remark,
+		CreateTimes: item.CreateTimes,
+		UpdateTimes: item.UpdateTimes,
+	}
+	if category != nil {
+		data.CategoryType = itick.CategoryType(category.CategoryType)
+		data.CategoryName = category.CategoryName
+		data.Icon = category.Icon
+	}
+	return data
+}
+
+func toTenantProductProto(item *models.TItickTenantProduct, product *models.TItickProduct) *itick.ItickTenantProduct {
+	if item == nil {
+		return nil
+	}
+
+	data := &itick.ItickTenantProduct{
+		Id:          item.Id,
+		TenantId:    item.TenantId,
+		ProductId:   item.ProductId,
+		Enabled:     item.Enabled,
+		AppVisible:  item.AppVisible,
+		Sort:        item.Sort,
+		Remark:      item.Remark,
+		CreateTimes: item.CreateTimes,
+		UpdateTimes: item.UpdateTimes,
+	}
+	if product != nil {
+		data.CategoryType = itick.CategoryType(product.CategoryType)
+		data.CategoryName = product.CategoryName
+		data.Market = product.Market
+		data.Symbol = product.Symbol
+		data.Code = product.Code
+		data.Name = product.Name
+		data.DisplayName = product.DisplayName
+		data.BaseCoin = product.BaseCoin
+		data.QuoteCoin = product.QuoteCoin
+		data.Icon = product.Icon
+	}
+	return data
+}
+
+func categoryTypeCode(categoryType itick.CategoryType) string {
+	switch categoryType {
+	case itick.CategoryType_CATEGORY_TYPE_FOREX:
+		return "forex"
+	case itick.CategoryType_CATEGORY_TYPE_CRYPTO:
+		return "crypto"
+	case itick.CategoryType_CATEGORY_TYPE_STOCK:
+		return "stock"
+	case itick.CategoryType_CATEGORY_TYPE_FUTURE:
+		return "future"
+	case itick.CategoryType_CATEGORY_TYPE_INDICES:
+		return "indices"
+	case itick.CategoryType_CATEGORY_TYPE_FUND:
+		return "fund"
+	default:
+		return ""
+	}
+}
+
+func statusMatches(filter int32, actual int64) bool {
+	switch filter {
+	case 0:
+		return true
+	case 1:
+		return actual == 1
+	case 2:
+		return actual == 0 || actual == 2
+	default:
+		return true
+	}
+}
+
+func keywordMatches(keyword string, parts ...string) bool {
+	keyword = strings.ToLower(strings.TrimSpace(keyword))
+	if keyword == "" {
+		return true
+	}
+	for _, part := range parts {
+		if strings.Contains(strings.ToLower(part), keyword) {
+			return true
+		}
+	}
+	return false
 }

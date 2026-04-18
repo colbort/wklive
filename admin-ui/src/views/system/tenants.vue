@@ -8,7 +8,6 @@
       </el-button>
     </div>
 
-    <!-- 查询表单 -->
     <el-card class="query-card" shadow="never">
       <el-form :model="queryForm" inline>
         <el-form-item :label="t('system.tenantCode')">
@@ -64,20 +63,9 @@
       </el-form>
     </el-card>
 
-    <!-- 数据表格 -->
     <el-card class="table-card" shadow="never">
-      <el-table
-        v-loading="loading"
-        :data="list"
-        :empty-text="t('common.noData')"
-        stripe
-      >
-        <el-table-column
-          prop="id"
-          :label="t('common.id')"
-          width="80"
-          align="center"
-        />
+      <el-table v-loading="loading" :data="list" :empty-text="t('common.noData')" stripe>
+        <el-table-column prop="id" :label="t('common.id')" width="80" align="center" />
         <el-table-column prop="tenantCode" :label="t('system.tenantCode')" min-width="150" />
         <el-table-column prop="tenantName" :label="t('system.tenantName')" min-width="150" />
         <el-table-column prop="contactName" :label="t('system.contactName')" min-width="120" />
@@ -110,12 +98,7 @@
             {{ formatDate(row.createTimes) }}
           </template>
         </el-table-column>
-        <el-table-column
-          :label="t('common.actions')"
-          width="180"
-          align="center"
-          fixed="right"
-        >
+        <el-table-column :label="t('common.actions')" width="180" align="center" fixed="right">
           <template #default="{ row }">
             <el-button
               v-perm="'sys:tenant:update'"
@@ -137,7 +120,6 @@
         </el-table-column>
       </el-table>
 
-      <!-- 分页 -->
       <div
         style="
           display: flex;
@@ -162,19 +144,13 @@
       </div>
     </el-card>
 
-    <!-- 新增/编辑对话框 -->
     <el-dialog
       v-model="dialogVisible"
       :title="isEdit ? t('system.editTenant') : t('system.addTenant')"
       width="700px"
       :close-on-click-modal="false"
     >
-      <el-form
-        ref="formRef"
-        :model="formData"
-        :rules="formRules"
-        label-width="120px"
-      >
+      <el-form ref="formRef" :model="formData" :rules="formRules" label-width="120px">
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item :label="t('system.tenantCode')" prop="tenantCode">
@@ -226,11 +202,7 @@
           <el-col :span="12">
             <el-form-item :label="t('system.status')" prop="status">
               <el-radio-group v-model="formData.status">
-                <el-radio
-                  v-for="item in statusOptions"
-                  :key="item.value"
-                  :value="item.value"
-                >
+                <el-radio v-for="item in statusOptions" :key="item.value" :value="item.value">
                   {{ getOptionLabel(t, item.code, item.value) }}
                 </el-radio>
               </el-radio-group>
@@ -281,10 +253,7 @@ import { useI18n } from 'vue-i18n'
 import { Plus, Search, Refresh } from '@element-plus/icons-vue'
 import { tenantsService } from '@/services/system/TenantsService'
 import type { OptionGroup } from '@/services'
-import type {
-  SysTenantItem,
-  SysTenantCreateReq,
-} from '@/services/system/TenantsService'
+import type { SysTenantItem, SysTenantCreateReq } from '@/services/system/TenantsService'
 import { usePagination } from '@/composables/usePagination'
 import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
@@ -327,7 +296,7 @@ const { form: formData, reset: resetForm } = useForm({
     tenantCode: '',
     tenantName: '',
     status: 1,
-    expireTime: Date.now() + 365 * 24 * 60 * 60 * 1000, // 默认一年后过期
+    expireTime: Date.now() + 365 * 24 * 60 * 60 * 1000,
     contactName: '',
     contactPhone: '',
     remark: '',
@@ -450,7 +419,7 @@ async function handleDelete(row: SysTenantItem) {
     ElMessage.success(t('common.deleteSuccess'))
     fetchList()
   } catch (error: unknown) {
-    if ((error instanceof Error ? error.message : '')  !== 'cancel') {
+    if ((error instanceof Error ? error.message : '') !== 'cancel') {
       ElMessage.error(error instanceof Error ? error.message : t('common.deleteFailed'))
     }
   }

@@ -6,13 +6,6 @@ import { ENV } from '@/config/environment'
 
 type LogLevel = 'debug' | 'info' | 'warn' | 'error'
 
-const LogLevelMap: Record<LogLevel, number> = {
-  debug: 0,
-  info: 1,
-  warn: 2,
-  error: 3,
-}
-
 class Logger {
   private enableLog = ENV.ENABLE_LOG
 

@@ -37,10 +37,32 @@ func (l *GetSystemCoreLogic) GetSystemCore() (resp *types.GetSystemCoreResp, err
 		return nil, err
 	}
 
-	var config system.SystemCore
-	err = json.Unmarshal([]byte(cd.Data.ConfigValue), &config)
+	var core system.SystemCore
+	err = json.Unmarshal([]byte(cd.Data.ConfigValue), &core)
 	if err != nil {
 		return nil, err
+	}
+
+	key = system.SysConfigType_OBJECT_STORAGE
+	cd, err = l.svcCtx.SystemCli.SysConfigDetail(l.ctx, &system.SysConfigDetailReq{
+		ConfigKey: &key,
+	})
+	if err != nil {
+		return nil, err
+	}
+	var storage system.ObjectStorageConfig
+	err = json.Unmarshal([]byte(cd.Data.ConfigValue), &storage)
+	if err != nil {
+		return nil, err
+	}
+	assetUrl := ""
+	switch storage.OssType {
+	case 1:
+		assetUrl = storage.AliyunOss.BucketUrl
+	case 2:
+		assetUrl = storage.TencentCos.BucketUrl
+	case 3:
+		assetUrl = storage.Minio.BucketUrl
 	}
 	return &types.GetSystemCoreResp{
 		RespBase: types.RespBase{
@@ -48,8 +70,9 @@ func (l *GetSystemCoreLogic) GetSystemCore() (resp *types.GetSystemCoreResp, err
 			Msg:  cd.Base.Msg,
 		},
 		Data: types.GetSystemCore{
-			SiteName: config.SiteName,
-			SiteLogo: config.SiteLogo,
+			SiteName: core.SiteName,
+			SiteLogo: core.SiteLogo,
+			AssetUrl: assetUrl,
 		},
 	}, nil
 }

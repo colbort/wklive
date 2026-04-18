@@ -11,7 +11,6 @@ const auth = useAuthStore()
 
 const { loading, withLoading } = useLoading()
 
-// 初始化表单
 const { form } = useForm({
   initialData: {
     username: '',
@@ -22,14 +21,18 @@ const { form } = useForm({
 
 async function submit() {
   await withLoading(async () => {
-    await auth.login({
-      username: form.username,
-      password: form.password,
-      googleCode: form.googleCode || undefined,
-    })
-    await auth.fetchProfile()
-    const redirect = (route.query.redirect as string) || '/home'
-    router.replace(redirect)
+    try {
+      await auth.login({
+        username: form.username,
+        password: form.password,
+        googleCode: form.googleCode || undefined,
+      })
+      await auth.fetchProfile()
+      const redirect = (route.query.redirect as string) || '/home'
+      router.replace(redirect)
+    } catch (e: unknown) {
+      alert(e)
+    }
   })
 }
 </script>
@@ -59,12 +62,7 @@ async function submit() {
           <el-input v-model="form.googleCode" />
         </el-form-item>
 
-        <el-button
-          type="primary"
-          :loading="loading"
-          style="width: 100%"
-          @click="submit"
-        >
+        <el-button type="primary" :loading="loading" style="width: 100%" @click="submit">
           {{ t('auth.submit') }}
         </el-button>
       </el-form>

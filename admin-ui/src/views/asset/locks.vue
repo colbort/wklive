@@ -1,7 +1,10 @@
 <template>
-  <AssetPanel mode="locks" title="资产锁仓明细" />
+  <AssetPanel mode="locks" :title="t('asset.locks')" />
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import AssetPanel from './asset-panel.vue'
+
+const { t } = useI18n()
 </script>

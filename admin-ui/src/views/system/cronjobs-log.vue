@@ -150,12 +150,7 @@ onMounted(() => {
     </el-form>
 
     <!-- Table -->
-    <el-table
-      v-loading="loading"
-      :data="list_ref"
-      row-key="id"
-      style="margin-bottom: 16px"
-    >
+    <el-table v-loading="loading" :data="list_ref" row-key="id" style="margin-bottom: 16px">
       <el-table-column prop="id" :label="t('common.id')" width="70" />
       <el-table-column prop="jobId" :label="t('system.jobId')" width="80" />
       <el-table-column prop="jobName" :label="t('system.jobName')" min-width="120" />
@@ -289,9 +284,7 @@ onMounted(() => {
             >
               {{ detailData.exceptionInfo }}
             </div>
-            <div v-else style="color: #999">
-              -
-            </div>
+            <div v-else style="color: #999">-</div>
           </el-descriptions-item>
           <el-descriptions-item :label="t('common.createTimes')">
             {{ formatDate(detailData.createTimes) }}

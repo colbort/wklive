@@ -51,7 +51,9 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     async login(payload: { username: string; password: string; googleCode?: string }) {
       const res = await post<LoginResp>('/admin/system/auth/login', payload)
-      if (res.code !== 200) throw new Error(res.msg || 'login failed')
+      if (res.code !== 200) {
+        throw new Error(res.msg || 'login failed')
+      }
       // payload is stored at top level since RespBase strips `data`
       this.token = res.data!.token
       this.exp = res.data!.exp

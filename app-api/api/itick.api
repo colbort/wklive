@@ -132,7 +132,9 @@ type ItickTenantProduct {
 // ====================
 // message ListVisibleCategoriesReq {
 // }
-type ListVisibleCategoriesReq {}
+type ListVisibleCategoriesReq {
+	tenantId int64 `form:"tenantId"`
+}
 
 type ListVisibleCategoriesResp {
 	RespBase
@@ -144,6 +146,7 @@ type ListVisibleProductsReq {
 	categoryCode string `json:"categoryCode"`
 	market       string `json:"market"`
 	keyword      string `json:"keyword"`
+	tenantId     int64 `form:"tenantId"`
 }
 
 type ListVisibleProductsResp {

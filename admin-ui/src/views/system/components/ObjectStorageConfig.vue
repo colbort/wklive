@@ -194,7 +194,6 @@ const form = computed({
 })
 
 function handleTabClick(_tab: unknown) {
-  // 仅切换视图选项卡，不修改 oss_type
 }
 </script>
 

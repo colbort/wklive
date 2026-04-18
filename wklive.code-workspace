@@ -56,14 +56,6 @@
     "i18n-ally.localesPaths": [
       "./admin-ui/src/i18n/locales",
     ],
-    "protoc": {
-      "options": [
-        "--proto_path=."
-      ]
-    },
-    "proto3.compile_on_save.options": [
-      "--proto_path=."
-    ],
     "cSpell.words": [
       "Aliyun",
       "APIURLIs",

@@ -15,7 +15,6 @@ const iconMap = ElementPlusIconsVue as Record<string, any>
 
 function labelById(id: number, fallback: string) {
   const key = `menu.${id}`
-  console.log(key)
   return te(key) ? t(key) : fallback
 }
 

@@ -1070,7 +1070,7 @@ type GetProductKlineResp struct {
 }
 
 type GetProductReq struct {
-	Id int64 `json:"id"`
+	Id int64 `path:"id"`
 }
 
 type GetProductResp struct {
@@ -1167,6 +1167,7 @@ type GetSyncTaskStatusResp struct {
 type GetSystemCore struct {
 	SiteName string `json:"siteName"`
 	SiteLogo string `json:"siteLogo"`
+	AssetUrl string `json:"assetUrl"`
 }
 
 type GetSystemCoreResp struct {
@@ -1180,8 +1181,8 @@ type GetSystemOptionsResp struct {
 }
 
 type GetTenantCategoryReq struct {
-	Id       int64 `json:"id"`
-	TenantId int64 `json:"tenantId"`
+	Id       int64 `path:"id"`
+	TenantId int64 `form:"tenantId"`
 }
 
 type GetTenantCategoryResp struct {
@@ -1230,7 +1231,7 @@ type GetTenantPayPlatformResp struct {
 }
 
 type GetTenantProductReq struct {
-	Id       int64 `json:"id"`
+	Id       int64 `path:"id"`
 	TenantId int64 `json:"tenantId"`
 }
 
@@ -1470,8 +1471,8 @@ type ItickProduct struct {
 	CategoryType int64  `json:"categoryType"`
 	CategoryCode string `json:"categoryCode"`
 	CategoryName string `json:"categoryName"`
-	Market       string `json:"market"` // binance / hk / us / forex ...
-	Symbol       string `json:"symbol"` // BTCUSDT / AAPL / EURUSD
+	Market       string `json:"market"` //
+	Symbol       string `json:"symbol"` //
 	Code         string `json:"code"`   // 第三方原始 code
 	Name         string `json:"name"`
 	DisplayName  string `json:"displayName"`
@@ -1758,10 +1759,10 @@ type ListSettlementsResp struct {
 
 type ListTenantCategoriesReq struct {
 	PageReq
-	TenantId      int64 `json:"tenantId"`
-	CategoryType  int64 `json:"categoryType"`
-	Status        int32 `json:"status"`        // 0全部 1启用 2禁用
-	VisibleStatus int32 `json:"visibleStatus"` // 0全部 1显示 2隐藏
+	TenantId      int64 `json:"tenantId,optional"`
+	CategoryType  int64 `json:"categoryType,optional"`
+	Status        int32 `json:"status,optional"`        // 0全部 1启用 2禁用
+	VisibleStatus int32 `json:"visibleStatus,optional"` // 0全部 1显示 2隐藏
 }
 
 type ListTenantCategoriesResp struct {
@@ -1826,12 +1827,12 @@ type ListTenantPayPlatformsResp struct {
 
 type ListTenantProductsReq struct {
 	PageReq
-	TenantId      int64  `json:"tenantId"`
-	CategoryType  int64  `json:"categoryType"`
-	Market        string `json:"market"`
-	Keyword       string `json:"keyword"`
-	Status        int32  `json:"status"`        // 0全部 1启用 2禁用
-	VisibleStatus int32  `json:"visibleStatus"` // 0全部 1显示 2隐藏
+	TenantId      int64  `json:"tenantId,optional"`
+	CategoryType  int64  `json:"categoryType,optional"`
+	Market        string `json:"market,optional"`
+	Keyword       string `json:"keyword,optional"`
+	Status        int32  `json:"status,optional"`        // 0全部 1启用 2禁用
+	VisibleStatus int32  `json:"visibleStatus,optional"` // 0全部 1显示 2隐藏
 }
 
 type ListTenantProductsResp struct {
@@ -3940,11 +3941,6 @@ type UserItem struct {
 	Deleted        int64  `json:"deleted"`        // 是否删除：0否 1是
 	CreateTimes    int64  `json:"createTimes"`    // 创建时间
 	UpdateTimes    int64  `json:"updateTimes"`    // 更新时间
-}
-
-type UserOptionItem struct {
-	Label string `json:"label"`
-	Value int64  `json:"value"`
 }
 
 type UserRechargeStat struct {

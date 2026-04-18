@@ -17,13 +17,19 @@
     <el-card class="query-card" shadow="never">
       <el-form :model="queryParams" inline label-width="90px">
         <el-form-item :label="t('itick.categoryType')">
-          <el-input
+          <el-select
             v-model="queryParams.categoryType"
-            :placeholder="t('itick.pleaseInputCategoryType')"
+            :placeholder="t('common.pleaseSelect')"
             clearable
             style="width: 180px"
-            @keyup.enter="handleQuery"
-          />
+          >
+            <el-option
+              v-for="item in categoryTypeOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
 
         <el-form-item :label="t('itick.market')">
@@ -53,9 +59,12 @@
             clearable
             style="width: 180px"
           >
-            <el-option :label="t('common.all')" :value="0" />
-            <el-option :label="t('common.enabled')" :value="1" />
-            <el-option :label="t('common.disabled')" :value="2" />
+            <el-option
+              v-for="item in statusOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
 
@@ -66,9 +75,12 @@
             clearable
             style="width: 180px"
           >
-            <el-option :label="t('common.all')" :value="0" />
-            <el-option :label="t('itick.show')" :value="1" />
-            <el-option :label="t('itick.hide')" :value="2" />
+            <el-option
+              v-for="item in visibleOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
 
@@ -86,7 +98,11 @@
     <el-card class="table-card" shadow="never">
       <el-table v-loading="loading" :data="list" stripe>
         <el-table-column prop="id" :label="t('common.id')" width="80" />
-        <el-table-column prop="categoryType" :label="t('itick.categoryType')" width="100" />
+        <el-table-column :label="t('itick.categoryType')" width="120">
+          <template #default="{ row }">
+            {{ getOptionValueLabel(optionGroups, 'categoryType', row.categoryType, t) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="categoryName" :label="t('itick.categoryName')" min-width="140" />
         <el-table-column prop="categoryCode" :label="t('itick.categoryCode')" min-width="140" />
         <el-table-column prop="market" :label="t('itick.market')" width="100" />
@@ -100,7 +116,7 @@
         <el-table-column :label="t('itick.enabledStatus')" width="100">
           <template #default="{ row }">
             <el-tag :type="row.enabled === 1 ? 'success' : 'info'">
-              {{ row.enabled === 1 ? t('common.enabled') : t('common.disabled') }}
+              {{ getOptionValueLabel(optionGroups, 'status', row.enabled, t) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -108,18 +124,24 @@
         <el-table-column :label="t('itick.appVisible')" width="100">
           <template #default="{ row }">
             <el-tag :type="row.appVisible === 1 ? 'success' : 'warning'">
-              {{ row.appVisible === 1 ? t('itick.show') : t('itick.hide') }}
+              {{ getOptionValueLabel(optionGroups, 'visible', row.appVisible, t) }}
             </el-tag>
           </template>
         </el-table-column>
 
         <el-table-column prop="sort" :label="t('common.sort')" width="90" />
-        <el-table-column
-          prop="icon"
-          :label="t('common.icon')"
-          min-width="180"
-          show-overflow-tooltip
-        />
+        <el-table-column :label="t('common.icon')" min-width="180">
+          <template #default="{ row }">
+            <div v-if="row.icon" class="icon-cell">
+              <el-image
+                :src="resolveAssetUrl(row.icon)"
+                class="icon-preview"
+                :preview-teleported="true"
+              />
+            </div>
+            <span v-else>-</span>
+          </template>
+        </el-table-column>
         <el-table-column
           prop="remark"
           :label="t('common.remark')"
@@ -142,14 +164,10 @@
         <el-table-column :label="t('common.actions')" width="180" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" @click="handleDetail(row)">
-              {{
-                t('itick.detail')
-              }}
+              {{ t('itick.detail') }}
             </el-button>
             <el-button link type="primary" @click="handleEdit(row)">
-              {{
-                t('common.edit')
-              }}
+              {{ t('common.edit') }}
             </el-button>
           </template>
         </el-table-column>
@@ -177,12 +195,7 @@
       :title="formMode === 'add' ? t('itick.addProduct') : t('itick.editProduct')"
       width="700px"
     >
-      <el-form
-        ref="formRef"
-        :model="form"
-        :rules="rules"
-        label-width="120px"
-      >
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="120px">
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item
@@ -190,13 +203,18 @@
               :label="t('itick.categoryType')"
               prop="categoryType"
             >
-              <el-input-number
+              <el-select
                 v-model="form.categoryType"
-                :min="1"
-                :precision="0"
-                controls-position="right"
+                :placeholder="t('common.pleaseSelect')"
                 style="width: 100%"
-              />
+              >
+                <el-option
+                  v-for="item in categoryTypeOptions"
+                  :key="item.value"
+                  :label="getOptionLabel(t, item.code, item.value)"
+                  :value="item.value"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -307,11 +325,8 @@
           <el-col :span="12">
             <el-form-item :label="t('itick.enabledStatus')" prop="enabled">
               <el-radio-group v-model="form.enabled">
-                <el-radio :value="1">
-                  {{ t('common.enabled') }}
-                </el-radio>
-                <el-radio :value="2">
-                  {{ t('common.disabled') }}
+                <el-radio v-for="item in statusOptions" :key="item.value" :value="item.value">
+                  {{ getOptionLabel(t, item.code, item.value) }}
                 </el-radio>
               </el-radio-group>
             </el-form-item>
@@ -319,11 +334,8 @@
           <el-col :span="12">
             <el-form-item :label="t('itick.appVisible')" prop="appVisible">
               <el-radio-group v-model="form.appVisible">
-                <el-radio :value="1">
-                  {{ t('itick.show') }}
-                </el-radio>
-                <el-radio :value="2">
-                  {{ t('itick.hide') }}
+                <el-radio v-for="item in visibleOptions" :key="item.value" :value="item.value">
+                  {{ getOptionLabel(t, item.code, item.value) }}
                 </el-radio>
               </el-radio-group>
             </el-form-item>
@@ -344,7 +356,25 @@
           </el-col>
           <el-col :span="12">
             <el-form-item :label="t('common.icon')" prop="icon">
-              <el-input v-model="form.icon" :placeholder="t('common.icon')" />
+              <div class="icon-upload-field">
+                <div v-if="form.icon" class="icon-upload-preview">
+                  <el-image
+                    :src="resolveAssetUrl(form.icon)"
+                    class="icon-preview-large"
+                    :preview-teleported="true"
+                  />
+                  <div class="icon-url">{{ form.icon }}</div>
+                </div>
+                <el-upload
+                  action="#"
+                  :auto-upload="false"
+                  :show-file-list="false"
+                  :on-change="handleIconSelect"
+                  accept="image/*"
+                >
+                  <el-button type="primary" :loading="submitLoading"> {{ t('itick.uploadImage') }} </el-button>
+                </el-upload>
+              </div>
             </el-form-item>
           </el-col>
         </el-row>
@@ -366,9 +396,7 @@
           {{ t('common.cancel') }}
         </el-button>
         <el-button type="primary" :loading="submitLoading" @click="submitForm">
-          {{
-            t('common.confirm')
-          }}
+          {{ t('common.confirm') }}
         </el-button>
       </template>
     </el-dialog>
@@ -379,101 +407,69 @@
           {{ detail.id ?? '-' }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('itick.categoryType')">
-          {{
-            detail.categoryType ?? '-'
-          }}
+          {{ getOptionValueLabel(optionGroups, 'categoryType', detail.categoryType, t) || '-' }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('itick.categoryName')">
-          {{
-            detail.categoryName || '-'
-          }}
+          {{ detail.categoryName || '-' }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('itick.categoryCode')">
-          {{
-            detail.categoryCode || '-'
-          }}
+          {{ detail.categoryCode || '-' }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('itick.market')">
-          {{
-            detail.market || '-'
-          }}
+          {{ detail.market || '-' }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('itick.symbol')">
-          {{
-            detail.symbol || '-'
-          }}
+          {{ detail.symbol || '-' }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('itick.code')">
-          {{
-            detail.code || '-'
-          }}
+          {{ detail.code || '-' }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('itick.name')">
-          {{
-            detail.name || '-'
-          }}
+          {{ detail.name || '-' }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('itick.displayName')">
-          {{
-            detail.displayName || '-'
-          }}
+          {{ detail.displayName || '-' }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('itick.baseCoin')">
-          {{
-            detail.baseCoin || '-'
-          }}
+          {{ detail.baseCoin || '-' }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('itick.quoteCoin')">
-          {{
-            detail.quoteCoin || '-'
-          }}
+          {{ detail.quoteCoin || '-' }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('itick.enabledStatus')">
-          {{
-            detail.enabled === 1
-              ? t('common.enabled')
-              : detail.enabled === 2
-                ? t('common.disabled')
-                : '-'
-          }}
+          {{ getOptionValueLabel(optionGroups, 'status', detail.enabled, t) || '-' }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('itick.appVisible')">
-          {{
-            detail.appVisible === 1
-              ? t('itick.show')
-              : detail.appVisible === 2
-                ? t('itick.hide')
-                : '-'
-          }}
+          {{ getOptionValueLabel(optionGroups, 'visible', detail.appVisible, t) || '-' }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('common.sort')">
-          {{
-            detail.sort ?? '-'
-          }}
+          {{ detail.sort ?? '-' }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('common.icon')">
-          {{
-            detail.icon || '-'
-          }}
+          <div v-if="detail.icon" class="icon-detail">
+            <el-image
+              :src="resolveAssetUrl(detail.icon)"
+              class="icon-preview-large"
+              :preview-teleported="true"
+            />
+            <div class="icon-url">{{ detail.icon }}</div>
+          </div>
+          <span v-else>-</span>
         </el-descriptions-item>
         <el-descriptions-item :label="t('common.remark')" :span="2">
-          {{
-            detail.remark || '-'
-          }}
+          {{ detail.remark || '-' }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('common.createTimes')">
-          {{ formatDate(detail.createTimes??0) }}
+          {{ formatDate(detail.createTimes ?? 0) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('itick.updateTimes')">
-          {{ formatDate(detail.updateTimes??0) }}
+          {{ formatDate(detail.updateTimes ?? 0) }}
         </el-descriptions-item>
       </el-descriptions>
 
       <template #footer>
         <el-button type="primary" @click="detailDialogVisible = false">
-          {{
-            t('common.close')
-          }}
+          {{ t('common.close') }}
         </el-button>
       </template>
     </el-dialog>
@@ -482,17 +478,21 @@
 
 <script setup lang="ts">
 import { computed, nextTick, ref, onMounted } from 'vue'
-import { ElMessage, type FormRules } from 'element-plus'
+import { ElMessage, type FormRules, type UploadFile } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables/usePagination'
 import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
+import { buildSystemAssetUrl, useSystemCore } from '@/composables/useSystemCore'
+import type { OptionGroup } from '@/services'
+import { apiUploadFile } from '@/api/system/upload'
 import {
   productsService,
   type ItickProduct,
   type ListProductsReq,
 } from '@/services/itick/ProductsService'
 import { formatDate } from '@/utils'
+import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 type FormData = {
   id?: number
@@ -514,6 +514,7 @@ type FormData = {
 }
 
 const { t } = useI18n()
+const { systemCore, loadSystemCore } = useSystemCore()
 const { pagination, updatePagination, reset: resetPagination } = usePagination(20)
 const { loading, withLoading } = useLoading()
 
@@ -558,9 +559,14 @@ const submitLoading = ref(false)
 const detailLoading = ref(false)
 const list = ref<ItickProduct[]>([])
 const detail = ref<Partial<ItickProduct>>({})
+const optionGroups = ref<OptionGroup[]>([])
 const formDialogVisible = ref(false)
 const detailDialogVisible = ref(false)
 const formMode = ref<'add' | 'edit'>('add')
+const categoryTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'categoryType'))
+const statusOptions = computed(() => findOptionGroup(optionGroups.value, 'status'))
+const visibleOptions = computed(() => findOptionGroup(optionGroups.value, 'visible'))
+const resolveAssetUrl = (url?: string) => buildSystemAssetUrl(systemCore.value.assetUrl, url)
 
 const rules: FormRules<FormData> = {
   categoryType: [{ required: true, message: t('itick.pleaseInputCategoryType'), trigger: 'blur' }],
@@ -622,6 +628,15 @@ const getList = async () => {
       ElMessage.error(t('common.loadFailed'))
     }
   })
+}
+
+const loadOptions = async () => {
+  try {
+    const res = await productsService.getOptions()
+    optionGroups.value = res.data || []
+  } catch {
+    ElMessage.error(t('common.loadFailed'))
+  }
 }
 
 const handleQuery = () => {
@@ -702,6 +717,35 @@ const handleDetail = async (row: ItickProduct) => {
   }
 }
 
+const handleIconSelect = async (uploadFile: UploadFile) => {
+  if (!uploadFile.raw) return
+
+  if (!uploadFile.raw.type.startsWith('image/')) {
+    ElMessage.error(t('app.pleaseSelectImageFile'))
+    return
+  }
+
+  if (uploadFile.raw.size > 5 * 1024 * 1024) {
+    ElMessage.error(t('app.avatarSizeLimit'))
+    return
+  }
+
+  submitLoading.value = true
+  try {
+    const res = await apiUploadFile(uploadFile.raw)
+    if (res.code === 0 || res.code === 200) {
+      form.icon = res.data?.url || ''
+      ElMessage.success(t('common.uploadSuccess'))
+      return
+    }
+    throw new Error(res.msg || t('common.uploadFailed'))
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : t('common.uploadFailed'))
+  } finally {
+    submitLoading.value = false
+  }
+}
+
 const submitForm = async () => {
   if (!formRef.value) return
   const valid = await formRef.value.validate().catch(() => false)
@@ -767,6 +811,8 @@ const handleNextPage = () => {
 }
 
 onMounted(() => {
+  loadSystemCore()
+  loadOptions()
   getList()
 })
 </script>
@@ -802,5 +848,32 @@ onMounted(() => {
   align-items: center;
   gap: 16px;
   margin-top: 16px;
+}
+
+.icon-cell,
+.icon-upload-field,
+.icon-detail {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icon-preview {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.icon-preview-large {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.icon-url {
+  color: #606266;
+  word-break: break-all;
 }
 </style>

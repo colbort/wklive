@@ -25,7 +25,21 @@ func NewGetProductKlineLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 
 // K线查看
 func (l *GetProductKlineLogic) GetProductKline(in *itick.GetProductKlineReq) (*itick.GetProductKlineResp, error) {
-	// todo: add your logic here and delete this line
+	getKlineLogic := NewGetKlineLogic(l.ctx, l.svcCtx)
+	result, err := getKlineLogic.GetKline(&itick.GetKlineReq{
+		CategoryCode: in.CategoryCode,
+		Market:       in.Market,
+		Symbol:       in.Symbol,
+		KType:        in.KType,
+		EndTs:        in.EndTs,
+		Limit:        in.Limit,
+	})
+	if err != nil {
+		return nil, err
+	}
 
-	return &itick.GetProductKlineResp{}, nil
+	return &itick.GetProductKlineResp{
+		Base: result.Base,
+		Data: result.Data,
+	}, nil
 }

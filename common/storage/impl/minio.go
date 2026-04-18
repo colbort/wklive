@@ -84,5 +84,5 @@ func (u *minioUploader) Upload(ctx context.Context, file multipart.File, header 
 		return "", err
 	}
 
-	return "/" + key, nil
+	return fmt.Sprintf("/%s/%s", bucketName, key), nil
 }

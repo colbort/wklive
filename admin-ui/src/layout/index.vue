@@ -66,7 +66,7 @@ onBeforeUnmount(() => {
           :src="buildAssetUrl(systemCore.siteLogo)"
           alt="logo"
           class="brand-logo"
-        >
+        />
         <span v-if="!collapsed" class="brand-text">{{ systemCore.siteName }}</span>
         <span v-else class="brand-text">{{
           systemCore.siteName ? systemCore.siteName.slice(0, 2).toUpperCase() : 'AI'

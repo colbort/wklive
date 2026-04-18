@@ -29,7 +29,7 @@ message ItickProduct {
   string category_name = 4;
   string market = 5; // binance / hk / us / forex ...
   string symbol = 6; // BTCUSDT / AAPL / EURUSD
-  string code = 7;   // 第三方原始 code
+  string code = 7; // 第三方原始 code
   string name = 8;
   string display_name = 9;
   string base_coin = 10;

@@ -502,6 +502,7 @@ export type GetUserTradeLimitReq = {
   tenantId?: number
   userId: number
   marketType: number
+  symbolId: number
 }
 
 export type GetUserSymbolLimitReq = {
@@ -575,6 +576,7 @@ export type RetryTradeEventReq = {
   tenantId: number // 租户ID
   id: number // 事件ID
   operatorId: number // 操作人ID
+  eventNo: string
 }
 
 export class TradeService {

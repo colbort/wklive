@@ -1,82 +1,66 @@
 <template>
   <div class="payment-page">
     <div class="page-header">
-      <h2>提现订单</h2>
-      <el-button @click="loadList">
-        刷新
-      </el-button>
+      <h2>{{ t('payment.withdrawOrders') }}</h2>
+      <el-button @click="loadList"> {{ t('common.refresh') }} </el-button>
     </div>
 
     <el-card shadow="never" class="query-card">
       <el-form :model="query" inline label-width="90px">
-        <el-form-item label="租户ID">
+        <el-form-item :label="t('common.tenantId')">
           <el-input-number v-model="query.tenantId" :min="0" :precision="0" />
         </el-form-item>
-        <el-form-item label="用户ID">
+        <el-form-item :label="t('common.userId')">
           <el-input-number v-model="query.userId" :min="0" :precision="0" />
         </el-form-item>
-        <el-form-item label="订单号">
+        <el-form-item :label="t('payment.orderNo')">
           <el-input v-model="query.orderNo" clearable />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="loadList">
-            查询
-          </el-button>
+          <el-button type="primary" @click="loadList"> {{ t('common.search') }} </el-button>
         </el-form-item>
       </el-form>
     </el-card>
 
     <el-card shadow="never">
       <el-table v-loading="loading" :data="list" stripe>
-        <el-table-column prop="orderNo" label="订单号" min-width="180" />
-        <el-table-column prop="tenantId" label="租户ID" width="100" />
-        <el-table-column prop="userId" label="用户ID" width="100" />
-        <el-table-column prop="platformId" label="平台ID" width="100" />
-        <el-table-column prop="channelId" label="通道ID" width="100" />
-        <el-table-column prop="currency" label="币种" width="80" />
-        <el-table-column prop="amount" label="提现金额" min-width="120" />
-        <el-table-column prop="feeAmount" label="手续费" min-width="100" />
-        <el-table-column prop="status" label="状态" width="90" />
-        <el-table-column label="操作" width="180">
+        <el-table-column prop="orderNo" :label="t('payment.orderNo')" min-width="180" />
+        <el-table-column prop="tenantId" :label="t('common.tenantId')" width="100" />
+        <el-table-column prop="userId" :label="t('common.userId')" width="100" />
+        <el-table-column prop="platformId" :label="t('payment.platformId')" width="100" />
+        <el-table-column prop="channelId" :label="t('payment.channelId')" width="100" />
+        <el-table-column prop="currency" :label="t('payment.currency')" width="80" />
+        <el-table-column prop="amount" :label="t('payment.amount')" min-width="120" />
+        <el-table-column prop="feeAmount" :label="t('payment.feeAmount')" min-width="100" />
+        <el-table-column prop="status" :label="t('common.status')" width="90" />
+        <el-table-column :label="t('common.actions')" width="180">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">
-              详情
-            </el-button>
-            <el-button link type="warning" @click="openAudit(row)">
-              审核
-            </el-button>
+            <el-button link type="primary" @click="showDetail(row)"> {{ t('common.detail') }} </el-button>
+            <el-button link type="warning" @click="openAudit(row)"> {{ t('payment.auditWithdraw') }} </el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-card>
 
-    <el-dialog v-model="detailVisible" title="订单详情" width="760px">
+    <el-dialog v-model="detailVisible" :title="t('payment.orderDetail')" width="760px">
       <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
     </el-dialog>
 
-    <el-dialog v-model="auditVisible" title="审核提现" width="520px">
+    <el-dialog v-model="auditVisible" :title="t('payment.auditWithdraw')" width="520px">
       <el-form label-width="110px">
-        <el-form-item label="审核结果">
+        <el-form-item :label="t('payment.auditResult')">
           <el-radio-group v-model="auditForm.approve">
-            <el-radio :value="1">
-              通过
-            </el-radio>
-            <el-radio :value="2">
-              拒绝
-            </el-radio>
+            <el-radio :value="1"> {{ t('payment.approved') }} </el-radio>
+            <el-radio :value="2"> {{ t('payment.rejected') }} </el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="备注">
+        <el-form-item :label="t('common.remark')">
           <el-input v-model="auditForm.remark" type="textarea" :rows="3" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="auditVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="submitAudit">
-          确定
-        </el-button>
+        <el-button @click="auditVisible = false"> {{ t('common.cancel') }} </el-button>
+        <el-button type="primary" @click="submitAudit"> {{ t('common.confirm') }} </el-button>
       </template>
     </el-dialog>
   </div>
@@ -84,8 +68,11 @@
 
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { withdrawService, type WithdrawOrder } from '@/services'
+
+const { t } = useI18n()
 
 const loading = ref(false)
 const list = ref<WithdrawOrder[]>([])
@@ -141,7 +128,7 @@ const submitAudit = async () => {
     approve: auditForm.approve,
     remark: auditForm.remark,
   })
-  ElMessage.success('审核成功')
+  ElMessage.success(t('payment.auditSuccess'))
   auditVisible.value = false
   loadList()
 }

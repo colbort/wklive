@@ -78,10 +78,10 @@ function getOptionTagClass(groupKey: string, value?: number) {
 async function fetchOptions() {
   try {
     const res = await memberUserService.getOptions()
-    if (!checkCode(res.code)) throw new Error(res.msg || '加载选项失败')
+    if (!checkCode(res.code)) throw new Error(res.msg || t('users.loadOptionsFailed'))
     optionGroups.value = res.data || []
   } catch (error: unknown) {
-    ElMessage.error(error instanceof Error ? error.message : '加载选项失败')
+    ElMessage.error(error instanceof Error ? error.message : t('users.loadOptionsFailed'))
   }
 }
 
@@ -89,10 +89,10 @@ async function fetchList() {
   loading.value = true
   try {
     const res = await memberUserService.listIdentities(query)
-    if (!checkCode(res.code)) throw new Error(res.msg || '加载失败')
+    if (!checkCode(res.code)) throw new Error(res.msg || t('users.loadFailed'))
     list.value = res.data || []
   } catch (error: unknown) {
-    ElMessage.error(error instanceof Error ? error.message : '加载失败')
+    ElMessage.error(error instanceof Error ? error.message : t('users.loadFailed'))
   } finally {
     loading.value = false
   }
@@ -115,12 +115,12 @@ function resetQuery() {
 async function showDetail(row: UserIdentityItem) {
   const tenantId = Number(query.tenantId || 0)
   if (!tenantId) {
-    ElMessage.warning('请先输入租户ID')
+    ElMessage.warning(t('users.queryTenantPrompt'))
     return
   }
   const res = await memberUserService.getDetail(row.userId, tenantId)
   if (!checkCode(res.code)) {
-    ElMessage.error(res.msg || '加载详情失败')
+    ElMessage.error(res.msg || t('users.loadDetailFailed'))
     return
   }
   detailData.value = res.detail || res.data
@@ -147,12 +147,12 @@ async function submitReview() {
       rejectReason: reviewForm.rejectReason || undefined,
       verifyBy: reviewForm.verifyBy,
     })
-    if (!checkCode(res.code)) throw new Error(res.msg || '审核失败')
-    ElMessage.success('审核成功')
+    if (!checkCode(res.code)) throw new Error(res.msg || t('users.reviewFailed'))
+    ElMessage.success(t('users.reviewSuccess'))
     reviewVisible.value = false
     fetchList()
   } catch (error: unknown) {
-    ElMessage.error(error instanceof Error ? error.message : '审核失败')
+    ElMessage.error(error instanceof Error ? error.message : t('users.reviewFailed'))
   } finally {
     submitLoading.value = false
   }
@@ -165,30 +165,28 @@ onMounted(fetchOptions)
 <template>
   <div class="module-page">
     <div class="page-header">
-      <h2>实名认证</h2>
-      <el-button @click="fetchList">
-        刷新
-      </el-button>
+      <h2>{{ t('users.identities') }}</h2>
+      <el-button @click="fetchList"> {{ t('common.refresh') }} </el-button>
     </div>
 
     <el-card shadow="never" class="query-card">
       <el-form :model="query" inline label-width="90px">
-        <el-form-item label="租户ID">
+        <el-form-item :label="t('common.tenantId')">
           <el-input-number v-model="query.tenantId" :min="0" :precision="0" />
         </el-form-item>
-        <el-form-item label="关键字">
+        <el-form-item :label="t('common.keyword')">
           <el-input v-model="query.keyword" clearable />
         </el-form-item>
-        <el-form-item label="用户ID">
+        <el-form-item :label="t('users.userId')">
           <el-input-number v-model="query.userId" :min="0" :precision="0" />
         </el-form-item>
-        <el-form-item label="用户名">
+        <el-form-item :label="t('users.username')">
           <el-input v-model="query.username" clearable />
         </el-form-item>
-        <el-form-item label="实名">
+        <el-form-item :label="t('users.realName')">
           <el-input v-model="query.realName" clearable />
         </el-form-item>
-        <el-form-item label="认证状态">
+        <el-form-item :label="t('users.verifyStatus')">
           <el-select v-model="query.verifyStatus" clearable style="width: 140px">
             <el-option
               v-for="item in verifyStatusOptions"
@@ -198,7 +196,7 @@ onMounted(fetchOptions)
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="KYC等级">
+        <el-form-item :label="t('users.kycLevel')">
           <el-select v-model="query.kycLevel" clearable style="width: 140px">
             <el-option
               v-for="item in kycLevelOptions"
@@ -209,69 +207,61 @@ onMounted(fetchOptions)
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="fetchList">
-            查询
-          </el-button>
-          <el-button @click="resetQuery">
-            重置
-          </el-button>
+          <el-button type="primary" @click="fetchList"> {{ t('common.search') }} </el-button>
+          <el-button @click="resetQuery"> {{ t('common.reset') }} </el-button>
         </el-form-item>
       </el-form>
     </el-card>
 
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="list" stripe>
-        <el-table-column prop="userId" label="用户ID" width="100" />
-        <el-table-column prop="userNo" label="用户编号" min-width="150" />
-        <el-table-column prop="username" label="用户名" min-width="140" />
-        <el-table-column prop="phone" label="手机号" min-width="140" />
-        <el-table-column prop="email" label="邮箱" min-width="180" />
-        <el-table-column prop="realName" label="实名" min-width="120" />
-        <el-table-column label="证件类型" width="110">
+        <el-table-column prop="userId" :label="t('users.userId')" width="100" />
+        <el-table-column prop="userNo" :label="t('users.userNo')" min-width="150" />
+        <el-table-column prop="username" :label="t('users.username')" min-width="140" />
+        <el-table-column prop="phone" :label="t('users.phone')" min-width="140" />
+        <el-table-column prop="email" :label="t('users.email')" min-width="180" />
+        <el-table-column prop="realName" :label="t('users.realName')" min-width="120" />
+        <el-table-column :label="t('users.idType')" width="110">
           <template #default="{ row }">
             <span :class="getOptionTagClass('idType', row.idType)">
               {{ getOptionValueLabel(optionGroups, 'idType', row.idType, t) }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="KYC等级" width="100">
+        <el-table-column :label="t('users.kycLevel')" width="100">
           <template #default="{ row }">
             <span :class="getOptionTagClass('kycLevel', row.kycLevel)">
               {{ getOptionValueLabel(optionGroups, 'kycLevel', row.kycLevel, t) }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="认证状态" width="110">
+        <el-table-column :label="t('users.verifyStatus')" width="110">
           <template #default="{ row }">
             <span :class="getOptionTagClass('verifyStatus', row.verifyStatus)">
               {{ getOptionValueLabel(optionGroups, 'verifyStatus', row.verifyStatus, t) }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="提交时间" min-width="170">
+        <el-table-column :label="t('users.submitTime')" min-width="170">
           <template #default="{ row }">
             {{ formatDate(row.submitTime) }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="160" fixed="right">
+        <el-table-column :label="t('common.actions')" width="160" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">
-              详情
-            </el-button>
-            <el-button link type="success" @click="openReview(row)">
-              审核
-            </el-button>
+            <el-button link type="primary" @click="showDetail(row)"> {{ t('common.detail') }} </el-button>
+            <el-button link type="success" @click="openReview(row)"> {{ t('users.review') }} </el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-card>
 
-    <el-dialog v-model="reviewVisible" title="实名认证审核" width="560px">
+    <el-dialog v-model="reviewVisible" :title="t('users.reviewIdentity')" width="560px">
       <el-form label-width="100px">
-        <el-form-item label="租户ID">
+        <el-form-item :label="t('common.tenantId')">
           <el-input-number v-model="reviewForm.tenantId" :min="0" :precision="0" />
         </el-form-item>
-        <el-form-item label="审核状态">
+        <el-form-item :label="t('users.verifyStatus')">
           <el-select v-model="reviewForm.verifyStatus" style="width: 100%">
             <el-option
               v-for="item in verifyStatusOptions"
@@ -281,24 +271,20 @@ onMounted(fetchOptions)
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="审核人ID">
+        <el-form-item :label="t('users.reviewerId')">
           <el-input-number v-model="reviewForm.verifyBy" :min="0" :precision="0" />
         </el-form-item>
-        <el-form-item label="拒绝原因">
+        <el-form-item :label="t('users.rejectReason')">
           <el-input v-model="reviewForm.rejectReason" type="textarea" :rows="3" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="reviewVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitReview">
-          确定
-        </el-button>
+        <el-button @click="reviewVisible = false"> {{ t('common.cancel') }} </el-button>
+        <el-button type="primary" :loading="submitLoading" @click="submitReview"> {{ t('common.confirm') }} </el-button>
       </template>
     </el-dialog>
 
-    <el-dialog v-model="detailVisible" title="认证详情" width="820px">
+    <el-dialog v-model="detailVisible" :title="t('users.identityDetail')" width="820px">
       <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
     </el-dialog>
   </div>

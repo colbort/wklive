@@ -1,5 +1,6 @@
-import type { RespBase } from '@/services'
+import type { OptionGroup, RespBase } from '@/services'
 import {
+  apiOptions,
   apiOpenTenantPayPlatform,
   apiTenantPayAccountCreate,
   apiTenantPayAccountDetail,
@@ -265,6 +266,9 @@ export type CreateTenantPayChannelRuleReq = {
 export type UpdateTenantPayChannelRuleReq = CreateTenantPayChannelRuleReq & { id: number }
 
 export class TenantService {
+  getOptions(): Promise<RespBase<OptionGroup[]>> {
+    return apiOptions()
+  }
   getTenantPlatformList(params: ListTenantPayPlatformsReq): Promise<RespBase<TenantPayPlatform[]>> {
     return apiTenantPayPlatformList(params)
   }

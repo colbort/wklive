@@ -6,18 +6,38 @@ import { buildAssetUrl } from '@/utils/file-url'
 export type SystemCoreState = {
   siteName: string
   siteLogo: string
+  assetUrl: string
 }
 
 const DEFAULT_SYSTEM_CORE: SystemCoreState = {
   siteName: 'Admin UI',
   siteLogo: '',
+  assetUrl: '',
 }
 
 function normalizeSystemCore(data: any): SystemCoreState {
   return {
     siteName: data?.siteName || data?.site_name || DEFAULT_SYSTEM_CORE.siteName,
     siteLogo: data?.siteLogo || data?.site_logo || DEFAULT_SYSTEM_CORE.siteLogo,
+    assetUrl: data?.assetUrl || data?.asset_url || DEFAULT_SYSTEM_CORE.assetUrl,
   }
+}
+
+function joinAssetUrl(base: string, path: string) {
+  if (base.endsWith('/') && path.startsWith('/')) {
+    return `${base.slice(0, -1)}${path}`
+  }
+  if (!base.endsWith('/') && !path.startsWith('/')) {
+    return `${base}/${path}`
+  }
+  return `${base}${path}`
+}
+
+export function buildSystemAssetUrl(assetUrl: string, url?: string) {
+  if (!url) return ''
+  if (/^https?:\/\//i.test(url)) return url
+  if (!assetUrl) return buildAssetUrl(url)
+  return joinAssetUrl(assetUrl, url)
 }
 
 function ensureFavicon(href: string) {

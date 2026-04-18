@@ -20,7 +20,7 @@ const list = ref<UserBankItem[]>([])
 const editVisible = ref(false)
 const statusVisible = ref(false)
 const detailVisible = ref(false)
-const detailData = ref<any>(null)
+const detailData = ref<UserBankItem>()
 const tenantChecking = ref(false)
 const tenantChecked = ref(false)
 const tenantExists = ref(false)
@@ -62,14 +62,18 @@ const statusForm = reactive({
 })
 
 const isCreate = computed(() => !form.id)
-const canSubmitCreate = computed(() => !isCreate.value || (tenantChecked.value && tenantExists.value && userChecked.value && userExists.value))
+const canSubmitCreate = computed(
+  () =>
+    !isCreate.value ||
+    (tenantChecked.value && tenantExists.value && userChecked.value && userExists.value),
+)
 
 function checkCode(code: number) {
   return code === 0 || code === 200
 }
 
 function getBooleanLabel(value?: number) {
-  return Number(value) === 1 ? '是' : '否'
+  return Number(value) === 1 ? t('users.yes') : t('users.no')
 }
 
 function getBooleanTagClass(value?: number) {
@@ -91,10 +95,10 @@ function getBankStatusLabel(value?: number) {
 async function fetchOptions() {
   try {
     const res = await memberUserService.getOptions()
-    if (!checkCode(res.code)) throw new Error(res.msg || '加载选项失败')
+    if (!checkCode(res.code)) throw new Error(res.msg || t('users.loadOptionsFailed'))
     optionGroups.value = res.data || []
   } catch (error: unknown) {
-    ElMessage.error(error instanceof Error ? error.message : '加载选项失败')
+    ElMessage.error(error instanceof Error ? error.message : t('users.loadOptionsFailed'))
   }
 }
 
@@ -124,14 +128,14 @@ async function verifyTenant() {
   const tenantId = Number(form.tenantId || 0)
   if (!tenantId) {
     resetTenantCheck()
-    ElMessage.warning('请输入租户ID')
+    ElMessage.warning(t('users.queryTenantPrompt'))
     return false
   }
 
   tenantChecking.value = true
   try {
     const res = await tenantsService.detail({ tenantId })
-    if (!checkCode(res.code)) throw new Error(res.msg || '查询租户失败')
+    if (!checkCode(res.code)) throw new Error(res.msg || t('users.queryTenantFailed'))
 
     const tenant = res.data
     tenantChecked.value = true
@@ -139,14 +143,14 @@ async function verifyTenant() {
     tenantCheckName.value = tenant?.tenantName || ''
 
     if (!tenant) {
-      ElMessage.warning('租户不存在，请确认租户ID')
+      ElMessage.warning(t('users.tenantNotFoundPrompt'))
       return false
     }
-    ElMessage.success(`已找到租户：${tenant.tenantName}`)
+    ElMessage.success(t('users.tenantFound', { name: tenant.tenantName }))
     return true
   } catch (error: unknown) {
     resetTenantCheck()
-    ElMessage.error(error instanceof Error ? error.message : '查询租户失败')
+    ElMessage.error(error instanceof Error ? error.message : t('users.queryTenantFailed'))
     return false
   } finally {
     tenantChecking.value = false
@@ -158,7 +162,7 @@ async function verifyUser() {
   const userId = Number(form.userId || 0)
 
   if (!tenantId) {
-    ElMessage.warning('请先输入并确认租户ID')
+    ElMessage.warning(t('users.inputTenantAndConfirm'))
     return false
   }
   if (!tenantChecked.value || !tenantExists.value) {
@@ -167,14 +171,14 @@ async function verifyUser() {
   }
   if (!userId) {
     resetUserCheck()
-    ElMessage.warning('请输入用户ID')
+    ElMessage.warning(t('users.queryUserPrompt'))
     return false
   }
 
   userChecking.value = true
   try {
     const res = await memberUserService.getDetail(userId, tenantId)
-    if (!checkCode(res.code)) throw new Error(res.msg || '查询用户失败')
+    if (!checkCode(res.code)) throw new Error(res.msg || t('users.queryUserFailed'))
 
     const data = res.detail || res.data
     const base = data?.base
@@ -184,14 +188,14 @@ async function verifyUser() {
     userCheckUserNo.value = base?.userNo || ''
 
     if (!base?.id) {
-      ElMessage.warning('用户不存在，请确认用户ID')
+      ElMessage.warning(t('users.userNotFoundPrompt'))
       return false
     }
-    ElMessage.success(`已找到用户：${base.username}`)
+    ElMessage.success(t('users.userFound', { name: base.username }))
     return true
   } catch (error: unknown) {
     resetUserCheck()
-    ElMessage.error(error instanceof Error ? error.message : '查询用户失败')
+    ElMessage.error(error instanceof Error ? error.message : t('users.queryUserFailed'))
     return false
   } finally {
     userChecking.value = false
@@ -202,10 +206,10 @@ async function fetchList() {
   loading.value = true
   try {
     const res = await memberUserService.listBanks(query)
-    if (!checkCode(res.code)) throw new Error(res.msg || '加载失败')
+    if (!checkCode(res.code)) throw new Error(res.msg || t('users.loadFailed'))
     list.value = res.data || []
   } catch (error: unknown) {
-    ElMessage.error(error instanceof Error ? error.message : '加载失败')
+    ElMessage.error(error instanceof Error ? error.message : t('users.loadFailed'))
   } finally {
     loading.value = false
   }
@@ -244,12 +248,12 @@ function openCreate() {
 async function openEdit(row: UserBankItem) {
   const tenantId = Number(row.tenantId || query.tenantId || 0)
   if (!tenantId) {
-    ElMessage.warning('请先输入租户ID')
+    ElMessage.warning(t('users.queryTenantPrompt'))
     return
   }
   const res = await memberUserService.getBank(row.id, tenantId)
   if (!checkCode(res.code)) {
-    ElMessage.error(res.msg || '加载详情失败')
+    ElMessage.error(res.msg || t('users.loadDetailFailed'))
     return
   }
   Object.assign(form, res.bank || res.data, { id: row.id })
@@ -259,14 +263,9 @@ async function openEdit(row: UserBankItem) {
 }
 
 async function showDetail(row: UserBankItem) {
-  const tenantId = Number(row.tenantId || query.tenantId || 0)
-  if (!tenantId) {
-    ElMessage.warning('请先输入租户ID')
-    return
-  }
-  const res = await memberUserService.getBank(row.id, tenantId)
+  const res = await memberUserService.getBank(row.id, row.tenantId)
   if (!checkCode(res.code)) {
-    ElMessage.error(res.msg || '加载详情失败')
+    ElMessage.error(res.msg)
     return
   }
   detailData.value = res.bank || res.data
@@ -290,7 +289,7 @@ async function submitEdit() {
         status: Number(form.status),
       }
       const res = await memberUserService.updateBank(Number(form.id), payload)
-      if (!checkCode(res.code)) throw new Error(res.msg || '更新失败')
+      if (!checkCode(res.code)) throw new Error(res.msg || t('users.updateFailed'))
     } else {
       if (!tenantChecked.value || !tenantExists.value) {
         const verifiedTenant = await verifyTenant()
@@ -313,13 +312,13 @@ async function submitEdit() {
         status: Number(form.status),
       }
       const res = await memberUserService.addBank(payload)
-      if (!checkCode(res.code)) throw new Error(res.msg || '新增失败')
+      if (!checkCode(res.code)) throw new Error(res.msg || t('users.createFailed'))
     }
-    ElMessage.success('保存成功')
+    ElMessage.success(t('users.saveSuccess'))
     editVisible.value = false
     fetchList()
   } catch (error: unknown) {
-    ElMessage.error(error instanceof Error ? error.message : '保存失败')
+    ElMessage.error(error instanceof Error ? error.message : t('users.saveFailed'))
   } finally {
     submitLoading.value = false
   }
@@ -328,7 +327,7 @@ async function submitEdit() {
 function openStatus(row: UserBankItem) {
   const tenantId = Number(row.tenantId || query.tenantId || 0)
   if (!tenantId) {
-    ElMessage.warning('请先输入租户ID')
+    ElMessage.warning(t('users.queryTenantPrompt'))
     return
   }
   Object.assign(statusForm, {
@@ -345,12 +344,12 @@ async function submitStatus() {
       tenantId: Number(statusForm.tenantId),
       status: Number(statusForm.status),
     })
-    if (!checkCode(res.code)) throw new Error(res.msg || '修改失败')
-    ElMessage.success('修改成功')
+    if (!checkCode(res.code)) throw new Error(res.msg || t('users.updateFailed'))
+    ElMessage.success(t('users.updateSuccess'))
     statusVisible.value = false
     fetchList()
   } catch (error: unknown) {
-    ElMessage.error(error instanceof Error ? error.message : '修改失败')
+    ElMessage.error(error instanceof Error ? error.message : t('users.updateFailed'))
   }
 }
 
@@ -358,25 +357,29 @@ async function setDefault(row: UserBankItem) {
   const tenantId = Number(row.tenantId || query.tenantId || 0)
   try {
     const res = await memberUserService.setDefaultBank(row.id, { tenantId, userId: row.userId })
-    if (!checkCode(res.code)) throw new Error(res.msg || '设置失败')
-    ElMessage.success('设置成功')
+    if (!checkCode(res.code)) throw new Error(res.msg || t('users.setFailed'))
+    ElMessage.success(t('users.setSuccess'))
     fetchList()
   } catch (error: unknown) {
-    ElMessage.error(error instanceof Error ? error.message : '设置失败')
+    ElMessage.error(error instanceof Error ? error.message : t('users.setFailed'))
   }
 }
 
 async function remove(row: UserBankItem) {
   const tenantId = Number(row.tenantId || query.tenantId || 0)
   try {
-    await ElMessageBox.confirm(`确认删除银行卡 ${row.bankName} ?`, '提示', { type: 'warning' })
+    await ElMessageBox.confirm(
+      t('users.deleteBankConfirm', { name: row.bankName }),
+      t('common.warning'),
+      { type: 'warning' },
+    )
     const res = await memberUserService.deleteBank(row.id, tenantId)
-    if (!checkCode(res.code)) throw new Error(res.msg || '删除失败')
-    ElMessage.success('删除成功')
+    if (!checkCode(res.code)) throw new Error(res.msg || t('users.deleteFailed'))
+    ElMessage.success(t('users.deleteSuccess'))
     fetchList()
   } catch (error: unknown) {
     if (error === 'cancel') return
-    ElMessage.error(error instanceof Error ? error.message : '删除失败')
+    ElMessage.error(error instanceof Error ? error.message : t('users.deleteFailed'))
   }
 }
 
@@ -387,29 +390,25 @@ onMounted(fetchOptions)
 <template>
   <div class="module-page">
     <div class="page-header">
-      <h2>银行卡管理</h2>
+      <h2>{{ t('users.banks') }}</h2>
       <div class="header-actions">
-        <el-button @click="fetchList">
-          刷新
-        </el-button>
-        <el-button type="primary" @click="openCreate">
-          新增银行卡
-        </el-button>
+        <el-button @click="fetchList"> {{ t('common.refresh') }} </el-button>
+        <el-button type="primary" @click="openCreate"> {{ t('users.addBank') }} </el-button>
       </div>
     </div>
 
     <el-card shadow="never" class="query-card">
       <el-form :model="query" inline label-width="90px">
-        <el-form-item label="租户ID">
+        <el-form-item :label="t('common.tenantId')">
           <el-input-number v-model="query.tenantId" :min="0" :precision="0" />
         </el-form-item>
-        <el-form-item label="用户ID">
+        <el-form-item :label="t('users.userId')">
           <el-input-number v-model="query.userId" :min="0" :precision="0" />
         </el-form-item>
-        <el-form-item label="关键字">
+        <el-form-item :label="t('common.keyword')">
           <el-input v-model="query.keyword" clearable />
         </el-form-item>
-        <el-form-item label="状态">
+        <el-form-item :label="t('users.status')">
           <el-select v-model="query.status" clearable style="width: 140px">
             <el-option
               v-for="item in bankStatusOptions"
@@ -420,12 +419,8 @@ onMounted(fetchOptions)
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="fetchList">
-            查询
-          </el-button>
-          <el-button @click="resetQuery">
-            重置
-          </el-button>
+          <el-button type="primary" @click="fetchList"> {{ t('common.search') }} </el-button>
+          <el-button @click="resetQuery"> {{ t('common.reset') }} </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -433,60 +428,45 @@ onMounted(fetchOptions)
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="list" stripe>
         <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="tenantId" label="租户ID" width="100" />
-        <el-table-column prop="userId" label="用户ID" width="100" />
-        <el-table-column prop="bankName" label="银行名" min-width="140" />
-        <el-table-column prop="accountName" label="户名" min-width="120" />
-        <el-table-column
-          prop="accountNo"
-          label="卡号"
-          min-width="160"
-          show-overflow-tooltip
-        />
-        <el-table-column prop="isDefault" label="默认" width="80">
+        <el-table-column prop="tenantId" :label="t('common.tenantId')" width="100" />
+        <el-table-column prop="userId" :label="t('users.userId')" width="100" />
+        <el-table-column prop="bankName" :label="t('users.bankName')" min-width="140" />
+        <el-table-column prop="accountName" :label="t('users.accountName')" min-width="120" />
+        <el-table-column prop="accountNo" :label="t('users.accountNo')" min-width="160" show-overflow-tooltip />
+        <el-table-column prop="isDefault" :label="t('common.default')" width="80">
           <template #default="{ row }">
             <span :class="getBooleanTagClass(row.isDefault)">
               {{ getBooleanLabel(row.isDefault) }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="状态" width="90">
+        <el-table-column :label="t('users.status')" width="90">
           <template #default="{ row }">
             <span :class="getBankStatusTagClass(row.status)">
               {{ getBankStatusLabel(row.status) }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="创建时间" min-width="170">
+        <el-table-column :label="t('common.createTimes')" min-width="170">
           <template #default="{ row }">
             {{ formatDate(row.createTimes) }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="260" fixed="right">
+        <el-table-column :label="t('common.actions')" width="260" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">
-              详情
-            </el-button>
-            <el-button link type="primary" @click="openEdit(row)">
-              编辑
-            </el-button>
-            <el-button link type="warning" @click="openStatus(row)">
-              状态
-            </el-button>
-            <el-button link type="success" @click="setDefault(row)">
-              设默认
-            </el-button>
-            <el-button link type="danger" @click="remove(row)">
-              删除
-            </el-button>
+            <el-button link type="primary" @click="showDetail(row)"> {{ t('common.detail') }} </el-button>
+            <el-button link type="primary" @click="openEdit(row)"> {{ t('common.edit') }} </el-button>
+            <el-button link type="warning" @click="openStatus(row)"> {{ t('users.status') }} </el-button>
+            <el-button link type="success" @click="setDefault(row)"> {{ t('users.setDefault') }} </el-button>
+            <el-button link type="danger" @click="remove(row)"> {{ t('common.delete') }} </el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-card>
 
-    <el-dialog v-model="editVisible" :title="form.id ? '编辑银行卡' : '新增银行卡'" width="620px">
+    <el-dialog v-model="editVisible" :title="form.id ? t('users.editBank') : t('users.addBank')" width="620px">
       <el-form label-width="100px">
-        <el-form-item label="租户ID">
+        <el-form-item :label="t('common.tenantId')">
           <div class="verify-row">
             <el-input-number
               v-model="form.tenantId"
@@ -502,22 +482,20 @@ onMounted(fetchOptions)
               :loading="tenantChecking"
               @click="verifyTenant"
             >
-              确认租户
+              {{ t('users.confirmTenant') }}
             </el-button>
           </div>
           <div v-if="isCreate" class="verify-tip">
             <span v-if="tenantChecked && tenantExists" class="verify-tip verify-tip--success">
-              已确认租户：{{ tenantCheckName || form.tenantId }}
+              {{ t('users.tenantConfirmed', { name: tenantCheckName || form.tenantId }) }}
             </span>
             <span v-else-if="tenantChecked" class="verify-tip verify-tip--error">
-              租户不存在，请重新输入
+              {{ t('users.tenantMissingRetry') }}
             </span>
-            <span v-else class="verify-tip verify-tip--muted">
-              新增前请先确认租户
-            </span>
+            <span v-else class="verify-tip verify-tip--muted"> {{ t('users.confirmTenantBeforeCreate') }} </span>
           </div>
         </el-form-item>
-        <el-form-item label="用户ID">
+        <el-form-item :label="t('users.userId')">
           <div class="verify-row">
             <el-input-number
               v-model="form.userId"
@@ -533,47 +511,42 @@ onMounted(fetchOptions)
               :loading="userChecking"
               @click="verifyUser"
             >
-              确认用户
+              {{ t('users.confirmUser') }}
             </el-button>
           </div>
           <div v-if="isCreate" class="verify-tip">
             <span v-if="userChecked && userExists" class="verify-tip verify-tip--success">
-              已确认用户：{{ userCheckName }}<template v-if="userCheckUserNo">（{{ userCheckUserNo }}）</template>
+              {{ t('users.userConfirmed', { name: userCheckName }) }}
+              <template v-if="userCheckUserNo"> ({{ userCheckUserNo }}) </template>
             </span>
             <span v-else-if="userChecked" class="verify-tip verify-tip--error">
-              用户不存在，请重新输入
+              {{ t('users.userMissingRetry') }}
             </span>
-            <span v-else class="verify-tip verify-tip--muted">
-              新增前请确认用户归属
-            </span>
+            <span v-else class="verify-tip verify-tip--muted"> {{ t('users.confirmUserBeforeCreate') }} </span>
           </div>
         </el-form-item>
-        <el-form-item label="银行名">
+        <el-form-item :label="t('users.bankName')">
           <el-input v-model="form.bankName" />
         </el-form-item>
-        <el-form-item label="银行编码">
+        <el-form-item :label="t('users.bankCode')">
           <el-input v-model="form.bankCode" />
         </el-form-item>
-        <el-form-item label="户名">
+        <el-form-item :label="t('users.accountName')">
           <el-input v-model="form.accountName" />
         </el-form-item>
-        <el-form-item label="卡号">
+        <el-form-item :label="t('users.accountNo')">
           <el-input v-model="form.accountNo" />
         </el-form-item>
-        <el-form-item label="支行">
+        <el-form-item :label="t('users.branchName')">
           <el-input v-model="form.branchName" />
         </el-form-item>
-        <el-form-item label="国家码">
+        <el-form-item :label="t('users.countryCode')">
           <el-input v-model="form.countryCode" />
         </el-form-item>
-        <el-form-item label="默认">
-          <el-switch
-            v-model="form.isDefault"
-            :active-value="1"
-            :inactive-value="0"
-          />
+        <el-form-item :label="t('common.default')">
+          <el-switch v-model="form.isDefault" :active-value="1" :inactive-value="0" />
         </el-form-item>
-        <el-form-item label="状态">
+        <el-form-item :label="t('users.status')">
           <el-select v-model="form.status" style="width: 100%">
             <el-option
               v-for="item in bankStatusOptions"
@@ -585,23 +558,21 @@ onMounted(fetchOptions)
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="editVisible = false">
-          取消
-        </el-button>
+        <el-button @click="editVisible = false"> {{ t('common.cancel') }} </el-button>
         <el-button
           type="primary"
           :loading="submitLoading"
           :disabled="!canSubmitCreate"
           @click="submitEdit"
         >
-          确定
+          {{ t('common.confirm') }}
         </el-button>
       </template>
     </el-dialog>
 
-    <el-dialog v-model="statusVisible" title="修改银行卡状态" width="420px">
+    <el-dialog v-model="statusVisible" :title="t('users.changeBankStatus')" width="420px">
       <el-form label-width="90px">
-        <el-form-item label="状态">
+        <el-form-item :label="t('users.status')">
           <el-select v-model="statusForm.status" style="width: 100%">
             <el-option
               v-for="item in bankStatusOptions"
@@ -613,16 +584,12 @@ onMounted(fetchOptions)
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="statusVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="submitStatus">
-          确定
-        </el-button>
+        <el-button @click="statusVisible = false"> {{ t('common.cancel') }} </el-button>
+        <el-button type="primary" @click="submitStatus"> {{ t('common.confirm') }} </el-button>
       </template>
     </el-dialog>
 
-    <el-dialog v-model="detailVisible" title="银行卡详情" width="760px">
+    <el-dialog v-model="detailVisible" :title="t('users.bankDetail')" width="760px">
       <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
     </el-dialog>
   </div>

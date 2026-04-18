@@ -977,6 +977,7 @@ type ListMyWithdrawOrdersResp struct {
 }
 
 type ListVisibleCategoriesReq struct {
+	TenantId int64 `form:"tenantId"`
 }
 
 type ListVisibleCategoriesResp struct {
@@ -989,6 +990,7 @@ type ListVisibleProductsReq struct {
 	CategoryCode string `json:"categoryCode"`
 	Market       string `json:"market"`
 	Keyword      string `json:"keyword"`
+	TenantId     int64  `form:"tenantId"`
 }
 
 type ListVisibleProductsResp struct {

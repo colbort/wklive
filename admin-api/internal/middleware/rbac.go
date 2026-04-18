@@ -199,6 +199,8 @@ func isWhitePath(path string) bool {
 		"/admin/system/auth/login":   {},
 		"/admin/system/auth/profile": {},
 		"/admin/system/auth/captcha": {},
+		"/admin/upload/avatar":       {},
+		"/admin/upload/file":         {},
 		"/health":                    {},
 	}
 

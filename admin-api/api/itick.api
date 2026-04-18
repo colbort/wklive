@@ -19,8 +19,8 @@ type ItickProduct {
 	categoryType int64  `json:"categoryType"`
 	categoryCode string `json:"categoryCode"`
 	categoryName string `json:"categoryName"`
-	market       string `json:"market"` // binance / hk / us / forex ...
-	symbol       string `json:"symbol"` // BTCUSDT / AAPL / EURUSD
+	market       string `json:"market"` // 
+	symbol       string `json:"symbol"` //
 	code         string `json:"code"` // 第三方原始 code
 	name         string `json:"name"`
 	displayName  string `json:"displayName"`
@@ -218,7 +218,7 @@ type UpdateProductReq {
 }
 
 type GetProductReq {
-	id int64 `json:"id"`
+	id int64 `path:"id"`
 }
 
 type GetProductResp {
@@ -294,8 +294,8 @@ type TenantCategoryItem {
 }
 
 type GetTenantCategoryReq {
-	id       int64 `json:"id"`
-	tenantId int64 `json:"tenantId"`
+	id       int64 `path:"id"`
+	tenantId int64 `form:"tenantId"`
 }
 
 type GetTenantCategoryResp {
@@ -305,10 +305,10 @@ type GetTenantCategoryResp {
 
 type ListTenantCategoriesReq {
 	PageReq
-	tenantId      int64 `json:"tenantId"`
-	categoryType  int64 `json:"categoryType"`
-	status        int32 `json:"status"` // 0全部 1启用 2禁用
-	visibleStatus int32 `json:"visibleStatus"` // 0全部 1显示 2隐藏
+	tenantId      int64 `json:"tenantId,optional"`
+	categoryType  int64 `json:"categoryType,optional"`
+	status        int32 `json:"status,optional"` // 0全部 1启用 2禁用
+	visibleStatus int32 `json:"visibleStatus,optional"` // 0全部 1显示 2隐藏
 }
 
 type ListTenantCategoriesResp {
@@ -352,7 +352,7 @@ type TenantProductItem {
 }
 
 type GetTenantProductReq {
-	id       int64 `json:"id"`
+	id       int64 `path:"id"`
 	tenantId int64 `json:"tenantId"`
 }
 
@@ -363,12 +363,12 @@ type GetTenantProductResp {
 
 type ListTenantProductsReq {
 	PageReq
-	tenantId      int64  `json:"tenantId"`
-	categoryType  int64  `json:"categoryType"`
-	market        string `json:"market"`
-	keyword       string `json:"keyword"`
-	status        int32  `json:"status"` // 0全部 1启用 2禁用
-	visibleStatus int32  `json:"visibleStatus"` // 0全部 1显示 2隐藏
+	tenantId      int64  `json:"tenantId,optional"`
+	categoryType  int64  `json:"categoryType,optional"`
+	market        string `json:"market,optional"`
+	keyword       string `json:"keyword,optional"`
+	status        int32  `json:"status,optional"` // 0全部 1启用 2禁用
+	visibleStatus int32  `json:"visibleStatus,optional"` // 0全部 1显示 2隐藏
 }
 
 type ListTenantProductsResp {

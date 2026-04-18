@@ -73,7 +73,6 @@ async function fetchOptions() {
 }
 
 function unwrapList(resp: any): any[] {
-  // 兼容 data / list / rows / result 之类
   if (!resp) return []
   if (Array.isArray(resp)) return resp
   return resp.data || resp.list || resp.rows || resp.result || []
@@ -81,11 +80,9 @@ function unwrapList(resp: any): any[] {
 
 function unwrapData(resp: any): any {
   if (!resp) return null
-  // detail 这种通常在 data 里
   return resp.data ?? resp
 }
 
-// 把扁平菜单转成树（包含按钮权限 menuType=3，以树状方式展示）
 function buildMenuTree(flat: any[]): any[] {
   const list = (flat || []).filter((x) => x)
 
@@ -102,7 +99,6 @@ function buildMenuTree(flat: any[]): any[] {
     }
   })
 
-  // 可选：按 sort 排序
   const sortRec = (arr: any[]) => {
     arr.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0))
     arr.forEach((x) => x.children?.length && sortRec(x.children))
@@ -200,7 +196,7 @@ async function onDelete(row: SysRole) {
       ElMessage.error(resp.msg || t('common.failed'))
     }
   } catch (error: unknown) {
-    if ((error instanceof Error ? error.message : '')  === 'cancel') return
+    if ((error instanceof Error ? error.message : '') === 'cancel') return
     ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
   }
 }
@@ -260,7 +256,6 @@ function openGrant(row: SysRole) {
 async function initGrant(roleId: number) {
   await withGrantLoading(async () => {
     try {
-      // ✅ 每次打开先清理（避免切角色残留）
       menuTree.value = []
       permList.value = []
       checkedPermKeys.value = []
@@ -281,7 +276,6 @@ async function initGrant(roleId: number) {
       permList.value = perms
       updateMenuNodeMap(menuTree.value)
 
-      // 角色原有菜单 + 按钮权限需要转成对应 node id
       const menuIds = Array.isArray(detail.menuIds) ? detail.menuIds : []
       const permKeys = Array.isArray(detail.permKeys) ? detail.permKeys : []
       const permKeyToId = new Map<string, number>()
@@ -334,7 +328,6 @@ async function submitGrant() {
     if (resp.code === 200) {
       ElMessage.success(resp.msg || t('common.success'))
       grantVisible.value = false
-      // ✅ 可选：保存后刷新列表（比如你要展示更新时间/状态）
       fetchList()
     } else {
       ElMessage.error(resp.msg || t('common.failed'))
@@ -371,7 +364,6 @@ onMounted(async () => {
       </div>
     </template>
 
-    <!-- 查询区 -->
     <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap">
       <el-input
         v-model="queryForm.keyword"
@@ -403,13 +395,11 @@ onMounted(async () => {
       </el-button>
     </div>
 
-    <!-- 表格 -->
     <el-table v-loading="loading" :data="tableData" style="width: 100%">
       <el-table-column prop="id" :label="t('common.id')" width="90" />
       <el-table-column prop="name" :label="t('system.roleName')" min-width="160" />
       <el-table-column prop="code" :label="t('system.roleCode')" min-width="160" />
 
-      <!-- 状态 -->
       <el-table-column :label="t('common.status')" width="110">
         <template #default="{ row }">
           <el-tag :type="(row as any).status === 1 ? 'success' : 'info'">
@@ -468,14 +458,10 @@ onMounted(async () => {
     >
       <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
       <el-button :disabled="!pagination.hasPrev" @click="prevPage">
-        {{
-          t('common.prevPage')
-        }}
+        {{ t('common.prevPage') }}
       </el-button>
       <el-button :disabled="!pagination.hasNext" @click="nextPage">
-        {{
-          t('common.nextPage')
-        }}
+        {{ t('common.nextPage') }}
       </el-button>
       <el-select
         v-model="pagination.limit"
@@ -495,7 +481,6 @@ onMounted(async () => {
     </div>
   </el-card>
 
-  <!-- 新增/编辑弹窗 -->
   <el-dialog
     v-model="editVisible"
     :title="editIsUpdate ? t('system.roleEdit') : t('system.roleAdd')"
@@ -524,11 +509,7 @@ onMounted(async () => {
         :rules="[{ required: true, message: t('common.required') }]"
       >
         <el-radio-group v-model="editForm.status">
-          <el-radio
-            v-for="item in statusOptions"
-            :key="item.value"
-            :label="item.value"
-          >
+          <el-radio v-for="item in statusOptions" :key="item.value" :label="item.value">
             {{ getOptionLabel(t, item.code, item.value) }}
           </el-radio>
         </el-radio-group>
@@ -544,14 +525,11 @@ onMounted(async () => {
         {{ t('common.cancel') }}
       </el-button>
       <el-button type="primary" :loading="editLoading" @click="submitEdit">
-        {{
-          t('common.confirm')
-        }}
+        {{ t('common.confirm') }}
       </el-button>
     </template>
   </el-dialog>
 
-  <!-- 授权弹窗：菜单 + 按钮权限 -->
   <el-dialog
     v-model="grantVisible"
     :title="t('system.grantTitle', { role: currentRole?.name || '' })"

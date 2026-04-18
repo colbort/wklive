@@ -1,12 +1,6 @@
 <template>
   <div class="table-wrapper">
-    <el-table
-      v-bind="$attrs"
-      :data="data"
-      stripe
-      border
-      class="table-content"
-    >
+    <el-table v-bind="$attrs" :data="data" stripe border class="table-content">
       <slot />
       <el-table-column
         v-if="showActions"
@@ -35,14 +29,10 @@
     >
       <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
       <el-button :disabled="!pagination.hasPrev" @click="$emit('prev')">
-        {{
-          t('common.prevPage')
-        }}
+        {{ t('common.prevPage') }}
       </el-button>
       <el-button :disabled="!pagination.hasNext" @click="$emit('next')">
-        {{
-          t('common.nextPage')
-        }}
+        {{ t('common.nextPage') }}
       </el-button>
       <el-select
         v-model="pagination.limit"

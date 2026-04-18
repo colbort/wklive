@@ -17,9 +17,7 @@ const { t } = useI18n()
 const iconMap = ElementPlusIconsVue as Record<string, any>
 
 const menuTree = computed(() => {
-  const menus = auth.menus
-  console.log('menus:', menus)
-  return menus
+  return auth.menus
 })
 
 function iconComp(icon?: string) {

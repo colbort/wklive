@@ -104,6 +104,7 @@ func (x *AppCommonResp) GetBase() *common.RespBase {
 
 type ListVisibleCategoriesReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -136,6 +137,13 @@ func (x *ListVisibleCategoriesReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ListVisibleCategoriesReq.ProtoReflect.Descriptor instead.
 func (*ListVisibleCategoriesReq) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *ListVisibleCategoriesReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
 }
 
 type ListVisibleCategoriesResp struct {
@@ -195,6 +203,7 @@ type ListVisibleProductsReq struct {
 	CategoryType  CategoryType           `protobuf:"varint,1,opt,name=category_type,json=categoryType,proto3,enum=itick.CategoryType" json:"category_type,omitempty"`
 	Market        string                 `protobuf:"bytes,2,opt,name=market,proto3" json:"market,omitempty"`
 	Keyword       string                 `protobuf:"bytes,3,opt,name=keyword,proto3" json:"keyword,omitempty"`
+	TenantId      int64                  `protobuf:"varint,4,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -248,6 +257,13 @@ func (x *ListVisibleProductsReq) GetKeyword() string {
 		return x.Keyword
 	}
 	return ""
+}
+
+func (x *ListVisibleProductsReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
 }
 
 type ListVisibleProductsResp struct {
@@ -929,7 +945,7 @@ func (x *PushReply) GetPayload() []byte {
 type KlineInterval struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	KType         int32                  `protobuf:"varint,2,opt,name=kType,proto3" json:"kType,omitempty"`
+	KType         int32                  `protobuf:"varint,2,opt,name=k_type,json=kType,proto3" json:"k_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1030,15 +1046,17 @@ const file_proto_itick_itick_app_proto_rawDesc = "" +
 	"\n" +
 	"\bAppEmpty\"5\n" +
 	"\rAppCommonResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\x1a\n" +
-	"\x18ListVisibleCategoriesReq\"q\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"7\n" +
+	"\x18ListVisibleCategoriesReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\"q\n" +
 	"\x19ListVisibleCategoriesResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
-	"\x04data\x18\x02 \x03(\v2\x1a.itick.ItickTenantCategoryR\x04data\"\x84\x01\n" +
+	"\x04data\x18\x02 \x03(\v2\x1a.itick.ItickTenantCategoryR\x04data\"\xa1\x01\n" +
 	"\x16ListVisibleProductsReq\x128\n" +
 	"\rcategory_type\x18\x01 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12\x16\n" +
 	"\x06market\x18\x02 \x01(\tR\x06market\x12\x18\n" +
-	"\akeyword\x18\x03 \x01(\tR\akeyword\"n\n" +
+	"\akeyword\x18\x03 \x01(\tR\akeyword\x12\x1b\n" +
+	"\ttenant_id\x18\x04 \x01(\x03R\btenantId\"n\n" +
 	"\x17ListVisibleProductsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
 	"\x04data\x18\x02 \x03(\v2\x19.itick.ItickTenantProductR\x04data\"\xb8\x01\n" +
@@ -1084,10 +1102,10 @@ const file_proto_itick_itick_app_proto_rawDesc = "" +
 	"\x06symbol\x18\x03 \x01(\tR\x06symbol\x12\x16\n" +
 	"\x06market\x18\x04 \x01(\tR\x06market\x12\x1a\n" +
 	"\binterval\x18\x05 \x01(\tR\binterval\x12\x18\n" +
-	"\apayload\x18\x06 \x01(\fR\apayload\"9\n" +
+	"\apayload\x18\x06 \x01(\fR\apayload\":\n" +
 	"\rKlineInterval\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +
-	"\x05kType\x18\x02 \x01(\x05R\x05kType\">\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x15\n" +
+	"\x06k_type\x18\x02 \x01(\x05R\x05kType\">\n" +
 	"\x12KlineIntervalsResp\x12(\n" +
 	"\x04data\x18\x01 \x03(\v2\x14.itick.KlineIntervalR\x04data2\xeb\x03\n" +
 	"\bItickApp\x12Z\n" +

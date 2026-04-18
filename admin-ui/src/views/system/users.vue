@@ -54,7 +54,6 @@ async function fetchList() {
         cursor: pagination.cursor,
         limit: pagination.limit,
       })
-      // 兼容 code=0 / 200
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'list failed')
       list.value = res.data || []
       updatePagination(
@@ -93,7 +92,6 @@ function prevPage() {
   fetchList()
 }
 
-// ---------- 角色缓存（分配角色用） ----------
 const { loading: roleLoading, withLoading: withRoleLoading } = useLoading()
 const roles = ref<SysRole[]>([])
 async function fetchRoles() {
@@ -108,7 +106,6 @@ async function fetchRoles() {
   })
 }
 
-// ---------- 新增/编辑 ----------
 const editVisible = ref(false)
 const editMode = ref<'create' | 'update'>('create')
 const { form: editForm } = useForm({
@@ -179,7 +176,6 @@ async function submitEdit() {
   })
 }
 
-// ---------- 删除 ----------
 const { confirm } = useConfirm()
 
 async function onDelete(row: SysUserItem) {
@@ -190,12 +186,11 @@ async function onDelete(row: SysUserItem) {
     ElMessage.success(t('common.success'))
     fetchList()
   } catch (error: unknown) {
-    if ((error instanceof Error ? error.message : '')  === 'cancel') return
+    if ((error instanceof Error ? error.message : '') === 'cancel') return
     ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
   }
 }
 
-// ---------- 启用/禁用 ----------
 async function onToggleStatus(row: SysUserItem) {
   try {
     const next = row.status === 1 ? 2 : 1
@@ -208,7 +203,6 @@ async function onToggleStatus(row: SysUserItem) {
   }
 }
 
-// ---------- 重置密码 ----------
 const pwdVisible = ref(false)
 const { form: pwdForm } = useForm({
   initialData: { id: 0, username: '', password: '' },
@@ -239,7 +233,6 @@ async function submitResetPwd() {
   })
 }
 
-// ---------- 分配角色 ----------
 const roleVisible = ref(false)
 const { form: roleForm } = useForm({
   initialData: { userId: 0, username: '', roleIds: [] as number[] },
@@ -386,7 +379,7 @@ async function doG2Reset() {
     ElMessage.success(t('common.success'))
     fetchList()
   } catch (error: unknown) {
-    if ((error instanceof Error ? error.message : '')  === 'cancel') return
+    if ((error instanceof Error ? error.message : '') === 'cancel') return
     ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
   }
 }
@@ -557,7 +550,6 @@ onMounted(async () => {
     </div>
   </el-card>
 
-  <!-- 新增/编辑 -->
   <el-dialog
     v-model="editVisible"
     :title="editMode === 'create' ? t('common.addUser') : t('common.editUser')"
@@ -575,11 +567,7 @@ onMounted(async () => {
       </el-form-item>
       <el-form-item :label="t('common.status')">
         <el-radio-group v-model="editForm.status">
-          <el-radio
-            v-for="item in statusOptions"
-            :key="item.value"
-            :label="item.value"
-          >
+          <el-radio v-for="item in statusOptions" :key="item.value" :label="item.value">
             {{ getOptionLabel(t, item.code, item.value) }}
           </el-radio>
         </el-radio-group>
@@ -592,12 +580,7 @@ onMounted(async () => {
           style="width: 100%"
           :loading="roleLoading"
         >
-          <el-option
-            v-for="r in roles"
-            :key="r.id"
-            :label="r.name"
-            :value="r.id"
-          />
+          <el-option v-for="r in roles" :key="r.id" :label="r.name" :value="r.id" />
         </el-select>
       </el-form-item>
     </el-form>
@@ -612,7 +595,6 @@ onMounted(async () => {
     </template>
   </el-dialog>
 
-  <!-- 重置密码 -->
   <el-dialog v-model="pwdVisible" :title="t('common.resetPassword')" width="420px">
     <el-form label-width="90px">
       <el-form-item :label="t('common.username')">
@@ -633,7 +615,6 @@ onMounted(async () => {
     </template>
   </el-dialog>
 
-  <!-- 分配角色 -->
   <el-dialog v-model="roleVisible" :title="t('common.assignRoles')" width="520px">
     <el-form label-width="90px">
       <el-form-item :label="t('common.username')">
@@ -647,12 +628,7 @@ onMounted(async () => {
           style="width: 100%"
           :loading="roleLoading"
         >
-          <el-option
-            v-for="r in roles"
-            :key="r.id"
-            :label="r.name"
-            :value="r.id"
-          />
+          <el-option v-for="r in roles" :key="r.id" :label="r.name" :value="r.id" />
         </el-select>
       </el-form-item>
     </el-form>
@@ -747,7 +723,7 @@ onMounted(async () => {
             min-height: 240px;
           "
         >
-          <img v-if="g2Init.qrCode" :src="g2Init.qrCode" style="width: 100%; height: auto">
+          <img v-if="g2Init.qrCode" :src="g2Init.qrCode" style="width: 100%; height: auto" />
           <div v-else style="color: #999">
             {{ t('common.click2faBindGenerateQrCode') }}
           </div>

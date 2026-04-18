@@ -2,6 +2,7 @@
 type GetSystemCore {
 	siteName string `json:"siteName"`
 	siteLogo string `json:"siteLogo"`
+	assetUrl string `json:"assetUrl"`
 }
 
 type GetSystemCoreResp {
