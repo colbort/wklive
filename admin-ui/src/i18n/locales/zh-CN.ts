@@ -893,6 +893,9 @@ export default {
   },
   option: {
     contracts: '合约列表',
+    marketDetail: '行情详情',
+    contractInfo: '合约信息',
+    marketInfo: '行情信息',
     orders: '订单列表',
     trades: '成交列表',
     positions: '持仓列表',

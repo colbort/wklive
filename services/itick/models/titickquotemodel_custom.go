@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"wklive/common/sqlutil"
 	"wklive/proto/itick"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
@@ -61,10 +62,56 @@ func (m *defaultTItickQuoteModel) Upsert(ctx context.Context, data *TItickQuote)
 }
 
 func (m *defaultTItickQuoteModel) FindPage(ctx context.Context, category string, symbol string, cursor int64, limit int64) ([]*TItickQuote, int64, error) {
-	query := fmt.Sprintf("select %s from %s where category = ? and symbol = ? and quote_time < ? order by quote_time desc limit ?", tItickQuoteRows, m.table)
-	var resp []*TItickQuote
-	err := m.QueryRowsNoCacheCtx(ctx, &resp, query, category, symbol, cursor, limit)
-	return resp, int64(len(resp)), err
+	limit = sqlutil.NormalizeLimit(limit)
+
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.EqString("category", category)
+	builder.EqString("symbol", symbol)
+
+	where := builder.Where()
+	args := builder.Args()
+
+	// ---- total ----
+	var total int64
+	countSql := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
+	if err := m.QueryRowNoCacheCtx(ctx, &total, countSql, args...); err != nil {
+		return nil, 0, err
+	}
+
+	// ---- list ----
+	listArgs := append([]any{}, args...)
+	var listSql string
+
+	if cursor <= 0 {
+		// 第一页
+		listSql = fmt.Sprintf(
+			`SELECT %s
+			FROM %s
+			WHERE %s
+			ORDER BY id DESC
+			LIMIT ?`,
+			tItickQuoteRows, m.table, where,
+		)
+		listArgs = append(listArgs, limit)
+	} else {
+		// 后续页
+		listSql = fmt.Sprintf(
+			`SELECT %s
+			FROM %s
+			WHERE %s AND id < ?
+			ORDER BY id DESC
+			LIMIT ?`,
+			tItickQuoteRows, m.table, where,
+		)
+		listArgs = append(listArgs, cursor, limit)
+	}
+
+	var list []*TItickQuote
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, listSql, listArgs...); err != nil {
+		return nil, 0, err
+	}
+
+	return list, total, nil
 }
 
 func (m *defaultTItickQuoteModel) FindQuotes(ctx context.Context, data []*itick.MarketSymbol) ([]*TItickQuote, error) {

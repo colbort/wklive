@@ -1232,7 +1232,7 @@ type GetTenantPayPlatformResp struct {
 
 type GetTenantProductReq struct {
 	Id       int64 `path:"id"`
-	TenantId int64 `json:"tenantId"`
+	TenantId int64 `form:"tenantId"`
 }
 
 type GetTenantProductResp struct {

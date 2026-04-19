@@ -107,7 +107,6 @@
                 class="icon-preview"
                 :preview-teleported="true"
               />
-              <span class="icon-url">{{ row.icon }}</span>
             </div>
             <span v-else>-</span>
           </template>

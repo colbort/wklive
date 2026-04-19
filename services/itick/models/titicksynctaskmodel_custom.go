@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"wklive/common/sqlutil"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -15,17 +16,54 @@ type ItickSyncTaskModel interface {
 }
 
 func (m *defaultTItickSyncTaskModel) FindPage(ctx context.Context, cursor, limit int64) ([]*TItickSyncTask, int64, error) {
-	query := fmt.Sprintf("select %s from %s where id > ? order by id limit ?", tItickSyncTaskRows, m.table)
-	var resp []*TItickSyncTask
-	err := m.QueryRowsNoCacheCtx(ctx, &resp, query, cursor, limit)
-	if err != nil {
+	limit = sqlutil.NormalizeLimit(limit)
+
+	builder := sqlutil.NewPageQueryBuilder()
+
+	where := builder.Where()
+	args := builder.Args()
+
+	// ---- total ----
+	var total int64
+	countSql := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
+	if err := m.QueryRowNoCacheCtx(ctx, &total, countSql, args...); err != nil {
 		return nil, 0, err
 	}
-	var nextCursor int64
-	if len(resp) > 0 {
-		nextCursor = resp[len(resp)-1].Id
+
+	// ---- list ----
+	listArgs := append([]any{}, args...)
+	var listSql string
+
+	if cursor <= 0 {
+		// 第一页
+		listSql = fmt.Sprintf(
+			`SELECT %s
+			FROM %s
+			WHERE %s
+			ORDER BY id DESC
+			LIMIT ?`,
+			tItickSyncTaskRows, m.table, where,
+		)
+		listArgs = append(listArgs, limit)
+	} else {
+		// 后续页
+		listSql = fmt.Sprintf(
+			`SELECT %s
+			FROM %s
+			WHERE %s AND id < ?
+			ORDER BY id DESC
+			LIMIT ?`,
+			tItickSyncTaskRows, m.table, where,
+		)
+		listArgs = append(listArgs, cursor, limit)
 	}
-	return resp, nextCursor, nil
+
+	var list []*TItickSyncTask
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, listSql, listArgs...); err != nil {
+		return nil, 0, err
+	}
+
+	return list, total, nil
 }
 
 func (m *defaultTItickSyncTaskModel) UpdateStatusByTaskNo(ctx context.Context, taskNo string, status int64, message string, updatedAt int64) error {

@@ -353,7 +353,7 @@ type TenantProductItem {
 
 type GetTenantProductReq {
 	id       int64 `path:"id"`
-	tenantId int64 `json:"tenantId"`
+	tenantId int64 `form:"tenantId"`
 }
 
 type GetTenantProductResp {
