@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
+	"wklive/common/sqlutil"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -20,9 +21,12 @@ type UserRoleModel interface {
 }
 
 func (m *defaultSysUserRoleModel) FindRoleIdsByUserId(ctx context.Context, uid int64) ([]int64, error) {
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.And("user_id = ?", uid)
+
 	var ids []int64
-	query := "select role_id from " + m.table + " where user_id = ?"
-	err := m.QueryRowsNoCacheCtx(ctx, &ids, query, uid)
+	query := fmt.Sprintf("select role_id from %s where %s", m.table, builder.Where())
+	err := m.QueryRowsNoCacheCtx(ctx, &ids, query, builder.Args()...)
 	if err != nil {
 		return nil, err
 	}
@@ -113,22 +117,13 @@ func (m *defaultSysUserRoleModel) FindByIds(ctx context.Context, userId int64, r
 		return []int64{}, nil
 	}
 
-	placeholders := make([]string, 0, len(roleIds))
-	args := make([]any, 0, len(roleIds)+1)
-	for _, id := range roleIds {
-		placeholders = append(placeholders, "?")
-		args = append(args, id)
-	}
-	args = append(args, userId)
-
-	query := fmt.Sprintf(
-		"SELECT id FROM %s WHERE user_id = ? AND role_id IN (%s)",
-		m.table,
-		strings.Join(placeholders, ","),
-	)
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.And("user_id = ?", userId)
+	builder.InInt64("role_id", roleIds)
 
 	var ids []int64
-	err := m.QueryRowsNoCacheCtx(ctx, &ids, query, args...)
+	query := fmt.Sprintf("SELECT id FROM %s WHERE %s", m.table, builder.Where())
+	err := m.QueryRowsNoCacheCtx(ctx, &ids, query, builder.Args()...)
 	if err != nil {
 		return nil, err
 	}
@@ -136,13 +131,12 @@ func (m *defaultSysUserRoleModel) FindByIds(ctx context.Context, userId int64, r
 }
 
 func (m *defaultSysUserRoleModel) FindByRoleId(ctx context.Context, roleId int64) ([]int64, error) {
-	query := fmt.Sprintf(
-		"SELECT user_id FROM %s WHERE role_id = ?",
-		m.table,
-	)
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.And("role_id = ?", roleId)
 
 	var ids []int64
-	err := m.QueryRowsNoCacheCtx(ctx, &ids, query, roleId)
+	query := fmt.Sprintf("SELECT user_id FROM %s WHERE %s", m.table, builder.Where())
+	err := m.QueryRowsNoCacheCtx(ctx, &ids, query, builder.Args()...)
 	if err != nil {
 		return nil, err
 	}

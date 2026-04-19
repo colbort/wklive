@@ -43,6 +43,7 @@ func (l *GetTenantCategoryLogic) GetTenantCategory(req *types.GetTenantCategoryR
 		Data: types.ItickTenantCategory{
 			Id:           result.Data.Id,
 			TenantId:     result.Data.TenantId,
+			TenantName:   result.Data.TenantName,
 			CategoryId:   result.Data.CategoryId,
 			Enabled:      result.Data.Enabled,
 			AppVisible:   result.Data.AppVisible,

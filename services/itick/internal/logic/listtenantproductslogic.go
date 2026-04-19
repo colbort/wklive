@@ -5,9 +5,10 @@ import (
 	"strings"
 
 	"wklive/common/pageutil"
+	"wklive/proto/common"
 	"wklive/proto/itick"
+	"wklive/proto/system"
 	"wklive/services/itick/internal/svc"
-	"wklive/services/itick/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,26 +29,40 @@ func NewListTenantProductsLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 租户产品列表
 func (l *ListTenantProductsLogic) ListTenantProducts(in *itick.ListTenantProductsReq) (*itick.ListTenantProductsResp, error) {
-	items, err := collectTenantProducts(l.ctx, l.svcCtx.ItickTenantProductModel, in.TenantId)
+	items, _, err := l.svcCtx.ItickTenantProductModel.FindPage(l.ctx, in.TenantId, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}
 
-	products, err := collectProducts(l.ctx, l.svcCtx.ItickProductModel)
+	productIDs := make([]int64, 0, len(items))
+	for _, item := range items {
+		productIDs = append(productIDs, item.ProductId)
+	}
+
+	products, err := collectProductsByIDs(l.ctx, l.svcCtx.ItickProductModel, productIDs)
 	if err != nil {
 		return nil, err
 	}
-	productMap := make(map[int64]*models.TItickProduct, len(products))
-	for _, product := range products {
-		productMap[product.Id] = product
+	tenants, err := l.svcCtx.SystemCli.SysTenantList(l.ctx, &system.SysTenantListReq{
+		Page: &common.PageReq{
+			Cursor: 0,
+			Limit:  100,
+		},
+	})
+	if err != nil {
+		return nil, err
 	}
-
+	tenantMap := make(map[int64]*system.SysTenantItem, len(tenants.Data))
+	for _, tenant := range tenants.Data {
+		tenantMap[tenant.Id] = tenant
+	}
 	limit := pageutil.NormalizeLimit(in.Page.Limit)
 	market := strings.TrimSpace(in.Market)
 	filtered := make([]*itick.ItickTenantProduct, 0)
 	total := int64(0)
 	for _, item := range items {
-		product := productMap[item.ProductId]
+		product := products[item.ProductId]
+		tenant := tenantMap[item.TenantId]
 		if product == nil {
 			continue
 		}
@@ -71,7 +86,7 @@ func (l *ListTenantProductsLogic) ListTenantProducts(in *itick.ListTenantProduct
 		if item.Id <= in.Page.Cursor || int64(len(filtered)) >= limit {
 			continue
 		}
-		filtered = append(filtered, toTenantProductProto(item, product))
+		filtered = append(filtered, toTenantProductProto(item, product, tenant))
 	}
 
 	lastID := int64(0)

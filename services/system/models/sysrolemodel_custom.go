@@ -3,7 +3,6 @@ package models
 import (
 	"context"
 	"fmt"
-	"strings"
 	"wklive/common/sqlutil"
 )
 
@@ -81,21 +80,12 @@ func (m *defaultSysRoleModel) FindIdsByIds(ctx context.Context, ids []int64) ([]
 		return []int64{}, nil
 	}
 
-	placeholders := make([]string, 0, len(ids))
-	args := make([]any, 0, len(ids))
-	for _, id := range ids {
-		placeholders = append(placeholders, "?")
-		args = append(args, id)
-	}
-
-	query := fmt.Sprintf(
-		"SELECT id FROM %s WHERE id IN (%s)",
-		m.table,
-		strings.Join(placeholders, ","),
-	)
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.InInt64("id", ids)
 
 	var existIds []int64
-	err := m.QueryRowsNoCacheCtx(ctx, &existIds, query, args...)
+	query := fmt.Sprintf("SELECT id FROM %s WHERE %s", m.table, builder.Where())
+	err := m.QueryRowsNoCacheCtx(ctx, &existIds, query, builder.Args()...)
 	if err != nil {
 		return nil, err
 	}

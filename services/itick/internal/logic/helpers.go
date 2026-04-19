@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"wklive/proto/itick"
+	"wklive/proto/system"
 	"wklive/services/itick/internal/socket/client"
 	"wklive/services/itick/models"
 )
@@ -112,7 +113,7 @@ func toKlineProto(kType itick.KlineType, item *models.CoinKline) *itick.Kline {
 	}
 }
 
-func toTenantCategoryProto(item *models.TItickTenantCategory, category *models.TItickCategory) *itick.ItickTenantCategory {
+func toTenantCategoryProto(item *models.TItickTenantCategory, category *models.TItickCategory, tenant *system.SysTenantItem) *itick.ItickTenantCategory {
 	if item == nil {
 		return nil
 	}
@@ -133,10 +134,13 @@ func toTenantCategoryProto(item *models.TItickTenantCategory, category *models.T
 		data.CategoryName = category.CategoryName
 		data.Icon = category.Icon
 	}
+	if tenant != nil {
+		data.TenantName = tenant.TenantName
+	}
 	return data
 }
 
-func toTenantProductProto(item *models.TItickTenantProduct, product *models.TItickProduct) *itick.ItickTenantProduct {
+func toTenantProductProto(item *models.TItickTenantProduct, product *models.TItickProduct, tenant *system.SysTenantItem) *itick.ItickTenantProduct {
 	if item == nil {
 		return nil
 	}
@@ -163,6 +167,9 @@ func toTenantProductProto(item *models.TItickTenantProduct, product *models.TIti
 		data.BaseCoin = product.BaseCoin
 		data.QuoteCoin = product.QuoteCoin
 		data.Icon = product.Icon
+	}
+	if tenant != nil {
+		data.TenantName = tenant.TenantName
 	}
 	return data
 }

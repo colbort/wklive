@@ -47,6 +47,7 @@ func (l *ListTenantCategoriesLogic) ListTenantCategories(req *types.ListTenantCa
 		data = append(data, types.ItickTenantCategory{
 			Id:           item.Id,
 			TenantId:     item.TenantId,
+			TenantName:   item.TenantName,
 			CategoryId:   item.CategoryId,
 			Enabled:      item.Enabled,
 			AppVisible:   item.AppVisible,

@@ -76,9 +76,11 @@ func (m *customSysJobModel) FindPage(ctx context.Context, cursor, limit int64, k
 }
 
 func (m *customSysJobModel) FindByInvokeTarget(ctx context.Context, invokeTarget string) (*SysJob, error) {
-	where := "invoke_target = ?"
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.And("invoke_target = ?", invokeTarget)
+
 	var resp SysJob
-	err := m.QueryRowNoCacheCtx(ctx, &resp, fmt.Sprintf("SELECT %s FROM %s WHERE %s", sysJobRows, m.table, where), invokeTarget)
+	err := m.QueryRowNoCacheCtx(ctx, &resp, fmt.Sprintf("SELECT %s FROM %s WHERE %s", sysJobRows, m.table, builder.Where()), builder.Args()...)
 	if err != nil {
 		return nil, err
 	}
@@ -86,9 +88,11 @@ func (m *customSysJobModel) FindByInvokeTarget(ctx context.Context, invokeTarget
 }
 
 func (m *customSysJobModel) FindEnabledJobs(ctx context.Context) ([]*SysJob, error) {
-	where := "status = 1"
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.And("status = ?", 1)
+
 	var resp []*SysJob
-	err := m.QueryRowsNoCacheCtx(ctx, &resp, fmt.Sprintf("SELECT %s FROM %s WHERE %s", sysJobRows, m.table, where))
+	err := m.QueryRowsNoCacheCtx(ctx, &resp, fmt.Sprintf("SELECT %s FROM %s WHERE %s", sysJobRows, m.table, builder.Where()), builder.Args()...)
 	if err != nil {
 		return nil, err
 	}

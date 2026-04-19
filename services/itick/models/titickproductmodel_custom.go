@@ -14,6 +14,7 @@ import (
 type ItickProductModel interface {
 	tItickProductModel
 	FindPage(ctx context.Context, categoryType int32, categoryName string, market string, keyword string, enabled int32, appVisible int32, cursor int64, limit int64) ([]*TItickProduct, int64, error)
+	FindByIds(ctx context.Context, ids []int64) ([]*TItickProduct, error)
 	Upsert(ctx context.Context, data *TItickProduct) (sql.Result, error)
 }
 
@@ -71,6 +72,29 @@ func (m *defaultTItickProductModel) FindPage(ctx context.Context, categoryType i
 	}
 
 	return list, total, nil
+}
+
+func (m *defaultTItickProductModel) FindByIds(ctx context.Context, ids []int64) ([]*TItickProduct, error) {
+	if len(ids) == 0 {
+		return []*TItickProduct{}, nil
+	}
+
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.InInt64("id", ids)
+
+	query := fmt.Sprintf(
+		"SELECT %s FROM %s WHERE %s",
+		tItickProductRows,
+		m.table,
+		builder.Where(),
+	)
+
+	var list []*TItickProduct
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, query, builder.Args()...); err != nil {
+		return nil, err
+	}
+
+	return list, nil
 }
 
 func (m *defaultTItickProductModel) Upsert(ctx context.Context, data *TItickProduct) (sql.Result, error) {

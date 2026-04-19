@@ -1500,6 +1500,7 @@ type ItickTenantCategory struct {
 	CategoryType int64  `json:"categoryType"`
 	CategoryName string `json:"categoryName"`
 	Icon         string `json:"icon"`
+	TenantName   string `json:"tenantName"`
 }
 
 type ItickTenantProduct struct {
@@ -1522,6 +1523,7 @@ type ItickTenantProduct struct {
 	BaseCoin     string `json:"baseCoin"`
 	QuoteCoin    string `json:"quoteCoin"`
 	Icon         string `json:"icon"`
+	TenantName   string `json:"tenantName"`
 }
 
 type Kline struct {

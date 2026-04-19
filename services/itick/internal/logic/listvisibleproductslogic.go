@@ -6,9 +6,10 @@ import (
 	"strings"
 
 	"wklive/common/helper"
+	"wklive/proto/common"
 	"wklive/proto/itick"
+	"wklive/proto/system"
 	"wklive/services/itick/internal/svc"
-	"wklive/services/itick/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,18 +30,9 @@ func NewListVisibleProductsLogic(ctx context.Context, svcCtx *svc.ServiceContext
 
 // 获取允许显示的产品
 func (l *ListVisibleProductsLogic) ListVisibleProducts(in *itick.ListVisibleProductsReq) (*itick.ListVisibleProductsResp, error) {
-	items, err := collectTenantProducts(l.ctx, l.svcCtx.ItickTenantProductModel, 0)
+	items, _, err := l.svcCtx.ItickTenantProductModel.FindPage(l.ctx, in.TenantId, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
-	}
-
-	products, err := collectProducts(l.ctx, l.svcCtx.ItickProductModel)
-	if err != nil {
-		return nil, err
-	}
-	productMap := make(map[int64]*models.TItickProduct, len(products))
-	for _, product := range products {
-		productMap[product.Id] = product
 	}
 
 	sort.Slice(items, func(i, j int) bool {
@@ -50,10 +42,35 @@ func (l *ListVisibleProductsLogic) ListVisibleProducts(in *itick.ListVisibleProd
 		return items[i].Sort < items[j].Sort
 	})
 
+	productIDs := make([]int64, 0, len(items))
+	for _, item := range items {
+		productIDs = append(productIDs, item.ProductId)
+	}
+
+	products, err := collectProductsByIDs(l.ctx, l.svcCtx.ItickProductModel, productIDs)
+	if err != nil {
+		return nil, err
+	}
+
+	tenants, err := l.svcCtx.SystemCli.SysTenantList(l.ctx, &system.SysTenantListReq{
+		Page: &common.PageReq{
+			Cursor: 0,
+			Limit:  100,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	tenantMap := make(map[int64]*system.SysTenantItem, len(tenants.Data))
+	for _, tenant := range tenants.Data {
+		tenantMap[tenant.Id] = tenant
+	}
+
 	market := strings.TrimSpace(in.Market)
 	data := make([]*itick.ItickTenantProduct, 0)
 	for _, item := range items {
-		product := productMap[item.ProductId]
+		product := products[item.ProductId]
+		tenant := tenantMap[item.TenantId]
 		if product == nil {
 			continue
 		}
@@ -72,7 +89,7 @@ func (l *ListVisibleProductsLogic) ListVisibleProducts(in *itick.ListVisibleProd
 		if !keywordMatches(in.Keyword, product.Symbol, product.Code, product.Name, product.DisplayName, product.CategoryName) {
 			continue
 		}
-		data = append(data, toTenantProductProto(item, product))
+		data = append(data, toTenantProductProto(item, product, tenant))
 	}
 
 	return &itick.ListVisibleProductsResp{

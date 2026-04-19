@@ -133,6 +133,7 @@ type ItickTenantProduct {
 // message ListVisibleCategoriesReq {
 // }
 type ListVisibleCategoriesReq {
+	PageReq
 	tenantId int64 `form:"tenantId"`
 }
 
@@ -142,6 +143,7 @@ type ListVisibleCategoriesResp {
 }
 
 type ListVisibleProductsReq {
+	PageReq
 	categoryType int64  `json:"categoryType"`
 	categoryCode string `json:"categoryCode"`
 	market       string `json:"market"`

@@ -49,6 +49,7 @@ func (l *ListTenantProductsLogic) ListTenantProducts(req *types.ListTenantProduc
 		data = append(data, types.ItickTenantProduct{
 			Id:           item.Id,
 			TenantId:     item.TenantId,
+			TenantName:   item.TenantName,
 			ProductId:    item.ProductId,
 			Enabled:      item.Enabled,
 			AppVisible:   item.AppVisible,

@@ -77,6 +77,25 @@ func (b *PageQueryBuilder) And(clause string, args ...any) {
 	b.args = append(b.args, args...)
 }
 
+func (b *PageQueryBuilder) Or(clauses []string, args ...any) {
+	filtered := make([]string, 0, len(clauses))
+	for _, clause := range clauses {
+		if clause == "" {
+			continue
+		}
+		filtered = append(filtered, clause)
+	}
+	if len(filtered) == 0 {
+		return
+	}
+	if len(filtered) == 1 {
+		b.parts = append(b.parts, filtered[0])
+	} else {
+		b.parts = append(b.parts, fmt.Sprintf("(%s)", strings.Join(filtered, " OR ")))
+	}
+	b.args = append(b.args, args...)
+}
+
 func (b *PageQueryBuilder) Where() string {
 	return strings.Join(b.parts, " AND ")
 }

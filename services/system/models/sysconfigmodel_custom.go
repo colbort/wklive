@@ -7,6 +7,7 @@ package models
 import (
 	"context"
 	"fmt"
+	"strings"
 	"wklive/common/sqlutil"
 )
 
@@ -74,13 +75,23 @@ func (m *customSysConfigModel) FindPage(
 }
 
 func (m *customSysConfigModel) FindByKeys(ctx context.Context, configKeys []string) ([]*SysConfig, error) {
-	args := make([]any, 0)
+	if len(configKeys) == 0 {
+		return []*SysConfig{}, nil
+	}
+
+	placeholders := make([]string, 0, len(configKeys))
+	args := make([]any, 0, len(configKeys))
 	for _, key := range configKeys {
+		placeholders = append(placeholders, "?")
 		args = append(args, key)
 	}
-	query := fmt.Sprintf(`SELECT %s FROM %s WHERE config_key IN (?)`, sysConfigRows, m.table)
+
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.And(fmt.Sprintf("config_key IN (%s)", strings.Join(placeholders, ",")), args...)
+
 	var configs []*SysConfig
-	err := m.QueryRowsNoCacheCtx(ctx, &configs, query, args...)
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE %s", sysConfigRows, m.table, builder.Where())
+	err := m.QueryRowsNoCacheCtx(ctx, &configs, query, builder.Args()...)
 	if err != nil {
 		return nil, err
 	}

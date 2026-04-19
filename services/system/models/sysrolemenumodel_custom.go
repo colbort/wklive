@@ -5,8 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-
-	"github.com/jmoiron/sqlx"
+	"wklive/common/sqlutil"
 
 	zero "github.com/zeromicro/go-zero/core/stores/sqlx"
 
@@ -23,20 +22,26 @@ type RoleMenuModel interface {
 }
 
 func (m *defaultSysRoleMenuModel) FindMenuIdsByRoleIds(ctx context.Context, roleIds []int64) ([]int64, error) {
-	var ids []int64
-	query := "select menu_id from " + m.table + " where role_id in (?)"
-	query, args, err := sqlx.In(query, roleIds)
-	if err != nil {
-		return nil, err
+	if len(roleIds) == 0 {
+		return []int64{}, nil
 	}
-	err = m.QueryRowsNoCacheCtx(ctx, &ids, query, args...)
+
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.InInt64("role_id", roleIds)
+
+	var ids []int64
+	query := fmt.Sprintf("select menu_id from %s where %s", m.table, builder.Where())
+	err := m.QueryRowsNoCacheCtx(ctx, &ids, query, builder.Args()...)
 	return ids, err
 }
 
 func (m *defaultSysRoleMenuModel) DeleteByRoleId(ctx context.Context, roleId int64) error {
-	query := fmt.Sprintf("DELETE FROM %s WHERE role_id = ?", m.table)
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.And("role_id = ?", roleId)
+
+	query := fmt.Sprintf("DELETE FROM %s WHERE %s", m.table, builder.Where())
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn zero.SqlConn) (sql.Result, error) {
-		return conn.ExecCtx(ctx, query, roleId)
+		return conn.ExecCtx(ctx, query, builder.Args()...)
 	})
 	return err
 }
@@ -71,8 +76,11 @@ func (m *defaultSysRoleMenuModel) TransactCtx(ctx context.Context, fn func(conte
 }
 
 func (m *defaultSysRoleMenuModel) ListByRoleId(ctx context.Context, roleId int64) ([]*SysRoleMenu, error) {
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.And("role_id = ?", roleId)
+
 	var list []*SysRoleMenu
-	query := fmt.Sprintf("SELECT %s FROM %s WHERE role_id = ?", sysRoleMenuRows, m.table)
-	err := m.QueryRowsNoCacheCtx(ctx, &list, query, roleId)
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE %s", sysRoleMenuRows, m.table, builder.Where())
+	err := m.QueryRowsNoCacheCtx(ctx, &list, query, builder.Args()...)
 	return list, err
 }

@@ -105,6 +105,7 @@ func (x *AppCommonResp) GetBase() *common.RespBase {
 type ListVisibleCategoriesReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Page          *common.PageReq        `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -144,6 +145,13 @@ func (x *ListVisibleCategoriesReq) GetTenantId() int64 {
 		return x.TenantId
 	}
 	return 0
+}
+
+func (x *ListVisibleCategoriesReq) GetPage() *common.PageReq {
+	if x != nil {
+		return x.Page
+	}
+	return nil
 }
 
 type ListVisibleCategoriesResp struct {
@@ -204,6 +212,7 @@ type ListVisibleProductsReq struct {
 	Market        string                 `protobuf:"bytes,2,opt,name=market,proto3" json:"market,omitempty"`
 	Keyword       string                 `protobuf:"bytes,3,opt,name=keyword,proto3" json:"keyword,omitempty"`
 	TenantId      int64                  `protobuf:"varint,4,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Page          *common.PageReq        `protobuf:"bytes,5,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -264,6 +273,13 @@ func (x *ListVisibleProductsReq) GetTenantId() int64 {
 		return x.TenantId
 	}
 	return 0
+}
+
+func (x *ListVisibleProductsReq) GetPage() *common.PageReq {
+	if x != nil {
+		return x.Page
+	}
+	return nil
 }
 
 type ListVisibleProductsResp struct {
@@ -1046,17 +1062,19 @@ const file_proto_itick_itick_app_proto_rawDesc = "" +
 	"\n" +
 	"\bAppEmpty\"5\n" +
 	"\rAppCommonResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"7\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\\\n" +
 	"\x18ListVisibleCategoriesReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\"q\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12#\n" +
+	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\"q\n" +
 	"\x19ListVisibleCategoriesResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
-	"\x04data\x18\x02 \x03(\v2\x1a.itick.ItickTenantCategoryR\x04data\"\xa1\x01\n" +
+	"\x04data\x18\x02 \x03(\v2\x1a.itick.ItickTenantCategoryR\x04data\"\xc6\x01\n" +
 	"\x16ListVisibleProductsReq\x128\n" +
 	"\rcategory_type\x18\x01 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12\x16\n" +
 	"\x06market\x18\x02 \x01(\tR\x06market\x12\x18\n" +
 	"\akeyword\x18\x03 \x01(\tR\akeyword\x12\x1b\n" +
-	"\ttenant_id\x18\x04 \x01(\x03R\btenantId\"n\n" +
+	"\ttenant_id\x18\x04 \x01(\x03R\btenantId\x12#\n" +
+	"\x04page\x18\x05 \x01(\v2\x0f.common.PageReqR\x04page\"n\n" +
 	"\x17ListVisibleProductsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
 	"\x04data\x18\x02 \x03(\v2\x19.itick.ItickTenantProductR\x04data\"\xb8\x01\n" +
@@ -1150,49 +1168,52 @@ var file_proto_itick_itick_app_proto_goTypes = []any{
 	(*KlineInterval)(nil),             // 16: itick.KlineInterval
 	(*KlineIntervalsResp)(nil),        // 17: itick.KlineIntervalsResp
 	(*common.RespBase)(nil),           // 18: common.RespBase
-	(*ItickTenantCategory)(nil),       // 19: itick.ItickTenantCategory
-	(CategoryType)(0),                 // 20: itick.CategoryType
-	(*ItickTenantProduct)(nil),        // 21: itick.ItickTenantProduct
-	(KlineType)(0),                    // 22: itick.KlineType
-	(*Kline)(nil),                     // 23: itick.Kline
-	(*Quote)(nil),                     // 24: itick.Quote
+	(*common.PageReq)(nil),            // 19: common.PageReq
+	(*ItickTenantCategory)(nil),       // 20: itick.ItickTenantCategory
+	(CategoryType)(0),                 // 21: itick.CategoryType
+	(*ItickTenantProduct)(nil),        // 22: itick.ItickTenantProduct
+	(KlineType)(0),                    // 23: itick.KlineType
+	(*Kline)(nil),                     // 24: itick.Kline
+	(*Quote)(nil),                     // 25: itick.Quote
 }
 var file_proto_itick_itick_app_proto_depIdxs = []int32{
 	18, // 0: itick.AppCommonResp.base:type_name -> common.RespBase
-	18, // 1: itick.ListVisibleCategoriesResp.base:type_name -> common.RespBase
-	19, // 2: itick.ListVisibleCategoriesResp.data:type_name -> itick.ItickTenantCategory
-	20, // 3: itick.ListVisibleProductsReq.category_type:type_name -> itick.CategoryType
-	18, // 4: itick.ListVisibleProductsResp.base:type_name -> common.RespBase
-	21, // 5: itick.ListVisibleProductsResp.data:type_name -> itick.ItickTenantProduct
-	22, // 6: itick.GetKlineReq.k_type:type_name -> itick.KlineType
-	18, // 7: itick.GetKlineResp.base:type_name -> common.RespBase
-	23, // 8: itick.GetKlineResp.data:type_name -> itick.Kline
-	18, // 9: itick.GetQuoteResp.base:type_name -> common.RespBase
-	24, // 10: itick.GetQuoteResp.data:type_name -> itick.Quote
-	10, // 11: itick.BatchGetQuoteReq.data:type_name -> itick.MarketSymbol
-	18, // 12: itick.BatchGetQuoteResp.base:type_name -> common.RespBase
-	24, // 13: itick.BatchGetQuoteResp.data:type_name -> itick.Quote
-	14, // 14: itick.SubscribeRequest.topics:type_name -> itick.SubscribeTopic
-	16, // 15: itick.KlineIntervalsResp.data:type_name -> itick.KlineInterval
-	2,  // 16: itick.ItickApp.ListVisibleCategories:input_type -> itick.ListVisibleCategoriesReq
-	4,  // 17: itick.ItickApp.ListVisibleProducts:input_type -> itick.ListVisibleProductsReq
-	6,  // 18: itick.ItickApp.GetKline:input_type -> itick.GetKlineReq
-	8,  // 19: itick.ItickApp.GetQuote:input_type -> itick.GetQuoteReq
-	11, // 20: itick.ItickApp.BatchGetQuote:input_type -> itick.BatchGetQuoteReq
-	13, // 21: itick.ItickApp.SubscribeStream:input_type -> itick.SubscribeRequest
-	0,  // 22: itick.ItickApp.GetKlineIntervals:input_type -> itick.AppEmpty
-	3,  // 23: itick.ItickApp.ListVisibleCategories:output_type -> itick.ListVisibleCategoriesResp
-	5,  // 24: itick.ItickApp.ListVisibleProducts:output_type -> itick.ListVisibleProductsResp
-	7,  // 25: itick.ItickApp.GetKline:output_type -> itick.GetKlineResp
-	9,  // 26: itick.ItickApp.GetQuote:output_type -> itick.GetQuoteResp
-	12, // 27: itick.ItickApp.BatchGetQuote:output_type -> itick.BatchGetQuoteResp
-	15, // 28: itick.ItickApp.SubscribeStream:output_type -> itick.PushReply
-	17, // 29: itick.ItickApp.GetKlineIntervals:output_type -> itick.KlineIntervalsResp
-	23, // [23:30] is the sub-list for method output_type
-	16, // [16:23] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	19, // 1: itick.ListVisibleCategoriesReq.page:type_name -> common.PageReq
+	18, // 2: itick.ListVisibleCategoriesResp.base:type_name -> common.RespBase
+	20, // 3: itick.ListVisibleCategoriesResp.data:type_name -> itick.ItickTenantCategory
+	21, // 4: itick.ListVisibleProductsReq.category_type:type_name -> itick.CategoryType
+	19, // 5: itick.ListVisibleProductsReq.page:type_name -> common.PageReq
+	18, // 6: itick.ListVisibleProductsResp.base:type_name -> common.RespBase
+	22, // 7: itick.ListVisibleProductsResp.data:type_name -> itick.ItickTenantProduct
+	23, // 8: itick.GetKlineReq.k_type:type_name -> itick.KlineType
+	18, // 9: itick.GetKlineResp.base:type_name -> common.RespBase
+	24, // 10: itick.GetKlineResp.data:type_name -> itick.Kline
+	18, // 11: itick.GetQuoteResp.base:type_name -> common.RespBase
+	25, // 12: itick.GetQuoteResp.data:type_name -> itick.Quote
+	10, // 13: itick.BatchGetQuoteReq.data:type_name -> itick.MarketSymbol
+	18, // 14: itick.BatchGetQuoteResp.base:type_name -> common.RespBase
+	25, // 15: itick.BatchGetQuoteResp.data:type_name -> itick.Quote
+	14, // 16: itick.SubscribeRequest.topics:type_name -> itick.SubscribeTopic
+	16, // 17: itick.KlineIntervalsResp.data:type_name -> itick.KlineInterval
+	2,  // 18: itick.ItickApp.ListVisibleCategories:input_type -> itick.ListVisibleCategoriesReq
+	4,  // 19: itick.ItickApp.ListVisibleProducts:input_type -> itick.ListVisibleProductsReq
+	6,  // 20: itick.ItickApp.GetKline:input_type -> itick.GetKlineReq
+	8,  // 21: itick.ItickApp.GetQuote:input_type -> itick.GetQuoteReq
+	11, // 22: itick.ItickApp.BatchGetQuote:input_type -> itick.BatchGetQuoteReq
+	13, // 23: itick.ItickApp.SubscribeStream:input_type -> itick.SubscribeRequest
+	0,  // 24: itick.ItickApp.GetKlineIntervals:input_type -> itick.AppEmpty
+	3,  // 25: itick.ItickApp.ListVisibleCategories:output_type -> itick.ListVisibleCategoriesResp
+	5,  // 26: itick.ItickApp.ListVisibleProducts:output_type -> itick.ListVisibleProductsResp
+	7,  // 27: itick.ItickApp.GetKline:output_type -> itick.GetKlineResp
+	9,  // 28: itick.ItickApp.GetQuote:output_type -> itick.GetQuoteResp
+	12, // 29: itick.ItickApp.BatchGetQuote:output_type -> itick.BatchGetQuoteResp
+	15, // 30: itick.ItickApp.SubscribeStream:output_type -> itick.PushReply
+	17, // 31: itick.ItickApp.GetKlineIntervals:output_type -> itick.KlineIntervalsResp
+	25, // [25:32] is the sub-list for method output_type
+	18, // [18:25] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_proto_itick_itick_app_proto_init() }

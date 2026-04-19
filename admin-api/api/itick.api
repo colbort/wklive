@@ -96,6 +96,7 @@ type ItickTenantCategory {
 	categoryType int64  `json:"categoryType"`
 	categoryName string `json:"categoryName"`
 	icon         string `json:"icon"`
+	tenantName string `json:"tenantName"`
 }
 
 type ItickTenantProduct {
@@ -119,6 +120,7 @@ type ItickTenantProduct {
 	baseCoin     string `json:"baseCoin"`
 	quoteCoin    string `json:"quoteCoin"`
 	icon         string `json:"icon"`
+	tenantName string `json:"tenantName"`
 }
 
 // ====================

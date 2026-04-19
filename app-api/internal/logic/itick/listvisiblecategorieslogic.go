@@ -8,6 +8,7 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
+	"wklive/proto/common"
 	"wklive/proto/itick"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -28,7 +29,13 @@ func NewListVisibleCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *ListVisibleCategoriesLogic) ListVisibleCategories(req *types.ListVisibleCategoriesReq) (resp *types.ListVisibleCategoriesResp, err error) {
-	result, err := l.svcCtx.ItickCli.ListVisibleCategories(l.ctx, &itick.ListVisibleCategoriesReq{})
+	result, err := l.svcCtx.ItickCli.ListVisibleCategories(l.ctx, &itick.ListVisibleCategoriesReq{
+		Page: &common.PageReq{
+			Cursor: req.Cursor,
+			Limit:  req.Limit,
+		},
+		TenantId: req.TenantId,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -42,18 +49,18 @@ func (l *ListVisibleCategoriesLogic) ListVisibleCategories(req *types.ListVisibl
 	}
 	for _, item := range result.Data {
 		resp.Data = append(resp.Data, types.ItickTenantCategory{
-			Id:             item.Id,
-			TenantId:       item.TenantId,
-			CategoryId:     item.CategoryId,
-			Enabled:        item.Enabled,
-			AppVisible:     item.AppVisible,
-			Sort:           item.Sort,
-			Remark:         item.Remark,
-			CreateTimes:     item.CreateTimes,
-			UpdateTimes:     item.UpdateTimes,
-			CategoryType:   int64(item.CategoryType),
-			CategoryName:   item.CategoryName,
-			Icon:           item.Icon,
+			Id:           item.Id,
+			TenantId:     item.TenantId,
+			CategoryId:   item.CategoryId,
+			Enabled:      item.Enabled,
+			AppVisible:   item.AppVisible,
+			Sort:         item.Sort,
+			Remark:       item.Remark,
+			CreateTimes:  item.CreateTimes,
+			UpdateTimes:  item.UpdateTimes,
+			CategoryType: int64(item.CategoryType),
+			CategoryName: item.CategoryName,
+			Icon:         item.Icon,
 		})
 	}
 

@@ -7,71 +7,43 @@ import (
 )
 
 const batchScanPageSize int64 = 500
+const productLookupBatchSize = 500
 
-func collectTenantCategories(ctx context.Context, model models.ItickTenantCategoryModel, tenantId int64) ([]*models.TItickTenantCategory, error) {
-	cursor := int64(0)
-	out := make([]*models.TItickTenantCategory, 0)
-
-	for {
-		items, nextCursor, err := model.FindPage(ctx, tenantId, cursor, batchScanPageSize)
-		if err != nil {
-			return nil, err
-		}
-		if len(items) == 0 {
-			break
-		}
-
-		out = append(out, items...)
-		if len(items) < int(batchScanPageSize) || nextCursor == 0 {
-			break
-		}
-		cursor = nextCursor
+func collectProductsByIDs(ctx context.Context, model models.ItickProductModel, ids []int64) (map[int64]*models.TItickProduct, error) {
+	if len(ids) == 0 {
+		return map[int64]*models.TItickProduct{}, nil
 	}
 
-	return out, nil
-}
-
-func collectTenantProducts(ctx context.Context, model models.ItickTenantProductModel, tenantId int64) ([]*models.TItickTenantProduct, error) {
-	cursor := int64(0)
-	out := make([]*models.TItickTenantProduct, 0)
-
-	for {
-		items, nextCursor, err := model.FindPage(ctx, tenantId, cursor, batchScanPageSize)
-		if err != nil {
-			return nil, err
+	uniqueIDs := make([]int64, 0, len(ids))
+	seen := make(map[int64]struct{}, len(ids))
+	for _, id := range ids {
+		if id <= 0 {
+			continue
 		}
-		if len(items) == 0 {
-			break
+		if _, ok := seen[id]; ok {
+			continue
 		}
-
-		out = append(out, items...)
-		if len(items) < int(batchScanPageSize) || nextCursor == 0 {
-			break
-		}
-		cursor = nextCursor
+		seen[id] = struct{}{}
+		uniqueIDs = append(uniqueIDs, id)
 	}
 
-	return out, nil
-}
+	out := make(map[int64]*models.TItickProduct, len(uniqueIDs))
+	for start := 0; start < len(uniqueIDs); start += productLookupBatchSize {
+		end := start + productLookupBatchSize
+		if end > len(uniqueIDs) {
+			end = len(uniqueIDs)
+		}
 
-func collectProducts(ctx context.Context, model models.ItickProductModel) ([]*models.TItickProduct, error) {
-	cursor := int64(0)
-	out := make([]*models.TItickProduct, 0)
-
-	for {
-		items, _, err := model.FindPage(ctx, 0, "", "", "", 0, 0, cursor, batchScanPageSize)
+		items, err := model.FindByIds(ctx, uniqueIDs[start:end])
 		if err != nil {
 			return nil, err
 		}
-		if len(items) == 0 {
-			break
+		for _, item := range items {
+			if item == nil {
+				continue
+			}
+			out[item.Id] = item
 		}
-
-		out = append(out, items...)
-		if len(items) < int(batchScanPageSize) {
-			break
-		}
-		cursor = items[len(items)-1].Id
 	}
 
 	return out, nil

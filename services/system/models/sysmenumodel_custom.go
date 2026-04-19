@@ -138,9 +138,12 @@ func (m *defaultSysMenuModel) FindPage(
 }
 
 func (m *defaultSysMenuModel) FindOneByName(ctx context.Context, name string) (*SysMenu, error) {
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.And("name = ?", name)
+
 	var menu SysMenu
-	query := "select " + sysMenuRows + " from " + m.table + " where name = ? limit 1"
-	err := m.QueryRowNoCacheCtx(ctx, &menu, query, name)
+	query := fmt.Sprintf("select %s from %s where %s limit 1", sysMenuRows, m.table, builder.Where())
+	err := m.QueryRowNoCacheCtx(ctx, &menu, query, builder.Args()...)
 	if err != nil {
 		return nil, err
 	}
@@ -148,9 +151,12 @@ func (m *defaultSysMenuModel) FindOneByName(ctx context.Context, name string) (*
 }
 
 func (m *defaultSysMenuModel) FindOneByPath(ctx context.Context, path string) (*SysMenu, error) {
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.And("path = ?", path)
+
 	var menu SysMenu
-	query := "select " + sysMenuRows + " from " + m.table + " where path = ? limit 1"
-	err := m.QueryRowNoCacheCtx(ctx, &menu, query, path)
+	query := fmt.Sprintf("select %s from %s where %s limit 1", sysMenuRows, m.table, builder.Where())
+	err := m.QueryRowNoCacheCtx(ctx, &menu, query, builder.Args()...)
 	if err != nil {
 		return nil, err
 	}
@@ -158,9 +164,12 @@ func (m *defaultSysMenuModel) FindOneByPath(ctx context.Context, path string) (*
 }
 
 func (m *defaultSysMenuModel) FindOneByPerms(ctx context.Context, perms string) (*SysMenu, error) {
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.And("perms = ?", perms)
+
 	var menu SysMenu
-	query := "select " + sysMenuRows + " from " + m.table + " where perms = ? limit 1"
-	err := m.QueryRowNoCacheCtx(ctx, &menu, query, perms)
+	query := fmt.Sprintf("select %s from %s where %s limit 1", sysMenuRows, m.table, builder.Where())
+	err := m.QueryRowNoCacheCtx(ctx, &menu, query, builder.Args()...)
 	if err != nil {
 		return nil, err
 	}

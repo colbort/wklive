@@ -18,6 +18,7 @@ message AppCommonResp { common.RespBase base = 1; }
 
 message ListVisibleCategoriesReq {
   int64 tenant_id = 1;
+  common.PageReq page = 2;
 }
 
 message ListVisibleCategoriesResp {
@@ -30,6 +31,7 @@ message ListVisibleProductsReq {
   string market = 2;
   string keyword = 3;
   int64 tenant_id = 4;
+  common.PageReq page = 5;
 }
 
 message ListVisibleProductsResp {

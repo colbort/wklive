@@ -1,6 +1,10 @@
 package models
 
-import "context"
+import (
+	"context"
+	"fmt"
+	"wklive/common/sqlutil"
+)
 
 type TenantModel interface {
 	sysTenantModel
@@ -9,68 +13,34 @@ type TenantModel interface {
 }
 
 func (m *customSysTenantModel) FindPage(ctx context.Context, keyword string, status int64, tenantName string, tenantCode string, contactName string, contactPhone string, cursor int64, limit int64) ([]*SysTenant, int64, error) {
-	query := "select " + sysTenantRows + " from " + m.table + " where 1=1"
-	var args []interface{}
+	limit = sqlutil.NormalizeLimit(limit)
+
+	builder := sqlutil.NewPageQueryBuilder()
 	if keyword != "" {
-		query += " and (tenant_name like ? or tenant_code like ? or contact_name like ? or contact_phone like ?)"
-		keyword = "%" + keyword + "%"
-		args = append(args, keyword, keyword, keyword, keyword)
+		like := "%" + keyword + "%"
+		builder.And("(tenant_name LIKE ? OR tenant_code LIKE ? OR contact_name LIKE ? OR contact_phone LIKE ?)", like, like, like, like)
 	}
-	if status != 0 {
-		query += " and status = ?"
-		args = append(args, status)
-	}
-	if tenantName != "" {
-		query += " and tenant_name like ?"
-		tenantName = "%" + tenantName + "%"
-		args = append(args, tenantName)
-	}
-	if tenantCode != "" {
-		query += " and tenant_code like ?"
-		tenantCode = "%" + tenantCode + "%"
-		args = append(args, tenantCode)
-	}
-	if contactName != "" {
-		query += " and contact_name like ?"
-		contactName = "%" + contactName + "%"
-		args = append(args, contactName)
-	}
-	if contactPhone != "" {
-		query += " and contact_phone like ?"
-		contactPhone = "%" + contactPhone + "%"
-		args = append(args, contactPhone)
-	}
-	query += " order by id desc limit ?,?"
-	args = append(args, cursor, limit)
+	builder.EqInt64("status", status)
+	builder.LikeString("tenant_name", "%"+tenantName+"%")
+	builder.LikeString("tenant_code", "%"+tenantCode+"%")
+	builder.LikeString("contact_name", "%"+contactName+"%")
+	builder.LikeString("contact_phone", "%"+contactPhone+"%")
+
+	where := builder.Where()
+	args := builder.Args()
+
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE %s ORDER BY id DESC LIMIT ?,?", sysTenantRows, m.table, where)
+	listArgs := append(append([]any{}, args...), cursor, limit)
 
 	var list []*SysTenant
-	err := m.QueryRowsNoCacheCtx(ctx, &list, query, args...)
+	err := m.QueryRowsNoCacheCtx(ctx, &list, query, listArgs...)
 	if err != nil {
 		return nil, 0, err
 	}
 
 	var total int64
-	countQuery := "select count(1) from " + m.table + " where 1=1"
-	if keyword != "" {
-		countQuery += " and (tenant_name like ? or tenant_code like ? or contact_name like ? or contact_phone like ?)"
-	}
-	if status != 0 {
-		countQuery += " and status = ?"
-	}
-	if tenantName != "" {
-		countQuery += " and tenant_name like ?"
-	}
-	if tenantCode != "" {
-		countQuery += " and tenant_code like ?"
-	}
-	if contactName != "" {
-		countQuery += " and contact_name like ?"
-	}
-	if contactPhone != "" {
-		countQuery += " and contact_phone like ?"
-	}
-
-	err = m.QueryRowNoCacheCtx(ctx, &total, countQuery, args[:len(args)-2]...)
+	countQuery := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
+	err = m.QueryRowNoCacheCtx(ctx, &total, countQuery, args...)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -79,9 +49,12 @@ func (m *customSysTenantModel) FindPage(ctx context.Context, keyword string, sta
 }
 
 func (m *customSysTenantModel) FindByTenantCode(ctx context.Context, tenantCode string) (*SysTenant, error) {
-	query := "select " + sysTenantRows + " from " + m.table + " where tenant_code = ? limit 1"
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.And("tenant_code = ?", tenantCode)
+
+	query := fmt.Sprintf("select %s from %s where %s limit 1", sysTenantRows, m.table, builder.Where())
 	var resp SysTenant
-	err := m.QueryRowNoCacheCtx(ctx, &resp, query, tenantCode)
+	err := m.QueryRowNoCacheCtx(ctx, &resp, query, builder.Args()...)
 	if err != nil {
 		return nil, err
 	}

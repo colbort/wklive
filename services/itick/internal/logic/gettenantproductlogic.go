@@ -6,6 +6,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/itick"
+	"wklive/proto/system"
 	"wklive/services/itick/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -37,6 +38,13 @@ func (l *GetTenantProductLogic) GetTenantProduct(in *itick.GetTenantProductReq) 
 		}, nil
 	}
 
+	tenant, err := l.svcCtx.SystemCli.SysTenantDetail(l.ctx, &system.SysTenantDetailReq{
+		TenantId: &in.TenantId,
+	})
+	if err != nil {
+		return nil, err
+	}
+
 	product, err := l.svcCtx.ItickProductModel.FindOne(l.ctx, item.ProductId)
 	if err != nil {
 		return nil, err
@@ -44,6 +52,6 @@ func (l *GetTenantProductLogic) GetTenantProduct(in *itick.GetTenantProductReq) 
 
 	return &itick.GetTenantProductResp{
 		Base: helper.OkResp(),
-		Data: toTenantProductProto(item, product),
+		Data: toTenantProductProto(item, product, tenant.Data),
 	}, nil
 }

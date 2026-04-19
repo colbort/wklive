@@ -43,6 +43,7 @@ func (l *GetTenantProductLogic) GetTenantProduct(req *types.GetTenantProductReq)
 		Data: types.ItickTenantProduct{
 			Id:           result.Data.Id,
 			TenantId:     result.Data.TenantId,
+			TenantName:   result.Data.TenantName,
 			ProductId:    result.Data.ProductId,
 			Enabled:      result.Data.Enabled,
 			AppVisible:   result.Data.AppVisible,

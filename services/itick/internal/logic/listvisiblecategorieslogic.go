@@ -5,7 +5,9 @@ import (
 	"sort"
 
 	"wklive/common/helper"
+	"wklive/proto/common"
 	"wklive/proto/itick"
+	"wklive/proto/system"
 	"wklive/services/itick/internal/svc"
 	"wklive/services/itick/models"
 
@@ -28,7 +30,7 @@ func NewListVisibleCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceConte
 
 // 获取允许显示的产品类型
 func (l *ListVisibleCategoriesLogic) ListVisibleCategories(in *itick.ListVisibleCategoriesReq) (*itick.ListVisibleCategoriesResp, error) {
-	items, err := collectTenantCategories(l.ctx, l.svcCtx.ItickTenantCategoryModel, 0)
+	items, _, err := l.svcCtx.ItickTenantCategoryModel.FindPage(l.ctx, in.TenantId, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -42,6 +44,20 @@ func (l *ListVisibleCategoriesLogic) ListVisibleCategories(in *itick.ListVisible
 		categoryMap[category.Id] = category
 	}
 
+	tenants, err := l.svcCtx.SystemCli.SysTenantList(l.ctx, &system.SysTenantListReq{
+		Page: &common.PageReq{
+			Cursor: 0,
+			Limit:  100,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	tenantMap := make(map[int64]*system.SysTenantItem, len(tenants.Data))
+	for _, tenant := range tenants.Data {
+		tenantMap[tenant.Id] = tenant
+	}
+
 	sort.Slice(items, func(i, j int) bool {
 		if items[i].Sort == items[j].Sort {
 			return items[i].Id < items[j].Id
@@ -52,6 +68,7 @@ func (l *ListVisibleCategoriesLogic) ListVisibleCategories(in *itick.ListVisible
 	data := make([]*itick.ItickTenantCategory, 0)
 	for _, item := range items {
 		category := categoryMap[item.CategoryId]
+		tenant := tenantMap[item.TenantId]
 		if category == nil {
 			continue
 		}
@@ -61,7 +78,7 @@ func (l *ListVisibleCategoriesLogic) ListVisibleCategories(in *itick.ListVisible
 		if category.Enabled != 1 || category.AppVisible != 1 {
 			continue
 		}
-		data = append(data, toTenantCategoryProto(item, category))
+		data = append(data, toTenantCategoryProto(item, category, tenant))
 	}
 
 	return &itick.ListVisibleCategoriesResp{
