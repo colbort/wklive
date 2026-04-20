@@ -44,7 +44,7 @@ func (l *GetQuoteLogic) GetQuote(req *types.GetQuoteReq) (resp *types.GetQuoteRe
 		},
 		Data: types.Quote{
 			CategoryCode:   result.Data.CategoryCode,
-			Market:         resp.Data.Market,
+			Market:         result.Data.Market,
 			Symbol:         result.Data.Symbol,
 			LastPrice:      result.Data.LastPrice,
 			OpenPrice:      result.Data.OpenPrice,
