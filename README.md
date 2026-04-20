@@ -189,6 +189,13 @@ Name: app
 Host: 0.0.0.0
 Port: 6666
 
+SystemRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: system.rpc
+
 UserRpc:
   rpcType: zrpc
   Etcd:
@@ -286,10 +293,28 @@ Etcd:
   Hosts:
   - 127.0.0.1:2379
   Key: itick.rpc
+
+SystemRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: system.rpc
+
 Itick:
   ApiUrl: https://api.itick.org
   WSUrl: wss://api.itick.org
   Token: 5093272afb5241dfa3fd5505937289804447d9d6941547b2ab45929024c0fd4b
+
+Mongo:
+  Url: "mongodb://root:openIM123@127.0.0.1:27017/stock?authSource=admin"
+  Db: "wklive"
+
+KlineWriter:
+  QueueSize: 20000
+  BatchSize: 300
+  FlushIntervalMs: 1000
+  WriteTimeoutMs: 5000
 ```
 
 ### payment-rpc 微服务配置 /wklive/payment-rpc/config

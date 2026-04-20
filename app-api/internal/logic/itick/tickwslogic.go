@@ -1,7 +1,7 @@
 // Code scaffolded by goctl. Safe to edit.
 // goctl 1.9.2
 
-package user_public
+package itick
 
 import (
 	"context"
@@ -66,6 +66,8 @@ func (l *TickWsLogic) TickWs(conn *websocket.Conn, r *http.Request) error {
 		maxPingInterval  = 40 * time.Second // 两次 ping 最大允许间隔
 	)
 
+	fmt.Println("============================= 33")
+
 	nowMs := func() int64 {
 		return time.Now().UnixMilli()
 	}
@@ -73,6 +75,16 @@ func (l *TickWsLogic) TickWs(conn *websocket.Conn, r *http.Request) error {
 	if err := conn.SetReadDeadline(time.Now().Add(heartbeatTimeout)); err != nil {
 		return err
 	}
+
+	if err := conn.WriteJSON(map[string]any{
+		"type":     "connected",
+		"serverTs": nowMs(),
+	}); err != nil {
+		fmt.Println("============================= 11")
+		return err
+	}
+
+	fmt.Println("============================= 22")
 
 	var firstMsg types.WsMessage
 	if err := conn.ReadJSON(&firstMsg); err != nil {

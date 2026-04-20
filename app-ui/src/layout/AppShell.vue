@@ -9,6 +9,16 @@ const route = useRoute()
 const { isDesktop } = useDevice()
 
 const pageTitle = computed(() => String(route.meta.title || 'AVE'))
+const desktopNav = [
+  '加密货币合约',
+  '股票',
+  '外汇',
+  '大宗商品',
+  '期权合约',
+  '公司资质',
+  '白皮书',
+  '监管文件',
+]
 </script>
 
 <template>
@@ -21,25 +31,33 @@ const pageTitle = computed(() => String(route.meta.title || 'AVE'))
         <span class="site-brand__mark">A</span>
         <div>
           <strong>AVE</strong>
-          <p>{{ pageTitle }}</p>
+          <p v-if="!isDesktop">{{ pageTitle }}</p>
         </div>
       </RouterLink>
 
       <nav v-if="isDesktop" class="site-nav">
-        <RouterLink
-          v-for="item in appNavigation"
-          :key="item.key"
-          :to="item.path"
+        <a
+          v-for="item in desktopNav"
+          :key="item"
+          href="#"
           class="site-nav__item"
-          :class="{ 'site-nav__item--active': route.path === item.path }"
         >
-          <span>{{ item.label }}</span>
-        </RouterLink>
+          <span>{{ item }}</span>
+        </a>
       </nav>
 
       <div class="site-header__actions">
-        <div v-if="isDesktop" class="topbar__badge">Multi-Asset Trading</div>
-        <RouterLink to="/profile" class="header-cta">登录</RouterLink>
+        <button class="site-action-circle">⌕</button>
+        <button v-if="!isDesktop" class="site-action-circle">🌐</button>
+        <div v-if="isDesktop" class="site-user-chip">
+          <div class="site-user-chip__avatar" />
+          <div>
+            <strong>GUEST-8437</strong>
+            <span>ID:50596163</span>
+          </div>
+        </div>
+        <button v-if="isDesktop" class="site-action-plain">☰</button>
+        <button class="site-action-circle site-action-circle--menu">☷</button>
       </div>
     </header>
 

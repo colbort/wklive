@@ -20,9 +20,9 @@
           >
             <el-option
               v-for="key in keys"
-              :key="key.value"
+              :key="key.code"
               :label="getOptionLabel(t, key.code, key.value)"
-              :value="key.value"
+              :value="key.code"
             />
           </el-select>
         </el-form-item>
@@ -135,9 +135,9 @@
           >
             <el-option
               v-for="key in keys"
-              :key="key.value"
+              :key="key.code"
               :label="getOptionLabel(t, key.code, key.value)"
-              :value="key.value"
+              :value="key.code"
             />
           </el-select>
           <el-input
@@ -148,11 +148,15 @@
           />
         </el-form-item>
         <template v-if="formData.configKey === 'SYSTEM_CORE'">
-          <SystemCoreConfig v-model="systemCoreForm" />
+          <SystemCoreConfigComponent v-model="systemCoreForm" />
         </template>
 
         <template v-else-if="formData.configKey === 'OBJECT_STORAGE'">
           <ObjectStorageConfigComponent v-model="objectStorageForm" />
+        </template>
+
+        <template v-else-if="formData.configKey === 'ITICK_CONFIG'">
+          <ItickConfigComponent v-model="itickConfigForm" />
         </template>
 
         <template v-else>
@@ -186,13 +190,18 @@ import { useI18n } from 'vue-i18n'
 import { Plus, Search, Refresh } from '@element-plus/icons-vue'
 import { configService } from '@/services'
 import type { SysConfigItem, SysConfigCreateReq, OptionItem } from '@/services'
-import type { SystemCore, ObjectStorageConfig } from '@/services/system/ConfigService'
+import type {
+  SystemCore,
+  ObjectStorageConfig,
+  ItickConfig,
+} from '@/services/system/ConfigService'
 import { usePagination } from '@/composables/usePagination'
 import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
 import { formatDate } from '@/utils'
-import SystemCoreConfig from './components/SystemCoreConfig.vue'
+import SystemCoreConfigComponent from './components/SystemCoreConfig.vue'
 import ObjectStorageConfigComponent from './components/ObjectStorageConfig.vue'
+import ItickConfigComponent from './components/ItickConfig.vue'
 import { getOptionLabel } from '@/utils/options'
 
 const { t } = useI18n()
@@ -236,6 +245,10 @@ const keys = ref<OptionItem[]>([])
 const systemCoreForm = ref<SystemCore>({
   site_name: '',
   site_logo: '',
+  is_captcha_enabled: false,
+  is_register_enabled: false,
+  is_guest_enabled: false,
+  is_crypto_enabled: false,
 })
 
 const activeTab = ref('aliyun')
@@ -264,6 +277,12 @@ const objectStorageForm = ref<ObjectStorageConfig>({
   },
   oss_type: 1,
   oss_domain: '',
+})
+
+const itickConfigForm = ref<ItickConfig>({
+  api_url: '',
+  api_token: '',
+  ws_url: '',
 })
 
 // Form validation rules
@@ -319,6 +338,10 @@ function resetTypeForms() {
   systemCoreForm.value = {
     site_name: '',
     site_logo: '',
+    is_captcha_enabled: false,
+    is_register_enabled: false,
+    is_guest_enabled: false,
+    is_crypto_enabled: false,
   }
   objectStorageForm.value = {
     aliyun_oss: {
@@ -345,6 +368,11 @@ function resetTypeForms() {
     oss_type: 1,
     oss_domain: '',
   }
+  itickConfigForm.value = {
+    api_url: '',
+    api_token: '',
+    ws_url: '',
+  }
 }
 
 function handleConfigKeyChange(value: string) {
@@ -352,6 +380,10 @@ function handleConfigKeyChange(value: string) {
     systemCoreForm.value = {
       site_name: '',
       site_logo: '',
+      is_captcha_enabled: false,
+      is_register_enabled: false,
+      is_guest_enabled: false,
+      is_crypto_enabled: false,
     }
     formData.configValue = ''
   } else if (value === 'OBJECT_STORAGE') {
@@ -379,6 +411,13 @@ function handleConfigKeyChange(value: string) {
       },
       oss_type: 1,
       oss_domain: '',
+    }
+    formData.configValue = ''
+  } else if (value === 'ITICK_CONFIG') {
+    itickConfigForm.value = {
+      api_url: '',
+      api_token: '',
+      ws_url: '',
     }
     formData.configValue = ''
   }
@@ -420,9 +459,20 @@ function handleEdit(row: SysConfigItem) {
       systemCoreForm.value = {
         site_name: parsed.site_name || '',
         site_logo: parsed.site_logo || '',
+        is_captcha_enabled: Boolean(parsed.is_captcha_enabled),
+        is_register_enabled: Boolean(parsed.is_register_enabled),
+        is_guest_enabled: Boolean(parsed.is_guest_enabled),
+        is_crypto_enabled: Boolean(parsed.is_crypto_enabled),
       }
     } catch {
-      systemCoreForm.value = { site_name: '', site_logo: '' }
+      systemCoreForm.value = {
+        site_name: '',
+        site_logo: '',
+        is_captcha_enabled: false,
+        is_register_enabled: false,
+        is_guest_enabled: false,
+        is_crypto_enabled: false,
+      }
     }
   } else if (row.configKey === 'OBJECT_STORAGE') {
     try {
@@ -439,6 +489,21 @@ function handleEdit(row: SysConfigItem) {
       else activeTab.value = 'minio'
     } catch {
       resetTypeForms()
+    }
+  } else if (row.configKey === 'ITICK_CONFIG') {
+    try {
+      const parsed = JSON.parse(row.configValue || '{}')
+      itickConfigForm.value = {
+        api_url: parsed.api_url || '',
+        api_token: parsed.api_token || '',
+        ws_url: parsed.ws_url || '',
+      }
+    } catch {
+      itickConfigForm.value = {
+        api_url: '',
+        api_token: '',
+        ws_url: '',
+      }
     }
   } else {
     formData.configValue = row.configValue
@@ -487,6 +552,11 @@ async function handleSubmit() {
         throw new Error(t('validation.required'))
       }
       formData.configValue = JSON.stringify(objectStorageForm.value)
+    } else if (formData.configKey === 'ITICK_CONFIG') {
+      if (!itickConfigForm.value.api_url || !itickConfigForm.value.api_token || !itickConfigForm.value.ws_url) {
+        throw new Error(t('validation.required'))
+      }
+      formData.configValue = JSON.stringify(itickConfigForm.value)
     }
 
     if (isEdit.value) {

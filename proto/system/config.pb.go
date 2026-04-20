@@ -82,7 +82,6 @@ type SystemCore struct {
 	IsRegisterEnabled bool                   `protobuf:"varint,4,opt,name=is_register_enabled,json=isRegisterEnabled,proto3" json:"is_register_enabled,omitempty"` // 是否开启注册
 	IsGuestEnabled    bool                   `protobuf:"varint,5,opt,name=is_guest_enabled,json=isGuestEnabled,proto3" json:"is_guest_enabled,omitempty"`          // 是否允许游客登录
 	IsCryptoEnabled   bool                   `protobuf:"varint,6,opt,name=is_crypto_enabled,json=isCryptoEnabled,proto3" json:"is_crypto_enabled,omitempty"`       // 是否加密接口提交数据
-	Intervals         []*Interval            `protobuf:"bytes,7,rep,name=intervals,proto3" json:"intervals,omitempty"`                                             // kline 支持粒度
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -157,13 +156,6 @@ func (x *SystemCore) GetIsCryptoEnabled() bool {
 		return x.IsCryptoEnabled
 	}
 	return false
-}
-
-func (x *SystemCore) GetIntervals() []*Interval {
-	if x != nil {
-		return x.Intervals
-	}
-	return nil
 }
 
 // 阿里云 OSS配置
@@ -541,7 +533,7 @@ const file_proto_system_config_proto_rawDesc = "" +
 	"\x19proto/system/config.proto\x12\x06system\"5\n" +
 	"\bInterval\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x15\n" +
-	"\x06k_type\x18\x02 \x01(\x05R\x05kType\"\xaa\x02\n" +
+	"\x06k_type\x18\x02 \x01(\x05R\x05kType\"\xfa\x01\n" +
 	"\n" +
 	"SystemCore\x12\x1b\n" +
 	"\tsite_name\x18\x01 \x01(\tR\bsiteName\x12\x1b\n" +
@@ -549,8 +541,7 @@ const file_proto_system_config_proto_rawDesc = "" +
 	"\x12is_captcha_enabled\x18\x03 \x01(\bR\x10isCaptchaEnabled\x12.\n" +
 	"\x13is_register_enabled\x18\x04 \x01(\bR\x11isRegisterEnabled\x12(\n" +
 	"\x10is_guest_enabled\x18\x05 \x01(\bR\x0eisGuestEnabled\x12*\n" +
-	"\x11is_crypto_enabled\x18\x06 \x01(\bR\x0fisCryptoEnabled\x12.\n" +
-	"\tintervals\x18\a \x03(\v2\x10.system.IntervalR\tintervals\"\xbd\x01\n" +
+	"\x11is_crypto_enabled\x18\x06 \x01(\bR\x0fisCryptoEnabled\"\xbd\x01\n" +
 	"\x0fAliyunOssConfig\x12\x1a\n" +
 	"\bendpoint\x18\x01 \x01(\tR\bendpoint\x12\"\n" +
 	"\raccess_key_id\x18\x02 \x01(\tR\vaccessKeyId\x12*\n" +
@@ -613,15 +604,14 @@ var file_proto_system_config_proto_goTypes = []any{
 	(*ItickConfig)(nil),         // 6: system.ItickConfig
 }
 var file_proto_system_config_proto_depIdxs = []int32{
-	0, // 0: system.SystemCore.intervals:type_name -> system.Interval
-	2, // 1: system.ObjectStorageConfig.aliyun_oss:type_name -> system.AliyunOssConfig
-	3, // 2: system.ObjectStorageConfig.tencent_cos:type_name -> system.TencentCosConfig
-	4, // 3: system.ObjectStorageConfig.minio:type_name -> system.MinioConfig
-	4, // [4:4] is the sub-list for method output_type
-	4, // [4:4] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	2, // 0: system.ObjectStorageConfig.aliyun_oss:type_name -> system.AliyunOssConfig
+	3, // 1: system.ObjectStorageConfig.tencent_cos:type_name -> system.TencentCosConfig
+	4, // 2: system.ObjectStorageConfig.minio:type_name -> system.MinioConfig
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_proto_system_config_proto_init() }

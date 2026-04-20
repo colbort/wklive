@@ -96,6 +96,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/quote",
 				Handler: itick.GetQuoteHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/ws/:id",
+				Handler: itick.TickWsHandler(serverCtx),
+			},
 		},
 		rest.WithPrefix("/app/itick"),
 	)
@@ -461,11 +466,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodPost,
 				Path:    "/register",
 				Handler: user_public.RegisterHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/ws/itick",
-				Handler: user_public.TickWsHandler(serverCtx),
 			},
 		},
 		rest.WithPrefix("/app/user"),

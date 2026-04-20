@@ -988,11 +988,11 @@ type ListVisibleCategoriesResp struct {
 
 type ListVisibleProductsReq struct {
 	PageReq
-	CategoryType int64  `json:"categoryType"`
-	CategoryCode string `json:"categoryCode"`
-	Market       string `json:"market"`
-	Keyword      string `json:"keyword"`
-	TenantId     int64  `form:"tenantId"`
+	CategoryType int64  `form:"categoryType,optional"`
+	CategoryCode string `form:"categoryCode,optional"`
+	Market       string `form:"market,optional"`
+	Keyword      string `json:"keyword,optional"`
+	TenantId     int64  `form:"tenantId,optional"`
 }
 
 type ListVisibleProductsResp struct {
@@ -1934,6 +1934,10 @@ type WithdrawOrder struct {
 	Remark       string `json:"remark"`
 	CreateTimes  int64  `json:"createTimes"`
 	UpdateTimes  int64  `json:"updateTimes"`
+}
+
+type WsItickReq struct {
+	Id string `path:"id"`
 }
 
 type WsMessage struct {

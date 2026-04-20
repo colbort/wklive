@@ -16,6 +16,7 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/syncx"
+	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type ServiceContext struct {
@@ -37,6 +38,7 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
+	systemCli := zrpc.MustNewClient(c.SystemRpc)
 	hub := server.NewHub()
 
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
@@ -96,6 +98,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	}
 	return &ServiceContext{
 		Config:                      c,
+		SystemCli:                   system.NewSystemClient(systemCli.Conn()),
 		ItickManager:                itickManager,
 		Hub:                         hub,
 		LockRedis:                   lockRedis,

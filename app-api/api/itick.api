@@ -144,11 +144,11 @@ type ListVisibleCategoriesResp {
 
 type ListVisibleProductsReq {
 	PageReq
-	categoryType int64  `json:"categoryType"`
-	categoryCode string `json:"categoryCode"`
-	market       string `json:"market"`
-	keyword      string `json:"keyword"`
-	tenantId     int64 `form:"tenantId"`
+	categoryType int64  `form:"categoryType,optional"`
+	categoryCode string `form:"categoryCode,optional"`
+	market       string `form:"market,optional"`
+	keyword      string `json:"keyword,optional"`
+	tenantId     int64 `form:"tenantId,optional"`
 }
 
 type ListVisibleProductsResp {
@@ -204,6 +204,33 @@ type BatchGetQuoteResp {
 	data []Quote `json:"data"`
 }
 
+type WsItickReq{
+	id string `path:"id"`
+}
+
+type WsTickTopic {
+	topic        string `json:"topic"`
+	categoryCode string `json:"categoryCode"`
+	symbol       string `json:"symbol"`
+	market       string `json:"market,optional"`
+	interval     string `json:"interval,optional"`
+}
+
+type WsMessage {
+	Type         string        `json:"type"`
+	ClientTs     int64         `json:"clientTs,omitempty"` // 客户端毫秒时间戳
+	ServerTs     int64         `json:"serverTs,omitempty"` // 服务端毫秒时间戳
+	Topics       []WsTickTopic `json:"topics,omitempty"`
+	Code         int           `json:"code,omitempty"`
+	Message      string        `json:"message,omitempty"`
+	Topic        string        `json:"topic,omitempty"`
+	categoryCode string        `json:"categoryCode,omitempty"`
+	Symbol       string        `json:"symbol,omitempty"`
+	Market       string        `json:"market,omitempty"`
+	Interval     string        `json:"interval,omitempty"`
+	Payload      []byte        `json:"payload,omitempty"`
+}
+
 @server (
 	prefix: /app/itick
 	group:  itick
@@ -228,5 +255,8 @@ service app {
 	// 批量获取最新报价
 	@handler BatchGetQuote
 	get /batch/quote (BatchGetQuoteReq) returns (BatchGetQuoteResp)
+
+	@handler TickWsHandler
+	get /ws/:id (WsItickReq)
 }
 

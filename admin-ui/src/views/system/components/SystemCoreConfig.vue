@@ -33,6 +33,34 @@
         </div>
       </div>
     </el-form-item>
+    <el-form-item :label="t('system.isCaptchaEnabled')" prop="is_captcha_enabled">
+      <el-switch
+        v-model="form.is_captcha_enabled"
+        :active-text="t('common.enabled')"
+        :inactive-text="t('common.disabled')"
+      />
+    </el-form-item>
+    <el-form-item :label="t('system.isRegisterEnabled')" prop="is_register_enabled">
+      <el-switch
+        v-model="form.is_register_enabled"
+        :active-text="t('common.enabled')"
+        :inactive-text="t('common.disabled')"
+      />
+    </el-form-item>
+    <el-form-item :label="t('system.isGuestEnabled')" prop="is_guest_enabled">
+      <el-switch
+        v-model="form.is_guest_enabled"
+        :active-text="t('common.enabled')"
+        :inactive-text="t('common.disabled')"
+      />
+    </el-form-item>
+    <el-form-item :label="t('system.isCryptoEnabled')" prop="is_crypto_enabled">
+      <el-switch
+        v-model="form.is_crypto_enabled"
+        :active-text="t('common.enabled')"
+        :inactive-text="t('common.disabled')"
+      />
+    </el-form-item>
 
     <!-- Image Crop Dialog -->
     <el-dialog
