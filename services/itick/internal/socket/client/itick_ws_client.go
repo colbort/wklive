@@ -380,7 +380,7 @@ func (c *ItickWsClient) HandleSubscriptionChange(change SubscriptionChange) {
 
 	switch change.Action {
 	case SubscriptionAdd:
-		if err := c.SubscribeByClientMessage(msg); err != nil {
+		if err := c.subscribeByClientMessage(msg); err != nil {
 			logx.Errorf("leader subscribe upstream failed, category=%s topic=%s err=%v", c.categoryCode, server.BuildTopicKey(msg), err)
 		}
 	case SubscriptionRemove:
@@ -397,7 +397,7 @@ func (c *ItickWsClient) restoreSubscriptions(ctx context.Context) error {
 	}
 
 	for _, msg := range list {
-		if err := c.SubscribeByClientMessage(msg); err != nil {
+		if err := c.subscribeByClientMessage(msg); err != nil {
 			logx.Errorf("restore subscribe failed, category=%s topic=%s err=%v", c.categoryCode, server.BuildTopicKey(msg), err)
 		}
 	}
@@ -405,7 +405,7 @@ func (c *ItickWsClient) restoreSubscriptions(ctx context.Context) error {
 	return nil
 }
 
-func (c *ItickWsClient) SubscribeByClientMessage(msg server.ClientMessage) error {
+func (c *ItickWsClient) subscribeByClientMessage(msg server.ClientMessage) error {
 	params, types, err := c.buildItickSubscribe(msg)
 	if err != nil {
 		return err

@@ -18,6 +18,33 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
+type streamReply struct {
+	gen   int64
+	reply *itick.PushReply
+}
+
+type streamError struct {
+	gen int64
+	err error
+}
+
+type tickWsRuntime struct {
+	conn *websocket.Conn
+
+	ctx    context.Context
+	cancel context.CancelFunc
+
+	replyCh     chan streamReply
+	writeCh     chan any
+	errCh       chan error
+	streamErrCh chan streamError
+
+	lastPingAt      int64
+	streamGen       int64
+	streamCancel    context.CancelFunc
+	subscriptionMap map[string]types.WsTickTopic
+}
+
 type TickWsLogic struct {
 	logx.Logger
 	ctx    context.Context
@@ -66,8 +93,6 @@ func (l *TickWsLogic) TickWs(conn *websocket.Conn, r *http.Request) error {
 		maxPingInterval  = 40 * time.Second // 两次 ping 最大允许间隔
 	)
 
-	fmt.Println("============================= 33")
-
 	nowMs := func() int64 {
 		return time.Now().UnixMilli()
 	}
@@ -80,168 +105,91 @@ func (l *TickWsLogic) TickWs(conn *websocket.Conn, r *http.Request) error {
 		"type":     "connected",
 		"serverTs": nowMs(),
 	}); err != nil {
-		fmt.Println("============================= 11")
 		return err
-	}
-
-	fmt.Println("============================= 22")
-
-	var firstMsg types.WsMessage
-	if err := conn.ReadJSON(&firstMsg); err != nil {
-		return err
-	}
-
-	if err := conn.SetReadDeadline(time.Now().Add(heartbeatTimeout)); err != nil {
-		return err
-	}
-
-	if firstMsg.Type != "subscribe" || len(firstMsg.Topics) == 0 {
-		_ = conn.WriteJSON(map[string]any{
-			"type":     "error",
-			"code":     400,
-			"message":  "invalid first ws message",
-			"serverTs": nowMs(),
-		})
-		return fmt.Errorf("invalid first ws message")
 	}
 
 	ctx, cancel := context.WithCancel(l.ctx)
 	defer cancel()
 
-	topics := make([]*itick.SubscribeTopic, 0, len(firstMsg.Topics))
-	for _, topic := range firstMsg.Topics {
-		topics = append(topics, &itick.SubscribeTopic{
-			Topic:        topic.Topic,
-			CategoryCode: topic.CategoryCode,
-			Symbol:       topic.Symbol,
-			Market:       topic.Market,
-			Interval:     topic.Interval,
-		})
+	runtime := &tickWsRuntime{
+		conn:            conn,
+		ctx:             ctx,
+		cancel:          cancel,
+		replyCh:         make(chan streamReply, 32),
+		writeCh:         make(chan any, 16),
+		errCh:           make(chan error, 4),
+		streamErrCh:     make(chan streamError, 8),
+		subscriptionMap: make(map[string]types.WsTickTopic),
 	}
 
-	stream, err := l.svcCtx.ItickCli.SubscribeStream(ctx, &itick.SubscribeRequest{
-		Topics: topics,
-	})
-	if err != nil {
-		_ = conn.WriteJSON(map[string]any{
-			"type":     "error",
-			"code":     500,
-			"message":  err.Error(),
-			"serverTs": nowMs(),
-		})
-		return err
-	}
+	go l.readLoop(runtime, heartbeatTimeout, maxPingInterval, nowMs)
 
-	replyCh := make(chan *itick.PushReply, 16)
-	writeCh := make(chan any, 16)
-	errCh := make(chan error, 2)
+	return l.writeLoop(runtime, nowMs)
+}
 
-	var lastPingAt int64 // UnixMilli，0 表示还没收到过 ping
-
-	// 读 gRPC stream
-	go func() {
-		for {
-			reply, err := stream.Recv()
-			if err != nil {
-				select {
-				case errCh <- err:
-				default:
-				}
-				return
-			}
-
+func (l *TickWsLogic) readLoop(runtime *tickWsRuntime, heartbeatTimeout, maxPingInterval time.Duration, nowMs func() int64) {
+	for {
+		var msg types.WsMessage
+		if err := runtime.conn.ReadJSON(&msg); err != nil {
 			select {
-			case replyCh <- reply:
-			case <-ctx.Done():
-				return
-			}
-		}
-	}()
-
-	// 读 ws 客户端消息，处理心跳
-	go func() {
-		for {
-			var msg types.WsMessage
-			if err := conn.ReadJSON(&msg); err != nil {
-				select {
-				case errCh <- err:
-				default:
-				}
-				return
-			}
-
-			recvAt := time.Now()
-
-			// 任何客户端消息到达，都刷新读超时
-			if err := conn.SetReadDeadline(recvAt.Add(heartbeatTimeout)); err != nil {
-				select {
-				case errCh <- err:
-				default:
-				}
-				return
-			}
-
-			switch msg.Type {
-			case "ping":
-				currentPingAt := recvAt.UnixMilli()
-
-				// 校验两次 ping 间隔
-				if lastPingAt > 0 {
-					interval := time.Duration(currentPingAt-lastPingAt) * time.Millisecond
-					if interval > maxPingInterval {
-						select {
-						case writeCh <- map[string]any{
-							"type":      "error",
-							"code":      4001,
-							"message":   "ping interval exceeded",
-							"clientTs":  msg.ClientTs,
-							"serverTs":  nowMs(),
-							"maxMillis": maxPingInterval.Milliseconds(),
-							"actualMs":  interval.Milliseconds(),
-						}:
-						default:
-						}
-
-						select {
-						case errCh <- fmt.Errorf("ping interval exceeded: %dms", interval.Milliseconds()):
-						default:
-						}
-
-					}
-				}
-
-				lastPingAt = currentPingAt
-
-				// 回复 pong：带回客户端时间戳 + 当前服务端时间戳
-				select {
-				case writeCh <- map[string]any{
-					"type":     "pong",
-					"clientTs": msg.ClientTs,
-					"serverTs": nowMs(),
-				}:
-				case <-ctx.Done():
-					return
-				}
-
-			case "subscribe":
-				// 这里先忽略后续 subscribe；后面你要动态订阅再扩展
+			case runtime.errCh <- err:
 			default:
-				// 未识别消息可以忽略，也可以返回错误
 			}
+			return
 		}
-	}()
 
+		recvAt := time.Now()
+
+		if err := runtime.conn.SetReadDeadline(recvAt.Add(heartbeatTimeout)); err != nil {
+			select {
+			case runtime.errCh <- err:
+			default:
+			}
+			return
+		}
+
+		switch msg.Type {
+		case "ping":
+			l.handlePing(runtime, msg, recvAt, maxPingInterval, nowMs)
+		case "subscribe":
+			if err := l.handleSubscribe(runtime, msg, nowMs); err != nil {
+				select {
+				case runtime.errCh <- err:
+				default:
+				}
+				return
+			}
+		default:
+		}
+	}
+}
+
+func (l *TickWsLogic) writeLoop(runtime *tickWsRuntime, nowMs func() int64) error {
 	for {
 		select {
-		case <-ctx.Done():
-			return ctx.Err()
+		case <-runtime.ctx.Done():
+			return runtime.ctx.Err()
 
-		case err := <-errCh:
-			cancel()
+		case err := <-runtime.errCh:
+			runtime.cancel()
+			runtime.stopStream()
 			return err
 
-		case reply := <-replyCh:
-			if err := conn.WriteJSON(map[string]any{
+		case streamErr := <-runtime.streamErrCh:
+			if streamErr.gen != runtime.streamGen {
+				continue
+			}
+			runtime.cancel()
+			runtime.stopStream()
+			return streamErr.err
+
+		case item := <-runtime.replyCh:
+			if item.gen != runtime.streamGen || item.reply == nil {
+				continue
+			}
+
+			reply := item.reply
+			if err := runtime.conn.WriteJSON(map[string]any{
 				"type":         "push",
 				"topic":        reply.Topic,
 				"categoryCode": reply.CategoryCode,
@@ -251,15 +199,168 @@ func (l *TickWsLogic) TickWs(conn *websocket.Conn, r *http.Request) error {
 				"payload":      json.RawMessage(reply.Payload),
 				"serverTs":     nowMs(),
 			}); err != nil {
-				cancel()
+				runtime.cancel()
+				runtime.stopStream()
 				return err
 			}
 
-		case out := <-writeCh:
-			if err := conn.WriteJSON(out); err != nil {
-				cancel()
+		case out := <-runtime.writeCh:
+			if err := runtime.conn.WriteJSON(out); err != nil {
+				runtime.cancel()
+				runtime.stopStream()
 				return err
 			}
 		}
 	}
+}
+
+func (l *TickWsLogic) handlePing(runtime *tickWsRuntime, msg types.WsMessage, recvAt time.Time, maxPingInterval time.Duration, nowMs func() int64) {
+	currentPingAt := recvAt.UnixMilli()
+
+	if runtime.lastPingAt > 0 {
+		interval := time.Duration(currentPingAt-runtime.lastPingAt) * time.Millisecond
+		if interval > maxPingInterval {
+			select {
+			case runtime.writeCh <- map[string]any{
+				"type":      "error",
+				"code":      4001,
+				"message":   "ping interval exceeded",
+				"clientTs":  msg.ClientTs,
+				"serverTs":  nowMs(),
+				"maxMillis": maxPingInterval.Milliseconds(),
+				"actualMs":  interval.Milliseconds(),
+			}:
+			default:
+			}
+
+			select {
+			case runtime.errCh <- fmt.Errorf("ping interval exceeded: %dms", interval.Milliseconds()):
+			default:
+			}
+			return
+		}
+	}
+
+	runtime.lastPingAt = currentPingAt
+
+	select {
+	case runtime.writeCh <- map[string]any{
+		"type":     "pong",
+		"clientTs": msg.ClientTs,
+		"serverTs": nowMs(),
+	}:
+	case <-runtime.ctx.Done():
+	}
+}
+
+func (l *TickWsLogic) handleSubscribe(runtime *tickWsRuntime, msg types.WsMessage, nowMs func() int64) error {
+	if len(msg.Topics) == 0 {
+		select {
+		case runtime.writeCh <- map[string]any{
+			"type":     "error",
+			"code":     400,
+			"message":  "empty subscribe topics",
+			"serverTs": nowMs(),
+		}:
+		default:
+		}
+		return nil
+	}
+
+	for _, topic := range msg.Topics {
+		if topic.Topic == "" || topic.CategoryCode == "" || topic.Symbol == "" {
+			continue
+		}
+		runtime.subscriptionMap[buildTopicKey(topic)] = topic
+	}
+
+	if err := l.restartStream(runtime); err != nil {
+		select {
+		case runtime.writeCh <- map[string]any{
+			"type":     "error",
+			"code":     500,
+			"message":  err.Error(),
+			"serverTs": nowMs(),
+		}:
+		default:
+		}
+		return err
+	}
+
+	select {
+	case runtime.writeCh <- map[string]any{
+		"type":      "subscribed",
+		"topics":    msg.Topics,
+		"serverTs":  nowMs(),
+		"topicSize": len(runtime.subscriptionMap),
+	}:
+	default:
+	}
+
+	return nil
+}
+
+func (l *TickWsLogic) restartStream(runtime *tickWsRuntime) error {
+	if len(runtime.subscriptionMap) == 0 {
+		return nil
+	}
+
+	runtime.stopStream()
+	runtime.streamGen++
+	currentGen := runtime.streamGen
+
+	streamCtx, cancelStream := context.WithCancel(runtime.ctx)
+	runtime.streamCancel = cancelStream
+
+	topics := make([]*itick.SubscribeTopic, 0, len(runtime.subscriptionMap))
+	for _, topic := range runtime.subscriptionMap {
+		topics = append(topics, &itick.SubscribeTopic{
+			Topic:        topic.Topic,
+			CategoryCode: topic.CategoryCode,
+			Symbol:       topic.Symbol,
+			Market:       topic.Market,
+			Interval:     topic.Interval,
+		})
+	}
+
+	stream, err := l.svcCtx.ItickCli.SubscribeStream(streamCtx, &itick.SubscribeRequest{
+		Topics: topics,
+	})
+	if err != nil {
+		cancelStream()
+		runtime.streamCancel = nil
+		return err
+	}
+
+	go func() {
+		for {
+			reply, err := stream.Recv()
+			if err != nil {
+				select {
+				case runtime.streamErrCh <- streamError{gen: currentGen, err: err}:
+				default:
+				}
+				return
+			}
+
+			select {
+			case runtime.replyCh <- streamReply{gen: currentGen, reply: reply}:
+			case <-streamCtx.Done():
+				return
+			}
+		}
+	}()
+
+	return nil
+}
+
+func (r *tickWsRuntime) stopStream() {
+	if r.streamCancel != nil {
+		r.streamCancel()
+		r.streamCancel = nil
+	}
+}
+
+func buildTopicKey(topic types.WsTickTopic) string {
+	return topic.Topic + "|" + topic.CategoryCode + "|" + topic.Symbol + "|" + topic.Market + "|" + topic.Interval
 }
