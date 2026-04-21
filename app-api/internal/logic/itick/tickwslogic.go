@@ -305,12 +305,10 @@ func (l *TickWsLogic) restartStream(runtime *tickWsRuntime) error {
 		return nil
 	}
 
-	runtime.stopStream()
-	runtime.streamGen++
-	currentGen := runtime.streamGen
+	prevCancel := runtime.streamCancel
+	currentGen := runtime.streamGen + 1
 
 	streamCtx, cancelStream := context.WithCancel(runtime.ctx)
-	runtime.streamCancel = cancelStream
 
 	topics := make([]*itick.SubscribeTopic, 0, len(runtime.subscriptionMap))
 	for _, topic := range runtime.subscriptionMap {
@@ -328,9 +326,11 @@ func (l *TickWsLogic) restartStream(runtime *tickWsRuntime) error {
 	})
 	if err != nil {
 		cancelStream()
-		runtime.streamCancel = nil
 		return err
 	}
+
+	runtime.streamGen = currentGen
+	runtime.streamCancel = cancelStream
 
 	go func() {
 		for {
@@ -350,6 +350,10 @@ func (l *TickWsLogic) restartStream(runtime *tickWsRuntime) error {
 			}
 		}
 	}()
+
+	if prevCancel != nil {
+		prevCancel()
+	}
 
 	return nil
 }

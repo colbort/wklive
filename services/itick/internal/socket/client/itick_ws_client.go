@@ -183,7 +183,11 @@ func (c *ItickWsClient) runAsLeader(ctx context.Context) error {
 		}
 
 		if err := c.readLoop(ctx); err != nil {
-			logx.Errorf("itick ws read loop stopped, category=%s err=%v", c.categoryCode, err)
+			if isNormalWsClose(err) {
+				logx.Infof("itick ws read loop closed normally, category=%s err=%v", c.categoryCode, err)
+			} else {
+				logx.Errorf("itick ws read loop stopped, category=%s err=%v", c.categoryCode, err)
+			}
 		}
 
 		c.closeConn()
@@ -270,6 +274,10 @@ func (c *ItickWsClient) readLoop(ctx context.Context) error {
 		_ = conn.SetReadDeadline(time.Now().Add(defaultPongWait))
 		c.handleUpstreamMessage(ctx, data)
 	}
+}
+
+func isNormalWsClose(err error) bool {
+	return websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway)
 }
 
 func (c *ItickWsClient) handleUpstreamMessage(ctx context.Context, data []byte) {
