@@ -455,6 +455,15 @@ func (c *ItickWsClient) restoreSubscriptions(ctx context.Context) error {
 		}
 	}
 
+	for key, msg := range c.snapshotUpstreamSubscriptions() {
+		if _, ok := merged[key]; ok {
+			continue
+		}
+		if err := c.UnsubscribeByClientMessage(msg); err != nil {
+			logx.Errorf("restore unsubscribe stale topic failed, category=%s topic=%s err=%v", c.categoryCode, key, err)
+		}
+	}
+
 	return nil
 }
 
@@ -616,6 +625,17 @@ func (c *ItickWsClient) resetUpstreamSubscriptions() {
 	defer c.upstreamMu.Unlock()
 
 	c.upstreamSubs = make(map[string]struct{})
+}
+
+func (c *ItickWsClient) snapshotUpstreamSubscriptions() map[string]server.ClientMessage {
+	c.upstreamMu.Lock()
+	defer c.upstreamMu.Unlock()
+
+	out := make(map[string]server.ClientMessage, len(c.upstreamSubs))
+	for key := range c.upstreamSubs {
+		out[key] = server.ParseTopicKey(key)
+	}
+	return out
 }
 
 func buildSymbolRegion(symbol, market string) string {

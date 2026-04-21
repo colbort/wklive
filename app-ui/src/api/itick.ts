@@ -62,10 +62,9 @@ export async function apiBatchGetQuote(
 }
 
 export function buildItickWsUrl(baseUrl?: string) {
-  // const resolvedBaseUrl = baseUrl || import.meta.env.VITE_API_BASE_URL || window.location.origin
-  // const parsed = new URL(resolvedBaseUrl)
-  // const protocol = parsed.protocol === 'https:' ? 'wss:' : 'ws:'
+  const resolvedBaseUrl = baseUrl || import.meta.env.VITE_API_BASE_URL || window.location.origin
+  const parsed = new URL(resolvedBaseUrl)
+  const protocol = parsed.protocol === 'https:' ? 'wss:' : 'ws:'
 
-  // return `${protocol}//${parsed.host}/app/user/ws/itick`
-  return 'ws://127.0.0.1:6666/app/itick/ws/itick'
+  return `${protocol}//${parsed.host}/app/itick/ws/itick`
 }

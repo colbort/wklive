@@ -7,11 +7,9 @@ import (
 	"flag"
 	"fmt"
 	"strings"
-
 	"wklive/app-api/internal/config"
 	"wklive/app-api/internal/handler"
 	"wklive/app-api/internal/svc"
-
 	"wklive/common/etcd"
 
 	"github.com/zeromicro/go-zero/rest"

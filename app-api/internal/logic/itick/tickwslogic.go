@@ -47,6 +47,7 @@ type tickWsRuntime struct {
 	streamGen       int64
 	streamCancels   map[string]context.CancelFunc
 	activeStreamGen map[int64]struct{}
+	streamGenByKey  map[string]int64
 	subscriptionMap map[string]types.WsTickTopic
 }
 
@@ -126,6 +127,7 @@ func (l *TickWsLogic) TickWs(conn *websocket.Conn, r *http.Request) error {
 		streamErrCh:     make(chan streamError, 8),
 		streamCancels:   make(map[string]context.CancelFunc),
 		activeStreamGen: make(map[int64]struct{}),
+		streamGenByKey:  make(map[string]int64),
 		subscriptionMap: make(map[string]types.WsTickTopic),
 	}
 
@@ -275,21 +277,28 @@ func (l *TickWsLogic) handleSubscribe(runtime *tickWsRuntime, msg types.WsMessag
 	}
 
 	added := make([]types.WsTickTopic, 0, len(msg.Topics))
-	pending := make(map[string]struct{}, len(msg.Topics))
+	desired := make(map[string]struct{}, len(msg.Topics))
+	topicGroups := make(map[string]struct{}, len(msg.Topics))
+
 	for _, topic := range msg.Topics {
 		if topic.Topic == "" || topic.CategoryCode == "" || topic.Symbol == "" {
 			continue
 		}
 		key := buildTopicKey(topic)
+		topicGroups[topic.Topic] = struct{}{}
+
+		if _, duplicated := desired[key]; duplicated {
+			continue
+		}
+		desired[key] = struct{}{}
+
 		if runtime.hasSubscription(key) {
 			continue
 		}
-		if _, ok := pending[key]; ok {
-			continue
-		}
-		pending[key] = struct{}{}
 		added = append(added, topic)
 	}
+
+	removed := runtime.removeStaleSubscriptions(desired, topicGroups)
 
 	for _, topic := range added {
 		if err := l.startTopicStream(runtime, topic); err != nil {
@@ -312,6 +321,7 @@ func (l *TickWsLogic) handleSubscribe(runtime *tickWsRuntime, msg types.WsMessag
 		"type":      "subscribed",
 		"topics":    msg.Topics,
 		"added":     added,
+		"removed":   removed,
 		"serverTs":  nowMs(),
 		"topicSize": runtime.subscriptionSize(),
 	}:
@@ -378,6 +388,9 @@ func (r *tickWsRuntime) stopStream() {
 	for gen := range r.activeStreamGen {
 		delete(r.activeStreamGen, gen)
 	}
+	for key := range r.streamGenByKey {
+		delete(r.streamGenByKey, key)
+	}
 }
 
 func (r *tickWsRuntime) hasSubscription(key string) bool {
@@ -409,6 +422,7 @@ func (r *tickWsRuntime) addStream(topicKey string, gen int64, cancel context.Can
 	r.streamGen = gen
 	r.streamCancels[topicKey] = cancel
 	r.activeStreamGen[gen] = struct{}{}
+	r.streamGenByKey[topicKey] = gen
 }
 
 func (r *tickWsRuntime) isActiveStream(gen int64) bool {
@@ -417,6 +431,40 @@ func (r *tickWsRuntime) isActiveStream(gen int64) bool {
 
 	_, ok := r.activeStreamGen[gen]
 	return ok
+}
+
+func (r *tickWsRuntime) removeStaleSubscriptions(desired map[string]struct{}, topicGroups map[string]struct{}) []string {
+	if len(topicGroups) == 0 {
+		return nil
+	}
+
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	removed := make([]string, 0)
+	for key, topic := range r.subscriptionMap {
+		if _, sameGroup := topicGroups[topic.Topic]; !sameGroup {
+			continue
+		}
+		if _, keep := desired[key]; keep {
+			continue
+		}
+
+		if cancel := r.streamCancels[key]; cancel != nil {
+			cancel()
+		}
+
+		if gen, ok := r.streamGenByKey[key]; ok {
+			delete(r.activeStreamGen, gen)
+			delete(r.streamGenByKey, key)
+		}
+
+		delete(r.streamCancels, key)
+		delete(r.subscriptionMap, key)
+		removed = append(removed, key)
+	}
+
+	return removed
 }
 
 func buildTopicKey(topic types.WsTickTopic) string {

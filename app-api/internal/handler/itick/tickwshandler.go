@@ -27,7 +27,7 @@ func TickWsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		upgrader := websocket.Upgrader{
 			CheckOrigin: func(r *http.Request) bool { return true },
 		}
-
+		logx.Infof("ws 请求头 %v", r.Header)
 		logx.Infof("tick ws request: host=%s origin=%s ua=%s. id=%s", r.Host, r.Header.Get("Origin"), r.UserAgent(), req.Id)
 
 		conn, err := upgrader.Upgrade(w, r, nil)
