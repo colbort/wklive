@@ -2,6 +2,7 @@ package server
 
 import (
 	"errors"
+	"strings"
 	"sync"
 	"sync/atomic"
 
@@ -241,4 +242,27 @@ func (h *Hub) TopicSubscriberCount(msg ClientMessage) int {
 	defer h.mu.RUnlock()
 
 	return len(h.subs[key])
+}
+
+func (h *Hub) SnapshotSubscriptions(categoryCode string) []ClientMessage {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+
+	categoryCode = strings.ToLower(strings.TrimSpace(categoryCode))
+	out := make([]ClientMessage, 0, len(h.subs))
+
+	for key, set := range h.subs {
+		if len(set) == 0 {
+			continue
+		}
+
+		msg := ParseTopicKey(key)
+		if strings.ToLower(strings.TrimSpace(msg.CategoryCode)) != categoryCode {
+			continue
+		}
+
+		out = append(out, msg)
+	}
+
+	return out
 }

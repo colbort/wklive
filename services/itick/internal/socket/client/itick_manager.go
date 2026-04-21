@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"strings"
 	"sync"
+	"time"
 
 	"wklive/services/itick/internal/socket/server"
 	"wklive/services/itick/models"
@@ -90,6 +91,7 @@ func (m *ItickManager) Load(ctx context.Context) error {
 			m.bus,
 			m.registry,
 			NewRedisLeaderLock(m.lockRedis, lockKey),
+			m.hub,
 		)
 	}
 
@@ -106,6 +108,18 @@ func (m *ItickManager) Load(ctx context.Context) error {
 }
 
 func (m *ItickManager) Start(ctx context.Context) error {
+	m.hub.SetHooks(
+		func(key string, msg server.ClientMessage) {
+			hookCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+
+			if err := m.EnsureUpstreamSubscription(hookCtx, msg); err != nil {
+				logx.Errorf("ensure upstream subscription failed, topic=%s err=%v", key, err)
+			}
+		},
+		nil,
+	)
+
 	if err := m.bus.Subscribe(ctx, func(msg server.ClientMessage, payload any) {
 		m.hub.Broadcast(msg, payload)
 	}); err != nil {
@@ -144,6 +158,22 @@ func (m *ItickManager) AddGlobalSubscription(ctx context.Context, msg server.Cli
 
 func (m *ItickManager) RemoveGlobalSubscription(ctx context.Context, msg server.ClientMessage) error {
 	return m.registry.Remove(ctx, msg)
+}
+
+func (m *ItickManager) EnsureUpstreamSubscription(ctx context.Context, msg server.ClientMessage) error {
+	if err := m.registry.EnsureAndNotify(ctx, msg); err != nil {
+		return err
+	}
+
+	m.mu.RLock()
+	cli := m.clients[strings.ToLower(strings.TrimSpace(msg.CategoryCode))]
+	m.mu.RUnlock()
+
+	if cli != nil && cli.IsLeader() {
+		return cli.subscribeByClientMessage(msg)
+	}
+
+	return nil
 }
 
 func sha1Hex(s string) string {

@@ -24,6 +24,7 @@ const (
 	defaultPongWait       = 70 * time.Second
 	defaultPingPeriod     = 30 * time.Second
 	defaultReconnectDelay = 5 * time.Second
+	defaultReconcileGap   = 5 * time.Second
 
 	defaultLeaderTTL      = 15 * time.Second
 	defaultLeaderRenewGap = 5 * time.Second
@@ -39,9 +40,13 @@ type ItickWsClient struct {
 	mu   sync.RWMutex
 	conn *websocket.Conn
 
+	upstreamMu   sync.Mutex
+	upstreamSubs map[string]struct{}
+
 	bus      *ClusterBus
 	registry *SubscriptionRegistry
 	locker   *RedisLeaderLock
+	hub      *server.Hub
 
 	leader int32
 	closed int32
@@ -52,6 +57,7 @@ func NewItickWsClient(
 	bus *ClusterBus,
 	registry *SubscriptionRegistry,
 	locker *RedisLeaderLock,
+	hub *server.Hub,
 ) *ItickWsClient {
 	return &ItickWsClient{
 		url:          url,
@@ -60,9 +66,11 @@ func NewItickWsClient(
 		dialer: &websocket.Dialer{
 			HandshakeTimeout: 10 * time.Second,
 		},
-		bus:      bus,
-		registry: registry,
-		locker:   locker,
+		upstreamSubs: make(map[string]struct{}),
+		bus:          bus,
+		registry:     registry,
+		locker:       locker,
+		hub:          hub,
 	}
 }
 
@@ -178,11 +186,15 @@ func (c *ItickWsClient) runAsLeader(ctx context.Context) error {
 			}
 		}
 
-		if err := c.restoreSubscriptions(ctx); err != nil {
+		sessionCtx, stopSession := context.WithCancel(ctx)
+
+		if err := c.restoreSubscriptions(sessionCtx); err != nil {
 			logx.Errorf("itick ws restore subscriptions failed, category=%s err=%v", c.categoryCode, err)
 		}
 
-		if err := c.readLoop(ctx); err != nil {
+		go c.reconcileSubscriptionsLoop(sessionCtx)
+
+		if err := c.readLoop(sessionCtx); err != nil {
 			if isNormalWsClose(err) {
 				logx.Infof("itick ws read loop closed normally, category=%s err=%v", c.categoryCode, err)
 			} else {
@@ -190,12 +202,29 @@ func (c *ItickWsClient) runAsLeader(ctx context.Context) error {
 			}
 		}
 
+		stopSession()
 		c.closeConn()
 
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
 		case <-time.After(defaultReconnectDelay):
+		}
+	}
+}
+
+func (c *ItickWsClient) reconcileSubscriptionsLoop(ctx context.Context) {
+	ticker := time.NewTicker(defaultReconcileGap)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-ticker.C:
+			if err := c.restoreSubscriptions(ctx); err != nil {
+				logx.Errorf("itick ws reconcile subscriptions failed, category=%s err=%v", c.categoryCode, err)
+			}
 		}
 	}
 }
@@ -214,6 +243,7 @@ func (c *ItickWsClient) connect() error {
 	c.mu.Lock()
 	c.conn = conn
 	c.mu.Unlock()
+	c.resetUpstreamSubscriptions()
 
 	go c.keepaliveLoop(conn)
 
@@ -399,14 +429,29 @@ func (c *ItickWsClient) HandleSubscriptionChange(change SubscriptionChange) {
 }
 
 func (c *ItickWsClient) restoreSubscriptions(ctx context.Context) error {
-	list, err := c.registry.ListActive(ctx, c.categoryCode)
+	registryList, err := c.registry.ListActive(ctx, c.categoryCode)
 	if err != nil {
 		return err
 	}
 
-	for _, msg := range list {
+	merged := make(map[string]server.ClientMessage, len(registryList))
+	for _, msg := range registryList {
+		merged[server.BuildTopicKey(msg)] = msg
+	}
+
+	if c.hub != nil {
+		for _, msg := range c.hub.SnapshotSubscriptions(c.categoryCode) {
+			key := server.BuildTopicKey(msg)
+			merged[key] = msg
+			if err := c.registry.EnsureLease(ctx, msg); err != nil {
+				logx.Errorf("restore local subscription lease failed, category=%s topic=%s err=%v", c.categoryCode, key, err)
+			}
+		}
+	}
+
+	for key, msg := range merged {
 		if err := c.subscribeByClientMessage(msg); err != nil {
-			logx.Errorf("restore subscribe failed, category=%s topic=%s err=%v", c.categoryCode, server.BuildTopicKey(msg), err)
+			logx.Errorf("restore subscribe failed, category=%s topic=%s err=%v", c.categoryCode, key, err)
 		}
 	}
 
@@ -414,19 +459,39 @@ func (c *ItickWsClient) restoreSubscriptions(ctx context.Context) error {
 }
 
 func (c *ItickWsClient) subscribeByClientMessage(msg server.ClientMessage) error {
+	key := server.BuildTopicKey(msg)
+	if c.hasUpstreamSubscription(key) {
+		return nil
+	}
+
 	params, types, err := c.buildItickSubscribe(msg)
 	if err != nil {
 		return err
 	}
-	return c.subscribe(params, types)
+	if err := c.subscribe(params, types); err != nil {
+		return err
+	}
+
+	c.markUpstreamSubscription(key)
+	return nil
 }
 
 func (c *ItickWsClient) UnsubscribeByClientMessage(msg server.ClientMessage) error {
+	key := server.BuildTopicKey(msg)
+	if !c.hasUpstreamSubscription(key) {
+		return nil
+	}
+
 	params, types, err := c.buildItickSubscribe(msg)
 	if err != nil {
 		return err
 	}
-	return c.unsubscribe(params, types)
+	if err := c.unsubscribe(params, types); err != nil {
+		return err
+	}
+
+	c.unmarkUpstreamSubscription(key)
+	return nil
 }
 
 func (c *ItickWsClient) buildItickSubscribe(msg server.ClientMessage) (params string, types string, err error) {
@@ -517,10 +582,40 @@ func (c *ItickWsClient) closeConn() {
 	conn := c.conn
 	c.conn = nil
 	c.mu.Unlock()
+	c.resetUpstreamSubscriptions()
 
 	if conn != nil {
 		_ = conn.Close()
 	}
+}
+
+func (c *ItickWsClient) hasUpstreamSubscription(key string) bool {
+	c.upstreamMu.Lock()
+	defer c.upstreamMu.Unlock()
+
+	_, ok := c.upstreamSubs[key]
+	return ok
+}
+
+func (c *ItickWsClient) markUpstreamSubscription(key string) {
+	c.upstreamMu.Lock()
+	defer c.upstreamMu.Unlock()
+
+	c.upstreamSubs[key] = struct{}{}
+}
+
+func (c *ItickWsClient) unmarkUpstreamSubscription(key string) {
+	c.upstreamMu.Lock()
+	defer c.upstreamMu.Unlock()
+
+	delete(c.upstreamSubs, key)
+}
+
+func (c *ItickWsClient) resetUpstreamSubscriptions() {
+	c.upstreamMu.Lock()
+	defer c.upstreamMu.Unlock()
+
+	c.upstreamSubs = make(map[string]struct{})
 }
 
 func buildSymbolRegion(symbol, market string) string {

@@ -4,7 +4,6 @@
 package itick
 
 import (
-	"fmt"
 	"net/http"
 
 	"wklive/app-api/internal/logic/itick"
@@ -18,7 +17,6 @@ import (
 
 func TickWsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("===================================. 11")
 		var req types.WsItickReq
 		if err := httpx.Parse(r, &req); err != nil {
 			logx.Errorf("获取参数失败 %s", err.Error())

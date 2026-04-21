@@ -68,6 +68,13 @@ func (l *SubscribeStreamLogic) SubscribeStream(in *itick.SubscribeRequest, strea
 			return err
 		}
 
+		// Redis lease may already exist and therefore not publish an add event.
+		// After the local Hub subscription is registered, explicitly ensure the
+		// current leader has subscribed upstream.
+		if err := l.svcCtx.ItickManager.EnsureUpstreamSubscription(stream.Context(), msg); err != nil {
+			logx.Errorf("ensure upstream subscription failed, key=%s, err=%v", server.BuildTopicKey(msg), err)
+		}
+
 		subscribed = append(subscribed, msg)
 	}
 

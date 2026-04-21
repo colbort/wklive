@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"sync"
 	"time"
 
 	"wklive/app-api/internal/svc"
@@ -24,12 +25,15 @@ type streamReply struct {
 }
 
 type streamError struct {
-	gen int64
-	err error
+	gen      int64
+	topicKey string
+	err      error
 }
 
 type tickWsRuntime struct {
 	conn *websocket.Conn
+
+	mu sync.RWMutex
 
 	ctx    context.Context
 	cancel context.CancelFunc
@@ -41,7 +45,8 @@ type tickWsRuntime struct {
 
 	lastPingAt      int64
 	streamGen       int64
-	streamCancel    context.CancelFunc
+	streamCancels   map[string]context.CancelFunc
+	activeStreamGen map[int64]struct{}
 	subscriptionMap map[string]types.WsTickTopic
 }
 
@@ -119,6 +124,8 @@ func (l *TickWsLogic) TickWs(conn *websocket.Conn, r *http.Request) error {
 		writeCh:         make(chan any, 16),
 		errCh:           make(chan error, 4),
 		streamErrCh:     make(chan streamError, 8),
+		streamCancels:   make(map[string]context.CancelFunc),
+		activeStreamGen: make(map[int64]struct{}),
 		subscriptionMap: make(map[string]types.WsTickTopic),
 	}
 
@@ -176,7 +183,7 @@ func (l *TickWsLogic) writeLoop(runtime *tickWsRuntime, nowMs func() int64) erro
 			return err
 
 		case streamErr := <-runtime.streamErrCh:
-			if streamErr.gen != runtime.streamGen {
+			if !runtime.isActiveStream(streamErr.gen) {
 				continue
 			}
 			runtime.cancel()
@@ -184,7 +191,7 @@ func (l *TickWsLogic) writeLoop(runtime *tickWsRuntime, nowMs func() int64) erro
 			return streamErr.err
 
 		case item := <-runtime.replyCh:
-			if item.gen != runtime.streamGen || item.reply == nil {
+			if !runtime.isActiveStream(item.gen) || item.reply == nil {
 				continue
 			}
 
@@ -267,32 +274,46 @@ func (l *TickWsLogic) handleSubscribe(runtime *tickWsRuntime, msg types.WsMessag
 		return nil
 	}
 
+	added := make([]types.WsTickTopic, 0, len(msg.Topics))
+	pending := make(map[string]struct{}, len(msg.Topics))
 	for _, topic := range msg.Topics {
 		if topic.Topic == "" || topic.CategoryCode == "" || topic.Symbol == "" {
 			continue
 		}
-		runtime.subscriptionMap[buildTopicKey(topic)] = topic
+		key := buildTopicKey(topic)
+		if runtime.hasSubscription(key) {
+			continue
+		}
+		if _, ok := pending[key]; ok {
+			continue
+		}
+		pending[key] = struct{}{}
+		added = append(added, topic)
 	}
 
-	if err := l.restartStream(runtime); err != nil {
-		select {
-		case runtime.writeCh <- map[string]any{
-			"type":     "error",
-			"code":     500,
-			"message":  err.Error(),
-			"serverTs": nowMs(),
-		}:
-		default:
+	for _, topic := range added {
+		if err := l.startTopicStream(runtime, topic); err != nil {
+			select {
+			case runtime.writeCh <- map[string]any{
+				"type":     "error",
+				"code":     500,
+				"message":  err.Error(),
+				"serverTs": nowMs(),
+			}:
+			default:
+			}
+			return err
 		}
-		return err
+		runtime.addSubscription(buildTopicKey(topic), topic)
 	}
 
 	select {
 	case runtime.writeCh <- map[string]any{
 		"type":      "subscribed",
 		"topics":    msg.Topics,
+		"added":     added,
 		"serverTs":  nowMs(),
-		"topicSize": len(runtime.subscriptionMap),
+		"topicSize": runtime.subscriptionSize(),
 	}:
 	default:
 	}
@@ -300,44 +321,36 @@ func (l *TickWsLogic) handleSubscribe(runtime *tickWsRuntime, msg types.WsMessag
 	return nil
 }
 
-func (l *TickWsLogic) restartStream(runtime *tickWsRuntime) error {
-	if len(runtime.subscriptionMap) == 0 {
-		return nil
-	}
-
-	prevCancel := runtime.streamCancel
+func (l *TickWsLogic) startTopicStream(runtime *tickWsRuntime, topic types.WsTickTopic) error {
+	topicKey := buildTopicKey(topic)
 	currentGen := runtime.streamGen + 1
 
 	streamCtx, cancelStream := context.WithCancel(runtime.ctx)
 
-	topics := make([]*itick.SubscribeTopic, 0, len(runtime.subscriptionMap))
-	for _, topic := range runtime.subscriptionMap {
-		topics = append(topics, &itick.SubscribeTopic{
-			Topic:        topic.Topic,
-			CategoryCode: topic.CategoryCode,
-			Symbol:       topic.Symbol,
-			Market:       topic.Market,
-			Interval:     topic.Interval,
-		})
-	}
-
 	stream, err := l.svcCtx.ItickCli.SubscribeStream(streamCtx, &itick.SubscribeRequest{
-		Topics: topics,
+		Topics: []*itick.SubscribeTopic{
+			{
+				Topic:        topic.Topic,
+				CategoryCode: topic.CategoryCode,
+				Symbol:       topic.Symbol,
+				Market:       topic.Market,
+				Interval:     topic.Interval,
+			},
+		},
 	})
 	if err != nil {
 		cancelStream()
 		return err
 	}
 
-	runtime.streamGen = currentGen
-	runtime.streamCancel = cancelStream
+	runtime.addStream(topicKey, currentGen, cancelStream)
 
 	go func() {
 		for {
 			reply, err := stream.Recv()
 			if err != nil {
 				select {
-				case runtime.streamErrCh <- streamError{gen: currentGen, err: err}:
+				case runtime.streamErrCh <- streamError{gen: currentGen, topicKey: topicKey, err: err}:
 				default:
 				}
 				return
@@ -351,18 +364,59 @@ func (l *TickWsLogic) restartStream(runtime *tickWsRuntime) error {
 		}
 	}()
 
-	if prevCancel != nil {
-		prevCancel()
-	}
-
 	return nil
 }
 
 func (r *tickWsRuntime) stopStream() {
-	if r.streamCancel != nil {
-		r.streamCancel()
-		r.streamCancel = nil
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	for key, cancel := range r.streamCancels {
+		cancel()
+		delete(r.streamCancels, key)
 	}
+	for gen := range r.activeStreamGen {
+		delete(r.activeStreamGen, gen)
+	}
+}
+
+func (r *tickWsRuntime) hasSubscription(key string) bool {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	_, ok := r.subscriptionMap[key]
+	return ok
+}
+
+func (r *tickWsRuntime) addSubscription(key string, topic types.WsTickTopic) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	r.subscriptionMap[key] = topic
+}
+
+func (r *tickWsRuntime) subscriptionSize() int {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	return len(r.subscriptionMap)
+}
+
+func (r *tickWsRuntime) addStream(topicKey string, gen int64, cancel context.CancelFunc) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	r.streamGen = gen
+	r.streamCancels[topicKey] = cancel
+	r.activeStreamGen[gen] = struct{}{}
+}
+
+func (r *tickWsRuntime) isActiveStream(gen int64) bool {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	_, ok := r.activeStreamGen[gen]
+	return ok
 }
 
 func buildTopicKey(topic types.WsTickTopic) string {
