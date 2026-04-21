@@ -75,6 +75,7 @@
       "omitempty",
       "otpauth",
       "pageutil",
+      "Premarket",
       "protoreflect",
       "qrcode",
       "sqlutil",
@@ -83,6 +84,7 @@
       "totp",
       "tuser",
       "upgrader",
+      "watchlist",
       "wklive",
       "zeromicro",
       "zrpc"
