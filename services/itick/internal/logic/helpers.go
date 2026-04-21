@@ -131,6 +131,7 @@ func toTenantCategoryProto(item *models.TItickTenantCategory, category *models.T
 	}
 	if category != nil {
 		data.CategoryType = itick.CategoryType(category.CategoryType)
+		data.CategoryCode = category.CategoryCode
 		data.CategoryName = category.CategoryName
 		data.Icon = category.Icon
 	}
@@ -158,6 +159,7 @@ func toTenantProductProto(item *models.TItickTenantProduct, product *models.TIti
 	}
 	if product != nil {
 		data.CategoryType = itick.CategoryType(product.CategoryType)
+		data.CategoryCode = product.CategoryCode
 		data.CategoryName = product.CategoryName
 		data.Market = product.Market
 		data.Symbol = product.Symbol

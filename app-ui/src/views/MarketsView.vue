@@ -14,7 +14,6 @@ import type {
   ItickWsSubscribeMessage,
   ItickWsTopicConfig,
   KlinePayload,
-  Quote,
   QuotePayload,
   TickPayload,
 } from '@/types/itick'
@@ -57,15 +56,7 @@ const selectedProduct = computed(
 )
 
 const selectedCategoryCode = computed(() => {
-  if (selectedCategory.value?.categoryCode) {
-    return selectedCategory.value.categoryCode
-  }
-
-  const productWithCategoryCode = products.value.find(
-    (item) => typeof (item as ItickTenantProduct & { categoryCode?: string }).categoryCode === 'string',
-  ) as (ItickTenantProduct & { categoryCode?: string }) | undefined
-
-  return productWithCategoryCode?.categoryCode || ''
+  return selectedCategory.value?.categoryCode || ''
 })
 
 const selectedQuote = computed(() => {
@@ -145,7 +136,6 @@ watch(products, async (list) => {
     selectedProductKey.value = ''
   }
 
-  await bootstrapQuotes(list)
   queueSocketRefresh()
 }, { deep: true })
 
@@ -200,35 +190,6 @@ async function loadProducts(categoryType: number) {
   }
 }
 
-async function bootstrapQuotes(list: ItickTenantProduct[]) {
-  if (!list.length) {
-    return
-  }
-
-  try {
-    if (!selectedCategoryCode.value) {
-      return
-    }
-
-    const quotes = await store.batchGetQuote({
-      categoryCode: selectedCategoryCode.value,
-      data: list.map((item) => ({
-        categoryCode: selectedCategoryCode.value,
-        market: item.market,
-        symbol: item.symbol,
-      })),
-    })
-
-    const nextMap = { ...quoteMap.value }
-    quotes.forEach((quote) => {
-      nextMap[productKeyByFields(quote.market, quote.symbol)] = quoteToPayload(quote)
-    })
-    quoteMap.value = nextMap
-  } catch (error) {
-    console.error('bootstrap quote failed', error)
-  }
-}
-
 async function bootstrapSelectedProduct() {
   const product = selectedProduct.value
   if (!product) {
@@ -236,33 +197,13 @@ async function bootstrapSelectedProduct() {
   }
 
   try {
-    if (!selectedCategoryCode.value) {
-      return
-    }
-
-    const quote = await store.getQuote({
-      categoryCode: selectedCategoryCode.value,
-      market: product.market,
-      symbol: product.symbol,
-    })
-
-    if (quote) {
-      quoteMap.value = {
-        ...quoteMap.value,
-        [productKey(product)]: quoteToPayload(quote),
-      }
-    }
-  } catch (error) {
-    console.error('bootstrap selected quote failed', error)
-  }
-
-  try {
-    if (!selectedCategoryCode.value) {
+    const categoryCode = product.categoryCode || selectedCategoryCode.value
+    if (!categoryCode) {
       return
     }
 
     const klines = await store.getKline({
-      categoryCode: selectedCategoryCode.value,
+      categoryCode,
       market: product.market,
       symbol: product.symbol,
       kType: 1,
@@ -390,17 +331,9 @@ function stopPingLoop() {
 }
 
 function sendQuoteSubscription() {
-  const categoryCode = selectedCategoryCode.value
-  if (!categoryCode) {
-    return
-  }
-
-  const topics: ItickWsTopicConfig[] = products.value.map((product) => ({
-    topic: 'quote', 
-    categoryCode,
-    symbol: product.symbol,
-    market: product.market,
-  }))
+  const topics = products.value
+    .map((product) => productTopic(product, 'quote'))
+    .filter((topic): topic is ItickWsTopicConfig => Boolean(topic))
 
   if (!topics.length) {
     return
@@ -416,8 +349,14 @@ function sendQuoteSubscription() {
 
 function sendSelectedDetailSubscription() {
   const selected = selectedProduct.value
-  const categoryCode = selectedCategoryCode.value
-  if (!categoryCode || !selected) {
+  if (!selected) {
+    return
+  }
+
+  const depthTopic = productTopic(selected, 'depth')
+  const tickTopic = productTopic(selected, 'tick')
+  const klineTopic = productTopic(selected, 'kline')
+  if (!depthTopic || !tickTopic || !klineTopic) {
     return
   }
 
@@ -425,22 +364,13 @@ function sendSelectedDetailSubscription() {
     type: 'subscribe',
     topics: [
       {
-        topic: 'depth',
-        categoryCode,
-        symbol: selected.symbol,
-        market: selected.market,
+        ...depthTopic,
       },
       {
-        topic: 'tick',
-        categoryCode,
-        symbol: selected.symbol,
-        market: selected.market,
+        ...tickTopic,
       },
       {
-        topic: 'kline',
-        categoryCode,
-        symbol: selected.symbol,
-        market: selected.market,
+        ...klineTopic,
         interval: DEFAULT_INTERVAL,
       },
     ],
@@ -520,6 +450,20 @@ function productKeyByFields(market: string, symbol: string) {
   return `${String(market || '').toUpperCase()}::${String(symbol || '').toUpperCase()}`
 }
 
+function productTopic(product: ItickTenantProduct, topic: ItickWsTopicConfig['topic']) {
+  const categoryCode = product.categoryCode || selectedCategoryCode.value
+  if (!categoryCode || !product.market || !product.symbol) {
+    return null
+  }
+
+  return {
+    topic,
+    categoryCode,
+    market: product.market,
+    symbol: product.symbol,
+  }
+}
+
 function dedupeTopics(items: ItickWsTopicConfig[]) {
   const seen = new Set<string>()
 
@@ -531,18 +475,6 @@ function dedupeTopics(items: ItickWsTopicConfig[]) {
     seen.add(key)
     return true
   })
-}
-
-function quoteToPayload(quote: Quote): QuotePayload {
-  return {
-    lastPrice: quote.lastPrice,
-    open: quote.openPrice || quote.prevClosePrice || quote.lastPrice,
-    high: quote.highPrice,
-    low: quote.lowPrice,
-    volume: quote.volume,
-    turnover: quote.turnover,
-    ts: quote.quoteTs,
-  }
 }
 
 function normalizeQuotePayload(payload: unknown): QuotePayload {

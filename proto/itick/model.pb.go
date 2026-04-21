@@ -617,6 +617,7 @@ type ItickTenantCategory struct {
 	CategoryName  string       `protobuf:"bytes,11,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"`
 	Icon          string       `protobuf:"bytes,12,opt,name=icon,proto3" json:"icon,omitempty"`
 	TenantName    string       `protobuf:"bytes,13,opt,name=tenant_name,json=tenantName,proto3" json:"tenant_name,omitempty"`
+	CategoryCode  string       `protobuf:"bytes,14,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -742,6 +743,13 @@ func (x *ItickTenantCategory) GetTenantName() string {
 	return ""
 }
 
+func (x *ItickTenantCategory) GetCategoryCode() string {
+	if x != nil {
+		return x.CategoryCode
+	}
+	return ""
+}
+
 type ItickTenantProduct struct {
 	state       protoimpl.MessageState `protogen:"open.v1"`
 	Id          int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -765,6 +773,7 @@ type ItickTenantProduct struct {
 	QuoteCoin     string       `protobuf:"bytes,18,opt,name=quote_coin,json=quoteCoin,proto3" json:"quote_coin,omitempty"`
 	Icon          string       `protobuf:"bytes,19,opt,name=icon,proto3" json:"icon,omitempty"`
 	TenantName    string       `protobuf:"bytes,20,opt,name=tenant_name,json=tenantName,proto3" json:"tenant_name,omitempty"`
+	CategoryCode  string       `protobuf:"bytes,21,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -939,6 +948,13 @@ func (x *ItickTenantProduct) GetTenantName() string {
 	return ""
 }
 
+func (x *ItickTenantProduct) GetCategoryCode() string {
+	if x != nil {
+		return x.CategoryCode
+	}
+	return ""
+}
+
 var File_proto_itick_model_proto protoreflect.FileDescriptor
 
 const file_proto_itick_model_proto_rawDesc = "" +
@@ -1012,7 +1028,7 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"\bturnover\x18\v \x01(\x01R\bturnover\x12\x19\n" +
 	"\bquote_ts\x18\f \x01(\x03R\aquoteTs\x12!\n" +
 	"\ftrade_status\x18\r \x01(\x03R\vtradeStatus\x12\x16\n" +
-	"\x06market\x18\x0e \x01(\tR\x06market\"\xa4\x03\n" +
+	"\x06market\x18\x0e \x01(\tR\x06market\"\xc9\x03\n" +
 	"\x13ItickTenantCategory\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
@@ -1030,7 +1046,8 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"\rcategory_name\x18\v \x01(\tR\fcategoryName\x12\x12\n" +
 	"\x04icon\x18\f \x01(\tR\x04icon\x12\x1f\n" +
 	"\vtenant_name\x18\r \x01(\tR\n" +
-	"tenantName\"\xd8\x04\n" +
+	"tenantName\x12#\n" +
+	"\rcategory_code\x18\x0e \x01(\tR\fcategoryCode\"\xfd\x04\n" +
 	"\x12ItickTenantProduct\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1d\n" +
@@ -1056,7 +1073,8 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"quote_coin\x18\x12 \x01(\tR\tquoteCoin\x12\x12\n" +
 	"\x04icon\x18\x13 \x01(\tR\x04icon\x12\x1f\n" +
 	"\vtenant_name\x18\x14 \x01(\tR\n" +
-	"tenantNameB\x1aZ\x18wklive/proto/itick;itickb\x06proto3"
+	"tenantName\x12#\n" +
+	"\rcategory_code\x18\x15 \x01(\tR\fcategoryCodeB\x1aZ\x18wklive/proto/itick;itickb\x06proto3"
 
 var (
 	file_proto_itick_model_proto_rawDescOnce sync.Once

@@ -836,6 +836,7 @@ type ItickTenantCategory struct {
 	CreateTimes  int64  `json:"createTimes"`
 	UpdateTimes  int64  `json:"updateTimes"`
 	CategoryType int64  `json:"categoryType"`
+	CategoryCode string `json:"categoryCode"`
 	CategoryName string `json:"categoryName"`
 	Icon         string `json:"icon"`
 }
@@ -851,6 +852,7 @@ type ItickTenantProduct struct {
 	CreateTimes  int64  `json:"createTimes"`
 	UpdateTimes  int64  `json:"updateTimes"`
 	CategoryType int64  `json:"categoryType"`
+	CategoryCode string `json:"categoryCode"`
 	CategoryName string `json:"categoryName"`
 	Market       string `json:"market"`
 	Symbol       string `json:"symbol"`

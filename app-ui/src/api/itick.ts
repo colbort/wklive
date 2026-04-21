@@ -2,8 +2,6 @@ import { http } from '@/api/http'
 import { compactParams } from '@/api/utils'
 import type { ApiResp } from '@/types/api'
 import type {
-  BatchGetQuoteReq,
-  BatchGetQuoteResp,
   GetKlineReq,
   GetKlineResp,
   GetQuoteReq,
@@ -42,21 +40,6 @@ export async function apiGetKline(params: GetKlineReq): Promise<ApiResp<GetKline
 export async function apiGetQuote(params: GetQuoteReq): Promise<ApiResp<GetQuoteResp>> {
   const { data } = await http.get<ApiResp<GetQuoteResp>>('/itick/quote', {
     params: compactParams(params),
-  })
-  return data
-}
-
-export async function apiBatchGetQuote(
-  params: BatchGetQuoteReq,
-): Promise<ApiResp<BatchGetQuoteResp>> {
-  const { data } = await http.get<ApiResp<BatchGetQuoteResp>>('/itick/batch/quote', {
-    params: {
-      ...compactParams({
-        categoryCode: params.categoryCode,
-        market: params.market,
-      }),
-      data: JSON.stringify(params.data),
-    },
   })
   return data
 }

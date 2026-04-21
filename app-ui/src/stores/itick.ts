@@ -1,14 +1,12 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import {
-  apiBatchGetQuote,
   apiGetKline,
   apiGetQuote,
   apiListVisibleCategories,
   apiListVisibleProducts,
 } from '@/api/itick'
 import type {
-  BatchGetQuoteReq,
   GetKlineReq,
   GetQuoteReq,
   ItickTenantCategory,
@@ -24,7 +22,6 @@ export const useItickStore = defineStore('itick', () => {
   const products = ref<ItickTenantProduct[]>([])
   const klines = ref<Kline[]>([])
   const currentQuote = ref<Quote | null>(null)
-  const quotes = ref<Quote[]>([])
   const loading = ref(false)
 
   async function listVisibleCategories(params: ListVisibleCategoriesReq) {
@@ -71,28 +68,15 @@ export const useItickStore = defineStore('itick', () => {
     }
   }
 
-  async function batchGetQuote(params: BatchGetQuoteReq) {
-    loading.value = true
-    try {
-      const res = await apiBatchGetQuote(params)
-      quotes.value = res.data || []
-      return quotes.value
-    } finally {
-      loading.value = false
-    }
-  }
-
   return {
     categories,
     products,
     klines,
     currentQuote,
-    quotes,
     loading,
     listVisibleCategories,
     listVisibleProducts,
     getKline,
     getQuote,
-    batchGetQuote,
   }
 })

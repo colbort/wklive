@@ -100,6 +100,7 @@ type ItickTenantCategory {
 	updateTimes int64  `json:"updateTimes"`
 	// 冗余返回字段，方便前端展示
 	categoryType int64  `json:"categoryType"`
+	categoryCode string `json:"categoryCode"`
 	categoryName string `json:"categoryName"`
 	icon         string `json:"icon"`
 }
@@ -116,6 +117,7 @@ type ItickTenantProduct {
 	updateTimes int64  `json:"updateTimes"`
 	// 冗余返回字段，方便前端展示
 	categoryType int64  `json:"categoryType"`
+	categoryCode string `json:"categoryCode"`
 	categoryName string `json:"categoryName"`
 	market       string `json:"market"`
 	symbol       string `json:"symbol"`
@@ -259,4 +261,3 @@ service app {
 	@handler TickWsHandler
 	get /ws/:id (WsItickReq)
 }
-

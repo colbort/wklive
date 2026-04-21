@@ -62,6 +62,7 @@ func (l *ListVisibleProductsLogic) ListVisibleProducts(req *types.ListVisiblePro
 			CreateTimes:  item.CreateTimes,
 			UpdateTimes:  item.UpdateTimes,
 			CategoryType: int64(item.CategoryType),
+			CategoryCode: item.CategoryCode,
 			CategoryName: item.CategoryName,
 			Market:       item.Market,
 			Symbol:       item.Symbol,

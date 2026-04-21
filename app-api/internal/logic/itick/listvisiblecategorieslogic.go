@@ -59,6 +59,7 @@ func (l *ListVisibleCategoriesLogic) ListVisibleCategories(req *types.ListVisibl
 			CreateTimes:  item.CreateTimes,
 			UpdateTimes:  item.UpdateTimes,
 			CategoryType: int64(item.CategoryType),
+			CategoryCode: item.CategoryCode,
 			CategoryName: item.CategoryName,
 			Icon:         item.Icon,
 		})

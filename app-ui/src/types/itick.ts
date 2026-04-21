@@ -112,6 +112,7 @@ export interface ItickTenantProduct {
   createTimes: number
   updateTimes: number
   categoryType: number
+  categoryCode: string
   categoryName: string
   market: string
   symbol: string
