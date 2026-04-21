@@ -447,30 +447,34 @@ button {
 
 .mobile-tabbar {
   position: fixed;
-  left: 22px;
-  right: 22px;
-  bottom: 22px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 70;
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 4px;
-  padding: 14px 12px 12px;
-  border-radius: 26px;
-  background: rgba(28, 31, 42, 0.98);
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  gap: 2px;
+  min-height: 84px;
+  padding: 10px 14px max(10px, env(safe-area-inset-bottom));
+  border-radius: 20px 20px 0 0;
+  background: rgba(26, 29, 39, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.035);
+  border-bottom: 0;
   backdrop-filter: blur(20px);
-  box-shadow: 0 20px 60px rgba(5, 12, 24, 0.36);
+  box-shadow: 0 -8px 26px rgba(5, 8, 18, 0.28);
 }
 
 .mobile-tabbar__item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 8px 2px;
-  border-radius: 16px;
-  color: rgba(243, 247, 254, 0.62);
+  justify-content: center;
+  gap: 5px;
+  padding: 2px;
+  border-radius: 14px;
+  color: rgba(243, 247, 254, 0.58);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .mobile-tabbar__item--active {
@@ -478,12 +482,20 @@ button {
 }
 
 .mobile-tabbar__icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 30px;
+  border-radius: 9px;
   background: transparent;
   color: currentColor;
-  font-size: 28px;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.mobile-tabbar__item--active .mobile-tabbar__icon {
+  color: var(--accent-strong);
 }
 
 .site-action-circle,
@@ -580,6 +592,6 @@ button {
   }
 
   .page-content {
-    padding-bottom: 146px;
+    padding-bottom: 112px;
   }
 }

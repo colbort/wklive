@@ -136,7 +136,6 @@
                 class="icon-preview"
                 :preview-teleported="true"
               />
-              <span class="icon-url">{{ row.icon }}</span>
             </div>
             <span v-else>-</span>
           </template>
@@ -196,9 +195,15 @@
           <el-select
             v-model="form.productId"
             filterable
+            remote
+            reserve-keyword
             clearable
+            :loading="productOptionsLoading"
+            :remote-method="handleProductRemoteSearch"
             :placeholder="t('itick.pleaseSelectProduct')"
+            popper-class="tenant-product-select-popper"
             style="width: 100%"
+            @visible-change="handleProductSelectVisibleChange"
           >
             <el-option
               v-for="item in productOptions"
@@ -206,6 +211,28 @@
               :label="`${item.id} - ${item.name || item.displayName} (${item.symbol})`"
               :value="item.id"
             />
+            <template #footer>
+              <div class="product-select-footer" @mousedown.prevent>
+                <span>{{ t('common.totalItems', { count: productOptionPagination.total }) }}</span>
+                <div class="product-select-footer__actions">
+                  <el-button
+                    size="small"
+                    :disabled="!productOptionPagination.hasPrev || productOptionsLoading"
+                    @click.stop="handleProductOptionsPrev"
+                  >
+                    {{ t('common.prevPage') }}
+                  </el-button>
+                  <el-button
+                    size="small"
+                    type="primary"
+                    :disabled="!productOptionPagination.hasNext || productOptionsLoading"
+                    @click.stop="handleProductOptionsNext"
+                  >
+                    {{ t('common.nextPage') }}
+                  </el-button>
+                </div>
+              </div>
+            </template>
           </el-select>
         </el-form-item>
 
@@ -344,9 +371,15 @@
             <el-select
               v-model="row.productId"
               filterable
+              remote
+              reserve-keyword
               clearable
+              :loading="productOptionsLoading"
+              :remote-method="handleProductRemoteSearch"
               :placeholder="t('itick.pleaseSelectProduct')"
+              popper-class="tenant-product-select-popper"
               style="width: 100%"
+              @visible-change="handleProductSelectVisibleChange"
             >
               <el-option
                 v-for="item in productOptions"
@@ -354,6 +387,28 @@
                 :label="`${item.id} - ${item.name || item.displayName} (${item.symbol})`"
                 :value="item.id"
               />
+              <template #footer>
+                <div class="product-select-footer" @mousedown.prevent>
+                  <span>{{ t('common.totalItems', { count: productOptionPagination.total }) }}</span>
+                  <div class="product-select-footer__actions">
+                    <el-button
+                      size="small"
+                      :disabled="!productOptionPagination.hasPrev || productOptionsLoading"
+                      @click.stop="handleProductOptionsPrev"
+                    >
+                      {{ t('common.prevPage') }}
+                    </el-button>
+                    <el-button
+                      size="small"
+                      type="primary"
+                      :disabled="!productOptionPagination.hasNext || productOptionsLoading"
+                      @click.stop="handleProductOptionsNext"
+                    >
+                      {{ t('common.nextPage') }}
+                    </el-button>
+                  </div>
+                </div>
+              </template>
             </el-select>
           </template>
         </el-table-column>
@@ -435,7 +490,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, reactive, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { EditPen, Operation, Plus, Refresh } from '@element-plus/icons-vue'
 import { ElMessage, type FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
@@ -471,6 +526,7 @@ const { t } = useI18n()
 const { systemCore, loadSystemCore } = useSystemCore()
 const { pagination, updatePagination, reset: resetPagination } = usePagination(20)
 const { loading, withLoading } = useLoading()
+const PRODUCT_OPTION_LIMIT = 20
 
 const { form: queryParams, reset: resetQueryParams } = useForm<ListTenantProductsReq>({
   initialData: {
@@ -504,6 +560,17 @@ const {
 const list = ref<ItickTenantProduct[]>([])
 const detail = ref<Partial<ItickTenantProduct>>({})
 const productOptions = ref<BaseItickProduct[]>([])
+const productOptionsLoading = ref(false)
+const productOptionKeyword = ref('')
+const productOptionPagination = reactive({
+  cursor: null as string | null,
+  nextCursor: null as string | null,
+  prevCursor: null as string | null,
+  limit: PRODUCT_OPTION_LIMIT,
+  total: 0,
+  hasNext: false,
+  hasPrev: false,
+})
 const optionGroups = ref<OptionGroup[]>([])
 const detailLoading = ref(false)
 const submitLoading = ref(false)
@@ -523,6 +590,7 @@ const initForm = reactive({
   tenantId: 0,
   overwrite: 0,
 })
+let productOptionsScrollEl: HTMLElement | null = null
 
 const rules: FormRules<FormData> = {
   tenantId: [{ required: true, message: t('itick.pleaseInputTenantId'), trigger: 'blur' }],
@@ -594,19 +662,146 @@ const loadOptions = async () => {
   }
 }
 
-const loadProductOptions = async (keyword = '') => {
+const resetProductOptionPagination = () => {
+  productOptionPagination.cursor = null
+  productOptionPagination.nextCursor = null
+  productOptionPagination.prevCursor = null
+  productOptionPagination.total = 0
+  productOptionPagination.hasNext = false
+  productOptionPagination.hasPrev = false
+}
+
+const loadProductOptions = async (
+  keyword = productOptionKeyword.value,
+  cursor: string | null = null,
+  append = false,
+) => {
+  productOptionsLoading.value = true
   try {
     const res = await productsService.getList({
-      limit: 100,
-      cursor: null,
+      limit: productOptionPagination.limit,
+      cursor,
       categoryType: queryParams.categoryType || undefined,
       market: queryParams.market?.trim() || undefined,
       keyword: keyword.trim() || undefined,
     })
-    productOptions.value = res.data || []
+    const nextOptions = res.data || []
+    productOptions.value = append ? mergeProductOptions(productOptions.value, nextOptions) : nextOptions
+    productOptionKeyword.value = keyword
+    productOptionPagination.cursor = cursor
+    productOptionPagination.total = res.total || 0
+    productOptionPagination.hasNext = !!res.hasNext
+    productOptionPagination.hasPrev = !!res.hasPrev
+    productOptionPagination.nextCursor = res.nextCursor || null
+    productOptionPagination.prevCursor = res.prevCursor || null
   } catch {
     ElMessage.error(t('itick.loadOptionsFailed'))
+  } finally {
+    productOptionsLoading.value = false
   }
+}
+
+const reloadProductOptions = () => {
+  resetProductOptionPagination()
+  return loadProductOptions(productOptionKeyword.value, null)
+}
+
+const mergeProductOptions = (current: BaseItickProduct[], incoming: BaseItickProduct[]) => {
+  const seen = new Set<number>()
+  const merged: BaseItickProduct[] = []
+  const combined = [...current, ...incoming]
+
+  combined.forEach((item) => {
+    if (seen.has(item.id)) {
+      return
+    }
+    seen.add(item.id)
+    merged.push(item)
+  })
+
+  return merged
+}
+
+const handleProductRemoteSearch = (keyword: string) => {
+  productOptionKeyword.value = keyword
+  resetProductOptionPagination()
+  loadProductOptions(keyword, null)
+}
+
+const handleProductSelectVisibleChange = (visible: boolean) => {
+  if (!visible) {
+    detachProductOptionsScroll()
+    return
+  }
+
+  nextTick(() => {
+    attachProductOptionsScroll()
+  })
+
+  if (!productOptions.value.length && !productOptionsLoading.value) {
+    reloadProductOptions().then(() => nextTick(attachProductOptionsScroll))
+  }
+}
+
+const handleProductOptionsPrev = () => {
+  if (!productOptionPagination.hasPrev || !productOptionPagination.prevCursor) {
+    return
+  }
+  loadProductOptions(productOptionKeyword.value, productOptionPagination.prevCursor)
+}
+
+const handleProductOptionsNext = () => {
+  if (!productOptionPagination.hasNext || !productOptionPagination.nextCursor) {
+    return
+  }
+  loadProductOptions(productOptionKeyword.value, productOptionPagination.nextCursor)
+}
+
+const loadMoreProductOptions = () => {
+  if (
+    productOptionsLoading.value ||
+    !productOptionPagination.hasNext ||
+    !productOptionPagination.nextCursor
+  ) {
+    return
+  }
+
+  loadProductOptions(productOptionKeyword.value, productOptionPagination.nextCursor, true)
+}
+
+const handleProductOptionsScroll = () => {
+  const el = productOptionsScrollEl
+  if (!el) {
+    return
+  }
+
+  const distanceToBottom = el.scrollHeight - el.scrollTop - el.clientHeight
+  if (distanceToBottom <= 24) {
+    loadMoreProductOptions()
+  }
+}
+
+const attachProductOptionsScroll = () => {
+  detachProductOptionsScroll()
+
+  const poppers = document.querySelectorAll<HTMLElement>('.tenant-product-select-popper')
+  const popper = poppers[poppers.length - 1]
+  const scrollEl = popper?.querySelector<HTMLElement>('.el-select-dropdown__wrap')
+  if (!scrollEl) {
+    return
+  }
+
+  productOptionsScrollEl = scrollEl
+  scrollEl.addEventListener('scroll', handleProductOptionsScroll)
+}
+
+const detachProductOptionsScroll = () => {
+  if (!productOptionsScrollEl) {
+    return
+  }
+
+  productOptionsScrollEl.removeEventListener('scroll', handleProductOptionsScroll)
+  productOptionsScrollEl = null
 }
 
 const handleQuery = () => {
@@ -647,7 +842,8 @@ const handleAdd = async () => {
   formMode.value = 'add'
   resetForm()
   form.tenantId = Number(queryParams.tenantId) || undefined
-  await loadProductOptions()
+  productOptionKeyword.value = ''
+  await reloadProductOptions()
   formDialogVisible.value = true
   await nextTick()
   formRef.value?.clearValidate()
@@ -728,7 +924,8 @@ const submitForm = async () => {
 }
 
 const openBatchDialog = () => {
-  loadProductOptions()
+  productOptionKeyword.value = ''
+  reloadProductOptions()
   batchRows.value = list.value.map((item) => ({
     id: item.id,
     productId: item.productId,
@@ -828,6 +1025,10 @@ onMounted(() => {
     getList()
   }
 })
+
+onBeforeUnmount(() => {
+  detachProductOptionsScroll()
+})
 </script>
 
 <style scoped>
@@ -865,6 +1066,20 @@ onMounted(() => {
   gap: 10px;
   align-items: center;
   margin-top: 16px;
+}
+
+.product-select-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+}
+
+.product-select-footer__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .batch-toolbar {

@@ -585,12 +585,12 @@ type GetIdentityResp struct {
 }
 
 type GetKlineReq struct {
-	CategoryCode string `json:"categoryCode"`
-	Market       string `json:"market"`
-	Symbol       string `json:"symbol"`
-	KType        int64  `json:"kType"`
-	EndTs        int64  `json:"endTs"`
-	Limit        int64  `json:"limit"`
+	CategoryCode string `form:"categoryCode"`
+	Market       string `form:"market"`
+	Symbol       string `form:"symbol"`
+	KType        int64  `form:"kType"`
+	EndTs        int64  `form:"endTs"`
+	Limit        int64  `form:"limit"`
 }
 
 type GetKlineResp struct {

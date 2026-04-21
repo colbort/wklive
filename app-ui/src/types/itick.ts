@@ -222,6 +222,11 @@ export interface DepthPayload {
   bids: DepthLevel[]
 }
 
+export interface RawDepthPayload {
+  asks?: DepthLevel[]
+  bids?: DepthLevel[]
+}
+
 export interface KlinePayload {
   interval: string
   open: number

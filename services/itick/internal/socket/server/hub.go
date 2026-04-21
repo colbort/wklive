@@ -74,6 +74,8 @@ func (h *Hub) NewSubscriber(buf int) *Subscriber {
 }
 
 func (h *Hub) Subscribe(sub *Subscriber, msg ClientMessage) error {
+	msg = NormalizeClientMessage(msg)
+
 	if sub == nil {
 		return errors.New("subscriber is nil")
 	}
@@ -124,6 +126,8 @@ func (h *Hub) Subscribe(sub *Subscriber, msg ClientMessage) error {
 }
 
 func (h *Hub) Unsubscribe(sub *Subscriber, msg ClientMessage) error {
+	msg = NormalizeClientMessage(msg)
+
 	if sub == nil {
 		return errors.New("subscriber is nil")
 	}
@@ -202,6 +206,7 @@ func (h *Hub) RemoveSubscriber(sub *Subscriber) {
 }
 
 func (h *Hub) Broadcast(topicMsg ClientMessage, payload any) {
+	topicMsg = NormalizeClientMessage(topicMsg)
 	key := BuildTopicKey(topicMsg)
 
 	msg := ServerMessage{
@@ -222,7 +227,7 @@ func (h *Hub) Broadcast(topicMsg ClientMessage, payload any) {
 	h.mu.RUnlock()
 
 	if len(subs) == 0 {
-		logx.Infof("stream broadcast skipped, no local subscriber, topic=%s", key)
+		logx.Errorf("stream broadcast skipped, no local subscriber, topic=%s", key)
 		return
 	}
 

@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
@@ -280,8 +281,12 @@ func (l *TickWsLogic) handleSubscribe(runtime *tickWsRuntime, msg types.WsMessag
 	desired := make(map[string]struct{}, len(msg.Topics))
 	topicGroups := make(map[string]struct{}, len(msg.Topics))
 
-	for _, topic := range msg.Topics {
+	for _, rawTopic := range msg.Topics {
+		topic := normalizeWsTickTopic(rawTopic)
 		if topic.Topic == "" || topic.CategoryCode == "" || topic.Symbol == "" {
+			continue
+		}
+		if topic.Topic == "kline" && topic.Interval == "" {
 			continue
 		}
 		key := buildTopicKey(topic)
@@ -468,5 +473,20 @@ func (r *tickWsRuntime) removeStaleSubscriptions(desired map[string]struct{}, to
 }
 
 func buildTopicKey(topic types.WsTickTopic) string {
+	topic = normalizeWsTickTopic(topic)
 	return topic.Topic + "|" + topic.CategoryCode + "|" + topic.Symbol + "|" + topic.Market + "|" + topic.Interval
+}
+
+func normalizeWsTickTopic(topic types.WsTickTopic) types.WsTickTopic {
+	topic.Topic = strings.ToLower(strings.TrimSpace(topic.Topic))
+	topic.CategoryCode = strings.ToLower(strings.TrimSpace(topic.CategoryCode))
+	topic.Symbol = strings.ToUpper(strings.TrimSpace(topic.Symbol))
+	topic.Market = strings.ToUpper(strings.TrimSpace(topic.Market))
+	topic.Interval = strings.ToLower(strings.TrimSpace(topic.Interval))
+
+	if topic.Topic != "kline" {
+		topic.Interval = ""
+	}
+
+	return topic
 }

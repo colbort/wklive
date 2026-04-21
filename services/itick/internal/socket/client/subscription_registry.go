@@ -34,13 +34,13 @@ type SubscriptionChange struct {
 }
 
 func (c SubscriptionChange) ToClientMessage() server.ClientMessage {
-	return server.ClientMessage{
+	return server.NormalizeClientMessage(server.ClientMessage{
 		Topic:        server.Topic(c.Topic),
 		CategoryCode: c.CategoryCode,
 		Symbol:       c.Symbol,
 		Market:       c.Market,
 		Interval:     c.Interval,
-	}
+	})
 }
 
 type SubscriptionRegistry struct {
@@ -80,6 +80,7 @@ func (r *SubscriptionRegistry) ownerLeaseKey(categoryCode, topicKey string) stri
 }
 
 func (r *SubscriptionRegistry) Add(ctx context.Context, msg server.ClientMessage) error {
+	msg = server.NormalizeClientMessage(msg)
 	topicKey := server.BuildTopicKey(msg)
 	indexKey := r.categoryIndexKey(msg.CategoryCode)
 	setKey := r.topicLeaseSetKey(msg.CategoryCode, topicKey)
@@ -123,6 +124,7 @@ func (r *SubscriptionRegistry) Add(ctx context.Context, msg server.ClientMessage
 }
 
 func (r *SubscriptionRegistry) Remove(ctx context.Context, msg server.ClientMessage) error {
+	msg = server.NormalizeClientMessage(msg)
 	topicKey := server.BuildTopicKey(msg)
 	indexKey := r.categoryIndexKey(msg.CategoryCode)
 	setKey := r.topicLeaseSetKey(msg.CategoryCode, topicKey)
@@ -172,6 +174,7 @@ func (r *SubscriptionRegistry) Remove(ctx context.Context, msg server.ClientMess
 }
 
 func (r *SubscriptionRegistry) EnsureLease(ctx context.Context, msg server.ClientMessage) error {
+	msg = server.NormalizeClientMessage(msg)
 	topicKey := server.BuildTopicKey(msg)
 	indexKey := r.categoryIndexKey(msg.CategoryCode)
 	setKey := r.topicLeaseSetKey(msg.CategoryCode, topicKey)
@@ -186,6 +189,7 @@ func (r *SubscriptionRegistry) EnsureLease(ctx context.Context, msg server.Clien
 }
 
 func (r *SubscriptionRegistry) EnsureAndNotify(ctx context.Context, msg server.ClientMessage) error {
+	msg = server.NormalizeClientMessage(msg)
 	if err := r.EnsureLease(ctx, msg); err != nil {
 		return err
 	}

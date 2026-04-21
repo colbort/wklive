@@ -56,8 +56,8 @@ type DepthLevel struct {
 
 // 深度
 type DepthPayload struct {
-	Asks []*DepthLevel
-	Bids []*DepthLevel
+	Asks []*DepthLevel `json:"asks"`
+	Bids []*DepthLevel `json:"bids"`
 }
 
 type QuotePayload struct {

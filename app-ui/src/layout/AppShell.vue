@@ -9,6 +9,7 @@ const route = useRoute()
 const { isDesktop } = useDevice()
 
 const pageTitle = computed(() => String(route.meta.title || 'AVE'))
+const showSiteHeader = computed(() => route.name === 'home')
 const desktopNav = [
   '加密货币合约',
   '股票',
@@ -26,7 +27,7 @@ const desktopNav = [
     <div class="app-shell__aurora app-shell__aurora--left" />
     <div class="app-shell__aurora app-shell__aurora--right" />
 
-    <header class="site-header">
+    <header v-if="showSiteHeader" class="site-header">
       <RouterLink to="/home" class="site-brand">
         <span class="site-brand__mark">A</span>
         <div>

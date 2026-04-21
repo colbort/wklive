@@ -31,6 +31,8 @@ func NewClusterBus(rdb *redis.Client, channel string) *ClusterBus {
 }
 
 func (b *ClusterBus) Publish(ctx context.Context, msg server.ClientMessage, payload any) error {
+	msg = server.NormalizeClientMessage(msg)
+
 	raw, err := json.Marshal(payload)
 	if err != nil {
 		return err
@@ -87,6 +89,7 @@ func (b *ClusterBus) Subscribe(ctx context.Context, fn func(msg server.ClientMes
 					Market:       env.Market,
 					Interval:     env.Interval,
 				}
+				msg = server.NormalizeClientMessage(msg)
 
 				payload, err := decodeClusterPayload(msg.Topic, env.Payload)
 				if err != nil {
