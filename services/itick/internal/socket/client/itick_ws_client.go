@@ -737,7 +737,7 @@ func (c *ItickWsClient) subscribe(params, types string) error {
 		return err
 	}
 
-	logx.Infof("itick subscribe success, category=%s params=%s, types=%s", c.categoryCode, params, types)
+	logx.Errorf("itick subscribe success, category=%s params=%s, types=%s", c.categoryCode, params, types)
 	return nil
 }
 
