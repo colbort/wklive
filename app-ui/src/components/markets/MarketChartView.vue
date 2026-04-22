@@ -617,8 +617,8 @@ function coinGlyph(product: ItickTenantProduct) {
 
 .chart-sticky-tabs {
   position: sticky;
-  top: 0;
-  z-index: 20;
+  top: var(--market-header-height, 68px);
+  z-index: 19;
   margin-top: 26px;
   background: #0b0c15;
   border-bottom: 1px solid #242633;

@@ -125,7 +125,7 @@ export interface ItickTenantProduct {
 }
 
 export interface ListVisibleCategoriesReq extends PageReq {
-  tenantId: number
+  tenantCode: string
 }
 
 export type ListVisibleCategoriesResp = ItickTenantCategory[]
@@ -135,7 +135,7 @@ export interface ListVisibleProductsReq extends PageReq {
   categoryCode?: string
   market?: string
   keyword?: string
-  tenantId: number
+  tenantCode: string
 }
 
 export type ListVisibleProductsResp = ItickTenantProduct[]

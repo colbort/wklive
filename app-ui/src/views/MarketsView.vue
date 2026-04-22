@@ -5,7 +5,7 @@ import MarketChartView from '@/components/markets/MarketChartView.vue'
 import MarketQuotesView from '@/components/markets/MarketQuotesView.vue'
 import MarketTopTabs from '@/components/markets/MarketTopTabs.vue'
 import type { MarketTopTab, MarketTopTabItem } from '@/components/markets/types'
-import { getAccessToken, getTenantId } from '@/api/http'
+import { getAccessToken, getTenantCode } from '@/api/http'
 import { buildItickWsUrl } from '@/api/itick'
 import { useItickStore } from '@/stores/itick'
 import { useSystemStore } from '@/stores/system'
@@ -63,7 +63,7 @@ let isUnmounted = false
 let reconnectEnabled = true
 let openingProductChart = false
 
-const tenantId = computed(() => getTenantId() ?? Number(import.meta.env.VITE_TENANT_ID || 0))
+const tenantCode = computed(() => getTenantCode())
 const isLoggedIn = computed(() => Boolean(getAccessToken()))
 const categories = computed(() => store.categories)
 const products = computed(() => store.products)
@@ -183,7 +183,7 @@ async function initializeMarketPage() {
   loadingBootstrap.value = true
   try {
     const list = await store.listVisibleCategories({
-      tenantId: tenantId.value,
+      tenantCode: tenantCode.value,
       limit: 20,
     })
 
@@ -199,7 +199,7 @@ async function loadProducts(categoryType: number) {
   loadingBootstrap.value = true
   try {
     await store.listVisibleProducts({
-      tenantId: tenantId.value,
+      tenantCode: tenantCode.value,
       categoryType,
       categoryCode: selectedCategory.value?.categoryCode,
       limit: 200,
@@ -664,11 +664,9 @@ function selectInterval(interval: Interval) {
 }
 
 .market-phone {
+  --market-header-height: 68px;
   width: min(100%, 640px);
-  height: calc(100dvh - 132px);
-  min-height: 560px;
-  overflow-x: hidden;
-  overflow-y: auto;
+  min-height: max(560px, calc(100dvh - 132px));
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   background: #0b0c15;
@@ -721,15 +719,14 @@ function selectInterval(interval: Interval) {
   line-height: 1.65;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 959px) {
   .markets-page {
     padding: 0 0 72px;
   }
 
   .market-phone {
     width: 100%;
-    height: calc(100dvh - 72px);
-    min-height: 0;
+    min-height: calc(100dvh - 72px);
     border-right: 0;
     border-left: 0;
     border-radius: 0;

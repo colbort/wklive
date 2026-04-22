@@ -34,7 +34,7 @@ func (l *ListVisibleCategoriesLogic) ListVisibleCategories(req *types.ListVisibl
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
 		},
-		TenantId: req.TenantId,
+		TenantCode: req.TenantCode,
 	})
 	if err != nil {
 		return nil, err

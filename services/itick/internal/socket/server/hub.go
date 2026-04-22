@@ -116,7 +116,7 @@ func (h *Hub) Subscribe(sub *Subscriber, msg ClientMessage) error {
 
 	h.mu.Unlock()
 
-	logx.Infof("stream subscribe success, subscriber=%d, topic=%s", sub.ID, key)
+	logx.Errorf("stream subscribe success, subscriber=%d, topic=%s", sub.ID, key)
 
 	if needCallHook && h.onFirstSubscribe != nil {
 		go h.onFirstSubscribe(key, msg)

@@ -29,7 +29,7 @@ func NewListTenantCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 // 租户产品类型列表
 func (l *ListTenantCategoriesLogic) ListTenantCategories(in *itick.ListTenantCategoriesReq) (*itick.ListTenantCategoriesResp, error) {
-	items, _, err := l.svcCtx.ItickTenantCategoryModel.FindPage(l.ctx, in.TenantId, in.Page.Cursor, in.Page.Limit)
+	items, total, err := l.svcCtx.ItickTenantCategoryModel.FindPage(l.ctx, in.TenantId, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -58,8 +58,7 @@ func (l *ListTenantCategoriesLogic) ListTenantCategories(in *itick.ListTenantCat
 	}
 
 	limit := pageutil.NormalizeLimit(in.Page.Limit)
-	filtered := make([]*itick.ItickTenantCategory, 0)
-	total := int64(0)
+	data := make([]*itick.ItickTenantCategory, 0)
 	for _, item := range items {
 		category := categoryMap[item.CategoryId]
 		tenant := tenantMap[item.TenantId]
@@ -76,20 +75,19 @@ func (l *ListTenantCategoriesLogic) ListTenantCategories(in *itick.ListTenantCat
 			continue
 		}
 
-		total++
-		if item.Id <= in.Page.Cursor || int64(len(filtered)) >= limit {
+		if item.Id <= in.Page.Cursor || int64(len(data)) >= limit {
 			continue
 		}
-		filtered = append(filtered, toTenantCategoryProto(item, category, tenant))
+		data = append(data, toTenantCategoryProto(item, category, tenant))
 	}
 
 	lastID := int64(0)
-	if len(filtered) > 0 {
-		lastID = filtered[len(filtered)-1].Id
+	if len(data) > 0 {
+		lastID = data[len(data)-1].Id
 	}
 
 	return &itick.ListTenantCategoriesResp{
-		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(filtered), total, lastID),
-		Data: filtered,
+		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(data), total, lastID),
+		Data: data,
 	}, nil
 }

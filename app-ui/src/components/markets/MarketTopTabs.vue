@@ -34,11 +34,16 @@ const emit = defineEmits<{
 
 <style scoped>
 .market-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   padding: 18px 18px 8px;
+  min-height: var(--market-header-height, 68px);
+  background: #0b0c15;
 }
 
 .top-tabs {

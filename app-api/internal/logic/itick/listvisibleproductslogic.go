@@ -34,7 +34,7 @@ func (l *ListVisibleProductsLogic) ListVisibleProducts(req *types.ListVisiblePro
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
 		},
-		TenantId:     req.TenantId,
+		TenantCode:   req.TenantCode,
 		CategoryType: itick.CategoryType(req.CategoryType),
 		Market:       req.Market,
 		Keyword:      req.Keyword,

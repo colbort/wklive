@@ -5,8 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	"wklive/common/helper"
-	"wklive/proto/common"
+	"wklive/common/pageutil"
 	"wklive/proto/itick"
 	"wklive/proto/system"
 	"wklive/services/itick/internal/svc"
@@ -30,7 +29,13 @@ func NewListVisibleProductsLogic(ctx context.Context, svcCtx *svc.ServiceContext
 
 // 获取允许显示的产品
 func (l *ListVisibleProductsLogic) ListVisibleProducts(in *itick.ListVisibleProductsReq) (*itick.ListVisibleProductsResp, error) {
-	items, _, err := l.svcCtx.ItickTenantProductModel.FindPage(l.ctx, in.TenantId, in.Page.Cursor, in.Page.Limit)
+	detail, err := l.svcCtx.SystemCli.SysTenantDetail(l.ctx, &system.SysTenantDetailReq{
+		TenantCode: &in.TenantCode,
+	})
+	if err != nil {
+		return nil, err
+	}
+	items, total, err := l.svcCtx.ItickTenantProductModel.FindPage(l.ctx, detail.Data.Id, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -52,25 +57,10 @@ func (l *ListVisibleProductsLogic) ListVisibleProducts(in *itick.ListVisibleProd
 		return nil, err
 	}
 
-	tenants, err := l.svcCtx.SystemCli.SysTenantList(l.ctx, &system.SysTenantListReq{
-		Page: &common.PageReq{
-			Cursor: 0,
-			Limit:  100,
-		},
-	})
-	if err != nil {
-		return nil, err
-	}
-	tenantMap := make(map[int64]*system.SysTenantItem, len(tenants.Data))
-	for _, tenant := range tenants.Data {
-		tenantMap[tenant.Id] = tenant
-	}
-
 	market := strings.TrimSpace(in.Market)
 	data := make([]*itick.ItickTenantProduct, 0)
 	for _, item := range items {
 		product := products[item.ProductId]
-		tenant := tenantMap[item.TenantId]
 		if product == nil {
 			continue
 		}
@@ -89,11 +79,16 @@ func (l *ListVisibleProductsLogic) ListVisibleProducts(in *itick.ListVisibleProd
 		if !keywordMatches(in.Keyword, product.Symbol, product.Code, product.Name, product.DisplayName, product.CategoryName) {
 			continue
 		}
-		data = append(data, toTenantProductProto(item, product, tenant))
+		data = append(data, toTenantProductProto(item, product, detail.Data))
+	}
+
+	lastID := int64(0)
+	if len(data) > 0 {
+		lastID = data[len(data)-1].Id
 	}
 
 	return &itick.ListVisibleProductsResp{
-		Base: helper.OkResp(),
+		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(data), total, lastID),
 		Data: data,
 	}, nil
 }

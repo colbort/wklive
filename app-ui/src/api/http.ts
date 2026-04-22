@@ -34,24 +34,6 @@ export function clearRefreshToken() {
   localStorage.removeItem(REFRESH_TOKEN_KEY)
 }
 
-export function getTenantId() {
-  const value = localStorage.getItem(TENANT_ID_KEY)
-  if (!value) {
-    const envValue = Number(import.meta.env.VITE_TENANT_ID)
-    return Number.isFinite(envValue) && envValue > 0 ? envValue : null
-  }
-  const parsed = Number(value)
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : null
-}
-
-export function setTenantId(tenantId: number) {
-  localStorage.setItem(TENANT_ID_KEY, String(tenantId))
-}
-
-export function clearTenantId() {
-  localStorage.removeItem(TENANT_ID_KEY)
-}
-
 export function getTenantCode() {
   return localStorage.getItem(TENANT_CODE_KEY) || import.meta.env.VITE_TENANT_CODE || ''
 }
@@ -69,12 +51,12 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
 }
 
 function appendTenantScope(target: Record<string, unknown>, url?: string) {
-  const tenantId = getTenantId()
+  // const tenantId = getTenantId()
   const tenantCode = getTenantCode()
 
-  if (tenantId && target.tenantId === undefined) {
-    target.tenantId = tenantId
-  }
+  // if (tenantId && target.tenantId === undefined) {
+  //   target.tenantId = tenantId
+  // }
 
   const needsTenantCode =
     url?.startsWith('/user/login') ||

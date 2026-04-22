@@ -100,11 +100,15 @@ function formatPercent(value: number) {
 }
 
 .category-strip {
+  position: sticky;
+  top: var(--market-header-height, 68px);
+  z-index: 19;
   display: flex;
   gap: 18px;
   overflow-x: auto;
   padding: 14px 18px 0;
   border-bottom: 1px solid #21232e;
+  background: #0b0c15;
 }
 
 .category-tab,

@@ -21,6 +21,8 @@ html,
 body,
 #app {
   margin: 0;
+  width: 100%;
+  min-width: 0;
   min-height: 100%;
 }
 
@@ -47,9 +49,13 @@ button {
 }
 
 .app-shell {
+  width: 100%;
+  min-width: 0;
   min-height: 100vh;
+  min-height: 100dvh;
   position: relative;
   isolation: isolate;
+  overflow-x: clip;
 }
 
 .app-shell::before {
@@ -193,11 +199,15 @@ button {
 .app-main {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  min-width: 0;
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .page-content {
   width: 100%;
+  min-width: 0;
   margin: 0 auto;
   padding: 0 0 110px;
 }
@@ -454,6 +464,8 @@ button {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 2px;
+  width: 100%;
+  max-width: 100dvw;
   min-height: 84px;
   padding: 10px 14px max(10px, env(safe-area-inset-bottom));
   border-radius: 20px 20px 0 0;
@@ -470,11 +482,19 @@ button {
   align-items: center;
   justify-content: center;
   gap: 5px;
+  min-width: 0;
   padding: 2px;
   border-radius: 14px;
   color: rgba(243, 247, 254, 0.58);
   font-size: 13px;
   font-weight: 500;
+}
+
+.mobile-tabbar__item span:last-child {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .mobile-tabbar__item--active {
@@ -573,6 +593,42 @@ button {
 }
 
 @media (max-width: 959px) {
+  html,
+  body,
+  #app {
+    height: 100%;
+    min-height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    width: 100dvw;
+  }
+
+  .app-shell,
+  .app-main,
+  .page-content {
+    width: 100dvw;
+    max-width: 100dvw;
+  }
+
+  .app-shell,
+  .app-main {
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .page-content {
+    flex: 1;
+    height: 100%;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .site-header {
     padding: max(14px, env(safe-area-inset-top, 14px)) 22px 14px;
   }
@@ -592,6 +648,6 @@ button {
   }
 
   .page-content {
-    padding-bottom: 112px;
+    padding-bottom: calc(92px + env(safe-area-inset-bottom));
   }
 }

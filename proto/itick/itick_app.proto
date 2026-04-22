@@ -17,7 +17,7 @@ message AppCommonResp { common.RespBase base = 1; }
 // ====================
 
 message ListVisibleCategoriesReq {
-  int64 tenant_id = 1;
+  string tenant_code = 1;
   common.PageReq page = 2;
 }
 
@@ -30,7 +30,7 @@ message ListVisibleProductsReq {
   itick.CategoryType category_type = 1;
   string market = 2;
   string keyword = 3;
-  int64 tenant_id = 4;
+  string tenant_code = 4;
   common.PageReq page = 5;
 }
 
@@ -94,7 +94,7 @@ message SubscribeRequest { repeated SubscribeTopic topics = 1; }
 message SubscribeTopic {
   string topic = 1; // quote depth tick kline
   string category_code = 2; // crypto forex indices stock future fund
-  string symbol = 3; // BTCUSDT / EURUSD / ...
+  string symbol = 3; //
   string market = 4; // BA / US / HK ...
   string interval = 5; // 1m 5m 1h 1d
 }

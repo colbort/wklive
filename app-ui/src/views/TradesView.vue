@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 
-import { getTenantId } from '@/api/http'
 import TradeOrderTabs from '@/components/trades/TradeOrderTabs.vue'
 import { useItickStore } from '@/stores/itick'
 import type { ItickTenantProduct } from '@/types/itick'
+import { getTenantCode } from '@/api/http'
 
 const store = useItickStore()
 
@@ -14,7 +14,7 @@ const orderMode = ref<'market' | 'limit'>('market')
 const productMenuOpen = ref(false)
 const loading = ref(false)
 
-const tenantId = computed(() => getTenantId() ?? Number(import.meta.env.VITE_TENANT_ID || 0))
+const tenantCode = computed(() => getTenantCode())
 const categories = computed(() => store.categories)
 const products = computed(() => store.products)
 const selectedCategory = computed(
@@ -68,7 +68,7 @@ onMounted(async () => {
   loading.value = true
   try {
     const list = await store.listVisibleCategories({
-      tenantId: tenantId.value,
+      tenantCode: tenantCode.value,
       limit: 20,
     })
     selectedCategoryType.value = list[0]?.categoryType ?? null
@@ -81,7 +81,7 @@ async function loadProducts(categoryType: number) {
   loading.value = true
   try {
     await store.listVisibleProducts({
-      tenantId: tenantId.value,
+      tenantCode: tenantCode.value,
       categoryType,
       categoryCode: selectedCategory.value?.categoryCode,
       limit: 200,
@@ -257,16 +257,19 @@ function selectProduct(product: ItickTenantProduct) {
 
 <style scoped>
 .trade-page {
+  width: 100%;
+  max-width: 100%;
   min-height: calc(100dvh - 72px);
   padding: 18px 22px 112px;
+  overflow-x: hidden;
   background: #0b0c15;
   color: #f6f7fb;
 }
 
 .trade-categories {
   display: flex;
+  flex-wrap: wrap;
   gap: 28px;
-  overflow-x: auto;
   margin-bottom: 28px;
 }
 
@@ -410,6 +413,10 @@ function selectProduct(product: ItickTenantProduct) {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(180px, 0.9fr);
   gap: 18px;
+}
+
+.contract-panel {
+  min-width: 0;
 }
 
 .trade-form,
@@ -695,15 +702,40 @@ function selectProduct(product: ItickTenantProduct) {
   border-top: 1px solid #242633;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 959px) {
   .trade-page {
-    padding-right: 16px;
-    padding-left: 16px;
+    min-height: 100%;
+    padding: 16px 16px calc(112px + env(safe-area-inset-bottom));
   }
 
   .contract-panel--crypto {
-    grid-template-columns: 1fr 0.7fr;
-    gap: 12px;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .trade-categories {
+    gap: 14px 20px;
+  }
+
+  .trade-symbol {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .trade-symbol__main,
+  .trade-symbol__sub,
+  .trade-symbol__quote,
+  .account-lines strong,
+  .order-book-preview strong {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .trade-symbol__main strong,
+  .account-lines strong,
+  .order-book-preview strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .order-book-preview p {

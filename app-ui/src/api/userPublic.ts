@@ -1,4 +1,4 @@
-import { http, setAccessToken, setRefreshToken, setTenantCode, setTenantId } from '@/api/http'
+import { http, setAccessToken, setRefreshToken, setTenantCode } from '@/api/http'
 import type { RespBase } from '@/types/api'
 import type {
   GuestLoginData,
@@ -17,7 +17,6 @@ export function apiRegister(params: RegisterReq): Promise<RespBase & RegisterRes
     if (data.token?.accessToken) setAccessToken(data.token.accessToken)
     if (data.token?.refreshToken) setRefreshToken(data.token.refreshToken)
     if (params.tenantCode) setTenantCode(params.tenantCode)
-    if (data.profile?.base?.tenantId) setTenantId(data.profile.base.tenantId)
     return data
   })
 }
@@ -28,7 +27,6 @@ export function apiLogin(params: LoginReq): Promise<RespBase & LoginResp> {
     if (data.token?.accessToken) setAccessToken(data.token.accessToken)
     if (data.token?.refreshToken) setRefreshToken(data.token.refreshToken)
     if (params.tenantCode) setTenantCode(params.tenantCode)
-    if (data.profile?.base?.tenantId) setTenantId(data.profile.base.tenantId)
     return data
   })
 }

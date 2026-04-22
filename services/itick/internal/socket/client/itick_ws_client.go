@@ -196,7 +196,7 @@ func (c *ItickWsClient) runAsLeader(ctx context.Context) error {
 
 		if err := c.readLoop(sessionCtx); err != nil {
 			if isNormalWsClose(err) {
-				logx.Infof("itick ws read loop closed normally, category=%s err=%v", c.categoryCode, err)
+				logx.Errorf("itick ws read loop closed normally, category=%s err=%v", c.categoryCode, err)
 			} else {
 				logx.Errorf("itick ws read loop stopped, category=%s err=%v", c.categoryCode, err)
 			}
@@ -293,11 +293,13 @@ func (c *ItickWsClient) readLoop(ctx context.Context) error {
 
 	for {
 		if ctx.Err() != nil || c.IsClosed() {
+			logx.Errorf("socket 链接关闭 ")
 			return ctx.Err()
 		}
 
 		_, data, err := conn.ReadMessage()
 		if err != nil {
+			logx.Errorf("读取数据失败 %v", err)
 			return err
 		}
 
@@ -342,11 +344,13 @@ func (c *ItickWsClient) handleUpstreamMessage(ctx context.Context, data []byte) 
 	}
 
 	if d.S == "" || d.R == "" || d.Type == "" {
+		logx.Errorf("数据异常")
 		return
 	}
 
 	topic, interval := mapItickType(d.Type)
 	if topic == "" {
+		logx.Errorf("不支持的数据类型 %s", d.Type)
 		return
 	}
 

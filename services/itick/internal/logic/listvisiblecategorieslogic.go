@@ -4,8 +4,7 @@ import (
 	"context"
 	"sort"
 
-	"wklive/common/helper"
-	"wklive/proto/common"
+	"wklive/common/pageutil"
 	"wklive/proto/itick"
 	"wklive/proto/system"
 	"wklive/services/itick/internal/svc"
@@ -30,7 +29,13 @@ func NewListVisibleCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceConte
 
 // 获取允许显示的产品类型
 func (l *ListVisibleCategoriesLogic) ListVisibleCategories(in *itick.ListVisibleCategoriesReq) (*itick.ListVisibleCategoriesResp, error) {
-	items, _, err := l.svcCtx.ItickTenantCategoryModel.FindPage(l.ctx, in.TenantId, in.Page.Cursor, in.Page.Limit)
+	detail, err := l.svcCtx.SystemCli.SysTenantDetail(l.ctx, &system.SysTenantDetailReq{
+		TenantCode: &in.TenantCode,
+	})
+	if err != nil {
+		return nil, err
+	}
+	items, total, err := l.svcCtx.ItickTenantCategoryModel.FindPage(l.ctx, detail.Data.Id, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -44,20 +49,6 @@ func (l *ListVisibleCategoriesLogic) ListVisibleCategories(in *itick.ListVisible
 		categoryMap[category.Id] = category
 	}
 
-	tenants, err := l.svcCtx.SystemCli.SysTenantList(l.ctx, &system.SysTenantListReq{
-		Page: &common.PageReq{
-			Cursor: 0,
-			Limit:  100,
-		},
-	})
-	if err != nil {
-		return nil, err
-	}
-	tenantMap := make(map[int64]*system.SysTenantItem, len(tenants.Data))
-	for _, tenant := range tenants.Data {
-		tenantMap[tenant.Id] = tenant
-	}
-
 	sort.Slice(items, func(i, j int) bool {
 		if items[i].Sort == items[j].Sort {
 			return items[i].Id < items[j].Id
@@ -65,10 +56,10 @@ func (l *ListVisibleCategoriesLogic) ListVisibleCategories(in *itick.ListVisible
 		return items[i].Sort < items[j].Sort
 	})
 
+	limit := pageutil.NormalizeLimit(in.Page.Limit)
 	data := make([]*itick.ItickTenantCategory, 0)
 	for _, item := range items {
 		category := categoryMap[item.CategoryId]
-		tenant := tenantMap[item.TenantId]
 		if category == nil {
 			continue
 		}
@@ -78,11 +69,19 @@ func (l *ListVisibleCategoriesLogic) ListVisibleCategories(in *itick.ListVisible
 		if category.Enabled != 1 || category.AppVisible != 1 {
 			continue
 		}
-		data = append(data, toTenantCategoryProto(item, category, tenant))
+		if item.Id <= in.Page.Cursor || int64(len(data)) >= limit {
+			continue
+		}
+		data = append(data, toTenantCategoryProto(item, category, detail.Data))
+	}
+
+	lastID := int64(0)
+	if len(data) > 0 {
+		lastID = data[len(data)-1].Id
 	}
 
 	return &itick.ListVisibleCategoriesResp{
-		Base: helper.OkResp(),
+		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(data), total, lastID),
 		Data: data,
 	}, nil
 }

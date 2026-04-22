@@ -23,8 +23,8 @@ type ItickProduct {
 	categoryType int64  `json:"categoryType"`
 	categoryCode string `json:"categoryCode"`
 	categoryName string `json:"categoryName"`
-	market       string `json:"market"` // binance / hk / us / forex ...
-	symbol       string `json:"symbol"` // BTCUSDT / AAPL / EURUSD
+	market       string `json:"market"` // 
+	symbol       string `json:"symbol"` // 
 	code         string `json:"code"` // 第三方原始 code
 	name         string `json:"name"`
 	displayName  string `json:"displayName"`
@@ -136,7 +136,7 @@ type ItickTenantProduct {
 // }
 type ListVisibleCategoriesReq {
 	PageReq
-	tenantId int64 `form:"tenantId"`
+	tenantCode string `form:"tenantCode"`
 }
 
 type ListVisibleCategoriesResp {
@@ -150,7 +150,7 @@ type ListVisibleProductsReq {
 	categoryCode string `form:"categoryCode,optional"`
 	market       string `form:"market,optional"`
 	keyword      string `json:"keyword,optional"`
-	tenantId     int64 `form:"tenantId,optional"`
+	tenantCode   string `form:"tenantCode"`
 }
 
 type ListVisibleProductsResp {

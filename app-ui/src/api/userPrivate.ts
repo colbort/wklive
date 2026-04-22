@@ -1,4 +1,4 @@
-import { clearAccessToken, clearRefreshToken, setTenantId, http } from '@/api/http'
+import { clearAccessToken, clearRefreshToken, http } from '@/api/http'
 import { buildPath, compactParams } from '@/api/utils'
 import type { RespBase } from '@/types/api'
 import type {
@@ -35,7 +35,6 @@ export function apiLogout(): Promise<RespBase> {
 export function apiGetProfile(): Promise<RespBase & GetProfileResp> {
   return http.get('/user/profile').then((res) => {
     const data = res.data
-    if (data.data?.base?.tenantId) setTenantId(data.data.base.tenantId)
     return data
   })
 }
@@ -43,7 +42,6 @@ export function apiGetProfile(): Promise<RespBase & GetProfileResp> {
 export function apiUpdateProfile(params: UpdateProfileReq): Promise<RespBase & UpdateProfileResp> {
   return http.put('/user/profile', params).then((res) => {
     const data = res.data
-    if (data.profile?.base?.tenantId) setTenantId(data.profile.base.tenantId)
     return data
   })
 }
