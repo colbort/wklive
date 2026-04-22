@@ -407,6 +407,7 @@ type GuestLoginReq struct {
 	DeviceId      string                 `protobuf:"bytes,1,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
 	Fingerprint   string                 `protobuf:"bytes,2,opt,name=fingerprint,proto3" json:"fingerprint,omitempty"`
 	RegisterIp    string                 `protobuf:"bytes,3,opt,name=register_ip,json=registerIp,proto3" json:"register_ip,omitempty"`
+	TenantCode    string                 `protobuf:"bytes,4,opt,name=tenant_code,json=tenantCode,proto3" json:"tenant_code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -458,6 +459,13 @@ func (x *GuestLoginReq) GetFingerprint() string {
 func (x *GuestLoginReq) GetRegisterIp() string {
 	if x != nil {
 		return x.RegisterIp
+	}
+	return ""
+}
+
+func (x *GuestLoginReq) GetTenantCode() string {
+	if x != nil {
+		return x.TenantCode
 	}
 	return ""
 }
@@ -2383,12 +2391,14 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12'\n" +
 	"\x05token\x18\x03 \x01(\v2\x11.common.TokenInfoR\x05token\x12+\n" +
-	"\aprofile\x18\x04 \x01(\v2\x11.user.UserProfileR\aprofile\"o\n" +
+	"\aprofile\x18\x04 \x01(\v2\x11.user.UserProfileR\aprofile\"\x90\x01\n" +
 	"\rGuestLoginReq\x12\x1b\n" +
 	"\tdevice_id\x18\x01 \x01(\tR\bdeviceId\x12 \n" +
 	"\vfingerprint\x18\x02 \x01(\tR\vfingerprint\x12\x1f\n" +
 	"\vregister_ip\x18\x03 \x01(\tR\n" +
-	"registerIp\"g\n" +
+	"registerIp\x12\x1f\n" +
+	"\vtenant_code\x18\x04 \x01(\tR\n" +
+	"tenantCode\"g\n" +
 	"\n" +
 	"GuestLogin\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x12\x10\n" +

@@ -13,16 +13,16 @@ import (
 type Claims struct {
 	Uid      int64  `json:"uid"`
 	Username string `json:"username"`
-	PermsVer int64  `json:"permsVer"`
+	Expand   string `json:"expand"`
 	jwt.RegisteredClaims
 }
 
-func GenToken(secret string, uid int64, username string, permsVer int64, issuser string, ttl time.Duration) (string, error) {
+func GenToken(secret string, uid int64, username string, expand string, issuser string, ttl time.Duration) (string, error) {
 	now := time.Now()
 	claims := Claims{
 		Uid:      uid,
 		Username: username,
-		PermsVer: permsVer,
+		Expand:   expand,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    issuser,
 			IssuedAt:  jwt.NewNumericDate(now),

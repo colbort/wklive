@@ -412,7 +412,7 @@ type AppListBillsResp {
 @server (
 	prefix: /app/option
 	group:  option
-	jwt:    Jwt
+	middleware: PublicRateLimit
 )
 service app {
 	@handler AppListContracts
@@ -420,13 +420,15 @@ service app {
 
 	@handler AppGetContractDetail
 	get /contracts/detail (AppGetContractDetailReq) returns (AppGetContractDetailResp)
+}
 
-	@handler AppPlaceOrder
-	post /orders (AppPlaceOrderReq) returns (AppPlaceOrderResp)
-
-	@handler AppCancelOrder
-	post /orders/cancel (AppCancelOrderReq) returns (AppCommonResp)
-
+@server (
+	prefix: /app/option
+	group:  option
+	jwt:    Jwt
+	middleware: UserRateLimit
+)
+service app {
 	@handler AppGetOrderDetail
 	get /orders/detail (AppGetOrderDetailReq) returns (AppGetOrderDetailResp)
 
@@ -445,9 +447,6 @@ service app {
 	@handler AppGetPositionDetail
 	get /positions/detail (AppGetPositionDetailReq) returns (AppGetPositionDetailResp)
 
-	@handler AppExercise
-	post /exercise (AppExerciseReq) returns (AppExerciseResp)
-
 	@handler AppListExercises
 	get /exercises (AppListExercisesReq) returns (AppListExercisesResp)
 
@@ -456,4 +455,21 @@ service app {
 
 	@handler AppListBills
 	get /bills (AppListBillsReq) returns (AppListBillsResp)
+}
+
+@server (
+	prefix: /app/option
+	group:  option
+	jwt:    Jwt
+	middleware: SensitiveRateLimit
+)
+service app {
+	@handler AppPlaceOrder
+	post /orders (AppPlaceOrderReq) returns (AppPlaceOrderResp)
+
+	@handler AppCancelOrder
+	post /orders/cancel (AppCancelOrderReq) returns (AppCommonResp)
+
+	@handler AppExercise
+	post /exercise (AppExerciseReq) returns (AppExerciseResp)
 }

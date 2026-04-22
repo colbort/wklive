@@ -32,6 +32,7 @@ func (l *GuestLoginLogic) GuestLogin(req *types.GuestLoginReq) (resp *types.Gues
 		DeviceId:    req.DeviceId,
 		Fingerprint: req.Fingerprint,
 		RegisterIp:  req.RegisterIp,
+		TenantCode:  req.TenantCode,
 	})
 	if err != nil {
 		return nil, err

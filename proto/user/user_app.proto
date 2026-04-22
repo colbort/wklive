@@ -50,6 +50,7 @@ message GuestLoginReq {
   string device_id = 1;
   string fingerprint = 2;
   string register_ip = 3;
+  string tenant_code = 4;
 }
 
 message GuestLogin {

@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"time"
 	"wklive/common/helper"
@@ -80,11 +81,18 @@ func (l *AdminLoginLogic) AdminLogin(in *system.AdminLoginReq) (*system.AdminLog
 		LoginAt:  now,
 	})
 
+	str := make(map[string]any, 0)
+	str["permsVer"] = user.PermsVer
+	expand, err := json.Marshal(str)
+	if err != nil {
+		return nil, err
+	}
+
 	token, err := utils.GenToken(
 		l.svcCtx.Config.Jwt.AccessSecret,
 		user.Id,
 		user.Username,
-		user.PermsVer,
+		string(expand),
 		l.svcCtx.Config.Name,
 		time.Duration(l.svcCtx.Config.Jwt.AccessExpire)*time.Second,
 	)

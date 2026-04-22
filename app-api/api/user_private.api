@@ -139,6 +139,7 @@ type SetDefaultBankReq {
 	prefix: /app/user
 	group:  user_private
 	jwt:    Jwt
+	middleware: UserRateLimit
 )
 service app {
 	@handler Logout
@@ -150,9 +151,6 @@ service app {
 	@handler UpdateProfile
 	put /profile (UpdateProfileReq) returns (UpdateProfileResp)
 
-	@handler ChangeLoginPassword
-	put /change-login-password (ChangeLoginPasswordReq) returns (RespBase)
-
 	@handler GetIdentity
 	get /identity returns (GetIdentityResp)
 
@@ -162,24 +160,43 @@ service app {
 	@handler GetSecurity
 	get /security returns (GetSecurityResp)
 
+	@handler InitGoogle2FA
+	get /google2fa/init returns (InitGoogle2FAResp)
+
+	@handler ListBanks
+	get /banks (ListBanksReq) returns (ListBanksResp)
+}
+
+@server (
+	prefix: /app/user
+	group:  user_private
+	jwt:    Jwt
+	middleware: SensitiveRateLimit
+)
+service app {
+	@handler ChangeLoginPassword
+	put /change-login-password (ChangeLoginPasswordReq) returns (RespBase)
+
 	@handler SetPayPassword
 	post /pay-password (SetPayPasswordReq) returns (RespBase)
 
 	@handler ChangePayPassword
 	put /pay-password (ChangePayPasswordReq) returns (RespBase)
 
-	@handler InitGoogle2FA
-	get /google2fa/init returns (InitGoogle2FAResp)
-
 	@handler EnableGoogle2FA
 	post /google2fa/enable (VerifyGoogle2FAReq) returns (RespBase)
 
 	@handler DisableGoogle2FA
 	post /google2fa/disable (VerifyGoogle2FAReq) returns (RespBase)
+}
 
-	@handler ListBanks
-	get /banks (ListBanksReq) returns (ListBanksResp)
-
+@server (
+	prefix: /app/user
+	group:  user_private
+	jwt:    Jwt
+	middleware: SensitiveRateLimit
+)
+service app {
 	@handler AddBank
 	post /banks (AddBankReq) returns (AddBankResp)
 

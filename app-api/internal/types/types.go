@@ -768,6 +768,7 @@ type GuestLoginReq struct {
 	DeviceId    string `json:"deviceId"`
 	Fingerprint string `json:"fingerprint"`
 	RegisterIp  string `json:"registerIp,optional"`
+	TenantCode  string `json:"tenantCode"`
 }
 
 type GuestLoginResp struct {

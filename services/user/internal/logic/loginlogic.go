@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"time"
 	"wklive/common/helper"
@@ -90,11 +91,17 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 	// TODO: verify password
 	// TODO: verify google 2FA if enabled
 
+	str := make(map[string]any, 0)
+	str["tid"] = tenant.Data.Id
+	expand, err := json.Marshal(str)
+	if err != nil {
+		return nil, err
+	}
 	token, err := utils.GenToken(
 		l.svcCtx.Config.Jwt.AccessSecret,
 		tuser.Id,
 		tuser.Username,
-		0,
+		string(expand),
 		"",
 		time.Duration(l.svcCtx.Config.Jwt.AccessExpire)*time.Second,
 	)

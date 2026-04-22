@@ -43,6 +43,7 @@ type GuestLoginReq {
 	deviceId    string `json:"deviceId"`
 	fingerprint string `json:"fingerprint"`
 	registerIp  string `json:"registerIp,optional"`
+	tenantCode  string `json:"tenantCode"`
 }
 
 type GuestLogin {
@@ -70,6 +71,7 @@ type RefreshTokenResp {
 @server (
 	prefix: /app/user
 	group:  user_public
+	middleware: GuestSensitiveRateLimit
 )
 service app {
 	@handler Register
@@ -80,7 +82,14 @@ service app {
 
 	@handler GuestLogin
 	post /guest-login (GuestLoginReq) returns (GuestLoginResp)
+}
 
+@server (
+	prefix: /app/user
+	group:  user_public
+	middleware: RefreshTokenRateLimit
+)
+service app {
 	@handler RefreshToken
 	post /refresh-token (RefreshTokenReq) returns (RefreshTokenResp)
 }

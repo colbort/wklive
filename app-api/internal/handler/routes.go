@@ -70,404 +70,521 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				Method:  http.MethodGet,
-				Path:    "/batch/quote",
-				Handler: itick.BatchGetQuoteHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/categories",
-				Handler: itick.ListVisibleCategoriesHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/kline",
-				Handler: itick.GetKlineHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/products",
-				Handler: itick.ListVisibleProductsHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/quote",
-				Handler: itick.GetQuoteHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/ws/:id",
-				Handler: itick.TickWsHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.PublicRateLimit},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/batch/quote",
+					Handler: itick.BatchGetQuoteHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/categories",
+					Handler: itick.ListVisibleCategoriesHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/kline",
+					Handler: itick.GetKlineHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/products",
+					Handler: itick.ListVisibleProductsHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/quote",
+					Handler: itick.GetQuoteHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/ws/:id",
+					Handler: itick.TickWsHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithPrefix("/app/itick"),
 	)
 
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				Method:  http.MethodGet,
-				Path:    "/accounts",
-				Handler: option.AppListAccountsHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/bills",
-				Handler: option.AppListBillsHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/contracts",
-				Handler: option.AppListContractsHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/contracts/detail",
-				Handler: option.AppGetContractDetailHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/exercise",
-				Handler: option.AppExerciseHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/exercises",
-				Handler: option.AppListExercisesHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/orders",
-				Handler: option.AppPlaceOrderHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/orders/cancel",
-				Handler: option.AppCancelOrderHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/orders/current",
-				Handler: option.AppListCurrentOrdersHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/orders/detail",
-				Handler: option.AppGetOrderDetailHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/orders/history",
-				Handler: option.AppListHistoryOrdersHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/positions",
-				Handler: option.AppListPositionsHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/positions/detail",
-				Handler: option.AppGetPositionDetailHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/trades",
-				Handler: option.AppListTradesHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.PublicRateLimit},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/contracts",
+					Handler: option.AppListContractsHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/contracts/detail",
+					Handler: option.AppGetContractDetailHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/app/option"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.UserRateLimit},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/accounts",
+					Handler: option.AppListAccountsHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/bills",
+					Handler: option.AppListBillsHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/exercises",
+					Handler: option.AppListExercisesHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/orders/current",
+					Handler: option.AppListCurrentOrdersHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/orders/detail",
+					Handler: option.AppGetOrderDetailHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/orders/history",
+					Handler: option.AppListHistoryOrdersHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/positions",
+					Handler: option.AppListPositionsHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/positions/detail",
+					Handler: option.AppGetPositionDetailHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/trades",
+					Handler: option.AppListTradesHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
 		rest.WithPrefix("/app/option"),
 	)
 
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				Method:  http.MethodPost,
-				Path:    "/channels/available",
-				Handler: payment.ListAvailableRechargeChannelsHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/create/recharge/orders",
-				Handler: payment.CreateRechargeOrderHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/recharge/orders",
-				Handler: payment.ListMyRechargeOrdersHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/recharge/orders/:orderNo",
-				Handler: payment.GetMyRechargeOrderHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/recharge/orders/:orderNo/cancel",
-				Handler: payment.CancelMyRechargeOrderHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/recharge/orders/:orderNo/status",
-				Handler: payment.QueryMyRechargeOrderStatusHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/recharge/stat",
-				Handler: payment.GetMyRechargeStatHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/withdraw/orders",
-				Handler: payment.CreateWithdrawOrderHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/withdraw/orders",
-				Handler: payment.ListMyWithdrawOrdersHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/withdraw/orders/:orderNo",
-				Handler: payment.GetMyWithdrawOrderHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.SensitiveRateLimit},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/exercise",
+					Handler: option.AppExerciseHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/orders",
+					Handler: option.AppPlaceOrderHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/orders/cancel",
+					Handler: option.AppCancelOrderHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
+		rest.WithPrefix("/app/option"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.UserRateLimit},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/channels/available",
+					Handler: payment.ListAvailableRechargeChannelsHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/recharge/orders",
+					Handler: payment.ListMyRechargeOrdersHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/recharge/orders/:orderNo",
+					Handler: payment.GetMyRechargeOrderHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/recharge/orders/:orderNo/status",
+					Handler: payment.QueryMyRechargeOrderStatusHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/recharge/stat",
+					Handler: payment.GetMyRechargeStatHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/withdraw/orders",
+					Handler: payment.ListMyWithdrawOrdersHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/withdraw/orders/:orderNo",
+					Handler: payment.GetMyWithdrawOrderHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
 		rest.WithPrefix("/app/payment"),
 	)
 
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				Method:  http.MethodGet,
-				Path:    "/my/orders",
-				Handler: staking.MyOrderListHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/my/orders/detail",
-				Handler: staking.MyOrderDetailHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/my/redeem-logs",
-				Handler: staking.MyRedeemLogListHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/my/reward-logs",
-				Handler: staking.MyRewardLogListHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/orders",
-				Handler: staking.CreateOrderHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/products",
-				Handler: staking.AppProductListHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/products/detail",
-				Handler: staking.AppProductDetailHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/redeem",
-				Handler: staking.RedeemHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.SensitiveRateLimit},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/create/recharge/orders",
+					Handler: payment.CreateRechargeOrderHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/recharge/orders/:orderNo/cancel",
+					Handler: payment.CancelMyRechargeOrderHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/withdraw/orders",
+					Handler: payment.CreateWithdrawOrderHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
+		rest.WithPrefix("/app/payment"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.PublicRateLimit},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/products",
+					Handler: staking.AppProductListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/products/detail",
+					Handler: staking.AppProductDetailHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/app/staking"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.UserRateLimit},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/my/orders",
+					Handler: staking.MyOrderListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/my/orders/detail",
+					Handler: staking.MyOrderDetailHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/my/redeem-logs",
+					Handler: staking.MyRedeemLogListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/my/reward-logs",
+					Handler: staking.MyRewardLogListHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
 		rest.WithPrefix("/app/staking"),
 	)
 
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				Method:  http.MethodGet,
-				Path:    "/fills",
-				Handler: trade.GetFillListHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/leverage",
-				Handler: trade.SetLeverageHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/leverage-config",
-				Handler: trade.GetLeverageConfigHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/margin-accounts",
-				Handler: trade.GetMarginAccountListHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/orders",
-				Handler: trade.PlaceOrderHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/orders",
-				Handler: trade.GetOrderListHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/orders/cancel",
-				Handler: trade.CancelOrderHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/orders/cancel-all",
-				Handler: trade.CancelAllOrdersHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/orders/detail",
-				Handler: trade.GetOrderDetailHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/positions",
-				Handler: trade.GetPositionListHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/symbols",
-				Handler: trade.GetSymbolListHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/symbols/detail",
-				Handler: trade.GetSymbolDetailHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.SensitiveRateLimit},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/orders",
+					Handler: staking.CreateOrderHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/redeem",
+					Handler: staking.RedeemHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
+		rest.WithPrefix("/app/staking"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.PublicRateLimit},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/symbols",
+					Handler: trade.GetSymbolListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/symbols/detail",
+					Handler: trade.GetSymbolDetailHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/app/trade"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.UserRateLimit},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/fills",
+					Handler: trade.GetFillListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/leverage-config",
+					Handler: trade.GetLeverageConfigHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/margin-accounts",
+					Handler: trade.GetMarginAccountListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/orders",
+					Handler: trade.GetOrderListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/orders/detail",
+					Handler: trade.GetOrderDetailHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/positions",
+					Handler: trade.GetPositionListHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
 		rest.WithPrefix("/app/trade"),
 	)
 
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				Method:  http.MethodGet,
-				Path:    "/banks",
-				Handler: user_private.ListBanksHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/banks",
-				Handler: user_private.AddBankHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPut,
-				Path:    "/banks/:id",
-				Handler: user_private.UpdateBankHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodDelete,
-				Path:    "/banks/:id",
-				Handler: user_private.DeleteBankHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPut,
-				Path:    "/banks/:id/default",
-				Handler: user_private.SetDefaultBankHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPut,
-				Path:    "/change-login-password",
-				Handler: user_private.ChangeLoginPasswordHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/google2fa/disable",
-				Handler: user_private.DisableGoogle2FAHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/google2fa/enable",
-				Handler: user_private.EnableGoogle2FAHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/google2fa/init",
-				Handler: user_private.InitGoogle2FAHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/identity",
-				Handler: user_private.GetIdentityHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/identity",
-				Handler: user_private.SubmitIdentityHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/logout",
-				Handler: user_private.LogoutHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/pay-password",
-				Handler: user_private.SetPayPasswordHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPut,
-				Path:    "/pay-password",
-				Handler: user_private.ChangePayPasswordHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/profile",
-				Handler: user_private.GetProfileHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPut,
-				Path:    "/profile",
-				Handler: user_private.UpdateProfileHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/security",
-				Handler: user_private.GetSecurityHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.SensitiveRateLimit},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/leverage",
+					Handler: trade.SetLeverageHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/orders",
+					Handler: trade.PlaceOrderHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/orders/cancel",
+					Handler: trade.CancelOrderHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/orders/cancel-all",
+					Handler: trade.CancelAllOrdersHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
+		rest.WithPrefix("/app/trade"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.UserRateLimit},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/banks",
+					Handler: user_private.ListBanksHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/google2fa/init",
+					Handler: user_private.InitGoogle2FAHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/identity",
+					Handler: user_private.GetIdentityHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/identity",
+					Handler: user_private.SubmitIdentityHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/logout",
+					Handler: user_private.LogoutHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/profile",
+					Handler: user_private.GetProfileHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPut,
+					Path:    "/profile",
+					Handler: user_private.UpdateProfileHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/security",
+					Handler: user_private.GetSecurityHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
 		rest.WithPrefix("/app/user"),
 	)
 
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				Method:  http.MethodPost,
-				Path:    "/guest-login",
-				Handler: user_public.GuestLoginHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/login",
-				Handler: user_public.LoginHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/refresh-token",
-				Handler: user_public.RefreshTokenHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/register",
-				Handler: user_public.RegisterHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.SensitiveRateLimit},
+			[]rest.Route{
+				{
+					Method:  http.MethodPut,
+					Path:    "/change-login-password",
+					Handler: user_private.ChangeLoginPasswordHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/google2fa/disable",
+					Handler: user_private.DisableGoogle2FAHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/google2fa/enable",
+					Handler: user_private.EnableGoogle2FAHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/pay-password",
+					Handler: user_private.SetPayPasswordHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPut,
+					Path:    "/pay-password",
+					Handler: user_private.ChangePayPasswordHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
+		rest.WithPrefix("/app/user"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.SensitiveRateLimit},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/banks",
+					Handler: user_private.AddBankHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPut,
+					Path:    "/banks/:id",
+					Handler: user_private.UpdateBankHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodDelete,
+					Path:    "/banks/:id",
+					Handler: user_private.DeleteBankHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPut,
+					Path:    "/banks/:id/default",
+					Handler: user_private.SetDefaultBankHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
+		rest.WithPrefix("/app/user"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.GuestSensitiveRateLimit},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/guest-login",
+					Handler: user_public.GuestLoginHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/login",
+					Handler: user_public.LoginHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/register",
+					Handler: user_public.RegisterHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/app/user"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.RefreshTokenRateLimit},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/refresh-token",
+					Handler: user_public.RefreshTokenHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithPrefix("/app/user"),
 	)
 }

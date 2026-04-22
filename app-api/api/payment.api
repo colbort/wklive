@@ -237,46 +237,45 @@ type GetMyWithdrawOrderResp {
 	prefix: /app/payment
 	group:  payment
 	jwt:    Jwt
+	middleware: UserRateLimit
 )
 service app {
-	// 当前用户累计充值统计（展示用）
 	@handler GetMyRechargeStat
 	get /recharge/stat (GetMyRechargeStatReq) returns (GetMyRechargeStatResp)
 
-	// 获取当前用户在指定充值金额下可用的充值通道
 	@handler ListAvailableRechargeChannels
 	post /channels/available (ListAvailableRechargeChannelsReq) returns (ListAvailableRechargeChannelsResp)
 
-	// 创建充值订单
-	@handler CreateRechargeOrder
-	post /create/recharge/orders (CreateRechargeOrderReq) returns (CreateRechargeOrderResp)
-
-	// 查询我的订单详情
 	@handler GetMyRechargeOrder
 	get /recharge/orders/:orderNo (GetMyRechargeOrderReq) returns (GetMyRechargeOrderResp)
 
-	// 查询我的充值订单列表
 	@handler ListMyRechargeOrders
 	get /recharge/orders (ListMyRechargeOrdersReq) returns (ListMyRechargeOrdersResp)
 
-	// 取消未支付订单
-	@handler CancelMyRechargeOrder
-	post /recharge/orders/:orderNo/cancel (CancelMyRechargeOrderReq) returns (RespBase)
-
-	// 轮询订单状态
 	@handler QueryMyRechargeOrderStatus
 	get /recharge/orders/:orderNo/status (QueryMyRechargeOrderStatusReq) returns (QueryMyRechargeOrderStatusResp)
 
-	// 提现
-	@handler CreateWithdrawOrder
-	post /withdraw/orders (CreateWithdrawOrderReq) returns (CreateWithdrawOrderResp)
-
-	// 获取提现订单列表
 	@handler ListMyWithdrawOrders
 	get /withdraw/orders (ListMyWithdrawOrdersReq) returns (ListMyWithdrawOrdersResp)
 
-	// 获取提现订单详情
 	@handler GetMyWithdrawOrder
 	get /withdraw/orders/:orderNo (GetMyWithdrawOrderReq) returns (GetMyWithdrawOrderResp)
+}
+
+@server (
+	prefix: /app/payment
+	group:  payment
+	jwt:    Jwt
+	middleware: SensitiveRateLimit
+)
+service app {
+	@handler CreateRechargeOrder
+	post /create/recharge/orders (CreateRechargeOrderReq) returns (CreateRechargeOrderResp)
+
+	@handler CancelMyRechargeOrder
+	post /recharge/orders/:orderNo/cancel (CancelMyRechargeOrderReq) returns (RespBase)
+
+	@handler CreateWithdrawOrder
+	post /withdraw/orders (CreateWithdrawOrderReq) returns (CreateWithdrawOrderResp)
 }
 

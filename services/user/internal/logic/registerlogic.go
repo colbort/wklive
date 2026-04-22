@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"time"
 	"wklive/common/helper"
@@ -150,11 +151,17 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 	if err != nil {
 		return nil, err
 	}
+	str := make(map[string]any, 0)
+	str["tid"] = tenant.Data.Id
+	expand, err := json.Marshal(str)
+	if err != nil {
+		return nil, err
+	}
 	token, err := utils.GenToken(
 		l.svcCtx.Config.Jwt.AccessSecret,
 		userId,
 		"",
-		0,
+		string(expand),
 		"",
 		time.Duration(l.svcCtx.Config.Jwt.AccessExpire)*time.Second,
 	)

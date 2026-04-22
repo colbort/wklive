@@ -217,7 +217,7 @@ type AppMyRedeemLogListResp {
 @server (
 	prefix: /app/staking
 	group:  staking
-	jwt:    Jwt
+	middleware: PublicRateLimit
 )
 service app {
 	@handler AppProductList
@@ -225,10 +225,15 @@ service app {
 
 	@handler AppProductDetail
 	get /products/detail (AppProductDetailReq) returns (AppProductDetailResp)
+}
 
-	@handler CreateOrder
-	post /orders (AppCreateOrderReq) returns (AppCreateOrderResp)
-
+@server (
+	prefix: /app/staking
+	group:  staking
+	jwt:    Jwt
+	middleware: UserRateLimit
+)
+service app {
 	@handler MyOrderList
 	get /my/orders (AppMyOrderListReq) returns (AppMyOrderListResp)
 
@@ -238,9 +243,20 @@ service app {
 	@handler MyRewardLogList
 	get /my/reward-logs (AppMyRewardLogListReq) returns (AppMyRewardLogListResp)
 
-	@handler Redeem
-	post /redeem (AppRedeemReq) returns (AppRedeemResp)
-
 	@handler MyRedeemLogList
 	get /my/redeem-logs (AppMyRedeemLogListReq) returns (AppMyRedeemLogListResp)
+}
+
+@server (
+	prefix: /app/staking
+	group:  staking
+	jwt:    Jwt
+	middleware: SensitiveRateLimit
+)
+service app {
+	@handler CreateOrder
+	post /orders (AppCreateOrderReq) returns (AppCreateOrderResp)
+
+	@handler Redeem
+	post /redeem (AppRedeemReq) returns (AppRedeemResp)
 }

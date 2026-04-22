@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"github.com/zeromicro/go-zero/core/logx"
 	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -10,6 +9,8 @@ import (
 	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type RefreshTokenLogic struct {
@@ -59,7 +60,7 @@ func (l *RefreshTokenLogic) RefreshToken(in *user.RefreshTokenReq) (*user.Refres
 		l.svcCtx.Config.Jwt.AccessSecret,
 		tuser.Id,
 		tuser.Username,
-		0,
+		claims.Expand,
 		"",
 		time.Duration(l.svcCtx.Config.Jwt.AccessExpire)*time.Second,
 	)
@@ -72,7 +73,7 @@ func (l *RefreshTokenLogic) RefreshToken(in *user.RefreshTokenReq) (*user.Refres
 		l.svcCtx.Config.Jwt.AccessSecret,
 		tuser.Id,
 		tuser.Username,
-		0,
+		claims.Expand,
 		"",
 		time.Duration(l.svcCtx.Config.Jwt.AccessExpire)*time.Second,
 	)

@@ -29,7 +29,11 @@ func NewSysCronJobUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 更新系统定时任务
 func (l *SysCronJobUpdateLogic) SysCronJobUpdate(in *system.SysCronJobUpdateReq) (*system.RespBase, error) {
-	_, err := cron.ParseStandard(in.CronExpression)
+	parser := cron.NewParser(
+		cron.SecondOptional | cron.Minute | cron.Hour | cron.Dom | cron.Month | cron.Dow | cron.Descriptor,
+	)
+
+	_, err := parser.Parse(in.CronExpression)
 	if err != nil {
 		return &system.RespBase{
 			Base: helper.GetErrResp(400, i18n.Translate(i18n.InvalidCronExpression, l.ctx)),
@@ -52,7 +56,7 @@ func (l *SysCronJobUpdateLogic) SysCronJobUpdate(in *system.SysCronJobUpdateReq)
 	job.CronExpression = in.CronExpression
 	job.Status = jobStatusToModel(in.Status)
 	job.Remark = sql.NullString{String: in.Remark, Valid: true}
-	userName, err := utils.GetUsernameFromCtx(l.ctx)
+	userName, err := utils.GetUsernameFromMd(l.ctx)
 	if err != nil {
 		return &system.RespBase{
 			Base: helper.GetErrResp(500, err.Error()),

@@ -343,7 +343,7 @@ type SetLeverageReq {
 @server (
 	prefix: /app/trade
 	group:  trade
-	jwt:    Jwt
+	middleware: PublicRateLimit
 )
 service app {
 	@handler GetSymbolList
@@ -351,16 +351,15 @@ service app {
 
 	@handler GetSymbolDetail
 	get /symbols/detail (GetSymbolDetailReq) returns (GetSymbolDetailResp)
+}
 
-	@handler PlaceOrder
-	post /orders (PlaceOrderReq) returns (PlaceOrderResp)
-
-	@handler CancelOrder
-	post /orders/cancel (CancelOrderReq) returns (TradeAppCommonResp)
-
-	@handler CancelAllOrders
-	post /orders/cancel-all (CancelAllOrdersReq) returns (CancelAllOrdersResp)
-
+@server (
+	prefix: /app/trade
+	group:  trade
+	jwt:    Jwt
+	middleware: UserRateLimit
+)
+service app {
 	@handler GetOrderList
 	get /orders (GetOrderListReq) returns (GetOrderListResp)
 
@@ -378,6 +377,23 @@ service app {
 
 	@handler GetLeverageConfig
 	get /leverage-config (GetLeverageConfigReq) returns (GetLeverageConfigResp)
+}
+
+@server (
+	prefix: /app/trade
+	group:  trade
+	jwt:    Jwt
+	middleware: SensitiveRateLimit
+)
+service app {
+	@handler PlaceOrder
+	post /orders (PlaceOrderReq) returns (PlaceOrderResp)
+
+	@handler CancelOrder
+	post /orders/cancel (CancelOrderReq) returns (TradeAppCommonResp)
+
+	@handler CancelAllOrders
+	post /orders/cancel-all (CancelAllOrdersReq) returns (CancelAllOrdersResp)
 
 	@handler SetLeverage
 	post /leverage (SetLeverageReq) returns (TradeAppCommonResp)

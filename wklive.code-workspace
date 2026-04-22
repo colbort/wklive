@@ -59,6 +59,7 @@
     "cSpell.words": [
       "Aliyun",
       "APIURLIs",
+      "casbin",
       "cronx",
       "cutils",
       "dedupe",
@@ -83,6 +84,8 @@
       "Premarket",
       "protoreflect",
       "qrcode",
+      "robfig",
+      "Segs",
       "sqlutil",
       "sqlx",
       "syncx",

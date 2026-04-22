@@ -2,16 +2,19 @@ package logic
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/zeromicro/go-zero/core/logx"
 	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
+	"wklive/proto/system"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type GuestLoginLogic struct {
@@ -30,6 +33,9 @@ func NewGuestLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GuestL
 
 // 游客登了
 func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginResp, error) {
+	tenant, err := l.svcCtx.SystemCli.SysTenantDetail(l.ctx, &system.SysTenantDetailReq{
+		TenantCode: &in.TenantCode,
+	})
 	if in.DeviceId == "" && in.Fingerprint == "" {
 		return &user.GuestLoginResp{
 			Base: helper.GetErrResp(201, i18n.Translate(i18n.PleaseSwitchDeviceToLogin, l.ctx)),
@@ -45,13 +51,20 @@ func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginRe
 		}, nil
 	}
 
+	str := make(map[string]any, 0)
+	str["tid"] = tenant.Data.Id
+	expand, err := json.Marshal(str)
+	if err != nil {
+		return nil, err
+	}
+
 	err = l.checkGuestLimit(in.RegisterIp)
 	userId := l.svcCtx.Node.Generate().Int64()
 	token, err := utils.GenToken(
 		l.svcCtx.Config.Jwt.AccessSecret,
 		userId,
 		fmt.Sprintf("Guest%d", userId),
-		0,
+		string(expand),
 		"",
 		time.Duration(24*3600)*time.Second,
 	)

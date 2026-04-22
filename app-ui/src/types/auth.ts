@@ -38,6 +38,7 @@ export interface GuestLoginReq {
   deviceId: string
   fingerprint: string
   registerIp?: string
+  tenantCode: string
 }
 
 export interface GuestLoginData {
