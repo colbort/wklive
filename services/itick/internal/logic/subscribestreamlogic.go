@@ -32,50 +32,50 @@ func NewSubscribeStreamLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 // 订阅数据流
 func (l *SubscribeStreamLogic) SubscribeStream(in *itick.SubscribeRequest, stream itick.ItickApp_SubscribeStreamServer) error {
 	sub := l.svcCtx.Hub.NewSubscriber(256)
-	defer l.svcCtx.Hub.RemoveSubscriber(sub)
 
-	subscribed := make([]server.ClientMessage, 0, len(in.Topics))
-
-	// 连接结束时，做全局退订
-	defer func() {
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-
-		for _, msg := range subscribed {
-			if err := l.svcCtx.ItickManager.RemoveGlobalSubscription(ctx, msg); err != nil {
-				logx.Errorf("remove global subscription failed, key=%s, err=%v", server.BuildTopicKey(msg), err)
-			}
-		}
-	}()
-
+	msgs := make([]server.ClientMessage, 0, len(in.Topics))
 	for _, topic := range in.Topics {
-		msg := server.ClientMessage{
+		msgs = append(msgs, server.ClientMessage{
 			Topic:        server.Topic(topic.Topic),
 			CategoryCode: topic.CategoryCode,
 			Symbol:       topic.Symbol,
 			Market:       topic.Market,
 			Interval:     topic.Interval,
-		}
+		})
+	}
 
-		// 1. 先注册全局订阅
-		if err := l.svcCtx.ItickManager.AddGlobalSubscription(stream.Context(), msg); err != nil {
-			return err
-		}
+	subscribed := make([]server.ClientMessage, 0, len(msgs))
 
+	defer func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		if err := l.svcCtx.ItickManager.RemoveGlobalSubscriptions(ctx, subscribed); err != nil {
+			logx.Errorf("remove global subscriptions failed, err=%v", err)
+		}
+	}()
+	defer l.svcCtx.Hub.RemoveSubscriber(sub)
+
+	// 1. 先注册全局订阅
+	if err := l.svcCtx.ItickManager.AddGlobalSubscriptions(stream.Context(), msgs); err != nil {
+		return err
+	}
+
+	for _, msg := range msgs {
 		// 2. 再注册本地 Hub 订阅
 		if err := l.svcCtx.Hub.Subscribe(sub, msg); err != nil {
-			_ = l.svcCtx.ItickManager.RemoveGlobalSubscription(stream.Context(), msg)
+			_ = l.svcCtx.ItickManager.RemoveGlobalSubscriptions(stream.Context(), msgs)
 			return err
-		}
-
-		// Redis lease may already exist and therefore not publish an add event.
-		// After the local Hub subscription is registered, explicitly ensure the
-		// current leader has subscribed upstream.
-		if err := l.svcCtx.ItickManager.EnsureUpstreamSubscription(stream.Context(), msg); err != nil {
-			logx.Errorf("ensure upstream subscription failed, key=%s, err=%v", server.BuildTopicKey(msg), err)
 		}
 
 		subscribed = append(subscribed, msg)
+	}
+
+	// Redis lease may already exist and therefore not publish an add event.
+	// After the local Hub subscriptions are registered, explicitly ensure the
+	// current leader has subscribed upstream.
+	if err := l.svcCtx.ItickManager.EnsureUpstreamSubscriptions(stream.Context(), msgs); err != nil {
+		logx.Errorf("ensure upstream subscriptions failed, err=%v", err)
 	}
 
 	for {

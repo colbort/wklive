@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -21,10 +22,12 @@ import (
 
 const (
 	defaultWriteWait      = 10 * time.Second
+	defaultAuthWait       = 10 * time.Second
 	defaultPongWait       = 70 * time.Second
 	defaultPingPeriod     = 30 * time.Second
 	defaultReconnectDelay = 5 * time.Second
 	defaultReconcileGap   = 5 * time.Second
+	defaultSubscribeDelay = 50 * time.Millisecond
 
 	defaultLeaderTTL      = 15 * time.Second
 	defaultLeaderRenewGap = 5 * time.Second
@@ -40,8 +43,14 @@ type ItickWsClient struct {
 	mu   sync.RWMutex
 	conn *websocket.Conn
 
-	upstreamMu   sync.Mutex
-	upstreamSubs map[string]struct{}
+	writeMu sync.Mutex
+
+	subMu          sync.Mutex
+	desiredSubs    map[string]server.ClientMessage
+	upstreamGroups map[string]string
+
+	syncSubMu    sync.Mutex
+	syncSubTimer *time.Timer
 
 	bus      *ClusterBus
 	registry *SubscriptionRegistry
@@ -66,11 +75,12 @@ func NewItickWsClient(
 		dialer: &websocket.Dialer{
 			HandshakeTimeout: 10 * time.Second,
 		},
-		upstreamSubs: make(map[string]struct{}),
-		bus:          bus,
-		registry:     registry,
-		locker:       locker,
-		hub:          hub,
+		desiredSubs:    make(map[string]server.ClientMessage),
+		upstreamGroups: make(map[string]string),
+		bus:            bus,
+		registry:       registry,
+		locker:         locker,
+		hub:            hub,
 	}
 }
 
@@ -188,6 +198,19 @@ func (c *ItickWsClient) runAsLeader(ctx context.Context) error {
 
 		sessionCtx, stopSession := context.WithCancel(ctx)
 
+		if err := c.waitAuthenticated(sessionCtx); err != nil {
+			stopSession()
+			c.closeConn()
+			logx.Errorf("itick ws auth failed, category=%s err=%v", c.categoryCode, err)
+
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			case <-time.After(defaultReconnectDelay):
+				continue
+			}
+		}
+
 		if err := c.restoreSubscriptions(sessionCtx); err != nil {
 			logx.Errorf("itick ws restore subscriptions failed, category=%s err=%v", c.categoryCode, err)
 		}
@@ -196,7 +219,7 @@ func (c *ItickWsClient) runAsLeader(ctx context.Context) error {
 
 		if err := c.readLoop(sessionCtx); err != nil {
 			if isNormalWsClose(err) {
-				logx.Errorf("itick ws read loop closed normally, category=%s err=%v", c.categoryCode, err)
+				logx.Infof("itick ws read loop closed normally, category=%s err=%v", c.categoryCode, err)
 			} else {
 				logx.Errorf("itick ws read loop stopped, category=%s err=%v", c.categoryCode, err)
 			}
@@ -239,15 +262,18 @@ func (c *ItickWsClient) connect() error {
 	}
 
 	_ = conn.SetReadDeadline(time.Now().Add(defaultPongWait))
+	conn.SetPongHandler(func(string) error {
+		return conn.SetReadDeadline(time.Now().Add(defaultPongWait))
+	})
 
 	c.mu.Lock()
 	c.conn = conn
 	c.mu.Unlock()
-	c.resetUpstreamSubscriptions()
+	c.resetUpstreamGroups()
 
 	go c.keepaliveLoop(conn)
 
-	logx.Infof("itick ws connected: %s", c.url)
+	logx.Errorf("itick ws connected: %s", c.url)
 	return nil
 }
 
@@ -268,15 +294,8 @@ func (c *ItickWsClient) keepaliveLoop(conn *websocket.Conn) {
 			return
 		}
 
-		ts := strconv.FormatInt(cutils.NowMillis(), 10)
-		req := PingReq{
-			Ac:     "ping",
-			Params: ts,
-		}
-
-		_ = current.SetWriteDeadline(time.Now().Add(defaultWriteWait))
-		if err := current.WriteJSON(req); err != nil {
-			logx.Errorf("itick business ping failed: %v", err)
+		if err := c.writePing(current); err != nil {
+			logx.Errorf("itick ping failed: %v", err)
 			return
 		}
 	}
@@ -293,13 +312,13 @@ func (c *ItickWsClient) readLoop(ctx context.Context) error {
 
 	for {
 		if ctx.Err() != nil || c.IsClosed() {
-			logx.Errorf("socket 链接关闭 ")
+			logx.Infof("socket 链接关闭")
 			return ctx.Err()
 		}
 
 		_, data, err := conn.ReadMessage()
 		if err != nil {
-			logx.Errorf("读取数据失败 %v", err)
+			logx.Errorf("读取数据失败 category=%s %v", c.categoryCode, err)
 			return err
 		}
 
@@ -312,6 +331,65 @@ func isNormalWsClose(err error) bool {
 	return websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway)
 }
 
+func (c *ItickWsClient) waitAuthenticated(ctx context.Context) error {
+	c.mu.RLock()
+	conn := c.conn
+	c.mu.RUnlock()
+
+	if conn == nil {
+		return errors.New("ws conn is nil")
+	}
+
+	authDeadline := time.Now().Add(defaultAuthWait)
+	_ = conn.SetReadDeadline(authDeadline)
+	defer func() {
+		_ = conn.SetReadDeadline(time.Now().Add(defaultPongWait))
+	}()
+
+	for {
+		if ctx.Err() != nil || c.IsClosed() {
+			return ctx.Err()
+		}
+
+		_, data, err := conn.ReadMessage()
+		if err != nil {
+			return err
+		}
+
+		var env UpstreamEnvelope
+		if err := json.Unmarshal(data, &env); err != nil {
+			return fmt.Errorf("unmarshal auth message failed: %w", err)
+		}
+
+		if env.ResAc == "" {
+			if env.Code == 1 && env.Msg != "" {
+				logx.Infof("itick ws connected ack, category=%s msg=%s", c.categoryCode, env.Msg)
+				continue
+			}
+			if len(env.Data) > 0 {
+				c.handleUpstreamEnvelope(ctx, env)
+				continue
+			}
+			if env.Msg != "" {
+				logx.Infof("itick ws pre-auth message, category=%s code=%d msg=%s", c.categoryCode, env.Code, env.Msg)
+			}
+			continue
+		}
+
+		if env.ResAc != "auth" {
+			c.handleUpstreamEnvelope(ctx, env)
+			continue
+		}
+
+		if env.Code != 1 {
+			return fmt.Errorf("auth rejected: code=%d msg=%s", env.Code, env.Msg)
+		}
+
+		logx.Infof("itick ws authenticated, category=%s msg=%s", c.categoryCode, env.Msg)
+		return nil
+	}
+}
+
 func (c *ItickWsClient) handleUpstreamMessage(ctx context.Context, data []byte) {
 	var env UpstreamEnvelope
 	if err := json.Unmarshal(data, &env); err != nil {
@@ -319,6 +397,10 @@ func (c *ItickWsClient) handleUpstreamMessage(ctx context.Context, data []byte) 
 		return
 	}
 
+	c.handleUpstreamEnvelope(ctx, env)
+}
+
+func (c *ItickWsClient) handleUpstreamEnvelope(ctx context.Context, env UpstreamEnvelope) {
 	if env.ResAc != "" {
 		switch env.ResAc {
 		case "auth", "subscribe", "unsubscribe":
@@ -410,25 +492,38 @@ func (c *ItickWsClient) handleUpstreamMessage(ctx context.Context, data []byte) 
 	}
 }
 
-func (c *ItickWsClient) HandleSubscriptionChange(change SubscriptionChange) {
+func (c *ItickWsClient) HandleSubscriptionChanges(changes []SubscriptionChange) {
 	if !c.IsLeader() {
 		return
 	}
-	if strings.ToLower(strings.TrimSpace(change.CategoryCode)) != c.categoryCode {
-		return
+
+	changed := false
+	for _, change := range changes {
+		if strings.ToLower(strings.TrimSpace(change.CategoryCode)) != c.categoryCode {
+			continue
+		}
+
+		msg := change.ToClientMessage()
+		key := server.BuildTopicKey(msg)
+
+		switch change.Action {
+		case SubscriptionAdd:
+			if _, _, err := c.buildItickSubscribe(msg); err != nil {
+				logx.Errorf("leader build subscribe failed, category=%s topic=%s err=%v", c.categoryCode, key, err)
+				continue
+			}
+			if c.addDesiredSubscription(key, msg) {
+				changed = true
+			}
+		case SubscriptionRemove:
+			if c.removeDesiredSubscription(key) {
+				changed = true
+			}
+		}
 	}
 
-	msg := change.ToClientMessage()
-
-	switch change.Action {
-	case SubscriptionAdd:
-		if err := c.subscribeByClientMessage(msg); err != nil {
-			logx.Errorf("leader subscribe upstream failed, category=%s topic=%s err=%v", c.categoryCode, server.BuildTopicKey(msg), err)
-		}
-	case SubscriptionRemove:
-		if err := c.UnsubscribeByClientMessage(msg); err != nil {
-			logx.Errorf("leader unsubscribe upstream failed, category=%s topic=%s err=%v", c.categoryCode, server.BuildTopicKey(msg), err)
-		}
+	if changed {
+		c.queueSubscriptionSync()
 	}
 }
 
@@ -453,58 +548,156 @@ func (c *ItickWsClient) restoreSubscriptions(ctx context.Context) error {
 		}
 	}
 
-	for key, msg := range merged {
-		if err := c.subscribeByClientMessage(msg); err != nil {
-			logx.Errorf("restore subscribe failed, category=%s topic=%s err=%v", c.categoryCode, key, err)
-		}
-	}
+	return c.replaceDesiredSubscriptions(merged)
+}
 
-	for key, msg := range c.snapshotUpstreamSubscriptions() {
-		if _, ok := merged[key]; ok {
+func (c *ItickWsClient) subscribeByClientMessages(items map[string]server.ClientMessage) error {
+	return c.replaceDesiredSubscriptions(items)
+}
+
+func (c *ItickWsClient) replaceDesiredSubscriptions(items map[string]server.ClientMessage) error {
+	next := make(map[string]server.ClientMessage, len(items))
+	for key, msg := range items {
+		if _, _, err := c.buildItickSubscribe(msg); err != nil {
+			logx.Errorf("build desired subscribe failed, category=%s topic=%s err=%v", c.categoryCode, key, err)
 			continue
 		}
-		if err := c.UnsubscribeByClientMessage(msg); err != nil {
-			logx.Errorf("restore unsubscribe stale topic failed, category=%s topic=%s err=%v", c.categoryCode, key, err)
+		next[key] = msg
+	}
+
+	c.subMu.Lock()
+	changed := !sameDesiredSubscriptions(c.desiredSubs, next)
+	needSync := changed || (len(c.upstreamGroups) == 0 && len(next) > 0)
+	if changed {
+		c.desiredSubs = next
+	}
+	c.subMu.Unlock()
+
+	if !needSync {
+		return nil
+	}
+
+	return c.syncDesiredSubscriptions()
+}
+
+func (c *ItickWsClient) addDesiredSubscription(key string, msg server.ClientMessage) bool {
+	c.subMu.Lock()
+	defer c.subMu.Unlock()
+
+	if old, ok := c.desiredSubs[key]; ok && sameClientMessage(old, msg) {
+		return false
+	}
+
+	c.desiredSubs[key] = msg
+	return true
+}
+
+func (c *ItickWsClient) removeDesiredSubscription(key string) bool {
+	c.subMu.Lock()
+	defer c.subMu.Unlock()
+
+	if _, ok := c.desiredSubs[key]; !ok {
+		return false
+	}
+
+	delete(c.desiredSubs, key)
+	return true
+}
+
+func (c *ItickWsClient) queueSubscriptionSync() {
+	c.syncSubMu.Lock()
+	defer c.syncSubMu.Unlock()
+
+	if c.syncSubTimer != nil {
+		c.syncSubTimer.Reset(defaultSubscribeDelay)
+		return
+	}
+
+	c.syncSubTimer = time.AfterFunc(defaultSubscribeDelay, c.flushSubscriptionSync)
+}
+
+func (c *ItickWsClient) flushSubscriptionSync() {
+	c.syncSubMu.Lock()
+	c.syncSubTimer = nil
+	c.syncSubMu.Unlock()
+
+	if !c.IsLeader() || c.IsClosed() {
+		return
+	}
+
+	if err := c.syncDesiredSubscriptions(); err != nil {
+		logx.Errorf("sync desired subscriptions failed, category=%s err=%v", c.categoryCode, err)
+	}
+}
+
+func (c *ItickWsClient) syncDesiredSubscriptions() error {
+	c.subMu.Lock()
+	desired := make(map[string]server.ClientMessage, len(c.desiredSubs))
+	for key, msg := range c.desiredSubs {
+		desired[key] = msg
+	}
+	previous := make(map[string]string, len(c.upstreamGroups))
+	for types, params := range c.upstreamGroups {
+		previous[types] = params
+	}
+	c.subMu.Unlock()
+
+	next, err := c.buildSubscriptionGroups(desired)
+	if err != nil {
+		return err
+	}
+
+	for types, oldParams := range previous {
+		if newParams, ok := next[types]; ok && newParams == oldParams {
+			continue
+		}
+		if oldParams == "" {
+			continue
+		}
+		if err := c.unsubscribe(oldParams, types); err != nil {
+			return err
 		}
 	}
 
+	for types, params := range next {
+		if params == "" || previous[types] == params {
+			continue
+		}
+		if err := c.subscribe(params, types); err != nil {
+			return err
+		}
+	}
+
+	c.subMu.Lock()
+	c.upstreamGroups = next
+	c.subMu.Unlock()
 	return nil
 }
 
-func (c *ItickWsClient) subscribeByClientMessage(msg server.ClientMessage) error {
-	key := server.BuildTopicKey(msg)
-	if c.hasUpstreamSubscription(key) {
-		return nil
+func (c *ItickWsClient) buildSubscriptionGroups(items map[string]server.ClientMessage) (map[string]string, error) {
+	groupSets := make(map[string]map[string]struct{})
+	for key, msg := range items {
+		params, types, err := c.buildItickSubscribe(msg)
+		if err != nil {
+			return nil, fmt.Errorf("build subscribe failed, topic=%s err=%w", key, err)
+		}
+		if groupSets[types] == nil {
+			groupSets[types] = make(map[string]struct{})
+		}
+		groupSets[types][params] = struct{}{}
 	}
 
-	params, types, err := c.buildItickSubscribe(msg)
-	if err != nil {
-		return err
-	}
-	if err := c.subscribe(params, types); err != nil {
-		return err
-	}
-
-	c.markUpstreamSubscription(key)
-	return nil
-}
-
-func (c *ItickWsClient) UnsubscribeByClientMessage(msg server.ClientMessage) error {
-	key := server.BuildTopicKey(msg)
-	if !c.hasUpstreamSubscription(key) {
-		return nil
+	groups := make(map[string]string, len(groupSets))
+	for types, set := range groupSets {
+		params := make([]string, 0, len(set))
+		for item := range set {
+			params = append(params, item)
+		}
+		sort.Strings(params)
+		groups[types] = strings.Join(params, ",")
 	}
 
-	params, types, err := c.buildItickSubscribe(msg)
-	if err != nil {
-		return err
-	}
-	if err := c.unsubscribe(params, types); err != nil {
-		return err
-	}
-
-	c.unmarkUpstreamSubscription(key)
-	return nil
+	return groups, nil
 }
 
 func (c *ItickWsClient) buildItickSubscribe(msg server.ClientMessage) (params string, types string, err error) {
@@ -572,8 +765,30 @@ func (c *ItickWsClient) writeJSON(v any) error {
 		return errors.New("ws conn is nil")
 	}
 
+	c.writeMu.Lock()
+	defer c.writeMu.Unlock()
+
 	_ = conn.SetWriteDeadline(time.Now().Add(defaultWriteWait))
 	return conn.WriteJSON(v)
+}
+
+func (c *ItickWsClient) writePing(conn *websocket.Conn) error {
+	ts := strconv.FormatInt(cutils.NowMillis(), 10)
+	req := PingReq{
+		Ac:     "ping",
+		Params: ts,
+	}
+
+	c.writeMu.Lock()
+	defer c.writeMu.Unlock()
+
+	deadline := time.Now().Add(defaultWriteWait)
+	if err := conn.WriteControl(websocket.PingMessage, []byte(ts), deadline); err != nil {
+		return err
+	}
+
+	_ = conn.SetWriteDeadline(deadline)
+	return conn.WriteJSON(req)
 }
 
 func (c *ItickWsClient) Close() error {
@@ -595,51 +810,50 @@ func (c *ItickWsClient) closeConn() {
 	conn := c.conn
 	c.conn = nil
 	c.mu.Unlock()
-	c.resetUpstreamSubscriptions()
+	c.resetPendingSubscriptionSync()
+	c.resetUpstreamGroups()
 
 	if conn != nil {
 		_ = conn.Close()
 	}
 }
 
-func (c *ItickWsClient) hasUpstreamSubscription(key string) bool {
-	c.upstreamMu.Lock()
-	defer c.upstreamMu.Unlock()
+func (c *ItickWsClient) resetPendingSubscriptionSync() {
+	c.syncSubMu.Lock()
+	defer c.syncSubMu.Unlock()
 
-	_, ok := c.upstreamSubs[key]
-	return ok
-}
-
-func (c *ItickWsClient) markUpstreamSubscription(key string) {
-	c.upstreamMu.Lock()
-	defer c.upstreamMu.Unlock()
-
-	c.upstreamSubs[key] = struct{}{}
-}
-
-func (c *ItickWsClient) unmarkUpstreamSubscription(key string) {
-	c.upstreamMu.Lock()
-	defer c.upstreamMu.Unlock()
-
-	delete(c.upstreamSubs, key)
-}
-
-func (c *ItickWsClient) resetUpstreamSubscriptions() {
-	c.upstreamMu.Lock()
-	defer c.upstreamMu.Unlock()
-
-	c.upstreamSubs = make(map[string]struct{})
-}
-
-func (c *ItickWsClient) snapshotUpstreamSubscriptions() map[string]server.ClientMessage {
-	c.upstreamMu.Lock()
-	defer c.upstreamMu.Unlock()
-
-	out := make(map[string]server.ClientMessage, len(c.upstreamSubs))
-	for key := range c.upstreamSubs {
-		out[key] = server.ParseTopicKey(key)
+	if c.syncSubTimer != nil {
+		c.syncSubTimer.Stop()
+		c.syncSubTimer = nil
 	}
-	return out
+}
+
+func (c *ItickWsClient) resetUpstreamGroups() {
+	c.subMu.Lock()
+	defer c.subMu.Unlock()
+
+	c.upstreamGroups = make(map[string]string)
+}
+
+func sameDesiredSubscriptions(left, right map[string]server.ClientMessage) bool {
+	if len(left) != len(right) {
+		return false
+	}
+	for key, leftMsg := range left {
+		rightMsg, ok := right[key]
+		if !ok || !sameClientMessage(leftMsg, rightMsg) {
+			return false
+		}
+	}
+	return true
+}
+
+func sameClientMessage(left, right server.ClientMessage) bool {
+	return left.Topic == right.Topic &&
+		left.CategoryCode == right.CategoryCode &&
+		left.Symbol == right.Symbol &&
+		left.Market == right.Market &&
+		left.Interval == right.Interval
 }
 
 func buildSymbolRegion(symbol, market string) string {

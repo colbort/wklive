@@ -31,9 +31,6 @@ func (s *Subscriber) C() <-chan ServerMessage {
 	return s.ch
 }
 
-type FirstSubscribeHook func(key string, msg ClientMessage)
-type LastUnsubscribeHook func(key string, msg ClientMessage)
-
 type Hub struct {
 	mu sync.RWMutex
 
@@ -42,25 +39,13 @@ type Hub struct {
 
 	// subscriber -> topic keys
 	subTopics map[*Subscriber]map[string]struct{}
-
-	// topic -> 是否已经向上游订阅
-	upstreamSubscribed map[string]bool
-
-	onFirstSubscribe FirstSubscribeHook
-	onLastLeave      LastUnsubscribeHook
 }
 
 func NewHub() *Hub {
 	return &Hub{
-		subs:               make(map[string]map[*Subscriber]struct{}),
-		subTopics:          make(map[*Subscriber]map[string]struct{}),
-		upstreamSubscribed: make(map[string]bool),
+		subs:      make(map[string]map[*Subscriber]struct{}),
+		subTopics: make(map[*Subscriber]map[string]struct{}),
 	}
-}
-
-func (h *Hub) SetHooks(onFirst FirstSubscribeHook, onLast LastUnsubscribeHook) {
-	h.onFirstSubscribe = onFirst
-	h.onLastLeave = onLast
 }
 
 func (h *Hub) NewSubscriber(buf int) *Subscriber {
@@ -87,7 +72,6 @@ func (h *Hub) Subscribe(sub *Subscriber, msg ClientMessage) error {
 	}
 
 	key := BuildTopicKey(msg)
-	needCallHook := false
 
 	h.mu.Lock()
 
@@ -109,18 +93,9 @@ func (h *Hub) Subscribe(sub *Subscriber, msg ClientMessage) error {
 	}
 	h.subTopics[sub][key] = struct{}{}
 
-	if !h.upstreamSubscribed[key] {
-		h.upstreamSubscribed[key] = true
-		needCallHook = true
-	}
-
 	h.mu.Unlock()
 
-	logx.Errorf("stream subscribe success, subscriber=%d, topic=%s", sub.ID, key)
-
-	if needCallHook && h.onFirstSubscribe != nil {
-		go h.onFirstSubscribe(key, msg)
-	}
+	logx.Infof("stream subscribe success, subscriber=%d, topic=%s", sub.ID, key)
 
 	return nil
 }
@@ -136,12 +111,10 @@ func (h *Hub) Unsubscribe(sub *Subscriber, msg ClientMessage) error {
 	}
 
 	key := BuildTopicKey(msg)
-	return h.unsubscribeByKey(sub, key, msg)
+	return h.unsubscribeByKey(sub, key)
 }
 
-func (h *Hub) unsubscribeByKey(sub *Subscriber, key string, msg ClientMessage) error {
-	needCallHook := false
-
+func (h *Hub) unsubscribeByKey(sub *Subscriber, key string) error {
 	h.mu.Lock()
 
 	set, ok := h.subs[key]
@@ -163,17 +136,11 @@ func (h *Hub) unsubscribeByKey(sub *Subscriber, key string, msg ClientMessage) e
 
 	if len(set) == 0 {
 		delete(h.subs, key)
-		delete(h.upstreamSubscribed, key)
-		needCallHook = true
 	}
 
 	h.mu.Unlock()
 
 	logx.Infof("stream unsubscribe success, subscriber=%d, topic=%s", sub.ID, key)
-
-	if needCallHook && h.onLastLeave != nil {
-		go h.onLastLeave(key, msg)
-	}
 
 	return nil
 }
@@ -192,8 +159,7 @@ func (h *Hub) RemoveSubscriber(sub *Subscriber) {
 	h.mu.Unlock()
 
 	for _, topic := range topics {
-		msg := ParseTopicKey(topic)
-		_ = h.unsubscribeByKey(sub, topic, msg)
+		_ = h.unsubscribeByKey(sub, topic)
 	}
 
 	h.mu.Lock()

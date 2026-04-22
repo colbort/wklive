@@ -33,6 +33,10 @@ type SubscriptionChange struct {
 	Interval     string                   `json:"interval,omitempty"`
 }
 
+type SubscriptionChangeBatch struct {
+	Changes []SubscriptionChange `json:"changes"`
+}
+
 func (c SubscriptionChange) ToClientMessage() server.ClientMessage {
 	return server.NormalizeClientMessage(server.ClientMessage{
 		Topic:        server.Topic(c.Topic),
@@ -79,7 +83,22 @@ func (r *SubscriptionRegistry) ownerLeaseKey(categoryCode, topicKey string) stri
 	return fmt.Sprintf("%s:lease:%s:%s:%s", r.hashKeyPrefix, normalizeLeasePart(categoryCode), shortHash(topicKey), r.ownerID)
 }
 
-func (r *SubscriptionRegistry) Add(ctx context.Context, msg server.ClientMessage) error {
+func (r *SubscriptionRegistry) AddMany(ctx context.Context, msgs []server.ClientMessage) error {
+	changes := make([]SubscriptionChange, 0, len(msgs))
+	for _, msg := range normalizeUniqueMessages(msgs) {
+		change, err := r.add(ctx, msg)
+		if err != nil {
+			return err
+		}
+		if change != nil {
+			changes = append(changes, *change)
+		}
+	}
+
+	return r.publishChanges(ctx, changes)
+}
+
+func (r *SubscriptionRegistry) add(ctx context.Context, msg server.ClientMessage) (*SubscriptionChange, error) {
 	msg = server.NormalizeClientMessage(msg)
 	topicKey := server.BuildTopicKey(msg)
 	indexKey := r.categoryIndexKey(msg.CategoryCode)
@@ -87,43 +106,57 @@ func (r *SubscriptionRegistry) Add(ctx context.Context, msg server.ClientMessage
 	leaseKey := r.ownerLeaseKey(msg.CategoryCode, topicKey)
 
 	if !r.acquireLocalRef(topicKey) {
-		return nil
+		return nil, nil
 	}
 
 	before, err := r.activeLeaseCount(ctx, setKey)
 	if err != nil {
 		r.releaseLocalRef(topicKey)
-		return err
+		return nil, err
 	}
 
 	if err := r.writeLease(ctx, indexKey, setKey, leaseKey, topicKey); err != nil {
 		r.releaseLocalRef(topicKey)
-		return err
+		return nil, err
 	}
 
 	r.startLeaseRenewer(indexKey, setKey, leaseKey, topicKey)
 
 	after, err := r.activeLeaseCount(ctx, setKey)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if before == 0 && after > 0 {
-		change := SubscriptionChange{
+		return &SubscriptionChange{
 			Action:       SubscriptionAdd,
 			Topic:        string(msg.Topic),
 			CategoryCode: msg.CategoryCode,
 			Symbol:       msg.Symbol,
 			Market:       msg.Market,
 			Interval:     msg.Interval,
-		}
-		return r.publishChange(ctx, change)
+		}, nil
 	}
 
-	return nil
+	return nil, nil
 }
 
-func (r *SubscriptionRegistry) Remove(ctx context.Context, msg server.ClientMessage) error {
+func (r *SubscriptionRegistry) RemoveMany(ctx context.Context, msgs []server.ClientMessage) error {
+	changes := make([]SubscriptionChange, 0, len(msgs))
+	for _, msg := range normalizeUniqueMessages(msgs) {
+		change, err := r.remove(ctx, msg)
+		if err != nil {
+			return err
+		}
+		if change != nil {
+			changes = append(changes, *change)
+		}
+	}
+
+	return r.publishChanges(ctx, changes)
+}
+
+func (r *SubscriptionRegistry) remove(ctx context.Context, msg server.ClientMessage) (*SubscriptionChange, error) {
 	msg = server.NormalizeClientMessage(msg)
 	topicKey := server.BuildTopicKey(msg)
 	indexKey := r.categoryIndexKey(msg.CategoryCode)
@@ -131,14 +164,14 @@ func (r *SubscriptionRegistry) Remove(ctx context.Context, msg server.ClientMess
 	leaseKey := r.ownerLeaseKey(msg.CategoryCode, topicKey)
 
 	if !r.releaseLocalRef(topicKey) {
-		return nil
+		return nil, nil
 	}
 
 	r.stopLeaseRenewer(leaseKey)
 
 	before, err := r.activeLeaseCount(ctx, setKey)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if _, err := r.rdb.TxPipelined(ctx, func(pipe redis.Pipeliner) error {
@@ -146,12 +179,12 @@ func (r *SubscriptionRegistry) Remove(ctx context.Context, msg server.ClientMess
 		pipe.SRem(ctx, setKey, leaseKey)
 		return nil
 	}); err != nil {
-		return err
+		return nil, err
 	}
 
 	after, err := r.activeLeaseCount(ctx, setKey)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if after == 0 {
@@ -159,18 +192,17 @@ func (r *SubscriptionRegistry) Remove(ctx context.Context, msg server.ClientMess
 	}
 
 	if before > 0 && after == 0 {
-		change := SubscriptionChange{
+		return &SubscriptionChange{
 			Action:       SubscriptionRemove,
 			Topic:        string(msg.Topic),
 			CategoryCode: msg.CategoryCode,
 			Symbol:       msg.Symbol,
 			Market:       msg.Market,
 			Interval:     msg.Interval,
-		}
-		return r.publishChange(ctx, change)
+		}, nil
 	}
 
-	return nil
+	return nil, nil
 }
 
 func (r *SubscriptionRegistry) EnsureLease(ctx context.Context, msg server.ClientMessage) error {
@@ -188,20 +220,14 @@ func (r *SubscriptionRegistry) EnsureLease(ctx context.Context, msg server.Clien
 	return nil
 }
 
-func (r *SubscriptionRegistry) EnsureAndNotify(ctx context.Context, msg server.ClientMessage) error {
-	msg = server.NormalizeClientMessage(msg)
-	if err := r.EnsureLease(ctx, msg); err != nil {
-		return err
+func (r *SubscriptionRegistry) EnsureLeases(ctx context.Context, msgs []server.ClientMessage) error {
+	for _, msg := range normalizeUniqueMessages(msgs) {
+		if err := r.EnsureLease(ctx, msg); err != nil {
+			return err
+		}
 	}
 
-	return r.publishChange(ctx, SubscriptionChange{
-		Action:       SubscriptionAdd,
-		Topic:        string(msg.Topic),
-		CategoryCode: msg.CategoryCode,
-		Symbol:       msg.Symbol,
-		Market:       msg.Market,
-		Interval:     msg.Interval,
-	})
+	return nil
 }
 
 func (r *SubscriptionRegistry) acquireLocalRef(topicKey string) bool {
@@ -340,7 +366,7 @@ func (r *SubscriptionRegistry) stopLeaseRenewer(leaseKey string) {
 	}
 }
 
-func (r *SubscriptionRegistry) WatchChanges(ctx context.Context, fn func(change SubscriptionChange)) error {
+func (r *SubscriptionRegistry) WatchChanges(ctx context.Context, fn func(changes []SubscriptionChange)) error {
 	pubsub := r.rdb.Subscribe(ctx, r.changeChannel)
 
 	_, err := pubsub.Receive(ctx)
@@ -362,12 +388,12 @@ func (r *SubscriptionRegistry) WatchChanges(ctx context.Context, fn func(change 
 					return
 				}
 
-				var change SubscriptionChange
-				if err := json.Unmarshal([]byte(msg.Payload), &change); err != nil {
+				changes := decodeSubscriptionChanges([]byte(msg.Payload))
+				if len(changes) == 0 {
 					continue
 				}
 
-				fn(change)
+				fn(changes)
 			}
 		}
 	}()
@@ -375,12 +401,38 @@ func (r *SubscriptionRegistry) WatchChanges(ctx context.Context, fn func(change 
 	return nil
 }
 
-func (r *SubscriptionRegistry) publishChange(ctx context.Context, change SubscriptionChange) error {
-	bs, err := json.Marshal(change)
+func (r *SubscriptionRegistry) publishChanges(ctx context.Context, changes []SubscriptionChange) error {
+	if len(changes) == 0 {
+		return nil
+	}
+
+	var payload any = SubscriptionChangeBatch{Changes: changes}
+	if len(changes) == 1 {
+		payload = changes[0]
+	}
+
+	bs, err := json.Marshal(payload)
 	if err != nil {
 		return err
 	}
 	return r.rdb.Publish(ctx, r.changeChannel, bs).Err()
+}
+
+func decodeSubscriptionChanges(payload []byte) []SubscriptionChange {
+	var batch SubscriptionChangeBatch
+	if err := json.Unmarshal(payload, &batch); err == nil && len(batch.Changes) > 0 {
+		return batch.Changes
+	}
+
+	var change SubscriptionChange
+	if err := json.Unmarshal(payload, &change); err != nil {
+		return nil
+	}
+	if change.Action == "" || change.CategoryCode == "" {
+		return nil
+	}
+
+	return []SubscriptionChange{change}
 }
 
 func buildRegistryOwnerID() string {

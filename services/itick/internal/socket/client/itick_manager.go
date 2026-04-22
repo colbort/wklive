@@ -30,6 +30,13 @@ type ItickManager struct {
 
 	mu      sync.RWMutex
 	clients map[string]*ItickWsClient
+
+	startMu sync.Mutex
+	started bool
+
+	changeMu            sync.Mutex
+	pendingChanges      []SubscriptionChange
+	pendingChangesTimer *time.Timer
 }
 
 func NewItickManager(
@@ -108,33 +115,29 @@ func (m *ItickManager) Load(ctx context.Context) error {
 }
 
 func (m *ItickManager) Start(ctx context.Context) error {
-	m.hub.SetHooks(
-		func(key string, msg server.ClientMessage) {
-			hookCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-			defer cancel()
-
-			if err := m.EnsureUpstreamSubscription(hookCtx, msg); err != nil {
-				logx.Errorf("ensure upstream subscription failed, topic=%s err=%v", key, err)
-			}
-		},
-		nil,
-	)
+	m.startMu.Lock()
+	if m.started {
+		m.startMu.Unlock()
+		return nil
+	}
+	m.started = true
+	m.startMu.Unlock()
 
 	if err := m.bus.Subscribe(ctx, func(msg server.ClientMessage, payload any) {
 		m.hub.Broadcast(msg, payload)
 	}); err != nil {
+		m.startMu.Lock()
+		m.started = false
+		m.startMu.Unlock()
 		return err
 	}
 
-	if err := m.registry.WatchChanges(ctx, func(change SubscriptionChange) {
-		m.mu.RLock()
-		cli := m.clients[strings.ToLower(strings.TrimSpace(change.CategoryCode))]
-		m.mu.RUnlock()
-
-		if cli != nil {
-			cli.HandleSubscriptionChange(change)
-		}
+	if err := m.registry.WatchChanges(ctx, func(changes []SubscriptionChange) {
+		m.queueSubscriptionChanges(changes)
 	}); err != nil {
+		m.startMu.Lock()
+		m.started = false
+		m.startMu.Unlock()
 		return err
 	}
 
@@ -152,25 +155,98 @@ func (m *ItickManager) Start(ctx context.Context) error {
 	return nil
 }
 
-func (m *ItickManager) AddGlobalSubscription(ctx context.Context, msg server.ClientMessage) error {
-	return m.registry.Add(ctx, msg)
+func (m *ItickManager) queueSubscriptionChanges(changes []SubscriptionChange) {
+	if len(changes) == 0 {
+		return
+	}
+
+	m.changeMu.Lock()
+	defer m.changeMu.Unlock()
+
+	m.pendingChanges = append(m.pendingChanges, changes...)
+	if m.pendingChangesTimer != nil {
+		m.pendingChangesTimer.Reset(defaultSubscribeDelay)
+		return
+	}
+
+	m.pendingChangesTimer = time.AfterFunc(defaultSubscribeDelay, m.flushSubscriptionChanges)
 }
 
-func (m *ItickManager) RemoveGlobalSubscription(ctx context.Context, msg server.ClientMessage) error {
-	return m.registry.Remove(ctx, msg)
-}
+func (m *ItickManager) flushSubscriptionChanges() {
+	m.changeMu.Lock()
+	changes := m.pendingChanges
+	m.pendingChanges = nil
+	m.pendingChangesTimer = nil
+	m.changeMu.Unlock()
 
-func (m *ItickManager) EnsureUpstreamSubscription(ctx context.Context, msg server.ClientMessage) error {
-	if err := m.registry.EnsureAndNotify(ctx, msg); err != nil {
-		return err
+	if len(changes) == 0 {
+		return
+	}
+
+	byCategory := make(map[string][]SubscriptionChange)
+	for _, change := range changes {
+		categoryCode := strings.ToLower(strings.TrimSpace(change.CategoryCode))
+		if categoryCode == "" {
+			continue
+		}
+		byCategory[categoryCode] = append(byCategory[categoryCode], change)
 	}
 
 	m.mu.RLock()
-	cli := m.clients[strings.ToLower(strings.TrimSpace(msg.CategoryCode))]
+	clients := make(map[string]*ItickWsClient, len(byCategory))
+	for categoryCode := range byCategory {
+		clients[categoryCode] = m.clients[categoryCode]
+	}
 	m.mu.RUnlock()
 
-	if cli != nil && cli.IsLeader() {
-		return cli.subscribeByClientMessage(msg)
+	for categoryCode, changes := range byCategory {
+		cli := clients[categoryCode]
+		if cli != nil {
+			cli.HandleSubscriptionChanges(changes)
+		}
+	}
+}
+
+func (m *ItickManager) AddGlobalSubscriptions(ctx context.Context, msgs []server.ClientMessage) error {
+	return m.registry.AddMany(ctx, msgs)
+}
+
+func (m *ItickManager) RemoveGlobalSubscriptions(ctx context.Context, msgs []server.ClientMessage) error {
+	return m.registry.RemoveMany(ctx, msgs)
+}
+
+func (m *ItickManager) EnsureUpstreamSubscriptions(ctx context.Context, msgs []server.ClientMessage) error {
+	uniqueMsgs := normalizeUniqueMessages(msgs)
+	if len(uniqueMsgs) == 0 {
+		return nil
+	}
+
+	byCategory := make(map[string]map[string]server.ClientMessage)
+	if err := m.registry.EnsureLeases(ctx, uniqueMsgs); err != nil {
+		return err
+	}
+	for _, msg := range uniqueMsgs {
+		categoryCode := strings.ToLower(strings.TrimSpace(msg.CategoryCode))
+		if byCategory[categoryCode] == nil {
+			byCategory[categoryCode] = make(map[string]server.ClientMessage)
+		}
+		byCategory[categoryCode][server.BuildTopicKey(msg)] = msg
+	}
+
+	m.mu.RLock()
+	clients := make(map[string]*ItickWsClient, len(byCategory))
+	for categoryCode := range byCategory {
+		clients[categoryCode] = m.clients[categoryCode]
+	}
+	m.mu.RUnlock()
+
+	for categoryCode, items := range byCategory {
+		cli := clients[categoryCode]
+		if cli != nil && cli.IsLeader() {
+			if err := cli.subscribeByClientMessages(items); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil
@@ -179,4 +255,22 @@ func (m *ItickManager) EnsureUpstreamSubscription(ctx context.Context, msg serve
 func sha1Hex(s string) string {
 	sum := sha1.Sum([]byte(s))
 	return hex.EncodeToString(sum[:])
+}
+
+func normalizeUniqueMessages(msgs []server.ClientMessage) []server.ClientMessage {
+	out := make([]server.ClientMessage, 0, len(msgs))
+	seen := make(map[string]struct{}, len(msgs))
+	for _, msg := range msgs {
+		msg = server.NormalizeClientMessage(msg)
+		key := server.BuildTopicKey(msg)
+		if key == "" {
+			continue
+		}
+		if _, ok := seen[key]; ok {
+			continue
+		}
+		seen[key] = struct{}{}
+		out = append(out, msg)
+	}
+	return out
 }

@@ -26,9 +26,8 @@ type streamReply struct {
 }
 
 type streamError struct {
-	gen      int64
-	topicKey string
-	err      error
+	gen int64
+	err error
 }
 
 type tickWsRuntime struct {
@@ -46,9 +45,8 @@ type tickWsRuntime struct {
 
 	lastPingAt      int64
 	streamGen       int64
-	streamCancels   map[string]context.CancelFunc
-	activeStreamGen map[int64]struct{}
-	streamGenByKey  map[string]int64
+	activeStreamGen int64
+	streamCancel    context.CancelFunc
 	subscriptionMap map[string]types.WsTickTopic
 }
 
@@ -126,9 +124,6 @@ func (l *TickWsLogic) TickWs(conn *websocket.Conn, r *http.Request) error {
 		writeCh:         make(chan any, 16),
 		errCh:           make(chan error, 4),
 		streamErrCh:     make(chan streamError, 8),
-		streamCancels:   make(map[string]context.CancelFunc),
-		activeStreamGen: make(map[int64]struct{}),
-		streamGenByKey:  make(map[string]int64),
 		subscriptionMap: make(map[string]types.WsTickTopic),
 	}
 
@@ -306,7 +301,11 @@ func (l *TickWsLogic) handleSubscribe(runtime *tickWsRuntime, msg types.WsMessag
 	removed := runtime.removeStaleSubscriptions(desired, topicGroups)
 
 	for _, topic := range added {
-		if err := l.startTopicStream(runtime, topic); err != nil {
+		runtime.addSubscription(buildTopicKey(topic), topic)
+	}
+
+	if len(added) > 0 || len(removed) > 0 || (runtime.subscriptionSize() > 0 && !runtime.hasActiveStream()) {
+		if err := l.restartSubscriptionStream(runtime); err != nil {
 			select {
 			case runtime.writeCh <- map[string]any{
 				"type":     "error",
@@ -318,7 +317,6 @@ func (l *TickWsLogic) handleSubscribe(runtime *tickWsRuntime, msg types.WsMessag
 			}
 			return err
 		}
-		runtime.addSubscription(buildTopicKey(topic), topic)
 	}
 
 	select {
@@ -336,36 +334,44 @@ func (l *TickWsLogic) handleSubscribe(runtime *tickWsRuntime, msg types.WsMessag
 	return nil
 }
 
-func (l *TickWsLogic) startTopicStream(runtime *tickWsRuntime, topic types.WsTickTopic) error {
-	topicKey := buildTopicKey(topic)
+func (l *TickWsLogic) restartSubscriptionStream(runtime *tickWsRuntime) error {
+	topics := runtime.snapshotSubscriptions()
+	runtime.stopStream()
+
+	if len(topics) == 0 {
+		return nil
+	}
+
 	currentGen := runtime.streamGen + 1
 
 	streamCtx, cancelStream := context.WithCancel(runtime.ctx)
+	reqTopics := make([]*itick.SubscribeTopic, 0, len(topics))
+	for _, topic := range topics {
+		reqTopics = append(reqTopics, &itick.SubscribeTopic{
+			Topic:        topic.Topic,
+			CategoryCode: topic.CategoryCode,
+			Symbol:       topic.Symbol,
+			Market:       topic.Market,
+			Interval:     topic.Interval,
+		})
+	}
 
 	stream, err := l.svcCtx.ItickCli.SubscribeStream(streamCtx, &itick.SubscribeRequest{
-		Topics: []*itick.SubscribeTopic{
-			{
-				Topic:        topic.Topic,
-				CategoryCode: topic.CategoryCode,
-				Symbol:       topic.Symbol,
-				Market:       topic.Market,
-				Interval:     topic.Interval,
-			},
-		},
+		Topics: reqTopics,
 	})
 	if err != nil {
 		cancelStream()
 		return err
 	}
 
-	runtime.addStream(topicKey, currentGen, cancelStream)
+	runtime.addStream(currentGen, cancelStream)
 
 	go func() {
 		for {
 			reply, err := stream.Recv()
 			if err != nil {
 				select {
-				case runtime.streamErrCh <- streamError{gen: currentGen, topicKey: topicKey, err: err}:
+				case runtime.streamErrCh <- streamError{gen: currentGen, err: err}:
 				default:
 				}
 				return
@@ -386,16 +392,11 @@ func (r *tickWsRuntime) stopStream() {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	for key, cancel := range r.streamCancels {
-		cancel()
-		delete(r.streamCancels, key)
+	if r.streamCancel != nil {
+		r.streamCancel()
 	}
-	for gen := range r.activeStreamGen {
-		delete(r.activeStreamGen, gen)
-	}
-	for key := range r.streamGenByKey {
-		delete(r.streamGenByKey, key)
-	}
+	r.streamCancel = nil
+	r.activeStreamGen = 0
 }
 
 func (r *tickWsRuntime) hasSubscription(key string) bool {
@@ -420,22 +421,38 @@ func (r *tickWsRuntime) subscriptionSize() int {
 	return len(r.subscriptionMap)
 }
 
-func (r *tickWsRuntime) addStream(topicKey string, gen int64, cancel context.CancelFunc) {
+func (r *tickWsRuntime) snapshotSubscriptions() []types.WsTickTopic {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	topics := make([]types.WsTickTopic, 0, len(r.subscriptionMap))
+	for _, topic := range r.subscriptionMap {
+		topics = append(topics, topic)
+	}
+	return topics
+}
+
+func (r *tickWsRuntime) addStream(gen int64, cancel context.CancelFunc) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
 	r.streamGen = gen
-	r.streamCancels[topicKey] = cancel
-	r.activeStreamGen[gen] = struct{}{}
-	r.streamGenByKey[topicKey] = gen
+	r.activeStreamGen = gen
+	r.streamCancel = cancel
 }
 
 func (r *tickWsRuntime) isActiveStream(gen int64) bool {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 
-	_, ok := r.activeStreamGen[gen]
-	return ok
+	return gen > 0 && r.activeStreamGen == gen
+}
+
+func (r *tickWsRuntime) hasActiveStream() bool {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	return r.activeStreamGen > 0
 }
 
 func (r *tickWsRuntime) removeStaleSubscriptions(desired map[string]struct{}, topicGroups map[string]struct{}) []string {
@@ -455,16 +472,6 @@ func (r *tickWsRuntime) removeStaleSubscriptions(desired map[string]struct{}, to
 			continue
 		}
 
-		if cancel := r.streamCancels[key]; cancel != nil {
-			cancel()
-		}
-
-		if gen, ok := r.streamGenByKey[key]; ok {
-			delete(r.activeStreamGen, gen)
-			delete(r.streamGenByKey, key)
-		}
-
-		delete(r.streamCancels, key)
 		delete(r.subscriptionMap, key)
 		removed = append(removed, key)
 	}

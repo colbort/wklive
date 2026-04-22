@@ -6,7 +6,7 @@ func TestNormalizeClientMessageClearsIntervalForNonKline(t *testing.T) {
 	msg := NormalizeClientMessage(ClientMessage{
 		Topic:        TopicQuote,
 		CategoryCode: " Crypto ",
-		Symbol:       "btcusdt",
+		Symbol:       "BTCUSDT",
 		Market:       "ba",
 		Interval:     "1m",
 	})
@@ -23,7 +23,7 @@ func TestNormalizeClientMessageKeepsKlineInterval(t *testing.T) {
 	msg := NormalizeClientMessage(ClientMessage{
 		Topic:        TopicKline,
 		CategoryCode: "crypto",
-		Symbol:       "btcusdt",
+		Symbol:       "BTCUSDT",
 		Market:       "ba",
 		Interval:     "1M",
 	})
