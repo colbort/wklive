@@ -52,3 +52,30 @@ func TestBuildTopicKeyIgnoresIntervalForQuote(t *testing.T) {
 		t.Fatalf("expected quote topic keys to match, got %q and %q", withInterval, withoutInterval)
 	}
 }
+
+func TestBuildTopicKeySeparatesTopicTypes(t *testing.T) {
+	base := ClientMessage{
+		CategoryCode: "crypto",
+		Symbol:       "ETHUSDT",
+		Market:       "BA",
+	}
+
+	quote := base
+	quote.Topic = TopicQuote
+	depth := base
+	depth.Topic = TopicDepth
+	tick := base
+	tick.Topic = TopicTick
+	kline := base
+	kline.Topic = TopicKline
+	kline.Interval = "1m"
+
+	keys := map[string]struct{}{}
+	for _, msg := range []ClientMessage{quote, depth, tick, kline} {
+		key := BuildTopicKey(msg)
+		if _, ok := keys[key]; ok {
+			t.Fatalf("expected distinct topic key, got duplicate %q", key)
+		}
+		keys[key] = struct{}{}
+	}
+}

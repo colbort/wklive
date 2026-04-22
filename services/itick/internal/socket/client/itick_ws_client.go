@@ -273,7 +273,7 @@ func (c *ItickWsClient) connect() error {
 
 	go c.keepaliveLoop(conn)
 
-	logx.Errorf("itick ws connected: %s", c.url)
+	logx.Infof("itick ws connected: %s", c.url)
 	return nil
 }
 
@@ -552,7 +552,7 @@ func (c *ItickWsClient) restoreSubscriptions(ctx context.Context) error {
 }
 
 func (c *ItickWsClient) subscribeByClientMessages(items map[string]server.ClientMessage) error {
-	return c.replaceDesiredSubscriptions(items)
+	return c.ensureDesiredSubscriptions(items)
 }
 
 func (c *ItickWsClient) replaceDesiredSubscriptions(items map[string]server.ClientMessage) error {
@@ -574,6 +574,34 @@ func (c *ItickWsClient) replaceDesiredSubscriptions(items map[string]server.Clie
 	c.subMu.Unlock()
 
 	if !needSync {
+		return nil
+	}
+
+	return c.syncDesiredSubscriptions()
+}
+
+func (c *ItickWsClient) ensureDesiredSubscriptions(items map[string]server.ClientMessage) error {
+	next := make(map[string]server.ClientMessage, len(items))
+	for key, msg := range items {
+		if _, _, err := c.buildItickSubscribe(msg); err != nil {
+			logx.Errorf("build ensure subscribe failed, category=%s topic=%s err=%v", c.categoryCode, key, err)
+			continue
+		}
+		next[key] = msg
+	}
+
+	c.subMu.Lock()
+	changed := false
+	for key, msg := range next {
+		if old, ok := c.desiredSubs[key]; ok && sameClientMessage(old, msg) {
+			continue
+		}
+		c.desiredSubs[key] = msg
+		changed = true
+	}
+	c.subMu.Unlock()
+
+	if !changed {
 		return nil
 	}
 
@@ -734,10 +762,10 @@ func (c *ItickWsClient) subscribe(params, types string) error {
 	}
 
 	if err := c.writeJSON(req); err != nil {
+		logx.Errorf("itick subscribe failed, category=%s params=%s, types=%s", c.categoryCode, params, types)
 		return err
 	}
 
-	logx.Errorf("itick subscribe success, category=%s params=%s, types=%s", c.categoryCode, params, types)
 	return nil
 }
 

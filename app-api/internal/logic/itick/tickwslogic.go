@@ -94,8 +94,8 @@ func (l *TickWsLogic) TickWs(conn *websocket.Conn, r *http.Request) error {
 	defer conn.Close()
 
 	const (
-		heartbeatTimeout = 70 * time.Second // 超过这个时间没收到任何客户端消息，直接断开
-		maxPingInterval  = 40 * time.Second // 两次 ping 最大允许间隔
+		heartbeatTimeout = 70 * time.Second
+		maxPingInterval  = 40 * time.Second
 	)
 
 	nowMs := func() int64 {
@@ -164,7 +164,24 @@ func (l *TickWsLogic) readLoop(runtime *tickWsRuntime, heartbeatTimeout, maxPing
 				}
 				return
 			}
+		case "unsubscribe":
+			if err := l.handleUnsubscribe(runtime, msg, nowMs); err != nil {
+				select {
+				case runtime.errCh <- err:
+				default:
+				}
+				return
+			}
 		default:
+			select {
+			case runtime.writeCh <- map[string]any{
+				"type":     "error",
+				"code":     400,
+				"message":  "unsupported message type",
+				"serverTs": nowMs(),
+			}:
+			default:
+			}
 		}
 	}
 }
@@ -273,38 +290,20 @@ func (l *TickWsLogic) handleSubscribe(runtime *tickWsRuntime, msg types.WsMessag
 	}
 
 	added := make([]types.WsTickTopic, 0, len(msg.Topics))
-	desired := make(map[string]struct{}, len(msg.Topics))
-	topicGroups := make(map[string]struct{}, len(msg.Topics))
-
 	for _, rawTopic := range msg.Topics {
 		topic := normalizeWsTickTopic(rawTopic)
-		if topic.Topic == "" || topic.CategoryCode == "" || topic.Symbol == "" {
-			continue
-		}
-		if topic.Topic == "kline" && topic.Interval == "" {
+		if !isValidWsTickTopic(topic) {
 			continue
 		}
 		key := buildTopicKey(topic)
-		topicGroups[topic.Topic] = struct{}{}
-
-		if _, duplicated := desired[key]; duplicated {
-			continue
-		}
-		desired[key] = struct{}{}
-
 		if runtime.hasSubscription(key) {
 			continue
 		}
+		runtime.addSubscription(key, topic)
 		added = append(added, topic)
 	}
 
-	removed := runtime.removeStaleSubscriptions(desired, topicGroups)
-
-	for _, topic := range added {
-		runtime.addSubscription(buildTopicKey(topic), topic)
-	}
-
-	if len(added) > 0 || len(removed) > 0 || (runtime.subscriptionSize() > 0 && !runtime.hasActiveStream()) {
+	if len(added) > 0 || (runtime.subscriptionSize() > 0 && !runtime.hasActiveStream()) {
 		if err := l.restartSubscriptionStream(runtime); err != nil {
 			select {
 			case runtime.writeCh <- map[string]any{
@@ -324,9 +323,65 @@ func (l *TickWsLogic) handleSubscribe(runtime *tickWsRuntime, msg types.WsMessag
 		"type":      "subscribed",
 		"topics":    msg.Topics,
 		"added":     added,
+		"serverTs":  nowMs(),
+		"topicSize": runtime.subscriptionSize(),
+		"current":   runtime.snapshotSubscriptions(),
+	}:
+	default:
+	}
+
+	return nil
+}
+
+func (l *TickWsLogic) handleUnsubscribe(runtime *tickWsRuntime, msg types.WsMessage, nowMs func() int64) error {
+	if len(msg.Topics) == 0 {
+		select {
+		case runtime.writeCh <- map[string]any{
+			"type":     "error",
+			"code":     400,
+			"message":  "empty unsubscribe topics",
+			"serverTs": nowMs(),
+		}:
+		default:
+		}
+		return nil
+	}
+
+	removed := make([]string, 0, len(msg.Topics))
+	for _, rawTopic := range msg.Topics {
+		topic := normalizeWsTickTopic(rawTopic)
+		if !isValidWsTickTopic(topic) {
+			continue
+		}
+		key := buildTopicKey(topic)
+		if runtime.removeSubscription(key) {
+			removed = append(removed, key)
+		}
+	}
+
+	if len(removed) > 0 || (runtime.subscriptionSize() == 0 && runtime.hasActiveStream()) {
+		if err := l.restartSubscriptionStream(runtime); err != nil {
+			select {
+			case runtime.writeCh <- map[string]any{
+				"type":     "error",
+				"code":     500,
+				"message":  err.Error(),
+				"serverTs": nowMs(),
+			}:
+			default:
+			}
+			return err
+		}
+	}
+
+	select {
+	case runtime.writeCh <- map[string]any{
+		"type":      "unsubscribed",
+		"topics":    msg.Topics,
 		"removed":   removed,
 		"serverTs":  nowMs(),
 		"topicSize": runtime.subscriptionSize(),
+		"current":   runtime.snapshotSubscriptions(),
 	}:
 	default:
 	}
@@ -356,9 +411,7 @@ func (l *TickWsLogic) restartSubscriptionStream(runtime *tickWsRuntime) error {
 		})
 	}
 
-	stream, err := l.svcCtx.ItickCli.SubscribeStream(streamCtx, &itick.SubscribeRequest{
-		Topics: reqTopics,
-	})
+	stream, err := l.svcCtx.ItickCli.SubscribeStream(streamCtx, &itick.SubscribeRequest{Topics: reqTopics})
 	if err != nil {
 		cancelStream()
 		return err
@@ -402,7 +455,6 @@ func (r *tickWsRuntime) stopStream() {
 func (r *tickWsRuntime) hasSubscription(key string) bool {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
-
 	_, ok := r.subscriptionMap[key]
 	return ok
 }
@@ -410,21 +462,28 @@ func (r *tickWsRuntime) hasSubscription(key string) bool {
 func (r *tickWsRuntime) addSubscription(key string, topic types.WsTickTopic) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-
 	r.subscriptionMap[key] = topic
+}
+
+func (r *tickWsRuntime) removeSubscription(key string) bool {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	if _, ok := r.subscriptionMap[key]; !ok {
+		return false
+	}
+	delete(r.subscriptionMap, key)
+	return true
 }
 
 func (r *tickWsRuntime) subscriptionSize() int {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
-
 	return len(r.subscriptionMap)
 }
 
 func (r *tickWsRuntime) snapshotSubscriptions() []types.WsTickTopic {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
-
 	topics := make([]types.WsTickTopic, 0, len(r.subscriptionMap))
 	for _, topic := range r.subscriptionMap {
 		topics = append(topics, topic)
@@ -435,7 +494,6 @@ func (r *tickWsRuntime) snapshotSubscriptions() []types.WsTickTopic {
 func (r *tickWsRuntime) addStream(gen int64, cancel context.CancelFunc) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-
 	r.streamGen = gen
 	r.activeStreamGen = gen
 	r.streamCancel = cancel
@@ -444,39 +502,13 @@ func (r *tickWsRuntime) addStream(gen int64, cancel context.CancelFunc) {
 func (r *tickWsRuntime) isActiveStream(gen int64) bool {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
-
 	return gen > 0 && r.activeStreamGen == gen
 }
 
 func (r *tickWsRuntime) hasActiveStream() bool {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
-
 	return r.activeStreamGen > 0
-}
-
-func (r *tickWsRuntime) removeStaleSubscriptions(desired map[string]struct{}, topicGroups map[string]struct{}) []string {
-	if len(topicGroups) == 0 {
-		return nil
-	}
-
-	r.mu.Lock()
-	defer r.mu.Unlock()
-
-	removed := make([]string, 0)
-	for key, topic := range r.subscriptionMap {
-		if _, sameGroup := topicGroups[topic.Topic]; !sameGroup {
-			continue
-		}
-		if _, keep := desired[key]; keep {
-			continue
-		}
-
-		delete(r.subscriptionMap, key)
-		removed = append(removed, key)
-	}
-
-	return removed
 }
 
 func buildTopicKey(topic types.WsTickTopic) string {
@@ -490,10 +522,18 @@ func normalizeWsTickTopic(topic types.WsTickTopic) types.WsTickTopic {
 	topic.Symbol = strings.ToUpper(strings.TrimSpace(topic.Symbol))
 	topic.Market = strings.ToUpper(strings.TrimSpace(topic.Market))
 	topic.Interval = strings.ToLower(strings.TrimSpace(topic.Interval))
-
 	if topic.Topic != "kline" {
 		topic.Interval = ""
 	}
-
 	return topic
+}
+
+func isValidWsTickTopic(topic types.WsTickTopic) bool {
+	if topic.Topic == "" || topic.CategoryCode == "" || topic.Symbol == "" {
+		return false
+	}
+	if topic.Topic == "kline" && topic.Interval == "" {
+		return false
+	}
+	return true
 }

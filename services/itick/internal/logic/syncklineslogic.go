@@ -21,7 +21,6 @@ import (
 	"wklive/services/itick/internal/svc"
 	"wklive/services/itick/models"
 
-	"github.com/gogo/protobuf/proto"
 	"github.com/zeromicro/go-zero/core/logx"
 	"golang.org/x/time/rate"
 )
@@ -95,7 +94,11 @@ func (l *SyncKlinesLogic) SyncKlines(in *itick.SyncKlinesReq) (*itick.SyncKlines
 		}, nil
 	}
 
-	reqCopy := proto.Clone(in).(*itick.SyncKlinesReq)
+	reqCopy := &itick.SyncKlinesReq{
+		ApiUrl:   in.GetApiUrl(),
+		ApiToken: in.GetApiToken(),
+		WsUrl:    in.GetWsUrl(),
+	}
 
 	go func(taskNo string, reqCopy *itick.SyncKlinesReq, lockKey, lockValue string) {
 		bgCtx, cancel := context.WithTimeout(context.Background(), 12*time.Hour)

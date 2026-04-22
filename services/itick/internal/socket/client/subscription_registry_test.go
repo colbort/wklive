@@ -42,3 +42,27 @@ func TestRegistryTopicKeyIgnoresNonKlineInterval(t *testing.T) {
 		t.Fatalf("expected depth topic keys to match, got %q and %q", withInterval, withoutInterval)
 	}
 }
+
+func TestSubscriptionRegistryLocalRefsReleaseOnlyLastSubscriber(t *testing.T) {
+	r := NewSubscriptionRegistry(nil, "itick:test", "changes")
+	msg := server.NormalizeClientMessage(server.ClientMessage{
+		Topic:        server.TopicQuote,
+		CategoryCode: "crypto",
+		Symbol:       "ETHUSDT",
+		Market:       "BA",
+	})
+	key := server.BuildTopicKey(msg)
+
+	if !r.acquireLocalRef(key) {
+		t.Fatalf("expected first local ref to require upstream add")
+	}
+	if r.acquireLocalRef(key) {
+		t.Fatalf("expected duplicate local ref to reuse upstream subscription")
+	}
+	if r.releaseLocalRef(key) {
+		t.Fatalf("expected first release to keep upstream subscription")
+	}
+	if !r.releaseLocalRef(key) {
+		t.Fatalf("expected last release to allow upstream remove")
+	}
+}

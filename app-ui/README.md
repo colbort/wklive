@@ -30,4 +30,4 @@ npm run dev
 
 默认代理到：
 
-- `http://localhost:6666/app`
+- `http://localhost:5555/app`

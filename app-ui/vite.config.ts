@@ -23,7 +23,7 @@ export default defineConfig(({ mode }) => {
       cors: true,
       proxy: {
         '/app': {
-          target: env.VITE_API_BASE_URL || 'http://localhost:6666',
+          target: env.VITE_API_BASE_URL || 'http://localhost:5555',
           changeOrigin: true,
           rewrite: (requestPath) => requestPath.replace(/^\/app/, '/app'),
         },
