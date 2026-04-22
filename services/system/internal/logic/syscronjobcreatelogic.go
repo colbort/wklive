@@ -47,7 +47,7 @@ func (l *SysCronJobCreateLogic) SysCronJobCreate(in *system.SysCronJobCreateReq)
 			Base: helper.GetErrResp(400, i18n.Translate(i18n.CronJobAlreadyExists, l.ctx)),
 		}, nil
 	}
-	userName, err := utils.GetUsernameFromCtx(l.ctx)
+	userName, err := utils.GetUsernameFromMd(l.ctx)
 	if err != nil {
 		return &system.RespBase{
 			Base: helper.GetErrResp(500, err.Error()),

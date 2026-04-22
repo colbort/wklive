@@ -192,48 +192,53 @@
         </el-form-item>
 
         <el-form-item v-if="formMode === 'add'" :label="t('itick.product')" prop="productId">
-          <el-select
-            v-model="form.productId"
-            filterable
-            remote
-            reserve-keyword
-            clearable
-            :loading="productOptionsLoading"
-            :remote-method="handleProductRemoteSearch"
-            :placeholder="t('itick.pleaseSelectProduct')"
-            popper-class="tenant-product-select-popper"
-            style="width: 100%"
-            @visible-change="handleProductSelectVisibleChange"
-          >
-            <el-option
-              v-for="item in productOptions"
-              :key="item.id"
-              :label="`${item.id} - ${item.name || item.displayName} (${item.symbol})`"
-              :value="item.id"
-            />
-            <template #footer>
-              <div class="product-select-footer" @mousedown.prevent>
-                <span>{{ t('common.totalItems', { count: productOptionPagination.total }) }}</span>
-                <div class="product-select-footer__actions">
-                  <el-button
-                    size="small"
-                    :disabled="!productOptionPagination.hasPrev || productOptionsLoading"
-                    @click.stop="handleProductOptionsPrev"
-                  >
-                    {{ t('common.prevPage') }}
-                  </el-button>
-                  <el-button
-                    size="small"
-                    type="primary"
-                    :disabled="!productOptionPagination.hasNext || productOptionsLoading"
-                    @click.stop="handleProductOptionsNext"
-                  >
-                    {{ t('common.nextPage') }}
-                  </el-button>
+          <div class="product-field">
+            <el-select
+              v-model="form.productId"
+              filterable
+              remote
+              reserve-keyword
+              clearable
+              :loading="productOptionsLoading"
+              :remote-method="handleProductRemoteSearch"
+              :placeholder="t('itick.pleaseSelectProduct')"
+              popper-class="tenant-product-select-popper"
+              style="width: 100%"
+              @visible-change="handleProductSelectVisibleChange"
+            >
+              <el-option
+                v-for="item in productOptions"
+                :key="item.id"
+                :label="formatProductOption(item)"
+                :value="item.id"
+              />
+              <template #footer>
+                <div class="product-select-footer" @mousedown.prevent>
+                  <span>{{ t('common.totalItems', { count: productOptionPagination.total }) }}</span>
+                  <div class="product-select-footer__actions">
+                    <el-button
+                      size="small"
+                      :disabled="!productOptionPagination.hasPrev || productOptionsLoading"
+                      @click.stop="handleProductOptionsPrev"
+                    >
+                      {{ t('common.prevPage') }}
+                    </el-button>
+                    <el-button
+                      size="small"
+                      type="primary"
+                      :disabled="!productOptionPagination.hasNext || productOptionsLoading"
+                      @click.stop="handleProductOptionsNext"
+                    >
+                      {{ t('common.nextPage') }}
+                    </el-button>
+                  </div>
                 </div>
-              </div>
-            </template>
-          </el-select>
+              </template>
+            </el-select>
+            <el-button @click="openProductPicker('single')">
+              {{ t('itick.selectFromProducts') }}
+            </el-button>
+          </div>
         </el-form-item>
 
         <el-form-item :label="t('itick.enabledStatus')" prop="enabled">
@@ -358,6 +363,9 @@
       <div class="batch-toolbar">
         <div class="batch-tip">{{ t('itick.batchSaveTip') }}</div>
         <div class="batch-actions">
+          <el-button type="primary" @click="openProductPicker('batch')">
+            {{ t('itick.selectProducts') }}
+          </el-button>
           <el-button @click="appendBatchRow"> {{ t('common.add') }} </el-button>
           <el-button type="primary" :loading="batchSubmitting" @click="submitBatch">
             {{ t('common.save') }}
@@ -384,7 +392,7 @@
               <el-option
                 v-for="item in productOptions"
                 :key="item.id"
-                :label="`${item.id} - ${item.name || item.displayName} (${item.symbol})`"
+                :label="formatProductOption(item)"
                 :value="item.id"
               />
               <template #footer>
@@ -458,6 +466,111 @@
           </template>
         </el-table-column>
       </el-table>
+    </el-dialog>
+
+    <el-dialog
+      v-model="productPickerVisible"
+      :title="t('itick.productPicker')"
+      width="980px"
+      class="product-picker-dialog"
+    >
+      <div class="product-picker-toolbar">
+        <el-select
+          v-model="productOptionFilters.categoryType"
+          clearable
+          :placeholder="t('itick.categoryType')"
+          style="width: 180px"
+          @change="reloadProductOptions"
+        >
+          <el-option
+            v-for="item in categoryTypeOptions"
+            :key="item.value"
+            :label="getOptionLabel(t, item.code, item.value)"
+            :value="item.value"
+          />
+        </el-select>
+        <el-input
+          v-model="productOptionFilters.market"
+          clearable
+          :placeholder="t('itick.pleaseInputMarket')"
+          style="width: 160px"
+          @keyup.enter="reloadProductOptions"
+        />
+        <el-input
+          v-model="productOptionKeyword"
+          clearable
+          :placeholder="t('itick.keyword')"
+          style="width: 220px"
+          @keyup.enter="reloadProductOptions"
+        />
+        <el-button type="primary" :loading="productOptionsLoading" @click="reloadProductOptions">
+          {{ t('common.search') }}
+        </el-button>
+        <el-button @click="resetProductPickerFilters"> {{ t('common.reset') }} </el-button>
+        <span class="product-picker-count">
+          {{ t('itick.selectedProducts', { count: selectedPickerProducts.length }) }}
+        </span>
+      </div>
+
+      <el-table
+        ref="productPickerTableRef"
+        v-loading="productOptionsLoading"
+        :data="productOptions"
+        row-key="id"
+        border
+        height="480"
+        @selection-change="handleProductPickerSelectionChange"
+      >
+        <el-table-column type="selection" width="48" reserve-selection />
+        <el-table-column prop="id" label="ID" width="90" />
+        <el-table-column prop="categoryName" :label="t('itick.categoryName')" min-width="130" />
+        <el-table-column prop="market" :label="t('itick.market')" width="90" />
+        <el-table-column prop="symbol" :label="t('itick.symbol')" min-width="130" />
+        <el-table-column prop="name" :label="t('itick.name')" min-width="150" />
+        <el-table-column prop="displayName" :label="t('itick.displayName')" min-width="150" />
+        <el-table-column :label="t('itick.enabledStatus')" width="100">
+          <template #default="{ row }">
+            <el-tag :type="row.enabled === 1 ? 'success' : 'info'">
+              {{ getOptionValueLabel(optionGroups, 'status', row.enabled, t) }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('itick.appVisible')" width="100">
+          <template #default="{ row }">
+            <el-tag :type="row.appVisible === 1 ? 'success' : 'warning'">
+              {{ getOptionValueLabel(optionGroups, 'visible', row.appVisible, t) }}
+            </el-tag>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <div class="product-picker-pagination">
+        <span>{{ t('common.totalItems', { count: productOptionPagination.total }) }}</span>
+        <el-button
+          :disabled="!productOptionPagination.hasPrev || productOptionsLoading"
+          @click="handleProductOptionsPrev"
+        >
+          {{ t('common.prevPage') }}
+        </el-button>
+        <el-button
+          type="primary"
+          :disabled="!productOptionPagination.hasNext || productOptionsLoading"
+          @click="handleProductOptionsNext"
+        >
+          {{ t('common.nextPage') }}
+        </el-button>
+      </div>
+
+      <template #footer>
+        <el-button @click="productPickerVisible = false"> {{ t('common.cancel') }} </el-button>
+        <el-button
+          type="primary"
+          :disabled="!selectedPickerProducts.length"
+          @click="confirmProductPicker"
+        >
+          {{ t('itick.addSelectedProducts') }}
+        </el-button>
+      </template>
     </el-dialog>
 
     <el-dialog v-model="initDialogVisible" :title="t('itick.initTenantDisplay')" width="520px">
@@ -571,6 +684,10 @@ const productOptionPagination = reactive({
   hasNext: false,
   hasPrev: false,
 })
+const productOptionFilters = reactive({
+  categoryType: 0,
+  market: '',
+})
 const optionGroups = ref<OptionGroup[]>([])
 const detailLoading = ref(false)
 const submitLoading = ref(false)
@@ -580,8 +697,13 @@ const formDialogVisible = ref(false)
 const detailDialogVisible = ref(false)
 const batchDialogVisible = ref(false)
 const initDialogVisible = ref(false)
+const productPickerVisible = ref(false)
 const formMode = ref<'add' | 'edit'>('add')
+const productPickerMode = ref<'single' | 'batch'>('batch')
 const batchRows = ref<TenantProductItem[]>([])
+const selectedPickerProductMap = reactive(new Map<number, BaseItickProduct>())
+const selectedPickerProducts = computed(() => Array.from(selectedPickerProductMap.values()))
+const productPickerTableRef = ref()
 const categoryTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'categoryType'))
 const statusOptions = computed(() => findOptionGroup(optionGroups.value, 'status'))
 const visibleOptions = computed(() => findOptionGroup(optionGroups.value, 'visible'))
@@ -681,8 +803,8 @@ const loadProductOptions = async (
     const res = await productsService.getList({
       limit: productOptionPagination.limit,
       cursor,
-      categoryType: queryParams.categoryType || undefined,
-      market: queryParams.market?.trim() || undefined,
+      categoryType: productOptionFilters.categoryType || undefined,
+      market: productOptionFilters.market?.trim() || undefined,
       keyword: keyword.trim() || undefined,
     })
     const nextOptions = res.data || []
@@ -804,6 +926,83 @@ const detachProductOptionsScroll = () => {
   productOptionsScrollEl = null
 }
 
+const formatProductOption = (item: BaseItickProduct) => {
+  const title = item.name || item.displayName || item.symbol
+  return `${item.id} - ${title} (${item.market}/${item.symbol})`
+}
+
+const openProductPicker = async (mode: 'single' | 'batch') => {
+  productPickerMode.value = mode
+  selectedPickerProductMap.clear()
+  productPickerVisible.value = true
+  productOptionKeyword.value = ''
+  productOptionFilters.categoryType = Number(queryParams.categoryType) || 0
+  productOptionFilters.market = queryParams.market?.trim() || ''
+  await reloadProductOptions()
+  await nextTick()
+  productPickerTableRef.value?.clearSelection?.()
+}
+
+const resetProductPickerFilters = () => {
+  productOptionKeyword.value = ''
+  productOptionFilters.categoryType = 0
+  productOptionFilters.market = ''
+  reloadProductOptions()
+}
+
+const handleProductPickerSelectionChange = (rows: BaseItickProduct[]) => {
+  const visibleIds = new Set(productOptions.value.map((item) => item.id))
+  const selectedIds = new Set(rows.map((item) => item.id))
+
+  productOptions.value.forEach((item) => {
+    if (visibleIds.has(item.id) && !selectedIds.has(item.id)) {
+      selectedPickerProductMap.delete(item.id)
+    }
+  })
+
+  rows.forEach((item) => {
+    selectedPickerProductMap.set(item.id, item)
+  })
+}
+
+const confirmProductPicker = () => {
+  if (!selectedPickerProducts.value.length) {
+    return
+  }
+
+  if (productPickerMode.value === 'single') {
+    form.productId = selectedPickerProducts.value[0].id
+    productOptions.value = mergeProductOptions(productOptions.value, selectedPickerProducts.value)
+    productPickerVisible.value = false
+    selectedPickerProductMap.clear()
+    return
+  }
+
+  const existing = new Set(
+    batchRows.value
+      .filter((item) => item.productId && Number(item.productId) > 0)
+      .map((item) => Number(item.productId)),
+  )
+
+  selectedPickerProducts.value.forEach((item) => {
+    if (existing.has(item.id)) {
+      return
+    }
+
+    existing.add(item.id)
+    batchRows.value.push({
+      productId: item.id,
+      enabled: 1,
+      appVisible: 1,
+      sort: item.sort || 0,
+      remark: '',
+    })
+  })
+
+  productPickerVisible.value = false
+  selectedPickerProductMap.clear()
+}
+
 const handleQuery = () => {
   pagination.cursor = null
   getList()
@@ -843,6 +1042,8 @@ const handleAdd = async () => {
   resetForm()
   form.tenantId = Number(queryParams.tenantId) || undefined
   productOptionKeyword.value = ''
+  productOptionFilters.categoryType = Number(queryParams.categoryType) || 0
+  productOptionFilters.market = queryParams.market?.trim() || ''
   await reloadProductOptions()
   formDialogVisible.value = true
   await nextTick()
@@ -925,6 +1126,8 @@ const submitForm = async () => {
 
 const openBatchDialog = () => {
   productOptionKeyword.value = ''
+  productOptionFilters.categoryType = Number(queryParams.categoryType) || 0
+  productOptionFilters.market = queryParams.market?.trim() || ''
   reloadProductOptions()
   batchRows.value = list.value.map((item) => ({
     id: item.id,
@@ -1080,6 +1283,37 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.product-field {
+  display: flex;
+  width: 100%;
+  gap: 8px;
+}
+
+.product-field .el-button {
+  flex-shrink: 0;
+}
+
+.product-picker-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.product-picker-count {
+  margin-left: auto;
+  color: #606266;
+  font-size: 13px;
+}
+
+.product-picker-pagination {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  align-items: center;
+  margin-top: 12px;
 }
 
 .batch-toolbar {

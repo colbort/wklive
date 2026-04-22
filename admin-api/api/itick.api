@@ -230,12 +230,12 @@ type GetProductResp {
 
 type ListProductsReq {
 	PageReq
-	categoryType int64  `json:"categoryType,optional"`
-	categoryName string `json:"categoryName,optional"`
-	market       string `json:"market,optional"`
-	keyword      string `json:"keyword,optional"`
-	enabled      int32  `json:"enabled,optional"` // 0全部 1启用 2禁用
-	appVisible   int32  `json:"appVisible,optional"` // 0全部 1显示 2隐藏
+	categoryType int64  `form:"categoryType,optional"`
+	categoryName string `form:"categoryName,optional"`
+	market       string `form:"market,optional"`
+	keyword      string `form:"keyword,optional"`
+	enabled      int32  `form:"enabled,optional"` // 0全部 1启用 2禁用
+	appVisible   int32  `form:"appVisible,optional"` // 0全部 1显示 2隐藏
 }
 
 type ListProductsResp {
@@ -365,12 +365,12 @@ type GetTenantProductResp {
 
 type ListTenantProductsReq {
 	PageReq
-	tenantId      int64  `json:"tenantId,optional"`
-	categoryType  int64  `json:"categoryType,optional"`
-	market        string `json:"market,optional"`
-	keyword       string `json:"keyword,optional"`
-	status        int32  `json:"status,optional"` // 0全部 1启用 2禁用
-	visibleStatus int32  `json:"visibleStatus,optional"` // 0全部 1显示 2隐藏
+	tenantId      int64  `form:"tenantId,optional"`
+	categoryType  int64  `form:"categoryType,optional"`
+	market        string `form:"market,optional"`
+	keyword       string `form:"keyword,optional"`
+	status        int32  `form:"status,optional"` // 0全部 1启用 2禁用
+	visibleStatus int32  `form:"visibleStatus,optional"` // 0全部 1显示 2隐藏
 }
 
 type ListTenantProductsResp {

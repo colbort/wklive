@@ -1693,12 +1693,12 @@ type ListPositionsResp struct {
 
 type ListProductsReq struct {
 	PageReq
-	CategoryType int64  `json:"categoryType,optional"`
-	CategoryName string `json:"categoryName,optional"`
-	Market       string `json:"market,optional"`
-	Keyword      string `json:"keyword,optional"`
-	Enabled      int32  `json:"enabled,optional"`    // 0全部 1启用 2禁用
-	AppVisible   int32  `json:"appVisible,optional"` // 0全部 1显示 2隐藏
+	CategoryType int64  `form:"categoryType,optional"`
+	CategoryName string `form:"categoryName,optional"`
+	Market       string `form:"market,optional"`
+	Keyword      string `form:"keyword,optional"`
+	Enabled      int32  `form:"enabled,optional"`    // 0全部 1启用 2禁用
+	AppVisible   int32  `form:"appVisible,optional"` // 0全部 1显示 2隐藏
 }
 
 type ListProductsResp struct {
@@ -1829,12 +1829,12 @@ type ListTenantPayPlatformsResp struct {
 
 type ListTenantProductsReq struct {
 	PageReq
-	TenantId      int64  `json:"tenantId,optional"`
-	CategoryType  int64  `json:"categoryType,optional"`
-	Market        string `json:"market,optional"`
-	Keyword       string `json:"keyword,optional"`
-	Status        int32  `json:"status,optional"`        // 0全部 1启用 2禁用
-	VisibleStatus int32  `json:"visibleStatus,optional"` // 0全部 1显示 2隐藏
+	TenantId      int64  `form:"tenantId,optional"`
+	CategoryType  int64  `form:"categoryType,optional"`
+	Market        string `form:"market,optional"`
+	Keyword       string `form:"keyword,optional"`
+	Status        int32  `form:"status,optional"`        // 0全部 1启用 2禁用
+	VisibleStatus int32  `form:"visibleStatus,optional"` // 0全部 1显示 2隐藏
 }
 
 type ListTenantProductsResp struct {
