@@ -190,11 +190,7 @@ import { useI18n } from 'vue-i18n'
 import { Plus, Search, Refresh } from '@element-plus/icons-vue'
 import { configService } from '@/services'
 import type { SysConfigItem, SysConfigCreateReq, OptionItem } from '@/services'
-import type {
-  SystemCore,
-  ObjectStorageConfig,
-  ItickConfig,
-} from '@/services/system/ConfigService'
+import type { SystemCore, ObjectStorageConfig, ItickConfig } from '@/services/system/ConfigService'
 import { usePagination } from '@/composables/usePagination'
 import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
@@ -553,7 +549,11 @@ async function handleSubmit() {
       }
       formData.configValue = JSON.stringify(objectStorageForm.value)
     } else if (formData.configKey === 'ITICK_CONFIG') {
-      if (!itickConfigForm.value.api_url || !itickConfigForm.value.api_token || !itickConfigForm.value.ws_url) {
+      if (
+        !itickConfigForm.value.api_url ||
+        !itickConfigForm.value.api_token ||
+        !itickConfigForm.value.ws_url
+      ) {
         throw new Error(t('validation.required'))
       }
       formData.configValue = JSON.stringify(itickConfigForm.value)

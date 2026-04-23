@@ -30,9 +30,15 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="loadPlatforms"> {{ t('common.search') }} </el-button>
-          <el-button @click="resetPlatformQuery"> {{ t('common.reset') }} </el-button>
-          <el-button type="primary" @click="openPlatformDialog()"> {{ t('payment.addPlatform') }} </el-button>
+          <el-button type="primary" @click="loadPlatforms">
+            {{ t('common.search') }}
+          </el-button>
+          <el-button @click="resetPlatformQuery">
+            {{ t('common.reset') }}
+          </el-button>
+          <el-button type="primary" @click="openPlatformDialog()">
+            {{ t('payment.addPlatform') }}
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -58,7 +64,12 @@
             <span v-else>-</span>
           </template>
         </el-table-column>
-        <el-table-column prop="notifyUrl" :label="t('payment.notifyUrl')" min-width="220" show-overflow-tooltip />
+        <el-table-column
+          prop="notifyUrl"
+          :label="t('payment.notifyUrl')"
+          min-width="220"
+          show-overflow-tooltip
+        />
         <el-table-column :label="t('common.status')" width="100">
           <template #default="{ row }">
             <el-tag :type="row.status === 1 ? 'success' : 'info'">
@@ -66,11 +77,20 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="remark" :label="t('common.remark')" min-width="180" show-overflow-tooltip />
+        <el-table-column
+          prop="remark"
+          :label="t('common.remark')"
+          min-width="180"
+          show-overflow-tooltip
+        />
         <el-table-column :label="t('common.actions')" width="160" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showPlatformDetail(row)"> {{ t('common.detail') }} </el-button>
-            <el-button link type="primary" @click="openPlatformDialog(row)"> {{ t('common.edit') }} </el-button>
+            <el-button link type="primary" @click="showPlatformDetail(row)">
+              {{ t('common.detail') }}
+            </el-button>
+            <el-button link type="primary" @click="openPlatformDialog(row)">
+              {{ t('common.edit') }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -135,7 +155,9 @@
               :on-change="handlePlatformIconSelect"
               accept="image/*"
             >
-              <el-button type="primary"> {{ t('payment.uploadImage') }} </el-button>
+              <el-button type="primary">
+                {{ t('payment.uploadImage') }}
+              </el-button>
             </el-upload>
           </div>
         </el-form-item>
@@ -154,7 +176,9 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="platformDialogVisible = false"> {{ t('common.cancel') }} </el-button>
+        <el-button @click="platformDialogVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
         <el-button type="primary" :loading="submitLoading" @click="submitPlatform">
           {{ t('common.confirm') }}
         </el-button>
@@ -191,7 +215,7 @@ const platforms = ref<PayPlatform[]>([])
 const supportedPlatforms = ref<PayPlatformItem[]>([])
 const detailVisible = ref(false)
 const detailTitle = ref('')
-const detailData = ref<Record<string, any>>({})
+const detailData = ref<PayPlatform | null>(null)
 const platformDialogVisible = ref(false)
 const selectedPlatformCode = ref('')
 const optionGroups = ref<OptionGroup[]>([])

@@ -3,8 +3,12 @@
     <div class="page-header">
       <h2>{{ t('payment.tenantAccounts') }}</h2>
       <div>
-        <el-button type="primary" @click="openDialog()"> {{ t('payment.addAccount') }} </el-button>
-        <el-button @click="loadList"> {{ t('common.refresh') }} </el-button>
+        <el-button type="primary" @click="openDialog()">
+          {{ t('payment.addAccount') }}
+        </el-button>
+        <el-button @click="loadList">
+          {{ t('common.refresh') }}
+        </el-button>
       </div>
     </div>
 
@@ -20,7 +24,9 @@
           <el-input v-model="query.keyword" clearable />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="loadList"> {{ t('common.search') }} </el-button>
+          <el-button type="primary" @click="loadList">
+            {{ t('common.search') }}
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -47,14 +53,22 @@
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="160">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)"> {{ t('common.detail') }} </el-button>
-            <el-button link type="primary" @click="openDialog(row)"> {{ t('common.edit') }} </el-button>
+            <el-button link type="primary" @click="showDetail(row)">
+              {{ t('common.detail') }}
+            </el-button>
+            <el-button link type="primary" @click="openDialog(row)">
+              {{ t('common.edit') }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-card>
 
-    <el-dialog v-model="dialogVisible" :title="form.id ? t('payment.editAccount') : t('payment.addAccount')" width="760px">
+    <el-dialog
+      v-model="dialogVisible"
+      :title="form.id ? t('payment.editAccount') : t('payment.addAccount')"
+      width="760px"
+    >
       <el-form label-width="120px">
         <el-form-item :label="t('common.tenantId')">
           <div class="verify-row">
@@ -68,7 +82,9 @@
             <el-button v-if="!form.id" :loading="tenantChecking" @click="checkTenant">
               {{ t('payment.verifyTenant') }}
             </el-button>
-            <span v-if="!form.id && tenantVerified" class="verified-text"> {{ t('payment.verified') }} </span>
+            <span v-if="!form.id && tenantVerified" class="verified-text">
+              {{ t('payment.verified') }}
+            </span>
           </div>
         </el-form-item>
 
@@ -83,7 +99,9 @@
             <el-button :loading="tenantPlatformChecking" @click="checkTenantPlatform">
               {{ t('payment.verifyTenantPlatform') }}
             </el-button>
-            <span v-if="tenantPlatformVerified" class="verified-text"> {{ t('payment.verified') }} </span>
+            <span v-if="tenantPlatformVerified" class="verified-text">
+              {{ t('payment.verified') }}
+            </span>
           </div>
         </el-form-item>
 
@@ -95,7 +113,9 @@
               :precision="0"
               @change="handlePlatformChange"
             />
-            <el-button :loading="platformChecking" @click="checkPlatform"> {{ t('payment.verifyPlatform') }} </el-button>
+            <el-button :loading="platformChecking" @click="checkPlatform">
+              {{ t('payment.verifyPlatform') }}
+            </el-button>
             <span v-if="platformVerified" class="verified-text"> {{ t('payment.verified') }} </span>
           </div>
         </el-form-item>
@@ -159,8 +179,12 @@
       </el-form>
 
       <template #footer>
-        <el-button @click="dialogVisible = false"> {{ t('common.cancel') }} </el-button>
-        <el-button type="primary" :disabled="submitDisabled" @click="submit"> {{ t('common.confirm') }} </el-button>
+        <el-button @click="dialogVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
+        <el-button type="primary" :disabled="submitDisabled" @click="submit">
+          {{ t('common.confirm') }}
+        </el-button>
       </template>
     </el-dialog>
 

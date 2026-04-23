@@ -3,8 +3,12 @@
     <div class="page-header">
       <h2>{{ t('option.contracts') }}</h2>
       <div class="header-actions">
-        <el-button @click="loadCurrent">{{ t('common.refresh') }}</el-button>
-        <el-button type="primary" @click="openContractDialog()">{{ t('option.createContract') }}</el-button>
+        <el-button @click="loadCurrent">
+          {{ t('common.refresh') }}
+        </el-button>
+        <el-button type="primary" @click="openContractDialog()">
+          {{ t('option.createContract') }}
+        </el-button>
       </div>
     </div>
 
@@ -40,8 +44,12 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="loadCurrent">{{ t('common.search') }}</el-button>
-          <el-button @click="resetCurrent">{{ t('common.reset') }}</el-button>
+          <el-button type="primary" @click="loadCurrent">
+            {{ t('common.search') }}
+          </el-button>
+          <el-button @click="resetCurrent">
+            {{ t('common.reset') }}
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -50,7 +58,12 @@
       <el-table v-loading="loading" :data="rows" stripe>
         <el-table-column prop="id" label="ID" width="90" />
         <el-table-column :label="t('option.tenantId')" prop="tenantId" width="100" />
-        <el-table-column :label="t('option.contractCode')" prop="contractCode" min-width="180" show-overflow-tooltip />
+        <el-table-column
+          :label="t('option.contractCode')"
+          prop="contractCode"
+          min-width="180"
+          show-overflow-tooltip
+        />
         <el-table-column
           prop="underlyingSymbol"
           :label="t('option.underlying')"
@@ -59,13 +72,24 @@
         />
         <el-table-column :label="t('option.settleCoin')" prop="settleCoin" width="100" />
         <el-table-column :label="t('option.quoteCoin')" prop="quoteCoin" width="100" />
-        <el-table-column :label="t('option.strikePrice')" prop="strikePrice" min-width="120" show-overflow-tooltip />
+        <el-table-column
+          :label="t('option.strikePrice')"
+          prop="strikePrice"
+          min-width="120"
+          show-overflow-tooltip
+        />
         <el-table-column :label="t('common.status')" prop="status" width="100" />
         <el-table-column :label="t('common.actions')" width="160" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">{{ t('option.detail') }}</el-button>
-            <el-button link type="primary" @click="openContractDialog(row)">{{ t('common.edit') }}</el-button>
-            <el-button link type="primary" @click="openMarketDialog(row)">{{ t('option.market') }}</el-button>
+            <el-button link type="primary" @click="showDetail(row)">
+              {{ t('option.detail') }}
+            </el-button>
+            <el-button link type="primary" @click="openContractDialog(row)">
+              {{ t('common.edit') }}
+            </el-button>
+            <el-button link type="primary" @click="openMarketDialog(row)">
+              {{ t('option.market') }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -166,8 +190,12 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="contractVisible = false">{{ t('common.cancel') }}</el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitContract">{{ t('common.confirm') }}</el-button>
+        <el-button @click="contractVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
+        <el-button type="primary" :loading="submitLoading" @click="submitContract">
+          {{ t('common.confirm') }}
+        </el-button>
       </template>
     </el-dialog>
 
@@ -232,8 +260,12 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="marketVisible = false">{{ t('common.cancel') }}</el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitMarket">{{ t('common.confirm') }}</el-button>
+        <el-button @click="marketVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
+        <el-button type="primary" :loading="submitLoading" @click="submitMarket">
+          {{ t('common.confirm') }}
+        </el-button>
       </template>
     </el-dialog>
 
@@ -247,16 +279,23 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { optionService, type OptionGroup, type UpdateContractReq, type UpdateMarketReq } from '@/services'
+import {
+  optionService,
+  type OptionContract,
+  type OptionContractDetail,
+  type OptionGroup,
+  type UpdateContractReq,
+  type UpdateMarketReq,
+} from '@/services'
 import { findOptionGroup, getOptionLabel } from '@/utils/options'
 
 const { t } = useI18n()
 
 const loading = ref(false)
 const submitLoading = ref(false)
-const rows = ref<Record<string, any>[]>([])
+const rows = ref<OptionContract[]>([])
 const detailVisible = ref(false)
-const detailData = ref<Record<string, any>>({})
+const detailData = ref<OptionContractDetail | OptionContract | null>(null)
 const contractVisible = ref(false)
 const marketVisible = ref(false)
 const optionGroups = ref<OptionGroup[]>([])
@@ -401,17 +440,19 @@ const resetCurrent = () => {
   loadCurrent()
 }
 
-const showDetail = async (row: Record<string, any>) => {
+const showDetail = async (row: OptionContract) => {
   detailData.value =
-    (await optionService.getContract({
-      tenantId: row.tenantId,
-      id: row.id,
-      contractCode: row.contractCode,
-    })).data || row
+    (
+      await optionService.getContract({
+        tenantId: row.tenantId,
+        id: row.id,
+        contractCode: row.contractCode,
+      })
+    ).data || row
   detailVisible.value = true
 }
 
-const openContractDialog = (row?: Record<string, any>) => {
+const openContractDialog = (row?: OptionContract) => {
   resetContractForm()
   if (row) {
     Object.assign(contractForm, row)
@@ -435,12 +476,12 @@ const submitContract = async () => {
   }
 }
 
-const openMarketDialog = (row?: Record<string, any>) => {
+const openMarketDialog = (row?: OptionContract) => {
   resetMarketForm()
   if (row) {
     Object.assign(marketForm, {
       tenantId: row.tenantId || 0,
-      contractId: row.contractId || row.id || 0,
+      contractId: row.id || 0,
     })
   }
   marketVisible.value = true

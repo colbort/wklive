@@ -539,7 +539,7 @@ async function updateSimpleValue(row: UserItem, field: 'status' | 'memberLevel' 
     t('users.inputNewValue', { title: titleMap[field] }),
     titleMap[field],
     {
-    inputValue: String(current),
+      inputValue: String(current),
     },
   )
   try {
@@ -577,8 +577,12 @@ onMounted(fetchCreateOptions)
     <div class="page-header">
       <h2>{{ t('users.memberUsers') }}</h2>
       <div class="header-actions">
-        <el-button @click="fetchList"> {{ t('common.refresh') }} </el-button>
-        <el-button type="primary" @click="openCreate"> {{ t('users.addUser') }} </el-button>
+        <el-button @click="fetchList">
+          {{ t('common.refresh') }}
+        </el-button>
+        <el-button type="primary" @click="openCreate">
+          {{ t('users.addUser') }}
+        </el-button>
       </div>
     </div>
 
@@ -620,8 +624,12 @@ onMounted(fetchCreateOptions)
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="fetchList"> {{ t('common.search') }} </el-button>
-          <el-button @click="resetQuery"> {{ t('common.reset') }} </el-button>
+          <el-button type="primary" @click="fetchList">
+            {{ t('common.search') }}
+          </el-button>
+          <el-button @click="resetQuery">
+            {{ t('common.reset') }}
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -630,9 +638,19 @@ onMounted(fetchCreateOptions)
       <el-table v-loading="loading" :data="list" stripe>
         <el-table-column prop="id" :label="t('users.userId')" width="100" />
         <el-table-column prop="tenantId" :label="t('common.tenantId')" width="100" />
-        <el-table-column prop="userNo" :label="t('users.userNo')" min-width="150" show-overflow-tooltip />
+        <el-table-column
+          prop="userNo"
+          :label="t('users.userNo')"
+          min-width="150"
+          show-overflow-tooltip
+        />
         <el-table-column prop="username" :label="t('users.username')" min-width="140" />
-        <el-table-column prop="nickname" :label="t('users.nickname')" min-width="140" show-overflow-tooltip />
+        <el-table-column
+          prop="nickname"
+          :label="t('users.nickname')"
+          min-width="140"
+          show-overflow-tooltip
+        />
         <el-table-column :label="t('users.registerType')" width="120">
           <template #default="{ row }">
             <span :class="getOptionTagClass('registerType', row.registerType)">
@@ -685,8 +703,12 @@ onMounted(fetchCreateOptions)
 
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item @click="showDetail(row)"> {{ t('common.detail') }} </el-dropdown-item>
-                  <el-dropdown-item @click="openEdit(row)"> {{ t('common.edit') }} </el-dropdown-item>
+                  <el-dropdown-item @click="showDetail(row)">
+                    {{ t('common.detail') }}
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="openEdit(row)">
+                    {{ t('common.edit') }}
+                  </el-dropdown-item>
                   <el-dropdown-item @click="updateSimpleValue(row, 'status')">
                     {{ t('users.modifyStatus') }}
                   </el-dropdown-item>
@@ -702,7 +724,9 @@ onMounted(fetchCreateOptions)
                   <el-dropdown-item @click="openPassword(row, 'pay')">
                     {{ t('users.resetPayPassword') }}
                   </el-dropdown-item>
-                  <el-dropdown-item @click="quickAction(row, 'unlock')"> {{ t('users.unlock') }} </el-dropdown-item>
+                  <el-dropdown-item @click="quickAction(row, 'unlock')">
+                    {{ t('users.unlock') }}
+                  </el-dropdown-item>
                   <el-dropdown-item @click="quickAction(row, 'reset2fa')">
                     {{ t('users.reset2fa') }}
                   </el-dropdown-item>
@@ -717,7 +741,11 @@ onMounted(fetchCreateOptions)
       </el-table>
     </el-card>
 
-    <el-dialog v-model="editVisible" :title="isCreate ? t('users.addUser') : t('users.editUser')" width="720px">
+    <el-dialog
+      v-model="editVisible"
+      :title="isCreate ? t('users.addUser') : t('users.editUser')"
+      width="720px"
+    >
       <el-form label-width="110px" class="edit-form-grid">
         <el-form-item :label="t('common.tenantId')">
           <div class="tenant-check-row">
@@ -871,7 +899,9 @@ onMounted(fetchCreateOptions)
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="editVisible = false"> {{ t('common.cancel') }} </el-button>
+        <el-button @click="editVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
         <el-button
           type="primary"
           :loading="submitLoading"
@@ -894,7 +924,9 @@ onMounted(fetchCreateOptions)
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="pwdVisible = false"> {{ t('common.cancel') }} </el-button>
+        <el-button @click="pwdVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
         <el-button type="primary" :loading="submitLoading" @click="submitPassword">
           {{ t('common.confirm') }}
         </el-button>
@@ -1034,8 +1066,16 @@ onMounted(fetchCreateOptions)
               <el-table v-if="detail.banks?.length" :data="detail.banks" stripe>
                 <el-table-column prop="bankName" :label="t('users.bankNameFull')" min-width="140" />
                 <el-table-column prop="bankCode" :label="t('users.bankCode')" min-width="120" />
-                <el-table-column prop="accountName" :label="t('users.accountName')" min-width="140" />
-                <el-table-column :label="t('users.accountNo')" min-width="180" show-overflow-tooltip>
+                <el-table-column
+                  prop="accountName"
+                  :label="t('users.accountName')"
+                  min-width="140"
+                />
+                <el-table-column
+                  :label="t('users.accountNo')"
+                  min-width="180"
+                  show-overflow-tooltip
+                >
                   <template #default="{ row }">
                     {{ displayText(row.maskedAccountNo || row.accountNo) }}
                   </template>

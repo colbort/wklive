@@ -3,7 +3,9 @@
     <div class="page-header">
       <h2>{{ t('payment.userRechargeStats') }}</h2>
       <div class="header-actions">
-        <el-button @click="loadList"> {{ t('common.refresh') }} </el-button>
+        <el-button @click="loadList">
+          {{ t('common.refresh') }}
+        </el-button>
       </div>
     </div>
     <el-card shadow="never" class="query-card">
@@ -21,7 +23,9 @@
           <el-input-number v-model="query.successTotalAmountMax" :min="0" :precision="0" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="loadList"> {{ t('common.search') }} </el-button>
+          <el-button type="primary" @click="loadList">
+            {{ t('common.search') }}
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -30,13 +34,31 @@
         <el-table-column prop="id" :label="t('common.id')" width="80" />
         <el-table-column prop="tenantId" :label="t('common.tenantId')" width="100" />
         <el-table-column prop="userId" :label="t('common.userId')" width="100" />
-        <el-table-column prop="successOrderCount" :label="t('payment.successOrderCount')" width="120" />
-        <el-table-column prop="successTotalAmount" :label="t('payment.successTotalAmount')" min-width="120" />
-        <el-table-column prop="todaySuccessAmount" :label="t('payment.todaySuccessAmount')" min-width="120" />
-        <el-table-column prop="todaySuccessCount" :label="t('payment.todaySuccessCount')" width="100" />
+        <el-table-column
+          prop="successOrderCount"
+          :label="t('payment.successOrderCount')"
+          width="120"
+        />
+        <el-table-column
+          prop="successTotalAmount"
+          :label="t('payment.successTotalAmount')"
+          min-width="120"
+        />
+        <el-table-column
+          prop="todaySuccessAmount"
+          :label="t('payment.todaySuccessAmount')"
+          min-width="120"
+        />
+        <el-table-column
+          prop="todaySuccessCount"
+          :label="t('payment.todaySuccessCount')"
+          width="100"
+        />
         <el-table-column :label="t('common.actions')" width="100">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)"> {{ t('common.detail') }} </el-button>
+            <el-button link type="primary" @click="showDetail(row)">
+              {{ t('common.detail') }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -57,7 +79,7 @@ const { t } = useI18n()
 const loading = ref(false)
 const list = ref<UserRechargeStat[]>([])
 const detailVisible = ref(false)
-const detailData = ref<Record<string, any>>({})
+const detailData = ref<UserRechargeStat | null>(null)
 const query = reactive({
   tenantId: 0,
   userId: 0,

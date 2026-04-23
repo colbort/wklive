@@ -2,7 +2,9 @@
   <div class="payment-page">
     <div class="page-header">
       <h2>{{ t('payment.withdrawNotifyLogs') }}</h2>
-      <el-button @click="loadList"> {{ t('common.refresh') }} </el-button>
+      <el-button @click="loadList">
+        {{ t('common.refresh') }}
+      </el-button>
     </div>
     <el-card shadow="never" class="query-card">
       <el-form :model="query" inline label-width="100px">
@@ -16,7 +18,9 @@
           <el-input-number v-model="query.notifyStatus" :min="0" :precision="0" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="loadList"> {{ t('common.search') }} </el-button>
+          <el-button type="primary" @click="loadList">
+            {{ t('common.search') }}
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -35,7 +39,9 @@
         />
         <el-table-column :label="t('common.actions')" width="100">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)"> {{ t('common.detail') }} </el-button>
+            <el-button link type="primary" @click="showDetail(row)">
+              {{ t('common.detail') }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -56,7 +62,7 @@ const { t } = useI18n()
 const loading = ref(false)
 const list = ref<PayNotifyLog[]>([])
 const detailVisible = ref(false)
-const detailData = ref<Record<string, any>>({})
+const detailData = ref<PayNotifyLog | null>(null)
 const query = reactive({ tenantId: 0, orderNo: '', notifyStatus: 0 })
 
 const loadList = async () => {

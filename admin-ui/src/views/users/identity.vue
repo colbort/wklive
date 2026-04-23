@@ -166,7 +166,9 @@ onMounted(fetchOptions)
   <div class="module-page">
     <div class="page-header">
       <h2>{{ t('users.identities') }}</h2>
-      <el-button @click="fetchList"> {{ t('common.refresh') }} </el-button>
+      <el-button @click="fetchList">
+        {{ t('common.refresh') }}
+      </el-button>
     </div>
 
     <el-card shadow="never" class="query-card">
@@ -207,8 +209,12 @@ onMounted(fetchOptions)
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="fetchList"> {{ t('common.search') }} </el-button>
-          <el-button @click="resetQuery"> {{ t('common.reset') }} </el-button>
+          <el-button type="primary" @click="fetchList">
+            {{ t('common.search') }}
+          </el-button>
+          <el-button @click="resetQuery">
+            {{ t('common.reset') }}
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -249,8 +255,12 @@ onMounted(fetchOptions)
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="160" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)"> {{ t('common.detail') }} </el-button>
-            <el-button link type="success" @click="openReview(row)"> {{ t('users.review') }} </el-button>
+            <el-button link type="primary" @click="showDetail(row)">
+              {{ t('common.detail') }}
+            </el-button>
+            <el-button link type="success" @click="openReview(row)">
+              {{ t('users.review') }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -279,8 +289,12 @@ onMounted(fetchOptions)
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="reviewVisible = false"> {{ t('common.cancel') }} </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitReview"> {{ t('common.confirm') }} </el-button>
+        <el-button @click="reviewVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
+        <el-button type="primary" :loading="submitLoading" @click="submitReview">
+          {{ t('common.confirm') }}
+        </el-button>
       </template>
     </el-dialog>
 

@@ -2,7 +2,9 @@
   <div class="payment-page">
     <div class="page-header">
       <h2>{{ t('payment.tenantChannelRules') }}</h2>
-      <el-button @click="loadRules"> {{ t('common.refresh') }} </el-button>
+      <el-button @click="loadRules">
+        {{ t('common.refresh') }}
+      </el-button>
     </div>
 
     <el-card shadow="never" class="query-card">
@@ -14,8 +16,12 @@
           <el-input-number v-model="ruleQuery.channelId" :min="0" :precision="0" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="loadRules"> {{ t('common.search') }} </el-button>
-          <el-button type="primary" @click="openRuleDialog()"> {{ t('payment.addRule') }} </el-button>
+          <el-button type="primary" @click="loadRules">
+            {{ t('common.search') }}
+          </el-button>
+          <el-button type="primary" @click="openRuleDialog()">
+            {{ t('payment.addRule') }}
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -36,8 +42,12 @@
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="160">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showRuleDetail(row)"> {{ t('common.detail') }} </el-button>
-            <el-button link type="primary" @click="openRuleDialog(row)"> {{ t('common.edit') }} </el-button>
+            <el-button link type="primary" @click="showRuleDetail(row)">
+              {{ t('common.detail') }}
+            </el-button>
+            <el-button link type="primary" @click="openRuleDialog(row)">
+              {{ t('common.edit') }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -61,7 +71,9 @@
             <el-button v-if="!ruleForm.id" :loading="ruleTenantChecking" @click="checkRuleTenant">
               {{ t('payment.verifyTenant') }}
             </el-button>
-            <span v-if="!ruleForm.id && ruleTenantVerified" class="verified-text"> {{ t('payment.verified') }} </span>
+            <span v-if="!ruleForm.id && ruleTenantVerified" class="verified-text">
+              {{ t('payment.verified') }}
+            </span>
           </div>
         </el-form-item>
 
@@ -77,7 +89,9 @@
             <el-button v-if="!ruleForm.id" :loading="ruleChannelChecking" @click="checkRuleChannel">
               {{ t('payment.verifyChannel') }}
             </el-button>
-            <span v-if="!ruleForm.id && ruleChannelVerified" class="verified-text"> {{ t('payment.verified') }} </span>
+            <span v-if="!ruleForm.id && ruleChannelVerified" class="verified-text">
+              {{ t('payment.verified') }}
+            </span>
           </div>
         </el-form-item>
 
@@ -128,7 +142,9 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="ruleDialogVisible = false"> {{ t('common.cancel') }} </el-button>
+        <el-button @click="ruleDialogVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
         <el-button type="primary" :disabled="ruleSubmitDisabled" @click="submitRule">
           {{ t('common.confirm') }}
         </el-button>

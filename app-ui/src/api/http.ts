@@ -2,11 +2,28 @@ import axios from 'axios'
 
 const ACCESS_TOKEN_KEY = 'app_access_token'
 const REFRESH_TOKEN_KEY = 'app_refresh_token'
-const TENANT_ID_KEY = 'app_tenant_id'
 const TENANT_CODE_KEY = 'app_tenant_code'
+const DEFAULT_API_BASE_PATH = '/app'
+
+function trimTrailingSlash(value: string) {
+  return value.replace(/\/+$/, '')
+}
+
+function normalizeLeadingSlash(value: string) {
+  return value.startsWith('/') ? value : `/${value}`
+}
+
+function resolveApiBaseURL() {
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim()
+  const apiBasePath = normalizeLeadingSlash(import.meta.env.VITE_API_BASE_PATH || DEFAULT_API_BASE_PATH)
+
+  if (!apiBaseUrl) return apiBasePath
+
+  return `${trimTrailingSlash(apiBaseUrl)}${apiBasePath}`
+}
 
 export const http = axios.create({
-  baseURL: '/app',
+  baseURL: resolveApiBaseURL(),
   timeout: 10000,
 })
 

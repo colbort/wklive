@@ -14,48 +14,25 @@
         {{ t('trade.riskQuery') }}
       </template>
 
-      <el-form
-        :model="riskQuery"
-        inline
-        label-width="90px"
-      >
+      <el-form :model="riskQuery" inline label-width="90px">
         <el-form-item :label="t('trade.tenantId')">
-          <el-input-number
-            v-model="riskQuery.tenantId"
-            :min="0"
-            :precision="0"
-          />
+          <el-input-number v-model="riskQuery.tenantId" :min="0" :precision="0" />
         </el-form-item>
 
         <el-form-item :label="t('trade.userId')">
-          <el-input-number
-            v-model="riskQuery.userId"
-            :min="0"
-            :precision="0"
-          />
+          <el-input-number v-model="riskQuery.userId" :min="0" :precision="0" />
         </el-form-item>
 
         <el-form-item :label="t('trade.symbolId')">
-          <el-input-number
-            v-model="riskQuery.symbolId"
-            :min="0"
-            :precision="0"
-          />
+          <el-input-number v-model="riskQuery.symbolId" :min="0" :precision="0" />
         </el-form-item>
 
         <el-form-item :label="t('trade.marketType')">
-          <el-input-number
-            v-model="riskQuery.marketType"
-            :min="0"
-            :precision="0"
-          />
+          <el-input-number v-model="riskQuery.marketType" :min="0" :precision="0" />
         </el-form-item>
 
         <el-form-item>
-          <el-button
-            type="primary"
-            @click="loadRiskData"
-          >
+          <el-button type="primary" @click="loadRiskData">
             {{ t('trade.loadConfig') }}
           </el-button>
         </el-form-item>
@@ -70,27 +47,15 @@
 
         <el-form label-width="120px">
           <el-form-item :label="t('trade.canOpen')">
-            <el-switch
-              v-model="tradeLimitForm.canOpen"
-              :active-value="1"
-              :inactive-value="0"
-            />
+            <el-switch v-model="tradeLimitForm.canOpen" :active-value="1" :inactive-value="0" />
           </el-form-item>
 
           <el-form-item :label="t('trade.canClose')">
-            <el-switch
-              v-model="tradeLimitForm.canClose"
-              :active-value="1"
-              :inactive-value="0"
-            />
+            <el-switch v-model="tradeLimitForm.canClose" :active-value="1" :inactive-value="0" />
           </el-form-item>
 
           <el-form-item :label="t('trade.canCancel')">
-            <el-switch
-              v-model="tradeLimitForm.canCancel"
-              :active-value="1"
-              :inactive-value="0"
-            />
+            <el-switch v-model="tradeLimitForm.canCancel" :active-value="1" :inactive-value="0" />
           </el-form-item>
 
           <el-form-item :label="t('trade.onlyReduceOnly')">
@@ -110,11 +75,7 @@
           </el-form-item>
 
           <el-form-item :label="t('trade.maxOpenOrderCount')">
-            <el-input-number
-              v-model="tradeLimitForm.maxOpenOrderCount"
-              :min="0"
-              :precision="0"
-            />
+            <el-input-number v-model="tradeLimitForm.maxOpenOrderCount" :min="0" :precision="0" />
           </el-form-item>
 
           <el-form-item :label="t('trade.maxPositionNotional')">
@@ -122,18 +83,10 @@
           </el-form-item>
 
           <el-form-item :label="t('trade.operatorId')">
-            <el-input-number
-              v-model="tradeLimitForm.operatorId"
-              :min="0"
-              :precision="0"
-            />
+            <el-input-number v-model="tradeLimitForm.operatorId" :min="0" :precision="0" />
           </el-form-item>
 
-          <el-button
-            type="primary"
-            :loading="submitLoading"
-            @click="submitTradeLimit"
-          >
+          <el-button type="primary" :loading="submitLoading" @click="submitTradeLimit">
             {{ t('common.save') }}
           </el-button>
         </el-form>
@@ -162,18 +115,10 @@
           </el-form-item>
 
           <el-form-item :label="t('trade.operatorId')">
-            <el-input-number
-              v-model="symbolLimitForm.operatorId"
-              :min="0"
-              :precision="0"
-            />
+            <el-input-number v-model="symbolLimitForm.operatorId" :min="0" :precision="0" />
           </el-form-item>
 
-          <el-button
-            type="primary"
-            :loading="submitLoading"
-            @click="submitSymbolLimit"
-          >
+          <el-button type="primary" :loading="submitLoading" @click="submitSymbolLimit">
             {{ t('common.save') }}
           </el-button>
         </el-form>
@@ -186,27 +131,15 @@
 
         <el-form label-width="120px">
           <el-form-item :label="t('trade.positionMode')">
-            <el-input-number
-              v-model="tradeConfigForm.positionMode"
-              :min="0"
-              :precision="0"
-            />
+            <el-input-number v-model="tradeConfigForm.positionMode" :min="0" :precision="0" />
           </el-form-item>
 
           <el-form-item :label="t('trade.marginMode')">
-            <el-input-number
-              v-model="tradeConfigForm.marginMode"
-              :min="0"
-              :precision="0"
-            />
+            <el-input-number v-model="tradeConfigForm.marginMode" :min="0" :precision="0" />
           </el-form-item>
 
           <el-form-item :label="t('trade.defaultLeverage')">
-            <el-input-number
-              v-model="tradeConfigForm.defaultLeverage"
-              :min="0"
-              :precision="0"
-            />
+            <el-input-number v-model="tradeConfigForm.defaultLeverage" :min="0" :precision="0" />
           </el-form-item>
 
           <el-form-item :label="t('trade.tradeEnabled')">
@@ -225,11 +158,7 @@
             />
           </el-form-item>
 
-          <el-button
-            type="primary"
-            :loading="submitLoading"
-            @click="submitTradeConfig"
-          >
+          <el-button type="primary" :loading="submitLoading" @click="submitTradeConfig">
             {{ t('common.save') }}
           </el-button>
         </el-form>
@@ -242,58 +171,30 @@
 
         <el-form label-width="120px">
           <el-form-item :label="t('trade.marginMode')">
-            <el-input-number
-              v-model="leverageForm.marginMode"
-              :min="0"
-              :precision="0"
-            />
+            <el-input-number v-model="leverageForm.marginMode" :min="0" :precision="0" />
           </el-form-item>
 
           <el-form-item :label="t('trade.positionMode')">
-            <el-input-number
-              v-model="leverageForm.positionMode"
-              :min="0"
-              :precision="0"
-            />
+            <el-input-number v-model="leverageForm.positionMode" :min="0" :precision="0" />
           </el-form-item>
 
           <el-form-item :label="t('trade.longLeverage')">
-            <el-input-number
-              v-model="leverageForm.longLeverage"
-              :min="0"
-              :precision="0"
-            />
+            <el-input-number v-model="leverageForm.longLeverage" :min="0" :precision="0" />
           </el-form-item>
 
           <el-form-item :label="t('trade.shortLeverage')">
-            <el-input-number
-              v-model="leverageForm.shortLeverage"
-              :min="0"
-              :precision="0"
-            />
+            <el-input-number v-model="leverageForm.shortLeverage" :min="0" :precision="0" />
           </el-form-item>
 
           <el-form-item :label="t('trade.maxLeverage')">
-            <el-input-number
-              v-model="leverageForm.maxLeverage"
-              :min="0"
-              :precision="0"
-            />
+            <el-input-number v-model="leverageForm.maxLeverage" :min="0" :precision="0" />
           </el-form-item>
 
           <el-form-item :label="t('trade.operatorId')">
-            <el-input-number
-              v-model="leverageForm.operatorId"
-              :min="0"
-              :precision="0"
-            />
+            <el-input-number v-model="leverageForm.operatorId" :min="0" :precision="0" />
           </el-form-item>
 
-          <el-button
-            type="primary"
-            :loading="submitLoading"
-            @click="submitLeverage"
-          >
+          <el-button type="primary" :loading="submitLoading" @click="submitLeverage">
             {{ t('common.save') }}
           </el-button>
         </el-form>
@@ -305,58 +206,31 @@
         {{ t('trade.riskLogs') }}
       </template>
 
-      <el-form
-        :model="riskLogQuery"
-        inline
-        label-width="90px"
-        class="query-card-inner"
-      >
+      <el-form :model="riskLogQuery" inline label-width="90px" class="query-card-inner">
         <el-form-item :label="t('trade.tenantId')">
-          <el-input-number
-            v-model="riskLogQuery.tenantId"
-            :min="0"
-            :precision="0"
-          />
+          <el-input-number v-model="riskLogQuery.tenantId" :min="0" :precision="0" />
         </el-form-item>
 
         <el-form-item :label="t('trade.userId')">
-          <el-input-number
-            v-model="riskLogQuery.userId"
-            :min="0"
-            :precision="0"
-          />
+          <el-input-number v-model="riskLogQuery.userId" :min="0" :precision="0" />
         </el-form-item>
 
         <el-form-item :label="t('trade.symbolId')">
-          <el-input-number
-            v-model="riskLogQuery.symbolId"
-            :min="0"
-            :precision="0"
-          />
+          <el-input-number v-model="riskLogQuery.symbolId" :min="0" :precision="0" />
         </el-form-item>
 
         <el-form-item :label="t('trade.orderNo')">
-          <el-input
-            v-model="riskLogQuery.orderNo"
-            clearable
-          />
+          <el-input v-model="riskLogQuery.orderNo" clearable />
         </el-form-item>
 
         <el-form-item>
-          <el-button
-            type="primary"
-            @click="loadRiskLogs"
-          >
+          <el-button type="primary" @click="loadRiskLogs">
             {{ t('common.search') }}
           </el-button>
         </el-form-item>
       </el-form>
 
-      <el-table
-        v-loading="loading"
-        :data="rows"
-        stripe
-      >
+      <el-table v-loading="loading" :data="rows" stripe>
         <el-table-column
           prop="orderNo"
           :label="t('trade.orderNo')"
@@ -364,29 +238,13 @@
           show-overflow-tooltip
         />
 
-        <el-table-column
-          prop="userId"
-          :label="t('trade.userId')"
-          width="100"
-        />
+        <el-table-column prop="userId" :label="t('trade.userId')" width="100" />
 
-        <el-table-column
-          prop="symbolId"
-          :label="t('trade.symbolId')"
-          width="100"
-        />
+        <el-table-column prop="symbolId" :label="t('trade.symbolId')" width="100" />
 
-        <el-table-column
-          prop="checkType"
-          :label="t('trade.checkType')"
-          width="100"
-        />
+        <el-table-column prop="checkType" :label="t('trade.checkType')" width="100" />
 
-        <el-table-column
-          prop="checkResult"
-          :label="t('trade.checkResult')"
-          width="100"
-        />
+        <el-table-column prop="checkResult" :label="t('trade.checkResult')" width="100" />
 
         <el-table-column
           prop="rejectMsg"
@@ -395,17 +253,9 @@
           show-overflow-tooltip
         />
 
-        <el-table-column
-          :label="t('common.actions')"
-          width="100"
-          fixed="right"
-        >
+        <el-table-column :label="t('common.actions')" width="100" fixed="right">
           <template #default="{ row }">
-            <el-button
-              link
-              type="primary"
-              @click="showDetail(row)"
-            >
+            <el-button link type="primary" @click="showDetail(row)">
               {{ t('option.detail') }}
             </el-button>
           </template>
@@ -413,11 +263,7 @@
       </el-table>
     </el-card>
 
-    <el-dialog
-      v-model="detailVisible"
-      :title="t('option.detail')"
-      width="760px"
-    >
+    <el-dialog v-model="detailVisible" :title="t('option.detail')" width="760px">
       <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
     </el-dialog>
   </div>
@@ -427,7 +273,12 @@
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import { SetUserTradeLimitReq, tradeService } from '@/services'
+import {
+  SetUserSymbolLimitReq,
+  SetUserTradeLimitReq,
+  tradeService,
+  type RiskOrderCheckLog,
+} from '@/services'
 
 const { t } = useI18n()
 
@@ -445,18 +296,6 @@ interface RiskLogQuery {
   symbolId: number
   orderNo: string
   limit: number
-}
-
-interface SymbolLimitForm {
-  tenantId: number
-  userId: number
-  symbolId: number
-  marketType: number
-  maxPositionQty: string
-  maxOrderQty: string
-  minOrderQty: string
-  priceDeviationRate: string
-  operatorId: number
 }
 
 interface TradeConfigForm {
@@ -489,9 +328,9 @@ interface LeverageForm {
 
 const loading = ref(false)
 const submitLoading = ref(false)
-const rows = ref<Record<string, any>[]>([])
+const rows = ref<RiskOrderCheckLog[]>([])
 const detailVisible = ref(false)
-const detailData = ref<Record<string, any>>({})
+const detailData = ref<RiskOrderCheckLog | null>(null)
 
 const riskQuery = reactive<RiskQuery>({
   tenantId: 0,
@@ -534,7 +373,7 @@ const tradeLimitForm = reactive<SetUserTradeLimitReq>({
   remark: '',
 })
 
-const symbolLimitForm = reactive<SymbolLimitForm>({
+const symbolLimitForm = reactive<SetUserSymbolLimitReq>({
   tenantId: 0,
   userId: 0,
   symbolId: 0,
@@ -551,12 +390,10 @@ const symbolLimitForm = reactive<SymbolLimitForm>({
   priceDeviationRate: '',
   operatorId: 0,
   source: 0,
-  status: 1,
+  status: 0,
   effectiveStartTime: 0,
   effectiveEndTime: 0,
   remark: '',
-  createTimes: 0,
-  updateTimes: 0,
 })
 
 const tradeConfigForm = reactive<TradeConfigForm>({
@@ -631,7 +468,7 @@ const loadRiskLogs = async () => {
   }
 }
 
-const showDetail = (row: Record<string, any>) => {
+const showDetail = (row: RiskOrderCheckLog) => {
   detailData.value = row
   detailVisible.value = true
 }

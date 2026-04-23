@@ -10,3 +10,6 @@ avatars/
 dist/
 
 *.tsbuildinfo
+
+android/
+ios/

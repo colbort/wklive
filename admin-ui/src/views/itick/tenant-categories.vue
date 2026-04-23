@@ -64,8 +64,12 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="handleQuery"> {{ t('common.search') }} </el-button>
-          <el-button @click="resetQuery"> {{ t('common.reset') }} </el-button>
+          <el-button type="primary" @click="handleQuery">
+            {{ t('common.search') }}
+          </el-button>
+          <el-button @click="resetQuery">
+            {{ t('common.reset') }}
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -111,7 +115,12 @@
             <span v-else>-</span>
           </template>
         </el-table-column>
-        <el-table-column prop="remark" :label="t('common.remark')" min-width="180" show-overflow-tooltip />
+        <el-table-column
+          prop="remark"
+          :label="t('common.remark')"
+          min-width="180"
+          show-overflow-tooltip
+        />
         <el-table-column :label="t('common.createTimes')" min-width="170">
           <template #default="{ row }">
             {{ formatDate(row.createTimes) }}
@@ -124,15 +133,21 @@
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="180" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="handleDetail(row)"> {{ t('common.detail') }} </el-button>
-            <el-button link type="primary" @click="handleEdit(row)"> {{ t('common.edit') }} </el-button>
+            <el-button link type="primary" @click="handleDetail(row)">
+              {{ t('common.detail') }}
+            </el-button>
+            <el-button link type="primary" @click="handleEdit(row)">
+              {{ t('common.edit') }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
 
       <div class="pagination-bar">
         <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
-        <el-button :disabled="!pagination.hasPrev" @click="handlePrevPage"> {{ t('common.prevPage') }} </el-button>
+        <el-button :disabled="!pagination.hasPrev" @click="handlePrevPage">
+          {{ t('common.prevPage') }}
+        </el-button>
         <el-button :disabled="!pagination.hasNext" type="primary" @click="handleNextPage">
           {{ t('common.nextPage') }}
         </el-button>
@@ -218,8 +233,12 @@
       </el-form>
 
       <template #footer>
-        <el-button @click="formDialogVisible = false"> {{ t('common.cancel') }} </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitForm"> {{ t('common.confirm') }} </el-button>
+        <el-button @click="formDialogVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
+        <el-button type="primary" :loading="submitLoading" @click="submitForm">
+          {{ t('common.confirm') }}
+        </el-button>
       </template>
     </el-dialog>
 
@@ -247,7 +266,9 @@
               class="icon-preview-large"
               :preview-teleported="true"
             />
-            <div class="icon-url">{{ detail.icon }}</div>
+            <div class="icon-url">
+              {{ detail.icon }}
+            </div>
           </div>
           <span v-else>-</span>
         </el-descriptions-item>
@@ -272,15 +293,21 @@
       </el-descriptions>
 
       <template #footer>
-        <el-button type="primary" @click="detailDialogVisible = false"> {{ t('common.close') }} </el-button>
+        <el-button type="primary" @click="detailDialogVisible = false">
+          {{ t('common.close') }}
+        </el-button>
       </template>
     </el-dialog>
 
     <el-dialog v-model="batchDialogVisible" :title="t('itick.batchTenantCategories')" width="920px">
       <div class="batch-toolbar">
-        <div class="batch-tip">{{ t('itick.batchSaveTip') }}</div>
+        <div class="batch-tip">
+          {{ t('itick.batchSaveTip') }}
+        </div>
         <div class="batch-actions">
-          <el-button @click="appendBatchRow"> {{ t('common.add') }} </el-button>
+          <el-button @click="appendBatchRow">
+            {{ t('common.add') }}
+          </el-button>
           <el-button type="primary" :loading="batchSubmitting" @click="submitBatch">
             {{ t('common.save') }}
           </el-button>
@@ -348,7 +375,9 @@
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="90" fixed="right">
           <template #default="{ $index }">
-            <el-button link type="danger" @click="removeBatchRow($index)"> {{ t('common.delete') }} </el-button>
+            <el-button link type="danger" @click="removeBatchRow($index)">
+              {{ t('common.delete') }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>

@@ -3,8 +3,12 @@
     <div class="page-header">
       <h2>{{ t('option.marketDetail') }}</h2>
       <div class="header-actions">
-        <el-button @click="loadCurrent">{{ t('common.refresh') }}</el-button>
-        <el-button type="primary" plain @click="openMarketDialog()">{{ t('option.updateMarket') }}</el-button>
+        <el-button @click="loadCurrent">
+          {{ t('common.refresh') }}
+        </el-button>
+        <el-button type="primary" plain @click="openMarketDialog()">
+          {{ t('option.updateMarket') }}
+        </el-button>
       </div>
     </div>
 
@@ -17,8 +21,12 @@
           <el-input-number v-model="query.contractId" :min="0" :precision="0" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="loadCurrent">{{ t('common.search') }}</el-button>
-          <el-button @click="resetCurrent">{{ t('common.reset') }}</el-button>
+          <el-button type="primary" @click="loadCurrent">
+            {{ t('common.search') }}
+          </el-button>
+          <el-button @click="resetCurrent">
+            {{ t('common.reset') }}
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -68,13 +76,13 @@
             {{ formatOptionValue('contractStatus', detail.contract?.status) }}
           </el-descriptions-item>
           <el-descriptions-item :label="t('option.listTime')">
-            {{ formatDate(detail.contract?.listTime??0) }}
+            {{ formatDate(detail.contract?.listTime ?? 0) }}
           </el-descriptions-item>
           <el-descriptions-item :label="t('option.expireTime')">
-            {{ formatDate(detail.contract?.expireTime??0) }}
+            {{ formatDate(detail.contract?.expireTime ?? 0) }}
           </el-descriptions-item>
           <el-descriptions-item :label="t('option.deliverTime')">
-            {{ formatDate(detail.contract?.deliverTime??0) }}
+            {{ formatDate(detail.contract?.deliverTime ?? 0) }}
           </el-descriptions-item>
           <el-descriptions-item :label="t('common.remark')">
             {{ detail.contract?.remark || '-' }}
@@ -96,7 +104,7 @@
             {{ detail.market?.id ?? '-' }}
           </el-descriptions-item>
           <el-descriptions-item :label="t('option.snapshotTime')">
-            {{ formatDate(detail.market?.snapshotTime??0) }}
+            {{ formatDate(detail.market?.snapshotTime ?? 0) }}
           </el-descriptions-item>
           <el-descriptions-item :label="t('option.underlyingPrice')">
             {{ detail.market?.underlyingPrice || '-' }}
@@ -147,16 +155,19 @@
             {{ detail.market?.pricingModel || '-' }}
           </el-descriptions-item>
           <el-descriptions-item :label="t('common.createTimes')">
-            {{ formatDate(detail.market?.createTimes??0) }}
+            {{ formatDate(detail.market?.createTimes ?? 0) }}
           </el-descriptions-item>
           <el-descriptions-item :label="t('common.updateTimes')">
-            {{ formatDate(detail.market?.updateTimes??0) }}
+            {{ formatDate(detail.market?.updateTimes ?? 0) }}
           </el-descriptions-item>
         </el-descriptions>
       </el-card>
     </div>
 
-    <el-empty v-if="!loading && !detail.market && !detail.contract" :description="t('common.noData')" />
+    <el-empty
+      v-if="!loading && !detail.market && !detail.contract"
+      :description="t('common.noData')"
+    />
 
     <el-dialog v-model="marketVisible" :title="t('option.updateMarket')" width="720px">
       <el-form label-width="110px">
@@ -219,8 +230,12 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="marketVisible = false">{{ t('common.cancel') }}</el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitMarket">{{ t('common.confirm') }}</el-button>
+        <el-button @click="marketVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
+        <el-button type="primary" :loading="submitLoading" @click="submitMarket">
+          {{ t('common.confirm') }}
+        </el-button>
       </template>
     </el-dialog>
   </div>
@@ -231,7 +246,13 @@ import { onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import { optionService, type OptionContract, type OptionGroup, type OptionMarket, type UpdateMarketReq } from '@/services'
+import {
+  optionService,
+  type OptionContract,
+  type OptionGroup,
+  type OptionMarket,
+  type UpdateMarketReq,
+} from '@/services'
 import { formatDate } from '@/utils'
 import { getOptionValueLabel } from '@/utils/options'
 
@@ -328,7 +349,8 @@ const loadCurrent = async () => {
         tenantId: query.tenantId,
         id: query.contractId,
       })
-      detail.contract = contractRes.data?.contract || (contractRes.data as unknown as OptionContract)
+      detail.contract =
+        contractRes.data?.contract || (contractRes.data as unknown as OptionContract)
     }
     resetMarketForm()
   } finally {

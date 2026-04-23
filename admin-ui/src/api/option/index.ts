@@ -58,9 +58,7 @@ export function apiOptionCreateContract(
   return post<{ id: number }>('/admin/option/contracts', params)
 }
 
-export function apiOptionUpdateContract(
-  params: UpdateContractReq,
-): Promise<OptionAdminCommonResp> {
+export function apiOptionUpdateContract(params: UpdateContractReq): Promise<OptionAdminCommonResp> {
   return post('/admin/option/contracts/update', params)
 }
 
@@ -94,27 +92,39 @@ export function apiOptionGetTrade(params: GetTradeReq): Promise<RespBase<OptionT
   return get<OptionTradeDetail>('/admin/option/trades/detail', params)
 }
 
-export function apiOptionListPositions(params: ListPositionsReq): Promise<RespBase<OptionPosition[]>> {
+export function apiOptionListPositions(
+  params: ListPositionsReq,
+): Promise<RespBase<OptionPosition[]>> {
   return get<OptionPosition[]>('/admin/option/positions', params)
 }
 
-export function apiOptionGetPosition(params: GetPositionReq): Promise<RespBase<OptionPositionDetail>> {
+export function apiOptionGetPosition(
+  params: GetPositionReq,
+): Promise<RespBase<OptionPositionDetail>> {
   return get<OptionPositionDetail>('/admin/option/positions/detail', params)
 }
 
-export function apiOptionListExercises(params: ListExercisesReq): Promise<RespBase<OptionExerciseDetail[]>> {
+export function apiOptionListExercises(
+  params: ListExercisesReq,
+): Promise<RespBase<OptionExerciseDetail[]>> {
   return get<OptionExerciseDetail[]>('/admin/option/exercises', params)
 }
 
-export function apiOptionGetExercise(params: GetExerciseReq): Promise<RespBase<OptionExerciseDetail>> {
+export function apiOptionGetExercise(
+  params: GetExerciseReq,
+): Promise<RespBase<OptionExerciseDetail>> {
   return get<OptionExerciseDetail>('/admin/option/exercises/detail', params)
 }
 
-export function apiOptionListSettlements(params: ListSettlementsReq): Promise<RespBase<OptionSettlement[]>> {
+export function apiOptionListSettlements(
+  params: ListSettlementsReq,
+): Promise<RespBase<OptionSettlement[]>> {
   return get<OptionSettlement[]>('/admin/option/settlements', params)
 }
 
-export function apiOptionGetSettlement(params: GetSettlementReq): Promise<RespBase<OptionSettlementDetail>> {
+export function apiOptionGetSettlement(
+  params: GetSettlementReq,
+): Promise<RespBase<OptionSettlementDetail>> {
   return get<OptionSettlementDetail>('/admin/option/settlements/detail', params)
 }
 

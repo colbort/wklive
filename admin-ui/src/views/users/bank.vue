@@ -392,8 +392,12 @@ onMounted(fetchOptions)
     <div class="page-header">
       <h2>{{ t('users.banks') }}</h2>
       <div class="header-actions">
-        <el-button @click="fetchList"> {{ t('common.refresh') }} </el-button>
-        <el-button type="primary" @click="openCreate"> {{ t('users.addBank') }} </el-button>
+        <el-button @click="fetchList">
+          {{ t('common.refresh') }}
+        </el-button>
+        <el-button type="primary" @click="openCreate">
+          {{ t('users.addBank') }}
+        </el-button>
       </div>
     </div>
 
@@ -419,8 +423,12 @@ onMounted(fetchOptions)
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="fetchList"> {{ t('common.search') }} </el-button>
-          <el-button @click="resetQuery"> {{ t('common.reset') }} </el-button>
+          <el-button type="primary" @click="fetchList">
+            {{ t('common.search') }}
+          </el-button>
+          <el-button @click="resetQuery">
+            {{ t('common.reset') }}
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -432,7 +440,12 @@ onMounted(fetchOptions)
         <el-table-column prop="userId" :label="t('users.userId')" width="100" />
         <el-table-column prop="bankName" :label="t('users.bankName')" min-width="140" />
         <el-table-column prop="accountName" :label="t('users.accountName')" min-width="120" />
-        <el-table-column prop="accountNo" :label="t('users.accountNo')" min-width="160" show-overflow-tooltip />
+        <el-table-column
+          prop="accountNo"
+          :label="t('users.accountNo')"
+          min-width="160"
+          show-overflow-tooltip
+        />
         <el-table-column prop="isDefault" :label="t('common.default')" width="80">
           <template #default="{ row }">
             <span :class="getBooleanTagClass(row.isDefault)">
@@ -454,17 +467,31 @@ onMounted(fetchOptions)
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="260" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)"> {{ t('common.detail') }} </el-button>
-            <el-button link type="primary" @click="openEdit(row)"> {{ t('common.edit') }} </el-button>
-            <el-button link type="warning" @click="openStatus(row)"> {{ t('users.status') }} </el-button>
-            <el-button link type="success" @click="setDefault(row)"> {{ t('users.setDefault') }} </el-button>
-            <el-button link type="danger" @click="remove(row)"> {{ t('common.delete') }} </el-button>
+            <el-button link type="primary" @click="showDetail(row)">
+              {{ t('common.detail') }}
+            </el-button>
+            <el-button link type="primary" @click="openEdit(row)">
+              {{ t('common.edit') }}
+            </el-button>
+            <el-button link type="warning" @click="openStatus(row)">
+              {{ t('users.status') }}
+            </el-button>
+            <el-button link type="success" @click="setDefault(row)">
+              {{ t('users.setDefault') }}
+            </el-button>
+            <el-button link type="danger" @click="remove(row)">
+              {{ t('common.delete') }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-card>
 
-    <el-dialog v-model="editVisible" :title="form.id ? t('users.editBank') : t('users.addBank')" width="620px">
+    <el-dialog
+      v-model="editVisible"
+      :title="form.id ? t('users.editBank') : t('users.addBank')"
+      width="620px"
+    >
       <el-form label-width="100px">
         <el-form-item :label="t('common.tenantId')">
           <div class="verify-row">
@@ -492,7 +519,9 @@ onMounted(fetchOptions)
             <span v-else-if="tenantChecked" class="verify-tip verify-tip--error">
               {{ t('users.tenantMissingRetry') }}
             </span>
-            <span v-else class="verify-tip verify-tip--muted"> {{ t('users.confirmTenantBeforeCreate') }} </span>
+            <span v-else class="verify-tip verify-tip--muted">
+              {{ t('users.confirmTenantBeforeCreate') }}
+            </span>
           </div>
         </el-form-item>
         <el-form-item :label="t('users.userId')">
@@ -522,7 +551,9 @@ onMounted(fetchOptions)
             <span v-else-if="userChecked" class="verify-tip verify-tip--error">
               {{ t('users.userMissingRetry') }}
             </span>
-            <span v-else class="verify-tip verify-tip--muted"> {{ t('users.confirmUserBeforeCreate') }} </span>
+            <span v-else class="verify-tip verify-tip--muted">
+              {{ t('users.confirmUserBeforeCreate') }}
+            </span>
           </div>
         </el-form-item>
         <el-form-item :label="t('users.bankName')">
@@ -558,7 +589,9 @@ onMounted(fetchOptions)
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="editVisible = false"> {{ t('common.cancel') }} </el-button>
+        <el-button @click="editVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
         <el-button
           type="primary"
           :loading="submitLoading"
@@ -584,8 +617,12 @@ onMounted(fetchOptions)
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="statusVisible = false"> {{ t('common.cancel') }} </el-button>
-        <el-button type="primary" @click="submitStatus"> {{ t('common.confirm') }} </el-button>
+        <el-button @click="statusVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
+        <el-button type="primary" @click="submitStatus">
+          {{ t('common.confirm') }}
+        </el-button>
       </template>
     </el-dialog>
 

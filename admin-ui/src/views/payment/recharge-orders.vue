@@ -2,7 +2,9 @@
   <div class="payment-page">
     <div class="page-header">
       <h2>{{ t('payment.rechargeOrders') }}</h2>
-      <el-button @click="loadList"> {{ t('common.refresh') }} </el-button>
+      <el-button @click="loadList">
+        {{ t('common.refresh') }}
+      </el-button>
     </div>
     <el-card shadow="never" class="query-card">
       <el-form :model="query" inline label-width="90px">
@@ -19,7 +21,9 @@
           <el-input v-model="query.bizOrderNo" clearable />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="loadList"> {{ t('common.search') }} </el-button>
+          <el-button type="primary" @click="loadList">
+            {{ t('common.search') }}
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -34,10 +38,18 @@
         <el-table-column prop="status" :label="t('common.status')" width="90" />
         <el-table-column :label="t('common.actions')" width="260" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)"> {{ t('common.detail') }} </el-button>
-            <el-button link type="warning" @click="closeOrder(row)"> {{ t('payment.closeOrder') }} </el-button>
-            <el-button link type="success" @click="openManualSuccess(row)"> {{ t('payment.manualMarkSuccess') }} </el-button>
-            <el-button link type="primary" @click="retryNotify(row)"> {{ t('payment.retryNotify') }} </el-button>
+            <el-button link type="primary" @click="showDetail(row)">
+              {{ t('common.detail') }}
+            </el-button>
+            <el-button link type="warning" @click="closeOrder(row)">
+              {{ t('payment.closeOrder') }}
+            </el-button>
+            <el-button link type="success" @click="openManualSuccess(row)">
+              {{ t('payment.manualMarkSuccess') }}
+            </el-button>
+            <el-button link type="primary" @click="retryNotify(row)">
+              {{ t('payment.retryNotify') }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -51,15 +63,24 @@
           <el-input v-model="manualForm.thirdTradeNo" />
         </el-form-item>
         <el-form-item :label="t('payment.payAmount')">
-          <el-input-number v-model="manualForm.payAmount" :min="0" :precision="0" style="width: 100%" />
+          <el-input-number
+            v-model="manualForm.payAmount"
+            :min="0"
+            :precision="0"
+            style="width: 100%"
+          />
         </el-form-item>
         <el-form-item :label="t('common.remark')">
           <el-input v-model="manualForm.remark" type="textarea" :rows="3" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="manualVisible = false"> {{ t('common.cancel') }} </el-button>
-        <el-button type="primary" @click="submitManual"> {{ t('common.confirm') }} </el-button>
+        <el-button @click="manualVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
+        <el-button type="primary" @click="submitManual">
+          {{ t('common.confirm') }}
+        </el-button>
       </template>
     </el-dialog>
   </div>
@@ -76,7 +97,7 @@ const { t } = useI18n()
 const loading = ref(false)
 const list = ref<RechargeOrder[]>([])
 const detailVisible = ref(false)
-const detailData = ref<Record<string, any>>({})
+const detailData = ref<RechargeOrder | null>(null)
 const manualVisible = ref(false)
 const currentOrder = ref<RechargeOrder | null>(null)
 const manualForm = reactive({ thirdTradeNo: '', payAmount: 0, remark: '' })

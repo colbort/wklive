@@ -22,9 +22,15 @@
           <el-input v-model="productQuery.keyword" clearable />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="loadProducts"> {{ t('common.search') }} </el-button>
-          <el-button @click="resetProductQuery"> {{ t('common.reset') }} </el-button>
-          <el-button type="primary" @click="openProductDialog()"> {{ t('payment.addProduct') }} </el-button>
+          <el-button type="primary" @click="loadProducts">
+            {{ t('common.search') }}
+          </el-button>
+          <el-button @click="resetProductQuery">
+            {{ t('common.reset') }}
+          </el-button>
+          <el-button type="primary" @click="openProductDialog()">
+            {{ t('payment.addProduct') }}
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -48,11 +54,20 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="remark" :label="t('common.remark')" min-width="180" show-overflow-tooltip />
+        <el-table-column
+          prop="remark"
+          :label="t('common.remark')"
+          min-width="180"
+          show-overflow-tooltip
+        />
         <el-table-column :label="t('common.actions')" width="160" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showProductDetail(row)"> {{ t('common.detail') }} </el-button>
-            <el-button link type="primary" @click="openProductDialog(row)"> {{ t('common.edit') }} </el-button>
+            <el-button link type="primary" @click="showProductDetail(row)">
+              {{ t('common.detail') }}
+            </el-button>
+            <el-button link type="primary" @click="openProductDialog(row)">
+              {{ t('common.edit') }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -72,8 +87,12 @@
               :precision="0"
               @change="handlePlatformIdChange"
             />
-            <el-button :loading="platformChecking" @click="checkPlatform"> {{ t('payment.verifyPlatform') }} </el-button>
-            <span v-if="platformVerified" class="platform-verified-text"> {{ t('payment.verified') }} </span>
+            <el-button :loading="platformChecking" @click="checkPlatform">
+              {{ t('payment.verifyPlatform') }}
+            </el-button>
+            <span v-if="platformVerified" class="platform-verified-text">
+              {{ t('payment.verified') }}
+            </span>
           </div>
         </el-form-item>
         <el-form-item v-if="!productForm.id" :label="t('payment.productCode')">
@@ -110,7 +129,9 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="productDialogVisible = false"> {{ t('common.cancel') }} </el-button>
+        <el-button @click="productDialogVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
         <el-button
           type="primary"
           :loading="submitLoading"
@@ -143,7 +164,7 @@ const productLoading = ref(false)
 const products = ref<PayProduct[]>([])
 const detailVisible = ref(false)
 const detailTitle = ref('')
-const detailData = ref<Record<string, any>>({})
+const detailData = ref<PayProduct | null>(null)
 const productDialogVisible = ref(false)
 const platformChecking = ref(false)
 const platformVerified = ref(false)

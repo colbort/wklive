@@ -3,7 +3,9 @@
     <div class="page-header">
       <h2>{{ t('option.settlements') }}</h2>
       <div class="header-actions">
-        <el-button @click="loadCurrent">{{ t('common.refresh') }}</el-button>
+        <el-button @click="loadCurrent">
+          {{ t('common.refresh') }}
+        </el-button>
       </div>
     </div>
 
@@ -19,21 +21,37 @@
           <el-input v-model="query.settlementNo" clearable />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="loadCurrent">{{ t('common.search') }}</el-button>
-          <el-button @click="resetCurrent">{{ t('common.reset') }}</el-button>
+          <el-button type="primary" @click="loadCurrent">
+            {{ t('common.search') }}
+          </el-button>
+          <el-button @click="resetCurrent">
+            {{ t('common.reset') }}
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
 
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="rows" stripe>
-        <el-table-column :label="t('option.settlementNo')" prop="settlementNo" min-width="180" show-overflow-tooltip />
+        <el-table-column
+          :label="t('option.settlementNo')"
+          prop="settlementNo"
+          min-width="180"
+          show-overflow-tooltip
+        />
         <el-table-column :label="t('option.contractId')" prop="contractId" width="100" />
-        <el-table-column :label="t('option.deliveryPrice')" prop="deliveryPrice" min-width="120" show-overflow-tooltip />
+        <el-table-column
+          :label="t('option.deliveryPrice')"
+          prop="deliveryPrice"
+          min-width="120"
+          show-overflow-tooltip
+        />
         <el-table-column :label="t('common.status')" prop="status" width="100" />
         <el-table-column :label="t('common.actions')" width="100" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">{{ t('option.detail') }}</el-button>
+            <el-button link type="primary" @click="showDetail(row)">
+              {{ t('option.detail') }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -48,14 +66,14 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { optionService } from '@/services'
+import { optionService, type OptionSettlement, type OptionSettlementDetail } from '@/services'
 
 const { t } = useI18n()
 
 const loading = ref(false)
-const rows = ref<Record<string, any>[]>([])
+const rows = ref<OptionSettlement[]>([])
 const detailVisible = ref(false)
-const detailData = ref<Record<string, any>>({})
+const detailData = ref<OptionSettlementDetail | OptionSettlement | null>(null)
 const query = reactive({
   tenantId: undefined as number | undefined,
   contractId: undefined as number | undefined,
@@ -84,8 +102,15 @@ const resetCurrent = () => {
   loadCurrent()
 }
 
-const showDetail = async (row: Record<string, any>) => {
-  detailData.value = (await optionService.getSettlement({ tenantId: row.tenantId, id: row.id, settlementNo: row.settlementNo })).data || row
+const showDetail = async (row: OptionSettlement) => {
+  detailData.value =
+    (
+      await optionService.getSettlement({
+        tenantId: row.tenantId,
+        id: row.id,
+        settlementNo: row.settlementNo,
+      })
+    ).data || row
   detailVisible.value = true
 }
 

@@ -3,7 +3,9 @@
     <div class="page-header">
       <h2>{{ t('staking.redeemLogs') }}</h2>
       <div class="header-actions">
-        <el-button @click="loadRows"> {{ t('common.refresh') }} </el-button>
+        <el-button @click="loadRows">
+          {{ t('common.refresh') }}
+        </el-button>
       </div>
     </div>
 
@@ -19,16 +21,30 @@
           <el-input v-model="query.redeemNo" clearable />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="loadRows"> {{ t('common.search') }} </el-button>
-          <el-button @click="resetQuery"> {{ t('common.reset') }} </el-button>
+          <el-button type="primary" @click="loadRows">
+            {{ t('common.search') }}
+          </el-button>
+          <el-button @click="resetQuery">
+            {{ t('common.reset') }}
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
 
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="rows" stripe>
-        <el-table-column :label="t('staking.redeemNo')" prop="redeemNo" min-width="180" show-overflow-tooltip />
-        <el-table-column :label="t('staking.orderNo')" prop="orderNo" min-width="180" show-overflow-tooltip />
+        <el-table-column
+          :label="t('staking.redeemNo')"
+          prop="redeemNo"
+          min-width="180"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          :label="t('staking.orderNo')"
+          prop="orderNo"
+          min-width="180"
+          show-overflow-tooltip
+        />
         <el-table-column :label="t('staking.userId')" prop="uid" width="100" />
         <el-table-column
           prop="redeemAmount"
@@ -36,11 +52,18 @@
           min-width="120"
           show-overflow-tooltip
         />
-        <el-table-column :label="t('staking.feeAmount')" prop="feeAmount" min-width="120" show-overflow-tooltip />
+        <el-table-column
+          :label="t('staking.feeAmount')"
+          prop="feeAmount"
+          min-width="120"
+          show-overflow-tooltip
+        />
         <el-table-column :label="t('staking.redeemStatus')" prop="redeemStatus" width="100" />
         <el-table-column :label="t('common.actions')" width="100" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)"> {{ t('itick.detail') }} </el-button>
+            <el-button link type="primary" @click="showDetail(row)">
+              {{ t('itick.detail') }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -54,15 +77,15 @@
 
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
-import { stakingService } from '@/services'
+import { stakingService, type StakeRedeemLog } from '@/services'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
 const loading = ref(false)
-const rows = ref<Record<string, any>[]>([])
+const rows = ref<StakeRedeemLog[]>([])
 const detailVisible = ref(false)
-const detailData = ref<Record<string, any>>({})
+const detailData = ref<StakeRedeemLog | null>(null)
 const query = reactive({
   tenantId: undefined as number | undefined,
   orderNo: '',
@@ -91,7 +114,7 @@ const resetQuery = () => {
   loadRows()
 }
 
-const showDetail = (row: Record<string, any>) => {
+const showDetail = (row: StakeRedeemLog) => {
   detailData.value = row
   detailVisible.value = true
 }

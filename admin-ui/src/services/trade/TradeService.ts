@@ -537,6 +537,7 @@ export type GetRiskOrderCheckLogListReq = {
   tenantId?: number
   userId?: number
   symbolId?: number
+  orderNo?: string
   marketType?: number
   checkType?: number
   checkResult?: number

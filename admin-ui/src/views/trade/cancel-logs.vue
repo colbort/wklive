@@ -10,35 +10,15 @@
     </div>
 
     <el-card shadow="never" class="query-card">
-      <el-form
-        :model="currentQuery"
-        inline
-        label-width="90px"
-      >
-        <el-form-item
-          v-for="field in currentFields"
-          :key="field.key"
-          :label="field.label"
-        >
-          <el-input
-            v-if="field.type !== 'number'"
-            v-model="currentQuery[field.key]"
-            clearable
-          />
+      <el-form :model="currentQuery" inline label-width="90px">
+        <el-form-item v-for="field in currentFields" :key="field.key" :label="field.label">
+          <el-input v-if="field.type !== 'number'" v-model="currentQuery[field.key]" clearable />
 
-          <el-input-number
-            v-else
-            v-model="currentQuery[field.key]"
-            :min="0"
-            :precision="0"
-          />
+          <el-input-number v-else v-model="currentQuery[field.key]" :min="0" :precision="0" />
         </el-form-item>
 
         <el-form-item>
-          <el-button
-            type="primary"
-            @click="loadCurrent"
-          >
+          <el-button type="primary" @click="loadCurrent">
             {{ t('common.search') }}
           </el-button>
           <el-button @click="resetCurrent">
@@ -49,11 +29,7 @@
     </el-card>
 
     <el-card shadow="never" class="table-card">
-      <el-table
-        v-loading="loading"
-        :data="rows"
-        stripe
-      >
+      <el-table v-loading="loading" :data="rows" stripe>
         <el-table-column
           v-for="column in currentColumns"
           :key="column.prop"
@@ -63,17 +39,9 @@
           show-overflow-tooltip
         />
 
-        <el-table-column
-          :label="t('common.actions')"
-          width="100"
-          fixed="right"
-        >
+        <el-table-column :label="t('common.actions')" width="100" fixed="right">
           <template #default="{ row }">
-            <el-button
-              link
-              type="primary"
-              @click="showDetail(row)"
-            >
+            <el-button link type="primary" @click="showDetail(row)">
               {{ t('option.detail') }}
             </el-button>
           </template>
@@ -81,11 +49,7 @@
       </el-table>
     </el-card>
 
-    <el-dialog
-      v-model="detailVisible"
-      :title="t('option.detail')"
-      width="760px"
-    >
+    <el-dialog v-model="detailVisible" :title="t('option.detail')" width="760px">
       <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
     </el-dialog>
   </div>
@@ -94,7 +58,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { tradeService } from '@/services'
+import { tradeService, type TradeCancelLog } from '@/services'
 
 const { t } = useI18n()
 
@@ -124,9 +88,9 @@ interface CurrentColumn {
 }
 
 const loading = ref(false)
-const rows = ref<Record<string, any>[]>([])
+const rows = ref<TradeCancelLog[]>([])
 const detailVisible = ref(false)
-const detailData = ref<Record<string, any>>({})
+const detailData = ref<TradeCancelLog | null>(null)
 
 const currentQuery = reactive<CurrentQuery>({
   tenantId: undefined,
@@ -167,7 +131,7 @@ const resetCurrent = () => {
   loadCurrent()
 }
 
-const showDetail = (row: Record<string, any>) => {
+const showDetail = (row: TradeCancelLog) => {
   detailData.value = row
   detailVisible.value = true
 }

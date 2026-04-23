@@ -88,8 +88,12 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="handleQuery"> {{ t('common.search') }} </el-button>
-          <el-button @click="resetQuery"> {{ t('common.reset') }} </el-button>
+          <el-button type="primary" @click="handleQuery">
+            {{ t('common.search') }}
+          </el-button>
+          <el-button @click="resetQuery">
+            {{ t('common.reset') }}
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -140,7 +144,12 @@
             <span v-else>-</span>
           </template>
         </el-table-column>
-        <el-table-column prop="remark" :label="t('common.remark')" min-width="180" show-overflow-tooltip />
+        <el-table-column
+          prop="remark"
+          :label="t('common.remark')"
+          min-width="180"
+          show-overflow-tooltip
+        />
         <el-table-column :label="t('common.createTimes')" min-width="170">
           <template #default="{ row }">
             {{ formatDate(row.createTimes) }}
@@ -153,15 +162,21 @@
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="180" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="handleDetail(row)"> {{ t('common.detail') }} </el-button>
-            <el-button link type="primary" @click="handleEdit(row)"> {{ t('common.edit') }} </el-button>
+            <el-button link type="primary" @click="handleDetail(row)">
+              {{ t('common.detail') }}
+            </el-button>
+            <el-button link type="primary" @click="handleEdit(row)">
+              {{ t('common.edit') }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
 
       <div class="pagination-bar">
         <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
-        <el-button :disabled="!pagination.hasPrev" @click="handlePrevPage"> {{ t('common.prevPage') }} </el-button>
+        <el-button :disabled="!pagination.hasPrev" @click="handlePrevPage">
+          {{ t('common.prevPage') }}
+        </el-button>
         <el-button :disabled="!pagination.hasNext" type="primary" @click="handleNextPage">
           {{ t('common.nextPage') }}
         </el-button>
@@ -214,7 +229,9 @@
               />
               <template #footer>
                 <div class="product-select-footer" @mousedown.prevent>
-                  <span>{{ t('common.totalItems', { count: productOptionPagination.total }) }}</span>
+                  <span>{{
+                    t('common.totalItems', { count: productOptionPagination.total })
+                  }}</span>
                   <div class="product-select-footer__actions">
                     <el-button
                       size="small"
@@ -280,8 +297,12 @@
       </el-form>
 
       <template #footer>
-        <el-button @click="formDialogVisible = false"> {{ t('common.cancel') }} </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitForm"> {{ t('common.confirm') }} </el-button>
+        <el-button @click="formDialogVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
+        <el-button type="primary" :loading="submitLoading" @click="submitForm">
+          {{ t('common.confirm') }}
+        </el-button>
       </template>
     </el-dialog>
 
@@ -330,7 +351,9 @@
               class="icon-preview-large"
               :preview-teleported="true"
             />
-            <div class="icon-url">{{ detail.icon }}</div>
+            <div class="icon-url">
+              {{ detail.icon }}
+            </div>
           </div>
           <span v-else>-</span>
         </el-descriptions-item>
@@ -355,18 +378,24 @@
       </el-descriptions>
 
       <template #footer>
-        <el-button type="primary" @click="detailDialogVisible = false"> {{ t('common.close') }} </el-button>
+        <el-button type="primary" @click="detailDialogVisible = false">
+          {{ t('common.close') }}
+        </el-button>
       </template>
     </el-dialog>
 
     <el-dialog v-model="batchDialogVisible" :title="t('itick.batchTenantProducts')" width="980px">
       <div class="batch-toolbar">
-        <div class="batch-tip">{{ t('itick.batchSaveTip') }}</div>
+        <div class="batch-tip">
+          {{ t('itick.batchSaveTip') }}
+        </div>
         <div class="batch-actions">
           <el-button type="primary" @click="openProductPicker('batch')">
             {{ t('itick.selectProducts') }}
           </el-button>
-          <el-button @click="appendBatchRow"> {{ t('common.add') }} </el-button>
+          <el-button @click="appendBatchRow">
+            {{ t('common.add') }}
+          </el-button>
           <el-button type="primary" :loading="batchSubmitting" @click="submitBatch">
             {{ t('common.save') }}
           </el-button>
@@ -397,7 +426,9 @@
               />
               <template #footer>
                 <div class="product-select-footer" @mousedown.prevent>
-                  <span>{{ t('common.totalItems', { count: productOptionPagination.total }) }}</span>
+                  <span>{{
+                    t('common.totalItems', { count: productOptionPagination.total })
+                  }}</span>
                   <div class="product-select-footer__actions">
                     <el-button
                       size="small"
@@ -462,7 +493,9 @@
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="90" fixed="right">
           <template #default="{ $index }">
-            <el-button link type="danger" @click="removeBatchRow($index)"> {{ t('common.delete') }} </el-button>
+            <el-button link type="danger" @click="removeBatchRow($index)">
+              {{ t('common.delete') }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -506,7 +539,9 @@
         <el-button type="primary" :loading="productOptionsLoading" @click="reloadProductOptions">
           {{ t('common.search') }}
         </el-button>
-        <el-button @click="resetProductPickerFilters"> {{ t('common.reset') }} </el-button>
+        <el-button @click="resetProductPickerFilters">
+          {{ t('common.reset') }}
+        </el-button>
         <span class="product-picker-count">
           {{ t('itick.selectedProducts', { count: selectedPickerProducts.length }) }}
         </span>
@@ -562,7 +597,9 @@
       </div>
 
       <template #footer>
-        <el-button @click="productPickerVisible = false"> {{ t('common.cancel') }} </el-button>
+        <el-button @click="productPickerVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
         <el-button
           type="primary"
           :disabled="!selectedPickerProducts.length"
@@ -586,14 +623,20 @@
         </el-form-item>
         <el-form-item :label="t('itick.overwriteExistingConfig')">
           <el-radio-group v-model="initForm.overwrite">
-            <el-radio :value="0"> {{ t('common.no') }} </el-radio>
-            <el-radio :value="1"> {{ t('common.yes') }} </el-radio>
+            <el-radio :value="0">
+              {{ t('common.no') }}
+            </el-radio>
+            <el-radio :value="1">
+              {{ t('common.yes') }}
+            </el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
 
       <template #footer>
-        <el-button @click="initDialogVisible = false"> {{ t('common.cancel') }} </el-button>
+        <el-button @click="initDialogVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
         <el-button type="primary" :loading="initSubmitting" @click="submitInit">
           {{ t('itick.startInit') }}
         </el-button>
@@ -808,7 +851,9 @@ const loadProductOptions = async (
       keyword: keyword.trim() || undefined,
     })
     const nextOptions = res.data || []
-    productOptions.value = append ? mergeProductOptions(productOptions.value, nextOptions) : nextOptions
+    productOptions.value = append
+      ? mergeProductOptions(productOptions.value, nextOptions)
+      : nextOptions
     productOptionKeyword.value = keyword
     productOptionPagination.cursor = cursor
     productOptionPagination.total = res.total || 0

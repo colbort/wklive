@@ -70,6 +70,7 @@ export function buildItickWsUrl(id: string, baseUrl?: string) {
   const resolvedBaseUrl = resolveItickWsBaseUrl(baseUrl)
   const parsed = new URL(resolvedBaseUrl)
   const protocol = parsed.protocol === 'https:' ? 'wss:' : 'ws:'
+  const apiBasePath = (import.meta.env.VITE_API_BASE_PATH || '/app').replace(/\/+$/, '')
 
-  return `${protocol}//${parsed.host}/app/itick/ws/${id}`
+  return `${protocol}//${parsed.host}${apiBasePath}/itick/ws/${id}`
 }

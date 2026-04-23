@@ -3,8 +3,12 @@
     <div class="page-header">
       <h2>{{ t('payment.tenantPlatforms') }}</h2>
       <div class="header-actions">
-        <el-button type="primary" @click="openDialog()"> {{ t('payment.addTenantPlatform') }} </el-button>
-        <el-button @click="loadList"> {{ t('common.refresh') }} </el-button>
+        <el-button type="primary" @click="openDialog()">
+          {{ t('payment.addTenantPlatform') }}
+        </el-button>
+        <el-button @click="loadList">
+          {{ t('common.refresh') }}
+        </el-button>
       </div>
     </div>
     <el-card shadow="never" class="query-card">
@@ -27,7 +31,9 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="loadList"> {{ t('common.search') }} </el-button>
+          <el-button type="primary" @click="loadList">
+            {{ t('common.search') }}
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -53,8 +59,12 @@
         <el-table-column prop="remark" :label="t('common.remark')" min-width="180" />
         <el-table-column :label="t('common.actions')" width="160">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)"> {{ t('common.detail') }} </el-button>
-            <el-button link type="primary" @click="openDialog(row)"> {{ t('common.edit') }} </el-button>
+            <el-button link type="primary" @click="showDetail(row)">
+              {{ t('common.detail') }}
+            </el-button>
+            <el-button link type="primary" @click="openDialog(row)">
+              {{ t('common.edit') }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -77,7 +87,9 @@
             <el-button v-if="!form.id" :loading="tenantChecking" @click="checkTenant">
               {{ t('payment.verifyTenant') }}
             </el-button>
-            <span v-if="!form.id && tenantVerified" class="verified-text"> {{ t('payment.verified') }} </span>
+            <span v-if="!form.id && tenantVerified" class="verified-text">
+              {{ t('payment.verified') }}
+            </span>
           </div>
         </el-form-item>
         <el-form-item v-if="!form.id" :label="t('payment.platformId')">
@@ -88,7 +100,9 @@
               :precision="0"
               @change="handlePlatformIdChange"
             />
-            <el-button :loading="platformChecking" @click="checkPlatform"> {{ t('payment.verifyPlatform') }} </el-button>
+            <el-button :loading="platformChecking" @click="checkPlatform">
+              {{ t('payment.verifyPlatform') }}
+            </el-button>
             <span v-if="platformVerified" class="verified-text"> {{ t('payment.verified') }} </span>
           </div>
         </el-form-item>
@@ -117,8 +131,11 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="dialogVisible = false"> {{ t('common.cancel') }} </el-button
-        ><el-button type="primary" :disabled="submitDisabled" @click="submit"> {{ t('common.confirm') }} </el-button>
+        <el-button @click="dialogVisible = false">
+          {{ t('common.cancel') }} </el-button
+        ><el-button type="primary" :disabled="submitDisabled" @click="submit">
+          {{ t('common.confirm') }}
+        </el-button>
       </template>
     </el-dialog>
     <el-dialog v-model="detailVisible" :title="t('payment.detailTitle')" width="680px">
@@ -146,7 +163,7 @@ const loading = ref(false)
 const list = ref<TenantPayPlatform[]>([])
 const dialogVisible = ref(false)
 const detailVisible = ref(false)
-const detailData = ref<Record<string, any>>({})
+const detailData = ref<TenantPayPlatform | null>(null)
 const tenantChecking = ref(false)
 const platformChecking = ref(false)
 const tenantVerified = ref(false)

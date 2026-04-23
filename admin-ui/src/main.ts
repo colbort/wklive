@@ -23,7 +23,7 @@ function setFavicon(href: string) {
   icon.href = href
 }
 
-(async () => {
+;(async () => {
   try {
     const res = await getSystemCore()
     if (res?.code === 200 && res.data) {

@@ -11,38 +11,45 @@
     <el-card shadow="never" class="query-card">
       <template #header>
         {{ t('trade.riskQuery') }}
-      </template><el-form :model="riskQuery" inline label-width="90px">
+      </template>
+      <el-form :model="riskQuery" inline label-width="90px">
         <el-form-item :label="t('trade.tenantId')">
           <el-input-number v-model="riskQuery.tenantId" :min="0" :precision="0" />
-        </el-form-item><el-form-item :label="t('trade.userId')">
+        </el-form-item>
+        <el-form-item :label="t('trade.userId')">
           <el-input-number v-model="riskQuery.userId" :min="0" :precision="0" />
-        </el-form-item><el-form-item :label="t('trade.symbolId')">
+        </el-form-item>
+        <el-form-item :label="t('trade.symbolId')">
           <el-input-number v-model="riskQuery.symbolId" :min="0" :precision="0" />
-        </el-form-item><el-form-item :label="t('trade.marketType')">
+        </el-form-item>
+        <el-form-item :label="t('trade.marketType')">
           <el-input-number v-model="riskQuery.marketType" :min="0" :precision="0" />
-        </el-form-item><el-form-item>
+        </el-form-item>
+        <el-form-item>
           <el-button type="primary" @click="loadRiskData">
             {{ t('trade.loadConfig') }}
           </el-button>
         </el-form-item>
       </el-form>
-    </el-card><el-card shadow="never">
+    </el-card>
+    <el-card shadow="never">
       <el-form label-width="120px">
         <el-form-item :label="t('trade.maxPositionQty')">
           <el-input v-model="symbolLimitForm.maxPositionQty" />
-        </el-form-item><el-form-item :label="t('trade.maxOrderQty')">
+        </el-form-item>
+        <el-form-item :label="t('trade.maxOrderQty')">
           <el-input v-model="symbolLimitForm.maxOrderQty" />
-        </el-form-item><el-form-item :label="t('trade.minOrderQty')">
+        </el-form-item>
+        <el-form-item :label="t('trade.minOrderQty')">
           <el-input v-model="symbolLimitForm.minOrderQty" />
-        </el-form-item><el-form-item :label="t('trade.priceDeviationRate')">
+        </el-form-item>
+        <el-form-item :label="t('trade.priceDeviationRate')">
           <el-input v-model="symbolLimitForm.priceDeviationRate" />
-        </el-form-item><el-form-item :label="t('trade.operatorId')">
-          <el-input-number
-            v-model="symbolLimitForm.operatorId"
-            :min="0"
-            :precision="0"
-          />
-        </el-form-item><el-button type="primary" :loading="submitLoading" @click="submitSymbolLimit">
+        </el-form-item>
+        <el-form-item :label="t('trade.operatorId')">
+          <el-input-number v-model="symbolLimitForm.operatorId" :min="0" :precision="0" />
+        </el-form-item>
+        <el-button type="primary" :loading="submitLoading" @click="submitSymbolLimit">
           {{ t('common.save') }}
         </el-button>
       </el-form>

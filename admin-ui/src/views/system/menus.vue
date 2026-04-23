@@ -335,7 +335,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, ref, type Component } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
@@ -388,7 +388,7 @@ type ApiResp<T = any> = {
   data?: T
 }
 
-const iconMap = ElementPlusIconsVue as Record<string, any>
+const iconMap = ElementPlusIconsVue as Record<string, Component>
 const iconNames = Object.keys(iconMap).sort()
 const optionGroups = ref<OptionGroup[]>([])
 const menuTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'menuType'))

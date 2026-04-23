@@ -363,7 +363,9 @@
                     class="icon-preview-large"
                     :preview-teleported="true"
                   />
-                  <div class="icon-url">{{ form.icon }}</div>
+                  <div class="icon-url">
+                    {{ form.icon }}
+                  </div>
                 </div>
                 <el-upload
                   action="#"
@@ -372,7 +374,9 @@
                   :on-change="handleIconSelect"
                   accept="image/*"
                 >
-                  <el-button type="primary" :loading="submitLoading"> {{ t('itick.uploadImage') }} </el-button>
+                  <el-button type="primary" :loading="submitLoading">
+                    {{ t('itick.uploadImage') }}
+                  </el-button>
                 </el-upload>
               </div>
             </el-form-item>
@@ -452,7 +456,9 @@
               class="icon-preview-large"
               :preview-teleported="true"
             />
-            <div class="icon-url">{{ detail.icon }}</div>
+            <div class="icon-url">
+              {{ detail.icon }}
+            </div>
           </div>
           <span v-else>-</span>
         </el-descriptions-item>

@@ -1,7 +1,9 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
+  readonly VITE_APP_TARGET?: 'web' | 'capacitor'
   readonly VITE_API_BASE_URL?: string
+  readonly VITE_API_BASE_PATH?: string
   readonly VITE_ROUTER_BASE?: string
   readonly VITE_TENANT_CODE?: string
 }

@@ -2,7 +2,9 @@
   <div class="payment-page">
     <div class="page-header">
       <h2>{{ t('payment.tenantChannels') }}</h2>
-      <el-button @click="loadChannels"> {{ t('common.refresh') }} </el-button>
+      <el-button @click="loadChannels">
+        {{ t('common.refresh') }}
+      </el-button>
     </div>
 
     <el-card shadow="never" class="query-card">
@@ -17,8 +19,12 @@
           <el-input v-model="channelQuery.keyword" clearable />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="loadChannels"> {{ t('common.search') }} </el-button>
-          <el-button type="primary" @click="openChannelDialog()"> {{ t('payment.addChannel') }} </el-button>
+          <el-button type="primary" @click="loadChannels">
+            {{ t('common.search') }}
+          </el-button>
+          <el-button type="primary" @click="openChannelDialog()">
+            {{ t('payment.addChannel') }}
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -45,8 +51,12 @@
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="160">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showChannelDetail(row)"> {{ t('common.detail') }} </el-button>
-            <el-button link type="primary" @click="openChannelDialog(row)"> {{ t('common.edit') }} </el-button>
+            <el-button link type="primary" @click="showChannelDetail(row)">
+              {{ t('common.detail') }}
+            </el-button>
+            <el-button link type="primary" @click="openChannelDialog(row)">
+              {{ t('common.edit') }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -91,7 +101,9 @@
             <el-button :loading="channelPlatformChecking" @click="checkChannelPlatform">
               {{ t('payment.verifyPlatform') }}
             </el-button>
-            <span v-if="channelPlatformVerified" class="verified-text"> {{ t('payment.verified') }} </span>
+            <span v-if="channelPlatformVerified" class="verified-text">
+              {{ t('payment.verified') }}
+            </span>
           </div>
         </el-form-item>
 
@@ -106,7 +118,9 @@
             <el-button :loading="channelProductChecking" @click="checkChannelProduct">
               {{ t('payment.verifyProduct') }}
             </el-button>
-            <span v-if="channelProductVerified" class="verified-text"> {{ t('payment.verified') }} </span>
+            <span v-if="channelProductVerified" class="verified-text">
+              {{ t('payment.verified') }}
+            </span>
           </div>
         </el-form-item>
 
@@ -121,7 +135,9 @@
             <el-button :loading="channelAccountChecking" @click="checkChannelAccount">
               {{ t('payment.verifyAccount') }}
             </el-button>
-            <span v-if="channelAccountVerified" class="verified-text"> {{ t('payment.verified') }} </span>
+            <span v-if="channelAccountVerified" class="verified-text">
+              {{ t('payment.verified') }}
+            </span>
           </div>
         </el-form-item>
 
@@ -181,7 +197,9 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="channelDialogVisible = false"> {{ t('common.cancel') }} </el-button>
+        <el-button @click="channelDialogVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
         <el-button type="primary" :disabled="channelSubmitDisabled" @click="submitChannel">
           {{ t('common.confirm') }}
         </el-button>
@@ -212,7 +230,7 @@ const { t } = useI18n()
 const channelLoading = ref(false)
 const channels = ref<TenantPayChannel[]>([])
 const detailVisible = ref(false)
-const detailData = ref<Record<string, any>>({})
+const detailData = ref<TenantPayChannel | null>(null)
 const channelDialogVisible = ref(false)
 
 const optionGroups = ref<OptionGroup[]>([])

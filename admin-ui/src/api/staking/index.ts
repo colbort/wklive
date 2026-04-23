@@ -25,7 +25,9 @@ export function apiStakingListProducts(
   return get<StakeProduct[]>('/admin/staking/products', params)
 }
 
-export function apiStakingGetProduct(params: AdminProductDetailReq): Promise<RespBase<StakeProduct>> {
+export function apiStakingGetProduct(
+  params: AdminProductDetailReq,
+): Promise<RespBase<StakeProduct>> {
   return get<StakeProduct>('/admin/staking/products/detail', params)
 }
 

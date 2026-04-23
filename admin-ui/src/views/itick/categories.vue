@@ -65,8 +65,12 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="handleQuery"> {{ t('common.search') }} </el-button>
-          <el-button @click="resetQuery"> {{ t('common.reset') }} </el-button>
+          <el-button type="primary" @click="handleQuery">
+            {{ t('common.search') }}
+          </el-button>
+          <el-button @click="resetQuery">
+            {{ t('common.reset') }}
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -111,7 +115,12 @@
             <span v-else>-</span>
           </template>
         </el-table-column>
-        <el-table-column :label="t('common.remark')" prop="remark" min-width="180" show-overflow-tooltip />
+        <el-table-column
+          :label="t('common.remark')"
+          prop="remark"
+          min-width="180"
+          show-overflow-tooltip
+        />
 
         <el-table-column :label="t('common.createTimes')" min-width="170">
           <template #default="{ row }">
@@ -127,9 +136,15 @@
 
         <el-table-column :label="t('common.actions')" width="180" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="handleDetail(row)"> {{ t('itick.detail') }} </el-button>
-            <el-button link type="primary" @click="handleEdit(row)"> {{ t('common.edit') }} </el-button>
-            <el-button link type="warning" @click="handleSync(row)"> {{ t('itick.syncProducts') }} </el-button>
+            <el-button link type="primary" @click="handleDetail(row)">
+              {{ t('itick.detail') }}
+            </el-button>
+            <el-button link type="primary" @click="handleEdit(row)">
+              {{ t('common.edit') }}
+            </el-button>
+            <el-button link type="warning" @click="handleSync(row)">
+              {{ t('itick.syncProducts') }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -157,8 +172,16 @@
       width="620px"
     >
       <el-form ref="formRef" :model="form" :rules="rules" label-width="100px">
-        <el-form-item v-if="formMode === 'add'" :label="t('itick.categoryType')" prop="categoryType">
-          <el-select v-model="form.categoryType" :placeholder="t('common.pleaseSelect')" style="width: 100%">
+        <el-form-item
+          v-if="formMode === 'add'"
+          :label="t('itick.categoryType')"
+          prop="categoryType"
+        >
+          <el-select
+            v-model="form.categoryType"
+            :placeholder="t('common.pleaseSelect')"
+            style="width: 100%"
+          >
             <el-option
               v-for="item in categoryTypeOptions"
               :key="item.value"
@@ -211,7 +234,9 @@
                 class="icon-preview-large"
                 :preview-teleported="true"
               />
-              <div class="icon-url">{{ form.icon }}</div>
+              <div class="icon-url">
+                {{ form.icon }}
+              </div>
             </div>
             <el-upload
               action="#"
@@ -220,7 +245,9 @@
               :on-change="handleIconSelect"
               accept="image/*"
             >
-              <el-button type="primary" :loading="submitLoading"> {{ t('itick.uploadImage') }} </el-button>
+              <el-button type="primary" :loading="submitLoading">
+                {{ t('itick.uploadImage') }}
+              </el-button>
             </el-upload>
           </div>
         </el-form-item>
@@ -238,8 +265,12 @@
       </el-form>
 
       <template #footer>
-        <el-button @click="formDialogVisible = false"> {{ t('common.cancel') }} </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitForm"> {{ t('common.confirm') }} </el-button>
+        <el-button @click="formDialogVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
+        <el-button type="primary" :loading="submitLoading" @click="submitForm">
+          {{ t('common.confirm') }}
+        </el-button>
       </template>
     </el-dialog>
 
@@ -273,7 +304,9 @@
               class="icon-preview-large"
               :preview-teleported="true"
             />
-            <div class="icon-url">{{ detail.icon }}</div>
+            <div class="icon-url">
+              {{ detail.icon }}
+            </div>
           </div>
           <span v-else>-</span>
         </el-descriptions-item>
@@ -289,7 +322,9 @@
       </el-descriptions>
 
       <template #footer>
-        <el-button type="primary" @click="detailDialogVisible = false"> {{ t('common.close') }} </el-button>
+        <el-button type="primary" @click="detailDialogVisible = false">
+          {{ t('common.close') }}
+        </el-button>
       </template>
     </el-dialog>
   </div>
@@ -567,9 +602,7 @@ const submitForm = async () => {
 const handleSync = async (row: ItickCategory) => {
   try {
     const res = await categoriesService.syncProducts({ id: row.id })
-    ElMessage.success(
-      t('itick.syncTaskSubmittedWithTaskNo', { taskNo: res?.data?.taskNo || '-' }),
-    )
+    ElMessage.success(t('itick.syncTaskSubmittedWithTaskNo', { taskNo: res?.data?.taskNo || '-' }))
   } catch {
     ElMessage.error(t('common.operationFailed'))
   }

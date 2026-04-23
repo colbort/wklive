@@ -4,9 +4,10 @@ import path from 'node:path'
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd())
+  const isCapacitor = env.VITE_APP_TARGET === 'capacitor'
 
   return {
-    base: env.VITE_ROUTER_BASE || '/',
+    base: isCapacitor ? './' : env.VITE_ROUTER_BASE || '/',
     plugins: [vue()],
     resolve: {
       alias: {

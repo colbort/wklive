@@ -44,7 +44,9 @@ import type {
   UpdateSymbolReq,
 } from '@/services'
 
-export function apiTradeListSymbols(params: GetSymbolListAdminReq): Promise<RespBase<TradeSymbol[]>> {
+export function apiTradeListSymbols(
+  params: GetSymbolListAdminReq,
+): Promise<RespBase<TradeSymbol[]>> {
   return get<TradeSymbol[]>('/admin/trade/symbols', params)
 }
 
@@ -84,11 +86,15 @@ export function apiTradeGetFill(params: GetFillDetailAdminReq): Promise<RespBase
   return get<TradeFill>('/admin/trade/fills/detail', params)
 }
 
-export function apiTradeListPositions(params: GetPositionListAdminReq): Promise<RespBase<ContractPosition[]>> {
+export function apiTradeListPositions(
+  params: GetPositionListAdminReq,
+): Promise<RespBase<ContractPosition[]>> {
   return get<ContractPosition[]>('/admin/trade/positions', params)
 }
 
-export function apiTradeGetPosition(params: GetPositionDetailAdminReq): Promise<RespBase<ContractPosition>> {
+export function apiTradeGetPosition(
+  params: GetPositionDetailAdminReq,
+): Promise<RespBase<ContractPosition>> {
   return get<ContractPosition>('/admin/trade/positions/detail', params)
 }
 
@@ -98,15 +104,21 @@ export function apiTradeListPositionHistories(
   return get<ContractPositionHistory[]>('/admin/trade/position-histories', params)
 }
 
-export function apiTradeListMarginAccounts(params: GetMarginAccountListAdminReq): Promise<RespBase<ContractMarginAccount[]>> {
+export function apiTradeListMarginAccounts(
+  params: GetMarginAccountListAdminReq,
+): Promise<RespBase<ContractMarginAccount[]>> {
   return get<ContractMarginAccount[]>('/admin/trade/margin-accounts', params)
 }
 
-export function apiTradeListCancelLogs(params: GetCancelLogListAdminReq): Promise<RespBase<TradeCancelLog[]>> {
+export function apiTradeListCancelLogs(
+  params: GetCancelLogListAdminReq,
+): Promise<RespBase<TradeCancelLog[]>> {
   return get<TradeCancelLog[]>('/admin/trade/cancel-logs', params)
 }
 
-export function apiTradeGetUserTradeLimit(params: GetUserTradeLimitReq): Promise<RespBase<RiskUserTradeLimit>> {
+export function apiTradeGetUserTradeLimit(
+  params: GetUserTradeLimitReq,
+): Promise<RespBase<RiskUserTradeLimit>> {
   return get<RiskUserTradeLimit>('/admin/trade/user-trade-limit', params)
 }
 
@@ -114,7 +126,9 @@ export function apiTradeSetUserTradeLimit(params: SetUserTradeLimitReq): Promise
   return post('/admin/trade/user-trade-limit', params)
 }
 
-export function apiTradeGetUserSymbolLimit(params: GetUserSymbolLimitReq): Promise<RespBase<RiskUserSymbolLimit>> {
+export function apiTradeGetUserSymbolLimit(
+  params: GetUserSymbolLimitReq,
+): Promise<RespBase<RiskUserSymbolLimit>> {
   return get<RiskUserSymbolLimit>('/admin/trade/user-symbol-limit', params)
 }
 
@@ -122,7 +136,9 @@ export function apiTradeSetUserSymbolLimit(params: SetUserSymbolLimitReq): Promi
   return post('/admin/trade/user-symbol-limit', params)
 }
 
-export function apiTradeGetUserTradeConfig(params: GetUserTradeConfigReq): Promise<RespBase<TradeUserConfig>> {
+export function apiTradeGetUserTradeConfig(
+  params: GetUserTradeConfigReq,
+): Promise<RespBase<TradeUserConfig>> {
   return get<TradeUserConfig>('/admin/trade/user-trade-config', params)
 }
 
@@ -130,11 +146,15 @@ export function apiTradeSetUserTradeConfig(params: SetUserTradeConfigReq): Promi
   return post('/admin/trade/user-trade-config', params)
 }
 
-export function apiTradeListRiskLogs(params: GetRiskOrderCheckLogListReq): Promise<RespBase<RiskOrderCheckLog[]>> {
+export function apiTradeListRiskLogs(
+  params: GetRiskOrderCheckLogListReq,
+): Promise<RespBase<RiskOrderCheckLog[]>> {
   return get<RiskOrderCheckLog[]>('/admin/trade/risk-order-check-logs', params)
 }
 
-export function apiTradeGetUserLeverageConfig(params: GetUserLeverageConfigReq): Promise<RespBase<ContractLeverageConfig>> {
+export function apiTradeGetUserLeverageConfig(
+  params: GetUserLeverageConfigReq,
+): Promise<RespBase<ContractLeverageConfig>> {
   return get<ContractLeverageConfig>('/admin/trade/user-leverage-config', params)
 }
 
@@ -142,7 +162,9 @@ export function apiTradeSetUserLeverageConfig(params: SetUserLeverageConfigReq):
   return post('/admin/trade/user-leverage-config', params)
 }
 
-export function apiTradeListEvents(params: GetTradeEventListReq): Promise<RespBase<BizTradeEvent[]>> {
+export function apiTradeListEvents(
+  params: GetTradeEventListReq,
+): Promise<RespBase<BizTradeEvent[]>> {
   return get<BizTradeEvent[]>('/admin/trade/events', params)
 }
 

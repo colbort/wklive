@@ -3,8 +3,12 @@
     <div class="page-header">
       <h2>{{ t('staking.products') }}</h2>
       <div class="header-actions">
-        <el-button @click="loadProducts"> {{ t('common.refresh') }} </el-button>
-        <el-button type="primary" @click="openProductDialog()"> {{ t('staking.addProduct') }} </el-button>
+        <el-button @click="loadProducts">
+          {{ t('common.refresh') }}
+        </el-button>
+        <el-button type="primary" @click="openProductDialog()">
+          {{ t('staking.addProduct') }}
+        </el-button>
       </div>
     </div>
 
@@ -20,15 +24,24 @@
           <el-input v-model="query.productName" clearable />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="loadProducts"> {{ t('common.search') }} </el-button>
-          <el-button @click="resetQuery"> {{ t('common.reset') }} </el-button>
+          <el-button type="primary" @click="loadProducts">
+            {{ t('common.search') }}
+          </el-button>
+          <el-button @click="resetQuery">
+            {{ t('common.reset') }}
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
 
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="rows" stripe>
-        <el-table-column :label="t('staking.productNo')" prop="productNo" min-width="180" show-overflow-tooltip />
+        <el-table-column
+          :label="t('staking.productNo')"
+          prop="productNo"
+          min-width="180"
+          show-overflow-tooltip
+        />
         <el-table-column
           prop="productName"
           :label="t('staking.productName')"
@@ -41,9 +54,15 @@
         <el-table-column :label="t('common.status')" prop="status" width="100" />
         <el-table-column :label="t('common.actions')" width="220" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)"> {{ t('common.detail') }} </el-button>
-            <el-button link type="primary" @click="openProductDialog(row)"> {{ t('common.edit') }} </el-button>
-            <el-button link type="warning" @click="changeStatus(row)"> {{ t('staking.statusAction') }} </el-button>
+            <el-button link type="primary" @click="showDetail(row)">
+              {{ t('common.detail') }}
+            </el-button>
+            <el-button link type="primary" @click="openProductDialog(row)">
+              {{ t('common.edit') }}
+            </el-button>
+            <el-button link type="warning" @click="changeStatus(row)">
+              {{ t('staking.statusAction') }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -161,8 +180,12 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="productVisible = false"> {{ t('common.cancel') }} </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitProduct"> {{ t('common.confirm') }} </el-button>
+        <el-button @click="productVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
+        <el-button type="primary" :loading="submitLoading" @click="submitProduct">
+          {{ t('common.confirm') }}
+        </el-button>
       </template>
     </el-dialog>
 
@@ -176,7 +199,12 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { AdminProductUpdateReq, stakingService, type OptionGroup } from '@/services'
+import {
+  AdminProductUpdateReq,
+  stakingService,
+  type OptionGroup,
+  type StakeProduct,
+} from '@/services'
 import { findOptionGroup, getOptionLabel } from '@/utils/options'
 
 const { t } = useI18n()
@@ -189,9 +217,9 @@ const rewardModeOptions = computed(() => findOptionGroup(optionGroups.value, 're
 const yesNoOptions = computed(() => findOptionGroup(optionGroups.value, 'yesNo'))
 const loading = ref(false)
 const submitLoading = ref(false)
-const rows = ref<Record<string, any>[]>([])
+const rows = ref<StakeProduct[]>([])
 const detailVisible = ref(false)
-const detailData = ref<Record<string, any>>({})
+const detailData = ref<StakeProduct | null>(null)
 const productVisible = ref(false)
 
 const query = reactive({
@@ -254,13 +282,13 @@ const resetQuery = () => {
   loadProducts()
 }
 
-const showDetail = async (row: Record<string, any>) => {
+const showDetail = async (row: StakeProduct) => {
   detailData.value =
     (await stakingService.getProduct({ tenantId: row.tenantId, id: row.id })).data || row
   detailVisible.value = true
 }
 
-const openProductDialog = (row?: Record<string, any>) => {
+const openProductDialog = (row?: StakeProduct) => {
   Object.assign(
     productForm,
     {
@@ -307,10 +335,14 @@ const submitProduct = async () => {
   }
 }
 
-const changeStatus = async (row: Record<string, any>) => {
-  const { value } = await ElMessageBox.prompt(t('staking.pleaseInputNewStatus'), t('staking.changeStatus'), {
-    inputValue: String(row.status || 0),
-  })
+const changeStatus = async (row: StakeProduct) => {
+  const { value } = await ElMessageBox.prompt(
+    t('staking.pleaseInputNewStatus'),
+    t('staking.changeStatus'),
+    {
+      inputValue: String(row.status || 0),
+    },
+  )
   await stakingService.changeProductStatus({
     tenantId: row.tenantId,
     id: row.id,

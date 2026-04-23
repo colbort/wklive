@@ -2,7 +2,9 @@
   <div class="payment-page">
     <div class="page-header">
       <h2>{{ t('payment.withdrawOrders') }}</h2>
-      <el-button @click="loadList"> {{ t('common.refresh') }} </el-button>
+      <el-button @click="loadList">
+        {{ t('common.refresh') }}
+      </el-button>
     </div>
 
     <el-card shadow="never" class="query-card">
@@ -17,7 +19,9 @@
           <el-input v-model="query.orderNo" clearable />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="loadList"> {{ t('common.search') }} </el-button>
+          <el-button type="primary" @click="loadList">
+            {{ t('common.search') }}
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -35,8 +39,12 @@
         <el-table-column prop="status" :label="t('common.status')" width="90" />
         <el-table-column :label="t('common.actions')" width="180">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)"> {{ t('common.detail') }} </el-button>
-            <el-button link type="warning" @click="openAudit(row)"> {{ t('payment.auditWithdraw') }} </el-button>
+            <el-button link type="primary" @click="showDetail(row)">
+              {{ t('common.detail') }}
+            </el-button>
+            <el-button link type="warning" @click="openAudit(row)">
+              {{ t('payment.auditWithdraw') }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -50,8 +58,12 @@
       <el-form label-width="110px">
         <el-form-item :label="t('payment.auditResult')">
           <el-radio-group v-model="auditForm.approve">
-            <el-radio :value="1"> {{ t('payment.approved') }} </el-radio>
-            <el-radio :value="2"> {{ t('payment.rejected') }} </el-radio>
+            <el-radio :value="1">
+              {{ t('payment.approved') }}
+            </el-radio>
+            <el-radio :value="2">
+              {{ t('payment.rejected') }}
+            </el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item :label="t('common.remark')">
@@ -59,8 +71,12 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="auditVisible = false"> {{ t('common.cancel') }} </el-button>
-        <el-button type="primary" @click="submitAudit"> {{ t('common.confirm') }} </el-button>
+        <el-button @click="auditVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
+        <el-button type="primary" @click="submitAudit">
+          {{ t('common.confirm') }}
+        </el-button>
       </template>
     </el-dialog>
   </div>
@@ -77,7 +93,7 @@ const { t } = useI18n()
 const loading = ref(false)
 const list = ref<WithdrawOrder[]>([])
 const detailVisible = ref(false)
-const detailData = ref<Record<string, any>>({})
+const detailData = ref<WithdrawOrder | null>(null)
 const auditVisible = ref(false)
 const currentOrder = ref<WithdrawOrder | null>(null)
 

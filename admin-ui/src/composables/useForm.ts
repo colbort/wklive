@@ -2,7 +2,7 @@
  * 表单 Hook
  */
 
-import { ref, reactive, Reactive } from 'vue'
+import { ref, reactive } from 'vue'
 import { logger } from '@/utils/logger'
 
 export interface FormOptions<T> {

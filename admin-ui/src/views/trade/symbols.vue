@@ -6,45 +6,22 @@
         <el-button @click="loadCurrent">
           {{ t('common.refresh') }}
         </el-button>
-        <el-button
-          type="primary"
-          @click="openSymbolDialog()"
-        >
+        <el-button type="primary" @click="openSymbolDialog()">
           {{ t('trade.addSymbol') }}
         </el-button>
       </div>
     </div>
 
     <el-card shadow="never" class="query-card">
-      <el-form
-        :model="currentQuery"
-        inline
-        label-width="90px"
-      >
-        <el-form-item
-          v-for="field in currentFields"
-          :key="field.key"
-          :label="field.label"
-        >
-          <el-input
-            v-if="field.type !== 'number'"
-            v-model="currentQuery[field.key]"
-            clearable
-          />
+      <el-form :model="currentQuery" inline label-width="90px">
+        <el-form-item v-for="field in currentFields" :key="field.key" :label="field.label">
+          <el-input v-if="field.type !== 'number'" v-model="currentQuery[field.key]" clearable />
 
-          <el-input-number
-            v-else
-            v-model="currentQuery[field.key]"
-            :min="0"
-            :precision="0"
-          />
+          <el-input-number v-else v-model="currentQuery[field.key]" :min="0" :precision="0" />
         </el-form-item>
 
         <el-form-item>
-          <el-button
-            type="primary"
-            @click="loadCurrent"
-          >
+          <el-button type="primary" @click="loadCurrent">
             {{ t('common.search') }}
           </el-button>
           <el-button @click="resetCurrent">
@@ -55,11 +32,7 @@
     </el-card>
 
     <el-card shadow="never" class="table-card">
-      <el-table
-        v-loading="loading"
-        :data="rows"
-        stripe
-      >
+      <el-table v-loading="loading" :data="rows" stripe>
         <el-table-column
           v-for="column in currentColumns"
           :key="column.prop"
@@ -69,41 +42,21 @@
           show-overflow-tooltip
         />
 
-        <el-table-column
-          :label="t('common.actions')"
-          width="240"
-          fixed="right"
-        >
+        <el-table-column :label="t('common.actions')" width="240" fixed="right">
           <template #default="{ row }">
-            <el-button
-              link
-              type="primary"
-              @click="showDetail(row)"
-            >
+            <el-button link type="primary" @click="showDetail(row)">
               {{ t('option.detail') }}
             </el-button>
 
-            <el-button
-              link
-              type="primary"
-              @click="openSymbolDialog(row)"
-            >
+            <el-button link type="primary" @click="openSymbolDialog(row)">
               {{ t('common.edit') }}
             </el-button>
 
-            <el-button
-              link
-              type="primary"
-              @click="openSpotDialog(row)"
-            >
+            <el-button link type="primary" @click="openSpotDialog(row)">
               {{ t('trade.spotConfig') }}
             </el-button>
 
-            <el-button
-              link
-              type="primary"
-              @click="openContractDialog(row)"
-            >
+            <el-button link type="primary" @click="openContractDialog(row)">
               {{ t('trade.contractConfig') }}
             </el-button>
           </template>
@@ -118,11 +71,7 @@
     >
       <el-form label-width="110px">
         <el-form-item :label="t('trade.tenantId')">
-          <el-input-number
-            v-model="symbolForm.tenantId"
-            :min="0"
-            :precision="0"
-          />
+          <el-input-number v-model="symbolForm.tenantId" :min="0" :precision="0" />
         </el-form-item>
 
         <el-form-item :label="t('trade.symbol')">
@@ -134,11 +83,7 @@
         </el-form-item>
 
         <el-form-item :label="t('trade.marketType')">
-          <el-input-number
-            v-model="symbolForm.marketType"
-            :min="0"
-            :precision="0"
-          />
+          <el-input-number v-model="symbolForm.marketType" :min="0" :precision="0" />
         </el-form-item>
 
         <el-form-item :label="t('trade.baseAsset')">
@@ -154,35 +99,19 @@
         </el-form-item>
 
         <el-form-item :label="t('trade.contractType')">
-          <el-input-number
-            v-model="symbolForm.contractType"
-            :min="0"
-            :precision="0"
-          />
+          <el-input-number v-model="symbolForm.contractType" :min="0" :precision="0" />
         </el-form-item>
 
         <el-form-item :label="t('trade.status')">
-          <el-input-number
-            v-model="symbolForm.status"
-            :min="0"
-            :precision="0"
-          />
+          <el-input-number v-model="symbolForm.status" :min="0" :precision="0" />
         </el-form-item>
 
         <el-form-item :label="t('trade.priceScale')">
-          <el-input-number
-            v-model="symbolForm.priceScale"
-            :min="0"
-            :precision="0"
-          />
+          <el-input-number v-model="symbolForm.priceScale" :min="0" :precision="0" />
         </el-form-item>
 
         <el-form-item :label="t('trade.qtyScale')">
-          <el-input-number
-            v-model="symbolForm.qtyScale"
-            :min="0"
-            :precision="0"
-          />
+          <el-input-number v-model="symbolForm.qtyScale" :min="0" :precision="0" />
         </el-form-item>
 
         <el-form-item :label="t('trade.minPrice')">
@@ -214,43 +143,23 @@
         </el-form-item>
 
         <el-form-item :label="t('trade.maxLeverage')">
-          <el-input-number
-            v-model="symbolForm.maxLeverage"
-            :min="0"
-            :precision="0"
-          />
+          <el-input-number v-model="symbolForm.maxLeverage" :min="0" :precision="0" />
         </el-form-item>
 
         <el-form-item :label="t('trade.openTime')">
-          <el-input-number
-            v-model="symbolForm.openTime"
-            :min="0"
-            :precision="0"
-          />
+          <el-input-number v-model="symbolForm.openTime" :min="0" :precision="0" />
         </el-form-item>
 
         <el-form-item :label="t('trade.closeTime')">
-          <el-input-number
-            v-model="symbolForm.closeTime"
-            :min="0"
-            :precision="0"
-          />
+          <el-input-number v-model="symbolForm.closeTime" :min="0" :precision="0" />
         </el-form-item>
 
         <el-form-item :label="t('common.sort')">
-          <el-input-number
-            v-model="symbolForm.sort"
-            :min="0"
-            :precision="0"
-          />
+          <el-input-number v-model="symbolForm.sort" :min="0" :precision="0" />
         </el-form-item>
 
         <el-form-item :label="t('common.remark')">
-          <el-input
-            v-model="symbolForm.remark"
-            type="textarea"
-            :rows="3"
-          />
+          <el-input v-model="symbolForm.remark" type="textarea" :rows="3" />
         </el-form-item>
       </el-form>
 
@@ -258,36 +167,20 @@
         <el-button @click="symbolVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button
-          type="primary"
-          :loading="submitLoading"
-          @click="submitSymbol"
-        >
+        <el-button type="primary" :loading="submitLoading" @click="submitSymbol">
           {{ t('common.confirm') }}
         </el-button>
       </template>
     </el-dialog>
 
-    <el-dialog
-      v-model="spotVisible"
-      :title="t('trade.spotConfig')"
-      width="640px"
-    >
+    <el-dialog v-model="spotVisible" :title="t('trade.spotConfig')" width="640px">
       <el-form label-width="110px">
         <el-form-item :label="t('trade.tenantId')">
-          <el-input-number
-            v-model="spotForm.tenantId"
-            :min="0"
-            :precision="0"
-          />
+          <el-input-number v-model="spotForm.tenantId" :min="0" :precision="0" />
         </el-form-item>
 
         <el-form-item :label="t('trade.symbolId')">
-          <el-input-number
-            v-model="spotForm.symbolId"
-            :min="0"
-            :precision="0"
-          />
+          <el-input-number v-model="spotForm.symbolId" :min="0" :precision="0" />
         </el-form-item>
 
         <el-form-item :label="t('trade.makerFeeRate')">
@@ -299,19 +192,11 @@
         </el-form-item>
 
         <el-form-item :label="t('trade.buyEnabled')">
-          <el-switch
-            v-model="spotForm.buyEnabled"
-            :active-value="1"
-            :inactive-value="0"
-          />
+          <el-switch v-model="spotForm.buyEnabled" :active-value="1" :inactive-value="0" />
         </el-form-item>
 
         <el-form-item :label="t('trade.sellEnabled')">
-          <el-switch
-            v-model="spotForm.sellEnabled"
-            :active-value="1"
-            :inactive-value="0"
-          />
+          <el-switch v-model="spotForm.sellEnabled" :active-value="1" :inactive-value="0" />
         </el-form-item>
       </el-form>
 
@@ -319,36 +204,20 @@
         <el-button @click="spotVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button
-          type="primary"
-          :loading="submitLoading"
-          @click="submitSpotConfig"
-        >
+        <el-button type="primary" :loading="submitLoading" @click="submitSpotConfig">
           {{ t('common.confirm') }}
         </el-button>
       </template>
     </el-dialog>
 
-    <el-dialog
-      v-model="contractVisible"
-      :title="t('trade.contractConfig')"
-      width="700px"
-    >
+    <el-dialog v-model="contractVisible" :title="t('trade.contractConfig')" width="700px">
       <el-form label-width="120px">
         <el-form-item :label="t('trade.tenantId')">
-          <el-input-number
-            v-model="contractForm.tenantId"
-            :min="0"
-            :precision="0"
-          />
+          <el-input-number v-model="contractForm.tenantId" :min="0" :precision="0" />
         </el-form-item>
 
         <el-form-item :label="t('trade.symbolId')">
-          <el-input-number
-            v-model="contractForm.symbolId"
-            :min="0"
-            :precision="0"
-          />
+          <el-input-number v-model="contractForm.symbolId" :min="0" :precision="0" />
         </el-form-item>
 
         <el-form-item :label="t('trade.contractSize')">
@@ -376,51 +245,27 @@
         </el-form-item>
 
         <el-form-item :label="t('trade.fundingIntervalMinutes')">
-          <el-input-number
-            v-model="contractForm.fundingIntervalMinutes"
-            :min="0"
-            :precision="0"
-          />
+          <el-input-number v-model="contractForm.fundingIntervalMinutes" :min="0" :precision="0" />
         </el-form-item>
 
         <el-form-item :label="t('option.deliverTime')">
-          <el-input-number
-            v-model="contractForm.deliveryTime"
-            :min="0"
-            :precision="0"
-          />
+          <el-input-number v-model="contractForm.deliveryTime" :min="0" :precision="0" />
         </el-form-item>
 
         <el-form-item :label="t('trade.supportCross')">
-          <el-switch
-            v-model="contractForm.supportCross"
-            :active-value="1"
-            :inactive-value="0"
-          />
+          <el-switch v-model="contractForm.supportCross" :active-value="1" :inactive-value="0" />
         </el-form-item>
 
         <el-form-item :label="t('trade.supportIsolated')">
-          <el-switch
-            v-model="contractForm.supportIsolated"
-            :active-value="1"
-            :inactive-value="0"
-          />
+          <el-switch v-model="contractForm.supportIsolated" :active-value="1" :inactive-value="0" />
         </el-form-item>
 
         <el-form-item :label="t('trade.buyEnabled')">
-          <el-switch
-            v-model="contractForm.buyEnabled"
-            :active-value="1"
-            :inactive-value="0"
-          />
+          <el-switch v-model="contractForm.buyEnabled" :active-value="1" :inactive-value="0" />
         </el-form-item>
 
         <el-form-item :label="t('trade.sellEnabled')">
-          <el-switch
-            v-model="contractForm.sellEnabled"
-            :active-value="1"
-            :inactive-value="0"
-          />
+          <el-switch v-model="contractForm.sellEnabled" :active-value="1" :inactive-value="0" />
         </el-form-item>
       </el-form>
 
@@ -428,21 +273,13 @@
         <el-button @click="contractVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button
-          type="primary"
-          :loading="submitLoading"
-          @click="submitContractConfig"
-        >
+        <el-button type="primary" :loading="submitLoading" @click="submitContractConfig">
           {{ t('common.confirm') }}
         </el-button>
       </template>
     </el-dialog>
 
-    <el-dialog
-      v-model="detailVisible"
-      :title="t('option.detail')"
-      width="760px"
-    >
+    <el-dialog v-model="detailVisible" :title="t('option.detail')" width="760px">
       <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
     </el-dialog>
   </div>
@@ -452,7 +289,7 @@
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import { tradeService } from '@/services'
+import { tradeService, type TradeSymbol } from '@/services'
 
 const { t } = useI18n()
 
@@ -537,9 +374,9 @@ interface ContractForm {
 
 const loading = ref(false)
 const submitLoading = ref(false)
-const rows = ref<Record<string, any>[]>([])
+const rows = ref<TradeSymbol[]>([])
 const detailVisible = ref(false)
-const detailData = ref<Record<string, any>>({})
+const detailData = ref<TradeSymbol | null>(null)
 const symbolVisible = ref(false)
 const spotVisible = ref(false)
 const contractVisible = ref(false)
@@ -645,7 +482,7 @@ const resetCurrent = () => {
   loadCurrent()
 }
 
-const showDetail = async (row: Record<string, any>) => {
+const showDetail = async (row: TradeSymbol) => {
   detailData.value =
     (await tradeService.getSymbol({ tenantId: row.tenantId, id: row.id })).data || row
   detailVisible.value = true
@@ -672,10 +509,10 @@ const submitSymbol = async () => {
   }
 }
 
-const openSpotDialog = (row: Record<string, any>) => {
+const openSpotDialog = (row: TradeSymbol) => {
   Object.assign(spotForm, getDefaultSpotForm(), {
     tenantId: row.tenantId || 0,
-    symbolId: row.id || row.symbolId || 0,
+    symbolId: row.id || 0,
   })
   spotVisible.value = true
 }
@@ -691,10 +528,10 @@ const submitSpotConfig = async () => {
   }
 }
 
-const openContractDialog = (row: Record<string, any>) => {
+const openContractDialog = (row: TradeSymbol) => {
   Object.assign(contractForm, getDefaultContractForm(), {
     tenantId: row.tenantId || 0,
-    symbolId: row.id || row.symbolId || 0,
+    symbolId: row.id || 0,
   })
   contractVisible.value = true
 }
