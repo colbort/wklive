@@ -16,6 +16,8 @@ type UserModel interface {
 	CountRecentNoRecharge(ctx context.Context, id int64) (int64, error)
 	FindByUsername(ctx context.Context, tenantCode string, username string) (*TUser, error)
 	FindByDeviceIdOrFingerprint(ctx context.Context, deviceId string, fingerprint string) (*TUser, error)
+	FindGuestByDeviceId(ctx context.Context, tenantId int64, deviceId string) (*TUser, error)
+	FindGuestFingerprintCandidates(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TUser, error)
 	FindByTenantIdUserId(ctx context.Context, tenantId int64, userId int64) (*TUser, error)
 }
 
@@ -157,6 +159,65 @@ func (m *defaultTUserModel) FindByDeviceIdOrFingerprint(ctx context.Context, dev
 	}
 
 	return &resp, nil
+}
+
+func (m *defaultTUserModel) FindGuestByDeviceId(ctx context.Context, tenantId int64, deviceId string) (*TUser, error) {
+	var resp TUser
+
+	query := fmt.Sprintf(`
+		SELECT %s
+		FROM %s
+		WHERE tenant_id = ?
+		AND is_guest = 2
+		AND device_id = ?
+		AND deleted = 0
+		ORDER BY id DESC
+		LIMIT 1
+	`, tUserRows, m.table)
+
+	err := m.QueryRowNoCacheCtx(ctx, &resp, query, tenantId, deviceId)
+	if err != nil {
+		if err == sqlx.ErrNotFound {
+			return nil, ErrNotFound
+		}
+		return nil, err
+	}
+
+	return &resp, nil
+}
+
+func (m *defaultTUserModel) FindGuestFingerprintCandidates(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TUser, error) {
+	if limit <= 0 || limit > 500 {
+		limit = 500
+	}
+
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.EqInt64("tenant_id", tenantId)
+	builder.And("is_guest = ?", int64(2))
+	builder.And("fingerprint <> ''")
+	builder.And("deleted = ?", int64(0))
+	if cursor > 0 {
+		builder.And("id < ?", cursor)
+	}
+
+	where := builder.Where()
+	args := builder.Args()
+	args = append(args, limit)
+
+	query := fmt.Sprintf(`
+		SELECT %s
+		FROM %s
+		WHERE %s
+		ORDER BY id DESC
+		LIMIT ?
+	`, tUserRows, m.table, where)
+
+	var list []*TUser
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, query, args...); err != nil {
+		return nil, err
+	}
+
+	return list, nil
 }
 
 func (m *defaultTUserModel) FindByTenantIdUserId(ctx context.Context, tenantId int64, userId int64) (*TUser, error) {

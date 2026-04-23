@@ -94,8 +94,8 @@ func (l *UpdateUserBaseLogic) UpdateUserBase(in *user.UpdateUserBaseReq) (*user.
 
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		userModel := models.NewTUserModel(conn, l.svcCtx.Config.CacheRedis).(models.UserModel)
-		userIdentityModel := models.NewTUserIdentityModel(conn, l.svcCtx.Config.CacheRedis).(models.UserIdentityModel)
+		userModel := models.NewTUserModel(conn, l.svcCtx.Config.CacheRedis)
+		userIdentityModel := models.NewTUserIdentityModel(conn, l.svcCtx.Config.CacheRedis)
 
 		if err := userModel.Update(ctx, tuser); err != nil {
 			return err

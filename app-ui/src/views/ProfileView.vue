@@ -3,6 +3,8 @@ import { computed, onMounted, ref } from 'vue'
 
 import { getAccessToken } from '@/api/http'
 import { apiGetProfile, apiLogout } from '@/api/userPrivate'
+import { apiGuestLogin } from '@/api/userPublic'
+import { useTenantStore } from '@/stores/tenant'
 import type { UserProfile } from '@/types/user'
 
 const guestMenuItems = [
@@ -29,6 +31,9 @@ const userMenuItems = [
 const profile = ref<UserProfile | null>(null)
 const isLoggedIn = ref(Boolean(getAccessToken()))
 const loadingProfile = ref(false)
+const loggingGuest = ref(false)
+const guestLoginError = ref('')
+const tenantStore = useTenantStore()
 
 const menuItems = computed(() => (isLoggedIn.value ? userMenuItems : guestMenuItems))
 const userBase = computed(() => profile.value?.base ?? null)
@@ -51,6 +56,33 @@ async function loadProfile() {
     console.warn('load profile failed', error)
   } finally {
     loadingProfile.value = false
+  }
+}
+
+async function handleGuestLogin() {
+  if (loggingGuest.value) return
+
+  guestLoginError.value = ''
+  tenantStore.hydrateFromEnv()
+  if (!tenantStore.tenantCode) {
+    guestLoginError.value = '租户信息缺失'
+    return
+  }
+
+  loggingGuest.value = true
+  try {
+    const res = await apiGuestLogin({ tenantCode: tenantStore.tenantCode })
+    if (res.code !== 0 && res.code !== 200) {
+      guestLoginError.value = res.msg || '登录失败'
+      return
+    }
+    isLoggedIn.value = true
+    await loadProfile()
+  } catch (error) {
+    console.warn('guest login failed', error)
+    guestLoginError.value = '登录失败'
+  } finally {
+    loggingGuest.value = false
   }
 }
 
@@ -89,11 +121,18 @@ async function handleMenuClick(key: string) {
           <h2>欢迎使用本平台</h2>
           <p>安全可靠，极速体验</p>
         </div>
-        <button type="button" class="profile-demo">
-          <span>模拟用户注册</span>
+        <button
+          type="button"
+          class="profile-demo"
+          :disabled="loggingGuest"
+          :aria-busy="loggingGuest"
+          @click="handleGuestLogin"
+        >
+          <span>{{ loggingGuest ? '登录中' : '模拟用户登录' }}</span>
           <i />
         </button>
       </div>
+      <p v-if="guestLoginError" class="profile-hero__error">{{ guestLoginError }}</p>
 
       <div class="profile-actions">
         <button type="button" class="profile-actions__login">登录</button>
@@ -241,6 +280,13 @@ async function handleMenuClick(key: string) {
   font-weight: 700;
 }
 
+.profile-hero__error {
+  margin: -18px 0 0;
+  color: #ff6b6b;
+  font-size: 16px;
+  font-weight: 600;
+}
+
 .profile-demo,
 .profile-actions button,
 .profile-menu__item {
@@ -258,6 +304,11 @@ async function handleMenuClick(key: string) {
   color: #04c704;
   font-size: 19px;
   font-weight: 500;
+}
+
+.profile-demo:disabled {
+  cursor: wait;
+  opacity: 0.72;
 }
 
 .profile-demo i,

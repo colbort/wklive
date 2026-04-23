@@ -21,8 +21,6 @@ const props = defineProps<{
   selectedIntervalName: string
 }>()
 
-const PRODUCT_PAGE_SIZE = 4
-
 const emit = defineEmits<{
   selectProduct: [productKey: string]
   selectInterval: [interval: Interval]
@@ -33,9 +31,6 @@ const swipeStartX = ref<number | null>(null)
 const swipeStartY = ref<number | null>(null)
 const switcherOpen = ref(false)
 const activeDetailTab = ref<DetailTab>('market')
-const productPage = ref(0)
-const sheetSwipeStartX = ref<number | null>(null)
-const sheetSwipeStartY = ref<number | null>(null)
 
 const selectedProduct = computed(() => {
   return props.products.find((item) => productKey(item) === props.selectedProductKey) ?? null
@@ -86,16 +81,11 @@ const chartPriceMarks = computed(() => {
 const chartStats = computed(() => {
   const quote = props.selectedQuote
   return [
-    { label: '最高', value: formatNumber(quote?.high, 2), accent: true },
-    { label: '最低', value: formatNumber(quote?.low, 2), accent: true },
+    { label: '最高', value: formatPrice(quote?.high), accent: true },
+    { label: '最低', value: formatPrice(quote?.low), accent: true },
     { label: '成交额', value: formatCompact(quote?.turnover) },
     { label: '成交量', value: formatCompact(quote?.volume) },
   ]
-})
-const productPageCount = computed(() => Math.max(1, Math.ceil(props.rows.length / PRODUCT_PAGE_SIZE)))
-const visibleProductRows = computed(() => {
-  const start = productPage.value * PRODUCT_PAGE_SIZE
-  return props.rows.slice(start, start + PRODUCT_PAGE_SIZE)
 })
 const askRows = computed(() => props.depthSnapshot?.asks.slice(0, 6) ?? [])
 const bidRows = computed(() => props.depthSnapshot?.bids.slice(0, 6) ?? [])
@@ -118,8 +108,6 @@ function productKey(product: Pick<ItickTenantProduct, 'market' | 'symbol'>) {
 }
 
 function openSwitcher() {
-  const selectedIndex = props.rows.findIndex((item) => item.key === props.selectedProductKey)
-  productPage.value = selectedIndex > -1 ? Math.floor(selectedIndex / PRODUCT_PAGE_SIZE) : 0
   switcherOpen.value = true
 }
 
@@ -130,33 +118,6 @@ function closeSwitcher() {
 function selectProductRow(row: MarketRow) {
   emit('selectProduct', row.key)
   closeSwitcher()
-}
-
-function handleSheetPointerStart(event: TouchEvent | MouseEvent) {
-  const point = getClientPoint(event)
-  sheetSwipeStartX.value = point.x
-  sheetSwipeStartY.value = point.y
-}
-
-function handleSheetPointerEnd(event: TouchEvent | MouseEvent) {
-  if (sheetSwipeStartX.value === null || sheetSwipeStartY.value === null) return
-
-  const point = getClientPoint(event)
-  const deltaX = point.x - sheetSwipeStartX.value
-  const deltaY = point.y - sheetSwipeStartY.value
-
-  sheetSwipeStartX.value = null
-  sheetSwipeStartY.value = null
-
-  if (Math.abs(deltaX) < 48 || Math.abs(deltaY) > 42) return
-
-  if (deltaX < 0 && productPage.value < productPageCount.value - 1) {
-    productPage.value += 1
-  }
-
-  if (deltaX > 0 && productPage.value > 0) {
-    productPage.value -= 1
-  }
 }
 
 function handlePointerStart(event: TouchEvent | MouseEvent) {
@@ -221,6 +182,12 @@ function formatNumber(value?: number | null, digits = 2) {
   }).format(value)
 }
 
+function formatPrice(value?: number | null) {
+  if (value === null || value === undefined || !Number.isFinite(value)) return '--'
+
+  return formatNumber(value, Math.abs(value) >= 1 ? 4 : 8)
+}
+
 function formatCompact(value?: number | null) {
   if (value === null || value === undefined || !Number.isFinite(value)) return '--'
 
@@ -265,13 +232,13 @@ function coinGlyph(product: ItickTenantProduct) {
     <div class="chart-summary">
       <div>
         <strong class="chart-summary__price" :class="selectedTrendClass">
-          {{ selectedQuote ? formatNumber(selectedQuote.lastPrice, 2) : '--' }}
+          {{ selectedQuote ? formatPrice(selectedQuote.lastPrice) : '--' }}
         </strong>
         <span :class="selectedTrendClass">
-          {{ selectedQuote ? `${selectedChangeValue >= 0 ? '+' : ''}${formatNumber(selectedChangeValue, 2)}  ${formatPercent(selectedPriceChange)}` : '--' }}
+          {{ selectedQuote ? `${selectedChangeValue >= 0 ? '+' : ''}${formatPrice(selectedChangeValue)}  ${formatPercent(selectedPriceChange)}` : '--' }}
         </span>
-        <small>今开 {{ formatNumber(selectedQuote?.open, 2) }}</small>
-        <small>昨收 {{ formatNumber(selectedQuote?.open, 2) }}</small>
+        <small>今开 {{ formatPrice(selectedQuote?.open) }}</small>
+        <small>昨收 {{ formatPrice(selectedQuote?.open) }}</small>
       </div>
 
       <div class="chart-stats">
@@ -373,7 +340,7 @@ function coinGlyph(product: ItickTenantProduct) {
         </svg>
 
         <div class="price-axis">
-          <span v-for="mark in chartPriceMarks" :key="mark">{{ formatNumber(mark, 2) }}</span>
+          <span v-for="mark in chartPriceMarks" :key="mark">{{ formatPrice(mark) }}</span>
         </div>
 
         <div v-if="loadingKline" class="chart-loading">加载中...</div>
@@ -408,14 +375,14 @@ function coinGlyph(product: ItickTenantProduct) {
           class="depth-row depth-row--ask"
         >
           <i :style="{ width: `${Math.max(8, (item.volume / maxAskVolume) * 100)}%` }" />
-          <span>{{ formatNumber(item.price, 4) }}</span>
+          <span>{{ formatPrice(item.price) }}</span>
           <strong>{{ formatNumber(item.volume, 8) }}</strong>
         </div>
       </div>
 
       <div class="depth-mid" :class="selectedTrendClass">
-        <strong>{{ selectedQuote ? formatNumber(selectedQuote.lastPrice, 4) : '--' }}</strong>
-        <span>{{ formatNumber(selectedQuote?.open, 4) }}</span>
+        <strong>{{ selectedQuote ? formatPrice(selectedQuote.lastPrice) : '--' }}</strong>
+        <span>{{ formatPrice(selectedQuote?.open) }}</span>
       </div>
 
       <div class="depth-list depth-list--bids">
@@ -425,7 +392,7 @@ function coinGlyph(product: ItickTenantProduct) {
           class="depth-row depth-row--bid"
         >
           <i :style="{ width: `${Math.max(8, (item.volume / maxBidVolume) * 100)}%` }" />
-          <span>{{ formatNumber(item.price, 4) }}</span>
+          <span>{{ formatPrice(item.price) }}</span>
           <strong>{{ formatNumber(item.volume, 8) }}</strong>
         </div>
       </div>
@@ -448,7 +415,7 @@ function coinGlyph(product: ItickTenantProduct) {
         class="trade-row"
         :class="{ 'trade-row--down': item.direction === 'down' }"
       >
-        <span>{{ formatNumber(item.lastPrice, 4) }}</span>
+        <span>{{ formatPrice(item.lastPrice) }}</span>
         <strong>{{ formatNumber(item.volume, 8) }}</strong>
         <time>{{ formatTime(item.ts) }}</time>
       </div>
@@ -457,10 +424,6 @@ function coinGlyph(product: ItickTenantProduct) {
     <div v-if="switcherOpen" class="product-sheet-overlay" @click.self="closeSwitcher">
       <section
         class="product-sheet"
-        @touchstart.passive="handleSheetPointerStart"
-        @touchend.passive="handleSheetPointerEnd"
-        @mousedown="handleSheetPointerStart"
-        @mouseup="handleSheetPointerEnd"
       >
         <span class="product-sheet__handle" />
 
@@ -471,7 +434,7 @@ function coinGlyph(product: ItickTenantProduct) {
 
         <div class="product-sheet__rows">
           <button
-            v-for="row in visibleProductRows"
+            v-for="row in rows"
             :key="row.key"
             type="button"
             class="product-sheet-row"
@@ -483,17 +446,16 @@ function coinGlyph(product: ItickTenantProduct) {
           >
             <span class="product-sheet-row__coin">{{ coinGlyph(row.product) }}</span>
             <span class="product-sheet-row__symbol">{{ row.product.symbol }}</span>
-            <strong>{{ row.quote ? formatNumber(row.quote.lastPrice, 4) : '--' }}</strong>
+            <strong>{{ row.quote ? formatPrice(row.quote.lastPrice) : '--' }}</strong>
             <span class="product-sheet-row__change">
-              <em>{{ row.quote ? formatNumber(row.quote.lastPrice - row.quote.open, 4) : '--' }}</em>
+              <em>{{ row.quote ? formatPrice(row.quote.lastPrice - row.quote.open) : '--' }}</em>
               <small>{{ row.quote ? formatPercent(row.changeRate) : '等待' }}</small>
             </span>
           </button>
         </div>
 
         <div class="product-sheet__footer">
-          <span v-if="productPageCount > 1">{{ productPage + 1 }} / {{ productPageCount }}</span>
-          <span v-else>没有更多了</span>
+          <span>共 {{ rows.length }} 个产品</span>
         </div>
       </section>
     </div>
@@ -980,21 +942,25 @@ function coinGlyph(product: ItickTenantProduct) {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding: 0 0 12px;
+  padding: 0;
   background: rgba(3, 4, 10, 0.68);
   backdrop-filter: blur(7px);
 }
 
 .product-sheet {
   position: relative;
+  display: flex;
+  flex-direction: column;
   width: min(100%, 640px);
   max-height: 68dvh;
   padding: 22px 22px 26px;
   overflow: hidden;
-  border-radius: 28px 28px 8px 8px;
+  border-radius: 28px 28px 0 0;
   background: #22232c;
   color: #f6f7fb;
   box-shadow: 0 -24px 70px rgba(0, 0, 0, 0.42);
+  touch-action: pan-y;
+  max-width: 100%;
 }
 
 .product-sheet__handle {
@@ -1034,14 +1000,22 @@ function coinGlyph(product: ItickTenantProduct) {
 }
 
 .product-sheet__rows {
-  min-height: 384px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 
 .product-sheet-row {
   display: grid;
-  grid-template-columns: 54px minmax(100px, 1fr) minmax(88px, 0.78fr) minmax(82px, 0.7fr);
+  grid-template-columns: 44px minmax(0, 1fr) minmax(0, 72px) minmax(0, 64px);
   align-items: center;
+  column-gap: 10px;
   width: 100%;
+  min-width: 0;
   min-height: 96px;
   padding: 12px 0;
   border: 0;
@@ -1081,40 +1055,55 @@ function coinGlyph(product: ItickTenantProduct) {
 .product-sheet-row__symbol {
   overflow: hidden;
   color: #fff;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 500;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .product-sheet-row strong {
+  min-width: 0;
+  overflow: hidden;
   color: #09d676;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 500;
   text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .product-sheet-row__change {
   display: grid;
   justify-items: end;
   gap: 6px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .product-sheet-row__change em {
+  max-width: 100%;
+  overflow: hidden;
   color: #09d676;
-  font-size: 17px;
+  font-size: 15px;
   font-style: normal;
   font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .product-sheet-row__change small {
-  min-width: 76px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   padding: 5px 9px;
+  overflow: hidden;
   border-radius: 14px;
   background: #06d171;
   color: #fff;
-  font-size: 14px;
+  font-size: 13px;
   text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .product-sheet-row--down strong,

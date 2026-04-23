@@ -46,6 +46,20 @@ const placeholderChange = computed(() => {
   return '+1.33%'
 })
 const priceTrend = computed(() => (placeholderChange.value.startsWith('-') ? 'down' : 'up'))
+const productSheetRows = computed(() =>
+  products.value.map((product) => {
+    const key = productKey(product)
+    const isSelected = key === selectedProductKey.value
+
+    return {
+      key,
+      product,
+      price: isSelected ? placeholderPrice.value : '--',
+      change: isSelected ? placeholderChange.value : '',
+      direction: isSelected ? priceTrend.value : 'flat',
+    }
+  }),
+)
 
 watch(selectedCategoryType, async (categoryType) => {
   if (categoryType === null) return
@@ -99,6 +113,15 @@ function selectProduct(product: ItickTenantProduct) {
   selectedProductKey.value = productKey(product)
   productMenuOpen.value = false
 }
+
+function closeProductSheet() {
+  productMenuOpen.value = false
+}
+
+function coinGlyph(product: ItickTenantProduct) {
+  const coin = product.baseCoin || product.symbol.slice(0, 3) || product.displayName
+  return coin.slice(0, 1).toUpperCase()
+}
 </script>
 
 <template>
@@ -116,7 +139,7 @@ function selectProduct(product: ItickTenantProduct) {
     </nav>
 
     <header class="trade-symbol">
-      <button type="button" class="trade-symbol__main" @click="productMenuOpen = !productMenuOpen">
+      <button type="button" class="trade-symbol__main" @click="productMenuOpen = true">
         <strong>{{ selectedProduct?.symbol || '选择产品' }}</strong>
         <span />
       </button>
@@ -135,15 +158,41 @@ function selectProduct(product: ItickTenantProduct) {
         <button type="button">⌃</button>
       </div>
 
-      <div v-if="productMenuOpen" class="product-menu">
-        <button
-          v-for="product in products.slice(0, 12)"
-          :key="productKey(product)"
-          type="button"
-          @click="selectProduct(product)"
-        >
-          {{ product.symbol }}
-        </button>
+      <div v-if="productMenuOpen" class="product-sheet-overlay" @click.self="closeProductSheet">
+        <section class="product-sheet">
+          <span class="product-sheet__handle" />
+
+          <header class="product-sheet__header">
+            <h3>{{ selectedCategory?.categoryName || '产品' }}</h3>
+            <button type="button" aria-label="关闭" @click="closeProductSheet">×</button>
+          </header>
+
+          <div class="product-sheet__rows">
+            <button
+              v-for="row in productSheetRows"
+              :key="row.key"
+              type="button"
+              class="product-sheet-row"
+              :class="{
+                'product-sheet-row--active': row.key === selectedProductKey,
+                'product-sheet-row--down': row.direction === 'down',
+              }"
+              @click="selectProduct(row.product)"
+            >
+              <span class="product-sheet-row__coin">{{ coinGlyph(row.product) }}</span>
+              <span class="product-sheet-row__symbol">{{ row.product.symbol }}</span>
+              <strong>{{ row.price }}</strong>
+              <span class="product-sheet-row__change">
+                <em>{{ row.change || '--' }}</em>
+                <small>{{ row.change || '等待' }}</small>
+              </span>
+            </button>
+          </div>
+
+          <div class="product-sheet__footer">
+            <span>共 {{ productSheetRows.length }} 个产品</span>
+          </div>
+        </section>
       </div>
     </header>
 
@@ -281,7 +330,8 @@ function selectProduct(product: ItickTenantProduct) {
 .dual-actions button,
 .inner-tabs button,
 .duration-grid button,
-.product-menu button {
+.product-sheet__header button,
+.product-sheet-row {
   border: 0;
   background: transparent;
   color: inherit;
@@ -366,22 +416,191 @@ function selectProduct(product: ItickTenantProduct) {
   font-size: 25px;
 }
 
-.product-menu {
-  position: absolute;
-  top: 34px;
-  left: 0;
-  z-index: 4;
-  display: grid;
-  min-width: 170px;
-  padding: 8px;
-  border-radius: 12px;
-  background: #22232c;
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.28);
+.product-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+  background: rgba(3, 4, 10, 0.68);
+  backdrop-filter: blur(7px);
 }
 
-.product-menu button {
-  padding: 8px 10px;
+.product-sheet {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 640px);
+  max-height: 68dvh;
+  padding: 22px 22px 26px;
+  overflow: hidden;
+  border-radius: 28px 28px 0 0;
+  background: #22232c;
+  color: #f6f7fb;
+  box-shadow: 0 -24px 70px rgba(0, 0, 0, 0.42);
+  touch-action: pan-y;
+  max-width: 100%;
+}
+
+.product-sheet__handle {
+  display: block;
+  width: 54px;
+  height: 6px;
+  margin: 0 auto 22px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.52);
+}
+
+.product-sheet__header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  margin-bottom: 10px;
+}
+
+.product-sheet__header h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.product-sheet__header button {
+  position: absolute;
+  top: 42px;
+  right: 24px;
+  color: #fff;
+  font-size: 31px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.product-sheet__rows {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+
+.product-sheet-row {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) minmax(0, 72px) minmax(0, 64px);
+  align-items: center;
+  column-gap: 10px;
+  width: 100%;
+  min-width: 0;
+  min-height: 96px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   text-align: left;
+  cursor: pointer;
+}
+
+.product-sheet-row__coin {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: linear-gradient(145deg, #4099ff, #67c2ff);
+  color: #fff;
+  font-size: 21px;
+  font-weight: 500;
+}
+
+.product-sheet-row:nth-child(4n + 2) .product-sheet-row__coin {
+  background: linear-gradient(145deg, #e9ddc9, #fff2d8);
+  color: #b8346c;
+}
+
+.product-sheet-row:nth-child(4n + 3) .product-sheet-row__coin {
+  background: linear-gradient(145deg, #2186dd, #2e9fff);
+}
+
+.product-sheet-row:nth-child(4n + 4) .product-sheet-row__coin {
+  background: linear-gradient(145deg, #0e52ff, #3888ff);
+}
+
+.product-sheet-row__symbol {
+  overflow: hidden;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-sheet-row strong {
+  min-width: 0;
+  overflow: hidden;
+  color: #09d676;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-sheet-row__change {
+  display: grid;
+  justify-items: end;
+  gap: 6px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.product-sheet-row__change em {
+  max-width: 100%;
+  overflow: hidden;
+  color: #09d676;
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-sheet-row__change small {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding: 5px 9px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #06d171;
+  color: #fff;
+  font-size: 13px;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-sheet-row--down strong,
+.product-sheet-row--down .product-sheet-row__change em {
+  color: #ff5148;
+}
+
+.product-sheet-row--down .product-sheet-row__change small {
+  background: #ff4438;
+}
+
+.product-sheet-row--active {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.product-sheet__footer {
+  display: flex;
+  justify-content: center;
+  min-height: 26px;
+  padding-top: 12px;
+  color: #8f929d;
+  font-size: 14px;
 }
 
 .mode-switch {

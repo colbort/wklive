@@ -20,6 +20,7 @@ type ServiceContext struct {
 	UserSecurityModel models.UserSecurityModel
 	UserIdentityModel models.UserIdentityModel
 	UserBankModel     models.UserBankModel
+	FingerprintModel  models.UserFingerprintModel
 	SystemCli         system.SystemClient
 }
 
@@ -39,6 +40,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		UserSecurityModel: models.NewTUserSecurityModel(conn, c.CacheRedis).(models.UserSecurityModel),
 		UserIdentityModel: models.NewTUserIdentityModel(conn, c.CacheRedis).(models.UserIdentityModel),
 		UserBankModel:     models.NewTUserBankModel(conn, c.CacheRedis).(models.UserBankModel),
+		FingerprintModel:  models.NewTUserFingerprintModel(conn, c.CacheRedis).(models.UserFingerprintModel),
 		SystemCli:         system.NewSystemClient(systemCli.Conn()),
 	}
 }

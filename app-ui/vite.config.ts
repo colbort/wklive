@@ -17,6 +17,7 @@ export default defineConfig(({ mode }) => {
       'process.env': env,
     },
     server: {
+      host: '0.0.0.0',
       port: 5174,
       strictPort: false,
       open: true,
@@ -25,6 +26,7 @@ export default defineConfig(({ mode }) => {
         '/app': {
           target: env.VITE_API_BASE_URL || 'http://localhost:5555',
           changeOrigin: true,
+          ws: true,
           rewrite: (requestPath) => requestPath.replace(/^\/app/, '/app'),
         },
       },

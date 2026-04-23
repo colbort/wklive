@@ -37,16 +37,21 @@ func (l *GuestLoginLogic) GuestLogin(req *types.GuestLoginReq) (resp *types.Gues
 	if err != nil {
 		return nil, err
 	}
+	data := types.GuestLogin{}
+	if result.Data != nil {
+		data = types.GuestLogin{
+			Token:    result.Data.Token,
+			Uid:      result.Data.Uid,
+			DeviceId: result.Data.Uid,
+			Username: result.Data.Username,
+			IsNew:    result.Data.IsNew,
+		}
+	}
 	return &types.GuestLoginResp{
 		RespBase: types.RespBase{
 			Code: result.Base.Code,
 			Msg:  result.Base.Msg,
 		},
-		Data: types.GuestLogin{
-			Token:    resp.Data.Token,
-			Uid:      resp.Data.Uid,
-			Username: resp.Data.Username,
-			IsNew:    resp.Data.IsNew,
-		},
+		Data: data,
 	}, nil
 }

@@ -760,6 +760,7 @@ type GetSystemCoreResp struct {
 type GuestLogin struct {
 	Token    string `json:"token"`
 	Uid      string `json:"uid"`
+	DeviceId string `json:"deviceId"`
 	IsNew    bool   `json:"isNew"`
 	Username string `json:"username"`
 }

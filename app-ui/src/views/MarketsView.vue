@@ -257,9 +257,18 @@ function queueSocketRefresh() {
   }, 80)
 }
 
+function createWsId() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID()
+  }
+
+  return `ws-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`
+}
+
 function connectSocket() {
-  wsId.value = crypto.randomUUID()
+  wsId.value = createWsId()
   const url = buildItickWsUrl(wsId.value)
+  console.info('[itick-ws] connecting', url)
 
   stopReconnectTimer()
   reconnectEnabled = false

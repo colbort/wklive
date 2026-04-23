@@ -49,6 +49,7 @@ type GuestLoginReq {
 type GuestLogin {
 	token    string `json:"token"`
 	uid      string `json:"uid"`
+	deviceId string `json:"deviceId"`
 	isNew    bool   `json:"isNew"`
 	username string `json:"username"`
 }
@@ -93,4 +94,3 @@ service app {
 	@handler RefreshToken
 	post /refresh-token (RefreshTokenReq) returns (RefreshTokenResp)
 }
-

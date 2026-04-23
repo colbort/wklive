@@ -33,6 +33,12 @@ function formatNumber(value?: number | null, digits = 2) {
   }).format(value)
 }
 
+function formatPrice(value?: number | null) {
+  if (value === null || value === undefined || !Number.isFinite(value)) return '--'
+
+  return formatNumber(value, Math.abs(value) >= 1 ? 4 : 8)
+}
+
 function formatPercent(value: number) {
   return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`
 }
@@ -82,11 +88,11 @@ function formatPercent(value: number) {
         </span>
 
         <strong class="quote-row__price">
-          {{ row.quote ? formatNumber(row.quote.lastPrice, 4) : '--' }}
+          {{ row.quote ? formatPrice(row.quote.lastPrice) : '--' }}
         </strong>
 
         <span class="quote-row__change">
-          <strong>{{ row.quote ? formatNumber(row.quote.lastPrice - row.quote.open, 4) : '--' }}</strong>
+          <strong>{{ row.quote ? formatPrice(row.quote.lastPrice - row.quote.open) : '--' }}</strong>
           <em>{{ row.quote ? formatPercent(row.changeRate) : '等待' }}</em>
         </span>
       </button>

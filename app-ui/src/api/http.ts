@@ -51,12 +51,7 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
 }
 
 function appendTenantScope(target: Record<string, unknown>, url?: string) {
-  // const tenantId = getTenantId()
   const tenantCode = getTenantCode()
-
-  // if (tenantId && target.tenantId === undefined) {
-  //   target.tenantId = tenantId
-  // }
 
   const needsTenantCode =
     url?.startsWith('/user/login') ||

@@ -69,7 +69,7 @@ type (
 		IsGuest        int64          `db:"is_guest"`         // 是否游客；1正常用户，2游客
 		IsRecharge     int64          `db:"is_recharge"`      // 是否充值；0没有充值，1已充值
 		DeviceId       string         `db:"device_id"`        // 设备唯一ID
-		Fingerprint    string         `db:"fingerprint"`      // 浏览器指纹
+		Fingerprint    sql.NullString `db:"fingerprint"`      // 浏览器指纹JSON
 		Remark         sql.NullString `db:"remark"`           // 备注
 		Deleted        int64          `db:"deleted"`          // 是否删除：0否 1是
 		CreateTimes    int64          `db:"create_times"`     // 创建时间

@@ -22,7 +22,7 @@ CREATE TABLE `t_user` (
   `is_guest` tinyint NOT NULL DEFAULT 1 COMMENT '是否游客；1正常用户，2游客',
   `is_recharge` tinyint NOT NULL DEFAULT 0 COMMENT '是否充值；0没有充值，1已充值',
   `device_id` varchar(64) NOT NULL DEFAULT '' COMMENT '设备唯一ID',
-  `fingerprint` varchar(128) NOT NULL DEFAULT '' COMMENT '浏览器指纹',
+  `fingerprint` text COMMENT '浏览器指纹JSON',
   `remark` varchar(255) DEFAULT NULL COMMENT '备注',
   `deleted` tinyint NOT NULL DEFAULT 0 COMMENT '是否删除：0否 1是',
   `create_times` bigint NOT NULL DEFAULT 0 COMMENT '创建时间',
@@ -37,6 +37,28 @@ CREATE TABLE `t_user` (
   KEY `idx_referrer_user_id` (`referrer_user_id`),
   KEY `idx_last_login_time` (`last_login_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户基础表';
+
+CREATE TABLE `t_user_fingerprint` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` bigint NOT NULL COMMENT '租户ID',
+  `user_id` bigint NOT NULL COMMENT '用户ID',
+  `device_id` varchar(64) NOT NULL DEFAULT '' COMMENT '设备唯一ID',
+  `fingerprint_hash` char(64) NOT NULL COMMENT '浏览器指纹SHA256',
+  `match_key` char(64) NOT NULL DEFAULT '' COMMENT '浏览器指纹匹配键SHA256',
+  `fingerprint` text NOT NULL COMMENT '浏览器指纹JSON',
+  `source_ip` varchar(64) DEFAULT NULL COMMENT '来源IP',
+  `first_seen_time` bigint NOT NULL DEFAULT 0 COMMENT '首次出现时间',
+  `last_seen_time` bigint NOT NULL DEFAULT 0 COMMENT '最后出现时间',
+  `create_times` bigint NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_times` bigint NOT NULL DEFAULT 0 COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_tenant_user_hash` (`tenant_id`, `user_id`, `fingerprint_hash`),
+  KEY `idx_tenant_hash` (`tenant_id`, `fingerprint_hash`),
+  KEY `idx_tenant_match_key_id` (`tenant_id`, `match_key`, `id`),
+  KEY `idx_tenant_user_id` (`tenant_id`, `user_id`),
+  KEY `idx_tenant_device_id` (`tenant_id`, `device_id`),
+  KEY `idx_tenant_last_seen` (`tenant_id`, `last_seen_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户浏览器指纹表';
 
 
 CREATE TABLE `t_user_identity` (

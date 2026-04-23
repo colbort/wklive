@@ -44,8 +44,30 @@ export async function apiGetQuote(params: GetQuoteReq): Promise<ApiResp<GetQuote
   return data
 }
 
+function isLoopbackHost(hostname: string) {
+  return ['localhost', '127.0.0.1', '0.0.0.0', '::1', '[::1]'].includes(hostname)
+}
+
+function resolveItickWsBaseUrl(baseUrl?: string) {
+  if (baseUrl) return baseUrl
+
+  const envBaseUrl = import.meta.env.VITE_API_BASE_URL
+  if (!envBaseUrl) return window.location.origin
+
+  try {
+    const parsedEnvBaseUrl = new URL(envBaseUrl)
+    if (isLoopbackHost(parsedEnvBaseUrl.hostname) && !isLoopbackHost(window.location.hostname)) {
+      return window.location.origin
+    }
+  } catch {
+    return window.location.origin
+  }
+
+  return envBaseUrl
+}
+
 export function buildItickWsUrl(id: string, baseUrl?: string) {
-  const resolvedBaseUrl = baseUrl || import.meta.env.VITE_API_BASE_URL || window.location.origin
+  const resolvedBaseUrl = resolveItickWsBaseUrl(baseUrl)
   const parsed = new URL(resolvedBaseUrl)
   const protocol = parsed.protocol === 'https:' ? 'wss:' : 'ws:'
 

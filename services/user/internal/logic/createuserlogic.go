@@ -75,7 +75,7 @@ func (l *CreateUserLogic) CreateUser(in *user.CreateUserReq) (*user.CreateUserRe
 		IsGuest:        1,
 		IsRecharge:     0,
 		DeviceId:       "",
-		Fingerprint:    "",
+		Fingerprint:    sql.NullString{String: "", Valid: true},
 	}
 
 	userIdentity := &models.TUserIdentity{
@@ -95,9 +95,9 @@ func (l *CreateUserLogic) CreateUser(in *user.CreateUserReq) (*user.CreateUserRe
 
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		userModel := models.NewTUserModel(conn, l.svcCtx.Config.CacheRedis).(models.UserModel)
-		userIdentityModel := models.NewTUserIdentityModel(conn, l.svcCtx.Config.CacheRedis).(models.UserIdentityModel)
-		userSecurityModel := models.NewTUserSecurityModel(conn, l.svcCtx.Config.CacheRedis).(models.UserSecurityModel)
+		userModel := models.NewTUserModel(conn, l.svcCtx.Config.CacheRedis)
+		userIdentityModel := models.NewTUserIdentityModel(conn, l.svcCtx.Config.CacheRedis)
+		userSecurityModel := models.NewTUserSecurityModel(conn, l.svcCtx.Config.CacheRedis)
 
 		result, err := userModel.Insert(ctx, tuser)
 

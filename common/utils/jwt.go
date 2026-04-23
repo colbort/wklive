@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type Claims struct {
@@ -55,14 +54,12 @@ func GetUidFromCtx(ctx context.Context) (int64, error) {
 	var uid int64
 	jsonUid, ok := ctx.Value("uid").(json.Number)
 	if !ok {
-		logx.WithContext(ctx).Errorf("GetUidFromCtx err : not found uid in context")
 		return 0, errors.New("uid not found in context")
 
 	}
 	if int64Uid, err := jsonUid.Int64(); err == nil {
 		uid = int64Uid
 	} else {
-		logx.WithContext(ctx).Errorf("GetUidFromCtx err : %+v", err)
 		return 0, err
 	}
 	return uid, nil
@@ -71,7 +68,6 @@ func GetUidFromCtx(ctx context.Context) (int64, error) {
 func GetUsernameFromCtx(ctx context.Context) (string, error) {
 	username, ok := ctx.Value("username").(string)
 	if !ok {
-		logx.WithContext(ctx).Errorf("GetUsernameFromCtx err : not found username in context")
 		return "", errors.New("username not found in context")
 	}
 	return username, nil
@@ -81,13 +77,11 @@ func GetTenantIdFromCtx(ctx context.Context) (int64, error) {
 	var tenantId int64
 	jsonTenantId, ok := ctx.Value("tenantId").(json.Number)
 	if !ok {
-		logx.WithContext(ctx).Errorf("GetTenantIdFromCtx err : not found tenantId in context")
 		return 0, errors.New("tenantId not found in context")
 	}
 	if int64TenantId, err := jsonTenantId.Int64(); err == nil {
 		tenantId = int64TenantId
 	} else {
-		logx.WithContext(ctx).Errorf("GetTenantIdFromCtx err : %+v", err)
 		return 0, err
 	}
 	return tenantId, nil

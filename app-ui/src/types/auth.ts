@@ -44,6 +44,7 @@ export interface GuestLoginReq {
 export interface GuestLoginData {
   token: string
   uid: string
+  deviceId: string
   isNew: boolean
   username: string
 }
