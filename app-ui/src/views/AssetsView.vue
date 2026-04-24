@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
+// 资产页：展示资产中心和订单中心的移动端占位结构。
 type AssetTopTab = 'assets' | 'orders'
 
 const activeTopTab = ref<AssetTopTab>('assets')

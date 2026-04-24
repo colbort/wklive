@@ -5,8 +5,8 @@ defineProps<{
 </script>
 
 <template>
-  <section class="trade-order-tabs">
-    <div class="trade-order-tabs__nav">
+  <section class="trade-orders-panel">
+    <div class="trade-orders-panel__nav">
       <button class="active" type="button">当前委托</button>
       <button type="button">历史订单</button>
       <button v-if="showPremarket" type="button">盘前订单</button>
@@ -16,7 +16,7 @@ defineProps<{
 </template>
 
 <style scoped>
-.trade-order-tabs__nav {
+.trade-orders-panel__nav {
   display: flex;
   gap: 28px;
   padding: 22px 22px 0;

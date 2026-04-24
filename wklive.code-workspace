@@ -9,6 +9,10 @@
       "name": "admin-ui"
     },
     {
+      "path": "agent-ui",
+      "name": "agent-ui"
+    },
+    {
       "path": "app-api",
       "name": "app-api"
     },

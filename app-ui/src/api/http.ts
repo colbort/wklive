@@ -14,10 +14,11 @@ function normalizeLeadingSlash(value: string) {
 }
 
 function resolveApiBaseURL() {
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim()
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim()??''
   const apiBasePath = normalizeLeadingSlash(import.meta.env.VITE_API_BASE_PATH || DEFAULT_API_BASE_PATH)
+  const target = import.meta.env.VITE_APP_TARGET
 
-  if (!apiBaseUrl) return apiBasePath
+  if (!apiBaseUrl || !target) return apiBasePath
 
   return `${trimTrailingSlash(apiBaseUrl)}${apiBasePath}`
 }

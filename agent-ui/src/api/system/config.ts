@@ -1,0 +1,31 @@
+import { get, post, put, del } from '@/utils/request'
+import type {
+  RespBase,
+  SysConfigListReq,
+  SysConfigItem,
+  SysConfigCreateReq,
+  SysConfigUpdateReq,
+  OptionGroup,
+} from '@/services'
+
+// ===== API 函数 =====
+
+export function apiSysConfigList(params: SysConfigListReq): Promise<RespBase<SysConfigItem[]>> {
+  return get<SysConfigItem[]>('/admin/system/configs', params)
+}
+
+export function apiSysConfigCreate(data: SysConfigCreateReq): Promise<RespBase> {
+  return post('/admin/system/configs', data)
+}
+
+export function apiSysConfigUpdate(data: SysConfigUpdateReq): Promise<RespBase> {
+  return put('/admin/system/configs', data)
+}
+
+export function apiSysConfigDelete(id: number): Promise<RespBase> {
+  return del(`/admin/system/configs/${id}`)
+}
+
+export function apiOptions(): Promise<RespBase<OptionGroup[]>> {
+  return get('/admin/system/options')
+}

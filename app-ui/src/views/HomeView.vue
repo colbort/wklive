@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 
+// 首页：承载平台品牌展示和从首页进入市场页的主入口。
 const featureCards = [
   {
     icon: '⟆',

@@ -1,0 +1,97 @@
+<script setup lang="ts">
+import MobileMarketDepthPreview from '@/components/markets/MobileMarketDepthPreview.vue'
+import MobileMarketTradeHeader from '@/components/markets/MobileMarketTradeHeader.vue'
+import TradeOrdersPanel from '@/components/trades/TradeOrdersPanel.vue'
+import MobileTradeSubmitPanel from '@/components/trades/MobileTradeSubmitPanel.vue'
+import type { ItickTenantCategory, ItickTenantProduct, QuotePayload } from '@/types/itick'
+
+type ProductSheetRow = {
+  key: string
+  product: ItickTenantProduct
+  price: string
+  change: string
+  direction: 'up' | 'down' | 'flat'
+}
+
+defineProps<{
+  categories: ItickTenantCategory[]
+  selectedCategoryType: number | null
+  selectedCategory: ItickTenantCategory | null
+  selectedProduct: ItickTenantProduct | null
+  selectedProductKey: string
+  tradeKind: 'stock' | 'option' | 'forex' | 'commodity' | 'crypto'
+  priceTrend: 'up' | 'down'
+  placeholderPrice: string
+  placeholderChange: string
+  selectedQuote: QuotePayload | null
+  productMenuOpen: boolean
+  productSheetRows: ProductSheetRow[]
+  orderMode: 'market' | 'limit'
+  coinGlyph: (product: ItickTenantProduct) => string
+}>()
+
+const emit = defineEmits<{
+  (e: 'select-category', categoryType: number): void
+  (e: 'open-product-menu'): void
+  (e: 'close-product-sheet'): void
+  (e: 'select-product', product: ItickTenantProduct): void
+  (e: 'update:orderMode', value: 'market' | 'limit'): void
+}>()
+</script>
+
+<template>
+  <div class="mobile-trade-view">
+    <MobileMarketTradeHeader
+      :categories="categories"
+      :selected-category-type="selectedCategoryType"
+      :selected-category="selectedCategory"
+      :selected-product="selectedProduct"
+      :selected-product-key="selectedProductKey"
+      :trade-kind="tradeKind"
+      :price-trend="priceTrend"
+      :placeholder-price="placeholderPrice"
+      :placeholder-change="placeholderChange"
+      :selected-quote="selectedQuote"
+      :product-menu-open="productMenuOpen"
+      :product-sheet-rows="productSheetRows"
+      :coin-glyph="coinGlyph"
+      @select-category="emit('select-category', $event)"
+      @open-product-menu="emit('open-product-menu')"
+      @close-product-sheet="emit('close-product-sheet')"
+      @select-product="emit('select-product', $event)"
+    />
+
+    <section v-if="tradeKind === 'crypto'" class="mobile-contract-layout">
+      <MobileTradeSubmitPanel
+        :selected-product="selectedProduct"
+        :trade-kind="tradeKind"
+        :order-mode="orderMode"
+        @update:order-mode="emit('update:orderMode', $event)"
+      />
+      <MobileMarketDepthPreview :selected-product="selectedProduct" />
+    </section>
+
+    <MobileTradeSubmitPanel
+      v-else
+      :selected-product="selectedProduct"
+      :trade-kind="tradeKind"
+      :order-mode="orderMode"
+      @update:order-mode="emit('update:orderMode', $event)"
+    />
+
+    <TradeOrdersPanel :show-premarket="tradeKind === 'stock'" />
+  </div>
+</template>
+
+<style scoped>
+.mobile-trade-view {
+  min-width: 0;
+}
+
+.mobile-contract-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(180px, 0.9fr);
+  gap: 18px;
+  min-width: 0;
+}
+</style>

@@ -7,6 +7,7 @@ import { apiGuestLogin } from '@/api/userPublic'
 import { useTenantStore } from '@/stores/tenant'
 import type { UserProfile } from '@/types/user'
 
+// 用户页：负责游客登录、已登录资料展示和用户菜单入口。
 const guestMenuItems = [
   { key: 'language', label: '语言', value: '中文简体', icon: '◎', flag: '🇨🇳' },
   { key: 'service', label: '客服', icon: '♧' },
