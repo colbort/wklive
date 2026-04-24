@@ -39,7 +39,8 @@ func (l *SysTenantCreateLogic) SysTenantCreate(in *system.SysTenantCreateReq) (*
 			Base: helper.GetErrResp(400, i18n.Translate(i18n.TenantCodeAlreadyExists, l.ctx)),
 		}, nil
 	}
-	_, err = l.svcCtx.TenantMode.Insert(l.ctx, &models.SysTenant{
+	// 1、创建 tenant
+	result, err = l.svcCtx.TenantMode.Insert(l.ctx, &models.SysTenant{
 		TenantCode:   in.TenantCode,
 		TenantName:   in.TenantName,
 		Status:       commonStatusToModel(in.Status),
@@ -50,6 +51,10 @@ func (l *SysTenantCreateLogic) SysTenantCreate(in *system.SysTenantCreateReq) (*
 		CreateTimes:  utils.NowMillis(),
 		UpdateTimes:  utils.NowMillis(),
 	})
+	// 2、创建 sys_user
+	
+	// 3、租户最高权限的 sys_role_menu tenant_id == 0，role_id == 2001
+	// 4、绑定 `sys_user_role`
 	if err != nil {
 		return nil, err
 	}

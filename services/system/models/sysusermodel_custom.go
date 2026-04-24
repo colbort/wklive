@@ -16,6 +16,7 @@ var (
 
 type UserModel interface {
 	sysUserModel
+	FindOneByUsername(ctx context.Context, username string) (*SysUser, error)
 	FindPage(ctx context.Context, keyword string, status, cursor, limit int64) ([]*SysUser, int64, error)
 	TransCtx(ctx context.Context, fn func(context context.Context, session sqlx.Session) error) error
 	InsertCtx(ctx context.Context, session sqlx.Session, data *SysUser) (sql.Result, error)
@@ -84,8 +85,30 @@ func (m *defaultSysUserModel) TransCtx(ctx context.Context, fn func(context cont
 }
 
 func (m *defaultSysUserModel) InsertCtx(ctx context.Context, session sqlx.Session, data *SysUser) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (`username`, `nickname`, `password`, `status`) values (?, ?, ?, ?)", m.table)
-	ret, err := session.ExecCtx(ctx, query, data.Username, data.Nickname, data.Password, data.Status)
+	query := fmt.Sprintf(
+		"insert into %s (`tenant_id`, `user_type`, `is_owner`, `username`, `password`, `nickname`, `avatar`, `status`, `google_secret`, `google_enabled`, `perms_ver`, `last_login_ip`, `last_login_at`, `create_by`, `create_times`, `update_times`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+		m.table,
+	)
+	ret, err := session.ExecCtx(
+		ctx,
+		query,
+		data.TenantId,
+		data.UserType,
+		data.IsOwner,
+		data.Username,
+		data.Password,
+		data.Nickname,
+		data.Avatar,
+		data.Status,
+		data.GoogleSecret,
+		data.GoogleEnabled,
+		data.PermsVer,
+		data.LastLoginIp,
+		data.LastLoginAt,
+		data.CreateBy,
+		data.CreateTimes,
+		data.UpdateTimes,
+	)
 	return ret, err
 }
 

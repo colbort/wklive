@@ -3,12 +3,13 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SysRoleCreateLogic struct {
@@ -26,7 +27,7 @@ func NewSysRoleCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 }
 
 func (l *SysRoleCreateLogic) SysRoleCreate(in *system.SysRoleCreateReq) (*system.RespBase, error) {
-	result, err := l.svcCtx.RoleModel.FindOneByCode(l.ctx, in.Code)
+	result, err := l.svcCtx.RoleModel.FindOneByTenantIdCode(l.ctx, in.TenantId, in.Code)
 	if err == nil {
 		return nil, err
 	}

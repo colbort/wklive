@@ -23,15 +23,15 @@ var (
 	sysUserRowsExpectAutoSet   = strings.Join(stringx.Remove(sysUserFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	sysUserRowsWithPlaceHolder = strings.Join(stringx.Remove(sysUserFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheSysUserIdPrefix       = "cache:sysUser:id:"
-	cacheSysUserUsernamePrefix = "cache:sysUser:username:"
+	cacheSysUserIdPrefix               = "cache:sysUser:id:"
+	cacheSysUserTenantIdUsernamePrefix = "cache:sysUser:tenantId:username:"
 )
 
 type (
 	sysUserModel interface {
 		Insert(ctx context.Context, data *SysUser) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*SysUser, error)
-		FindOneByUsername(ctx context.Context, username string) (*SysUser, error)
+		FindOneByTenantIdUsername(ctx context.Context, tenantId int64, username string) (*SysUser, error)
 		Update(ctx context.Context, data *SysUser) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -42,19 +42,23 @@ type (
 	}
 
 	SysUser struct {
-		Id            int64          `db:"id"`             // 用户ID
-		Username      string         `db:"username"`       // 登录账号
-		Password      string         `db:"password"`       // bcrypt密码
-		Nickname      string         `db:"nickname"`       // 昵称
-		Avatar        string         `db:"avatar"`         // 头像
-		Status        int64          `db:"status"`         // 状态 1正常 2禁用
-		GoogleSecret  string         `db:"google_secret"`  // 2FA secret(加密存储)
-		GoogleEnabled int64          `db:"google_enabled"` // 是否开启2FA
-		PermsVer      int64          `db:"perms_ver"`      // 权限版本(角色变化强制token失效)
-		LastLoginIp   sql.NullString `db:"last_login_ip"`
-		LastLoginAt   int64          `db:"last_login_at"`
-		CreateTimes   int64          `db:"create_times"`
-		UpdateTimes   int64          `db:"update_times"`
+		Id            int64  `db:"id"`             // 用户ID
+		TenantId      int64  `db:"tenant_id"`      // 所属租户ID：0=系统侧，>0=租户ID
+		UserType      int64  `db:"user_type"`      // 用户类型：1系统管理员 2租户主账号 3租户管理员
+		IsOwner       int64  `db:"is_owner"`       // 是否租户主账号：1是 0否
+		Username      string `db:"username"`       // 登录账号
+		Password      string `db:"password"`       // bcrypt密码
+		Nickname      string `db:"nickname"`       // 昵称
+		Avatar        string `db:"avatar"`         // 头像
+		Status        int64  `db:"status"`         // 状态 1正常 2禁用
+		GoogleSecret  string `db:"google_secret"`  // 2FA secret(加密存储)
+		GoogleEnabled int64  `db:"google_enabled"` // 是否开启2FA
+		PermsVer      int64  `db:"perms_ver"`      // 权限版本(角色变化强制token失效)
+		LastLoginIp   string `db:"last_login_ip"`  // 最后登录IP
+		LastLoginAt   int64  `db:"last_login_at"`  // 最后登录时间
+		CreateBy      int64  `db:"create_by"`      // 创建人ID
+		CreateTimes   int64  `db:"create_times"`
+		UpdateTimes   int64  `db:"update_times"`
 	}
 )
 
@@ -72,11 +76,11 @@ func (m *defaultSysUserModel) Delete(ctx context.Context, id int64) error {
 	}
 
 	sysUserIdKey := fmt.Sprintf("%s%v", cacheSysUserIdPrefix, id)
-	sysUserUsernameKey := fmt.Sprintf("%s%v", cacheSysUserUsernamePrefix, data.Username)
+	sysUserTenantIdUsernameKey := fmt.Sprintf("%s%v:%v", cacheSysUserTenantIdUsernamePrefix, data.TenantId, data.Username)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, sysUserIdKey, sysUserUsernameKey)
+	}, sysUserIdKey, sysUserTenantIdUsernameKey)
 	return err
 }
 
@@ -97,12 +101,12 @@ func (m *defaultSysUserModel) FindOne(ctx context.Context, id int64) (*SysUser, 
 	}
 }
 
-func (m *defaultSysUserModel) FindOneByUsername(ctx context.Context, username string) (*SysUser, error) {
-	sysUserUsernameKey := fmt.Sprintf("%s%v", cacheSysUserUsernamePrefix, username)
+func (m *defaultSysUserModel) FindOneByTenantIdUsername(ctx context.Context, tenantId int64, username string) (*SysUser, error) {
+	sysUserTenantIdUsernameKey := fmt.Sprintf("%s%v:%v", cacheSysUserTenantIdUsernamePrefix, tenantId, username)
 	var resp SysUser
-	err := m.QueryRowIndexCtx(ctx, &resp, sysUserUsernameKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `username` = ? limit 1", sysUserRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, username); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, sysUserTenantIdUsernameKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `username` = ? limit 1", sysUserRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, username); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -119,11 +123,11 @@ func (m *defaultSysUserModel) FindOneByUsername(ctx context.Context, username st
 
 func (m *defaultSysUserModel) Insert(ctx context.Context, data *SysUser) (sql.Result, error) {
 	sysUserIdKey := fmt.Sprintf("%s%v", cacheSysUserIdPrefix, data.Id)
-	sysUserUsernameKey := fmt.Sprintf("%s%v", cacheSysUserUsernamePrefix, data.Username)
+	sysUserTenantIdUsernameKey := fmt.Sprintf("%s%v:%v", cacheSysUserTenantIdUsernamePrefix, data.TenantId, data.Username)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysUserRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.Username, data.Password, data.Nickname, data.Avatar, data.Status, data.GoogleSecret, data.GoogleEnabled, data.PermsVer, data.LastLoginIp, data.LastLoginAt, data.CreateTimes, data.UpdateTimes)
-	}, sysUserIdKey, sysUserUsernameKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysUserRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserType, data.IsOwner, data.Username, data.Password, data.Nickname, data.Avatar, data.Status, data.GoogleSecret, data.GoogleEnabled, data.PermsVer, data.LastLoginIp, data.LastLoginAt, data.CreateBy, data.CreateTimes, data.UpdateTimes)
+	}, sysUserIdKey, sysUserTenantIdUsernameKey)
 	return ret, err
 }
 
@@ -134,11 +138,11 @@ func (m *defaultSysUserModel) Update(ctx context.Context, newData *SysUser) erro
 	}
 
 	sysUserIdKey := fmt.Sprintf("%s%v", cacheSysUserIdPrefix, data.Id)
-	sysUserUsernameKey := fmt.Sprintf("%s%v", cacheSysUserUsernamePrefix, data.Username)
+	sysUserTenantIdUsernameKey := fmt.Sprintf("%s%v:%v", cacheSysUserTenantIdUsernamePrefix, data.TenantId, data.Username)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysUserRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.Username, newData.Password, newData.Nickname, newData.Avatar, newData.Status, newData.GoogleSecret, newData.GoogleEnabled, newData.PermsVer, newData.LastLoginIp, newData.LastLoginAt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, sysUserIdKey, sysUserUsernameKey)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserType, newData.IsOwner, newData.Username, newData.Password, newData.Nickname, newData.Avatar, newData.Status, newData.GoogleSecret, newData.GoogleEnabled, newData.PermsVer, newData.LastLoginIp, newData.LastLoginAt, newData.CreateBy, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, sysUserIdKey, sysUserTenantIdUsernameKey)
 	return err
 }
 

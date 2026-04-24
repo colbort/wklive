@@ -76,8 +76,8 @@ func (m *defaultSysUserRoleModel) FindRoleIdsByUserIds(
 }
 
 func (m *defaultSysUserRoleModel) InsertCtx(ctx context.Context, session sqlx.Session, data *SysUserRole) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (`user_id`, `role_id`) values (?, ?)", m.table)
-	ret, err := session.ExecCtx(ctx, query, data.UserId, data.RoleId)
+	query := fmt.Sprintf("insert into %s (`tenant_id`, `user_id`, `role_id`) values (?, ?, ?)", m.table)
+	ret, err := session.ExecCtx(ctx, query, data.TenantId, data.UserId, data.RoleId)
 	return ret, err
 }
 

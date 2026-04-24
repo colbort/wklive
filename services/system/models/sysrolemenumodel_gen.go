@@ -42,9 +42,10 @@ type (
 	}
 
 	SysRoleMenu struct {
-		Id     int64 `db:"id"`
-		RoleId int64 `db:"role_id"`
-		MenuId int64 `db:"menu_id"`
+		Id       int64 `db:"id"`        // 主键ID
+		TenantId int64 `db:"tenant_id"` // 所属租户ID：0=系统侧，>0=租户ID
+		RoleId   int64 `db:"role_id"`   // 角色ID
+		MenuId   int64 `db:"menu_id"`   // 菜单ID
 	}
 )
 
@@ -111,8 +112,8 @@ func (m *defaultSysRoleMenuModel) Insert(ctx context.Context, data *SysRoleMenu)
 	sysRoleMenuIdKey := fmt.Sprintf("%s%v", cacheSysRoleMenuIdPrefix, data.Id)
 	sysRoleMenuRoleIdMenuIdKey := fmt.Sprintf("%s%v:%v", cacheSysRoleMenuRoleIdMenuIdPrefix, data.RoleId, data.MenuId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?)", m.table, sysRoleMenuRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.RoleId, data.MenuId)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?)", m.table, sysRoleMenuRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.RoleId, data.MenuId)
 	}, sysRoleMenuIdKey, sysRoleMenuRoleIdMenuIdKey)
 	return ret, err
 }
@@ -127,7 +128,7 @@ func (m *defaultSysRoleMenuModel) Update(ctx context.Context, newData *SysRoleMe
 	sysRoleMenuRoleIdMenuIdKey := fmt.Sprintf("%s%v:%v", cacheSysRoleMenuRoleIdMenuIdPrefix, data.RoleId, data.MenuId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysRoleMenuRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.RoleId, newData.MenuId, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.RoleId, newData.MenuId, newData.Id)
 	}, sysRoleMenuIdKey, sysRoleMenuRoleIdMenuIdKey)
 	return err
 }

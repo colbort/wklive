@@ -31,6 +31,10 @@ message AdminLoginResp {
   repeated int64 role_ids = 7;
   int64 google2fa_enabled = 8;
   int64 perms_ver = 9;
+  int64 tenant_id = 10;
+  system.UserType user_type = 11;
+  int64 is_owner = 12;
+  string avatar = 13;
 }
 
 message ProfileReq { int64 uid = 1; }
@@ -40,6 +44,9 @@ message ProfileUser {
   string username = 2;
   string nickname = 3;
   string avatar = 4;
+  int64 tenant_id = 5;
+  system.UserType user_type = 6;
+  int64 is_owner = 7;
 }
 
 message SysMenuNode {
@@ -131,6 +138,15 @@ message SysUserItem {
   repeated int64 role_ids = 5;
   int64 create_times = 6;
   int64 google2fa_enabled = 7;
+  int64 tenant_id = 8;
+  system.UserType user_type = 9;
+  int64 is_owner = 10;
+  string avatar = 11;
+  int64 perms_ver = 12;
+  string last_login_ip = 13;
+  int64 last_login_at = 14;
+  int64 create_by = 15;
+  int64 update_times = 16;
 }
 
 message SysUserListReq {
@@ -155,12 +171,20 @@ message SysUserCreateReq {
   string nickname = 3;
   system.CommonStatus status = 4;
   repeated int64 role_ids = 5;
+  int64 tenant_id = 6;
+  system.UserType user_type = 7;
+  int64 is_owner = 8;
+  string avatar = 9;
 }
 message SysUserUpdateReq {
   int64 id = 1;
   string nickname = 2;
   system.CommonStatus status = 3;
   repeated int64 role_ids = 4;
+  int64 tenant_id = 5;
+  system.UserType user_type = 6;
+  int64 is_owner = 7;
+  string avatar = 8;
 }
 message SysUserDeleteReq { int64 id = 1; }
 message ChangeUserStatusReq {
@@ -186,6 +210,8 @@ message SysRoleItem {
   system.CommonStatus status = 4;
   string remark = 5;
   int64 create_times = 6;
+  int64 tenant_id = 7;
+  int64 update_times = 8;
 }
 message SysRoleListReq {
   common.PageReq page = 1;
@@ -202,12 +228,15 @@ message SysRoleCreateReq {
   string code = 2;
   system.CommonStatus status = 3;
   string remark = 4;
+  int64 tenant_id = 5;
 }
 message SysRoleUpdateReq {
   int64 id = 1;
   string name = 2;
   system.CommonStatus status = 3;
   string remark = 4;
+  int64 tenant_id = 5;
+  string code = 6;
 }
 message SysRoleDeleteReq { int64 id = 1; }
 message SysRoleGrantReq {
@@ -480,6 +509,11 @@ message SysTenantItem {
   string remark = 8;
   int64 create_times = 9;
   int64 update_times = 10;
+  string login_ip = 11;
+  int64 login_time = 12;
+  int64 login_count = 13;
+  int64 create_by = 14;
+  int64 update_by = 15;
 }
 
 message SysTenantListReq {

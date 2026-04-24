@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"strings"
 	"wklive/common/helper"
@@ -33,7 +32,7 @@ func NewSysUserCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 }
 
 func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system.RespBase, error) {
-	one, err := l.svcCtx.UserModel.FindOneByUsername(l.ctx, in.Username)
+	one, err := l.svcCtx.UserModel.FindOneByTenantIdUsername(l.ctx, 0, in.Username)
 	if err != nil && err != sqlx.ErrNotFound {
 		return nil, err
 	}
@@ -47,6 +46,13 @@ func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system
 	if err != nil {
 		return nil, err
 	}
+
+	tenantId, err := utils.GetTidFromMd(l.ctx)
+	if tenantId > 0 {
+		// 租户登录
+	} else {
+		// 系统管理员登录
+	}
 	data := models.SysUser{
 		Username:      in.Username,
 		Nickname:      in.Nickname,
@@ -56,7 +62,7 @@ func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system
 		Avatar:        "",
 		GoogleSecret:  "",
 		GoogleEnabled: 0,
-		LastLoginIp:   sql.NullString{},
+		LastLoginIp:   "",
 		LastLoginAt:   0,
 		CreateTimes:   utils.NowMillis(),
 		UpdateTimes:   utils.NowMillis(),

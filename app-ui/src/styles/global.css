@@ -101,8 +101,8 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
-  padding: 10px 26px;
+  gap: 10px;
+  padding: 8px 18px;
   background: rgba(12, 14, 24, 0.94);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
@@ -111,7 +111,7 @@ button {
 .site-brand {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   flex: none;
 }
 
@@ -120,18 +120,18 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
   background: linear-gradient(135deg, #27c9c0, #7a51d8);
   color: #091019;
   font-weight: 700;
-  font-size: 22px;
+  font-size: 19px;
 }
 
 .site-brand strong {
   display: block;
-  font-size: 22px;
+  font-size: 18px;
   letter-spacing: -0.04em;
 }
 
@@ -146,7 +146,7 @@ button {
   align-items: center;
   flex: 1;
   gap: 0;
-  margin-left: 14px;
+  margin-left: 8px;
   min-width: 0;
 }
 
@@ -158,13 +158,13 @@ button {
 }
 
 .site-nav__item {
-  padding: 0 18px;
+  padding: 0 14px;
   line-height: 1;
-  min-height: 40px;
+  min-height: 34px;
   display: inline-flex;
   align-items: center;
   color: rgba(243, 247, 254, 0.96);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   transition: 180ms ease;
   border-left: 1px solid rgba(255, 255, 255, 0.06);
@@ -307,35 +307,35 @@ button {
 .site-header__actions {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   flex: none;
 }
 
 .site-action-circle,
 .site-action-circle--menu {
-  width: 48px;
-  height: 48px;
-  font-size: 22px;
+  width: 42px;
+  height: 42px;
+  font-size: 18px;
 }
 
 .site-action-plain {
-  min-width: 36px;
-  min-height: 36px;
-  font-size: 24px;
+  min-width: 32px;
+  min-height: 32px;
+  font-size: 20px;
 }
 
 .site-user-chip {
-  gap: 10px;
+  gap: 8px;
   padding: 0 6px 0 0;
 }
 
 .site-user-chip__avatar {
-  width: 50px;
-  height: 50px;
+  width: 42px;
+  height: 42px;
 }
 
 .site-user-chip strong {
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .site-user-chip span {

@@ -191,6 +191,10 @@ type AdminLoginResp struct {
 	RoleIds          []int64                `protobuf:"varint,7,rep,packed,name=role_ids,json=roleIds,proto3" json:"role_ids,omitempty"`
 	Google2FaEnabled int64                  `protobuf:"varint,8,opt,name=google2fa_enabled,json=google2faEnabled,proto3" json:"google2fa_enabled,omitempty"`
 	PermsVer         int64                  `protobuf:"varint,9,opt,name=perms_ver,json=permsVer,proto3" json:"perms_ver,omitempty"`
+	TenantId         int64                  `protobuf:"varint,10,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserType         UserType               `protobuf:"varint,11,opt,name=user_type,json=userType,proto3,enum=system.UserType" json:"user_type,omitempty"`
+	IsOwner          int64                  `protobuf:"varint,12,opt,name=is_owner,json=isOwner,proto3" json:"is_owner,omitempty"`
+	Avatar           string                 `protobuf:"bytes,13,opt,name=avatar,proto3" json:"avatar,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -281,6 +285,34 @@ func (x *AdminLoginResp) GetPermsVer() int64 {
 	return 0
 }
 
+func (x *AdminLoginResp) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *AdminLoginResp) GetUserType() UserType {
+	if x != nil {
+		return x.UserType
+	}
+	return UserType_USER_TYPE_UNKNOWN
+}
+
+func (x *AdminLoginResp) GetIsOwner() int64 {
+	if x != nil {
+		return x.IsOwner
+	}
+	return 0
+}
+
+func (x *AdminLoginResp) GetAvatar() string {
+	if x != nil {
+		return x.Avatar
+	}
+	return ""
+}
+
 type ProfileReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Uid           int64                  `protobuf:"varint,1,opt,name=uid,proto3" json:"uid,omitempty"`
@@ -331,6 +363,9 @@ type ProfileUser struct {
 	Username      string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
 	Nickname      string                 `protobuf:"bytes,3,opt,name=nickname,proto3" json:"nickname,omitempty"`
 	Avatar        string                 `protobuf:"bytes,4,opt,name=avatar,proto3" json:"avatar,omitempty"`
+	TenantId      int64                  `protobuf:"varint,5,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserType      UserType               `protobuf:"varint,6,opt,name=user_type,json=userType,proto3,enum=system.UserType" json:"user_type,omitempty"`
+	IsOwner       int64                  `protobuf:"varint,7,opt,name=is_owner,json=isOwner,proto3" json:"is_owner,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -391,6 +426,27 @@ func (x *ProfileUser) GetAvatar() string {
 		return x.Avatar
 	}
 	return ""
+}
+
+func (x *ProfileUser) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *ProfileUser) GetUserType() UserType {
+	if x != nil {
+		return x.UserType
+	}
+	return UserType_USER_TYPE_UNKNOWN
+}
+
+func (x *ProfileUser) GetIsOwner() int64 {
+	if x != nil {
+		return x.IsOwner
+	}
+	return 0
 }
 
 type SysMenuNode struct {
@@ -1175,6 +1231,15 @@ type SysUserItem struct {
 	RoleIds          []int64                `protobuf:"varint,5,rep,packed,name=role_ids,json=roleIds,proto3" json:"role_ids,omitempty"`
 	CreateTimes      int64                  `protobuf:"varint,6,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	Google2FaEnabled int64                  `protobuf:"varint,7,opt,name=google2fa_enabled,json=google2faEnabled,proto3" json:"google2fa_enabled,omitempty"`
+	TenantId         int64                  `protobuf:"varint,8,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserType         UserType               `protobuf:"varint,9,opt,name=user_type,json=userType,proto3,enum=system.UserType" json:"user_type,omitempty"`
+	IsOwner          int64                  `protobuf:"varint,10,opt,name=is_owner,json=isOwner,proto3" json:"is_owner,omitempty"`
+	Avatar           string                 `protobuf:"bytes,11,opt,name=avatar,proto3" json:"avatar,omitempty"`
+	PermsVer         int64                  `protobuf:"varint,12,opt,name=perms_ver,json=permsVer,proto3" json:"perms_ver,omitempty"`
+	LastLoginIp      string                 `protobuf:"bytes,13,opt,name=last_login_ip,json=lastLoginIp,proto3" json:"last_login_ip,omitempty"`
+	LastLoginAt      int64                  `protobuf:"varint,14,opt,name=last_login_at,json=lastLoginAt,proto3" json:"last_login_at,omitempty"`
+	CreateBy         int64                  `protobuf:"varint,15,opt,name=create_by,json=createBy,proto3" json:"create_by,omitempty"`
+	UpdateTimes      int64                  `protobuf:"varint,16,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -1254,6 +1319,69 @@ func (x *SysUserItem) GetCreateTimes() int64 {
 func (x *SysUserItem) GetGoogle2FaEnabled() int64 {
 	if x != nil {
 		return x.Google2FaEnabled
+	}
+	return 0
+}
+
+func (x *SysUserItem) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *SysUserItem) GetUserType() UserType {
+	if x != nil {
+		return x.UserType
+	}
+	return UserType_USER_TYPE_UNKNOWN
+}
+
+func (x *SysUserItem) GetIsOwner() int64 {
+	if x != nil {
+		return x.IsOwner
+	}
+	return 0
+}
+
+func (x *SysUserItem) GetAvatar() string {
+	if x != nil {
+		return x.Avatar
+	}
+	return ""
+}
+
+func (x *SysUserItem) GetPermsVer() int64 {
+	if x != nil {
+		return x.PermsVer
+	}
+	return 0
+}
+
+func (x *SysUserItem) GetLastLoginIp() string {
+	if x != nil {
+		return x.LastLoginIp
+	}
+	return ""
+}
+
+func (x *SysUserItem) GetLastLoginAt() int64 {
+	if x != nil {
+		return x.LastLoginAt
+	}
+	return 0
+}
+
+func (x *SysUserItem) GetCreateBy() int64 {
+	if x != nil {
+		return x.CreateBy
+	}
+	return 0
+}
+
+func (x *SysUserItem) GetUpdateTimes() int64 {
+	if x != nil {
+		return x.UpdateTimes
 	}
 	return 0
 }
@@ -1473,6 +1601,10 @@ type SysUserCreateReq struct {
 	Nickname      string                 `protobuf:"bytes,3,opt,name=nickname,proto3" json:"nickname,omitempty"`
 	Status        CommonStatus           `protobuf:"varint,4,opt,name=status,proto3,enum=system.CommonStatus" json:"status,omitempty"`
 	RoleIds       []int64                `protobuf:"varint,5,rep,packed,name=role_ids,json=roleIds,proto3" json:"role_ids,omitempty"`
+	TenantId      int64                  `protobuf:"varint,6,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserType      UserType               `protobuf:"varint,7,opt,name=user_type,json=userType,proto3,enum=system.UserType" json:"user_type,omitempty"`
+	IsOwner       int64                  `protobuf:"varint,8,opt,name=is_owner,json=isOwner,proto3" json:"is_owner,omitempty"`
+	Avatar        string                 `protobuf:"bytes,9,opt,name=avatar,proto3" json:"avatar,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1542,12 +1674,44 @@ func (x *SysUserCreateReq) GetRoleIds() []int64 {
 	return nil
 }
 
+func (x *SysUserCreateReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *SysUserCreateReq) GetUserType() UserType {
+	if x != nil {
+		return x.UserType
+	}
+	return UserType_USER_TYPE_UNKNOWN
+}
+
+func (x *SysUserCreateReq) GetIsOwner() int64 {
+	if x != nil {
+		return x.IsOwner
+	}
+	return 0
+}
+
+func (x *SysUserCreateReq) GetAvatar() string {
+	if x != nil {
+		return x.Avatar
+	}
+	return ""
+}
+
 type SysUserUpdateReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Nickname      string                 `protobuf:"bytes,2,opt,name=nickname,proto3" json:"nickname,omitempty"`
 	Status        CommonStatus           `protobuf:"varint,3,opt,name=status,proto3,enum=system.CommonStatus" json:"status,omitempty"`
 	RoleIds       []int64                `protobuf:"varint,4,rep,packed,name=role_ids,json=roleIds,proto3" json:"role_ids,omitempty"`
+	TenantId      int64                  `protobuf:"varint,5,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserType      UserType               `protobuf:"varint,6,opt,name=user_type,json=userType,proto3,enum=system.UserType" json:"user_type,omitempty"`
+	IsOwner       int64                  `protobuf:"varint,7,opt,name=is_owner,json=isOwner,proto3" json:"is_owner,omitempty"`
+	Avatar        string                 `protobuf:"bytes,8,opt,name=avatar,proto3" json:"avatar,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1608,6 +1772,34 @@ func (x *SysUserUpdateReq) GetRoleIds() []int64 {
 		return x.RoleIds
 	}
 	return nil
+}
+
+func (x *SysUserUpdateReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *SysUserUpdateReq) GetUserType() UserType {
+	if x != nil {
+		return x.UserType
+	}
+	return UserType_USER_TYPE_UNKNOWN
+}
+
+func (x *SysUserUpdateReq) GetIsOwner() int64 {
+	if x != nil {
+		return x.IsOwner
+	}
+	return 0
+}
+
+func (x *SysUserUpdateReq) GetAvatar() string {
+	if x != nil {
+		return x.Avatar
+	}
+	return ""
 }
 
 type SysUserDeleteReq struct {
@@ -1821,6 +2013,8 @@ type SysRoleItem struct {
 	Status        CommonStatus           `protobuf:"varint,4,opt,name=status,proto3,enum=system.CommonStatus" json:"status,omitempty"`
 	Remark        string                 `protobuf:"bytes,5,opt,name=remark,proto3" json:"remark,omitempty"`
 	CreateTimes   int64                  `protobuf:"varint,6,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
+	TenantId      int64                  `protobuf:"varint,7,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UpdateTimes   int64                  `protobuf:"varint,8,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1893,6 +2087,20 @@ func (x *SysRoleItem) GetRemark() string {
 func (x *SysRoleItem) GetCreateTimes() int64 {
 	if x != nil {
 		return x.CreateTimes
+	}
+	return 0
+}
+
+func (x *SysRoleItem) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *SysRoleItem) GetUpdateTimes() int64 {
+	if x != nil {
+		return x.UpdateTimes
 	}
 	return 0
 }
@@ -2015,6 +2223,7 @@ type SysRoleCreateReq struct {
 	Code          string                 `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
 	Status        CommonStatus           `protobuf:"varint,3,opt,name=status,proto3,enum=system.CommonStatus" json:"status,omitempty"`
 	Remark        string                 `protobuf:"bytes,4,opt,name=remark,proto3" json:"remark,omitempty"`
+	TenantId      int64                  `protobuf:"varint,5,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2077,12 +2286,21 @@ func (x *SysRoleCreateReq) GetRemark() string {
 	return ""
 }
 
+func (x *SysRoleCreateReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
 type SysRoleUpdateReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Status        CommonStatus           `protobuf:"varint,3,opt,name=status,proto3,enum=system.CommonStatus" json:"status,omitempty"`
 	Remark        string                 `protobuf:"bytes,4,opt,name=remark,proto3" json:"remark,omitempty"`
+	TenantId      int64                  `protobuf:"varint,5,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Code          string                 `protobuf:"bytes,6,opt,name=code,proto3" json:"code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2141,6 +2359,20 @@ func (x *SysRoleUpdateReq) GetStatus() CommonStatus {
 func (x *SysRoleUpdateReq) GetRemark() string {
 	if x != nil {
 		return x.Remark
+	}
+	return ""
+}
+
+func (x *SysRoleUpdateReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *SysRoleUpdateReq) GetCode() string {
+	if x != nil {
+		return x.Code
 	}
 	return ""
 }
@@ -4977,6 +5209,11 @@ type SysTenantItem struct {
 	Remark        string                 `protobuf:"bytes,8,opt,name=remark,proto3" json:"remark,omitempty"`
 	CreateTimes   int64                  `protobuf:"varint,9,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes   int64                  `protobuf:"varint,10,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	LoginIp       string                 `protobuf:"bytes,11,opt,name=login_ip,json=loginIp,proto3" json:"login_ip,omitempty"`
+	LoginTime     int64                  `protobuf:"varint,12,opt,name=login_time,json=loginTime,proto3" json:"login_time,omitempty"`
+	LoginCount    int64                  `protobuf:"varint,13,opt,name=login_count,json=loginCount,proto3" json:"login_count,omitempty"`
+	CreateBy      int64                  `protobuf:"varint,14,opt,name=create_by,json=createBy,proto3" json:"create_by,omitempty"`
+	UpdateBy      int64                  `protobuf:"varint,15,opt,name=update_by,json=updateBy,proto3" json:"update_by,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5077,6 +5314,41 @@ func (x *SysTenantItem) GetCreateTimes() int64 {
 func (x *SysTenantItem) GetUpdateTimes() int64 {
 	if x != nil {
 		return x.UpdateTimes
+	}
+	return 0
+}
+
+func (x *SysTenantItem) GetLoginIp() string {
+	if x != nil {
+		return x.LoginIp
+	}
+	return ""
+}
+
+func (x *SysTenantItem) GetLoginTime() int64 {
+	if x != nil {
+		return x.LoginTime
+	}
+	return 0
+}
+
+func (x *SysTenantItem) GetLoginCount() int64 {
+	if x != nil {
+		return x.LoginCount
+	}
+	return 0
+}
+
+func (x *SysTenantItem) GetCreateBy() int64 {
+	if x != nil {
+		return x.CreateBy
+	}
+	return 0
+}
+
+func (x *SysTenantItem) GetUpdateBy() int64 {
+	if x != nil {
+		return x.UpdateBy
 	}
 	return 0
 }
@@ -5571,7 +5843,7 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\vgoogle_code\x18\x03 \x01(\tR\n" +
 	"googleCode\x12\x0e\n" +
 	"\x02ip\x18\x04 \x01(\tR\x02ip\x12\x0e\n" +
-	"\x02ua\x18\x05 \x01(\tR\x02ua\"\xf1\x01\n" +
+	"\x02ua\x18\x05 \x01(\tR\x02ua\"\xf0\x02\n" +
 	"\x0eAdminLoginResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x14\n" +
 	"\x05token\x18\x03 \x01(\tR\x05token\x12\x10\n" +
@@ -5580,15 +5852,23 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\bnickname\x18\x06 \x01(\tR\bnickname\x12\x19\n" +
 	"\brole_ids\x18\a \x03(\x03R\aroleIds\x12+\n" +
 	"\x11google2fa_enabled\x18\b \x01(\x03R\x10google2faEnabled\x12\x1b\n" +
-	"\tperms_ver\x18\t \x01(\x03R\bpermsVer\"\x1e\n" +
+	"\tperms_ver\x18\t \x01(\x03R\bpermsVer\x12\x1b\n" +
+	"\ttenant_id\x18\n" +
+	" \x01(\x03R\btenantId\x12-\n" +
+	"\tuser_type\x18\v \x01(\x0e2\x10.system.UserTypeR\buserType\x12\x19\n" +
+	"\bis_owner\x18\f \x01(\x03R\aisOwner\x12\x16\n" +
+	"\x06avatar\x18\r \x01(\tR\x06avatar\"\x1e\n" +
 	"\n" +
 	"ProfileReq\x12\x10\n" +
-	"\x03uid\x18\x01 \x01(\x03R\x03uid\"m\n" +
+	"\x03uid\x18\x01 \x01(\x03R\x03uid\"\xd4\x01\n" +
 	"\vProfileUser\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x12\x1a\n" +
 	"\bnickname\x18\x03 \x01(\tR\bnickname\x12\x16\n" +
-	"\x06avatar\x18\x04 \x01(\tR\x06avatar\"\xfd\x02\n" +
+	"\x06avatar\x18\x04 \x01(\tR\x06avatar\x12\x1b\n" +
+	"\ttenant_id\x18\x05 \x01(\x03R\btenantId\x12-\n" +
+	"\tuser_type\x18\x06 \x01(\x0e2\x10.system.UserTypeR\buserType\x12\x19\n" +
+	"\bis_owner\x18\a \x01(\x03R\aisOwner\"\xfd\x02\n" +
 	"\vSysMenuNode\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
@@ -5651,7 +5931,7 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\",\n" +
 	"\x11Google2FAResetReq\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"\xee\x01\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"\x92\x04\n" +
 	"\vSysUserItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x12\x1a\n" +
@@ -5659,7 +5939,17 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x06status\x18\x04 \x01(\x0e2\x14.system.CommonStatusR\x06status\x12\x19\n" +
 	"\brole_ids\x18\x05 \x03(\x03R\aroleIds\x12!\n" +
 	"\fcreate_times\x18\x06 \x01(\x03R\vcreateTimes\x12+\n" +
-	"\x11google2fa_enabled\x18\a \x01(\x03R\x10google2faEnabled\"}\n" +
+	"\x11google2fa_enabled\x18\a \x01(\x03R\x10google2faEnabled\x12\x1b\n" +
+	"\ttenant_id\x18\b \x01(\x03R\btenantId\x12-\n" +
+	"\tuser_type\x18\t \x01(\x0e2\x10.system.UserTypeR\buserType\x12\x19\n" +
+	"\bis_owner\x18\n" +
+	" \x01(\x03R\aisOwner\x12\x16\n" +
+	"\x06avatar\x18\v \x01(\tR\x06avatar\x12\x1b\n" +
+	"\tperms_ver\x18\f \x01(\x03R\bpermsVer\x12\"\n" +
+	"\rlast_login_ip\x18\r \x01(\tR\vlastLoginIp\x12\"\n" +
+	"\rlast_login_at\x18\x0e \x01(\x03R\vlastLoginAt\x12\x1b\n" +
+	"\tcreate_by\x18\x0f \x01(\x03R\bcreateBy\x12!\n" +
+	"\fupdate_times\x18\x10 \x01(\x03R\vupdateTimes\"}\n" +
 	"\x0eSysUserListReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x18\n" +
 	"\akeyword\x18\x02 \x01(\tR\akeyword\x12,\n" +
@@ -5671,18 +5961,26 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"b\n" +
 	"\x11SysUserDetailResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
-	"\x04data\x18\x03 \x01(\v2\x13.system.SysUserItemR\x04data\"\xaf\x01\n" +
+	"\x04data\x18\x03 \x01(\v2\x13.system.SysUserItemR\x04data\"\xae\x02\n" +
 	"\x10SysUserCreateReq\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1a\n" +
 	"\bnickname\x18\x03 \x01(\tR\bnickname\x12,\n" +
 	"\x06status\x18\x04 \x01(\x0e2\x14.system.CommonStatusR\x06status\x12\x19\n" +
-	"\brole_ids\x18\x05 \x03(\x03R\aroleIds\"\x87\x01\n" +
+	"\brole_ids\x18\x05 \x03(\x03R\aroleIds\x12\x1b\n" +
+	"\ttenant_id\x18\x06 \x01(\x03R\btenantId\x12-\n" +
+	"\tuser_type\x18\a \x01(\x0e2\x10.system.UserTypeR\buserType\x12\x19\n" +
+	"\bis_owner\x18\b \x01(\x03R\aisOwner\x12\x16\n" +
+	"\x06avatar\x18\t \x01(\tR\x06avatar\"\x86\x02\n" +
 	"\x10SysUserUpdateReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1a\n" +
 	"\bnickname\x18\x02 \x01(\tR\bnickname\x12,\n" +
 	"\x06status\x18\x03 \x01(\x0e2\x14.system.CommonStatusR\x06status\x12\x19\n" +
-	"\brole_ids\x18\x04 \x03(\x03R\aroleIds\"\"\n" +
+	"\brole_ids\x18\x04 \x03(\x03R\aroleIds\x12\x1b\n" +
+	"\ttenant_id\x18\x05 \x01(\x03R\btenantId\x12-\n" +
+	"\tuser_type\x18\x06 \x01(\x0e2\x10.system.UserTypeR\buserType\x12\x19\n" +
+	"\bis_owner\x18\a \x01(\x03R\aisOwner\x12\x16\n" +
+	"\x06avatar\x18\b \x01(\tR\x06avatar\"\"\n" +
 	"\x10SysUserDeleteReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"S\n" +
 	"\x13ChangeUserStatusReq\x12\x0e\n" +
@@ -5693,31 +5991,36 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"H\n" +
 	"\x12AssignUserRolesReq\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x19\n" +
-	"\brole_ids\x18\x02 \x03(\x03R\aroleIds\"\xae\x01\n" +
+	"\brole_ids\x18\x02 \x03(\x03R\aroleIds\"\xee\x01\n" +
 	"\vSysRoleItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
 	"\x04code\x18\x03 \x01(\tR\x04code\x12,\n" +
 	"\x06status\x18\x04 \x01(\x0e2\x14.system.CommonStatusR\x06status\x12\x16\n" +
 	"\x06remark\x18\x05 \x01(\tR\x06remark\x12!\n" +
-	"\fcreate_times\x18\x06 \x01(\x03R\vcreateTimes\"}\n" +
+	"\fcreate_times\x18\x06 \x01(\x03R\vcreateTimes\x12\x1b\n" +
+	"\ttenant_id\x18\a \x01(\x03R\btenantId\x12!\n" +
+	"\fupdate_times\x18\b \x01(\x03R\vupdateTimes\"}\n" +
 	"\x0eSysRoleListReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x18\n" +
 	"\akeyword\x18\x02 \x01(\tR\akeyword\x12,\n" +
 	"\x06status\x18\x03 \x01(\x0e2\x14.system.CommonStatusR\x06status\"`\n" +
 	"\x0fSysRoleListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
-	"\x04data\x18\x04 \x03(\v2\x13.system.SysRoleItemR\x04data\"\x80\x01\n" +
+	"\x04data\x18\x04 \x03(\v2\x13.system.SysRoleItemR\x04data\"\x9d\x01\n" +
 	"\x10SysRoleCreateReq\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\x12,\n" +
 	"\x06status\x18\x03 \x01(\x0e2\x14.system.CommonStatusR\x06status\x12\x16\n" +
-	"\x06remark\x18\x04 \x01(\tR\x06remark\"|\n" +
+	"\x06remark\x18\x04 \x01(\tR\x06remark\x12\x1b\n" +
+	"\ttenant_id\x18\x05 \x01(\x03R\btenantId\"\xad\x01\n" +
 	"\x10SysRoleUpdateReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12,\n" +
 	"\x06status\x18\x03 \x01(\x0e2\x14.system.CommonStatusR\x06status\x12\x16\n" +
-	"\x06remark\x18\x04 \x01(\tR\x06remark\"\"\n" +
+	"\x06remark\x18\x04 \x01(\tR\x06remark\x12\x1b\n" +
+	"\ttenant_id\x18\x05 \x01(\x03R\btenantId\x12\x12\n" +
+	"\x04code\x18\x06 \x01(\tR\x04code\"\"\n" +
 	"\x10SysRoleDeleteReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"E\n" +
 	"\x0fSysRoleGrantReq\x12\x17\n" +
@@ -5931,7 +6234,7 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x04data\x18\x03 \x03(\v2\x18.system.SysCronJobHanderR\x04data\"l\n" +
 	"\x15SysCronJobLogListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x04 \x03(\v2\x19.system.SysCronJobLogItemR\x04data\"\xd6\x02\n" +
+	"\x04data\x18\x04 \x03(\v2\x19.system.SysCronJobLogItemR\x04data\"\xeb\x03\n" +
 	"\rSysTenantItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vtenant_code\x18\x02 \x01(\tR\n" +
@@ -5946,7 +6249,14 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x06remark\x18\b \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\t \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\n" +
-	" \x01(\x03R\vupdateTimes\"\x89\x02\n" +
+	" \x01(\x03R\vupdateTimes\x12\x19\n" +
+	"\blogin_ip\x18\v \x01(\tR\aloginIp\x12\x1d\n" +
+	"\n" +
+	"login_time\x18\f \x01(\x03R\tloginTime\x12\x1f\n" +
+	"\vlogin_count\x18\r \x01(\x03R\n" +
+	"loginCount\x12\x1b\n" +
+	"\tcreate_by\x18\x0e \x01(\x03R\bcreateBy\x12\x1b\n" +
+	"\tupdate_by\x18\x0f \x01(\x03R\bupdateBy\"\x89\x02\n" +
 	"\x10SysTenantListReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x18\n" +
 	"\akeyword\x18\x02 \x01(\tR\akeyword\x12,\n" +
@@ -6147,209 +6457,215 @@ var file_proto_system_system_proto_goTypes = []any{
 	(*SysTenantDetailReq)(nil),     // 82: system.SysTenantDetailReq
 	(*SysTenantDetailResp)(nil),    // 83: system.SysTenantDetailResp
 	(*common.RespBase)(nil),        // 84: common.RespBase
-	(MenuType)(0),                  // 85: system.MenuType
-	(VisibleStatus)(0),             // 86: system.VisibleStatus
-	(CommonStatus)(0),              // 87: system.CommonStatus
-	(RequestMethod)(0),             // 88: system.RequestMethod
-	(*common.PageReq)(nil),         // 89: common.PageReq
-	(SysConfigType)(0),             // 90: system.SysConfigType
-	(JobStatus)(0),                 // 91: system.JobStatus
+	(UserType)(0),                  // 85: system.UserType
+	(MenuType)(0),                  // 86: system.MenuType
+	(VisibleStatus)(0),             // 87: system.VisibleStatus
+	(CommonStatus)(0),              // 88: system.CommonStatus
+	(RequestMethod)(0),             // 89: system.RequestMethod
+	(*common.PageReq)(nil),         // 90: common.PageReq
+	(SysConfigType)(0),             // 91: system.SysConfigType
+	(JobStatus)(0),                 // 92: system.JobStatus
 }
 var file_proto_system_system_proto_depIdxs = []int32{
 	84,  // 0: system.RespBase.base:type_name -> common.RespBase
 	84,  // 1: system.AdminLoginResp.base:type_name -> common.RespBase
-	85,  // 2: system.SysMenuNode.menu_type:type_name -> system.MenuType
-	86,  // 3: system.SysMenuNode.visible:type_name -> system.VisibleStatus
-	87,  // 4: system.SysMenuNode.status:type_name -> system.CommonStatus
-	6,   // 5: system.SysMenuNode.children:type_name -> system.SysMenuNode
-	5,   // 6: system.ProfileResp.user:type_name -> system.ProfileUser
-	6,   // 7: system.ProfileResp.menus:type_name -> system.SysMenuNode
-	85,  // 8: system.SysMenuItem.menu_type:type_name -> system.MenuType
-	88,  // 9: system.SysMenuItem.method:type_name -> system.RequestMethod
-	86,  // 10: system.SysMenuItem.visible:type_name -> system.VisibleStatus
-	87,  // 11: system.SysMenuItem.status:type_name -> system.CommonStatus
-	84,  // 12: system.SysMenuTreeResp.base:type_name -> common.RespBase
-	9,   // 13: system.SysMenuTreeResp.data:type_name -> system.SysMenuItem
-	84,  // 14: system.Google2FAInitResp.base:type_name -> common.RespBase
-	87,  // 15: system.SysUserItem.status:type_name -> system.CommonStatus
-	89,  // 16: system.SysUserListReq.page:type_name -> common.PageReq
-	87,  // 17: system.SysUserListReq.status:type_name -> system.CommonStatus
-	84,  // 18: system.SysUserListResp.base:type_name -> common.RespBase
-	17,  // 19: system.SysUserListResp.data:type_name -> system.SysUserItem
-	84,  // 20: system.SysUserDetailResp.base:type_name -> common.RespBase
-	17,  // 21: system.SysUserDetailResp.data:type_name -> system.SysUserItem
-	87,  // 22: system.SysUserCreateReq.status:type_name -> system.CommonStatus
-	87,  // 23: system.SysUserUpdateReq.status:type_name -> system.CommonStatus
-	87,  // 24: system.ChangeUserStatusReq.status:type_name -> system.CommonStatus
-	87,  // 25: system.SysRoleItem.status:type_name -> system.CommonStatus
-	89,  // 26: system.SysRoleListReq.page:type_name -> common.PageReq
-	87,  // 27: system.SysRoleListReq.status:type_name -> system.CommonStatus
-	84,  // 28: system.SysRoleListResp.base:type_name -> common.RespBase
-	28,  // 29: system.SysRoleListResp.data:type_name -> system.SysRoleItem
-	87,  // 30: system.SysRoleCreateReq.status:type_name -> system.CommonStatus
-	87,  // 31: system.SysRoleUpdateReq.status:type_name -> system.CommonStatus
-	84,  // 32: system.SysRoleGrantDetailResp.base:type_name -> common.RespBase
-	88,  // 33: system.SysPermItem.method:type_name -> system.RequestMethod
-	84,  // 34: system.SysPermListResp.base:type_name -> common.RespBase
-	37,  // 35: system.SysPermListResp.data:type_name -> system.SysPermItem
-	85,  // 36: system.SysMenuCreateReq.menu_type:type_name -> system.MenuType
-	88,  // 37: system.SysMenuCreateReq.method:type_name -> system.RequestMethod
-	86,  // 38: system.SysMenuCreateReq.visible:type_name -> system.VisibleStatus
-	87,  // 39: system.SysMenuCreateReq.status:type_name -> system.CommonStatus
-	85,  // 40: system.SysMenuUpdateReq.menu_type:type_name -> system.MenuType
-	88,  // 41: system.SysMenuUpdateReq.method:type_name -> system.RequestMethod
-	86,  // 42: system.SysMenuUpdateReq.visible:type_name -> system.VisibleStatus
-	87,  // 43: system.SysMenuUpdateReq.status:type_name -> system.CommonStatus
-	89,  // 44: system.SysMenuListReq.page:type_name -> common.PageReq
-	85,  // 45: system.SysMenuListReq.menu_type:type_name -> system.MenuType
-	87,  // 46: system.SysMenuListReq.status:type_name -> system.CommonStatus
-	86,  // 47: system.SysMenuListReq.visible:type_name -> system.VisibleStatus
-	84,  // 48: system.SysMenuListResp.base:type_name -> common.RespBase
-	9,   // 49: system.SysMenuListResp.data:type_name -> system.SysMenuItem
-	89,  // 50: system.LoginLogListReq.page:type_name -> common.PageReq
-	84,  // 51: system.LoginLogListResp.base:type_name -> common.RespBase
-	44,  // 52: system.LoginLogListResp.data:type_name -> system.LoginLogItem
-	88,  // 53: system.OpLogItem.method:type_name -> system.RequestMethod
-	89,  // 54: system.OpLogListReq.page:type_name -> common.PageReq
-	88,  // 55: system.OpLogListReq.method:type_name -> system.RequestMethod
-	84,  // 56: system.OpLogListResp.base:type_name -> common.RespBase
-	47,  // 57: system.OpLogListResp.data:type_name -> system.OpLogItem
-	89,  // 58: system.SysConfigListReq.page:type_name -> common.PageReq
-	84,  // 59: system.SysConfigListResp.base:type_name -> common.RespBase
-	53,  // 60: system.SysConfigListResp.data:type_name -> system.SysConfigItem
-	90,  // 61: system.SysConfigDetailReq.config_key:type_name -> system.SysConfigType
-	84,  // 62: system.SysConfigDetailResp.base:type_name -> common.RespBase
-	53,  // 63: system.SysConfigDetailResp.data:type_name -> system.SysConfigItem
-	84,  // 64: system.SysConfigByKeysResp.base:type_name -> common.RespBase
-	53,  // 65: system.SysConfigByKeysResp.data:type_name -> system.SysConfigItem
-	91,  // 66: system.SysCronJobItem.status:type_name -> system.JobStatus
-	89,  // 67: system.SysCronJobListReq.page:type_name -> common.PageReq
-	91,  // 68: system.SysCronJobListReq.status:type_name -> system.JobStatus
-	84,  // 69: system.SysCronJobListResp.base:type_name -> common.RespBase
-	62,  // 70: system.SysCronJobListResp.data:type_name -> system.SysCronJobItem
-	91,  // 71: system.SysCronJobCreateReq.status:type_name -> system.JobStatus
-	91,  // 72: system.SysCronJobUpdateReq.status:type_name -> system.JobStatus
-	89,  // 73: system.SysCronJobLogListReq.page:type_name -> common.PageReq
-	84,  // 74: system.SysCronJobHandlersResp.base:type_name -> common.RespBase
-	73,  // 75: system.SysCronJobHandlersResp.data:type_name -> system.SysCronJobHander
-	84,  // 76: system.SysCronJobLogListResp.base:type_name -> common.RespBase
-	71,  // 77: system.SysCronJobLogListResp.data:type_name -> system.SysCronJobLogItem
-	87,  // 78: system.SysTenantItem.status:type_name -> system.CommonStatus
-	89,  // 79: system.SysTenantListReq.page:type_name -> common.PageReq
-	87,  // 80: system.SysTenantListReq.status:type_name -> system.CommonStatus
-	84,  // 81: system.SysTenantListResp.base:type_name -> common.RespBase
-	76,  // 82: system.SysTenantListResp.data:type_name -> system.SysTenantItem
-	87,  // 83: system.SysTenantCreateReq.status:type_name -> system.CommonStatus
-	87,  // 84: system.SysTenantUpdateReq.status:type_name -> system.CommonStatus
-	84,  // 85: system.SysTenantDetailResp.base:type_name -> common.RespBase
-	76,  // 86: system.SysTenantDetailResp.data:type_name -> system.SysTenantItem
-	2,   // 87: system.System.AdminLogin:input_type -> system.AdminLoginReq
-	4,   // 88: system.System.GetProfile:input_type -> system.ProfileReq
-	8,   // 89: system.System.UpdateProfile:input_type -> system.UpdateProfileReq
-	11,  // 90: system.System.Google2FAInit:input_type -> system.Google2FAInitReq
-	13,  // 91: system.System.Google2FABind:input_type -> system.Google2FABindReq
-	14,  // 92: system.System.Google2FAEnable:input_type -> system.Google2FAEnableReq
-	15,  // 93: system.System.Google2FADisable:input_type -> system.Google2FADisableReq
-	16,  // 94: system.System.Google2FAReset:input_type -> system.Google2FAResetReq
-	18,  // 95: system.System.SysUserList:input_type -> system.SysUserListReq
-	20,  // 96: system.System.SysUserDetail:input_type -> system.SysUserDetailReq
-	22,  // 97: system.System.SysUserCreate:input_type -> system.SysUserCreateReq
-	23,  // 98: system.System.SysUserUpdate:input_type -> system.SysUserUpdateReq
-	24,  // 99: system.System.SysUserDelete:input_type -> system.SysUserDeleteReq
-	25,  // 100: system.System.ChangeUserStatus:input_type -> system.ChangeUserStatusReq
-	26,  // 101: system.System.ResetUserPwd:input_type -> system.ResetUserPwdReq
-	27,  // 102: system.System.AssignUserRoles:input_type -> system.AssignUserRolesReq
-	29,  // 103: system.System.SysRoleList:input_type -> system.SysRoleListReq
-	31,  // 104: system.System.SysRoleCreate:input_type -> system.SysRoleCreateReq
-	32,  // 105: system.System.SysRoleUpdate:input_type -> system.SysRoleUpdateReq
-	33,  // 106: system.System.SysRoleDelete:input_type -> system.SysRoleDeleteReq
-	34,  // 107: system.System.SysRoleGrant:input_type -> system.SysRoleGrantReq
-	35,  // 108: system.System.SysRoleGrantDetail:input_type -> system.SysRoleGrantDetailReq
-	0,   // 109: system.System.SysPermList:input_type -> system.Empty
-	0,   // 110: system.System.GetMenuTree:input_type -> system.Empty
-	39,  // 111: system.System.SysMenuCreate:input_type -> system.SysMenuCreateReq
-	40,  // 112: system.System.SysMenuUpdate:input_type -> system.SysMenuUpdateReq
-	41,  // 113: system.System.SysMenuDelete:input_type -> system.SysMenuDeleteReq
-	42,  // 114: system.System.SysMenuList:input_type -> system.SysMenuListReq
-	45,  // 115: system.System.LoginLogList:input_type -> system.LoginLogListReq
-	48,  // 116: system.System.OpLogList:input_type -> system.OpLogListReq
-	50,  // 117: system.System.SysConfigCreate:input_type -> system.SysConfigCreateReq
-	51,  // 118: system.System.SysConfigUpdate:input_type -> system.SysConfigUpdateReq
-	52,  // 119: system.System.SysConfigDelete:input_type -> system.SysConfigDeleteReq
-	54,  // 120: system.System.SysConfigList:input_type -> system.SysConfigListReq
-	56,  // 121: system.System.SysConfigDetail:input_type -> system.SysConfigDetailReq
-	58,  // 122: system.System.SysConfigByKeys:input_type -> system.SysConfigByKeysReq
-	60,  // 123: system.System.LoginUserPerms:input_type -> system.LoginUserPermsReq
-	63,  // 124: system.System.SysCronJobList:input_type -> system.SysCronJobListReq
-	65,  // 125: system.System.SysCronJobCreate:input_type -> system.SysCronJobCreateReq
-	66,  // 126: system.System.SysCronJobUpdate:input_type -> system.SysCronJobUpdateReq
-	67,  // 127: system.System.SysCronJobDelete:input_type -> system.SysCronJobDeleteReq
-	68,  // 128: system.System.SysCronJobRun:input_type -> system.SysCronJobRunReq
-	69,  // 129: system.System.SysCronJobStart:input_type -> system.SysCronJobStartReq
-	70,  // 130: system.System.SysCronJobStop:input_type -> system.SysCronJobStopReq
-	0,   // 131: system.System.SysCronJobHandlers:input_type -> system.Empty
-	72,  // 132: system.System.SysCronJobLogList:input_type -> system.SysCronJobLogListReq
-	79,  // 133: system.System.SysTenantCreate:input_type -> system.SysTenantCreateReq
-	80,  // 134: system.System.SysTenantUpdate:input_type -> system.SysTenantUpdateReq
-	81,  // 135: system.System.SysTenantDelete:input_type -> system.SysTenantDeleteReq
-	77,  // 136: system.System.SysTenantList:input_type -> system.SysTenantListReq
-	82,  // 137: system.System.SysTenantDetail:input_type -> system.SysTenantDetailReq
-	3,   // 138: system.System.AdminLogin:output_type -> system.AdminLoginResp
-	7,   // 139: system.System.GetProfile:output_type -> system.ProfileResp
-	1,   // 140: system.System.UpdateProfile:output_type -> system.RespBase
-	12,  // 141: system.System.Google2FAInit:output_type -> system.Google2FAInitResp
-	1,   // 142: system.System.Google2FABind:output_type -> system.RespBase
-	1,   // 143: system.System.Google2FAEnable:output_type -> system.RespBase
-	1,   // 144: system.System.Google2FADisable:output_type -> system.RespBase
-	1,   // 145: system.System.Google2FAReset:output_type -> system.RespBase
-	19,  // 146: system.System.SysUserList:output_type -> system.SysUserListResp
-	21,  // 147: system.System.SysUserDetail:output_type -> system.SysUserDetailResp
-	1,   // 148: system.System.SysUserCreate:output_type -> system.RespBase
-	1,   // 149: system.System.SysUserUpdate:output_type -> system.RespBase
-	1,   // 150: system.System.SysUserDelete:output_type -> system.RespBase
-	1,   // 151: system.System.ChangeUserStatus:output_type -> system.RespBase
-	1,   // 152: system.System.ResetUserPwd:output_type -> system.RespBase
-	1,   // 153: system.System.AssignUserRoles:output_type -> system.RespBase
-	30,  // 154: system.System.SysRoleList:output_type -> system.SysRoleListResp
-	1,   // 155: system.System.SysRoleCreate:output_type -> system.RespBase
-	1,   // 156: system.System.SysRoleUpdate:output_type -> system.RespBase
-	1,   // 157: system.System.SysRoleDelete:output_type -> system.RespBase
-	1,   // 158: system.System.SysRoleGrant:output_type -> system.RespBase
-	36,  // 159: system.System.SysRoleGrantDetail:output_type -> system.SysRoleGrantDetailResp
-	38,  // 160: system.System.SysPermList:output_type -> system.SysPermListResp
-	10,  // 161: system.System.GetMenuTree:output_type -> system.SysMenuTreeResp
-	1,   // 162: system.System.SysMenuCreate:output_type -> system.RespBase
-	1,   // 163: system.System.SysMenuUpdate:output_type -> system.RespBase
-	1,   // 164: system.System.SysMenuDelete:output_type -> system.RespBase
-	43,  // 165: system.System.SysMenuList:output_type -> system.SysMenuListResp
-	46,  // 166: system.System.LoginLogList:output_type -> system.LoginLogListResp
-	49,  // 167: system.System.OpLogList:output_type -> system.OpLogListResp
-	1,   // 168: system.System.SysConfigCreate:output_type -> system.RespBase
-	1,   // 169: system.System.SysConfigUpdate:output_type -> system.RespBase
-	1,   // 170: system.System.SysConfigDelete:output_type -> system.RespBase
-	55,  // 171: system.System.SysConfigList:output_type -> system.SysConfigListResp
-	57,  // 172: system.System.SysConfigDetail:output_type -> system.SysConfigDetailResp
-	59,  // 173: system.System.SysConfigByKeys:output_type -> system.SysConfigByKeysResp
-	61,  // 174: system.System.LoginUserPerms:output_type -> system.LoginUserPermsResp
-	64,  // 175: system.System.SysCronJobList:output_type -> system.SysCronJobListResp
-	1,   // 176: system.System.SysCronJobCreate:output_type -> system.RespBase
-	1,   // 177: system.System.SysCronJobUpdate:output_type -> system.RespBase
-	1,   // 178: system.System.SysCronJobDelete:output_type -> system.RespBase
-	1,   // 179: system.System.SysCronJobRun:output_type -> system.RespBase
-	1,   // 180: system.System.SysCronJobStart:output_type -> system.RespBase
-	1,   // 181: system.System.SysCronJobStop:output_type -> system.RespBase
-	74,  // 182: system.System.SysCronJobHandlers:output_type -> system.SysCronJobHandlersResp
-	75,  // 183: system.System.SysCronJobLogList:output_type -> system.SysCronJobLogListResp
-	1,   // 184: system.System.SysTenantCreate:output_type -> system.RespBase
-	1,   // 185: system.System.SysTenantUpdate:output_type -> system.RespBase
-	1,   // 186: system.System.SysTenantDelete:output_type -> system.RespBase
-	78,  // 187: system.System.SysTenantList:output_type -> system.SysTenantListResp
-	83,  // 188: system.System.SysTenantDetail:output_type -> system.SysTenantDetailResp
-	138, // [138:189] is the sub-list for method output_type
-	87,  // [87:138] is the sub-list for method input_type
-	87,  // [87:87] is the sub-list for extension type_name
-	87,  // [87:87] is the sub-list for extension extendee
-	0,   // [0:87] is the sub-list for field type_name
+	85,  // 2: system.AdminLoginResp.user_type:type_name -> system.UserType
+	85,  // 3: system.ProfileUser.user_type:type_name -> system.UserType
+	86,  // 4: system.SysMenuNode.menu_type:type_name -> system.MenuType
+	87,  // 5: system.SysMenuNode.visible:type_name -> system.VisibleStatus
+	88,  // 6: system.SysMenuNode.status:type_name -> system.CommonStatus
+	6,   // 7: system.SysMenuNode.children:type_name -> system.SysMenuNode
+	5,   // 8: system.ProfileResp.user:type_name -> system.ProfileUser
+	6,   // 9: system.ProfileResp.menus:type_name -> system.SysMenuNode
+	86,  // 10: system.SysMenuItem.menu_type:type_name -> system.MenuType
+	89,  // 11: system.SysMenuItem.method:type_name -> system.RequestMethod
+	87,  // 12: system.SysMenuItem.visible:type_name -> system.VisibleStatus
+	88,  // 13: system.SysMenuItem.status:type_name -> system.CommonStatus
+	84,  // 14: system.SysMenuTreeResp.base:type_name -> common.RespBase
+	9,   // 15: system.SysMenuTreeResp.data:type_name -> system.SysMenuItem
+	84,  // 16: system.Google2FAInitResp.base:type_name -> common.RespBase
+	88,  // 17: system.SysUserItem.status:type_name -> system.CommonStatus
+	85,  // 18: system.SysUserItem.user_type:type_name -> system.UserType
+	90,  // 19: system.SysUserListReq.page:type_name -> common.PageReq
+	88,  // 20: system.SysUserListReq.status:type_name -> system.CommonStatus
+	84,  // 21: system.SysUserListResp.base:type_name -> common.RespBase
+	17,  // 22: system.SysUserListResp.data:type_name -> system.SysUserItem
+	84,  // 23: system.SysUserDetailResp.base:type_name -> common.RespBase
+	17,  // 24: system.SysUserDetailResp.data:type_name -> system.SysUserItem
+	88,  // 25: system.SysUserCreateReq.status:type_name -> system.CommonStatus
+	85,  // 26: system.SysUserCreateReq.user_type:type_name -> system.UserType
+	88,  // 27: system.SysUserUpdateReq.status:type_name -> system.CommonStatus
+	85,  // 28: system.SysUserUpdateReq.user_type:type_name -> system.UserType
+	88,  // 29: system.ChangeUserStatusReq.status:type_name -> system.CommonStatus
+	88,  // 30: system.SysRoleItem.status:type_name -> system.CommonStatus
+	90,  // 31: system.SysRoleListReq.page:type_name -> common.PageReq
+	88,  // 32: system.SysRoleListReq.status:type_name -> system.CommonStatus
+	84,  // 33: system.SysRoleListResp.base:type_name -> common.RespBase
+	28,  // 34: system.SysRoleListResp.data:type_name -> system.SysRoleItem
+	88,  // 35: system.SysRoleCreateReq.status:type_name -> system.CommonStatus
+	88,  // 36: system.SysRoleUpdateReq.status:type_name -> system.CommonStatus
+	84,  // 37: system.SysRoleGrantDetailResp.base:type_name -> common.RespBase
+	89,  // 38: system.SysPermItem.method:type_name -> system.RequestMethod
+	84,  // 39: system.SysPermListResp.base:type_name -> common.RespBase
+	37,  // 40: system.SysPermListResp.data:type_name -> system.SysPermItem
+	86,  // 41: system.SysMenuCreateReq.menu_type:type_name -> system.MenuType
+	89,  // 42: system.SysMenuCreateReq.method:type_name -> system.RequestMethod
+	87,  // 43: system.SysMenuCreateReq.visible:type_name -> system.VisibleStatus
+	88,  // 44: system.SysMenuCreateReq.status:type_name -> system.CommonStatus
+	86,  // 45: system.SysMenuUpdateReq.menu_type:type_name -> system.MenuType
+	89,  // 46: system.SysMenuUpdateReq.method:type_name -> system.RequestMethod
+	87,  // 47: system.SysMenuUpdateReq.visible:type_name -> system.VisibleStatus
+	88,  // 48: system.SysMenuUpdateReq.status:type_name -> system.CommonStatus
+	90,  // 49: system.SysMenuListReq.page:type_name -> common.PageReq
+	86,  // 50: system.SysMenuListReq.menu_type:type_name -> system.MenuType
+	88,  // 51: system.SysMenuListReq.status:type_name -> system.CommonStatus
+	87,  // 52: system.SysMenuListReq.visible:type_name -> system.VisibleStatus
+	84,  // 53: system.SysMenuListResp.base:type_name -> common.RespBase
+	9,   // 54: system.SysMenuListResp.data:type_name -> system.SysMenuItem
+	90,  // 55: system.LoginLogListReq.page:type_name -> common.PageReq
+	84,  // 56: system.LoginLogListResp.base:type_name -> common.RespBase
+	44,  // 57: system.LoginLogListResp.data:type_name -> system.LoginLogItem
+	89,  // 58: system.OpLogItem.method:type_name -> system.RequestMethod
+	90,  // 59: system.OpLogListReq.page:type_name -> common.PageReq
+	89,  // 60: system.OpLogListReq.method:type_name -> system.RequestMethod
+	84,  // 61: system.OpLogListResp.base:type_name -> common.RespBase
+	47,  // 62: system.OpLogListResp.data:type_name -> system.OpLogItem
+	90,  // 63: system.SysConfigListReq.page:type_name -> common.PageReq
+	84,  // 64: system.SysConfigListResp.base:type_name -> common.RespBase
+	53,  // 65: system.SysConfigListResp.data:type_name -> system.SysConfigItem
+	91,  // 66: system.SysConfigDetailReq.config_key:type_name -> system.SysConfigType
+	84,  // 67: system.SysConfigDetailResp.base:type_name -> common.RespBase
+	53,  // 68: system.SysConfigDetailResp.data:type_name -> system.SysConfigItem
+	84,  // 69: system.SysConfigByKeysResp.base:type_name -> common.RespBase
+	53,  // 70: system.SysConfigByKeysResp.data:type_name -> system.SysConfigItem
+	92,  // 71: system.SysCronJobItem.status:type_name -> system.JobStatus
+	90,  // 72: system.SysCronJobListReq.page:type_name -> common.PageReq
+	92,  // 73: system.SysCronJobListReq.status:type_name -> system.JobStatus
+	84,  // 74: system.SysCronJobListResp.base:type_name -> common.RespBase
+	62,  // 75: system.SysCronJobListResp.data:type_name -> system.SysCronJobItem
+	92,  // 76: system.SysCronJobCreateReq.status:type_name -> system.JobStatus
+	92,  // 77: system.SysCronJobUpdateReq.status:type_name -> system.JobStatus
+	90,  // 78: system.SysCronJobLogListReq.page:type_name -> common.PageReq
+	84,  // 79: system.SysCronJobHandlersResp.base:type_name -> common.RespBase
+	73,  // 80: system.SysCronJobHandlersResp.data:type_name -> system.SysCronJobHander
+	84,  // 81: system.SysCronJobLogListResp.base:type_name -> common.RespBase
+	71,  // 82: system.SysCronJobLogListResp.data:type_name -> system.SysCronJobLogItem
+	88,  // 83: system.SysTenantItem.status:type_name -> system.CommonStatus
+	90,  // 84: system.SysTenantListReq.page:type_name -> common.PageReq
+	88,  // 85: system.SysTenantListReq.status:type_name -> system.CommonStatus
+	84,  // 86: system.SysTenantListResp.base:type_name -> common.RespBase
+	76,  // 87: system.SysTenantListResp.data:type_name -> system.SysTenantItem
+	88,  // 88: system.SysTenantCreateReq.status:type_name -> system.CommonStatus
+	88,  // 89: system.SysTenantUpdateReq.status:type_name -> system.CommonStatus
+	84,  // 90: system.SysTenantDetailResp.base:type_name -> common.RespBase
+	76,  // 91: system.SysTenantDetailResp.data:type_name -> system.SysTenantItem
+	2,   // 92: system.System.AdminLogin:input_type -> system.AdminLoginReq
+	4,   // 93: system.System.GetProfile:input_type -> system.ProfileReq
+	8,   // 94: system.System.UpdateProfile:input_type -> system.UpdateProfileReq
+	11,  // 95: system.System.Google2FAInit:input_type -> system.Google2FAInitReq
+	13,  // 96: system.System.Google2FABind:input_type -> system.Google2FABindReq
+	14,  // 97: system.System.Google2FAEnable:input_type -> system.Google2FAEnableReq
+	15,  // 98: system.System.Google2FADisable:input_type -> system.Google2FADisableReq
+	16,  // 99: system.System.Google2FAReset:input_type -> system.Google2FAResetReq
+	18,  // 100: system.System.SysUserList:input_type -> system.SysUserListReq
+	20,  // 101: system.System.SysUserDetail:input_type -> system.SysUserDetailReq
+	22,  // 102: system.System.SysUserCreate:input_type -> system.SysUserCreateReq
+	23,  // 103: system.System.SysUserUpdate:input_type -> system.SysUserUpdateReq
+	24,  // 104: system.System.SysUserDelete:input_type -> system.SysUserDeleteReq
+	25,  // 105: system.System.ChangeUserStatus:input_type -> system.ChangeUserStatusReq
+	26,  // 106: system.System.ResetUserPwd:input_type -> system.ResetUserPwdReq
+	27,  // 107: system.System.AssignUserRoles:input_type -> system.AssignUserRolesReq
+	29,  // 108: system.System.SysRoleList:input_type -> system.SysRoleListReq
+	31,  // 109: system.System.SysRoleCreate:input_type -> system.SysRoleCreateReq
+	32,  // 110: system.System.SysRoleUpdate:input_type -> system.SysRoleUpdateReq
+	33,  // 111: system.System.SysRoleDelete:input_type -> system.SysRoleDeleteReq
+	34,  // 112: system.System.SysRoleGrant:input_type -> system.SysRoleGrantReq
+	35,  // 113: system.System.SysRoleGrantDetail:input_type -> system.SysRoleGrantDetailReq
+	0,   // 114: system.System.SysPermList:input_type -> system.Empty
+	0,   // 115: system.System.GetMenuTree:input_type -> system.Empty
+	39,  // 116: system.System.SysMenuCreate:input_type -> system.SysMenuCreateReq
+	40,  // 117: system.System.SysMenuUpdate:input_type -> system.SysMenuUpdateReq
+	41,  // 118: system.System.SysMenuDelete:input_type -> system.SysMenuDeleteReq
+	42,  // 119: system.System.SysMenuList:input_type -> system.SysMenuListReq
+	45,  // 120: system.System.LoginLogList:input_type -> system.LoginLogListReq
+	48,  // 121: system.System.OpLogList:input_type -> system.OpLogListReq
+	50,  // 122: system.System.SysConfigCreate:input_type -> system.SysConfigCreateReq
+	51,  // 123: system.System.SysConfigUpdate:input_type -> system.SysConfigUpdateReq
+	52,  // 124: system.System.SysConfigDelete:input_type -> system.SysConfigDeleteReq
+	54,  // 125: system.System.SysConfigList:input_type -> system.SysConfigListReq
+	56,  // 126: system.System.SysConfigDetail:input_type -> system.SysConfigDetailReq
+	58,  // 127: system.System.SysConfigByKeys:input_type -> system.SysConfigByKeysReq
+	60,  // 128: system.System.LoginUserPerms:input_type -> system.LoginUserPermsReq
+	63,  // 129: system.System.SysCronJobList:input_type -> system.SysCronJobListReq
+	65,  // 130: system.System.SysCronJobCreate:input_type -> system.SysCronJobCreateReq
+	66,  // 131: system.System.SysCronJobUpdate:input_type -> system.SysCronJobUpdateReq
+	67,  // 132: system.System.SysCronJobDelete:input_type -> system.SysCronJobDeleteReq
+	68,  // 133: system.System.SysCronJobRun:input_type -> system.SysCronJobRunReq
+	69,  // 134: system.System.SysCronJobStart:input_type -> system.SysCronJobStartReq
+	70,  // 135: system.System.SysCronJobStop:input_type -> system.SysCronJobStopReq
+	0,   // 136: system.System.SysCronJobHandlers:input_type -> system.Empty
+	72,  // 137: system.System.SysCronJobLogList:input_type -> system.SysCronJobLogListReq
+	79,  // 138: system.System.SysTenantCreate:input_type -> system.SysTenantCreateReq
+	80,  // 139: system.System.SysTenantUpdate:input_type -> system.SysTenantUpdateReq
+	81,  // 140: system.System.SysTenantDelete:input_type -> system.SysTenantDeleteReq
+	77,  // 141: system.System.SysTenantList:input_type -> system.SysTenantListReq
+	82,  // 142: system.System.SysTenantDetail:input_type -> system.SysTenantDetailReq
+	3,   // 143: system.System.AdminLogin:output_type -> system.AdminLoginResp
+	7,   // 144: system.System.GetProfile:output_type -> system.ProfileResp
+	1,   // 145: system.System.UpdateProfile:output_type -> system.RespBase
+	12,  // 146: system.System.Google2FAInit:output_type -> system.Google2FAInitResp
+	1,   // 147: system.System.Google2FABind:output_type -> system.RespBase
+	1,   // 148: system.System.Google2FAEnable:output_type -> system.RespBase
+	1,   // 149: system.System.Google2FADisable:output_type -> system.RespBase
+	1,   // 150: system.System.Google2FAReset:output_type -> system.RespBase
+	19,  // 151: system.System.SysUserList:output_type -> system.SysUserListResp
+	21,  // 152: system.System.SysUserDetail:output_type -> system.SysUserDetailResp
+	1,   // 153: system.System.SysUserCreate:output_type -> system.RespBase
+	1,   // 154: system.System.SysUserUpdate:output_type -> system.RespBase
+	1,   // 155: system.System.SysUserDelete:output_type -> system.RespBase
+	1,   // 156: system.System.ChangeUserStatus:output_type -> system.RespBase
+	1,   // 157: system.System.ResetUserPwd:output_type -> system.RespBase
+	1,   // 158: system.System.AssignUserRoles:output_type -> system.RespBase
+	30,  // 159: system.System.SysRoleList:output_type -> system.SysRoleListResp
+	1,   // 160: system.System.SysRoleCreate:output_type -> system.RespBase
+	1,   // 161: system.System.SysRoleUpdate:output_type -> system.RespBase
+	1,   // 162: system.System.SysRoleDelete:output_type -> system.RespBase
+	1,   // 163: system.System.SysRoleGrant:output_type -> system.RespBase
+	36,  // 164: system.System.SysRoleGrantDetail:output_type -> system.SysRoleGrantDetailResp
+	38,  // 165: system.System.SysPermList:output_type -> system.SysPermListResp
+	10,  // 166: system.System.GetMenuTree:output_type -> system.SysMenuTreeResp
+	1,   // 167: system.System.SysMenuCreate:output_type -> system.RespBase
+	1,   // 168: system.System.SysMenuUpdate:output_type -> system.RespBase
+	1,   // 169: system.System.SysMenuDelete:output_type -> system.RespBase
+	43,  // 170: system.System.SysMenuList:output_type -> system.SysMenuListResp
+	46,  // 171: system.System.LoginLogList:output_type -> system.LoginLogListResp
+	49,  // 172: system.System.OpLogList:output_type -> system.OpLogListResp
+	1,   // 173: system.System.SysConfigCreate:output_type -> system.RespBase
+	1,   // 174: system.System.SysConfigUpdate:output_type -> system.RespBase
+	1,   // 175: system.System.SysConfigDelete:output_type -> system.RespBase
+	55,  // 176: system.System.SysConfigList:output_type -> system.SysConfigListResp
+	57,  // 177: system.System.SysConfigDetail:output_type -> system.SysConfigDetailResp
+	59,  // 178: system.System.SysConfigByKeys:output_type -> system.SysConfigByKeysResp
+	61,  // 179: system.System.LoginUserPerms:output_type -> system.LoginUserPermsResp
+	64,  // 180: system.System.SysCronJobList:output_type -> system.SysCronJobListResp
+	1,   // 181: system.System.SysCronJobCreate:output_type -> system.RespBase
+	1,   // 182: system.System.SysCronJobUpdate:output_type -> system.RespBase
+	1,   // 183: system.System.SysCronJobDelete:output_type -> system.RespBase
+	1,   // 184: system.System.SysCronJobRun:output_type -> system.RespBase
+	1,   // 185: system.System.SysCronJobStart:output_type -> system.RespBase
+	1,   // 186: system.System.SysCronJobStop:output_type -> system.RespBase
+	74,  // 187: system.System.SysCronJobHandlers:output_type -> system.SysCronJobHandlersResp
+	75,  // 188: system.System.SysCronJobLogList:output_type -> system.SysCronJobLogListResp
+	1,   // 189: system.System.SysTenantCreate:output_type -> system.RespBase
+	1,   // 190: system.System.SysTenantUpdate:output_type -> system.RespBase
+	1,   // 191: system.System.SysTenantDelete:output_type -> system.RespBase
+	78,  // 192: system.System.SysTenantList:output_type -> system.SysTenantListResp
+	83,  // 193: system.System.SysTenantDetail:output_type -> system.SysTenantDetailResp
+	143, // [143:194] is the sub-list for method output_type
+	92,  // [92:143] is the sub-list for method input_type
+	92,  // [92:92] is the sub-list for extension type_name
+	92,  // [92:92] is the sub-list for extension extendee
+	0,   // [0:92] is the sub-list for field type_name
 }
 
 func init() { file_proto_system_system_proto_init() }

@@ -52,15 +52,15 @@ func (m *defaultSysRoleMenuModel) InsertBatch(ctx context.Context, data []*SysRo
 	}
 
 	valueStrings := make([]string, 0, len(data))
-	valueArgs := make([]interface{}, 0, len(data)*2)
+	valueArgs := make([]interface{}, 0, len(data)*3)
 
 	for _, d := range data {
-		valueStrings = append(valueStrings, "(?, ?)")
-		valueArgs = append(valueArgs, d.RoleId, d.MenuId)
+		valueStrings = append(valueStrings, "(?, ?, ?)")
+		valueArgs = append(valueArgs, d.TenantId, d.RoleId, d.MenuId)
 	}
 
 	stmt := fmt.Sprintf(
-		"INSERT INTO %s (role_id, menu_id) VALUES %s",
+		"INSERT INTO %s (tenant_id, role_id, menu_id) VALUES %s",
 		m.table,
 		strings.Join(valueStrings, ","),
 	)

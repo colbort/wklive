@@ -6,28 +6,28 @@ option go_package = "wklive/proto/system;system";
 
 enum SysConfigType {
   UNKNOWN = 0;
-  SYSTEM_CORE = 1;    // 系统配置
+  SYSTEM_CORE = 1; // 系统配置
   OBJECT_STORAGE = 2; // 对象存储配置
-  ITICK_CONFIG = 3;   // ITICK配置
+  ITICK_CONFIG = 3; // ITICK配置
 }
 
 enum CommonStatus {
   COMMON_STATUS_UNKNOWN = 0;
-  COMMON_STATUS_ENABLED = 1;  // 启用
+  COMMON_STATUS_ENABLED = 1; // 启用
   COMMON_STATUS_DISABLED = 2; // 禁用
 }
 
 enum MenuType {
   MENU_TYPE_UNKNOWN = 0;
-  MENU_TYPE_DIR = 1;    // 目录
-  MENU_TYPE_MENU = 2;   // 菜单
+  MENU_TYPE_DIR = 1; // 目录
+  MENU_TYPE_MENU = 2; // 菜单
   MENU_TYPE_BUTTON = 3; // 按钮
 }
 
 enum VisibleStatus {
   VISIBLE_STATUS_UNKNOWN = 0;
   VISIBLE_STATUS_VISIBLE = 1; // 显示
-  VISIBLE_STATUS_HIDDEN = 2;  // 隐藏
+  VISIBLE_STATUS_HIDDEN = 2; // 隐藏
 }
 
 enum RequestMethod {
@@ -40,5 +40,12 @@ enum RequestMethod {
 
 enum JobStatus {
   JOB_STATUS_DISABLED = 0; // 停用
-  JOB_STATUS_ENABLED = 1;  // 启用
+  JOB_STATUS_ENABLED = 1; // 启用
+}
+
+enum UserType {
+  USER_TYPE_UNKNOWN = 0; // 未知
+  USER_TYPE_SYSTEM_ADMIN = 1; // 系统管理员
+  USER_TYPE_TENANT_OWNER = 2; // 租户主账号
+  USER_TYPE_TENANT_ADMIN = 3; // 租户管理员
 }

@@ -23,17 +23,17 @@ var (
 	sysRoleRowsExpectAutoSet   = strings.Join(stringx.Remove(sysRoleFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	sysRoleRowsWithPlaceHolder = strings.Join(stringx.Remove(sysRoleFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheSysRoleIdPrefix   = "cache:sysRole:id:"
-	cacheSysRoleCodePrefix = "cache:sysRole:code:"
-	cacheSysRoleNamePrefix = "cache:sysRole:name:"
+	cacheSysRoleIdPrefix           = "cache:sysRole:id:"
+	cacheSysRoleTenantIdCodePrefix = "cache:sysRole:tenantId:code:"
+	cacheSysRoleTenantIdNamePrefix = "cache:sysRole:tenantId:name:"
 )
 
 type (
 	sysRoleModel interface {
 		Insert(ctx context.Context, data *SysRole) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*SysRole, error)
-		FindOneByCode(ctx context.Context, code string) (*SysRole, error)
-		FindOneByName(ctx context.Context, name string) (*SysRole, error)
+		FindOneByTenantIdCode(ctx context.Context, tenantId int64, code string) (*SysRole, error)
+		FindOneByTenantIdName(ctx context.Context, tenantId int64, name string) (*SysRole, error)
 		Update(ctx context.Context, data *SysRole) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -44,10 +44,11 @@ type (
 	}
 
 	SysRole struct {
-		Id          int64  `db:"id"`
-		Name        string `db:"name"`   // 角色名称
-		Code        string `db:"code"`   // 角色标识(如admin)
-		Status      int64  `db:"status"` // 1启用 2禁用
+		Id          int64  `db:"id"`        // 角色ID
+		TenantId    int64  `db:"tenant_id"` // 所属租户ID：0=系统角色，>0=租户角色
+		Name        string `db:"name"`      // 角色名称
+		Code        string `db:"code"`      // 角色标识(如admin)
+		Status      int64  `db:"status"`    // 1启用 2禁用
 		Remark      string `db:"remark"`
 		CreateTimes int64  `db:"create_times"`
 		UpdateTimes int64  `db:"update_times"`
@@ -67,13 +68,13 @@ func (m *defaultSysRoleModel) Delete(ctx context.Context, id int64) error {
 		return err
 	}
 
-	sysRoleCodeKey := fmt.Sprintf("%s%v", cacheSysRoleCodePrefix, data.Code)
 	sysRoleIdKey := fmt.Sprintf("%s%v", cacheSysRoleIdPrefix, id)
-	sysRoleNameKey := fmt.Sprintf("%s%v", cacheSysRoleNamePrefix, data.Name)
+	sysRoleTenantIdCodeKey := fmt.Sprintf("%s%v:%v", cacheSysRoleTenantIdCodePrefix, data.TenantId, data.Code)
+	sysRoleTenantIdNameKey := fmt.Sprintf("%s%v:%v", cacheSysRoleTenantIdNamePrefix, data.TenantId, data.Name)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, sysRoleCodeKey, sysRoleIdKey, sysRoleNameKey)
+	}, sysRoleIdKey, sysRoleTenantIdCodeKey, sysRoleTenantIdNameKey)
 	return err
 }
 
@@ -94,12 +95,12 @@ func (m *defaultSysRoleModel) FindOne(ctx context.Context, id int64) (*SysRole, 
 	}
 }
 
-func (m *defaultSysRoleModel) FindOneByCode(ctx context.Context, code string) (*SysRole, error) {
-	sysRoleCodeKey := fmt.Sprintf("%s%v", cacheSysRoleCodePrefix, code)
+func (m *defaultSysRoleModel) FindOneByTenantIdCode(ctx context.Context, tenantId int64, code string) (*SysRole, error) {
+	sysRoleTenantIdCodeKey := fmt.Sprintf("%s%v:%v", cacheSysRoleTenantIdCodePrefix, tenantId, code)
 	var resp SysRole
-	err := m.QueryRowIndexCtx(ctx, &resp, sysRoleCodeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `code` = ? limit 1", sysRoleRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, code); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, sysRoleTenantIdCodeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `code` = ? limit 1", sysRoleRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, code); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -114,12 +115,12 @@ func (m *defaultSysRoleModel) FindOneByCode(ctx context.Context, code string) (*
 	}
 }
 
-func (m *defaultSysRoleModel) FindOneByName(ctx context.Context, name string) (*SysRole, error) {
-	sysRoleNameKey := fmt.Sprintf("%s%v", cacheSysRoleNamePrefix, name)
+func (m *defaultSysRoleModel) FindOneByTenantIdName(ctx context.Context, tenantId int64, name string) (*SysRole, error) {
+	sysRoleTenantIdNameKey := fmt.Sprintf("%s%v:%v", cacheSysRoleTenantIdNamePrefix, tenantId, name)
 	var resp SysRole
-	err := m.QueryRowIndexCtx(ctx, &resp, sysRoleNameKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `name` = ? limit 1", sysRoleRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, name); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, sysRoleTenantIdNameKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `name` = ? limit 1", sysRoleRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, name); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -135,13 +136,13 @@ func (m *defaultSysRoleModel) FindOneByName(ctx context.Context, name string) (*
 }
 
 func (m *defaultSysRoleModel) Insert(ctx context.Context, data *SysRole) (sql.Result, error) {
-	sysRoleCodeKey := fmt.Sprintf("%s%v", cacheSysRoleCodePrefix, data.Code)
 	sysRoleIdKey := fmt.Sprintf("%s%v", cacheSysRoleIdPrefix, data.Id)
-	sysRoleNameKey := fmt.Sprintf("%s%v", cacheSysRoleNamePrefix, data.Name)
+	sysRoleTenantIdCodeKey := fmt.Sprintf("%s%v:%v", cacheSysRoleTenantIdCodePrefix, data.TenantId, data.Code)
+	sysRoleTenantIdNameKey := fmt.Sprintf("%s%v:%v", cacheSysRoleTenantIdNamePrefix, data.TenantId, data.Name)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?)", m.table, sysRoleRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.Name, data.Code, data.Status, data.Remark, data.CreateTimes, data.UpdateTimes)
-	}, sysRoleCodeKey, sysRoleIdKey, sysRoleNameKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, sysRoleRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.Name, data.Code, data.Status, data.Remark, data.CreateTimes, data.UpdateTimes)
+	}, sysRoleIdKey, sysRoleTenantIdCodeKey, sysRoleTenantIdNameKey)
 	return ret, err
 }
 
@@ -151,13 +152,13 @@ func (m *defaultSysRoleModel) Update(ctx context.Context, newData *SysRole) erro
 		return err
 	}
 
-	sysRoleCodeKey := fmt.Sprintf("%s%v", cacheSysRoleCodePrefix, data.Code)
 	sysRoleIdKey := fmt.Sprintf("%s%v", cacheSysRoleIdPrefix, data.Id)
-	sysRoleNameKey := fmt.Sprintf("%s%v", cacheSysRoleNamePrefix, data.Name)
+	sysRoleTenantIdCodeKey := fmt.Sprintf("%s%v:%v", cacheSysRoleTenantIdCodePrefix, data.TenantId, data.Code)
+	sysRoleTenantIdNameKey := fmt.Sprintf("%s%v:%v", cacheSysRoleTenantIdNamePrefix, data.TenantId, data.Name)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysRoleRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.Name, newData.Code, newData.Status, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, sysRoleCodeKey, sysRoleIdKey, sysRoleNameKey)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.Name, newData.Code, newData.Status, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, sysRoleIdKey, sysRoleTenantIdCodeKey, sysRoleTenantIdNameKey)
 	return err
 }
 

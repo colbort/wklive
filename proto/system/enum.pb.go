@@ -324,6 +324,58 @@ func (JobStatus) EnumDescriptor() ([]byte, []int) {
 	return file_proto_system_enum_proto_rawDescGZIP(), []int{5}
 }
 
+type UserType int32
+
+const (
+	UserType_USER_TYPE_UNKNOWN      UserType = 0 // 未知
+	UserType_USER_TYPE_SYSTEM_ADMIN UserType = 1 // 系统管理员
+	UserType_USER_TYPE_TENANT_OWNER UserType = 2 // 租户主账号
+	UserType_USER_TYPE_TENANT_ADMIN UserType = 3 // 租户管理员
+)
+
+// Enum value maps for UserType.
+var (
+	UserType_name = map[int32]string{
+		0: "USER_TYPE_UNKNOWN",
+		1: "USER_TYPE_SYSTEM_ADMIN",
+		2: "USER_TYPE_TENANT_OWNER",
+		3: "USER_TYPE_TENANT_ADMIN",
+	}
+	UserType_value = map[string]int32{
+		"USER_TYPE_UNKNOWN":      0,
+		"USER_TYPE_SYSTEM_ADMIN": 1,
+		"USER_TYPE_TENANT_OWNER": 2,
+		"USER_TYPE_TENANT_ADMIN": 3,
+	}
+)
+
+func (x UserType) Enum() *UserType {
+	p := new(UserType)
+	*p = x
+	return p
+}
+
+func (x UserType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (UserType) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_system_enum_proto_enumTypes[6].Descriptor()
+}
+
+func (UserType) Type() protoreflect.EnumType {
+	return &file_proto_system_enum_proto_enumTypes[6]
+}
+
+func (x UserType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use UserType.Descriptor instead.
+func (UserType) EnumDescriptor() ([]byte, []int) {
+	return file_proto_system_enum_proto_rawDescGZIP(), []int{6}
+}
+
 var File_proto_system_enum_proto protoreflect.FileDescriptor
 
 const file_proto_system_enum_proto_rawDesc = "" +
@@ -355,7 +407,12 @@ const file_proto_system_enum_proto_rawDesc = "" +
 	"\x15REQUEST_METHOD_DELETE\x10\x04*<\n" +
 	"\tJobStatus\x12\x17\n" +
 	"\x13JOB_STATUS_DISABLED\x10\x00\x12\x16\n" +
-	"\x12JOB_STATUS_ENABLED\x10\x01B\x1cZ\x1awklive/proto/system;systemb\x06proto3"
+	"\x12JOB_STATUS_ENABLED\x10\x01*u\n" +
+	"\bUserType\x12\x15\n" +
+	"\x11USER_TYPE_UNKNOWN\x10\x00\x12\x1a\n" +
+	"\x16USER_TYPE_SYSTEM_ADMIN\x10\x01\x12\x1a\n" +
+	"\x16USER_TYPE_TENANT_OWNER\x10\x02\x12\x1a\n" +
+	"\x16USER_TYPE_TENANT_ADMIN\x10\x03B\x1cZ\x1awklive/proto/system;systemb\x06proto3"
 
 var (
 	file_proto_system_enum_proto_rawDescOnce sync.Once
@@ -369,7 +426,7 @@ func file_proto_system_enum_proto_rawDescGZIP() []byte {
 	return file_proto_system_enum_proto_rawDescData
 }
 
-var file_proto_system_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 6)
+var file_proto_system_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 7)
 var file_proto_system_enum_proto_goTypes = []any{
 	(SysConfigType)(0), // 0: system.SysConfigType
 	(CommonStatus)(0),  // 1: system.CommonStatus
@@ -377,6 +434,7 @@ var file_proto_system_enum_proto_goTypes = []any{
 	(VisibleStatus)(0), // 3: system.VisibleStatus
 	(RequestMethod)(0), // 4: system.RequestMethod
 	(JobStatus)(0),     // 5: system.JobStatus
+	(UserType)(0),      // 6: system.UserType
 }
 var file_proto_system_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -396,7 +454,7 @@ func file_proto_system_enum_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_system_enum_proto_rawDesc), len(file_proto_system_enum_proto_rawDesc)),
-			NumEnums:      6,
+			NumEnums:      7,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

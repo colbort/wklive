@@ -1,11 +1,21 @@
 -- =============================
--- 管理员用户
+-- 管理员用户（统一用户表）
+-- 说明：
+-- 1. tenant_id = 0       -> 系统侧用户
+-- 2. tenant_id > 0       -> 租户侧用户
+-- 3. user_type = 1       -> 系统管理员
+-- 4. user_type = 2       -> 租户主账号
+-- 5. user_type = 3       -> 租户管理员
 -- =============================
 DROP TABLE IF EXISTS sys_user;
 CREATE TABLE sys_user (
   id BIGINT AUTO_INCREMENT COMMENT '用户ID',
 
-  username VARCHAR(64) NOT NULL UNIQUE COMMENT '登录账号',
+  tenant_id BIGINT NOT NULL DEFAULT 0 COMMENT '所属租户ID：0=系统侧，>0=租户ID',
+  user_type TINYINT NOT NULL DEFAULT 1 COMMENT '用户类型：1系统管理员 2租户主账号 3租户管理员',
+  is_owner TINYINT NOT NULL DEFAULT 0 COMMENT '是否租户主账号：1是 0否',
+
+  username VARCHAR(64) NOT NULL COMMENT '登录账号',
   password VARCHAR(255) NOT NULL COMMENT 'bcrypt密码',
 
   nickname VARCHAR(64) DEFAULT '' COMMENT '昵称',
@@ -19,34 +29,49 @@ CREATE TABLE sys_user (
 
   perms_ver INT DEFAULT 1 COMMENT '权限版本(角色变化强制token失效)',
 
-  last_login_ip VARCHAR(64),
-  last_login_at bigint NOT NULL DEFAULT 0,
+  last_login_ip VARCHAR(64) DEFAULT '' COMMENT '最后登录IP',
+  last_login_at BIGINT NOT NULL DEFAULT 0 COMMENT '最后登录时间',
 
-  create_times bigint NOT NULL DEFAULT 0,
-  update_times bigint NOT NULL DEFAULT 0,
+  create_by BIGINT NOT NULL DEFAULT 0 COMMENT '创建人ID',
+  create_times BIGINT NOT NULL DEFAULT 0,
+  update_times BIGINT NOT NULL DEFAULT 0,
 
   PRIMARY KEY (id),
+  UNIQUE KEY uk_tenant_username (tenant_id, username),
+  INDEX idx_tenant_id(tenant_id),
+  INDEX idx_user_type(user_type),
+  INDEX idx_owner(is_owner),
   INDEX idx_status(status)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系统管理员';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='统一用户表';
 
 
 -- =============================
 -- 角色
+-- 说明：
+-- 1. tenant_id = 0  -> 系统角色
+-- 2. tenant_id > 0  -> 某个租户自己的角色
 -- =============================
 DROP TABLE IF EXISTS sys_role;
 CREATE TABLE sys_role (
-  id BIGINT AUTO_INCREMENT,
+  id BIGINT AUTO_INCREMENT COMMENT '角色ID',
 
-  name VARCHAR(64) NOT NULL UNIQUE COMMENT '角色名称',
-  code VARCHAR(64) NOT NULL UNIQUE COMMENT '角色标识(如admin)',
+  tenant_id BIGINT NOT NULL DEFAULT 0 COMMENT '所属租户ID：0=系统角色，>0=租户角色',
+
+  name VARCHAR(64) NOT NULL COMMENT '角色名称',
+  code VARCHAR(64) NOT NULL COMMENT '角色标识(如admin)',
 
   status TINYINT DEFAULT 1 COMMENT '1启用 2禁用',
 
   remark VARCHAR(255) DEFAULT '',
 
-  create_times bigint NOT NULL DEFAULT 0,
-  update_times bigint NOT NULL DEFAULT 0,
-  PRIMARY KEY (id)
+  create_times BIGINT NOT NULL DEFAULT 0,
+  update_times BIGINT NOT NULL DEFAULT 0,
+
+  PRIMARY KEY (id),
+  UNIQUE KEY uk_tenant_role_name(tenant_id, name),
+  UNIQUE KEY uk_tenant_role_code(tenant_id, code),
+  INDEX idx_tenant_id(tenant_id),
+  INDEX idx_status(status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色表';
 
 
@@ -55,17 +80,25 @@ CREATE TABLE sys_role (
 -- =============================
 DROP TABLE IF EXISTS sys_user_role;
 CREATE TABLE sys_user_role (
-  id BIGINT AUTO_INCREMENT,
-  user_id BIGINT NOT NULL,
-  role_id BIGINT NOT NULL,
+  id BIGINT AUTO_INCREMENT COMMENT '主键ID',
+
+  tenant_id BIGINT NOT NULL DEFAULT 0 COMMENT '所属租户ID：0=系统侧，>0=租户ID',
+  user_id BIGINT NOT NULL COMMENT '用户ID',
+  role_id BIGINT NOT NULL COMMENT '角色ID',
+
   PRIMARY KEY (id),
   UNIQUE KEY uk_user_role(user_id, role_id),
+  INDEX idx_tenant_id(tenant_id),
+  INDEX idx_user(user_id),
   INDEX idx_role(role_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户角色关联';
 
 
 -- =============================
 -- 菜单/按钮（核心RBAC）
+-- 说明：
+-- 1. scope = 1 -> 系统端菜单
+-- 2. scope = 2 -> 租户端菜单
 -- =============================
 DROP TABLE IF EXISTS sys_menu;
 CREATE TABLE sys_menu (
@@ -74,6 +107,7 @@ CREATE TABLE sys_menu (
   parent_id BIGINT DEFAULT 0 COMMENT '父级ID',
 
   name VARCHAR(64) NOT NULL COMMENT '名称',
+  scope TINYINT NOT NULL DEFAULT 1 COMMENT '菜单范围：1系统端 2租户端',
 
   menu_type TINYINT NOT NULL COMMENT '1目录 2菜单 3按钮',
 
@@ -89,11 +123,12 @@ CREATE TABLE sys_menu (
   visible TINYINT DEFAULT 1 COMMENT '1显示 2隐藏',
   status TINYINT DEFAULT 1 COMMENT '1启用 2禁用',
 
-  create_times bigint NOT NULL DEFAULT 0,
-  update_times bigint NOT NULL DEFAULT 0,
+  create_times BIGINT NOT NULL DEFAULT 0,
+  update_times BIGINT NOT NULL DEFAULT 0,
 
   PRIMARY KEY (id),
   INDEX idx_parent(parent_id),
+  INDEX idx_scope(scope),
   INDEX idx_perms(perms)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='菜单权限';
 
@@ -103,21 +138,30 @@ CREATE TABLE sys_menu (
 -- =============================
 DROP TABLE IF EXISTS sys_role_menu;
 CREATE TABLE sys_role_menu (
-  id BIGINT AUTO_INCREMENT,
-  role_id BIGINT NOT NULL,
-  menu_id BIGINT NOT NULL,
+  id BIGINT AUTO_INCREMENT COMMENT '主键ID',
+
+  tenant_id BIGINT NOT NULL DEFAULT 0 COMMENT '所属租户ID：0=系统侧，>0=租户ID',
+  role_id BIGINT NOT NULL COMMENT '角色ID',
+  menu_id BIGINT NOT NULL COMMENT '菜单ID',
+
   PRIMARY KEY (id),
   UNIQUE KEY uk_role_menu(role_id, menu_id),
+  INDEX idx_tenant_id(tenant_id),
+  INDEX idx_role(role_id),
   INDEX idx_menu(menu_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色菜单权限';
 
 
 -- =============================
 -- 登录日志
+-- 说明：
+-- 增加 tenant_id，方便系统侧/租户侧隔离查询
 -- =============================
 DROP TABLE IF EXISTS sys_login_log;
 CREATE TABLE sys_login_log (
   id BIGINT AUTO_INCREMENT,
+
+  tenant_id BIGINT NOT NULL DEFAULT 0 COMMENT '所属租户ID：0=系统侧，>0=租户ID',
 
   user_id BIGINT,
   username VARCHAR(64),
@@ -128,9 +172,10 @@ CREATE TABLE sys_login_log (
   success TINYINT COMMENT '1成功 0失败',
   msg VARCHAR(255),
 
-  login_at bigint NOT NULL DEFAULT 0,
+  login_at BIGINT NOT NULL DEFAULT 0,
   
   PRIMARY KEY (id),
+  INDEX idx_tenant_id(tenant_id),
   INDEX idx_user(user_id),
   INDEX idx_time(login_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='登录日志';
@@ -138,10 +183,14 @@ CREATE TABLE sys_login_log (
 
 -- =============================
 -- 操作日志
+-- 说明：
+-- 增加 tenant_id，方便系统侧/租户侧隔离查询
 -- =============================
 DROP TABLE IF EXISTS sys_op_log;
 CREATE TABLE sys_op_log (
   id BIGINT AUTO_INCREMENT,
+
+  tenant_id BIGINT NOT NULL DEFAULT 0 COMMENT '所属租户ID：0=系统侧，>0=租户ID',
 
   user_id BIGINT,
   username VARCHAR(64),
@@ -156,17 +205,21 @@ CREATE TABLE sys_op_log (
 
   cost_ms INT COMMENT '耗时',
 
-  create_times bigint NOT NULL DEFAULT 0,
-  update_times bigint NOT NULL DEFAULT 0,
+  create_times BIGINT NOT NULL DEFAULT 0,
+  update_times BIGINT NOT NULL DEFAULT 0,
 
   PRIMARY KEY (id),
+  INDEX idx_tenant_id(tenant_id),
   INDEX idx_user(user_id),
   INDEX idx_time(create_times)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='操作日志';
 
 
 -- =============================
--- 系统配置（可选）
+-- 系统配置（系统级）
+-- 说明：
+-- 这张表保留为系统配置，不做租户隔离
+-- 如需租户配置，建议单独增加 tenant_config
 -- =============================
 DROP TABLE IF EXISTS sys_config;
 CREATE TABLE sys_config (
@@ -176,67 +229,83 @@ CREATE TABLE sys_config (
   config_value JSON,
   remark VARCHAR(255),
 
-  create_times bigint NOT NULL DEFAULT 0,
-  update_times bigint NOT NULL DEFAULT 0,
+  create_times BIGINT NOT NULL DEFAULT 0,
+  update_times BIGINT NOT NULL DEFAULT 0,
+
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系统配置';
 
 
-CREATE TABLE `sys_job` (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `job_name` varchar(100) NOT NULL COMMENT '任务名称',
-  `job_group` varchar(50) DEFAULT 'DEFAULT' COMMENT '任务分组',
-  `invoke_target` varchar(500) NOT NULL COMMENT '调用目标',
-  `cron_expression` varchar(100) NOT NULL COMMENT 'cron表达式',
-  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：0停用 1启用',
-  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
-  `create_by` varchar(64) DEFAULT NULL COMMENT '创建人',
-  `create_times` bigint NOT NULL DEFAULT 0 COMMENT '创建时间',
-  `update_by` varchar(64) DEFAULT NULL COMMENT '更新人',
-  `update_times` bigint NOT NULL DEFAULT 0 COMMENT '更新时间',
-  PRIMARY KEY (`id`),
-  KEY `idx_status` (`status`)
+-- =============================
+-- 定时任务表
+-- 说明：
+-- 默认为系统级任务，不开放给租户
+-- =============================
+DROP TABLE IF EXISTS sys_job;
+CREATE TABLE sys_job (
+  id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  job_name VARCHAR(100) NOT NULL COMMENT '任务名称',
+  job_group VARCHAR(50) DEFAULT 'DEFAULT' COMMENT '任务分组',
+  invoke_target VARCHAR(500) NOT NULL COMMENT '调用目标',
+  cron_expression VARCHAR(100) NOT NULL COMMENT 'cron表达式',
+  status TINYINT NOT NULL DEFAULT 1 COMMENT '状态：0停用 1启用',
+  remark VARCHAR(500) DEFAULT NULL COMMENT '备注',
+  create_by VARCHAR(64) DEFAULT NULL COMMENT '创建人',
+  create_times BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
+  update_by VARCHAR(64) DEFAULT NULL COMMENT '更新人',
+  update_times BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
+  PRIMARY KEY (id),
+  KEY idx_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='定时任务表';
 
 
-CREATE TABLE `sys_job_log` (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `job_id` bigint NOT NULL COMMENT '任务ID',
-  `job_name` varchar(100) NOT NULL COMMENT '任务名称',
-  `invoke_target` varchar(500) NOT NULL COMMENT '调用目标',
-  `cron_expression` varchar(100) DEFAULT NULL COMMENT 'cron表达式',
-  `status` tinyint NOT NULL COMMENT '执行状态：0失败 1成功',
-  `message` varchar(2000) DEFAULT NULL COMMENT '执行信息',
-  `exception_info` text COMMENT '异常信息',
-  `start_time` bigint DEFAULT 0 COMMENT '开始时间',
-  `end_time` bigint DEFAULT 0 COMMENT '结束时间',
-  `create_times` bigint NOT NULL DEFAULT 0 COMMENT '创建时间',
-  PRIMARY KEY (`id`),
-  KEY `idx_job_id` (`job_id`),
-  KEY `idx_create_times` (`create_times`)
+-- =============================
+-- 定时任务日志表
+-- =============================
+DROP TABLE IF EXISTS sys_job_log;
+CREATE TABLE sys_job_log (
+  id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  job_id BIGINT NOT NULL COMMENT '任务ID',
+  job_name VARCHAR(100) NOT NULL COMMENT '任务名称',
+  invoke_target VARCHAR(500) NOT NULL COMMENT '调用目标',
+  cron_expression VARCHAR(100) DEFAULT NULL COMMENT 'cron表达式',
+  status TINYINT NOT NULL COMMENT '执行状态：0失败 1成功',
+  message VARCHAR(2000) DEFAULT NULL COMMENT '执行信息',
+  exception_info TEXT COMMENT '异常信息',
+  start_time BIGINT DEFAULT 0 COMMENT '开始时间',
+  end_time BIGINT DEFAULT 0 COMMENT '结束时间',
+  create_times BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
+  PRIMARY KEY (id),
+  KEY idx_job_id (job_id),
+  KEY idx_create_times (create_times)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='定时任务日志表';
 
 
-CREATE TABLE `sys_tenant` (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '租户ID',
-  `tenant_code` varchar(64) NOT NULL COMMENT '租户编码',
-  `tenant_username` varchar(64) NOT NULL COMMENT '租户管理员账号',
-  `tenant_password` varchar(255) NOT NULL COMMENT '租户管理员密码（bcrypt加密）',
-  `tenant_name` varchar(128) NOT NULL COMMENT '租户名称',
-  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：1正常 2禁用',
-  `expire_time` bigint DEFAULT 0 COMMENT '到期时间',
-  `contact_name` varchar(64) DEFAULT NULL COMMENT '联系人',
-  `contact_phone` varchar(32) DEFAULT NULL COMMENT '联系电话',
-  `login_ip` varchar(64) DEFAULT NULL COMMENT '最后登录IP',
-  `login_time` bigint DEFAULT 0 COMMENT '最后登录时间',
-  `login_count` int DEFAULT 0 COMMENT '登录次数',
-  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
-  `create_by` varchar(64) DEFAULT NULL COMMENT '创建人',
-  `create_times` bigint NOT NULL DEFAULT 0 COMMENT '创建时间',
-  `update_by` varchar(64) DEFAULT NULL COMMENT '更新人',
-  `update_times` bigint NOT NULL DEFAULT 0 COMMENT '更新时间',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_tenant_code` (`tenant_code`),
-  KEY `idx_status` (`status`),
-  KEY `idx_expire_time` (`expire_time`)
+-- =============================
+-- 租户表
+-- 说明：
+-- 这里只保留租户资料，不再存登录账号密码
+-- 租户主账号统一存到 sys_user
+-- =============================
+DROP TABLE IF EXISTS sys_tenant;
+CREATE TABLE sys_tenant (
+  id BIGINT NOT NULL AUTO_INCREMENT COMMENT '租户ID',
+  tenant_code VARCHAR(64) NOT NULL COMMENT '租户编码',
+  tenant_name VARCHAR(128) NOT NULL COMMENT '租户名称',
+  status TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1正常 2禁用',
+  expire_time BIGINT DEFAULT 0 COMMENT '到期时间',
+  contact_name VARCHAR(64) DEFAULT NULL COMMENT '联系人',
+  contact_phone VARCHAR(32) DEFAULT NULL COMMENT '联系电话',
+  login_ip VARCHAR(64) DEFAULT NULL COMMENT '最后登录IP',
+  login_time BIGINT DEFAULT 0 COMMENT '最后登录时间',
+  login_count INT DEFAULT 0 COMMENT '登录次数',
+  remark VARCHAR(255) DEFAULT NULL COMMENT '备注',
+  create_by VARCHAR(64) DEFAULT NULL COMMENT '创建人',
+  create_times BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
+  update_by VARCHAR(64) DEFAULT NULL COMMENT '更新人',
+  update_times BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
+  PRIMARY KEY (id),
+  UNIQUE KEY uk_tenant_code (tenant_code),
+  KEY idx_status (status),
+  KEY idx_expire_time (expire_time)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='租户表';

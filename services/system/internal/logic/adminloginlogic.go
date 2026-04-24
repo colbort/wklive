@@ -65,7 +65,7 @@ func (l *AdminLoginLogic) AdminLogin(in *system.AdminLoginReq) (*system.AdminLog
 	}
 
 	// 3️⃣ 更新登录时间
-	user.LastLoginIp = sql.NullString{String: in.Ip, Valid: true}
+	user.LastLoginIp = in.Ip
 	now := utils.NowMillis()
 	user.LastLoginAt = now
 	_ = l.svcCtx.UserModel.Update(l.ctx, user)

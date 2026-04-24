@@ -9,10 +9,6 @@
       "name": "admin-ui"
     },
     {
-      "path": "agent-ui",
-      "name": "agent-ui"
-    },
-    {
       "path": "app-api",
       "name": "app-api"
     },
@@ -93,6 +89,7 @@
       "qrcode",
       "robfig",
       "Segs",
+      "sqlc",
       "sqlutil",
       "sqlx",
       "syncx",
