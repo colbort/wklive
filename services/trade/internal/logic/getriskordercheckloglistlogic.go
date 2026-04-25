@@ -30,9 +30,9 @@ func NewGetRiskOrderCheckLogListLogic(ctx context.Context, svcCtx *svc.ServiceCo
 func (l *GetRiskOrderCheckLogListLogic) GetRiskOrderCheckLogList(in *trade.GetRiskOrderCheckLogListReq) (*trade.GetRiskOrderCheckLogListResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
 	list, total, err := l.svcCtx.RiskOrderCheckLogModel.FindPage(l.ctx, models.RiskOrderCheckLogPageFilter{
-		TenantId:    int64(in.TenantId),
-		UserId:      int64(in.UserId),
-		SymbolId:    int64(in.SymbolId),
+		TenantId:    in.TenantId,
+		UserId:      in.UserId,
+		SymbolId:    in.SymbolId,
 		MarketType:  int64(in.MarketType),
 		CheckType:   int64(in.CheckType),
 		CheckResult: int64(in.CheckResult),

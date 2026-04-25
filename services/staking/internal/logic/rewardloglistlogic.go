@@ -5,6 +5,7 @@ import (
 
 	"wklive/common/helper"
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/staking"
 	"wklive/services/staking/internal/svc"
 
@@ -27,6 +28,11 @@ func NewRewardLogListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Rew
 
 // 获取收益记录列表
 func (l *RewardLogListLogic) RewardLogList(in *staking.AdminRewardLogListReq) (*staking.AdminRewardLogListResp, error) {
+	if in.TenantId <= 0 {
+		if tenantId, err := utils.GetTenantIdFromMd(l.ctx); err == nil {
+			in.TenantId = tenantId
+		}
+	}
 	page := in.GetPage()
 	cursor, limit := int64(0), int64(10)
 	if page != nil {

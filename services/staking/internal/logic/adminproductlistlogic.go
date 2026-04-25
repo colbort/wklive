@@ -5,6 +5,7 @@ import (
 
 	"wklive/common/helper"
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/staking"
 	"wklive/services/staking/internal/svc"
 
@@ -27,15 +28,26 @@ func NewAdminProductListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 获取质押产品列表
 func (l *AdminProductListLogic) AdminProductList(in *staking.AdminProductListReq) (*staking.AdminProductListResp, error) {
+	if in.TenantId <= 0 {
+		if tenantId, err := utils.GetTenantIdFromMd(l.ctx); err == nil {
+			in.TenantId = tenantId
+		}
+	}
 	page := in.GetPage()
 	cursor, limit := int64(0), int64(10)
 	if page != nil {
 		cursor, limit = page.Cursor, page.Limit
 	}
 	items, total, err := l.svcCtx.StakeProductModel.FindPage(
-		l.ctx, in.TenantId, cursor, limit,
-		in.ProductNo, in.ProductName, in.CoinSymbol,
-		int64(in.ProductType), int64(in.Status),
+		l.ctx,
+		in.TenantId,
+		cursor,
+		limit,
+		in.ProductNo,
+		in.ProductName,
+		in.CoinSymbol,
+		int64(in.ProductType),
+		int64(in.Status),
 	)
 	if err != nil {
 		return nil, err

@@ -952,3 +952,4 @@ service admin {
 	@handler GetWithdrawNotifyLog
 	get /withdraw-notify-log/:id (GetWithdrawNotifyLogReq) returns (GetWithdrawNotifyLogResp)
 }
+

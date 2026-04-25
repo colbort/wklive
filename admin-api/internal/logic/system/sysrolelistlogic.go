@@ -47,6 +47,7 @@ func (l *SysRoleListLogic) SysRoleList(req *types.SysRoleListReq) (resp *types.S
 			Name:        item.Name,
 			Code:        item.Code,
 			Status:      fromCommonStatus(item.Status),
+			TenantId:    item.TenantId,
 			Remark:      item.Remark,
 			CreateTimes: item.CreateTimes,
 		})

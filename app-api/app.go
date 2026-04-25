@@ -11,6 +11,8 @@ import (
 	"wklive/app-api/internal/handler"
 	"wklive/app-api/internal/svc"
 	"wklive/common/etcd"
+	"wklive/common/middleware"
+	"wklive/common/utils"
 
 	"github.com/zeromicro/go-zero/rest"
 )
@@ -30,8 +32,15 @@ func main() {
 		panic(err)
 	}
 
-	server := rest.MustNewServer(c.RestConf, rest.WithCors("*"))
+	server := rest.MustNewServer(
+		c.RestConf,
+		rest.WithCors("*"),
+		rest.WithCorsHeaders(string(utils.CtxKeyTenantCode)),
+	)
 	defer server.Stop()
+
+	headerMiddleware := middleware.NewHeaderMiddleware()
+	server.Use(headerMiddleware.Handle)
 
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)

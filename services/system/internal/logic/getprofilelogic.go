@@ -3,12 +3,13 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
 	"sort"
 	"wklive/common/i18n"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type GetProfileLogic struct {
@@ -49,6 +50,9 @@ func (l *GetProfileLogic) GetProfile(in *system.ProfileReq) (*system.ProfileResp
 				Username: u.Username,
 				Nickname: u.Nickname,
 				Avatar:   u.Avatar,
+				TenantId: u.TenantId,
+				UserType: system.UserType(u.UserType),
+				IsOwner:  u.IsOwner,
 			},
 			Menus:   []*system.SysMenuNode{},
 			Perms:   []string{},
@@ -68,6 +72,9 @@ func (l *GetProfileLogic) GetProfile(in *system.ProfileReq) (*system.ProfileResp
 				Username: u.Username,
 				Nickname: u.Nickname,
 				Avatar:   u.Avatar,
+				TenantId: u.TenantId,
+				UserType: system.UserType(u.UserType),
+				IsOwner:  u.IsOwner,
 			},
 			Menus:   []*system.SysMenuNode{},
 			Perms:   []string{},
@@ -90,6 +97,9 @@ func (l *GetProfileLogic) GetProfile(in *system.ProfileReq) (*system.ProfileResp
 			Username: u.Username,
 			Nickname: u.Nickname,
 			Avatar:   u.Avatar,
+			TenantId: u.TenantId,                  // 所属租户ID：0=系统侧，>0=租户ID
+			UserType: system.UserType(u.UserType), // 用户类型：1系统管理员 2租户主账号 3租户管理员
+			IsOwner:  u.IsOwner,                   // 是否租户主账号：1是 0否
 		},
 		Menus:   tree,
 		Perms:   perms,

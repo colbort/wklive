@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -28,6 +29,11 @@ func NewListWithdrawNotifyLogsLogic(ctx context.Context, svcCtx *svc.ServiceCont
 
 // 提现回调日志列表
 func (l *ListWithdrawNotifyLogsLogic) ListWithdrawNotifyLogs(in *payment.ListWithdrawNotifyLogsReq) (*payment.ListWithdrawNotifyLogsResp, error) {
+	if in.TenantId <= 0 {
+		if tenantId, err := utils.GetTenantIdFromMd(l.ctx); err == nil {
+			in.TenantId = tenantId
+		}
+	}
 	logs, total, err := l.svcCtx.WithdrawNotifyLogModel.FindPage(
 		l.ctx,
 		in.TenantId,

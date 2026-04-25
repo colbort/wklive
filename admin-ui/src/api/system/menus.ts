@@ -9,8 +9,8 @@ import type {
   SysMenuListResp,
 } from '@/services'
 
-export async function apiMenuTree(): Promise<RespBase<MenuNode[]>> {
-  return await get('/admin/system/menus/tree')
+export async function apiMenuTree(tenantId: number): Promise<RespBase<MenuNode[]>> {
+  return await get(`/admin/system/menus/tree/${tenantId}`)
 }
 export async function apiPermList(): Promise<RespBase<PermItem[]>> {
   return await get('/admin/system/perms')

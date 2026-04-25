@@ -162,7 +162,7 @@ func (s *SystemServer) SysPermList(ctx context.Context, in *system.Empty) (*syst
 }
 
 // 获取菜单树
-func (s *SystemServer) GetMenuTree(ctx context.Context, in *system.Empty) (*system.SysMenuTreeResp, error) {
+func (s *SystemServer) GetMenuTree(ctx context.Context, in *system.SysMenuTreeReq) (*system.SysMenuTreeResp, error) {
 	l := logic.NewGetMenuTreeLogic(ctx, s.svcCtx)
 	return l.GetMenuTree(in)
 }

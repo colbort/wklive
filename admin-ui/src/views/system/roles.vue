@@ -250,10 +250,10 @@ function onMenuTreeCheck() {
 function openGrant(row: SysRole) {
   currentRole.value = row
   grantVisible.value = true
-  initGrant(row.id)
+  initGrant(row.id, row.tenantId??0)
 }
 
-async function initGrant(roleId: number) {
+async function initGrant(roleId: number, tenantId: number) {
   await withGrantLoading(async () => {
     try {
       menuTree.value = []
@@ -263,7 +263,7 @@ async function initGrant(roleId: number) {
       menuTreeRef.value?.setCheckedKeys?.([])
 
       const [menusResp, permsResp, detailResp] = await Promise.all([
-        menuService.getMenuTree(),
+        menuService.getMenuTree(tenantId),
         menuService.getPermissionList(),
         roleService.getRoleGrantDetail(roleId),
       ])

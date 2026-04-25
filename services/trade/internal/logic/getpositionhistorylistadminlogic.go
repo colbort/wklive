@@ -30,9 +30,9 @@ func NewGetPositionHistoryListAdminLogic(ctx context.Context, svcCtx *svc.Servic
 func (l *GetPositionHistoryListAdminLogic) GetPositionHistoryListAdmin(in *trade.GetPositionHistoryListAdminReq) (*trade.GetPositionHistoryListAdminResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
 	list, total, err := l.svcCtx.ContractPositionHistModel.FindPage(l.ctx, models.ContractPositionHistoryPageFilter{
-		TenantId:   int64(in.TenantId),
-		UserId:     int64(in.UserId),
-		SymbolId:   int64(in.SymbolId),
+		TenantId:   in.TenantId,
+		UserId:     in.UserId,
+		SymbolId:   in.SymbolId,
 		MarketType: int64(in.MarketType),
 		PositionId: int64(in.PositionId),
 		ActionType: int64(in.ActionType),

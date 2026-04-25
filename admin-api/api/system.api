@@ -102,6 +102,7 @@ type SysRoleItem {
 	code        string `json:"code"`
 	status      int64  `json:"status"`
 	remark      string `json:"remark,optional"`
+	tenantId    int64  `json:"tenantId"`
 	createTimes int64  `json:"createTimes"`
 }
 
@@ -178,6 +179,10 @@ type SysMenuItem {
 	visible   int64  `json:"visible"`
 	status    int64  `json:"status"`
 	perms     string `json:"perms,optional"`
+}
+
+type SysMenuTreeReq {
+	tenantId int64 `path:"tenantId"`
 }
 
 type SysMenuTreeResp {
@@ -417,24 +422,25 @@ type SysCronJobLogListResp {
 
 // ===== system: 租户 =====
 type SysTenantCreateReq {
-	tenantCode   string `json:"tenantCode"`
-	tenantName   string `json:"tenantName"`
-	status       int64  `json:"status"`
-	expireTime   int64  `json:"expireTime"`
-	contactName  string `json:"contactName,optional"`
-	contactPhone string `json:"contactPhone,optional"`
-	remark       string `json:"remark,optional"`
+	username       string `json:"username"`
+	tenantName     string `json:"tenantName"`
+	tenantPassword string `json:"tenantPassword"`
+	status         int64  `json:"status"`
+	expireTime     int64  `json:"expireTime"`
+	contactName    string `json:"contactName,optional"`
+	contactPhone   string `json:"contactPhone,optional"`
+	remark         string `json:"remark,optional"`
 }
 
 type SysTenantUpdateReq {
-	id           int64  `json:"id"`
-	tenantCode   string `json:"tenantCode,optional"`
-	tenantName   string `json:"tenantName,optional"`
-	status       int64  `json:"status,optional"`
-	expireTime   int64  `json:"expireTime,optional"`
-	contactName  string `json:"contactName,optional"`
-	contactPhone string `json:"contactPhone,optional"`
-	remark       string `json:"remark,optional"`
+	id             int64  `json:"id"`
+	tenantName     string `json:"tenantName,optional"`
+	tenantPassword string `json:"tenantPassword,optional"`
+	status         int64  `json:"status,optional"`
+	expireTime     int64  `json:"expireTime,optional"`
+	contactName    string `json:"contactName,optional"`
+	contactPhone   string `json:"contactPhone,optional"`
+	remark         string `json:"remark,optional"`
 }
 
 type SysTenantDeleteReq {
@@ -498,7 +504,7 @@ service admin {
 	get /users (SysUserListReq) returns (SysUserListResp)
 
 	@handler SysUserDetail
-	get /users/:id returns (SysUserDetailResp)
+	get /users/detail returns (SysUserDetailResp)
 
 	@handler SysUserCreate
 	post /users (SysUserCreateReq) returns (RespBase)
@@ -559,7 +565,7 @@ service admin {
 
 	// --- 菜单 ---
 	@handler SysMenuTree
-	get /menus/tree returns (SysMenuTreeResp)
+	get /menus/tree/:tenantId (SysMenuTreeReq) returns (SysMenuTreeResp)
 
 	@handler SysMenuCreate
 	post /menus (SysMenuCreateReq) returns (RespBase)
@@ -645,3 +651,4 @@ service admin {
 	@handler SysTenantDetail
 	get /tenant/detail (SysTenantDetailReq) returns (SysTenantDetailResp)
 }
+

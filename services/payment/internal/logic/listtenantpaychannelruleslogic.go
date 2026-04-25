@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -28,6 +29,11 @@ func NewListTenantPayChannelRulesLogic(ctx context.Context, svcCtx *svc.ServiceC
 
 // 通道规则列表
 func (l *ListTenantPayChannelRulesLogic) ListTenantPayChannelRules(in *payment.ListTenantPayChannelRulesReq) (*payment.ListTenantPayChannelRulesResp, error) {
+	if in.TenantId <= 0 {
+		if tenantId, err := utils.GetTenantIdFromMd(l.ctx); err == nil {
+			in.TenantId = tenantId
+		}
+	}
 	rules, total, err := l.svcCtx.TenantPayChannelRuleModel.FindPage(l.ctx, in.ChannelId, in.Page.Cursor, in.Page.Limit)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err

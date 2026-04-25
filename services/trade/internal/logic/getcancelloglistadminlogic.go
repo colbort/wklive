@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -28,10 +29,15 @@ func NewGetCancelLogListAdminLogic(ctx context.Context, svcCtx *svc.ServiceConte
 
 // 获取撤单日志列表
 func (l *GetCancelLogListAdminLogic) GetCancelLogListAdmin(in *trade.GetCancelLogListAdminReq) (*trade.GetCancelLogListAdminResp, error) {
+	if in.TenantId <= 0 {
+		if tenantId, err := utils.GetTenantIdFromMd(l.ctx); err == nil {
+			in.TenantId = tenantId
+		}
+	}
 	cursor, limit := pageutil.Input(in.Page)
 	list, total, err := l.svcCtx.TradeCancelLogModel.FindPage(l.ctx, models.TradeCancelLogPageFilter{
-		TenantId:     int64(in.TenantId),
-		UserId:       int64(in.UserId),
+		TenantId:     in.TenantId,
+		UserId:       in.UserId,
 		OrderId:      int64(in.OrderId),
 		OrderNo:      in.OrderNo,
 		CancelSource: int64(in.CancelSource),

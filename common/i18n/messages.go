@@ -173,6 +173,8 @@ const (
 	EarlyRedeemNotAllowed                  = 2144
 	RedeemAmountInvalid                    = 2145
 	RewardAmountInvalid                    = 2146
+	SuperAdminCannotBeDeleted              = 2147
+	TenantOwnerCannotBeDeleted             = 2148
 )
 
 // MessageMap 定义所有支持的错误消息翻译
@@ -828,5 +830,13 @@ var MessageMap = map[int32]map[Language]string{
 	RewardAmountInvalid: {
 		EN: "Invalid reward amount",
 		ZH: "收益数量无效",
+	},
+	SuperAdminCannotBeDeleted: {
+		EN: "System super administrator cannot be deleted",
+		ZH: "系统超级管理员不能删除",
+	},
+	TenantOwnerCannotBeDeleted: {
+		EN: "Tenant owner account cannot be deleted",
+		ZH: "租户主账号不能删除",
 	},
 }

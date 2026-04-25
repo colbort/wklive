@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -29,6 +30,11 @@ func NewListUserIdentitiesLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 管理员查询用户实名认证信息列表
 func (l *ListUserIdentitiesLogic) ListUserIdentities(in *user.ListUserIdentitiesReq) (*user.ListUserIdentitiesResp, error) {
+	if in.TenantId <= 0 {
+		if tenantId, err := utils.GetTenantIdFromMd(l.ctx); err == nil {
+			in.TenantId = tenantId
+		}
+	}
 	items, total, err := l.svcCtx.UserIdentityModel.FindPage(l.ctx, in.TenantId, in.Page.Cursor, in.Page.Limit)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err

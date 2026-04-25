@@ -8,13 +8,15 @@ import (
 
 type RoleModel interface {
 	sysRoleModel
-	FindPage(ctx context.Context, keyword string, status, cursor, limit int64) ([]*SysRole, int64, error)
+	FindPage(ctx context.Context, keyword string, tenantId int64, status, cursor, limit int64) ([]*SysRole, int64, error)
 	FindIdsByIds(ctx context.Context, ids []int64) ([]int64, error)
+	FindIdsByTenantId(ctx context.Context, tenantId int64) ([]int64, error)
 }
 
 func (m *defaultSysRoleModel) FindPage(
 	ctx context.Context,
 	keyword string,
+	tenantId int64,
 	status int64,
 	cursor, limit int64,
 ) ([]*SysRole, int64, error) {
@@ -28,6 +30,7 @@ func (m *defaultSysRoleModel) FindPage(
 		builder.And("(name LIKE ? OR code LIKE ?)", like, like)
 	}
 	builder.EqInt64("status", status)
+	builder.EqInt64("tenant_id", tenantId)
 
 	where := builder.Where()
 	args := builder.Args()
@@ -73,6 +76,16 @@ func (m *defaultSysRoleModel) FindPage(
 	}
 
 	return list, total, nil
+}
+
+func (m *defaultSysRoleModel) FindIdsByTenantId(ctx context.Context, tenantId int64) ([]int64, error) {
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.EqInt64("tenant_id", tenantId)
+
+	var ids []int64
+	query := fmt.Sprintf("SELECT id FROM %s WHERE %s", m.table, builder.Where())
+	err := m.QueryRowsNoCacheCtx(ctx, &ids, query, builder.Args()...)
+	return ids, err
 }
 
 func (m *defaultSysRoleModel) FindIdsByIds(ctx context.Context, ids []int64) ([]int64, error) {

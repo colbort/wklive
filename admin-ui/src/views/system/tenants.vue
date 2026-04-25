@@ -152,14 +152,24 @@
     >
       <el-form ref="formRef" :model="formData" :rules="formRules" label-width="120px">
         <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col v-if="isEdit" :span="12">
             <el-form-item :label="t('system.tenantCode')" prop="tenantCode">
               <el-input
                 v-model="formData.tenantCode"
                 :placeholder="t('system.pleaseInputTenantCode')"
                 maxlength="50"
                 show-word-limit
-                :disabled="isEdit"
+                disabled
+              />
+            </el-form-item>
+          </el-col>
+          <el-col v-else :span="12">
+            <el-form-item :label="t('common.username')" prop="username">
+              <el-input
+                v-model="formData.username"
+                :placeholder="t('common.pleaseInputUsername')"
+                maxlength="50"
+                show-word-limit
               />
             </el-form-item>
           </el-col>
@@ -170,6 +180,20 @@
                 :placeholder="t('system.pleaseInputTenantName')"
                 maxlength="100"
                 show-word-limit
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row v-if="!isEdit" :gutter="20">
+          <el-col :span="12">
+            <el-form-item :label="t('common.password')" prop="tenantPassword">
+              <el-input
+                v-model="formData.tenantPassword"
+                type="password"
+                :placeholder="t('common.pleaseInputNewPassword')"
+                maxlength="100"
+                show-password
               />
             </el-form-item>
           </el-col>
@@ -294,7 +318,9 @@ const { form: formData, reset: resetForm } = useForm({
   initialData: {
     id: 0,
     tenantCode: '',
+    username: '',
     tenantName: '',
+    tenantPassword: '',
     status: 1,
     expireTime: Date.now() + 365 * 24 * 60 * 60 * 1000,
     contactName: '',
@@ -306,7 +332,9 @@ const { form: formData, reset: resetForm } = useForm({
 // Form validation rules
 const formRules = {
   tenantCode: [{ required: true, message: t('system.pleaseInputTenantCode'), trigger: 'blur' }],
+  username: [{ required: true, message: t('common.pleaseInputUsername'), trigger: 'blur' }],
   tenantName: [{ required: true, message: t('system.pleaseInputTenantName'), trigger: 'blur' }],
+  tenantPassword: [{ required: true, message: t('common.pleaseInputNewPassword'), trigger: 'blur' }],
   status: [{ required: true, message: t('system.pleaseSelectStatus'), trigger: 'change' }],
   expireTime: [{ required: true, message: t('validation.required'), trigger: 'change' }],
   contactName: [{ required: true, message: t('system.pleaseInputContactName'), trigger: 'blur' }],
@@ -435,14 +463,21 @@ async function handleSubmit() {
     submitLoading.value = true
 
     if (isEdit.value) {
-      const { id, ...updateData } = formData
-      const res = await tenantsService.update(id, updateData)
+      const res = await tenantsService.update(formData.id, {
+        tenantName: formData.tenantName,
+        status: formData.status,
+        expireTime: formData.expireTime,
+        contactName: formData.contactName,
+        contactPhone: formData.contactPhone,
+        remark: formData.remark || '',
+      })
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || t('common.updateFailed'))
       ElMessage.success(t('common.updateSuccess'))
     } else {
       const data: SysTenantCreateReq = {
-        tenantCode: formData.tenantCode,
+        username: formData.username,
         tenantName: formData.tenantName,
+        tenantPassword: formData.tenantPassword,
         status: formData.status,
         expireTime: formData.expireTime,
         contactName: formData.contactName,

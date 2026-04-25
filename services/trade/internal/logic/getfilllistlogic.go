@@ -30,9 +30,9 @@ func NewGetFillListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetFi
 func (l *GetFillListLogic) GetFillList(in *trade.GetFillListReq) (*trade.GetFillListResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
 	list, total, err := l.svcCtx.TradeFillModel.FindPage(l.ctx, models.TradeFillPageFilter{
-		TenantId:   int64(in.TenantId),
-		UserId:     int64(in.UserId),
-		SymbolId:   int64(in.SymbolId),
+		TenantId:   in.TenantId,
+		UserId:     in.UserId,
+		SymbolId:   in.SymbolId,
 		MarketType: int64(in.MarketType),
 		TimeStart:  in.TimeRange.StartTime,
 		TimeEnd:    in.TimeRange.EndTime,

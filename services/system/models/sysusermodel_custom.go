@@ -17,7 +17,8 @@ var (
 type UserModel interface {
 	sysUserModel
 	FindOneByUsername(ctx context.Context, username string) (*SysUser, error)
-	FindPage(ctx context.Context, keyword string, status, cursor, limit int64) ([]*SysUser, int64, error)
+	FindIdsByTenantId(ctx context.Context, tenantId int64) ([]int64, error)
+	FindPage(ctx context.Context, keyword string, tenantId int64, status, cursor, limit int64) ([]*SysUser, int64, error)
 	TransCtx(ctx context.Context, fn func(context context.Context, session sqlx.Session) error) error
 	InsertCtx(ctx context.Context, session sqlx.Session, data *SysUser) (sql.Result, error)
 	InsertGoogle2FASecret(ctx context.Context, userId int64, secret string) error
@@ -25,9 +26,34 @@ type UserModel interface {
 	DeleteGoogle2FASecret(ctx context.Context, userId int64) error
 }
 
+func (m *defaultSysUserModel) FindOneByUsername(ctx context.Context, username string) (*SysUser, error) {
+	var resp SysUser
+	query := fmt.Sprintf("select %s from %s where `username` = ? limit 1", sysUserRows, m.table)
+	err := m.QueryRowNoCacheCtx(ctx, &resp, query, username)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlx.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultSysUserModel) FindIdsByTenantId(ctx context.Context, tenantId int64) ([]int64, error) {
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.EqInt64("tenant_id", tenantId)
+
+	var ids []int64
+	query := fmt.Sprintf("SELECT id FROM %s WHERE %s", m.table, builder.Where())
+	err := m.QueryRowsNoCacheCtx(ctx, &ids, query, builder.Args()...)
+	return ids, err
+}
+
 func (m *defaultSysUserModel) FindPage(
 	ctx context.Context,
 	keyword string,
+	tenantId int64,
 	status int64,
 	cursor, limit int64,
 ) ([]*SysUser, int64, error) {
@@ -41,6 +67,7 @@ func (m *defaultSysUserModel) FindPage(
 		builder.And("(username LIKE ? OR nickname LIKE ?)", like, like)
 	}
 	builder.EqInt64("status", status)
+	builder.EqInt64("tenant_id", tenantId)
 
 	where := builder.Where()
 	args := builder.Args()

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -26,10 +27,12 @@ func NewSysUserListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysUs
 
 // 用户
 func (l *SysUserListLogic) SysUserList(in *system.SysUserListReq) (*system.SysUserListResp, error) {
+	tenantId, _ := utils.GetTenantIdFromMd(l.ctx)
 	// 2️⃣ 查询用户分页
 	items, total, err := l.svcCtx.UserModel.FindPage(
 		l.ctx,
 		in.Keyword,
+		tenantId,
 		commonStatusToModel(in.Status),
 		in.Page.Cursor,
 		in.Page.Limit,

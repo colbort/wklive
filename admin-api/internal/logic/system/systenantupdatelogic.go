@@ -29,13 +29,14 @@ func NewSysTenantUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 
 func (l *SysTenantUpdateLogic) SysTenantUpdate(req *types.SysTenantUpdateReq) (resp *types.RespBase, err error) {
 	result, err := l.svcCtx.SystemCli.SysTenantUpdate(l.ctx, &system.SysTenantUpdateReq{
-		Id:           req.Id,
-		TenantName:   req.TenantName,
-		Status:       toCommonStatus(req.Status),
-		ExpireTime:   req.ExpireTime,
-		ContactName:  req.ContactName,
-		ContactPhone: req.ContactPhone,
-		Remark:       req.Remark,
+		Id:             req.Id,
+		TenantName:     req.TenantName,
+		TenantPassword: req.TenantPassword,
+		Status:         toCommonStatus(req.Status),
+		ExpireTime:     req.ExpireTime,
+		ContactName:    req.ContactName,
+		ContactPhone:   req.ContactPhone,
+		Remark:         req.Remark,
 	})
 	if err != nil {
 		return nil, err

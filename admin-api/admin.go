@@ -17,6 +17,8 @@ import (
 	"github.com/zeromicro/go-zero/rest"
 
 	"wklive/common/etcd"
+	um "wklive/common/middleware"
+	"wklive/common/utils"
 )
 
 var (
@@ -35,7 +37,9 @@ func main() {
 	}
 
 	server := rest.MustNewServer(
-		c.RestConf, rest.WithCors("*"),
+		c.RestConf,
+		rest.WithCors("*"),
+		rest.WithCorsHeaders(string(utils.CtxKeyTenantId)),
 		rest.WithFileServer(
 			"/avatars",
 			http.Dir("./avatars"),
@@ -44,12 +48,13 @@ func main() {
 	defer server.Stop()
 
 	ctx := svc.NewServiceContext(c)
-	handler.RegisterHandlers(server, ctx)
-	handler.RegisterCustomHandlers(server, ctx)
-
-	// Add RBAC middleware
+	headerMiddleware := um.NewHeaderMiddleware()
+	server.Use(headerMiddleware.Handle)
 	rbacMiddleware := middleware.NewRbacMiddleware(ctx)
 	server.Use(rbacMiddleware.Handle)
+
+	handler.RegisterHandlers(server, ctx)
+	handler.RegisterCustomHandlers(server, ctx)
 
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()

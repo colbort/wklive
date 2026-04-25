@@ -27,13 +27,15 @@ func NewSysMenuTreeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysMe
 	}
 }
 
-func (l *SysMenuTreeLogic) SysMenuTree() (resp *types.SysMenuTreeResp, err error) {
-	reuslt, err := l.svcCtx.SystemCli.GetMenuTree(l.ctx, &system.Empty{})
+func (l *SysMenuTreeLogic) SysMenuTree(req *types.SysMenuTreeReq) (resp *types.SysMenuTreeResp, err error) {
+	result, err := l.svcCtx.SystemCli.GetMenuTree(l.ctx, &system.SysMenuTreeReq{
+		TenantId: req.TenantId,
+	})
 	if err != nil {
 		return nil, err
 	}
 	data := make([]types.SysMenuItem, 0)
-	for _, item := range reuslt.Data {
+	for _, item := range result.Data {
 		data = append(data, types.SysMenuItem{
 			Id:        item.Id,
 			ParentId:  item.ParentId,
@@ -51,8 +53,8 @@ func (l *SysMenuTreeLogic) SysMenuTree() (resp *types.SysMenuTreeResp, err error
 	}
 	resp = &types.SysMenuTreeResp{
 		RespBase: types.RespBase{
-			Code: reuslt.Base.Code,
-			Msg:  reuslt.Base.Msg,
+			Code: result.Base.Code,
+			Msg:  result.Base.Msg,
 		},
 		Data: data,
 	}

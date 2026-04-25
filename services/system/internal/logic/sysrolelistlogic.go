@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -26,8 +27,9 @@ func NewSysRoleListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysRo
 
 // 角色
 func (l *SysRoleListLogic) SysRoleList(in *system.SysRoleListReq) (*system.SysRoleListResp, error) {
+	tenantId, _ := utils.GetTenantIdFromMd(l.ctx)
 	// 2) 查分页
-	items, total, err := l.svcCtx.RoleModel.FindPage(l.ctx, in.Keyword, commonStatusToModel(in.Status), in.Page.Cursor, in.Page.Limit)
+	items, total, err := l.svcCtx.RoleModel.FindPage(l.ctx, in.Keyword, tenantId, commonStatusToModel(in.Status), in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -40,11 +42,15 @@ func (l *SysRoleListLogic) SysRoleList(in *system.SysRoleListReq) (*system.SysRo
 	// 3) 组装返回
 	data := make([]*system.SysRoleItem, 0, len(items))
 	for _, r := range items {
+		if r.Code == "super_admin" || r.Code == "tenant_super_admin" {
+			continue
+		}
 		data = append(data, &system.SysRoleItem{
 			Id:          r.Id,
 			Name:        r.Name,
 			Code:        r.Code,
 			Status:      commonStatusToProto(r.Status),
+			TenantId:    r.TenantId,
 			Remark:      r.Remark,
 			CreateTimes: r.CreateTimes,
 		})

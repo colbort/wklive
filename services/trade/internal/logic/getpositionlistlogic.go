@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"wklive/common/helper"
+	"wklive/common/utils"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -28,10 +29,15 @@ func NewGetPositionListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 
 // 获取持仓列表
 func (l *GetPositionListLogic) GetPositionList(in *trade.GetPositionListReq) (*trade.GetPositionListResp, error) {
+	if in.TenantId <= 0 {
+		if tenantId, err := utils.GetTenantIdFromMd(l.ctx); err == nil {
+			in.TenantId = tenantId
+		}
+	}
 	list, err := l.svcCtx.ContractPositionModel.FindList(l.ctx, models.ContractPositionPageFilter{
-		TenantId:   int64(in.TenantId),
-		UserId:     int64(in.UserId),
-		SymbolId:   int64(in.SymbolId),
+		TenantId:   in.TenantId,
+		UserId:     in.UserId,
+		SymbolId:   in.SymbolId,
 		MarketType: int64(in.MarketType),
 	})
 	if err != nil && !errors.Is(err, models.ErrNotFound) {

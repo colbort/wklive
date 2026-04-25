@@ -165,24 +165,24 @@ type UserBankItem {
 }
 
 type CreateUserReq {
-	tenantCode     string `json:"tenantCode"`
-	username       string `json:"username"`
-	nickname       string `json:"nickname,optional"`
-	avatar         string `json:"avatar,optional"`
-	phone          string `json:"phone,optional"`
-	email          string `json:"email,optional"`
-	password       string `json:"password"`
-	registerType   int64  `json:"registerType"`
-	status         int64  `json:"status"`
-	memberLevel    int32  `json:"memberLevel,optional"`
-	language       string `json:"language,optional"`
-	timezone       string `json:"timezone,optional"`
-	inviteCode     string `json:"inviteCode,optional"`
-	signature      string `json:"signature,optional"`
-	source         string `json:"source,optional"`
-	referrerUserId int64  `json:"referrerUserId,optional"`
+	tenantCode         string `json:"tenantCode"`
+	username           string `json:"username"`
+	nickname           string `json:"nickname,optional"`
+	avatar             string `json:"avatar,optional"`
+	phone              string `json:"phone,optional"`
+	email              string `json:"email,optional"`
+	password           string `json:"password"`
+	registerType       int64  `json:"registerType"`
+	status             int64  `json:"status"`
+	memberLevel        int32  `json:"memberLevel,optional"`
+	language           string `json:"language,optional"`
+	timezone           string `json:"timezone,optional"`
+	inviteCode         string `json:"inviteCode,optional"`
+	signature          string `json:"signature,optional"`
+	source             string `json:"source,optional"`
+	referrerUserId     int64  `json:"referrerUserId,optional"`
 	referrerInviteCode string `json:"referrerInviteCode,optional"`
-	remark         string `json:"remark,optional"`
+	remark             string `json:"remark,optional"`
 }
 
 type CreateUserResp {
@@ -247,20 +247,20 @@ type ListUsersResp {
 }
 
 type UpdateUserBaseReq {
-	tenantId       int64  `json:"tenantId"`
-	userId         int64  `path:"userId"`
-	username       string `json:"username,optional"`
-	nickname       string `json:"nickname,optional"`
-	avatar         string `json:"avatar,optional"`
-	language       string `json:"language,optional"`
-	timezone       string `json:"timezone,optional"`
-	signature      string `json:"signature,optional"`
-	source         string `json:"source,optional"`
-	referrerUserId int64  `json:"referrerUserId,optional"`
+	tenantId           int64  `json:"tenantId"`
+	userId             int64  `path:"userId"`
+	username           string `json:"username,optional"`
+	nickname           string `json:"nickname,optional"`
+	avatar             string `json:"avatar,optional"`
+	language           string `json:"language,optional"`
+	timezone           string `json:"timezone,optional"`
+	signature          string `json:"signature,optional"`
+	source             string `json:"source,optional"`
+	referrerUserId     int64  `json:"referrerUserId,optional"`
 	referrerInviteCode string `json:"referrerInviteCode,optional"`
-	remark         string `json:"remark,optional"`
-	phone          string `json:"phone,optional"`
-	email          string `json:"email,optional"`
+	remark             string `json:"remark,optional"`
+	phone              string `json:"phone,optional"`
+	email              string `json:"email,optional"`
 }
 
 type UpdateUserBaseResp {
@@ -513,3 +513,4 @@ service admin {
 	@handler SetDefaultUserBank
 	put /user-banks/:id/default (SetDefaultUserBankReq) returns (RespBase)
 }
+

@@ -96,6 +96,10 @@ message SysMenuItem {
   string perms = 12; // 按钮必须有，例如 sys:user:add
 }
 
+message SysMenuTreeReq {
+  int64 tenant_id = 1;
+}
+
 message SysMenuTreeResp {
   common.RespBase base = 1;
   repeated SysMenuItem data = 2;
@@ -531,23 +535,25 @@ message SysTenantListResp {
 }
 
 message SysTenantCreateReq {
-  string tenant_code = 1;
+  string username = 1;
   string tenant_name = 2;
-  system.CommonStatus status = 3;
-  int64 expire_time = 4;
-  string contact_name = 5;
-  string contact_phone = 6;
-  string remark = 7;
+  string tenant_password = 3;
+  system.CommonStatus status = 4;
+  int64 expire_time = 5;
+  string contact_name = 6;
+  string contact_phone = 7;
+  string remark = 8;
 }
 
 message SysTenantUpdateReq {
   int64 id = 1;
   string tenant_name = 2;
-  system.CommonStatus status = 3;
-  int64 expire_time = 4;
-  string contact_name = 5;
-  string contact_phone = 6;
-  string remark = 7;
+  string tenant_password = 3;
+  system.CommonStatus status = 4;
+  int64 expire_time = 5;
+  string contact_name = 6;
+  string contact_phone = 7;
+  string remark = 8;
 }
 
 message SysTenantDeleteReq { int64 id = 1; }
@@ -614,7 +620,7 @@ service System {
   // 获取权限列表
   rpc SysPermList(Empty) returns (SysPermListResp);
   // 获取菜单树
-  rpc GetMenuTree(Empty) returns (SysMenuTreeResp);
+  rpc GetMenuTree(SysMenuTreeReq) returns (SysMenuTreeResp);
   // 菜单
   rpc SysMenuCreate(SysMenuCreateReq) returns (RespBase);
   // 更新菜单

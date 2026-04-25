@@ -127,7 +127,7 @@ type SystemClient interface {
 	// 获取权限列表
 	SysPermList(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysPermListResp, error)
 	// 获取菜单树
-	GetMenuTree(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysMenuTreeResp, error)
+	GetMenuTree(ctx context.Context, in *SysMenuTreeReq, opts ...grpc.CallOption) (*SysMenuTreeResp, error)
 	// 菜单
 	SysMenuCreate(ctx context.Context, in *SysMenuCreateReq, opts ...grpc.CallOption) (*RespBase, error)
 	// 更新菜单
@@ -422,7 +422,7 @@ func (c *systemClient) SysPermList(ctx context.Context, in *Empty, opts ...grpc.
 	return out, nil
 }
 
-func (c *systemClient) GetMenuTree(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysMenuTreeResp, error) {
+func (c *systemClient) GetMenuTree(ctx context.Context, in *SysMenuTreeReq, opts ...grpc.CallOption) (*SysMenuTreeResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SysMenuTreeResp)
 	err := c.cc.Invoke(ctx, System_GetMenuTree_FullMethodName, in, out, cOpts...)
@@ -757,7 +757,7 @@ type SystemServer interface {
 	// 获取权限列表
 	SysPermList(context.Context, *Empty) (*SysPermListResp, error)
 	// 获取菜单树
-	GetMenuTree(context.Context, *Empty) (*SysMenuTreeResp, error)
+	GetMenuTree(context.Context, *SysMenuTreeReq) (*SysMenuTreeResp, error)
 	// 菜单
 	SysMenuCreate(context.Context, *SysMenuCreateReq) (*RespBase, error)
 	// 更新菜单
@@ -891,7 +891,7 @@ func (UnimplementedSystemServer) SysRoleGrantDetail(context.Context, *SysRoleGra
 func (UnimplementedSystemServer) SysPermList(context.Context, *Empty) (*SysPermListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysPermList not implemented")
 }
-func (UnimplementedSystemServer) GetMenuTree(context.Context, *Empty) (*SysMenuTreeResp, error) {
+func (UnimplementedSystemServer) GetMenuTree(context.Context, *SysMenuTreeReq) (*SysMenuTreeResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMenuTree not implemented")
 }
 func (UnimplementedSystemServer) SysMenuCreate(context.Context, *SysMenuCreateReq) (*RespBase, error) {
@@ -1411,7 +1411,7 @@ func _System_SysPermList_Handler(srv interface{}, ctx context.Context, dec func(
 }
 
 func _System_GetMenuTree_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Empty)
+	in := new(SysMenuTreeReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1423,7 +1423,7 @@ func _System_GetMenuTree_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: System_GetMenuTree_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).GetMenuTree(ctx, req.(*Empty))
+		return srv.(SystemServer).GetMenuTree(ctx, req.(*SysMenuTreeReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }

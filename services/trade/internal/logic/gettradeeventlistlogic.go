@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -28,9 +29,14 @@ func NewGetTradeEventListLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 // 获取交易事件列表
 func (l *GetTradeEventListLogic) GetTradeEventList(in *trade.GetTradeEventListReq) (*trade.GetTradeEventListResp, error) {
+	if in.TenantId <= 0 {
+		if tenantId, err := utils.GetTenantIdFromMd(l.ctx); err == nil {
+			in.TenantId = tenantId
+		}
+	}
 	cursor, limit := pageutil.Input(in.Page)
 	list, total, err := l.svcCtx.BizTradeEventModel.FindPage(l.ctx, models.BizTradeEventPageFilter{
-		TenantId:    int64(in.TenantId),
+		TenantId:    in.TenantId,
 		EventType:   in.EventType,
 		BizType:     in.BizType,
 		BizId:       in.BizId,

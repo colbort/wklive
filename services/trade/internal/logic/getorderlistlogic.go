@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -28,11 +29,16 @@ func NewGetOrderListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetO
 
 // 获取订单列表
 func (l *GetOrderListLogic) GetOrderList(in *trade.GetOrderListReq) (*trade.GetOrderListResp, error) {
+	if in.TenantId <= 0 {
+		if tenantId, err := utils.GetTenantIdFromMd(l.ctx); err == nil {
+			in.TenantId = tenantId
+		}
+	}
 	cursor, limit := pageutil.Input(in.Page)
 	list, total, err := l.svcCtx.TradeOrderModel.FindPage(l.ctx, models.TradeOrderPageFilter{
-		TenantId:   int64(in.TenantId),
-		UserId:     int64(in.UserId),
-		SymbolId:   int64(in.SymbolId),
+		TenantId:   in.TenantId,
+		UserId:     in.UserId,
+		SymbolId:   in.SymbolId,
 		MarketType: int64(in.MarketType),
 		Status:     int64(in.Status),
 		Side:       int64(in.Side),

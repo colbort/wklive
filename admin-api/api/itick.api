@@ -19,7 +19,7 @@ type ItickProduct {
 	categoryType int64  `json:"categoryType"`
 	categoryCode string `json:"categoryCode"`
 	categoryName string `json:"categoryName"`
-	market       string `json:"market"` // 
+	market       string `json:"market"` //
 	symbol       string `json:"symbol"` //
 	code         string `json:"code"` // 第三方原始 code
 	name         string `json:"name"`
@@ -96,7 +96,7 @@ type ItickTenantCategory {
 	categoryType int64  `json:"categoryType"`
 	categoryName string `json:"categoryName"`
 	icon         string `json:"icon"`
-	tenantName string `json:"tenantName"`
+	tenantName   string `json:"tenantName"`
 }
 
 type ItickTenantProduct {
@@ -120,7 +120,7 @@ type ItickTenantProduct {
 	baseCoin     string `json:"baseCoin"`
 	quoteCoin    string `json:"quoteCoin"`
 	icon         string `json:"icon"`
-	tenantName string `json:"tenantName"`
+	tenantName   string `json:"tenantName"`
 }
 
 // ====================
@@ -494,3 +494,4 @@ service admin {
 	@handler InitTenantItickDisplay
 	post /tenant-display/init (InitTenantItickDisplayReq) returns (InitTenantItickDisplayResp)
 }
+

@@ -5,6 +5,7 @@ import (
 
 	"wklive/common/helper"
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/staking"
 	"wklive/services/staking/internal/svc"
 
@@ -27,6 +28,11 @@ func NewAppProductListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ap
 
 // 获取质押产品列表
 func (l *AppProductListLogic) AppProductList(in *staking.AppProductListReq) (*staking.AppProductListResp, error) {
+	if in.TenantId <= 0 {
+		if tenantId, err := utils.GetTenantIdFromMd(l.ctx); err == nil {
+			in.TenantId = tenantId
+		}
+	}
 	page := in.GetPage()
 	cursor, limit := int64(0), int64(10)
 	if page != nil {

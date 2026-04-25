@@ -15,8 +15,8 @@ CREATE TABLE sys_user (
   user_type TINYINT NOT NULL DEFAULT 1 COMMENT '用户类型：1系统管理员 2租户主账号 3租户管理员',
   is_owner TINYINT NOT NULL DEFAULT 0 COMMENT '是否租户主账号：1是 0否',
 
-  username VARCHAR(64) NOT NULL COMMENT '登录账号',
-  password VARCHAR(255) NOT NULL COMMENT 'bcrypt密码',
+  username VARCHAR(64) NOT NULL DEFAULT '' COMMENT '登录账号',
+  password VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'bcrypt密码',
 
   nickname VARCHAR(64) DEFAULT '' COMMENT '昵称',
   avatar VARCHAR(255) DEFAULT '' COMMENT '头像',
@@ -57,8 +57,8 @@ CREATE TABLE sys_role (
 
   tenant_id BIGINT NOT NULL DEFAULT 0 COMMENT '所属租户ID：0=系统角色，>0=租户角色',
 
-  name VARCHAR(64) NOT NULL COMMENT '角色名称',
-  code VARCHAR(64) NOT NULL COMMENT '角色标识(如admin)',
+  name VARCHAR(64) NOT NULL DEFAULT '' COMMENT '角色名称',
+  code VARCHAR(64) NOT NULL DEFAULT '' COMMENT '角色标识(如admin)',
 
   status TINYINT DEFAULT 1 COMMENT '1启用 2禁用',
 
@@ -83,8 +83,8 @@ CREATE TABLE sys_user_role (
   id BIGINT AUTO_INCREMENT COMMENT '主键ID',
 
   tenant_id BIGINT NOT NULL DEFAULT 0 COMMENT '所属租户ID：0=系统侧，>0=租户ID',
-  user_id BIGINT NOT NULL COMMENT '用户ID',
-  role_id BIGINT NOT NULL COMMENT '角色ID',
+  user_id BIGINT NOT NULL DEFAULT 0 COMMENT '用户ID',
+  role_id BIGINT NOT NULL DEFAULT 0 COMMENT '角色ID',
 
   PRIMARY KEY (id),
   UNIQUE KEY uk_user_role(user_id, role_id),
@@ -106,10 +106,9 @@ CREATE TABLE sys_menu (
 
   parent_id BIGINT DEFAULT 0 COMMENT '父级ID',
 
-  name VARCHAR(64) NOT NULL COMMENT '名称',
-  scope TINYINT NOT NULL DEFAULT 1 COMMENT '菜单范围：1系统端 2租户端',
+  name VARCHAR(64) NOT NULL DEFAULT '' COMMENT '名称',
 
-  menu_type TINYINT NOT NULL COMMENT '1目录 2菜单 3按钮',
+  menu_type TINYINT NOT NULL DEFAULT 0 COMMENT '1目录 2菜单 3按钮',
 
   method VARCHAR(16) DEFAULT '' COMMENT '请求方法 GET POST PUT DELETE',
   path VARCHAR(255) DEFAULT '' COMMENT '路由路径',
@@ -141,8 +140,8 @@ CREATE TABLE sys_role_menu (
   id BIGINT AUTO_INCREMENT COMMENT '主键ID',
 
   tenant_id BIGINT NOT NULL DEFAULT 0 COMMENT '所属租户ID：0=系统侧，>0=租户ID',
-  role_id BIGINT NOT NULL COMMENT '角色ID',
-  menu_id BIGINT NOT NULL COMMENT '菜单ID',
+  role_id BIGINT NOT NULL DEFAULT 0 COMMENT '角色ID',
+  menu_id BIGINT NOT NULL DEFAULT 0 COMMENT '菜单ID',
 
   PRIMARY KEY (id),
   UNIQUE KEY uk_role_menu(role_id, menu_id),
@@ -244,10 +243,10 @@ CREATE TABLE sys_config (
 DROP TABLE IF EXISTS sys_job;
 CREATE TABLE sys_job (
   id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  job_name VARCHAR(100) NOT NULL COMMENT '任务名称',
+  job_name VARCHAR(100) NOT NULL DEFAULT '' COMMENT '任务名称',
   job_group VARCHAR(50) DEFAULT 'DEFAULT' COMMENT '任务分组',
-  invoke_target VARCHAR(500) NOT NULL COMMENT '调用目标',
-  cron_expression VARCHAR(100) NOT NULL COMMENT 'cron表达式',
+  invoke_target VARCHAR(500) NOT NULL DEFAULT '' COMMENT '调用目标',
+  cron_expression VARCHAR(100) NOT NULL DEFAULT '' COMMENT 'cron表达式',
   status TINYINT NOT NULL DEFAULT 1 COMMENT '状态：0停用 1启用',
   remark VARCHAR(500) DEFAULT NULL COMMENT '备注',
   create_by VARCHAR(64) DEFAULT NULL COMMENT '创建人',
@@ -265,11 +264,11 @@ CREATE TABLE sys_job (
 DROP TABLE IF EXISTS sys_job_log;
 CREATE TABLE sys_job_log (
   id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  job_id BIGINT NOT NULL COMMENT '任务ID',
-  job_name VARCHAR(100) NOT NULL COMMENT '任务名称',
-  invoke_target VARCHAR(500) NOT NULL COMMENT '调用目标',
+  job_id BIGINT NOT NULL DEFAULT 0 COMMENT '任务ID',
+  job_name VARCHAR(100) NOT NULL DEFAULT '' COMMENT '任务名称',
+  invoke_target VARCHAR(500) NOT NULL DEFAULT '' COMMENT '调用目标',
   cron_expression VARCHAR(100) DEFAULT NULL COMMENT 'cron表达式',
-  status TINYINT NOT NULL COMMENT '执行状态：0失败 1成功',
+  status TINYINT NOT NULL DEFAULT 0 COMMENT '执行状态：0失败 1成功',
   message VARCHAR(2000) DEFAULT NULL COMMENT '执行信息',
   exception_info TEXT COMMENT '异常信息',
   start_time BIGINT DEFAULT 0 COMMENT '开始时间',
@@ -290,8 +289,8 @@ CREATE TABLE sys_job_log (
 DROP TABLE IF EXISTS sys_tenant;
 CREATE TABLE sys_tenant (
   id BIGINT NOT NULL AUTO_INCREMENT COMMENT '租户ID',
-  tenant_code VARCHAR(64) NOT NULL COMMENT '租户编码',
-  tenant_name VARCHAR(128) NOT NULL COMMENT '租户名称',
+  tenant_code VARCHAR(64) NOT NULL DEFAULT '' COMMENT '租户编码',
+  tenant_name VARCHAR(128) NOT NULL DEFAULT '' COMMENT '租户名称',
   status TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1正常 2禁用',
   expire_time BIGINT DEFAULT 0 COMMENT '到期时间',
   contact_name VARCHAR(64) DEFAULT NULL COMMENT '联系人',

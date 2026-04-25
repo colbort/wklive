@@ -31,10 +31,15 @@ func NewCancelAllOrdersLogic(ctx context.Context, svcCtx *svc.ServiceContext) *C
 
 // 撤销当前用户全部订单
 func (l *CancelAllOrdersLogic) CancelAllOrders(in *trade.CancelAllOrdersReq) (*trade.CancelAllOrdersResp, error) {
+	if in.TenantId <= 0 {
+		if tenantId, err := utils.GetTenantIdFromMd(l.ctx); err == nil {
+			in.TenantId = tenantId
+		}
+	}
 	list, _, err := l.svcCtx.TradeOrderModel.FindPage(l.ctx, models.TradeOrderPageFilter{
-		TenantId:     int64(in.TenantId),
-		UserId:       int64(in.UserId),
-		SymbolId:     int64(in.SymbolId),
+		TenantId:     in.TenantId,
+		UserId:       in.UserId,
+		SymbolId:     in.SymbolId,
 		MarketType:   int64(in.MarketType),
 		Side:         int64(in.Side),
 		Statuses:     openOrderStatuses(),

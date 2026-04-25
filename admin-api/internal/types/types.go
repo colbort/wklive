@@ -2464,6 +2464,9 @@ type ProfileUser struct {
 	Username string `json:"username"`
 	Nickname string `json:"nickname,optional"`
 	Avatar   string `json:"avatar,optional"`
+	TenantId int64  `json:"tenantId"` // 所属租户ID：0=系统侧，>0=租户ID
+	UserType int64  `json:"userType"` // 用户类型：1系统管理员 2租户主账号 3租户管理员
+	IsOwner  int64  `json:"isOwner"`  // 是否租户主账号：1是 0否
 }
 
 type Quote struct {
@@ -3063,6 +3066,10 @@ type SysMenuListResp struct {
 	Data []SysMenuItem `json:"data"`
 }
 
+type SysMenuTreeReq struct {
+	TenantId int64 `path:"tenantId"`
+}
+
 type SysMenuTreeResp struct {
 	RespBase
 	Data []SysMenuItem `json:"data"`
@@ -3130,6 +3137,7 @@ type SysRoleItem struct {
 	Code        string `json:"code"`
 	Status      int64  `json:"status"`
 	Remark      string `json:"remark,optional"`
+	TenantId    int64  `json:"tenantId"`
 	CreateTimes int64  `json:"createTimes"`
 }
 
@@ -3152,13 +3160,14 @@ type SysRoleUpdateReq struct {
 }
 
 type SysTenantCreateReq struct {
-	TenantCode   string `json:"tenantCode"`
-	TenantName   string `json:"tenantName"`
-	Status       int64  `json:"status"`
-	ExpireTime   int64  `json:"expireTime"`
-	ContactName  string `json:"contactName,optional"`
-	ContactPhone string `json:"contactPhone,optional"`
-	Remark       string `json:"remark,optional"`
+	Username       string `json:"username"`
+	TenantName     string `json:"tenantName"`
+	TenantPassword string `json:"tenantPassword"`
+	Status         int64  `json:"status"`
+	ExpireTime     int64  `json:"expireTime"`
+	ContactName    string `json:"contactName,optional"`
+	ContactPhone   string `json:"contactPhone,optional"`
+	Remark         string `json:"remark,optional"`
 }
 
 type SysTenantDeleteReq struct {
@@ -3204,14 +3213,14 @@ type SysTenantListResp struct {
 }
 
 type SysTenantUpdateReq struct {
-	Id           int64  `json:"id"`
-	TenantCode   string `json:"tenantCode,optional"`
-	TenantName   string `json:"tenantName,optional"`
-	Status       int64  `json:"status,optional"`
-	ExpireTime   int64  `json:"expireTime,optional"`
-	ContactName  string `json:"contactName,optional"`
-	ContactPhone string `json:"contactPhone,optional"`
-	Remark       string `json:"remark,optional"`
+	Id             int64  `json:"id"`
+	TenantName     string `json:"tenantName,optional"`
+	TenantPassword string `json:"tenantPassword,optional"`
+	Status         int64  `json:"status,optional"`
+	ExpireTime     int64  `json:"expireTime,optional"`
+	ContactName    string `json:"contactName,optional"`
+	ContactPhone   string `json:"contactPhone,optional"`
+	Remark         string `json:"remark,optional"`
 }
 
 type SysUserCreateReq struct {

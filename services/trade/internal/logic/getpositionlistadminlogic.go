@@ -30,9 +30,9 @@ func NewGetPositionListAdminLogic(ctx context.Context, svcCtx *svc.ServiceContex
 func (l *GetPositionListAdminLogic) GetPositionListAdmin(in *trade.GetPositionListAdminReq) (*trade.GetPositionListAdminResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
 	list, total, err := l.svcCtx.ContractPositionModel.FindPage(l.ctx, models.ContractPositionPageFilter{
-		TenantId:   int64(in.TenantId),
-		UserId:     int64(in.UserId),
-		SymbolId:   int64(in.SymbolId),
+		TenantId:   in.TenantId,
+		UserId:     in.UserId,
+		SymbolId:   in.SymbolId,
 		MarketType: int64(in.MarketType),
 	}, cursor, limit)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {

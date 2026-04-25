@@ -10,8 +10,9 @@ import {
 import { apiOptions } from '@/api/system/options'
 
 export type SysTenantCreateReq = {
-  tenantCode: string
+  username: string
   tenantName: string
+  tenantPassword: string
   status: number
   expireTime: number
   contactName: string

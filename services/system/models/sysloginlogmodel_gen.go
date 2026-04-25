@@ -41,6 +41,7 @@ type (
 
 	SysLoginLog struct {
 		Id       int64          `db:"id"`
+		TenantId int64          `db:"tenant_id"` // 所属租户ID：0=系统侧，>0=租户ID
 		UserId   sql.NullInt64  `db:"user_id"`
 		Username sql.NullString `db:"username"`
 		Ip       sql.NullString `db:"ip"`
@@ -87,8 +88,8 @@ func (m *defaultSysLoginLogModel) FindOne(ctx context.Context, id int64) (*SysLo
 func (m *defaultSysLoginLogModel) Insert(ctx context.Context, data *SysLoginLog) (sql.Result, error) {
 	sysLoginLogIdKey := fmt.Sprintf("%s%v", cacheSysLoginLogIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, sysLoginLogRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.UserId, data.Username, data.Ip, data.Ua, data.Success, data.Msg, data.LoginAt)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysLoginLogRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.Username, data.Ip, data.Ua, data.Success, data.Msg, data.LoginAt)
 	}, sysLoginLogIdKey)
 	return ret, err
 }
@@ -97,7 +98,7 @@ func (m *defaultSysLoginLogModel) Update(ctx context.Context, data *SysLoginLog)
 	sysLoginLogIdKey := fmt.Sprintf("%s%v", cacheSysLoginLogIdPrefix, data.Id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysLoginLogRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.UserId, data.Username, data.Ip, data.Ua, data.Success, data.Msg, data.LoginAt, data.Id)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.Username, data.Ip, data.Ua, data.Success, data.Msg, data.LoginAt, data.Id)
 	}, sysLoginLogIdKey)
 	return err
 }

@@ -764,7 +764,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
-				Path:    "/menus/tree",
+				Path:    "/menus/tree/:tenantId",
 				Handler: system.SysMenuTreeHandler(serverCtx),
 			},
 			{
@@ -848,11 +848,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: system.SysUserUpdateHandler(serverCtx),
 			},
 			{
-				Method:  http.MethodGet,
-				Path:    "/users/:id",
-				Handler: system.SysUserDetailHandler(serverCtx),
-			},
-			{
 				Method:  http.MethodDelete,
 				Path:    "/users/:id",
 				Handler: system.SysUserDeleteHandler(serverCtx),
@@ -861,6 +856,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodPost,
 				Path:    "/users/assignRoles",
 				Handler: system.AssignUserRolesHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/users/detail",
+				Handler: system.SysUserDetailHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,

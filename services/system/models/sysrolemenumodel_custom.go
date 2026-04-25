@@ -15,10 +15,21 @@ import (
 type RoleMenuModel interface {
 	sysRoleMenuModel
 	FindMenuIdsByRoleIds(ctx context.Context, roleIds []int64) ([]int64, error)
+	FindIdsByTenantId(ctx context.Context, tenantId int64) ([]int64, error)
 	DeleteByRoleId(ctx context.Context, roleId int64) error
 	InsertBatch(ctx context.Context, data []*SysRoleMenu) error
 	TransactCtx(ctx context.Context, fn func(context.Context, g.Session) error) error
 	ListByRoleId(ctx context.Context, roleId int64) ([]*SysRoleMenu, error)
+}
+
+func (m *defaultSysRoleMenuModel) FindIdsByTenantId(ctx context.Context, tenantId int64) ([]int64, error) {
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.EqInt64("tenant_id", tenantId)
+
+	var ids []int64
+	query := fmt.Sprintf("select id from %s where %s", m.table, builder.Where())
+	err := m.QueryRowsNoCacheCtx(ctx, &ids, query, builder.Args()...)
+	return ids, err
 }
 
 func (m *defaultSysRoleMenuModel) FindMenuIdsByRoleIds(ctx context.Context, roleIds []int64) ([]int64, error) {

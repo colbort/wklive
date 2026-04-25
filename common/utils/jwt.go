@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -51,38 +53,47 @@ func ParseToken(secret, tokenString string) (*Claims, error) {
 }
 
 func GetUidFromCtx(ctx context.Context) (int64, error) {
-	var uid int64
-	jsonUid, ok := ctx.Value("uid").(json.Number)
-	if !ok {
+	v := ctx.Value(CtxKeyUid)
+	if v == nil {
 		return 0, errors.New("uid not found in context")
+	}
 
+	switch val := v.(type) {
+	case float64:
+		return int64(val), nil
+	case int64:
+		return val, nil
+	case int:
+		return int64(val), nil
+	case json.Number:
+		return val.Int64()
+	case string:
+		return strconv.ParseInt(val, 10, 64)
+	default:
+		return 0, fmt.Errorf("invalid uid type: %T, value=%#v", v, v)
 	}
-	if int64Uid, err := jsonUid.Int64(); err == nil {
-		uid = int64Uid
-	} else {
-		return 0, err
-	}
-	return uid, nil
 }
 
 func GetUsernameFromCtx(ctx context.Context) (string, error) {
-	username, ok := ctx.Value("username").(string)
+	username, ok := ctx.Value(CtxKeyUsername).(string)
 	if !ok {
-		return "", errors.New("username not found in context")
+		return "", fmt.Errorf("%s not found in context", CtxKeyUsername)
 	}
 	return username, nil
 }
 
 func GetTenantIdFromCtx(ctx context.Context) (int64, error) {
-	var tenantId int64
-	jsonTenantId, ok := ctx.Value("tenantId").(json.Number)
+	tenantId, ok := ctx.Value(CtxKeyTenantId).(int64)
 	if !ok {
-		return 0, errors.New("tenantId not found in context")
-	}
-	if int64TenantId, err := jsonTenantId.Int64(); err == nil {
-		tenantId = int64TenantId
-	} else {
-		return 0, err
+		return 0, fmt.Errorf("%s not found in context", CtxKeyTenantId)
 	}
 	return tenantId, nil
+}
+
+func GetTenantCodeFromCtx(ctx context.Context) (string, error) {
+	tenantCode, ok := ctx.Value(CtxKeyTenantCode).(string)
+	if !ok {
+		return "", fmt.Errorf("%s not found in context", CtxKeyTenantCode)
+	}
+	return tenantCode, nil
 }

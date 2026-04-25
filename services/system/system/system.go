@@ -68,6 +68,7 @@ type (
 	SysMenuListReq         = system.SysMenuListReq
 	SysMenuListResp        = system.SysMenuListResp
 	SysMenuNode            = system.SysMenuNode
+	SysMenuTreeReq         = system.SysMenuTreeReq
 	SysMenuTreeResp        = system.SysMenuTreeResp
 	SysMenuUpdateReq       = system.SysMenuUpdateReq
 	SysPermItem            = system.SysPermItem
@@ -147,7 +148,7 @@ type (
 		// 获取权限列表
 		SysPermList(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysPermListResp, error)
 		// 获取菜单树
-		GetMenuTree(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysMenuTreeResp, error)
+		GetMenuTree(ctx context.Context, in *SysMenuTreeReq, opts ...grpc.CallOption) (*SysMenuTreeResp, error)
 		// 菜单
 		SysMenuCreate(ctx context.Context, in *SysMenuCreateReq, opts ...grpc.CallOption) (*RespBase, error)
 		// 更新菜单
@@ -354,7 +355,7 @@ func (m *defaultSystem) SysPermList(ctx context.Context, in *Empty, opts ...grpc
 }
 
 // 获取菜单树
-func (m *defaultSystem) GetMenuTree(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*SysMenuTreeResp, error) {
+func (m *defaultSystem) GetMenuTree(ctx context.Context, in *SysMenuTreeReq, opts ...grpc.CallOption) (*SysMenuTreeResp, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.GetMenuTree(ctx, in, opts...)
 }

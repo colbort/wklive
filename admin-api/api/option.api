@@ -665,3 +665,4 @@ service admin {
 	@handler AdminListBills
 	get /bills (ListBillsReq) returns (ListBillsResp)
 }
+

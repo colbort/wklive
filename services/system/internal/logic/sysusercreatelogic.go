@@ -32,7 +32,16 @@ func NewSysUserCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 }
 
 func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system.RespBase, error) {
-	one, err := l.svcCtx.UserModel.FindOneByTenantIdUsername(l.ctx, 0, in.Username)
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		tenantId = 0
+	}
+	creatorId, err := utils.GetUidFromMd(l.ctx)
+	if err != nil {
+		creatorId = 0
+	}
+
+	one, err := l.svcCtx.UserModel.FindOneByTenantIdUsername(l.ctx, tenantId, in.Username)
 	if err != nil && err != sqlx.ErrNotFound {
 		return nil, err
 	}
@@ -47,23 +56,25 @@ func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system
 		return nil, err
 	}
 
-	tenantId, err := utils.GetTidFromMd(l.ctx)
+	userType := int64(system.UserType_USER_TYPE_SYSTEM_ADMIN)
 	if tenantId > 0 {
-		// 租户登录
-	} else {
-		// 系统管理员登录
+		userType = int64(system.UserType_USER_TYPE_TENANT_ADMIN)
 	}
 	data := models.SysUser{
+		TenantId:      tenantId,
+		UserType:      userType,
+		IsOwner:       0,
 		Username:      in.Username,
 		Nickname:      in.Nickname,
 		Password:      string(hashedPassword),
 		PermsVer:      1,
 		Status:        commonStatusToModel(in.Status),
-		Avatar:        "",
+		Avatar:        in.Avatar,
 		GoogleSecret:  "",
 		GoogleEnabled: 0,
 		LastLoginIp:   "",
 		LastLoginAt:   0,
+		CreateBy:      creatorId,
 		CreateTimes:   utils.NowMillis(),
 		UpdateTimes:   utils.NowMillis(),
 	}
@@ -81,8 +92,12 @@ func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system
 		roleIds = append(roleIds, id)
 	}
 
-	err = l.svcCtx.UserModel.TransCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
-		res, err := l.svcCtx.UserModel.InsertCtx(ctx, session, &data)
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		userModel := models.NewSysUserModel(conn, l.svcCtx.Config.CacheRedis).(models.UserModel)
+		userRoleModel := models.NewSysUserRoleModel(conn, l.svcCtx.Config.CacheRedis).(models.UserRoleModel)
+
+		res, err := userModel.InsertCtx(ctx, session, &data)
 		if err != nil {
 			return err
 		}
@@ -104,10 +119,14 @@ func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system
 			if role == nil {
 				return fmt.Errorf("role_not_found:%d", rid)
 			}
+			if role.TenantId != tenantId {
+				return fmt.Errorf("role_tenant_mismatch:%d", rid)
+			}
 
-			_, err = l.svcCtx.UserRoleModel.InsertCtx(ctx, session, &models.SysUserRole{
-				UserId: data.Id,
-				RoleId: rid,
+			_, err = userRoleModel.InsertCtx(ctx, session, &models.SysUserRole{
+				TenantId: tenantId,
+				UserId:   data.Id,
+				RoleId:   rid,
 			})
 			if err != nil {
 				return err
@@ -118,6 +137,11 @@ func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system
 
 	if err != nil {
 		if strings.HasPrefix(err.Error(), "role_not_found:") {
+			return &system.RespBase{
+				Base: helper.GetErrResp(400, i18n.Translate(i18n.RoleNotFound, l.ctx)),
+			}, nil
+		}
+		if strings.HasPrefix(err.Error(), "role_tenant_mismatch:") {
 			return &system.RespBase{
 				Base: helper.GetErrResp(400, i18n.Translate(i18n.RoleNotFound, l.ctx)),
 			}, nil

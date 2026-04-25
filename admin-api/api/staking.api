@@ -363,3 +363,4 @@ service admin {
 	@handler ManualRedeem
 	post /manual-redeem (AdminManualRedeemReq) returns (AdminManualRedeemResp)
 }
+

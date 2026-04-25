@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -28,6 +29,11 @@ func NewListWithdrawOrdersLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 获取提现订单列表
 func (l *ListWithdrawOrdersLogic) ListWithdrawOrders(in *payment.ListWithdrawOrdersReq) (*payment.ListWithdrawOrdersResp, error) {
+	if in.TenantId <= 0 {
+		if tenantId, err := utils.GetTenantIdFromMd(l.ctx); err == nil {
+			in.TenantId = tenantId
+		}
+	}
 	orders, total, err := l.svcCtx.WithdrawOrderModel.FindPage(
 		l.ctx,
 		in.TenantId,

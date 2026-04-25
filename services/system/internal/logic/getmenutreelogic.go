@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"wklive/common/helper"
+	"wklive/common/utils"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 
@@ -24,14 +25,30 @@ func NewGetMenuTreeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetMe
 	}
 }
 
-func (l *GetMenuTreeLogic) GetMenuTree(in *system.Empty) (*system.SysMenuTreeResp, error) {
+func (l *GetMenuTreeLogic) GetMenuTree(in *system.SysMenuTreeReq) (*system.SysMenuTreeResp, error) {
 	menus, err := l.svcCtx.MenuModel.ListAll(l.ctx)
 	if err != nil {
 		return nil, err
 	}
+	mm := make(map[int64]bool, len(menus))
+	tenantId, _ := utils.GetTenantIdFromMd(l.ctx)
+	filter := false
+	if tenantId > 0 || in.TenantId > 0 {
+		roleMenus, err := l.svcCtx.RoleMenuModel.ListByRoleId(l.ctx, 2)
+		if err != nil {
+			return nil, err
+		}
+		for _, v := range roleMenus {
+			mm[v.MenuId] = true
+		}
+		filter = true
+	}
 
 	data := make([]*system.SysMenuItem, 0, len(menus))
 	for _, m := range menus {
+		if !mm[m.Id] && filter {
+			continue
+		}
 		item := &system.SysMenuItem{
 			Id:        m.Id,
 			ParentId:  m.ParentId,

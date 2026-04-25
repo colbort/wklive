@@ -35,7 +35,7 @@ func GetUserInfoFromMd(ctx context.Context) (int64, string, error) {
 	}
 
 	var uid int64
-	if vals := md.Get("uid"); len(vals) > 0 && vals[0] != "" {
+	if vals := md.Get(CtxKeyUid); len(vals) > 0 && vals[0] != "" {
 		var err error
 		uid, err = strconv.ParseInt(vals[0], 10, 64)
 		if err != nil {
@@ -44,7 +44,7 @@ func GetUserInfoFromMd(ctx context.Context) (int64, string, error) {
 	}
 
 	var username string
-	if vals := md.Get("username"); len(vals) > 0 {
+	if vals := md.Get(CtxKeyUsername); len(vals) > 0 {
 		username = vals[0]
 	}
 
@@ -58,7 +58,7 @@ func GetUidFromMd(ctx context.Context) (int64, error) {
 	}
 
 	var uid int64
-	if vals := md.Get("uid"); len(vals) > 0 && vals[0] != "" {
+	if vals := md.Get(CtxKeyUid); len(vals) > 0 && vals[0] != "" {
 		var err error
 		uid, err = strconv.ParseInt(vals[0], 10, 64)
 		if err != nil {
@@ -76,21 +76,21 @@ func GetUsernameFromMd(ctx context.Context) (string, error) {
 	}
 
 	var username string
-	if vals := md.Get("username"); len(vals) > 0 {
+	if vals := md.Get(CtxKeyUsername); len(vals) > 0 {
 		username = vals[0]
 	}
 
 	return username, nil
 }
 
-func GetTidFromMd(ctx context.Context) (int64, error) {
+func GetTenantIdFromMd(ctx context.Context) (int64, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return 0, fmt.Errorf("no metadata in context")
 	}
 
 	var uid int64
-	if vals := md.Get("tid"); len(vals) > 0 && vals[0] != "" {
+	if vals := md.Get(CtxKeyTenantId); len(vals) > 0 && vals[0] != "" {
 		var err error
 		uid, err = strconv.ParseInt(vals[0], 10, 64)
 		if err != nil {
@@ -99,4 +99,18 @@ func GetTidFromMd(ctx context.Context) (int64, error) {
 	}
 
 	return uid, nil
+}
+
+func GetTenantCodeFromMd(ctx context.Context) (string, error) {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return "", fmt.Errorf("no metadata in context")
+	}
+
+	var tenantCode string
+	if vals := md.Get(CtxKeyTenantCode); len(vals) > 0 {
+		tenantCode = vals[0]
+	}
+
+	return tenantCode, nil
 }

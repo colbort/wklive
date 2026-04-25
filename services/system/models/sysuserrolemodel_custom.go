@@ -12,12 +12,23 @@ import (
 
 type UserRoleModel interface {
 	sysUserRoleModel
+	FindIdsByTenantId(ctx context.Context, tenantId int64) ([]int64, error)
 	FindRoleIdsByUserId(ctx context.Context, uid int64) ([]int64, error)
 	FindRoleIdsByUserIds(ctx context.Context, userIds []int64) (map[int64][]int64, error)
 	InsertCtx(ctx context.Context, session sqlx.Session, data *SysUserRole) (sql.Result, error)
 	FindLoginUserPerms(ctx context.Context, uid int64, clear bool) ([]string, error)
 	FindByIds(ctx context.Context, userId int64, roleIds []int64) ([]int64, error)
 	FindByRoleId(ctx context.Context, roleId int64) ([]int64, error)
+}
+
+func (m *defaultSysUserRoleModel) FindIdsByTenantId(ctx context.Context, tenantId int64) ([]int64, error) {
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.EqInt64("tenant_id", tenantId)
+
+	var ids []int64
+	query := fmt.Sprintf("select id from %s where %s", m.table, builder.Where())
+	err := m.QueryRowsNoCacheCtx(ctx, &ids, query, builder.Args()...)
+	return ids, err
 }
 
 func (m *defaultSysUserRoleModel) FindRoleIdsByUserId(ctx context.Context, uid int64) ([]int64, error) {

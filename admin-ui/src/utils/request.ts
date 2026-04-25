@@ -23,6 +23,9 @@ http.interceptors.request.use(
     if (auth.token) {
       config.headers.Authorization = `Bearer ${auth.token}`
     }
+    if (auth.tenantId) {
+      config.headers['x-tenant-id'] = String(auth.tenantId)
+    }
     logger.debug(`[${config.method?.toUpperCase()}] ${config.url || ''}`)
     return config
   },

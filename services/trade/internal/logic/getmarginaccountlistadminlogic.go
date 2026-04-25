@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -28,10 +29,15 @@ func NewGetMarginAccountListAdminLogic(ctx context.Context, svcCtx *svc.ServiceC
 
 // 获取保证金账户列表
 func (l *GetMarginAccountListAdminLogic) GetMarginAccountListAdmin(in *trade.GetMarginAccountListAdminReq) (*trade.GetMarginAccountListAdminResp, error) {
+	if in.TenantId <= 0 {
+		if tenantId, err := utils.GetTenantIdFromMd(l.ctx); err == nil {
+			in.TenantId = tenantId
+		}
+	}
 	cursor, limit := pageutil.Input(in.Page)
 	list, total, err := l.svcCtx.ContractMarginAcctModel.FindPage(l.ctx, models.ContractMarginAccountPageFilter{
-		TenantId:    int64(in.TenantId),
-		UserId:      int64(in.UserId),
+		TenantId:    in.TenantId,
+		UserId:      in.UserId,
 		MarketType:  int64(in.MarketType),
 		MarginAsset: in.MarginAsset,
 	}, cursor, limit)

@@ -41,6 +41,7 @@ type (
 
 	SysOpLog struct {
 		Id          int64          `db:"id"`
+		TenantId    int64          `db:"tenant_id"` // 所属租户ID：0=系统侧，>0=租户ID
 		UserId      sql.NullInt64  `db:"user_id"`
 		Username    sql.NullString `db:"username"`
 		Method      sql.NullString `db:"method"`
@@ -90,8 +91,8 @@ func (m *defaultSysOpLogModel) FindOne(ctx context.Context, id int64) (*SysOpLog
 func (m *defaultSysOpLogModel) Insert(ctx context.Context, data *SysOpLog) (sql.Result, error) {
 	sysOpLogIdKey := fmt.Sprintf("%s%v", cacheSysOpLogIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysOpLogRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.UserId, data.Username, data.Method, data.Path, data.Req, data.Resp, data.Ip, data.CostMs, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysOpLogRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.Username, data.Method, data.Path, data.Req, data.Resp, data.Ip, data.CostMs, data.CreateTimes, data.UpdateTimes)
 	}, sysOpLogIdKey)
 	return ret, err
 }
@@ -100,7 +101,7 @@ func (m *defaultSysOpLogModel) Update(ctx context.Context, data *SysOpLog) error
 	sysOpLogIdKey := fmt.Sprintf("%s%v", cacheSysOpLogIdPrefix, data.Id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysOpLogRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.UserId, data.Username, data.Method, data.Path, data.Req, data.Resp, data.Ip, data.CostMs, data.CreateTimes, data.UpdateTimes, data.Id)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.Username, data.Method, data.Path, data.Req, data.Resp, data.Ip, data.CostMs, data.CreateTimes, data.UpdateTimes, data.Id)
 	}, sysOpLogIdKey)
 	return err
 }

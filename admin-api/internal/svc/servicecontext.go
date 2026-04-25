@@ -5,6 +5,7 @@ package svc
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"wklive/admin-api/internal/config"
 	"wklive/common/utils"
@@ -43,12 +44,18 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		invoker grpc.UnaryInvoker,
 		opts ...grpc.CallOption,
 	) error {
-		pairs := make([]string, 0, 4)
+		pairs := make([]string, 0)
 		if uid, err := utils.GetUidFromCtx(ctx); err == nil {
-			pairs = append(pairs, "uid", strconv.FormatInt(uid, 10))
+			pairs = append(pairs, utils.CtxKeyUid, strconv.FormatInt(uid, 10))
 		}
 		if username, err := utils.GetUsernameFromCtx(ctx); err == nil {
-			pairs = append(pairs, "username", username)
+			pairs = append(pairs, utils.CtxKeyUsername, username)
+		}
+		if tenantId, err := utils.GetTenantIdFromCtx(ctx); err == nil {
+			pairs = append(pairs, utils.CtxKeyTenantId, fmt.Sprintf("%d", tenantId))
+		}
+		if tenantCode, err := utils.GetUsernameFromCtx(ctx); err == nil {
+			pairs = append(pairs, utils.CtxKeyTenantCode, tenantCode)
 		}
 		if len(pairs) > 0 {
 			ctx = metadata.AppendToOutgoingContext(ctx, pairs...)

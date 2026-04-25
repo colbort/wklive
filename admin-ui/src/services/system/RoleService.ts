@@ -17,6 +17,7 @@ export type SysRole = {
   code: string
   remark?: string
   status?: number
+  tenantId?: number
   isSuper?: boolean // 可选：如果后端有的话
 }
 

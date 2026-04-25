@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"wklive/common/helper"
+	"wklive/common/utils"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -28,8 +29,13 @@ func NewGetSymbolListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Get
 
 // 获取交易对列表
 func (l *GetSymbolListLogic) GetSymbolList(in *trade.GetSymbolListReq) (*trade.GetSymbolListResp, error) {
+	if in.TenantId <= 0 {
+		if tenantId, err := utils.GetTenantIdFromMd(l.ctx); err == nil {
+			in.TenantId = tenantId
+		}
+	}
 	list, err := l.svcCtx.TradeSymbolModel.FindAll(l.ctx, models.TradeSymbolPageFilter{
-		TenantId:   int64(in.TenantId),
+		TenantId:   in.TenantId,
 		MarketType: int64(in.MarketType),
 		Status:     int64(in.Status),
 	})

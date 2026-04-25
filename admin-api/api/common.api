@@ -19,8 +19,8 @@ type TimeRange {
 }
 
 type OptionsItem {
-	value int32 `json:"value"`
-	code string `json:"code"`
+	value int32  `json:"value"`
+	code  string `json:"code"`
 }
 
 type OptionsGroup {
@@ -28,3 +28,4 @@ type OptionsGroup {
 	label   string        `json:"label"`
 	options []OptionsItem `json:"options"`
 }
+

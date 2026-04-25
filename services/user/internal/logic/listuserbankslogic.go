@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -29,6 +30,11 @@ func NewListUserBanksLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Lis
 
 // 管理员查询用户银行卡列表
 func (l *ListUserBanksLogic) ListUserBanks(in *user.ListUserBanksReq) (*user.ListUserBanksResp, error) {
+	if in.TenantId <= 0 {
+		if tenantId, err := utils.GetTenantIdFromMd(l.ctx); err == nil {
+			in.TenantId = tenantId
+		}
+	}
 	items, total, err := l.svcCtx.UserBankModel.FindPage(l.ctx, in.TenantId, in.UserId, in.Page.Cursor, in.Page.Limit)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err

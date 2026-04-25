@@ -29,13 +29,14 @@ func NewSysTenantCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 
 func (l *SysTenantCreateLogic) SysTenantCreate(req *types.SysTenantCreateReq) (resp *types.RespBase, err error) {
 	result, err := l.svcCtx.SystemCli.SysTenantCreate(l.ctx, &system.SysTenantCreateReq{
-		TenantCode:   req.TenantCode,
-		TenantName:   req.TenantName,
-		Status:       toCommonStatus(req.Status),
-		ExpireTime:   req.ExpireTime,
-		ContactName:  req.ContactName,
-		ContactPhone: req.ContactPhone,
-		Remark:       req.Remark,
+		Username:       req.Username,
+		TenantPassword: req.TenantPassword,
+		TenantName:     req.TenantName,
+		Status:         toCommonStatus(req.Status),
+		ExpireTime:     req.ExpireTime,
+		ContactName:    req.ContactName,
+		ContactPhone:   req.ContactPhone,
+		Remark:         req.Remark,
 	})
 	if err != nil {
 		return nil, err
