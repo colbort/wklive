@@ -1,5 +1,4 @@
 export interface GuestFingerprint {
-  deviceLocalId: string
   timezone: string
   platform: string
   language: string
@@ -30,14 +29,6 @@ export interface GuestFingerprint {
 
 function safeNumber(value: unknown, defaultValue = 0) {
   return typeof value === 'number' && !Number.isNaN(value) ? value : defaultValue
-}
-
-function createLocalId() {
-  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-    return crypto.randomUUID()
-  }
-
-  return `fallback_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
 }
 
 function getScreenInfo() {
@@ -178,21 +169,6 @@ function hashString(value: string) {
   return `fp_${(hash >>> 0).toString(16).padStart(8, '0')}`
 }
 
-export function getOrCreateDeviceLocalId() {
-  const key = 'device_local_id'
-
-  try {
-    let value = localStorage.getItem(key)
-    if (value) return value
-
-    value = createLocalId()
-    localStorage.setItem(key, value)
-    return value
-  } catch {
-    return createLocalId()
-  }
-}
-
 export function getGuestId() {
   try {
     return localStorage.getItem('guest_id') || ''
@@ -248,8 +224,6 @@ export function collectGuestFingerprint(): GuestFingerprint {
   )
 
   return {
-    deviceLocalId: getOrCreateDeviceLocalId(),
-
     timezone,
 
     platform: navigatorInfo.platform,

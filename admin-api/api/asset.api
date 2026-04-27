@@ -17,6 +17,29 @@ type AssetUserAsset {
 	updateTimes     int64  `json:"updateTimes"`
 }
 
+type AssetCoinConfig {
+	id              int64  `json:"id"`
+	tenantId        int64  `json:"tenantId"`
+	walletType      int64  `json:"walletType"`
+	coin            string `json:"coin"`
+	symbol          string `json:"symbol"`
+	coinName        string `json:"coinName"`
+	coinType        int64  `json:"coinType"`
+	iconUrl         string `json:"iconUrl"`
+	iconText        string `json:"iconText"`
+	iconBgColor     string `json:"iconBgColor"`
+	decimalPlaces   int64  `json:"decimalPlaces"`
+	appVisible      int64  `json:"appVisible"`
+	rechargeEnabled int64  `json:"rechargeEnabled"`
+	withdrawEnabled int64  `json:"withdrawEnabled"`
+	transferEnabled int64  `json:"transferEnabled"`
+	status          int64  `json:"status"`
+	sort            int64  `json:"sort"`
+	remark          string `json:"remark"`
+	createTimes     int64  `json:"createTimes"`
+	updateTimes     int64  `json:"updateTimes"`
+}
+
 type AssetFlow {
 	id                     int64  `json:"id"`
 	flowNo                 string `json:"flowNo"`
@@ -87,6 +110,85 @@ type AssetLock {
 	remark       string `json:"remark"`
 	createTimes  int64  `json:"createTimes"`
 	updateTimes  int64  `json:"updateTimes"`
+}
+
+type CreateAssetCoinConfigReq {
+	tenantId        int64  `json:"tenantId"`
+	walletType      int64  `json:"walletType"`
+	coin            string `json:"coin"`
+	symbol          string `json:"symbol"`
+	coinName        string `json:"coinName"`
+	coinType        int64  `json:"coinType"`
+	iconUrl         string `json:"iconUrl,optional"`
+	iconText        string `json:"iconText,optional"`
+	iconBgColor     string `json:"iconBgColor,optional"`
+	decimalPlaces   int64  `json:"decimalPlaces,optional"`
+	appVisible      int64  `json:"appVisible,optional"`
+	rechargeEnabled int64  `json:"rechargeEnabled,optional"`
+	withdrawEnabled int64  `json:"withdrawEnabled,optional"`
+	transferEnabled int64  `json:"transferEnabled,optional"`
+	status          int64  `json:"status,optional"`
+	sort            int64  `json:"sort,optional"`
+	remark          string `json:"remark,optional"`
+}
+
+type UpdateAssetCoinConfigReq {
+	id              int64  `path:"id"`
+	tenantId        int64  `json:"tenantId,optional"`
+	walletType      int64  `json:"walletType,optional"`
+	coin            string `json:"coin,optional"`
+	symbol          string `json:"symbol,optional"`
+	coinName        string `json:"coinName,optional"`
+	coinType        int64  `json:"coinType,optional"`
+	iconUrl         string `json:"iconUrl,optional"`
+	iconText        string `json:"iconText,optional"`
+	iconBgColor     string `json:"iconBgColor,optional"`
+	decimalPlaces   int64  `json:"decimalPlaces,optional"`
+	appVisible      int64  `json:"appVisible,optional"`
+	rechargeEnabled int64  `json:"rechargeEnabled,optional"`
+	withdrawEnabled int64  `json:"withdrawEnabled,optional"`
+	transferEnabled int64  `json:"transferEnabled,optional"`
+	status          int64  `json:"status,optional"`
+	sort            int64  `json:"sort,optional"`
+	remark          string `json:"remark,optional"`
+}
+
+type DeleteAssetCoinConfigReq {
+	id       int64 `path:"id"`
+	tenantId int64 `form:"tenantId,optional"`
+}
+
+type GetAssetCoinConfigReq {
+	id       int64 `path:"id"`
+	tenantId int64 `form:"tenantId,optional"`
+}
+
+type PageAssetCoinConfigsReq {
+	PageReq
+	tenantId        int64  `form:"tenantId,optional"`
+	walletType      int64  `form:"walletType,optional"`
+	coin            string `form:"coin,optional"`
+	symbol          string `form:"symbol,optional"`
+	coinType        int64  `form:"coinType,optional"`
+	appVisible      int64  `form:"appVisible,optional"`
+	rechargeEnabled int64  `form:"rechargeEnabled,optional"`
+	withdrawEnabled int64  `form:"withdrawEnabled,optional"`
+	transferEnabled int64  `form:"transferEnabled,optional"`
+	status          int64  `form:"status,optional"`
+}
+
+type AssetCoinConfigResp {
+	RespBase
+	data AssetCoinConfig `json:"data"`
+}
+
+type PageAssetCoinConfigsResp {
+	RespBase
+	data []AssetCoinConfig `json:"data"`
+}
+
+type DeleteAssetCoinConfigResp {
+	RespBase
 }
 
 type PageUserAssetsReq {
@@ -246,6 +348,21 @@ service admin {
 	@handler GetAssetOptions
 	get /options returns (GetAssetOptionsResp)
 
+	@handler CreateAssetCoinConfig
+	post /coin-configs (CreateAssetCoinConfigReq) returns (AssetCoinConfigResp)
+
+	@handler UpdateAssetCoinConfig
+	put /coin-configs/:id (UpdateAssetCoinConfigReq) returns (AssetCoinConfigResp)
+
+	@handler DeleteAssetCoinConfig
+	delete /coin-configs/:id (DeleteAssetCoinConfigReq) returns (DeleteAssetCoinConfigResp)
+
+	@handler GetAssetCoinConfig
+	get /coin-configs/:id (GetAssetCoinConfigReq) returns (AssetCoinConfigResp)
+
+	@handler PageAssetCoinConfigs
+	get /coin-configs (PageAssetCoinConfigsReq) returns (PageAssetCoinConfigsResp)
+
 	@handler PageUserAssets
 	get /user-assets (PageUserAssetsReq) returns (PageUserAssetsResp)
 
@@ -279,4 +396,3 @@ service admin {
 	@handler AdminUnlockAsset
 	post /unlock (AdminUnlockAssetReq) returns (AdminChangeAssetResp)
 }
-

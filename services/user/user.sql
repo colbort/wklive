@@ -52,7 +52,7 @@ CREATE TABLE `t_user_fingerprint` (
   `create_times` bigint NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_times` bigint NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_tenant_user_hash` (`tenant_id`, `user_id`, `fingerprint_hash`),
+  UNIQUE KEY `uk_tenant_user` (`tenant_id`, `user_id`),
   KEY `idx_tenant_hash` (`tenant_id`, `fingerprint_hash`),
   KEY `idx_tenant_match_key_id` (`tenant_id`, `match_key`, `id`),
   KEY `idx_tenant_user_id` (`tenant_id`, `user_id`),

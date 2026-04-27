@@ -19,6 +19,29 @@ type AssetUserAsset {
 	updateTimes     int64  `json:"updateTimes"` // 更新时间
 }
 
+type AssetCoinConfig {
+	id              int64  `json:"id"` // 主键ID
+	tenantId        int64  `json:"tenantId"` // 租户ID
+	walletType      int64  `json:"walletType"` // 账户类型
+	coin            string `json:"coin"` // 币种代码
+	symbol          string `json:"symbol"` // 展示符号/资产标识
+	coinName        string `json:"coinName"` // 币种名称
+	coinType        int64  `json:"coinType"` // 币种类型
+	iconUrl         string `json:"iconUrl"` // 币种图标URL
+	iconText        string `json:"iconText"` // 币种图标文案/符号
+	iconBgColor     string `json:"iconBgColor"` // 图标背景色
+	decimalPlaces   int64  `json:"decimalPlaces"` // 资产展示精度
+	appVisible      int64  `json:"appVisible"` // APP操作页是否展示
+	rechargeEnabled int64  `json:"rechargeEnabled"` // 充值页是否展示
+	withdrawEnabled int64  `json:"withdrawEnabled"` // 提现页是否展示
+	transferEnabled int64  `json:"transferEnabled"` // 划转页是否展示
+	status          int64  `json:"status"` // 状态
+	sort            int64  `json:"sort"` // 排序
+	remark          string `json:"remark"` // 备注
+	createTimes     int64  `json:"createTimes"` // 创建时间
+	updateTimes     int64  `json:"updateTimes"` // 更新时间
+}
+
 type AssetFlow {
 	id                     int64  `json:"id"` // 主键ID
 	flowNo                 string `json:"flowNo"` // 流水单号
@@ -101,6 +124,18 @@ type UserAssetSummary {
 	assets             []AssetUserAsset `json:"assets"` // 资产列表
 }
 
+type ListAssetCoinConfigsReq {
+	tenantId      int64 `form:"tenantId,optional"` // 租户ID
+	walletType    int64 `form:"walletType"` // 账户类型
+	operationType int64 `form:"operationType"` // 操作场景:1充值 2提现 3划转
+	coinType      int64 `form:"coinType,optional"` // 币种类型
+}
+
+type ListAssetCoinConfigsResp {
+	RespBase
+	data []AssetCoinConfig `json:"data"`
+}
+
 type GetMyAssetSummaryReq {
 	tenantId int64 `form:"tenantId,optional"` // 租户ID
 }
@@ -179,6 +214,9 @@ type ListMyLocksResp {
 	jwt:    Jwt
 )
 service app {
+	@handler ListAssetCoinConfigs
+	get /coin-configs (ListAssetCoinConfigsReq) returns (ListAssetCoinConfigsResp)
+
 	@handler GetMyAssetSummary
 	get /summary (GetMyAssetSummaryReq) returns (GetMyAssetSummaryResp)
 

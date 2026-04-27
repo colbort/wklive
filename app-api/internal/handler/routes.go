@@ -35,6 +35,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
+				Path:    "/coin-configs",
+				Handler: asset.ListAssetCoinConfigsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
 				Path:    "/flows",
 				Handler: asset.ListMyAssetFlowsHandler(serverCtx),
 			},

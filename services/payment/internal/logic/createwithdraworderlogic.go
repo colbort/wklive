@@ -3,8 +3,10 @@ package logic
 import (
 	"context"
 	"database/sql"
+	"fmt"
 
 	"wklive/common/helper"
+	"wklive/common/notify"
 	"wklive/common/utils"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
@@ -76,6 +78,18 @@ func (l *CreateWithdrawOrderLogic) CreateWithdrawOrder(in *payment.CreateWithdra
 	}
 
 	l.Logger.Infof("Create withdraw order success: %s, user_id: %d, amount: %d", orderNo, in.UserId, in.Amount)
+	event := notify.NewEvent(notify.EventTypeWithdraw, notify.EventLevelWarning, "用户提现", fmt.Sprintf("用户 %d 发起提现订单 %s", in.UserId, orderNo))
+	event.Source = "payment"
+	event.TenantID = in.TenantId
+	event.UserID = in.UserId
+	event.BizNo = orderNo
+	event.Data = map[string]any{
+		"amount":   in.Amount,
+		"currency": in.Currency,
+	}
+	if err := notify.Publish(l.ctx, l.svcCtx.Redis, event); err != nil {
+		l.Errorf("publish admin withdraw notification failed, orderNo=%s err=%v", orderNo, err)
+	}
 
 	return &payment.CreateWithdrawOrderResp{
 		Base: helper.OkResp(),

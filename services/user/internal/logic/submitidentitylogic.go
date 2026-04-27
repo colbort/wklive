@@ -4,8 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/notify"
 	"wklive/common/utils"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
@@ -107,6 +109,19 @@ func (l *SubmitIdentityLogic) SubmitIdentity(in *user.SubmitIdentityReq) (*user.
 	}
 
 	l.Logger.Infof("用户 %d 提交实名认证信息成功，状态为待审核", in.UserId)
+
+	event := notify.NewEvent(notify.EventTypeUserIdentitySubmit, notify.EventLevelInfo, "实名认证提交", fmt.Sprintf("用户 %d 提交实名认证", in.UserId))
+	event.Source = "user"
+	event.TenantID = tuser.TenantId
+	event.UserID = tuser.Id
+	event.Data = map[string]any{
+		"username": tuser.Username,
+		"realName": in.RealName,
+		"idType":   in.IdType.String(),
+	}
+	if err := notify.Publish(l.ctx, l.svcCtx.Redis, event); err != nil {
+		l.Errorf("publish admin user notification failed, userId=%d err=%v", tuser.Id, err)
+	}
 
 	return &user.SubmitIdentityResp{
 		Base:     helper.OkResp(),

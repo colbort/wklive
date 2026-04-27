@@ -274,7 +274,6 @@ func parseFingerprint(raw string, ip string) (map[string]any, bool) {
 func buildFingerprintMatchKey(fingerprint map[string]any) string {
 	keys := []string{
 		"platform",
-		"browserName",
 		"osName",
 		"deviceType",
 	}
@@ -298,29 +297,28 @@ func buildFingerprintMatchKey(fingerprint map[string]any) string {
 
 func scoreGuestFingerprint(left, right map[string]any) int {
 	score := 0
-	score += scoreStringField(left, right, "userAgent", 14)
-	score += scoreStringField(left, right, "platform", 7)
+	score += scoreStringField(left, right, "platform", 12)
 	score += scoreStringField(left, right, "timezone", 8)
-	score += scoreStringField(left, right, "language", 3)
-	score += scoreAnyField(left, right, "languages", 2)
-	score += scoreStringField(left, right, "browserName", 5)
-	score += scoreStringField(left, right, "browserMajorVersion", 3)
-	score += scoreStringField(left, right, "osName", 10)
-	score += scoreStringField(left, right, "deviceType", 6)
-	score += scoreNumberField(left, right, "screenWidth", 4)
-	score += scoreNumberField(left, right, "screenHeight", 4)
-	score += scoreNumberField(left, right, "availWidth", 1)
-	score += scoreNumberField(left, right, "availHeight", 1)
-	score += scoreNumberField(left, right, "colorDepth", 2)
-	score += scoreNumberField(left, right, "pixelRatio", 5)
-	score += scoreNumberField(left, right, "hardwareConcurrency", 4)
-	score += scoreNumberField(left, right, "deviceMemory", 3)
-	score += scoreNumberField(left, right, "maxTouchPoints", 4)
-	score += scoreBoolField(left, right, "cookieEnabled", 1)
-	score += scoreBoolField(left, right, "localStorageSupported", 1)
-	score += scoreBoolField(left, right, "sessionStorageSupported", 1)
-	score += scoreBoolField(left, right, "indexedDBSupported", 1)
-	score += scoreStringField(left, right, "ip", 10)
+	score += scoreStringField(left, right, "language", 4)
+	score += scoreAnyField(left, right, "languages", 3)
+	score += scoreStringField(left, right, "browserName", 1)
+	score += scoreStringField(left, right, "browserMajorVersion", 1)
+	score += scoreStringField(left, right, "osName", 12)
+	score += scoreStringField(left, right, "deviceType", 10)
+	score += scoreNumberField(left, right, "screenWidth", 10)
+	score += scoreNumberField(left, right, "screenHeight", 10)
+	score += scoreNumberField(left, right, "availWidth", 4)
+	score += scoreNumberField(left, right, "availHeight", 4)
+	score += scoreNumberField(left, right, "colorDepth", 4)
+	score += scoreNumberField(left, right, "pixelRatio", 8)
+	score += scoreNumberField(left, right, "hardwareConcurrency", 10)
+	score += scoreNumberField(left, right, "deviceMemory", 8)
+	score += scoreNumberField(left, right, "maxTouchPoints", 8)
+	score += scoreBoolField(left, right, "cookieEnabled", 2)
+	score += scoreBoolField(left, right, "localStorageSupported", 3)
+	score += scoreBoolField(left, right, "sessionStorageSupported", 3)
+	score += scoreBoolField(left, right, "indexedDBSupported", 3)
+	score += scoreStringField(left, right, "ip", 2)
 	return score
 }
 

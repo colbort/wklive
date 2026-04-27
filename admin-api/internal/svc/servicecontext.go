@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"strconv"
 	"wklive/admin-api/internal/config"
+	"wklive/admin-api/internal/ws"
 	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/proto/itick"
@@ -18,21 +19,23 @@ import (
 	"wklive/proto/trade"
 	"wklive/proto/user"
 
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )
 
 type ServiceContext struct {
-	Config     config.Config
-	SystemCli  system.SystemClient
-	UserCli    user.UserAdminClient
-	PaymentCli payment.PaymentAdminClient
-	ItickCli   itick.ItickAdminClient
-	AssetCli   asset.AssetAdminClient
-	OptionCli  option.OptionAdminClient
-	StakingCli staking.StakingAdminClient
-	TradeCli   trade.TradeAdminClient
+	Config          config.Config
+	SystemCli       system.SystemClient
+	UserCli         user.UserAdminClient
+	PaymentCli      payment.PaymentAdminClient
+	ItickCli        itick.ItickAdminClient
+	AssetCli        asset.AssetAdminClient
+	OptionCli       option.OptionAdminClient
+	StakingCli      staking.StakingAdminClient
+	TradeCli        trade.TradeAdminClient
+	NotificationHub *ws.Hub
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -70,15 +73,24 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	optionCli := zrpc.MustNewClient(c.OptionRpc, options)
 	stakingCli := zrpc.MustNewClient(c.StakingRpc, options)
 	tradeCli := zrpc.MustNewClient(c.TradeRpc, options)
+	notificationHub := ws.NewHub()
+	go notificationHub.Run()
+	if c.RedisConf.Host != "" {
+		go ws.SubscribeRedis(context.Background(), c.RedisConf, notificationHub)
+	} else {
+		logx.Info("admin notification redis is not configured, skip subscription")
+	}
+
 	return &ServiceContext{
-		Config:     c,
-		SystemCli:  system.NewSystemClient(systemCli.Conn()),
-		UserCli:    user.NewUserAdminClient(userCli.Conn()),
-		PaymentCli: payment.NewPaymentAdminClient(paymentCli.Conn()),
-		ItickCli:   itick.NewItickAdminClient(itickCli.Conn()),
-		AssetCli:   asset.NewAssetAdminClient(assetCli.Conn()),
-		OptionCli:  option.NewOptionAdminClient(optionCli.Conn()),
-		StakingCli: staking.NewStakingAdminClient(stakingCli.Conn()),
-		TradeCli:   trade.NewTradeAdminClient(tradeCli.Conn()),
+		Config:          c,
+		SystemCli:       system.NewSystemClient(systemCli.Conn()),
+		UserCli:         user.NewUserAdminClient(userCli.Conn()),
+		PaymentCli:      payment.NewPaymentAdminClient(paymentCli.Conn()),
+		ItickCli:        itick.NewItickAdminClient(itickCli.Conn()),
+		AssetCli:        asset.NewAssetAdminClient(assetCli.Conn()),
+		OptionCli:       option.NewOptionAdminClient(optionCli.Conn()),
+		StakingCli:      staking.NewStakingAdminClient(stakingCli.Conn()),
+		TradeCli:        trade.NewTradeAdminClient(tradeCli.Conn()),
+		NotificationHub: notificationHub,
 	}
 }

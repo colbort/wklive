@@ -1,16 +1,32 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import SideMenu from './side-menu.vue'
 import TopBar from './top-bar.vue'
 import { useSystemCore } from '@/composables/useSystemCore'
 import { buildAssetUrl } from '@/utils/file-url'
+import { adminNotificationService } from '@/services/system/AdminNotificationService'
+import { useAuthStore } from '@/stores'
 
 const collapsed = ref(false)
 const { systemCore, loadSystemCore } = useSystemCore()
+const auth = useAuthStore()
 
 onMounted(() => {
   loadSystemCore()
 })
+
+const stopNotificationWatch = watch(
+  () => auth.token,
+  (token) => {
+    if (token) {
+      adminNotificationService.connect()
+      return
+    }
+
+    adminNotificationService.disconnect()
+  },
+  { immediate: true },
+)
 
 const asideWidth = ref(240)
 const MIN_W = 200
@@ -52,6 +68,8 @@ function onDragEnd() {
 }
 
 onBeforeUnmount(() => {
+  stopNotificationWatch()
+  adminNotificationService.disconnect()
   document.removeEventListener('mousemove', onDragMove)
   document.removeEventListener('mouseup', onDragEnd)
 })

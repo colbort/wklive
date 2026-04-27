@@ -7,9 +7,9 @@ option go_package = "wklive/proto/asset;asset";
 // 钱包类型
 enum WalletType {
   WALLET_TYPE_UNKNOWN = 0;
-  WALLET_TYPE_SPOT = 1; // 现货钱包
-  WALLET_TYPE_FUNDING = 2; // 资金钱包
-  WALLET_TYPE_CONTRACT = 3; // 合约钱包
+  WALLET_TYPE_SPOT = 1; // 现金账户/现货钱包
+  WALLET_TYPE_FUNDING = 2; // 股票账户/资金钱包
+  WALLET_TYPE_CONTRACT = 3; // 合约账户/合约钱包
   WALLET_TYPE_EARN = 4; // 理财钱包
   WALLET_TYPE_OPTION = 5; // 期权钱包
 }
@@ -105,4 +105,26 @@ enum IdempotentStatus {
   IDEMPOTENT_STATUS_PROCESSING = 1; // 处理中
   IDEMPOTENT_STATUS_SUCCESS = 2; // 成功
   IDEMPOTENT_STATUS_FAILED = 3; // 失败
+}
+
+// 资产币种类型
+enum AssetCoinType {
+  ASSET_COIN_TYPE_UNKNOWN = 0;
+  ASSET_COIN_TYPE_FIAT = 1; // 法币
+  ASSET_COIN_TYPE_CRYPTO = 2; // 加密货币
+}
+
+// 资产币种展示/操作开关
+enum AssetCoinSwitch {
+  ASSET_COIN_SWITCH_UNKNOWN = 0;
+  ASSET_COIN_SWITCH_OFF = 1; // 关闭/隐藏
+  ASSET_COIN_SWITCH_ON = 2; // 开启/展示
+}
+
+// 资产币种操作场景
+enum AssetCoinOperationType {
+  ASSET_COIN_OPERATION_TYPE_UNKNOWN = 0;
+  ASSET_COIN_OPERATION_TYPE_RECHARGE = 1; // 充值
+  ASSET_COIN_OPERATION_TYPE_WITHDRAW = 2; // 提现
+  ASSET_COIN_OPERATION_TYPE_TRANSFER = 3; // 划转
 }

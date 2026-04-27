@@ -26,9 +26,9 @@ type WalletType int32
 
 const (
 	WalletType_WALLET_TYPE_UNKNOWN  WalletType = 0
-	WalletType_WALLET_TYPE_SPOT     WalletType = 1 // 现货钱包
-	WalletType_WALLET_TYPE_FUNDING  WalletType = 2 // 资金钱包
-	WalletType_WALLET_TYPE_CONTRACT WalletType = 3 // 合约钱包
+	WalletType_WALLET_TYPE_SPOT     WalletType = 1 // 现金账户/现货钱包
+	WalletType_WALLET_TYPE_FUNDING  WalletType = 2 // 股票账户/资金钱包
+	WalletType_WALLET_TYPE_CONTRACT WalletType = 3 // 合约账户/合约钱包
 	WalletType_WALLET_TYPE_EARN     WalletType = 4 // 理财钱包
 	WalletType_WALLET_TYPE_OPTION   WalletType = 5 // 期权钱包
 )
@@ -537,6 +537,159 @@ func (IdempotentStatus) EnumDescriptor() ([]byte, []int) {
 	return file_proto_asset_enum_proto_rawDescGZIP(), []int{7}
 }
 
+// 资产币种类型
+type AssetCoinType int32
+
+const (
+	AssetCoinType_ASSET_COIN_TYPE_UNKNOWN AssetCoinType = 0
+	AssetCoinType_ASSET_COIN_TYPE_FIAT    AssetCoinType = 1 // 法币
+	AssetCoinType_ASSET_COIN_TYPE_CRYPTO  AssetCoinType = 2 // 加密货币
+)
+
+// Enum value maps for AssetCoinType.
+var (
+	AssetCoinType_name = map[int32]string{
+		0: "ASSET_COIN_TYPE_UNKNOWN",
+		1: "ASSET_COIN_TYPE_FIAT",
+		2: "ASSET_COIN_TYPE_CRYPTO",
+	}
+	AssetCoinType_value = map[string]int32{
+		"ASSET_COIN_TYPE_UNKNOWN": 0,
+		"ASSET_COIN_TYPE_FIAT":    1,
+		"ASSET_COIN_TYPE_CRYPTO":  2,
+	}
+)
+
+func (x AssetCoinType) Enum() *AssetCoinType {
+	p := new(AssetCoinType)
+	*p = x
+	return p
+}
+
+func (x AssetCoinType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (AssetCoinType) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_asset_enum_proto_enumTypes[8].Descriptor()
+}
+
+func (AssetCoinType) Type() protoreflect.EnumType {
+	return &file_proto_asset_enum_proto_enumTypes[8]
+}
+
+func (x AssetCoinType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use AssetCoinType.Descriptor instead.
+func (AssetCoinType) EnumDescriptor() ([]byte, []int) {
+	return file_proto_asset_enum_proto_rawDescGZIP(), []int{8}
+}
+
+// 资产币种展示/操作开关
+type AssetCoinSwitch int32
+
+const (
+	AssetCoinSwitch_ASSET_COIN_SWITCH_UNKNOWN AssetCoinSwitch = 0
+	AssetCoinSwitch_ASSET_COIN_SWITCH_OFF     AssetCoinSwitch = 1 // 关闭/隐藏
+	AssetCoinSwitch_ASSET_COIN_SWITCH_ON      AssetCoinSwitch = 2 // 开启/展示
+)
+
+// Enum value maps for AssetCoinSwitch.
+var (
+	AssetCoinSwitch_name = map[int32]string{
+		0: "ASSET_COIN_SWITCH_UNKNOWN",
+		1: "ASSET_COIN_SWITCH_OFF",
+		2: "ASSET_COIN_SWITCH_ON",
+	}
+	AssetCoinSwitch_value = map[string]int32{
+		"ASSET_COIN_SWITCH_UNKNOWN": 0,
+		"ASSET_COIN_SWITCH_OFF":     1,
+		"ASSET_COIN_SWITCH_ON":      2,
+	}
+)
+
+func (x AssetCoinSwitch) Enum() *AssetCoinSwitch {
+	p := new(AssetCoinSwitch)
+	*p = x
+	return p
+}
+
+func (x AssetCoinSwitch) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (AssetCoinSwitch) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_asset_enum_proto_enumTypes[9].Descriptor()
+}
+
+func (AssetCoinSwitch) Type() protoreflect.EnumType {
+	return &file_proto_asset_enum_proto_enumTypes[9]
+}
+
+func (x AssetCoinSwitch) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use AssetCoinSwitch.Descriptor instead.
+func (AssetCoinSwitch) EnumDescriptor() ([]byte, []int) {
+	return file_proto_asset_enum_proto_rawDescGZIP(), []int{9}
+}
+
+// 资产币种操作场景
+type AssetCoinOperationType int32
+
+const (
+	AssetCoinOperationType_ASSET_COIN_OPERATION_TYPE_UNKNOWN  AssetCoinOperationType = 0
+	AssetCoinOperationType_ASSET_COIN_OPERATION_TYPE_RECHARGE AssetCoinOperationType = 1 // 充值
+	AssetCoinOperationType_ASSET_COIN_OPERATION_TYPE_WITHDRAW AssetCoinOperationType = 2 // 提现
+	AssetCoinOperationType_ASSET_COIN_OPERATION_TYPE_TRANSFER AssetCoinOperationType = 3 // 划转
+)
+
+// Enum value maps for AssetCoinOperationType.
+var (
+	AssetCoinOperationType_name = map[int32]string{
+		0: "ASSET_COIN_OPERATION_TYPE_UNKNOWN",
+		1: "ASSET_COIN_OPERATION_TYPE_RECHARGE",
+		2: "ASSET_COIN_OPERATION_TYPE_WITHDRAW",
+		3: "ASSET_COIN_OPERATION_TYPE_TRANSFER",
+	}
+	AssetCoinOperationType_value = map[string]int32{
+		"ASSET_COIN_OPERATION_TYPE_UNKNOWN":  0,
+		"ASSET_COIN_OPERATION_TYPE_RECHARGE": 1,
+		"ASSET_COIN_OPERATION_TYPE_WITHDRAW": 2,
+		"ASSET_COIN_OPERATION_TYPE_TRANSFER": 3,
+	}
+)
+
+func (x AssetCoinOperationType) Enum() *AssetCoinOperationType {
+	p := new(AssetCoinOperationType)
+	*p = x
+	return p
+}
+
+func (x AssetCoinOperationType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (AssetCoinOperationType) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_asset_enum_proto_enumTypes[10].Descriptor()
+}
+
+func (AssetCoinOperationType) Type() protoreflect.EnumType {
+	return &file_proto_asset_enum_proto_enumTypes[10]
+}
+
+func (x AssetCoinOperationType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use AssetCoinOperationType.Descriptor instead.
+func (AssetCoinOperationType) EnumDescriptor() ([]byte, []int) {
+	return file_proto_asset_enum_proto_rawDescGZIP(), []int{10}
+}
+
 var File_proto_asset_enum_proto protoreflect.FileDescriptor
 
 const file_proto_asset_enum_proto_rawDesc = "" +
@@ -613,7 +766,20 @@ const file_proto_asset_enum_proto_rawDesc = "" +
 	"\x19IDEMPOTENT_STATUS_UNKNOWN\x10\x00\x12 \n" +
 	"\x1cIDEMPOTENT_STATUS_PROCESSING\x10\x01\x12\x1d\n" +
 	"\x19IDEMPOTENT_STATUS_SUCCESS\x10\x02\x12\x1c\n" +
-	"\x18IDEMPOTENT_STATUS_FAILED\x10\x03B\x1aZ\x18wklive/proto/asset;assetb\x06proto3"
+	"\x18IDEMPOTENT_STATUS_FAILED\x10\x03*b\n" +
+	"\rAssetCoinType\x12\x1b\n" +
+	"\x17ASSET_COIN_TYPE_UNKNOWN\x10\x00\x12\x18\n" +
+	"\x14ASSET_COIN_TYPE_FIAT\x10\x01\x12\x1a\n" +
+	"\x16ASSET_COIN_TYPE_CRYPTO\x10\x02*e\n" +
+	"\x0fAssetCoinSwitch\x12\x1d\n" +
+	"\x19ASSET_COIN_SWITCH_UNKNOWN\x10\x00\x12\x19\n" +
+	"\x15ASSET_COIN_SWITCH_OFF\x10\x01\x12\x18\n" +
+	"\x14ASSET_COIN_SWITCH_ON\x10\x02*\xb7\x01\n" +
+	"\x16AssetCoinOperationType\x12%\n" +
+	"!ASSET_COIN_OPERATION_TYPE_UNKNOWN\x10\x00\x12&\n" +
+	"\"ASSET_COIN_OPERATION_TYPE_RECHARGE\x10\x01\x12&\n" +
+	"\"ASSET_COIN_OPERATION_TYPE_WITHDRAW\x10\x02\x12&\n" +
+	"\"ASSET_COIN_OPERATION_TYPE_TRANSFER\x10\x03B\x1aZ\x18wklive/proto/asset;assetb\x06proto3"
 
 var (
 	file_proto_asset_enum_proto_rawDescOnce sync.Once
@@ -627,16 +793,19 @@ func file_proto_asset_enum_proto_rawDescGZIP() []byte {
 	return file_proto_asset_enum_proto_rawDescData
 }
 
-var file_proto_asset_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 8)
+var file_proto_asset_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 11)
 var file_proto_asset_enum_proto_goTypes = []any{
-	(WalletType)(0),       // 0: asset.WalletType
-	(AssetStatus)(0),      // 1: asset.AssetStatus
-	(AssetOpType)(0),      // 2: asset.AssetOpType
-	(BizType)(0),          // 3: asset.BizType
-	(SceneType)(0),        // 4: asset.SceneType
-	(FreezeStatus)(0),     // 5: asset.FreezeStatus
-	(LockStatus)(0),       // 6: asset.LockStatus
-	(IdempotentStatus)(0), // 7: asset.IdempotentStatus
+	(WalletType)(0),             // 0: asset.WalletType
+	(AssetStatus)(0),            // 1: asset.AssetStatus
+	(AssetOpType)(0),            // 2: asset.AssetOpType
+	(BizType)(0),                // 3: asset.BizType
+	(SceneType)(0),              // 4: asset.SceneType
+	(FreezeStatus)(0),           // 5: asset.FreezeStatus
+	(LockStatus)(0),             // 6: asset.LockStatus
+	(IdempotentStatus)(0),       // 7: asset.IdempotentStatus
+	(AssetCoinType)(0),          // 8: asset.AssetCoinType
+	(AssetCoinSwitch)(0),        // 9: asset.AssetCoinSwitch
+	(AssetCoinOperationType)(0), // 10: asset.AssetCoinOperationType
 }
 var file_proto_asset_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -656,7 +825,7 @@ func file_proto_asset_enum_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_asset_enum_proto_rawDesc), len(file_proto_asset_enum_proto_rawDesc)),
-			NumEnums:      8,
+			NumEnums:      11,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

@@ -10,6 +10,10 @@ option go_package = "wklive/proto/asset;asset";
 
 // 用户端资产服务
 service AssetApp {
+  // 查询APP资产操作页币种配置
+  rpc ListAssetCoinConfigs(ListAssetCoinConfigsReq)
+      returns (ListAssetCoinConfigsResp);
+
   // 查询我的资产汇总
   rpc GetMyAssetSummary(GetMyAssetSummaryReq) returns (GetMyAssetSummaryResp);
 
@@ -27,6 +31,18 @@ service AssetApp {
 
   // 查询我的锁仓明细
   rpc ListMyLocks(ListMyLocksReq) returns (ListMyLocksResp);
+}
+
+message ListAssetCoinConfigsReq {
+  int64 tenant_id = 1;                         // 租户ID
+  WalletType wallet_type = 2;                  // 账户类型
+  AssetCoinOperationType operation_type = 3;   // 操作场景
+  AssetCoinType coin_type = 4;                 // 币种类型,0表示全部
+}
+
+message ListAssetCoinConfigsResp {
+  common.RespBase base = 1;
+  repeated AssetCoinConfig data = 2; // 币种配置列表
 }
 
 message GetMyAssetSummaryReq {

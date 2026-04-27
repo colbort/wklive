@@ -21,6 +21,34 @@ CREATE TABLE `t_user_asset` (
   KEY `idx_update_time` (`update_times`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户资产汇总表';
 
+CREATE TABLE `t_asset_coin_config` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `wallet_type` tinyint NOT NULL DEFAULT 1 COMMENT '账户类型:1现金账户 2股票账户 3合约账户',
+  `coin` varchar(20) NOT NULL DEFAULT '' COMMENT '币种代码,如 USD/USDT/BTC/ETH',
+  `symbol` varchar(32) NOT NULL DEFAULT '' COMMENT '展示符号/资产标识,如 USD/USDT/BTCUSDT/ETHUSDT',
+  `coin_name` varchar(64) NOT NULL DEFAULT '' COMMENT '币种名称',
+  `coin_type` tinyint NOT NULL DEFAULT 2 COMMENT '币种类型:1法币 2加密货币',
+  `icon_url` varchar(255) NOT NULL DEFAULT '' COMMENT '币种图标URL',
+  `icon_text` varchar(16) NOT NULL DEFAULT '' COMMENT '币种图标文案/符号',
+  `icon_bg_color` varchar(16) NOT NULL DEFAULT '' COMMENT '图标背景色',
+  `decimal_places` tinyint NOT NULL DEFAULT 8 COMMENT '资产展示精度',
+  `app_visible` tinyint NOT NULL DEFAULT 1 COMMENT 'APP操作页是否展示:1展示 0隐藏',
+  `recharge_enabled` tinyint NOT NULL DEFAULT 0 COMMENT '充值页是否展示:1展示 0隐藏',
+  `withdraw_enabled` tinyint NOT NULL DEFAULT 0 COMMENT '提现页是否展示:1展示 0隐藏',
+  `transfer_enabled` tinyint NOT NULL DEFAULT 1 COMMENT '划转页是否展示:1展示 0隐藏',
+  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态:1启用 0禁用',
+  `sort` int NOT NULL DEFAULT 0 COMMENT '排序,越小越靠前',
+  `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
+  `create_times` bigint NOT NULL DEFAULT 0 COMMENT '创建时间戳(毫秒)',
+  `update_times` bigint NOT NULL DEFAULT 0 COMMENT '更新时间戳(毫秒)',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_tenant_wallet_coin` (`tenant_id`,`wallet_type`,`coin`),
+  KEY `idx_tenant_visible_sort` (`tenant_id`,`wallet_type`,`app_visible`,`status`,`sort`),
+  KEY `idx_tenant_coin` (`tenant_id`,`coin`),
+  KEY `idx_tenant_status` (`tenant_id`,`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='APP资产操作币种显示配置表';
+
 CREATE TABLE `t_asset_flow` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `flow_no` varchar(64) NOT NULL DEFAULT '' COMMENT '资产流水单号',

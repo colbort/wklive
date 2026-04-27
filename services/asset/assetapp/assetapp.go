@@ -14,20 +14,24 @@ import (
 )
 
 type (
-	GetMyAssetReq         = asset.GetMyAssetReq
-	GetMyAssetResp        = asset.GetMyAssetResp
-	GetMyAssetSummaryReq  = asset.GetMyAssetSummaryReq
-	GetMyAssetSummaryResp = asset.GetMyAssetSummaryResp
-	ListMyAssetFlowsReq   = asset.ListMyAssetFlowsReq
-	ListMyAssetFlowsResp  = asset.ListMyAssetFlowsResp
-	ListMyAssetsReq       = asset.ListMyAssetsReq
-	ListMyAssetsResp      = asset.ListMyAssetsResp
-	ListMyFreezesReq      = asset.ListMyFreezesReq
-	ListMyFreezesResp     = asset.ListMyFreezesResp
-	ListMyLocksReq        = asset.ListMyLocksReq
-	ListMyLocksResp       = asset.ListMyLocksResp
+	GetMyAssetReq            = asset.GetMyAssetReq
+	GetMyAssetResp           = asset.GetMyAssetResp
+	GetMyAssetSummaryReq     = asset.GetMyAssetSummaryReq
+	GetMyAssetSummaryResp    = asset.GetMyAssetSummaryResp
+	ListAssetCoinConfigsReq  = asset.ListAssetCoinConfigsReq
+	ListAssetCoinConfigsResp = asset.ListAssetCoinConfigsResp
+	ListMyAssetFlowsReq      = asset.ListMyAssetFlowsReq
+	ListMyAssetFlowsResp     = asset.ListMyAssetFlowsResp
+	ListMyAssetsReq          = asset.ListMyAssetsReq
+	ListMyAssetsResp         = asset.ListMyAssetsResp
+	ListMyFreezesReq         = asset.ListMyFreezesReq
+	ListMyFreezesResp        = asset.ListMyFreezesResp
+	ListMyLocksReq           = asset.ListMyLocksReq
+	ListMyLocksResp          = asset.ListMyLocksResp
 
 	AssetApp interface {
+		// 查询APP资产操作页币种配置
+		ListAssetCoinConfigs(ctx context.Context, in *ListAssetCoinConfigsReq, opts ...grpc.CallOption) (*ListAssetCoinConfigsResp, error)
 		// 查询我的资产汇总
 		GetMyAssetSummary(ctx context.Context, in *GetMyAssetSummaryReq, opts ...grpc.CallOption) (*GetMyAssetSummaryResp, error)
 		// 查询我的资产列表
@@ -51,6 +55,12 @@ func NewAssetApp(cli zrpc.Client) AssetApp {
 	return &defaultAssetApp{
 		cli: cli,
 	}
+}
+
+// 查询APP资产操作页币种配置
+func (m *defaultAssetApp) ListAssetCoinConfigs(ctx context.Context, in *ListAssetCoinConfigsReq, opts ...grpc.CallOption) (*ListAssetCoinConfigsResp, error) {
+	client := asset.NewAssetAppClient(m.cli.Conn())
+	return client.ListAssetCoinConfigs(ctx, in, opts...)
 }
 
 // 查询我的资产汇总

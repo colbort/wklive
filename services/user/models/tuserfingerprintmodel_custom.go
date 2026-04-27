@@ -26,6 +26,7 @@ func (m *defaultTUserFingerprintModel) UpsertSeen(ctx context.Context, data *TUs
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		ON DUPLICATE KEY UPDATE
 			device_id = VALUES(device_id),
+			fingerprint_hash = VALUES(fingerprint_hash),
 			match_key = VALUES(match_key),
 			fingerprint = VALUES(fingerprint),
 			source_ip = VALUES(source_ip),
@@ -56,7 +57,7 @@ func (m *defaultTUserFingerprintModel) FindGuestFingerprintCandidates(ctx contex
 	args = append(args, limit)
 
 	query := fmt.Sprintf(`
-		SELECT f.id, f.user_id, f.fingerprint
+		SELECT f.id, f.user_id, f.fingerprint, f.source_ip
 		FROM %s f
 		JOIN t_user u ON u.tenant_id = f.tenant_id AND u.id = f.user_id
 		WHERE %s

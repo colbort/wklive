@@ -291,6 +291,34 @@ type AdminUnlockAssetReq struct {
 	OperatorId int64  `json:"operatorId"`
 }
 
+type AssetCoinConfig struct {
+	Id              int64  `json:"id"`
+	TenantId        int64  `json:"tenantId"`
+	WalletType      int64  `json:"walletType"`
+	Coin            string `json:"coin"`
+	Symbol          string `json:"symbol"`
+	CoinName        string `json:"coinName"`
+	CoinType        int64  `json:"coinType"`
+	IconUrl         string `json:"iconUrl"`
+	IconText        string `json:"iconText"`
+	IconBgColor     string `json:"iconBgColor"`
+	DecimalPlaces   int64  `json:"decimalPlaces"`
+	AppVisible      int64  `json:"appVisible"`
+	RechargeEnabled int64  `json:"rechargeEnabled"`
+	WithdrawEnabled int64  `json:"withdrawEnabled"`
+	TransferEnabled int64  `json:"transferEnabled"`
+	Status          int64  `json:"status"`
+	Sort            int64  `json:"sort"`
+	Remark          string `json:"remark"`
+	CreateTimes     int64  `json:"createTimes"`
+	UpdateTimes     int64  `json:"updateTimes"`
+}
+
+type AssetCoinConfigResp struct {
+	RespBase
+	Data AssetCoinConfig `json:"data"`
+}
+
 type AssetFlow struct {
 	Id                     int64  `json:"id"`
 	FlowNo                 string `json:"flowNo"`
@@ -544,6 +572,26 @@ type ContractPositionHistory struct {
 	CreateTimes          int64  `json:"createTimes"`
 }
 
+type CreateAssetCoinConfigReq struct {
+	TenantId        int64  `json:"tenantId"`
+	WalletType      int64  `json:"walletType"`
+	Coin            string `json:"coin"`
+	Symbol          string `json:"symbol"`
+	CoinName        string `json:"coinName"`
+	CoinType        int64  `json:"coinType"`
+	IconUrl         string `json:"iconUrl,optional"`
+	IconText        string `json:"iconText,optional"`
+	IconBgColor     string `json:"iconBgColor,optional"`
+	DecimalPlaces   int64  `json:"decimalPlaces,optional"`
+	AppVisible      int64  `json:"appVisible,optional"`
+	RechargeEnabled int64  `json:"rechargeEnabled,optional"`
+	WithdrawEnabled int64  `json:"withdrawEnabled,optional"`
+	TransferEnabled int64  `json:"transferEnabled,optional"`
+	Status          int64  `json:"status,optional"`
+	Sort            int64  `json:"sort,optional"`
+	Remark          string `json:"remark,optional"`
+}
+
 type CreateCategoryReq struct {
 	CategoryType int64  `json:"categoryType"`
 	CategoryName string `json:"categoryName"`
@@ -756,6 +804,15 @@ type CreateUserResp struct {
 	UserId int64 `json:"userId"`
 }
 
+type DeleteAssetCoinConfigReq struct {
+	Id       int64 `path:"id"`
+	TenantId int64 `form:"tenantId,optional"`
+}
+
+type DeleteAssetCoinConfigResp struct {
+	RespBase
+}
+
 type DeletePayPlatformReq struct {
 	TenantId int64 `form:"tenantId"`
 	Id       int64 `path:"id"`
@@ -819,6 +876,11 @@ type GetAccountReq struct {
 type GetAccountResp struct {
 	RespBase
 	Data OptionAccount `json:"data"`
+}
+
+type GetAssetCoinConfigReq struct {
+	Id       int64 `path:"id"`
+	TenantId int64 `form:"tenantId,optional"`
 }
 
 type GetAssetOptionsResp struct {
@@ -2331,6 +2393,25 @@ type OptionsItem struct {
 	Code  string `json:"code"`
 }
 
+type PageAssetCoinConfigsReq struct {
+	PageReq
+	TenantId        int64  `form:"tenantId,optional"`
+	WalletType      int64  `form:"walletType,optional"`
+	Coin            string `form:"coin,optional"`
+	Symbol          string `form:"symbol,optional"`
+	CoinType        int64  `form:"coinType,optional"`
+	AppVisible      int64  `form:"appVisible,optional"`
+	RechargeEnabled int64  `form:"rechargeEnabled,optional"`
+	WithdrawEnabled int64  `form:"withdrawEnabled,optional"`
+	TransferEnabled int64  `form:"transferEnabled,optional"`
+	Status          int64  `form:"status,optional"`
+}
+
+type PageAssetCoinConfigsResp struct {
+	RespBase
+	Data []AssetCoinConfig `json:"data"`
+}
+
 type PageAssetFlowsReq struct {
 	PageReq
 	TenantId   int64     `form:"tenantId,optional"`
@@ -3530,6 +3611,27 @@ type TradeUserConfig struct {
 type UnlockUserReq struct {
 	TenantId int64 `json:"tenantId"`
 	UserId   int64 `path:"userId"`
+}
+
+type UpdateAssetCoinConfigReq struct {
+	Id              int64  `path:"id"`
+	TenantId        int64  `json:"tenantId,optional"`
+	WalletType      int64  `json:"walletType,optional"`
+	Coin            string `json:"coin,optional"`
+	Symbol          string `json:"symbol,optional"`
+	CoinName        string `json:"coinName,optional"`
+	CoinType        int64  `json:"coinType,optional"`
+	IconUrl         string `json:"iconUrl,optional"`
+	IconText        string `json:"iconText,optional"`
+	IconBgColor     string `json:"iconBgColor,optional"`
+	DecimalPlaces   int64  `json:"decimalPlaces,optional"`
+	AppVisible      int64  `json:"appVisible,optional"`
+	RechargeEnabled int64  `json:"rechargeEnabled,optional"`
+	WithdrawEnabled int64  `json:"withdrawEnabled,optional"`
+	TransferEnabled int64  `json:"transferEnabled,optional"`
+	Status          int64  `json:"status,optional"`
+	Sort            int64  `json:"sort,optional"`
+	Remark          string `json:"remark,optional"`
 }
 
 type UpdateCategoryReq struct {

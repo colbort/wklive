@@ -19,12 +19,13 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AssetApp_GetMyAssetSummary_FullMethodName = "/asset.AssetApp/GetMyAssetSummary"
-	AssetApp_ListMyAssets_FullMethodName      = "/asset.AssetApp/ListMyAssets"
-	AssetApp_GetMyAsset_FullMethodName        = "/asset.AssetApp/GetMyAsset"
-	AssetApp_ListMyAssetFlows_FullMethodName  = "/asset.AssetApp/ListMyAssetFlows"
-	AssetApp_ListMyFreezes_FullMethodName     = "/asset.AssetApp/ListMyFreezes"
-	AssetApp_ListMyLocks_FullMethodName       = "/asset.AssetApp/ListMyLocks"
+	AssetApp_ListAssetCoinConfigs_FullMethodName = "/asset.AssetApp/ListAssetCoinConfigs"
+	AssetApp_GetMyAssetSummary_FullMethodName    = "/asset.AssetApp/GetMyAssetSummary"
+	AssetApp_ListMyAssets_FullMethodName         = "/asset.AssetApp/ListMyAssets"
+	AssetApp_GetMyAsset_FullMethodName           = "/asset.AssetApp/GetMyAsset"
+	AssetApp_ListMyAssetFlows_FullMethodName     = "/asset.AssetApp/ListMyAssetFlows"
+	AssetApp_ListMyFreezes_FullMethodName        = "/asset.AssetApp/ListMyFreezes"
+	AssetApp_ListMyLocks_FullMethodName          = "/asset.AssetApp/ListMyLocks"
 )
 
 // AssetAppClient is the client API for AssetApp service.
@@ -33,6 +34,8 @@ const (
 //
 // 用户端资产服务
 type AssetAppClient interface {
+	// 查询APP资产操作页币种配置
+	ListAssetCoinConfigs(ctx context.Context, in *ListAssetCoinConfigsReq, opts ...grpc.CallOption) (*ListAssetCoinConfigsResp, error)
 	// 查询我的资产汇总
 	GetMyAssetSummary(ctx context.Context, in *GetMyAssetSummaryReq, opts ...grpc.CallOption) (*GetMyAssetSummaryResp, error)
 	// 查询我的资产列表
@@ -53,6 +56,16 @@ type assetAppClient struct {
 
 func NewAssetAppClient(cc grpc.ClientConnInterface) AssetAppClient {
 	return &assetAppClient{cc}
+}
+
+func (c *assetAppClient) ListAssetCoinConfigs(ctx context.Context, in *ListAssetCoinConfigsReq, opts ...grpc.CallOption) (*ListAssetCoinConfigsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListAssetCoinConfigsResp)
+	err := c.cc.Invoke(ctx, AssetApp_ListAssetCoinConfigs_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *assetAppClient) GetMyAssetSummary(ctx context.Context, in *GetMyAssetSummaryReq, opts ...grpc.CallOption) (*GetMyAssetSummaryResp, error) {
@@ -121,6 +134,8 @@ func (c *assetAppClient) ListMyLocks(ctx context.Context, in *ListMyLocksReq, op
 //
 // 用户端资产服务
 type AssetAppServer interface {
+	// 查询APP资产操作页币种配置
+	ListAssetCoinConfigs(context.Context, *ListAssetCoinConfigsReq) (*ListAssetCoinConfigsResp, error)
 	// 查询我的资产汇总
 	GetMyAssetSummary(context.Context, *GetMyAssetSummaryReq) (*GetMyAssetSummaryResp, error)
 	// 查询我的资产列表
@@ -143,6 +158,9 @@ type AssetAppServer interface {
 // pointer dereference when methods are called.
 type UnimplementedAssetAppServer struct{}
 
+func (UnimplementedAssetAppServer) ListAssetCoinConfigs(context.Context, *ListAssetCoinConfigsReq) (*ListAssetCoinConfigsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListAssetCoinConfigs not implemented")
+}
 func (UnimplementedAssetAppServer) GetMyAssetSummary(context.Context, *GetMyAssetSummaryReq) (*GetMyAssetSummaryResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMyAssetSummary not implemented")
 }
@@ -180,6 +198,24 @@ func RegisterAssetAppServer(s grpc.ServiceRegistrar, srv AssetAppServer) {
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&AssetApp_ServiceDesc, srv)
+}
+
+func _AssetApp_ListAssetCoinConfigs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListAssetCoinConfigsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AssetAppServer).ListAssetCoinConfigs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AssetApp_ListAssetCoinConfigs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AssetAppServer).ListAssetCoinConfigs(ctx, req.(*ListAssetCoinConfigsReq))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _AssetApp_GetMyAssetSummary_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -297,6 +333,10 @@ var AssetApp_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "asset.AssetApp",
 	HandlerType: (*AssetAppServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ListAssetCoinConfigs",
+			Handler:    _AssetApp_ListAssetCoinConfigs_Handler,
+		},
 		{
 			MethodName: "GetMyAssetSummary",
 			Handler:    _AssetApp_GetMyAssetSummary_Handler,

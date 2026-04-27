@@ -10,6 +10,25 @@ option go_package = "wklive/proto/asset;asset";
 
 // 后台资产服务
 service AssetAdmin {
+  // 创建APP资产操作币种显示配置
+  rpc CreateAssetCoinConfig(CreateAssetCoinConfigReq)
+      returns (AssetCoinConfigResp);
+
+  // 更新APP资产操作币种显示配置
+  rpc UpdateAssetCoinConfig(UpdateAssetCoinConfigReq)
+      returns (AssetCoinConfigResp);
+
+  // 删除APP资产操作币种显示配置
+  rpc DeleteAssetCoinConfig(DeleteAssetCoinConfigReq)
+      returns (DeleteAssetCoinConfigResp);
+
+  // 查询APP资产操作币种显示配置详情
+  rpc GetAssetCoinConfig(GetAssetCoinConfigReq) returns (AssetCoinConfigResp);
+
+  // 分页查询APP资产操作币种显示配置
+  rpc PageAssetCoinConfigs(PageAssetCoinConfigsReq)
+      returns (PageAssetCoinConfigsResp);
+
   // 分页查询资产
   rpc PageUserAssets(PageUserAssetsReq) returns (PageUserAssetsResp);
 
@@ -43,6 +62,85 @@ service AssetAdmin {
 
   // 后台解锁资产
   rpc AdminUnlockAsset(AdminUnlockAssetReq) returns (AdminChangeAssetResp);
+}
+
+message CreateAssetCoinConfigReq {
+  int64 tenant_id = 1;                      // 租户ID
+  WalletType wallet_type = 2;               // 账户类型
+  string coin = 3;                          // 币种代码
+  string symbol = 4;                        // 展示符号/资产标识
+  string coin_name = 5;                     // 币种名称
+  AssetCoinType coin_type = 6;              // 币种类型
+  string icon_url = 7;                      // 币种图标URL
+  string icon_text = 8;                     // 币种图标文案/符号
+  string icon_bg_color = 9;                 // 图标背景色
+  int32 decimal_places = 10;                // 资产展示精度
+  AssetCoinSwitch app_visible = 11;         // APP操作页是否展示
+  AssetCoinSwitch recharge_enabled = 12;    // 充值页是否展示
+  AssetCoinSwitch withdraw_enabled = 13;    // 提现页是否展示
+  AssetCoinSwitch transfer_enabled = 14;    // 划转页是否展示
+  AssetStatus status = 15;                  // 状态
+  int32 sort = 16;                          // 排序
+  string remark = 17;                       // 备注
+}
+
+message UpdateAssetCoinConfigReq {
+  int64 id = 1;                             // 主键ID
+  int64 tenant_id = 2;                      // 租户ID
+  WalletType wallet_type = 3;               // 账户类型
+  string coin = 4;                          // 币种代码
+  string symbol = 5;                        // 展示符号/资产标识
+  string coin_name = 6;                     // 币种名称
+  AssetCoinType coin_type = 7;              // 币种类型
+  string icon_url = 8;                      // 币种图标URL
+  string icon_text = 9;                     // 币种图标文案/符号
+  string icon_bg_color = 10;                // 图标背景色
+  int32 decimal_places = 11;                // 资产展示精度
+  AssetCoinSwitch app_visible = 12;         // APP操作页是否展示
+  AssetCoinSwitch recharge_enabled = 13;    // 充值页是否展示
+  AssetCoinSwitch withdraw_enabled = 14;    // 提现页是否展示
+  AssetCoinSwitch transfer_enabled = 15;    // 划转页是否展示
+  AssetStatus status = 16;                  // 状态
+  int32 sort = 17;                          // 排序
+  string remark = 18;                       // 备注
+}
+
+message DeleteAssetCoinConfigReq {
+  int64 id = 1;        // 主键ID
+  int64 tenant_id = 2; // 租户ID
+}
+
+message GetAssetCoinConfigReq {
+  int64 id = 1;        // 主键ID
+  int64 tenant_id = 2; // 租户ID
+}
+
+message PageAssetCoinConfigsReq {
+  int64 tenant_id = 1;                      // 租户ID,0表示全部
+  WalletType wallet_type = 2;               // 账户类型,0表示全部
+  string coin = 3;                          // 币种,空表示全部
+  string symbol = 4;                        // 展示符号/资产标识,空表示全部
+  AssetCoinType coin_type = 5;              // 币种类型,0表示全部
+  AssetCoinSwitch app_visible = 6;          // APP操作页是否展示,0表示全部
+  AssetCoinSwitch recharge_enabled = 7;     // 充值页是否展示,0表示全部
+  AssetCoinSwitch withdraw_enabled = 8;     // 提现页是否展示,0表示全部
+  AssetCoinSwitch transfer_enabled = 9;     // 划转页是否展示,0表示全部
+  AssetStatus status = 10;                  // 状态,0表示全部
+  common.PageReq page = 11;                 // 分页
+}
+
+message AssetCoinConfigResp {
+  common.RespBase base = 1;
+  AssetCoinConfig data = 2; // 配置详情
+}
+
+message PageAssetCoinConfigsResp {
+  common.RespBase base = 1;
+  repeated AssetCoinConfig data = 2; // 配置列表
+}
+
+message DeleteAssetCoinConfigResp {
+  common.RespBase base = 1;
 }
 
 message PageUserAssetsReq {

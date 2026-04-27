@@ -22,6 +22,734 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type CreateAssetCoinConfigReq struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	TenantId        int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                                  // 租户ID
+	WalletType      WalletType             `protobuf:"varint,2,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"`                      // 账户类型
+	Coin            string                 `protobuf:"bytes,3,opt,name=coin,proto3" json:"coin,omitempty"`                                                                           // 币种代码
+	Symbol          string                 `protobuf:"bytes,4,opt,name=symbol,proto3" json:"symbol,omitempty"`                                                                       // 展示符号/资产标识
+	CoinName        string                 `protobuf:"bytes,5,opt,name=coin_name,json=coinName,proto3" json:"coin_name,omitempty"`                                                   // 币种名称
+	CoinType        AssetCoinType          `protobuf:"varint,6,opt,name=coin_type,json=coinType,proto3,enum=asset.AssetCoinType" json:"coin_type,omitempty"`                         // 币种类型
+	IconUrl         string                 `protobuf:"bytes,7,opt,name=icon_url,json=iconUrl,proto3" json:"icon_url,omitempty"`                                                      // 币种图标URL
+	IconText        string                 `protobuf:"bytes,8,opt,name=icon_text,json=iconText,proto3" json:"icon_text,omitempty"`                                                   // 币种图标文案/符号
+	IconBgColor     string                 `protobuf:"bytes,9,opt,name=icon_bg_color,json=iconBgColor,proto3" json:"icon_bg_color,omitempty"`                                        // 图标背景色
+	DecimalPlaces   int32                  `protobuf:"varint,10,opt,name=decimal_places,json=decimalPlaces,proto3" json:"decimal_places,omitempty"`                                  // 资产展示精度
+	AppVisible      AssetCoinSwitch        `protobuf:"varint,11,opt,name=app_visible,json=appVisible,proto3,enum=asset.AssetCoinSwitch" json:"app_visible,omitempty"`                // APP操作页是否展示
+	RechargeEnabled AssetCoinSwitch        `protobuf:"varint,12,opt,name=recharge_enabled,json=rechargeEnabled,proto3,enum=asset.AssetCoinSwitch" json:"recharge_enabled,omitempty"` // 充值页是否展示
+	WithdrawEnabled AssetCoinSwitch        `protobuf:"varint,13,opt,name=withdraw_enabled,json=withdrawEnabled,proto3,enum=asset.AssetCoinSwitch" json:"withdraw_enabled,omitempty"` // 提现页是否展示
+	TransferEnabled AssetCoinSwitch        `protobuf:"varint,14,opt,name=transfer_enabled,json=transferEnabled,proto3,enum=asset.AssetCoinSwitch" json:"transfer_enabled,omitempty"` // 划转页是否展示
+	Status          AssetStatus            `protobuf:"varint,15,opt,name=status,proto3,enum=asset.AssetStatus" json:"status,omitempty"`                                              // 状态
+	Sort            int32                  `protobuf:"varint,16,opt,name=sort,proto3" json:"sort,omitempty"`                                                                         // 排序
+	Remark          string                 `protobuf:"bytes,17,opt,name=remark,proto3" json:"remark,omitempty"`                                                                      // 备注
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *CreateAssetCoinConfigReq) Reset() {
+	*x = CreateAssetCoinConfigReq{}
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateAssetCoinConfigReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateAssetCoinConfigReq) ProtoMessage() {}
+
+func (x *CreateAssetCoinConfigReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateAssetCoinConfigReq.ProtoReflect.Descriptor instead.
+func (*CreateAssetCoinConfigReq) Descriptor() ([]byte, []int) {
+	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *CreateAssetCoinConfigReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *CreateAssetCoinConfigReq) GetWalletType() WalletType {
+	if x != nil {
+		return x.WalletType
+	}
+	return WalletType_WALLET_TYPE_UNKNOWN
+}
+
+func (x *CreateAssetCoinConfigReq) GetCoin() string {
+	if x != nil {
+		return x.Coin
+	}
+	return ""
+}
+
+func (x *CreateAssetCoinConfigReq) GetSymbol() string {
+	if x != nil {
+		return x.Symbol
+	}
+	return ""
+}
+
+func (x *CreateAssetCoinConfigReq) GetCoinName() string {
+	if x != nil {
+		return x.CoinName
+	}
+	return ""
+}
+
+func (x *CreateAssetCoinConfigReq) GetCoinType() AssetCoinType {
+	if x != nil {
+		return x.CoinType
+	}
+	return AssetCoinType_ASSET_COIN_TYPE_UNKNOWN
+}
+
+func (x *CreateAssetCoinConfigReq) GetIconUrl() string {
+	if x != nil {
+		return x.IconUrl
+	}
+	return ""
+}
+
+func (x *CreateAssetCoinConfigReq) GetIconText() string {
+	if x != nil {
+		return x.IconText
+	}
+	return ""
+}
+
+func (x *CreateAssetCoinConfigReq) GetIconBgColor() string {
+	if x != nil {
+		return x.IconBgColor
+	}
+	return ""
+}
+
+func (x *CreateAssetCoinConfigReq) GetDecimalPlaces() int32 {
+	if x != nil {
+		return x.DecimalPlaces
+	}
+	return 0
+}
+
+func (x *CreateAssetCoinConfigReq) GetAppVisible() AssetCoinSwitch {
+	if x != nil {
+		return x.AppVisible
+	}
+	return AssetCoinSwitch_ASSET_COIN_SWITCH_UNKNOWN
+}
+
+func (x *CreateAssetCoinConfigReq) GetRechargeEnabled() AssetCoinSwitch {
+	if x != nil {
+		return x.RechargeEnabled
+	}
+	return AssetCoinSwitch_ASSET_COIN_SWITCH_UNKNOWN
+}
+
+func (x *CreateAssetCoinConfigReq) GetWithdrawEnabled() AssetCoinSwitch {
+	if x != nil {
+		return x.WithdrawEnabled
+	}
+	return AssetCoinSwitch_ASSET_COIN_SWITCH_UNKNOWN
+}
+
+func (x *CreateAssetCoinConfigReq) GetTransferEnabled() AssetCoinSwitch {
+	if x != nil {
+		return x.TransferEnabled
+	}
+	return AssetCoinSwitch_ASSET_COIN_SWITCH_UNKNOWN
+}
+
+func (x *CreateAssetCoinConfigReq) GetStatus() AssetStatus {
+	if x != nil {
+		return x.Status
+	}
+	return AssetStatus_ASSET_STATUS_UNKNOWN
+}
+
+func (x *CreateAssetCoinConfigReq) GetSort() int32 {
+	if x != nil {
+		return x.Sort
+	}
+	return 0
+}
+
+func (x *CreateAssetCoinConfigReq) GetRemark() string {
+	if x != nil {
+		return x.Remark
+	}
+	return ""
+}
+
+type UpdateAssetCoinConfigReq struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                              // 主键ID
+	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                                  // 租户ID
+	WalletType      WalletType             `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"`                      // 账户类型
+	Coin            string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`                                                                           // 币种代码
+	Symbol          string                 `protobuf:"bytes,5,opt,name=symbol,proto3" json:"symbol,omitempty"`                                                                       // 展示符号/资产标识
+	CoinName        string                 `protobuf:"bytes,6,opt,name=coin_name,json=coinName,proto3" json:"coin_name,omitempty"`                                                   // 币种名称
+	CoinType        AssetCoinType          `protobuf:"varint,7,opt,name=coin_type,json=coinType,proto3,enum=asset.AssetCoinType" json:"coin_type,omitempty"`                         // 币种类型
+	IconUrl         string                 `protobuf:"bytes,8,opt,name=icon_url,json=iconUrl,proto3" json:"icon_url,omitempty"`                                                      // 币种图标URL
+	IconText        string                 `protobuf:"bytes,9,opt,name=icon_text,json=iconText,proto3" json:"icon_text,omitempty"`                                                   // 币种图标文案/符号
+	IconBgColor     string                 `protobuf:"bytes,10,opt,name=icon_bg_color,json=iconBgColor,proto3" json:"icon_bg_color,omitempty"`                                       // 图标背景色
+	DecimalPlaces   int32                  `protobuf:"varint,11,opt,name=decimal_places,json=decimalPlaces,proto3" json:"decimal_places,omitempty"`                                  // 资产展示精度
+	AppVisible      AssetCoinSwitch        `protobuf:"varint,12,opt,name=app_visible,json=appVisible,proto3,enum=asset.AssetCoinSwitch" json:"app_visible,omitempty"`                // APP操作页是否展示
+	RechargeEnabled AssetCoinSwitch        `protobuf:"varint,13,opt,name=recharge_enabled,json=rechargeEnabled,proto3,enum=asset.AssetCoinSwitch" json:"recharge_enabled,omitempty"` // 充值页是否展示
+	WithdrawEnabled AssetCoinSwitch        `protobuf:"varint,14,opt,name=withdraw_enabled,json=withdrawEnabled,proto3,enum=asset.AssetCoinSwitch" json:"withdraw_enabled,omitempty"` // 提现页是否展示
+	TransferEnabled AssetCoinSwitch        `protobuf:"varint,15,opt,name=transfer_enabled,json=transferEnabled,proto3,enum=asset.AssetCoinSwitch" json:"transfer_enabled,omitempty"` // 划转页是否展示
+	Status          AssetStatus            `protobuf:"varint,16,opt,name=status,proto3,enum=asset.AssetStatus" json:"status,omitempty"`                                              // 状态
+	Sort            int32                  `protobuf:"varint,17,opt,name=sort,proto3" json:"sort,omitempty"`                                                                         // 排序
+	Remark          string                 `protobuf:"bytes,18,opt,name=remark,proto3" json:"remark,omitempty"`                                                                      // 备注
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *UpdateAssetCoinConfigReq) Reset() {
+	*x = UpdateAssetCoinConfigReq{}
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateAssetCoinConfigReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateAssetCoinConfigReq) ProtoMessage() {}
+
+func (x *UpdateAssetCoinConfigReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateAssetCoinConfigReq.ProtoReflect.Descriptor instead.
+func (*UpdateAssetCoinConfigReq) Descriptor() ([]byte, []int) {
+	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *UpdateAssetCoinConfigReq) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UpdateAssetCoinConfigReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *UpdateAssetCoinConfigReq) GetWalletType() WalletType {
+	if x != nil {
+		return x.WalletType
+	}
+	return WalletType_WALLET_TYPE_UNKNOWN
+}
+
+func (x *UpdateAssetCoinConfigReq) GetCoin() string {
+	if x != nil {
+		return x.Coin
+	}
+	return ""
+}
+
+func (x *UpdateAssetCoinConfigReq) GetSymbol() string {
+	if x != nil {
+		return x.Symbol
+	}
+	return ""
+}
+
+func (x *UpdateAssetCoinConfigReq) GetCoinName() string {
+	if x != nil {
+		return x.CoinName
+	}
+	return ""
+}
+
+func (x *UpdateAssetCoinConfigReq) GetCoinType() AssetCoinType {
+	if x != nil {
+		return x.CoinType
+	}
+	return AssetCoinType_ASSET_COIN_TYPE_UNKNOWN
+}
+
+func (x *UpdateAssetCoinConfigReq) GetIconUrl() string {
+	if x != nil {
+		return x.IconUrl
+	}
+	return ""
+}
+
+func (x *UpdateAssetCoinConfigReq) GetIconText() string {
+	if x != nil {
+		return x.IconText
+	}
+	return ""
+}
+
+func (x *UpdateAssetCoinConfigReq) GetIconBgColor() string {
+	if x != nil {
+		return x.IconBgColor
+	}
+	return ""
+}
+
+func (x *UpdateAssetCoinConfigReq) GetDecimalPlaces() int32 {
+	if x != nil {
+		return x.DecimalPlaces
+	}
+	return 0
+}
+
+func (x *UpdateAssetCoinConfigReq) GetAppVisible() AssetCoinSwitch {
+	if x != nil {
+		return x.AppVisible
+	}
+	return AssetCoinSwitch_ASSET_COIN_SWITCH_UNKNOWN
+}
+
+func (x *UpdateAssetCoinConfigReq) GetRechargeEnabled() AssetCoinSwitch {
+	if x != nil {
+		return x.RechargeEnabled
+	}
+	return AssetCoinSwitch_ASSET_COIN_SWITCH_UNKNOWN
+}
+
+func (x *UpdateAssetCoinConfigReq) GetWithdrawEnabled() AssetCoinSwitch {
+	if x != nil {
+		return x.WithdrawEnabled
+	}
+	return AssetCoinSwitch_ASSET_COIN_SWITCH_UNKNOWN
+}
+
+func (x *UpdateAssetCoinConfigReq) GetTransferEnabled() AssetCoinSwitch {
+	if x != nil {
+		return x.TransferEnabled
+	}
+	return AssetCoinSwitch_ASSET_COIN_SWITCH_UNKNOWN
+}
+
+func (x *UpdateAssetCoinConfigReq) GetStatus() AssetStatus {
+	if x != nil {
+		return x.Status
+	}
+	return AssetStatus_ASSET_STATUS_UNKNOWN
+}
+
+func (x *UpdateAssetCoinConfigReq) GetSort() int32 {
+	if x != nil {
+		return x.Sort
+	}
+	return 0
+}
+
+func (x *UpdateAssetCoinConfigReq) GetRemark() string {
+	if x != nil {
+		return x.Remark
+	}
+	return ""
+}
+
+type DeleteAssetCoinConfigReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                             // 主键ID
+	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"` // 租户ID
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteAssetCoinConfigReq) Reset() {
+	*x = DeleteAssetCoinConfigReq{}
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteAssetCoinConfigReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteAssetCoinConfigReq) ProtoMessage() {}
+
+func (x *DeleteAssetCoinConfigReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteAssetCoinConfigReq.ProtoReflect.Descriptor instead.
+func (*DeleteAssetCoinConfigReq) Descriptor() ([]byte, []int) {
+	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *DeleteAssetCoinConfigReq) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *DeleteAssetCoinConfigReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+type GetAssetCoinConfigReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                             // 主键ID
+	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"` // 租户ID
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetAssetCoinConfigReq) Reset() {
+	*x = GetAssetCoinConfigReq{}
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAssetCoinConfigReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAssetCoinConfigReq) ProtoMessage() {}
+
+func (x *GetAssetCoinConfigReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAssetCoinConfigReq.ProtoReflect.Descriptor instead.
+func (*GetAssetCoinConfigReq) Descriptor() ([]byte, []int) {
+	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *GetAssetCoinConfigReq) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *GetAssetCoinConfigReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+type PageAssetCoinConfigsReq struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	TenantId        int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                                 // 租户ID,0表示全部
+	WalletType      WalletType             `protobuf:"varint,2,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"`                     // 账户类型,0表示全部
+	Coin            string                 `protobuf:"bytes,3,opt,name=coin,proto3" json:"coin,omitempty"`                                                                          // 币种,空表示全部
+	Symbol          string                 `protobuf:"bytes,4,opt,name=symbol,proto3" json:"symbol,omitempty"`                                                                      // 展示符号/资产标识,空表示全部
+	CoinType        AssetCoinType          `protobuf:"varint,5,opt,name=coin_type,json=coinType,proto3,enum=asset.AssetCoinType" json:"coin_type,omitempty"`                        // 币种类型,0表示全部
+	AppVisible      AssetCoinSwitch        `protobuf:"varint,6,opt,name=app_visible,json=appVisible,proto3,enum=asset.AssetCoinSwitch" json:"app_visible,omitempty"`                // APP操作页是否展示,0表示全部
+	RechargeEnabled AssetCoinSwitch        `protobuf:"varint,7,opt,name=recharge_enabled,json=rechargeEnabled,proto3,enum=asset.AssetCoinSwitch" json:"recharge_enabled,omitempty"` // 充值页是否展示,0表示全部
+	WithdrawEnabled AssetCoinSwitch        `protobuf:"varint,8,opt,name=withdraw_enabled,json=withdrawEnabled,proto3,enum=asset.AssetCoinSwitch" json:"withdraw_enabled,omitempty"` // 提现页是否展示,0表示全部
+	TransferEnabled AssetCoinSwitch        `protobuf:"varint,9,opt,name=transfer_enabled,json=transferEnabled,proto3,enum=asset.AssetCoinSwitch" json:"transfer_enabled,omitempty"` // 划转页是否展示,0表示全部
+	Status          AssetStatus            `protobuf:"varint,10,opt,name=status,proto3,enum=asset.AssetStatus" json:"status,omitempty"`                                             // 状态,0表示全部
+	Page            *common.PageReq        `protobuf:"bytes,11,opt,name=page,proto3" json:"page,omitempty"`                                                                         // 分页
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *PageAssetCoinConfigsReq) Reset() {
+	*x = PageAssetCoinConfigsReq{}
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PageAssetCoinConfigsReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PageAssetCoinConfigsReq) ProtoMessage() {}
+
+func (x *PageAssetCoinConfigsReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PageAssetCoinConfigsReq.ProtoReflect.Descriptor instead.
+func (*PageAssetCoinConfigsReq) Descriptor() ([]byte, []int) {
+	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *PageAssetCoinConfigsReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *PageAssetCoinConfigsReq) GetWalletType() WalletType {
+	if x != nil {
+		return x.WalletType
+	}
+	return WalletType_WALLET_TYPE_UNKNOWN
+}
+
+func (x *PageAssetCoinConfigsReq) GetCoin() string {
+	if x != nil {
+		return x.Coin
+	}
+	return ""
+}
+
+func (x *PageAssetCoinConfigsReq) GetSymbol() string {
+	if x != nil {
+		return x.Symbol
+	}
+	return ""
+}
+
+func (x *PageAssetCoinConfigsReq) GetCoinType() AssetCoinType {
+	if x != nil {
+		return x.CoinType
+	}
+	return AssetCoinType_ASSET_COIN_TYPE_UNKNOWN
+}
+
+func (x *PageAssetCoinConfigsReq) GetAppVisible() AssetCoinSwitch {
+	if x != nil {
+		return x.AppVisible
+	}
+	return AssetCoinSwitch_ASSET_COIN_SWITCH_UNKNOWN
+}
+
+func (x *PageAssetCoinConfigsReq) GetRechargeEnabled() AssetCoinSwitch {
+	if x != nil {
+		return x.RechargeEnabled
+	}
+	return AssetCoinSwitch_ASSET_COIN_SWITCH_UNKNOWN
+}
+
+func (x *PageAssetCoinConfigsReq) GetWithdrawEnabled() AssetCoinSwitch {
+	if x != nil {
+		return x.WithdrawEnabled
+	}
+	return AssetCoinSwitch_ASSET_COIN_SWITCH_UNKNOWN
+}
+
+func (x *PageAssetCoinConfigsReq) GetTransferEnabled() AssetCoinSwitch {
+	if x != nil {
+		return x.TransferEnabled
+	}
+	return AssetCoinSwitch_ASSET_COIN_SWITCH_UNKNOWN
+}
+
+func (x *PageAssetCoinConfigsReq) GetStatus() AssetStatus {
+	if x != nil {
+		return x.Status
+	}
+	return AssetStatus_ASSET_STATUS_UNKNOWN
+}
+
+func (x *PageAssetCoinConfigsReq) GetPage() *common.PageReq {
+	if x != nil {
+		return x.Page
+	}
+	return nil
+}
+
+type AssetCoinConfigResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          *AssetCoinConfig       `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"` // 配置详情
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AssetCoinConfigResp) Reset() {
+	*x = AssetCoinConfigResp{}
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AssetCoinConfigResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AssetCoinConfigResp) ProtoMessage() {}
+
+func (x *AssetCoinConfigResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AssetCoinConfigResp.ProtoReflect.Descriptor instead.
+func (*AssetCoinConfigResp) Descriptor() ([]byte, []int) {
+	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *AssetCoinConfigResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *AssetCoinConfigResp) GetData() *AssetCoinConfig {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type PageAssetCoinConfigsResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          []*AssetCoinConfig     `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"` // 配置列表
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PageAssetCoinConfigsResp) Reset() {
+	*x = PageAssetCoinConfigsResp{}
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PageAssetCoinConfigsResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PageAssetCoinConfigsResp) ProtoMessage() {}
+
+func (x *PageAssetCoinConfigsResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PageAssetCoinConfigsResp.ProtoReflect.Descriptor instead.
+func (*PageAssetCoinConfigsResp) Descriptor() ([]byte, []int) {
+	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *PageAssetCoinConfigsResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *PageAssetCoinConfigsResp) GetData() []*AssetCoinConfig {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type DeleteAssetCoinConfigResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteAssetCoinConfigResp) Reset() {
+	*x = DeleteAssetCoinConfigResp{}
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteAssetCoinConfigResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteAssetCoinConfigResp) ProtoMessage() {}
+
+func (x *DeleteAssetCoinConfigResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteAssetCoinConfigResp.ProtoReflect.Descriptor instead.
+func (*DeleteAssetCoinConfigResp) Descriptor() ([]byte, []int) {
+	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *DeleteAssetCoinConfigResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
 type PageUserAssetsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                             // 租户ID,0表示全部
@@ -36,7 +764,7 @@ type PageUserAssetsReq struct {
 
 func (x *PageUserAssetsReq) Reset() {
 	*x = PageUserAssetsReq{}
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[0]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -48,7 +776,7 @@ func (x *PageUserAssetsReq) String() string {
 func (*PageUserAssetsReq) ProtoMessage() {}
 
 func (x *PageUserAssetsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[0]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -61,7 +789,7 @@ func (x *PageUserAssetsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PageUserAssetsReq.ProtoReflect.Descriptor instead.
 func (*PageUserAssetsReq) Descriptor() ([]byte, []int) {
-	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{0}
+	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *PageUserAssetsReq) GetTenantId() int64 {
@@ -116,7 +844,7 @@ type PageUserAssetsResp struct {
 
 func (x *PageUserAssetsResp) Reset() {
 	*x = PageUserAssetsResp{}
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[1]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -128,7 +856,7 @@ func (x *PageUserAssetsResp) String() string {
 func (*PageUserAssetsResp) ProtoMessage() {}
 
 func (x *PageUserAssetsResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[1]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -141,7 +869,7 @@ func (x *PageUserAssetsResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PageUserAssetsResp.ProtoReflect.Descriptor instead.
 func (*PageUserAssetsResp) Descriptor() ([]byte, []int) {
-	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{1}
+	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *PageUserAssetsResp) GetBase() *common.RespBase {
@@ -170,7 +898,7 @@ type GetUserAssetDetailReq struct {
 
 func (x *GetUserAssetDetailReq) Reset() {
 	*x = GetUserAssetDetailReq{}
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[2]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -182,7 +910,7 @@ func (x *GetUserAssetDetailReq) String() string {
 func (*GetUserAssetDetailReq) ProtoMessage() {}
 
 func (x *GetUserAssetDetailReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[2]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -195,7 +923,7 @@ func (x *GetUserAssetDetailReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserAssetDetailReq.ProtoReflect.Descriptor instead.
 func (*GetUserAssetDetailReq) Descriptor() ([]byte, []int) {
-	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{2}
+	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *GetUserAssetDetailReq) GetTenantId() int64 {
@@ -236,7 +964,7 @@ type GetUserAssetDetailResp struct {
 
 func (x *GetUserAssetDetailResp) Reset() {
 	*x = GetUserAssetDetailResp{}
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[3]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -248,7 +976,7 @@ func (x *GetUserAssetDetailResp) String() string {
 func (*GetUserAssetDetailResp) ProtoMessage() {}
 
 func (x *GetUserAssetDetailResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[3]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -261,7 +989,7 @@ func (x *GetUserAssetDetailResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserAssetDetailResp.ProtoReflect.Descriptor instead.
 func (*GetUserAssetDetailResp) Descriptor() ([]byte, []int) {
-	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{3}
+	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *GetUserAssetDetailResp) GetBase() *common.RespBase {
@@ -295,7 +1023,7 @@ type PageAssetFlowsReq struct {
 
 func (x *PageAssetFlowsReq) Reset() {
 	*x = PageAssetFlowsReq{}
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[4]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -307,7 +1035,7 @@ func (x *PageAssetFlowsReq) String() string {
 func (*PageAssetFlowsReq) ProtoMessage() {}
 
 func (x *PageAssetFlowsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[4]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -320,7 +1048,7 @@ func (x *PageAssetFlowsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PageAssetFlowsReq.ProtoReflect.Descriptor instead.
 func (*PageAssetFlowsReq) Descriptor() ([]byte, []int) {
-	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{4}
+	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *PageAssetFlowsReq) GetTenantId() int64 {
@@ -396,7 +1124,7 @@ type PageAssetFlowsResp struct {
 
 func (x *PageAssetFlowsResp) Reset() {
 	*x = PageAssetFlowsResp{}
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[5]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -408,7 +1136,7 @@ func (x *PageAssetFlowsResp) String() string {
 func (*PageAssetFlowsResp) ProtoMessage() {}
 
 func (x *PageAssetFlowsResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[5]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -421,7 +1149,7 @@ func (x *PageAssetFlowsResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PageAssetFlowsResp.ProtoReflect.Descriptor instead.
 func (*PageAssetFlowsResp) Descriptor() ([]byte, []int) {
-	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{5}
+	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *PageAssetFlowsResp) GetBase() *common.RespBase {
@@ -454,7 +1182,7 @@ type PageAssetFreezesReq struct {
 
 func (x *PageAssetFreezesReq) Reset() {
 	*x = PageAssetFreezesReq{}
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[6]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -466,7 +1194,7 @@ func (x *PageAssetFreezesReq) String() string {
 func (*PageAssetFreezesReq) ProtoMessage() {}
 
 func (x *PageAssetFreezesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[6]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -479,7 +1207,7 @@ func (x *PageAssetFreezesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PageAssetFreezesReq.ProtoReflect.Descriptor instead.
 func (*PageAssetFreezesReq) Descriptor() ([]byte, []int) {
-	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{6}
+	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *PageAssetFreezesReq) GetTenantId() int64 {
@@ -548,7 +1276,7 @@ type PageAssetFreezesResp struct {
 
 func (x *PageAssetFreezesResp) Reset() {
 	*x = PageAssetFreezesResp{}
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[7]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -560,7 +1288,7 @@ func (x *PageAssetFreezesResp) String() string {
 func (*PageAssetFreezesResp) ProtoMessage() {}
 
 func (x *PageAssetFreezesResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[7]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -573,7 +1301,7 @@ func (x *PageAssetFreezesResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PageAssetFreezesResp.ProtoReflect.Descriptor instead.
 func (*PageAssetFreezesResp) Descriptor() ([]byte, []int) {
-	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{7}
+	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *PageAssetFreezesResp) GetBase() *common.RespBase {
@@ -606,7 +1334,7 @@ type PageAssetLocksReq struct {
 
 func (x *PageAssetLocksReq) Reset() {
 	*x = PageAssetLocksReq{}
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[8]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -618,7 +1346,7 @@ func (x *PageAssetLocksReq) String() string {
 func (*PageAssetLocksReq) ProtoMessage() {}
 
 func (x *PageAssetLocksReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[8]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -631,7 +1359,7 @@ func (x *PageAssetLocksReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PageAssetLocksReq.ProtoReflect.Descriptor instead.
 func (*PageAssetLocksReq) Descriptor() ([]byte, []int) {
-	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{8}
+	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *PageAssetLocksReq) GetTenantId() int64 {
@@ -700,7 +1428,7 @@ type PageAssetLocksResp struct {
 
 func (x *PageAssetLocksResp) Reset() {
 	*x = PageAssetLocksResp{}
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[9]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -712,7 +1440,7 @@ func (x *PageAssetLocksResp) String() string {
 func (*PageAssetLocksResp) ProtoMessage() {}
 
 func (x *PageAssetLocksResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[9]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -725,7 +1453,7 @@ func (x *PageAssetLocksResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PageAssetLocksResp.ProtoReflect.Descriptor instead.
 func (*PageAssetLocksResp) Descriptor() ([]byte, []int) {
-	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{9}
+	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *PageAssetLocksResp) GetBase() *common.RespBase {
@@ -758,7 +1486,7 @@ type AdminAddAssetReq struct {
 
 func (x *AdminAddAssetReq) Reset() {
 	*x = AdminAddAssetReq{}
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[10]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -770,7 +1498,7 @@ func (x *AdminAddAssetReq) String() string {
 func (*AdminAddAssetReq) ProtoMessage() {}
 
 func (x *AdminAddAssetReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[10]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -783,7 +1511,7 @@ func (x *AdminAddAssetReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminAddAssetReq.ProtoReflect.Descriptor instead.
 func (*AdminAddAssetReq) Descriptor() ([]byte, []int) {
-	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{10}
+	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *AdminAddAssetReq) GetTenantId() int64 {
@@ -858,7 +1586,7 @@ type AdminSubAssetReq struct {
 
 func (x *AdminSubAssetReq) Reset() {
 	*x = AdminSubAssetReq{}
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[11]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -870,7 +1598,7 @@ func (x *AdminSubAssetReq) String() string {
 func (*AdminSubAssetReq) ProtoMessage() {}
 
 func (x *AdminSubAssetReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[11]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -883,7 +1611,7 @@ func (x *AdminSubAssetReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminSubAssetReq.ProtoReflect.Descriptor instead.
 func (*AdminSubAssetReq) Descriptor() ([]byte, []int) {
-	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{11}
+	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *AdminSubAssetReq) GetTenantId() int64 {
@@ -958,7 +1686,7 @@ type AdminFreezeAssetReq struct {
 
 func (x *AdminFreezeAssetReq) Reset() {
 	*x = AdminFreezeAssetReq{}
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[12]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -970,7 +1698,7 @@ func (x *AdminFreezeAssetReq) String() string {
 func (*AdminFreezeAssetReq) ProtoMessage() {}
 
 func (x *AdminFreezeAssetReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[12]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -983,7 +1711,7 @@ func (x *AdminFreezeAssetReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminFreezeAssetReq.ProtoReflect.Descriptor instead.
 func (*AdminFreezeAssetReq) Descriptor() ([]byte, []int) {
-	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{12}
+	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *AdminFreezeAssetReq) GetTenantId() int64 {
@@ -1056,7 +1784,7 @@ type AdminUnfreezeAssetReq struct {
 
 func (x *AdminUnfreezeAssetReq) Reset() {
 	*x = AdminUnfreezeAssetReq{}
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[13]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1068,7 +1796,7 @@ func (x *AdminUnfreezeAssetReq) String() string {
 func (*AdminUnfreezeAssetReq) ProtoMessage() {}
 
 func (x *AdminUnfreezeAssetReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[13]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1081,7 +1809,7 @@ func (x *AdminUnfreezeAssetReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminUnfreezeAssetReq.ProtoReflect.Descriptor instead.
 func (*AdminUnfreezeAssetReq) Descriptor() ([]byte, []int) {
-	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{13}
+	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *AdminUnfreezeAssetReq) GetTenantId() int64 {
@@ -1142,7 +1870,7 @@ type AdminLockAssetReq struct {
 
 func (x *AdminLockAssetReq) Reset() {
 	*x = AdminLockAssetReq{}
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[14]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1154,7 +1882,7 @@ func (x *AdminLockAssetReq) String() string {
 func (*AdminLockAssetReq) ProtoMessage() {}
 
 func (x *AdminLockAssetReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[14]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1167,7 +1895,7 @@ func (x *AdminLockAssetReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminLockAssetReq.ProtoReflect.Descriptor instead.
 func (*AdminLockAssetReq) Descriptor() ([]byte, []int) {
-	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{14}
+	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *AdminLockAssetReq) GetTenantId() int64 {
@@ -1240,7 +1968,7 @@ type AdminUnlockAssetReq struct {
 
 func (x *AdminUnlockAssetReq) Reset() {
 	*x = AdminUnlockAssetReq{}
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[15]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1252,7 +1980,7 @@ func (x *AdminUnlockAssetReq) String() string {
 func (*AdminUnlockAssetReq) ProtoMessage() {}
 
 func (x *AdminUnlockAssetReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[15]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1265,7 +1993,7 @@ func (x *AdminUnlockAssetReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminUnlockAssetReq.ProtoReflect.Descriptor instead.
 func (*AdminUnlockAssetReq) Descriptor() ([]byte, []int) {
-	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{15}
+	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *AdminUnlockAssetReq) GetTenantId() int64 {
@@ -1321,7 +2049,7 @@ type AdminChangeAssetResp struct {
 
 func (x *AdminChangeAssetResp) Reset() {
 	*x = AdminChangeAssetResp{}
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[16]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1333,7 +2061,7 @@ func (x *AdminChangeAssetResp) String() string {
 func (*AdminChangeAssetResp) ProtoMessage() {}
 
 func (x *AdminChangeAssetResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_asset_asset_admin_proto_msgTypes[16]
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1346,7 +2074,7 @@ func (x *AdminChangeAssetResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdminChangeAssetResp.ProtoReflect.Descriptor instead.
 func (*AdminChangeAssetResp) Descriptor() ([]byte, []int) {
-	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{16}
+	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *AdminChangeAssetResp) GetBase() *common.RespBase {
@@ -1374,7 +2102,79 @@ var File_proto_asset_asset_admin_proto protoreflect.FileDescriptor
 
 const file_proto_asset_asset_admin_proto_rawDesc = "" +
 	"\n" +
-	"\x1dproto/asset/asset_admin.proto\x12\x05asset\x1a\x19proto/common/common.proto\x1a\x16proto/asset/enum.proto\x1a\x17proto/asset/model.proto\"\xe2\x01\n" +
+	"\x1dproto/asset/asset_admin.proto\x12\x05asset\x1a\x19proto/common/common.proto\x1a\x16proto/asset/enum.proto\x1a\x17proto/asset/model.proto\"\xc4\x05\n" +
+	"\x18CreateAssetCoinConfigReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x122\n" +
+	"\vwallet_type\x18\x02 \x01(\x0e2\x11.asset.WalletTypeR\n" +
+	"walletType\x12\x12\n" +
+	"\x04coin\x18\x03 \x01(\tR\x04coin\x12\x16\n" +
+	"\x06symbol\x18\x04 \x01(\tR\x06symbol\x12\x1b\n" +
+	"\tcoin_name\x18\x05 \x01(\tR\bcoinName\x121\n" +
+	"\tcoin_type\x18\x06 \x01(\x0e2\x14.asset.AssetCoinTypeR\bcoinType\x12\x19\n" +
+	"\bicon_url\x18\a \x01(\tR\aiconUrl\x12\x1b\n" +
+	"\ticon_text\x18\b \x01(\tR\biconText\x12\"\n" +
+	"\ricon_bg_color\x18\t \x01(\tR\viconBgColor\x12%\n" +
+	"\x0edecimal_places\x18\n" +
+	" \x01(\x05R\rdecimalPlaces\x127\n" +
+	"\vapp_visible\x18\v \x01(\x0e2\x16.asset.AssetCoinSwitchR\n" +
+	"appVisible\x12A\n" +
+	"\x10recharge_enabled\x18\f \x01(\x0e2\x16.asset.AssetCoinSwitchR\x0frechargeEnabled\x12A\n" +
+	"\x10withdraw_enabled\x18\r \x01(\x0e2\x16.asset.AssetCoinSwitchR\x0fwithdrawEnabled\x12A\n" +
+	"\x10transfer_enabled\x18\x0e \x01(\x0e2\x16.asset.AssetCoinSwitchR\x0ftransferEnabled\x12*\n" +
+	"\x06status\x18\x0f \x01(\x0e2\x12.asset.AssetStatusR\x06status\x12\x12\n" +
+	"\x04sort\x18\x10 \x01(\x05R\x04sort\x12\x16\n" +
+	"\x06remark\x18\x11 \x01(\tR\x06remark\"\xd4\x05\n" +
+	"\x18UpdateAssetCoinConfigReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x122\n" +
+	"\vwallet_type\x18\x03 \x01(\x0e2\x11.asset.WalletTypeR\n" +
+	"walletType\x12\x12\n" +
+	"\x04coin\x18\x04 \x01(\tR\x04coin\x12\x16\n" +
+	"\x06symbol\x18\x05 \x01(\tR\x06symbol\x12\x1b\n" +
+	"\tcoin_name\x18\x06 \x01(\tR\bcoinName\x121\n" +
+	"\tcoin_type\x18\a \x01(\x0e2\x14.asset.AssetCoinTypeR\bcoinType\x12\x19\n" +
+	"\bicon_url\x18\b \x01(\tR\aiconUrl\x12\x1b\n" +
+	"\ticon_text\x18\t \x01(\tR\biconText\x12\"\n" +
+	"\ricon_bg_color\x18\n" +
+	" \x01(\tR\viconBgColor\x12%\n" +
+	"\x0edecimal_places\x18\v \x01(\x05R\rdecimalPlaces\x127\n" +
+	"\vapp_visible\x18\f \x01(\x0e2\x16.asset.AssetCoinSwitchR\n" +
+	"appVisible\x12A\n" +
+	"\x10recharge_enabled\x18\r \x01(\x0e2\x16.asset.AssetCoinSwitchR\x0frechargeEnabled\x12A\n" +
+	"\x10withdraw_enabled\x18\x0e \x01(\x0e2\x16.asset.AssetCoinSwitchR\x0fwithdrawEnabled\x12A\n" +
+	"\x10transfer_enabled\x18\x0f \x01(\x0e2\x16.asset.AssetCoinSwitchR\x0ftransferEnabled\x12*\n" +
+	"\x06status\x18\x10 \x01(\x0e2\x12.asset.AssetStatusR\x06status\x12\x12\n" +
+	"\x04sort\x18\x11 \x01(\x05R\x04sort\x12\x16\n" +
+	"\x06remark\x18\x12 \x01(\tR\x06remark\"G\n" +
+	"\x18DeleteAssetCoinConfigReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\"D\n" +
+	"\x15GetAssetCoinConfigReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\"\x9c\x04\n" +
+	"\x17PageAssetCoinConfigsReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x122\n" +
+	"\vwallet_type\x18\x02 \x01(\x0e2\x11.asset.WalletTypeR\n" +
+	"walletType\x12\x12\n" +
+	"\x04coin\x18\x03 \x01(\tR\x04coin\x12\x16\n" +
+	"\x06symbol\x18\x04 \x01(\tR\x06symbol\x121\n" +
+	"\tcoin_type\x18\x05 \x01(\x0e2\x14.asset.AssetCoinTypeR\bcoinType\x127\n" +
+	"\vapp_visible\x18\x06 \x01(\x0e2\x16.asset.AssetCoinSwitchR\n" +
+	"appVisible\x12A\n" +
+	"\x10recharge_enabled\x18\a \x01(\x0e2\x16.asset.AssetCoinSwitchR\x0frechargeEnabled\x12A\n" +
+	"\x10withdraw_enabled\x18\b \x01(\x0e2\x16.asset.AssetCoinSwitchR\x0fwithdrawEnabled\x12A\n" +
+	"\x10transfer_enabled\x18\t \x01(\x0e2\x16.asset.AssetCoinSwitchR\x0ftransferEnabled\x12*\n" +
+	"\x06status\x18\n" +
+	" \x01(\x0e2\x12.asset.AssetStatusR\x06status\x12#\n" +
+	"\x04page\x18\v \x01(\v2\x0f.common.PageReqR\x04page\"g\n" +
+	"\x13AssetCoinConfigResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
+	"\x04data\x18\x02 \x01(\v2\x16.asset.AssetCoinConfigR\x04data\"l\n" +
+	"\x18PageAssetCoinConfigsResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
+	"\x04data\x18\x02 \x03(\v2\x16.asset.AssetCoinConfigR\x04data\"A\n" +
+	"\x19DeleteAssetCoinConfigResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\xe2\x01\n" +
 	"\x11PageUserAssetsReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x122\n" +
@@ -1500,9 +2300,14 @@ const file_proto_asset_asset_admin_proto_rawDesc = "" +
 	"\x14AdminChangeAssetResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x15\n" +
 	"\x06biz_no\x18\x02 \x01(\tR\x05bizNo\x12&\n" +
-	"\x05asset\x18\x03 \x01(\v2\x10.asset.UserAssetR\x05asset2\xc3\x06\n" +
+	"\x05asset\x18\x03 \x01(\v2\x10.asset.UserAssetR\x05asset2\xf4\t\n" +
 	"\n" +
-	"AssetAdmin\x12E\n" +
+	"AssetAdmin\x12T\n" +
+	"\x15CreateAssetCoinConfig\x12\x1f.asset.CreateAssetCoinConfigReq\x1a\x1a.asset.AssetCoinConfigResp\x12T\n" +
+	"\x15UpdateAssetCoinConfig\x12\x1f.asset.UpdateAssetCoinConfigReq\x1a\x1a.asset.AssetCoinConfigResp\x12Z\n" +
+	"\x15DeleteAssetCoinConfig\x12\x1f.asset.DeleteAssetCoinConfigReq\x1a .asset.DeleteAssetCoinConfigResp\x12N\n" +
+	"\x12GetAssetCoinConfig\x12\x1c.asset.GetAssetCoinConfigReq\x1a\x1a.asset.AssetCoinConfigResp\x12W\n" +
+	"\x14PageAssetCoinConfigs\x12\x1e.asset.PageAssetCoinConfigsReq\x1a\x1f.asset.PageAssetCoinConfigsResp\x12E\n" +
 	"\x0ePageUserAssets\x12\x18.asset.PageUserAssetsReq\x1a\x19.asset.PageUserAssetsResp\x12Q\n" +
 	"\x12GetUserAssetDetail\x12\x1c.asset.GetUserAssetDetailReq\x1a\x1d.asset.GetUserAssetDetailResp\x12E\n" +
 	"\x0ePageAssetFlows\x12\x18.asset.PageAssetFlowsReq\x1a\x19.asset.PageAssetFlowsResp\x12K\n" +
@@ -1527,100 +2332,148 @@ func file_proto_asset_asset_admin_proto_rawDescGZIP() []byte {
 	return file_proto_asset_asset_admin_proto_rawDescData
 }
 
-var file_proto_asset_asset_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
+var file_proto_asset_asset_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
 var file_proto_asset_asset_admin_proto_goTypes = []any{
-	(*PageUserAssetsReq)(nil),      // 0: asset.PageUserAssetsReq
-	(*PageUserAssetsResp)(nil),     // 1: asset.PageUserAssetsResp
-	(*GetUserAssetDetailReq)(nil),  // 2: asset.GetUserAssetDetailReq
-	(*GetUserAssetDetailResp)(nil), // 3: asset.GetUserAssetDetailResp
-	(*PageAssetFlowsReq)(nil),      // 4: asset.PageAssetFlowsReq
-	(*PageAssetFlowsResp)(nil),     // 5: asset.PageAssetFlowsResp
-	(*PageAssetFreezesReq)(nil),    // 6: asset.PageAssetFreezesReq
-	(*PageAssetFreezesResp)(nil),   // 7: asset.PageAssetFreezesResp
-	(*PageAssetLocksReq)(nil),      // 8: asset.PageAssetLocksReq
-	(*PageAssetLocksResp)(nil),     // 9: asset.PageAssetLocksResp
-	(*AdminAddAssetReq)(nil),       // 10: asset.AdminAddAssetReq
-	(*AdminSubAssetReq)(nil),       // 11: asset.AdminSubAssetReq
-	(*AdminFreezeAssetReq)(nil),    // 12: asset.AdminFreezeAssetReq
-	(*AdminUnfreezeAssetReq)(nil),  // 13: asset.AdminUnfreezeAssetReq
-	(*AdminLockAssetReq)(nil),      // 14: asset.AdminLockAssetReq
-	(*AdminUnlockAssetReq)(nil),    // 15: asset.AdminUnlockAssetReq
-	(*AdminChangeAssetResp)(nil),   // 16: asset.AdminChangeAssetResp
-	(WalletType)(0),                // 17: asset.WalletType
-	(AssetStatus)(0),               // 18: asset.AssetStatus
-	(*common.PageReq)(nil),         // 19: common.PageReq
-	(*common.RespBase)(nil),        // 20: common.RespBase
-	(*UserAsset)(nil),              // 21: asset.UserAsset
-	(BizType)(0),                   // 22: asset.BizType
-	(SceneType)(0),                 // 23: asset.SceneType
-	(*common.TimeRange)(nil),       // 24: common.TimeRange
-	(*AssetFlow)(nil),              // 25: asset.AssetFlow
-	(FreezeStatus)(0),              // 26: asset.FreezeStatus
-	(*AssetFreeze)(nil),            // 27: asset.AssetFreeze
-	(LockStatus)(0),                // 28: asset.LockStatus
-	(*AssetLock)(nil),              // 29: asset.AssetLock
+	(*CreateAssetCoinConfigReq)(nil),  // 0: asset.CreateAssetCoinConfigReq
+	(*UpdateAssetCoinConfigReq)(nil),  // 1: asset.UpdateAssetCoinConfigReq
+	(*DeleteAssetCoinConfigReq)(nil),  // 2: asset.DeleteAssetCoinConfigReq
+	(*GetAssetCoinConfigReq)(nil),     // 3: asset.GetAssetCoinConfigReq
+	(*PageAssetCoinConfigsReq)(nil),   // 4: asset.PageAssetCoinConfigsReq
+	(*AssetCoinConfigResp)(nil),       // 5: asset.AssetCoinConfigResp
+	(*PageAssetCoinConfigsResp)(nil),  // 6: asset.PageAssetCoinConfigsResp
+	(*DeleteAssetCoinConfigResp)(nil), // 7: asset.DeleteAssetCoinConfigResp
+	(*PageUserAssetsReq)(nil),         // 8: asset.PageUserAssetsReq
+	(*PageUserAssetsResp)(nil),        // 9: asset.PageUserAssetsResp
+	(*GetUserAssetDetailReq)(nil),     // 10: asset.GetUserAssetDetailReq
+	(*GetUserAssetDetailResp)(nil),    // 11: asset.GetUserAssetDetailResp
+	(*PageAssetFlowsReq)(nil),         // 12: asset.PageAssetFlowsReq
+	(*PageAssetFlowsResp)(nil),        // 13: asset.PageAssetFlowsResp
+	(*PageAssetFreezesReq)(nil),       // 14: asset.PageAssetFreezesReq
+	(*PageAssetFreezesResp)(nil),      // 15: asset.PageAssetFreezesResp
+	(*PageAssetLocksReq)(nil),         // 16: asset.PageAssetLocksReq
+	(*PageAssetLocksResp)(nil),        // 17: asset.PageAssetLocksResp
+	(*AdminAddAssetReq)(nil),          // 18: asset.AdminAddAssetReq
+	(*AdminSubAssetReq)(nil),          // 19: asset.AdminSubAssetReq
+	(*AdminFreezeAssetReq)(nil),       // 20: asset.AdminFreezeAssetReq
+	(*AdminUnfreezeAssetReq)(nil),     // 21: asset.AdminUnfreezeAssetReq
+	(*AdminLockAssetReq)(nil),         // 22: asset.AdminLockAssetReq
+	(*AdminUnlockAssetReq)(nil),       // 23: asset.AdminUnlockAssetReq
+	(*AdminChangeAssetResp)(nil),      // 24: asset.AdminChangeAssetResp
+	(WalletType)(0),                   // 25: asset.WalletType
+	(AssetCoinType)(0),                // 26: asset.AssetCoinType
+	(AssetCoinSwitch)(0),              // 27: asset.AssetCoinSwitch
+	(AssetStatus)(0),                  // 28: asset.AssetStatus
+	(*common.PageReq)(nil),            // 29: common.PageReq
+	(*common.RespBase)(nil),           // 30: common.RespBase
+	(*AssetCoinConfig)(nil),           // 31: asset.AssetCoinConfig
+	(*UserAsset)(nil),                 // 32: asset.UserAsset
+	(BizType)(0),                      // 33: asset.BizType
+	(SceneType)(0),                    // 34: asset.SceneType
+	(*common.TimeRange)(nil),          // 35: common.TimeRange
+	(*AssetFlow)(nil),                 // 36: asset.AssetFlow
+	(FreezeStatus)(0),                 // 37: asset.FreezeStatus
+	(*AssetFreeze)(nil),               // 38: asset.AssetFreeze
+	(LockStatus)(0),                   // 39: asset.LockStatus
+	(*AssetLock)(nil),                 // 40: asset.AssetLock
 }
 var file_proto_asset_asset_admin_proto_depIdxs = []int32{
-	17, // 0: asset.PageUserAssetsReq.wallet_type:type_name -> asset.WalletType
-	18, // 1: asset.PageUserAssetsReq.status:type_name -> asset.AssetStatus
-	19, // 2: asset.PageUserAssetsReq.page:type_name -> common.PageReq
-	20, // 3: asset.PageUserAssetsResp.base:type_name -> common.RespBase
-	21, // 4: asset.PageUserAssetsResp.data:type_name -> asset.UserAsset
-	17, // 5: asset.GetUserAssetDetailReq.wallet_type:type_name -> asset.WalletType
-	20, // 6: asset.GetUserAssetDetailResp.base:type_name -> common.RespBase
-	21, // 7: asset.GetUserAssetDetailResp.data:type_name -> asset.UserAsset
-	17, // 8: asset.PageAssetFlowsReq.wallet_type:type_name -> asset.WalletType
-	22, // 9: asset.PageAssetFlowsReq.biz_type:type_name -> asset.BizType
-	23, // 10: asset.PageAssetFlowsReq.scene_type:type_name -> asset.SceneType
-	24, // 11: asset.PageAssetFlowsReq.time_range:type_name -> common.TimeRange
-	19, // 12: asset.PageAssetFlowsReq.page:type_name -> common.PageReq
-	20, // 13: asset.PageAssetFlowsResp.base:type_name -> common.RespBase
-	25, // 14: asset.PageAssetFlowsResp.data:type_name -> asset.AssetFlow
-	17, // 15: asset.PageAssetFreezesReq.wallet_type:type_name -> asset.WalletType
-	22, // 16: asset.PageAssetFreezesReq.biz_type:type_name -> asset.BizType
-	26, // 17: asset.PageAssetFreezesReq.status:type_name -> asset.FreezeStatus
-	19, // 18: asset.PageAssetFreezesReq.page:type_name -> common.PageReq
-	20, // 19: asset.PageAssetFreezesResp.base:type_name -> common.RespBase
-	27, // 20: asset.PageAssetFreezesResp.data:type_name -> asset.AssetFreeze
-	17, // 21: asset.PageAssetLocksReq.wallet_type:type_name -> asset.WalletType
-	22, // 22: asset.PageAssetLocksReq.biz_type:type_name -> asset.BizType
-	28, // 23: asset.PageAssetLocksReq.status:type_name -> asset.LockStatus
-	19, // 24: asset.PageAssetLocksReq.page:type_name -> common.PageReq
-	20, // 25: asset.PageAssetLocksResp.base:type_name -> common.RespBase
-	29, // 26: asset.PageAssetLocksResp.data:type_name -> asset.AssetLock
-	17, // 27: asset.AdminAddAssetReq.wallet_type:type_name -> asset.WalletType
-	17, // 28: asset.AdminSubAssetReq.wallet_type:type_name -> asset.WalletType
-	17, // 29: asset.AdminFreezeAssetReq.wallet_type:type_name -> asset.WalletType
-	17, // 30: asset.AdminLockAssetReq.wallet_type:type_name -> asset.WalletType
-	20, // 31: asset.AdminChangeAssetResp.base:type_name -> common.RespBase
-	21, // 32: asset.AdminChangeAssetResp.asset:type_name -> asset.UserAsset
-	0,  // 33: asset.AssetAdmin.PageUserAssets:input_type -> asset.PageUserAssetsReq
-	2,  // 34: asset.AssetAdmin.GetUserAssetDetail:input_type -> asset.GetUserAssetDetailReq
-	4,  // 35: asset.AssetAdmin.PageAssetFlows:input_type -> asset.PageAssetFlowsReq
-	6,  // 36: asset.AssetAdmin.PageAssetFreezes:input_type -> asset.PageAssetFreezesReq
-	8,  // 37: asset.AssetAdmin.PageAssetLocks:input_type -> asset.PageAssetLocksReq
-	10, // 38: asset.AssetAdmin.AdminAddAsset:input_type -> asset.AdminAddAssetReq
-	11, // 39: asset.AssetAdmin.AdminSubAsset:input_type -> asset.AdminSubAssetReq
-	12, // 40: asset.AssetAdmin.AdminFreezeAsset:input_type -> asset.AdminFreezeAssetReq
-	13, // 41: asset.AssetAdmin.AdminUnfreezeAsset:input_type -> asset.AdminUnfreezeAssetReq
-	14, // 42: asset.AssetAdmin.AdminLockAsset:input_type -> asset.AdminLockAssetReq
-	15, // 43: asset.AssetAdmin.AdminUnlockAsset:input_type -> asset.AdminUnlockAssetReq
-	1,  // 44: asset.AssetAdmin.PageUserAssets:output_type -> asset.PageUserAssetsResp
-	3,  // 45: asset.AssetAdmin.GetUserAssetDetail:output_type -> asset.GetUserAssetDetailResp
-	5,  // 46: asset.AssetAdmin.PageAssetFlows:output_type -> asset.PageAssetFlowsResp
-	7,  // 47: asset.AssetAdmin.PageAssetFreezes:output_type -> asset.PageAssetFreezesResp
-	9,  // 48: asset.AssetAdmin.PageAssetLocks:output_type -> asset.PageAssetLocksResp
-	16, // 49: asset.AssetAdmin.AdminAddAsset:output_type -> asset.AdminChangeAssetResp
-	16, // 50: asset.AssetAdmin.AdminSubAsset:output_type -> asset.AdminChangeAssetResp
-	16, // 51: asset.AssetAdmin.AdminFreezeAsset:output_type -> asset.AdminChangeAssetResp
-	16, // 52: asset.AssetAdmin.AdminUnfreezeAsset:output_type -> asset.AdminChangeAssetResp
-	16, // 53: asset.AssetAdmin.AdminLockAsset:output_type -> asset.AdminChangeAssetResp
-	16, // 54: asset.AssetAdmin.AdminUnlockAsset:output_type -> asset.AdminChangeAssetResp
-	44, // [44:55] is the sub-list for method output_type
-	33, // [33:44] is the sub-list for method input_type
-	33, // [33:33] is the sub-list for extension type_name
-	33, // [33:33] is the sub-list for extension extendee
-	0,  // [0:33] is the sub-list for field type_name
+	25, // 0: asset.CreateAssetCoinConfigReq.wallet_type:type_name -> asset.WalletType
+	26, // 1: asset.CreateAssetCoinConfigReq.coin_type:type_name -> asset.AssetCoinType
+	27, // 2: asset.CreateAssetCoinConfigReq.app_visible:type_name -> asset.AssetCoinSwitch
+	27, // 3: asset.CreateAssetCoinConfigReq.recharge_enabled:type_name -> asset.AssetCoinSwitch
+	27, // 4: asset.CreateAssetCoinConfigReq.withdraw_enabled:type_name -> asset.AssetCoinSwitch
+	27, // 5: asset.CreateAssetCoinConfigReq.transfer_enabled:type_name -> asset.AssetCoinSwitch
+	28, // 6: asset.CreateAssetCoinConfigReq.status:type_name -> asset.AssetStatus
+	25, // 7: asset.UpdateAssetCoinConfigReq.wallet_type:type_name -> asset.WalletType
+	26, // 8: asset.UpdateAssetCoinConfigReq.coin_type:type_name -> asset.AssetCoinType
+	27, // 9: asset.UpdateAssetCoinConfigReq.app_visible:type_name -> asset.AssetCoinSwitch
+	27, // 10: asset.UpdateAssetCoinConfigReq.recharge_enabled:type_name -> asset.AssetCoinSwitch
+	27, // 11: asset.UpdateAssetCoinConfigReq.withdraw_enabled:type_name -> asset.AssetCoinSwitch
+	27, // 12: asset.UpdateAssetCoinConfigReq.transfer_enabled:type_name -> asset.AssetCoinSwitch
+	28, // 13: asset.UpdateAssetCoinConfigReq.status:type_name -> asset.AssetStatus
+	25, // 14: asset.PageAssetCoinConfigsReq.wallet_type:type_name -> asset.WalletType
+	26, // 15: asset.PageAssetCoinConfigsReq.coin_type:type_name -> asset.AssetCoinType
+	27, // 16: asset.PageAssetCoinConfigsReq.app_visible:type_name -> asset.AssetCoinSwitch
+	27, // 17: asset.PageAssetCoinConfigsReq.recharge_enabled:type_name -> asset.AssetCoinSwitch
+	27, // 18: asset.PageAssetCoinConfigsReq.withdraw_enabled:type_name -> asset.AssetCoinSwitch
+	27, // 19: asset.PageAssetCoinConfigsReq.transfer_enabled:type_name -> asset.AssetCoinSwitch
+	28, // 20: asset.PageAssetCoinConfigsReq.status:type_name -> asset.AssetStatus
+	29, // 21: asset.PageAssetCoinConfigsReq.page:type_name -> common.PageReq
+	30, // 22: asset.AssetCoinConfigResp.base:type_name -> common.RespBase
+	31, // 23: asset.AssetCoinConfigResp.data:type_name -> asset.AssetCoinConfig
+	30, // 24: asset.PageAssetCoinConfigsResp.base:type_name -> common.RespBase
+	31, // 25: asset.PageAssetCoinConfigsResp.data:type_name -> asset.AssetCoinConfig
+	30, // 26: asset.DeleteAssetCoinConfigResp.base:type_name -> common.RespBase
+	25, // 27: asset.PageUserAssetsReq.wallet_type:type_name -> asset.WalletType
+	28, // 28: asset.PageUserAssetsReq.status:type_name -> asset.AssetStatus
+	29, // 29: asset.PageUserAssetsReq.page:type_name -> common.PageReq
+	30, // 30: asset.PageUserAssetsResp.base:type_name -> common.RespBase
+	32, // 31: asset.PageUserAssetsResp.data:type_name -> asset.UserAsset
+	25, // 32: asset.GetUserAssetDetailReq.wallet_type:type_name -> asset.WalletType
+	30, // 33: asset.GetUserAssetDetailResp.base:type_name -> common.RespBase
+	32, // 34: asset.GetUserAssetDetailResp.data:type_name -> asset.UserAsset
+	25, // 35: asset.PageAssetFlowsReq.wallet_type:type_name -> asset.WalletType
+	33, // 36: asset.PageAssetFlowsReq.biz_type:type_name -> asset.BizType
+	34, // 37: asset.PageAssetFlowsReq.scene_type:type_name -> asset.SceneType
+	35, // 38: asset.PageAssetFlowsReq.time_range:type_name -> common.TimeRange
+	29, // 39: asset.PageAssetFlowsReq.page:type_name -> common.PageReq
+	30, // 40: asset.PageAssetFlowsResp.base:type_name -> common.RespBase
+	36, // 41: asset.PageAssetFlowsResp.data:type_name -> asset.AssetFlow
+	25, // 42: asset.PageAssetFreezesReq.wallet_type:type_name -> asset.WalletType
+	33, // 43: asset.PageAssetFreezesReq.biz_type:type_name -> asset.BizType
+	37, // 44: asset.PageAssetFreezesReq.status:type_name -> asset.FreezeStatus
+	29, // 45: asset.PageAssetFreezesReq.page:type_name -> common.PageReq
+	30, // 46: asset.PageAssetFreezesResp.base:type_name -> common.RespBase
+	38, // 47: asset.PageAssetFreezesResp.data:type_name -> asset.AssetFreeze
+	25, // 48: asset.PageAssetLocksReq.wallet_type:type_name -> asset.WalletType
+	33, // 49: asset.PageAssetLocksReq.biz_type:type_name -> asset.BizType
+	39, // 50: asset.PageAssetLocksReq.status:type_name -> asset.LockStatus
+	29, // 51: asset.PageAssetLocksReq.page:type_name -> common.PageReq
+	30, // 52: asset.PageAssetLocksResp.base:type_name -> common.RespBase
+	40, // 53: asset.PageAssetLocksResp.data:type_name -> asset.AssetLock
+	25, // 54: asset.AdminAddAssetReq.wallet_type:type_name -> asset.WalletType
+	25, // 55: asset.AdminSubAssetReq.wallet_type:type_name -> asset.WalletType
+	25, // 56: asset.AdminFreezeAssetReq.wallet_type:type_name -> asset.WalletType
+	25, // 57: asset.AdminLockAssetReq.wallet_type:type_name -> asset.WalletType
+	30, // 58: asset.AdminChangeAssetResp.base:type_name -> common.RespBase
+	32, // 59: asset.AdminChangeAssetResp.asset:type_name -> asset.UserAsset
+	0,  // 60: asset.AssetAdmin.CreateAssetCoinConfig:input_type -> asset.CreateAssetCoinConfigReq
+	1,  // 61: asset.AssetAdmin.UpdateAssetCoinConfig:input_type -> asset.UpdateAssetCoinConfigReq
+	2,  // 62: asset.AssetAdmin.DeleteAssetCoinConfig:input_type -> asset.DeleteAssetCoinConfigReq
+	3,  // 63: asset.AssetAdmin.GetAssetCoinConfig:input_type -> asset.GetAssetCoinConfigReq
+	4,  // 64: asset.AssetAdmin.PageAssetCoinConfigs:input_type -> asset.PageAssetCoinConfigsReq
+	8,  // 65: asset.AssetAdmin.PageUserAssets:input_type -> asset.PageUserAssetsReq
+	10, // 66: asset.AssetAdmin.GetUserAssetDetail:input_type -> asset.GetUserAssetDetailReq
+	12, // 67: asset.AssetAdmin.PageAssetFlows:input_type -> asset.PageAssetFlowsReq
+	14, // 68: asset.AssetAdmin.PageAssetFreezes:input_type -> asset.PageAssetFreezesReq
+	16, // 69: asset.AssetAdmin.PageAssetLocks:input_type -> asset.PageAssetLocksReq
+	18, // 70: asset.AssetAdmin.AdminAddAsset:input_type -> asset.AdminAddAssetReq
+	19, // 71: asset.AssetAdmin.AdminSubAsset:input_type -> asset.AdminSubAssetReq
+	20, // 72: asset.AssetAdmin.AdminFreezeAsset:input_type -> asset.AdminFreezeAssetReq
+	21, // 73: asset.AssetAdmin.AdminUnfreezeAsset:input_type -> asset.AdminUnfreezeAssetReq
+	22, // 74: asset.AssetAdmin.AdminLockAsset:input_type -> asset.AdminLockAssetReq
+	23, // 75: asset.AssetAdmin.AdminUnlockAsset:input_type -> asset.AdminUnlockAssetReq
+	5,  // 76: asset.AssetAdmin.CreateAssetCoinConfig:output_type -> asset.AssetCoinConfigResp
+	5,  // 77: asset.AssetAdmin.UpdateAssetCoinConfig:output_type -> asset.AssetCoinConfigResp
+	7,  // 78: asset.AssetAdmin.DeleteAssetCoinConfig:output_type -> asset.DeleteAssetCoinConfigResp
+	5,  // 79: asset.AssetAdmin.GetAssetCoinConfig:output_type -> asset.AssetCoinConfigResp
+	6,  // 80: asset.AssetAdmin.PageAssetCoinConfigs:output_type -> asset.PageAssetCoinConfigsResp
+	9,  // 81: asset.AssetAdmin.PageUserAssets:output_type -> asset.PageUserAssetsResp
+	11, // 82: asset.AssetAdmin.GetUserAssetDetail:output_type -> asset.GetUserAssetDetailResp
+	13, // 83: asset.AssetAdmin.PageAssetFlows:output_type -> asset.PageAssetFlowsResp
+	15, // 84: asset.AssetAdmin.PageAssetFreezes:output_type -> asset.PageAssetFreezesResp
+	17, // 85: asset.AssetAdmin.PageAssetLocks:output_type -> asset.PageAssetLocksResp
+	24, // 86: asset.AssetAdmin.AdminAddAsset:output_type -> asset.AdminChangeAssetResp
+	24, // 87: asset.AssetAdmin.AdminSubAsset:output_type -> asset.AdminChangeAssetResp
+	24, // 88: asset.AssetAdmin.AdminFreezeAsset:output_type -> asset.AdminChangeAssetResp
+	24, // 89: asset.AssetAdmin.AdminUnfreezeAsset:output_type -> asset.AdminChangeAssetResp
+	24, // 90: asset.AssetAdmin.AdminLockAsset:output_type -> asset.AdminChangeAssetResp
+	24, // 91: asset.AssetAdmin.AdminUnlockAsset:output_type -> asset.AdminChangeAssetResp
+	76, // [76:92] is the sub-list for method output_type
+	60, // [60:76] is the sub-list for method input_type
+	60, // [60:60] is the sub-list for extension type_name
+	60, // [60:60] is the sub-list for extension extendee
+	0,  // [0:60] is the sub-list for field type_name
 }
 
 func init() { file_proto_asset_asset_admin_proto_init() }
@@ -1636,7 +2489,7 @@ func file_proto_asset_asset_admin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_asset_asset_admin_proto_rawDesc), len(file_proto_asset_asset_admin_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   17,
+			NumMessages:   25,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

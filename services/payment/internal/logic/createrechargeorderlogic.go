@@ -4,8 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/notify"
 	"wklive/common/utils"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
@@ -129,6 +131,18 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 	}
 
 	l.Logger.Infof("Create recharge order success: %s, user_id: %d", orderNo, in.UserId)
+	event := notify.NewEvent(notify.EventTypeRecharge, notify.EventLevelInfo, "用户充值", fmt.Sprintf("用户 %d 发起充值订单 %s", in.UserId, orderNo))
+	event.Source = "payment"
+	event.TenantID = in.TenantId
+	event.UserID = in.UserId
+	event.BizNo = orderNo
+	event.Data = map[string]any{
+		"amount":   in.RechargeAmount,
+		"currency": in.Currency,
+	}
+	if err := notify.Publish(l.ctx, l.svcCtx.Redis, event); err != nil {
+		l.Errorf("publish admin recharge notification failed, orderNo=%s err=%v", orderNo, err)
+	}
 
 	return &payment.CreateRechargeOrderResp{
 		Base:  helper.OkResp(),

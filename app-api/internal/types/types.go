@@ -298,6 +298,29 @@ type AppRedeemResp struct {
 	RedeemNo string `json:"redeemNo"` // 赎回单号
 }
 
+type AssetCoinConfig struct {
+	Id              int64  `json:"id"`              // 主键ID
+	TenantId        int64  `json:"tenantId"`        // 租户ID
+	WalletType      int64  `json:"walletType"`      // 账户类型
+	Coin            string `json:"coin"`            // 币种代码
+	Symbol          string `json:"symbol"`          // 展示符号/资产标识
+	CoinName        string `json:"coinName"`        // 币种名称
+	CoinType        int64  `json:"coinType"`        // 币种类型
+	IconUrl         string `json:"iconUrl"`         // 币种图标URL
+	IconText        string `json:"iconText"`        // 币种图标文案/符号
+	IconBgColor     string `json:"iconBgColor"`     // 图标背景色
+	DecimalPlaces   int64  `json:"decimalPlaces"`   // 资产展示精度
+	AppVisible      int64  `json:"appVisible"`      // APP操作页是否展示
+	RechargeEnabled int64  `json:"rechargeEnabled"` // 充值页是否展示
+	WithdrawEnabled int64  `json:"withdrawEnabled"` // 提现页是否展示
+	TransferEnabled int64  `json:"transferEnabled"` // 划转页是否展示
+	Status          int64  `json:"status"`          // 状态
+	Sort            int64  `json:"sort"`            // 排序
+	Remark          string `json:"remark"`          // 备注
+	CreateTimes     int64  `json:"createTimes"`     // 创建时间
+	UpdateTimes     int64  `json:"updateTimes"`     // 更新时间
+}
+
 type AssetFlow struct {
 	Id                     int64  `json:"id"`                     // 主键ID
 	FlowNo                 string `json:"flowNo"`                 // 流水单号
@@ -811,8 +834,8 @@ type ItickProduct struct {
 	CategoryType int64  `json:"categoryType"`
 	CategoryCode string `json:"categoryCode"`
 	CategoryName string `json:"categoryName"`
-	Market       string `json:"market"` // binance / hk / us / forex ...
-	Symbol       string `json:"symbol"` // BTCUSDT / AAPL / EURUSD
+	Market       string `json:"market"` //
+	Symbol       string `json:"symbol"` //
 	Code         string `json:"code"`   // 第三方原始 code
 	Name         string `json:"name"`
 	DisplayName  string `json:"displayName"`
@@ -878,6 +901,18 @@ type Kline struct {
 	Close        float64 `json:"close"`
 	Volume       float64 `json:"volume"`
 	Turnover     float64 `json:"turnover"`
+}
+
+type ListAssetCoinConfigsReq struct {
+	TenantId      int64 `form:"tenantId,optional"` // 租户ID
+	WalletType    int64 `form:"walletType"`        // 账户类型
+	OperationType int64 `form:"operationType"`     // 操作场景:1充值 2提现 3划转
+	CoinType      int64 `form:"coinType,optional"` // 币种类型
+}
+
+type ListAssetCoinConfigsResp struct {
+	RespBase
+	Data []AssetCoinConfig `json:"data"`
 }
 
 type ListAvailableRechargeChannelsReq struct {

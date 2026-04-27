@@ -23,6 +23,36 @@ func NewAssetAdminServer(svcCtx *svc.ServiceContext) *AssetAdminServer {
 	}
 }
 
+// 创建APP资产操作币种显示配置
+func (s *AssetAdminServer) CreateAssetCoinConfig(ctx context.Context, in *asset.CreateAssetCoinConfigReq) (*asset.AssetCoinConfigResp, error) {
+	l := logic.NewCreateAssetCoinConfigLogic(ctx, s.svcCtx)
+	return l.CreateAssetCoinConfig(in)
+}
+
+// 更新APP资产操作币种显示配置
+func (s *AssetAdminServer) UpdateAssetCoinConfig(ctx context.Context, in *asset.UpdateAssetCoinConfigReq) (*asset.AssetCoinConfigResp, error) {
+	l := logic.NewUpdateAssetCoinConfigLogic(ctx, s.svcCtx)
+	return l.UpdateAssetCoinConfig(in)
+}
+
+// 删除APP资产操作币种显示配置
+func (s *AssetAdminServer) DeleteAssetCoinConfig(ctx context.Context, in *asset.DeleteAssetCoinConfigReq) (*asset.DeleteAssetCoinConfigResp, error) {
+	l := logic.NewDeleteAssetCoinConfigLogic(ctx, s.svcCtx)
+	return l.DeleteAssetCoinConfig(in)
+}
+
+// 查询APP资产操作币种显示配置详情
+func (s *AssetAdminServer) GetAssetCoinConfig(ctx context.Context, in *asset.GetAssetCoinConfigReq) (*asset.AssetCoinConfigResp, error) {
+	l := logic.NewGetAssetCoinConfigLogic(ctx, s.svcCtx)
+	return l.GetAssetCoinConfig(in)
+}
+
+// 分页查询APP资产操作币种显示配置
+func (s *AssetAdminServer) PageAssetCoinConfigs(ctx context.Context, in *asset.PageAssetCoinConfigsReq) (*asset.PageAssetCoinConfigsResp, error) {
+	l := logic.NewPageAssetCoinConfigsLogic(ctx, s.svcCtx)
+	return l.PageAssetCoinConfigs(in)
+}
+
 // 分页查询资产
 func (s *AssetAdminServer) PageUserAssets(ctx context.Context, in *asset.PageUserAssetsReq) (*asset.PageUserAssetsResp, error) {
 	l := logic.NewPageUserAssetsLogic(ctx, s.svcCtx)

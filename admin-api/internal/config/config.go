@@ -4,6 +4,7 @@
 package config
 
 import (
+	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
 )
@@ -22,4 +23,5 @@ type Config struct {
 	OptionRpc  zrpc.RpcClientConf
 	StakingRpc zrpc.RpcClientConf
 	TradeRpc   zrpc.RpcClientConf
+	RedisConf  redis.RedisConf `json:"Redis" yaml:"Redis"`
 }

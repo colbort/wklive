@@ -20,6 +20,17 @@ func ToAssetStatus(status int64) asset.AssetStatus {
 	}
 }
 
+func ToAssetCoinSwitch(value int64) asset.AssetCoinSwitch {
+	switch value {
+	case 1:
+		return asset.AssetCoinSwitch_ASSET_COIN_SWITCH_ON
+	case 0:
+		return asset.AssetCoinSwitch_ASSET_COIN_SWITCH_OFF
+	default:
+		return asset.AssetCoinSwitch_ASSET_COIN_SWITCH_UNKNOWN
+	}
+}
+
 func ToFreezeStatus(status int64) asset.FreezeStatus {
 	switch status {
 	case 1:
@@ -192,6 +203,34 @@ func toUserAssetProto(data *models.TUserAsset) *asset.UserAsset {
 		LockedAmount:    conv.FloatString(data.LockedAmount),
 		Status:          ToAssetStatus(data.Status),
 		Version:         data.Version,
+		Remark:          data.Remark,
+		CreateTimes:     data.CreateTimes,
+		UpdateTimes:     data.UpdateTimes,
+	}
+}
+
+func toAssetCoinConfigProto(data *models.TAssetCoinConfig) *asset.AssetCoinConfig {
+	if data == nil {
+		return nil
+	}
+	return &asset.AssetCoinConfig{
+		Id:              data.Id,
+		TenantId:        data.TenantId,
+		WalletType:      asset.WalletType(data.WalletType),
+		Coin:            data.Coin,
+		Symbol:          data.Symbol,
+		CoinName:        data.CoinName,
+		CoinType:        asset.AssetCoinType(data.CoinType),
+		IconUrl:         data.IconUrl,
+		IconText:        data.IconText,
+		IconBgColor:     data.IconBgColor,
+		DecimalPlaces:   int32(data.DecimalPlaces),
+		AppVisible:      ToAssetCoinSwitch(data.AppVisible),
+		RechargeEnabled: ToAssetCoinSwitch(data.RechargeEnabled),
+		WithdrawEnabled: ToAssetCoinSwitch(data.WithdrawEnabled),
+		TransferEnabled: ToAssetCoinSwitch(data.TransferEnabled),
+		Status:          ToAssetStatus(data.Status),
+		Sort:            int32(data.Sort),
 		Remark:          data.Remark,
 		CreateTimes:     data.CreateTimes,
 		UpdateTimes:     data.UpdateTimes,
@@ -401,6 +440,35 @@ func assetStatusFilter(status asset.AssetStatus) int64 {
 	default:
 		return 0
 	}
+}
+
+func assetCoinStatusValue(status asset.AssetStatus, defaultValue int64) int64 {
+	switch status {
+	case asset.AssetStatus_ASSET_STATUS_ENABLED:
+		return 1
+	case asset.AssetStatus_ASSET_STATUS_DISABLED:
+		return 0
+	default:
+		return defaultValue
+	}
+}
+
+func assetCoinSwitchValue(value asset.AssetCoinSwitch, defaultValue int64) int64 {
+	switch value {
+	case asset.AssetCoinSwitch_ASSET_COIN_SWITCH_ON:
+		return 1
+	case asset.AssetCoinSwitch_ASSET_COIN_SWITCH_OFF:
+		return 0
+	default:
+		return defaultValue
+	}
+}
+
+func assetCoinTypeValue(value asset.AssetCoinType, defaultValue int64) int64 {
+	if value == asset.AssetCoinType_ASSET_COIN_TYPE_UNKNOWN {
+		return defaultValue
+	}
+	return int64(value)
 }
 
 func EnumToFilterString(bizType asset.BizType, sceneType asset.SceneType) (string, string) {

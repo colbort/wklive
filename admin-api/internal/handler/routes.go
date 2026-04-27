@@ -30,6 +30,31 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: asset.AdminAddAssetHandler(serverCtx),
 			},
 			{
+				Method:  http.MethodPost,
+				Path:    "/coin-configs",
+				Handler: asset.CreateAssetCoinConfigHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/coin-configs",
+				Handler: asset.PageAssetCoinConfigsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/coin-configs/:id",
+				Handler: asset.UpdateAssetCoinConfigHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodDelete,
+				Path:    "/coin-configs/:id",
+				Handler: asset.DeleteAssetCoinConfigHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/coin-configs/:id",
+				Handler: asset.GetAssetCoinConfigHandler(serverCtx),
+			},
+			{
 				Method:  http.MethodGet,
 				Path:    "/flows",
 				Handler: asset.PageAssetFlowsHandler(serverCtx),

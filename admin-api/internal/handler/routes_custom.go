@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	auth_private "wklive/admin-api/internal/handler/auth_private"
+	admin_ws "wklive/admin-api/internal/handler/ws"
 	"wklive/admin-api/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
@@ -27,6 +28,17 @@ func RegisterCustomHandlers(server *rest.Server, serverCtx *svc.ServiceContext) 
 			},
 		},
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
+		rest.WithPrefix("/admin"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/ws/notifications",
+				Handler: admin_ws.NotificationsHandler(serverCtx),
+			},
+		},
 		rest.WithPrefix("/admin"),
 	)
 }

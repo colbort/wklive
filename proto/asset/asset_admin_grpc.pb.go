@@ -19,17 +19,22 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AssetAdmin_PageUserAssets_FullMethodName     = "/asset.AssetAdmin/PageUserAssets"
-	AssetAdmin_GetUserAssetDetail_FullMethodName = "/asset.AssetAdmin/GetUserAssetDetail"
-	AssetAdmin_PageAssetFlows_FullMethodName     = "/asset.AssetAdmin/PageAssetFlows"
-	AssetAdmin_PageAssetFreezes_FullMethodName   = "/asset.AssetAdmin/PageAssetFreezes"
-	AssetAdmin_PageAssetLocks_FullMethodName     = "/asset.AssetAdmin/PageAssetLocks"
-	AssetAdmin_AdminAddAsset_FullMethodName      = "/asset.AssetAdmin/AdminAddAsset"
-	AssetAdmin_AdminSubAsset_FullMethodName      = "/asset.AssetAdmin/AdminSubAsset"
-	AssetAdmin_AdminFreezeAsset_FullMethodName   = "/asset.AssetAdmin/AdminFreezeAsset"
-	AssetAdmin_AdminUnfreezeAsset_FullMethodName = "/asset.AssetAdmin/AdminUnfreezeAsset"
-	AssetAdmin_AdminLockAsset_FullMethodName     = "/asset.AssetAdmin/AdminLockAsset"
-	AssetAdmin_AdminUnlockAsset_FullMethodName   = "/asset.AssetAdmin/AdminUnlockAsset"
+	AssetAdmin_CreateAssetCoinConfig_FullMethodName = "/asset.AssetAdmin/CreateAssetCoinConfig"
+	AssetAdmin_UpdateAssetCoinConfig_FullMethodName = "/asset.AssetAdmin/UpdateAssetCoinConfig"
+	AssetAdmin_DeleteAssetCoinConfig_FullMethodName = "/asset.AssetAdmin/DeleteAssetCoinConfig"
+	AssetAdmin_GetAssetCoinConfig_FullMethodName    = "/asset.AssetAdmin/GetAssetCoinConfig"
+	AssetAdmin_PageAssetCoinConfigs_FullMethodName  = "/asset.AssetAdmin/PageAssetCoinConfigs"
+	AssetAdmin_PageUserAssets_FullMethodName        = "/asset.AssetAdmin/PageUserAssets"
+	AssetAdmin_GetUserAssetDetail_FullMethodName    = "/asset.AssetAdmin/GetUserAssetDetail"
+	AssetAdmin_PageAssetFlows_FullMethodName        = "/asset.AssetAdmin/PageAssetFlows"
+	AssetAdmin_PageAssetFreezes_FullMethodName      = "/asset.AssetAdmin/PageAssetFreezes"
+	AssetAdmin_PageAssetLocks_FullMethodName        = "/asset.AssetAdmin/PageAssetLocks"
+	AssetAdmin_AdminAddAsset_FullMethodName         = "/asset.AssetAdmin/AdminAddAsset"
+	AssetAdmin_AdminSubAsset_FullMethodName         = "/asset.AssetAdmin/AdminSubAsset"
+	AssetAdmin_AdminFreezeAsset_FullMethodName      = "/asset.AssetAdmin/AdminFreezeAsset"
+	AssetAdmin_AdminUnfreezeAsset_FullMethodName    = "/asset.AssetAdmin/AdminUnfreezeAsset"
+	AssetAdmin_AdminLockAsset_FullMethodName        = "/asset.AssetAdmin/AdminLockAsset"
+	AssetAdmin_AdminUnlockAsset_FullMethodName      = "/asset.AssetAdmin/AdminUnlockAsset"
 )
 
 // AssetAdminClient is the client API for AssetAdmin service.
@@ -38,6 +43,16 @@ const (
 //
 // 后台资产服务
 type AssetAdminClient interface {
+	// 创建APP资产操作币种显示配置
+	CreateAssetCoinConfig(ctx context.Context, in *CreateAssetCoinConfigReq, opts ...grpc.CallOption) (*AssetCoinConfigResp, error)
+	// 更新APP资产操作币种显示配置
+	UpdateAssetCoinConfig(ctx context.Context, in *UpdateAssetCoinConfigReq, opts ...grpc.CallOption) (*AssetCoinConfigResp, error)
+	// 删除APP资产操作币种显示配置
+	DeleteAssetCoinConfig(ctx context.Context, in *DeleteAssetCoinConfigReq, opts ...grpc.CallOption) (*DeleteAssetCoinConfigResp, error)
+	// 查询APP资产操作币种显示配置详情
+	GetAssetCoinConfig(ctx context.Context, in *GetAssetCoinConfigReq, opts ...grpc.CallOption) (*AssetCoinConfigResp, error)
+	// 分页查询APP资产操作币种显示配置
+	PageAssetCoinConfigs(ctx context.Context, in *PageAssetCoinConfigsReq, opts ...grpc.CallOption) (*PageAssetCoinConfigsResp, error)
 	// 分页查询资产
 	PageUserAssets(ctx context.Context, in *PageUserAssetsReq, opts ...grpc.CallOption) (*PageUserAssetsResp, error)
 	// 查询用户资产详情
@@ -68,6 +83,56 @@ type assetAdminClient struct {
 
 func NewAssetAdminClient(cc grpc.ClientConnInterface) AssetAdminClient {
 	return &assetAdminClient{cc}
+}
+
+func (c *assetAdminClient) CreateAssetCoinConfig(ctx context.Context, in *CreateAssetCoinConfigReq, opts ...grpc.CallOption) (*AssetCoinConfigResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AssetCoinConfigResp)
+	err := c.cc.Invoke(ctx, AssetAdmin_CreateAssetCoinConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *assetAdminClient) UpdateAssetCoinConfig(ctx context.Context, in *UpdateAssetCoinConfigReq, opts ...grpc.CallOption) (*AssetCoinConfigResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AssetCoinConfigResp)
+	err := c.cc.Invoke(ctx, AssetAdmin_UpdateAssetCoinConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *assetAdminClient) DeleteAssetCoinConfig(ctx context.Context, in *DeleteAssetCoinConfigReq, opts ...grpc.CallOption) (*DeleteAssetCoinConfigResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteAssetCoinConfigResp)
+	err := c.cc.Invoke(ctx, AssetAdmin_DeleteAssetCoinConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *assetAdminClient) GetAssetCoinConfig(ctx context.Context, in *GetAssetCoinConfigReq, opts ...grpc.CallOption) (*AssetCoinConfigResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AssetCoinConfigResp)
+	err := c.cc.Invoke(ctx, AssetAdmin_GetAssetCoinConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *assetAdminClient) PageAssetCoinConfigs(ctx context.Context, in *PageAssetCoinConfigsReq, opts ...grpc.CallOption) (*PageAssetCoinConfigsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PageAssetCoinConfigsResp)
+	err := c.cc.Invoke(ctx, AssetAdmin_PageAssetCoinConfigs_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *assetAdminClient) PageUserAssets(ctx context.Context, in *PageUserAssetsReq, opts ...grpc.CallOption) (*PageUserAssetsResp, error) {
@@ -186,6 +251,16 @@ func (c *assetAdminClient) AdminUnlockAsset(ctx context.Context, in *AdminUnlock
 //
 // 后台资产服务
 type AssetAdminServer interface {
+	// 创建APP资产操作币种显示配置
+	CreateAssetCoinConfig(context.Context, *CreateAssetCoinConfigReq) (*AssetCoinConfigResp, error)
+	// 更新APP资产操作币种显示配置
+	UpdateAssetCoinConfig(context.Context, *UpdateAssetCoinConfigReq) (*AssetCoinConfigResp, error)
+	// 删除APP资产操作币种显示配置
+	DeleteAssetCoinConfig(context.Context, *DeleteAssetCoinConfigReq) (*DeleteAssetCoinConfigResp, error)
+	// 查询APP资产操作币种显示配置详情
+	GetAssetCoinConfig(context.Context, *GetAssetCoinConfigReq) (*AssetCoinConfigResp, error)
+	// 分页查询APP资产操作币种显示配置
+	PageAssetCoinConfigs(context.Context, *PageAssetCoinConfigsReq) (*PageAssetCoinConfigsResp, error)
 	// 分页查询资产
 	PageUserAssets(context.Context, *PageUserAssetsReq) (*PageUserAssetsResp, error)
 	// 查询用户资产详情
@@ -218,6 +293,21 @@ type AssetAdminServer interface {
 // pointer dereference when methods are called.
 type UnimplementedAssetAdminServer struct{}
 
+func (UnimplementedAssetAdminServer) CreateAssetCoinConfig(context.Context, *CreateAssetCoinConfigReq) (*AssetCoinConfigResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateAssetCoinConfig not implemented")
+}
+func (UnimplementedAssetAdminServer) UpdateAssetCoinConfig(context.Context, *UpdateAssetCoinConfigReq) (*AssetCoinConfigResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateAssetCoinConfig not implemented")
+}
+func (UnimplementedAssetAdminServer) DeleteAssetCoinConfig(context.Context, *DeleteAssetCoinConfigReq) (*DeleteAssetCoinConfigResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteAssetCoinConfig not implemented")
+}
+func (UnimplementedAssetAdminServer) GetAssetCoinConfig(context.Context, *GetAssetCoinConfigReq) (*AssetCoinConfigResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAssetCoinConfig not implemented")
+}
+func (UnimplementedAssetAdminServer) PageAssetCoinConfigs(context.Context, *PageAssetCoinConfigsReq) (*PageAssetCoinConfigsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method PageAssetCoinConfigs not implemented")
+}
 func (UnimplementedAssetAdminServer) PageUserAssets(context.Context, *PageUserAssetsReq) (*PageUserAssetsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method PageUserAssets not implemented")
 }
@@ -270,6 +360,96 @@ func RegisterAssetAdminServer(s grpc.ServiceRegistrar, srv AssetAdminServer) {
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&AssetAdmin_ServiceDesc, srv)
+}
+
+func _AssetAdmin_CreateAssetCoinConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateAssetCoinConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AssetAdminServer).CreateAssetCoinConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AssetAdmin_CreateAssetCoinConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AssetAdminServer).CreateAssetCoinConfig(ctx, req.(*CreateAssetCoinConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AssetAdmin_UpdateAssetCoinConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateAssetCoinConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AssetAdminServer).UpdateAssetCoinConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AssetAdmin_UpdateAssetCoinConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AssetAdminServer).UpdateAssetCoinConfig(ctx, req.(*UpdateAssetCoinConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AssetAdmin_DeleteAssetCoinConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteAssetCoinConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AssetAdminServer).DeleteAssetCoinConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AssetAdmin_DeleteAssetCoinConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AssetAdminServer).DeleteAssetCoinConfig(ctx, req.(*DeleteAssetCoinConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AssetAdmin_GetAssetCoinConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAssetCoinConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AssetAdminServer).GetAssetCoinConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AssetAdmin_GetAssetCoinConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AssetAdminServer).GetAssetCoinConfig(ctx, req.(*GetAssetCoinConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AssetAdmin_PageAssetCoinConfigs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PageAssetCoinConfigsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AssetAdminServer).PageAssetCoinConfigs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AssetAdmin_PageAssetCoinConfigs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AssetAdminServer).PageAssetCoinConfigs(ctx, req.(*PageAssetCoinConfigsReq))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _AssetAdmin_PageUserAssets_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -477,6 +657,26 @@ var AssetAdmin_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "asset.AssetAdmin",
 	HandlerType: (*AssetAdminServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateAssetCoinConfig",
+			Handler:    _AssetAdmin_CreateAssetCoinConfig_Handler,
+		},
+		{
+			MethodName: "UpdateAssetCoinConfig",
+			Handler:    _AssetAdmin_UpdateAssetCoinConfig_Handler,
+		},
+		{
+			MethodName: "DeleteAssetCoinConfig",
+			Handler:    _AssetAdmin_DeleteAssetCoinConfig_Handler,
+		},
+		{
+			MethodName: "GetAssetCoinConfig",
+			Handler:    _AssetAdmin_GetAssetCoinConfig_Handler,
+		},
+		{
+			MethodName: "PageAssetCoinConfigs",
+			Handler:    _AssetAdmin_PageAssetCoinConfigs_Handler,
+		},
 		{
 			MethodName: "PageUserAssets",
 			Handler:    _AssetAdmin_PageUserAssets_Handler,

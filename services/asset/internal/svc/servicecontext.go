@@ -21,6 +21,7 @@ type ServiceContext struct {
 	AssetFlowModel       models.AssetFlowModel
 	AssetFreezeModel     models.AssetFreezeModel
 	AssetIdempotentModel models.AssetIdempotentModel
+	AssetCoinConfigModel models.AssetCoinConfigModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -34,6 +35,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		AssetFlowModel:       models.NewTAssetFlowModel(conn, c.CacheRedis).(models.AssetFlowModel),
 		AssetFreezeModel:     models.NewTAssetFreezeModel(conn, c.CacheRedis).(models.AssetFreezeModel),
 		AssetIdempotentModel: models.NewTAssetIdempotentModel(conn, c.CacheRedis).(models.AssetIdempotentModel),
+		AssetCoinConfigModel: models.NewTAssetCoinConfigModel(conn, c.CacheRedis).(models.AssetCoinConfigModel),
 	}
 }
 

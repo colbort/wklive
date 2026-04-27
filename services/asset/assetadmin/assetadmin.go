@@ -14,25 +14,43 @@ import (
 )
 
 type (
-	AdminAddAssetReq       = asset.AdminAddAssetReq
-	AdminChangeAssetResp   = asset.AdminChangeAssetResp
-	AdminFreezeAssetReq    = asset.AdminFreezeAssetReq
-	AdminLockAssetReq      = asset.AdminLockAssetReq
-	AdminSubAssetReq       = asset.AdminSubAssetReq
-	AdminUnfreezeAssetReq  = asset.AdminUnfreezeAssetReq
-	AdminUnlockAssetReq    = asset.AdminUnlockAssetReq
-	GetUserAssetDetailReq  = asset.GetUserAssetDetailReq
-	GetUserAssetDetailResp = asset.GetUserAssetDetailResp
-	PageAssetFlowsReq      = asset.PageAssetFlowsReq
-	PageAssetFlowsResp     = asset.PageAssetFlowsResp
-	PageAssetFreezesReq    = asset.PageAssetFreezesReq
-	PageAssetFreezesResp   = asset.PageAssetFreezesResp
-	PageAssetLocksReq      = asset.PageAssetLocksReq
-	PageAssetLocksResp     = asset.PageAssetLocksResp
-	PageUserAssetsReq      = asset.PageUserAssetsReq
-	PageUserAssetsResp     = asset.PageUserAssetsResp
+	AdminAddAssetReq          = asset.AdminAddAssetReq
+	AdminChangeAssetResp      = asset.AdminChangeAssetResp
+	AdminFreezeAssetReq       = asset.AdminFreezeAssetReq
+	AdminLockAssetReq         = asset.AdminLockAssetReq
+	AdminSubAssetReq          = asset.AdminSubAssetReq
+	AdminUnfreezeAssetReq     = asset.AdminUnfreezeAssetReq
+	AdminUnlockAssetReq       = asset.AdminUnlockAssetReq
+	AssetCoinConfigResp       = asset.AssetCoinConfigResp
+	CreateAssetCoinConfigReq  = asset.CreateAssetCoinConfigReq
+	DeleteAssetCoinConfigReq  = asset.DeleteAssetCoinConfigReq
+	DeleteAssetCoinConfigResp = asset.DeleteAssetCoinConfigResp
+	GetAssetCoinConfigReq     = asset.GetAssetCoinConfigReq
+	GetUserAssetDetailReq     = asset.GetUserAssetDetailReq
+	GetUserAssetDetailResp    = asset.GetUserAssetDetailResp
+	PageAssetCoinConfigsReq   = asset.PageAssetCoinConfigsReq
+	PageAssetCoinConfigsResp  = asset.PageAssetCoinConfigsResp
+	PageAssetFlowsReq         = asset.PageAssetFlowsReq
+	PageAssetFlowsResp        = asset.PageAssetFlowsResp
+	PageAssetFreezesReq       = asset.PageAssetFreezesReq
+	PageAssetFreezesResp      = asset.PageAssetFreezesResp
+	PageAssetLocksReq         = asset.PageAssetLocksReq
+	PageAssetLocksResp        = asset.PageAssetLocksResp
+	PageUserAssetsReq         = asset.PageUserAssetsReq
+	PageUserAssetsResp        = asset.PageUserAssetsResp
+	UpdateAssetCoinConfigReq  = asset.UpdateAssetCoinConfigReq
 
 	AssetAdmin interface {
+		// 创建APP资产操作币种显示配置
+		CreateAssetCoinConfig(ctx context.Context, in *CreateAssetCoinConfigReq, opts ...grpc.CallOption) (*AssetCoinConfigResp, error)
+		// 更新APP资产操作币种显示配置
+		UpdateAssetCoinConfig(ctx context.Context, in *UpdateAssetCoinConfigReq, opts ...grpc.CallOption) (*AssetCoinConfigResp, error)
+		// 删除APP资产操作币种显示配置
+		DeleteAssetCoinConfig(ctx context.Context, in *DeleteAssetCoinConfigReq, opts ...grpc.CallOption) (*DeleteAssetCoinConfigResp, error)
+		// 查询APP资产操作币种显示配置详情
+		GetAssetCoinConfig(ctx context.Context, in *GetAssetCoinConfigReq, opts ...grpc.CallOption) (*AssetCoinConfigResp, error)
+		// 分页查询APP资产操作币种显示配置
+		PageAssetCoinConfigs(ctx context.Context, in *PageAssetCoinConfigsReq, opts ...grpc.CallOption) (*PageAssetCoinConfigsResp, error)
 		// 分页查询资产
 		PageUserAssets(ctx context.Context, in *PageUserAssetsReq, opts ...grpc.CallOption) (*PageUserAssetsResp, error)
 		// 查询用户资产详情
@@ -66,6 +84,36 @@ func NewAssetAdmin(cli zrpc.Client) AssetAdmin {
 	return &defaultAssetAdmin{
 		cli: cli,
 	}
+}
+
+// 创建APP资产操作币种显示配置
+func (m *defaultAssetAdmin) CreateAssetCoinConfig(ctx context.Context, in *CreateAssetCoinConfigReq, opts ...grpc.CallOption) (*AssetCoinConfigResp, error) {
+	client := asset.NewAssetAdminClient(m.cli.Conn())
+	return client.CreateAssetCoinConfig(ctx, in, opts...)
+}
+
+// 更新APP资产操作币种显示配置
+func (m *defaultAssetAdmin) UpdateAssetCoinConfig(ctx context.Context, in *UpdateAssetCoinConfigReq, opts ...grpc.CallOption) (*AssetCoinConfigResp, error) {
+	client := asset.NewAssetAdminClient(m.cli.Conn())
+	return client.UpdateAssetCoinConfig(ctx, in, opts...)
+}
+
+// 删除APP资产操作币种显示配置
+func (m *defaultAssetAdmin) DeleteAssetCoinConfig(ctx context.Context, in *DeleteAssetCoinConfigReq, opts ...grpc.CallOption) (*DeleteAssetCoinConfigResp, error) {
+	client := asset.NewAssetAdminClient(m.cli.Conn())
+	return client.DeleteAssetCoinConfig(ctx, in, opts...)
+}
+
+// 查询APP资产操作币种显示配置详情
+func (m *defaultAssetAdmin) GetAssetCoinConfig(ctx context.Context, in *GetAssetCoinConfigReq, opts ...grpc.CallOption) (*AssetCoinConfigResp, error) {
+	client := asset.NewAssetAdminClient(m.cli.Conn())
+	return client.GetAssetCoinConfig(ctx, in, opts...)
+}
+
+// 分页查询APP资产操作币种显示配置
+func (m *defaultAssetAdmin) PageAssetCoinConfigs(ctx context.Context, in *PageAssetCoinConfigsReq, opts ...grpc.CallOption) (*PageAssetCoinConfigsResp, error) {
+	client := asset.NewAssetAdminClient(m.cli.Conn())
+	return client.PageAssetCoinConfigs(ctx, in, opts...)
 }
 
 // 分页查询资产

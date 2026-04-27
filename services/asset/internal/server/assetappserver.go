@@ -23,6 +23,12 @@ func NewAssetAppServer(svcCtx *svc.ServiceContext) *AssetAppServer {
 	}
 }
 
+// 查询APP资产操作页币种配置
+func (s *AssetAppServer) ListAssetCoinConfigs(ctx context.Context, in *asset.ListAssetCoinConfigsReq) (*asset.ListAssetCoinConfigsResp, error) {
+	l := logic.NewListAssetCoinConfigsLogic(ctx, s.svcCtx)
+	return l.ListAssetCoinConfigs(in)
+}
+
 // 查询我的资产汇总
 func (s *AssetAppServer) GetMyAssetSummary(ctx context.Context, in *asset.GetMyAssetSummaryReq) (*asset.GetMyAssetSummaryResp, error) {
 	l := logic.NewGetMyAssetSummaryLogic(ctx, s.svcCtx)

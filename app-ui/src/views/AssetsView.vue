@@ -1,18 +1,27 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
+import { getAccessToken } from '@/api/http'
+import { apiCreateRechargeOrder, apiListAvailableRechargeChannels } from '@/api/payment'
+
 // 资产页：展示资产中心和订单中心的移动端占位结构。
 type AssetTopTab = 'assets' | 'orders'
+
+const RECHARGE_AMOUNT = 1000
+const RECHARGE_CURRENCY = 'USDT'
+const CLIENT_TYPE_H5 = 2
 
 const activeTopTab = ref<AssetTopTab>('assets')
 const activeAssetAccount = ref('cash')
 const activeOrderScope = ref('stock')
+const rechargeLoading = ref(false)
+const rechargeMessage = ref('')
 
 const assetActions = [
-  { label: '加密货币充值', icon: '$' },
-  { label: '加密货币提现', icon: '$' },
-  { label: '账户划转', icon: '▭' },
-  { label: '资金记录', icon: '▤' },
+  { key: 'recharge', label: '加密货币充值', icon: '$' },
+  { key: 'withdraw', label: '加密货币提现', icon: '$' },
+  { key: 'transfer', label: '账户划转', icon: '▭' },
+  { key: 'flows', label: '资金记录', icon: '▤' },
 ]
 
 const assetAccounts = [
@@ -28,6 +37,68 @@ const orderScopes = [
 ]
 
 const orderTabs = ['当前持仓', '历史查询', '盘前订单']
+
+function isSuccessCode(code: number) {
+  return code === 0 || code === 200
+}
+
+async function handleAssetAction(key: string) {
+  if (key !== 'recharge') return
+  if (rechargeLoading.value) return
+
+  rechargeMessage.value = ''
+  if (!getAccessToken()) {
+    rechargeMessage.value = '请先登录'
+    return
+  }
+
+  rechargeLoading.value = true
+  try {
+    const channelsResp = await apiListAvailableRechargeChannels({
+      rechargeAmount: RECHARGE_AMOUNT,
+      currency: RECHARGE_CURRENCY,
+      clientType: CLIENT_TYPE_H5,
+    })
+
+    if (!isSuccessCode(channelsResp.code)) {
+      rechargeMessage.value = channelsResp.msg || '充值通道获取失败'
+      return
+    }
+
+    const channel = channelsResp.data?.[0]
+    if (!channel) {
+      rechargeMessage.value = '暂无可用充值通道'
+      return
+    }
+
+    const orderResp = await apiCreateRechargeOrder({
+      channelId: channel.channelId,
+      rechargeAmount: RECHARGE_AMOUNT,
+      currency: channel.currency || RECHARGE_CURRENCY,
+      subject: `充值 ${RECHARGE_AMOUNT}`,
+      body: '加密货币充值',
+      clientType: CLIENT_TYPE_H5,
+    })
+
+    if (!isSuccessCode(orderResp.code)) {
+      rechargeMessage.value = orderResp.msg || '充值订单创建失败'
+      return
+    }
+
+    const payUrl = orderResp.data?.payUrl
+    if (payUrl) {
+      window.location.href = payUrl
+      return
+    }
+
+    rechargeMessage.value = orderResp.data?.orderNo ? `充值订单已创建：${orderResp.data.orderNo}` : '充值订单已创建'
+  } catch (error) {
+    console.warn('create recharge order failed', error)
+    rechargeMessage.value = '充值失败'
+  } finally {
+    rechargeLoading.value = false
+  }
+}
 </script>
 
 <template>
@@ -39,11 +110,20 @@ const orderTabs = ['当前持仓', '历史查询', '盘前订单']
 
     <template v-if="activeTopTab === 'assets'">
       <section class="asset-actions">
-        <button v-for="action in assetActions" :key="action.label" type="button">
+        <button
+          v-for="action in assetActions"
+          :key="action.key"
+          type="button"
+          :disabled="action.key === 'recharge' && rechargeLoading"
+          :aria-busy="action.key === 'recharge' && rechargeLoading"
+          @click="handleAssetAction(action.key)"
+        >
           <span>{{ action.icon }}</span>
-          <strong>{{ action.label }}</strong>
+          <strong>{{ action.key === 'recharge' && rechargeLoading ? '充值中' : action.label }}</strong>
         </button>
       </section>
+
+      <p v-if="rechargeMessage" class="asset-recharge-message">{{ rechargeMessage }}</p>
 
       <nav class="assets-sub-tabs" aria-label="账户类型">
         <button
@@ -142,6 +222,11 @@ button {
   border-right: 1px solid #242633;
 }
 
+.asset-actions button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
 .asset-actions button:nth-child(3n) {
   border-right: 0;
 }
@@ -164,6 +249,13 @@ button {
 .asset-actions strong {
   font-size: 17px;
   font-weight: 500;
+}
+
+.asset-recharge-message {
+  margin: -58px 0 54px;
+  color: #02b904;
+  font-size: 15px;
+  text-align: center;
 }
 
 .assets-sub-tabs {

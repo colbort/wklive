@@ -171,6 +171,203 @@ func (x *UserAsset) GetUpdateTimes() int64 {
 	return 0
 }
 
+// APP资产操作币种显示配置
+type AssetCoinConfig struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                              // 主键ID
+	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                                  // 租户ID
+	WalletType      WalletType             `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"`                      // 账户类型
+	Coin            string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`                                                                           // 币种代码
+	Symbol          string                 `protobuf:"bytes,5,opt,name=symbol,proto3" json:"symbol,omitempty"`                                                                       // 展示符号/资产标识
+	CoinName        string                 `protobuf:"bytes,6,opt,name=coin_name,json=coinName,proto3" json:"coin_name,omitempty"`                                                   // 币种名称
+	CoinType        AssetCoinType          `protobuf:"varint,7,opt,name=coin_type,json=coinType,proto3,enum=asset.AssetCoinType" json:"coin_type,omitempty"`                         // 币种类型
+	IconUrl         string                 `protobuf:"bytes,8,opt,name=icon_url,json=iconUrl,proto3" json:"icon_url,omitempty"`                                                      // 币种图标URL
+	IconText        string                 `protobuf:"bytes,9,opt,name=icon_text,json=iconText,proto3" json:"icon_text,omitempty"`                                                   // 币种图标文案/符号
+	IconBgColor     string                 `protobuf:"bytes,10,opt,name=icon_bg_color,json=iconBgColor,proto3" json:"icon_bg_color,omitempty"`                                       // 图标背景色
+	DecimalPlaces   int32                  `protobuf:"varint,11,opt,name=decimal_places,json=decimalPlaces,proto3" json:"decimal_places,omitempty"`                                  // 资产展示精度
+	AppVisible      AssetCoinSwitch        `protobuf:"varint,12,opt,name=app_visible,json=appVisible,proto3,enum=asset.AssetCoinSwitch" json:"app_visible,omitempty"`                // APP操作页是否展示
+	RechargeEnabled AssetCoinSwitch        `protobuf:"varint,13,opt,name=recharge_enabled,json=rechargeEnabled,proto3,enum=asset.AssetCoinSwitch" json:"recharge_enabled,omitempty"` // 充值页是否展示
+	WithdrawEnabled AssetCoinSwitch        `protobuf:"varint,14,opt,name=withdraw_enabled,json=withdrawEnabled,proto3,enum=asset.AssetCoinSwitch" json:"withdraw_enabled,omitempty"` // 提现页是否展示
+	TransferEnabled AssetCoinSwitch        `protobuf:"varint,15,opt,name=transfer_enabled,json=transferEnabled,proto3,enum=asset.AssetCoinSwitch" json:"transfer_enabled,omitempty"` // 划转页是否展示
+	Status          AssetStatus            `protobuf:"varint,16,opt,name=status,proto3,enum=asset.AssetStatus" json:"status,omitempty"`                                              // 状态
+	Sort            int32                  `protobuf:"varint,17,opt,name=sort,proto3" json:"sort,omitempty"`                                                                         // 排序,越小越靠前
+	Remark          string                 `protobuf:"bytes,18,opt,name=remark,proto3" json:"remark,omitempty"`                                                                      // 备注
+	CreateTimes     int64                  `protobuf:"varint,19,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                                        // 创建时间戳(毫秒)
+	UpdateTimes     int64                  `protobuf:"varint,20,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                                        // 更新时间戳(毫秒)
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *AssetCoinConfig) Reset() {
+	*x = AssetCoinConfig{}
+	mi := &file_proto_asset_model_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AssetCoinConfig) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AssetCoinConfig) ProtoMessage() {}
+
+func (x *AssetCoinConfig) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_asset_model_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AssetCoinConfig.ProtoReflect.Descriptor instead.
+func (*AssetCoinConfig) Descriptor() ([]byte, []int) {
+	return file_proto_asset_model_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *AssetCoinConfig) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *AssetCoinConfig) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *AssetCoinConfig) GetWalletType() WalletType {
+	if x != nil {
+		return x.WalletType
+	}
+	return WalletType_WALLET_TYPE_UNKNOWN
+}
+
+func (x *AssetCoinConfig) GetCoin() string {
+	if x != nil {
+		return x.Coin
+	}
+	return ""
+}
+
+func (x *AssetCoinConfig) GetSymbol() string {
+	if x != nil {
+		return x.Symbol
+	}
+	return ""
+}
+
+func (x *AssetCoinConfig) GetCoinName() string {
+	if x != nil {
+		return x.CoinName
+	}
+	return ""
+}
+
+func (x *AssetCoinConfig) GetCoinType() AssetCoinType {
+	if x != nil {
+		return x.CoinType
+	}
+	return AssetCoinType_ASSET_COIN_TYPE_UNKNOWN
+}
+
+func (x *AssetCoinConfig) GetIconUrl() string {
+	if x != nil {
+		return x.IconUrl
+	}
+	return ""
+}
+
+func (x *AssetCoinConfig) GetIconText() string {
+	if x != nil {
+		return x.IconText
+	}
+	return ""
+}
+
+func (x *AssetCoinConfig) GetIconBgColor() string {
+	if x != nil {
+		return x.IconBgColor
+	}
+	return ""
+}
+
+func (x *AssetCoinConfig) GetDecimalPlaces() int32 {
+	if x != nil {
+		return x.DecimalPlaces
+	}
+	return 0
+}
+
+func (x *AssetCoinConfig) GetAppVisible() AssetCoinSwitch {
+	if x != nil {
+		return x.AppVisible
+	}
+	return AssetCoinSwitch_ASSET_COIN_SWITCH_UNKNOWN
+}
+
+func (x *AssetCoinConfig) GetRechargeEnabled() AssetCoinSwitch {
+	if x != nil {
+		return x.RechargeEnabled
+	}
+	return AssetCoinSwitch_ASSET_COIN_SWITCH_UNKNOWN
+}
+
+func (x *AssetCoinConfig) GetWithdrawEnabled() AssetCoinSwitch {
+	if x != nil {
+		return x.WithdrawEnabled
+	}
+	return AssetCoinSwitch_ASSET_COIN_SWITCH_UNKNOWN
+}
+
+func (x *AssetCoinConfig) GetTransferEnabled() AssetCoinSwitch {
+	if x != nil {
+		return x.TransferEnabled
+	}
+	return AssetCoinSwitch_ASSET_COIN_SWITCH_UNKNOWN
+}
+
+func (x *AssetCoinConfig) GetStatus() AssetStatus {
+	if x != nil {
+		return x.Status
+	}
+	return AssetStatus_ASSET_STATUS_UNKNOWN
+}
+
+func (x *AssetCoinConfig) GetSort() int32 {
+	if x != nil {
+		return x.Sort
+	}
+	return 0
+}
+
+func (x *AssetCoinConfig) GetRemark() string {
+	if x != nil {
+		return x.Remark
+	}
+	return ""
+}
+
+func (x *AssetCoinConfig) GetCreateTimes() int64 {
+	if x != nil {
+		return x.CreateTimes
+	}
+	return 0
+}
+
+func (x *AssetCoinConfig) GetUpdateTimes() int64 {
+	if x != nil {
+		return x.UpdateTimes
+	}
+	return 0
+}
+
 // 资产流水
 type AssetFlow struct {
 	state                  protoimpl.MessageState `protogen:"open.v1"`
@@ -206,7 +403,7 @@ type AssetFlow struct {
 
 func (x *AssetFlow) Reset() {
 	*x = AssetFlow{}
-	mi := &file_proto_asset_model_proto_msgTypes[1]
+	mi := &file_proto_asset_model_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -218,7 +415,7 @@ func (x *AssetFlow) String() string {
 func (*AssetFlow) ProtoMessage() {}
 
 func (x *AssetFlow) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_asset_model_proto_msgTypes[1]
+	mi := &file_proto_asset_model_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -231,7 +428,7 @@ func (x *AssetFlow) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AssetFlow.ProtoReflect.Descriptor instead.
 func (*AssetFlow) Descriptor() ([]byte, []int) {
-	return file_proto_asset_model_proto_rawDescGZIP(), []int{1}
+	return file_proto_asset_model_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *AssetFlow) GetId() int64 {
@@ -445,7 +642,7 @@ type AssetFreeze struct {
 
 func (x *AssetFreeze) Reset() {
 	*x = AssetFreeze{}
-	mi := &file_proto_asset_model_proto_msgTypes[2]
+	mi := &file_proto_asset_model_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -457,7 +654,7 @@ func (x *AssetFreeze) String() string {
 func (*AssetFreeze) ProtoMessage() {}
 
 func (x *AssetFreeze) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_asset_model_proto_msgTypes[2]
+	mi := &file_proto_asset_model_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -470,7 +667,7 @@ func (x *AssetFreeze) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AssetFreeze.ProtoReflect.Descriptor instead.
 func (*AssetFreeze) Descriptor() ([]byte, []int) {
-	return file_proto_asset_model_proto_rawDescGZIP(), []int{2}
+	return file_proto_asset_model_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *AssetFreeze) GetId() int64 {
@@ -642,7 +839,7 @@ type AssetLock struct {
 
 func (x *AssetLock) Reset() {
 	*x = AssetLock{}
-	mi := &file_proto_asset_model_proto_msgTypes[3]
+	mi := &file_proto_asset_model_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -654,7 +851,7 @@ func (x *AssetLock) String() string {
 func (*AssetLock) ProtoMessage() {}
 
 func (x *AssetLock) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_asset_model_proto_msgTypes[3]
+	mi := &file_proto_asset_model_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -667,7 +864,7 @@ func (x *AssetLock) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AssetLock.ProtoReflect.Descriptor instead.
 func (*AssetLock) Descriptor() ([]byte, []int) {
-	return file_proto_asset_model_proto_rawDescGZIP(), []int{3}
+	return file_proto_asset_model_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *AssetLock) GetId() int64 {
@@ -828,7 +1025,7 @@ type AssetIdempotent struct {
 
 func (x *AssetIdempotent) Reset() {
 	*x = AssetIdempotent{}
-	mi := &file_proto_asset_model_proto_msgTypes[4]
+	mi := &file_proto_asset_model_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -840,7 +1037,7 @@ func (x *AssetIdempotent) String() string {
 func (*AssetIdempotent) ProtoMessage() {}
 
 func (x *AssetIdempotent) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_asset_model_proto_msgTypes[4]
+	mi := &file_proto_asset_model_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -853,7 +1050,7 @@ func (x *AssetIdempotent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AssetIdempotent.ProtoReflect.Descriptor instead.
 func (*AssetIdempotent) Descriptor() ([]byte, []int) {
-	return file_proto_asset_model_proto_rawDescGZIP(), []int{4}
+	return file_proto_asset_model_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *AssetIdempotent) GetId() int64 {
@@ -935,7 +1132,7 @@ type UserAssetSummary struct {
 
 func (x *UserAssetSummary) Reset() {
 	*x = UserAssetSummary{}
-	mi := &file_proto_asset_model_proto_msgTypes[5]
+	mi := &file_proto_asset_model_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -947,7 +1144,7 @@ func (x *UserAssetSummary) String() string {
 func (*UserAssetSummary) ProtoMessage() {}
 
 func (x *UserAssetSummary) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_asset_model_proto_msgTypes[5]
+	mi := &file_proto_asset_model_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -960,7 +1157,7 @@ func (x *UserAssetSummary) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserAssetSummary.ProtoReflect.Descriptor instead.
 func (*UserAssetSummary) Descriptor() ([]byte, []int) {
-	return file_proto_asset_model_proto_rawDescGZIP(), []int{5}
+	return file_proto_asset_model_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *UserAssetSummary) GetTenantId() int64 {
@@ -1033,7 +1230,31 @@ const file_proto_asset_model_proto_rawDesc = "" +
 	"\aversion\x18\v \x01(\x03R\aversion\x12\x16\n" +
 	"\x06remark\x18\f \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\r \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x0e \x01(\x03R\vupdateTimes\"\x8b\b\n" +
+	"\fupdate_times\x18\x0e \x01(\x03R\vupdateTimes\"\x91\x06\n" +
+	"\x0fAssetCoinConfig\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x122\n" +
+	"\vwallet_type\x18\x03 \x01(\x0e2\x11.asset.WalletTypeR\n" +
+	"walletType\x12\x12\n" +
+	"\x04coin\x18\x04 \x01(\tR\x04coin\x12\x16\n" +
+	"\x06symbol\x18\x05 \x01(\tR\x06symbol\x12\x1b\n" +
+	"\tcoin_name\x18\x06 \x01(\tR\bcoinName\x121\n" +
+	"\tcoin_type\x18\a \x01(\x0e2\x14.asset.AssetCoinTypeR\bcoinType\x12\x19\n" +
+	"\bicon_url\x18\b \x01(\tR\aiconUrl\x12\x1b\n" +
+	"\ticon_text\x18\t \x01(\tR\biconText\x12\"\n" +
+	"\ricon_bg_color\x18\n" +
+	" \x01(\tR\viconBgColor\x12%\n" +
+	"\x0edecimal_places\x18\v \x01(\x05R\rdecimalPlaces\x127\n" +
+	"\vapp_visible\x18\f \x01(\x0e2\x16.asset.AssetCoinSwitchR\n" +
+	"appVisible\x12A\n" +
+	"\x10recharge_enabled\x18\r \x01(\x0e2\x16.asset.AssetCoinSwitchR\x0frechargeEnabled\x12A\n" +
+	"\x10withdraw_enabled\x18\x0e \x01(\x0e2\x16.asset.AssetCoinSwitchR\x0fwithdrawEnabled\x12A\n" +
+	"\x10transfer_enabled\x18\x0f \x01(\x0e2\x16.asset.AssetCoinSwitchR\x0ftransferEnabled\x12*\n" +
+	"\x06status\x18\x10 \x01(\x0e2\x12.asset.AssetStatusR\x06status\x12\x12\n" +
+	"\x04sort\x18\x11 \x01(\x05R\x04sort\x12\x16\n" +
+	"\x06remark\x18\x12 \x01(\tR\x06remark\x12!\n" +
+	"\fcreate_times\x18\x13 \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18\x14 \x01(\x03R\vupdateTimes\"\x8b\b\n" +
 	"\tAssetFlow\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\aflow_no\x18\x02 \x01(\tR\x06flowNo\x12\x1b\n" +
@@ -1148,51 +1369,61 @@ func file_proto_asset_model_proto_rawDescGZIP() []byte {
 	return file_proto_asset_model_proto_rawDescData
 }
 
-var file_proto_asset_model_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_proto_asset_model_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_proto_asset_model_proto_goTypes = []any{
 	(*UserAsset)(nil),        // 0: asset.UserAsset
-	(*AssetFlow)(nil),        // 1: asset.AssetFlow
-	(*AssetFreeze)(nil),      // 2: asset.AssetFreeze
-	(*AssetLock)(nil),        // 3: asset.AssetLock
-	(*AssetIdempotent)(nil),  // 4: asset.AssetIdempotent
-	(*UserAssetSummary)(nil), // 5: asset.UserAssetSummary
-	(WalletType)(0),          // 6: asset.WalletType
-	(AssetStatus)(0),         // 7: asset.AssetStatus
-	(BizType)(0),             // 8: asset.BizType
-	(SceneType)(0),           // 9: asset.SceneType
-	(AssetOpType)(0),         // 10: asset.AssetOpType
-	(*structpb.Struct)(nil),  // 11: google.protobuf.Struct
-	(FreezeStatus)(0),        // 12: asset.FreezeStatus
-	(LockStatus)(0),          // 13: asset.LockStatus
-	(IdempotentStatus)(0),    // 14: asset.IdempotentStatus
+	(*AssetCoinConfig)(nil),  // 1: asset.AssetCoinConfig
+	(*AssetFlow)(nil),        // 2: asset.AssetFlow
+	(*AssetFreeze)(nil),      // 3: asset.AssetFreeze
+	(*AssetLock)(nil),        // 4: asset.AssetLock
+	(*AssetIdempotent)(nil),  // 5: asset.AssetIdempotent
+	(*UserAssetSummary)(nil), // 6: asset.UserAssetSummary
+	(WalletType)(0),          // 7: asset.WalletType
+	(AssetStatus)(0),         // 8: asset.AssetStatus
+	(AssetCoinType)(0),       // 9: asset.AssetCoinType
+	(AssetCoinSwitch)(0),     // 10: asset.AssetCoinSwitch
+	(BizType)(0),             // 11: asset.BizType
+	(SceneType)(0),           // 12: asset.SceneType
+	(AssetOpType)(0),         // 13: asset.AssetOpType
+	(*structpb.Struct)(nil),  // 14: google.protobuf.Struct
+	(FreezeStatus)(0),        // 15: asset.FreezeStatus
+	(LockStatus)(0),          // 16: asset.LockStatus
+	(IdempotentStatus)(0),    // 17: asset.IdempotentStatus
 }
 var file_proto_asset_model_proto_depIdxs = []int32{
-	6,  // 0: asset.UserAsset.wallet_type:type_name -> asset.WalletType
-	7,  // 1: asset.UserAsset.status:type_name -> asset.AssetStatus
-	6,  // 2: asset.AssetFlow.wallet_type:type_name -> asset.WalletType
-	8,  // 3: asset.AssetFlow.biz_type:type_name -> asset.BizType
-	9,  // 4: asset.AssetFlow.scene_type:type_name -> asset.SceneType
-	10, // 5: asset.AssetFlow.op_type:type_name -> asset.AssetOpType
-	11, // 6: asset.AssetFlow.ext_json:type_name -> google.protobuf.Struct
-	6,  // 7: asset.AssetFreeze.wallet_type:type_name -> asset.WalletType
-	8,  // 8: asset.AssetFreeze.biz_type:type_name -> asset.BizType
-	9,  // 9: asset.AssetFreeze.scene_type:type_name -> asset.SceneType
-	12, // 10: asset.AssetFreeze.status:type_name -> asset.FreezeStatus
-	11, // 11: asset.AssetFreeze.ext_json:type_name -> google.protobuf.Struct
-	6,  // 12: asset.AssetLock.wallet_type:type_name -> asset.WalletType
-	8,  // 13: asset.AssetLock.biz_type:type_name -> asset.BizType
-	9,  // 14: asset.AssetLock.scene_type:type_name -> asset.SceneType
-	13, // 15: asset.AssetLock.status:type_name -> asset.LockStatus
-	11, // 16: asset.AssetLock.ext_json:type_name -> google.protobuf.Struct
-	8,  // 17: asset.AssetIdempotent.biz_type:type_name -> asset.BizType
-	9,  // 18: asset.AssetIdempotent.scene_type:type_name -> asset.SceneType
-	14, // 19: asset.AssetIdempotent.status:type_name -> asset.IdempotentStatus
-	0,  // 20: asset.UserAssetSummary.assets:type_name -> asset.UserAsset
-	21, // [21:21] is the sub-list for method output_type
-	21, // [21:21] is the sub-list for method input_type
-	21, // [21:21] is the sub-list for extension type_name
-	21, // [21:21] is the sub-list for extension extendee
-	0,  // [0:21] is the sub-list for field type_name
+	7,  // 0: asset.UserAsset.wallet_type:type_name -> asset.WalletType
+	8,  // 1: asset.UserAsset.status:type_name -> asset.AssetStatus
+	7,  // 2: asset.AssetCoinConfig.wallet_type:type_name -> asset.WalletType
+	9,  // 3: asset.AssetCoinConfig.coin_type:type_name -> asset.AssetCoinType
+	10, // 4: asset.AssetCoinConfig.app_visible:type_name -> asset.AssetCoinSwitch
+	10, // 5: asset.AssetCoinConfig.recharge_enabled:type_name -> asset.AssetCoinSwitch
+	10, // 6: asset.AssetCoinConfig.withdraw_enabled:type_name -> asset.AssetCoinSwitch
+	10, // 7: asset.AssetCoinConfig.transfer_enabled:type_name -> asset.AssetCoinSwitch
+	8,  // 8: asset.AssetCoinConfig.status:type_name -> asset.AssetStatus
+	7,  // 9: asset.AssetFlow.wallet_type:type_name -> asset.WalletType
+	11, // 10: asset.AssetFlow.biz_type:type_name -> asset.BizType
+	12, // 11: asset.AssetFlow.scene_type:type_name -> asset.SceneType
+	13, // 12: asset.AssetFlow.op_type:type_name -> asset.AssetOpType
+	14, // 13: asset.AssetFlow.ext_json:type_name -> google.protobuf.Struct
+	7,  // 14: asset.AssetFreeze.wallet_type:type_name -> asset.WalletType
+	11, // 15: asset.AssetFreeze.biz_type:type_name -> asset.BizType
+	12, // 16: asset.AssetFreeze.scene_type:type_name -> asset.SceneType
+	15, // 17: asset.AssetFreeze.status:type_name -> asset.FreezeStatus
+	14, // 18: asset.AssetFreeze.ext_json:type_name -> google.protobuf.Struct
+	7,  // 19: asset.AssetLock.wallet_type:type_name -> asset.WalletType
+	11, // 20: asset.AssetLock.biz_type:type_name -> asset.BizType
+	12, // 21: asset.AssetLock.scene_type:type_name -> asset.SceneType
+	16, // 22: asset.AssetLock.status:type_name -> asset.LockStatus
+	14, // 23: asset.AssetLock.ext_json:type_name -> google.protobuf.Struct
+	11, // 24: asset.AssetIdempotent.biz_type:type_name -> asset.BizType
+	12, // 25: asset.AssetIdempotent.scene_type:type_name -> asset.SceneType
+	17, // 26: asset.AssetIdempotent.status:type_name -> asset.IdempotentStatus
+	0,  // 27: asset.UserAssetSummary.assets:type_name -> asset.UserAsset
+	28, // [28:28] is the sub-list for method output_type
+	28, // [28:28] is the sub-list for method input_type
+	28, // [28:28] is the sub-list for extension type_name
+	28, // [28:28] is the sub-list for extension extendee
+	0,  // [0:28] is the sub-list for field type_name
 }
 
 func init() { file_proto_asset_model_proto_init() }
@@ -1207,7 +1438,7 @@ func file_proto_asset_model_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_asset_model_proto_rawDesc), len(file_proto_asset_model_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
