@@ -496,6 +496,170 @@ message GetWithdrawNotifyLogResp {
   payment.PayNotifyLog data = 2;
 }
 
+// ---------- 链上充值地址 ----------
+message CreateCryptoRechargeAddressReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  int64 wallet_type = 3;
+  string coin = 4;
+  common.ChainCode chain_code = 5;
+  string address = 6;
+  string memo = 7;
+  payment.CryptoRechargeAddressSource address_source = 8;
+  payment.CryptoRechargeAddressType address_type = 9;
+  payment.CryptoRechargeAddressStatus status = 10;
+}
+
+message UpdateCryptoRechargeAddressReq {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string address = 3;
+  string memo = 4;
+  payment.CryptoRechargeAddressSource address_source = 5;
+  payment.CryptoRechargeAddressType address_type = 6;
+  payment.CryptoRechargeAddressStatus status = 7;
+}
+
+message GetCryptoRechargeAddressReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+}
+
+message GetCryptoRechargeAddressResp {
+  common.RespBase base = 1;
+  payment.CryptoRechargeAddress data = 2;
+}
+
+message ListCryptoRechargeAddressesReq {
+  common.PageReq page = 1;
+  int64 tenant_id = 2;
+  int64 user_id = 3;
+  int64 wallet_type = 4;
+  string coin = 5;
+  common.ChainCode chain_code = 6;
+  string address = 7;
+  payment.CryptoRechargeAddressStatus status = 8;
+  payment.CryptoRechargeAddressType address_type = 9;
+}
+
+message ListCryptoRechargeAddressesResp {
+  common.RespBase base = 1;
+  repeated payment.CryptoRechargeAddress data = 2;
+}
+
+// ---------- 链上钱包账号 ----------
+message CreateCryptoWalletAccountReq {
+  int64 tenant_id = 1;
+  string account_code = 2;
+  string account_name = 3;
+  string provider = 4;
+  string api_key_cipher = 5;
+  string api_secret_cipher = 6;
+  string callback_secret_cipher = 7;
+  string ext_config = 8;
+  payment.CommonStatus status = 9;
+  int64 is_default = 10;
+}
+
+message UpdateCryptoWalletAccountReq {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string account_name = 3;
+  string provider = 4;
+  string api_key_cipher = 5;
+  string api_secret_cipher = 6;
+  string callback_secret_cipher = 7;
+  string ext_config = 8;
+  payment.CommonStatus status = 9;
+  int64 is_default = 10;
+}
+
+message GetCryptoWalletAccountReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+}
+
+message GetCryptoWalletAccountResp {
+  common.RespBase base = 1;
+  payment.CryptoWalletAccount data = 2;
+}
+
+message ListCryptoWalletAccountsReq {
+  common.PageReq page = 1;
+  int64 tenant_id = 2;
+  string keyword = 3;
+  string provider = 4;
+  payment.CommonStatus status = 5;
+  int64 is_default = 6;
+}
+
+message ListCryptoWalletAccountsResp {
+  common.RespBase base = 1;
+  repeated payment.CryptoWalletAccount data = 2;
+}
+
+// ---------- 链上充值交易 ----------
+message CreateCryptoRechargeTxReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  int64 order_id = 3;
+  string order_no = 4;
+  string coin = 5;
+  common.ChainCode chain_code = 6;
+  string tx_hash = 7;
+  string from_address = 8;
+  string to_address = 9;
+  string memo = 10;
+  string amount = 11;
+  int64 block_height = 12;
+  int64 confirm_count = 13;
+  int64 required_confirm_count = 14;
+  payment.CryptoRechargeTxStatus status = 15;
+  string raw_data = 16;
+}
+
+message UpdateCryptoRechargeTxReq {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 order_id = 3;
+  string order_no = 4;
+  int64 confirm_count = 5;
+  int64 required_confirm_count = 6;
+  payment.CryptoRechargeTxStatus status = 7;
+  string raw_data = 8;
+}
+
+message GetCryptoRechargeTxReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+  string tx_hash = 3;
+  common.ChainCode chain_code = 4;
+}
+
+message GetCryptoRechargeTxResp {
+  common.RespBase base = 1;
+  payment.CryptoRechargeTx data = 2;
+}
+
+message ListCryptoRechargeTxsReq {
+  common.PageReq page = 1;
+  int64 tenant_id = 2;
+  int64 user_id = 3;
+  string order_no = 4;
+  string coin = 5;
+  common.ChainCode chain_code = 6;
+  string tx_hash = 7;
+  string to_address = 8;
+  payment.CryptoRechargeTxStatus status = 9;
+  int64 create_time_start = 10;
+  int64 create_time_end = 11;
+}
+
+message ListCryptoRechargeTxsResp {
+  common.RespBase base = 1;
+  repeated payment.CryptoRechargeTx data = 2;
+}
+
 message AdminEmpty {
   
 }
@@ -624,4 +788,43 @@ service PaymentAdmin {
   // 获取提现回调日志详情
   rpc GetWithdrawNotifyLog(GetWithdrawNotifyLogReq)
       returns (GetWithdrawNotifyLogResp);
+
+  // 创建链上充值地址
+  rpc CreateCryptoRechargeAddress(CreateCryptoRechargeAddressReq)
+      returns (AdminCommonResp);
+  // 更新链上充值地址
+  rpc UpdateCryptoRechargeAddress(UpdateCryptoRechargeAddressReq)
+      returns (AdminCommonResp);
+  // 获取链上充值地址详情
+  rpc GetCryptoRechargeAddress(GetCryptoRechargeAddressReq)
+      returns (GetCryptoRechargeAddressResp);
+  // 链上充值地址列表
+  rpc ListCryptoRechargeAddresses(ListCryptoRechargeAddressesReq)
+      returns (ListCryptoRechargeAddressesResp);
+
+  // 创建链上钱包账号
+  rpc CreateCryptoWalletAccount(CreateCryptoWalletAccountReq)
+      returns (AdminCommonResp);
+  // 更新链上钱包账号
+  rpc UpdateCryptoWalletAccount(UpdateCryptoWalletAccountReq)
+      returns (AdminCommonResp);
+  // 获取链上钱包账号详情
+  rpc GetCryptoWalletAccount(GetCryptoWalletAccountReq)
+      returns (GetCryptoWalletAccountResp);
+  // 链上钱包账号列表
+  rpc ListCryptoWalletAccounts(ListCryptoWalletAccountsReq)
+      returns (ListCryptoWalletAccountsResp);
+
+  // 创建链上充值交易
+  rpc CreateCryptoRechargeTx(CreateCryptoRechargeTxReq)
+      returns (AdminCommonResp);
+  // 更新链上充值交易
+  rpc UpdateCryptoRechargeTx(UpdateCryptoRechargeTxReq)
+      returns (AdminCommonResp);
+  // 获取链上充值交易详情
+  rpc GetCryptoRechargeTx(GetCryptoRechargeTxReq)
+      returns (GetCryptoRechargeTxResp);
+  // 链上充值交易列表
+  rpc ListCryptoRechargeTxs(ListCryptoRechargeTxsReq)
+      returns (ListCryptoRechargeTxsResp);
 }

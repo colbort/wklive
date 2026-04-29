@@ -141,6 +141,65 @@ message GetMyWithdrawOrderResp {
   payment.WithdrawOrder data = 2;
 }
 
+// 获取/分配我的链上充值地址
+message GetMyCryptoRechargeAddressReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  int64 wallet_type = 3;
+  string coin = 4;
+  common.ChainCode chain_code = 5;
+}
+
+message GetMyCryptoRechargeAddressResp {
+  common.RespBase base = 1;
+  payment.CryptoRechargeAddress data = 2;
+}
+
+// 我的链上充值地址列表
+message ListMyCryptoRechargeAddressesReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  int64 wallet_type = 3;
+  string coin = 4;
+  common.ChainCode chain_code = 5;
+}
+
+message ListMyCryptoRechargeAddressesResp {
+  common.RespBase base = 1;
+  repeated payment.CryptoRechargeAddress data = 2;
+}
+
+// 我的链上充值交易列表
+message ListMyCryptoRechargeTxsReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  common.PageReq page = 3;
+  string order_no = 4;
+  string coin = 5;
+  common.ChainCode chain_code = 6;
+  payment.CryptoRechargeTxStatus status = 7;
+  int64 create_time_start = 8;
+  int64 create_time_end = 9;
+}
+
+message ListMyCryptoRechargeTxsResp {
+  common.RespBase base = 1;
+  repeated payment.CryptoRechargeTx data = 2;
+}
+
+// 我的链上充值交易详情
+message GetMyCryptoRechargeTxReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  int64 id = 3;
+  string tx_hash = 4;
+}
+
+message GetMyCryptoRechargeTxResp {
+  common.RespBase base = 1;
+  payment.CryptoRechargeTx data = 2;
+}
+
 // APP端接口
 service PaymentApp {
   // 当前用户累计充值统计（展示用）
@@ -180,4 +239,20 @@ service PaymentApp {
   // 获取提现订单详情
   rpc GetMyWithdrawOrder(GetMyWithdrawOrderReq)
       returns (GetMyWithdrawOrderResp);
+
+  // 获取/分配我的链上充值地址
+  rpc GetMyCryptoRechargeAddress(GetMyCryptoRechargeAddressReq)
+      returns (GetMyCryptoRechargeAddressResp);
+
+  // 我的链上充值地址列表
+  rpc ListMyCryptoRechargeAddresses(ListMyCryptoRechargeAddressesReq)
+      returns (ListMyCryptoRechargeAddressesResp);
+
+  // 我的链上充值交易列表
+  rpc ListMyCryptoRechargeTxs(ListMyCryptoRechargeTxsReq)
+      returns (ListMyCryptoRechargeTxsResp);
+
+  // 我的链上充值交易详情
+  rpc GetMyCryptoRechargeTx(GetMyCryptoRechargeTxReq)
+      returns (GetMyCryptoRechargeTxResp);
 }

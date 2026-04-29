@@ -276,3 +276,98 @@ CREATE TABLE `t_withdraw_notify_log` (
   KEY `idx_order_id` (`order_id`),
   KEY `idx_notify_status` (`notify_status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='提现回调日志表'; 
+
+CREATE TABLE `t_crypto_recharge_address` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `user_id` bigint NOT NULL DEFAULT 0 COMMENT '用户ID',
+
+  `wallet_type` tinyint NOT NULL DEFAULT 1 COMMENT '账户类型:1现金账户 2股票账户 3合约账户 4理财账户 5期权账户',
+
+  `coin` varchar(20) NOT NULL DEFAULT '' COMMENT '币种:USDT/BTC/ETH',
+  `chain_code` tinyint NOT NULL DEFAULT 0 COMMENT '链类型',
+
+  `address` varchar(255) NOT NULL DEFAULT '' COMMENT '充值地址',
+  `memo` varchar(128) NOT NULL DEFAULT '' COMMENT 'memo/tag，如XRP/EOS/TON等',
+
+  `address_source` tinyint NOT NULL DEFAULT 1 COMMENT '地址来源:1系统生成 2第三方分配 3手工导入',
+  `address_type` tinyint NOT NULL DEFAULT 1 COMMENT '地址类型:1用户独享 2平台公共地址+memo',
+
+  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态:1可用 0禁用 2冻结',
+
+  `last_used_time` bigint NOT NULL DEFAULT 0 COMMENT '最近使用时间',
+  `create_times` bigint NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_times` bigint NOT NULL DEFAULT 0 COMMENT '更新时间',
+
+  PRIMARY KEY (`id`),
+
+  UNIQUE KEY `uk_tenant_user_coin_chain` (`tenant_id`, `user_id`, `wallet_type`, `coin`, `chain_code`),
+  UNIQUE KEY `uk_chain_address_memo` (`chain_code`, `address`, `memo`),
+
+  KEY `idx_tenant_user` (`tenant_id`, `user_id`),
+  KEY `idx_tenant_coin_chain` (`tenant_id`, `coin`, `chain_code`),
+  KEY `idx_address` (`address`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户链上充值地址表';
+
+CREATE TABLE `t_crypto_wallet_account` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `account_code` varchar(64) NOT NULL DEFAULT '' COMMENT '钱包账号编码',
+  `account_name` varchar(128) NOT NULL DEFAULT '' COMMENT '钱包账号名称',
+
+  `provider` varchar(64) NOT NULL DEFAULT '' COMMENT '钱包服务商:self/cobo/bitgo/fireblocks等',
+  `api_key_cipher` text COMMENT 'API Key密文',
+  `api_secret_cipher` text COMMENT 'API Secret密文',
+  `callback_secret_cipher` text COMMENT '回调验签密钥密文',
+
+  `ext_config` json DEFAULT NULL COMMENT '扩展配置',
+
+  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态:1启用 0禁用',
+  `is_default` tinyint NOT NULL DEFAULT 0 COMMENT '是否默认:1是 0否',
+
+  `create_times` bigint NOT NULL DEFAULT 0,
+  `update_times` bigint NOT NULL DEFAULT 0,
+
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_tenant_account_code` (`tenant_id`, `account_code`),
+  KEY `idx_tenant_status` (`tenant_id`, `status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='链上钱包账号配置表';
+
+CREATE TABLE `t_crypto_recharge_tx` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `user_id` bigint NOT NULL DEFAULT 0 COMMENT '用户ID',
+
+  `order_id` bigint NOT NULL DEFAULT 0 COMMENT '充值订单ID',
+  `order_no` varchar(64) NOT NULL DEFAULT '' COMMENT '充值订单号',
+
+  `coin` varchar(20) NOT NULL DEFAULT '' COMMENT '币种',
+  `chain_code` tinyint NOT NULL DEFAULT 0 COMMENT '链类型',
+
+  `tx_hash` varchar(128) NOT NULL DEFAULT '' COMMENT '交易哈希',
+  `from_address` varchar(255) NOT NULL DEFAULT '' COMMENT '付款地址',
+  `to_address` varchar(255) NOT NULL DEFAULT '' COMMENT '收款地址',
+  `memo` varchar(128) NOT NULL DEFAULT '' COMMENT 'memo/tag',
+
+  `amount` decimal(36,18) NOT NULL DEFAULT 0 COMMENT '链上到账数量',
+  `block_height` bigint NOT NULL DEFAULT 0 COMMENT '区块高度',
+  `confirm_count` int NOT NULL DEFAULT 0 COMMENT '当前确认数',
+  `required_confirm_count` int NOT NULL DEFAULT 0 COMMENT '要求确认数',
+
+  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态:1待确认 2确认中 3已确认 4失败 5已入账',
+
+  `raw_data` json DEFAULT NULL COMMENT '链上原始数据',
+
+  `create_times` bigint NOT NULL DEFAULT 0,
+  `update_times` bigint NOT NULL DEFAULT 0,
+
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_chain_tx` (`chain_code`, `tx_hash`),
+  KEY `idx_tenant_user` (`tenant_id`, `user_id`),
+  KEY `idx_order_no` (`order_no`),
+  KEY `idx_to_address` (`to_address`),
+  KEY `idx_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='链上充值交易记录表';

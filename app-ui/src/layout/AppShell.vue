@@ -3,10 +3,14 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 
 import { appNavigation } from '@/config/navigation'
+import { apiGetMyAssetSummary } from '@/api/asset'
 import { apiListVisibleCategories, apiListVisibleProducts } from '@/api/itick'
-import { getTenantCode } from '@/api/http'
+import { getAccessToken, getTenantCode } from '@/api/http'
+import { apiGetProfile, apiLogout } from '@/api/userPrivate'
 import { useDevice } from '@/composables/useDevice'
+import type { AssetUserAsset } from '@/types/asset'
 import type { ItickTenantCategory, ItickTenantProduct } from '@/types/itick'
+import type { UserProfile } from '@/types/user'
 
 const route = useRoute()
 const router = useRouter()
@@ -14,10 +18,14 @@ const { isDesktop } = useDevice()
 
 const pageTitle = computed(() => String(route.meta.title || 'AVE'))
 const showSiteHeader = computed(() => isDesktop.value || route.name === 'home')
+const showMobileTabbar = computed(() => !isDesktop.value && !route.meta.hideTabbar)
 
 const desktopCategories = ref<ItickTenantCategory[]>([])
 const desktopProductsMap = ref<Record<number, ItickTenantProduct[]>>({})
 const hoveredCategoryType = ref<number | null>(null)
+const profile = ref<UserProfile | null>(null)
+const userAssets = ref<AssetUserAsset[]>([])
+const activeUserPanel = ref('')
 
 const desktopDocNav = [
   { key: 'license', label: '公司资质', path: '/home' },
@@ -36,16 +44,39 @@ const activeDesktopCategoryType = computed(() => {
   return desktopCategories.value[0]?.categoryType ?? null
 })
 
+const userBase = computed(() => profile.value?.base ?? null)
+const displayName = computed(() => userBase.value?.nickname || userBase.value?.username || 'GUEST-8437')
+const displayUserId = computed(() => userBase.value?.id || 50596163)
+const desktopAssetPreview = computed(() => userAssets.value.filter((asset) => asset.walletType === 1).slice(0, 8))
+
 onMounted(async () => {
   if (isDesktop.value) {
     await ensureDesktopCategories()
+    await ensureDesktopUserData()
   }
 })
 
 watch(isDesktop, async (desktop) => {
   if (!desktop) return
   await ensureDesktopCategories()
+  await ensureDesktopUserData()
 })
+
+async function ensureDesktopUserData() {
+  if (!getAccessToken()) return
+
+  try {
+    const [profileResp, assetResp] = await Promise.all([apiGetProfile(), apiGetMyAssetSummary({})])
+    if (profileResp.code === 0 || profileResp.code === 200) {
+      profile.value = profileResp.data
+    }
+    if (assetResp.code === 0 || assetResp.code === 200) {
+      userAssets.value = assetResp.data?.assets || []
+    }
+  } catch (error) {
+    console.warn('load desktop user data failed', error)
+  }
+}
 
 async function ensureDesktopCategories() {
   if (desktopCategories.value.length) return
@@ -103,6 +134,13 @@ function openDesktopProduct(category: ItickTenantCategory, product: ItickTenantP
       symbol: product.symbol,
     },
   })
+}
+
+async function logout() {
+  await apiLogout()
+  profile.value = null
+  userAssets.value = []
+  router.push('/profile')
 }
 </script>
 
@@ -173,11 +211,82 @@ function openDesktopProduct(category: ItickTenantCategory, product: ItickTenantP
       <div class="site-header__actions">
         <button class="site-action-circle">⌕</button>
         <button v-if="!isDesktop" class="site-action-circle">🌐</button>
-        <div v-if="isDesktop" class="site-user-chip">
-          <div class="site-user-chip__avatar" />
-          <div>
-            <strong>GUEST-8437</strong>
-            <span>ID:50596163</span>
+        <div v-if="isDesktop" class="site-user-area">
+          <div class="site-user-chip">
+            <div class="site-user-chip__avatar" />
+            <div>
+              <strong>{{ displayName }}</strong>
+              <span>ID:{{ displayUserId }}</span>
+            </div>
+            <i class="site-user-chip__bars" />
+          </div>
+
+          <div class="site-user-menu">
+            <div class="site-user-menu__main">
+              <header class="site-user-menu__head">
+                <div class="site-user-chip__avatar" />
+                <div>
+                  <strong>{{ displayName }}</strong>
+                  <span>ID:{{ displayUserId }}</span>
+                </div>
+              </header>
+
+              <nav>
+                <RouterLink class="site-user-menu__row" to="/assets" @mouseenter="activeUserPanel = 'assets'">
+                  <span>◉</span>
+                  <strong>我的资产</strong>
+                  <em>›</em>
+                </RouterLink>
+                <RouterLink class="site-user-menu__row" to="/assets" @mouseenter="activeUserPanel = ''">
+                  <span>▣</span>
+                  <strong>充值</strong>
+                </RouterLink>
+                <RouterLink class="site-user-menu__row" to="/assets" @mouseenter="activeUserPanel = ''">
+                  <span>▤</span>
+                  <strong>提现</strong>
+                </RouterLink>
+                <RouterLink class="site-user-menu__row" to="/assets" @mouseenter="activeUserPanel = ''">
+                  <span>⌘</span>
+                  <strong>划转</strong>
+                </RouterLink>
+                <RouterLink class="site-user-menu__row" to="/assets" @mouseenter="activeUserPanel = ''">
+                  <span>▧</span>
+                  <strong>资金记录</strong>
+                </RouterLink>
+                <RouterLink class="site-user-menu__row site-user-menu__row--split" to="/profile" @mouseenter="activeUserPanel = ''">
+                  <span>◈</span>
+                  <strong>推荐朋友</strong>
+                </RouterLink>
+                <RouterLink class="site-user-menu__row site-user-menu__row--split" to="/assets" @mouseenter="activeUserPanel = ''">
+                  <span>▤</span>
+                  <strong>订单中心</strong>
+                </RouterLink>
+                <RouterLink class="site-user-menu__row site-user-menu__row--split" to="/profile" @mouseenter="activeUserPanel = ''">
+                  <span>▰</span>
+                  <strong>收款帐户</strong>
+                </RouterLink>
+                <RouterLink class="site-user-menu__row" to="/profile" @mouseenter="activeUserPanel = ''">
+                  <span>◆</span>
+                  <strong>安全设置</strong>
+                </RouterLink>
+                <button class="site-user-menu__row" type="button" @mouseenter="activeUserPanel = ''" @click="logout">
+                  <span>↪</span>
+                  <strong>退出登录</strong>
+                </button>
+              </nav>
+            </div>
+
+            <aside v-if="activeUserPanel === 'assets'" class="site-user-assets">
+              <h3>现金账户</h3>
+              <div class="site-user-assets__list">
+                <div v-for="asset in desktopAssetPreview" :key="asset.id || asset.coin" class="site-user-assets__row">
+                  <span>{{ asset.coin.slice(0, 1) }}</span>
+                  <strong>{{ asset.coin }}</strong>
+                  <em>{{ asset.availableAmount || asset.totalAmount || '0' }}</em>
+                </div>
+                <RouterLink class="site-user-assets__more" to="/assets">more+</RouterLink>
+              </div>
+            </aside>
           </div>
         </div>
         <button v-if="isDesktop" class="site-action-plain">☰</button>
@@ -190,7 +299,7 @@ function openDesktopProduct(category: ItickTenantCategory, product: ItickTenantP
         <RouterView />
       </main>
 
-      <nav v-if="!isDesktop" class="mobile-tabbar">
+      <nav v-if="showMobileTabbar" class="mobile-tabbar">
         <RouterLink
           v-for="item in appNavigation"
           :key="item.key"

@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package asset;
 
+import "proto/common/common.proto";
 import "google/protobuf/struct.proto";
 import "proto/asset/enum.proto";
 
@@ -34,19 +35,20 @@ message AssetCoinConfig {
   string symbol = 5;                        // 展示符号/资产标识
   string coin_name = 6;                     // 币种名称
   AssetCoinType coin_type = 7;              // 币种类型
-  string icon_url = 8;                      // 币种图标URL
-  string icon_text = 9;                     // 币种图标文案/符号
-  string icon_bg_color = 10;                // 图标背景色
-  int32 decimal_places = 11;                // 资产展示精度
-  AssetCoinSwitch app_visible = 12;         // APP操作页是否展示
-  AssetCoinSwitch recharge_enabled = 13;    // 充值页是否展示
-  AssetCoinSwitch withdraw_enabled = 14;    // 提现页是否展示
-  AssetCoinSwitch transfer_enabled = 15;    // 划转页是否展示
-  AssetStatus status = 16;                  // 状态
-  int32 sort = 17;                          // 排序,越小越靠前
-  string remark = 18;                       // 备注
-  int64 create_times = 19;                  // 创建时间戳(毫秒)
-  int64 update_times = 20;                  // 更新时间戳(毫秒)
+  common.ChainCode chain_code = 8;                 // 链类型
+  string icon_url = 9;                      // 币种图标URL
+  string icon_text = 10;                    // 币种图标文案/符号
+  string icon_bg_color = 11;                // 图标背景色
+  int32 decimal_places = 12;                // 资产展示精度
+  AssetCoinSwitch app_visible = 13;         // APP操作页是否展示
+  AssetCoinSwitch recharge_enabled = 14;    // 充值页是否展示
+  AssetCoinSwitch withdraw_enabled = 15;    // 提现页是否展示
+  AssetCoinSwitch transfer_enabled = 16;    // 划转页是否展示
+  AssetStatus status = 17;                  // 状态
+  int32 sort = 18;                          // 排序,越小越靠前
+  string remark = 19;                       // 备注
+  int64 create_times = 20;                  // 创建时间戳(毫秒)
+  int64 update_times = 21;                  // 更新时间戳(毫秒)
 }
 
 // 资产流水

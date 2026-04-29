@@ -12,6 +12,17 @@ export interface ApiResp<T> extends RespBase {
   data?: T
 }
 
+export interface OptionsItem {
+  value: number
+  code: string
+}
+
+export interface OptionsGroup {
+  key: string
+  label: string
+  options: OptionsItem[]
+}
+
 export interface PageReq {
   cursor?: number
   limit?: number

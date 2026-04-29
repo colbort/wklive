@@ -17,6 +17,7 @@ export { CatalogService, catalogService } from './payment/CatalogService'
 export { TenantService, tenantService } from './payment/TenantService'
 export { RechargeService, rechargeService } from './payment/RechargeService'
 export { WithdrawService, withdrawService } from './payment/WithdrawService'
+export { CryptoService, cryptoService } from './payment/CryptoService'
 export { AssetService, assetService } from './asset/AssetService'
 export { OptionService, optionService } from './option/OptionService'
 export { StakingService, stakingService } from './staking/StakingService'
@@ -182,11 +183,30 @@ export type {
   ListWithdrawNotifyLogsReq,
 } from './payment/WithdrawService'
 export type {
+  CryptoRechargeAddress,
+  CryptoRechargeTx,
+  CryptoWalletAccount,
+  CreateCryptoRechargeAddressReq,
+  CreateCryptoRechargeTxReq,
+  CreateCryptoWalletAccountReq,
+  ListCryptoRechargeAddressesReq,
+  ListCryptoRechargeTxsReq,
+  ListCryptoWalletAccountsReq,
+  UpdateCryptoRechargeAddressReq,
+  UpdateCryptoRechargeTxReq,
+  UpdateCryptoWalletAccountReq,
+} from './payment/CryptoService'
+export type {
   AssetUserAsset,
+  AssetCoinConfig,
   AssetFlow,
   AssetFreeze,
   AssetLock,
   AssetChangeResp,
+  GetAssetCoinConfigReq,
+  PageAssetCoinConfigsReq,
+  CreateAssetCoinConfigReq,
+  UpdateAssetCoinConfigReq,
   GetUserAssetDetailReq,
   PageUserAssetsReq,
   PageAssetFlowsReq,

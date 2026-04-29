@@ -1,4 +1,4 @@
-import { get, post } from '@/utils/request'
+import { del, get, post, put } from '@/utils/request'
 import type {
   AdminAddAssetReq,
   AdminFreezeAssetReq,
@@ -7,16 +7,21 @@ import type {
   AdminUnfreezeAssetReq,
   AdminUnlockAssetReq,
   AssetChangeResp,
+  AssetCoinConfig,
   AssetFlow,
   AssetFreeze,
   AssetLock,
   AssetUserAsset,
+  CreateAssetCoinConfigReq,
+  GetAssetCoinConfigReq,
   OptionGroup,
+  PageAssetCoinConfigsReq,
   PageAssetFlowsReq,
   PageAssetFreezesReq,
   PageAssetLocksReq,
   PageUserAssetsReq,
   RespBase,
+  UpdateAssetCoinConfigReq,
 } from '@/services'
 
 export function apiPageUserAssets(params: PageUserAssetsReq): Promise<RespBase<AssetUserAsset[]>> {
@@ -42,6 +47,39 @@ export function apiPageAssetFreezes(params: PageAssetFreezesReq): Promise<RespBa
 
 export function apiPageAssetLocks(params: PageAssetLocksReq): Promise<RespBase<AssetLock[]>> {
   return get<AssetLock[]>('/admin/asset/locks', params)
+}
+
+export function apiPageAssetCoinConfigs(
+  params: PageAssetCoinConfigsReq,
+): Promise<RespBase<AssetCoinConfig[]>> {
+  return get<AssetCoinConfig[]>('/admin/asset/coin-configs', params)
+}
+
+export function apiGetAssetCoinConfig(
+  params: GetAssetCoinConfigReq,
+): Promise<RespBase<AssetCoinConfig>> {
+  const { id, ...query } = params
+  return get<AssetCoinConfig>(`/admin/asset/coin-configs/${id}`, query)
+}
+
+export function apiCreateAssetCoinConfig(
+  params: CreateAssetCoinConfigReq,
+): Promise<RespBase<AssetCoinConfig>> {
+  return post<AssetCoinConfig>('/admin/asset/coin-configs', params)
+}
+
+export function apiUpdateAssetCoinConfig(
+  params: UpdateAssetCoinConfigReq,
+): Promise<RespBase<AssetCoinConfig>> {
+  const { id, ...data } = params
+  return put<AssetCoinConfig>(`/admin/asset/coin-configs/${id}`, data)
+}
+
+export function apiDeleteAssetCoinConfig(
+  id: number,
+  params?: { tenantId?: number },
+): Promise<RespBase> {
+  return del('/admin/asset/coin-configs/' + id, params)
 }
 
 export function apiAdminAddAsset(params: AdminAddAssetReq): Promise<RespBase<AssetChangeResp>> {

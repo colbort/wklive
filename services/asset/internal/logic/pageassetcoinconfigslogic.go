@@ -32,7 +32,7 @@ func (l *PageAssetCoinConfigsLogic) PageAssetCoinConfigs(in *asset.PageAssetCoin
 		page = &common.PageReq{}
 	}
 
-	list, total, err := l.svcCtx.AssetCoinConfigModel.FindPage(l.ctx, in.TenantId, int64(in.WalletType), in.Coin, in.Symbol, int64(in.CoinType), int64(in.AppVisible), int64(in.RechargeEnabled), int64(in.WithdrawEnabled), int64(in.TransferEnabled), int64(in.Status), page.Cursor, page.Limit)
+	list, total, err := l.svcCtx.AssetCoinConfigModel.FindPage(l.ctx, in.TenantId, int64(in.WalletType), in.Coin, in.Symbol, int64(in.CoinType), int64(in.ChainCode), int64(in.AppVisible), int64(in.RechargeEnabled), int64(in.WithdrawEnabled), int64(in.TransferEnabled), int64(in.Status), page.Cursor, page.Limit)
 	if err != nil {
 		return nil, err
 	}

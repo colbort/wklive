@@ -409,12 +409,20 @@ type AppListBillsResp {
 	page PageReq      `json:"page"`
 }
 
+type GetOptionOptionsResp {
+	RespBase
+	data []OptionsGroup `json:"data"`
+}
+
 @server (
 	prefix: /app/option
 	group:  option
 	middleware: PublicRateLimit
 )
 service app {
+	@handler GetOptionOptions
+	get /options returns (GetOptionOptionsResp)
+
 	@handler AppListContracts
 	get /contracts (AppListContractsReq) returns (AppListContractsResp)
 

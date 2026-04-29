@@ -36,6 +36,7 @@ func (l *CreateAssetCoinConfigLogic) CreateAssetCoinConfig(in *asset.CreateAsset
 		Symbol:          in.Symbol,
 		CoinName:        in.CoinName,
 		CoinType:        assetCoinTypeValue(in.CoinType, int64(asset.AssetCoinType_ASSET_COIN_TYPE_CRYPTO)),
+		ChainCode:       int64(in.ChainCode),
 		IconUrl:         in.IconUrl,
 		IconText:        in.IconText,
 		IconBgColor:     in.IconBgColor,

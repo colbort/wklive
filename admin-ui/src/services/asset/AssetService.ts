@@ -6,12 +6,17 @@ import {
   apiAdminSubAsset,
   apiAdminUnfreezeAsset,
   apiAdminUnlockAsset,
+  apiCreateAssetCoinConfig,
+  apiDeleteAssetCoinConfig,
+  apiGetAssetCoinConfig,
+  apiPageAssetCoinConfigs,
   apiGetUserAssetDetail,
   apiPageAssetFlows,
   apiPageAssetFreezes,
   apiPageAssetLocks,
   apiOptions,
   apiPageUserAssets,
+  apiUpdateAssetCoinConfig,
 } from '@/api/asset'
 
 export type AssetUserAsset = {
@@ -107,6 +112,31 @@ export type AssetLock = {
   createTimes: number // 创建时间
   updateTimes: number // 更新时间
 }
+
+export type AssetCoinConfig = {
+  id: number // 主键ID
+  tenantId: number // 租户ID
+  walletType: number // 钱包类型
+  coin: string // 币种
+  symbol: string // 币种符号
+  coinName: string // 币种名称
+  coinType: number // 币种类型
+  chainCode: number // 链类型
+  iconUrl: string // 图标地址
+  iconText: string // 图标文字
+  iconBgColor: string // 图标背景色
+  decimalPlaces: number // 精度
+  appVisible: number // App是否显示
+  rechargeEnabled: number // 是否允许充值
+  withdrawEnabled: number // 是否允许提现
+  transferEnabled: number // 是否允许划转
+  status: number // 状态
+  sort: number // 排序
+  remark: string // 备注
+  createTimes: number // 创建时间
+  updateTimes: number // 更新时间
+}
+
 export type AssetChangeResp = {
   bizNo: string // 业务单号
   asset: AssetUserAsset // 变更后的资产
@@ -164,6 +194,52 @@ export type PageAssetLocksReq = {
   bizType?: number // 业务类型
   bizNo?: string // 业务单号
   status?: number // 状态
+}
+
+export type PageAssetCoinConfigsReq = {
+  cursor?: number // 游标
+  limit?: number // 每页条数
+  tenantId?: number // 租户ID
+  walletType?: number // 钱包类型
+  coin?: string // 币种
+  symbol?: string // 币种符号
+  coinType?: number // 币种类型
+  chainCode?: number // 链类型
+  appVisible?: number // App是否显示
+  rechargeEnabled?: number // 是否允许充值
+  withdrawEnabled?: number // 是否允许提现
+  transferEnabled?: number // 是否允许划转
+  status?: number // 状态
+}
+
+export type GetAssetCoinConfigReq = {
+  id: number // 主键ID
+  tenantId?: number // 租户ID
+}
+
+export type CreateAssetCoinConfigReq = {
+  tenantId: number // 租户ID
+  walletType: number // 钱包类型
+  coin: string // 币种
+  symbol: string // 币种符号
+  coinName: string // 币种名称
+  coinType: number // 币种类型
+  chainCode?: number // 链类型
+  iconUrl?: string // 图标地址
+  iconText?: string // 图标文字
+  iconBgColor?: string // 图标背景色
+  decimalPlaces?: number // 精度
+  appVisible?: number // App是否显示
+  rechargeEnabled?: number // 是否允许充值
+  withdrawEnabled?: number // 是否允许提现
+  transferEnabled?: number // 是否允许划转
+  status?: number // 状态
+  sort?: number // 排序
+  remark?: string // 备注
+}
+
+export type UpdateAssetCoinConfigReq = Partial<CreateAssetCoinConfigReq> & {
+  id: number // 主键ID
 }
 
 export type AdminAddAssetReq = {
@@ -224,6 +300,26 @@ export class AssetService {
 
   getLocks(params: PageAssetLocksReq): Promise<RespBase<AssetLock[]>> {
     return apiPageAssetLocks(params)
+  }
+
+  getCoinConfigs(params: PageAssetCoinConfigsReq): Promise<RespBase<AssetCoinConfig[]>> {
+    return apiPageAssetCoinConfigs(params)
+  }
+
+  getCoinConfig(params: GetAssetCoinConfigReq): Promise<RespBase<AssetCoinConfig>> {
+    return apiGetAssetCoinConfig(params)
+  }
+
+  createCoinConfig(params: CreateAssetCoinConfigReq): Promise<RespBase<AssetCoinConfig>> {
+    return apiCreateAssetCoinConfig(params)
+  }
+
+  updateCoinConfig(params: UpdateAssetCoinConfigReq): Promise<RespBase<AssetCoinConfig>> {
+    return apiUpdateAssetCoinConfig(params)
+  }
+
+  deleteCoinConfig(id: number, params?: { tenantId?: number }): Promise<RespBase> {
+    return apiDeleteAssetCoinConfig(id, params)
   }
 
   addAsset(params: AdminAddAssetReq) {

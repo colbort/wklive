@@ -1,5 +1,5 @@
 import { http, setAccessToken, setRefreshToken, setTenantCode } from '@/api/http'
-import type { RespBase } from '@/types/api'
+import type { OptionsGroup, RespBase } from '@/types/api'
 import type {
   GuestLoginData,
   GuestLoginReq,
@@ -17,6 +17,10 @@ import {
   setGuestId,
   setGuestToken,
 } from '@/utils/guestFingerprint'
+
+export function apiGetUserOptions(): Promise<RespBase & { data: OptionsGroup[] }> {
+  return http.get('/user/options').then((res) => res.data)
+}
 
 export function apiRegister(params: RegisterReq): Promise<RespBase & RegisterResp> {
   return http.post('/user/register', params).then((res) => {

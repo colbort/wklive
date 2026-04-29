@@ -334,7 +334,9 @@ const formRules = {
   tenantCode: [{ required: true, message: t('system.pleaseInputTenantCode'), trigger: 'blur' }],
   username: [{ required: true, message: t('common.pleaseInputUsername'), trigger: 'blur' }],
   tenantName: [{ required: true, message: t('system.pleaseInputTenantName'), trigger: 'blur' }],
-  tenantPassword: [{ required: true, message: t('common.pleaseInputNewPassword'), trigger: 'blur' }],
+  tenantPassword: [
+    { required: true, message: t('common.pleaseInputNewPassword'), trigger: 'blur' },
+  ],
   status: [{ required: true, message: t('system.pleaseSelectStatus'), trigger: 'change' }],
   expireTime: [{ required: true, message: t('validation.required'), trigger: 'change' }],
   contactName: [{ required: true, message: t('system.pleaseInputContactName'), trigger: 'blur' }],

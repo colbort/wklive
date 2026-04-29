@@ -1,6 +1,6 @@
 import { http } from '@/api/http'
 import { compactParams } from '@/api/utils'
-import type { ApiResp } from '@/types/api'
+import type { ApiResp, OptionsGroup, RespBase } from '@/types/api'
 import type {
   GetKlineReq,
   GetKlineResp,
@@ -11,6 +11,10 @@ import type {
   ListVisibleProductsReq,
   ListVisibleProductsResp,
 } from '@/types/itick'
+
+export function apiGetItickOptions(): Promise<RespBase & { data: OptionsGroup[] }> {
+  return http.get('/itick/options').then((res) => res.data)
+}
 
 export async function apiListVisibleCategories(
   params: ListVisibleCategoriesReq,

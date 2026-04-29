@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package payment;
 
+import "proto/common/common.proto";
 import "proto/payment/enum.proto";
 
 option go_package = "wklive/proto/payment;payment";
@@ -228,4 +229,59 @@ message WithdrawOrder {
   int64 product_id = 25;                   // 产品ID
   int64 account_id = 26;                   // 账号ID
   int64 channel_id = 27;                   // 通道ID
+}
+
+message CryptoRechargeAddress {
+  int64 id = 1;                            // 主键ID
+  int64 tenant_id = 2;                     // 租户ID
+  int64 user_id = 3;                       // 用户ID
+  int64 wallet_type = 4;                   // 账户类型
+  string coin = 5;                         // 币种:USDT/BTC/ETH
+  common.ChainCode chain_code = 6;                   // 链网络:TRC20/ERC20/BEP20/BTC/ETH
+  string address = 7;                      // 充值地址
+  string memo = 8;                         // memo/tag
+  payment.CryptoRechargeAddressSource address_source = 9; // 地址来源
+  payment.CryptoRechargeAddressType address_type = 10;    // 地址类型
+  payment.CryptoRechargeAddressStatus status = 11;        // 状态
+  int64 last_used_time = 12;               // 最近使用时间
+  int64 create_times = 13;                 // 创建时间
+  int64 update_times = 14;                 // 更新时间
+}
+
+message CryptoWalletAccount {
+  int64 id = 1;                            // 主键ID
+  int64 tenant_id = 2;                     // 租户ID
+  string account_code = 3;                 // 钱包账号编码
+  string account_name = 4;                 // 钱包账号名称
+  string provider = 5;                     // 钱包服务商:self/cobo/bitgo/fireblocks等
+  string api_key_cipher = 6;               // API Key密文
+  string api_secret_cipher = 7;            // API Secret密文
+  string callback_secret_cipher = 8;       // 回调验签密钥密文
+  string ext_config = 9;                   // 扩展配置(JSON)
+  payment.CommonStatus status = 10;        // 状态
+  int64 is_default = 11;                   // 是否默认:1是 0否
+  int64 create_times = 12;                 // 创建时间
+  int64 update_times = 13;                 // 更新时间
+}
+
+message CryptoRechargeTx {
+  int64 id = 1;                            // 主键ID
+  int64 tenant_id = 2;                     // 租户ID
+  int64 user_id = 3;                       // 用户ID
+  int64 order_id = 4;                      // 充值订单ID
+  string order_no = 5;                     // 充值订单号
+  string coin = 6;                         // 币种
+  common.ChainCode chain_code = 7;                   // 链网络
+  string tx_hash = 8;                      // 交易哈希
+  string from_address = 9;                 // 付款地址
+  string to_address = 10;                  // 收款地址
+  string memo = 11;                        // memo/tag
+  string amount = 12;                      // 链上到账数量
+  int64 block_height = 13;                 // 区块高度
+  int64 confirm_count = 14;                // 当前确认数
+  int64 required_confirm_count = 15;       // 要求确认数
+  payment.CryptoRechargeTxStatus status = 16; // 状态
+  string raw_data = 17;                    // 链上原始数据(JSON)
+  int64 create_times = 18;                 // 创建时间
+  int64 update_times = 19;                 // 更新时间
 }

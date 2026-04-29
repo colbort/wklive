@@ -185,6 +185,61 @@ type PayNotifyLog {
 	createTimes   int64  `json:"createTimes"`
 }
 
+type CryptoRechargeAddress {
+	id             int64  `json:"id"`
+	tenantId       int64  `json:"tenantId"`
+	userId         int64  `json:"userId"`
+	walletType     int64  `json:"walletType"`
+	coin           string `json:"coin"`
+	chainCode      int64  `json:"chainCode"`
+	address        string `json:"address"`
+	memo           string `json:"memo"`
+	addressSource  int64  `json:"addressSource"`
+	addressType    int64  `json:"addressType"`
+	status         int64  `json:"status"`
+	lastUsedTime   int64  `json:"lastUsedTime"`
+	createTimes    int64  `json:"createTimes"`
+	updateTimes    int64  `json:"updateTimes"`
+}
+
+type CryptoWalletAccount {
+	id                   int64  `json:"id"`
+	tenantId             int64  `json:"tenantId"`
+	accountCode          string `json:"accountCode"`
+	accountName          string `json:"accountName"`
+	provider             string `json:"provider"`
+	apiKeyCipher         string `json:"apiKeyCipher"`
+	apiSecretCipher      string `json:"apiSecretCipher"`
+	callbackSecretCipher string `json:"callbackSecretCipher"`
+	extConfig            string `json:"extConfig"`
+	status               int64  `json:"status"`
+	isDefault            int64  `json:"isDefault"`
+	createTimes          int64  `json:"createTimes"`
+	updateTimes          int64  `json:"updateTimes"`
+}
+
+type CryptoRechargeTx {
+	id                   int64  `json:"id"`
+	tenantId             int64  `json:"tenantId"`
+	userId               int64  `json:"userId"`
+	orderId              int64  `json:"orderId"`
+	orderNo              string `json:"orderNo"`
+	coin                 string `json:"coin"`
+	chainCode            int64  `json:"chainCode"`
+	txHash               string `json:"txHash"`
+	fromAddress          string `json:"fromAddress"`
+	toAddress            string `json:"toAddress"`
+	memo                 string `json:"memo"`
+	amount               string `json:"amount"`
+	blockHeight          int64  `json:"blockHeight"`
+	confirmCount         int64  `json:"confirmCount"`
+	requiredConfirmCount int64  `json:"requiredConfirmCount"`
+	status               int64  `json:"status"`
+	rawData              string `json:"rawData"`
+	createTimes          int64  `json:"createTimes"`
+	updateTimes          int64  `json:"updateTimes"`
+}
+
 // ====================
 // platform
 // ====================
@@ -763,6 +818,167 @@ type GetWithdrawNotifyLogResp {
 	data PayNotifyLog `json:"data"`
 }
 
+type CreateCryptoRechargeAddressReq {
+	tenantId      int64  `json:"tenantId"`
+	userId        int64  `json:"userId"`
+	walletType    int64  `json:"walletType"`
+	coin          string `json:"coin"`
+	chainCode     int64  `json:"chainCode"`
+	address       string `json:"address"`
+	memo          string `json:"memo,optional"`
+	addressSource int64  `json:"addressSource"`
+	addressType   int64  `json:"addressType"`
+	status        int64  `json:"status"`
+}
+
+type UpdateCryptoRechargeAddressReq {
+	id            int64  `json:"id"`
+	tenantId      int64  `json:"tenantId"`
+	address       string `json:"address"`
+	memo          string `json:"memo,optional"`
+	addressSource int64  `json:"addressSource"`
+	addressType   int64  `json:"addressType"`
+	status        int64  `json:"status"`
+}
+
+type GetCryptoRechargeAddressReq {
+	tenantId int64 `form:"tenantId"`
+	id       int64 `form:"id"`
+}
+
+type GetCryptoRechargeAddressResp {
+	RespBase
+	data CryptoRechargeAddress `json:"data"`
+}
+
+type ListCryptoRechargeAddressesReq {
+	PageReq
+	tenantId    int64  `form:"tenantId,optional"`
+	userId      int64  `form:"userId,optional"`
+	walletType  int64  `form:"walletType,optional"`
+	coin        string `form:"coin,optional"`
+	chainCode   int64  `form:"chainCode,optional"`
+	address     string `form:"address,optional"`
+	status      int64  `form:"status,optional"`
+	addressType int64  `form:"addressType,optional"`
+}
+
+type ListCryptoRechargeAddressesResp {
+	RespBase
+	data []CryptoRechargeAddress `json:"data"`
+}
+
+type CreateCryptoWalletAccountReq {
+	tenantId             int64  `json:"tenantId"`
+	accountCode          string `json:"accountCode"`
+	accountName          string `json:"accountName"`
+	provider             string `json:"provider"`
+	apiKeyCipher         string `json:"apiKeyCipher,optional"`
+	apiSecretCipher      string `json:"apiSecretCipher,optional"`
+	callbackSecretCipher string `json:"callbackSecretCipher,optional"`
+	extConfig            string `json:"extConfig,optional"`
+	status               int64  `json:"status"`
+	isDefault            int64  `json:"isDefault"`
+}
+
+type UpdateCryptoWalletAccountReq {
+	id                   int64  `json:"id"`
+	tenantId             int64  `json:"tenantId"`
+	accountName          string `json:"accountName"`
+	provider             string `json:"provider"`
+	apiKeyCipher         string `json:"apiKeyCipher,optional"`
+	apiSecretCipher      string `json:"apiSecretCipher,optional"`
+	callbackSecretCipher string `json:"callbackSecretCipher,optional"`
+	extConfig            string `json:"extConfig,optional"`
+	status               int64  `json:"status"`
+	isDefault            int64  `json:"isDefault"`
+}
+
+type GetCryptoWalletAccountReq {
+	tenantId int64 `form:"tenantId"`
+	id       int64 `form:"id"`
+}
+
+type GetCryptoWalletAccountResp {
+	RespBase
+	data CryptoWalletAccount `json:"data"`
+}
+
+type ListCryptoWalletAccountsReq {
+	PageReq
+	tenantId  int64  `form:"tenantId,optional"`
+	keyword   string `form:"keyword,optional"`
+	provider  string `form:"provider,optional"`
+	status    int64  `form:"status,optional"`
+	isDefault int64  `form:"isDefault,optional"`
+}
+
+type ListCryptoWalletAccountsResp {
+	RespBase
+	data []CryptoWalletAccount `json:"data"`
+}
+
+type CreateCryptoRechargeTxReq {
+	tenantId             int64  `json:"tenantId"`
+	userId               int64  `json:"userId"`
+	orderId              int64  `json:"orderId,optional"`
+	orderNo              string `json:"orderNo,optional"`
+	coin                 string `json:"coin"`
+	chainCode            int64  `json:"chainCode"`
+	txHash               string `json:"txHash"`
+	fromAddress          string `json:"fromAddress,optional"`
+	toAddress            string `json:"toAddress"`
+	memo                 string `json:"memo,optional"`
+	amount               string `json:"amount"`
+	blockHeight          int64  `json:"blockHeight,optional"`
+	confirmCount         int64  `json:"confirmCount,optional"`
+	requiredConfirmCount int64  `json:"requiredConfirmCount,optional"`
+	status               int64  `json:"status"`
+	rawData              string `json:"rawData,optional"`
+}
+
+type UpdateCryptoRechargeTxReq {
+	id                   int64  `json:"id"`
+	tenantId             int64  `json:"tenantId"`
+	orderId              int64  `json:"orderId,optional"`
+	orderNo              string `json:"orderNo,optional"`
+	confirmCount         int64  `json:"confirmCount,optional"`
+	requiredConfirmCount int64  `json:"requiredConfirmCount,optional"`
+	status               int64  `json:"status"`
+	rawData              string `json:"rawData,optional"`
+}
+
+type GetCryptoRechargeTxReq {
+	tenantId  int64  `form:"tenantId"`
+	id        int64  `form:"id,optional"`
+	txHash    string `form:"txHash,optional"`
+	chainCode int64  `form:"chainCode,optional"`
+}
+
+type GetCryptoRechargeTxResp {
+	RespBase
+	data CryptoRechargeTx `json:"data"`
+}
+
+type ListCryptoRechargeTxsReq {
+	PageReq
+	tenantId        int64  `form:"tenantId,optional"`
+	userId          int64  `form:"userId,optional"`
+	orderNo         string `form:"orderNo,optional"`
+	coin            string `form:"coin,optional"`
+	chainCode       int64  `form:"chainCode,optional"`
+	txHash          string `form:"txHash,optional"`
+	toAddress       string `form:"toAddress,optional"`
+	status          int64  `form:"status,optional"`
+	createTimeStart int64  `form:"createTimeStart,optional"`
+	createTimeEnd   int64  `form:"createTimeEnd,optional"`
+}
+
+type ListCryptoRechargeTxsResp {
+	RespBase
+	data []CryptoRechargeTx `json:"data"`
+}
+
 @server (
 	prefix: /admin/payment
 	group:  payment
@@ -951,5 +1167,52 @@ service admin {
 	// 获取提现回调日志详情
 	@handler GetWithdrawNotifyLog
 	get /withdraw-notify-log/:id (GetWithdrawNotifyLogReq) returns (GetWithdrawNotifyLogResp)
-}
 
+	// 创建链上充值地址
+	@handler CreateCryptoRechargeAddress
+	post /crypto-recharge-address (CreateCryptoRechargeAddressReq) returns (RespBase)
+
+	// 更新链上充值地址
+	@handler UpdateCryptoRechargeAddress
+	put /crypto-recharge-address (UpdateCryptoRechargeAddressReq) returns (RespBase)
+
+	// 链上充值地址详情
+	@handler GetCryptoRechargeAddress
+	get /crypto-recharge-address (GetCryptoRechargeAddressReq) returns (GetCryptoRechargeAddressResp)
+
+	// 链上充值地址列表
+	@handler ListCryptoRechargeAddresses
+	get /crypto-recharge-addresses (ListCryptoRechargeAddressesReq) returns (ListCryptoRechargeAddressesResp)
+
+	// 创建链上钱包账号
+	@handler CreateCryptoWalletAccount
+	post /crypto-wallet-account (CreateCryptoWalletAccountReq) returns (RespBase)
+
+	// 更新链上钱包账号
+	@handler UpdateCryptoWalletAccount
+	put /crypto-wallet-account (UpdateCryptoWalletAccountReq) returns (RespBase)
+
+	// 链上钱包账号详情
+	@handler GetCryptoWalletAccount
+	get /crypto-wallet-account (GetCryptoWalletAccountReq) returns (GetCryptoWalletAccountResp)
+
+	// 链上钱包账号列表
+	@handler ListCryptoWalletAccounts
+	get /crypto-wallet-accounts (ListCryptoWalletAccountsReq) returns (ListCryptoWalletAccountsResp)
+
+	// 创建链上充值交易
+	@handler CreateCryptoRechargeTx
+	post /crypto-recharge-tx (CreateCryptoRechargeTxReq) returns (RespBase)
+
+	// 更新链上充值交易
+	@handler UpdateCryptoRechargeTx
+	put /crypto-recharge-tx (UpdateCryptoRechargeTxReq) returns (RespBase)
+
+	// 链上充值交易详情
+	@handler GetCryptoRechargeTx
+	get /crypto-recharge-tx (GetCryptoRechargeTxReq) returns (GetCryptoRechargeTxResp)
+
+	// 链上充值交易列表
+	@handler ListCryptoRechargeTxs
+	get /crypto-recharge-txs (ListCryptoRechargeTxsReq) returns (ListCryptoRechargeTxsResp)
+}

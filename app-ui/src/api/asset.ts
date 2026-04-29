@@ -1,19 +1,31 @@
 import { http } from '@/api/http'
 import { compactParams } from '@/api/utils'
-import type { RespBase } from '@/types/api'
+import type { OptionsGroup, RespBase } from '@/types/api'
 import type {
+  AssetCoinConfig,
   AssetFlow,
   AssetFreeze,
   AssetLock,
   AssetUserAsset,
   GetMyAssetReq,
   GetMyAssetSummaryReq,
+  ListAssetCoinConfigsReq,
   ListMyAssetFlowsReq,
   ListMyAssetsReq,
   ListMyFreezesReq,
   ListMyLocksReq,
   UserAssetSummary,
 } from '@/types/asset'
+
+export function apiGetAssetOptions(): Promise<RespBase & { data: OptionsGroup[] }> {
+  return http.get('/asset/options').then((res) => res.data)
+}
+
+export function apiListAssetCoinConfigs(
+  params: ListAssetCoinConfigsReq,
+): Promise<RespBase & { data: AssetCoinConfig[] }> {
+  return http.get('/asset/coin-configs', { params: compactParams(params) }).then((res) => res.data)
+}
 
 export function apiGetMyAssetSummary(params: GetMyAssetSummaryReq): Promise<RespBase & { data: UserAssetSummary }> {
   return http.get('/asset/summary', { params: compactParams(params) }).then((res) => res.data)

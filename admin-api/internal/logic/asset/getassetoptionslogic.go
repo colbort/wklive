@@ -7,6 +7,7 @@ import (
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
 	"wklive/proto/asset"
+	"wklive/proto/common"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -30,6 +31,7 @@ func (l *GetAssetOptionsLogic) GetAssetOptions() (resp *types.GetAssetOptionsRes
 		RespBase: types.RespBase{Code: 200, Msg: "success"},
 		Data: []types.OptionsGroup{
 			logicutil.EnumGroup("walletType", "钱包类型", asset.WalletType_WALLET_TYPE_UNKNOWN.Descriptor()),
+			logicutil.EnumGroup("chainCode", "链类型", common.ChainCode_CHAIN_CODE_UNKNOWN.Descriptor()),
 			logicutil.EnumGroup("assetStatus", "资产状态", asset.AssetStatus_ASSET_STATUS_UNKNOWN.Descriptor()),
 			logicutil.EnumGroup("freezeStatus", "冻结状态", asset.FreezeStatus_FREEZE_STATUS_UNKNOWN.Descriptor()),
 			logicutil.EnumGroup("lockStatus", "锁定状态", asset.LockStatus_LOCK_STATUS_UNKNOWN.Descriptor()),

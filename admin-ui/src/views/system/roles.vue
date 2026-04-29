@@ -2,8 +2,8 @@
 import { computed, ref, onMounted, nextTick } from 'vue'
 import { ElMessage, type FormInstance, type TreeInstance } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import type { OptionGroup } from '@/services'
-import type { SysRole } from '@/services/system/RoleService'
+import type { OptionGroup, RespBase } from '@/services'
+import type { RoleQueryParams, SysRole } from '@/services/system/RoleService'
 import type { MenuNode, PermItem } from '@/services/system/MenuService'
 import { usePagination, useLoading, useConfirm, useForm } from '@/composables'
 
@@ -40,7 +40,7 @@ const tableData = ref<SysRole[]>([])
 async function fetchList() {
   await withLoading(async () => {
     try {
-      const q: any = {
+      const q: RoleQueryParams = {
         keyword: queryForm.keyword,
         status: queryForm.status,
         cursor: pagination.cursor,
@@ -72,13 +72,13 @@ async function fetchOptions() {
   }
 }
 
-function unwrapList(resp: any): any[] {
+function unwrapList(resp: RespBase): any[] {
   if (!resp) return []
   if (Array.isArray(resp)) return resp
-  return resp.data || resp.list || resp.rows || resp.result || []
+  return resp.data || []
 }
 
-function unwrapData(resp: any): any {
+function unwrapData(resp: RespBase): any {
   if (!resp) return null
   return resp.data ?? resp
 }
@@ -250,7 +250,7 @@ function onMenuTreeCheck() {
 function openGrant(row: SysRole) {
   currentRole.value = row
   grantVisible.value = true
-  initGrant(row.id, row.tenantId??0)
+  initGrant(row.id, row.tenantId ?? 0)
 }
 
 async function initGrant(roleId: number, tenantId: number) {

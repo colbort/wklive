@@ -214,12 +214,20 @@ type AppMyRedeemLogListResp {
 	data []StakeRedeemLog `json:"data"`
 }
 
+type GetStakingOptionsResp {
+	RespBase
+	data []OptionsGroup `json:"data"`
+}
+
 @server (
 	prefix: /app/staking
 	group:  staking
 	middleware: PublicRateLimit
 )
 service app {
+	@handler GetStakingOptions
+	get /options returns (GetStakingOptionsResp)
+
 	@handler AppProductList
 	get /products (AppProductListReq) returns (AppProductListResp)
 

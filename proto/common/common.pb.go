@@ -21,6 +21,78 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type ChainCode int32
+
+const (
+	ChainCode_CHAIN_CODE_UNKNOWN ChainCode = 0 // 未指定
+	// 主网
+	ChainCode_CHAIN_CODE_BTC     ChainCode = 1 // Bitcoin
+	ChainCode_CHAIN_CODE_ETH     ChainCode = 2 // Ethereum mainnet
+	ChainCode_CHAIN_CODE_TRX     ChainCode = 3 // Tron
+	ChainCode_CHAIN_CODE_BSC     ChainCode = 4 // BNB Smart Chain
+	ChainCode_CHAIN_CODE_SOL     ChainCode = 5 // Solana
+	ChainCode_CHAIN_CODE_POLYGON ChainCode = 6 // Polygon
+	// 代币标准/常用网络展示名
+	ChainCode_CHAIN_CODE_TRC20 ChainCode = 20 // USDT on Tron
+	ChainCode_CHAIN_CODE_ERC20 ChainCode = 21 // Token on Ethereum
+	ChainCode_CHAIN_CODE_BEP20 ChainCode = 22 // Token on BSC
+)
+
+// Enum value maps for ChainCode.
+var (
+	ChainCode_name = map[int32]string{
+		0:  "CHAIN_CODE_UNKNOWN",
+		1:  "CHAIN_CODE_BTC",
+		2:  "CHAIN_CODE_ETH",
+		3:  "CHAIN_CODE_TRX",
+		4:  "CHAIN_CODE_BSC",
+		5:  "CHAIN_CODE_SOL",
+		6:  "CHAIN_CODE_POLYGON",
+		20: "CHAIN_CODE_TRC20",
+		21: "CHAIN_CODE_ERC20",
+		22: "CHAIN_CODE_BEP20",
+	}
+	ChainCode_value = map[string]int32{
+		"CHAIN_CODE_UNKNOWN": 0,
+		"CHAIN_CODE_BTC":     1,
+		"CHAIN_CODE_ETH":     2,
+		"CHAIN_CODE_TRX":     3,
+		"CHAIN_CODE_BSC":     4,
+		"CHAIN_CODE_SOL":     5,
+		"CHAIN_CODE_POLYGON": 6,
+		"CHAIN_CODE_TRC20":   20,
+		"CHAIN_CODE_ERC20":   21,
+		"CHAIN_CODE_BEP20":   22,
+	}
+)
+
+func (x ChainCode) Enum() *ChainCode {
+	p := new(ChainCode)
+	*p = x
+	return p
+}
+
+func (x ChainCode) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ChainCode) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_common_common_proto_enumTypes[0].Descriptor()
+}
+
+func (ChainCode) Type() protoreflect.EnumType {
+	return &file_proto_common_common_proto_enumTypes[0]
+}
+
+func (x ChainCode) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ChainCode.Descriptor instead.
+func (ChainCode) EnumDescriptor() ([]byte, []int) {
+	return file_proto_common_common_proto_rawDescGZIP(), []int{0}
+}
+
 type Empty struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -340,7 +412,18 @@ const file_proto_common_common_proto_rawDesc = "" +
 	"\tTimeRange\x12\x1d\n" +
 	"\n" +
 	"start_time\x18\x01 \x01(\x03R\tstartTime\x12\x19\n" +
-	"\bend_time\x18\x02 \x01(\x03R\aendTimeB\x1cZ\x1awklive/proto/common;commonb\x06proto3"
+	"\bend_time\x18\x02 \x01(\x03R\aendTime*\xe1\x01\n" +
+	"\tChainCode\x12\x16\n" +
+	"\x12CHAIN_CODE_UNKNOWN\x10\x00\x12\x12\n" +
+	"\x0eCHAIN_CODE_BTC\x10\x01\x12\x12\n" +
+	"\x0eCHAIN_CODE_ETH\x10\x02\x12\x12\n" +
+	"\x0eCHAIN_CODE_TRX\x10\x03\x12\x12\n" +
+	"\x0eCHAIN_CODE_BSC\x10\x04\x12\x12\n" +
+	"\x0eCHAIN_CODE_SOL\x10\x05\x12\x16\n" +
+	"\x12CHAIN_CODE_POLYGON\x10\x06\x12\x14\n" +
+	"\x10CHAIN_CODE_TRC20\x10\x14\x12\x14\n" +
+	"\x10CHAIN_CODE_ERC20\x10\x15\x12\x14\n" +
+	"\x10CHAIN_CODE_BEP20\x10\x16B\x1cZ\x1awklive/proto/common;commonb\x06proto3"
 
 var (
 	file_proto_common_common_proto_rawDescOnce sync.Once
@@ -354,13 +437,15 @@ func file_proto_common_common_proto_rawDescGZIP() []byte {
 	return file_proto_common_common_proto_rawDescData
 }
 
+var file_proto_common_common_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_proto_common_common_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_proto_common_common_proto_goTypes = []any{
-	(*Empty)(nil),     // 0: common.Empty
-	(*RespBase)(nil),  // 1: common.RespBase
-	(*PageReq)(nil),   // 2: common.PageReq
-	(*TokenInfo)(nil), // 3: common.TokenInfo
-	(*TimeRange)(nil), // 4: common.TimeRange
+	(ChainCode)(0),    // 0: common.ChainCode
+	(*Empty)(nil),     // 1: common.Empty
+	(*RespBase)(nil),  // 2: common.RespBase
+	(*PageReq)(nil),   // 3: common.PageReq
+	(*TokenInfo)(nil), // 4: common.TokenInfo
+	(*TimeRange)(nil), // 5: common.TimeRange
 }
 var file_proto_common_common_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -380,13 +465,14 @@ func file_proto_common_common_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_common_common_proto_rawDesc), len(file_proto_common_common_proto_rawDesc)),
-			NumEnums:      0,
+			NumEnums:      1,
 			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_proto_common_common_proto_goTypes,
 		DependencyIndexes: file_proto_common_common_proto_depIdxs,
+		EnumInfos:         file_proto_common_common_proto_enumTypes,
 		MessageInfos:      file_proto_common_common_proto_msgTypes,
 	}.Build()
 	File_proto_common_common_proto = out.File

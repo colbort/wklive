@@ -27,6 +27,7 @@ type AssetCoinConfig {
 	symbol          string `json:"symbol"` // 展示符号/资产标识
 	coinName        string `json:"coinName"` // 币种名称
 	coinType        int64  `json:"coinType"` // 币种类型
+	chainCode       int64  `json:"chainCode"` // 链类型
 	iconUrl         string `json:"iconUrl"` // 币种图标URL
 	iconText        string `json:"iconText"` // 币种图标文案/符号
 	iconBgColor     string `json:"iconBgColor"` // 图标背景色
@@ -206,6 +207,21 @@ type ListMyLocksReq {
 type ListMyLocksResp {
 	RespBase
 	data []AssetLock `json:"data"`
+}
+
+type GetAssetOptionsResp {
+	RespBase
+	data []OptionsGroup `json:"data"`
+}
+
+@server (
+	prefix: /app/asset
+	group:  asset
+	middleware: PublicRateLimit
+)
+service app {
+	@handler GetAssetOptions
+	get /options returns (GetAssetOptionsResp)
 }
 
 @server (

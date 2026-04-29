@@ -49,6 +49,7 @@ func (l *UpdateAssetCoinConfigLogic) UpdateAssetCoinConfig(in *asset.UpdateAsset
 		Symbol:          in.Symbol,
 		CoinName:        in.CoinName,
 		CoinType:        assetCoinTypeValue(in.CoinType, old.CoinType),
+		ChainCode:       int64(in.ChainCode),
 		IconUrl:         in.IconUrl,
 		IconText:        in.IconText,
 		IconBgColor:     in.IconBgColor,
@@ -80,6 +81,9 @@ func (l *UpdateAssetCoinConfigLogic) UpdateAssetCoinConfig(in *asset.UpdateAsset
 	}
 	if data.DecimalPlaces == 0 {
 		data.DecimalPlaces = old.DecimalPlaces
+	}
+	if data.ChainCode == 0 {
+		data.ChainCode = old.ChainCode
 	}
 
 	if err := l.svcCtx.AssetCoinConfigModel.Update(l.ctx, data); err != nil {

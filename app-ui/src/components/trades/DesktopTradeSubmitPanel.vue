@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+
+import { apiGetTradeOptions } from '@/api/trade'
+import { optionText, useOptions } from '@/composables/useOptions'
 import type { ItickTenantProduct } from '@/types/itick'
 
 defineProps<{
@@ -9,23 +13,48 @@ defineProps<{
 const emit = defineEmits<{
   (e: 'update:orderMode', value: 'market' | 'limit'): void
 }>()
+
+const tradeOptions = useOptions(apiGetTradeOptions)
+const orderTypeOptions = computed(() => {
+  const options = tradeOptions.getGroup('orderType').filter((option) => {
+    return ['ORDER_TYPE_MARKET', 'ORDER_TYPE_LIMIT'].includes(option.code)
+  })
+
+  return options.length
+    ? options
+    : [
+        { value: 2, code: 'ORDER_TYPE_MARKET' },
+        { value: 1, code: 'ORDER_TYPE_LIMIT' },
+      ]
+})
+const marginModeOptions = computed(() => {
+  const options = tradeOptions.getGroup('marginMode').filter((option) => option.value > 0)
+  return options.length ? options : [{ value: 1, code: 'MARGIN_MODE_CROSS' }]
+})
+
+function orderModeFromCode(code: string): 'market' | 'limit' {
+  return code === 'ORDER_TYPE_LIMIT' ? 'limit' : 'market'
+}
 </script>
 
 <template>
   <aside class="desktop-order-panel">
     <div class="mode-switch">
-      <button type="button" :class="{ active: orderMode === 'market' }" @click="emit('update:orderMode', 'market')">
-        市价
-      </button>
-      <button type="button" :class="{ active: orderMode === 'limit' }" @click="emit('update:orderMode', 'limit')">
-        限价
+      <button
+        v-for="option in orderTypeOptions"
+        :key="option.value"
+        type="button"
+        :class="{ active: orderMode === orderModeFromCode(option.code) }"
+        @click="emit('update:orderMode', orderModeFromCode(option.code))"
+      >
+        {{ optionText(option) }}
       </button>
     </div>
 
     <div class="desktop-order-panel__grid">
       <div>
         <label>保证金模式</label>
-        <button type="button">全仓</button>
+        <button type="button">{{ optionText(marginModeOptions[0]) }}</button>
       </div>
       <div>
         <label>杠杆</label>

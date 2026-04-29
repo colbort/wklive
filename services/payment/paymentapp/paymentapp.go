@@ -20,6 +20,10 @@ type (
 	CreateRechargeOrderResp           = payment.CreateRechargeOrderResp
 	CreateWithdrawOrderReq            = payment.CreateWithdrawOrderReq
 	CreateWithdrawOrderResp           = payment.CreateWithdrawOrderResp
+	GetMyCryptoRechargeAddressReq     = payment.GetMyCryptoRechargeAddressReq
+	GetMyCryptoRechargeAddressResp    = payment.GetMyCryptoRechargeAddressResp
+	GetMyCryptoRechargeTxReq          = payment.GetMyCryptoRechargeTxReq
+	GetMyCryptoRechargeTxResp         = payment.GetMyCryptoRechargeTxResp
 	GetMyRechargeOrderReq             = payment.GetMyRechargeOrderReq
 	GetMyRechargeOrderResp            = payment.GetMyRechargeOrderResp
 	GetMyRechargeStatReq              = payment.GetMyRechargeStatReq
@@ -28,6 +32,10 @@ type (
 	GetMyWithdrawOrderResp            = payment.GetMyWithdrawOrderResp
 	ListAvailableRechargeChannelsReq  = payment.ListAvailableRechargeChannelsReq
 	ListAvailableRechargeChannelsResp = payment.ListAvailableRechargeChannelsResp
+	ListMyCryptoRechargeAddressesReq  = payment.ListMyCryptoRechargeAddressesReq
+	ListMyCryptoRechargeAddressesResp = payment.ListMyCryptoRechargeAddressesResp
+	ListMyCryptoRechargeTxsReq        = payment.ListMyCryptoRechargeTxsReq
+	ListMyCryptoRechargeTxsResp       = payment.ListMyCryptoRechargeTxsResp
 	ListMyRechargeOrdersReq           = payment.ListMyRechargeOrdersReq
 	ListMyRechargeOrdersResp          = payment.ListMyRechargeOrdersResp
 	ListMyWithdrawOrdersReq           = payment.ListMyWithdrawOrdersReq
@@ -56,6 +64,14 @@ type (
 		ListMyWithdrawOrders(ctx context.Context, in *ListMyWithdrawOrdersReq, opts ...grpc.CallOption) (*ListMyWithdrawOrdersResp, error)
 		// 获取提现订单详情
 		GetMyWithdrawOrder(ctx context.Context, in *GetMyWithdrawOrderReq, opts ...grpc.CallOption) (*GetMyWithdrawOrderResp, error)
+		// 获取/分配我的链上充值地址
+		GetMyCryptoRechargeAddress(ctx context.Context, in *GetMyCryptoRechargeAddressReq, opts ...grpc.CallOption) (*GetMyCryptoRechargeAddressResp, error)
+		// 我的链上充值地址列表
+		ListMyCryptoRechargeAddresses(ctx context.Context, in *ListMyCryptoRechargeAddressesReq, opts ...grpc.CallOption) (*ListMyCryptoRechargeAddressesResp, error)
+		// 我的链上充值交易列表
+		ListMyCryptoRechargeTxs(ctx context.Context, in *ListMyCryptoRechargeTxsReq, opts ...grpc.CallOption) (*ListMyCryptoRechargeTxsResp, error)
+		// 我的链上充值交易详情
+		GetMyCryptoRechargeTx(ctx context.Context, in *GetMyCryptoRechargeTxReq, opts ...grpc.CallOption) (*GetMyCryptoRechargeTxResp, error)
 	}
 
 	defaultPaymentApp struct {
@@ -127,4 +143,28 @@ func (m *defaultPaymentApp) ListMyWithdrawOrders(ctx context.Context, in *ListMy
 func (m *defaultPaymentApp) GetMyWithdrawOrder(ctx context.Context, in *GetMyWithdrawOrderReq, opts ...grpc.CallOption) (*GetMyWithdrawOrderResp, error) {
 	client := payment.NewPaymentAppClient(m.cli.Conn())
 	return client.GetMyWithdrawOrder(ctx, in, opts...)
+}
+
+// 获取/分配我的链上充值地址
+func (m *defaultPaymentApp) GetMyCryptoRechargeAddress(ctx context.Context, in *GetMyCryptoRechargeAddressReq, opts ...grpc.CallOption) (*GetMyCryptoRechargeAddressResp, error) {
+	client := payment.NewPaymentAppClient(m.cli.Conn())
+	return client.GetMyCryptoRechargeAddress(ctx, in, opts...)
+}
+
+// 我的链上充值地址列表
+func (m *defaultPaymentApp) ListMyCryptoRechargeAddresses(ctx context.Context, in *ListMyCryptoRechargeAddressesReq, opts ...grpc.CallOption) (*ListMyCryptoRechargeAddressesResp, error) {
+	client := payment.NewPaymentAppClient(m.cli.Conn())
+	return client.ListMyCryptoRechargeAddresses(ctx, in, opts...)
+}
+
+// 我的链上充值交易列表
+func (m *defaultPaymentApp) ListMyCryptoRechargeTxs(ctx context.Context, in *ListMyCryptoRechargeTxsReq, opts ...grpc.CallOption) (*ListMyCryptoRechargeTxsResp, error) {
+	client := payment.NewPaymentAppClient(m.cli.Conn())
+	return client.ListMyCryptoRechargeTxs(ctx, in, opts...)
+}
+
+// 我的链上充值交易详情
+func (m *defaultPaymentApp) GetMyCryptoRechargeTx(ctx context.Context, in *GetMyCryptoRechargeTxReq, opts ...grpc.CallOption) (*GetMyCryptoRechargeTxResp, error) {
+	client := payment.NewPaymentAppClient(m.cli.Conn())
+	return client.GetMyCryptoRechargeTx(ctx, in, opts...)
 }

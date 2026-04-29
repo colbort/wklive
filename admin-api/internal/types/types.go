@@ -299,6 +299,7 @@ type AssetCoinConfig struct {
 	Symbol          string `json:"symbol"`
 	CoinName        string `json:"coinName"`
 	CoinType        int64  `json:"coinType"`
+	ChainCode       int64  `json:"chainCode"`
 	IconUrl         string `json:"iconUrl"`
 	IconText        string `json:"iconText"`
 	IconBgColor     string `json:"iconBgColor"`
@@ -579,6 +580,7 @@ type CreateAssetCoinConfigReq struct {
 	Symbol          string `json:"symbol"`
 	CoinName        string `json:"coinName"`
 	CoinType        int64  `json:"coinType"`
+	ChainCode       int64  `json:"chainCode,optional"`
 	IconUrl         string `json:"iconUrl,optional"`
 	IconText        string `json:"iconText,optional"`
 	IconBgColor     string `json:"iconBgColor,optional"`
@@ -630,6 +632,51 @@ type CreateContractReq struct {
 type CreateContractResp struct {
 	RespBase
 	Id int64 `json:"id"`
+}
+
+type CreateCryptoRechargeAddressReq struct {
+	TenantId      int64  `json:"tenantId"`
+	UserId        int64  `json:"userId"`
+	WalletType    int64  `json:"walletType"`
+	Coin          string `json:"coin"`
+	ChainCode     int64  `json:"chainCode"`
+	Address       string `json:"address"`
+	Memo          string `json:"memo,optional"`
+	AddressSource int64  `json:"addressSource"`
+	AddressType   int64  `json:"addressType"`
+	Status        int64  `json:"status"`
+}
+
+type CreateCryptoRechargeTxReq struct {
+	TenantId             int64  `json:"tenantId"`
+	UserId               int64  `json:"userId"`
+	OrderId              int64  `json:"orderId,optional"`
+	OrderNo              string `json:"orderNo,optional"`
+	Coin                 string `json:"coin"`
+	ChainCode            int64  `json:"chainCode"`
+	TxHash               string `json:"txHash"`
+	FromAddress          string `json:"fromAddress,optional"`
+	ToAddress            string `json:"toAddress"`
+	Memo                 string `json:"memo,optional"`
+	Amount               string `json:"amount"`
+	BlockHeight          int64  `json:"blockHeight,optional"`
+	ConfirmCount         int64  `json:"confirmCount,optional"`
+	RequiredConfirmCount int64  `json:"requiredConfirmCount,optional"`
+	Status               int64  `json:"status"`
+	RawData              string `json:"rawData,optional"`
+}
+
+type CreateCryptoWalletAccountReq struct {
+	TenantId             int64  `json:"tenantId"`
+	AccountCode          string `json:"accountCode"`
+	AccountName          string `json:"accountName"`
+	Provider             string `json:"provider"`
+	ApiKeyCipher         string `json:"apiKeyCipher,optional"`
+	ApiSecretCipher      string `json:"apiSecretCipher,optional"`
+	CallbackSecretCipher string `json:"callbackSecretCipher,optional"`
+	ExtConfig            string `json:"extConfig,optional"`
+	Status               int64  `json:"status"`
+	IsDefault            int64  `json:"isDefault"`
 }
 
 type CreatePayPlatformReq struct {
@@ -804,6 +851,61 @@ type CreateUserResp struct {
 	UserId int64 `json:"userId"`
 }
 
+type CryptoRechargeAddress struct {
+	Id            int64  `json:"id"`
+	TenantId      int64  `json:"tenantId"`
+	UserId        int64  `json:"userId"`
+	WalletType    int64  `json:"walletType"`
+	Coin          string `json:"coin"`
+	ChainCode     int64  `json:"chainCode"`
+	Address       string `json:"address"`
+	Memo          string `json:"memo"`
+	AddressSource int64  `json:"addressSource"`
+	AddressType   int64  `json:"addressType"`
+	Status        int64  `json:"status"`
+	LastUsedTime  int64  `json:"lastUsedTime"`
+	CreateTimes   int64  `json:"createTimes"`
+	UpdateTimes   int64  `json:"updateTimes"`
+}
+
+type CryptoRechargeTx struct {
+	Id                   int64  `json:"id"`
+	TenantId             int64  `json:"tenantId"`
+	UserId               int64  `json:"userId"`
+	OrderId              int64  `json:"orderId"`
+	OrderNo              string `json:"orderNo"`
+	Coin                 string `json:"coin"`
+	ChainCode            int64  `json:"chainCode"`
+	TxHash               string `json:"txHash"`
+	FromAddress          string `json:"fromAddress"`
+	ToAddress            string `json:"toAddress"`
+	Memo                 string `json:"memo"`
+	Amount               string `json:"amount"`
+	BlockHeight          int64  `json:"blockHeight"`
+	ConfirmCount         int64  `json:"confirmCount"`
+	RequiredConfirmCount int64  `json:"requiredConfirmCount"`
+	Status               int64  `json:"status"`
+	RawData              string `json:"rawData"`
+	CreateTimes          int64  `json:"createTimes"`
+	UpdateTimes          int64  `json:"updateTimes"`
+}
+
+type CryptoWalletAccount struct {
+	Id                   int64  `json:"id"`
+	TenantId             int64  `json:"tenantId"`
+	AccountCode          string `json:"accountCode"`
+	AccountName          string `json:"accountName"`
+	Provider             string `json:"provider"`
+	ApiKeyCipher         string `json:"apiKeyCipher"`
+	ApiSecretCipher      string `json:"apiSecretCipher"`
+	CallbackSecretCipher string `json:"callbackSecretCipher"`
+	ExtConfig            string `json:"extConfig"`
+	Status               int64  `json:"status"`
+	IsDefault            int64  `json:"isDefault"`
+	CreateTimes          int64  `json:"createTimes"`
+	UpdateTimes          int64  `json:"updateTimes"`
+}
+
 type DeleteAssetCoinConfigReq struct {
 	Id       int64 `path:"id"`
 	TenantId int64 `form:"tenantId,optional"`
@@ -932,6 +1034,38 @@ type GetContractReq struct {
 type GetContractResp struct {
 	RespBase
 	Data OptionContractDetail `json:"data"`
+}
+
+type GetCryptoRechargeAddressReq struct {
+	TenantId int64 `form:"tenantId"`
+	Id       int64 `form:"id"`
+}
+
+type GetCryptoRechargeAddressResp struct {
+	RespBase
+	Data CryptoRechargeAddress `json:"data"`
+}
+
+type GetCryptoRechargeTxReq struct {
+	TenantId  int64  `form:"tenantId"`
+	Id        int64  `form:"id,optional"`
+	TxHash    string `form:"txHash,optional"`
+	ChainCode int64  `form:"chainCode,optional"`
+}
+
+type GetCryptoRechargeTxResp struct {
+	RespBase
+	Data CryptoRechargeTx `json:"data"`
+}
+
+type GetCryptoWalletAccountReq struct {
+	TenantId int64 `form:"tenantId"`
+	Id       int64 `form:"id"`
+}
+
+type GetCryptoWalletAccountResp struct {
+	RespBase
+	Data CryptoWalletAccount `json:"data"`
 }
 
 type GetExerciseReq struct {
@@ -1659,6 +1793,56 @@ type ListContractsResp struct {
 	RespBase
 	List []OptionContractDetail `json:"list"`
 	Page PageReq                `json:"page"`
+}
+
+type ListCryptoRechargeAddressesReq struct {
+	PageReq
+	TenantId    int64  `form:"tenantId,optional"`
+	UserId      int64  `form:"userId,optional"`
+	WalletType  int64  `form:"walletType,optional"`
+	Coin        string `form:"coin,optional"`
+	ChainCode   int64  `form:"chainCode,optional"`
+	Address     string `form:"address,optional"`
+	Status      int64  `form:"status,optional"`
+	AddressType int64  `form:"addressType,optional"`
+}
+
+type ListCryptoRechargeAddressesResp struct {
+	RespBase
+	Data []CryptoRechargeAddress `json:"data"`
+}
+
+type ListCryptoRechargeTxsReq struct {
+	PageReq
+	TenantId        int64  `form:"tenantId,optional"`
+	UserId          int64  `form:"userId,optional"`
+	OrderNo         string `form:"orderNo,optional"`
+	Coin            string `form:"coin,optional"`
+	ChainCode       int64  `form:"chainCode,optional"`
+	TxHash          string `form:"txHash,optional"`
+	ToAddress       string `form:"toAddress,optional"`
+	Status          int64  `form:"status,optional"`
+	CreateTimeStart int64  `form:"createTimeStart,optional"`
+	CreateTimeEnd   int64  `form:"createTimeEnd,optional"`
+}
+
+type ListCryptoRechargeTxsResp struct {
+	RespBase
+	Data []CryptoRechargeTx `json:"data"`
+}
+
+type ListCryptoWalletAccountsReq struct {
+	PageReq
+	TenantId  int64  `form:"tenantId,optional"`
+	Keyword   string `form:"keyword,optional"`
+	Provider  string `form:"provider,optional"`
+	Status    int64  `form:"status,optional"`
+	IsDefault int64  `form:"isDefault,optional"`
+}
+
+type ListCryptoWalletAccountsResp struct {
+	RespBase
+	Data []CryptoWalletAccount `json:"data"`
 }
 
 type ListExercisesReq struct {
@@ -2400,6 +2584,7 @@ type PageAssetCoinConfigsReq struct {
 	Coin            string `form:"coin,optional"`
 	Symbol          string `form:"symbol,optional"`
 	CoinType        int64  `form:"coinType,optional"`
+	ChainCode       int64  `form:"chainCode,optional"`
 	AppVisible      int64  `form:"appVisible,optional"`
 	RechargeEnabled int64  `form:"rechargeEnabled,optional"`
 	WithdrawEnabled int64  `form:"withdrawEnabled,optional"`
@@ -3621,6 +3806,7 @@ type UpdateAssetCoinConfigReq struct {
 	Symbol          string `json:"symbol,optional"`
 	CoinName        string `json:"coinName,optional"`
 	CoinType        int64  `json:"coinType,optional"`
+	ChainCode       int64  `json:"chainCode,optional"`
 	IconUrl         string `json:"iconUrl,optional"`
 	IconText        string `json:"iconText,optional"`
 	IconBgColor     string `json:"iconBgColor,optional"`
@@ -3669,6 +3855,40 @@ type UpdateContractReq struct {
 	Sort             int64  `json:"sort"`
 	Remark           string `json:"remark,optional"`
 	IsDeleted        int64  `json:"isDeleted"`
+}
+
+type UpdateCryptoRechargeAddressReq struct {
+	Id            int64  `json:"id"`
+	TenantId      int64  `json:"tenantId"`
+	Address       string `json:"address"`
+	Memo          string `json:"memo,optional"`
+	AddressSource int64  `json:"addressSource"`
+	AddressType   int64  `json:"addressType"`
+	Status        int64  `json:"status"`
+}
+
+type UpdateCryptoRechargeTxReq struct {
+	Id                   int64  `json:"id"`
+	TenantId             int64  `json:"tenantId"`
+	OrderId              int64  `json:"orderId,optional"`
+	OrderNo              string `json:"orderNo,optional"`
+	ConfirmCount         int64  `json:"confirmCount,optional"`
+	RequiredConfirmCount int64  `json:"requiredConfirmCount,optional"`
+	Status               int64  `json:"status"`
+	RawData              string `json:"rawData,optional"`
+}
+
+type UpdateCryptoWalletAccountReq struct {
+	Id                   int64  `json:"id"`
+	TenantId             int64  `json:"tenantId"`
+	AccountName          string `json:"accountName"`
+	Provider             string `json:"provider"`
+	ApiKeyCipher         string `json:"apiKeyCipher,optional"`
+	ApiSecretCipher      string `json:"apiSecretCipher,optional"`
+	CallbackSecretCipher string `json:"callbackSecretCipher,optional"`
+	ExtConfig            string `json:"extConfig,optional"`
+	Status               int64  `json:"status"`
+	IsDefault            int64  `json:"isDefault"`
 }
 
 type UpdateMarketReq struct {

@@ -1272,6 +1272,546 @@ func (x *GetMyWithdrawOrderResp) GetData() *WithdrawOrder {
 	return nil
 }
 
+// 获取/分配我的链上充值地址
+type GetMyCryptoRechargeAddressReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	WalletType    int64                  `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3" json:"wallet_type,omitempty"`
+	Coin          string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`
+	ChainCode     common.ChainCode       `protobuf:"varint,5,opt,name=chain_code,json=chainCode,proto3,enum=common.ChainCode" json:"chain_code,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetMyCryptoRechargeAddressReq) Reset() {
+	*x = GetMyCryptoRechargeAddressReq{}
+	mi := &file_proto_payment_payment_app_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetMyCryptoRechargeAddressReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMyCryptoRechargeAddressReq) ProtoMessage() {}
+
+func (x *GetMyCryptoRechargeAddressReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_payment_payment_app_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMyCryptoRechargeAddressReq.ProtoReflect.Descriptor instead.
+func (*GetMyCryptoRechargeAddressReq) Descriptor() ([]byte, []int) {
+	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *GetMyCryptoRechargeAddressReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *GetMyCryptoRechargeAddressReq) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *GetMyCryptoRechargeAddressReq) GetWalletType() int64 {
+	if x != nil {
+		return x.WalletType
+	}
+	return 0
+}
+
+func (x *GetMyCryptoRechargeAddressReq) GetCoin() string {
+	if x != nil {
+		return x.Coin
+	}
+	return ""
+}
+
+func (x *GetMyCryptoRechargeAddressReq) GetChainCode() common.ChainCode {
+	if x != nil {
+		return x.ChainCode
+	}
+	return common.ChainCode(0)
+}
+
+type GetMyCryptoRechargeAddressResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          *CryptoRechargeAddress `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetMyCryptoRechargeAddressResp) Reset() {
+	*x = GetMyCryptoRechargeAddressResp{}
+	mi := &file_proto_payment_payment_app_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetMyCryptoRechargeAddressResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMyCryptoRechargeAddressResp) ProtoMessage() {}
+
+func (x *GetMyCryptoRechargeAddressResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_payment_payment_app_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMyCryptoRechargeAddressResp.ProtoReflect.Descriptor instead.
+func (*GetMyCryptoRechargeAddressResp) Descriptor() ([]byte, []int) {
+	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *GetMyCryptoRechargeAddressResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *GetMyCryptoRechargeAddressResp) GetData() *CryptoRechargeAddress {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+// 我的链上充值地址列表
+type ListMyCryptoRechargeAddressesReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	WalletType    int64                  `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3" json:"wallet_type,omitempty"`
+	Coin          string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`
+	ChainCode     common.ChainCode       `protobuf:"varint,5,opt,name=chain_code,json=chainCode,proto3,enum=common.ChainCode" json:"chain_code,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListMyCryptoRechargeAddressesReq) Reset() {
+	*x = ListMyCryptoRechargeAddressesReq{}
+	mi := &file_proto_payment_payment_app_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListMyCryptoRechargeAddressesReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMyCryptoRechargeAddressesReq) ProtoMessage() {}
+
+func (x *ListMyCryptoRechargeAddressesReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_payment_payment_app_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMyCryptoRechargeAddressesReq.ProtoReflect.Descriptor instead.
+func (*ListMyCryptoRechargeAddressesReq) Descriptor() ([]byte, []int) {
+	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *ListMyCryptoRechargeAddressesReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *ListMyCryptoRechargeAddressesReq) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ListMyCryptoRechargeAddressesReq) GetWalletType() int64 {
+	if x != nil {
+		return x.WalletType
+	}
+	return 0
+}
+
+func (x *ListMyCryptoRechargeAddressesReq) GetCoin() string {
+	if x != nil {
+		return x.Coin
+	}
+	return ""
+}
+
+func (x *ListMyCryptoRechargeAddressesReq) GetChainCode() common.ChainCode {
+	if x != nil {
+		return x.ChainCode
+	}
+	return common.ChainCode(0)
+}
+
+type ListMyCryptoRechargeAddressesResp struct {
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Base          *common.RespBase         `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          []*CryptoRechargeAddress `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListMyCryptoRechargeAddressesResp) Reset() {
+	*x = ListMyCryptoRechargeAddressesResp{}
+	mi := &file_proto_payment_payment_app_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListMyCryptoRechargeAddressesResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMyCryptoRechargeAddressesResp) ProtoMessage() {}
+
+func (x *ListMyCryptoRechargeAddressesResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_payment_payment_app_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMyCryptoRechargeAddressesResp.ProtoReflect.Descriptor instead.
+func (*ListMyCryptoRechargeAddressesResp) Descriptor() ([]byte, []int) {
+	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *ListMyCryptoRechargeAddressesResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *ListMyCryptoRechargeAddressesResp) GetData() []*CryptoRechargeAddress {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+// 我的链上充值交易列表
+type ListMyCryptoRechargeTxsReq struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	TenantId        int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId          int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Page            *common.PageReq        `protobuf:"bytes,3,opt,name=page,proto3" json:"page,omitempty"`
+	OrderNo         string                 `protobuf:"bytes,4,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
+	Coin            string                 `protobuf:"bytes,5,opt,name=coin,proto3" json:"coin,omitempty"`
+	ChainCode       common.ChainCode       `protobuf:"varint,6,opt,name=chain_code,json=chainCode,proto3,enum=common.ChainCode" json:"chain_code,omitempty"`
+	Status          CryptoRechargeTxStatus `protobuf:"varint,7,opt,name=status,proto3,enum=payment.CryptoRechargeTxStatus" json:"status,omitempty"`
+	CreateTimeStart int64                  `protobuf:"varint,8,opt,name=create_time_start,json=createTimeStart,proto3" json:"create_time_start,omitempty"`
+	CreateTimeEnd   int64                  `protobuf:"varint,9,opt,name=create_time_end,json=createTimeEnd,proto3" json:"create_time_end,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *ListMyCryptoRechargeTxsReq) Reset() {
+	*x = ListMyCryptoRechargeTxsReq{}
+	mi := &file_proto_payment_payment_app_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListMyCryptoRechargeTxsReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMyCryptoRechargeTxsReq) ProtoMessage() {}
+
+func (x *ListMyCryptoRechargeTxsReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_payment_payment_app_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMyCryptoRechargeTxsReq.ProtoReflect.Descriptor instead.
+func (*ListMyCryptoRechargeTxsReq) Descriptor() ([]byte, []int) {
+	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *ListMyCryptoRechargeTxsReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *ListMyCryptoRechargeTxsReq) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ListMyCryptoRechargeTxsReq) GetPage() *common.PageReq {
+	if x != nil {
+		return x.Page
+	}
+	return nil
+}
+
+func (x *ListMyCryptoRechargeTxsReq) GetOrderNo() string {
+	if x != nil {
+		return x.OrderNo
+	}
+	return ""
+}
+
+func (x *ListMyCryptoRechargeTxsReq) GetCoin() string {
+	if x != nil {
+		return x.Coin
+	}
+	return ""
+}
+
+func (x *ListMyCryptoRechargeTxsReq) GetChainCode() common.ChainCode {
+	if x != nil {
+		return x.ChainCode
+	}
+	return common.ChainCode(0)
+}
+
+func (x *ListMyCryptoRechargeTxsReq) GetStatus() CryptoRechargeTxStatus {
+	if x != nil {
+		return x.Status
+	}
+	return CryptoRechargeTxStatus_CRYPTO_RECHARGE_TX_STATUS_UNKNOWN
+}
+
+func (x *ListMyCryptoRechargeTxsReq) GetCreateTimeStart() int64 {
+	if x != nil {
+		return x.CreateTimeStart
+	}
+	return 0
+}
+
+func (x *ListMyCryptoRechargeTxsReq) GetCreateTimeEnd() int64 {
+	if x != nil {
+		return x.CreateTimeEnd
+	}
+	return 0
+}
+
+type ListMyCryptoRechargeTxsResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          []*CryptoRechargeTx    `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListMyCryptoRechargeTxsResp) Reset() {
+	*x = ListMyCryptoRechargeTxsResp{}
+	mi := &file_proto_payment_payment_app_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListMyCryptoRechargeTxsResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMyCryptoRechargeTxsResp) ProtoMessage() {}
+
+func (x *ListMyCryptoRechargeTxsResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_payment_payment_app_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMyCryptoRechargeTxsResp.ProtoReflect.Descriptor instead.
+func (*ListMyCryptoRechargeTxsResp) Descriptor() ([]byte, []int) {
+	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *ListMyCryptoRechargeTxsResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *ListMyCryptoRechargeTxsResp) GetData() []*CryptoRechargeTx {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+// 我的链上充值交易详情
+type GetMyCryptoRechargeTxReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Id            int64                  `protobuf:"varint,3,opt,name=id,proto3" json:"id,omitempty"`
+	TxHash        string                 `protobuf:"bytes,4,opt,name=tx_hash,json=txHash,proto3" json:"tx_hash,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetMyCryptoRechargeTxReq) Reset() {
+	*x = GetMyCryptoRechargeTxReq{}
+	mi := &file_proto_payment_payment_app_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetMyCryptoRechargeTxReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMyCryptoRechargeTxReq) ProtoMessage() {}
+
+func (x *GetMyCryptoRechargeTxReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_payment_payment_app_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMyCryptoRechargeTxReq.ProtoReflect.Descriptor instead.
+func (*GetMyCryptoRechargeTxReq) Descriptor() ([]byte, []int) {
+	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *GetMyCryptoRechargeTxReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *GetMyCryptoRechargeTxReq) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *GetMyCryptoRechargeTxReq) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *GetMyCryptoRechargeTxReq) GetTxHash() string {
+	if x != nil {
+		return x.TxHash
+	}
+	return ""
+}
+
+type GetMyCryptoRechargeTxResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          *CryptoRechargeTx      `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetMyCryptoRechargeTxResp) Reset() {
+	*x = GetMyCryptoRechargeTxResp{}
+	mi := &file_proto_payment_payment_app_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetMyCryptoRechargeTxResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMyCryptoRechargeTxResp) ProtoMessage() {}
+
+func (x *GetMyCryptoRechargeTxResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_payment_payment_app_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMyCryptoRechargeTxResp.ProtoReflect.Descriptor instead.
+func (*GetMyCryptoRechargeTxResp) Descriptor() ([]byte, []int) {
+	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *GetMyCryptoRechargeTxResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *GetMyCryptoRechargeTxResp) GetData() *CryptoRechargeTx {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
 var File_proto_payment_payment_app_proto protoreflect.FileDescriptor
 
 const file_proto_payment_payment_app_proto_rawDesc = "" +
@@ -1366,7 +1906,52 @@ const file_proto_payment_payment_app_proto_rawDesc = "" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\"j\n" +
 	"\x16GetMyWithdrawOrderResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
-	"\x04data\x18\x02 \x01(\v2\x16.payment.WithdrawOrderR\x04data2\xb7\a\n" +
+	"\x04data\x18\x02 \x01(\v2\x16.payment.WithdrawOrderR\x04data\"\xbc\x01\n" +
+	"\x1dGetMyCryptoRechargeAddressReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1f\n" +
+	"\vwallet_type\x18\x03 \x01(\x03R\n" +
+	"walletType\x12\x12\n" +
+	"\x04coin\x18\x04 \x01(\tR\x04coin\x120\n" +
+	"\n" +
+	"chain_code\x18\x05 \x01(\x0e2\x11.common.ChainCodeR\tchainCode\"z\n" +
+	"\x1eGetMyCryptoRechargeAddressResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x122\n" +
+	"\x04data\x18\x02 \x01(\v2\x1e.payment.CryptoRechargeAddressR\x04data\"\xbf\x01\n" +
+	" ListMyCryptoRechargeAddressesReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1f\n" +
+	"\vwallet_type\x18\x03 \x01(\x03R\n" +
+	"walletType\x12\x12\n" +
+	"\x04coin\x18\x04 \x01(\tR\x04coin\x120\n" +
+	"\n" +
+	"chain_code\x18\x05 \x01(\x0e2\x11.common.ChainCodeR\tchainCode\"}\n" +
+	"!ListMyCryptoRechargeAddressesResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x122\n" +
+	"\x04data\x18\x02 \x03(\v2\x1e.payment.CryptoRechargeAddressR\x04data\"\xe5\x02\n" +
+	"\x1aListMyCryptoRechargeTxsReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12#\n" +
+	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\x12\x19\n" +
+	"\border_no\x18\x04 \x01(\tR\aorderNo\x12\x12\n" +
+	"\x04coin\x18\x05 \x01(\tR\x04coin\x120\n" +
+	"\n" +
+	"chain_code\x18\x06 \x01(\x0e2\x11.common.ChainCodeR\tchainCode\x127\n" +
+	"\x06status\x18\a \x01(\x0e2\x1f.payment.CryptoRechargeTxStatusR\x06status\x12*\n" +
+	"\x11create_time_start\x18\b \x01(\x03R\x0fcreateTimeStart\x12&\n" +
+	"\x0fcreate_time_end\x18\t \x01(\x03R\rcreateTimeEnd\"r\n" +
+	"\x1bListMyCryptoRechargeTxsResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
+	"\x04data\x18\x02 \x03(\v2\x19.payment.CryptoRechargeTxR\x04data\"y\n" +
+	"\x18GetMyCryptoRechargeTxReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x0e\n" +
+	"\x02id\x18\x03 \x01(\x03R\x02id\x12\x17\n" +
+	"\atx_hash\x18\x04 \x01(\tR\x06txHash\"p\n" +
+	"\x19GetMyCryptoRechargeTxResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
+	"\x04data\x18\x02 \x01(\v2\x19.payment.CryptoRechargeTxR\x04data2\xe4\n" +
+	"\n" +
 	"\n" +
 	"PaymentApp\x12R\n" +
 	"\x11GetMyRechargeStat\x12\x1d.payment.GetMyRechargeStatReq\x1a\x1e.payment.GetMyRechargeStatResp\x12v\n" +
@@ -1378,7 +1963,11 @@ const file_proto_payment_payment_app_proto_rawDesc = "" +
 	"\x1aQueryMyRechargeOrderStatus\x12&.payment.QueryMyRechargeOrderStatusReq\x1a'.payment.QueryMyRechargeOrderStatusResp\x12X\n" +
 	"\x13CreateWithdrawOrder\x12\x1f.payment.CreateWithdrawOrderReq\x1a .payment.CreateWithdrawOrderResp\x12[\n" +
 	"\x14ListMyWithdrawOrders\x12 .payment.ListMyWithdrawOrdersReq\x1a!.payment.ListMyWithdrawOrdersResp\x12U\n" +
-	"\x12GetMyWithdrawOrder\x12\x1e.payment.GetMyWithdrawOrderReq\x1a\x1f.payment.GetMyWithdrawOrderRespB\x1eZ\x1cwklive/proto/payment;paymentb\x06proto3"
+	"\x12GetMyWithdrawOrder\x12\x1e.payment.GetMyWithdrawOrderReq\x1a\x1f.payment.GetMyWithdrawOrderResp\x12m\n" +
+	"\x1aGetMyCryptoRechargeAddress\x12&.payment.GetMyCryptoRechargeAddressReq\x1a'.payment.GetMyCryptoRechargeAddressResp\x12v\n" +
+	"\x1dListMyCryptoRechargeAddresses\x12).payment.ListMyCryptoRechargeAddressesReq\x1a*.payment.ListMyCryptoRechargeAddressesResp\x12d\n" +
+	"\x17ListMyCryptoRechargeTxs\x12#.payment.ListMyCryptoRechargeTxsReq\x1a$.payment.ListMyCryptoRechargeTxsResp\x12^\n" +
+	"\x15GetMyCryptoRechargeTx\x12!.payment.GetMyCryptoRechargeTxReq\x1a\".payment.GetMyCryptoRechargeTxRespB\x1eZ\x1cwklive/proto/payment;paymentb\x06proto3"
 
 var (
 	file_proto_payment_payment_app_proto_rawDescOnce sync.Once
@@ -1392,7 +1981,7 @@ func file_proto_payment_payment_app_proto_rawDescGZIP() []byte {
 	return file_proto_payment_payment_app_proto_rawDescData
 }
 
-var file_proto_payment_payment_app_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
+var file_proto_payment_payment_app_proto_msgTypes = make([]protoimpl.MessageInfo, 28)
 var file_proto_payment_payment_app_proto_goTypes = []any{
 	(*AppCommonResp)(nil),                     // 0: payment.AppCommonResp
 	(*GetMyRechargeStatReq)(nil),              // 1: payment.GetMyRechargeStatReq
@@ -1414,65 +2003,98 @@ var file_proto_payment_payment_app_proto_goTypes = []any{
 	(*ListMyWithdrawOrdersResp)(nil),          // 17: payment.ListMyWithdrawOrdersResp
 	(*GetMyWithdrawOrderReq)(nil),             // 18: payment.GetMyWithdrawOrderReq
 	(*GetMyWithdrawOrderResp)(nil),            // 19: payment.GetMyWithdrawOrderResp
-	(*common.RespBase)(nil),                   // 20: common.RespBase
-	(*UserRechargeStat)(nil),                  // 21: payment.UserRechargeStat
-	(ClientType)(0),                           // 22: payment.ClientType
-	(*VisiblePayChannel)(nil),                 // 23: payment.VisiblePayChannel
-	(*RechargeOrder)(nil),                     // 24: payment.RechargeOrder
-	(*common.PageReq)(nil),                    // 25: common.PageReq
-	(PayOrderStatus)(0),                       // 26: payment.PayOrderStatus
-	(*WithdrawOrder)(nil),                     // 27: payment.WithdrawOrder
+	(*GetMyCryptoRechargeAddressReq)(nil),     // 20: payment.GetMyCryptoRechargeAddressReq
+	(*GetMyCryptoRechargeAddressResp)(nil),    // 21: payment.GetMyCryptoRechargeAddressResp
+	(*ListMyCryptoRechargeAddressesReq)(nil),  // 22: payment.ListMyCryptoRechargeAddressesReq
+	(*ListMyCryptoRechargeAddressesResp)(nil), // 23: payment.ListMyCryptoRechargeAddressesResp
+	(*ListMyCryptoRechargeTxsReq)(nil),        // 24: payment.ListMyCryptoRechargeTxsReq
+	(*ListMyCryptoRechargeTxsResp)(nil),       // 25: payment.ListMyCryptoRechargeTxsResp
+	(*GetMyCryptoRechargeTxReq)(nil),          // 26: payment.GetMyCryptoRechargeTxReq
+	(*GetMyCryptoRechargeTxResp)(nil),         // 27: payment.GetMyCryptoRechargeTxResp
+	(*common.RespBase)(nil),                   // 28: common.RespBase
+	(*UserRechargeStat)(nil),                  // 29: payment.UserRechargeStat
+	(ClientType)(0),                           // 30: payment.ClientType
+	(*VisiblePayChannel)(nil),                 // 31: payment.VisiblePayChannel
+	(*RechargeOrder)(nil),                     // 32: payment.RechargeOrder
+	(*common.PageReq)(nil),                    // 33: common.PageReq
+	(PayOrderStatus)(0),                       // 34: payment.PayOrderStatus
+	(*WithdrawOrder)(nil),                     // 35: payment.WithdrawOrder
+	(common.ChainCode)(0),                     // 36: common.ChainCode
+	(*CryptoRechargeAddress)(nil),             // 37: payment.CryptoRechargeAddress
+	(CryptoRechargeTxStatus)(0),               // 38: payment.CryptoRechargeTxStatus
+	(*CryptoRechargeTx)(nil),                  // 39: payment.CryptoRechargeTx
 }
 var file_proto_payment_payment_app_proto_depIdxs = []int32{
-	20, // 0: payment.AppCommonResp.base:type_name -> common.RespBase
-	20, // 1: payment.GetMyRechargeStatResp.base:type_name -> common.RespBase
-	21, // 2: payment.GetMyRechargeStatResp.stat:type_name -> payment.UserRechargeStat
-	22, // 3: payment.ListAvailableRechargeChannelsReq.client_type:type_name -> payment.ClientType
-	20, // 4: payment.ListAvailableRechargeChannelsResp.base:type_name -> common.RespBase
-	23, // 5: payment.ListAvailableRechargeChannelsResp.list:type_name -> payment.VisiblePayChannel
-	22, // 6: payment.CreateRechargeOrderReq.client_type:type_name -> payment.ClientType
-	20, // 7: payment.CreateRechargeOrderResp.base:type_name -> common.RespBase
-	24, // 8: payment.CreateRechargeOrderResp.order:type_name -> payment.RechargeOrder
-	20, // 9: payment.GetMyRechargeOrderResp.base:type_name -> common.RespBase
-	24, // 10: payment.GetMyRechargeOrderResp.order:type_name -> payment.RechargeOrder
-	25, // 11: payment.ListMyRechargeOrdersReq.page:type_name -> common.PageReq
-	26, // 12: payment.ListMyRechargeOrdersReq.status:type_name -> payment.PayOrderStatus
-	20, // 13: payment.ListMyRechargeOrdersResp.base:type_name -> common.RespBase
-	24, // 14: payment.ListMyRechargeOrdersResp.list:type_name -> payment.RechargeOrder
-	20, // 15: payment.QueryMyRechargeOrderStatusResp.base:type_name -> common.RespBase
-	24, // 16: payment.QueryMyRechargeOrderStatusResp.order:type_name -> payment.RechargeOrder
-	20, // 17: payment.CreateWithdrawOrderResp.base:type_name -> common.RespBase
-	25, // 18: payment.ListMyWithdrawOrdersReq.page:type_name -> common.PageReq
-	26, // 19: payment.ListMyWithdrawOrdersReq.status:type_name -> payment.PayOrderStatus
-	20, // 20: payment.ListMyWithdrawOrdersResp.base:type_name -> common.RespBase
-	27, // 21: payment.ListMyWithdrawOrdersResp.data:type_name -> payment.WithdrawOrder
-	20, // 22: payment.GetMyWithdrawOrderResp.base:type_name -> common.RespBase
-	27, // 23: payment.GetMyWithdrawOrderResp.data:type_name -> payment.WithdrawOrder
-	1,  // 24: payment.PaymentApp.GetMyRechargeStat:input_type -> payment.GetMyRechargeStatReq
-	3,  // 25: payment.PaymentApp.ListAvailableRechargeChannels:input_type -> payment.ListAvailableRechargeChannelsReq
-	5,  // 26: payment.PaymentApp.CreateRechargeOrder:input_type -> payment.CreateRechargeOrderReq
-	7,  // 27: payment.PaymentApp.GetMyRechargeOrder:input_type -> payment.GetMyRechargeOrderReq
-	9,  // 28: payment.PaymentApp.ListMyRechargeOrders:input_type -> payment.ListMyRechargeOrdersReq
-	11, // 29: payment.PaymentApp.CancelMyRechargeOrder:input_type -> payment.CancelMyRechargeOrderReq
-	12, // 30: payment.PaymentApp.QueryMyRechargeOrderStatus:input_type -> payment.QueryMyRechargeOrderStatusReq
-	14, // 31: payment.PaymentApp.CreateWithdrawOrder:input_type -> payment.CreateWithdrawOrderReq
-	16, // 32: payment.PaymentApp.ListMyWithdrawOrders:input_type -> payment.ListMyWithdrawOrdersReq
-	18, // 33: payment.PaymentApp.GetMyWithdrawOrder:input_type -> payment.GetMyWithdrawOrderReq
-	2,  // 34: payment.PaymentApp.GetMyRechargeStat:output_type -> payment.GetMyRechargeStatResp
-	4,  // 35: payment.PaymentApp.ListAvailableRechargeChannels:output_type -> payment.ListAvailableRechargeChannelsResp
-	6,  // 36: payment.PaymentApp.CreateRechargeOrder:output_type -> payment.CreateRechargeOrderResp
-	8,  // 37: payment.PaymentApp.GetMyRechargeOrder:output_type -> payment.GetMyRechargeOrderResp
-	10, // 38: payment.PaymentApp.ListMyRechargeOrders:output_type -> payment.ListMyRechargeOrdersResp
-	0,  // 39: payment.PaymentApp.CancelMyRechargeOrder:output_type -> payment.AppCommonResp
-	13, // 40: payment.PaymentApp.QueryMyRechargeOrderStatus:output_type -> payment.QueryMyRechargeOrderStatusResp
-	15, // 41: payment.PaymentApp.CreateWithdrawOrder:output_type -> payment.CreateWithdrawOrderResp
-	17, // 42: payment.PaymentApp.ListMyWithdrawOrders:output_type -> payment.ListMyWithdrawOrdersResp
-	19, // 43: payment.PaymentApp.GetMyWithdrawOrder:output_type -> payment.GetMyWithdrawOrderResp
-	34, // [34:44] is the sub-list for method output_type
-	24, // [24:34] is the sub-list for method input_type
-	24, // [24:24] is the sub-list for extension type_name
-	24, // [24:24] is the sub-list for extension extendee
-	0,  // [0:24] is the sub-list for field type_name
+	28, // 0: payment.AppCommonResp.base:type_name -> common.RespBase
+	28, // 1: payment.GetMyRechargeStatResp.base:type_name -> common.RespBase
+	29, // 2: payment.GetMyRechargeStatResp.stat:type_name -> payment.UserRechargeStat
+	30, // 3: payment.ListAvailableRechargeChannelsReq.client_type:type_name -> payment.ClientType
+	28, // 4: payment.ListAvailableRechargeChannelsResp.base:type_name -> common.RespBase
+	31, // 5: payment.ListAvailableRechargeChannelsResp.list:type_name -> payment.VisiblePayChannel
+	30, // 6: payment.CreateRechargeOrderReq.client_type:type_name -> payment.ClientType
+	28, // 7: payment.CreateRechargeOrderResp.base:type_name -> common.RespBase
+	32, // 8: payment.CreateRechargeOrderResp.order:type_name -> payment.RechargeOrder
+	28, // 9: payment.GetMyRechargeOrderResp.base:type_name -> common.RespBase
+	32, // 10: payment.GetMyRechargeOrderResp.order:type_name -> payment.RechargeOrder
+	33, // 11: payment.ListMyRechargeOrdersReq.page:type_name -> common.PageReq
+	34, // 12: payment.ListMyRechargeOrdersReq.status:type_name -> payment.PayOrderStatus
+	28, // 13: payment.ListMyRechargeOrdersResp.base:type_name -> common.RespBase
+	32, // 14: payment.ListMyRechargeOrdersResp.list:type_name -> payment.RechargeOrder
+	28, // 15: payment.QueryMyRechargeOrderStatusResp.base:type_name -> common.RespBase
+	32, // 16: payment.QueryMyRechargeOrderStatusResp.order:type_name -> payment.RechargeOrder
+	28, // 17: payment.CreateWithdrawOrderResp.base:type_name -> common.RespBase
+	33, // 18: payment.ListMyWithdrawOrdersReq.page:type_name -> common.PageReq
+	34, // 19: payment.ListMyWithdrawOrdersReq.status:type_name -> payment.PayOrderStatus
+	28, // 20: payment.ListMyWithdrawOrdersResp.base:type_name -> common.RespBase
+	35, // 21: payment.ListMyWithdrawOrdersResp.data:type_name -> payment.WithdrawOrder
+	28, // 22: payment.GetMyWithdrawOrderResp.base:type_name -> common.RespBase
+	35, // 23: payment.GetMyWithdrawOrderResp.data:type_name -> payment.WithdrawOrder
+	36, // 24: payment.GetMyCryptoRechargeAddressReq.chain_code:type_name -> common.ChainCode
+	28, // 25: payment.GetMyCryptoRechargeAddressResp.base:type_name -> common.RespBase
+	37, // 26: payment.GetMyCryptoRechargeAddressResp.data:type_name -> payment.CryptoRechargeAddress
+	36, // 27: payment.ListMyCryptoRechargeAddressesReq.chain_code:type_name -> common.ChainCode
+	28, // 28: payment.ListMyCryptoRechargeAddressesResp.base:type_name -> common.RespBase
+	37, // 29: payment.ListMyCryptoRechargeAddressesResp.data:type_name -> payment.CryptoRechargeAddress
+	33, // 30: payment.ListMyCryptoRechargeTxsReq.page:type_name -> common.PageReq
+	36, // 31: payment.ListMyCryptoRechargeTxsReq.chain_code:type_name -> common.ChainCode
+	38, // 32: payment.ListMyCryptoRechargeTxsReq.status:type_name -> payment.CryptoRechargeTxStatus
+	28, // 33: payment.ListMyCryptoRechargeTxsResp.base:type_name -> common.RespBase
+	39, // 34: payment.ListMyCryptoRechargeTxsResp.data:type_name -> payment.CryptoRechargeTx
+	28, // 35: payment.GetMyCryptoRechargeTxResp.base:type_name -> common.RespBase
+	39, // 36: payment.GetMyCryptoRechargeTxResp.data:type_name -> payment.CryptoRechargeTx
+	1,  // 37: payment.PaymentApp.GetMyRechargeStat:input_type -> payment.GetMyRechargeStatReq
+	3,  // 38: payment.PaymentApp.ListAvailableRechargeChannels:input_type -> payment.ListAvailableRechargeChannelsReq
+	5,  // 39: payment.PaymentApp.CreateRechargeOrder:input_type -> payment.CreateRechargeOrderReq
+	7,  // 40: payment.PaymentApp.GetMyRechargeOrder:input_type -> payment.GetMyRechargeOrderReq
+	9,  // 41: payment.PaymentApp.ListMyRechargeOrders:input_type -> payment.ListMyRechargeOrdersReq
+	11, // 42: payment.PaymentApp.CancelMyRechargeOrder:input_type -> payment.CancelMyRechargeOrderReq
+	12, // 43: payment.PaymentApp.QueryMyRechargeOrderStatus:input_type -> payment.QueryMyRechargeOrderStatusReq
+	14, // 44: payment.PaymentApp.CreateWithdrawOrder:input_type -> payment.CreateWithdrawOrderReq
+	16, // 45: payment.PaymentApp.ListMyWithdrawOrders:input_type -> payment.ListMyWithdrawOrdersReq
+	18, // 46: payment.PaymentApp.GetMyWithdrawOrder:input_type -> payment.GetMyWithdrawOrderReq
+	20, // 47: payment.PaymentApp.GetMyCryptoRechargeAddress:input_type -> payment.GetMyCryptoRechargeAddressReq
+	22, // 48: payment.PaymentApp.ListMyCryptoRechargeAddresses:input_type -> payment.ListMyCryptoRechargeAddressesReq
+	24, // 49: payment.PaymentApp.ListMyCryptoRechargeTxs:input_type -> payment.ListMyCryptoRechargeTxsReq
+	26, // 50: payment.PaymentApp.GetMyCryptoRechargeTx:input_type -> payment.GetMyCryptoRechargeTxReq
+	2,  // 51: payment.PaymentApp.GetMyRechargeStat:output_type -> payment.GetMyRechargeStatResp
+	4,  // 52: payment.PaymentApp.ListAvailableRechargeChannels:output_type -> payment.ListAvailableRechargeChannelsResp
+	6,  // 53: payment.PaymentApp.CreateRechargeOrder:output_type -> payment.CreateRechargeOrderResp
+	8,  // 54: payment.PaymentApp.GetMyRechargeOrder:output_type -> payment.GetMyRechargeOrderResp
+	10, // 55: payment.PaymentApp.ListMyRechargeOrders:output_type -> payment.ListMyRechargeOrdersResp
+	0,  // 56: payment.PaymentApp.CancelMyRechargeOrder:output_type -> payment.AppCommonResp
+	13, // 57: payment.PaymentApp.QueryMyRechargeOrderStatus:output_type -> payment.QueryMyRechargeOrderStatusResp
+	15, // 58: payment.PaymentApp.CreateWithdrawOrder:output_type -> payment.CreateWithdrawOrderResp
+	17, // 59: payment.PaymentApp.ListMyWithdrawOrders:output_type -> payment.ListMyWithdrawOrdersResp
+	19, // 60: payment.PaymentApp.GetMyWithdrawOrder:output_type -> payment.GetMyWithdrawOrderResp
+	21, // 61: payment.PaymentApp.GetMyCryptoRechargeAddress:output_type -> payment.GetMyCryptoRechargeAddressResp
+	23, // 62: payment.PaymentApp.ListMyCryptoRechargeAddresses:output_type -> payment.ListMyCryptoRechargeAddressesResp
+	25, // 63: payment.PaymentApp.ListMyCryptoRechargeTxs:output_type -> payment.ListMyCryptoRechargeTxsResp
+	27, // 64: payment.PaymentApp.GetMyCryptoRechargeTx:output_type -> payment.GetMyCryptoRechargeTxResp
+	51, // [51:65] is the sub-list for method output_type
+	37, // [37:51] is the sub-list for method input_type
+	37, // [37:37] is the sub-list for extension type_name
+	37, // [37:37] is the sub-list for extension extendee
+	0,  // [0:37] is the sub-list for field type_name
 }
 
 func init() { file_proto_payment_payment_app_proto_init() }
@@ -1488,7 +2110,7 @@ func file_proto_payment_payment_app_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_payment_payment_app_proto_rawDesc), len(file_proto_payment_payment_app_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   20,
+			NumMessages:   28,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

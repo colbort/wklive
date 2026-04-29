@@ -35,12 +35,8 @@
     <el-card shadow="never" class="table-card">
       <template #header>
         {{ t('trade.riskLogs') }}
-      </template><el-form
-        :model="riskLogQuery"
-        inline
-        label-width="90px"
-        class="query-card-inner"
-      >
+      </template>
+      <el-form :model="riskLogQuery" inline label-width="90px" class="query-card-inner">
         <el-form-item :label="t('trade.tenantId')">
           <el-input-number v-model="riskLogQuery.tenantId" :min="0" :precision="0" />
         </el-form-item>
@@ -67,17 +63,9 @@
           show-overflow-tooltip
         />
         <el-table-column prop="userId" :label="t('trade.userId')" width="100" />
-        <el-table-column
-          prop="symbolId"
-          :label="t('trade.symbolId')"
-          width="100"
-        />
+        <el-table-column prop="symbolId" :label="t('trade.symbolId')" width="100" />
         <el-table-column prop="checkType" :label="t('trade.checkType')" width="100" />
-        <el-table-column
-          prop="checkResult"
-          :label="t('trade.checkResult')"
-          width="100"
-        />
+        <el-table-column prop="checkResult" :label="t('trade.checkResult')" width="100" />
         <el-table-column
           prop="rejectMsg"
           :label="t('trade.rejectMsg')"
@@ -101,7 +89,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { tradeService, type GetRiskOrderCheckLogListReq, type RiskOrderCheckLog } from '@/services'
+import { RespBase, tradeService, type GetRiskOrderCheckLogListReq, type RiskOrderCheckLog } from '@/services'
 
 const { t } = useI18n()
 
@@ -129,7 +117,7 @@ const riskLogQuery = reactive<GetRiskOrderCheckLogListReq>({
   orderNo: '',
   limit: 100,
 })
-const pickList = (res: any) => res?.data || res?.list || []
+const pickList = (res: RespBase) => res?.data || []
 
 const loadCurrent = async () => {
   await loadRiskLogs()

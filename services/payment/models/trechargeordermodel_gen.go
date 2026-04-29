@@ -69,10 +69,10 @@ type (
 		RequestData  sql.NullString `db:"request_data"`   // 请求快照
 		ResponseData sql.NullString `db:"response_data"`  // 响应快照
 		NotifyData   sql.NullString `db:"notify_data"`    // 回调数据
-		ExpireTime   sql.NullInt64  `db:"expire_time"`    // 过期时间
-		PaidTime     sql.NullInt64  `db:"paid_time"`      // 支付时间
-		NotifyTime   sql.NullInt64  `db:"notify_time"`    // 回调时间
-		CloseTime    sql.NullInt64  `db:"close_time"`     // 关闭时间
+		ExpireTime   int64          `db:"expire_time"`    // 过期时间
+		PaidTime     int64          `db:"paid_time"`      // 支付时间
+		NotifyTime   int64          `db:"notify_time"`    // 回调时间
+		CloseTime    int64          `db:"close_time"`     // 关闭时间
 		Remark       sql.NullString `db:"remark"`         // 备注
 		CreateTimes  int64          `db:"create_times"`   // 创建时间
 		UpdateTimes  int64          `db:"update_times"`   // 更新时间

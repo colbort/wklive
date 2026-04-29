@@ -25,6 +25,7 @@ type AssetCoinConfig {
 	symbol          string `json:"symbol"`
 	coinName        string `json:"coinName"`
 	coinType        int64  `json:"coinType"`
+	chainCode       int64  `json:"chainCode"`
 	iconUrl         string `json:"iconUrl"`
 	iconText        string `json:"iconText"`
 	iconBgColor     string `json:"iconBgColor"`
@@ -119,6 +120,7 @@ type CreateAssetCoinConfigReq {
 	symbol          string `json:"symbol"`
 	coinName        string `json:"coinName"`
 	coinType        int64  `json:"coinType"`
+	chainCode       int64  `json:"chainCode,optional"`
 	iconUrl         string `json:"iconUrl,optional"`
 	iconText        string `json:"iconText,optional"`
 	iconBgColor     string `json:"iconBgColor,optional"`
@@ -140,6 +142,7 @@ type UpdateAssetCoinConfigReq {
 	symbol          string `json:"symbol,optional"`
 	coinName        string `json:"coinName,optional"`
 	coinType        int64  `json:"coinType,optional"`
+	chainCode       int64  `json:"chainCode,optional"`
 	iconUrl         string `json:"iconUrl,optional"`
 	iconText        string `json:"iconText,optional"`
 	iconBgColor     string `json:"iconBgColor,optional"`
@@ -170,6 +173,7 @@ type PageAssetCoinConfigsReq {
 	coin            string `form:"coin,optional"`
 	symbol          string `form:"symbol,optional"`
 	coinType        int64  `form:"coinType,optional"`
+	chainCode       int64  `form:"chainCode,optional"`
 	appVisible      int64  `form:"appVisible,optional"`
 	rechargeEnabled int64  `form:"rechargeEnabled,optional"`
 	withdrawEnabled int64  `form:"withdrawEnabled,optional"`

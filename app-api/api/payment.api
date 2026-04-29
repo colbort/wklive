@@ -233,6 +233,21 @@ type GetMyWithdrawOrderResp {
 	data WithdrawOrder `json:"data"`
 }
 
+type GetPaymentOptionsResp {
+	RespBase
+	data []OptionsGroup `json:"data"`
+}
+
+@server (
+	prefix: /app/payment
+	group:  payment
+	middleware: PublicRateLimit
+)
+service app {
+	@handler GetPaymentOptions
+	get /options returns (GetPaymentOptionsResp)
+}
+
 @server (
 	prefix: /app/payment
 	group:  payment
@@ -278,4 +293,3 @@ service app {
 	@handler CreateWithdrawOrder
 	post /withdraw/orders (CreateWithdrawOrderReq) returns (CreateWithdrawOrderResp)
 }
-

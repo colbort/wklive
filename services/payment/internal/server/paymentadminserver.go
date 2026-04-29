@@ -256,3 +256,75 @@ func (s *PaymentAdminServer) GetWithdrawNotifyLog(ctx context.Context, in *payme
 	l := logic.NewGetWithdrawNotifyLogLogic(ctx, s.svcCtx)
 	return l.GetWithdrawNotifyLog(in)
 }
+
+// 创建链上充值地址
+func (s *PaymentAdminServer) CreateCryptoRechargeAddress(ctx context.Context, in *payment.CreateCryptoRechargeAddressReq) (*payment.AdminCommonResp, error) {
+	l := logic.NewCreateCryptoRechargeAddressLogic(ctx, s.svcCtx)
+	return l.CreateCryptoRechargeAddress(in)
+}
+
+// 更新链上充值地址
+func (s *PaymentAdminServer) UpdateCryptoRechargeAddress(ctx context.Context, in *payment.UpdateCryptoRechargeAddressReq) (*payment.AdminCommonResp, error) {
+	l := logic.NewUpdateCryptoRechargeAddressLogic(ctx, s.svcCtx)
+	return l.UpdateCryptoRechargeAddress(in)
+}
+
+// 获取链上充值地址详情
+func (s *PaymentAdminServer) GetCryptoRechargeAddress(ctx context.Context, in *payment.GetCryptoRechargeAddressReq) (*payment.GetCryptoRechargeAddressResp, error) {
+	l := logic.NewGetCryptoRechargeAddressLogic(ctx, s.svcCtx)
+	return l.GetCryptoRechargeAddress(in)
+}
+
+// 链上充值地址列表
+func (s *PaymentAdminServer) ListCryptoRechargeAddresses(ctx context.Context, in *payment.ListCryptoRechargeAddressesReq) (*payment.ListCryptoRechargeAddressesResp, error) {
+	l := logic.NewListCryptoRechargeAddressesLogic(ctx, s.svcCtx)
+	return l.ListCryptoRechargeAddresses(in)
+}
+
+// 创建链上钱包账号
+func (s *PaymentAdminServer) CreateCryptoWalletAccount(ctx context.Context, in *payment.CreateCryptoWalletAccountReq) (*payment.AdminCommonResp, error) {
+	l := logic.NewCreateCryptoWalletAccountLogic(ctx, s.svcCtx)
+	return l.CreateCryptoWalletAccount(in)
+}
+
+// 更新链上钱包账号
+func (s *PaymentAdminServer) UpdateCryptoWalletAccount(ctx context.Context, in *payment.UpdateCryptoWalletAccountReq) (*payment.AdminCommonResp, error) {
+	l := logic.NewUpdateCryptoWalletAccountLogic(ctx, s.svcCtx)
+	return l.UpdateCryptoWalletAccount(in)
+}
+
+// 获取链上钱包账号详情
+func (s *PaymentAdminServer) GetCryptoWalletAccount(ctx context.Context, in *payment.GetCryptoWalletAccountReq) (*payment.GetCryptoWalletAccountResp, error) {
+	l := logic.NewGetCryptoWalletAccountLogic(ctx, s.svcCtx)
+	return l.GetCryptoWalletAccount(in)
+}
+
+// 链上钱包账号列表
+func (s *PaymentAdminServer) ListCryptoWalletAccounts(ctx context.Context, in *payment.ListCryptoWalletAccountsReq) (*payment.ListCryptoWalletAccountsResp, error) {
+	l := logic.NewListCryptoWalletAccountsLogic(ctx, s.svcCtx)
+	return l.ListCryptoWalletAccounts(in)
+}
+
+// 创建链上充值交易
+func (s *PaymentAdminServer) CreateCryptoRechargeTx(ctx context.Context, in *payment.CreateCryptoRechargeTxReq) (*payment.AdminCommonResp, error) {
+	l := logic.NewCreateCryptoRechargeTxLogic(ctx, s.svcCtx)
+	return l.CreateCryptoRechargeTx(in)
+}
+
+// 更新链上充值交易
+func (s *PaymentAdminServer) UpdateCryptoRechargeTx(ctx context.Context, in *payment.UpdateCryptoRechargeTxReq) (*payment.AdminCommonResp, error) {
+	l := logic.NewUpdateCryptoRechargeTxLogic(ctx, s.svcCtx)
+	return l.UpdateCryptoRechargeTx(in)
+}
+
+// 获取链上充值交易详情
+func (s *PaymentAdminServer) GetCryptoRechargeTx(ctx context.Context, in *payment.GetCryptoRechargeTxReq) (*payment.GetCryptoRechargeTxResp, error) {
+	l := logic.NewGetCryptoRechargeTxLogic(ctx, s.svcCtx)
+	return l.GetCryptoRechargeTx(in)
+}
+
+// 链上充值交易列表
+func (s *PaymentAdminServer) ListCryptoRechargeTxs(ctx context.Context, in *payment.ListCryptoRechargeTxsReq) (*payment.ListCryptoRechargeTxsResp, error) {
+	l := logic.NewListCryptoRechargeTxsLogic(ctx, s.svcCtx)
+	return l.ListCryptoRechargeTxs(in)
+}

@@ -29,6 +29,10 @@ const (
 	PaymentApp_CreateWithdrawOrder_FullMethodName           = "/payment.PaymentApp/CreateWithdrawOrder"
 	PaymentApp_ListMyWithdrawOrders_FullMethodName          = "/payment.PaymentApp/ListMyWithdrawOrders"
 	PaymentApp_GetMyWithdrawOrder_FullMethodName            = "/payment.PaymentApp/GetMyWithdrawOrder"
+	PaymentApp_GetMyCryptoRechargeAddress_FullMethodName    = "/payment.PaymentApp/GetMyCryptoRechargeAddress"
+	PaymentApp_ListMyCryptoRechargeAddresses_FullMethodName = "/payment.PaymentApp/ListMyCryptoRechargeAddresses"
+	PaymentApp_ListMyCryptoRechargeTxs_FullMethodName       = "/payment.PaymentApp/ListMyCryptoRechargeTxs"
+	PaymentApp_GetMyCryptoRechargeTx_FullMethodName         = "/payment.PaymentApp/GetMyCryptoRechargeTx"
 )
 
 // PaymentAppClient is the client API for PaymentApp service.
@@ -57,6 +61,14 @@ type PaymentAppClient interface {
 	ListMyWithdrawOrders(ctx context.Context, in *ListMyWithdrawOrdersReq, opts ...grpc.CallOption) (*ListMyWithdrawOrdersResp, error)
 	// 获取提现订单详情
 	GetMyWithdrawOrder(ctx context.Context, in *GetMyWithdrawOrderReq, opts ...grpc.CallOption) (*GetMyWithdrawOrderResp, error)
+	// 获取/分配我的链上充值地址
+	GetMyCryptoRechargeAddress(ctx context.Context, in *GetMyCryptoRechargeAddressReq, opts ...grpc.CallOption) (*GetMyCryptoRechargeAddressResp, error)
+	// 我的链上充值地址列表
+	ListMyCryptoRechargeAddresses(ctx context.Context, in *ListMyCryptoRechargeAddressesReq, opts ...grpc.CallOption) (*ListMyCryptoRechargeAddressesResp, error)
+	// 我的链上充值交易列表
+	ListMyCryptoRechargeTxs(ctx context.Context, in *ListMyCryptoRechargeTxsReq, opts ...grpc.CallOption) (*ListMyCryptoRechargeTxsResp, error)
+	// 我的链上充值交易详情
+	GetMyCryptoRechargeTx(ctx context.Context, in *GetMyCryptoRechargeTxReq, opts ...grpc.CallOption) (*GetMyCryptoRechargeTxResp, error)
 }
 
 type paymentAppClient struct {
@@ -167,6 +179,46 @@ func (c *paymentAppClient) GetMyWithdrawOrder(ctx context.Context, in *GetMyWith
 	return out, nil
 }
 
+func (c *paymentAppClient) GetMyCryptoRechargeAddress(ctx context.Context, in *GetMyCryptoRechargeAddressReq, opts ...grpc.CallOption) (*GetMyCryptoRechargeAddressResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetMyCryptoRechargeAddressResp)
+	err := c.cc.Invoke(ctx, PaymentApp_GetMyCryptoRechargeAddress_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentAppClient) ListMyCryptoRechargeAddresses(ctx context.Context, in *ListMyCryptoRechargeAddressesReq, opts ...grpc.CallOption) (*ListMyCryptoRechargeAddressesResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListMyCryptoRechargeAddressesResp)
+	err := c.cc.Invoke(ctx, PaymentApp_ListMyCryptoRechargeAddresses_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentAppClient) ListMyCryptoRechargeTxs(ctx context.Context, in *ListMyCryptoRechargeTxsReq, opts ...grpc.CallOption) (*ListMyCryptoRechargeTxsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListMyCryptoRechargeTxsResp)
+	err := c.cc.Invoke(ctx, PaymentApp_ListMyCryptoRechargeTxs_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentAppClient) GetMyCryptoRechargeTx(ctx context.Context, in *GetMyCryptoRechargeTxReq, opts ...grpc.CallOption) (*GetMyCryptoRechargeTxResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetMyCryptoRechargeTxResp)
+	err := c.cc.Invoke(ctx, PaymentApp_GetMyCryptoRechargeTx_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PaymentAppServer is the server API for PaymentApp service.
 // All implementations must embed UnimplementedPaymentAppServer
 // for forward compatibility.
@@ -193,6 +245,14 @@ type PaymentAppServer interface {
 	ListMyWithdrawOrders(context.Context, *ListMyWithdrawOrdersReq) (*ListMyWithdrawOrdersResp, error)
 	// 获取提现订单详情
 	GetMyWithdrawOrder(context.Context, *GetMyWithdrawOrderReq) (*GetMyWithdrawOrderResp, error)
+	// 获取/分配我的链上充值地址
+	GetMyCryptoRechargeAddress(context.Context, *GetMyCryptoRechargeAddressReq) (*GetMyCryptoRechargeAddressResp, error)
+	// 我的链上充值地址列表
+	ListMyCryptoRechargeAddresses(context.Context, *ListMyCryptoRechargeAddressesReq) (*ListMyCryptoRechargeAddressesResp, error)
+	// 我的链上充值交易列表
+	ListMyCryptoRechargeTxs(context.Context, *ListMyCryptoRechargeTxsReq) (*ListMyCryptoRechargeTxsResp, error)
+	// 我的链上充值交易详情
+	GetMyCryptoRechargeTx(context.Context, *GetMyCryptoRechargeTxReq) (*GetMyCryptoRechargeTxResp, error)
 	mustEmbedUnimplementedPaymentAppServer()
 }
 
@@ -232,6 +292,18 @@ func (UnimplementedPaymentAppServer) ListMyWithdrawOrders(context.Context, *List
 }
 func (UnimplementedPaymentAppServer) GetMyWithdrawOrder(context.Context, *GetMyWithdrawOrderReq) (*GetMyWithdrawOrderResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMyWithdrawOrder not implemented")
+}
+func (UnimplementedPaymentAppServer) GetMyCryptoRechargeAddress(context.Context, *GetMyCryptoRechargeAddressReq) (*GetMyCryptoRechargeAddressResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMyCryptoRechargeAddress not implemented")
+}
+func (UnimplementedPaymentAppServer) ListMyCryptoRechargeAddresses(context.Context, *ListMyCryptoRechargeAddressesReq) (*ListMyCryptoRechargeAddressesResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListMyCryptoRechargeAddresses not implemented")
+}
+func (UnimplementedPaymentAppServer) ListMyCryptoRechargeTxs(context.Context, *ListMyCryptoRechargeTxsReq) (*ListMyCryptoRechargeTxsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListMyCryptoRechargeTxs not implemented")
+}
+func (UnimplementedPaymentAppServer) GetMyCryptoRechargeTx(context.Context, *GetMyCryptoRechargeTxReq) (*GetMyCryptoRechargeTxResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMyCryptoRechargeTx not implemented")
 }
 func (UnimplementedPaymentAppServer) mustEmbedUnimplementedPaymentAppServer() {}
 func (UnimplementedPaymentAppServer) testEmbeddedByValue()                    {}
@@ -434,6 +506,78 @@ func _PaymentApp_GetMyWithdrawOrder_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PaymentApp_GetMyCryptoRechargeAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMyCryptoRechargeAddressReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentAppServer).GetMyCryptoRechargeAddress(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentApp_GetMyCryptoRechargeAddress_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentAppServer).GetMyCryptoRechargeAddress(ctx, req.(*GetMyCryptoRechargeAddressReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentApp_ListMyCryptoRechargeAddresses_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListMyCryptoRechargeAddressesReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentAppServer).ListMyCryptoRechargeAddresses(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentApp_ListMyCryptoRechargeAddresses_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentAppServer).ListMyCryptoRechargeAddresses(ctx, req.(*ListMyCryptoRechargeAddressesReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentApp_ListMyCryptoRechargeTxs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListMyCryptoRechargeTxsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentAppServer).ListMyCryptoRechargeTxs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentApp_ListMyCryptoRechargeTxs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentAppServer).ListMyCryptoRechargeTxs(ctx, req.(*ListMyCryptoRechargeTxsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentApp_GetMyCryptoRechargeTx_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMyCryptoRechargeTxReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentAppServer).GetMyCryptoRechargeTx(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentApp_GetMyCryptoRechargeTx_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentAppServer).GetMyCryptoRechargeTx(ctx, req.(*GetMyCryptoRechargeTxReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PaymentApp_ServiceDesc is the grpc.ServiceDesc for PaymentApp service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -480,6 +624,22 @@ var PaymentApp_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetMyWithdrawOrder",
 			Handler:    _PaymentApp_GetMyWithdrawOrder_Handler,
+		},
+		{
+			MethodName: "GetMyCryptoRechargeAddress",
+			Handler:    _PaymentApp_GetMyCryptoRechargeAddress_Handler,
+		},
+		{
+			MethodName: "ListMyCryptoRechargeAddresses",
+			Handler:    _PaymentApp_ListMyCryptoRechargeAddresses_Handler,
+		},
+		{
+			MethodName: "ListMyCryptoRechargeTxs",
+			Handler:    _PaymentApp_ListMyCryptoRechargeTxs_Handler,
+		},
+		{
+			MethodName: "GetMyCryptoRechargeTx",
+			Handler:    _PaymentApp_GetMyCryptoRechargeTx_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

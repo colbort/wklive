@@ -340,12 +340,20 @@ type SetLeverageReq {
 	shortLeverage int64 `json:"shortLeverage"` // 空头杠杆
 }
 
+type GetTradeOptionsResp {
+	RespBase
+	data []OptionsGroup `json:"data"`
+}
+
 @server (
 	prefix: /app/trade
 	group:  trade
 	middleware: PublicRateLimit
 )
 service app {
+	@handler GetTradeOptions
+	get /options returns (GetTradeOptionsResp)
+
 	@handler GetSymbolList
 	get /symbols (GetSymbolListReq) returns (GetSymbolListResp)
 

@@ -71,27 +71,7 @@ message CreateAssetCoinConfigReq {
   string symbol = 4;                        // 展示符号/资产标识
   string coin_name = 5;                     // 币种名称
   AssetCoinType coin_type = 6;              // 币种类型
-  string icon_url = 7;                      // 币种图标URL
-  string icon_text = 8;                     // 币种图标文案/符号
-  string icon_bg_color = 9;                 // 图标背景色
-  int32 decimal_places = 10;                // 资产展示精度
-  AssetCoinSwitch app_visible = 11;         // APP操作页是否展示
-  AssetCoinSwitch recharge_enabled = 12;    // 充值页是否展示
-  AssetCoinSwitch withdraw_enabled = 13;    // 提现页是否展示
-  AssetCoinSwitch transfer_enabled = 14;    // 划转页是否展示
-  AssetStatus status = 15;                  // 状态
-  int32 sort = 16;                          // 排序
-  string remark = 17;                       // 备注
-}
-
-message UpdateAssetCoinConfigReq {
-  int64 id = 1;                             // 主键ID
-  int64 tenant_id = 2;                      // 租户ID
-  WalletType wallet_type = 3;               // 账户类型
-  string coin = 4;                          // 币种代码
-  string symbol = 5;                        // 展示符号/资产标识
-  string coin_name = 6;                     // 币种名称
-  AssetCoinType coin_type = 7;              // 币种类型
+  common.ChainCode chain_code = 7;                 // 链类型
   string icon_url = 8;                      // 币种图标URL
   string icon_text = 9;                     // 币种图标文案/符号
   string icon_bg_color = 10;                // 图标背景色
@@ -103,6 +83,28 @@ message UpdateAssetCoinConfigReq {
   AssetStatus status = 16;                  // 状态
   int32 sort = 17;                          // 排序
   string remark = 18;                       // 备注
+}
+
+message UpdateAssetCoinConfigReq {
+  int64 id = 1;                             // 主键ID
+  int64 tenant_id = 2;                      // 租户ID
+  WalletType wallet_type = 3;               // 账户类型
+  string coin = 4;                          // 币种代码
+  string symbol = 5;                        // 展示符号/资产标识
+  string coin_name = 6;                     // 币种名称
+  AssetCoinType coin_type = 7;              // 币种类型
+  common.ChainCode chain_code = 8;                 // 链类型
+  string icon_url = 9;                      // 币种图标URL
+  string icon_text = 10;                    // 币种图标文案/符号
+  string icon_bg_color = 11;                // 图标背景色
+  int32 decimal_places = 12;                // 资产展示精度
+  AssetCoinSwitch app_visible = 13;         // APP操作页是否展示
+  AssetCoinSwitch recharge_enabled = 14;    // 充值页是否展示
+  AssetCoinSwitch withdraw_enabled = 15;    // 提现页是否展示
+  AssetCoinSwitch transfer_enabled = 16;    // 划转页是否展示
+  AssetStatus status = 17;                  // 状态
+  int32 sort = 18;                          // 排序
+  string remark = 19;                       // 备注
 }
 
 message DeleteAssetCoinConfigReq {
@@ -127,6 +129,7 @@ message PageAssetCoinConfigsReq {
   AssetCoinSwitch transfer_enabled = 9;     // 划转页是否展示,0表示全部
   AssetStatus status = 10;                  // 状态,0表示全部
   common.PageReq page = 11;                 // 分页
+  common.ChainCode chain_code = 12;                // 链类型,0表示全部
 }
 
 message AssetCoinConfigResp {

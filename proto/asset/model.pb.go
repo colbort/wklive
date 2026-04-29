@@ -13,6 +13,7 @@ import (
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+	common "wklive/proto/common"
 )
 
 const (
@@ -181,19 +182,20 @@ type AssetCoinConfig struct {
 	Symbol          string                 `protobuf:"bytes,5,opt,name=symbol,proto3" json:"symbol,omitempty"`                                                                       // 展示符号/资产标识
 	CoinName        string                 `protobuf:"bytes,6,opt,name=coin_name,json=coinName,proto3" json:"coin_name,omitempty"`                                                   // 币种名称
 	CoinType        AssetCoinType          `protobuf:"varint,7,opt,name=coin_type,json=coinType,proto3,enum=asset.AssetCoinType" json:"coin_type,omitempty"`                         // 币种类型
-	IconUrl         string                 `protobuf:"bytes,8,opt,name=icon_url,json=iconUrl,proto3" json:"icon_url,omitempty"`                                                      // 币种图标URL
-	IconText        string                 `protobuf:"bytes,9,opt,name=icon_text,json=iconText,proto3" json:"icon_text,omitempty"`                                                   // 币种图标文案/符号
-	IconBgColor     string                 `protobuf:"bytes,10,opt,name=icon_bg_color,json=iconBgColor,proto3" json:"icon_bg_color,omitempty"`                                       // 图标背景色
-	DecimalPlaces   int32                  `protobuf:"varint,11,opt,name=decimal_places,json=decimalPlaces,proto3" json:"decimal_places,omitempty"`                                  // 资产展示精度
-	AppVisible      AssetCoinSwitch        `protobuf:"varint,12,opt,name=app_visible,json=appVisible,proto3,enum=asset.AssetCoinSwitch" json:"app_visible,omitempty"`                // APP操作页是否展示
-	RechargeEnabled AssetCoinSwitch        `protobuf:"varint,13,opt,name=recharge_enabled,json=rechargeEnabled,proto3,enum=asset.AssetCoinSwitch" json:"recharge_enabled,omitempty"` // 充值页是否展示
-	WithdrawEnabled AssetCoinSwitch        `protobuf:"varint,14,opt,name=withdraw_enabled,json=withdrawEnabled,proto3,enum=asset.AssetCoinSwitch" json:"withdraw_enabled,omitempty"` // 提现页是否展示
-	TransferEnabled AssetCoinSwitch        `protobuf:"varint,15,opt,name=transfer_enabled,json=transferEnabled,proto3,enum=asset.AssetCoinSwitch" json:"transfer_enabled,omitempty"` // 划转页是否展示
-	Status          AssetStatus            `protobuf:"varint,16,opt,name=status,proto3,enum=asset.AssetStatus" json:"status,omitempty"`                                              // 状态
-	Sort            int32                  `protobuf:"varint,17,opt,name=sort,proto3" json:"sort,omitempty"`                                                                         // 排序,越小越靠前
-	Remark          string                 `protobuf:"bytes,18,opt,name=remark,proto3" json:"remark,omitempty"`                                                                      // 备注
-	CreateTimes     int64                  `protobuf:"varint,19,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                                        // 创建时间戳(毫秒)
-	UpdateTimes     int64                  `protobuf:"varint,20,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                                        // 更新时间戳(毫秒)
+	ChainCode       common.ChainCode       `protobuf:"varint,8,opt,name=chain_code,json=chainCode,proto3,enum=common.ChainCode" json:"chain_code,omitempty"`                         // 链类型
+	IconUrl         string                 `protobuf:"bytes,9,opt,name=icon_url,json=iconUrl,proto3" json:"icon_url,omitempty"`                                                      // 币种图标URL
+	IconText        string                 `protobuf:"bytes,10,opt,name=icon_text,json=iconText,proto3" json:"icon_text,omitempty"`                                                  // 币种图标文案/符号
+	IconBgColor     string                 `protobuf:"bytes,11,opt,name=icon_bg_color,json=iconBgColor,proto3" json:"icon_bg_color,omitempty"`                                       // 图标背景色
+	DecimalPlaces   int32                  `protobuf:"varint,12,opt,name=decimal_places,json=decimalPlaces,proto3" json:"decimal_places,omitempty"`                                  // 资产展示精度
+	AppVisible      AssetCoinSwitch        `protobuf:"varint,13,opt,name=app_visible,json=appVisible,proto3,enum=asset.AssetCoinSwitch" json:"app_visible,omitempty"`                // APP操作页是否展示
+	RechargeEnabled AssetCoinSwitch        `protobuf:"varint,14,opt,name=recharge_enabled,json=rechargeEnabled,proto3,enum=asset.AssetCoinSwitch" json:"recharge_enabled,omitempty"` // 充值页是否展示
+	WithdrawEnabled AssetCoinSwitch        `protobuf:"varint,15,opt,name=withdraw_enabled,json=withdrawEnabled,proto3,enum=asset.AssetCoinSwitch" json:"withdraw_enabled,omitempty"` // 提现页是否展示
+	TransferEnabled AssetCoinSwitch        `protobuf:"varint,16,opt,name=transfer_enabled,json=transferEnabled,proto3,enum=asset.AssetCoinSwitch" json:"transfer_enabled,omitempty"` // 划转页是否展示
+	Status          AssetStatus            `protobuf:"varint,17,opt,name=status,proto3,enum=asset.AssetStatus" json:"status,omitempty"`                                              // 状态
+	Sort            int32                  `protobuf:"varint,18,opt,name=sort,proto3" json:"sort,omitempty"`                                                                         // 排序,越小越靠前
+	Remark          string                 `protobuf:"bytes,19,opt,name=remark,proto3" json:"remark,omitempty"`                                                                      // 备注
+	CreateTimes     int64                  `protobuf:"varint,20,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                                        // 创建时间戳(毫秒)
+	UpdateTimes     int64                  `protobuf:"varint,21,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                                        // 更新时间戳(毫秒)
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -275,6 +277,13 @@ func (x *AssetCoinConfig) GetCoinType() AssetCoinType {
 		return x.CoinType
 	}
 	return AssetCoinType_ASSET_COIN_TYPE_UNKNOWN
+}
+
+func (x *AssetCoinConfig) GetChainCode() common.ChainCode {
+	if x != nil {
+		return x.ChainCode
+	}
+	return common.ChainCode(0)
 }
 
 func (x *AssetCoinConfig) GetIconUrl() string {
@@ -1213,7 +1222,7 @@ var File_proto_asset_model_proto protoreflect.FileDescriptor
 
 const file_proto_asset_model_proto_rawDesc = "" +
 	"\n" +
-	"\x17proto/asset/model.proto\x12\x05asset\x1a\x1cgoogle/protobuf/struct.proto\x1a\x16proto/asset/enum.proto\"\xd5\x03\n" +
+	"\x17proto/asset/model.proto\x12\x05asset\x1a\x19proto/common/common.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x16proto/asset/enum.proto\"\xd5\x03\n" +
 	"\tUserAsset\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -1230,7 +1239,7 @@ const file_proto_asset_model_proto_rawDesc = "" +
 	"\aversion\x18\v \x01(\x03R\aversion\x12\x16\n" +
 	"\x06remark\x18\f \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\r \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x0e \x01(\x03R\vupdateTimes\"\x91\x06\n" +
+	"\fupdate_times\x18\x0e \x01(\x03R\vupdateTimes\"\xc3\x06\n" +
 	"\x0fAssetCoinConfig\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x122\n" +
@@ -1239,22 +1248,24 @@ const file_proto_asset_model_proto_rawDesc = "" +
 	"\x04coin\x18\x04 \x01(\tR\x04coin\x12\x16\n" +
 	"\x06symbol\x18\x05 \x01(\tR\x06symbol\x12\x1b\n" +
 	"\tcoin_name\x18\x06 \x01(\tR\bcoinName\x121\n" +
-	"\tcoin_type\x18\a \x01(\x0e2\x14.asset.AssetCoinTypeR\bcoinType\x12\x19\n" +
-	"\bicon_url\x18\b \x01(\tR\aiconUrl\x12\x1b\n" +
-	"\ticon_text\x18\t \x01(\tR\biconText\x12\"\n" +
-	"\ricon_bg_color\x18\n" +
-	" \x01(\tR\viconBgColor\x12%\n" +
-	"\x0edecimal_places\x18\v \x01(\x05R\rdecimalPlaces\x127\n" +
-	"\vapp_visible\x18\f \x01(\x0e2\x16.asset.AssetCoinSwitchR\n" +
+	"\tcoin_type\x18\a \x01(\x0e2\x14.asset.AssetCoinTypeR\bcoinType\x120\n" +
+	"\n" +
+	"chain_code\x18\b \x01(\x0e2\x11.common.ChainCodeR\tchainCode\x12\x19\n" +
+	"\bicon_url\x18\t \x01(\tR\aiconUrl\x12\x1b\n" +
+	"\ticon_text\x18\n" +
+	" \x01(\tR\biconText\x12\"\n" +
+	"\ricon_bg_color\x18\v \x01(\tR\viconBgColor\x12%\n" +
+	"\x0edecimal_places\x18\f \x01(\x05R\rdecimalPlaces\x127\n" +
+	"\vapp_visible\x18\r \x01(\x0e2\x16.asset.AssetCoinSwitchR\n" +
 	"appVisible\x12A\n" +
-	"\x10recharge_enabled\x18\r \x01(\x0e2\x16.asset.AssetCoinSwitchR\x0frechargeEnabled\x12A\n" +
-	"\x10withdraw_enabled\x18\x0e \x01(\x0e2\x16.asset.AssetCoinSwitchR\x0fwithdrawEnabled\x12A\n" +
-	"\x10transfer_enabled\x18\x0f \x01(\x0e2\x16.asset.AssetCoinSwitchR\x0ftransferEnabled\x12*\n" +
-	"\x06status\x18\x10 \x01(\x0e2\x12.asset.AssetStatusR\x06status\x12\x12\n" +
-	"\x04sort\x18\x11 \x01(\x05R\x04sort\x12\x16\n" +
-	"\x06remark\x18\x12 \x01(\tR\x06remark\x12!\n" +
-	"\fcreate_times\x18\x13 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x14 \x01(\x03R\vupdateTimes\"\x8b\b\n" +
+	"\x10recharge_enabled\x18\x0e \x01(\x0e2\x16.asset.AssetCoinSwitchR\x0frechargeEnabled\x12A\n" +
+	"\x10withdraw_enabled\x18\x0f \x01(\x0e2\x16.asset.AssetCoinSwitchR\x0fwithdrawEnabled\x12A\n" +
+	"\x10transfer_enabled\x18\x10 \x01(\x0e2\x16.asset.AssetCoinSwitchR\x0ftransferEnabled\x12*\n" +
+	"\x06status\x18\x11 \x01(\x0e2\x12.asset.AssetStatusR\x06status\x12\x12\n" +
+	"\x04sort\x18\x12 \x01(\x05R\x04sort\x12\x16\n" +
+	"\x06remark\x18\x13 \x01(\tR\x06remark\x12!\n" +
+	"\fcreate_times\x18\x14 \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18\x15 \x01(\x03R\vupdateTimes\"\x8b\b\n" +
 	"\tAssetFlow\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\aflow_no\x18\x02 \x01(\tR\x06flowNo\x12\x1b\n" +
@@ -1381,49 +1392,51 @@ var file_proto_asset_model_proto_goTypes = []any{
 	(WalletType)(0),          // 7: asset.WalletType
 	(AssetStatus)(0),         // 8: asset.AssetStatus
 	(AssetCoinType)(0),       // 9: asset.AssetCoinType
-	(AssetCoinSwitch)(0),     // 10: asset.AssetCoinSwitch
-	(BizType)(0),             // 11: asset.BizType
-	(SceneType)(0),           // 12: asset.SceneType
-	(AssetOpType)(0),         // 13: asset.AssetOpType
-	(*structpb.Struct)(nil),  // 14: google.protobuf.Struct
-	(FreezeStatus)(0),        // 15: asset.FreezeStatus
-	(LockStatus)(0),          // 16: asset.LockStatus
-	(IdempotentStatus)(0),    // 17: asset.IdempotentStatus
+	(common.ChainCode)(0),    // 10: common.ChainCode
+	(AssetCoinSwitch)(0),     // 11: asset.AssetCoinSwitch
+	(BizType)(0),             // 12: asset.BizType
+	(SceneType)(0),           // 13: asset.SceneType
+	(AssetOpType)(0),         // 14: asset.AssetOpType
+	(*structpb.Struct)(nil),  // 15: google.protobuf.Struct
+	(FreezeStatus)(0),        // 16: asset.FreezeStatus
+	(LockStatus)(0),          // 17: asset.LockStatus
+	(IdempotentStatus)(0),    // 18: asset.IdempotentStatus
 }
 var file_proto_asset_model_proto_depIdxs = []int32{
 	7,  // 0: asset.UserAsset.wallet_type:type_name -> asset.WalletType
 	8,  // 1: asset.UserAsset.status:type_name -> asset.AssetStatus
 	7,  // 2: asset.AssetCoinConfig.wallet_type:type_name -> asset.WalletType
 	9,  // 3: asset.AssetCoinConfig.coin_type:type_name -> asset.AssetCoinType
-	10, // 4: asset.AssetCoinConfig.app_visible:type_name -> asset.AssetCoinSwitch
-	10, // 5: asset.AssetCoinConfig.recharge_enabled:type_name -> asset.AssetCoinSwitch
-	10, // 6: asset.AssetCoinConfig.withdraw_enabled:type_name -> asset.AssetCoinSwitch
-	10, // 7: asset.AssetCoinConfig.transfer_enabled:type_name -> asset.AssetCoinSwitch
-	8,  // 8: asset.AssetCoinConfig.status:type_name -> asset.AssetStatus
-	7,  // 9: asset.AssetFlow.wallet_type:type_name -> asset.WalletType
-	11, // 10: asset.AssetFlow.biz_type:type_name -> asset.BizType
-	12, // 11: asset.AssetFlow.scene_type:type_name -> asset.SceneType
-	13, // 12: asset.AssetFlow.op_type:type_name -> asset.AssetOpType
-	14, // 13: asset.AssetFlow.ext_json:type_name -> google.protobuf.Struct
-	7,  // 14: asset.AssetFreeze.wallet_type:type_name -> asset.WalletType
-	11, // 15: asset.AssetFreeze.biz_type:type_name -> asset.BizType
-	12, // 16: asset.AssetFreeze.scene_type:type_name -> asset.SceneType
-	15, // 17: asset.AssetFreeze.status:type_name -> asset.FreezeStatus
-	14, // 18: asset.AssetFreeze.ext_json:type_name -> google.protobuf.Struct
-	7,  // 19: asset.AssetLock.wallet_type:type_name -> asset.WalletType
-	11, // 20: asset.AssetLock.biz_type:type_name -> asset.BizType
-	12, // 21: asset.AssetLock.scene_type:type_name -> asset.SceneType
-	16, // 22: asset.AssetLock.status:type_name -> asset.LockStatus
-	14, // 23: asset.AssetLock.ext_json:type_name -> google.protobuf.Struct
-	11, // 24: asset.AssetIdempotent.biz_type:type_name -> asset.BizType
-	12, // 25: asset.AssetIdempotent.scene_type:type_name -> asset.SceneType
-	17, // 26: asset.AssetIdempotent.status:type_name -> asset.IdempotentStatus
-	0,  // 27: asset.UserAssetSummary.assets:type_name -> asset.UserAsset
-	28, // [28:28] is the sub-list for method output_type
-	28, // [28:28] is the sub-list for method input_type
-	28, // [28:28] is the sub-list for extension type_name
-	28, // [28:28] is the sub-list for extension extendee
-	0,  // [0:28] is the sub-list for field type_name
+	10, // 4: asset.AssetCoinConfig.chain_code:type_name -> common.ChainCode
+	11, // 5: asset.AssetCoinConfig.app_visible:type_name -> asset.AssetCoinSwitch
+	11, // 6: asset.AssetCoinConfig.recharge_enabled:type_name -> asset.AssetCoinSwitch
+	11, // 7: asset.AssetCoinConfig.withdraw_enabled:type_name -> asset.AssetCoinSwitch
+	11, // 8: asset.AssetCoinConfig.transfer_enabled:type_name -> asset.AssetCoinSwitch
+	8,  // 9: asset.AssetCoinConfig.status:type_name -> asset.AssetStatus
+	7,  // 10: asset.AssetFlow.wallet_type:type_name -> asset.WalletType
+	12, // 11: asset.AssetFlow.biz_type:type_name -> asset.BizType
+	13, // 12: asset.AssetFlow.scene_type:type_name -> asset.SceneType
+	14, // 13: asset.AssetFlow.op_type:type_name -> asset.AssetOpType
+	15, // 14: asset.AssetFlow.ext_json:type_name -> google.protobuf.Struct
+	7,  // 15: asset.AssetFreeze.wallet_type:type_name -> asset.WalletType
+	12, // 16: asset.AssetFreeze.biz_type:type_name -> asset.BizType
+	13, // 17: asset.AssetFreeze.scene_type:type_name -> asset.SceneType
+	16, // 18: asset.AssetFreeze.status:type_name -> asset.FreezeStatus
+	15, // 19: asset.AssetFreeze.ext_json:type_name -> google.protobuf.Struct
+	7,  // 20: asset.AssetLock.wallet_type:type_name -> asset.WalletType
+	12, // 21: asset.AssetLock.biz_type:type_name -> asset.BizType
+	13, // 22: asset.AssetLock.scene_type:type_name -> asset.SceneType
+	17, // 23: asset.AssetLock.status:type_name -> asset.LockStatus
+	15, // 24: asset.AssetLock.ext_json:type_name -> google.protobuf.Struct
+	12, // 25: asset.AssetIdempotent.biz_type:type_name -> asset.BizType
+	13, // 26: asset.AssetIdempotent.scene_type:type_name -> asset.SceneType
+	18, // 27: asset.AssetIdempotent.status:type_name -> asset.IdempotentStatus
+	0,  // 28: asset.UserAssetSummary.assets:type_name -> asset.UserAsset
+	29, // [29:29] is the sub-list for method output_type
+	29, // [29:29] is the sub-list for method input_type
+	29, // [29:29] is the sub-list for extension type_name
+	29, // [29:29] is the sub-list for extension extendee
+	0,  // [0:29] is the sub-list for field type_name
 }
 
 func init() { file_proto_asset_model_proto_init() }

@@ -82,3 +82,27 @@ func (s *PaymentAppServer) GetMyWithdrawOrder(ctx context.Context, in *payment.G
 	l := logic.NewGetMyWithdrawOrderLogic(ctx, s.svcCtx)
 	return l.GetMyWithdrawOrder(in)
 }
+
+// 获取/分配我的链上充值地址
+func (s *PaymentAppServer) GetMyCryptoRechargeAddress(ctx context.Context, in *payment.GetMyCryptoRechargeAddressReq) (*payment.GetMyCryptoRechargeAddressResp, error) {
+	l := logic.NewGetMyCryptoRechargeAddressLogic(ctx, s.svcCtx)
+	return l.GetMyCryptoRechargeAddress(in)
+}
+
+// 我的链上充值地址列表
+func (s *PaymentAppServer) ListMyCryptoRechargeAddresses(ctx context.Context, in *payment.ListMyCryptoRechargeAddressesReq) (*payment.ListMyCryptoRechargeAddressesResp, error) {
+	l := logic.NewListMyCryptoRechargeAddressesLogic(ctx, s.svcCtx)
+	return l.ListMyCryptoRechargeAddresses(in)
+}
+
+// 我的链上充值交易列表
+func (s *PaymentAppServer) ListMyCryptoRechargeTxs(ctx context.Context, in *payment.ListMyCryptoRechargeTxsReq) (*payment.ListMyCryptoRechargeTxsResp, error) {
+	l := logic.NewListMyCryptoRechargeTxsLogic(ctx, s.svcCtx)
+	return l.ListMyCryptoRechargeTxs(in)
+}
+
+// 我的链上充值交易详情
+func (s *PaymentAppServer) GetMyCryptoRechargeTx(ctx context.Context, in *payment.GetMyCryptoRechargeTxReq) (*payment.GetMyCryptoRechargeTxResp, error) {
+	l := logic.NewGetMyCryptoRechargeTxLogic(ctx, s.svcCtx)
+	return l.GetMyCryptoRechargeTx(in)
+}

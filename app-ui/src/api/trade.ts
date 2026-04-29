@@ -1,6 +1,6 @@
 import { http } from '@/api/http'
 import { compactParams } from '@/api/utils'
-import type { RespBase } from '@/types/api'
+import type { OptionsGroup, RespBase } from '@/types/api'
 import type {
   CancelAllOrdersReq,
   CancelOrderReq,
@@ -23,6 +23,10 @@ import type {
   TradeSymbolContract,
   TradeSymbolSpot,
 } from '@/types/trade'
+
+export function apiGetTradeOptions(): Promise<RespBase & { data: OptionsGroup[] }> {
+  return http.get('/trade/options').then((res) => res.data)
+}
 
 export function apiTradeGetSymbolList(params: GetSymbolListReq): Promise<RespBase & { list: TradeSymbol[] }> {
   return http.get('/trade/symbols', { params: compactParams(params) }).then((res) => res.data)

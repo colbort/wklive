@@ -306,6 +306,7 @@ type AssetCoinConfig struct {
 	Symbol          string `json:"symbol"`          // 展示符号/资产标识
 	CoinName        string `json:"coinName"`        // 币种名称
 	CoinType        int64  `json:"coinType"`        // 币种类型
+	ChainCode       int64  `json:"chainCode"`       // 链类型
 	IconUrl         string `json:"iconUrl"`         // 币种图标URL
 	IconText        string `json:"iconText"`        // 币种图标文案/符号
 	IconBgColor     string `json:"iconBgColor"`     // 图标背景色
@@ -589,6 +590,11 @@ type DepthLevel struct {
 	Volume float64 `json:"volume"`
 }
 
+type GetAssetOptionsResp struct {
+	RespBase
+	Data []OptionsGroup `json:"data"`
+}
+
 type GetFillListReq struct {
 	PageReq
 	TenantId   int64     `form:"tenantId,optional"`
@@ -605,6 +611,11 @@ type GetFillListResp struct {
 type GetIdentityResp struct {
 	RespBase
 	Data UserIdentity `json:"data"`
+}
+
+type GetItickOptionsResp struct {
+	RespBase
+	Data []OptionsGroup `json:"data"`
 }
 
 type GetKlineReq struct {
@@ -692,6 +703,11 @@ type GetMyWithdrawOrderResp struct {
 	Data WithdrawOrder `json:"data"`
 }
 
+type GetOptionOptionsResp struct {
+	RespBase
+	Data []OptionsGroup `json:"data"`
+}
+
 type GetOrderDetailReq struct {
 	TenantId int64  `form:"tenantId,optional"`
 	OrderId  int64  `form:"orderId,optional"`
@@ -718,6 +734,11 @@ type GetOrderListReq struct {
 type GetOrderListResp struct {
 	RespBase
 	List []TradeOrder `json:"list"`
+}
+
+type GetPaymentOptionsResp struct {
+	RespBase
+	Data []OptionsGroup `json:"data"`
 }
 
 type GetPositionListReq struct {
@@ -752,6 +773,11 @@ type GetSecurityResp struct {
 	Data UserSecurity `json:"data"`
 }
 
+type GetStakingOptionsResp struct {
+	RespBase
+	Data []OptionsGroup `json:"data"`
+}
+
 type GetSymbolDetailReq struct {
 	TenantId int64 `form:"tenantId,optional"` // 租户ID
 	SymbolId int64 `form:"symbolId"`          // 交易对ID
@@ -778,6 +804,16 @@ type GetSymbolListResp struct {
 type GetSystemCoreResp struct {
 	RespBase
 	Data SystemCore `json:"data"`
+}
+
+type GetTradeOptionsResp struct {
+	RespBase
+	Data []OptionsGroup `json:"data"`
+}
+
+type GetUserOptionsResp struct {
+	RespBase
+	Data []OptionsGroup `json:"data"`
 }
 
 type GuestLogin struct {
@@ -1280,6 +1316,17 @@ type OptionTrade struct {
 type OptionTradeDetail struct {
 	Trade    OptionTrade    `json:"trade"`
 	Contract OptionContract `json:"contract"`
+}
+
+type OptionsGroup struct {
+	Key     string        `json:"key"`
+	Label   string        `json:"label"`
+	Options []OptionsItem `json:"options"`
+}
+
+type OptionsItem struct {
+	Value int32  `json:"value"`
+	Code  string `json:"code"`
 }
 
 type PageReq struct {

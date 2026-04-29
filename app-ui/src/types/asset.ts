@@ -17,6 +17,30 @@ export interface AssetUserAsset {
   updateTimes: number
 }
 
+export interface AssetCoinConfig {
+  id: number
+  tenantId: number
+  walletType: number
+  coin: string
+  symbol: string
+  coinName: string
+  coinType: number
+  chainCode: number
+  iconUrl: string
+  iconText: string
+  iconBgColor: string
+  decimalPlaces: number
+  appVisible: number
+  rechargeEnabled: number
+  withdrawEnabled: number
+  transferEnabled: number
+  status: number
+  sort: number
+  remark: string
+  createTimes: number
+  updateTimes: number
+}
+
 export interface AssetFlow {
   id: number
   flowNo: string
@@ -101,6 +125,13 @@ export interface UserAssetSummary {
 
 export interface GetMyAssetSummaryReq {
   tenantId?: number
+}
+
+export interface ListAssetCoinConfigsReq {
+  tenantId?: number
+  walletType: number
+  operationType: number
+  coinType?: number
 }
 
 export interface ListMyAssetsReq {

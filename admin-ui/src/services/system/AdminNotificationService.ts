@@ -150,7 +150,10 @@ class AdminNotificationService {
 
     try {
       const text =
-        voiceTextMap[event.type as AdminNotificationEventType] || event.title || event.message || '有新的管理通知'
+        voiceTextMap[event.type as AdminNotificationEventType] ||
+        event.title ||
+        event.message ||
+        '有新的管理通知'
       const utterance = new SpeechSynthesisUtterance(text)
       utterance.lang = 'zh-CN'
       utterance.rate = 1

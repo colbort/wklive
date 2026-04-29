@@ -18,11 +18,20 @@ type (
 	AdminEmpty                        = payment.AdminEmpty
 	AuditWithdrawOrderReq             = payment.AuditWithdrawOrderReq
 	CloseRechargeOrderReq             = payment.CloseRechargeOrderReq
+	CreateCryptoRechargeAddressReq    = payment.CreateCryptoRechargeAddressReq
+	CreateCryptoRechargeTxReq         = payment.CreateCryptoRechargeTxReq
+	CreateCryptoWalletAccountReq      = payment.CreateCryptoWalletAccountReq
 	CreatePayPlatformReq              = payment.CreatePayPlatformReq
 	CreatePayProductReq               = payment.CreatePayProductReq
 	CreateTenantPayAccountReq         = payment.CreateTenantPayAccountReq
 	CreateTenantPayChannelReq         = payment.CreateTenantPayChannelReq
 	CreateTenantPayChannelRuleReq     = payment.CreateTenantPayChannelRuleReq
+	GetCryptoRechargeAddressReq       = payment.GetCryptoRechargeAddressReq
+	GetCryptoRechargeAddressResp      = payment.GetCryptoRechargeAddressResp
+	GetCryptoRechargeTxReq            = payment.GetCryptoRechargeTxReq
+	GetCryptoRechargeTxResp           = payment.GetCryptoRechargeTxResp
+	GetCryptoWalletAccountReq         = payment.GetCryptoWalletAccountReq
+	GetCryptoWalletAccountResp        = payment.GetCryptoWalletAccountResp
 	GetPayPlatformReq                 = payment.GetPayPlatformReq
 	GetPayPlatformResp                = payment.GetPayPlatformResp
 	GetPayProductReq                  = payment.GetPayProductReq
@@ -45,6 +54,12 @@ type (
 	GetWithdrawNotifyLogResp          = payment.GetWithdrawNotifyLogResp
 	GetWithdrawOrderReq               = payment.GetWithdrawOrderReq
 	GetWithdrawOrderResp              = payment.GetWithdrawOrderResp
+	ListCryptoRechargeAddressesReq    = payment.ListCryptoRechargeAddressesReq
+	ListCryptoRechargeAddressesResp   = payment.ListCryptoRechargeAddressesResp
+	ListCryptoRechargeTxsReq          = payment.ListCryptoRechargeTxsReq
+	ListCryptoRechargeTxsResp         = payment.ListCryptoRechargeTxsResp
+	ListCryptoWalletAccountsReq       = payment.ListCryptoWalletAccountsReq
+	ListCryptoWalletAccountsResp      = payment.ListCryptoWalletAccountsResp
 	ListPayPlatformsReq               = payment.ListPayPlatformsReq
 	ListPayPlatformsResp              = payment.ListPayPlatformsResp
 	ListPayProductsReq                = payment.ListPayProductsReq
@@ -72,6 +87,9 @@ type (
 	PayPlatformItem                   = payment.PayPlatformItem
 	PayPlatformsResp                  = payment.PayPlatformsResp
 	RetryNotifyReq                    = payment.RetryNotifyReq
+	UpdateCryptoRechargeAddressReq    = payment.UpdateCryptoRechargeAddressReq
+	UpdateCryptoRechargeTxReq         = payment.UpdateCryptoRechargeTxReq
+	UpdateCryptoWalletAccountReq      = payment.UpdateCryptoWalletAccountReq
 	UpdatePayPlatformReq              = payment.UpdatePayPlatformReq
 	UpdatePayProductReq               = payment.UpdatePayProductReq
 	UpdateTenantPayAccountReq         = payment.UpdateTenantPayAccountReq
@@ -158,6 +176,30 @@ type (
 		ListWithdrawNotifyLogs(ctx context.Context, in *ListWithdrawNotifyLogsReq, opts ...grpc.CallOption) (*ListWithdrawNotifyLogsResp, error)
 		// 获取提现回调日志详情
 		GetWithdrawNotifyLog(ctx context.Context, in *GetWithdrawNotifyLogReq, opts ...grpc.CallOption) (*GetWithdrawNotifyLogResp, error)
+		// 创建链上充值地址
+		CreateCryptoRechargeAddress(ctx context.Context, in *CreateCryptoRechargeAddressReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 更新链上充值地址
+		UpdateCryptoRechargeAddress(ctx context.Context, in *UpdateCryptoRechargeAddressReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 获取链上充值地址详情
+		GetCryptoRechargeAddress(ctx context.Context, in *GetCryptoRechargeAddressReq, opts ...grpc.CallOption) (*GetCryptoRechargeAddressResp, error)
+		// 链上充值地址列表
+		ListCryptoRechargeAddresses(ctx context.Context, in *ListCryptoRechargeAddressesReq, opts ...grpc.CallOption) (*ListCryptoRechargeAddressesResp, error)
+		// 创建链上钱包账号
+		CreateCryptoWalletAccount(ctx context.Context, in *CreateCryptoWalletAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 更新链上钱包账号
+		UpdateCryptoWalletAccount(ctx context.Context, in *UpdateCryptoWalletAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 获取链上钱包账号详情
+		GetCryptoWalletAccount(ctx context.Context, in *GetCryptoWalletAccountReq, opts ...grpc.CallOption) (*GetCryptoWalletAccountResp, error)
+		// 链上钱包账号列表
+		ListCryptoWalletAccounts(ctx context.Context, in *ListCryptoWalletAccountsReq, opts ...grpc.CallOption) (*ListCryptoWalletAccountsResp, error)
+		// 创建链上充值交易
+		CreateCryptoRechargeTx(ctx context.Context, in *CreateCryptoRechargeTxReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 更新链上充值交易
+		UpdateCryptoRechargeTx(ctx context.Context, in *UpdateCryptoRechargeTxReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 获取链上充值交易详情
+		GetCryptoRechargeTx(ctx context.Context, in *GetCryptoRechargeTxReq, opts ...grpc.CallOption) (*GetCryptoRechargeTxResp, error)
+		// 链上充值交易列表
+		ListCryptoRechargeTxs(ctx context.Context, in *ListCryptoRechargeTxsReq, opts ...grpc.CallOption) (*ListCryptoRechargeTxsResp, error)
 	}
 
 	defaultPaymentAdmin struct {
@@ -403,4 +445,76 @@ func (m *defaultPaymentAdmin) ListWithdrawNotifyLogs(ctx context.Context, in *Li
 func (m *defaultPaymentAdmin) GetWithdrawNotifyLog(ctx context.Context, in *GetWithdrawNotifyLogReq, opts ...grpc.CallOption) (*GetWithdrawNotifyLogResp, error) {
 	client := payment.NewPaymentAdminClient(m.cli.Conn())
 	return client.GetWithdrawNotifyLog(ctx, in, opts...)
+}
+
+// 创建链上充值地址
+func (m *defaultPaymentAdmin) CreateCryptoRechargeAddress(ctx context.Context, in *CreateCryptoRechargeAddressReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	client := payment.NewPaymentAdminClient(m.cli.Conn())
+	return client.CreateCryptoRechargeAddress(ctx, in, opts...)
+}
+
+// 更新链上充值地址
+func (m *defaultPaymentAdmin) UpdateCryptoRechargeAddress(ctx context.Context, in *UpdateCryptoRechargeAddressReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	client := payment.NewPaymentAdminClient(m.cli.Conn())
+	return client.UpdateCryptoRechargeAddress(ctx, in, opts...)
+}
+
+// 获取链上充值地址详情
+func (m *defaultPaymentAdmin) GetCryptoRechargeAddress(ctx context.Context, in *GetCryptoRechargeAddressReq, opts ...grpc.CallOption) (*GetCryptoRechargeAddressResp, error) {
+	client := payment.NewPaymentAdminClient(m.cli.Conn())
+	return client.GetCryptoRechargeAddress(ctx, in, opts...)
+}
+
+// 链上充值地址列表
+func (m *defaultPaymentAdmin) ListCryptoRechargeAddresses(ctx context.Context, in *ListCryptoRechargeAddressesReq, opts ...grpc.CallOption) (*ListCryptoRechargeAddressesResp, error) {
+	client := payment.NewPaymentAdminClient(m.cli.Conn())
+	return client.ListCryptoRechargeAddresses(ctx, in, opts...)
+}
+
+// 创建链上钱包账号
+func (m *defaultPaymentAdmin) CreateCryptoWalletAccount(ctx context.Context, in *CreateCryptoWalletAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	client := payment.NewPaymentAdminClient(m.cli.Conn())
+	return client.CreateCryptoWalletAccount(ctx, in, opts...)
+}
+
+// 更新链上钱包账号
+func (m *defaultPaymentAdmin) UpdateCryptoWalletAccount(ctx context.Context, in *UpdateCryptoWalletAccountReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	client := payment.NewPaymentAdminClient(m.cli.Conn())
+	return client.UpdateCryptoWalletAccount(ctx, in, opts...)
+}
+
+// 获取链上钱包账号详情
+func (m *defaultPaymentAdmin) GetCryptoWalletAccount(ctx context.Context, in *GetCryptoWalletAccountReq, opts ...grpc.CallOption) (*GetCryptoWalletAccountResp, error) {
+	client := payment.NewPaymentAdminClient(m.cli.Conn())
+	return client.GetCryptoWalletAccount(ctx, in, opts...)
+}
+
+// 链上钱包账号列表
+func (m *defaultPaymentAdmin) ListCryptoWalletAccounts(ctx context.Context, in *ListCryptoWalletAccountsReq, opts ...grpc.CallOption) (*ListCryptoWalletAccountsResp, error) {
+	client := payment.NewPaymentAdminClient(m.cli.Conn())
+	return client.ListCryptoWalletAccounts(ctx, in, opts...)
+}
+
+// 创建链上充值交易
+func (m *defaultPaymentAdmin) CreateCryptoRechargeTx(ctx context.Context, in *CreateCryptoRechargeTxReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	client := payment.NewPaymentAdminClient(m.cli.Conn())
+	return client.CreateCryptoRechargeTx(ctx, in, opts...)
+}
+
+// 更新链上充值交易
+func (m *defaultPaymentAdmin) UpdateCryptoRechargeTx(ctx context.Context, in *UpdateCryptoRechargeTxReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	client := payment.NewPaymentAdminClient(m.cli.Conn())
+	return client.UpdateCryptoRechargeTx(ctx, in, opts...)
+}
+
+// 获取链上充值交易详情
+func (m *defaultPaymentAdmin) GetCryptoRechargeTx(ctx context.Context, in *GetCryptoRechargeTxReq, opts ...grpc.CallOption) (*GetCryptoRechargeTxResp, error) {
+	client := payment.NewPaymentAdminClient(m.cli.Conn())
+	return client.GetCryptoRechargeTx(ctx, in, opts...)
+}
+
+// 链上充值交易列表
+func (m *defaultPaymentAdmin) ListCryptoRechargeTxs(ctx context.Context, in *ListCryptoRechargeTxsReq, opts ...grpc.CallOption) (*ListCryptoRechargeTxsResp, error) {
+	client := payment.NewPaymentAdminClient(m.cli.Conn())
+	return client.ListCryptoRechargeTxs(ctx, in, opts...)
 }

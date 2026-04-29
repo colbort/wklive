@@ -186,23 +186,27 @@ CREATE TABLE sys_login_log (
 -- 增加 tenant_id，方便系统侧/租户侧隔离查询
 -- =============================
 DROP TABLE IF EXISTS sys_op_log;
+
 CREATE TABLE sys_op_log (
   id BIGINT AUTO_INCREMENT,
 
   tenant_id BIGINT NOT NULL DEFAULT 0 COMMENT '所属租户ID：0=系统侧，>0=租户ID',
 
-  user_id BIGINT,
-  username VARCHAR(64),
+  user_id BIGINT DEFAULT 0 COMMENT '操作人ID',
+  username VARCHAR(64) DEFAULT '' COMMENT '操作人账号',
 
-  method VARCHAR(16),
-  path VARCHAR(255),
+  module VARCHAR(64) DEFAULT '' COMMENT '模块',
+  action VARCHAR(64) DEFAULT '' COMMENT '操作',
 
-  req TEXT,
-  resp TEXT,
+  method VARCHAR(16) DEFAULT '' COMMENT '请求方法',
+  path VARCHAR(255) DEFAULT '' COMMENT '请求路径',
 
-  ip VARCHAR(64),
+  req TEXT COMMENT '请求参数',
+  resp TEXT COMMENT '响应内容',
 
-  cost_ms INT COMMENT '耗时',
+  ip VARCHAR(64) DEFAULT '' COMMENT 'IP',
+
+  cost_ms INT DEFAULT 0 COMMENT '耗时',
 
   create_times BIGINT NOT NULL DEFAULT 0,
   update_times BIGINT NOT NULL DEFAULT 0,
@@ -210,7 +214,8 @@ CREATE TABLE sys_op_log (
   PRIMARY KEY (id),
   INDEX idx_tenant_id(tenant_id),
   INDEX idx_user(user_id),
-  INDEX idx_time(create_times)
+  INDEX idx_time(create_times),
+  INDEX idx_path(path)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='操作日志';
 
 

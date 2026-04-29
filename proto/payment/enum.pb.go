@@ -504,6 +504,217 @@ func (ClientType) EnumDescriptor() ([]byte, []int) {
 	return file_proto_payment_enum_proto_rawDescGZIP(), []int{8}
 }
 
+type CryptoRechargeAddressSource int32
+
+const (
+	CryptoRechargeAddressSource_CRYPTO_RECHARGE_ADDRESS_SOURCE_UNKNOWN  CryptoRechargeAddressSource = 0
+	CryptoRechargeAddressSource_CRYPTO_RECHARGE_ADDRESS_SOURCE_SYSTEM   CryptoRechargeAddressSource = 1 // 系统生成
+	CryptoRechargeAddressSource_CRYPTO_RECHARGE_ADDRESS_SOURCE_PROVIDER CryptoRechargeAddressSource = 2 // 第三方分配
+	CryptoRechargeAddressSource_CRYPTO_RECHARGE_ADDRESS_SOURCE_MANUAL   CryptoRechargeAddressSource = 3 // 手工导入
+)
+
+// Enum value maps for CryptoRechargeAddressSource.
+var (
+	CryptoRechargeAddressSource_name = map[int32]string{
+		0: "CRYPTO_RECHARGE_ADDRESS_SOURCE_UNKNOWN",
+		1: "CRYPTO_RECHARGE_ADDRESS_SOURCE_SYSTEM",
+		2: "CRYPTO_RECHARGE_ADDRESS_SOURCE_PROVIDER",
+		3: "CRYPTO_RECHARGE_ADDRESS_SOURCE_MANUAL",
+	}
+	CryptoRechargeAddressSource_value = map[string]int32{
+		"CRYPTO_RECHARGE_ADDRESS_SOURCE_UNKNOWN":  0,
+		"CRYPTO_RECHARGE_ADDRESS_SOURCE_SYSTEM":   1,
+		"CRYPTO_RECHARGE_ADDRESS_SOURCE_PROVIDER": 2,
+		"CRYPTO_RECHARGE_ADDRESS_SOURCE_MANUAL":   3,
+	}
+)
+
+func (x CryptoRechargeAddressSource) Enum() *CryptoRechargeAddressSource {
+	p := new(CryptoRechargeAddressSource)
+	*p = x
+	return p
+}
+
+func (x CryptoRechargeAddressSource) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (CryptoRechargeAddressSource) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_payment_enum_proto_enumTypes[9].Descriptor()
+}
+
+func (CryptoRechargeAddressSource) Type() protoreflect.EnumType {
+	return &file_proto_payment_enum_proto_enumTypes[9]
+}
+
+func (x CryptoRechargeAddressSource) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use CryptoRechargeAddressSource.Descriptor instead.
+func (CryptoRechargeAddressSource) EnumDescriptor() ([]byte, []int) {
+	return file_proto_payment_enum_proto_rawDescGZIP(), []int{9}
+}
+
+type CryptoRechargeAddressType int32
+
+const (
+	CryptoRechargeAddressType_CRYPTO_RECHARGE_ADDRESS_TYPE_UNKNOWN     CryptoRechargeAddressType = 0
+	CryptoRechargeAddressType_CRYPTO_RECHARGE_ADDRESS_TYPE_EXCLUSIVE   CryptoRechargeAddressType = 1 // 用户独享
+	CryptoRechargeAddressType_CRYPTO_RECHARGE_ADDRESS_TYPE_SHARED_MEMO CryptoRechargeAddressType = 2 // 平台公共地址+memo
+)
+
+// Enum value maps for CryptoRechargeAddressType.
+var (
+	CryptoRechargeAddressType_name = map[int32]string{
+		0: "CRYPTO_RECHARGE_ADDRESS_TYPE_UNKNOWN",
+		1: "CRYPTO_RECHARGE_ADDRESS_TYPE_EXCLUSIVE",
+		2: "CRYPTO_RECHARGE_ADDRESS_TYPE_SHARED_MEMO",
+	}
+	CryptoRechargeAddressType_value = map[string]int32{
+		"CRYPTO_RECHARGE_ADDRESS_TYPE_UNKNOWN":     0,
+		"CRYPTO_RECHARGE_ADDRESS_TYPE_EXCLUSIVE":   1,
+		"CRYPTO_RECHARGE_ADDRESS_TYPE_SHARED_MEMO": 2,
+	}
+)
+
+func (x CryptoRechargeAddressType) Enum() *CryptoRechargeAddressType {
+	p := new(CryptoRechargeAddressType)
+	*p = x
+	return p
+}
+
+func (x CryptoRechargeAddressType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (CryptoRechargeAddressType) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_payment_enum_proto_enumTypes[10].Descriptor()
+}
+
+func (CryptoRechargeAddressType) Type() protoreflect.EnumType {
+	return &file_proto_payment_enum_proto_enumTypes[10]
+}
+
+func (x CryptoRechargeAddressType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use CryptoRechargeAddressType.Descriptor instead.
+func (CryptoRechargeAddressType) EnumDescriptor() ([]byte, []int) {
+	return file_proto_payment_enum_proto_rawDescGZIP(), []int{10}
+}
+
+type CryptoRechargeAddressStatus int32
+
+const (
+	CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_UNKNOWN  CryptoRechargeAddressStatus = 0
+	CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_DISABLED CryptoRechargeAddressStatus = 1 // 禁用
+	CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_ENABLED  CryptoRechargeAddressStatus = 2 // 可用
+	CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_FROZEN   CryptoRechargeAddressStatus = 3 // 冻结
+)
+
+// Enum value maps for CryptoRechargeAddressStatus.
+var (
+	CryptoRechargeAddressStatus_name = map[int32]string{
+		0: "CRYPTO_RECHARGE_ADDRESS_STATUS_UNKNOWN",
+		1: "CRYPTO_RECHARGE_ADDRESS_STATUS_DISABLED",
+		2: "CRYPTO_RECHARGE_ADDRESS_STATUS_ENABLED",
+		3: "CRYPTO_RECHARGE_ADDRESS_STATUS_FROZEN",
+	}
+	CryptoRechargeAddressStatus_value = map[string]int32{
+		"CRYPTO_RECHARGE_ADDRESS_STATUS_UNKNOWN":  0,
+		"CRYPTO_RECHARGE_ADDRESS_STATUS_DISABLED": 1,
+		"CRYPTO_RECHARGE_ADDRESS_STATUS_ENABLED":  2,
+		"CRYPTO_RECHARGE_ADDRESS_STATUS_FROZEN":   3,
+	}
+)
+
+func (x CryptoRechargeAddressStatus) Enum() *CryptoRechargeAddressStatus {
+	p := new(CryptoRechargeAddressStatus)
+	*p = x
+	return p
+}
+
+func (x CryptoRechargeAddressStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (CryptoRechargeAddressStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_payment_enum_proto_enumTypes[11].Descriptor()
+}
+
+func (CryptoRechargeAddressStatus) Type() protoreflect.EnumType {
+	return &file_proto_payment_enum_proto_enumTypes[11]
+}
+
+func (x CryptoRechargeAddressStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use CryptoRechargeAddressStatus.Descriptor instead.
+func (CryptoRechargeAddressStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_payment_enum_proto_rawDescGZIP(), []int{11}
+}
+
+type CryptoRechargeTxStatus int32
+
+const (
+	CryptoRechargeTxStatus_CRYPTO_RECHARGE_TX_STATUS_UNKNOWN    CryptoRechargeTxStatus = 0
+	CryptoRechargeTxStatus_CRYPTO_RECHARGE_TX_STATUS_PENDING    CryptoRechargeTxStatus = 1 // 待确认
+	CryptoRechargeTxStatus_CRYPTO_RECHARGE_TX_STATUS_CONFIRMING CryptoRechargeTxStatus = 2 // 确认中
+	CryptoRechargeTxStatus_CRYPTO_RECHARGE_TX_STATUS_CONFIRMED  CryptoRechargeTxStatus = 3 // 已确认
+	CryptoRechargeTxStatus_CRYPTO_RECHARGE_TX_STATUS_FAILED     CryptoRechargeTxStatus = 4 // 失败
+	CryptoRechargeTxStatus_CRYPTO_RECHARGE_TX_STATUS_CREDITED   CryptoRechargeTxStatus = 5 // 已入账
+)
+
+// Enum value maps for CryptoRechargeTxStatus.
+var (
+	CryptoRechargeTxStatus_name = map[int32]string{
+		0: "CRYPTO_RECHARGE_TX_STATUS_UNKNOWN",
+		1: "CRYPTO_RECHARGE_TX_STATUS_PENDING",
+		2: "CRYPTO_RECHARGE_TX_STATUS_CONFIRMING",
+		3: "CRYPTO_RECHARGE_TX_STATUS_CONFIRMED",
+		4: "CRYPTO_RECHARGE_TX_STATUS_FAILED",
+		5: "CRYPTO_RECHARGE_TX_STATUS_CREDITED",
+	}
+	CryptoRechargeTxStatus_value = map[string]int32{
+		"CRYPTO_RECHARGE_TX_STATUS_UNKNOWN":    0,
+		"CRYPTO_RECHARGE_TX_STATUS_PENDING":    1,
+		"CRYPTO_RECHARGE_TX_STATUS_CONFIRMING": 2,
+		"CRYPTO_RECHARGE_TX_STATUS_CONFIRMED":  3,
+		"CRYPTO_RECHARGE_TX_STATUS_FAILED":     4,
+		"CRYPTO_RECHARGE_TX_STATUS_CREDITED":   5,
+	}
+)
+
+func (x CryptoRechargeTxStatus) Enum() *CryptoRechargeTxStatus {
+	p := new(CryptoRechargeTxStatus)
+	*p = x
+	return p
+}
+
+func (x CryptoRechargeTxStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (CryptoRechargeTxStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_payment_enum_proto_enumTypes[12].Descriptor()
+}
+
+func (CryptoRechargeTxStatus) Type() protoreflect.EnumType {
+	return &file_proto_payment_enum_proto_enumTypes[12]
+}
+
+func (x CryptoRechargeTxStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use CryptoRechargeTxStatus.Descriptor instead.
+func (CryptoRechargeTxStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_payment_enum_proto_rawDescGZIP(), []int{12}
+}
+
 var File_proto_payment_enum_proto protoreflect.FileDescriptor
 
 const file_proto_payment_enum_proto_rawDesc = "" +
@@ -561,7 +772,28 @@ const file_proto_payment_enum_proto_rawDesc = "" +
 	"\x13CLIENT_TYPE_UNKNOWN\x10\x00\x12\x13\n" +
 	"\x0fCLIENT_TYPE_APP\x10\x01\x12\x12\n" +
 	"\x0eCLIENT_TYPE_H5\x10\x02\x12\x13\n" +
-	"\x0fCLIENT_TYPE_WEB\x10\x03B\x1eZ\x1cwklive/proto/payment;paymentb\x06proto3"
+	"\x0fCLIENT_TYPE_WEB\x10\x03*\xcc\x01\n" +
+	"\x1bCryptoRechargeAddressSource\x12*\n" +
+	"&CRYPTO_RECHARGE_ADDRESS_SOURCE_UNKNOWN\x10\x00\x12)\n" +
+	"%CRYPTO_RECHARGE_ADDRESS_SOURCE_SYSTEM\x10\x01\x12+\n" +
+	"'CRYPTO_RECHARGE_ADDRESS_SOURCE_PROVIDER\x10\x02\x12)\n" +
+	"%CRYPTO_RECHARGE_ADDRESS_SOURCE_MANUAL\x10\x03*\x9f\x01\n" +
+	"\x19CryptoRechargeAddressType\x12(\n" +
+	"$CRYPTO_RECHARGE_ADDRESS_TYPE_UNKNOWN\x10\x00\x12*\n" +
+	"&CRYPTO_RECHARGE_ADDRESS_TYPE_EXCLUSIVE\x10\x01\x12,\n" +
+	"(CRYPTO_RECHARGE_ADDRESS_TYPE_SHARED_MEMO\x10\x02*\xcd\x01\n" +
+	"\x1bCryptoRechargeAddressStatus\x12*\n" +
+	"&CRYPTO_RECHARGE_ADDRESS_STATUS_UNKNOWN\x10\x00\x12+\n" +
+	"'CRYPTO_RECHARGE_ADDRESS_STATUS_DISABLED\x10\x01\x12*\n" +
+	"&CRYPTO_RECHARGE_ADDRESS_STATUS_ENABLED\x10\x02\x12)\n" +
+	"%CRYPTO_RECHARGE_ADDRESS_STATUS_FROZEN\x10\x03*\x87\x02\n" +
+	"\x16CryptoRechargeTxStatus\x12%\n" +
+	"!CRYPTO_RECHARGE_TX_STATUS_UNKNOWN\x10\x00\x12%\n" +
+	"!CRYPTO_RECHARGE_TX_STATUS_PENDING\x10\x01\x12(\n" +
+	"$CRYPTO_RECHARGE_TX_STATUS_CONFIRMING\x10\x02\x12'\n" +
+	"#CRYPTO_RECHARGE_TX_STATUS_CONFIRMED\x10\x03\x12$\n" +
+	" CRYPTO_RECHARGE_TX_STATUS_FAILED\x10\x04\x12&\n" +
+	"\"CRYPTO_RECHARGE_TX_STATUS_CREDITED\x10\x05B\x1eZ\x1cwklive/proto/payment;paymentb\x06proto3"
 
 var (
 	file_proto_payment_enum_proto_rawDescOnce sync.Once
@@ -575,17 +807,21 @@ func file_proto_payment_enum_proto_rawDescGZIP() []byte {
 	return file_proto_payment_enum_proto_rawDescData
 }
 
-var file_proto_payment_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 9)
+var file_proto_payment_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 13)
 var file_proto_payment_enum_proto_goTypes = []any{
-	(PlatformType)(0),        // 0: payment.PlatformType
-	(CommonStatus)(0),        // 1: payment.CommonStatus
-	(OpenStatus)(0),          // 2: payment.OpenStatus
-	(SceneType)(0),           // 3: payment.SceneType
-	(FeeType)(0),             // 4: payment.FeeType
-	(PayOrderStatus)(0),      // 5: payment.PayOrderStatus
-	(NotifyProcessStatus)(0), // 6: payment.NotifyProcessStatus
-	(SignResult)(0),          // 7: payment.SignResult
-	(ClientType)(0),          // 8: payment.ClientType
+	(PlatformType)(0),                // 0: payment.PlatformType
+	(CommonStatus)(0),                // 1: payment.CommonStatus
+	(OpenStatus)(0),                  // 2: payment.OpenStatus
+	(SceneType)(0),                   // 3: payment.SceneType
+	(FeeType)(0),                     // 4: payment.FeeType
+	(PayOrderStatus)(0),              // 5: payment.PayOrderStatus
+	(NotifyProcessStatus)(0),         // 6: payment.NotifyProcessStatus
+	(SignResult)(0),                  // 7: payment.SignResult
+	(ClientType)(0),                  // 8: payment.ClientType
+	(CryptoRechargeAddressSource)(0), // 9: payment.CryptoRechargeAddressSource
+	(CryptoRechargeAddressType)(0),   // 10: payment.CryptoRechargeAddressType
+	(CryptoRechargeAddressStatus)(0), // 11: payment.CryptoRechargeAddressStatus
+	(CryptoRechargeTxStatus)(0),      // 12: payment.CryptoRechargeTxStatus
 }
 var file_proto_payment_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -605,7 +841,7 @@ func file_proto_payment_enum_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_payment_enum_proto_rawDesc), len(file_proto_payment_enum_proto_rawDesc)),
-			NumEnums:      9,
+			NumEnums:      13,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

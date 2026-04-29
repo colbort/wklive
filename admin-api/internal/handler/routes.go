@@ -389,6 +389,66 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
+				Method:  http.MethodPost,
+				Path:    "/crypto-recharge-address",
+				Handler: payment.CreateCryptoRechargeAddressHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/crypto-recharge-address",
+				Handler: payment.UpdateCryptoRechargeAddressHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/crypto-recharge-address",
+				Handler: payment.GetCryptoRechargeAddressHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/crypto-recharge-addresses",
+				Handler: payment.ListCryptoRechargeAddressesHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/crypto-recharge-tx",
+				Handler: payment.CreateCryptoRechargeTxHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/crypto-recharge-tx",
+				Handler: payment.UpdateCryptoRechargeTxHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/crypto-recharge-tx",
+				Handler: payment.GetCryptoRechargeTxHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/crypto-recharge-txs",
+				Handler: payment.ListCryptoRechargeTxsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/crypto-wallet-account",
+				Handler: payment.CreateCryptoWalletAccountHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/crypto-wallet-account",
+				Handler: payment.UpdateCryptoWalletAccountHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/crypto-wallet-account",
+				Handler: payment.GetCryptoWalletAccountHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/crypto-wallet-accounts",
+				Handler: payment.ListCryptoWalletAccountsHandler(serverCtx),
+			},
+			{
 				Method:  http.MethodGet,
 				Path:    "/options",
 				Handler: payment.GetPaymentOptionsHandler(serverCtx),

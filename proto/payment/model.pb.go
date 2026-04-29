@@ -12,6 +12,7 @@ import (
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+	common "wklive/proto/common"
 )
 
 const (
@@ -1945,11 +1946,487 @@ func (x *WithdrawOrder) GetChannelId() int64 {
 	return 0
 }
 
+type CryptoRechargeAddress struct {
+	state         protoimpl.MessageState      `protogen:"open.v1"`
+	Id            int64                       `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                                     // 主键ID
+	TenantId      int64                       `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                                         // 租户ID
+	UserId        int64                       `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                                               // 用户ID
+	WalletType    int64                       `protobuf:"varint,4,opt,name=wallet_type,json=walletType,proto3" json:"wallet_type,omitempty"`                                                   // 账户类型
+	Coin          string                      `protobuf:"bytes,5,opt,name=coin,proto3" json:"coin,omitempty"`                                                                                  // 币种:USDT/BTC/ETH
+	ChainCode     common.ChainCode            `protobuf:"varint,6,opt,name=chain_code,json=chainCode,proto3,enum=common.ChainCode" json:"chain_code,omitempty"`                                // 链网络:TRC20/ERC20/BEP20/BTC/ETH
+	Address       string                      `protobuf:"bytes,7,opt,name=address,proto3" json:"address,omitempty"`                                                                            // 充值地址
+	Memo          string                      `protobuf:"bytes,8,opt,name=memo,proto3" json:"memo,omitempty"`                                                                                  // memo/tag
+	AddressSource CryptoRechargeAddressSource `protobuf:"varint,9,opt,name=address_source,json=addressSource,proto3,enum=payment.CryptoRechargeAddressSource" json:"address_source,omitempty"` // 地址来源
+	AddressType   CryptoRechargeAddressType   `protobuf:"varint,10,opt,name=address_type,json=addressType,proto3,enum=payment.CryptoRechargeAddressType" json:"address_type,omitempty"`        // 地址类型
+	Status        CryptoRechargeAddressStatus `protobuf:"varint,11,opt,name=status,proto3,enum=payment.CryptoRechargeAddressStatus" json:"status,omitempty"`                                   // 状态
+	LastUsedTime  int64                       `protobuf:"varint,12,opt,name=last_used_time,json=lastUsedTime,proto3" json:"last_used_time,omitempty"`                                          // 最近使用时间
+	CreateTimes   int64                       `protobuf:"varint,13,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                                               // 创建时间
+	UpdateTimes   int64                       `protobuf:"varint,14,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                                               // 更新时间
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CryptoRechargeAddress) Reset() {
+	*x = CryptoRechargeAddress{}
+	mi := &file_proto_payment_model_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CryptoRechargeAddress) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CryptoRechargeAddress) ProtoMessage() {}
+
+func (x *CryptoRechargeAddress) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_payment_model_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CryptoRechargeAddress.ProtoReflect.Descriptor instead.
+func (*CryptoRechargeAddress) Descriptor() ([]byte, []int) {
+	return file_proto_payment_model_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *CryptoRechargeAddress) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *CryptoRechargeAddress) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *CryptoRechargeAddress) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *CryptoRechargeAddress) GetWalletType() int64 {
+	if x != nil {
+		return x.WalletType
+	}
+	return 0
+}
+
+func (x *CryptoRechargeAddress) GetCoin() string {
+	if x != nil {
+		return x.Coin
+	}
+	return ""
+}
+
+func (x *CryptoRechargeAddress) GetChainCode() common.ChainCode {
+	if x != nil {
+		return x.ChainCode
+	}
+	return common.ChainCode(0)
+}
+
+func (x *CryptoRechargeAddress) GetAddress() string {
+	if x != nil {
+		return x.Address
+	}
+	return ""
+}
+
+func (x *CryptoRechargeAddress) GetMemo() string {
+	if x != nil {
+		return x.Memo
+	}
+	return ""
+}
+
+func (x *CryptoRechargeAddress) GetAddressSource() CryptoRechargeAddressSource {
+	if x != nil {
+		return x.AddressSource
+	}
+	return CryptoRechargeAddressSource_CRYPTO_RECHARGE_ADDRESS_SOURCE_UNKNOWN
+}
+
+func (x *CryptoRechargeAddress) GetAddressType() CryptoRechargeAddressType {
+	if x != nil {
+		return x.AddressType
+	}
+	return CryptoRechargeAddressType_CRYPTO_RECHARGE_ADDRESS_TYPE_UNKNOWN
+}
+
+func (x *CryptoRechargeAddress) GetStatus() CryptoRechargeAddressStatus {
+	if x != nil {
+		return x.Status
+	}
+	return CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_UNKNOWN
+}
+
+func (x *CryptoRechargeAddress) GetLastUsedTime() int64 {
+	if x != nil {
+		return x.LastUsedTime
+	}
+	return 0
+}
+
+func (x *CryptoRechargeAddress) GetCreateTimes() int64 {
+	if x != nil {
+		return x.CreateTimes
+	}
+	return 0
+}
+
+func (x *CryptoRechargeAddress) GetUpdateTimes() int64 {
+	if x != nil {
+		return x.UpdateTimes
+	}
+	return 0
+}
+
+type CryptoWalletAccount struct {
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	Id                   int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                  // 主键ID
+	TenantId             int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                      // 租户ID
+	AccountCode          string                 `protobuf:"bytes,3,opt,name=account_code,json=accountCode,proto3" json:"account_code,omitempty"`                              // 钱包账号编码
+	AccountName          string                 `protobuf:"bytes,4,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`                              // 钱包账号名称
+	Provider             string                 `protobuf:"bytes,5,opt,name=provider,proto3" json:"provider,omitempty"`                                                       // 钱包服务商:self/cobo/bitgo/fireblocks等
+	ApiKeyCipher         string                 `protobuf:"bytes,6,opt,name=api_key_cipher,json=apiKeyCipher,proto3" json:"api_key_cipher,omitempty"`                         // API Key密文
+	ApiSecretCipher      string                 `protobuf:"bytes,7,opt,name=api_secret_cipher,json=apiSecretCipher,proto3" json:"api_secret_cipher,omitempty"`                // API Secret密文
+	CallbackSecretCipher string                 `protobuf:"bytes,8,opt,name=callback_secret_cipher,json=callbackSecretCipher,proto3" json:"callback_secret_cipher,omitempty"` // 回调验签密钥密文
+	ExtConfig            string                 `protobuf:"bytes,9,opt,name=ext_config,json=extConfig,proto3" json:"ext_config,omitempty"`                                    // 扩展配置(JSON)
+	Status               CommonStatus           `protobuf:"varint,10,opt,name=status,proto3,enum=payment.CommonStatus" json:"status,omitempty"`                               // 状态
+	IsDefault            int64                  `protobuf:"varint,11,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`                                  // 是否默认:1是 0否
+	CreateTimes          int64                  `protobuf:"varint,12,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                            // 创建时间
+	UpdateTimes          int64                  `protobuf:"varint,13,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                            // 更新时间
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
+}
+
+func (x *CryptoWalletAccount) Reset() {
+	*x = CryptoWalletAccount{}
+	mi := &file_proto_payment_model_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CryptoWalletAccount) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CryptoWalletAccount) ProtoMessage() {}
+
+func (x *CryptoWalletAccount) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_payment_model_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CryptoWalletAccount.ProtoReflect.Descriptor instead.
+func (*CryptoWalletAccount) Descriptor() ([]byte, []int) {
+	return file_proto_payment_model_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *CryptoWalletAccount) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *CryptoWalletAccount) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *CryptoWalletAccount) GetAccountCode() string {
+	if x != nil {
+		return x.AccountCode
+	}
+	return ""
+}
+
+func (x *CryptoWalletAccount) GetAccountName() string {
+	if x != nil {
+		return x.AccountName
+	}
+	return ""
+}
+
+func (x *CryptoWalletAccount) GetProvider() string {
+	if x != nil {
+		return x.Provider
+	}
+	return ""
+}
+
+func (x *CryptoWalletAccount) GetApiKeyCipher() string {
+	if x != nil {
+		return x.ApiKeyCipher
+	}
+	return ""
+}
+
+func (x *CryptoWalletAccount) GetApiSecretCipher() string {
+	if x != nil {
+		return x.ApiSecretCipher
+	}
+	return ""
+}
+
+func (x *CryptoWalletAccount) GetCallbackSecretCipher() string {
+	if x != nil {
+		return x.CallbackSecretCipher
+	}
+	return ""
+}
+
+func (x *CryptoWalletAccount) GetExtConfig() string {
+	if x != nil {
+		return x.ExtConfig
+	}
+	return ""
+}
+
+func (x *CryptoWalletAccount) GetStatus() CommonStatus {
+	if x != nil {
+		return x.Status
+	}
+	return CommonStatus_COMMON_STATUS_UNKNOWN
+}
+
+func (x *CryptoWalletAccount) GetIsDefault() int64 {
+	if x != nil {
+		return x.IsDefault
+	}
+	return 0
+}
+
+func (x *CryptoWalletAccount) GetCreateTimes() int64 {
+	if x != nil {
+		return x.CreateTimes
+	}
+	return 0
+}
+
+func (x *CryptoWalletAccount) GetUpdateTimes() int64 {
+	if x != nil {
+		return x.UpdateTimes
+	}
+	return 0
+}
+
+type CryptoRechargeTx struct {
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	Id                   int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                    // 主键ID
+	TenantId             int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                        // 租户ID
+	UserId               int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                              // 用户ID
+	OrderId              int64                  `protobuf:"varint,4,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`                                           // 充值订单ID
+	OrderNo              string                 `protobuf:"bytes,5,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`                                            // 充值订单号
+	Coin                 string                 `protobuf:"bytes,6,opt,name=coin,proto3" json:"coin,omitempty"`                                                                 // 币种
+	ChainCode            common.ChainCode       `protobuf:"varint,7,opt,name=chain_code,json=chainCode,proto3,enum=common.ChainCode" json:"chain_code,omitempty"`               // 链网络
+	TxHash               string                 `protobuf:"bytes,8,opt,name=tx_hash,json=txHash,proto3" json:"tx_hash,omitempty"`                                               // 交易哈希
+	FromAddress          string                 `protobuf:"bytes,9,opt,name=from_address,json=fromAddress,proto3" json:"from_address,omitempty"`                                // 付款地址
+	ToAddress            string                 `protobuf:"bytes,10,opt,name=to_address,json=toAddress,proto3" json:"to_address,omitempty"`                                     // 收款地址
+	Memo                 string                 `protobuf:"bytes,11,opt,name=memo,proto3" json:"memo,omitempty"`                                                                // memo/tag
+	Amount               string                 `protobuf:"bytes,12,opt,name=amount,proto3" json:"amount,omitempty"`                                                            // 链上到账数量
+	BlockHeight          int64                  `protobuf:"varint,13,opt,name=block_height,json=blockHeight,proto3" json:"block_height,omitempty"`                              // 区块高度
+	ConfirmCount         int64                  `protobuf:"varint,14,opt,name=confirm_count,json=confirmCount,proto3" json:"confirm_count,omitempty"`                           // 当前确认数
+	RequiredConfirmCount int64                  `protobuf:"varint,15,opt,name=required_confirm_count,json=requiredConfirmCount,proto3" json:"required_confirm_count,omitempty"` // 要求确认数
+	Status               CryptoRechargeTxStatus `protobuf:"varint,16,opt,name=status,proto3,enum=payment.CryptoRechargeTxStatus" json:"status,omitempty"`                       // 状态
+	RawData              string                 `protobuf:"bytes,17,opt,name=raw_data,json=rawData,proto3" json:"raw_data,omitempty"`                                           // 链上原始数据(JSON)
+	CreateTimes          int64                  `protobuf:"varint,18,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                              // 创建时间
+	UpdateTimes          int64                  `protobuf:"varint,19,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                              // 更新时间
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
+}
+
+func (x *CryptoRechargeTx) Reset() {
+	*x = CryptoRechargeTx{}
+	mi := &file_proto_payment_model_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CryptoRechargeTx) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CryptoRechargeTx) ProtoMessage() {}
+
+func (x *CryptoRechargeTx) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_payment_model_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CryptoRechargeTx.ProtoReflect.Descriptor instead.
+func (*CryptoRechargeTx) Descriptor() ([]byte, []int) {
+	return file_proto_payment_model_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *CryptoRechargeTx) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *CryptoRechargeTx) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *CryptoRechargeTx) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *CryptoRechargeTx) GetOrderId() int64 {
+	if x != nil {
+		return x.OrderId
+	}
+	return 0
+}
+
+func (x *CryptoRechargeTx) GetOrderNo() string {
+	if x != nil {
+		return x.OrderNo
+	}
+	return ""
+}
+
+func (x *CryptoRechargeTx) GetCoin() string {
+	if x != nil {
+		return x.Coin
+	}
+	return ""
+}
+
+func (x *CryptoRechargeTx) GetChainCode() common.ChainCode {
+	if x != nil {
+		return x.ChainCode
+	}
+	return common.ChainCode(0)
+}
+
+func (x *CryptoRechargeTx) GetTxHash() string {
+	if x != nil {
+		return x.TxHash
+	}
+	return ""
+}
+
+func (x *CryptoRechargeTx) GetFromAddress() string {
+	if x != nil {
+		return x.FromAddress
+	}
+	return ""
+}
+
+func (x *CryptoRechargeTx) GetToAddress() string {
+	if x != nil {
+		return x.ToAddress
+	}
+	return ""
+}
+
+func (x *CryptoRechargeTx) GetMemo() string {
+	if x != nil {
+		return x.Memo
+	}
+	return ""
+}
+
+func (x *CryptoRechargeTx) GetAmount() string {
+	if x != nil {
+		return x.Amount
+	}
+	return ""
+}
+
+func (x *CryptoRechargeTx) GetBlockHeight() int64 {
+	if x != nil {
+		return x.BlockHeight
+	}
+	return 0
+}
+
+func (x *CryptoRechargeTx) GetConfirmCount() int64 {
+	if x != nil {
+		return x.ConfirmCount
+	}
+	return 0
+}
+
+func (x *CryptoRechargeTx) GetRequiredConfirmCount() int64 {
+	if x != nil {
+		return x.RequiredConfirmCount
+	}
+	return 0
+}
+
+func (x *CryptoRechargeTx) GetStatus() CryptoRechargeTxStatus {
+	if x != nil {
+		return x.Status
+	}
+	return CryptoRechargeTxStatus_CRYPTO_RECHARGE_TX_STATUS_UNKNOWN
+}
+
+func (x *CryptoRechargeTx) GetRawData() string {
+	if x != nil {
+		return x.RawData
+	}
+	return ""
+}
+
+func (x *CryptoRechargeTx) GetCreateTimes() int64 {
+	if x != nil {
+		return x.CreateTimes
+	}
+	return 0
+}
+
+func (x *CryptoRechargeTx) GetUpdateTimes() int64 {
+	if x != nil {
+		return x.UpdateTimes
+	}
+	return 0
+}
+
 var File_proto_payment_model_proto protoreflect.FileDescriptor
 
 const file_proto_payment_model_proto_rawDesc = "" +
 	"\n" +
-	"\x19proto/payment/model.proto\x12\apayment\x1a\x18proto/payment/enum.proto\"\x82\x03\n" +
+	"\x19proto/payment/model.proto\x12\apayment\x1a\x19proto/common/common.proto\x1a\x18proto/payment/enum.proto\"\x82\x03\n" +
 	"\vPayPlatform\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rplatform_code\x18\x02 \x01(\tR\fplatformCode\x12#\n" +
@@ -2212,7 +2689,65 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\n" +
 	"account_id\x18\x1a \x01(\x03R\taccountId\x12\x1d\n" +
 	"\n" +
-	"channel_id\x18\x1b \x01(\x03R\tchannelIdB\x1eZ\x1cwklive/proto/payment;paymentb\x06proto3"
+	"channel_id\x18\x1b \x01(\x03R\tchannelId\"\xb0\x04\n" +
+	"\x15CryptoRechargeAddress\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x1f\n" +
+	"\vwallet_type\x18\x04 \x01(\x03R\n" +
+	"walletType\x12\x12\n" +
+	"\x04coin\x18\x05 \x01(\tR\x04coin\x120\n" +
+	"\n" +
+	"chain_code\x18\x06 \x01(\x0e2\x11.common.ChainCodeR\tchainCode\x12\x18\n" +
+	"\aaddress\x18\a \x01(\tR\aaddress\x12\x12\n" +
+	"\x04memo\x18\b \x01(\tR\x04memo\x12K\n" +
+	"\x0eaddress_source\x18\t \x01(\x0e2$.payment.CryptoRechargeAddressSourceR\raddressSource\x12E\n" +
+	"\faddress_type\x18\n" +
+	" \x01(\x0e2\".payment.CryptoRechargeAddressTypeR\vaddressType\x12<\n" +
+	"\x06status\x18\v \x01(\x0e2$.payment.CryptoRechargeAddressStatusR\x06status\x12$\n" +
+	"\x0elast_used_time\x18\f \x01(\x03R\flastUsedTime\x12!\n" +
+	"\fcreate_times\x18\r \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18\x0e \x01(\x03R\vupdateTimes\"\xdf\x03\n" +
+	"\x13CryptoWalletAccount\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12!\n" +
+	"\faccount_code\x18\x03 \x01(\tR\vaccountCode\x12!\n" +
+	"\faccount_name\x18\x04 \x01(\tR\vaccountName\x12\x1a\n" +
+	"\bprovider\x18\x05 \x01(\tR\bprovider\x12$\n" +
+	"\x0eapi_key_cipher\x18\x06 \x01(\tR\fapiKeyCipher\x12*\n" +
+	"\x11api_secret_cipher\x18\a \x01(\tR\x0fapiSecretCipher\x124\n" +
+	"\x16callback_secret_cipher\x18\b \x01(\tR\x14callbackSecretCipher\x12\x1d\n" +
+	"\n" +
+	"ext_config\x18\t \x01(\tR\textConfig\x12-\n" +
+	"\x06status\x18\n" +
+	" \x01(\x0e2\x15.payment.CommonStatusR\x06status\x12\x1d\n" +
+	"\n" +
+	"is_default\x18\v \x01(\x03R\tisDefault\x12!\n" +
+	"\fcreate_times\x18\f \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18\r \x01(\x03R\vupdateTimes\"\xf3\x04\n" +
+	"\x10CryptoRechargeTx\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x19\n" +
+	"\border_id\x18\x04 \x01(\x03R\aorderId\x12\x19\n" +
+	"\border_no\x18\x05 \x01(\tR\aorderNo\x12\x12\n" +
+	"\x04coin\x18\x06 \x01(\tR\x04coin\x120\n" +
+	"\n" +
+	"chain_code\x18\a \x01(\x0e2\x11.common.ChainCodeR\tchainCode\x12\x17\n" +
+	"\atx_hash\x18\b \x01(\tR\x06txHash\x12!\n" +
+	"\ffrom_address\x18\t \x01(\tR\vfromAddress\x12\x1d\n" +
+	"\n" +
+	"to_address\x18\n" +
+	" \x01(\tR\ttoAddress\x12\x12\n" +
+	"\x04memo\x18\v \x01(\tR\x04memo\x12\x16\n" +
+	"\x06amount\x18\f \x01(\tR\x06amount\x12!\n" +
+	"\fblock_height\x18\r \x01(\x03R\vblockHeight\x12#\n" +
+	"\rconfirm_count\x18\x0e \x01(\x03R\fconfirmCount\x124\n" +
+	"\x16required_confirm_count\x18\x0f \x01(\x03R\x14requiredConfirmCount\x127\n" +
+	"\x06status\x18\x10 \x01(\x0e2\x1f.payment.CryptoRechargeTxStatusR\x06status\x12\x19\n" +
+	"\braw_data\x18\x11 \x01(\tR\arawData\x12!\n" +
+	"\fcreate_times\x18\x12 \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18\x13 \x01(\x03R\vupdateTimesB\x1eZ\x1cwklive/proto/payment;paymentb\x06proto3"
 
 var (
 	file_proto_payment_model_proto_rawDescOnce sync.Once
@@ -2226,52 +2761,67 @@ func file_proto_payment_model_proto_rawDescGZIP() []byte {
 	return file_proto_payment_model_proto_rawDescData
 }
 
-var file_proto_payment_model_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_proto_payment_model_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_proto_payment_model_proto_goTypes = []any{
-	(*PayPlatform)(nil),          // 0: payment.PayPlatform
-	(*PayProduct)(nil),           // 1: payment.PayProduct
-	(*TenantPayPlatform)(nil),    // 2: payment.TenantPayPlatform
-	(*TenantPayAccount)(nil),     // 3: payment.TenantPayAccount
-	(*TenantPayChannel)(nil),     // 4: payment.TenantPayChannel
-	(*TenantPayChannelRule)(nil), // 5: payment.TenantPayChannelRule
-	(*UserRechargeStat)(nil),     // 6: payment.UserRechargeStat
-	(*RechargeOrder)(nil),        // 7: payment.RechargeOrder
-	(*PayNotifyLog)(nil),         // 8: payment.PayNotifyLog
-	(*VisiblePayChannel)(nil),    // 9: payment.VisiblePayChannel
-	(*WithdrawOrder)(nil),        // 10: payment.WithdrawOrder
-	(PlatformType)(0),            // 11: payment.PlatformType
-	(CommonStatus)(0),            // 12: payment.CommonStatus
-	(SceneType)(0),               // 13: payment.SceneType
-	(OpenStatus)(0),              // 14: payment.OpenStatus
-	(FeeType)(0),                 // 15: payment.FeeType
-	(ClientType)(0),              // 16: payment.ClientType
-	(PayOrderStatus)(0),          // 17: payment.PayOrderStatus
-	(NotifyProcessStatus)(0),     // 18: payment.NotifyProcessStatus
-	(SignResult)(0),              // 19: payment.SignResult
+	(*PayPlatform)(nil),              // 0: payment.PayPlatform
+	(*PayProduct)(nil),               // 1: payment.PayProduct
+	(*TenantPayPlatform)(nil),        // 2: payment.TenantPayPlatform
+	(*TenantPayAccount)(nil),         // 3: payment.TenantPayAccount
+	(*TenantPayChannel)(nil),         // 4: payment.TenantPayChannel
+	(*TenantPayChannelRule)(nil),     // 5: payment.TenantPayChannelRule
+	(*UserRechargeStat)(nil),         // 6: payment.UserRechargeStat
+	(*RechargeOrder)(nil),            // 7: payment.RechargeOrder
+	(*PayNotifyLog)(nil),             // 8: payment.PayNotifyLog
+	(*VisiblePayChannel)(nil),        // 9: payment.VisiblePayChannel
+	(*WithdrawOrder)(nil),            // 10: payment.WithdrawOrder
+	(*CryptoRechargeAddress)(nil),    // 11: payment.CryptoRechargeAddress
+	(*CryptoWalletAccount)(nil),      // 12: payment.CryptoWalletAccount
+	(*CryptoRechargeTx)(nil),         // 13: payment.CryptoRechargeTx
+	(PlatformType)(0),                // 14: payment.PlatformType
+	(CommonStatus)(0),                // 15: payment.CommonStatus
+	(SceneType)(0),                   // 16: payment.SceneType
+	(OpenStatus)(0),                  // 17: payment.OpenStatus
+	(FeeType)(0),                     // 18: payment.FeeType
+	(ClientType)(0),                  // 19: payment.ClientType
+	(PayOrderStatus)(0),              // 20: payment.PayOrderStatus
+	(NotifyProcessStatus)(0),         // 21: payment.NotifyProcessStatus
+	(SignResult)(0),                  // 22: payment.SignResult
+	(common.ChainCode)(0),            // 23: common.ChainCode
+	(CryptoRechargeAddressSource)(0), // 24: payment.CryptoRechargeAddressSource
+	(CryptoRechargeAddressType)(0),   // 25: payment.CryptoRechargeAddressType
+	(CryptoRechargeAddressStatus)(0), // 26: payment.CryptoRechargeAddressStatus
+	(CryptoRechargeTxStatus)(0),      // 27: payment.CryptoRechargeTxStatus
 }
 var file_proto_payment_model_proto_depIdxs = []int32{
-	11, // 0: payment.PayPlatform.platform_type:type_name -> payment.PlatformType
-	12, // 1: payment.PayPlatform.status:type_name -> payment.CommonStatus
-	13, // 2: payment.PayProduct.scene_type:type_name -> payment.SceneType
-	12, // 3: payment.PayProduct.status:type_name -> payment.CommonStatus
-	12, // 4: payment.TenantPayPlatform.status:type_name -> payment.CommonStatus
-	14, // 5: payment.TenantPayPlatform.open_status:type_name -> payment.OpenStatus
-	12, // 6: payment.TenantPayAccount.status:type_name -> payment.CommonStatus
-	12, // 7: payment.TenantPayChannel.status:type_name -> payment.CommonStatus
-	15, // 8: payment.TenantPayChannel.fee_type:type_name -> payment.FeeType
-	12, // 9: payment.TenantPayChannelRule.status:type_name -> payment.CommonStatus
-	16, // 10: payment.RechargeOrder.client_type:type_name -> payment.ClientType
-	17, // 11: payment.RechargeOrder.status:type_name -> payment.PayOrderStatus
-	18, // 12: payment.PayNotifyLog.notify_status:type_name -> payment.NotifyProcessStatus
-	19, // 13: payment.PayNotifyLog.sign_result:type_name -> payment.SignResult
-	15, // 14: payment.VisiblePayChannel.fee_type:type_name -> payment.FeeType
-	16, // 15: payment.WithdrawOrder.client_type:type_name -> payment.ClientType
-	17, // 16: payment.WithdrawOrder.status:type_name -> payment.PayOrderStatus
-	17, // [17:17] is the sub-list for method output_type
-	17, // [17:17] is the sub-list for method input_type
-	17, // [17:17] is the sub-list for extension type_name
-	17, // [17:17] is the sub-list for extension extendee
-	0,  // [0:17] is the sub-list for field type_name
+	14, // 0: payment.PayPlatform.platform_type:type_name -> payment.PlatformType
+	15, // 1: payment.PayPlatform.status:type_name -> payment.CommonStatus
+	16, // 2: payment.PayProduct.scene_type:type_name -> payment.SceneType
+	15, // 3: payment.PayProduct.status:type_name -> payment.CommonStatus
+	15, // 4: payment.TenantPayPlatform.status:type_name -> payment.CommonStatus
+	17, // 5: payment.TenantPayPlatform.open_status:type_name -> payment.OpenStatus
+	15, // 6: payment.TenantPayAccount.status:type_name -> payment.CommonStatus
+	15, // 7: payment.TenantPayChannel.status:type_name -> payment.CommonStatus
+	18, // 8: payment.TenantPayChannel.fee_type:type_name -> payment.FeeType
+	15, // 9: payment.TenantPayChannelRule.status:type_name -> payment.CommonStatus
+	19, // 10: payment.RechargeOrder.client_type:type_name -> payment.ClientType
+	20, // 11: payment.RechargeOrder.status:type_name -> payment.PayOrderStatus
+	21, // 12: payment.PayNotifyLog.notify_status:type_name -> payment.NotifyProcessStatus
+	22, // 13: payment.PayNotifyLog.sign_result:type_name -> payment.SignResult
+	18, // 14: payment.VisiblePayChannel.fee_type:type_name -> payment.FeeType
+	19, // 15: payment.WithdrawOrder.client_type:type_name -> payment.ClientType
+	20, // 16: payment.WithdrawOrder.status:type_name -> payment.PayOrderStatus
+	23, // 17: payment.CryptoRechargeAddress.chain_code:type_name -> common.ChainCode
+	24, // 18: payment.CryptoRechargeAddress.address_source:type_name -> payment.CryptoRechargeAddressSource
+	25, // 19: payment.CryptoRechargeAddress.address_type:type_name -> payment.CryptoRechargeAddressType
+	26, // 20: payment.CryptoRechargeAddress.status:type_name -> payment.CryptoRechargeAddressStatus
+	15, // 21: payment.CryptoWalletAccount.status:type_name -> payment.CommonStatus
+	23, // 22: payment.CryptoRechargeTx.chain_code:type_name -> common.ChainCode
+	27, // 23: payment.CryptoRechargeTx.status:type_name -> payment.CryptoRechargeTxStatus
+	24, // [24:24] is the sub-list for method output_type
+	24, // [24:24] is the sub-list for method input_type
+	24, // [24:24] is the sub-list for extension type_name
+	24, // [24:24] is the sub-list for extension extendee
+	0,  // [0:24] is the sub-list for field type_name
 }
 
 func init() { file_proto_payment_model_proto_init() }
@@ -2286,7 +2836,7 @@ func file_proto_payment_model_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_payment_model_proto_rawDesc), len(file_proto_payment_model_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   11,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

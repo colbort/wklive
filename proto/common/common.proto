@@ -31,3 +31,18 @@ message TimeRange {
   int64 start_time = 1;
   int64 end_time = 2;
 }
+
+enum ChainCode {
+  CHAIN_CODE_UNKNOWN = 0; // 未指定
+  // 主网
+  CHAIN_CODE_BTC = 1;       // Bitcoin
+  CHAIN_CODE_ETH = 2;       // Ethereum mainnet
+  CHAIN_CODE_TRX = 3;       // Tron
+  CHAIN_CODE_BSC = 4;       // BNB Smart Chain
+  CHAIN_CODE_SOL = 5;       // Solana
+  CHAIN_CODE_POLYGON = 6;   // Polygon
+  // 代币标准/常用网络展示名
+  CHAIN_CODE_TRC20 = 20;    // USDT on Tron
+  CHAIN_CODE_ERC20 = 21;    // Token on Ethereum
+  CHAIN_CODE_BEP20 = 22;    // Token on BSC
+}

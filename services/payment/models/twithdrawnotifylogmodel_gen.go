@@ -51,7 +51,7 @@ type (
 		SignResult    int64          `db:"sign_result"`    // 验签结果：0未验 1通过 2失败
 		ProcessResult sql.NullString `db:"process_result"` // 处理结果
 		ErrorMessage  sql.NullString `db:"error_message"`  // 错误信息
-		NotifyTime    sql.NullInt64  `db:"notify_time"`    // 回调时间
+		NotifyTime    int64          `db:"notify_time"`    // 回调时间
 		CreateTimes   int64          `db:"create_times"`   // 创建时间
 	}
 )

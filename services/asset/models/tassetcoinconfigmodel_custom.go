@@ -8,7 +8,7 @@ import (
 
 type AssetCoinConfigModel interface {
 	tAssetCoinConfigModel
-	FindPage(ctx context.Context, tenantId int64, walletType int64, coin string, symbol string, coinType int64, appVisible int64, rechargeEnabled int64, withdrawEnabled int64, transferEnabled int64, status int64, cursor int64, limit int64) ([]*TAssetCoinConfig, int64, error)
+	FindPage(ctx context.Context, tenantId int64, walletType int64, coin string, symbol string, coinType int64, chainCode int64, appVisible int64, rechargeEnabled int64, withdrawEnabled int64, transferEnabled int64, status int64, cursor int64, limit int64) ([]*TAssetCoinConfig, int64, error)
 	FindVisibleByOperation(ctx context.Context, tenantId int64, walletType int64, operationType int64, coinType int64) ([]*TAssetCoinConfig, error)
 }
 
@@ -24,7 +24,7 @@ const (
 	assetCoinOperationTransfer = int64(3)
 )
 
-func (m *defaultTAssetCoinConfigModel) FindPage(ctx context.Context, tenantId int64, walletType int64, coin string, symbol string, coinType int64, appVisible int64, rechargeEnabled int64, withdrawEnabled int64, transferEnabled int64, status int64, cursor int64, limit int64) ([]*TAssetCoinConfig, int64, error) {
+func (m *defaultTAssetCoinConfigModel) FindPage(ctx context.Context, tenantId int64, walletType int64, coin string, symbol string, coinType int64, chainCode int64, appVisible int64, rechargeEnabled int64, withdrawEnabled int64, transferEnabled int64, status int64, cursor int64, limit int64) ([]*TAssetCoinConfig, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -33,6 +33,7 @@ func (m *defaultTAssetCoinConfigModel) FindPage(ctx context.Context, tenantId in
 	builder.EqString("coin", coin)
 	builder.EqString("symbol", symbol)
 	builder.EqInt64("coin_type", coinType)
+	builder.EqInt64("chain_code", chainCode)
 	appendSwitchFilter(builder, "app_visible", appVisible)
 	appendSwitchFilter(builder, "recharge_enabled", rechargeEnabled)
 	appendSwitchFilter(builder, "withdraw_enabled", withdrawEnabled)
