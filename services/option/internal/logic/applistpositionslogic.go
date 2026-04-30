@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	pageutil "wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
@@ -29,9 +30,17 @@ func NewAppListPositionsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 // 获取持仓列表
 func (l *AppListPositionsLogic) AppListPositions(in *option.AppListPositionsReq) (*option.AppListPositionsResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	items, total, err := l.svcCtx.OptionPositionModel.FindPage(l.ctx, models.OptionPositionPageFilter{
-		TenantId:  in.TenantId,
-		Uid:       in.Uid,
+		TenantId:  tenantId,
+		UserId:    userId,
 		AccountId: in.AccountId,
 		Status:    int64(in.Status),
 	}, cursor, limit)

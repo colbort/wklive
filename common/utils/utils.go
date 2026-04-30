@@ -34,10 +34,10 @@ func GetUserInfoFromMd(ctx context.Context) (int64, string, error) {
 		return 0, "", fmt.Errorf("no metadata in context")
 	}
 
-	var uid int64
+	var userId int64
 	if vals := md.Get(CtxKeyUid); len(vals) > 0 && vals[0] != "" {
 		var err error
-		uid, err = strconv.ParseInt(vals[0], 10, 64)
+		userId, err = strconv.ParseInt(vals[0], 10, 64)
 		if err != nil {
 			return 0, "", fmt.Errorf("invalid x-user-id: %w", err)
 		}
@@ -48,25 +48,25 @@ func GetUserInfoFromMd(ctx context.Context) (int64, string, error) {
 		username = vals[0]
 	}
 
-	return uid, username, nil
+	return userId, username, nil
 }
 
-func GetUidFromMd(ctx context.Context) (int64, error) {
+func GetUserIdFromMd(ctx context.Context) (int64, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return 0, fmt.Errorf("no metadata in context")
 	}
 
-	var uid int64
+	var userId int64
 	if vals := md.Get(CtxKeyUid); len(vals) > 0 && vals[0] != "" {
 		var err error
-		uid, err = strconv.ParseInt(vals[0], 10, 64)
+		userId, err = strconv.ParseInt(vals[0], 10, 64)
 		if err != nil {
 			return 0, fmt.Errorf("invalid x-user-id: %w", err)
 		}
 	}
 
-	return uid, nil
+	return userId, nil
 }
 
 func GetUsernameFromMd(ctx context.Context) (string, error) {
@@ -89,16 +89,16 @@ func GetTenantIdFromMd(ctx context.Context) (int64, error) {
 		return 0, fmt.Errorf("no metadata in context")
 	}
 
-	var uid int64
+	var tenantId int64
 	if vals := md.Get(CtxKeyTenantId); len(vals) > 0 && vals[0] != "" {
 		var err error
-		uid, err = strconv.ParseInt(vals[0], 10, 64)
+		tenantId, err = strconv.ParseInt(vals[0], 10, 64)
 		if err != nil {
-			return 0, fmt.Errorf("invalid x-user-id: %w", err)
+			return 0, fmt.Errorf("invalid x-tenant-id: %w", err)
 		}
 	}
 
-	return uid, nil
+	return tenantId, nil
 }
 
 func GetTenantCodeFromMd(ctx context.Context) (string, error) {

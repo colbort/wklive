@@ -19,7 +19,6 @@ type AddBankResp struct {
 }
 
 type AppCancelOrderReq struct {
-	TenantId  int64  `json:"tenantId,optional"`
 	AccountId int64  `json:"accountId"`
 	OrderId   int64  `json:"orderId,optional"`
 	OrderNo   string `json:"orderNo,optional"`
@@ -30,7 +29,6 @@ type AppCommonResp struct {
 }
 
 type AppCreateOrderReq struct {
-	TenantId    int64  `json:"tenantId,optional"`
 	ProductId   int64  `json:"productId"`
 	StakeAmount string `json:"stakeAmount"`
 	Source      int64  `json:"source"`
@@ -44,7 +42,6 @@ type AppCreateOrderResp struct {
 }
 
 type AppExerciseReq struct {
-	TenantId    int64  `json:"tenantId,optional"`
 	AccountId   int64  `json:"accountId"`
 	PositionId  int64  `json:"positionId"`
 	ContractId  int64  `json:"contractId"`
@@ -58,8 +55,7 @@ type AppExerciseResp struct {
 }
 
 type AppGetContractDetailReq struct {
-	TenantId   int64 `form:"tenantId,optional"` // 租户ID
-	ContractId int64 `form:"contractId"`        // 合约ID
+	ContractId int64 `form:"contractId"` // 合约ID
 }
 
 type AppGetContractDetailResp struct {
@@ -68,7 +64,6 @@ type AppGetContractDetailResp struct {
 }
 
 type AppGetOrderDetailReq struct {
-	TenantId  int64  `form:"tenantId,optional"`
 	AccountId int64  `form:"accountId"`
 	OrderId   int64  `form:"orderId,optional"`
 	OrderNo   string `form:"orderNo,optional"`
@@ -80,7 +75,6 @@ type AppGetOrderDetailResp struct {
 }
 
 type AppGetPositionDetailReq struct {
-	TenantId   int64 `form:"tenantId,optional"`
 	AccountId  int64 `form:"accountId"`
 	PositionId int64 `form:"positionId"`
 }
@@ -91,7 +85,6 @@ type AppGetPositionDetailResp struct {
 }
 
 type AppListAccountsReq struct {
-	TenantId  int64 `form:"tenantId,optional"`
 	AccountId int64 `form:"accountId,optional"`
 }
 
@@ -102,7 +95,6 @@ type AppListAccountsResp struct {
 
 type AppListBillsReq struct {
 	PageReq
-	TenantId        int64     `form:"tenantId,optional"`
 	AccountId       int64     `form:"accountId,optional"`
 	RefType         int64     `form:"refType,optional"`
 	CreateTimeRange TimeRange `form:"createTimeRange,optional"`
@@ -116,7 +108,6 @@ type AppListBillsResp struct {
 
 type AppListContractsReq struct {
 	PageReq
-	TenantId         int64  `form:"tenantId,optional"`         // 租户ID
 	UnderlyingSymbol string `form:"underlyingSymbol,optional"` // 标的符号
 	OptionType       int64  `form:"optionType,optional"`       // 期权类型
 	Status           int64  `form:"status,optional"`           // 状态
@@ -129,7 +120,6 @@ type AppListContractsResp struct {
 
 type AppListCurrentOrdersReq struct {
 	PageReq
-	TenantId   int64 `form:"tenantId,optional"`
 	AccountId  int64 `form:"accountId"`
 	ContractId int64 `form:"contractId,optional"`
 	Side       int64 `form:"side,optional"`
@@ -143,7 +133,6 @@ type AppListCurrentOrdersResp struct {
 
 type AppListExercisesReq struct {
 	PageReq
-	TenantId          int64     `form:"tenantId,optional"`
 	AccountId         int64     `form:"accountId"`
 	ContractId        int64     `form:"contractId,optional"`
 	Status            int64     `form:"status,optional"`
@@ -158,7 +147,6 @@ type AppListExercisesResp struct {
 
 type AppListHistoryOrdersReq struct {
 	PageReq
-	TenantId        int64     `form:"tenantId,optional"`
 	AccountId       int64     `form:"accountId"`
 	ContractId      int64     `form:"contractId,optional"`
 	Status          int64     `form:"status,optional"`
@@ -173,7 +161,6 @@ type AppListHistoryOrdersResp struct {
 
 type AppListPositionsReq struct {
 	PageReq
-	TenantId  int64 `form:"tenantId,optional"`
 	AccountId int64 `form:"accountId"`
 	Status    int64 `form:"status,optional"`
 }
@@ -186,7 +173,6 @@ type AppListPositionsResp struct {
 
 type AppListTradesReq struct {
 	PageReq
-	TenantId       int64     `form:"tenantId,optional"`
 	AccountId      int64     `form:"accountId"`
 	ContractId     int64     `form:"contractId,optional"`
 	TradeTimeRange TimeRange `form:"tradeTimeRange,optional"`
@@ -199,8 +185,7 @@ type AppListTradesResp struct {
 }
 
 type AppMyOrderDetailReq struct {
-	TenantId int64 `form:"tenantId,optional"`
-	Id       int64 `form:"id"`
+	Id int64 `form:"id"`
 }
 
 type AppMyOrderDetailResp struct {
@@ -210,7 +195,6 @@ type AppMyOrderDetailResp struct {
 
 type AppMyOrderListReq struct {
 	PageReq
-	TenantId   int64 `form:"tenantId,optional"`
 	Status     int64 `form:"status,optional"`
 	RedeemType int64 `form:"redeemType,optional"`
 }
@@ -222,8 +206,7 @@ type AppMyOrderListResp struct {
 
 type AppMyRedeemLogListReq struct {
 	PageReq
-	TenantId int64 `form:"tenantId,optional"`
-	OrderId  int64 `form:"orderId,optional"`
+	OrderId int64 `form:"orderId,optional"`
 }
 
 type AppMyRedeemLogListResp struct {
@@ -233,7 +216,6 @@ type AppMyRedeemLogListResp struct {
 
 type AppMyRewardLogListReq struct {
 	PageReq
-	TenantId   int64 `form:"tenantId,optional"`
 	OrderId    int64 `form:"orderId,optional"`
 	RewardType int64 `form:"rewardType,optional"`
 }
@@ -244,9 +226,8 @@ type AppMyRewardLogListResp struct {
 }
 
 type AppPlaceOrderReq struct {
-	TenantId       int64  `json:"tenantId,optional"` // 租户ID
-	AccountId      int64  `json:"accountId"`         // 账户ID
-	ContractId     int64  `json:"contractId"`        // 合约ID
+	AccountId      int64  `json:"accountId"`  // 账户ID
+	ContractId     int64  `json:"contractId"` // 合约ID
 	Side           int64  `json:"side"`
 	PositionEffect int64  `json:"positionEffect"`
 	OrderType      int64  `json:"orderType"`
@@ -264,8 +245,7 @@ type AppPlaceOrderResp struct {
 }
 
 type AppProductDetailReq struct {
-	TenantId int64 `form:"tenantId,optional"`
-	Id       int64 `form:"id"`
+	Id int64 `form:"id"`
 }
 
 type AppProductDetailResp struct {
@@ -275,7 +255,6 @@ type AppProductDetailResp struct {
 
 type AppProductListReq struct {
 	PageReq
-	TenantId    int64  `form:"tenantId,optional"`
 	ProductType int64  `form:"productType,optional"`
 	CoinSymbol  string `form:"coinSymbol,optional"`
 }
@@ -286,7 +265,6 @@ type AppProductListResp struct {
 }
 
 type AppRedeemReq struct {
-	TenantId   int64  `json:"tenantId,optional"`
 	OrderId    int64  `json:"orderId"`
 	RedeemType int64  `json:"redeemType"`
 	Remark     string `json:"remark,optional"`
@@ -441,7 +419,6 @@ type BatchGetQuoteResp struct {
 }
 
 type CancelAllOrdersReq struct {
-	TenantId     int64 `json:"tenantId,optional"`
 	MarketType   int64 `json:"marketType,optional"`
 	SymbolId     int64 `json:"symbolId,optional"`
 	Side         int64 `json:"side,optional"`
@@ -454,12 +431,10 @@ type CancelAllOrdersResp struct {
 }
 
 type CancelMyRechargeOrderReq struct {
-	TenantId int64  `json:"tenantId,optional"`
-	OrderNo  string `path:"orderNo"`
+	OrderNo string `path:"orderNo"`
 }
 
 type CancelOrderReq struct {
-	TenantId      int64  `json:"tenantId,optional"`
 	OrderId       int64  `json:"orderId,optional"`
 	OrderNo       string `json:"orderNo,optional"`
 	ClientOrderId string `json:"clientOrderId,optional"`
@@ -541,7 +516,6 @@ type ContractPosition struct {
 }
 
 type CreateRechargeOrderReq struct {
-	TenantId       int64  `json:"json:"tenantId,optional"`
 	ChannelId      int64  `json:"channelId"`
 	RechargeAmount int64  `json:"rechargeAmount"` // 单位：分
 	Currency       string `json:"currency"`
@@ -558,8 +532,6 @@ type CreateRechargeOrderResp struct {
 }
 
 type CreateWithdrawOrderReq struct {
-	TenantId int64  `json:"tenantId,optional"`
-	UserId   int64  `json:"userId,optional"`
 	Amount   int64  `json:"amount"` // 单位：分
 	Currency string `json:"currency"`
 	Address  string `json:"address"` // 提现地址（钱包地址等）
@@ -570,6 +542,45 @@ type CreateWithdrawOrderReq struct {
 type CreateWithdrawOrderResp struct {
 	RespBase
 	Id int64 `json:"id"`
+}
+
+type CryptoRechargeAddress struct {
+	Id            int64  `json:"id"`
+	TenantId      int64  `json:"tenantId"`
+	UserId        int64  `json:"userId"`
+	WalletType    int64  `json:"walletType"`
+	Coin          string `json:"coin"`
+	ChainCode     int64  `json:"chainCode"`
+	Address       string `json:"address"`
+	Memo          string `json:"memo"`
+	AddressSource int64  `json:"addressSource"`
+	AddressType   int64  `json:"addressType"`
+	Status        int64  `json:"status"`
+	LastUsedTime  int64  `json:"lastUsedTime"`
+	CreateTimes   int64  `json:"createTimes"`
+	UpdateTimes   int64  `json:"updateTimes"`
+}
+
+type CryptoRechargeTx struct {
+	Id                   int64  `json:"id"`
+	TenantId             int64  `json:"tenantId"`
+	UserId               int64  `json:"userId"`
+	OrderId              int64  `json:"orderId"`
+	OrderNo              string `json:"orderNo"`
+	Coin                 string `json:"coin"`
+	ChainCode            int64  `json:"chainCode"`
+	TxHash               string `json:"txHash"`
+	FromAddress          string `json:"fromAddress"`
+	ToAddress            string `json:"toAddress"`
+	Memo                 string `json:"memo"`
+	Amount               string `json:"amount"`
+	BlockHeight          int64  `json:"blockHeight"`
+	ConfirmCount         int64  `json:"confirmCount"`
+	RequiredConfirmCount int64  `json:"requiredConfirmCount"`
+	Status               int64  `json:"status"`
+	RawData              string `json:"rawData"`
+	CreateTimes          int64  `json:"createTimes"`
+	UpdateTimes          int64  `json:"updateTimes"`
 }
 
 type DeleteBankReq struct {
@@ -597,7 +608,6 @@ type GetAssetOptionsResp struct {
 
 type GetFillListReq struct {
 	PageReq
-	TenantId   int64     `form:"tenantId,optional"`
 	MarketType int64     `form:"marketType,optional"`
 	SymbolId   int64     `form:"symbolId,optional"`
 	TimeRange  TimeRange `form:"timeRange,optional"`
@@ -633,7 +643,6 @@ type GetKlineResp struct {
 }
 
 type GetLeverageConfigReq struct {
-	TenantId   int64 `form:"tenantId,optional"`
 	SymbolId   int64 `form:"symbolId"`
 	MarketType int64 `form:"marketType"`
 	MarginMode int64 `form:"marginMode"`
@@ -645,7 +654,6 @@ type GetLeverageConfigResp struct {
 }
 
 type GetMarginAccountListReq struct {
-	TenantId    int64  `form:"tenantId,optional"`
 	MarketType  int64  `form:"marketType,optional"`
 	MarginAsset string `form:"marginAsset,optional"`
 }
@@ -656,9 +664,8 @@ type GetMarginAccountListResp struct {
 }
 
 type GetMyAssetReq struct {
-	TenantId   int64  `form:"tenantId,optional"` // 租户ID
-	WalletType int64  `form:"walletType"`        // 钱包类型
-	Coin       string `form:"coin"`              // 币种
+	WalletType int64  `form:"walletType"` // 钱包类型
+	Coin       string `form:"coin"`       // 币种
 }
 
 type GetMyAssetResp struct {
@@ -667,7 +674,6 @@ type GetMyAssetResp struct {
 }
 
 type GetMyAssetSummaryReq struct {
-	TenantId int64 `form:"tenantId,optional"` // 租户ID
 }
 
 type GetMyAssetSummaryResp struct {
@@ -675,9 +681,29 @@ type GetMyAssetSummaryResp struct {
 	Data UserAssetSummary `json:"data"`
 }
 
+type GetMyCryptoRechargeAddressReq struct {
+	WalletType int64  `form:"walletType"`
+	Coin       string `form:"coin"`
+	ChainCode  int64  `form:"chainCode"`
+}
+
+type GetMyCryptoRechargeAddressResp struct {
+	RespBase
+	Data CryptoRechargeAddress `json:"data"`
+}
+
+type GetMyCryptoRechargeTxReq struct {
+	Id     int64  `path:"id"`
+	TxHash string `form:"txHash,optional"`
+}
+
+type GetMyCryptoRechargeTxResp struct {
+	RespBase
+	Data CryptoRechargeTx `json:"data"`
+}
+
 type GetMyRechargeOrderReq struct {
-	TenantId int64  `form:"tenantId,optional"`
-	OrderNo  string `path:"orderNo"`
+	OrderNo string `path:"orderNo"`
 }
 
 type GetMyRechargeOrderResp struct {
@@ -686,7 +712,6 @@ type GetMyRechargeOrderResp struct {
 }
 
 type GetMyRechargeStatReq struct {
-	TenantId int64 `form:"tenantId,optional"`
 }
 
 type GetMyRechargeStatResp struct {
@@ -709,9 +734,8 @@ type GetOptionOptionsResp struct {
 }
 
 type GetOrderDetailReq struct {
-	TenantId int64  `form:"tenantId,optional"`
-	OrderId  int64  `form:"orderId,optional"`
-	OrderNo  string `form:"orderNo,optional"`
+	OrderId int64  `form:"orderId,optional"`
+	OrderNo string `form:"orderNo,optional"`
 }
 
 type GetOrderDetailResp struct {
@@ -723,7 +747,6 @@ type GetOrderDetailResp struct {
 
 type GetOrderListReq struct {
 	PageReq
-	TenantId   int64     `form:"tenantId,optional"`
 	MarketType int64     `form:"marketType,optional"`
 	SymbolId   int64     `form:"symbolId,optional"`
 	Status     int64     `form:"status,optional"`
@@ -742,7 +765,6 @@ type GetPaymentOptionsResp struct {
 }
 
 type GetPositionListReq struct {
-	TenantId   int64 `form:"tenantId,optional"`
 	MarketType int64 `form:"marketType,optional"`
 	SymbolId   int64 `form:"symbolId,optional"`
 }
@@ -779,8 +801,7 @@ type GetStakingOptionsResp struct {
 }
 
 type GetSymbolDetailReq struct {
-	TenantId int64 `form:"tenantId,optional"` // 租户ID
-	SymbolId int64 `form:"symbolId"`          // 交易对ID
+	SymbolId int64 `form:"symbolId"` // 交易对ID
 }
 
 type GetSymbolDetailResp struct {
@@ -791,7 +812,6 @@ type GetSymbolDetailResp struct {
 }
 
 type GetSymbolListReq struct {
-	TenantId   int64 `form:"tenantId,optional"`   // 租户ID
 	MarketType int64 `form:"marketType,optional"` // 市场类型
 	Status     int64 `form:"status,optional"`     // 状态
 }
@@ -818,7 +838,7 @@ type GetUserOptionsResp struct {
 
 type GuestLogin struct {
 	Token    string `json:"token"`
-	Uid      string `json:"uid"`
+	UserId   string `json:"userId"`
 	DeviceId string `json:"deviceId"`
 	IsNew    bool   `json:"isNew"`
 	Username string `json:"username"`
@@ -940,7 +960,6 @@ type Kline struct {
 }
 
 type ListAssetCoinConfigsReq struct {
-	TenantId      int64 `form:"tenantId,optional"` // 租户ID
 	WalletType    int64 `form:"walletType"`        // 账户类型
 	OperationType int64 `form:"operationType"`     // 操作场景:1充值 2提现 3划转
 	CoinType      int64 `form:"coinType,optional"` // 币种类型
@@ -952,7 +971,6 @@ type ListAssetCoinConfigsResp struct {
 }
 
 type ListAvailableRechargeChannelsReq struct {
-	TenantId       int64  `json:"tenantId,optional"`
 	RechargeAmount int64  `json:"rechargeAmount"` // 单位：分
 	Currency       string `json:"currency"`
 	ClientType     int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
@@ -974,7 +992,6 @@ type ListBanksResp struct {
 
 type ListMyAssetFlowsReq struct {
 	PageReq
-	TenantId   int64     `form:"tenantId,optional"`   // 租户ID
 	WalletType int64     `form:"walletType,optional"` // 钱包类型
 	Coin       string    `form:"coin,optional"`       // 币种
 	BizType    int64     `form:"bizType,optional"`    // 业务类型
@@ -988,7 +1005,6 @@ type ListMyAssetFlowsResp struct {
 }
 
 type ListMyAssetsReq struct {
-	TenantId   int64  `form:"tenantId,optional"`   // 租户ID
 	WalletType int64  `form:"walletType,optional"` // 钱包类型
 	Coin       string `form:"coin,optional"`       // 币种
 }
@@ -998,12 +1014,38 @@ type ListMyAssetsResp struct {
 	Data []AssetUserAsset `json:"data"`
 }
 
+type ListMyCryptoRechargeAddressesReq struct {
+	WalletType int64  `form:"walletType,optional"`
+	Coin       string `form:"coin,optional"`
+	ChainCode  int64  `form:"chainCode,optional"`
+}
+
+type ListMyCryptoRechargeAddressesResp struct {
+	RespBase
+	Data []CryptoRechargeAddress `json:"data"`
+}
+
+type ListMyCryptoRechargeTxsReq struct {
+	Cursor          int64  `form:"cursor,optional"`
+	Limit           int64  `form:"limit,optional"`
+	OrderNo         string `form:"orderNo,optional"`
+	Coin            string `form:"coin,optional"`
+	ChainCode       int64  `form:"chainCode,optional"`
+	Status          int64  `form:"status,optional"`
+	CreateTimeStart int64  `form:"createTimeStart,optional"`
+	CreateTimeEnd   int64  `form:"createTimeEnd,optional"`
+}
+
+type ListMyCryptoRechargeTxsResp struct {
+	RespBase
+	Data []CryptoRechargeTx `json:"data"`
+}
+
 type ListMyFreezesReq struct {
 	PageReq
-	TenantId   int64  `form:"tenantId,optional"` // 租户ID
-	WalletType int64  `form:"walletType"`        // 钱包类型
-	Coin       string `form:"coin,optional"`     // 币种
-	Status     int64  `form:"status,optional"`   // 状态
+	WalletType int64  `form:"walletType"`      // 钱包类型
+	Coin       string `form:"coin,optional"`   // 币种
+	Status     int64  `form:"status,optional"` // 状态
 }
 
 type ListMyFreezesResp struct {
@@ -1013,10 +1055,9 @@ type ListMyFreezesResp struct {
 
 type ListMyLocksReq struct {
 	PageReq
-	TenantId   int64  `form:"tenantId,optional"` // 租户ID
-	WalletType int64  `form:"walletType"`        // 钱包类型
-	Coin       string `form:"coin,optional"`     // 币种
-	Status     int64  `form:"status,optional"`   // 状态
+	WalletType int64  `form:"walletType"`      // 钱包类型
+	Coin       string `form:"coin,optional"`   // 币种
+	Status     int64  `form:"status,optional"` // 状态
 }
 
 type ListMyLocksResp struct {
@@ -1025,7 +1066,6 @@ type ListMyLocksResp struct {
 }
 
 type ListMyRechargeOrdersReq struct {
-	TenantId        int64  `form:"tenantId,optional"`
 	Cursor          int64  `form:"cursor,optional"`
 	Limit           int64  `form:"limit,optional"`
 	Status          int64  `form:"status,optional"` // 0未知 1待支付 2支付中 3成功 4失败 5已关闭 6已退款
@@ -1041,9 +1081,7 @@ type ListMyRechargeOrdersResp struct {
 
 type ListMyWithdrawOrdersReq struct {
 	PageReq
-	TenantId int64 `form:"tenantId,optional"`
-	UserId   int64 `form:"userId,optional"`
-	Status   int64 `form:"status,optional"` // 0未知 1待处理 2处理中 3成功 4失败
+	Status int64 `form:"status,optional"` // 0未知 1待处理 2处理中 3成功 4失败
 }
 
 type ListMyWithdrawOrdersResp struct {
@@ -1100,7 +1138,7 @@ type MarketSymbol struct {
 type OptionAccount struct {
 	Id               int64  `json:"id"`
 	TenantId         int64  `json:"tenantId"`
-	Uid              int64  `json:"uid"`
+	UserId           int64  `json:"userId"`
 	AccountId        int64  `json:"accountId"`
 	MarginCoin       string `json:"marginCoin"`
 	Balance          string `json:"balance"`
@@ -1119,7 +1157,7 @@ type OptionAccount struct {
 type OptionBill struct {
 	Id            int64  `json:"id"`
 	TenantId      int64  `json:"tenantId"`
-	Uid           int64  `json:"uid"`
+	UserId        int64  `json:"userId"`
 	AccountId     int64  `json:"accountId"`
 	BizNo         string `json:"bizNo"`
 	RefType       int64  `json:"refType"`
@@ -1170,7 +1208,7 @@ type OptionExercise struct {
 	Id              int64  `json:"id"`
 	TenantId        int64  `json:"tenantId"`
 	ExerciseNo      string `json:"exerciseNo"`
-	Uid             int64  `json:"uid"`
+	UserId          int64  `json:"userId"`
 	AccountId       int64  `json:"accountId"`
 	ContractId      int64  `json:"contractId"`
 	PositionId      int64  `json:"positionId"`
@@ -1224,7 +1262,7 @@ type OptionOrder struct {
 	Id               int64  `json:"id"`       // 主键ID
 	TenantId         int64  `json:"tenantId"` // 租户ID
 	OrderNo          string `json:"orderNo"`  // 订单号
-	Uid              int64  `json:"uid"`
+	UserId           int64  `json:"userId"`
 	AccountId        int64  `json:"accountId"`
 	ContractId       int64  `json:"contractId"`
 	UnderlyingSymbol string `json:"underlyingSymbol"`
@@ -1260,7 +1298,7 @@ type OptionOrderDetail struct {
 type OptionPosition struct {
 	Id                int64  `json:"id"`
 	TenantId          int64  `json:"tenantId"`
-	Uid               int64  `json:"uid"`
+	UserId            int64  `json:"userId"`
 	AccountId         int64  `json:"accountId"`
 	ContractId        int64  `json:"contractId"`
 	UnderlyingSymbol  string `json:"underlyingSymbol"`
@@ -1335,9 +1373,8 @@ type PageReq struct {
 }
 
 type PlaceOrderReq struct {
-	TenantId        int64  `json:"tenantId,optional"` // 租户ID
-	SymbolId        int64  `json:"symbolId"`          // 交易对ID
-	MarketType      int64  `json:"marketType"`        // 市场类型
+	SymbolId        int64  `json:"symbolId"`   // 交易对ID
+	MarketType      int64  `json:"marketType"` // 市场类型
 	Side            int64  `json:"side"`
 	PositionSide    int64  `json:"positionSide"`
 	OrderType       int64  `json:"orderType"`
@@ -1363,8 +1400,7 @@ type PlaceOrderResp struct {
 }
 
 type QueryMyRechargeOrderStatusReq struct {
-	TenantId int64  `form:"tenantId,optional"`
-	OrderNo  string `path:"orderNo"`
+	OrderNo string `path:"orderNo"`
 }
 
 type QueryMyRechargeOrderStatusResp struct {
@@ -1469,8 +1505,7 @@ type SetDefaultBankReq struct {
 }
 
 type SetLeverageReq struct {
-	TenantId      int64 `json:"tenantId,optional"` // 租户ID
-	SymbolId      int64 `json:"symbolId"`          // 交易对ID
+	SymbolId      int64 `json:"symbolId"` // 交易对ID
 	MarketType    int64 `json:"marketType"`
 	MarginMode    int64 `json:"marginMode"`
 	PositionMode  int64 `json:"positionMode"`
@@ -1487,7 +1522,7 @@ type StakeOrder struct {
 	Id               int64  `json:"id"`       // 主键ID
 	TenantId         int64  `json:"tenantId"` // 租户ID
 	OrderNo          string `json:"orderNo"`  // 订单号
-	Uid              int64  `json:"uid"`
+	UserId           int64  `json:"userId"`
 	ProductId        int64  `json:"productId"`
 	ProductNo        string `json:"productNo"`
 	ProductName      string `json:"productName"`
@@ -1560,7 +1595,7 @@ type StakeRedeemLog struct {
 	TenantId     int64  `json:"tenantId"`
 	OrderId      int64  `json:"orderId"`
 	OrderNo      string `json:"orderNo"`
-	Uid          int64  `json:"uid"`
+	UserId       int64  `json:"userId"`
 	ProductId    int64  `json:"productId"`
 	RedeemNo     string `json:"redeemNo"`
 	RedeemType   int64  `json:"redeemType"`
@@ -1583,7 +1618,7 @@ type StakeRewardLog struct {
 	TenantId         int64  `json:"tenantId"`
 	OrderId          int64  `json:"orderId"`
 	OrderNo          string `json:"orderNo"`
-	Uid              int64  `json:"uid"`
+	UserId           int64  `json:"userId"`
 	ProductId        int64  `json:"productId"`
 	ProductName      string `json:"productName"`
 	CoinSymbol       string `json:"coinSymbol"`

@@ -89,8 +89,14 @@ export type ListCryptoWalletAccountsReq = {
   cursor?: string | null
   limit?: number
 }
-export type CreateCryptoWalletAccountReq = Omit<CryptoWalletAccount, 'id' | 'createTimes' | 'updateTimes'>
-export type UpdateCryptoWalletAccountReq = Omit<CryptoWalletAccount, 'accountCode' | 'createTimes' | 'updateTimes'>
+export type CreateCryptoWalletAccountReq = Omit<
+  CryptoWalletAccount,
+  'id' | 'createTimes' | 'updateTimes'
+>
+export type UpdateCryptoWalletAccountReq = Omit<
+  CryptoWalletAccount,
+  'accountCode' | 'createTimes' | 'updateTimes'
+>
 
 export type ListCryptoRechargeTxsReq = {
   tenantId?: number
@@ -107,11 +113,20 @@ export type ListCryptoRechargeTxsReq = {
 export type CreateCryptoRechargeTxReq = Omit<CryptoRechargeTx, 'id' | 'createTimes' | 'updateTimes'>
 export type UpdateCryptoRechargeTxReq = Pick<
   CryptoRechargeTx,
-  'id' | 'tenantId' | 'orderId' | 'orderNo' | 'confirmCount' | 'requiredConfirmCount' | 'status' | 'rawData'
+  | 'id'
+  | 'tenantId'
+  | 'orderId'
+  | 'orderNo'
+  | 'confirmCount'
+  | 'requiredConfirmCount'
+  | 'status'
+  | 'rawData'
 >
 
 export class CryptoService {
-  listRechargeAddresses(params: ListCryptoRechargeAddressesReq): Promise<RespBase<CryptoRechargeAddress[]>> {
+  listRechargeAddresses(
+    params: ListCryptoRechargeAddressesReq,
+  ): Promise<RespBase<CryptoRechargeAddress[]>> {
     return apiCryptoRechargeAddressList(params)
   }
 
@@ -123,7 +138,9 @@ export class CryptoService {
     return apiCryptoRechargeAddressUpdate(params)
   }
 
-  listWalletAccounts(params: ListCryptoWalletAccountsReq): Promise<RespBase<CryptoWalletAccount[]>> {
+  listWalletAccounts(
+    params: ListCryptoWalletAccountsReq,
+  ): Promise<RespBase<CryptoWalletAccount[]>> {
     return apiCryptoWalletAccountList(params)
   }
 

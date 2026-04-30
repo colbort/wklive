@@ -68,7 +68,6 @@ func (x *AppCommonResp) GetBase() *common.RespBase {
 
 type AppListContractsReq struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	TenantId         int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	UnderlyingSymbol string                 `protobuf:"bytes,2,opt,name=underlying_symbol,json=underlyingSymbol,proto3" json:"underlying_symbol,omitempty"`
 	OptionType       OptionType             `protobuf:"varint,3,opt,name=option_type,json=optionType,proto3,enum=option.OptionType" json:"option_type,omitempty"`
 	Status           ContractStatus         `protobuf:"varint,4,opt,name=status,proto3,enum=option.ContractStatus" json:"status,omitempty"`
@@ -105,13 +104,6 @@ func (x *AppListContractsReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AppListContractsReq.ProtoReflect.Descriptor instead.
 func (*AppListContractsReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_app_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *AppListContractsReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
 }
 
 func (x *AppListContractsReq) GetUnderlyingSymbol() string {
@@ -196,7 +188,6 @@ func (x *AppListContractsResp) GetList() []*OptionContractDetail {
 
 type AppGetContractDetailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	ContractId    int64                  `protobuf:"varint,2,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -230,13 +221,6 @@ func (x *AppGetContractDetailReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AppGetContractDetailReq.ProtoReflect.Descriptor instead.
 func (*AppGetContractDetailReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_app_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *AppGetContractDetailReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
 }
 
 func (x *AppGetContractDetailReq) GetContractId() int64 {
@@ -300,8 +284,6 @@ func (x *AppGetContractDetailResp) GetData() *OptionContractDetail {
 
 type AppPlaceOrderReq struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	TenantId       int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid            int64                  `protobuf:"varint,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	AccountId      int64                  `protobuf:"varint,3,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	ContractId     int64                  `protobuf:"varint,4,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
 	Side           Side                   `protobuf:"varint,5,opt,name=side,proto3,enum=option.Side" json:"side,omitempty"`
@@ -344,20 +326,6 @@ func (x *AppPlaceOrderReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AppPlaceOrderReq.ProtoReflect.Descriptor instead.
 func (*AppPlaceOrderReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_app_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *AppPlaceOrderReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *AppPlaceOrderReq) GetUid() int64 {
-	if x != nil {
-		return x.Uid
-	}
-	return 0
 }
 
 func (x *AppPlaceOrderReq) GetAccountId() int64 {
@@ -492,11 +460,9 @@ func (x *AppPlaceOrderResp) GetOrderId() int64 {
 
 type AppCancelOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid           int64                  `protobuf:"varint,2,opt,name=uid,proto3" json:"uid,omitempty"`
-	AccountId     int64                  `protobuf:"varint,3,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
-	OrderId       int64                  `protobuf:"varint,4,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
-	OrderNo       string                 `protobuf:"bytes,5,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
+	AccountId     int64                  `protobuf:"varint,2,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	OrderId       int64                  `protobuf:"varint,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	OrderNo       string                 `protobuf:"bytes,4,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -531,20 +497,6 @@ func (*AppCancelOrderReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_app_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *AppCancelOrderReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *AppCancelOrderReq) GetUid() int64 {
-	if x != nil {
-		return x.Uid
-	}
-	return 0
-}
-
 func (x *AppCancelOrderReq) GetAccountId() int64 {
 	if x != nil {
 		return x.AccountId
@@ -568,8 +520,6 @@ func (x *AppCancelOrderReq) GetOrderNo() string {
 
 type AppGetOrderDetailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid           int64                  `protobuf:"varint,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	AccountId     int64                  `protobuf:"varint,3,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	OrderId       int64                  `protobuf:"varint,4,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
 	OrderNo       string                 `protobuf:"bytes,5,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
@@ -605,20 +555,6 @@ func (x *AppGetOrderDetailReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AppGetOrderDetailReq.ProtoReflect.Descriptor instead.
 func (*AppGetOrderDetailReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_app_proto_rawDescGZIP(), []int{8}
-}
-
-func (x *AppGetOrderDetailReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *AppGetOrderDetailReq) GetUid() int64 {
-	if x != nil {
-		return x.Uid
-	}
-	return 0
 }
 
 func (x *AppGetOrderDetailReq) GetAccountId() int64 {
@@ -696,8 +632,6 @@ func (x *AppGetOrderDetailResp) GetData() *OptionOrderDetail {
 
 type AppListCurrentOrdersReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid           int64                  `protobuf:"varint,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	AccountId     int64                  `protobuf:"varint,3,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	ContractId    int64                  `protobuf:"varint,4,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
 	Side          Side                   `protobuf:"varint,5,opt,name=side,proto3,enum=option.Side" json:"side,omitempty"`
@@ -734,20 +668,6 @@ func (x *AppListCurrentOrdersReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AppListCurrentOrdersReq.ProtoReflect.Descriptor instead.
 func (*AppListCurrentOrdersReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_app_proto_rawDescGZIP(), []int{10}
-}
-
-func (x *AppListCurrentOrdersReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *AppListCurrentOrdersReq) GetUid() int64 {
-	if x != nil {
-		return x.Uid
-	}
-	return 0
 }
 
 func (x *AppListCurrentOrdersReq) GetAccountId() int64 {
@@ -840,8 +760,6 @@ func (x *AppListCurrentOrdersResp) GetPage() *common.PageReq {
 
 type AppListHistoryOrdersReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	TenantId        int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid             int64                  `protobuf:"varint,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	AccountId       int64                  `protobuf:"varint,3,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	ContractId      int64                  `protobuf:"varint,4,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
 	Status          OrderStatus            `protobuf:"varint,5,opt,name=status,proto3,enum=option.OrderStatus" json:"status,omitempty"`
@@ -879,20 +797,6 @@ func (x *AppListHistoryOrdersReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AppListHistoryOrdersReq.ProtoReflect.Descriptor instead.
 func (*AppListHistoryOrdersReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_app_proto_rawDescGZIP(), []int{12}
-}
-
-func (x *AppListHistoryOrdersReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *AppListHistoryOrdersReq) GetUid() int64 {
-	if x != nil {
-		return x.Uid
-	}
-	return 0
 }
 
 func (x *AppListHistoryOrdersReq) GetAccountId() int64 {
@@ -992,8 +896,6 @@ func (x *AppListHistoryOrdersResp) GetPage() *common.PageReq {
 
 type AppListTradesReq struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	TenantId       int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid            int64                  `protobuf:"varint,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	AccountId      int64                  `protobuf:"varint,3,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	ContractId     int64                  `protobuf:"varint,4,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
 	TradeTimeRange *common.TimeRange      `protobuf:"bytes,5,opt,name=trade_time_range,json=tradeTimeRange,proto3" json:"trade_time_range,omitempty"`
@@ -1030,20 +932,6 @@ func (x *AppListTradesReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AppListTradesReq.ProtoReflect.Descriptor instead.
 func (*AppListTradesReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_app_proto_rawDescGZIP(), []int{14}
-}
-
-func (x *AppListTradesReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *AppListTradesReq) GetUid() int64 {
-	if x != nil {
-		return x.Uid
-	}
-	return 0
 }
 
 func (x *AppListTradesReq) GetAccountId() int64 {
@@ -1136,8 +1024,6 @@ func (x *AppListTradesResp) GetPage() *common.PageReq {
 
 type AppListPositionsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid           int64                  `protobuf:"varint,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	AccountId     int64                  `protobuf:"varint,3,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	Status        PositionStatus         `protobuf:"varint,4,opt,name=status,proto3,enum=option.PositionStatus" json:"status,omitempty"`
 	Page          *common.PageReq        `protobuf:"bytes,5,opt,name=page,proto3" json:"page,omitempty"`
@@ -1173,20 +1059,6 @@ func (x *AppListPositionsReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AppListPositionsReq.ProtoReflect.Descriptor instead.
 func (*AppListPositionsReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_app_proto_rawDescGZIP(), []int{16}
-}
-
-func (x *AppListPositionsReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *AppListPositionsReq) GetUid() int64 {
-	if x != nil {
-		return x.Uid
-	}
-	return 0
 }
 
 func (x *AppListPositionsReq) GetAccountId() int64 {
@@ -1272,8 +1144,6 @@ func (x *AppListPositionsResp) GetPage() *common.PageReq {
 
 type AppGetPositionDetailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid           int64                  `protobuf:"varint,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	AccountId     int64                  `protobuf:"varint,3,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	PositionId    int64                  `protobuf:"varint,4,opt,name=position_id,json=positionId,proto3" json:"position_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1308,20 +1178,6 @@ func (x *AppGetPositionDetailReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AppGetPositionDetailReq.ProtoReflect.Descriptor instead.
 func (*AppGetPositionDetailReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_app_proto_rawDescGZIP(), []int{18}
-}
-
-func (x *AppGetPositionDetailReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *AppGetPositionDetailReq) GetUid() int64 {
-	if x != nil {
-		return x.Uid
-	}
-	return 0
 }
 
 func (x *AppGetPositionDetailReq) GetAccountId() int64 {
@@ -1392,8 +1248,6 @@ func (x *AppGetPositionDetailResp) GetData() *OptionPositionDetail {
 
 type AppExerciseReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid           int64                  `protobuf:"varint,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	AccountId     int64                  `protobuf:"varint,3,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	PositionId    int64                  `protobuf:"varint,4,opt,name=position_id,json=positionId,proto3" json:"position_id,omitempty"`
 	ContractId    int64                  `protobuf:"varint,5,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
@@ -1430,20 +1284,6 @@ func (x *AppExerciseReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AppExerciseReq.ProtoReflect.Descriptor instead.
 func (*AppExerciseReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_app_proto_rawDescGZIP(), []int{20}
-}
-
-func (x *AppExerciseReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *AppExerciseReq) GetUid() int64 {
-	if x != nil {
-		return x.Uid
-	}
-	return 0
 }
 
 func (x *AppExerciseReq) GetAccountId() int64 {
@@ -1536,8 +1376,6 @@ func (x *AppExerciseResp) GetExerciseId() int64 {
 
 type AppListExercisesReq struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
-	TenantId          int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid               int64                  `protobuf:"varint,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	AccountId         int64                  `protobuf:"varint,3,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	ContractId        int64                  `protobuf:"varint,4,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
 	Status            ExerciseStatus         `protobuf:"varint,5,opt,name=status,proto3,enum=option.ExerciseStatus" json:"status,omitempty"`
@@ -1575,20 +1413,6 @@ func (x *AppListExercisesReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AppListExercisesReq.ProtoReflect.Descriptor instead.
 func (*AppListExercisesReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_app_proto_rawDescGZIP(), []int{22}
-}
-
-func (x *AppListExercisesReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *AppListExercisesReq) GetUid() int64 {
-	if x != nil {
-		return x.Uid
-	}
-	return 0
 }
 
 func (x *AppListExercisesReq) GetAccountId() int64 {
@@ -1688,8 +1512,6 @@ func (x *AppListExercisesResp) GetPage() *common.PageReq {
 
 type AppListAccountsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid           int64                  `protobuf:"varint,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	AccountId     int64                  `protobuf:"varint,3,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1723,20 +1545,6 @@ func (x *AppListAccountsReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AppListAccountsReq.ProtoReflect.Descriptor instead.
 func (*AppListAccountsReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_app_proto_rawDescGZIP(), []int{24}
-}
-
-func (x *AppListAccountsReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *AppListAccountsReq) GetUid() int64 {
-	if x != nil {
-		return x.Uid
-	}
-	return 0
 }
 
 func (x *AppListAccountsReq) GetAccountId() int64 {
@@ -1800,8 +1608,6 @@ func (x *AppListAccountsResp) GetList() []*OptionAccount {
 
 type AppListBillsReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	TenantId        int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid             int64                  `protobuf:"varint,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	AccountId       int64                  `protobuf:"varint,3,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	RefType         BillRefType            `protobuf:"varint,4,opt,name=ref_type,json=refType,proto3,enum=option.BillRefType" json:"ref_type,omitempty"`
 	CreateTimeRange *common.TimeRange      `protobuf:"bytes,5,opt,name=create_time_range,json=createTimeRange,proto3" json:"create_time_range,omitempty"`
@@ -1838,20 +1644,6 @@ func (x *AppListBillsReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AppListBillsReq.ProtoReflect.Descriptor instead.
 func (*AppListBillsReq) Descriptor() ([]byte, []int) {
 	return file_proto_option_option_app_proto_rawDescGZIP(), []int{26}
-}
-
-func (x *AppListBillsReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *AppListBillsReq) GetUid() int64 {
-	if x != nil {
-		return x.Uid
-	}
-	return 0
 }
 
 func (x *AppListBillsReq) GetAccountId() int64 {
@@ -1948,9 +1740,8 @@ const file_proto_option_option_app_proto_rawDesc = "" +
 	"\n" +
 	"\x1dproto/option/option_app.proto\x12\x06option\x1a\x19proto/common/common.proto\x1a\x17proto/option/enum.proto\x1a\x18proto/option/model.proto\"5\n" +
 	"\rAppCommonResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\xe9\x01\n" +
-	"\x13AppListContractsReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12+\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\xcc\x01\n" +
+	"\x13AppListContractsReq\x12+\n" +
 	"\x11underlying_symbol\x18\x02 \x01(\tR\x10underlyingSymbol\x123\n" +
 	"\voption_type\x18\x03 \x01(\x0e2\x12.option.OptionTypeR\n" +
 	"optionType\x12.\n" +
@@ -1958,17 +1749,14 @@ const file_proto_option_option_app_proto_rawDesc = "" +
 	"\x04page\x18\x05 \x01(\v2\x0f.common.PageReqR\x04page\"n\n" +
 	"\x14AppListContractsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x120\n" +
-	"\x04list\x18\x02 \x03(\v2\x1c.option.OptionContractDetailR\x04list\"W\n" +
-	"\x17AppGetContractDetailReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1f\n" +
+	"\x04list\x18\x02 \x03(\v2\x1c.option.OptionContractDetailR\x04list\":\n" +
+	"\x17AppGetContractDetailReq\x12\x1f\n" +
 	"\vcontract_id\x18\x02 \x01(\x03R\n" +
 	"contractId\"r\n" +
 	"\x18AppGetContractDetailResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x120\n" +
-	"\x04data\x18\x02 \x01(\v2\x1c.option.OptionContractDetailR\x04data\"\xb7\x03\n" +
-	"\x10AppPlaceOrderReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x02 \x01(\x03R\x03uid\x12\x1d\n" +
+	"\x04data\x18\x02 \x01(\v2\x1c.option.OptionContractDetailR\x04data\"\x88\x03\n" +
+	"\x10AppPlaceOrderReq\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x03 \x01(\x03R\taccountId\x12\x1f\n" +
 	"\vcontract_id\x18\x04 \x01(\x03R\n" +
@@ -1987,27 +1775,21 @@ const file_proto_option_option_app_proto_rawDesc = "" +
 	"\x11AppPlaceOrderResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x19\n" +
 	"\border_no\x18\x02 \x01(\tR\aorderNo\x12\x19\n" +
-	"\border_id\x18\x03 \x01(\x03R\aorderId\"\x97\x01\n" +
-	"\x11AppCancelOrderReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x02 \x01(\x03R\x03uid\x12\x1d\n" +
+	"\border_id\x18\x03 \x01(\x03R\aorderId\"h\n" +
+	"\x11AppCancelOrderReq\x12\x1d\n" +
 	"\n" +
-	"account_id\x18\x03 \x01(\x03R\taccountId\x12\x19\n" +
-	"\border_id\x18\x04 \x01(\x03R\aorderId\x12\x19\n" +
-	"\border_no\x18\x05 \x01(\tR\aorderNo\"\x9a\x01\n" +
-	"\x14AppGetOrderDetailReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x02 \x01(\x03R\x03uid\x12\x1d\n" +
+	"account_id\x18\x02 \x01(\x03R\taccountId\x12\x19\n" +
+	"\border_id\x18\x03 \x01(\x03R\aorderId\x12\x19\n" +
+	"\border_no\x18\x04 \x01(\tR\aorderNo\"k\n" +
+	"\x14AppGetOrderDetailReq\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x03 \x01(\x03R\taccountId\x12\x19\n" +
 	"\border_id\x18\x04 \x01(\x03R\aorderId\x12\x19\n" +
 	"\border_no\x18\x05 \x01(\tR\aorderNo\"l\n" +
 	"\x15AppGetOrderDetailResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x02 \x01(\v2\x19.option.OptionOrderDetailR\x04data\"\xcf\x01\n" +
-	"\x17AppListCurrentOrdersReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x02 \x01(\x03R\x03uid\x12\x1d\n" +
+	"\x04data\x18\x02 \x01(\v2\x19.option.OptionOrderDetailR\x04data\"\xa0\x01\n" +
+	"\x17AppListCurrentOrdersReq\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x03 \x01(\x03R\taccountId\x12\x1f\n" +
 	"\vcontract_id\x18\x04 \x01(\x03R\n" +
@@ -2017,10 +1799,8 @@ const file_proto_option_option_app_proto_rawDesc = "" +
 	"\x18AppListCurrentOrdersResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
 	"\x04list\x18\x02 \x03(\v2\x19.option.OptionOrderDetailR\x04list\x12#\n" +
-	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\"\x99\x02\n" +
-	"\x17AppListHistoryOrdersReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x02 \x01(\x03R\x03uid\x12\x1d\n" +
+	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\"\xea\x01\n" +
+	"\x17AppListHistoryOrdersReq\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x03 \x01(\x03R\taccountId\x12\x1f\n" +
 	"\vcontract_id\x18\x04 \x01(\x03R\n" +
@@ -2031,10 +1811,8 @@ const file_proto_option_option_app_proto_rawDesc = "" +
 	"\x18AppListHistoryOrdersResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
 	"\x04list\x18\x02 \x03(\v2\x19.option.OptionOrderDetailR\x04list\x12#\n" +
-	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\"\xe3\x01\n" +
-	"\x10AppListTradesReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x02 \x01(\x03R\x03uid\x12\x1d\n" +
+	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\"\xb4\x01\n" +
+	"\x10AppListTradesReq\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x03 \x01(\x03R\taccountId\x12\x1f\n" +
 	"\vcontract_id\x18\x04 \x01(\x03R\n" +
@@ -2044,10 +1822,8 @@ const file_proto_option_option_app_proto_rawDesc = "" +
 	"\x11AppListTradesResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
 	"\x04list\x18\x02 \x03(\v2\x19.option.OptionTradeDetailR\x04list\x12#\n" +
-	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\"\xb8\x01\n" +
-	"\x13AppListPositionsReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x02 \x01(\x03R\x03uid\x12\x1d\n" +
+	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\"\x89\x01\n" +
+	"\x13AppListPositionsReq\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x03 \x01(\x03R\taccountId\x12.\n" +
 	"\x06status\x18\x04 \x01(\x0e2\x16.option.PositionStatusR\x06status\x12#\n" +
@@ -2055,20 +1831,16 @@ const file_proto_option_option_app_proto_rawDesc = "" +
 	"\x14AppListPositionsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x120\n" +
 	"\x04list\x18\x02 \x03(\v2\x1c.option.OptionPositionDetailR\x04list\x12#\n" +
-	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\"\x88\x01\n" +
-	"\x17AppGetPositionDetailReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x02 \x01(\x03R\x03uid\x12\x1d\n" +
+	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\"Y\n" +
+	"\x17AppGetPositionDetailReq\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x03 \x01(\x03R\taccountId\x12\x1f\n" +
 	"\vposition_id\x18\x04 \x01(\x03R\n" +
 	"positionId\"r\n" +
 	"\x18AppGetPositionDetailResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x120\n" +
-	"\x04data\x18\x02 \x01(\v2\x1c.option.OptionPositionDetailR\x04data\"\xc3\x01\n" +
-	"\x0eAppExerciseReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x02 \x01(\x03R\x03uid\x12\x1d\n" +
+	"\x04data\x18\x02 \x01(\v2\x1c.option.OptionPositionDetailR\x04data\"\x94\x01\n" +
+	"\x0eAppExerciseReq\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x03 \x01(\x03R\taccountId\x12\x1f\n" +
 	"\vposition_id\x18\x04 \x01(\x03R\n" +
@@ -2081,10 +1853,8 @@ const file_proto_option_option_app_proto_rawDesc = "" +
 	"\vexercise_no\x18\x02 \x01(\tR\n" +
 	"exerciseNo\x12\x1f\n" +
 	"\vexercise_id\x18\x03 \x01(\x03R\n" +
-	"exerciseId\"\x9c\x02\n" +
-	"\x13AppListExercisesReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x02 \x01(\x03R\x03uid\x12\x1d\n" +
+	"exerciseId\"\xed\x01\n" +
+	"\x13AppListExercisesReq\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x03 \x01(\x03R\taccountId\x12\x1f\n" +
 	"\vcontract_id\x18\x04 \x01(\x03R\n" +
@@ -2095,18 +1865,14 @@ const file_proto_option_option_app_proto_rawDesc = "" +
 	"\x14AppListExercisesResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x120\n" +
 	"\x04list\x18\x02 \x03(\v2\x1c.option.OptionExerciseDetailR\x04list\x12#\n" +
-	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\"b\n" +
-	"\x12AppListAccountsReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x02 \x01(\x03R\x03uid\x12\x1d\n" +
+	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\"3\n" +
+	"\x12AppListAccountsReq\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x03 \x01(\x03R\taccountId\"f\n" +
 	"\x13AppListAccountsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
-	"\x04list\x18\x02 \x03(\v2\x15.option.OptionAccountR\x04list\"\xf3\x01\n" +
-	"\x0fAppListBillsReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x02 \x01(\x03R\x03uid\x12\x1d\n" +
+	"\x04list\x18\x02 \x03(\v2\x15.option.OptionAccountR\x04list\"\xc4\x01\n" +
+	"\x0fAppListBillsReq\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x03 \x01(\x03R\taccountId\x12.\n" +
 	"\bref_type\x18\x04 \x01(\x0e2\x13.option.BillRefTypeR\arefType\x12=\n" +

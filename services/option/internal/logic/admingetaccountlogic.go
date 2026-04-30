@@ -3,12 +3,13 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type AdminGetAccountLogic struct {
@@ -29,7 +30,7 @@ func NewAdminGetAccountLogic(ctx context.Context, svcCtx *svc.ServiceContext) *A
 func (l *AdminGetAccountLogic) AdminGetAccount(in *option.GetAccountReq) (*option.GetAccountResp, error) {
 	items, _, err := l.svcCtx.OptionAccountModel.FindPage(l.ctx, models.OptionAccountPageFilter{
 		TenantId:   in.TenantId,
-		Uid:        in.Uid,
+		UserId:     in.UserId,
 		AccountId:  in.AccountId,
 		MarginCoin: in.MarginCoin,
 	}, 0, 1)

@@ -29,7 +29,7 @@ func NewGetProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetPro
 // 获取当前用户信息
 func (l *GetProfileLogic) GetProfile(in *system.ProfileReq) (*system.ProfileResp, error) {
 	// 1) user info
-	u, err := l.svcCtx.UserModel.FindOne(l.ctx, in.Uid)
+	u, err := l.svcCtx.UserModel.FindOne(l.ctx, in.UserId)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +38,7 @@ func (l *GetProfileLogic) GetProfile(in *system.ProfileReq) (*system.ProfileResp
 	}
 
 	// 2) roleIds
-	roleIds, err := l.svcCtx.UserRoleModel.FindRoleIdsByUserId(l.ctx, in.Uid)
+	roleIds, err := l.svcCtx.UserRoleModel.FindRoleIdsByUserId(l.ctx, in.UserId)
 	if err != nil {
 		return nil, err
 	}

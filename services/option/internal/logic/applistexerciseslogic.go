@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	pageutil "wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
@@ -29,9 +30,17 @@ func NewAppListExercisesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 // 获取行权记录列表
 func (l *AppListExercisesLogic) AppListExercises(in *option.AppListExercisesReq) (*option.AppListExercisesResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	items, total, err := l.svcCtx.OptionExerciseModel.FindPage(l.ctx, models.OptionExercisePageFilter{
-		TenantId:          in.TenantId,
-		Uid:               in.Uid,
+		TenantId:          tenantId,
+		UserId:            userId,
 		AccountId:         in.AccountId,
 		ContractId:        in.ContractId,
 		Status:            int64(in.Status),

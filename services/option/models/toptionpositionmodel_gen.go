@@ -23,15 +23,15 @@ var (
 	tOptionPositionRowsExpectAutoSet   = strings.Join(stringx.Remove(tOptionPositionFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tOptionPositionRowsWithPlaceHolder = strings.Join(stringx.Remove(tOptionPositionFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTOptionPositionIdPrefix                                 = "cache:tOptionPosition:id:"
-	cacheTOptionPositionTenantIdUidAccountIdContractIdSidePrefix = "cache:tOptionPosition:tenantId:uid:accountId:contractId:side:"
+	cacheTOptionPositionIdPrefix                                    = "cache:tOptionPosition:id:"
+	cacheTOptionPositionTenantIdUserIdAccountIdContractIdSidePrefix = "cache:tOptionPosition:tenantId:userId:accountId:contractId:side:"
 )
 
 type (
 	tOptionPositionModel interface {
 		Insert(ctx context.Context, data *TOptionPosition) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TOptionPosition, error)
-		FindOneByTenantIdUidAccountIdContractIdSide(ctx context.Context, tenantId int64, uid int64, accountId int64, contractId int64, side int64) (*TOptionPosition, error)
+		FindOneByTenantIdUserIdAccountIdContractIdSide(ctx context.Context, tenantId int64, userId int64, accountId int64, contractId int64, side int64) (*TOptionPosition, error)
 		Update(ctx context.Context, data *TOptionPosition) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -44,7 +44,7 @@ type (
 	TOptionPosition struct {
 		Id                int64   `db:"id"`                 // 主键ID
 		TenantId          int64   `db:"tenant_id"`          // 租户ID
-		Uid               int64   `db:"uid"`                // 用户ID
+		UserId            int64   `db:"user_id"`            // 用户ID
 		AccountId         int64   `db:"account_id"`         // 交易账户ID
 		ContractId        int64   `db:"contract_id"`        // 合约ID
 		UnderlyingSymbol  string  `db:"underlying_symbol"`  // 标的
@@ -81,11 +81,11 @@ func (m *defaultTOptionPositionModel) Delete(ctx context.Context, id int64) erro
 	}
 
 	tOptionPositionIdKey := fmt.Sprintf("%s%v", cacheTOptionPositionIdPrefix, id)
-	tOptionPositionTenantIdUidAccountIdContractIdSideKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTOptionPositionTenantIdUidAccountIdContractIdSidePrefix, data.TenantId, data.Uid, data.AccountId, data.ContractId, data.Side)
+	tOptionPositionTenantIdUserIdAccountIdContractIdSideKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTOptionPositionTenantIdUserIdAccountIdContractIdSidePrefix, data.TenantId, data.UserId, data.AccountId, data.ContractId, data.Side)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tOptionPositionIdKey, tOptionPositionTenantIdUidAccountIdContractIdSideKey)
+	}, tOptionPositionIdKey, tOptionPositionTenantIdUserIdAccountIdContractIdSideKey)
 	return err
 }
 
@@ -106,12 +106,12 @@ func (m *defaultTOptionPositionModel) FindOne(ctx context.Context, id int64) (*T
 	}
 }
 
-func (m *defaultTOptionPositionModel) FindOneByTenantIdUidAccountIdContractIdSide(ctx context.Context, tenantId int64, uid int64, accountId int64, contractId int64, side int64) (*TOptionPosition, error) {
-	tOptionPositionTenantIdUidAccountIdContractIdSideKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTOptionPositionTenantIdUidAccountIdContractIdSidePrefix, tenantId, uid, accountId, contractId, side)
+func (m *defaultTOptionPositionModel) FindOneByTenantIdUserIdAccountIdContractIdSide(ctx context.Context, tenantId int64, userId int64, accountId int64, contractId int64, side int64) (*TOptionPosition, error) {
+	tOptionPositionTenantIdUserIdAccountIdContractIdSideKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTOptionPositionTenantIdUserIdAccountIdContractIdSidePrefix, tenantId, userId, accountId, contractId, side)
 	var resp TOptionPosition
-	err := m.QueryRowIndexCtx(ctx, &resp, tOptionPositionTenantIdUidAccountIdContractIdSideKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `uid` = ? and `account_id` = ? and `contract_id` = ? and `side` = ? limit 1", tOptionPositionRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, uid, accountId, contractId, side); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tOptionPositionTenantIdUserIdAccountIdContractIdSideKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `user_id` = ? and `account_id` = ? and `contract_id` = ? and `side` = ? limit 1", tOptionPositionRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, userId, accountId, contractId, side); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -128,11 +128,11 @@ func (m *defaultTOptionPositionModel) FindOneByTenantIdUidAccountIdContractIdSid
 
 func (m *defaultTOptionPositionModel) Insert(ctx context.Context, data *TOptionPosition) (sql.Result, error) {
 	tOptionPositionIdKey := fmt.Sprintf("%s%v", cacheTOptionPositionIdPrefix, data.Id)
-	tOptionPositionTenantIdUidAccountIdContractIdSideKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTOptionPositionTenantIdUidAccountIdContractIdSidePrefix, data.TenantId, data.Uid, data.AccountId, data.ContractId, data.Side)
+	tOptionPositionTenantIdUserIdAccountIdContractIdSideKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTOptionPositionTenantIdUserIdAccountIdContractIdSidePrefix, data.TenantId, data.UserId, data.AccountId, data.ContractId, data.Side)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionPositionRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.Uid, data.AccountId, data.ContractId, data.UnderlyingSymbol, data.Side, data.PositionQty, data.AvailableQty, data.FrozenQty, data.OpenAvgPrice, data.MarkPrice, data.PositionValue, data.MarginAmount, data.MaintenanceMargin, data.UnrealizedPnl, data.RealizedPnl, data.ExerciseableQty, data.Status, data.LastCalcTime, data.CreateTimes, data.UpdateTimes)
-	}, tOptionPositionIdKey, tOptionPositionTenantIdUidAccountIdContractIdSideKey)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.AccountId, data.ContractId, data.UnderlyingSymbol, data.Side, data.PositionQty, data.AvailableQty, data.FrozenQty, data.OpenAvgPrice, data.MarkPrice, data.PositionValue, data.MarginAmount, data.MaintenanceMargin, data.UnrealizedPnl, data.RealizedPnl, data.ExerciseableQty, data.Status, data.LastCalcTime, data.CreateTimes, data.UpdateTimes)
+	}, tOptionPositionIdKey, tOptionPositionTenantIdUserIdAccountIdContractIdSideKey)
 	return ret, err
 }
 
@@ -143,11 +143,11 @@ func (m *defaultTOptionPositionModel) Update(ctx context.Context, newData *TOpti
 	}
 
 	tOptionPositionIdKey := fmt.Sprintf("%s%v", cacheTOptionPositionIdPrefix, data.Id)
-	tOptionPositionTenantIdUidAccountIdContractIdSideKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTOptionPositionTenantIdUidAccountIdContractIdSidePrefix, data.TenantId, data.Uid, data.AccountId, data.ContractId, data.Side)
+	tOptionPositionTenantIdUserIdAccountIdContractIdSideKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTOptionPositionTenantIdUserIdAccountIdContractIdSidePrefix, data.TenantId, data.UserId, data.AccountId, data.ContractId, data.Side)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tOptionPositionRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.Uid, newData.AccountId, newData.ContractId, newData.UnderlyingSymbol, newData.Side, newData.PositionQty, newData.AvailableQty, newData.FrozenQty, newData.OpenAvgPrice, newData.MarkPrice, newData.PositionValue, newData.MarginAmount, newData.MaintenanceMargin, newData.UnrealizedPnl, newData.RealizedPnl, newData.ExerciseableQty, newData.Status, newData.LastCalcTime, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tOptionPositionIdKey, tOptionPositionTenantIdUidAccountIdContractIdSideKey)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.AccountId, newData.ContractId, newData.UnderlyingSymbol, newData.Side, newData.PositionQty, newData.AvailableQty, newData.FrozenQty, newData.OpenAvgPrice, newData.MarkPrice, newData.PositionValue, newData.MarginAmount, newData.MaintenanceMargin, newData.UnrealizedPnl, newData.RealizedPnl, newData.ExerciseableQty, newData.Status, newData.LastCalcTime, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tOptionPositionIdKey, tOptionPositionTenantIdUserIdAccountIdContractIdSideKey)
 	return err
 }
 

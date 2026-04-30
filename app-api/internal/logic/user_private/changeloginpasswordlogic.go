@@ -8,7 +8,6 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/common/utils"
 	"wklive/proto/user"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,12 +28,7 @@ func NewChangeLoginPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *ChangeLoginPasswordLogic) ChangeLoginPassword(req *types.ChangeLoginPasswordReq) (resp *types.RespBase, err error) {
-	userId, err := utils.GetUidFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
 	result, err := l.svcCtx.UserCli.ChangeLoginPassword(l.ctx, &user.ChangeLoginPasswordReq{
-		UserId:          userId,
 		OldPassword:     req.OldPassword,
 		NewPassword:     req.NewPassword,
 		ConfirmPassword: req.ConfirmPassword,

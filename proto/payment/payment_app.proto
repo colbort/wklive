@@ -12,8 +12,6 @@ message AppCommonResp { common.RespBase base = 1; }
 
 // 当前用户累计充值统计
 message GetMyRechargeStatReq {
-  int64 tenant_id = 1;
-  int64 user_id = 2;
 }
 
 message GetMyRechargeStatResp {
@@ -23,8 +21,6 @@ message GetMyRechargeStatResp {
 
 // 获取当前登录用户在指定充值场景下可用的充值通道
 message ListAvailableRechargeChannelsReq {
-  int64 tenant_id = 1;
-  int64 user_id = 2;
   int64 recharge_amount = 3; // 单位：分
   string currency = 4;
   payment.ClientType client_type = 5;
@@ -37,8 +33,6 @@ message ListAvailableRechargeChannelsResp {
 
 // 创建充值订单
 message CreateRechargeOrderReq {
-  int64 tenant_id = 1;
-  int64 user_id = 2;
   int64 channel_id = 3;
   int64 recharge_amount = 4; // 单位：分
   string currency = 5;
@@ -56,9 +50,7 @@ message CreateRechargeOrderResp {
 
 // 查询我的订单详情
 message GetMyRechargeOrderReq {
-  int64 tenant_id = 1;
   string order_no = 2;
-  int64 user_id = 64;
 }
 
 message GetMyRechargeOrderResp {
@@ -68,8 +60,6 @@ message GetMyRechargeOrderResp {
 
 // 查询我的充值订单列表
 message ListMyRechargeOrdersReq {
-  int64 tenant_id = 1;
-  int64 user_id = 2;
   common.PageReq page = 3;
   payment.PayOrderStatus status = 4;
   string order_no = 5;
@@ -84,15 +74,11 @@ message ListMyRechargeOrdersResp {
 
 // 取消未支付订单
 message CancelMyRechargeOrderReq {
-  int64 tenant_id = 1;
   string order_no = 2;
-  int64 user_id = 3;
 }
 
 // 轮询订单状态
 message QueryMyRechargeOrderStatusReq {
-  int64 tenant_id = 1;
-  int64 user_id = 2;
   string order_no = 3;
 }
 
@@ -103,8 +89,6 @@ message QueryMyRechargeOrderStatusResp {
 
 // 提现
 message CreateWithdrawOrderReq {
-  int64 tenant_id = 1;
-  int64 user_id = 2;
   int64 amount = 3; // 单位：分
   string currency = 4;
   string address = 5; // 提现地址（钱包地址等）
@@ -119,8 +103,6 @@ message CreateWithdrawOrderResp {
 
 // 获取提现订单列表
 message ListMyWithdrawOrdersReq {
-  int64 tenant_id = 1;
-  int64 user_id = 2;
   common.PageReq page = 3;
   payment.PayOrderStatus status = 4;
 }
@@ -133,7 +115,6 @@ message ListMyWithdrawOrdersResp {
 // 获取提现订单详情
 message GetMyWithdrawOrderReq {
   int64 id = 1;
-  int64 user_id = 2;
 }
 
 message GetMyWithdrawOrderResp {
@@ -143,8 +124,6 @@ message GetMyWithdrawOrderResp {
 
 // 获取/分配我的链上充值地址
 message GetMyCryptoRechargeAddressReq {
-  int64 tenant_id = 1;
-  int64 user_id = 2;
   int64 wallet_type = 3;
   string coin = 4;
   common.ChainCode chain_code = 5;
@@ -157,8 +136,6 @@ message GetMyCryptoRechargeAddressResp {
 
 // 我的链上充值地址列表
 message ListMyCryptoRechargeAddressesReq {
-  int64 tenant_id = 1;
-  int64 user_id = 2;
   int64 wallet_type = 3;
   string coin = 4;
   common.ChainCode chain_code = 5;
@@ -171,8 +148,6 @@ message ListMyCryptoRechargeAddressesResp {
 
 // 我的链上充值交易列表
 message ListMyCryptoRechargeTxsReq {
-  int64 tenant_id = 1;
-  int64 user_id = 2;
   common.PageReq page = 3;
   string order_no = 4;
   string coin = 5;
@@ -189,8 +164,6 @@ message ListMyCryptoRechargeTxsResp {
 
 // 我的链上充值交易详情
 message GetMyCryptoRechargeTxReq {
-  int64 tenant_id = 1;
-  int64 user_id = 2;
   int64 id = 3;
   string tx_hash = 4;
 }

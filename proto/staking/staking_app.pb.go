@@ -25,7 +25,6 @@ const (
 // 产品列表
 type AppProductListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	ProductType   ProductType            `protobuf:"varint,2,opt,name=product_type,json=productType,proto3,enum=staking.ProductType" json:"product_type,omitempty"`
 	CoinSymbol    string                 `protobuf:"bytes,3,opt,name=coin_symbol,json=coinSymbol,proto3" json:"coin_symbol,omitempty"`
 	Page          *common.PageReq        `protobuf:"bytes,4,opt,name=page,proto3" json:"page,omitempty"`
@@ -61,13 +60,6 @@ func (x *AppProductListReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AppProductListReq.ProtoReflect.Descriptor instead.
 func (*AppProductListReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *AppProductListReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
 }
 
 func (x *AppProductListReq) GetProductType() ProductType {
@@ -146,7 +138,6 @@ func (x *AppProductListResp) GetData() []*StakeProduct {
 // 产品详情
 type AppProductDetailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -180,13 +171,6 @@ func (x *AppProductDetailReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AppProductDetailReq.ProtoReflect.Descriptor instead.
 func (*AppProductDetailReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *AppProductDetailReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
 }
 
 func (x *AppProductDetailReq) GetId() int64 {
@@ -251,8 +235,6 @@ func (x *AppProductDetailResp) GetData() *StakeProduct {
 // 创建订单
 type AppCreateOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid           int64                  `protobuf:"varint,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	ProductId     int64                  `protobuf:"varint,3,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	StakeAmount   string                 `protobuf:"bytes,4,opt,name=stake_amount,json=stakeAmount,proto3" json:"stake_amount,omitempty"`
 	Source        SourceType             `protobuf:"varint,5,opt,name=source,proto3,enum=staking.SourceType" json:"source,omitempty"`
@@ -289,20 +271,6 @@ func (x *AppCreateOrderReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AppCreateOrderReq.ProtoReflect.Descriptor instead.
 func (*AppCreateOrderReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *AppCreateOrderReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *AppCreateOrderReq) GetUid() int64 {
-	if x != nil {
-		return x.Uid
-	}
-	return 0
 }
 
 func (x *AppCreateOrderReq) GetProductId() int64 {
@@ -396,8 +364,6 @@ func (x *AppCreateOrderResp) GetOrderNo() string {
 // 我的订单列表
 type AppMyOrderListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid           int64                  `protobuf:"varint,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	Status        OrderStatus            `protobuf:"varint,3,opt,name=status,proto3,enum=staking.OrderStatus" json:"status,omitempty"`
 	RedeemType    RedeemType             `protobuf:"varint,4,opt,name=redeem_type,json=redeemType,proto3,enum=staking.RedeemType" json:"redeem_type,omitempty"`
 	Page          *common.PageReq        `protobuf:"bytes,5,opt,name=page,proto3" json:"page,omitempty"`
@@ -433,20 +399,6 @@ func (x *AppMyOrderListReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AppMyOrderListReq.ProtoReflect.Descriptor instead.
 func (*AppMyOrderListReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{6}
-}
-
-func (x *AppMyOrderListReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *AppMyOrderListReq) GetUid() int64 {
-	if x != nil {
-		return x.Uid
-	}
-	return 0
 }
 
 func (x *AppMyOrderListReq) GetStatus() OrderStatus {
@@ -525,8 +477,6 @@ func (x *AppMyOrderListResp) GetData() []*StakeOrder {
 // 我的订单详情
 type AppMyOrderDetailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid           int64                  `protobuf:"varint,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	Id            int64                  `protobuf:"varint,3,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -560,20 +510,6 @@ func (x *AppMyOrderDetailReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AppMyOrderDetailReq.ProtoReflect.Descriptor instead.
 func (*AppMyOrderDetailReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{8}
-}
-
-func (x *AppMyOrderDetailReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *AppMyOrderDetailReq) GetUid() int64 {
-	if x != nil {
-		return x.Uid
-	}
-	return 0
 }
 
 func (x *AppMyOrderDetailReq) GetId() int64 {
@@ -638,8 +574,6 @@ func (x *AppMyOrderDetailResp) GetData() *StakeOrder {
 // 我的收益记录
 type AppMyRewardLogListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid           int64                  `protobuf:"varint,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	OrderId       int64                  `protobuf:"varint,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
 	RewardType    RewardType             `protobuf:"varint,4,opt,name=reward_type,json=rewardType,proto3,enum=staking.RewardType" json:"reward_type,omitempty"`
 	Page          *common.PageReq        `protobuf:"bytes,5,opt,name=page,proto3" json:"page,omitempty"`
@@ -675,20 +609,6 @@ func (x *AppMyRewardLogListReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AppMyRewardLogListReq.ProtoReflect.Descriptor instead.
 func (*AppMyRewardLogListReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{10}
-}
-
-func (x *AppMyRewardLogListReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *AppMyRewardLogListReq) GetUid() int64 {
-	if x != nil {
-		return x.Uid
-	}
-	return 0
 }
 
 func (x *AppMyRewardLogListReq) GetOrderId() int64 {
@@ -767,8 +687,6 @@ func (x *AppMyRewardLogListResp) GetData() []*StakeRewardLog {
 // 赎回
 type AppRedeemReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid           int64                  `protobuf:"varint,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	OrderId       int64                  `protobuf:"varint,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
 	RedeemType    RedeemType             `protobuf:"varint,4,opt,name=redeem_type,json=redeemType,proto3,enum=staking.RedeemType" json:"redeem_type,omitempty"`
 	Remark        string                 `protobuf:"bytes,5,opt,name=remark,proto3" json:"remark,omitempty"`
@@ -804,20 +722,6 @@ func (x *AppRedeemReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AppRedeemReq.ProtoReflect.Descriptor instead.
 func (*AppRedeemReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{12}
-}
-
-func (x *AppRedeemReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *AppRedeemReq) GetUid() int64 {
-	if x != nil {
-		return x.Uid
-	}
-	return 0
 }
 
 func (x *AppRedeemReq) GetOrderId() int64 {
@@ -904,8 +808,6 @@ func (x *AppRedeemResp) GetRedeemNo() string {
 // 我的赎回记录
 type AppMyRedeemLogListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid           int64                  `protobuf:"varint,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	OrderId       int64                  `protobuf:"varint,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
 	Page          *common.PageReq        `protobuf:"bytes,4,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -940,20 +842,6 @@ func (x *AppMyRedeemLogListReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AppMyRedeemLogListReq.ProtoReflect.Descriptor instead.
 func (*AppMyRedeemLogListReq) Descriptor() ([]byte, []int) {
 	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{14}
-}
-
-func (x *AppMyRedeemLogListReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *AppMyRedeemLogListReq) GetUid() int64 {
-	if x != nil {
-		return x.Uid
-	}
-	return 0
 }
 
 func (x *AppMyRedeemLogListReq) GetOrderId() int64 {
@@ -1026,25 +914,21 @@ var File_proto_staking_staking_app_proto protoreflect.FileDescriptor
 
 const file_proto_staking_staking_app_proto_rawDesc = "" +
 	"\n" +
-	"\x1fproto/staking/staking_app.proto\x12\astaking\x1a\x19proto/common/common.proto\x1a\x18proto/staking/enum.proto\x1a\x19proto/staking/model.proto\"\xaf\x01\n" +
-	"\x11AppProductListReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x127\n" +
+	"\x1fproto/staking/staking_app.proto\x12\astaking\x1a\x19proto/common/common.proto\x1a\x18proto/staking/enum.proto\x1a\x19proto/staking/model.proto\"\x92\x01\n" +
+	"\x11AppProductListReq\x127\n" +
 	"\fproduct_type\x18\x02 \x01(\x0e2\x14.staking.ProductTypeR\vproductType\x12\x1f\n" +
 	"\vcoin_symbol\x18\x03 \x01(\tR\n" +
 	"coinSymbol\x12#\n" +
 	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"e\n" +
 	"\x12AppProductListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
-	"\x04data\x18\x02 \x03(\v2\x15.staking.StakeProductR\x04data\"B\n" +
-	"\x13AppProductDetailReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
+	"\x04data\x18\x02 \x03(\v2\x15.staking.StakeProductR\x04data\"%\n" +
+	"\x13AppProductDetailReq\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\"g\n" +
 	"\x14AppProductDetailResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
-	"\x04data\x18\x02 \x01(\v2\x15.staking.StakeProductR\x04data\"\xc9\x01\n" +
-	"\x11AppCreateOrderReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x02 \x01(\x03R\x03uid\x12\x1d\n" +
+	"\x04data\x18\x02 \x01(\v2\x15.staking.StakeProductR\x04data\"\x9a\x01\n" +
+	"\x11AppCreateOrderReq\x12\x1d\n" +
 	"\n" +
 	"product_id\x18\x03 \x01(\x03R\tproductId\x12!\n" +
 	"\fstake_amount\x18\x04 \x01(\tR\vstakeAmount\x12+\n" +
@@ -1053,37 +937,29 @@ const file_proto_staking_staking_app_proto_rawDesc = "" +
 	"\x12AppCreateOrderResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\x12\x19\n" +
-	"\border_no\x18\x03 \x01(\tR\aorderNo\"\xcb\x01\n" +
-	"\x11AppMyOrderListReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x02 \x01(\x03R\x03uid\x12,\n" +
+	"\border_no\x18\x03 \x01(\tR\aorderNo\"\x9c\x01\n" +
+	"\x11AppMyOrderListReq\x12,\n" +
 	"\x06status\x18\x03 \x01(\x0e2\x14.staking.OrderStatusR\x06status\x124\n" +
 	"\vredeem_type\x18\x04 \x01(\x0e2\x13.staking.RedeemTypeR\n" +
 	"redeemType\x12#\n" +
 	"\x04page\x18\x05 \x01(\v2\x0f.common.PageReqR\x04page\"c\n" +
 	"\x12AppMyOrderListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
-	"\x04data\x18\x02 \x03(\v2\x13.staking.StakeOrderR\x04data\"T\n" +
-	"\x13AppMyOrderDetailReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x02 \x01(\x03R\x03uid\x12\x0e\n" +
+	"\x04data\x18\x02 \x03(\v2\x13.staking.StakeOrderR\x04data\"%\n" +
+	"\x13AppMyOrderDetailReq\x12\x0e\n" +
 	"\x02id\x18\x03 \x01(\x03R\x02id\"e\n" +
 	"\x14AppMyOrderDetailResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
-	"\x04data\x18\x02 \x01(\v2\x13.staking.StakeOrderR\x04data\"\xbc\x01\n" +
-	"\x15AppMyRewardLogListReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x02 \x01(\x03R\x03uid\x12\x19\n" +
+	"\x04data\x18\x02 \x01(\v2\x13.staking.StakeOrderR\x04data\"\x8d\x01\n" +
+	"\x15AppMyRewardLogListReq\x12\x19\n" +
 	"\border_id\x18\x03 \x01(\x03R\aorderId\x124\n" +
 	"\vreward_type\x18\x04 \x01(\x0e2\x13.staking.RewardTypeR\n" +
 	"rewardType\x12#\n" +
 	"\x04page\x18\x05 \x01(\v2\x0f.common.PageReqR\x04page\"k\n" +
 	"\x16AppMyRewardLogListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12+\n" +
-	"\x04data\x18\x02 \x03(\v2\x17.staking.StakeRewardLogR\x04data\"\xa6\x01\n" +
-	"\fAppRedeemReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x02 \x01(\x03R\x03uid\x12\x19\n" +
+	"\x04data\x18\x02 \x03(\v2\x17.staking.StakeRewardLogR\x04data\"w\n" +
+	"\fAppRedeemReq\x12\x19\n" +
 	"\border_id\x18\x03 \x01(\x03R\aorderId\x124\n" +
 	"\vredeem_type\x18\x04 \x01(\x0e2\x13.staking.RedeemTypeR\n" +
 	"redeemType\x12\x16\n" +
@@ -1091,10 +967,8 @@ const file_proto_staking_staking_app_proto_rawDesc = "" +
 	"\rAppRedeemResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x18\n" +
 	"\asuccess\x18\x02 \x01(\x03R\asuccess\x12\x1b\n" +
-	"\tredeem_no\x18\x03 \x01(\tR\bredeemNo\"\x86\x01\n" +
-	"\x15AppMyRedeemLogListReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x02 \x01(\x03R\x03uid\x12\x19\n" +
+	"\tredeem_no\x18\x03 \x01(\tR\bredeemNo\"W\n" +
+	"\x15AppMyRedeemLogListReq\x12\x19\n" +
 	"\border_id\x18\x03 \x01(\x03R\aorderId\x12#\n" +
 	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"k\n" +
 	"\x16AppMyRedeemLogListResp\x12$\n" +

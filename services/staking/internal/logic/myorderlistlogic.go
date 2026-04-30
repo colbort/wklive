@@ -5,6 +5,7 @@ import (
 
 	"wklive/common/helper"
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/staking"
 	"wklive/services/staking/internal/svc"
 
@@ -32,7 +33,15 @@ func (l *MyOrderListLogic) MyOrderList(in *staking.AppMyOrderListReq) (*staking.
 	if page != nil {
 		cursor, limit = page.Cursor, page.Limit
 	}
-	items, total, err := l.svcCtx.StakeOrderModel.FindPage(l.ctx, in.TenantId, cursor, limit, in.Uid, 0, "", "", "", int64(in.Status), int64(in.RedeemType), 0, 0, 0, 0, 0)
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	items, total, err := l.svcCtx.StakeOrderModel.FindPage(l.ctx, tenantId, cursor, limit, userId, 0, "", "", "", int64(in.Status), int64(in.RedeemType), 0, 0, 0, 0, 0)
 	if err != nil {
 		return nil, err
 	}

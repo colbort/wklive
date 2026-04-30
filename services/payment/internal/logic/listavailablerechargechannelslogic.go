@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"wklive/common/helper"
+	"wklive/common/utils"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -28,7 +29,11 @@ func NewListAvailableRechargeChannelsLogic(ctx context.Context, svcCtx *svc.Serv
 
 // 获取当前登录用户在指定充值金额下可用的充值通道
 func (l *ListAvailableRechargeChannelsLogic) ListAvailableRechargeChannels(in *payment.ListAvailableRechargeChannelsReq) (*payment.ListAvailableRechargeChannelsResp, error) {
-	channels, _, err := l.svcCtx.TenantPayChannelModel.FindPage(l.ctx, in.TenantId, 0, 0, 0, "", 1, 0, 0)
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	channels, _, err := l.svcCtx.TenantPayChannelModel.FindPage(l.ctx, tenantId, 0, 0, 0, "", 1, 0, 0)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}

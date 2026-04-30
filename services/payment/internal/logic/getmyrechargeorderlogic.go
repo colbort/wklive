@@ -5,6 +5,7 @@ import (
 	"errors"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -28,6 +29,14 @@ func NewGetMyRechargeOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 查询我的订单详情
 func (l *GetMyRechargeOrderLogic) GetMyRechargeOrder(in *payment.GetMyRechargeOrderReq) (*payment.GetMyRechargeOrderResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	order, err := l.svcCtx.RechargeOrderModel.FindOneByOrderNo(l.ctx, in.OrderNo)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
@@ -40,7 +49,7 @@ func (l *GetMyRechargeOrderLogic) GetMyRechargeOrder(in *payment.GetMyRechargeOr
 	}
 
 	// Check permission - user can only see their own orders
-	if order.UserId != in.UserId || order.TenantId != in.TenantId {
+	if order.UserId != userId || order.TenantId != tenantId {
 		return &payment.GetMyRechargeOrderResp{
 			Base: helper.GetErrResp(403, i18n.Translate(i18n.NoPermissionAccessOrder, l.ctx)),
 		}, nil

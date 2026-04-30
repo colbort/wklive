@@ -84,7 +84,7 @@ message OptionOrder {
   int64 id = 1;
   int64 tenant_id = 2;
   string order_no = 3;
-  int64 uid = 4;
+  int64 user_id = 4;
   int64 account_id = 5;
   int64 contract_id = 6;
   string underlying_symbol = 7;
@@ -120,11 +120,11 @@ message OptionTrade {
   string underlying_symbol = 5;
   int64 buy_order_id = 6;
   string buy_order_no = 7;
-  int64 buy_uid = 8;
+  int64 buy_user_id = 8;
   int64 buy_account_id = 9;
   int64 sell_order_id = 10;
   string sell_order_no = 11;
-  int64 sell_uid = 12;
+  int64 sell_user_id = 12;
   int64 sell_account_id = 13;
   string price = 14;
   string qty = 15;
@@ -140,7 +140,7 @@ message OptionTrade {
 message OptionPosition {
   int64 id = 1;
   int64 tenant_id = 2;
-  int64 uid = 3;
+  int64 user_id = 3;
   int64 account_id = 4;
   int64 contract_id = 5;
   string underlying_symbol = 6;
@@ -166,7 +166,7 @@ message OptionExercise {
   int64 id = 1;
   int64 tenant_id = 2;
   string exercise_no = 3;
-  int64 uid = 4;
+  int64 user_id = 4;
   int64 account_id = 5;
   int64 contract_id = 6;
   int64 position_id = 7;
@@ -208,7 +208,7 @@ message OptionSettlement {
 message OptionAccount {
   int64 id = 1;
   int64 tenant_id = 2;
-  int64 uid = 3;
+  int64 user_id = 3;
   int64 account_id = 4;
   string margin_coin = 5;
   string balance = 6;
@@ -227,7 +227,7 @@ message OptionAccount {
 message OptionBill {
   int64 id = 1;
   int64 tenant_id = 2;
-  int64 uid = 3;
+  int64 user_id = 3;
   int64 account_id = 4;
   string biz_no = 5;
   BillRefType ref_type = 6;

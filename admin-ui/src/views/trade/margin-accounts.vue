@@ -14,7 +14,12 @@
         <el-form-item v-for="field in currentFields" :key="field.key" :label="field.label">
           <el-input v-if="field.type !== 'number'" v-model="currentQuery[field.key]" clearable />
 
-          <el-input-number v-else v-model="currentQuery[field.key]" :min="0" :precision="0" />
+          <el-input-number
+            v-else
+            v-model="currentQuery[field.key]"
+            :min="0"
+            :precision="0"
+          />
         </el-form-item>
 
         <el-form-item>

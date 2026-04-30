@@ -24,7 +24,6 @@ const (
 
 type ListAssetCoinConfigsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                                  // 租户ID
 	WalletType    WalletType             `protobuf:"varint,2,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"`                      // 账户类型
 	OperationType AssetCoinOperationType `protobuf:"varint,3,opt,name=operation_type,json=operationType,proto3,enum=asset.AssetCoinOperationType" json:"operation_type,omitempty"` // 操作场景
 	CoinType      AssetCoinType          `protobuf:"varint,4,opt,name=coin_type,json=coinType,proto3,enum=asset.AssetCoinType" json:"coin_type,omitempty"`                         // 币种类型,0表示全部
@@ -60,13 +59,6 @@ func (x *ListAssetCoinConfigsReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ListAssetCoinConfigsReq.ProtoReflect.Descriptor instead.
 func (*ListAssetCoinConfigsReq) Descriptor() ([]byte, []int) {
 	return file_proto_asset_asset_app_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *ListAssetCoinConfigsReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
 }
 
 func (x *ListAssetCoinConfigsReq) GetWalletType() WalletType {
@@ -144,8 +136,6 @@ func (x *ListAssetCoinConfigsResp) GetData() []*AssetCoinConfig {
 
 type GetMyAssetSummaryReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"` // 租户ID
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`       // 用户ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -178,20 +168,6 @@ func (x *GetMyAssetSummaryReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetMyAssetSummaryReq.ProtoReflect.Descriptor instead.
 func (*GetMyAssetSummaryReq) Descriptor() ([]byte, []int) {
 	return file_proto_asset_asset_app_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *GetMyAssetSummaryReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *GetMyAssetSummaryReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 type GetMyAssetSummaryResp struct {
@@ -248,10 +224,8 @@ func (x *GetMyAssetSummaryResp) GetData() *UserAssetSummary {
 
 type ListMyAssetsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                             // 租户ID
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                   // 用户ID
-	WalletType    WalletType             `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"` // 钱包类型,0表示全部
-	Coin          string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`                                                      // 币种,空表示全部
+	WalletType    WalletType             `protobuf:"varint,2,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"` // 钱包类型,0表示全部
+	Coin          string                 `protobuf:"bytes,3,opt,name=coin,proto3" json:"coin,omitempty"`                                                      // 币种,空表示全部
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -284,20 +258,6 @@ func (x *ListMyAssetsReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ListMyAssetsReq.ProtoReflect.Descriptor instead.
 func (*ListMyAssetsReq) Descriptor() ([]byte, []int) {
 	return file_proto_asset_asset_app_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *ListMyAssetsReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *ListMyAssetsReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 func (x *ListMyAssetsReq) GetWalletType() WalletType {
@@ -368,8 +328,6 @@ func (x *ListMyAssetsResp) GetData() []*UserAsset {
 
 type GetMyAssetReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                             // 租户ID
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                   // 用户ID
 	WalletType    WalletType             `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"` // 钱包类型
 	Coin          string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`                                                      // 币种
 	unknownFields protoimpl.UnknownFields
@@ -404,20 +362,6 @@ func (x *GetMyAssetReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetMyAssetReq.ProtoReflect.Descriptor instead.
 func (*GetMyAssetReq) Descriptor() ([]byte, []int) {
 	return file_proto_asset_asset_app_proto_rawDescGZIP(), []int{6}
-}
-
-func (x *GetMyAssetReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *GetMyAssetReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 func (x *GetMyAssetReq) GetWalletType() WalletType {
@@ -488,8 +432,6 @@ func (x *GetMyAssetResp) GetAsset() *UserAsset {
 
 type ListMyAssetFlowsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                             // 租户ID
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                   // 用户ID
 	WalletType    WalletType             `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"` // 钱包类型,0表示全部
 	Coin          string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`                                                      // 币种
 	BizType       BizType                `protobuf:"varint,5,opt,name=biz_type,json=bizType,proto3,enum=asset.BizType" json:"biz_type,omitempty"`             // 业务类型,0表示全部
@@ -528,20 +470,6 @@ func (x *ListMyAssetFlowsReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ListMyAssetFlowsReq.ProtoReflect.Descriptor instead.
 func (*ListMyAssetFlowsReq) Descriptor() ([]byte, []int) {
 	return file_proto_asset_asset_app_proto_rawDescGZIP(), []int{8}
-}
-
-func (x *ListMyAssetFlowsReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *ListMyAssetFlowsReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 func (x *ListMyAssetFlowsReq) GetWalletType() WalletType {
@@ -640,8 +568,6 @@ func (x *ListMyAssetFlowsResp) GetData() []*AssetFlow {
 
 type ListMyFreezesReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                             // 租户ID
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                   // 用户ID
 	WalletType    WalletType             `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"` // 钱包类型
 	Coin          string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`                                                      // 币种
 	Status        FreezeStatus           `protobuf:"varint,5,opt,name=status,proto3,enum=asset.FreezeStatus" json:"status,omitempty"`                         // 冻结状态
@@ -678,20 +604,6 @@ func (x *ListMyFreezesReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ListMyFreezesReq.ProtoReflect.Descriptor instead.
 func (*ListMyFreezesReq) Descriptor() ([]byte, []int) {
 	return file_proto_asset_asset_app_proto_rawDescGZIP(), []int{10}
-}
-
-func (x *ListMyFreezesReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *ListMyFreezesReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 func (x *ListMyFreezesReq) GetWalletType() WalletType {
@@ -776,8 +688,6 @@ func (x *ListMyFreezesResp) GetData() []*AssetFreeze {
 
 type ListMyLocksReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                             // 租户ID
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                   // 用户ID
 	WalletType    WalletType             `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"` // 钱包类型
 	Coin          string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`                                                      // 币种
 	Status        LockStatus             `protobuf:"varint,5,opt,name=status,proto3,enum=asset.LockStatus" json:"status,omitempty"`                           // 锁仓状态
@@ -814,20 +724,6 @@ func (x *ListMyLocksReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ListMyLocksReq.ProtoReflect.Descriptor instead.
 func (*ListMyLocksReq) Descriptor() ([]byte, []int) {
 	return file_proto_asset_asset_app_proto_rawDescGZIP(), []int{12}
-}
-
-func (x *ListMyLocksReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *ListMyLocksReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 func (x *ListMyLocksReq) GetWalletType() WalletType {
@@ -914,43 +810,34 @@ var File_proto_asset_asset_app_proto protoreflect.FileDescriptor
 
 const file_proto_asset_asset_app_proto_rawDesc = "" +
 	"\n" +
-	"\x1bproto/asset/asset_app.proto\x12\x05asset\x1a\x19proto/common/common.proto\x1a\x16proto/asset/enum.proto\x1a\x17proto/asset/model.proto\"\xe3\x01\n" +
-	"\x17ListAssetCoinConfigsReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x122\n" +
+	"\x1bproto/asset/asset_app.proto\x12\x05asset\x1a\x19proto/common/common.proto\x1a\x16proto/asset/enum.proto\x1a\x17proto/asset/model.proto\"\xc6\x01\n" +
+	"\x17ListAssetCoinConfigsReq\x122\n" +
 	"\vwallet_type\x18\x02 \x01(\x0e2\x11.asset.WalletTypeR\n" +
 	"walletType\x12D\n" +
 	"\x0eoperation_type\x18\x03 \x01(\x0e2\x1d.asset.AssetCoinOperationTypeR\roperationType\x121\n" +
 	"\tcoin_type\x18\x04 \x01(\x0e2\x14.asset.AssetCoinTypeR\bcoinType\"l\n" +
 	"\x18ListAssetCoinConfigsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
-	"\x04data\x18\x02 \x03(\v2\x16.asset.AssetCoinConfigR\x04data\"L\n" +
-	"\x14GetMyAssetSummaryReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\"j\n" +
+	"\x04data\x18\x02 \x03(\v2\x16.asset.AssetCoinConfigR\x04data\"\x16\n" +
+	"\x14GetMyAssetSummaryReq\"j\n" +
 	"\x15GetMyAssetSummaryResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12+\n" +
-	"\x04data\x18\x02 \x01(\v2\x17.asset.UserAssetSummaryR\x04data\"\x8f\x01\n" +
-	"\x0fListMyAssetsReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x122\n" +
-	"\vwallet_type\x18\x03 \x01(\x0e2\x11.asset.WalletTypeR\n" +
+	"\x04data\x18\x02 \x01(\v2\x17.asset.UserAssetSummaryR\x04data\"Y\n" +
+	"\x0fListMyAssetsReq\x122\n" +
+	"\vwallet_type\x18\x02 \x01(\x0e2\x11.asset.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
-	"\x04coin\x18\x04 \x01(\tR\x04coin\"^\n" +
+	"\x04coin\x18\x03 \x01(\tR\x04coin\"^\n" +
 	"\x10ListMyAssetsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12$\n" +
-	"\x04data\x18\x02 \x03(\v2\x10.asset.UserAssetR\x04data\"\x8d\x01\n" +
-	"\rGetMyAssetReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x122\n" +
+	"\x04data\x18\x02 \x03(\v2\x10.asset.UserAssetR\x04data\"W\n" +
+	"\rGetMyAssetReq\x122\n" +
 	"\vwallet_type\x18\x03 \x01(\x0e2\x11.asset.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x04 \x01(\tR\x04coin\"^\n" +
 	"\x0eGetMyAssetResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
-	"\x05asset\x18\x02 \x01(\v2\x10.asset.UserAssetR\x05asset\"\xc6\x02\n" +
-	"\x13ListMyAssetFlowsReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x122\n" +
+	"\x05asset\x18\x02 \x01(\v2\x10.asset.UserAssetR\x05asset\"\x90\x02\n" +
+	"\x13ListMyAssetFlowsReq\x122\n" +
 	"\vwallet_type\x18\x03 \x01(\x0e2\x11.asset.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x04 \x01(\tR\x04coin\x12)\n" +
@@ -962,10 +849,8 @@ const file_proto_asset_asset_app_proto_rawDesc = "" +
 	"\x04page\x18\b \x01(\v2\x0f.common.PageReqR\x04page\"b\n" +
 	"\x14ListMyAssetFlowsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12$\n" +
-	"\x04data\x18\x02 \x03(\v2\x10.asset.AssetFlowR\x04data\"\xe2\x01\n" +
-	"\x10ListMyFreezesReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x122\n" +
+	"\x04data\x18\x02 \x03(\v2\x10.asset.AssetFlowR\x04data\"\xac\x01\n" +
+	"\x10ListMyFreezesReq\x122\n" +
 	"\vwallet_type\x18\x03 \x01(\x0e2\x11.asset.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x04 \x01(\tR\x04coin\x12+\n" +
@@ -973,10 +858,8 @@ const file_proto_asset_asset_app_proto_rawDesc = "" +
 	"\x04page\x18\x06 \x01(\v2\x0f.common.PageReqR\x04page\"a\n" +
 	"\x11ListMyFreezesResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
-	"\x04data\x18\x02 \x03(\v2\x12.asset.AssetFreezeR\x04data\"\xde\x01\n" +
-	"\x0eListMyLocksReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x122\n" +
+	"\x04data\x18\x02 \x03(\v2\x12.asset.AssetFreezeR\x04data\"\xa8\x01\n" +
+	"\x0eListMyLocksReq\x122\n" +
 	"\vwallet_type\x18\x03 \x01(\x0e2\x11.asset.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x04 \x01(\tR\x04coin\x12)\n" +

@@ -29,6 +29,14 @@ func NewCancelMyRechargeOrderLogic(ctx context.Context, svcCtx *svc.ServiceConte
 
 // 取消未支付订单
 func (l *CancelMyRechargeOrderLogic) CancelMyRechargeOrder(in *payment.CancelMyRechargeOrderReq) (*payment.AppCommonResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	order, err := l.svcCtx.RechargeOrderModel.FindOneByOrderNo(l.ctx, in.OrderNo)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
@@ -41,7 +49,7 @@ func (l *CancelMyRechargeOrderLogic) CancelMyRechargeOrder(in *payment.CancelMyR
 	}
 
 	// Check permission
-	if order.UserId != in.UserId || order.TenantId != in.TenantId {
+	if order.UserId != userId || order.TenantId != tenantId {
 		return &payment.AppCommonResp{
 			Base: helper.GetErrResp(403, i18n.Translate(i18n.NoPermissionCancelOrder, l.ctx)),
 		}, nil
@@ -63,7 +71,7 @@ func (l *CancelMyRechargeOrderLogic) CancelMyRechargeOrder(in *payment.CancelMyR
 		return nil, err
 	}
 
-	l.Logger.Infof("Cancel recharge order success: %s, user_id: %d", in.OrderNo, in.UserId)
+	l.Logger.Infof("Cancel recharge order success: %s, user_id: %d", in.OrderNo, userId)
 
 	return &payment.AppCommonResp{
 		Base: helper.OkResp(),

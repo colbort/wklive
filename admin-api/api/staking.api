@@ -35,7 +35,7 @@ type StakeOrder {
 	id               int64  `json:"id"`
 	tenantId         int64  `json:"tenantId"`
 	orderNo          string `json:"orderNo"`
-	uid              int64  `json:"uid"`
+	userId              int64  `json:"userId"`
 	productId        int64  `json:"productId"`
 	productNo        string `json:"productNo"`
 	productName      string `json:"productName"`
@@ -77,7 +77,7 @@ type StakeRewardLog {
 	tenantId         int64  `json:"tenantId"`
 	orderId          int64  `json:"orderId"`
 	orderNo          string `json:"orderNo"`
-	uid              int64  `json:"uid"`
+	userId              int64  `json:"userId"`
 	productId        int64  `json:"productId"`
 	productName      string `json:"productName"`
 	coinSymbol       string `json:"coinSymbol"`
@@ -100,7 +100,7 @@ type StakeRedeemLog {
 	tenantId     int64  `json:"tenantId"`
 	orderId      int64  `json:"orderId"`
 	orderNo      string `json:"orderNo"`
-	uid          int64  `json:"uid"`
+	userId          int64  `json:"userId"`
 	productId    int64  `json:"productId"`
 	redeemNo     string `json:"redeemNo"`
 	redeemType   int64  `json:"redeemType"`
@@ -221,7 +221,7 @@ type AdminOrderListReq {
 	PageReq
 	tenantId        int64  `form:"tenantId,optional"`
 	orderNo         string `form:"orderNo,optional"`
-	uid             int64  `form:"uid,optional"`
+	userId             int64  `form:"userId,optional"`
 	productId       int64  `form:"productId,optional"`
 	productName     string `form:"productName,optional"`
 	coinSymbol      string `form:"coinSymbol,optional"`
@@ -253,7 +253,7 @@ type AdminRewardLogListReq {
 	PageReq
 	tenantId         int64  `form:"tenantId,optional"`
 	orderNo          string `form:"orderNo,optional"`
-	uid              int64  `form:"uid,optional"`
+	userId              int64  `form:"userId,optional"`
 	productId        int64  `form:"productId,optional"`
 	rewardType       int64  `form:"rewardType,optional"`
 	rewardStatus     int64  `form:"rewardStatus,optional"`
@@ -271,7 +271,7 @@ type AdminRedeemLogListReq {
 	tenantId         int64  `form:"tenantId,optional"`
 	orderNo          string `form:"orderNo,optional"`
 	redeemNo         string `form:"redeemNo,optional"`
-	uid              int64  `form:"uid,optional"`
+	userId              int64  `form:"userId,optional"`
 	productId        int64  `form:"productId,optional"`
 	redeemType       int64  `form:"redeemType,optional"`
 	redeemStatus     int64  `form:"redeemStatus,optional"`

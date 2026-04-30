@@ -7,6 +7,7 @@ import (
 	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
@@ -30,6 +31,14 @@ func NewAppExerciseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AppEx
 
 // 发起行权
 func (l *AppExerciseLogic) AppExercise(in *option.AppExerciseReq) (*option.AppExerciseResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	position, err := l.svcCtx.OptionPositionModel.FindOne(l.ctx, in.PositionId)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
@@ -37,7 +46,7 @@ func (l *AppExerciseLogic) AppExercise(in *option.AppExerciseReq) (*option.AppEx
 		}
 		return nil, err
 	}
-	if position.TenantId != in.TenantId || position.Uid != in.Uid || position.AccountId != in.AccountId {
+	if position.TenantId != tenantId || position.UserId != userId || position.AccountId != in.AccountId {
 		return &option.AppExerciseResp{Base: helper.GetErrResp(403, i18n.Translate(i18n.NoPermissionOperatePosition, l.ctx))}, nil
 	}
 	if in.ContractId != 0 && position.ContractId != in.ContractId {
@@ -67,9 +76,9 @@ func (l *AppExerciseLogic) AppExercise(in *option.AppExerciseReq) (*option.AppEx
 
 	now := time.Now().Unix()
 	item := &models.TOptionExercise{
-		TenantId:        in.TenantId,
+		TenantId:        tenantId,
 		ExerciseNo:      exerciseNo,
-		Uid:             in.Uid,
+		UserId:          userId,
 		AccountId:       in.AccountId,
 		ContractId:      position.ContractId,
 		PositionId:      position.Id,

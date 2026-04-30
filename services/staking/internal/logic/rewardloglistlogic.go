@@ -39,7 +39,7 @@ func (l *RewardLogListLogic) RewardLogList(in *staking.AdminRewardLogListReq) (*
 		cursor, limit = page.Cursor, page.Limit
 	}
 	items, total, err := l.svcCtx.StakeRewardLogModel.FindPage(
-		l.ctx, in.TenantId, cursor, limit, in.Uid, 0, in.ProductId, in.OrderNo,
+		l.ctx, in.TenantId, cursor, limit, in.UserId, 0, in.ProductId, in.OrderNo,
 		int64(in.RewardType), int64(in.RewardStatus), in.RewardTimesBegin, in.RewardTimesEnd,
 	)
 	if err != nil {

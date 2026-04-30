@@ -39,7 +39,7 @@ func (l *RedeemLogListLogic) RedeemLogList(in *staking.AdminRedeemLogListReq) (*
 		cursor, limit = page.Cursor, page.Limit
 	}
 	items, total, err := l.svcCtx.StakeRedeemLogModel.FindPage(
-		l.ctx, in.TenantId, cursor, limit, in.Uid, 0, in.ProductId, in.OrderNo, in.RedeemNo,
+		l.ctx, in.TenantId, cursor, limit, in.UserId, 0, in.ProductId, in.OrderNo, in.RedeemNo,
 		int64(in.RedeemType), int64(in.RedeemStatus), in.RedeemTimesBegin, in.RedeemTimesEnd,
 	)
 	if err != nil {

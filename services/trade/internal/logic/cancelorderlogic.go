@@ -36,17 +36,25 @@ func (l *CancelOrderLogic) CancelOrder(in *trade.CancelOrderReq) (*trade.AppComm
 		item *models.TTradeOrder
 		err  error
 	)
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	switch {
 	case in.OrderId > 0:
 		item, err = l.svcCtx.TradeOrderModel.FindOne(l.ctx, in.OrderId)
 	case in.OrderNo != "":
-		item, err = l.svcCtx.TradeOrderModel.FindOneByTenantIdOrderNo(l.ctx, in.TenantId, in.OrderNo)
+		item, err = l.svcCtx.TradeOrderModel.FindOneByTenantIdOrderNo(l.ctx, tenantId, in.OrderNo)
 	case in.ClientOrderId != "":
-		item, err = l.svcCtx.TradeOrderModel.FindOneByTenantIdUserIdClientOrderId(l.ctx, in.TenantId, in.UserId, in.ClientOrderId)
+		item, err = l.svcCtx.TradeOrderModel.FindOneByTenantIdUserIdClientOrderId(l.ctx, tenantId, userId, in.ClientOrderId)
 	default:
 		return &trade.AppCommonResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
-	if errors.Is(err, models.ErrNotFound) || (err == nil && (item.TenantId != in.TenantId || item.UserId != in.UserId)) {
+	if errors.Is(err, models.ErrNotFound) || (err == nil && (item.TenantId != tenantId || item.UserId != userId)) {
 		return &trade.AppCommonResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 	}
 	if err != nil {

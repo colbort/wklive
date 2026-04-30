@@ -18,8 +18,8 @@ func (m *HeaderMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		ctx := r.Context()
 
 		if uidStr := r.Header.Get(string(utils.CtxKeyUid)); uidStr != "" {
-			if uid, err := strconv.ParseInt(uidStr, 10, 64); err == nil {
-				ctx = context.WithValue(ctx, utils.CtxKeyUid, uid)
+			if userId, err := strconv.ParseInt(uidStr, 10, 64); err == nil {
+				ctx = context.WithValue(ctx, utils.CtxKeyUid, userId)
 			}
 		}
 

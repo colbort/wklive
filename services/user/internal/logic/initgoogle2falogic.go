@@ -3,13 +3,14 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type InitGoogle2FALogic struct {
@@ -28,8 +29,12 @@ func NewInitGoogle2FALogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ini
 
 // 初始化Google 2FA
 func (l *InitGoogle2FALogic) InitGoogle2FA(in *user.InitGoogle2FAReq) (*user.InitGoogle2FAResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	// 获取用户信息
-	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, in.UserId)
+	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, userId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
@@ -51,7 +56,7 @@ func (l *InitGoogle2FALogic) InitGoogle2FA(in *user.InitGoogle2FAReq) (*user.Ini
 		}, nil
 	}
 
-	l.Logger.Infof("用户 %d 初始化Google 2FA成功", in.UserId)
+	l.Logger.Infof("用户 %d 初始化Google 2FA成功", userId)
 
 	return &user.InitGoogle2FAResp{
 		Base:      helper.OkResp(),

@@ -105,7 +105,7 @@ CREATE TABLE `t_option_order` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
   `order_no` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '订单号',
-  `uid` BIGINT NOT NULL DEFAULT 0 COMMENT '用户ID',
+  `user_id` BIGINT NOT NULL DEFAULT 0 COMMENT '用户ID',
   `account_id` BIGINT NOT NULL DEFAULT 0 COMMENT '交易账户ID',
   `contract_id` BIGINT NOT NULL DEFAULT 0 COMMENT '期权合约ID',
   `underlying_symbol` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '标的',
@@ -133,9 +133,9 @@ CREATE TABLE `t_option_order` (
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_order_no` (`tenant_id`, `order_no`),
-  UNIQUE KEY `uk_tenant_uid_client_order_id` (`tenant_id`, `uid`, `client_order_id`),
-  KEY `idx_tenant_uid_account` (`tenant_id`, `uid`, `account_id`),
-  KEY `idx_tenant_uid_contract_id` (`tenant_id`, `uid`, `contract_id`),
+  UNIQUE KEY `uk_tenant_uid_client_order_id` (`tenant_id`, `user_id`, `client_order_id`),
+  KEY `idx_tenant_uid_account` (`tenant_id`, `user_id`, `account_id`),
+  KEY `idx_tenant_uid_contract_id` (`tenant_id`, `user_id`, `contract_id`),
   KEY `idx_tenant_contract_id_status` (`tenant_id`, `contract_id`, `status`),
   KEY `idx_tenant_create_times` (`tenant_id`, `create_times`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权委托表';
@@ -152,11 +152,11 @@ CREATE TABLE `t_option_trade` (
   `underlying_symbol` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '标的',
   `buy_order_id` BIGINT NOT NULL DEFAULT 0 COMMENT '买单ID',
   `buy_order_no` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '买单订单号',
-  `buy_uid` BIGINT NOT NULL DEFAULT 0 COMMENT '买方用户ID',
+  `buy_user_id` BIGINT NOT NULL DEFAULT 0 COMMENT '买方用户ID',
   `buy_account_id` BIGINT NOT NULL DEFAULT 0 COMMENT '买方账户ID',
   `sell_order_id` BIGINT NOT NULL DEFAULT 0 COMMENT '卖单ID',
   `sell_order_no` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '卖单订单号',
-  `sell_uid` BIGINT NOT NULL DEFAULT 0 COMMENT '卖方用户ID',
+  `sell_user_id` BIGINT NOT NULL DEFAULT 0 COMMENT '卖方用户ID',
   `sell_account_id` BIGINT NOT NULL DEFAULT 0 COMMENT '卖方账户ID',
   `price` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '成交价格/权利金',
   `qty` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '成交数量',
@@ -169,8 +169,8 @@ CREATE TABLE `t_option_trade` (
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_trade_no` (`tenant_id`, `trade_no`),
-  KEY `idx_tenant_buy_uid` (`tenant_id`, `buy_uid`),
-  KEY `idx_tenant_sell_uid` (`tenant_id`, `sell_uid`),
+  KEY `idx_tenant_buy_user_id` (`tenant_id`, `buy_user_id`),
+  KEY `idx_tenant_sell_user_id` (`tenant_id`, `sell_user_id`),
   KEY `idx_tenant_contract_trade_time` (`tenant_id`, `contract_id`, `trade_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权成交表';
 
@@ -181,7 +181,7 @@ DROP TABLE IF EXISTS `t_option_position`;
 CREATE TABLE `t_option_position` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
-  `uid` BIGINT NOT NULL DEFAULT 0 COMMENT '用户ID',
+  `user_id` BIGINT NOT NULL DEFAULT 0 COMMENT '用户ID',
   `account_id` BIGINT NOT NULL DEFAULT 0 COMMENT '交易账户ID',
   `contract_id` BIGINT NOT NULL DEFAULT 0 COMMENT '合约ID',
   `underlying_symbol` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '标的',
@@ -202,9 +202,9 @@ CREATE TABLE `t_option_position` (
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_tenant_uid_account_contract_side` (`tenant_id`, `uid`, `account_id`, `contract_id`, `side`),
+  UNIQUE KEY `uk_tenant_uid_account_contract_side` (`tenant_id`, `user_id`, `account_id`, `contract_id`, `side`),
   KEY `idx_tenant_contract_id` (`tenant_id`, `contract_id`),
-  KEY `idx_tenant_uid_account` (`tenant_id`, `uid`, `account_id`)
+  KEY `idx_tenant_uid_account` (`tenant_id`, `user_id`, `account_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权持仓表';
 
 -- =========================================================
@@ -215,7 +215,7 @@ CREATE TABLE `t_option_exercise` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
   `exercise_no` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '行权单号',
-  `uid` BIGINT NOT NULL DEFAULT 0 COMMENT '用户ID',
+  `user_id` BIGINT NOT NULL DEFAULT 0 COMMENT '用户ID',
   `account_id` BIGINT NOT NULL DEFAULT 0 COMMENT '交易账户ID',
   `contract_id` BIGINT NOT NULL DEFAULT 0 COMMENT '合约ID',
   `position_id` BIGINT NOT NULL DEFAULT 0 COMMENT '持仓ID',
@@ -235,7 +235,7 @@ CREATE TABLE `t_option_exercise` (
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_exercise_no` (`tenant_id`, `exercise_no`),
-  KEY `idx_tenant_uid_account_contract_id` (`tenant_id`, `uid`, `account_id`, `contract_id`),
+  KEY `idx_tenant_uid_account_contract_id` (`tenant_id`, `user_id`, `account_id`, `contract_id`),
   KEY `idx_tenant_position_id` (`tenant_id`, `position_id`),
   KEY `idx_tenant_status` (`tenant_id`, `status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权行权表';
@@ -275,7 +275,7 @@ DROP TABLE IF EXISTS `t_option_account`;
 CREATE TABLE `t_option_account` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
-  `uid` BIGINT NOT NULL DEFAULT 0 COMMENT '用户ID',
+  `user_id` BIGINT NOT NULL DEFAULT 0 COMMENT '用户ID',
   `account_id` BIGINT NOT NULL DEFAULT 0 COMMENT '交易账户ID',
   `margin_coin` VARCHAR(16) NOT NULL DEFAULT '' COMMENT '保证金币种',
   `balance` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '账户余额',
@@ -290,8 +290,8 @@ CREATE TABLE `t_option_account` (
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_tenant_uid_account_margin_coin` (`tenant_id`, `uid`, `account_id`, `margin_coin`),
-  KEY `idx_tenant_uid_account` (`tenant_id`, `uid`, `account_id`)
+  UNIQUE KEY `uk_tenant_uid_account_margin_coin` (`tenant_id`, `user_id`, `account_id`, `margin_coin`),
+  KEY `idx_tenant_uid_account` (`tenant_id`, `user_id`, `account_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权账户资产表';
 
 -- =========================================================
@@ -301,7 +301,7 @@ DROP TABLE IF EXISTS `t_option_bill`;
 CREATE TABLE `t_option_bill` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
-  `uid` BIGINT NOT NULL DEFAULT 0 COMMENT '用户ID',
+  `user_id` BIGINT NOT NULL DEFAULT 0 COMMENT '用户ID',
   `account_id` BIGINT NOT NULL DEFAULT 0 COMMENT '交易账户ID',
   `biz_no` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '业务流水号',
   `ref_type` TINYINT NOT NULL DEFAULT 0 COMMENT '关联类型：1下单 2成交 3撤单 4行权 5结算 6手续费',
@@ -314,7 +314,7 @@ CREATE TABLE `t_option_bill` (
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_biz_no` (`tenant_id`, `biz_no`),
-  KEY `idx_tenant_uid_account` (`tenant_id`, `uid`, `account_id`),
+  KEY `idx_tenant_uid_account` (`tenant_id`, `user_id`, `account_id`),
   KEY `idx_tenant_ref_type_ref_id` (`tenant_id`, `ref_type`, `ref_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权资金流水表';
 

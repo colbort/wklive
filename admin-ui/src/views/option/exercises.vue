@@ -15,7 +15,7 @@
           <el-input-number v-model="query.tenantId" :min="0" :precision="0" />
         </el-form-item>
         <el-form-item :label="t('option.userId')">
-          <el-input-number v-model="query.uid" :min="0" :precision="0" />
+          <el-input-number v-model="query.userId" :min="0" :precision="0" />
         </el-form-item>
         <el-form-item :label="t('option.exerciseNo')">
           <el-input v-model="query.exerciseNo" clearable />
@@ -39,7 +39,7 @@
           min-width="180"
           show-overflow-tooltip
         />
-        <el-table-column :label="t('option.userId')" prop="uid" width="100" />
+        <el-table-column :label="t('option.userId')" prop="userId" width="100" />
         <el-table-column
           :label="t('option.exerciseQty')"
           prop="exerciseQty"
@@ -82,7 +82,7 @@ const detailVisible = ref(false)
 const detailData = ref<OptionExerciseDetail | OptionExercise | null>(null)
 const query = reactive({
   tenantId: undefined as number | undefined,
-  uid: undefined as number | undefined,
+  userId: undefined as number | undefined,
   exerciseNo: '',
   contractId: undefined as number | undefined,
   limit: 100,
@@ -101,7 +101,7 @@ const loadCurrent = async () => {
 
 const resetCurrent = () => {
   query.tenantId = undefined
-  query.uid = undefined
+  query.userId = undefined
   query.exerciseNo = ''
   query.contractId = undefined
   query.limit = 100

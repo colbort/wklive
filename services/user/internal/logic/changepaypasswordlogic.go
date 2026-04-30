@@ -30,8 +30,12 @@ func NewChangePayPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 // 修改支付密码
 func (l *ChangePayPasswordLogic) ChangePayPassword(in *user.ChangePayPasswordReq) (*user.AppCommonResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	// 获取用户信息
-	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, in.UserId)
+	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, userId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
@@ -50,7 +54,7 @@ func (l *ChangePayPasswordLogic) ChangePayPassword(in *user.ChangePayPasswordReq
 	}
 
 	// 获取用户安全信息
-	userSecurity, err := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, in.UserId)
+	userSecurity, err := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, userId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
@@ -73,7 +77,7 @@ func (l *ChangePayPasswordLogic) ChangePayPassword(in *user.ChangePayPasswordReq
 		return nil, err
 	}
 
-	l.Logger.Infof("用户 %d 修改支付密码成功", in.UserId)
+	l.Logger.Infof("用户 %d 修改支付密码成功", userId)
 
 	return &user.AppCommonResp{
 		Base: helper.OkResp(),

@@ -30,8 +30,12 @@ func NewSetPayPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Se
 
 // 设置支付密码
 func (l *SetPayPasswordLogic) SetPayPassword(in *user.SetPayPasswordReq) (*user.AppCommonResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	// 获取用户信息
-	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, in.UserId)
+	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, userId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
@@ -50,7 +54,7 @@ func (l *SetPayPasswordLogic) SetPayPassword(in *user.SetPayPasswordReq) (*user.
 	}
 
 	now := utils.NowMillis()
-	userSecurity, err := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, in.UserId)
+	userSecurity, err := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, userId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
@@ -69,7 +73,7 @@ func (l *SetPayPasswordLogic) SetPayPassword(in *user.SetPayPasswordReq) (*user.
 		userSecurity = &models.TUserSecurity{
 			Id:              l.svcCtx.Node.Generate().Int64(),
 			TenantId:        tuser.TenantId,
-			UserId:          in.UserId,
+			UserId:          userId,
 			PayPasswordHash: sql.NullString{String: in.Password, Valid: true},
 			CreateTimes:     now,
 			UpdateTimes:     now,
@@ -81,7 +85,7 @@ func (l *SetPayPasswordLogic) SetPayPassword(in *user.SetPayPasswordReq) (*user.
 		}
 	}
 
-	l.Logger.Infof("用户 %d 设置支付密码成功", in.UserId)
+	l.Logger.Infof("用户 %d 设置支付密码成功", userId)
 
 	return &user.AppCommonResp{
 		Base: helper.OkResp(),

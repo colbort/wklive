@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"wklive/common/helper"
+	"wklive/common/utils"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
@@ -28,9 +29,17 @@ func NewAppListAccountsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *A
 
 // 获取账户资产列表
 func (l *AppListAccountsLogic) AppListAccounts(in *option.AppListAccountsReq) (*option.AppListAccountsResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	items, _, err := l.svcCtx.OptionAccountModel.FindPage(l.ctx, models.OptionAccountPageFilter{
-		TenantId:  in.TenantId,
-		Uid:       in.Uid,
+		TenantId:  tenantId,
+		UserId:    userId,
 		AccountId: in.AccountId,
 	}, 0, 100)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {

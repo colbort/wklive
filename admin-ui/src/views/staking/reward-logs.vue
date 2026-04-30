@@ -18,7 +18,7 @@
           <el-input v-model="query.orderNo" clearable />
         </el-form-item>
         <el-form-item :label="t('staking.userId')">
-          <el-input-number v-model="query.uid" :min="0" :precision="0" />
+          <el-input-number v-model="query.userId" :min="0" :precision="0" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="loadRows">
@@ -39,7 +39,7 @@
           min-width="180"
           show-overflow-tooltip
         />
-        <el-table-column :label="t('staking.userId')" prop="uid" width="100" />
+        <el-table-column :label="t('staking.userId')" prop="userId" width="100" />
         <el-table-column
           prop="rewardAmount"
           :label="t('staking.rewardAmount')"
@@ -78,7 +78,7 @@ const detailData = ref<StakeRewardLog | null>(null)
 const query = reactive({
   tenantId: undefined as number | undefined,
   orderNo: '',
-  uid: undefined as number | undefined,
+  userId: undefined as number | undefined,
   productId: undefined as number | undefined,
   limit: 100,
 })
@@ -97,7 +97,7 @@ const loadRows = async () => {
 const resetQuery = () => {
   query.tenantId = undefined
   query.orderNo = ''
-  query.uid = undefined
+  query.userId = undefined
   query.productId = undefined
   query.limit = 100
   loadRows()

@@ -149,7 +149,7 @@ func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginRe
 
 func (l *GuestLoginLogic) buildGuestLoginResp(tenantId int64, guest *models.TUser, isNew bool) (*user.GuestLoginResp, error) {
 	str := make(map[string]any, 1)
-	str["tid"] = tenantId
+	str["tenantId"] = tenantId
 	expand, err := json.Marshal(str)
 	if err != nil {
 		return nil, err
@@ -170,7 +170,7 @@ func (l *GuestLoginLogic) buildGuestLoginResp(tenantId int64, guest *models.TUse
 		Base: helper.OkResp(),
 		Data: &user.GuestLogin{
 			Token:    token,
-			Uid:      guest.DeviceId,
+			UserId:   guest.DeviceId,
 			Username: guest.Username,
 			IsNew:    isNew,
 		},

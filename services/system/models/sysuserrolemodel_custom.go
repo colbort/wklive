@@ -13,10 +13,10 @@ import (
 type UserRoleModel interface {
 	sysUserRoleModel
 	FindIdsByTenantId(ctx context.Context, tenantId int64) ([]int64, error)
-	FindRoleIdsByUserId(ctx context.Context, uid int64) ([]int64, error)
+	FindRoleIdsByUserId(ctx context.Context, userId int64) ([]int64, error)
 	FindRoleIdsByUserIds(ctx context.Context, userIds []int64) (map[int64][]int64, error)
 	InsertCtx(ctx context.Context, session sqlx.Session, data *SysUserRole) (sql.Result, error)
-	FindLoginUserPerms(ctx context.Context, uid int64, clear bool) ([]string, error)
+	FindLoginUserPerms(ctx context.Context, userId int64, clear bool) ([]string, error)
 	FindByIds(ctx context.Context, userId int64, roleIds []int64) ([]int64, error)
 	FindByRoleId(ctx context.Context, roleId int64) ([]int64, error)
 }
@@ -31,9 +31,9 @@ func (m *defaultSysUserRoleModel) FindIdsByTenantId(ctx context.Context, tenantI
 	return ids, err
 }
 
-func (m *defaultSysUserRoleModel) FindRoleIdsByUserId(ctx context.Context, uid int64) ([]int64, error) {
+func (m *defaultSysUserRoleModel) FindRoleIdsByUserId(ctx context.Context, userId int64) ([]int64, error) {
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.And("user_id = ?", uid)
+	builder.And("user_id = ?", userId)
 
 	var ids []int64
 	query := fmt.Sprintf("select role_id from %s where %s", m.table, builder.Where())
@@ -92,21 +92,21 @@ func (m *defaultSysUserRoleModel) InsertCtx(ctx context.Context, session sqlx.Se
 	return ret, err
 }
 
-func (m *defaultSysUserRoleModel) FindLoginUserPerms(ctx context.Context, uid int64, clear bool) ([]string, error) {
-	key := fmt.Sprintf("system:user:perms:%d", uid)
+func (m *defaultSysUserRoleModel) FindLoginUserPerms(ctx context.Context, userId int64, clear bool) ([]string, error) {
+	key := fmt.Sprintf("system:user:perms:%d", userId)
 	var perms []string
 	if clear {
-		return m.findLoginUserPermsFromDB(ctx, uid, key)
+		return m.findLoginUserPermsFromDB(ctx, userId, key)
 	} else {
 		err := m.GetCacheCtx(ctx, key, &perms)
 		if err != nil {
-			return m.findLoginUserPermsFromDB(ctx, uid, key)
+			return m.findLoginUserPermsFromDB(ctx, userId, key)
 		}
 	}
 	return perms, nil
 }
 
-func (m *defaultSysUserRoleModel) findLoginUserPermsFromDB(ctx context.Context, uid int64, key string) ([]string, error) {
+func (m *defaultSysUserRoleModel) findLoginUserPermsFromDB(ctx context.Context, userId int64, key string) ([]string, error) {
 	query := fmt.Sprintf(`
 		SELECT DISTINCT m.perms
 		FROM %s ur
@@ -115,7 +115,7 @@ func (m *defaultSysUserRoleModel) findLoginUserPermsFromDB(ctx context.Context, 
 		WHERE ur.user_id = ? AND m.perms != ''
 	`, m.table)
 	var perms []string
-	err := m.QueryRowsNoCacheCtx(ctx, &perms, query, uid)
+	err := m.QueryRowsNoCacheCtx(ctx, &perms, query, userId)
 	if err != nil {
 		return nil, err
 	}

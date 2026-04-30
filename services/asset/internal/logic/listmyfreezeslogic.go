@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/svc"
 
@@ -26,7 +27,15 @@ func NewListMyFreezesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Lis
 
 // 查询我的冻结明细
 func (l *ListMyFreezesLogic) ListMyFreezes(in *asset.ListMyFreezesReq) (*asset.ListMyFreezesResp, error) {
-	items, total, err := l.svcCtx.AssetFreezeModel.FindPage(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "", "", int64(in.Status), in.Page.Cursor, in.Page.Limit)
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	items, total, err := l.svcCtx.AssetFreezeModel.FindPage(l.ctx, tenantId, userId, int64(in.WalletType), in.Coin, "", "", int64(in.Status), in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}

@@ -8,7 +8,6 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/common/utils"
 	"wklive/proto/user"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,12 +28,7 @@ func NewAddBankLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddBankLo
 }
 
 func (l *AddBankLogic) AddBank(req *types.AddBankReq) (resp *types.AddBankResp, err error) {
-	userId, err := utils.GetUidFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
 	result, err := l.svcCtx.UserCli.AddBank(l.ctx, &user.AddBankReq{
-		UserId:      userId,
 		BankName:    req.BankName,
 		BankCode:    req.BankCode,
 		AccountName: req.AccountName,

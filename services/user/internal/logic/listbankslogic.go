@@ -6,6 +6,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -29,8 +30,12 @@ func NewListBanksLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListBan
 
 // 查询用户银行卡列表
 func (l *ListBanksLogic) ListBanks(in *user.ListBanksReq) (*user.ListBanksResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	// 获取用户信息
-	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, in.UserId)
+	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, userId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}

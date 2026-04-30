@@ -75,7 +75,7 @@ func (m *RbacMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		uid, err := utils.GetUidFromCtx(r.Context())
+		userId, err := utils.GetUserIdFromCtx(r.Context())
 		if err != nil {
 			logx.Errorf("invalid token: %v", err)
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
@@ -83,10 +83,10 @@ func (m *RbacMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		resp, err := m.svcCtx.SystemCli.LoginUserPerms(r.Context(), &system.LoginUserPermsReq{
-			UserId: uid,
+			UserId: userId,
 		})
 		if err != nil {
-			logx.Errorf("get profile failed, uid=%d err=%v", uid, err)
+			logx.Errorf("get profile failed, userId=%d err=%v", userId, err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
@@ -98,7 +98,7 @@ func (m *RbacMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		enforcer, err := newUserPermEnforcer(fmt.Sprintf("%d", uid), resp.Perms)
+		enforcer, err := newUserPermEnforcer(fmt.Sprintf("%d", userId), resp.Perms)
 		if err != nil {
 			logx.Errorf("create casbin enforcer failed: %v", err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -112,16 +112,16 @@ func (m *RbacMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		allowed, err := enforcer.Enforce(fmt.Sprintf("%d", uid), obj, act)
+		allowed, err := enforcer.Enforce(fmt.Sprintf("%d", userId), obj, act)
 		if err != nil {
-			logx.Errorf("casbin enforce failed, uid=%d perm=%s err=%v", uid, requiredPerm, err)
+			logx.Errorf("casbin enforce failed, userId=%d perm=%s err=%v", userId, requiredPerm, err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
 
 		if !allowed {
-			logx.Errorf("forbidden, uid=%d method=%s path=%s required=%s userPerms=%v",
-				uid, method, path, requiredPerm, resp.Perms)
+			logx.Errorf("forbidden, userId=%d method=%s path=%s required=%s userPerms=%v",
+				userId, method, path, requiredPerm, resp.Perms)
 			http.Error(w, "Forbidden", http.StatusForbidden)
 			return
 		}

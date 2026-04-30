@@ -186,7 +186,7 @@ type AdminLoginResp struct {
 	Base             *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Token            string                 `protobuf:"bytes,3,opt,name=token,proto3" json:"token,omitempty"`
 	Exp              int64                  `protobuf:"varint,4,opt,name=exp,proto3" json:"exp,omitempty"`
-	Uid              int64                  `protobuf:"varint,5,opt,name=uid,proto3" json:"uid,omitempty"`
+	UserId           int64                  `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Nickname         string                 `protobuf:"bytes,6,opt,name=nickname,proto3" json:"nickname,omitempty"`
 	RoleIds          []int64                `protobuf:"varint,7,rep,packed,name=role_ids,json=roleIds,proto3" json:"role_ids,omitempty"`
 	Google2FaEnabled int64                  `protobuf:"varint,8,opt,name=google2fa_enabled,json=google2faEnabled,proto3" json:"google2fa_enabled,omitempty"`
@@ -250,9 +250,9 @@ func (x *AdminLoginResp) GetExp() int64 {
 	return 0
 }
 
-func (x *AdminLoginResp) GetUid() int64 {
+func (x *AdminLoginResp) GetUserId() int64 {
 	if x != nil {
-		return x.Uid
+		return x.UserId
 	}
 	return 0
 }
@@ -315,7 +315,7 @@ func (x *AdminLoginResp) GetAvatar() string {
 
 type ProfileReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Uid           int64                  `protobuf:"varint,1,opt,name=uid,proto3" json:"uid,omitempty"`
+	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -350,9 +350,9 @@ func (*ProfileReq) Descriptor() ([]byte, []int) {
 	return file_proto_system_system_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *ProfileReq) GetUid() int64 {
+func (x *ProfileReq) GetUserId() int64 {
 	if x != nil {
-		return x.Uid
+		return x.UserId
 	}
 	return 0
 }
@@ -5903,12 +5903,12 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\vgoogle_code\x18\x03 \x01(\tR\n" +
 	"googleCode\x12\x0e\n" +
 	"\x02ip\x18\x04 \x01(\tR\x02ip\x12\x0e\n" +
-	"\x02ua\x18\x05 \x01(\tR\x02ua\"\xf0\x02\n" +
+	"\x02ua\x18\x05 \x01(\tR\x02ua\"\xf7\x02\n" +
 	"\x0eAdminLoginResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x14\n" +
 	"\x05token\x18\x03 \x01(\tR\x05token\x12\x10\n" +
-	"\x03exp\x18\x04 \x01(\x03R\x03exp\x12\x10\n" +
-	"\x03uid\x18\x05 \x01(\x03R\x03uid\x12\x1a\n" +
+	"\x03exp\x18\x04 \x01(\x03R\x03exp\x12\x17\n" +
+	"\auser_id\x18\x05 \x01(\x03R\x06userId\x12\x1a\n" +
 	"\bnickname\x18\x06 \x01(\tR\bnickname\x12\x19\n" +
 	"\brole_ids\x18\a \x03(\x03R\aroleIds\x12+\n" +
 	"\x11google2fa_enabled\x18\b \x01(\x03R\x10google2faEnabled\x12\x1b\n" +
@@ -5917,10 +5917,10 @@ const file_proto_system_system_proto_rawDesc = "" +
 	" \x01(\x03R\btenantId\x12-\n" +
 	"\tuser_type\x18\v \x01(\x0e2\x10.system.UserTypeR\buserType\x12\x19\n" +
 	"\bis_owner\x18\f \x01(\x03R\aisOwner\x12\x16\n" +
-	"\x06avatar\x18\r \x01(\tR\x06avatar\"\x1e\n" +
+	"\x06avatar\x18\r \x01(\tR\x06avatar\"%\n" +
 	"\n" +
-	"ProfileReq\x12\x10\n" +
-	"\x03uid\x18\x01 \x01(\x03R\x03uid\"\xd4\x01\n" +
+	"ProfileReq\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"\xd4\x01\n" +
 	"\vProfileUser\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x12\x1a\n" +

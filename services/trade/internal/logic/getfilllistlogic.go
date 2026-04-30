@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -29,9 +30,17 @@ func NewGetFillListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetFi
 // 获取成交记录列表
 func (l *GetFillListLogic) GetFillList(in *trade.GetFillListReq) (*trade.GetFillListResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	list, total, err := l.svcCtx.TradeFillModel.FindPage(l.ctx, models.TradeFillPageFilter{
-		TenantId:   in.TenantId,
-		UserId:     in.UserId,
+		TenantId:   tenantId,
+		UserId:     userId,
 		SymbolId:   in.SymbolId,
 		MarketType: int64(in.MarketType),
 		TimeStart:  in.TimeRange.StartTime,

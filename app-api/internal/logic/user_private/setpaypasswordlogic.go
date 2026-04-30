@@ -8,7 +8,6 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/common/utils"
 	"wklive/proto/user"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,12 +28,7 @@ func NewSetPayPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Se
 }
 
 func (l *SetPayPasswordLogic) SetPayPassword(req *types.SetPayPasswordReq) (resp *types.RespBase, err error) {
-	userId, err := utils.GetUidFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
 	result, err := l.svcCtx.UserCli.SetPayPassword(l.ctx, &user.SetPayPasswordReq{
-		UserId:          userId,
 		Password:        req.Password,
 		ConfirmPassword: req.ConfirmPassword,
 	})

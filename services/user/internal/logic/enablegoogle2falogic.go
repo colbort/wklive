@@ -29,8 +29,12 @@ func NewEnableGoogle2FALogic(ctx context.Context, svcCtx *svc.ServiceContext) *E
 
 // 启用Google 2FA
 func (l *EnableGoogle2FALogic) EnableGoogle2FA(in *user.EnableGoogle2FAReq) (*user.AppCommonResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	// 获取用户信息
-	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, in.UserId)
+	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, userId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
@@ -42,7 +46,7 @@ func (l *EnableGoogle2FALogic) EnableGoogle2FA(in *user.EnableGoogle2FAReq) (*us
 	}
 
 	// 获取用户安全信息
-	userSecurity, err := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, in.UserId)
+	userSecurity, err := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, userId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
@@ -75,7 +79,7 @@ func (l *EnableGoogle2FALogic) EnableGoogle2FA(in *user.EnableGoogle2FAReq) (*us
 		return nil, err
 	}
 
-	l.Logger.Infof("用户 %d 启用Google 2FA成功", in.UserId)
+	l.Logger.Infof("用户 %d 启用Google 2FA成功", userId)
 
 	return &user.AppCommonResp{
 		Base: helper.OkResp(),

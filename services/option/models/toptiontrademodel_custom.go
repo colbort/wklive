@@ -10,7 +10,7 @@ import (
 type OptionTradePageFilter struct {
 	TenantId       int64
 	ContractId     int64
-	Uid            int64
+	UserId         int64
 	AccountId      int64
 	TradeNo        string
 	TradeTimeStart int64
@@ -33,9 +33,9 @@ func (m *defaultTOptionTradeModel) FindPage(ctx context.Context, filter OptionTr
 
 	where := builder.Where()
 	args := builder.Args()
-	if filter.Uid != 0 {
-		where += " AND (buy_uid = ? OR sell_uid = ?)"
-		args = append(args, filter.Uid, filter.Uid)
+	if filter.UserId != 0 {
+		where += " AND (buy_user_id = ? OR sell_user_id = ?)"
+		args = append(args, filter.UserId, filter.UserId)
 	}
 	if filter.AccountId != 0 {
 		where += " AND (buy_account_id = ? OR sell_account_id = ?)"

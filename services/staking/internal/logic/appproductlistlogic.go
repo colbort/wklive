@@ -28,10 +28,9 @@ func NewAppProductListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ap
 
 // 获取质押产品列表
 func (l *AppProductListLogic) AppProductList(in *staking.AppProductListReq) (*staking.AppProductListResp, error) {
-	if in.TenantId <= 0 {
-		if tenantId, err := utils.GetTenantIdFromMd(l.ctx); err == nil {
-			in.TenantId = tenantId
-		}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
 	}
 	page := in.GetPage()
 	cursor, limit := int64(0), int64(10)
@@ -39,7 +38,7 @@ func (l *AppProductListLogic) AppProductList(in *staking.AppProductListReq) (*st
 		cursor, limit = page.Cursor, page.Limit
 	}
 	items, total, err := l.svcCtx.StakeProductModel.FindPage(
-		l.ctx, in.TenantId, cursor, limit,
+		l.ctx, tenantId, cursor, limit,
 		"", "", in.CoinSymbol,
 		int64(in.ProductType), int64(staking.ProductStatus_PRODUCT_STATUS_ENABLE),
 	)

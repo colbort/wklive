@@ -5,6 +5,7 @@ import (
 
 	"wklive/common/conv"
 	"wklive/common/helper"
+	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/svc"
 
@@ -27,7 +28,15 @@ func NewGetMyAssetSummaryLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 // 查询我的资产汇总
 func (l *GetMyAssetSummaryLogic) GetMyAssetSummary(in *asset.GetMyAssetSummaryReq) (*asset.GetMyAssetSummaryResp, error) {
-	list, err := l.svcCtx.UserAssetModel.FindAll(l.ctx, in.TenantId, in.UserId, 0, "", 0)
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	list, err := l.svcCtx.UserAssetModel.FindAll(l.ctx, tenantId, userId, 0, "", 0)
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +45,7 @@ func (l *GetMyAssetSummaryLogic) GetMyAssetSummary(in *asset.GetMyAssetSummaryRe
 	totalAvailable := 0.0
 	totalFrozen := 0.0
 	totalLocked := 0.0
-	resp := &asset.GetMyAssetSummaryResp{Base: helper.OkResp(), Data: &asset.UserAssetSummary{TenantId: in.TenantId, UserId: in.UserId}}
+	resp := &asset.GetMyAssetSummaryResp{Base: helper.OkResp(), Data: &asset.UserAssetSummary{TenantId: tenantId, UserId: userId}}
 	for _, item := range list {
 		totalAsset += item.TotalAmount
 		totalAvailable += item.AvailableAmount

@@ -93,19 +93,55 @@ export interface WithdrawOrder {
   updateTimes: number
 }
 
+export interface CryptoRechargeAddress {
+  id: number
+  tenantId: number
+  userId: number
+  walletType: number
+  coin: string
+  chainCode: number
+  address: string
+  memo: string
+  addressSource: number
+  addressType: number
+  status: number
+  lastUsedTime: number
+  createTimes: number
+  updateTimes: number
+}
+
+export interface CryptoRechargeTx {
+  id: number
+  tenantId: number
+  userId: number
+  orderId: number
+  orderNo: string
+  coin: string
+  chainCode: number
+  txHash: string
+  fromAddress: string
+  toAddress: string
+  memo: string
+  amount: string
+  blockHeight: number
+  confirmCount: number
+  requiredConfirmCount: number
+  status: number
+  rawData: string
+  createTimes: number
+  updateTimes: number
+}
+
 export interface GetMyRechargeStatReq {
-  tenantId?: number
 }
 
 export interface ListAvailableRechargeChannelsReq {
-  tenantId?: number
   rechargeAmount: number
   currency: string
   clientType: number
 }
 
 export interface CreateRechargeOrderReq {
-  tenantId?: number
   channelId: number
   rechargeAmount: number
   currency: string
@@ -117,12 +153,10 @@ export interface CreateRechargeOrderReq {
 }
 
 export interface GetMyRechargeOrderReq {
-  tenantId?: number
   orderNo: string
 }
 
 export interface ListMyRechargeOrdersReq extends PageReq {
-  tenantId?: number
   status?: number
   orderNo?: string
   createTimeStart?: number
@@ -130,18 +164,40 @@ export interface ListMyRechargeOrdersReq extends PageReq {
 }
 
 export interface CancelMyRechargeOrderReq {
-  tenantId?: number
   orderNo: string
 }
 
 export interface QueryMyRechargeOrderStatusReq {
-  tenantId?: number
   orderNo: string
 }
 
+export interface GetMyCryptoRechargeAddressReq {
+  walletType: number
+  coin: string
+  chainCode: number
+}
+
+export interface ListMyCryptoRechargeAddressesReq {
+  walletType?: number
+  coin?: string
+  chainCode?: number
+}
+
+export interface ListMyCryptoRechargeTxsReq extends PageReq {
+  orderNo?: string
+  coin?: string
+  chainCode?: number
+  status?: number
+  createTimeStart?: number
+  createTimeEnd?: number
+}
+
+export interface GetMyCryptoRechargeTxReq {
+  id: number
+  txHash?: string
+}
+
 export interface CreateWithdrawOrderReq {
-  tenantId?: number
-  userId?: number
   amount: number
   currency: string
   address: string
@@ -150,8 +206,6 @@ export interface CreateWithdrawOrderReq {
 }
 
 export interface ListMyWithdrawOrdersReq extends PageReq {
-  tenantId?: number
-  userId?: number
   status?: number
 }
 

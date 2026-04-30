@@ -110,7 +110,7 @@ type AdminOrderListReq struct {
 	PageReq
 	TenantId        int64  `form:"tenantId,optional"`
 	OrderNo         string `form:"orderNo,optional"`
-	Uid             int64  `form:"uid,optional"`
+	UserId          int64  `form:"userId,optional"`
 	ProductId       int64  `form:"productId,optional"`
 	ProductName     string `form:"productName,optional"`
 	CoinSymbol      string `form:"coinSymbol,optional"`
@@ -232,7 +232,7 @@ type AdminRedeemLogListReq struct {
 	TenantId         int64  `form:"tenantId,optional"`
 	OrderNo          string `form:"orderNo,optional"`
 	RedeemNo         string `form:"redeemNo,optional"`
-	Uid              int64  `form:"uid,optional"`
+	UserId           int64  `form:"userId,optional"`
 	ProductId        int64  `form:"productId,optional"`
 	RedeemType       int64  `form:"redeemType,optional"`
 	RedeemStatus     int64  `form:"redeemStatus,optional"`
@@ -249,7 +249,7 @@ type AdminRewardLogListReq struct {
 	PageReq
 	TenantId         int64  `form:"tenantId,optional"`
 	OrderNo          string `form:"orderNo,optional"`
-	Uid              int64  `form:"uid,optional"`
+	UserId           int64  `form:"userId,optional"`
 	ProductId        int64  `form:"productId,optional"`
 	RewardType       int64  `form:"rewardType,optional"`
 	RewardStatus     int64  `form:"rewardStatus,optional"`
@@ -971,7 +971,7 @@ type DepthLevel struct {
 type GetAccountReq struct {
 	TenantId  int64 `form:"tenantId,optional"`
 	Id        int64 `form:"id,optional"`
-	Uid       int64 `form:"uid,optional"`
+	UserId    int64 `form:"userId,optional"`
 	AccountId int64 `form:"accountId,optional"`
 }
 
@@ -1739,7 +1739,7 @@ type Kline struct {
 type ListAccountsReq struct {
 	PageReq
 	TenantId   int64  `form:"tenantId,optional"`
-	Uid        int64  `form:"uid,optional"`
+	UserId     int64  `form:"userId,optional"`
 	AccountId  int64  `form:"accountId,optional"`
 	MarginCoin string `form:"marginCoin,optional"`
 	Status     int64  `form:"status,optional"`
@@ -1754,7 +1754,7 @@ type ListAccountsResp struct {
 type ListBillsReq struct {
 	PageReq
 	TenantId        int64     `form:"tenantId,optional"`
-	Uid             int64     `form:"uid,optional"`
+	UserId          int64     `form:"userId,optional"`
 	AccountId       int64     `form:"accountId,optional"`
 	RefType         int64     `form:"refType,optional"`
 	CreateTimeRange TimeRange `form:"createTimeRange,optional"`
@@ -1848,7 +1848,7 @@ type ListCryptoWalletAccountsResp struct {
 type ListExercisesReq struct {
 	PageReq
 	TenantId          int64     `form:"tenantId,optional"`
-	Uid               int64     `form:"uid,optional"`
+	UserId            int64     `form:"userId,optional"`
 	AccountId         int64     `form:"accountId,optional"`
 	ContractId        int64     `form:"contractId,optional"`
 	Status            int64     `form:"status,optional"`
@@ -1877,7 +1877,7 @@ type ListMarketSnapshotsResp struct {
 type ListOrdersReq struct {
 	PageReq
 	TenantId         int64     `form:"tenantId,optional"`
-	Uid              int64     `form:"uid,optional"`
+	UserId           int64     `form:"userId,optional"`
 	AccountId        int64     `form:"accountId,optional"`
 	ContractId       int64     `form:"contractId,optional"`
 	UnderlyingSymbol string    `form:"underlyingSymbol,optional"`
@@ -1925,7 +1925,7 @@ type ListPayProductsResp struct {
 type ListPositionsReq struct {
 	PageReq
 	TenantId   int64 `form:"tenantId,optional"`
-	Uid        int64 `form:"uid,optional"`
+	UserId     int64 `form:"userId,optional"`
 	AccountId  int64 `form:"accountId,optional"`
 	ContractId int64 `form:"contractId,optional"`
 	Status     int64 `form:"status,optional"`
@@ -2092,7 +2092,7 @@ type ListTradesReq struct {
 	PageReq
 	TenantId       int64     `form:"tenantId,optional"`
 	ContractId     int64     `form:"contractId,optional"`
-	Uid            int64     `form:"uid,optional"`
+	UserId         int64     `form:"userId,optional"`
 	TradeNo        string    `form:"tradeNo,optional"`
 	TradeTimeRange TimeRange `form:"tradeTimeRange,optional"`
 }
@@ -2300,7 +2300,7 @@ type OpenTenantPayPlatformReq struct {
 type OptionAccount struct {
 	Id               int64  `json:"id"`
 	TenantId         int64  `json:"tenantId"`
-	Uid              int64  `json:"uid"`
+	UserId           int64  `json:"userId"`
 	AccountId        int64  `json:"accountId"`
 	MarginCoin       string `json:"marginCoin"`
 	Balance          string `json:"balance"`
@@ -2323,7 +2323,7 @@ type OptionAdminCommonResp struct {
 type OptionBill struct {
 	Id            int64  `json:"id"`
 	TenantId      int64  `json:"tenantId"`
-	Uid           int64  `json:"uid"`
+	UserId        int64  `json:"userId"`
 	AccountId     int64  `json:"accountId"`
 	BizNo         string `json:"bizNo"`
 	RefType       int64  `json:"refType"`
@@ -2374,7 +2374,7 @@ type OptionExercise struct {
 	Id              int64  `json:"id"`
 	TenantId        int64  `json:"tenantId"`
 	ExerciseNo      string `json:"exerciseNo"`
-	Uid             int64  `json:"uid"`
+	UserId          int64  `json:"userId"`
 	AccountId       int64  `json:"accountId"`
 	ContractId      int64  `json:"contractId"`
 	PositionId      int64  `json:"positionId"`
@@ -2448,7 +2448,7 @@ type OptionOrder struct {
 	Id               int64  `json:"id"`
 	TenantId         int64  `json:"tenantId"`
 	OrderNo          string `json:"orderNo"`
-	Uid              int64  `json:"uid"`
+	UserId           int64  `json:"userId"`
 	AccountId        int64  `json:"accountId"`
 	ContractId       int64  `json:"contractId"`
 	UnderlyingSymbol string `json:"underlyingSymbol"`
@@ -2484,7 +2484,7 @@ type OptionOrderDetail struct {
 type OptionPosition struct {
 	Id                int64  `json:"id"`
 	TenantId          int64  `json:"tenantId"`
-	Uid               int64  `json:"uid"`
+	UserId            int64  `json:"userId"`
 	AccountId         int64  `json:"accountId"`
 	ContractId        int64  `json:"contractId"`
 	UnderlyingSymbol  string `json:"underlyingSymbol"`
@@ -3029,7 +3029,7 @@ type StakeOrder struct {
 	Id               int64  `json:"id"`
 	TenantId         int64  `json:"tenantId"`
 	OrderNo          string `json:"orderNo"`
-	Uid              int64  `json:"uid"`
+	UserId           int64  `json:"userId"`
 	ProductId        int64  `json:"productId"`
 	ProductNo        string `json:"productNo"`
 	ProductName      string `json:"productName"`
@@ -3102,7 +3102,7 @@ type StakeRedeemLog struct {
 	TenantId     int64  `json:"tenantId"`
 	OrderId      int64  `json:"orderId"`
 	OrderNo      string `json:"orderNo"`
-	Uid          int64  `json:"uid"`
+	UserId       int64  `json:"userId"`
 	ProductId    int64  `json:"productId"`
 	RedeemNo     string `json:"redeemNo"`
 	RedeemType   int64  `json:"redeemType"`
@@ -3125,7 +3125,7 @@ type StakeRewardLog struct {
 	TenantId         int64  `json:"tenantId"`
 	OrderId          int64  `json:"orderId"`
 	OrderNo          string `json:"orderNo"`
-	Uid              int64  `json:"uid"`
+	UserId           int64  `json:"userId"`
 	ProductId        int64  `json:"productId"`
 	ProductName      string `json:"productName"`
 	CoinSymbol       string `json:"coinSymbol"`

@@ -48,7 +48,7 @@ type GuestLoginReq {
 
 type GuestLogin {
 	token    string `json:"token"`
-	uid      string `json:"uid"`
+	userId      string `json:"userId"`
 	deviceId string `json:"deviceId"`
 	isNew    bool   `json:"isNew"`
 	username string `json:"username"`

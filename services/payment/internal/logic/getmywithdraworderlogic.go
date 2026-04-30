@@ -5,6 +5,7 @@ import (
 	"errors"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -28,6 +29,10 @@ func NewGetMyWithdrawOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 获取提现订单详情
 func (l *GetMyWithdrawOrderLogic) GetMyWithdrawOrder(in *payment.GetMyWithdrawOrderReq) (*payment.GetMyWithdrawOrderResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	order, err := l.svcCtx.WithdrawOrderModel.FindOne(l.ctx, in.Id)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
@@ -40,7 +45,7 @@ func (l *GetMyWithdrawOrderLogic) GetMyWithdrawOrder(in *payment.GetMyWithdrawOr
 	}
 
 	// Check permission
-	if order.UserId != in.UserId {
+	if order.UserId != userId {
 		return &payment.GetMyWithdrawOrderResp{
 			Base: helper.GetErrResp(403, i18n.Translate(i18n.NoPermissionAccessOrder, l.ctx)),
 		}, nil

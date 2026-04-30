@@ -5,6 +5,7 @@ import (
 	"errors"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -28,8 +29,12 @@ func NewGetProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetPro
 
 // 获取用户资料
 func (l *GetProfileLogic) GetProfile(in *user.GetProfileReq) (*user.GetProfileResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	// 查询用户基本信息
-	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, in.UserId)
+	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, userId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
@@ -41,19 +46,19 @@ func (l *GetProfileLogic) GetProfile(in *user.GetProfileReq) (*user.GetProfileRe
 	}
 
 	// 查询用户身份信息
-	identity, err := l.svcCtx.UserIdentityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, in.UserId)
+	identity, err := l.svcCtx.UserIdentityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, userId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 
 	// 查询用户安全信息
-	security, err := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, in.UserId)
+	security, err := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, userId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 
 	return &user.GetProfileResp{
-		Base: helper.OkResp(),
+		Base:    helper.OkResp(),
 		Profile: toUserProfileProto(tuser, identity, security),
 	}, nil
 }

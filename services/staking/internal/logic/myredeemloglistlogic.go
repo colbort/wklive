@@ -5,6 +5,7 @@ import (
 
 	"wklive/common/helper"
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/staking"
 	"wklive/services/staking/internal/svc"
 
@@ -32,7 +33,15 @@ func (l *MyRedeemLogListLogic) MyRedeemLogList(in *staking.AppMyRedeemLogListReq
 	if page != nil {
 		cursor, limit = page.Cursor, page.Limit
 	}
-	items, total, err := l.svcCtx.StakeRedeemLogModel.FindPage(l.ctx, in.TenantId, cursor, limit, in.Uid, in.OrderId, 0, "", "", 0, 0, 0, 0)
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	items, total, err := l.svcCtx.StakeRedeemLogModel.FindPage(l.ctx, tenantId, cursor, limit, userId, in.OrderId, 0, "", "", 0, 0, 0, 0)
 	if err != nil {
 		return nil, err
 	}

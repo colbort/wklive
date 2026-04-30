@@ -654,7 +654,7 @@ type OptionOrder struct {
 	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	TenantId         int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	OrderNo          string                 `protobuf:"bytes,3,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
-	Uid              int64                  `protobuf:"varint,4,opt,name=uid,proto3" json:"uid,omitempty"`
+	UserId           int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	AccountId        int64                  `protobuf:"varint,5,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	ContractId       int64                  `protobuf:"varint,6,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
 	UnderlyingSymbol string                 `protobuf:"bytes,7,opt,name=underlying_symbol,json=underlyingSymbol,proto3" json:"underlying_symbol,omitempty"`
@@ -735,9 +735,9 @@ func (x *OptionOrder) GetOrderNo() string {
 	return ""
 }
 
-func (x *OptionOrder) GetUid() int64 {
+func (x *OptionOrder) GetUserId() int64 {
 	if x != nil {
-		return x.Uid
+		return x.UserId
 	}
 	return 0
 }
@@ -926,11 +926,11 @@ type OptionTrade struct {
 	UnderlyingSymbol string                 `protobuf:"bytes,5,opt,name=underlying_symbol,json=underlyingSymbol,proto3" json:"underlying_symbol,omitempty"`
 	BuyOrderId       int64                  `protobuf:"varint,6,opt,name=buy_order_id,json=buyOrderId,proto3" json:"buy_order_id,omitempty"`
 	BuyOrderNo       string                 `protobuf:"bytes,7,opt,name=buy_order_no,json=buyOrderNo,proto3" json:"buy_order_no,omitempty"`
-	BuyUid           int64                  `protobuf:"varint,8,opt,name=buy_uid,json=buyUid,proto3" json:"buy_uid,omitempty"`
+	BuyUserId        int64                  `protobuf:"varint,8,opt,name=buy_user_id,json=buyUserId,proto3" json:"buy_user_id,omitempty"`
 	BuyAccountId     int64                  `protobuf:"varint,9,opt,name=buy_account_id,json=buyAccountId,proto3" json:"buy_account_id,omitempty"`
 	SellOrderId      int64                  `protobuf:"varint,10,opt,name=sell_order_id,json=sellOrderId,proto3" json:"sell_order_id,omitempty"`
 	SellOrderNo      string                 `protobuf:"bytes,11,opt,name=sell_order_no,json=sellOrderNo,proto3" json:"sell_order_no,omitempty"`
-	SellUid          int64                  `protobuf:"varint,12,opt,name=sell_uid,json=sellUid,proto3" json:"sell_uid,omitempty"`
+	SellUserId       int64                  `protobuf:"varint,12,opt,name=sell_user_id,json=sellUserId,proto3" json:"sell_user_id,omitempty"`
 	SellAccountId    int64                  `protobuf:"varint,13,opt,name=sell_account_id,json=sellAccountId,proto3" json:"sell_account_id,omitempty"`
 	Price            string                 `protobuf:"bytes,14,opt,name=price,proto3" json:"price,omitempty"`
 	Qty              string                 `protobuf:"bytes,15,opt,name=qty,proto3" json:"qty,omitempty"`
@@ -1024,9 +1024,9 @@ func (x *OptionTrade) GetBuyOrderNo() string {
 	return ""
 }
 
-func (x *OptionTrade) GetBuyUid() int64 {
+func (x *OptionTrade) GetBuyUserId() int64 {
 	if x != nil {
-		return x.BuyUid
+		return x.BuyUserId
 	}
 	return 0
 }
@@ -1052,9 +1052,9 @@ func (x *OptionTrade) GetSellOrderNo() string {
 	return ""
 }
 
-func (x *OptionTrade) GetSellUid() int64 {
+func (x *OptionTrade) GetSellUserId() int64 {
 	if x != nil {
-		return x.SellUid
+		return x.SellUserId
 	}
 	return 0
 }
@@ -1133,7 +1133,7 @@ type OptionPosition struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	Id                int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	TenantId          int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid               int64                  `protobuf:"varint,3,opt,name=uid,proto3" json:"uid,omitempty"`
+	UserId            int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	AccountId         int64                  `protobuf:"varint,4,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	ContractId        int64                  `protobuf:"varint,5,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
 	UnderlyingSymbol  string                 `protobuf:"bytes,6,opt,name=underlying_symbol,json=underlyingSymbol,proto3" json:"underlying_symbol,omitempty"`
@@ -1201,9 +1201,9 @@ func (x *OptionPosition) GetTenantId() int64 {
 	return 0
 }
 
-func (x *OptionPosition) GetUid() int64 {
+func (x *OptionPosition) GetUserId() int64 {
 	if x != nil {
-		return x.Uid
+		return x.UserId
 	}
 	return 0
 }
@@ -1346,7 +1346,7 @@ type OptionExercise struct {
 	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	ExerciseNo      string                 `protobuf:"bytes,3,opt,name=exercise_no,json=exerciseNo,proto3" json:"exercise_no,omitempty"`
-	Uid             int64                  `protobuf:"varint,4,opt,name=uid,proto3" json:"uid,omitempty"`
+	UserId          int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	AccountId       int64                  `protobuf:"varint,5,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	ContractId      int64                  `protobuf:"varint,6,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
 	PositionId      int64                  `protobuf:"varint,7,opt,name=position_id,json=positionId,proto3" json:"position_id,omitempty"`
@@ -1419,9 +1419,9 @@ func (x *OptionExercise) GetExerciseNo() string {
 	return ""
 }
 
-func (x *OptionExercise) GetUid() int64 {
+func (x *OptionExercise) GetUserId() int64 {
 	if x != nil {
-		return x.Uid
+		return x.UserId
 	}
 	return 0
 }
@@ -1713,7 +1713,7 @@ type OptionAccount struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	TenantId         int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid              int64                  `protobuf:"varint,3,opt,name=uid,proto3" json:"uid,omitempty"`
+	UserId           int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	AccountId        int64                  `protobuf:"varint,4,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	MarginCoin       string                 `protobuf:"bytes,5,opt,name=margin_coin,json=marginCoin,proto3" json:"margin_coin,omitempty"`
 	Balance          string                 `protobuf:"bytes,6,opt,name=balance,proto3" json:"balance,omitempty"`
@@ -1775,9 +1775,9 @@ func (x *OptionAccount) GetTenantId() int64 {
 	return 0
 }
 
-func (x *OptionAccount) GetUid() int64 {
+func (x *OptionAccount) GetUserId() int64 {
 	if x != nil {
-		return x.Uid
+		return x.UserId
 	}
 	return 0
 }
@@ -1877,7 +1877,7 @@ type OptionBill struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid           int64                  `protobuf:"varint,3,opt,name=uid,proto3" json:"uid,omitempty"`
+	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	AccountId     int64                  `protobuf:"varint,4,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	BizNo         string                 `protobuf:"bytes,5,opt,name=biz_no,json=bizNo,proto3" json:"biz_no,omitempty"`
 	RefType       BillRefType            `protobuf:"varint,6,opt,name=ref_type,json=refType,proto3,enum=option.BillRefType" json:"ref_type,omitempty"`
@@ -1936,9 +1936,9 @@ func (x *OptionBill) GetTenantId() int64 {
 	return 0
 }
 
-func (x *OptionBill) GetUid() int64 {
+func (x *OptionBill) GetUserId() int64 {
 	if x != nil {
-		return x.Uid
+		return x.UserId
 	}
 	return 0
 }
@@ -2423,12 +2423,12 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\x04vega\x18\x0e \x01(\tR\x04vega\x12\x10\n" +
 	"\x03rho\x18\x0f \x01(\tR\x03rho\x12#\n" +
 	"\rsnapshot_time\x18\x10 \x01(\x03R\fsnapshotTime\x12!\n" +
-	"\fcreate_times\x18\x11 \x01(\x03R\vcreateTimes\"\xdc\a\n" +
+	"\fcreate_times\x18\x11 \x01(\x03R\vcreateTimes\"\xe3\a\n" +
 	"\vOptionOrder\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
-	"\border_no\x18\x03 \x01(\tR\aorderNo\x12\x10\n" +
-	"\x03uid\x18\x04 \x01(\x03R\x03uid\x12\x1d\n" +
+	"\border_no\x18\x03 \x01(\tR\aorderNo\x12\x17\n" +
+	"\auser_id\x18\x04 \x01(\x03R\x06userId\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x05 \x01(\x03R\taccountId\x12\x1f\n" +
 	"\vcontract_id\x18\x06 \x01(\x03R\n" +
@@ -2461,7 +2461,7 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\vcancel_time\x18\x1b \x01(\x03R\n" +
 	"cancelTime\x12!\n" +
 	"\fcreate_times\x18\x1c \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x1d \x01(\x03R\vupdateTimes\"\xb8\x05\n" +
+	"\fupdate_times\x18\x1d \x01(\x03R\vupdateTimes\"\xc6\x05\n" +
 	"\vOptionTrade\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
@@ -2472,13 +2472,14 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\fbuy_order_id\x18\x06 \x01(\x03R\n" +
 	"buyOrderId\x12 \n" +
 	"\fbuy_order_no\x18\a \x01(\tR\n" +
-	"buyOrderNo\x12\x17\n" +
-	"\abuy_uid\x18\b \x01(\x03R\x06buyUid\x12$\n" +
+	"buyOrderNo\x12\x1e\n" +
+	"\vbuy_user_id\x18\b \x01(\x03R\tbuyUserId\x12$\n" +
 	"\x0ebuy_account_id\x18\t \x01(\x03R\fbuyAccountId\x12\"\n" +
 	"\rsell_order_id\x18\n" +
 	" \x01(\x03R\vsellOrderId\x12\"\n" +
-	"\rsell_order_no\x18\v \x01(\tR\vsellOrderNo\x12\x19\n" +
-	"\bsell_uid\x18\f \x01(\x03R\asellUid\x12&\n" +
+	"\rsell_order_no\x18\v \x01(\tR\vsellOrderNo\x12 \n" +
+	"\fsell_user_id\x18\f \x01(\x03R\n" +
+	"sellUserId\x12&\n" +
 	"\x0fsell_account_id\x18\r \x01(\x03R\rsellAccountId\x12\x14\n" +
 	"\x05price\x18\x0e \x01(\tR\x05price\x12\x10\n" +
 	"\x03qty\x18\x0f \x01(\tR\x03qty\x12\x1a\n" +
@@ -2490,11 +2491,11 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"maker_side\x18\x14 \x01(\x0e2\x11.option.MakerSideR\tmakerSide\x12\x1d\n" +
 	"\n" +
 	"trade_time\x18\x15 \x01(\x03R\ttradeTime\x12!\n" +
-	"\fcreate_times\x18\x16 \x01(\x03R\vcreateTimes\"\x9e\x06\n" +
+	"\fcreate_times\x18\x16 \x01(\x03R\vcreateTimes\"\xa5\x06\n" +
 	"\x0eOptionPosition\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x03 \x01(\x03R\x03uid\x12\x1d\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x04 \x01(\x03R\taccountId\x12\x1f\n" +
 	"\vcontract_id\x18\x05 \x01(\x03R\n" +
@@ -2518,13 +2519,13 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\x06status\x18\x13 \x01(\x0e2\x16.option.PositionStatusR\x06status\x12$\n" +
 	"\x0elast_calc_time\x18\x14 \x01(\x03R\flastCalcTime\x12!\n" +
 	"\fcreate_times\x18\x15 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x16 \x01(\x03R\vupdateTimes\"\xcc\x05\n" +
+	"\fupdate_times\x18\x16 \x01(\x03R\vupdateTimes\"\xd3\x05\n" +
 	"\x0eOptionExercise\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
 	"\vexercise_no\x18\x03 \x01(\tR\n" +
-	"exerciseNo\x12\x10\n" +
-	"\x03uid\x18\x04 \x01(\x03R\x03uid\x12\x1d\n" +
+	"exerciseNo\x12\x17\n" +
+	"\auser_id\x18\x04 \x01(\x03R\x06userId\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x05 \x01(\x03R\taccountId\x12\x1f\n" +
 	"\vcontract_id\x18\x06 \x01(\x03R\n" +
@@ -2566,11 +2567,11 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\x06status\x18\r \x01(\x0e2\x18.option.SettlementStatusR\x06status\x12\x16\n" +
 	"\x06remark\x18\x0e \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\x0f \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x10 \x01(\x03R\vupdateTimes\"\xa4\x04\n" +
+	"\fupdate_times\x18\x10 \x01(\x03R\vupdateTimes\"\xab\x04\n" +
 	"\rOptionAccount\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x03 \x01(\x03R\x03uid\x12\x1d\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x04 \x01(\x03R\taccountId\x12\x1f\n" +
 	"\vmargin_coin\x18\x05 \x01(\tR\n" +
@@ -2586,12 +2587,12 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\trisk_rate\x18\r \x01(\tR\briskRate\x12-\n" +
 	"\x06status\x18\x0e \x01(\x0e2\x15.option.AccountStatusR\x06status\x12!\n" +
 	"\fcreate_times\x18\x0f \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x10 \x01(\x03R\vupdateTimes\"\x88\x03\n" +
+	"\fupdate_times\x18\x10 \x01(\x03R\vupdateTimes\"\x8f\x03\n" +
 	"\n" +
 	"OptionBill\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x03 \x01(\x03R\x03uid\x12\x1d\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x04 \x01(\x03R\taccountId\x12\x15\n" +
 	"\x06biz_no\x18\x05 \x01(\tR\x05bizNo\x12.\n" +

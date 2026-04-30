@@ -9,16 +9,16 @@ import (
 
 type StakeRedeemLogModel interface {
 	tStakeRedeemLogModel
-	FindPage(ctx context.Context, tenantID int64, cursor, limit int64, uid, orderID, productID int64, orderNo, redeemNo string, redeemType, redeemStatus int64, redeemBegin, redeemEnd int64) ([]*TStakeRedeemLog, int64, error)
+	FindPage(ctx context.Context, tenantID int64, cursor, limit int64, user_id, orderID, productID int64, orderNo, redeemNo string, redeemType, redeemStatus int64, redeemBegin, redeemEnd int64) ([]*TStakeRedeemLog, int64, error)
 }
 
-func (m *defaultTStakeRedeemLogModel) FindPage(ctx context.Context, tenantID int64, cursor, limit int64, uid, orderID, productID int64, orderNo, redeemNo string, redeemType, redeemStatus int64, redeemBegin, redeemEnd int64) ([]*TStakeRedeemLog, int64, error) {
+func (m *defaultTStakeRedeemLogModel) FindPage(ctx context.Context, tenantID int64, cursor, limit int64, user_id, orderID, productID int64, orderNo, redeemNo string, redeemType, redeemStatus int64, redeemBegin, redeemEnd int64) ([]*TStakeRedeemLog, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.And("tenant_id = ?", tenantID)
-	if uid > 0 {
-		builder.And("uid = ?", uid)
+	if user_id > 0 {
+		builder.And("user_id = ?", user_id)
 	}
 	if orderID > 0 {
 		builder.And("order_id = ?", orderID)

@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	pageutil "wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
@@ -33,8 +34,12 @@ func (l *AppListContractsLogic) AppListContracts(in *option.AppListContractsReq)
 	if status == 0 {
 		status = int64(option.ContractStatus_CONTRACT_STATUS_TRADING)
 	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	items, total, err := l.svcCtx.OptionContractModel.FindPage(l.ctx, models.OptionContractPageFilter{
-		TenantId:         in.TenantId,
+		TenantId:         tenantId,
 		UnderlyingSymbol: in.UnderlyingSymbol,
 		OptionType:       int64(in.OptionType),
 		Status:           status,

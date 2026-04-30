@@ -179,18 +179,15 @@ export interface ContractLeverageConfig {
 }
 
 export interface GetSymbolListReq {
-  tenantId?: number
   marketType?: number
   status?: number
 }
 
 export interface GetSymbolDetailReq {
-  tenantId?: number
   symbolId: number
 }
 
 export interface PlaceOrderReq {
-  tenantId?: number
   symbolId: number
   marketType: number
   side: number
@@ -213,14 +210,12 @@ export interface PlaceOrderReq {
 }
 
 export interface CancelOrderReq {
-  tenantId?: number
   orderId?: number
   orderNo?: string
   clientOrderId?: string
 }
 
 export interface CancelAllOrdersReq {
-  tenantId?: number
   marketType?: number
   symbolId?: number
   side?: number
@@ -228,7 +223,6 @@ export interface CancelAllOrdersReq {
 }
 
 export interface GetOrderListReq extends PageReq {
-  tenantId?: number
   marketType?: number
   symbolId?: number
   status?: number
@@ -237,39 +231,33 @@ export interface GetOrderListReq extends PageReq {
 }
 
 export interface GetOrderDetailReq {
-  tenantId?: number
   orderId?: number
   orderNo?: string
 }
 
 export interface GetFillListReq extends PageReq {
-  tenantId?: number
   marketType?: number
   symbolId?: number
   timeRange?: TimeRange
 }
 
 export interface GetPositionListReq {
-  tenantId?: number
   marketType?: number
   symbolId?: number
 }
 
 export interface GetMarginAccountListReq {
-  tenantId?: number
   marketType?: number
   marginAsset?: string
 }
 
 export interface GetLeverageConfigReq {
-  tenantId?: number
   symbolId: number
   marketType: number
   marginMode: number
 }
 
 export interface SetLeverageReq {
-  tenantId?: number
   symbolId: number
   marketType: number
   marginMode: number

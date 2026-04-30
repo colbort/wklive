@@ -36,7 +36,7 @@ func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system
 	if err != nil {
 		tenantId = 0
 	}
-	creatorId, err := utils.GetUidFromMd(l.ctx)
+	creatorId, err := utils.GetUserIdFromMd(l.ctx)
 	if err != nil {
 		creatorId = 0
 	}

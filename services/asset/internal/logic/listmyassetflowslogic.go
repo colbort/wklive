@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/svc"
 
@@ -33,7 +34,15 @@ func (l *ListMyAssetFlowsLogic) ListMyAssetFlows(in *asset.ListMyAssetFlowsReq) 
 		endTime = in.TimeRange.EndTime
 	}
 
-	items, total, err := l.svcCtx.AssetFlowModel.FindPage(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, assetBizType(in.BizType), assetSceneType(in.SceneType), "", startTime, endTime, in.Page.Cursor, in.Page.Limit)
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	items, total, err := l.svcCtx.AssetFlowModel.FindPage(l.ctx, tenantId, userId, int64(in.WalletType), in.Coin, assetBizType(in.BizType), assetSceneType(in.SceneType), "", startTime, endTime, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}

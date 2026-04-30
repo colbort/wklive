@@ -29,15 +29,18 @@ func NewGetOrderListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetO
 
 // 获取订单列表
 func (l *GetOrderListLogic) GetOrderList(in *trade.GetOrderListReq) (*trade.GetOrderListResp, error) {
-	if in.TenantId <= 0 {
-		if tenantId, err := utils.GetTenantIdFromMd(l.ctx); err == nil {
-			in.TenantId = tenantId
-		}
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
 	}
 	cursor, limit := pageutil.Input(in.Page)
 	list, total, err := l.svcCtx.TradeOrderModel.FindPage(l.ctx, models.TradeOrderPageFilter{
-		TenantId:   in.TenantId,
-		UserId:     in.UserId,
+		TenantId:   tenantId,
+		UserId:     userId,
 		SymbolId:   in.SymbolId,
 		MarketType: int64(in.MarketType),
 		Status:     int64(in.Status),

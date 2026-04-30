@@ -41,7 +41,7 @@ func (l *SysTenantCreateLogic) SysTenantCreate(in *system.SysTenantCreateReq) (*
 			Base: i18n.BuildPermissionDeniedErrorResponse(l.ctx, ""),
 		}, nil
 	}
-	creatorId, err := utils.GetUidFromMd(l.ctx)
+	creatorId, err := utils.GetUserIdFromMd(l.ctx)
 	if err != nil {
 		creatorId = 0
 	}

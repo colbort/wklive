@@ -8,7 +8,6 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/common/utils"
 	"wklive/proto/user"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,13 +28,7 @@ func NewGetProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetPro
 }
 
 func (l *GetProfileLogic) GetProfile() (resp *types.GetProfileResp, err error) {
-	userId, err := utils.GetUidFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-	result, err := l.svcCtx.UserCli.GetProfile(l.ctx, &user.GetProfileReq{
-		UserId: userId,
-	})
+	result, err := l.svcCtx.UserCli.GetProfile(l.ctx, &user.GetProfileReq{})
 	if err != nil {
 		return nil, err
 	}
@@ -45,6 +38,30 @@ func (l *GetProfileLogic) GetProfile() (resp *types.GetProfileResp, err error) {
 			Msg:  result.Base.Msg,
 		},
 		Data: types.UserProfile{
+			Base: types.UserBase{
+				Id:             result.Profile.Base.Id,
+				TenantId:       result.Profile.Base.TenantId,
+				UserNo:         result.Profile.Base.UserNo,
+				Username:       result.Profile.Base.Username,
+				Nickname:       result.Profile.Base.Nickname,
+				Avatar:         result.Profile.Base.Avatar,
+				Language:       result.Profile.Base.Language,
+				Timezone:       result.Profile.Base.Timezone,
+				InviteCode:     result.Profile.Base.InviteCode,
+				Signature:      result.Profile.Base.Signature,
+				RegisterType:   int64(result.Profile.Base.RegisterType),
+				Status:         int64(result.Profile.Base.Status),
+				MemberLevel:    int32(result.Profile.Base.MemberLevel),
+				Source:         result.Profile.Base.Source,
+				ReferrerUserId: result.Profile.Base.ReferrerUserId,
+				LastLoginIp:    result.Profile.Base.LastLoginIp,
+				LastLoginTime:  result.Profile.Base.LastLoginTime,
+				RegisterIp:     result.Profile.Base.RegisterIp,
+				RegisterTime:   result.Profile.Base.RegisterTime,
+				Remark:         result.Profile.Base.Remark,
+				CreateTimes:    result.Profile.Base.CreateTimes,
+				UpdateTimes:    result.Profile.Base.UpdateTimes,
+			},
 			Identity: types.UserIdentity{
 				Id:            result.Profile.Identity.Id,
 				TenantId:      result.Profile.Identity.TenantId,

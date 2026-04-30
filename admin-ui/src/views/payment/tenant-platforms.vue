@@ -132,8 +132,8 @@
       </el-form>
       <template #footer>
         <el-button @click="dialogVisible = false">
-          {{ t('common.cancel') }} </el-button
-        ><el-button type="primary" :disabled="submitDisabled" @click="submit">
+          {{ t('common.cancel') }}
+        </el-button><el-button type="primary" :disabled="submitDisabled" @click="submit">
           {{ t('common.confirm') }}
         </el-button>
       </template>

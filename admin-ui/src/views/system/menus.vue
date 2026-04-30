@@ -140,7 +140,12 @@
           min-width="180"
           show-overflow-tooltip
         />
-        <el-table-column :label="t('system.sort')" prop="sort" width="80" align="center" />
+        <el-table-column
+          :label="t('system.sort')"
+          prop="sort"
+          width="80"
+          align="center"
+        />
 
         <el-table-column :label="t('common.visible')" width="90" align="center">
           <template #default="{ row }">
@@ -158,9 +163,19 @@
           </template>
         </el-table-column>
 
-        <el-table-column :label="t('common.actions')" width="180" fixed="right" align="center">
+        <el-table-column
+          :label="t('common.actions')"
+          width="180"
+          fixed="right"
+          align="center"
+        >
           <template #default="{ row }">
-            <el-button v-if="row.menuType !== 3" link type="primary" @click="handleAdd(row.id)">
+            <el-button
+              v-if="row.menuType !== 3"
+              link
+              type="primary"
+              @click="handleAdd(row.id)"
+            >
               {{ t('system.addChild') }}
             </el-button>
             <el-button link type="primary" @click="handleEdit(row)">
@@ -180,7 +195,12 @@
       width="760px"
       destroy-on-close
     >
-      <el-form ref="formRef" :model="formData" :rules="rules" label-width="100px">
+      <el-form
+        ref="formRef"
+        :model="formData"
+        :rules="rules"
+        label-width="100px"
+      >
         <el-form-item :label="t('system.parentMenu')" prop="parentId">
           <el-tree-select
             v-model="formData.parentId"
@@ -282,7 +302,12 @@
         <el-row v-if="formData.menuType !== 3" :gutter="16">
           <el-col :span="12">
             <el-form-item :label="t('system.sort')" prop="sort">
-              <el-input-number v-model="formData.sort" :min="0" :max="9999" style="width: 100%" />
+              <el-input-number
+                v-model="formData.sort"
+                :min="0"
+                :max="9999"
+                style="width: 100%"
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -290,7 +315,12 @@
         <el-row v-if="formData.menuType === 3" :gutter="16">
           <el-col :span="12">
             <el-form-item :label="t('system.sort')" prop="sort">
-              <el-input-number v-model="formData.sort" :min="0" :max="9999" style="width: 100%" />
+              <el-input-number
+                v-model="formData.sort"
+                :min="0"
+                :max="9999"
+                style="width: 100%"
+              />
             </el-form-item>
           </el-col>
         </el-row>

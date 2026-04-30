@@ -31,12 +31,12 @@ func NewUpdateProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upd
 }
 
 func (l *UpdateProfileLogic) UpdateProfile(req *types.UpdateProfileReq) (resp *types.RespBase, err error) {
-	uid, err := utils.GetUidFromCtx(l.ctx)
+	userId, err := utils.GetUserIdFromCtx(l.ctx)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", i18n.Translate(i18n.InternalServerError, l.ctx), err)
 	}
 	result, err := l.svcCtx.SystemCli.UpdateProfile(l.ctx, &system.UpdateProfileReq{
-		Id:       uid,
+		Id:       userId,
 		Avatar:   &req.Avatar,
 		Nickname: &req.Nickname,
 		Password: &req.Password,

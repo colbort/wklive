@@ -37,7 +37,15 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.AppCreateOrderReq) (*staking.
 	if err != nil {
 		return nil, err
 	}
-	if product == nil || product.TenantId != in.TenantId {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	if product == nil || product.TenantId != tenantId {
 		return &staking.AppCreateOrderResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
 	}
 	if product.Status != int64(staking.ProductStatus_PRODUCT_STATUS_ENABLE) {
@@ -64,7 +72,7 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.AppCreateOrderReq) (*staking.
 		return &staking.AppCreateOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ProductQuotaInsufficient, l.ctx))}, nil
 	}
 	if product.UserLimitAmount > 0 {
-		userStaked, err := l.svcCtx.StakeOrderModel.SumStakeAmountByStatuses(l.ctx, in.TenantId, in.Uid, in.ProductId, activeOrderStatuses())
+		userStaked, err := l.svcCtx.StakeOrderModel.SumStakeAmountByStatuses(l.ctx, tenantId, userId, in.ProductId, activeOrderStatuses())
 		if err != nil {
 			return nil, err
 		}
@@ -84,9 +92,9 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.AppCreateOrderReq) (*staking.
 		return nil, err
 	}
 	order := &models.TStakeOrder{
-		TenantId:         in.TenantId,
+		TenantId:         tenantId,
 		OrderNo:          orderNo,
-		Uid:              in.Uid,
+		UserId:           userId,
 		ProductId:        product.Id,
 		ProductNo:        product.ProductNo,
 		ProductName:      product.ProductName,
@@ -117,15 +125,15 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.AppCreateOrderReq) (*staking.
 		RedeemTimes:      0,
 		Source:           int64(in.Source),
 		Remark:           in.Remark,
-		CreateUserId:     in.Uid,
-		UpdateUserId:     in.Uid,
+		CreateUserId:     userId,
+		UpdateUserId:     userId,
 		CreateTimes:      now,
 		UpdateTimes:      now,
 	}
 
 	lockResp, err := l.svcCtx.AssetClient.LockAsset(l.ctx, &asset.LockAssetReq{
-		TenantId:   in.TenantId,
-		UserId:     in.Uid,
+		TenantId:   tenantId,
+		UserId:     userId,
 		WalletType: asset.WalletType_WALLET_TYPE_EARN,
 		Coin:       product.CoinSymbol,
 		Amount:     conv.FloatString(amount),
@@ -147,7 +155,7 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.AppCreateOrderReq) (*staking.
 	}
 
 	product.StakedAmount += amount
-	product.UpdateUserId = in.Uid
+	product.UpdateUserId = userId
 	product.UpdateTimes = now
 	var id int64
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
@@ -167,7 +175,7 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.AppCreateOrderReq) (*staking.
 	})
 	if err != nil {
 		_, unlockErr := l.svcCtx.AssetClient.UnlockAssetByBizNo(l.ctx, &asset.UnlockAssetByBizNoReq{
-			TenantId:      in.TenantId,
+			TenantId:      tenantId,
 			TargetBizType: asset.BizType_BIZ_TYPE_STAKING,
 			TargetBizNo:   orderNo,
 			Amount:        conv.FloatString(amount),

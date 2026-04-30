@@ -39,11 +39,15 @@ export function apiCryptoWalletAccountList(
   return get<CryptoWalletAccount[]>('/admin/payment/crypto-wallet-accounts', params)
 }
 
-export function apiCryptoWalletAccountCreate(params: CreateCryptoWalletAccountReq): Promise<RespBase> {
+export function apiCryptoWalletAccountCreate(
+  params: CreateCryptoWalletAccountReq,
+): Promise<RespBase> {
   return post('/admin/payment/crypto-wallet-account', params)
 }
 
-export function apiCryptoWalletAccountUpdate(params: UpdateCryptoWalletAccountReq): Promise<RespBase> {
+export function apiCryptoWalletAccountUpdate(
+  params: UpdateCryptoWalletAccountReq,
+): Promise<RespBase> {
   return put('/admin/payment/crypto-wallet-account', params)
 }
 

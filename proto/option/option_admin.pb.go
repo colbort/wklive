@@ -1365,7 +1365,7 @@ func (x *GetOrderResp) GetData() *OptionOrderDetail {
 type ListOrdersReq struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	TenantId         int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid              int64                  `protobuf:"varint,2,opt,name=uid,proto3" json:"uid,omitempty"`
+	UserId           int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	AccountId        int64                  `protobuf:"varint,3,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	ContractId       int64                  `protobuf:"varint,4,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
 	UnderlyingSymbol string                 `protobuf:"bytes,5,opt,name=underlying_symbol,json=underlyingSymbol,proto3" json:"underlying_symbol,omitempty"`
@@ -1417,9 +1417,9 @@ func (x *ListOrdersReq) GetTenantId() int64 {
 	return 0
 }
 
-func (x *ListOrdersReq) GetUid() int64 {
+func (x *ListOrdersReq) GetUserId() int64 {
 	if x != nil {
-		return x.Uid
+		return x.UserId
 	}
 	return 0
 }
@@ -1670,7 +1670,7 @@ type ListTradesReq struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	TenantId       int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	ContractId     int64                  `protobuf:"varint,2,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
-	Uid            int64                  `protobuf:"varint,3,opt,name=uid,proto3" json:"uid,omitempty"`
+	UserId         int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	TradeNo        string                 `protobuf:"bytes,4,opt,name=trade_no,json=tradeNo,proto3" json:"trade_no,omitempty"`
 	TradeTimeRange *common.TimeRange      `protobuf:"bytes,5,opt,name=trade_time_range,json=tradeTimeRange,proto3" json:"trade_time_range,omitempty"`
 	Page           *common.PageReq        `protobuf:"bytes,6,opt,name=page,proto3" json:"page,omitempty"`
@@ -1722,9 +1722,9 @@ func (x *ListTradesReq) GetContractId() int64 {
 	return 0
 }
 
-func (x *ListTradesReq) GetUid() int64 {
+func (x *ListTradesReq) GetUserId() int64 {
 	if x != nil {
-		return x.Uid
+		return x.UserId
 	}
 	return 0
 }
@@ -1917,7 +1917,7 @@ func (x *GetPositionResp) GetData() *OptionPositionDetail {
 type ListPositionsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid           int64                  `protobuf:"varint,2,opt,name=uid,proto3" json:"uid,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	AccountId     int64                  `protobuf:"varint,3,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	ContractId    int64                  `protobuf:"varint,4,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
 	Side          PositionSide           `protobuf:"varint,5,opt,name=side,proto3,enum=option.PositionSide" json:"side,omitempty"`
@@ -1964,9 +1964,9 @@ func (x *ListPositionsReq) GetTenantId() int64 {
 	return 0
 }
 
-func (x *ListPositionsReq) GetUid() int64 {
+func (x *ListPositionsReq) GetUserId() int64 {
 	if x != nil {
-		return x.Uid
+		return x.UserId
 	}
 	return 0
 }
@@ -2181,7 +2181,7 @@ func (x *GetExerciseResp) GetData() *OptionExerciseDetail {
 type ListExercisesReq struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	TenantId          int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid               int64                  `protobuf:"varint,2,opt,name=uid,proto3" json:"uid,omitempty"`
+	UserId            int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	AccountId         int64                  `protobuf:"varint,3,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	ContractId        int64                  `protobuf:"varint,4,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
 	ExerciseType      ExerciseType           `protobuf:"varint,5,opt,name=exercise_type,json=exerciseType,proto3,enum=option.ExerciseType" json:"exercise_type,omitempty"`
@@ -2229,9 +2229,9 @@ func (x *ListExercisesReq) GetTenantId() int64 {
 	return 0
 }
 
-func (x *ListExercisesReq) GetUid() int64 {
+func (x *ListExercisesReq) GetUserId() int64 {
 	if x != nil {
-		return x.Uid
+		return x.UserId
 	}
 	return 0
 }
@@ -2589,7 +2589,7 @@ func (x *ListSettlementsResp) GetPage() *common.PageReq {
 type GetAccountReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid           int64                  `protobuf:"varint,2,opt,name=uid,proto3" json:"uid,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	AccountId     int64                  `protobuf:"varint,3,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	MarginCoin    string                 `protobuf:"bytes,4,opt,name=margin_coin,json=marginCoin,proto3" json:"margin_coin,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -2633,9 +2633,9 @@ func (x *GetAccountReq) GetTenantId() int64 {
 	return 0
 }
 
-func (x *GetAccountReq) GetUid() int64 {
+func (x *GetAccountReq) GetUserId() int64 {
 	if x != nil {
-		return x.Uid
+		return x.UserId
 	}
 	return 0
 }
@@ -2709,7 +2709,7 @@ func (x *GetAccountResp) GetData() *OptionAccount {
 type ListAccountsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid           int64                  `protobuf:"varint,2,opt,name=uid,proto3" json:"uid,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	AccountId     int64                  `protobuf:"varint,3,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	Status        AccountStatus          `protobuf:"varint,4,opt,name=status,proto3,enum=option.AccountStatus" json:"status,omitempty"`
 	Page          *common.PageReq        `protobuf:"bytes,5,opt,name=page,proto3" json:"page,omitempty"`
@@ -2754,9 +2754,9 @@ func (x *ListAccountsReq) GetTenantId() int64 {
 	return 0
 }
 
-func (x *ListAccountsReq) GetUid() int64 {
+func (x *ListAccountsReq) GetUserId() int64 {
 	if x != nil {
-		return x.Uid
+		return x.UserId
 	}
 	return 0
 }
@@ -2949,7 +2949,7 @@ func (x *GetBillResp) GetData() *OptionBill {
 type ListBillsReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	TenantId        int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Uid             int64                  `protobuf:"varint,2,opt,name=uid,proto3" json:"uid,omitempty"`
+	UserId          int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	AccountId       int64                  `protobuf:"varint,3,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	BizNo           string                 `protobuf:"bytes,4,opt,name=biz_no,json=bizNo,proto3" json:"biz_no,omitempty"`
 	RefType         BillRefType            `protobuf:"varint,5,opt,name=ref_type,json=refType,proto3,enum=option.BillRefType" json:"ref_type,omitempty"`
@@ -2996,9 +2996,9 @@ func (x *ListBillsReq) GetTenantId() int64 {
 	return 0
 }
 
-func (x *ListBillsReq) GetUid() int64 {
+func (x *ListBillsReq) GetUserId() int64 {
 	if x != nil {
-		return x.Uid
+		return x.UserId
 	}
 	return 0
 }
@@ -3243,10 +3243,10 @@ const file_proto_option_option_admin_proto_rawDesc = "" +
 	"\border_no\x18\x03 \x01(\tR\aorderNo\"c\n" +
 	"\fGetOrderResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x02 \x01(\v2\x19.option.OptionOrderDetailR\x04data\"\xec\x03\n" +
+	"\x04data\x18\x02 \x01(\v2\x19.option.OptionOrderDetailR\x04data\"\xf3\x03\n" +
 	"\rListOrdersReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x02 \x01(\x03R\x03uid\x12\x1d\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x03 \x01(\x03R\taccountId\x12\x1f\n" +
 	"\vcontract_id\x18\x04 \x01(\x03R\n" +
@@ -3271,12 +3271,12 @@ const file_proto_option_option_admin_proto_rawDesc = "" +
 	"\btrade_no\x18\x03 \x01(\tR\atradeNo\"c\n" +
 	"\fGetTradeResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x02 \x01(\v2\x19.option.OptionTradeDetailR\x04data\"\xdc\x01\n" +
+	"\x04data\x18\x02 \x01(\v2\x19.option.OptionTradeDetailR\x04data\"\xe3\x01\n" +
 	"\rListTradesReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1f\n" +
 	"\vcontract_id\x18\x02 \x01(\x03R\n" +
-	"contractId\x12\x10\n" +
-	"\x03uid\x18\x03 \x01(\x03R\x03uid\x12\x19\n" +
+	"contractId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x19\n" +
 	"\btrade_no\x18\x04 \x01(\tR\atradeNo\x12;\n" +
 	"\x10trade_time_range\x18\x05 \x01(\v2\x11.common.TimeRangeR\x0etradeTimeRange\x12#\n" +
 	"\x04page\x18\x06 \x01(\v2\x0f.common.PageReqR\x04page\"\x8a\x01\n" +
@@ -3289,10 +3289,10 @@ const file_proto_option_option_admin_proto_rawDesc = "" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\"i\n" +
 	"\x0fGetPositionResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x120\n" +
-	"\x04data\x18\x02 \x01(\v2\x1c.option.OptionPositionDetailR\x04data\"\x80\x02\n" +
+	"\x04data\x18\x02 \x01(\v2\x1c.option.OptionPositionDetailR\x04data\"\x87\x02\n" +
 	"\x10ListPositionsReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x02 \x01(\x03R\x03uid\x12\x1d\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x03 \x01(\x03R\taccountId\x12\x1f\n" +
 	"\vcontract_id\x18\x04 \x01(\x03R\n" +
@@ -3311,10 +3311,10 @@ const file_proto_option_option_admin_proto_rawDesc = "" +
 	"exerciseNo\"i\n" +
 	"\x0fGetExerciseResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x120\n" +
-	"\x04data\x18\x02 \x01(\v2\x1c.option.OptionExerciseDetailR\x04data\"\xd4\x02\n" +
+	"\x04data\x18\x02 \x01(\v2\x1c.option.OptionExerciseDetailR\x04data\"\xdb\x02\n" +
 	"\x10ListExercisesReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x02 \x01(\x03R\x03uid\x12\x1d\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x03 \x01(\x03R\taccountId\x12\x1f\n" +
 	"\vcontract_id\x18\x04 \x01(\x03R\n" +
@@ -3344,20 +3344,20 @@ const file_proto_option_option_admin_proto_rawDesc = "" +
 	"\x13ListSettlementsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x122\n" +
 	"\x04list\x18\x02 \x03(\v2\x1e.option.OptionSettlementDetailR\x04list\x12#\n" +
-	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\"~\n" +
+	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\"\x85\x01\n" +
 	"\rGetAccountReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x02 \x01(\x03R\x03uid\x12\x1d\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x03 \x01(\x03R\taccountId\x12\x1f\n" +
 	"\vmargin_coin\x18\x04 \x01(\tR\n" +
 	"marginCoin\"a\n" +
 	"\x0eGetAccountResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
-	"\x04data\x18\x02 \x01(\v2\x15.option.OptionAccountR\x04data\"\xb3\x01\n" +
+	"\x04data\x18\x02 \x01(\v2\x15.option.OptionAccountR\x04data\"\xba\x01\n" +
 	"\x0fListAccountsReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x02 \x01(\x03R\x03uid\x12\x1d\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x03 \x01(\x03R\taccountId\x12-\n" +
 	"\x06status\x18\x04 \x01(\x0e2\x15.option.AccountStatusR\x06status\x12#\n" +
@@ -3372,10 +3372,10 @@ const file_proto_option_option_admin_proto_rawDesc = "" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\"[\n" +
 	"\vGetBillResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
-	"\x04data\x18\x02 \x01(\v2\x12.option.OptionBillR\x04data\"\x87\x02\n" +
+	"\x04data\x18\x02 \x01(\v2\x12.option.OptionBillR\x04data\"\x8e\x02\n" +
 	"\fListBillsReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x10\n" +
-	"\x03uid\x18\x02 \x01(\x03R\x03uid\x12\x1d\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x03 \x01(\x03R\taccountId\x12\x15\n" +
 	"\x06biz_no\x18\x04 \x01(\tR\x05bizNo\x12.\n" +

@@ -33,15 +33,23 @@ func NewPlaceOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PlaceO
 
 // 下单
 func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrderResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	symbol, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, in.SymbolId)
-	if errors.Is(err, models.ErrNotFound) || (err == nil && symbol.TenantId != in.TenantId) {
+	if errors.Is(err, models.ErrNotFound) || (err == nil && symbol.TenantId != tenantId) {
 		return &trade.PlaceOrderResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
 	}
 	if err != nil {
 		return nil, err
 	}
 	if in.ClientOrderId != "" {
-		exists, err := l.svcCtx.TradeOrderModel.FindOneByTenantIdUserIdClientOrderId(l.ctx, in.TenantId, in.UserId, in.ClientOrderId)
+		exists, err := l.svcCtx.TradeOrderModel.FindOneByTenantIdUserIdClientOrderId(l.ctx, tenantId, userId, in.ClientOrderId)
 		if err != nil && !errors.Is(err, models.ErrNotFound) {
 			return nil, err
 		}
@@ -70,10 +78,10 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 	}
 	now := utils.NowMillis()
 	order := &models.TTradeOrder{
-		TenantId:      in.TenantId,
+		TenantId:      tenantId,
 		OrderNo:       orderNo,
 		ClientOrderId: in.ClientOrderId,
-		UserId:        in.UserId,
+		UserId:        userId,
 		SymbolId:      in.SymbolId,
 		MarketType:    int64(in.MarketType),
 		Side:          int64(in.Side),
@@ -118,7 +126,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		if in.MarketType == trade.MarketType_MARKET_TYPE_SPOT {
 			frozenAsset, frozenAmount = spotFrozenAssetAndAmount(symbol, in.Side, qty, amount)
 			spot := &models.TTradeOrderSpot{
-				TenantId:     in.TenantId,
+				TenantId:     tenantId,
 				OrderId:      order.Id,
 				FrozenAsset:  frozenAsset,
 				FrozenAmount: frozenAmount,
@@ -136,7 +144,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		marginAsset := marginAssetForSymbol(symbol)
 		frozenAsset, frozenAmount = marginAsset, amount
 		contract := &models.TTradeOrderContract{
-			TenantId:          in.TenantId,
+			TenantId:          tenantId,
 			OrderId:           order.Id,
 			MarginMode:        int64(in.MarginMode),
 			Leverage:          ensureLeverage(symbol, in.Leverage),

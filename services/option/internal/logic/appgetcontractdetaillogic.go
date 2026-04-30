@@ -3,12 +3,14 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type AppGetContractDetailLogic struct {
@@ -27,6 +29,10 @@ func NewAppGetContractDetailLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 // 获取期权合约详情
 func (l *AppGetContractDetailLogic) AppGetContractDetail(in *option.AppGetContractDetailReq) (*option.AppGetContractDetailResp, error) {
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	item, err := l.svcCtx.OptionContractModel.FindOne(l.ctx, in.ContractId)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
@@ -34,7 +40,7 @@ func (l *AppGetContractDetailLogic) AppGetContractDetail(in *option.AppGetContra
 		}
 		return nil, err
 	}
-	if in.TenantId != 0 && item.TenantId != in.TenantId {
+	if item.TenantId != tenantId {
 		return &option.AppGetContractDetailResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
 	}
 	data, err := buildContractDetail(l.ctx, l.svcCtx, item)

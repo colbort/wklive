@@ -29,12 +29,20 @@ func NewGetMyCryptoRechargeAddressLogic(ctx context.Context, svcCtx *svc.Service
 
 // 获取/分配我的链上充值地址
 func (l *GetMyCryptoRechargeAddressLogic) GetMyCryptoRechargeAddress(in *payment.GetMyCryptoRechargeAddressReq) (*payment.GetMyCryptoRechargeAddressResp, error) {
-	item, err := l.svcCtx.CryptoRechargeAddressModel.FindOneByTenantIdUserIdWalletTypeCoinChainCode(l.ctx, in.TenantId, in.UserId, in.WalletType, in.Coin, int64(in.ChainCode))
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	item, err := l.svcCtx.CryptoRechargeAddressModel.FindOneByTenantIdUserIdWalletTypeCoinChainCode(l.ctx, tenantId, userId, in.WalletType, in.Coin, int64(in.ChainCode))
 	if err != nil {
 		if !errors.Is(err, models.ErrNotFound) {
 			return nil, err
 		}
-		item, err = l.svcCtx.CryptoRechargeAddressModel.FindOneAssignable(l.ctx, in.TenantId, in.WalletType, in.Coin, int64(in.ChainCode))
+		item, err = l.svcCtx.CryptoRechargeAddressModel.FindOneAssignable(l.ctx, tenantId, in.WalletType, in.Coin, int64(in.ChainCode))
 		if err != nil {
 			if errors.Is(err, models.ErrNotFound) {
 				return &payment.GetMyCryptoRechargeAddressResp{Base: helper.GetErrResp(404, "no available crypto recharge address")}, nil
@@ -43,7 +51,7 @@ func (l *GetMyCryptoRechargeAddressLogic) GetMyCryptoRechargeAddress(in *payment
 		}
 
 		now := utils.NowMillis()
-		item.UserId = in.UserId
+		item.UserId = userId
 		item.WalletType = in.WalletType
 		item.Coin = in.Coin
 		item.ChainCode = int64(in.ChainCode)

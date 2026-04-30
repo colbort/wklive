@@ -18,16 +18,16 @@ type Connection struct {
 	Hub      *Hub
 	Conn     *websocket.Conn
 	Send     chan []byte
-	UID      int64
+	UserId   int64
 	Username string
 }
 
-func NewConnection(hub *Hub, conn *websocket.Conn, uid int64, username string) *Connection {
+func NewConnection(hub *Hub, conn *websocket.Conn, userId int64, username string) *Connection {
 	return &Connection{
 		Hub:      hub,
 		Conn:     conn,
 		Send:     make(chan []byte, 32),
-		UID:      uid,
+		UserId:   userId,
 		Username: username,
 	}
 }
@@ -47,7 +47,7 @@ func (c *Connection) ReadPump() {
 	for {
 		if _, _, err := c.Conn.NextReader(); err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-				logx.Errorf("admin ws read failed, uid=%d err=%v", c.UID, err)
+				logx.Errorf("admin ws read failed, userId=%d err=%v", c.UserId, err)
 			}
 			return
 		}

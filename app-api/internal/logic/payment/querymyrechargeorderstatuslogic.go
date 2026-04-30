@@ -8,7 +8,6 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/common/utils"
 	"wklive/proto/payment"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,18 +28,8 @@ func NewQueryMyRechargeOrderStatusLogic(ctx context.Context, svcCtx *svc.Service
 }
 
 func (l *QueryMyRechargeOrderStatusLogic) QueryMyRechargeOrderStatus(req *types.QueryMyRechargeOrderStatusReq) (resp *types.QueryMyRechargeOrderStatusResp, err error) {
-	userId, err := utils.GetUidFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-	tenantId, err := utils.GetTenantIdFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
 	result, err := l.svcCtx.PaymentCli.QueryMyRechargeOrderStatus(l.ctx, &payment.QueryMyRechargeOrderStatusReq{
-		UserId:   userId,
-		TenantId: tenantId,
-		OrderNo:  req.OrderNo,
+		OrderNo: req.OrderNo,
 	})
 	if err != nil {
 		return nil, err
@@ -81,8 +70,8 @@ func (l *QueryMyRechargeOrderStatusLogic) QueryMyRechargeOrderStatus(req *types.
 			NotifyTime:   result.Order.NotifyTime,
 			CloseTime:    result.Order.CloseTime,
 			Remark:       result.Order.Remark,
-			CreateTimes:   result.Order.CreateTimes,
-			UpdateTimes:   result.Order.UpdateTimes,
+			CreateTimes:  result.Order.CreateTimes,
+			UpdateTimes:  result.Order.UpdateTimes,
 		},
 	}, nil
 }

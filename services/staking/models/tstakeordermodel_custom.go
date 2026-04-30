@@ -10,17 +10,17 @@ import (
 
 type StakeOrderModel interface {
 	tStakeOrderModel
-	FindPage(ctx context.Context, tenantID int64, cursor, limit int64, uid, productID int64, orderNo, productName, coinSymbol string, status, redeemType, source int64, startBegin, startEnd, endBegin, endEnd int64) ([]*TStakeOrder, int64, error)
-	SumStakeAmountByStatuses(ctx context.Context, tenantID, uid, productID int64, statuses []int64) (float64, error)
+	FindPage(ctx context.Context, tenantID int64, cursor, limit int64, user_id, productID int64, orderNo, productName, coinSymbol string, status, redeemType, source int64, startBegin, startEnd, endBegin, endEnd int64) ([]*TStakeOrder, int64, error)
+	SumStakeAmountByStatuses(ctx context.Context, tenantID, user_id, productID int64, statuses []int64) (float64, error)
 }
 
-func (m *defaultTStakeOrderModel) FindPage(ctx context.Context, tenantID int64, cursor, limit int64, uid, productID int64, orderNo, productName, coinSymbol string, status, redeemType, source int64, startBegin, startEnd, endBegin, endEnd int64) ([]*TStakeOrder, int64, error) {
+func (m *defaultTStakeOrderModel) FindPage(ctx context.Context, tenantID int64, cursor, limit int64, user_id, productID int64, orderNo, productName, coinSymbol string, status, redeemType, source int64, startBegin, startEnd, endBegin, endEnd int64) ([]*TStakeOrder, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.And("tenant_id = ?", tenantID)
-	if uid > 0 {
-		builder.And("uid = ?", uid)
+	if user_id > 0 {
+		builder.And("user_id = ?", user_id)
 	}
 	if productID > 0 {
 		builder.And("product_id = ?", productID)
@@ -64,10 +64,10 @@ func (m *defaultTStakeOrderModel) FindPage(ctx context.Context, tenantID int64, 
 	return list, total, nil
 }
 
-func (m *defaultTStakeOrderModel) SumStakeAmountByStatuses(ctx context.Context, tenantID, uid, productID int64, statuses []int64) (float64, error) {
+func (m *defaultTStakeOrderModel) SumStakeAmountByStatuses(ctx context.Context, tenantID, user_id, productID int64, statuses []int64) (float64, error) {
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.And("tenant_id = ?", tenantID)
-	builder.And("uid = ?", uid)
+	builder.And("user_id = ?", user_id)
 	builder.And("product_id = ?", productID)
 	builder.InInt64("status", statuses)
 

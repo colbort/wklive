@@ -38,7 +38,7 @@ func (l *RefreshTokenLogic) RefreshToken(in *user.RefreshTokenReq) (*user.Refres
 	}
 
 	// 获取用户信息
-	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, claims.Uid)
+	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, claims.UserId)
 	if err != nil {
 		return nil, err
 	}

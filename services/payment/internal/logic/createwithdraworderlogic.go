@@ -31,6 +31,14 @@ func NewCreateWithdrawOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext
 
 // 提现
 func (l *CreateWithdrawOrderLogic) CreateWithdrawOrder(in *payment.CreateWithdrawOrderReq) (*payment.CreateWithdrawOrderResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	now := utils.NowMillis()
 	orderNo, err := l.svcCtx.GenerateOrderNo(l.ctx, "WD")
 	if err != nil {
@@ -39,8 +47,8 @@ func (l *CreateWithdrawOrderLogic) CreateWithdrawOrder(in *payment.CreateWithdra
 
 	// Create withdraw order
 	withdrawOrder := &models.TWithdrawOrder{
-		TenantId:     in.TenantId,
-		UserId:       in.UserId,
+		TenantId:     tenantId,
+		UserId:       userId,
 		OrderNo:      orderNo,
 		BizOrderNo:   sql.NullString{String: "", Valid: true},
 		PlatformId:   0,
@@ -77,11 +85,11 @@ func (l *CreateWithdrawOrderLogic) CreateWithdrawOrder(in *payment.CreateWithdra
 		id = withdrawOrder.Id
 	}
 
-	l.Logger.Infof("Create withdraw order success: %s, user_id: %d, amount: %d", orderNo, in.UserId, in.Amount)
-	event := notify.NewEvent(notify.EventTypeWithdraw, notify.EventLevelWarning, "用户提现", fmt.Sprintf("用户 %d 发起提现订单 %s", in.UserId, orderNo))
+	l.Logger.Infof("Create withdraw order success: %s, user_id: %d, amount: %d", orderNo, userId, in.Amount)
+	event := notify.NewEvent(notify.EventTypeWithdraw, notify.EventLevelWarning, "用户提现", fmt.Sprintf("用户 %d 发起提现订单 %s", userId, orderNo))
 	event.Source = "payment"
-	event.TenantID = in.TenantId
-	event.UserID = in.UserId
+	event.TenantID = tenantId
+	event.UserID = userId
 	event.BizNo = orderNo
 	event.Data = map[string]any{
 		"amount":   in.Amount,

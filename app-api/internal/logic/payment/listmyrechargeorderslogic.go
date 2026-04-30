@@ -8,7 +8,6 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/payment"
 
@@ -30,17 +29,7 @@ func NewListMyRechargeOrdersLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 func (l *ListMyRechargeOrdersLogic) ListMyRechargeOrders(req *types.ListMyRechargeOrdersReq) (resp *types.ListMyRechargeOrdersResp, err error) {
-	userId, err := utils.GetUidFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-	tenantId, err := utils.GetTenantIdFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
 	result, err := l.svcCtx.PaymentCli.ListMyRechargeOrders(l.ctx, &payment.ListMyRechargeOrdersReq{
-		UserId:   userId,
-		TenantId: tenantId,
 		Page: &common.PageReq{
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
@@ -86,8 +75,8 @@ func (l *ListMyRechargeOrdersLogic) ListMyRechargeOrders(req *types.ListMyRechar
 			NotifyTime:   order.NotifyTime,
 			CloseTime:    order.CloseTime,
 			Remark:       order.Remark,
-			CreateTimes:   order.CreateTimes,
-			UpdateTimes:   order.UpdateTimes,
+			CreateTimes:  order.CreateTimes,
+			UpdateTimes:  order.UpdateTimes,
 		})
 	}
 	return &types.ListMyRechargeOrdersResp{

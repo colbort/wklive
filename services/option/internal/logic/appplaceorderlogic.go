@@ -7,6 +7,7 @@ import (
 	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
@@ -33,6 +34,14 @@ func NewAppPlaceOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *App
 
 // 提交期权下单请求
 func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option.AppPlaceOrderResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	contract, err := l.svcCtx.OptionContractModel.FindOne(l.ctx, in.ContractId)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
@@ -40,7 +49,7 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 		}
 		return nil, err
 	}
-	if contract.TenantId != in.TenantId {
+	if contract.TenantId != tenantId {
 		return &option.AppPlaceOrderResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
 	}
 	if contract.Status != int64(option.ContractStatus_CONTRACT_STATUS_TRADING) {
@@ -69,7 +78,7 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 	}
 
 	if in.ClientOrderId != "" {
-		exists, err := l.svcCtx.OptionOrderModel.FindOneByTenantIdUidClientOrderId(l.ctx, in.TenantId, in.Uid, in.ClientOrderId)
+		exists, err := l.svcCtx.OptionOrderModel.FindOneByTenantIdUserIdClientOrderId(l.ctx, tenantId, userId, in.ClientOrderId)
 		if err != nil && !errors.Is(err, models.ErrNotFound) {
 			return nil, err
 		}
@@ -85,9 +94,9 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 
 	now := time.Now().Unix()
 	order := &models.TOptionOrder{
-		TenantId:         in.TenantId,
+		TenantId:         tenantId,
 		OrderNo:          orderNo,
-		Uid:              in.Uid,
+		UserId:           userId,
 		AccountId:        in.AccountId,
 		ContractId:       in.ContractId,
 		UnderlyingSymbol: contract.UnderlyingSymbol,
@@ -132,8 +141,8 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 
 	if marginAmount > 0 {
 		resp, err := l.svcCtx.AssetClient.FreezeAsset(l.ctx, &asset.FreezeAssetReq{
-			TenantId:   in.TenantId,
-			UserId:     in.Uid,
+			TenantId:   tenantId,
+			UserId:     userId,
 			WalletType: asset.WalletType_WALLET_TYPE_OPTION,
 			Coin:       contract.SettleCoin,
 			Amount:     conv.FloatString(marginAmount),

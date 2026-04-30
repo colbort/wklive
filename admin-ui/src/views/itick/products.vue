@@ -195,7 +195,12 @@
       :title="formMode === 'add' ? t('itick.addProduct') : t('itick.editProduct')"
       width="700px"
     >
-      <el-form ref="formRef" :model="form" :rules="rules" label-width="120px">
+      <el-form
+        ref="formRef"
+        :model="form"
+        :rules="rules"
+        label-width="120px"
+      >
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item

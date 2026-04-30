@@ -41,8 +41,8 @@ func (l *GuestLoginLogic) GuestLogin(req *types.GuestLoginReq) (resp *types.Gues
 	if result.Data != nil {
 		data = types.GuestLogin{
 			Token:    result.Data.Token,
-			Uid:      result.Data.Uid,
-			DeviceId: result.Data.Uid,
+			UserId:   result.Data.UserId,
+			DeviceId: "",
 			Username: result.Data.Username,
 			IsNew:    result.Data.IsNew,
 		}

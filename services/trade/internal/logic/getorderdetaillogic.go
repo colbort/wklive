@@ -6,6 +6,7 @@ import (
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -33,12 +34,20 @@ func (l *GetOrderDetailLogic) GetOrderDetail(in *trade.GetOrderDetailReq) (*trad
 		item *models.TTradeOrder
 		err  error
 	)
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	if in.OrderId > 0 {
 		item, err = l.svcCtx.TradeOrderModel.FindOne(l.ctx, in.OrderId)
 	} else {
-		item, err = l.svcCtx.TradeOrderModel.FindOneByTenantIdOrderNo(l.ctx, in.TenantId, in.OrderNo)
+		item, err = l.svcCtx.TradeOrderModel.FindOneByTenantIdOrderNo(l.ctx, tenantId, in.OrderNo)
 	}
-	if errors.Is(err, models.ErrNotFound) || (err == nil && (item.TenantId != in.TenantId || item.UserId != in.UserId)) {
+	if errors.Is(err, models.ErrNotFound) || (err == nil && (item.TenantId != tenantId || item.UserId != userId)) {
 		return &trade.GetOrderDetailResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 	}
 	if err != nil {
@@ -46,14 +55,14 @@ func (l *GetOrderDetailLogic) GetOrderDetail(in *trade.GetOrderDetailReq) (*trad
 	}
 
 	resp := &trade.GetOrderDetailResp{Base: helper.OkResp(), Order: orderToProto(item)}
-	spot, err := l.svcCtx.TradeOrderSpotModel.FindOneByTenantIdOrderId(l.ctx, in.TenantId, item.Id)
+	spot, err := l.svcCtx.TradeOrderSpotModel.FindOneByTenantIdOrderId(l.ctx, tenantId, item.Id)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 	if spot != nil {
 		resp.Spot = orderSpotToProto(spot)
 	}
-	contractCfg, err := l.svcCtx.TradeOrderContractModel.FindOneByTenantIdOrderId(l.ctx, in.TenantId, item.Id)
+	contractCfg, err := l.svcCtx.TradeOrderContractModel.FindOneByTenantIdOrderId(l.ctx, tenantId, item.Id)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}

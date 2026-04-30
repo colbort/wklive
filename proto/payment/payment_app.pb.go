@@ -69,8 +69,6 @@ func (x *AppCommonResp) GetBase() *common.RespBase {
 // 当前用户累计充值统计
 type GetMyRechargeStatReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -103,20 +101,6 @@ func (x *GetMyRechargeStatReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetMyRechargeStatReq.ProtoReflect.Descriptor instead.
 func (*GetMyRechargeStatReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *GetMyRechargeStatReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *GetMyRechargeStatReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 type GetMyRechargeStatResp struct {
@@ -174,8 +158,6 @@ func (x *GetMyRechargeStatResp) GetStat() *UserRechargeStat {
 // 获取当前登录用户在指定充值场景下可用的充值通道
 type ListAvailableRechargeChannelsReq struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	TenantId       int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId         int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	RechargeAmount int64                  `protobuf:"varint,3,opt,name=recharge_amount,json=rechargeAmount,proto3" json:"recharge_amount,omitempty"` // 单位：分
 	Currency       string                 `protobuf:"bytes,4,opt,name=currency,proto3" json:"currency,omitempty"`
 	ClientType     ClientType             `protobuf:"varint,5,opt,name=client_type,json=clientType,proto3,enum=payment.ClientType" json:"client_type,omitempty"`
@@ -211,20 +193,6 @@ func (x *ListAvailableRechargeChannelsReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ListAvailableRechargeChannelsReq.ProtoReflect.Descriptor instead.
 func (*ListAvailableRechargeChannelsReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *ListAvailableRechargeChannelsReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *ListAvailableRechargeChannelsReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 func (x *ListAvailableRechargeChannelsReq) GetRechargeAmount() int64 {
@@ -303,8 +271,6 @@ func (x *ListAvailableRechargeChannelsResp) GetList() []*VisiblePayChannel {
 // 创建充值订单
 type CreateRechargeOrderReq struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	TenantId       int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId         int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	ChannelId      int64                  `protobuf:"varint,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
 	RechargeAmount int64                  `protobuf:"varint,4,opt,name=recharge_amount,json=rechargeAmount,proto3" json:"recharge_amount,omitempty"` // 单位：分
 	Currency       string                 `protobuf:"bytes,5,opt,name=currency,proto3" json:"currency,omitempty"`
@@ -345,20 +311,6 @@ func (x *CreateRechargeOrderReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use CreateRechargeOrderReq.ProtoReflect.Descriptor instead.
 func (*CreateRechargeOrderReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *CreateRechargeOrderReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *CreateRechargeOrderReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 func (x *CreateRechargeOrderReq) GetChannelId() int64 {
@@ -472,9 +424,7 @@ func (x *CreateRechargeOrderResp) GetOrder() *RechargeOrder {
 // 查询我的订单详情
 type GetMyRechargeOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	OrderNo       string                 `protobuf:"bytes,2,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
-	UserId        int64                  `protobuf:"varint,64,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -509,25 +459,11 @@ func (*GetMyRechargeOrderReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *GetMyRechargeOrderReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
 func (x *GetMyRechargeOrderReq) GetOrderNo() string {
 	if x != nil {
 		return x.OrderNo
 	}
 	return ""
-}
-
-func (x *GetMyRechargeOrderReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 type GetMyRechargeOrderResp struct {
@@ -585,8 +521,6 @@ func (x *GetMyRechargeOrderResp) GetOrder() *RechargeOrder {
 // 查询我的充值订单列表
 type ListMyRechargeOrdersReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	TenantId        int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId          int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Page            *common.PageReq        `protobuf:"bytes,3,opt,name=page,proto3" json:"page,omitempty"`
 	Status          PayOrderStatus         `protobuf:"varint,4,opt,name=status,proto3,enum=payment.PayOrderStatus" json:"status,omitempty"`
 	OrderNo         string                 `protobuf:"bytes,5,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
@@ -624,20 +558,6 @@ func (x *ListMyRechargeOrdersReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ListMyRechargeOrdersReq.ProtoReflect.Descriptor instead.
 func (*ListMyRechargeOrdersReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{9}
-}
-
-func (x *ListMyRechargeOrdersReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *ListMyRechargeOrdersReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 func (x *ListMyRechargeOrdersReq) GetPage() *common.PageReq {
@@ -730,9 +650,7 @@ func (x *ListMyRechargeOrdersResp) GetList() []*RechargeOrder {
 // 取消未支付订单
 type CancelMyRechargeOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	OrderNo       string                 `protobuf:"bytes,2,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
-	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -767,13 +685,6 @@ func (*CancelMyRechargeOrderReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *CancelMyRechargeOrderReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
 func (x *CancelMyRechargeOrderReq) GetOrderNo() string {
 	if x != nil {
 		return x.OrderNo
@@ -781,18 +692,9 @@ func (x *CancelMyRechargeOrderReq) GetOrderNo() string {
 	return ""
 }
 
-func (x *CancelMyRechargeOrderReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
 // 轮询订单状态
 type QueryMyRechargeOrderStatusReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	OrderNo       string                 `protobuf:"bytes,3,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -826,20 +728,6 @@ func (x *QueryMyRechargeOrderStatusReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use QueryMyRechargeOrderStatusReq.ProtoReflect.Descriptor instead.
 func (*QueryMyRechargeOrderStatusReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{12}
-}
-
-func (x *QueryMyRechargeOrderStatusReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *QueryMyRechargeOrderStatusReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 func (x *QueryMyRechargeOrderStatusReq) GetOrderNo() string {
@@ -904,8 +792,6 @@ func (x *QueryMyRechargeOrderStatusResp) GetOrder() *RechargeOrder {
 // 提现
 type CreateWithdrawOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Amount        int64                  `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"` // 单位：分
 	Currency      string                 `protobuf:"bytes,4,opt,name=currency,proto3" json:"currency,omitempty"`
 	Address       string                 `protobuf:"bytes,5,opt,name=address,proto3" json:"address,omitempty"`              // 提现地址（钱包地址等）
@@ -943,20 +829,6 @@ func (x *CreateWithdrawOrderReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use CreateWithdrawOrderReq.ProtoReflect.Descriptor instead.
 func (*CreateWithdrawOrderReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{14}
-}
-
-func (x *CreateWithdrawOrderReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *CreateWithdrawOrderReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 func (x *CreateWithdrawOrderReq) GetAmount() int64 {
@@ -1049,8 +921,6 @@ func (x *CreateWithdrawOrderResp) GetId() int64 {
 // 获取提现订单列表
 type ListMyWithdrawOrdersReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Page          *common.PageReq        `protobuf:"bytes,3,opt,name=page,proto3" json:"page,omitempty"`
 	Status        PayOrderStatus         `protobuf:"varint,4,opt,name=status,proto3,enum=payment.PayOrderStatus" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1085,20 +955,6 @@ func (x *ListMyWithdrawOrdersReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ListMyWithdrawOrdersReq.ProtoReflect.Descriptor instead.
 func (*ListMyWithdrawOrdersReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{16}
-}
-
-func (x *ListMyWithdrawOrdersReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *ListMyWithdrawOrdersReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 func (x *ListMyWithdrawOrdersReq) GetPage() *common.PageReq {
@@ -1171,7 +1027,6 @@ func (x *ListMyWithdrawOrdersResp) GetData() []*WithdrawOrder {
 type GetMyWithdrawOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1209,13 +1064,6 @@ func (*GetMyWithdrawOrderReq) Descriptor() ([]byte, []int) {
 func (x *GetMyWithdrawOrderReq) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *GetMyWithdrawOrderReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
 	}
 	return 0
 }
@@ -1275,8 +1123,6 @@ func (x *GetMyWithdrawOrderResp) GetData() *WithdrawOrder {
 // 获取/分配我的链上充值地址
 type GetMyCryptoRechargeAddressReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	WalletType    int64                  `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3" json:"wallet_type,omitempty"`
 	Coin          string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`
 	ChainCode     common.ChainCode       `protobuf:"varint,5,opt,name=chain_code,json=chainCode,proto3,enum=common.ChainCode" json:"chain_code,omitempty"`
@@ -1312,20 +1158,6 @@ func (x *GetMyCryptoRechargeAddressReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetMyCryptoRechargeAddressReq.ProtoReflect.Descriptor instead.
 func (*GetMyCryptoRechargeAddressReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{20}
-}
-
-func (x *GetMyCryptoRechargeAddressReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *GetMyCryptoRechargeAddressReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 func (x *GetMyCryptoRechargeAddressReq) GetWalletType() int64 {
@@ -1404,8 +1236,6 @@ func (x *GetMyCryptoRechargeAddressResp) GetData() *CryptoRechargeAddress {
 // 我的链上充值地址列表
 type ListMyCryptoRechargeAddressesReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	WalletType    int64                  `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3" json:"wallet_type,omitempty"`
 	Coin          string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`
 	ChainCode     common.ChainCode       `protobuf:"varint,5,opt,name=chain_code,json=chainCode,proto3,enum=common.ChainCode" json:"chain_code,omitempty"`
@@ -1441,20 +1271,6 @@ func (x *ListMyCryptoRechargeAddressesReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ListMyCryptoRechargeAddressesReq.ProtoReflect.Descriptor instead.
 func (*ListMyCryptoRechargeAddressesReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{22}
-}
-
-func (x *ListMyCryptoRechargeAddressesReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *ListMyCryptoRechargeAddressesReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 func (x *ListMyCryptoRechargeAddressesReq) GetWalletType() int64 {
@@ -1533,8 +1349,6 @@ func (x *ListMyCryptoRechargeAddressesResp) GetData() []*CryptoRechargeAddress {
 // 我的链上充值交易列表
 type ListMyCryptoRechargeTxsReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	TenantId        int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId          int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Page            *common.PageReq        `protobuf:"bytes,3,opt,name=page,proto3" json:"page,omitempty"`
 	OrderNo         string                 `protobuf:"bytes,4,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
 	Coin            string                 `protobuf:"bytes,5,opt,name=coin,proto3" json:"coin,omitempty"`
@@ -1574,20 +1388,6 @@ func (x *ListMyCryptoRechargeTxsReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ListMyCryptoRechargeTxsReq.ProtoReflect.Descriptor instead.
 func (*ListMyCryptoRechargeTxsReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{24}
-}
-
-func (x *ListMyCryptoRechargeTxsReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *ListMyCryptoRechargeTxsReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 func (x *ListMyCryptoRechargeTxsReq) GetPage() *common.PageReq {
@@ -1694,8 +1494,6 @@ func (x *ListMyCryptoRechargeTxsResp) GetData() []*CryptoRechargeTx {
 // 我的链上充值交易详情
 type GetMyCryptoRechargeTxReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Id            int64                  `protobuf:"varint,3,opt,name=id,proto3" json:"id,omitempty"`
 	TxHash        string                 `protobuf:"bytes,4,opt,name=tx_hash,json=txHash,proto3" json:"tx_hash,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1730,20 +1528,6 @@ func (x *GetMyCryptoRechargeTxReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetMyCryptoRechargeTxReq.ProtoReflect.Descriptor instead.
 func (*GetMyCryptoRechargeTxReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_app_proto_rawDescGZIP(), []int{26}
-}
-
-func (x *GetMyCryptoRechargeTxReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *GetMyCryptoRechargeTxReq) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 func (x *GetMyCryptoRechargeTxReq) GetId() int64 {
@@ -1818,26 +1602,20 @@ const file_proto_payment_payment_app_proto_rawDesc = "" +
 	"\n" +
 	"\x1fproto/payment/payment_app.proto\x12\apayment\x1a\x19proto/common/common.proto\x1a\x18proto/payment/enum.proto\x1a\x19proto/payment/model.proto\"5\n" +
 	"\rAppCommonResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"L\n" +
-	"\x14GetMyRechargeStatReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\"l\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\x16\n" +
+	"\x14GetMyRechargeStatReq\"l\n" +
 	"\x15GetMyRechargeStatResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
-	"\x04stat\x18\x02 \x01(\v2\x19.payment.UserRechargeStatR\x04stat\"\xd3\x01\n" +
-	" ListAvailableRechargeChannelsReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12'\n" +
+	"\x04stat\x18\x02 \x01(\v2\x19.payment.UserRechargeStatR\x04stat\"\x9d\x01\n" +
+	" ListAvailableRechargeChannelsReq\x12'\n" +
 	"\x0frecharge_amount\x18\x03 \x01(\x03R\x0erechargeAmount\x12\x1a\n" +
 	"\bcurrency\x18\x04 \x01(\tR\bcurrency\x124\n" +
 	"\vclient_type\x18\x05 \x01(\x0e2\x13.payment.ClientTypeR\n" +
 	"clientType\"y\n" +
 	"!ListAvailableRechargeChannelsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
-	"\x04list\x18\x02 \x03(\v2\x1a.payment.VisiblePayChannelR\x04list\"\xd5\x02\n" +
-	"\x16CreateRechargeOrderReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1d\n" +
+	"\x04list\x18\x02 \x03(\v2\x1a.payment.VisiblePayChannelR\x04list\"\x9f\x02\n" +
+	"\x16CreateRechargeOrderReq\x12\x1d\n" +
 	"\n" +
 	"channel_id\x18\x03 \x01(\x03R\tchannelId\x12'\n" +
 	"\x0frecharge_amount\x18\x04 \x01(\x03R\x0erechargeAmount\x12\x1a\n" +
@@ -1852,17 +1630,13 @@ const file_proto_payment_payment_app_proto_rawDesc = "" +
 	"bizOrderNo\"m\n" +
 	"\x17CreateRechargeOrderResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12,\n" +
-	"\x05order\x18\x02 \x01(\v2\x16.payment.RechargeOrderR\x05order\"h\n" +
-	"\x15GetMyRechargeOrderReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
-	"\border_no\x18\x02 \x01(\tR\aorderNo\x12\x17\n" +
-	"\auser_id\x18@ \x01(\x03R\x06userId\"l\n" +
+	"\x05order\x18\x02 \x01(\v2\x16.payment.RechargeOrderR\x05order\"2\n" +
+	"\x15GetMyRechargeOrderReq\x12\x19\n" +
+	"\border_no\x18\x02 \x01(\tR\aorderNo\"l\n" +
 	"\x16GetMyRechargeOrderResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12,\n" +
-	"\x05order\x18\x02 \x01(\v2\x16.payment.RechargeOrderR\x05order\"\x94\x02\n" +
-	"\x17ListMyRechargeOrdersReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12#\n" +
+	"\x05order\x18\x02 \x01(\v2\x16.payment.RechargeOrderR\x05order\"\xde\x01\n" +
+	"\x17ListMyRechargeOrdersReq\x12#\n" +
 	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\x12/\n" +
 	"\x06status\x18\x04 \x01(\x0e2\x17.payment.PayOrderStatusR\x06status\x12\x19\n" +
 	"\border_no\x18\x05 \x01(\tR\aorderNo\x12*\n" +
@@ -1870,21 +1644,15 @@ const file_proto_payment_payment_app_proto_rawDesc = "" +
 	"\x0fcreate_time_end\x18\a \x01(\x03R\rcreateTimeEnd\"l\n" +
 	"\x18ListMyRechargeOrdersResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
-	"\x04list\x18\x02 \x03(\v2\x16.payment.RechargeOrderR\x04list\"k\n" +
-	"\x18CancelMyRechargeOrderReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
-	"\border_no\x18\x02 \x01(\tR\aorderNo\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x03R\x06userId\"p\n" +
-	"\x1dQueryMyRechargeOrderStatusReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x19\n" +
+	"\x04list\x18\x02 \x03(\v2\x16.payment.RechargeOrderR\x04list\"5\n" +
+	"\x18CancelMyRechargeOrderReq\x12\x19\n" +
+	"\border_no\x18\x02 \x01(\tR\aorderNo\":\n" +
+	"\x1dQueryMyRechargeOrderStatusReq\x12\x19\n" +
 	"\border_no\x18\x03 \x01(\tR\aorderNo\"t\n" +
 	"\x1eQueryMyRechargeOrderStatusResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12,\n" +
-	"\x05order\x18\x02 \x01(\v2\x16.payment.RechargeOrderR\x05order\"\xcd\x01\n" +
-	"\x16CreateWithdrawOrderReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x16\n" +
+	"\x05order\x18\x02 \x01(\v2\x16.payment.RechargeOrderR\x05order\"\x97\x01\n" +
+	"\x16CreateWithdrawOrderReq\x12\x16\n" +
 	"\x06amount\x18\x03 \x01(\x03R\x06amount\x12\x1a\n" +
 	"\bcurrency\x18\x04 \x01(\tR\bcurrency\x12\x18\n" +
 	"\aaddress\x18\x05 \x01(\tR\aaddress\x12\x17\n" +
@@ -1892,24 +1660,19 @@ const file_proto_payment_payment_app_proto_rawDesc = "" +
 	"\x06remark\x18\a \x01(\tR\x06remark\"O\n" +
 	"\x17CreateWithdrawOrderResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"\xa5\x01\n" +
-	"\x17ListMyWithdrawOrdersReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12#\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"o\n" +
+	"\x17ListMyWithdrawOrdersReq\x12#\n" +
 	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\x12/\n" +
 	"\x06status\x18\x04 \x01(\x0e2\x17.payment.PayOrderStatusR\x06status\"l\n" +
 	"\x18ListMyWithdrawOrdersResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
-	"\x04data\x18\x02 \x03(\v2\x16.payment.WithdrawOrderR\x04data\"@\n" +
+	"\x04data\x18\x02 \x03(\v2\x16.payment.WithdrawOrderR\x04data\"'\n" +
 	"\x15GetMyWithdrawOrderReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\"j\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"j\n" +
 	"\x16GetMyWithdrawOrderResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
-	"\x04data\x18\x02 \x01(\v2\x16.payment.WithdrawOrderR\x04data\"\xbc\x01\n" +
-	"\x1dGetMyCryptoRechargeAddressReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1f\n" +
+	"\x04data\x18\x02 \x01(\v2\x16.payment.WithdrawOrderR\x04data\"\x86\x01\n" +
+	"\x1dGetMyCryptoRechargeAddressReq\x12\x1f\n" +
 	"\vwallet_type\x18\x03 \x01(\x03R\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x04 \x01(\tR\x04coin\x120\n" +
@@ -1917,10 +1680,8 @@ const file_proto_payment_payment_app_proto_rawDesc = "" +
 	"chain_code\x18\x05 \x01(\x0e2\x11.common.ChainCodeR\tchainCode\"z\n" +
 	"\x1eGetMyCryptoRechargeAddressResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x122\n" +
-	"\x04data\x18\x02 \x01(\v2\x1e.payment.CryptoRechargeAddressR\x04data\"\xbf\x01\n" +
-	" ListMyCryptoRechargeAddressesReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1f\n" +
+	"\x04data\x18\x02 \x01(\v2\x1e.payment.CryptoRechargeAddressR\x04data\"\x89\x01\n" +
+	" ListMyCryptoRechargeAddressesReq\x12\x1f\n" +
 	"\vwallet_type\x18\x03 \x01(\x03R\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x04 \x01(\tR\x04coin\x120\n" +
@@ -1928,10 +1689,8 @@ const file_proto_payment_payment_app_proto_rawDesc = "" +
 	"chain_code\x18\x05 \x01(\x0e2\x11.common.ChainCodeR\tchainCode\"}\n" +
 	"!ListMyCryptoRechargeAddressesResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x122\n" +
-	"\x04data\x18\x02 \x03(\v2\x1e.payment.CryptoRechargeAddressR\x04data\"\xe5\x02\n" +
-	"\x1aListMyCryptoRechargeTxsReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12#\n" +
+	"\x04data\x18\x02 \x03(\v2\x1e.payment.CryptoRechargeAddressR\x04data\"\xaf\x02\n" +
+	"\x1aListMyCryptoRechargeTxsReq\x12#\n" +
 	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\x12\x19\n" +
 	"\border_no\x18\x04 \x01(\tR\aorderNo\x12\x12\n" +
 	"\x04coin\x18\x05 \x01(\tR\x04coin\x120\n" +
@@ -1942,10 +1701,8 @@ const file_proto_payment_payment_app_proto_rawDesc = "" +
 	"\x0fcreate_time_end\x18\t \x01(\x03R\rcreateTimeEnd\"r\n" +
 	"\x1bListMyCryptoRechargeTxsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x02 \x03(\v2\x19.payment.CryptoRechargeTxR\x04data\"y\n" +
-	"\x18GetMyCryptoRechargeTxReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x0e\n" +
+	"\x04data\x18\x02 \x03(\v2\x19.payment.CryptoRechargeTxR\x04data\"C\n" +
+	"\x18GetMyCryptoRechargeTxReq\x12\x0e\n" +
 	"\x02id\x18\x03 \x01(\x03R\x02id\x12\x17\n" +
 	"\atx_hash\x18\x04 \x01(\tR\x06txHash\"p\n" +
 	"\x19GetMyCryptoRechargeTxResp\x12$\n" +

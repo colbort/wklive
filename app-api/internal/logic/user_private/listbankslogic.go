@@ -8,7 +8,6 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/user"
 
@@ -30,12 +29,7 @@ func NewListBanksLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListBan
 }
 
 func (l *ListBanksLogic) ListBanks(req *types.ListBanksReq) (resp *types.ListBanksResp, err error) {
-	userId, err := utils.GetUidFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
 	result, err := l.svcCtx.UserCli.ListBanks(l.ctx, &user.ListBanksReq{
-		UserId: userId,
 		Page: &common.PageReq{
 			Cursor: req.Cursor,
 			Limit:  req.Limit,

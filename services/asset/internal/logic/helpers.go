@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"wklive/common/conv"
 	"wklive/proto/asset"
+	"wklive/proto/common"
 	"wklive/services/asset/internal/svc"
 	"wklive/services/asset/models"
 )
@@ -221,7 +222,7 @@ func toAssetCoinConfigProto(data *models.TAssetCoinConfig) *asset.AssetCoinConfi
 		Symbol:          data.Symbol,
 		CoinName:        data.CoinName,
 		CoinType:        asset.AssetCoinType(data.CoinType),
-		ChainCode:       asset.ChainCode(data.ChainCode),
+		ChainCode:       common.ChainCode(data.ChainCode),
 		IconUrl:         data.IconUrl,
 		IconText:        data.IconText,
 		IconBgColor:     data.IconBgColor,

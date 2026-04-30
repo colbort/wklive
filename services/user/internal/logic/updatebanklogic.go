@@ -30,6 +30,10 @@ func NewUpdateBankLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 
 // 更新银行卡
 func (l *UpdateBankLogic) UpdateBank(in *user.UpdateBankReq) (*user.UpdateBankResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	// 获取银行卡信息
 	bank, err := l.svcCtx.UserBankModel.FindOne(l.ctx, in.Id)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
@@ -43,7 +47,7 @@ func (l *UpdateBankLogic) UpdateBank(in *user.UpdateBankReq) (*user.UpdateBankRe
 	}
 
 	// 验证银行卡是否属于该用户
-	if bank.UserId != in.UserId {
+	if bank.UserId != userId {
 		return &user.UpdateBankResp{
 			Base: helper.GetErrResp(403, i18n.Translate(i18n.NoPermissionModifyThisBankCard, l.ctx)),
 		}, nil
@@ -83,7 +87,7 @@ func (l *UpdateBankLogic) UpdateBank(in *user.UpdateBankReq) (*user.UpdateBankRe
 		return nil, err
 	}
 
-	l.Logger.Infof("用户 %d 更新银行卡 %d 成功", in.UserId, in.Id)
+	l.Logger.Infof("用户 %d 更新银行卡 %d 成功", userId, in.Id)
 
 	return &user.UpdateBankResp{
 		Base: helper.OkResp(),

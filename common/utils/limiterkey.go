@@ -4,8 +4,8 @@ import (
 	"strconv"
 )
 
-func BuildUidKey(prefix string, uid int64) string {
-	return prefix + ":uid:" + strconv.FormatInt(uid, 10)
+func BuildUserIdKey(prefix string, userId int64) string {
+	return prefix + ":userId:" + strconv.FormatInt(userId, 10)
 }
 
 func BuildIPKey(prefix, ip string) string {

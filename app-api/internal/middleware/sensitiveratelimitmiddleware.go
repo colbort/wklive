@@ -19,8 +19,8 @@ func NewSensitiveRateLimitMiddleware(rds *redis.Redis) *SensitiveRateLimitMiddle
 
 func (m *SensitiveRateLimitMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		uid, err := utils.GetUidFromCtx(r.Context())
-		if err != nil || uid <= 0 {
+		userId, err := utils.GetUserIdFromCtx(r.Context())
+		if err != nil || userId <= 0 {
 			httpx.WriteJsonCtx(r.Context(), w, http.StatusUnauthorized, map[string]any{
 				"code": 401,
 				"msg":  "未登录",
@@ -30,8 +30,8 @@ func (m *SensitiveRateLimitMiddleware) Handle(next http.HandlerFunc) http.Handle
 
 		ip := utils.GetClientIP(r)
 
-		// 1) 每 uid 每秒 3 次，突发 5
-		tokenLimiter := limit.NewTokenLimiter(3, 5, m.rds, utils.BuildUidKey("rl:sensitive:user", uid))
+		// 1) 每 userId 每秒 3 次，突发 5
+		tokenLimiter := limit.NewTokenLimiter(3, 5, m.rds, utils.BuildUserIdKey("rl:sensitive:user", userId))
 		if !tokenLimiter.AllowCtx(r.Context()) {
 			httpx.WriteJsonCtx(r.Context(), w, http.StatusTooManyRequests, map[string]any{
 				"code": 429,
@@ -40,9 +40,9 @@ func (m *SensitiveRateLimitMiddleware) Handle(next http.HandlerFunc) http.Handle
 			return
 		}
 
-		// 2) 每 uid 每分钟最多 30 次
+		// 2) 每 userId 每分钟最多 30 次
 		periodLimiter := limit.NewPeriodLimit(60, 30, m.rds, "pl:sensitive:user")
-		code, err := periodLimiter.Take(utils.BuildUidKey("user", uid))
+		code, err := periodLimiter.Take(utils.BuildUserIdKey("user", userId))
 		if err != nil {
 			httpx.WriteJsonCtx(r.Context(), w, http.StatusInternalServerError, map[string]any{
 				"code": 500,

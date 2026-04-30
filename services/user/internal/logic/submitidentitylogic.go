@@ -32,8 +32,12 @@ func NewSubmitIdentityLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Su
 
 // 提交实名认证信息
 func (l *SubmitIdentityLogic) SubmitIdentity(in *user.SubmitIdentityReq) (*user.SubmitIdentityResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	// 获取用户信息
-	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, in.UserId)
+	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, userId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
@@ -45,7 +49,7 @@ func (l *SubmitIdentityLogic) SubmitIdentity(in *user.SubmitIdentityReq) (*user.
 	}
 
 	now := utils.NowMillis()
-	identity, err := l.svcCtx.UserIdentityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, in.UserId)
+	identity, err := l.svcCtx.UserIdentityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, userId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
@@ -80,7 +84,7 @@ func (l *SubmitIdentityLogic) SubmitIdentity(in *user.SubmitIdentityReq) (*user.
 		identity = &models.TUserIdentity{
 			Id:            l.svcCtx.Node.Generate().Int64(),
 			TenantId:      tuser.TenantId,
-			UserId:        in.UserId,
+			UserId:        userId,
 			Phone:         sql.NullString{String: in.Phone, Valid: in.Phone != ""},
 			Email:         sql.NullString{String: in.Email, Valid: in.Email != ""},
 			RealName:      sql.NullString{String: in.RealName, Valid: in.RealName != ""},
@@ -108,9 +112,9 @@ func (l *SubmitIdentityLogic) SubmitIdentity(in *user.SubmitIdentityReq) (*user.
 		}
 	}
 
-	l.Logger.Infof("用户 %d 提交实名认证信息成功，状态为待审核", in.UserId)
+	l.Logger.Infof("用户 %d 提交实名认证信息成功，状态为待审核", userId)
 
-	event := notify.NewEvent(notify.EventTypeUserIdentitySubmit, notify.EventLevelInfo, "实名认证提交", fmt.Sprintf("用户 %d 提交实名认证", in.UserId))
+	event := notify.NewEvent(notify.EventTypeUserIdentitySubmit, notify.EventLevelInfo, "实名认证提交", fmt.Sprintf("用户 %d 提交实名认证", userId))
 	event.Source = "user"
 	event.TenantID = tuser.TenantId
 	event.UserID = tuser.Id

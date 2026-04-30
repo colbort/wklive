@@ -6,6 +6,7 @@ import (
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/staking"
 	"wklive/services/staking/internal/svc"
 	"wklive/services/staking/models"
@@ -29,6 +30,10 @@ func NewAppProductDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 获取质押产品详情
 func (l *AppProductDetailLogic) AppProductDetail(in *staking.AppProductDetailReq) (*staking.AppProductDetailResp, error) {
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	item, err := l.svcCtx.StakeProductModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
@@ -36,7 +41,7 @@ func (l *AppProductDetailLogic) AppProductDetail(in *staking.AppProductDetailReq
 		}
 		return nil, err
 	}
-	if item.TenantId != in.TenantId || item.Status != int64(staking.ProductStatus_PRODUCT_STATUS_ENABLE) {
+	if item.TenantId != tenantId || item.Status != int64(staking.ProductStatus_PRODUCT_STATUS_ENABLE) {
 		return &staking.AppProductDetailResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
 	}
 

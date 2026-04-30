@@ -8,7 +8,6 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/common/utils"
 	"wklive/proto/payment"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,15 +28,7 @@ func NewGetMyRechargeStatLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *GetMyRechargeStatLogic) GetMyRechargeStat(req *types.GetMyRechargeStatReq) (resp *types.GetMyRechargeStatResp, err error) {
-	userId, err := utils.GetUidFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	result, err := l.svcCtx.PaymentCli.GetMyRechargeStat(l.ctx, &payment.GetMyRechargeStatReq{
-		TenantId: req.TenantId,
-		UserId:   userId,
-	})
+	result, err := l.svcCtx.PaymentCli.GetMyRechargeStat(l.ctx, &payment.GetMyRechargeStatReq{})
 	if err != nil {
 		return nil, err
 	}
@@ -57,8 +48,8 @@ func (l *GetMyRechargeStatLogic) GetMyRechargeStat(req *types.GetMyRechargeStatR
 			TodaySuccessCount:  result.Stat.TodaySuccessCount,
 			FirstSuccessTime:   result.Stat.FirstSuccessTime,
 			LastSuccessTime:    result.Stat.LastSuccessTime,
-			CreateTimes:         result.Stat.CreateTimes,
-			UpdateTimes:         result.Stat.UpdateTimes,
+			CreateTimes:        result.Stat.CreateTimes,
+			UpdateTimes:        result.Stat.UpdateTimes,
 		},
 	}
 

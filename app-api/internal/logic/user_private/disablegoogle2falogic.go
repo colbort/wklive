@@ -8,7 +8,6 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/common/utils"
 	"wklive/proto/user"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,12 +28,7 @@ func NewDisableGoogle2FALogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *DisableGoogle2FALogic) DisableGoogle2FA(req *types.VerifyGoogle2FAReq) (resp *types.RespBase, err error) {
-	userId, err := utils.GetUidFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
 	result, err := l.svcCtx.UserCli.DisableGoogle2FA(l.ctx, &user.DisableGoogle2FAReq{
-		UserId:     userId,
 		GoogleCode: req.GoogleCode,
 	})
 	if err != nil {

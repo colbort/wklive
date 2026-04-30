@@ -108,7 +108,7 @@ export type OptionOrder = {
   id: number // 主键ID
   tenantId: number // 租户ID
   orderNo: string // 订单号
-  uid: number
+  userId: number
   accountId: number
   contractId: number
   underlyingSymbol: string
@@ -164,7 +164,7 @@ export type OptionTrade = {
 export type OptionPosition = {
   id: number
   tenantId: number
-  uid: number
+  userId: number
   accountId: number
   contractId: number
   underlyingSymbol: string
@@ -190,7 +190,7 @@ export type OptionExercise = {
   id: number
   tenantId: number
   exerciseNo: string
-  uid: number
+  userId: number
   accountId: number
   contractId: number
   positionId: number
@@ -232,7 +232,7 @@ export type OptionSettlement = {
 export type OptionAccount = {
   id: number
   tenantId: number
-  uid: number
+  userId: number
   accountId: number
   marginCoin: string
   balance: string
@@ -251,7 +251,7 @@ export type OptionAccount = {
 export type OptionBill = {
   id: number
   tenantId: number
-  uid: number
+  userId: number
   accountId: number
   bizNo: string
   refType: number
@@ -345,7 +345,7 @@ export type ListOrdersReq = {
   cursor?: number
   limit?: number
   tenantId?: number
-  uid?: number
+  userId?: number
   accountId?: number
   contractId?: number
   underlyingSymbol?: string
@@ -368,7 +368,7 @@ export type ListTradesReq = {
   limit?: number
   tenantId?: number
   contractId?: number
-  uid?: number
+  userId?: number
   tradeNo?: string
   tradeTimeRange?: TimeRange
 }
@@ -383,7 +383,7 @@ export type ListPositionsReq = {
   cursor?: number
   limit?: number
   tenantId?: number
-  uid?: number
+  userId?: number
   accountId?: number
   contractId?: number
   status?: number
@@ -399,7 +399,7 @@ export type ListExercisesReq = {
   cursor?: number
   limit?: number
   tenantId?: number
-  uid?: number
+  userId?: number
   accountId?: number
   contractId?: number
   status?: number
@@ -424,7 +424,7 @@ export type ListSettlementsReq = {
 export type GetAccountReq = {
   tenantId?: number
   id?: number
-  uid?: number
+  userId?: number
   accountId?: number
 }
 
@@ -432,7 +432,7 @@ export type ListAccountsReq = {
   cursor?: number
   limit?: number
   tenantId?: number
-  uid?: number
+  userId?: number
   accountId?: number
   marginCoin?: string
   status?: number
@@ -448,7 +448,7 @@ export type ListBillsReq = {
   cursor?: number
   limit?: number
   tenantId?: number
-  uid?: number
+  userId?: number
   accountId?: number
   refType?: number
   createTimeRange?: TimeRange

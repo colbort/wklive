@@ -44,7 +44,7 @@ type (
 	TOptionBill struct {
 		Id            int64   `db:"id"`             // 主键ID
 		TenantId      int64   `db:"tenant_id"`      // 租户ID
-		Uid           int64   `db:"uid"`            // 用户ID
+		UserId        int64   `db:"user_id"`        // 用户ID
 		AccountId     int64   `db:"account_id"`     // 交易账户ID
 		BizNo         string  `db:"biz_no"`         // 业务流水号
 		RefType       int64   `db:"ref_type"`       // 关联类型：1下单 2成交 3撤单 4行权 5结算 6手续费
@@ -122,7 +122,7 @@ func (m *defaultTOptionBillModel) Insert(ctx context.Context, data *TOptionBill)
 	tOptionBillTenantIdBizNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionBillTenantIdBizNoPrefix, data.TenantId, data.BizNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionBillRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.Uid, data.AccountId, data.BizNo, data.RefType, data.RefId, data.Coin, data.ChangeAmount, data.BalanceBefore, data.BalanceAfter, data.Remark, data.CreateTimes)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.AccountId, data.BizNo, data.RefType, data.RefId, data.Coin, data.ChangeAmount, data.BalanceBefore, data.BalanceAfter, data.Remark, data.CreateTimes)
 	}, tOptionBillIdKey, tOptionBillTenantIdBizNoKey)
 	return ret, err
 }
@@ -137,7 +137,7 @@ func (m *defaultTOptionBillModel) Update(ctx context.Context, newData *TOptionBi
 	tOptionBillTenantIdBizNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionBillTenantIdBizNoPrefix, data.TenantId, data.BizNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tOptionBillRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.Uid, newData.AccountId, newData.BizNo, newData.RefType, newData.RefId, newData.Coin, newData.ChangeAmount, newData.BalanceBefore, newData.BalanceAfter, newData.Remark, newData.CreateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.AccountId, newData.BizNo, newData.RefType, newData.RefId, newData.Coin, newData.ChangeAmount, newData.BalanceBefore, newData.BalanceAfter, newData.Remark, newData.CreateTimes, newData.Id)
 	}, tOptionBillIdKey, tOptionBillTenantIdBizNoKey)
 	return err
 }

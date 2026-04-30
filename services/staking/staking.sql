@@ -49,7 +49,7 @@ CREATE TABLE `t_stake_order` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT '0' COMMENT '租户ID',
   `order_no` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '质押订单号',
-  `uid` BIGINT NOT NULL DEFAULT '0' COMMENT '用户ID',
+  `user_id` BIGINT NOT NULL DEFAULT '0' COMMENT '用户ID',
   `product_id` BIGINT NOT NULL DEFAULT '0' COMMENT '质押产品ID',
   `product_no` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '质押产品编号快照',
   `product_name` VARCHAR(100) NOT NULL DEFAULT '' COMMENT '质押产品名称快照',
@@ -86,10 +86,10 @@ CREATE TABLE `t_stake_order` (
   `update_times` BIGINT NOT NULL DEFAULT '0' COMMENT '更新时间戳',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_order_no` (`tenant_id`, `order_no`),
-  KEY `idx_tenant_uid` (`tenant_id`, `uid`),
+  KEY `idx_tenant_uid` (`tenant_id`, `user_id`),
   KEY `idx_tenant_product_id` (`tenant_id`, `product_id`),
   KEY `idx_tenant_status` (`tenant_id`, `status`),
-  KEY `idx_tenant_uid_status` (`tenant_id`, `uid`, `status`),
+  KEY `idx_tenant_uid_status` (`tenant_id`, `user_id`, `status`),
   KEY `idx_tenant_start_times` (`tenant_id`, `start_times`),
   KEY `idx_tenant_end_times` (`tenant_id`, `end_times`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='质押订单表';
@@ -103,7 +103,7 @@ CREATE TABLE `t_stake_reward_log` (
   `tenant_id` BIGINT NOT NULL DEFAULT '0' COMMENT '租户ID',
   `order_id` BIGINT NOT NULL DEFAULT '0' COMMENT '质押订单ID',
   `order_no` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '质押订单号',
-  `uid` BIGINT NOT NULL DEFAULT '0' COMMENT '用户ID',
+  `user_id` BIGINT NOT NULL DEFAULT '0' COMMENT '用户ID',
   `product_id` BIGINT NOT NULL DEFAULT '0' COMMENT '质押产品ID',
   `product_name` VARCHAR(100) NOT NULL DEFAULT '' COMMENT '质押产品名称快照',
   `coin_symbol` VARCHAR(20) NOT NULL DEFAULT '' COMMENT '质押币种符号快照',
@@ -122,7 +122,7 @@ CREATE TABLE `t_stake_reward_log` (
   PRIMARY KEY (`id`),
   KEY `idx_tenant_order_id` (`tenant_id`, `order_id`),
   KEY `idx_tenant_order_no` (`tenant_id`, `order_no`),
-  KEY `idx_tenant_uid` (`tenant_id`, `uid`),
+  KEY `idx_tenant_uid` (`tenant_id`, `user_id`),
   KEY `idx_tenant_reward_times` (`tenant_id`, `reward_times`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='质押收益记录表';
 
@@ -135,7 +135,7 @@ CREATE TABLE `t_stake_redeem_log` (
   `tenant_id` BIGINT NOT NULL DEFAULT '0' COMMENT '租户ID',
   `order_id` BIGINT NOT NULL DEFAULT '0' COMMENT '质押订单ID',
   `order_no` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '质押订单号',
-  `uid` BIGINT NOT NULL DEFAULT '0' COMMENT '用户ID',
+  `user_id` BIGINT NOT NULL DEFAULT '0' COMMENT '用户ID',
   `product_id` BIGINT NOT NULL DEFAULT '0' COMMENT '质押产品ID',
   `redeem_no` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '赎回单号',
   `redeem_type` TINYINT NOT NULL DEFAULT '1' COMMENT '赎回类型：1到期赎回 2提前赎回 3手动赎回',
@@ -155,7 +155,7 @@ CREATE TABLE `t_stake_redeem_log` (
   UNIQUE KEY `uk_tenant_redeem_no` (`tenant_id`, `redeem_no`),
   KEY `idx_tenant_order_id` (`tenant_id`, `order_id`),
   KEY `idx_tenant_order_no` (`tenant_id`, `order_no`),
-  KEY `idx_tenant_uid` (`tenant_id`, `uid`),
+  KEY `idx_tenant_uid` (`tenant_id`, `user_id`),
   KEY `idx_tenant_redeem_times` (`tenant_id`, `redeem_times`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='质押赎回记录表';
 

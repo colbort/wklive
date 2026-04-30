@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	pageutil "wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
@@ -29,10 +30,18 @@ func NewAppListTradesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *App
 // 获取成交记录列表
 func (l *AppListTradesLogic) AppListTrades(in *option.AppListTradesReq) (*option.AppListTradesResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	items, total, err := l.svcCtx.OptionTradeModel.FindPage(l.ctx, models.OptionTradePageFilter{
-		TenantId:       in.TenantId,
+		TenantId:       tenantId,
 		ContractId:     in.ContractId,
-		Uid:            in.Uid,
+		UserId:         userId,
 		AccountId:      in.AccountId,
 		TradeTimeStart: pageutil.TimeRangeStart(in.TradeTimeRange),
 		TradeTimeEnd:   pageutil.TimeRangeEnd(in.TradeTimeRange),

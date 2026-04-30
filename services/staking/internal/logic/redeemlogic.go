@@ -33,14 +33,22 @@ func NewRedeemLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RedeemLogi
 
 // 发起赎回
 func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	order, err := l.svcCtx.StakeOrderModel.FindOne(l.ctx, in.OrderId)
 	if err != nil {
 		return nil, err
 	}
-	if order == nil || order.TenantId != in.TenantId {
+	if order == nil || order.TenantId != tenantId {
 		return &staking.AppRedeemResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 	}
-	if order.Uid != in.Uid {
+	if order.UserId != userId {
 		return &staking.AppRedeemResp{Base: helper.GetErrResp(403, i18n.Translate(i18n.NoPermissionAccessOrder, l.ctx))}, nil
 	}
 	if order.Status == int64(staking.OrderStatus_ORDER_STATUS_REDEEMED) || order.Status == int64(staking.OrderStatus_ORDER_STATUS_EARLY_REDEEMED) || order.Status == int64(staking.OrderStatus_ORDER_STATUS_CANCELLED) {
@@ -122,7 +130,7 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 	if rewardAmount > 0 {
 		resp, err := l.svcCtx.AssetClient.AddAvailable(l.ctx, &asset.AddAvailableReq{
 			TenantId:   order.TenantId,
-			UserId:     order.Uid,
+			UserId:     order.UserId,
 			WalletType: asset.WalletType_WALLET_TYPE_EARN,
 			Coin:       order.RewardCoinSymbol,
 			Amount:     conv.FloatString(rewardAmount),
@@ -153,7 +161,7 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 		} else {
 			product.StakedAmount = 0
 		}
-		product.UpdateUserId = in.Uid
+		product.UpdateUserId = userId
 		product.UpdateTimes = now
 	}
 
@@ -170,7 +178,7 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 		order.Status = int64(staking.OrderStatus_ORDER_STATUS_REDEEMED)
 	}
 	order.Remark = in.Remark
-	order.UpdateUserId = in.Uid
+	order.UpdateUserId = userId
 	order.UpdateTimes = now
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
@@ -182,7 +190,7 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 			TenantId:     order.TenantId,
 			OrderId:      order.Id,
 			OrderNo:      order.OrderNo,
-			Uid:          order.Uid,
+			UserId:         order.UserId,
 			ProductId:    order.ProductId,
 			RedeemNo:     redeemNo,
 			RedeemType:   int64(redeemType),
@@ -194,8 +202,8 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 			RedeemStatus: int64(staking.RedeemStatus_REDEEM_STATUS_SUCCESS),
 			RedeemTimes:  now,
 			Remark:       in.Remark,
-			CreateUserId: in.Uid,
-			UpdateUserId: in.Uid,
+			CreateUserId: userId,
+			UpdateUserId: userId,
 			CreateTimes:  now,
 			UpdateTimes:  now,
 		}); err != nil {

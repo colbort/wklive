@@ -78,7 +78,7 @@ type OptionOrder {
 	id               int64  `json:"id"`
 	tenantId         int64  `json:"tenantId"`
 	orderNo          string `json:"orderNo"`
-	uid              int64  `json:"uid"`
+	userId              int64  `json:"userId"`
 	accountId        int64  `json:"accountId"`
 	contractId       int64  `json:"contractId"`
 	underlyingSymbol string `json:"underlyingSymbol"`
@@ -134,7 +134,7 @@ type OptionTrade {
 type OptionPosition {
 	id                int64  `json:"id"`
 	tenantId          int64  `json:"tenantId"`
-	uid               int64  `json:"uid"`
+	userId               int64  `json:"userId"`
 	accountId         int64  `json:"accountId"`
 	contractId        int64  `json:"contractId"`
 	underlyingSymbol  string `json:"underlyingSymbol"`
@@ -160,7 +160,7 @@ type OptionExercise {
 	id              int64  `json:"id"`
 	tenantId        int64  `json:"tenantId"`
 	exerciseNo      string `json:"exerciseNo"`
-	uid             int64  `json:"uid"`
+	userId             int64  `json:"userId"`
 	accountId       int64  `json:"accountId"`
 	contractId      int64  `json:"contractId"`
 	positionId      int64  `json:"positionId"`
@@ -202,7 +202,7 @@ type OptionSettlement {
 type OptionAccount {
 	id               int64  `json:"id"`
 	tenantId         int64  `json:"tenantId"`
-	uid              int64  `json:"uid"`
+	userId              int64  `json:"userId"`
 	accountId        int64  `json:"accountId"`
 	marginCoin       string `json:"marginCoin"`
 	balance          string `json:"balance"`
@@ -221,7 +221,7 @@ type OptionAccount {
 type OptionBill {
 	id            int64  `json:"id"`
 	tenantId      int64  `json:"tenantId"`
-	uid           int64  `json:"uid"`
+	userId           int64  `json:"userId"`
 	accountId     int64  `json:"accountId"`
 	bizNo         string `json:"bizNo"`
 	refType       int64  `json:"refType"`
@@ -413,7 +413,7 @@ type GetOrderResp {
 type ListOrdersReq {
 	PageReq
 	tenantId         int64     `form:"tenantId,optional"`
-	uid              int64     `form:"uid,optional"`
+	userId              int64     `form:"userId,optional"`
 	accountId        int64     `form:"accountId,optional"`
 	contractId       int64     `form:"contractId,optional"`
 	underlyingSymbol string    `form:"underlyingSymbol,optional"`
@@ -446,7 +446,7 @@ type ListTradesReq {
 	PageReq
 	tenantId       int64     `form:"tenantId,optional"`
 	contractId     int64     `form:"contractId,optional"`
-	uid            int64     `form:"uid,optional"`
+	userId            int64     `form:"userId,optional"`
 	tradeNo        string    `form:"tradeNo,optional"`
 	tradeTimeRange TimeRange `form:"tradeTimeRange,optional"`
 }
@@ -471,7 +471,7 @@ type GetPositionResp {
 type ListPositionsReq {
 	PageReq
 	tenantId   int64 `form:"tenantId,optional"`
-	uid        int64 `form:"uid,optional"`
+	userId        int64 `form:"userId,optional"`
 	accountId  int64 `form:"accountId,optional"`
 	contractId int64 `form:"contractId,optional"`
 	status     int64 `form:"status,optional"`
@@ -497,7 +497,7 @@ type GetExerciseResp {
 type ListExercisesReq {
 	PageReq
 	tenantId          int64     `form:"tenantId,optional"`
-	uid               int64     `form:"uid,optional"`
+	userId               int64     `form:"userId,optional"`
 	accountId         int64     `form:"accountId,optional"`
 	contractId        int64     `form:"contractId,optional"`
 	status            int64     `form:"status,optional"`
@@ -538,7 +538,7 @@ type ListSettlementsResp {
 type GetAccountReq {
 	tenantId  int64 `form:"tenantId,optional"`
 	id        int64 `form:"id,optional"`
-	uid       int64 `form:"uid,optional"`
+	userId       int64 `form:"userId,optional"`
 	accountId int64 `form:"accountId,optional"`
 }
 
@@ -550,7 +550,7 @@ type GetAccountResp {
 type ListAccountsReq {
 	PageReq
 	tenantId   int64  `form:"tenantId,optional"`
-	uid        int64  `form:"uid,optional"`
+	userId        int64  `form:"userId,optional"`
 	accountId  int64  `form:"accountId,optional"`
 	marginCoin string `form:"marginCoin,optional"`
 	status     int64  `form:"status,optional"`
@@ -576,7 +576,7 @@ type GetBillResp {
 type ListBillsReq {
 	PageReq
 	tenantId        int64     `form:"tenantId,optional"`
-	uid             int64     `form:"uid,optional"`
+	userId             int64     `form:"userId,optional"`
 	accountId       int64     `form:"accountId,optional"`
 	refType         int64     `form:"refType,optional"`
 	createTimeRange TimeRange `form:"createTimeRange,optional"`

@@ -48,8 +48,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		opts ...grpc.CallOption,
 	) error {
 		pairs := make([]string, 0)
-		if uid, err := utils.GetUidFromCtx(ctx); err == nil {
-			pairs = append(pairs, utils.CtxKeyUid, strconv.FormatInt(uid, 10))
+		if userId, err := utils.GetUserIdFromCtx(ctx); err == nil {
+			pairs = append(pairs, utils.CtxKeyUid, strconv.FormatInt(userId, 10))
 		}
 		if username, err := utils.GetUsernameFromCtx(ctx); err == nil {
 			pairs = append(pairs, utils.CtxKeyUsername, username)

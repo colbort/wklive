@@ -29,14 +29,17 @@ func NewGetPositionListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 
 // 获取持仓列表
 func (l *GetPositionListLogic) GetPositionList(in *trade.GetPositionListReq) (*trade.GetPositionListResp, error) {
-	if in.TenantId <= 0 {
-		if tenantId, err := utils.GetTenantIdFromMd(l.ctx); err == nil {
-			in.TenantId = tenantId
-		}
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
 	}
 	list, err := l.svcCtx.ContractPositionModel.FindList(l.ctx, models.ContractPositionPageFilter{
-		TenantId:   in.TenantId,
-		UserId:     in.UserId,
+		TenantId:   tenantId,
+		UserId:     userId,
 		SymbolId:   in.SymbolId,
 		MarketType: int64(in.MarketType),
 	})

@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	pageutil "wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
@@ -29,9 +30,17 @@ func NewAppListBillsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AppL
 // 获取资金流水列表
 func (l *AppListBillsLogic) AppListBills(in *option.AppListBillsReq) (*option.AppListBillsResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	items, total, err := l.svcCtx.OptionBillModel.FindPage(l.ctx, models.OptionBillPageFilter{
-		TenantId:        in.TenantId,
-		Uid:             in.Uid,
+		TenantId:        tenantId,
+		UserId:          userId,
 		AccountId:       in.AccountId,
 		RefType:         int64(in.RefType),
 		CreateTimeStart: pageutil.TimeRangeStart(in.CreateTimeRange),

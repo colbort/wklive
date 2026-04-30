@@ -8,7 +8,6 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/common/utils"
 	"wklive/proto/payment"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,30 +28,15 @@ func NewCreateRechargeOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *CreateRechargeOrderLogic) CreateRechargeOrder(req *types.CreateRechargeOrderReq) (resp *types.CreateRechargeOrderResp, err error) {
-	userId, err := utils.GetUidFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	tenantId := req.TenantId
-	if tenantId == 0 {
-		tenantId, err = utils.GetTenantIdFromCtx(l.ctx)
-		if err != nil {
-			return nil, err
-		}
-	}
-
 	result, err := l.svcCtx.PaymentCli.CreateRechargeOrder(l.ctx, &payment.CreateRechargeOrderReq{
-		TenantId:      tenantId,
-		UserId:        userId,
-		ChannelId:     req.ChannelId,
+		ChannelId:      req.ChannelId,
 		RechargeAmount: req.RechargeAmount,
-		Currency:      req.Currency,
-		Subject:       req.Subject,
-		Body:          req.Body,
-		ClientType:    payment.ClientType(req.ClientType),
-		ClientIp:      req.ClientIp,
-		BizOrderNo:    req.BizOrderNo,
+		Currency:       req.Currency,
+		Subject:        req.Subject,
+		Body:           req.Body,
+		ClientType:     payment.ClientType(req.ClientType),
+		ClientIp:       req.ClientIp,
+		BizOrderNo:     req.BizOrderNo,
 	})
 	if err != nil {
 		return nil, err
@@ -94,8 +78,8 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(req *types.CreateRecharge
 			NotifyTime:   result.Order.NotifyTime,
 			CloseTime:    result.Order.CloseTime,
 			Remark:       result.Order.Remark,
-			CreateTimes:   result.Order.CreateTimes,
-			UpdateTimes:   result.Order.UpdateTimes,
+			CreateTimes:  result.Order.CreateTimes,
+			UpdateTimes:  result.Order.UpdateTimes,
 		},
 	}
 

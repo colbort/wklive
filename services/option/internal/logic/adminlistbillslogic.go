@@ -31,7 +31,7 @@ func (l *AdminListBillsLogic) AdminListBills(in *option.ListBillsReq) (*option.L
 	cursor, limit := pageutil.Input(in.Page)
 	items, total, err := l.svcCtx.OptionBillModel.FindPage(l.ctx, models.OptionBillPageFilter{
 		TenantId:        in.TenantId,
-		Uid:             in.Uid,
+		UserId:          in.UserId,
 		AccountId:       in.AccountId,
 		BizNo:           in.BizNo,
 		RefType:         int64(in.RefType),

@@ -185,7 +185,6 @@ type TradeAppCommonResp {
 }
 
 type GetSymbolListReq {
-	tenantId   int64 `form:"tenantId,optional"` // 租户ID
 	marketType int64 `form:"marketType,optional"` // 市场类型
 	status     int64 `form:"status,optional"` // 状态
 }
@@ -196,7 +195,6 @@ type GetSymbolListResp {
 }
 
 type GetSymbolDetailReq {
-	tenantId int64 `form:"tenantId,optional"` // 租户ID
 	symbolId int64 `form:"symbolId"` // 交易对ID
 }
 
@@ -208,7 +206,6 @@ type GetSymbolDetailResp {
 }
 
 type PlaceOrderReq {
-	tenantId        int64  `json:"tenantId,optional"` // 租户ID
 	symbolId        int64  `json:"symbolId"` // 交易对ID
 	marketType      int64  `json:"marketType"` // 市场类型
 	side            int64  `json:"side"`
@@ -236,14 +233,12 @@ type PlaceOrderResp {
 }
 
 type CancelOrderReq {
-	tenantId      int64  `json:"tenantId,optional"`
 	orderId       int64  `json:"orderId,optional"`
 	orderNo       string `json:"orderNo,optional"`
 	clientOrderId string `json:"clientOrderId,optional"`
 }
 
 type CancelAllOrdersReq {
-	tenantId     int64 `json:"tenantId,optional"`
 	marketType   int64 `json:"marketType,optional"`
 	symbolId     int64 `json:"symbolId,optional"`
 	side         int64 `json:"side,optional"`
@@ -257,7 +252,6 @@ type CancelAllOrdersResp {
 
 type GetOrderListReq {
 	PageReq
-	tenantId   int64     `form:"tenantId,optional"`
 	marketType int64     `form:"marketType,optional"`
 	symbolId   int64     `form:"symbolId,optional"`
 	status     int64     `form:"status,optional"`
@@ -271,7 +265,6 @@ type GetOrderListResp {
 }
 
 type GetOrderDetailReq {
-	tenantId int64  `form:"tenantId,optional"`
 	orderId  int64  `form:"orderId,optional"`
 	orderNo  string `form:"orderNo,optional"`
 }
@@ -285,7 +278,6 @@ type GetOrderDetailResp {
 
 type GetFillListReq {
 	PageReq
-	tenantId   int64     `form:"tenantId,optional"`
 	marketType int64     `form:"marketType,optional"`
 	symbolId   int64     `form:"symbolId,optional"`
 	timeRange  TimeRange `form:"timeRange,optional"`
@@ -297,7 +289,6 @@ type GetFillListResp {
 }
 
 type GetPositionListReq {
-	tenantId   int64 `form:"tenantId,optional"`
 	marketType int64 `form:"marketType,optional"`
 	symbolId   int64 `form:"symbolId,optional"`
 }
@@ -308,7 +299,6 @@ type GetPositionListResp {
 }
 
 type GetMarginAccountListReq {
-	tenantId    int64  `form:"tenantId,optional"`
 	marketType  int64  `form:"marketType,optional"`
 	marginAsset string `form:"marginAsset,optional"`
 }
@@ -319,7 +309,6 @@ type GetMarginAccountListResp {
 }
 
 type GetLeverageConfigReq {
-	tenantId   int64 `form:"tenantId,optional"`
 	symbolId   int64 `form:"symbolId"`
 	marketType int64 `form:"marketType"`
 	marginMode int64 `form:"marginMode"`
@@ -331,7 +320,6 @@ type GetLeverageConfigResp {
 }
 
 type SetLeverageReq {
-	tenantId      int64  `json:"tenantId,optional"` // 租户ID
 	symbolId      int64  `json:"symbolId"` // 交易对ID
 	marketType    int64  `json:"marketType"`
 	marginMode    int64  `json:"marginMode"`

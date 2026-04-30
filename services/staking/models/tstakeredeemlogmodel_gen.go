@@ -46,7 +46,7 @@ type (
 		TenantId     int64   `db:"tenant_id"`      // 租户ID
 		OrderId      int64   `db:"order_id"`       // 质押订单ID
 		OrderNo      string  `db:"order_no"`       // 质押订单号
-		Uid          int64   `db:"uid"`            // 用户ID
+		UserId       int64   `db:"user_id"`        // 用户ID
 		ProductId    int64   `db:"product_id"`     // 质押产品ID
 		RedeemNo     string  `db:"redeem_no"`      // 赎回单号
 		RedeemType   int64   `db:"redeem_type"`    // 赎回类型：1到期赎回 2提前赎回 3手动赎回
@@ -129,7 +129,7 @@ func (m *defaultTStakeRedeemLogModel) Insert(ctx context.Context, data *TStakeRe
 	tStakeRedeemLogTenantIdRedeemNoKey := fmt.Sprintf("%s%v:%v", cacheTStakeRedeemLogTenantIdRedeemNoPrefix, data.TenantId, data.RedeemNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tStakeRedeemLogRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderId, data.OrderNo, data.Uid, data.ProductId, data.RedeemNo, data.RedeemType, data.StakeAmount, data.RedeemAmount, data.RewardAmount, data.FeeRate, data.FeeAmount, data.RedeemStatus, data.RedeemTimes, data.Remark, data.CreateUserId, data.UpdateUserId, data.CreateTimes, data.UpdateTimes)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderId, data.OrderNo, data.UserId, data.ProductId, data.RedeemNo, data.RedeemType, data.StakeAmount, data.RedeemAmount, data.RewardAmount, data.FeeRate, data.FeeAmount, data.RedeemStatus, data.RedeemTimes, data.Remark, data.CreateUserId, data.UpdateUserId, data.CreateTimes, data.UpdateTimes)
 	}, tStakeRedeemLogIdKey, tStakeRedeemLogTenantIdRedeemNoKey)
 	return ret, err
 }
@@ -144,7 +144,7 @@ func (m *defaultTStakeRedeemLogModel) Update(ctx context.Context, newData *TStak
 	tStakeRedeemLogTenantIdRedeemNoKey := fmt.Sprintf("%s%v:%v", cacheTStakeRedeemLogTenantIdRedeemNoPrefix, data.TenantId, data.RedeemNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tStakeRedeemLogRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderId, newData.OrderNo, newData.Uid, newData.ProductId, newData.RedeemNo, newData.RedeemType, newData.StakeAmount, newData.RedeemAmount, newData.RewardAmount, newData.FeeRate, newData.FeeAmount, newData.RedeemStatus, newData.RedeemTimes, newData.Remark, newData.CreateUserId, newData.UpdateUserId, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderId, newData.OrderNo, newData.UserId, newData.ProductId, newData.RedeemNo, newData.RedeemType, newData.StakeAmount, newData.RedeemAmount, newData.RewardAmount, newData.FeeRate, newData.FeeAmount, newData.RedeemStatus, newData.RedeemTimes, newData.Remark, newData.CreateUserId, newData.UpdateUserId, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tStakeRedeemLogIdKey, tStakeRedeemLogTenantIdRedeemNoKey)
 	return err
 }

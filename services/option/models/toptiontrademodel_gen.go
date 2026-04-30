@@ -49,11 +49,11 @@ type (
 		UnderlyingSymbol string  `db:"underlying_symbol"` // 标的
 		BuyOrderId       int64   `db:"buy_order_id"`      // 买单ID
 		BuyOrderNo       string  `db:"buy_order_no"`      // 买单订单号
-		BuyUid           int64   `db:"buy_uid"`           // 买方用户ID
+		BuyUserId        int64   `db:"buy_user_id"`       // 买方用户ID
 		BuyAccountId     int64   `db:"buy_account_id"`    // 买方账户ID
 		SellOrderId      int64   `db:"sell_order_id"`     // 卖单ID
 		SellOrderNo      string  `db:"sell_order_no"`     // 卖单订单号
-		SellUid          int64   `db:"sell_uid"`          // 卖方用户ID
+		SellUserId       int64   `db:"sell_user_id"`      // 卖方用户ID
 		SellAccountId    int64   `db:"sell_account_id"`   // 卖方账户ID
 		Price            float64 `db:"price"`             // 成交价格/权利金
 		Qty              float64 `db:"qty"`               // 成交数量
@@ -131,7 +131,7 @@ func (m *defaultTOptionTradeModel) Insert(ctx context.Context, data *TOptionTrad
 	tOptionTradeTenantIdTradeNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionTradeTenantIdTradeNoPrefix, data.TenantId, data.TradeNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionTradeRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.TradeNo, data.ContractId, data.UnderlyingSymbol, data.BuyOrderId, data.BuyOrderNo, data.BuyUid, data.BuyAccountId, data.SellOrderId, data.SellOrderNo, data.SellUid, data.SellAccountId, data.Price, data.Qty, data.Turnover, data.BuyFee, data.SellFee, data.FeeCoin, data.MakerSide, data.TradeTime, data.CreateTimes)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.TradeNo, data.ContractId, data.UnderlyingSymbol, data.BuyOrderId, data.BuyOrderNo, data.BuyUserId, data.BuyAccountId, data.SellOrderId, data.SellOrderNo, data.SellUserId, data.SellAccountId, data.Price, data.Qty, data.Turnover, data.BuyFee, data.SellFee, data.FeeCoin, data.MakerSide, data.TradeTime, data.CreateTimes)
 	}, tOptionTradeIdKey, tOptionTradeTenantIdTradeNoKey)
 	return ret, err
 }
@@ -146,7 +146,7 @@ func (m *defaultTOptionTradeModel) Update(ctx context.Context, newData *TOptionT
 	tOptionTradeTenantIdTradeNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionTradeTenantIdTradeNoPrefix, data.TenantId, data.TradeNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tOptionTradeRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.TradeNo, newData.ContractId, newData.UnderlyingSymbol, newData.BuyOrderId, newData.BuyOrderNo, newData.BuyUid, newData.BuyAccountId, newData.SellOrderId, newData.SellOrderNo, newData.SellUid, newData.SellAccountId, newData.Price, newData.Qty, newData.Turnover, newData.BuyFee, newData.SellFee, newData.FeeCoin, newData.MakerSide, newData.TradeTime, newData.CreateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.TradeNo, newData.ContractId, newData.UnderlyingSymbol, newData.BuyOrderId, newData.BuyOrderNo, newData.BuyUserId, newData.BuyAccountId, newData.SellOrderId, newData.SellOrderNo, newData.SellUserId, newData.SellAccountId, newData.Price, newData.Qty, newData.Turnover, newData.BuyFee, newData.SellFee, newData.FeeCoin, newData.MakerSide, newData.TradeTime, newData.CreateTimes, newData.Id)
 	}, tOptionTradeIdKey, tOptionTradeTenantIdTradeNoKey)
 	return err
 }

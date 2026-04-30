@@ -9,7 +9,7 @@ import (
 
 type OptionBillPageFilter struct {
 	TenantId        int64
-	Uid             int64
+	UserId          int64
 	AccountId       int64
 	BizNo           string
 	RefType         int64
@@ -26,7 +26,7 @@ func (m *defaultTOptionBillModel) FindPage(ctx context.Context, filter OptionBil
 	limit = sqlutil.NormalizeLimit(limit)
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)
-	builder.EqInt64("uid", filter.Uid)
+	builder.EqInt64("user_id", filter.UserId)
 	builder.EqInt64("account_id", filter.AccountId)
 	builder.EqString("biz_no", filter.BizNo)
 	builder.EqInt64("ref_type", filter.RefType)

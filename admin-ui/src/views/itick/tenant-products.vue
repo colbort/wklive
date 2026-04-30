@@ -194,7 +194,12 @@
       :title="formMode === 'add' ? t('itick.addTenantProduct') : t('itick.editTenantProduct')"
       width="640px"
     >
-      <el-form ref="formRef" :model="form" :rules="rules" label-width="110px">
+      <el-form
+        ref="formRef"
+        :model="form"
+        :rules="rules"
+        label-width="110px"
+      >
         <el-form-item :label="t('common.tenantId')" prop="tenantId">
           <el-input-number
             v-model="form.tenantId"

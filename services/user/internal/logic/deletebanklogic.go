@@ -3,12 +3,14 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type DeleteBankLogic struct {
@@ -27,6 +29,10 @@ func NewDeleteBankLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delete
 
 // 删除银行卡
 func (l *DeleteBankLogic) DeleteBank(in *user.DeleteBankReq) (*user.AppCommonResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	// 获取银行卡信息
 	bank, err := l.svcCtx.UserBankModel.FindOne(l.ctx, in.Id)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
@@ -40,7 +46,7 @@ func (l *DeleteBankLogic) DeleteBank(in *user.DeleteBankReq) (*user.AppCommonRes
 	}
 
 	// 验证银行卡是否属于该用户
-	if bank.UserId != in.UserId {
+	if bank.UserId != userId {
 		return &user.AppCommonResp{
 			Base: helper.GetErrResp(403, i18n.Translate(i18n.NoPermissionDeleteThisBankCard, l.ctx)),
 		}, nil
@@ -53,7 +59,7 @@ func (l *DeleteBankLogic) DeleteBank(in *user.DeleteBankReq) (*user.AppCommonRes
 		return nil, err
 	}
 
-	l.Logger.Infof("用户 %d 删除银行卡 %d 成功", in.UserId, in.Id)
+	l.Logger.Infof("用户 %d 删除银行卡 %d 成功", userId, in.Id)
 
 	return &user.AppCommonResp{
 		Base: helper.OkResp(),

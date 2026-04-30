@@ -3,15 +3,17 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
 	"time"
 	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type AppCancelOrderLogic struct {
@@ -30,14 +32,22 @@ func NewAppCancelOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ap
 
 // 撤销期权委托订单
 func (l *AppCancelOrderLogic) AppCancelOrder(in *option.AppCancelOrderReq) (*option.AppCommonResp, error) {
-	item, err := findOrderByNoOrID(l.ctx, l.svcCtx, in.TenantId, in.OrderId, in.OrderNo)
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	item, err := findOrderByNoOrID(l.ctx, l.svcCtx, tenantId, in.OrderId, in.OrderNo)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
 			return &option.AppCommonResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
-	if item.Uid != in.Uid || item.AccountId != in.AccountId {
+	if item.UserId != userId || item.AccountId != in.AccountId {
 		return &option.AppCommonResp{Base: helper.GetErrResp(403, i18n.Translate(i18n.NoPermissionOperateOrder, l.ctx))}, nil
 	}
 	if item.Status != int64(option.OrderStatus_ORDER_STATUS_PENDING) && item.Status != int64(option.OrderStatus_ORDER_STATUS_PART_FILLED) {

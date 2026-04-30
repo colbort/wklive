@@ -19,8 +19,8 @@ func NewUserRateLimitMiddleware(rds *redis.Redis) *UserRateLimitMiddleware {
 
 func (m *UserRateLimitMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		uid, err := utils.GetUidFromCtx(r.Context())
-		if err != nil || uid <= 0 {
+		userId, err := utils.GetUserIdFromCtx(r.Context())
+		if err != nil || userId <= 0 {
 			httpx.WriteJsonCtx(r.Context(), w, http.StatusUnauthorized, map[string]any{
 				"code": 401,
 				"msg":  "未登录",
@@ -30,8 +30,8 @@ func (m *UserRateLimitMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc
 
 		ip := utils.GetClientIP(r)
 
-		// 每 uid 每秒 10 次，突发 20
-		userLimiter := limit.NewTokenLimiter(10, 20, m.rds, utils.BuildUidKey("rl:user", uid))
+		// 每 userId 每秒 10 次，突发 20
+		userLimiter := limit.NewTokenLimiter(10, 20, m.rds, utils.BuildUserIdKey("rl:user", userId))
 		if !userLimiter.AllowCtx(r.Context()) {
 			httpx.WriteJsonCtx(r.Context(), w, http.StatusTooManyRequests, map[string]any{
 				"code": 429,

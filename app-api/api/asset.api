@@ -126,7 +126,6 @@ type UserAssetSummary {
 }
 
 type ListAssetCoinConfigsReq {
-	tenantId      int64 `form:"tenantId,optional"` // 租户ID
 	walletType    int64 `form:"walletType"` // 账户类型
 	operationType int64 `form:"operationType"` // 操作场景:1充值 2提现 3划转
 	coinType      int64 `form:"coinType,optional"` // 币种类型
@@ -138,7 +137,6 @@ type ListAssetCoinConfigsResp {
 }
 
 type GetMyAssetSummaryReq {
-	tenantId int64 `form:"tenantId,optional"` // 租户ID
 }
 
 type GetMyAssetSummaryResp {
@@ -147,7 +145,6 @@ type GetMyAssetSummaryResp {
 }
 
 type ListMyAssetsReq {
-	tenantId   int64  `form:"tenantId,optional"` // 租户ID
 	walletType int64  `form:"walletType,optional"` // 钱包类型
 	coin       string `form:"coin,optional"` // 币种
 }
@@ -158,7 +155,6 @@ type ListMyAssetsResp {
 }
 
 type GetMyAssetReq {
-	tenantId   int64  `form:"tenantId,optional"` // 租户ID
 	walletType int64  `form:"walletType"` // 钱包类型
 	coin       string `form:"coin"` // 币种
 }
@@ -170,7 +166,6 @@ type GetMyAssetResp {
 
 type ListMyAssetFlowsReq {
 	PageReq
-	tenantId   int64     `form:"tenantId,optional"` // 租户ID
 	walletType int64     `form:"walletType,optional"` // 钱包类型
 	coin       string    `form:"coin,optional"` // 币种
 	bizType    int64     `form:"bizType,optional"` // 业务类型
@@ -185,7 +180,6 @@ type ListMyAssetFlowsResp {
 
 type ListMyFreezesReq {
 	PageReq
-	tenantId   int64 `form:"tenantId,optional"` // 租户ID
 	walletType int64 `form:"walletType"` // 钱包类型
 	coin       string `form:"coin,optional"` // 币种
 	status     int64 `form:"status,optional"` // 状态
@@ -198,7 +192,6 @@ type ListMyFreezesResp {
 
 type ListMyLocksReq {
 	PageReq
-	tenantId   int64 `form:"tenantId,optional"` // 租户ID
 	walletType int64 `form:"walletType"` // 钱包类型
 	coin       string `form:"coin,optional"` // 币种
 	status     int64 `form:"status,optional"` // 状态

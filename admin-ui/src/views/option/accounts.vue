@@ -15,7 +15,7 @@
           <el-input-number v-model="query.tenantId" :min="0" :precision="0" />
         </el-form-item>
         <el-form-item :label="t('option.userId')">
-          <el-input-number v-model="query.uid" :min="0" :precision="0" />
+          <el-input-number v-model="query.userId" :min="0" :precision="0" />
         </el-form-item>
         <el-form-item :label="t('option.accountId')">
           <el-input-number v-model="query.accountId" :min="0" :precision="0" />
@@ -33,7 +33,7 @@
 
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="rows" stripe>
-        <el-table-column :label="t('option.userId')" prop="uid" width="100" />
+        <el-table-column :label="t('option.userId')" prop="userId" width="100" />
         <el-table-column :label="t('option.accountId')" prop="accountId" width="120" />
         <el-table-column :label="t('option.marginCoin')" prop="marginCoin" width="120" />
         <el-table-column
@@ -77,7 +77,7 @@ const detailVisible = ref(false)
 const detailData = ref<OptionAccount | null>(null)
 const query = reactive({
   tenantId: undefined as number | undefined,
-  uid: undefined as number | undefined,
+  userId: undefined as number | undefined,
   accountId: undefined as number | undefined,
   marginCoin: '',
   limit: 100,
@@ -96,7 +96,7 @@ const loadCurrent = async () => {
 
 const resetCurrent = () => {
   query.tenantId = undefined
-  query.uid = undefined
+  query.userId = undefined
   query.accountId = undefined
   query.marginCoin = ''
   query.limit = 100

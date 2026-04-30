@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	pageutil "wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
@@ -29,9 +30,17 @@ func NewAppListHistoryOrdersLogic(ctx context.Context, svcCtx *svc.ServiceContex
 // 获取历史委托列表
 func (l *AppListHistoryOrdersLogic) AppListHistoryOrders(in *option.AppListHistoryOrdersReq) (*option.AppListHistoryOrdersResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	filter := models.OptionOrderPageFilter{
-		TenantId:        in.TenantId,
-		Uid:             in.Uid,
+		TenantId:        tenantId,
+		UserId:          userId,
 		AccountId:       in.AccountId,
 		ContractId:      in.ContractId,
 		Status:          int64(in.Status),

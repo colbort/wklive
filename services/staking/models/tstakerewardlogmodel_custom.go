@@ -9,16 +9,16 @@ import (
 
 type StakeRewardLogModel interface {
 	tStakeRewardLogModel
-	FindPage(ctx context.Context, tenantID int64, cursor, limit int64, uid, orderID, productID int64, orderNo string, rewardType, rewardStatus int64, rewardBegin, rewardEnd int64) ([]*TStakeRewardLog, int64, error)
+	FindPage(ctx context.Context, tenantID int64, cursor, limit int64, user_id, orderID, productID int64, orderNo string, rewardType, rewardStatus int64, rewardBegin, rewardEnd int64) ([]*TStakeRewardLog, int64, error)
 }
 
-func (m *defaultTStakeRewardLogModel) FindPage(ctx context.Context, tenantID int64, cursor, limit int64, uid, orderID, productID int64, orderNo string, rewardType, rewardStatus int64, rewardBegin, rewardEnd int64) ([]*TStakeRewardLog, int64, error) {
+func (m *defaultTStakeRewardLogModel) FindPage(ctx context.Context, tenantID int64, cursor, limit int64, user_id, orderID, productID int64, orderNo string, rewardType, rewardStatus int64, rewardBegin, rewardEnd int64) ([]*TStakeRewardLog, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.And("tenant_id = ?", tenantID)
-	if uid > 0 {
-		builder.And("uid = ?", uid)
+	if user_id > 0 {
+		builder.And("user_id = ?", user_id)
 	}
 	if orderID > 0 {
 		builder.And("order_id = ?", orderID)

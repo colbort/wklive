@@ -35,7 +35,7 @@ export interface StakeOrder {
   id: number
   tenantId: number
   orderNo: string
-  uid: number
+  userId: number
   productId: number
   productNo: string
   productName: string
@@ -77,7 +77,7 @@ export interface StakeRewardLog {
   tenantId: number
   orderId: number
   orderNo: string
-  uid: number
+  userId: number
   productId: number
   productName: string
   coinSymbol: string
@@ -100,7 +100,7 @@ export interface StakeRedeemLog {
   tenantId: number
   orderId: number
   orderNo: string
-  uid: number
+  userId: number
   productId: number
   redeemNo: string
   redeemType: number
@@ -119,18 +119,15 @@ export interface StakeRedeemLog {
 }
 
 export interface AppProductListReq extends PageReq {
-  tenantId?: number
   productType?: number
   coinSymbol?: string
 }
 
 export interface AppProductDetailReq {
-  tenantId?: number
   id: number
 }
 
 export interface AppCreateOrderReq {
-  tenantId?: number
   productId: number
   stakeAmount: string
   source: number
@@ -138,30 +135,25 @@ export interface AppCreateOrderReq {
 }
 
 export interface AppMyOrderListReq extends PageReq {
-  tenantId?: number
   status?: number
   redeemType?: number
 }
 
 export interface AppMyOrderDetailReq {
-  tenantId?: number
   id: number
 }
 
 export interface AppMyRewardLogListReq extends PageReq {
-  tenantId?: number
   orderId?: number
   rewardType?: number
 }
 
 export interface AppRedeemReq {
-  tenantId?: number
   orderId: number
   redeemType: number
   remark?: string
 }
 
 export interface AppMyRedeemLogListReq extends PageReq {
-  tenantId?: number
   orderId?: number
 }

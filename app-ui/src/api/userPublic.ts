@@ -58,7 +58,7 @@ export function apiGuestLogin(params: Partial<GuestLoginReq> & Pick<GuestLoginRe
       setAccessToken(data.data.token)
     }
     if (data.data?.deviceId) setGuestDeviceId(data.data.deviceId)
-    if (data.data?.uid) setGuestId(data.data.uid)
+    if (data.data?.userId) setGuestId(data.data.userId)
     if (params.tenantCode) setTenantCode(params.tenantCode)
     return data
   })

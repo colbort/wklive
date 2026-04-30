@@ -8,7 +8,6 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/common/utils"
 	"wklive/proto/payment"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,13 +28,7 @@ func NewListAvailableRechargeChannelsLogic(ctx context.Context, svcCtx *svc.Serv
 }
 
 func (l *ListAvailableRechargeChannelsLogic) ListAvailableRechargeChannels(req *types.ListAvailableRechargeChannelsReq) (resp *types.ListAvailableRechargeChannelsResp, err error) {
-	userId, err := utils.GetUidFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
 	result, err := l.svcCtx.PaymentCli.ListAvailableRechargeChannels(l.ctx, &payment.ListAvailableRechargeChannelsReq{
-		UserId:         userId,
-		TenantId:       req.TenantId,
 		RechargeAmount: req.RechargeAmount,
 		Currency:       req.Currency,
 		ClientType:     payment.ClientType(req.ClientType),

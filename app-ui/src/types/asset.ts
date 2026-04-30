@@ -124,30 +124,25 @@ export interface UserAssetSummary {
 }
 
 export interface GetMyAssetSummaryReq {
-  tenantId?: number
 }
 
 export interface ListAssetCoinConfigsReq {
-  tenantId?: number
   walletType: number
   operationType: number
   coinType?: number
 }
 
 export interface ListMyAssetsReq {
-  tenantId?: number
   walletType?: number
   coin?: string
 }
 
 export interface GetMyAssetReq {
-  tenantId?: number
   walletType: number
   coin: string
 }
 
 export interface ListMyAssetFlowsReq extends PageReq {
-  tenantId?: number
   walletType?: number
   coin?: string
   bizType?: number
@@ -156,14 +151,12 @@ export interface ListMyAssetFlowsReq extends PageReq {
 }
 
 export interface ListMyFreezesReq extends PageReq {
-  tenantId?: number
   walletType: number
   coin?: string
   status?: number
 }
 
 export interface ListMyLocksReq extends PageReq {
-  tenantId?: number
   walletType: number
   coin?: string
   status?: number

@@ -103,7 +103,7 @@ func (l *AdminLoginLogic) AdminLogin(in *system.AdminLoginReq) (*system.AdminLog
 	return &system.AdminLoginResp{
 		Base:             helper.OkResp(),
 		Token:            token,
-		Uid:              user.Id,
+		UserId:           user.Id,
 		Nickname:         user.Nickname,
 		Google2FaEnabled: user.GoogleEnabled,
 		PermsVer:         user.PermsVer,

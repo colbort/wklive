@@ -34,7 +34,6 @@ service AssetApp {
 }
 
 message ListAssetCoinConfigsReq {
-  int64 tenant_id = 1;                         // 租户ID
   WalletType wallet_type = 2;                  // 账户类型
   AssetCoinOperationType operation_type = 3;   // 操作场景
   AssetCoinType coin_type = 4;                 // 币种类型,0表示全部
@@ -46,8 +45,6 @@ message ListAssetCoinConfigsResp {
 }
 
 message GetMyAssetSummaryReq {
-  int64 tenant_id = 1; // 租户ID
-  int64 user_id = 2;   // 用户ID
 }
 
 message GetMyAssetSummaryResp {
@@ -56,10 +53,8 @@ message GetMyAssetSummaryResp {
 }
 
 message ListMyAssetsReq {
-  int64 tenant_id = 1;        // 租户ID
-  int64 user_id = 2;          // 用户ID
-  WalletType wallet_type = 3; // 钱包类型,0表示全部
-  string coin = 4;            // 币种,空表示全部
+  WalletType wallet_type = 2; // 钱包类型,0表示全部
+  string coin = 3;            // 币种,空表示全部
 }
 
 message ListMyAssetsResp {
@@ -68,8 +63,6 @@ message ListMyAssetsResp {
 }
 
 message GetMyAssetReq {
-  int64 tenant_id = 1;        // 租户ID
-  int64 user_id = 2;          // 用户ID
   WalletType wallet_type = 3; // 钱包类型
   string coin = 4;            // 币种
 }
@@ -80,8 +73,6 @@ message GetMyAssetResp {
 }
 
 message ListMyAssetFlowsReq {
-  int64 tenant_id = 1;             // 租户ID
-  int64 user_id = 2;               // 用户ID
   WalletType wallet_type = 3;      // 钱包类型,0表示全部
   string coin = 4;                 // 币种
   BizType biz_type = 5;            // 业务类型,0表示全部
@@ -96,8 +87,6 @@ message ListMyAssetFlowsResp {
 }
 
 message ListMyFreezesReq {
-  int64 tenant_id = 1;        // 租户ID
-  int64 user_id = 2;          // 用户ID
   WalletType wallet_type = 3; // 钱包类型
   string coin = 4;            // 币种
   FreezeStatus status = 5;    // 冻结状态
@@ -110,8 +99,6 @@ message ListMyFreezesResp {
 }
 
 message ListMyLocksReq {
-  int64 tenant_id = 1;        // 租户ID
-  int64 user_id = 2;          // 用户ID
   WalletType wallet_type = 3; // 钱包类型
   string coin = 4;            // 币种
   LockStatus status = 5;      // 锁仓状态

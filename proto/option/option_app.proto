@@ -60,7 +60,6 @@ service OptionApp {
 message AppCommonResp { common.RespBase base = 1; }
 
 message AppListContractsReq {
-  int64 tenant_id = 1;
   string underlying_symbol = 2;
   OptionType option_type = 3;
   ContractStatus status = 4;
@@ -73,7 +72,6 @@ message AppListContractsResp {
 }
 
 message AppGetContractDetailReq {
-  int64 tenant_id = 1;
   int64 contract_id = 2;
 }
 
@@ -83,8 +81,6 @@ message AppGetContractDetailResp {
 }
 
 message AppPlaceOrderReq {
-  int64 tenant_id = 1;
-  int64 uid = 2;
   int64 account_id = 3;
   int64 contract_id = 4;
   Side side = 5;
@@ -104,16 +100,12 @@ message AppPlaceOrderResp {
 }
 
 message AppCancelOrderReq {
-  int64 tenant_id = 1;
-  int64 uid = 2;
-  int64 account_id = 3;
-  int64 order_id = 4;
-  string order_no = 5;
+  int64 account_id = 2;
+  int64 order_id = 3;
+  string order_no = 4;
 }
 
 message AppGetOrderDetailReq {
-  int64 tenant_id = 1;
-  int64 uid = 2;
   int64 account_id = 3;
   int64 order_id = 4;
   string order_no = 5;
@@ -125,8 +117,6 @@ message AppGetOrderDetailResp {
 }
 
 message AppListCurrentOrdersReq {
-  int64 tenant_id = 1;
-  int64 uid = 2;
   int64 account_id = 3;
   int64 contract_id = 4;
   Side side = 5;
@@ -140,8 +130,6 @@ message AppListCurrentOrdersResp {
 }
 
 message AppListHistoryOrdersReq {
-  int64 tenant_id = 1;
-  int64 uid = 2;
   int64 account_id = 3;
   int64 contract_id = 4;
   OrderStatus status = 5;
@@ -156,8 +144,6 @@ message AppListHistoryOrdersResp {
 }
 
 message AppListTradesReq {
-  int64 tenant_id = 1;
-  int64 uid = 2;
   int64 account_id = 3;
   int64 contract_id = 4;
   common.TimeRange trade_time_range = 5;
@@ -171,8 +157,6 @@ message AppListTradesResp {
 }
 
 message AppListPositionsReq {
-  int64 tenant_id = 1;
-  int64 uid = 2;
   int64 account_id = 3;
   PositionStatus status = 4;
   common.PageReq page = 5;
@@ -185,8 +169,6 @@ message AppListPositionsResp {
 }
 
 message AppGetPositionDetailReq {
-  int64 tenant_id = 1;
-  int64 uid = 2;
   int64 account_id = 3;
   int64 position_id = 4;
 }
@@ -197,8 +179,6 @@ message AppGetPositionDetailResp {
 }
 
 message AppExerciseReq {
-  int64 tenant_id = 1;
-  int64 uid = 2;
   int64 account_id = 3;
   int64 position_id = 4;
   int64 contract_id = 5;
@@ -212,8 +192,6 @@ message AppExerciseResp {
 }
 
 message AppListExercisesReq {
-  int64 tenant_id = 1;
-  int64 uid = 2;
   int64 account_id = 3;
   int64 contract_id = 4;
   ExerciseStatus status = 5;
@@ -228,8 +206,6 @@ message AppListExercisesResp {
 }
 
 message AppListAccountsReq {
-  int64 tenant_id = 1;
-  int64 uid = 2;
   int64 account_id = 3;
 }
 
@@ -239,8 +215,6 @@ message AppListAccountsResp {
 }
 
 message AppListBillsReq {
-  int64 tenant_id = 1;
-  int64 uid = 2;
   int64 account_id = 3;
   BillRefType ref_type = 4;
   common.TimeRange create_time_range = 5;

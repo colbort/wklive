@@ -165,7 +165,7 @@ message AdminProductChangeStatusResp {
 message AdminOrderListReq {
   int64 tenant_id = 1;
   string order_no = 2;
-  int64 uid = 3;
+  int64 user_id = 3;
   int64 product_id = 4;
   string product_name = 5;
   string coin_symbol = 6;
@@ -199,7 +199,7 @@ message AdminOrderDetailResp {
 message AdminRewardLogListReq {
   int64 tenant_id = 1;
   string order_no = 2;
-  int64 uid = 3;
+  int64 user_id = 3;
   int64 product_id = 4;
   RewardType reward_type = 5;
   RewardStatus reward_status = 6;
@@ -218,7 +218,7 @@ message AdminRedeemLogListReq {
   int64 tenant_id = 1;
   string order_no = 2;
   string redeem_no = 3;
-  int64 uid = 4;
+  int64 user_id = 4;
   int64 product_id = 5;
   RedeemType redeem_type = 6;
   RedeemStatus redeem_status = 7;

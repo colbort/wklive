@@ -120,7 +120,7 @@ func (l *ManualRedeemLogic) ManualRedeem(in *staking.AdminManualRedeemReq) (*sta
 	if rewardAmount > 0 {
 		resp, err := l.svcCtx.AssetClient.AddAvailable(l.ctx, &asset.AddAvailableReq{
 			TenantId:   order.TenantId,
-			UserId:     order.Uid,
+			UserId:     order.UserId,
 			WalletType: asset.WalletType_WALLET_TYPE_EARN,
 			Coin:       order.RewardCoinSymbol,
 			Amount:     conv.FloatString(rewardAmount),
@@ -180,7 +180,7 @@ func (l *ManualRedeemLogic) ManualRedeem(in *staking.AdminManualRedeemReq) (*sta
 			TenantId:     order.TenantId,
 			OrderId:      order.Id,
 			OrderNo:      order.OrderNo,
-			Uid:          order.Uid,
+			UserId:       order.UserId,
 			ProductId:    order.ProductId,
 			RedeemNo:     redeemNo,
 			RedeemType:   int64(in.RedeemType),

@@ -29,14 +29,17 @@ func NewGetMarginAccountListLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 // 获取保证金账户列表
 func (l *GetMarginAccountListLogic) GetMarginAccountList(in *trade.GetMarginAccountListReq) (*trade.GetMarginAccountListResp, error) {
-	if in.TenantId <= 0 {
-		if tenantId, err := utils.GetTenantIdFromMd(l.ctx); err == nil {
-			in.TenantId = tenantId
-		}
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
 	}
 	list, err := l.svcCtx.ContractMarginAcctModel.FindList(l.ctx, models.ContractMarginAccountPageFilter{
-		TenantId:    in.TenantId,
-		UserId:      in.UserId,
+		TenantId:    tenantId,
+		UserId:      userId,
 		MarketType:  int64(in.MarketType),
 		MarginAsset: in.MarginAsset,
 	})

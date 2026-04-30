@@ -49,7 +49,7 @@ export type StakeOrder = {
   id: number // 主键ID
   tenantId: number // 租户ID
   orderNo: string // 订单号
-  uid: number // 用户ID
+  userId: number // 用户ID
   productId: number // 产品ID
   productNo: string // 产品编号
   productName: string // 产品名称
@@ -91,7 +91,7 @@ export type StakeRewardLog = {
   tenantId: number // 租户ID
   orderId: number // 订单ID
   orderNo: string // 订单号
-  uid: number // 用户ID
+  userId: number // 用户ID
   productId: number // 产品ID
   productName: string // 产品名称
   coinSymbol: string // 质押币种符号
@@ -114,7 +114,7 @@ export type StakeRedeemLog = {
   tenantId: number // 租户ID
   orderId: number // 订单ID
   orderNo: string // 订单号
-  uid: number // 用户ID
+  userId: number // 用户ID
   productId: number // 产品ID
   redeemNo: string // 赎回单号
   redeemType: number // 赎回类型
@@ -190,7 +190,7 @@ export type AdminOrderListReq = {
   limit?: number // 每页条数
   tenantId?: number // 租户ID
   orderNo?: string // 订单号
-  uid?: number // 用户ID
+  userId?: number // 用户ID
   productId?: number // 产品ID
   productName?: string // 产品名称
   coinSymbol?: string // 币种符号
@@ -213,7 +213,7 @@ export type AdminRewardLogListReq = {
   limit?: number // 每页条数
   tenantId?: number // 租户ID
   orderNo?: string // 订单号
-  uid?: number // 用户ID
+  userId?: number // 用户ID
   productId?: number // 产品ID
   rewardType?: number // 奖励类型
   rewardStatus?: number // 奖励状态
@@ -227,7 +227,7 @@ export type AdminRedeemLogListReq = {
   tenantId?: number // 租户ID
   orderNo?: string // 订单号
   redeemNo?: string // 赎回单号
-  uid?: number // 用户ID
+  userId?: number // 用户ID
   productId?: number // 产品ID
   redeemType?: number // 赎回类型
   redeemStatus?: number // 赎回状态

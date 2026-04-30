@@ -31,11 +31,11 @@ func NotificationsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 
 		conn, err := upgrader.Upgrade(w, r, nil)
 		if err != nil {
-			logx.Errorf("upgrade admin ws failed, uid=%d err=%v", claims.Uid, err)
+			logx.Errorf("upgrade admin ws failed, userId=%d err=%v", claims.UserId, err)
 			return
 		}
 
-		client := ws.NewConnection(svcCtx.NotificationHub, conn, claims.Uid, claims.Username)
+		client := ws.NewConnection(svcCtx.NotificationHub, conn, claims.UserId, claims.Username)
 		svcCtx.NotificationHub.Register(client)
 		connected, _ := json.Marshal(notify.Event{
 			ID:        "connected",
@@ -43,7 +43,7 @@ func NotificationsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			Level:     notify.EventLevelInfo,
 			Title:     "connected",
 			Message:   "admin notification websocket connected",
-			UserID:    claims.Uid,
+			UserID:    claims.UserId,
 			CreatedAt: time.Now().UnixMilli(),
 		})
 		client.Send <- connected

@@ -31,7 +31,7 @@ func (l *AdminListPositionsLogic) AdminListPositions(in *option.ListPositionsReq
 	cursor, limit := pageutil.Input(in.Page)
 	items, total, err := l.svcCtx.OptionPositionModel.FindPage(l.ctx, models.OptionPositionPageFilter{
 		TenantId:   in.TenantId,
-		Uid:        in.Uid,
+		UserId:     in.UserId,
 		AccountId:  in.AccountId,
 		ContractId: in.ContractId,
 		Side:       int64(in.Side),

@@ -8,7 +8,6 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/common/utils"
 	"wklive/proto/user"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,13 +28,7 @@ func NewGetIdentityLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetId
 }
 
 func (l *GetIdentityLogic) GetIdentity() (resp *types.GetIdentityResp, err error) {
-	userId, err := utils.GetUidFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-	result, err := l.svcCtx.UserCli.GetIdentity(l.ctx, &user.GetIdentityReq{
-		UserId: userId,
-	})
+	result, err := l.svcCtx.UserCli.GetIdentity(l.ctx, &user.GetIdentityReq{})
 	if err != nil {
 		return nil, err
 	}

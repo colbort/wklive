@@ -26,7 +26,7 @@ message AdminLoginResp {
   common.RespBase base = 1;
   string token = 3;
   int64 exp = 4;
-  int64 uid = 5;
+  int64 user_id = 5;
   string nickname = 6;
   repeated int64 role_ids = 7;
   int64 google2fa_enabled = 8;
@@ -37,7 +37,7 @@ message AdminLoginResp {
   string avatar = 13;
 }
 
-message ProfileReq { int64 uid = 1; }
+message ProfileReq { int64 user_id = 1; }
 
 message ProfileUser {
   int64 id = 1;

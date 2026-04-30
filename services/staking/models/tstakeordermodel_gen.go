@@ -45,7 +45,7 @@ type (
 		Id               int64   `db:"id"`                 // 主键ID
 		TenantId         int64   `db:"tenant_id"`          // 租户ID
 		OrderNo          string  `db:"order_no"`           // 质押订单号
-		Uid              int64   `db:"uid"`                // 用户ID
+		UserId           int64   `db:"user_id"`            // 用户ID
 		ProductId        int64   `db:"product_id"`         // 质押产品ID
 		ProductNo        string  `db:"product_no"`         // 质押产品编号快照
 		ProductName      string  `db:"product_name"`       // 质押产品名称快照
@@ -147,7 +147,7 @@ func (m *defaultTStakeOrderModel) Insert(ctx context.Context, data *TStakeOrder)
 	tStakeOrderTenantIdOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTStakeOrderTenantIdOrderNoPrefix, data.TenantId, data.OrderNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tStakeOrderRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderNo, data.Uid, data.ProductId, data.ProductNo, data.ProductName, data.ProductType, data.CoinName, data.CoinSymbol, data.RewardCoinName, data.RewardCoinSymbol, data.StakeAmount, data.Apr, data.LockDays, data.InterestMode, data.RewardMode, data.AllowEarlyRedeem, data.EarlyRedeemRate, data.InterestDays, data.StartTimes, data.EndTimes, data.LastRewardTimes, data.NextRewardTimes, data.TotalReward, data.PendingReward, data.RedeemAmount, data.RedeemFee, data.Status, data.RedeemType, data.RedeemApplyTimes, data.RedeemTimes, data.Source, data.Remark, data.CreateUserId, data.UpdateUserId, data.CreateTimes, data.UpdateTimes)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderNo, data.UserId, data.ProductId, data.ProductNo, data.ProductName, data.ProductType, data.CoinName, data.CoinSymbol, data.RewardCoinName, data.RewardCoinSymbol, data.StakeAmount, data.Apr, data.LockDays, data.InterestMode, data.RewardMode, data.AllowEarlyRedeem, data.EarlyRedeemRate, data.InterestDays, data.StartTimes, data.EndTimes, data.LastRewardTimes, data.NextRewardTimes, data.TotalReward, data.PendingReward, data.RedeemAmount, data.RedeemFee, data.Status, data.RedeemType, data.RedeemApplyTimes, data.RedeemTimes, data.Source, data.Remark, data.CreateUserId, data.UpdateUserId, data.CreateTimes, data.UpdateTimes)
 	}, tStakeOrderIdKey, tStakeOrderTenantIdOrderNoKey)
 	return ret, err
 }
@@ -162,7 +162,7 @@ func (m *defaultTStakeOrderModel) Update(ctx context.Context, newData *TStakeOrd
 	tStakeOrderTenantIdOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTStakeOrderTenantIdOrderNoPrefix, data.TenantId, data.OrderNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tStakeOrderRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderNo, newData.Uid, newData.ProductId, newData.ProductNo, newData.ProductName, newData.ProductType, newData.CoinName, newData.CoinSymbol, newData.RewardCoinName, newData.RewardCoinSymbol, newData.StakeAmount, newData.Apr, newData.LockDays, newData.InterestMode, newData.RewardMode, newData.AllowEarlyRedeem, newData.EarlyRedeemRate, newData.InterestDays, newData.StartTimes, newData.EndTimes, newData.LastRewardTimes, newData.NextRewardTimes, newData.TotalReward, newData.PendingReward, newData.RedeemAmount, newData.RedeemFee, newData.Status, newData.RedeemType, newData.RedeemApplyTimes, newData.RedeemTimes, newData.Source, newData.Remark, newData.CreateUserId, newData.UpdateUserId, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderNo, newData.UserId, newData.ProductId, newData.ProductNo, newData.ProductName, newData.ProductType, newData.CoinName, newData.CoinSymbol, newData.RewardCoinName, newData.RewardCoinSymbol, newData.StakeAmount, newData.Apr, newData.LockDays, newData.InterestMode, newData.RewardMode, newData.AllowEarlyRedeem, newData.EarlyRedeemRate, newData.InterestDays, newData.StartTimes, newData.EndTimes, newData.LastRewardTimes, newData.NextRewardTimes, newData.TotalReward, newData.PendingReward, newData.RedeemAmount, newData.RedeemFee, newData.Status, newData.RedeemType, newData.RedeemApplyTimes, newData.RedeemTimes, newData.Source, newData.Remark, newData.CreateUserId, newData.UpdateUserId, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tStakeOrderIdKey, tStakeOrderTenantIdOrderNoKey)
 	return err
 }

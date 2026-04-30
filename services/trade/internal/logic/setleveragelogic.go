@@ -30,8 +30,16 @@ func NewSetLeverageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SetLe
 
 // 设置杠杆倍数
 func (l *SetLeverageLogic) SetLeverage(in *trade.SetLeverageReq) (*trade.AppCommonResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	symbol, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, in.SymbolId)
-	if errors.Is(err, models.ErrNotFound) || (err == nil && symbol.TenantId != in.TenantId) {
+	if errors.Is(err, models.ErrNotFound) || (err == nil && symbol.TenantId != tenantId) {
 		return &trade.AppCommonResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
 	}
 	if err != nil {
@@ -39,15 +47,15 @@ func (l *SetLeverageLogic) SetLeverage(in *trade.SetLeverageReq) (*trade.AppComm
 	}
 	now := utils.NowMillis()
 	cfg, err := l.svcCtx.ContractLeverageCfgModel.FindOneByTenantIdUserIdSymbolIdMarketTypeMarginMode(
-		l.ctx, in.TenantId, in.UserId, in.SymbolId, int64(in.MarketType), int64(in.MarginMode),
+		l.ctx, tenantId, userId, in.SymbolId, int64(in.MarketType), int64(in.MarginMode),
 	)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 	if cfg == nil {
 		cfg = &models.TContractLeverageConfig{
-			TenantId:     in.TenantId,
-			UserId:       in.UserId,
+			TenantId:     tenantId,
+			UserId:       userId,
 			SymbolId:     in.SymbolId,
 			MarketType:   int64(in.MarketType),
 			MarginMode:   int64(in.MarginMode),
@@ -62,7 +70,7 @@ func (l *SetLeverageLogic) SetLeverage(in *trade.SetLeverageReq) (*trade.AppComm
 	cfg.LongLeverage = ensureLeverage(symbol, in.LongLeverage)
 	cfg.ShortLeverage = ensureLeverage(symbol, in.ShortLeverage)
 	cfg.MaxLeverage = symbol.MaxLeverage
-	cfg.OperatorId = in.UserId
+	cfg.OperatorId = userId
 	cfg.UpdateTimes = now
 	if cfg.Id == 0 {
 		if _, err = l.svcCtx.ContractLeverageCfgModel.Insert(l.ctx, cfg); err != nil {

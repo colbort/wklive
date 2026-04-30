@@ -288,7 +288,7 @@ type StakeOrder struct {
 	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	TenantId         int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	OrderNo          string                 `protobuf:"bytes,3,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
-	Uid              int64                  `protobuf:"varint,4,opt,name=uid,proto3" json:"uid,omitempty"`
+	UserId           int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	ProductId        int64                  `protobuf:"varint,5,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	ProductNo        string                 `protobuf:"bytes,6,opt,name=product_no,json=productNo,proto3" json:"product_no,omitempty"`
 	ProductName      string                 `protobuf:"bytes,7,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`
@@ -378,9 +378,9 @@ func (x *StakeOrder) GetOrderNo() string {
 	return ""
 }
 
-func (x *StakeOrder) GetUid() int64 {
+func (x *StakeOrder) GetUserId() int64 {
 	if x != nil {
-		return x.Uid
+		return x.UserId
 	}
 	return 0
 }
@@ -630,7 +630,7 @@ type StakeRewardLog struct {
 	TenantId         int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	OrderId          int64                  `protobuf:"varint,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
 	OrderNo          string                 `protobuf:"bytes,4,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
-	Uid              int64                  `protobuf:"varint,5,opt,name=uid,proto3" json:"uid,omitempty"`
+	UserId           int64                  `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	ProductId        int64                  `protobuf:"varint,6,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	ProductName      string                 `protobuf:"bytes,7,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`
 	CoinSymbol       string                 `protobuf:"bytes,8,opt,name=coin_symbol,json=coinSymbol,proto3" json:"coin_symbol,omitempty"`
@@ -708,9 +708,9 @@ func (x *StakeRewardLog) GetOrderNo() string {
 	return ""
 }
 
-func (x *StakeRewardLog) GetUid() int64 {
+func (x *StakeRewardLog) GetUserId() int64 {
 	if x != nil {
-		return x.Uid
+		return x.UserId
 	}
 	return 0
 }
@@ -827,7 +827,7 @@ type StakeRedeemLog struct {
 	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	OrderId       int64                  `protobuf:"varint,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
 	OrderNo       string                 `protobuf:"bytes,4,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
-	Uid           int64                  `protobuf:"varint,5,opt,name=uid,proto3" json:"uid,omitempty"`
+	UserId        int64                  `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	ProductId     int64                  `protobuf:"varint,6,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	RedeemNo      string                 `protobuf:"bytes,7,opt,name=redeem_no,json=redeemNo,proto3" json:"redeem_no,omitempty"`
 	RedeemType    RedeemType             `protobuf:"varint,8,opt,name=redeem_type,json=redeemType,proto3,enum=staking.RedeemType" json:"redeem_type,omitempty"`
@@ -905,9 +905,9 @@ func (x *StakeRedeemLog) GetOrderNo() string {
 	return ""
 }
 
-func (x *StakeRedeemLog) GetUid() int64 {
+func (x *StakeRedeemLog) GetUserId() int64 {
 	if x != nil {
-		return x.Uid
+		return x.UserId
 	}
 	return 0
 }
@@ -1057,13 +1057,13 @@ const file_proto_staking_model_proto_rawDesc = "" +
 	"\x0ecreate_user_id\x18\x19 \x01(\x03R\fcreateUserId\x12$\n" +
 	"\x0eupdate_user_id\x18\x1a \x01(\x03R\fupdateUserId\x12!\n" +
 	"\fcreate_times\x18\x1b \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x1c \x01(\x03R\vupdateTimes\"\x99\v\n" +
+	"\fupdate_times\x18\x1c \x01(\x03R\vupdateTimes\"\xa0\v\n" +
 	"\n" +
 	"StakeOrder\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
-	"\border_no\x18\x03 \x01(\tR\aorderNo\x12\x10\n" +
-	"\x03uid\x18\x04 \x01(\x03R\x03uid\x12\x1d\n" +
+	"\border_no\x18\x03 \x01(\tR\aorderNo\x12\x17\n" +
+	"\auser_id\x18\x04 \x01(\x03R\x06userId\x12\x1d\n" +
 	"\n" +
 	"product_id\x18\x05 \x01(\x03R\tproductId\x12\x1d\n" +
 	"\n" +
@@ -1105,13 +1105,13 @@ const file_proto_staking_model_proto_rawDesc = "" +
 	"\x0ecreate_user_id\x18# \x01(\x03R\fcreateUserId\x12$\n" +
 	"\x0eupdate_user_id\x18$ \x01(\x03R\fupdateUserId\x12!\n" +
 	"\fcreate_times\x18% \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18& \x01(\x03R\vupdateTimes\"\xc2\x05\n" +
+	"\fupdate_times\x18& \x01(\x03R\vupdateTimes\"\xc9\x05\n" +
 	"\x0eStakeRewardLog\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
 	"\border_id\x18\x03 \x01(\x03R\aorderId\x12\x19\n" +
-	"\border_no\x18\x04 \x01(\tR\aorderNo\x12\x10\n" +
-	"\x03uid\x18\x05 \x01(\x03R\x03uid\x12\x1d\n" +
+	"\border_no\x18\x04 \x01(\tR\aorderNo\x12\x17\n" +
+	"\auser_id\x18\x05 \x01(\x03R\x06userId\x12\x1d\n" +
 	"\n" +
 	"product_id\x18\x06 \x01(\x03R\tproductId\x12!\n" +
 	"\fproduct_name\x18\a \x01(\tR\vproductName\x12\x1f\n" +
@@ -1130,13 +1130,13 @@ const file_proto_staking_model_proto_rawDesc = "" +
 	"\x0ecreate_user_id\x18\x11 \x01(\x03R\fcreateUserId\x12$\n" +
 	"\x0eupdate_user_id\x18\x12 \x01(\x03R\fupdateUserId\x12!\n" +
 	"\fcreate_times\x18\x13 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x14 \x01(\x03R\vupdateTimes\"\xa7\x05\n" +
+	"\fupdate_times\x18\x14 \x01(\x03R\vupdateTimes\"\xae\x05\n" +
 	"\x0eStakeRedeemLog\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
 	"\border_id\x18\x03 \x01(\x03R\aorderId\x12\x19\n" +
-	"\border_no\x18\x04 \x01(\tR\aorderNo\x12\x10\n" +
-	"\x03uid\x18\x05 \x01(\x03R\x03uid\x12\x1d\n" +
+	"\border_no\x18\x04 \x01(\tR\aorderNo\x12\x17\n" +
+	"\auser_id\x18\x05 \x01(\x03R\x06userId\x12\x1d\n" +
 	"\n" +
 	"product_id\x18\x06 \x01(\x03R\tproductId\x12\x1b\n" +
 	"\tredeem_no\x18\a \x01(\tR\bredeemNo\x124\n" +

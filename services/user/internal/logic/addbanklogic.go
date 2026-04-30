@@ -30,8 +30,12 @@ func NewAddBankLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddBankLo
 
 // 添加银行卡
 func (l *AddBankLogic) AddBank(in *user.AddBankReq) (*user.AddBankResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	// 获取用户信息
-	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, in.UserId)
+	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, userId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
@@ -54,7 +58,7 @@ func (l *AddBankLogic) AddBank(in *user.AddBankReq) (*user.AddBankResp, error) {
 	bank := &models.TUserBank{
 		Id:          l.svcCtx.Node.Generate().Int64(),
 		TenantId:    tuser.TenantId,
-		UserId:      in.UserId,
+		UserId:      userId,
 		BankName:    in.BankName,
 		BankCode:    sql.NullString{String: in.BankCode, Valid: in.BankCode != ""},
 		AccountName: in.AccountName,
@@ -72,7 +76,7 @@ func (l *AddBankLogic) AddBank(in *user.AddBankReq) (*user.AddBankResp, error) {
 		return nil, err
 	}
 
-	l.Logger.Infof("用户 %d 添加银行卡成功，卡号后4位：%s", in.UserId, getLastFourDigits(in.AccountNo))
+	l.Logger.Infof("用户 %d 添加银行卡成功，卡号后4位：%s", userId, getLastFourDigits(in.AccountNo))
 
 	return &user.AddBankResp{
 		Base: helper.OkResp(),

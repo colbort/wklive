@@ -49,7 +49,12 @@
           show-overflow-tooltip
         />
         <el-table-column :label="t('staking.coinSymbol')" prop="coinSymbol" width="120" />
-        <el-table-column prop="apr" label="APR" min-width="120" show-overflow-tooltip />
+        <el-table-column
+          prop="apr"
+          label="APR"
+          min-width="120"
+          show-overflow-tooltip
+        />
         <el-table-column :label="t('staking.lockDays')" prop="lockDays" width="120" />
         <el-table-column :label="t('common.status')" prop="status" width="100" />
         <el-table-column :label="t('common.actions')" width="220" fixed="right">

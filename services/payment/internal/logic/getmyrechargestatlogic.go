@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"wklive/common/helper"
+	"wklive/common/utils"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -28,7 +29,15 @@ func NewGetMyRechargeStatLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 
 // 当前用户累计充值统计
 func (l *GetMyRechargeStatLogic) GetMyRechargeStat(in *payment.GetMyRechargeStatReq) (*payment.GetMyRechargeStatResp, error) {
-	stat, err := l.svcCtx.UserRechargeStatModel.FindOneByTenantIdUserId(l.ctx, in.TenantId, in.UserId)
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	stat, err := l.svcCtx.UserRechargeStatModel.FindOneByTenantIdUserId(l.ctx, tenantId, userId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
@@ -38,8 +47,8 @@ func (l *GetMyRechargeStatLogic) GetMyRechargeStat(in *payment.GetMyRechargeStat
 		return &payment.GetMyRechargeStatResp{
 			Base: helper.OkResp(),
 			Stat: &payment.UserRechargeStat{
-				TenantId: in.TenantId,
-				UserId:   in.UserId,
+				TenantId: tenantId,
+				UserId:   userId,
 			},
 		}, nil
 	}

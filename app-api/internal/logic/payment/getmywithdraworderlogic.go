@@ -8,7 +8,6 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/common/utils"
 	"wklive/proto/payment"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,14 +28,8 @@ func NewGetMyWithdrawOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *GetMyWithdrawOrderLogic) GetMyWithdrawOrder(req *types.GetMyWithdrawOrderReq) (resp *types.GetMyWithdrawOrderResp, err error) {
-	userId, err := utils.GetUidFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	result, err := l.svcCtx.PaymentCli.GetMyWithdrawOrder(l.ctx, &payment.GetMyWithdrawOrderReq{
-		Id:     req.Id,
-		UserId: userId,
+		Id: req.Id,
 	})
 	if err != nil {
 		return nil, err
@@ -68,8 +61,8 @@ func (l *GetMyWithdrawOrderLogic) GetMyWithdrawOrder(req *types.GetMyWithdrawOrd
 			NotifyTime:   result.Data.NotifyTime,
 			CloseTime:    result.Data.CloseTime,
 			Remark:       result.Data.Remark,
-			CreateTimes:   result.Data.CreateTimes,
-			UpdateTimes:   result.Data.UpdateTimes,
+			CreateTimes:  result.Data.CreateTimes,
+			UpdateTimes:  result.Data.UpdateTimes,
 		},
 	}
 

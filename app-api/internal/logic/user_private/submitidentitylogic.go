@@ -8,7 +8,6 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/common/utils"
 	"wklive/proto/user"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,12 +28,7 @@ func NewSubmitIdentityLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Su
 }
 
 func (l *SubmitIdentityLogic) SubmitIdentity(req *types.SubmitIdentityReq) (resp *types.SubmitIdentityResp, err error) {
-	userId, err := utils.GetUidFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
 	result, err := l.svcCtx.UserCli.SubmitIdentity(l.ctx, &user.SubmitIdentityReq{
-		UserId:        userId,
 		Phone:         req.Phone,
 		Email:         req.Email,
 		RealName:      req.RealName,

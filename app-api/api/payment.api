@@ -76,12 +76,52 @@ type RechargeOrder {
 	updateTimes  int64  `json:"updateTimes"`
 }
 
+// 链上充值地址
+type CryptoRechargeAddress {
+	id            int64  `json:"id"`
+	tenantId      int64  `json:"tenantId"`
+	userId        int64  `json:"userId"`
+	walletType    int64  `json:"walletType"`
+	coin          string `json:"coin"`
+	chainCode     int64  `json:"chainCode"`
+	address       string `json:"address"`
+	memo          string `json:"memo"`
+	addressSource int64  `json:"addressSource"`
+	addressType   int64  `json:"addressType"`
+	status        int64  `json:"status"`
+	lastUsedTime  int64  `json:"lastUsedTime"`
+	createTimes   int64  `json:"createTimes"`
+	updateTimes   int64  `json:"updateTimes"`
+}
+
+// 链上充值交易
+type CryptoRechargeTx {
+	id                   int64  `json:"id"`
+	tenantId             int64  `json:"tenantId"`
+	userId               int64  `json:"userId"`
+	orderId              int64  `json:"orderId"`
+	orderNo              string `json:"orderNo"`
+	coin                 string `json:"coin"`
+	chainCode            int64  `json:"chainCode"`
+	txHash               string `json:"txHash"`
+	fromAddress          string `json:"fromAddress"`
+	toAddress            string `json:"toAddress"`
+	memo                 string `json:"memo"`
+	amount               string `json:"amount"`
+	blockHeight          int64  `json:"blockHeight"`
+	confirmCount         int64  `json:"confirmCount"`
+	requiredConfirmCount int64  `json:"requiredConfirmCount"`
+	status               int64  `json:"status"`
+	rawData              string `json:"rawData"`
+	createTimes          int64  `json:"createTimes"`
+	updateTimes          int64  `json:"updateTimes"`
+}
+
 // ====================
 // request / response
 // ====================
 // 当前用户累计充值统计
 type GetMyRechargeStatReq {
-	tenantId int64 `form:"tenantId,optional"`
 }
 
 type GetMyRechargeStatResp {
@@ -92,7 +132,6 @@ type GetMyRechargeStatResp {
 // 获取当前用户在指定充值金额下可用的充值通道
 // 服务端需要基于当前登录用户自动查询累计充值金额并套用规则过滤
 type ListAvailableRechargeChannelsReq {
-	tenantId       int64  `json:"tenantId,optional"`
 	rechargeAmount int64  `json:"rechargeAmount"` // 单位：分
 	currency       string `json:"currency"`
 	clientType     int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
@@ -109,7 +148,6 @@ type ListAvailableRechargeChannelsResp {
 // 2. 当前用户是否满足通道规则
 // 3. 金额、币种、客户端是否合法
 type CreateRechargeOrderReq {
-	tenantId       int64  `json:"json:"tenantId,optional"`
 	channelId      int64  `json:"channelId"`
 	rechargeAmount int64  `json:"rechargeAmount"` // 单位：分
 	currency       string `json:"currency"`
@@ -127,7 +165,6 @@ type CreateRechargeOrderResp {
 
 // 查询我的订单详情
 type GetMyRechargeOrderReq {
-	tenantId int64  `form:"tenantId,optional"`
 	orderNo  string `path:"orderNo"`
 }
 
@@ -138,7 +175,6 @@ type GetMyRechargeOrderResp {
 
 // 查询我的充值订单列表
 type ListMyRechargeOrdersReq {
-	tenantId        int64  `form:"tenantId,optional"`
 	cursor          int64  `form:"cursor,optional"`
 	limit           int64  `form:"limit,optional"`
 	status          int64  `form:"status,optional"` // 0未知 1待支付 2支付中 3成功 4失败 5已关闭 6已退款
@@ -154,19 +190,69 @@ type ListMyRechargeOrdersResp {
 
 // 取消未支付订单
 type CancelMyRechargeOrderReq {
-	tenantId int64  `json:"tenantId,optional"`
 	orderNo  string `path:"orderNo"`
 }
 
 // 轮询订单状态
 type QueryMyRechargeOrderStatusReq {
-	tenantId int64  `form:"tenantId,optional"`
 	orderNo  string `path:"orderNo"`
 }
 
 type QueryMyRechargeOrderStatusResp {
 	RespBase
 	data RechargeOrder `json:"data"`
+}
+
+// 获取/分配我的链上充值地址
+type GetMyCryptoRechargeAddressReq {
+	walletType int64  `form:"walletType"`
+	coin       string `form:"coin"`
+	chainCode  int64  `form:"chainCode"`
+}
+
+type GetMyCryptoRechargeAddressResp {
+	RespBase
+	data CryptoRechargeAddress `json:"data"`
+}
+
+// 我的链上充值地址列表
+type ListMyCryptoRechargeAddressesReq {
+	walletType int64  `form:"walletType,optional"`
+	coin       string `form:"coin,optional"`
+	chainCode  int64  `form:"chainCode,optional"`
+}
+
+type ListMyCryptoRechargeAddressesResp {
+	RespBase
+	data []CryptoRechargeAddress `json:"data"`
+}
+
+// 我的链上充值交易列表
+type ListMyCryptoRechargeTxsReq {
+	cursor          int64  `form:"cursor,optional"`
+	limit           int64  `form:"limit,optional"`
+	orderNo         string `form:"orderNo,optional"`
+	coin            string `form:"coin,optional"`
+	chainCode       int64  `form:"chainCode,optional"`
+	status          int64  `form:"status,optional"`
+	createTimeStart int64  `form:"createTimeStart,optional"`
+	createTimeEnd   int64  `form:"createTimeEnd,optional"`
+}
+
+type ListMyCryptoRechargeTxsResp {
+	RespBase
+	data []CryptoRechargeTx `json:"data"`
+}
+
+// 我的链上充值交易详情
+type GetMyCryptoRechargeTxReq {
+	id       int64  `path:"id"`
+	txHash   string `form:"txHash,optional"`
+}
+
+type GetMyCryptoRechargeTxResp {
+	RespBase
+	data CryptoRechargeTx `json:"data"`
 }
 
 // 提现
@@ -197,8 +283,6 @@ type WithdrawOrder {
 }
 
 type CreateWithdrawOrderReq {
-	tenantId int64  `json:"tenantId,optional"`
-	userId   int64  `json:"userId,optional"`
 	amount   int64  `json:"amount"` // 单位：分
 	currency string `json:"currency"`
 	address  string `json:"address"` // 提现地址（钱包地址等）
@@ -214,8 +298,6 @@ type CreateWithdrawOrderResp {
 // 获取提现订单列表
 type ListMyWithdrawOrdersReq {
 	PageReq
-	tenantId int64 `form:"tenantId,optional"`
-	userId   int64 `form:"userId,optional"`
 	status   int64 `form:"status,optional"` // 0未知 1待处理 2处理中 3成功 4失败
 }
 
@@ -292,4 +374,16 @@ service app {
 
 	@handler CreateWithdrawOrder
 	post /withdraw/orders (CreateWithdrawOrderReq) returns (CreateWithdrawOrderResp)
+
+	@handler GetMyCryptoRechargeAddress
+	get /crypto/recharge/address (GetMyCryptoRechargeAddressReq) returns (GetMyCryptoRechargeAddressResp)
+
+	@handler ListMyCryptoRechargeAddresses
+	get /crypto/recharge/addresses (ListMyCryptoRechargeAddressesReq) returns (ListMyCryptoRechargeAddressesResp)
+
+	@handler ListMyCryptoRechargeTxs
+	get /crypto/recharge/txs (ListMyCryptoRechargeTxsReq) returns (ListMyCryptoRechargeTxsResp)
+
+	@handler GetMyCryptoRechargeTx
+	get /crypto/recharge/txs/:id (GetMyCryptoRechargeTxReq) returns (GetMyCryptoRechargeTxResp)
 }

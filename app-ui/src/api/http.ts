@@ -2,6 +2,7 @@ import axios from 'axios'
 
 const ACCESS_TOKEN_KEY = 'app_access_token'
 const REFRESH_TOKEN_KEY = 'app_refresh_token'
+const TENANT_ID_KEY = 'app_tenant_id'
 const TENANT_CODE_KEY = 'app_tenant_code'
 const DEFAULT_API_BASE_PATH = '/app'
 
@@ -56,6 +57,18 @@ export function getTenantCode() {
   return localStorage.getItem(TENANT_CODE_KEY) || import.meta.env.VITE_TENANT_CODE || ''
 }
 
+export function getTenantId() {
+  return localStorage.getItem(TENANT_ID_KEY) || import.meta.env.VITE_TENANT_ID || ''
+}
+
+export function setTenantId(tenantId: string | number) {
+  localStorage.setItem(TENANT_ID_KEY, String(tenantId))
+}
+
+export function clearTenantId() {
+  localStorage.removeItem(TENANT_ID_KEY)
+}
+
 export function setTenantCode(tenantCode: string) {
   localStorage.setItem(TENANT_CODE_KEY, tenantCode)
 }
@@ -83,18 +96,43 @@ function appendTenantScope(target: Record<string, unknown>, url?: string) {
   return target
 }
 
+function stripUserTenantScope(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map((item) => stripUserTenantScope(item))
+  }
+
+  if (!isPlainObject(value)) {
+    return value
+  }
+
+  return Object.fromEntries(
+    Object.entries(value)
+      .filter(([key]) => key !== 'userId' && key !== 'tenantId')
+      .map(([key, childValue]) => [key, stripUserTenantScope(childValue)]),
+  )
+}
+
 http.interceptors.request.use((config) => {
   const accessToken = getAccessToken()
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`
   }
 
+  const tenantId = getTenantId()
+  const tenantCode = getTenantCode()
+  if (tenantId) {
+    config.headers['x-tenant-id'] = tenantId
+  }
+  if (tenantCode) {
+    config.headers['x-tenant-code'] = tenantCode
+  }
+
   if (isPlainObject(config.params)) {
-    config.params = appendTenantScope({ ...config.params }, config.url)
+    config.params = stripUserTenantScope(appendTenantScope({ ...config.params }, config.url))
   }
 
   if (isPlainObject(config.data)) {
-    config.data = appendTenantScope({ ...config.data }, config.url)
+    config.data = stripUserTenantScope(appendTenantScope({ ...config.data }, config.url))
   }
 
   return config

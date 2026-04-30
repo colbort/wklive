@@ -32,8 +32,12 @@ func NewUpdateProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upd
 
 // 更新用户资料
 func (l *UpdateProfileLogic) UpdateProfile(in *user.UpdateProfileReq) (*user.UpdateProfileResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	// 获取用户信息
-	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, in.UserId)
+	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, userId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
@@ -63,7 +67,7 @@ func (l *UpdateProfileLogic) UpdateProfile(in *user.UpdateProfileReq) (*user.Upd
 	}
 	tuser.UpdateTimes = now
 
-	identity, err := l.svcCtx.UserIdentityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, in.UserId)
+	identity, err := l.svcCtx.UserIdentityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, userId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
@@ -110,7 +114,7 @@ func (l *UpdateProfileLogic) UpdateProfile(in *user.UpdateProfileReq) (*user.Upd
 		return nil, err
 	}
 
-	l.Logger.Infof("用户 %d 更新资料成功", in.UserId)
+	l.Logger.Infof("用户 %d 更新资料成功", userId)
 
 	// 返回更新后的资料
 	return l.buildUpdateProfileResp(tuser, identity)
@@ -127,7 +131,7 @@ func (l *UpdateProfileLogic) buildUpdateProfileResp(tuser *models.TUser, _ *mode
 	}
 
 	return &user.UpdateProfileResp{
-		Base: helper.OkResp(),
+		Base:    helper.OkResp(),
 		Profile: toUserProfileProto(tuser, identity, security),
 	}, nil
 }

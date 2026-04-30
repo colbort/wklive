@@ -45,7 +45,7 @@ type (
 		Id              int64   `db:"id"`               // 主键ID
 		TenantId        int64   `db:"tenant_id"`        // 租户ID
 		ExerciseNo      string  `db:"exercise_no"`      // 行权单号
-		Uid             int64   `db:"uid"`              // 用户ID
+		UserId          int64   `db:"user_id"`          // 用户ID
 		AccountId       int64   `db:"account_id"`       // 交易账户ID
 		ContractId      int64   `db:"contract_id"`      // 合约ID
 		PositionId      int64   `db:"position_id"`      // 持仓ID
@@ -130,7 +130,7 @@ func (m *defaultTOptionExerciseModel) Insert(ctx context.Context, data *TOptionE
 	tOptionExerciseTenantIdExerciseNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionExerciseTenantIdExerciseNoPrefix, data.TenantId, data.ExerciseNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionExerciseRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.ExerciseNo, data.Uid, data.AccountId, data.ContractId, data.PositionId, data.ExerciseType, data.ExerciseQty, data.StrikePrice, data.SettlementPrice, data.ExerciseAmount, data.ProfitAmount, data.Fee, data.FeeCoin, data.Status, data.Remark, data.ExerciseTime, data.FinishTime, data.CreateTimes, data.UpdateTimes)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.ExerciseNo, data.UserId, data.AccountId, data.ContractId, data.PositionId, data.ExerciseType, data.ExerciseQty, data.StrikePrice, data.SettlementPrice, data.ExerciseAmount, data.ProfitAmount, data.Fee, data.FeeCoin, data.Status, data.Remark, data.ExerciseTime, data.FinishTime, data.CreateTimes, data.UpdateTimes)
 	}, tOptionExerciseIdKey, tOptionExerciseTenantIdExerciseNoKey)
 	return ret, err
 }
@@ -145,7 +145,7 @@ func (m *defaultTOptionExerciseModel) Update(ctx context.Context, newData *TOpti
 	tOptionExerciseTenantIdExerciseNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionExerciseTenantIdExerciseNoPrefix, data.TenantId, data.ExerciseNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tOptionExerciseRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.ExerciseNo, newData.Uid, newData.AccountId, newData.ContractId, newData.PositionId, newData.ExerciseType, newData.ExerciseQty, newData.StrikePrice, newData.SettlementPrice, newData.ExerciseAmount, newData.ProfitAmount, newData.Fee, newData.FeeCoin, newData.Status, newData.Remark, newData.ExerciseTime, newData.FinishTime, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.ExerciseNo, newData.UserId, newData.AccountId, newData.ContractId, newData.PositionId, newData.ExerciseType, newData.ExerciseQty, newData.StrikePrice, newData.SettlementPrice, newData.ExerciseAmount, newData.ProfitAmount, newData.Fee, newData.FeeCoin, newData.Status, newData.Remark, newData.ExerciseTime, newData.FinishTime, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tOptionExerciseIdKey, tOptionExerciseTenantIdExerciseNoKey)
 	return err
 }

@@ -58,7 +58,7 @@ export interface OptionOrder {
   id: number
   tenantId: number
   orderNo: string
-  uid: number
+  userId: number
   accountId: number
   contractId: number
   underlyingSymbol: string
@@ -114,7 +114,7 @@ export interface OptionTrade {
 export interface OptionPosition {
   id: number
   tenantId: number
-  uid: number
+  userId: number
   accountId: number
   contractId: number
   underlyingSymbol: string
@@ -140,7 +140,7 @@ export interface OptionExercise {
   id: number
   tenantId: number
   exerciseNo: string
-  uid: number
+  userId: number
   accountId: number
   contractId: number
   positionId: number
@@ -163,7 +163,7 @@ export interface OptionExercise {
 export interface OptionAccount {
   id: number
   tenantId: number
-  uid: number
+  userId: number
   accountId: number
   marginCoin: string
   balance: string
@@ -182,7 +182,7 @@ export interface OptionAccount {
 export interface OptionBill {
   id: number
   tenantId: number
-  uid: number
+  userId: number
   accountId: number
   bizNo: string
   refType: number
@@ -222,19 +222,16 @@ export interface OptionExerciseDetail {
 }
 
 export interface AppListContractsReq extends PageReq {
-  tenantId?: number
   underlyingSymbol?: string
   optionType?: number
   status?: number
 }
 
 export interface AppGetContractDetailReq {
-  tenantId?: number
   contractId: number
 }
 
 export interface AppPlaceOrderReq {
-  tenantId?: number
   accountId: number
   contractId: number
   side: number
@@ -248,28 +245,24 @@ export interface AppPlaceOrderReq {
 }
 
 export interface AppCancelOrderReq {
-  tenantId?: number
   accountId: number
   orderId?: number
   orderNo?: string
 }
 
 export interface AppGetOrderDetailReq {
-  tenantId?: number
   accountId: number
   orderId?: number
   orderNo?: string
 }
 
 export interface AppListCurrentOrdersReq extends PageReq {
-  tenantId?: number
   accountId: number
   contractId?: number
   side?: number
 }
 
 export interface AppListHistoryOrdersReq extends PageReq {
-  tenantId?: number
   accountId: number
   contractId?: number
   status?: number
@@ -277,26 +270,22 @@ export interface AppListHistoryOrdersReq extends PageReq {
 }
 
 export interface AppListTradesReq extends PageReq {
-  tenantId?: number
   accountId: number
   contractId?: number
   tradeTimeRange?: TimeRange
 }
 
 export interface AppListPositionsReq extends PageReq {
-  tenantId?: number
   accountId: number
   status?: number
 }
 
 export interface AppGetPositionDetailReq {
-  tenantId?: number
   accountId: number
   positionId: number
 }
 
 export interface AppExerciseReq {
-  tenantId?: number
   accountId: number
   positionId: number
   contractId: number
@@ -304,7 +293,6 @@ export interface AppExerciseReq {
 }
 
 export interface AppListExercisesReq extends PageReq {
-  tenantId?: number
   accountId: number
   contractId?: number
   status?: number
@@ -312,12 +300,10 @@ export interface AppListExercisesReq extends PageReq {
 }
 
 export interface AppListAccountsReq {
-  tenantId?: number
   accountId?: number
 }
 
 export interface AppListBillsReq extends PageReq {
-  tenantId?: number
   accountId?: number
   refType?: number
   createTimeRange?: TimeRange

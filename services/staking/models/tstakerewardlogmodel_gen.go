@@ -44,7 +44,7 @@ type (
 		TenantId         int64   `db:"tenant_id"`          // 租户ID
 		OrderId          int64   `db:"order_id"`           // 质押订单ID
 		OrderNo          string  `db:"order_no"`           // 质押订单号
-		Uid              int64   `db:"uid"`                // 用户ID
+		UserId           int64   `db:"user_id"`            // 用户ID
 		ProductId        int64   `db:"product_id"`         // 质押产品ID
 		ProductName      string  `db:"product_name"`       // 质押产品名称快照
 		CoinSymbol       string  `db:"coin_symbol"`        // 质押币种符号快照
@@ -100,7 +100,7 @@ func (m *defaultTStakeRewardLogModel) Insert(ctx context.Context, data *TStakeRe
 	tStakeRewardLogIdKey := fmt.Sprintf("%s%v", cacheTStakeRewardLogIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tStakeRewardLogRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderId, data.OrderNo, data.Uid, data.ProductId, data.ProductName, data.CoinSymbol, data.RewardCoinSymbol, data.RewardAmount, data.BeforeReward, data.AfterReward, data.RewardType, data.RewardStatus, data.RewardTimes, data.Remark, data.CreateUserId, data.UpdateUserId, data.CreateTimes, data.UpdateTimes)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderId, data.OrderNo, data.UserId, data.ProductId, data.ProductName, data.CoinSymbol, data.RewardCoinSymbol, data.RewardAmount, data.BeforeReward, data.AfterReward, data.RewardType, data.RewardStatus, data.RewardTimes, data.Remark, data.CreateUserId, data.UpdateUserId, data.CreateTimes, data.UpdateTimes)
 	}, tStakeRewardLogIdKey)
 	return ret, err
 }
@@ -109,7 +109,7 @@ func (m *defaultTStakeRewardLogModel) Update(ctx context.Context, data *TStakeRe
 	tStakeRewardLogIdKey := fmt.Sprintf("%s%v", cacheTStakeRewardLogIdPrefix, data.Id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tStakeRewardLogRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderId, data.OrderNo, data.Uid, data.ProductId, data.ProductName, data.CoinSymbol, data.RewardCoinSymbol, data.RewardAmount, data.BeforeReward, data.AfterReward, data.RewardType, data.RewardStatus, data.RewardTimes, data.Remark, data.CreateUserId, data.UpdateUserId, data.CreateTimes, data.UpdateTimes, data.Id)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderId, data.OrderNo, data.UserId, data.ProductId, data.ProductName, data.CoinSymbol, data.RewardCoinSymbol, data.RewardAmount, data.BeforeReward, data.AfterReward, data.RewardType, data.RewardStatus, data.RewardTimes, data.Remark, data.CreateUserId, data.UpdateUserId, data.CreateTimes, data.UpdateTimes, data.Id)
 	}, tStakeRewardLogIdKey)
 	return err
 }

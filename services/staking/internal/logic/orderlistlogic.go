@@ -39,7 +39,7 @@ func (l *OrderListLogic) OrderList(in *staking.AdminOrderListReq) (*staking.Admi
 		cursor, limit = page.Cursor, page.Limit
 	}
 	items, total, err := l.svcCtx.StakeOrderModel.FindPage(
-		l.ctx, in.TenantId, cursor, limit, in.Uid, in.ProductId, in.OrderNo, in.ProductName, in.CoinSymbol,
+		l.ctx, in.TenantId, cursor, limit, in.UserId, in.ProductId, in.OrderNo, in.ProductName, in.CoinSymbol,
 		int64(in.Status), int64(in.RedeemType), int64(in.Source),
 		in.StartTimesBegin, in.StartTimesEnd, in.EndTimesBegin, in.EndTimesEnd,
 	)

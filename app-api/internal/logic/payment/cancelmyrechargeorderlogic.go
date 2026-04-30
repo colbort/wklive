@@ -8,7 +8,6 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/common/utils"
 	"wklive/proto/payment"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,23 +28,8 @@ func NewCancelMyRechargeOrderLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *CancelMyRechargeOrderLogic) CancelMyRechargeOrder(req *types.CancelMyRechargeOrderReq) (resp *types.RespBase, err error) {
-	userId, err := utils.GetUidFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	tenantId := req.TenantId
-	if tenantId == 0 {
-		tenantId, err = utils.GetTenantIdFromCtx(l.ctx)
-		if err != nil {
-			return nil, err
-		}
-	}
-
 	result, err := l.svcCtx.PaymentCli.CancelMyRechargeOrder(l.ctx, &payment.CancelMyRechargeOrderReq{
-		TenantId: tenantId,
-		UserId:   userId,
-		OrderNo:  req.OrderNo,
+		OrderNo: req.OrderNo,
 	})
 	if err != nil {
 		return nil, err

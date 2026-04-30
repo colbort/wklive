@@ -8,7 +8,6 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/common/utils"
 	"wklive/proto/user"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,13 +28,8 @@ func NewDeleteBankLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Delete
 }
 
 func (l *DeleteBankLogic) DeleteBank(req *types.DeleteBankReq) (resp *types.RespBase, err error) {
-	userId, err := utils.GetUidFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
 	result, err := l.svcCtx.UserCli.DeleteBank(l.ctx, &user.DeleteBankReq{
-		UserId: userId,
-		Id:     req.Id,
+		Id: req.Id,
 	})
 	if err != nil {
 		return nil, err

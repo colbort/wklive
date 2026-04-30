@@ -1,6 +1,6 @@
-import { clearAccessToken, clearRefreshToken, http } from '@/api/http'
+import { clearAccessToken, clearRefreshToken, http, setTenantId } from '@/api/http'
 import { buildPath, compactParams } from '@/api/utils'
-import type { RespBase } from '@/types/api'
+import type { ApiResp, RespBase } from '@/types/api'
 import type {
   AddBankReq,
   AddBankResp,
@@ -33,8 +33,10 @@ export function apiLogout(): Promise<RespBase> {
 }
 
 export function apiGetProfile(): Promise<RespBase & GetProfileResp> {
-  return http.get('/user/profile').then((res) => {
+  return http.get<RespBase & GetProfileResp>('/user/profile').then((res) => {
     const data = res.data
+    console.log('User profile:', data.data.base)
+    setTenantId(data.data?.base.tenantId ?? '')
     return data
   })
 }

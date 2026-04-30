@@ -4,8 +4,6 @@ import (
 	"context"
 	"reflect"
 
-	"wklive/common/utils"
-
 	"google.golang.org/grpc"
 )
 
@@ -13,20 +11,6 @@ func Proxy[Resp any, PReq any, PResp any](ctx context.Context, req any, call fun
 	protoReq := new(PReq)
 	if err := copyValue(reflect.ValueOf(protoReq), reflect.ValueOf(req)); err != nil {
 		return nil, err
-	}
-
-	if uid, err := utils.GetUidFromCtx(ctx); err == nil {
-		setInt64Field(protoReq, uid, "UserId", "Uid")
-	}
-
-	tenantId := getInt64Field(req, "TenantId")
-	if tenantId == 0 {
-		if ctxTenantId, err := utils.GetTenantIdFromCtx(ctx); err == nil {
-			tenantId = ctxTenantId
-		}
-	}
-	if tenantId != 0 {
-		setInt64Field(protoReq, tenantId, "TenantId")
 	}
 
 	protoResp, err := call(ctx, protoReq)
@@ -164,27 +148,6 @@ func setInt64Field(target any, value int64, names ...string) {
 			_ = copyValue(field, reflect.ValueOf(value))
 		}
 	}
-}
-
-func getInt64Field(source any, name string) int64 {
-	if source == nil {
-		return 0
-	}
-	if field, ok := findField(reflect.ValueOf(source), name); ok {
-		for field.Kind() == reflect.Pointer {
-			if field.IsNil() {
-				return 0
-			}
-			field = field.Elem()
-		}
-		switch field.Kind() {
-		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			return field.Int()
-		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			return int64(field.Uint())
-		}
-	}
-	return 0
 }
 
 func findField(v reflect.Value, name string) (reflect.Value, bool) {

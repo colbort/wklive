@@ -45,7 +45,7 @@
           min-width="180"
           show-overflow-tooltip
         />
-        <el-table-column :label="t('staking.userId')" prop="uid" width="100" />
+        <el-table-column :label="t('staking.userId')" prop="userId" width="100" />
         <el-table-column
           prop="redeemAmount"
           :label="t('staking.redeemAmount')"
@@ -89,7 +89,7 @@ const detailData = ref<StakeRedeemLog | null>(null)
 const query = reactive({
   tenantId: undefined as number | undefined,
   orderNo: '',
-  uid: undefined as number | undefined,
+  userId: undefined as number | undefined,
   redeemNo: '',
   limit: 100,
 })
@@ -108,7 +108,7 @@ const loadRows = async () => {
 const resetQuery = () => {
   query.tenantId = undefined
   query.orderNo = ''
-  query.uid = undefined
+  query.userId = undefined
   query.redeemNo = ''
   query.limit = 100
   loadRows()

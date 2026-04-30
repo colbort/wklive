@@ -55,7 +55,7 @@ message GuestLoginReq {
 
 message GuestLogin {
   string token = 1;
-  string uid = 2;
+  string user_id = 2;
   bool is_new = 3;
   string username = 4;
 }
@@ -65,7 +65,7 @@ message GuestLoginResp {
   GuestLogin data = 2;
 }
 
-message LogoutReq { int64 user_id = 1; }
+message LogoutReq { }
 
 message RefreshTokenReq {
   string tenant_code = 1;
@@ -77,7 +77,7 @@ message RefreshTokenResp {
   common.TokenInfo token = 2;
 }
 
-message GetProfileReq { int64 user_id = 1; }
+message GetProfileReq { }
 
 message GetProfileResp {
   common.RespBase base = 1;
@@ -85,7 +85,6 @@ message GetProfileResp {
 }
 
 message UpdateProfileReq {
-  int64 user_id = 1;
   string nickname = 2;
   string avatar = 3;
   string language = 4;
@@ -105,13 +104,12 @@ message UpdateProfileResp {
 }
 
 message ChangeLoginPasswordReq {
-  int64 user_id = 1;
   string old_password = 2;
   string new_password = 3;
   string confirm_password = 4;
 }
 
-message GetIdentityReq { int64 user_id = 1; }
+message GetIdentityReq { }
 
 message GetIdentityResp {
   common.RespBase base = 1;
@@ -119,7 +117,6 @@ message GetIdentityResp {
 }
 
 message SubmitIdentityReq {
-  int64 user_id = 1;
   string phone = 2;
   string email = 3;
   string real_name = 4;
@@ -142,7 +139,7 @@ message SubmitIdentityResp {
   user.UserIdentity identity = 2;
 }
 
-message GetSecurityReq { int64 user_id = 1; }
+message GetSecurityReq { }
 
 message GetSecurityResp {
   common.RespBase base = 1;
@@ -150,19 +147,17 @@ message GetSecurityResp {
 }
 
 message SetPayPasswordReq {
-  int64 user_id = 1;
   string password = 2;
   string confirm_password = 3;
 }
 
 message ChangePayPasswordReq {
-  int64 user_id = 1;
   string old_password = 2;
   string new_password = 3;
   string confirm_password = 4;
 }
 
-message InitGoogle2FAReq { int64 user_id = 1; }
+message InitGoogle2FAReq { }
 
 message InitGoogle2FAResp {
   common.RespBase base = 1;
@@ -171,17 +166,14 @@ message InitGoogle2FAResp {
 }
 
 message EnableGoogle2FAReq {
-  int64 user_id = 1;
   string google_code = 2;
 }
 
 message DisableGoogle2FAReq {
-  int64 user_id = 1;
   string google_code = 2;
 }
 
 message ListBanksReq {
-  int64 user_id = 1;
   common.PageReq page = 2;
 }
 
@@ -191,7 +183,6 @@ message ListBanksResp {
 }
 
 message AddBankReq {
-  int64 user_id = 1;
   string bank_name = 2;
   string bank_code = 3;
   string account_name = 4;
@@ -208,7 +199,6 @@ message AddBankResp {
 
 message UpdateBankReq {
   int64 id = 1;
-  int64 user_id = 2;
   string bank_name = 3;
   string bank_code = 4;
   string account_name = 5;
@@ -225,12 +215,10 @@ message UpdateBankResp {
 
 message DeleteBankReq {
   int64 id = 1;
-  int64 user_id = 2;
 }
 
 message SetDefaultBankReq {
   int64 id = 1;
-  int64 user_id = 2;
 }
 
 // APP端接口

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
@@ -28,8 +29,12 @@ func NewGetIdentityLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetId
 
 // 获取身份信息
 func (l *GetIdentityLogic) GetIdentity(in *user.GetIdentityReq) (*user.GetIdentityResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	// 获取用户信息
-	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, in.UserId)
+	tuser, err := l.svcCtx.UserModel.FindOne(l.ctx, userId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
@@ -41,7 +46,7 @@ func (l *GetIdentityLogic) GetIdentity(in *user.GetIdentityReq) (*user.GetIdenti
 	}
 
 	// 查询用户身份信息
-	identity, err := l.svcCtx.UserIdentityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, in.UserId)
+	identity, err := l.svcCtx.UserIdentityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, userId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}

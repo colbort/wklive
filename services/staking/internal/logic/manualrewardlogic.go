@@ -48,7 +48,7 @@ func (l *ManualRewardLogic) ManualReward(in *staking.AdminManualRewardReq) (*sta
 	now := utils.NowMillis()
 	resp, err := l.svcCtx.AssetClient.AddAvailable(l.ctx, &asset.AddAvailableReq{
 		TenantId:   order.TenantId,
-		UserId:     order.Uid,
+		UserId:     order.UserId,
 		WalletType: asset.WalletType_WALLET_TYPE_EARN,
 		Coin:       order.RewardCoinSymbol,
 		Amount:     conv.FloatString(rewardAmount),
@@ -82,7 +82,7 @@ func (l *ManualRewardLogic) ManualReward(in *staking.AdminManualRewardReq) (*sta
 			TenantId:         order.TenantId,
 			OrderId:          order.Id,
 			OrderNo:          order.OrderNo,
-			Uid:              order.Uid,
+			UserId:           order.UserId,
 			ProductId:        order.ProductId,
 			ProductName:      order.ProductName,
 			CoinSymbol:       order.CoinSymbol,

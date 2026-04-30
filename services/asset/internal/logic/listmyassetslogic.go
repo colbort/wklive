@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"wklive/common/helper"
+	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/svc"
 
@@ -26,7 +27,15 @@ func NewListMyAssetsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *List
 
 // 查询我的资产列表
 func (l *ListMyAssetsLogic) ListMyAssets(in *asset.ListMyAssetsReq) (*asset.ListMyAssetsResp, error) {
-	list, err := l.svcCtx.UserAssetModel.FindAll(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, 0)
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	list, err := l.svcCtx.UserAssetModel.FindAll(l.ctx, tenantId, userId, int64(in.WalletType), in.Coin, 0)
 	if err != nil {
 		return nil, err
 	}

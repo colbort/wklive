@@ -29,6 +29,10 @@ func NewSetDefaultBankLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Se
 
 // 设置默认银行卡
 func (l *SetDefaultBankLogic) SetDefaultBank(in *user.SetDefaultBankReq) (*user.AppCommonResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	// 获取银行卡信息
 	bank, err := l.svcCtx.UserBankModel.FindOne(l.ctx, in.Id)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
@@ -42,7 +46,7 @@ func (l *SetDefaultBankLogic) SetDefaultBank(in *user.SetDefaultBankReq) (*user.
 	}
 
 	// 验证银行卡是否属于该用户
-	if bank.UserId != in.UserId {
+	if bank.UserId != userId {
 		return &user.AppCommonResp{
 			Base: helper.GetErrResp(403, i18n.Translate(i18n.PermissionDeniedForBankCard, l.ctx)),
 		}, nil
@@ -61,7 +65,7 @@ func (l *SetDefaultBankLogic) SetDefaultBank(in *user.SetDefaultBankReq) (*user.
 		return nil, err
 	}
 
-	l.Logger.Infof("用户 %d 设置银行卡 %d 为默认卡成功", in.UserId, in.Id)
+	l.Logger.Infof("用户 %d 设置银行卡 %d 为默认卡成功", userId, in.Id)
 
 	return &user.AppCommonResp{
 		Base: helper.OkResp(),

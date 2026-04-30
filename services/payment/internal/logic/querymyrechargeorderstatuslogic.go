@@ -5,6 +5,7 @@ import (
 	"errors"
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -28,6 +29,14 @@ func NewQueryMyRechargeOrderStatusLogic(ctx context.Context, svcCtx *svc.Service
 
 // 轮询订单状态
 func (l *QueryMyRechargeOrderStatusLogic) QueryMyRechargeOrderStatus(in *payment.QueryMyRechargeOrderStatusReq) (*payment.QueryMyRechargeOrderStatusResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	order, err := l.svcCtx.RechargeOrderModel.FindOneByOrderNo(l.ctx, in.OrderNo)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
@@ -40,7 +49,7 @@ func (l *QueryMyRechargeOrderStatusLogic) QueryMyRechargeOrderStatus(in *payment
 	}
 
 	// Check permission
-	if order.UserId != in.UserId || order.TenantId != in.TenantId {
+	if order.UserId != userId || order.TenantId != tenantId {
 		return &payment.QueryMyRechargeOrderStatusResp{
 			Base: helper.GetErrResp(403, i18n.Translate(i18n.NoPermissionQueryOrder, l.ctx)),
 		}, nil

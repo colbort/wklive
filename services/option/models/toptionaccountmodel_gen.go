@@ -23,15 +23,15 @@ var (
 	tOptionAccountRowsExpectAutoSet   = strings.Join(stringx.Remove(tOptionAccountFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tOptionAccountRowsWithPlaceHolder = strings.Join(stringx.Remove(tOptionAccountFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTOptionAccountIdPrefix                             = "cache:tOptionAccount:id:"
-	cacheTOptionAccountTenantIdUidAccountIdMarginCoinPrefix = "cache:tOptionAccount:tenantId:uid:accountId:marginCoin:"
+	cacheTOptionAccountIdPrefix                                = "cache:tOptionAccount:id:"
+	cacheTOptionAccountTenantIdUserIdAccountIdMarginCoinPrefix = "cache:tOptionAccount:tenantId:userId:accountId:marginCoin:"
 )
 
 type (
 	tOptionAccountModel interface {
 		Insert(ctx context.Context, data *TOptionAccount) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TOptionAccount, error)
-		FindOneByTenantIdUidAccountIdMarginCoin(ctx context.Context, tenantId int64, uid int64, accountId int64, marginCoin string) (*TOptionAccount, error)
+		FindOneByTenantIdUserIdAccountIdMarginCoin(ctx context.Context, tenantId int64, userId int64, accountId int64, marginCoin string) (*TOptionAccount, error)
 		Update(ctx context.Context, data *TOptionAccount) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -44,7 +44,7 @@ type (
 	TOptionAccount struct {
 		Id               int64   `db:"id"`                // 主键ID
 		TenantId         int64   `db:"tenant_id"`         // 租户ID
-		Uid              int64   `db:"uid"`               // 用户ID
+		UserId           int64   `db:"user_id"`           // 用户ID
 		AccountId        int64   `db:"account_id"`        // 交易账户ID
 		MarginCoin       string  `db:"margin_coin"`       // 保证金币种
 		Balance          float64 `db:"balance"`           // 账户余额
@@ -75,11 +75,11 @@ func (m *defaultTOptionAccountModel) Delete(ctx context.Context, id int64) error
 	}
 
 	tOptionAccountIdKey := fmt.Sprintf("%s%v", cacheTOptionAccountIdPrefix, id)
-	tOptionAccountTenantIdUidAccountIdMarginCoinKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTOptionAccountTenantIdUidAccountIdMarginCoinPrefix, data.TenantId, data.Uid, data.AccountId, data.MarginCoin)
+	tOptionAccountTenantIdUserIdAccountIdMarginCoinKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTOptionAccountTenantIdUserIdAccountIdMarginCoinPrefix, data.TenantId, data.UserId, data.AccountId, data.MarginCoin)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tOptionAccountIdKey, tOptionAccountTenantIdUidAccountIdMarginCoinKey)
+	}, tOptionAccountIdKey, tOptionAccountTenantIdUserIdAccountIdMarginCoinKey)
 	return err
 }
 
@@ -100,12 +100,12 @@ func (m *defaultTOptionAccountModel) FindOne(ctx context.Context, id int64) (*TO
 	}
 }
 
-func (m *defaultTOptionAccountModel) FindOneByTenantIdUidAccountIdMarginCoin(ctx context.Context, tenantId int64, uid int64, accountId int64, marginCoin string) (*TOptionAccount, error) {
-	tOptionAccountTenantIdUidAccountIdMarginCoinKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTOptionAccountTenantIdUidAccountIdMarginCoinPrefix, tenantId, uid, accountId, marginCoin)
+func (m *defaultTOptionAccountModel) FindOneByTenantIdUserIdAccountIdMarginCoin(ctx context.Context, tenantId int64, userId int64, accountId int64, marginCoin string) (*TOptionAccount, error) {
+	tOptionAccountTenantIdUserIdAccountIdMarginCoinKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTOptionAccountTenantIdUserIdAccountIdMarginCoinPrefix, tenantId, userId, accountId, marginCoin)
 	var resp TOptionAccount
-	err := m.QueryRowIndexCtx(ctx, &resp, tOptionAccountTenantIdUidAccountIdMarginCoinKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `uid` = ? and `account_id` = ? and `margin_coin` = ? limit 1", tOptionAccountRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, uid, accountId, marginCoin); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tOptionAccountTenantIdUserIdAccountIdMarginCoinKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `user_id` = ? and `account_id` = ? and `margin_coin` = ? limit 1", tOptionAccountRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, userId, accountId, marginCoin); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -122,11 +122,11 @@ func (m *defaultTOptionAccountModel) FindOneByTenantIdUidAccountIdMarginCoin(ctx
 
 func (m *defaultTOptionAccountModel) Insert(ctx context.Context, data *TOptionAccount) (sql.Result, error) {
 	tOptionAccountIdKey := fmt.Sprintf("%s%v", cacheTOptionAccountIdPrefix, data.Id)
-	tOptionAccountTenantIdUidAccountIdMarginCoinKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTOptionAccountTenantIdUidAccountIdMarginCoinPrefix, data.TenantId, data.Uid, data.AccountId, data.MarginCoin)
+	tOptionAccountTenantIdUserIdAccountIdMarginCoinKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTOptionAccountTenantIdUserIdAccountIdMarginCoinPrefix, data.TenantId, data.UserId, data.AccountId, data.MarginCoin)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionAccountRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.Uid, data.AccountId, data.MarginCoin, data.Balance, data.AvailableBalance, data.FrozenBalance, data.PositionMargin, data.OrderMargin, data.UnrealizedPnl, data.RealizedPnl, data.RiskRate, data.Status, data.CreateTimes, data.UpdateTimes)
-	}, tOptionAccountIdKey, tOptionAccountTenantIdUidAccountIdMarginCoinKey)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.AccountId, data.MarginCoin, data.Balance, data.AvailableBalance, data.FrozenBalance, data.PositionMargin, data.OrderMargin, data.UnrealizedPnl, data.RealizedPnl, data.RiskRate, data.Status, data.CreateTimes, data.UpdateTimes)
+	}, tOptionAccountIdKey, tOptionAccountTenantIdUserIdAccountIdMarginCoinKey)
 	return ret, err
 }
 
@@ -137,11 +137,11 @@ func (m *defaultTOptionAccountModel) Update(ctx context.Context, newData *TOptio
 	}
 
 	tOptionAccountIdKey := fmt.Sprintf("%s%v", cacheTOptionAccountIdPrefix, data.Id)
-	tOptionAccountTenantIdUidAccountIdMarginCoinKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTOptionAccountTenantIdUidAccountIdMarginCoinPrefix, data.TenantId, data.Uid, data.AccountId, data.MarginCoin)
+	tOptionAccountTenantIdUserIdAccountIdMarginCoinKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTOptionAccountTenantIdUserIdAccountIdMarginCoinPrefix, data.TenantId, data.UserId, data.AccountId, data.MarginCoin)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tOptionAccountRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.Uid, newData.AccountId, newData.MarginCoin, newData.Balance, newData.AvailableBalance, newData.FrozenBalance, newData.PositionMargin, newData.OrderMargin, newData.UnrealizedPnl, newData.RealizedPnl, newData.RiskRate, newData.Status, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tOptionAccountIdKey, tOptionAccountTenantIdUidAccountIdMarginCoinKey)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.AccountId, newData.MarginCoin, newData.Balance, newData.AvailableBalance, newData.FrozenBalance, newData.PositionMargin, newData.OrderMargin, newData.UnrealizedPnl, newData.RealizedPnl, newData.RiskRate, newData.Status, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tOptionAccountIdKey, tOptionAccountTenantIdUserIdAccountIdMarginCoinKey)
 	return err
 }
 

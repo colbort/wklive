@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	pageutil "wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
@@ -29,9 +30,17 @@ func NewAppListCurrentOrdersLogic(ctx context.Context, svcCtx *svc.ServiceContex
 // 获取当前委托列表
 func (l *AppListCurrentOrdersLogic) AppListCurrentOrders(in *option.AppListCurrentOrdersReq) (*option.AppListCurrentOrdersResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	items, total, err := l.svcCtx.OptionOrderModel.FindPage(l.ctx, models.OptionOrderPageFilter{
-		TenantId:   in.TenantId,
-		Uid:        in.Uid,
+		TenantId:   tenantId,
+		UserId:     userId,
 		AccountId:  in.AccountId,
 		ContractId: in.ContractId,
 		Side:       int64(in.Side),

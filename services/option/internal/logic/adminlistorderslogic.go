@@ -31,7 +31,7 @@ func (l *AdminListOrdersLogic) AdminListOrders(in *option.ListOrdersReq) (*optio
 	cursor, limit := pageutil.Input(in.Page)
 	items, total, err := l.svcCtx.OptionOrderModel.FindPage(l.ctx, models.OptionOrderPageFilter{
 		TenantId:         in.TenantId,
-		Uid:              in.Uid,
+		UserId:              in.UserId,
 		AccountId:        in.AccountId,
 		ContractId:       in.ContractId,
 		UnderlyingSymbol: in.UnderlyingSymbol,

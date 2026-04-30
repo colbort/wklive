@@ -32,7 +32,7 @@ func (l *AdminListTradesLogic) AdminListTrades(in *option.ListTradesReq) (*optio
 	items, total, err := l.svcCtx.OptionTradeModel.FindPage(l.ctx, models.OptionTradePageFilter{
 		TenantId:       in.TenantId,
 		ContractId:     in.ContractId,
-		Uid:            in.Uid,
+		UserId:         in.UserId,
 		TradeNo:        in.TradeNo,
 		TradeTimeStart: pageutil.TimeRangeStart(in.TradeTimeRange),
 		TradeTimeEnd:   pageutil.TimeRangeEnd(in.TradeTimeRange),

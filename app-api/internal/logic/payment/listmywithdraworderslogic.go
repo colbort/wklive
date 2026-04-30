@@ -8,7 +8,6 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/payment"
 
@@ -30,22 +29,7 @@ func NewListMyWithdrawOrdersLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 func (l *ListMyWithdrawOrdersLogic) ListMyWithdrawOrders(req *types.ListMyWithdrawOrdersReq) (resp *types.ListMyWithdrawOrdersResp, err error) {
-	userId, err := utils.GetUidFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	tenantId := req.TenantId
-	if tenantId == 0 {
-		tenantId, err = utils.GetTenantIdFromCtx(l.ctx)
-		if err != nil {
-			return nil, err
-		}
-	}
-
 	result, err := l.svcCtx.PaymentCli.ListMyWithdrawOrders(l.ctx, &payment.ListMyWithdrawOrdersReq{
-		TenantId: tenantId,
-		UserId:   userId,
 		Page: &common.PageReq{
 			Cursor: req.Cursor,
 			Limit:  req.Limit,

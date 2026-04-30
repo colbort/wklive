@@ -31,7 +31,7 @@ func (l *AdminListAccountsLogic) AdminListAccounts(in *option.ListAccountsReq) (
 	cursor, limit := pageutil.Input(in.Page)
 	items, total, err := l.svcCtx.OptionAccountModel.FindPage(l.ctx, models.OptionAccountPageFilter{
 		TenantId:  in.TenantId,
-		Uid:       in.Uid,
+		UserId:    in.UserId,
 		AccountId: in.AccountId,
 		Status:    int64(in.Status),
 	}, cursor, limit)

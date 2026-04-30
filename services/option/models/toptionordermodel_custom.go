@@ -9,7 +9,7 @@ import (
 
 type OptionOrderPageFilter struct {
 	TenantId         int64
-	Uid              int64
+	UserId           int64
 	AccountId        int64
 	ContractId       int64
 	UnderlyingSymbol string
@@ -32,7 +32,7 @@ func (m *defaultTOptionOrderModel) FindPage(ctx context.Context, filter OptionOr
 	limit = sqlutil.NormalizeLimit(limit)
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)
-	builder.EqInt64("uid", filter.Uid)
+	builder.EqInt64("user_id", filter.UserId)
 	builder.EqInt64("account_id", filter.AccountId)
 	builder.EqInt64("contract_id", filter.ContractId)
 	builder.EqString("underlying_symbol", filter.UnderlyingSymbol)

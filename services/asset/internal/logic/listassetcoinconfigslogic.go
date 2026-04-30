@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"wklive/common/helper"
+	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/svc"
 
@@ -26,7 +27,11 @@ func NewListAssetCoinConfigsLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 // 查询APP资产操作页币种配置
 func (l *ListAssetCoinConfigsLogic) ListAssetCoinConfigs(in *asset.ListAssetCoinConfigsReq) (*asset.ListAssetCoinConfigsResp, error) {
-	list, err := l.svcCtx.AssetCoinConfigModel.FindVisibleByOperation(l.ctx, in.TenantId, int64(in.WalletType), int64(in.OperationType), int64(in.CoinType))
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	list, err := l.svcCtx.AssetCoinConfigModel.FindVisibleByOperation(l.ctx, tenantId, int64(in.WalletType), int64(in.OperationType), int64(in.CoinType))
 	if err != nil {
 		return nil, err
 	}

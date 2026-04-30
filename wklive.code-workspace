@@ -89,6 +89,8 @@
       "omitempty",
       "otpauth",
       "pageutil",
+      "paymentadmin",
+      "paymentapp",
       "paypwd",
       "Premarket",
       "protoreflect",

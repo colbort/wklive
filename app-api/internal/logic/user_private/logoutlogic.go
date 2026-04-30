@@ -8,7 +8,6 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/common/utils"
 	"wklive/proto/user"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,18 +28,12 @@ func NewLogoutLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LogoutLogi
 }
 
 func (l *LogoutLogic) Logout() (resp *types.RespBase, err error) {
-	userId, err := utils.GetUidFromCtx(l.ctx)
-	if err != nil {
-		return nil, err
-	}
-	reuslt, err := l.svcCtx.UserCli.Logout(l.ctx, &user.LogoutReq{
-		UserId: userId,
-	})
+	result, err := l.svcCtx.UserCli.Logout(l.ctx, &user.LogoutReq{})
 	if err != nil {
 		return nil, err
 	}
 	return &types.RespBase{
-		Code: reuslt.Base.Code,
-		Msg:  reuslt.Base.Msg,
+		Code: result.Base.Code,
+		Msg:  result.Base.Msg,
 	}, nil
 }

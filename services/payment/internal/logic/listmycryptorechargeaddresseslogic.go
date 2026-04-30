@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"wklive/common/helper"
+	"wklive/common/utils"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 
@@ -26,7 +27,15 @@ func NewListMyCryptoRechargeAddressesLogic(ctx context.Context, svcCtx *svc.Serv
 
 // 我的链上充值地址列表
 func (l *ListMyCryptoRechargeAddressesLogic) ListMyCryptoRechargeAddresses(in *payment.ListMyCryptoRechargeAddressesReq) (*payment.ListMyCryptoRechargeAddressesResp, error) {
-	items, _, err := l.svcCtx.CryptoRechargeAddressModel.FindPage(l.ctx, in.TenantId, in.UserId, in.WalletType, in.Coin, int64(in.ChainCode), "", int64(payment.CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_ENABLED), 0, 0, 100)
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	items, _, err := l.svcCtx.CryptoRechargeAddressModel.FindPage(l.ctx, tenantId, userId, in.WalletType, in.Coin, int64(in.ChainCode), "", int64(payment.CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_ENABLED), 0, 0, 100)
 	if err != nil {
 		return nil, err
 	}

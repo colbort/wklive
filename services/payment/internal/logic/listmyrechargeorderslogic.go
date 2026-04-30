@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -28,7 +29,15 @@ func NewListMyRechargeOrdersLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 // 查询我的充值订单列表
 func (l *ListMyRechargeOrdersLogic) ListMyRechargeOrders(in *payment.ListMyRechargeOrdersReq) (*payment.ListMyRechargeOrdersResp, error) {
-	items, total, err := l.svcCtx.RechargeOrderModel.FindPage(l.ctx, in.TenantId, in.UserId, in.OrderNo, int64(in.Status), in.Page.Cursor, in.Page.Limit)
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	items, total, err := l.svcCtx.RechargeOrderModel.FindPage(l.ctx, tenantId, userId, in.OrderNo, int64(in.Status), in.Page.Cursor, in.Page.Limit)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}

@@ -31,7 +31,7 @@ func (l *AdminListExercisesLogic) AdminListExercises(in *option.ListExercisesReq
 	cursor, limit := pageutil.Input(in.Page)
 	items, total, err := l.svcCtx.OptionExerciseModel.FindPage(l.ctx, models.OptionExercisePageFilter{
 		TenantId:          in.TenantId,
-		Uid:               in.Uid,
+		UserId:            in.UserId,
 		AccountId:         in.AccountId,
 		ContractId:        in.ContractId,
 		ExerciseType:      int64(in.ExerciseType),

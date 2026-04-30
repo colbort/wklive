@@ -33,6 +33,14 @@ func NewCreateRechargeOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext
 
 // 创建充值订单
 func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRechargeOrderReq) (*payment.CreateRechargeOrderResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	now := utils.NowMillis()
 
 	// 生成订单号
@@ -79,8 +87,8 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 
 	// 创建充值订单
 	rechargeOrder := &models.TRechargeOrder{
-		TenantId:    in.TenantId,
-		UserId:      in.UserId,
+		TenantId:    tenantId,
+		UserId:      userId,
 		OrderNo:     orderNo,
 		BizOrderNo:  sql.NullString{String: in.BizOrderNo, Valid: in.BizOrderNo != ""},
 		PlatformId:  channel.PlatformId,
@@ -109,14 +117,14 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 			return err
 		}
 
-		stat, err := userRechargeStatModel.FindOneByTenantIdUserId(ctx, in.TenantId, in.UserId)
+		stat, err := userRechargeStatModel.FindOneByTenantIdUserId(ctx, tenantId, userId)
 		if err != nil && !errors.Is(err, models.ErrNotFound) {
 			return err
 		}
 		if stat == nil {
 			_, err = userRechargeStatModel.Insert(ctx, &models.TUserRechargeStat{
-				TenantId:    in.TenantId,
-				UserId:      in.UserId,
+				TenantId:    tenantId,
+				UserId:      userId,
 				CreateTimes: now,
 				UpdateTimes: now,
 			})
@@ -130,11 +138,11 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 		return nil, err
 	}
 
-	l.Logger.Infof("Create recharge order success: %s, user_id: %d", orderNo, in.UserId)
-	event := notify.NewEvent(notify.EventTypeRecharge, notify.EventLevelInfo, "用户充值", fmt.Sprintf("用户 %d 发起充值订单 %s", in.UserId, orderNo))
+	l.Logger.Infof("Create recharge order success: %s, user_id: %d", orderNo, userId)
+	event := notify.NewEvent(notify.EventTypeRecharge, notify.EventLevelInfo, "用户充值", fmt.Sprintf("用户 %d 发起充值订单 %s", userId, orderNo))
 	event.Source = "payment"
-	event.TenantID = in.TenantId
-	event.UserID = in.UserId
+	event.TenantID = tenantId
+	event.UserID = userId
 	event.BizNo = orderNo
 	event.Data = map[string]any{
 		"amount":   in.RechargeAmount,

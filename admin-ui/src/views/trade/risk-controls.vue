@@ -206,7 +206,12 @@
         {{ t('trade.riskLogs') }}
       </template>
 
-      <el-form :model="riskLogQuery" inline label-width="90px" class="query-card-inner">
+      <el-form
+        :model="riskLogQuery"
+        inline
+        label-width="90px"
+        class="query-card-inner"
+      >
         <el-form-item :label="t('trade.tenantId')">
           <el-input-number v-model="riskLogQuery.tenantId" :min="0" :precision="0" />
         </el-form-item>

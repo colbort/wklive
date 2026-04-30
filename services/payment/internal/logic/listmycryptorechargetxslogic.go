@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 
@@ -26,9 +27,17 @@ func NewListMyCryptoRechargeTxsLogic(ctx context.Context, svcCtx *svc.ServiceCon
 
 // 我的链上充值交易列表
 func (l *ListMyCryptoRechargeTxsLogic) ListMyCryptoRechargeTxs(in *payment.ListMyCryptoRechargeTxsReq) (*payment.ListMyCryptoRechargeTxsResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	items, total, err := listCryptoRechargeTxs(l.ctx, l.svcCtx, listCryptoTxReq{
-		tenantId:        in.TenantId,
-		userId:          in.UserId,
+		tenantId:        tenantId,
+		userId:          userId,
 		orderNo:         in.OrderNo,
 		coin:            in.Coin,
 		chainCode:       in.ChainCode,

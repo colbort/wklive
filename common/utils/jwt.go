@@ -12,16 +12,16 @@ import (
 )
 
 type Claims struct {
-	Uid      int64  `json:"uid"`
+	UserId   int64  `json:"userId"`
 	Username string `json:"username"`
 	Expand   string `json:"expand"`
 	jwt.RegisteredClaims
 }
 
-func GenToken(secret string, uid int64, username string, expand string, issuser string, ttl time.Duration) (string, error) {
+func GenToken(secret string, userId int64, username string, expand string, issuser string, ttl time.Duration) (string, error) {
 	now := time.Now()
 	claims := Claims{
-		Uid:      uid,
+		UserId:   userId,
 		Username: username,
 		Expand:   expand,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -52,10 +52,10 @@ func ParseToken(secret, tokenString string) (*Claims, error) {
 	return claims, nil
 }
 
-func GetUidFromCtx(ctx context.Context) (int64, error) {
+func GetUserIdFromCtx(ctx context.Context) (int64, error) {
 	v := ctx.Value(CtxKeyUid)
 	if v == nil {
-		return 0, errors.New("uid not found in context")
+		return 0, errors.New("userId not found in context")
 	}
 
 	switch val := v.(type) {
@@ -70,7 +70,7 @@ func GetUidFromCtx(ctx context.Context) (int64, error) {
 	case string:
 		return strconv.ParseInt(val, 10, 64)
 	default:
-		return 0, fmt.Errorf("invalid uid type: %T, value=%#v", v, v)
+		return 0, fmt.Errorf("invalid userId type: %T, value=%#v", v, v)
 	}
 }
 
