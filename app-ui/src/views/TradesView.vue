@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { computed, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 
-import DesktopMarketTradeView from "@/components/markets/DesktopMarketTradeView.vue";
-import MobileTradeView from "@/components/trades/MobileTradeView.vue";
-import { useDevice } from "@/composables/useDevice";
-import { useTradingDesk } from "@/composables/useTradingDesk";
+import DesktopMarketTradeView from '@/components/markets/DesktopMarketTradeView.vue'
+import MobileTradeView from '@/components/trades/MobileTradeView.vue'
+import { useDevice } from '@/composables/useDevice'
+import { useTradingDesk } from '@/composables/useTradingDesk'
 
 // 交易页：手机端展示交易表单与订单列表，桌面端复用市场交易组合台。
-const route = useRoute();
-const { isDesktop } = useDevice();
-const detailVisible = computed(() => isDesktop.value);
-const orderMode = ref<"market" | "limit">("market");
-const productMenuOpen = ref(false);
-const desktopProductsExpanded = ref(false);
-const desktopOrderbookExpanded = ref(true);
+const route = useRoute()
+const { isDesktop } = useDevice()
+const detailVisible = computed(() => isDesktop.value)
+const orderMode = ref<'market' | 'limit'>('market')
+const productMenuOpen = ref(false)
+const desktopProductsExpanded = ref(false)
+const desktopOrderbookExpanded = ref(true)
 const {
   selectedCategoryType,
   selectedProductKey,
@@ -42,47 +42,47 @@ const {
 } = useTradingDesk({
   detailVisible,
   tickLimit: 24,
-});
+})
 const tradeKind = computed(() => {
   const code =
-    `${selectedCategory.value?.categoryCode || ""} ${selectedCategory.value?.categoryName || ""}`.toLowerCase();
-  if (code.includes("stock") || code.includes("股票")) return "stock";
-  if (code.includes("option") || code.includes("期权")) return "option";
-  if (code.includes("forex") || code.includes("外汇")) return "forex";
-  if (code.includes("commodity") || code.includes("大宗")) return "commodity";
-  return "crypto";
-});
+    `${selectedCategory.value?.categoryCode || ''} ${selectedCategory.value?.categoryName || ''}`.toLowerCase()
+  if (code.includes('stock') || code.includes('股票')) return 'stock'
+  if (code.includes('option') || code.includes('期权')) return 'option'
+  if (code.includes('forex') || code.includes('外汇')) return 'forex'
+  if (code.includes('commodity') || code.includes('大宗')) return 'commodity'
+  return 'crypto'
+})
 
 watch(
   () => route.query,
   (query) => {
-    const categoryType = Number(query.categoryType);
+    const categoryType = Number(query.categoryType)
     if (Number.isFinite(categoryType) && categoryType > 0) {
-      selectedCategoryType.value = categoryType;
+      selectedCategoryType.value = categoryType
     }
 
-    const market = String(query.market || "");
-    const symbol = String(query.symbol || "");
+    const market = String(query.market || '')
+    const symbol = String(query.symbol || '')
     if (market && symbol) {
-      selectedProductKey.value = productKey({ market, symbol });
+      selectedProductKey.value = productKey({ market, symbol })
     }
   },
   { immediate: true },
-);
+)
 watch(selectedProductKey, () => {
-  productMenuOpen.value = false;
-});
+  productMenuOpen.value = false
+})
 
 function closeProductSheet() {
-  productMenuOpen.value = false;
+  productMenuOpen.value = false
 }
 
 function toggleDesktopProducts() {
-  desktopProductsExpanded.value = !desktopProductsExpanded.value;
+  desktopProductsExpanded.value = !desktopProductsExpanded.value
 }
 
 function toggleDesktopOrderbook() {
-  desktopOrderbookExpanded.value = !desktopOrderbookExpanded.value;
+  desktopOrderbookExpanded.value = !desktopOrderbookExpanded.value
 }
 </script>
 

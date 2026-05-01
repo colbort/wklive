@@ -476,10 +476,16 @@ function coinGlyph(product: ItickTenantProduct) {
 }
 
 .chart-switcher {
+  position: sticky;
+  top: var(--market-header-height, 68px);
+  z-index: 25;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 14px;
+  padding-top: 14px;
+  padding-bottom: 10px;
+  background: #0b0c15;
 }
 
 .symbol-switch {
@@ -579,7 +585,7 @@ function coinGlyph(product: ItickTenantProduct) {
 
 .chart-sticky-tabs {
   position: sticky;
-  top: var(--market-header-height, 68px);
+  top: calc(var(--market-header-height, 68px) + 58px);
   z-index: 19;
   margin-top: 26px;
   background: #0b0c15;
@@ -629,8 +635,9 @@ function coinGlyph(product: ItickTenantProduct) {
 
 .interval-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
-  overflow-x: auto;
+  overflow-x: hidden;
   padding-top: 16px;
   padding-bottom: 15px;
 }

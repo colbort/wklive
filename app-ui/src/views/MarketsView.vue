@@ -1,37 +1,32 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref } from 'vue'
 
-import DesktopMarketTradeView from "@/components/markets/DesktopMarketTradeView.vue";
-import MarketChartView from "@/components/markets/MarketChartView.vue";
-import MarketQuotesView from "@/components/markets/MarketQuotesView.vue";
-import MarketTopTabs from "@/components/markets/MarketTopTabs.vue";
-import type {
-  MarketTopTab,
-  MarketTopTabItem,
-} from "@/components/markets/types";
-import { getAccessToken } from "@/api/http";
-import { useDevice } from "@/composables/useDevice";
-import { useTradingDesk } from "@/composables/useTradingDesk";
-import type { ItickTenantProduct } from "@/types/itick";
+import DesktopMarketTradeView from '@/components/markets/DesktopMarketTradeView.vue'
+import MarketChartView from '@/components/markets/MarketChartView.vue'
+import MarketQuotesView from '@/components/markets/MarketQuotesView.vue'
+import MarketTopTabs from '@/components/markets/MarketTopTabs.vue'
+import type { MarketTopTab, MarketTopTabItem } from '@/components/markets/types'
+import { getAccessToken } from '@/api/http'
+import { useDevice } from '@/composables/useDevice'
+import { useTradingDesk } from '@/composables/useTradingDesk'
+import type { ItickTenantProduct } from '@/types/itick'
 
 // 市场页：手机端负责自选/行情/图表切换，桌面端承载市场与交易组合台。
-const { isDesktop } = useDevice();
+const { isDesktop } = useDevice()
 
 const topTabs: MarketTopTabItem[] = [
-  { key: "watchlist", label: "自选" },
-  { key: "markets", label: "行情" },
-  { key: "chart", label: "图表" },
-];
+  { key: 'watchlist', label: '自选' },
+  { key: 'markets', label: '行情' },
+  { key: 'chart', label: '图表' },
+]
 
-const activeTopTab = ref<MarketTopTab>("markets");
-const orderMode = ref<"market" | "limit">("market");
-const desktopProductsExpanded = ref(false);
-const desktopOrderbookExpanded = ref(true);
+const activeTopTab = ref<MarketTopTab>('markets')
+const orderMode = ref<'market' | 'limit'>('market')
+const desktopProductsExpanded = ref(false)
+const desktopOrderbookExpanded = ref(true)
 
-const showingDesktopDesk = computed(
-  () => isDesktop.value || activeTopTab.value === "chart",
-);
-const isLoggedIn = computed(() => Boolean(getAccessToken()));
+const showingDesktopDesk = computed(() => isDesktop.value || activeTopTab.value === 'chart')
+const isLoggedIn = computed(() => Boolean(getAccessToken()))
 
 const {
   selectedCategoryType,
@@ -64,19 +59,19 @@ const {
 } = useTradingDesk({
   detailVisible: showingDesktopDesk,
   tickLimit: 12,
-});
+})
 
 function openProductChart(product: ItickTenantProduct) {
-  selectProduct(product);
-  activeTopTab.value = "chart";
+  selectProduct(product)
+  activeTopTab.value = 'chart'
 }
 
 function toggleDesktopProducts() {
-  desktopProductsExpanded.value = !desktopProductsExpanded.value;
+  desktopProductsExpanded.value = !desktopProductsExpanded.value
 }
 
 function toggleDesktopOrderbook() {
-  desktopOrderbookExpanded.value = !desktopOrderbookExpanded.value;
+  desktopOrderbookExpanded.value = !desktopOrderbookExpanded.value
 }
 </script>
 
@@ -109,11 +104,7 @@ function toggleDesktopOrderbook() {
     />
 
     <template v-else>
-      <MarketTopTabs
-        :tabs="topTabs"
-        :active-tab="activeTopTab"
-        @change="activeTopTab = $event"
-      />
+      <MarketTopTabs :tabs="topTabs" :active-tab="activeTopTab" @change="activeTopTab = $event" />
 
       <div v-if="activeTopTab === 'markets'" class="markets-page__mobile">
         <MarketQuotesView
@@ -131,10 +122,7 @@ function toggleDesktopOrderbook() {
         />
       </div>
 
-      <div
-        v-else-if="activeTopTab === 'watchlist'"
-        class="markets-page__watchlist"
-      >
+      <div v-else-if="activeTopTab === 'watchlist'" class="markets-page__watchlist">
         <div v-if="isLoggedIn" class="watchlist-empty">自选功能整理中</div>
         <div v-else class="watchlist-empty">登录后可查看自选产品</div>
       </div>

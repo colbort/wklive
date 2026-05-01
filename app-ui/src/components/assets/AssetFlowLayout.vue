@@ -27,7 +27,10 @@ const router = useRouter()
 
 <style scoped>
 .asset-flow-page {
+  width: 100%;
+  max-width: 100%;
   min-height: 100dvh;
+  overflow-x: hidden;
   padding: 10px 18px 28px;
   background: #0b0c15;
   color: #f8f8fb;
@@ -41,14 +44,21 @@ button {
 }
 
 .asset-flow-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
   display: grid;
-  grid-template-columns: 36px 1fr 80px;
+  grid-template-columns: 36px minmax(0, 1fr) minmax(0, 80px);
   align-items: center;
   min-height: 36px;
+  min-width: 0;
+  margin: -10px -18px 0;
+  padding: 10px 18px 8px;
+  background: #0b0c15;
 }
 
 .asset-flow-header--plain-right {
-  grid-template-columns: 36px 1fr 36px;
+  grid-template-columns: 36px minmax(0, 1fr) 36px;
 }
 
 .asset-flow-back {
@@ -63,9 +73,13 @@ button {
 }
 
 .asset-flow-header h1 {
+  min-width: 0;
+  overflow: hidden;
   margin: 0;
   font-size: 18px;
   text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .asset-flow-link {
@@ -76,7 +90,39 @@ button {
 }
 
 .asset-flow-body {
+  width: 100%;
+  min-width: 0;
   padding-top: 20px;
+}
+
+@media (max-width: 390px) {
+  .asset-flow-page {
+    padding: 8px 14px 24px;
+  }
+
+  .asset-flow-header {
+    grid-template-columns: 34px minmax(0, 1fr) minmax(0, 70px);
+    margin: -8px -14px 0;
+    padding: 8px 14px 8px;
+  }
+
+  .asset-flow-header--plain-right {
+    grid-template-columns: 34px minmax(0, 1fr) 34px;
+  }
+
+  .asset-flow-back {
+    width: 34px;
+    height: 34px;
+    font-size: 28px;
+  }
+
+  .asset-flow-header h1 {
+    font-size: 17px;
+  }
+
+  .asset-flow-link {
+    font-size: 13px;
+  }
 }
 
 @media (min-width: 768px) {

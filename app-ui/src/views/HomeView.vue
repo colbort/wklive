@@ -1,52 +1,52 @@
 <script setup lang="ts">
-import { RouterLink } from "vue-router";
+import { RouterLink } from 'vue-router'
 
 // 首页：承载平台品牌展示和从首页进入市场页的主入口。
 const featureCards = [
   {
-    icon: "⟆",
-    title: "深度流动性",
-    desc: "享受极低滑点，轻松完成大额交易",
+    icon: '⟆',
+    title: '深度流动性',
+    desc: '享受极低滑点，轻松完成大额交易',
   },
   {
-    icon: "↗",
-    title: "专业级图表工具",
-    desc: "多维数据分析，精准把握市场趋势",
+    icon: '↗',
+    title: '专业级图表工具',
+    desc: '多维数据分析，精准把握市场趋势',
   },
   {
-    icon: "$",
-    title: "超低费用结构",
-    desc: "节省成本，最大化您的收益",
+    icon: '$',
+    title: '超低费用结构',
+    desc: '节省成本，最大化您的收益',
   },
-];
+]
 
 const strategyFeatures = [
   {
-    icon: "✎",
-    title: "智能订单类型",
-    desc: "满足限价、止损、条件触发等复杂需求",
+    icon: '✎',
+    title: '智能订单类型',
+    desc: '满足限价、止损、条件触发等复杂需求',
   },
   {
-    icon: "⇆",
-    title: "高级API交易",
-    desc: "毫秒级响应，机构级执行效率",
+    icon: '⇆',
+    title: '高级API交易',
+    desc: '毫秒级响应，机构级执行效率',
   },
-];
+]
 
 const footerColumns = [
   {
-    title: "产品",
-    links: ["股票", "外汇", "大宗商品", "加密货币", "期权合约"],
+    title: '产品',
+    links: ['股票', '外汇', '大宗商品', '加密货币', '期权合约'],
   },
   {
-    title: "其他",
-    links: ["订单中心", "资产中心", "用户中心"],
+    title: '其他',
+    links: ['订单中心', '资产中心', '用户中心'],
   },
   {
-    title: "社交媒体&社区",
-    links: ["Twitter", "LinkedIn", "Facebook", "Telegram", "YouTube"],
+    title: '社交媒体&社区',
+    links: ['Twitter', 'LinkedIn', 'Facebook', 'Telegram', 'YouTube'],
   },
-];
+]
 </script>
 
 <template>
@@ -80,11 +80,7 @@ const footerColumns = [
       <p class="ave-section__sub">24小时交易，涨跌都能赚</p>
 
       <div class="ave-feature-grid">
-        <article
-          v-for="item in featureCards"
-          :key="item.title"
-          class="ave-feature-card"
-        >
+        <article v-for="item in featureCards" :key="item.title" class="ave-feature-card">
           <div class="ave-feature-card__icon">
             {{ item.icon }}
           </div>
@@ -101,11 +97,7 @@ const footerColumns = [
       <p class="ave-section__sub">从美股到比特币，投资从未如此简单</p>
 
       <div class="ave-strategy__top">
-        <article
-          v-for="item in strategyFeatures"
-          :key="item.title"
-          class="ave-strategy__info"
-        >
+        <article v-for="item in strategyFeatures" :key="item.title" class="ave-strategy__info">
           <div class="ave-strategy__icon">
             {{ item.icon }}
           </div>
@@ -206,11 +198,7 @@ const footerColumns = [
         </article>
 
         <div class="ave-footer__links">
-          <article
-            v-for="column in footerColumns"
-            :key="column.title"
-            class="ave-footer__column"
-          >
+          <article v-for="column in footerColumns" :key="column.title" class="ave-footer__column">
             <h4>{{ column.title }}</h4>
             <RouterLink v-for="item in column.links" :key="item" to="/home">
               {{ item }}
@@ -219,9 +207,7 @@ const footerColumns = [
         </div>
       </div>
 
-      <p class="ave-footer__copyright">
-        © 2025 AVE交易所. 保留所有权利 | Copyright © 2022-2026
-      </p>
+      <p class="ave-footer__copyright">© 2025 AVE交易所. 保留所有权利 | Copyright © 2022-2026</p>
     </section>
   </section>
 </template>
@@ -334,23 +320,15 @@ const footerColumns = [
       rgba(17, 106, 52, 0.15) 18%,
       transparent 28%
     ),
-    radial-gradient(
-      circle at 36% 38%,
-      rgba(55, 255, 151, 0.34),
-      transparent 18%
-    ),
-    radial-gradient(
-      circle at 55% 60%,
-      rgba(16, 255, 117, 0.12),
-      transparent 55%
-    ),
+    radial-gradient(circle at 36% 38%, rgba(55, 255, 151, 0.34), transparent 18%),
+    radial-gradient(circle at 55% 60%, rgba(16, 255, 117, 0.12), transparent 55%),
     linear-gradient(135deg, #08140d, #0a3a1e 48%, #18c85e 100%);
   box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.45);
 }
 
 .ave-portal::before,
 .ave-portal::after {
-  content: "";
+  content: '';
   position: absolute;
   border-radius: 50%;
   border: 2px solid rgba(15, 161, 62, 0.12);
@@ -458,11 +436,7 @@ const footerColumns = [
   padding: 36px 32px;
   border-radius: 34px;
   border: 2px solid rgba(121, 124, 140, 0.5);
-  background: linear-gradient(
-    180deg,
-    rgba(38, 40, 51, 0.82),
-    rgba(28, 30, 41, 0.76)
-  );
+  background: linear-gradient(180deg, rgba(38, 40, 51, 0.82), rgba(28, 30, 41, 0.76));
 }
 
 .ave-feature-card__icon,
@@ -570,11 +544,7 @@ const footerColumns = [
   height: 100%;
   padding: 18px;
   border-radius: 34px;
-  background: linear-gradient(
-    180deg,
-    rgba(18, 22, 32, 0.96),
-    rgba(14, 17, 24, 0.98)
-  );
+  background: linear-gradient(180deg, rgba(18, 22, 32, 0.96), rgba(14, 17, 24, 0.98));
 }
 
 .ave-phone__title {
@@ -701,11 +671,7 @@ const footerColumns = [
   padding: 18px;
   border-radius: 40px;
   border: 2px solid rgba(121, 124, 140, 0.34);
-  background: linear-gradient(
-    180deg,
-    rgba(34, 37, 47, 0.82),
-    rgba(27, 29, 39, 0.84)
-  );
+  background: linear-gradient(180deg, rgba(34, 37, 47, 0.82), rgba(27, 29, 39, 0.84));
 }
 
 .ave-strategy__panel-image {
@@ -713,11 +679,7 @@ const footerColumns = [
   border-radius: 28px;
   background:
     radial-gradient(circle at 68% 42%, rgba(7, 255, 115, 0.3), transparent 18%),
-    radial-gradient(
-      circle at 35% 38%,
-      rgba(255, 255, 255, 0.18),
-      transparent 10%
-    ),
+    radial-gradient(circle at 35% 38%, rgba(255, 255, 255, 0.18), transparent 10%),
     linear-gradient(180deg, rgba(6, 9, 13, 0.34), rgba(7, 9, 14, 0.14)),
     linear-gradient(135deg, #040608, #10361e 60%, #0b0d12 100%);
 }

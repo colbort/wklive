@@ -1,109 +1,111 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
-import { getAccessToken } from "@/api/http";
-import { apiGetProfile, apiLogout } from "@/api/userPrivate";
-import { apiGuestLogin } from "@/api/userPublic";
-import { useTenantStore } from "@/stores/tenant";
-import type { UserProfile } from "@/types/user";
+import { getAccessToken } from '@/api/http'
+import { apiGetProfile, apiLogout } from '@/api/userPrivate'
+import { apiGuestLogin } from '@/api/userPublic'
+import { useTenantStore } from '@/stores/tenant'
+import type { UserProfile } from '@/types/user'
 
 // 用户页：负责游客登录、已登录资料展示和用户菜单入口。
 const guestMenuItems = [
-  { key: "language", label: "语言", value: "中文简体", icon: "◎", flag: "🇨🇳" },
-  { key: "service", label: "客服", icon: "♧" },
-  { key: "download", label: "APP下载", icon: "⇩" },
-  { key: "whitepaper", label: "白皮书", icon: "i" },
-  { key: "company", label: "公司资质", icon: "i" },
-  { key: "regulation", label: "监管文件", icon: "i" },
-];
+  { key: 'language', label: '语言', value: '中文简体', icon: '◎', flag: '🇨🇳' },
+  { key: 'service', label: '客服', icon: '♧' },
+  { key: 'download', label: 'APP下载', icon: '⇩' },
+  { key: 'whitepaper', label: '白皮书', icon: 'i' },
+  { key: 'company', label: '公司资质', icon: 'i' },
+  { key: 'regulation', label: '监管文件', icon: 'i' },
+]
 
 const userMenuItems = [
-  { key: "language", label: "语言", value: "中文简体", icon: "◎", flag: "🇨🇳" },
-  { key: "bank", label: "收款账号", icon: "▭" },
-  { key: "security", label: "安全", icon: "盾" },
-  { key: "service", label: "客服", icon: "♧" },
-  { key: "download", label: "APP下载", icon: "⇩" },
-  { key: "whitepaper", label: "白皮书", icon: "i" },
-  { key: "company", label: "公司资质", icon: "i" },
-  { key: "regulation", label: "监管文件", icon: "i" },
-  { key: "logout", label: "退出登录", icon: "↪" },
-];
+  { key: 'language', label: '语言', value: '中文简体', icon: '◎', flag: '🇨🇳' },
+  { key: 'bank', label: '收款账号', icon: '▭' },
+  { key: 'security', label: '安全', icon: '盾' },
+  { key: 'service', label: '客服', icon: '♧' },
+  { key: 'download', label: 'APP下载', icon: '⇩' },
+  { key: 'whitepaper', label: '白皮书', icon: 'i' },
+  { key: 'company', label: '公司资质', icon: 'i' },
+  { key: 'regulation', label: '监管文件', icon: 'i' },
+  { key: 'logout', label: '退出登录', icon: '↪' },
+]
 
-const profile = ref<UserProfile | null>(null);
-const isLoggedIn = ref(Boolean(getAccessToken()));
-const loadingProfile = ref(false);
-const loggingGuest = ref(false);
-const guestLoginError = ref("");
-const tenantStore = useTenantStore();
+const profile = ref<UserProfile | null>(null)
+const isLoggedIn = ref(Boolean(getAccessToken()))
+const loadingProfile = ref(false)
+const loggingGuest = ref(false)
+const guestLoginError = ref('')
+const tenantStore = useTenantStore()
+const router = useRouter()
 
-const menuItems = computed(() =>
-  isLoggedIn.value ? userMenuItems : guestMenuItems,
-);
-const userBase = computed(() => profile.value?.base ?? null);
+const menuItems = computed(() => (isLoggedIn.value ? userMenuItems : guestMenuItems))
+const userBase = computed(() => profile.value?.base ?? null)
 const displayName = computed(
-  () => userBase.value?.nickname || userBase.value?.username || "GUEST-6721",
-);
+  () => userBase.value?.nickname || userBase.value?.username || 'GUEST-6721',
+)
 const displayId = computed(
-  () =>
-    userBase.value?.userNo ||
-    (userBase.value?.id ? String(userBase.value.id) : "42110599"),
-);
-const avatarUrl = computed(() => userBase.value?.avatar || "");
+  () => userBase.value?.userNo || (userBase.value?.id ? String(userBase.value.id) : '42110599'),
+)
+const avatarUrl = computed(() => userBase.value?.avatar || '')
 
 onMounted(() => {
   if (isLoggedIn.value) {
-    loadProfile();
+    loadProfile()
   }
-});
+})
 
 async function loadProfile() {
-  loadingProfile.value = true;
+  loadingProfile.value = true
   try {
-    const res = await apiGetProfile();
-    profile.value = res.data;
+    const res = await apiGetProfile()
+    profile.value = res.data
   } catch (error) {
-    console.warn("load profile failed", error);
+    console.warn('load profile failed', error)
   } finally {
-    loadingProfile.value = false;
+    loadingProfile.value = false
   }
 }
 
 async function handleGuestLogin() {
-  if (loggingGuest.value) return;
+  if (loggingGuest.value) return
 
-  guestLoginError.value = "";
-  tenantStore.hydrateFromEnv();
+  guestLoginError.value = ''
+  tenantStore.hydrateFromEnv()
   if (!tenantStore.tenantCode) {
-    guestLoginError.value = "租户信息缺失";
-    return;
+    guestLoginError.value = '租户信息缺失'
+    return
   }
 
-  loggingGuest.value = true;
+  loggingGuest.value = true
   try {
-    const res = await apiGuestLogin({ tenantCode: tenantStore.tenantCode });
+    const res = await apiGuestLogin({ tenantCode: tenantStore.tenantCode })
     if (res.code !== 0 && res.code !== 200) {
-      guestLoginError.value = res.msg || "登录失败";
-      return;
+      guestLoginError.value = res.msg || '登录失败'
+      return
     }
-    isLoggedIn.value = true;
-    await loadProfile();
+    isLoggedIn.value = true
+    await loadProfile()
   } catch (error) {
-    console.warn("guest login failed", error);
-    guestLoginError.value = "登录失败";
+    console.warn('guest login failed', error)
+    guestLoginError.value = '登录失败'
   } finally {
-    loggingGuest.value = false;
+    loggingGuest.value = false
   }
 }
 
 async function handleMenuClick(key: string) {
-  if (key !== "logout") return;
+  if (key !== 'logout') return
 
   try {
-    await apiLogout();
+    await apiLogout()
   } finally {
-    profile.value = null;
-    isLoggedIn.value = false;
+    profile.value = null
+    isLoggedIn.value = false
   }
+}
+
+function goLogin() {
+  router.push('/login')
 }
 </script>
 
@@ -114,10 +116,7 @@ async function handleMenuClick(key: string) {
     </header>
 
     <section v-if="isLoggedIn" class="profile-user" :aria-busy="loadingProfile">
-      <div
-        class="profile-avatar"
-        :class="{ 'profile-avatar--image': avatarUrl }"
-      >
+      <div class="profile-avatar" :class="{ 'profile-avatar--image': avatarUrl }">
         <img v-if="avatarUrl" :src="avatarUrl" alt="" />
         <span v-else />
       </div>
@@ -140,7 +139,7 @@ async function handleMenuClick(key: string) {
           :aria-busy="loggingGuest"
           @click="handleGuestLogin"
         >
-          <span>{{ loggingGuest ? "登录中" : "模拟用户登录" }}</span>
+          <span>{{ loggingGuest ? '登录中' : '模拟用户登录' }}</span>
           <i />
         </button>
       </div>
@@ -149,8 +148,10 @@ async function handleMenuClick(key: string) {
       </p>
 
       <div class="profile-actions">
-        <button type="button" class="profile-actions__login">登录</button>
-        <button type="button" class="profile-actions__register">注册</button>
+        <button type="button" class="profile-actions__login" @click="goLogin">登录</button>
+        <button type="button" class="profile-actions__register" @click="router.push('/register')">
+          注册
+        </button>
       </div>
     </section>
 
@@ -174,9 +175,7 @@ async function handleMenuClick(key: string) {
         </span>
         <span class="profile-menu__label">{{ item.label }}</span>
         <span v-if="item.flag" class="profile-menu__flag">{{ item.flag }}</span>
-        <span v-if="item.value" class="profile-menu__value">{{
-          item.value
-        }}</span>
+        <span v-if="item.value" class="profile-menu__value">{{ item.value }}</span>
         <i class="profile-menu__arrow" />
       </button>
     </nav>
@@ -196,11 +195,16 @@ async function handleMenuClick(key: string) {
 }
 
 .profile-header {
+  position: sticky;
+  top: 0;
+  z-index: 25;
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 54px;
-  margin-bottom: 42px;
+  margin: -22px -28px 42px;
+  padding: 22px 28px 10px;
+  background: #0b0c15;
 }
 
 .profile-header h1 {
@@ -399,7 +403,7 @@ async function handleMenuClick(key: string) {
 .profile-menu__icon--bank::before,
 .profile-menu__icon--bank::after {
   position: absolute;
-  content: "";
+  content: '';
 }
 
 .profile-menu__icon--bank::before {
@@ -421,13 +425,8 @@ async function handleMenuClick(key: string) {
   width: 34px;
   height: 34px;
   color: transparent;
-  background: linear-gradient(
-      135deg,
-      transparent 42%,
-      #fff 43% 52%,
-      transparent 53%
-    )
-    center / 18px 18px no-repeat;
+  background: linear-gradient(135deg, transparent 42%, #fff 43% 52%, transparent 53%) center / 18px
+    18px no-repeat;
   clip-path: polygon(50% 4%, 86% 18%, 86% 52%, 50% 96%, 14% 52%, 14% 18%);
   outline: 3px solid #fff;
   outline-offset: -6px;
@@ -465,7 +464,8 @@ async function handleMenuClick(key: string) {
   }
 
   .profile-header {
-    margin-bottom: 38px;
+    margin: -18px -16px 38px;
+    padding: 18px 16px 10px;
   }
 
   .profile-hero {

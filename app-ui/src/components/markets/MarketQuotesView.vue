@@ -102,6 +102,9 @@ function formatPercent(value: number) {
 
 <style scoped>
 .quotes-view {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
   padding-bottom: 18px;
 }
 
@@ -110,8 +113,9 @@ function formatPercent(value: number) {
   top: var(--market-header-height, 68px);
   z-index: 19;
   display: flex;
+  flex-wrap: wrap;
   gap: 18px;
-  overflow-x: auto;
+  overflow-x: hidden;
   padding: 14px 18px 0;
   border-bottom: 1px solid #21232e;
   background: #0b0c15;
@@ -191,7 +195,7 @@ function formatPercent(value: number) {
 
 .quote-row {
   display: grid;
-  grid-template-columns: 52px minmax(96px, 1fr) minmax(82px, 0.75fr) minmax(76px, 0.65fr);
+  grid-template-columns: 46px minmax(0, 1fr) minmax(72px, 0.72fr) minmax(66px, 0.6fr);
   align-items: center;
   width: calc(100% - 36px);
   min-height: 82px;
@@ -199,6 +203,46 @@ function formatPercent(value: number) {
   padding: 12px 0;
   border-bottom: 1px solid #20222d;
   text-align: left;
+}
+
+@media (max-width: 390px) {
+  .category-strip {
+    gap: 14px;
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .category-tab {
+    font-size: 15px;
+  }
+
+  .quote-row {
+    grid-template-columns: 38px minmax(0, 1fr) minmax(62px, 0.68fr) minmax(58px, 0.58fr);
+    width: calc(100% - 28px);
+    min-height: 72px;
+    margin: 0 14px;
+  }
+
+  .coin-mark {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .quote-row__name strong,
+  .quote-row__price {
+    font-size: 15px;
+  }
+
+  .quote-row__change strong,
+  .quote-row__change em {
+    font-size: 12px;
+  }
+
+  .quote-row__change em {
+    min-width: 54px;
+    padding: 4px 6px;
+  }
 }
 
 .coin-mark {

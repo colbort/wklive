@@ -34,7 +34,7 @@ func (l *SysConfigDetailLogic) SysConfigDetail(in *system.SysConfigDetailReq) (*
 	if in.Id != nil && *in.Id > 0 {
 		config, err = l.svcCtx.ConfigModel.FindOne(l.ctx, *in.Id)
 
-	} else if in.ConfigKey != nil && in.ConfigKey.String() != "" && *in.TenantId != 0 {
+	} else if in.ConfigKey != nil && in.ConfigKey.String() != "" {
 		config, err = l.svcCtx.ConfigModel.FindOneByTenantIdConfigKey(l.ctx, *in.TenantId, sql.NullString{String: in.ConfigKey.String(), Valid: true})
 	} else {
 		err = errors.New(i18n.Translate(i18n.InvalidQueryCondition, l.ctx))

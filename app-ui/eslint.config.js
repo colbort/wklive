@@ -6,12 +6,12 @@ import tseslint from 'typescript-eslint'
 export default [
   {
     ignores: [
-      'node_modules',
-      'dist',
-      'build',
-      'coverage',
-      '.output',
-      '.nuxt',
+      'node_modules/**',
+      'dist/**',
+      'build/**',
+      'coverage/**',
+      '.output/**',
+      '.nuxt/**',
     ],
   },
 
@@ -34,6 +34,7 @@ export default [
       },
       parserOptions: {
         parser: tseslint.parser,
+        extraFileExtensions: ['.vue'],
       },
     },
 
@@ -44,12 +45,15 @@ export default [
       'vue/component-definition-name-casing': ['error', 'PascalCase'],
 
       // TypeScript 相关
-      '@typescript-eslint/no-unused-vars': ['error', {
-        argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_',
-        caughtErrorsIgnorePattern: '^_',
-        destructuredArrayIgnorePattern: '^_',
-      }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+          destructuredArrayIgnorePattern: '^_',
+        },
+      ],
       '@typescript-eslint/explicit-function-return-types': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
 

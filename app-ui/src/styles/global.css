@@ -17,6 +17,20 @@
   box-sizing: border-box;
 }
 
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+button,
+input,
+textarea,
+select {
+  max-width: 100%;
+}
+
 html,
 body,
 #app {
@@ -633,7 +647,7 @@ button {
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 2px;
   width: 100%;
-  max-width: 100dvw;
+  max-width: 100%;
   min-height: 84px;
   padding: 10px 14px max(10px, env(safe-area-inset-bottom));
   border-radius: 20px 20px 0 0;
@@ -949,18 +963,21 @@ button {
   #app {
     height: 100%;
     min-height: 100%;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: hidden;
   }
 
   body {
-    width: 100dvw;
+    width: 100%;
+    max-width: 100%;
+    touch-action: pan-y;
   }
 
   .app-shell,
   .app-main,
   .page-content {
-    width: 100dvw;
-    max-width: 100dvw;
+    width: 100%;
+    max-width: 100%;
   }
 
   .app-shell,
@@ -977,7 +994,46 @@ button {
     min-height: 0;
     overflow-x: hidden;
     overflow-y: auto;
+    overscroll-behavior-x: none;
     -webkit-overflow-scrolling: touch;
+  }
+
+  .home-page,
+  .markets-page,
+  .trade-page,
+  .assets-page,
+  .profile-page,
+  .asset-flow-page,
+  .chart-view,
+  .quotes-view,
+  .mobile-trade-view {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  .home-page *,
+  .markets-page *,
+  .trade-page *,
+  .assets-page *,
+  .profile-page *,
+  .asset-flow-page *,
+  .chart-view *,
+  .quotes-view *,
+  .mobile-trade-view * {
+    min-width: 0;
+  }
+
+  .category-strip,
+  .assets-top-tabs,
+  .assets-sub-tabs,
+  .assets-order-tabs,
+  .trade-categories,
+  .chart-sticky-tabs,
+  .interval-row {
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
   .site-header {
@@ -1000,5 +1056,30 @@ button {
 
   .page-content {
     padding-bottom: calc(92px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 390px) {
+  .site-header {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .site-brand strong {
+    font-size: 24px;
+  }
+
+  .site-brand__mark {
+    width: 44px;
+    height: 44px;
+  }
+
+  .mobile-tabbar {
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  .mobile-tabbar__item {
+    font-size: 10px;
   }
 }

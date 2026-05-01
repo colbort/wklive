@@ -1,146 +1,123 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import { computed, onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
-import {
-  apiGetAssetOptions,
-  apiGetMyAssetSummary,
-  apiListAssetCoinConfigs,
-} from "@/api/asset";
-import AssetCoinIcon from "@/components/assets/AssetCoinIcon.vue";
-import AssetFlowLayout from "@/components/assets/AssetFlowLayout.vue";
-import AssetPrimaryButton from "@/components/assets/AssetPrimaryButton.vue";
-import AssetTransferSelectSheet from "@/components/assets/AssetTransferSelectSheet.vue";
-import { optionText, useOptions } from "@/composables/useOptions";
-import type { AssetCoinConfig, AssetUserAsset } from "@/types/asset";
+import { apiGetAssetOptions, apiGetMyAssetSummary, apiListAssetCoinConfigs } from '@/api/asset'
+import AssetCoinIcon from '@/components/assets/AssetCoinIcon.vue'
+import AssetFlowLayout from '@/components/assets/AssetFlowLayout.vue'
+import AssetPrimaryButton from '@/components/assets/AssetPrimaryButton.vue'
+import AssetTransferSelectSheet from '@/components/assets/AssetTransferSelectSheet.vue'
+import { optionText, useOptions } from '@/composables/useOptions'
+import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
 
-const route = useRoute();
-const assetOptions = useOptions(apiGetAssetOptions);
-const coinConfigs = ref<AssetCoinConfig[]>([]);
-const assets = ref<AssetUserAsset[]>([]);
-const amount = ref("");
-const pickerTarget = ref<"from" | "to" | "">("");
-const fromWalletType = ref(Number(route.query.walletType || 1));
-const toWalletType = ref(Number(route.query.walletType || 1));
-const fromSelectedCoin = ref("");
-const toSelectedCoin = ref("");
+const route = useRoute()
+const assetOptions = useOptions(apiGetAssetOptions)
+const coinConfigs = ref<AssetCoinConfig[]>([])
+const assets = ref<AssetUserAsset[]>([])
+const amount = ref('')
+const pickerTarget = ref<'from' | 'to' | ''>('')
+const fromWalletType = ref(Number(route.query.walletType || 1))
+const toWalletType = ref(Number(route.query.walletType || 1))
+const fromSelectedCoin = ref('')
+const toSelectedCoin = ref('')
 
-const direction = computed(() => String(route.query.direction || "out"));
-const queryCoin = computed(() => String(route.query.coin || "USDT"));
-const fromCoin = computed(() => fromSelectedCoin.value);
-const toCoin = computed(() => toSelectedCoin.value);
+const direction = computed(() => String(route.query.direction || 'out'))
+const queryCoin = computed(() => String(route.query.coin || 'USDT'))
+const fromCoin = computed(() => fromSelectedCoin.value)
+const toCoin = computed(() => toSelectedCoin.value)
 const fromConfig = computed(() =>
   coinConfigs.value.find((config) => config.coin === fromCoin.value),
-);
-const toConfig = computed(() =>
-  coinConfigs.value.find((config) => config.coin === toCoin.value),
-);
+)
+const toConfig = computed(() => coinConfigs.value.find((config) => config.coin === toCoin.value))
 const pickerWalletType = computed(() =>
-  pickerTarget.value === "to" ? toWalletType.value : fromWalletType.value,
-);
-const pickerCoin = computed(() =>
-  pickerTarget.value === "to" ? toCoin.value : fromCoin.value,
-);
-const pickerTitle = computed(() =>
-  pickerTarget.value === "to" ? "选择转入账户" : "选择转出账户",
-);
-const pickerVisible = computed(() => Boolean(pickerTarget.value));
+  pickerTarget.value === 'to' ? toWalletType.value : fromWalletType.value,
+)
+const pickerCoin = computed(() => (pickerTarget.value === 'to' ? toCoin.value : fromCoin.value))
+const pickerTitle = computed(() => (pickerTarget.value === 'to' ? '选择转入账户' : '选择转出账户'))
+const pickerVisible = computed(() => Boolean(pickerTarget.value))
 const availableAmount = computed(() => {
-  if (!fromCoin.value) return "0";
+  if (!fromCoin.value) return '0'
   return (
     assets.value.find(
-      (asset) =>
-        asset.walletType === fromWalletType.value &&
-        asset.coin === fromCoin.value,
-    )?.availableAmount || "0"
-  );
-});
+      (asset) => asset.walletType === fromWalletType.value && asset.coin === fromCoin.value,
+    )?.availableAmount || '0'
+  )
+})
 const walletTypes = computed(() => {
   const options = assetOptions
-    .getGroup("walletType")
+    .getGroup('walletType')
     .filter((option) => option.value > 0)
-    .map((option) => ({ value: option.value, label: optionText(option) }));
+    .map((option) => ({ value: option.value, label: optionText(option) }))
 
   return options.length
     ? options
     : [
-        { value: 1, label: "现金账户" },
-        { value: 2, label: "股票账户" },
-        { value: 3, label: "合约账户" },
-      ];
-});
-const fromAccountLabel = computed(() => accountLabel(fromWalletType.value));
-const toAccountLabel = computed(() => accountLabel(toWalletType.value));
-const fromPlaceholder = computed(() =>
-  placeholderAccountLabel(fromWalletType.value),
-);
-const toPlaceholder = computed(() =>
-  placeholderAccountLabel(toWalletType.value),
-);
+        { value: 1, label: '现金账户' },
+        { value: 2, label: '股票账户' },
+        { value: 3, label: '合约账户' },
+      ]
+})
+const fromAccountLabel = computed(() => accountLabel(fromWalletType.value))
+const toAccountLabel = computed(() => accountLabel(toWalletType.value))
+const fromPlaceholder = computed(() => placeholderAccountLabel(fromWalletType.value))
+const toPlaceholder = computed(() => placeholderAccountLabel(toWalletType.value))
 
 function accountLabel(walletType: number) {
-  return (
-    walletTypes.value.find((account) => account.value === walletType)?.label ||
-    "现金账户"
-  );
+  return walletTypes.value.find((account) => account.value === walletType)?.label || '现金账户'
 }
 
 function placeholderAccountLabel(walletType: number) {
-  return (
-    walletTypes.value.find((account) => account.value !== walletType)?.label ||
-    "请选择账户"
-  );
+  return walletTypes.value.find((account) => account.value !== walletType)?.label || '请选择账户'
 }
 
 function isSuccessCode(code: number) {
-  return code === 0 || code === 200;
+  return code === 0 || code === 200
 }
 
-function openPicker(target: "from" | "to") {
-  pickerTarget.value = target;
+function openPicker(target: 'from' | 'to') {
+  pickerTarget.value = target
 }
 
 function selectTransferAsset(payload: { walletType: number; coin: string }) {
-  if (pickerTarget.value === "to") {
-    toWalletType.value = payload.walletType;
-    toSelectedCoin.value = payload.coin;
+  if (pickerTarget.value === 'to') {
+    toWalletType.value = payload.walletType
+    toSelectedCoin.value = payload.coin
   } else {
-    fromWalletType.value = payload.walletType;
-    fromSelectedCoin.value = payload.coin;
+    fromWalletType.value = payload.walletType
+    fromSelectedCoin.value = payload.coin
   }
 }
 
 function updatePickerVisible(visible: boolean) {
-  if (!visible) pickerTarget.value = "";
+  if (!visible) pickerTarget.value = ''
 }
 
 async function loadPageData() {
   try {
     const configRequests = walletTypes.value.map((account) =>
       apiListAssetCoinConfigs({ walletType: account.value, operationType: 3 }),
-    );
+    )
     const [summaryResp, ...configResponses] = await Promise.all([
       apiGetMyAssetSummary({}),
       ...configRequests,
-    ]);
-    if (isSuccessCode(summaryResp.code))
-      assets.value = summaryResp.data?.assets || [];
+    ])
+    if (isSuccessCode(summaryResp.code)) assets.value = summaryResp.data?.assets || []
     coinConfigs.value = configResponses.flatMap((resp) =>
       isSuccessCode(resp.code) ? resp.data || [] : [],
-    );
+    )
   } catch (error) {
-    console.warn("load transfer data failed", error);
+    console.warn('load transfer data failed', error)
   }
 }
 
 onMounted(() => {
-  if (direction.value === "in") {
-    toSelectedCoin.value = queryCoin.value;
+  if (direction.value === 'in') {
+    toSelectedCoin.value = queryCoin.value
   } else {
-    fromSelectedCoin.value = queryCoin.value;
+    fromSelectedCoin.value = queryCoin.value
   }
-  void loadPageData();
-});
+  void loadPageData()
+})
 </script>
 
 <template>
@@ -153,11 +130,7 @@ onMounted(() => {
             >可用 <b>{{ availableAmount }}</b> {{ fromCoin }}</small
           >
         </span>
-        <button
-          type="button"
-          class="transfer-picker"
-          @click="openPicker('from')"
-        >
+        <button type="button" class="transfer-picker" @click="openPicker('from')">
           <span>{{ fromAccountLabel }}</span>
           <i />
           <span v-if="fromCoin" class="transfer-picker__coin">

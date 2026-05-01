@@ -32,7 +32,7 @@ button {
 
 .asset-picker {
   display: grid;
-  grid-template-columns: 28px auto auto 1fr;
+  grid-template-columns: 28px minmax(0, auto) minmax(0, auto) minmax(18px, 1fr);
   align-items: center;
   gap: 8px;
   width: 100%;
@@ -44,21 +44,43 @@ button {
 }
 
 .asset-picker strong {
+  min-width: 0;
+  overflow: hidden;
   font-size: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .asset-picker small {
+  min-width: 0;
+  overflow: hidden;
   padding: 3px 7px;
   border-radius: 999px;
   background: #4a4c58;
   color: #fff;
   font-size: 10px;
   font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .asset-picker__arrow {
   justify-self: end;
   color: #989aa3;
   font-size: 24px;
+}
+
+@media (max-width: 390px) {
+  .asset-picker {
+    grid-template-columns: 26px minmax(0, auto) minmax(0, auto) minmax(16px, 1fr);
+    gap: 7px;
+    min-height: 52px;
+    padding: 0 12px;
+    border-radius: 13px;
+  }
+
+  .asset-picker strong {
+    font-size: 15px;
+  }
 }
 </style>

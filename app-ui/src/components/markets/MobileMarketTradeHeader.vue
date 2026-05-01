@@ -108,11 +108,23 @@ const emit = defineEmits<{
 </template>
 
 <style scoped>
+.mobile-market-trade-header {
+  position: sticky;
+  top: 0;
+  z-index: 25;
+  max-width: calc(100% + 36px);
+  margin: 0 -18px 18px;
+  padding: 14px 18px 1px;
+  background: #0b0c15;
+}
+
 .trade-categories {
   display: flex;
   flex-wrap: wrap;
-  gap: 28px;
-  margin-bottom: 28px;
+  gap: 18px 24px;
+  max-width: 100%;
+  overflow-x: hidden;
+  margin-bottom: 22px;
 }
 
 .trade-categories button,
@@ -142,7 +154,7 @@ const emit = defineEmits<{
 .trade-symbol {
   position: relative;
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 4px 14px;
   margin-bottom: 22px;
 }
@@ -152,12 +164,18 @@ const emit = defineEmits<{
   align-items: center;
   gap: 10px;
   justify-self: start;
+  min-width: 0;
+  max-width: 100%;
   padding: 0;
 }
 
 .trade-symbol__main strong {
+  min-width: 0;
+  overflow: hidden;
   font-size: 17px;
   font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .trade-symbol__main span {
@@ -166,6 +184,65 @@ const emit = defineEmits<{
   transform: rotate(45deg) translateY(-2px);
   border-right: 2px solid currentColor;
   border-bottom: 2px solid currentColor;
+}
+
+@media (max-width: 390px) {
+  .trade-categories {
+    gap: 14px 18px;
+    margin-bottom: 22px;
+  }
+
+  .mobile-market-trade-header {
+    max-width: calc(100% + 28px);
+    margin-right: -14px;
+    margin-left: -14px;
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .trade-categories button {
+    font-size: 16px;
+  }
+
+  .trade-categories button.active {
+    font-size: 18px;
+  }
+
+  .trade-symbol__icons {
+    gap: 8px;
+  }
+
+  .trade-symbol__icons button {
+    font-size: 20px;
+  }
+
+  .product-sheet {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .product-sheet-row {
+    grid-template-columns: 36px minmax(0, 1fr) minmax(0, 62px) minmax(0, 58px);
+    min-height: 76px;
+    column-gap: 8px;
+  }
+
+  .product-sheet-row__coin {
+    width: 34px;
+    height: 34px;
+    font-size: 17px;
+  }
+
+  .product-sheet-row__symbol,
+  .product-sheet-row strong,
+  .product-sheet-row__change em {
+    font-size: 14px;
+  }
+
+  .product-sheet-row__change small {
+    padding: 4px 6px;
+    font-size: 11px;
+  }
 }
 
 .trade-symbol__sub {

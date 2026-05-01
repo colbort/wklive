@@ -1,0 +1,1497 @@
+<script setup lang="ts">
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+import { getTenantCode } from '@/api/http'
+import { apiLogin } from '@/api/userPublic'
+
+const LOGIN_TYPE_PHONE = 2
+const LOGIN_TYPE_EMAIL = 3
+
+type EthereumProvider = {
+  providers?: EthereumProvider[]
+  isMetaMask?: boolean
+  isBraveWallet?: boolean
+  isCoinbaseWallet?: boolean
+  isOkxWallet?: boolean
+  isTokenPocket?: boolean
+  isTrust?: boolean
+  isBitKeep?: boolean
+  isBitgetWallet?: boolean
+  isImToken?: boolean
+  isMathWallet?: boolean
+  isSafePal?: boolean
+  isRabby?: boolean
+  isPhantom?: boolean
+  isOneKey?: boolean
+  isGateWallet?: boolean
+  isCoin98?: boolean
+  isExodus?: boolean
+  isOpera?: boolean
+  isFrame?: boolean
+  isTally?: boolean
+  isZerion?: boolean
+  isRainbow?: boolean
+  isBybit?: boolean
+  isKuCoinWallet?: boolean
+  isHaloWallet?: boolean
+  isSubWallet?: boolean
+  isXDEFI?: boolean
+  isKeplr?: boolean
+  isCosmostation?: boolean
+  isWalletConnect?: boolean
+  selectedProvider?: EthereumProvider
+  ethereum?: EthereumProvider
+  request: <T = unknown>(args: { method: string; params?: unknown[] }) => Promise<T>
+  [key: string]: unknown
+}
+
+type WalletOption = {
+  key: string
+  name: string
+  provider: EthereumProvider | null
+  installed: boolean
+  installUrl: string
+}
+
+type WalletDefinition = {
+  key: string
+  name: string
+  installUrl: string
+  detect: (provider: EthereumProvider) => boolean
+}
+
+declare global {
+  interface Window {
+    ethereum?: EthereumProvider
+    okxwallet?: EthereumProvider
+    trustwallet?: EthereumProvider
+    BinanceChain?: EthereumProvider
+    bitkeep?: { ethereum?: EthereumProvider }
+    bitgetWallet?: EthereumProvider
+    imToken?: EthereumProvider
+    mathwallet?: EthereumProvider
+    safepalProvider?: EthereumProvider
+    rabby?: EthereumProvider
+    phantom?: { ethereum?: EthereumProvider }
+    oneKeyWallet?: EthereumProvider
+    gatewallet?: EthereumProvider
+    coin98?: { provider?: EthereumProvider }
+    exodus?: { ethereum?: EthereumProvider }
+    tally?: EthereumProvider
+    zerionWallet?: EthereumProvider
+    rainbow?: EthereumProvider
+    bybitWallet?: EthereumProvider
+    kucoinWallet?: EthereumProvider
+    haloWallet?: EthereumProvider
+    subwallet?: EthereumProvider
+    xfi?: { ethereum?: EthereumProvider }
+    keplr?: EthereumProvider
+    cosmostation?: { ethereum?: EthereumProvider }
+  }
+}
+
+const router = useRouter()
+const activeTab = ref<'email' | 'phone'>('email')
+const account = ref('')
+const password = ref('')
+const remember = ref(false)
+const showPassword = ref(false)
+const submitting = ref(false)
+const walletConnecting = ref(false)
+const walletAddress = ref('')
+const walletError = ref('')
+const walletSheetOpen = ref(false)
+const errorMessage = ref('')
+
+const accountPlaceholder = computed(() => (activeTab.value === 'email' ? '您的邮箱' : '手机号'))
+const loginType = computed(() => (activeTab.value === 'email' ? LOGIN_TYPE_EMAIL : LOGIN_TYPE_PHONE))
+const shortWalletAddress = computed(() => {
+  if (!walletAddress.value) return ''
+  return `${walletAddress.value.slice(0, 6)}...${walletAddress.value.slice(-4)}`
+})
+const walletOptions = computed<WalletOption[]>(() => {
+  const providers = getWalletProviders()
+  const usedProviders = new Set<EthereumProvider>()
+  const options = walletDefinitions.map((wallet) => {
+    const provider = providers.find((item) => wallet.detect(item)) || null
+    if (provider) usedProviders.add(provider)
+    return {
+      key: wallet.key,
+      name: wallet.name,
+      provider,
+      installed: Boolean(provider),
+      installUrl: wallet.installUrl,
+    }
+  })
+  const fallback = providers.find((provider) => !usedProviders.has(provider)) || null
+
+  return [
+    ...options,
+    { key: 'browser', name: 'Browser Wallet', provider: fallback, installed: Boolean(fallback), installUrl: 'https://metamask.io/download/' },
+  ]
+})
+
+const walletDefinitions: WalletDefinition[] = [
+  { key: 'brave', name: 'Brave 钱包', installUrl: 'https://brave.com/wallet/', detect: (provider) => Boolean(provider.isBraveWallet) },
+  { key: 'metamask', name: 'MetaMask', installUrl: 'https://metamask.io/download/', detect: (provider) => Boolean(provider.isMetaMask && !provider.isBraveWallet) },
+  { key: 'okx', name: 'OKX Wallet', installUrl: 'https://www.okx.com/web3', detect: (provider) => Boolean(provider.isOkxWallet || provider === window.okxwallet) },
+  { key: 'tokenpocket', name: 'TokenPocket', installUrl: 'https://www.tokenpocket.pro/', detect: (provider) => Boolean(provider.isTokenPocket) },
+  { key: 'trust', name: 'Trust Wallet', installUrl: 'https://trustwallet.com/download', detect: (provider) => Boolean(provider.isTrust || provider === window.trustwallet) },
+  { key: 'bitget', name: 'Bitget Wallet', installUrl: 'https://web3.bitget.com/', detect: (provider) => Boolean(provider.isBitKeep || provider.isBitgetWallet || provider === window.bitgetWallet || provider === window.bitkeep?.ethereum) },
+  { key: 'coinbase', name: 'Coinbase Wallet', installUrl: 'https://www.coinbase.com/wallet/downloads', detect: (provider) => Boolean(provider.isCoinbaseWallet) },
+  { key: 'imtoken', name: 'imToken', installUrl: 'https://token.im/', detect: (provider) => Boolean(provider.isImToken || provider === window.imToken) },
+  { key: 'math', name: 'MathWallet', installUrl: 'https://mathwallet.org/', detect: (provider) => Boolean(provider.isMathWallet || provider === window.mathwallet) },
+  { key: 'safepal', name: 'SafePal', installUrl: 'https://www.safepal.com/download', detect: (provider) => Boolean(provider.isSafePal || provider === window.safepalProvider) },
+  { key: 'rabby', name: 'Rabby Wallet', installUrl: 'https://rabby.io/', detect: (provider) => Boolean(provider.isRabby || provider === window.rabby) },
+  { key: 'phantom', name: 'Phantom', installUrl: 'https://phantom.app/download', detect: (provider) => Boolean(provider.isPhantom || provider === window.phantom?.ethereum) },
+  { key: 'binance', name: 'Binance Wallet', installUrl: 'https://www.binance.com/web3wallet', detect: (provider) => Boolean(provider === window.BinanceChain) },
+  { key: 'onekey', name: 'OneKey Wallet', installUrl: 'https://onekey.so/download/', detect: (provider) => Boolean(provider.isOneKey || provider === window.oneKeyWallet) },
+  { key: 'gate', name: 'Gate Wallet', installUrl: 'https://www.gate.io/web3', detect: (provider) => Boolean(provider.isGateWallet || provider === window.gatewallet) },
+  { key: 'coin98', name: 'Coin98 Wallet', installUrl: 'https://coin98.com/wallet', detect: (provider) => Boolean(provider.isCoin98 || provider === window.coin98?.provider) },
+  { key: 'exodus', name: 'Exodus', installUrl: 'https://www.exodus.com/download/', detect: (provider) => Boolean(provider.isExodus || provider === window.exodus?.ethereum) },
+  { key: 'opera', name: 'Opera Wallet', installUrl: 'https://www.opera.com/crypto/next', detect: (provider) => Boolean(provider.isOpera) },
+  { key: 'frame', name: 'Frame', installUrl: 'https://frame.sh/', detect: (provider) => Boolean(provider.isFrame) },
+  { key: 'tally', name: 'Taho/Tally', installUrl: 'https://taho.xyz/', detect: (provider) => Boolean(provider.isTally || provider === window.tally) },
+  { key: 'zerion', name: 'Zerion Wallet', installUrl: 'https://zerion.io/wallet', detect: (provider) => Boolean(provider.isZerion || provider === window.zerionWallet) },
+  { key: 'rainbow', name: 'Rainbow', installUrl: 'https://rainbow.me/', detect: (provider) => Boolean(provider.isRainbow || provider === window.rainbow) },
+  { key: 'bybit', name: 'Bybit Wallet', installUrl: 'https://www.bybit.com/web3', detect: (provider) => Boolean(provider.isBybit || provider === window.bybitWallet) },
+  { key: 'kucoin', name: 'KuCoin Wallet', installUrl: 'https://www.kucoin.com/web3', detect: (provider) => Boolean(provider.isKuCoinWallet || provider === window.kucoinWallet) },
+  { key: 'halo', name: 'Halo Wallet', installUrl: 'https://halo.social/wallet', detect: (provider) => Boolean(provider.isHaloWallet || provider === window.haloWallet) },
+  { key: 'subwallet', name: 'SubWallet', installUrl: 'https://www.subwallet.app/download.html', detect: (provider) => Boolean(provider.isSubWallet || provider === window.subwallet) },
+  { key: 'xdefi', name: 'XDEFI Wallet', installUrl: 'https://www.xdefi.io/', detect: (provider) => Boolean(provider.isXDEFI || provider === window.xfi?.ethereum) },
+  { key: 'keplr', name: 'Keplr', installUrl: 'https://www.keplr.app/download', detect: (provider) => Boolean(provider.isKeplr || provider === window.keplr) },
+  { key: 'cosmostation', name: 'Cosmostation Wallet', installUrl: 'https://cosmostation.io/products/cosmostation_wallet', detect: (provider) => Boolean(provider.isCosmostation || provider === window.cosmostation?.ethereum) },
+  { key: 'walletconnect', name: 'WalletConnect', installUrl: 'https://walletconnect.network/', detect: (provider) => Boolean(provider.isWalletConnect) },
+]
+
+function goBack() {
+  if (window.history.length > 1) {
+    router.back()
+    return
+  }
+  router.push('/profile')
+}
+
+async function submitLogin() {
+  if (submitting.value) return
+
+  errorMessage.value = ''
+  const tenantCode = getTenantCode()
+  if (!tenantCode) {
+    errorMessage.value = '租户信息缺失'
+    return
+  }
+  if (!account.value.trim() || !password.value) {
+    errorMessage.value = '请输入账号和密码'
+    return
+  }
+
+  submitting.value = true
+  try {
+    const res = await apiLogin({
+      tenantCode,
+      loginType: loginType.value,
+      account: account.value.trim(),
+      password: password.value,
+    })
+    if (res.code !== 0 && res.code !== 200) {
+      errorMessage.value = res.msg || '登录失败'
+      return
+    }
+    router.replace('/profile')
+  } catch (error) {
+    console.warn('login failed', error)
+    errorMessage.value = '登录失败'
+  } finally {
+    submitting.value = false
+  }
+}
+
+function getWalletProviders() {
+  const providers: EthereumProvider[] = []
+  const seen = new Set<EthereumProvider>()
+  const addProvider = (provider?: EthereumProvider | null) => {
+    if (!provider || typeof provider.request !== 'function' || seen.has(provider)) return
+    seen.add(provider)
+    providers.push(provider)
+  }
+
+  const ethereum = window.ethereum
+  if (Array.isArray(ethereum?.providers) && ethereum.providers.length) {
+    ethereum.providers.forEach(addProvider)
+  }
+  addProvider(ethereum?.selectedProvider)
+  addProvider(ethereum)
+  addProvider(window.okxwallet)
+  addProvider(window.trustwallet)
+  addProvider(window.BinanceChain)
+  addProvider(window.bitkeep?.ethereum)
+  addProvider(window.bitgetWallet)
+  addProvider(window.imToken)
+  addProvider(window.mathwallet)
+  addProvider(window.safepalProvider)
+  addProvider(window.rabby)
+  addProvider(window.phantom?.ethereum)
+  addProvider(window.oneKeyWallet)
+  addProvider(window.gatewallet)
+  addProvider(window.coin98?.provider)
+  addProvider(window.exodus?.ethereum)
+  addProvider(window.tally)
+  addProvider(window.zerionWallet)
+  addProvider(window.rainbow)
+  addProvider(window.bybitWallet)
+  addProvider(window.kucoinWallet)
+  addProvider(window.haloWallet)
+  addProvider(window.subwallet)
+  addProvider(window.xfi?.ethereum)
+  addProvider(window.keplr)
+  addProvider(window.cosmostation?.ethereum)
+
+  return providers
+}
+
+function openWalletSheet() {
+  walletError.value = ''
+  errorMessage.value = ''
+  walletSheetOpen.value = true
+}
+
+function installWallet(wallet: WalletOption) {
+  walletError.value = ''
+  window.open(wallet.installUrl, '_blank', 'noopener,noreferrer')
+}
+
+function handleWalletSelected(wallet: WalletOption) {
+  if (wallet.installed) {
+    connectWallet(wallet.provider)
+    return
+  }
+  installWallet(wallet)
+}
+
+async function connectWallet(selectedProvider?: EthereumProvider | null) {
+  if (walletConnecting.value) return
+
+  walletError.value = ''
+  errorMessage.value = ''
+
+  const provider = selectedProvider || walletOptions.value.find((wallet) => wallet.installed)?.provider || null
+  if (!provider) {
+    walletError.value = '当前浏览器没有检测到钱包，请在钱包 App 内打开'
+    return
+  }
+
+  walletConnecting.value = true
+  try {
+    const accounts = await provider.request<string[]>({ method: 'eth_requestAccounts' })
+    const address = accounts?.[0]
+    if (!address) {
+      walletError.value = '未获取到钱包地址'
+      return
+    }
+
+    walletAddress.value = address
+    const message = `Wklive wallet login\nAddress: ${address}\nTime: ${Date.now()}`
+    await provider.request({
+      method: 'personal_sign',
+      params: [message, address],
+    })
+    walletSheetOpen.value = false
+  } catch (error: any) {
+    console.warn('connect wallet failed', error)
+    walletError.value = error?.code === 4001 ? '已取消连接钱包' : '连接钱包失败'
+  } finally {
+    walletConnecting.value = false
+  }
+}
+</script>
+
+<template>
+  <section class="auth-page">
+    <header class="auth-topbar">
+      <button type="button" class="icon-button" aria-label="返回" @click="goBack">
+        <span class="chevron-left" />
+      </button>
+      <button type="button" class="icon-button" aria-label="语言">
+        <span class="globe-icon" />
+      </button>
+    </header>
+
+    <main class="auth-content">
+      <h1>登录</h1>
+
+      <div class="auth-tabs" role="tablist" aria-label="登录方式">
+        <button
+          type="button"
+          :class="{ active: activeTab === 'email' }"
+          role="tab"
+          :aria-selected="activeTab === 'email'"
+          @click="activeTab = 'email'"
+        >
+          邮箱
+        </button>
+        <button
+          type="button"
+          :class="{ active: activeTab === 'phone' }"
+          role="tab"
+          :aria-selected="activeTab === 'phone'"
+          @click="activeTab = 'phone'"
+        >
+          手机
+        </button>
+      </div>
+
+      <form class="auth-form" @submit.prevent="submitLogin">
+        <label class="auth-field">
+          <span v-if="activeTab === 'email'" class="field-icon mail-icon" />
+          <span v-else class="phone-prefix">+1 <i /></span>
+          <input v-model="account" :placeholder="accountPlaceholder" autocomplete="username" />
+        </label>
+
+        <label class="auth-field">
+          <span class="field-icon lock-icon" />
+          <input
+            v-model="password"
+            :type="showPassword ? 'text' : 'password'"
+            placeholder="请输入您的密码"
+            autocomplete="current-password"
+          />
+          <button
+            type="button"
+            class="field-action"
+            aria-label="切换密码显示"
+            @click="showPassword = !showPassword"
+          >
+            <span class="eye-off-icon" />
+          </button>
+        </label>
+
+        <div class="auth-row">
+          <label class="remember-control">
+            <input v-model="remember" type="checkbox" />
+            <span />
+            <em>记住账号和密码</em>
+          </label>
+          <RouterLink to="/forgot-password">忘记密码</RouterLink>
+        </div>
+
+        <p v-if="errorMessage" class="auth-error">{{ errorMessage }}</p>
+
+        <button type="submit" class="primary-button" :disabled="submitting">
+          {{ submitting ? '登录中' : '登录' }}
+        </button>
+      </form>
+
+      <div class="quick-login">
+        <div class="quick-login__divider">
+          <span />
+          <strong>快捷登录</strong>
+          <span />
+        </div>
+        <button type="button" class="wallet-button" :disabled="walletConnecting" @click="openWalletSheet">
+          <span class="wallet-icon" />
+        </button>
+        <strong>{{ walletConnecting ? '连接中' : walletAddress ? shortWalletAddress : '连接钱包' }}</strong>
+        <p v-if="walletError" class="wallet-error">{{ walletError }}</p>
+      </div>
+
+      <p class="auth-switch">
+        没有账号吗
+        <button type="button" @click="router.push('/register')">去注册</button>
+      </p>
+    </main>
+
+    <div v-if="walletSheetOpen" class="wallet-sheet-layer" @click.self="walletSheetOpen = false">
+      <div class="wallet-sheet" role="dialog" aria-modal="true" aria-label="Connect Wallet">
+        <header class="wallet-sheet__header">
+          <button type="button" class="wallet-sheet__help" aria-label="帮助">?</button>
+          <strong>Connect Wallet</strong>
+          <button type="button" class="wallet-sheet__close" aria-label="关闭" @click="walletSheetOpen = false">
+            ×
+          </button>
+        </header>
+
+        <div class="wallet-list">
+          <button
+            v-for="wallet in walletOptions"
+            :key="wallet.key"
+            type="button"
+            class="wallet-row"
+            :disabled="walletConnecting"
+            @click="handleWalletSelected(wallet)"
+          >
+            <span class="wallet-row__icon" :class="`wallet-row__icon--${wallet.key}`">
+              {{ wallet.name.slice(0, 1) }}
+            </span>
+            <span>{{ wallet.name }}</span>
+            <em :class="{ install: !wallet.installed }">{{ wallet.installed ? 'INSTALLED' : '安装' }}</em>
+          </button>
+
+          <button type="button" class="wallet-search" disabled>
+            <span class="wallet-search__icon" />
+            <span>Search Wallet</span>
+            <em>本地</em>
+          </button>
+        </div>
+
+        <p v-if="walletError" class="wallet-sheet__error">{{ walletError }}</p>
+        <p class="wallet-sheet__hint">不使用 Reown，仅连接当前浏览器检测到的钱包。</p>
+      </div>
+    </div>
+  </section>
+</template>
+
+<style scoped>
+.auth-page {
+  width: 100%;
+  max-width: 100%;
+  height: 100dvh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-x: none;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 auto;
+  padding: 24px 28px 42px;
+  background: #0d0e17;
+  color: #fff;
+}
+
+.auth-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  margin: -24px -28px 0;
+  padding: 24px 28px 10px;
+  background: #0d0e17;
+}
+
+.icon-button {
+  display: inline-flex;
+  width: 54px;
+  height: 54px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: #252733;
+  color: #fff;
+}
+
+.chevron-left {
+  width: 18px;
+  height: 18px;
+  border-left: 4px solid currentColor;
+  border-bottom: 4px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.globe-icon {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  border: 4px solid currentColor;
+  border-radius: 50%;
+}
+
+.globe-icon::before,
+.globe-icon::after {
+  content: '';
+  position: absolute;
+  inset: 3px 8px;
+  border-left: 3px solid currentColor;
+  border-right: 3px solid currentColor;
+  border-radius: 50%;
+}
+
+.globe-icon::after {
+  inset: 10px -3px auto;
+  height: 3px;
+  border: 0;
+  background: currentColor;
+}
+
+.auth-content {
+  width: 100%;
+  min-width: 0;
+  padding-top: 106px;
+}
+
+.auth-content h1 {
+  margin: 0 0 76px;
+  font-size: 48px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.auth-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border-bottom: 1px solid #20222d;
+}
+
+.auth-tabs button {
+  position: relative;
+  height: 54px;
+  border: 0;
+  background: transparent;
+  color: #8e9099;
+  font-size: 26px;
+  font-weight: 800;
+}
+
+.auth-tabs button.active {
+  color: #00c313;
+}
+
+.auth-tabs button.active::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 5px;
+  background: #00c313;
+}
+
+.auth-form {
+  display: grid;
+  gap: 30px;
+  margin-top: 64px;
+}
+
+.auth-field {
+  display: flex;
+  min-height: 102px;
+  align-items: center;
+  gap: 14px;
+  border-radius: 28px;
+  background: #20212b;
+  padding: 0 22px;
+}
+
+.auth-field input {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #fff;
+  font-size: 26px;
+  font-weight: 800;
+}
+
+.auth-field input::placeholder {
+  color: #8f9098;
+}
+
+.field-icon {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #4a4c58;
+}
+
+.mail-icon::before {
+  content: '';
+  position: absolute;
+  inset: 16px 13px 14px;
+  border: 3px solid #fff;
+}
+
+.mail-icon::after {
+  content: '';
+  position: absolute;
+  top: 17px;
+  left: 15px;
+  width: 26px;
+  height: 18px;
+  border-left: 3px solid #fff;
+  border-bottom: 3px solid #fff;
+  transform: rotate(-45deg) skew(12deg, 12deg);
+}
+
+.lock-icon::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  right: 15px;
+  bottom: 14px;
+  height: 22px;
+  border: 3px solid #fff;
+}
+
+.lock-icon::after {
+  content: '';
+  position: absolute;
+  top: 13px;
+  left: 18px;
+  width: 20px;
+  height: 22px;
+  border: 3px solid #fff;
+  border-bottom: 0;
+  border-radius: 12px 12px 0 0;
+}
+
+.phone-prefix {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  color: #fff;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.phone-prefix i {
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid #a5a7af;
+  border-bottom: 2px solid #a5a7af;
+  transform: rotate(45deg);
+}
+
+.field-action {
+  display: inline-flex;
+  width: 42px;
+  height: 42px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: #9b9ca4;
+}
+
+.eye-off-icon {
+  position: relative;
+  width: 28px;
+  height: 16px;
+  border: 3px solid currentColor;
+  border-radius: 50%;
+}
+
+.eye-off-icon::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 8px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.eye-off-icon::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 12px;
+  width: 3px;
+  height: 32px;
+  background: currentColor;
+  transform: rotate(-45deg);
+}
+
+.auth-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  min-width: 0;
+  margin-top: -2px;
+}
+
+.remember-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.remember-control input {
+  position: absolute;
+  opacity: 0;
+}
+
+.remember-control span {
+  width: 30px;
+  height: 30px;
+  border: 2px solid #6d707d;
+  border-radius: 8px;
+}
+
+.remember-control input:checked + span {
+  border-color: #00c313;
+  background: #00c313;
+}
+
+.remember-control em,
+.auth-row a {
+  color: #fff;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.auth-error {
+  margin: -12px 0 0;
+  color: #ff6666;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.primary-button {
+  min-height: 102px;
+  margin-top: 64px;
+  border: 0;
+  border-radius: 50px;
+  background: #00c313;
+  color: #fff;
+  font-size: 30px;
+  font-weight: 900;
+}
+
+.primary-button:disabled {
+  opacity: 0.7;
+}
+
+.quick-login {
+  display: grid;
+  justify-items: center;
+  gap: 20px;
+  margin-top: 60px;
+  color: #fff;
+}
+
+.quick-login__divider {
+  display: grid;
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 18px;
+}
+
+.quick-login__divider span {
+  height: 1px;
+  background: #22242e;
+}
+
+.quick-login__divider strong,
+.quick-login > strong {
+  font-size: 26px;
+  font-weight: 900;
+}
+
+.wallet-button {
+  display: inline-flex;
+  width: 108px;
+  height: 108px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: #282a36;
+  color: #00c313;
+}
+
+.wallet-button:disabled {
+  opacity: 0.7;
+}
+
+.wallet-error {
+  max-width: 100%;
+  margin: -8px 0 0;
+  color: #ff6b5f;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.wallet-icon {
+  position: relative;
+  width: 38px;
+  height: 30px;
+  border-radius: 4px;
+  background: currentColor;
+}
+
+.wallet-icon::before {
+  content: '';
+  position: absolute;
+  top: -9px;
+  left: 9px;
+  width: 28px;
+  height: 18px;
+  border-radius: 3px;
+  background: currentColor;
+  transform: rotate(-25deg);
+}
+
+.wallet-icon::after {
+  content: '';
+  position: absolute;
+  top: 12px;
+  right: 5px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #282a36;
+}
+
+.auth-switch {
+  margin: 46px 0 0;
+  text-align: center;
+  color: #8f9098;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.auth-switch button {
+  border: 0;
+  background: transparent;
+  color: #00c313;
+  font: inherit;
+}
+
+.wallet-sheet-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.68);
+  backdrop-filter: blur(8px);
+}
+
+.wallet-sheet {
+  width: min(100%, 720px);
+  max-height: min(78dvh, 560px);
+  overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 28px 28px 0 0;
+  background: #202020;
+  padding: 28px 28px 24px;
+  color: #fff;
+  box-shadow: 0 -18px 40px rgba(0, 0, 0, 0.35);
+}
+
+.wallet-sheet__header {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) 42px;
+  align-items: center;
+  margin-bottom: 26px;
+}
+
+.wallet-sheet__header strong {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.wallet-sheet__help,
+.wallet-sheet__close {
+  display: inline-flex;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.wallet-sheet__help {
+  width: 28px;
+  height: 28px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.wallet-list {
+  display: grid;
+  gap: 12px;
+}
+
+.wallet-row,
+.wallet-search {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  grid-template-columns: 54px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  border: 0;
+  border-radius: 16px;
+  background: transparent;
+  padding: 14px 18px;
+  color: #fff;
+  text-align: left;
+}
+
+.wallet-row:disabled {
+  opacity: 0.62;
+}
+
+.wallet-row:not(:disabled):active {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.wallet-row span:nth-child(2),
+.wallet-search span:nth-child(2) {
+  overflow: hidden;
+  min-width: 0;
+  font-size: 24px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wallet-row em,
+.wallet-search em {
+  border-radius: 8px;
+  background: rgba(38, 169, 106, 0.18);
+  padding: 5px 8px;
+  color: #35c686;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.wallet-row em.install {
+  background: rgba(255, 255, 255, 0.08);
+  color: #b8b8b8;
+}
+
+.wallet-row__icon,
+.wallet-search__icon {
+  display: inline-flex;
+  width: 48px;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: #2b2b2b;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.wallet-row__icon--brave {
+  background: #f15a24;
+}
+
+.wallet-row__icon--metamask {
+  background: #f6851b;
+}
+
+.wallet-row__icon--okx,
+.wallet-row__icon--browser {
+  background: #111;
+}
+
+.wallet-row__icon--coinbase {
+  background: #2457ff;
+}
+
+.wallet-row__icon--tokenpocket {
+  background: #2f7df6;
+}
+
+.wallet-row__icon--trust {
+  background: #3375bb;
+}
+
+.wallet-row__icon--bitget {
+  background: #00d1ff;
+  color: #061018;
+}
+
+.wallet-row__icon--imtoken {
+  background: #1f6fff;
+}
+
+.wallet-row__icon--math {
+  background: #111b3a;
+}
+
+.wallet-row__icon--safepal {
+  background: #5b6cff;
+}
+
+.wallet-row__icon--rabby {
+  background: #7b5cff;
+}
+
+.wallet-row__icon--phantom {
+  background: #ab9ff2;
+  color: #171724;
+}
+
+.wallet-row__icon--binance {
+  background: #f3ba2f;
+  color: #171300;
+}
+
+.wallet-row__icon--onekey {
+  background: #00b578;
+}
+
+.wallet-row__icon--gate {
+  background: #2454ff;
+}
+
+.wallet-row__icon--coin98 {
+  background: #d8a600;
+}
+
+.wallet-row__icon--exodus {
+  background: #6c4cff;
+}
+
+.wallet-row__icon--opera {
+  background: #ff1b2d;
+}
+
+.wallet-row__icon--frame,
+.wallet-row__icon--tally {
+  background: #f4f4f4;
+  color: #111;
+}
+
+.wallet-row__icon--zerion {
+  background: #2962ff;
+}
+
+.wallet-row__icon--rainbow {
+  background: linear-gradient(135deg, #ff4d6d, #ffd166 45%, #22c55e 70%, #38bdf8);
+}
+
+.wallet-row__icon--bybit {
+  background: #f7a600;
+  color: #111;
+}
+
+.wallet-row__icon--kucoin {
+  background: #24ae8f;
+}
+
+.wallet-row__icon--halo {
+  background: #15d46f;
+  color: #07140c;
+}
+
+.wallet-row__icon--subwallet {
+  background: #004bff;
+}
+
+.wallet-row__icon--xdefi {
+  background: #34d399;
+  color: #06120d;
+}
+
+.wallet-row__icon--keplr,
+.wallet-row__icon--cosmostation {
+  background: #121826;
+}
+
+.wallet-row__icon--walletconnect {
+  background: #3b99fc;
+}
+
+.wallet-search {
+  margin-top: 6px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.04);
+  opacity: 0.72;
+}
+
+.wallet-search__icon {
+  position: relative;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.wallet-search__icon::before {
+  content: '';
+  width: 14px;
+  height: 14px;
+  border: 3px solid #aaa;
+  border-radius: 50%;
+}
+
+.wallet-search__icon::after {
+  content: '';
+  position: absolute;
+  right: 13px;
+  bottom: 13px;
+  width: 11px;
+  height: 3px;
+  border-radius: 3px;
+  background: #aaa;
+  transform: rotate(45deg);
+}
+
+.wallet-sheet__error {
+  margin: 16px 0 0;
+  color: #ff6b5f;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.wallet-sheet__hint {
+  margin: 18px 0 0;
+  color: #9b9b9b;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+}
+
+@media (max-width: 520px) {
+  .auth-page {
+    padding: 20px 26px 36px;
+  }
+
+  .auth-content {
+    padding-top: 92px;
+  }
+
+  .auth-content h1 {
+    margin-bottom: 66px;
+    font-size: 42px;
+  }
+
+  .auth-field,
+  .primary-button {
+    min-height: 84px;
+  }
+
+  .auth-field input,
+  .auth-tabs button {
+    font-size: 22px;
+  }
+
+  .remember-control em,
+  .auth-row a,
+  .auth-switch,
+  .phone-prefix {
+    font-size: 20px;
+  }
+}
+
+.auth-page {
+  padding: 18px 22px 30px;
+}
+
+.auth-topbar {
+  margin: -18px -22px 0;
+  padding: 18px 22px 10px;
+}
+
+.icon-button {
+  width: 46px;
+  height: 46px;
+}
+
+.chevron-left {
+  width: 16px;
+  height: 16px;
+  border-left-width: 3px;
+  border-bottom-width: 3px;
+}
+
+.globe-icon {
+  width: 24px;
+  height: 24px;
+  border-width: 3px;
+}
+
+.auth-content {
+  padding-top: 68px;
+}
+
+.auth-content h1 {
+  margin-bottom: 48px;
+  font-size: 38px;
+}
+
+.auth-tabs button {
+  height: 46px;
+  font-size: 21px;
+}
+
+.auth-form {
+  gap: 22px;
+  margin-top: 42px;
+}
+
+.auth-field {
+  min-height: 74px;
+  border-radius: 22px;
+  padding: 0 18px;
+}
+
+.auth-field input {
+  font-size: 20px;
+}
+
+.field-icon {
+  width: 44px;
+  height: 44px;
+}
+
+.phone-prefix,
+.remember-control em,
+.auth-row a,
+.auth-switch {
+  font-size: 18px;
+}
+
+.remember-control span {
+  width: 26px;
+  height: 26px;
+}
+
+.primary-button {
+  min-height: 76px;
+  margin-top: 36px;
+  border-radius: 38px;
+  font-size: 24px;
+}
+
+.quick-login {
+  gap: 14px;
+  margin-top: 38px;
+}
+
+.quick-login__divider strong,
+.quick-login > strong {
+  font-size: 20px;
+}
+
+.wallet-button {
+  width: 84px;
+  height: 84px;
+}
+
+.auth-switch {
+  margin-top: 30px;
+}
+
+@media (max-width: 390px) {
+  .auth-page {
+    padding: 16px 18px 28px;
+  }
+
+  .auth-topbar {
+    margin: -16px -18px 0;
+    padding: 16px 18px 8px;
+  }
+
+  .auth-content {
+    padding-top: 52px;
+  }
+
+  .auth-content h1 {
+    margin-bottom: 38px;
+    font-size: 32px;
+  }
+
+  .auth-form {
+    gap: 18px;
+    margin-top: 32px;
+  }
+
+  .auth-field {
+    min-height: 66px;
+    border-radius: 18px;
+    padding: 0 14px;
+  }
+
+  .auth-field input,
+  .auth-tabs button {
+    font-size: 18px;
+  }
+
+  .remember-control em,
+  .auth-row a,
+  .auth-switch,
+  .phone-prefix {
+    font-size: 16px;
+  }
+
+  .primary-button {
+    min-height: 68px;
+    margin-top: 26px;
+    font-size: 21px;
+  }
+
+  .quick-login {
+    margin-top: 30px;
+  }
+}
+
+@media (max-width: 959px) {
+  .auth-page {
+    padding: 14px 24px 28px;
+  }
+
+  .auth-topbar {
+    margin: -14px -24px 0;
+    padding: 14px 24px 8px;
+  }
+
+  .icon-button {
+    width: 42px;
+    height: 42px;
+  }
+
+  .chevron-left {
+    width: 15px;
+    height: 15px;
+    border-left-width: 3px;
+    border-bottom-width: 3px;
+  }
+
+  .globe-icon {
+    width: 22px;
+    height: 22px;
+    border-width: 3px;
+  }
+
+  .auth-content {
+    padding-top: 42px;
+  }
+
+  .auth-content h1 {
+    margin-bottom: 42px;
+    font-size: 34px;
+  }
+
+  .auth-tabs button {
+    height: 40px;
+    font-size: 19px;
+  }
+
+  .auth-tabs button.active::after {
+    height: 3px;
+  }
+
+  .auth-form {
+    gap: 18px;
+    margin-top: 34px;
+  }
+
+  .auth-field {
+    min-height: 62px;
+    border-radius: 18px;
+    padding: 0 14px;
+  }
+
+  .auth-field input {
+    font-size: 18px;
+  }
+
+  .field-icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .field-action {
+    width: 34px;
+    height: 34px;
+  }
+
+  .eye-off-icon {
+    width: 24px;
+    height: 14px;
+    border-width: 3px;
+  }
+
+  .phone-prefix,
+  .remember-control em,
+  .auth-row a,
+  .auth-switch {
+    font-size: 15px;
+  }
+
+  .remember-control span {
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+  }
+
+  .primary-button {
+    min-height: 66px;
+    margin-top: 28px;
+    border-radius: 33px;
+    font-size: 22px;
+  }
+
+  .quick-login {
+    gap: 12px;
+    margin-top: 34px;
+  }
+
+  .quick-login__divider strong,
+  .quick-login > strong {
+    font-size: 18px;
+  }
+
+  .wallet-button {
+    width: 72px;
+    height: 72px;
+  }
+
+  .wallet-sheet {
+    max-height: 70dvh;
+    border-radius: 24px 24px 0 0;
+    padding: 22px 20px 20px;
+  }
+
+  .wallet-sheet__header {
+    grid-template-columns: 34px minmax(0, 1fr) 34px;
+    margin-bottom: 18px;
+  }
+
+  .wallet-sheet__header strong {
+    font-size: 20px;
+  }
+
+  .wallet-row,
+  .wallet-search {
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    gap: 12px;
+    padding: 11px 8px;
+  }
+
+  .wallet-row__icon,
+  .wallet-search__icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    font-size: 18px;
+  }
+
+  .wallet-row span:nth-child(2),
+  .wallet-search span:nth-child(2) {
+    font-size: 18px;
+  }
+
+  .wallet-row em,
+  .wallet-search em {
+    font-size: 12px;
+  }
+}
+</style>

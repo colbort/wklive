@@ -1,5 +1,7 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import AssetCoinIcon from '@/components/assets/AssetCoinIcon.vue'
+import { apiGetAssetOptions } from '@/api/asset'
+import { useOptions } from '@/composables/useOptions'
 import type { AssetCoinConfig } from '@/types/asset'
 
 const props = defineProps<{
@@ -15,31 +17,32 @@ const emit = defineEmits<{
   select: [config: AssetCoinConfig]
 }>()
 
-const chainLabels: Record<number, string> = {
-  1: 'BTC',
-  2: 'ETH',
-  3: 'TRX',
-  4: 'BSC',
-  5: 'SOL',
-  6: 'POLYGON',
-  20: 'TRC20',
-  21: 'ERC20',
-  22: 'BEP20',
-}
+const assetOptions = useOptions(apiGetAssetOptions)
 
 function closeSheet() {
   emit('update:modelValue', false)
 }
 
 function chainLabel(config: AssetCoinConfig) {
-  if (config.chainCode) return chainLabels[config.chainCode] || String(config.chainCode)
+  if (config.chainCode) {
+    const option = assetOptions
+      .getGroup('chainCode')
+      .find((item) => item.value === config.chainCode)
+    return option ? formatChainCode(option.code) : String(config.chainCode)
+  }
   return config.coin === 'USDT' ? 'TRC20' : ''
+}
+
+function formatChainCode(code: string) {
+  return code.replace(/^CHAIN_CODE_/, '')
 }
 
 function isSelected(config: AssetCoinConfig) {
   if (!props.selectedConfig) return false
   if (props.selectedConfig.id && config.id) return props.selectedConfig.id === config.id
-  return props.selectedConfig.coin === config.coin && props.selectedConfig.chainCode === config.chainCode
+  return (
+    props.selectedConfig.coin === config.coin && props.selectedConfig.chainCode === config.chainCode
+  )
 }
 
 function selectConfig(config: AssetCoinConfig) {
@@ -54,7 +57,14 @@ function selectConfig(config: AssetCoinConfig) {
       <div v-if="modelValue" class="asset-coin-sheet" @click.self="closeSheet">
         <section class="asset-coin-sheet__panel" role="dialog" aria-modal="true">
           <span class="asset-coin-sheet__handle" />
-          <button type="button" class="asset-coin-sheet__close" aria-label="关闭" @click="closeSheet">×</button>
+          <button
+            type="button"
+            class="asset-coin-sheet__close"
+            aria-label="关闭"
+            @click="closeSheet"
+          >
+            ×
+          </button>
           <h2>{{ title || '币种选择' }}</h2>
 
           <div class="asset-coin-sheet__list">
@@ -95,6 +105,7 @@ button {
   align-items: flex-end;
   background: rgba(0, 0, 0, 0.58);
   backdrop-filter: blur(8px);
+  overflow-x: hidden;
 }
 
 .asset-coin-sheet__panel {
@@ -143,7 +154,7 @@ button {
 
 .asset-coin-sheet__item {
   display: grid;
-  grid-template-columns: 28px auto auto 1fr;
+  grid-template-columns: 28px minmax(0, auto) minmax(0, auto) minmax(20px, 1fr);
   align-items: center;
   gap: 10px;
   min-height: 52px;
@@ -156,17 +167,25 @@ button {
 }
 
 .asset-coin-sheet__item strong {
+  min-width: 0;
+  overflow: hidden;
   font-size: 16px;
   font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .asset-coin-sheet__item small {
+  min-width: 0;
+  overflow: hidden;
   padding: 3px 8px;
   border-radius: 999px;
   background: #4a4c58;
   color: #fff;
   font-size: 11px;
   font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .asset-coin-sheet__check {
@@ -174,6 +193,24 @@ button {
   color: #02b904;
   font-size: 20px;
   font-weight: 900;
+}
+
+@media (max-width: 390px) {
+  .asset-coin-sheet__panel {
+    max-height: 74dvh;
+    border-radius: 22px 22px 0 0;
+    padding-top: 34px;
+  }
+
+  .asset-coin-sheet__item {
+    min-height: 48px;
+    padding: 0 20px;
+  }
+
+  .asset-coin-sheet h2 {
+    margin-bottom: 20px;
+    font-size: 17px;
+  }
 }
 
 .asset-coin-sheet__empty {

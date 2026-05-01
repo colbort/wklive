@@ -1,77 +1,67 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import { computed, onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
-import {
-  apiGetAssetOptions,
-  apiGetMyAssetSummary,
-  apiListAssetCoinConfigs,
-} from "@/api/asset";
-import { apiCreateWithdrawOrder } from "@/api/payment";
-import AssetCoinSelectSheet from "@/components/assets/AssetCoinSelectSheet.vue";
-import AssetCoinPicker from "@/components/assets/AssetCoinPicker.vue";
-import AssetFlowLayout from "@/components/assets/AssetFlowLayout.vue";
-import AssetPrimaryButton from "@/components/assets/AssetPrimaryButton.vue";
-import { useOptions } from "@/composables/useOptions";
-import type { AssetCoinConfig, AssetUserAsset } from "@/types/asset";
+import { apiGetAssetOptions, apiGetMyAssetSummary, apiListAssetCoinConfigs } from '@/api/asset'
+import { apiCreateWithdrawOrder } from '@/api/payment'
+import AssetCoinSelectSheet from '@/components/assets/AssetCoinSelectSheet.vue'
+import AssetCoinPicker from '@/components/assets/AssetCoinPicker.vue'
+import AssetFlowLayout from '@/components/assets/AssetFlowLayout.vue'
+import AssetPrimaryButton from '@/components/assets/AssetPrimaryButton.vue'
+import { useOptions } from '@/composables/useOptions'
+import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
 
-const route = useRoute();
-const assetOptions = useOptions(apiGetAssetOptions);
-const coinConfigs = ref<AssetCoinConfig[]>([]);
-const assets = ref<AssetUserAsset[]>([]);
-const amount = ref("");
-const address = ref("");
-const submitLoading = ref(false);
-const pageError = ref("");
-const pageTip = ref("");
-const selectedConfig = ref<AssetCoinConfig | null>(null);
-const coinSheetVisible = ref(false);
+const route = useRoute()
+const assetOptions = useOptions(apiGetAssetOptions)
+const coinConfigs = ref<AssetCoinConfig[]>([])
+const assets = ref<AssetUserAsset[]>([])
+const amount = ref('')
+const address = ref('')
+const submitLoading = ref(false)
+const pageError = ref('')
+const pageTip = ref('')
+const selectedConfig = ref<AssetCoinConfig | null>(null)
+const coinSheetVisible = ref(false)
 
-const walletType = computed(() => Number(route.query.walletType || 1));
-const routeCoin = computed(() => String(route.query.coin || "USDT"));
-const coin = computed(() => selectedConfig.value?.coin || routeCoin.value);
+const walletType = computed(() => Number(route.query.walletType || 1))
+const routeCoin = computed(() => String(route.query.coin || 'USDT'))
+const coin = computed(() => selectedConfig.value?.coin || routeCoin.value)
 const selectedChain = computed(() => {
-  const config = selectedConfig.value;
-  if (!config) return "";
-  return getChainLabel(config);
-});
+  const config = selectedConfig.value
+  if (!config) return ''
+  return getChainLabel(config)
+})
 const availableAmount = computed(() => {
   return (
-    assets.value.find(
-      (asset) =>
-        asset.walletType === walletType.value && asset.coin === coin.value,
-    )?.availableAmount || "0"
-  );
-});
-const receivedAmount = computed(() => amount.value || "0");
+    assets.value.find((asset) => asset.walletType === walletType.value && asset.coin === coin.value)
+      ?.availableAmount || '0'
+  )
+})
+const receivedAmount = computed(() => amount.value || '0')
 
 function isSuccessCode(code: number) {
-  return code === 0 || code === 200;
+  return code === 0 || code === 200
 }
 
 function getChainLabel(config: AssetCoinConfig) {
-  if (String(config.coin).toLocaleUpperCase() != "USDT" || !config.chainCode)
-    return "";
-  const option = assetOptions
-    .getGroup("chainCode")
-    .find((item) => item.value === config.chainCode);
-  return option ? formatChainCode(option.code) : String(config.chainCode);
+  if (String(config.coin).toLocaleUpperCase() != 'USDT' || !config.chainCode) return ''
+  const option = assetOptions.getGroup('chainCode').find((item) => item.value === config.chainCode)
+  return option ? formatChainCode(option.code) : String(config.chainCode)
 }
 
 function formatChainCode(code: string) {
-  return code.replace(/^CHAIN_CODE_/, "");
+  return code.replace(/^CHAIN_CODE_/, '')
 }
 
 function syncSelectedConfig(configs: AssetCoinConfig[]) {
   selectedConfig.value =
     configs.find(
       (config) =>
-        config.coin === routeCoin.value &&
-        config.id === Number(route.query.coinConfigId || 0),
+        config.coin === routeCoin.value && config.id === Number(route.query.coinConfigId || 0),
     ) ||
     configs.find((config) => config.coin === routeCoin.value) ||
     configs[0] ||
-    null;
+    null
 }
 
 async function loadPageData() {
@@ -82,78 +72,77 @@ async function loadPageData() {
         operationType: 2,
       }),
       apiGetMyAssetSummary({}),
-    ]);
+    ])
     if (isSuccessCode(configsResp.code)) {
-      coinConfigs.value = configsResp.data || [];
-      syncSelectedConfig(coinConfigs.value);
+      coinConfigs.value = configsResp.data || []
+      syncSelectedConfig(coinConfigs.value)
     }
-    if (isSuccessCode(summaryResp.code))
-      assets.value = summaryResp.data?.assets || [];
+    if (isSuccessCode(summaryResp.code)) assets.value = summaryResp.data?.assets || []
   } catch (error) {
-    console.warn("load withdraw data failed", error);
+    console.warn('load withdraw data failed', error)
   }
 }
 
 function selectConfig(config: AssetCoinConfig) {
-  selectedConfig.value = config;
-  pageError.value = "";
-  pageTip.value = "";
+  selectedConfig.value = config
+  pageError.value = ''
+  pageTip.value = ''
 }
 
 function parseAmountToMinor(value: string) {
-  const normalized = value.trim();
-  if (!/^\d+(\.\d{1,2})?$/.test(normalized)) return 0;
-  const [integerPart, decimalPart = ""] = normalized.split(".");
-  return Number(integerPart) * 100 + Number(decimalPart.padEnd(2, "0"));
+  const normalized = value.trim()
+  if (!/^\d+(\.\d{1,2})?$/.test(normalized)) return 0
+  const [integerPart, decimalPart = ''] = normalized.split('.')
+  return Number(integerPart) * 100 + Number(decimalPart.padEnd(2, '0'))
 }
 
 async function submitWithdraw() {
-  if (submitLoading.value) return;
+  if (submitLoading.value) return
 
-  pageError.value = "";
-  pageTip.value = "";
-  const withdrawAmount = parseAmountToMinor(amount.value);
+  pageError.value = ''
+  pageTip.value = ''
+  const withdrawAmount = parseAmountToMinor(amount.value)
   if (!coin.value) {
-    pageError.value = "请选择提现币种";
-    return;
+    pageError.value = '请选择提现币种'
+    return
   }
   if (!address.value.trim()) {
-    pageError.value = "请输入提现地址";
-    return;
+    pageError.value = '请输入提现地址'
+    return
   }
   if (withdrawAmount <= 0) {
-    pageError.value = "请输入提现金额";
-    return;
+    pageError.value = '请输入提现金额'
+    return
   }
 
-  submitLoading.value = true;
+  submitLoading.value = true
   try {
     const resp = await apiCreateWithdrawOrder({
       amount: withdrawAmount,
       currency: coin.value,
       address: address.value.trim(),
       bankId: 0,
-      remark: selectedChain.value ? `chain:${selectedChain.value}` : "",
-    });
+      remark: selectedChain.value ? `chain:${selectedChain.value}` : '',
+    })
     if (isSuccessCode(resp.code)) {
-      pageTip.value = resp.id ? `提现申请已提交：${resp.id}` : "提现申请已提交";
-      amount.value = "";
-      address.value = "";
-      await loadPageData();
+      pageTip.value = resp.id ? `提现申请已提交：${resp.id}` : '提现申请已提交'
+      amount.value = ''
+      address.value = ''
+      await loadPageData()
     } else {
-      pageError.value = resp.msg || "提现提交失败，请稍后重试";
+      pageError.value = resp.msg || '提现提交失败，请稍后重试'
     }
   } catch (error) {
-    console.warn("create withdraw order failed", error);
-    pageError.value = "提现提交失败，请稍后重试";
+    console.warn('create withdraw order failed', error)
+    pageError.value = '提现提交失败，请稍后重试'
   } finally {
-    submitLoading.value = false;
+    submitLoading.value = false
   }
 }
 
 onMounted(() => {
-  void loadPageData();
-});
+  void loadPageData()
+})
 </script>
 
 <template>
@@ -206,10 +195,7 @@ onMounted(() => {
       {{ pageTip }}
     </p>
 
-    <AssetPrimaryButton
-      :label="submitLoading ? '提交中' : '提现'"
-      @click="submitWithdraw"
-    />
+    <AssetPrimaryButton :label="submitLoading ? '提交中' : '提现'" @click="submitWithdraw" />
 
     <AssetCoinSelectSheet
       v-model="coinSheetVisible"

@@ -86,6 +86,8 @@ const emit = defineEmits<{
 <style scoped>
 .mobile-trade-view {
   min-width: 0;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .mobile-contract-layout {
@@ -93,5 +95,11 @@ const emit = defineEmits<{
   grid-template-columns: minmax(0, 1.1fr) minmax(180px, 0.9fr);
   gap: 18px;
   min-width: 0;
+}
+
+@media (max-width: 430px) {
+  .mobile-contract-layout {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
