@@ -44,7 +44,12 @@ export default [
       'vue/component-definition-name-casing': ['error', 'PascalCase'],
 
       // TypeScript 相关
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': ['error', {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_',
+        destructuredArrayIgnorePattern: '^_',
+      }],
       '@typescript-eslint/explicit-function-return-types': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
 

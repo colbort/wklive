@@ -49,12 +49,7 @@
           show-overflow-tooltip
         />
         <el-table-column :label="t('staking.coinSymbol')" prop="coinSymbol" width="120" />
-        <el-table-column
-          prop="apr"
-          label="APR"
-          min-width="120"
-          show-overflow-tooltip
-        />
+        <el-table-column prop="apr" label="APR" min-width="120" show-overflow-tooltip />
         <el-table-column :label="t('staking.lockDays')" prop="lockDays" width="120" />
         <el-table-column :label="t('common.status')" prop="status" width="100" />
         <el-table-column :label="t('common.actions')" width="220" fixed="right">
@@ -200,7 +195,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang='ts'>
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'

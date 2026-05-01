@@ -55,7 +55,6 @@ function getChainLabel(config: AssetCoinConfig) {
   const option = assetOptions
     .getGroup("chainCode")
     .find((item) => item.value === config.chainCode);
-  console.log("find chain option ================= ", config.chainCode, option);
   return option ? formatChainCode(option.code) : String(config.chainCode);
 }
 

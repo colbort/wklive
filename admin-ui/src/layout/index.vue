@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang='ts'>
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import SideMenu from './side-menu.vue'
 import TopBar from './top-bar.vue'

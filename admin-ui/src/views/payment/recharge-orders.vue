@@ -57,12 +57,7 @@
             <el-button link type="primary" @click="showDetail(row)">
               {{ t('common.detail') }}
             </el-button>
-            <el-button
-              v-if="canClose(row)"
-              link
-              type="warning"
-              @click="closeOrder(row)"
-            >
+            <el-button v-if="canClose(row)" link type="warning" @click="closeOrder(row)">
               {{ t('payment.closeOrder') }}
             </el-button>
             <el-button
@@ -73,12 +68,7 @@
             >
               {{ t('payment.manualMarkSuccess') }}
             </el-button>
-            <el-button
-              v-if="canRetryNotify(row)"
-              link
-              type="primary"
-              @click="retryNotify(row)"
-            >
+            <el-button v-if="canRetryNotify(row)" link type="primary" @click="retryNotify(row)">
               {{ t('payment.retryNotify') }}
             </el-button>
           </template>
@@ -170,7 +160,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang='ts'>
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -223,7 +213,8 @@ const showDetail = async (row: RechargeOrder) => {
   detailVisible.value = true
 }
 
-const canClose = (row: RechargeOrder) => row.status === PAY_ORDER_STATUS_PENDING || row.status === PAY_ORDER_STATUS_PAYING
+const canClose = (row: RechargeOrder) =>
+  row.status === PAY_ORDER_STATUS_PENDING || row.status === PAY_ORDER_STATUS_PAYING
 const canManualSuccess = (row: RechargeOrder) => row.status == PAY_ORDER_STATUS_PAYING
 const canRetryNotify = (row: RechargeOrder) => row.status == PAY_ORDER_STATUS_PAYING
 

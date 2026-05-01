@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang='ts'>
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores'
 import { useI18n } from 'vue-i18n'
@@ -62,12 +62,7 @@ async function submit() {
           <el-input v-model="form.googleCode" />
         </el-form-item>
 
-        <el-button
-          type="primary"
-          :loading="loading"
-          style="width: 100%"
-          @click="submit"
-        >
+        <el-button type="primary" :loading="loading" style="width: 100%" @click="submit">
           {{ t('auth.submit') }}
         </el-button>
       </el-form>

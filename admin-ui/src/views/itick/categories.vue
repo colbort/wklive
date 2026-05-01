@@ -171,12 +171,7 @@
       :title="formMode === 'add' ? t('itick.addCategory') : t('itick.editCategory')"
       width="620px"
     >
-      <el-form
-        ref="formRef"
-        :model="form"
-        :rules="rules"
-        label-width="100px"
-      >
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item
           v-if="formMode === 'add'"
           :label="t('itick.categoryType')"
@@ -335,7 +330,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang='ts'>
 import { computed, nextTick, onMounted, ref } from 'vue'
 import { ElMessage, type FormRules, type UploadFile } from 'element-plus'
 import { useI18n } from 'vue-i18n'
@@ -451,7 +446,7 @@ const getList = async () => {
         res?.nextCursor || null,
         res?.prevCursor || null,
       )
-    } catch (error) {
+    } catch (_) {
       ElMessage.error(t('common.loadFailed'))
     }
   })
@@ -516,7 +511,7 @@ const handleEdit = async (row: ItickCategory) => {
     formDialogVisible.value = true
     await nextTick()
     formRef.value?.clearValidate()
-  } catch (error) {
+  } catch (_) {
     ElMessage.error(t('common.loadFailed'))
   }
 }
@@ -529,7 +524,7 @@ const handleDetail = async (row: ItickCategory) => {
   try {
     const res = await categoriesService.detail(row.id)
     detail.value = res?.data || {}
-  } catch (error) {
+  } catch (_) {
     ElMessage.error(t('common.loadFailed'))
   } finally {
     detailLoading.value = false
@@ -597,7 +592,7 @@ const submitForm = async () => {
 
     formDialogVisible.value = false
     getList()
-  } catch (error) {
+  } catch (_) {
     ElMessage.error(formMode.value === 'add' ? t('common.createFailed') : t('common.updateFailed'))
   } finally {
     submitLoading.value = false

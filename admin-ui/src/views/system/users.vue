@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang='ts'>
 import { computed, onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
@@ -323,7 +323,7 @@ async function copySecret() {
   try {
     await navigator.clipboard.writeText(g2Init.secret)
     ElMessage.success(t('common.copied'))
-  } catch (e) {
+  } catch (_) {
     ElMessage.error(t('common.copyFailed'))
   }
 }
@@ -336,7 +336,7 @@ async function copyOtpauthUrl() {
   try {
     await navigator.clipboard.writeText(g2Init.otpauthUrl)
     ElMessage.success(t('common.copied'))
-  } catch (e) {
+  } catch (_) {
     ElMessage.error(t('common.copyFailed'))
   }
 }
@@ -580,12 +580,7 @@ onMounted(async () => {
           style="width: 100%"
           :loading="roleLoading"
         >
-          <el-option
-            v-for="r in roles"
-            :key="r.id"
-            :label="r.name"
-            :value="r.id"
-          />
+          <el-option v-for="r in roles" :key="r.id" :label="r.name" :value="r.id" />
         </el-select>
       </el-form-item>
     </el-form>
@@ -633,12 +628,7 @@ onMounted(async () => {
           style="width: 100%"
           :loading="roleLoading"
         >
-          <el-option
-            v-for="r in roles"
-            :key="r.id"
-            :label="r.name"
-            :value="r.id"
-          />
+          <el-option v-for="r in roles" :key="r.id" :label="r.name" :value="r.id" />
         </el-select>
       </el-form-item>
     </el-form>
@@ -733,7 +723,7 @@ onMounted(async () => {
             min-height: 240px;
           "
         >
-          <img v-if="g2Init.qrCode" :src="g2Init.qrCode" style="width: 100%; height: auto">
+          <img v-if="g2Init.qrCode" :src="g2Init.qrCode" style="width: 100%; height: auto" />
           <div v-else style="color: #999">
             {{ t('common.click2faBindGenerateQrCode') }}
           </div>

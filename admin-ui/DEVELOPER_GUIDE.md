@@ -237,7 +237,7 @@ export interface User {
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang='ts'>
 import { onMounted, ref } from 'vue'
 import { usePagination, useLoading } from '@/composables'
 import { userService } from '@/services/UserService'

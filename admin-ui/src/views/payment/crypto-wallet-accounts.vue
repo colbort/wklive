@@ -64,11 +64,7 @@
           :label="t('common.default')"
           width="80"
         /><el-table-column prop="status" :label="t('common.status')" width="80" />
-        <el-table-column
-          :label="t('common.actions')"
-          width="140"
-          fixed="right"
-        >
+        <el-table-column :label="t('common.actions')" width="140" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" @click="showDetail(row)">
               {{ t('common.detail') }}
@@ -140,7 +136,7 @@
     </el-dialog>
   </div>
 </template>
-<script setup lang="ts">
+<script setup lang='ts'>
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'

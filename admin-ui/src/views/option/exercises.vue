@@ -69,7 +69,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang='ts'>
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { optionService, type OptionExercise, type OptionExerciseDetail } from '@/services'

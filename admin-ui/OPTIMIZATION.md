@@ -305,7 +305,7 @@ export class UserService extends BaseService {
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang='ts'>
 import { ref } from 'vue'
 import { usePagination, useLoading, useConfirm } from '@/composables'
 import { UserService } from '@/services/UserService'

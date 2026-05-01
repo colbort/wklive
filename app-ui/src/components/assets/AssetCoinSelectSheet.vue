@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang='ts'>
 import AssetCoinIcon from '@/components/assets/AssetCoinIcon.vue'
 import type { AssetCoinConfig } from '@/types/asset'
 

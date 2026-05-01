@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang='ts'>
 import { computed, ref } from 'vue'
 import type { DepthPayload, QuotePayload, TickPayload } from '@/types/itick'
 

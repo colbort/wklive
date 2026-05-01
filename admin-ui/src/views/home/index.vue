@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang='ts'>
 import { useAuthStore } from '@/stores'
 import { useI18n } from 'vue-i18n'
 const auth = useAuthStore()

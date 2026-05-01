@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang='ts'>
 import type { Interval } from '@/types/core'
 import type { DepthPayload, ItickTenantProduct, KlinePayload, QuotePayload, TickPayload } from '@/types/itick'
 import DesktopTradeOrdersPanel from '@/components/trades/DesktopTradeOrdersPanel.vue'

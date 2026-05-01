@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang='ts'>
 import type { ItickTenantProduct } from '@/types/itick'
 import type { DesktopProductRow } from './desktop-types'
 

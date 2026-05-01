@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang='ts'>
 import MobileMarketDepthPreview from '@/components/markets/MobileMarketDepthPreview.vue'
 import MobileMarketTradeHeader from '@/components/markets/MobileMarketTradeHeader.vue'
 import TradeOrdersPanel from '@/components/trades/TradeOrdersPanel.vue'

@@ -195,12 +195,7 @@
       :title="formMode === 'add' ? t('itick.addProduct') : t('itick.editProduct')"
       width="700px"
     >
-      <el-form
-        ref="formRef"
-        :model="form"
-        :rules="rules"
-        label-width="120px"
-      >
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="120px">
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item
@@ -487,7 +482,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang='ts'>
 import { computed, nextTick, ref, onMounted } from 'vue'
 import { ElMessage, type FormRules, type UploadFile } from 'element-plus'
 import { useI18n } from 'vue-i18n'
@@ -635,7 +630,7 @@ const getList = async () => {
         res?.nextCursor || null,
         res?.prevCursor || null,
       )
-    } catch (error) {
+    } catch (_) {
       ElMessage.error(t('common.loadFailed'))
     }
   })
@@ -708,7 +703,7 @@ const handleEdit = async (row: ItickProduct) => {
     formDialogVisible.value = true
     await nextTick()
     formRef.value?.clearValidate()
-  } catch (error) {
+  } catch (_) {
     ElMessage.error(t('common.loadFailed'))
   }
 }
@@ -721,7 +716,7 @@ const handleDetail = async (row: ItickProduct) => {
   try {
     const res = await productsService.detail(row.id)
     detail.value = res?.data || {}
-  } catch (error) {
+  } catch (_) {
     ElMessage.error(t('common.loadFailed'))
   } finally {
     detailLoading.value = false
@@ -800,7 +795,7 @@ const submitForm = async () => {
 
     formDialogVisible.value = false
     getList()
-  } catch (error) {
+  } catch (_) {
     ElMessage.error(formMode.value === 'add' ? t('common.createFailed') : t('common.updateFailed'))
   } finally {
     submitLoading.value = false

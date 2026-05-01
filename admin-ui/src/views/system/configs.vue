@@ -48,24 +48,9 @@
     </el-card>
 
     <el-card class="table-card" shadow="never">
-      <el-table
-        v-loading="loading"
-        :data="list"
-        :empty-text="t('common.noData')"
-        stripe
-      >
-        <el-table-column
-          prop="id"
-          :label="t('common.id')"
-          width="80"
-          align="center"
-        />
-        <el-table-column
-          prop="tenantId"
-          :label="t('common.tenantId')"
-          width="100"
-          align="center"
-        />
+      <el-table v-loading="loading" :data="list" :empty-text="t('common.noData')" stripe>
+        <el-table-column prop="id" :label="t('common.id')" width="80" align="center" />
+        <el-table-column prop="tenantId" :label="t('common.tenantId')" width="100" align="center" />
         <el-table-column prop="configKey" :label="t('system.configKey')" min-width="150" />
         <el-table-column prop="configValue" :label="t('system.configValue')" min-width="200">
           <template #default="{ row }">
@@ -95,12 +80,7 @@
             {{ formatDate(row.updateTimes) }}
           </template>
         </el-table-column>
-        <el-table-column
-          :label="t('common.actions')"
-          width="150"
-          align="center"
-          fixed="right"
-        >
+        <el-table-column :label="t('common.actions')" width="150" align="center" fixed="right">
           <template #default="{ row }">
             <el-button
               v-perm="'sys:config:update'"
@@ -162,12 +142,7 @@
       width="600px"
       :close-on-click-modal="false"
     >
-      <el-form
-        ref="formRef"
-        :model="formData"
-        :rules="formRules"
-        label-width="160px"
-      >
+      <el-form ref="formRef" :model="formData" :rules="formRules" label-width="160px">
         <el-form-item :label="t('common.tenantId')" prop="tenantId">
           <TenantSelect
             v-model="formData.tenantId"
@@ -248,7 +223,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang='ts'>
 import { onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'

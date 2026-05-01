@@ -53,12 +53,7 @@
             {{ getPlatformTypeLabel(row.platformType) }}
           </template>
         </el-table-column>
-        <el-table-column
-          prop="icon"
-          :label="t('common.icon')"
-          width="100"
-          align="center"
-        >
+        <el-table-column prop="icon" :label="t('common.icon')" width="100" align="center">
           <template #default="{ row }">
             <el-image
               v-if="row.icon"
@@ -196,7 +191,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang='ts'>
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Refresh } from '@element-plus/icons-vue'

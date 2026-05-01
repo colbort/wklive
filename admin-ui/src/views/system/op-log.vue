@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang='ts'>
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
@@ -153,12 +153,7 @@ onMounted(() => {
     </el-form>
 
     <!-- Table -->
-    <el-table
-      v-loading="loading"
-      :data="list_ref"
-      row-key="id"
-      style="margin-bottom: 16px"
-    >
+    <el-table v-loading="loading" :data="list_ref" row-key="id" style="margin-bottom: 16px">
       <el-table-column prop="id" :label="t('common.id')" width="70" />
       <el-table-column prop="username" :label="t('common.username')" min-width="120" />
       <el-table-column prop="method" :label="t('common.method')" width="80">

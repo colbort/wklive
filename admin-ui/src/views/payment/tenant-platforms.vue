@@ -134,7 +134,7 @@
     </el-dialog>
   </div>
 </template>
-<script setup lang="ts">
+<script setup lang='ts'>
 import { onMounted, reactive, ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'

@@ -134,7 +134,7 @@ export const userService = new UserService()
 ### 在组件中使用 (简洁高效)
 
 ```vue
-<script setup lang="ts">
+<script setup lang='ts'>
 import { usePagination, useLoading } from '@/composables'
 import { userService } from '@/services/UserService'
 

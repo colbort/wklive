@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang='ts'>
 import type { ItickTenantCategory, ItickTenantProduct, ItickWsConnectionState } from '@/types/itick'
 import type { MarketRow } from './types'
 

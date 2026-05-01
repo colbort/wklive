@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang='ts'>
 import type { AssetCoinConfig } from '@/types/asset'
 
 const props = defineProps<{

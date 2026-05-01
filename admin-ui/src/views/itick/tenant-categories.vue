@@ -165,12 +165,7 @@
       :title="formMode === 'add' ? t('itick.addTenantCategory') : t('itick.editTenantCategory')"
       width="620px"
     >
-      <el-form
-        ref="formRef"
-        :model="form"
-        :rules="rules"
-        label-width="110px"
-      >
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="110px">
         <el-form-item :label="t('common.tenantId')" prop="tenantId">
           <TenantSelect v-model="form.tenantId" :disabled="formMode === 'edit'" />
         </el-form-item>
@@ -383,7 +378,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang='ts'>
 import { computed, nextTick, onMounted, ref } from 'vue'
 import { EditPen, Plus, Refresh } from '@element-plus/icons-vue'
 import { ElMessage, type FormRules } from 'element-plus'

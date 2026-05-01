@@ -99,12 +99,7 @@
     </el-card>
 
     <el-card shadow="never" class="table-card">
-      <el-table
-        v-loading="loading"
-        :data="rows"
-        stripe
-        :empty-text="t('common.noData')"
-      >
+      <el-table v-loading="loading" :data="rows" stripe :empty-text="t('common.noData')">
         <el-table-column prop="id" :label="t('common.id')" width="90" />
         <el-table-column prop="tenantId" :label="t('asset.tenantId')" min-width="100" />
         <el-table-column prop="walletType" :label="t('asset.walletType')" min-width="110">
@@ -202,12 +197,7 @@
       width="760px"
       :close-on-click-modal="false"
     >
-      <el-form
-        ref="formRef"
-        :model="form"
-        :rules="rules"
-        label-width="118px"
-      >
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="118px">
         <el-row :gutter="16">
           <el-col :span="12">
             <el-form-item :label="t('asset.tenantId')" prop="tenantId">
@@ -267,12 +257,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item :label="t('asset.decimalPlaces')">
-              <el-input-number
-                v-model="form.decimalPlaces"
-                :min="0"
-                :max="18"
-                :precision="0"
-              />
+              <el-input-number v-model="form.decimalPlaces" :min="0" :max="18" :precision="0" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -353,7 +338,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang='ts'>
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
@@ -595,7 +580,7 @@ async function submitForm() {
     if (isEdit.value) {
       await assetService.updateCoinConfig(payload)
     } else {
-      const { id: _id, ...createPayload } = payload
+      const { id: _, ...createPayload } = payload
       await assetService.createCoinConfig(createPayload)
     }
     ElMessage.success(t('common.success'))
