@@ -5,7 +5,8 @@
       <div class="header-actions">
         <el-button @click="loadList">
           {{ t('common.refresh') }}
-        </el-button><el-button type="primary" @click="openDialog()">
+        </el-button>
+        <el-button type="primary" @click="openDialog()">
           {{ t('payment.addCryptoWalletAccount') }}
         </el-button>
       </div>
@@ -32,7 +33,8 @@
         <el-form-item>
           <el-button type="primary" @click="loadList">
             {{ t('common.search') }}
-          </el-button><el-button @click="resetQuery">
+          </el-button>
+          <el-button @click="resetQuery">
             {{ t('common.reset') }}
           </el-button>
         </el-form-item>
@@ -44,7 +46,8 @@
           prop="tenantId"
           :label="t('common.tenantId')"
           width="90"
-        /><el-table-column
+        />
+        <el-table-column
           prop="accountCode"
           :label="t('payment.accountCode')"
           min-width="150"
@@ -60,7 +63,8 @@
           prop="isDefault"
           :label="t('common.default')"
           width="80"
-        /><el-table-column prop="status" :label="t('common.status')" width="80" /><el-table-column
+        /><el-table-column prop="status" :label="t('common.status')" width="80" />
+        <el-table-column
           :label="t('common.actions')"
           width="140"
           fixed="right"
@@ -68,7 +72,8 @@
           <template #default="{ row }">
             <el-button link type="primary" @click="showDetail(row)">
               {{ t('common.detail') }}
-            </el-button><el-button link type="primary" @click="openDialog(row)">
+            </el-button>
+            <el-button link type="primary" @click="openDialog(row)">
               {{ t('common.edit') }}
             </el-button>
           </template>
@@ -82,7 +87,7 @@
     >
       <el-form label-width="130px">
         <el-form-item :label="t('common.tenantId')">
-          <el-input-number v-model="form.tenantId" :min="0" :precision="0" />
+          <TenantSelect v-model="form.tenantId" include-system />
         </el-form-item>
         <el-form-item :label="t('payment.accountCode')">
           <el-input v-model="form.accountCode" :disabled="Boolean(form.id)" />
@@ -120,7 +125,8 @@
       <template #footer>
         <el-button @click="dialogVisible = false">
           {{ t('common.cancel') }}
-        </el-button><el-button type="primary" @click="submit">
+        </el-button>
+        <el-button type="primary" @click="submit">
           {{ t('common.confirm') }}
         </el-button>
       </template>
@@ -139,6 +145,7 @@ import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { cryptoService, type CryptoWalletAccount } from '@/services'
+import TenantSelect from '@/components/TenantSelect.vue'
 const { t } = useI18n()
 const loading = ref(false),
   dialogVisible = ref(false),

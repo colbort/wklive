@@ -78,7 +78,7 @@
     <el-dialog v-model="rewardVisible" :title="t('staking.manualReward')" width="640px">
       <el-form label-width="100px">
         <el-form-item :label="t('staking.tenantId')">
-          <el-input-number v-model="rewardForm.tenantId" :min="0" :precision="0" />
+          <TenantSelect v-model="rewardForm.tenantId" include-system />
         </el-form-item>
         <el-form-item :label="t('staking.orderId')">
           <el-input-number v-model="rewardForm.orderId" :min="0" :precision="0" />
@@ -109,7 +109,7 @@
     <el-dialog v-model="redeemVisible" :title="t('staking.manualRedeem')" width="680px">
       <el-form label-width="100px">
         <el-form-item :label="t('staking.tenantId')">
-          <el-input-number v-model="redeemForm.tenantId" :min="0" :precision="0" />
+          <TenantSelect v-model="redeemForm.tenantId" include-system />
         </el-form-item>
         <el-form-item :label="t('staking.orderId')">
           <el-input-number v-model="redeemForm.orderId" :min="0" :precision="0" />
@@ -162,6 +162,7 @@ import {
   type StakeOrder,
 } from '@/services'
 import { useI18n } from 'vue-i18n'
+import TenantSelect from '@/components/TenantSelect.vue'
 
 const { t } = useI18n()
 

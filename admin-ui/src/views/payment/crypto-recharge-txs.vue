@@ -91,7 +91,7 @@
     >
       <el-form label-width="130px">
         <el-form-item :label="t('common.tenantId')">
-          <el-input-number v-model="form.tenantId" :min="0" :precision="0" />
+          <TenantSelect v-model="form.tenantId" include-system />
         </el-form-item>
         <template v-if="!form.id">
           <el-form-item :label="t('common.userId')">
@@ -170,6 +170,7 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { catalogService, cryptoService, type CryptoRechargeTx, type OptionGroup } from '@/services'
 import { findOptionGroup, getOptionLabel } from '@/utils/options'
+import TenantSelect from '@/components/TenantSelect.vue'
 
 const { t } = useI18n()
 const loading = ref(false)

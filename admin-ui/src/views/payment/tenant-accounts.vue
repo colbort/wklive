@@ -71,21 +71,11 @@
     >
       <el-form label-width="120px">
         <el-form-item :label="t('common.tenantId')">
-          <div class="verify-row">
-            <el-input-number
-              v-model="form.tenantId"
-              :min="1"
-              :precision="0"
-              :disabled="!!form.id"
-              @change="handleTenantChange"
-            />
-            <el-button v-if="!form.id" :loading="tenantChecking" @click="checkTenant">
-              {{ t('payment.verifyTenant') }}
-            </el-button>
-            <span v-if="!form.id && tenantVerified" class="verified-text">
-              {{ t('payment.verified') }}
-            </span>
-          </div>
+          <TenantSelect
+            v-model="form.tenantId"
+            :disabled="!!form.id"
+            @change="handleTenantChange"
+          />
         </el-form-item>
 
         <el-form-item v-if="!form.id" :label="t('payment.tenantPayPlatformId')">
@@ -198,14 +188,9 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import {
-  catalogService,
-  tenantService,
-  tenantsService,
-  type OptionGroup,
-  type TenantPayAccount,
-} from '@/services'
+import { catalogService, tenantService, type OptionGroup, type TenantPayAccount } from '@/services'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import TenantSelect from '@/components/TenantSelect.vue'
 
 const { t } = useI18n()
 
@@ -219,7 +204,6 @@ const optionGroups = ref<OptionGroup[]>([])
 const statusOptions = computed(() => findOptionGroup(optionGroups.value, 'status'))
 const yesNoOptions = computed(() => findOptionGroup(optionGroups.value, 'yesNo'))
 
-const tenantChecking = ref(false)
 const tenantPlatformChecking = ref(false)
 const platformChecking = ref(false)
 const tenantVerified = ref(false)
@@ -315,8 +299,8 @@ const openDialog = (row?: TenantPayAccount) => {
 }
 
 const handleTenantChange = () => {
-  tenantVerified.value = false
-  verifiedTenantId.value = 0
+  tenantVerified.value = form.tenantId > 0
+  verifiedTenantId.value = form.tenantId
   tenantPlatformVerified.value = false
   verifiedTenantPlatformId.value = 0
 }
@@ -331,28 +315,6 @@ const handlePlatformChange = () => {
   verifiedPlatformId.value = 0
   tenantPlatformVerified.value = false
   verifiedTenantPlatformId.value = 0
-}
-
-const validateTenantExists = async (tenantId: number) => {
-  if (!tenantId) {
-    ElMessage.warning(t('payment.pleaseInputTenantId'))
-    return false
-  }
-
-  tenantChecking.value = true
-  try {
-    const res = await tenantsService.detail({ tenantId })
-    if (!res.data?.id) {
-      ElMessage.error(t('payment.tenantNotFound'))
-      return false
-    }
-    return true
-  } catch {
-    ElMessage.error(t('payment.tenantNotFound'))
-    return false
-  } finally {
-    tenantChecking.value = false
-  }
 }
 
 const validatePlatformExists = async (platformId: number) => {
@@ -412,15 +374,6 @@ const validateTenantPlatformExists = async (
     return false
   } finally {
     tenantPlatformChecking.value = false
-  }
-}
-
-const checkTenant = async () => {
-  const exists = await validateTenantExists(form.tenantId)
-  tenantVerified.value = exists
-  verifiedTenantId.value = exists ? form.tenantId : 0
-  if (exists) {
-    ElMessage.success(t('payment.tenantVerifiedSuccess'))
   }
 }
 

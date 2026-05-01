@@ -201,14 +201,7 @@
         label-width="110px"
       >
         <el-form-item :label="t('common.tenantId')" prop="tenantId">
-          <el-input-number
-            v-model="form.tenantId"
-            :min="1"
-            :precision="0"
-            controls-position="right"
-            style="width: 100%"
-            :disabled="formMode === 'edit'"
-          />
+          <TenantSelect v-model="form.tenantId" :disabled="formMode === 'edit'" />
         </el-form-item>
 
         <el-form-item v-if="formMode === 'add'" :label="t('itick.product')" prop="productId">
@@ -618,13 +611,7 @@
     <el-dialog v-model="initDialogVisible" :title="t('itick.initTenantDisplay')" width="520px">
       <el-form label-width="110px">
         <el-form-item :label="t('common.tenantId')">
-          <el-input-number
-            v-model="initForm.tenantId"
-            :min="1"
-            :precision="0"
-            controls-position="right"
-            style="width: 100%"
-          />
+          <TenantSelect v-model="initForm.tenantId" />
         </el-form-item>
         <el-form-item :label="t('itick.overwriteExistingConfig')">
           <el-radio-group v-model="initForm.overwrite">
@@ -672,6 +659,7 @@ import {
 } from '@/services/itick/TenantProductsService'
 import { formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import TenantSelect from '@/components/TenantSelect.vue'
 
 type FormData = {
   id?: number

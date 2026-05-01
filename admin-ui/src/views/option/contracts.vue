@@ -102,7 +102,7 @@
     >
       <el-form label-width="110px">
         <el-form-item :label="t('option.tenantId')">
-          <el-input-number v-model="contractForm.tenantId" :min="0" :precision="0" />
+          <TenantSelect v-model="contractForm.tenantId" include-system />
         </el-form-item>
         <el-form-item :label="t('option.contractCode')">
           <el-input v-model="contractForm.contractCode" />
@@ -202,7 +202,7 @@
     <el-dialog v-model="marketVisible" :title="t('option.updateMarket')" width="720px">
       <el-form label-width="110px">
         <el-form-item :label="t('option.tenantId')">
-          <el-input-number v-model="marketForm.tenantId" :min="0" :precision="0" />
+          <TenantSelect v-model="marketForm.tenantId" include-system />
         </el-form-item>
         <el-form-item :label="t('option.contractId')">
           <el-input-number v-model="marketForm.contractId" :min="0" :precision="0" />
@@ -288,6 +288,7 @@ import {
   type UpdateMarketReq,
 } from '@/services'
 import { findOptionGroup, getOptionLabel } from '@/utils/options'
+import TenantSelect from '@/components/TenantSelect.vue'
 
 const { t } = useI18n()
 

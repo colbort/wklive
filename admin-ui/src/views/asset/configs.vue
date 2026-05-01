@@ -211,7 +211,7 @@
         <el-row :gutter="16">
           <el-col :span="12">
             <el-form-item :label="t('asset.tenantId')" prop="tenantId">
-              <el-input-number v-model="form.tenantId" :min="0" :precision="0" />
+              <TenantSelect v-model="form.tenantId" include-system />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -360,6 +360,7 @@ import { useI18n } from 'vue-i18n'
 import { assetService, type AssetCoinConfig, type OptionGroup, type OptionItem } from '@/services'
 import { formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel } from '@/utils/options'
+import TenantSelect from '@/components/TenantSelect.vue'
 
 const { t } = useI18n()
 

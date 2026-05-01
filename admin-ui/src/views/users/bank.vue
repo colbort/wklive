@@ -4,14 +4,15 @@ import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   memberUserService,
-  tenantsService,
   type AddUserBankReq,
   type OptionGroup,
+  type SysTenantItem,
   type UserBankItem,
   type UpdateMemberUserBankReq,
 } from '@/services'
 import { formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import TenantSelect from '@/components/TenantSelect.vue'
 
 const { t } = useI18n()
 const loading = ref(false)
@@ -21,7 +22,6 @@ const editVisible = ref(false)
 const statusVisible = ref(false)
 const detailVisible = ref(false)
 const detailData = ref<UserBankItem>()
-const tenantChecking = ref(false)
 const tenantChecked = ref(false)
 const tenantExists = ref(false)
 const tenantCheckName = ref('')
@@ -41,6 +41,7 @@ const query = reactive({
   limit: 100,
 })
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const form = reactive<any>({
   id: 0,
   tenantId: 0,
@@ -120,41 +121,16 @@ function onTenantChange() {
   resetUserCheck()
 }
 
-function onUserChange() {
+function handleTenantSelected(tenant: SysTenantItem | null) {
+  if (!isCreate.value) return
+  tenantChecked.value = Boolean(tenant?.id)
+  tenantExists.value = Boolean(tenant?.id)
+  tenantCheckName.value = tenant?.tenantName || ''
   resetUserCheck()
 }
 
-async function verifyTenant() {
-  const tenantId = Number(form.tenantId || 0)
-  if (!tenantId) {
-    resetTenantCheck()
-    ElMessage.warning(t('users.queryTenantPrompt'))
-    return false
-  }
-
-  tenantChecking.value = true
-  try {
-    const res = await tenantsService.detail({ tenantId })
-    if (!checkCode(res.code)) throw new Error(res.msg || t('users.queryTenantFailed'))
-
-    const tenant = res.data
-    tenantChecked.value = true
-    tenantExists.value = Boolean(tenant)
-    tenantCheckName.value = tenant?.tenantName || ''
-
-    if (!tenant) {
-      ElMessage.warning(t('users.tenantNotFoundPrompt'))
-      return false
-    }
-    ElMessage.success(t('users.tenantFound', { name: tenant.tenantName }))
-    return true
-  } catch (error: unknown) {
-    resetTenantCheck()
-    ElMessage.error(error instanceof Error ? error.message : t('users.queryTenantFailed'))
-    return false
-  } finally {
-    tenantChecking.value = false
-  }
+function onUserChange() {
+  resetUserCheck()
 }
 
 async function verifyUser() {
@@ -166,8 +142,8 @@ async function verifyUser() {
     return false
   }
   if (!tenantChecked.value || !tenantExists.value) {
-    const verified = await verifyTenant()
-    if (!verified) return false
+    ElMessage.warning(t('users.inputTenantAndConfirm'))
+    return false
   }
   if (!userId) {
     resetUserCheck()
@@ -292,8 +268,8 @@ async function submitEdit() {
       if (!checkCode(res.code)) throw new Error(res.msg || t('users.updateFailed'))
     } else {
       if (!tenantChecked.value || !tenantExists.value) {
-        const verifiedTenant = await verifyTenant()
-        if (!verifiedTenant) return
+        ElMessage.warning(t('users.inputTenantAndConfirm'))
+        return
       }
       if (!userChecked.value || !userExists.value) {
         const verifiedUser = await verifyUser()
@@ -495,22 +471,12 @@ onMounted(fetchOptions)
       <el-form label-width="100px">
         <el-form-item :label="t('common.tenantId')">
           <div class="verify-row">
-            <el-input-number
+            <TenantSelect
               v-model="form.tenantId"
-              :min="0"
-              :precision="0"
               :disabled="!isCreate"
               @change="onTenantChange"
+              @selected="handleTenantSelected"
             />
-            <el-button
-              v-if="isCreate"
-              type="primary"
-              plain
-              :loading="tenantChecking"
-              @click="verifyTenant"
-            >
-              {{ t('users.confirmTenant') }}
-            </el-button>
           </div>
           <div v-if="isCreate" class="verify-tip">
             <span v-if="tenantChecked && tenantExists" class="verify-tip verify-tip--success">

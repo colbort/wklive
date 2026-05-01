@@ -60,21 +60,11 @@
     >
       <el-form label-width="120px">
         <el-form-item :label="t('common.tenantId')">
-          <div class="verify-row">
-            <el-input-number
-              v-model="ruleForm.tenantId"
-              :min="1"
-              :precision="0"
-              :disabled="!!ruleForm.id"
-              @change="handleRuleTenantChange"
-            />
-            <el-button v-if="!ruleForm.id" :loading="ruleTenantChecking" @click="checkRuleTenant">
-              {{ t('payment.verifyTenant') }}
-            </el-button>
-            <span v-if="!ruleForm.id && ruleTenantVerified" class="verified-text">
-              {{ t('payment.verified') }}
-            </span>
-          </div>
+          <TenantSelect
+            v-model="ruleForm.tenantId"
+            :disabled="!!ruleForm.id"
+            @change="handleRuleTenantChange"
+          />
         </el-form-item>
 
         <el-form-item :label="t('payment.channelId')">
@@ -161,13 +151,9 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import {
-  tenantService,
-  tenantsService,
-  type OptionGroup,
-  type TenantPayChannelRule,
-} from '@/services'
+import { tenantService, type OptionGroup, type TenantPayChannelRule } from '@/services'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import TenantSelect from '@/components/TenantSelect.vue'
 
 const { t } = useI18n()
 
@@ -205,7 +191,6 @@ const ruleForm = reactive({
   remark: '',
 })
 
-const ruleTenantChecking = ref(false)
 const ruleChannelChecking = ref(false)
 const ruleTenantVerified = ref(false)
 const ruleChannelVerified = ref(false)
@@ -286,28 +271,6 @@ const openRuleDialog = (row?: TenantPayChannelRule) => {
   ruleDialogVisible.value = true
 }
 
-const validateTenantExists = async (tenantId: number) => {
-  if (!tenantId) {
-    ElMessage.warning(t('payment.pleaseInputTenantId'))
-    return false
-  }
-
-  ruleTenantChecking.value = true
-  try {
-    const res = await tenantsService.detail({ tenantId })
-    if (!res.data?.id) {
-      ElMessage.error(t('payment.tenantNotFound'))
-      return false
-    }
-    return true
-  } catch {
-    ElMessage.error(t('payment.tenantNotFound'))
-    return false
-  } finally {
-    ruleTenantChecking.value = false
-  }
-}
-
 const validateChannelExists = async (channelId: number, tenantId: number) => {
   if (!channelId) {
     ElMessage.warning(t('payment.pleaseInputChannelId'))
@@ -335,8 +298,8 @@ const validateChannelExists = async (channelId: number, tenantId: number) => {
 }
 
 const handleRuleTenantChange = () => {
-  ruleTenantVerified.value = false
-  verifiedRuleTenantId.value = 0
+  ruleTenantVerified.value = ruleForm.tenantId > 0
+  verifiedRuleTenantId.value = ruleForm.tenantId
   ruleChannelVerified.value = false
   verifiedRuleChannelId.value = 0
 }
@@ -344,17 +307,6 @@ const handleRuleTenantChange = () => {
 const handleRuleChannelChange = () => {
   ruleChannelVerified.value = false
   verifiedRuleChannelId.value = 0
-}
-
-const checkRuleTenant = async () => {
-  const exists = await validateTenantExists(ruleForm.tenantId)
-  ruleTenantVerified.value = exists
-  verifiedRuleTenantId.value = exists ? ruleForm.tenantId : 0
-  if (!exists) {
-    ruleChannelVerified.value = false
-    verifiedRuleChannelId.value = 0
-  }
-  if (exists) ElMessage.success(t('payment.tenantVerifiedSuccess'))
 }
 
 const checkRuleChannel = async () => {

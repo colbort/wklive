@@ -268,9 +268,6 @@ onMounted(fetchOptions)
 
     <el-dialog v-model="reviewVisible" :title="t('users.reviewIdentity')" width="560px">
       <el-form label-width="100px">
-        <el-form-item :label="t('common.tenantId')">
-          <el-input-number v-model="reviewForm.tenantId" :min="0" :precision="0" />
-        </el-form-item>
         <el-form-item :label="t('users.verifyStatus')">
           <el-select v-model="reviewForm.verifyStatus" style="width: 100%">
             <el-option

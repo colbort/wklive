@@ -76,21 +76,11 @@
     >
       <el-form label-width="100px">
         <el-form-item :label="t('common.tenantId')">
-          <div class="verify-row">
-            <el-input-number
-              v-model="form.tenantId"
-              :min="1"
-              :precision="0"
-              :disabled="!!form.id"
-              @change="handleTenantIdChange"
-            />
-            <el-button v-if="!form.id" :loading="tenantChecking" @click="checkTenant">
-              {{ t('payment.verifyTenant') }}
-            </el-button>
-            <span v-if="!form.id && tenantVerified" class="verified-text">
-              {{ t('payment.verified') }}
-            </span>
-          </div>
+          <TenantSelect
+            v-model="form.tenantId"
+            :disabled="!!form.id"
+            @change="handleTenantIdChange"
+          />
         </el-form-item>
         <el-form-item v-if="!form.id" :label="t('payment.platformId')">
           <div class="verify-row">
@@ -133,7 +123,8 @@
       <template #footer>
         <el-button @click="dialogVisible = false">
           {{ t('common.cancel') }}
-        </el-button><el-button type="primary" :disabled="submitDisabled" @click="submit">
+        </el-button>
+        <el-button type="primary" :disabled="submitDisabled" @click="submit">
           {{ t('common.confirm') }}
         </el-button>
       </template>
@@ -147,14 +138,9 @@
 import { onMounted, reactive, ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import {
-  catalogService,
-  tenantService,
-  tenantsService,
-  type TenantPayPlatform,
-  type OptionGroup,
-} from '@/services'
+import { catalogService, tenantService, type TenantPayPlatform, type OptionGroup } from '@/services'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import TenantSelect from '@/components/TenantSelect.vue'
 
 const { t } = useI18n()
 
@@ -164,7 +150,6 @@ const list = ref<TenantPayPlatform[]>([])
 const dialogVisible = ref(false)
 const detailVisible = ref(false)
 const detailData = ref<TenantPayPlatform | null>(null)
-const tenantChecking = ref(false)
 const platformChecking = ref(false)
 const tenantVerified = ref(false)
 const platformVerified = ref(false)
@@ -230,35 +215,13 @@ const openDialog = (row?: TenantPayPlatform) => {
 }
 
 const handleTenantIdChange = () => {
-  tenantVerified.value = false
-  verifiedTenantId.value = 0
+  tenantVerified.value = form.tenantId > 0
+  verifiedTenantId.value = form.tenantId
 }
 
 const handlePlatformIdChange = () => {
   platformVerified.value = false
   verifiedPlatformId.value = 0
-}
-
-const validateTenantExists = async (tenantId: number) => {
-  if (!tenantId) {
-    ElMessage.warning(t('payment.pleaseInputTenantId'))
-    return false
-  }
-
-  tenantChecking.value = true
-  try {
-    const res = await tenantsService.detail({ tenantId })
-    if (!res.data?.id) {
-      ElMessage.error(t('payment.tenantNotFound'))
-      return false
-    }
-    return true
-  } catch {
-    ElMessage.error(t('payment.tenantNotFound'))
-    return false
-  } finally {
-    tenantChecking.value = false
-  }
 }
 
 const validatePlatformExists = async (platformId: number) => {
@@ -280,15 +243,6 @@ const validatePlatformExists = async (platformId: number) => {
     return false
   } finally {
     platformChecking.value = false
-  }
-}
-
-const checkTenant = async () => {
-  const exists = await validateTenantExists(form.tenantId)
-  tenantVerified.value = exists
-  verifiedTenantId.value = exists ? form.tenantId : 0
-  if (exists) {
-    ElMessage.success(t('payment.tenantVerifiedSuccess'))
   }
 }
 

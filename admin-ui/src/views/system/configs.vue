@@ -48,9 +48,24 @@
     </el-card>
 
     <el-card class="table-card" shadow="never">
-      <el-table v-loading="loading" :data="list" :empty-text="t('common.noData')" stripe>
-        <el-table-column prop="id" :label="t('common.id')" width="80" align="center" />
-        <el-table-column prop="tenantId" :label="t('common.tenantId')" width="100" align="center" />
+      <el-table
+        v-loading="loading"
+        :data="list"
+        :empty-text="t('common.noData')"
+        stripe
+      >
+        <el-table-column
+          prop="id"
+          :label="t('common.id')"
+          width="80"
+          align="center"
+        />
+        <el-table-column
+          prop="tenantId"
+          :label="t('common.tenantId')"
+          width="100"
+          align="center"
+        />
         <el-table-column prop="configKey" :label="t('system.configKey')" min-width="150" />
         <el-table-column prop="configValue" :label="t('system.configValue')" min-width="200">
           <template #default="{ row }">
@@ -80,7 +95,12 @@
             {{ formatDate(row.updateTimes) }}
           </template>
         </el-table-column>
-        <el-table-column :label="t('common.actions')" width="150" align="center" fixed="right">
+        <el-table-column
+          :label="t('common.actions')"
+          width="150"
+          align="center"
+          fixed="right"
+        >
           <template #default="{ row }">
             <el-button
               v-perm="'sys:config:update'"
@@ -142,19 +162,20 @@
       width="600px"
       :close-on-click-modal="false"
     >
-      <el-form ref="formRef" :model="formData" :rules="formRules" label-width="100px">
+      <el-form
+        ref="formRef"
+        :model="formData"
+        :rules="formRules"
+        label-width="160px"
+      >
         <el-form-item :label="t('common.tenantId')" prop="tenantId">
+          <TenantSelect
+            v-model="formData.tenantId"
+            include-system
+            :disabled="isEdit"
+            @change="handleTenantChange"
+          />
           <div class="verify-row">
-            <el-input-number
-              v-model="formData.tenantId"
-              :disabled="isEdit"
-              :min="0"
-              :precision="0"
-              @change="handleTenantChange"
-            />
-            <el-button v-if="formData.tenantId > 0" :loading="tenantChecking" @click="checkTenant">
-              {{ t('payment.verifyTenant') }}
-            </el-button>
             <span v-if="tenantVerified" class="verified-text">
               {{ formData.tenantId === 0 ? t('system.systemConfigScope') : t('payment.verified') }}
             </span>
@@ -178,7 +199,7 @@
           </el-select>
           <el-input
             v-else
-            v-model="formData.configKey"
+            :model-value="t('options.' + formData.configKey)"
             :placeholder="t('common.pleaseEnter')"
             disabled
           />
@@ -232,7 +253,7 @@ import { onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { Plus, Search, Refresh } from '@element-plus/icons-vue'
-import { configService, tenantsService } from '@/services'
+import { configService } from '@/services'
 import type { SysConfigItem, SysConfigCreateReq, OptionItem } from '@/services'
 import type {
   SystemCore,
@@ -251,6 +272,7 @@ import ItickConfigComponent from './components/ItickConfig.vue'
 import RechargeConfigComponent from './components/RechargeConfig.vue'
 import WithdrawConfigComponent from './components/WithdrawConfig.vue'
 import { getOptionLabel } from '@/utils/options'
+import TenantSelect from '@/components/TenantSelect.vue'
 
 const { t } = useI18n()
 
@@ -276,7 +298,6 @@ const { form: queryForm } = useForm({
 const dialogVisible = ref(false)
 const isEdit = ref(false)
 const submitLoading = ref(false)
-const tenantChecking = ref(false)
 const tenantVerified = ref(true)
 const verifiedTenantId = ref(0)
 const formRef = ref()
@@ -704,46 +725,14 @@ function handleTenantChange() {
     verifiedTenantId.value = 0
     return
   }
-  tenantVerified.value = false
-  verifiedTenantId.value = 0
-}
-
-async function validateTenantExists(tenantId: number) {
-  if (tenantId === 0) return true
-
-  try {
-    const res = await tenantsService.detail({ tenantId })
-    return (res.code === 0 || res.code === 200) && Boolean(res.data)
-  } catch {
-    return false
-  }
-}
-
-async function checkTenant() {
-  if (formData.tenantId === 0) {
-    tenantVerified.value = true
-    verifiedTenantId.value = 0
-    return true
-  }
-
-  tenantChecking.value = true
-  try {
-    const exists = await validateTenantExists(formData.tenantId)
-    tenantVerified.value = exists
-    verifiedTenantId.value = exists ? formData.tenantId : 0
-    ElMessage[exists ? 'success' : 'error'](
-      exists ? t('payment.tenantVerifiedSuccess') : t('payment.tenantNotFound'),
-    )
-    return exists
-  } finally {
-    tenantChecking.value = false
-  }
+  tenantVerified.value = formData.tenantId > 0
+  verifiedTenantId.value = formData.tenantId
 }
 
 async function ensureTenantVerified() {
   if (formData.tenantId === 0) return true
   if (tenantVerified.value && verifiedTenantId.value === formData.tenantId) return true
-  return checkTenant()
+  return false
 }
 
 // Handle submit

@@ -80,7 +80,7 @@
     >
       <el-form label-width="110px">
         <el-form-item :label="t('staking.tenantId')">
-          <el-input-number v-model="productForm.tenantId" :min="0" :precision="0" />
+          <TenantSelect v-model="productForm.tenantId" include-system />
         </el-form-item>
         <el-form-item :label="t('staking.productNo')">
           <el-input v-model="productForm.productNo" />
@@ -211,6 +211,7 @@ import {
   type StakeProduct,
 } from '@/services'
 import { findOptionGroup, getOptionLabel } from '@/utils/options'
+import TenantSelect from '@/components/TenantSelect.vue'
 
 const { t } = useI18n()
 

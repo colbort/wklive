@@ -27,7 +27,7 @@ func (m *customSysConfigModel) FindPage(
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.And("tenant_id = ?", tenantId)
+	builder.EqInt64("tenant_id", tenantId)
 	builder.LikeString("config_key", "%"+configKey+"%")
 
 	where := builder.Where()

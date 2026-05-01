@@ -134,9 +134,6 @@
 
     <el-dialog v-model="changeVisible" :title="changeTitle" width="680px">
       <el-form label-width="100px">
-        <el-form-item :label="t('asset.tenantId')">
-          <el-input-number v-model="changeForm.tenantId" :min="0" :precision="0" />
-        </el-form-item>
         <el-form-item :label="t('asset.freezeNo')">
           <el-input v-model="changeForm.freezeNo" />
         </el-form-item>

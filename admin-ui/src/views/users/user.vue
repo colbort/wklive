@@ -5,9 +5,9 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { ArrowDown } from '@element-plus/icons-vue'
 import {
   memberUserService,
-  tenantsService,
   type OptionGroup,
   type OptionItem,
+  type SysTenantItem,
   type CreateMemberUserReq,
   type UserDetail,
   type UserItem,
@@ -15,6 +15,7 @@ import {
 } from '@/services'
 import { formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import TenantSelect from '@/components/TenantSelect.vue'
 
 const { t } = useI18n()
 const loading = ref(false)
@@ -26,7 +27,6 @@ const detailActiveTab = ref('identity')
 const editVisible = ref(false)
 const pwdVisible = ref(false)
 const pwdMode = ref<'login' | 'pay'>('login')
-const tenantChecking = ref(false)
 const tenantChecked = ref(false)
 const tenantExists = ref(false)
 const tenantCheckName = ref('')
@@ -171,6 +171,15 @@ function resetTenantCheck() {
   resetReferrerCheck()
 }
 
+function handleTenantSelected(tenant: SysTenantItem | null) {
+  if (!isCreate.value) return
+  tenantChecked.value = Boolean(tenant?.id)
+  tenantExists.value = Boolean(tenant?.id)
+  tenantCheckName.value = tenant?.tenantName || ''
+  tenantCheckCode.value = tenant?.tenantCode || ''
+  resetReferrerCheck()
+}
+
 function resetReferrerCheck() {
   referrerChecked.value = false
   referrerExists.value = false
@@ -192,41 +201,6 @@ async function fetchCreateOptions() {
     })
   } catch (error: unknown) {
     ElMessage.error(error instanceof Error ? error.message : t('users.loadOptionsFailed'))
-  }
-}
-
-async function verifyTenant() {
-  const tenantId = Number(editForm.tenantId || 0)
-  if (!tenantId) {
-    resetTenantCheck()
-    ElMessage.warning(t('users.queryTenantPrompt'))
-    return false
-  }
-
-  tenantChecking.value = true
-  try {
-    const res = await tenantsService.detail({ tenantId })
-    if (!checkCode(res.code)) throw new Error(res.msg || t('users.queryTenantFailed'))
-
-    const tenant = res.data
-    tenantChecked.value = true
-    tenantExists.value = Boolean(tenant)
-    tenantCheckName.value = tenant?.tenantName || ''
-    tenantCheckCode.value = tenant?.tenantCode || ''
-    resetReferrerCheck()
-
-    if (!tenant) {
-      ElMessage.warning(t('users.tenantNotFoundPrompt'))
-      return false
-    }
-    ElMessage.success(t('users.tenantFound', { name: tenant.tenantName }))
-    return true
-  } catch (error: unknown) {
-    resetTenantCheck()
-    ElMessage.error(error instanceof Error ? error.message : t('users.queryTenantFailed'))
-    return false
-  } finally {
-    tenantChecking.value = false
   }
 }
 
@@ -395,8 +369,8 @@ async function submitEdit() {
   try {
     if (isCreate.value) {
       if (!tenantChecked.value || !tenantExists.value) {
-        const verified = await verifyTenant()
-        if (!verified) return
+        ElMessage.warning(t('users.queryTenantPrompt'))
+        return
       }
     }
     const referrerOk = await verifyReferrer()
@@ -749,22 +723,13 @@ onMounted(fetchCreateOptions)
       <el-form label-width="110px" class="edit-form-grid">
         <el-form-item :label="t('common.tenantId')">
           <div class="tenant-check-row">
-            <el-input-number
+            <TenantSelect
               v-model="editForm.tenantId"
               class="form-control"
-              :min="0"
-              :precision="0"
+              :disabled="!isCreate"
               @change="resetTenantCheck"
+              @selected="handleTenantSelected"
             />
-            <el-button
-              v-if="isCreate"
-              type="primary"
-              plain
-              :loading="tenantChecking"
-              @click="verifyTenant"
-            >
-              {{ t('users.queryTenant') }}
-            </el-button>
           </div>
           <div v-if="isCreate" class="tenant-check-tip">
             <span

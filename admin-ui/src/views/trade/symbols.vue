@@ -76,7 +76,7 @@
     >
       <el-form label-width="110px">
         <el-form-item :label="t('trade.tenantId')">
-          <el-input-number v-model="symbolForm.tenantId" :min="0" :precision="0" />
+          <TenantSelect v-model="symbolForm.tenantId" include-system />
         </el-form-item>
 
         <el-form-item :label="t('trade.symbol')">
@@ -181,7 +181,7 @@
     <el-dialog v-model="spotVisible" :title="t('trade.spotConfig')" width="640px">
       <el-form label-width="110px">
         <el-form-item :label="t('trade.tenantId')">
-          <el-input-number v-model="spotForm.tenantId" :min="0" :precision="0" />
+          <TenantSelect v-model="spotForm.tenantId" include-system />
         </el-form-item>
 
         <el-form-item :label="t('trade.symbolId')">
@@ -218,7 +218,7 @@
     <el-dialog v-model="contractVisible" :title="t('trade.contractConfig')" width="700px">
       <el-form label-width="120px">
         <el-form-item :label="t('trade.tenantId')">
-          <el-input-number v-model="contractForm.tenantId" :min="0" :precision="0" />
+          <TenantSelect v-model="contractForm.tenantId" include-system />
         </el-form-item>
 
         <el-form-item :label="t('trade.symbolId')">
@@ -295,6 +295,7 @@ import { onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { tradeService, type TradeSymbol } from '@/services'
+import TenantSelect from '@/components/TenantSelect.vue'
 
 const { t } = useI18n()
 

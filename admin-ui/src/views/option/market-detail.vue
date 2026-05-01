@@ -172,7 +172,7 @@
     <el-dialog v-model="marketVisible" :title="t('option.updateMarket')" width="720px">
       <el-form label-width="110px">
         <el-form-item :label="t('option.tenantId')">
-          <el-input-number v-model="marketForm.tenantId" :min="0" :precision="0" />
+          <TenantSelect v-model="marketForm.tenantId" include-system />
         </el-form-item>
         <el-form-item :label="t('option.contractId')">
           <el-input-number v-model="marketForm.contractId" :min="0" :precision="0" />
@@ -255,6 +255,7 @@ import {
 } from '@/services'
 import { formatDate } from '@/utils'
 import { getOptionValueLabel } from '@/utils/options'
+import TenantSelect from '@/components/TenantSelect.vue'
 
 type MarketDetailState = {
   contract?: OptionContract
