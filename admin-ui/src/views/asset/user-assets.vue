@@ -230,7 +230,7 @@ async function loadList() {
   loading.value = true
   try {
     const resp = await assetService.getUserAssets(query)
-    if (resp.code !== 0) {
+    if (resp.code !== 200) {
       ElMessage.error(resp.msg || t('common.loadFailed'))
       return
     }

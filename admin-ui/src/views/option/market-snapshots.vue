@@ -192,12 +192,15 @@ const marketForm = reactive<UpdateMarketReq>({
   snapshotTime: 0,
 })
 
-const pickList = (res: any) => res?.data || res?.list || []
-
 const loadCurrent = async () => {
   loading.value = true
   try {
-    rows.value = pickList(await optionService.listMarketSnapshots(query))
+    const resp = await optionService.listMarketSnapshots(query)
+    if (resp.code !== 200) {
+      ElMessage.error(resp.msg || t('common.loadFailed'))
+      return
+    }
+    rows.value = resp?.data || []
   } finally {
     loading.value = false
   }
