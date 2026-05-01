@@ -201,7 +201,7 @@
         <el-row :gutter="16">
           <el-col :span="12">
             <el-form-item :label="t('asset.tenantId')" prop="tenantId">
-              <TenantSelect v-model="form.tenantId" include-system />
+              <TenantSelect v-model="form.tenantId" />
             </el-form-item>
           </el-col>
           <el-col :span="12">

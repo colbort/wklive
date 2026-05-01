@@ -46,18 +46,39 @@ type EthereumProvider = {
   [key: string]: unknown
 }
 
+type TronLinkProvider = {
+  request?: <T = unknown>(args: { method: string; params?: unknown[] }) => Promise<T>
+  ready?: boolean
+}
+
+type TronWebProvider = {
+  defaultAddress?: {
+    base58?: string
+    hex?: string
+  }
+  toHex?: (message: string) => string
+  trx?: {
+    sign?: (message: string) => Promise<string>
+    signMessageV2?: (message: string) => Promise<string>
+  }
+}
+
+type WalletProvider = EthereumProvider | TronLinkProvider
+
 type WalletOption = {
   key: string
   name: string
-  provider: EthereumProvider | null
+  provider: WalletProvider | null
   installed: boolean
   installUrl: string
+  chainType: 'evm' | 'tron'
 }
 
 type WalletDefinition = {
   key: string
   name: string
   installUrl: string
+  chainType: 'evm' | 'tron'
   detect: (provider: EthereumProvider) => boolean
 }
 
@@ -88,6 +109,8 @@ declare global {
     xfi?: { ethereum?: EthereumProvider }
     keplr?: EthereumProvider
     cosmostation?: { ethereum?: EthereumProvider }
+    tronLink?: TronLinkProvider
+    tronWeb?: TronWebProvider
   }
 }
 
@@ -102,6 +125,8 @@ const walletConnecting = ref(false)
 const walletAddress = ref('')
 const walletError = ref('')
 const walletSheetOpen = ref(false)
+const pendingWallet = ref<WalletOption | null>(null)
+const walletRequestId = ref(0)
 const errorMessage = ref('')
 
 const accountPlaceholder = computed(() => (activeTab.value === 'email' ? '您的邮箱' : '手机号'))
@@ -114,55 +139,67 @@ const walletOptions = computed<WalletOption[]>(() => {
   const providers = getWalletProviders()
   const usedProviders = new Set<EthereumProvider>()
   const options = walletDefinitions.map((wallet) => {
-    const provider = providers.find((item) => wallet.detect(item)) || null
-    if (provider) usedProviders.add(provider)
+    const provider = wallet.chainType === 'tron'
+      ? getTronProvider()
+      : providers.find((item) => wallet.detect(item)) || null
+    if (provider && wallet.chainType === 'evm') usedProviders.add(provider as EthereumProvider)
     return {
       key: wallet.key,
       name: wallet.name,
       provider,
       installed: Boolean(provider),
       installUrl: wallet.installUrl,
+      chainType: wallet.chainType,
     }
   })
   const fallback = providers.find((provider) => !usedProviders.has(provider)) || null
 
-  return [
+  const wallets = [
     ...options,
-    { key: 'browser', name: 'Browser Wallet', provider: fallback, installed: Boolean(fallback), installUrl: 'https://metamask.io/download/' },
+    {
+      key: 'browser',
+      name: 'Browser Wallet',
+      provider: fallback,
+      installed: Boolean(fallback),
+      installUrl: 'https://metamask.io/download/',
+      chainType: 'evm' as const,
+    },
   ]
+  return wallets.sort((left, right) => Number(right.installed) - Number(left.installed))
 })
 
 const walletDefinitions: WalletDefinition[] = [
-  { key: 'brave', name: 'Brave 钱包', installUrl: 'https://brave.com/wallet/', detect: (provider) => Boolean(provider.isBraveWallet) },
-  { key: 'metamask', name: 'MetaMask', installUrl: 'https://metamask.io/download/', detect: (provider) => Boolean(provider.isMetaMask && !provider.isBraveWallet) },
-  { key: 'okx', name: 'OKX Wallet', installUrl: 'https://www.okx.com/web3', detect: (provider) => Boolean(provider.isOkxWallet || provider === window.okxwallet) },
-  { key: 'tokenpocket', name: 'TokenPocket', installUrl: 'https://www.tokenpocket.pro/', detect: (provider) => Boolean(provider.isTokenPocket) },
-  { key: 'trust', name: 'Trust Wallet', installUrl: 'https://trustwallet.com/download', detect: (provider) => Boolean(provider.isTrust || provider === window.trustwallet) },
-  { key: 'bitget', name: 'Bitget Wallet', installUrl: 'https://web3.bitget.com/', detect: (provider) => Boolean(provider.isBitKeep || provider.isBitgetWallet || provider === window.bitgetWallet || provider === window.bitkeep?.ethereum) },
-  { key: 'coinbase', name: 'Coinbase Wallet', installUrl: 'https://www.coinbase.com/wallet/downloads', detect: (provider) => Boolean(provider.isCoinbaseWallet) },
-  { key: 'imtoken', name: 'imToken', installUrl: 'https://token.im/', detect: (provider) => Boolean(provider.isImToken || provider === window.imToken) },
-  { key: 'math', name: 'MathWallet', installUrl: 'https://mathwallet.org/', detect: (provider) => Boolean(provider.isMathWallet || provider === window.mathwallet) },
-  { key: 'safepal', name: 'SafePal', installUrl: 'https://www.safepal.com/download', detect: (provider) => Boolean(provider.isSafePal || provider === window.safepalProvider) },
-  { key: 'rabby', name: 'Rabby Wallet', installUrl: 'https://rabby.io/', detect: (provider) => Boolean(provider.isRabby || provider === window.rabby) },
-  { key: 'phantom', name: 'Phantom', installUrl: 'https://phantom.app/download', detect: (provider) => Boolean(provider.isPhantom || provider === window.phantom?.ethereum) },
-  { key: 'binance', name: 'Binance Wallet', installUrl: 'https://www.binance.com/web3wallet', detect: (provider) => Boolean(provider === window.BinanceChain) },
-  { key: 'onekey', name: 'OneKey Wallet', installUrl: 'https://onekey.so/download/', detect: (provider) => Boolean(provider.isOneKey || provider === window.oneKeyWallet) },
-  { key: 'gate', name: 'Gate Wallet', installUrl: 'https://www.gate.io/web3', detect: (provider) => Boolean(provider.isGateWallet || provider === window.gatewallet) },
-  { key: 'coin98', name: 'Coin98 Wallet', installUrl: 'https://coin98.com/wallet', detect: (provider) => Boolean(provider.isCoin98 || provider === window.coin98?.provider) },
-  { key: 'exodus', name: 'Exodus', installUrl: 'https://www.exodus.com/download/', detect: (provider) => Boolean(provider.isExodus || provider === window.exodus?.ethereum) },
-  { key: 'opera', name: 'Opera Wallet', installUrl: 'https://www.opera.com/crypto/next', detect: (provider) => Boolean(provider.isOpera) },
-  { key: 'frame', name: 'Frame', installUrl: 'https://frame.sh/', detect: (provider) => Boolean(provider.isFrame) },
-  { key: 'tally', name: 'Taho/Tally', installUrl: 'https://taho.xyz/', detect: (provider) => Boolean(provider.isTally || provider === window.tally) },
-  { key: 'zerion', name: 'Zerion Wallet', installUrl: 'https://zerion.io/wallet', detect: (provider) => Boolean(provider.isZerion || provider === window.zerionWallet) },
-  { key: 'rainbow', name: 'Rainbow', installUrl: 'https://rainbow.me/', detect: (provider) => Boolean(provider.isRainbow || provider === window.rainbow) },
-  { key: 'bybit', name: 'Bybit Wallet', installUrl: 'https://www.bybit.com/web3', detect: (provider) => Boolean(provider.isBybit || provider === window.bybitWallet) },
-  { key: 'kucoin', name: 'KuCoin Wallet', installUrl: 'https://www.kucoin.com/web3', detect: (provider) => Boolean(provider.isKuCoinWallet || provider === window.kucoinWallet) },
-  { key: 'halo', name: 'Halo Wallet', installUrl: 'https://halo.social/wallet', detect: (provider) => Boolean(provider.isHaloWallet || provider === window.haloWallet) },
-  { key: 'subwallet', name: 'SubWallet', installUrl: 'https://www.subwallet.app/download.html', detect: (provider) => Boolean(provider.isSubWallet || provider === window.subwallet) },
-  { key: 'xdefi', name: 'XDEFI Wallet', installUrl: 'https://www.xdefi.io/', detect: (provider) => Boolean(provider.isXDEFI || provider === window.xfi?.ethereum) },
-  { key: 'keplr', name: 'Keplr', installUrl: 'https://www.keplr.app/download', detect: (provider) => Boolean(provider.isKeplr || provider === window.keplr) },
-  { key: 'cosmostation', name: 'Cosmostation Wallet', installUrl: 'https://cosmostation.io/products/cosmostation_wallet', detect: (provider) => Boolean(provider.isCosmostation || provider === window.cosmostation?.ethereum) },
-  { key: 'walletconnect', name: 'WalletConnect', installUrl: 'https://walletconnect.network/', detect: (provider) => Boolean(provider.isWalletConnect) },
+  { key: 'tronlink', name: 'TronLink', installUrl: 'https://www.tronlink.org/', chainType: 'tron', detect: () => false },
+  { key: 'brave', name: 'Brave 钱包', installUrl: 'https://brave.com/wallet/', chainType: 'evm', detect: (provider) => Boolean(provider.isBraveWallet) },
+  { key: 'metamask', name: 'MetaMask', installUrl: 'https://metamask.io/download/', chainType: 'evm', detect: (provider) => Boolean(provider.isMetaMask && !provider.isBraveWallet) },
+  { key: 'okx', name: 'OKX Wallet', installUrl: 'https://www.okx.com/web3', chainType: 'evm', detect: (provider) => Boolean(provider.isOkxWallet || provider === window.okxwallet) },
+  { key: 'tokenpocket', name: 'TokenPocket', installUrl: 'https://www.tokenpocket.pro/', chainType: 'evm', detect: (provider) => Boolean(provider.isTokenPocket) },
+  { key: 'trust', name: 'Trust Wallet', installUrl: 'https://trustwallet.com/download', chainType: 'evm', detect: (provider) => Boolean(provider.isTrust || provider === window.trustwallet) },
+  { key: 'bitget', name: 'Bitget Wallet', installUrl: 'https://web3.bitget.com/', chainType: 'evm', detect: (provider) => Boolean(provider.isBitKeep || provider.isBitgetWallet || provider === window.bitgetWallet || provider === window.bitkeep?.ethereum) },
+  { key: 'coinbase', name: 'Coinbase Wallet', installUrl: 'https://www.coinbase.com/wallet/downloads', chainType: 'evm', detect: (provider) => Boolean(provider.isCoinbaseWallet) },
+  { key: 'imtoken', name: 'imToken', installUrl: 'https://token.im/', chainType: 'evm', detect: (provider) => Boolean(provider.isImToken || provider === window.imToken) },
+  { key: 'math', name: 'MathWallet', installUrl: 'https://mathwallet.org/', chainType: 'evm', detect: (provider) => Boolean(provider.isMathWallet || provider === window.mathwallet) },
+  { key: 'safepal', name: 'SafePal', installUrl: 'https://www.safepal.com/download', chainType: 'evm', detect: (provider) => Boolean(provider.isSafePal || provider === window.safepalProvider) },
+  { key: 'rabby', name: 'Rabby Wallet', installUrl: 'https://rabby.io/', chainType: 'evm', detect: (provider) => Boolean(provider.isRabby || provider === window.rabby) },
+  { key: 'phantom', name: 'Phantom', installUrl: 'https://phantom.app/download', chainType: 'evm', detect: (provider) => Boolean(provider.isPhantom || provider === window.phantom?.ethereum) },
+  { key: 'binance', name: 'Binance Wallet', installUrl: 'https://www.binance.com/web3wallet', chainType: 'evm', detect: (provider) => Boolean(provider === window.BinanceChain) },
+  { key: 'onekey', name: 'OneKey Wallet', installUrl: 'https://onekey.so/download/', chainType: 'evm', detect: (provider) => Boolean(provider.isOneKey || provider === window.oneKeyWallet) },
+  { key: 'gate', name: 'Gate Wallet', installUrl: 'https://www.gate.io/web3', chainType: 'evm', detect: (provider) => Boolean(provider.isGateWallet || provider === window.gatewallet) },
+  { key: 'coin98', name: 'Coin98 Wallet', installUrl: 'https://coin98.com/wallet', chainType: 'evm', detect: (provider) => Boolean(provider.isCoin98 || provider === window.coin98?.provider) },
+  { key: 'exodus', name: 'Exodus', installUrl: 'https://www.exodus.com/download/', chainType: 'evm', detect: (provider) => Boolean(provider.isExodus || provider === window.exodus?.ethereum) },
+  { key: 'opera', name: 'Opera Wallet', installUrl: 'https://www.opera.com/crypto/next', chainType: 'evm', detect: (provider) => Boolean(provider.isOpera) },
+  { key: 'frame', name: 'Frame', installUrl: 'https://frame.sh/', chainType: 'evm', detect: (provider) => Boolean(provider.isFrame) },
+  { key: 'tally', name: 'Taho/Tally', installUrl: 'https://taho.xyz/', chainType: 'evm', detect: (provider) => Boolean(provider.isTally || provider === window.tally) },
+  { key: 'zerion', name: 'Zerion Wallet', installUrl: 'https://zerion.io/wallet', chainType: 'evm', detect: (provider) => Boolean(provider.isZerion || provider === window.zerionWallet) },
+  { key: 'rainbow', name: 'Rainbow', installUrl: 'https://rainbow.me/', chainType: 'evm', detect: (provider) => Boolean(provider.isRainbow || provider === window.rainbow) },
+  { key: 'bybit', name: 'Bybit Wallet', installUrl: 'https://www.bybit.com/web3', chainType: 'evm', detect: (provider) => Boolean(provider.isBybit || provider === window.bybitWallet) },
+  { key: 'kucoin', name: 'KuCoin Wallet', installUrl: 'https://www.kucoin.com/web3', chainType: 'evm', detect: (provider) => Boolean(provider.isKuCoinWallet || provider === window.kucoinWallet) },
+  { key: 'halo', name: 'Halo Wallet', installUrl: 'https://halo.social/wallet', chainType: 'evm', detect: (provider) => Boolean(provider.isHaloWallet || provider === window.haloWallet) },
+  { key: 'subwallet', name: 'SubWallet', installUrl: 'https://www.subwallet.app/download.html', chainType: 'evm', detect: (provider) => Boolean(provider.isSubWallet || provider === window.subwallet) },
+  { key: 'xdefi', name: 'XDEFI Wallet', installUrl: 'https://www.xdefi.io/', chainType: 'evm', detect: (provider) => Boolean(provider.isXDEFI || provider === window.xfi?.ethereum) },
+  { key: 'keplr', name: 'Keplr', installUrl: 'https://www.keplr.app/download', chainType: 'evm', detect: (provider) => Boolean(provider.isKeplr || provider === window.keplr) },
+  { key: 'cosmostation', name: 'Cosmostation Wallet', installUrl: 'https://cosmostation.io/products/cosmostation_wallet', chainType: 'evm', detect: (provider) => Boolean(provider.isCosmostation || provider === window.cosmostation?.ethereum) },
+  { key: 'walletconnect', name: 'WalletConnect', installUrl: 'https://walletconnect.network/', chainType: 'evm', detect: (provider) => Boolean(provider.isWalletConnect) },
 ]
 
 function goBack() {
@@ -251,10 +288,24 @@ function getWalletProviders() {
   return providers
 }
 
+function getTronProvider() {
+  if (window.tronLink || window.tronWeb?.defaultAddress?.base58) {
+    return window.tronLink || ({ ready: true } as TronLinkProvider)
+  }
+  return null
+}
+
 function openWalletSheet() {
   walletError.value = ''
   errorMessage.value = ''
+  pendingWallet.value = null
   walletSheetOpen.value = true
+}
+
+function closeWalletSheet() {
+  walletRequestId.value += 1
+  walletSheetOpen.value = false
+  pendingWallet.value = null
 }
 
 function installWallet(wallet: WalletOption) {
@@ -264,19 +315,75 @@ function installWallet(wallet: WalletOption) {
 
 function handleWalletSelected(wallet: WalletOption) {
   if (wallet.installed) {
-    connectWallet(wallet.provider)
+    pendingWallet.value = wallet
+    if (wallet.chainType === 'tron') {
+      connectTronWallet(wallet.provider as TronLinkProvider)
+      return
+    }
+    connectWallet(wallet.provider as EthereumProvider)
     return
   }
   installWallet(wallet)
 }
 
+function backToWalletList() {
+  walletRequestId.value += 1
+  walletConnecting.value = false
+  walletError.value = ''
+  pendingWallet.value = null
+}
+
+function retryPendingWallet() {
+  if (!pendingWallet.value) return
+  walletRequestId.value += 1
+  walletConnecting.value = false
+  handleWalletSelected(pendingWallet.value)
+}
+
+function isUserRejectedWalletError(error: any) {
+  const message = String(error?.message || '').toLowerCase()
+  return error?.code === 4001 || error?.code === '4001' || message.includes('user rejected') || message.includes('user denied') || message.includes('cancel')
+}
+
+function isDefiniteWalletError(error: any) {
+  const message = String(error?.message || '').toLowerCase()
+  if (isUserRejectedWalletError(error)) return true
+  return (
+    error?.code === -32002 ||
+    error?.code === '-32002' ||
+    message.includes('already pending') ||
+    message.includes('invalid transaction') ||
+    message.includes('unsupported') ||
+    message.includes('not support')
+  )
+}
+
+function wait(ms: number) {
+  return new Promise((resolve) => window.setTimeout(resolve, ms))
+}
+
+async function waitForTronAddress() {
+  const startedAt = Date.now()
+  const timeout = 90000
+  const requestId = walletRequestId.value
+  while (walletSheetOpen.value && pendingWallet.value?.key === 'tronlink' && requestId === walletRequestId.value) {
+    const address = window.tronWeb?.defaultAddress?.base58
+    if (address) return address
+    if (Date.now() - startedAt >= timeout) return ''
+    await wait(800)
+  }
+  return ''
+}
+
 async function connectWallet(selectedProvider?: EthereumProvider | null) {
   if (walletConnecting.value) return
 
+  const requestId = walletRequestId.value + 1
+  walletRequestId.value = requestId
   walletError.value = ''
   errorMessage.value = ''
 
-  const provider = selectedProvider || walletOptions.value.find((wallet) => wallet.installed)?.provider || null
+  const provider = selectedProvider || (walletOptions.value.find((wallet) => wallet.installed && wallet.chainType === 'evm')?.provider as EthereumProvider | null) || null
   if (!provider) {
     walletError.value = '当前浏览器没有检测到钱包，请在钱包 App 内打开'
     return
@@ -285,6 +392,7 @@ async function connectWallet(selectedProvider?: EthereumProvider | null) {
   walletConnecting.value = true
   try {
     const accounts = await provider.request<string[]>({ method: 'eth_requestAccounts' })
+    if (requestId !== walletRequestId.value) return
     const address = accounts?.[0]
     if (!address) {
       walletError.value = '未获取到钱包地址'
@@ -297,12 +405,55 @@ async function connectWallet(selectedProvider?: EthereumProvider | null) {
       method: 'personal_sign',
       params: [message, address],
     })
+    if (requestId !== walletRequestId.value) return
     walletSheetOpen.value = false
+    pendingWallet.value = null
   } catch (error: any) {
     console.warn('connect wallet failed', error)
-    walletError.value = error?.code === 4001 ? '已取消连接钱包' : '连接钱包失败'
+    walletError.value = isUserRejectedWalletError(error) ? '已取消连接钱包' : '连接钱包失败'
   } finally {
-    walletConnecting.value = false
+    if (requestId === walletRequestId.value) walletConnecting.value = false
+  }
+}
+
+async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
+  if (walletConnecting.value) return
+
+  const requestId = walletRequestId.value + 1
+  walletRequestId.value = requestId
+  walletError.value = ''
+  errorMessage.value = ''
+  walletConnecting.value = true
+  try {
+    if (selectedProvider?.request) {
+      await selectedProvider.request({ method: 'tron_requestAccounts' }).catch((error: any) => {
+        if (isDefiniteWalletError(error)) throw error
+        console.warn('tronlink request pending', error)
+      })
+    }
+
+    const address = await waitForTronAddress()
+    if (requestId !== walletRequestId.value) return
+    if (!address) {
+      walletError.value = walletSheetOpen.value ? '连接超时，请在钱包确认后重试' : ''
+      return
+    }
+
+    walletAddress.value = address
+    const message = `Wklive wallet login\nAddress: ${address}\nTime: ${Date.now()}`
+    if (window.tronWeb?.trx?.signMessageV2) {
+      await window.tronWeb.trx.signMessageV2(message)
+    } else if (window.tronWeb?.trx?.sign && window.tronWeb?.toHex) {
+      await window.tronWeb.trx.sign(window.tronWeb.toHex(message))
+    }
+    if (requestId !== walletRequestId.value) return
+    walletSheetOpen.value = false
+    pendingWallet.value = null
+  } catch (error: any) {
+    console.warn('connect tronlink failed', error)
+    walletError.value = isUserRejectedWalletError(error) ? '已取消连接钱包' : '连接 TronLink 失败'
+  } finally {
+    if (requestId === walletRequestId.value) walletConnecting.value = false
   }
 }
 </script>
@@ -402,17 +553,47 @@ async function connectWallet(selectedProvider?: EthereumProvider | null) {
       </p>
     </main>
 
-    <div v-if="walletSheetOpen" class="wallet-sheet-layer" @click.self="walletSheetOpen = false">
+    <div
+      v-if="walletSheetOpen"
+      class="wallet-sheet-layer"
+      @click.self="closeWalletSheet"
+    >
       <div class="wallet-sheet" role="dialog" aria-modal="true" aria-label="Connect Wallet">
         <header class="wallet-sheet__header">
-          <button type="button" class="wallet-sheet__help" aria-label="帮助">?</button>
-          <strong>Connect Wallet</strong>
-          <button type="button" class="wallet-sheet__close" aria-label="关闭" @click="walletSheetOpen = false">
+          <button
+            v-if="pendingWallet"
+            type="button"
+            class="wallet-sheet__back"
+            aria-label="返回"
+            @click="backToWalletList"
+          >
+            ‹
+          </button>
+          <button v-else type="button" class="wallet-sheet__help" aria-label="帮助">?</button>
+          <strong>{{ pendingWallet ? pendingWallet.name : 'Connect Wallet' }}</strong>
+          <button
+            type="button"
+            class="wallet-sheet__close"
+            aria-label="关闭"
+            @click="closeWalletSheet"
+          >
             ×
           </button>
         </header>
 
-        <div class="wallet-list">
+        <div v-if="pendingWallet" class="wallet-pending">
+          <span class="wallet-pending__icon" :class="`wallet-row__icon--${pendingWallet.key}`">
+            {{ pendingWallet.name.slice(0, 1) }}
+          </span>
+          <strong>Continue in {{ pendingWallet.name }}</strong>
+          <p>Accept connection request in the wallet</p>
+          <button type="button" @click="retryPendingWallet">
+            <span>↻</span>
+            Try again
+          </button>
+        </div>
+
+        <div v-else class="wallet-list">
           <button
             v-for="wallet in walletOptions"
             :key="wallet.key"
@@ -897,6 +1078,7 @@ async function connectWallet(selectedProvider?: EthereumProvider | null) {
 }
 
 .wallet-sheet__help,
+.wallet-sheet__back,
 .wallet-sheet__close {
   display: inline-flex;
   width: 36px;
@@ -908,6 +1090,14 @@ async function connectWallet(selectedProvider?: EthereumProvider | null) {
   color: #fff;
   font-size: 28px;
   line-height: 1;
+}
+
+.wallet-sheet__back {
+  font-size: 34px;
+}
+
+.wallet-sheet__back:disabled {
+  opacity: 0.45;
 }
 
 .wallet-sheet__help {
@@ -922,6 +1112,80 @@ async function connectWallet(selectedProvider?: EthereumProvider | null) {
 .wallet-list {
   display: grid;
   gap: 12px;
+}
+
+.wallet-pending {
+  display: grid;
+  justify-items: center;
+  padding: 54px 16px 24px;
+  text-align: center;
+}
+
+.wallet-pending__icon {
+  position: relative;
+  display: inline-flex;
+  width: 92px;
+  height: 92px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 24px;
+  color: #fff;
+  font-size: 38px;
+  font-weight: 900;
+}
+
+.wallet-pending__icon::after {
+  content: '';
+  position: absolute;
+  inset: -18px;
+  border: 5px solid transparent;
+  border-right-color: #2095ff;
+  border-bottom-color: #2095ff;
+  border-radius: 50%;
+  animation: wallet-pending-spin 1.1s linear infinite;
+}
+
+@keyframes wallet-pending-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.wallet-pending strong {
+  margin-top: 54px;
+  color: #fff;
+  font-size: 26px;
+  font-weight: 800;
+}
+
+.wallet-pending p {
+  margin: 16px 0 38px;
+  color: #9d9d9d;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.wallet-pending button {
+  display: inline-flex;
+  min-height: 58px;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 18px;
+  background: transparent;
+  padding: 0 30px;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.wallet-pending button:disabled {
+  opacity: 0.55;
+}
+
+.wallet-pending button span {
+  font-size: 22px;
 }
 
 .wallet-row,
@@ -1011,6 +1275,10 @@ async function connectWallet(selectedProvider?: EthereumProvider | null) {
 
 .wallet-row__icon--trust {
   background: #3375bb;
+}
+
+.wallet-row__icon--tronlink {
+  background: #ff1f3d;
 }
 
 .wallet-row__icon--bitget {
@@ -1467,6 +1735,33 @@ async function connectWallet(selectedProvider?: EthereumProvider | null) {
 
   .wallet-sheet__header strong {
     font-size: 20px;
+  }
+
+  .wallet-pending {
+    padding: 42px 10px 18px;
+  }
+
+  .wallet-pending__icon {
+    width: 78px;
+    height: 78px;
+    border-radius: 20px;
+    font-size: 30px;
+  }
+
+  .wallet-pending strong {
+    margin-top: 44px;
+    font-size: 21px;
+  }
+
+  .wallet-pending p {
+    margin: 12px 0 30px;
+    font-size: 17px;
+  }
+
+  .wallet-pending button {
+    min-height: 52px;
+    border-radius: 16px;
+    font-size: 18px;
   }
 
   .wallet-row,
