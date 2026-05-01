@@ -1,93 +1,118 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, onMounted, ref, watch } from "vue";
+import { useRouter } from "vue-router";
 
-import { apiGetAssetOptions, apiGetMyAssetSummary, apiListAssetCoinConfigs } from '@/api/asset'
-import { getAccessToken } from '@/api/http'
-import { useDevice } from '@/composables/useDevice'
-import { optionText, useOptions } from '@/composables/useOptions'
-import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
+import {
+  apiGetAssetOptions,
+  apiGetMyAssetSummary,
+  apiListAssetCoinConfigs,
+} from "@/api/asset";
+import { getAccessToken } from "@/api/http";
+import { useDevice } from "@/composables/useDevice";
+import { optionText, useOptions } from "@/composables/useOptions";
+import type { AssetCoinConfig, AssetUserAsset } from "@/types/asset";
 
 // 资产页：展示资产中心和订单中心的移动端占位结构。
-type AssetTopTab = 'assets' | 'orders' | 'profile'
-type AssetActionKey = 'cryptoRecharge' | 'bankRecharge' | 'cryptoWithdraw' | 'bankWithdraw' | 'transfer' | 'flows'
+type AssetTopTab = "assets" | "orders" | "profile";
+type AssetActionKey =
+  | "cryptoRecharge"
+  | "bankRecharge"
+  | "cryptoWithdraw"
+  | "bankWithdraw"
+  | "transfer"
+  | "flows";
 
 const ASSET_OPERATION_TYPES: Partial<Record<AssetActionKey, number>> = {
   cryptoRecharge: 1,
   cryptoWithdraw: 2,
   transfer: 3,
-}
+};
 
-const { isDesktop } = useDevice()
-const router = useRouter()
-const assetOptions = useOptions(apiGetAssetOptions)
-const activeTopTab = ref<AssetTopTab>('assets')
-const activeAssetAccount = ref('cash')
-const activeAssetAction = ref<AssetActionKey>('cryptoRecharge')
-const activeOrderScope = ref('stock')
-const coinConfigs = ref<AssetCoinConfig[]>([])
-const coinConfigsLoading = ref(false)
-const coinConfigsMessage = ref('')
-const summaryAssets = ref<AssetUserAsset[]>([])
-const summaryLoading = ref(false)
-const selectedCoinConfig = ref<AssetCoinConfig | null>(null)
+const { isDesktop } = useDevice();
+const router = useRouter();
+const assetOptions = useOptions(apiGetAssetOptions);
+const activeTopTab = ref<AssetTopTab>("assets");
+const activeAssetAccount = ref("cash");
+const activeAssetAction = ref<AssetActionKey>("cryptoRecharge");
+const activeOrderScope = ref("stock");
+const coinConfigs = ref<AssetCoinConfig[]>([]);
+const coinConfigsLoading = ref(false);
+const coinConfigsMessage = ref("");
+const summaryAssets = ref<AssetUserAsset[]>([]);
+const summaryLoading = ref(false);
+const selectedCoinConfig = ref<AssetCoinConfig | null>(null);
 
-const assetActions: Array<{ key: AssetActionKey; label: string; icon: string }> = [
-  { key: 'cryptoRecharge', label: '加密货币充值', icon: '$' },
-  { key: 'bankRecharge', label: '银行卡充值', icon: '▣' },
-  { key: 'cryptoWithdraw', label: '加密货币提现', icon: '$' },
-  { key: 'bankWithdraw', label: '银行卡提现', icon: '▭' },
-  { key: 'transfer', label: '账户划转', icon: '⇄' },
-  { key: 'flows', label: '资金记录', icon: '▤' },
-]
+const assetActions: Array<{
+  key: AssetActionKey;
+  label: string;
+  icon: string;
+}> = [
+  { key: "cryptoRecharge", label: "加密货币充值", icon: "$" },
+  { key: "bankRecharge", label: "银行卡充值", icon: "▣" },
+  { key: "cryptoWithdraw", label: "加密货币提现", icon: "$" },
+  { key: "bankWithdraw", label: "银行卡提现", icon: "▭" },
+  { key: "transfer", label: "账户划转", icon: "⇄" },
+  { key: "flows", label: "资金记录", icon: "▤" },
+];
 
 const fallbackAssetAccounts = [
-  { key: 'cash', label: '现金账户', walletType: 1 },
-  { key: 'stock', label: '股票账户', walletType: 2 },
-  { key: 'contract', label: '合约账户', walletType: 3 },
-]
+  { key: "cash", label: "现金账户", walletType: 1 },
+  { key: "stock", label: "股票账户", walletType: 2 },
+  { key: "contract", label: "合约账户", walletType: 3 },
+];
 
 const orderScopes = [
-  { key: 'stock', label: '股票' },
-  { key: 'contract', label: '合约订单' },
-  { key: 'option', label: '期权合约' },
-]
+  { key: "stock", label: "股票" },
+  { key: "contract", label: "合约订单" },
+  { key: "option", label: "期权合约" },
+];
 
-const orderTabs = ['当前持仓', '历史查询', '盘前订单']
+const orderTabs = ["当前持仓", "历史查询", "盘前订单"];
 
 const pageTabs: Array<{ key: AssetTopTab; label: string }> = [
-  { key: 'assets', label: '资产中心' },
-  { key: 'orders', label: '订单中心' },
-  { key: 'profile', label: '个人中心' },
-]
+  { key: "assets", label: "资产中心" },
+  { key: "orders", label: "订单中心" },
+  { key: "profile", label: "个人中心" },
+];
 
 const assetAccounts = computed(() => {
-  const walletTypeOptions = assetOptions.getGroup('walletType')
+  const walletTypeOptions = assetOptions
+    .getGroup("walletType")
     .filter((option) => option.value > 0)
     .map((option) => ({
       key: String(option.value),
       label: optionText(option),
       walletType: option.value,
-    }))
+    }));
 
-  return walletTypeOptions.length ? walletTypeOptions : fallbackAssetAccounts
-})
+  return walletTypeOptions.length ? walletTypeOptions : fallbackAssetAccounts;
+});
 
 const activeWalletType = computed(() => {
-  return assetAccounts.value.find((account) => account.key === activeAssetAccount.value)?.walletType || 1
-})
+  return (
+    assetAccounts.value.find(
+      (account) => account.key === activeAssetAccount.value,
+    )?.walletType || 1
+  );
+});
 
-const activeOperationType = computed(() => ASSET_OPERATION_TYPES[activeAssetAction.value])
+const activeOperationType = computed(
+  () => ASSET_OPERATION_TYPES[activeAssetAction.value],
+);
 const activeAccountLabel = computed(() => {
-  return assetAccounts.value.find((account) => account.key === activeAssetAccount.value)?.label || '现金账户'
-})
+  return (
+    assetAccounts.value.find(
+      (account) => account.key === activeAssetAccount.value,
+    )?.label || "现金账户"
+  );
+});
 
 const displayedAssets = computed(() => {
   const amountMap = new Map(
     summaryAssets.value
       .filter((asset) => asset.walletType === activeWalletType.value)
       .map((asset) => [asset.coin, asset]),
-  )
+  );
 
   const configs = coinConfigs.value.length
     ? coinConfigs.value
@@ -102,9 +127,9 @@ const displayedAssets = computed(() => {
           coinName: asset.coin,
           coinType: 0,
           chainCode: 0,
-          iconUrl: '',
+          iconUrl: "",
           iconText: asset.coin,
-          iconBgColor: '',
+          iconBgColor: "",
           decimalPlaces: 2,
           appVisible: 1,
           rechargeEnabled: 1,
@@ -112,49 +137,57 @@ const displayedAssets = computed(() => {
           transferEnabled: 1,
           status: asset.status || 1,
           sort: 0,
-          remark: '',
+          remark: "",
           createTimes: asset.createTimes,
           updateTimes: asset.updateTimes,
-        }))
+        }));
 
   return configs.map((config) => ({
     config,
-    amount: amountMap.get(config.coin)?.availableAmount || amountMap.get(config.coin)?.totalAmount || '0',
-  }))
-})
+    amount:
+      amountMap.get(config.coin)?.availableAmount ||
+      amountMap.get(config.coin)?.totalAmount ||
+      "0",
+  }));
+});
 
 function isSuccessCode(code: number) {
-  return code === 0 || code === 200
+  return code === 0 || code === 200;
 }
 
 function coinConfigName(config: AssetCoinConfig) {
-  return config.coinName || config.symbol || config.coin
+  return config.coinName || config.symbol || config.coin;
 }
 
 function coinConfigIconText(config: AssetCoinConfig) {
-  return (config.iconText || config.symbol || config.coin || '?').slice(0, 3).toUpperCase()
+  return (config.iconText || config.symbol || config.coin || "?")
+    .slice(0, 3)
+    .toUpperCase();
 }
 
 function selectAssetAction(key: AssetActionKey) {
-  activeAssetAction.value = key
+  activeAssetAction.value = key;
 }
 
 function activeCoinConfig() {
-  return displayedAssets.value[0]?.config
+  return displayedAssets.value[0]?.config;
 }
 
 function openCoinActions(config: AssetCoinConfig) {
-  if (isDesktop.value) return
-  selectedCoinConfig.value = config
+  if (isDesktop.value) return;
+  selectedCoinConfig.value = config;
 }
 
 function closeCoinActions() {
-  selectedCoinConfig.value = null
+  selectedCoinConfig.value = null;
 }
 
-function openAssetFlow(action: 'recharge' | 'withdraw' | 'transfer', direction?: 'in' | 'out') {
-  const config = selectedCoinConfig.value || activeCoinConfig()
-  if (!config) return
+function openAssetFlow(
+  action: "recharge" | "withdraw" | "transfer",
+  direction?: "in" | "out",
+) {
+  const config = selectedCoinConfig.value || activeCoinConfig();
+  if (!config) return;
 
   router.push({
     path: `/assets/${action}`,
@@ -163,82 +196,82 @@ function openAssetFlow(action: 'recharge' | 'withdraw' | 'transfer', direction?:
       walletType: String(activeWalletType.value),
       direction,
     },
-  })
+  });
 }
 
 async function loadAssetSummary() {
   if (!getAccessToken()) {
-    summaryAssets.value = []
-    return
+    summaryAssets.value = [];
+    return;
   }
 
-  summaryLoading.value = true
+  summaryLoading.value = true;
   try {
-    const resp = await apiGetMyAssetSummary({})
+    const resp = await apiGetMyAssetSummary({});
     if (isSuccessCode(resp.code)) {
-      summaryAssets.value = resp.data?.assets || []
+      summaryAssets.value = resp.data?.assets || [];
     }
   } catch (error) {
-    console.warn('get my asset summary failed', error)
+    console.warn("get my asset summary failed", error);
   } finally {
-    summaryLoading.value = false
+    summaryLoading.value = false;
   }
 }
 
 async function loadCoinConfigs() {
-  coinConfigs.value = []
-  coinConfigsMessage.value = ''
+  coinConfigs.value = [];
+  coinConfigsMessage.value = "";
 
   if (!getAccessToken()) {
-    coinConfigsMessage.value = '请先登录'
-    return
+    coinConfigsMessage.value = "请先登录";
+    return;
   }
 
-  coinConfigsLoading.value = true
+  coinConfigsLoading.value = true;
   try {
     const resp = await apiListAssetCoinConfigs({
       walletType: activeWalletType.value,
       operationType: 0,
-    })
+    });
 
     if (!isSuccessCode(resp.code)) {
-      coinConfigsMessage.value = resp.msg || '币种配置获取失败'
-      return
+      coinConfigsMessage.value = resp.msg || "币种配置获取失败";
+      return;
     }
 
-    coinConfigs.value = resp.data || []
+    coinConfigs.value = resp.data || [];
     if (!coinConfigs.value.length) {
-      coinConfigsMessage.value = '暂无可用币种'
+      coinConfigsMessage.value = "暂无可用币种";
     }
   } catch (error) {
-    console.warn('list asset coin configs failed', error)
-    coinConfigsMessage.value = '币种配置获取失败'
+    console.warn("list asset coin configs failed", error);
+    coinConfigsMessage.value = "币种配置获取失败";
   } finally {
-    coinConfigsLoading.value = false
+    coinConfigsLoading.value = false;
   }
 }
 
 function handleAssetAction(key: AssetActionKey) {
-  selectAssetAction(key)
-  if (key === 'cryptoRecharge') openAssetFlow('recharge')
-  if (key === 'cryptoWithdraw') openAssetFlow('withdraw')
-  if (key === 'transfer') openAssetFlow('transfer')
+  selectAssetAction(key);
+  if (key === "cryptoRecharge") openAssetFlow("recharge");
+  if (key === "cryptoWithdraw") openAssetFlow("withdraw");
+  if (key === "transfer") openAssetFlow("transfer");
 }
 
 watch([activeWalletType, activeOperationType], () => {
-  void loadCoinConfigs()
-})
+  void loadCoinConfigs();
+});
 
 watch(assetAccounts, (accounts) => {
   if (!accounts.some((account) => account.key === activeAssetAccount.value)) {
-    activeAssetAccount.value = accounts[0]?.key || 'cash'
+    activeAssetAccount.value = accounts[0]?.key || "cash";
   }
-})
+});
 
 onMounted(() => {
-  void loadCoinConfigs()
-  void loadAssetSummary()
-})
+  void loadCoinConfigs();
+  void loadAssetSummary();
+});
 </script>
 
 <template>
@@ -251,7 +284,7 @@ onMounted(() => {
         :class="{ active: activeTopTab === tab.key }"
         @click="activeTopTab = tab.key"
       >
-        {{ isDesktop ? tab.label : tab.label.replace('中心', '') }}
+        {{ isDesktop ? tab.label : tab.label.replace("中心", "") }}
       </button>
     </nav>
 
@@ -315,8 +348,16 @@ onMounted(() => {
           </header>
 
           <section class="asset-coin-configs" aria-live="polite">
-            <div v-if="coinConfigsLoading || summaryLoading" class="asset-coin-configs__state">加载中</div>
-            <div v-else-if="coinConfigsMessage && !displayedAssets.length" class="asset-coin-configs__state">
+            <div
+              v-if="coinConfigsLoading || summaryLoading"
+              class="asset-coin-configs__state"
+            >
+              加载中
+            </div>
+            <div
+              v-else-if="coinConfigsMessage && !displayedAssets.length"
+              class="asset-coin-configs__state"
+            >
               {{ coinConfigsMessage }}
             </div>
             <div v-else class="asset-coin-list">
@@ -329,21 +370,31 @@ onMounted(() => {
               >
                 <span
                   class="asset-coin-row__icon"
-                  :style="{ backgroundColor: item.config.iconBgColor || '#17391f' }"
+                  :style="{
+                    backgroundColor: item.config.iconBgColor || '#17391f',
+                  }"
                 >
-                  <img v-if="item.config.iconUrl" :src="item.config.iconUrl" :alt="coinConfigName(item.config)" />
+                  <img
+                    v-if="item.config.iconUrl"
+                    :src="item.config.iconUrl"
+                    :alt="coinConfigName(item.config)"
+                  />
                   <span v-else>{{ coinConfigIconText(item.config) }}</span>
                 </span>
                 <span class="asset-coin-row__main">
                   <strong>{{ item.config.coin }}</strong>
-                  <small v-if="isDesktop">{{ coinConfigName(item.config) }}</small>
+                  <small v-if="isDesktop">{{
+                    coinConfigName(item.config)
+                  }}</small>
                 </span>
                 <span class="asset-coin-row__meta">{{ item.amount }}</span>
               </button>
             </div>
           </section>
 
-          <div v-if="!getAccessToken()" class="asset-login-tip"><span>登录</span>或<span>注册</span>查看资产</div>
+          <div v-if="!getAccessToken()" class="asset-login-tip">
+            <span>登录</span>或<span>注册</span>查看资产
+          </div>
         </section>
       </div>
 
@@ -353,33 +404,67 @@ onMounted(() => {
         role="presentation"
         @click.self="closeCoinActions"
       >
-        <section class="coin-action-sheet" role="dialog" aria-modal="true" aria-label="币种操作">
-          <button class="coin-action-sheet__close" type="button" aria-label="关闭" @click="closeCoinActions">×</button>
+        <section
+          class="coin-action-sheet"
+          role="dialog"
+          aria-modal="true"
+          aria-label="币种操作"
+        >
+          <button
+            class="coin-action-sheet__close"
+            type="button"
+            aria-label="关闭"
+            @click="closeCoinActions"
+          >
+            ×
+          </button>
           <i class="coin-action-sheet__handle" />
           <h2>币种操作</h2>
           <span
             class="coin-action-sheet__coin"
-            :style="{ backgroundColor: selectedCoinConfig.iconBgColor || '#16ad77' }"
+            :style="{
+              backgroundColor: selectedCoinConfig.iconBgColor || '#16ad77',
+            }"
           >
-            <img v-if="selectedCoinConfig.iconUrl" :src="selectedCoinConfig.iconUrl" :alt="coinConfigName(selectedCoinConfig)" />
+            <img
+              v-if="selectedCoinConfig.iconUrl"
+              :src="selectedCoinConfig.iconUrl"
+              :alt="coinConfigName(selectedCoinConfig)"
+            />
             <span v-else>{{ coinConfigIconText(selectedCoinConfig) }}</span>
           </span>
           <strong>{{ selectedCoinConfig.coin }}</strong>
 
           <div class="coin-action-sheet__grid">
-            <button type="button" class="coin-action coin-action--recharge" @click="openAssetFlow('recharge')">
+            <button
+              type="button"
+              class="coin-action coin-action--recharge"
+              @click="openAssetFlow('recharge')"
+            >
               <span>⇣</span>
               <strong>充值</strong>
             </button>
-            <button type="button" class="coin-action coin-action--withdraw" @click="openAssetFlow('withdraw')">
+            <button
+              type="button"
+              class="coin-action coin-action--withdraw"
+              @click="openAssetFlow('withdraw')"
+            >
               <span>⇡</span>
               <strong>提现</strong>
             </button>
-            <button type="button" class="coin-action coin-action--transfer-in" @click="openAssetFlow('transfer', 'in')">
+            <button
+              type="button"
+              class="coin-action coin-action--transfer-in"
+              @click="openAssetFlow('transfer', 'in')"
+            >
               <span>↯</span>
               <strong>转入</strong>
             </button>
-            <button type="button" class="coin-action coin-action--transfer-out" @click="openAssetFlow('transfer', 'out')">
+            <button
+              type="button"
+              class="coin-action coin-action--transfer-out"
+              @click="openAssetFlow('transfer', 'out')"
+            >
               <span>↟</span>
               <strong>转出</strong>
             </button>
@@ -389,7 +474,10 @@ onMounted(() => {
     </template>
 
     <template v-else-if="activeTopTab === 'orders'">
-      <nav class="assets-sub-tabs assets-sub-tabs--orders" aria-label="订单分类">
+      <nav
+        class="assets-sub-tabs assets-sub-tabs--orders"
+        aria-label="订单分类"
+      >
         <button
           v-for="scope in orderScopes"
           :key="scope.key"
@@ -402,16 +490,25 @@ onMounted(() => {
       </nav>
 
       <nav class="assets-order-tabs" aria-label="订单状态">
-        <button v-for="(tab, index) in orderTabs" :key="tab" type="button" :class="{ active: index === 0 }">
+        <button
+          v-for="(tab, index) in orderTabs"
+          :key="tab"
+          type="button"
+          :class="{ active: index === 0 }"
+        >
           {{ tab }}
         </button>
       </nav>
 
-      <div class="asset-login-tip asset-login-tip--orders"><span>登录</span>或<span>注册</span>查看数据</div>
+      <div class="asset-login-tip asset-login-tip--orders">
+        <span>登录</span>或<span>注册</span>查看数据
+      </div>
     </template>
 
     <template v-else>
-      <div class="asset-login-tip asset-login-tip--orders"><span>登录</span>或<span>注册</span>查看资料</div>
+      <div class="asset-login-tip asset-login-tip--orders">
+        <span>登录</span>或<span>注册</span>查看资料
+      </div>
     </template>
   </section>
 </template>
@@ -489,7 +586,7 @@ button {
   height: 3px;
   border-radius: 999px;
   background: #02b904;
-  content: '';
+  content: "";
 }
 
 .assets-center {
@@ -545,7 +642,7 @@ button {
   width: 12px;
   border-radius: 0 999px 999px 0;
   background: #02b904;
-  content: '';
+  content: "";
 }
 
 .asset-actions {
@@ -775,7 +872,7 @@ button {
   height: 3px;
   border-radius: 999px;
   background: #02b904;
-  content: '';
+  content: "";
 }
 
 .assets-order-tabs {
