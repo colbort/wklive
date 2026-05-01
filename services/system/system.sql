@@ -228,15 +228,16 @@ CREATE TABLE sys_op_log (
 DROP TABLE IF EXISTS sys_config;
 CREATE TABLE sys_config (
   id BIGINT AUTO_INCREMENT,
-
-  config_key VARCHAR(64) UNIQUE,
+  tenant_id BIGINT NOT NULL DEFAULT 0 COMMENT '所属租户ID：0=系统侧，>0=租户ID',
+  config_key VARCHAR(64),
   config_value JSON,
   remark VARCHAR(255),
 
   create_times BIGINT NOT NULL DEFAULT 0,
   update_times BIGINT NOT NULL DEFAULT 0,
 
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  UNIQUE KEY uk_config_key(tenant_id, config_key)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系统配置';
 
 

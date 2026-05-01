@@ -34,7 +34,8 @@ func (l *SysConfigListLogic) SysConfigList(req *types.SysConfigListReq) (resp *t
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
 		},
-		Keyword: req.Keyword,
+		Keyword:  req.Keyword,
+		TenantId: req.TenantId,
 	})
 	if err != nil {
 		return nil, err
@@ -54,10 +55,12 @@ func (l *SysConfigListLogic) SysConfigList(req *types.SysConfigListReq) (resp *t
 	for i, v := range result.Data {
 		resp.Data[i] = types.SysConfigItem{
 			Id:          v.Id,
+			TenantId:    v.TenantId,
 			ConfigKey:   v.ConfigKey,
 			ConfigValue: v.ConfigValue,
 			Remark:      v.Remark,
 			CreateTimes: v.CreateTimes,
+			UpdateTimes: v.UpdateTimes,
 		}
 	}
 	return

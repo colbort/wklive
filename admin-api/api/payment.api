@@ -774,8 +774,7 @@ type ListWithdrawOrdersResp {
 }
 
 type GetWithdrawOrderReq {
-	tenantId int64  `form:"tenantId"`
-	orderNo  string `form:"orderNo"`
+	orderNo  string `path:"orderNo"`
 }
 
 type GetWithdrawOrderResp {
@@ -1154,7 +1153,7 @@ service admin {
 
 	// 获取提现订单详情
 	@handler GetWithdrawOrder
-	get /withdraw-order/:id (GetWithdrawOrderReq) returns (GetWithdrawOrderResp)
+	get /withdraw-order/:orderNo (GetWithdrawOrderReq) returns (GetWithdrawOrderResp)
 
 	// 审核提现订单
 	@handler AuditWithdrawOrder

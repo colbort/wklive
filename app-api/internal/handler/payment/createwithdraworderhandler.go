@@ -6,10 +6,12 @@ package payment
 import (
 	"net/http"
 
-	"github.com/zeromicro/go-zero/rest/httpx"
 	"wklive/app-api/internal/logic/payment"
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
+	"wklive/common/utils"
+
+	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
 func CreateWithdrawOrderHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
@@ -21,6 +23,7 @@ func CreateWithdrawOrderHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := payment.NewCreateWithdrawOrderLogic(r.Context(), svcCtx)
+		req.ClientIp = utils.GetClientIP(r) // 获取客户端IP
 		resp, err := l.CreateWithdrawOrder(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)

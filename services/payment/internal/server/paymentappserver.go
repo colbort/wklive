@@ -41,6 +41,12 @@ func (s *PaymentAppServer) CreateRechargeOrder(ctx context.Context, in *payment.
 	return l.CreateRechargeOrder(in)
 }
 
+// 创建链上充值订单
+func (s *PaymentAppServer) CreateCryptoRechargeOrder(ctx context.Context, in *payment.CreateCryptoRechargeOrderReq) (*payment.CreateCryptoRechargeOrderResp, error) {
+	l := logic.NewCreateCryptoRechargeOrderLogic(ctx, s.svcCtx)
+	return l.CreateCryptoRechargeOrder(in)
+}
+
 // 查询我的订单详情
 func (s *PaymentAppServer) GetMyRechargeOrder(ctx context.Context, in *payment.GetMyRechargeOrderReq) (*payment.GetMyRechargeOrderResp, error) {
 	l := logic.NewGetMyRechargeOrderLogic(ctx, s.svcCtx)

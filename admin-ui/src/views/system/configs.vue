@@ -10,6 +10,14 @@
 
     <el-card class="query-card" shadow="never">
       <el-form :model="queryForm" inline>
+        <el-form-item :label="t('common.tenantId')">
+          <el-input-number
+            v-model="queryForm.tenantId"
+            :min="0"
+            :precision="0"
+            @change="fetchList"
+          />
+        </el-form-item>
         <el-form-item :label="t('system.configKey')">
           <el-select
             v-model="queryForm.keyword"
@@ -40,18 +48,9 @@
     </el-card>
 
     <el-card class="table-card" shadow="never">
-      <el-table
-        v-loading="loading"
-        :data="list"
-        :empty-text="t('common.noData')"
-        stripe
-      >
-        <el-table-column
-          prop="id"
-          :label="t('common.id')"
-          width="80"
-          align="center"
-        />
+      <el-table v-loading="loading" :data="list" :empty-text="t('common.noData')" stripe>
+        <el-table-column prop="id" :label="t('common.id')" width="80" align="center" />
+        <el-table-column prop="tenantId" :label="t('common.tenantId')" width="100" align="center" />
         <el-table-column prop="configKey" :label="t('system.configKey')" min-width="150" />
         <el-table-column prop="configValue" :label="t('system.configValue')" min-width="200">
           <template #default="{ row }">
@@ -72,11 +71,16 @@
           </template>
         </el-table-column>
         <el-table-column
-          :label="t('common.actions')"
-          width="150"
+          prop="updateTimes"
+          :label="t('common.updateTimes')"
+          width="160"
           align="center"
-          fixed="right"
         >
+          <template #default="{ row }">
+            {{ formatDate(row.updateTimes) }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('common.actions')" width="150" align="center" fixed="right">
           <template #default="{ row }">
             <el-button
               v-perm="'sys:config:update'"
@@ -138,12 +142,24 @@
       width="600px"
       :close-on-click-modal="false"
     >
-      <el-form
-        ref="formRef"
-        :model="formData"
-        :rules="formRules"
-        label-width="100px"
-      >
+      <el-form ref="formRef" :model="formData" :rules="formRules" label-width="100px">
+        <el-form-item :label="t('common.tenantId')" prop="tenantId">
+          <div class="verify-row">
+            <el-input-number
+              v-model="formData.tenantId"
+              :disabled="isEdit"
+              :min="0"
+              :precision="0"
+              @change="handleTenantChange"
+            />
+            <el-button v-if="formData.tenantId > 0" :loading="tenantChecking" @click="checkTenant">
+              {{ t('payment.verifyTenant') }}
+            </el-button>
+            <span v-if="tenantVerified" class="verified-text">
+              {{ formData.tenantId === 0 ? t('system.systemConfigScope') : t('payment.verified') }}
+            </span>
+          </div>
+        </el-form-item>
         <el-form-item :label="t('system.configKey')" prop="configKey">
           <el-select
             v-if="!isEdit"
@@ -179,6 +195,14 @@
           <ItickConfigComponent v-model="itickConfigForm" />
         </template>
 
+        <template v-else-if="formData.configKey === 'RECHARGE_CONFIG'">
+          <RechargeConfigComponent v-model="rechargeConfigForm" />
+        </template>
+
+        <template v-else-if="formData.configKey === 'WITHDRAW_CONFIG'">
+          <WithdrawConfigComponent v-model="withdrawConfigForm" />
+        </template>
+
         <template v-else>
           <el-form-item :label="t('system.configValue')" prop="configValue">
             <el-input
@@ -208,9 +232,15 @@ import { onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { Plus, Search, Refresh } from '@element-plus/icons-vue'
-import { configService } from '@/services'
+import { configService, tenantsService } from '@/services'
 import type { SysConfigItem, SysConfigCreateReq, OptionItem } from '@/services'
-import type { SystemCore, ObjectStorageConfig, ItickConfig } from '@/services/system/ConfigService'
+import type {
+  SystemCore,
+  ObjectStorageConfig,
+  ItickConfig,
+  RechargeConfig,
+  WithdrawConfig,
+} from '@/services/system/ConfigService'
 import { usePagination } from '@/composables/usePagination'
 import { useLoading } from '@/composables/useLoading'
 import { useForm } from '@/composables/useForm'
@@ -218,6 +248,8 @@ import { formatDate } from '@/utils'
 import SystemCoreConfigComponent from './components/SystemCoreConfig.vue'
 import ObjectStorageConfigComponent from './components/ObjectStorageConfig.vue'
 import ItickConfigComponent from './components/ItickConfig.vue'
+import RechargeConfigComponent from './components/RechargeConfig.vue'
+import WithdrawConfigComponent from './components/WithdrawConfig.vue'
 import { getOptionLabel } from '@/utils/options'
 
 const { t } = useI18n()
@@ -235,6 +267,7 @@ const { loading, withLoading } = useLoading()
 // Query form
 const { form: queryForm } = useForm({
   initialData: {
+    tenantId: 0,
     keyword: '',
   },
 })
@@ -243,11 +276,15 @@ const { form: queryForm } = useForm({
 const dialogVisible = ref(false)
 const isEdit = ref(false)
 const submitLoading = ref(false)
+const tenantChecking = ref(false)
+const tenantVerified = ref(true)
+const verifiedTenantId = ref(0)
 const formRef = ref()
 
 const { form: formData, reset: resetForm } = useForm({
   initialData: {
     id: 0,
+    tenantId: 0,
     configKey: '',
     configValue: '',
     remark: '',
@@ -301,6 +338,26 @@ const itickConfigForm = ref<ItickConfig>({
   ws_url: '',
 })
 
+const rechargeConfigForm = ref<RechargeConfig>({
+  minAmount: 0,
+  maxAmount: 0,
+  feeRate: 0,
+})
+
+const withdrawConfigForm = ref<WithdrawConfig>({
+  minAmount: 0,
+  maxAmount: 0,
+  feeRate: 0,
+  dailyLimitPerUser: 0,
+  dailyAmountLimitPerUser: 0,
+  allowedTimeRange: '',
+  pendingWithdrawalLimitPerUser: 0,
+  freeWithdrawTimesPerDay: 0,
+})
+
+const configNumber = (data: Record<string, unknown>, camelKey: string, snakeKey: string) =>
+  Number(data[camelKey] ?? data[snakeKey] ?? 0)
+
 // Form validation rules
 const formRules = {
   configKey: [{ required: true, message: t('validation.required'), trigger: 'blur' }],
@@ -323,6 +380,7 @@ async function fetchList() {
   await withLoading(async () => {
     try {
       const res = await configService.getList({
+        tenantId: queryForm.tenantId,
         keyword: queryForm.keyword || undefined,
         cursor: pagination.cursor,
         limit: pagination.limit,
@@ -344,6 +402,7 @@ async function fetchList() {
 
 // Handle reset
 function handleReset() {
+  queryForm.tenantId = 0
   queryForm.keyword = ''
   pagination.cursor = null
   pagination.hasPrev = false
@@ -388,6 +447,21 @@ function resetTypeForms() {
     api_url: '',
     api_token: '',
     ws_url: '',
+  }
+  rechargeConfigForm.value = {
+    minAmount: 0,
+    maxAmount: 0,
+    feeRate: 0,
+  }
+  withdrawConfigForm.value = {
+    minAmount: 0,
+    maxAmount: 0,
+    feeRate: 0,
+    dailyLimitPerUser: 0,
+    dailyAmountLimitPerUser: 0,
+    allowedTimeRange: '',
+    pendingWithdrawalLimitPerUser: 0,
+    freeWithdrawTimesPerDay: 0,
   }
 }
 
@@ -436,6 +510,25 @@ function handleConfigKeyChange(value: string) {
       ws_url: '',
     }
     formData.configValue = ''
+  } else if (value === 'RECHARGE_CONFIG') {
+    rechargeConfigForm.value = {
+      minAmount: 0,
+      maxAmount: 0,
+      feeRate: 0,
+    }
+    formData.configValue = ''
+  } else if (value === 'WITHDRAW_CONFIG') {
+    withdrawConfigForm.value = {
+      minAmount: 0,
+      maxAmount: 0,
+      feeRate: 0,
+      dailyLimitPerUser: 0,
+      dailyAmountLimitPerUser: 0,
+      allowedTimeRange: '',
+      pendingWithdrawalLimitPerUser: 0,
+      freeWithdrawTimesPerDay: 0,
+    }
+    formData.configValue = ''
   }
 }
 
@@ -454,6 +547,7 @@ function handleCreate() {
   isEdit.value = false
   resetForm()
   resetTypeForms()
+  handleTenantChange()
   loadKeys()
   dialogVisible.value = true
 }
@@ -465,9 +559,12 @@ function handleEdit(row: SysConfigItem) {
   resetTypeForms()
   Object.assign(formData, {
     id: row.id,
+    tenantId: row.tenantId || 0,
     configKey: row.configKey,
     remark: row.remark || '',
   })
+  tenantVerified.value = true
+  verifiedTenantId.value = row.tenantId || 0
 
   if (row.configKey === 'SYSTEM_CORE') {
     try {
@@ -521,6 +618,58 @@ function handleEdit(row: SysConfigItem) {
         ws_url: '',
       }
     }
+  } else if (row.configKey === 'RECHARGE_CONFIG') {
+    try {
+      const parsed = JSON.parse(row.configValue || '{}') as Record<string, unknown>
+      rechargeConfigForm.value = {
+        minAmount: configNumber(parsed, 'minAmount', 'min_amount'),
+        maxAmount: configNumber(parsed, 'maxAmount', 'max_amount'),
+        feeRate: configNumber(parsed, 'feeRate', 'fee_rate'),
+      }
+    } catch {
+      rechargeConfigForm.value = {
+        minAmount: 0,
+        maxAmount: 0,
+        feeRate: 0,
+      }
+    }
+  } else if (row.configKey === 'WITHDRAW_CONFIG') {
+    try {
+      const parsed = JSON.parse(row.configValue || '{}') as Record<string, unknown>
+      withdrawConfigForm.value = {
+        minAmount: configNumber(parsed, 'minAmount', 'min_amount'),
+        maxAmount: configNumber(parsed, 'maxAmount', 'max_amount'),
+        feeRate: configNumber(parsed, 'feeRate', 'fee_rate'),
+        dailyLimitPerUser: configNumber(parsed, 'dailyLimitPerUser', 'daily_limit_per_user'),
+        dailyAmountLimitPerUser: configNumber(
+          parsed,
+          'dailyAmountLimitPerUser',
+          'daily_amount_limit_per_user',
+        ),
+        allowedTimeRange: String(parsed.allowedTimeRange ?? parsed.allowed_time_range ?? ''),
+        pendingWithdrawalLimitPerUser: configNumber(
+          parsed,
+          'pendingWithdrawalLimitPerUser',
+          'pending_withdrawal_limit_per_user',
+        ),
+        freeWithdrawTimesPerDay: configNumber(
+          parsed,
+          'freeWithdrawTimesPerDay',
+          'free_withdraw_times_per_day',
+        ),
+      }
+    } catch {
+      withdrawConfigForm.value = {
+        minAmount: 0,
+        maxAmount: 0,
+        feeRate: 0,
+        dailyLimitPerUser: 0,
+        dailyAmountLimitPerUser: 0,
+        allowedTimeRange: '',
+        pendingWithdrawalLimitPerUser: 0,
+        freeWithdrawTimesPerDay: 0,
+      }
+    }
   } else {
     formData.configValue = row.configValue
   }
@@ -549,12 +698,62 @@ async function handleDelete(row: SysConfigItem) {
   }
 }
 
+function handleTenantChange() {
+  if (formData.tenantId === 0) {
+    tenantVerified.value = true
+    verifiedTenantId.value = 0
+    return
+  }
+  tenantVerified.value = false
+  verifiedTenantId.value = 0
+}
+
+async function validateTenantExists(tenantId: number) {
+  if (tenantId === 0) return true
+
+  try {
+    const res = await tenantsService.detail({ tenantId })
+    return (res.code === 0 || res.code === 200) && Boolean(res.data)
+  } catch {
+    return false
+  }
+}
+
+async function checkTenant() {
+  if (formData.tenantId === 0) {
+    tenantVerified.value = true
+    verifiedTenantId.value = 0
+    return true
+  }
+
+  tenantChecking.value = true
+  try {
+    const exists = await validateTenantExists(formData.tenantId)
+    tenantVerified.value = exists
+    verifiedTenantId.value = exists ? formData.tenantId : 0
+    ElMessage[exists ? 'success' : 'error'](
+      exists ? t('payment.tenantVerifiedSuccess') : t('payment.tenantNotFound'),
+    )
+    return exists
+  } finally {
+    tenantChecking.value = false
+  }
+}
+
+async function ensureTenantVerified() {
+  if (formData.tenantId === 0) return true
+  if (tenantVerified.value && verifiedTenantId.value === formData.tenantId) return true
+  return checkTenant()
+}
+
 // Handle submit
 async function handleSubmit() {
   if (!formRef.value) return
 
   try {
     await formRef.value.validate()
+    const tenantOk = await ensureTenantVerified()
+    if (!tenantOk) return
 
     submitLoading.value = true
 
@@ -577,6 +776,10 @@ async function handleSubmit() {
         throw new Error(t('validation.required'))
       }
       formData.configValue = JSON.stringify(itickConfigForm.value)
+    } else if (formData.configKey === 'RECHARGE_CONFIG') {
+      formData.configValue = JSON.stringify(rechargeConfigForm.value)
+    } else if (formData.configKey === 'WITHDRAW_CONFIG') {
+      formData.configValue = JSON.stringify(withdrawConfigForm.value)
     }
 
     if (isEdit.value) {
@@ -586,6 +789,7 @@ async function handleSubmit() {
       ElMessage.success(t('common.updateSuccess'))
     } else {
       const data: SysConfigCreateReq = {
+        tenantId: formData.tenantId,
         configKey: formData.configKey,
         configValue: formData.configValue,
         remark: formData.remark || undefined,
@@ -648,6 +852,17 @@ onMounted(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.verify-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.verified-text {
+  color: var(--el-color-success);
+  font-size: 14px;
 }
 </style>
 

@@ -28,7 +28,7 @@ const router = useRouter()
 <style scoped>
 .asset-flow-page {
   min-height: 100dvh;
-  padding: 12px 20px 36px;
+  padding: 10px 18px 28px;
   background: #0b0c15;
   color: #f8f8fb;
 }
@@ -42,29 +42,29 @@ button {
 
 .asset-flow-header {
   display: grid;
-  grid-template-columns: 40px 1fr 84px;
+  grid-template-columns: 36px 1fr 80px;
   align-items: center;
-  min-height: 40px;
+  min-height: 36px;
 }
 
 .asset-flow-header--plain-right {
-  grid-template-columns: 40px 1fr 40px;
+  grid-template-columns: 36px 1fr 36px;
 }
 
 .asset-flow-back {
   display: grid;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   place-items: center;
   border-radius: 50%;
   background: #242633;
-  font-size: 36px;
+  font-size: 32px;
   line-height: 0.6;
 }
 
 .asset-flow-header h1 {
   margin: 0;
-  font-size: 20px;
+  font-size: 18px;
   text-align: center;
 }
 
@@ -76,12 +76,12 @@ button {
 }
 
 .asset-flow-body {
-  padding-top: 24px;
+  padding-top: 20px;
 }
 
 @media (min-width: 768px) {
   .asset-flow-page--narrow {
-    max-width: 720px;
+    max-width: 430px;
     min-height: calc(100dvh - 76px);
     margin: 0 auto;
   }

@@ -2,17 +2,24 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
-import { apiGetMyAssetSummary, apiListAssetCoinConfigs } from '@/api/asset'
+import { apiGetAssetOptions, apiGetMyAssetSummary, apiListAssetCoinConfigs } from '@/api/asset'
+import { apiCreateWithdrawOrder } from '@/api/payment'
 import AssetCoinSelectSheet from '@/components/assets/AssetCoinSelectSheet.vue'
 import AssetCoinPicker from '@/components/assets/AssetCoinPicker.vue'
 import AssetFlowLayout from '@/components/assets/AssetFlowLayout.vue'
 import AssetPrimaryButton from '@/components/assets/AssetPrimaryButton.vue'
+import { useOptions } from '@/composables/useOptions'
 import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
 
 const route = useRoute()
+const assetOptions = useOptions(apiGetAssetOptions)
 const coinConfigs = ref<AssetCoinConfig[]>([])
 const assets = ref<AssetUserAsset[]>([])
 const amount = ref('')
+const address = ref('')
+const submitLoading = ref(false)
+const pageError = ref('')
+const pageTip = ref('')
 const selectedConfig = ref<AssetCoinConfig | null>(null)
 const coinSheetVisible = ref(false)
 
@@ -21,32 +28,27 @@ const routeCoin = computed(() => String(route.query.coin || 'USDT'))
 const coin = computed(() => selectedConfig.value?.coin || routeCoin.value)
 const selectedChain = computed(() => {
   const config = selectedConfig.value
-  if (!config) return routeCoin.value === 'USDT' ? 'TRC20' : ''
+  if (!config) return ''
   return getChainLabel(config)
 })
 const availableAmount = computed(() => {
   return assets.value.find((asset) => asset.walletType === walletType.value && asset.coin === coin.value)?.availableAmount || '0'
 })
-
-const chainLabels: Record<number, string> = {
-  1: 'BTC',
-  2: 'ETH',
-  3: 'TRX',
-  4: 'BSC',
-  5: 'SOL',
-  6: 'POLYGON',
-  20: 'TRC20',
-  21: 'ERC20',
-  22: 'BEP20',
-}
+const receivedAmount = computed(() => amount.value || '0')
 
 function isSuccessCode(code: number) {
   return code === 0 || code === 200
 }
 
 function getChainLabel(config: AssetCoinConfig) {
-  if (config.chainCode) return chainLabels[config.chainCode] || String(config.chainCode)
-  return config.coin === 'USDT' ? 'TRC20' : ''
+  if (String(config.coin).toLocaleUpperCase() != "USDT" || !config.chainCode) return ''
+  const option = assetOptions.getGroup('chainCode').find((item) => item.value === config.chainCode)
+  console.log('find chain option ================= ', config.chainCode, option)
+  return option ? formatChainCode(option.code) : String(config.chainCode)
+}
+
+function formatChainCode(code: string) {
+  return code.replace(/^CHAIN_CODE_/, '')
 }
 
 function syncSelectedConfig(configs: AssetCoinConfig[]) {
@@ -75,6 +77,59 @@ async function loadPageData() {
 
 function selectConfig(config: AssetCoinConfig) {
   selectedConfig.value = config
+  pageError.value = ''
+  pageTip.value = ''
+}
+
+function parseAmountToMinor(value: string) {
+  const normalized = value.trim()
+  if (!/^\d+(\.\d{1,2})?$/.test(normalized)) return 0
+  const [integerPart, decimalPart = ''] = normalized.split('.')
+  return Number(integerPart) * 100 + Number(decimalPart.padEnd(2, '0'))
+}
+
+async function submitWithdraw() {
+  if (submitLoading.value) return
+
+  pageError.value = ''
+  pageTip.value = ''
+  const withdrawAmount = parseAmountToMinor(amount.value)
+  if (!coin.value) {
+    pageError.value = '请选择提现币种'
+    return
+  }
+  if (!address.value.trim()) {
+    pageError.value = '请输入提现地址'
+    return
+  }
+  if (withdrawAmount <= 0) {
+    pageError.value = '请输入提现金额'
+    return
+  }
+
+  submitLoading.value = true
+  try {
+    const resp = await apiCreateWithdrawOrder({
+      amount: withdrawAmount,
+      currency: coin.value,
+      address: address.value.trim(),
+      bankId: 0,
+      remark: selectedChain.value ? `chain:${selectedChain.value}` : '',
+    })
+    if (isSuccessCode(resp.code)) {
+      pageTip.value = resp.id ? `提现申请已提交：${resp.id}` : '提现申请已提交'
+      amount.value = ''
+      address.value = ''
+      await loadPageData()
+    } else {
+      pageError.value = resp.msg || '提现提交失败，请稍后重试'
+    }
+  } catch (error) {
+    console.warn('create withdraw order failed', error)
+    pageError.value = '提现提交失败，请稍后重试'
+  } finally {
+    submitLoading.value = false
+  }
 }
 
 onMounted(() => {
@@ -99,7 +154,7 @@ onMounted(() => {
     <label class="field-block">
       <span>提现地址</span>
       <span class="asset-input asset-input--address">
-        <input placeholder="选择或输入地址" />
+        <input v-model="address" placeholder="选择或输入地址" />
         <i>▣</i>
       </span>
     </label>
@@ -119,11 +174,14 @@ onMounted(() => {
       </div>
       <div>
         <dt>到账金额</dt>
-        <dd>{{ amount || 0 }} {{ coin }}</dd>
+        <dd>{{ receivedAmount }} {{ coin }}</dd>
       </div>
     </dl>
 
-    <AssetPrimaryButton label="提现" />
+    <p v-if="pageError" class="state-text state-text--error">{{ pageError }}</p>
+    <p v-if="pageTip" class="state-text state-text--success">{{ pageTip }}</p>
+
+    <AssetPrimaryButton :label="submitLoading ? '提交中' : '提现'" @click="submitWithdraw" />
 
     <AssetCoinSelectSheet
       v-model="coinSheetVisible"
@@ -231,5 +289,21 @@ input {
   margin: 0;
   font-size: 14px;
   font-weight: 800;
+}
+
+.state-text {
+  margin: -10px 0 16px;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.state-text--error {
+  color: #ff7676;
+}
+
+.state-text--success {
+  color: #02d107;
 }
 </style>

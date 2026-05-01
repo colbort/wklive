@@ -38,6 +38,7 @@ func main() {
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		payment.RegisterPaymentAdminServer(grpcServer, server.NewPaymentAdminServer(ctx))
+		payment.RegisterPaymentAppServer(grpcServer, server.NewPaymentAppServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

@@ -23,15 +23,15 @@ var (
 	sysConfigRowsExpectAutoSet   = strings.Join(stringx.Remove(sysConfigFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	sysConfigRowsWithPlaceHolder = strings.Join(stringx.Remove(sysConfigFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheSysConfigIdPrefix        = "cache:sysConfig:id:"
-	cacheSysConfigConfigKeyPrefix = "cache:sysConfig:configKey:"
+	cacheSysConfigIdPrefix                = "cache:sysConfig:id:"
+	cacheSysConfigTenantIdConfigKeyPrefix = "cache:sysConfig:tenantId:configKey:"
 )
 
 type (
 	sysConfigModel interface {
 		Insert(ctx context.Context, data *SysConfig) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*SysConfig, error)
-		FindOneByConfigKey(ctx context.Context, configKey sql.NullString) (*SysConfig, error)
+		FindOneByTenantIdConfigKey(ctx context.Context, tenantId int64, configKey sql.NullString) (*SysConfig, error)
 		Update(ctx context.Context, data *SysConfig) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -43,6 +43,7 @@ type (
 
 	SysConfig struct {
 		Id          int64          `db:"id"`
+		TenantId    int64          `db:"tenant_id"` // 所属租户ID：0=系统侧，>0=租户ID
 		ConfigKey   sql.NullString `db:"config_key"`
 		ConfigValue sql.NullString `db:"config_value"`
 		Remark      sql.NullString `db:"remark"`
@@ -64,12 +65,12 @@ func (m *defaultSysConfigModel) Delete(ctx context.Context, id int64) error {
 		return err
 	}
 
-	sysConfigConfigKeyKey := fmt.Sprintf("%s%v", cacheSysConfigConfigKeyPrefix, data.ConfigKey)
 	sysConfigIdKey := fmt.Sprintf("%s%v", cacheSysConfigIdPrefix, id)
+	sysConfigTenantIdConfigKeyKey := fmt.Sprintf("%s%v:%v", cacheSysConfigTenantIdConfigKeyPrefix, data.TenantId, data.ConfigKey)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, sysConfigConfigKeyKey, sysConfigIdKey)
+	}, sysConfigIdKey, sysConfigTenantIdConfigKeyKey)
 	return err
 }
 
@@ -90,12 +91,12 @@ func (m *defaultSysConfigModel) FindOne(ctx context.Context, id int64) (*SysConf
 	}
 }
 
-func (m *defaultSysConfigModel) FindOneByConfigKey(ctx context.Context, configKey sql.NullString) (*SysConfig, error) {
-	sysConfigConfigKeyKey := fmt.Sprintf("%s%v", cacheSysConfigConfigKeyPrefix, configKey)
+func (m *defaultSysConfigModel) FindOneByTenantIdConfigKey(ctx context.Context, tenantId int64, configKey sql.NullString) (*SysConfig, error) {
+	sysConfigTenantIdConfigKeyKey := fmt.Sprintf("%s%v:%v", cacheSysConfigTenantIdConfigKeyPrefix, tenantId, configKey)
 	var resp SysConfig
-	err := m.QueryRowIndexCtx(ctx, &resp, sysConfigConfigKeyKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `config_key` = ? limit 1", sysConfigRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, configKey); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, sysConfigTenantIdConfigKeyKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `config_key` = ? limit 1", sysConfigRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, configKey); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -111,12 +112,12 @@ func (m *defaultSysConfigModel) FindOneByConfigKey(ctx context.Context, configKe
 }
 
 func (m *defaultSysConfigModel) Insert(ctx context.Context, data *SysConfig) (sql.Result, error) {
-	sysConfigConfigKeyKey := fmt.Sprintf("%s%v", cacheSysConfigConfigKeyPrefix, data.ConfigKey)
 	sysConfigIdKey := fmt.Sprintf("%s%v", cacheSysConfigIdPrefix, data.Id)
+	sysConfigTenantIdConfigKeyKey := fmt.Sprintf("%s%v:%v", cacheSysConfigTenantIdConfigKeyPrefix, data.TenantId, data.ConfigKey)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?)", m.table, sysConfigRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.ConfigKey, data.ConfigValue, data.Remark, data.CreateTimes, data.UpdateTimes)
-	}, sysConfigConfigKeyKey, sysConfigIdKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?)", m.table, sysConfigRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.ConfigKey, data.ConfigValue, data.Remark, data.CreateTimes, data.UpdateTimes)
+	}, sysConfigIdKey, sysConfigTenantIdConfigKeyKey)
 	return ret, err
 }
 
@@ -126,12 +127,12 @@ func (m *defaultSysConfigModel) Update(ctx context.Context, newData *SysConfig) 
 		return err
 	}
 
-	sysConfigConfigKeyKey := fmt.Sprintf("%s%v", cacheSysConfigConfigKeyPrefix, data.ConfigKey)
 	sysConfigIdKey := fmt.Sprintf("%s%v", cacheSysConfigIdPrefix, data.Id)
+	sysConfigTenantIdConfigKeyKey := fmt.Sprintf("%s%v:%v", cacheSysConfigTenantIdConfigKeyPrefix, data.TenantId, data.ConfigKey)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysConfigRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.ConfigKey, newData.ConfigValue, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, sysConfigConfigKeyKey, sysConfigIdKey)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.ConfigKey, newData.ConfigValue, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, sysConfigIdKey, sysConfigTenantIdConfigKeyKey)
 	return err
 }
 

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { apiListAssetCoinConfigs } from '@/api/asset'
-import { apiGetMyCryptoRechargeAddress } from '@/api/payment'
+import { apiCreateCryptoRechargeOrder, apiGetMyCryptoRechargeAddress } from '@/api/payment'
 import AssetCoinSelectSheet from '@/components/assets/AssetCoinSelectSheet.vue'
 import AssetCoinPicker from '@/components/assets/AssetCoinPicker.vue'
 import AssetFlowLayout from '@/components/assets/AssetFlowLayout.vue'
@@ -21,6 +21,9 @@ const pageError = ref('')
 const copyTip = ref('')
 const amount = ref('')
 const voucherName = ref('')
+const submitLoading = ref(false)
+const addressSecondsLeft = ref(0)
+let addressTimer: ReturnType<typeof setInterval> | undefined
 const fileInputRef = ref<HTMLInputElement | null>(null)
 const step = ref<'select' | 'detail'>('select')
 
@@ -36,7 +39,13 @@ const selectedChain = computed(() => {
 const qrImageUrl = computed(() => {
   const address = rechargeAddress.value?.address || ''
   if (!address) return ''
-  return `https://api.qrserver.com/v1/create-qr-code/?size=280x280&margin=12&data=${encodeURIComponent(address)}`
+  return `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&data=${encodeURIComponent(address)}`
+})
+const addressCountdownText = computed(() => {
+  const seconds = addressSecondsLeft.value
+  const minutes = Math.floor(seconds / 60)
+  const remainSeconds = String(seconds % 60).padStart(2, '0')
+  return `${minutes}:${remainSeconds}`
 })
 
 const chainLabels: Record<number, string> = {
@@ -86,10 +95,34 @@ async function loadCoinConfigs() {
 function selectConfig(config: AssetCoinConfig) {
   selectedConfig.value = config
   rechargeAddress.value = null
+  stopAddressCountdown()
   pageError.value = ''
   copyTip.value = ''
   step.value = 'select'
   coinSheetVisible.value = false
+}
+
+function stopAddressCountdown() {
+  if (addressTimer) {
+    clearInterval(addressTimer)
+    addressTimer = undefined
+  }
+  addressSecondsLeft.value = 0
+}
+
+function startAddressCountdown() {
+  stopAddressCountdown()
+  addressSecondsLeft.value = 180
+  addressTimer = setInterval(() => {
+    addressSecondsLeft.value -= 1
+    if (addressSecondsLeft.value > 0) return
+
+    stopAddressCountdown()
+    rechargeAddress.value = null
+    copyTip.value = ''
+    pageError.value = '充值地址已过期，请重新获取地址'
+    step.value = 'select'
+  }, 1000)
 }
 
 async function startRecharge() {
@@ -109,6 +142,7 @@ async function startRecharge() {
     })
     if (isSuccessCode(resp.code) && resp.data?.address) {
       rechargeAddress.value = resp.data
+      startAddressCountdown()
       step.value = 'detail'
     } else {
       pageError.value = resp.msg || '暂未获取到充值地址'
@@ -137,12 +171,56 @@ function handleVoucherChange(event: Event) {
   voucherName.value = input.files?.[0]?.name || ''
 }
 
-function completeRecharge() {
-  copyTip.value = '已提交，请等待链上确认'
+function parseAmountToMinor(value: string) {
+  const normalized = value.trim()
+  if (!/^\d+(\.\d{1,2})?$/.test(normalized)) return 0
+  const [integerPart, decimalPart = ''] = normalized.split('.')
+  return Number(integerPart) * 100 + Number(decimalPart.padEnd(2, '0'))
+}
+
+async function completeRecharge() {
+  if (submitLoading.value) return
+
+  pageError.value = ''
+  copyTip.value = ''
+  const rechargeAmount = parseAmountToMinor(amount.value)
+  if (rechargeAmount <= 0) {
+    pageError.value = '请输入充值金额'
+    return
+  }
+
+  submitLoading.value = true
+  try {
+    const resp = await apiCreateCryptoRechargeOrder({
+      walletType: walletType.value,
+      coin: selectedCoin.value,
+      chainCode: selectedChainCode.value,
+      rechargeAmount,
+      clientType: 2,
+    })
+    if (isSuccessCode(resp.code)) {
+      if (resp.address) {
+        rechargeAddress.value = resp.address
+      }
+      stopAddressCountdown()
+      copyTip.value = resp.data?.orderNo ? `已提交：${resp.data.orderNo}` : '已提交，请等待链上确认'
+    } else {
+      pageError.value = resp.msg || '提交失败，请稍后重试'
+    }
+  } catch (error) {
+    console.warn('create crypto recharge order failed', error)
+    pageError.value = '提交失败，请稍后重试'
+  } finally {
+    submitLoading.value = false
+  }
 }
 
 onMounted(() => {
   void loadCoinConfigs()
+})
+
+onBeforeUnmount(() => {
+  stopAddressCountdown()
 })
 </script>
 
@@ -178,6 +256,9 @@ onMounted(() => {
         <strong>{{ rechargeAddress?.address }}</strong>
         <button type="button" @click="copyText(rechargeAddress?.address || '')">复制</button>
       </div>
+      <p v-if="addressSecondsLeft > 0" class="address-countdown">
+        地址有效期 {{ addressCountdownText }}，超时后需重新获取
+      </p>
       <div v-if="rechargeAddress?.memo" class="memo-row">
         <span>Memo / Tag</span>
         <strong>{{ rechargeAddress.memo }}</strong>
@@ -203,8 +284,13 @@ onMounted(() => {
         </label>
       </section>
 
+      <p v-if="pageError" class="state-text state-text--error">{{ pageError }}</p>
       <p v-if="copyTip" class="copy-tip">{{ copyTip }}</p>
-      <AssetPrimaryButton class="complete-button" label="完成" @click="completeRecharge" />
+      <AssetPrimaryButton
+        class="complete-button"
+        :label="submitLoading ? '提交中' : '完成'"
+        @click="completeRecharge"
+      />
     </template>
 
     <AssetCoinSelectSheet
@@ -227,13 +313,20 @@ input {
 }
 
 h2 {
-  margin: 0 0 14px;
-  font-size: 15px;
+  margin: 0 0 12px;
+  font-size: 14px;
   font-weight: 700;
 }
 
 .recharge-button {
   margin-top: 36px;
+}
+
+.recharge-button,
+.complete-button {
+  min-height: 48px;
+  border-radius: 14px;
+  font-size: 16px;
 }
 
 .state-text {
@@ -254,7 +347,7 @@ h2 {
 
 .detail-coin :deep(.asset-picker) {
   width: auto;
-  min-height: 44px;
+  min-height: 38px;
   padding: 0;
   background: transparent;
 }
@@ -263,13 +356,17 @@ h2 {
   display: none;
 }
 
+.detail-coin :deep(.asset-picker strong) {
+  font-size: 15px;
+}
+
 .qr-card {
   display: grid;
-  width: min(316px, 76vw);
+  width: min(248px, 68vw);
   aspect-ratio: 1;
-  margin: 34px auto 28px;
+  margin: 24px auto 22px;
   place-items: center;
-  border-radius: 28px;
+  border-radius: 22px;
   background: #fff;
 }
 
@@ -284,10 +381,10 @@ h2 {
 .amount-input {
   display: flex;
   align-items: center;
-  gap: 14px;
-  min-height: 76px;
-  padding: 0 22px;
-  border-radius: 22px;
+  gap: 12px;
+  min-height: 58px;
+  padding: 0 16px;
+  border-radius: 16px;
   background: #20222d;
 }
 
@@ -296,27 +393,36 @@ h2 {
   flex: 1;
   overflow-wrap: anywhere;
   color: #fff;
-  font-size: 17px;
+  font-size: 14px;
   line-height: 1.35;
 }
 
 .address-row button,
 .memo-row button {
   flex: 0 0 auto;
-  min-width: 68px;
-  min-height: 40px;
+  min-width: 56px;
+  min-height: 34px;
   border: 1px solid #02b904;
   border-radius: 999px;
   color: #02d107;
+  font-size: 14px;
   font-weight: 800;
+}
+
+.address-countdown {
+  margin: 10px 0 0;
+  color: #ffce6a;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
 }
 
 .memo-row {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 8px 12px;
-  margin-top: 12px;
-  padding: 14px 22px;
+  margin-top: 10px;
+  padding: 12px 16px;
 }
 
 .memo-row span {
@@ -327,34 +433,34 @@ h2 {
 }
 
 .divider {
-  margin: 28px -20px 36px;
+  margin: 24px -18px 28px;
   border-top: 1px dashed #2c2f3a;
 }
 
 .field-block {
-  margin-bottom: 30px;
+  margin-bottom: 24px;
 }
 
 .voucher-upload {
   display: inline-grid;
-  grid-template-columns: 102px auto;
+  grid-template-columns: 78px auto;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
   color: #8f929e;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 800;
   text-align: left;
 }
 
 .voucher-upload span {
   display: grid;
-  width: 102px;
-  height: 102px;
+  width: 78px;
+  height: 78px;
   place-items: center;
-  border-radius: 22px;
+  border-radius: 18px;
   background: #292b36;
   color: #9b9da6;
-  font-size: 52px;
+  font-size: 40px;
   font-weight: 300;
   line-height: 1;
 }
@@ -371,19 +477,19 @@ h2 {
 }
 
 .amount-input {
-  min-height: 102px;
-  padding: 0 30px;
+  min-height: 72px;
+  padding: 0 20px;
 }
 
 .amount-input input {
   min-width: 0;
   flex: 1;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 800;
 }
 
 .amount-input span {
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 800;
 }
 
@@ -396,6 +502,6 @@ h2 {
 }
 
 .complete-button {
-  margin-top: 22px;
+  margin-top: 18px;
 }
 </style>

@@ -315,6 +315,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: payment.ListMyCryptoRechargeAddressesHandler(serverCtx),
 				},
 				{
+					Method:  http.MethodPost,
+					Path:    "/crypto/recharge/orders",
+					Handler: payment.CreateCryptoRechargeOrderHandler(serverCtx),
+				},
+				{
 					Method:  http.MethodGet,
 					Path:    "/crypto/recharge/txs",
 					Handler: payment.ListMyCryptoRechargeTxsHandler(serverCtx),

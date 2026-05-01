@@ -24,10 +24,12 @@ const (
 type SysConfigType int32
 
 const (
-	SysConfigType_UNKNOWN        SysConfigType = 0
-	SysConfigType_SYSTEM_CORE    SysConfigType = 1 // 系统配置
-	SysConfigType_OBJECT_STORAGE SysConfigType = 2 // 对象存储配置
-	SysConfigType_ITICK_CONFIG   SysConfigType = 3 // ITICK配置
+	SysConfigType_UNKNOWN         SysConfigType = 0
+	SysConfigType_SYSTEM_CORE     SysConfigType = 1 // 系统配置
+	SysConfigType_OBJECT_STORAGE  SysConfigType = 2 // 对象存储配置
+	SysConfigType_ITICK_CONFIG    SysConfigType = 3 // ITICK配置
+	SysConfigType_RECHARGE_CONFIG SysConfigType = 4 // 充值配置
+	SysConfigType_WITHDRAW_CONFIG SysConfigType = 5 // 提现配置
 )
 
 // Enum value maps for SysConfigType.
@@ -37,12 +39,16 @@ var (
 		1: "SYSTEM_CORE",
 		2: "OBJECT_STORAGE",
 		3: "ITICK_CONFIG",
+		4: "RECHARGE_CONFIG",
+		5: "WITHDRAW_CONFIG",
 	}
 	SysConfigType_value = map[string]int32{
-		"UNKNOWN":        0,
-		"SYSTEM_CORE":    1,
-		"OBJECT_STORAGE": 2,
-		"ITICK_CONFIG":   3,
+		"UNKNOWN":         0,
+		"SYSTEM_CORE":     1,
+		"OBJECT_STORAGE":  2,
+		"ITICK_CONFIG":    3,
+		"RECHARGE_CONFIG": 4,
+		"WITHDRAW_CONFIG": 5,
 	}
 )
 
@@ -380,12 +386,14 @@ var File_proto_system_enum_proto protoreflect.FileDescriptor
 
 const file_proto_system_enum_proto_rawDesc = "" +
 	"\n" +
-	"\x17proto/system/enum.proto\x12\x06system*S\n" +
+	"\x17proto/system/enum.proto\x12\x06system*}\n" +
 	"\rSysConfigType\x12\v\n" +
 	"\aUNKNOWN\x10\x00\x12\x0f\n" +
 	"\vSYSTEM_CORE\x10\x01\x12\x12\n" +
 	"\x0eOBJECT_STORAGE\x10\x02\x12\x10\n" +
-	"\fITICK_CONFIG\x10\x03*`\n" +
+	"\fITICK_CONFIG\x10\x03\x12\x13\n" +
+	"\x0fRECHARGE_CONFIG\x10\x04\x12\x13\n" +
+	"\x0fWITHDRAW_CONFIG\x10\x05*`\n" +
 	"\fCommonStatus\x12\x19\n" +
 	"\x15COMMON_STATUS_UNKNOWN\x10\x00\x12\x19\n" +
 	"\x15COMMON_STATUS_ENABLED\x10\x01\x12\x1a\n" +

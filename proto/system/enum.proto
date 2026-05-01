@@ -9,6 +9,8 @@ enum SysConfigType {
   SYSTEM_CORE = 1; // 系统配置
   OBJECT_STORAGE = 2; // 对象存储配置
   ITICK_CONFIG = 3; // ITICK配置
+  RECHARGE_CONFIG = 4; // 充值配置
+  WITHDRAW_CONFIG = 5; // 提现配置
 }
 
 enum CommonStatus {

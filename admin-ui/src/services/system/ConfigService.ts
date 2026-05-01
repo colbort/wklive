@@ -11,14 +11,17 @@ import {
 
 export type SysConfigItem = {
   id: number
+  tenantId: number
   configKey: string
   configValue: string
   remark?: string
   createTimes: number
+  updateTimes: number
 }
 
 export type SysConfigListReq = {
   keyword?: string
+  tenantId?: number
   cursor?: string | null
   limit?: number
 }
@@ -26,6 +29,7 @@ export type SysConfigListReq = {
 export type SysConfigListResp = RespBase<SysConfigItem[]>
 
 export type SysConfigCreateReq = {
+  tenantId: number
   configKey: string
   configValue: string
   remark?: string
@@ -33,6 +37,7 @@ export type SysConfigCreateReq = {
 
 export type SysConfigUpdateReq = {
   id: number
+  tenantId?: number
   configKey?: string
   configValue?: string
   remark?: string
@@ -92,6 +97,25 @@ export type ObjectStorageConfig = {
   minio: MinioConfig
   oss_type: number // 1阿里云OSS 2腾讯云COS 3MINIO
   oss_domain: string // 对象存储访问域名（可选，优先使用bucket_url）
+}
+
+// 充值配置
+export type RechargeConfig = {
+  minAmount: number // 最小充值金额，单位：分
+  maxAmount: number // 最大充值金额，单位：分
+  feeRate: number // 手续费配置，单位：万分之几，例如：100表示1%
+}
+
+// 提现配置
+export type WithdrawConfig = {
+  minAmount: number // 最小提现金额，单位：分
+  maxAmount: number // 最大提现金额，单位：分
+  feeRate: number // 手续费配置，单位：万分之几，例如：100表示1%
+  dailyLimitPerUser: number // 每人每天提现次数限制
+  dailyAmountLimitPerUser: number // 每人每天提现金额限制，单位：分
+  allowedTimeRange: string // 允许提现的时间段，例如：每天9:00-18:00，格式为"09:00-18:00"
+  pendingWithdrawalLimitPerUser: number // 允许未审核在提现数量限制，单位：笔
+  freeWithdrawTimesPerDay: number // 每日免费提现次数，0=没有免费提现
 }
 
 // ===== 系统配置服务 =====

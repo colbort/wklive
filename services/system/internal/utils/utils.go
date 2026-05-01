@@ -16,6 +16,12 @@ func CheckConfig(key string, value string) error {
 	case system.SysConfigType_ITICK_CONFIG.String():
 		var itickConfig system.ItickConfig
 		return json.Unmarshal([]byte(value), &itickConfig)
+	case system.SysConfigType_RECHARGE_CONFIG.String():
+		var rechargeConfig system.RechargeConfig
+		return json.Unmarshal([]byte(value), &rechargeConfig)
+	case system.SysConfigType_WITHDRAW_CONFIG.String():
+		var withdrawConfig system.WithdrawConfig
+		return json.Unmarshal([]byte(value), &withdrawConfig)
 	default:
 		return nil
 	}

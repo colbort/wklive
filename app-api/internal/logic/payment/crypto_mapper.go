@@ -47,6 +47,46 @@ func cryptoRechargeAddressFromPB(item *payment.CryptoRechargeAddress) types.Cryp
 	}
 }
 
+func rechargeOrderFromPB(item *payment.RechargeOrder) types.RechargeOrder {
+	if item == nil {
+		return types.RechargeOrder{}
+	}
+	return types.RechargeOrder{
+		Id:           item.Id,
+		TenantId:     item.TenantId,
+		UserId:       item.UserId,
+		OrderNo:      item.OrderNo,
+		BizOrderNo:   item.BizOrderNo,
+		PlatformId:   item.PlatformId,
+		ProductId:    item.ProductId,
+		AccountId:    item.AccountId,
+		ChannelId:    item.ChannelId,
+		Currency:     item.Currency,
+		OrderAmount:  item.OrderAmount,
+		PayAmount:    item.PayAmount,
+		FeeAmount:    item.FeeAmount,
+		Subject:      item.Subject,
+		Body:         item.Body,
+		ClientType:   int64(item.ClientType.Number()),
+		ClientIp:     item.ClientIp,
+		Status:       int64(item.Status.Number()),
+		ThirdTradeNo: item.ThirdTradeNo,
+		ThirdOrderNo: item.ThirdOrderNo,
+		PayUrl:       item.PayUrl,
+		QrContent:    item.QrContent,
+		RequestData:  item.RequestData,
+		ResponseData: item.ResponseData,
+		NotifyData:   item.NotifyData,
+		ExpireTime:   item.ExpireTime,
+		PaidTime:     item.PaidTime,
+		NotifyTime:   item.NotifyTime,
+		CloseTime:    item.CloseTime,
+		Remark:       item.Remark,
+		CreateTimes:  item.CreateTimes,
+		UpdateTimes:  item.UpdateTimes,
+	}
+}
+
 func cryptoRechargeTxFromPB(item *payment.CryptoRechargeTx) types.CryptoRechargeTx {
 	if item == nil {
 		return types.CryptoRechargeTx{}

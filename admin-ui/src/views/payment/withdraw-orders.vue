@@ -18,6 +18,16 @@
         <el-form-item :label="t('payment.orderNo')">
           <el-input v-model="query.orderNo" clearable />
         </el-form-item>
+        <el-form-item :label="t('common.status')">
+          <el-select v-model="query.status" clearable style="width: 150px">
+            <el-option
+              v-for="item in payOrderStatusOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="loadList">
             {{ t('common.search') }}
@@ -36,7 +46,13 @@
         <el-table-column prop="currency" :label="t('payment.currency')" width="80" />
         <el-table-column prop="amount" :label="t('payment.amount')" min-width="120" />
         <el-table-column prop="feeAmount" :label="t('payment.feeAmount')" min-width="100" />
-        <el-table-column prop="status" :label="t('common.status')" width="90" />
+        <el-table-column :label="t('common.status')" width="110">
+          <template #default="{ row }">
+            <el-tag :type="statusTagType(row.status)" disable-transitions>
+              {{ getOptionValueLabel(optionGroups, 'payOrderStatus', row.status, t) }}
+            </el-tag>
+          </template>
+        </el-table-column>
         <el-table-column :label="t('common.actions')" width="180">
           <template #default="{ row }">
             <el-button link type="primary" @click="showDetail(row)">
@@ -50,9 +66,60 @@
       </el-table>
     </el-card>
 
-    <el-dialog v-model="detailVisible" :title="t('payment.orderDetail')" width="760px">
-      <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
-    </el-dialog>
+    <el-drawer v-model="detailVisible" :title="t('payment.orderDetail')" size="520px">
+      <el-descriptions v-if="detailData" :column="1" border>
+        <el-descriptions-item :label="t('payment.orderNo')">
+          {{ detailData.orderNo }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('payment.bizOrderNo')">
+          {{ detailData.bizOrderNo || '-' }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.tenantId')">
+          {{ detailData.tenantId }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.userId')">
+          {{ detailData.userId }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.status')">
+          <el-tag :type="statusTagType(detailData.status)" disable-transitions>
+            {{ getOptionValueLabel(optionGroups, 'payOrderStatus', detailData.status, t) }}
+          </el-tag>
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('payment.platformId')">
+          {{ detailData.platformId }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('payment.channelId')">
+          {{ detailData.channelId }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('payment.currency')">
+          {{ detailData.currency }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('payment.amount')">
+          {{ detailData.amount }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('payment.feeAmount')">
+          {{ detailData.feeAmount }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('payment.actualAmount')">
+          {{ detailData.actualAmount }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('payment.thirdTradeNo')">
+          {{ detailData.thirdTradeNo || '-' }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('payment.thirdOrderNo')">
+          {{ detailData.thirdOrderNo || '-' }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('payment.clientType')">
+          {{ getOptionValueLabel(optionGroups, 'clientType', detailData.clientType, t) }}
+        </el-descriptions-item>
+        <el-descriptions-item label="IP">
+          {{ detailData.clientIp || '-' }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.remark')">
+          {{ detailData.remark || '-' }}
+        </el-descriptions-item>
+      </el-descriptions>
+    </el-drawer>
 
     <el-dialog v-model="auditVisible" :title="t('payment.auditWithdraw')" width="520px">
       <el-form label-width="110px">
@@ -83,10 +150,11 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { withdrawService, type WithdrawOrder } from '@/services'
+import { catalogService, withdrawService, type OptionGroup, type WithdrawOrder } from '@/services'
+import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 const { t } = useI18n()
 
@@ -96,6 +164,8 @@ const detailVisible = ref(false)
 const detailData = ref<WithdrawOrder | null>(null)
 const auditVisible = ref(false)
 const currentOrder = ref<WithdrawOrder | null>(null)
+const optionGroups = ref<OptionGroup[]>([])
+const payOrderStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'payOrderStatus'))
 
 const auditForm = reactive({
   approve: 1,
@@ -106,6 +176,7 @@ const query = reactive({
   tenantId: 0,
   userId: 0,
   orderNo: '',
+  status: undefined as number | undefined,
 })
 
 const loadList = async () => {
@@ -116,6 +187,7 @@ const loadList = async () => {
       tenantId: query.tenantId || undefined,
       userId: query.userId || undefined,
       orderNo: query.orderNo || undefined,
+      status: query.status || undefined,
       limit: 100,
     })
     list.value = res.data || []
@@ -128,6 +200,14 @@ const showDetail = async (row: WithdrawOrder) => {
   const res = await withdrawService.getWithdrawOrderDetail(row.orderNo, row.tenantId)
   detailData.value = res.data || row
   detailVisible.value = true
+}
+
+const statusTagType = (status: number) => {
+  if (status === 3) return 'success'
+  if (status === 4) return 'danger'
+  if (status === 5 || status === 6) return 'info'
+  if (status === 2) return 'warning'
+  return ''
 }
 
 const openAudit = (row: WithdrawOrder) => {
@@ -149,7 +229,14 @@ const submitAudit = async () => {
   loadList()
 }
 
-onMounted(loadList)
+const loadOptions = async () => {
+  optionGroups.value = (await catalogService.getOptions()).data || []
+}
+
+onMounted(() => {
+  void loadOptions()
+  void loadList()
+})
 </script>
 
 <style scoped></style>

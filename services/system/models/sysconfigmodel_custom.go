@@ -13,12 +13,13 @@ import (
 
 type ConfigModel interface {
 	SysConfigModel
-	FindPage(ctx context.Context, configKey string, cursor, limit int64) ([]*SysConfig, int64, error)
+	FindPage(ctx context.Context, tenantId int64, configKey string, cursor, limit int64) ([]*SysConfig, int64, error)
 	FindByKeys(ctx context.Context, configKeys []string) ([]*SysConfig, error)
 }
 
 func (m *customSysConfigModel) FindPage(
 	ctx context.Context,
+	tenantId int64,
 	configKey string,
 	cursor, limit int64,
 ) ([]*SysConfig, int64, error) {
@@ -26,6 +27,7 @@ func (m *customSysConfigModel) FindPage(
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
+	builder.And("tenant_id = ?", tenantId)
 	builder.LikeString("config_key", "%"+configKey+"%")
 
 	where := builder.Where()

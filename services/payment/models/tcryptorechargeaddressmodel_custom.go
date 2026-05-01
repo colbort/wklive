@@ -15,6 +15,8 @@ type CryptoRechargeAddressModel interface {
 	tCryptoRechargeAddressModel
 	FindPage(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, chainCode int64, address string, status int64, addressType int64, cursor int64, limit int64) ([]*TCryptoRechargeAddress, int64, error)
 	FindOneAssignable(ctx context.Context, tenantId int64, walletType int64, coin string, chainCode int64) (*TCryptoRechargeAddress, error)
+	FindAssignableCandidates(ctx context.Context, tenantId int64, walletType int64, coin string, chainCode int64, reusableBefore int64, limit int64) ([]*TCryptoRechargeAddress, error)
+	HasEnabledAddress(ctx context.Context, tenantId int64, walletType int64, coin string, chainCode int64) (bool, error)
 }
 
 func (m *defaultTCryptoRechargeAddressModel) FindPage(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, chainCode int64, address string, status int64, addressType int64, cursor int64, limit int64) ([]*TCryptoRechargeAddress, int64, error) {
@@ -82,4 +84,38 @@ func (m *defaultTCryptoRechargeAddressModel) FindOneAssignable(ctx context.Conte
 	}
 
 	return &item, nil
+}
+
+func (m *defaultTCryptoRechargeAddressModel) FindAssignableCandidates(ctx context.Context, tenantId int64, walletType int64, coin string, chainCode int64, reusableBefore int64, limit int64) ([]*TCryptoRechargeAddress, error) {
+	limit = sqlutil.NormalizeLimit(limit)
+	query := fmt.Sprintf(
+		`SELECT %s FROM %s
+		WHERE tenant_id = ? AND wallet_type = ? AND coin = ? AND chain_code = ? AND status = 1
+			AND (user_id = 0 OR last_used_time <= ?)
+		ORDER BY address_type DESC, last_used_time ASC, id ASC
+		LIMIT ?`,
+		tCryptoRechargeAddressRows, m.table,
+	)
+
+	var list []*TCryptoRechargeAddress
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, query, tenantId, walletType, coin, chainCode, reusableBefore, limit); err != nil {
+		return nil, err
+	}
+
+	return list, nil
+}
+
+func (m *defaultTCryptoRechargeAddressModel) HasEnabledAddress(ctx context.Context, tenantId int64, walletType int64, coin string, chainCode int64) (bool, error) {
+	query := fmt.Sprintf(
+		`SELECT COUNT(1) FROM %s
+		WHERE tenant_id = ? AND wallet_type = ? AND coin = ? AND chain_code = ? AND status = 1`,
+		m.table,
+	)
+
+	var total int64
+	if err := m.QueryRowNoCacheCtx(ctx, &total, query, tenantId, walletType, coin, chainCode); err != nil {
+		return false, err
+	}
+
+	return total > 0, nil
 }

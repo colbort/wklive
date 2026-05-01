@@ -286,6 +286,7 @@ type OpLogListResp {
 }
 
 type SysConfigCreateReq {
+	tenantId    int64  `json:"tenantId,optional"`
 	configKey   string `json:"configKey" validate:"required"`
 	configValue string `json:"configValue"`
 	remark      string `json:"remark,optional"`
@@ -304,15 +305,18 @@ type SysConfigDeleteReq {
 
 type SysConfigItem {
 	id          int64  `json:"id"`
+	tenantId    int64  `json:"tenantId"`
 	configKey   string `json:"configKey"`
 	configValue string `json:"configValue"`
 	remark      string `json:"remark,optional"`
 	createTimes int64  `json:"createTimes"`
+	updateTimes int64  `json:"updateTimes"`
 }
 
 type SysConfigListReq {
 	PageReq
-	keyword string `form:"keyword,optional"`
+	keyword  string `form:"keyword,optional"`
+	tenantId int64  `form:"tenantId,optional"`
 }
 
 type SysConfigListResp {
@@ -651,4 +655,3 @@ service admin {
 	@handler SysTenantDetail
 	get /tenant/detail (SysTenantDetailReq) returns (SysTenantDetailResp)
 }
-

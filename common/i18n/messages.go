@@ -175,6 +175,9 @@ const (
 	RewardAmountInvalid                    = 2146
 	SuperAdminCannotBeDeleted              = 2147
 	TenantOwnerCannotBeDeleted             = 2148
+	CryptoRechargeAddressNotConfigured     = 2149
+	CryptoRechargeAddressInUse             = 2150
+	CryptoRechargeAddressExpired           = 2151
 )
 
 // MessageMap 定义所有支持的错误消息翻译
@@ -610,6 +613,18 @@ var MessageMap = map[int32]map[Language]string{
 	NoPermissionModify: {
 		EN: "No permission to modify",
 		ZH: "无权限修改",
+	},
+	CryptoRechargeAddressNotConfigured: {
+		EN: "Recharge address is not configured for this coin",
+		ZH: "当前币种暂未配置充值地址",
+	},
+	CryptoRechargeAddressInUse: {
+		EN: "Recharge address is in use, please try again later",
+		ZH: "充值地址正在使用中，请稍后再试",
+	},
+	CryptoRechargeAddressExpired: {
+		EN: "Recharge address has expired, please get a new address",
+		ZH: "充值地址已过期，请重新获取地址",
 	},
 	UserSecurityInfoNotFound: {
 		EN: "User security information not found",

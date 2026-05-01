@@ -4,8 +4,8 @@
       <h2>{{ t('payment.cryptoWalletAccounts') }}</h2>
       <div class="header-actions">
         <el-button @click="loadList">
-          {{ t('common.refresh') }} </el-button
-        ><el-button type="primary" @click="openDialog()">
+          {{ t('common.refresh') }}
+        </el-button><el-button type="primary" @click="openDialog()">
           {{ t('payment.addCryptoWalletAccount') }}
         </el-button>
       </div>
@@ -31,8 +31,8 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="loadList">
-            {{ t('common.search') }} </el-button
-          ><el-button @click="resetQuery">
+            {{ t('common.search') }}
+          </el-button><el-button @click="resetQuery">
             {{ t('common.reset') }}
           </el-button>
         </el-form-item>
@@ -67,8 +67,8 @@
         >
           <template #default="{ row }">
             <el-button link type="primary" @click="showDetail(row)">
-              {{ t('common.detail') }} </el-button
-            ><el-button link type="primary" @click="openDialog(row)">
+              {{ t('common.detail') }}
+            </el-button><el-button link type="primary" @click="openDialog(row)">
               {{ t('common.edit') }}
             </el-button>
           </template>
@@ -119,8 +119,8 @@
       </el-form>
       <template #footer>
         <el-button @click="dialogVisible = false">
-          {{ t('common.cancel') }} </el-button
-        ><el-button type="primary" @click="submit">
+          {{ t('common.cancel') }}
+        </el-button><el-button type="primary" @click="submit">
           {{ t('common.confirm') }}
         </el-button>
       </template>

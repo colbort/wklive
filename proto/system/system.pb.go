@@ -3644,6 +3644,7 @@ type SysConfigCreateReq struct {
 	ConfigKey     string                 `protobuf:"bytes,1,opt,name=config_key,json=configKey,proto3" json:"config_key,omitempty"`
 	ConfigValue   string                 `protobuf:"bytes,2,opt,name=config_value,json=configValue,proto3" json:"config_value,omitempty"`
 	Remark        string                 `protobuf:"bytes,3,opt,name=remark,proto3" json:"remark,omitempty"`
+	TenantId      int64                  `protobuf:"varint,4,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3697,6 +3698,13 @@ func (x *SysConfigCreateReq) GetRemark() string {
 		return x.Remark
 	}
 	return ""
+}
+
+func (x *SysConfigCreateReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
 }
 
 type SysConfigUpdateReq struct {
@@ -3818,6 +3826,8 @@ type SysConfigItem struct {
 	ConfigValue   string                 `protobuf:"bytes,3,opt,name=config_value,json=configValue,proto3" json:"config_value,omitempty"`
 	Remark        string                 `protobuf:"bytes,4,opt,name=remark,proto3" json:"remark,omitempty"`
 	CreateTimes   int64                  `protobuf:"varint,5,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
+	UpdateTimes   int64                  `protobuf:"varint,6,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	TenantId      int64                  `protobuf:"varint,7,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3887,10 +3897,25 @@ func (x *SysConfigItem) GetCreateTimes() int64 {
 	return 0
 }
 
+func (x *SysConfigItem) GetUpdateTimes() int64 {
+	if x != nil {
+		return x.UpdateTimes
+	}
+	return 0
+}
+
+func (x *SysConfigItem) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
 type SysConfigListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	Keyword       string                 `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"`
+	TenantId      int64                  `protobuf:"varint,3,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3937,6 +3962,13 @@ func (x *SysConfigListReq) GetKeyword() string {
 		return x.Keyword
 	}
 	return ""
+}
+
+func (x *SysConfigListReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
 }
 
 type SysConfigListResp struct {
@@ -3995,6 +4027,7 @@ type SysConfigDetailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
 	ConfigKey     *SysConfigType         `protobuf:"varint,2,opt,name=config_key,json=configKey,proto3,enum=system.SysConfigType,oneof" json:"config_key,omitempty"`
+	TenantId      *int64                 `protobuf:"varint,3,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4041,6 +4074,13 @@ func (x *SysConfigDetailReq) GetConfigKey() SysConfigType {
 		return *x.ConfigKey
 	}
 	return SysConfigType_UNKNOWN
+}
+
+func (x *SysConfigDetailReq) GetTenantId() int64 {
+	if x != nil && x.TenantId != nil {
+		return *x.TenantId
+	}
+	return 0
 }
 
 type SysConfigDetailResp struct {
@@ -6177,12 +6217,13 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x04path\x18\x04 \x01(\tR\x04path\"\\\n" +
 	"\rOpLogListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12%\n" +
-	"\x04data\x18\x04 \x03(\v2\x11.system.OpLogItemR\x04data\"n\n" +
+	"\x04data\x18\x04 \x03(\v2\x11.system.OpLogItemR\x04data\"\x8b\x01\n" +
 	"\x12SysConfigCreateReq\x12\x1d\n" +
 	"\n" +
 	"config_key\x18\x01 \x01(\tR\tconfigKey\x12!\n" +
 	"\fconfig_value\x18\x02 \x01(\tR\vconfigValue\x12\x16\n" +
-	"\x06remark\x18\x03 \x01(\tR\x06remark\"~\n" +
+	"\x06remark\x18\x03 \x01(\tR\x06remark\x12\x1b\n" +
+	"\ttenant_id\x18\x04 \x01(\x03R\btenantId\"~\n" +
 	"\x12SysConfigUpdateReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -6190,26 +6231,32 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\fconfig_value\x18\x03 \x01(\tR\vconfigValue\x12\x16\n" +
 	"\x06remark\x18\x04 \x01(\tR\x06remark\"$\n" +
 	"\x12SysConfigDeleteReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\x9c\x01\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xdc\x01\n" +
 	"\rSysConfigItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
 	"config_key\x18\x02 \x01(\tR\tconfigKey\x12!\n" +
 	"\fconfig_value\x18\x03 \x01(\tR\vconfigValue\x12\x16\n" +
 	"\x06remark\x18\x04 \x01(\tR\x06remark\x12!\n" +
-	"\fcreate_times\x18\x05 \x01(\x03R\vcreateTimes\"Q\n" +
+	"\fcreate_times\x18\x05 \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18\x06 \x01(\x03R\vupdateTimes\x12\x1b\n" +
+	"\ttenant_id\x18\a \x01(\x03R\btenantId\"n\n" +
 	"\x10SysConfigListReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x18\n" +
-	"\akeyword\x18\x02 \x01(\tR\akeyword\"d\n" +
+	"\akeyword\x18\x02 \x01(\tR\akeyword\x12\x1b\n" +
+	"\ttenant_id\x18\x03 \x01(\x03R\btenantId\"d\n" +
 	"\x11SysConfigListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
-	"\x04data\x18\x04 \x03(\v2\x15.system.SysConfigItemR\x04data\"z\n" +
+	"\x04data\x18\x04 \x03(\v2\x15.system.SysConfigItemR\x04data\"\xaa\x01\n" +
 	"\x12SysConfigDetailReq\x12\x13\n" +
 	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x88\x01\x01\x129\n" +
 	"\n" +
-	"config_key\x18\x02 \x01(\x0e2\x15.system.SysConfigTypeH\x01R\tconfigKey\x88\x01\x01B\x05\n" +
+	"config_key\x18\x02 \x01(\x0e2\x15.system.SysConfigTypeH\x01R\tconfigKey\x88\x01\x01\x12 \n" +
+	"\ttenant_id\x18\x03 \x01(\x03H\x02R\btenantId\x88\x01\x01B\x05\n" +
 	"\x03_idB\r\n" +
-	"\v_config_key\"f\n" +
+	"\v_config_keyB\f\n" +
+	"\n" +
+	"_tenant_id\"f\n" +
 	"\x13SysConfigDetailResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
 	"\x04data\x18\x03 \x01(\v2\x15.system.SysConfigItemR\x04data\"5\n" +

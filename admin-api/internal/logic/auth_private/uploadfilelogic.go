@@ -54,8 +54,10 @@ func (l *UploadFileLogic) UploadFile(file multipart.File, header *multipart.File
 		}, nil
 	}
 
+	tenantId := int64(0)
 	key := system.SysConfigType_OBJECT_STORAGE
 	cd, err := l.svcCtx.SystemCli.SysConfigDetail(l.ctx, &system.SysConfigDetailReq{
+		TenantId:  &tenantId,
 		ConfigKey: &key,
 	})
 	if err != nil {

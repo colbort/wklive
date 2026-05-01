@@ -363,6 +363,7 @@ message SysConfigCreateReq {
   string config_key = 1;
   string config_value = 2;
   string remark = 3;
+  int64 tenant_id = 4;
 }
 
 message SysConfigUpdateReq {
@@ -380,11 +381,14 @@ message SysConfigItem {
   string config_value = 3;
   string remark = 4;
   int64 create_times = 5;
+  int64 update_times = 6;
+  int64 tenant_id = 7;
 }
 
 message SysConfigListReq {
   common.PageReq page = 1;
   string keyword = 2;
+  int64 tenant_id = 3;
 }
 message SysConfigListResp {
   common.RespBase base = 1;
@@ -394,6 +398,7 @@ message SysConfigListResp {
 message SysConfigDetailReq {
   optional int64 id = 1;
   optional system.SysConfigType config_key = 2;
+  optional int64 tenant_id = 3;
 }
 
 message SysConfigDetailResp {

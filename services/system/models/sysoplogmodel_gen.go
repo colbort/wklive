@@ -42,14 +42,16 @@ type (
 	SysOpLog struct {
 		Id          int64          `db:"id"`
 		TenantId    int64          `db:"tenant_id"` // 所属租户ID：0=系统侧，>0=租户ID
-		UserId      sql.NullInt64  `db:"user_id"`
-		Username    sql.NullString `db:"username"`
-		Method      sql.NullString `db:"method"`
-		Path        sql.NullString `db:"path"`
-		Req         sql.NullString `db:"req"`
-		Resp        sql.NullString `db:"resp"`
-		Ip          sql.NullString `db:"ip"`
-		CostMs      sql.NullInt64  `db:"cost_ms"` // 耗时
+		UserId      int64          `db:"user_id"`   // 操作人ID
+		Username    string         `db:"username"`  // 操作人账号
+		Module      string         `db:"module"`    // 模块
+		Action      string         `db:"action"`    // 操作
+		Method      string         `db:"method"`    // 请求方法
+		Path        string         `db:"path"`      // 请求路径
+		Req         sql.NullString `db:"req"`       // 请求参数
+		Resp        sql.NullString `db:"resp"`      // 响应内容
+		Ip          string         `db:"ip"`        // IP
+		CostMs      int64          `db:"cost_ms"`   // 耗时
 		CreateTimes int64          `db:"create_times"`
 		UpdateTimes int64          `db:"update_times"`
 	}
@@ -91,8 +93,8 @@ func (m *defaultSysOpLogModel) FindOne(ctx context.Context, id int64) (*SysOpLog
 func (m *defaultSysOpLogModel) Insert(ctx context.Context, data *SysOpLog) (sql.Result, error) {
 	sysOpLogIdKey := fmt.Sprintf("%s%v", cacheSysOpLogIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysOpLogRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.Username, data.Method, data.Path, data.Req, data.Resp, data.Ip, data.CostMs, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysOpLogRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.Username, data.Module, data.Action, data.Method, data.Path, data.Req, data.Resp, data.Ip, data.CostMs, data.CreateTimes, data.UpdateTimes)
 	}, sysOpLogIdKey)
 	return ret, err
 }
@@ -101,7 +103,7 @@ func (m *defaultSysOpLogModel) Update(ctx context.Context, data *SysOpLog) error
 	sysOpLogIdKey := fmt.Sprintf("%s%v", cacheSysOpLogIdPrefix, data.Id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysOpLogRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.Username, data.Method, data.Path, data.Req, data.Resp, data.Ip, data.CostMs, data.CreateTimes, data.UpdateTimes, data.Id)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.Username, data.Module, data.Action, data.Method, data.Path, data.Req, data.Resp, data.Ip, data.CostMs, data.CreateTimes, data.UpdateTimes, data.Id)
 	}, sysOpLogIdKey)
 	return err
 }

@@ -62,7 +62,12 @@
             {{ formatChainCode(row.chainCode) }}
           </template>
         </el-table-column>
-        <el-table-column prop="txHash" label="TxHash" min-width="240" show-overflow-tooltip />
+        <el-table-column
+          prop="txHash"
+          label="TxHash"
+          min-width="240"
+          show-overflow-tooltip
+        />
         <el-table-column prop="amount" :label="t('payment.quantity')" width="120" />
         <el-table-column prop="confirmCount" :label="t('payment.confirmCount')" width="90" />
         <el-table-column prop="status" :label="t('common.status')" width="90" />

@@ -29,6 +29,7 @@ func NewSysConfigCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 
 func (l *SysConfigCreateLogic) SysConfigCreate(req *types.SysConfigCreateReq) (resp *types.RespBase, err error) {
 	result, err := l.svcCtx.SystemCli.SysConfigCreate(l.ctx, &system.SysConfigCreateReq{
+		TenantId:    req.TenantId,
 		ConfigKey:   req.ConfigKey,
 		ConfigValue: req.ConfigValue,
 		Remark:      req.Remark,

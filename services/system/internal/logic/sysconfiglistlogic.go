@@ -26,7 +26,7 @@ func NewSysConfigListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 
 // 获取系统配置列表
 func (l *SysConfigListLogic) SysConfigList(in *system.SysConfigListReq) (*system.SysConfigListResp, error) {
-	items, total, err := l.svcCtx.ConfigModel.FindPage(l.ctx, "", in.Page.Cursor, in.Page.Limit)
+	items, total, err := l.svcCtx.ConfigModel.FindPage(l.ctx, in.TenantId, "", in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -40,10 +40,12 @@ func (l *SysConfigListLogic) SysConfigList(in *system.SysConfigListReq) (*system
 	for _, config := range items {
 		data = append(data, &system.SysConfigItem{
 			Id:          config.Id,
+			TenantId:    config.TenantId,
 			ConfigKey:   config.ConfigKey.String,
 			ConfigValue: config.ConfigValue.String,
 			Remark:      config.Remark.String,
 			CreateTimes: config.CreateTimes,
+			UpdateTimes: config.UpdateTimes,
 		})
 	}
 

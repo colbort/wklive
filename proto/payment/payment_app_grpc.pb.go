@@ -22,6 +22,7 @@ const (
 	PaymentApp_GetMyRechargeStat_FullMethodName             = "/payment.PaymentApp/GetMyRechargeStat"
 	PaymentApp_ListAvailableRechargeChannels_FullMethodName = "/payment.PaymentApp/ListAvailableRechargeChannels"
 	PaymentApp_CreateRechargeOrder_FullMethodName           = "/payment.PaymentApp/CreateRechargeOrder"
+	PaymentApp_CreateCryptoRechargeOrder_FullMethodName     = "/payment.PaymentApp/CreateCryptoRechargeOrder"
 	PaymentApp_GetMyRechargeOrder_FullMethodName            = "/payment.PaymentApp/GetMyRechargeOrder"
 	PaymentApp_ListMyRechargeOrders_FullMethodName          = "/payment.PaymentApp/ListMyRechargeOrders"
 	PaymentApp_CancelMyRechargeOrder_FullMethodName         = "/payment.PaymentApp/CancelMyRechargeOrder"
@@ -47,6 +48,8 @@ type PaymentAppClient interface {
 	ListAvailableRechargeChannels(ctx context.Context, in *ListAvailableRechargeChannelsReq, opts ...grpc.CallOption) (*ListAvailableRechargeChannelsResp, error)
 	// 创建充值订单（服务端需要再次校验通道与用户规则）
 	CreateRechargeOrder(ctx context.Context, in *CreateRechargeOrderReq, opts ...grpc.CallOption) (*CreateRechargeOrderResp, error)
+	// 创建链上充值订单
+	CreateCryptoRechargeOrder(ctx context.Context, in *CreateCryptoRechargeOrderReq, opts ...grpc.CallOption) (*CreateCryptoRechargeOrderResp, error)
 	// 查询我的订单详情
 	GetMyRechargeOrder(ctx context.Context, in *GetMyRechargeOrderReq, opts ...grpc.CallOption) (*GetMyRechargeOrderResp, error)
 	// 查询我的充值订单列表
@@ -103,6 +106,16 @@ func (c *paymentAppClient) CreateRechargeOrder(ctx context.Context, in *CreateRe
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateRechargeOrderResp)
 	err := c.cc.Invoke(ctx, PaymentApp_CreateRechargeOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentAppClient) CreateCryptoRechargeOrder(ctx context.Context, in *CreateCryptoRechargeOrderReq, opts ...grpc.CallOption) (*CreateCryptoRechargeOrderResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateCryptoRechargeOrderResp)
+	err := c.cc.Invoke(ctx, PaymentApp_CreateCryptoRechargeOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -231,6 +244,8 @@ type PaymentAppServer interface {
 	ListAvailableRechargeChannels(context.Context, *ListAvailableRechargeChannelsReq) (*ListAvailableRechargeChannelsResp, error)
 	// 创建充值订单（服务端需要再次校验通道与用户规则）
 	CreateRechargeOrder(context.Context, *CreateRechargeOrderReq) (*CreateRechargeOrderResp, error)
+	// 创建链上充值订单
+	CreateCryptoRechargeOrder(context.Context, *CreateCryptoRechargeOrderReq) (*CreateCryptoRechargeOrderResp, error)
 	// 查询我的订单详情
 	GetMyRechargeOrder(context.Context, *GetMyRechargeOrderReq) (*GetMyRechargeOrderResp, error)
 	// 查询我的充值订单列表
@@ -271,6 +286,9 @@ func (UnimplementedPaymentAppServer) ListAvailableRechargeChannels(context.Conte
 }
 func (UnimplementedPaymentAppServer) CreateRechargeOrder(context.Context, *CreateRechargeOrderReq) (*CreateRechargeOrderResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateRechargeOrder not implemented")
+}
+func (UnimplementedPaymentAppServer) CreateCryptoRechargeOrder(context.Context, *CreateCryptoRechargeOrderReq) (*CreateCryptoRechargeOrderResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateCryptoRechargeOrder not implemented")
 }
 func (UnimplementedPaymentAppServer) GetMyRechargeOrder(context.Context, *GetMyRechargeOrderReq) (*GetMyRechargeOrderResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMyRechargeOrder not implemented")
@@ -376,6 +394,24 @@ func _PaymentApp_CreateRechargeOrder_Handler(srv interface{}, ctx context.Contex
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PaymentAppServer).CreateRechargeOrder(ctx, req.(*CreateRechargeOrderReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentApp_CreateCryptoRechargeOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCryptoRechargeOrderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentAppServer).CreateCryptoRechargeOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentApp_CreateCryptoRechargeOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentAppServer).CreateCryptoRechargeOrder(ctx, req.(*CreateCryptoRechargeOrderReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -596,6 +632,10 @@ var PaymentApp_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateRechargeOrder",
 			Handler:    _PaymentApp_CreateRechargeOrder_Handler,
+		},
+		{
+			MethodName: "CreateCryptoRechargeOrder",
+			Handler:    _PaymentApp_CreateCryptoRechargeOrder_Handler,
 		},
 		{
 			MethodName: "GetMyRechargeOrder",

@@ -17,7 +17,7 @@ func init() {
 }
 
 func syncItickKlines(ctx context.Context, job *models.SysJob) error {
-	config, err := global.ConfigModel.FindOneByConfigKey(ctx, sql.NullString{
+	config, err := global.ConfigModel.FindOneByTenantIdConfigKey(ctx, 0, sql.NullString{
 		String: system.SysConfigType_ITICK_CONFIG.String(),
 		Valid:  true,
 	})

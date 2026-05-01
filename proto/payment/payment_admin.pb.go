@@ -4194,7 +4194,6 @@ func (x *ListWithdrawOrdersResp) GetData() []*WithdrawOrder {
 
 type GetWithdrawOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	OrderNo       string                 `protobuf:"bytes,2,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -4228,13 +4227,6 @@ func (x *GetWithdrawOrderReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetWithdrawOrderReq.ProtoReflect.Descriptor instead.
 func (*GetWithdrawOrderReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_admin_proto_rawDescGZIP(), []int{54}
-}
-
-func (x *GetWithdrawOrderReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
 }
 
 func (x *GetWithdrawOrderReq) GetOrderNo() string {
@@ -6673,9 +6665,8 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\border_no\x18\x04 \x01(\tR\aorderNo\"j\n" +
 	"\x16ListWithdrawOrdersResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
-	"\x04data\x18\x02 \x03(\v2\x16.payment.WithdrawOrderR\x04data\"M\n" +
-	"\x13GetWithdrawOrderReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
+	"\x04data\x18\x02 \x03(\v2\x16.payment.WithdrawOrderR\x04data\"0\n" +
+	"\x13GetWithdrawOrderReq\x12\x19\n" +
 	"\border_no\x18\x02 \x01(\tR\aorderNo\"h\n" +
 	"\x14GetWithdrawOrderResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +

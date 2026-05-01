@@ -29,6 +29,7 @@ func NewCreateWithdrawOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext
 
 func (l *CreateWithdrawOrderLogic) CreateWithdrawOrder(req *types.CreateWithdrawOrderReq) (resp *types.CreateWithdrawOrderResp, err error) {
 	result, err := l.svcCtx.PaymentCli.CreateWithdrawOrder(l.ctx, &payment.CreateWithdrawOrderReq{
+		ClientIp: req.ClientIp,
 		Amount:   req.Amount,
 		Currency: req.Currency,
 		Address:  req.Address,

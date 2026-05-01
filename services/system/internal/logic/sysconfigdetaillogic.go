@@ -4,12 +4,13 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"github.com/zeromicro/go-zero/core/logx"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SysConfigDetailLogic struct {
@@ -33,8 +34,8 @@ func (l *SysConfigDetailLogic) SysConfigDetail(in *system.SysConfigDetailReq) (*
 	if in.Id != nil && *in.Id > 0 {
 		config, err = l.svcCtx.ConfigModel.FindOne(l.ctx, *in.Id)
 
-	} else if in.ConfigKey != nil {
-		config, err = l.svcCtx.ConfigModel.FindOneByConfigKey(l.ctx, sql.NullString{String: in.ConfigKey.String(), Valid: true})
+	} else if in.ConfigKey != nil && in.ConfigKey.String() != "" && *in.TenantId != 0 {
+		config, err = l.svcCtx.ConfigModel.FindOneByTenantIdConfigKey(l.ctx, *in.TenantId, sql.NullString{String: in.ConfigKey.String(), Valid: true})
 	} else {
 		err = errors.New(i18n.Translate(i18n.InvalidQueryCondition, l.ctx))
 	}
@@ -49,6 +50,8 @@ func (l *SysConfigDetailLogic) SysConfigDetail(in *system.SysConfigDetailReq) (*
 			ConfigValue: config.ConfigValue.String,
 			Remark:      config.Remark.String,
 			CreateTimes: config.CreateTimes,
+			UpdateTimes: config.UpdateTimes,
+			TenantId:    config.TenantId,
 		},
 	}, nil
 }

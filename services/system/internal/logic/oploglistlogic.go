@@ -46,14 +46,14 @@ func (l *OpLogListLogic) OpLogList(in *system.OpLogListReq) (*system.OpLogListRe
 	for _, item := range items {
 		data = append(data, &system.OpLogItem{
 			Id:          item.Id,
-			UserId:      item.UserId.Int64,
-			Username:    item.Username.String,
-			Method:      requestMethodToProto(item.Method.String),
-			Path:        item.Path.String,
+			UserId:      item.UserId,
+			Username:    item.Username,
+			Method:      requestMethodToProto(item.Method),
+			Path:        item.Path,
 			Req:         item.Req.String,
 			Resp:        item.Resp.String,
-			Ip:          item.Ip.String,
-			CostMs:      item.CostMs.Int64,
+			Ip:          item.Ip,
+			CostMs:      item.CostMs,
 			CreateTimes: item.CreateTimes,
 			UpdateTimes: item.UpdateTimes,
 		})

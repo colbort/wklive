@@ -665,7 +665,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
-				Path:    "/withdraw-order/:id",
+				Path:    "/withdraw-order/:orderNo",
 				Handler: payment.GetWithdrawOrderHandler(serverCtx),
 			},
 			{

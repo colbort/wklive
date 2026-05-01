@@ -16,6 +16,8 @@ import (
 type (
 	AppCommonResp                     = payment.AppCommonResp
 	CancelMyRechargeOrderReq          = payment.CancelMyRechargeOrderReq
+	CreateCryptoRechargeOrderReq      = payment.CreateCryptoRechargeOrderReq
+	CreateCryptoRechargeOrderResp     = payment.CreateCryptoRechargeOrderResp
 	CreateRechargeOrderReq            = payment.CreateRechargeOrderReq
 	CreateRechargeOrderResp           = payment.CreateRechargeOrderResp
 	CreateWithdrawOrderReq            = payment.CreateWithdrawOrderReq
@@ -50,6 +52,8 @@ type (
 		ListAvailableRechargeChannels(ctx context.Context, in *ListAvailableRechargeChannelsReq, opts ...grpc.CallOption) (*ListAvailableRechargeChannelsResp, error)
 		// 创建充值订单（服务端需要再次校验通道与用户规则）
 		CreateRechargeOrder(ctx context.Context, in *CreateRechargeOrderReq, opts ...grpc.CallOption) (*CreateRechargeOrderResp, error)
+		// 创建链上充值订单
+		CreateCryptoRechargeOrder(ctx context.Context, in *CreateCryptoRechargeOrderReq, opts ...grpc.CallOption) (*CreateCryptoRechargeOrderResp, error)
 		// 查询我的订单详情
 		GetMyRechargeOrder(ctx context.Context, in *GetMyRechargeOrderReq, opts ...grpc.CallOption) (*GetMyRechargeOrderResp, error)
 		// 查询我的充值订单列表
@@ -101,6 +105,12 @@ func (m *defaultPaymentApp) ListAvailableRechargeChannels(ctx context.Context, i
 func (m *defaultPaymentApp) CreateRechargeOrder(ctx context.Context, in *CreateRechargeOrderReq, opts ...grpc.CallOption) (*CreateRechargeOrderResp, error) {
 	client := payment.NewPaymentAppClient(m.cli.Conn())
 	return client.CreateRechargeOrder(ctx, in, opts...)
+}
+
+// 创建链上充值订单
+func (m *defaultPaymentApp) CreateCryptoRechargeOrder(ctx context.Context, in *CreateCryptoRechargeOrderReq, opts ...grpc.CallOption) (*CreateCryptoRechargeOrderResp, error) {
+	client := payment.NewPaymentAppClient(m.cli.Conn())
+	return client.CreateCryptoRechargeOrder(ctx, in, opts...)
 }
 
 // 查询我的订单详情

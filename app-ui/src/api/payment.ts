@@ -4,6 +4,7 @@ import type { OptionsGroup, RespBase } from '@/types/api'
 import type {
   AvailableRechargeChannel,
   CancelMyRechargeOrderReq,
+  CreateCryptoRechargeOrderReq,
   CreateRechargeOrderReq,
   CreateWithdrawOrderReq,
   CryptoRechargeAddress,
@@ -44,6 +45,12 @@ export function apiCreateRechargeOrder(
   params: CreateRechargeOrderReq,
 ): Promise<RespBase & { data: RechargeOrder }> {
   return http.post('/payment/create/recharge/orders', params).then((res) => res.data)
+}
+
+export function apiCreateCryptoRechargeOrder(
+  params: CreateCryptoRechargeOrderReq,
+): Promise<RespBase & { data: RechargeOrder; address: CryptoRechargeAddress }> {
+  return http.post('/payment/crypto/recharge/orders', params).then((res) => res.data)
 }
 
 export function apiGetMyRechargeOrder(

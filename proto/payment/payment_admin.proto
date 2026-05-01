@@ -452,7 +452,6 @@ message ListWithdrawOrdersResp {
 }
 
 message GetWithdrawOrderReq {
-  int64 tenant_id = 1;
   string order_no = 2;
 }
 

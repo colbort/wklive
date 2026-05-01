@@ -29,8 +29,7 @@ func NewGetWithdrawOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 func (l *GetWithdrawOrderLogic) GetWithdrawOrder(req *types.GetWithdrawOrderReq) (resp *types.GetWithdrawOrderResp, err error) {
 	result, err := l.svcCtx.PaymentCli.GetWithdrawOrder(l.ctx, &payment.GetWithdrawOrderReq{
-		TenantId: req.TenantId,
-		OrderNo:  req.OrderNo,
+		OrderNo: req.OrderNo,
 	})
 	if err != nil {
 		return nil, err

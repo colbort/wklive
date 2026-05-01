@@ -515,6 +515,22 @@ type ContractPosition struct {
 	UpdateTimes      int64  `json:"updateTimes"`
 }
 
+type CreateCryptoRechargeOrderReq struct {
+	WalletType     int64  `json:"walletType"`
+	Coin           string `json:"coin"`
+	ChainCode      int64  `json:"chainCode"`
+	RechargeAmount int64  `json:"rechargeAmount"` // 单位：分
+	ClientType     int64  `json:"clientType"`     // 0未知 1APP 2H5 3WEB
+	ClientIp       string `json:"clientIp,optional"`
+	BizOrderNo     string `json:"bizOrderNo,optional"`
+}
+
+type CreateCryptoRechargeOrderResp struct {
+	RespBase
+	Data    RechargeOrder         `json:"data"`
+	Address CryptoRechargeAddress `json:"address"`
+}
+
 type CreateRechargeOrderReq struct {
 	ChannelId      int64  `json:"channelId"`
 	RechargeAmount int64  `json:"rechargeAmount"` // 单位：分
@@ -532,7 +548,8 @@ type CreateRechargeOrderResp struct {
 }
 
 type CreateWithdrawOrderReq struct {
-	Amount   int64  `json:"amount"` // 单位：分
+	ClientIp string `json:"clientIp"` // 可选，服务端也可以通过上下文获取
+	Amount   int64  `json:"amount"`   // 单位：分
 	Currency string `json:"currency"`
 	Address  string `json:"address"` // 提现地址（钱包地址等）
 	BankId   int64  `json:"bankId"`  // 银行ID（如果是提现到银行卡）

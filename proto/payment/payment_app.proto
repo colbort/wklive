@@ -48,6 +48,23 @@ message CreateRechargeOrderResp {
   payment.RechargeOrder order = 2;
 }
 
+// 创建链上充值订单
+message CreateCryptoRechargeOrderReq {
+  int64 wallet_type = 3;
+  string coin = 4;
+  common.ChainCode chain_code = 5;
+  int64 recharge_amount = 6; // 单位：分
+  payment.ClientType client_type = 7;
+  string client_ip = 8;
+  string biz_order_no = 9;
+}
+
+message CreateCryptoRechargeOrderResp {
+  common.RespBase base = 1;
+  payment.RechargeOrder order = 2;
+  payment.CryptoRechargeAddress address = 3;
+}
+
 // 查询我的订单详情
 message GetMyRechargeOrderReq {
   string order_no = 2;
@@ -89,6 +106,7 @@ message QueryMyRechargeOrderStatusResp {
 
 // 提现
 message CreateWithdrawOrderReq {
+  string client_ip = 2;
   int64 amount = 3; // 单位：分
   string currency = 4;
   string address = 5; // 提现地址（钱包地址等）
@@ -185,6 +203,10 @@ service PaymentApp {
   // 创建充值订单（服务端需要再次校验通道与用户规则）
   rpc CreateRechargeOrder(CreateRechargeOrderReq)
       returns (CreateRechargeOrderResp);
+
+  // 创建链上充值订单
+  rpc CreateCryptoRechargeOrder(CreateCryptoRechargeOrderReq)
+      returns (CreateCryptoRechargeOrderResp);
 
   // 查询我的订单详情
   rpc GetMyRechargeOrder(GetMyRechargeOrderReq)

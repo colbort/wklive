@@ -163,6 +163,23 @@ type CreateRechargeOrderResp {
 	data RechargeOrder `json:"data"`
 }
 
+// 创建链上充值订单
+type CreateCryptoRechargeOrderReq {
+	walletType     int64  `json:"walletType"`
+	coin           string `json:"coin"`
+	chainCode      int64  `json:"chainCode"`
+	rechargeAmount int64  `json:"rechargeAmount"` // 单位：分
+	clientType     int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
+	clientIp       string `json:"clientIp,optional"`
+	bizOrderNo     string `json:"bizOrderNo,optional"`
+}
+
+type CreateCryptoRechargeOrderResp {
+	RespBase
+	data    RechargeOrder         `json:"data"`
+	address CryptoRechargeAddress `json:"address"`
+}
+
 // 查询我的订单详情
 type GetMyRechargeOrderReq {
 	orderNo  string `path:"orderNo"`
@@ -283,6 +300,7 @@ type WithdrawOrder {
 }
 
 type CreateWithdrawOrderReq {
+	clientIp string `json:"clientIp"` // 可选，服务端也可以通过上下文获取
 	amount   int64  `json:"amount"` // 单位：分
 	currency string `json:"currency"`
 	address  string `json:"address"` // 提现地址（钱包地址等）
@@ -368,6 +386,9 @@ service app {
 service app {
 	@handler CreateRechargeOrder
 	post /create/recharge/orders (CreateRechargeOrderReq) returns (CreateRechargeOrderResp)
+
+	@handler CreateCryptoRechargeOrder
+	post /crypto/recharge/orders (CreateCryptoRechargeOrderReq) returns (CreateCryptoRechargeOrderResp)
 
 	@handler CancelMyRechargeOrder
 	post /recharge/orders/:orderNo/cancel (CancelMyRechargeOrderReq) returns (RespBase)

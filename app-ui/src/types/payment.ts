@@ -152,6 +152,16 @@ export interface CreateRechargeOrderReq {
   bizOrderNo?: string
 }
 
+export interface CreateCryptoRechargeOrderReq {
+  walletType: number
+  coin: string
+  chainCode: number
+  rechargeAmount: number
+  clientType: number
+  clientIp?: string
+  bizOrderNo?: string
+}
+
 export interface GetMyRechargeOrderReq {
   orderNo: string
 }

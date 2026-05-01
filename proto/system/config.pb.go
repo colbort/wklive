@@ -526,6 +526,166 @@ func (x *ItickConfig) GetWsUrl() string {
 	return ""
 }
 
+type RechargeConfig struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	MinAmount     int64                  `protobuf:"varint,1,opt,name=min_amount,json=minAmount,proto3" json:"min_amount,omitempty"` // 最小充值金额，单位：分
+	MaxAmount     int64                  `protobuf:"varint,2,opt,name=max_amount,json=maxAmount,proto3" json:"max_amount,omitempty"` // 最大充值金额，单位：分
+	FeeRate       int64                  `protobuf:"varint,3,opt,name=fee_rate,json=feeRate,proto3" json:"fee_rate,omitempty"`       // 手续费配置，单位：万分之几，例如：100表示1%
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RechargeConfig) Reset() {
+	*x = RechargeConfig{}
+	mi := &file_proto_system_config_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RechargeConfig) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RechargeConfig) ProtoMessage() {}
+
+func (x *RechargeConfig) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_system_config_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RechargeConfig.ProtoReflect.Descriptor instead.
+func (*RechargeConfig) Descriptor() ([]byte, []int) {
+	return file_proto_system_config_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *RechargeConfig) GetMinAmount() int64 {
+	if x != nil {
+		return x.MinAmount
+	}
+	return 0
+}
+
+func (x *RechargeConfig) GetMaxAmount() int64 {
+	if x != nil {
+		return x.MaxAmount
+	}
+	return 0
+}
+
+func (x *RechargeConfig) GetFeeRate() int64 {
+	if x != nil {
+		return x.FeeRate
+	}
+	return 0
+}
+
+type WithdrawConfig struct {
+	state                         protoimpl.MessageState `protogen:"open.v1"`
+	MinAmount                     int64                  `protobuf:"varint,1,opt,name=min_amount,json=minAmount,proto3" json:"min_amount,omitempty"`                                                                   // 最小提现金额，单位：分
+	MaxAmount                     int64                  `protobuf:"varint,2,opt,name=max_amount,json=maxAmount,proto3" json:"max_amount,omitempty"`                                                                   // 最大提现金额，单位：分
+	FeeRate                       int64                  `protobuf:"varint,3,opt,name=fee_rate,json=feeRate,proto3" json:"fee_rate,omitempty"`                                                                         // 手续费配置，单位：万分之几，例如：100表示1%
+	DailyLimitPerUser             int32                  `protobuf:"varint,4,opt,name=daily_limit_per_user,json=dailyLimitPerUser,proto3" json:"daily_limit_per_user,omitempty"`                                       // 每人每天提现次数限制
+	DailyAmountLimitPerUser       int64                  `protobuf:"varint,5,opt,name=daily_amount_limit_per_user,json=dailyAmountLimitPerUser,proto3" json:"daily_amount_limit_per_user,omitempty"`                   // 每人每天提现金额限制，单位：分
+	AllowedTimeRange              string                 `protobuf:"bytes,6,opt,name=allowed_time_range,json=allowedTimeRange,proto3" json:"allowed_time_range,omitempty"`                                             // 允许提现的时间段，例如：每天9:00-18:00，格式为"09:00-18:00"
+	PendingWithdrawalLimitPerUser int32                  `protobuf:"varint,7,opt,name=pending_withdrawal_limit_per_user,json=pendingWithdrawalLimitPerUser,proto3" json:"pending_withdrawal_limit_per_user,omitempty"` // 允许未审核在提现数量限制，单位：笔
+	FreeWithdrawTimesPerDay       int32                  `protobuf:"varint,13,opt,name=free_withdraw_times_per_day,json=freeWithdrawTimesPerDay,proto3" json:"free_withdraw_times_per_day,omitempty"`                  // 每日免费提现次数，0=没有免费提现
+	unknownFields                 protoimpl.UnknownFields
+	sizeCache                     protoimpl.SizeCache
+}
+
+func (x *WithdrawConfig) Reset() {
+	*x = WithdrawConfig{}
+	mi := &file_proto_system_config_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WithdrawConfig) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WithdrawConfig) ProtoMessage() {}
+
+func (x *WithdrawConfig) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_system_config_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WithdrawConfig.ProtoReflect.Descriptor instead.
+func (*WithdrawConfig) Descriptor() ([]byte, []int) {
+	return file_proto_system_config_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *WithdrawConfig) GetMinAmount() int64 {
+	if x != nil {
+		return x.MinAmount
+	}
+	return 0
+}
+
+func (x *WithdrawConfig) GetMaxAmount() int64 {
+	if x != nil {
+		return x.MaxAmount
+	}
+	return 0
+}
+
+func (x *WithdrawConfig) GetFeeRate() int64 {
+	if x != nil {
+		return x.FeeRate
+	}
+	return 0
+}
+
+func (x *WithdrawConfig) GetDailyLimitPerUser() int32 {
+	if x != nil {
+		return x.DailyLimitPerUser
+	}
+	return 0
+}
+
+func (x *WithdrawConfig) GetDailyAmountLimitPerUser() int64 {
+	if x != nil {
+		return x.DailyAmountLimitPerUser
+	}
+	return 0
+}
+
+func (x *WithdrawConfig) GetAllowedTimeRange() string {
+	if x != nil {
+		return x.AllowedTimeRange
+	}
+	return ""
+}
+
+func (x *WithdrawConfig) GetPendingWithdrawalLimitPerUser() int32 {
+	if x != nil {
+		return x.PendingWithdrawalLimitPerUser
+	}
+	return 0
+}
+
+func (x *WithdrawConfig) GetFreeWithdrawTimesPerDay() int32 {
+	if x != nil {
+		return x.FreeWithdrawTimesPerDay
+	}
+	return 0
+}
+
 var File_proto_system_config_proto protoreflect.FileDescriptor
 
 const file_proto_system_config_proto_rawDesc = "" +
@@ -579,7 +739,24 @@ const file_proto_system_config_proto_rawDesc = "" +
 	"\vItickConfig\x12\x17\n" +
 	"\aapi_url\x18\x01 \x01(\tR\x06apiUrl\x12\x1b\n" +
 	"\tapi_token\x18\x02 \x01(\tR\bapiToken\x12\x15\n" +
-	"\x06ws_url\x18\x03 \x01(\tR\x05wsUrlB\x1cZ\x1awklive/proto/system;systemb\x06proto3"
+	"\x06ws_url\x18\x03 \x01(\tR\x05wsUrl\"i\n" +
+	"\x0eRechargeConfig\x12\x1d\n" +
+	"\n" +
+	"min_amount\x18\x01 \x01(\x03R\tminAmount\x12\x1d\n" +
+	"\n" +
+	"max_amount\x18\x02 \x01(\x03R\tmaxAmount\x12\x19\n" +
+	"\bfee_rate\x18\x03 \x01(\x03R\afeeRate\"\x8e\x03\n" +
+	"\x0eWithdrawConfig\x12\x1d\n" +
+	"\n" +
+	"min_amount\x18\x01 \x01(\x03R\tminAmount\x12\x1d\n" +
+	"\n" +
+	"max_amount\x18\x02 \x01(\x03R\tmaxAmount\x12\x19\n" +
+	"\bfee_rate\x18\x03 \x01(\x03R\afeeRate\x12/\n" +
+	"\x14daily_limit_per_user\x18\x04 \x01(\x05R\x11dailyLimitPerUser\x12<\n" +
+	"\x1bdaily_amount_limit_per_user\x18\x05 \x01(\x03R\x17dailyAmountLimitPerUser\x12,\n" +
+	"\x12allowed_time_range\x18\x06 \x01(\tR\x10allowedTimeRange\x12H\n" +
+	"!pending_withdrawal_limit_per_user\x18\a \x01(\x05R\x1dpendingWithdrawalLimitPerUser\x12<\n" +
+	"\x1bfree_withdraw_times_per_day\x18\r \x01(\x05R\x17freeWithdrawTimesPerDayB\x1cZ\x1awklive/proto/system;systemb\x06proto3"
 
 var (
 	file_proto_system_config_proto_rawDescOnce sync.Once
@@ -593,7 +770,7 @@ func file_proto_system_config_proto_rawDescGZIP() []byte {
 	return file_proto_system_config_proto_rawDescData
 }
 
-var file_proto_system_config_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_proto_system_config_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_proto_system_config_proto_goTypes = []any{
 	(*Interval)(nil),            // 0: system.Interval
 	(*SystemCore)(nil),          // 1: system.SystemCore
@@ -602,6 +779,8 @@ var file_proto_system_config_proto_goTypes = []any{
 	(*MinioConfig)(nil),         // 4: system.MinioConfig
 	(*ObjectStorageConfig)(nil), // 5: system.ObjectStorageConfig
 	(*ItickConfig)(nil),         // 6: system.ItickConfig
+	(*RechargeConfig)(nil),      // 7: system.RechargeConfig
+	(*WithdrawConfig)(nil),      // 8: system.WithdrawConfig
 }
 var file_proto_system_config_proto_depIdxs = []int32{
 	2, // 0: system.ObjectStorageConfig.aliyun_oss:type_name -> system.AliyunOssConfig
@@ -625,7 +804,7 @@ func file_proto_system_config_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_system_config_proto_rawDesc), len(file_proto_system_config_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

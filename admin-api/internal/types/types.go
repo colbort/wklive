@@ -1593,8 +1593,7 @@ type GetWithdrawNotifyLogResp struct {
 }
 
 type GetWithdrawOrderReq struct {
-	TenantId int64  `form:"tenantId"`
-	OrderNo  string `form:"orderNo"`
+	OrderNo string `path:"orderNo"`
 }
 
 type GetWithdrawOrderResp struct {
@@ -3153,6 +3152,7 @@ type SyncCategoryProductsResp struct {
 }
 
 type SysConfigCreateReq struct {
+	TenantId    int64  `json:"tenantId,optional"`
 	ConfigKey   string `json:"configKey" validate:"required"`
 	ConfigValue string `json:"configValue"`
 	Remark      string `json:"remark,optional"`
@@ -3164,15 +3164,18 @@ type SysConfigDeleteReq struct {
 
 type SysConfigItem struct {
 	Id          int64  `json:"id"`
+	TenantId    int64  `json:"tenantId"`
 	ConfigKey   string `json:"configKey"`
 	ConfigValue string `json:"configValue"`
 	Remark      string `json:"remark,optional"`
 	CreateTimes int64  `json:"createTimes"`
+	UpdateTimes int64  `json:"updateTimes"`
 }
 
 type SysConfigListReq struct {
 	PageReq
-	Keyword string `form:"keyword,optional"`
+	Keyword  string `form:"keyword,optional"`
+	TenantId int64  `form:"tenantId,optional"`
 }
 
 type SysConfigListResp struct {
