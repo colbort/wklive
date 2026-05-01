@@ -207,10 +207,6 @@ const freezeStatusOptions = computed(() => findOptionGroup(optionGroups.value, '
 const detailTitle = computed(() => `${t('asset.freezes')}${t('asset.detail')}`)
 const changeTitle = computed(() => t('asset.unfreezeAsset'))
 
-function pickList(res: any) {
-  return res?.data || res?.list || []
-}
-
 async function loadOptions() {
   const res = await assetService.getOptions()
   optionGroups.value = res.data || []
@@ -219,7 +215,12 @@ async function loadOptions() {
 async function loadList() {
   loading.value = true
   try {
-    rows.value = pickList(await assetService.getFreezes(query))
+    const resp = await assetService.getFreezes(query)
+    if (resp.code !== 0) {
+      ElMessage.error(resp.msg || t('common.loadFailed'))
+      return
+    }
+    rows.value = resp?.data || []
   } finally {
     loading.value = false
   }

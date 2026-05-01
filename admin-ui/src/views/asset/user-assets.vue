@@ -221,10 +221,6 @@ const changeTitle = computed(
     })[changeMode.value],
 )
 
-function pickList(res: any) {
-  return res?.data || res?.list || []
-}
-
 async function loadOptions() {
   const res = await assetService.getOptions()
   optionGroups.value = res.data || []
@@ -233,7 +229,12 @@ async function loadOptions() {
 async function loadList() {
   loading.value = true
   try {
-    rows.value = pickList(await assetService.getUserAssets(query))
+    const resp = await assetService.getUserAssets(query)
+    if (resp.code !== 0) {
+      ElMessage.error(resp.msg || t('common.loadFailed'))
+      return
+    }
+    rows.value = resp?.data || []
   } finally {
     loading.value = false
   }
