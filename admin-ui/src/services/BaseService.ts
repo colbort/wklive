@@ -5,8 +5,8 @@ export type RespBase<T = any> = {
   msg: string
   data?: T
   total?: number
-  nextCursor?: string | null
-  prevCursor?: string | null
+  nextCursor?: number
+  prevCursor?: number
   hasNext?: boolean
   hasPrev?: boolean
 }

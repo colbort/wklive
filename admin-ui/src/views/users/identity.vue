@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { usePagination } from '@/composables'
 import { ElMessage } from 'element-plus'
 import { memberUserService, type UserIdentityItem, type OptionGroup, UserDetail } from '@/services'
 import { formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 const { t } = useI18n()
+const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
 const loading = ref(false)
 const submitLoading = ref(false)
 const list = ref<UserIdentityItem[]>([])
@@ -25,7 +27,7 @@ const query = reactive({
   realName: '',
   verifyStatus: undefined as number | undefined,
   kycLevel: undefined as number | undefined,
-  limit: 100,
+  limit: 20,
 })
 
 const reviewForm = reactive({
@@ -108,9 +110,14 @@ async function fetchOptions() {
 async function fetchList() {
   loading.value = true
   try {
-    const res = await memberUserService.listIdentities(query)
+    const res = await memberUserService.listIdentities({
+      ...query,
+      cursor: pagination.cursor,
+      limit: pagination.limit,
+    })
     if (!checkCode(res.code)) throw new Error(res.msg || t('users.loadFailed'))
     list.value = res.data || []
+    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
   } catch (error: unknown) {
     ElMessage.error(error instanceof Error ? error.message : t('users.loadFailed'))
   } finally {
@@ -127,7 +134,8 @@ function resetQuery() {
     realName: '',
     verifyStatus: undefined,
     kycLevel: undefined,
-    limit: 100,
+    cursor: pagination.cursor,
+    limit: pagination.limit,
   })
   fetchList()
 }
@@ -170,6 +178,25 @@ async function submitReview() {
     ElMessage.error(error instanceof Error ? error.message : t('users.reviewFailed'))
   } finally {
     submitLoading.value = false
+  }
+}
+
+function handleLimitChange() {
+  resetPagination()
+  fetchList()
+}
+
+function handlePrevPage() {
+  if (pagination.hasPrev && pagination.prevCursor !== undefined) {
+    pagination.cursor = pagination.prevCursor
+    fetchList()
+  }
+}
+
+function handleNextPage() {
+  if (pagination.hasNext && pagination.nextCursor !== undefined) {
+    pagination.cursor = pagination.nextCursor
+    fetchList()
   }
 }
 
@@ -279,6 +306,16 @@ onMounted(fetchOptions)
           </template>
         </el-table-column>
       </el-table>
+
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="handlePrevPage"
+        @next="handleNextPage"
+        @limit-change="handleLimitChange"
+      />
     </el-card>
 
     <el-dialog v-model="reviewVisible" :title="t('users.reviewIdentity')" width="560px">

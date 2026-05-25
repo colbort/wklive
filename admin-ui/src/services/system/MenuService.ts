@@ -47,7 +47,7 @@ export type SysMenuUpdateReq = {
 }
 
 export type SysMenuListReq = {
-  cursor?: string | null
+  cursor?: number
   limit?: number
   keyword: string
   menuType: number
@@ -73,21 +73,6 @@ export type SysMenuTreeItem = SysMenuItem & {
   children?: SysMenuTreeItem[]
 }
 
-export type SysMenuListResp = {
-  base: RespBase
-  data: SysMenuItem[]
-}
-
-// 菜单接口定义（复用现有的类型）
-export interface Menu extends MenuNode {}
-export interface Permission extends PermItem {}
-
-export interface MenuQueryParams extends SysMenuListReq {}
-
-export interface CreateMenuRequest extends SysMenuCreateReq {}
-
-export interface UpdateMenuRequest extends SysMenuUpdateReq {}
-
 /**
  * 菜单服务类
  * 实现 BaseService 接口，使用现有的 API 函数
@@ -96,21 +81,21 @@ export class MenuService implements BaseService {
   /**
    * 获取菜单树
    */
-  async getMenuTree(tenantId: number): Promise<RespBase<Menu[]>> {
+  async getMenuTree(tenantId: number): Promise<RespBase<MenuNode[]>> {
     return apiMenuTree(tenantId)
   }
 
   /**
    * 获取权限列表
    */
-  async getPermissionList(): Promise<RespBase<Permission[]>> {
+  async getPermissionList(): Promise<RespBase<PermItem[]>> {
     return apiPermList()
   }
 
   /**
    * 获取菜单列表
    */
-  async getList(params?: MenuQueryParams): Promise<RespBase<SysMenuListResp>> {
+  async getList(params?: SysMenuListReq): Promise<RespBase<SysMenuItem[]>> {
     return sysMenuList(params || ({} as SysMenuListReq))
   }
 
@@ -121,14 +106,14 @@ export class MenuService implements BaseService {
   /**
    * 创建菜单
    */
-  async create(data: CreateMenuRequest): Promise<RespBase> {
+  async create(data: SysMenuCreateReq): Promise<RespBase> {
     return sysMenuCreate(data)
   }
 
   /**
    * 更新菜单
    */
-  async update(id: string | number, data: UpdateMenuRequest): Promise<RespBase> {
+  async update(id: string | number, data: SysMenuUpdateReq): Promise<RespBase> {
     return sysMenuUpdate({ ...data, id: Number(id) })
   }
 

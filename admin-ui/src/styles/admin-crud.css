@@ -11,6 +11,9 @@
   flex-direction: column;
   gap: var(--admin-page-gap);
   padding: 4px 0 12px;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .module-page .page-header,
@@ -63,6 +66,41 @@
 .module-page .query-card,
 .payment-page .query-card {
   background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+}
+
+.module-page .table-card,
+.payment-page .table-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.module-page .table-card > .el-card__body,
+.payment-page .table-card > .el-card__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.module-page .table-card .el-table,
+.payment-page .table-card .el-table {
+  flex: 1;
+  min-height: 0;
+}
+
+.module-page .table-card .el-table__inner-wrapper,
+.payment-page .table-card .el-table__inner-wrapper {
+  height: 100%;
+}
+
+.module-page .table-card .el-table__body-wrapper,
+.payment-page .table-card .el-table__body-wrapper {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .module-page .query-card .el-form,

@@ -53,7 +53,12 @@
             {{ getPlatformTypeLabel(row.platformType) }}
           </template>
         </el-table-column>
-        <el-table-column prop="icon" :label="t('common.icon')" width="100" align="center">
+        <el-table-column
+          prop="icon"
+          :label="t('common.icon')"
+          width="100"
+          align="center"
+        >
           <template #default="{ row }">
             <el-image
               v-if="row.icon"
@@ -94,6 +99,16 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="handlePrevPage"
+        @next="handleNextPage"
+        @limit-change="handleLimitChange"
+      />
     </el-card>
 
     <el-dialog
@@ -194,6 +209,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { usePagination } from '@/composables'
 import { Refresh } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import type { UploadFile } from 'element-plus'
@@ -209,6 +225,7 @@ import { buildAssetUrl } from '@/utils/file-url'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 const { t } = useI18n()
+const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
 
 const submitLoading = ref(false)
 const platformLoading = ref(false)
@@ -240,8 +257,13 @@ const platformForm = reactive({
 const loadPlatforms = async () => {
   platformLoading.value = true
   try {
-    const res = await catalogService.getPlatformList({ ...platformQuery, limit: 100 })
+    const res = await catalogService.getPlatformList({
+      ...platformQuery,
+      cursor: pagination.cursor,
+      limit: pagination.limit,
+    })
     platforms.value = res.data || []
+    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
   } finally {
     platformLoading.value = false
   }
@@ -349,6 +371,25 @@ const showPlatformDetail = async (row: PayPlatform) => {
   detailTitle.value = t('payment.platformDetail')
   detailData.value = res.data || row
   detailVisible.value = true
+}
+
+function handleLimitChange() {
+  resetPagination()
+  loadPlatforms()
+}
+
+function handlePrevPage() {
+  if (pagination.hasPrev && pagination.prevCursor) {
+    pagination.cursor = pagination.prevCursor
+    loadPlatforms()
+  }
+}
+
+function handleNextPage() {
+  if (pagination.hasNext && pagination.nextCursor) {
+    pagination.cursor = pagination.nextCursor
+    loadPlatforms()
+  }
 }
 
 onMounted(async () => {

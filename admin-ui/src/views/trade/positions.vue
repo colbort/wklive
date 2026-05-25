@@ -14,7 +14,12 @@
         <el-form-item v-for="field in currentFields" :key="field.key" :label="field.label">
           <el-input v-if="field.type !== 'number'" v-model="currentQuery[field.key]" clearable />
 
-          <el-input-number v-else v-model="currentQuery[field.key]" :min="0" :precision="0" />
+          <el-input-number
+            v-else
+            v-model="currentQuery[field.key]"
+            :min="0"
+            :precision="0"
+          />
         </el-form-item>
 
         <el-form-item>
@@ -47,6 +52,16 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="handlePrevPage"
+        @next="handleNextPage"
+        @limit-change="handleLimitChange"
+      />
     </el-card>
 
     <el-dialog v-model="detailVisible" :title="t('option.detail')" width="760px">
@@ -58,9 +73,11 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { usePagination } from '@/composables'
 import { tradeService, type ContractPosition } from '@/services'
 
 const { t } = useI18n()
+const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
 
 interface CurrentQuery {
   tenantId: number | undefined
@@ -90,7 +107,7 @@ const currentQuery = reactive<CurrentQuery>({
   tenantId: undefined,
   userId: undefined,
   symbolId: undefined,
-  limit: 100,
+  limit: 20,
 })
 
 const currentFields: CurrentField[] = [
@@ -107,12 +124,16 @@ const currentColumns: CurrentColumn[] = [
   { prop: 'unrealizedPnl', label: t('option.unrealizedPnl') },
 ]
 
-const pickList = (res: any) => res?.data || res?.list || []
-
 const loadCurrent = async () => {
   loading.value = true
   try {
-    rows.value = pickList(await tradeService.listPositions(currentQuery))
+    const res = await tradeService.listPositions({
+      ...currentQuery,
+      cursor: pagination.cursor,
+      limit: pagination.limit,
+    })
+    rows.value = res?.data || []
+    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
   } finally {
     loading.value = false
   }
@@ -130,6 +151,25 @@ const showDetail = async (row: ContractPosition) => {
   detailData.value =
     (await tradeService.getPosition({ tenantId: row.tenantId, id: row.id })).data || row
   detailVisible.value = true
+}
+
+function handleLimitChange() {
+  resetPagination()
+  loadCurrent()
+}
+
+function handlePrevPage() {
+  if (pagination.hasPrev && pagination.prevCursor) {
+    pagination.cursor = pagination.prevCursor
+    loadCurrent()
+  }
+}
+
+function handleNextPage() {
+  if (pagination.hasNext && pagination.nextCursor) {
+    pagination.cursor = pagination.nextCursor
+    loadCurrent()
+  }
 }
 
 onMounted(loadCurrent)

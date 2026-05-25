@@ -140,7 +140,12 @@
           min-width="180"
           show-overflow-tooltip
         />
-        <el-table-column :label="t('system.sort')" prop="sort" width="80" align="center" />
+        <el-table-column
+          :label="t('system.sort')"
+          prop="sort"
+          width="80"
+          align="center"
+        />
 
         <el-table-column :label="t('common.visible')" width="90" align="center">
           <template #default="{ row }">
@@ -158,9 +163,19 @@
           </template>
         </el-table-column>
 
-        <el-table-column :label="t('common.actions')" width="180" fixed="right" align="center">
+        <el-table-column
+          :label="t('common.actions')"
+          width="180"
+          fixed="right"
+          align="center"
+        >
           <template #default="{ row }">
-            <el-button v-if="row.menuType !== 3" link type="primary" @click="handleAdd(row.id)">
+            <el-button
+              v-if="row.menuType !== 3"
+              link
+              type="primary"
+              @click="handleAdd(row.id)"
+            >
               {{ t('system.addChild') }}
             </el-button>
             <el-button link type="primary" @click="handleEdit(row)">
@@ -180,7 +195,12 @@
       width="760px"
       destroy-on-close
     >
-      <el-form ref="formRef" :model="formData" :rules="rules" label-width="100px">
+      <el-form
+        ref="formRef"
+        :model="formData"
+        :rules="rules"
+        label-width="100px"
+      >
         <el-form-item :label="t('system.parentMenu')" prop="parentId">
           <el-tree-select
             v-model="formData.parentId"
@@ -282,7 +302,12 @@
         <el-row v-if="formData.menuType !== 3" :gutter="16">
           <el-col :span="12">
             <el-form-item :label="t('system.sort')" prop="sort">
-              <el-input-number v-model="formData.sort" :min="0" :max="9999" style="width: 100%" />
+              <el-input-number
+                v-model="formData.sort"
+                :min="0"
+                :max="9999"
+                style="width: 100%"
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -290,7 +315,12 @@
         <el-row v-if="formData.menuType === 3" :gutter="16">
           <el-col :span="12">
             <el-form-item :label="t('system.sort')" prop="sort">
-              <el-input-number v-model="formData.sort" :min="0" :max="9999" style="width: 100%" />
+              <el-input-number
+                v-model="formData.sort"
+                :min="0"
+                :max="9999"
+                style="width: 100%"
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -376,18 +406,6 @@ type QueryFormData = {
   visible: number | undefined
 }
 
-type RespBase = {
-  code?: number
-  msg?: string
-}
-
-type ApiResp<T = any> = {
-  code?: number
-  msg?: string
-  base?: RespBase
-  data?: T
-}
-
 const iconMap = ElementPlusIconsVue as Record<string, Component>
 const iconNames = Object.keys(iconMap).sort()
 const optionGroups = ref<OptionGroup[]>([])
@@ -414,7 +432,7 @@ const dialogType = ref<DialogType>('add')
 const formRef = ref<FormInstance>()
 
 // Query pagination
-const queryPage = { cursor: null, limit: 1000 }
+const queryPage = { cursor: undefined, limit: 1000 }
 
 // Menu tree data
 const rawList = ref<SysMenuItem[]>([])
@@ -612,26 +630,6 @@ function handleMenuTypeChange() {
   })
 }
 
-function isSuccessCode(code?: number) {
-  return code === 0 || code === 200
-}
-
-function getRespCode(res: ApiResp<any>) {
-  return res?.code ?? res?.base?.code
-}
-
-function getRespMsg(res: ApiResp<any>) {
-  return res?.msg || res?.base?.msg || t('common.failed')
-}
-
-function assertApiSuccess<T = any>(res: ApiResp<T>, defaultMsg?: string): T {
-  const code = getRespCode(res)
-  if (!isSuccessCode(code)) {
-    throw new Error(getRespMsg(res) || defaultMsg || t('common.failed'))
-  }
-  return res?.data as T
-}
-
 function showError(error: unknown) {
   const msg =
     error instanceof Error ? error.message : typeof error === 'string' ? error : t('common.failed')
@@ -642,17 +640,20 @@ function showError(error: unknown) {
 async function getList() {
   await withMainLoading(async () => {
     try {
-      const res = (await menuService.getList({
+      const res = await menuService.getList({
         cursor: queryPage.cursor,
         limit: queryPage.limit,
         keyword: queryForm.keyword || '',
         menuType: queryForm.menuType ?? 0,
         status: queryForm.status ?? 0,
         visible: queryForm.visible ?? 0,
-      })) as ApiResp<SysMenuItem[]>
+      })
 
-      const list = assertApiSuccess<SysMenuItem[]>(res, t('common.failed'))
-      rawList.value = Array.isArray(list) ? list : []
+      if (res.code != 200) {
+        ElMessage.error(res.msg || t('common.failed'))
+        return
+      }
+      rawList.value = res?.data || []
       tableData.value = buildTree(rawList.value)
     } catch (error) {
       rawList.value = []
@@ -668,7 +669,7 @@ async function loadOptions() {
 }
 
 function handleSearch() {
-  queryPage.cursor = null
+  queryPage.cursor = undefined
   getList()
 }
 
@@ -677,7 +678,7 @@ function handleReset() {
   queryForm.menuType = undefined
   queryForm.status = undefined
   queryForm.visible = undefined
-  queryPage.cursor = null
+  queryPage.cursor = undefined
   queryPage.limit = 20
   getList()
 }
@@ -726,7 +727,10 @@ async function handleDelete(row: SysMenuItem) {
     await confirm(t('system.confirmDeleteMenu', { name: getMenuTitle(row) }), { type: 'warning' })
 
     const res = await menuService.delete(row.id)
-    assertApiSuccess(res, t('common.failed'))
+    if (res.code != 200) {
+      ElMessage.error(res.msg || t('common.failed'))
+      return
+    }
 
     ElMessage.success(t('common.success'))
     await getList()
@@ -759,7 +763,9 @@ async function handleSubmit() {
         }
 
         const res = await menuService.create(payload)
-        assertApiSuccess(res, t('common.failed'))
+        if (res.code != 200) {
+          ElMessage.error(res.msg || t('common.failed'))
+        }
       } else {
         const payload: SysMenuUpdateReq = {
           id: formData.id as number,
@@ -776,7 +782,9 @@ async function handleSubmit() {
         }
 
         const res = await menuService.update(formData.id!, payload)
-        assertApiSuccess(res, t('common.failed'))
+        if (res.code != 200) {
+          ElMessage.error(res.msg || t('common.failed'))
+        }
       }
 
       ElMessage.success(t('common.success'))

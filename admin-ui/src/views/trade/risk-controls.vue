@@ -206,7 +206,12 @@
         {{ t('trade.riskLogs') }}
       </template>
 
-      <el-form :model="riskLogQuery" inline label-width="90px" class="query-card-inner">
+      <el-form
+        :model="riskLogQuery"
+        inline
+        label-width="90px"
+        class="query-card-inner"
+      >
         <el-form-item :label="t('trade.tenantId')">
           <el-input-number v-model="riskLogQuery.tenantId" :min="0" :precision="0" />
         </el-form-item>
@@ -261,6 +266,16 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="handlePrevPage"
+        @next="handleNextPage"
+        @limit-change="handleLimitChange"
+      />
     </el-card>
 
     <el-dialog v-model="detailVisible" :title="t('option.detail')" width="760px">
@@ -273,6 +288,7 @@
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import { usePagination } from '@/composables'
 import {
   SetUserSymbolLimitReq,
   SetUserTradeLimitReq,
@@ -281,6 +297,7 @@ import {
 } from '@/services'
 
 const { t } = useI18n()
+const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
 
 interface RiskQuery {
   tenantId: number
@@ -345,7 +362,7 @@ const riskLogQuery = reactive<RiskLogQuery>({
   userId: 0,
   symbolId: 0,
   orderNo: '',
-  limit: 100,
+  limit: 20,
 })
 
 const tradeLimitForm = reactive<SetUserTradeLimitReq>({
@@ -424,8 +441,6 @@ const leverageForm = reactive<LeverageForm>({
   remark: '',
 })
 
-const pickList = (res: any) => res?.data || res?.list || []
-
 const loadCurrent = async () => {
   await loadRiskLogs()
 }
@@ -462,7 +477,13 @@ const loadRiskData = async () => {
 const loadRiskLogs = async () => {
   loading.value = true
   try {
-    rows.value = pickList(await tradeService.listRiskLogs(riskLogQuery))
+    const res = await tradeService.listRiskLogs({
+      ...riskLogQuery,
+      cursor: pagination.cursor,
+      limit: pagination.limit,
+    })
+    rows.value = res?.data || []
+    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
   } finally {
     loading.value = false
   }
@@ -510,6 +531,25 @@ const submitLeverage = async () => {
     ElMessage.success(t('trade.saveSuccessLeverage'))
   } finally {
     submitLoading.value = false
+  }
+}
+
+function handleLimitChange() {
+  resetPagination()
+  loadCurrent()
+}
+
+function handlePrevPage() {
+  if (pagination.hasPrev && pagination.prevCursor) {
+    pagination.cursor = pagination.prevCursor
+    loadCurrent()
+  }
+}
+
+function handleNextPage() {
+  if (pagination.hasNext && pagination.nextCursor) {
+    pagination.cursor = pagination.nextCursor
+    loadCurrent()
   }
 }
 

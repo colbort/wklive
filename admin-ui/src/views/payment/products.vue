@@ -71,6 +71,16 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="handlePrevPage"
+        @next="handleNextPage"
+        @limit-change="handleLimitChange"
+      />
     </el-card>
 
     <el-dialog
@@ -152,6 +162,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { usePagination } from '@/composables'
 import { Refresh } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { catalogService, type OptionGroup, type PayProduct } from '@/services'
@@ -159,6 +170,7 @@ import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescrip
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 const { t } = useI18n()
+const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
 
 const submitLoading = ref(false)
 const productLoading = ref(false)
@@ -198,9 +210,11 @@ const loadProducts = async () => {
     const res = await catalogService.getProductList({
       ...productQuery,
       platformId: productQuery.platformId || undefined,
-      limit: 100,
+      cursor: pagination.cursor,
+      limit: pagination.limit,
     })
     products.value = res.data || []
+    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
   } finally {
     productLoading.value = false
   }
@@ -299,6 +313,25 @@ const showProductDetail = async (row: PayProduct) => {
   detailTitle.value = t('payment.productDetail')
   detailData.value = res.data || row
   detailVisible.value = true
+}
+
+function handleLimitChange() {
+  resetPagination()
+  loadProducts()
+}
+
+function handlePrevPage() {
+  if (pagination.hasPrev && pagination.prevCursor) {
+    pagination.cursor = pagination.prevCursor
+    loadProducts()
+  }
+}
+
+function handleNextPage() {
+  if (pagination.hasNext && pagination.nextCursor) {
+    pagination.cursor = pagination.nextCursor
+    loadProducts()
+  }
 }
 
 onMounted(async () => {

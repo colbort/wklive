@@ -172,21 +172,15 @@
         </el-table-column>
       </el-table>
 
-      <div class="pagination-bar">
-        <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
-        <el-button :disabled="!pagination.hasPrev" @click="handlePrevPage">
-          {{ t('common.prevPage') }}
-        </el-button>
-        <el-button :disabled="!pagination.hasNext" type="primary" @click="handleNextPage">
-          {{ t('common.nextPage') }}
-        </el-button>
-        <el-select v-model="pagination.limit" style="width: 100px" @change="handleLimitChange">
-          <el-option :value="10" :label="t('common.perPage10')" />
-          <el-option :value="20" :label="t('common.perPage20')" />
-          <el-option :value="50" :label="t('common.perPage50')" />
-          <el-option :value="100" :label="t('common.perPage100')" />
-        </el-select>
-      </div>
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="handlePrevPage"
+        @next="handleNextPage"
+        @limit-change="handleLimitChange"
+      />
     </el-card>
 
     <el-dialog
@@ -194,7 +188,12 @@
       :title="formMode === 'add' ? t('itick.addTenantProduct') : t('itick.editTenantProduct')"
       width="640px"
     >
-      <el-form ref="formRef" :model="form" :rules="rules" label-width="110px">
+      <el-form
+        ref="formRef"
+        :model="form"
+        :rules="rules"
+        label-width="110px"
+      >
         <el-form-item :label="t('common.tenantId')" prop="tenantId">
           <TenantSelect v-model="form.tenantId" :disabled="formMode === 'edit'" />
         </el-form-item>
@@ -222,26 +221,16 @@
               />
               <template #footer>
                 <div class="product-select-footer" @mousedown.prevent>
-                  <span>{{
-                    t('common.totalItems', { count: productOptionPagination.total })
-                  }}</span>
-                  <div class="product-select-footer__actions">
-                    <el-button
-                      size="small"
-                      :disabled="!productOptionPagination.hasPrev || productOptionsLoading"
-                      @click.stop="handleProductOptionsPrev"
-                    >
-                      {{ t('common.prevPage') }}
-                    </el-button>
-                    <el-button
-                      size="small"
-                      type="primary"
-                      :disabled="!productOptionPagination.hasNext || productOptionsLoading"
-                      @click.stop="handleProductOptionsNext"
-                    >
-                      {{ t('common.nextPage') }}
-                    </el-button>
-                  </div>
+                  <CursorPagination
+                    :total="productOptionPagination.total"
+                    :has-prev="productOptionPagination.hasPrev"
+                    :has-next="productOptionPagination.hasNext"
+                    :limit="productOptionPagination.limit"
+                    :show-limit="false"
+                    :disabled="productOptionsLoading"
+                    @prev="handleProductOptionsPrev"
+                    @next="handleProductOptionsNext"
+                  />
                 </div>
               </template>
             </el-select>
@@ -419,26 +408,16 @@
               />
               <template #footer>
                 <div class="product-select-footer" @mousedown.prevent>
-                  <span>{{
-                    t('common.totalItems', { count: productOptionPagination.total })
-                  }}</span>
-                  <div class="product-select-footer__actions">
-                    <el-button
-                      size="small"
-                      :disabled="!productOptionPagination.hasPrev || productOptionsLoading"
-                      @click.stop="handleProductOptionsPrev"
-                    >
-                      {{ t('common.prevPage') }}
-                    </el-button>
-                    <el-button
-                      size="small"
-                      type="primary"
-                      :disabled="!productOptionPagination.hasNext || productOptionsLoading"
-                      @click.stop="handleProductOptionsNext"
-                    >
-                      {{ t('common.nextPage') }}
-                    </el-button>
-                  </div>
+                  <CursorPagination
+                    :total="productOptionPagination.total"
+                    :has-prev="productOptionPagination.hasPrev"
+                    :has-next="productOptionPagination.hasNext"
+                    :limit="productOptionPagination.limit"
+                    :show-limit="false"
+                    :disabled="productOptionsLoading"
+                    @prev="handleProductOptionsPrev"
+                    @next="handleProductOptionsNext"
+                  />
                 </div>
               </template>
             </el-select>
@@ -572,22 +551,16 @@
         </el-table-column>
       </el-table>
 
-      <div class="product-picker-pagination">
-        <span>{{ t('common.totalItems', { count: productOptionPagination.total }) }}</span>
-        <el-button
-          :disabled="!productOptionPagination.hasPrev || productOptionsLoading"
-          @click="handleProductOptionsPrev"
-        >
-          {{ t('common.prevPage') }}
-        </el-button>
-        <el-button
-          type="primary"
-          :disabled="!productOptionPagination.hasNext || productOptionsLoading"
-          @click="handleProductOptionsNext"
-        >
-          {{ t('common.nextPage') }}
-        </el-button>
-      </div>
+      <CursorPagination
+        :total="productOptionPagination.total"
+        :has-prev="productOptionPagination.hasPrev"
+        :has-next="productOptionPagination.hasNext"
+        :limit="productOptionPagination.limit"
+        :show-limit="false"
+        :disabled="productOptionsLoading"
+        @prev="handleProductOptionsPrev"
+        @next="handleProductOptionsNext"
+      />
 
       <template #footer>
         <el-button @click="productPickerVisible = false">
@@ -668,7 +641,7 @@ type FormData = {
 
 const { t } = useI18n()
 const { systemCore, loadSystemCore } = useSystemCore()
-const { pagination, updatePagination, reset: resetPagination } = usePagination(20)
+const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
 const { loading, withLoading } = useLoading()
 const PRODUCT_OPTION_LIMIT = 20
 
@@ -680,7 +653,7 @@ const { form: queryParams, reset: resetQueryParams } = useForm<ListTenantProduct
     keyword: '',
     status: 0,
     visibleStatus: 0,
-    cursor: null,
+    cursor: undefined,
     limit: 20,
   },
 })
@@ -707,9 +680,9 @@ const productOptions = ref<BaseItickProduct[]>([])
 const productOptionsLoading = ref(false)
 const productOptionKeyword = ref('')
 const productOptionPagination = reactive({
-  cursor: null as string | null,
-  nextCursor: null as string | null,
-  prevCursor: null as string | null,
+  cursor: undefined as number | undefined,
+  nextCursor: undefined as number | undefined,
+  prevCursor: undefined as number | undefined,
   limit: PRODUCT_OPTION_LIMIT,
   total: 0,
   hasNext: false,
@@ -785,7 +758,7 @@ const cleanedQueryParams = computed<ListTenantProductsReq | null>(() => {
 const getList = async () => {
   if (!cleanedQueryParams.value) {
     list.value = []
-    updatePagination(0, false, false, null, null)
+    resetPagination()
     return
   }
 
@@ -794,13 +767,7 @@ const getList = async () => {
       cleanedQueryParams.value as ListTenantProductsReq,
     )
     list.value = res?.data || []
-    updatePagination(
-      res?.total || 0,
-      !!res?.hasNext,
-      !!res?.hasPrev,
-      res?.nextCursor || null,
-      res?.prevCursor || null,
-    )
+    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
   }).catch(() => {
     ElMessage.error(t('itick.loadFailed'))
   })
@@ -816,9 +783,9 @@ const loadOptions = async () => {
 }
 
 const resetProductOptionPagination = () => {
-  productOptionPagination.cursor = null
-  productOptionPagination.nextCursor = null
-  productOptionPagination.prevCursor = null
+  productOptionPagination.cursor = undefined
+  productOptionPagination.nextCursor = undefined
+  productOptionPagination.prevCursor = undefined
   productOptionPagination.total = 0
   productOptionPagination.hasNext = false
   productOptionPagination.hasPrev = false
@@ -826,7 +793,7 @@ const resetProductOptionPagination = () => {
 
 const loadProductOptions = async (
   keyword = productOptionKeyword.value,
-  cursor: string | null = null,
+  cursor: number | undefined = undefined,
   append = false,
 ) => {
   productOptionsLoading.value = true
@@ -847,8 +814,8 @@ const loadProductOptions = async (
     productOptionPagination.total = res.total || 0
     productOptionPagination.hasNext = !!res.hasNext
     productOptionPagination.hasPrev = !!res.hasPrev
-    productOptionPagination.nextCursor = res.nextCursor || null
-    productOptionPagination.prevCursor = res.prevCursor || null
+    productOptionPagination.nextCursor = res.nextCursor
+    productOptionPagination.prevCursor = res.prevCursor
   } catch {
     ElMessage.error(t('itick.loadOptionsFailed'))
   } finally {
@@ -858,7 +825,7 @@ const loadProductOptions = async (
 
 const reloadProductOptions = () => {
   resetProductOptionPagination()
-  return loadProductOptions(productOptionKeyword.value, null)
+  return loadProductOptions(productOptionKeyword.value, undefined)
 }
 
 const mergeProductOptions = (current: BaseItickProduct[], incoming: BaseItickProduct[]) => {
@@ -880,7 +847,7 @@ const mergeProductOptions = (current: BaseItickProduct[], incoming: BaseItickPro
 const handleProductRemoteSearch = (keyword: string) => {
   productOptionKeyword.value = keyword
   resetProductOptionPagination()
-  loadProductOptions(keyword, null)
+  loadProductOptions(keyword, undefined)
 }
 
 const handleProductSelectVisibleChange = (visible: boolean) => {
@@ -899,14 +866,14 @@ const handleProductSelectVisibleChange = (visible: boolean) => {
 }
 
 const handleProductOptionsPrev = () => {
-  if (!productOptionPagination.hasPrev || !productOptionPagination.prevCursor) {
+  if (!productOptionPagination.hasPrev || productOptionPagination.prevCursor === undefined) {
     return
   }
   loadProductOptions(productOptionKeyword.value, productOptionPagination.prevCursor)
 }
 
 const handleProductOptionsNext = () => {
-  if (!productOptionPagination.hasNext || !productOptionPagination.nextCursor) {
+  if (!productOptionPagination.hasNext || productOptionPagination.nextCursor === undefined) {
     return
   }
   loadProductOptions(productOptionKeyword.value, productOptionPagination.nextCursor)
@@ -1037,7 +1004,7 @@ const confirmProductPicker = () => {
 }
 
 const handleQuery = () => {
-  pagination.cursor = null
+  resetPagination()
   getList()
 }
 
@@ -1048,7 +1015,7 @@ const resetQuery = () => {
 }
 
 const handleLimitChange = () => {
-  pagination.cursor = null
+  resetPagination()
   getList()
 }
 
@@ -1307,15 +1274,13 @@ onBeforeUnmount(() => {
 .product-select-footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 12px;
   padding: 6px 0;
 }
 
-.product-select-footer__actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.product-select-footer :deep(.pagination-bar) {
+  margin-top: 0;
 }
 
 .product-field {
@@ -1339,14 +1304,6 @@ onBeforeUnmount(() => {
   margin-left: auto;
   color: #606266;
   font-size: 13px;
-}
-
-.product-picker-pagination {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  align-items: center;
-  margin-top: 12px;
 }
 
 .batch-toolbar {

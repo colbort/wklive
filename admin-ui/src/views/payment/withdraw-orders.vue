@@ -36,7 +36,7 @@
       </el-form>
     </el-card>
 
-    <el-card shadow="never">
+    <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="list" stripe>
         <el-table-column prop="orderNo" :label="t('payment.orderNo')" min-width="180" />
         <el-table-column prop="tenantId" :label="t('common.tenantId')" width="100" />
@@ -44,8 +44,16 @@
         <el-table-column prop="platformId" :label="t('payment.platformId')" width="100" />
         <el-table-column prop="channelId" :label="t('payment.channelId')" width="100" />
         <el-table-column prop="currency" :label="t('payment.currency')" width="80" />
-        <el-table-column prop="amount" :label="t('payment.amount')" min-width="120" />
-        <el-table-column prop="feeAmount" :label="t('payment.feeAmount')" min-width="100" />
+        <el-table-column :label="t('payment.amount')" min-width="120">
+          <template #default="{ row }">
+            {{ formatCentAmount(row.amount) }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('payment.feeAmount')" min-width="100">
+          <template #default="{ row }">
+            {{ formatCentAmount(row.feeAmount) }}
+          </template>
+        </el-table-column>
         <el-table-column :label="t('common.status')" width="110">
           <template #default="{ row }">
             <el-tag :type="statusTagType(row.status)" disable-transitions>
@@ -58,16 +66,35 @@
             <el-button link type="primary" @click="showDetail(row)">
               {{ t('common.detail') }}
             </el-button>
-            <el-button v-if="canAudit(row)" link type="warning" @click="openAudit(row)">
+            <el-button
+              v-if="canAudit(row)"
+              link
+              type="warning"
+              @click="openAudit(row)"
+            >
               {{ t('payment.auditWithdraw') }}
             </el-button>
           </template>
         </el-table-column>
       </el-table>
+
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="handlePrevPage"
+        @next="handleNextPage"
+        @limit-change="handleLimitChange"
+      />
     </el-card>
 
     <el-drawer v-model="detailVisible" :title="t('payment.orderDetail')" size="720px">
-      <PaymentDetailDescriptions :data="detailData" :option-groups="optionGroups" :columns="1" />
+      <PaymentDetailDescriptions
+        :data="detailDisplayData"
+        :option-groups="optionGroups"
+        :columns="1"
+      />
     </el-drawer>
 
     <el-dialog v-model="auditVisible" :title="t('payment.auditWithdraw')" width="520px">
@@ -101,12 +128,14 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { usePagination } from '@/composables'
 import { ElMessage } from 'element-plus'
 import { catalogService, withdrawService, type OptionGroup, type WithdrawOrder } from '@/services'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 const { t } = useI18n()
+const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
 
 const loading = ref(false)
 const list = ref<WithdrawOrder[]>([])
@@ -118,6 +147,24 @@ const optionGroups = ref<OptionGroup[]>([])
 const payOrderStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'payOrderStatus'))
 
 const PAY_ORDER_STATUS_PENDING = 1
+const CENT_AMOUNT_KEYS = new Set(['amount', 'feeAmount', 'actualAmount'])
+
+const centToAmount = (value: unknown) => {
+  const amount = Number(value || 0) / 100
+  return Number.isFinite(amount) ? amount : 0
+}
+
+const formatCentAmount = (value: unknown) => centToAmount(value).toFixed(2)
+
+const detailDisplayData = computed(() => {
+  if (!detailData.value) return null
+  return Object.fromEntries(
+    Object.entries(detailData.value).map(([key, value]) => [
+      key,
+      CENT_AMOUNT_KEYS.has(key) ? formatCentAmount(value) : value,
+    ]),
+  )
+})
 
 const auditForm = reactive({
   approve: 1,
@@ -140,9 +187,11 @@ const loadList = async () => {
       userId: query.userId || undefined,
       orderNo: query.orderNo || undefined,
       status: query.status || undefined,
-      limit: 100,
+      cursor: pagination.cursor,
+      limit: pagination.limit,
     })
     list.value = res.data || []
+    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
   } finally {
     loading.value = false
   }
@@ -199,6 +248,25 @@ const submitAudit = async () => {
 
 const loadOptions = async () => {
   optionGroups.value = (await catalogService.getOptions()).data || []
+}
+
+function handleLimitChange() {
+  resetPagination()
+  loadList()
+}
+
+function handlePrevPage() {
+  if (pagination.hasPrev && pagination.prevCursor) {
+    pagination.cursor = pagination.prevCursor
+    loadList()
+  }
+}
+
+function handleNextPage() {
+  if (pagination.hasNext && pagination.nextCursor) {
+    pagination.cursor = pagination.nextCursor
+    loadList()
+  }
 }
 
 onMounted(() => {

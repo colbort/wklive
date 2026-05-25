@@ -15,9 +15,10 @@ const { t } = useI18n()
 const {
   pagination,
   updatePagination,
+  reset: resetPagination,
   nextPage: paginationNextPage,
   prevPage: paginationPrevPage,
-} = usePagination(10)
+} = usePagination<number>(10)
 const { loading, withLoading } = useLoading()
 
 // Query form
@@ -47,13 +48,7 @@ async function fetchList() {
       })
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
       list_ref.value = res.data || []
-      updatePagination(
-        res.total || 0,
-        res.hasNext || false,
-        res.hasPrev || false,
-        res.nextCursor || null,
-        res.prevCursor || null,
-      )
+      updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
     } catch (error: unknown) {
       ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
     }
@@ -61,8 +56,7 @@ async function fetchList() {
 }
 
 function onSearch() {
-  pagination.cursor = null
-  pagination.hasPrev = false
+  resetPagination()
   fetchList()
 }
 
@@ -70,8 +64,7 @@ function onReset() {
   queryForm.jobName = ''
   queryForm.invokeTarget = ''
   queryForm.status = undefined
-  pagination.cursor = null
-  pagination.hasPrev = false
+  resetPagination()
   fetchList()
 }
 
@@ -150,7 +143,12 @@ onMounted(() => {
     </el-form>
 
     <!-- Table -->
-    <el-table v-loading="loading" :data="list_ref" row-key="id" style="margin-bottom: 16px">
+    <el-table
+      v-loading="loading"
+      :data="list_ref"
+      row-key="id"
+      style="margin-bottom: 16px"
+    >
       <el-table-column prop="id" :label="t('common.id')" width="70" />
       <el-table-column prop="jobId" :label="t('system.jobId')" width="80" />
       <el-table-column prop="jobName" :label="t('system.jobName')" min-width="120" />
@@ -198,30 +196,20 @@ onMounted(() => {
     </el-table>
 
     <!-- Pagination -->
-    <div style="display: flex; justify-content: flex-end; gap: 10px; align-items: center">
-      <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
-      <el-button :disabled="!pagination.hasPrev" @click="prevPage">
-        {{ t('common.prevPage') }}
-      </el-button>
-      <el-button :disabled="!pagination.hasNext" @click="nextPage">
-        {{ t('common.nextPage') }}
-      </el-button>
-      <el-select
-        v-model="pagination.limit"
-        style="width: 100px"
-        @change="
-          () => {
-            pagination.cursor = null
-            pagination.hasPrev = false
-            fetchList()
-          }
-        "
-      >
-        <el-option label="10" :value="10" />
-        <el-option label="20" :value="20" />
-        <el-option label="50" :value="50" />
-      </el-select>
-    </div>
+    <CursorPagination
+      v-model:limit="pagination.limit"
+      :total="pagination.total"
+      :has-prev="pagination.hasPrev"
+      :has-next="pagination.hasNext"
+      @prev="prevPage"
+      @next="nextPage"
+      @limit-change="
+        () => {
+          resetPagination()
+          fetchList()
+        }
+      "
+    />
 
     <!-- Detail Drawer -->
     <el-drawer v-model="detailDrawerVisible" :title="t('system.logDetail')" size="50%">
@@ -284,7 +272,9 @@ onMounted(() => {
             >
               {{ detailData.exceptionInfo }}
             </div>
-            <div v-else style="color: #999">-</div>
+            <div v-else style="color: #999">
+              -
+            </div>
           </el-descriptions-item>
           <el-descriptions-item :label="t('common.createTimes')">
             {{ formatDate(detailData.createTimes) }}

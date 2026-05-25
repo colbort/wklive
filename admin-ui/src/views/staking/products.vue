@@ -49,7 +49,12 @@
           show-overflow-tooltip
         />
         <el-table-column :label="t('staking.coinSymbol')" prop="coinSymbol" width="120" />
-        <el-table-column prop="apr" label="APR" min-width="120" show-overflow-tooltip />
+        <el-table-column
+          prop="apr"
+          label="APR"
+          min-width="120"
+          show-overflow-tooltip
+        />
         <el-table-column :label="t('staking.lockDays')" prop="lockDays" width="120" />
         <el-table-column :label="t('common.status')" prop="status" width="100" />
         <el-table-column :label="t('common.actions')" width="220" fixed="right">
@@ -66,6 +71,16 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="handlePrevPage"
+        @next="handleNextPage"
+        @limit-change="handleLimitChange"
+      />
     </el-card>
 
     <el-dialog
@@ -198,6 +213,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { usePagination } from '@/composables'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   AdminProductUpdateReq,
@@ -209,6 +225,7 @@ import { findOptionGroup, getOptionLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 
 const { t } = useI18n()
+const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
 
 const optionGroups = ref<OptionGroup[]>([])
 const productTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'productType'))
@@ -228,7 +245,7 @@ const query = reactive({
   productNo: '',
   productName: '',
   coinSymbol: '',
-  limit: 100,
+  limit: 20,
 })
 
 const productForm = reactive<AdminProductUpdateReq>({
@@ -258,8 +275,6 @@ const productForm = reactive<AdminProductUpdateReq>({
   remark: '',
 })
 
-const pickList = (res: any) => res?.data || res?.list || []
-
 const loadOptions = async () => {
   const res = await stakingService.getOptions()
   optionGroups.value = res.data || []
@@ -268,7 +283,13 @@ const loadOptions = async () => {
 const loadProducts = async () => {
   loading.value = true
   try {
-    rows.value = pickList(await stakingService.listProducts(query))
+    const res = await stakingService.listProducts({
+      ...query,
+      cursor: pagination.cursor,
+      limit: pagination.limit,
+    })
+    rows.value = res?.data || []
+    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
   } finally {
     loading.value = false
   }
@@ -352,6 +373,25 @@ const changeStatus = async (row: StakeProduct) => {
   })
   ElMessage.success(t('staking.statusUpdated'))
   loadProducts()
+}
+
+function handleLimitChange() {
+  resetPagination()
+  loadProducts()
+}
+
+function handlePrevPage() {
+  if (pagination.hasPrev && pagination.prevCursor) {
+    pagination.cursor = pagination.prevCursor
+    loadProducts()
+  }
+}
+
+function handleNextPage() {
+  if (pagination.hasNext && pagination.nextCursor) {
+    pagination.cursor = pagination.nextCursor
+    loadProducts()
+  }
 }
 
 onMounted(async () => {

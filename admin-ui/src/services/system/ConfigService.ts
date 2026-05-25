@@ -22,7 +22,7 @@ export type SysConfigItem = {
 export type SysConfigListReq = {
   keyword?: string
   tenantId?: number
-  cursor?: string | null
+  cursor?: number
   limit?: number
 }
 

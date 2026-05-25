@@ -62,7 +62,12 @@ async function submit() {
           <el-input v-model="form.googleCode" />
         </el-form-item>
 
-        <el-button type="primary" :loading="loading" style="width: 100%" @click="submit">
+        <el-button
+          type="primary"
+          :loading="loading"
+          style="width: 100%"
+          @click="submit"
+        >
           {{ t('auth.submit') }}
         </el-button>
       </el-form>

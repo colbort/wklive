@@ -30,6 +30,6 @@ export async function apiRoleGrant(params: RoleGrantRequest): Promise<RespBase> 
   // POST /roles/grant
   return await post('/admin/system/roles/grant', params)
 }
-export async function apiRoleGrantDetail(roleId: number): Promise<RespBase> {
+export async function apiRoleGrantDetail(roleId: number): Promise<RespBase<RoleGrantRequest>> {
   return await get(`/admin/system/roles/${roleId}/grant`)
 }

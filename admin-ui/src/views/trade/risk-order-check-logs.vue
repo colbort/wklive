@@ -36,7 +36,12 @@
       <template #header>
         {{ t('trade.riskLogs') }}
       </template>
-      <el-form :model="riskLogQuery" inline label-width="90px" class="query-card-inner">
+      <el-form
+        :model="riskLogQuery"
+        inline
+        label-width="90px"
+        class="query-card-inner"
+      >
         <el-form-item :label="t('trade.tenantId')">
           <el-input-number v-model="riskLogQuery.tenantId" :min="0" :precision="0" />
         </el-form-item>
@@ -80,6 +85,16 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="handlePrevPage"
+        @next="handleNextPage"
+        @limit-change="handleLimitChange"
+      />
     </el-card>
     <el-dialog v-model="detailVisible" :title="t('option.detail')" width="760px">
       <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
@@ -89,14 +104,11 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import {
-  RespBase,
-  tradeService,
-  type GetRiskOrderCheckLogListReq,
-  type RiskOrderCheckLog,
-} from '@/services'
+import { usePagination } from '@/composables'
+import { tradeService, type GetRiskOrderCheckLogListReq, type RiskOrderCheckLog } from '@/services'
 
 const { t } = useI18n()
+const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
 
 const loading = ref(false)
 interface RiskQuery {
@@ -120,9 +132,8 @@ const riskLogQuery = reactive<GetRiskOrderCheckLogListReq>({
   userId: 0,
   symbolId: 0,
   orderNo: '',
-  limit: 100,
+  limit: 20,
 })
-const pickList = (res: RespBase) => res?.data || []
 
 const loadCurrent = async () => {
   await loadRiskLogs()
@@ -135,9 +146,34 @@ const loadRiskData = async () => {
 const loadRiskLogs = async () => {
   loading.value = true
   try {
-    rows.value = pickList(await tradeService.listRiskLogs(riskLogQuery))
+    const res = await tradeService.listRiskLogs({
+      ...riskLogQuery,
+      cursor: pagination.cursor,
+      limit: pagination.limit,
+    })
+    rows.value = res?.data || []
+    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
   } finally {
     loading.value = false
+  }
+}
+
+function handleLimitChange() {
+  resetPagination()
+  loadCurrent()
+}
+
+function handlePrevPage() {
+  if (pagination.hasPrev && pagination.prevCursor) {
+    pagination.cursor = pagination.prevCursor
+    loadCurrent()
+  }
+}
+
+function handleNextPage() {
+  if (pagination.hasNext && pagination.nextCursor) {
+    pagination.cursor = pagination.nextCursor
+    loadCurrent()
   }
 }
 

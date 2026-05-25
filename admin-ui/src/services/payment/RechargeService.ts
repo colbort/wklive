@@ -86,7 +86,7 @@ export type ListUserRechargeStatsReq = {
   userId?: number // 用户ID
   successTotalAmountMin?: number // 累计充值金额最小值，单位分
   successTotalAmountMax?: number // 累计充值金额最大值，单位分
-  cursor?: string | null // 分页游标
+  cursor?: number // 分页游标
   limit?: number // 分页大小
 }
 
@@ -103,7 +103,7 @@ export type ListRechargeOrdersReq = {
   status?: number // 订单状态
   createTimeStart?: number // 创建时间开始
   createTimeEnd?: number // 创建时间结束
-  cursor?: string | null // 分页游标
+  cursor?: number // 分页游标
   limit?: number // 分页大小
 }
 
@@ -117,7 +117,7 @@ export type ListRechargeNotifyLogsReq = {
   signResult?: number // 验签结果
   createTimeStart?: number // 创建时间开始
   createTimeEnd?: number // 创建时间结束
-  cursor?: string | null // 分页游标
+  cursor?: number // 分页游标
   limit?: number // 分页大小
 }
 

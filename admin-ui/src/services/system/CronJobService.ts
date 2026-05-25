@@ -27,7 +27,7 @@ export type SysCronJobItem = {
 }
 
 export type SysCronJobListReq = {
-  cursor?: string | null
+  cursor?: number
   limit?: number
   keyword?: string
   jobName?: string
@@ -94,7 +94,7 @@ export type SysCronJobLogItem = {
 }
 
 export type SysCronJobLogListReq = {
-  cursor?: string | null
+  cursor?: number
   limit?: number
   jobId?: number
   jobName?: string

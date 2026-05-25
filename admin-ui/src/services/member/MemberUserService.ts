@@ -187,7 +187,7 @@ export type MemberUserDetail = UserDetail
 export type MemberUserItem = UserItem
 
 export type ListMemberUsersReq = {
-  cursor?: number | string | null // 游标
+  cursor?: number // 游标
   limit?: number // 条数限制
   tenantId?: number // 租户ID
   tenantCode?: string // 租户编码
@@ -269,7 +269,7 @@ export type CheckUserReferrerResp = MemberRespBase<{
 }
 
 export type ListMemberUserIdentitiesReq = {
-  cursor?: number | string | null // 游标
+  cursor?: number // 游标
   limit?: number // 条数限制
   tenantId?: number // 租户ID
   tenantCode?: string // 租户编码
@@ -293,7 +293,7 @@ export type ReviewUserIdentityReq = {
 }
 
 export type ListMemberUserBanksReq = {
-  cursor?: number | string | null // 游标
+  cursor?: number // 游标
   limit?: number // 条数限制
   tenantId?: number // 租户ID
   userId?: number // 用户ID

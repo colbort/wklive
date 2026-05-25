@@ -1,5 +1,5 @@
 <template>
-  <div class="module-page">
+  <div class="module-page flow-page">
     <div class="page-header">
       <h2>{{ t('asset.flows') }}</h2>
       <div class="header-actions">
@@ -34,7 +34,7 @@
           <el-input v-model="query.bizNo" clearable />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="loadList">
+          <el-button type="primary" @click="handleQuery">
             {{ t('common.search') }}
           </el-button>
           <el-button @click="resetQuery">
@@ -44,8 +44,14 @@
       </el-form>
     </el-card>
 
-    <el-card shadow="never" class="table-card">
-      <el-table v-loading="loading" :data="rows" stripe>
+    <el-card shadow="never" class="table-card flow-table-card">
+      <el-table
+        v-loading="loading"
+        :data="rows"
+        stripe
+        height="100%"
+        class="flow-table"
+      >
         <el-table-column
           prop="flowNo"
           :label="t('asset.flowNo')"
@@ -75,12 +81,11 @@
           min-width="100"
           show-overflow-tooltip
         />
-        <el-table-column
-          prop="changeAmount"
-          :label="t('asset.changeAmount')"
-          min-width="140"
-          show-overflow-tooltip
-        />
+        <el-table-column :label="t('asset.changeAmount')" min-width="140" show-overflow-tooltip>
+          <template #default="{ row }">
+            {{ formatCentAmount(row.changeAmount) }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="bizNo"
           :label="t('asset.bizNo')"
@@ -100,6 +105,16 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="handlePrevPage"
+        @next="handleNextPage"
+        @limit-change="handleLimitChange"
+      />
     </el-card>
 
     <el-drawer v-model="detailVisible" :title="detailTitle" size="760px">
@@ -123,16 +138,16 @@
           {{ detailData.coin }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.changeAmount')">
-          {{ detailData.changeAmount }}
+          {{ formatCentAmount(detailData.changeAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.opType')">
           {{ detailData.opType }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.bizType')">
-          {{ detailData.bizType }}
+          {{ formatOptionValue('bizType', detailData.bizType) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.sceneType')">
-          {{ detailData.sceneType }}
+          {{ formatOptionValue('sceneType', detailData.sceneType) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.bizId')">
           {{ detailData.bizId }}
@@ -141,28 +156,28 @@
           {{ detailData.bizNo || '-' }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.beforeTotalAmount')">
-          {{ detailData.beforeTotalAmount }}
+          {{ formatCentAmount(detailData.beforeTotalAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.afterTotalAmount')">
-          {{ detailData.afterTotalAmount }}
+          {{ formatCentAmount(detailData.afterTotalAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.beforeAvailableAmount')">
-          {{ detailData.beforeAvailableAmount }}
+          {{ formatCentAmount(detailData.beforeAvailableAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.afterAvailableAmount')">
-          {{ detailData.afterAvailableAmount }}
+          {{ formatCentAmount(detailData.afterAvailableAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.beforeFrozenAmount')">
-          {{ detailData.beforeFrozenAmount }}
+          {{ formatCentAmount(detailData.beforeFrozenAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.afterFrozenAmount')">
-          {{ detailData.afterFrozenAmount }}
+          {{ formatCentAmount(detailData.afterFrozenAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.beforeLockedAmount')">
-          {{ detailData.beforeLockedAmount }}
+          {{ formatCentAmount(detailData.beforeLockedAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.afterLockedAmount')">
-          {{ detailData.afterLockedAmount }}
+          {{ formatCentAmount(detailData.afterLockedAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.balanceSnapshotVersion')">
           {{ detailData.balanceSnapshotVersion }}
@@ -187,6 +202,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { usePagination } from '@/composables'
 import { assetService, type AssetFlow, type OptionGroup } from '@/services'
 import { formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
@@ -205,18 +221,20 @@ const query = reactive({
   walletType: undefined as number | undefined,
   coin: '',
   bizNo: '',
-  limit: 100,
 })
+
+const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
 
 const walletTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'walletType'))
 const detailTitle = computed(() => `${t('asset.flows')}${t('asset.detail')}`)
 
-function pickList(res: any) {
-  return res?.data || res?.list || []
-}
-
 function formatOptionValue(key: string, value: number | string | undefined) {
   return getOptionValueLabel(optionGroups.value, key, value, t)
+}
+
+function formatCentAmount(value: string | number | undefined) {
+  const amount = Number(value || 0) / 100
+  return Number.isFinite(amount) ? amount.toFixed(2) : '0.00'
 }
 
 async function loadOptions() {
@@ -227,10 +245,26 @@ async function loadOptions() {
 async function loadList() {
   loading.value = true
   try {
-    rows.value = pickList(await assetService.getFlows(query))
+    const res = await assetService.getFlows({
+      ...query,
+      tenantId: query.tenantId || undefined,
+      userId: query.userId || undefined,
+      walletType: query.walletType || undefined,
+      coin: query.coin || undefined,
+      bizNo: query.bizNo || undefined,
+      cursor: pagination.cursor,
+      limit: pagination.limit,
+    })
+    rows.value = res.data || []
+    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
   } finally {
     loading.value = false
   }
+}
+
+function handleQuery() {
+  resetPagination()
+  loadList()
 }
 
 function resetQuery() {
@@ -239,8 +273,27 @@ function resetQuery() {
   query.walletType = undefined
   query.coin = ''
   query.bizNo = ''
-  query.limit = 100
+  resetPagination()
   loadList()
+}
+
+function handleLimitChange() {
+  resetPagination()
+  loadList()
+}
+
+function handlePrevPage() {
+  if (pagination.hasPrev && pagination.prevCursor !== undefined) {
+    pagination.cursor = pagination.prevCursor
+    loadList()
+  }
+}
+
+function handleNextPage() {
+  if (pagination.hasNext && pagination.nextCursor !== undefined) {
+    pagination.cursor = pagination.nextCursor
+    loadList()
+  }
 }
 
 function showDetail(row: AssetFlow) {
@@ -253,6 +306,29 @@ onMounted(loadOptions)
 </script>
 
 <style scoped>
+.flow-page {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.flow-table-card {
+  flex: 1;
+  min-height: 0;
+}
+
+.flow-table-card :deep(.el-card__body) {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.flow-table {
+  flex: 1;
+  min-height: 0;
+}
+
 .query-card :deep(.el-form-item) {
   margin-bottom: 12px;
 }

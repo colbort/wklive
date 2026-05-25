@@ -67,7 +67,7 @@ export type CryptoRechargeTx = {
 }
 
 export type ListCryptoRechargeAddressesReq = Partial<CryptoRechargeAddress> & {
-  cursor?: string | null
+  cursor?: number
   limit?: number
 }
 
@@ -86,7 +86,7 @@ export type ListCryptoWalletAccountsReq = {
   provider?: string
   status?: number
   isDefault?: number
-  cursor?: string | null
+  cursor?: number
   limit?: number
 }
 export type CreateCryptoWalletAccountReq = Omit<
@@ -107,7 +107,7 @@ export type ListCryptoRechargeTxsReq = {
   txHash?: string
   toAddress?: string
   status?: number
-  cursor?: string | null
+  cursor?: number
   limit?: number
 }
 export type CreateCryptoRechargeTxReq = Omit<CryptoRechargeTx, 'id' | 'createTimes' | 'updateTimes'>

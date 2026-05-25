@@ -42,7 +42,7 @@ export type ListWithdrawOrdersReq = {
   tenantId?: number // 租户ID
   userId?: number // 用户ID
   orderNo?: string // 平台订单号
-  cursor?: string | null // 分页游标
+  cursor?: number // 分页游标
   limit?: number // 分页大小
   status?: number // 订单状态
 }
@@ -57,7 +57,7 @@ export type ListWithdrawNotifyLogsReq = {
   signResult?: number // 验签结果
   createTimeStart?: number // 创建时间开始
   createTimeEnd?: number // 创建时间结束
-  cursor?: string | null // 分页游标
+  cursor?: number // 分页游标
   limit?: number // 分页大小
 }
 

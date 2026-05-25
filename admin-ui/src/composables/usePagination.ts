@@ -2,60 +2,60 @@
  * 分页 Hook
  */
 
-import { ref, reactive, computed } from 'vue'
+import { reactive } from 'vue'
 
-export interface PaginationState {
-  cursor: string | null
-  nextCursor: string | null
-  prevCursor: string | null
+export interface PaginationState<TCursor = number> {
+  cursor: TCursor | undefined
+  nextCursor: TCursor | undefined
+  prevCursor: TCursor | undefined
   limit: number
   total: number
   hasNext: boolean
   hasPrev: boolean
 }
 
-export function usePagination(initialLimit = 10) {
-  const pagination = reactive<PaginationState>({
-    cursor: null,
-    nextCursor: null,
-    prevCursor: null,
+export function usePagination<TCursor = number>(initialLimit = 10) {
+  const pagination = reactive({
+    cursor: undefined,
+    nextCursor: undefined,
+    prevCursor: undefined,
     limit: initialLimit,
     total: 0,
     hasNext: false,
     hasPrev: false,
-  })
+  }) as PaginationState<TCursor>
 
   const updatePagination = (
     total: number,
     hasNext: boolean,
     hasPrev: boolean,
-    nextCursor: string | null = null,
-    prevCursor: string | null = null,
+    nextCursor?: TCursor,
+    prevCursor?: TCursor,
   ) => {
     pagination.total = total
     pagination.hasNext = hasNext
     pagination.hasPrev = hasPrev
-    pagination.nextCursor = nextCursor
-    pagination.prevCursor = prevCursor
+    pagination.nextCursor = nextCursor ?? undefined
+    pagination.prevCursor = prevCursor ?? undefined
   }
 
   const reset = () => {
-    pagination.cursor = null
-    pagination.nextCursor = null
-    pagination.prevCursor = null
+    pagination.cursor = undefined
+    pagination.nextCursor = undefined
+    pagination.prevCursor = undefined
     pagination.total = 0
     pagination.hasNext = false
     pagination.hasPrev = false
   }
 
   const nextPage = () => {
-    if (pagination.hasNext && pagination.nextCursor) {
+    if (pagination.hasNext && pagination.nextCursor !== undefined) {
       pagination.cursor = pagination.nextCursor
     }
   }
 
   const prevPage = () => {
-    if (pagination.hasPrev && pagination.prevCursor) {
+    if (pagination.hasPrev && pagination.prevCursor !== undefined) {
       pagination.cursor = pagination.prevCursor
     }
   }

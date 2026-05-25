@@ -40,7 +40,7 @@
         </el-form-item>
       </el-form>
     </el-card>
-    <el-card shadow="never">
+    <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="list" stripe>
         <el-table-column prop="id" :label="t('common.id')" width="80" /><el-table-column
           prop="tenantId"
@@ -75,6 +75,16 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="handlePrevPage"
+        @next="handleNextPage"
+        @limit-change="handleLimitChange"
+      />
     </el-card>
     <el-dialog
       v-model="dialogVisible"
@@ -139,11 +149,13 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { usePagination } from '@/composables'
 import { ElMessage } from 'element-plus'
 import { cryptoService, type CryptoWalletAccount } from '@/services'
 import TenantSelect from '@/components/TenantSelect.vue'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 const { t } = useI18n()
+const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
 const loading = ref(false),
   dialogVisible = ref(false),
   detailVisible = ref(false)
@@ -178,7 +190,13 @@ function params() {
 async function loadList() {
   loading.value = true
   try {
-    list.value = (await cryptoService.listWalletAccounts({ ...params(), limit: 100 })).data || []
+    const res = await cryptoService.listWalletAccounts({
+      ...params(),
+      cursor: pagination.cursor,
+      limit: pagination.limit,
+    })
+    list.value = res.data || []
+    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
   } finally {
     loading.value = false
   }
@@ -222,5 +240,24 @@ async function submit() {
     await loadList()
   }
 }
+function handleLimitChange() {
+  resetPagination()
+  loadList()
+}
+
+function handlePrevPage() {
+  if (pagination.hasPrev && pagination.prevCursor) {
+    pagination.cursor = pagination.prevCursor
+    loadList()
+  }
+}
+
+function handleNextPage() {
+  if (pagination.hasNext && pagination.nextCursor) {
+    pagination.cursor = pagination.nextCursor
+    loadList()
+  }
+}
+
 onMounted(loadList)
 </script>

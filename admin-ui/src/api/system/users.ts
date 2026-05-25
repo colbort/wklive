@@ -4,7 +4,7 @@ import type { RespBase, SysUserItem, Google2FABindInitResp } from '@/services'
 export function apiUserList(params: {
   keyword?: string
   status?: number
-  cursor?: string | null
+  cursor?: number
   limit?: number
 }): Promise<RespBase<SysUserItem[]>> {
   return get<SysUserItem[]>('/admin/system/users', params)

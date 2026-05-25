@@ -2,13 +2,21 @@
 import { computed, ref, onMounted, nextTick } from 'vue'
 import { ElMessage, type FormInstance, type TreeInstance } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import type { OptionGroup, RespBase } from '@/services'
+import type { OptionGroup } from '@/services'
 import type { RoleQueryParams, SysRole } from '@/services/system/RoleService'
 import type { MenuNode, PermItem } from '@/services/system/MenuService'
 import { usePagination, useLoading, useConfirm, useForm } from '@/composables'
 
 import { roleService, menuService } from '@/services'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+
+type RoleMenuNode = MenuNode & {
+  parentId?: number
+  menuType?: number
+  perms?: string
+  sort?: number
+  children?: RoleMenuNode[]
+}
 
 // ===== i18n =====
 const { t } = useI18n()
@@ -25,9 +33,10 @@ function isSuperRole(r: SysRole | null | undefined) {
 const {
   pagination,
   updatePagination,
+  reset: resetPagination,
   nextPage: paginationNextPage,
   prevPage: paginationPrevPage,
-} = usePagination(20)
+} = usePagination<number>(20)
 const { loading, withLoading } = useLoading()
 const { confirm } = useConfirm()
 const { form: queryForm } = useForm({
@@ -52,10 +61,10 @@ async function fetchList() {
       tableData.value = resp.data || []
       updatePagination(
         resp.total || 0,
-        resp.hasNext || false,
-        resp.hasPrev || false,
-        resp.nextCursor || null,
-        resp.prevCursor || null,
+        !!resp.hasNext,
+        !!resp.hasPrev,
+        resp.nextCursor,
+        resp.prevCursor,
       )
     } catch (error: unknown) {
       ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
@@ -72,34 +81,30 @@ async function fetchOptions() {
   }
 }
 
-function unwrapList(resp: RespBase): any[] {
-  if (!resp) return []
-  if (Array.isArray(resp)) return resp
-  return resp.data || []
+function toRoleMenuNode(node: MenuNode): RoleMenuNode {
+  return {
+    ...node,
+    children: [],
+  }
 }
 
-function unwrapData(resp: RespBase): any {
-  if (!resp) return null
-  return resp.data ?? resp
-}
+function buildMenuTree(flat: MenuNode[]): RoleMenuNode[] {
+  const list = (flat || []).filter((x): x is MenuNode => Boolean(x))
 
-function buildMenuTree(flat: any[]): any[] {
-  const list = (flat || []).filter((x) => x)
+  const map = new Map<number, RoleMenuNode>()
+  list.forEach((n) => map.set(n.id, toRoleMenuNode(n)))
 
-  const map = new Map<number, any>()
-  list.forEach((n) => map.set(n.id, { ...n, children: [] }))
-
-  const roots: any[] = []
+  const roots: RoleMenuNode[] = []
   map.forEach((node) => {
     const pid = node.parentId
     if (pid && map.has(pid)) {
-      map.get(pid).children.push(node)
+      map.get(pid)?.children?.push(node)
     } else {
       roots.push(node)
     }
   })
 
-  const sortRec = (arr: any[]) => {
+  const sortRec = (arr: RoleMenuNode[]) => {
     arr.sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0))
     arr.forEach((x) => x.children?.length && sortRec(x.children))
   }
@@ -109,8 +114,7 @@ function buildMenuTree(flat: any[]): any[] {
 }
 
 function onSearch() {
-  pagination.cursor = null
-  pagination.hasPrev = false
+  resetPagination()
   fetchList()
 }
 
@@ -206,8 +210,8 @@ const grantVisible = ref(false)
 const currentRole = ref<SysRole | null>(null)
 
 const { loading: grantLoading, withLoading: withGrantLoading } = useLoading()
-const menuTree = ref<MenuNode[]>([])
-const menuNodeMap = ref<Map<number, any>>(new Map())
+const menuTree = ref<RoleMenuNode[]>([])
+const menuNodeMap = ref<Map<number, RoleMenuNode>>(new Map())
 const permList = ref<PermItem[]>([])
 
 const menuTreeRef = ref<TreeInstance>()
@@ -215,7 +219,7 @@ const checkedPermKeys = ref<string[]>([])
 
 const grantReadonly = computed(() => isSuperRole(currentRole.value))
 
-function flattenMenuTree(nodes: any[], result: any[] = []): any[] {
+function flattenMenuTree(nodes: RoleMenuNode[], result: RoleMenuNode[] = []): RoleMenuNode[] {
   for (const node of nodes || []) {
     result.push(node)
     if (node.children?.length) {
@@ -225,8 +229,8 @@ function flattenMenuTree(nodes: any[], result: any[] = []): any[] {
   return result
 }
 
-function updateMenuNodeMap(nodes: any[]) {
-  const map = new Map<number, any>()
+function updateMenuNodeMap(nodes: RoleMenuNode[]) {
+  const map = new Map<number, RoleMenuNode>()
   flattenMenuTree(nodes).forEach((node) => {
     if (node && node.id != null) {
       map.set(node.id, node)
@@ -236,7 +240,7 @@ function updateMenuNodeMap(nodes: any[]) {
 }
 
 function getCheckedButtonPermKeys(): string[] {
-  const checkedNodes = (menuTreeRef.value?.getCheckedNodes?.() || []) as any[]
+  const checkedNodes = (menuTreeRef.value?.getCheckedNodes?.() || []) as RoleMenuNode[]
   return checkedNodes
     .filter((node) => node.menuType === 3 && node.perms)
     .map((node) => node.perms as string)
@@ -268,16 +272,16 @@ async function initGrant(roleId: number, tenantId: number) {
         roleService.getRoleGrantDetail(roleId),
       ])
 
-      const menusFlat = unwrapList(menusResp)
-      const perms = unwrapList(permsResp)
-      const detail = unwrapData(detailResp) || {}
+      const menusFlat = menusResp.data || []
+      const perms = permsResp.data || []
+      const detail = detailResp.data || { menuIds: [], permKeys: [] }
 
       menuTree.value = buildMenuTree(menusFlat)
       permList.value = perms
       updateMenuNodeMap(menuTree.value)
 
-      const menuIds = Array.isArray(detail.menuIds) ? detail.menuIds : []
-      const permKeys = Array.isArray(detail.permKeys) ? detail.permKeys : []
+      const menuIds = detail?.menuIds || []
+      const permKeys = detail?.permKeys || []
       const permKeyToId = new Map<string, number>()
       flattenMenuTree(menuTree.value).forEach((node) => {
         if (node.menuType === 3 && node.perms) {
@@ -289,8 +293,8 @@ async function initGrant(roleId: number, tenantId: number) {
         .filter((id: number | undefined): id is number => id != null)
 
       await nextTick()
-      menuTreeRef.value?.setCheckedKeys([...menuIds, ...buttonIds] as any)
-      checkedPermKeys.value = permKeys as string[]
+      menuTreeRef.value?.setCheckedKeys([...menuIds, ...buttonIds])
+      checkedPermKeys.value = permKeys
     } catch (error: unknown) {
       ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
     }
@@ -402,8 +406,8 @@ onMounted(async () => {
 
       <el-table-column :label="t('common.status')" width="110">
         <template #default="{ row }">
-          <el-tag :type="(row as any).status === 1 ? 'success' : 'info'">
-            {{ getOptionValueLabel(optionGroups, 'status', (row as any).status, t) }}
+          <el-tag :type="row.status === 1 ? 'success' : 'info'">
+            {{ getOptionValueLabel(optionGroups, 'status', row.status, t) }}
           </el-tag>
         </template>
       </el-table-column>
@@ -447,38 +451,20 @@ onMounted(async () => {
       </el-table-column>
     </el-table>
 
-    <div
-      style="
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-        align-items: center;
-        margin-top: 12px;
+    <CursorPagination
+      v-model:limit="pagination.limit"
+      :total="pagination.total"
+      :has-prev="pagination.hasPrev"
+      :has-next="pagination.hasNext"
+      @prev="prevPage"
+      @next="nextPage"
+      @limit-change="
+        () => {
+          resetPagination()
+          fetchList()
+        }
       "
-    >
-      <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
-      <el-button :disabled="!pagination.hasPrev" @click="prevPage">
-        {{ t('common.prevPage') }}
-      </el-button>
-      <el-button :disabled="!pagination.hasNext" @click="nextPage">
-        {{ t('common.nextPage') }}
-      </el-button>
-      <el-select
-        v-model="pagination.limit"
-        style="width: 100px"
-        @change="
-          () => {
-            pagination.cursor = null
-            pagination.hasPrev = false
-            fetchList()
-          }
-        "
-      >
-        <el-option label="10" :value="10" />
-        <el-option label="20" :value="20" />
-        <el-option label="50" :value="50" />
-      </el-select>
-    </div>
+    />
   </el-card>
 
   <el-dialog

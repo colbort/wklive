@@ -32,9 +32,10 @@ const jobStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'job
 const {
   pagination,
   updatePagination,
+  reset: resetPagination,
   nextPage: paginationNextPage,
   prevPage: paginationPrevPage,
-} = usePagination(10)
+} = usePagination<number>(10)
 const list = ref<SysCronJobItem[]>([])
 const { loading, withLoading } = useLoading()
 
@@ -92,13 +93,7 @@ async function fetchList() {
       })
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
       list.value = res.data || []
-      updatePagination(
-        res.total || 0,
-        res.hasNext || false,
-        res.hasPrev || false,
-        res.nextCursor || null,
-        res.prevCursor || null,
-      )
+      updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
     } catch (error: unknown) {
       ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
     }
@@ -128,8 +123,7 @@ async function fetchOptions() {
 
 // Search and reset
 function onSearch() {
-  pagination.cursor = null
-  pagination.hasPrev = false
+  resetPagination()
   fetchList()
 }
 
@@ -137,8 +131,7 @@ function onReset() {
   queryForm.jobName = ''
   queryForm.jobGroup = ''
   queryForm.status = undefined
-  pagination.cursor = null
-  pagination.hasPrev = false
+  resetPagination()
   fetchList()
 }
 
@@ -190,8 +183,7 @@ async function handleSubmit() {
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
       ElMessage.success(isEdit.value ? t('common.updateSuccess') : t('common.createSuccess'))
       dialogVisible.value = false
-      pagination.cursor = null
-      pagination.hasPrev = false
+      resetPagination()
       fetchList()
     } finally {
       submitLoading.value = false
@@ -321,7 +313,12 @@ onMounted(() => {
     </el-form>
 
     <!-- Table -->
-    <el-table v-loading="loading" :data="list" row-key="id" style="margin-bottom: 16px">
+    <el-table
+      v-loading="loading"
+      :data="list"
+      row-key="id"
+      style="margin-bottom: 16px"
+    >
       <el-table-column prop="id" :label="t('common.id')" width="70" />
       <el-table-column prop="jobName" :label="t('system.jobName')" min-width="120" />
       <el-table-column prop="jobGroup" :label="t('system.jobGroup')" width="100" />
@@ -346,15 +343,30 @@ onMounted(() => {
             <el-icon><VideoPlay /></el-icon>
             {{ t('system.run') }}
           </el-button>
-          <el-button v-if="row.status === 0" type="success" size="small" @click="handleStart(row)">
+          <el-button
+            v-if="row.status === 0"
+            type="success"
+            size="small"
+            @click="handleStart(row)"
+          >
             <el-icon><CircleCheck /></el-icon>
             {{ t('system.start') }}
           </el-button>
-          <el-button v-if="row.status === 1" type="warning" size="small" @click="handleStop(row)">
+          <el-button
+            v-if="row.status === 1"
+            type="warning"
+            size="small"
+            @click="handleStop(row)"
+          >
             <el-icon><CircleCloseFilled /></el-icon>
             {{ t('system.stop') }}
           </el-button>
-          <el-button v-perm="'sys:job:update'" type="primary" size="small" @click="handleEdit(row)">
+          <el-button
+            v-perm="'sys:job:update'"
+            type="primary"
+            size="small"
+            @click="handleEdit(row)"
+          >
             <el-icon><Edit /></el-icon>
             {{ t('common.edit') }}
           </el-button>
@@ -372,30 +384,20 @@ onMounted(() => {
     </el-table>
 
     <!-- Pagination -->
-    <div style="display: flex; justify-content: flex-end; gap: 10px; align-items: center">
-      <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
-      <el-button :disabled="!pagination.hasPrev" @click="prevPage">
-        {{ t('common.prevPage') }}
-      </el-button>
-      <el-button :disabled="!pagination.hasNext" @click="nextPage">
-        {{ t('common.nextPage') }}
-      </el-button>
-      <el-select
-        v-model="pagination.limit"
-        style="width: 100px"
-        @change="
-          () => {
-            pagination.cursor = null
-            pagination.hasPrev = false
-            fetchList()
-          }
-        "
-      >
-        <el-option label="10" :value="10" />
-        <el-option label="20" :value="20" />
-        <el-option label="50" :value="50" />
-      </el-select>
-    </div>
+    <CursorPagination
+      v-model:limit="pagination.limit"
+      :total="pagination.total"
+      :has-prev="pagination.hasPrev"
+      :has-next="pagination.hasNext"
+      @prev="prevPage"
+      @next="nextPage"
+      @limit-change="
+        () => {
+          resetPagination()
+          fetchList()
+        }
+      "
+    />
 
     <!-- Create/Edit Dialog -->
     <el-dialog
@@ -404,7 +406,12 @@ onMounted(() => {
       width="600px"
       :close-on-click-modal="false"
     >
-      <el-form ref="formRef" :model="formData" :rules="formRules" label-width="140px">
+      <el-form
+        ref="formRef"
+        :model="formData"
+        :rules="formRules"
+        label-width="140px"
+      >
         <el-form-item :label="t('system.jobName')" prop="jobName">
           <el-input
             v-model="formData.jobName"

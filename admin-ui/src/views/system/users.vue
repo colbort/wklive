@@ -21,9 +21,10 @@ const statusOptions = computed(() => findOptionGroup(optionGroups.value, 'status
 const {
   pagination,
   updatePagination,
+  reset: resetPagination,
   nextPage: paginationNextPage,
   prevPage: paginationPrevPage,
-} = usePagination(10)
+} = usePagination<number>(10)
 const list = ref<SysUserItem[]>([])
 const { loading, withLoading: withMainLoading } = useLoading()
 
@@ -56,13 +57,7 @@ async function fetchList() {
       })
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'list failed')
       list.value = res.data || []
-      updatePagination(
-        res.total || 0,
-        res.hasNext || false,
-        res.hasPrev || false,
-        res.nextCursor || null,
-        res.prevCursor || null,
-      )
+      updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
     } catch (error: unknown) {
       ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
     }
@@ -70,15 +65,13 @@ async function fetchList() {
 }
 
 function onSearch() {
-  pagination.cursor = null
-  pagination.hasPrev = false
+  resetPagination()
   fetchList()
 }
 function onReset() {
   queryForm.keyword = ''
   queryForm.status = undefined
-  pagination.cursor = null
-  pagination.hasPrev = false
+  resetPagination()
   fetchList()
 }
 
@@ -97,7 +90,7 @@ const roles = ref<SysRole[]>([])
 async function fetchRoles() {
   await withRoleLoading(async () => {
     try {
-      const res = await roleService.getList({ cursor: null, limit: 9999, status: 1 })
+      const res = await roleService.getList({ cursor: undefined, limit: 9999, status: 1 })
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'role list failed')
       roles.value = res.data || []
     } catch (error: unknown) {
@@ -516,38 +509,20 @@ onMounted(async () => {
       </el-table-column>
     </el-table>
 
-    <div
-      style="
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-        align-items: center;
-        margin-top: 12px;
+    <CursorPagination
+      v-model:limit="pagination.limit"
+      :total="pagination.total"
+      :has-prev="pagination.hasPrev"
+      :has-next="pagination.hasNext"
+      @prev="prevPage"
+      @next="nextPage"
+      @limit-change="
+        () => {
+          resetPagination()
+          fetchList()
+        }
       "
-    >
-      <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
-      <el-button :disabled="!pagination.hasPrev" @click="prevPage">
-        {{ t('common.prevPage') }}
-      </el-button>
-      <el-button :disabled="!pagination.hasNext" @click="nextPage">
-        {{ t('common.nextPage') }}
-      </el-button>
-      <el-select
-        v-model="pagination.limit"
-        style="width: 100px"
-        @change="
-          () => {
-            pagination.cursor = null
-            pagination.hasPrev = false
-            fetchList()
-          }
-        "
-      >
-        <el-option label="10" :value="10" />
-        <el-option label="20" :value="20" />
-        <el-option label="50" :value="50" />
-      </el-select>
-    </div>
+    />
   </el-card>
 
   <el-dialog
@@ -580,7 +555,12 @@ onMounted(async () => {
           style="width: 100%"
           :loading="roleLoading"
         >
-          <el-option v-for="r in roles" :key="r.id" :label="r.name" :value="r.id" />
+          <el-option
+            v-for="r in roles"
+            :key="r.id"
+            :label="r.name"
+            :value="r.id"
+          />
         </el-select>
       </el-form-item>
     </el-form>
@@ -628,7 +608,12 @@ onMounted(async () => {
           style="width: 100%"
           :loading="roleLoading"
         >
-          <el-option v-for="r in roles" :key="r.id" :label="r.name" :value="r.id" />
+          <el-option
+            v-for="r in roles"
+            :key="r.id"
+            :label="r.name"
+            :value="r.id"
+          />
         </el-select>
       </el-form-item>
     </el-form>
@@ -723,7 +708,7 @@ onMounted(async () => {
             min-height: 240px;
           "
         >
-          <img v-if="g2Init.qrCode" :src="g2Init.qrCode" style="width: 100%; height: auto" />
+          <img v-if="g2Init.qrCode" :src="g2Init.qrCode" style="width: 100%; height: auto">
           <div v-else style="color: #999">
             {{ t('common.click2faBindGenerateQrCode') }}
           </div>

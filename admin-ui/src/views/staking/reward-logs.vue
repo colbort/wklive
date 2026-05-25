@@ -56,6 +56,16 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="handlePrevPage"
+        @next="handleNextPage"
+        @limit-change="handleLimitChange"
+      />
     </el-card>
 
     <el-dialog v-model="detailVisible" :title="t('itick.detail')" width="760px">
@@ -68,8 +78,10 @@
 import { onMounted, reactive, ref } from 'vue'
 import { stakingService, type StakeRewardLog } from '@/services'
 import { useI18n } from 'vue-i18n'
+import { usePagination } from '@/composables'
 
 const { t } = useI18n()
+const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
 
 const loading = ref(false)
 const rows = ref<StakeRewardLog[]>([])
@@ -80,15 +92,19 @@ const query = reactive({
   orderNo: '',
   userId: undefined as number | undefined,
   productId: undefined as number | undefined,
-  limit: 100,
+  limit: 20,
 })
-
-const pickList = (res: any) => res?.data || res?.list || []
 
 const loadRows = async () => {
   loading.value = true
   try {
-    rows.value = pickList(await stakingService.listRewardLogs(query))
+    const res = await stakingService.listRewardLogs({
+      ...query,
+      cursor: pagination.cursor,
+      limit: pagination.limit,
+    })
+    rows.value = res?.data || []
+    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
   } finally {
     loading.value = false
   }
@@ -106,6 +122,25 @@ const resetQuery = () => {
 const showDetail = (row: StakeRewardLog) => {
   detailData.value = row
   detailVisible.value = true
+}
+
+function handleLimitChange() {
+  resetPagination()
+  loadRows()
+}
+
+function handlePrevPage() {
+  if (pagination.hasPrev && pagination.prevCursor) {
+    pagination.cursor = pagination.prevCursor
+    loadRows()
+  }
+}
+
+function handleNextPage() {
+  if (pagination.hasNext && pagination.nextCursor) {
+    pagination.cursor = pagination.nextCursor
+    loadRows()
+  }
 }
 
 onMounted(loadRows)

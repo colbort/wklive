@@ -67,7 +67,7 @@ export type ListProductsReq = {
   keyword?: string
   enabled?: number // 0全部 1启用 2禁用
   appVisible?: number // 0全部 1显示 2隐藏
-  cursor?: string | null
+  cursor?: number
   limit?: number
 }
 

@@ -62,6 +62,16 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="handlePrevPage"
+        @next="handleNextPage"
+        @limit-change="handleLimitChange"
+      />
     </el-card>
 
     <el-dialog v-model="detailVisible" :title="t('option.detail')" width="760px">
@@ -73,9 +83,11 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { usePagination } from '@/composables'
 import { optionService, type OptionOrder, type OptionOrderDetail } from '@/services'
 
 const { t } = useI18n()
+const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
 
 const loading = ref(false)
 const rows = ref<OptionOrder[]>([])
@@ -86,15 +98,19 @@ const query = reactive({
   userId: undefined as number | undefined,
   orderNo: '',
   contractId: undefined as number | undefined,
-  limit: 100,
+  limit: 20,
 })
-
-const pickList = (res: any) => res?.data || res?.list || []
 
 const loadCurrent = async () => {
   loading.value = true
   try {
-    rows.value = pickList(await optionService.listOrders(query))
+    const res = await optionService.listOrders({
+      ...query,
+      cursor: pagination.cursor,
+      limit: pagination.limit,
+    })
+    rows.value = res?.data || []
+    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
   } finally {
     loading.value = false
   }
@@ -114,6 +130,25 @@ const showDetail = async (row: OptionOrder) => {
     (await optionService.getOrder({ tenantId: row.tenantId, id: row.id, orderNo: row.orderNo }))
       .data || row
   detailVisible.value = true
+}
+
+function handleLimitChange() {
+  resetPagination()
+  loadCurrent()
+}
+
+function handlePrevPage() {
+  if (pagination.hasPrev && pagination.prevCursor) {
+    pagination.cursor = pagination.prevCursor
+    loadCurrent()
+  }
+}
+
+function handleNextPage() {
+  if (pagination.hasNext && pagination.nextCursor) {
+    pagination.cursor = pagination.nextCursor
+    loadCurrent()
+  }
 }
 
 onMounted(loadCurrent)

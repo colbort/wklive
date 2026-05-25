@@ -50,7 +50,7 @@ func updateCryptoRechargeAddress(ctx context.Context, svcCtx *svc.ServiceContext
 		return nil, err
 	}
 	if in.TenantId > 0 && item.TenantId != in.TenantId {
-		return &payment.AdminCommonResp{Base: helper.GetErrResp(404, "crypto recharge address not found")}, nil
+		item.TenantId = in.TenantId
 	}
 	if in.Address != "" {
 		item.Address = in.Address

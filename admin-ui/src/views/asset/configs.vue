@@ -99,7 +99,12 @@
     </el-card>
 
     <el-card shadow="never" class="table-card">
-      <el-table v-loading="loading" :data="rows" stripe :empty-text="t('common.noData')">
+      <el-table
+        v-loading="loading"
+        :data="rows"
+        stripe
+        :empty-text="t('common.noData')"
+      >
         <el-table-column prop="id" :label="t('common.id')" width="90" />
         <el-table-column prop="tenantId" :label="t('asset.tenantId')" min-width="100" />
         <el-table-column prop="walletType" :label="t('asset.walletType')" min-width="110">
@@ -189,6 +194,16 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="handlePrevPage"
+        @next="handleNextPage"
+        @limit-change="handleLimitChange"
+      />
     </el-card>
 
     <el-dialog
@@ -197,7 +212,12 @@
       width="760px"
       :close-on-click-modal="false"
     >
-      <el-form ref="formRef" :model="form" :rules="rules" label-width="118px">
+      <el-form
+        ref="formRef"
+        :model="form"
+        :rules="rules"
+        label-width="118px"
+      >
         <el-row :gutter="16">
           <el-col :span="12">
             <el-form-item :label="t('asset.tenantId')" prop="tenantId">
@@ -257,7 +277,12 @@
           </el-col>
           <el-col :span="12">
             <el-form-item :label="t('asset.decimalPlaces')">
-              <el-input-number v-model="form.decimalPlaces" :min="0" :max="18" :precision="0" />
+              <el-input-number
+                v-model="form.decimalPlaces"
+                :min="0"
+                :max="18"
+                :precision="0"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -342,12 +367,14 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import { usePagination } from '@/composables'
 import { assetService, type AssetCoinConfig, type OptionGroup, type OptionItem } from '@/services'
 import { formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 
 const { t } = useI18n()
+const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
 
 const loading = ref(false)
 const submitLoading = ref(false)
@@ -371,7 +398,7 @@ const query = reactive({
   withdrawEnabled: undefined as number | undefined,
   transferEnabled: undefined as number | undefined,
   status: undefined as number | undefined,
-  limit: 100,
+  limit: 20,
 })
 
 const form = reactive({
@@ -433,10 +460,6 @@ const dialogTitle = computed(() =>
   isEdit.value ? t('asset.editCoinConfig') : t('asset.addCoinConfig'),
 )
 const detailTitle = computed(() => `${t('asset.coinConfigs')}${t('asset.detail')}`)
-
-function pickList(res: any) {
-  return res?.data || res?.list || []
-}
 
 function formatEnabled(value: number) {
   return value === 2 ? t('common.enabled') : t('common.disabled')
@@ -504,7 +527,13 @@ async function loadOptions() {
 async function loadList() {
   loading.value = true
   try {
-    rows.value = pickList(await assetService.getCoinConfigs(query))
+    const res = await assetService.getCoinConfigs({
+      ...query,
+      cursor: pagination.cursor,
+      limit: pagination.limit,
+    })
+    rows.value = res?.data || []
+    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
   } finally {
     loading.value = false
   }
@@ -605,6 +634,25 @@ async function deleteRow(row: AssetCoinConfig) {
     if (error !== 'cancel') {
       ElMessage.error(error instanceof Error ? error.message : t('common.deleteFailed'))
     }
+  }
+}
+
+function handleLimitChange() {
+  resetPagination()
+  loadList()
+}
+
+function handlePrevPage() {
+  if (pagination.hasPrev && pagination.prevCursor) {
+    pagination.cursor = pagination.prevCursor
+    loadList()
+  }
+}
+
+function handleNextPage() {
+  if (pagination.hasNext && pagination.nextCursor) {
+    pagination.cursor = pagination.nextCursor
+    loadList()
   }
 }
 

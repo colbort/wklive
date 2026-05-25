@@ -28,7 +28,7 @@ import { tenantsService, type SysTenantItem } from '@/services'
 
 const props = withDefaults(
   defineProps<{
-    modelValue: number
+    modelValue: number | undefined
     disabled?: boolean
     includeSystem?: boolean
     placeholder?: string
@@ -41,9 +41,9 @@ const props = withDefaults(
 )
 
 const emit = defineEmits<{
-  'update:modelValue': [value: number]
-  change: [value: number]
-  selected: [value: SysTenantItem | null]
+  'update:modelValue': [value: number | undefined]
+  'change': [value: number | undefined]
+  'selected': [value: SysTenantItem | null]
 }>()
 
 const { t } = useI18n()

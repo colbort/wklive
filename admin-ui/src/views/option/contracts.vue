@@ -93,6 +93,16 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="handlePrevPage"
+        @next="handleNextPage"
+        @limit-change="handleLimitChange"
+      />
     </el-card>
 
     <el-dialog
@@ -278,6 +288,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { usePagination } from '@/composables'
 import { ElMessage } from 'element-plus'
 import {
   optionService,
@@ -291,6 +302,7 @@ import { findOptionGroup, getOptionLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 
 const { t } = useI18n()
+const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
 
 const loading = ref(false)
 const submitLoading = ref(false)
@@ -307,7 +319,7 @@ const query = reactive({
   underlyingSymbol: '',
   optionType: undefined as number | undefined,
   status: undefined as number | undefined,
-  limit: 100,
+  limit: 20,
 })
 
 const contractForm = reactive<UpdateContractReq>({
@@ -363,8 +375,6 @@ const optionTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'op
 const exerciseStyleOptions = computed(() => findOptionGroup(optionGroups.value, 'exerciseStyle'))
 const statusOptions = computed(() => findOptionGroup(optionGroups.value, 'status'))
 
-const pickList = (res: any) => res?.data || res?.list || []
-
 const loadOptions = async () => {
   optionGroups.value = (await optionService.getOptions()).data || []
 }
@@ -372,7 +382,13 @@ const loadOptions = async () => {
 const loadCurrent = async () => {
   loading.value = true
   try {
-    rows.value = pickList(await optionService.listContracts(query))
+    const res = await optionService.listContracts({
+      ...query,
+      cursor: pagination.cursor,
+      limit: pagination.limit,
+    })
+    rows.value = res?.data || []
+    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
   } finally {
     loading.value = false
   }
@@ -496,6 +512,25 @@ const submitMarket = async () => {
     marketVisible.value = false
   } finally {
     submitLoading.value = false
+  }
+}
+
+function handleLimitChange() {
+  resetPagination()
+  loadCurrent()
+}
+
+function handlePrevPage() {
+  if (pagination.hasPrev && pagination.prevCursor) {
+    pagination.cursor = pagination.prevCursor
+    loadCurrent()
+  }
+}
+
+function handleNextPage() {
+  if (pagination.hasNext && pagination.nextCursor) {
+    pagination.cursor = pagination.nextCursor
+    loadCurrent()
   }
 }
 

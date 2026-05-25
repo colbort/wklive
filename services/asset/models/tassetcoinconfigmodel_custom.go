@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"fmt"
+	"sort"
 	"wklive/common/sqlutil"
 )
 
@@ -116,19 +117,33 @@ func (m *defaultTAssetCoinConfigModel) FindVisibleByOperation(ctx context.Contex
 	// 如果operationType <= 0, USDT 只应该返回一个，USDT有ERC20和TRC20两种类型，但APP端不区分
 	if operationType <= 0 {
 		usdtList := make([]*TAssetCoinConfig, 0)
+		usdcList := make([]*TAssetCoinConfig, 0)
 		newList := make([]*TAssetCoinConfig, 0, len(list))
 		for _, item := range list {
-			if item.Coin == "USDT" {
+			switch item.Coin {
+			case "USDT":
 				usdtList = append(usdtList, item)
-			} else {
+			case "USDC":
+				usdcList = append(usdcList, item)
+			default:
 				newList = append(newList, item)
 			}
 		}
 		if len(usdtList) > 0 {
 			newList = append(newList, usdtList[0])
 		}
+		if len(usdcList) > 0 {
+			newList = append(newList, usdcList[0])
+		}
 		list = newList
 	}
+
+	sort.SliceStable(list, func(i, j int) bool {
+		if list[i].Sort == list[j].Sort {
+			return list[i].Id > list[j].Id
+		}
+		return list[i].Sort < list[j].Sort
+	})
 
 	return list, nil
 }

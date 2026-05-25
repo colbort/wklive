@@ -5,6 +5,7 @@ import 'element-plus/dist/index.css'
 import '@/styles/admin-crud.css'
 
 import App from '@/App.vue'
+import CursorPagination from '@/components/common/CursorPagination.vue'
 import { router } from '@/router'
 import { i18n, elLocaleMap } from '@/i18n'
 import { setupPermDirective } from '@/directives/perm'
@@ -47,6 +48,7 @@ app.use(createPinia())
 app.use(i18n)
 app.use(router)
 app.use(ElementPlus, { locale: epLocale })
+app.component('CursorPagination', CursorPagination)
 
 setupPermDirective(app)
 

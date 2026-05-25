@@ -73,6 +73,16 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="handlePrevPage"
+        @next="handleNextPage"
+        @limit-change="handleLimitChange"
+      />
     </el-card>
 
     <el-dialog v-model="rewardVisible" :title="t('staking.manualReward')" width="640px">
@@ -162,9 +172,11 @@ import {
   type StakeOrder,
 } from '@/services'
 import { useI18n } from 'vue-i18n'
+import { usePagination } from '@/composables'
 import TenantSelect from '@/components/TenantSelect.vue'
 
 const { t } = useI18n()
+const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
 
 const loading = ref(false)
 const submitLoading = ref(false)
@@ -179,7 +191,7 @@ const query = reactive({
   orderNo: '',
   userId: undefined as number | undefined,
   productId: undefined as number | undefined,
-  limit: 100,
+  limit: 20,
 })
 const rewardForm = reactive<AdminManualRewardReq>({
   tenantId: 0,
@@ -201,12 +213,16 @@ const redeemForm = reactive<AdminManualRedeemReq>({
   remark: '',
 })
 
-const pickList = (res: any) => res?.data || res?.list || []
-
 const loadOrders = async () => {
   loading.value = true
   try {
-    rows.value = pickList(await stakingService.listOrders(query))
+    const res = await stakingService.listOrders({
+      ...query,
+      cursor: pagination.cursor,
+      limit: pagination.limit,
+    })
+    rows.value = res?.data || []
+    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
   } finally {
     loading.value = false
   }
@@ -275,6 +291,25 @@ const submitRedeem = async () => {
     loadOrders()
   } finally {
     submitLoading.value = false
+  }
+}
+
+function handleLimitChange() {
+  resetPagination()
+  loadOrders()
+}
+
+function handlePrevPage() {
+  if (pagination.hasPrev && pagination.prevCursor) {
+    pagination.cursor = pagination.prevCursor
+    loadOrders()
+  }
+}
+
+function handleNextPage() {
+  if (pagination.hasNext && pagination.nextCursor) {
+    pagination.cursor = pagination.nextCursor
+    loadOrders()
   }
 }
 

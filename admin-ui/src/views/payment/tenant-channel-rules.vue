@@ -26,7 +26,7 @@
       </el-form>
     </el-card>
 
-    <el-card shadow="never">
+    <el-card shadow="never" class="table-card">
       <el-table v-loading="ruleLoading" :data="rules" stripe>
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="tenantId" :label="t('common.tenantId')" width="100" />
@@ -51,6 +51,16 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="handlePrevPage"
+        @next="handleNextPage"
+        @limit-change="handleLimitChange"
+      />
     </el-card>
 
     <el-dialog
@@ -150,6 +160,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { usePagination } from '@/composables'
 import { ElMessage } from 'element-plus'
 import { tenantService, type OptionGroup, type TenantPayChannelRule } from '@/services'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
@@ -157,6 +168,7 @@ import TenantSelect from '@/components/TenantSelect.vue'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 
 const { t } = useI18n()
+const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
 
 const ruleLoading = ref(false)
 const rules = ref<TenantPayChannelRule[]>([])
@@ -219,9 +231,11 @@ const loadRules = async () => {
       ...ruleQuery,
       tenantId: ruleQuery.tenantId || undefined,
       channelId: ruleQuery.channelId || undefined,
-      limit: 100,
+      cursor: pagination.cursor,
+      limit: pagination.limit,
     })
     rules.value = res.data || []
+    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
   } finally {
     ruleLoading.value = false
   }
@@ -344,6 +358,25 @@ function getStatusTagClass(value?: number) {
   if (num === 1) return 'option-tag option-tag--green'
   if (num === 2) return 'option-tag option-tag--red'
   return 'option-tag option-tag--slate'
+}
+
+function handleLimitChange() {
+  resetPagination()
+  loadRules()
+}
+
+function handlePrevPage() {
+  if (pagination.hasPrev && pagination.prevCursor) {
+    pagination.cursor = pagination.prevCursor
+    loadRules()
+  }
+}
+
+function handleNextPage() {
+  if (pagination.hasNext && pagination.nextCursor) {
+    pagination.cursor = pagination.nextCursor
+    loadRules()
+  }
 }
 
 onMounted(async () => {

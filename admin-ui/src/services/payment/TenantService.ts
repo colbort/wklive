@@ -109,7 +109,7 @@ export type ListTenantPayPlatformsReq = {
   platformId?: number // 平台ID
   status?: number // 状态：1启用 2停用
   openStatus?: number // 开通状态
-  cursor?: string | null // 分页游标
+  cursor?: number // 分页游标
   limit?: number // 分页大小
 }
 
@@ -135,7 +135,7 @@ export type ListTenantPayAccountsReq = {
   tenantPayPlatformId?: number // 租户开通平台ID
   keyword?: string // 关键字
   status?: number // 状态：1启用 2停用
-  cursor?: string | null // 分页游标
+  cursor?: number // 分页游标
   limit?: number // 分页大小
 }
 
@@ -185,7 +185,7 @@ export type ListTenantPayChannelsReq = {
   keyword?: string // 关键字
   status?: number // 状态：1启用 2停用
   visible?: number // 是否显示：0否 1是
-  cursor?: string | null // 分页游标
+  cursor?: number // 分页游标
   limit?: number // 分页大小
 }
 
@@ -238,7 +238,7 @@ export type ListTenantPayChannelRulesReq = {
   tenantId?: number // 租户ID
   channelId?: number // 通道ID
   status?: number // 状态：1启用 2停用
-  cursor?: string | null // 分页游标
+  cursor?: number // 分页游标
   limit?: number // 分页大小
 }
 

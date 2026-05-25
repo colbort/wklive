@@ -124,6 +124,16 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="handlePrevPage"
+        @next="handleNextPage"
+        @limit-change="handleLimitChange"
+      />
     </el-card>
 
     <el-dialog v-model="changeVisible" :title="changeTitle" width="680px">
@@ -164,10 +174,12 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import { usePagination } from '@/composables'
 import { assetService, type AssetLock, type OptionGroup } from '@/services'
 import { findOptionGroup, getOptionLabel } from '@/utils/options'
 
 const { t } = useI18n()
+const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
 
 const loading = ref(false)
 const submitLoading = ref(false)
@@ -184,7 +196,7 @@ const query = reactive({
   coin: '',
   bizNo: '',
   status: undefined as number | undefined,
-  limit: 100,
+  limit: 20,
 })
 
 const changeForm = reactive({
@@ -209,12 +221,23 @@ async function loadOptions() {
 async function loadList() {
   loading.value = true
   try {
-    const resp = await assetService.getLocks(query)
+    const resp = await assetService.getLocks({
+      ...query,
+      cursor: pagination.cursor,
+      limit: pagination.limit,
+    })
     if (resp.code !== 200) {
       ElMessage.error(resp.msg || t('common.loadFailed'))
       return
     }
     rows.value = resp?.data || []
+    updatePagination(
+      resp.total || 0,
+      !!resp.hasNext,
+      !!resp.hasPrev,
+      resp.nextCursor,
+      resp.prevCursor,
+    )
   } finally {
     loading.value = false
   }
@@ -265,6 +288,25 @@ async function submitChange() {
     loadList()
   } finally {
     submitLoading.value = false
+  }
+}
+
+function handleLimitChange() {
+  resetPagination()
+  loadList()
+}
+
+function handlePrevPage() {
+  if (pagination.hasPrev && pagination.prevCursor) {
+    pagination.cursor = pagination.prevCursor
+    loadList()
+  }
+}
+
+function handleNextPage() {
+  if (pagination.hasNext && pagination.nextCursor) {
+    pagination.cursor = pagination.nextCursor
+    loadList()
   }
 }
 

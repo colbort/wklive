@@ -18,7 +18,7 @@ export type LoginLogItem = {
 
 // 登录日志列表请求
 export interface LoginLogListReq {
-  cursor?: string | null
+  cursor?: number
   limit?: number
   username?: string
   success?: number
@@ -49,7 +49,7 @@ export type OpLogItem = {
 
 // 操作日志列表请求
 export interface OpLogListReq {
-  cursor?: string | null
+  cursor?: number
   limit?: number
   username?: string
   path?: string

@@ -71,7 +71,7 @@ export type ListPayPlatformsReq = {
   platformCode?: string // 平台编码
   status?: number // 状态：1启用 2停用
   platformType?: number // 平台类型
-  cursor?: string | null // 分页游标
+  cursor?: number // 分页游标
   limit?: number // 分页大小
 }
 
@@ -100,7 +100,7 @@ export type ListPayProductsReq = {
   productCode?: string // 产品编码
   status?: number // 状态：1启用 2停用
   sceneType?: number // 场景类型
-  cursor?: string | null // 分页游标
+  cursor?: number // 分页游标
   limit?: number // 分页大小
 }
 

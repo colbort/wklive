@@ -50,7 +50,7 @@
       </el-form>
     </el-card>
 
-    <el-card shadow="never">
+    <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="list" stripe>
         <el-table-column prop="id" :label="t('common.id')" width="80" />
         <el-table-column prop="tenantId" :label="t('common.tenantId')" width="90" />
@@ -62,7 +62,12 @@
             {{ formatChainCode(row.chainCode) }}
           </template>
         </el-table-column>
-        <el-table-column prop="txHash" label="TxHash" min-width="240" show-overflow-tooltip />
+        <el-table-column
+          prop="txHash"
+          label="TxHash"
+          min-width="240"
+          show-overflow-tooltip
+        />
         <el-table-column prop="amount" :label="t('payment.quantity')" width="120" />
         <el-table-column prop="confirmCount" :label="t('payment.confirmCount')" width="90" />
         <el-table-column prop="status" :label="t('common.status')" width="90" />
@@ -77,6 +82,16 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="handlePrevPage"
+        @next="handleNextPage"
+        @limit-change="handleLimitChange"
+      />
     </el-card>
 
     <el-dialog
@@ -162,6 +177,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { usePagination } from '@/composables'
 import { ElMessage } from 'element-plus'
 import { catalogService, cryptoService, type CryptoRechargeTx, type OptionGroup } from '@/services'
 import { findOptionGroup, getOptionLabel } from '@/utils/options'
@@ -169,6 +185,7 @@ import TenantSelect from '@/components/TenantSelect.vue'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 
 const { t } = useI18n()
+const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
 const loading = ref(false)
 const dialogVisible = ref(false)
 const detailVisible = ref(false)
@@ -212,7 +229,13 @@ function params() {
 async function loadList() {
   loading.value = true
   try {
-    list.value = (await cryptoService.listRechargeTxs({ ...params(), limit: 100 })).data || []
+    const res = await cryptoService.listRechargeTxs({
+      ...params(),
+      cursor: pagination.cursor,
+      limit: pagination.limit,
+    })
+    list.value = res.data || []
+    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
   } finally {
     loading.value = false
   }
@@ -276,6 +299,25 @@ async function submit() {
     await loadList()
   }
 }
+function handleLimitChange() {
+  resetPagination()
+  loadList()
+}
+
+function handlePrevPage() {
+  if (pagination.hasPrev && pagination.prevCursor) {
+    pagination.cursor = pagination.prevCursor
+    loadList()
+  }
+}
+
+function handleNextPage() {
+  if (pagination.hasNext && pagination.nextCursor) {
+    pagination.cursor = pagination.nextCursor
+    loadList()
+  }
+}
+
 onMounted(() => {
   void loadOptions()
   void loadList()

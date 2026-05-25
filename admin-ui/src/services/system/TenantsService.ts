@@ -51,7 +51,7 @@ export type SysTenantListReq = {
   tenantName?: string
   contactName?: string
   contactPhone?: string
-  cursor?: string | null
+  cursor?: number
   limit?: number
 }
 

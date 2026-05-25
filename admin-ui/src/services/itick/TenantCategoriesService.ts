@@ -61,7 +61,7 @@ export type ListTenantCategoriesReq = {
   categoryType?: number
   status?: number
   visibleStatus?: number
-  cursor?: string | null
+  cursor?: number
   limit?: number
 }
 

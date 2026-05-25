@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { usePagination } from '@/composables'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ArrowDown } from '@element-plus/icons-vue'
 import {
@@ -18,6 +19,7 @@ import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/op
 import TenantSelect from '@/components/TenantSelect.vue'
 
 const { t } = useI18n()
+const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
 const loading = ref(false)
 const submitLoading = ref(false)
 const list = ref<UserItem[]>([])
@@ -49,10 +51,10 @@ const query = reactive({
   email: '',
   status: undefined as number | undefined,
   verifyStatus: undefined as number | undefined,
-  limit: 100,
+  limit: 20,
 })
 
-const editForm = reactive<any>({
+const editForm = reactive({
   userId: 0,
   tenantId: 0,
   username: '',
@@ -245,6 +247,7 @@ async function fetchList() {
     })
     if (!checkCode(res.code)) throw new Error(res.msg || t('users.loadFailed'))
     list.value = res.data || []
+    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
   } catch (error: unknown) {
     ElMessage.error(error instanceof Error ? error.message : t('users.loadFailed'))
   } finally {
@@ -261,7 +264,8 @@ function resetQuery() {
     email: '',
     status: undefined,
     verifyStatus: undefined,
-    limit: 100,
+    cursor: pagination.cursor,
+    limit: pagination.limit,
   })
   fetchList()
 }
@@ -269,7 +273,7 @@ function resetQuery() {
 async function showDetail(row: UserItem) {
   loading.value = true
   try {
-    const res = await memberUserService.getDetail(row.id, row.tenantId)
+    const res = await memberUserService.getDetail(row.id)
     if (!checkCode(res.code)) throw new Error(res.msg || t('users.loadDetailFailed'))
     detail.value = (res.detail || res.data) as UserDetail
     detailActiveTab.value = 'identity'
@@ -309,12 +313,7 @@ function openCreate() {
 }
 
 async function openEdit(row: UserItem) {
-  const tenantId = Number(row.tenantId || query.tenantId || 0)
-  if (!tenantId) {
-    ElMessage.warning(t('users.queryTenantPrompt'))
-    return
-  }
-  const res = await memberUserService.getDetail(row.id, tenantId)
+  const res = await memberUserService.getDetail(row.id)
   if (!checkCode(res.code)) {
     ElMessage.error(res.msg || t('users.loadDetailFailed'))
     return
@@ -344,10 +343,7 @@ async function openEdit(row: UserItem) {
   resetReferrerCheck()
   if (Number(data.base.referrerUserId || 0) > 0) {
     try {
-      const referrerRes = await memberUserService.getDetail(
-        Number(data.base.referrerUserId),
-        data.base.tenantId,
-      )
+      const referrerRes = await memberUserService.getDetail(Number(data.base.referrerUserId))
       if (checkCode(referrerRes.code)) {
         const referrerDetail = (referrerRes.detail || referrerRes.data) as UserDetail
         editForm.referrerInviteCode = referrerDetail.base.inviteCode || ''
@@ -542,6 +538,25 @@ async function updateSimpleValue(row: UserItem, field: 'status' | 'memberLevel' 
   }
 }
 
+function handleLimitChange() {
+  resetPagination()
+  fetchList()
+}
+
+function handlePrevPage() {
+  if (pagination.hasPrev && pagination.prevCursor !== undefined) {
+    pagination.cursor = pagination.prevCursor
+    fetchList()
+  }
+}
+
+function handleNextPage() {
+  if (pagination.hasNext && pagination.nextCursor !== undefined) {
+    pagination.cursor = pagination.nextCursor
+    fetchList()
+  }
+}
+
 onMounted(fetchList)
 onMounted(fetchCreateOptions)
 </script>
@@ -713,6 +728,16 @@ onMounted(fetchCreateOptions)
           </template>
         </el-table-column>
       </el-table>
+
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="handlePrevPage"
+        @next="handleNextPage"
+        @limit-change="handleLimitChange"
+      />
     </el-card>
 
     <el-dialog

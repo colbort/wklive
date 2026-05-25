@@ -37,14 +37,22 @@
         </el-form-item>
       </el-form>
     </el-card>
-    <el-card shadow="never">
+    <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="list" stripe>
         <el-table-column prop="orderNo" :label="t('payment.orderNo')" min-width="180" />
         <el-table-column prop="tenantId" :label="t('common.tenantId')" width="100" />
         <el-table-column prop="userId" :label="t('common.userId')" width="100" />
         <el-table-column prop="currency" :label="t('payment.currency')" width="80" />
-        <el-table-column prop="orderAmount" :label="t('payment.orderAmount')" min-width="120" />
-        <el-table-column prop="payAmount" :label="t('payment.payAmount')" min-width="120" />
+        <el-table-column :label="t('payment.orderAmount')" min-width="120">
+          <template #default="{ row }">
+            {{ formatCentAmount(row.orderAmount) }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('payment.payAmount')" min-width="120">
+          <template #default="{ row }">
+            {{ formatCentAmount(row.payAmount) }}
+          </template>
+        </el-table-column>
         <el-table-column :label="t('common.status')" width="110">
           <template #default="{ row }">
             <el-tag :type="statusTagType(row.status)" disable-transitions>
@@ -57,7 +65,12 @@
             <el-button link type="primary" @click="showDetail(row)">
               {{ t('common.detail') }}
             </el-button>
-            <el-button v-if="canClose(row)" link type="warning" @click="closeOrder(row)">
+            <el-button
+              v-if="canClose(row)"
+              link
+              type="warning"
+              @click="closeOrder(row)"
+            >
               {{ t('payment.closeOrder') }}
             </el-button>
             <el-button
@@ -68,16 +81,35 @@
             >
               {{ t('payment.manualMarkSuccess') }}
             </el-button>
-            <el-button v-if="canRetryNotify(row)" link type="primary" @click="retryNotify(row)">
+            <el-button
+              v-if="canRetryNotify(row)"
+              link
+              type="primary"
+              @click="retryNotify(row)"
+            >
               {{ t('payment.retryNotify') }}
             </el-button>
           </template>
         </el-table-column>
       </el-table>
+
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="handlePrevPage"
+        @next="handleNextPage"
+        @limit-change="handleLimitChange"
+      />
     </el-card>
 
     <el-drawer v-model="detailVisible" :title="t('payment.orderDetail')" size="720px">
-      <PaymentDetailDescriptions :data="detailData" :option-groups="optionGroups" :columns="1" />
+      <PaymentDetailDescriptions
+        :data="detailDisplayData"
+        :option-groups="optionGroups"
+        :columns="1"
+      />
     </el-drawer>
 
     <el-dialog v-model="manualVisible" :title="t('payment.manualMarkSuccess')" width="520px">
@@ -89,7 +121,7 @@
           <el-input-number
             v-model="manualForm.payAmount"
             :min="0"
-            :precision="0"
+            :precision="2"
             style="width: 100%"
           />
         </el-form-item>
@@ -112,12 +144,14 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { usePagination } from '@/composables'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { catalogService, rechargeService, type OptionGroup, type RechargeOrder } from '@/services'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 const { t } = useI18n()
+const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
 
 const loading = ref(false)
 const list = ref<RechargeOrder[]>([])
@@ -138,6 +172,26 @@ const query = reactive({
 
 const PAY_ORDER_STATUS_PENDING = 1
 const PAY_ORDER_STATUS_PAYING = 2
+const CENT_AMOUNT_KEYS = new Set(['orderAmount', 'payAmount', 'feeAmount'])
+
+const centToAmount = (value: unknown) => {
+  const amount = Number(value || 0) / 100
+  return Number.isFinite(amount) ? amount : 0
+}
+
+const amountToCent = (value: number) => Math.round((value || 0) * 100)
+
+const formatCentAmount = (value: unknown) => centToAmount(value).toFixed(2)
+
+const detailDisplayData = computed(() => {
+  if (!detailData.value) return null
+  return Object.fromEntries(
+    Object.entries(detailData.value).map(([key, value]) => [
+      key,
+      CENT_AMOUNT_KEYS.has(key) ? formatCentAmount(value) : value,
+    ]),
+  )
+})
 
 const loadList = async () => {
   loading.value = true
@@ -149,9 +203,11 @@ const loadList = async () => {
       orderNo: query.orderNo || undefined,
       bizOrderNo: query.bizOrderNo || undefined,
       status: query.status || undefined,
-      limit: 100,
+      cursor: pagination.cursor,
+      limit: pagination.limit,
     })
     list.value = res.data || []
+    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
   } finally {
     loading.value = false
   }
@@ -187,7 +243,7 @@ const openManualSuccess = (row: RechargeOrder) => {
   currentOrder.value = row
   Object.assign(manualForm, {
     thirdTradeNo: '',
-    payAmount: row.payAmount || row.orderAmount || 0,
+    payAmount: centToAmount(row.payAmount || row.orderAmount || 0),
     remark: '',
   })
   manualVisible.value = true
@@ -198,7 +254,7 @@ const submitManual = async () => {
   await rechargeService.manualSuccessRechargeOrder(currentOrder.value.orderNo, {
     tenantId: currentOrder.value.tenantId,
     thirdTradeNo: manualForm.thirdTradeNo,
-    payAmount: manualForm.payAmount,
+    payAmount: amountToCent(manualForm.payAmount),
     remark: manualForm.remark,
   })
   ElMessage.success(t('common.operationSuccess'))
@@ -213,6 +269,25 @@ const retryNotify = async (row: RechargeOrder) => {
 
 const loadOptions = async () => {
   optionGroups.value = (await catalogService.getOptions()).data || []
+}
+
+function handleLimitChange() {
+  resetPagination()
+  loadList()
+}
+
+function handlePrevPage() {
+  if (pagination.hasPrev && pagination.prevCursor) {
+    pagination.cursor = pagination.prevCursor
+    loadList()
+  }
+}
+
+function handleNextPage() {
+  if (pagination.hasNext && pagination.nextCursor) {
+    pagination.cursor = pagination.nextCursor
+    loadList()
+  }
 }
 
 onMounted(() => {

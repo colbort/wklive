@@ -1,5 +1,5 @@
 <template>
-  <div class="payment-page module-page">
+  <div class="payment-page module-page crypto-address-page">
     <div class="page-header">
       <h2>{{ t('payment.cryptoRechargeAddresses') }}</h2>
       <div class="header-actions">
@@ -21,7 +21,14 @@
           <el-input-number v-model="query.userId" :min="0" :precision="0" />
         </el-form-item>
         <el-form-item :label="t('payment.walletType')">
-          <el-input-number v-model="query.walletType" :min="0" :precision="0" />
+          <el-select v-model="query.walletType" clearable style="width: 150px">
+            <el-option
+              v-for="item in walletTypeOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item :label="t('payment.currency')">
           <el-input v-model="query.coin" clearable />
@@ -31,7 +38,7 @@
             <el-option
               v-for="item in chainCodeOptions"
               :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
+              :label="item.label"
               :value="item.value"
             />
           </el-select>
@@ -41,13 +48,16 @@
         </el-form-item>
         <el-form-item :label="t('common.status')">
           <el-select v-model="query.status" clearable style="width: 150px">
-            <el-option :label="t('common.disabled')" :value="1" />
-            <el-option :label="t('payment.available')" :value="2" />
-            <el-option :label="t('payment.frozen')" :value="3" />
+            <el-option
+              v-for="item in addressStatusOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="loadList">
+          <el-button type="primary" @click="handleQuery">
             {{ t('common.search') }}
           </el-button>
           <el-button @click="resetQuery">
@@ -57,16 +67,26 @@
       </el-form>
     </el-card>
 
-    <el-card shadow="never">
-      <el-table v-loading="loading" :data="list" stripe>
+    <el-card shadow="never" class="table-card crypto-address-table-card">
+      <el-table
+        v-loading="loading"
+        :data="list"
+        stripe
+        height="100%"
+        class="crypto-address-table"
+      >
         <el-table-column prop="id" :label="t('common.id')" width="80" />
         <el-table-column prop="tenantId" :label="t('common.tenantId')" width="90" />
         <el-table-column prop="userId" :label="t('common.userId')" width="100" />
-        <el-table-column prop="walletType" :label="t('payment.walletType')" width="80" />
+        <el-table-column :label="t('payment.walletType')" width="100">
+          <template #default="{ row }">
+            {{ formatOptionValue('walletType', row.walletType) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="coin" :label="t('payment.currency')" width="90" />
         <el-table-column :label="t('payment.chain')" width="110">
           <template #default="{ row }">
-            {{ formatChainCode(row.chainCode) }}
+            {{ formatOptionValue('chainCode', row.chainCode) }}
           </template>
         </el-table-column>
         <el-table-column
@@ -83,16 +103,12 @@
         />
         <el-table-column :label="t('payment.type')" width="130">
           <template #default="{ row }">
-            {{
-              row.addressType === 2
-                ? t('payment.sharedAddressWithMemo')
-                : t('payment.exclusiveAddress')
-            }}
+            {{ formatOptionValue('cryptoRechargeAddressType', row.addressType) }}
           </template>
         </el-table-column>
         <el-table-column :label="t('common.status')" width="90">
           <template #default="{ row }">
-            <el-tag>{{ statusText(row.status) }}</el-tag>
+            <el-tag>{{ formatOptionValue('cryptoRechargeAddressStatus', row.status) }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="140" fixed="right">
@@ -106,6 +122,16 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="handlePrevPage"
+        @next="handleNextPage"
+        @limit-change="handleLimitChange"
+      />
     </el-card>
 
     <el-dialog
@@ -124,7 +150,14 @@
             <el-input-number v-model="form.userId" :min="0" :precision="0" />
           </el-form-item>
           <el-form-item :label="t('payment.walletType')">
-            <el-input-number v-model="form.walletType" :min="1" :precision="0" />
+            <el-select v-model="form.walletType" style="width: 100%">
+              <el-option
+                v-for="item in walletTypeOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
           </el-form-item>
           <el-form-item :label="t('payment.currency')">
             <el-input v-model="form.coin" />
@@ -134,7 +167,7 @@
               <el-option
                 v-for="item in chainCodeOptions"
                 :key="item.value"
-                :label="getOptionLabel(t, item.code, item.value)"
+                :label="item.label"
                 :value="item.value"
               />
             </el-select>
@@ -148,22 +181,32 @@
         </el-form-item>
         <el-form-item :label="t('payment.source')">
           <el-select v-model="form.addressSource" style="width: 100%">
-            <el-option :label="t('payment.systemGenerated')" :value="1" />
-            <el-option :label="t('payment.thirdPartyAssigned')" :value="2" />
-            <el-option :label="t('payment.manualImport')" :value="3" />
+            <el-option
+              v-for="item in addressSourceOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item :label="t('payment.type')">
           <el-select v-model="form.addressType" style="width: 100%">
-            <el-option :label="t('payment.exclusiveAddress')" :value="1" />
-            <el-option :label="t('payment.sharedAddressWithMemo')" :value="2" />
+            <el-option
+              v-for="item in addressTypeOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item :label="t('common.status')">
           <el-select v-model="form.status" style="width: 100%">
-            <el-option :label="t('common.disabled')" :value="1" />
-            <el-option :label="t('payment.available')" :value="2" />
-            <el-option :label="t('payment.frozen')" :value="3" />
+            <el-option
+              v-for="item in addressStatusOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
       </el-form>
@@ -182,7 +225,7 @@
       :title="t('payment.cryptoRechargeAddressDetail')"
       width="760px"
     >
-      <PaymentDetailDescriptions :data="detailData" />
+      <PaymentDetailDescriptions :data="detailDisplayData" />
     </el-dialog>
   </div>
 </template>
@@ -191,7 +234,9 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
+import { usePagination } from '@/composables'
 import {
+  assetService,
   catalogService,
   cryptoService,
   type CryptoRechargeAddress,
@@ -209,11 +254,32 @@ const dialogVisible = ref(false)
 const detailVisible = ref(false)
 const detailData = ref<CryptoRechargeAddress | null>(null)
 const optionGroups = ref<OptionGroup[]>([])
-const chainCodeOptions = computed(() => findOptionGroup(optionGroups.value, 'chainCode'))
+const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
+const walletTypeOptions = computed(() => optionItems('walletType'))
+const chainCodeOptions = computed(() => optionItems('chainCode'))
+const addressSourceOptions = computed(() => optionItems('cryptoRechargeAddressSource'))
+const addressTypeOptions = computed(() => optionItems('cryptoRechargeAddressType'))
+const addressStatusOptions = computed(() => optionItems('cryptoRechargeAddressStatus'))
+const detailOptionKeys: Record<string, string> = {
+  walletType: 'walletType',
+  chainCode: 'chainCode',
+  addressSource: 'cryptoRechargeAddressSource',
+  addressType: 'cryptoRechargeAddressType',
+  status: 'cryptoRechargeAddressStatus',
+}
+const detailDisplayData = computed(() => {
+  if (!detailData.value) return null
+  return Object.fromEntries(
+    Object.entries(detailData.value).map(([key, value]) => [
+      key,
+      detailOptionKeys[key] ? formatOptionValue(detailOptionKeys[key], value as number) : value,
+    ]),
+  )
+})
 const query = reactive({
-  tenantId: 0,
-  userId: 0,
-  walletType: 0,
+  tenantId: undefined as number | undefined,
+  userId: undefined as number | undefined,
+  walletType: undefined as number | undefined,
   coin: '',
   chainCode: undefined as number | undefined,
   address: '',
@@ -238,28 +304,69 @@ function params() {
     Object.entries(query).filter(([, v]) => v !== '' && v !== 0 && v !== undefined),
   )
 }
+function optionItems(key: string) {
+  const options = findOptionGroup(optionGroups.value, key)
+  return options.map((item) => ({
+    value: item.value,
+    label: getOptionLabel(t, item.code, item.value),
+  }))
+}
 async function loadList() {
   loading.value = true
   try {
-    list.value = (await cryptoService.listRechargeAddresses({ ...params(), limit: 100 })).data || []
+    const res = await cryptoService.listRechargeAddresses({
+      ...params(),
+      cursor: pagination.cursor,
+      limit: pagination.limit,
+    })
+    list.value = res.data || []
+    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
   } finally {
     loading.value = false
   }
 }
 async function loadOptions() {
-  optionGroups.value = (await catalogService.getOptions()).data || []
+  const [paymentOptions, assetOptions] = await Promise.allSettled([
+    catalogService.getOptions(),
+    assetService.getOptions(),
+  ])
+  optionGroups.value = [
+    ...(paymentOptions.status === 'fulfilled' ? paymentOptions.value.data || [] : []),
+    ...(assetOptions.status === 'fulfilled' ? assetOptions.value.data || [] : []),
+  ]
 }
 function resetQuery() {
   Object.assign(query, {
-    tenantId: 0,
-    userId: 0,
-    walletType: 0,
+    tenantId: undefined,
+    userId: undefined,
+    walletType: undefined,
     coin: '',
     chainCode: undefined,
     address: '',
     status: undefined,
   })
+  resetPagination()
   void loadList()
+}
+function handleQuery() {
+  resetPagination()
+  void loadList()
+}
+function handleLimitChange() {
+  resetPagination()
+  void loadList()
+}
+function handlePrevPage() {
+  if (pagination.hasPrev && pagination.prevCursor !== undefined) {
+    pagination.cursor = pagination.prevCursor
+    void loadList()
+  }
+}
+function handleNextPage() {
+  if (pagination.hasNext && pagination.nextCursor !== undefined) {
+    pagination.cursor = pagination.nextCursor
+    void loadList()
+  }
 }
 function openDialog(row?: CryptoRechargeAddress) {
   Object.assign(
@@ -286,16 +393,9 @@ function showDetail(row: CryptoRechargeAddress) {
   detailData.value = row
   detailVisible.value = true
 }
-function statusText(status: number) {
-  return status === 1
-    ? t('common.disabled')
-    : status === 3
-      ? t('payment.frozen')
-      : t('payment.available')
-}
-function formatChainCode(value: number) {
-  const item = chainCodeOptions.value.find((option) => String(option.value) === String(value))
-  return item ? getOptionLabel(t, item.code, item.value) : value
+function formatOptionValue(key: string, value: number | string | undefined) {
+  const item = optionItems(key).find((option) => String(option.value) === String(value))
+  return item ? item.label : value
 }
 async function submit() {
   const res = form.id
@@ -312,3 +412,28 @@ onMounted(() => {
   void loadList()
 })
 </script>
+
+<style scoped>
+.crypto-address-page {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.crypto-address-table-card {
+  flex: 1;
+  min-height: 0;
+}
+
+.crypto-address-table-card :deep(.el-card__body) {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.crypto-address-table {
+  flex: 1;
+  min-height: 0;
+}
+</style>

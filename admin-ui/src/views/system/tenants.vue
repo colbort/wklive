@@ -64,8 +64,18 @@
     </el-card>
 
     <el-card class="table-card" shadow="never">
-      <el-table v-loading="loading" :data="list" :empty-text="t('common.noData')" stripe>
-        <el-table-column prop="id" :label="t('common.id')" width="80" align="center" />
+      <el-table
+        v-loading="loading"
+        :data="list"
+        :empty-text="t('common.noData')"
+        stripe
+      >
+        <el-table-column
+          prop="id"
+          :label="t('common.id')"
+          width="80"
+          align="center"
+        />
         <el-table-column prop="tenantCode" :label="t('system.tenantCode')" min-width="150" />
         <el-table-column prop="tenantName" :label="t('system.tenantName')" min-width="150" />
         <el-table-column prop="contactName" :label="t('system.contactName')" min-width="120" />
@@ -98,7 +108,12 @@
             {{ formatDate(row.createTimes) }}
           </template>
         </el-table-column>
-        <el-table-column :label="t('common.actions')" width="180" align="center" fixed="right">
+        <el-table-column
+          :label="t('common.actions')"
+          width="180"
+          align="center"
+          fixed="right"
+        >
           <template #default="{ row }">
             <el-button
               v-perm="'sys:tenant:update'"
@@ -120,28 +135,15 @@
         </el-table-column>
       </el-table>
 
-      <div
-        style="
-          display: flex;
-          justify-content: flex-end;
-          gap: 10px;
-          align-items: center;
-          margin-top: 12px;
-        "
-      >
-        <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
-        <el-button :disabled="!pagination.hasPrev" @click="prevPage">
-          {{ t('common.prevPage') }}
-        </el-button>
-        <el-button :disabled="!pagination.hasNext" @click="nextPage">
-          {{ t('common.nextPage') }}
-        </el-button>
-        <el-select v-model="pagination.limit" style="width: 100px" @change="handleSizeChange">
-          <el-option :value="10" :label="t('common.perPage10')" />
-          <el-option :value="20" :label="t('common.perPage20')" />
-          <el-option :value="50" :label="t('common.perPage50')" />
-        </el-select>
-      </div>
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="prevPage"
+        @next="nextPage"
+        @limit-change="handleSizeChange"
+      />
     </el-card>
 
     <el-dialog
@@ -150,7 +152,12 @@
       width="700px"
       :close-on-click-modal="false"
     >
-      <el-form ref="formRef" :model="formData" :rules="formRules" label-width="120px">
+      <el-form
+        ref="formRef"
+        :model="formData"
+        :rules="formRules"
+        label-width="120px"
+      >
         <el-row :gutter="20">
           <el-col v-if="isEdit" :span="12">
             <el-form-item :label="t('system.tenantCode')" prop="tenantCode">
@@ -292,9 +299,10 @@ const statusOptions = computed(() => findOptionGroup(optionGroups.value, 'status
 const {
   pagination,
   updatePagination,
+  reset: resetPagination,
   nextPage: paginationNextPage,
   prevPage: paginationPrevPage,
-} = usePagination(10)
+} = usePagination<number>(10)
 const list = ref<SysTenantItem[]>([])
 const { loading, withLoading } = useLoading()
 
@@ -358,13 +366,7 @@ async function fetchList() {
       const res = await tenantsService.getList(params)
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'list failed')
       list.value = res.data || []
-      updatePagination(
-        res.total || 0,
-        res.hasNext || false,
-        res.hasPrev || false,
-        res.nextCursor || null,
-        res.prevCursor || null,
-      )
+      updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
     } catch (error: unknown) {
       ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
     }
@@ -384,8 +386,7 @@ async function fetchOptions() {
 // Handle pagination
 function handleSizeChange(size: number) {
   pagination.limit = size
-  pagination.cursor = null
-  pagination.hasPrev = false
+  resetPagination()
   fetchList()
 }
 
@@ -395,8 +396,7 @@ function handleReset() {
   queryForm.tenantName = ''
   queryForm.contactName = ''
   queryForm.status = 0
-  pagination.cursor = null
-  pagination.hasPrev = false
+  resetPagination()
   fetchList()
 }
 
@@ -530,11 +530,5 @@ onMounted(() => {
 
 .table-card {
   margin-bottom: 20px;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
 }
 </style>

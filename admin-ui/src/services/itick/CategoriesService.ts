@@ -27,7 +27,7 @@ export type ListCategoriesReq = {
   categoryType?: number
   enabled?: number // 0全部 1启用 2禁用
   appVisible?: number // 0全部 1启用 2禁用
-  cursor?: string | null
+  cursor?: number
   limit?: number
 }
 

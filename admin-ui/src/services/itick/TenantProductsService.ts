@@ -71,7 +71,7 @@ export type ListTenantProductsReq = {
   keyword?: string
   status?: number
   visibleStatus?: number
-  cursor?: string | null
+  cursor?: number
   limit?: number
 }
 

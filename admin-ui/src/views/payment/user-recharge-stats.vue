@@ -62,6 +62,16 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="handlePrevPage"
+        @next="handleNextPage"
+        @limit-change="handleLimitChange"
+      />
     </el-card>
     <el-dialog v-model="detailVisible" :title="t('payment.userRechargeStatDetail')" width="720px">
       <el-descriptions v-if="detailData" :column="2" border>
@@ -107,11 +117,13 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { usePagination } from '@/composables'
 import { ElMessage } from 'element-plus'
 import { rechargeService, type UserRechargeStat } from '@/services'
 import { formatDate } from '@/utils'
 
 const { t } = useI18n()
+const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
 
 const loading = ref(false)
 const list = ref<UserRechargeStat[]>([])
@@ -133,9 +145,11 @@ const loadList = async () => {
       userId: query.userId || undefined,
       successTotalAmountMin: query.successTotalAmountMin || undefined,
       successTotalAmountMax: query.successTotalAmountMax || undefined,
-      limit: 100,
+      cursor: pagination.cursor,
+      limit: pagination.limit,
     })
     list.value = res.data || []
+    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
   } finally {
     loading.value = false
   }
@@ -152,6 +166,25 @@ const showDetail = async (row: UserRechargeStat) => {
     detailData.value = res.data || row
   } catch (error: unknown) {
     ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
+  }
+}
+
+function handleLimitChange() {
+  resetPagination()
+  loadList()
+}
+
+function handlePrevPage() {
+  if (pagination.hasPrev && pagination.prevCursor) {
+    pagination.cursor = pagination.prevCursor
+    loadList()
+  }
+}
+
+function handleNextPage() {
+  if (pagination.hasNext && pagination.nextCursor) {
+    pagination.cursor = pagination.nextCursor
+    loadList()
   }
 }
 

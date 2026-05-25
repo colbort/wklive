@@ -2,6 +2,8 @@ package logic
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -47,10 +49,24 @@ func (l *GetMyAssetSummaryLogic) GetMyAssetSummary(in *asset.GetMyAssetSummaryRe
 	totalLocked := 0.0
 	resp := &asset.GetMyAssetSummaryResp{Base: helper.OkResp(), Data: &asset.UserAssetSummary{TenantId: tenantId, UserId: userId}}
 	for _, item := range list {
-		totalAsset += item.TotalAmount
-		totalAvailable += item.AvailableAmount
-		totalFrozen += item.FrozenAmount
-		totalLocked += item.LockedAmount
+		// 总资产、可用资产、冻结资产、锁定资产，单位都是USDT
+		if item.Coin == "USDT" {
+			totalAsset += item.TotalAmount
+			totalAvailable += item.AvailableAmount
+			totalFrozen += item.FrozenAmount
+			totalLocked += item.LockedAmount
+		} else {
+			// 其他币种需要换算成USDT
+			exchangeRate, err := l.lastPrice(item.Coin + "USDT")
+			if err != nil {
+				logx.Errorf("GetExchangeRate error: tenantId=%d, coin=%s, err=%v", tenantId, item.Coin, err)
+				continue
+			}
+			totalAsset += item.TotalAmount * exchangeRate
+			totalAvailable += item.AvailableAmount * exchangeRate
+			totalFrozen += item.FrozenAmount * exchangeRate
+			totalLocked += item.LockedAmount * exchangeRate
+		}
 		resp.Data.Assets = append(resp.Data.Assets, toUserAssetProto(item))
 	}
 
@@ -60,4 +76,23 @@ func (l *GetMyAssetSummaryLogic) GetMyAssetSummary(in *asset.GetMyAssetSummaryRe
 	resp.Data.TotalLockedUsdt = conv.FloatString(totalLocked)
 
 	return resp, nil
+}
+
+// 获取最新报价
+func (l *GetMyAssetSummaryLogic) lastPrice(symbol string) (float64, error) {
+	key := fmt.Sprintf("itick:quote:%s:%s:%s", "crypto", "BA", symbol)
+	data, err := l.svcCtx.Redis.GetCtx(l.ctx, key)
+	if err != nil {
+		return 0, err
+	}
+
+	var quoteData struct {
+		Price float64 `json:"lastPrice"`
+	}
+	err = json.Unmarshal([]byte(data), &quoteData)
+	if err != nil {
+		return 0, err
+	}
+
+	return quoteData.Price, nil
 }

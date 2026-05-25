@@ -66,6 +66,16 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="handlePrevPage"
+        @next="handleNextPage"
+        @limit-change="handleLimitChange"
+      />
     </el-card>
 
     <el-dialog v-model="marketVisible" :title="t('option.updateMarket')" width="720px">
@@ -148,6 +158,7 @@
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import { usePagination } from '@/composables'
 import TenantSelect from '@/components/TenantSelect.vue'
 import {
   ListMarketSnapshotsReq,
@@ -158,6 +169,7 @@ import {
 } from '@/services'
 
 const { t } = useI18n()
+const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
 
 const loading = ref(false)
 const submitLoading = ref(false)
@@ -168,7 +180,7 @@ const marketVisible = ref(false)
 const query = reactive<ListMarketSnapshotsReq>({
   tenantId: 0,
   contractId: 0,
-  limit: 100,
+  limit: 20,
 })
 const marketForm = reactive<UpdateMarketReq>({
   tenantId: 0,
@@ -195,12 +207,23 @@ const marketForm = reactive<UpdateMarketReq>({
 const loadCurrent = async () => {
   loading.value = true
   try {
-    const resp = await optionService.listMarketSnapshots(query)
+    const resp = await optionService.listMarketSnapshots({
+      ...query,
+      cursor: pagination.cursor,
+      limit: pagination.limit,
+    })
     if (resp.code !== 200) {
       ElMessage.error(resp.msg || t('common.loadFailed'))
       return
     }
     rows.value = resp?.data || []
+    updatePagination(
+      resp.total || 0,
+      !!resp.hasNext,
+      !!resp.hasPrev,
+      resp.nextCursor,
+      resp.prevCursor,
+    )
   } finally {
     loading.value = false
   }
@@ -254,6 +277,25 @@ const submitMarket = async () => {
     loadCurrent()
   } finally {
     submitLoading.value = false
+  }
+}
+
+function handleLimitChange() {
+  resetPagination()
+  loadCurrent()
+}
+
+function handlePrevPage() {
+  if (pagination.hasPrev && pagination.prevCursor) {
+    pagination.cursor = pagination.prevCursor
+    loadCurrent()
+  }
+}
+
+function handleNextPage() {
+  if (pagination.hasNext && pagination.nextCursor) {
+    pagination.cursor = pagination.nextCursor
+    loadCurrent()
   }
 }
 

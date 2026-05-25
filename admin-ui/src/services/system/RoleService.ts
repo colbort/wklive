@@ -28,9 +28,6 @@ export type RoleListResp = {
 
 export type RoleItem = { id: number; name: string; code: string; status: number; remark?: string }
 
-// 角色接口定义（复用现有的类型）
-export interface Role extends SysRole {}
-
 export interface CreateRoleRequest {
   name: string
   code: string
@@ -50,14 +47,14 @@ export interface UpdateRoleRequest {
   permIds?: number[]
 }
 
-export interface RoleQueryParams {
+export type RoleQueryParams = {
   keyword?: string
   status?: number
-  cursor?: string | null
+  cursor?: number
   limit?: number
 }
 
-export interface RoleGrantRequest {
+export type RoleGrantRequest = {
   roleId: number
   menuIds: number[]
   permKeys: string[]
@@ -110,7 +107,7 @@ export class RoleService implements BaseService {
   /**
    * 获取角色授权详情
    */
-  async getRoleGrantDetail(roleId: number): Promise<RespBase<any>> {
+  async getRoleGrantDetail(roleId: number): Promise<RespBase<RoleGrantRequest>> {
     return apiRoleGrantDetail(roleId)
   }
 }

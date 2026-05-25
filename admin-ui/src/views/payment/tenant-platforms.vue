@@ -68,6 +68,16 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="handlePrevPage"
+        @next="handleNextPage"
+        @limit-change="handleLimitChange"
+      />
     </el-card>
     <el-dialog
       v-model="dialogVisible"
@@ -137,6 +147,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { usePagination } from '@/composables'
 import { ElMessage } from 'element-plus'
 import { catalogService, tenantService, type TenantPayPlatform, type OptionGroup } from '@/services'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
@@ -144,6 +155,7 @@ import TenantSelect from '@/components/TenantSelect.vue'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 
 const { t } = useI18n()
+const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
 
 // reactive data
 const loading = ref(false)
@@ -194,9 +206,10 @@ const loadList = async () => {
       ...query,
       tenantId: query.tenantId || undefined,
       platformId: query.platformId || undefined,
-      limit: 100,
+      limit: 20,
     })
     list.value = res.data || []
+    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
   } finally {
     loading.value = false
   }
@@ -306,6 +319,25 @@ function getOpenStatusTagClass(value?: number) {
   if (num === 3) return 'option-tag option-tag--warning'
   if (num === 4) return 'option-tag option-tag--red'
   return 'option-tag option-tag--slate'
+}
+
+function handleLimitChange() {
+  resetPagination()
+  loadList()
+}
+
+function handlePrevPage() {
+  if (pagination.hasPrev && pagination.prevCursor) {
+    pagination.cursor = pagination.prevCursor
+    loadList()
+  }
+}
+
+function handleNextPage() {
+  if (pagination.hasNext && pagination.nextCursor) {
+    pagination.cursor = pagination.nextCursor
+    loadList()
+  }
 }
 
 onMounted(() => {

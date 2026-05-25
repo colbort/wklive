@@ -173,21 +173,15 @@
         </el-table-column>
       </el-table>
 
-      <div class="pagination-bar">
-        <span>{{ t('common.totalItems', { count: pagination.total }) }}</span>
-        <el-button :disabled="!pagination.hasPrev" @click="handlePrevPage">
-          {{ t('common.prevPage') }}
-        </el-button>
-        <el-button :disabled="!pagination.hasNext" type="primary" @click="handleNextPage">
-          {{ t('common.nextPage') }}
-        </el-button>
-        <el-select v-model="pagination.limit" style="width: 100px" @change="handleLimitChange">
-          <el-option :value="10" :label="t('common.perPage10')" />
-          <el-option :value="20" :label="t('common.perPage20')" />
-          <el-option :value="50" :label="t('common.perPage50')" />
-          <el-option :value="100" :label="t('common.perPage100')" />
-        </el-select>
-      </div>
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="handlePrevPage"
+        @next="handleNextPage"
+        @limit-change="handleLimitChange"
+      />
     </el-card>
 
     <el-dialog
@@ -195,7 +189,12 @@
       :title="formMode === 'add' ? t('itick.addProduct') : t('itick.editProduct')"
       width="700px"
     >
-      <el-form ref="formRef" :model="form" :rules="rules" label-width="120px">
+      <el-form
+        ref="formRef"
+        :model="form"
+        :rules="rules"
+        label-width="120px"
+      >
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item
@@ -521,7 +520,7 @@ type FormData = {
 
 const { t } = useI18n()
 const { systemCore, loadSystemCore } = useSystemCore()
-const { pagination, updatePagination, reset: resetPagination } = usePagination(20)
+const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
 const { loading, withLoading } = useLoading()
 
 const { form: queryParams, reset: resetQueryParams } = useForm<ListProductsReq>({
@@ -531,7 +530,7 @@ const { form: queryParams, reset: resetQueryParams } = useForm<ListProductsReq>(
     keyword: '',
     enabled: 0,
     appVisible: 0,
-    cursor: null,
+    cursor: undefined,
     limit: 20,
   },
 })
@@ -623,13 +622,7 @@ const getList = async () => {
         cursor: pagination.cursor,
       })
       list.value = res?.data || []
-      updatePagination(
-        res?.total || 0,
-        !!res?.hasNext,
-        !!res?.hasPrev,
-        res?.nextCursor || null,
-        res?.prevCursor || null,
-      )
+      updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
     } catch (_) {
       ElMessage.error(t('common.loadFailed'))
     }
@@ -646,7 +639,7 @@ const loadOptions = async () => {
 }
 
 const handleQuery = () => {
-  pagination.cursor = null
+  resetPagination()
   getList()
 }
 
@@ -657,7 +650,7 @@ const resetQuery = () => {
 }
 
 const handleLimitChange = () => {
-  pagination.cursor = null
+  resetPagination()
   getList()
 }
 
