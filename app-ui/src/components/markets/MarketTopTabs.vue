@@ -34,9 +34,6 @@ const emit = defineEmits<{
 
 <style scoped>
 .market-header {
-  position: sticky;
-  top: 0;
-  z-index: 20;
   display: flex;
   align-items: center;
   justify-content: space-between;

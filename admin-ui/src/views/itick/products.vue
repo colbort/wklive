@@ -482,7 +482,7 @@
   </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, nextTick, ref, onMounted } from 'vue'
 import { ElMessage, type FormRules, type UploadFile } from 'element-plus'
 import { useI18n } from 'vue-i18n'

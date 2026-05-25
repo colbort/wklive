@@ -58,7 +58,7 @@
             <el-button link type="primary" @click="showDetail(row)">
               {{ t('common.detail') }}
             </el-button>
-            <el-button link type="warning" @click="openAudit(row)">
+            <el-button v-if="canAudit(row)" link type="warning" @click="openAudit(row)">
               {{ t('payment.auditWithdraw') }}
             </el-button>
           </template>
@@ -66,59 +66,8 @@
       </el-table>
     </el-card>
 
-    <el-drawer v-model="detailVisible" :title="t('payment.orderDetail')" size="520px">
-      <el-descriptions v-if="detailData" :column="1" border>
-        <el-descriptions-item :label="t('payment.orderNo')">
-          {{ detailData.orderNo }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('payment.bizOrderNo')">
-          {{ detailData.bizOrderNo || '-' }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('common.tenantId')">
-          {{ detailData.tenantId }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('common.userId')">
-          {{ detailData.userId }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('common.status')">
-          <el-tag :type="statusTagType(detailData.status)" disable-transitions>
-            {{ getOptionValueLabel(optionGroups, 'payOrderStatus', detailData.status, t) }}
-          </el-tag>
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('payment.platformId')">
-          {{ detailData.platformId }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('payment.channelId')">
-          {{ detailData.channelId }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('payment.currency')">
-          {{ detailData.currency }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('payment.amount')">
-          {{ detailData.amount }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('payment.feeAmount')">
-          {{ detailData.feeAmount }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('payment.actualAmount')">
-          {{ detailData.actualAmount }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('payment.thirdTradeNo')">
-          {{ detailData.thirdTradeNo || '-' }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('payment.thirdOrderNo')">
-          {{ detailData.thirdOrderNo || '-' }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('payment.clientType')">
-          {{ getOptionValueLabel(optionGroups, 'clientType', detailData.clientType, t) }}
-        </el-descriptions-item>
-        <el-descriptions-item label="IP">
-          {{ detailData.clientIp || '-' }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('common.remark')">
-          {{ detailData.remark || '-' }}
-        </el-descriptions-item>
-      </el-descriptions>
+    <el-drawer v-model="detailVisible" :title="t('payment.orderDetail')" size="720px">
+      <PaymentDetailDescriptions :data="detailData" :option-groups="optionGroups" :columns="1" />
     </el-drawer>
 
     <el-dialog v-model="auditVisible" :title="t('payment.auditWithdraw')" width="520px">
@@ -149,11 +98,12 @@
   </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { catalogService, withdrawService, type OptionGroup, type WithdrawOrder } from '@/services'
+import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 const { t } = useI18n()
@@ -166,6 +116,8 @@ const auditVisible = ref(false)
 const currentOrder = ref<WithdrawOrder | null>(null)
 const optionGroups = ref<OptionGroup[]>([])
 const payOrderStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'payOrderStatus'))
+
+const PAY_ORDER_STATUS_PENDING = 1
 
 const auditForm = reactive({
   approve: 1,
@@ -210,7 +162,13 @@ const statusTagType = (status: number) => {
   return ''
 }
 
+const canAudit = (row: WithdrawOrder) => row.status === PAY_ORDER_STATUS_PENDING
+
 const openAudit = (row: WithdrawOrder) => {
+  if (!canAudit(row)) {
+    ElMessage.warning(t('payment.onlyPendingWithdrawCanAudit'))
+    return
+  }
   currentOrder.value = row
   Object.assign(auditForm, { approve: 1, remark: '' })
   auditVisible.value = true
@@ -218,14 +176,24 @@ const openAudit = (row: WithdrawOrder) => {
 
 const submitAudit = async () => {
   if (!currentOrder.value) return
-  await withdrawService.auditWithdrawOrder({
+  if (!canAudit(currentOrder.value)) {
+    ElMessage.warning(t('payment.onlyPendingWithdrawCanAudit'))
+    auditVisible.value = false
+    return
+  }
+  const result = await withdrawService.auditWithdrawOrder({
     tenantId: currentOrder.value.tenantId,
     orderNo: currentOrder.value.orderNo,
     approve: auditForm.approve,
     remark: auditForm.remark,
   })
-  ElMessage.success(t('payment.auditSuccess'))
-  auditVisible.value = false
+  if (result.code !== 200) {
+    ElMessage.error(result.msg || t('payment.auditFailed'))
+    return
+  } else {
+    ElMessage.success(t('payment.auditSuccess'))
+    auditVisible.value = false
+  }
   loadList()
 }
 

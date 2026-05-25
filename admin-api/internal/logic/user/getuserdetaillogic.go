@@ -29,8 +29,7 @@ func NewGetUserDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Get
 
 func (l *GetUserDetailLogic) GetUserDetail(req *types.GetUserDetailReq) (resp *types.GetUserDetailResp, err error) {
 	result, err := l.svcCtx.UserCli.GetUserDetail(l.ctx, &user.GetUserDetailReq{
-		TenantId: req.TenantId,
-		UserId:   req.UserId,
+		UserId: req.UserId,
 	})
 	if err != nil {
 		return nil, err

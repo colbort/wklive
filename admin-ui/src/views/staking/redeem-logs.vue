@@ -75,7 +75,7 @@
   </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { stakingService, type StakeRedeemLog } from '@/services'
 import { useI18n } from 'vue-i18n'

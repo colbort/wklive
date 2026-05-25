@@ -14,7 +14,7 @@ type UserAssetModel interface {
 	tUserAssetModel
 	FindPage(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, status int64, cursor int64, limit int64) ([]*TUserAsset, int64, error)
 	FindAll(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, status int64) ([]*TUserAsset, error)
-	// 增加可用资产（充值等），如果不存在则先插入初始化记录
+	// 增加已有资产的可用余额，调用方需要先创建不存在的资产记录
 	AddAvailableAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount float64, version int64, updateTimes int64) (int64, error)
 	SubAvailableAmount(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (bool, error)
 	// 冻结资产（下单冻结）
@@ -109,8 +109,31 @@ func (m *defaultTUserAssetModel) FindAll(ctx context.Context, tenantId int64, us
 	return list, nil
 }
 
+func (m *defaultTUserAssetModel) userAssetCacheKeys(ctx context.Context, tenantId, userId, walletType int64, coin string) ([]string, error) {
+	tUserAssetTenantIdUserIdWalletTypeCoinKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTUserAssetTenantIdUserIdWalletTypeCoinPrefix, tenantId, userId, walletType, coin)
+	keys := []string{tUserAssetTenantIdUserIdWalletTypeCoinKey}
+
+	var id int64
+	query := fmt.Sprintf("select `id` from %s where `tenant_id` = ? and `user_id` = ? and `wallet_type` = ? and `coin` = ? limit 1", m.table)
+	err := m.QueryRowNoCacheCtx(ctx, &id, query, tenantId, userId, walletType, coin)
+	switch err {
+	case nil:
+		tUserAssetIdKey := fmt.Sprintf("%s%v", cacheTUserAssetIdPrefix, id)
+		keys = append(keys, tUserAssetIdKey)
+		return keys, nil
+	case sqlc.ErrNotFound, sql.ErrNoRows, ErrNotFound:
+		return keys, nil
+	default:
+		return nil, err
+	}
+}
+
 // 增加可用资产（充值等）
 func (m *defaultTUserAssetModel) AddAvailableAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount float64, version int64, updateTimes int64) (int64, error) {
+	if version < 0 {
+		return 0, ErrNotFound
+	}
+
 	query := fmt.Sprintf(`
 		UPDATE %s
 		SET 
@@ -122,13 +145,17 @@ func (m *defaultTUserAssetModel) AddAvailableAmount(ctx context.Context, tenantI
 		m.table)
 
 	args := []any{amount, amount, updateTimes, tenantId, userId, walletType, coin}
-	if version > 0 {
-		args = append(args, version)
+	query += " AND version = ?"
+	args = append(args, version)
+
+	cacheKeys, err := m.userAssetCacheKeys(ctx, tenantId, userId, walletType, coin)
+	if err != nil {
+		return 0, err
 	}
 
 	result, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
 		return conn.ExecCtx(ctx, query, args...)
-	})
+	}, cacheKeys...)
 
 	if err != nil {
 		return 0, err
@@ -140,35 +167,7 @@ func (m *defaultTUserAssetModel) AddAvailableAmount(ctx context.Context, tenantI
 	if rows > 0 {
 		return rows, nil
 	}
-
-	// 如果记录不存在，则插入新记录
-	_, err = m.FindOneByTenantIdUserIdWalletTypeCoin(ctx, tenantId, userId, walletType, coin)
-	if err == nil {
-		return 0, nil
-	}
-	if err != sqlc.ErrNotFound {
-		return 0, err
-	}
-
-	_, err = m.Insert(ctx, &TUserAsset{
-		TenantId:        tenantId,
-		UserId:          userId,
-		WalletType:      walletType,
-		Coin:            coin,
-		TotalAmount:     amount,
-		AvailableAmount: amount,
-		FrozenAmount:    0,
-		LockedAmount:    0,
-		Status:          1,
-		Version:         0,
-		Remark:          "",
-		CreateTimes:     updateTimes,
-		UpdateTimes:     updateTimes,
-	})
-	if err != nil {
-		return 0, err
-	}
-	return 1, nil
+	return 0, fmt.Errorf("asset balance version changed or asset disabled")
 }
 
 func (m *defaultTUserAssetModel) SubAvailableAmount(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (bool, error) {
@@ -182,9 +181,14 @@ func (m *defaultTUserAssetModel) SubAvailableAmount(ctx context.Context, tenantI
 		WHERE tenant_id = ? AND user_id = ? AND wallet_type = ? AND coin = ? AND status = 1 AND available_amount >= ?
 	`, m.table)
 
+	cacheKeys, err := m.userAssetCacheKeys(ctx, tenantId, userId, walletType, coin)
+	if err != nil {
+		return false, err
+	}
+
 	result, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
 		return conn.ExecCtx(ctx, query, amount, amount, updateTimes, tenantId, userId, walletType, coin, amount)
-	})
+	}, cacheKeys...)
 	if err != nil {
 		return false, err
 	}
@@ -203,9 +207,14 @@ func (m *defaultTUserAssetModel) DeductLockedAmount(ctx context.Context, tenantI
 		WHERE tenant_id = ? AND user_id = ? AND wallet_type = ? AND coin = ? AND status = 1 AND locked_amount >= ?
 	`, m.table)
 
+	cacheKeys, err := m.userAssetCacheKeys(ctx, tenantId, userId, walletType, coin)
+	if err != nil {
+		return false, err
+	}
+
 	result, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
 		return conn.ExecCtx(ctx, query, amount, amount, updateTimes, tenantId, userId, walletType, coin, amount)
-	})
+	}, cacheKeys...)
 	if err != nil {
 		return false, err
 	}
@@ -226,9 +235,14 @@ func (m *defaultTUserAssetModel) FreezeAmount(ctx context.Context, tenantId, use
 			AND status = 1 AND available_amount >= ?
 	`, m.table)
 
+	cacheKeys, err := m.userAssetCacheKeys(ctx, tenantId, userId, walletType, coin)
+	if err != nil {
+		return false, err
+	}
+
 	result, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
 		return conn.ExecCtx(ctx, query, amount, amount, updateTimes, tenantId, userId, walletType, coin, amount)
-	})
+	}, cacheKeys...)
 
 	if err != nil {
 		return false, err
@@ -250,9 +264,14 @@ func (m *defaultTUserAssetModel) UnfreezeAmount(ctx context.Context, tenantId, u
 			AND status = 1 AND frozen_amount >= ?
 	`, m.table)
 
+	cacheKeys, err := m.userAssetCacheKeys(ctx, tenantId, userId, walletType, coin)
+	if err != nil {
+		return false, err
+	}
+
 	result, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
 		return conn.ExecCtx(ctx, query, amount, amount, updateTimes, tenantId, userId, walletType, coin, amount)
-	})
+	}, cacheKeys...)
 
 	if err != nil {
 		return false, err
@@ -274,9 +293,14 @@ func (m *defaultTUserAssetModel) DeductFromFrozen(ctx context.Context, tenantId,
 			AND status = 1 AND frozen_amount >= ?
 	`, m.table)
 
+	cacheKeys, err := m.userAssetCacheKeys(ctx, tenantId, userId, walletType, coin)
+	if err != nil {
+		return false, err
+	}
+
 	result, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
 		return conn.ExecCtx(ctx, query, amount, amount, updateTimes, tenantId, userId, walletType, coin, amount)
-	})
+	}, cacheKeys...)
 
 	if err != nil {
 		return false, err
@@ -298,9 +322,14 @@ func (m *defaultTUserAssetModel) LockAmount(ctx context.Context, tenantId, userI
 			AND status = 1 AND available_amount >= ?
 	`, m.table)
 
+	cacheKeys, err := m.userAssetCacheKeys(ctx, tenantId, userId, walletType, coin)
+	if err != nil {
+		return false, err
+	}
+
 	result, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
 		return conn.ExecCtx(ctx, query, amount, amount, updateTimes, tenantId, userId, walletType, coin, amount)
-	})
+	}, cacheKeys...)
 
 	if err != nil {
 		return false, err
@@ -322,9 +351,14 @@ func (m *defaultTUserAssetModel) UnlockAmount(ctx context.Context, tenantId, use
 			AND status = 1 AND locked_amount >= ?
 	`, m.table)
 
+	cacheKeys, err := m.userAssetCacheKeys(ctx, tenantId, userId, walletType, coin)
+	if err != nil {
+		return false, err
+	}
+
 	result, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
 		return conn.ExecCtx(ctx, query, amount, amount, updateTimes, tenantId, userId, walletType, coin, amount)
-	})
+	}, cacheKeys...)
 
 	if err != nil {
 		return false, err

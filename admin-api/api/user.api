@@ -213,7 +213,6 @@ type GetUserOptionsResp {
 }
 
 type GetUserDetailReq {
-	tenantId int64 `form:"tenantId"`
 	userId   int64 `path:"userId"`
 }
 

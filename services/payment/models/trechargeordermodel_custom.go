@@ -9,10 +9,10 @@ import (
 
 type RechargeOrderModel interface {
 	tRechargeOrderModel
-	FindPage(ctx context.Context, tenantId int64, userId int64, orderNo string, status int64, cursor int64, limit int64) ([]*TRechargeOrder, int64, error)
+	FindPage(ctx context.Context, tenantId int64, userId int64, orderNo string, status int64, rechargeType int64, cursor int64, limit int64) ([]*TRechargeOrder, int64, error)
 }
 
-func (m *defaultTRechargeOrderModel) FindPage(ctx context.Context, tenantId int64, userId int64, orderNo string, status int64, cursor int64, limit int64) ([]*TRechargeOrder, int64, error) {
+func (m *defaultTRechargeOrderModel) FindPage(ctx context.Context, tenantId int64, userId int64, orderNo string, status int64, rechargeType int64, cursor int64, limit int64) ([]*TRechargeOrder, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -20,6 +20,7 @@ func (m *defaultTRechargeOrderModel) FindPage(ctx context.Context, tenantId int6
 	builder.EqInt64("user_id", userId)
 	builder.EqString("order_no", orderNo)
 	builder.EqInt64("status", status)
+	builder.EqInt64("recharge_type", rechargeType)
 
 	where := builder.Where()
 	args := builder.Args()

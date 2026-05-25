@@ -1,13 +1,208 @@
 package logic
 
 import (
+	"context"
+	"database/sql"
+	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"wklive/common/conv"
+	"wklive/common/utils"
+	"wklive/proto/asset"
 	"wklive/proto/common"
 	"wklive/proto/payment"
+	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
+
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
+
+func rechargeTypeFromPlatform(item *models.TPayPlatform) payment.RechargeType {
+	if item == nil {
+		return payment.RechargeType_RECHARGE_TYPE_UNKNOWN
+	}
+	switch payment.PlatformType(item.PlatformType) {
+	case payment.PlatformType_PLATFORM_TYPE_CHAIN:
+		return payment.RechargeType_RECHARGE_TYPE_CRYPTO
+	case payment.PlatformType_PLATFORM_TYPE_THIRD:
+		return payment.RechargeType_RECHARGE_TYPE_THIRD
+	case payment.PlatformType_PLATFORM_TYPE_BANK:
+		return payment.RechargeType_RECHARGE_TYPE_BANK
+	case payment.PlatformType_PLATFORM_TYPE_MANUAL:
+		return payment.RechargeType_RECHARGE_TYPE_MANUAL
+	default:
+		return payment.RechargeType_RECHARGE_TYPE_OTHER
+	}
+}
+
+func markRechargeOrderSuccessAndCredit(ctx context.Context, svcCtx *svc.ServiceContext, order *models.TRechargeOrder, thirdTradeNo string, payAmount int64, remark string) error {
+	if order == nil {
+		return fmt.Errorf("recharge order is nil")
+	}
+
+	return svcCtx.DB.TransactCtx(ctx, func(txCtx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		rechargeOrderModel := models.NewTRechargeOrderModel(conn, svcCtx.Config.CacheRedis).(models.RechargeOrderModel)
+
+		current, err := rechargeOrderModel.FindOne(txCtx, order.Id)
+		if err != nil {
+			return err
+		}
+		if current.Status == int64(payment.PayOrderStatus_PAY_ORDER_STATUS_SUCCESS) {
+			return nil
+		}
+		if current.Status != int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PENDING) &&
+			current.Status != int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PAYING) {
+			return fmt.Errorf("only pending or paying recharge orders can be marked success")
+		}
+
+		now := utils.NowMillis()
+		current.Status = int64(payment.PayOrderStatus_PAY_ORDER_STATUS_SUCCESS)
+		if payAmount > 0 {
+			current.PayAmount = payAmount
+		} else if current.PayAmount <= 0 {
+			current.PayAmount = current.OrderAmount
+		}
+		if thirdTradeNo != "" {
+			current.ThirdTradeNo = sql.NullString{String: thirdTradeNo, Valid: true}
+		}
+		current.PaidTime = now
+		current.UpdateTimes = now
+
+		if err := creditRechargeOrderAsset(txCtx, svcCtx, current, remark); err != nil {
+			return err
+		}
+		return rechargeOrderModel.Update(txCtx, current)
+	})
+}
+
+func creditRechargeOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext, order *models.TRechargeOrder, remark string) error {
+	if order == nil {
+		return fmt.Errorf("recharge order is nil")
+	}
+	amount := order.PayAmount
+	if amount <= 0 {
+		amount = order.OrderAmount
+	}
+	resp, err := svcCtx.AssetCli.AddAvailable(ctx, &asset.AddAvailableReq{
+		TenantId:   order.TenantId,
+		UserId:     order.UserId,
+		WalletType: rechargeOrderWalletType(order),
+		Coin:       order.Currency,
+		Amount:     strconv.FormatInt(amount, 10),
+		BizType:    asset.BizType_BIZ_TYPE_PAYMENT,
+		SceneType:  asset.SceneType_SCENE_TYPE_RECHARGE,
+		BizId:      order.Id,
+		BizNo:      order.OrderNo,
+		Remark:     remark,
+	})
+	if err != nil {
+		return err
+	}
+	if resp == nil || resp.Base == nil {
+		return fmt.Errorf("asset add available returned empty response")
+	}
+	if resp.Base.Code != 200 {
+		return fmt.Errorf("asset add available failed: %s", resp.Base.Msg)
+	}
+	return nil
+}
+
+func freezeWithdrawOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext, order *models.TWithdrawOrder, remark string) error {
+	if order == nil {
+		return fmt.Errorf("withdraw order is nil")
+	}
+	resp, err := svcCtx.AssetCli.FreezeAsset(ctx, &asset.FreezeAssetReq{
+		TenantId:   order.TenantId,
+		UserId:     order.UserId,
+		WalletType: asset.WalletType_WALLET_TYPE_SPOT,
+		Coin:       order.Currency,
+		Amount:     strconv.FormatInt(order.Amount, 10),
+		BizType:    asset.BizType_BIZ_TYPE_PAYMENT,
+		SceneType:  asset.SceneType_SCENE_TYPE_WITHDRAW_APPLY,
+		BizId:      order.Id,
+		BizNo:      order.OrderNo,
+		Remark:     remark,
+	})
+	if err != nil {
+		return err
+	}
+	if resp == nil || resp.Base == nil {
+		return fmt.Errorf("asset freeze returned empty response")
+	}
+	if resp.Base.Code != 200 {
+		return fmt.Errorf("asset freeze failed: %s", resp.Base.Msg)
+	}
+	return nil
+}
+
+func deductWithdrawOrderFrozenAsset(ctx context.Context, svcCtx *svc.ServiceContext, order *models.TWithdrawOrder, remark string) error {
+	if order == nil {
+		return fmt.Errorf("withdraw order is nil")
+	}
+	resp, err := svcCtx.AssetCli.DeductFrozenAssetByBizNo(ctx, &asset.DeductFrozenAssetByBizNoReq{
+		TenantId:      order.TenantId,
+		TargetBizType: asset.BizType_BIZ_TYPE_PAYMENT,
+		TargetBizNo:   order.OrderNo,
+		Amount:        strconv.FormatInt(order.Amount, 10),
+		BizType:       asset.BizType_BIZ_TYPE_PAYMENT,
+		SceneType:     asset.SceneType_SCENE_TYPE_WITHDRAW_SUCCESS,
+		BizId:         order.Id,
+		BizNo:         order.OrderNo,
+		Remark:        remark,
+	})
+	if err != nil {
+		return err
+	}
+	if resp == nil || resp.Base == nil {
+		return fmt.Errorf("asset deduct frozen returned empty response")
+	}
+	if resp.Base.Code != 200 {
+		return fmt.Errorf("asset deduct frozen failed: %s", resp.Base.Msg)
+	}
+	return nil
+}
+
+func unfreezeWithdrawOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext, order *models.TWithdrawOrder, remark string) error {
+	if order == nil {
+		return fmt.Errorf("withdraw order is nil")
+	}
+	resp, err := svcCtx.AssetCli.UnfreezeAssetByBizNo(ctx, &asset.UnfreezeAssetByBizNoReq{
+		TenantId:      order.TenantId,
+		TargetBizType: asset.BizType_BIZ_TYPE_PAYMENT,
+		TargetBizNo:   order.OrderNo,
+		Amount:        strconv.FormatInt(order.Amount, 10),
+		BizType:       asset.BizType_BIZ_TYPE_PAYMENT,
+		SceneType:     asset.SceneType_SCENE_TYPE_WITHDRAW_REJECT,
+		BizId:         order.Id,
+		BizNo:         order.OrderNo,
+		Remark:        remark,
+	})
+	if err != nil {
+		return err
+	}
+	if resp == nil || resp.Base == nil {
+		return fmt.Errorf("asset unfreeze returned empty response")
+	}
+	if resp.Base.Code != 200 {
+		return fmt.Errorf("asset unfreeze failed: %s", resp.Base.Msg)
+	}
+	return nil
+}
+
+func rechargeOrderWalletType(order *models.TRechargeOrder) asset.WalletType {
+	if order == nil || order.RequestData.String == "" {
+		return asset.WalletType_WALLET_TYPE_SPOT
+	}
+	var requestData struct {
+		WalletType int64 `json:"walletType"`
+	}
+	if err := json.Unmarshal([]byte(order.RequestData.String), &requestData); err != nil || requestData.WalletType <= 0 {
+		return asset.WalletType_WALLET_TYPE_SPOT
+	}
+	return asset.WalletType(requestData.WalletType)
+}
 
 func toPayPlatformProto(item *models.TPayPlatform) *payment.PayPlatform {
 	if item == nil {
@@ -194,6 +389,7 @@ func toRechargeOrderProto(item *models.TRechargeOrder) *payment.RechargeOrder {
 		ProductId:    item.ProductId,
 		AccountId:    item.AccountId,
 		ChannelId:    item.ChannelId,
+		RechargeType: payment.RechargeType(item.RechargeType),
 		Currency:     item.Currency,
 		OrderAmount:  item.OrderAmount,
 		PayAmount:    item.PayAmount,

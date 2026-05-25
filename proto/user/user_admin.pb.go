@@ -292,8 +292,7 @@ func (x *CreateUserResp) GetUserId() int64 {
 
 type GetUserDetailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -326,13 +325,6 @@ func (x *GetUserDetailReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetUserDetailReq.ProtoReflect.Descriptor instead.
 func (*GetUserDetailReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_admin_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *GetUserDetailReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
 }
 
 func (x *GetUserDetailReq) GetUserId() int64 {
@@ -2468,10 +2460,9 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	"\x06remark\x18\x11 \x01(\tR\x06remark\"O\n" +
 	"\x0eCreateUserResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\"H\n" +
-	"\x10GetUserDetailReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\"c\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\"+\n" +
+	"\x10GetUserDetailReq\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"c\n" +
 	"\x11GetUserDetailResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12(\n" +
 	"\x06detail\x18\x02 \x01(\v2\x10.user.UserDetailR\x06detail\"\xb5\x04\n" +

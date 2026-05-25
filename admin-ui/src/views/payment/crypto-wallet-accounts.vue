@@ -132,16 +132,17 @@
       :title="t('payment.cryptoWalletAccountDetail')"
       width="760px"
     >
-      <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
+      <PaymentDetailDescriptions :data="detailData" />
     </el-dialog>
   </div>
 </template>
-<script setup lang='ts'>
+<script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { cryptoService, type CryptoWalletAccount } from '@/services'
 import TenantSelect from '@/components/TenantSelect.vue'
+import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 const { t } = useI18n()
 const loading = ref(false),
   dialogVisible = ref(false),

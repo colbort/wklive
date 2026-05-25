@@ -109,9 +109,12 @@ function formatPercent(value: number) {
 }
 
 .category-strip {
+  position: -webkit-sticky;
   position: sticky;
-  top: var(--market-header-height, 68px);
-  z-index: 19;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
   display: flex;
   flex-wrap: wrap;
   gap: 18px;

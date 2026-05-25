@@ -12,6 +12,15 @@ enum PlatformType {
   PLATFORM_TYPE_MANUAL = 4; // 人工代收
 }
 
+enum RechargeType {
+  RECHARGE_TYPE_UNKNOWN = 0;
+  RECHARGE_TYPE_CRYPTO = 1; // 虚拟币
+  RECHARGE_TYPE_THIRD = 2;  // 三方充值
+  RECHARGE_TYPE_BANK = 3;   // 银行卡
+  RECHARGE_TYPE_MANUAL = 4; // 人工充值
+  RECHARGE_TYPE_OTHER = 5;  // 其他
+}
+
 enum CommonStatus {
   COMMON_STATUS_UNKNOWN = 0;
   COMMON_STATUS_ENABLED = 1;

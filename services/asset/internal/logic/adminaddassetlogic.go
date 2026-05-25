@@ -51,8 +51,27 @@ func (l *AdminAddAssetLogic) AdminAddAsset(in *asset.AdminAddAssetReq) (*asset.A
 			return err
 		}
 
-		if _, err := userAssetModel.AddAvailableAmount(ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, amount, 0, ts); err != nil {
-			return err
+		if before == nil {
+			_, err = userAssetModel.Insert(ctx, &models.TUserAsset{
+				TenantId:        in.TenantId,
+				UserId:          in.UserId,
+				WalletType:      int64(in.WalletType),
+				Coin:            in.Coin,
+				TotalAmount:     amount,
+				AvailableAmount: amount,
+				Status:          1,
+				Version:         1,
+				Remark:          in.Remark,
+				CreateTimes:     ts,
+				UpdateTimes:     ts,
+			})
+			if err != nil {
+				return err
+			}
+		} else {
+			if _, err := userAssetModel.AddAvailableAmount(ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, amount, before.Version, ts); err != nil {
+				return err
+			}
 		}
 
 		after, err = userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin)

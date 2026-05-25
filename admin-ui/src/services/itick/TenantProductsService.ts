@@ -65,7 +65,7 @@ export type BatchUpsertTenantProductsReq = {
 }
 
 export type ListTenantProductsReq = {
-  tenantId: number
+  tenantId?: number
   categoryType?: number
   market?: string
   keyword?: string

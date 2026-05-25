@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
@@ -38,6 +38,26 @@ const reviewForm = reactive({
 
 function checkCode(code: number) {
   return code === 0 || code === 200
+}
+
+function getBooleanLabel(value?: number) {
+  return Number(value) === 1 ? t('users.yes') : t('users.no')
+}
+
+function getBooleanTagClass(value?: number) {
+  return Number(value) === 1 ? 'option-tag option-tag--green' : 'option-tag option-tag--red'
+}
+
+function getBankStatusTagClass(value?: number) {
+  const bankStatusMap: Record<number, string> = {
+    1: 'option-tag option-tag--green',
+    2: 'option-tag option-tag--red',
+  }
+  return bankStatusMap[Number(value ?? 0)] || 'option-tag'
+}
+
+function getBankStatusLabel(value?: number) {
+  return getOptionValueLabel(optionGroups.value, 'bankStatus', value, t)
 }
 
 function getOptionTagClass(groupKey: string, value?: number) {
@@ -113,12 +133,7 @@ function resetQuery() {
 }
 
 async function showDetail(row: UserIdentityItem) {
-  const tenantId = Number(query.tenantId || 0)
-  if (!tenantId) {
-    ElMessage.warning(t('users.queryTenantPrompt'))
-    return
-  }
-  const res = await memberUserService.getDetail(row.userId, tenantId)
+  const res = await memberUserService.getDetail(row.userId)
   if (!checkCode(res.code)) {
     ElMessage.error(res.msg || t('users.loadDetailFailed'))
     return
@@ -295,8 +310,252 @@ onMounted(fetchOptions)
       </template>
     </el-dialog>
 
-    <el-dialog v-model="detailVisible" :title="t('users.identityDetail')" width="820px">
-      <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
+    <el-dialog v-model="detailVisible" :title="t('users.identityDetail')" width="1000px">
+      <el-tabs v-if="detailData" type="border-card">
+        <!-- 用户基础信息标签页 -->
+        <el-tab-pane :label="t('users.baseInfo')">
+          <el-descriptions v-if="detailData.base" :column="2" border>
+            <el-descriptions-item :label="t('common.id')" width="150px">
+              {{ detailData.base.id }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('common.tenantId')">
+              {{ detailData.base.tenantId }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.userNo')">
+              {{ detailData.base.userNo }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.username')">
+              {{ detailData.base.username }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.nickname')">
+              {{ detailData.base.nickname || '--' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.language')">
+              {{ detailData.base.language || '--' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.timezone')">
+              {{ detailData.base.timezone || '--' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.inviteCode')">
+              {{ detailData.base.inviteCode || '--' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('common.status')">
+              {{ detailData.base.status }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.memberLevel')">
+              {{ detailData.base.memberLevel }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.registerType')">
+              {{ detailData.base.registerType }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.source')">
+              {{ detailData.base.source || '--' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.referrerUserId')">
+              {{ detailData.base.referrerUserId || '--' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.lastLoginIp')">
+              {{ detailData.base.lastLoginIp || '--' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.lastLoginTime')">
+              {{ formatDate(detailData.base.lastLoginTime) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.registerIp')">
+              {{ detailData.base.registerIp || '--' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.registerTime')">
+              {{ formatDate(detailData.base.registerTime) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('common.createTimes')">
+              {{ formatDate(detailData.base.createTimes) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('common.updateTimes')">
+              {{ formatDate(detailData.base.updateTimes) }}
+            </el-descriptions-item>
+          </el-descriptions>
+        </el-tab-pane>
+
+        <!-- 实名信息标签页 -->
+        <el-tab-pane :label="t('users.identityInfo')">
+          <el-descriptions v-if="detailData.identity" :column="2" border>
+            <el-descriptions-item :label="t('common.id')" width="150px">
+              {{ detailData.identity.id }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('common.tenantId')">
+              {{ detailData.identity.tenantId }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.userId')">
+              {{ detailData.identity.userId }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.realName')">
+              {{ detailData.identity.realName }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.phone')">
+              {{ detailData.identity.phone || '--' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.email')">
+              {{ detailData.identity.email || '--' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.gender')">
+              {{ detailData.identity.gender }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.birthday')">
+              {{ formatDate(detailData.identity.birthday) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.country')">
+              {{ detailData.identity.countryCode || '--' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.province')">
+              {{ detailData.identity.province || '--' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.city')">
+              {{ detailData.identity.city || '--' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.address')">
+              {{ detailData.identity.address || '--' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.idType')">
+              <span :class="getOptionTagClass('idType', detailData.identity.idType)">
+                {{ getOptionValueLabel(optionGroups, 'idType', detailData.identity.idType, t) }}
+              </span>
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.idNo')">
+              {{ detailData.identity.idNo || '--' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.frontImage')">
+              <el-image
+                v-if="detailData.identity.frontImage"
+                :src="detailData.identity.frontImage"
+                style="width: 100px"
+                preview-teleported
+              />
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.backImage')">
+              <el-image
+                v-if="detailData.identity.backImage"
+                :src="detailData.identity.backImage"
+                style="width: 100px"
+                preview-teleported
+              />
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.handheldImage')">
+              <el-image
+                v-if="detailData.identity.handheldImage"
+                :src="detailData.identity.handheldImage"
+                style="width: 100px"
+                preview-teleported
+              />
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.kycLevel')">
+              <span :class="getOptionTagClass('kycLevel', detailData.identity.kycLevel)">
+                {{ getOptionValueLabel(optionGroups, 'kycLevel', detailData.identity.kycLevel, t) }}
+              </span>
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.verifyStatus')">
+              <span :class="getOptionTagClass('verifyStatus', detailData.identity.verifyStatus)">
+                {{
+                  getOptionValueLabel(
+                    optionGroups,
+                    'verifyStatus',
+                    detailData.identity.verifyStatus,
+                    t,
+                  )
+                }}
+              </span>
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.rejectReason')">
+              {{ detailData.identity.rejectReason || '--' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.submitTime')">
+              {{ formatDate(detailData.identity.submitTime) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.verifyTime')">
+              {{ formatDate(detailData.identity.verifyTime) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.verifyBy')">
+              {{ detailData.identity.verifyBy || '--' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('common.createTimes')">
+              {{ formatDate(detailData.identity.createTimes) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('common.updateTimes')">
+              {{ formatDate(detailData.identity.updateTimes) }}
+            </el-descriptions-item>
+          </el-descriptions>
+        </el-tab-pane>
+
+        <!-- 安全信息标签页 -->
+        <el-tab-pane :label="t('users.securityInfo')">
+          <el-descriptions v-if="detailData.security" :column="2" border>
+            <el-descriptions-item :label="t('common.id')" width="150px">
+              {{ detailData.security.id }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('common.tenantId')">
+              {{ detailData.security.tenantId }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.userId')">
+              {{ detailData.security.userId }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.googleEnabled')">
+              {{ detailData.security.googleEnabled === 1 ? t('users.yes') : t('users.no') }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.loginErrorCount')">
+              {{ detailData.security.loginErrorCount }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.payErrorCount')">
+              {{ detailData.security.payErrorCount }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.lockUntil')">
+              {{ formatDate(detailData.security.lockUntil) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('users.riskLevel')">
+              {{ detailData.security.riskLevel }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('common.createTimes')">
+              {{ formatDate(detailData.security.createTimes) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('common.updateTimes')">
+              {{ formatDate(detailData.security.updateTimes) }}
+            </el-descriptions-item>
+          </el-descriptions>
+        </el-tab-pane>
+
+        <!-- 银行卡列表标签页 -->
+        <el-tab-pane :label="t('users.bankList')">
+          <el-table
+            v-if="detailData.banks && detailData.banks.length"
+            :data="detailData.banks"
+            stripe
+          >
+            <el-table-column prop="id" :label="t('common.id')" width="80" />
+            <el-table-column prop="bankName" :label="t('users.bankName')" min-width="120" />
+            <el-table-column prop="accountName" :label="t('users.accountName')" min-width="120" />
+            <el-table-column prop="accountNo" :label="t('users.accountNo')" min-width="140" />
+            <el-table-column prop="isDefault" :label="t('common.default')" width="80">
+              <template #default="{ row }">
+                <span :class="getBooleanTagClass(row.isDefault)">
+                  {{ getBooleanLabel(row.isDefault) }}
+                </span>
+              </template>
+            </el-table-column>
+            <el-table-column :label="t('users.status')" width="90">
+              <template #default="{ row }">
+                <span :class="getBankStatusTagClass(row.status)">
+                  {{ getBankStatusLabel(row.status) }}
+                </span>
+              </template>
+            </el-table-column>
+            <el-table-column :label="t('common.createTimes')" min-width="170">
+              <template #default="{ row }">
+                {{ formatDate(row.createTimes) }}
+              </template>
+            </el-table-column>
+          </el-table>
+          <div v-else style="text-align: center; padding: 20px; color: #909399">
+            {{ t('common.noData') }}
+          </div>
+        </el-tab-pane>
+      </el-tabs>
     </el-dialog>
   </div>
 </template>

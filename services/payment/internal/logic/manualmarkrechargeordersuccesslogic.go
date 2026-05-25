@@ -2,11 +2,9 @@ package logic
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"wklive/common/helper"
 	"wklive/common/i18n"
-	"wklive/common/utils"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
@@ -47,21 +45,15 @@ func (l *ManualMarkRechargeOrderSuccessLogic) ManualMarkRechargeOrderSuccess(in 
 		}, nil
 	}
 
-	// 只有pending状态的订单才能标记为成功
-	if order.Status != int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PENDING) {
+	// 只有待支付/支付中状态的订单才能标记为成功
+	if order.Status != int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PENDING) &&
+		order.Status != int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PAYING) {
 		return &payment.AdminCommonResp{
 			Base: helper.GetErrResp(201, i18n.Translate(i18n.OnlyPendingPaymentOrdersCanMarkSuccess, l.ctx)),
 		}, nil
 	}
 
-	now := utils.NowMillis()
-	order.Status = int64(payment.PayOrderStatus_PAY_ORDER_STATUS_SUCCESS)
-	order.PayAmount = in.PayAmount
-	order.ThirdTradeNo = sql.NullString{String: in.ThirdTradeNo, Valid: in.ThirdTradeNo != ""}
-	order.UpdateTimes = now
-
-	err = l.svcCtx.RechargeOrderModel.Update(l.ctx, order)
-	if err != nil {
+	if err := markRechargeOrderSuccessAndCredit(l.ctx, l.svcCtx, order, in.ThirdTradeNo, in.PayAmount, "manual mark recharge success"); err != nil {
 		l.Logger.Errorf("%s error: %s", errLogic, err.Error())
 		return nil, err
 	}

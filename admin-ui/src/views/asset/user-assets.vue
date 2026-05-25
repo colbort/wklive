@@ -77,12 +77,11 @@
           min-width="100"
           show-overflow-tooltip
         />
-        <el-table-column
-          prop="walletType"
-          :label="t('asset.walletType')"
-          min-width="120"
-          show-overflow-tooltip
-        />
+        <el-table-column prop="walletType" :label="t('asset.walletType')" min-width="120">
+          <template #default="{ row }">
+            {{ formatOptionValue('walletType', row.walletType) }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="coin"
           :label="t('asset.coin')"
@@ -164,18 +163,62 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="detailVisible" :title="detailTitle" width="760px">
-      <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
-    </el-dialog>
+    <el-drawer v-model="detailVisible" :title="detailTitle" size="720px">
+      <el-descriptions v-if="detailData" :column="2" border>
+        <el-descriptions-item :label="t('common.id')">
+          {{ detailData.id }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.tenantId')">
+          {{ detailData.tenantId }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.userId')">
+          {{ detailData.userId }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.walletType')">
+          {{ formatOptionValue('walletType', detailData.walletType) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.coin')">
+          {{ detailData.coin }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.status')">
+          {{ formatOptionValue('assetStatus', detailData.status) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.totalAmount')">
+          {{ detailData.totalAmount }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.availableAmount')">
+          {{ detailData.availableAmount }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.frozenAmount')">
+          {{ detailData.frozenAmount }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.lockedAmount')">
+          {{ detailData.lockedAmount }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.version')">
+          {{ detailData.version }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.createTimes')">
+          {{ formatDate(detailData.createTimes) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.updateTimes')">
+          {{ formatDate(detailData.updateTimes) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.remark')" :span="2">
+          {{ detailData.remark || '-' }}
+        </el-descriptions-item>
+      </el-descriptions>
+    </el-drawer>
   </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { assetService, type AssetUserAsset, type OptionGroup } from '@/services'
-import { findOptionGroup, getOptionLabel } from '@/utils/options'
+import { formatDate } from '@/utils'
+import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 const { t } = useI18n()
 
@@ -238,6 +281,10 @@ async function loadList() {
   } finally {
     loading.value = false
   }
+}
+
+function formatOptionValue(key: string, value: number | string | undefined) {
+  return getOptionValueLabel(optionGroups.value, key, value, t)
 }
 
 function resetQuery() {

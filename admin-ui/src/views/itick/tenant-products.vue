@@ -632,7 +632,7 @@
   </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { EditPen, Operation, Plus, Refresh } from '@element-plus/icons-vue'
 import { ElMessage, type FormRules } from 'element-plus'
@@ -674,7 +674,7 @@ const PRODUCT_OPTION_LIMIT = 20
 
 const { form: queryParams, reset: resetQueryParams } = useForm<ListTenantProductsReq>({
   initialData: {
-    tenantId: 0,
+    tenantId: undefined,
     categoryType: 0,
     market: '',
     keyword: '',

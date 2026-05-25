@@ -186,12 +186,12 @@
     </el-dialog>
 
     <el-dialog v-model="detailVisible" :title="detailTitle" width="720px">
-      <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
+      <PaymentDetailDescriptions :data="detailData" :option-groups="optionGroups" />
     </el-dialog>
   </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Refresh } from '@element-plus/icons-vue'
@@ -203,6 +203,7 @@ import {
   type PayPlatform,
   type PayPlatformItem,
 } from '@/services'
+import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 import { apiUploadFile } from '@/api/system/upload'
 import { buildAssetUrl } from '@/utils/file-url'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'

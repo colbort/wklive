@@ -36,6 +36,16 @@
         <el-form-item :label="t('asset.bizNo')">
           <el-input v-model="query.bizNo" clearable />
         </el-form-item>
+        <el-form-item :label="t('asset.bizType')">
+          <el-select v-model="query.bizType" clearable style="width: 160px">
+            <el-option
+              v-for="item in bizTypeOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item :label="t('common.status')">
           <el-select v-model="query.status" clearable style="width: 160px">
             <el-option
@@ -77,12 +87,11 @@
           min-width="100"
           show-overflow-tooltip
         />
-        <el-table-column
-          prop="walletType"
-          :label="t('asset.walletType')"
-          min-width="120"
-          show-overflow-tooltip
-        />
+        <el-table-column prop="walletType" :label="t('asset.walletType')" min-width="120">
+          <template #default="{ row }">
+            {{ formatOptionValue('walletType', row.walletType) }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="coin"
           :label="t('asset.coin')"
@@ -113,12 +122,16 @@
           min-width="140"
           show-overflow-tooltip
         />
-        <el-table-column
-          prop="status"
-          :label="t('common.status')"
-          min-width="100"
-          show-overflow-tooltip
-        />
+        <el-table-column prop="bizType" :label="t('asset.bizType')" min-width="120">
+          <template #default="{ row }">
+            {{ formatOptionValue('bizType', row.bizType) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="status" :label="t('common.status')" min-width="110">
+          <template #default="{ row }">
+            {{ formatOptionValue('freezeStatus', row.status) }}
+          </template>
+        </el-table-column>
         <el-table-column :label="t('common.actions')" width="180" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" @click="showDetail(row)">
@@ -160,18 +173,77 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="detailVisible" :title="detailTitle" width="760px">
-      <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
-    </el-dialog>
+    <el-drawer v-model="detailVisible" :title="detailTitle" size="760px">
+      <el-descriptions v-if="detailData" :column="2" border>
+        <el-descriptions-item :label="t('common.id')">
+          {{ detailData.id }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.freezeNo')">
+          {{ detailData.freezeNo }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.tenantId')">
+          {{ detailData.tenantId }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.userId')">
+          {{ detailData.userId }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.walletType')">
+          {{ formatOptionValue('walletType', detailData.walletType) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.coin')">
+          {{ detailData.coin }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.bizType')">
+          {{ formatOptionValue('bizType', detailData.bizType) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.sceneType')">
+          {{ formatOptionValue('sceneType', detailData.sceneType) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.bizId')">
+          {{ detailData.bizId }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.bizNo')">
+          {{ detailData.bizNo || '-' }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.freezeAmount')">
+          {{ detailData.amount }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.usedAmount')">
+          {{ detailData.usedAmount }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.unfreezeAmount')">
+          {{ detailData.unfreezeAmount }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.remainAmount')">
+          {{ detailData.remainAmount }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.status')">
+          {{ formatOptionValue('freezeStatus', detailData.status) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.expireTime')">
+          {{ formatDate(detailData.expireTime) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.createTimes')">
+          {{ formatDate(detailData.createTimes) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.updateTimes')">
+          {{ formatDate(detailData.updateTimes) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.remark')" :span="2">
+          {{ detailData.remark || '-' }}
+        </el-descriptions-item>
+      </el-descriptions>
+    </el-drawer>
   </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { assetService, type AssetFreeze, type OptionGroup } from '@/services'
-import { findOptionGroup, getOptionLabel } from '@/utils/options'
+import { formatDate } from '@/utils'
+import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 const { t } = useI18n()
 
@@ -189,6 +261,7 @@ const query = reactive({
   walletType: undefined as number | undefined,
   coin: '',
   bizNo: '',
+  bizType: undefined as number | undefined,
   status: undefined as number | undefined,
   limit: 100,
 })
@@ -203,6 +276,7 @@ const changeForm = reactive({
 })
 
 const walletTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'walletType'))
+const bizTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'bizType'))
 const freezeStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'freezeStatus'))
 const detailTitle = computed(() => `${t('asset.freezes')}${t('asset.detail')}`)
 const changeTitle = computed(() => t('asset.unfreezeAsset'))
@@ -226,12 +300,17 @@ async function loadList() {
   }
 }
 
+function formatOptionValue(key: string, value: number | string | undefined) {
+  return getOptionValueLabel(optionGroups.value, key, value, t)
+}
+
 function resetQuery() {
   query.tenantId = undefined
   query.userId = undefined
   query.walletType = undefined
   query.coin = ''
   query.bizNo = ''
+  query.bizType = undefined
   query.status = undefined
   query.limit = 100
   loadList()

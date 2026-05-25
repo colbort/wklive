@@ -64,12 +64,11 @@
           min-width="100"
           show-overflow-tooltip
         />
-        <el-table-column
-          prop="walletType"
-          :label="t('asset.walletType')"
-          min-width="120"
-          show-overflow-tooltip
-        />
+        <el-table-column prop="walletType" :label="t('asset.walletType')" min-width="120">
+          <template #default="{ row }">
+            {{ formatOptionValue('walletType', row.walletType) }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="coin"
           :label="t('asset.coin')"
@@ -88,12 +87,11 @@
           min-width="180"
           show-overflow-tooltip
         />
-        <el-table-column
-          prop="createTimes"
-          :label="t('common.createTimes')"
-          min-width="180"
-          show-overflow-tooltip
-        />
+        <el-table-column prop="createTimes" :label="t('common.createTimes')" min-width="180">
+          <template #default="{ row }">
+            {{ formatDate(row.createTimes) }}
+          </template>
+        </el-table-column>
         <el-table-column :label="t('common.actions')" width="120" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" @click="showDetail(row)">
@@ -104,17 +102,94 @@
       </el-table>
     </el-card>
 
-    <el-dialog v-model="detailVisible" :title="detailTitle" width="760px">
-      <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
-    </el-dialog>
+    <el-drawer v-model="detailVisible" :title="detailTitle" size="760px">
+      <el-descriptions v-if="detailData" :column="2" border>
+        <el-descriptions-item :label="t('common.id')">
+          {{ detailData.id }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.flowNo')">
+          {{ detailData.flowNo }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.tenantId')">
+          {{ detailData.tenantId }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.userId')">
+          {{ detailData.userId }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.walletType')">
+          {{ formatOptionValue('walletType', detailData.walletType) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.coin')">
+          {{ detailData.coin }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.changeAmount')">
+          {{ detailData.changeAmount }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.opType')">
+          {{ detailData.opType }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.bizType')">
+          {{ detailData.bizType }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.sceneType')">
+          {{ detailData.sceneType }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.bizId')">
+          {{ detailData.bizId }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.bizNo')">
+          {{ detailData.bizNo || '-' }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.beforeTotalAmount')">
+          {{ detailData.beforeTotalAmount }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.afterTotalAmount')">
+          {{ detailData.afterTotalAmount }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.beforeAvailableAmount')">
+          {{ detailData.beforeAvailableAmount }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.afterAvailableAmount')">
+          {{ detailData.afterAvailableAmount }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.beforeFrozenAmount')">
+          {{ detailData.beforeFrozenAmount }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.afterFrozenAmount')">
+          {{ detailData.afterFrozenAmount }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.beforeLockedAmount')">
+          {{ detailData.beforeLockedAmount }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.afterLockedAmount')">
+          {{ detailData.afterLockedAmount }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.balanceSnapshotVersion')">
+          {{ detailData.balanceSnapshotVersion }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('asset.changeType')">
+          {{ detailData.changeType || '-' }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.createTimes')">
+          {{ formatDate(detailData.createTimes) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.updateTimes')">
+          {{ formatDate(detailData.updateTimes) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.remark')" :span="2">
+          {{ detailData.remark || '-' }}
+        </el-descriptions-item>
+      </el-descriptions>
+    </el-drawer>
   </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { assetService, type AssetFlow, type OptionGroup } from '@/services'
-import { findOptionGroup, getOptionLabel } from '@/utils/options'
+import { formatDate } from '@/utils'
+import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 const { t } = useI18n()
 
@@ -138,6 +213,10 @@ const detailTitle = computed(() => `${t('asset.flows')}${t('asset.detail')}`)
 
 function pickList(res: any) {
   return res?.data || res?.list || []
+}
+
+function formatOptionValue(key: string, value: number | string | undefined) {
+  return getOptionValueLabel(optionGroups.value, key, value, t)
 }
 
 async function loadOptions() {

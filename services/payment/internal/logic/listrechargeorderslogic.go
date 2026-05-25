@@ -34,6 +34,7 @@ func (l *ListRechargeOrdersLogic) ListRechargeOrders(in *payment.ListRechargeOrd
 		in.UserId,
 		in.OrderNo,
 		int64(in.Status),
+		int64(in.RechargeType),
 		in.Page.Cursor,
 		in.Page.Limit,
 	)

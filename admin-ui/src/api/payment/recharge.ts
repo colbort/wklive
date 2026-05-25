@@ -13,7 +13,7 @@ import type {
 export function apiUserRechargeStatDetail(
   params: GetUserRechargeStatReq,
 ): Promise<RespBase<UserRechargeStat>> {
-  return get<UserRechargeStat>('/admin/payment/user-recharge-stats', params)
+  return get<UserRechargeStat>('/admin/payment/user-recharge-stat', params)
 }
 
 export function apiUserRechargeStatList(

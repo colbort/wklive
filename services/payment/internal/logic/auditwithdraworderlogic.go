@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -12,6 +13,7 @@ import (
 	"wklive/services/payment/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type AuditWithdrawOrderLogic struct {
@@ -55,17 +57,35 @@ func (l *AuditWithdrawOrderLogic) AuditWithdrawOrder(in *payment.AuditWithdrawOr
 	}
 
 	now := utils.NowMillis()
-	if in.Approve == 1 {
-		// 审核通过，改为已批准
-		order.Status = int64(payment.PayOrderStatus_PAY_ORDER_STATUS_SUCCESS)
-	} else {
-		// 审核不通过，改为已拒绝
-		order.Status = int64(payment.PayOrderStatus_PAY_ORDER_STATUS_CLOSED)
-		order.Remark = sql.NullString{String: in.Remark, Valid: in.Remark != ""}
-	}
-	order.UpdateTimes = now
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		withdrawOrderModel := models.NewTWithdrawOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.WithdrawOrderModel)
 
-	err = l.svcCtx.WithdrawOrderModel.Update(l.ctx, order)
+		current, err := withdrawOrderModel.FindOne(ctx, order.Id)
+		if err != nil {
+			return err
+		}
+		if current.Status != int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PENDING) {
+			return fmt.Errorf("only pending review orders can audit")
+		}
+
+		if in.Approve == 1 {
+			if err := deductWithdrawOrderFrozenAsset(ctx, l.svcCtx, current, "withdraw audit approved"); err != nil {
+				return err
+			}
+			// 审核通过，改为已批准
+			current.Status = int64(payment.PayOrderStatus_PAY_ORDER_STATUS_SUCCESS)
+		} else {
+			if err := unfreezeWithdrawOrderAsset(ctx, l.svcCtx, current, "withdraw audit rejected"); err != nil {
+				return err
+			}
+			// 审核不通过，改为已拒绝
+			current.Status = int64(payment.PayOrderStatus_PAY_ORDER_STATUS_CLOSED)
+			current.Remark = sql.NullString{String: in.Remark, Valid: in.Remark != ""}
+		}
+		current.UpdateTimes = now
+		return withdrawOrderModel.Update(ctx, current)
+	})
 	if err != nil {
 		l.Logger.Errorf("%s error: %s", errLogic, err.Error())
 		return nil, err

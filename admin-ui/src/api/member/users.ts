@@ -30,11 +30,8 @@ export function apiMemberUserList(params: ListMemberUsersReq): Promise<MemberRes
   return get<UserItem[]>('/admin/member/users', params)
 }
 
-export function apiMemberUserDetail(
-  userId: number,
-  tenantId: number,
-): Promise<MemberRespBase<UserDetail>> {
-  return get<UserDetail>(`/admin/member/users/${userId}`, { tenantId })
+export function apiMemberUserDetail(userId: number): Promise<MemberRespBase<UserDetail>> {
+  return get<UserDetail>(`/admin/member/users/${userId}`)
 }
 
 export function apiMemberUserCreate(

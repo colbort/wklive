@@ -47,15 +47,16 @@
       </el-table>
     </el-card>
     <el-dialog v-model="detailVisible" :title="t('payment.logDetail')" width="760px">
-      <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
+      <PaymentDetailDescriptions :data="detailData" />
     </el-dialog>
   </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { rechargeService, type PayNotifyLog } from '@/services'
+import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 
 const { t } = useI18n()
 

@@ -113,6 +113,23 @@ func (m *defaultTAssetCoinConfigModel) FindVisibleByOperation(ctx context.Contex
 		return nil, err
 	}
 
+	// 如果operationType <= 0, USDT 只应该返回一个，USDT有ERC20和TRC20两种类型，但APP端不区分
+	if operationType <= 0 {
+		usdtList := make([]*TAssetCoinConfig, 0)
+		newList := make([]*TAssetCoinConfig, 0, len(list))
+		for _, item := range list {
+			if item.Coin == "USDT" {
+				usdtList = append(usdtList, item)
+			} else {
+				newList = append(newList, item)
+			}
+		}
+		if len(usdtList) > 0 {
+			newList = append(newList, usdtList[0])
+		}
+		list = newList
+	}
+
 	return list, nil
 }
 

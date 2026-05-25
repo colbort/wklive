@@ -16,7 +16,7 @@ func (m *defaultTStakeProductModel) FindPage(ctx context.Context, tenantID int64
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.And("tenant_id = ?", tenantID)
+	builder.EqInt64("tenant_id = ?", tenantID)
 	builder.EqString("product_no", productNo)
 	if productName != "" {
 		builder.LikeString("product_name", "%"+productName+"%")

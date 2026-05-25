@@ -59,6 +59,12 @@ func (s *AssetInternalServer) DeductFrozenAsset(ctx context.Context, in *asset.D
 	return l.DeductFrozenAsset(in)
 }
 
+// 按业务单号扣减冻结余额
+func (s *AssetInternalServer) DeductFrozenAssetByBizNo(ctx context.Context, in *asset.DeductFrozenAssetByBizNoReq) (*asset.ChangeAssetResp, error) {
+	l := logic.NewDeductFrozenAssetByBizNoLogic(ctx, s.svcCtx)
+	return l.DeductFrozenAssetByBizNo(in)
+}
+
 // 锁仓
 func (s *AssetInternalServer) LockAsset(ctx context.Context, in *asset.LockAssetReq) (*asset.LockAssetResp, error) {
 	l := logic.NewLockAssetLogic(ctx, s.svcCtx)

@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, ref, onMounted, nextTick } from 'vue'
 import { ElMessage, type FormInstance, type TreeInstance } from 'element-plus'
 import { useI18n } from 'vue-i18n'

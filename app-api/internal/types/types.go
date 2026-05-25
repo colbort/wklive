@@ -548,8 +548,8 @@ type CreateRechargeOrderResp struct {
 }
 
 type CreateWithdrawOrderReq struct {
-	ClientIp string `json:"clientIp"` // 可选，服务端也可以通过上下文获取
-	Amount   int64  `json:"amount"`   // 单位：分
+	ClientIp string `json:"clientIp,optional"` // 可选，服务端也可以通过上下文获取
+	Amount   int64  `json:"amount"`            // 单位：分
 	Currency string `json:"currency"`
 	Address  string `json:"address"` // 提现地址（钱包地址等）
 	BankId   int64  `json:"bankId"`  // 银行ID（如果是提现到银行卡）

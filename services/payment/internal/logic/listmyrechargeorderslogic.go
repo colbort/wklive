@@ -37,7 +37,7 @@ func (l *ListMyRechargeOrdersLogic) ListMyRechargeOrders(in *payment.ListMyRecha
 	if err != nil {
 		return nil, err
 	}
-	items, total, err := l.svcCtx.RechargeOrderModel.FindPage(l.ctx, tenantId, userId, in.OrderNo, int64(in.Status), in.Page.Cursor, in.Page.Limit)
+	items, total, err := l.svcCtx.RechargeOrderModel.FindPage(l.ctx, tenantId, userId, in.OrderNo, int64(in.Status), 0, in.Page.Cursor, in.Page.Limit)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}

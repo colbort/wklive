@@ -13,6 +13,7 @@ import (
 	"wklive/services/payment/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type CreateWithdrawOrderLogic struct {
@@ -50,7 +51,7 @@ func (l *CreateWithdrawOrderLogic) CreateWithdrawOrder(in *payment.CreateWithdra
 		TenantId:     tenantId,
 		UserId:       userId,
 		OrderNo:      orderNo,
-		BizOrderNo:   sql.NullString{String: "", Valid: true},
+		BizOrderNo:   sql.NullString{String: orderNo, Valid: true},
 		PlatformId:   0,
 		ProductId:    0,
 		AccountId:    0,
@@ -75,14 +76,26 @@ func (l *CreateWithdrawOrderLogic) CreateWithdrawOrder(in *payment.CreateWithdra
 		UpdateTimes:  now,
 	}
 
-	res, err := l.svcCtx.WithdrawOrderModel.Insert(l.ctx, withdrawOrder)
+	var id int64
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		withdrawOrderModel := models.NewTWithdrawOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.WithdrawOrderModel)
+
+		res, err := withdrawOrderModel.Insert(ctx, withdrawOrder)
+		if err != nil {
+			return err
+		}
+
+		id, _ = res.LastInsertId()
+		if id == 0 {
+			id = withdrawOrder.Id
+		}
+		withdrawOrder.Id = id
+
+		return freezeWithdrawOrderAsset(ctx, l.svcCtx, withdrawOrder, "withdraw apply freeze")
+	})
 	if err != nil {
 		return nil, err
-	}
-
-	id, _ := res.LastInsertId()
-	if id == 0 {
-		id = withdrawOrder.Id
 	}
 
 	l.Logger.Infof("Create withdraw order success: %s, user_id: %d, amount: %d", orderNo, userId, in.Amount)

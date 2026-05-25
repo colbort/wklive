@@ -44,6 +44,7 @@ func (l *ListRechargeOrdersLogic) ListRechargeOrders(req *types.ListRechargeOrde
 		BizOrderNo:      req.BizOrderNo,
 		ThirdTradeNo:    req.ThirdTradeNo,
 		Status:          payment.PayOrderStatus(req.Status),
+		RechargeType:    payment.RechargeType(req.RechargeType),
 		CreateTimeStart: req.CreateTimeStart,
 		CreateTimeEnd:   req.CreateTimeEnd,
 	})
@@ -63,6 +64,7 @@ func (l *ListRechargeOrdersLogic) ListRechargeOrders(req *types.ListRechargeOrde
 			ProductId:    item.ProductId,
 			AccountId:    item.AccountId,
 			ChannelId:    item.ChannelId,
+			RechargeType: int64(item.RechargeType),
 			Currency:     item.Currency,
 			OrderAmount:  item.OrderAmount,
 			PayAmount:    item.PayAmount,

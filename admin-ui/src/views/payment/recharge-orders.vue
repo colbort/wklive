@@ -76,59 +76,8 @@
       </el-table>
     </el-card>
 
-    <el-drawer v-model="detailVisible" :title="t('payment.orderDetail')" size="520px">
-      <el-descriptions v-if="detailData" :column="1" border>
-        <el-descriptions-item :label="t('payment.orderNo')">
-          {{ detailData.orderNo }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('payment.bizOrderNo')">
-          {{ detailData.bizOrderNo || '-' }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('common.tenantId')">
-          {{ detailData.tenantId }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('common.userId')">
-          {{ detailData.userId }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('common.status')">
-          <el-tag :type="statusTagType(detailData.status)" disable-transitions>
-            {{ getOptionValueLabel(optionGroups, 'payOrderStatus', detailData.status, t) }}
-          </el-tag>
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('payment.currency')">
-          {{ detailData.currency }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('payment.orderAmount')">
-          {{ detailData.orderAmount }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('payment.payAmount')">
-          {{ detailData.payAmount }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('payment.feeAmount')">
-          {{ detailData.feeAmount }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('payment.thirdTradeNo')">
-          {{ detailData.thirdTradeNo || '-' }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('payment.thirdOrderNo')">
-          {{ detailData.thirdOrderNo || '-' }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('payment.clientType')">
-          {{ getOptionValueLabel(optionGroups, 'clientType', detailData.clientType, t) }}
-        </el-descriptions-item>
-        <el-descriptions-item label="IP">
-          {{ detailData.clientIp || '-' }}
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('payment.payUrl')">
-          <span class="break-text">{{ detailData.payUrl || '-' }}</span>
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('payment.qrContent')">
-          <span class="break-text">{{ detailData.qrContent || '-' }}</span>
-        </el-descriptions-item>
-        <el-descriptions-item :label="t('common.remark')">
-          {{ detailData.remark || '-' }}
-        </el-descriptions-item>
-      </el-descriptions>
+    <el-drawer v-model="detailVisible" :title="t('payment.orderDetail')" size="720px">
+      <PaymentDetailDescriptions :data="detailData" :option-groups="optionGroups" :columns="1" />
     </el-drawer>
 
     <el-dialog v-model="manualVisible" :title="t('payment.manualMarkSuccess')" width="520px">
@@ -160,11 +109,12 @@
   </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { catalogService, rechargeService, type OptionGroup, type RechargeOrder } from '@/services'
+import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 const { t } = useI18n()

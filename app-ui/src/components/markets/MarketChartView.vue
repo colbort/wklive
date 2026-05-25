@@ -30,7 +30,15 @@ const emit = defineEmits<{
 const swipeStartX = ref<number | null>(null)
 const swipeStartY = ref<number | null>(null)
 const switcherOpen = ref(false)
+const timeSheetOpen = ref(false)
 const activeDetailTab = ref<DetailTab>('market')
+
+const minuteIntervals = computed(() => props.intervals.filter((item) => /m$/i.test(item.name)))
+const majorIntervals = computed(() => props.intervals.filter((item) => !/m$/i.test(item.name)))
+const selectedMinuteName = computed(() => {
+  const minute = minuteIntervals.value.find((item) => item.name === props.selectedIntervalName)
+  return minute ? minute.name : minuteIntervals.value[0]?.name || ''
+})
 
 const selectedProduct = computed(() => {
   return props.products.find((item) => productKey(item) === props.selectedProductKey) ?? null
@@ -139,6 +147,19 @@ function handlePointerEnd(event: TouchEvent | MouseEvent) {
   if (deltaX > 56 && Math.abs(deltaY) < 42) {
     emit('loadPreviousPage')
   }
+}
+
+function openTimeSheet() {
+  timeSheetOpen.value = true
+}
+
+function closeTimeSheet() {
+  timeSheetOpen.value = false
+}
+
+function selectTimeInterval(interval: Interval) {
+  emit('selectInterval', interval)
+  closeTimeSheet()
 }
 
 function getClientPoint(event: TouchEvent | MouseEvent) {
@@ -280,8 +301,14 @@ function coinGlyph(product: ItickTenantProduct) {
 
     <template v-if="activeDetailTab === 'market'">
       <div class="interval-row">
+        <button type="button" class="time-selector" @click="timeSheetOpen = true">
+          <span class="time-selector__label">Time</span>
+          <span class="time-selector__value">{{ selectedMinuteName }}</span>
+          <span class="time-selector__arrow">▾</span>
+        </button>
+
         <button
-          v-for="item in intervals"
+          v-for="item in majorIntervals"
           :key="`${item.name}-${item.kType}`"
           type="button"
           class="interval-pill"
@@ -293,9 +320,18 @@ function coinGlyph(product: ItickTenantProduct) {
       </div>
 
       <div class="tool-row">
-        <button type="button">ƒ 指标</button>
-        <button type="button">◉ 时区</button>
-        <button type="button">⚙ 设置</button>
+        <button type="button" class="tool-button">
+          <span class="tool-button__icon">ƒ</span>
+          <span class="tool-button__label">指标</span>
+        </button>
+        <button type="button" class="tool-button">
+          <span class="tool-button__icon">◉</span>
+          <span class="tool-button__label">时区</span>
+        </button>
+        <button type="button" class="tool-button">
+          <span class="tool-button__icon">⚙</span>
+          <span class="tool-button__label">设置</span>
+        </button>
       </div>
 
       <div
@@ -459,6 +495,24 @@ function coinGlyph(product: ItickTenantProduct) {
         </div>
       </section>
     </div>
+
+    <div v-if="timeSheetOpen" class="product-sheet-overlay" @click.self="closeTimeSheet">
+      <section class="time-sheet">
+        <span class="time-sheet__handle" />
+        <div class="time-sheet__rows">
+          <button
+            v-for="item in minuteIntervals"
+            :key="item.name"
+            type="button"
+            class="time-sheet__item"
+            :class="{ 'time-sheet__item--active': item.name === selectedIntervalName }"
+            @click="selectTimeInterval(item)"
+          >
+            {{ item.name }}
+          </button>
+        </div>
+      </section>
+    </div>
   </section>
 </template>
 
@@ -521,14 +575,17 @@ function coinGlyph(product: ItickTenantProduct) {
 
 .chart-summary {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(155px, 0.9fr);
-  gap: 18px;
-  margin-top: 20px;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, 0.9fr);
+  gap: 12px;
+  margin-top: 12px;
+  padding: 12px 18px 10px;
+  min-height: 72px;
+  overflow: visible;
 }
 
 .chart-summary > div:first-child {
   display: grid;
-  gap: 8px;
+  gap: 6px;
 }
 
 .chart-summary__price {
@@ -536,29 +593,41 @@ function coinGlyph(product: ItickTenantProduct) {
   font-size: 24px;
   font-weight: 600;
   line-height: 1;
+  display: block;
 }
 
 .chart-summary span {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
 }
 
 .chart-summary small {
   color: #9ca0aa;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 400;
 }
 
 .chart-stats {
   display: grid;
-  gap: 11px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
 }
 
 .chart-stats span {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
-  font-size: 13px;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.chart-stats em {
+  color: #9ca0aa;
+  font-size: 12px;
+}
+
+.chart-stats strong {
+  color: #fff;
+  font-weight: 500;
 }
 
 .chart-stats em {
@@ -636,21 +705,30 @@ function coinGlyph(product: ItickTenantProduct) {
 .interval-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  overflow-x: hidden;
-  padding-top: 16px;
-  padding-bottom: 15px;
+  align-items: center;
+  gap: 4px;
+  overflow-x: auto;
+  padding-top: 6px;
+  padding-bottom: 6px;
 }
 
 .interval-pill {
   flex: 0 0 auto;
-  min-width: 44px;
-  padding: 7px 9px;
+  min-width: 28px;
+  padding: 4px 8px;
+  height: 30px;
+  line-height: 22px;
   border-radius: 999px;
   background: #191b25;
   color: #8d929d;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 500;
+  white-space: nowrap;
+}
+
+.interval-pill--time {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .interval-pill--active {
@@ -661,20 +739,120 @@ function coinGlyph(product: ItickTenantProduct) {
 .tool-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  border-top: 1px solid #242633;
-  border-bottom: 1px solid #242633;
+  border-top: 1px solid #16171d;
+  border-bottom: 1px solid #16171d;
 }
 
 .tool-row button {
-  min-height: 42px;
-  border-right: 1px solid #242633;
+  min-height: 36px;
+  display: grid;
+  gap: 1px;
+  justify-items: center;
+  align-items: center;
+  border-right: 1px solid #16171d;
+  background: #0b0c15;
   color: #8f929d;
-  font-size: 14px;
+  font-size: 11px;
   font-weight: 500;
+  padding: 4px 0;
 }
 
 .tool-row button:last-child {
   border-right: 0;
+}
+
+.tool-button__icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.tool-button__label {
+  font-size: 11px;
+}
+
+.time-selector {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  min-height: 34px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid #242633;
+  color: #8f929d;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.time-selector__label {
+  white-space: nowrap;
+}
+
+.time-selector__value {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #14161f;
+  color: #08c200;
+}
+
+.time-selector__arrow {
+  font-size: 12px;
+  color: #8f929d;
+}
+
+.time-sheet {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 640px);
+  max-height: 68dvh;
+  padding: 14px 16px 30px;
+  overflow: hidden;
+  border-radius: 28px 28px 0 0;
+  background: #16171f;
+  color: #f6f7fb;
+  box-shadow: 0 -24px 70px rgba(0, 0, 0, 0.42);
+  touch-action: pan-y;
+  max-width: 100%;
+}
+
+.time-sheet__handle {
+  display: block;
+  width: 54px;
+  height: 6px;
+  margin: 0 auto 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.time-sheet__rows {
+  display: grid;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.time-sheet__item {
+  width: 100%;
+  min-height: 56px;
+  border-radius: 16px;
+  padding: 16px 20px;
+  border: 1px solid transparent;
+  background: #1b1d27;
+  color: #d3d7df;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.time-sheet__item--active {
+  background: #10131d;
+  color: #08c200;
+  border-color: rgba(8, 194, 0, 0.18);
 }
 
 .chart-board {

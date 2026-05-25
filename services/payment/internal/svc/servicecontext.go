@@ -7,14 +7,18 @@ import (
 	"wklive/services/payment/internal/config"
 	"wklive/services/payment/models"
 
+	"wklive/proto/asset"
+
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
+	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type ServiceContext struct {
 	Config                     config.Config
 	DB                         sqlx.SqlConn
 	Redis                      *redis.Redis
+	AssetCli                   asset.AssetInternalClient
 	PayPlatformModel           models.PayPlatformModel
 	PayProductModel            models.PayProductModel
 	UserRechargeStatModel      models.UserRechargeStatModel
@@ -33,10 +37,12 @@ type ServiceContext struct {
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
+	assetCli := zrpc.MustNewClient(c.AssetRpc)
 	return &ServiceContext{
 		Config:                     c,
 		DB:                         conn,
 		Redis:                      redis.MustNewRedis(c.Redis.RedisConf),
+		AssetCli:                   asset.NewAssetInternalClient(assetCli.Conn()),
 		PayPlatformModel:           models.NewTPayPlatformModel(conn, c.CacheRedis).(models.PayPlatformModel),
 		PayProductModel:            models.NewTPayProductModel(conn, c.CacheRedis).(models.PayProductModel),
 		UserRechargeStatModel:      models.NewTUserRechargeStatModel(conn, c.CacheRedis).(models.UserRechargeStatModel),

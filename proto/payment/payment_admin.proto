@@ -383,6 +383,7 @@ message ListRechargeOrdersReq {
   payment.PayOrderStatus status = 11;
   int64 create_time_start = 12;
   int64 create_time_end = 13;
+  payment.RechargeType recharge_type = 14;
 }
 
 message ListRechargeOrdersResp {

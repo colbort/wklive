@@ -63,16 +63,53 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <el-dialog v-model="detailVisible" :title="t('payment.detailTitle')" width="680px">
-      <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
+    <el-dialog v-model="detailVisible" :title="t('payment.userRechargeStatDetail')" width="720px">
+      <el-descriptions v-if="detailData" :column="2" border>
+        <el-descriptions-item :label="t('common.id')">
+          {{ detailData.id }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.tenantId')">
+          {{ detailData.tenantId }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.userId')">
+          {{ detailData.userId }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('payment.successOrderCount')">
+          {{ detailData.successOrderCount }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('payment.successTotalAmount')">
+          {{ detailData.successTotalAmount }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('payment.todaySuccessAmount')">
+          {{ detailData.todaySuccessAmount }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('payment.todaySuccessCount')">
+          {{ detailData.todaySuccessCount }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('payment.firstSuccessTime')">
+          {{ formatDate(detailData.firstSuccessTime) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('payment.lastSuccessTime')">
+          {{ formatDate(detailData.lastSuccessTime) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.createTimes')">
+          {{ formatDate(detailData.createTimes) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.updateTimes')">
+          {{ formatDate(detailData.updateTimes) }}
+        </el-descriptions-item>
+      </el-descriptions>
+      <el-empty v-else :description="t('common.noData')" />
     </el-dialog>
   </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { ElMessage } from 'element-plus'
 import { rechargeService, type UserRechargeStat } from '@/services'
+import { formatDate } from '@/utils'
 
 const { t } = useI18n()
 
@@ -105,12 +142,17 @@ const loadList = async () => {
 }
 
 const showDetail = async (row: UserRechargeStat) => {
-  const res = await rechargeService.getUserRechargeStat({
-    tenantId: row.tenantId,
-    userId: row.userId,
-  })
-  detailData.value = res.data || row
+  detailData.value = row
   detailVisible.value = true
+  try {
+    const res = await rechargeService.getUserRechargeStat({
+      tenantId: row.tenantId,
+      userId: row.userId,
+    })
+    detailData.value = res.data || row
+  } catch (error: unknown) {
+    ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
+  }
 }
 
 onMounted(loadList)

@@ -331,8 +331,8 @@ export class MemberUserService {
     return apiMemberUserList(params)
   }
 
-  getDetail(userId: number, tenantId: number) {
-    return apiMemberUserDetail(userId, tenantId)
+  getDetail(userId: number) {
+    return apiMemberUserDetail(userId)
   }
 
   create(data: CreateMemberUserReq) {

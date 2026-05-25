@@ -166,6 +166,7 @@ message RechargeOrder {
   string remark = 30;                      // 备注
   int64 create_times = 31;                 // 创建时间
   int64 update_times = 32;                 // 更新时间
+  payment.RechargeType recharge_type = 33; // 充值类型：1虚拟币 2三方充值 3银行卡 4人工充值 5其他
 }
 
 message PayNotifyLog {

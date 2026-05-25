@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -593,7 +593,54 @@ onMounted(fetchOptions)
     </el-dialog>
 
     <el-dialog v-model="detailVisible" :title="t('users.bankDetail')" width="760px">
-      <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
+      <el-descriptions v-if="detailData" :column="2" border>
+        <el-descriptions-item :label="t('common.id')" width="100px">
+          {{ detailData.id }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.tenantId')">
+          {{ detailData.tenantId }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('users.userId')">
+          {{ detailData.userId }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('users.username')">
+          {{ detailData.username }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('users.bankName')">
+          {{ detailData.bankName }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('users.bankCode')">
+          {{ detailData.bankCode || '--' }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('users.accountName')">
+          {{ detailData.accountName }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('users.accountNo')">
+          {{ detailData.accountNo }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('users.branchName')">
+          {{ detailData.branchName || '--' }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('users.countryCode')">
+          {{ detailData.countryCode || '--' }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.default')">
+          <span :class="getBooleanTagClass(detailData.isDefault)">
+            {{ getBooleanLabel(detailData.isDefault) }}
+          </span>
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('users.status')">
+          <span :class="getBankStatusTagClass(detailData.status)">
+            {{ getBankStatusLabel(detailData.status) }}
+          </span>
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.createTimes')">
+          {{ formatDate(detailData.createTimes) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.updateTimes')">
+          {{ formatDate(detailData.updateTimes) }}
+        </el-descriptions-item>
+      </el-descriptions>
     </el-dialog>
   </div>
 </template>

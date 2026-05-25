@@ -130,17 +130,18 @@
       </template>
     </el-dialog>
     <el-dialog v-model="detailVisible" :title="t('payment.detailTitle')" width="680px">
-      <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
+      <PaymentDetailDescriptions :data="detailData" :option-groups="optionGroups" />
     </el-dialog>
   </div>
 </template>
-<script setup lang='ts'>
+<script setup lang="ts">
 import { onMounted, reactive, ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { catalogService, tenantService, type TenantPayPlatform, type OptionGroup } from '@/services'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
+import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 
 const { t } = useI18n()
 

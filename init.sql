@@ -83,6 +83,7 @@ INSERT INTO `sys_role_menu` (`tenant_id`, `role_id`, `menu_id`) VALUES
 (0, 1, 201),
 (0, 1, 202),
 (0, 1, 203),
+(0, 1, 204),
 (0, 1, 220),
 (0, 1, 221),
 (0, 1, 230),
@@ -328,6 +329,7 @@ INSERT INTO sys_role_menu (tenant_id, role_id, menu_id) VALUES
 (0, 2, 201),
 (0, 2, 202),
 (0, 2, 203),
+(0, 2, 204),
 (0, 2, 220),
 (0, 2, 221),
 (0, 2, 230),
@@ -564,6 +566,7 @@ VALUES
 (201, 200, '创建支付通道规则', 3, 'POST', '/payment/tenant-channel-rule', 'payment:tenant-channel-rule:add', '', '', 201),
 (202, 200, '更新支付通道规则', 3, 'PUT', '/payment/tenant-channel-rule', 'payment:tenant-channel-rule:update', '', '', 202),
 (203, 200, '删除支付通道规则', 3, 'DELETE', '/payment/tenant-channel-rule/{id}', 'payment:tenant-channel-rule:delete', '', '', 203),
+(204, 200, '获取支付通道规则详情', 3, 'GET', '/payment/tenant-channel-rule', 'payment:tenant-channel-rule:detail', '', '', 204),
 
 (220, 100, '用户充值统计', 2, 'GET', '/payment/user-recharge-stats', 'payment:user-recharge-stat:list', 'payment/user-recharge-stats', 'Gold', 220),
 (221, 220, '用户充值统计详情', 3, 'GET', '/payment/user-recharge-stat', 'payment:user-recharge-stat:detail', '', '', 221),
@@ -660,7 +663,7 @@ VALUES
 (540, 500, '资产冻结列表', 2, 'GET', '/asset/freezes', 'asset:freeze:list', 'asset/freezes', 'Lock', 540),
 (541, 540, '管理员冻结资产', 3, 'POST', '/asset/freeze', 'asset:freeze:add', '', '', 541),
 (542, 540, '管理员解冻资产', 3, 'POST', '/asset/unfreeze', 'asset:freeze:unfreeze', '', '', 542),
-(550, 400, '资产锁定列表', 2, 'GET', '/asset/locks', 'asset:lock:list', 'asset/locks', 'Lock', 550),
+(550, 500, '资产锁定列表', 2, 'GET', '/asset/locks', 'asset:lock:list', 'asset/locks', 'Lock', 550),
 (551, 550, '管理员锁定资产', 3, 'POST', '/asset/lock', 'asset:lock:add', '', '', 551),
 (552, 550, '管理员解锁资产', 3, 'POST', '/asset/unlock', 'asset:lock:unlock', '', '', 552);
 

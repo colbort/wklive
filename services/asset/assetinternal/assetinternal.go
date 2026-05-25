@@ -16,6 +16,7 @@ import (
 type (
 	AddAvailableReq             = asset.AddAvailableReq
 	ChangeAssetResp             = asset.ChangeAssetResp
+	DeductFrozenAssetByBizNoReq = asset.DeductFrozenAssetByBizNoReq
 	DeductFrozenAssetReq        = asset.DeductFrozenAssetReq
 	DeductLockedAssetByBizNoReq = asset.DeductLockedAssetByBizNoReq
 	DeductLockedAssetReq        = asset.DeductLockedAssetReq
@@ -44,6 +45,8 @@ type (
 		UnfreezeAssetByBizNo(ctx context.Context, in *UnfreezeAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
 		// 扣减冻结余额
 		DeductFrozenAsset(ctx context.Context, in *DeductFrozenAssetReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
+		// 按业务单号扣减冻结余额
+		DeductFrozenAssetByBizNo(ctx context.Context, in *DeductFrozenAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
 		// 锁仓
 		LockAsset(ctx context.Context, in *LockAssetReq, opts ...grpc.CallOption) (*LockAssetResp, error)
 		// 解锁
@@ -103,6 +106,12 @@ func (m *defaultAssetInternal) UnfreezeAssetByBizNo(ctx context.Context, in *Unf
 func (m *defaultAssetInternal) DeductFrozenAsset(ctx context.Context, in *DeductFrozenAssetReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
 	client := asset.NewAssetInternalClient(m.cli.Conn())
 	return client.DeductFrozenAsset(ctx, in, opts...)
+}
+
+// 按业务单号扣减冻结余额
+func (m *defaultAssetInternal) DeductFrozenAssetByBizNo(ctx context.Context, in *DeductFrozenAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
+	client := asset.NewAssetInternalClient(m.cli.Conn())
+	return client.DeductFrozenAssetByBizNo(ctx, in, opts...)
 }
 
 // 锁仓

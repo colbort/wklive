@@ -43,6 +43,7 @@ func (l *GetPaymentOptionsLogic) GetPaymentOptions() (resp *types.GetPaymentOpti
 			logicutil.EnumGroup("openStatus", "开通状态", payment.OpenStatus_OPEN_STATUS_UNKNOWN.Descriptor()),
 			logicutil.EnumGroup("sceneType", "场景类型", payment.SceneType_SCENE_TYPE_UNKNOWN.Descriptor()),
 			logicutil.EnumGroup("feeType", "费用类型", payment.FeeType_FEE_TYPE_UNKNOWN.Descriptor()),
+			logicutil.EnumGroup("rechargeType", "充值类型", payment.RechargeType_RECHARGE_TYPE_UNKNOWN.Descriptor()),
 			logicutil.EnumGroup("clientType", "客户端类型", payment.ClientType_CLIENT_TYPE_UNKNOWN.Descriptor()),
 			logicutil.EnumGroup("payOrderStatus", "支付订单状态", payment.PayOrderStatus_PAY_ORDER_STATUS_UNKNOWN.Descriptor()),
 			logicutil.EnumGroup("notifyProcessStatus", "回调处理状态", payment.NotifyProcessStatus_NOTIFY_PROCESS_STATUS_UNKNOWN.Descriptor()),

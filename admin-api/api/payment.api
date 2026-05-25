@@ -144,6 +144,7 @@ type RechargeOrder {
 	productId    int64  `json:"productId"`
 	accountId    int64  `json:"accountId"`
 	channelId    int64  `json:"channelId"`
+	rechargeType int64  `json:"rechargeType"` // 0未知 1虚拟币 2三方充值 3银行卡 4人工充值 5其他
 	currency     string `json:"currency"`
 	orderAmount  int64  `json:"orderAmount"`
 	payAmount    int64  `json:"payAmount"`
@@ -671,6 +672,7 @@ type ListRechargeOrdersReq {
 	bizOrderNo      string `form:"bizOrderNo,optional"`
 	thirdTradeNo    string `form:"thirdTradeNo,optional"`
 	status          int64  `form:"status,optional"`
+	rechargeType    int64  `form:"rechargeType,optional"`
 	createTimeStart int64  `form:"createTimeStart,optional"`
 	createTimeEnd   int64  `form:"createTimeEnd,optional"`
 }

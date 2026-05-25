@@ -51,6 +51,7 @@ func (l *GetRechargeOrderLogic) GetRechargeOrder(req *types.GetRechargeOrderReq)
 			ProductId:    result.Data.ProductId,
 			AccountId:    result.Data.AccountId,
 			ChannelId:    result.Data.ChannelId,
+			RechargeType: int64(result.Data.RechargeType),
 			Currency:     result.Data.Currency,
 			OrderAmount:  result.Data.OrderAmount,
 			PayAmount:    result.Data.PayAmount,

@@ -199,6 +199,11 @@ func createCryptoRechargeTx(ctx context.Context, svcCtx *svc.ServiceContext, in 
 	if err != nil {
 		return nil, err
 	}
+	if in.Status == payment.CryptoRechargeTxStatus_CRYPTO_RECHARGE_TX_STATUS_CREDITED {
+		if err := creditCryptoRechargeOrder(ctx, svcCtx, in.OrderNo, in.TxHash); err != nil {
+			return nil, err
+		}
+	}
 	return &payment.AdminCommonResp{Base: helper.OkResp()}, nil
 }
 
@@ -228,11 +233,27 @@ func updateCryptoRechargeTx(ctx context.Context, svcCtx *svc.ServiceContext, in 
 	if in.RawData != "" {
 		item.RawData = nullableString(in.RawData)
 	}
+	if payment.CryptoRechargeTxStatus(item.Status) == payment.CryptoRechargeTxStatus_CRYPTO_RECHARGE_TX_STATUS_CREDITED {
+		if err := creditCryptoRechargeOrder(ctx, svcCtx, item.OrderNo, item.TxHash); err != nil {
+			return nil, err
+		}
+	}
 	item.UpdateTimes = utils.NowMillis()
 	if err := svcCtx.CryptoRechargeTxModel.Update(ctx, item); err != nil {
 		return nil, err
 	}
 	return &payment.AdminCommonResp{Base: helper.OkResp()}, nil
+}
+
+func creditCryptoRechargeOrder(ctx context.Context, svcCtx *svc.ServiceContext, orderNo string, txHash string) error {
+	if orderNo == "" {
+		return nil
+	}
+	order, err := svcCtx.RechargeOrderModel.FindOneByOrderNo(ctx, orderNo)
+	if err != nil {
+		return err
+	}
+	return markRechargeOrderSuccessAndCredit(ctx, svcCtx, order, txHash, 0, "crypto recharge credited")
 }
 
 func listCryptoRechargeTxs(ctx context.Context, svcCtx *svc.ServiceContext, req listCryptoTxReq) ([]*models.TCryptoRechargeTx, int64, error) {

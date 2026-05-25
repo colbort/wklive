@@ -25,6 +25,7 @@ const (
 	AssetInternal_UnfreezeAsset_FullMethodName            = "/asset.AssetInternal/UnfreezeAsset"
 	AssetInternal_UnfreezeAssetByBizNo_FullMethodName     = "/asset.AssetInternal/UnfreezeAssetByBizNo"
 	AssetInternal_DeductFrozenAsset_FullMethodName        = "/asset.AssetInternal/DeductFrozenAsset"
+	AssetInternal_DeductFrozenAssetByBizNo_FullMethodName = "/asset.AssetInternal/DeductFrozenAssetByBizNo"
 	AssetInternal_LockAsset_FullMethodName                = "/asset.AssetInternal/LockAsset"
 	AssetInternal_UnlockAsset_FullMethodName              = "/asset.AssetInternal/UnlockAsset"
 	AssetInternal_UnlockAssetByBizNo_FullMethodName       = "/asset.AssetInternal/UnlockAssetByBizNo"
@@ -51,6 +52,8 @@ type AssetInternalClient interface {
 	UnfreezeAssetByBizNo(ctx context.Context, in *UnfreezeAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
 	// 扣减冻结余额
 	DeductFrozenAsset(ctx context.Context, in *DeductFrozenAssetReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
+	// 按业务单号扣减冻结余额
+	DeductFrozenAssetByBizNo(ctx context.Context, in *DeductFrozenAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
 	// 锁仓
 	LockAsset(ctx context.Context, in *LockAssetReq, opts ...grpc.CallOption) (*LockAssetResp, error)
 	// 解锁
@@ -127,6 +130,16 @@ func (c *assetInternalClient) DeductFrozenAsset(ctx context.Context, in *DeductF
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ChangeAssetResp)
 	err := c.cc.Invoke(ctx, AssetInternal_DeductFrozenAsset_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *assetInternalClient) DeductFrozenAssetByBizNo(ctx context.Context, in *DeductFrozenAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ChangeAssetResp)
+	err := c.cc.Invoke(ctx, AssetInternal_DeductFrozenAssetByBizNo_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -211,6 +224,8 @@ type AssetInternalServer interface {
 	UnfreezeAssetByBizNo(context.Context, *UnfreezeAssetByBizNoReq) (*ChangeAssetResp, error)
 	// 扣减冻结余额
 	DeductFrozenAsset(context.Context, *DeductFrozenAssetReq) (*ChangeAssetResp, error)
+	// 按业务单号扣减冻结余额
+	DeductFrozenAssetByBizNo(context.Context, *DeductFrozenAssetByBizNoReq) (*ChangeAssetResp, error)
 	// 锁仓
 	LockAsset(context.Context, *LockAssetReq) (*LockAssetResp, error)
 	// 解锁
@@ -250,6 +265,9 @@ func (UnimplementedAssetInternalServer) UnfreezeAssetByBizNo(context.Context, *U
 }
 func (UnimplementedAssetInternalServer) DeductFrozenAsset(context.Context, *DeductFrozenAssetReq) (*ChangeAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeductFrozenAsset not implemented")
+}
+func (UnimplementedAssetInternalServer) DeductFrozenAssetByBizNo(context.Context, *DeductFrozenAssetByBizNoReq) (*ChangeAssetResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeductFrozenAssetByBizNo not implemented")
 }
 func (UnimplementedAssetInternalServer) LockAsset(context.Context, *LockAssetReq) (*LockAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method LockAsset not implemented")
@@ -398,6 +416,24 @@ func _AssetInternal_DeductFrozenAsset_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AssetInternal_DeductFrozenAssetByBizNo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeductFrozenAssetByBizNoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AssetInternalServer).DeductFrozenAssetByBizNo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AssetInternal_DeductFrozenAssetByBizNo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AssetInternalServer).DeductFrozenAssetByBizNo(ctx, req.(*DeductFrozenAssetByBizNoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _AssetInternal_LockAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LockAssetReq)
 	if err := dec(in); err != nil {
@@ -536,6 +572,10 @@ var AssetInternal_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeductFrozenAsset",
 			Handler:    _AssetInternal_DeductFrozenAsset_Handler,
+		},
+		{
+			MethodName: "DeductFrozenAssetByBizNo",
+			Handler:    _AssetInternal_DeductFrozenAssetByBizNo_Handler,
 		},
 		{
 			MethodName: "LockAsset",

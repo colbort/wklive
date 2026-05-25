@@ -39,17 +39,6 @@ func (l *DeductFrozenAssetLogic) DeductFrozenAsset(in *asset.DeductFrozenAssetRe
 		return nil, fmt.Errorf("amount must be positive")
 	}
 
-	freeze, err := l.svcCtx.AssetFreezeModel.FindOneByFreezeNo(l.ctx, in.FreezeNo)
-	if err != nil {
-		return nil, err
-	}
-	if freeze.TenantId != in.TenantId {
-		return nil, fmt.Errorf("tenant mismatch for freeze record")
-	}
-	if amount > freeze.RemainAmount {
-		return nil, fmt.Errorf("deduct amount exceeds remaining frozen amount")
-	}
-
 	ts := utils.NowMillis()
 	var after *models.TUserAsset
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
@@ -57,6 +46,20 @@ func (l *DeductFrozenAssetLogic) DeductFrozenAsset(in *asset.DeductFrozenAssetRe
 		userAssetModel := models.NewTUserAssetModel(conn, l.svcCtx.Config.CacheRedis).(models.UserAssetModel)
 		assetFreezeModel := models.NewTAssetFreezeModel(conn, l.svcCtx.Config.CacheRedis).(models.AssetFreezeModel)
 		assetFlowModel := models.NewTAssetFlowModel(conn, l.svcCtx.Config.CacheRedis).(models.AssetFlowModel)
+
+		freeze, err := assetFreezeModel.FindOneByFreezeNo(ctx, in.FreezeNo)
+		if err != nil {
+			return err
+		}
+		if freeze.TenantId != in.TenantId {
+			return fmt.Errorf("tenant mismatch for freeze record")
+		}
+		if freeze.Status != 1 && freeze.Status != 2 {
+			return fmt.Errorf("freeze record is not deductible")
+		}
+		if amount > freeze.RemainAmount {
+			return fmt.Errorf("deduct amount exceeds remaining frozen amount")
+		}
 
 		before, err := userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, freeze.TenantId, freeze.UserId, freeze.WalletType, freeze.Coin)
 		if err != nil {

@@ -1500,8 +1500,7 @@ type GetUserBankResp struct {
 }
 
 type GetUserDetailReq struct {
-	TenantId int64 `form:"tenantId"`
-	UserId   int64 `path:"userId"`
+	UserId int64 `path:"userId"`
 }
 
 type GetUserDetailResp struct {
@@ -1981,6 +1980,7 @@ type ListRechargeOrdersReq struct {
 	BizOrderNo      string `form:"bizOrderNo,optional"`
 	ThirdTradeNo    string `form:"thirdTradeNo,optional"`
 	Status          int64  `form:"status,optional"`
+	RechargeType    int64  `form:"rechargeType,optional"`
 	CreateTimeStart int64  `form:"createTimeStart,optional"`
 	CreateTimeEnd   int64  `form:"createTimeEnd,optional"`
 }
@@ -2760,6 +2760,7 @@ type RechargeOrder struct {
 	ProductId    int64  `json:"productId"`
 	AccountId    int64  `json:"accountId"`
 	ChannelId    int64  `json:"channelId"`
+	RechargeType int64  `json:"rechargeType"` // 0未知 1虚拟币 2三方充值 3银行卡 4人工充值 5其他
 	Currency     string `json:"currency"`
 	OrderAmount  int64  `json:"orderAmount"`
 	PayAmount    int64  `json:"payAmount"`

@@ -67,6 +67,11 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 			Base: helper.GetErrResp(201, i18n.Translate(i18n.PaymentChannelUnavailable, l.ctx)),
 		}, nil
 	}
+	platform, err := l.svcCtx.PayPlatformModel.FindOne(l.ctx, channel.PlatformId)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
+	rechargeType := rechargeTypeFromPlatform(platform)
 
 	// 验证金额限制
 	if in.RechargeAmount < channel.SingleMinAmount || in.RechargeAmount > channel.SingleMaxAmount {
@@ -87,25 +92,26 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 
 	// 创建充值订单
 	rechargeOrder := &models.TRechargeOrder{
-		TenantId:    tenantId,
-		UserId:      userId,
-		OrderNo:     orderNo,
-		BizOrderNo:  sql.NullString{String: in.BizOrderNo, Valid: in.BizOrderNo != ""},
-		PlatformId:  channel.PlatformId,
-		ProductId:   channel.ProductId,
-		AccountId:   channel.AccountId,
-		ChannelId:   in.ChannelId,
-		Currency:    in.Currency,
-		OrderAmount: in.RechargeAmount,
-		PayAmount:   in.RechargeAmount,
-		FeeAmount:   feeAmount,
-		Subject:     sql.NullString{String: in.Subject, Valid: in.Subject != ""},
-		Body:        sql.NullString{String: in.Body, Valid: in.Body != ""},
-		ClientType:  int64(in.ClientType),
-		ClientIp:    sql.NullString{String: in.ClientIp, Valid: in.ClientIp != ""},
-		Status:      int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PENDING),
-		CreateTimes: now,
-		UpdateTimes: now,
+		TenantId:     tenantId,
+		UserId:       userId,
+		OrderNo:      orderNo,
+		BizOrderNo:   sql.NullString{String: in.BizOrderNo, Valid: in.BizOrderNo != ""},
+		PlatformId:   channel.PlatformId,
+		ProductId:    channel.ProductId,
+		AccountId:    channel.AccountId,
+		ChannelId:    in.ChannelId,
+		RechargeType: int64(rechargeType),
+		Currency:     in.Currency,
+		OrderAmount:  in.RechargeAmount,
+		PayAmount:    in.RechargeAmount,
+		FeeAmount:    feeAmount,
+		Subject:      sql.NullString{String: in.Subject, Valid: in.Subject != ""},
+		Body:         sql.NullString{String: in.Body, Valid: in.Body != ""},
+		ClientType:   int64(in.ClientType),
+		ClientIp:     sql.NullString{String: in.ClientIp, Valid: in.ClientIp != ""},
+		Status:       int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PENDING),
+		CreateTimes:  now,
+		UpdateTimes:  now,
 	}
 
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
