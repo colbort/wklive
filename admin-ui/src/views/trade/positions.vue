@@ -77,7 +77,13 @@ import { usePagination } from '@/composables'
 import { tradeService, type ContractPosition } from '@/services'
 
 const { t } = useI18n()
-const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
+const {
+  pagination,
+  updateFromResponse,
+  resetAndLoad,
+  prevAndLoad,
+  nextAndLoad,
+} = usePagination<number>(20)
 
 interface CurrentQuery {
   tenantId: number | undefined
@@ -133,7 +139,7 @@ const loadCurrent = async () => {
       limit: pagination.limit,
     })
     rows.value = res?.data || []
-    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
+    updateFromResponse(res)
   } finally {
     loading.value = false
   }
@@ -154,22 +160,15 @@ const showDetail = async (row: ContractPosition) => {
 }
 
 function handleLimitChange() {
-  resetPagination()
-  loadCurrent()
+  resetAndLoad(loadCurrent)
 }
 
 function handlePrevPage() {
-  if (pagination.hasPrev && pagination.prevCursor) {
-    pagination.cursor = pagination.prevCursor
-    loadCurrent()
-  }
+  prevAndLoad(loadCurrent)
 }
 
 function handleNextPage() {
-  if (pagination.hasNext && pagination.nextCursor) {
-    pagination.cursor = pagination.nextCursor
-    loadCurrent()
-  }
+  nextAndLoad(loadCurrent)
 }
 
 onMounted(loadCurrent)

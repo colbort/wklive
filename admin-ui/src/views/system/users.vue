@@ -20,10 +20,10 @@ const statusOptions = computed(() => findOptionGroup(optionGroups.value, 'status
 // Pagination and main list
 const {
   pagination,
-  updatePagination,
-  reset: resetPagination,
-  nextPage: paginationNextPage,
-  prevPage: paginationPrevPage,
+  updateFromResponse,
+  resetAndLoad,
+  prevAndLoad,
+  nextAndLoad,
 } = usePagination<number>(10)
 const list = ref<SysUserItem[]>([])
 const { loading, withLoading: withMainLoading } = useLoading()
@@ -57,7 +57,7 @@ async function fetchList() {
       })
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'list failed')
       list.value = res.data || []
-      updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
+      updateFromResponse(res)
     } catch (error: unknown) {
       ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
     }
@@ -65,24 +65,20 @@ async function fetchList() {
 }
 
 function onSearch() {
-  resetPagination()
-  fetchList()
+  resetAndLoad(fetchList)
 }
 function onReset() {
   queryForm.keyword = ''
   queryForm.status = undefined
-  resetPagination()
-  fetchList()
+  resetAndLoad(fetchList)
 }
 
 function nextPage() {
-  paginationNextPage()
-  fetchList()
+  nextAndLoad(fetchList)
 }
 
 function prevPage() {
-  paginationPrevPage()
-  fetchList()
+  prevAndLoad(fetchList)
 }
 
 const { loading: roleLoading, withLoading: withRoleLoading } = useLoading()
@@ -518,8 +514,7 @@ onMounted(async () => {
       @next="nextPage"
       @limit-change="
         () => {
-          resetPagination()
-          fetchList()
+          resetAndLoad(fetchList)
         }
       "
     />

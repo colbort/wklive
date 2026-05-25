@@ -131,8 +131,7 @@
         @next="nextPage"
         @limit-change="
           () => {
-            resetPagination()
-            fetchList()
+            resetAndLoad(fetchList)
           }
         "
       />
@@ -261,10 +260,10 @@ const { t } = useI18n()
 // Pagination and main list
 const {
   pagination,
-  updatePagination,
-  reset: resetPagination,
-  nextPage: paginationNextPage,
-  prevPage: paginationPrevPage,
+  updateFromResponse,
+  resetAndLoad,
+  prevAndLoad,
+  nextAndLoad,
 } = usePagination<number>(10)
 const list = ref<SysConfigItem[]>([])
 const { loading, withLoading } = useLoading()
@@ -391,7 +390,7 @@ async function fetchList() {
       })
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'list failed')
       list.value = res.data || []
-      updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
+      updateFromResponse(res)
     } catch (error: unknown) {
       ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
     }
@@ -402,8 +401,7 @@ async function fetchList() {
 function handleReset() {
   queryForm.tenantId = 0
   queryForm.keyword = ''
-  resetPagination()
-  fetchList()
+  resetAndLoad(fetchList)
 }
 
 function resetTypeForms() {
@@ -530,13 +528,11 @@ function handleConfigKeyChange(value: string) {
 }
 
 function nextPage() {
-  paginationNextPage()
-  fetchList()
+  nextAndLoad(fetchList)
 }
 
 function prevPage() {
-  paginationPrevPage()
-  fetchList()
+  prevAndLoad(fetchList)
 }
 
 // Handle create

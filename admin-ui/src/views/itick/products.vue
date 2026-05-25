@@ -520,7 +520,13 @@ type FormData = {
 
 const { t } = useI18n()
 const { systemCore, loadSystemCore } = useSystemCore()
-const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
+const {
+  pagination,
+  updateFromResponse,
+  resetAndLoad,
+  prevAndLoad,
+  nextAndLoad,
+} = usePagination<number>(20)
 const { loading, withLoading } = useLoading()
 
 const { form: queryParams, reset: resetQueryParams } = useForm<ListProductsReq>({
@@ -622,7 +628,7 @@ const getList = async () => {
         cursor: pagination.cursor,
       })
       list.value = res?.data || []
-      updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
+      updateFromResponse(res)
     } catch (_) {
       ElMessage.error(t('common.loadFailed'))
     }
@@ -639,19 +645,16 @@ const loadOptions = async () => {
 }
 
 const handleQuery = () => {
-  resetPagination()
-  getList()
+  resetAndLoad(getList)
 }
 
 const resetQuery = () => {
   resetQueryParams()
-  resetPagination()
-  getList()
+  resetAndLoad(getList)
 }
 
 const handleLimitChange = () => {
-  resetPagination()
-  getList()
+  resetAndLoad(getList)
 }
 
 const refreshCurrentPage = () => {
@@ -796,17 +799,11 @@ const submitForm = async () => {
 }
 
 const handlePrevPage = () => {
-  if (pagination.hasPrev && pagination.prevCursor) {
-    pagination.cursor = pagination.prevCursor
-    getList()
-  }
+  prevAndLoad(getList)
 }
 
 const handleNextPage = () => {
-  if (pagination.hasNext && pagination.nextCursor) {
-    pagination.cursor = pagination.nextCursor
-    getList()
-  }
+  nextAndLoad(getList)
 }
 
 onMounted(() => {

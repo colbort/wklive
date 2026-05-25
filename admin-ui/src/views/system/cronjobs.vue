@@ -31,10 +31,10 @@ const jobStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'job
 // Pagination and main list
 const {
   pagination,
-  updatePagination,
-  reset: resetPagination,
-  nextPage: paginationNextPage,
-  prevPage: paginationPrevPage,
+  updateFromResponse,
+  resetAndLoad,
+  prevAndLoad,
+  nextAndLoad,
 } = usePagination<number>(10)
 const list = ref<SysCronJobItem[]>([])
 const { loading, withLoading } = useLoading()
@@ -93,7 +93,7 @@ async function fetchList() {
       })
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
       list.value = res.data || []
-      updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
+      updateFromResponse(res)
     } catch (error: unknown) {
       ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
     }
@@ -123,27 +123,23 @@ async function fetchOptions() {
 
 // Search and reset
 function onSearch() {
-  resetPagination()
-  fetchList()
+  resetAndLoad(fetchList)
 }
 
 function onReset() {
   queryForm.jobName = ''
   queryForm.jobGroup = ''
   queryForm.status = undefined
-  resetPagination()
-  fetchList()
+  resetAndLoad(fetchList)
 }
 
 // Pagination
 function nextPage() {
-  paginationNextPage()
-  fetchList()
+  nextAndLoad(fetchList)
 }
 
 function prevPage() {
-  paginationPrevPage()
-  fetchList()
+  prevAndLoad(fetchList)
 }
 
 // Dialog operations
@@ -183,8 +179,7 @@ async function handleSubmit() {
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
       ElMessage.success(isEdit.value ? t('common.updateSuccess') : t('common.createSuccess'))
       dialogVisible.value = false
-      resetPagination()
-      fetchList()
+      resetAndLoad(fetchList)
     } finally {
       submitLoading.value = false
     }
@@ -393,8 +388,7 @@ onMounted(() => {
       @next="nextPage"
       @limit-change="
         () => {
-          resetPagination()
-          fetchList()
+          resetAndLoad(fetchList)
         }
       "
     />

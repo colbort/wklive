@@ -32,10 +32,10 @@ function isSuperRole(r: SysRole | null | undefined) {
 // ===== state =====
 const {
   pagination,
-  updatePagination,
-  reset: resetPagination,
-  nextPage: paginationNextPage,
-  prevPage: paginationPrevPage,
+  updateFromResponse,
+  resetAndLoad,
+  nextAndLoad,
+  prevAndLoad,
 } = usePagination<number>(20)
 const { loading, withLoading } = useLoading()
 const { confirm } = useConfirm()
@@ -59,13 +59,7 @@ async function fetchList() {
 
       const resp = await roleService.getList(q)
       tableData.value = resp.data || []
-      updatePagination(
-        resp.total || 0,
-        !!resp.hasNext,
-        !!resp.hasPrev,
-        resp.nextCursor,
-        resp.prevCursor,
-      )
+      updateFromResponse(resp)
     } catch (error: unknown) {
       ElMessage.error(error instanceof Error ? error.message : t('common.failed'))
     }
@@ -114,8 +108,7 @@ function buildMenuTree(flat: MenuNode[]): RoleMenuNode[] {
 }
 
 function onSearch() {
-  resetPagination()
-  fetchList()
+  resetAndLoad(fetchList)
 }
 
 function onReset() {
@@ -125,13 +118,11 @@ function onReset() {
 }
 
 function nextPage() {
-  paginationNextPage()
-  fetchList()
+  nextAndLoad(fetchList)
 }
 
 function prevPage() {
-  paginationPrevPage()
-  fetchList()
+  prevAndLoad(fetchList)
 }
 
 // ===== create/update dialog =====
@@ -460,8 +451,7 @@ onMounted(async () => {
       @next="nextPage"
       @limit-change="
         () => {
-          resetPagination()
-          fetchList()
+          resetAndLoad(fetchList)
         }
       "
     />

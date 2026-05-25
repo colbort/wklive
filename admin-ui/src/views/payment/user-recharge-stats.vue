@@ -123,7 +123,13 @@ import { rechargeService, type UserRechargeStat } from '@/services'
 import { formatDate } from '@/utils'
 
 const { t } = useI18n()
-const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
+const {
+  pagination,
+  updateFromResponse,
+  resetAndLoad,
+  prevAndLoad,
+  nextAndLoad,
+} = usePagination<number>(20)
 
 const loading = ref(false)
 const list = ref<UserRechargeStat[]>([])
@@ -149,7 +155,7 @@ const loadList = async () => {
       limit: pagination.limit,
     })
     list.value = res.data || []
-    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
+    updateFromResponse(res)
   } finally {
     loading.value = false
   }
@@ -170,22 +176,15 @@ const showDetail = async (row: UserRechargeStat) => {
 }
 
 function handleLimitChange() {
-  resetPagination()
-  loadList()
+  resetAndLoad(loadList)
 }
 
 function handlePrevPage() {
-  if (pagination.hasPrev && pagination.prevCursor) {
-    pagination.cursor = pagination.prevCursor
-    loadList()
-  }
+  prevAndLoad(loadList)
 }
 
 function handleNextPage() {
-  if (pagination.hasNext && pagination.nextCursor) {
-    pagination.cursor = pagination.nextCursor
-    loadList()
-  }
+  nextAndLoad(loadList)
 }
 
 onMounted(loadList)

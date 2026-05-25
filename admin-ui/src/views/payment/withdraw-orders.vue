@@ -133,9 +133,16 @@ import { ElMessage } from 'element-plus'
 import { catalogService, withdrawService, type OptionGroup, type WithdrawOrder } from '@/services'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import { formatCentAmount, formatCentFields } from '@/utils/amount'
 
 const { t } = useI18n()
-const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
+const {
+  pagination,
+  updateFromResponse,
+  resetAndLoad,
+  prevAndLoad,
+  nextAndLoad,
+} = usePagination<number>(20)
 
 const loading = ref(false)
 const list = ref<WithdrawOrder[]>([])
@@ -149,21 +156,8 @@ const payOrderStatusOptions = computed(() => findOptionGroup(optionGroups.value,
 const PAY_ORDER_STATUS_PENDING = 1
 const CENT_AMOUNT_KEYS = new Set(['amount', 'feeAmount', 'actualAmount'])
 
-const centToAmount = (value: unknown) => {
-  const amount = Number(value || 0) / 100
-  return Number.isFinite(amount) ? amount : 0
-}
-
-const formatCentAmount = (value: unknown) => centToAmount(value).toFixed(2)
-
 const detailDisplayData = computed(() => {
-  if (!detailData.value) return null
-  return Object.fromEntries(
-    Object.entries(detailData.value).map(([key, value]) => [
-      key,
-      CENT_AMOUNT_KEYS.has(key) ? formatCentAmount(value) : value,
-    ]),
-  )
+  return formatCentFields(detailData.value, CENT_AMOUNT_KEYS)
 })
 
 const auditForm = reactive({
@@ -191,7 +185,7 @@ const loadList = async () => {
       limit: pagination.limit,
     })
     list.value = res.data || []
-    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
+    updateFromResponse(res)
   } finally {
     loading.value = false
   }
@@ -251,22 +245,15 @@ const loadOptions = async () => {
 }
 
 function handleLimitChange() {
-  resetPagination()
-  loadList()
+  resetAndLoad(loadList)
 }
 
 function handlePrevPage() {
-  if (pagination.hasPrev && pagination.prevCursor) {
-    pagination.cursor = pagination.prevCursor
-    loadList()
-  }
+  prevAndLoad(loadList)
 }
 
 function handleNextPage() {
-  if (pagination.hasNext && pagination.nextCursor) {
-    pagination.cursor = pagination.nextCursor
-    loadList()
-  }
+  nextAndLoad(loadList)
 }
 
 onMounted(() => {

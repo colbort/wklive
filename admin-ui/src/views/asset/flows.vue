@@ -204,7 +204,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
 import { assetService, type AssetFlow, type OptionGroup } from '@/services'
-import { formatDate } from '@/utils'
+import { formatCentAmount, formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 const { t } = useI18n()
@@ -223,18 +223,19 @@ const query = reactive({
   bizNo: '',
 })
 
-const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
+const {
+  pagination,
+  updateFromResponse,
+  resetAndLoad,
+  prevAndLoad,
+  nextAndLoad,
+} = usePagination<number>(20)
 
 const walletTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'walletType'))
 const detailTitle = computed(() => `${t('asset.flows')}${t('asset.detail')}`)
 
 function formatOptionValue(key: string, value: number | string | undefined) {
   return getOptionValueLabel(optionGroups.value, key, value, t)
-}
-
-function formatCentAmount(value: string | number | undefined) {
-  const amount = Number(value || 0) / 100
-  return Number.isFinite(amount) ? amount.toFixed(2) : '0.00'
 }
 
 async function loadOptions() {
@@ -256,15 +257,14 @@ async function loadList() {
       limit: pagination.limit,
     })
     rows.value = res.data || []
-    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
+    updateFromResponse(res)
   } finally {
     loading.value = false
   }
 }
 
 function handleQuery() {
-  resetPagination()
-  loadList()
+  resetAndLoad(loadList)
 }
 
 function resetQuery() {
@@ -273,27 +273,19 @@ function resetQuery() {
   query.walletType = undefined
   query.coin = ''
   query.bizNo = ''
-  resetPagination()
-  loadList()
+  resetAndLoad(loadList)
 }
 
 function handleLimitChange() {
-  resetPagination()
-  loadList()
+  resetAndLoad(loadList)
 }
 
 function handlePrevPage() {
-  if (pagination.hasPrev && pagination.prevCursor !== undefined) {
-    pagination.cursor = pagination.prevCursor
-    loadList()
-  }
+  prevAndLoad(loadList)
 }
 
 function handleNextPage() {
-  if (pagination.hasNext && pagination.nextCursor !== undefined) {
-    pagination.cursor = pagination.nextCursor
-    loadList()
-  }
+  nextAndLoad(loadList)
 }
 
 function showDetail(row: AssetFlow) {

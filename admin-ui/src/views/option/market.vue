@@ -169,7 +169,13 @@ import {
 } from '@/services'
 
 const { t } = useI18n()
-const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
+const {
+  pagination,
+  updateFromResponse,
+  resetAndLoad,
+  prevAndLoad,
+  nextAndLoad,
+} = usePagination<number>(20)
 
 const loading = ref(false)
 const submitLoading = ref(false)
@@ -217,13 +223,7 @@ const loadCurrent = async () => {
       return
     }
     rows.value = resp?.data || []
-    updatePagination(
-      resp.total || 0,
-      !!resp.hasNext,
-      !!resp.hasPrev,
-      resp.nextCursor,
-      resp.prevCursor,
-    )
+    updateFromResponse(resp)
   } finally {
     loading.value = false
   }
@@ -281,22 +281,15 @@ const submitMarket = async () => {
 }
 
 function handleLimitChange() {
-  resetPagination()
-  loadCurrent()
+  resetAndLoad(loadCurrent)
 }
 
 function handlePrevPage() {
-  if (pagination.hasPrev && pagination.prevCursor) {
-    pagination.cursor = pagination.prevCursor
-    loadCurrent()
-  }
+  prevAndLoad(loadCurrent)
 }
 
 function handleNextPage() {
-  if (pagination.hasNext && pagination.nextCursor) {
-    pagination.cursor = pagination.nextCursor
-    loadCurrent()
-  }
+  nextAndLoad(loadCurrent)
 }
 
 onMounted(loadCurrent)

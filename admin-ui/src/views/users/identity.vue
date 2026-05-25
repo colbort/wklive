@@ -8,7 +8,13 @@ import { formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 const { t } = useI18n()
-const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
+const {
+  pagination,
+  updateFromResponse,
+  resetAndLoad,
+  prevAndLoad,
+  nextAndLoad,
+} = usePagination<number>(20)
 const loading = ref(false)
 const submitLoading = ref(false)
 const list = ref<UserIdentityItem[]>([])
@@ -117,7 +123,7 @@ async function fetchList() {
     })
     if (!checkCode(res.code)) throw new Error(res.msg || t('users.loadFailed'))
     list.value = res.data || []
-    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
+    updateFromResponse(res)
   } catch (error: unknown) {
     ElMessage.error(error instanceof Error ? error.message : t('users.loadFailed'))
   } finally {
@@ -182,22 +188,15 @@ async function submitReview() {
 }
 
 function handleLimitChange() {
-  resetPagination()
-  fetchList()
+  resetAndLoad(fetchList)
 }
 
 function handlePrevPage() {
-  if (pagination.hasPrev && pagination.prevCursor !== undefined) {
-    pagination.cursor = pagination.prevCursor
-    fetchList()
-  }
+  prevAndLoad(fetchList)
 }
 
 function handleNextPage() {
-  if (pagination.hasNext && pagination.nextCursor !== undefined) {
-    pagination.cursor = pagination.nextCursor
-    fetchList()
-  }
+  nextAndLoad(fetchList)
 }
 
 onMounted(fetchList)

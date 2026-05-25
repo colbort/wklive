@@ -298,10 +298,10 @@ const statusOptions = computed(() => findOptionGroup(optionGroups.value, 'status
 // Pagination and main list
 const {
   pagination,
-  updatePagination,
-  reset: resetPagination,
-  nextPage: paginationNextPage,
-  prevPage: paginationPrevPage,
+  updateFromResponse,
+  resetAndLoad,
+  prevAndLoad,
+  nextAndLoad,
 } = usePagination<number>(10)
 const list = ref<SysTenantItem[]>([])
 const { loading, withLoading } = useLoading()
@@ -366,7 +366,7 @@ async function fetchList() {
       const res = await tenantsService.getList(params)
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'list failed')
       list.value = res.data || []
-      updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
+      updateFromResponse(res)
     } catch (error: unknown) {
       ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
     }
@@ -386,8 +386,7 @@ async function fetchOptions() {
 // Handle pagination
 function handleSizeChange(size: number) {
   pagination.limit = size
-  resetPagination()
-  fetchList()
+  resetAndLoad(fetchList)
 }
 
 // Handle reset
@@ -396,18 +395,15 @@ function handleReset() {
   queryForm.tenantName = ''
   queryForm.contactName = ''
   queryForm.status = 0
-  resetPagination()
-  fetchList()
+  resetAndLoad(fetchList)
 }
 
 function nextPage() {
-  paginationNextPage()
-  fetchList()
+  nextAndLoad(fetchList)
 }
 
 function prevPage() {
-  paginationPrevPage()
-  fetchList()
+  prevAndLoad(fetchList)
 }
 
 // Handle create

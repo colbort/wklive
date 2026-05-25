@@ -225,7 +225,13 @@ import { buildAssetUrl } from '@/utils/file-url'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 const { t } = useI18n()
-const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
+const {
+  pagination,
+  updateFromResponse,
+  resetAndLoad,
+  prevAndLoad,
+  nextAndLoad,
+} = usePagination<number>(20)
 
 const submitLoading = ref(false)
 const platformLoading = ref(false)
@@ -263,7 +269,7 @@ const loadPlatforms = async () => {
       limit: pagination.limit,
     })
     platforms.value = res.data || []
-    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
+    updateFromResponse(res)
   } finally {
     platformLoading.value = false
   }
@@ -374,22 +380,15 @@ const showPlatformDetail = async (row: PayPlatform) => {
 }
 
 function handleLimitChange() {
-  resetPagination()
-  loadPlatforms()
+  resetAndLoad(loadPlatforms)
 }
 
 function handlePrevPage() {
-  if (pagination.hasPrev && pagination.prevCursor) {
-    pagination.cursor = pagination.prevCursor
-    loadPlatforms()
-  }
+  prevAndLoad(loadPlatforms)
 }
 
 function handleNextPage() {
-  if (pagination.hasNext && pagination.nextCursor) {
-    pagination.cursor = pagination.nextCursor
-    loadPlatforms()
-  }
+  nextAndLoad(loadPlatforms)
 }
 
 onMounted(async () => {

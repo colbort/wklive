@@ -19,7 +19,13 @@ import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/op
 import TenantSelect from '@/components/TenantSelect.vue'
 
 const { t } = useI18n()
-const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
+const {
+  pagination,
+  updateFromResponse,
+  resetAndLoad,
+  prevAndLoad,
+  nextAndLoad,
+} = usePagination<number>(20)
 const loading = ref(false)
 const submitLoading = ref(false)
 const list = ref<UserItem[]>([])
@@ -247,7 +253,7 @@ async function fetchList() {
     })
     if (!checkCode(res.code)) throw new Error(res.msg || t('users.loadFailed'))
     list.value = res.data || []
-    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
+    updateFromResponse(res)
   } catch (error: unknown) {
     ElMessage.error(error instanceof Error ? error.message : t('users.loadFailed'))
   } finally {
@@ -539,22 +545,15 @@ async function updateSimpleValue(row: UserItem, field: 'status' | 'memberLevel' 
 }
 
 function handleLimitChange() {
-  resetPagination()
-  fetchList()
+  resetAndLoad(fetchList)
 }
 
 function handlePrevPage() {
-  if (pagination.hasPrev && pagination.prevCursor !== undefined) {
-    pagination.cursor = pagination.prevCursor
-    fetchList()
-  }
+  prevAndLoad(fetchList)
 }
 
 function handleNextPage() {
-  if (pagination.hasNext && pagination.nextCursor !== undefined) {
-    pagination.cursor = pagination.nextCursor
-    fetchList()
-  }
+  nextAndLoad(fetchList)
 }
 
 onMounted(fetchList)

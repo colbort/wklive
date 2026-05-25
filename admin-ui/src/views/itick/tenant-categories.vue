@@ -410,7 +410,14 @@ type FormData = {
 
 const { t } = useI18n()
 const { systemCore, loadSystemCore } = useSystemCore()
-const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
+const {
+  pagination,
+  updateFromResponse,
+  reset,
+  resetAndLoad,
+  prevAndLoad,
+  nextAndLoad,
+} = usePagination<number>(20)
 const { loading, withLoading } = useLoading()
 
 const { form: queryParams, reset: resetQueryParams } = useForm<ListTenantCategoriesReq>({
@@ -491,7 +498,7 @@ const cleanedQueryParams = computed<ListTenantCategoriesReq | null>(() => {
 const getList = async () => {
   if (!cleanedQueryParams.value) {
     list.value = []
-    resetPagination()
+    reset()
     return
   }
 
@@ -500,7 +507,7 @@ const getList = async () => {
       cleanedQueryParams.value as ListTenantCategoriesReq,
     )
     list.value = res?.data || []
-    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
+    updateFromResponse(res)
   }).catch(() => {
     ElMessage.error(t('itick.loadFailed'))
   })
@@ -520,19 +527,17 @@ const loadOptions = async () => {
 }
 
 const handleQuery = () => {
-  resetPagination()
-  getList()
+  resetAndLoad(getList)
 }
 
 const resetQuery = () => {
   resetQueryParams()
   list.value = []
-  resetPagination()
+  reset()
 }
 
 const handleLimitChange = () => {
-  resetPagination()
-  getList()
+  resetAndLoad(getList)
 }
 
 const refreshCurrentPage = () => {
@@ -540,17 +545,11 @@ const refreshCurrentPage = () => {
 }
 
 const handlePrevPage = () => {
-  if (pagination.hasPrev && pagination.prevCursor) {
-    pagination.cursor = pagination.prevCursor
-    getList()
-  }
+  prevAndLoad(getList)
 }
 
 const handleNextPage = () => {
-  if (pagination.hasNext && pagination.nextCursor) {
-    pagination.cursor = pagination.nextCursor
-    getList()
-  }
+  nextAndLoad(getList)
 }
 
 const handleAdd = async () => {

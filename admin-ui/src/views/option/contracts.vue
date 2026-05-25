@@ -302,7 +302,13 @@ import { findOptionGroup, getOptionLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 
 const { t } = useI18n()
-const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
+const {
+  pagination,
+  updateFromResponse,
+  resetAndLoad,
+  prevAndLoad,
+  nextAndLoad,
+} = usePagination<number>(20)
 
 const loading = ref(false)
 const submitLoading = ref(false)
@@ -388,7 +394,7 @@ const loadCurrent = async () => {
       limit: pagination.limit,
     })
     rows.value = res?.data || []
-    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
+    updateFromResponse(res)
   } finally {
     loading.value = false
   }
@@ -516,22 +522,15 @@ const submitMarket = async () => {
 }
 
 function handleLimitChange() {
-  resetPagination()
-  loadCurrent()
+  resetAndLoad(loadCurrent)
 }
 
 function handlePrevPage() {
-  if (pagination.hasPrev && pagination.prevCursor) {
-    pagination.cursor = pagination.prevCursor
-    loadCurrent()
-  }
+  prevAndLoad(loadCurrent)
 }
 
 function handleNextPage() {
-  if (pagination.hasNext && pagination.nextCursor) {
-    pagination.cursor = pagination.nextCursor
-    loadCurrent()
-  }
+  nextAndLoad(loadCurrent)
 }
 
 onMounted(async () => {

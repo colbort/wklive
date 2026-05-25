@@ -176,7 +176,13 @@ import { usePagination } from '@/composables'
 import TenantSelect from '@/components/TenantSelect.vue'
 
 const { t } = useI18n()
-const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
+const {
+  pagination,
+  updateFromResponse,
+  resetAndLoad,
+  prevAndLoad,
+  nextAndLoad,
+} = usePagination<number>(20)
 
 const loading = ref(false)
 const submitLoading = ref(false)
@@ -222,7 +228,7 @@ const loadOrders = async () => {
       limit: pagination.limit,
     })
     rows.value = res?.data || []
-    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
+    updateFromResponse(res)
   } finally {
     loading.value = false
   }
@@ -295,22 +301,15 @@ const submitRedeem = async () => {
 }
 
 function handleLimitChange() {
-  resetPagination()
-  loadOrders()
+  resetAndLoad(loadOrders)
 }
 
 function handlePrevPage() {
-  if (pagination.hasPrev && pagination.prevCursor) {
-    pagination.cursor = pagination.prevCursor
-    loadOrders()
-  }
+  prevAndLoad(loadOrders)
 }
 
 function handleNextPage() {
-  if (pagination.hasNext && pagination.nextCursor) {
-    pagination.cursor = pagination.nextCursor
-    loadOrders()
-  }
+  nextAndLoad(loadOrders)
 }
 
 onMounted(loadOrders)

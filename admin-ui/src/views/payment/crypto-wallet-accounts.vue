@@ -155,7 +155,13 @@ import { cryptoService, type CryptoWalletAccount } from '@/services'
 import TenantSelect from '@/components/TenantSelect.vue'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 const { t } = useI18n()
-const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
+const {
+  pagination,
+  updateFromResponse,
+  resetAndLoad,
+  prevAndLoad,
+  nextAndLoad,
+} = usePagination<number>(20)
 const loading = ref(false),
   dialogVisible = ref(false),
   detailVisible = ref(false)
@@ -196,7 +202,7 @@ async function loadList() {
       limit: pagination.limit,
     })
     list.value = res.data || []
-    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
+    updateFromResponse(res)
   } finally {
     loading.value = false
   }
@@ -241,22 +247,15 @@ async function submit() {
   }
 }
 function handleLimitChange() {
-  resetPagination()
-  loadList()
+  resetAndLoad(loadList)
 }
 
 function handlePrevPage() {
-  if (pagination.hasPrev && pagination.prevCursor) {
-    pagination.cursor = pagination.prevCursor
-    loadList()
-  }
+  prevAndLoad(loadList)
 }
 
 function handleNextPage() {
-  if (pagination.hasNext && pagination.nextCursor) {
-    pagination.cursor = pagination.nextCursor
-    loadList()
-  }
+  nextAndLoad(loadList)
 }
 
 onMounted(loadList)

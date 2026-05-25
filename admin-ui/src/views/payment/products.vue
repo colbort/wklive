@@ -170,7 +170,13 @@ import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescrip
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 const { t } = useI18n()
-const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
+const {
+  pagination,
+  updateFromResponse,
+  resetAndLoad,
+  prevAndLoad,
+  nextAndLoad,
+} = usePagination<number>(20)
 
 const submitLoading = ref(false)
 const productLoading = ref(false)
@@ -214,7 +220,7 @@ const loadProducts = async () => {
       limit: pagination.limit,
     })
     products.value = res.data || []
-    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
+    updateFromResponse(res)
   } finally {
     productLoading.value = false
   }
@@ -316,22 +322,15 @@ const showProductDetail = async (row: PayProduct) => {
 }
 
 function handleLimitChange() {
-  resetPagination()
-  loadProducts()
+  resetAndLoad(loadProducts)
 }
 
 function handlePrevPage() {
-  if (pagination.hasPrev && pagination.prevCursor) {
-    pagination.cursor = pagination.prevCursor
-    loadProducts()
-  }
+  prevAndLoad(loadProducts)
 }
 
 function handleNextPage() {
-  if (pagination.hasNext && pagination.nextCursor) {
-    pagination.cursor = pagination.nextCursor
-    loadProducts()
-  }
+  nextAndLoad(loadProducts)
 }
 
 onMounted(async () => {

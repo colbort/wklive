@@ -254,7 +254,14 @@ const dialogVisible = ref(false)
 const detailVisible = ref(false)
 const detailData = ref<CryptoRechargeAddress | null>(null)
 const optionGroups = ref<OptionGroup[]>([])
-const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
+const {
+  pagination,
+  updateFromResponse,
+  reset,
+  resetAndLoad,
+  prevAndLoad,
+  nextAndLoad,
+} = usePagination<number>(20)
 const walletTypeOptions = computed(() => optionItems('walletType'))
 const chainCodeOptions = computed(() => optionItems('chainCode'))
 const addressSourceOptions = computed(() => optionItems('cryptoRechargeAddressSource'))
@@ -320,7 +327,7 @@ async function loadList() {
       limit: pagination.limit,
     })
     list.value = res.data || []
-    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
+    updateFromResponse(res)
   } finally {
     loading.value = false
   }
@@ -345,28 +352,20 @@ function resetQuery() {
     address: '',
     status: undefined,
   })
-  resetPagination()
+  reset()
   void loadList()
 }
 function handleQuery() {
-  resetPagination()
-  void loadList()
+  resetAndLoad(loadList)
 }
 function handleLimitChange() {
-  resetPagination()
-  void loadList()
+  resetAndLoad(loadList)
 }
 function handlePrevPage() {
-  if (pagination.hasPrev && pagination.prevCursor !== undefined) {
-    pagination.cursor = pagination.prevCursor
-    void loadList()
-  }
+  prevAndLoad(loadList)
 }
 function handleNextPage() {
-  if (pagination.hasNext && pagination.nextCursor !== undefined) {
-    pagination.cursor = pagination.nextCursor
-    void loadList()
-  }
+  nextAndLoad(loadList)
 }
 function openDialog(row?: CryptoRechargeAddress) {
   Object.assign(

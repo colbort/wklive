@@ -168,7 +168,13 @@ import TenantSelect from '@/components/TenantSelect.vue'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 
 const { t } = useI18n()
-const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
+const {
+  pagination,
+  updateFromResponse,
+  resetAndLoad,
+  prevAndLoad,
+  nextAndLoad,
+} = usePagination<number>(20)
 
 const ruleLoading = ref(false)
 const rules = ref<TenantPayChannelRule[]>([])
@@ -235,7 +241,7 @@ const loadRules = async () => {
       limit: pagination.limit,
     })
     rules.value = res.data || []
-    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
+    updateFromResponse(res)
   } finally {
     ruleLoading.value = false
   }
@@ -361,22 +367,15 @@ function getStatusTagClass(value?: number) {
 }
 
 function handleLimitChange() {
-  resetPagination()
-  loadRules()
+  resetAndLoad(loadRules)
 }
 
 function handlePrevPage() {
-  if (pagination.hasPrev && pagination.prevCursor) {
-    pagination.cursor = pagination.prevCursor
-    loadRules()
-  }
+  prevAndLoad(loadRules)
 }
 
 function handleNextPage() {
-  if (pagination.hasNext && pagination.nextCursor) {
-    pagination.cursor = pagination.nextCursor
-    loadRules()
-  }
+  nextAndLoad(loadRules)
 }
 
 onMounted(async () => {

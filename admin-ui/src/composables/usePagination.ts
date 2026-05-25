@@ -14,6 +14,17 @@ export interface PaginationState<TCursor = number> {
   hasPrev: boolean
 }
 
+export interface PaginationResponse<TCursor = number> {
+  total?: number
+  hasNext?: boolean
+  hasPrev?: boolean
+  nextCursor?: TCursor
+  prevCursor?: TCursor
+}
+
+type MaybePromise<T> = T | Promise<T>
+type LoadFn = () => MaybePromise<void>
+
 export function usePagination<TCursor = number>(initialLimit = 10) {
   const pagination = reactive({
     cursor: undefined,
@@ -25,18 +36,12 @@ export function usePagination<TCursor = number>(initialLimit = 10) {
     hasPrev: false,
   }) as PaginationState<TCursor>
 
-  const updatePagination = (
-    total: number,
-    hasNext: boolean,
-    hasPrev: boolean,
-    nextCursor?: TCursor,
-    prevCursor?: TCursor,
-  ) => {
-    pagination.total = total
-    pagination.hasNext = hasNext
-    pagination.hasPrev = hasPrev
-    pagination.nextCursor = nextCursor ?? undefined
-    pagination.prevCursor = prevCursor ?? undefined
+  const updateFromResponse = (res: PaginationResponse<TCursor>) => {
+    pagination.total = res.total || 0
+    pagination.hasNext = !!res.hasNext
+    pagination.hasPrev = !!res.hasPrev
+    pagination.nextCursor = res.nextCursor ?? undefined
+    pagination.prevCursor = res.prevCursor ?? undefined
   }
 
   const reset = () => {
@@ -51,20 +56,46 @@ export function usePagination<TCursor = number>(initialLimit = 10) {
   const nextPage = () => {
     if (pagination.hasNext && pagination.nextCursor !== undefined) {
       pagination.cursor = pagination.nextCursor
+      return true
     }
+    return false
   }
 
   const prevPage = () => {
     if (pagination.hasPrev && pagination.prevCursor !== undefined) {
       pagination.cursor = pagination.prevCursor
+      return true
     }
+    return false
+  }
+
+  const resetAndLoad = (load: LoadFn) => {
+    reset()
+    return load()
+  }
+
+  const nextAndLoad = (load: LoadFn) => {
+    if (nextPage()) {
+      return load()
+    }
+    return undefined
+  }
+
+  const prevAndLoad = (load: LoadFn) => {
+    if (prevPage()) {
+      return load()
+    }
+    return undefined
   }
 
   return {
     pagination,
-    updatePagination,
+    updateFromResponse,
     reset,
     nextPage,
     prevPage,
+    resetAndLoad,
+    nextAndLoad,
+    prevAndLoad,
   }
 }

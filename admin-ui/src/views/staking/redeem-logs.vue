@@ -92,7 +92,13 @@ import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
 
 const { t } = useI18n()
-const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
+const {
+  pagination,
+  updateFromResponse,
+  resetAndLoad,
+  prevAndLoad,
+  nextAndLoad,
+} = usePagination<number>(20)
 
 const loading = ref(false)
 const rows = ref<StakeRedeemLog[]>([])
@@ -115,7 +121,7 @@ const loadRows = async () => {
       limit: pagination.limit,
     })
     rows.value = res?.data || []
-    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
+    updateFromResponse(res)
   } finally {
     loading.value = false
   }
@@ -136,22 +142,15 @@ const showDetail = (row: StakeRedeemLog) => {
 }
 
 function handleLimitChange() {
-  resetPagination()
-  loadRows()
+  resetAndLoad(loadRows)
 }
 
 function handlePrevPage() {
-  if (pagination.hasPrev && pagination.prevCursor) {
-    pagination.cursor = pagination.prevCursor
-    loadRows()
-  }
+  prevAndLoad(loadRows)
 }
 
 function handleNextPage() {
-  if (pagination.hasNext && pagination.nextCursor) {
-    pagination.cursor = pagination.nextCursor
-    loadRows()
-  }
+  nextAndLoad(loadRows)
 }
 
 onMounted(loadRows)

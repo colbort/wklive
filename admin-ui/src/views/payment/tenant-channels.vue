@@ -219,7 +219,13 @@ import TenantSelect from '@/components/TenantSelect.vue'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 
 const { t } = useI18n()
-const { pagination, updatePagination, reset: resetPagination } = usePagination<number>(20)
+const {
+  pagination,
+  updateFromResponse,
+  resetAndLoad,
+  prevAndLoad,
+  nextAndLoad,
+} = usePagination<number>(20)
 
 const channelLoading = ref(false)
 const channels = ref<TenantPayChannel[]>([])
@@ -303,7 +309,7 @@ const loadChannels = async () => {
       limit: pagination.limit,
     })
     channels.value = res.data || []
-    updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
+    updateFromResponse(res)
   } finally {
     channelLoading.value = false
   }
@@ -532,22 +538,15 @@ function getStatusTagClass(value?: number) {
 }
 
 function handleLimitChange() {
-  resetPagination()
-  loadChannels()
+  resetAndLoad(loadChannels)
 }
 
 function handlePrevPage() {
-  if (pagination.hasPrev && pagination.prevCursor) {
-    pagination.cursor = pagination.prevCursor
-    loadChannels()
-  }
+  prevAndLoad(loadChannels)
 }
 
 function handleNextPage() {
-  if (pagination.hasNext && pagination.nextCursor) {
-    pagination.cursor = pagination.nextCursor
-    loadChannels()
-  }
+  nextAndLoad(loadChannels)
 }
 
 onMounted(async () => {

@@ -14,10 +14,10 @@ const { t } = useI18n()
 // Pagination and list
 const {
   pagination,
-  updatePagination,
-  reset: resetPagination,
-  nextPage: paginationNextPage,
-  prevPage: paginationPrevPage,
+  updateFromResponse,
+  resetAndLoad,
+  prevAndLoad,
+  nextAndLoad,
 } = usePagination<number>(10)
 const { loading, withLoading } = useLoading()
 
@@ -42,7 +42,7 @@ async function fetchList() {
       })
       if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
       list_ref.value = res.data || []
-      updatePagination(res.total || 0, !!res.hasNext, !!res.hasPrev, res.nextCursor, res.prevCursor)
+      updateFromResponse(res)
     } catch (error: unknown) {
       ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
     }
@@ -50,25 +50,21 @@ async function fetchList() {
 }
 
 function onSearch() {
-  resetPagination()
-  fetchList()
+  resetAndLoad(fetchList)
 }
 
 function onReset() {
   queryForm.username = ''
   queryForm.success = undefined
-  resetPagination()
-  fetchList()
+  resetAndLoad(fetchList)
 }
 
 function nextPage() {
-  paginationNextPage()
-  fetchList()
+  nextAndLoad(fetchList)
 }
 
 function prevPage() {
-  paginationPrevPage()
-  fetchList()
+  prevAndLoad(fetchList)
 }
 
 onMounted(() => {
@@ -166,8 +162,7 @@ onMounted(() => {
       @next="nextPage"
       @limit-change="
         () => {
-          resetPagination()
-          fetchList()
+          resetAndLoad(fetchList)
         }
       "
     />
