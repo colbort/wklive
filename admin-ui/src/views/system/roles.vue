@@ -347,7 +347,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <el-card>
+  <div class="module-page">
+  <el-card class="table-card">
     <template #header>
       <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
         <div>{{ t('system.roles') }}</div>
@@ -553,4 +554,5 @@ onMounted(async () => {
       </el-button>
     </template>
   </el-dialog>
+  </div>
 </template>

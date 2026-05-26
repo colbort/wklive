@@ -58,7 +58,7 @@ export default [
       '@typescript-eslint/no-explicit-any': 'warn',
 
       // 通用规则
-      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'no-console': ['warn', { allow: ['debug', 'info', 'warn', 'error'] }],
       semi: ['error', 'never'],
       quotes: ['error', 'single', { avoidEscape: true }],
       'comma-dangle': ['error', 'always-multiline'],

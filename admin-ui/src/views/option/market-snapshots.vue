@@ -148,8 +148,118 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="detailVisible" :title="t('option.detail')" width="760px">
-      <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
+    <el-dialog v-model="detailVisible" :title="t('option.detail')" width="860px">
+      <div v-loading="detailLoading" class="market-detail">
+        <el-descriptions
+          v-if="detailData?.contract"
+          :title="t('option.contractInfo')"
+          :column="2"
+          border
+        >
+          <el-descriptions-item label="ID">
+            {{ detailData.contract.id ?? '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.tenantId')">
+            {{ detailData.contract.tenantId ?? '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.contractCode')">
+            {{ detailData.contract.contractCode || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.underlying')">
+            {{ detailData.contract.underlyingSymbol || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.settleCoin')">
+            {{ detailData.contract.settleCoin || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.quoteCoin')">
+            {{ detailData.contract.quoteCoin || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.strikePrice')">
+            {{ detailData.contract.strikePrice || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('common.status')">
+            {{ detailData.contract.status ?? '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.listTime')">
+            {{ formatDate(detailData.contract.listTime || 0) }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.expireTime')">
+            {{ formatDate(detailData.contract.expireTime || 0) }}
+          </el-descriptions-item>
+        </el-descriptions>
+
+        <el-descriptions :title="t('option.marketInfo')" :column="2" border>
+          <el-descriptions-item label="ID">
+            {{ detailData?.id ?? '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.tenantId')">
+            {{ detailData?.tenantId ?? '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.contractId')">
+            {{ detailData?.contractId ?? '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.snapshotTime')">
+            {{ formatDate(detailData?.snapshotTime || 0) }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.underlyingPrice')">
+            {{ detailData?.underlyingPrice || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.markPrice')">
+            {{ detailData?.markPrice || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.lastPrice')">
+            {{ detailData?.lastPrice || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.bidPrice')">
+            {{ detailData?.bidPrice || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.askPrice')">
+            {{ detailData?.askPrice || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.theoreticalPrice')">
+            {{ detailData?.theoreticalPrice || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.intrinsicValue')">
+            {{ detailData?.intrinsicValue || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.timeValue')">
+            {{ detailData?.timeValue || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.iv')">
+            {{ detailData?.iv || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.delta')">
+            {{ detailData?.delta || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.gamma')">
+            {{ detailData?.gamma || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.theta')">
+            {{ detailData?.theta || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.vega')">
+            {{ detailData?.vega || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.rho')">
+            {{ detailData?.rho || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.riskFreeRate')">
+            {{ detailData?.riskFreeRate || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.pricingModel')">
+            {{ detailData?.pricingModel || '-' }}
+          </el-descriptions-item>
+        </el-descriptions>
+      </div>
+
+      <template #footer>
+        <el-button @click="detailVisible = false">
+          {{ t('common.close') }}
+        </el-button>
+        <el-button type="primary" @click="openMarketDialog(detailData || undefined)">
+          {{ t('option.updateMarket') }}
+        </el-button>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -160,13 +270,19 @@ import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
 import TenantSelect from '@/components/TenantSelect.vue'
+import { formatDate } from '@/utils'
 import {
   ListMarketSnapshotsReq,
   optionService,
+  type OptionContract,
   type OptionMarket,
   type OptionMarketSnapshot,
   UpdateMarketReq,
 } from '@/services'
+
+type MarketDetail = Partial<OptionMarket> & Partial<OptionMarketSnapshot> & {
+  contract?: OptionContract
+}
 
 const { t } = useI18n()
 const {
@@ -178,10 +294,11 @@ const {
 } = usePagination<number>(20)
 
 const loading = ref(false)
+const detailLoading = ref(false)
 const submitLoading = ref(false)
 const rows = ref<OptionMarketSnapshot[]>([])
 const detailVisible = ref(false)
-const detailData = ref<OptionMarket | OptionMarketSnapshot | null>(null)
+const detailData = ref<MarketDetail | null>(null)
 const marketVisible = ref(false)
 const query = reactive<ListMarketSnapshotsReq>({
   tenantId: undefined as number | undefined,
@@ -237,13 +354,27 @@ const resetCurrent = () => {
 }
 
 const showDetail = async (row: OptionMarketSnapshot) => {
-  detailData.value =
-    (await optionService.getMarket({ tenantId: row.tenantId, contractId: row.contractId })).data ||
-    row
   detailVisible.value = true
+  detailLoading.value = true
+  detailData.value = row
+  try {
+    const market: MarketDetail =
+      ((await optionService.getMarket({ tenantId: row.tenantId, contractId: row.contractId }))
+        .data as MarketDetail | undefined) || row
+    if (!market.contract && row.contractId) {
+      const contractRes = await optionService.getContract({
+        tenantId: row.tenantId,
+        id: row.contractId,
+      })
+      market.contract = contractRes.data?.contract
+    }
+    detailData.value = market
+  } finally {
+    detailLoading.value = false
+  }
 }
 
-const openMarketDialog = (row?: Pick<OptionMarketSnapshot, 'tenantId' | 'contractId'>) => {
+const openMarketDialog = (row?: { tenantId?: number; contractId?: number } | null) => {
   Object.assign(marketForm, {
     tenantId: row?.tenantId || 0,
     contractId: row?.contractId || 0,
@@ -295,4 +426,9 @@ function handleNextPage() {
 onMounted(loadCurrent)
 </script>
 
-<style scoped></style>
+<style scoped>
+.market-detail {
+  display: grid;
+  gap: 18px;
+}
+</style>

@@ -9,14 +9,14 @@ export interface ErrorInfo {
   status?: number
   code?: number | string
   message: string
-  data?: any
+  data?: unknown
 }
 
 class ErrorHandler {
   /**
    * 处理异常并显示用户友好的消息
    */
-  handle(error: unknown, defaultMsg?: string) {
+  handle(error: unknown) {
     const errorInfo = this.parse(error)
     this.log(errorInfo)
     this.notify(errorInfo)
@@ -29,9 +29,10 @@ class ErrorHandler {
   parse(error: unknown): ErrorInfo {
     // 如果是已格式化的错误对象
     if (typeof error === 'object' && error !== null && 'message' in error) {
+      const errorRecord = error as Partial<ErrorInfo>
       return {
-        ...(error as ErrorInfo),
-        message: (error as any).message || 'Unknown error',
+        ...errorRecord,
+        message: errorRecord.message || 'Unknown error',
       }
     }
 

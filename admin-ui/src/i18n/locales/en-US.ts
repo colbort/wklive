@@ -1061,7 +1061,6 @@ export default {
   },
   option: {
     contracts: 'Contracts',
-    marketDetail: 'Market Detail',
     contractInfo: 'Contract Info',
     marketInfo: 'Market Info',
     orders: 'Orders',

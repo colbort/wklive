@@ -22,7 +22,7 @@
             <el-option
               v-for="item in walletTypeOptions"
               :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
+              :label="item.label"
               :value="item.value"
             />
           </el-select>
@@ -72,7 +72,7 @@
         />
         <el-table-column prop="walletType" :label="t('asset.walletType')" min-width="120">
           <template #default="{ row }">
-            {{ formatOptionValue('walletType', row.walletType) }}
+            {{ optionLabel('walletType', row.walletType) }}
           </template>
         </el-table-column>
         <el-table-column
@@ -132,7 +132,7 @@
           {{ detailData.userId }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.walletType')">
-          {{ formatOptionValue('walletType', detailData.walletType) }}
+          {{ optionLabel('walletType', detailData.walletType) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.coin')">
           {{ detailData.coin }}
@@ -144,10 +144,10 @@
           {{ detailData.opType }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.bizType')">
-          {{ formatOptionValue('bizType', detailData.bizType) }}
+          {{ optionLabel('bizType', detailData.bizType) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.sceneType')">
-          {{ formatOptionValue('sceneType', detailData.sceneType) }}
+          {{ optionLabel('sceneType', detailData.sceneType) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.bizId')">
           {{ detailData.bizId }}
@@ -202,10 +202,9 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { usePagination } from '@/composables'
+import { useOptions, usePagination } from '@/composables'
 import { assetService, type AssetFlow, type OptionGroup } from '@/services'
 import { formatCentAmount, formatDate } from '@/utils'
-import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 const { t } = useI18n()
 
@@ -230,13 +229,11 @@ const {
   prevAndLoad,
   nextAndLoad,
 } = usePagination<number>(20)
+const { optionItems, optionLabel } = useOptions(optionGroups)
 
-const walletTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'walletType'))
+const walletTypeOptions = optionItems('walletType')
 const detailTitle = computed(() => `${t('asset.flows')}${t('asset.detail')}`)
 
-function formatOptionValue(key: string, value: number | string | undefined) {
-  return getOptionValueLabel(optionGroups.value, key, value, t)
-}
 
 async function loadOptions() {
   const res = await assetService.getOptions()

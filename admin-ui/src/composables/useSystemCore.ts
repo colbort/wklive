@@ -15,11 +15,11 @@ const DEFAULT_SYSTEM_CORE: SystemCoreState = {
   assetUrl: '',
 }
 
-function normalizeSystemCore(data: any): SystemCoreState {
+function normalizeSystemCore(data: Record<string, unknown>): SystemCoreState {
   return {
-    siteName: data?.siteName || data?.site_name || DEFAULT_SYSTEM_CORE.siteName,
-    siteLogo: data?.siteLogo || data?.site_logo || DEFAULT_SYSTEM_CORE.siteLogo,
-    assetUrl: data?.assetUrl || data?.asset_url || DEFAULT_SYSTEM_CORE.assetUrl,
+    siteName: String(data.siteName || data.site_name || DEFAULT_SYSTEM_CORE.siteName),
+    siteLogo: String(data.siteLogo || data.site_logo || DEFAULT_SYSTEM_CORE.siteLogo),
+    assetUrl: String(data.assetUrl || data.asset_url || DEFAULT_SYSTEM_CORE.assetUrl),
   }
 }
 
@@ -69,7 +69,7 @@ export function useSystemCore(initial?: Partial<SystemCoreState>) {
     try {
       const res = await getSystemCore()
       if (res?.code === 200 && res.data) {
-        systemCore.value = normalizeSystemCore(res.data)
+        systemCore.value = normalizeSystemCore(res.data as Record<string, unknown>)
       }
       return systemCore.value
     } catch (error) {

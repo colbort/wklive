@@ -3,6 +3,7 @@ import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 const route = useRoute()
 const { t } = useI18n()
+const missingComponent = String((route.meta as Record<string, unknown>).missing || '')
 </script>
 
 <template>
@@ -13,7 +14,7 @@ const { t } = useI18n()
   >
     <template #extra>
       <div style="color: #666">
-        missing: {{ (route.meta as any).missing }}
+        missing: {{ missingComponent }}
       </div>
       <el-button style="margin-top: 12px" @click="$router.push('/')">
         {{ t('common.goHome') }}

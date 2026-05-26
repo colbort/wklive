@@ -25,7 +25,7 @@
             <el-option
               v-for="item in walletTypeOptions"
               :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
+              :label="item.label"
               :value="item.value"
             />
           </el-select>
@@ -41,7 +41,7 @@
             <el-option
               v-for="item in bizTypeOptions"
               :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
+              :label="item.label"
               :value="item.value"
             />
           </el-select>
@@ -51,7 +51,7 @@
             <el-option
               v-for="item in freezeStatusOptions"
               :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
+              :label="item.label"
               :value="item.value"
             />
           </el-select>
@@ -89,7 +89,7 @@
         />
         <el-table-column prop="walletType" :label="t('asset.walletType')" min-width="120">
           <template #default="{ row }">
-            {{ formatOptionValue('walletType', row.walletType) }}
+            {{ optionLabel('walletType', row.walletType) }}
           </template>
         </el-table-column>
         <el-table-column
@@ -124,12 +124,12 @@
         />
         <el-table-column prop="bizType" :label="t('asset.bizType')" min-width="120">
           <template #default="{ row }">
-            {{ formatOptionValue('bizType', row.bizType) }}
+            {{ optionLabel('bizType', row.bizType) }}
           </template>
         </el-table-column>
         <el-table-column prop="status" :label="t('common.status')" min-width="110">
           <template #default="{ row }">
-            {{ formatOptionValue('freezeStatus', row.status) }}
+            {{ optionLabel('freezeStatus', row.status) }}
           </template>
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="180" fixed="right">
@@ -198,16 +198,16 @@
           {{ detailData.userId }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.walletType')">
-          {{ formatOptionValue('walletType', detailData.walletType) }}
+          {{ optionLabel('walletType', detailData.walletType) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.coin')">
           {{ detailData.coin }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.bizType')">
-          {{ formatOptionValue('bizType', detailData.bizType) }}
+          {{ optionLabel('bizType', detailData.bizType) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.sceneType')">
-          {{ formatOptionValue('sceneType', detailData.sceneType) }}
+          {{ optionLabel('sceneType', detailData.sceneType) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.bizId')">
           {{ detailData.bizId }}
@@ -228,7 +228,7 @@
           {{ detailData.remainAmount }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('common.status')">
-          {{ formatOptionValue('freezeStatus', detailData.status) }}
+          {{ optionLabel('freezeStatus', detailData.status) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.expireTime')">
           {{ formatDate(detailData.expireTime) }}
@@ -251,10 +251,9 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import { usePagination } from '@/composables'
+import { useOptions, usePagination } from '@/composables'
 import { assetService, type AssetFreeze, type OptionGroup } from '@/services'
 import { formatDate } from '@/utils'
-import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 const { t } = useI18n()
 const {
@@ -272,6 +271,7 @@ const optionGroups = ref<OptionGroup[]>([])
 const detailVisible = ref(false)
 const detailData = ref<AssetFreeze | null>(null)
 const changeVisible = ref(false)
+const { optionItems, optionLabel } = useOptions(optionGroups)
 
 const query = reactive({
   tenantId: undefined as number | undefined,
@@ -293,9 +293,9 @@ const changeForm = reactive({
   remark: '',
 })
 
-const walletTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'walletType'))
-const bizTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'bizType'))
-const freezeStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'freezeStatus'))
+const walletTypeOptions = optionItems('walletType')
+const bizTypeOptions = optionItems('bizType')
+const freezeStatusOptions = optionItems('freezeStatus')
 const detailTitle = computed(() => `${t('asset.freezes')}${t('asset.detail')}`)
 const changeTitle = computed(() => t('asset.unfreezeAsset'))
 
@@ -323,9 +323,6 @@ async function loadList() {
   }
 }
 
-function formatOptionValue(key: string, value: number | string | undefined) {
-  return getOptionValueLabel(optionGroups.value, key, value, t)
-}
 
 function resetQuery() {
   query.tenantId = undefined

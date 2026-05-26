@@ -25,7 +25,7 @@
             <el-option
               v-for="item in walletTypeOptions"
               :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
+              :label="item.label"
               :value="item.value"
             />
           </el-select>
@@ -41,7 +41,7 @@
             <el-option
               v-for="item in lockStatusOptions"
               :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
+              :label="item.label"
               :value="item.value"
             />
           </el-select>
@@ -174,9 +174,8 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import { usePagination } from '@/composables'
+import { useOptions, usePagination } from '@/composables'
 import { assetService, type AssetLock, type OptionGroup } from '@/services'
-import { findOptionGroup, getOptionLabel } from '@/utils/options'
 
 const { t } = useI18n()
 const {
@@ -194,6 +193,7 @@ const optionGroups = ref<OptionGroup[]>([])
 const detailVisible = ref(false)
 const detailData = ref<AssetLock | null>(null)
 const changeVisible = ref(false)
+const { optionItems } = useOptions(optionGroups)
 
 const query = reactive({
   tenantId: undefined as number | undefined,
@@ -214,8 +214,8 @@ const changeForm = reactive({
   remark: '',
 })
 
-const walletTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'walletType'))
-const lockStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'lockStatus'))
+const walletTypeOptions = optionItems('walletType')
+const lockStatusOptions = optionItems('lockStatus')
 const detailTitle = computed(() => `${t('asset.locks')}${t('asset.detail')}`)
 const changeTitle = computed(() => t('asset.unlockAsset'))
 

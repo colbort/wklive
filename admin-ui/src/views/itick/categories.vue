@@ -1,5 +1,5 @@
 <template>
-  <div class="itick-categories">
+  <div class="itick-categories module-page">
     <div class="page-header">
       <h2>{{ t('itick.categories') }}</h2>
       <div class="header-actions">

@@ -91,7 +91,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <el-card>
+  <div class="module-page">
+  <el-card class="table-card">
     <template #header>
       {{ t('system.cronJobLog') }}
     </template>
@@ -278,4 +279,5 @@ onMounted(() => {
       </div>
     </el-drawer>
   </el-card>
+  </div>
 </template>

@@ -49,8 +49,21 @@ const query = reactive({
   limit: 20,
 })
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const form = reactive<any>({
+type UserBankForm = {
+  id: number
+  tenantId: number
+  userId: number
+  bankName: string
+  bankCode: string
+  accountName: string
+  accountNo: string
+  branchName: string
+  countryCode: string
+  isDefault: number
+  status: number
+}
+
+const form = reactive<UserBankForm>({
   id: 0,
   tenantId: 0,
   userId: 0,

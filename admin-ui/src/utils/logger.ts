@@ -6,10 +6,25 @@ import { ENV } from '@/config/environment'
 
 type LogLevel = 'debug' | 'info' | 'warn' | 'error'
 
+function getConsoleOutput(level: LogLevel) {
+  switch (level) {
+    case 'debug':
+      return console.debug
+    case 'info':
+      return console.info
+    case 'warn':
+      return console.warn
+    case 'error':
+      return console.error
+    default:
+      return console.info
+  }
+}
+
 class Logger {
   private enableLog = ENV.ENABLE_LOG
 
-  private log(level: LogLevel, message: string, data?: any) {
+  private log(level: LogLevel, message: string, data?: unknown) {
     if (!this.enableLog) return
 
     const timestamp = new Date().toLocaleTimeString()
@@ -22,26 +37,27 @@ class Logger {
       error: 'color: #ef4444; font-weight: bold;',
     }
 
+    const output = getConsoleOutput(level)
     if (data !== undefined) {
-      console.log(`%c${prefix} ${message}`, styles[level], data)
+      output(`%c${prefix} ${message}`, styles[level], data)
     } else {
-      console.log(`%c${prefix} ${message}`, styles[level])
+      output(`%c${prefix} ${message}`, styles[level])
     }
   }
 
-  debug(message: string, data?: any) {
+  debug(message: string, data?: unknown) {
     this.log('debug', message, data)
   }
 
-  info(message: string, data?: any) {
+  info(message: string, data?: unknown) {
     this.log('info', message, data)
   }
 
-  warn(message: string, data?: any) {
+  warn(message: string, data?: unknown) {
     this.log('warn', message, data)
   }
 
-  error(message: string, data?: any) {
+  error(message: string, data?: unknown) {
     this.log('error', message, data)
   }
 }

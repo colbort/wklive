@@ -1,5 +1,5 @@
 <template>
-  <div class="sys-tenants">
+  <div class="sys-tenants module-page">
     <div class="page-header">
       <h2>{{ t('system.tenants') }}</h2>
       <el-button v-perm="'sys:tenant:add'" type="primary" @click="handleCreate">

@@ -55,12 +55,12 @@ http.interceptors.response.use(
   },
 )
 
-function request<T = any>(
+function request<T = unknown>(
   method: Method,
   url: string,
   options?: {
-    params?: any
-    data?: any
+    params?: object
+    data?: unknown
     config?: AxiosRequestConfig
   },
 ): Promise<RespBase<T>> {
@@ -74,41 +74,41 @@ function request<T = any>(
   })
 }
 
-export function get<T = any>(
+export function get<T = unknown>(
   url: string,
-  params?: any,
+  params?: object,
   config?: AxiosRequestConfig,
 ): Promise<RespBase<T>> {
   return request<T>('GET', url, { params, config })
 }
 
-export function post<T = any>(
+export function post<T = unknown>(
   url: string,
-  data?: any,
+  data?: unknown,
   config?: AxiosRequestConfig,
 ): Promise<RespBase<T>> {
   return request<T>('POST', url, { data, config })
 }
 
-export function put<T = any>(
+export function put<T = unknown>(
   url: string,
-  data?: any,
+  data?: unknown,
   config?: AxiosRequestConfig,
 ): Promise<RespBase<T>> {
   return request<T>('PUT', url, { data, config })
 }
 
-export function del<T = any>(
+export function del<T = unknown>(
   url: string,
-  params?: any,
+  params?: object,
   config?: AxiosRequestConfig,
 ): Promise<RespBase<T>> {
   return request<T>('DELETE', url, { params, config })
 }
 
-export function patch<T = any>(
+export function patch<T = unknown>(
   url: string,
-  data?: any,
+  data?: unknown,
   config?: AxiosRequestConfig,
 ): Promise<RespBase<T>> {
   return request<T>('PATCH', url, { data, config })

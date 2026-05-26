@@ -1,5 +1,5 @@
 <template>
-  <div class="itick-products">
+  <div class="itick-products module-page">
     <div class="page-header">
       <h2>{{ t('itick.products') }}</h2>
       <div class="header-actions">
@@ -815,6 +815,12 @@ onMounted(() => {
 
 <style scoped>
 .itick-products {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
   padding: 20px;
 }
 
@@ -835,7 +841,34 @@ onMounted(() => {
 }
 
 .table-card {
-  margin-bottom: 16px;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  margin-bottom: 0;
+}
+
+.table-card :deep(.el-card__body) {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.table-card :deep(.el-table) {
+  flex: 1;
+  min-height: 0;
+}
+
+.table-card :deep(.el-table__inner-wrapper) {
+  height: 100%;
+}
+
+.table-card :deep(.el-table__body-wrapper) {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .pagination-bar {

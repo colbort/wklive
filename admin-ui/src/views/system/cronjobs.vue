@@ -250,7 +250,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <el-card>
+  <div class="module-page">
+  <el-card class="table-card">
     <template #header>
       <div style="display: flex; justify-content: space-between; align-items: center">
         <span>{{ t('system.cronJobs') }}</span>
@@ -475,6 +476,7 @@ onMounted(() => {
       </template>
     </el-dialog>
   </el-card>
+  </div>
 </template>
 
 <style scoped>

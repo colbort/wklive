@@ -34,7 +34,7 @@
             <el-option
               v-for="item in walletTypeOptions"
               :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
+              :label="item.label"
               :value="item.value"
             />
           </el-select>
@@ -47,7 +47,7 @@
             <el-option
               v-for="item in assetStatusOptions"
               :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
+              :label="item.label"
               :value="item.value"
             />
           </el-select>
@@ -79,7 +79,7 @@
         />
         <el-table-column prop="walletType" :label="t('asset.walletType')" min-width="120">
           <template #default="{ row }">
-            {{ formatOptionValue('walletType', row.walletType) }}
+            {{ optionLabel('walletType', row.walletType) }}
           </template>
         </el-table-column>
         <el-table-column
@@ -142,7 +142,7 @@
             <el-option
               v-for="item in walletTypeOptions"
               :key="item.value"
-              :label="getOptionLabel(t, item.code, item.value)"
+              :label="item.label"
               :value="item.value"
             />
           </el-select>
@@ -185,13 +185,13 @@
           {{ detailData.userId }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.walletType')">
-          {{ formatOptionValue('walletType', detailData.walletType) }}
+          {{ optionLabel('walletType', detailData.walletType) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.coin')">
           {{ detailData.coin }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('common.status')">
-          {{ formatOptionValue('assetStatus', detailData.status) }}
+          {{ optionLabel('assetStatus', detailData.status) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.totalAmount')">
           {{ detailData.totalAmount }}
@@ -226,10 +226,9 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import { usePagination } from '@/composables'
+import { useOptions, usePagination } from '@/composables'
 import { assetService, type AssetUserAsset, type OptionGroup } from '@/services'
 import { formatDate } from '@/utils'
-import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 const { t } = useI18n()
 const {
@@ -248,6 +247,7 @@ const detailVisible = ref(false)
 const detailData = ref<AssetUserAsset | null>(null)
 const changeVisible = ref(false)
 const changeMode = ref<'add' | 'sub' | 'freeze' | 'lock'>('add')
+const { optionItems, optionLabel } = useOptions(optionGroups)
 
 const query = reactive({
   tenantId: undefined as number | undefined,
@@ -269,8 +269,8 @@ const changeForm = reactive({
   remark: '',
 })
 
-const walletTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'walletType'))
-const assetStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'assetStatus'))
+const walletTypeOptions = optionItems('walletType')
+const assetStatusOptions = optionItems('assetStatus')
 const detailTitle = computed(() => `${t('asset.userAssets')}${t('asset.detail')}`)
 const changeTitle = computed(
   () =>
@@ -306,9 +306,6 @@ async function loadList() {
   }
 }
 
-function formatOptionValue(key: string, value: number | string | undefined) {
-  return getOptionValueLabel(optionGroups.value, key, value, t)
-}
 
 function resetQuery() {
   query.tenantId = undefined

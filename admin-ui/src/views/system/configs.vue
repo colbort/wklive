@@ -1,5 +1,5 @@
 <template>
-  <div class="sys-config">
+  <div class="sys-config module-page">
     <div class="page-header">
       <h2>{{ t('system.config') }}</h2>
       <el-button v-perm="'sys:config:add'" type="primary" @click="handleCreate">

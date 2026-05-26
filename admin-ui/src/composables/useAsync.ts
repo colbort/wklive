@@ -3,7 +3,6 @@
  */
 
 import { ref, computed } from 'vue'
-import { errorHandler } from '@/utils/error'
 import { logger } from '@/utils/logger'
 
 export interface UseAsyncOptions<T> {
@@ -13,12 +12,12 @@ export interface UseAsyncOptions<T> {
   onError?: (error: unknown) => void
 }
 
-export function useAsync<T = any>(asyncFn: () => Promise<T>, options?: UseAsyncOptions<T>) {
+export function useAsync<T = unknown>(asyncFn: () => Promise<T>, options?: UseAsyncOptions<T>) {
   const { initialData, immediate = true, onSuccess, onError } = options ?? {}
 
   const data = ref<T | undefined>(initialData)
   const loading = ref(false)
-  const error = ref<any>(null)
+  const error = ref<unknown>(null)
 
   const isLoading = computed(() => loading.value)
   const isError = computed(() => !!error.value)

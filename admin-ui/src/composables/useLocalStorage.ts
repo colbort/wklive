@@ -12,7 +12,7 @@ export function useLocalStorage<T>(key: string, initialValue?: T, parse = true) 
   const storedValue = localStorage.getItem(key)
   if (storedValue) {
     try {
-      data.value = parse ? JSON.parse(storedValue) : (storedValue as any)
+      data.value = parse ? JSON.parse(storedValue) : (storedValue as T)
     } catch (error) {
       logger.error(`Failed to parse localStorage[${key}]`, error)
     }
@@ -25,7 +25,7 @@ export function useLocalStorage<T>(key: string, initialValue?: T, parse = true) 
       if (newValue === undefined) {
         localStorage.removeItem(key)
       } else {
-        localStorage.setItem(key, parse ? JSON.stringify(newValue) : (newValue as any))
+        localStorage.setItem(key, parse ? JSON.stringify(newValue) : String(newValue))
       }
     },
     { deep: true },

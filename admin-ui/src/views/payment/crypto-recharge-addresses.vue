@@ -80,13 +80,13 @@
         <el-table-column prop="userId" :label="t('common.userId')" width="100" />
         <el-table-column :label="t('payment.walletType')" width="100">
           <template #default="{ row }">
-            {{ formatOptionValue('walletType', row.walletType) }}
+            {{ optionLabel('walletType', row.walletType) }}
           </template>
         </el-table-column>
         <el-table-column prop="coin" :label="t('payment.currency')" width="90" />
         <el-table-column :label="t('payment.chain')" width="110">
           <template #default="{ row }">
-            {{ formatOptionValue('chainCode', row.chainCode) }}
+            {{ optionLabel('chainCode', row.chainCode) }}
           </template>
         </el-table-column>
         <el-table-column
@@ -103,12 +103,12 @@
         />
         <el-table-column :label="t('payment.type')" width="130">
           <template #default="{ row }">
-            {{ formatOptionValue('cryptoRechargeAddressType', row.addressType) }}
+            {{ optionLabel('cryptoRechargeAddressType', row.addressType) }}
           </template>
         </el-table-column>
         <el-table-column :label="t('common.status')" width="90">
           <template #default="{ row }">
-            <el-tag>{{ formatOptionValue('cryptoRechargeAddressStatus', row.status) }}</el-tag>
+            <el-tag>{{ optionLabel('cryptoRechargeAddressStatus', row.status) }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="140" fixed="right">
@@ -234,7 +234,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { usePagination } from '@/composables'
+import { useOptions, usePagination } from '@/composables'
 import {
   assetService,
   catalogService,
@@ -242,7 +242,6 @@ import {
   type CryptoRechargeAddress,
   type OptionGroup,
 } from '@/services'
-import { findOptionGroup, getOptionLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 
@@ -262,11 +261,12 @@ const {
   prevAndLoad,
   nextAndLoad,
 } = usePagination<number>(20)
-const walletTypeOptions = computed(() => optionItems('walletType'))
-const chainCodeOptions = computed(() => optionItems('chainCode'))
-const addressSourceOptions = computed(() => optionItems('cryptoRechargeAddressSource'))
-const addressTypeOptions = computed(() => optionItems('cryptoRechargeAddressType'))
-const addressStatusOptions = computed(() => optionItems('cryptoRechargeAddressStatus'))
+const { optionItems, optionLabel } = useOptions(optionGroups)
+const walletTypeOptions = optionItems('walletType')
+const chainCodeOptions = optionItems('chainCode')
+const addressSourceOptions = optionItems('cryptoRechargeAddressSource')
+const addressTypeOptions = optionItems('cryptoRechargeAddressType')
+const addressStatusOptions = optionItems('cryptoRechargeAddressStatus')
 const detailOptionKeys: Record<string, string> = {
   walletType: 'walletType',
   chainCode: 'chainCode',
@@ -279,7 +279,7 @@ const detailDisplayData = computed(() => {
   return Object.fromEntries(
     Object.entries(detailData.value).map(([key, value]) => [
       key,
-      detailOptionKeys[key] ? formatOptionValue(detailOptionKeys[key], value as number) : value,
+      detailOptionKeys[key] ? optionLabel(detailOptionKeys[key], value as number) : value,
     ]),
   )
 })
@@ -310,13 +310,6 @@ function params() {
   return Object.fromEntries(
     Object.entries(query).filter(([, v]) => v !== '' && v !== 0 && v !== undefined),
   )
-}
-function optionItems(key: string) {
-  const options = findOptionGroup(optionGroups.value, key)
-  return options.map((item) => ({
-    value: item.value,
-    label: getOptionLabel(t, item.code, item.value),
-  }))
 }
 async function loadList() {
   loading.value = true
@@ -391,10 +384,6 @@ function openDialog(row?: CryptoRechargeAddress) {
 function showDetail(row: CryptoRechargeAddress) {
   detailData.value = row
   detailVisible.value = true
-}
-function formatOptionValue(key: string, value: number | string | undefined) {
-  const item = optionItems(key).find((option) => String(option.value) === String(value))
-  return item ? item.label : value
 }
 async function submit() {
   const res = form.id

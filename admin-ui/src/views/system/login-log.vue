@@ -73,7 +73,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <el-card>
+  <div class="module-page">
+  <el-card class="table-card">
     <template #header>
       {{ t('system.loginLog') }}
     </template>
@@ -167,4 +168,5 @@ onMounted(() => {
       "
     />
   </el-card>
+  </div>
 </template>
