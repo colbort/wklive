@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { getTenantCode } from '@/api/http'
@@ -120,6 +120,8 @@ const account = ref('')
 const password = ref('')
 const remember = ref(false)
 const showPassword = ref(false)
+const googleCode = ref<string[]>(Array(6).fill(''))
+const googleCodeInputs = ref<HTMLInputElement[]>([])
 const submitting = ref(false)
 const walletConnecting = ref(false)
 const walletAddress = ref('')
@@ -131,6 +133,7 @@ const errorMessage = ref('')
 
 const accountPlaceholder = computed(() => (activeTab.value === 'email' ? '您的邮箱' : '手机号'))
 const loginType = computed(() => (activeTab.value === 'email' ? LOGIN_TYPE_EMAIL : LOGIN_TYPE_PHONE))
+const googleCodeValue = computed(() => googleCode.value.join(''))
 const shortWalletAddress = computed(() => {
   if (!walletAddress.value) return ''
   return `${walletAddress.value.slice(0, 6)}...${walletAddress.value.slice(-4)}`
@@ -210,6 +213,80 @@ function goBack() {
   router.push('/profile')
 }
 
+function setGoogleCodeInputRef(element: unknown, index: number) {
+  if (element instanceof HTMLInputElement) googleCodeInputs.value[index] = element
+}
+
+function focusGoogleCodeInput(index: number) {
+  const target = googleCodeInputs.value[Math.max(0, Math.min(index, googleCode.value.length - 1))]
+  if (!target) return
+  nextTick(() => {
+    target.focus()
+    target.select()
+  })
+}
+
+function applyGoogleCodeDigits(index: number, value: string) {
+  const digits = value.replace(/\D/g, '').slice(0, googleCode.value.length - index)
+  if (!digits) {
+    googleCode.value[index] = ''
+    return
+  }
+
+  digits.split('').forEach((digit, offset) => {
+    googleCode.value[index + offset] = digit
+  })
+
+  const nextIndex = Math.min(index + digits.length, googleCode.value.length - 1)
+  focusGoogleCodeInput(nextIndex)
+}
+
+function handleGoogleCodeInput(index: number, event: Event) {
+  applyGoogleCodeDigits(index, (event.target as HTMLInputElement).value)
+}
+
+function selectGoogleCodeInput(event: FocusEvent) {
+  const target = event.target as HTMLInputElement
+  target.select()
+}
+
+function handleGoogleCodeKeydown(index: number, event: KeyboardEvent) {
+  if (event.key === 'Backspace') {
+    event.preventDefault()
+    if (googleCode.value[index]) {
+      googleCode.value[index] = ''
+      return
+    }
+    if (index > 0) {
+      googleCode.value[index - 1] = ''
+      focusGoogleCodeInput(index - 1)
+    }
+    return
+  }
+
+  if (event.key === 'Delete') {
+    event.preventDefault()
+    googleCode.value[index] = ''
+    return
+  }
+
+  if (event.key === 'ArrowLeft' && index > 0) {
+    event.preventDefault()
+    focusGoogleCodeInput(index - 1)
+    return
+  }
+
+  if (event.key === 'ArrowRight' && index < googleCode.value.length - 1) {
+    event.preventDefault()
+    focusGoogleCodeInput(index + 1)
+  }
+}
+
+function handleGoogleCodePaste(index: number, event: ClipboardEvent) {
+  event.preventDefault()
+  applyGoogleCodeDigits(index, event.clipboardData?.getData('text') || '')
+}
+
 async function submitLogin() {
   if (submitting.value) return
 
@@ -223,6 +300,11 @@ async function submitLogin() {
     errorMessage.value = '请输入账号和密码'
     return
   }
+  if (googleCodeValue.value.length > 0 && googleCodeValue.value.length < googleCode.value.length) {
+    errorMessage.value = '请输入完整的谷歌验证码'
+    focusGoogleCodeInput(googleCode.value.findIndex((digit) => !digit))
+    return
+  }
 
   submitting.value = true
   try {
@@ -231,9 +313,11 @@ async function submitLogin() {
       loginType: loginType.value,
       account: account.value.trim(),
       password: password.value,
+      googleCode: googleCodeValue.value || undefined,
     })
     if (res.code !== 0 && res.code !== 200) {
       errorMessage.value = res.msg || '登录失败'
+      if (res.code === 2057) focusGoogleCodeInput(0)
       return
     }
     router.replace('/profile')
@@ -518,6 +602,26 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
           </button>
         </label>
 
+        <div class="google-code-field">
+          <span>谷歌验证码</span>
+          <div class="google-code-boxes" aria-label="谷歌验证码">
+            <input
+              v-for="(_, index) in googleCode"
+              :key="index"
+              :ref="(element) => setGoogleCodeInputRef(element, index)"
+              :value="googleCode[index]"
+              inputmode="numeric"
+              autocomplete="one-time-code"
+              maxlength="1"
+              aria-label="谷歌验证码"
+              @focus="selectGoogleCodeInput"
+              @input="handleGoogleCodeInput(index, $event)"
+              @keydown="handleGoogleCodeKeydown(index, $event)"
+              @paste="handleGoogleCodePaste(index, $event)"
+            />
+          </div>
+        </div>
+
         <div class="auth-row">
           <label class="remember-control">
             <input v-model="remember" type="checkbox" />
@@ -770,6 +874,43 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 
 .auth-field input::placeholder {
   color: #8f9098;
+}
+
+.google-code-field {
+  display: grid;
+  gap: 16px;
+}
+
+.google-code-field > span {
+  color: #8f9098;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.google-code-boxes {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.google-code-boxes input {
+  width: 100%;
+  aspect-ratio: 1;
+  min-width: 0;
+  border: 0;
+  border-radius: 18px;
+  outline: 2px solid transparent;
+  background: #20212b;
+  color: #fff;
+  font-size: 28px;
+  font-weight: 900;
+  text-align: center;
+  transition: outline-color 0.18s ease, background 0.18s ease;
+}
+
+.google-code-boxes input:focus {
+  outline-color: #00c313;
+  background: #252733;
 }
 
 .field-icon {

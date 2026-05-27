@@ -4,3 +4,6 @@ Etcd:
   Hosts:
   - 127.0.0.1:2379
   Key: user.rpc
+Jwt:
+  AccessSecret: "your_access_secret"
+  AccessExpire: 3600

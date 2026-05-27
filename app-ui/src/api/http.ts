@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { type AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
 
 const ACCESS_TOKEN_KEY = 'app_access_token'
 const REFRESH_TOKEN_KEY = 'app_refresh_token'
@@ -28,6 +28,17 @@ export const http = axios.create({
   baseURL: resolveApiBaseURL(),
   timeout: 10000,
 })
+
+const refreshHttp = axios.create({
+  baseURL: resolveApiBaseURL(),
+  timeout: 10000,
+})
+
+type RetryableRequestConfig = InternalAxiosRequestConfig & {
+  _retry?: boolean
+}
+
+let refreshTokenTask: Promise<string | null> | null = null
 
 export function getAccessToken() {
   return localStorage.getItem(ACCESS_TOKEN_KEY)
@@ -75,6 +86,11 @@ export function setTenantCode(tenantCode: string) {
 
 export function clearTenantCode() {
   localStorage.removeItem(TENANT_CODE_KEY)
+}
+
+function clearAuthTokens() {
+  clearAccessToken()
+  clearRefreshToken()
 }
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
@@ -137,3 +153,85 @@ http.interceptors.request.use((config) => {
 
   return config
 })
+
+function isRefreshTokenRequest(url?: string) {
+  return Boolean(url?.startsWith('/user/refresh-token'))
+}
+
+function getResponseCode(data: unknown) {
+  if (!isPlainObject(data)) return undefined
+  return Number(data.code)
+}
+
+function readTokenPayload(data: unknown) {
+  if (!isPlainObject(data)) return null
+
+  const directToken = data.token
+  if (isPlainObject(directToken)) return directToken
+
+  const nestedData = data.data
+  if (isPlainObject(nestedData) && isPlainObject(nestedData.token)) return nestedData.token
+
+  return null
+}
+
+function refreshAccessToken() {
+  if (!refreshTokenTask) {
+    refreshTokenTask = (async () => {
+      const refreshToken = getRefreshToken()
+      if (!refreshToken) return null
+
+      const tenantCode = getTenantCode()
+      const res = await refreshHttp.post('/user/refresh-token', {
+        refreshToken,
+        ...(tenantCode ? { tenantCode } : {}),
+      })
+      const token = readTokenPayload(res.data)
+      const accessToken = typeof token?.accessToken === 'string' ? token.accessToken : ''
+      const nextRefreshToken = typeof token?.refreshToken === 'string' ? token.refreshToken : ''
+
+      if (!accessToken) return null
+      setAccessToken(accessToken)
+      if (nextRefreshToken) setRefreshToken(nextRefreshToken)
+      return accessToken
+    })().finally(() => {
+      refreshTokenTask = null
+    })
+  }
+
+  return refreshTokenTask
+}
+
+async function retryWithRefreshedToken(config?: InternalAxiosRequestConfig) {
+  const originalConfig = config as RetryableRequestConfig | undefined
+  if (!originalConfig || originalConfig._retry || isRefreshTokenRequest(originalConfig.url)) {
+    clearAuthTokens()
+    return Promise.reject(new Error('Unauthorized'))
+  }
+
+  originalConfig._retry = true
+  const accessToken = await refreshAccessToken()
+  if (!accessToken) {
+    clearAuthTokens()
+    return Promise.reject(new Error('Unauthorized'))
+  }
+
+  originalConfig.headers = originalConfig.headers || {}
+  originalConfig.headers.Authorization = `Bearer ${accessToken}`
+  return http(originalConfig)
+}
+
+http.interceptors.response.use(
+  (response: AxiosResponse) => {
+    if (getResponseCode(response.data) === 401) {
+      return retryWithRefreshedToken(response.config)
+    }
+    return response
+  },
+  (error: AxiosError) => {
+    if (error.response?.status === 401) {
+      return retryWithRefreshedToken(error.config)
+    }
+    return Promise.reject(error)
+  },
+)

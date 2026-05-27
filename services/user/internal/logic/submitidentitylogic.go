@@ -54,23 +54,57 @@ func (l *SubmitIdentityLogic) SubmitIdentity(in *user.SubmitIdentityReq) (*user.
 		return nil, err
 	}
 
+	kycLevel := int64(1) // 默认KYC等级为1
+	if identity != nil {
+		kycLevel = identity.KycLevel
+	}
+	// TODO: 根据提交的身份信息完善KYC等级评估逻辑
+
 	if identity != nil {
 		// 更新现有身份信息
-		identity.Phone = sql.NullString{String: in.Phone, Valid: in.Phone != ""}
-		identity.Email = sql.NullString{String: in.Email, Valid: in.Email != ""}
-		identity.RealName = sql.NullString{String: in.RealName, Valid: in.RealName != ""}
-		identity.Gender = int64(in.Gender)
-		identity.Birthday = in.Birthday
-		identity.CountryCode = sql.NullString{String: in.CountryCode, Valid: in.CountryCode != ""}
-		identity.Province = sql.NullString{String: in.Province, Valid: in.Province != ""}
-		identity.City = sql.NullString{String: in.City, Valid: in.City != ""}
-		identity.Address = sql.NullString{String: in.Address, Valid: in.Address != ""}
-		identity.IdType = int64(in.IdType)
-		identity.IdNo = sql.NullString{String: in.IdNo, Valid: in.IdNo != ""}
-		identity.FrontImage = sql.NullString{String: in.FrontImage, Valid: in.FrontImage != ""}
-		identity.BackImage = sql.NullString{String: in.BackImage, Valid: in.BackImage != ""}
-		identity.HandheldImage = sql.NullString{String: in.HandheldImage, Valid: in.HandheldImage != ""}
-		identity.KycLevel = int64(in.KycLevel)
+		if in.Phone != "" {
+			identity.Phone = sql.NullString{String: in.Phone, Valid: true}
+		}
+		if in.Email != "" {
+			identity.Email = sql.NullString{String: in.Email, Valid: true}
+		}
+		if in.RealName != "" {
+			identity.RealName = sql.NullString{String: in.RealName, Valid: true}
+		}
+		if in.Gender != 0 {
+			identity.Gender = int64(in.Gender)
+		}
+		if in.Birthday != 0 {
+			identity.Birthday = in.Birthday
+		}
+		if in.CountryCode != "" {
+			identity.CountryCode = sql.NullString{String: in.CountryCode, Valid: true}
+		}
+		if in.Province != "" {
+			identity.Province = sql.NullString{String: in.Province, Valid: true}
+		}
+		if in.City != "" {
+			identity.City = sql.NullString{String: in.City, Valid: true}
+		}
+		if in.Address != "" {
+			identity.Address = sql.NullString{String: in.Address, Valid: true}
+		}
+		if in.IdType != 0 {
+			identity.IdType = int64(in.IdType)
+		}
+		if in.IdNo != "" {
+			identity.IdNo = sql.NullString{String: in.IdNo, Valid: true}
+		}
+		if in.FrontImage != "" {
+			identity.FrontImage = sql.NullString{String: in.FrontImage, Valid: true}
+		}
+		if in.BackImage != "" {
+			identity.BackImage = sql.NullString{String: in.BackImage, Valid: true}
+		}
+		if in.HandheldImage != "" {
+			identity.HandheldImage = sql.NullString{String: in.HandheldImage, Valid: true}
+		}
+		identity.KycLevel = kycLevel
 		identity.VerifyStatus = 1 // 待审核
 		identity.SubmitTime = now
 		identity.UpdateTimes = now
@@ -99,7 +133,7 @@ func (l *SubmitIdentityLogic) SubmitIdentity(in *user.SubmitIdentityReq) (*user.
 			FrontImage:    sql.NullString{String: in.FrontImage, Valid: in.FrontImage != ""},
 			BackImage:     sql.NullString{String: in.BackImage, Valid: in.BackImage != ""},
 			HandheldImage: sql.NullString{String: in.HandheldImage, Valid: in.HandheldImage != ""},
-			KycLevel:      int64(in.KycLevel),
+			KycLevel:      kycLevel,
 			VerifyStatus:  1, // 待审核
 			SubmitTime:    now,
 			CreateTimes:   now,

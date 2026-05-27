@@ -13,41 +13,36 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type SubmitIdentityLogic struct {
+type UpdateIdentityLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewSubmitIdentityLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SubmitIdentityLogic {
-	return &SubmitIdentityLogic{
+func NewUpdateIdentityLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateIdentityLogic {
+	return &UpdateIdentityLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *SubmitIdentityLogic) SubmitIdentity(req *types.SubmitIdentityReq) (resp *types.SubmitIdentityResp, err error) {
-	result, err := l.svcCtx.UserCli.SubmitIdentity(l.ctx, &user.SubmitIdentityReq{
-		Phone:         req.Phone,
-		Email:         req.Email,
-		RealName:      req.RealName,
-		Gender:        user.Gender(req.Gender),
-		Birthday:      req.Birthday,
-		CountryCode:   req.CountryCode,
-		Province:      req.Province,
-		City:          req.City,
-		Address:       req.Address,
-		IdType:        user.IdType(req.IdType),
-		IdNo:          req.IdNo,
-		FrontImage:    req.FrontImage,
-		BackImage:     req.BackImage,
-		HandheldImage: req.HandheldImage,
+func (l *UpdateIdentityLogic) UpdateIdentity(req *types.UpdateIdentityReq) (resp *types.UpdateIdentityResp, err error) {
+	result, err := l.svcCtx.UserCli.UpdateIdentity(l.ctx, &user.UpdateIdentityReq{
+		Phone:       req.Phone,
+		Email:       req.Email,
+		RealName:    req.RealName,
+		Gender:      user.Gender(req.Gender),
+		Birthday:    req.Birthday,
+		CountryCode: req.CountryCode,
+		Province:    req.Province,
+		City:        req.City,
+		Address:     req.Address,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return &types.SubmitIdentityResp{
+	return &types.UpdateIdentityResp{
 		RespBase: types.RespBase{
 			Code: result.Base.Code,
 			Msg:  result.Base.Msg,

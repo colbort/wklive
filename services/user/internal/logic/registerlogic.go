@@ -5,17 +5,18 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
-	"time"
+	"fmt"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
-	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type RegisterLogic struct {
@@ -118,13 +119,21 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 		}
 		referrerUserId = parent.Id
 	}
-	result, err := l.svcCtx.UserModel.Insert(l.ctx, &models.TUser{
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(in.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
+	passwordHash := string(hashedPassword)
+	userNo := l.svcCtx.Node.Generate().Int64()
+
+	now := utils.NowMillis()
+	tuser = &models.TUser{
 		TenantId:       tenant.Data.Id,
-		UserNo:         "",
-		Username:       "",
+		UserNo:         fmt.Sprintf("U%d", userNo),
+		Username:       fmt.Sprintf("U%d", userNo),
 		Nickname:       sql.NullString{String: "", Valid: true},
 		Avatar:         sql.NullString{String: "", Valid: true},
-		PasswordHash:   in.Password,
+		PasswordHash:   passwordHash,
 		RegisterType:   int64(in.RegisterType),
 		Status:         1,
 		MemberLevel:    0,
@@ -135,46 +144,72 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 		Source:         sql.NullString{String: "", Valid: true},
 		ReferrerUserId: sql.NullInt64{Int64: referrerUserId, Valid: true},
 		LastLoginIp:    sql.NullString{String: in.RegisterIp, Valid: true},
-		LastLoginTime:  utils.NowMillis(),
+		LastLoginTime:  now,
 		RegisterIp:     sql.NullString{String: in.RegisterIp, Valid: true},
 		IsGuest:        1,
 		IsRecharge:     0,
+		DeviceId:       "",
+		Fingerprint:    sql.NullString{String: "", Valid: true},
 		Remark:         sql.NullString{String: "", Valid: true},
 		Deleted:        0,
-		CreateTimes:    utils.NowMillis(),
-		UpdateTimes:    utils.NowMillis(),
+		CreateTimes:    now,
+		UpdateTimes:    now,
+	}
+
+	identity := &models.TUserIdentity{
+		TenantId:    tenant.Data.Id,
+		Phone:       sql.NullString{String: in.Phone, Valid: in.RegisterType == user.RegisterType_REGISTER_TYPE_PHONE && in.Phone != ""},
+		Email:       sql.NullString{String: in.Email, Valid: in.RegisterType == user.RegisterType_REGISTER_TYPE_EMAIL && in.Email != ""},
+		CreateTimes: now,
+		UpdateTimes: now,
+	}
+
+	userId := int64(0)
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		userModel := models.NewTUserModel(conn, l.svcCtx.Config.CacheRedis)
+		userIdentityModel := models.NewTUserIdentityModel(conn, l.svcCtx.Config.CacheRedis)
+
+		result, err := userModel.Insert(ctx, tuser)
+		if err != nil {
+			return err
+		}
+
+		userId, err = result.LastInsertId()
+		if err != nil {
+			return err
+		}
+
+		identity.UserId = userId
+		if _, err := userIdentityModel.Insert(ctx, identity); err != nil {
+			return err
+		}
+
+		return nil
 	})
 	if err != nil {
 		return nil, err
 	}
-	userId, err := result.LastInsertId()
-	if err != nil {
-		return nil, err
-	}
+
 	str := make(map[string]any, 0)
 	str["tid"] = tenant.Data.Id
 	expand, err := json.Marshal(str)
 	if err != nil {
 		return nil, err
 	}
-	token, err := utils.GenToken(
+	token, err := buildTokenInfo(
 		l.svcCtx.Config.Jwt.AccessSecret,
-		userId,
-		"",
-		string(expand),
-		"",
-		time.Duration(l.svcCtx.Config.Jwt.AccessExpire)*time.Second,
+		l.svcCtx.Config.Jwt.AccessExpire,
+		userId, "", string(expand),
 	)
 	if err != nil {
 		return nil, err
 	}
 
 	return &user.RegisterResp{
-		Base:   helper.OkResp(),
-		UserId: userId,
-		Token: &common.TokenInfo{
-			AccessToken: token,
-		},
+		Base:    helper.OkResp(),
+		UserId:  userId,
+		Token:   token,
 		Profile: &user.UserProfile{},
 	}, nil
 }

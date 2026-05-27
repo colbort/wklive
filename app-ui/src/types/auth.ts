@@ -119,6 +119,18 @@ export interface SubmitIdentityReq {
   kycLevel?: number
 }
 
+export interface UpdateIdentityReq {
+  phone?: string
+  email?: string
+  realName?: string
+  gender?: number
+  birthday?: number
+  countryCode?: string
+  province?: string
+  city?: string
+  address?: string
+}
+
 export interface SetPayPasswordReq {
   password: string
   confirmPassword: string
@@ -171,6 +183,10 @@ export interface UpdateProfileResp {
 }
 
 export interface SubmitIdentityResp {
+  data: UserIdentity
+}
+
+export interface UpdateIdentityResp {
   data: UserIdentity
 }
 

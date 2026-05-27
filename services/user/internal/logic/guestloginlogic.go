@@ -94,15 +94,14 @@ func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginRe
 		return nil, err
 	}
 
-	userId := l.svcCtx.Node.Generate().Int64()
-	deviceId := fmt.Sprintf("%d", userId)
+	userNo := l.svcCtx.Node.Generate().Int64()
+	deviceId := fmt.Sprintf("%d", userNo)
 	now := utils.NowMillis()
 	guest := &models.TUser{
-		Id:             userId,
 		TenantId:       tenant.Data.Id,
-		UserNo:         fmt.Sprintf("G%d", userId),
-		Username:       fmt.Sprintf("Guest%d", userId),
-		Nickname:       sql.NullString{String: fmt.Sprintf("Guest%d", userId), Valid: true},
+		UserNo:         fmt.Sprintf("G%d", userNo),
+		Username:       fmt.Sprintf("Guest%d", userNo),
+		Nickname:       sql.NullString{String: fmt.Sprintf("Guest%d", userNo), Valid: true},
 		Avatar:         sql.NullString{},
 		PasswordHash:   "",
 		RegisterType:   int64(user.RegisterType_REGISTER_TYPE_GUEST),
@@ -155,13 +154,10 @@ func (l *GuestLoginLogic) buildGuestLoginResp(tenantId int64, guest *models.TUse
 		return nil, err
 	}
 
-	token, err := utils.GenToken(
+	token, err := buildTokenInfo(
 		l.svcCtx.Config.Jwt.AccessSecret,
-		guest.Id,
-		guest.Username,
-		string(expand),
-		"",
-		time.Duration(24*3600)*time.Second,
+		24*3600,
+		guest.Id, guest.Username, string(expand),
 	)
 	if err != nil {
 		return nil, err
@@ -169,7 +165,7 @@ func (l *GuestLoginLogic) buildGuestLoginResp(tenantId int64, guest *models.TUse
 	return &user.GuestLoginResp{
 		Base: helper.OkResp(),
 		Data: &user.GuestLogin{
-			Token:    token,
+			Token:    token.AccessToken,
 			UserId:   guest.DeviceId,
 			Username: guest.Username,
 			IsNew:    isNew,

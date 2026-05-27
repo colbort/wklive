@@ -131,10 +131,26 @@ message SubmitIdentityReq {
   string front_image = 13;
   string back_image = 14;
   string handheld_image = 15;
-  user.KycLevel kyc_level = 16;
 }
 
 message SubmitIdentityResp {
+  common.RespBase base = 1;
+  user.UserIdentity identity = 2;
+}
+
+message UpdateIdentityReq {
+  string phone = 2;
+  string email = 3;
+  string real_name = 4;
+  user.Gender gender = 5;
+  int64 birthday = 6;
+  string country_code = 7;
+  string province = 8;
+  string city = 9;
+  string address = 10;
+}
+
+message UpdateIdentityResp {
   common.RespBase base = 1;
   user.UserIdentity identity = 2;
 }
@@ -245,6 +261,8 @@ service UserApp {
   rpc GetIdentity(GetIdentityReq) returns (GetIdentityResp);
   // 提交实名认证信息
   rpc SubmitIdentity(SubmitIdentityReq) returns (SubmitIdentityResp);
+  // 修改实名认证信息
+  rpc UpdateIdentity(UpdateIdentityReq) returns (UpdateIdentityResp);
 
   // 安全设置相关接口
   rpc GetSecurity(GetSecurityReq) returns (GetSecurityResp);

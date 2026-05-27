@@ -32,7 +32,7 @@ func (l *GetUserSecurityLogic) GetUserSecurity(in *user.GetUserSecurityReq) (*us
 	}
 
 	return &user.GetUserSecurityResp{
-		Base: helper.OkResp(),
+		Base:     helper.OkResp(),
 		Security: toUserSecurityProto(result),
 	}, nil
 }

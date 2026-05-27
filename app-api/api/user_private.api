@@ -53,10 +53,26 @@ type SubmitIdentityReq {
 	frontImage    string `json:"frontImage,optional"`
 	backImage     string `json:"backImage,optional"`
 	handheldImage string `json:"handheldImage,optional"`
-	kycLevel      int64  `json:"kycLevel,optional"`
 }
 
 type SubmitIdentityResp {
+	RespBase
+	data UserIdentity `json:"data"`
+}
+
+type UpdateIdentityReq {
+	phone         string `json:"phone,optional"`
+	email         string `json:"email,optional"`
+	realName      string `json:"realName,optional"`	
+	gender        int64  `json:"gender,optional"`
+	birthday      int64 `json:"birthday,optional"`
+	countryCode   string `json:"countryCode,optional"`
+	province      string `json:"province,optional"`
+	city          string `json:"city,optional"`
+	address       string `json:"address,optional"`
+}
+
+type UpdateIdentityResp {
 	RespBase
 	data UserIdentity `json:"data"`
 }
@@ -156,6 +172,9 @@ service app {
 
 	@handler SubmitIdentity
 	post /identity (SubmitIdentityReq) returns (SubmitIdentityResp)
+
+	@handler UpdateIdentity
+	put /identity (UpdateIdentityReq) returns (UpdateIdentityResp)
 
 	@handler GetSecurity
 	get /security returns (GetSecurityResp)

@@ -12,6 +12,7 @@ import (
 	"wklive/services/user/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type SetPayPasswordLogic struct {
@@ -53,6 +54,12 @@ func (l *SetPayPasswordLogic) SetPayPassword(in *user.SetPayPasswordReq) (*user.
 		}, nil
 	}
 
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(in.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
+	payPasswordHash := string(hashedPassword)
+
 	now := utils.NowMillis()
 	userSecurity, err := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, tuser.TenantId, userId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
@@ -61,7 +68,7 @@ func (l *SetPayPasswordLogic) SetPayPassword(in *user.SetPayPasswordReq) (*user.
 
 	if userSecurity != nil {
 		// 更新现有支付密码
-		userSecurity.PayPasswordHash = sql.NullString{String: in.Password, Valid: true}
+		userSecurity.PayPasswordHash = sql.NullString{String: payPasswordHash, Valid: true}
 		userSecurity.UpdateTimes = now
 
 		err = l.svcCtx.UserSecurityModel.Update(l.ctx, userSecurity)
@@ -74,7 +81,7 @@ func (l *SetPayPasswordLogic) SetPayPassword(in *user.SetPayPasswordReq) (*user.
 			Id:              l.svcCtx.Node.Generate().Int64(),
 			TenantId:        tuser.TenantId,
 			UserId:          userId,
-			PayPasswordHash: sql.NullString{String: in.Password, Valid: true},
+			PayPasswordHash: sql.NullString{String: payPasswordHash, Valid: true},
 			CreateTimes:     now,
 			UpdateTimes:     now,
 		}

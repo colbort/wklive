@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import QRCode from 'qrcode'
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { getTenantCode } from '@/api/http'
@@ -16,6 +16,7 @@ import RotateCaptcha from '@/components/auth/RotateCaptcha.vue'
 const REGISTER_TYPE_PHONE = 2
 const REGISTER_TYPE_EMAIL = 3
 type IdentityFileKey = 'front' | 'back' | 'handheld'
+type CodeInputKind = 'email' | 'google'
 
 const router = useRouter()
 const step = ref(1)
@@ -27,6 +28,7 @@ const inviteCode = ref('')
 const agreed = ref(true)
 const payPassword = ref('')
 const emailCode = ref<string[]>(Array(6).fill(''))
+const emailCodeInputs = ref<HTMLInputElement[]>([])
 const identityName = ref('')
 const identityNo = ref('')
 const identityFiles = ref({
@@ -37,6 +39,7 @@ const identityFiles = ref({
 const googleSecret = ref('')
 const googleQr = ref('')
 const googleCode = ref<string[]>(Array(6).fill(''))
+const googleCodeInputs = ref<HTMLInputElement[]>([])
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
 const showPayPassword = ref(false)
@@ -92,12 +95,87 @@ function skipStep() {
   router.push('/profile')
 }
 
-function setCodeDigit(target: string[], index: number, value: string) {
-  target[index] = value.replace(/\D/g, '').slice(0, 1)
+function getCodeState(kind: CodeInputKind) {
+  return kind === 'email'
+    ? { code: emailCode.value, inputs: emailCodeInputs.value }
+    : { code: googleCode.value, inputs: googleCodeInputs.value }
 }
 
-function setCodeInput(target: string[], index: number, event: Event) {
-  setCodeDigit(target, index, (event.target as HTMLInputElement).value)
+function setCodeInputRef(kind: CodeInputKind, element: unknown, index: number) {
+  if (!(element instanceof HTMLInputElement)) return
+  getCodeState(kind).inputs[index] = element
+}
+
+function focusCodeInput(kind: CodeInputKind, index: number) {
+  const { code, inputs } = getCodeState(kind)
+  const target = inputs[Math.max(0, Math.min(index, code.length - 1))]
+  if (!target) return
+  nextTick(() => {
+    target.focus()
+    target.select()
+  })
+}
+
+function applyCodeDigits(kind: CodeInputKind, index: number, value: string) {
+  const { code } = getCodeState(kind)
+  const digits = value.replace(/\D/g, '').slice(0, code.length - index)
+  if (!digits) {
+    code[index] = ''
+    return
+  }
+
+  digits.split('').forEach((digit, offset) => {
+    code[index + offset] = digit
+  })
+
+  focusCodeInput(kind, Math.min(index + digits.length, code.length - 1))
+}
+
+function handleCodeInput(kind: CodeInputKind, index: number, event: Event) {
+  applyCodeDigits(kind, index, (event.target as HTMLInputElement).value)
+}
+
+function selectCodeInput(event: FocusEvent) {
+  const target = event.target as HTMLInputElement
+  target.select()
+}
+
+function handleCodeKeydown(kind: CodeInputKind, index: number, event: KeyboardEvent) {
+  const { code } = getCodeState(kind)
+  if (event.key === 'Backspace') {
+    event.preventDefault()
+    if (code[index]) {
+      code[index] = ''
+      return
+    }
+    if (index > 0) {
+      code[index - 1] = ''
+      focusCodeInput(kind, index - 1)
+    }
+    return
+  }
+
+  if (event.key === 'Delete') {
+    event.preventDefault()
+    code[index] = ''
+    return
+  }
+
+  if (event.key === 'ArrowLeft' && index > 0) {
+    event.preventDefault()
+    focusCodeInput(kind, index - 1)
+    return
+  }
+
+  if (event.key === 'ArrowRight' && index < code.length - 1) {
+    event.preventDefault()
+    focusCodeInput(kind, index + 1)
+  }
+}
+
+function handleCodePaste(kind: CodeInputKind, index: number, event: ClipboardEvent) {
+  event.preventDefault()
+  applyCodeDigits(kind, index, event.clipboardData?.getData('text') || '')
 }
 
 async function continueStep() {
@@ -109,6 +187,7 @@ async function continueStep() {
   } else if (step.value === 3) {
     if (codeValue.value.length !== 6) {
       errorMessage.value = '请输入6位数代码'
+      focusCodeInput('email', emailCode.value.findIndex((digit) => !digit))
       return
     }
     step.value = 4
@@ -243,6 +322,7 @@ async function loadGoogle2FA() {
 async function submitGoogle2FA() {
   if (googleCodeValue.value.length !== 6) {
     errorMessage.value = '请输入谷歌验证码'
+    focusCodeInput('google', googleCode.value.findIndex((digit) => !digit))
     return
   }
   submitting.value = true
@@ -389,10 +469,15 @@ function markUpload(type: IdentityFileKey) {
           <input
             v-for="(_, index) in emailCode"
             :key="index"
+            :ref="(element) => setCodeInputRef('email', element, index)"
             :value="emailCode[index]"
             inputmode="numeric"
+            autocomplete="one-time-code"
             maxlength="1"
-            @input="setCodeInput(emailCode, index, $event)"
+            @focus="selectCodeInput"
+            @input="handleCodeInput('email', index, $event)"
+            @keydown="handleCodeKeydown('email', index, $event)"
+            @paste="handleCodePaste('email', index, $event)"
           />
         </div>
       </section>
@@ -450,10 +535,15 @@ function markUpload(type: IdentityFileKey) {
           <input
             v-for="(_, index) in googleCode"
             :key="index"
+            :ref="(element) => setCodeInputRef('google', element, index)"
             :value="googleCode[index]"
             inputmode="numeric"
+            autocomplete="one-time-code"
             maxlength="1"
-            @input="setCodeInput(googleCode, index, $event)"
+            @focus="selectCodeInput"
+            @input="handleCodeInput('google', index, $event)"
+            @keydown="handleCodeKeydown('google', index, $event)"
+            @paste="handleCodePaste('google', index, $event)"
           />
         </div>
       </section>

@@ -83,6 +83,12 @@ func (s *UserAppServer) SubmitIdentity(ctx context.Context, in *user.SubmitIdent
 	return l.SubmitIdentity(in)
 }
 
+// 修改实名认证信息
+func (s *UserAppServer) UpdateIdentity(ctx context.Context, in *user.UpdateIdentityReq) (*user.UpdateIdentityResp, error) {
+	l := logic.NewUpdateIdentityLogic(ctx, s.svcCtx)
+	return l.UpdateIdentity(in)
+}
+
 // 安全设置相关接口
 func (s *UserAppServer) GetSecurity(ctx context.Context, in *user.GetSecurityReq) (*user.GetSecurityResp, error) {
 	l := logic.NewGetSecurityLogic(ctx, s.svcCtx)

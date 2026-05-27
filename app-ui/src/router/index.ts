@@ -4,14 +4,17 @@ import AppShell from '@/layout/AppShell.vue'
 import HomeView from '@/views/HomeView.vue'
 import MarketsView from '@/views/MarketsView.vue'
 import TradesView from '@/views/TradesView.vue'
-import AssetsView from '@/views/AssetsView.vue'
-import AssetRechargeView from '@/views/AssetRechargeView.vue'
-import AssetTransferView from '@/views/AssetTransferView.vue'
-import AssetWithdrawView from '@/views/AssetWithdrawView.vue'
-import AuthForgotPasswordView from '@/views/AuthForgotPasswordView.vue'
-import AuthLoginView from '@/views/AuthLoginView.vue'
-import AuthRegisterView from '@/views/AuthRegisterView.vue'
-import ProfileView from '@/views/ProfileView.vue'
+import AssetRechargeView from '@/views/assets/RechargeView.vue'
+import AssetsView from '@/views/assets/AssetsView.vue'
+import AssetTransferView from '@/views/assets/TransferView.vue'
+import AssetWithdrawView from '@/views/assets/WithdrawView.vue'
+import AuthForgotPasswordView from '@/views/auth/ForgotPasswordView.vue'
+import AuthLoginView from '@/views/auth/LoginView.vue'
+import AuthRegisterView from '@/views/auth/RegisterView.vue'
+import BindAccountView from '@/views/profile/BindAccountView.vue'
+import ChangeSecurityPasswordView from '@/views/profile/ChangeSecurityPasswordView.vue'
+import ProfileView from '@/views/profile/ProfileView.vue'
+import SecuritySettingsView from '@/views/profile/SecuritySettingsView.vue'
 
 export const router = createRouter({
   history: createWebHistory(import.meta.env.VITE_ROUTER_BASE || '/'),
@@ -62,6 +65,36 @@ export const router = createRouter({
           meta: { title: '划转', hideTabbar: true },
         },
         { path: 'profile', name: 'profile', component: ProfileView, meta: { title: '我的' } },
+        {
+          path: 'profile/security',
+          name: 'profile-security',
+          component: SecuritySettingsView,
+          meta: { title: '安全设置', hideTabbar: true },
+        },
+        {
+          path: 'profile/security/login-password',
+          name: 'security-login-password',
+          component: ChangeSecurityPasswordView,
+          meta: { title: '修改登录密码', hideTabbar: true },
+        },
+        {
+          path: 'profile/security/pay-password',
+          name: 'security-pay-password',
+          component: ChangeSecurityPasswordView,
+          meta: { title: '修改交易密码', hideTabbar: true },
+        },
+        {
+          path: 'profile/security/bind-phone',
+          name: 'security-bind-phone',
+          component: BindAccountView,
+          meta: { title: '手机绑定', hideTabbar: true },
+        },
+        {
+          path: 'profile/security/bind-email',
+          name: 'security-bind-email',
+          component: BindAccountView,
+          meta: { title: '邮箱绑定', hideTabbar: true },
+        },
       ],
     },
   ],

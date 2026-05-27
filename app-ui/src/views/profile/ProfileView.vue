@@ -4,7 +4,8 @@ import { useRouter } from 'vue-router'
 
 import { getAccessToken } from '@/api/http'
 import { apiGetProfile, apiLogout } from '@/api/userPrivate'
-import { apiGuestLogin } from '@/api/userPublic'
+import { apiGetUserOptions, apiGuestLogin } from '@/api/userPublic'
+import { useOptions } from '@/composables/useOptions'
 import { useTenantStore } from '@/stores/tenant'
 import type { UserProfile } from '@/types/user'
 
@@ -37,9 +38,35 @@ const loggingGuest = ref(false)
 const guestLoginError = ref('')
 const tenantStore = useTenantStore()
 const router = useRouter()
+const userOptions = useOptions(apiGetUserOptions)
 
-const menuItems = computed(() => (isLoggedIn.value ? userMenuItems : guestMenuItems))
 const userBase = computed(() => profile.value?.base ?? null)
+const userIdentity = computed(() => profile.value?.identity ?? null)
+const verifyStatusOptions = computed(() => userOptions.getGroup('verifyStatus'))
+const pendingVerifyStatus = computed(
+  () => verifyStatusOptions.value.find((item) => item.code === 'VERIFY_STATUS_PENDING')?.value,
+)
+const approvedVerifyStatus = computed(
+  () => verifyStatusOptions.value.find((item) => item.code === 'VERIFY_STATUS_APPROVED')?.value,
+)
+const shouldShowIdentityEntry = computed(
+  () =>
+    isLoggedIn.value &&
+    Boolean(profile.value) &&
+    verifyStatusOptions.value.length > 0 &&
+    userIdentity.value?.verifyStatus !== pendingVerifyStatus.value &&
+    userIdentity.value?.verifyStatus !== approvedVerifyStatus.value,
+)
+const menuItems = computed(() => {
+  if (!isLoggedIn.value) return guestMenuItems
+  if (!shouldShowIdentityEntry.value) return userMenuItems
+
+  return [
+    userMenuItems[0],
+    { key: 'identity', label: '实名认证', icon: '证' },
+    ...userMenuItems.slice(1),
+  ]
+})
 const displayName = computed(
   () => userBase.value?.nickname || userBase.value?.username || 'GUEST-6721',
 )
@@ -94,6 +121,11 @@ async function handleGuestLogin() {
 }
 
 async function handleMenuClick(key: string) {
+  if (key === 'security') {
+    router.push('/profile/security')
+    return
+  }
+
   if (key !== 'logout') return
 
   try {
@@ -169,6 +201,7 @@ function goLogin() {
             'profile-menu__icon--info': item.icon === 'i',
             'profile-menu__icon--shield': item.icon === '盾',
             'profile-menu__icon--bank': item.icon === '▭',
+            'profile-menu__icon--identity': item.icon === '证',
           }"
         >
           {{ item.icon }}
@@ -185,10 +218,10 @@ function goLogin() {
 <style scoped>
 .profile-page {
   width: 100%;
-  max-width: 760px;
+  max-width: 680px;
   min-height: 100%;
   margin: 0 auto;
-  padding: 22px 28px calc(118px + env(safe-area-inset-bottom));
+  padding: 10px 24px calc(88px + env(safe-area-inset-bottom));
   overflow-x: hidden;
   background: #0b0c15;
   color: #f7f8fb;
@@ -201,39 +234,39 @@ function goLogin() {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 54px;
-  margin: -22px -28px 42px;
-  padding: 22px 28px 10px;
+  min-height: 36px;
+  margin: -10px -24px 20px;
+  padding: 10px 24px 6px;
   background: #0b0c15;
 }
 
 .profile-header h1 {
   margin: 0;
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 500;
   letter-spacing: 0;
 }
 
 .profile-hero {
   display: grid;
-  gap: 34px;
-  margin-bottom: 60px;
+  gap: 24px;
+  margin-bottom: 38px;
 }
 
 .profile-user {
   display: flex;
   align-items: center;
-  gap: 24px;
-  min-height: 96px;
-  margin: 22px 0 54px;
+  gap: 16px;
+  min-height: 56px;
+  margin: 2px 6px 26px;
 }
 
 .profile-avatar {
   display: grid;
   place-items: center;
   flex: none;
-  width: 74px;
-  height: 74px;
+  width: 54px;
+  height: 54px;
   overflow: hidden;
   border-radius: 999px;
   background:
@@ -241,7 +274,7 @@ function goLogin() {
     radial-gradient(circle at 34% 20%, #14151d 0 16%, transparent 17%),
     radial-gradient(circle at 64% 20%, #14151d 0 16%, transparent 17%),
     radial-gradient(circle at 50% 78%, #43c35d 0 34%, transparent 35%), #9ac291;
-  border: 6px solid #7ea97b;
+  border: 4px solid #7ea97b;
 }
 
 .profile-avatar img {
@@ -260,10 +293,10 @@ function goLogin() {
 }
 
 .profile-user__info h2 {
-  margin: 0 0 12px;
+  margin: 0 0 5px;
   overflow: hidden;
   color: #fff;
-  font-size: 26px;
+  font-size: 18px;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-overflow: ellipsis;
@@ -273,7 +306,7 @@ function goLogin() {
 .profile-user__info p {
   margin: 0;
   color: #9396a1;
-  font-size: 19px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.04em;
 }
@@ -287,7 +320,7 @@ function goLogin() {
 
 .profile-hero h2 {
   margin: 0 0 12px;
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
   line-height: 1.15;
 }
@@ -295,7 +328,7 @@ function goLogin() {
 .profile-hero p {
   margin: 0;
   color: #9b9daa;
-  font-size: 20px;
+  font-size: 17px;
   font-weight: 700;
 }
 
@@ -318,10 +351,10 @@ function goLogin() {
 .profile-demo {
   display: inline-flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   flex: none;
   color: #04c704;
-  font-size: 19px;
+  font-size: 16px;
   font-weight: 500;
 }
 
@@ -342,13 +375,13 @@ function goLogin() {
 .profile-actions {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 26px;
+  gap: 18px;
 }
 
 .profile-actions button {
-  min-height: 78px;
+  min-height: 52px;
   border-radius: 999px;
-  font-size: 25px;
+  font-size: 17px;
   font-weight: 700;
 }
 
@@ -362,17 +395,17 @@ function goLogin() {
 
 .profile-menu {
   display: grid;
-  gap: 20px;
+  gap: 10px;
 }
 
 .profile-menu__item {
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr) auto auto 18px;
+  grid-template-columns: 30px minmax(0, 1fr) auto auto 11px;
   align-items: center;
-  gap: 16px;
-  min-height: 86px;
-  padding: 0 28px;
-  border-radius: 28px;
+  gap: 10px;
+  min-height: 54px;
+  padding: 0 18px;
+  border-radius: 17px;
   background: #1b1d27;
   text-align: left;
 }
@@ -380,17 +413,17 @@ function goLogin() {
 .profile-menu__icon {
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
+  width: 24px;
+  height: 24px;
   color: #fff;
-  font-size: 28px;
+  font-size: 18px;
   line-height: 1;
 }
 
 .profile-menu__icon--info {
-  border: 3px solid currentColor;
+  border: 2px solid currentColor;
   border-radius: 999px;
-  font-size: 22px;
+  font-size: 15px;
   font-weight: 700;
   font-family: Georgia, serif;
 }
@@ -421,15 +454,46 @@ function goLogin() {
   box-shadow: 0 7px 0 #fff;
 }
 
-.profile-menu__icon--shield {
-  width: 34px;
-  height: 34px;
+.profile-menu__icon--identity {
+  position: relative;
   color: transparent;
-  background: linear-gradient(135deg, transparent 42%, #fff 43% 52%, transparent 53%) center / 18px
-    18px no-repeat;
+}
+
+.profile-menu__icon--identity::before,
+.profile-menu__icon--identity::after {
+  position: absolute;
+  content: '';
+}
+
+.profile-menu__icon--identity::before {
+  inset: 4px 1px;
+  border: 2px solid #fff;
+  border-radius: 4px;
+}
+
+.profile-menu__icon--identity::after {
+  top: 11px;
+  left: 7px;
+  width: 8px;
+  height: 8px;
+  border: 2px solid #fff;
+  border-radius: 999px;
+  box-shadow:
+    14px 0 0 -1px #fff,
+    14px 8px 0 -1px #fff,
+    0 13px 0 2px #1b1d27,
+    0 13px 0 4px #fff;
+}
+
+.profile-menu__icon--shield {
+  width: 24px;
+  height: 24px;
+  color: transparent;
+  background: linear-gradient(135deg, transparent 42%, #fff 43% 52%, transparent 53%) center / 15px
+    15px no-repeat;
   clip-path: polygon(50% 4%, 86% 18%, 86% 52%, 50% 96%, 14% 52%, 14% 18%);
-  outline: 3px solid #fff;
-  outline-offset: -6px;
+  outline: 2px solid #fff;
+  outline-offset: -5px;
 }
 
 .profile-menu__label {
@@ -437,18 +501,18 @@ function goLogin() {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 23px;
+  font-size: 17px;
   font-weight: 500;
 }
 
 .profile-menu__flag {
-  font-size: 30px;
+  font-size: 22px;
   line-height: 1;
 }
 
 .profile-menu__value {
   color: #f7f8fb;
-  font-size: 21px;
+  font-size: 16px;
   white-space: nowrap;
 }
 
@@ -460,37 +524,41 @@ function goLogin() {
 
 @media (max-width: 520px) {
   .profile-page {
-    padding: 18px 16px calc(112px + env(safe-area-inset-bottom));
+    padding: 10px 16px calc(88px + env(safe-area-inset-bottom));
   }
 
   .profile-header {
-    margin: -18px -16px 38px;
-    padding: 18px 16px 10px;
+    margin: -10px -16px 18px;
+    padding: 10px 16px 6px;
+  }
+
+  .profile-header h1 {
+    font-size: 21px;
   }
 
   .profile-hero {
-    gap: 30px;
-    margin-bottom: 52px;
+    gap: 24px;
+    margin-bottom: 38px;
   }
 
   .profile-user {
-    gap: 18px;
-    margin: 16px 0 46px;
+    gap: 14px;
+    margin: 2px 6px 24px;
   }
 
   .profile-avatar {
-    width: 64px;
-    height: 64px;
-    border-width: 5px;
+    width: 50px;
+    height: 50px;
+    border-width: 4px;
   }
 
   .profile-user__info h2 {
-    margin-bottom: 8px;
-    font-size: 22px;
+    margin-bottom: 5px;
+    font-size: 17px;
   }
 
   .profile-user__info p {
-    font-size: 17px;
+    font-size: 13px;
   }
 
   .profile-hero__intro {
@@ -498,16 +566,16 @@ function goLogin() {
   }
 
   .profile-hero h2 {
-    font-size: 24px;
+    font-size: 22px;
   }
 
   .profile-hero p {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .profile-demo {
-    gap: 10px;
-    font-size: 17px;
+    gap: 8px;
+    font-size: 15px;
   }
 
   .profile-actions {
@@ -515,40 +583,40 @@ function goLogin() {
   }
 
   .profile-actions button {
-    min-height: 60px;
-    font-size: 21px;
+    min-height: 50px;
+    font-size: 16px;
   }
 
   .profile-menu {
-    gap: 14px;
+    gap: 10px;
   }
 
   .profile-menu__item {
-    grid-template-columns: 38px minmax(0, 1fr) auto auto 14px;
-    gap: 10px;
-    min-height: 72px;
-    padding: 0 18px;
-    border-radius: 22px;
+    grid-template-columns: 28px minmax(0, 1fr) auto auto 10px;
+    gap: 9px;
+    min-height: 52px;
+    padding: 0 16px;
+    border-radius: 16px;
   }
 
   .profile-menu__icon {
-    width: 30px;
-    height: 30px;
-    font-size: 24px;
+    width: 23px;
+    height: 23px;
+    font-size: 17px;
   }
 
   .profile-menu__icon--info {
     border-width: 2px;
-    font-size: 19px;
+    font-size: 15px;
   }
 
   .profile-menu__icon--shield {
-    width: 30px;
-    height: 30px;
+    width: 23px;
+    height: 23px;
   }
 
   .profile-menu__label {
-    font-size: 20px;
+    font-size: 16px;
   }
 
   .profile-menu__flag {

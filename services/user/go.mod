@@ -5,6 +5,7 @@ go 1.25.4
 require (
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/zeromicro/go-zero v1.10.1
+	golang.org/x/crypto v0.48.0
 	google.golang.org/grpc v1.79.3
 	google.golang.org/protobuf v1.36.11
 	wklive/common v0.0.0-00010101000000-000000000000

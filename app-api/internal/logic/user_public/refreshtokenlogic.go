@@ -44,6 +44,7 @@ func (l *RefreshTokenLogic) RefreshToken(req *types.RefreshTokenReq) (resp *type
 		Token: types.TokenInfo{
 			AccessToken:  result.Token.AccessToken,
 			RefreshToken: result.Token.RefreshToken,
+			ExpireTime:   result.Token.ExpireTime,
 		},
 	}, nil
 }

@@ -27,33 +27,42 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 	}
 }
 
-func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err error) {
+func (l *LoginLogic) Login(req *types.LoginReq) (*types.LoginResp, error) {
 	result, err := l.svcCtx.UserCli.Login(l.ctx, &user.LoginReq{
 		TenantCode: req.TenantCode,
 		LoginType:  user.LoginType(req.LoginType),
 		Account:    req.Account,
 		Password:   req.Password,
 		GoogleCode: req.GoogleCode,
-		LoginIp:    "",
+		LoginIp:    req.LoginIp,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	resp = &types.LoginResp{
-		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
-		},
-		UserId: result.UserId,
-		Token: types.TokenInfo{
-			AccessToken:  result.Token.AccessToken,
-			RefreshToken: result.Token.RefreshToken,
-		},
-		Profile: types.UserProfile{
-			Identity: types.UserIdentity{},
-			Security: types.UserSecurity{},
-		},
+	if result.Base.Code != 200 {
+		return &types.LoginResp{
+			RespBase: types.RespBase{
+				Code: result.Base.Code,
+				Msg:  result.Base.Msg,
+			},
+		}, nil
+	} else {
+		return &types.LoginResp{
+			RespBase: types.RespBase{
+				Code: result.Base.Code,
+				Msg:  result.Base.Msg,
+			},
+			UserId: result.UserId,
+			Token: types.TokenInfo{
+				AccessToken:  result.Token.AccessToken,
+				RefreshToken: result.Token.RefreshToken,
+				ExpireTime:   result.Token.ExpireTime,
+			},
+			Profile: types.UserProfile{
+				Identity: types.UserIdentity{},
+				Security: types.UserSecurity{},
+			},
+		}, nil
 	}
-	return
 }

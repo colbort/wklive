@@ -16,6 +16,8 @@ import type {
   SetPayPasswordReq,
   SubmitIdentityReq,
   SubmitIdentityResp,
+  UpdateIdentityReq,
+  UpdateIdentityResp,
   UpdateBankReq,
   UpdateBankResp,
   UpdateProfileReq,
@@ -58,6 +60,10 @@ export function apiGetIdentity(): Promise<RespBase & GetIdentityResp> {
 
 export function apiSubmitIdentity(params: SubmitIdentityReq): Promise<RespBase & SubmitIdentityResp> {
   return http.post('/user/identity', params).then((res) => res.data)
+}
+
+export function apiUpdateIdentity(params: UpdateIdentityReq): Promise<RespBase & UpdateIdentityResp> {
+  return http.put('/user/identity', params).then((res) => res.data)
 }
 
 export function apiGetSecurity(): Promise<RespBase & GetSecurityResp> {

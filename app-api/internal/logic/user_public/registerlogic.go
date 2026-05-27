@@ -28,7 +28,7 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 }
 
 func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterResp, err error) {
-	reuslt, err := l.svcCtx.UserCli.Register(l.ctx, &user.RegisterReq{
+	result, err := l.svcCtx.UserCli.Register(l.ctx, &user.RegisterReq{
 		TenantCode:      req.TenantCode,
 		RegisterType:    user.RegisterType(req.RegisterType),
 		Username:        req.Username,
@@ -38,7 +38,7 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRe
 		ConfirmPassword: req.ConfirmPassword,
 		InviteCode:      req.InviteCode,
 		Source:          req.Source,
-		RegisterIp:      "",
+		RegisterIp:      req.RegisterIp,
 	})
 	if err != nil {
 		return nil, err
@@ -46,13 +46,14 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRe
 
 	resp = &types.RegisterResp{
 		RespBase: types.RespBase{
-			Code: reuslt.Base.Code,
-			Msg:  reuslt.Base.Msg,
+			Code: result.Base.Code,
+			Msg:  result.Base.Msg,
 		},
-		UserId: reuslt.UserId,
+		UserId: result.UserId,
 		Token: types.TokenInfo{
-			AccessToken:  reuslt.Token.AccessToken,
-			RefreshToken: reuslt.Token.RefreshToken,
+			AccessToken:  result.Token.AccessToken,
+			RefreshToken: result.Token.RefreshToken,
+			ExpireTime:   result.Token.ExpireTime,
 		},
 		Profile: types.UserProfile{
 			Identity: types.UserIdentity{},

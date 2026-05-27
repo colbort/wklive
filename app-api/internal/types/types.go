@@ -1668,7 +1668,6 @@ type SubmitIdentityReq struct {
 	FrontImage    string `json:"frontImage,optional"`
 	BackImage     string `json:"backImage,optional"`
 	HandheldImage string `json:"handheldImage,optional"`
-	KycLevel      int64  `json:"kycLevel,optional"`
 }
 
 type SubmitIdentityResp struct {
@@ -1846,6 +1845,23 @@ type UpdateBankReq struct {
 type UpdateBankResp struct {
 	RespBase
 	Bank UserBank `json:"bank"`
+}
+
+type UpdateIdentityReq struct {
+	Phone       string `json:"phone,optional"`
+	Email       string `json:"email,optional"`
+	RealName    string `json:"realName,optional"`
+	Gender      int64  `json:"gender,optional"`
+	Birthday    int64  `json:"birthday,optional"`
+	CountryCode string `json:"countryCode,optional"`
+	Province    string `json:"province,optional"`
+	City        string `json:"city,optional"`
+	Address     string `json:"address,optional"`
+}
+
+type UpdateIdentityResp struct {
+	RespBase
+	Data UserIdentity `json:"data"`
 }
 
 type UpdateProfileReq struct {

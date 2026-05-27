@@ -538,6 +538,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: user_private.SubmitIdentityHandler(serverCtx),
 				},
 				{
+					Method:  http.MethodPut,
+					Path:    "/identity",
+					Handler: user_private.UpdateIdentityHandler(serverCtx),
+				},
+				{
 					Method:  http.MethodPost,
 					Path:    "/logout",
 					Handler: user_private.LogoutHandler(serverCtx),

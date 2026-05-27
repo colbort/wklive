@@ -29,6 +29,7 @@ const (
 	UserApp_ChangeLoginPassword_FullMethodName = "/user.UserApp/ChangeLoginPassword"
 	UserApp_GetIdentity_FullMethodName         = "/user.UserApp/GetIdentity"
 	UserApp_SubmitIdentity_FullMethodName      = "/user.UserApp/SubmitIdentity"
+	UserApp_UpdateIdentity_FullMethodName      = "/user.UserApp/UpdateIdentity"
 	UserApp_GetSecurity_FullMethodName         = "/user.UserApp/GetSecurity"
 	UserApp_SetPayPassword_FullMethodName      = "/user.UserApp/SetPayPassword"
 	UserApp_ChangePayPassword_FullMethodName   = "/user.UserApp/ChangePayPassword"
@@ -68,6 +69,8 @@ type UserAppClient interface {
 	GetIdentity(ctx context.Context, in *GetIdentityReq, opts ...grpc.CallOption) (*GetIdentityResp, error)
 	// 提交实名认证信息
 	SubmitIdentity(ctx context.Context, in *SubmitIdentityReq, opts ...grpc.CallOption) (*SubmitIdentityResp, error)
+	// 修改实名认证信息
+	UpdateIdentity(ctx context.Context, in *UpdateIdentityReq, opts ...grpc.CallOption) (*UpdateIdentityResp, error)
 	// 安全设置相关接口
 	GetSecurity(ctx context.Context, in *GetSecurityReq, opts ...grpc.CallOption) (*GetSecurityResp, error)
 	// 设置支付密码
@@ -194,6 +197,16 @@ func (c *userAppClient) SubmitIdentity(ctx context.Context, in *SubmitIdentityRe
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SubmitIdentityResp)
 	err := c.cc.Invoke(ctx, UserApp_SubmitIdentity_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userAppClient) UpdateIdentity(ctx context.Context, in *UpdateIdentityReq, opts ...grpc.CallOption) (*UpdateIdentityResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateIdentityResp)
+	err := c.cc.Invoke(ctx, UserApp_UpdateIdentity_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -336,6 +349,8 @@ type UserAppServer interface {
 	GetIdentity(context.Context, *GetIdentityReq) (*GetIdentityResp, error)
 	// 提交实名认证信息
 	SubmitIdentity(context.Context, *SubmitIdentityReq) (*SubmitIdentityResp, error)
+	// 修改实名认证信息
+	UpdateIdentity(context.Context, *UpdateIdentityReq) (*UpdateIdentityResp, error)
 	// 安全设置相关接口
 	GetSecurity(context.Context, *GetSecurityReq) (*GetSecurityResp, error)
 	// 设置支付密码
@@ -397,6 +412,9 @@ func (UnimplementedUserAppServer) GetIdentity(context.Context, *GetIdentityReq) 
 }
 func (UnimplementedUserAppServer) SubmitIdentity(context.Context, *SubmitIdentityReq) (*SubmitIdentityResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SubmitIdentity not implemented")
+}
+func (UnimplementedUserAppServer) UpdateIdentity(context.Context, *UpdateIdentityReq) (*UpdateIdentityResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateIdentity not implemented")
 }
 func (UnimplementedUserAppServer) GetSecurity(context.Context, *GetSecurityReq) (*GetSecurityResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSecurity not implemented")
@@ -628,6 +646,24 @@ func _UserApp_SubmitIdentity_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserAppServer).SubmitIdentity(ctx, req.(*SubmitIdentityReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserApp_UpdateIdentity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateIdentityReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserAppServer).UpdateIdentity(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserApp_UpdateIdentity_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserAppServer).UpdateIdentity(ctx, req.(*UpdateIdentityReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -876,6 +912,10 @@ var UserApp_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SubmitIdentity",
 			Handler:    _UserApp_SubmitIdentity_Handler,
+		},
+		{
+			MethodName: "UpdateIdentity",
+			Handler:    _UserApp_UpdateIdentity_Handler,
 		},
 		{
 			MethodName: "GetSecurity",

@@ -2,11 +2,9 @@ package logic
 
 import (
 	"context"
-	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
-	"wklive/proto/common"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 
@@ -30,7 +28,7 @@ func NewRefreshTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Refr
 // 刷新Token
 func (l *RefreshTokenLogic) RefreshToken(in *user.RefreshTokenReq) (*user.RefreshTokenResp, error) {
 	// 解析旧token获取用户信息
-	claims, err := utils.ParseToken(in.RefreshToken, l.svcCtx.Config.Jwt.AccessSecret)
+	claims, err := utils.ParseToken(l.svcCtx.Config.Jwt.AccessSecret, in.RefreshToken)
 	if err != nil {
 		return &user.RefreshTokenResp{
 			Base: helper.GetErrResp(401, i18n.Translate(i18n.TokenExpiredOrInvalid, l.ctx)),
@@ -55,27 +53,10 @@ func (l *RefreshTokenLogic) RefreshToken(in *user.RefreshTokenReq) (*user.Refres
 		}, nil
 	}
 
-	// 生成新的accessToken
-	accessToken, err := utils.GenToken(
+	token, err := buildTokenInfo(
 		l.svcCtx.Config.Jwt.AccessSecret,
-		tuser.Id,
-		tuser.Username,
-		claims.Expand,
-		"",
-		time.Duration(l.svcCtx.Config.Jwt.AccessExpire)*time.Second,
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	// 生成新的refreshToken
-	refreshToken, err := utils.GenToken(
-		l.svcCtx.Config.Jwt.AccessSecret,
-		tuser.Id,
-		tuser.Username,
-		claims.Expand,
-		"",
-		time.Duration(l.svcCtx.Config.Jwt.AccessExpire)*time.Second,
+		l.svcCtx.Config.Jwt.AccessExpire,
+		tuser.Id, tuser.Username, claims.Expand,
 	)
 	if err != nil {
 		return nil, err
@@ -84,10 +65,7 @@ func (l *RefreshTokenLogic) RefreshToken(in *user.RefreshTokenReq) (*user.Refres
 	l.Logger.Infof("用户 %d 刷新Token成功", tuser.Id)
 
 	return &user.RefreshTokenResp{
-		Base: helper.OkResp(),
-		Token: &common.TokenInfo{
-			AccessToken:  accessToken,
-			RefreshToken: refreshToken,
-		},
+		Base:  helper.OkResp(),
+		Token: token,
 	}, nil
 }

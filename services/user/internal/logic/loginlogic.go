@@ -2,19 +2,19 @@ package logic
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"errors"
-	"time"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
-	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/proto/user"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type LoginLogic struct {
@@ -88,8 +88,28 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 		}, nil
 	}
 
-	// TODO: verify password
-	// TODO: verify google 2FA if enabled
+	if bcrypt.CompareHashAndPassword([]byte(tuser.PasswordHash), []byte(in.Password)) != nil {
+		return &user.LoginResp{
+			Base: helper.GetErrResp(401, i18n.Translate(i18n.UserNotFoundOrPasswordIncorrect, l.ctx)),
+		}, nil
+	}
+
+	userSecurity, err := l.svcCtx.UserSecurityModel.FindOneByTenantIdUserId(l.ctx, tenant.Data.Id, tuser.Id)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
+	if userSecurity != nil && userSecurity.GoogleEnabled == 1 {
+		if in.GoogleCode == "" {
+			return &user.LoginResp{
+				Base: helper.GetErrResp(400, i18n.Translate(i18n.Google2FACodeRequired, l.ctx)),
+			}, nil
+		}
+		if !utils.VerifyGoogle2FACode(userSecurity.GoogleSecret.String, in.GoogleCode) {
+			return &user.LoginResp{
+				Base: helper.GetErrResp(400, i18n.Translate(i18n.Google2FACodeInvalid, l.ctx)),
+			}, nil
+		}
+	}
 
 	str := make(map[string]any, 0)
 	str["tid"] = tenant.Data.Id
@@ -97,31 +117,27 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 	if err != nil {
 		return nil, err
 	}
-	token, err := utils.GenToken(
+	token, err := buildTokenInfo(
 		l.svcCtx.Config.Jwt.AccessSecret,
-		tuser.Id,
-		tuser.Username,
-		string(expand),
-		"",
-		time.Duration(l.svcCtx.Config.Jwt.AccessExpire)*time.Second,
+		l.svcCtx.Config.Jwt.AccessExpire,
+		tuser.Id, tuser.Username, string(expand),
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	_ = l.svcCtx.UserModel.Update(l.ctx, &models.TUser{
-		Id:            tuser.Id,
-		LastLoginIp:   tuser.LastLoginIp,
-		LastLoginTime: utils.NowMillis(),
-		UpdateTimes:   utils.NowMillis(),
-	})
+	now := utils.NowMillis()
+	if in.LoginIp != "" {
+		tuser.LastLoginIp = sql.NullString{String: in.LoginIp, Valid: true}
+	}
+	tuser.LastLoginTime = now
+	tuser.UpdateTimes = now
+	_ = l.svcCtx.UserModel.Update(l.ctx, tuser)
 
 	return &user.LoginResp{
-		Base:   helper.OkResp(),
-		UserId: tuser.Id,
-		Token: &common.TokenInfo{
-			AccessToken: token,
-		},
-		Profile: toUserProfileProto(tuser, nil, nil),
+		Base:    helper.OkResp(),
+		UserId:  tuser.Id,
+		Token:   token,
+		Profile: toUserProfileProto(tuser, nil, userSecurity),
 	}, nil
 }

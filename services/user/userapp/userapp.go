@@ -48,6 +48,8 @@ type (
 	SubmitIdentityResp     = user.SubmitIdentityResp
 	UpdateBankReq          = user.UpdateBankReq
 	UpdateBankResp         = user.UpdateBankResp
+	UpdateIdentityReq      = user.UpdateIdentityReq
+	UpdateIdentityResp     = user.UpdateIdentityResp
 	UpdateProfileReq       = user.UpdateProfileReq
 	UpdateProfileResp      = user.UpdateProfileResp
 
@@ -72,6 +74,8 @@ type (
 		GetIdentity(ctx context.Context, in *GetIdentityReq, opts ...grpc.CallOption) (*GetIdentityResp, error)
 		// 提交实名认证信息
 		SubmitIdentity(ctx context.Context, in *SubmitIdentityReq, opts ...grpc.CallOption) (*SubmitIdentityResp, error)
+		// 修改实名认证信息
+		UpdateIdentity(ctx context.Context, in *UpdateIdentityReq, opts ...grpc.CallOption) (*UpdateIdentityResp, error)
 		// 安全设置相关接口
 		GetSecurity(ctx context.Context, in *GetSecurityReq, opts ...grpc.CallOption) (*GetSecurityResp, error)
 		// 设置支付密码
@@ -165,6 +169,12 @@ func (m *defaultUserApp) GetIdentity(ctx context.Context, in *GetIdentityReq, op
 func (m *defaultUserApp) SubmitIdentity(ctx context.Context, in *SubmitIdentityReq, opts ...grpc.CallOption) (*SubmitIdentityResp, error) {
 	client := user.NewUserAppClient(m.cli.Conn())
 	return client.SubmitIdentity(ctx, in, opts...)
+}
+
+// 修改实名认证信息
+func (m *defaultUserApp) UpdateIdentity(ctx context.Context, in *UpdateIdentityReq, opts ...grpc.CallOption) (*UpdateIdentityResp, error) {
+	client := user.NewUserAppClient(m.cli.Conn())
+	return client.UpdateIdentity(ctx, in, opts...)
 }
 
 // 安全设置相关接口
