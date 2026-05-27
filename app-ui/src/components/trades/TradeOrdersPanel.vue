@@ -18,8 +18,9 @@ defineProps<{
 <style scoped>
 .trade-orders-panel__nav {
   display: flex;
-  gap: 28px;
-  padding: 22px 22px 0;
+  gap: 22px;
+  padding: 20px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 button {
@@ -29,8 +30,8 @@ button {
   background: transparent;
   color: #8f929d;
   font: inherit;
-  font-size: 18px;
-  font-weight: 500;
+  font-size: 17px;
+  font-weight: 700;
 }
 
 button.active {
@@ -50,14 +51,24 @@ button.active::after {
 
 p {
   display: grid;
-  min-height: 130px;
+  min-height: 88px;
   margin: 0;
   place-items: center;
   color: #8f929d;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 span {
   color: #02b904;
+}
+
+@media (max-width: 390px) {
+  .trade-orders-panel__nav {
+    gap: 18px;
+  }
+
+  button {
+    font-size: 15px;
+  }
 }
 </style>

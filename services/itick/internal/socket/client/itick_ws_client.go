@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
+	"math/rand"
 	"net/http"
 	"sort"
 	"strconv"
@@ -470,6 +472,8 @@ func (c *ItickWsClient) handleUpstreamEnvelope(ctx context.Context, env Upstream
 		bids := make([]*DepthLevel, 0)
 		_ = json.Unmarshal(d.A, &asks)
 		_ = json.Unmarshal(d.B, &bids)
+		asks = appendSyntheticDepthLevels(asks, true, 5)
+		bids = appendSyntheticDepthLevels(bids, false, 5)
 
 		payload := DepthPayload{
 			Asks: asks,
@@ -700,6 +704,93 @@ func (c *ItickWsClient) syncDesiredSubscriptions() error {
 	c.upstreamGroups = next
 	c.subMu.Unlock()
 	return nil
+}
+
+func appendSyntheticDepthLevels(levels []*DepthLevel, isAsk bool, count int) []*DepthLevel {
+	if count <= 0 {
+		return levels
+	}
+
+	valid := make([]*DepthLevel, 0, len(levels))
+	for _, level := range levels {
+		if level != nil && level.Price > 0 {
+			valid = append(valid, level)
+		}
+	}
+	if len(valid) == 0 {
+		return levels
+	}
+
+	prices := make([]float64, 0, len(valid))
+	totalVolume := 0.0
+	var maxPosition int64
+	for _, level := range valid {
+		prices = append(prices, level.Price)
+		if level.Volume > 0 {
+			totalVolume += level.Volume
+		}
+		if level.Position > maxPosition {
+			maxPosition = level.Position
+		}
+	}
+	sort.Float64s(prices)
+
+	step := depthPriceStep(prices)
+	avgVolume := totalVolume / float64(len(valid))
+	if avgVolume <= 0 {
+		avgVolume = 1
+	}
+
+	basePrice := prices[0]
+	direction := -1.0
+	if isAsk {
+		basePrice = prices[len(prices)-1]
+		direction = 1
+	}
+
+	out := append([]*DepthLevel{}, levels...)
+	for i := 1; i <= count; i++ {
+		priceOffset := step * float64(i) * (1 + rand.Float64()*0.35)
+		price := basePrice + direction*priceOffset
+		if price <= 0 {
+			continue
+		}
+		volume := avgVolume * (0.55 + rand.Float64()*0.9)
+		out = append(out, &DepthLevel{
+			Price:        roundDepthPrice(price),
+			Volume:       roundDepthVolume(volume),
+			Position:     maxPosition + int64(i),
+			OriginVolume: roundDepthVolume(volume),
+		})
+	}
+
+	return out
+}
+
+func depthPriceStep(prices []float64) float64 {
+	if len(prices) < 2 {
+		return math.Max(roundDepthPrice(prices[0]*0.0001), 0.01)
+	}
+
+	minStep := math.MaxFloat64
+	for i := 1; i < len(prices); i++ {
+		step := math.Abs(prices[i] - prices[i-1])
+		if step > 0 && step < minStep {
+			minStep = step
+		}
+	}
+	if minStep == math.MaxFloat64 || minStep <= 0 {
+		return math.Max(roundDepthPrice(prices[0]*0.0001), 0.01)
+	}
+	return minStep
+}
+
+func roundDepthPrice(value float64) float64 {
+	return math.Round(value*100) / 100
+}
+
+func roundDepthVolume(value float64) float64 {
+	return math.Round(value*1e5) / 1e5
 }
 
 func (c *ItickWsClient) buildSubscriptionGroups(items map[string]server.ClientMessage) (map[string]string, error) {

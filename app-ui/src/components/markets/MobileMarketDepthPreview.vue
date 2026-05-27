@@ -1,9 +1,29 @@
 <script setup lang='ts'>
-import type { ItickTenantProduct } from '@/types/itick'
+import { computed } from 'vue'
 
-defineProps<{
+import type { DepthLevel, DepthPayload, ItickTenantProduct } from '@/types/itick'
+
+const props = defineProps<{
   selectedProduct: ItickTenantProduct | null
+  depthSnapshot: DepthPayload | null
+  placeholderPrice: string
 }>()
+
+const askRows = computed(() => props.depthSnapshot?.asks.slice(0, 10) ?? [])
+const bidRows = computed(() => props.depthSnapshot?.bids.slice(0, 10) ?? [])
+const midPrice = computed(() => {
+  if (props.placeholderPrice && props.placeholderPrice !== '--') return props.placeholderPrice
+  return formatDepthNumber(bidRows.value[0]?.price ?? askRows.value[0]?.price)
+})
+
+function formatDepthNumber(value: number | undefined) {
+  if (!value || !Number.isFinite(value)) return '--'
+  return Number(value.toFixed(8)).toString()
+}
+
+function formatDepthVolume(level: DepthLevel) {
+  return formatDepthNumber(level.volume)
+}
 </script>
 
 <template>
@@ -12,16 +32,32 @@ defineProps<{
       <span>价格<br />(USDT)</span>
       <span>数量<br />({{ selectedProduct?.baseCoin || 'BTC' }})</span>
     </header>
-    <div class="asks">
-      <p v-for="price in ['76715.78', '76715.64', '76715.18', '76710.34', '76709.95', '76708.34']" :key="price">
-        <span>{{ price }}</span><strong>0.1658497455</strong>
-      </p>
+    <div class="depth-tools" aria-hidden="true">
+      <i class="depth-tools__bid" />
+      <i class="depth-tools__both" />
+      <i class="depth-tools__ask" />
     </div>
-    <div class="mid-price">76707.92 ↑</div>
-    <div class="bids">
-      <p v-for="price in ['76704.54', '76704.53', '76704.46', '76701.73', '76700.53']" :key="price">
-        <span>{{ price }}</span><strong>0.029772174</strong>
+    <div class="asks">
+      <p
+        v-for="level in askRows"
+        :key="`ask-${level.price}-${level.volume}`"
+      >
+        <span>{{ formatDepthNumber(level.price) }}</span><strong>{{ formatDepthVolume(level) }}</strong>
       </p>
+      <p v-if="!askRows.length" class="empty-row"><span>--</span><strong>--</strong></p>
+    </div>
+    <div class="mid-price">
+      <strong>{{ midPrice }} ↑</strong>
+      <span>{{ midPrice }}</span>
+    </div>
+    <div class="bids">
+      <p
+        v-for="level in bidRows"
+        :key="`bid-${level.price}-${level.volume}`"
+      >
+        <span>{{ formatDepthNumber(level.price) }}</span><strong>{{ formatDepthVolume(level) }}</strong>
+      </p>
+      <p v-if="!bidRows.length" class="empty-row"><span>--</span><strong>--</strong></p>
     </div>
   </aside>
 </template>
@@ -29,6 +65,7 @@ defineProps<{
 <style scoped>
 .order-book-preview {
   min-width: 0;
+  overflow: hidden;
 }
 
 .order-book-preview header,
@@ -39,19 +76,71 @@ defineProps<{
 }
 
 .order-book-preview header {
-  margin-bottom: 14px;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   color: #8f929d;
-  font-size: 14px;
+  font-size: 12px;
+  line-height: 1.15;
+  text-align: right;
+}
+
+.depth-tools {
+  display: flex;
+  gap: 9px;
+  height: 14px;
+  margin-bottom: 10px;
+}
+
+.depth-tools i {
+  display: block;
+  width: 14px;
+  height: 14px;
+  background:
+    linear-gradient(#13d383 0 0) 0 0 / 6px 6px no-repeat,
+    linear-gradient(#2f85ff 0 0) 8px 0 / 6px 6px no-repeat,
+    linear-gradient(#2f85ff 0 0) 0 8px / 6px 6px no-repeat,
+    linear-gradient(#13d383 0 0) 8px 8px / 6px 6px no-repeat;
+}
+
+.depth-tools__ask {
+  filter: hue-rotate(130deg) saturate(1.4);
 }
 
 .order-book-preview p {
-  margin: 0 0 8px;
-  font-size: 14px;
+  position: relative;
+  min-height: 22px;
+  padding: 1px 6px;
+  margin: 0;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 20px;
+}
+
+.order-book-preview p::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  width: 46%;
+  background: rgba(255, 68, 56, 0.14);
+  content: '';
+}
+
+.order-book-preview .empty-row {
+  color: #8f929d;
+}
+
+.order-book-preview .empty-row::after {
+  display: none;
 }
 
 .order-book-preview strong {
   color: #fff;
-  font-weight: 500;
+  font-weight: 700;
+  text-align: right;
 }
 
 .asks span {
@@ -63,9 +152,43 @@ defineProps<{
   color: #0cd977;
 }
 
+.bids p::after {
+  background: rgba(16, 210, 122, 0.14);
+}
+
 .mid-price {
-  margin: 16px 0;
-  font-size: 26px;
-  font-weight: 600;
+  display: grid;
+  gap: 1px;
+  margin: 10px 0 8px;
+  font-weight: 700;
+}
+
+.mid-price strong {
+  color: #10e08a;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.mid-price span {
+  color: #8f929d;
+  font-size: 13px;
+}
+
+@media (max-width: 390px) {
+  .order-book-preview header {
+    font-size: 11px;
+  }
+
+  .order-book-preview p {
+    min-height: 20px;
+    padding-right: 4px;
+    padding-left: 4px;
+    font-size: 11px;
+    line-height: 18px;
+  }
+
+  .mid-price strong {
+    font-size: 17px;
+  }
 }
 </style>

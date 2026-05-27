@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 
 import type { Interval } from '@/types/core'
 import type { DepthPayload, ItickTenantProduct, KlinePayload, QuotePayload, TickPayload } from '@/types/itick'
@@ -32,6 +32,13 @@ const swipeStartY = ref<number | null>(null)
 const switcherOpen = ref(false)
 const timeSheetOpen = ref(false)
 const activeDetailTab = ref<DetailTab>('market')
+const chartViewRef = ref<HTMLElement | null>(null)
+const detailTabsSentinelRef = ref<HTMLElement | null>(null)
+const detailTabsRef = ref<HTMLElement | null>(null)
+const detailTabsPinned = ref(false)
+let scrollContainer: HTMLElement | null = null
+let pinRaf = 0
+let detailTabsPinStart = 0
 
 const minuteIntervals = computed(() => props.intervals.filter((item) => /m$/i.test(item.name)))
 const majorIntervals = computed(() => props.intervals.filter((item) => !/m$/i.test(item.name)))
@@ -43,6 +50,18 @@ const selectedMinuteName = computed(() => {
 const selectedProduct = computed(() => {
   return props.products.find((item) => productKey(item) === props.selectedProductKey) ?? null
 })
+const selectedDisplaySymbol = computed(() => {
+  const product = selectedProduct.value
+  if (!product) return '--'
+  if (product.baseCoin && product.quoteCoin) return `${product.baseCoin}/${product.quoteCoin}`
+
+  const quote = product.quoteCoin || 'USDT'
+  if (product.symbol.toUpperCase().endsWith(quote.toUpperCase())) {
+    return `${product.symbol.slice(0, -quote.length)}/${quote}`
+  }
+
+  return product.symbol
+})
 const selectedPriceChange = computed(() => getChangeRate(props.selectedQuote))
 const selectedTrendClass = computed(() => trendClass(selectedPriceChange.value))
 const selectedChangeValue = computed(() => {
@@ -52,22 +71,31 @@ const selectedChangeValue = computed(() => {
 
 const chartCandles = computed(() => {
   const source = [...props.klineSnapshot].sort((left, right) => left.ts - right.ts).slice(-26)
-  const prices = source.flatMap((item) => [item.high, item.low]).filter((item) => item > 0)
-  const max = Math.max(...prices, 1)
-  const min = Math.min(...prices, max * 0.98)
-  const range = Math.max(max - min, max * 0.01)
+  const prices = source.flatMap((item) => [item.open, item.close]).filter((item) => item > 0)
+  const rawMax = Math.max(...prices, 1)
+  const rawMin = Math.min(...prices, rawMax * 0.98)
+  const padding = Math.max((rawMax - rawMin) * 0.08, rawMax * 0.00002)
+  const max = rawMax + padding
+  const min = Math.max(0, rawMin - padding)
+  const range = Math.max(max - min, rawMax * 0.00004)
+  const plotTop = 10
+  const plotHeight = 210
+  const toY = (value: number) => {
+    const y = plotTop + ((max - value) / range) * plotHeight
+    return Math.min(plotTop + plotHeight, Math.max(plotTop, y))
+  }
 
   return source.map((item, index) => {
-    const high = 12 + ((max - item.high) / range) * 164
-    const low = 12 + ((max - item.low) / range) * 164
-    const open = 12 + ((max - item.open) / range) * 164
-    const close = 12 + ((max - item.close) / range) * 164
+    const high = toY(Math.max(item.high, item.open, item.close))
+    const low = toY(Math.min(item.low, item.open, item.close))
+    const open = toY(item.open)
+    const close = toY(item.close)
     const bodyTop = Math.min(open, close)
-    const bodyHeight = Math.max(Math.abs(close - open), 4)
+    const bodyHeight = Math.max(Math.abs(close - open), 7)
 
     return {
       key: `${item.ts}-${index}`,
-      x: 14 + index * 18,
+      x: 14 + index * 19,
       high,
       low,
       bodyTop,
@@ -75,6 +103,25 @@ const chartCandles = computed(() => {
       up: item.close >= item.open,
     }
   })
+})
+
+const chartLinePoints = computed(() => {
+  if (!chartCandles.value.length) return ''
+
+  return chartCandles.value
+    .map((item) => `${item.x},${item.bodyTop + item.bodyHeight / 2}`)
+    .join(' ')
+})
+
+const volumeBars = computed(() => {
+  const source = [...props.klineSnapshot].sort((left, right) => left.ts - right.ts).slice(-26)
+  const maxVolume = Math.max(...source.map((item) => item.volume || 0), 1)
+
+  return source.map((item, index) => ({
+    key: `${item.ts}-${index}`,
+    up: item.close >= item.open,
+    height: 12 + ((item.volume || 0) / maxVolume) * 78,
+  }))
 })
 
 const chartPriceMarks = computed(() => {
@@ -89,9 +136,11 @@ const chartPriceMarks = computed(() => {
 const chartStats = computed(() => {
   const quote = props.selectedQuote
   return [
-    { label: '最高', value: formatPrice(quote?.high), accent: true },
-    { label: '最低', value: formatPrice(quote?.low), accent: true },
+    { label: '最高', value: formatChartPrice(quote?.high), accent: true },
+    { label: '今开', value: formatChartPrice(quote?.open) },
     { label: '成交额', value: formatCompact(quote?.turnover) },
+    { label: '最低', value: formatChartPrice(quote?.low), accent: true },
+    { label: '昨收', value: formatChartPrice(quote?.open) },
     { label: '成交量', value: formatCompact(quote?.volume) },
   ]
 })
@@ -162,6 +211,53 @@ function selectTimeInterval(interval: Interval) {
   closeTimeSheet()
 }
 
+function updateDetailTabsPin() {
+  pinRaf = 0
+
+  if (!scrollContainer || !detailTabsPinStart) {
+    detailTabsPinned.value = false
+    return
+  }
+
+  detailTabsPinned.value = scrollContainer.scrollTop >= detailTabsPinStart
+}
+
+function requestDetailTabsPinUpdate() {
+  if (pinRaf) return
+  pinRaf = window.requestAnimationFrame(updateDetailTabsPin)
+}
+
+function refreshDetailTabsPin() {
+  detailTabsPinStart = getDetailTabsPinStart()
+  requestDetailTabsPinUpdate()
+}
+
+function bindChartScroll() {
+  scrollContainer =
+    (chartViewRef.value?.closest('.page-content') as HTMLElement | null) ||
+    document.querySelector<HTMLElement>('.page-content')
+  detailTabsPinStart = getDetailTabsPinStart()
+  scrollContainer?.addEventListener('scroll', requestDetailTabsPinUpdate, { passive: true })
+  window.addEventListener('resize', refreshDetailTabsPin, { passive: true })
+  updateDetailTabsPin()
+}
+
+function getDetailTabsPinStart() {
+  const sentinelRect = detailTabsSentinelRef.value?.getBoundingClientRect()
+  const scrollRect = scrollContainer?.getBoundingClientRect()
+  if (!sentinelRect || !scrollRect || !scrollContainer) return 0
+
+  return Math.max(0, scrollContainer.scrollTop + sentinelRect.top - scrollRect.top)
+}
+
+onMounted(bindChartScroll)
+
+onBeforeUnmount(() => {
+  scrollContainer?.removeEventListener('scroll', requestDetailTabsPinUpdate)
+  window.removeEventListener('resize', refreshDetailTabsPin)
+  if (pinRaf) window.cancelAnimationFrame(pinRaf)
+})
+
 function getClientPoint(event: TouchEvent | MouseEvent) {
   if ('changedTouches' in event && event.changedTouches.length > 0) {
     return {
@@ -209,6 +305,12 @@ function formatPrice(value?: number | null) {
   return formatNumber(value, Math.abs(value) >= 1 ? 4 : 8)
 }
 
+function formatChartPrice(value?: number | null) {
+  if (value === null || value === undefined || !Number.isFinite(value)) return '--'
+
+  return formatNumber(value, Math.abs(value) >= 1 ? 2 : 8)
+}
+
 function formatCompact(value?: number | null) {
   if (value === null || value === undefined || !Number.isFinite(value)) return '--'
 
@@ -240,10 +342,10 @@ function coinGlyph(product: ItickTenantProduct) {
 </script>
 
 <template>
-  <section class="chart-view">
+  <section ref="chartViewRef" class="chart-view" :class="{ 'chart-view--tabs-pinned': detailTabsPinned }">
     <div class="chart-switcher">
       <button type="button" class="symbol-switch" @click="openSwitcher">
-        <span>{{ selectedProduct?.symbol || '--' }}</span>
+        <span>{{ selectedDisplaySymbol }}</span>
         <em />
       </button>
 
@@ -253,13 +355,11 @@ function coinGlyph(product: ItickTenantProduct) {
     <div class="chart-summary">
       <div>
         <strong class="chart-summary__price" :class="selectedTrendClass">
-          {{ selectedQuote ? formatPrice(selectedQuote.lastPrice) : '--' }}
+          {{ selectedQuote ? formatChartPrice(selectedQuote.lastPrice) : '--' }}
         </strong>
         <span :class="selectedTrendClass">
-          {{ selectedQuote ? `${selectedChangeValue >= 0 ? '+' : ''}${formatPrice(selectedChangeValue)}  ${formatPercent(selectedPriceChange)}` : '--' }}
+          {{ selectedQuote ? `${selectedChangeValue >= 0 ? '+' : ''}${formatChartPrice(selectedChangeValue)}  ${formatPercent(selectedPriceChange)}` : '--' }}
         </span>
-        <small>今开 {{ formatPrice(selectedQuote?.open) }}</small>
-        <small>昨收 {{ formatPrice(selectedQuote?.open) }}</small>
       </div>
 
       <div class="chart-stats">
@@ -270,7 +370,8 @@ function coinGlyph(product: ItickTenantProduct) {
       </div>
     </div>
 
-    <div class="chart-sticky-tabs">
+    <span ref="detailTabsSentinelRef" class="chart-tabs-sentinel" aria-hidden="true" />
+    <div ref="detailTabsRef" class="chart-sticky-tabs" :class="{ 'chart-sticky-tabs--pinned': detailTabsPinned }">
       <div class="sub-tabs">
         <button
           type="button"
@@ -301,10 +402,19 @@ function coinGlyph(product: ItickTenantProduct) {
 
     <template v-if="activeDetailTab === 'market'">
       <div class="interval-row">
-        <button type="button" class="time-selector" @click="timeSheetOpen = true">
+        <span class="time-selector" aria-hidden="true">
           <span class="time-selector__label">Time</span>
-          <span class="time-selector__value">{{ selectedMinuteName }}</span>
-          <span class="time-selector__arrow">▾</span>
+        </span>
+
+        <button
+          v-if="selectedMinuteName"
+          type="button"
+          class="interval-pill"
+          :class="{ 'interval-pill--active': selectedIntervalName === selectedMinuteName }"
+          @click="openTimeSheet"
+        >
+          {{ selectedMinuteName }}
+          <span class="interval-pill__arrow">▾</span>
         </button>
 
         <button
@@ -321,7 +431,7 @@ function coinGlyph(product: ItickTenantProduct) {
 
       <div class="tool-row">
         <button type="button" class="tool-button">
-          <span class="tool-button__icon">ƒ</span>
+          <span class="tool-button__icon">ƒx</span>
           <span class="tool-button__label">指标</span>
         </button>
         <button type="button" class="tool-button">
@@ -342,11 +452,23 @@ function coinGlyph(product: ItickTenantProduct) {
         @mouseup="handlePointerEnd"
       >
         <div class="chart-tools" aria-hidden="true">
-          <span />
-          <span />
-          <span />
-          <span />
-          <span />
+          <span class="chart-tool chart-tool--line" />
+          <span class="chart-tool chart-tool--trend" />
+          <span class="chart-tool chart-tool--circle" />
+          <span class="chart-tool chart-tool--rays" />
+          <span class="chart-tool chart-tool--mesh" />
+          <span class="chart-tool chart-tool--magnet" />
+        </div>
+
+        <div class="ma-legend" aria-hidden="true">
+          <span>MA(5,10,30,60)</span>
+          <button type="button">◉</button>
+          <button type="button">⚙</button>
+          <button type="button">×</button>
+          <strong class="ma-legend__ma5">MA5: 75,900.94</strong>
+          <strong class="ma-legend__ma10">MA10: 75,909.73</strong>
+          <strong class="ma-legend__ma30">MA30: 76,533.68</strong>
+          <strong class="ma-legend__ma60">MA60: 76,869.70</strong>
         </div>
 
         <svg class="candle-chart" viewBox="0 0 520 240" role="img" aria-label="K线图">
@@ -355,6 +477,10 @@ function coinGlyph(product: ItickTenantProduct) {
           <line x1="0" y1="182" x2="520" y2="182" class="grid-line" />
           <line x1="170" y1="0" x2="170" y2="240" class="grid-line" />
           <line x1="340" y1="0" x2="340" y2="240" class="grid-line" />
+
+          <polyline v-if="chartLinePoints" :points="chartLinePoints" class="ma-line ma-line--yellow" />
+          <polyline v-if="chartLinePoints" :points="chartLinePoints" class="ma-line ma-line--blue" transform="translate(0, 12)" />
+          <polyline v-if="chartLinePoints" :points="chartLinePoints" class="ma-line ma-line--pink" transform="translate(0, -20)" />
 
           <g v-for="candle in chartCandles" :key="candle.key">
             <line
@@ -383,16 +509,19 @@ function coinGlyph(product: ItickTenantProduct) {
       </div>
 
       <div class="volume-board" aria-hidden="true">
+        <div class="volume-tools" />
         <div class="volume-labels">
           <span>VOL(5,10,20)</span>
+          <em>MA10: 181.723K</em>
+          <em>MA20: 229.212K</em>
           <strong>VOLUME</strong>
         </div>
         <div class="volume-bars">
           <span
-            v-for="candle in chartCandles"
-            :key="`volume-${candle.key}`"
-            :class="candle.up ? 'volume-up' : 'volume-down'"
-            :style="{ height: `${24 + (candle.bodyHeight % 72)}px` }"
+            v-for="bar in volumeBars"
+            :key="`volume-${bar.key}`"
+            :class="bar.up ? 'volume-up' : 'volume-down'"
+            :style="{ height: `${bar.height}px` }"
           />
         </div>
       </div>
@@ -518,7 +647,18 @@ function coinGlyph(product: ItickTenantProduct) {
 
 <style scoped>
 .chart-view {
-  padding: 20px 0 0;
+  padding: 0;
+  padding-bottom: calc(92px + env(safe-area-inset-bottom));
+  overflow-x: clip;
+}
+
+.chart-view--tabs-pinned {
+  padding-top: 58px;
+}
+
+.chart-tabs-sentinel {
+  display: block;
+  height: 0;
 }
 
 .chart-switcher,
@@ -530,114 +670,114 @@ function coinGlyph(product: ItickTenantProduct) {
 }
 
 .chart-switcher {
-  position: sticky;
-  top: var(--market-header-height, 68px);
-  z-index: 25;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding-top: 14px;
-  padding-bottom: 10px;
+  padding-top: 10px;
+  padding-bottom: 8px;
   background: #0b0c15;
 }
 
 .symbol-switch {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
+  gap: 10px;
   min-width: 140px;
   border: 0;
   background: transparent;
   color: #fff;
   font: inherit;
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 500;
   cursor: pointer;
 }
 
 .symbol-switch em {
-  width: 10px;
-  height: 10px;
-  transform: rotate(45deg) translateY(-2px);
-  border-right: 2px solid currentColor;
-  border-bottom: 2px solid currentColor;
+  width: 14px;
+  height: 14px;
+  transform: rotate(45deg) translateY(-3px);
+  border-right: 3px solid currentColor;
+  border-bottom: 3px solid currentColor;
 }
 
 .star-button {
   border: 0;
   background: transparent;
   color: #fff;
-  font-size: 24px;
+  font-size: 30px;
+  font-weight: 300;
   line-height: 1;
   cursor: pointer;
 }
 
 .chart-summary {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(160px, 0.9fr);
-  gap: 12px;
-  margin-top: 12px;
-  padding: 12px 18px 10px;
-  min-height: 72px;
+  grid-template-columns: minmax(0, 0.88fr) minmax(0, 1fr);
+  gap: 18px;
+  padding: 14px 18px 16px;
+  min-height: 96px;
   overflow: visible;
 }
 
 .chart-summary > div:first-child {
   display: grid;
-  gap: 6px;
+  align-content: center;
+  gap: 10px;
+  min-width: 0;
 }
 
 .chart-summary__price {
+  overflow: hidden;
   color: #0cd977;
-  font-size: 24px;
-  font-weight: 600;
+  font-size: 30px;
+  font-weight: 500;
   line-height: 1;
   display: block;
+  letter-spacing: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .chart-summary span {
-  font-size: 14px;
+  overflow: hidden;
+  font-size: 17px;
   font-weight: 500;
-}
-
-.chart-summary small {
-  color: #9ca0aa;
-  font-size: 12px;
-  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .chart-stats {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px 10px;
+  align-content: center;
+  min-width: 0;
 }
 
 .chart-stats span {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  font-size: 12px;
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  font-size: 14px;
 }
 
 .chart-stats em {
   color: #9ca0aa;
   font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .chart-stats strong {
-  color: #fff;
-  font-weight: 500;
-}
-
-.chart-stats em {
+  overflow: hidden;
   color: #9ca0aa;
-  font-style: normal;
-}
-
-.chart-stats strong {
-  color: #fff;
+  font-size: 13px;
   font-weight: 500;
+  line-height: 1.08;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .up {
@@ -653,18 +793,25 @@ function coinGlyph(product: ItickTenantProduct) {
 }
 
 .chart-sticky-tabs {
-  position: sticky;
-  top: calc(var(--market-header-height, 68px) + 58px);
-  z-index: 19;
-  margin-top: 26px;
+  z-index: 60;
   background: #0b0c15;
-  border-bottom: 1px solid #242633;
-  box-shadow: 0 8px 18px rgba(5, 6, 14, 0.5);
+  border-bottom: 1px solid #20222d;
+  box-shadow: 0 8px 18px rgba(5, 6, 14, 0.36);
+}
+
+.chart-sticky-tabs--pinned {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 90;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .sub-tabs {
   display: flex;
-  gap: 28px;
+  gap: 42px;
   padding: 0 18px;
 }
 
@@ -680,15 +827,15 @@ function coinGlyph(product: ItickTenantProduct) {
 
 .sub-tab {
   position: relative;
-  padding: 0 0 15px;
+  padding: 12px 0 13px;
   color: #8f929d;
-  font-size: 17px;
+  font-size: 19px;
   font-weight: 500;
 }
 
 .sub-tab--active {
   color: #fff;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .sub-tab--active::after {
@@ -704,25 +851,31 @@ function coinGlyph(product: ItickTenantProduct) {
 
 .interval-row {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   overflow-x: auto;
-  padding-top: 6px;
-  padding-bottom: 6px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #20222d;
+  scrollbar-width: none;
+}
+
+.interval-row::-webkit-scrollbar {
+  display: none;
 }
 
 .interval-pill {
   flex: 0 0 auto;
-  min-width: 28px;
-  padding: 4px 8px;
-  height: 30px;
-  line-height: 22px;
+  min-width: 40px;
+  padding: 0 12px;
+  height: 34px;
+  line-height: 34px;
   border-radius: 999px;
-  background: #191b25;
+  background: #161923;
   color: #8d929d;
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 400;
   white-space: nowrap;
 }
 
@@ -739,22 +892,23 @@ function coinGlyph(product: ItickTenantProduct) {
 .tool-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  border-top: 1px solid #16171d;
-  border-bottom: 1px solid #16171d;
+  padding-right: 0;
+  padding-left: 0;
+  border-bottom: 1px solid #252733;
 }
 
 .tool-row button {
-  min-height: 36px;
-  display: grid;
-  gap: 1px;
-  justify-items: center;
+  min-height: 42px;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
   align-items: center;
-  border-right: 1px solid #16171d;
+  border-right: 1px solid #252733;
   background: #0b0c15;
   color: #8f929d;
-  font-size: 11px;
-  font-weight: 500;
-  padding: 4px 0;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 0;
 }
 
 .tool-row button:last-child {
@@ -762,47 +916,35 @@ function coinGlyph(product: ItickTenantProduct) {
 }
 
 .tool-button__icon {
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1;
 }
 
 .tool-button__label {
-  font-size: 11px;
+  font-size: 14px;
 }
 
 .time-selector {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
+  flex: 0 0 auto;
+  padding: 0 14px;
   min-height: 34px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid #242633;
+  background: #161923;
   color: #8f929d;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
+  font-size: 14px;
+  font-weight: 400;
 }
 
 .time-selector__label {
   white-space: nowrap;
 }
 
-.time-selector__value {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 32px;
-  padding: 4px 8px;
-  border-radius: 999px;
-  background: #14161f;
-  color: #08c200;
-}
-
-.time-selector__arrow {
-  font-size: 12px;
-  color: #8f929d;
+.interval-pill__arrow {
+  margin-left: 6px;
+  font-size: 16px;
+  color: currentColor;
 }
 
 .time-sheet {
@@ -858,32 +1000,153 @@ function coinGlyph(product: ItickTenantProduct) {
 .chart-board {
   position: relative;
   display: grid;
-  grid-template-columns: 58px minmax(0, 1fr) 70px;
-  min-height: 560px;
+  grid-template-columns: 58px minmax(0, 1fr) 86px;
+  min-height: 500px;
   overflow: hidden;
+  border-bottom: 1px solid #20222d;
   user-select: none;
 }
 
 .chart-tools {
   display: grid;
   align-content: start;
-  gap: 26px;
-  padding-top: 36px;
+  gap: 24px;
+  padding-top: 34px;
   border-right: 1px solid #242633;
 }
 
-.chart-tools span {
-  width: 30px;
-  height: 3px;
+.chart-tool {
+  position: relative;
+  display: block;
+  width: 34px;
+  height: 34px;
   margin: 0 auto;
+  color: #8f929d;
+}
+
+.chart-tool--line::before,
+.chart-tool--rays::before,
+.chart-tool--rays::after {
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  height: 3px;
   border-radius: 999px;
-  background: #8f929d;
-  box-shadow: 0 11px 0 rgba(143, 146, 157, 0.72);
+  background: currentColor;
+  content: '';
+}
+
+.chart-tool--line::before {
+  top: 16px;
+  box-shadow: 0 0 0 4px #0b0c15, 0 0 0 5px currentColor;
+}
+
+.chart-tool--trend::before {
+  position: absolute;
+  inset: 7px 4px;
+  transform: rotate(-42deg);
+  border-top: 3px solid currentColor;
+  border-bottom: 3px solid currentColor;
+  content: '';
+}
+
+.chart-tool--circle {
+  border: 3px solid currentColor;
+  border-radius: 999px;
+}
+
+.chart-tool--circle::after {
+  position: absolute;
+  top: 11px;
+  left: 11px;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 20px 2px 0 -1px currentColor;
+  content: '';
+}
+
+.chart-tool--rays::before {
+  top: 8px;
+  box-shadow: 0 10px 0 currentColor, 0 20px 0 currentColor;
+}
+
+.chart-tool--mesh::before {
+  position: absolute;
+  inset: 5px;
+  transform: rotate(-8deg);
+  border: 3px solid currentColor;
+  content: '';
+}
+
+.chart-tool--mesh::after {
+  position: absolute;
+  inset: 9px 3px;
+  transform: rotate(34deg);
+  border-top: 3px solid currentColor;
+  border-bottom: 3px solid currentColor;
+  content: '';
+}
+
+.chart-tool--magnet::before {
+  position: absolute;
+  inset: 5px;
+  border: 4px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 0 0 999px 999px;
+  content: '';
+}
+
+.ma-legend {
+  position: absolute;
+  top: 16px;
+  left: 82px;
+  right: 92px;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  align-items: center;
+  color: #8f929d;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.2;
+  pointer-events: none;
+}
+
+.ma-legend button {
+  border: 0;
+  background: transparent;
+  color: #8f929d;
+  font: inherit;
+  padding: 0;
+}
+
+.ma-legend strong {
+  font-weight: 500;
+}
+
+.ma-legend__ma5 {
+  color: #ffad16;
+}
+
+.ma-legend__ma10 {
+  color: #b16adc;
+}
+
+.ma-legend__ma30 {
+  color: #1aa9ff;
+}
+
+.ma-legend__ma60 {
+  color: #ff1687;
 }
 
 .candle-chart {
   width: 100%;
-  height: 560px;
+  height: 500px;
+  margin-top: 24px;
 }
 
 .grid-line {
@@ -902,14 +1165,32 @@ function coinGlyph(product: ItickTenantProduct) {
   stroke: #ff574c;
 }
 
+.ma-line {
+  fill: none;
+  stroke-width: 2;
+  opacity: 0.96;
+}
+
+.ma-line--yellow {
+  stroke: #ffad16;
+}
+
+.ma-line--blue {
+  stroke: #1aa9ff;
+}
+
+.ma-line--pink {
+  stroke: #ff1687;
+}
+
 .price-axis {
   display: grid;
   align-content: start;
-  gap: 92px;
-  padding: 76px 6px 0 8px;
+  gap: 82px;
+  padding: 58px 6px 0 8px;
   color: #8f929d;
   font-size: 12px;
-  font-weight: 400;
+  font-weight: 500;
 }
 
 .chart-loading {
@@ -927,19 +1208,24 @@ function coinGlyph(product: ItickTenantProduct) {
 
 .volume-board {
   display: grid;
-  grid-template-columns: 58px minmax(0, 1fr) 70px;
-  min-height: 170px;
-  padding-bottom: 120px;
+  grid-template-columns: 58px minmax(0, 1fr) 86px;
+  min-height: 150px;
+  padding-bottom: 18px;
   border-top: 1px solid #242633;
+}
+
+.volume-tools {
+  grid-row: 1 / 3;
+  border-right: 1px solid #242633;
 }
 
 .volume-labels {
   grid-column: 2 / 4;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 14px 18px 0 16px;
+  gap: 8px 18px;
+  padding: 12px 18px 0 16px;
   color: #8f929d;
   font-size: 13px;
 }
@@ -947,6 +1233,12 @@ function coinGlyph(product: ItickTenantProduct) {
 .volume-labels strong {
   color: #ff574c;
   font-weight: 500;
+  margin-left: auto;
+}
+
+.volume-labels em {
+  color: #b16adc;
+  font-style: normal;
 }
 
 .volume-bars {
@@ -954,8 +1246,8 @@ function coinGlyph(product: ItickTenantProduct) {
   display: flex;
   align-items: end;
   gap: 5px;
-  min-height: 112px;
-  padding: 10px 8px 0 16px;
+  min-height: 86px;
+  padding: 8px 8px 12px 16px;
 }
 
 .volume-bars span {
@@ -1053,7 +1345,7 @@ function coinGlyph(product: ItickTenantProduct) {
 
 .depth-mid strong {
   font-size: 26px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .depth-mid span {

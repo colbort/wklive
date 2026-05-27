@@ -10,7 +10,7 @@ import { useTradingDesk } from '@/composables/useTradingDesk'
 // 交易页：手机端展示交易表单与订单列表，桌面端复用市场交易组合台。
 const route = useRoute()
 const { isDesktop } = useDevice()
-const detailVisible = computed(() => isDesktop.value)
+const detailVisible = computed(() => true)
 const orderMode = ref<'market' | 'limit'>('market')
 const productMenuOpen = ref(false)
 const desktopProductsExpanded = ref(false)
@@ -125,6 +125,7 @@ function toggleDesktopOrderbook() {
       :placeholder-price="placeholderPrice"
       :placeholder-change="placeholderChange"
       :selected-quote="selectedQuote"
+      :depth-snapshot="depthSnapshot"
       :product-menu-open="productMenuOpen"
       :product-sheet-rows="productSheetRows"
       :order-mode="orderMode"

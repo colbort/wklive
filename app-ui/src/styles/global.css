@@ -1036,6 +1036,10 @@ button {
     overflow-x: hidden;
   }
 
+  .category-strip {
+    overflow-x: auto;
+  }
+
   .site-header {
     padding: max(14px, env(safe-area-inset-top, 14px)) 22px 14px;
   }

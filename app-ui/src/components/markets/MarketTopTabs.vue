@@ -4,6 +4,8 @@ import type { MarketTopTab, MarketTopTabItem } from './types'
 defineProps<{
   tabs: MarketTopTabItem[]
   activeTab: MarketTopTab
+  collapsed?: boolean
+  collapseProgress?: number
 }>()
 
 const emit = defineEmits<{
@@ -12,7 +14,11 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <header class="market-header">
+  <header
+    class="market-header"
+    :class="{ 'market-header--collapsed': collapsed || collapseProgress === 1 }"
+    :style="`--market-top-collapse: ${collapseProgress || 0}`"
+  >
     <nav class="top-tabs" aria-label="市场视图">
       <button
         v-for="tab in tabs"
@@ -38,14 +44,32 @@ const emit = defineEmits<{
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 18px 18px 8px;
-  min-height: var(--market-header-height, 68px);
+  box-sizing: border-box;
+  max-height: calc(74px * (1 - var(--market-top-collapse, 0)));
+  overflow: hidden;
+  padding:
+    calc(16px * (1 - var(--market-top-collapse, 0)))
+    28px
+    calc(8px * (1 - var(--market-top-collapse, 0)));
+  min-height: calc(64px * (1 - var(--market-top-collapse, 0)));
   background: #0b0c15;
+  opacity: calc(1 - var(--market-top-collapse, 0));
+  transform: translateY(calc(-10px * var(--market-top-collapse, 0)));
+  transition: opacity 0.08s linear;
+}
+
+.market-header--collapsed {
+  max-height: 0;
+  min-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .top-tabs {
   display: flex;
-  gap: 22px;
+  gap: 26px;
 }
 
 .top-tab,
@@ -59,15 +83,16 @@ const emit = defineEmits<{
 
 .top-tab {
   position: relative;
-  padding: 5px 0 9px;
+  padding: 4px 0 9px;
   color: #8f929d;
-  font-size: 18px;
-  font-weight: 500;
+  font-size: 19px;
+  font-weight: 400;
+  line-height: 1.2;
 }
 
 .top-tab--active {
   color: #ffffff;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .top-tab--active::after {
@@ -85,8 +110,8 @@ const emit = defineEmits<{
   display: grid;
   flex: 0 0 auto;
   place-items: center;
-  width: 42px;
-  height: 42px;
+  width: 46px;
+  height: 46px;
   border-radius: 999px;
   background: #242631;
 }
@@ -107,5 +132,25 @@ const emit = defineEmits<{
   border-radius: 999px;
   background: #fff;
   content: '';
+}
+
+@media (max-width: 390px) {
+  .market-header {
+    padding-right: 22px;
+    padding-left: 22px;
+  }
+
+  .top-tabs {
+    gap: 24px;
+  }
+
+  .top-tab {
+    font-size: 18px;
+  }
+
+  .search-button {
+    width: 44px;
+    height: 44px;
+  }
 }
 </style>

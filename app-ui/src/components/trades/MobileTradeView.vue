@@ -3,7 +3,7 @@ import MobileMarketDepthPreview from '@/components/markets/MobileMarketDepthPrev
 import MobileMarketTradeHeader from '@/components/markets/MobileMarketTradeHeader.vue'
 import TradeOrdersPanel from '@/components/trades/TradeOrdersPanel.vue'
 import MobileTradeSubmitPanel from '@/components/trades/MobileTradeSubmitPanel.vue'
-import type { ItickTenantCategory, ItickTenantProduct, QuotePayload } from '@/types/itick'
+import type { DepthPayload, ItickTenantCategory, ItickTenantProduct, QuotePayload } from '@/types/itick'
 
 type ProductSheetRow = {
   key: string
@@ -24,6 +24,7 @@ defineProps<{
   placeholderPrice: string
   placeholderChange: string
   selectedQuote: QuotePayload | null
+  depthSnapshot: DepthPayload | null
   productMenuOpen: boolean
   productSheetRows: ProductSheetRow[]
   orderMode: 'market' | 'limit'
@@ -68,7 +69,11 @@ const emit = defineEmits<{
         :order-mode="orderMode"
         @update:order-mode="emit('update:orderMode', $event)"
       />
-      <MobileMarketDepthPreview :selected-product="selectedProduct" />
+      <MobileMarketDepthPreview
+        :selected-product="selectedProduct"
+        :depth-snapshot="depthSnapshot"
+        :placeholder-price="placeholderPrice"
+      />
     </section>
 
     <MobileTradeSubmitPanel
@@ -90,14 +95,21 @@ const emit = defineEmits<{
   overflow-x: hidden;
 }
 
-.mobile-contract-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(180px, 0.9fr);
-  gap: 18px;
-  min-width: 0;
+@media (max-width: 767px) {
+  .mobile-trade-view {
+    padding-top: 50px;
+  }
 }
 
-@media (max-width: 430px) {
+.mobile-contract-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(112px, 0.9fr);
+  gap: 12px;
+  min-width: 0;
+  align-items: start;
+}
+
+@media (max-width: 340px) {
   .mobile-contract-layout {
     grid-template-columns: 1fr;
   }

@@ -12,17 +12,13 @@ defineProps<{
   loading: boolean
   rows: MarketRow[]
   selectedProductKey: string
+  categoryPinned?: boolean
 }>()
 
 const emit = defineEmits<{
   selectCategory: [categoryType: number]
   selectProduct: [product: ItickTenantProduct]
 }>()
-
-function coinGlyph(product: ItickTenantProduct) {
-  const coin = product.baseCoin || product.symbol.slice(0, 3) || product.displayName
-  return coin.slice(0, 1).toUpperCase()
-}
 
 function formatNumber(value?: number | null, digits = 2) {
   if (value === null || value === undefined || !Number.isFinite(value)) return '--'
@@ -45,7 +41,7 @@ function formatPercent(value: number) {
 </script>
 
 <template>
-  <section class="quotes-view">
+  <section class="quotes-view" :class="{ 'quotes-view--category-pinned': categoryPinned }">
     <div class="category-strip">
       <button
         v-for="category in categories"
@@ -80,11 +76,9 @@ function formatPercent(value: number) {
         }"
         @click="emit('selectProduct', row.product)"
       >
-        <span class="coin-mark">{{ coinGlyph(row.product) }}</span>
-
         <span class="quote-row__name">
           <strong>{{ row.product.symbol }}</strong>
-          <small>{{ row.product.market }} · {{ row.product.categoryCode || selectedCategoryCode }}</small>
+          <small>{{ row.product.displayName || row.product.name || row.product.market }}</small>
         </span>
 
         <strong class="quote-row__price">
@@ -104,8 +98,11 @@ function formatPercent(value: number) {
 .quotes-view {
   width: 100%;
   max-width: 100%;
-  overflow-x: hidden;
   padding-bottom: 18px;
+}
+
+.quotes-view--category-pinned {
+  padding-top: 57px;
 }
 
 .category-strip {
@@ -115,13 +112,30 @@ function formatPercent(value: number) {
   left: 0;
   right: 0;
   z-index: 30;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   display: flex;
-  flex-wrap: wrap;
-  gap: 18px;
-  overflow-x: hidden;
-  padding: 14px 18px 0;
+  flex-wrap: nowrap;
+  gap: 30px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 18px 28px 0;
   border-bottom: 1px solid #21232e;
   background: #0b0c15;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.category-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.quotes-view--category-pinned .category-strip {
+  position: fixed;
+  top: 0;
+  z-index: 80;
 }
 
 .category-tab,
@@ -136,10 +150,11 @@ function formatPercent(value: number) {
 .category-tab {
   position: relative;
   flex: 0 0 auto;
-  padding: 0 0 14px;
+  padding: 0 0 16px;
   color: #8c8f99;
-  font-size: 17px;
-  font-weight: 500;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.2;
   white-space: nowrap;
 }
 
@@ -160,7 +175,7 @@ function formatPercent(value: number) {
 }
 
 .connection-row {
-  display: flex;
+  display: none;
   align-items: center;
   gap: 8px;
   padding: 10px 18px 0;
@@ -198,38 +213,34 @@ function formatPercent(value: number) {
 
 .quote-row {
   display: grid;
-  grid-template-columns: 46px minmax(0, 1fr) minmax(72px, 0.72fr) minmax(66px, 0.6fr);
+  grid-template-columns: minmax(0, 1fr) minmax(68px, 0.38fr) minmax(64px, 0.34fr);
   align-items: center;
-  width: calc(100% - 36px);
-  min-height: 82px;
-  margin: 0 18px;
-  padding: 12px 0;
+  column-gap: 14px;
+  width: calc(100% - 56px);
+  min-height: 72px;
+  margin: 0 28px;
+  padding: 13px 0;
   border-bottom: 1px solid #20222d;
   text-align: left;
 }
 
 @media (max-width: 390px) {
   .category-strip {
-    gap: 14px;
-    padding-right: 14px;
-    padding-left: 14px;
+    gap: 24px;
+    padding-right: 22px;
+    padding-left: 22px;
   }
 
   .category-tab {
-    font-size: 15px;
+    font-size: 17px;
   }
 
   .quote-row {
-    grid-template-columns: 38px minmax(0, 1fr) minmax(62px, 0.68fr) minmax(58px, 0.58fr);
-    width: calc(100% - 28px);
+    grid-template-columns: minmax(0, 1fr) minmax(58px, 0.38fr) minmax(54px, 0.34fr);
+    column-gap: 10px;
+    width: calc(100% - 44px);
     min-height: 72px;
-    margin: 0 14px;
-  }
-
-  .coin-mark {
-    width: 32px;
-    height: 32px;
-    font-size: 16px;
+    margin: 0 22px;
   }
 
   .quote-row__name strong,
@@ -243,60 +254,45 @@ function formatPercent(value: number) {
   }
 
   .quote-row__change em {
-    min-width: 54px;
-    padding: 4px 6px;
+    min-width: 0;
+    padding: 0;
   }
-}
-
-.coin-mark {
-  display: grid;
-  place-items: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 999px;
-  background: linear-gradient(145deg, #ff9a16, #f2b728);
-  color: #fff;
-  font-size: 19px;
-  font-weight: 500;
-}
-
-.quote-row:nth-of-type(4n + 1) .coin-mark {
-  background: linear-gradient(145deg, #8b66ff, #a582ff);
-}
-
-.quote-row:nth-of-type(4n + 2) .coin-mark {
-  background: linear-gradient(145deg, #85bf62, #97d579);
-}
-
-.quote-row:nth-of-type(4n + 3) .coin-mark {
-  background: linear-gradient(145deg, #1d2430, #101722);
 }
 
 .quote-row__name {
   display: grid;
-  gap: 4px;
+  gap: 8px;
   min-width: 0;
 }
 
 .quote-row__name strong {
   overflow: hidden;
   color: #fff;
-  font-size: 17px;
-  font-weight: 500;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.08;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .quote-row__name small {
-  color: #5f6570;
-  font-size: 11px;
+  overflow: hidden;
+  color: #8e919b;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .quote-row__price {
-  color: #09d676;
+  overflow: hidden;
+  color: #8e919b;
   font-size: 17px;
-  font-weight: 600;
+  font-weight: 700;
   text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .quote-row__change {
@@ -306,17 +302,21 @@ function formatPercent(value: number) {
 }
 
 .quote-row__change strong {
-  color: #09d676;
-  font-size: 15px;
-  font-weight: 500;
+  overflow: hidden;
+  max-width: 100%;
+  color: #8e919b;
+  font-size: 17px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .quote-row__change em {
-  min-width: 62px;
-  padding: 5px 8px;
-  border-radius: 13px;
-  background: #06d171;
-  color: #fff;
+  min-width: 0;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #08c200;
   font-size: 13px;
   font-style: normal;
   font-weight: 500;
@@ -325,11 +325,11 @@ function formatPercent(value: number) {
 
 .quote-row--down .quote-row__price,
 .quote-row--down .quote-row__change strong {
-  color: #ff5959;
+  color: #8e919b;
 }
 
 .quote-row--down .quote-row__change em {
-  background: #ff4d4d;
+  color: #ff5959;
 }
 
 .quote-row--active {

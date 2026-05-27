@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 import DesktopMarketTradeView from '@/components/markets/DesktopMarketTradeView.vue'
 import MarketChartView from '@/components/markets/MarketChartView.vue'
@@ -24,6 +24,13 @@ const activeTopTab = ref<MarketTopTab>('markets')
 const orderMode = ref<'market' | 'limit'>('market')
 const desktopProductsExpanded = ref(false)
 const desktopOrderbookExpanded = ref(true)
+const marketsPageRef = ref<HTMLElement | null>(null)
+const mobileTabsCollapsed = ref(false)
+const mobileTabsCollapseProgress = ref(0)
+let mobileScrollContainer: HTMLElement | null = null
+let collapseRaf = 0
+
+const mobileTopTabsHeight = 88
 
 const showingDesktopDesk = computed(() => isDesktop.value || activeTopTab.value === 'chart')
 const isLoggedIn = computed(() => Boolean(getAccessToken()))
@@ -73,10 +80,67 @@ function toggleDesktopProducts() {
 function toggleDesktopOrderbook() {
   desktopOrderbookExpanded.value = !desktopOrderbookExpanded.value
 }
+
+function updateMobileTabsCollapse() {
+  collapseRaf = 0
+
+  if (isDesktop.value || activeTopTab.value !== 'markets') {
+    mobileTabsCollapseProgress.value = 0
+    mobileTabsCollapsed.value = false
+    return
+  }
+
+  const pageRect = marketsPageRef.value?.getBoundingClientRect()
+  const scrollRect = mobileScrollContainer?.getBoundingClientRect()
+  const scrollTop = mobileScrollContainer?.scrollTop || 0
+  const pageOffset = pageRect && scrollRect ? pageRect.top - scrollRect.top : -scrollTop
+  const pageScroll = Math.max(0, -pageOffset, scrollTop)
+  const progress = Math.min(pageScroll / mobileTopTabsHeight, 1)
+
+  mobileTabsCollapseProgress.value = progress
+  mobileTabsCollapsed.value = progress >= 1
+}
+
+function requestMobileTabsCollapseUpdate() {
+  if (collapseRaf) return
+  collapseRaf = window.requestAnimationFrame(updateMobileTabsCollapse)
+}
+
+function bindMobileScrollContainer() {
+  mobileScrollContainer?.removeEventListener('scroll', requestMobileTabsCollapseUpdate)
+  mobileScrollContainer =
+    (marketsPageRef.value?.closest('.page-content') as HTMLElement | null) ||
+    document.querySelector<HTMLElement>('.page-content')
+  mobileScrollContainer?.addEventListener('scroll', requestMobileTabsCollapseUpdate, { passive: true })
+  window.addEventListener('scroll', requestMobileTabsCollapseUpdate, { passive: true })
+  window.addEventListener('resize', requestMobileTabsCollapseUpdate, { passive: true })
+  updateMobileTabsCollapse()
+}
+
+onMounted(bindMobileScrollContainer)
+
+onBeforeUnmount(() => {
+  mobileScrollContainer?.removeEventListener('scroll', requestMobileTabsCollapseUpdate)
+  window.removeEventListener('scroll', requestMobileTabsCollapseUpdate)
+  window.removeEventListener('resize', requestMobileTabsCollapseUpdate)
+  if (collapseRaf) window.cancelAnimationFrame(collapseRaf)
+})
+
+watch([isDesktop, activeTopTab], () => {
+  updateMobileTabsCollapse()
+})
 </script>
 
 <template>
-  <section class="markets-page" :aria-busy="loadingBootstrap">
+  <section
+    ref="marketsPageRef"
+    class="markets-page"
+    :class="{
+      'markets-page--tabs-collapsed': mobileTabsCollapsed,
+      'markets-page--chart': !isDesktop && activeTopTab === 'chart',
+    }"
+    :aria-busy="loadingBootstrap"
+  >
     <DesktopMarketTradeView
       v-if="isDesktop"
       :selected-product="selectedProduct"
@@ -104,7 +168,13 @@ function toggleDesktopOrderbook() {
     />
 
     <template v-else>
-      <MarketTopTabs :tabs="topTabs" :active-tab="activeTopTab" @change="activeTopTab = $event" />
+      <MarketTopTabs
+        :tabs="topTabs"
+        :active-tab="activeTopTab"
+        :collapsed="mobileTabsCollapsed"
+        :collapse-progress="mobileTabsCollapseProgress"
+        @change="activeTopTab = $event"
+      />
 
       <div v-if="activeTopTab === 'markets'" class="markets-page__mobile">
         <MarketQuotesView
@@ -117,6 +187,7 @@ function toggleDesktopOrderbook() {
           :loading="loadingBootstrap"
           :rows="marketRows"
           :selected-product-key="selectedProductKey"
+          :category-pinned="mobileTabsCollapsed"
           @select-category="selectCategory"
           @select-product="openProductChart"
         />
@@ -127,7 +198,7 @@ function toggleDesktopOrderbook() {
         <div v-else class="watchlist-empty">登录后可查看自选产品</div>
       </div>
 
-      <div v-else class="markets-page__mobile">
+      <div v-else class="markets-page__mobile markets-page__mobile--chart">
         <MarketChartView
           :products="products"
           :rows="marketRows"
@@ -155,7 +226,6 @@ function toggleDesktopOrderbook() {
   max-width: 100%;
   min-height: calc(100dvh - 72px);
   padding: 18px 22px 112px;
-  overflow-x: hidden;
   background: #0b0c15;
   color: #f6f7fb;
 }
@@ -174,5 +244,24 @@ function toggleDesktopOrderbook() {
 .watchlist-empty {
   color: #8f929d;
   font-size: 15px;
+}
+
+@media (max-width: 959px) {
+  .markets-page {
+    min-height: 100%;
+    padding: 0 0 calc(96px + env(safe-area-inset-bottom));
+  }
+
+  .markets-page__mobile {
+    min-height: 100%;
+  }
+
+  .markets-page--chart {
+    padding-bottom: 0;
+  }
+
+  :global(.page-content:has(.markets-page--chart)) {
+    padding-bottom: 0;
+  }
 }
 </style>

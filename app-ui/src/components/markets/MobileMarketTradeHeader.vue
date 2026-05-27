@@ -109,22 +109,32 @@ const emit = defineEmits<{
 
 <style scoped>
 .mobile-market-trade-header {
-  position: sticky;
-  top: 0;
-  z-index: 25;
   max-width: calc(100% + 36px);
-  margin: 0 -18px 18px;
-  padding: 14px 18px 1px;
-  background: #0b0c15;
+  margin: 0 -18px 8px;
+  padding: 0 18px 1px;
 }
 
 .trade-categories {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 25;
   display: flex;
-  flex-wrap: wrap;
-  gap: 18px 24px;
+  flex-wrap: nowrap;
+  gap: 20px;
   max-width: 100%;
-  overflow-x: hidden;
-  margin-bottom: 22px;
+  padding: 10px 22px 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin-bottom: 0;
+  background: #0b0c15;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.trade-categories::-webkit-scrollbar {
+  display: none;
 }
 
 .trade-categories button,
@@ -140,14 +150,14 @@ const emit = defineEmits<{
 .trade-categories button {
   flex: 0 0 auto;
   color: #8f929d;
-  font-size: 19px;
+  font-size: 15px;
   font-weight: 500;
   white-space: nowrap;
 }
 
 .trade-categories button.active {
   color: #fff;
-  font-size: 22px;
+  font-size: 17px;
   font-weight: 600;
 }
 
@@ -188,8 +198,9 @@ const emit = defineEmits<{
 
 @media (max-width: 390px) {
   .trade-categories {
-    gap: 14px 18px;
-    margin-bottom: 22px;
+    gap: 18px;
+    padding-right: 14px;
+    padding-left: 14px;
   }
 
   .mobile-market-trade-header {
@@ -201,11 +212,11 @@ const emit = defineEmits<{
   }
 
   .trade-categories button {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .trade-categories button.active {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .trade-symbol__icons {

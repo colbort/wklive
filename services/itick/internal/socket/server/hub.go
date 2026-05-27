@@ -193,7 +193,7 @@ func (h *Hub) Broadcast(topicMsg ClientMessage, payload any) {
 	h.mu.RUnlock()
 
 	if len(subs) == 0 {
-		logx.Errorf("stream broadcast skipped, no local subscriber, topic=%s", key)
+		logx.Infof("stream broadcast skipped, no local subscriber, topic=%s", key)
 		return
 	}
 

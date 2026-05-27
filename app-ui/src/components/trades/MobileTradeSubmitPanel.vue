@@ -129,14 +129,14 @@ function orderModeFromCode(code: string): 'market' | 'limit' {
         <span>可开多</span><strong>0 手</strong>
         <span>保证金</span><strong>0 USD</strong>
       </div>
-      <button class="wide-action" type="button">登录</button>
+      <button class="wide-action wide-action--buy" type="button">买入开多</button>
 
       <label class="checkbox-line"><i />止盈/止损</label>
       <div class="account-lines">
         <span>可开空</span><strong>0 手</strong>
         <span>保证金</span><strong>0 USD</strong>
       </div>
-      <button class="wide-action" type="button">注册</button>
+      <button class="wide-action wide-action--sell" type="button">卖出开空</button>
     </div>
   </section>
 </template>
@@ -145,8 +145,8 @@ function orderModeFromCode(code: string): 'market' | 'limit' {
 .mode-switch {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  min-height: 58px;
-  margin-bottom: 18px;
+  min-height: 42px;
+  margin-bottom: 14px;
   overflow: hidden;
   border-radius: 999px;
   background: #242631;
@@ -171,7 +171,8 @@ function orderModeFromCode(code: string): 'market' | 'limit' {
 
 .mode-switch button {
   color: #8f929d;
-  font-size: 17px;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .mode-switch button.active {
@@ -183,26 +184,30 @@ function orderModeFromCode(code: string): 'market' | 'limit' {
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  margin-bottom: 18px;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 
 .form-row button,
 .trade-input {
-  min-height: 58px;
-  padding: 0 18px;
+  min-height: 48px;
+  padding: 0 12px;
   border-radius: 12px;
   background: #242631;
   color: #f6f7fb;
   text-align: left;
 }
 
+.form-row button {
+  font-size: 16px;
+}
+
 .trade-input {
   display: flex;
   align-items: center;
-  margin-bottom: 18px;
+  margin-bottom: 12px;
   color: #8f929d;
-  font-size: 17px;
+  font-size: 16px;
 }
 
 .trade-input.split {
@@ -215,16 +220,16 @@ function orderModeFromCode(code: string): 'market' | 'limit' {
 }
 
 .percent-bar {
-  height: 18px;
-  margin-bottom: 10px;
+  height: 14px;
+  margin-bottom: 8px;
   border-radius: 999px;
   background: linear-gradient(90deg, #1c1f2a 0 24%, transparent 24% 25%, #1c1f2a 25% 49%, transparent 49% 50%, #1c1f2a 50% 74%, transparent 74% 75%, #1c1f2a 75%);
 }
 
 .percent-bar i {
   display: block;
-  width: 18px;
-  height: 18px;
+  width: 14px;
+  height: 14px;
   border-radius: 999px;
   background: #02b904;
 }
@@ -232,18 +237,18 @@ function orderModeFromCode(code: string): 'market' | 'limit' {
 .percent-labels {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: 18px;
   color: #8f929d;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .account-lines {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 8px 14px;
-  margin-bottom: 18px;
+  gap: 7px 12px;
+  margin-bottom: 14px;
   color: #8f929d;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .account-lines strong {
@@ -254,30 +259,40 @@ function orderModeFromCode(code: string): 'market' | 'limit' {
 .checkbox-line {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin: 8px 0 16px;
-  font-size: 17px;
+  gap: 8px;
+  margin: 7px 0 14px;
+  font-size: 15px;
+  font-weight: 600;
 }
 
 .checkbox-line i {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border: 1px solid #f6f7fb;
   border-radius: 4px;
 }
 
 .wide-action,
 .dual-actions button {
-  min-height: 54px;
+  min-height: 46px;
   border-radius: 12px;
   background: #181b25;
   color: #fff;
-  font-size: 17px;
+  font-size: 15px;
+  font-weight: 700;
 }
 
 .wide-action {
   width: 100%;
-  margin-bottom: 24px;
+  margin-bottom: 18px;
+}
+
+.wide-action--buy {
+  background: #10d27a;
+}
+
+.wide-action--sell {
+  background: #ff4438;
 }
 
 .dual-actions {
@@ -405,5 +420,36 @@ function orderModeFromCode(code: string): 'market' | 'limit' {
 .buyable strong {
   color: #fff;
   font-weight: 500;
+}
+
+@media (max-width: 390px) {
+  .mode-switch {
+    min-height: 38px;
+  }
+
+  .mode-switch button,
+  .form-row button,
+  .trade-input {
+    font-size: 14px;
+  }
+
+  .form-row {
+    gap: 8px;
+  }
+
+  .form-row button,
+  .trade-input {
+    min-height: 44px;
+    padding: 0 10px;
+  }
+
+  .percent-labels,
+  .account-lines {
+    font-size: 12px;
+  }
+
+  .checkbox-line {
+    font-size: 14px;
+  }
 }
 </style>
