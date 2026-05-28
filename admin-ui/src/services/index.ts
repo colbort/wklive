@@ -280,6 +280,7 @@ export type {
   TradeSymbol,
   TradeSymbolSpot,
   TradeSymbolContract,
+  TradeSymbolDetailResp,
   TradeUserConfig,
   TradeOrder,
   TradeFill,

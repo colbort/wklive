@@ -40,6 +40,7 @@ import type {
   TradeFill,
   TradeOrder,
   TradeSymbol,
+  TradeSymbolDetailResp,
   TradeUserConfig,
   UpdateSymbolReq,
 } from '@/services'
@@ -50,7 +51,7 @@ export function apiTradeListSymbols(
   return get<TradeSymbol[]>('/admin/trade/symbols', params)
 }
 
-export function apiTradeGetSymbol(params: GetSymbolDetailAdminReq): Promise<RespBase<TradeSymbol>> {
+export function apiTradeGetSymbol(params: GetSymbolDetailAdminReq): Promise<TradeSymbolDetailResp> {
   return get<TradeSymbol>('/admin/trade/symbols/detail', params)
 }
 

@@ -408,7 +408,9 @@ type GetSymbolDetailAdminReq {
 
 type GetSymbolDetailAdminResp {
 	RespBase
-	data TradeSymbol `json:"data"`
+	data     TradeSymbol         `json:"data"`
+	spot     TradeSymbolSpot     `json:"spot,optional"`
+	contract TradeSymbolContract `json:"contract,optional"`
 }
 
 type SetSpotSymbolConfigReq {
@@ -820,4 +822,3 @@ service admin {
 	@handler RetryTradeEvent
 	post /events/retry (RetryTradeEventReq) returns (AdminCommonResp)
 }
-

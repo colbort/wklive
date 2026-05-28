@@ -66,14 +66,15 @@
 
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="rows" stripe>
-        <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="tenantId" :label="t('trade.tenantId')" width="100" />
 
-        <el-table-column :label="t('trade.symbol')" min-width="170" show-overflow-tooltip>
+        <el-table-column min-width="190" show-overflow-tooltip>
+          <template #header>
+            {{ t('trade.symbol') }} / {{ t('trade.displaySymbol') }}
+          </template>
           <template #default="{ row }">
             <div class="symbol-cell">
-              <span class="symbol-code">{{ row.symbol || '-' }}</span>
-              <span class="muted">{{ row.displaySymbol || '-' }}</span>
+              <span class="symbol-code">{{ row.symbol || '-' }}/{{ row.displaySymbol || '-' }}</span>
             </div>
           </template>
         </el-table-column>
@@ -91,7 +92,6 @@
             {{ optionLabel('contractType', row.contractType) }}
           </template>
         </el-table-column>
-
         <el-table-column :label="t('trade.status')" width="120">
           <template #default="{ row }">
             <el-tag size="small" :type="symbolStatusTagType(row.status)" effect="light">
@@ -99,8 +99,11 @@
             </el-tag>
           </template>
         </el-table-column>
-
-        <el-table-column :label="t('trade.baseAsset')" min-width="160" show-overflow-tooltip>
+        <el-table-column min-width="230" show-overflow-tooltip>
+          <template #header>
+            {{ t('trade.baseAsset') }} / {{ t('trade.quoteAsset') }} /
+            {{ t('trade.settleAsset') }}
+          </template>
           <template #default="{ row }">
             <div class="asset-pair">
               <el-tag size="small">
@@ -110,50 +113,53 @@
               <el-tag size="small" type="info">
                 {{ row.quoteAsset || '-' }}
               </el-tag>
+              <span>/</span>
               <span v-if="row.settleAsset" class="muted">{{ row.settleAsset }}</span>
             </div>
           </template>
         </el-table-column>
-
         <el-table-column :label="t('trade.priceTick')" min-width="120">
           <template #default="{ row }">
             {{ row.priceTick || '-' }}
           </template>
         </el-table-column>
-
         <el-table-column :label="t('trade.qtyStep')" min-width="120">
           <template #default="{ row }">
             {{ row.qtyStep || '-' }}
           </template>
         </el-table-column>
-
         <el-table-column :label="t('trade.maxLeverage')" width="110">
           <template #default="{ row }">
             {{ row.maxLeverage || '-' }}
           </template>
         </el-table-column>
-
         <el-table-column :label="t('common.sort')" width="90">
           <template #default="{ row }">
             {{ row.sort || 0 }}
           </template>
         </el-table-column>
-
-        <el-table-column :label="t('common.actions')" width="260" fixed="right">
+        <el-table-column :label="t('common.actions')" width="180" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" @click="showDetail(row)">
               {{ t('option.detail') }}
             </el-button>
-
             <el-button link type="primary" @click="openSymbolDialog(row)">
               {{ t('common.edit') }}
             </el-button>
-
-            <el-button link type="primary" @click="openSpotDialog(row)">
+            <el-button
+              v-if="isSpotMarket(row)"
+              link
+              type="primary"
+              @click="openSpotDialog(row)"
+            >
               {{ t('trade.spotConfig') }}
             </el-button>
-
-            <el-button link type="primary" @click="openContractDialog(row)">
+            <el-button
+              v-if="isContractMarket(row)"
+              link
+              type="primary"
+              @click="openContractDialog(row)"
+            >
               {{ t('trade.contractConfig') }}
             </el-button>
           </template>
@@ -345,7 +351,7 @@
       <el-form label-width="116px" class="dialog-form">
         <div class="form-grid two">
           <el-form-item :label="t('trade.tenantId')">
-            <TenantSelect v-model="spotForm.tenantId" include-system />
+            <TenantSelect v-model="spotForm.tenantId" include-system disabled />
           </el-form-item>
 
           <el-form-item :label="t('trade.symbolId')">
@@ -353,6 +359,7 @@
               v-model="spotForm.symbolId"
               :min="0"
               :precision="0"
+              disabled
               class="full-width"
             />
           </el-form-item>
@@ -403,7 +410,7 @@
       <el-form label-width="126px" class="dialog-form">
         <div class="form-grid two">
           <el-form-item :label="t('trade.tenantId')">
-            <TenantSelect v-model="contractForm.tenantId" include-system />
+            <TenantSelect v-model="contractForm.tenantId" include-system disabled />
           </el-form-item>
 
           <el-form-item :label="t('trade.symbolId')">
@@ -411,6 +418,7 @@
               v-model="contractForm.symbolId"
               :min="0"
               :precision="0"
+              disabled
               class="full-width"
             />
           </el-form-item>
@@ -863,6 +871,10 @@ const symbolStatusTagType = (status?: number): TagType => {
   }
 }
 
+const isSpotMarket = (row: TradeSymbol) => row.marketType === 1
+
+const isContractMarket = (row: TradeSymbol) => [2, 3, 4].includes(row.marketType)
+
 const loadOptions = async () => {
   try {
     optionGroups.value = (await tradeService.getOptions()).data || []
@@ -921,11 +933,23 @@ const submitSymbol = async () => {
   }
 }
 
-const openSpotDialog = (row: TradeSymbol) => {
+const openSpotDialog = async (row: TradeSymbol) => {
   Object.assign(spotForm, getDefaultSpotForm(), {
     tenantId: row.tenantId || 0,
     symbolId: row.id || 0,
   })
+  const detail = await tradeService.getSymbol({ tenantId: row.tenantId, id: row.id })
+  const spot = detail.spot
+  if (spot?.symbolId) {
+    Object.assign(spotForm, {
+      tenantId: spot.tenantId,
+      symbolId: spot.symbolId,
+      makerFeeRate: spot.makerFeeRate,
+      takerFeeRate: spot.takerFeeRate,
+      buyEnabled: spot.buyEnabled,
+      sellEnabled: spot.sellEnabled,
+    })
+  }
   spotVisible.value = true
 }
 
@@ -940,11 +964,31 @@ const submitSpotConfig = async () => {
   }
 }
 
-const openContractDialog = (row: TradeSymbol) => {
+const openContractDialog = async (row: TradeSymbol) => {
   Object.assign(contractForm, getDefaultContractForm(), {
     tenantId: row.tenantId || 0,
     symbolId: row.id || 0,
   })
+  const detail = await tradeService.getSymbol({ tenantId: row.tenantId, id: row.id })
+  const contract = detail.contract
+  if (contract?.symbolId) {
+    Object.assign(contractForm, {
+      tenantId: contract.tenantId,
+      symbolId: contract.symbolId,
+      contractSize: contract.contractSize,
+      multiplier: contract.multiplier,
+      maintenanceMarginRate: contract.maintenanceMarginRate,
+      initialMarginRate: contract.initialMarginRate,
+      makerFeeRate: contract.makerFeeRate,
+      takerFeeRate: contract.takerFeeRate,
+      fundingIntervalMinutes: contract.fundingIntervalMinutes,
+      deliveryTime: contract.deliveryTime,
+      supportCross: contract.supportCross,
+      supportIsolated: contract.supportIsolated,
+      buyEnabled: contract.buyEnabled,
+      sellEnabled: contract.sellEnabled,
+    })
+  }
   contractVisible.value = true
 }
 

@@ -96,6 +96,11 @@ export type TradeSymbolContract = {
   updateTimes: number // 更新时间
 }
 
+export type TradeSymbolDetailResp = RespBase<TradeSymbol> & {
+  spot?: TradeSymbolSpot
+  contract?: TradeSymbolContract
+}
+
 export type TradeUserConfig = {
   id: number
   tenantId: number

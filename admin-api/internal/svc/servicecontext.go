@@ -35,6 +35,7 @@ type ServiceContext struct {
 	OptionCli       option.OptionAdminClient
 	StakingCli      staking.StakingAdminClient
 	TradeCli        trade.TradeAdminClient
+	TradeAppCli     trade.TradeAppClient
 	NotificationHub *ws.Hub
 }
 
@@ -91,6 +92,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		OptionCli:       option.NewOptionAdminClient(optionCli.Conn()),
 		StakingCli:      staking.NewStakingAdminClient(stakingCli.Conn()),
 		TradeCli:        trade.NewTradeAdminClient(tradeCli.Conn()),
+		TradeAppCli:     trade.NewTradeAppClient(tradeCli.Conn()),
 		NotificationHub: notificationHub,
 	}
 }

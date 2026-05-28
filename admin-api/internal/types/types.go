@@ -1333,7 +1333,9 @@ type GetSymbolDetailAdminReq struct {
 
 type GetSymbolDetailAdminResp struct {
 	RespBase
-	Data TradeSymbol `json:"data"`
+	Data     TradeSymbol         `json:"data"`
+	Spot     TradeSymbolSpot     `json:"spot,optional"`
+	Contract TradeSymbolContract `json:"contract,optional"`
 }
 
 type GetSymbolListAdminReq struct {
