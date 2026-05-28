@@ -39,16 +39,16 @@ func (l *AdminListMarketSnapshotsLogic) AdminListMarketSnapshots(in *option.List
 		return nil, err
 	}
 
-	list := make([]*option.OptionMarketSnapshot, 0, len(items))
+	data := make([]*option.OptionMarketSnapshot, 0, len(items))
 	lastID := int64(0)
 	for _, item := range items {
 		lastID = item.Id
-		list = append(list, toMarketSnapshotProto(item))
+		data = append(data, toMarketSnapshotProto(item))
 	}
 
 	return &option.ListMarketSnapshotsResp{
 		Base: pageutil.Base(cursor, limit, len(items), total, lastID),
-		List: list,
+		Data: data,
 		Page: pageutil.Output(in.Page, limit),
 	}, nil
 }

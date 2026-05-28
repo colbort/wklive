@@ -40,7 +40,7 @@ func (l *AdminListSettlementsLogic) AdminListSettlements(in *option.ListSettleme
 		return nil, err
 	}
 
-	list := make([]*option.OptionSettlementDetail, 0, len(items))
+	data := make([]*option.OptionSettlementDetail, 0, len(items))
 	lastID := int64(0)
 	for _, item := range items {
 		lastID = item.Id
@@ -48,12 +48,12 @@ func (l *AdminListSettlementsLogic) AdminListSettlements(in *option.ListSettleme
 		if err != nil {
 			return nil, err
 		}
-		list = append(list, detail)
+		data = append(data, detail)
 	}
 
 	return &option.ListSettlementsResp{
 		Base: pageutil.Base(cursor, limit, len(items), total, lastID),
-		List: list,
+		Data: data,
 		Page: pageutil.Output(in.Page, limit),
 	}, nil
 }

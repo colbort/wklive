@@ -350,7 +350,7 @@ type ListContractsReq {
 
 type ListContractsResp {
 	RespBase
-	list []OptionContractDetail `json:"list"`
+	data []OptionContractDetail `json:"data"`
 	page PageReq                `json:"page"`
 }
 
@@ -395,7 +395,7 @@ type ListMarketSnapshotsReq {
 
 type ListMarketSnapshotsResp {
 	RespBase
-	list []OptionMarketSnapshot `json:"list"`
+	data []OptionMarketSnapshot `json:"data"`
 	page PageReq                `json:"page"`
 }
 
@@ -427,7 +427,7 @@ type ListOrdersReq {
 
 type ListOrdersResp {
 	RespBase
-	list []OptionOrderDetail `json:"list"`
+	data []OptionOrderDetail `json:"data"`
 	page PageReq             `json:"page"`
 }
 
@@ -453,7 +453,7 @@ type ListTradesReq {
 
 type ListTradesResp {
 	RespBase
-	list []OptionTradeDetail `json:"list"`
+	data []OptionTradeDetail `json:"data"`
 	page PageReq             `json:"page"`
 }
 
@@ -479,7 +479,7 @@ type ListPositionsReq {
 
 type ListPositionsResp {
 	RespBase
-	list []OptionPositionDetail `json:"list"`
+	data []OptionPositionDetail `json:"data"`
 	page PageReq                `json:"page"`
 }
 
@@ -506,7 +506,7 @@ type ListExercisesReq {
 
 type ListExercisesResp {
 	RespBase
-	list []OptionExerciseDetail `json:"list"`
+	data []OptionExerciseDetail `json:"data"`
 	page PageReq                `json:"page"`
 }
 
@@ -531,7 +531,7 @@ type ListSettlementsReq {
 
 type ListSettlementsResp {
 	RespBase
-	list []OptionSettlementDetail `json:"list"`
+	data []OptionSettlementDetail `json:"data"`
 	page PageReq                  `json:"page"`
 }
 
@@ -558,7 +558,7 @@ type ListAccountsReq {
 
 type ListAccountsResp {
 	RespBase
-	list []OptionAccount `json:"list"`
+	data []OptionAccount `json:"data"`
 	page PageReq         `json:"page"`
 }
 
@@ -584,7 +584,7 @@ type ListBillsReq {
 
 type ListBillsResp {
 	RespBase
-	list []OptionBill `json:"list"`
+	data []OptionBill `json:"data"`
 	page PageReq      `json:"page"`
 }
 

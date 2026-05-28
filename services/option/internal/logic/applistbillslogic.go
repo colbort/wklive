@@ -50,16 +50,16 @@ func (l *AppListBillsLogic) AppListBills(in *option.AppListBillsReq) (*option.Ap
 		return nil, err
 	}
 
-	list := make([]*option.OptionBill, 0, len(items))
+	data := make([]*option.OptionBill, 0, len(items))
 	lastID := int64(0)
 	for _, item := range items {
 		lastID = item.Id
-		list = append(list, toBillProto(item))
+		data = append(data, toBillProto(item))
 	}
 
 	return &option.AppListBillsResp{
 		Base: pageutil.Base(cursor, limit, len(items), total, lastID),
-		List: list,
+		Data: data,
 		Page: pageutil.Output(in.Page, limit),
 	}, nil
 }

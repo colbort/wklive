@@ -60,7 +60,7 @@ func (l *AppListHistoryOrdersLogic) AppListHistoryOrders(in *option.AppListHisto
 		return nil, err
 	}
 
-	list := make([]*option.OptionOrderDetail, 0, len(items))
+	data := make([]*option.OptionOrderDetail, 0, len(items))
 	lastID := int64(0)
 	for _, item := range items {
 		lastID = item.Id
@@ -68,12 +68,12 @@ func (l *AppListHistoryOrdersLogic) AppListHistoryOrders(in *option.AppListHisto
 		if err != nil {
 			return nil, err
 		}
-		list = append(list, detail)
+		data = append(data, detail)
 	}
 
 	return &option.AppListHistoryOrdersResp{
 		Base: pageutil.Base(cursor, limit, len(items), total, lastID),
-		List: list,
+		Data: data,
 		Page: pageutil.Output(in.Page, limit),
 	}, nil
 }

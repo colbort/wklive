@@ -86,7 +86,7 @@ func (l *TransferAssetLogic) TransferAsset(in *asset.TransferAssetReq) (*asset.T
 				return err
 			}
 		} else {
-			if _, err := userAssetModel.AddAvailableAmount(ctx, in.TenantId, in.UserId, int64(in.ToWalletType), in.Coin, amount, beforeTo.Version, ts); err != nil {
+			if _, err := userAssetModel.AddAvailableAmount(ctx, in.TenantId, in.UserId, int64(in.ToWalletType), in.Coin, amount, ts); err != nil {
 				return err
 			}
 		}

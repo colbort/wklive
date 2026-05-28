@@ -12,7 +12,8 @@ gen:
 		proto/staking/enum.proto \
 		proto/staking/model.proto \
 		proto/staking/staking_app.proto \
-		proto/staking/staking_admin.proto
+		proto/staking/staking_admin.proto \
+		proto/staking/staking_task.proto
 	@echo "✅ [proto/staking] generated"
 
 clean:

@@ -158,7 +158,7 @@ message ListContractsReq {
 
 message ListContractsResp {
   common.RespBase base = 1;
-  repeated OptionContractDetail list = 2;
+  repeated OptionContractDetail data = 2;
   common.PageReq page = 3;
 }
 
@@ -203,7 +203,7 @@ message ListMarketSnapshotsReq {
 
 message ListMarketSnapshotsResp {
   common.RespBase base = 1;
-  repeated OptionMarketSnapshot list = 2;
+  repeated OptionMarketSnapshot data = 2;
   common.PageReq page = 3;
 }
 
@@ -235,7 +235,7 @@ message ListOrdersReq {
 
 message ListOrdersResp {
   common.RespBase base = 1;
-  repeated OptionOrderDetail list = 2;
+  repeated OptionOrderDetail data = 2;
   common.PageReq page = 3;
 }
 
@@ -261,7 +261,7 @@ message ListTradesReq {
 
 message ListTradesResp {
   common.RespBase base = 1;
-  repeated OptionTradeDetail list = 2;
+  repeated OptionTradeDetail data = 2;
   common.PageReq page = 3;
 }
 
@@ -287,7 +287,7 @@ message ListPositionsReq {
 
 message ListPositionsResp {
   common.RespBase base = 1;
-  repeated OptionPositionDetail list = 2;
+  repeated OptionPositionDetail data = 2;
   common.PageReq page = 3;
 }
 
@@ -315,7 +315,7 @@ message ListExercisesReq {
 
 message ListExercisesResp {
   common.RespBase base = 1;
-  repeated OptionExerciseDetail list = 2;
+  repeated OptionExerciseDetail data = 2;
   common.PageReq page = 3;
 }
 
@@ -340,7 +340,7 @@ message ListSettlementsReq {
 
 message ListSettlementsResp {
   common.RespBase base = 1;
-  repeated OptionSettlementDetail list = 2;
+  repeated OptionSettlementDetail data = 2;
   common.PageReq page = 3;
 }
 
@@ -366,7 +366,7 @@ message ListAccountsReq {
 
 message ListAccountsResp {
   common.RespBase base = 1;
-  repeated OptionAccount list = 2;
+  repeated OptionAccount data = 2;
   common.PageReq page = 3;
 }
 
@@ -392,6 +392,6 @@ message ListBillsReq {
 
 message ListBillsResp {
   common.RespBase base = 1;
-  repeated OptionBill list = 2;
+  repeated OptionBill data = 2;
   common.PageReq page = 3;
 }

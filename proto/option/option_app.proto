@@ -68,7 +68,7 @@ message AppListContractsReq {
 
 message AppListContractsResp {
   common.RespBase base = 1;
-  repeated OptionContractDetail list = 2;
+  repeated OptionContractDetail data = 2;
 }
 
 message AppGetContractDetailReq {
@@ -125,7 +125,7 @@ message AppListCurrentOrdersReq {
 
 message AppListCurrentOrdersResp {
   common.RespBase base = 1;
-  repeated OptionOrderDetail list = 2;
+  repeated OptionOrderDetail data = 2;
   common.PageReq page = 3;
 }
 
@@ -139,7 +139,7 @@ message AppListHistoryOrdersReq {
 
 message AppListHistoryOrdersResp {
   common.RespBase base = 1;
-  repeated OptionOrderDetail list = 2;
+  repeated OptionOrderDetail data = 2;
   common.PageReq page = 3;
 }
 
@@ -152,7 +152,7 @@ message AppListTradesReq {
 
 message AppListTradesResp {
   common.RespBase base = 1;
-  repeated OptionTradeDetail list = 2;
+  repeated OptionTradeDetail data = 2;
   common.PageReq page = 3;
 }
 
@@ -164,7 +164,7 @@ message AppListPositionsReq {
 
 message AppListPositionsResp {
   common.RespBase base = 1;
-  repeated OptionPositionDetail list = 2;
+  repeated OptionPositionDetail data = 2;
   common.PageReq page = 3;
 }
 
@@ -201,7 +201,7 @@ message AppListExercisesReq {
 
 message AppListExercisesResp {
   common.RespBase base = 1;
-  repeated OptionExerciseDetail list = 2;
+  repeated OptionExerciseDetail data = 2;
   common.PageReq page = 3;
 }
 
@@ -211,7 +211,7 @@ message AppListAccountsReq {
 
 message AppListAccountsResp {
   common.RespBase base = 1;
-  repeated OptionAccount list = 2;
+  repeated OptionAccount data = 2;
 }
 
 message AppListBillsReq {
@@ -223,6 +223,6 @@ message AppListBillsReq {
 
 message AppListBillsResp {
   common.RespBase base = 1;
-  repeated OptionBill list = 2;
+  repeated OptionBill data = 2;
   common.PageReq page = 3;
 }

@@ -398,7 +398,7 @@ type GetSymbolListAdminReq {
 
 type GetSymbolListAdminResp {
 	RespBase
-	list []TradeSymbol `json:"list"`
+	data []TradeSymbol `json:"data"`
 }
 
 type GetSymbolDetailAdminReq {
@@ -450,7 +450,7 @@ type GetOrderListAdminReq {
 
 type GetOrderListAdminResp {
 	RespBase
-	list []TradeOrder `json:"list"`
+	data []TradeOrder `json:"data"`
 }
 
 type GetOrderDetailAdminReq {
@@ -474,7 +474,7 @@ type GetFillListAdminReq {
 
 type GetFillListAdminResp {
 	RespBase
-	list []TradeFill `json:"list"`
+	data []TradeFill `json:"data"`
 }
 
 type GetFillDetailAdminReq {
@@ -497,7 +497,7 @@ type GetPositionListAdminReq {
 
 type GetPositionListAdminResp {
 	RespBase
-	list []ContractPosition `json:"list"`
+	data []ContractPosition `json:"data"`
 }
 
 type GetPositionDetailAdminReq {
@@ -523,7 +523,7 @@ type GetPositionHistoryListAdminReq {
 
 type GetPositionHistoryListAdminResp {
 	RespBase
-	list []ContractPositionHistory `json:"list"`
+	data []ContractPositionHistory `json:"data"`
 }
 
 type GetMarginAccountListAdminReq {
@@ -536,7 +536,7 @@ type GetMarginAccountListAdminReq {
 
 type GetMarginAccountListAdminResp {
 	RespBase
-	list []ContractMarginAccount `json:"list"`
+	data []ContractMarginAccount `json:"data"`
 }
 
 type GetCancelLogListAdminReq {
@@ -551,7 +551,7 @@ type GetCancelLogListAdminReq {
 
 type GetCancelLogListAdminResp {
 	RespBase
-	list []TradeCancelLog `json:"list"`
+	data []TradeCancelLog `json:"data"`
 }
 
 type SetUserTradeLimitReq {
@@ -662,7 +662,7 @@ type GetRiskOrderCheckLogListReq {
 
 type GetRiskOrderCheckLogListResp {
 	RespBase
-	list []RiskOrderCheckLog `json:"list"`
+	data []RiskOrderCheckLog `json:"data"`
 }
 
 type SetUserLeverageConfigReq {
@@ -706,7 +706,7 @@ type GetTradeEventListReq {
 
 type GetTradeEventListResp {
 	RespBase
-	list []BizTradeEvent `json:"list"`
+	data []BizTradeEvent `json:"data"`
 }
 
 type GetTradeEventDetailReq {

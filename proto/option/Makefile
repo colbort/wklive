@@ -11,8 +11,10 @@ gen:
 		proto/common/common.proto \
 		proto/option/enum.proto \
 		proto/option/model.proto \
+		proto/option/option_internal.proto \
 		proto/option/option_app.proto \
-		proto/option/option_admin.proto
+		proto/option/option_admin.proto \
+		proto/option/option_task.proto
 	@echo "✅ [proto/option] generated"
 
 clean:

@@ -35,7 +35,7 @@ func (l *GetCancelLogListAdminLogic) GetCancelLogListAdmin(in *trade.GetCancelLo
 		}
 	}
 	cursor, limit := pageutil.Input(in.Page)
-	list, total, err := l.svcCtx.TradeCancelLogModel.FindPage(l.ctx, models.TradeCancelLogPageFilter{
+	data, total, err := l.svcCtx.TradeCancelLogModel.FindPage(l.ctx, models.TradeCancelLogPageFilter{
 		TenantId:     in.TenantId,
 		UserId:       in.UserId,
 		OrderId:      int64(in.OrderId),
@@ -49,12 +49,12 @@ func (l *GetCancelLogListAdminLogic) GetCancelLogListAdmin(in *trade.GetCancelLo
 	}
 
 	lastID := int64(0)
-	if len(list) > 0 {
-		lastID = int64(list[len(list)-1].Id)
+	if len(data) > 0 {
+		lastID = int64(data[len(data)-1].Id)
 	}
-	resp := &trade.GetCancelLogListAdminResp{Base: pageutil.Base(cursor, limit, len(list), total, lastID)}
-	for _, item := range list {
-		resp.List = append(resp.List, cancelLogToProto(item))
+	resp := &trade.GetCancelLogListAdminResp{Base: pageutil.Base(cursor, limit, len(data), total, lastID)}
+	for _, item := range data {
+		resp.Data = append(resp.Data, cancelLogToProto(item))
 	}
 	return resp, nil
 }

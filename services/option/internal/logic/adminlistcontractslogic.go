@@ -44,7 +44,7 @@ func (l *AdminListContractsLogic) AdminListContracts(in *option.ListContractsReq
 		return nil, err
 	}
 
-	list := make([]*option.OptionContractDetail, 0, len(items))
+	data := make([]*option.OptionContractDetail, 0, len(items))
 	lastID := int64(0)
 	for _, item := range items {
 		lastID = item.Id
@@ -52,12 +52,12 @@ func (l *AdminListContractsLogic) AdminListContracts(in *option.ListContractsReq
 		if err != nil {
 			return nil, err
 		}
-		list = append(list, detail)
+		data = append(data, detail)
 	}
 
 	return &option.ListContractsResp{
 		Base: pageutil.Base(cursor, limit, len(items), total, lastID),
-		List: list,
+		Data: data,
 		Page: pageutil.Output(in.Page, limit),
 	}, nil
 }

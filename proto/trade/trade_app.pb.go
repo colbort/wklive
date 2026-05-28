@@ -121,7 +121,7 @@ func (x *GetSymbolListReq) GetStatus() SymbolStatus {
 type GetSymbolListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	List          []*TradeSymbol         `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
+	Data          []*TradeSymbol         `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -163,9 +163,9 @@ func (x *GetSymbolListResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *GetSymbolListResp) GetList() []*TradeSymbol {
+func (x *GetSymbolListResp) GetData() []*TradeSymbol {
 	if x != nil {
-		return x.List
+		return x.Data
 	}
 	return nil
 }
@@ -789,7 +789,7 @@ func (x *GetOrderListReq) GetTimeRange() *TimeRange {
 type GetOrderListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	List          []*TradeOrder          `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
+	Data          []*TradeOrder          `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -831,9 +831,9 @@ func (x *GetOrderListResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *GetOrderListResp) GetList() []*TradeOrder {
+func (x *GetOrderListResp) GetData() []*TradeOrder {
 	if x != nil {
-		return x.List
+		return x.Data
 	}
 	return nil
 }
@@ -1029,7 +1029,7 @@ func (x *GetFillListReq) GetTimeRange() *TimeRange {
 type GetFillListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	List          []*TradeFill           `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
+	Data          []*TradeFill           `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1071,9 +1071,9 @@ func (x *GetFillListResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *GetFillListResp) GetList() []*TradeFill {
+func (x *GetFillListResp) GetData() []*TradeFill {
 	if x != nil {
-		return x.List
+		return x.Data
 	}
 	return nil
 }
@@ -1133,7 +1133,7 @@ func (x *GetPositionListReq) GetSymbolId() int64 {
 type GetPositionListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	List          []*ContractPosition    `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
+	Data          []*ContractPosition    `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1175,9 +1175,9 @@ func (x *GetPositionListResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *GetPositionListResp) GetList() []*ContractPosition {
+func (x *GetPositionListResp) GetData() []*ContractPosition {
 	if x != nil {
-		return x.List
+		return x.Data
 	}
 	return nil
 }
@@ -1237,7 +1237,7 @@ func (x *GetMarginAccountListReq) GetMarginAsset() string {
 type GetMarginAccountListResp struct {
 	state         protoimpl.MessageState   `protogen:"open.v1"`
 	Base          *common.RespBase         `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	List          []*ContractMarginAccount `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
+	Data          []*ContractMarginAccount `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1279,9 +1279,9 @@ func (x *GetMarginAccountListResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *GetMarginAccountListResp) GetList() []*ContractMarginAccount {
+func (x *GetMarginAccountListResp) GetData() []*ContractMarginAccount {
 	if x != nil {
-		return x.List
+		return x.Data
 	}
 	return nil
 }
@@ -1495,7 +1495,7 @@ const file_proto_trade_trade_app_proto_rawDesc = "" +
 	"\x06status\x18\x03 \x01(\x0e2\x13.trade.SymbolStatusR\x06status\"a\n" +
 	"\x11GetSymbolListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
-	"\x04list\x18\x02 \x03(\v2\x12.trade.TradeSymbolR\x04list\"1\n" +
+	"\x04data\x18\x02 \x03(\v2\x12.trade.TradeSymbolR\x04data\"1\n" +
 	"\x12GetSymbolDetailReq\x12\x1b\n" +
 	"\tsymbol_id\x18\x02 \x01(\x03R\bsymbolId\"\xcb\x01\n" +
 	"\x13GetSymbolDetailResp\x12$\n" +
@@ -1554,7 +1554,7 @@ const file_proto_trade_trade_app_proto_rawDesc = "" +
 	"time_range\x18\b \x01(\v2\x10.trade.TimeRangeR\ttimeRange\"_\n" +
 	"\x10GetOrderListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12%\n" +
-	"\x04list\x18\x02 \x03(\v2\x11.trade.TradeOrderR\x04list\"I\n" +
+	"\x04data\x18\x02 \x03(\v2\x11.trade.TradeOrderR\x04data\"I\n" +
 	"\x11GetOrderDetailReq\x12\x19\n" +
 	"\border_id\x18\x03 \x01(\x03R\aorderId\x12\x19\n" +
 	"\border_no\x18\x04 \x01(\tR\aorderNo\"\xc5\x01\n" +
@@ -1572,21 +1572,21 @@ const file_proto_trade_trade_app_proto_rawDesc = "" +
 	"time_range\x18\x06 \x01(\v2\x10.trade.TimeRangeR\ttimeRange\"]\n" +
 	"\x0fGetFillListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12$\n" +
-	"\x04list\x18\x02 \x03(\v2\x10.trade.TradeFillR\x04list\"e\n" +
+	"\x04data\x18\x02 \x03(\v2\x10.trade.TradeFillR\x04data\"e\n" +
 	"\x12GetPositionListReq\x122\n" +
 	"\vmarket_type\x18\x03 \x01(\x0e2\x11.trade.MarketTypeR\n" +
 	"marketType\x12\x1b\n" +
 	"\tsymbol_id\x18\x04 \x01(\x03R\bsymbolId\"h\n" +
 	"\x13GetPositionListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12+\n" +
-	"\x04list\x18\x02 \x03(\v2\x17.trade.ContractPositionR\x04list\"p\n" +
+	"\x04data\x18\x02 \x03(\v2\x17.trade.ContractPositionR\x04data\"p\n" +
 	"\x17GetMarginAccountListReq\x122\n" +
 	"\vmarket_type\x18\x03 \x01(\x0e2\x11.trade.MarketTypeR\n" +
 	"marketType\x12!\n" +
 	"\fmargin_asset\x18\x04 \x01(\tR\vmarginAsset\"r\n" +
 	"\x18GetMarginAccountListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x120\n" +
-	"\x04list\x18\x02 \x03(\v2\x1c.trade.ContractMarginAccountR\x04list\"\x9b\x01\n" +
+	"\x04data\x18\x02 \x03(\v2\x1c.trade.ContractMarginAccountR\x04data\"\x9b\x01\n" +
 	"\x14GetLeverageConfigReq\x12\x1b\n" +
 	"\tsymbol_id\x18\x03 \x01(\x03R\bsymbolId\x122\n" +
 	"\vmarket_type\x18\x04 \x01(\x0e2\x11.trade.MarketTypeR\n" +
@@ -1687,7 +1687,7 @@ var file_proto_trade_trade_app_proto_depIdxs = []int32{
 	24, // 1: trade.GetSymbolListReq.market_type:type_name -> trade.MarketType
 	25, // 2: trade.GetSymbolListReq.status:type_name -> trade.SymbolStatus
 	23, // 3: trade.GetSymbolListResp.base:type_name -> common.RespBase
-	26, // 4: trade.GetSymbolListResp.list:type_name -> trade.TradeSymbol
+	26, // 4: trade.GetSymbolListResp.data:type_name -> trade.TradeSymbol
 	23, // 5: trade.GetSymbolDetailResp.base:type_name -> common.RespBase
 	26, // 6: trade.GetSymbolDetailResp.symbol:type_name -> trade.TradeSymbol
 	27, // 7: trade.GetSymbolDetailResp.spot:type_name -> trade.TradeSymbolSpot
@@ -1712,7 +1712,7 @@ var file_proto_trade_trade_app_proto_depIdxs = []int32{
 	29, // 26: trade.GetOrderListReq.side:type_name -> trade.TradeSide
 	39, // 27: trade.GetOrderListReq.time_range:type_name -> trade.TimeRange
 	23, // 28: trade.GetOrderListResp.base:type_name -> common.RespBase
-	36, // 29: trade.GetOrderListResp.list:type_name -> trade.TradeOrder
+	36, // 29: trade.GetOrderListResp.data:type_name -> trade.TradeOrder
 	23, // 30: trade.GetOrderDetailResp.base:type_name -> common.RespBase
 	36, // 31: trade.GetOrderDetailResp.order:type_name -> trade.TradeOrder
 	40, // 32: trade.GetOrderDetailResp.spot:type_name -> trade.TradeOrderSpot
@@ -1721,13 +1721,13 @@ var file_proto_trade_trade_app_proto_depIdxs = []int32{
 	24, // 35: trade.GetFillListReq.market_type:type_name -> trade.MarketType
 	39, // 36: trade.GetFillListReq.time_range:type_name -> trade.TimeRange
 	23, // 37: trade.GetFillListResp.base:type_name -> common.RespBase
-	42, // 38: trade.GetFillListResp.list:type_name -> trade.TradeFill
+	42, // 38: trade.GetFillListResp.data:type_name -> trade.TradeFill
 	24, // 39: trade.GetPositionListReq.market_type:type_name -> trade.MarketType
 	23, // 40: trade.GetPositionListResp.base:type_name -> common.RespBase
-	43, // 41: trade.GetPositionListResp.list:type_name -> trade.ContractPosition
+	43, // 41: trade.GetPositionListResp.data:type_name -> trade.ContractPosition
 	24, // 42: trade.GetMarginAccountListReq.market_type:type_name -> trade.MarketType
 	23, // 43: trade.GetMarginAccountListResp.base:type_name -> common.RespBase
-	44, // 44: trade.GetMarginAccountListResp.list:type_name -> trade.ContractMarginAccount
+	44, // 44: trade.GetMarginAccountListResp.data:type_name -> trade.ContractMarginAccount
 	24, // 45: trade.GetLeverageConfigReq.market_type:type_name -> trade.MarketType
 	34, // 46: trade.GetLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
 	23, // 47: trade.GetLeverageConfigResp.base:type_name -> common.RespBase

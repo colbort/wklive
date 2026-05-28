@@ -29,7 +29,7 @@ func NewGetRiskOrderCheckLogListLogic(ctx context.Context, svcCtx *svc.ServiceCo
 // 获取风控订单校验日志列表
 func (l *GetRiskOrderCheckLogListLogic) GetRiskOrderCheckLogList(in *trade.GetRiskOrderCheckLogListReq) (*trade.GetRiskOrderCheckLogListResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
-	list, total, err := l.svcCtx.RiskOrderCheckLogModel.FindPage(l.ctx, models.RiskOrderCheckLogPageFilter{
+	data, total, err := l.svcCtx.RiskOrderCheckLogModel.FindPage(l.ctx, models.RiskOrderCheckLogPageFilter{
 		TenantId:    in.TenantId,
 		UserId:      in.UserId,
 		SymbolId:    in.SymbolId,
@@ -43,12 +43,12 @@ func (l *GetRiskOrderCheckLogListLogic) GetRiskOrderCheckLogList(in *trade.GetRi
 		return nil, err
 	}
 	lastID := int64(0)
-	if len(list) > 0 {
-		lastID = int64(list[len(list)-1].Id)
+	if len(data) > 0 {
+		lastID = int64(data[len(data)-1].Id)
 	}
-	resp := &trade.GetRiskOrderCheckLogListResp{Base: pageutil.Base(cursor, limit, len(list), total, lastID)}
-	for _, item := range list {
-		resp.List = append(resp.List, riskOrderCheckLogToProto(item))
+	resp := &trade.GetRiskOrderCheckLogListResp{Base: pageutil.Base(cursor, limit, len(data), total, lastID)}
+	for _, item := range data {
+		resp.Data = append(resp.Data, riskOrderCheckLogToProto(item))
 	}
 	return resp, nil
 }

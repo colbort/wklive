@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"wklive/proto/option"
 	"wklive/proto/system"
 	"wklive/services/itick/internal/config"
 	"wklive/services/itick/internal/pkg/klinewriter"
@@ -22,6 +23,7 @@ import (
 type ServiceContext struct {
 	Config                      config.Config
 	SystemCli                   system.SystemClient
+	OptionCli                   option.OptionInternalClient
 	ItickManager                *client.ItickManager
 	Hub                         *server.Hub
 	LockRedis                   *redis.Client
@@ -38,7 +40,8 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	systemCli := zrpc.MustNewClient(c.SystemRpc)
+	systemCli := system.NewSystemClient(zrpc.MustNewClient(c.SystemRpc).Conn())
+	optionCli := option.NewOptionInternalClient(zrpc.MustNewClient(c.OptionRpc).Conn())
 	hub := server.NewHub()
 
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
@@ -86,6 +89,35 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		busRedis,
 		lockRedis,
 	)
+	itickManager.SetQuoteHandler(func(_ context.Context, msg server.ClientMessage, payload *client.QuotePayload) {
+		rpcCtx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+		defer cancel()
+
+		resp, err := optionCli.SyncMarketQuote(rpcCtx, &option.SyncMarketQuoteReq{
+			CategoryCode:    msg.CategoryCode,
+			Market:          msg.Market,
+			Symbol:          msg.Symbol,
+			UnderlyingPrice: payload.LastPrice,
+			OpenPrice:       payload.Open,
+			HighPrice:       payload.High,
+			LowPrice:        payload.Low,
+			Volume:          payload.Volume,
+			Turnover:        payload.Turnover,
+			QuoteTs:         payload.Ts,
+		})
+		if err != nil {
+			logx.Errorf("sync option market quote failed, symbol=%s market=%s err=%v", msg.Symbol, msg.Market, err)
+			return
+		}
+		if resp == nil || resp.GetBase() == nil {
+			logx.Errorf("sync option market quote empty response, symbol=%s market=%s", msg.Symbol, msg.Market)
+			return
+		}
+		if resp.GetBase().GetCode() != 200 {
+			logx.Errorf("sync option market quote rejected, symbol=%s market=%s code=%d msg=%s",
+				msg.Symbol, msg.Market, resp.GetBase().GetCode(), resp.GetBase().GetMsg())
+		}
+	})
 
 	ctx := context.Background()
 
@@ -98,7 +130,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	}
 	return &ServiceContext{
 		Config:                      c,
-		SystemCli:                   system.NewSystemClient(systemCli.Conn()),
+		SystemCli:                   systemCli,
+		OptionCli:                   optionCli,
 		ItickManager:                itickManager,
 		Hub:                         hub,
 		LockRedis:                   lockRedis,

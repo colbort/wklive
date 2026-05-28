@@ -40,6 +40,7 @@ func main() {
 		trade.RegisterTradeAdminServer(grpcServer, server.NewTradeAdminServer(svcCtx))
 		trade.RegisterTradeAppServer(grpcServer, server.NewTradeAppServer(svcCtx))
 		trade.RegisterTradeInternalServer(grpcServer, server.NewTradeInternalServer(svcCtx))
+		trade.RegisterTradeTaskServer(grpcServer, server.NewTradeTaskServer(svcCtx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

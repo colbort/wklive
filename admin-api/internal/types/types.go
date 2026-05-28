@@ -1013,7 +1013,7 @@ type GetCancelLogListAdminReq struct {
 
 type GetCancelLogListAdminResp struct {
 	RespBase
-	List []TradeCancelLog `json:"list"`
+	Data []TradeCancelLog `json:"data"`
 }
 
 type GetCategoryReq struct {
@@ -1100,7 +1100,7 @@ type GetFillListAdminReq struct {
 
 type GetFillListAdminResp struct {
 	RespBase
-	List []TradeFill `json:"list"`
+	Data []TradeFill `json:"data"`
 }
 
 type GetItickOptionsResp struct {
@@ -1118,7 +1118,7 @@ type GetMarginAccountListAdminReq struct {
 
 type GetMarginAccountListAdminResp struct {
 	RespBase
-	List []ContractMarginAccount `json:"list"`
+	Data []ContractMarginAccount `json:"data"`
 }
 
 type GetMarketReq struct {
@@ -1159,7 +1159,7 @@ type GetOrderListAdminReq struct {
 
 type GetOrderListAdminResp struct {
 	RespBase
-	List []TradeOrder `json:"list"`
+	Data []TradeOrder `json:"data"`
 }
 
 type GetOrderReq struct {
@@ -1224,7 +1224,7 @@ type GetPositionHistoryListAdminReq struct {
 
 type GetPositionHistoryListAdminResp struct {
 	RespBase
-	List []ContractPositionHistory `json:"list"`
+	Data []ContractPositionHistory `json:"data"`
 }
 
 type GetPositionListAdminReq struct {
@@ -1237,7 +1237,7 @@ type GetPositionListAdminReq struct {
 
 type GetPositionListAdminResp struct {
 	RespBase
-	List []ContractPosition `json:"list"`
+	Data []ContractPosition `json:"data"`
 }
 
 type GetPositionReq struct {
@@ -1307,7 +1307,7 @@ type GetRiskOrderCheckLogListReq struct {
 
 type GetRiskOrderCheckLogListResp struct {
 	RespBase
-	List []RiskOrderCheckLog `json:"list"`
+	Data []RiskOrderCheckLog `json:"data"`
 }
 
 type GetSettlementReq struct {
@@ -1346,7 +1346,7 @@ type GetSymbolListAdminReq struct {
 
 type GetSymbolListAdminResp struct {
 	RespBase
-	List []TradeSymbol `json:"list"`
+	Data []TradeSymbol `json:"data"`
 }
 
 type GetSyncTaskStatusReq struct {
@@ -1458,7 +1458,7 @@ type GetTradeEventListReq struct {
 
 type GetTradeEventListResp struct {
 	RespBase
-	List []BizTradeEvent `json:"list"`
+	Data []BizTradeEvent `json:"data"`
 }
 
 type GetTradeOptionsResp struct {
@@ -1745,7 +1745,7 @@ type ListAccountsReq struct {
 
 type ListAccountsResp struct {
 	RespBase
-	List []OptionAccount `json:"list"`
+	Data []OptionAccount `json:"data"`
 	Page PageReq         `json:"page"`
 }
 
@@ -1760,7 +1760,7 @@ type ListBillsReq struct {
 
 type ListBillsResp struct {
 	RespBase
-	List []OptionBill `json:"list"`
+	Data []OptionBill `json:"data"`
 	Page PageReq      `json:"page"`
 }
 
@@ -1789,7 +1789,7 @@ type ListContractsReq struct {
 
 type ListContractsResp struct {
 	RespBase
-	List []OptionContractDetail `json:"list"`
+	Data []OptionContractDetail `json:"data"`
 	Page PageReq                `json:"page"`
 }
 
@@ -1855,7 +1855,7 @@ type ListExercisesReq struct {
 
 type ListExercisesResp struct {
 	RespBase
-	List []OptionExerciseDetail `json:"list"`
+	Data []OptionExerciseDetail `json:"data"`
 	Page PageReq                `json:"page"`
 }
 
@@ -1868,7 +1868,7 @@ type ListMarketSnapshotsReq struct {
 
 type ListMarketSnapshotsResp struct {
 	RespBase
-	List []OptionMarketSnapshot `json:"list"`
+	Data []OptionMarketSnapshot `json:"data"`
 	Page PageReq                `json:"page"`
 }
 
@@ -1889,7 +1889,7 @@ type ListOrdersReq struct {
 
 type ListOrdersResp struct {
 	RespBase
-	List []OptionOrderDetail `json:"list"`
+	Data []OptionOrderDetail `json:"data"`
 	Page PageReq             `json:"page"`
 }
 
@@ -1931,7 +1931,7 @@ type ListPositionsReq struct {
 
 type ListPositionsResp struct {
 	RespBase
-	List []OptionPositionDetail `json:"list"`
+	Data []OptionPositionDetail `json:"data"`
 	Page PageReq                `json:"page"`
 }
 
@@ -2000,7 +2000,7 @@ type ListSettlementsReq struct {
 
 type ListSettlementsResp struct {
 	RespBase
-	List []OptionSettlementDetail `json:"list"`
+	Data []OptionSettlementDetail `json:"data"`
 	Page PageReq                  `json:"page"`
 }
 
@@ -2098,7 +2098,7 @@ type ListTradesReq struct {
 
 type ListTradesResp struct {
 	RespBase
-	List []OptionTradeDetail `json:"list"`
+	Data []OptionTradeDetail `json:"data"`
 	Page PageReq             `json:"page"`
 }
 

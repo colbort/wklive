@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package staking;
+
+option go_package = "wklive/proto/staking;staking";
+
+import "proto/common/common.proto";
+
+message StakingTaskReq {
+  int64 tenant_id = 1;
+}
+
+message StakingTaskResp {
+  common.RespBase base = 1;
+}
+
+// ====================
+// 定时任务
+// ====================
+service StakingTask {
+  // 质押收益发放/到期结算
+  rpc ProcessRewardsAndSettleOrders(StakingTaskReq) returns (StakingTaskResp);
+}

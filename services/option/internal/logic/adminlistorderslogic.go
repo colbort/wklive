@@ -31,7 +31,7 @@ func (l *AdminListOrdersLogic) AdminListOrders(in *option.ListOrdersReq) (*optio
 	cursor, limit := pageutil.Input(in.Page)
 	items, total, err := l.svcCtx.OptionOrderModel.FindPage(l.ctx, models.OptionOrderPageFilter{
 		TenantId:         in.TenantId,
-		UserId:              in.UserId,
+		UserId:           in.UserId,
 		AccountId:        in.AccountId,
 		ContractId:       in.ContractId,
 		UnderlyingSymbol: in.UnderlyingSymbol,
@@ -47,7 +47,7 @@ func (l *AdminListOrdersLogic) AdminListOrders(in *option.ListOrdersReq) (*optio
 		return nil, err
 	}
 
-	list := make([]*option.OptionOrderDetail, 0, len(items))
+	data := make([]*option.OptionOrderDetail, 0, len(items))
 	lastID := int64(0)
 	for _, item := range items {
 		lastID = item.Id
@@ -55,12 +55,12 @@ func (l *AdminListOrdersLogic) AdminListOrders(in *option.ListOrdersReq) (*optio
 		if err != nil {
 			return nil, err
 		}
-		list = append(list, detail)
+		data = append(data, detail)
 	}
 
 	return &option.ListOrdersResp{
 		Base: pageutil.Base(cursor, limit, len(items), total, lastID),
-		List: list,
+		Data: data,
 		Page: pageutil.Output(in.Page, limit),
 	}, nil
 }

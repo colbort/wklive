@@ -10,6 +10,47 @@ import (
 	"wklive/services/asset/models"
 )
 
+func prepareAssetIdempotent(ctx context.Context, model models.AssetIdempotentModel, tenantId int64, bizType, sceneType, bizNo, remark string, ts int64) (bool, error) {
+	record, err := model.FindOneByTenantIdBizTypeSceneTypeBizNo(ctx, tenantId, bizType, sceneType, bizNo)
+	if err != nil && err != models.ErrNotFound {
+		return false, err
+	}
+	if record != nil {
+		switch record.Status {
+		case int64(asset.IdempotentStatus_IDEMPOTENT_STATUS_SUCCESS):
+			return true, nil
+		case int64(asset.IdempotentStatus_IDEMPOTENT_STATUS_PROCESSING):
+			return false, fmt.Errorf("asset request is processing")
+		}
+		record.Status = int64(asset.IdempotentStatus_IDEMPOTENT_STATUS_PROCESSING)
+		record.Remark = remark
+		record.UpdateTimes = ts
+		return false, model.Update(ctx, record)
+	}
+	_, err = model.Insert(ctx, &models.TAssetIdempotent{
+		TenantId:    tenantId,
+		BizType:     bizType,
+		SceneType:   sceneType,
+		BizNo:       bizNo,
+		Status:      int64(asset.IdempotentStatus_IDEMPOTENT_STATUS_PROCESSING),
+		Remark:      remark,
+		CreateTimes: ts,
+		UpdateTimes: ts,
+	})
+	return false, err
+}
+
+func completeAssetIdempotent(ctx context.Context, model models.AssetIdempotentModel, tenantId int64, bizType, sceneType, bizNo string, ts int64) error {
+	record, err := model.FindOneByTenantIdBizTypeSceneTypeBizNo(ctx, tenantId, bizType, sceneType, bizNo)
+	if err != nil {
+		return err
+	}
+	record.Status = int64(asset.IdempotentStatus_IDEMPOTENT_STATUS_SUCCESS)
+	record.Remark = "success"
+	record.UpdateTimes = ts
+	return model.Update(ctx, record)
+}
+
 func ToAssetStatus(status int64) asset.AssetStatus {
 	switch status {
 	case 1:

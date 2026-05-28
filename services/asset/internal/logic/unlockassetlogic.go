@@ -46,9 +46,6 @@ func (l *UnlockAssetLogic) UnlockAsset(in *asset.UnlockAssetReq) (*asset.ChangeA
 	if lock.TenantId != in.TenantId {
 		return nil, fmt.Errorf("tenant mismatch for lock record")
 	}
-	if amount > lock.RemainAmount {
-		return nil, fmt.Errorf("unlock amount exceeds locked amount")
-	}
 
 	ts := utils.NowMillis()
 	var after *models.TUserAsset
@@ -57,6 +54,26 @@ func (l *UnlockAssetLogic) UnlockAsset(in *asset.UnlockAssetReq) (*asset.ChangeA
 		userAssetModel := models.NewTUserAssetModel(conn, l.svcCtx.Config.CacheRedis).(models.UserAssetModel)
 		assetLockModel := models.NewTAssetLockModel(conn, l.svcCtx.Config.CacheRedis).(models.AssetLockModel)
 		assetFlowModel := models.NewTAssetFlowModel(conn, l.svcCtx.Config.CacheRedis).(models.AssetFlowModel)
+		idempotentModel := models.NewTAssetIdempotentModel(conn, l.svcCtx.Config.CacheRedis).(models.AssetIdempotentModel)
+
+		if in.BizNo != "" {
+			done, err := prepareAssetIdempotent(ctx, idempotentModel, in.TenantId, assetBizType(in.BizType), assetSceneType(in.SceneType), in.BizNo, in.Remark, ts)
+			if err != nil {
+				return err
+			}
+			if done {
+				after, err = userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, lock.TenantId, lock.UserId, lock.WalletType, lock.Coin)
+				return err
+			}
+		}
+
+		lock, err := assetLockModel.FindOneByLockNo(ctx, in.LockNo)
+		if err != nil {
+			return err
+		}
+		if amount > lock.RemainAmount {
+			return fmt.Errorf("unlock amount exceeds locked amount")
+		}
 
 		before, err := userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, lock.TenantId, lock.UserId, lock.WalletType, lock.Coin)
 		if err != nil {
@@ -87,6 +104,11 @@ func (l *UnlockAssetLogic) UnlockAsset(in *asset.UnlockAssetReq) (*asset.ChangeA
 		flow := buildAssetFlowRecord(l.svcCtx, ctx, lock.TenantId, lock.UserId, lock.WalletType, lock.Coin, assetSceneType(in.SceneType), assetBizType(in.BizType), assetSceneType(in.SceneType), in.BizId, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_UNLOCK, amount, before, after, in.Remark, ts)
 		if _, err := assetFlowModel.Insert(ctx, flow); err != nil {
 			return err
+		}
+		if in.BizNo != "" {
+			if err := completeAssetIdempotent(ctx, idempotentModel, in.TenantId, assetBizType(in.BizType), assetSceneType(in.SceneType), in.BizNo, ts); err != nil {
+				return err
+			}
 		}
 		return nil
 	})

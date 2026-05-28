@@ -194,6 +194,35 @@ func toMarketSnapshotProto(item *models.TOptionMarketSnapshot) *option.OptionMar
 	}
 }
 
+func insertMarketSnapshot(ctx context.Context, model models.OptionMarketSnapshotModel, market *models.TOptionMarket, now int64) error {
+	if market == nil {
+		return nil
+	}
+	snapshotTime := market.SnapshotTime
+	if snapshotTime == 0 {
+		snapshotTime = now
+	}
+	_, err := model.Insert(ctx, &models.TOptionMarketSnapshot{
+		TenantId:         market.TenantId,
+		ContractId:       market.ContractId,
+		UnderlyingPrice:  market.UnderlyingPrice,
+		MarkPrice:        market.MarkPrice,
+		LastPrice:        market.LastPrice,
+		BidPrice:         market.BidPrice,
+		AskPrice:         market.AskPrice,
+		TheoreticalPrice: market.TheoreticalPrice,
+		Iv:               market.Iv,
+		Delta:            market.Delta,
+		Gamma:            market.Gamma,
+		Theta:            market.Theta,
+		Vega:             market.Vega,
+		Rho:              market.Rho,
+		SnapshotTime:     snapshotTime,
+		CreateTimes:      now,
+	})
+	return err
+}
+
 func toOrderProto(item *models.TOptionOrder) *option.OptionOrder {
 	if item == nil {
 		return nil

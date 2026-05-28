@@ -79,7 +79,7 @@ clean-gen:
 	@rm -rf wklive/
 
 clean-main:
-	@rm -rf optionadmin.go optionapp.go ./etc/optionadmin.yaml ./etc/optionapp.yaml
+	@rm -rf optionadmin.go optionapp.go optioninternal.go optiontask.go ./etc/optionadmin.yaml ./etc/optionapp.yaml ./etc/optioninternal.yaml ./etc/optiontask.yaml
 
 .PHONY: gen-model
 gen-model:

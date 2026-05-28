@@ -11,6 +11,13 @@ Itick:
   WSUrl: wss://api.itick.org
   Token: 5093272afb5241dfa3fd5505937289804447d9d6941547b2ab45929024c0fd4b
 
+OptionRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - 127.0.0.1:2379
+    Key: option.rpc
+
 
 Mongo:
   Url: "mongodb://root:openIM123@127.0.0.1:27017/stock?authSource=admin"

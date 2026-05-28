@@ -12,6 +12,7 @@ type OptionExercisePageFilter struct {
 	UserId            int64
 	AccountId         int64
 	ContractId        int64
+	PositionId        int64
 	ExerciseType      int64
 	Status            int64
 	ExerciseTimeStart int64
@@ -30,6 +31,7 @@ func (m *defaultTOptionExerciseModel) FindPage(ctx context.Context, filter Optio
 	builder.EqInt64("user_id", filter.UserId)
 	builder.EqInt64("account_id", filter.AccountId)
 	builder.EqInt64("contract_id", filter.ContractId)
+	builder.EqInt64("position_id", filter.PositionId)
 	builder.EqInt64("exercise_type", filter.ExerciseType)
 	builder.EqInt64("status", filter.Status)
 	builder.GteInt64("exercise_time", filter.ExerciseTimeStart)

@@ -57,7 +57,7 @@ message GetSymbolListReq {
 
 message GetSymbolListResp {
   common.RespBase base = 1;
-  repeated TradeSymbol list = 2;
+  repeated TradeSymbol data = 2;
 }
 
 message GetSymbolDetailReq {
@@ -127,7 +127,7 @@ message GetOrderListReq {
 
 message GetOrderListResp {
   common.RespBase base = 1;
-  repeated TradeOrder list = 2;
+  repeated TradeOrder data = 2;
 }
 
 message GetOrderDetailReq {
@@ -151,7 +151,7 @@ message GetFillListReq {
 
 message GetFillListResp {
   common.RespBase base = 1;
-  repeated TradeFill list = 2;
+  repeated TradeFill data = 2;
 }
 
 message GetPositionListReq {
@@ -161,7 +161,7 @@ message GetPositionListReq {
 
 message GetPositionListResp {
   common.RespBase base = 1;
-  repeated ContractPosition list = 2;
+  repeated ContractPosition data = 2;
 }
 
 message GetMarginAccountListReq {
@@ -171,7 +171,7 @@ message GetMarginAccountListReq {
 
 message GetMarginAccountListResp {
   common.RespBase base = 1;
-  repeated ContractMarginAccount list = 2;
+  repeated ContractMarginAccount data = 2;
 }
 
 message GetLeverageConfigReq {

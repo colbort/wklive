@@ -35,7 +35,7 @@ func (l *GetMarginAccountListAdminLogic) GetMarginAccountListAdmin(in *trade.Get
 		}
 	}
 	cursor, limit := pageutil.Input(in.Page)
-	list, total, err := l.svcCtx.ContractMarginAcctModel.FindPage(l.ctx, models.ContractMarginAccountPageFilter{
+	data, total, err := l.svcCtx.ContractMarginAcctModel.FindPage(l.ctx, models.ContractMarginAccountPageFilter{
 		TenantId:    in.TenantId,
 		UserId:      in.UserId,
 		MarketType:  int64(in.MarketType),
@@ -46,12 +46,12 @@ func (l *GetMarginAccountListAdminLogic) GetMarginAccountListAdmin(in *trade.Get
 	}
 
 	lastID := int64(0)
-	if len(list) > 0 {
-		lastID = int64(list[len(list)-1].Id)
+	if len(data) > 0 {
+		lastID = int64(data[len(data)-1].Id)
 	}
-	resp := &trade.GetMarginAccountListAdminResp{Base: pageutil.Base(cursor, limit, len(list), total, lastID)}
-	for _, item := range list {
-		resp.List = append(resp.List, marginAccountToProto(item))
+	resp := &trade.GetMarginAccountListAdminResp{Base: pageutil.Base(cursor, limit, len(data), total, lastID)}
+	for _, item := range data {
+		resp.Data = append(resp.Data, marginAccountToProto(item))
 	}
 	return resp, nil
 }

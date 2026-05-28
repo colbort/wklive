@@ -51,6 +51,18 @@ func (l *AddAvailableLogic) AddAvailable(in *asset.AddAvailableReq) (*asset.Chan
 		conn := sqlx.NewSqlConnFromSession(session)
 		userAssetModel := models.NewTUserAssetModel(conn, l.svcCtx.Config.CacheRedis).(models.UserAssetModel)
 		assetFlowModel := models.NewTAssetFlowModel(conn, l.svcCtx.Config.CacheRedis).(models.AssetFlowModel)
+		idempotentModel := models.NewTAssetIdempotentModel(conn, l.svcCtx.Config.CacheRedis).(models.AssetIdempotentModel)
+
+		if in.BizNo != "" {
+			done, err := prepareAssetIdempotent(ctx, idempotentModel, in.TenantId, assetBizType(in.BizType), assetSceneType(in.SceneType), in.BizNo, in.Remark, ts)
+			if err != nil {
+				return err
+			}
+			if done {
+				after, err = userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin)
+				return err
+			}
+		}
 
 		before, err := userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin)
 		if err != nil && err != models.ErrNotFound {
@@ -77,7 +89,7 @@ func (l *AddAvailableLogic) AddAvailable(in *asset.AddAvailableReq) (*asset.Chan
 				return err
 			}
 		} else {
-			if _, err := userAssetModel.AddAvailableAmount(ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, amount, before.Version, ts); err != nil {
+			if _, err := userAssetModel.AddAvailableAmount(ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, amount, ts); err != nil {
 				return err
 			}
 		}
@@ -90,6 +102,11 @@ func (l *AddAvailableLogic) AddAvailable(in *asset.AddAvailableReq) (*asset.Chan
 		flow := buildAssetFlowRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, changeType, assetBizType(in.BizType), assetSceneType(in.SceneType), in.BizId, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_ADD, amount, before, after, in.Remark, ts)
 		if _, err := assetFlowModel.Insert(ctx, flow); err != nil {
 			return err
+		}
+		if in.BizNo != "" {
+			if err := completeAssetIdempotent(ctx, idempotentModel, in.TenantId, assetBizType(in.BizType), assetSceneType(in.SceneType), in.BizNo, ts); err != nil {
+				return err
+			}
 		}
 		return nil
 	})

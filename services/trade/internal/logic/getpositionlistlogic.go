@@ -37,7 +37,7 @@ func (l *GetPositionListLogic) GetPositionList(in *trade.GetPositionListReq) (*t
 	if err != nil {
 		return nil, err
 	}
-	list, err := l.svcCtx.ContractPositionModel.FindList(l.ctx, models.ContractPositionPageFilter{
+	data, err := l.svcCtx.ContractPositionModel.FindList(l.ctx, models.ContractPositionPageFilter{
 		TenantId:   tenantId,
 		UserId:     userId,
 		SymbolId:   in.SymbolId,
@@ -48,8 +48,8 @@ func (l *GetPositionListLogic) GetPositionList(in *trade.GetPositionListReq) (*t
 	}
 
 	resp := &trade.GetPositionListResp{Base: helper.OkResp()}
-	for _, item := range list {
-		resp.List = append(resp.List, positionToProto(item))
+	for _, item := range data {
+		resp.Data = append(resp.Data, positionToProto(item))
 	}
 	return resp, nil
 }

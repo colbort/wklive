@@ -90,7 +90,7 @@ type AppListAccountsReq struct {
 
 type AppListAccountsResp struct {
 	RespBase
-	List []OptionAccount `json:"list"`
+	Data []OptionAccount `json:"data"`
 }
 
 type AppListBillsReq struct {
@@ -102,7 +102,7 @@ type AppListBillsReq struct {
 
 type AppListBillsResp struct {
 	RespBase
-	List []OptionBill `json:"list"`
+	Data []OptionBill `json:"data"`
 	Page PageReq      `json:"page"`
 }
 
@@ -115,7 +115,7 @@ type AppListContractsReq struct {
 
 type AppListContractsResp struct {
 	RespBase
-	List []OptionContractDetail `json:"list"`
+	Data []OptionContractDetail `json:"data"`
 }
 
 type AppListCurrentOrdersReq struct {
@@ -127,7 +127,7 @@ type AppListCurrentOrdersReq struct {
 
 type AppListCurrentOrdersResp struct {
 	RespBase
-	List []OptionOrderDetail `json:"list"`
+	Data []OptionOrderDetail `json:"data"`
 	Page PageReq             `json:"page"`
 }
 
@@ -141,7 +141,7 @@ type AppListExercisesReq struct {
 
 type AppListExercisesResp struct {
 	RespBase
-	List []OptionExerciseDetail `json:"list"`
+	Data []OptionExerciseDetail `json:"data"`
 	Page PageReq                `json:"page"`
 }
 
@@ -155,7 +155,7 @@ type AppListHistoryOrdersReq struct {
 
 type AppListHistoryOrdersResp struct {
 	RespBase
-	List []OptionOrderDetail `json:"list"`
+	Data []OptionOrderDetail `json:"data"`
 	Page PageReq             `json:"page"`
 }
 
@@ -167,7 +167,7 @@ type AppListPositionsReq struct {
 
 type AppListPositionsResp struct {
 	RespBase
-	List []OptionPositionDetail `json:"list"`
+	Data []OptionPositionDetail `json:"data"`
 	Page PageReq                `json:"page"`
 }
 
@@ -180,7 +180,7 @@ type AppListTradesReq struct {
 
 type AppListTradesResp struct {
 	RespBase
-	List []OptionTradeDetail `json:"list"`
+	Data []OptionTradeDetail `json:"data"`
 	Page PageReq             `json:"page"`
 }
 
@@ -632,7 +632,7 @@ type GetFillListReq struct {
 
 type GetFillListResp struct {
 	RespBase
-	List []TradeFill `json:"list"`
+	Data []TradeFill `json:"data"`
 }
 
 type GetIdentityResp struct {
@@ -677,7 +677,7 @@ type GetMarginAccountListReq struct {
 
 type GetMarginAccountListResp struct {
 	RespBase
-	List []ContractMarginAccount `json:"list"`
+	Data []ContractMarginAccount `json:"data"`
 }
 
 type GetMyAssetReq struct {
@@ -773,7 +773,7 @@ type GetOrderListReq struct {
 
 type GetOrderListResp struct {
 	RespBase
-	List []TradeOrder `json:"list"`
+	Data []TradeOrder `json:"data"`
 }
 
 type GetPaymentOptionsResp struct {
@@ -788,7 +788,7 @@ type GetPositionListReq struct {
 
 type GetPositionListResp struct {
 	RespBase
-	List []ContractPosition `json:"list"`
+	Data []ContractPosition `json:"data"`
 }
 
 type GetProfileResp struct {
@@ -835,7 +835,7 @@ type GetSymbolListReq struct {
 
 type GetSymbolListResp struct {
 	RespBase
-	List []TradeSymbol `json:"list"`
+	Data []TradeSymbol `json:"data"`
 }
 
 type GetSystemCoreResp struct {

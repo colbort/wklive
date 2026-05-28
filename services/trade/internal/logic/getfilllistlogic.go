@@ -38,7 +38,7 @@ func (l *GetFillListLogic) GetFillList(in *trade.GetFillListReq) (*trade.GetFill
 	if err != nil {
 		return nil, err
 	}
-	list, total, err := l.svcCtx.TradeFillModel.FindPage(l.ctx, models.TradeFillPageFilter{
+	data, total, err := l.svcCtx.TradeFillModel.FindPage(l.ctx, models.TradeFillPageFilter{
 		TenantId:   tenantId,
 		UserId:     userId,
 		SymbolId:   in.SymbolId,
@@ -51,12 +51,12 @@ func (l *GetFillListLogic) GetFillList(in *trade.GetFillListReq) (*trade.GetFill
 	}
 
 	lastID := int64(0)
-	if len(list) > 0 {
-		lastID = int64(list[len(list)-1].Id)
+	if len(data) > 0 {
+		lastID = int64(data[len(data)-1].Id)
 	}
-	resp := &trade.GetFillListResp{Base: pageutil.Base(cursor, limit, len(list), total, lastID)}
-	for _, item := range list {
-		resp.List = append(resp.List, fillToProto(item))
+	resp := &trade.GetFillListResp{Base: pageutil.Base(cursor, limit, len(data), total, lastID)}
+	for _, item := range data {
+		resp.Data = append(resp.Data, fillToProto(item))
 	}
 	return resp, nil
 }

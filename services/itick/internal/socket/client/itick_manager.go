@@ -37,6 +37,8 @@ type ItickManager struct {
 	changeMu            sync.Mutex
 	pendingChanges      []SubscriptionChange
 	pendingChangesTimer *time.Timer
+
+	quoteHandler func(ctx context.Context, msg server.ClientMessage, payload *QuotePayload)
 }
 
 func NewItickManager(
@@ -125,6 +127,7 @@ func (m *ItickManager) Start(ctx context.Context) error {
 
 	if err := m.bus.Subscribe(ctx, func(msg server.ClientMessage, payload any) {
 		m.hub.Broadcast(msg, payload)
+		m.dispatchQuote(ctx, msg, payload)
 	}); err != nil {
 		m.startMu.Lock()
 		m.started = false
@@ -153,6 +156,21 @@ func (m *ItickManager) Start(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+func (m *ItickManager) SetQuoteHandler(handler func(ctx context.Context, msg server.ClientMessage, payload *QuotePayload)) {
+	m.quoteHandler = handler
+}
+
+func (m *ItickManager) dispatchQuote(ctx context.Context, msg server.ClientMessage, payload any) {
+	if msg.Topic != server.TopicQuote || m.quoteHandler == nil {
+		return
+	}
+	quote, ok := payload.(*QuotePayload)
+	if !ok || quote == nil {
+		return
+	}
+	go m.quoteHandler(ctx, msg, quote)
 }
 
 func (m *ItickManager) queueSubscriptionChanges(changes []SubscriptionChange) {

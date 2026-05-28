@@ -191,7 +191,7 @@ type GetSymbolListReq {
 
 type GetSymbolListResp {
 	RespBase
-	list []TradeSymbol `json:"list"`
+	data []TradeSymbol `json:"data"`
 }
 
 type GetSymbolDetailReq {
@@ -261,7 +261,7 @@ type GetOrderListReq {
 
 type GetOrderListResp {
 	RespBase
-	list []TradeOrder `json:"list"`
+	data []TradeOrder `json:"data"`
 }
 
 type GetOrderDetailReq {
@@ -285,7 +285,7 @@ type GetFillListReq {
 
 type GetFillListResp {
 	RespBase
-	list []TradeFill `json:"list"`
+	data []TradeFill `json:"data"`
 }
 
 type GetPositionListReq {
@@ -295,7 +295,7 @@ type GetPositionListReq {
 
 type GetPositionListResp {
 	RespBase
-	list []ContractPosition `json:"list"`
+	data []ContractPosition `json:"data"`
 }
 
 type GetMarginAccountListReq {
@@ -305,7 +305,7 @@ type GetMarginAccountListReq {
 
 type GetMarginAccountListResp {
 	RespBase
-	list []ContractMarginAccount `json:"list"`
+	data []ContractMarginAccount `json:"data"`
 }
 
 type GetLeverageConfigReq {

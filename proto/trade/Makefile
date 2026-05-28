@@ -13,7 +13,8 @@ gen:
 		proto/trade/model.proto \
 		proto/trade/trade_app.proto \
 		proto/trade/trade_admin.proto \
-		proto/trade/trade_internal.proto 
+		proto/trade/trade_internal.proto \
+		proto/trade/trade_task.proto
 	@echo "✅ [proto/trade] generated"
 
 clean:

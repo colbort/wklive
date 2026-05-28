@@ -33,7 +33,7 @@ func (l *GetSymbolListLogic) GetSymbolList(in *trade.GetSymbolListReq) (*trade.G
 	if err != nil {
 		return nil, err
 	}
-	list, err := l.svcCtx.TradeSymbolModel.FindAll(l.ctx, models.TradeSymbolPageFilter{
+	data, err := l.svcCtx.TradeSymbolModel.FindAll(l.ctx, models.TradeSymbolPageFilter{
 		TenantId:   tenantId,
 		MarketType: int64(in.MarketType),
 		Status:     int64(in.Status),
@@ -43,8 +43,8 @@ func (l *GetSymbolListLogic) GetSymbolList(in *trade.GetSymbolListReq) (*trade.G
 	}
 
 	resp := &trade.GetSymbolListResp{Base: helper.OkResp()}
-	for _, item := range list {
-		resp.List = append(resp.List, symbolToProto(item))
+	for _, item := range data {
+		resp.Data = append(resp.Data, symbolToProto(item))
 	}
 	return resp, nil
 }

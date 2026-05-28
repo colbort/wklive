@@ -38,7 +38,7 @@ func (l *GetOrderListLogic) GetOrderList(in *trade.GetOrderListReq) (*trade.GetO
 		return nil, err
 	}
 	cursor, limit := pageutil.Input(in.Page)
-	list, total, err := l.svcCtx.TradeOrderModel.FindPage(l.ctx, models.TradeOrderPageFilter{
+	data, total, err := l.svcCtx.TradeOrderModel.FindPage(l.ctx, models.TradeOrderPageFilter{
 		TenantId:   tenantId,
 		UserId:     userId,
 		SymbolId:   in.SymbolId,
@@ -53,12 +53,12 @@ func (l *GetOrderListLogic) GetOrderList(in *trade.GetOrderListReq) (*trade.GetO
 	}
 
 	lastID := int64(0)
-	if len(list) > 0 {
-		lastID = int64(list[len(list)-1].Id)
+	if len(data) > 0 {
+		lastID = int64(data[len(data)-1].Id)
 	}
-	resp := &trade.GetOrderListResp{Base: pageutil.Base(cursor, limit, len(list), total, lastID)}
-	for _, item := range list {
-		resp.List = append(resp.List, orderToProto(item))
+	resp := &trade.GetOrderListResp{Base: pageutil.Base(cursor, limit, len(data), total, lastID)}
+	for _, item := range data {
+		resp.Data = append(resp.Data, orderToProto(item))
 	}
 	return resp, nil
 }

@@ -69,7 +69,7 @@ func (l *AdminAddAssetLogic) AdminAddAsset(in *asset.AdminAddAssetReq) (*asset.A
 				return err
 			}
 		} else {
-			if _, err := userAssetModel.AddAvailableAmount(ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, amount, before.Version, ts); err != nil {
+			if _, err := userAssetModel.AddAvailableAmount(ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, amount, ts); err != nil {
 				return err
 			}
 		}

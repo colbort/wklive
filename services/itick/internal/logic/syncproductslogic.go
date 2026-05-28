@@ -3,14 +3,20 @@ package logic
 import (
 	"context"
 	"errors"
+	"fmt"
+	"time"
 
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/itick"
+	"wklive/services/itick/internal/pkg/utils"
 	"wklive/services/itick/internal/svc"
 	"wklive/services/itick/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
+
+const syncProductsLockKey = "itick:sync_products"
 
 type SyncProductsLogic struct {
 	ctx    context.Context
@@ -28,6 +34,30 @@ func NewSyncProductsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sync
 
 // 同步产品列表 （定时任务）
 func (l *SyncProductsLogic) SyncProducts(in *itick.SyncProductsReq) (*itick.SyncProductsResp, error) {
+	lockValue := fmt.Sprintf("%d", time.Now().UnixNano())
+	distLock := utils.NewRedisLock(l.svcCtx.LockRedis)
+	if err := distLock.Acquire(l.ctx, syncProductsLockKey, lockValue, 30*time.Second); err != nil {
+		if errors.Is(err, utils.ErrLockNotAcquired) {
+			return &itick.SyncProductsResp{
+				Base: helper.GetErrResp(1, i18n.Translate(i18n.SyncTaskAlreadyRunning, l.ctx)),
+			}, nil
+		}
+
+		logx.Errorf("acquire lock failed, key=%s err=%v", syncProductsLockKey, err)
+		return &itick.SyncProductsResp{
+			Base: helper.GetErrResp(1, i18n.Translate(i18n.DistributedLockAcquireFailed, l.ctx)),
+		}, nil
+	}
+
+	renewCtx, renewCancel := context.WithCancel(l.ctx)
+	go l.autoRenewLock(renewCtx, distLock, syncProductsLockKey, lockValue)
+	defer func() {
+		renewCancel()
+		if err := distLock.Release(context.Background(), syncProductsLockKey, lockValue); err != nil {
+			logx.Errorf("release lock failed, key=%s err=%v", syncProductsLockKey, err)
+		}
+	}()
+
 	categories, err := l.svcCtx.ItickCategoryModel.FindAll(l.ctx)
 	if err != nil {
 		return nil, err
@@ -51,4 +81,21 @@ func (l *SyncProductsLogic) SyncProducts(in *itick.SyncProductsReq) (*itick.Sync
 	return &itick.SyncProductsResp{
 		Base: helper.OkResp(),
 	}, nil
+}
+
+func (l *SyncProductsLogic) autoRenewLock(ctx context.Context, lock *utils.RedisLock, key, value string) {
+	ticker := time.NewTicker(10 * time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-ticker.C:
+			if err := lock.Refresh(context.Background(), key, value, 30*time.Second); err != nil {
+				logx.Errorf("refresh lock failed, key=%s err=%v", key, err)
+				return
+			}
+		}
+	}
 }

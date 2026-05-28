@@ -29,7 +29,7 @@ func NewGetPositionHistoryListAdminLogic(ctx context.Context, svcCtx *svc.Servic
 // 获取持仓历史列表
 func (l *GetPositionHistoryListAdminLogic) GetPositionHistoryListAdmin(in *trade.GetPositionHistoryListAdminReq) (*trade.GetPositionHistoryListAdminResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
-	list, total, err := l.svcCtx.ContractPositionHistModel.FindPage(l.ctx, models.ContractPositionHistoryPageFilter{
+	data, total, err := l.svcCtx.ContractPositionHistModel.FindPage(l.ctx, models.ContractPositionHistoryPageFilter{
 		TenantId:   in.TenantId,
 		UserId:     in.UserId,
 		SymbolId:   in.SymbolId,
@@ -44,12 +44,12 @@ func (l *GetPositionHistoryListAdminLogic) GetPositionHistoryListAdmin(in *trade
 	}
 
 	lastID := int64(0)
-	if len(list) > 0 {
-		lastID = int64(list[len(list)-1].Id)
+	if len(data) > 0 {
+		lastID = int64(data[len(data)-1].Id)
 	}
-	resp := &trade.GetPositionHistoryListAdminResp{Base: pageutil.Base(cursor, limit, len(list), total, lastID)}
-	for _, item := range list {
-		resp.List = append(resp.List, positionHistoryToProto(item))
+	resp := &trade.GetPositionHistoryListAdminResp{Base: pageutil.Base(cursor, limit, len(data), total, lastID)}
+	for _, item := range data {
+		resp.Data = append(resp.Data, positionHistoryToProto(item))
 	}
 	return resp, nil
 }

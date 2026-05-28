@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package option;
+
+import "proto/common/common.proto";
+
+option go_package = "wklive/proto/option;option";
+
+message OptionTaskReq {
+  int64 tenant_id = 1;
+}
+
+message OptionTaskResp {
+  common.RespBase base = 1;
+}
+
+// ====================
+// 定时任务
+// ====================
+service OptionTask {
+  // 期权合约生命周期处理（状态流转/订单过期/自动行权/到期结算）
+  rpc ProcessContractLifecycle(OptionTaskReq) returns (OptionTaskResp);
+  // 期权行情快照归档/清理
+  rpc CleanMarketSnapshots(OptionTaskReq) returns (OptionTaskResp);
+}

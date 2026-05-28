@@ -39,6 +39,8 @@ func main() {
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		option.RegisterOptionAdminServer(grpcServer, server.NewOptionAdminServer(svcCtx))
 		option.RegisterOptionAppServer(grpcServer, server.NewOptionAppServer(svcCtx))
+		option.RegisterOptionInternalServer(grpcServer, server.NewOptionInternalServer(svcCtx))
+		option.RegisterOptionTaskServer(grpcServer, server.NewOptionTaskServer(svcCtx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

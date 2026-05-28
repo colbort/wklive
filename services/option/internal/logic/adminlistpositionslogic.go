@@ -41,7 +41,7 @@ func (l *AdminListPositionsLogic) AdminListPositions(in *option.ListPositionsReq
 		return nil, err
 	}
 
-	list := make([]*option.OptionPositionDetail, 0, len(items))
+	data := make([]*option.OptionPositionDetail, 0, len(items))
 	lastID := int64(0)
 	for _, item := range items {
 		lastID = item.Id
@@ -49,12 +49,12 @@ func (l *AdminListPositionsLogic) AdminListPositions(in *option.ListPositionsReq
 		if err != nil {
 			return nil, err
 		}
-		list = append(list, detail)
+		data = append(data, detail)
 	}
 
 	return &option.ListPositionsResp{
 		Base: pageutil.Base(cursor, limit, len(items), total, lastID),
-		List: list,
+		Data: data,
 		Page: pageutil.Output(in.Page, limit),
 	}, nil
 }

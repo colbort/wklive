@@ -45,10 +45,10 @@ func (l *AppListAccountsLogic) AppListAccounts(in *option.AppListAccountsReq) (*
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
-	list := make([]*option.OptionAccount, 0, len(items))
+	data := make([]*option.OptionAccount, 0, len(items))
 	for _, item := range items {
-		list = append(list, toAccountProto(item))
+		data = append(data, toAccountProto(item))
 	}
 
-	return &option.AppListAccountsResp{Base: helper.OkResp(), List: list}, nil
+	return &option.AppListAccountsResp{Base: helper.OkResp(), Data: data}, nil
 }

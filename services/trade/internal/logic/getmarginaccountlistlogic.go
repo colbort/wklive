@@ -37,7 +37,7 @@ func (l *GetMarginAccountListLogic) GetMarginAccountList(in *trade.GetMarginAcco
 	if err != nil {
 		return nil, err
 	}
-	list, err := l.svcCtx.ContractMarginAcctModel.FindList(l.ctx, models.ContractMarginAccountPageFilter{
+	data, err := l.svcCtx.ContractMarginAcctModel.FindList(l.ctx, models.ContractMarginAccountPageFilter{
 		TenantId:    tenantId,
 		UserId:      userId,
 		MarketType:  int64(in.MarketType),
@@ -48,8 +48,8 @@ func (l *GetMarginAccountListLogic) GetMarginAccountList(in *trade.GetMarginAcco
 	}
 
 	resp := &trade.GetMarginAccountListResp{Base: helper.OkResp()}
-	for _, item := range list {
-		resp.List = append(resp.List, marginAccountToProto(item))
+	for _, item := range data {
+		resp.Data = append(resp.Data, marginAccountToProto(item))
 	}
 	return resp, nil
 }

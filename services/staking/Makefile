@@ -79,7 +79,7 @@ clean-gen:
 	@rm -rf wklive/
 
 clean-main:
-	@rm -rf stakingadmin.go stakingapp.go ./etc/stakingadmin.yaml ./etc/stakingapp.yaml 
+	@rm -rf stakingadmin.go stakingapp.go stakingtask.go ./etc/stakingadmin.yaml ./etc/stakingapp.yaml ./etc/stakingtask.yaml
 
 .PHONY: gen-model
 gen-model:

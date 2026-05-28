@@ -35,7 +35,7 @@ func (l *GetTradeEventListLogic) GetTradeEventList(in *trade.GetTradeEventListRe
 		}
 	}
 	cursor, limit := pageutil.Input(in.Page)
-	list, total, err := l.svcCtx.BizTradeEventModel.FindPage(l.ctx, models.BizTradeEventPageFilter{
+	data, total, err := l.svcCtx.BizTradeEventModel.FindPage(l.ctx, models.BizTradeEventPageFilter{
 		TenantId:    in.TenantId,
 		EventType:   in.EventType,
 		BizType:     in.BizType,
@@ -48,12 +48,12 @@ func (l *GetTradeEventListLogic) GetTradeEventList(in *trade.GetTradeEventListRe
 		return nil, err
 	}
 	lastID := int64(0)
-	if len(list) > 0 {
-		lastID = int64(list[len(list)-1].Id)
+	if len(data) > 0 {
+		lastID = int64(data[len(data)-1].Id)
 	}
-	resp := &trade.GetTradeEventListResp{Base: pageutil.Base(cursor, limit, len(list), total, lastID)}
-	for _, item := range list {
-		resp.List = append(resp.List, tradeEventToProto(item))
+	resp := &trade.GetTradeEventListResp{Base: pageutil.Base(cursor, limit, len(data), total, lastID)}
+	for _, item := range data {
+		resp.Data = append(resp.Data, tradeEventToProto(item))
 	}
 	return resp, nil
 }

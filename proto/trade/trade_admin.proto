@@ -166,7 +166,7 @@ message GetSymbolListAdminReq {
 
 message GetSymbolListAdminResp {
   common.RespBase base = 1;
-  repeated TradeSymbol list = 2;
+  repeated TradeSymbol data = 2;
 }
 
 message GetSymbolDetailAdminReq {
@@ -218,7 +218,7 @@ message GetOrderListAdminReq {
 
 message GetOrderListAdminResp {
   common.RespBase base = 1;
-  repeated TradeOrder list = 2;
+  repeated TradeOrder data = 2;
 }
 
 message GetOrderDetailAdminReq {
@@ -242,7 +242,7 @@ message GetFillListAdminReq {
 
 message GetFillListAdminResp {
   common.RespBase base = 1;
-  repeated TradeFill list = 2;
+  repeated TradeFill data = 2;
 }
 
 message GetFillDetailAdminReq {
@@ -265,7 +265,7 @@ message GetPositionListAdminReq {
 
 message GetPositionListAdminResp {
   common.RespBase base = 1;
-  repeated ContractPosition list = 2;
+  repeated ContractPosition data = 2;
 }
 
 message GetPositionDetailAdminReq {
@@ -291,7 +291,7 @@ message GetPositionHistoryListAdminReq {
 
 message GetPositionHistoryListAdminResp {
   common.RespBase base = 1;
-  repeated ContractPositionHistory list = 2;
+  repeated ContractPositionHistory data = 2;
 }
 
 message GetMarginAccountListAdminReq {
@@ -304,7 +304,7 @@ message GetMarginAccountListAdminReq {
 
 message GetMarginAccountListAdminResp {
   common.RespBase base = 1;
-  repeated ContractMarginAccount list = 2;
+  repeated ContractMarginAccount data = 2;
 }
 
 message GetCancelLogListAdminReq {
@@ -319,7 +319,7 @@ message GetCancelLogListAdminReq {
 
 message GetCancelLogListAdminResp {
   common.RespBase base = 1;
-  repeated TradeCancelLog list = 2;
+  repeated TradeCancelLog data = 2;
 }
 
 message SetUserTradeLimitReq {
@@ -430,7 +430,7 @@ message GetRiskOrderCheckLogListReq {
 
 message GetRiskOrderCheckLogListResp {
   common.RespBase base = 1;
-  repeated RiskOrderCheckLog list = 2;
+  repeated RiskOrderCheckLog data = 2;
 }
 
 message SetUserLeverageConfigReq {
@@ -474,7 +474,7 @@ message GetTradeEventListReq {
 
 message GetTradeEventListResp {
   common.RespBase base = 1;
-  repeated BizTradeEvent list = 2;
+  repeated BizTradeEvent data = 2;
 }
 
 message GetTradeEventDetailReq {

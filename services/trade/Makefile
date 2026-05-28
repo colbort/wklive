@@ -79,7 +79,7 @@ clean-gen:
 	@rm -rf wklive/
 
 clean-main:
-	@rm -rf tradeadmin.go tradeapp.go tradeinternal.go ./etc/tradeadmin.yaml ./etc/tradeapp.yaml ./etc/tradeinternal.yaml
+	@rm -rf tradeadmin.go tradeapp.go tradeinternal.go tradetask.go ./etc/tradeadmin.yaml ./etc/tradeapp.yaml ./etc/tradeinternal.yaml ./etc/tradetask.yaml
 
 .PHONY: gen-model
 gen-model:

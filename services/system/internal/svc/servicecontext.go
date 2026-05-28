@@ -2,6 +2,9 @@ package svc
 
 import (
 	"wklive/proto/itick"
+	"wklive/proto/option"
+	"wklive/proto/staking"
+	"wklive/proto/trade"
 	"wklive/services/system/internal/config"
 	"wklive/services/system/internal/global"
 	"wklive/services/system/internal/plugins/cronx"
@@ -33,8 +36,10 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	cli := zrpc.MustNewClient(c.ItickRpc)
-	global.ItickTaskCli = itick.NewItickTaskClient(cli.Conn())
+	global.ItickTaskCli = itick.NewItickTaskClient(zrpc.MustNewClient(c.ItickRpc).Conn())
+	global.OptionTaskCli = option.NewOptionTaskClient(zrpc.MustNewClient(c.OptionRpc).Conn())
+	global.StakingTaskCli = staking.NewStakingTaskClient(zrpc.MustNewClient(c.StakingRpc).Conn())
+	global.TradeTaskCli = trade.NewTradeTaskClient(zrpc.MustNewClient(c.TradeRpc).Conn())
 
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
 	jobLogModel := models.NewSysJobLogModel(conn, c.CacheRedis).(models.JobLogModel)

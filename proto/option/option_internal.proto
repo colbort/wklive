@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package option;
+
+import "proto/common/common.proto";
+
+option go_package = "wklive/proto/option;option";
+
+message SyncMarketQuoteReq {
+  int64 tenant_id = 1;
+  string category_code = 2;
+  string market = 3;
+  string symbol = 4;
+  double underlying_price = 5;
+  double open_price = 6;
+  double high_price = 7;
+  double low_price = 8;
+  double volume = 9;
+  double turnover = 10;
+  int64 quote_ts = 11;
+}
+
+message InternalCommonResp { common.RespBase base = 1; }
+
+service OptionInternal {
+  // 同步标的行情，更新对应期权合约行情和快照。
+  rpc SyncMarketQuote(SyncMarketQuoteReq) returns (InternalCommonResp);
+}

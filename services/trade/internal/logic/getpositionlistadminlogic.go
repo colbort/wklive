@@ -29,7 +29,7 @@ func NewGetPositionListAdminLogic(ctx context.Context, svcCtx *svc.ServiceContex
 // 获取后台持仓列表
 func (l *GetPositionListAdminLogic) GetPositionListAdmin(in *trade.GetPositionListAdminReq) (*trade.GetPositionListAdminResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
-	list, total, err := l.svcCtx.ContractPositionModel.FindPage(l.ctx, models.ContractPositionPageFilter{
+	data, total, err := l.svcCtx.ContractPositionModel.FindPage(l.ctx, models.ContractPositionPageFilter{
 		TenantId:   in.TenantId,
 		UserId:     in.UserId,
 		SymbolId:   in.SymbolId,
@@ -40,12 +40,12 @@ func (l *GetPositionListAdminLogic) GetPositionListAdmin(in *trade.GetPositionLi
 	}
 
 	lastID := int64(0)
-	if len(list) > 0 {
-		lastID = int64(list[len(list)-1].Id)
+	if len(data) > 0 {
+		lastID = int64(data[len(data)-1].Id)
 	}
-	resp := &trade.GetPositionListAdminResp{Base: pageutil.Base(cursor, limit, len(list), total, lastID)}
-	for _, item := range list {
-		resp.List = append(resp.List, positionToProto(item))
+	resp := &trade.GetPositionListAdminResp{Base: pageutil.Base(cursor, limit, len(data), total, lastID)}
+	for _, item := range data {
+		resp.Data = append(resp.Data, positionToProto(item))
 	}
 	return resp, nil
 }

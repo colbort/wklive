@@ -43,7 +43,7 @@ func (l *AdminListExercisesLogic) AdminListExercises(in *option.ListExercisesReq
 		return nil, err
 	}
 
-	list := make([]*option.OptionExerciseDetail, 0, len(items))
+	data := make([]*option.OptionExerciseDetail, 0, len(items))
 	lastID := int64(0)
 	for _, item := range items {
 		lastID = item.Id
@@ -51,12 +51,12 @@ func (l *AdminListExercisesLogic) AdminListExercises(in *option.ListExercisesReq
 		if err != nil {
 			return nil, err
 		}
-		list = append(list, detail)
+		data = append(data, detail)
 	}
 
 	return &option.ListExercisesResp{
 		Base: pageutil.Base(cursor, limit, len(items), total, lastID),
-		List: list,
+		Data: data,
 		Page: pageutil.Output(in.Page, limit),
 	}, nil
 }

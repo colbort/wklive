@@ -9,9 +9,11 @@ require (
 	github.com/zeromicro/go-zero v1.10.0
 	go.mongodb.org/mongo-driver/v2 v2.5.0
 	golang.org/x/time v0.10.0
-	google.golang.org/grpc v1.79.3
+	google.golang.org/grpc v1.80.0
 	wklive/common v0.0.0-00010101000000-000000000000
+	wklive/proto/common v0.0.0-00010101000000-000000000000
 	wklive/proto/itick v0.0.0-00010101000000-000000000000
+	wklive/proto/option v0.0.0-00010101000000-000000000000
 	wklive/proto/system v0.0.0-00010101000000-000000000000
 )
 
@@ -84,15 +86,15 @@ require (
 	go.uber.org/multierr v1.9.0 // indirect
 	go.uber.org/zap v1.24.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.2 // indirect
-	golang.org/x/crypto v0.46.0 // indirect
-	golang.org/x/net v0.48.0 // indirect
+	golang.org/x/crypto v0.47.0 // indirect
+	golang.org/x/net v0.49.0 // indirect
 	golang.org/x/oauth2 v0.34.0 // indirect
 	golang.org/x/sync v0.19.0 // indirect
-	golang.org/x/sys v0.39.0 // indirect
-	golang.org/x/term v0.38.0 // indirect
-	golang.org/x/text v0.32.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20251202230838-ff82c1b0f217 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20251202230838-ff82c1b0f217 // indirect
+	golang.org/x/sys v0.40.0 // indirect
+	golang.org/x/term v0.39.0 // indirect
+	golang.org/x/text v0.33.0 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20260120221211-b8f7ae30c516 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260120221211-b8f7ae30c516 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
@@ -106,7 +108,6 @@ require (
 	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.4.1 // indirect
 	sigs.k8s.io/yaml v1.3.0 // indirect
-	wklive/proto/common v0.0.0-00010101000000-000000000000 // indirect
 )
 
 replace wklive/proto/common => ../../proto/common
@@ -116,3 +117,5 @@ replace wklive/proto/itick => ../../proto/itick
 replace wklive/common => ../../common
 
 replace wklive/proto/system => ../../proto/system
+
+replace wklive/proto/option => ../../proto/option

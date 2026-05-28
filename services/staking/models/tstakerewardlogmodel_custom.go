@@ -16,7 +16,9 @@ func (m *defaultTStakeRewardLogModel) FindPage(ctx context.Context, tenantID int
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.And("tenant_id = ?", tenantID)
+	if tenantID > 0 {
+		builder.And("tenant_id = ?", tenantID)
+	}
 	if user_id > 0 {
 		builder.And("user_id = ?", user_id)
 	}

@@ -39,6 +39,7 @@ func main() {
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		staking.RegisterStakingAdminServer(grpcServer, server.NewStakingAdminServer(svcCtx))
 		staking.RegisterStakingAppServer(grpcServer, server.NewStakingAppServer(svcCtx))
+		staking.RegisterStakingTaskServer(grpcServer, server.NewStakingTaskServer(svcCtx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

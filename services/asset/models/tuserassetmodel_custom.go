@@ -15,7 +15,7 @@ type UserAssetModel interface {
 	FindPage(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, status int64, cursor int64, limit int64) ([]*TUserAsset, int64, error)
 	FindAll(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, status int64) ([]*TUserAsset, error)
 	// 增加已有资产的可用余额，调用方需要先创建不存在的资产记录
-	AddAvailableAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount float64, version int64, updateTimes int64) (int64, error)
+	AddAvailableAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (int64, error)
 	SubAvailableAmount(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (bool, error)
 	// 冻结资产（下单冻结）
 	FreezeAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (bool, error)
@@ -129,11 +129,7 @@ func (m *defaultTUserAssetModel) userAssetCacheKeys(ctx context.Context, tenantI
 }
 
 // 增加可用资产（充值等）
-func (m *defaultTUserAssetModel) AddAvailableAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount float64, version int64, updateTimes int64) (int64, error) {
-	if version < 0 {
-		return 0, ErrNotFound
-	}
-
+func (m *defaultTUserAssetModel) AddAvailableAmount(ctx context.Context, tenantId, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (int64, error) {
 	query := fmt.Sprintf(`
 		UPDATE %s
 		SET 
@@ -145,8 +141,6 @@ func (m *defaultTUserAssetModel) AddAvailableAmount(ctx context.Context, tenantI
 		m.table)
 
 	args := []any{amount, amount, updateTimes, tenantId, userId, walletType, coin}
-	query += " AND version = ?"
-	args = append(args, version)
 
 	cacheKeys, err := m.userAssetCacheKeys(ctx, tenantId, userId, walletType, coin)
 	if err != nil {
@@ -167,7 +161,7 @@ func (m *defaultTUserAssetModel) AddAvailableAmount(ctx context.Context, tenantI
 	if rows > 0 {
 		return rows, nil
 	}
-	return 0, fmt.Errorf("asset balance version changed or asset disabled")
+	return 0, fmt.Errorf("asset disabled or not found")
 }
 
 func (m *defaultTUserAssetModel) SubAvailableAmount(ctx context.Context, tenantId int64, userId int64, walletType int64, coin string, amount float64, updateTimes int64) (bool, error) {

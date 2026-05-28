@@ -184,25 +184,7 @@ func (l *AdminUpdateMarketLogic) AdminUpdateMarket(in *option.UpdateMarketReq) (
 			return err
 		}
 
-		_, err := snapshotModel.Insert(ctx, &models.TOptionMarketSnapshot{
-			TenantId:         contract.TenantId,
-			ContractId:       in.ContractId,
-			UnderlyingPrice:  market.UnderlyingPrice,
-			MarkPrice:        market.MarkPrice,
-			LastPrice:        market.LastPrice,
-			BidPrice:         market.BidPrice,
-			AskPrice:         market.AskPrice,
-			TheoreticalPrice: market.TheoreticalPrice,
-			Iv:               market.Iv,
-			Delta:            market.Delta,
-			Gamma:            market.Gamma,
-			Theta:            market.Theta,
-			Vega:             market.Vega,
-			Rho:              market.Rho,
-			SnapshotTime:     market.SnapshotTime,
-			CreateTimes:      now,
-		})
-		return err
+		return insertMarketSnapshot(ctx, snapshotModel, market, now)
 	})
 	if err != nil {
 		return nil, err
