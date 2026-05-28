@@ -108,13 +108,8 @@ import { usePagination } from '@/composables'
 import { tradeService, type GetRiskOrderCheckLogListReq, type RiskOrderCheckLog } from '@/services'
 
 const { t } = useI18n()
-const {
-  pagination,
-  updateFromResponse,
-  resetAndLoad,
-  prevAndLoad,
-  nextAndLoad,
-} = usePagination<number>(20)
+const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
+  usePagination<number>(20)
 
 const loading = ref(false)
 interface RiskQuery {

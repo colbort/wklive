@@ -258,13 +258,8 @@ import TenantSelect from '@/components/TenantSelect.vue'
 const { t } = useI18n()
 
 // Pagination and main list
-const {
-  pagination,
-  updateFromResponse,
-  resetAndLoad,
-  prevAndLoad,
-  nextAndLoad,
-} = usePagination<number>(10)
+const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
+  usePagination<number>(10)
 const list = ref<SysConfigItem[]>([])
 const { loading, withLoading } = useLoading()
 

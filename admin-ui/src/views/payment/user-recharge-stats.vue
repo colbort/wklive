@@ -123,13 +123,8 @@ import { rechargeService, type UserRechargeStat } from '@/services'
 import { formatDate } from '@/utils'
 
 const { t } = useI18n()
-const {
-  pagination,
-  updateFromResponse,
-  resetAndLoad,
-  prevAndLoad,
-  nextAndLoad,
-} = usePagination<number>(20)
+const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
+  usePagination<number>(20)
 
 const loading = ref(false)
 const list = ref<UserRechargeStat[]>([])

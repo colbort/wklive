@@ -280,18 +280,14 @@ import {
   UpdateMarketReq,
 } from '@/services'
 
-type MarketDetail = Partial<OptionMarket> & Partial<OptionMarketSnapshot> & {
-  contract?: OptionContract
-}
+type MarketDetail = Partial<OptionMarket> &
+  Partial<OptionMarketSnapshot> & {
+    contract?: OptionContract
+  }
 
 const { t } = useI18n()
-const {
-  pagination,
-  updateFromResponse,
-  resetAndLoad,
-  prevAndLoad,
-  nextAndLoad,
-} = usePagination<number>(20)
+const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
+  usePagination<number>(20)
 
 const loading = ref(false)
 const detailLoading = ref(false)

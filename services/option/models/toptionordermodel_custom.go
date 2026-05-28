@@ -26,6 +26,7 @@ type OptionOrderPageFilter struct {
 type OptionOrderModel interface {
 	tOptionOrderModel
 	FindPage(ctx context.Context, filter OptionOrderPageFilter, cursor int64, limit int64) ([]*TOptionOrder, int64, error)
+	FindMatchableOrders(ctx context.Context, tenantId, contractId, side int64, price float64, limit int64) ([]*TOptionOrder, error)
 }
 
 func (m *defaultTOptionOrderModel) FindPage(ctx context.Context, filter OptionOrderPageFilter, cursor int64, limit int64) ([]*TOptionOrder, int64, error) {
@@ -69,4 +70,36 @@ func (m *defaultTOptionOrderModel) FindPage(ctx context.Context, filter OptionOr
 	}
 
 	return list, total, nil
+}
+
+func (m *defaultTOptionOrderModel) FindMatchableOrders(ctx context.Context, tenantId, contractId, side int64, price float64, limit int64) ([]*TOptionOrder, error) {
+	limit = sqlutil.NormalizeLimit(limit)
+
+	priceClause := "price <= ?"
+	orderBy := "price ASC, id ASC"
+	if side == 1 {
+		priceClause = "price >= ?"
+		orderBy = "price DESC, id ASC"
+	}
+
+	query := fmt.Sprintf(`SELECT %s FROM %s
+WHERE tenant_id = ? AND contract_id = ? AND side = ?
+  AND status IN (?, ?) AND unfilled_qty > 0 AND %s
+ORDER BY %s LIMIT ? FOR UPDATE`, tOptionOrderRows, m.table, priceClause, orderBy)
+
+	var list []*TOptionOrder
+	err := m.QueryRowsNoCacheCtx(ctx, &list, query,
+		tenantId,
+		contractId,
+		side,
+		1,
+		2,
+		price,
+		limit,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return list, nil
 }

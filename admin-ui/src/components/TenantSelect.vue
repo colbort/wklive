@@ -21,7 +21,7 @@
   </el-select>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { tenantsService, type SysTenantItem } from '@/services'
@@ -42,8 +42,8 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   'update:modelValue': [value: number | undefined]
-  'change': [value: number | undefined]
-  'selected': [value: SysTenantItem | null]
+  change: [value: number | undefined]
+  selected: [value: SysTenantItem | null]
 }>()
 
 const { t } = useI18n()
@@ -53,10 +53,15 @@ const tenants = ref<SysTenantItem[]>([])
 const selectedValue = computed({
   get: () => props.modelValue,
   set: (value) => {
-    const nextValue = Number(value || 0)
+    const nextValue = value === undefined || value === null ? undefined : Number(value)
     emit('update:modelValue', nextValue)
     emit('change', nextValue)
-    emit('selected', tenants.value.find((tenant) => tenant.id === nextValue) || null)
+    emit(
+      'selected',
+      nextValue === undefined
+        ? null
+        : tenants.value.find((tenant) => tenant.id === nextValue) || null,
+    )
   },
 })
 

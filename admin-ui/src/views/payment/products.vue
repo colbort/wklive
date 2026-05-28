@@ -170,13 +170,8 @@ import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescrip
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 const { t } = useI18n()
-const {
-  pagination,
-  updateFromResponse,
-  resetAndLoad,
-  prevAndLoad,
-  nextAndLoad,
-} = usePagination<number>(20)
+const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
+  usePagination<number>(20)
 
 const submitLoading = ref(false)
 const productLoading = ref(false)

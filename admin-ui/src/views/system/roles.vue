@@ -30,13 +30,8 @@ function isSuperRole(r: SysRole | null | undefined) {
 }
 
 // ===== state =====
-const {
-  pagination,
-  updateFromResponse,
-  resetAndLoad,
-  nextAndLoad,
-  prevAndLoad,
-} = usePagination<number>(20)
+const { pagination, updateFromResponse, resetAndLoad, nextAndLoad, prevAndLoad } =
+  usePagination<number>(20)
 const { loading, withLoading } = useLoading()
 const { confirm } = useConfirm()
 const { form: queryForm } = useForm({
@@ -348,211 +343,213 @@ onMounted(async () => {
 
 <template>
   <div class="module-page">
-  <el-card class="table-card">
-    <template #header>
-      <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
-        <div>{{ t('system.roles') }}</div>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap">
-          <el-button v-perm="'sys:role:add'" type="primary" @click="openCreate">
-            {{ t('perms.sys:role:add') }}
-          </el-button>
+    <el-card class="table-card">
+      <template #header>
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+          <div>{{ t('system.roles') }}</div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap">
+            <el-button v-perm="'sys:role:add'" type="primary" @click="openCreate">
+              {{ t('perms.sys:role:add') }}
+            </el-button>
+          </div>
         </div>
-      </div>
-    </template>
+      </template>
 
-    <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap">
-      <el-input
-        v-model="queryForm.keyword"
-        :placeholder="t('common.keyword')"
-        clearable
-        style="max-width: 260px"
-      />
-
-      <el-select
-        v-model="queryForm.status"
-        style="width: 140px"
-        :placeholder="t('common.status')"
-        @change="onSearch"
-      >
-        <el-option :label="t('common.all')" :value="0" />
-        <el-option
-          v-for="item in statusOptions"
-          :key="item.value"
-          :label="getOptionLabel(t, item.code, item.value)"
-          :value="item.value"
-        />
-      </el-select>
-
-      <el-button @click="onSearch">
-        {{ t('common.search') }}
-      </el-button>
-      <el-button @click="onReset">
-        {{ t('common.reset') }}
-      </el-button>
-    </div>
-
-    <el-table v-loading="loading" :data="tableData" style="width: 100%">
-      <el-table-column prop="id" :label="t('common.id')" width="90" />
-      <el-table-column prop="name" :label="t('system.roleName')" min-width="160" />
-      <el-table-column prop="code" :label="t('system.roleCode')" min-width="160" />
-
-      <el-table-column :label="t('common.status')" width="110">
-        <template #default="{ row }">
-          <el-tag :type="row.status === 1 ? 'success' : 'info'">
-            {{ getOptionValueLabel(optionGroups, 'status', row.status, t) }}
-          </el-tag>
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="remark" :label="t('common.remark')" min-width="200" />
-
-      <el-table-column :label="t('common.actions')" width="320" fixed="right">
-        <template #default="{ row }">
-          <el-button
-            v-perm="'sys:role:update'"
-            size="small"
-            :disabled="isSuperRole(row)"
-            @click="openUpdate(row)"
-          >
-            {{ t('common.edit') }}
-          </el-button>
-
-          <el-button
-            v-perm="'sys:role:grant'"
-            size="small"
-            :disabled="isSuperRole(row)"
-            @click="openGrant(row)"
-          >
-            {{ t('system.grant') }}
-          </el-button>
-
-          <el-button
-            v-perm="'sys:role:delete'"
-            size="small"
-            type="danger"
-            :disabled="isSuperRole(row)"
-            @click="onDelete(row)"
-          >
-            {{ t('common.delete') }}
-          </el-button>
-
-          <el-tag v-if="isSuperRole(row)" type="warning" style="margin-left: 8px">
-            {{ t('system.superAdmin') }}
-          </el-tag>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <CursorPagination
-      v-model:limit="pagination.limit"
-      :total="pagination.total"
-      :has-prev="pagination.hasPrev"
-      :has-next="pagination.hasNext"
-      @prev="prevPage"
-      @next="nextPage"
-      @limit-change="
-        () => {
-          resetAndLoad(fetchList)
-        }
-      "
-    />
-  </el-card>
-
-  <el-dialog
-    v-model="editVisible"
-    :title="editIsUpdate ? t('system.roleEdit') : t('system.roleAdd')"
-    width="520px"
-  >
-    <el-form ref="editFormRef" :model="editForm" label-width="110px">
-      <el-form-item
-        :label="t('system.roleName')"
-        prop="name"
-        :rules="[{ required: true, message: t('common.required') }]"
-      >
-        <el-input v-model="editForm.name" />
-      </el-form-item>
-
-      <el-form-item
-        :label="t('system.roleCode')"
-        prop="code"
-        :rules="[{ required: true, message: t('common.required') }]"
-      >
-        <el-input v-model="editForm.code" :disabled="editIsUpdate" />
-      </el-form-item>
-
-      <el-form-item
-        :label="t('common.status')"
-        prop="status"
-        :rules="[{ required: true, message: t('common.required') }]"
-      >
-        <el-radio-group v-model="editForm.status">
-          <el-radio v-for="item in statusOptions" :key="item.value" :label="item.value">
-            {{ getOptionLabel(t, item.code, item.value) }}
-          </el-radio>
-        </el-radio-group>
-      </el-form-item>
-
-      <el-form-item :label="t('common.remark')" prop="remark">
-        <el-input v-model="editForm.remark" type="textarea" :rows="3" />
-      </el-form-item>
-    </el-form>
-
-    <template #footer>
-      <el-button @click="editVisible = false">
-        {{ t('common.cancel') }}
-      </el-button>
-      <el-button type="primary" :loading="editLoading" @click="submitEdit">
-        {{ t('common.confirm') }}
-      </el-button>
-    </template>
-  </el-dialog>
-
-  <el-dialog
-    v-model="grantVisible"
-    :title="t('system.grantTitle', { role: currentRole?.name || '' })"
-    width="400px"
-    :style="{ maxWidth: '460px' }"
-    @closed="onGrantClosed"
-  >
-    <el-alert
-      v-if="grantReadonly"
-      type="warning"
-      :closable="false"
-      :title="t('system.superAdminAllPerms')"
-      style="margin-bottom: 12px"
-    />
-
-    <div v-loading="grantLoading">
       <div
-        v-if="!menuTree || menuTree.length === 0"
-        style="padding: 24px; text-align: center; color: #999"
+        style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap"
       >
-        {{ t('common.noData') }}
+        <el-input
+          v-model="queryForm.keyword"
+          :placeholder="t('common.keyword')"
+          clearable
+          style="max-width: 260px"
+        />
+
+        <el-select
+          v-model="queryForm.status"
+          style="width: 140px"
+          :placeholder="t('common.status')"
+          @change="onSearch"
+        >
+          <el-option :label="t('common.all')" :value="0" />
+          <el-option
+            v-for="item in statusOptions"
+            :key="item.value"
+            :label="getOptionLabel(t, item.code, item.value)"
+            :value="item.value"
+          />
+        </el-select>
+
+        <el-button @click="onSearch">
+          {{ t('common.search') }}
+        </el-button>
+        <el-button @click="onReset">
+          {{ t('common.reset') }}
+        </el-button>
       </div>
 
-      <el-tree
-        v-else
-        ref="menuTreeRef"
-        :data="menuTree"
-        node-key="id"
-        show-checkbox
-        :props="{ label: 'name', children: 'children' }"
-        :check-strictly="false"
-        :disabled="grantReadonly"
-        :default-expand-all="false"
-        style="max-height: 420px; overflow: auto"
-        @check="onMenuTreeCheck"
-      />
-    </div>
+      <el-table v-loading="loading" :data="tableData" style="width: 100%">
+        <el-table-column prop="id" :label="t('common.id')" width="90" />
+        <el-table-column prop="name" :label="t('system.roleName')" min-width="160" />
+        <el-table-column prop="code" :label="t('system.roleCode')" min-width="160" />
 
-    <template #footer>
-      <el-button @click="grantVisible = false">
-        {{ t('common.cancel') }}
-      </el-button>
-      <el-button type="primary" :disabled="grantReadonly" @click="submitGrant">
-        {{ t('common.save') }}
-      </el-button>
-    </template>
-  </el-dialog>
+        <el-table-column :label="t('common.status')" width="110">
+          <template #default="{ row }">
+            <el-tag :type="row.status === 1 ? 'success' : 'info'">
+              {{ getOptionValueLabel(optionGroups, 'status', row.status, t) }}
+            </el-tag>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="remark" :label="t('common.remark')" min-width="200" />
+
+        <el-table-column :label="t('common.actions')" width="320" fixed="right">
+          <template #default="{ row }">
+            <el-button
+              v-perm="'sys:role:update'"
+              size="small"
+              :disabled="isSuperRole(row)"
+              @click="openUpdate(row)"
+            >
+              {{ t('common.edit') }}
+            </el-button>
+
+            <el-button
+              v-perm="'sys:role:grant'"
+              size="small"
+              :disabled="isSuperRole(row)"
+              @click="openGrant(row)"
+            >
+              {{ t('system.grant') }}
+            </el-button>
+
+            <el-button
+              v-perm="'sys:role:delete'"
+              size="small"
+              type="danger"
+              :disabled="isSuperRole(row)"
+              @click="onDelete(row)"
+            >
+              {{ t('common.delete') }}
+            </el-button>
+
+            <el-tag v-if="isSuperRole(row)" type="warning" style="margin-left: 8px">
+              {{ t('system.superAdmin') }}
+            </el-tag>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="prevPage"
+        @next="nextPage"
+        @limit-change="
+          () => {
+            resetAndLoad(fetchList)
+          }
+        "
+      />
+    </el-card>
+
+    <el-dialog
+      v-model="editVisible"
+      :title="editIsUpdate ? t('system.roleEdit') : t('system.roleAdd')"
+      width="520px"
+    >
+      <el-form ref="editFormRef" :model="editForm" label-width="110px">
+        <el-form-item
+          :label="t('system.roleName')"
+          prop="name"
+          :rules="[{ required: true, message: t('common.required') }]"
+        >
+          <el-input v-model="editForm.name" />
+        </el-form-item>
+
+        <el-form-item
+          :label="t('system.roleCode')"
+          prop="code"
+          :rules="[{ required: true, message: t('common.required') }]"
+        >
+          <el-input v-model="editForm.code" :disabled="editIsUpdate" />
+        </el-form-item>
+
+        <el-form-item
+          :label="t('common.status')"
+          prop="status"
+          :rules="[{ required: true, message: t('common.required') }]"
+        >
+          <el-radio-group v-model="editForm.status">
+            <el-radio v-for="item in statusOptions" :key="item.value" :label="item.value">
+              {{ getOptionLabel(t, item.code, item.value) }}
+            </el-radio>
+          </el-radio-group>
+        </el-form-item>
+
+        <el-form-item :label="t('common.remark')" prop="remark">
+          <el-input v-model="editForm.remark" type="textarea" :rows="3" />
+        </el-form-item>
+      </el-form>
+
+      <template #footer>
+        <el-button @click="editVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
+        <el-button type="primary" :loading="editLoading" @click="submitEdit">
+          {{ t('common.confirm') }}
+        </el-button>
+      </template>
+    </el-dialog>
+
+    <el-dialog
+      v-model="grantVisible"
+      :title="t('system.grantTitle', { role: currentRole?.name || '' })"
+      width="400px"
+      :style="{ maxWidth: '460px' }"
+      @closed="onGrantClosed"
+    >
+      <el-alert
+        v-if="grantReadonly"
+        type="warning"
+        :closable="false"
+        :title="t('system.superAdminAllPerms')"
+        style="margin-bottom: 12px"
+      />
+
+      <div v-loading="grantLoading">
+        <div
+          v-if="!menuTree || menuTree.length === 0"
+          style="padding: 24px; text-align: center; color: #999"
+        >
+          {{ t('common.noData') }}
+        </div>
+
+        <el-tree
+          v-else
+          ref="menuTreeRef"
+          :data="menuTree"
+          node-key="id"
+          show-checkbox
+          :props="{ label: 'name', children: 'children' }"
+          :check-strictly="false"
+          :disabled="grantReadonly"
+          :default-expand-all="false"
+          style="max-height: 420px; overflow: auto"
+          @check="onMenuTreeCheck"
+        />
+      </div>
+
+      <template #footer>
+        <el-button @click="grantVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
+        <el-button type="primary" :disabled="grantReadonly" @click="submitGrant">
+          {{ t('common.save') }}
+        </el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>

@@ -25,7 +25,7 @@ CREATE TABLE `t_option_contract` (
   `list_time` BIGINT NOT NULL DEFAULT 0 COMMENT '上市时间',
   `expire_time` BIGINT NOT NULL DEFAULT 0 COMMENT '到期时间',
   `deliver_time` BIGINT NOT NULL DEFAULT 0 COMMENT '交割/结算时间',
-  `is_auto_exercise` TINYINT NOT NULL DEFAULT 1 COMMENT '是否自动行权：0否 1是',
+  `is_auto_exercise` TINYINT NOT NULL DEFAULT 1 COMMENT '是否自动行权：1否 2是',
   `status` TINYINT NOT NULL DEFAULT 0 COMMENT '状态：1待上市 2可交易 3暂停交易 4已到期 5已结算 6已下线',
   `sort` INT NOT NULL DEFAULT 0 COMMENT '排序值',
   `remark` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '备注',

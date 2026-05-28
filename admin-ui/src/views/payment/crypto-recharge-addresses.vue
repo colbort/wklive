@@ -253,14 +253,8 @@ const dialogVisible = ref(false)
 const detailVisible = ref(false)
 const detailData = ref<CryptoRechargeAddress | null>(null)
 const optionGroups = ref<OptionGroup[]>([])
-const {
-  pagination,
-  updateFromResponse,
-  reset,
-  resetAndLoad,
-  prevAndLoad,
-  nextAndLoad,
-} = usePagination<number>(20)
+const { pagination, updateFromResponse, reset, resetAndLoad, prevAndLoad, nextAndLoad } =
+  usePagination<number>(20)
 const { optionItems, optionLabel } = useOptions(optionGroups)
 const walletTypeOptions = optionItems('walletType')
 const chainCodeOptions = optionItems('chainCode')

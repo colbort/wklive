@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"wklive/common/conv"
@@ -147,7 +148,16 @@ func (l *ProcessContractLifecycleLogic) expireContractOrders(contract *models.TO
 			order.CancelReason = "CONTRACT_EXPIRED"
 			order.CancelTime = now
 			order.UpdateTimes = now
-			if err := l.svcCtx.OptionOrderModel.Update(l.ctx, order); err != nil {
+			err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+				conn := sqlx.NewSqlConnFromSession(session)
+				orderModel := models.NewTOptionOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionOrderModel)
+				positionModel := models.NewTOptionPositionModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionPositionModel)
+				if err := releaseClosePositionFrozenQty(ctx, positionModel, order, order.UnfilledQty, now); err != nil {
+					return err
+				}
+				return orderModel.Update(ctx, order)
+			})
+			if err != nil {
 				return err
 			}
 		}
@@ -158,6 +168,15 @@ func (l *ProcessContractLifecycleLogic) expireContractOrders(contract *models.TO
 }
 
 func (l *ProcessContractLifecycleLogic) autoExerciseContract(contract *models.TOptionContract, now int64) error {
+	market, err := l.svcCtx.OptionMarketModel.FindOneByTenantIdContractId(l.ctx, contract.TenantId, contract.Id)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return err
+	}
+	deliveryPrice := 0.0
+	if market != nil {
+		deliveryPrice = market.UnderlyingPrice
+	}
+	intrinsicValue := optionIntrinsicValue(contract, deliveryPrice)
 	cursor := int64(0)
 	for {
 		positions, _, err := l.svcCtx.OptionPositionModel.FindPage(l.ctx, models.OptionPositionPageFilter{
@@ -172,8 +191,12 @@ func (l *ProcessContractLifecycleLogic) autoExerciseContract(contract *models.TO
 		}
 		for _, position := range positions {
 			cursor = position.Id
-			if position.ExerciseableQty <= 0 {
+			if position.Side != int64(option.PositionSide_POSITION_SIDE_LONG) {
+				continue
+			}
+			if position.ExerciseableQty <= 0 || intrinsicValue <= optionFloatEpsilon {
 				position.Status = int64(option.PositionStatus_POSITION_STATUS_EXPIRED)
+				position.ExerciseableQty = 0
 				position.UpdateTimes = now
 				if err := l.svcCtx.OptionPositionModel.Update(l.ctx, position); err != nil {
 					return err
@@ -183,7 +206,6 @@ func (l *ProcessContractLifecycleLogic) autoExerciseContract(contract *models.TO
 			exists, _, err := l.svcCtx.OptionExerciseModel.FindPage(l.ctx, models.OptionExercisePageFilter{
 				TenantId:   position.TenantId,
 				PositionId: position.Id,
-				Status:     int64(option.ExerciseStatus_EXERCISE_STATUS_PENDING),
 			}, 0, 1)
 			if err != nil {
 				return err
@@ -205,11 +227,14 @@ func (l *ProcessContractLifecycleLogic) autoExerciseContract(contract *models.TO
 				ExerciseType:    int64(option.ExerciseType_EXERCISE_TYPE_AUTO),
 				ExerciseQty:     position.ExerciseableQty,
 				StrikePrice:     contract.StrikePrice,
-				SettlementPrice: position.MarkPrice,
+				SettlementPrice: deliveryPrice,
+				ExerciseAmount:  optionExerciseAmount(contract, position.ExerciseableQty),
+				ProfitAmount:    optionSettlementPayoff(contract, deliveryPrice, position.ExerciseableQty),
 				FeeCoin:         contract.SettleCoin,
-				Status:          int64(option.ExerciseStatus_EXERCISE_STATUS_PENDING),
+				Status:          int64(option.ExerciseStatus_EXERCISE_STATUS_DONE),
 				Remark:          "option auto exercise task",
 				ExerciseTime:    now,
+				FinishTime:      now,
 				CreateTimes:     now,
 				UpdateTimes:     now,
 			})
@@ -217,6 +242,7 @@ func (l *ProcessContractLifecycleLogic) autoExerciseContract(contract *models.TO
 				return err
 			}
 			position.Status = int64(option.PositionStatus_POSITION_STATUS_EXERCISED)
+			position.ExerciseableQty = 0
 			position.UpdateTimes = now
 			if err := l.svcCtx.OptionPositionModel.Update(l.ctx, position); err != nil {
 				return err
@@ -253,6 +279,14 @@ func (l *ProcessContractLifecycleLogic) settleContract(contract *models.TOptionC
 			isITM = int64(option.YesNo_YES_NO_YES)
 		}
 	}
+	exerciseResult := int64(option.ExerciseResult_EXERCISE_RESULT_NONE)
+	if contract.IsAutoExercise == int64(option.YesNo_YES_NO_YES) {
+		if isITM == int64(option.YesNo_YES_NO_YES) {
+			exerciseResult = int64(option.ExerciseResult_EXERCISE_RESULT_AUTO_EXERCISE)
+		} else {
+			exerciseResult = int64(option.ExerciseResult_EXERCISE_RESULT_AUTO_ABANDON)
+		}
+	}
 	settlementNo, err := l.svcCtx.GenerateBizNo(l.ctx, "OPS")
 	if err != nil {
 		return err
@@ -264,8 +298,11 @@ func (l *ProcessContractLifecycleLogic) settleContract(contract *models.TOptionC
 		settlementModel := models.NewTOptionSettlementModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionSettlementModel)
 		snapshotModel := models.NewTOptionMarketSnapshotModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionMarketSnapshotModel)
 		contractModel := models.NewTOptionContractModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionContractModel)
+		positionModel := models.NewTOptionPositionModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionPositionModel)
+		accountModel := models.NewTOptionAccountModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionAccountModel)
+		billModel := models.NewTOptionBillModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionBillModel)
 
-		if _, err := settlementModel.Insert(ctx, &models.TOptionSettlement{
+		result, err := settlementModel.Insert(ctx, &models.TOptionSettlement{
 			TenantId:         contract.TenantId,
 			SettlementNo:     settlementNo,
 			ContractId:       contract.Id,
@@ -276,12 +313,20 @@ func (l *ProcessContractLifecycleLogic) settleContract(contract *models.TOptionC
 			TheoreticalPrice: theoreticalPrice,
 			Iv:               iv,
 			IsItm:            isITM,
-			ExerciseResult:   int64(option.ExerciseResult_EXERCISE_RESULT_NONE),
+			ExerciseResult:   exerciseResult,
 			Status:           int64(option.SettlementStatus_SETTLEMENT_STATUS_DONE),
 			Remark:           "option settlement task",
 			CreateTimes:      now,
 			UpdateTimes:      now,
-		}); err != nil {
+		})
+		if err != nil {
+			return err
+		}
+		settlementId, err := result.LastInsertId()
+		if err != nil {
+			return err
+		}
+		if err := settleContractPositions(ctx, positionModel, accountModel, billModel, contract, settlementNo, settlementId, deliveryPrice, now); err != nil {
 			return err
 		}
 		if err := insertMarketSnapshot(ctx, snapshotModel, market, now); err != nil {
@@ -289,4 +334,61 @@ func (l *ProcessContractLifecycleLogic) settleContract(contract *models.TOptionC
 		}
 		return contractModel.Update(ctx, contract)
 	})
+}
+
+func settleContractPositions(ctx context.Context, positionModel models.OptionPositionModel, accountModel models.OptionAccountModel, billModel models.OptionBillModel, contract *models.TOptionContract, settlementNo string, settlementId int64, deliveryPrice float64, now int64) error {
+	cursor := int64(0)
+	for {
+		positions, _, err := positionModel.FindPage(ctx, models.OptionPositionPageFilter{
+			ContractId: contract.Id,
+			Statuses: []int64{
+				int64(option.PositionStatus_POSITION_STATUS_HOLDING),
+				int64(option.PositionStatus_POSITION_STATUS_EXERCISED),
+				int64(option.PositionStatus_POSITION_STATUS_EXPIRED),
+			},
+		}, cursor, 100)
+		if err != nil {
+			return err
+		}
+		if len(positions) == 0 {
+			return nil
+		}
+		for _, position := range positions {
+			cursor = position.Id
+			qty := position.PositionQty
+			payoff := optionSettlementPayoff(contract, deliveryPrice, qty)
+			changeAmount := 0.0
+			if position.Side == int64(option.PositionSide_POSITION_SIDE_LONG) {
+				if contract.IsAutoExercise == int64(option.YesNo_YES_NO_YES) || position.Status == int64(option.PositionStatus_POSITION_STATUS_EXERCISED) {
+					changeAmount = payoff
+				}
+			} else if position.Side == int64(option.PositionSide_POSITION_SIDE_SHORT) {
+				if contract.IsAutoExercise == int64(option.YesNo_YES_NO_YES) {
+					changeAmount = -payoff
+				}
+			}
+
+			position.PositionQty = 0
+			position.AvailableQty = 0
+			position.FrozenQty = 0
+			position.PositionValue = 0
+			position.MarginAmount = 0
+			position.MaintenanceMargin = 0
+			position.UnrealizedPnl = 0
+			position.ExerciseableQty = 0
+			position.RealizedPnl = normalizeZero(position.RealizedPnl + changeAmount)
+			position.Status = int64(option.PositionStatus_POSITION_STATUS_SETTLED)
+			position.LastCalcTime = now
+			position.UpdateTimes = now
+			if err := positionModel.Update(ctx, position); err != nil {
+				return err
+			}
+			if err := applyOptionAccountDelta(ctx, accountModel, billModel, position.TenantId, position.UserId, position.AccountId, contract.SettleCoin, changeAmount, int64(option.BillRefType_BILL_REF_TYPE_SETTLEMENT), settlementId, fmt.Sprintf("%s-P%d", settlementNo, position.Id), "option contract settlement", true, now); err != nil {
+				return err
+			}
+		}
+		if len(positions) < 100 {
+			return nil
+		}
+	}
 }

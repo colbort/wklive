@@ -124,6 +124,7 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		orderModel := models.NewTOptionOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionOrderModel)
+		positionModel := models.NewTOptionPositionModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionPositionModel)
 		result, err := orderModel.Insert(ctx, order)
 		if err != nil {
 			return err
@@ -133,9 +134,18 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 			return err
 		}
 		order.Id = id
+		if err := freezeClosePosition(ctx, positionModel, order, now); err != nil {
+			return err
+		}
 		return nil
 	})
 	if err != nil {
+		if errors.Is(err, models.ErrNotFound) {
+			return &option.AppPlaceOrderResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.PositionNotFound, l.ctx)), OrderNo: order.OrderNo, OrderId: id}, nil
+		}
+		if errors.Is(err, errInsufficientPositionQuantity) {
+			return &option.AppPlaceOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.QuantityFormatError, l.ctx)), OrderNo: order.OrderNo, OrderId: id}, nil
+		}
 		return nil, err
 	}
 
@@ -161,7 +171,7 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 			}
 			return nil, err
 		}
-		if resp == nil || resp.Base == nil || resp.Base.Code != 0 {
+		if resp == nil || resp.Base == nil || resp.Base.Code != 200 {
 			order.Status = int64(option.OrderStatus_ORDER_STATUS_REJECTED)
 			if resp != nil && resp.Base != nil {
 				order.CancelReason = resp.Base.Msg
@@ -175,6 +185,10 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 			}
 			return nil, err
 		}
+	}
+
+	if err := l.matchOrder(contract, order); err != nil {
+		return nil, err
 	}
 
 	return &option.AppPlaceOrderResp{Base: helper.OkResp(), OrderNo: order.OrderNo, OrderId: id}, nil

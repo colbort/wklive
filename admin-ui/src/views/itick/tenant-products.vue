@@ -641,14 +641,8 @@ type FormData = {
 
 const { t } = useI18n()
 const { systemCore, loadSystemCore } = useSystemCore()
-const {
-  pagination,
-  updateFromResponse,
-  reset,
-  resetAndLoad,
-  prevAndLoad,
-  nextAndLoad,
-} = usePagination<number>(20)
+const { pagination, updateFromResponse, reset, resetAndLoad, prevAndLoad, nextAndLoad } =
+  usePagination<number>(20)
 const { loading, withLoading } = useLoading()
 const PRODUCT_OPTION_LIMIT = 20
 

@@ -29,13 +29,8 @@ const optionGroups = ref<OptionGroup[]>([])
 const jobStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'jobStatus'))
 
 // Pagination and main list
-const {
-  pagination,
-  updateFromResponse,
-  resetAndLoad,
-  prevAndLoad,
-  nextAndLoad,
-} = usePagination<number>(10)
+const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
+  usePagination<number>(10)
 const list = ref<SysCronJobItem[]>([])
 const { loading, withLoading } = useLoading()
 
@@ -251,231 +246,231 @@ onMounted(() => {
 
 <template>
   <div class="module-page">
-  <el-card class="table-card">
-    <template #header>
-      <div style="display: flex; justify-content: space-between; align-items: center">
-        <span>{{ t('system.cronJobs') }}</span>
-        <el-button v-perm="'sys:job:add'" type="primary" @click="handleCreate">
-          <el-icon><Plus /></el-icon>
-          {{ t('common.add') }}
-        </el-button>
-      </div>
-    </template>
-
-    <!-- Query Form -->
-    <el-form :model="queryForm" inline style="margin-bottom: 16px">
-      <el-form-item :label="t('system.jobName')">
-        <el-input
-          v-model="queryForm.jobName"
-          :placeholder="t('common.pleaseEnter')"
-          clearable
-          style="width: 180px"
-        />
-      </el-form-item>
-
-      <el-form-item :label="t('system.jobGroup')">
-        <el-input
-          v-model="queryForm.jobGroup"
-          :placeholder="t('common.pleaseEnter')"
-          clearable
-          style="width: 180px"
-        />
-      </el-form-item>
-
-      <el-form-item :label="t('common.status')">
-        <el-select
-          v-model="queryForm.status"
-          :placeholder="t('common.pleaseSelect')"
-          clearable
-          style="width: 140px"
-        >
-          <el-option
-            v-for="item in jobStatusOptions"
-            :key="item.value"
-            :label="getOptionLabel(t, item.code, item.value)"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
-
-      <el-form-item>
-        <el-button type="primary" @click="onSearch">
-          {{ t('common.search') }}
-        </el-button>
-        <el-button @click="onReset">
-          {{ t('common.reset') }}
-        </el-button>
-      </el-form-item>
-    </el-form>
-
-    <!-- Table -->
-    <el-table
-      v-loading="loading"
-      :data="list"
-      row-key="id"
-      style="margin-bottom: 16px"
-    >
-      <el-table-column prop="id" :label="t('common.id')" width="70" />
-      <el-table-column prop="jobName" :label="t('system.jobName')" min-width="120" />
-      <el-table-column prop="jobGroup" :label="t('system.jobGroup')" width="100" />
-      <el-table-column prop="invokeTarget" :label="t('system.invokeTarget')" min-width="180" />
-      <el-table-column prop="cronExpression" :label="t('system.cronExpression')" width="140" />
-      <el-table-column prop="status" :label="t('common.status')" width="100">
-        <template #default="{ row }">
-          <el-tag :type="row.status === 1 ? 'success' : 'info'">
-            {{ getOptionValueLabel(optionGroups, 'jobStatus', row.status, t) }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="createBy" :label="t('system.createBy')" width="100" />
-      <el-table-column prop="createTimes" :label="t('common.createTimes')" width="170">
-        <template #default="{ row }">
-          <span>{{ formatDate(row.createTimes) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column :label="t('common.actions')" width="280" fixed="right">
-        <template #default="{ row }">
-          <el-button type="primary" size="small" @click="handleRun(row)">
-            <el-icon><VideoPlay /></el-icon>
-            {{ t('system.run') }}
+    <el-card class="table-card">
+      <template #header>
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <span>{{ t('system.cronJobs') }}</span>
+          <el-button v-perm="'sys:job:add'" type="primary" @click="handleCreate">
+            <el-icon><Plus /></el-icon>
+            {{ t('common.add') }}
           </el-button>
-          <el-button
-            v-if="row.status === 0"
-            type="success"
-            size="small"
-            @click="handleStart(row)"
-          >
-            <el-icon><CircleCheck /></el-icon>
-            {{ t('system.start') }}
-          </el-button>
-          <el-button
-            v-if="row.status === 1"
-            type="warning"
-            size="small"
-            @click="handleStop(row)"
-          >
-            <el-icon><CircleCloseFilled /></el-icon>
-            {{ t('system.stop') }}
-          </el-button>
-          <el-button
-            v-perm="'sys:job:update'"
-            type="primary"
-            size="small"
-            @click="handleEdit(row)"
-          >
-            <el-icon><Edit /></el-icon>
-            {{ t('common.edit') }}
-          </el-button>
-          <el-button
-            v-perm="'sys:job:delete'"
-            type="danger"
-            size="small"
-            @click="handleDelete(row)"
-          >
-            <el-icon><Delete /></el-icon>
-            {{ t('common.delete') }}
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+        </div>
+      </template>
 
-    <!-- Pagination -->
-    <CursorPagination
-      v-model:limit="pagination.limit"
-      :total="pagination.total"
-      :has-prev="pagination.hasPrev"
-      :has-next="pagination.hasNext"
-      @prev="prevPage"
-      @next="nextPage"
-      @limit-change="
-        () => {
-          resetAndLoad(fetchList)
-        }
-      "
-    />
-
-    <!-- Create/Edit Dialog -->
-    <el-dialog
-      v-model="dialogVisible"
-      :title="isEdit ? t('common.edit') : t('common.add')"
-      width="600px"
-      :close-on-click-modal="false"
-    >
-      <el-form
-        ref="formRef"
-        :model="formData"
-        :rules="formRules"
-        label-width="140px"
-      >
-        <el-form-item :label="t('system.jobName')" prop="jobName">
+      <!-- Query Form -->
+      <el-form :model="queryForm" inline style="margin-bottom: 16px">
+        <el-form-item :label="t('system.jobName')">
           <el-input
-            v-model="formData.jobName"
+            v-model="queryForm.jobName"
             :placeholder="t('common.pleaseEnter')"
-            maxlength="100"
-          />
-        </el-form-item>
-
-        <el-form-item :label="t('system.jobGroup')" prop="jobGroup">
-          <el-input
-            v-model="formData.jobGroup"
-            :placeholder="t('common.pleaseEnter')"
-            maxlength="50"
-          />
-        </el-form-item>
-
-        <el-form-item :label="t('system.invokeTarget')" prop="invokeTarget">
-          <el-select
-            v-model="formData.invokeTarget"
-            :placeholder="t('common.pleaseSelect')"
-            filterable
             clearable
-          >
-            <el-option
-              v-for="handler in handlers"
-              :key="handler.invokeTarget"
-              :label="`${handler.jobName} (${handler.invokeTarget})`"
-              :value="handler.invokeTarget"
-            />
-          </el-select>
+            style="width: 180px"
+          />
         </el-form-item>
 
-        <el-form-item :label="t('system.cronExpression')" prop="cronExpression">
+        <el-form-item :label="t('system.jobGroup')">
           <el-input
-            v-model="formData.cronExpression"
-            :placeholder="t('system.cronExpressionPlaceholder')"
-            maxlength="100"
+            v-model="queryForm.jobGroup"
+            :placeholder="t('common.pleaseEnter')"
+            clearable
+            style="width: 180px"
           />
         </el-form-item>
 
         <el-form-item :label="t('common.status')">
-          <el-radio-group v-model="formData.status">
-            <el-radio v-for="item in jobStatusOptions" :key="item.value" :label="item.value">
-              {{ getOptionLabel(t, item.code, item.value) }}
-            </el-radio>
-          </el-radio-group>
+          <el-select
+            v-model="queryForm.status"
+            :placeholder="t('common.pleaseSelect')"
+            clearable
+            style="width: 140px"
+          >
+            <el-option
+              v-for="item in jobStatusOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
 
-        <el-form-item :label="t('common.remark')">
-          <el-input
-            v-model="formData.remark"
-            :placeholder="t('common.pleaseEnter')"
-            type="textarea"
-            :rows="3"
-            maxlength="500"
-          />
+        <el-form-item>
+          <el-button type="primary" @click="onSearch">
+            {{ t('common.search') }}
+          </el-button>
+          <el-button @click="onReset">
+            {{ t('common.reset') }}
+          </el-button>
         </el-form-item>
       </el-form>
 
-      <template #footer>
-        <el-button @click="dialogVisible = false">
-          {{ t('common.cancel') }}
-        </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="handleSubmit">
-          {{ t('common.confirm') }}
-        </el-button>
-      </template>
-    </el-dialog>
-  </el-card>
+      <!-- Table -->
+      <el-table
+        v-loading="loading"
+        :data="list"
+        row-key="id"
+        style="margin-bottom: 16px"
+      >
+        <el-table-column prop="id" :label="t('common.id')" width="70" />
+        <el-table-column prop="jobName" :label="t('system.jobName')" min-width="120" />
+        <el-table-column prop="jobGroup" :label="t('system.jobGroup')" width="100" />
+        <el-table-column prop="invokeTarget" :label="t('system.invokeTarget')" min-width="180" />
+        <el-table-column prop="cronExpression" :label="t('system.cronExpression')" width="140" />
+        <el-table-column prop="status" :label="t('common.status')" width="100">
+          <template #default="{ row }">
+            <el-tag :type="row.status === 1 ? 'success' : 'info'">
+              {{ getOptionValueLabel(optionGroups, 'jobStatus', row.status, t) }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createBy" :label="t('system.createBy')" width="100" />
+        <el-table-column prop="createTimes" :label="t('common.createTimes')" width="170">
+          <template #default="{ row }">
+            <span>{{ formatDate(row.createTimes) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('common.actions')" width="280" fixed="right">
+          <template #default="{ row }">
+            <el-button type="primary" size="small" @click="handleRun(row)">
+              <el-icon><VideoPlay /></el-icon>
+              {{ t('system.run') }}
+            </el-button>
+            <el-button
+              v-if="row.status === 0"
+              type="success"
+              size="small"
+              @click="handleStart(row)"
+            >
+              <el-icon><CircleCheck /></el-icon>
+              {{ t('system.start') }}
+            </el-button>
+            <el-button
+              v-if="row.status === 1"
+              type="warning"
+              size="small"
+              @click="handleStop(row)"
+            >
+              <el-icon><CircleCloseFilled /></el-icon>
+              {{ t('system.stop') }}
+            </el-button>
+            <el-button
+              v-perm="'sys:job:update'"
+              type="primary"
+              size="small"
+              @click="handleEdit(row)"
+            >
+              <el-icon><Edit /></el-icon>
+              {{ t('common.edit') }}
+            </el-button>
+            <el-button
+              v-perm="'sys:job:delete'"
+              type="danger"
+              size="small"
+              @click="handleDelete(row)"
+            >
+              <el-icon><Delete /></el-icon>
+              {{ t('common.delete') }}
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <!-- Pagination -->
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="prevPage"
+        @next="nextPage"
+        @limit-change="
+          () => {
+            resetAndLoad(fetchList)
+          }
+        "
+      />
+
+      <!-- Create/Edit Dialog -->
+      <el-dialog
+        v-model="dialogVisible"
+        :title="isEdit ? t('common.edit') : t('common.add')"
+        width="600px"
+        :close-on-click-modal="false"
+      >
+        <el-form
+          ref="formRef"
+          :model="formData"
+          :rules="formRules"
+          label-width="140px"
+        >
+          <el-form-item :label="t('system.jobName')" prop="jobName">
+            <el-input
+              v-model="formData.jobName"
+              :placeholder="t('common.pleaseEnter')"
+              maxlength="100"
+            />
+          </el-form-item>
+
+          <el-form-item :label="t('system.jobGroup')" prop="jobGroup">
+            <el-input
+              v-model="formData.jobGroup"
+              :placeholder="t('common.pleaseEnter')"
+              maxlength="50"
+            />
+          </el-form-item>
+
+          <el-form-item :label="t('system.invokeTarget')" prop="invokeTarget">
+            <el-select
+              v-model="formData.invokeTarget"
+              :placeholder="t('common.pleaseSelect')"
+              filterable
+              clearable
+            >
+              <el-option
+                v-for="handler in handlers"
+                :key="handler.invokeTarget"
+                :label="`${handler.jobName} (${handler.invokeTarget})`"
+                :value="handler.invokeTarget"
+              />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item :label="t('system.cronExpression')" prop="cronExpression">
+            <el-input
+              v-model="formData.cronExpression"
+              :placeholder="t('system.cronExpressionPlaceholder')"
+              maxlength="100"
+            />
+          </el-form-item>
+
+          <el-form-item :label="t('common.status')">
+            <el-radio-group v-model="formData.status">
+              <el-radio v-for="item in jobStatusOptions" :key="item.value" :label="item.value">
+                {{ getOptionLabel(t, item.code, item.value) }}
+              </el-radio>
+            </el-radio-group>
+          </el-form-item>
+
+          <el-form-item :label="t('common.remark')">
+            <el-input
+              v-model="formData.remark"
+              :placeholder="t('common.pleaseEnter')"
+              type="textarea"
+              :rows="3"
+              maxlength="500"
+            />
+          </el-form-item>
+        </el-form>
+
+        <template #footer>
+          <el-button @click="dialogVisible = false">
+            {{ t('common.cancel') }}
+          </el-button>
+          <el-button type="primary" :loading="submitLoading" @click="handleSubmit">
+            {{ t('common.confirm') }}
+          </el-button>
+        </template>
+      </el-dialog>
+    </el-card>
   </div>
 </template>
 

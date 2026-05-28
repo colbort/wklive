@@ -14,6 +14,7 @@ type OptionPositionPageFilter struct {
 	ContractId int64
 	Side       int64
 	Status     int64
+	Statuses   []int64
 }
 
 type OptionPositionModel interface {
@@ -30,6 +31,7 @@ func (m *defaultTOptionPositionModel) FindPage(ctx context.Context, filter Optio
 	builder.EqInt64("contract_id", filter.ContractId)
 	builder.EqInt64("side", filter.Side)
 	builder.EqInt64("status", filter.Status)
+	builder.InInt64("status", filter.Statuses)
 
 	where := builder.Where()
 	args := builder.Args()

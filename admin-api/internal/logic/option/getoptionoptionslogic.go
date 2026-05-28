@@ -30,8 +30,10 @@ func (l *GetOptionOptionsLogic) GetOptionOptions() (resp *types.GetOptionOptions
 		RespBase: types.RespBase{Code: 200, Msg: "success"},
 		Data: []types.OptionsGroup{
 			logicutil.EnumGroup("commonStatus", "通用状态", option.CommonStatus_COMMON_STATUS_UNKNOWN.Descriptor()),
+			logicutil.EnumGroup("yesNo", "是否", option.YesNo_YES_NO_UNKNOWN.Descriptor()),
 			logicutil.EnumGroup("optionType", "期权类型", option.OptionType_OPTION_TYPE_UNKNOWN.Descriptor()),
 			logicutil.EnumGroup("exerciseStyle", "行权方式", option.ExerciseStyle_EXERCISE_STYLE_UNKNOWN.Descriptor()),
+			logicutil.EnumGroup("settlementType", "结算方式", option.SettlementType_SETTLEMENT_TYPE_UNKNOWN.Descriptor()),
 			logicutil.EnumGroup("contractStatus", "合约状态", option.ContractStatus_CONTRACT_STATUS_UNKNOWN.Descriptor()),
 		},
 	}, nil

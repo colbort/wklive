@@ -222,18 +222,12 @@ const query = reactive({
   bizNo: '',
 })
 
-const {
-  pagination,
-  updateFromResponse,
-  resetAndLoad,
-  prevAndLoad,
-  nextAndLoad,
-} = usePagination<number>(20)
+const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
+  usePagination<number>(20)
 const { optionItems, optionLabel } = useOptions(optionGroups)
 
 const walletTypeOptions = optionItems('walletType')
 const detailTitle = computed(() => `${t('asset.flows')}${t('asset.detail')}`)
-
 
 async function loadOptions() {
   const res = await assetService.getOptions()

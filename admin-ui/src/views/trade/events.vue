@@ -82,13 +82,8 @@ import { usePagination } from '@/composables'
 import { tradeService, type BizTradeEvent } from '@/services'
 
 const { t } = useI18n()
-const {
-  pagination,
-  updateFromResponse,
-  resetAndLoad,
-  prevAndLoad,
-  nextAndLoad,
-} = usePagination<number>(20)
+const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
+  usePagination<number>(20)
 
 interface CurrentQuery {
   tenantId: number | undefined

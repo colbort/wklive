@@ -86,13 +86,8 @@ import { usePagination } from '@/composables'
 import { optionService, type OptionBill } from '@/services'
 
 const { t } = useI18n()
-const {
-  pagination,
-  updateFromResponse,
-  resetAndLoad,
-  prevAndLoad,
-  nextAndLoad,
-} = usePagination<number>(20)
+const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
+  usePagination<number>(20)
 
 const loading = ref(false)
 const rows = ref<OptionBill[]>([])

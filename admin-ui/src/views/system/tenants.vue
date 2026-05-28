@@ -296,13 +296,8 @@ const optionGroups = ref<OptionGroup[]>([])
 const statusOptions = computed(() => findOptionGroup(optionGroups.value, 'status'))
 
 // Pagination and main list
-const {
-  pagination,
-  updateFromResponse,
-  resetAndLoad,
-  prevAndLoad,
-  nextAndLoad,
-} = usePagination<number>(10)
+const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
+  usePagination<number>(10)
 const list = ref<SysTenantItem[]>([])
 const { loading, withLoading } = useLoading()
 

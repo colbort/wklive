@@ -81,13 +81,8 @@ import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
 
 const { t } = useI18n()
-const {
-  pagination,
-  updateFromResponse,
-  resetAndLoad,
-  prevAndLoad,
-  nextAndLoad,
-} = usePagination<number>(20)
+const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
+  usePagination<number>(20)
 
 const loading = ref(false)
 const rows = ref<StakeRewardLog[]>([])

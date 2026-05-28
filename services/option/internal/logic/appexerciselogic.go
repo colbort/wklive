@@ -13,6 +13,7 @@ import (
 	"wklive/services/option/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type AppExerciseLogic struct {
@@ -49,6 +50,9 @@ func (l *AppExerciseLogic) AppExercise(in *option.AppExerciseReq) (*option.AppEx
 	if position.TenantId != tenantId || position.UserId != userId || position.AccountId != in.AccountId {
 		return &option.AppExerciseResp{Base: helper.GetErrResp(403, i18n.Translate(i18n.NoPermissionOperatePosition, l.ctx))}, nil
 	}
+	if position.Side != int64(option.PositionSide_POSITION_SIDE_LONG) || position.Status != int64(option.PositionStatus_POSITION_STATUS_HOLDING) {
+		return &option.AppExerciseResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.NoPermissionOperatePosition, l.ctx))}, nil
+	}
 	if in.ContractId != 0 && position.ContractId != in.ContractId {
 		return &option.AppExerciseResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ContractPositionMismatch, l.ctx))}, nil
 	}
@@ -65,8 +69,27 @@ func (l *AppExerciseLogic) AppExercise(in *option.AppExerciseReq) (*option.AppEx
 	if err != nil || exerciseQty <= 0 {
 		return &option.AppExerciseResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ExerciseQuantityFormatError, l.ctx))}, nil
 	}
-	if position.ExerciseableQty > 0 && exerciseQty > position.ExerciseableQty {
+	if position.ExerciseableQty+optionFloatEpsilon < exerciseQty {
 		return &option.AppExerciseResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ExercisableQuantityExceeded, l.ctx))}, nil
+	}
+	if position.AvailableQty+optionFloatEpsilon < exerciseQty {
+		return &option.AppExerciseResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ExercisableQuantityExceeded, l.ctx))}, nil
+	}
+	now := time.Now().Unix()
+	if contract.ExerciseStyle == int64(option.ExerciseStyle_EXERCISE_STYLE_EUROPEAN) && now < contract.ExpireTime {
+		return &option.AppExerciseResp{Base: helper.GetErrResp(400, "欧式期权未到期不能提前行权")}, nil
+	}
+	market, err := l.svcCtx.OptionMarketModel.FindOneByTenantIdContractId(l.ctx, tenantId, contract.Id)
+	if err != nil {
+		if errors.Is(err, models.ErrNotFound) {
+			return &option.AppExerciseResp{Base: helper.GetErrResp(404, "期权行情不存在")}, nil
+		}
+		return nil, err
+	}
+	settlementPrice := market.UnderlyingPrice
+	profitAmount := optionSettlementPayoff(contract, settlementPrice, exerciseQty)
+	if profitAmount <= optionFloatEpsilon {
+		return &option.AppExerciseResp{Base: helper.GetErrResp(400, "当前不是价内期权，不能行权")}, nil
 	}
 
 	exerciseNo, err := l.svcCtx.GenerateBizNo(l.ctx, "EX")
@@ -74,7 +97,6 @@ func (l *AppExerciseLogic) AppExercise(in *option.AppExerciseReq) (*option.AppEx
 		return nil, err
 	}
 
-	now := time.Now().Unix()
 	item := &models.TOptionExercise{
 		TenantId:        tenantId,
 		ExerciseNo:      exerciseNo,
@@ -85,21 +107,55 @@ func (l *AppExerciseLogic) AppExercise(in *option.AppExerciseReq) (*option.AppEx
 		ExerciseType:    int64(option.ExerciseType_EXERCISE_TYPE_USER),
 		ExerciseQty:     exerciseQty,
 		StrikePrice:     contract.StrikePrice,
-		SettlementPrice: 0,
-		ExerciseAmount:  0,
-		ProfitAmount:    0,
+		SettlementPrice: settlementPrice,
+		ExerciseAmount:  optionExerciseAmount(contract, exerciseQty),
+		ProfitAmount:    profitAmount,
 		Fee:             0,
 		FeeCoin:         contract.SettleCoin,
-		Status:          int64(option.ExerciseStatus_EXERCISE_STATUS_PENDING),
+		Status:          int64(option.ExerciseStatus_EXERCISE_STATUS_DONE),
 		ExerciseTime:    now,
+		FinishTime:      now,
 		CreateTimes:     now,
 		UpdateTimes:     now,
 	}
-	result, err := l.svcCtx.OptionExerciseModel.Insert(l.ctx, item)
-	if err != nil {
-		return nil, err
-	}
-	id, err := result.LastInsertId()
+	var id int64
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		exerciseModel := models.NewTOptionExerciseModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionExerciseModel)
+		positionModel := models.NewTOptionPositionModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionPositionModel)
+		accountModel := models.NewTOptionAccountModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionAccountModel)
+		billModel := models.NewTOptionBillModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionBillModel)
+
+		result, err := exerciseModel.Insert(ctx, item)
+		if err != nil {
+			return err
+		}
+		id, err = result.LastInsertId()
+		if err != nil {
+			return err
+		}
+		item.Id = id
+
+		position.PositionQty = normalizeZero(maxFloat64(position.PositionQty-exerciseQty, 0))
+		position.AvailableQty = normalizeZero(maxFloat64(position.AvailableQty-exerciseQty, 0))
+		position.ExerciseableQty = normalizeZero(maxFloat64(position.ExerciseableQty-exerciseQty, 0))
+		position.PositionValue = position.MarkPrice * position.PositionQty * optionMultiplier(contract)
+		position.RealizedPnl = normalizeZero(position.RealizedPnl + profitAmount)
+		position.UpdateTimes = now
+		if position.PositionQty <= optionFloatEpsilon {
+			position.PositionQty = 0
+			position.AvailableQty = 0
+			position.FrozenQty = 0
+			position.ExerciseableQty = 0
+			position.PositionValue = 0
+			position.UnrealizedPnl = 0
+			position.Status = int64(option.PositionStatus_POSITION_STATUS_EXERCISED)
+		}
+		if err := positionModel.Update(ctx, position); err != nil {
+			return err
+		}
+		return applyOptionAccountDelta(ctx, accountModel, billModel, tenantId, userId, in.AccountId, contract.SettleCoin, profitAmount, int64(option.BillRefType_BILL_REF_TYPE_EXERCISE), id, item.ExerciseNo, "option exercise profit", true, now)
+	})
 	if err != nil {
 		return nil, err
 	}

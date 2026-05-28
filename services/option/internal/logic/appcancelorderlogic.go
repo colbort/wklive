@@ -14,6 +14,7 @@ import (
 	"wklive/services/option/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type AppCancelOrderLogic struct {
@@ -69,7 +70,7 @@ func (l *AppCancelOrderLogic) AppCancelOrder(in *option.AppCancelOrderReq) (*opt
 		if err != nil {
 			return nil, err
 		}
-		if resp == nil || resp.Base == nil || resp.Base.Code != 0 {
+		if resp == nil || resp.Base == nil || resp.Base.Code != 200 {
 			if resp != nil && resp.Base != nil {
 				return &option.AppCommonResp{Base: resp.Base}, nil
 			}
@@ -82,7 +83,16 @@ func (l *AppCancelOrderLogic) AppCancelOrder(in *option.AppCancelOrderReq) (*opt
 	item.CancelReason = "USER_CANCEL"
 	item.CancelTime = now
 	item.UpdateTimes = now
-	if err := l.svcCtx.OptionOrderModel.Update(l.ctx, item); err != nil {
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		orderModel := models.NewTOptionOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionOrderModel)
+		positionModel := models.NewTOptionPositionModel(conn, l.svcCtx.Config.CacheRedis).(models.OptionPositionModel)
+		if err := releaseClosePositionFrozenQty(ctx, positionModel, item, item.UnfilledQty, now); err != nil {
+			return err
+		}
+		return orderModel.Update(ctx, item)
+	})
+	if err != nil {
 		return nil, err
 	}
 

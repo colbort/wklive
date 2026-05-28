@@ -15,13 +15,8 @@ const optionGroups = ref<OptionGroup[]>([])
 const methodOptions = computed(() => findOptionGroup(optionGroups.value, 'method'))
 
 // Pagination and list
-const {
-  pagination,
-  updateFromResponse,
-  resetAndLoad,
-  prevAndLoad,
-  nextAndLoad,
-} = usePagination<number>(10)
+const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
+  usePagination<number>(10)
 const { loading, withLoading } = useLoading()
 
 // Query form
@@ -91,110 +86,110 @@ onMounted(() => {
 
 <template>
   <div class="module-page">
-  <el-card class="table-card">
-    <template #header>
-      {{ t('system.opLog') }}
-    </template>
+    <el-card class="table-card">
+      <template #header>
+        {{ t('system.opLog') }}
+      </template>
 
-    <!-- Query Form -->
-    <el-form :model="queryForm" inline style="margin-bottom: 16px">
-      <el-form-item :label="t('common.username')">
-        <el-input
-          v-model="queryForm.username"
-          :placeholder="t('common.pleaseInputUsername')"
-          clearable
-          style="width: 200px"
-        />
-      </el-form-item>
-
-      <el-form-item :label="t('common.method')">
-        <el-select
-          v-model="queryForm.method"
-          :placeholder="t('common.pleaseSelect')"
-          clearable
-          style="width: 200px"
-        >
-          <el-option
-            v-for="item in methodOptions"
-            :key="item.value"
-            :label="getOptionLabel(t, item.code, item.value)"
-            :value="item.code"
+      <!-- Query Form -->
+      <el-form :model="queryForm" inline style="margin-bottom: 16px">
+        <el-form-item :label="t('common.username')">
+          <el-input
+            v-model="queryForm.username"
+            :placeholder="t('common.pleaseInputUsername')"
+            clearable
+            style="width: 200px"
           />
-        </el-select>
-      </el-form-item>
+        </el-form-item>
 
-      <el-form-item :label="t('common.path')">
-        <el-input
-          v-model="queryForm.path"
-          :placeholder="t('common.pleaseInputPath')"
-          clearable
-          style="width: 200px"
+        <el-form-item :label="t('common.method')">
+          <el-select
+            v-model="queryForm.method"
+            :placeholder="t('common.pleaseSelect')"
+            clearable
+            style="width: 200px"
+          >
+            <el-option
+              v-for="item in methodOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.code"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item :label="t('common.path')">
+          <el-input
+            v-model="queryForm.path"
+            :placeholder="t('common.pleaseInputPath')"
+            clearable
+            style="width: 200px"
+          />
+        </el-form-item>
+
+        <el-form-item>
+          <el-button type="primary" @click="onSearch">
+            {{ t('common.search') }}
+          </el-button>
+          <el-button @click="onReset">
+            {{ t('common.reset') }}
+          </el-button>
+        </el-form-item>
+      </el-form>
+
+      <!-- Table -->
+      <el-table
+        v-loading="loading"
+        :data="list_ref"
+        row-key="id"
+        style="margin-bottom: 16px"
+      >
+        <el-table-column prop="id" :label="t('common.id')" width="70" />
+        <el-table-column prop="username" :label="t('common.username')" min-width="120" />
+        <el-table-column prop="method" :label="t('common.method')" width="80">
+          <template #default="{ row }">
+            <el-tag>{{ row.method }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="path"
+          :label="t('common.path')"
+          min-width="150"
+          show-overflow-tooltip
         />
-      </el-form-item>
+        <el-table-column prop="ip" :label="t('common.ipAddress')" min-width="130" />
+        <el-table-column
+          prop="resp"
+          :label="t('common.response')"
+          min-width="150"
+          show-overflow-tooltip
+        />
+        <el-table-column prop="costMs" :label="t('common.costMs')" width="110">
+          <template #default="{ row }">
+            <span style="color: #666">{{ row.costMs }}ms</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createTimes" :label="t('common.createTimes')" min-width="170">
+          <template #default="{ row }">
+            <span style="color: #666">{{ formatDate(row.createTimes) }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
 
-      <el-form-item>
-        <el-button type="primary" @click="onSearch">
-          {{ t('common.search') }}
-        </el-button>
-        <el-button @click="onReset">
-          {{ t('common.reset') }}
-        </el-button>
-      </el-form-item>
-    </el-form>
-
-    <!-- Table -->
-    <el-table
-      v-loading="loading"
-      :data="list_ref"
-      row-key="id"
-      style="margin-bottom: 16px"
-    >
-      <el-table-column prop="id" :label="t('common.id')" width="70" />
-      <el-table-column prop="username" :label="t('common.username')" min-width="120" />
-      <el-table-column prop="method" :label="t('common.method')" width="80">
-        <template #default="{ row }">
-          <el-tag>{{ row.method }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="path"
-        :label="t('common.path')"
-        min-width="150"
-        show-overflow-tooltip
+      <!-- Pagination -->
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="prevPage"
+        @next="nextPage"
+        @limit-change="
+          () => {
+            resetAndLoad(fetchList)
+          }
+        "
       />
-      <el-table-column prop="ip" :label="t('common.ipAddress')" min-width="130" />
-      <el-table-column
-        prop="resp"
-        :label="t('common.response')"
-        min-width="150"
-        show-overflow-tooltip
-      />
-      <el-table-column prop="costMs" :label="t('common.costMs')" width="110">
-        <template #default="{ row }">
-          <span style="color: #666">{{ row.costMs }}ms</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="createTimes" :label="t('common.createTimes')" min-width="170">
-        <template #default="{ row }">
-          <span style="color: #666">{{ formatDate(row.createTimes) }}</span>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <!-- Pagination -->
-    <CursorPagination
-      v-model:limit="pagination.limit"
-      :total="pagination.total"
-      :has-prev="pagination.hasPrev"
-      :has-next="pagination.hasNext"
-      @prev="prevPage"
-      @next="nextPage"
-      @limit-change="
-        () => {
-          resetAndLoad(fetchList)
-        }
-      "
-    />
-  </el-card>
+    </el-card>
   </div>
 </template>

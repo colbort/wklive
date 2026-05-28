@@ -22,7 +22,6 @@ import type {
   OptionAccount,
   OptionAdminCommonResp,
   OptionBill,
-  OptionContract,
   OptionContractDetail,
   OptionExercise,
   OptionExerciseDetail,
@@ -44,8 +43,8 @@ import type {
 
 export function apiOptionListContracts(
   params: ListContractsReq,
-): Promise<RespBase<OptionContract[]>> {
-  return get<OptionContract[]>('/admin/option/contracts', params)
+): Promise<RespBase<OptionContractDetail[]>> {
+  return get<OptionContractDetail[]>('/admin/option/contracts', params)
 }
 
 export function apiOptionGetContract(

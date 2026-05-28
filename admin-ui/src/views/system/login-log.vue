@@ -12,13 +12,8 @@ import type { LoginLogItem } from '@/services/system/LogService'
 const { t } = useI18n()
 
 // Pagination and list
-const {
-  pagination,
-  updateFromResponse,
-  resetAndLoad,
-  prevAndLoad,
-  nextAndLoad,
-} = usePagination<number>(10)
+const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
+  usePagination<number>(10)
 const { loading, withLoading } = useLoading()
 
 // Query form
@@ -74,99 +69,99 @@ onMounted(() => {
 
 <template>
   <div class="module-page">
-  <el-card class="table-card">
-    <template #header>
-      {{ t('system.loginLog') }}
-    </template>
+    <el-card class="table-card">
+      <template #header>
+        {{ t('system.loginLog') }}
+      </template>
 
-    <!-- Query Form -->
-    <el-form :model="queryForm" inline style="margin-bottom: 16px">
-      <el-form-item :label="t('common.username')">
-        <el-input
-          v-model="queryForm.username"
-          :placeholder="t('common.pleaseInputUsername')"
-          clearable
-          style="width: 220px"
-        />
-      </el-form-item>
+      <!-- Query Form -->
+      <el-form :model="queryForm" inline style="margin-bottom: 16px">
+        <el-form-item :label="t('common.username')">
+          <el-input
+            v-model="queryForm.username"
+            :placeholder="t('common.pleaseInputUsername')"
+            clearable
+            style="width: 220px"
+          />
+        </el-form-item>
 
-      <el-form-item :label="t('common.result')">
-        <el-select
-          v-model="queryForm.success"
-          :placeholder="t('common.pleaseSelectResult')"
-          clearable
-          style="width: 140px"
-        >
-          <el-option :label="t('common.success')" :value="1" />
-          <el-option :label="t('common.failed')" :value="0" />
-        </el-select>
-      </el-form-item>
+        <el-form-item :label="t('common.result')">
+          <el-select
+            v-model="queryForm.success"
+            :placeholder="t('common.pleaseSelectResult')"
+            clearable
+            style="width: 140px"
+          >
+            <el-option :label="t('common.success')" :value="1" />
+            <el-option :label="t('common.failed')" :value="0" />
+          </el-select>
+        </el-form-item>
 
-      <el-form-item>
-        <el-button type="primary" @click="onSearch">
-          {{ t('common.search') }}
-        </el-button>
-        <el-button @click="onReset">
-          {{ t('common.reset') }}
-        </el-button>
-      </el-form-item>
-    </el-form>
+        <el-form-item>
+          <el-button type="primary" @click="onSearch">
+            {{ t('common.search') }}
+          </el-button>
+          <el-button @click="onReset">
+            {{ t('common.reset') }}
+          </el-button>
+        </el-form-item>
+      </el-form>
 
-    <!-- Table -->
-    <el-table
-      v-loading="loading"
-      :data="list_ref"
-      row-key="id"
-      style="margin-bottom: 16px"
-    >
-      <el-table-column prop="id" :label="t('common.id')" width="70" />
-      <el-table-column prop="username" :label="t('common.username')" min-width="120" />
-      <el-table-column prop="ip" :label="t('common.loginIP')" min-width="130" />
-      <el-table-column
-        prop="ua"
-        :label="t('common.userAgent')"
-        min-width="180"
-        show-overflow-tooltip
-      />
-      <el-table-column prop="success" :label="t('common.result')" width="100">
-        <template #default="{ row }">
-          <el-tag :type="row.success === 1 ? 'success' : 'danger'">
-            {{ row.success === 1 ? t('common.loginSuccess') : t('common.loginFailed') }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="msg"
-        :label="t('common.failureReason')"
-        min-width="180"
-        show-overflow-tooltip
+      <!-- Table -->
+      <el-table
+        v-loading="loading"
+        :data="list_ref"
+        row-key="id"
+        style="margin-bottom: 16px"
       >
-        <template #default="{ row }">
-          <span v-if="row.success !== 1">{{ row.msg }} </span>
-          <span v-else style="color: #999">-</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="loginAt" :label="t('common.loginTime')" min-width="170">
-        <template #default="{ row }">
-          <span style="color: #666">{{ formatDate(row.loginAt) }}</span>
-        </template>
-      </el-table-column>
-    </el-table>
+        <el-table-column prop="id" :label="t('common.id')" width="70" />
+        <el-table-column prop="username" :label="t('common.username')" min-width="120" />
+        <el-table-column prop="ip" :label="t('common.loginIP')" min-width="130" />
+        <el-table-column
+          prop="ua"
+          :label="t('common.userAgent')"
+          min-width="180"
+          show-overflow-tooltip
+        />
+        <el-table-column prop="success" :label="t('common.result')" width="100">
+          <template #default="{ row }">
+            <el-tag :type="row.success === 1 ? 'success' : 'danger'">
+              {{ row.success === 1 ? t('common.loginSuccess') : t('common.loginFailed') }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="msg"
+          :label="t('common.failureReason')"
+          min-width="180"
+          show-overflow-tooltip
+        >
+          <template #default="{ row }">
+            <span v-if="row.success !== 1">{{ row.msg }} </span>
+            <span v-else style="color: #999">-</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="loginAt" :label="t('common.loginTime')" min-width="170">
+          <template #default="{ row }">
+            <span style="color: #666">{{ formatDate(row.loginAt) }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
 
-    <!-- Pagination -->
-    <CursorPagination
-      v-model:limit="pagination.limit"
-      :total="pagination.total"
-      :has-prev="pagination.hasPrev"
-      :has-next="pagination.hasNext"
-      @prev="prevPage"
-      @next="nextPage"
-      @limit-change="
-        () => {
-          resetAndLoad(fetchList)
-        }
-      "
-    />
-  </el-card>
+      <!-- Pagination -->
+      <CursorPagination
+        v-model:limit="pagination.limit"
+        :total="pagination.total"
+        :has-prev="pagination.hasPrev"
+        :has-next="pagination.hasNext"
+        @prev="prevPage"
+        @next="nextPage"
+        @limit-change="
+          () => {
+            resetAndLoad(fetchList)
+          }
+        "
+      />
+    </el-card>
   </div>
 </template>
