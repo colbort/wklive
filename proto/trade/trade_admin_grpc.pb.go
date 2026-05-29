@@ -25,6 +25,9 @@ const (
 	TradeAdmin_GetSymbolDetailAdmin_FullMethodName        = "/trade.TradeAdmin/GetSymbolDetailAdmin"
 	TradeAdmin_SetSpotSymbolConfig_FullMethodName         = "/trade.TradeAdmin/SetSpotSymbolConfig"
 	TradeAdmin_SetContractSymbolConfig_FullMethodName     = "/trade.TradeAdmin/SetContractSymbolConfig"
+	TradeAdmin_SetSymbolLeverageConfig_FullMethodName     = "/trade.TradeAdmin/SetSymbolLeverageConfig"
+	TradeAdmin_GetSymbolLeverageConfig_FullMethodName     = "/trade.TradeAdmin/GetSymbolLeverageConfig"
+	TradeAdmin_GetSymbolLeverageConfigList_FullMethodName = "/trade.TradeAdmin/GetSymbolLeverageConfigList"
 	TradeAdmin_GetOrderListAdmin_FullMethodName           = "/trade.TradeAdmin/GetOrderListAdmin"
 	TradeAdmin_GetOrderDetailAdmin_FullMethodName         = "/trade.TradeAdmin/GetOrderDetailAdmin"
 	TradeAdmin_GetFillListAdmin_FullMethodName            = "/trade.TradeAdmin/GetFillListAdmin"
@@ -66,6 +69,12 @@ type TradeAdminClient interface {
 	SetSpotSymbolConfig(ctx context.Context, in *SetSpotSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 	// 设置合约交易对配置
 	SetContractSymbolConfig(ctx context.Context, in *SetContractSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	// 保存交易对杠杆档位配置
+	SetSymbolLeverageConfig(ctx context.Context, in *SetSymbolLeverageConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+	// 获取交易对杠杆档位配置
+	GetSymbolLeverageConfig(ctx context.Context, in *GetSymbolLeverageConfigReq, opts ...grpc.CallOption) (*GetSymbolLeverageConfigResp, error)
+	// 获取交易对杠杆档位配置列表
+	GetSymbolLeverageConfigList(ctx context.Context, in *GetSymbolLeverageConfigListReq, opts ...grpc.CallOption) (*GetSymbolLeverageConfigListResp, error)
 	// 获取后台订单列表
 	GetOrderListAdmin(ctx context.Context, in *GetOrderListAdminReq, opts ...grpc.CallOption) (*GetOrderListAdminResp, error)
 	// 获取订单详情
@@ -172,6 +181,36 @@ func (c *tradeAdminClient) SetContractSymbolConfig(ctx context.Context, in *SetC
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AdminCommonResp)
 	err := c.cc.Invoke(ctx, TradeAdmin_SetContractSymbolConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeAdminClient) SetSymbolLeverageConfig(ctx context.Context, in *SetSymbolLeverageConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminCommonResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_SetSymbolLeverageConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeAdminClient) GetSymbolLeverageConfig(ctx context.Context, in *GetSymbolLeverageConfigReq, opts ...grpc.CallOption) (*GetSymbolLeverageConfigResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSymbolLeverageConfigResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_GetSymbolLeverageConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeAdminClient) GetSymbolLeverageConfigList(ctx context.Context, in *GetSymbolLeverageConfigListReq, opts ...grpc.CallOption) (*GetSymbolLeverageConfigListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSymbolLeverageConfigListResp)
+	err := c.cc.Invoke(ctx, TradeAdmin_GetSymbolLeverageConfigList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -406,6 +445,12 @@ type TradeAdminServer interface {
 	SetSpotSymbolConfig(context.Context, *SetSpotSymbolConfigReq) (*AdminCommonResp, error)
 	// 设置合约交易对配置
 	SetContractSymbolConfig(context.Context, *SetContractSymbolConfigReq) (*AdminCommonResp, error)
+	// 保存交易对杠杆档位配置
+	SetSymbolLeverageConfig(context.Context, *SetSymbolLeverageConfigReq) (*AdminCommonResp, error)
+	// 获取交易对杠杆档位配置
+	GetSymbolLeverageConfig(context.Context, *GetSymbolLeverageConfigReq) (*GetSymbolLeverageConfigResp, error)
+	// 获取交易对杠杆档位配置列表
+	GetSymbolLeverageConfigList(context.Context, *GetSymbolLeverageConfigListReq) (*GetSymbolLeverageConfigListResp, error)
 	// 获取后台订单列表
 	GetOrderListAdmin(context.Context, *GetOrderListAdminReq) (*GetOrderListAdminResp, error)
 	// 获取订单详情
@@ -475,6 +520,15 @@ func (UnimplementedTradeAdminServer) SetSpotSymbolConfig(context.Context, *SetSp
 }
 func (UnimplementedTradeAdminServer) SetContractSymbolConfig(context.Context, *SetContractSymbolConfigReq) (*AdminCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetContractSymbolConfig not implemented")
+}
+func (UnimplementedTradeAdminServer) SetSymbolLeverageConfig(context.Context, *SetSymbolLeverageConfigReq) (*AdminCommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetSymbolLeverageConfig not implemented")
+}
+func (UnimplementedTradeAdminServer) GetSymbolLeverageConfig(context.Context, *GetSymbolLeverageConfigReq) (*GetSymbolLeverageConfigResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetSymbolLeverageConfig not implemented")
+}
+func (UnimplementedTradeAdminServer) GetSymbolLeverageConfigList(context.Context, *GetSymbolLeverageConfigListReq) (*GetSymbolLeverageConfigListResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetSymbolLeverageConfigList not implemented")
 }
 func (UnimplementedTradeAdminServer) GetOrderListAdmin(context.Context, *GetOrderListAdminReq) (*GetOrderListAdminResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetOrderListAdmin not implemented")
@@ -664,6 +718,60 @@ func _TradeAdmin_SetContractSymbolConfig_Handler(srv interface{}, ctx context.Co
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TradeAdminServer).SetContractSymbolConfig(ctx, req.(*SetContractSymbolConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TradeAdmin_SetSymbolLeverageConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetSymbolLeverageConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).SetSymbolLeverageConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_SetSymbolLeverageConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).SetSymbolLeverageConfig(ctx, req.(*SetSymbolLeverageConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TradeAdmin_GetSymbolLeverageConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSymbolLeverageConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).GetSymbolLeverageConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_GetSymbolLeverageConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).GetSymbolLeverageConfig(ctx, req.(*GetSymbolLeverageConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TradeAdmin_GetSymbolLeverageConfigList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSymbolLeverageConfigListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeAdminServer).GetSymbolLeverageConfigList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeAdmin_GetSymbolLeverageConfigList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeAdminServer).GetSymbolLeverageConfigList(ctx, req.(*GetSymbolLeverageConfigListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1076,6 +1184,18 @@ var TradeAdmin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetContractSymbolConfig",
 			Handler:    _TradeAdmin_SetContractSymbolConfig_Handler,
+		},
+		{
+			MethodName: "SetSymbolLeverageConfig",
+			Handler:    _TradeAdmin_SetSymbolLeverageConfig_Handler,
+		},
+		{
+			MethodName: "GetSymbolLeverageConfig",
+			Handler:    _TradeAdmin_GetSymbolLeverageConfig_Handler,
+		},
+		{
+			MethodName: "GetSymbolLeverageConfigList",
+			Handler:    _TradeAdmin_GetSymbolLeverageConfigList_Handler,
 		},
 		{
 			MethodName: "GetOrderListAdmin",

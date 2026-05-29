@@ -1081,6 +1081,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodPost,
+				Path:    "/symbols/leverage-config",
+				Handler: trade.SetSymbolLeverageConfigHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/symbols/leverage-config",
+				Handler: trade.GetSymbolLeverageConfigHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/symbols/leverage-configs",
+				Handler: trade.GetSymbolLeverageConfigListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
 				Path:    "/symbols/spot-config",
 				Handler: trade.SetSpotSymbolConfigHandler(serverCtx),
 			},

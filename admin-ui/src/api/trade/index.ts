@@ -17,6 +17,7 @@ import type {
   GetPositionListAdminReq,
   GetRiskOrderCheckLogListReq,
   GetSymbolDetailAdminReq,
+  GetSymbolLeverageConfigListReq,
   GetSymbolListAdminReq,
   GetTradeEventDetailReq,
   GetTradeEventListReq,
@@ -32,6 +33,7 @@ import type {
   RiskUserTradeLimit,
   SetContractSymbolConfigReq,
   SetSpotSymbolConfigReq,
+  SetSymbolLeverageConfigReq,
   SetUserLeverageConfigReq,
   SetUserSymbolLimitReq,
   SetUserTradeConfigReq,
@@ -41,6 +43,7 @@ import type {
   TradeOrder,
   TradeSymbol,
   TradeSymbolDetailResp,
+  TradeSymbolLeverageConfig,
   TradeUserConfig,
   UpdateSymbolReq,
 } from '@/services'
@@ -69,6 +72,18 @@ export function apiTradeSetSpotConfig(params: SetSpotSymbolConfigReq): Promise<R
 
 export function apiTradeSetContractConfig(params: SetContractSymbolConfigReq): Promise<RespBase> {
   return post('/admin/trade/symbols/contract-config', params)
+}
+
+export function apiTradeListSymbolLeverageConfigs(
+  params: GetSymbolLeverageConfigListReq,
+): Promise<RespBase<TradeSymbolLeverageConfig[]>> {
+  return get<TradeSymbolLeverageConfig[]>('/admin/trade/symbols/leverage-configs', params)
+}
+
+export function apiTradeSetSymbolLeverageConfig(
+  params: SetSymbolLeverageConfigReq,
+): Promise<RespBase> {
+  return post('/admin/trade/symbols/leverage-config', params)
 }
 
 export function apiTradeListOrders(params: GetOrderListAdminReq): Promise<RespBase<TradeOrder[]>> {

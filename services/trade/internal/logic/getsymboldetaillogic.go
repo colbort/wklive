@@ -60,5 +60,12 @@ func (l *GetSymbolDetailLogic) GetSymbolDetail(in *trade.GetSymbolDetailReq) (*t
 	if contractCfg != nil {
 		resp.Contract = contractSymbolToProto(contractCfg)
 	}
+	configs, _, err := l.svcCtx.SymbolLeverageCfgModel.FindPage(l.ctx, tenantId, in.SymbolId, item.MarketType, 0, 1, 0, 100)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
+	for _, cfg := range configs {
+		resp.LeverageConfigs = append(resp.LeverageConfigs, symbolLeverageConfigToProto(cfg))
+	}
 	return resp, nil
 }

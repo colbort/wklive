@@ -31,6 +31,18 @@ service TradeAdmin {
   rpc SetContractSymbolConfig(SetContractSymbolConfigReq)
       returns (AdminCommonResp);
 
+  // 保存交易对杠杆档位配置
+  rpc SetSymbolLeverageConfig(SetSymbolLeverageConfigReq)
+      returns (AdminCommonResp);
+
+  // 获取交易对杠杆档位配置
+  rpc GetSymbolLeverageConfig(GetSymbolLeverageConfigReq)
+      returns (GetSymbolLeverageConfigResp);
+
+  // 获取交易对杠杆档位配置列表
+  rpc GetSymbolLeverageConfigList(GetSymbolLeverageConfigListReq)
+      returns (GetSymbolLeverageConfigListResp);
+
   // 获取后台订单列表
   rpc GetOrderListAdmin(GetOrderListAdminReq) returns (GetOrderListAdminResp);
 
@@ -177,6 +189,7 @@ message GetSymbolDetailAdminReq {
 message GetSymbolDetailAdminResp {
   common.RespBase base = 1;
   TradeSymbol data = 2;
+  repeated TradeSymbolLeverageConfig leverage_configs = 3;
 }
 
 message SetSpotSymbolConfigReq {
@@ -203,6 +216,46 @@ message SetContractSymbolConfigReq {
   int64 support_isolated = 12;
   int64 buy_enabled = 13;
   int64 sell_enabled = 14;
+}
+
+message SetSymbolLeverageConfigReq {
+  int64 tenant_id = 1;
+  int64 symbol_id = 2;
+  MarketType market_type = 3;
+  MarginMode margin_mode = 4;
+  repeated int64 leverage_values = 5;
+  int64 default_leverage = 6;
+  int64 max_leverage = 7;
+  int64 status = 8;
+  int64 sort = 9;
+  string remark = 10;
+}
+
+message GetSymbolLeverageConfigReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+  int64 symbol_id = 3;
+  MarketType market_type = 4;
+  MarginMode margin_mode = 5;
+}
+
+message GetSymbolLeverageConfigResp {
+  common.RespBase base = 1;
+  TradeSymbolLeverageConfig data = 2;
+}
+
+message GetSymbolLeverageConfigListReq {
+  int64 tenant_id = 1;
+  common.PageReq page = 2;
+  int64 symbol_id = 3;
+  MarketType market_type = 4;
+  MarginMode margin_mode = 5;
+  int64 status = 6;
+}
+
+message GetSymbolLeverageConfigListResp {
+  common.RespBase base = 1;
+  repeated TradeSymbolLeverageConfig data = 2;
 }
 
 message GetOrderListAdminReq {

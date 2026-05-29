@@ -1,20 +1,77 @@
-<script setup lang='ts'>
-import { computed } from 'vue'
+<script setup lang="ts">
+import { computed, ref } from 'vue'
 
 import { apiGetTradeOptions } from '@/api/trade'
 import { optionText, useOptions } from '@/composables/useOptions'
 import type { ItickTenantProduct } from '@/types/itick'
+import type {
+  TradeSymbol,
+  TradeSymbolContract,
+  TradeSymbolLeverageConfig,
+  TradeSymbolSpot,
+} from '@/types/trade'
 
-defineProps<{
+type SubmitSide = 'buy' | 'sell'
+type TradeSymbolDetail = {
+  symbol: TradeSymbol | null
+  spot: TradeSymbolSpot | null
+  contract: TradeSymbolContract | null
+  leverageConfigs: TradeSymbolLeverageConfig[]
+}
+
+const props = defineProps<{
   selectedProduct: ItickTenantProduct | null
   tradeKind: 'stock' | 'option' | 'forex' | 'commodity' | 'crypto'
   orderMode: 'market' | 'limit'
+  selectedTradeSymbol: TradeSymbol | null
+  tradeSymbolDetail: TradeSymbolDetail | null
+  tradeSymbolLoading: boolean
+  isLoggedIn: boolean
+  tradeAvailable: boolean
+  tradePrice: string
+  tradeQty: string
+  tradePercent: number
+  referencePrice: string | number
+  marginMode: number
+  leverage: number
+  maxLeverage: number
+  leverageValues: number[]
+  takeProfitPrice: string
+  stopLossPrice: string
+  settleAsset: string
+  availableBalance: string
+  longPositionQty: string
+  shortPositionQty: string
+  tradeMessage: string
+  tradeError: string
+  submittingSide: SubmitSide | null
 }>()
 
 const emit = defineEmits<{
   (e: 'update:orderMode', value: 'market' | 'limit'): void
+  (e: 'update:tradePrice', value: string): void
+  (e: 'update:tradeQty', value: string): void
+  (e: 'update:tradePercent', value: number): void
+  (e: 'update:marginMode', value: number): void
+  (e: 'update:leverage', value: number): void
+  (e: 'update:takeProfitPrice', value: string): void
+  (e: 'update:stopLossPrice', value: string): void
+  (e: 'submit-order', side: SubmitSide): void
 }>()
 
+const MARKET_TYPE_SPOT = 1
+type SelectionSheet = 'margin' | 'leverage' | 'risk' | null
+type RiskEntrySide = 'long' | 'short'
+const selectionSheet = ref<SelectionSheet>(null)
+const riskEntrySide = ref<RiskEntrySide | null>(null)
+const editingRiskEntrySide = ref<RiskEntrySide>('long')
+const riskTakeProfitEnabled = ref(false)
+const riskStopLossEnabled = ref(false)
+const riskTakeProfitPrice = ref('')
+const riskStopLossPrice = ref('')
+const riskTakeProfitPercent = ref('')
+const riskStopLossPercent = ref('')
+const riskQty = ref('')
 const tradeOptions = useOptions(apiGetTradeOptions)
 const orderTypeOptions = computed(() => {
   const options = tradeOptions.getGroup('orderType').filter((option) => {
@@ -32,9 +89,192 @@ const marginModeOptions = computed(() => {
   const options = tradeOptions.getGroup('marginMode').filter((option) => option.value > 0)
   return options.length ? options : [{ value: 1, code: 'MARGIN_MODE_CROSS' }]
 })
+const isSpotTrade = computed(() => props.selectedTradeSymbol?.marketType === MARKET_TYPE_SPOT)
+const canSubmit = computed(
+  () => props.isLoggedIn && props.tradeAvailable && !props.tradeSymbolLoading,
+)
+const submitDisabled = computed(() => !canSubmit.value || Boolean(props.submittingSide))
+const baseAsset = computed(() => {
+  return (
+    props.selectedTradeSymbol?.baseAsset ||
+    props.selectedProduct?.baseCoin ||
+    props.selectedProduct?.symbol ||
+    'BTC'
+  )
+})
+const selectedMarginMode = computed(() => {
+  return (
+    marginModeOptions.value.find((option) => option.value === props.marginMode) ||
+    marginModeOptions.value[0] || { value: 1, code: 'MARGIN_MODE_CROSS' }
+  )
+})
+const conversionText = computed(() => {
+  const contractSize = props.tradeSymbolDetail?.contract?.contractSize || ''
+  if (isSpotTrade.value) return `1 ${baseAsset.value} = 1 ${baseAsset.value}`
+  return contractSize ? `1 手 = ${contractSize} ${baseAsset.value}` : `1 手 = 1 ${baseAsset.value}`
+})
+const buyLabel = computed(() => (isSpotTrade.value ? '买入' : '买入开多'))
+const sellLabel = computed(() => (isSpotTrade.value ? '卖出' : '卖出开空'))
+const riskSettingsActive = computed(() => Boolean(props.takeProfitPrice || props.stopLossPrice))
+const riskTakeProfitReady = computed(
+  () => riskTakeProfitEnabled.value && Boolean(validPositiveDecimal(riskTakeProfitPrice.value)),
+)
+const riskStopLossReady = computed(
+  () => riskStopLossEnabled.value && Boolean(validPositiveDecimal(riskStopLossPrice.value)),
+)
+const riskQtyReady = computed(() => Boolean(validPositiveDecimal(riskQty.value)))
+const riskCanConfirm = computed(
+  () => (riskTakeProfitReady.value || riskStopLossReady.value) && riskQtyReady.value,
+)
+const riskReferencePrice = computed(() => {
+  const orderPrice = parseDecimal(props.tradePrice)
+  if (props.orderMode === 'limit' && orderPrice && orderPrice > 0) return orderPrice
+
+  const latestPrice = parseDecimal(props.referencePrice)
+  return latestPrice && latestPrice > 0 ? latestPrice : null
+})
+const unavailableText = computed(() => {
+  if (!props.isLoggedIn) return '请先登录后再交易'
+  if (props.tradeSymbolLoading) return '交易配置加载中'
+  if (!props.tradeAvailable) return '当前品种暂未开放交易'
+  return ''
+})
 
 function orderModeFromCode(code: string): 'market' | 'limit' {
   return code === 'ORDER_TYPE_LIMIT' ? 'limit' : 'market'
+}
+
+function inputValue(event: Event) {
+  return (event.target as HTMLInputElement).value
+}
+
+function inputNumber(event: Event) {
+  return Number((event.target as HTMLInputElement).value)
+}
+
+function parseDecimal(value: string | number | null | undefined) {
+  const text = String(value ?? '')
+    .trim()
+    .replace(/,/g, '')
+  if (!text) return null
+
+  const numberValue = Number(text)
+  return Number.isFinite(numberValue) ? numberValue : null
+}
+
+function validPositiveDecimal(value: string | number | null | undefined) {
+  const numberValue = parseDecimal(value)
+  return numberValue !== null && numberValue > 0 ? numberValue : null
+}
+
+function trimDecimal(value: string) {
+  return value.replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '')
+}
+
+function priceScale() {
+  const scale = Number(props.selectedTradeSymbol?.priceScale)
+  if (Number.isFinite(scale) && scale >= 0) return Math.min(scale, 12)
+
+  const tick = props.selectedTradeSymbol?.priceTick || ''
+  const decimalText = tick.includes('.') ? tick.split('.')[1]?.replace(/0+$/, '') || '' : ''
+  return Math.min(decimalText.length || 8, 12)
+}
+
+function formatPriceValue(value: number) {
+  if (!Number.isFinite(value) || value <= 0) return ''
+  return trimDecimal(value.toFixed(priceScale()))
+}
+
+function formatPercentValue(value: number) {
+  if (!Number.isFinite(value)) return ''
+  return trimDecimal(value.toFixed(2))
+}
+
+function riskPercentFromPrice(priceText: string, direction: 'up' | 'down') {
+  const price = parseDecimal(priceText)
+  const referencePrice = riskReferencePrice.value
+  if (!price || price <= 0 || !referencePrice) return ''
+
+  const percent =
+    direction === 'up'
+      ? ((price - referencePrice) / referencePrice) * 100
+      : ((referencePrice - price) / referencePrice) * 100
+  return formatPercentValue(percent)
+}
+
+function riskPriceFromPercent(percentText: string, direction: 'up' | 'down') {
+  const percent = parseDecimal(percentText)
+  const referencePrice = riskReferencePrice.value
+  if (percent === null || !referencePrice) return ''
+
+  const price =
+    direction === 'up' ? referencePrice * (1 + percent / 100) : referencePrice * (1 - percent / 100)
+  return formatPriceValue(price)
+}
+
+function updateRiskTakeProfitPrice(value: string) {
+  riskTakeProfitPrice.value = value
+  riskTakeProfitPercent.value = riskPercentFromPrice(value, 'up')
+}
+
+function updateRiskTakeProfitPercent(value: string) {
+  riskTakeProfitPercent.value = value
+  riskTakeProfitPrice.value = riskPriceFromPercent(value, 'up')
+}
+
+function updateRiskStopLossPrice(value: string) {
+  riskStopLossPrice.value = value
+  riskStopLossPercent.value = riskPercentFromPrice(value, 'down')
+}
+
+function updateRiskStopLossPercent(value: string) {
+  riskStopLossPercent.value = value
+  riskStopLossPrice.value = riskPriceFromPercent(value, 'down')
+}
+
+function isRiskEntryActive(side: RiskEntrySide) {
+  return riskSettingsActive.value && riskEntrySide.value === side
+}
+
+function openSelectionSheet(type: Exclude<SelectionSheet, null>, side?: RiskEntrySide) {
+  if (isSpotTrade.value) return
+  if (type === 'risk') {
+    editingRiskEntrySide.value = side || riskEntrySide.value || 'long'
+    riskTakeProfitEnabled.value = Boolean(props.takeProfitPrice)
+    riskStopLossEnabled.value = Boolean(props.stopLossPrice)
+    riskTakeProfitPrice.value = props.takeProfitPrice
+    riskStopLossPrice.value = props.stopLossPrice
+    riskTakeProfitPercent.value = riskPercentFromPrice(props.takeProfitPrice, 'up')
+    riskStopLossPercent.value = riskPercentFromPrice(props.stopLossPrice, 'down')
+    riskQty.value = ''
+  }
+  selectionSheet.value = type
+}
+
+function closeSelectionSheet() {
+  selectionSheet.value = null
+}
+
+function selectMarginMode(value: number) {
+  emit('update:marginMode', value)
+  closeSelectionSheet()
+}
+
+function selectLeverage(value: number) {
+  emit('update:leverage', value)
+  closeSelectionSheet()
+}
+
+function confirmRiskSettings() {
+  if (!riskCanConfirm.value) return
+
+  const nextTakeProfitPrice = riskTakeProfitReady.value ? riskTakeProfitPrice.value : ''
+  const nextStopLossPrice = riskStopLossReady.value ? riskStopLossPrice.value : ''
+
+  emit('update:takeProfitPrice', nextTakeProfitPrice)
+  emit('update:stopLossPrice', nextStopLossPrice)
+  riskEntrySide.value = nextTakeProfitPrice || nextStopLossPrice ? editingRiskEntrySide.value : null
+  closeSelectionSheet()
 }
 </script>
 
@@ -65,14 +305,18 @@ function orderModeFromCode(code: string): 'market' | 'limit' {
 
     <div class="trade-input">数量</div>
     <div class="percent-bar"><i /></div>
-    <div class="percent-labels"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>
+    <div class="percent-labels">
+      <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
+    </div>
     <button class="wide-action" type="button">登录/注册</button>
   </section>
 
   <section v-else-if="tradeKind === 'option'" class="option-panel">
     <div class="mini-chart">
       <svg viewBox="0 0 320 88" aria-label="走势">
-        <path d="M0 50 C28 48 26 40 54 42 C88 47 82 28 119 25 C152 20 143 32 176 28 C218 26 199 64 231 63 C266 62 252 49 320 53" />
+        <path
+          d="M0 50 C28 48 26 40 54 42 C88 47 82 28 119 25 C152 20 143 32 176 28 C218 26 199 64 231 63 C266 62 252 49 320 53"
+        />
       </svg>
     </div>
 
@@ -89,9 +333,13 @@ function orderModeFromCode(code: string): 'market' | 'limit' {
     <h3>投资额</h3>
     <div class="trade-input split"><span>>=100</span><strong>USD</strong></div>
     <div class="percent-bar"><i /></div>
-    <div class="percent-labels"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>
+    <div class="percent-labels">
+      <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
+    </div>
     <div class="buyable"><span>可买</span><strong>0 USD</strong></div>
-    <div class="dual-actions"><button type="button">登录</button><button type="button">注册</button></div>
+    <div class="dual-actions">
+      <button type="button">登录</button><button type="button">注册</button>
+    </div>
   </section>
 
   <section v-else class="contract-panel">
@@ -109,35 +357,251 @@ function orderModeFromCode(code: string): 'market' | 'limit' {
       </div>
 
       <div class="form-row">
-        <button type="button">{{ optionText(marginModeOptions[0]) }}⌄</button>
-        <button type="button">1X⌄</button>
+        <button
+          type="button"
+          class="picker-trigger"
+          :disabled="isSpotTrade"
+          @click="openSelectionSheet('margin')"
+        >
+          {{ optionText(selectedMarginMode) }}
+        </button>
+        <button
+          type="button"
+          class="picker-trigger"
+          :disabled="isSpotTrade"
+          @click="openSelectionSheet('leverage')"
+        >
+          {{ leverage }}X
+        </button>
       </div>
 
-      <div class="trade-input">
-        数量({{ tradeKind === 'forex' ? selectedProduct?.symbol : selectedProduct?.baseCoin || selectedProduct?.symbol || 'BTC' }})
+      <div v-if="orderMode === 'limit'" class="trade-input trade-input--field">
+        <input
+          :value="tradePrice"
+          inputmode="decimal"
+          :placeholder="`价格(${settleAsset}) / 最小 ${selectedTradeSymbol?.priceTick || '--'}`"
+          @input="emit('update:tradePrice', inputValue($event))"
+        />
       </div>
-      <div class="percent-bar"><i /></div>
-      <div class="percent-labels"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>
+
+      <div class="trade-input trade-input--field">
+        <input
+          :value="tradeQty"
+          inputmode="decimal"
+          :placeholder="`数量(${baseAsset}) / 最小 ${selectedTradeSymbol?.minQty || '--'}`"
+          @input="emit('update:tradeQty', inputValue($event))"
+        />
+      </div>
+      <div class="percent-bar" :style="{ '--progress': `${tradePercent}%` }">
+        <input
+          class="percent-range"
+          type="range"
+          min="0"
+          max="100"
+          step="1"
+          :value="tradePercent"
+          @input="emit('update:tradePercent', inputNumber($event))"
+        />
+      </div>
+      <div class="percent-labels">
+        <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
+      </div>
 
       <div class="account-lines">
-        <span>可用</span><strong>0 USD</strong>
-        <span>换算</span><strong>{{ tradeKind === 'crypto' ? '1 手 = 1 BTC' : `1 手 = 1 ${selectedProduct?.symbol || ''}` }}</strong>
+        <span>可用</span><strong>{{ availableBalance }} {{ settleAsset }}</strong> <span>换算</span
+        ><strong>{{ conversionText }}</strong> <span>模式</span
+        ><strong
+          >{{ optionText(selectedMarginMode) }} /
+          {{ isSpotTrade ? '无杠杆' : `${leverage}X` }}</strong
+        >
       </div>
 
-      <label class="checkbox-line"><i />止盈/止损</label>
+      <button type="button" class="risk-trigger" @click="openSelectionSheet('risk', 'long')">
+        <span
+          :class="{
+            active: isRiskEntryActive('long'),
+          }"
+        />
+        止盈/止损
+      </button>
       <div class="account-lines">
-        <span>可开多</span><strong>0 手</strong>
-        <span>保证金</span><strong>0 USD</strong>
+        <span>{{ isSpotTrade ? '可买' : '可开多' }}</span
+        ><strong>{{ longPositionQty }} {{ isSpotTrade ? baseAsset : '手' }}</strong>
+        <span>保证金</span><strong>{{ availableBalance }} {{ settleAsset }}</strong>
       </div>
-      <button class="wide-action wide-action--buy" type="button">买入开多</button>
+      <button
+        class="wide-action wide-action--buy"
+        type="button"
+        :disabled="submitDisabled"
+        @click="emit('submit-order', 'buy')"
+      >
+        {{ submittingSide === 'buy' ? '提交中' : buyLabel }}
+      </button>
 
-      <label class="checkbox-line"><i />止盈/止损</label>
+      <button type="button" class="risk-trigger" @click="openSelectionSheet('risk', 'short')">
+        <span
+          :class="{
+            active: isRiskEntryActive('short'),
+          }"
+        />
+        止盈/止损
+      </button>
       <div class="account-lines">
-        <span>可开空</span><strong>0 手</strong>
-        <span>保证金</span><strong>0 USD</strong>
+        <span>{{ isSpotTrade ? '可卖' : '可开空' }}</span
+        ><strong>{{ shortPositionQty }} {{ isSpotTrade ? baseAsset : '手' }}</strong>
+        <span>保证金</span><strong>{{ availableBalance }} {{ settleAsset }}</strong>
       </div>
-      <button class="wide-action wide-action--sell" type="button">卖出开空</button>
+      <button
+        class="wide-action wide-action--sell"
+        type="button"
+        :disabled="submitDisabled"
+        @click="emit('submit-order', 'sell')"
+      >
+        {{ submittingSide === 'sell' ? '提交中' : sellLabel }}
+      </button>
+
+      <p v-if="tradeError || unavailableText" class="order-message order-message--error">
+        {{ tradeError || unavailableText }}
+      </p>
+      <p v-else-if="tradeMessage" class="order-message">{{ tradeMessage }}</p>
     </div>
+
+    <Teleport to="body">
+      <div
+        v-if="selectionSheet"
+        class="selection-sheet-backdrop"
+        role="presentation"
+        @click.self="closeSelectionSheet"
+      >
+        <section
+          class="selection-sheet"
+          :class="[
+            `selection-sheet--${selectionSheet}`,
+            {
+              'selection-sheet--risk-active':
+                selectionSheet === 'risk' && (riskTakeProfitEnabled || riskStopLossEnabled),
+              'selection-sheet--risk-full':
+                selectionSheet === 'risk' && riskTakeProfitEnabled && riskStopLossEnabled,
+            },
+          ]"
+          role="dialog"
+          aria-modal="true"
+        >
+          <span class="selection-sheet__handle" />
+          <button
+            type="button"
+            class="selection-sheet__close"
+            aria-label="关闭"
+            @click="closeSelectionSheet"
+          >
+            <span />
+          </button>
+
+          <h2>
+            {{
+              selectionSheet === 'margin'
+                ? '保证金模式'
+                : selectionSheet === 'leverage'
+                  ? '杠杆'
+                  : '止盈/止损'
+            }}
+          </h2>
+
+          <div v-if="selectionSheet === 'margin'" class="margin-mode-list">
+            <button
+              v-for="option in marginModeOptions"
+              :key="option.value"
+              type="button"
+              :class="{ active: option.value === marginMode }"
+              @click="selectMarginMode(option.value)"
+            >
+              {{ optionText(option) }}
+            </button>
+          </div>
+
+          <div v-else-if="selectionSheet === 'leverage'" class="leverage-grid">
+            <button
+              v-for="value in leverageValues"
+              :key="value"
+              type="button"
+              :class="{ active: value === leverage }"
+              @click="selectLeverage(value)"
+            >
+              {{ value }}X
+            </button>
+          </div>
+
+          <div v-else class="risk-sheet-body">
+            <label class="risk-check-row">
+              <input v-model="riskTakeProfitEnabled" type="checkbox" />
+              <span />
+              <strong>止盈</strong>
+            </label>
+            <div v-if="riskTakeProfitEnabled" class="risk-input-grid">
+              <label class="risk-field risk-field--wide">
+                <input
+                  :value="riskTakeProfitPrice"
+                  inputmode="decimal"
+                  placeholder="价格"
+                  @input="updateRiskTakeProfitPrice(inputValue($event))"
+                />
+                <strong>{{ settleAsset }}</strong>
+              </label>
+              <label class="risk-field">
+                <input
+                  :value="riskTakeProfitPercent"
+                  inputmode="decimal"
+                  placeholder="涨幅"
+                  @input="updateRiskTakeProfitPercent(inputValue($event))"
+                />
+                <strong>%</strong>
+              </label>
+            </div>
+
+            <label class="risk-check-row">
+              <input v-model="riskStopLossEnabled" type="checkbox" />
+              <span />
+              <strong>止损</strong>
+            </label>
+            <div v-if="riskStopLossEnabled" class="risk-input-grid">
+              <label class="risk-field risk-field--wide">
+                <input
+                  :value="riskStopLossPrice"
+                  inputmode="decimal"
+                  placeholder="价格"
+                  @input="updateRiskStopLossPrice(inputValue($event))"
+                />
+                <strong>{{ settleAsset }}</strong>
+              </label>
+              <label class="risk-field">
+                <input
+                  :value="riskStopLossPercent"
+                  inputmode="decimal"
+                  placeholder="跌幅"
+                  @input="updateRiskStopLossPercent(inputValue($event))"
+                />
+                <strong>%</strong>
+              </label>
+            </div>
+
+            <div class="risk-divider" />
+            <label v-if="riskTakeProfitEnabled || riskStopLossEnabled" class="risk-qty">
+              <strong>数量</strong>
+              <input v-model="riskQty" inputmode="decimal" placeholder="止盈止损数量" />
+            </label>
+
+            <button
+              type="button"
+              class="risk-confirm"
+              :disabled="!riskCanConfirm"
+              @click="confirmRiskSettings"
+            >
+              确认
+            </button>
+          </div>
+        </section>
+      </div>
+    </Teleport>
   </section>
 </template>
 
@@ -159,6 +623,7 @@ function orderModeFromCode(code: string): 'market' | 'limit' {
 .mode-switch button,
 .form-row button,
 .trade-input,
+.risk-trigger,
 .wide-action,
 .dual-actions button,
 .inner-tabs button,
@@ -189,6 +654,8 @@ function orderModeFromCode(code: string): 'market' | 'limit' {
 }
 
 .form-row button,
+.form-row select,
+.form-row input,
 .trade-input {
   min-height: 48px;
   padding: 0 12px;
@@ -198,8 +665,316 @@ function orderModeFromCode(code: string): 'market' | 'limit' {
   text-align: left;
 }
 
-.form-row button {
+.form-row button,
+.form-row select,
+.form-row input {
+  border: 0;
+  outline: 0;
   font-size: 16px;
+}
+
+.picker-trigger {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.picker-trigger::after {
+  position: absolute;
+  right: 16px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #777c88;
+  border-bottom: 2px solid #777c88;
+  transform: rotate(45deg) translateY(-2px);
+  content: '';
+}
+
+.picker-trigger:disabled::after {
+  opacity: 0.45;
+}
+
+.selection-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(2, 3, 8, 0.58);
+  backdrop-filter: blur(7px);
+}
+
+.selection-sheet {
+  position: relative;
+  width: min(calc(100% - clamp(12px, 3vw, 22px)), 680px);
+  max-width: 680px;
+  min-height: min(88dvh, clamp(324px, 31dvh, 460px));
+  max-height: 88dvh;
+  overflow-y: auto;
+  padding: clamp(68px, 9.7vw, 74px) clamp(28px, 4.8vw, 34px) clamp(42px, 6.8vw, 52px);
+  border-radius: clamp(28px, 4.4vw, 32px) clamp(28px, 4.4vw, 32px) 0 0;
+  background: #24242d;
+  box-shadow: 0 -18px 52px rgba(0, 0, 0, 0.28);
+}
+
+.selection-sheet--leverage {
+  min-height: min(88dvh, clamp(390px, 35.2dvh, 528px));
+}
+
+.selection-sheet--risk {
+  width: 100%;
+  max-width: none;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  overflow: visible;
+  padding-top: clamp(60px, 8.8vw, 66px);
+  padding-right: clamp(24px, 4vw, 30px);
+  padding-bottom: clamp(34px, 5.5vw, 42px);
+  padding-left: clamp(24px, 4vw, 30px);
+}
+
+.selection-sheet--risk-active {
+  height: auto;
+  min-height: 0;
+}
+
+.selection-sheet--risk-full {
+  height: auto;
+  min-height: 0;
+}
+
+.selection-sheet__handle {
+  position: absolute;
+  top: clamp(14px, 2vw, 16px);
+  left: 50%;
+  width: clamp(58px, 8.2vw, 60px);
+  height: 6px;
+  border-radius: 999px;
+  background: #a8a8ad;
+  transform: translateX(-50%);
+}
+
+.selection-sheet__close {
+  position: absolute;
+  top: clamp(28px, 4vw, 32px);
+  right: clamp(28px, 5.4vw, 40px);
+  display: grid;
+  place-items: center;
+  width: clamp(38px, 5.8vw, 42px);
+  height: clamp(38px, 5.8vw, 42px);
+  border: 0;
+  background: transparent;
+}
+
+.selection-sheet--risk .selection-sheet__close {
+  top: clamp(30px, 4.4vw, 34px);
+  right: clamp(28px, 4.6vw, 34px);
+}
+
+.selection-sheet__close span {
+  display: none;
+}
+
+.selection-sheet__close::before,
+.selection-sheet__close::after {
+  position: absolute;
+  display: block;
+  width: clamp(25px, 4.2vw, 30px);
+  height: 3px;
+  border-radius: 999px;
+  background: #fff;
+  content: '';
+}
+
+.selection-sheet__close::before {
+  transform: rotate(45deg);
+}
+
+.selection-sheet__close::after {
+  transform: rotate(-45deg);
+}
+
+.selection-sheet h2 {
+  margin: 0 0 clamp(44px, 6.8vw, 50px);
+  color: #fff;
+  font-size: clamp(24px, 4.2vw, 30px);
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.selection-sheet--risk h2 {
+  margin-bottom: clamp(46px, 6.4vw, 50px);
+  font-size: clamp(22px, 3.3vw, 24px);
+  font-weight: 700;
+}
+
+.margin-mode-list {
+  display: grid;
+  gap: clamp(24px, 4.6vw, 34px);
+}
+
+.margin-mode-list button,
+.leverage-grid button {
+  min-height: clamp(64px, 12.5vw, 90px);
+  border: 0;
+  border-radius: clamp(20px, 3.9vw, 28px);
+  background: #3d3e47;
+  color: #fff;
+  font: inherit;
+  font-size: clamp(21px, 3.9vw, 28px);
+  font-weight: 800;
+}
+
+.margin-mode-list button.active,
+.leverage-grid button.active {
+  background: #02b904;
+}
+
+.leverage-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(16px, 2.8vw, 20px) clamp(18px, 2.8vw, 20px);
+}
+
+.leverage-grid button {
+  min-height: clamp(58px, 10.3vw, 74px);
+  border-radius: clamp(18px, 3.2vw, 23px);
+}
+
+.risk-sheet-body {
+  display: grid;
+  gap: clamp(20px, 2.8vw, 22px);
+  width: 100%;
+}
+
+.risk-check-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #fff;
+  font-size: clamp(18px, 2.9vw, 20px);
+  font-weight: 700;
+}
+
+.risk-check-row input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.risk-check-row span {
+  position: relative;
+  width: clamp(22px, 3.4vw, 25px);
+  height: clamp(22px, 3.4vw, 25px);
+  flex: 0 0 auto;
+  border: 2px solid #d9ddea;
+  border-radius: 7px;
+}
+
+.risk-check-row input:checked + span {
+  border-color: #02b904;
+  background: #02b904;
+}
+
+.risk-check-row input:checked + span::after {
+  position: absolute;
+  top: 4px;
+  left: 7px;
+  width: 6px;
+  height: 11px;
+  border-right: 3px solid #fff;
+  border-bottom: 3px solid #fff;
+  transform: rotate(45deg);
+  content: '';
+}
+
+.risk-input-grid {
+  display: grid;
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.55fr);
+  gap: clamp(10px, 1.7vw, 12px);
+}
+
+.risk-field {
+  display: flex;
+  align-items: center;
+  min-height: clamp(52px, 9.8vw, 64px);
+  padding: 0 clamp(18px, 3.7vw, 24px);
+  border-radius: clamp(16px, 3vw, 20px);
+  background: #3d3e47;
+}
+
+.risk-field input,
+.risk-qty input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  font-size: clamp(17px, 2.8vw, 20px);
+  font-weight: 600;
+}
+
+.risk-field input::placeholder,
+.risk-qty input::placeholder {
+  color: #8d8f97;
+}
+
+.risk-field strong {
+  margin-left: clamp(8px, 1.8vw, 12px);
+  color: #fff;
+  font-size: clamp(17px, 2.8vw, 20px);
+  font-weight: 700;
+}
+
+.risk-divider {
+  height: 1px;
+  background: #3d3e47;
+}
+
+.risk-qty {
+  display: grid;
+  gap: clamp(16px, 2.6vw, 18px);
+  color: #fff;
+  font-size: clamp(18px, 2.9vw, 20px);
+  font-weight: 700;
+}
+
+.risk-qty input {
+  min-height: clamp(52px, 9.8vw, 64px);
+  padding: 0 clamp(20px, 3.7vw, 24px);
+  border-radius: clamp(16px, 3vw, 20px);
+  background: #3d3e47;
+}
+
+.risk-confirm {
+  min-height: clamp(60px, 11.8vw, 78px);
+  margin-top: clamp(14px, 2.4vw, 18px);
+  border: 0;
+  border-radius: clamp(24px, 5.5vw, 36px);
+  background: #02b904;
+  color: #fff;
+  font: inherit;
+  font-size: clamp(19px, 2.9vw, 21px);
+  font-weight: 700;
+}
+
+.risk-confirm:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.form-row button:disabled,
+.form-row select:disabled,
+.form-row input:disabled {
+  color: #8f929d;
 }
 
 .trade-input {
@@ -208,6 +983,20 @@ function orderModeFromCode(code: string): 'market' | 'limit' {
   margin-bottom: 12px;
   color: #8f929d;
   font-size: 16px;
+}
+
+.trade-input--field input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #f6f7fb;
+  font: inherit;
+}
+
+.trade-input--field input::placeholder {
+  color: #8f929d;
 }
 
 .trade-input.split {
@@ -220,10 +1009,22 @@ function orderModeFromCode(code: string): 'market' | 'limit' {
 }
 
 .percent-bar {
+  position: relative;
   height: 14px;
   margin-bottom: 8px;
   border-radius: 999px;
-  background: linear-gradient(90deg, #1c1f2a 0 24%, transparent 24% 25%, #1c1f2a 25% 49%, transparent 49% 50%, #1c1f2a 50% 74%, transparent 74% 75%, #1c1f2a 75%);
+  background:
+    linear-gradient(90deg, #02b904 0 var(--progress, 0%), transparent var(--progress, 0%)),
+    linear-gradient(
+      90deg,
+      #1c1f2a 0 24%,
+      transparent 24% 25%,
+      #1c1f2a 25% 49%,
+      transparent 49% 50%,
+      #1c1f2a 50% 74%,
+      transparent 74% 75%,
+      #1c1f2a 75%
+    );
 }
 
 .percent-bar i {
@@ -232,6 +1033,13 @@ function orderModeFromCode(code: string): 'market' | 'limit' {
   height: 14px;
   border-radius: 999px;
   background: #02b904;
+}
+
+.percent-range {
+  position: absolute;
+  inset: -7px 0;
+  width: 100%;
+  opacity: 0;
 }
 
 .percent-labels {
@@ -256,20 +1064,40 @@ function orderModeFromCode(code: string): 'market' | 'limit' {
   font-weight: 500;
 }
 
-.checkbox-line {
+.risk-trigger {
   display: flex;
   align-items: center;
   gap: 8px;
   margin: 7px 0 14px;
+  padding: 0;
+  color: #fff;
   font-size: 15px;
   font-weight: 600;
 }
 
-.checkbox-line i {
+.risk-trigger span {
+  position: relative;
   width: 18px;
   height: 18px;
   border: 1px solid #f6f7fb;
   border-radius: 4px;
+}
+
+.risk-trigger span.active {
+  border-color: #02b904;
+  background: #02b904;
+}
+
+.risk-trigger span.active::after {
+  position: absolute;
+  top: 3px;
+  left: 6px;
+  width: 5px;
+  height: 9px;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotate(45deg);
+  content: '';
 }
 
 .wide-action,
@@ -293,6 +1121,22 @@ function orderModeFromCode(code: string): 'market' | 'limit' {
 
 .wide-action--sell {
   background: #ff4438;
+}
+
+.wide-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.52;
+}
+
+.order-message {
+  margin: -4px 0 12px;
+  color: #10d27a;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.order-message--error {
+  color: #ff6b5f;
 }
 
 .dual-actions {
@@ -429,6 +1273,8 @@ function orderModeFromCode(code: string): 'market' | 'limit' {
 
   .mode-switch button,
   .form-row button,
+  .form-row select,
+  .form-row input,
   .trade-input {
     font-size: 14px;
   }
@@ -448,7 +1294,7 @@ function orderModeFromCode(code: string): 'market' | 'limit' {
     font-size: 12px;
   }
 
-  .checkbox-line {
+  .risk-trigger {
     font-size: 14px;
   }
 }

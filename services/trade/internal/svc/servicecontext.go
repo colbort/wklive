@@ -31,6 +31,7 @@ type ServiceContext struct {
 	ContractPositionHistModel models.ContractPositionHistoryModel
 	ContractMarginAcctModel   models.ContractMarginAccountModel
 	ContractLeverageCfgModel  models.ContractLeverageConfigModel
+	SymbolLeverageCfgModel    models.TradeSymbolLeverageConfigModel
 	RiskUserTradeLimitModel   models.RiskUserTradeLimitModel
 	RiskUserSymbolLimitModel  models.RiskUserSymbolLimitModel
 	RiskOrderCheckLogModel    models.RiskOrderCheckLogModel
@@ -58,6 +59,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ContractPositionHistModel: models.NewTContractPositionHistoryModel(conn, c.CacheRedis).(models.ContractPositionHistoryModel),
 		ContractMarginAcctModel:   models.NewTContractMarginAccountModel(conn, c.CacheRedis).(models.ContractMarginAccountModel),
 		ContractLeverageCfgModel:  models.NewTContractLeverageConfigModel(conn, c.CacheRedis).(models.ContractLeverageConfigModel),
+		SymbolLeverageCfgModel:    models.NewTTradeSymbolLeverageConfigModel(conn, c.CacheRedis).(models.TradeSymbolLeverageConfigModel),
 		RiskUserTradeLimitModel:   models.NewTRiskUserTradeLimitModel(conn, c.CacheRedis).(models.RiskUserTradeLimitModel),
 		RiskUserSymbolLimitModel:  models.NewTRiskUserSymbolLimitModel(conn, c.CacheRedis).(models.RiskUserSymbolLimitModel),
 		RiskOrderCheckLogModel:    models.NewTRiskOrderCheckLogModel(conn, c.CacheRedis).(models.RiskOrderCheckLogModel),

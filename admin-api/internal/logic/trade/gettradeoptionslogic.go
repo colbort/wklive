@@ -39,6 +39,19 @@ func (l *GetTradeOptionsLogic) GetTradeOptions() (resp *types.GetTradeOptionsRes
 			logicutil.EnumGroup("marginMode", "保证金模式", trade.MarginMode_MARGIN_MODE_UNKNOWN.Descriptor()),
 			logicutil.EnumGroup("positionMode", "持仓模式", trade.PositionMode_POSITION_MODE_UNKNOWN.Descriptor()),
 			logicutil.EnumGroup("enableStatus", "启用状态", trade.EnableStatus_ENABLE_STATUS_DISABLED.Descriptor()),
+			logicutil.Group(
+				"leverageValue",
+				"杠杆倍数",
+				logicutil.Option(1, "LEVERAGE_VALUE_1X"),
+				logicutil.Option(2, "LEVERAGE_VALUE_2X"),
+				logicutil.Option(5, "LEVERAGE_VALUE_5X"),
+				logicutil.Option(10, "LEVERAGE_VALUE_10X"),
+				logicutil.Option(20, "LEVERAGE_VALUE_20X"),
+				logicutil.Option(50, "LEVERAGE_VALUE_50X"),
+				logicutil.Option(75, "LEVERAGE_VALUE_75X"),
+				logicutil.Option(100, "LEVERAGE_VALUE_100X"),
+				logicutil.Option(125, "LEVERAGE_VALUE_125X"),
+			),
 		},
 	}, nil
 }

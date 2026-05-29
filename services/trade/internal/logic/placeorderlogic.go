@@ -71,6 +71,17 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 	if qty <= 0 && amount <= 0 {
 		return &trade.PlaceOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
+	leverage := int64(1)
+	if in.MarketType != trade.MarketType_MARKET_TYPE_SPOT {
+		var ok bool
+		leverage, ok, err = ensureConfiguredLeverage(l.ctx, l.svcCtx.SymbolLeverageCfgModel, tenantId, symbol, in.MarginMode, in.Leverage)
+		if err != nil {
+			return nil, err
+		}
+		if !ok {
+			return &trade.PlaceOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		}
+	}
 
 	orderNo, err := l.svcCtx.GenerateBizNo(l.ctx, "TRD")
 	if err != nil {
@@ -147,7 +158,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 			TenantId:          tenantId,
 			OrderId:           order.Id,
 			MarginMode:        int64(in.MarginMode),
-			Leverage:          ensureLeverage(symbol, in.Leverage),
+			Leverage:          leverage,
 			MarginAsset:       marginAsset,
 			MarginAmount:      amount,
 			ClosePositionType: 0,

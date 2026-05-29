@@ -19,7 +19,9 @@ import {
   apiTradeListPositionHistories,
   apiTradeListPositions,
   apiTradeListRiskLogs,
+  apiTradeListSymbolLeverageConfigs,
   apiTradeListSymbols,
+  apiTradeSetSymbolLeverageConfig,
   apiTradeRetryEvent,
   apiTradeSetContractConfig,
   apiTradeSetSpotConfig,
@@ -96,9 +98,26 @@ export type TradeSymbolContract = {
   updateTimes: number // 更新时间
 }
 
+export type TradeSymbolLeverageConfig = {
+  id: number
+  tenantId: number
+  symbolId: number
+  marketType: number
+  marginMode: number
+  leverageValues: number[]
+  defaultLeverage: number
+  maxLeverage: number
+  status: number
+  sort: number
+  remark: string
+  createTimes: number
+  updateTimes: number
+}
+
 export type TradeSymbolDetailResp = RespBase<TradeSymbol> & {
   spot?: TradeSymbolSpot
   contract?: TradeSymbolContract
+  leverageConfigs?: TradeSymbolLeverageConfig[]
 }
 
 export type TradeUserConfig = {
@@ -421,6 +440,21 @@ export type SetContractSymbolConfigReq = Omit<
   'id' | 'createTimes' | 'updateTimes'
 >
 
+export type SetSymbolLeverageConfigReq = Omit<
+  TradeSymbolLeverageConfig,
+  'id' | 'createTimes' | 'updateTimes'
+>
+
+export type GetSymbolLeverageConfigListReq = {
+  cursor?: number
+  limit?: number
+  tenantId?: number
+  symbolId?: number
+  marketType?: number
+  marginMode?: number
+  status?: number
+}
+
 export type GetOrderListAdminReq = {
   cursor?: number
   limit?: number
@@ -612,6 +646,14 @@ export class TradeService {
 
   setContractConfig(params: SetContractSymbolConfigReq) {
     return apiTradeSetContractConfig(params)
+  }
+
+  listSymbolLeverageConfigs(params: GetSymbolLeverageConfigListReq) {
+    return apiTradeListSymbolLeverageConfigs(params)
+  }
+
+  setSymbolLeverageConfig(params: SetSymbolLeverageConfigReq) {
+    return apiTradeSetSymbolLeverageConfig(params)
   }
 
   listOrders(params: GetOrderListAdminReq) {

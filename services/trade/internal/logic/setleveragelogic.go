@@ -45,6 +45,20 @@ func (l *SetLeverageLogic) SetLeverage(in *trade.SetLeverageReq) (*trade.AppComm
 	if err != nil {
 		return nil, err
 	}
+	longLeverage, ok, err := ensureConfiguredLeverage(l.ctx, l.svcCtx.SymbolLeverageCfgModel, tenantId, symbol, in.MarginMode, in.LongLeverage)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return &trade.AppCommonResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
+	shortLeverage, ok, err := ensureConfiguredLeverage(l.ctx, l.svcCtx.SymbolLeverageCfgModel, tenantId, symbol, in.MarginMode, in.ShortLeverage)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return &trade.AppCommonResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
 	now := utils.NowMillis()
 	cfg, err := l.svcCtx.ContractLeverageCfgModel.FindOneByTenantIdUserIdSymbolIdMarketTypeMarginMode(
 		l.ctx, tenantId, userId, in.SymbolId, int64(in.MarketType), int64(in.MarginMode),
@@ -62,14 +76,13 @@ func (l *SetLeverageLogic) SetLeverage(in *trade.SetLeverageReq) (*trade.AppComm
 			CreateTimes:  now,
 			Source:       int64(trade.SourceType_SOURCE_TYPE_USER),
 			Status:       1,
-			MaxLeverage:  int64(symbol.MaxLeverage),
 			PositionMode: int64(in.PositionMode),
 		}
 	}
 	cfg.PositionMode = int64(in.PositionMode)
-	cfg.LongLeverage = ensureLeverage(symbol, in.LongLeverage)
-	cfg.ShortLeverage = ensureLeverage(symbol, in.ShortLeverage)
-	cfg.MaxLeverage = symbol.MaxLeverage
+	cfg.LongLeverage = longLeverage
+	cfg.ShortLeverage = shortLeverage
+	cfg.MaxLeverage = maxLeverageValue([]int64{symbol.MaxLeverage, longLeverage, shortLeverage})
 	cfg.OperatorId = userId
 	cfg.UpdateTimes = now
 	if cfg.Id == 0 {

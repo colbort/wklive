@@ -1,8 +1,13 @@
 package logic
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"sort"
+	"strconv"
+	"strings"
 
 	"wklive/common/conv"
 	"wklive/proto/asset"
@@ -351,6 +356,93 @@ func leverageConfigToProto(item *models.TContractLeverageConfig) *trade.Contract
 	}
 }
 
+func symbolLeverageConfigToProto(item *models.TTradeSymbolLeverageConfig) *trade.TradeSymbolLeverageConfig {
+	if item == nil {
+		return nil
+	}
+	return &trade.TradeSymbolLeverageConfig{
+		Id:              item.Id,
+		TenantId:        item.TenantId,
+		SymbolId:        item.SymbolId,
+		MarketType:      trade.MarketType(item.MarketType),
+		MarginMode:      trade.MarginMode(item.MarginMode),
+		LeverageValues:  parseLeverageValues(item.LeverageValues),
+		DefaultLeverage: item.DefaultLeverage,
+		MaxLeverage:     item.MaxLeverage,
+		Status:          item.Status,
+		Sort:            item.Sort,
+		Remark:          item.Remark,
+		CreateTimes:     item.CreateTimes,
+		UpdateTimes:     item.UpdateTimes,
+	}
+}
+
+func parseLeverageValues(value string) []int64 {
+	parts := strings.Split(value, ",")
+	values := make([]int64, 0, len(parts))
+	seen := make(map[int64]struct{}, len(parts))
+	for _, part := range parts {
+		next, err := strconv.ParseInt(strings.TrimSpace(part), 10, 64)
+		if err != nil || next <= 0 {
+			continue
+		}
+		if _, ok := seen[next]; ok {
+			continue
+		}
+		seen[next] = struct{}{}
+		values = append(values, next)
+	}
+	sort.Slice(values, func(i, j int) bool {
+		return values[i] < values[j]
+	})
+	return values
+}
+
+func joinLeverageValues(values []int64, maxLeverage int64) (string, []int64) {
+	if maxLeverage <= 0 {
+		maxLeverage = 1
+	}
+	seen := make(map[int64]struct{}, len(values))
+	result := make([]int64, 0, len(values))
+	for _, value := range values {
+		if value <= 0 || value > maxLeverage {
+			continue
+		}
+		if _, ok := seen[value]; ok {
+			continue
+		}
+		seen[value] = struct{}{}
+		result = append(result, value)
+	}
+	if len(result) == 0 {
+		result = append(result, 1)
+	}
+	sort.Slice(result, func(i, j int) bool {
+		return result[i] < result[j]
+	})
+
+	parts := make([]string, 0, len(result))
+	for _, value := range result {
+		parts = append(parts, strconv.FormatInt(value, 10))
+	}
+	return strings.Join(parts, ","), result
+}
+
+func containsLeverage(values []int64, leverage int64) bool {
+	for _, value := range values {
+		if value == leverage {
+			return true
+		}
+	}
+	return false
+}
+
+func isContractMarket(marketType trade.MarketType) bool {
+	return marketType == trade.MarketType_MARKET_TYPE_SECONDS_CONTRACT ||
+		marketType == trade.MarketType_MARKET_TYPE_USDT_CONTRACT ||
+		marketType == trade.MarketType_MARKET_TYPE_COIN_CONTRACT
+}
+
 func riskUserTradeLimitToProto(item *models.TRiskUserTradeLimit) *trade.RiskUserTradeLimit {
 	if item == nil {
 		return nil
@@ -480,6 +572,41 @@ func ensureLeverage(symbol *models.TTradeSymbol, leverage int64) int64 {
 		return symbol.MaxLeverage
 	}
 	return leverage
+}
+
+func ensureConfiguredLeverage(ctx context.Context, model models.TradeSymbolLeverageConfigModel, tenantId int64, symbol *models.TTradeSymbol, marginMode trade.MarginMode, leverage int64) (int64, bool, error) {
+	if symbol == nil || model == nil || marginMode == trade.MarginMode_MARGIN_MODE_UNKNOWN || !isContractMarket(trade.MarketType(symbol.MarketType)) {
+		return ensureLeverage(symbol, leverage), true, nil
+	}
+
+	cfg, err := model.FindOneByTenantIdSymbolIdMarketTypeMarginMode(ctx, tenantId, symbol.Id, symbol.MarketType, int64(marginMode))
+	if errors.Is(err, models.ErrNotFound) || (err == nil && cfg.Status != 1) {
+		return ensureLeverage(symbol, leverage), true, nil
+	}
+	if err != nil {
+		return 0, false, err
+	}
+
+	maxLeverage := cfg.MaxLeverage
+	configuredValues := parseLeverageValues(cfg.LeverageValues)
+	if valueMax := maxLeverageValue(configuredValues); valueMax > maxLeverage {
+		maxLeverage = valueMax
+	}
+	if maxLeverage <= 0 {
+		maxLeverage = symbol.MaxLeverage
+	}
+	_, values := joinLeverageValues(configuredValues, maxLeverage)
+	effective := leverage
+	if leverage <= 0 {
+		effective = cfg.DefaultLeverage
+		if !containsLeverage(values, effective) {
+			effective = values[0]
+		}
+	}
+	if !containsLeverage(values, effective) {
+		return 0, false, nil
+	}
+	return effective, true, nil
 }
 
 func marginAssetForSymbol(symbol *models.TTradeSymbol) string {

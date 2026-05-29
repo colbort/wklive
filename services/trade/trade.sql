@@ -306,6 +306,26 @@ CREATE TABLE `t_contract_leverage_config` (
   KEY `idx_tenant_symbol_market` (`tenant_id`, `symbol_id`, `market_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户合约杠杆配置表';
 
+CREATE TABLE `t_trade_symbol_leverage_config` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `symbol_id` BIGINT NOT NULL COMMENT '交易标的ID，对应t_trade_symbol.id',
+  `market_type` TINYINT NOT NULL COMMENT '市场类型：2秒合约 3U本位 4币本位',
+  `margin_mode` TINYINT NOT NULL COMMENT '保证金模式：1全仓 2逐仓',
+  `leverage_values` VARCHAR(255) NOT NULL DEFAULT '1' COMMENT '可选杠杆倍数，逗号分隔，如1,2,5,10,20,50,75,100,125',
+  `default_leverage` INT NOT NULL DEFAULT 1 COMMENT '默认杠杆倍数',
+  `max_leverage` INT NOT NULL DEFAULT 1 COMMENT '当前模式允许的最大杠杆倍数',
+  `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1启用 0禁用',
+  `sort` INT NOT NULL DEFAULT 0 COMMENT '排序值，越小越靠前',
+  `remark` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '备注',
+  `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间，毫秒时间戳',
+  `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间，毫秒时间戳',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_tenant_symbol_market_margin_mode` (`tenant_id`, `symbol_id`, `market_type`, `margin_mode`),
+  KEY `idx_tenant_symbol_market_status` (`tenant_id`, `symbol_id`, `market_type`, `status`),
+  KEY `idx_tenant_market_status` (`tenant_id`, `market_type`, `status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='交易对杠杆档位配置表';
+
 CREATE TABLE `t_risk_user_trade_limit` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',

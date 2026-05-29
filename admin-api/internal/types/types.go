@@ -1333,9 +1333,37 @@ type GetSymbolDetailAdminReq struct {
 
 type GetSymbolDetailAdminResp struct {
 	RespBase
-	Data     TradeSymbol         `json:"data"`
-	Spot     TradeSymbolSpot     `json:"spot,optional"`
-	Contract TradeSymbolContract `json:"contract,optional"`
+	Data            TradeSymbol                 `json:"data"`
+	Spot            TradeSymbolSpot             `json:"spot,optional"`
+	Contract        TradeSymbolContract         `json:"contract,optional"`
+	LeverageConfigs []TradeSymbolLeverageConfig `json:"leverageConfigs,optional"`
+}
+
+type GetSymbolLeverageConfigListReq struct {
+	PageReq
+	TenantId   int64 `form:"tenantId,optional"`
+	SymbolId   int64 `form:"symbolId,optional"`
+	MarketType int64 `form:"marketType,optional"`
+	MarginMode int64 `form:"marginMode,optional"`
+	Status     int64 `form:"status,optional"`
+}
+
+type GetSymbolLeverageConfigListResp struct {
+	RespBase
+	Data []TradeSymbolLeverageConfig `json:"data"`
+}
+
+type GetSymbolLeverageConfigReq struct {
+	TenantId   int64 `form:"tenantId,optional"`
+	Id         int64 `form:"id,optional"`
+	SymbolId   int64 `form:"symbolId,optional"`
+	MarketType int64 `form:"marketType,optional"`
+	MarginMode int64 `form:"marginMode,optional"`
+}
+
+type GetSymbolLeverageConfigResp struct {
+	RespBase
+	Data TradeSymbolLeverageConfig `json:"data"`
 }
 
 type GetSymbolListAdminReq struct {
@@ -2951,6 +2979,19 @@ type SetSpotSymbolConfigReq struct {
 	SellEnabled  int64  `json:"sellEnabled"`
 }
 
+type SetSymbolLeverageConfigReq struct {
+	TenantId        int64   `json:"tenantId"`
+	SymbolId        int64   `json:"symbolId"`
+	MarketType      int64   `json:"marketType"`
+	MarginMode      int64   `json:"marginMode"`
+	LeverageValues  []int64 `json:"leverageValues"`
+	DefaultLeverage int64   `json:"defaultLeverage"`
+	MaxLeverage     int64   `json:"maxLeverage"`
+	Status          int64   `json:"status"`
+	Sort            int64   `json:"sort"`
+	Remark          string  `json:"remark,optional"`
+}
+
 type SetUserLeverageConfigReq struct {
 	TenantId      int64  `json:"tenantId"`
 	UserId        int64  `json:"userId"`
@@ -3770,6 +3811,22 @@ type TradeSymbolContract struct {
 	SellEnabled            int64  `json:"sellEnabled"`
 	CreateTimes            int64  `json:"createTimes"`
 	UpdateTimes            int64  `json:"updateTimes"`
+}
+
+type TradeSymbolLeverageConfig struct {
+	Id              int64   `json:"id"`
+	TenantId        int64   `json:"tenantId"`
+	SymbolId        int64   `json:"symbolId"`
+	MarketType      int64   `json:"marketType"`
+	MarginMode      int64   `json:"marginMode"`
+	LeverageValues  []int64 `json:"leverageValues"`
+	DefaultLeverage int64   `json:"defaultLeverage"`
+	MaxLeverage     int64   `json:"maxLeverage"`
+	Status          int64   `json:"status"`
+	Sort            int64   `json:"sort"`
+	Remark          string  `json:"remark"`
+	CreateTimes     int64   `json:"createTimes"`
+	UpdateTimes     int64   `json:"updateTimes"`
 }
 
 type TradeSymbolSpot struct {

@@ -180,6 +180,22 @@ type ContractLeverageConfig {
 	updateTimes   int64  `json:"updateTimes"` // 更新时间
 }
 
+type TradeSymbolLeverageConfig {
+	id              int64   `json:"id"`
+	tenantId        int64   `json:"tenantId"`
+	symbolId        int64   `json:"symbolId"`
+	marketType      int64   `json:"marketType"`
+	marginMode      int64   `json:"marginMode"`
+	leverageValues  []int64 `json:"leverageValues"`
+	defaultLeverage int64   `json:"defaultLeverage"`
+	maxLeverage     int64   `json:"maxLeverage"`
+	status          int64   `json:"status"`
+	sort            int64   `json:"sort"`
+	remark          string  `json:"remark"`
+	createTimes     int64   `json:"createTimes"`
+	updateTimes     int64   `json:"updateTimes"`
+}
+
 type TradeAppCommonResp {
 	RespBase
 }
@@ -200,9 +216,10 @@ type GetSymbolDetailReq {
 
 type GetSymbolDetailResp {
 	RespBase
-	symbol   TradeSymbol         `json:"symbol"`
-	spot     TradeSymbolSpot     `json:"spot"`
-	contract TradeSymbolContract `json:"contract"`
+	symbol          TradeSymbol                 `json:"symbol"`
+	spot            TradeSymbolSpot             `json:"spot"`
+	contract        TradeSymbolContract         `json:"contract"`
+	leverageConfigs []TradeSymbolLeverageConfig `json:"leverageConfigs"`
 }
 
 type PlaceOrderReq {

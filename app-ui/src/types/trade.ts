@@ -178,6 +178,22 @@ export interface ContractLeverageConfig {
   updateTimes: number
 }
 
+export interface TradeSymbolLeverageConfig {
+  id: number
+  tenantId: number
+  symbolId: number
+  marketType: number
+  marginMode: number
+  leverageValues: number[]
+  defaultLeverage: number
+  maxLeverage: number
+  status: number
+  sort: number
+  remark: string
+  createTimes: number
+  updateTimes: number
+}
+
 export interface GetSymbolListReq {
   marketType?: number
   status?: number

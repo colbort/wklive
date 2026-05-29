@@ -59,6 +59,24 @@ func (s *TradeAdminServer) SetContractSymbolConfig(ctx context.Context, in *trad
 	return l.SetContractSymbolConfig(in)
 }
 
+// 保存交易对杠杆档位配置
+func (s *TradeAdminServer) SetSymbolLeverageConfig(ctx context.Context, in *trade.SetSymbolLeverageConfigReq) (*trade.AdminCommonResp, error) {
+	l := logic.NewSetSymbolLeverageConfigLogic(ctx, s.svcCtx)
+	return l.SetSymbolLeverageConfig(in)
+}
+
+// 获取交易对杠杆档位配置
+func (s *TradeAdminServer) GetSymbolLeverageConfig(ctx context.Context, in *trade.GetSymbolLeverageConfigReq) (*trade.GetSymbolLeverageConfigResp, error) {
+	l := logic.NewGetSymbolLeverageConfigLogic(ctx, s.svcCtx)
+	return l.GetSymbolLeverageConfig(in)
+}
+
+// 获取交易对杠杆档位配置列表
+func (s *TradeAdminServer) GetSymbolLeverageConfigList(ctx context.Context, in *trade.GetSymbolLeverageConfigListReq) (*trade.GetSymbolLeverageConfigListResp, error) {
+	l := logic.NewGetSymbolLeverageConfigListLogic(ctx, s.svcCtx)
+	return l.GetSymbolLeverageConfigList(in)
+}
+
 // 获取后台订单列表
 func (s *TradeAdminServer) GetOrderListAdmin(ctx context.Context, in *trade.GetOrderListAdminReq) (*trade.GetOrderListAdminResp, error) {
 	l := logic.NewGetOrderListAdminLogic(ctx, s.svcCtx)

@@ -2601,6 +2601,146 @@ func (x *ContractLeverageConfig) GetUpdateTimes() int64 {
 	return 0
 }
 
+type TradeSymbolLeverageConfig struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	SymbolId        int64                  `protobuf:"varint,3,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
+	MarketType      MarketType             `protobuf:"varint,4,opt,name=market_type,json=marketType,proto3,enum=trade.MarketType" json:"market_type,omitempty"`
+	MarginMode      MarginMode             `protobuf:"varint,5,opt,name=margin_mode,json=marginMode,proto3,enum=trade.MarginMode" json:"margin_mode,omitempty"`
+	LeverageValues  []int64                `protobuf:"varint,6,rep,packed,name=leverage_values,json=leverageValues,proto3" json:"leverage_values,omitempty"`
+	DefaultLeverage int64                  `protobuf:"varint,7,opt,name=default_leverage,json=defaultLeverage,proto3" json:"default_leverage,omitempty"`
+	MaxLeverage     int64                  `protobuf:"varint,8,opt,name=max_leverage,json=maxLeverage,proto3" json:"max_leverage,omitempty"`
+	Status          int64                  `protobuf:"varint,9,opt,name=status,proto3" json:"status,omitempty"`
+	Sort            int64                  `protobuf:"varint,10,opt,name=sort,proto3" json:"sort,omitempty"`
+	Remark          string                 `protobuf:"bytes,11,opt,name=remark,proto3" json:"remark,omitempty"`
+	CreateTimes     int64                  `protobuf:"varint,12,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
+	UpdateTimes     int64                  `protobuf:"varint,13,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *TradeSymbolLeverageConfig) Reset() {
+	*x = TradeSymbolLeverageConfig{}
+	mi := &file_proto_trade_model_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TradeSymbolLeverageConfig) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TradeSymbolLeverageConfig) ProtoMessage() {}
+
+func (x *TradeSymbolLeverageConfig) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_model_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TradeSymbolLeverageConfig.ProtoReflect.Descriptor instead.
+func (*TradeSymbolLeverageConfig) Descriptor() ([]byte, []int) {
+	return file_proto_trade_model_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *TradeSymbolLeverageConfig) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *TradeSymbolLeverageConfig) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *TradeSymbolLeverageConfig) GetSymbolId() int64 {
+	if x != nil {
+		return x.SymbolId
+	}
+	return 0
+}
+
+func (x *TradeSymbolLeverageConfig) GetMarketType() MarketType {
+	if x != nil {
+		return x.MarketType
+	}
+	return MarketType_MARKET_TYPE_UNKNOWN
+}
+
+func (x *TradeSymbolLeverageConfig) GetMarginMode() MarginMode {
+	if x != nil {
+		return x.MarginMode
+	}
+	return MarginMode_MARGIN_MODE_UNKNOWN
+}
+
+func (x *TradeSymbolLeverageConfig) GetLeverageValues() []int64 {
+	if x != nil {
+		return x.LeverageValues
+	}
+	return nil
+}
+
+func (x *TradeSymbolLeverageConfig) GetDefaultLeverage() int64 {
+	if x != nil {
+		return x.DefaultLeverage
+	}
+	return 0
+}
+
+func (x *TradeSymbolLeverageConfig) GetMaxLeverage() int64 {
+	if x != nil {
+		return x.MaxLeverage
+	}
+	return 0
+}
+
+func (x *TradeSymbolLeverageConfig) GetStatus() int64 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+func (x *TradeSymbolLeverageConfig) GetSort() int64 {
+	if x != nil {
+		return x.Sort
+	}
+	return 0
+}
+
+func (x *TradeSymbolLeverageConfig) GetRemark() string {
+	if x != nil {
+		return x.Remark
+	}
+	return ""
+}
+
+func (x *TradeSymbolLeverageConfig) GetCreateTimes() int64 {
+	if x != nil {
+		return x.CreateTimes
+	}
+	return 0
+}
+
+func (x *TradeSymbolLeverageConfig) GetUpdateTimes() int64 {
+	if x != nil {
+		return x.UpdateTimes
+	}
+	return 0
+}
+
 type RiskUserTradeLimit struct {
 	state                protoimpl.MessageState `protogen:"open.v1"`
 	Id                   int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -2634,7 +2774,7 @@ type RiskUserTradeLimit struct {
 
 func (x *RiskUserTradeLimit) Reset() {
 	*x = RiskUserTradeLimit{}
-	mi := &file_proto_trade_model_proto_msgTypes[19]
+	mi := &file_proto_trade_model_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2646,7 +2786,7 @@ func (x *RiskUserTradeLimit) String() string {
 func (*RiskUserTradeLimit) ProtoMessage() {}
 
 func (x *RiskUserTradeLimit) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_model_proto_msgTypes[19]
+	mi := &file_proto_trade_model_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2659,7 +2799,7 @@ func (x *RiskUserTradeLimit) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RiskUserTradeLimit.ProtoReflect.Descriptor instead.
 func (*RiskUserTradeLimit) Descriptor() ([]byte, []int) {
-	return file_proto_trade_model_proto_rawDescGZIP(), []int{19}
+	return file_proto_trade_model_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *RiskUserTradeLimit) GetId() int64 {
@@ -2868,7 +3008,7 @@ type RiskUserSymbolLimit struct {
 
 func (x *RiskUserSymbolLimit) Reset() {
 	*x = RiskUserSymbolLimit{}
-	mi := &file_proto_trade_model_proto_msgTypes[20]
+	mi := &file_proto_trade_model_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2880,7 +3020,7 @@ func (x *RiskUserSymbolLimit) String() string {
 func (*RiskUserSymbolLimit) ProtoMessage() {}
 
 func (x *RiskUserSymbolLimit) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_model_proto_msgTypes[20]
+	mi := &file_proto_trade_model_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2893,7 +3033,7 @@ func (x *RiskUserSymbolLimit) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RiskUserSymbolLimit.ProtoReflect.Descriptor instead.
 func (*RiskUserSymbolLimit) Descriptor() ([]byte, []int) {
-	return file_proto_trade_model_proto_rawDescGZIP(), []int{20}
+	return file_proto_trade_model_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *RiskUserSymbolLimit) GetId() int64 {
@@ -3083,7 +3223,7 @@ type RiskOrderCheckLog struct {
 
 func (x *RiskOrderCheckLog) Reset() {
 	*x = RiskOrderCheckLog{}
-	mi := &file_proto_trade_model_proto_msgTypes[21]
+	mi := &file_proto_trade_model_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3095,7 +3235,7 @@ func (x *RiskOrderCheckLog) String() string {
 func (*RiskOrderCheckLog) ProtoMessage() {}
 
 func (x *RiskOrderCheckLog) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_model_proto_msgTypes[21]
+	mi := &file_proto_trade_model_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3108,7 +3248,7 @@ func (x *RiskOrderCheckLog) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RiskOrderCheckLog.ProtoReflect.Descriptor instead.
 func (*RiskOrderCheckLog) Descriptor() ([]byte, []int) {
-	return file_proto_trade_model_proto_rawDescGZIP(), []int{21}
+	return file_proto_trade_model_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *RiskOrderCheckLog) GetId() int64 {
@@ -3265,7 +3405,7 @@ type BizTradeEvent struct {
 
 func (x *BizTradeEvent) Reset() {
 	*x = BizTradeEvent{}
-	mi := &file_proto_trade_model_proto_msgTypes[22]
+	mi := &file_proto_trade_model_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3277,7 +3417,7 @@ func (x *BizTradeEvent) String() string {
 func (*BizTradeEvent) ProtoMessage() {}
 
 func (x *BizTradeEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_model_proto_msgTypes[22]
+	mi := &file_proto_trade_model_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3290,7 +3430,7 @@ func (x *BizTradeEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BizTradeEvent.ProtoReflect.Descriptor instead.
 func (*BizTradeEvent) Descriptor() ([]byte, []int) {
-	return file_proto_trade_model_proto_rawDescGZIP(), []int{22}
+	return file_proto_trade_model_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *BizTradeEvent) GetId() int64 {
@@ -3739,7 +3879,24 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\x06status\x18\r \x01(\x03R\x06status\x12\x16\n" +
 	"\x06remark\x18\x0e \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\x0f \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x10 \x01(\x03R\vupdateTimes\"\xc4\a\n" +
+	"\fupdate_times\x18\x10 \x01(\x03R\vupdateTimes\"\xce\x03\n" +
+	"\x19TradeSymbolLeverageConfig\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1b\n" +
+	"\tsymbol_id\x18\x03 \x01(\x03R\bsymbolId\x122\n" +
+	"\vmarket_type\x18\x04 \x01(\x0e2\x11.trade.MarketTypeR\n" +
+	"marketType\x122\n" +
+	"\vmargin_mode\x18\x05 \x01(\x0e2\x11.trade.MarginModeR\n" +
+	"marginMode\x12'\n" +
+	"\x0fleverage_values\x18\x06 \x03(\x03R\x0eleverageValues\x12)\n" +
+	"\x10default_leverage\x18\a \x01(\x03R\x0fdefaultLeverage\x12!\n" +
+	"\fmax_leverage\x18\b \x01(\x03R\vmaxLeverage\x12\x16\n" +
+	"\x06status\x18\t \x01(\x03R\x06status\x12\x12\n" +
+	"\x04sort\x18\n" +
+	" \x01(\x03R\x04sort\x12\x16\n" +
+	"\x06remark\x18\v \x01(\tR\x06remark\x12!\n" +
+	"\fcreate_times\x18\f \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18\r \x01(\x03R\vupdateTimes\"\xc4\a\n" +
 	"\x12RiskUserTradeLimit\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -3863,96 +4020,99 @@ func file_proto_trade_model_proto_rawDescGZIP() []byte {
 	return file_proto_trade_model_proto_rawDescData
 }
 
-var file_proto_trade_model_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
+var file_proto_trade_model_proto_msgTypes = make([]protoimpl.MessageInfo, 24)
 var file_proto_trade_model_proto_goTypes = []any{
-	(*TenantReq)(nil),               // 0: trade.TenantReq
-	(*UserReq)(nil),                 // 1: trade.UserReq
-	(*TimeRange)(nil),               // 2: trade.TimeRange
-	(*DecimalRange)(nil),            // 3: trade.DecimalRange
-	(*StringValues)(nil),            // 4: trade.StringValues
-	(*Uint64Values)(nil),            // 5: trade.Uint64Values
-	(*TradeSymbol)(nil),             // 6: trade.TradeSymbol
-	(*TradeSymbolSpot)(nil),         // 7: trade.TradeSymbolSpot
-	(*TradeSymbolContract)(nil),     // 8: trade.TradeSymbolContract
-	(*TradeUserConfig)(nil),         // 9: trade.TradeUserConfig
-	(*TradeOrder)(nil),              // 10: trade.TradeOrder
-	(*TradeOrderSpot)(nil),          // 11: trade.TradeOrderSpot
-	(*TradeOrderContract)(nil),      // 12: trade.TradeOrderContract
-	(*TradeFill)(nil),               // 13: trade.TradeFill
-	(*TradeCancelLog)(nil),          // 14: trade.TradeCancelLog
-	(*ContractPosition)(nil),        // 15: trade.ContractPosition
-	(*ContractPositionHistory)(nil), // 16: trade.ContractPositionHistory
-	(*ContractMarginAccount)(nil),   // 17: trade.ContractMarginAccount
-	(*ContractLeverageConfig)(nil),  // 18: trade.ContractLeverageConfig
-	(*RiskUserTradeLimit)(nil),      // 19: trade.RiskUserTradeLimit
-	(*RiskUserSymbolLimit)(nil),     // 20: trade.RiskUserSymbolLimit
-	(*RiskOrderCheckLog)(nil),       // 21: trade.RiskOrderCheckLog
-	(*BizTradeEvent)(nil),           // 22: trade.BizTradeEvent
-	(MarketType)(0),                 // 23: trade.MarketType
-	(ContractType)(0),               // 24: trade.ContractType
-	(SymbolStatus)(0),               // 25: trade.SymbolStatus
-	(PositionMode)(0),               // 26: trade.PositionMode
-	(MarginMode)(0),                 // 27: trade.MarginMode
-	(TradeSide)(0),                  // 28: trade.TradeSide
-	(PositionSide)(0),               // 29: trade.PositionSide
-	(OrderType)(0),                  // 30: trade.OrderType
-	(TimeInForce)(0),                // 31: trade.TimeInForce
-	(OrderStatus)(0),                // 32: trade.OrderStatus
-	(OrderSourceType)(0),            // 33: trade.OrderSourceType
-	(LiquidityType)(0),              // 34: trade.LiquidityType
-	(PositionActionType)(0),         // 35: trade.PositionActionType
-	(SourceType)(0),                 // 36: trade.SourceType
-	(RiskCheckType)(0),              // 37: trade.RiskCheckType
-	(RiskCheckResult)(0),            // 38: trade.RiskCheckResult
-	(EventStatus)(0),                // 39: trade.EventStatus
+	(*TenantReq)(nil),                 // 0: trade.TenantReq
+	(*UserReq)(nil),                   // 1: trade.UserReq
+	(*TimeRange)(nil),                 // 2: trade.TimeRange
+	(*DecimalRange)(nil),              // 3: trade.DecimalRange
+	(*StringValues)(nil),              // 4: trade.StringValues
+	(*Uint64Values)(nil),              // 5: trade.Uint64Values
+	(*TradeSymbol)(nil),               // 6: trade.TradeSymbol
+	(*TradeSymbolSpot)(nil),           // 7: trade.TradeSymbolSpot
+	(*TradeSymbolContract)(nil),       // 8: trade.TradeSymbolContract
+	(*TradeUserConfig)(nil),           // 9: trade.TradeUserConfig
+	(*TradeOrder)(nil),                // 10: trade.TradeOrder
+	(*TradeOrderSpot)(nil),            // 11: trade.TradeOrderSpot
+	(*TradeOrderContract)(nil),        // 12: trade.TradeOrderContract
+	(*TradeFill)(nil),                 // 13: trade.TradeFill
+	(*TradeCancelLog)(nil),            // 14: trade.TradeCancelLog
+	(*ContractPosition)(nil),          // 15: trade.ContractPosition
+	(*ContractPositionHistory)(nil),   // 16: trade.ContractPositionHistory
+	(*ContractMarginAccount)(nil),     // 17: trade.ContractMarginAccount
+	(*ContractLeverageConfig)(nil),    // 18: trade.ContractLeverageConfig
+	(*TradeSymbolLeverageConfig)(nil), // 19: trade.TradeSymbolLeverageConfig
+	(*RiskUserTradeLimit)(nil),        // 20: trade.RiskUserTradeLimit
+	(*RiskUserSymbolLimit)(nil),       // 21: trade.RiskUserSymbolLimit
+	(*RiskOrderCheckLog)(nil),         // 22: trade.RiskOrderCheckLog
+	(*BizTradeEvent)(nil),             // 23: trade.BizTradeEvent
+	(MarketType)(0),                   // 24: trade.MarketType
+	(ContractType)(0),                 // 25: trade.ContractType
+	(SymbolStatus)(0),                 // 26: trade.SymbolStatus
+	(PositionMode)(0),                 // 27: trade.PositionMode
+	(MarginMode)(0),                   // 28: trade.MarginMode
+	(TradeSide)(0),                    // 29: trade.TradeSide
+	(PositionSide)(0),                 // 30: trade.PositionSide
+	(OrderType)(0),                    // 31: trade.OrderType
+	(TimeInForce)(0),                  // 32: trade.TimeInForce
+	(OrderStatus)(0),                  // 33: trade.OrderStatus
+	(OrderSourceType)(0),              // 34: trade.OrderSourceType
+	(LiquidityType)(0),                // 35: trade.LiquidityType
+	(PositionActionType)(0),           // 36: trade.PositionActionType
+	(SourceType)(0),                   // 37: trade.SourceType
+	(RiskCheckType)(0),                // 38: trade.RiskCheckType
+	(RiskCheckResult)(0),              // 39: trade.RiskCheckResult
+	(EventStatus)(0),                  // 40: trade.EventStatus
 }
 var file_proto_trade_model_proto_depIdxs = []int32{
-	23, // 0: trade.TradeSymbol.market_type:type_name -> trade.MarketType
-	24, // 1: trade.TradeSymbol.contract_type:type_name -> trade.ContractType
-	25, // 2: trade.TradeSymbol.status:type_name -> trade.SymbolStatus
-	23, // 3: trade.TradeUserConfig.market_type:type_name -> trade.MarketType
-	26, // 4: trade.TradeUserConfig.position_mode:type_name -> trade.PositionMode
-	27, // 5: trade.TradeUserConfig.margin_mode:type_name -> trade.MarginMode
-	23, // 6: trade.TradeOrder.market_type:type_name -> trade.MarketType
-	28, // 7: trade.TradeOrder.side:type_name -> trade.TradeSide
-	29, // 8: trade.TradeOrder.position_side:type_name -> trade.PositionSide
-	30, // 9: trade.TradeOrder.order_type:type_name -> trade.OrderType
-	31, // 10: trade.TradeOrder.time_in_force:type_name -> trade.TimeInForce
-	32, // 11: trade.TradeOrder.status:type_name -> trade.OrderStatus
-	33, // 12: trade.TradeOrder.source:type_name -> trade.OrderSourceType
-	27, // 13: trade.TradeOrderContract.margin_mode:type_name -> trade.MarginMode
-	23, // 14: trade.TradeFill.market_type:type_name -> trade.MarketType
-	28, // 15: trade.TradeFill.side:type_name -> trade.TradeSide
-	29, // 16: trade.TradeFill.position_side:type_name -> trade.PositionSide
-	34, // 17: trade.TradeFill.liquidity_type:type_name -> trade.LiquidityType
-	23, // 18: trade.ContractPosition.market_type:type_name -> trade.MarketType
-	29, // 19: trade.ContractPosition.position_side:type_name -> trade.PositionSide
-	27, // 20: trade.ContractPosition.margin_mode:type_name -> trade.MarginMode
-	23, // 21: trade.ContractPositionHistory.market_type:type_name -> trade.MarketType
-	29, // 22: trade.ContractPositionHistory.position_side:type_name -> trade.PositionSide
-	35, // 23: trade.ContractPositionHistory.action_type:type_name -> trade.PositionActionType
-	36, // 24: trade.ContractPositionHistory.source:type_name -> trade.SourceType
-	23, // 25: trade.ContractMarginAccount.market_type:type_name -> trade.MarketType
-	23, // 26: trade.ContractLeverageConfig.market_type:type_name -> trade.MarketType
-	27, // 27: trade.ContractLeverageConfig.margin_mode:type_name -> trade.MarginMode
-	26, // 28: trade.ContractLeverageConfig.position_mode:type_name -> trade.PositionMode
-	36, // 29: trade.ContractLeverageConfig.source:type_name -> trade.SourceType
-	23, // 30: trade.RiskUserTradeLimit.market_type:type_name -> trade.MarketType
-	36, // 31: trade.RiskUserTradeLimit.source:type_name -> trade.SourceType
-	23, // 32: trade.RiskUserSymbolLimit.market_type:type_name -> trade.MarketType
-	36, // 33: trade.RiskUserSymbolLimit.source:type_name -> trade.SourceType
-	23, // 34: trade.RiskOrderCheckLog.market_type:type_name -> trade.MarketType
-	37, // 35: trade.RiskOrderCheckLog.check_type:type_name -> trade.RiskCheckType
-	38, // 36: trade.RiskOrderCheckLog.check_result:type_name -> trade.RiskCheckResult
-	36, // 37: trade.RiskOrderCheckLog.source:type_name -> trade.SourceType
-	23, // 38: trade.BizTradeEvent.market_type:type_name -> trade.MarketType
-	36, // 39: trade.BizTradeEvent.source:type_name -> trade.SourceType
-	39, // 40: trade.BizTradeEvent.event_status:type_name -> trade.EventStatus
-	41, // [41:41] is the sub-list for method output_type
-	41, // [41:41] is the sub-list for method input_type
-	41, // [41:41] is the sub-list for extension type_name
-	41, // [41:41] is the sub-list for extension extendee
-	0,  // [0:41] is the sub-list for field type_name
+	24, // 0: trade.TradeSymbol.market_type:type_name -> trade.MarketType
+	25, // 1: trade.TradeSymbol.contract_type:type_name -> trade.ContractType
+	26, // 2: trade.TradeSymbol.status:type_name -> trade.SymbolStatus
+	24, // 3: trade.TradeUserConfig.market_type:type_name -> trade.MarketType
+	27, // 4: trade.TradeUserConfig.position_mode:type_name -> trade.PositionMode
+	28, // 5: trade.TradeUserConfig.margin_mode:type_name -> trade.MarginMode
+	24, // 6: trade.TradeOrder.market_type:type_name -> trade.MarketType
+	29, // 7: trade.TradeOrder.side:type_name -> trade.TradeSide
+	30, // 8: trade.TradeOrder.position_side:type_name -> trade.PositionSide
+	31, // 9: trade.TradeOrder.order_type:type_name -> trade.OrderType
+	32, // 10: trade.TradeOrder.time_in_force:type_name -> trade.TimeInForce
+	33, // 11: trade.TradeOrder.status:type_name -> trade.OrderStatus
+	34, // 12: trade.TradeOrder.source:type_name -> trade.OrderSourceType
+	28, // 13: trade.TradeOrderContract.margin_mode:type_name -> trade.MarginMode
+	24, // 14: trade.TradeFill.market_type:type_name -> trade.MarketType
+	29, // 15: trade.TradeFill.side:type_name -> trade.TradeSide
+	30, // 16: trade.TradeFill.position_side:type_name -> trade.PositionSide
+	35, // 17: trade.TradeFill.liquidity_type:type_name -> trade.LiquidityType
+	24, // 18: trade.ContractPosition.market_type:type_name -> trade.MarketType
+	30, // 19: trade.ContractPosition.position_side:type_name -> trade.PositionSide
+	28, // 20: trade.ContractPosition.margin_mode:type_name -> trade.MarginMode
+	24, // 21: trade.ContractPositionHistory.market_type:type_name -> trade.MarketType
+	30, // 22: trade.ContractPositionHistory.position_side:type_name -> trade.PositionSide
+	36, // 23: trade.ContractPositionHistory.action_type:type_name -> trade.PositionActionType
+	37, // 24: trade.ContractPositionHistory.source:type_name -> trade.SourceType
+	24, // 25: trade.ContractMarginAccount.market_type:type_name -> trade.MarketType
+	24, // 26: trade.ContractLeverageConfig.market_type:type_name -> trade.MarketType
+	28, // 27: trade.ContractLeverageConfig.margin_mode:type_name -> trade.MarginMode
+	27, // 28: trade.ContractLeverageConfig.position_mode:type_name -> trade.PositionMode
+	37, // 29: trade.ContractLeverageConfig.source:type_name -> trade.SourceType
+	24, // 30: trade.TradeSymbolLeverageConfig.market_type:type_name -> trade.MarketType
+	28, // 31: trade.TradeSymbolLeverageConfig.margin_mode:type_name -> trade.MarginMode
+	24, // 32: trade.RiskUserTradeLimit.market_type:type_name -> trade.MarketType
+	37, // 33: trade.RiskUserTradeLimit.source:type_name -> trade.SourceType
+	24, // 34: trade.RiskUserSymbolLimit.market_type:type_name -> trade.MarketType
+	37, // 35: trade.RiskUserSymbolLimit.source:type_name -> trade.SourceType
+	24, // 36: trade.RiskOrderCheckLog.market_type:type_name -> trade.MarketType
+	38, // 37: trade.RiskOrderCheckLog.check_type:type_name -> trade.RiskCheckType
+	39, // 38: trade.RiskOrderCheckLog.check_result:type_name -> trade.RiskCheckResult
+	37, // 39: trade.RiskOrderCheckLog.source:type_name -> trade.SourceType
+	24, // 40: trade.BizTradeEvent.market_type:type_name -> trade.MarketType
+	37, // 41: trade.BizTradeEvent.source:type_name -> trade.SourceType
+	40, // 42: trade.BizTradeEvent.event_status:type_name -> trade.EventStatus
+	43, // [43:43] is the sub-list for method output_type
+	43, // [43:43] is the sub-list for method input_type
+	43, // [43:43] is the sub-list for extension type_name
+	43, // [43:43] is the sub-list for extension extendee
+	0,  // [0:43] is the sub-list for field type_name
 }
 
 func init() { file_proto_trade_model_proto_init() }
@@ -3967,7 +4127,7 @@ func file_proto_trade_model_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_trade_model_proto_rawDesc), len(file_proto_trade_model_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   23,
+			NumMessages:   24,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

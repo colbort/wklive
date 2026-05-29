@@ -1,17 +1,119 @@
 <script setup lang='ts'>
-defineProps<{
+import { computed, ref } from 'vue'
+
+import type { TradeOrder, TradeSymbol } from '@/types/trade'
+
+type OrderTab = 'open' | 'history'
+
+const props = withDefaults(defineProps<{
   showPremarket?: boolean
+  orders?: TradeOrder[]
+  loading?: boolean
+  error?: string
+  isLoggedIn?: boolean
+  selectedTradeSymbol?: TradeSymbol | null
+  cancelingOrderId?: number | null
+}>(), {
+  showPremarket: false,
+  orders: () => [],
+  loading: false,
+  error: '',
+  isLoggedIn: false,
+  selectedTradeSymbol: null,
+  cancelingOrderId: null,
+})
+
+const emit = defineEmits<{
+  (e: 'cancel-order', order: TradeOrder): void
+  (e: 'refresh'): void
 }>()
+
+const activeTab = ref<OrderTab>('open')
+const openStatuses = new Set([1, 2])
+const filteredOrders = computed(() => {
+  return props.orders.filter((order) => {
+    const isOpen = openStatuses.has(order.status)
+    return activeTab.value === 'open' ? isOpen : !isOpen
+  })
+})
+
+function orderSideText(order: TradeOrder) {
+  if (order.positionSide === 2) return '开多'
+  if (order.positionSide === 3) return '开空'
+  return order.side === 1 ? '买入' : '卖出'
+}
+
+function statusText(status: number) {
+  const labels: Record<number, string> = {
+    1: '委托中',
+    2: '部分成交',
+    3: '已成交',
+    4: '已撤销',
+    5: '已拒绝',
+    6: '已过期',
+  }
+  return labels[status] || '未知'
+}
+
+function orderTypeText(orderType: number) {
+  if (orderType === 1) return '限价'
+  if (orderType === 2) return '市价'
+  return '条件'
+}
+
+function formatTime(value: number) {
+  if (!value) return '--'
+  const ms = value > 9999999999 ? value : value * 1000
+  return new Date(ms).toLocaleString('zh-CN', {
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
 </script>
 
 <template>
   <section class="trade-orders-panel">
     <div class="trade-orders-panel__nav">
-      <button class="active" type="button">当前委托</button>
-      <button type="button">历史订单</button>
+      <button :class="{ active: activeTab === 'open' }" type="button" @click="activeTab = 'open'">当前委托</button>
+      <button :class="{ active: activeTab === 'history' }" type="button" @click="activeTab = 'history'">历史订单</button>
       <button v-if="showPremarket" type="button">盘前订单</button>
+      <button class="trade-orders-panel__refresh" type="button" @click="emit('refresh')">刷新</button>
     </div>
-    <p><span>登录</span>或<span>注册</span>查看数据</p>
+
+    <p v-if="!isLoggedIn" class="trade-orders-panel__state trade-orders-panel__auth">
+      <span>登录</span>或<span>注册</span>查看数据
+    </p>
+    <p v-else-if="!selectedTradeSymbol" class="trade-orders-panel__state">当前品种暂未开放交易</p>
+    <p v-else-if="loading" class="trade-orders-panel__state">委托加载中</p>
+    <p v-else-if="error" class="trade-orders-panel__state trade-orders-panel__state--error">{{ error }}</p>
+    <p v-else-if="!filteredOrders.length" class="trade-orders-panel__state">暂无数据</p>
+
+    <ul v-else class="trade-orders-panel__list">
+      <li v-for="order in filteredOrders" :key="order.id || order.orderNo" class="trade-orders-panel__item">
+        <div>
+          <strong>{{ selectedTradeSymbol?.displaySymbol || selectedTradeSymbol?.symbol || '--' }}</strong>
+          <span>{{ orderSideText(order) }} / {{ orderTypeText(order.orderType) }}</span>
+        </div>
+        <div>
+          <strong>{{ order.price || '市价' }}</strong>
+          <span>{{ order.qty }} / {{ order.filledQty || '0' }}</span>
+        </div>
+        <div>
+          <strong>{{ statusText(order.status) }}</strong>
+          <span>{{ formatTime(order.createTimes) }}</span>
+        </div>
+        <button
+          v-if="openStatuses.has(order.status)"
+          type="button"
+          :disabled="cancelingOrderId === order.id"
+          @click="emit('cancel-order', order)"
+        >
+          {{ cancelingOrderId === order.id ? '撤单中' : '撤单' }}
+        </button>
+      </li>
+    </ul>
   </section>
 </template>
 
@@ -21,6 +123,7 @@ defineProps<{
   gap: 22px;
   padding: 20px 0 0;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
+  align-items: flex-start;
 }
 
 button {
@@ -32,6 +135,11 @@ button {
   font: inherit;
   font-size: 17px;
   font-weight: 700;
+}
+
+.trade-orders-panel__refresh {
+  margin-left: auto;
+  font-size: 14px;
 }
 
 button.active {
@@ -49,7 +157,7 @@ button.active::after {
   content: '';
 }
 
-p {
+.trade-orders-panel__state {
   display: grid;
   min-height: 88px;
   margin: 0;
@@ -58,17 +166,78 @@ p {
   font-size: 14px;
 }
 
-span {
+.trade-orders-panel__state--error {
+  color: #ff6b5f;
+}
+
+.trade-orders-panel__auth span {
   color: #02b904;
+}
+
+.trade-orders-panel__list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 14px 0 0;
+  list-style: none;
+}
+
+.trade-orders-panel__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.95fr) minmax(0, 0.9fr) auto;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+  padding: 12px;
+  border-radius: 8px;
+  background: #151823;
+}
+
+.trade-orders-panel__item div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.trade-orders-panel__item strong,
+.trade-orders-panel__item span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trade-orders-panel__item strong {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.trade-orders-panel__item span {
+  color: #8f929d;
+  font-size: 12px;
+}
+
+.trade-orders-panel__item button {
+  padding: 0;
+  color: #02b904;
+  font-size: 13px;
+}
+
+.trade-orders-panel__item button:disabled {
+  color: #8f929d;
 }
 
 @media (max-width: 390px) {
   .trade-orders-panel__nav {
-    gap: 18px;
+    gap: 14px;
   }
 
   button {
     font-size: 15px;
+  }
+
+  .trade-orders-panel__item {
+    grid-template-columns: 1fr 1fr;
   }
 }
 </style>

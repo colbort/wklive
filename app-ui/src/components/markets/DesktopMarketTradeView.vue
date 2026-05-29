@@ -1,6 +1,19 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import type { Interval } from '@/types/core'
-import type { DepthPayload, ItickTenantProduct, KlinePayload, QuotePayload, TickPayload } from '@/types/itick'
+import type {
+  DepthPayload,
+  ItickTenantProduct,
+  KlinePayload,
+  QuotePayload,
+  TickPayload,
+} from '@/types/itick'
+import type {
+  TradeOrder,
+  TradeSymbol,
+  TradeSymbolContract,
+  TradeSymbolLeverageConfig,
+  TradeSymbolSpot,
+} from '@/types/trade'
 import DesktopTradeOrdersPanel from '@/components/trades/DesktopTradeOrdersPanel.vue'
 import DesktopTradeSubmitPanel from '@/components/trades/DesktopTradeSubmitPanel.vue'
 import DesktopMarketChartPanel from './DesktopMarketChartPanel.vue'
@@ -9,25 +22,83 @@ import DesktopMarketOrderbookPanel from './DesktopMarketOrderbookPanel.vue'
 import DesktopMarketProductsPanel from './DesktopMarketProductsPanel.vue'
 import type { DesktopProductRow, DesktopStat } from './desktop-types'
 
-defineProps<{
-  selectedProduct: ItickTenantProduct | null
-  priceTrend: 'up' | 'down'
-  placeholderPrice: string
-  desktopStats: DesktopStat[]
-  desktopProductRows: DesktopProductRow[]
-  selectedProductKey: string
-  desktopProductsExpanded: boolean
-  desktopOrderbookExpanded: boolean
-  selectedQuote: QuotePayload | null
-  depthSnapshot: DepthPayload | null
-  tickSnapshot: TickPayload[]
-  klineSnapshot: KlinePayload[]
-  intervals: Interval[]
-  selectedIntervalName: string
-  loadingKline: boolean
-  orderMode: 'market' | 'limit'
-  coinGlyph: (product: ItickTenantProduct) => string
-}>()
+type SubmitSide = 'buy' | 'sell'
+type TradeSymbolDetail = {
+  symbol: TradeSymbol | null
+  spot: TradeSymbolSpot | null
+  contract: TradeSymbolContract | null
+  leverageConfigs: TradeSymbolLeverageConfig[]
+}
+
+withDefaults(
+  defineProps<{
+    selectedProduct: ItickTenantProduct | null
+    priceTrend: 'up' | 'down'
+    placeholderPrice: string
+    desktopStats: DesktopStat[]
+    desktopProductRows: DesktopProductRow[]
+    selectedProductKey: string
+    desktopProductsExpanded: boolean
+    desktopOrderbookExpanded: boolean
+    selectedQuote: QuotePayload | null
+    depthSnapshot: DepthPayload | null
+    tickSnapshot: TickPayload[]
+    klineSnapshot: KlinePayload[]
+    intervals: Interval[]
+    selectedIntervalName: string
+    loadingKline: boolean
+    orderMode: 'market' | 'limit'
+    selectedTradeSymbol?: TradeSymbol | null
+    tradeSymbolDetail?: TradeSymbolDetail | null
+    tradeSymbolLoading?: boolean
+    isLoggedIn?: boolean
+    tradeAvailable?: boolean
+    tradePrice?: string
+    tradeQty?: string
+    tradePercent?: number
+    marginMode?: number
+    leverage?: number
+    maxLeverage?: number
+    leverageValues?: number[]
+    settleAsset?: string
+    availableBalance?: string
+    longPositionQty?: string
+    shortPositionQty?: string
+    tradeMessage?: string
+    tradeError?: string
+    submittingSide?: SubmitSide | null
+    tradeOrders?: TradeOrder[]
+    ordersLoading?: boolean
+    ordersError?: string
+    cancelingOrderId?: number | null
+    coinGlyph: (product: ItickTenantProduct) => string
+  }>(),
+  {
+    selectedTradeSymbol: null,
+    tradeSymbolDetail: null,
+    tradeSymbolLoading: false,
+    isLoggedIn: false,
+    tradeAvailable: false,
+    tradePrice: '',
+    tradeQty: '',
+    tradePercent: 0,
+    marginMode: 1,
+    leverage: 1,
+    maxLeverage: 1,
+    leverageValues: () => [],
+    settleAsset: 'USDT',
+    availableBalance: '0',
+    longPositionQty: '0',
+    shortPositionQty: '0',
+    tradeMessage: '',
+    tradeError: '',
+    submittingSide: null,
+    tradeOrders: () => [],
+    ordersLoading: false,
+    ordersError: '',
+    cancelingOrderId: null,
+  },
+)
 
 const emit = defineEmits<{
   (e: 'toggle-products'): void
@@ -35,6 +106,14 @@ const emit = defineEmits<{
   (e: 'select-product', product: ItickTenantProduct): void
   (e: 'select-interval', interval: Interval): void
   (e: 'update:orderMode', value: 'market' | 'limit'): void
+  (e: 'update:tradePrice', value: string): void
+  (e: 'update:tradeQty', value: string): void
+  (e: 'update:tradePercent', value: number): void
+  (e: 'update:marginMode', value: number): void
+  (e: 'update:leverage', value: number): void
+  (e: 'submit-order', side: SubmitSide): void
+  (e: 'cancel-order', order: TradeOrder): void
+  (e: 'refresh-orders'): void
 }>()
 </script>
 
@@ -104,11 +183,45 @@ const emit = defineEmits<{
         <DesktopTradeSubmitPanel
           :selected-product="selectedProduct"
           :order-mode="orderMode"
+          :selected-trade-symbol="selectedTradeSymbol"
+          :trade-symbol-detail="tradeSymbolDetail"
+          :trade-symbol-loading="tradeSymbolLoading"
+          :is-logged-in="isLoggedIn"
+          :trade-available="tradeAvailable"
+          :trade-price="tradePrice"
+          :trade-qty="tradeQty"
+          :trade-percent="tradePercent"
+          :margin-mode="marginMode"
+          :leverage="leverage"
+          :max-leverage="maxLeverage"
+          :leverage-values="leverageValues"
+          :settle-asset="settleAsset"
+          :available-balance="availableBalance"
+          :long-position-qty="longPositionQty"
+          :short-position-qty="shortPositionQty"
+          :trade-message="tradeMessage"
+          :trade-error="tradeError"
+          :submitting-side="submittingSide"
           @update:order-mode="emit('update:orderMode', $event)"
+          @update:trade-price="emit('update:tradePrice', $event)"
+          @update:trade-qty="emit('update:tradeQty', $event)"
+          @update:trade-percent="emit('update:tradePercent', $event)"
+          @update:margin-mode="emit('update:marginMode', $event)"
+          @update:leverage="emit('update:leverage', $event)"
+          @submit-order="emit('submit-order', $event)"
         />
       </div>
 
-      <DesktopTradeOrdersPanel />
+      <DesktopTradeOrdersPanel
+        :orders="tradeOrders"
+        :loading="ordersLoading"
+        :error="ordersError"
+        :is-logged-in="isLoggedIn"
+        :selected-trade-symbol="selectedTradeSymbol"
+        :canceling-order-id="cancelingOrderId"
+        @cancel-order="emit('cancel-order', $event)"
+        @refresh="emit('refresh-orders')"
+      />
     </section>
   </section>
 </template>

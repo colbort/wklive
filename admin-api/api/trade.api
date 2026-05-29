@@ -239,6 +239,22 @@ type ContractLeverageConfig {
 	updateTimes   int64  `json:"updateTimes"`
 }
 
+type TradeSymbolLeverageConfig {
+	id              int64   `json:"id"`
+	tenantId        int64   `json:"tenantId"`
+	symbolId        int64   `json:"symbolId"`
+	marketType      int64   `json:"marketType"`
+	marginMode      int64   `json:"marginMode"`
+	leverageValues  []int64 `json:"leverageValues"`
+	defaultLeverage int64   `json:"defaultLeverage"`
+	maxLeverage     int64   `json:"maxLeverage"`
+	status          int64   `json:"status"`
+	sort            int64   `json:"sort"`
+	remark          string  `json:"remark"`
+	createTimes     int64   `json:"createTimes"`
+	updateTimes     int64   `json:"updateTimes"`
+}
+
 type RiskUserTradeLimit {
 	id                   int64  `json:"id"`
 	tenantId             int64  `json:"tenantId"`
@@ -408,9 +424,10 @@ type GetSymbolDetailAdminReq {
 
 type GetSymbolDetailAdminResp {
 	RespBase
-	data     TradeSymbol         `json:"data"`
-	spot     TradeSymbolSpot     `json:"spot,optional"`
-	contract TradeSymbolContract `json:"contract,optional"`
+	data            TradeSymbol                  `json:"data"`
+	spot            TradeSymbolSpot              `json:"spot,optional"`
+	contract        TradeSymbolContract          `json:"contract,optional"`
+	leverageConfigs []TradeSymbolLeverageConfig  `json:"leverageConfigs,optional"`
 }
 
 type SetSpotSymbolConfigReq {
@@ -437,6 +454,46 @@ type SetContractSymbolConfigReq {
 	supportIsolated        int64  `json:"supportIsolated"`
 	buyEnabled             int64  `json:"buyEnabled"`
 	sellEnabled            int64  `json:"sellEnabled"`
+}
+
+type SetSymbolLeverageConfigReq {
+	tenantId        int64   `json:"tenantId"`
+	symbolId        int64   `json:"symbolId"`
+	marketType      int64   `json:"marketType"`
+	marginMode      int64   `json:"marginMode"`
+	leverageValues  []int64 `json:"leverageValues"`
+	defaultLeverage int64   `json:"defaultLeverage"`
+	maxLeverage     int64   `json:"maxLeverage"`
+	status          int64   `json:"status"`
+	sort            int64   `json:"sort"`
+	remark          string  `json:"remark,optional"`
+}
+
+type GetSymbolLeverageConfigReq {
+	tenantId   int64 `form:"tenantId,optional"`
+	id         int64 `form:"id,optional"`
+	symbolId   int64 `form:"symbolId,optional"`
+	marketType int64 `form:"marketType,optional"`
+	marginMode int64 `form:"marginMode,optional"`
+}
+
+type GetSymbolLeverageConfigResp {
+	RespBase
+	data TradeSymbolLeverageConfig `json:"data"`
+}
+
+type GetSymbolLeverageConfigListReq {
+	PageReq
+	tenantId   int64 `form:"tenantId,optional"`
+	symbolId   int64 `form:"symbolId,optional"`
+	marketType int64 `form:"marketType,optional"`
+	marginMode int64 `form:"marginMode,optional"`
+	status     int64 `form:"status,optional"`
+}
+
+type GetSymbolLeverageConfigListResp {
+	RespBase
+	data []TradeSymbolLeverageConfig `json:"data"`
 }
 
 type GetOrderListAdminReq {
@@ -758,6 +815,15 @@ service admin {
 
 	@handler SetContractSymbolConfig
 	post /symbols/contract-config (SetContractSymbolConfigReq) returns (AdminCommonResp)
+
+	@handler SetSymbolLeverageConfig
+	post /symbols/leverage-config (SetSymbolLeverageConfigReq) returns (AdminCommonResp)
+
+	@handler GetSymbolLeverageConfig
+	get /symbols/leverage-config (GetSymbolLeverageConfigReq) returns (GetSymbolLeverageConfigResp)
+
+	@handler GetSymbolLeverageConfigList
+	get /symbols/leverage-configs (GetSymbolLeverageConfigListReq) returns (GetSymbolLeverageConfigListResp)
 
 	@handler GetOrderListAdmin
 	get /orders (GetOrderListAdminReq) returns (GetOrderListAdminResp)

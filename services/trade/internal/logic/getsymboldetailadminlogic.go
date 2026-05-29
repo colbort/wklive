@@ -37,5 +37,13 @@ func (l *GetSymbolDetailAdminLogic) GetSymbolDetailAdmin(in *trade.GetSymbolDeta
 		return nil, err
 	}
 
-	return &trade.GetSymbolDetailAdminResp{Base: helper.OkResp(), Data: symbolToProto(item)}, nil
+	resp := &trade.GetSymbolDetailAdminResp{Base: helper.OkResp(), Data: symbolToProto(item)}
+	configs, _, err := l.svcCtx.SymbolLeverageCfgModel.FindPage(l.ctx, in.TenantId, in.Id, item.MarketType, 0, 0, 0, 100)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
+	for _, cfg := range configs {
+		resp.LeverageConfigs = append(resp.LeverageConfigs, symbolLeverageConfigToProto(cfg))
+	}
+	return resp, nil
 }

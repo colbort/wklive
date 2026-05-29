@@ -38,6 +38,10 @@ type (
 	GetRiskOrderCheckLogListResp    = trade.GetRiskOrderCheckLogListResp
 	GetSymbolDetailAdminReq         = trade.GetSymbolDetailAdminReq
 	GetSymbolDetailAdminResp        = trade.GetSymbolDetailAdminResp
+	GetSymbolLeverageConfigListReq  = trade.GetSymbolLeverageConfigListReq
+	GetSymbolLeverageConfigListResp = trade.GetSymbolLeverageConfigListResp
+	GetSymbolLeverageConfigReq      = trade.GetSymbolLeverageConfigReq
+	GetSymbolLeverageConfigResp     = trade.GetSymbolLeverageConfigResp
 	GetSymbolListAdminReq           = trade.GetSymbolListAdminReq
 	GetSymbolListAdminResp          = trade.GetSymbolListAdminResp
 	GetTradeEventDetailReq          = trade.GetTradeEventDetailReq
@@ -55,6 +59,7 @@ type (
 	RetryTradeEventReq              = trade.RetryTradeEventReq
 	SetContractSymbolConfigReq      = trade.SetContractSymbolConfigReq
 	SetSpotSymbolConfigReq          = trade.SetSpotSymbolConfigReq
+	SetSymbolLeverageConfigReq      = trade.SetSymbolLeverageConfigReq
 	SetUserLeverageConfigReq        = trade.SetUserLeverageConfigReq
 	SetUserSymbolLimitReq           = trade.SetUserSymbolLimitReq
 	SetUserTradeConfigReq           = trade.SetUserTradeConfigReq
@@ -74,6 +79,12 @@ type (
 		SetSpotSymbolConfig(ctx context.Context, in *SetSpotSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
 		// 设置合约交易对配置
 		SetContractSymbolConfig(ctx context.Context, in *SetContractSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 保存交易对杠杆档位配置
+		SetSymbolLeverageConfig(ctx context.Context, in *SetSymbolLeverageConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error)
+		// 获取交易对杠杆档位配置
+		GetSymbolLeverageConfig(ctx context.Context, in *GetSymbolLeverageConfigReq, opts ...grpc.CallOption) (*GetSymbolLeverageConfigResp, error)
+		// 获取交易对杠杆档位配置列表
+		GetSymbolLeverageConfigList(ctx context.Context, in *GetSymbolLeverageConfigListReq, opts ...grpc.CallOption) (*GetSymbolLeverageConfigListResp, error)
 		// 获取后台订单列表
 		GetOrderListAdmin(ctx context.Context, in *GetOrderListAdminReq, opts ...grpc.CallOption) (*GetOrderListAdminResp, error)
 		// 获取订单详情
@@ -163,6 +174,24 @@ func (m *defaultTradeAdmin) SetSpotSymbolConfig(ctx context.Context, in *SetSpot
 func (m *defaultTradeAdmin) SetContractSymbolConfig(ctx context.Context, in *SetContractSymbolConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
 	client := trade.NewTradeAdminClient(m.cli.Conn())
 	return client.SetContractSymbolConfig(ctx, in, opts...)
+}
+
+// 保存交易对杠杆档位配置
+func (m *defaultTradeAdmin) SetSymbolLeverageConfig(ctx context.Context, in *SetSymbolLeverageConfigReq, opts ...grpc.CallOption) (*AdminCommonResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.SetSymbolLeverageConfig(ctx, in, opts...)
+}
+
+// 获取交易对杠杆档位配置
+func (m *defaultTradeAdmin) GetSymbolLeverageConfig(ctx context.Context, in *GetSymbolLeverageConfigReq, opts ...grpc.CallOption) (*GetSymbolLeverageConfigResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.GetSymbolLeverageConfig(ctx, in, opts...)
+}
+
+// 获取交易对杠杆档位配置列表
+func (m *defaultTradeAdmin) GetSymbolLeverageConfigList(ctx context.Context, in *GetSymbolLeverageConfigListReq, opts ...grpc.CallOption) (*GetSymbolLeverageConfigListResp, error) {
+	client := trade.NewTradeAdminClient(m.cli.Conn())
+	return client.GetSymbolLeverageConfigList(ctx, in, opts...)
 }
 
 // 获取后台订单列表

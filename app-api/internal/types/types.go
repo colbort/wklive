@@ -823,9 +823,10 @@ type GetSymbolDetailReq struct {
 
 type GetSymbolDetailResp struct {
 	RespBase
-	Symbol   TradeSymbol         `json:"symbol"`
-	Spot     TradeSymbolSpot     `json:"spot"`
-	Contract TradeSymbolContract `json:"contract"`
+	Symbol          TradeSymbol                 `json:"symbol"`
+	Spot            TradeSymbolSpot             `json:"spot"`
+	Contract        TradeSymbolContract         `json:"contract"`
+	LeverageConfigs []TradeSymbolLeverageConfig `json:"leverageConfigs"`
 }
 
 type GetSymbolListReq struct {
@@ -1817,6 +1818,22 @@ type TradeSymbolContract struct {
 	SellEnabled            int64  `json:"sellEnabled"`     // 是否允许卖出：0否 1是
 	CreateTimes            int64  `json:"createTimes"`
 	UpdateTimes            int64  `json:"updateTimes"`
+}
+
+type TradeSymbolLeverageConfig struct {
+	Id              int64   `json:"id"`
+	TenantId        int64   `json:"tenantId"`
+	SymbolId        int64   `json:"symbolId"`
+	MarketType      int64   `json:"marketType"`
+	MarginMode      int64   `json:"marginMode"`
+	LeverageValues  []int64 `json:"leverageValues"`
+	DefaultLeverage int64   `json:"defaultLeverage"`
+	MaxLeverage     int64   `json:"maxLeverage"`
+	Status          int64   `json:"status"`
+	Sort            int64   `json:"sort"`
+	Remark          string  `json:"remark"`
+	CreateTimes     int64   `json:"createTimes"`
+	UpdateTimes     int64   `json:"updateTimes"`
 }
 
 type TradeSymbolSpot struct {
