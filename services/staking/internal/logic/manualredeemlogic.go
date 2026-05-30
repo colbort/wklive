@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -86,13 +87,17 @@ func (l *ManualRedeemLogic) ManualRedeem(in *staking.AdminManualRedeemReq) (*sta
 			Remark:        in.Remark,
 		})
 		if err != nil {
+			l.Errorf("staking manual redeem unlock asset rpc failed, tenantId=%d userId=%d orderNo=%s redeemNo=%s amount=%v err=%v",
+				order.TenantId, order.UserId, order.OrderNo, redeemNo, unlockAmount, err)
 			return nil, err
 		}
-		if resp == nil || resp.Base == nil || resp.Base.Code != 0 {
+		if resp == nil || resp.Base == nil || resp.Base.Code != 200 {
+			l.Errorf("staking manual redeem unlock asset failed, tenantId=%d userId=%d orderNo=%s redeemNo=%s amount=%v msg=%s",
+				order.TenantId, order.UserId, order.OrderNo, redeemNo, unlockAmount, assetBaseMsg(resp))
 			if resp != nil && resp.Base != nil {
 				return &staking.AdminManualRedeemResp{Page: resp.Base}, nil
 			}
-			return nil, err
+			return nil, fmt.Errorf("staking manual redeem unlock asset returned empty response")
 		}
 	}
 	if feeAmount > 0 {
@@ -108,13 +113,17 @@ func (l *ManualRedeemLogic) ManualRedeem(in *staking.AdminManualRedeemReq) (*sta
 			Remark:        "staking manual redeem fee deduct",
 		})
 		if err != nil {
+			l.Errorf("staking manual redeem deduct locked fee rpc failed, tenantId=%d userId=%d orderNo=%s redeemNo=%s amount=%v err=%v",
+				order.TenantId, order.UserId, order.OrderNo, redeemNo, feeAmount, err)
 			return nil, err
 		}
-		if resp == nil || resp.Base == nil || resp.Base.Code != 0 {
+		if resp == nil || resp.Base == nil || resp.Base.Code != 200 {
+			l.Errorf("staking manual redeem deduct locked fee failed, tenantId=%d userId=%d orderNo=%s redeemNo=%s amount=%v msg=%s",
+				order.TenantId, order.UserId, order.OrderNo, redeemNo, feeAmount, assetBaseMsg(resp))
 			if resp != nil && resp.Base != nil {
 				return &staking.AdminManualRedeemResp{Page: resp.Base}, nil
 			}
-			return nil, err
+			return nil, fmt.Errorf("staking manual redeem deduct locked fee returned empty response")
 		}
 	}
 	if rewardAmount > 0 {
@@ -131,13 +140,17 @@ func (l *ManualRedeemLogic) ManualRedeem(in *staking.AdminManualRedeemReq) (*sta
 			Remark:     in.Remark,
 		})
 		if err != nil {
+			l.Errorf("staking manual redeem add reward rpc failed, tenantId=%d userId=%d orderNo=%s redeemNo=%s coin=%s amount=%v err=%v",
+				order.TenantId, order.UserId, order.OrderNo, redeemNo, order.RewardCoinSymbol, rewardAmount, err)
 			return nil, err
 		}
-		if resp == nil || resp.Base == nil || resp.Base.Code != 0 {
+		if resp == nil || resp.Base == nil || resp.Base.Code != 200 {
+			l.Errorf("staking manual redeem add reward failed, tenantId=%d userId=%d orderNo=%s redeemNo=%s coin=%s amount=%v msg=%s",
+				order.TenantId, order.UserId, order.OrderNo, redeemNo, order.RewardCoinSymbol, rewardAmount, assetBaseMsg(resp))
 			if resp != nil && resp.Base != nil {
 				return &staking.AdminManualRedeemResp{Page: resp.Base}, nil
 			}
-			return nil, err
+			return nil, fmt.Errorf("staking manual redeem add reward returned empty response")
 		}
 	}
 

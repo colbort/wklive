@@ -33,10 +33,15 @@ func NewUnfreezeAssetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Unf
 func (l *UnfreezeAssetLogic) UnfreezeAsset(in *asset.UnfreezeAssetReq) (*asset.ChangeAssetResp, error) {
 	amount, err := conv.ParseFloatField(in.Amount)
 	if err != nil {
+		l.Errorf("UnfreezeAsset parse amount failed, tenantId=%d freezeNo=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
+			in.TenantId, in.FreezeNo, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err
 	}
 	if amount <= 0 {
-		return nil, fmt.Errorf("amount must be positive")
+		err := fmt.Errorf("amount must be positive")
+		l.Errorf("UnfreezeAsset validate amount failed, tenantId=%d freezeNo=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
+			in.TenantId, in.FreezeNo, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
+		return nil, err
 	}
 
 	ts := utils.NowMillis()
@@ -94,6 +99,8 @@ func (l *UnfreezeAssetLogic) UnfreezeAsset(in *asset.UnfreezeAssetReq) (*asset.C
 		return nil
 	})
 	if err != nil {
+		l.Errorf("UnfreezeAsset transaction failed, tenantId=%d freezeNo=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
+			in.TenantId, in.FreezeNo, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err
 	}
 

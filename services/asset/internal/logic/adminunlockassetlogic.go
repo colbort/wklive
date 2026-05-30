@@ -33,21 +33,34 @@ func NewAdminUnlockAssetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 func (l *AdminUnlockAssetLogic) AdminUnlockAsset(in *asset.AdminUnlockAssetReq) (*asset.AdminChangeAssetResp, error) {
 	amount, err := conv.ParseFloatField(in.Amount)
 	if err != nil {
+		l.Errorf("AdminUnlockAsset parse amount failed, tenantId=%d lockNo=%s amount=%s bizNo=%s err=%v",
+			in.TenantId, in.LockNo, in.Amount, in.BizNo, err)
 		return nil, err
 	}
 	if amount <= 0 {
-		return nil, fmt.Errorf("amount must be positive")
+		err := fmt.Errorf("amount must be positive")
+		l.Errorf("AdminUnlockAsset validate amount failed, tenantId=%d lockNo=%s amount=%s bizNo=%s err=%v",
+			in.TenantId, in.LockNo, in.Amount, in.BizNo, err)
+		return nil, err
 	}
 
 	lock, err := l.svcCtx.AssetLockModel.FindOneByLockNo(l.ctx, in.LockNo)
 	if err != nil {
+		l.Errorf("AdminUnlockAsset find lock failed, tenantId=%d lockNo=%s amount=%s bizNo=%s err=%v",
+			in.TenantId, in.LockNo, in.Amount, in.BizNo, err)
 		return nil, err
 	}
 	if lock.TenantId != in.TenantId {
-		return nil, fmt.Errorf("tenant mismatch for lock record")
+		err := fmt.Errorf("tenant mismatch for lock record")
+		l.Errorf("AdminUnlockAsset tenant mismatch, tenantId=%d lockTenantId=%d lockNo=%s amount=%s bizNo=%s err=%v",
+			in.TenantId, lock.TenantId, in.LockNo, in.Amount, in.BizNo, err)
+		return nil, err
 	}
 	if amount > lock.RemainAmount {
-		return nil, fmt.Errorf("unlock amount exceeds locked amount")
+		err := fmt.Errorf("unlock amount exceeds locked amount")
+		l.Errorf("AdminUnlockAsset amount exceeds locked amount, tenantId=%d lockNo=%s amount=%s remainAmount=%v bizNo=%s err=%v",
+			in.TenantId, in.LockNo, in.Amount, lock.RemainAmount, in.BizNo, err)
+		return nil, err
 	}
 
 	ts := utils.NowMillis()
@@ -91,6 +104,8 @@ func (l *AdminUnlockAssetLogic) AdminUnlockAsset(in *asset.AdminUnlockAssetReq) 
 		return nil
 	})
 	if err != nil {
+		l.Errorf("AdminUnlockAsset transaction failed, tenantId=%d lockNo=%s amount=%s bizNo=%s err=%v",
+			in.TenantId, in.LockNo, in.Amount, in.BizNo, err)
 		return nil, err
 	}
 

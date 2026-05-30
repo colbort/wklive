@@ -26,6 +26,8 @@ func NewUnfreezeAssetByBizNoLogic(ctx context.Context, svcCtx *svc.ServiceContex
 func (l *UnfreezeAssetByBizNoLogic) UnfreezeAssetByBizNo(in *asset.UnfreezeAssetByBizNoReq) (*asset.ChangeAssetResp, error) {
 	freeze, err := findFreezeByBizNo(l.ctx, l.svcCtx, in.TenantId, in.TargetBizType, in.TargetBizNo)
 	if err != nil {
+		l.Errorf("UnfreezeAssetByBizNo find freeze failed, tenantId=%d targetBizType=%d targetBizNo=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
+			in.TenantId, in.TargetBizType, in.TargetBizNo, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err
 	}
 

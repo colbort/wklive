@@ -33,18 +33,28 @@ func NewUnlockAssetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Unloc
 func (l *UnlockAssetLogic) UnlockAsset(in *asset.UnlockAssetReq) (*asset.ChangeAssetResp, error) {
 	amount, err := conv.ParseFloatField(in.Amount)
 	if err != nil {
+		l.Errorf("UnlockAsset parse amount failed, tenantId=%d lockNo=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
+			in.TenantId, in.LockNo, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err
 	}
 	if amount <= 0 {
-		return nil, fmt.Errorf("amount must be positive")
+		err := fmt.Errorf("amount must be positive")
+		l.Errorf("UnlockAsset validate amount failed, tenantId=%d lockNo=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
+			in.TenantId, in.LockNo, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
+		return nil, err
 	}
 
 	lock, err := l.svcCtx.AssetLockModel.FindOneByLockNo(l.ctx, in.LockNo)
 	if err != nil {
+		l.Errorf("UnlockAsset find lock failed, tenantId=%d lockNo=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
+			in.TenantId, in.LockNo, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err
 	}
 	if lock.TenantId != in.TenantId {
-		return nil, fmt.Errorf("tenant mismatch for lock record")
+		err := fmt.Errorf("tenant mismatch for lock record")
+		l.Errorf("UnlockAsset tenant mismatch, tenantId=%d lockTenantId=%d lockNo=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
+			in.TenantId, lock.TenantId, in.LockNo, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
+		return nil, err
 	}
 
 	ts := utils.NowMillis()
@@ -113,6 +123,8 @@ func (l *UnlockAssetLogic) UnlockAsset(in *asset.UnlockAssetReq) (*asset.ChangeA
 		return nil
 	})
 	if err != nil {
+		l.Errorf("UnlockAsset transaction failed, tenantId=%d lockNo=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
+			in.TenantId, in.LockNo, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err
 	}
 

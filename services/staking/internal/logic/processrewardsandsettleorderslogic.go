@@ -88,9 +88,13 @@ func (l *ProcessRewardsAndSettleOrdersLogic) processDailyReward(order *models.TS
 	rewardStatus := int64(staking.RewardStatus_REWARD_STATUS_SUCCESS)
 	remark := "staking daily reward task"
 	if err != nil {
+		l.Errorf("staking daily reward add asset rpc failed, tenantId=%d userId=%d orderId=%d orderNo=%s rewardNo=%s coin=%s amount=%v err=%v",
+			order.TenantId, order.UserId, order.Id, order.OrderNo, rewardNo, order.RewardCoinSymbol, rewardAmount, err)
 		rewardStatus = int64(staking.RewardStatus_REWARD_STATUS_FAIL)
 		remark = err.Error()
 	} else if resp == nil || resp.Base == nil || resp.Base.Code != 200 {
+		l.Errorf("staking daily reward add asset failed, tenantId=%d userId=%d orderId=%d orderNo=%s rewardNo=%s coin=%s amount=%v msg=%s",
+			order.TenantId, order.UserId, order.Id, order.OrderNo, rewardNo, order.RewardCoinSymbol, rewardAmount, assetBaseMsg(resp))
 		rewardStatus = int64(staking.RewardStatus_REWARD_STATUS_FAIL)
 		if resp != nil && resp.Base != nil {
 			remark = resp.Base.Msg
@@ -106,7 +110,7 @@ func (l *ProcessRewardsAndSettleOrdersLogic) processDailyReward(order *models.TS
 	}
 	order.UpdateTimes = now
 
-	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		rewardLogModel := models.NewTStakeRewardLogModel(conn, l.svcCtx.Config.CacheRedis).(models.StakeRewardLogModel)
 		orderModel := models.NewTStakeOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.StakeOrderModel)
@@ -136,6 +140,12 @@ func (l *ProcessRewardsAndSettleOrdersLogic) processDailyReward(order *models.TS
 		}
 		return nil
 	})
+	if err != nil {
+		l.Errorf("staking daily reward transaction failed, tenantId=%d userId=%d orderId=%d orderNo=%s rewardNo=%s coin=%s amount=%v status=%d err=%v",
+			order.TenantId, order.UserId, order.Id, order.OrderNo, rewardNo, order.RewardCoinSymbol, rewardAmount, rewardStatus, err)
+		return err
+	}
+	return nil
 }
 
 func (l *ProcessRewardsAndSettleOrdersLogic) settleExpiredOrder(order *models.TStakeOrder, now int64) error {
@@ -161,9 +171,13 @@ func (l *ProcessRewardsAndSettleOrdersLogic) settleExpiredOrder(order *models.TS
 		Remark:        "staking maturity redeem task",
 	})
 	if err != nil {
+		l.Errorf("staking maturity redeem unlock asset rpc failed, tenantId=%d userId=%d orderId=%d orderNo=%s redeemNo=%s amount=%v err=%v",
+			order.TenantId, order.UserId, order.Id, order.OrderNo, redeemNo, order.StakeAmount, err)
 		return err
 	}
 	if resp == nil || resp.Base == nil || resp.Base.Code != 200 {
+		l.Errorf("staking maturity redeem unlock asset failed, tenantId=%d userId=%d orderId=%d orderNo=%s redeemNo=%s amount=%v msg=%s",
+			order.TenantId, order.UserId, order.Id, order.OrderNo, redeemNo, order.StakeAmount, assetBaseMsg(resp))
 		return l.insertRedeemFailedLog(order, redeemNo, rewardAmount, now, assetBaseMsg(resp))
 	}
 	if rewardAmount > 0 {
@@ -180,9 +194,13 @@ func (l *ProcessRewardsAndSettleOrdersLogic) settleExpiredOrder(order *models.TS
 			Remark:     "staking maturity reward task",
 		})
 		if err != nil {
+			l.Errorf("staking maturity reward add asset rpc failed, tenantId=%d userId=%d orderId=%d orderNo=%s redeemNo=%s coin=%s amount=%v err=%v",
+				order.TenantId, order.UserId, order.Id, order.OrderNo, redeemNo, order.RewardCoinSymbol, rewardAmount, err)
 			return err
 		}
 		if resp == nil || resp.Base == nil || resp.Base.Code != 200 {
+			l.Errorf("staking maturity reward add asset failed, tenantId=%d userId=%d orderId=%d orderNo=%s redeemNo=%s coin=%s amount=%v msg=%s",
+				order.TenantId, order.UserId, order.Id, order.OrderNo, redeemNo, order.RewardCoinSymbol, rewardAmount, assetBaseMsg(resp))
 			return l.insertRedeemFailedLog(order, redeemNo, rewardAmount, now, assetBaseMsg(resp))
 		}
 	}
@@ -208,7 +226,7 @@ func (l *ProcessRewardsAndSettleOrdersLogic) settleExpiredOrder(order *models.TS
 	order.Status = int64(staking.OrderStatus_ORDER_STATUS_REDEEMED)
 	order.UpdateTimes = now
 
-	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		redeemLogModel := models.NewTStakeRedeemLogModel(conn, l.svcCtx.Config.CacheRedis).(models.StakeRedeemLogModel)
 		productModel := models.NewTStakeProductModel(conn, l.svcCtx.Config.CacheRedis).(models.StakeProductModel)
@@ -239,6 +257,12 @@ func (l *ProcessRewardsAndSettleOrdersLogic) settleExpiredOrder(order *models.TS
 		}
 		return orderModel.Update(ctx, order)
 	})
+	if err != nil {
+		l.Errorf("staking maturity redeem transaction failed after asset change, tenantId=%d userId=%d orderId=%d orderNo=%s redeemNo=%s rewardAmount=%v err=%v",
+			order.TenantId, order.UserId, order.Id, order.OrderNo, redeemNo, rewardAmount, err)
+		return err
+	}
+	return nil
 }
 
 func (l *ProcessRewardsAndSettleOrdersLogic) insertRedeemFailedLog(order *models.TStakeOrder, redeemNo string, rewardAmount float64, now int64, remark string) error {
@@ -262,6 +286,10 @@ func (l *ProcessRewardsAndSettleOrdersLogic) insertRedeemFailedLog(order *models
 		CreateTimes:  now,
 		UpdateTimes:  now,
 	})
+	if err != nil {
+		l.Errorf("staking redeem failed log insert failed, tenantId=%d userId=%d orderId=%d orderNo=%s redeemNo=%s rewardAmount=%v remark=%s err=%v",
+			order.TenantId, order.UserId, order.Id, order.OrderNo, redeemNo, rewardAmount, remark, err)
+	}
 	return err
 }
 

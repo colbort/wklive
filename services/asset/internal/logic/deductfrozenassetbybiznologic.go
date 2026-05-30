@@ -26,6 +26,8 @@ func NewDeductFrozenAssetByBizNoLogic(ctx context.Context, svcCtx *svc.ServiceCo
 func (l *DeductFrozenAssetByBizNoLogic) DeductFrozenAssetByBizNo(in *asset.DeductFrozenAssetByBizNoReq) (*asset.ChangeAssetResp, error) {
 	freeze, err := findFreezeByBizNo(l.ctx, l.svcCtx, in.TenantId, in.TargetBizType, in.TargetBizNo)
 	if err != nil {
+		l.Errorf("DeductFrozenAssetByBizNo find freeze failed, tenantId=%d targetBizType=%d targetBizNo=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
+			in.TenantId, in.TargetBizType, in.TargetBizNo, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err
 	}
 

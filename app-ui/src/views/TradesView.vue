@@ -90,6 +90,7 @@ const ordersError = ref('')
 let tradeSymbolsRequestId = 0
 let tradeDetailRequestId = 0
 let tradeAccountRequestId = 0
+let tradeOrdersRequestId = 0
 let leverageConfigRequestId = 0
 let saveLeverageRequestId = 0
 const {
@@ -221,6 +222,7 @@ watch(
   (symbolId) => {
     tradeDetailRequestId += 1
     tradeAccountRequestId += 1
+    tradeOrdersRequestId += 1
     tradeMessage.value = ''
     tradeError.value = ''
     ordersError.value = ''
@@ -361,6 +363,57 @@ function isPositiveDecimal(value: string) {
   const text = value.trim()
   if (!/^\d+(\.\d+)?$/.test(text)) return false
   return Number(text) > 0
+}
+
+function divideAmountTextBy100(value: string) {
+  const text = String(value ?? '').trim()
+  if (!/^-?\d+(\.\d+)?$/.test(text)) return value
+
+  const negative = text.startsWith('-')
+  const unsignedText = negative ? text.slice(1) : text
+  const [integerPart, fractionPart = ''] = unsignedText.split('.')
+  const digits = `${integerPart}${fractionPart}`.replace(/^0+(?=\d)/, '') || '0'
+  const decimalPlaces = fractionPart.length + 2
+  const paddedDigits = digits.padStart(decimalPlaces + 1, '0')
+  const integerEndIndex = paddedDigits.length - decimalPlaces
+  const nextInteger = paddedDigits.slice(0, integerEndIndex).replace(/^0+(?=\d)/, '') || '0'
+  const nextFraction = paddedDigits.slice(integerEndIndex).replace(/0+$/, '')
+  const nextValue = nextFraction ? `${nextInteger}.${nextFraction}` : nextInteger
+
+  if (nextValue === '0') return '0'
+  return negative ? `-${nextValue}` : nextValue
+}
+
+function normalizeTradeOrderAmounts(order: TradeOrder): TradeOrder {
+  return {
+    ...order,
+    amount: divideAmountTextBy100(order.amount),
+    filledAmount: divideAmountTextBy100(order.filledAmount),
+    fee: divideAmountTextBy100(order.fee),
+  }
+}
+
+function normalizeContractPositionAmounts(position: ContractPosition): ContractPosition {
+  return {
+    ...position,
+    positionMargin: divideAmountTextBy100(position.positionMargin),
+    isolatedMargin: divideAmountTextBy100(position.isolatedMargin),
+    unrealizedPnl: divideAmountTextBy100(position.unrealizedPnl),
+    realizedPnl: divideAmountTextBy100(position.realizedPnl),
+  }
+}
+
+function normalizeMarginAccountAmounts(account: ContractMarginAccount): ContractMarginAccount {
+  return {
+    ...account,
+    balance: divideAmountTextBy100(account.balance),
+    availableBalance: divideAmountTextBy100(account.availableBalance),
+    frozenBalance: divideAmountTextBy100(account.frozenBalance),
+    positionMargin: divideAmountTextBy100(account.positionMargin),
+    orderMargin: divideAmountTextBy100(account.orderMargin),
+    unrealizedPnl: divideAmountTextBy100(account.unrealizedPnl),
+    realizedPnl: divideAmountTextBy100(account.realizedPnl),
+  }
 }
 
 function createClientOrderId() {
@@ -531,7 +584,8 @@ async function loadTradeSymbolDetail(symbolId: number) {
 async function refreshTradeAccount() {
   syncAuthState()
 
-  const requestId = ++tradeAccountRequestId
+  const accountRequestId = ++tradeAccountRequestId
+  const ordersRequestId = ++tradeOrdersRequestId
   const symbol = selectedTradeSymbol.value
   if (!isLoggedIn.value || !symbol) {
     tradeOrders.value = []
@@ -565,40 +619,89 @@ async function refreshTradeAccount() {
       }),
     ])
 
-    if (requestId !== tradeAccountRequestId) return
+    if (accountRequestId !== tradeAccountRequestId) return
 
-    if (ordersResult.status === 'fulfilled' && isSuccessCode(ordersResult.value.code)) {
-      tradeOrders.value = ordersResult.value.data || []
-    } else {
-      tradeOrders.value = []
-      ordersError.value =
-        ordersResult.status === 'fulfilled'
-          ? ordersResult.value.msg || '委托加载失败'
-          : '委托加载失败'
+    if (ordersRequestId === tradeOrdersRequestId) {
+      if (ordersResult.status === 'fulfilled' && isSuccessCode(ordersResult.value.code)) {
+        tradeOrders.value = (ordersResult.value.data || []).map(normalizeTradeOrderAmounts)
+      } else {
+        tradeOrders.value = []
+        ordersError.value =
+          ordersResult.status === 'fulfilled'
+            ? ordersResult.value.msg || '委托加载失败'
+            : '委托加载失败'
+      }
     }
 
     if (positionsResult.status === 'fulfilled' && isSuccessCode(positionsResult.value.code)) {
-      tradePositions.value = positionsResult.value.data || []
+      tradePositions.value = (positionsResult.value.data || []).map(normalizeContractPositionAmounts)
     } else {
       tradePositions.value = []
     }
 
     if (accountsResult.status === 'fulfilled' && isSuccessCode(accountsResult.value.code)) {
-      marginAccounts.value = accountsResult.value.data || []
+      marginAccounts.value = (accountsResult.value.data || []).map(normalizeMarginAccountAmounts)
     } else {
       marginAccounts.value = []
     }
   } catch (error) {
     console.warn('refresh trade account failed', error)
-    if (requestId === tradeAccountRequestId) {
-      tradeOrders.value = []
+    if (accountRequestId === tradeAccountRequestId) {
+      if (ordersRequestId === tradeOrdersRequestId) {
+        tradeOrders.value = []
+        ordersError.value = '委托加载失败'
+      }
       tradePositions.value = []
       marginAccounts.value = []
-      ordersError.value = '委托加载失败'
     }
   } finally {
-    if (requestId === tradeAccountRequestId) {
+    if (accountRequestId === tradeAccountRequestId) {
       loadingTradeAccount.value = false
+    }
+    if (ordersRequestId === tradeOrdersRequestId) {
+      loadingTradeOrders.value = false
+    }
+  }
+}
+
+async function refreshTradeOrders() {
+  syncAuthState()
+
+  const requestId = ++tradeOrdersRequestId
+  const symbol = selectedTradeSymbol.value
+  if (!isLoggedIn.value || !symbol) {
+    tradeOrders.value = []
+    loadingTradeOrders.value = false
+    return
+  }
+
+  ordersError.value = ''
+
+  try {
+    const resp = await apiTradeGetOrderList({
+      marketType: symbol.marketType,
+      symbolId: symbol.id,
+      limit: 100,
+    })
+    if (requestId !== tradeOrdersRequestId) return
+
+    if (!isSuccessCode(resp.code)) {
+      if (!tradeOrders.value.length) {
+        ordersError.value = resp.msg || '委托加载失败'
+      }
+      return
+    }
+
+    tradeOrders.value = (resp.data || []).map(normalizeTradeOrderAmounts)
+  } catch (error) {
+    console.warn('refresh trade orders failed', error)
+    if (requestId === tradeOrdersRequestId) {
+      if (!tradeOrders.value.length) {
+        ordersError.value = '委托加载失败'
+      }
+    }
+  } finally {
+    if (requestId === tradeOrdersRequestId) {
       loadingTradeOrders.value = false
     }
   }
@@ -774,7 +877,7 @@ async function cancelTradeOrder(order: TradeOrder) {
       @update:leverage="updateLeverage"
       @submit-order="submitTradeOrder"
       @cancel-order="cancelTradeOrder"
-      @refresh-orders="refreshTradeAccount"
+      @refresh-orders="refreshTradeOrders"
     />
     <MobileTradeView
       v-else
@@ -832,7 +935,7 @@ async function cancelTradeOrder(order: TradeOrder) {
       @update:stop-loss-price="stopLossPrice = $event"
       @submit-order="submitTradeOrder"
       @cancel-order="cancelTradeOrder"
-      @refresh-orders="refreshTradeAccount"
+      @refresh-orders="refreshTradeOrders"
     />
   </section>
 </template>

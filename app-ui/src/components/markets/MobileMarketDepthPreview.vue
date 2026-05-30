@@ -9,8 +9,8 @@ const props = defineProps<{
   placeholderPrice: string
 }>()
 
-const askRows = computed(() => props.depthSnapshot?.asks.slice(0, 10) ?? [])
-const bidRows = computed(() => props.depthSnapshot?.bids.slice(0, 10) ?? [])
+const askRows = computed(() => props.depthSnapshot?.asks ?? [])
+const bidRows = computed(() => props.depthSnapshot?.bids ?? [])
 const midPrice = computed(() => {
   if (props.placeholderPrice && props.placeholderPrice !== '--') return props.placeholderPrice
   return formatDepthNumber(bidRows.value[0]?.price ?? askRows.value[0]?.price)

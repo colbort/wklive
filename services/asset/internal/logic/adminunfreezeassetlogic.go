@@ -33,10 +33,15 @@ func NewAdminUnfreezeAssetLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 func (l *AdminUnfreezeAssetLogic) AdminUnfreezeAsset(in *asset.AdminUnfreezeAssetReq) (*asset.AdminChangeAssetResp, error) {
 	amount, err := conv.ParseFloatField(in.Amount)
 	if err != nil {
+		l.Errorf("AdminUnfreezeAsset parse amount failed, tenantId=%d freezeNo=%s amount=%s bizNo=%s err=%v",
+			in.TenantId, in.FreezeNo, in.Amount, in.BizNo, err)
 		return nil, err
 	}
 	if amount <= 0 {
-		return nil, fmt.Errorf("amount must be positive")
+		err := fmt.Errorf("amount must be positive")
+		l.Errorf("AdminUnfreezeAsset validate amount failed, tenantId=%d freezeNo=%s amount=%s bizNo=%s err=%v",
+			in.TenantId, in.FreezeNo, in.Amount, in.BizNo, err)
+		return nil, err
 	}
 
 	ts := utils.NowMillis()
@@ -94,6 +99,8 @@ func (l *AdminUnfreezeAssetLogic) AdminUnfreezeAsset(in *asset.AdminUnfreezeAsse
 		return nil
 	})
 	if err != nil {
+		l.Errorf("AdminUnfreezeAsset transaction failed, tenantId=%d freezeNo=%s amount=%s bizNo=%s err=%v",
+			in.TenantId, in.FreezeNo, in.Amount, in.BizNo, err)
 		return nil, err
 	}
 

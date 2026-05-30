@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -59,16 +60,22 @@ func (l *ManualRewardLogic) ManualReward(in *staking.AdminManualRewardReq) (*sta
 		Remark:     in.Remark,
 	})
 	if err != nil {
+		l.Errorf("staking manual reward add asset rpc failed, tenantId=%d userId=%d orderId=%d orderNo=%s coin=%s amount=%v err=%v",
+			order.TenantId, order.UserId, order.Id, order.OrderNo, order.RewardCoinSymbol, rewardAmount, err)
 		return nil, err
 	}
-	if resp == nil || resp.Base == nil || resp.Base.Code != 0 {
+	if resp == nil || resp.Base == nil || resp.Base.Code != 200 {
+		l.Errorf("staking manual reward add asset failed, tenantId=%d userId=%d orderId=%d orderNo=%s coin=%s amount=%v msg=%s",
+			order.TenantId, order.UserId, order.Id, order.OrderNo, order.RewardCoinSymbol, rewardAmount, assetBaseMsg(resp))
 		if resp != nil && resp.Base != nil {
 			return &staking.AdminManualRewardResp{Page: resp.Base}, nil
 		}
-		return nil, err
+		return nil, fmt.Errorf("staking manual reward add asset returned empty response")
 	}
 
-	order.TotalReward += rewardAmount
+	beforeReward := order.TotalReward
+	afterReward := beforeReward + rewardAmount
+	order.TotalReward = afterReward
 	order.LastRewardTimes = now
 	order.NextRewardTimes = calcNextRewardTime(int64(now), staking.RewardMode(order.RewardMode), int64(order.EndTimes))
 	order.UpdateUserId = in.OperatorUid
@@ -88,8 +95,8 @@ func (l *ManualRewardLogic) ManualReward(in *staking.AdminManualRewardReq) (*sta
 			CoinSymbol:       order.CoinSymbol,
 			RewardCoinSymbol: order.RewardCoinSymbol,
 			RewardAmount:     rewardAmount,
-			BeforeReward:     order.TotalReward,
-			AfterReward:      order.TotalReward + rewardAmount,
+			BeforeReward:     beforeReward,
+			AfterReward:      afterReward,
 			RewardType:       int64(in.RewardType),
 			RewardStatus:     int64(staking.RewardStatus_REWARD_STATUS_SUCCESS),
 			RewardTimes:      now,
@@ -104,6 +111,8 @@ func (l *ManualRewardLogic) ManualReward(in *staking.AdminManualRewardReq) (*sta
 		return orderModel.Update(ctx, order)
 	})
 	if err != nil {
+		l.Errorf("staking manual reward transaction failed after add asset, tenantId=%d userId=%d orderId=%d orderNo=%s coin=%s amount=%v err=%v",
+			order.TenantId, order.UserId, order.Id, order.OrderNo, order.RewardCoinSymbol, rewardAmount, err)
 		return nil, err
 	}
 

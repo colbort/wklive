@@ -33,10 +33,15 @@ func NewAdminFreezeAssetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 func (l *AdminFreezeAssetLogic) AdminFreezeAsset(in *asset.AdminFreezeAssetReq) (*asset.AdminChangeAssetResp, error) {
 	amount, err := conv.ParseFloatField(in.Amount)
 	if err != nil {
+		l.Errorf("AdminFreezeAsset parse amount failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizNo=%s err=%v",
+			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizNo, err)
 		return nil, err
 	}
 	if amount <= 0 {
-		return nil, fmt.Errorf("amount must be positive")
+		err := fmt.Errorf("amount must be positive")
+		l.Errorf("AdminFreezeAsset validate amount failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizNo=%s err=%v",
+			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizNo, err)
+		return nil, err
 	}
 
 	ts := utils.NowMillis()
@@ -80,6 +85,8 @@ func (l *AdminFreezeAssetLogic) AdminFreezeAsset(in *asset.AdminFreezeAssetReq) 
 		return nil
 	})
 	if err != nil {
+		l.Errorf("AdminFreezeAsset transaction failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizNo=%s err=%v",
+			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizNo, err)
 		return nil, err
 	}
 

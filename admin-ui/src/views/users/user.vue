@@ -100,6 +100,47 @@ function displayText(value: unknown) {
   return String(value)
 }
 
+function hasText(value: unknown) {
+  return String(value ?? '').trim().length > 0
+}
+
+function displayMaskedText(value: unknown) {
+  return hasText(value) ? '••••••••' : '-'
+}
+
+async function writeClipboard(text: string) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(text)
+    return
+  }
+
+  const textarea = document.createElement('textarea')
+  textarea.value = text
+  textarea.setAttribute('readonly', 'readonly')
+  textarea.style.position = 'fixed'
+  textarea.style.opacity = '0'
+  document.body.appendChild(textarea)
+  textarea.select()
+  const copied = document.execCommand('copy')
+  document.body.removeChild(textarea)
+  if (!copied) throw new Error('copy failed')
+}
+
+async function copyGoogleSecret(value: unknown) {
+  const secret = String(value ?? '').trim()
+  if (!secret) {
+    ElMessage.warning(t('common.noData'))
+    return
+  }
+
+  try {
+    await writeClipboard(secret)
+    ElMessage.success(t('common.copied'))
+  } catch (_) {
+    ElMessage.error(t('common.copyFailed'))
+  }
+}
+
 function getGenderLabel(value?: number) {
   return getOptionValueLabel(optionGroups.value, 'gender', value, t)
 }
@@ -122,6 +163,10 @@ function getRiskLevelLabel(value?: number) {
 
 function getEnabledLabel(value?: number) {
   return Number(value) === 1 ? t('users.yes') : t('users.no')
+}
+
+function getGuestLabel(value?: number) {
+  return Number(value) === 2 ? t('users.yes') : t('users.no')
 }
 
 function getOptionTagClass(groupKey: string, value?: number) {
@@ -152,6 +197,10 @@ function getOptionTagClass(groupKey: string, value?: number) {
 
 function getBooleanTagClass(value?: number) {
   return Number(value) === 1 ? 'option-tag option-tag--green' : 'option-tag option-tag--red'
+}
+
+function getGuestTagClass(value?: number) {
+  return Number(value) === 2 ? 'option-tag option-tag--green' : 'option-tag option-tag--red'
 }
 
 function getBankStatusTagClass(value?: number) {
@@ -651,8 +700,8 @@ onMounted(fetchCreateOptions)
         </el-table-column>
         <el-table-column :label="t('users.isGuest')" width="80">
           <template #default="{ row }">
-            <span :class="getBooleanTagClass(row.isGuest)">
-              {{ getEnabledLabel(row.isGuest) }}
+            <span :class="getGuestTagClass(row.isGuest)">
+              {{ getGuestLabel(row.isGuest) }}
             </span>
           </template>
         </el-table-column>
@@ -1015,10 +1064,21 @@ onMounted(fetchCreateOptions)
             <el-card shadow="never">
               <el-descriptions :column="2" border>
                 <el-descriptions-item :label="t('users.payPasswordHash')">
-                  {{ displayText(detail.security.payPasswordHash) }}
+                  {{ displayMaskedText(detail.security.payPasswordHash) }}
                 </el-descriptions-item>
                 <el-descriptions-item :label="t('users.googleSecret')">
-                  {{ displayText(detail.security.googleSecret) }}
+                  <span class="sensitive-value">
+                    <span>{{ displayMaskedText(detail.security.googleSecret) }}</span>
+                    <el-button
+                      size="small"
+                      text
+                      type="primary"
+                      :disabled="!hasText(detail.security.googleSecret)"
+                      @click="copyGoogleSecret(detail.security.googleSecret)"
+                    >
+                      {{ t('common.copy') }}
+                    </el-button>
+                  </span>
                 </el-descriptions-item>
                 <el-descriptions-item :label="t('users.google2faEnabled')">
                   {{ getEnabledLabel(detail.security.googleEnabled) }}
@@ -1137,6 +1197,12 @@ onMounted(fetchCreateOptions)
 .option-tag--slate {
   background: #e5e7eb;
   color: #475467;
+}
+
+.sensitive-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .edit-form-grid :deep(.el-form-item) {

@@ -41,7 +41,7 @@ func syncItickProducts(ctx context.Context, job *models.SysJob) error {
 	if err != nil {
 		return err
 	}
-	if result.Base.Code != 0 {
+	if result.Base.Code != 200 {
 		return fmt.Errorf("sync products failed, code: %d, message: %s", result.Base.Code, result.Base.Msg)
 	}
 	return nil
@@ -64,7 +64,7 @@ func syncItickKlines(ctx context.Context, job *models.SysJob) error {
 	if err != nil {
 		return err
 	}
-	if result.Base.Code != 0 {
+	if result.Base.Code != 200 {
 		return fmt.Errorf("sync klines failed, code: %d, message: %s", result.Base.Code, result.Base.Msg)
 	}
 	return nil

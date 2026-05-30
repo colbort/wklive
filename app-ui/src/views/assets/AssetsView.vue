@@ -144,6 +144,35 @@ function isSuccessCode(code: number) {
   return code === 0 || code === 200
 }
 
+function divideAssetAmountTextBy100(value: string) {
+  const text = String(value ?? '').trim()
+  if (!/^-?\d+(\.\d+)?$/.test(text)) return value
+
+  const negative = text.startsWith('-')
+  const unsignedText = negative ? text.slice(1) : text
+  const [integerPart, fractionPart = ''] = unsignedText.split('.')
+  const digits = `${integerPart}${fractionPart}`.replace(/^0+(?=\d)/, '') || '0'
+  const decimalPlaces = fractionPart.length + 2
+  const paddedDigits = digits.padStart(decimalPlaces + 1, '0')
+  const integerEndIndex = paddedDigits.length - decimalPlaces
+  const nextInteger = paddedDigits.slice(0, integerEndIndex).replace(/^0+(?=\d)/, '') || '0'
+  const nextFraction = paddedDigits.slice(integerEndIndex).replace(/0+$/, '')
+  const nextValue = nextFraction ? `${nextInteger}.${nextFraction}` : nextInteger
+
+  if (nextValue === '0') return '0'
+  return negative ? `-${nextValue}` : nextValue
+}
+
+function normalizeAssetAmounts(asset: AssetUserAsset): AssetUserAsset {
+  return {
+    ...asset,
+    totalAmount: divideAssetAmountTextBy100(asset.totalAmount),
+    availableAmount: divideAssetAmountTextBy100(asset.availableAmount),
+    frozenAmount: divideAssetAmountTextBy100(asset.frozenAmount),
+    lockedAmount: divideAssetAmountTextBy100(asset.lockedAmount),
+  }
+}
+
 function coinConfigName(config: AssetCoinConfig) {
   return config.coinName || config.symbol || config.coin
 }
@@ -193,7 +222,7 @@ async function loadAssetSummary() {
   try {
     const resp = await apiGetMyAssetSummary({})
     if (isSuccessCode(resp.code)) {
-      summaryAssets.value = resp.data?.assets || []
+      summaryAssets.value = (resp.data?.assets || []).map(normalizeAssetAmounts)
     }
   } catch (error) {
     console.warn('get my asset summary failed', error)
@@ -811,6 +840,15 @@ button {
   margin: 0 -16px;
   padding: 0 16px;
   border-bottom: 1px solid #242633;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.assets-sub-tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .assets-page--desktop .assets-sub-tabs--orders,

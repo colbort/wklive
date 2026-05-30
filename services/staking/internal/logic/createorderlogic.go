@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	"math"
 
 	"wklive/common/conv"
@@ -145,13 +146,17 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.AppCreateOrderReq) (*staking.
 		Remark:     in.Remark,
 	})
 	if err != nil {
+		l.Errorf("staking create order lock asset rpc failed, tenantId=%d userId=%d orderNo=%s coin=%s amount=%v err=%v",
+			tenantId, userId, orderNo, product.CoinSymbol, amount, err)
 		return nil, err
 	}
-	if lockResp == nil || lockResp.Base == nil || lockResp.Base.Code != 0 {
+	if lockResp == nil || lockResp.Base == nil || lockResp.Base.Code != 200 {
+		l.Errorf("staking create order lock asset failed, tenantId=%d userId=%d orderNo=%s coin=%s amount=%v msg=%s",
+			tenantId, userId, orderNo, product.CoinSymbol, amount, assetBaseMsg(lockResp))
 		if lockResp != nil && lockResp.Base != nil {
 			return &staking.AppCreateOrderResp{Base: lockResp.Base}, nil
 		}
-		return nil, err
+		return nil, fmt.Errorf("staking create order lock asset returned empty response")
 	}
 
 	product.StakedAmount += amount
@@ -174,6 +179,8 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.AppCreateOrderReq) (*staking.
 		return err
 	})
 	if err != nil {
+		l.Errorf("staking create order transaction failed after lock asset, tenantId=%d userId=%d orderNo=%s amount=%v err=%v",
+			tenantId, userId, orderNo, amount, err)
 		_, unlockErr := l.svcCtx.AssetClient.UnlockAssetByBizNo(l.ctx, &asset.UnlockAssetByBizNoReq{
 			TenantId:      tenantId,
 			TargetBizType: asset.BizType_BIZ_TYPE_STAKING,

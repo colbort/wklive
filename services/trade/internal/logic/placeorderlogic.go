@@ -87,6 +87,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 	if err != nil {
 		return nil, err
 	}
+	marginAsset := marginAssetForSymbol(symbol)
 	now := utils.NowMillis()
 	order := &models.TTradeOrder{
 		TenantId:      tenantId,
@@ -107,7 +108,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		FilledAmount:  0,
 		AvgPrice:      0,
 		Fee:           0,
-		FeeAsset:      marginAssetForSymbol(symbol),
+		FeeAsset:      marginAsset,
 		Source:        int64(in.OrderSource),
 		IsReduceOnly:  in.IsReduceOnly,
 		IsCloseOnly:   in.IsCloseOnly,
@@ -120,6 +121,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 	var (
 		frozenAsset  string
 		frozenAmount float64
+		freezeNo     string
 	)
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
@@ -152,7 +154,6 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 			return nil
 		}
 
-		marginAsset := marginAssetForSymbol(symbol)
 		frozenAsset, frozenAmount = marginAsset, amount
 		contract := &models.TTradeOrderContract{
 			TenantId:          tenantId,
@@ -177,7 +178,10 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		return nil, err
 	}
 
-	if _, err = freezeOrderAsset(l.svcCtx, l.ctx, order, symbol, frozenAsset, frozenAmount); err != nil {
+	freezeNo, err = freezeOrderAsset(l.svcCtx, l.ctx, order, symbol, frozenAsset, frozenAmount)
+	if err != nil {
+		l.Errorf("place order freeze asset failed, tenantId=%d userId=%d orderNo=%s symbolId=%d marketType=%d frozenAsset=%s frozenAmount=%v err=%v",
+			tenantId, userId, order.OrderNo, in.SymbolId, in.MarketType, frozenAsset, frozenAmount, err)
 		order.Status = int64(trade.OrderStatus_ORDER_STATUS_REJECTED)
 		order.CancelReason = fmt.Sprintf("asset freeze failed: %v", err)
 		order.UpdateTimes = utils.NowMillis()
@@ -185,6 +189,31 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 			l.Errorf("update rejected order failed, orderNo=%s err=%v", order.OrderNo, updateErr)
 		}
 		return nil, err
+	}
+	if freezeNo != "" {
+		extValue, err := marshalOrderAssetExt(orderAssetExt{FreezeNo: freezeNo})
+		if err != nil {
+			if compensateErr := unfreezeOrderAsset(l.svcCtx, l.ctx, order, freezeNo, frozenAmount, "trade place order compensate unfreeze"); compensateErr != nil {
+				l.Errorf("place order compensate unfreeze failed after marshal ext failed, tenantId=%d userId=%d orderNo=%s freezeNo=%s amount=%v err=%v compensateErr=%v",
+					tenantId, userId, order.OrderNo, freezeNo, frozenAmount, err, compensateErr)
+				return nil, fmt.Errorf("marshal order asset ext failed: %w; unfreeze compensation failed: %v", err, compensateErr)
+			}
+			l.Errorf("place order marshal asset ext failed after freeze, tenantId=%d userId=%d orderNo=%s freezeNo=%s amount=%v err=%v",
+				tenantId, userId, order.OrderNo, freezeNo, frozenAmount, err)
+			return nil, err
+		}
+		order.BizExt = sql.NullString{String: extValue, Valid: extValue != ""}
+		order.UpdateTimes = utils.NowMillis()
+		if err := l.svcCtx.TradeOrderModel.Update(l.ctx, order); err != nil {
+			if compensateErr := unfreezeOrderAsset(l.svcCtx, l.ctx, order, freezeNo, frozenAmount, "trade place order compensate unfreeze"); compensateErr != nil {
+				l.Errorf("place order compensate unfreeze failed after update order failed, tenantId=%d userId=%d orderNo=%s freezeNo=%s amount=%v err=%v compensateErr=%v",
+					tenantId, userId, order.OrderNo, freezeNo, frozenAmount, err, compensateErr)
+				return nil, fmt.Errorf("update order after freeze failed: %w; unfreeze compensation failed: %v", err, compensateErr)
+			}
+			l.Errorf("place order update order after freeze failed, tenantId=%d userId=%d orderNo=%s freezeNo=%s amount=%v err=%v",
+				tenantId, userId, order.OrderNo, freezeNo, frozenAmount, err)
+			return nil, err
+		}
 	}
 
 	return &trade.PlaceOrderResp{Base: helper.OkResp(), Order: orderToProto(order)}, nil

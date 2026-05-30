@@ -33,10 +33,15 @@ func NewTransferAssetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Tra
 func (l *TransferAssetLogic) TransferAsset(in *asset.TransferAssetReq) (*asset.TransferAssetResp, error) {
 	amount, err := conv.ParseFloatField(in.Amount)
 	if err != nil {
+		l.Errorf("TransferAsset parse amount failed, tenantId=%d userId=%d fromWalletType=%d toWalletType=%d coin=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
+			in.TenantId, in.UserId, in.FromWalletType, in.ToWalletType, in.Coin, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err
 	}
 	if amount <= 0 {
-		return nil, fmt.Errorf("amount must be positive")
+		err := fmt.Errorf("amount must be positive")
+		l.Errorf("TransferAsset validate amount failed, tenantId=%d userId=%d fromWalletType=%d toWalletType=%d coin=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
+			in.TenantId, in.UserId, in.FromWalletType, in.ToWalletType, in.Coin, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
+		return nil, err
 	}
 	ts := utils.NowMillis()
 	var (
@@ -112,6 +117,8 @@ func (l *TransferAssetLogic) TransferAsset(in *asset.TransferAssetReq) (*asset.T
 		return nil
 	})
 	if err != nil {
+		l.Errorf("TransferAsset transaction failed, tenantId=%d userId=%d fromWalletType=%d toWalletType=%d coin=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
+			in.TenantId, in.UserId, in.FromWalletType, in.ToWalletType, in.Coin, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err
 	}
 

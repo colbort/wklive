@@ -33,10 +33,15 @@ func NewAddAvailableLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddA
 func (l *AddAvailableLogic) AddAvailable(in *asset.AddAvailableReq) (*asset.ChangeAssetResp, error) {
 	amount, err := conv.ParseFloatField(in.Amount)
 	if err != nil {
+		l.Errorf("AddAvailable parse amount failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
+			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err
 	}
 	if amount <= 0 {
-		return nil, fmt.Errorf("amount must be positive")
+		err := fmt.Errorf("amount must be positive")
+		l.Errorf("AddAvailable validate amount failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
+			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
+		return nil, err
 	}
 
 	ts := utils.NowMillis()
@@ -111,6 +116,8 @@ func (l *AddAvailableLogic) AddAvailable(in *asset.AddAvailableReq) (*asset.Chan
 		return nil
 	})
 	if err != nil {
+		l.Errorf("AddAvailable transaction failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
+			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err
 	}
 

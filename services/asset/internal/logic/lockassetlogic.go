@@ -33,10 +33,15 @@ func NewLockAssetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LockAss
 func (l *LockAssetLogic) LockAsset(in *asset.LockAssetReq) (*asset.LockAssetResp, error) {
 	amount, err := conv.ParseFloatField(in.Amount)
 	if err != nil {
+		l.Errorf("LockAsset parse amount failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizType=%d sceneType=%d bizNo=%s err=%v",
+			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizType, in.SceneType, in.BizNo, err)
 		return nil, err
 	}
 	if amount <= 0 {
-		return nil, fmt.Errorf("amount must be positive")
+		err := fmt.Errorf("amount must be positive")
+		l.Errorf("LockAsset validate amount failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizType=%d sceneType=%d bizNo=%s err=%v",
+			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizType, in.SceneType, in.BizNo, err)
+		return nil, err
 	}
 
 	ts := utils.NowMillis()
@@ -80,6 +85,8 @@ func (l *LockAssetLogic) LockAsset(in *asset.LockAssetReq) (*asset.LockAssetResp
 		return nil
 	})
 	if err != nil {
+		l.Errorf("LockAsset transaction failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizType=%d sceneType=%d bizNo=%s err=%v",
+			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizType, in.SceneType, in.BizNo, err)
 		return nil, err
 	}
 

@@ -238,6 +238,7 @@ function isRiskEntryActive(side: RiskEntrySide) {
 
 function openSelectionSheet(type: Exclude<SelectionSheet, null>, side?: RiskEntrySide) {
   if (isSpotTrade.value) return
+  if (type === 'risk' && submitDisabled.value) return
   if (type === 'risk') {
     editingRiskEntrySide.value = side || riskEntrySide.value || 'long'
     riskTakeProfitEnabled.value = Boolean(props.takeProfitPrice)
@@ -416,7 +417,12 @@ function confirmRiskSettings() {
         >
       </div>
 
-      <button type="button" class="risk-trigger" @click="openSelectionSheet('risk', 'long')">
+      <button
+        type="button"
+        class="risk-trigger"
+        :disabled="submitDisabled"
+        @click="openSelectionSheet('risk', 'long')"
+      >
         <span
           :class="{
             active: isRiskEntryActive('long'),
@@ -438,7 +444,12 @@ function confirmRiskSettings() {
         {{ submittingSide === 'buy' ? '提交中' : buyLabel }}
       </button>
 
-      <button type="button" class="risk-trigger" @click="openSelectionSheet('risk', 'short')">
+      <button
+        type="button"
+        class="risk-trigger"
+        :disabled="submitDisabled"
+        @click="openSelectionSheet('risk', 'short')"
+      >
         <span
           :class="{
             active: isRiskEntryActive('short'),
@@ -1098,6 +1109,15 @@ function confirmRiskSettings() {
   border-bottom: 2px solid #fff;
   transform: rotate(45deg);
   content: '';
+}
+
+.risk-trigger:disabled {
+  cursor: not-allowed;
+  color: #8f929d;
+}
+
+.risk-trigger:disabled span {
+  border-color: #8f929d;
 }
 
 .wide-action,

@@ -146,6 +146,7 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 		LastLoginIp:    sql.NullString{String: in.RegisterIp, Valid: true},
 		LastLoginTime:  now,
 		RegisterIp:     sql.NullString{String: in.RegisterIp, Valid: true},
+		RegisterTime:   now,
 		IsGuest:        1,
 		IsRecharge:     0,
 		DeviceId:       "",
