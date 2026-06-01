@@ -392,7 +392,8 @@ type AssetUserAsset struct {
 type TransferMyAssetReq struct {
 	FromWalletType int64  `json:"fromWalletType"`  // 转出钱包类型
 	ToWalletType   int64  `json:"toWalletType"`    // 转入钱包类型
-	Coin           string `json:"coin"`            // 币种
+	FromCoin       string `json:"fromCoin"`        // 转出币种
+	ToCoin         string `json:"toCoin"`          // 转入币种
 	Amount         string `json:"amount"`          // 划转金额，单位：分
 	Remark         string `json:"remark,optional"` // 备注
 }

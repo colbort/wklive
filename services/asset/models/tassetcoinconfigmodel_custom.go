@@ -114,7 +114,7 @@ func (m *defaultTAssetCoinConfigModel) FindVisibleByOperation(ctx context.Contex
 		return nil, err
 	}
 
-	// 如果operationType <= 0, USDT 只应该返回一个，USDT有ERC20和TRC20两种类型，但APP端不区分
+	// 如果operationType <= 0, USDT，USDC 只应该返回一个，USDT有ERC20和TRC20两种类型，但APP端不区分
 	if operationType <= 0 {
 		usdtList := make([]*TAssetCoinConfig, 0)
 		usdcList := make([]*TAssetCoinConfig, 0)

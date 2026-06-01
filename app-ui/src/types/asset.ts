@@ -126,7 +126,8 @@ export interface UserAssetSummary {
 export interface TransferMyAssetReq {
   fromWalletType: number
   toWalletType: number
-  coin: string
+  fromCoin: string
+  toCoin: string
   amount: string
   remark?: string
 }

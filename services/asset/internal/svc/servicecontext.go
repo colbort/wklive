@@ -2,6 +2,7 @@ package svc
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -80,4 +81,23 @@ func SanitizeBizNo(bizNo string) string {
 		}
 		return -1
 	}, bizNo)
+}
+
+// 获取最新报价
+func (s *ServiceContext) LastPrice(ctx context.Context, symbol string) (float64, error) {
+	key := fmt.Sprintf("itick:quote:%s:%s:%s", "crypto", "BA", symbol)
+	data, err := s.Redis.GetCtx(ctx, key)
+	if err != nil {
+		return 0, err
+	}
+
+	var quoteData struct {
+		Price float64 `json:"lastPrice"`
+	}
+	err = json.Unmarshal([]byte(data), &quoteData)
+	if err != nil {
+		return 0, err
+	}
+
+	return quoteData.Price, nil
 }

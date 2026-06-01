@@ -116,9 +116,10 @@ message ListMyLocksResp {
 message TransferMyAssetReq {
   WalletType from_wallet_type = 1; // 转出钱包类型
   WalletType to_wallet_type = 2;   // 转入钱包类型
-  string coin = 3;                 // 币种
-  string amount = 4;               // 划转金额
-  string remark = 5;               // 备注
+  string from_coin = 3;            // 转出币种
+  string to_coin = 4;              // 转入币种
+  string amount = 5;               // 划转金额
+  string remark = 6;               // 备注
 }
 
 message TransferMyAssetResp {

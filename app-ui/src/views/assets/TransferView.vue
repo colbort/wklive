@@ -83,6 +83,8 @@ const walletTypes = computed(() => {
         { value: 1, label: '现金账户' },
         { value: 2, label: '股票账户' },
         { value: 3, label: '合约账户' },
+        { value: 4, label: '理财账户' },
+        { value: 5, label: '期权账户' },
       ]
 })
 const fromAccountLabel = computed(() => accountLabel(fromWalletType.value))
@@ -106,6 +108,14 @@ function isSuccessCode(code: number) {
   return code === 0 || code === 200
 }
 
+function coinKey(coin: string) {
+  return String(coin || '').toUpperCase()
+}
+
+function isSameTransferCoin(walletType: number, coin: string, targetWalletType: number, targetCoin: string) {
+  return walletType === targetWalletType && Boolean(coin) && coinKey(coin) === coinKey(targetCoin)
+}
+
 function openPicker(target: 'from' | 'to') {
   pickerTarget.value = target
   pageError.value = ''
@@ -115,13 +125,19 @@ function openPicker(target: 'from' | 'to') {
 function selectTransferAsset(payload: { walletType: number; coin: string }) {
   const coin = payload.coin
   if (pickerTarget.value === 'to') {
+    if (isSameTransferCoin(payload.walletType, coin, fromWalletType.value, fromCoin.value)) {
+      pageError.value = '同一账户同一币种无需划转'
+      return
+    }
     toWalletType.value = payload.walletType
     toSelectedCoin.value = coin
-    fromSelectedCoin.value = coin
   } else {
+    if (isSameTransferCoin(payload.walletType, coin, toWalletType.value, toCoin.value)) {
+      pageError.value = '同一账户同一币种无需划转'
+      return
+    }
     fromWalletType.value = payload.walletType
     fromSelectedCoin.value = coin
-    toSelectedCoin.value = coin
   }
   pageError.value = ''
   pageTip.value = ''
@@ -162,12 +178,8 @@ async function submitTransfer() {
     pageError.value = '请选择划转币种'
     return
   }
-  if (fromWalletType.value === toWalletType.value) {
-    pageError.value = '请选择不同的转出和转入账户'
-    return
-  }
-  if (fromCoin.value !== toCoin.value) {
-    pageError.value = '转出和转入币种需保持一致'
+  if (isSameTransferCoin(fromWalletType.value, fromCoin.value, toWalletType.value, toCoin.value)) {
+    pageError.value = '同一账户同一币种无需划转'
     return
   }
   if (!transferAmount || transferAmount === '0') {
@@ -184,7 +196,8 @@ async function submitTransfer() {
     const resp = await apiTransferMyAsset({
       fromWalletType: fromWalletType.value,
       toWalletType: toWalletType.value,
-      coin: fromCoin.value,
+      fromCoin: fromCoin.value,
+      toCoin: toCoin.value,
       amount: transferAmount,
     })
     if (isSuccessCode(resp.code)) {
@@ -280,6 +293,9 @@ onMounted(() => {
     <AssetTransferSelectSheet
       :model-value="pickerVisible"
       :title="pickerTitle"
+      :source="pickerTarget === 'to' ? 'configs' : 'assets'"
+      :excluded-wallet-type="pickerTarget === 'to' ? fromWalletType : toWalletType"
+      :excluded-coin="pickerTarget === 'to' ? fromCoin : toCoin"
       :wallet-types="walletTypes"
       :selected-wallet-type="pickerWalletType"
       :selected-coin="pickerCoin"

@@ -5,15 +5,22 @@ import AssetCoinIcon from '@/components/assets/AssetCoinIcon.vue'
 import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
 import { formatAssetMinorAmount } from '@/utils/assetAmount'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   title: string
   modelValue: boolean
+  source?: 'assets' | 'configs'
+  excludedWalletType?: number
+  excludedCoin?: string
   walletTypes: Array<{ value: number; label: string }>
   selectedWalletType: number
   selectedCoin: string
   assets: AssetUserAsset[]
   configs: AssetCoinConfig[]
-}>()
+}>(), {
+  source: 'assets',
+  excludedWalletType: 0,
+  excludedCoin: '',
+})
 
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
@@ -27,6 +34,14 @@ function coinKey(coin: string) {
   return String(coin || '').toUpperCase()
 }
 
+function isExcludedCoin(coin: string) {
+  return (
+    activeWalletType.value === props.excludedWalletType &&
+    Boolean(props.excludedCoin) &&
+    coinKey(coin) === coinKey(props.excludedCoin)
+  )
+}
+
 const coins = computed(() => {
   const enabledConfigs = props.configs.filter((config) => config.walletType === activeWalletType.value)
   const configMap = new Map<string, AssetCoinConfig>()
@@ -34,35 +49,44 @@ const coins = computed(() => {
     const key = coinKey(config.coin)
     if (!configMap.has(key)) configMap.set(key, config)
   })
-  const enabledCoins = new Set(configMap.keys())
   const assetMap = new Map<string, AssetUserAsset>()
   props.assets
     .filter((asset) => asset.walletType === activeWalletType.value)
-    .filter((asset) => enabledCoins.has(coinKey(asset.coin)))
     .forEach((asset) => {
       const key = coinKey(asset.coin)
       if (!assetMap.has(key)) assetMap.set(key, asset)
     })
 
-  const rows = Array.from(assetMap.values()).map((asset) => ({
-      coin: asset.coin,
-      config: configMap.get(coinKey(asset.coin)),
-      availableAmount: formatAssetMinorAmount(
-        asset.availableAmount || asset.totalAmount || '0',
-        configMap.get(coinKey(asset.coin))?.decimalPlaces,
-      ),
-    }))
-
-  const configuredRows = Array.from(configMap.values())
-    .filter((config) => !assetMap.has(coinKey(config.coin)))
-    .map((config) => ({
-      coin: config.coin,
-      config,
-      availableAmount: formatAssetMinorAmount('0', config.decimalPlaces),
-    }))
+  const rows =
+    props.source === 'configs'
+      ? Array.from(configMap.values()).map((config) => {
+          const asset = assetMap.get(coinKey(config.coin))
+          return {
+            coin: config.coin,
+            config,
+            amountLabel: '余额',
+            availableAmount: formatAssetMinorAmount(
+              asset?.availableAmount || asset?.totalAmount || '0',
+              config.decimalPlaces,
+            ),
+          }
+        })
+      : props.assets
+          .filter((asset) => asset.walletType === activeWalletType.value)
+          .map((asset) => ({
+            coin: asset.coin,
+            config: configMap.get(coinKey(asset.coin)),
+            amountLabel: '可用',
+            availableAmount: formatAssetMinorAmount(
+              asset.availableAmount || asset.totalAmount || '0',
+              configMap.get(coinKey(asset.coin))?.decimalPlaces,
+            ),
+          }))
 
   const keyword = query.value.trim().toUpperCase()
-  return [...rows, ...configuredRows].filter((row) => !keyword || row.coin.toUpperCase().includes(keyword))
+  return rows.filter(
+    (row) => !isExcludedCoin(row.coin) && (!keyword || row.coin.toUpperCase().includes(keyword)),
+  )
 })
 
 watch(
@@ -126,7 +150,7 @@ function selectCoin(coin: string) {
           >
             <AssetCoinIcon :coin="row.coin" :config="row.config" />
             <strong>{{ row.coin }}</strong>
-            <span>可用 <b>{{ row.availableAmount }}</b></span>
+            <span>{{ row.amountLabel }} <b>{{ row.availableAmount }}</b></span>
             <em v-if="activeWalletType === selectedWalletType && row.coin === selectedCoin">✓</em>
           </button>
           <p v-if="!coins.length" class="asset-select-empty">暂无可选币种</p>

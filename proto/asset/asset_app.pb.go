@@ -810,9 +810,10 @@ type TransferMyAssetReq struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	FromWalletType WalletType             `protobuf:"varint,1,opt,name=from_wallet_type,json=fromWalletType,proto3,enum=asset.WalletType" json:"from_wallet_type,omitempty"` // 转出钱包类型
 	ToWalletType   WalletType             `protobuf:"varint,2,opt,name=to_wallet_type,json=toWalletType,proto3,enum=asset.WalletType" json:"to_wallet_type,omitempty"`       // 转入钱包类型
-	Coin           string                 `protobuf:"bytes,3,opt,name=coin,proto3" json:"coin,omitempty"`                                                                    // 币种
-	Amount         string                 `protobuf:"bytes,4,opt,name=amount,proto3" json:"amount,omitempty"`                                                                // 划转金额
-	Remark         string                 `protobuf:"bytes,5,opt,name=remark,proto3" json:"remark,omitempty"`                                                                // 备注
+	FromCoin       string                 `protobuf:"bytes,3,opt,name=from_coin,json=fromCoin,proto3" json:"from_coin,omitempty"`                                            // 转出币种
+	ToCoin         string                 `protobuf:"bytes,4,opt,name=to_coin,json=toCoin,proto3" json:"to_coin,omitempty"`                                                  // 转入币种
+	Amount         string                 `protobuf:"bytes,5,opt,name=amount,proto3" json:"amount,omitempty"`                                                                // 划转金额
+	Remark         string                 `protobuf:"bytes,6,opt,name=remark,proto3" json:"remark,omitempty"`                                                                // 备注
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -861,9 +862,16 @@ func (x *TransferMyAssetReq) GetToWalletType() WalletType {
 	return WalletType_WALLET_TYPE_UNKNOWN
 }
 
-func (x *TransferMyAssetReq) GetCoin() string {
+func (x *TransferMyAssetReq) GetFromCoin() string {
 	if x != nil {
-		return x.Coin
+		return x.FromCoin
+	}
+	return ""
+}
+
+func (x *TransferMyAssetReq) GetToCoin() string {
+	if x != nil {
+		return x.ToCoin
 	}
 	return ""
 }
@@ -1003,13 +1011,14 @@ const file_proto_asset_asset_app_proto_rawDesc = "" +
 	"\x04page\x18\x06 \x01(\v2\x0f.common.PageReqR\x04page\"]\n" +
 	"\x0fListMyLocksResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12$\n" +
-	"\x04data\x18\x02 \x03(\v2\x10.asset.AssetLockR\x04data\"\xce\x01\n" +
+	"\x04data\x18\x02 \x03(\v2\x10.asset.AssetLockR\x04data\"\xf0\x01\n" +
 	"\x12TransferMyAssetReq\x12;\n" +
 	"\x10from_wallet_type\x18\x01 \x01(\x0e2\x11.asset.WalletTypeR\x0efromWalletType\x127\n" +
-	"\x0eto_wallet_type\x18\x02 \x01(\x0e2\x11.asset.WalletTypeR\ftoWalletType\x12\x12\n" +
-	"\x04coin\x18\x03 \x01(\tR\x04coin\x12\x16\n" +
-	"\x06amount\x18\x04 \x01(\tR\x06amount\x12\x16\n" +
-	"\x06remark\x18\x05 \x01(\tR\x06remark\"\x99\x01\n" +
+	"\x0eto_wallet_type\x18\x02 \x01(\x0e2\x11.asset.WalletTypeR\ftoWalletType\x12\x1b\n" +
+	"\tfrom_coin\x18\x03 \x01(\tR\bfromCoin\x12\x17\n" +
+	"\ato_coin\x18\x04 \x01(\tR\x06toCoin\x12\x16\n" +
+	"\x06amount\x18\x05 \x01(\tR\x06amount\x12\x16\n" +
+	"\x06remark\x18\x06 \x01(\tR\x06remark\"\x99\x01\n" +
 	"\x13TransferMyAssetResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12/\n" +
 	"\n" +
