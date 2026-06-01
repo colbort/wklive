@@ -2,19 +2,34 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
-import { apiGetAssetOptions, apiGetMyAssetSummary, apiListAssetCoinConfigs } from '@/api/asset'
+import {
+  apiGetAssetOptions,
+  apiGetMyAssetSummary,
+  apiListAssetCoinConfigs,
+  apiTransferMyAsset,
+} from '@/api/asset'
 import AssetCoinIcon from '@/components/assets/AssetCoinIcon.vue'
 import AssetFlowLayout from '@/components/assets/AssetFlowLayout.vue'
 import AssetPrimaryButton from '@/components/assets/AssetPrimaryButton.vue'
 import AssetTransferSelectSheet from '@/components/assets/AssetTransferSelectSheet.vue'
 import { optionText, useOptions } from '@/composables/useOptions'
 import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
+import {
+  compareDecimalText,
+  formatAssetMinorAmount,
+  normalizeAssetDecimalPlaces,
+  normalizeAssetInputDecimalPlaces,
+  parseAssetDecimalToMinorText,
+} from '@/utils/assetAmount'
 
 const route = useRoute()
 const assetOptions = useOptions(apiGetAssetOptions)
 const coinConfigs = ref<AssetCoinConfig[]>([])
 const assets = ref<AssetUserAsset[]>([])
 const amount = ref('')
+const submitLoading = ref(false)
+const pageError = ref('')
+const pageTip = ref('')
 const pickerTarget = ref<'from' | 'to' | ''>('')
 const fromWalletType = ref(Number(route.query.walletType || 1))
 const toWalletType = ref(Number(route.query.walletType || 1))
@@ -26,16 +41,26 @@ const queryCoin = computed(() => String(route.query.coin || 'USDT'))
 const fromCoin = computed(() => fromSelectedCoin.value)
 const toCoin = computed(() => toSelectedCoin.value)
 const fromConfig = computed(() =>
-  coinConfigs.value.find((config) => config.coin === fromCoin.value),
+  coinConfigs.value.find(
+    (config) => config.walletType === fromWalletType.value && config.coin === fromCoin.value,
+  ),
 )
-const toConfig = computed(() => coinConfigs.value.find((config) => config.coin === toCoin.value))
+const toConfig = computed(() =>
+  coinConfigs.value.find(
+    (config) => config.walletType === toWalletType.value && config.coin === toCoin.value,
+  ),
+)
+const fromDecimalPlaces = computed(() => normalizeAssetDecimalPlaces(fromConfig.value?.decimalPlaces))
+const fromInputDecimalPlaces = computed(() =>
+  normalizeAssetInputDecimalPlaces(fromConfig.value?.decimalPlaces),
+)
 const pickerWalletType = computed(() =>
   pickerTarget.value === 'to' ? toWalletType.value : fromWalletType.value,
 )
 const pickerCoin = computed(() => (pickerTarget.value === 'to' ? toCoin.value : fromCoin.value))
 const pickerTitle = computed(() => (pickerTarget.value === 'to' ? '选择转入账户' : '选择转出账户'))
 const pickerVisible = computed(() => Boolean(pickerTarget.value))
-const availableAmount = computed(() => {
+const rawAvailableAmount = computed(() => {
   if (!fromCoin.value) return '0'
   return (
     assets.value.find(
@@ -43,6 +68,9 @@ const availableAmount = computed(() => {
     )?.availableAmount || '0'
   )
 })
+const availableAmount = computed(() =>
+  formatAssetMinorAmount(rawAvailableAmount.value, fromDecimalPlaces.value),
+)
 const walletTypes = computed(() => {
   const options = assetOptions
     .getGroup('walletType')
@@ -70,22 +98,33 @@ function placeholderAccountLabel(walletType: number) {
   return walletTypes.value.find((account) => account.value !== walletType)?.label || '请选择账户'
 }
 
+function firstOtherWalletType(walletType: number) {
+  return walletTypes.value.find((account) => account.value !== walletType)?.value || walletType
+}
+
 function isSuccessCode(code: number) {
   return code === 0 || code === 200
 }
 
 function openPicker(target: 'from' | 'to') {
   pickerTarget.value = target
+  pageError.value = ''
+  pageTip.value = ''
 }
 
 function selectTransferAsset(payload: { walletType: number; coin: string }) {
+  const coin = payload.coin
   if (pickerTarget.value === 'to') {
     toWalletType.value = payload.walletType
-    toSelectedCoin.value = payload.coin
+    toSelectedCoin.value = coin
+    fromSelectedCoin.value = coin
   } else {
     fromWalletType.value = payload.walletType
-    fromSelectedCoin.value = payload.coin
+    fromSelectedCoin.value = coin
+    toSelectedCoin.value = coin
   }
+  pageError.value = ''
+  pageTip.value = ''
 }
 
 function updatePickerVisible(visible: boolean) {
@@ -101,7 +140,9 @@ async function loadPageData() {
       apiGetMyAssetSummary({}),
       ...configRequests,
     ])
-    if (isSuccessCode(summaryResp.code)) assets.value = summaryResp.data?.assets || []
+    if (isSuccessCode(summaryResp.code)) {
+      assets.value = summaryResp.data?.assets || []
+    }
     coinConfigs.value = configResponses.flatMap((resp) =>
       isSuccessCode(resp.code) ? resp.data || [] : [],
     )
@@ -110,11 +151,69 @@ async function loadPageData() {
   }
 }
 
+async function submitTransfer() {
+  if (submitLoading.value) return
+
+  pageError.value = ''
+  pageTip.value = ''
+
+  const transferAmount = parseAssetDecimalToMinorText(amount.value, fromDecimalPlaces.value)
+  if (!fromCoin.value || !toCoin.value) {
+    pageError.value = '请选择划转币种'
+    return
+  }
+  if (fromWalletType.value === toWalletType.value) {
+    pageError.value = '请选择不同的转出和转入账户'
+    return
+  }
+  if (fromCoin.value !== toCoin.value) {
+    pageError.value = '转出和转入币种需保持一致'
+    return
+  }
+  if (!transferAmount || transferAmount === '0') {
+    pageError.value = `请输入有效划转数量，最多保留 ${fromInputDecimalPlaces.value} 位小数`
+    return
+  }
+  if (compareDecimalText(transferAmount, rawAvailableAmount.value) > 0) {
+    pageError.value = '可用余额不足'
+    return
+  }
+
+  submitLoading.value = true
+  try {
+    const resp = await apiTransferMyAsset({
+      fromWalletType: fromWalletType.value,
+      toWalletType: toWalletType.value,
+      coin: fromCoin.value,
+      amount: transferAmount,
+    })
+    if (isSuccessCode(resp.code)) {
+      pageTip.value = '划转成功'
+      amount.value = ''
+      await loadPageData()
+    } else {
+      pageError.value = resp.msg || '划转失败，请稍后重试'
+    }
+  } catch (error) {
+    console.warn('transfer asset failed', error)
+    pageError.value = '划转失败，请稍后重试'
+  } finally {
+    submitLoading.value = false
+  }
+}
+
 onMounted(() => {
+  const walletType = Number(route.query.walletType || 1)
   if (direction.value === 'in') {
+    fromWalletType.value = firstOtherWalletType(walletType)
+    toWalletType.value = walletType
+    fromSelectedCoin.value = queryCoin.value
     toSelectedCoin.value = queryCoin.value
   } else {
+    fromWalletType.value = walletType
+    toWalletType.value = firstOtherWalletType(walletType)
     fromSelectedCoin.value = queryCoin.value
+    toSelectedCoin.value = queryCoin.value
   }
   void loadPageData()
 })
@@ -165,7 +264,18 @@ onMounted(() => {
       </span>
     </label>
 
-    <AssetPrimaryButton class="transfer-button" label="划转" />
+    <p v-if="pageError" class="state-text state-text--error">
+      {{ pageError }}
+    </p>
+    <p v-if="pageTip" class="state-text state-text--success">
+      {{ pageTip }}
+    </p>
+
+    <AssetPrimaryButton
+      class="transfer-button"
+      :label="submitLoading ? '划转中' : '划转'"
+      @click="submitTransfer"
+    />
 
     <AssetTransferSelectSheet
       :model-value="pickerVisible"
@@ -306,5 +416,19 @@ input {
 
 .transfer-button {
   margin-top: 30px;
+}
+
+.state-text {
+  margin: 14px 0 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.state-text--error {
+  color: #ff6b6b;
+}
+
+.state-text--success {
+  color: #02b904;
 }
 </style>

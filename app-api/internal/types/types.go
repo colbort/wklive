@@ -389,6 +389,20 @@ type AssetUserAsset struct {
 	UpdateTimes     int64  `json:"updateTimes"`     // 更新时间
 }
 
+type TransferMyAssetReq struct {
+	FromWalletType int64  `json:"fromWalletType"`  // 转出钱包类型
+	ToWalletType   int64  `json:"toWalletType"`    // 转入钱包类型
+	Coin           string `json:"coin"`            // 币种
+	Amount         string `json:"amount"`          // 划转金额，单位：分
+	Remark         string `json:"remark,optional"` // 备注
+}
+
+type TransferMyAssetResp struct {
+	RespBase
+	FromAsset AssetUserAsset `json:"fromAsset"` // 转出账户资产
+	ToAsset   AssetUserAsset `json:"toAsset"`   // 转入账户资产
+}
+
 type AvailableRechargeChannel struct {
 	ChannelId              int64  `json:"channelId"`
 	ChannelCode            string `json:"channelCode"`

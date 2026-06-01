@@ -12,6 +12,11 @@ import AssetPrimaryButton from '@/components/assets/AssetPrimaryButton.vue'
 import { useOptions } from '@/composables/useOptions'
 import type { AssetCoinConfig } from '@/types/asset'
 import type { CryptoRechargeAddress } from '@/types/payment'
+import {
+  normalizeAssetDecimalPlaces,
+  normalizeAssetInputDecimalPlaces,
+  parseAssetDecimalToMinorText,
+} from '@/utils/assetAmount'
 
 const route = useRoute()
 const assetOptions = useOptions(apiGetAssetOptions)
@@ -34,6 +39,12 @@ const step = ref<'select' | 'detail'>('select')
 const walletType = computed(() => Number(route.query.walletType || 1))
 const routeCoin = computed(() => String(route.query.coin || 'USDT'))
 const selectedCoin = computed(() => selectedConfig.value?.coin || routeCoin.value)
+const selectedDecimalPlaces = computed(() =>
+  normalizeAssetDecimalPlaces(selectedConfig.value?.decimalPlaces),
+)
+const selectedInputDecimalPlaces = computed(() =>
+  normalizeAssetInputDecimalPlaces(selectedConfig.value?.decimalPlaces),
+)
 const selectedChainCode = computed(
   () => selectedConfig.value?.chainCode || (selectedCoin.value === 'USDT' ? 20 : 0),
 )
@@ -187,21 +198,15 @@ function handleVoucherChange(event: Event) {
   voucherName.value = input.files?.[0]?.name || ''
 }
 
-function parseAmountToMinor(value: string) {
-  const normalized = value.trim()
-  if (!/^\d+(\.\d{1,2})?$/.test(normalized)) return 0
-  const [integerPart, decimalPart = ''] = normalized.split('.')
-  return Number(integerPart) * 100 + Number(decimalPart.padEnd(2, '0'))
-}
-
 async function completeRecharge() {
   if (submitLoading.value) return
 
   pageError.value = ''
   copyTip.value = ''
-  const rechargeAmount = parseAmountToMinor(amount.value)
-  if (rechargeAmount <= 0) {
-    pageError.value = '请输入充值金额'
+  const rechargeAmountText = parseAssetDecimalToMinorText(amount.value, selectedDecimalPlaces.value)
+  const rechargeAmount = Number(rechargeAmountText)
+  if (!rechargeAmountText || rechargeAmount <= 0) {
+    pageError.value = `请输入有效充值金额，最多保留 ${selectedInputDecimalPlaces.value} 位小数`
     return
   }
 

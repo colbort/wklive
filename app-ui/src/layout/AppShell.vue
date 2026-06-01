@@ -3,14 +3,15 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 
 import { appNavigation } from '@/config/navigation'
-import { apiGetMyAssetSummary } from '@/api/asset'
+import { apiGetMyAssetSummary, apiListAssetCoinConfigs } from '@/api/asset'
 import { apiListVisibleCategories, apiListVisibleProducts } from '@/api/itick'
 import { getAccessToken, getTenantCode } from '@/api/http'
 import { apiGetProfile, apiLogout } from '@/api/userPrivate'
 import { useDevice } from '@/composables/useDevice'
-import type { AssetUserAsset } from '@/types/asset'
+import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
 import type { ItickTenantCategory, ItickTenantProduct } from '@/types/itick'
 import type { UserProfile } from '@/types/user'
+import { formatAssetMinorAmount } from '@/utils/assetAmount'
 
 const route = useRoute()
 const router = useRouter()
@@ -25,6 +26,7 @@ const desktopProductsMap = ref<Record<number, ItickTenantProduct[]>>({})
 const hoveredCategoryType = ref<number | null>(null)
 const profile = ref<UserProfile | null>(null)
 const userAssets = ref<AssetUserAsset[]>([])
+const userAssetCoinConfigs = ref<AssetCoinConfig[]>([])
 const activeUserPanel = ref('')
 
 const desktopDocNav = [
@@ -48,6 +50,9 @@ const userBase = computed(() => profile.value?.base ?? null)
 const displayName = computed(() => userBase.value?.nickname || userBase.value?.username || 'GUEST-8437')
 const displayUserId = computed(() => userBase.value?.id || 50596163)
 const desktopAssetPreview = computed(() => userAssets.value.filter((asset) => asset.walletType === 1).slice(0, 8))
+const desktopAssetConfigMap = computed(
+  () => new Map(userAssetCoinConfigs.value.map((config) => [config.coin, config])),
+)
 
 onMounted(async () => {
   if (isDesktop.value) {
@@ -66,12 +71,19 @@ async function ensureDesktopUserData() {
   if (!getAccessToken()) return
 
   try {
-    const [profileResp, assetResp] = await Promise.all([apiGetProfile(), apiGetMyAssetSummary({})])
+    const [profileResp, assetResp, configResp] = await Promise.all([
+      apiGetProfile(),
+      apiGetMyAssetSummary({}),
+      apiListAssetCoinConfigs({ walletType: 1, operationType: 0 }),
+    ])
     if (profileResp.code === 0 || profileResp.code === 200) {
       profile.value = profileResp.data
     }
     if (assetResp.code === 0 || assetResp.code === 200) {
       userAssets.value = assetResp.data?.assets || []
+    }
+    if (configResp.code === 0 || configResp.code === 200) {
+      userAssetCoinConfigs.value = configResp.data || []
     }
   } catch (error) {
     console.warn('load desktop user data failed', error)
@@ -122,6 +134,11 @@ function handleDesktopNavLeave() {
 function coinGlyph(product: ItickTenantProduct) {
   const coin = product.baseCoin || product.symbol.slice(0, 3) || product.displayName
   return coin.slice(0, 1).toUpperCase()
+}
+
+function desktopAssetAmount(asset: AssetUserAsset) {
+  const config = desktopAssetConfigMap.value.get(asset.coin)
+  return formatAssetMinorAmount(asset.availableAmount || asset.totalAmount || '0', config?.decimalPlaces)
 }
 
 function openDesktopProduct(category: ItickTenantCategory, product: ItickTenantProduct) {
@@ -282,7 +299,7 @@ async function logout() {
                 <div v-for="asset in desktopAssetPreview" :key="asset.id || asset.coin" class="site-user-assets__row">
                   <span>{{ asset.coin.slice(0, 1) }}</span>
                   <strong>{{ asset.coin }}</strong>
-                  <em>{{ asset.availableAmount || asset.totalAmount || '0' }}</em>
+                  <em>{{ desktopAssetAmount(asset) }}</em>
                 </div>
                 <RouterLink class="site-user-assets__more" to="/assets">more+</RouterLink>
               </div>

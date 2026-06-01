@@ -123,6 +123,19 @@ export interface UserAssetSummary {
   assets: AssetUserAsset[]
 }
 
+export interface TransferMyAssetReq {
+  fromWalletType: number
+  toWalletType: number
+  coin: string
+  amount: string
+  remark?: string
+}
+
+export interface TransferMyAssetResp {
+  fromAsset: AssetUserAsset
+  toAsset: AssetUserAsset
+}
+
 export interface GetMyAssetSummaryReq {
 }
 

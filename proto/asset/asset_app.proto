@@ -31,6 +31,9 @@ service AssetApp {
 
   // 查询我的锁仓明细
   rpc ListMyLocks(ListMyLocksReq) returns (ListMyLocksResp);
+
+  // 我的账户划转
+  rpc TransferMyAsset(TransferMyAssetReq) returns (TransferMyAssetResp);
 }
 
 message ListAssetCoinConfigsReq {
@@ -108,4 +111,18 @@ message ListMyLocksReq {
 message ListMyLocksResp {
   common.RespBase base = 1;
   repeated AssetLock data = 2; // 锁仓列表
+}
+
+message TransferMyAssetReq {
+  WalletType from_wallet_type = 1; // 转出钱包类型
+  WalletType to_wallet_type = 2;   // 转入钱包类型
+  string coin = 3;                 // 币种
+  string amount = 4;               // 划转金额
+  string remark = 5;               // 备注
+}
+
+message TransferMyAssetResp {
+  common.RespBase base = 1;
+  UserAsset from_asset = 2; // 转出账户资产
+  UserAsset to_asset = 3;   // 转入账户资产
 }

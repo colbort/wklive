@@ -202,6 +202,20 @@ type ListMyLocksResp {
 	data []AssetLock `json:"data"`
 }
 
+type TransferMyAssetReq {
+	fromWalletType int64  `json:"fromWalletType"` // 转出钱包类型
+	toWalletType   int64  `json:"toWalletType"` // 转入钱包类型
+	coin           string `json:"coin"` // 币种
+	amount         string `json:"amount"` // 划转金额，单位：分
+	remark         string `json:"remark,optional"` // 备注
+}
+
+type TransferMyAssetResp {
+	RespBase
+	fromAsset AssetUserAsset `json:"fromAsset"` // 转出账户资产
+	toAsset   AssetUserAsset `json:"toAsset"` // 转入账户资产
+}
+
 type GetAssetOptionsResp {
 	RespBase
 	data []OptionsGroup `json:"data"`
@@ -243,4 +257,15 @@ service app {
 
 	@handler ListMyLocks
 	get /locks (ListMyLocksReq) returns (ListMyLocksResp)
+}
+
+@server (
+	prefix: /app/asset
+	group:  asset
+	jwt:    Jwt
+	middleware: SensitiveRateLimit
+)
+service app {
+	@handler TransferMyAsset
+	post /transfer (TransferMyAssetReq) returns (TransferMyAssetResp)
 }

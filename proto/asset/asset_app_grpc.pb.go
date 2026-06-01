@@ -26,6 +26,7 @@ const (
 	AssetApp_ListMyAssetFlows_FullMethodName     = "/asset.AssetApp/ListMyAssetFlows"
 	AssetApp_ListMyFreezes_FullMethodName        = "/asset.AssetApp/ListMyFreezes"
 	AssetApp_ListMyLocks_FullMethodName          = "/asset.AssetApp/ListMyLocks"
+	AssetApp_TransferMyAsset_FullMethodName      = "/asset.AssetApp/TransferMyAsset"
 )
 
 // AssetAppClient is the client API for AssetApp service.
@@ -48,6 +49,8 @@ type AssetAppClient interface {
 	ListMyFreezes(ctx context.Context, in *ListMyFreezesReq, opts ...grpc.CallOption) (*ListMyFreezesResp, error)
 	// 查询我的锁仓明细
 	ListMyLocks(ctx context.Context, in *ListMyLocksReq, opts ...grpc.CallOption) (*ListMyLocksResp, error)
+	// 我的账户划转
+	TransferMyAsset(ctx context.Context, in *TransferMyAssetReq, opts ...grpc.CallOption) (*TransferMyAssetResp, error)
 }
 
 type assetAppClient struct {
@@ -128,6 +131,16 @@ func (c *assetAppClient) ListMyLocks(ctx context.Context, in *ListMyLocksReq, op
 	return out, nil
 }
 
+func (c *assetAppClient) TransferMyAsset(ctx context.Context, in *TransferMyAssetReq, opts ...grpc.CallOption) (*TransferMyAssetResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TransferMyAssetResp)
+	err := c.cc.Invoke(ctx, AssetApp_TransferMyAsset_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AssetAppServer is the server API for AssetApp service.
 // All implementations must embed UnimplementedAssetAppServer
 // for forward compatibility.
@@ -148,6 +161,8 @@ type AssetAppServer interface {
 	ListMyFreezes(context.Context, *ListMyFreezesReq) (*ListMyFreezesResp, error)
 	// 查询我的锁仓明细
 	ListMyLocks(context.Context, *ListMyLocksReq) (*ListMyLocksResp, error)
+	// 我的账户划转
+	TransferMyAsset(context.Context, *TransferMyAssetReq) (*TransferMyAssetResp, error)
 	mustEmbedUnimplementedAssetAppServer()
 }
 
@@ -178,6 +193,9 @@ func (UnimplementedAssetAppServer) ListMyFreezes(context.Context, *ListMyFreezes
 }
 func (UnimplementedAssetAppServer) ListMyLocks(context.Context, *ListMyLocksReq) (*ListMyLocksResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListMyLocks not implemented")
+}
+func (UnimplementedAssetAppServer) TransferMyAsset(context.Context, *TransferMyAssetReq) (*TransferMyAssetResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method TransferMyAsset not implemented")
 }
 func (UnimplementedAssetAppServer) mustEmbedUnimplementedAssetAppServer() {}
 func (UnimplementedAssetAppServer) testEmbeddedByValue()                  {}
@@ -326,6 +344,24 @@ func _AssetApp_ListMyLocks_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AssetApp_TransferMyAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TransferMyAssetReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AssetAppServer).TransferMyAsset(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AssetApp_TransferMyAsset_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AssetAppServer).TransferMyAsset(ctx, req.(*TransferMyAssetReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AssetApp_ServiceDesc is the grpc.ServiceDesc for AssetApp service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -360,6 +396,10 @@ var AssetApp_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListMyLocks",
 			Handler:    _AssetApp_ListMyLocks_Handler,
+		},
+		{
+			MethodName: "TransferMyAsset",
+			Handler:    _AssetApp_TransferMyAsset_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -14,6 +14,8 @@ import type {
   ListMyAssetsReq,
   ListMyFreezesReq,
   ListMyLocksReq,
+  TransferMyAssetReq,
+  TransferMyAssetResp,
   UserAssetSummary,
 } from '@/types/asset'
 
@@ -51,4 +53,10 @@ export function apiListMyFreezes(params: ListMyFreezesReq): Promise<RespBase & {
 
 export function apiListMyLocks(params: ListMyLocksReq): Promise<RespBase & { data: AssetLock[] }> {
   return http.get('/asset/locks', { params: compactParams(params) }).then((res) => res.data)
+}
+
+export function apiTransferMyAsset(
+  params: TransferMyAssetReq,
+): Promise<RespBase & TransferMyAssetResp> {
+  return http.post('/asset/transfer', params).then((res) => res.data)
 }

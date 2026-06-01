@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
+import { apiListAssetCoinConfigs } from '@/api/asset'
 import { getAccessToken } from '@/api/http'
 import {
   apiTradeCancelOrder,
@@ -18,6 +19,7 @@ import DesktopMarketTradeView from '@/components/markets/DesktopMarketTradeView.
 import MobileTradeView from '@/components/trades/MobileTradeView.vue'
 import { useDevice } from '@/composables/useDevice'
 import { useTradingDesk } from '@/composables/useTradingDesk'
+import type { AssetCoinConfig } from '@/types/asset'
 import type {
   ContractLeverageConfig,
   ContractMarginAccount,
@@ -29,6 +31,7 @@ import type {
   TradeSymbolLeverageConfig,
   TradeSymbolSpot,
 } from '@/types/trade'
+import { formatAssetMinorAmount } from '@/utils/assetAmount'
 
 type SubmitSide = 'buy' | 'sell'
 type TradeSymbolDetail = {
@@ -71,6 +74,7 @@ const userLeverageConfig = ref<ContractLeverageConfig | null>(null)
 const tradeOrders = ref<TradeOrder[]>([])
 const tradePositions = ref<ContractPosition[]>([])
 const marginAccounts = ref<ContractMarginAccount[]>([])
+const assetCoinConfigs = ref<AssetCoinConfig[]>([])
 const loadingTradeSymbols = ref(false)
 const loadingTradeDetail = ref(false)
 const loadingTradeAccount = ref(false)
@@ -93,6 +97,7 @@ let tradeAccountRequestId = 0
 let tradeOrdersRequestId = 0
 let leverageConfigRequestId = 0
 let saveLeverageRequestId = 0
+let assetCoinConfigsRequestId = 0
 const {
   selectedCategoryType,
   selectedProductKey,
@@ -140,6 +145,38 @@ const selectedTradeSettleAsset = computed(() => {
     'USDT'
   )
 })
+const selectedTradeWalletType = computed(() => {
+  const symbol = selectedTradeSymbol.value
+  if (symbol && isContractMarket(symbol.marketType)) return 3
+  if (tradeKind.value === 'stock') return 2
+  if (tradeKind.value === 'option') return 5
+  return 1
+})
+const selectedTradeSettleConfig = computed(() => {
+  const settleAsset = selectedTradeSettleAsset.value.toUpperCase()
+  return (
+    assetCoinConfigs.value.find((config) => {
+      return config.walletType === selectedTradeWalletType.value && config.coin.toUpperCase() === settleAsset
+    }) ||
+    assetCoinConfigs.value.find((config) => config.coin.toUpperCase() === settleAsset) ||
+    null
+  )
+})
+const displaySelectedTradeSymbol = computed(() => {
+  const symbol = selectedTradeSymbol.value
+  if (!symbol) return null
+
+  return {
+    ...symbol,
+    minPrice: symbol.minPrice,
+    maxPrice: symbol.maxPrice,
+    priceTick: symbol.priceTick,
+    minNotional: formatAssetMinorAmount(
+      symbol.minNotional,
+      selectedTradeSettleConfig.value?.decimalPlaces,
+    ),
+  }
+})
 const selectedMarginAccount = computed(() => {
   const settleAsset = selectedTradeSettleAsset.value.toUpperCase()
   return (
@@ -148,7 +185,12 @@ const selectedMarginAccount = computed(() => {
     null
   )
 })
-const availableBalance = computed(() => selectedMarginAccount.value?.availableBalance || '0')
+const availableBalance = computed(() =>
+  formatAssetMinorAmount(
+    selectedMarginAccount.value?.availableBalance || '0',
+    selectedTradeSettleConfig.value?.decimalPlaces,
+  ),
+)
 const longPositionQty = computed(() => {
   const position = tradePositions.value.find((item) => item.positionSide === POSITION_SIDE_LONG)
   return position?.availQty || position?.qty || '0'
@@ -197,6 +239,7 @@ const tradeLeverageValues = computed(() => {
 const tradeAvailable = computed(() =>
   Boolean(selectedTradeSymbol.value && !loadingTradeSymbols.value),
 )
+const displayTradeOrders = computed(() => tradeOrders.value.map(normalizeTradeOrderAmounts))
 
 watch(
   () => route.query,
@@ -257,6 +300,13 @@ watch(
   [() => selectedTradeSymbol.value?.id || 0, marginMode],
   () => {
     void loadUserLeverageConfig()
+  },
+  { immediate: true },
+)
+watch(
+  selectedTradeWalletType,
+  () => {
+    void loadAssetCoinConfigs()
   },
   { immediate: true },
 )
@@ -365,54 +415,27 @@ function isPositiveDecimal(value: string) {
   return Number(text) > 0
 }
 
-function divideAmountTextBy100(value: string) {
-  const text = String(value ?? '').trim()
-  if (!/^-?\d+(\.\d+)?$/.test(text)) return value
+function assetConfigForCoin(coin: string) {
+  const normalizedCoin = coin.toUpperCase()
+  return (
+    assetCoinConfigs.value.find((config) => {
+      return config.walletType === selectedTradeWalletType.value && config.coin.toUpperCase() === normalizedCoin
+    }) ||
+    assetCoinConfigs.value.find((config) => config.coin.toUpperCase() === normalizedCoin) ||
+    null
+  )
+}
 
-  const negative = text.startsWith('-')
-  const unsignedText = negative ? text.slice(1) : text
-  const [integerPart, fractionPart = ''] = unsignedText.split('.')
-  const digits = `${integerPart}${fractionPart}`.replace(/^0+(?=\d)/, '') || '0'
-  const decimalPlaces = fractionPart.length + 2
-  const paddedDigits = digits.padStart(decimalPlaces + 1, '0')
-  const integerEndIndex = paddedDigits.length - decimalPlaces
-  const nextInteger = paddedDigits.slice(0, integerEndIndex).replace(/^0+(?=\d)/, '') || '0'
-  const nextFraction = paddedDigits.slice(integerEndIndex).replace(/0+$/, '')
-  const nextValue = nextFraction ? `${nextInteger}.${nextFraction}` : nextInteger
-
-  if (nextValue === '0') return '0'
-  return negative ? `-${nextValue}` : nextValue
+function formatTradeMoney(value: string, coin = selectedTradeSettleAsset.value) {
+  return formatAssetMinorAmount(value, assetConfigForCoin(coin)?.decimalPlaces)
 }
 
 function normalizeTradeOrderAmounts(order: TradeOrder): TradeOrder {
   return {
     ...order,
-    amount: divideAmountTextBy100(order.amount),
-    filledAmount: divideAmountTextBy100(order.filledAmount),
-    fee: divideAmountTextBy100(order.fee),
-  }
-}
-
-function normalizeContractPositionAmounts(position: ContractPosition): ContractPosition {
-  return {
-    ...position,
-    positionMargin: divideAmountTextBy100(position.positionMargin),
-    isolatedMargin: divideAmountTextBy100(position.isolatedMargin),
-    unrealizedPnl: divideAmountTextBy100(position.unrealizedPnl),
-    realizedPnl: divideAmountTextBy100(position.realizedPnl),
-  }
-}
-
-function normalizeMarginAccountAmounts(account: ContractMarginAccount): ContractMarginAccount {
-  return {
-    ...account,
-    balance: divideAmountTextBy100(account.balance),
-    availableBalance: divideAmountTextBy100(account.availableBalance),
-    frozenBalance: divideAmountTextBy100(account.frozenBalance),
-    positionMargin: divideAmountTextBy100(account.positionMargin),
-    orderMargin: divideAmountTextBy100(account.orderMargin),
-    unrealizedPnl: divideAmountTextBy100(account.unrealizedPnl),
-    realizedPnl: divideAmountTextBy100(account.realizedPnl),
+    amount: formatTradeMoney(order.amount),
+    filledAmount: formatTradeMoney(order.filledAmount),
+    fee: formatTradeMoney(order.fee, order.feeAsset || selectedTradeSettleAsset.value),
   }
 }
 
@@ -444,6 +467,25 @@ function defaultTradeLeverage() {
       tradeLeverageValues.value[0] ||
       1,
   )
+}
+
+async function loadAssetCoinConfigs() {
+  const requestId = ++assetCoinConfigsRequestId
+
+  try {
+    const resp = await apiListAssetCoinConfigs({
+      walletType: selectedTradeWalletType.value,
+      operationType: 0,
+    })
+    if (requestId !== assetCoinConfigsRequestId) return
+
+    assetCoinConfigs.value = isSuccessCode(resp.code) ? resp.data || [] : []
+  } catch (error) {
+    console.warn('load trade asset coin configs failed', error)
+    if (requestId === assetCoinConfigsRequestId) {
+      assetCoinConfigs.value = []
+    }
+  }
 }
 
 function updateMarginMode(value: number) {
@@ -623,7 +665,7 @@ async function refreshTradeAccount() {
 
     if (ordersRequestId === tradeOrdersRequestId) {
       if (ordersResult.status === 'fulfilled' && isSuccessCode(ordersResult.value.code)) {
-        tradeOrders.value = (ordersResult.value.data || []).map(normalizeTradeOrderAmounts)
+        tradeOrders.value = ordersResult.value.data || []
       } else {
         tradeOrders.value = []
         ordersError.value =
@@ -634,13 +676,13 @@ async function refreshTradeAccount() {
     }
 
     if (positionsResult.status === 'fulfilled' && isSuccessCode(positionsResult.value.code)) {
-      tradePositions.value = (positionsResult.value.data || []).map(normalizeContractPositionAmounts)
+      tradePositions.value = positionsResult.value.data || []
     } else {
       tradePositions.value = []
     }
 
     if (accountsResult.status === 'fulfilled' && isSuccessCode(accountsResult.value.code)) {
-      marginAccounts.value = (accountsResult.value.data || []).map(normalizeMarginAccountAmounts)
+      marginAccounts.value = accountsResult.value.data || []
     } else {
       marginAccounts.value = []
     }
@@ -692,7 +734,7 @@ async function refreshTradeOrders() {
       return
     }
 
-    tradeOrders.value = (resp.data || []).map(normalizeTradeOrderAmounts)
+    tradeOrders.value = resp.data || []
   } catch (error) {
     console.warn('refresh trade orders failed', error)
     if (requestId === tradeOrdersRequestId) {
@@ -758,11 +800,21 @@ async function submitTradeOrder(side: SubmitSide) {
   if (isContractMarket(symbol.marketType)) {
     params.marginMode = marginMode.value
     params.leverage = clampLeverage(leverage.value)
-    if (isPositiveDecimal(takeProfitPrice.value)) {
-      params.takeProfitPrice = takeProfitPrice.value.trim()
+    const takeProfitPriceText = takeProfitPrice.value.trim()
+    const stopLossPriceText = stopLossPrice.value.trim()
+    if (takeProfitPriceText) {
+      if (!isPositiveDecimal(takeProfitPriceText)) {
+        tradeError.value = '请输入有效止盈价'
+        return
+      }
+      params.takeProfitPrice = takeProfitPriceText
     }
-    if (isPositiveDecimal(stopLossPrice.value)) {
-      params.stopLossPrice = stopLossPrice.value.trim()
+    if (stopLossPriceText) {
+      if (!isPositiveDecimal(stopLossPriceText)) {
+        tradeError.value = '请输入有效止损价'
+        return
+      }
+      params.stopLossPrice = stopLossPriceText
     }
   }
 
@@ -841,7 +893,7 @@ async function cancelTradeOrder(order: TradeOrder) {
       :selected-interval-name="selectedIntervalName"
       :loading-kline="loadingKline"
       :order-mode="orderMode"
-      :selected-trade-symbol="selectedTradeSymbol"
+      :selected-trade-symbol="displaySelectedTradeSymbol"
       :trade-symbol-detail="tradeSymbolDetail"
       :trade-symbol-loading="loadingTradeSymbols || loadingTradeDetail"
       :is-logged-in="isLoggedIn"
@@ -860,7 +912,7 @@ async function cancelTradeOrder(order: TradeOrder) {
       :trade-message="tradeMessage"
       :trade-error="tradeError"
       :submitting-side="submittingSide"
-      :trade-orders="tradeOrders"
+      :trade-orders="displayTradeOrders"
       :orders-loading="loadingTradeOrders"
       :orders-error="ordersError"
       :canceling-order-id="cancelingOrderId"
@@ -895,7 +947,7 @@ async function cancelTradeOrder(order: TradeOrder) {
       :product-menu-open="productMenuOpen"
       :product-sheet-rows="productSheetRows"
       :order-mode="orderMode"
-      :selected-trade-symbol="selectedTradeSymbol"
+      :selected-trade-symbol="displaySelectedTradeSymbol"
       :trade-symbol-detail="tradeSymbolDetail"
       :trade-symbol-loading="loadingTradeSymbols || loadingTradeDetail"
       :is-logged-in="isLoggedIn"
@@ -916,7 +968,7 @@ async function cancelTradeOrder(order: TradeOrder) {
       :trade-message="tradeMessage"
       :trade-error="tradeError"
       :submitting-side="submittingSide"
-      :trade-orders="tradeOrders"
+      :trade-orders="displayTradeOrders"
       :orders-loading="loadingTradeOrders"
       :orders-error="ordersError"
       :canceling-order-id="cancelingOrderId"

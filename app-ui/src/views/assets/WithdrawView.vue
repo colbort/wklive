@@ -10,6 +10,13 @@ import AssetFlowLayout from '@/components/assets/AssetFlowLayout.vue'
 import AssetPrimaryButton from '@/components/assets/AssetPrimaryButton.vue'
 import { useOptions } from '@/composables/useOptions'
 import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
+import {
+  formatAssetDecimalAmount,
+  formatAssetMinorAmount,
+  normalizeAssetDecimalPlaces,
+  normalizeAssetInputDecimalPlaces,
+  parseAssetDecimalToMinorText,
+} from '@/utils/assetAmount'
 
 const route = useRoute()
 const assetOptions = useOptions(apiGetAssetOptions)
@@ -26,18 +33,31 @@ const coinSheetVisible = ref(false)
 const walletType = computed(() => Number(route.query.walletType || 1))
 const routeCoin = computed(() => String(route.query.coin || 'USDT'))
 const coin = computed(() => selectedConfig.value?.coin || routeCoin.value)
+const selectedDecimalPlaces = computed(() =>
+  normalizeAssetDecimalPlaces(selectedConfig.value?.decimalPlaces),
+)
+const selectedInputDecimalPlaces = computed(() =>
+  normalizeAssetInputDecimalPlaces(selectedConfig.value?.decimalPlaces),
+)
 const selectedChain = computed(() => {
   const config = selectedConfig.value
   if (!config) return ''
   return getChainLabel(config)
 })
-const availableAmount = computed(() => {
+const rawAvailableAmount = computed(() => {
   return (
     assets.value.find((asset) => asset.walletType === walletType.value && asset.coin === coin.value)
       ?.availableAmount || '0'
   )
 })
-const receivedAmount = computed(() => amount.value || '0')
+const availableAmount = computed(() =>
+  formatAssetMinorAmount(rawAvailableAmount.value, selectedDecimalPlaces.value),
+)
+const feeAmount = computed(() => formatAssetDecimalAmount('0', selectedDecimalPlaces.value))
+const receivedAmount = computed(() => {
+  if (!amount.value.trim()) return formatAssetDecimalAmount('0', selectedDecimalPlaces.value)
+  return formatAssetDecimalAmount(amount.value, selectedDecimalPlaces.value)
+})
 
 function isSuccessCode(code: number) {
   return code === 0 || code === 200
@@ -89,19 +109,13 @@ function selectConfig(config: AssetCoinConfig) {
   pageTip.value = ''
 }
 
-function parseAmountToMinor(value: string) {
-  const normalized = value.trim()
-  if (!/^\d+(\.\d{1,2})?$/.test(normalized)) return 0
-  const [integerPart, decimalPart = ''] = normalized.split('.')
-  return Number(integerPart) * 100 + Number(decimalPart.padEnd(2, '0'))
-}
-
 async function submitWithdraw() {
   if (submitLoading.value) return
 
   pageError.value = ''
   pageTip.value = ''
-  const withdrawAmount = parseAmountToMinor(amount.value)
+  const withdrawAmountText = parseAssetDecimalToMinorText(amount.value, selectedDecimalPlaces.value)
+  const withdrawAmount = Number(withdrawAmountText)
   if (!coin.value) {
     pageError.value = '请选择提现币种'
     return
@@ -110,8 +124,8 @@ async function submitWithdraw() {
     pageError.value = '请输入提现地址'
     return
   }
-  if (withdrawAmount <= 0) {
-    pageError.value = '请输入提现金额'
+  if (!withdrawAmountText || withdrawAmount <= 0) {
+    pageError.value = `请输入有效提现金额，最多保留 ${selectedInputDecimalPlaces.value} 位小数`
     return
   }
 
@@ -180,7 +194,7 @@ onMounted(() => {
     <dl class="withdraw-summary">
       <div>
         <dt>手续费</dt>
-        <dd>0 {{ coin }}</dd>
+        <dd>{{ feeAmount }} {{ coin }}</dd>
       </div>
       <div>
         <dt>到账金额</dt>

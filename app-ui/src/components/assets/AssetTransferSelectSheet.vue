@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue'
 
 import AssetCoinIcon from '@/components/assets/AssetCoinIcon.vue'
 import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
+import { formatAssetMinorAmount } from '@/utils/assetAmount'
 
 const props = defineProps<{
   title: string
@@ -22,25 +23,42 @@ const emit = defineEmits<{
 const query = ref('')
 const activeWalletType = ref(props.selectedWalletType)
 
+function coinKey(coin: string) {
+  return String(coin || '').toUpperCase()
+}
+
 const coins = computed(() => {
   const enabledConfigs = props.configs.filter((config) => config.walletType === activeWalletType.value)
-  const configMap = new Map(enabledConfigs.map((config) => [config.coin, config]))
+  const configMap = new Map<string, AssetCoinConfig>()
+  enabledConfigs.forEach((config) => {
+    const key = coinKey(config.coin)
+    if (!configMap.has(key)) configMap.set(key, config)
+  })
   const enabledCoins = new Set(configMap.keys())
-  const rows = props.assets
+  const assetMap = new Map<string, AssetUserAsset>()
+  props.assets
     .filter((asset) => asset.walletType === activeWalletType.value)
-    .filter((asset) => enabledCoins.has(asset.coin))
-    .map((asset) => ({
+    .filter((asset) => enabledCoins.has(coinKey(asset.coin)))
+    .forEach((asset) => {
+      const key = coinKey(asset.coin)
+      if (!assetMap.has(key)) assetMap.set(key, asset)
+    })
+
+  const rows = Array.from(assetMap.values()).map((asset) => ({
       coin: asset.coin,
-      availableAmount: asset.availableAmount || asset.totalAmount || '0',
-      config: configMap.get(asset.coin),
+      config: configMap.get(coinKey(asset.coin)),
+      availableAmount: formatAssetMinorAmount(
+        asset.availableAmount || asset.totalAmount || '0',
+        configMap.get(coinKey(asset.coin))?.decimalPlaces,
+      ),
     }))
 
-  const configuredRows = enabledConfigs
-    .filter((config) => !rows.some((row) => row.coin === config.coin))
+  const configuredRows = Array.from(configMap.values())
+    .filter((config) => !assetMap.has(coinKey(config.coin)))
     .map((config) => ({
       coin: config.coin,
-      availableAmount: '0',
       config,
+      availableAmount: formatAssetMinorAmount('0', config.decimalPlaces),
     }))
 
   const keyword = query.value.trim().toUpperCase()

@@ -7,6 +7,7 @@ import { getAccessToken } from '@/api/http'
 import { useDevice } from '@/composables/useDevice'
 import { optionText, useOptions } from '@/composables/useOptions'
 import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
+import { DEFAULT_ASSET_DECIMAL_PLACES, formatAssetMinorAmount } from '@/utils/assetAmount'
 
 // 资产页：展示资产中心和订单中心的移动端占位结构。
 type AssetTopTab = 'assets' | 'orders' | 'profile'
@@ -121,7 +122,7 @@ const displayedAssets = computed(() => {
           iconUrl: '',
           iconText: asset.coin,
           iconBgColor: '',
-          decimalPlaces: 2,
+          decimalPlaces: DEFAULT_ASSET_DECIMAL_PLACES,
           appVisible: 1,
           rechargeEnabled: 1,
           withdrawEnabled: 1,
@@ -133,44 +134,20 @@ const displayedAssets = computed(() => {
           updateTimes: asset.updateTimes,
         }))
 
-  return configs.map((config) => ({
-    config,
-    amount:
-      amountMap.get(config.coin)?.availableAmount || amountMap.get(config.coin)?.totalAmount || '0',
-  }))
+  return configs.map((config) => {
+    const asset = amountMap.get(config.coin)
+    return {
+      config,
+      amount: formatAssetMinorAmount(
+        asset?.availableAmount || asset?.totalAmount || '0',
+        config.decimalPlaces,
+      ),
+    }
+  })
 })
 
 function isSuccessCode(code: number) {
   return code === 0 || code === 200
-}
-
-function divideAssetAmountTextBy100(value: string) {
-  const text = String(value ?? '').trim()
-  if (!/^-?\d+(\.\d+)?$/.test(text)) return value
-
-  const negative = text.startsWith('-')
-  const unsignedText = negative ? text.slice(1) : text
-  const [integerPart, fractionPart = ''] = unsignedText.split('.')
-  const digits = `${integerPart}${fractionPart}`.replace(/^0+(?=\d)/, '') || '0'
-  const decimalPlaces = fractionPart.length + 2
-  const paddedDigits = digits.padStart(decimalPlaces + 1, '0')
-  const integerEndIndex = paddedDigits.length - decimalPlaces
-  const nextInteger = paddedDigits.slice(0, integerEndIndex).replace(/^0+(?=\d)/, '') || '0'
-  const nextFraction = paddedDigits.slice(integerEndIndex).replace(/0+$/, '')
-  const nextValue = nextFraction ? `${nextInteger}.${nextFraction}` : nextInteger
-
-  if (nextValue === '0') return '0'
-  return negative ? `-${nextValue}` : nextValue
-}
-
-function normalizeAssetAmounts(asset: AssetUserAsset): AssetUserAsset {
-  return {
-    ...asset,
-    totalAmount: divideAssetAmountTextBy100(asset.totalAmount),
-    availableAmount: divideAssetAmountTextBy100(asset.availableAmount),
-    frozenAmount: divideAssetAmountTextBy100(asset.frozenAmount),
-    lockedAmount: divideAssetAmountTextBy100(asset.lockedAmount),
-  }
 }
 
 function coinConfigName(config: AssetCoinConfig) {
@@ -222,7 +199,7 @@ async function loadAssetSummary() {
   try {
     const resp = await apiGetMyAssetSummary({})
     if (isSuccessCode(resp.code)) {
-      summaryAssets.value = (resp.data?.assets || []).map(normalizeAssetAmounts)
+      summaryAssets.value = resp.data?.assets || []
     }
   } catch (error) {
     console.warn('get my asset summary failed', error)

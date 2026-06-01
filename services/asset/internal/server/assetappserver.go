@@ -64,3 +64,9 @@ func (s *AssetAppServer) ListMyLocks(ctx context.Context, in *asset.ListMyLocksR
 	l := logic.NewListMyLocksLogic(ctx, s.svcCtx)
 	return l.ListMyLocks(in)
 }
+
+// 我的账户划转
+func (s *AssetAppServer) TransferMyAsset(ctx context.Context, in *asset.TransferMyAssetReq) (*asset.TransferMyAssetResp, error) {
+	l := logic.NewTransferMyAssetLogic(ctx, s.svcCtx)
+	return l.TransferMyAsset(in)
+}

@@ -806,6 +806,142 @@ func (x *ListMyLocksResp) GetData() []*AssetLock {
 	return nil
 }
 
+type TransferMyAssetReq struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	FromWalletType WalletType             `protobuf:"varint,1,opt,name=from_wallet_type,json=fromWalletType,proto3,enum=asset.WalletType" json:"from_wallet_type,omitempty"` // 转出钱包类型
+	ToWalletType   WalletType             `protobuf:"varint,2,opt,name=to_wallet_type,json=toWalletType,proto3,enum=asset.WalletType" json:"to_wallet_type,omitempty"`       // 转入钱包类型
+	Coin           string                 `protobuf:"bytes,3,opt,name=coin,proto3" json:"coin,omitempty"`                                                                    // 币种
+	Amount         string                 `protobuf:"bytes,4,opt,name=amount,proto3" json:"amount,omitempty"`                                                                // 划转金额
+	Remark         string                 `protobuf:"bytes,5,opt,name=remark,proto3" json:"remark,omitempty"`                                                                // 备注
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *TransferMyAssetReq) Reset() {
+	*x = TransferMyAssetReq{}
+	mi := &file_proto_asset_asset_app_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TransferMyAssetReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TransferMyAssetReq) ProtoMessage() {}
+
+func (x *TransferMyAssetReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_asset_asset_app_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TransferMyAssetReq.ProtoReflect.Descriptor instead.
+func (*TransferMyAssetReq) Descriptor() ([]byte, []int) {
+	return file_proto_asset_asset_app_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *TransferMyAssetReq) GetFromWalletType() WalletType {
+	if x != nil {
+		return x.FromWalletType
+	}
+	return WalletType_WALLET_TYPE_UNKNOWN
+}
+
+func (x *TransferMyAssetReq) GetToWalletType() WalletType {
+	if x != nil {
+		return x.ToWalletType
+	}
+	return WalletType_WALLET_TYPE_UNKNOWN
+}
+
+func (x *TransferMyAssetReq) GetCoin() string {
+	if x != nil {
+		return x.Coin
+	}
+	return ""
+}
+
+func (x *TransferMyAssetReq) GetAmount() string {
+	if x != nil {
+		return x.Amount
+	}
+	return ""
+}
+
+func (x *TransferMyAssetReq) GetRemark() string {
+	if x != nil {
+		return x.Remark
+	}
+	return ""
+}
+
+type TransferMyAssetResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	FromAsset     *UserAsset             `protobuf:"bytes,2,opt,name=from_asset,json=fromAsset,proto3" json:"from_asset,omitempty"` // 转出账户资产
+	ToAsset       *UserAsset             `protobuf:"bytes,3,opt,name=to_asset,json=toAsset,proto3" json:"to_asset,omitempty"`       // 转入账户资产
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TransferMyAssetResp) Reset() {
+	*x = TransferMyAssetResp{}
+	mi := &file_proto_asset_asset_app_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TransferMyAssetResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TransferMyAssetResp) ProtoMessage() {}
+
+func (x *TransferMyAssetResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_asset_asset_app_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TransferMyAssetResp.ProtoReflect.Descriptor instead.
+func (*TransferMyAssetResp) Descriptor() ([]byte, []int) {
+	return file_proto_asset_asset_app_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *TransferMyAssetResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *TransferMyAssetResp) GetFromAsset() *UserAsset {
+	if x != nil {
+		return x.FromAsset
+	}
+	return nil
+}
+
+func (x *TransferMyAssetResp) GetToAsset() *UserAsset {
+	if x != nil {
+		return x.ToAsset
+	}
+	return nil
+}
+
 var File_proto_asset_asset_app_proto protoreflect.FileDescriptor
 
 const file_proto_asset_asset_app_proto_rawDesc = "" +
@@ -867,7 +1003,18 @@ const file_proto_asset_asset_app_proto_rawDesc = "" +
 	"\x04page\x18\x06 \x01(\v2\x0f.common.PageReqR\x04page\"]\n" +
 	"\x0fListMyLocksResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12$\n" +
-	"\x04data\x18\x02 \x03(\v2\x10.asset.AssetLockR\x04data2\xfe\x03\n" +
+	"\x04data\x18\x02 \x03(\v2\x10.asset.AssetLockR\x04data\"\xce\x01\n" +
+	"\x12TransferMyAssetReq\x12;\n" +
+	"\x10from_wallet_type\x18\x01 \x01(\x0e2\x11.asset.WalletTypeR\x0efromWalletType\x127\n" +
+	"\x0eto_wallet_type\x18\x02 \x01(\x0e2\x11.asset.WalletTypeR\ftoWalletType\x12\x12\n" +
+	"\x04coin\x18\x03 \x01(\tR\x04coin\x12\x16\n" +
+	"\x06amount\x18\x04 \x01(\tR\x06amount\x12\x16\n" +
+	"\x06remark\x18\x05 \x01(\tR\x06remark\"\x99\x01\n" +
+	"\x13TransferMyAssetResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12/\n" +
+	"\n" +
+	"from_asset\x18\x02 \x01(\v2\x10.asset.UserAssetR\tfromAsset\x12+\n" +
+	"\bto_asset\x18\x03 \x01(\v2\x10.asset.UserAssetR\atoAsset2\xc8\x04\n" +
 	"\bAssetApp\x12W\n" +
 	"\x14ListAssetCoinConfigs\x12\x1e.asset.ListAssetCoinConfigsReq\x1a\x1f.asset.ListAssetCoinConfigsResp\x12N\n" +
 	"\x11GetMyAssetSummary\x12\x1b.asset.GetMyAssetSummaryReq\x1a\x1c.asset.GetMyAssetSummaryResp\x12?\n" +
@@ -876,7 +1023,8 @@ const file_proto_asset_asset_app_proto_rawDesc = "" +
 	"GetMyAsset\x12\x14.asset.GetMyAssetReq\x1a\x15.asset.GetMyAssetResp\x12K\n" +
 	"\x10ListMyAssetFlows\x12\x1a.asset.ListMyAssetFlowsReq\x1a\x1b.asset.ListMyAssetFlowsResp\x12B\n" +
 	"\rListMyFreezes\x12\x17.asset.ListMyFreezesReq\x1a\x18.asset.ListMyFreezesResp\x12<\n" +
-	"\vListMyLocks\x12\x15.asset.ListMyLocksReq\x1a\x16.asset.ListMyLocksRespB\x1aZ\x18wklive/proto/asset;assetb\x06proto3"
+	"\vListMyLocks\x12\x15.asset.ListMyLocksReq\x1a\x16.asset.ListMyLocksResp\x12H\n" +
+	"\x0fTransferMyAsset\x12\x19.asset.TransferMyAssetReq\x1a\x1a.asset.TransferMyAssetRespB\x1aZ\x18wklive/proto/asset;assetb\x06proto3"
 
 var (
 	file_proto_asset_asset_app_proto_rawDescOnce sync.Once
@@ -890,7 +1038,7 @@ func file_proto_asset_asset_app_proto_rawDescGZIP() []byte {
 	return file_proto_asset_asset_app_proto_rawDescData
 }
 
-var file_proto_asset_asset_app_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_proto_asset_asset_app_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_proto_asset_asset_app_proto_goTypes = []any{
 	(*ListAssetCoinConfigsReq)(nil),  // 0: asset.ListAssetCoinConfigsReq
 	(*ListAssetCoinConfigsResp)(nil), // 1: asset.ListAssetCoinConfigsResp
@@ -906,73 +1054,82 @@ var file_proto_asset_asset_app_proto_goTypes = []any{
 	(*ListMyFreezesResp)(nil),        // 11: asset.ListMyFreezesResp
 	(*ListMyLocksReq)(nil),           // 12: asset.ListMyLocksReq
 	(*ListMyLocksResp)(nil),          // 13: asset.ListMyLocksResp
-	(WalletType)(0),                  // 14: asset.WalletType
-	(AssetCoinOperationType)(0),      // 15: asset.AssetCoinOperationType
-	(AssetCoinType)(0),               // 16: asset.AssetCoinType
-	(*common.RespBase)(nil),          // 17: common.RespBase
-	(*AssetCoinConfig)(nil),          // 18: asset.AssetCoinConfig
-	(*UserAssetSummary)(nil),         // 19: asset.UserAssetSummary
-	(*UserAsset)(nil),                // 20: asset.UserAsset
-	(BizType)(0),                     // 21: asset.BizType
-	(SceneType)(0),                   // 22: asset.SceneType
-	(*common.TimeRange)(nil),         // 23: common.TimeRange
-	(*common.PageReq)(nil),           // 24: common.PageReq
-	(*AssetFlow)(nil),                // 25: asset.AssetFlow
-	(FreezeStatus)(0),                // 26: asset.FreezeStatus
-	(*AssetFreeze)(nil),              // 27: asset.AssetFreeze
-	(LockStatus)(0),                  // 28: asset.LockStatus
-	(*AssetLock)(nil),                // 29: asset.AssetLock
+	(*TransferMyAssetReq)(nil),       // 14: asset.TransferMyAssetReq
+	(*TransferMyAssetResp)(nil),      // 15: asset.TransferMyAssetResp
+	(WalletType)(0),                  // 16: asset.WalletType
+	(AssetCoinOperationType)(0),      // 17: asset.AssetCoinOperationType
+	(AssetCoinType)(0),               // 18: asset.AssetCoinType
+	(*common.RespBase)(nil),          // 19: common.RespBase
+	(*AssetCoinConfig)(nil),          // 20: asset.AssetCoinConfig
+	(*UserAssetSummary)(nil),         // 21: asset.UserAssetSummary
+	(*UserAsset)(nil),                // 22: asset.UserAsset
+	(BizType)(0),                     // 23: asset.BizType
+	(SceneType)(0),                   // 24: asset.SceneType
+	(*common.TimeRange)(nil),         // 25: common.TimeRange
+	(*common.PageReq)(nil),           // 26: common.PageReq
+	(*AssetFlow)(nil),                // 27: asset.AssetFlow
+	(FreezeStatus)(0),                // 28: asset.FreezeStatus
+	(*AssetFreeze)(nil),              // 29: asset.AssetFreeze
+	(LockStatus)(0),                  // 30: asset.LockStatus
+	(*AssetLock)(nil),                // 31: asset.AssetLock
 }
 var file_proto_asset_asset_app_proto_depIdxs = []int32{
-	14, // 0: asset.ListAssetCoinConfigsReq.wallet_type:type_name -> asset.WalletType
-	15, // 1: asset.ListAssetCoinConfigsReq.operation_type:type_name -> asset.AssetCoinOperationType
-	16, // 2: asset.ListAssetCoinConfigsReq.coin_type:type_name -> asset.AssetCoinType
-	17, // 3: asset.ListAssetCoinConfigsResp.base:type_name -> common.RespBase
-	18, // 4: asset.ListAssetCoinConfigsResp.data:type_name -> asset.AssetCoinConfig
-	17, // 5: asset.GetMyAssetSummaryResp.base:type_name -> common.RespBase
-	19, // 6: asset.GetMyAssetSummaryResp.data:type_name -> asset.UserAssetSummary
-	14, // 7: asset.ListMyAssetsReq.wallet_type:type_name -> asset.WalletType
-	17, // 8: asset.ListMyAssetsResp.base:type_name -> common.RespBase
-	20, // 9: asset.ListMyAssetsResp.data:type_name -> asset.UserAsset
-	14, // 10: asset.GetMyAssetReq.wallet_type:type_name -> asset.WalletType
-	17, // 11: asset.GetMyAssetResp.base:type_name -> common.RespBase
-	20, // 12: asset.GetMyAssetResp.asset:type_name -> asset.UserAsset
-	14, // 13: asset.ListMyAssetFlowsReq.wallet_type:type_name -> asset.WalletType
-	21, // 14: asset.ListMyAssetFlowsReq.biz_type:type_name -> asset.BizType
-	22, // 15: asset.ListMyAssetFlowsReq.scene_type:type_name -> asset.SceneType
-	23, // 16: asset.ListMyAssetFlowsReq.time_range:type_name -> common.TimeRange
-	24, // 17: asset.ListMyAssetFlowsReq.page:type_name -> common.PageReq
-	17, // 18: asset.ListMyAssetFlowsResp.base:type_name -> common.RespBase
-	25, // 19: asset.ListMyAssetFlowsResp.data:type_name -> asset.AssetFlow
-	14, // 20: asset.ListMyFreezesReq.wallet_type:type_name -> asset.WalletType
-	26, // 21: asset.ListMyFreezesReq.status:type_name -> asset.FreezeStatus
-	24, // 22: asset.ListMyFreezesReq.page:type_name -> common.PageReq
-	17, // 23: asset.ListMyFreezesResp.base:type_name -> common.RespBase
-	27, // 24: asset.ListMyFreezesResp.data:type_name -> asset.AssetFreeze
-	14, // 25: asset.ListMyLocksReq.wallet_type:type_name -> asset.WalletType
-	28, // 26: asset.ListMyLocksReq.status:type_name -> asset.LockStatus
-	24, // 27: asset.ListMyLocksReq.page:type_name -> common.PageReq
-	17, // 28: asset.ListMyLocksResp.base:type_name -> common.RespBase
-	29, // 29: asset.ListMyLocksResp.data:type_name -> asset.AssetLock
-	0,  // 30: asset.AssetApp.ListAssetCoinConfigs:input_type -> asset.ListAssetCoinConfigsReq
-	2,  // 31: asset.AssetApp.GetMyAssetSummary:input_type -> asset.GetMyAssetSummaryReq
-	4,  // 32: asset.AssetApp.ListMyAssets:input_type -> asset.ListMyAssetsReq
-	6,  // 33: asset.AssetApp.GetMyAsset:input_type -> asset.GetMyAssetReq
-	8,  // 34: asset.AssetApp.ListMyAssetFlows:input_type -> asset.ListMyAssetFlowsReq
-	10, // 35: asset.AssetApp.ListMyFreezes:input_type -> asset.ListMyFreezesReq
-	12, // 36: asset.AssetApp.ListMyLocks:input_type -> asset.ListMyLocksReq
-	1,  // 37: asset.AssetApp.ListAssetCoinConfigs:output_type -> asset.ListAssetCoinConfigsResp
-	3,  // 38: asset.AssetApp.GetMyAssetSummary:output_type -> asset.GetMyAssetSummaryResp
-	5,  // 39: asset.AssetApp.ListMyAssets:output_type -> asset.ListMyAssetsResp
-	7,  // 40: asset.AssetApp.GetMyAsset:output_type -> asset.GetMyAssetResp
-	9,  // 41: asset.AssetApp.ListMyAssetFlows:output_type -> asset.ListMyAssetFlowsResp
-	11, // 42: asset.AssetApp.ListMyFreezes:output_type -> asset.ListMyFreezesResp
-	13, // 43: asset.AssetApp.ListMyLocks:output_type -> asset.ListMyLocksResp
-	37, // [37:44] is the sub-list for method output_type
-	30, // [30:37] is the sub-list for method input_type
-	30, // [30:30] is the sub-list for extension type_name
-	30, // [30:30] is the sub-list for extension extendee
-	0,  // [0:30] is the sub-list for field type_name
+	16, // 0: asset.ListAssetCoinConfigsReq.wallet_type:type_name -> asset.WalletType
+	17, // 1: asset.ListAssetCoinConfigsReq.operation_type:type_name -> asset.AssetCoinOperationType
+	18, // 2: asset.ListAssetCoinConfigsReq.coin_type:type_name -> asset.AssetCoinType
+	19, // 3: asset.ListAssetCoinConfigsResp.base:type_name -> common.RespBase
+	20, // 4: asset.ListAssetCoinConfigsResp.data:type_name -> asset.AssetCoinConfig
+	19, // 5: asset.GetMyAssetSummaryResp.base:type_name -> common.RespBase
+	21, // 6: asset.GetMyAssetSummaryResp.data:type_name -> asset.UserAssetSummary
+	16, // 7: asset.ListMyAssetsReq.wallet_type:type_name -> asset.WalletType
+	19, // 8: asset.ListMyAssetsResp.base:type_name -> common.RespBase
+	22, // 9: asset.ListMyAssetsResp.data:type_name -> asset.UserAsset
+	16, // 10: asset.GetMyAssetReq.wallet_type:type_name -> asset.WalletType
+	19, // 11: asset.GetMyAssetResp.base:type_name -> common.RespBase
+	22, // 12: asset.GetMyAssetResp.asset:type_name -> asset.UserAsset
+	16, // 13: asset.ListMyAssetFlowsReq.wallet_type:type_name -> asset.WalletType
+	23, // 14: asset.ListMyAssetFlowsReq.biz_type:type_name -> asset.BizType
+	24, // 15: asset.ListMyAssetFlowsReq.scene_type:type_name -> asset.SceneType
+	25, // 16: asset.ListMyAssetFlowsReq.time_range:type_name -> common.TimeRange
+	26, // 17: asset.ListMyAssetFlowsReq.page:type_name -> common.PageReq
+	19, // 18: asset.ListMyAssetFlowsResp.base:type_name -> common.RespBase
+	27, // 19: asset.ListMyAssetFlowsResp.data:type_name -> asset.AssetFlow
+	16, // 20: asset.ListMyFreezesReq.wallet_type:type_name -> asset.WalletType
+	28, // 21: asset.ListMyFreezesReq.status:type_name -> asset.FreezeStatus
+	26, // 22: asset.ListMyFreezesReq.page:type_name -> common.PageReq
+	19, // 23: asset.ListMyFreezesResp.base:type_name -> common.RespBase
+	29, // 24: asset.ListMyFreezesResp.data:type_name -> asset.AssetFreeze
+	16, // 25: asset.ListMyLocksReq.wallet_type:type_name -> asset.WalletType
+	30, // 26: asset.ListMyLocksReq.status:type_name -> asset.LockStatus
+	26, // 27: asset.ListMyLocksReq.page:type_name -> common.PageReq
+	19, // 28: asset.ListMyLocksResp.base:type_name -> common.RespBase
+	31, // 29: asset.ListMyLocksResp.data:type_name -> asset.AssetLock
+	16, // 30: asset.TransferMyAssetReq.from_wallet_type:type_name -> asset.WalletType
+	16, // 31: asset.TransferMyAssetReq.to_wallet_type:type_name -> asset.WalletType
+	19, // 32: asset.TransferMyAssetResp.base:type_name -> common.RespBase
+	22, // 33: asset.TransferMyAssetResp.from_asset:type_name -> asset.UserAsset
+	22, // 34: asset.TransferMyAssetResp.to_asset:type_name -> asset.UserAsset
+	0,  // 35: asset.AssetApp.ListAssetCoinConfigs:input_type -> asset.ListAssetCoinConfigsReq
+	2,  // 36: asset.AssetApp.GetMyAssetSummary:input_type -> asset.GetMyAssetSummaryReq
+	4,  // 37: asset.AssetApp.ListMyAssets:input_type -> asset.ListMyAssetsReq
+	6,  // 38: asset.AssetApp.GetMyAsset:input_type -> asset.GetMyAssetReq
+	8,  // 39: asset.AssetApp.ListMyAssetFlows:input_type -> asset.ListMyAssetFlowsReq
+	10, // 40: asset.AssetApp.ListMyFreezes:input_type -> asset.ListMyFreezesReq
+	12, // 41: asset.AssetApp.ListMyLocks:input_type -> asset.ListMyLocksReq
+	14, // 42: asset.AssetApp.TransferMyAsset:input_type -> asset.TransferMyAssetReq
+	1,  // 43: asset.AssetApp.ListAssetCoinConfigs:output_type -> asset.ListAssetCoinConfigsResp
+	3,  // 44: asset.AssetApp.GetMyAssetSummary:output_type -> asset.GetMyAssetSummaryResp
+	5,  // 45: asset.AssetApp.ListMyAssets:output_type -> asset.ListMyAssetsResp
+	7,  // 46: asset.AssetApp.GetMyAsset:output_type -> asset.GetMyAssetResp
+	9,  // 47: asset.AssetApp.ListMyAssetFlows:output_type -> asset.ListMyAssetFlowsResp
+	11, // 48: asset.AssetApp.ListMyFreezes:output_type -> asset.ListMyFreezesResp
+	13, // 49: asset.AssetApp.ListMyLocks:output_type -> asset.ListMyLocksResp
+	15, // 50: asset.AssetApp.TransferMyAsset:output_type -> asset.TransferMyAssetResp
+	43, // [43:51] is the sub-list for method output_type
+	35, // [35:43] is the sub-list for method input_type
+	35, // [35:35] is the sub-list for extension type_name
+	35, // [35:35] is the sub-list for extension extendee
+	0,  // [0:35] is the sub-list for field type_name
 }
 
 func init() { file_proto_asset_asset_app_proto_init() }
@@ -988,7 +1145,7 @@ func file_proto_asset_asset_app_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_asset_asset_app_proto_rawDesc), len(file_proto_asset_asset_app_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
