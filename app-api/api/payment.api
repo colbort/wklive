@@ -154,7 +154,6 @@ type CreateRechargeOrderReq {
 	subject        string `json:"subject,optional"`
 	body           string `json:"body,optional"`
 	clientType     int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
-	clientIp       string `json:"clientIp,optional"`
 	bizOrderNo     string `json:"bizOrderNo,optional"`
 }
 
@@ -170,7 +169,6 @@ type CreateCryptoRechargeOrderReq {
 	chainCode      int64  `json:"chainCode"`
 	rechargeAmount int64  `json:"rechargeAmount"` // 单位：分
 	clientType     int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
-	clientIp       string `json:"clientIp,optional"`
 	bizOrderNo     string `json:"bizOrderNo,optional"`
 }
 
@@ -300,7 +298,6 @@ type WithdrawOrder {
 }
 
 type CreateWithdrawOrderReq {
-	clientIp string `json:"clientIp,optional"` // 可选，服务端也可以通过上下文获取
 	amount   int64  `json:"amount"` // 单位：分
 	currency string `json:"currency"`
 	address  string `json:"address"` // 提现地址（钱包地址等）

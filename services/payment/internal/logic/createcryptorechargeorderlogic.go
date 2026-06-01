@@ -50,6 +50,7 @@ func (l *CreateCryptoRechargeOrderLogic) CreateCryptoRechargeOrder(in *payment.C
 	if err != nil {
 		return nil, err
 	}
+	clientIP, _ := utils.GetClientIPFromMd(l.ctx)
 
 	addressItem, err := l.svcCtx.CryptoRechargeAddressModel.FindOneByTenantIdUserIdWalletTypeCoinChainCode(l.ctx, tenantId, userId, in.WalletType, in.Coin, int64(in.ChainCode))
 	if err != nil {
@@ -92,7 +93,7 @@ func (l *CreateCryptoRechargeOrderLogic) CreateCryptoRechargeOrder(in *payment.C
 		Subject:      sql.NullString{String: "Crypto Recharge", Valid: true},
 		Body:         sql.NullString{String: addressItem.Address, Valid: true},
 		ClientType:   int64(in.ClientType),
-		ClientIp:     sql.NullString{String: in.ClientIp, Valid: in.ClientIp != ""},
+		ClientIp:     sql.NullString{String: clientIP, Valid: clientIP != ""},
 		Status:       int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PAYING),
 		QrContent:    sql.NullString{String: addressItem.Address, Valid: true},
 		RequestData:  sql.NullString{String: string(requestData), Valid: len(requestData) > 0},

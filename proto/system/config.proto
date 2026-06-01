@@ -75,5 +75,5 @@ message WithdrawConfig {
   int64 daily_amount_limit_per_user = 5; // 每人每天提现金额限制，单位：分
   string allowed_time_range = 6; // 允许提现的时间段，例如：每天9:00-18:00，格式为"09:00-18:00"
   int32 pending_withdrawal_limit_per_user = 7; // 允许未审核在提现数量限制，单位：笔
-  int32 free_withdraw_times_per_day = 13; // 每日免费提现次数，0=没有免费提现
+  int32 free_withdraw_times_per_day = 8; // 每日免费提现次数，0=没有免费提现
 }

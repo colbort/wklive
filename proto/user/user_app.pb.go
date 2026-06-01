@@ -77,7 +77,6 @@ type RegisterReq struct {
 	ConfirmPassword string                 `protobuf:"bytes,7,opt,name=confirm_password,json=confirmPassword,proto3" json:"confirm_password,omitempty"`
 	InviteCode      string                 `protobuf:"bytes,8,opt,name=invite_code,json=inviteCode,proto3" json:"invite_code,omitempty"`
 	Source          string                 `protobuf:"bytes,9,opt,name=source,proto3" json:"source,omitempty"`
-	RegisterIp      string                 `protobuf:"bytes,10,opt,name=register_ip,json=registerIp,proto3" json:"register_ip,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -175,13 +174,6 @@ func (x *RegisterReq) GetSource() string {
 	return ""
 }
 
-func (x *RegisterReq) GetRegisterIp() string {
-	if x != nil {
-		return x.RegisterIp
-	}
-	return ""
-}
-
 type RegisterResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
@@ -257,7 +249,6 @@ type LoginReq struct {
 	Account       string                 `protobuf:"bytes,3,opt,name=account,proto3" json:"account,omitempty"`
 	Password      string                 `protobuf:"bytes,4,opt,name=password,proto3" json:"password,omitempty"`
 	GoogleCode    string                 `protobuf:"bytes,5,opt,name=google_code,json=googleCode,proto3" json:"google_code,omitempty"`
-	LoginIp       string                 `protobuf:"bytes,6,opt,name=login_ip,json=loginIp,proto3" json:"login_ip,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -323,13 +314,6 @@ func (x *LoginReq) GetPassword() string {
 func (x *LoginReq) GetGoogleCode() string {
 	if x != nil {
 		return x.GoogleCode
-	}
-	return ""
-}
-
-func (x *LoginReq) GetLoginIp() string {
-	if x != nil {
-		return x.LoginIp
 	}
 	return ""
 }
@@ -406,8 +390,7 @@ type GuestLoginReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DeviceId      string                 `protobuf:"bytes,1,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
 	Fingerprint   string                 `protobuf:"bytes,2,opt,name=fingerprint,proto3" json:"fingerprint,omitempty"`
-	RegisterIp    string                 `protobuf:"bytes,3,opt,name=register_ip,json=registerIp,proto3" json:"register_ip,omitempty"`
-	TenantCode    string                 `protobuf:"bytes,4,opt,name=tenant_code,json=tenantCode,proto3" json:"tenant_code,omitempty"`
+	TenantCode    string                 `protobuf:"bytes,3,opt,name=tenant_code,json=tenantCode,proto3" json:"tenant_code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -452,13 +435,6 @@ func (x *GuestLoginReq) GetDeviceId() string {
 func (x *GuestLoginReq) GetFingerprint() string {
 	if x != nil {
 		return x.Fingerprint
-	}
-	return ""
-}
-
-func (x *GuestLoginReq) GetRegisterIp() string {
-	if x != nil {
-		return x.RegisterIp
 	}
 	return ""
 }
@@ -820,17 +796,17 @@ func (x *GetProfileResp) GetProfile() *UserProfile {
 
 type UpdateProfileReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Nickname      string                 `protobuf:"bytes,2,opt,name=nickname,proto3" json:"nickname,omitempty"`
-	Avatar        string                 `protobuf:"bytes,3,opt,name=avatar,proto3" json:"avatar,omitempty"`
-	Language      string                 `protobuf:"bytes,4,opt,name=language,proto3" json:"language,omitempty"`
-	Timezone      string                 `protobuf:"bytes,5,opt,name=timezone,proto3" json:"timezone,omitempty"`
-	Signature     string                 `protobuf:"bytes,6,opt,name=signature,proto3" json:"signature,omitempty"`
-	Gender        Gender                 `protobuf:"varint,7,opt,name=gender,proto3,enum=user.Gender" json:"gender,omitempty"`
-	Birthday      int64                  `protobuf:"varint,8,opt,name=birthday,proto3" json:"birthday,omitempty"`
-	CountryCode   string                 `protobuf:"bytes,9,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
-	Province      string                 `protobuf:"bytes,10,opt,name=province,proto3" json:"province,omitempty"`
-	City          string                 `protobuf:"bytes,11,opt,name=city,proto3" json:"city,omitempty"`
-	Address       string                 `protobuf:"bytes,12,opt,name=address,proto3" json:"address,omitempty"`
+	Nickname      string                 `protobuf:"bytes,1,opt,name=nickname,proto3" json:"nickname,omitempty"`
+	Avatar        string                 `protobuf:"bytes,2,opt,name=avatar,proto3" json:"avatar,omitempty"`
+	Language      string                 `protobuf:"bytes,3,opt,name=language,proto3" json:"language,omitempty"`
+	Timezone      string                 `protobuf:"bytes,4,opt,name=timezone,proto3" json:"timezone,omitempty"`
+	Signature     string                 `protobuf:"bytes,5,opt,name=signature,proto3" json:"signature,omitempty"`
+	Gender        Gender                 `protobuf:"varint,6,opt,name=gender,proto3,enum=user.Gender" json:"gender,omitempty"`
+	Birthday      int64                  `protobuf:"varint,7,opt,name=birthday,proto3" json:"birthday,omitempty"`
+	CountryCode   string                 `protobuf:"bytes,8,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
+	Province      string                 `protobuf:"bytes,9,opt,name=province,proto3" json:"province,omitempty"`
+	City          string                 `protobuf:"bytes,10,opt,name=city,proto3" json:"city,omitempty"`
+	Address       string                 `protobuf:"bytes,11,opt,name=address,proto3" json:"address,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -996,9 +972,9 @@ func (x *UpdateProfileResp) GetProfile() *UserProfile {
 
 type ChangeLoginPasswordReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	OldPassword     string                 `protobuf:"bytes,2,opt,name=old_password,json=oldPassword,proto3" json:"old_password,omitempty"`
-	NewPassword     string                 `protobuf:"bytes,3,opt,name=new_password,json=newPassword,proto3" json:"new_password,omitempty"`
-	ConfirmPassword string                 `protobuf:"bytes,4,opt,name=confirm_password,json=confirmPassword,proto3" json:"confirm_password,omitempty"`
+	OldPassword     string                 `protobuf:"bytes,1,opt,name=old_password,json=oldPassword,proto3" json:"old_password,omitempty"`
+	NewPassword     string                 `protobuf:"bytes,2,opt,name=new_password,json=newPassword,proto3" json:"new_password,omitempty"`
+	ConfirmPassword string                 `protobuf:"bytes,3,opt,name=confirm_password,json=confirmPassword,proto3" json:"confirm_password,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -1144,20 +1120,20 @@ func (x *GetIdentityResp) GetIdentity() *UserIdentity {
 
 type SubmitIdentityReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Phone         string                 `protobuf:"bytes,2,opt,name=phone,proto3" json:"phone,omitempty"`
-	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
-	RealName      string                 `protobuf:"bytes,4,opt,name=real_name,json=realName,proto3" json:"real_name,omitempty"`
-	Gender        Gender                 `protobuf:"varint,5,opt,name=gender,proto3,enum=user.Gender" json:"gender,omitempty"`
-	Birthday      int64                  `protobuf:"varint,6,opt,name=birthday,proto3" json:"birthday,omitempty"`
-	CountryCode   string                 `protobuf:"bytes,7,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
-	Province      string                 `protobuf:"bytes,8,opt,name=province,proto3" json:"province,omitempty"`
-	City          string                 `protobuf:"bytes,9,opt,name=city,proto3" json:"city,omitempty"`
-	Address       string                 `protobuf:"bytes,10,opt,name=address,proto3" json:"address,omitempty"`
-	IdType        IdType                 `protobuf:"varint,11,opt,name=id_type,json=idType,proto3,enum=user.IdType" json:"id_type,omitempty"`
-	IdNo          string                 `protobuf:"bytes,12,opt,name=id_no,json=idNo,proto3" json:"id_no,omitempty"`
-	FrontImage    string                 `protobuf:"bytes,13,opt,name=front_image,json=frontImage,proto3" json:"front_image,omitempty"`
-	BackImage     string                 `protobuf:"bytes,14,opt,name=back_image,json=backImage,proto3" json:"back_image,omitempty"`
-	HandheldImage string                 `protobuf:"bytes,15,opt,name=handheld_image,json=handheldImage,proto3" json:"handheld_image,omitempty"`
+	Phone         string                 `protobuf:"bytes,1,opt,name=phone,proto3" json:"phone,omitempty"`
+	Email         string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	RealName      string                 `protobuf:"bytes,3,opt,name=real_name,json=realName,proto3" json:"real_name,omitempty"`
+	Gender        Gender                 `protobuf:"varint,4,opt,name=gender,proto3,enum=user.Gender" json:"gender,omitempty"`
+	Birthday      int64                  `protobuf:"varint,5,opt,name=birthday,proto3" json:"birthday,omitempty"`
+	CountryCode   string                 `protobuf:"bytes,6,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
+	Province      string                 `protobuf:"bytes,7,opt,name=province,proto3" json:"province,omitempty"`
+	City          string                 `protobuf:"bytes,8,opt,name=city,proto3" json:"city,omitempty"`
+	Address       string                 `protobuf:"bytes,9,opt,name=address,proto3" json:"address,omitempty"`
+	IdType        IdType                 `protobuf:"varint,10,opt,name=id_type,json=idType,proto3,enum=user.IdType" json:"id_type,omitempty"`
+	IdNo          string                 `protobuf:"bytes,11,opt,name=id_no,json=idNo,proto3" json:"id_no,omitempty"`
+	FrontImage    string                 `protobuf:"bytes,12,opt,name=front_image,json=frontImage,proto3" json:"front_image,omitempty"`
+	BackImage     string                 `protobuf:"bytes,13,opt,name=back_image,json=backImage,proto3" json:"back_image,omitempty"`
+	HandheldImage string                 `protobuf:"bytes,14,opt,name=handheld_image,json=handheldImage,proto3" json:"handheld_image,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1344,15 +1320,15 @@ func (x *SubmitIdentityResp) GetIdentity() *UserIdentity {
 
 type UpdateIdentityReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Phone         string                 `protobuf:"bytes,2,opt,name=phone,proto3" json:"phone,omitempty"`
-	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
-	RealName      string                 `protobuf:"bytes,4,opt,name=real_name,json=realName,proto3" json:"real_name,omitempty"`
-	Gender        Gender                 `protobuf:"varint,5,opt,name=gender,proto3,enum=user.Gender" json:"gender,omitempty"`
-	Birthday      int64                  `protobuf:"varint,6,opt,name=birthday,proto3" json:"birthday,omitempty"`
-	CountryCode   string                 `protobuf:"bytes,7,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
-	Province      string                 `protobuf:"bytes,8,opt,name=province,proto3" json:"province,omitempty"`
-	City          string                 `protobuf:"bytes,9,opt,name=city,proto3" json:"city,omitempty"`
-	Address       string                 `protobuf:"bytes,10,opt,name=address,proto3" json:"address,omitempty"`
+	Phone         string                 `protobuf:"bytes,1,opt,name=phone,proto3" json:"phone,omitempty"`
+	Email         string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	RealName      string                 `protobuf:"bytes,3,opt,name=real_name,json=realName,proto3" json:"real_name,omitempty"`
+	Gender        Gender                 `protobuf:"varint,4,opt,name=gender,proto3,enum=user.Gender" json:"gender,omitempty"`
+	Birthday      int64                  `protobuf:"varint,5,opt,name=birthday,proto3" json:"birthday,omitempty"`
+	CountryCode   string                 `protobuf:"bytes,6,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
+	Province      string                 `protobuf:"bytes,7,opt,name=province,proto3" json:"province,omitempty"`
+	City          string                 `protobuf:"bytes,8,opt,name=city,proto3" json:"city,omitempty"`
+	Address       string                 `protobuf:"bytes,9,opt,name=address,proto3" json:"address,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1592,8 +1568,8 @@ func (x *GetSecurityResp) GetSecurity() *UserSecurity {
 
 type SetPayPasswordReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	Password        string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
-	ConfirmPassword string                 `protobuf:"bytes,3,opt,name=confirm_password,json=confirmPassword,proto3" json:"confirm_password,omitempty"`
+	Password        string                 `protobuf:"bytes,1,opt,name=password,proto3" json:"password,omitempty"`
+	ConfirmPassword string                 `protobuf:"bytes,2,opt,name=confirm_password,json=confirmPassword,proto3" json:"confirm_password,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -1644,9 +1620,9 @@ func (x *SetPayPasswordReq) GetConfirmPassword() string {
 
 type ChangePayPasswordReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	OldPassword     string                 `protobuf:"bytes,2,opt,name=old_password,json=oldPassword,proto3" json:"old_password,omitempty"`
-	NewPassword     string                 `protobuf:"bytes,3,opt,name=new_password,json=newPassword,proto3" json:"new_password,omitempty"`
-	ConfirmPassword string                 `protobuf:"bytes,4,opt,name=confirm_password,json=confirmPassword,proto3" json:"confirm_password,omitempty"`
+	OldPassword     string                 `protobuf:"bytes,1,opt,name=old_password,json=oldPassword,proto3" json:"old_password,omitempty"`
+	NewPassword     string                 `protobuf:"bytes,2,opt,name=new_password,json=newPassword,proto3" json:"new_password,omitempty"`
+	ConfirmPassword string                 `protobuf:"bytes,3,opt,name=confirm_password,json=confirmPassword,proto3" json:"confirm_password,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -1800,7 +1776,7 @@ func (x *InitGoogle2FAResp) GetQrCodeUrl() string {
 
 type EnableGoogle2FAReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	GoogleCode    string                 `protobuf:"bytes,2,opt,name=google_code,json=googleCode,proto3" json:"google_code,omitempty"`
+	GoogleCode    string                 `protobuf:"bytes,1,opt,name=google_code,json=googleCode,proto3" json:"google_code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1844,7 +1820,7 @@ func (x *EnableGoogle2FAReq) GetGoogleCode() string {
 
 type DisableGoogle2FAReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	GoogleCode    string                 `protobuf:"bytes,2,opt,name=google_code,json=googleCode,proto3" json:"google_code,omitempty"`
+	GoogleCode    string                 `protobuf:"bytes,1,opt,name=google_code,json=googleCode,proto3" json:"google_code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1888,7 +1864,7 @@ func (x *DisableGoogle2FAReq) GetGoogleCode() string {
 
 type ListBanksReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Page          *common.PageReq        `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
+	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1984,13 +1960,13 @@ func (x *ListBanksResp) GetList() []*UserBankItem {
 
 type AddBankReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	BankName      string                 `protobuf:"bytes,2,opt,name=bank_name,json=bankName,proto3" json:"bank_name,omitempty"`
-	BankCode      string                 `protobuf:"bytes,3,opt,name=bank_code,json=bankCode,proto3" json:"bank_code,omitempty"`
-	AccountName   string                 `protobuf:"bytes,4,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`
-	AccountNo     string                 `protobuf:"bytes,5,opt,name=account_no,json=accountNo,proto3" json:"account_no,omitempty"`
-	BranchName    string                 `protobuf:"bytes,6,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`
-	CountryCode   string                 `protobuf:"bytes,7,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
-	IsDefault     int64                  `protobuf:"varint,8,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
+	BankName      string                 `protobuf:"bytes,1,opt,name=bank_name,json=bankName,proto3" json:"bank_name,omitempty"`
+	BankCode      string                 `protobuf:"bytes,2,opt,name=bank_code,json=bankCode,proto3" json:"bank_code,omitempty"`
+	AccountName   string                 `protobuf:"bytes,3,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`
+	AccountNo     string                 `protobuf:"bytes,4,opt,name=account_no,json=accountNo,proto3" json:"account_no,omitempty"`
+	BranchName    string                 `protobuf:"bytes,5,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`
+	CountryCode   string                 `protobuf:"bytes,6,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
+	IsDefault     int64                  `protobuf:"varint,7,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2129,13 +2105,13 @@ func (x *AddBankResp) GetBank() *UserBankItem {
 type UpdateBankReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	BankName      string                 `protobuf:"bytes,3,opt,name=bank_name,json=bankName,proto3" json:"bank_name,omitempty"`
-	BankCode      string                 `protobuf:"bytes,4,opt,name=bank_code,json=bankCode,proto3" json:"bank_code,omitempty"`
-	AccountName   string                 `protobuf:"bytes,5,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`
-	AccountNo     string                 `protobuf:"bytes,6,opt,name=account_no,json=accountNo,proto3" json:"account_no,omitempty"`
-	BranchName    string                 `protobuf:"bytes,7,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`
-	CountryCode   string                 `protobuf:"bytes,8,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
-	IsDefault     int64                  `protobuf:"varint,9,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
+	BankName      string                 `protobuf:"bytes,2,opt,name=bank_name,json=bankName,proto3" json:"bank_name,omitempty"`
+	BankCode      string                 `protobuf:"bytes,3,opt,name=bank_code,json=bankCode,proto3" json:"bank_code,omitempty"`
+	AccountName   string                 `protobuf:"bytes,4,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`
+	AccountNo     string                 `protobuf:"bytes,5,opt,name=account_no,json=accountNo,proto3" json:"account_no,omitempty"`
+	BranchName    string                 `protobuf:"bytes,6,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`
+	CountryCode   string                 `protobuf:"bytes,7,opt,name=country_code,json=countryCode,proto3" json:"country_code,omitempty"`
+	IsDefault     int64                  `protobuf:"varint,8,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2372,7 +2348,7 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\n" +
 	"\x19proto/user/user_app.proto\x12\x04user\x1a\x19proto/common/common.proto\x1a\x15proto/user/enum.proto\x1a\x16proto/user/model.proto\"5\n" +
 	"\rAppCommonResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\xd0\x02\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\xaf\x02\n" +
 	"\vRegisterReq\x12\x1f\n" +
 	"\vtenant_code\x18\x01 \x01(\tR\n" +
 	"tenantCode\x127\n" +
@@ -2384,15 +2360,12 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\x10confirm_password\x18\a \x01(\tR\x0fconfirmPassword\x12\x1f\n" +
 	"\vinvite_code\x18\b \x01(\tR\n" +
 	"inviteCode\x12\x16\n" +
-	"\x06source\x18\t \x01(\tR\x06source\x12\x1f\n" +
-	"\vregister_ip\x18\n" +
-	" \x01(\tR\n" +
-	"registerIp\"\xa3\x01\n" +
+	"\x06source\x18\t \x01(\tR\x06source\"\xa3\x01\n" +
 	"\fRegisterResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12'\n" +
 	"\x05token\x18\x03 \x01(\v2\x11.common.TokenInfoR\x05token\x12+\n" +
-	"\aprofile\x18\x04 \x01(\v2\x11.user.UserProfileR\aprofile\"\xcd\x01\n" +
+	"\aprofile\x18\x04 \x01(\v2\x11.user.UserProfileR\aprofile\"\xb2\x01\n" +
 	"\bLoginReq\x12\x1f\n" +
 	"\vtenant_code\x18\x01 \x01(\tR\n" +
 	"tenantCode\x12.\n" +
@@ -2401,19 +2374,16 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\aaccount\x18\x03 \x01(\tR\aaccount\x12\x1a\n" +
 	"\bpassword\x18\x04 \x01(\tR\bpassword\x12\x1f\n" +
 	"\vgoogle_code\x18\x05 \x01(\tR\n" +
-	"googleCode\x12\x19\n" +
-	"\blogin_ip\x18\x06 \x01(\tR\aloginIp\"\xa0\x01\n" +
+	"googleCode\"\xa0\x01\n" +
 	"\tLoginResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12'\n" +
 	"\x05token\x18\x03 \x01(\v2\x11.common.TokenInfoR\x05token\x12+\n" +
-	"\aprofile\x18\x04 \x01(\v2\x11.user.UserProfileR\aprofile\"\x90\x01\n" +
+	"\aprofile\x18\x04 \x01(\v2\x11.user.UserProfileR\aprofile\"o\n" +
 	"\rGuestLoginReq\x12\x1b\n" +
 	"\tdevice_id\x18\x01 \x01(\tR\bdeviceId\x12 \n" +
 	"\vfingerprint\x18\x02 \x01(\tR\vfingerprint\x12\x1f\n" +
-	"\vregister_ip\x18\x03 \x01(\tR\n" +
-	"registerIp\x12\x1f\n" +
-	"\vtenant_code\x18\x04 \x01(\tR\n" +
+	"\vtenant_code\x18\x03 \x01(\tR\n" +
 	"tenantCode\"n\n" +
 	"\n" +
 	"GuestLogin\x12\x14\n" +
@@ -2437,61 +2407,60 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12+\n" +
 	"\aprofile\x18\x02 \x01(\v2\x11.user.UserProfileR\aprofile\"\xcb\x02\n" +
 	"\x10UpdateProfileReq\x12\x1a\n" +
-	"\bnickname\x18\x02 \x01(\tR\bnickname\x12\x16\n" +
-	"\x06avatar\x18\x03 \x01(\tR\x06avatar\x12\x1a\n" +
-	"\blanguage\x18\x04 \x01(\tR\blanguage\x12\x1a\n" +
-	"\btimezone\x18\x05 \x01(\tR\btimezone\x12\x1c\n" +
-	"\tsignature\x18\x06 \x01(\tR\tsignature\x12$\n" +
-	"\x06gender\x18\a \x01(\x0e2\f.user.GenderR\x06gender\x12\x1a\n" +
-	"\bbirthday\x18\b \x01(\x03R\bbirthday\x12!\n" +
-	"\fcountry_code\x18\t \x01(\tR\vcountryCode\x12\x1a\n" +
-	"\bprovince\x18\n" +
-	" \x01(\tR\bprovince\x12\x12\n" +
-	"\x04city\x18\v \x01(\tR\x04city\x12\x18\n" +
-	"\aaddress\x18\f \x01(\tR\aaddress\"f\n" +
+	"\bnickname\x18\x01 \x01(\tR\bnickname\x12\x16\n" +
+	"\x06avatar\x18\x02 \x01(\tR\x06avatar\x12\x1a\n" +
+	"\blanguage\x18\x03 \x01(\tR\blanguage\x12\x1a\n" +
+	"\btimezone\x18\x04 \x01(\tR\btimezone\x12\x1c\n" +
+	"\tsignature\x18\x05 \x01(\tR\tsignature\x12$\n" +
+	"\x06gender\x18\x06 \x01(\x0e2\f.user.GenderR\x06gender\x12\x1a\n" +
+	"\bbirthday\x18\a \x01(\x03R\bbirthday\x12!\n" +
+	"\fcountry_code\x18\b \x01(\tR\vcountryCode\x12\x1a\n" +
+	"\bprovince\x18\t \x01(\tR\bprovince\x12\x12\n" +
+	"\x04city\x18\n" +
+	" \x01(\tR\x04city\x12\x18\n" +
+	"\aaddress\x18\v \x01(\tR\aaddress\"f\n" +
 	"\x11UpdateProfileResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12+\n" +
 	"\aprofile\x18\x02 \x01(\v2\x11.user.UserProfileR\aprofile\"\x89\x01\n" +
 	"\x16ChangeLoginPasswordReq\x12!\n" +
-	"\fold_password\x18\x02 \x01(\tR\voldPassword\x12!\n" +
-	"\fnew_password\x18\x03 \x01(\tR\vnewPassword\x12)\n" +
-	"\x10confirm_password\x18\x04 \x01(\tR\x0fconfirmPassword\"\x10\n" +
+	"\fold_password\x18\x01 \x01(\tR\voldPassword\x12!\n" +
+	"\fnew_password\x18\x02 \x01(\tR\vnewPassword\x12)\n" +
+	"\x10confirm_password\x18\x03 \x01(\tR\x0fconfirmPassword\"\x10\n" +
 	"\x0eGetIdentityReq\"g\n" +
 	"\x0fGetIdentityResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
 	"\bidentity\x18\x02 \x01(\v2\x12.user.UserIdentityR\bidentity\"\xae\x03\n" +
 	"\x11SubmitIdentityReq\x12\x14\n" +
-	"\x05phone\x18\x02 \x01(\tR\x05phone\x12\x14\n" +
-	"\x05email\x18\x03 \x01(\tR\x05email\x12\x1b\n" +
-	"\treal_name\x18\x04 \x01(\tR\brealName\x12$\n" +
-	"\x06gender\x18\x05 \x01(\x0e2\f.user.GenderR\x06gender\x12\x1a\n" +
-	"\bbirthday\x18\x06 \x01(\x03R\bbirthday\x12!\n" +
-	"\fcountry_code\x18\a \x01(\tR\vcountryCode\x12\x1a\n" +
-	"\bprovince\x18\b \x01(\tR\bprovince\x12\x12\n" +
-	"\x04city\x18\t \x01(\tR\x04city\x12\x18\n" +
-	"\aaddress\x18\n" +
-	" \x01(\tR\aaddress\x12%\n" +
-	"\aid_type\x18\v \x01(\x0e2\f.user.IdTypeR\x06idType\x12\x13\n" +
-	"\x05id_no\x18\f \x01(\tR\x04idNo\x12\x1f\n" +
-	"\vfront_image\x18\r \x01(\tR\n" +
+	"\x05phone\x18\x01 \x01(\tR\x05phone\x12\x14\n" +
+	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1b\n" +
+	"\treal_name\x18\x03 \x01(\tR\brealName\x12$\n" +
+	"\x06gender\x18\x04 \x01(\x0e2\f.user.GenderR\x06gender\x12\x1a\n" +
+	"\bbirthday\x18\x05 \x01(\x03R\bbirthday\x12!\n" +
+	"\fcountry_code\x18\x06 \x01(\tR\vcountryCode\x12\x1a\n" +
+	"\bprovince\x18\a \x01(\tR\bprovince\x12\x12\n" +
+	"\x04city\x18\b \x01(\tR\x04city\x12\x18\n" +
+	"\aaddress\x18\t \x01(\tR\aaddress\x12%\n" +
+	"\aid_type\x18\n" +
+	" \x01(\x0e2\f.user.IdTypeR\x06idType\x12\x13\n" +
+	"\x05id_no\x18\v \x01(\tR\x04idNo\x12\x1f\n" +
+	"\vfront_image\x18\f \x01(\tR\n" +
 	"frontImage\x12\x1d\n" +
 	"\n" +
-	"back_image\x18\x0e \x01(\tR\tbackImage\x12%\n" +
-	"\x0ehandheld_image\x18\x0f \x01(\tR\rhandheldImage\"j\n" +
+	"back_image\x18\r \x01(\tR\tbackImage\x12%\n" +
+	"\x0ehandheld_image\x18\x0e \x01(\tR\rhandheldImage\"j\n" +
 	"\x12SubmitIdentityResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
 	"\bidentity\x18\x02 \x01(\v2\x12.user.UserIdentityR\bidentity\"\x8b\x02\n" +
 	"\x11UpdateIdentityReq\x12\x14\n" +
-	"\x05phone\x18\x02 \x01(\tR\x05phone\x12\x14\n" +
-	"\x05email\x18\x03 \x01(\tR\x05email\x12\x1b\n" +
-	"\treal_name\x18\x04 \x01(\tR\brealName\x12$\n" +
-	"\x06gender\x18\x05 \x01(\x0e2\f.user.GenderR\x06gender\x12\x1a\n" +
-	"\bbirthday\x18\x06 \x01(\x03R\bbirthday\x12!\n" +
-	"\fcountry_code\x18\a \x01(\tR\vcountryCode\x12\x1a\n" +
-	"\bprovince\x18\b \x01(\tR\bprovince\x12\x12\n" +
-	"\x04city\x18\t \x01(\tR\x04city\x12\x18\n" +
-	"\aaddress\x18\n" +
-	" \x01(\tR\aaddress\"j\n" +
+	"\x05phone\x18\x01 \x01(\tR\x05phone\x12\x14\n" +
+	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1b\n" +
+	"\treal_name\x18\x03 \x01(\tR\brealName\x12$\n" +
+	"\x06gender\x18\x04 \x01(\x0e2\f.user.GenderR\x06gender\x12\x1a\n" +
+	"\bbirthday\x18\x05 \x01(\x03R\bbirthday\x12!\n" +
+	"\fcountry_code\x18\x06 \x01(\tR\vcountryCode\x12\x1a\n" +
+	"\bprovince\x18\a \x01(\tR\bprovince\x12\x12\n" +
+	"\x04city\x18\b \x01(\tR\x04city\x12\x18\n" +
+	"\aaddress\x18\t \x01(\tR\aaddress\"j\n" +
 	"\x12UpdateIdentityResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
 	"\bidentity\x18\x02 \x01(\v2\x12.user.UserIdentityR\bidentity\"\x10\n" +
@@ -2500,30 +2469,45 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
 	"\bsecurity\x18\x02 \x01(\v2\x12.user.UserSecurityR\bsecurity\"Z\n" +
 	"\x11SetPayPasswordReq\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\x12)\n" +
-	"\x10confirm_password\x18\x03 \x01(\tR\x0fconfirmPassword\"\x87\x01\n" +
+	"\bpassword\x18\x01 \x01(\tR\bpassword\x12)\n" +
+	"\x10confirm_password\x18\x02 \x01(\tR\x0fconfirmPassword\"\x87\x01\n" +
 	"\x14ChangePayPasswordReq\x12!\n" +
-	"\fold_password\x18\x02 \x01(\tR\voldPassword\x12!\n" +
-	"\fnew_password\x18\x03 \x01(\tR\vnewPassword\x12)\n" +
-	"\x10confirm_password\x18\x04 \x01(\tR\x0fconfirmPassword\"\x12\n" +
+	"\fold_password\x18\x01 \x01(\tR\voldPassword\x12!\n" +
+	"\fnew_password\x18\x02 \x01(\tR\vnewPassword\x12)\n" +
+	"\x10confirm_password\x18\x03 \x01(\tR\x0fconfirmPassword\"\x12\n" +
 	"\x10InitGoogle2FAReq\"q\n" +
 	"\x11InitGoogle2FAResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x16\n" +
 	"\x06secret\x18\x02 \x01(\tR\x06secret\x12\x1e\n" +
 	"\vqr_code_url\x18\x03 \x01(\tR\tqrCodeUrl\"5\n" +
 	"\x12EnableGoogle2FAReq\x12\x1f\n" +
-	"\vgoogle_code\x18\x02 \x01(\tR\n" +
+	"\vgoogle_code\x18\x01 \x01(\tR\n" +
 	"googleCode\"6\n" +
 	"\x13DisableGoogle2FAReq\x12\x1f\n" +
-	"\vgoogle_code\x18\x02 \x01(\tR\n" +
+	"\vgoogle_code\x18\x01 \x01(\tR\n" +
 	"googleCode\"3\n" +
 	"\fListBanksReq\x12#\n" +
-	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\"]\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\"]\n" +
 	"\rListBanksResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
 	"\x04list\x18\x02 \x03(\v2\x12.user.UserBankItemR\x04list\"\xeb\x01\n" +
 	"\n" +
 	"AddBankReq\x12\x1b\n" +
+	"\tbank_name\x18\x01 \x01(\tR\bbankName\x12\x1b\n" +
+	"\tbank_code\x18\x02 \x01(\tR\bbankCode\x12!\n" +
+	"\faccount_name\x18\x03 \x01(\tR\vaccountName\x12\x1d\n" +
+	"\n" +
+	"account_no\x18\x04 \x01(\tR\taccountNo\x12\x1f\n" +
+	"\vbranch_name\x18\x05 \x01(\tR\n" +
+	"branchName\x12!\n" +
+	"\fcountry_code\x18\x06 \x01(\tR\vcountryCode\x12\x1d\n" +
+	"\n" +
+	"is_default\x18\a \x01(\x03R\tisDefault\"[\n" +
+	"\vAddBankResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
+	"\x04bank\x18\x02 \x01(\v2\x12.user.UserBankItemR\x04bank\"\xfe\x01\n" +
+	"\rUpdateBankReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tbank_name\x18\x02 \x01(\tR\bbankName\x12\x1b\n" +
 	"\tbank_code\x18\x03 \x01(\tR\bbankCode\x12!\n" +
 	"\faccount_name\x18\x04 \x01(\tR\vaccountName\x12\x1d\n" +
@@ -2533,22 +2517,7 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"branchName\x12!\n" +
 	"\fcountry_code\x18\a \x01(\tR\vcountryCode\x12\x1d\n" +
 	"\n" +
-	"is_default\x18\b \x01(\x03R\tisDefault\"[\n" +
-	"\vAddBankResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
-	"\x04bank\x18\x02 \x01(\v2\x12.user.UserBankItemR\x04bank\"\xfe\x01\n" +
-	"\rUpdateBankReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\tbank_name\x18\x03 \x01(\tR\bbankName\x12\x1b\n" +
-	"\tbank_code\x18\x04 \x01(\tR\bbankCode\x12!\n" +
-	"\faccount_name\x18\x05 \x01(\tR\vaccountName\x12\x1d\n" +
-	"\n" +
-	"account_no\x18\x06 \x01(\tR\taccountNo\x12\x1f\n" +
-	"\vbranch_name\x18\a \x01(\tR\n" +
-	"branchName\x12!\n" +
-	"\fcountry_code\x18\b \x01(\tR\vcountryCode\x12\x1d\n" +
-	"\n" +
-	"is_default\x18\t \x01(\x03R\tisDefault\"^\n" +
+	"is_default\x18\b \x01(\x03R\tisDefault\"^\n" +
 	"\x0eUpdateBankResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
 	"\x04bank\x18\x02 \x01(\v2\x12.user.UserBankItemR\x04bank\"\x1f\n" +

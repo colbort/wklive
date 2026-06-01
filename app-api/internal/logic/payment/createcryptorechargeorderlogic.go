@@ -35,7 +35,6 @@ func (l *CreateCryptoRechargeOrderLogic) CreateCryptoRechargeOrder(req *types.Cr
 		ChainCode:      common.ChainCode(req.ChainCode),
 		RechargeAmount: req.RechargeAmount,
 		ClientType:     payment.ClientType(req.ClientType),
-		ClientIp:       req.ClientIp,
 		BizOrderNo:     req.BizOrderNo,
 	})
 	if err != nil {

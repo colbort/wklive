@@ -10,6 +10,7 @@ import (
 	"wklive/app-api/internal/logic/payment"
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
+	"wklive/common/utils"
 )
 
 func CreateRechargeOrderHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
@@ -20,12 +21,13 @@ func CreateRechargeOrderHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := payment.NewCreateRechargeOrderLogic(r.Context(), svcCtx)
+		ctx := utils.ContextWithClientIP(r.Context(), utils.GetClientIP(r))
+		l := payment.NewCreateRechargeOrderLogic(ctx, svcCtx)
 		resp, err := l.CreateRechargeOrder(&req)
 		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+			httpx.ErrorCtx(ctx, w, err)
 		} else {
-			httpx.OkJsonCtx(r.Context(), w, resp)
+			httpx.OkJsonCtx(ctx, w, resp)
 		}
 	}
 }

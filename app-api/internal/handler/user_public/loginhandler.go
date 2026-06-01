@@ -22,13 +22,13 @@ func LoginHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := user_public.NewLoginLogic(r.Context(), svcCtx)
-		req.LoginIp = utils.GetClientIP(r)
+		ctx := utils.ContextWithClientIP(r.Context(), utils.GetClientIP(r))
+		l := user_public.NewLoginLogic(ctx, svcCtx)
 		resp, err := l.Login(&req)
 		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+			httpx.ErrorCtx(ctx, w, err)
 		} else {
-			httpx.OkJsonCtx(r.Context(), w, resp)
+			httpx.OkJsonCtx(ctx, w, resp)
 		}
 	}
 }

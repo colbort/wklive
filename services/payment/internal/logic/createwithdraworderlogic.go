@@ -40,6 +40,7 @@ func (l *CreateWithdrawOrderLogic) CreateWithdrawOrder(in *payment.CreateWithdra
 	if err != nil {
 		return nil, err
 	}
+	clientIP, _ := utils.GetClientIPFromMd(l.ctx)
 	now := utils.NowMillis()
 	orderNo, err := l.svcCtx.GenerateOrderNo(l.ctx, "WD")
 	if err != nil {
@@ -61,7 +62,7 @@ func (l *CreateWithdrawOrderLogic) CreateWithdrawOrder(in *payment.CreateWithdra
 		FeeAmount:    0,
 		ActualAmount: 0,
 		ClientType:   0,
-		ClientIp:     sql.NullString{String: in.ClientIp, Valid: true},
+		ClientIp:     sql.NullString{String: clientIP, Valid: clientIP != ""},
 		Status:       int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PENDING),
 		ThirdTradeNo: sql.NullString{String: "", Valid: true},
 		ThirdOrderNo: sql.NullString{String: "", Valid: true},

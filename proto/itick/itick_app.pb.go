@@ -802,7 +802,7 @@ type SubscribeTopic struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Topic         string                 `protobuf:"bytes,1,opt,name=topic,proto3" json:"topic,omitempty"`                                   // quote depth tick kline
 	CategoryCode  string                 `protobuf:"bytes,2,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"` // crypto forex indices stock future fund
-	Symbol        string                 `protobuf:"bytes,3,opt,name=symbol,proto3" json:"symbol,omitempty"`                                 // BTCUSDT / EURUSD / ...
+	Symbol        string                 `protobuf:"bytes,3,opt,name=symbol,proto3" json:"symbol,omitempty"`                                 //
 	Market        string                 `protobuf:"bytes,4,opt,name=market,proto3" json:"market,omitempty"`                                 // BA / US / HK ...
 	Interval      string                 `protobuf:"bytes,5,opt,name=interval,proto3" json:"interval,omitempty"`                             // 1m 5m 1h 1d
 	unknownFields protoimpl.UnknownFields

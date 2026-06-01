@@ -22,13 +22,13 @@ func RegisterHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := user_public.NewRegisterLogic(r.Context(), svcCtx)
-		req.RegisterIp = utils.GetClientIP(r)
+		ctx := utils.ContextWithClientIP(r.Context(), utils.GetClientIP(r))
+		l := user_public.NewRegisterLogic(ctx, svcCtx)
 		resp, err := l.Register(&req)
 		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+			httpx.ErrorCtx(ctx, w, err)
 		} else {
-			httpx.OkJsonCtx(r.Context(), w, resp)
+			httpx.OkJsonCtx(ctx, w, resp)
 		}
 	}
 }

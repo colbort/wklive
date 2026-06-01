@@ -24,9 +24,9 @@ const (
 
 type ListAssetCoinConfigsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	WalletType    WalletType             `protobuf:"varint,2,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"`                      // 账户类型
-	OperationType AssetCoinOperationType `protobuf:"varint,3,opt,name=operation_type,json=operationType,proto3,enum=asset.AssetCoinOperationType" json:"operation_type,omitempty"` // 操作场景
-	CoinType      AssetCoinType          `protobuf:"varint,4,opt,name=coin_type,json=coinType,proto3,enum=asset.AssetCoinType" json:"coin_type,omitempty"`                         // 币种类型,0表示全部
+	WalletType    WalletType             `protobuf:"varint,1,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"`                      // 账户类型
+	OperationType AssetCoinOperationType `protobuf:"varint,2,opt,name=operation_type,json=operationType,proto3,enum=asset.AssetCoinOperationType" json:"operation_type,omitempty"` // 操作场景
+	CoinType      AssetCoinType          `protobuf:"varint,3,opt,name=coin_type,json=coinType,proto3,enum=asset.AssetCoinType" json:"coin_type,omitempty"`                         // 币种类型,0表示全部
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -224,8 +224,8 @@ func (x *GetMyAssetSummaryResp) GetData() *UserAssetSummary {
 
 type ListMyAssetsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	WalletType    WalletType             `protobuf:"varint,2,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"` // 钱包类型,0表示全部
-	Coin          string                 `protobuf:"bytes,3,opt,name=coin,proto3" json:"coin,omitempty"`                                                      // 币种,空表示全部
+	WalletType    WalletType             `protobuf:"varint,1,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"` // 钱包类型,0表示全部
+	Coin          string                 `protobuf:"bytes,2,opt,name=coin,proto3" json:"coin,omitempty"`                                                      // 币种,空表示全部
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -328,8 +328,8 @@ func (x *ListMyAssetsResp) GetData() []*UserAsset {
 
 type GetMyAssetReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	WalletType    WalletType             `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"` // 钱包类型
-	Coin          string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`                                                      // 币种
+	WalletType    WalletType             `protobuf:"varint,1,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"` // 钱包类型
+	Coin          string                 `protobuf:"bytes,2,opt,name=coin,proto3" json:"coin,omitempty"`                                                      // 币种
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -432,12 +432,12 @@ func (x *GetMyAssetResp) GetAsset() *UserAsset {
 
 type ListMyAssetFlowsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	WalletType    WalletType             `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"` // 钱包类型,0表示全部
-	Coin          string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`                                                      // 币种
-	BizType       BizType                `protobuf:"varint,5,opt,name=biz_type,json=bizType,proto3,enum=asset.BizType" json:"biz_type,omitempty"`             // 业务类型,0表示全部
-	SceneType     SceneType              `protobuf:"varint,6,opt,name=scene_type,json=sceneType,proto3,enum=asset.SceneType" json:"scene_type,omitempty"`     // 业务场景,0表示全部
-	TimeRange     *common.TimeRange      `protobuf:"bytes,7,opt,name=time_range,json=timeRange,proto3" json:"time_range,omitempty"`                           // 时间范围
-	Page          *common.PageReq        `protobuf:"bytes,8,opt,name=page,proto3" json:"page,omitempty"`                                                      // 分页
+	WalletType    WalletType             `protobuf:"varint,1,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"` // 钱包类型,0表示全部
+	Coin          string                 `protobuf:"bytes,2,opt,name=coin,proto3" json:"coin,omitempty"`                                                      // 币种
+	BizType       BizType                `protobuf:"varint,3,opt,name=biz_type,json=bizType,proto3,enum=asset.BizType" json:"biz_type,omitempty"`             // 业务类型,0表示全部
+	SceneType     SceneType              `protobuf:"varint,4,opt,name=scene_type,json=sceneType,proto3,enum=asset.SceneType" json:"scene_type,omitempty"`     // 业务场景,0表示全部
+	TimeRange     *common.TimeRange      `protobuf:"bytes,5,opt,name=time_range,json=timeRange,proto3" json:"time_range,omitempty"`                           // 时间范围
+	Page          *common.PageReq        `protobuf:"bytes,6,opt,name=page,proto3" json:"page,omitempty"`                                                      // 分页
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -568,10 +568,10 @@ func (x *ListMyAssetFlowsResp) GetData() []*AssetFlow {
 
 type ListMyFreezesReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	WalletType    WalletType             `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"` // 钱包类型
-	Coin          string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`                                                      // 币种
-	Status        FreezeStatus           `protobuf:"varint,5,opt,name=status,proto3,enum=asset.FreezeStatus" json:"status,omitempty"`                         // 冻结状态
-	Page          *common.PageReq        `protobuf:"bytes,6,opt,name=page,proto3" json:"page,omitempty"`                                                      // 分页
+	WalletType    WalletType             `protobuf:"varint,1,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"` // 钱包类型
+	Coin          string                 `protobuf:"bytes,2,opt,name=coin,proto3" json:"coin,omitempty"`                                                      // 币种
+	Status        FreezeStatus           `protobuf:"varint,3,opt,name=status,proto3,enum=asset.FreezeStatus" json:"status,omitempty"`                         // 冻结状态
+	Page          *common.PageReq        `protobuf:"bytes,4,opt,name=page,proto3" json:"page,omitempty"`                                                      // 分页
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -688,10 +688,10 @@ func (x *ListMyFreezesResp) GetData() []*AssetFreeze {
 
 type ListMyLocksReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	WalletType    WalletType             `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"` // 钱包类型
-	Coin          string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`                                                      // 币种
-	Status        LockStatus             `protobuf:"varint,5,opt,name=status,proto3,enum=asset.LockStatus" json:"status,omitempty"`                           // 锁仓状态
-	Page          *common.PageReq        `protobuf:"bytes,6,opt,name=page,proto3" json:"page,omitempty"`                                                      // 分页
+	WalletType    WalletType             `protobuf:"varint,1,opt,name=wallet_type,json=walletType,proto3,enum=asset.WalletType" json:"wallet_type,omitempty"` // 钱包类型
+	Coin          string                 `protobuf:"bytes,2,opt,name=coin,proto3" json:"coin,omitempty"`                                                      // 币种
+	Status        LockStatus             `protobuf:"varint,3,opt,name=status,proto3,enum=asset.LockStatus" json:"status,omitempty"`                           // 锁仓状态
+	Page          *common.PageReq        `protobuf:"bytes,4,opt,name=page,proto3" json:"page,omitempty"`                                                      // 分页
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -956,10 +956,10 @@ const file_proto_asset_asset_app_proto_rawDesc = "" +
 	"\n" +
 	"\x1bproto/asset/asset_app.proto\x12\x05asset\x1a\x19proto/common/common.proto\x1a\x16proto/asset/enum.proto\x1a\x17proto/asset/model.proto\"\xc6\x01\n" +
 	"\x17ListAssetCoinConfigsReq\x122\n" +
-	"\vwallet_type\x18\x02 \x01(\x0e2\x11.asset.WalletTypeR\n" +
+	"\vwallet_type\x18\x01 \x01(\x0e2\x11.asset.WalletTypeR\n" +
 	"walletType\x12D\n" +
-	"\x0eoperation_type\x18\x03 \x01(\x0e2\x1d.asset.AssetCoinOperationTypeR\roperationType\x121\n" +
-	"\tcoin_type\x18\x04 \x01(\x0e2\x14.asset.AssetCoinTypeR\bcoinType\"l\n" +
+	"\x0eoperation_type\x18\x02 \x01(\x0e2\x1d.asset.AssetCoinOperationTypeR\roperationType\x121\n" +
+	"\tcoin_type\x18\x03 \x01(\x0e2\x14.asset.AssetCoinTypeR\bcoinType\"l\n" +
 	"\x18ListAssetCoinConfigsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
 	"\x04data\x18\x02 \x03(\v2\x16.asset.AssetCoinConfigR\x04data\"\x16\n" +
@@ -968,47 +968,47 @@ const file_proto_asset_asset_app_proto_rawDesc = "" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12+\n" +
 	"\x04data\x18\x02 \x01(\v2\x17.asset.UserAssetSummaryR\x04data\"Y\n" +
 	"\x0fListMyAssetsReq\x122\n" +
-	"\vwallet_type\x18\x02 \x01(\x0e2\x11.asset.WalletTypeR\n" +
+	"\vwallet_type\x18\x01 \x01(\x0e2\x11.asset.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
-	"\x04coin\x18\x03 \x01(\tR\x04coin\"^\n" +
+	"\x04coin\x18\x02 \x01(\tR\x04coin\"^\n" +
 	"\x10ListMyAssetsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12$\n" +
 	"\x04data\x18\x02 \x03(\v2\x10.asset.UserAssetR\x04data\"W\n" +
 	"\rGetMyAssetReq\x122\n" +
-	"\vwallet_type\x18\x03 \x01(\x0e2\x11.asset.WalletTypeR\n" +
+	"\vwallet_type\x18\x01 \x01(\x0e2\x11.asset.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
-	"\x04coin\x18\x04 \x01(\tR\x04coin\"^\n" +
+	"\x04coin\x18\x02 \x01(\tR\x04coin\"^\n" +
 	"\x0eGetMyAssetResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
 	"\x05asset\x18\x02 \x01(\v2\x10.asset.UserAssetR\x05asset\"\x90\x02\n" +
 	"\x13ListMyAssetFlowsReq\x122\n" +
-	"\vwallet_type\x18\x03 \x01(\x0e2\x11.asset.WalletTypeR\n" +
+	"\vwallet_type\x18\x01 \x01(\x0e2\x11.asset.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
-	"\x04coin\x18\x04 \x01(\tR\x04coin\x12)\n" +
-	"\bbiz_type\x18\x05 \x01(\x0e2\x0e.asset.BizTypeR\abizType\x12/\n" +
+	"\x04coin\x18\x02 \x01(\tR\x04coin\x12)\n" +
+	"\bbiz_type\x18\x03 \x01(\x0e2\x0e.asset.BizTypeR\abizType\x12/\n" +
 	"\n" +
-	"scene_type\x18\x06 \x01(\x0e2\x10.asset.SceneTypeR\tsceneType\x120\n" +
+	"scene_type\x18\x04 \x01(\x0e2\x10.asset.SceneTypeR\tsceneType\x120\n" +
 	"\n" +
-	"time_range\x18\a \x01(\v2\x11.common.TimeRangeR\ttimeRange\x12#\n" +
-	"\x04page\x18\b \x01(\v2\x0f.common.PageReqR\x04page\"b\n" +
+	"time_range\x18\x05 \x01(\v2\x11.common.TimeRangeR\ttimeRange\x12#\n" +
+	"\x04page\x18\x06 \x01(\v2\x0f.common.PageReqR\x04page\"b\n" +
 	"\x14ListMyAssetFlowsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12$\n" +
 	"\x04data\x18\x02 \x03(\v2\x10.asset.AssetFlowR\x04data\"\xac\x01\n" +
 	"\x10ListMyFreezesReq\x122\n" +
-	"\vwallet_type\x18\x03 \x01(\x0e2\x11.asset.WalletTypeR\n" +
+	"\vwallet_type\x18\x01 \x01(\x0e2\x11.asset.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
-	"\x04coin\x18\x04 \x01(\tR\x04coin\x12+\n" +
-	"\x06status\x18\x05 \x01(\x0e2\x13.asset.FreezeStatusR\x06status\x12#\n" +
-	"\x04page\x18\x06 \x01(\v2\x0f.common.PageReqR\x04page\"a\n" +
+	"\x04coin\x18\x02 \x01(\tR\x04coin\x12+\n" +
+	"\x06status\x18\x03 \x01(\x0e2\x13.asset.FreezeStatusR\x06status\x12#\n" +
+	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"a\n" +
 	"\x11ListMyFreezesResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
 	"\x04data\x18\x02 \x03(\v2\x12.asset.AssetFreezeR\x04data\"\xa8\x01\n" +
 	"\x0eListMyLocksReq\x122\n" +
-	"\vwallet_type\x18\x03 \x01(\x0e2\x11.asset.WalletTypeR\n" +
+	"\vwallet_type\x18\x01 \x01(\x0e2\x11.asset.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
-	"\x04coin\x18\x04 \x01(\tR\x04coin\x12)\n" +
-	"\x06status\x18\x05 \x01(\x0e2\x11.asset.LockStatusR\x06status\x12#\n" +
-	"\x04page\x18\x06 \x01(\v2\x0f.common.PageReqR\x04page\"]\n" +
+	"\x04coin\x18\x02 \x01(\tR\x04coin\x12)\n" +
+	"\x06status\x18\x03 \x01(\x0e2\x11.asset.LockStatusR\x06status\x12#\n" +
+	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"]\n" +
 	"\x0fListMyLocksResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12$\n" +
 	"\x04data\x18\x02 \x03(\v2\x10.asset.AssetLockR\x04data\"\xf0\x01\n" +

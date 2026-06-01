@@ -60,10 +60,10 @@ service OptionApp {
 message AppCommonResp { common.RespBase base = 1; }
 
 message AppListContractsReq {
-  string underlying_symbol = 2;
-  OptionType option_type = 3;
-  ContractStatus status = 4;
-  common.PageReq page = 5;
+  string underlying_symbol = 1;
+  OptionType option_type = 2;
+  ContractStatus status = 3;
+  common.PageReq page = 4;
 }
 
 message AppListContractsResp {
@@ -72,7 +72,7 @@ message AppListContractsResp {
 }
 
 message AppGetContractDetailReq {
-  int64 contract_id = 2;
+  int64 contract_id = 1;
 }
 
 message AppGetContractDetailResp {
@@ -81,16 +81,16 @@ message AppGetContractDetailResp {
 }
 
 message AppPlaceOrderReq {
-  int64 account_id = 3;
-  int64 contract_id = 4;
-  Side side = 5;
-  PositionEffect position_effect = 6;
-  OrderType order_type = 7;
-  string price = 8;
-  string qty = 9;
-  string client_order_id = 10;
-  YesNo reduce_only = 11;
-  YesNo mmp = 12;
+  int64 account_id = 1;
+  int64 contract_id = 2;
+  Side side = 3;
+  PositionEffect position_effect = 4;
+  OrderType order_type = 5;
+  string price = 6;
+  string qty = 7;
+  string client_order_id = 8;
+  YesNo reduce_only = 9;
+  YesNo mmp = 10;
 }
 
 message AppPlaceOrderResp {
@@ -100,15 +100,15 @@ message AppPlaceOrderResp {
 }
 
 message AppCancelOrderReq {
-  int64 account_id = 2;
-  int64 order_id = 3;
-  string order_no = 4;
+  int64 account_id = 1;
+  int64 order_id = 2;
+  string order_no = 3;
 }
 
 message AppGetOrderDetailReq {
-  int64 account_id = 3;
-  int64 order_id = 4;
-  string order_no = 5;
+  int64 account_id = 1;
+  int64 order_id = 2;
+  string order_no = 3;
 }
 
 message AppGetOrderDetailResp {
@@ -117,10 +117,10 @@ message AppGetOrderDetailResp {
 }
 
 message AppListCurrentOrdersReq {
-  int64 account_id = 3;
-  int64 contract_id = 4;
-  Side side = 5;
-  common.PageReq page = 6;
+  int64 account_id = 1;
+  int64 contract_id = 2;
+  Side side = 3;
+  common.PageReq page = 4;
 }
 
 message AppListCurrentOrdersResp {
@@ -130,11 +130,11 @@ message AppListCurrentOrdersResp {
 }
 
 message AppListHistoryOrdersReq {
-  int64 account_id = 3;
-  int64 contract_id = 4;
-  OrderStatus status = 5;
-  common.TimeRange create_time_range = 6;
-  common.PageReq page = 7;
+  int64 account_id = 1;
+  int64 contract_id = 2;
+  OrderStatus status = 3;
+  common.TimeRange create_time_range = 4;
+  common.PageReq page = 5;
 }
 
 message AppListHistoryOrdersResp {
@@ -144,10 +144,10 @@ message AppListHistoryOrdersResp {
 }
 
 message AppListTradesReq {
-  int64 account_id = 3;
-  int64 contract_id = 4;
-  common.TimeRange trade_time_range = 5;
-  common.PageReq page = 6;
+  int64 account_id = 1;
+  int64 contract_id = 2;
+  common.TimeRange trade_time_range = 3;
+  common.PageReq page = 4;
 }
 
 message AppListTradesResp {
@@ -157,9 +157,9 @@ message AppListTradesResp {
 }
 
 message AppListPositionsReq {
-  int64 account_id = 3;
-  PositionStatus status = 4;
-  common.PageReq page = 5;
+  int64 account_id = 1;
+  PositionStatus status = 2;
+  common.PageReq page = 3;
 }
 
 message AppListPositionsResp {
@@ -169,8 +169,8 @@ message AppListPositionsResp {
 }
 
 message AppGetPositionDetailReq {
-  int64 account_id = 3;
-  int64 position_id = 4;
+  int64 account_id = 1;
+  int64 position_id = 2;
 }
 
 message AppGetPositionDetailResp {
@@ -179,10 +179,10 @@ message AppGetPositionDetailResp {
 }
 
 message AppExerciseReq {
-  int64 account_id = 3;
-  int64 position_id = 4;
-  int64 contract_id = 5;
-  string exercise_qty = 6;
+  int64 account_id = 1;
+  int64 position_id = 2;
+  int64 contract_id = 3;
+  string exercise_qty = 4;
 }
 
 message AppExerciseResp {
@@ -192,11 +192,11 @@ message AppExerciseResp {
 }
 
 message AppListExercisesReq {
-  int64 account_id = 3;
-  int64 contract_id = 4;
-  ExerciseStatus status = 5;
-  common.TimeRange exercise_time_range = 6;
-  common.PageReq page = 7;
+  int64 account_id = 1;
+  int64 contract_id = 2;
+  ExerciseStatus status = 3;
+  common.TimeRange exercise_time_range = 4;
+  common.PageReq page = 5;
 }
 
 message AppListExercisesResp {
@@ -206,7 +206,7 @@ message AppListExercisesResp {
 }
 
 message AppListAccountsReq {
-  int64 account_id = 3;
+  int64 account_id = 1;
 }
 
 message AppListAccountsResp {
@@ -215,10 +215,10 @@ message AppListAccountsResp {
 }
 
 message AppListBillsReq {
-  int64 account_id = 3;
-  BillRefType ref_type = 4;
-  common.TimeRange create_time_range = 5;
-  common.PageReq page = 6;
+  int64 account_id = 1;
+  BillRefType ref_type = 2;
+  common.TimeRange create_time_range = 3;
+  common.PageReq page = 4;
 }
 
 message AppListBillsResp {

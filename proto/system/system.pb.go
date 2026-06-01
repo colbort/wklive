@@ -184,17 +184,17 @@ func (x *AdminLoginReq) GetUa() string {
 type AdminLoginResp struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Base             *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Token            string                 `protobuf:"bytes,3,opt,name=token,proto3" json:"token,omitempty"`
-	Exp              int64                  `protobuf:"varint,4,opt,name=exp,proto3" json:"exp,omitempty"`
-	UserId           int64                  `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Nickname         string                 `protobuf:"bytes,6,opt,name=nickname,proto3" json:"nickname,omitempty"`
-	RoleIds          []int64                `protobuf:"varint,7,rep,packed,name=role_ids,json=roleIds,proto3" json:"role_ids,omitempty"`
-	Google2FaEnabled int64                  `protobuf:"varint,8,opt,name=google2fa_enabled,json=google2faEnabled,proto3" json:"google2fa_enabled,omitempty"`
-	PermsVer         int64                  `protobuf:"varint,9,opt,name=perms_ver,json=permsVer,proto3" json:"perms_ver,omitempty"`
-	TenantId         int64                  `protobuf:"varint,10,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserType         UserType               `protobuf:"varint,11,opt,name=user_type,json=userType,proto3,enum=system.UserType" json:"user_type,omitempty"`
-	IsOwner          int64                  `protobuf:"varint,12,opt,name=is_owner,json=isOwner,proto3" json:"is_owner,omitempty"`
-	Avatar           string                 `protobuf:"bytes,13,opt,name=avatar,proto3" json:"avatar,omitempty"`
+	Token            string                 `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
+	Exp              int64                  `protobuf:"varint,3,opt,name=exp,proto3" json:"exp,omitempty"`
+	UserId           int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Nickname         string                 `protobuf:"bytes,5,opt,name=nickname,proto3" json:"nickname,omitempty"`
+	RoleIds          []int64                `protobuf:"varint,6,rep,packed,name=role_ids,json=roleIds,proto3" json:"role_ids,omitempty"`
+	Google2FaEnabled int64                  `protobuf:"varint,7,opt,name=google2fa_enabled,json=google2faEnabled,proto3" json:"google2fa_enabled,omitempty"`
+	PermsVer         int64                  `protobuf:"varint,8,opt,name=perms_ver,json=permsVer,proto3" json:"perms_ver,omitempty"`
+	TenantId         int64                  `protobuf:"varint,9,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserType         UserType               `protobuf:"varint,10,opt,name=user_type,json=userType,proto3,enum=system.UserType" json:"user_type,omitempty"`
+	IsOwner          int64                  `protobuf:"varint,11,opt,name=is_owner,json=isOwner,proto3" json:"is_owner,omitempty"`
+	Avatar           string                 `protobuf:"bytes,12,opt,name=avatar,proto3" json:"avatar,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -998,8 +998,8 @@ func (x *Google2FAInitReq) GetUserId() int64 {
 type Google2FAInitResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Secret        string                 `protobuf:"bytes,3,opt,name=secret,proto3" json:"secret,omitempty"`
-	OtpauthUrl    string                 `protobuf:"bytes,4,opt,name=otpauth_url,json=otpauthUrl,proto3" json:"otpauth_url,omitempty"`
+	Secret        string                 `protobuf:"bytes,2,opt,name=secret,proto3" json:"secret,omitempty"`
+	OtpauthUrl    string                 `protobuf:"bytes,3,opt,name=otpauth_url,json=otpauthUrl,proto3" json:"otpauth_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1493,7 +1493,7 @@ func (x *SysUserListReq) GetStatus() CommonStatus {
 type SysUserListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          []*SysUserItem         `protobuf:"bytes,4,rep,name=data,proto3" json:"data,omitempty"`
+	Data          []*SysUserItem         `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1589,7 +1589,7 @@ func (x *SysUserDetailReq) GetId() int64 {
 type SysUserDetailResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          *SysUserItem           `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
+	Data          *SysUserItem           `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2212,7 +2212,7 @@ func (x *SysRoleListReq) GetStatus() CommonStatus {
 type SysRoleListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          []*SysRoleItem         `protobuf:"bytes,4,rep,name=data,proto3" json:"data,omitempty"`
+	Data          []*SysRoleItem         `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2564,9 +2564,9 @@ func (x *SysRoleGrantDetailReq) GetRoleId() int64 {
 type SysRoleGrantDetailResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	RoleId        int64                  `protobuf:"varint,3,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
-	MenuIds       []int64                `protobuf:"varint,4,rep,packed,name=menu_ids,json=menuIds,proto3" json:"menu_ids,omitempty"`
-	PermKeys      []string               `protobuf:"bytes,5,rep,name=perm_keys,json=permKeys,proto3" json:"perm_keys,omitempty"`
+	RoleId        int64                  `protobuf:"varint,2,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
+	MenuIds       []int64                `protobuf:"varint,3,rep,packed,name=menu_ids,json=menuIds,proto3" json:"menu_ids,omitempty"`
+	PermKeys      []string               `protobuf:"bytes,4,rep,name=perm_keys,json=permKeys,proto3" json:"perm_keys,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2700,7 +2700,7 @@ func (x *SysPermItem) GetName() string {
 type SysPermListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          []*SysPermItem         `protobuf:"bytes,3,rep,name=data,proto3" json:"data,omitempty"`
+	Data          []*SysPermItem         `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2764,7 +2764,7 @@ type SysMenuCreateReq struct {
 	Sort          int64                  `protobuf:"varint,8,opt,name=sort,proto3" json:"sort,omitempty"`
 	Visible       VisibleStatus          `protobuf:"varint,9,opt,name=visible,proto3,enum=system.VisibleStatus" json:"visible,omitempty"`
 	Status        CommonStatus           `protobuf:"varint,10,opt,name=status,proto3,enum=system.CommonStatus" json:"status,omitempty"`
-	Perms         string                 `protobuf:"bytes,12,opt,name=perms,proto3" json:"perms,omitempty"`
+	Perms         string                 `protobuf:"bytes,11,opt,name=perms,proto3" json:"perms,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3131,7 +3131,7 @@ func (x *SysMenuListReq) GetVisible() VisibleStatus {
 type SysMenuListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          []*SysMenuItem         `protobuf:"bytes,4,rep,name=data,proto3" json:"data,omitempty"`
+	Data          []*SysMenuItem         `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3346,7 +3346,7 @@ func (x *LoginLogListReq) GetSuccess() int64 {
 type LoginLogListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          []*LoginLogItem        `protobuf:"bytes,4,rep,name=data,proto3" json:"data,omitempty"`
+	Data          []*LoginLogItem        `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3590,7 +3590,7 @@ func (x *OpLogListReq) GetPath() string {
 type OpLogListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          []*OpLogItem           `protobuf:"bytes,4,rep,name=data,proto3" json:"data,omitempty"`
+	Data          []*OpLogItem           `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3974,7 +3974,7 @@ func (x *SysConfigListReq) GetTenantId() int64 {
 type SysConfigListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          []*SysConfigItem       `protobuf:"bytes,4,rep,name=data,proto3" json:"data,omitempty"`
+	Data          []*SysConfigItem       `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4086,7 +4086,7 @@ func (x *SysConfigDetailReq) GetTenantId() int64 {
 type SysConfigDetailResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          *SysConfigItem         `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
+	Data          *SysConfigItem         `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4182,7 +4182,7 @@ func (x *SysConfigByKeysReq) GetConfigKeys() []string {
 type SysConfigByKeysResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          []*SysConfigItem       `protobuf:"bytes,3,rep,name=data,proto3" json:"data,omitempty"`
+	Data          []*SysConfigItem       `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4523,7 +4523,7 @@ func (x *SysCronJobListReq) GetStatus() JobStatus {
 type SysCronJobListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          []*SysCronJobItem      `protobuf:"bytes,4,rep,name=data,proto3" json:"data,omitempty"`
+	Data          []*SysCronJobItem      `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5179,7 +5179,7 @@ func (x *SysCronJobHander) GetJobName() string {
 type SysCronJobHandlersResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          []*SysCronJobHander    `protobuf:"bytes,3,rep,name=data,proto3" json:"data,omitempty"`
+	Data          []*SysCronJobHander    `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5231,7 +5231,7 @@ func (x *SysCronJobHandlersResp) GetData() []*SysCronJobHander {
 type SysCronJobLogListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          []*SysCronJobLogItem   `protobuf:"bytes,4,rep,name=data,proto3" json:"data,omitempty"`
+	Data          []*SysCronJobLogItem   `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5532,7 +5532,7 @@ func (x *SysTenantListReq) GetContactPhone() string {
 type SysTenantListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          []*SysTenantItem       `protobuf:"bytes,4,rep,name=data,proto3" json:"data,omitempty"`
+	Data          []*SysTenantItem       `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -5946,18 +5946,18 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x02ua\x18\x05 \x01(\tR\x02ua\"\xf7\x02\n" +
 	"\x0eAdminLoginResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x14\n" +
-	"\x05token\x18\x03 \x01(\tR\x05token\x12\x10\n" +
-	"\x03exp\x18\x04 \x01(\x03R\x03exp\x12\x17\n" +
-	"\auser_id\x18\x05 \x01(\x03R\x06userId\x12\x1a\n" +
-	"\bnickname\x18\x06 \x01(\tR\bnickname\x12\x19\n" +
-	"\brole_ids\x18\a \x03(\x03R\aroleIds\x12+\n" +
-	"\x11google2fa_enabled\x18\b \x01(\x03R\x10google2faEnabled\x12\x1b\n" +
-	"\tperms_ver\x18\t \x01(\x03R\bpermsVer\x12\x1b\n" +
-	"\ttenant_id\x18\n" +
-	" \x01(\x03R\btenantId\x12-\n" +
-	"\tuser_type\x18\v \x01(\x0e2\x10.system.UserTypeR\buserType\x12\x19\n" +
-	"\bis_owner\x18\f \x01(\x03R\aisOwner\x12\x16\n" +
-	"\x06avatar\x18\r \x01(\tR\x06avatar\"%\n" +
+	"\x05token\x18\x02 \x01(\tR\x05token\x12\x10\n" +
+	"\x03exp\x18\x03 \x01(\x03R\x03exp\x12\x17\n" +
+	"\auser_id\x18\x04 \x01(\x03R\x06userId\x12\x1a\n" +
+	"\bnickname\x18\x05 \x01(\tR\bnickname\x12\x19\n" +
+	"\brole_ids\x18\x06 \x03(\x03R\aroleIds\x12+\n" +
+	"\x11google2fa_enabled\x18\a \x01(\x03R\x10google2faEnabled\x12\x1b\n" +
+	"\tperms_ver\x18\b \x01(\x03R\bpermsVer\x12\x1b\n" +
+	"\ttenant_id\x18\t \x01(\x03R\btenantId\x12-\n" +
+	"\tuser_type\x18\n" +
+	" \x01(\x0e2\x10.system.UserTypeR\buserType\x12\x19\n" +
+	"\bis_owner\x18\v \x01(\x03R\aisOwner\x12\x16\n" +
+	"\x06avatar\x18\f \x01(\tR\x06avatar\"%\n" +
 	"\n" +
 	"ProfileReq\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\"\xd4\x01\n" +
@@ -6019,8 +6019,8 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\"r\n" +
 	"\x11Google2FAInitResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x16\n" +
-	"\x06secret\x18\x03 \x01(\tR\x06secret\x12\x1f\n" +
-	"\votpauth_url\x18\x04 \x01(\tR\n" +
+	"\x06secret\x18\x02 \x01(\tR\x06secret\x12\x1f\n" +
+	"\votpauth_url\x18\x03 \x01(\tR\n" +
 	"otpauthUrl\"W\n" +
 	"\x10Google2FABindReq\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x16\n" +
@@ -6058,12 +6058,12 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x06status\x18\x03 \x01(\x0e2\x14.system.CommonStatusR\x06status\"`\n" +
 	"\x0fSysUserListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
-	"\x04data\x18\x04 \x03(\v2\x13.system.SysUserItemR\x04data\"\"\n" +
+	"\x04data\x18\x02 \x03(\v2\x13.system.SysUserItemR\x04data\"\"\n" +
 	"\x10SysUserDetailReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"b\n" +
 	"\x11SysUserDetailResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
-	"\x04data\x18\x03 \x01(\v2\x13.system.SysUserItemR\x04data\"\xae\x02\n" +
+	"\x04data\x18\x02 \x01(\v2\x13.system.SysUserItemR\x04data\"\xae\x02\n" +
 	"\x10SysUserCreateReq\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x1a\n" +
@@ -6109,7 +6109,7 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x06status\x18\x03 \x01(\x0e2\x14.system.CommonStatusR\x06status\"`\n" +
 	"\x0fSysRoleListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
-	"\x04data\x18\x04 \x03(\v2\x13.system.SysRoleItemR\x04data\"\x9d\x01\n" +
+	"\x04data\x18\x02 \x03(\v2\x13.system.SysRoleItemR\x04data\"\x9d\x01\n" +
 	"\x10SysRoleCreateReq\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
 	"\x04code\x18\x02 \x01(\tR\x04code\x12,\n" +
@@ -6132,9 +6132,9 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\arole_id\x18\x01 \x01(\x03R\x06roleId\"\x8f\x01\n" +
 	"\x16SysRoleGrantDetailResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x17\n" +
-	"\arole_id\x18\x03 \x01(\x03R\x06roleId\x12\x19\n" +
-	"\bmenu_ids\x18\x04 \x03(\x03R\amenuIds\x12\x1b\n" +
-	"\tperm_keys\x18\x05 \x03(\tR\bpermKeys\"\x7f\n" +
+	"\arole_id\x18\x02 \x01(\x03R\x06roleId\x12\x19\n" +
+	"\bmenu_ids\x18\x03 \x03(\x03R\amenuIds\x12\x1b\n" +
+	"\tperm_keys\x18\x04 \x03(\tR\bpermKeys\"\x7f\n" +
 	"\vSysPermItem\x12\x19\n" +
 	"\bperm_key\x18\x01 \x01(\tR\apermKey\x12-\n" +
 	"\x06method\x18\x02 \x01(\x0e2\x15.system.RequestMethodR\x06method\x12\x12\n" +
@@ -6142,7 +6142,7 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x04name\x18\x04 \x01(\tR\x04name\"`\n" +
 	"\x0fSysPermListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
-	"\x04data\x18\x03 \x03(\v2\x13.system.SysPermItemR\x04data\"\xf0\x02\n" +
+	"\x04data\x18\x02 \x03(\v2\x13.system.SysPermItemR\x04data\"\xf0\x02\n" +
 	"\x10SysMenuCreateReq\x12\x1b\n" +
 	"\tparent_id\x18\x01 \x01(\x03R\bparentId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12-\n" +
@@ -6155,7 +6155,7 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\avisible\x18\t \x01(\x0e2\x15.system.VisibleStatusR\avisible\x12,\n" +
 	"\x06status\x18\n" +
 	" \x01(\x0e2\x14.system.CommonStatusR\x06status\x12\x14\n" +
-	"\x05perms\x18\f \x01(\tR\x05perms\"\x80\x03\n" +
+	"\x05perms\x18\v \x01(\tR\x05perms\"\x80\x03\n" +
 	"\x10SysMenuUpdateReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tparent_id\x18\x02 \x01(\x03R\bparentId\x12\x12\n" +
@@ -6180,7 +6180,7 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\avisible\x18\x05 \x01(\x0e2\x15.system.VisibleStatusR\avisible\"`\n" +
 	"\x0fSysMenuListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
-	"\x04data\x18\x04 \x03(\v2\x13.system.SysMenuItemR\x04data\"\xba\x01\n" +
+	"\x04data\x18\x02 \x03(\v2\x13.system.SysMenuItemR\x04data\"\xba\x01\n" +
 	"\fLoginLogItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1a\n" +
@@ -6196,7 +6196,7 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\asuccess\x18\x03 \x01(\x03R\asuccess\"b\n" +
 	"\x10LoginLogListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12(\n" +
-	"\x04data\x18\x04 \x03(\v2\x14.system.LoginLogItemR\x04data\"\xa8\x02\n" +
+	"\x04data\x18\x02 \x03(\v2\x14.system.LoginLogItemR\x04data\"\xa8\x02\n" +
 	"\tOpLogItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1a\n" +
@@ -6217,7 +6217,7 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x04path\x18\x04 \x01(\tR\x04path\"\\\n" +
 	"\rOpLogListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12%\n" +
-	"\x04data\x18\x04 \x03(\v2\x11.system.OpLogItemR\x04data\"\x8b\x01\n" +
+	"\x04data\x18\x02 \x03(\v2\x11.system.OpLogItemR\x04data\"\x8b\x01\n" +
 	"\x12SysConfigCreateReq\x12\x1d\n" +
 	"\n" +
 	"config_key\x18\x01 \x01(\tR\tconfigKey\x12!\n" +
@@ -6247,7 +6247,7 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\ttenant_id\x18\x03 \x01(\x03R\btenantId\"d\n" +
 	"\x11SysConfigListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
-	"\x04data\x18\x04 \x03(\v2\x15.system.SysConfigItemR\x04data\"\xaa\x01\n" +
+	"\x04data\x18\x02 \x03(\v2\x15.system.SysConfigItemR\x04data\"\xaa\x01\n" +
 	"\x12SysConfigDetailReq\x12\x13\n" +
 	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x88\x01\x01\x129\n" +
 	"\n" +
@@ -6259,13 +6259,13 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"_tenant_id\"f\n" +
 	"\x13SysConfigDetailResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
-	"\x04data\x18\x03 \x01(\v2\x15.system.SysConfigItemR\x04data\"5\n" +
+	"\x04data\x18\x02 \x01(\v2\x15.system.SysConfigItemR\x04data\"5\n" +
 	"\x12SysConfigByKeysReq\x12\x1f\n" +
 	"\vconfig_keys\x18\x01 \x03(\tR\n" +
 	"configKeys\"f\n" +
 	"\x13SysConfigByKeysResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
-	"\x04data\x18\x03 \x03(\v2\x15.system.SysConfigItemR\x04data\",\n" +
+	"\x04data\x18\x02 \x03(\v2\x15.system.SysConfigItemR\x04data\",\n" +
 	"\x11LoginUserPermsReq\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\"*\n" +
 	"\x12LoginUserPermsResp\x12\x14\n" +
@@ -6291,7 +6291,7 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x06status\x18\x05 \x01(\x0e2\x11.system.JobStatusR\x06status\"f\n" +
 	"\x12SysCronJobListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
-	"\x04data\x18\x04 \x03(\v2\x16.system.SysCronJobItemR\x04data\"\xde\x01\n" +
+	"\x04data\x18\x02 \x03(\v2\x16.system.SysCronJobItemR\x04data\"\xde\x01\n" +
 	"\x13SysCronJobCreateReq\x12\x19\n" +
 	"\bjob_name\x18\x01 \x01(\tR\ajobName\x12\x1b\n" +
 	"\tjob_group\x18\x02 \x01(\tR\bjobGroup\x12#\n" +
@@ -6340,10 +6340,10 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\bjob_name\x18\x02 \x01(\tR\ajobName\"l\n" +
 	"\x16SysCronJobHandlersResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12,\n" +
-	"\x04data\x18\x03 \x03(\v2\x18.system.SysCronJobHanderR\x04data\"l\n" +
+	"\x04data\x18\x02 \x03(\v2\x18.system.SysCronJobHanderR\x04data\"l\n" +
 	"\x15SysCronJobLogListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x04 \x03(\v2\x19.system.SysCronJobLogItemR\x04data\"\xeb\x03\n" +
+	"\x04data\x18\x02 \x03(\v2\x19.system.SysCronJobLogItemR\x04data\"\xeb\x03\n" +
 	"\rSysTenantItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vtenant_code\x18\x02 \x01(\tR\n" +
@@ -6378,7 +6378,7 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\rcontact_phone\x18\a \x01(\tR\fcontactPhone\"d\n" +
 	"\x11SysTenantListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
-	"\x04data\x18\x04 \x03(\v2\x15.system.SysTenantItemR\x04data\"\xa9\x02\n" +
+	"\x04data\x18\x02 \x03(\v2\x15.system.SysTenantItemR\x04data\"\xa9\x02\n" +
 	"\x12SysTenantCreateReq\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1f\n" +
 	"\vtenant_name\x18\x02 \x01(\tR\n" +

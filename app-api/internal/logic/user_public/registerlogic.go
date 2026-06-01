@@ -38,7 +38,6 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRe
 		ConfirmPassword: req.ConfirmPassword,
 		InviteCode:      req.InviteCode,
 		Source:          req.Source,
-		RegisterIp:      req.RegisterIp,
 	})
 	if err != nil {
 		return nil, err

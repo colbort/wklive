@@ -45,9 +45,9 @@ service StakingApp {
 
 // 产品列表
 message AppProductListReq {
-  ProductType product_type = 2;
-  string coin_symbol = 3;
-  common.PageReq page = 4;
+  ProductType product_type = 1;
+  string coin_symbol = 2;
+  common.PageReq page = 3;
 }
 
 message AppProductListResp {
@@ -57,7 +57,7 @@ message AppProductListResp {
 
 // 产品详情
 message AppProductDetailReq {
-  int64 id = 2;
+  int64 id = 1;
 }
 
 message AppProductDetailResp {
@@ -67,10 +67,10 @@ message AppProductDetailResp {
 
 // 创建订单
 message AppCreateOrderReq {
-  int64 product_id = 3;
-  string stake_amount = 4;
-  SourceType source = 5;
-  string remark = 6;
+  int64 product_id = 1;
+  string stake_amount = 2;
+  SourceType source = 3;
+  string remark = 4;
 }
 
 message AppCreateOrderResp {
@@ -81,9 +81,9 @@ message AppCreateOrderResp {
 
 // 我的订单列表
 message AppMyOrderListReq {
-  OrderStatus status = 3;
-  RedeemType redeem_type = 4;
-  common.PageReq page = 5;
+  OrderStatus status = 1;
+  RedeemType redeem_type = 2;
+  common.PageReq page = 3;
 }
 
 message AppMyOrderListResp {
@@ -93,7 +93,7 @@ message AppMyOrderListResp {
 
 // 我的订单详情
 message AppMyOrderDetailReq {
-  int64 id = 3;
+  int64 id = 1;
 }
 
 message AppMyOrderDetailResp {
@@ -103,9 +103,9 @@ message AppMyOrderDetailResp {
 
 // 我的收益记录
 message AppMyRewardLogListReq {
-  int64 order_id = 3;
-  RewardType reward_type = 4;
-  common.PageReq page = 5;
+  int64 order_id = 1;
+  RewardType reward_type = 2;
+  common.PageReq page = 3;
 }
 
 message AppMyRewardLogListResp {
@@ -115,9 +115,9 @@ message AppMyRewardLogListResp {
 
 // 赎回
 message AppRedeemReq {
-  int64 order_id = 3;
-  RedeemType redeem_type = 4;
-  string remark = 5;
+  int64 order_id = 1;
+  RedeemType redeem_type = 2;
+  string remark = 3;
 }
 
 message AppRedeemResp {
@@ -128,8 +128,8 @@ message AppRedeemResp {
 
 // 我的赎回记录
 message AppMyRedeemLogListReq {
-  int64 order_id = 3;
-  common.PageReq page = 4;
+  int64 order_id = 1;
+  common.PageReq page = 2;
 }
 
 message AppMyRedeemLogListResp {

@@ -35,6 +35,7 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 
 // 用户注册
 func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, error) {
+	registerIP, _ := utils.GetClientIPFromMd(l.ctx)
 	tenant, err := l.svcCtx.SystemCli.SysTenantDetail(l.ctx, &system.SysTenantDetailReq{
 		TenantCode: &in.TenantCode,
 	})
@@ -143,9 +144,9 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 		Signature:      sql.NullString{String: "", Valid: true},
 		Source:         sql.NullString{String: "", Valid: true},
 		ReferrerUserId: sql.NullInt64{Int64: referrerUserId, Valid: true},
-		LastLoginIp:    sql.NullString{String: in.RegisterIp, Valid: true},
+		LastLoginIp:    sql.NullString{String: registerIP, Valid: registerIP != ""},
 		LastLoginTime:  now,
-		RegisterIp:     sql.NullString{String: in.RegisterIp, Valid: true},
+		RegisterIp:     sql.NullString{String: registerIP, Valid: registerIP != ""},
 		RegisterTime:   now,
 		IsGuest:        1,
 		IsRecharge:     0,

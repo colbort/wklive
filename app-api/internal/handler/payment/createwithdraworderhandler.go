@@ -22,13 +22,13 @@ func CreateWithdrawOrderHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := payment.NewCreateWithdrawOrderLogic(r.Context(), svcCtx)
-		req.ClientIp = utils.GetClientIP(r) // 获取客户端IP
+		ctx := utils.ContextWithClientIP(r.Context(), utils.GetClientIP(r))
+		l := payment.NewCreateWithdrawOrderLogic(ctx, svcCtx)
 		resp, err := l.CreateWithdrawOrder(&req)
 		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+			httpx.ErrorCtx(ctx, w, err)
 		} else {
-			httpx.OkJsonCtx(r.Context(), w, resp)
+			httpx.OkJsonCtx(ctx, w, resp)
 		}
 	}
 }

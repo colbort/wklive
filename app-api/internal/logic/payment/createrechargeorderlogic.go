@@ -35,7 +35,6 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(req *types.CreateRecharge
 		Subject:        req.Subject,
 		Body:           req.Body,
 		ClientType:     payment.ClientType(req.ClientType),
-		ClientIp:       req.ClientIp,
 		BizOrderNo:     req.BizOrderNo,
 	})
 	if err != nil {

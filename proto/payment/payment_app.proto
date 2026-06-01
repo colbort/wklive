@@ -21,9 +21,9 @@ message GetMyRechargeStatResp {
 
 // 获取当前登录用户在指定充值场景下可用的充值通道
 message ListAvailableRechargeChannelsReq {
-  int64 recharge_amount = 3; // 单位：分
-  string currency = 4;
-  payment.ClientType client_type = 5;
+  int64 recharge_amount = 1; // 单位：分
+  string currency = 2;
+  payment.ClientType client_type = 3;
 }
 
 message ListAvailableRechargeChannelsResp {
@@ -33,14 +33,13 @@ message ListAvailableRechargeChannelsResp {
 
 // 创建充值订单
 message CreateRechargeOrderReq {
-  int64 channel_id = 3;
-  int64 recharge_amount = 4; // 单位：分
-  string currency = 5;
-  string subject = 6;
-  string body = 7;
-  payment.ClientType client_type = 8;
-  string client_ip = 9;
-  string biz_order_no = 10;
+  int64 channel_id = 1;
+  int64 recharge_amount = 2; // 单位：分
+  string currency = 3;
+  string subject = 4;
+  string body = 5;
+  payment.ClientType client_type = 6;
+  string biz_order_no = 7;
 }
 
 message CreateRechargeOrderResp {
@@ -50,13 +49,12 @@ message CreateRechargeOrderResp {
 
 // 创建链上充值订单
 message CreateCryptoRechargeOrderReq {
-  int64 wallet_type = 3;
-  string coin = 4;
-  common.ChainCode chain_code = 5;
-  int64 recharge_amount = 6; // 单位：分
-  payment.ClientType client_type = 7;
-  string client_ip = 8;
-  string biz_order_no = 9;
+  int64 wallet_type = 1;
+  string coin = 2;
+  common.ChainCode chain_code = 3;
+  int64 recharge_amount = 4; // 单位：分
+  payment.ClientType client_type = 5;
+  string biz_order_no = 6;
 }
 
 message CreateCryptoRechargeOrderResp {
@@ -67,7 +65,7 @@ message CreateCryptoRechargeOrderResp {
 
 // 查询我的订单详情
 message GetMyRechargeOrderReq {
-  string order_no = 2;
+  string order_no = 1;
 }
 
 message GetMyRechargeOrderResp {
@@ -77,11 +75,11 @@ message GetMyRechargeOrderResp {
 
 // 查询我的充值订单列表
 message ListMyRechargeOrdersReq {
-  common.PageReq page = 3;
-  payment.PayOrderStatus status = 4;
-  string order_no = 5;
-  int64 create_time_start = 6;
-  int64 create_time_end = 7;
+  common.PageReq page = 1;
+  payment.PayOrderStatus status = 2;
+  string order_no = 3;
+  int64 create_time_start = 4;
+  int64 create_time_end = 5;
 }
 
 message ListMyRechargeOrdersResp {
@@ -91,12 +89,12 @@ message ListMyRechargeOrdersResp {
 
 // 取消未支付订单
 message CancelMyRechargeOrderReq {
-  string order_no = 2;
+  string order_no = 1;
 }
 
 // 轮询订单状态
 message QueryMyRechargeOrderStatusReq {
-  string order_no = 3;
+  string order_no = 1;
 }
 
 message QueryMyRechargeOrderStatusResp {
@@ -106,12 +104,11 @@ message QueryMyRechargeOrderStatusResp {
 
 // 提现
 message CreateWithdrawOrderReq {
-  string client_ip = 2;
-  int64 amount = 3; // 单位：分
-  string currency = 4;
-  string address = 5; // 提现地址（钱包地址等）
-  int64 bank_id = 6;  // 银行ID（如果是提现到银行卡）
-  string remark = 7;
+  int64 amount = 1; // 单位：分
+  string currency = 2;
+  string address = 3; // 提现地址（钱包地址等）
+  int64 bank_id = 4;  // 银行ID（如果是提现到银行卡）
+  string remark = 5;
 }
 
 message CreateWithdrawOrderResp {
@@ -121,8 +118,8 @@ message CreateWithdrawOrderResp {
 
 // 获取提现订单列表
 message ListMyWithdrawOrdersReq {
-  common.PageReq page = 3;
-  payment.PayOrderStatus status = 4;
+  common.PageReq page = 1;
+  payment.PayOrderStatus status = 2;
 }
 
 message ListMyWithdrawOrdersResp {
@@ -142,9 +139,9 @@ message GetMyWithdrawOrderResp {
 
 // 获取/分配我的链上充值地址
 message GetMyCryptoRechargeAddressReq {
-  int64 wallet_type = 3;
-  string coin = 4;
-  common.ChainCode chain_code = 5;
+  int64 wallet_type = 1;
+  string coin = 2;
+  common.ChainCode chain_code = 3;
 }
 
 message GetMyCryptoRechargeAddressResp {
@@ -154,9 +151,9 @@ message GetMyCryptoRechargeAddressResp {
 
 // 我的链上充值地址列表
 message ListMyCryptoRechargeAddressesReq {
-  int64 wallet_type = 3;
-  string coin = 4;
-  common.ChainCode chain_code = 5;
+  int64 wallet_type = 1;
+  string coin = 2;
+  common.ChainCode chain_code = 3;
 }
 
 message ListMyCryptoRechargeAddressesResp {
@@ -166,13 +163,13 @@ message ListMyCryptoRechargeAddressesResp {
 
 // 我的链上充值交易列表
 message ListMyCryptoRechargeTxsReq {
-  common.PageReq page = 3;
-  string order_no = 4;
-  string coin = 5;
-  common.ChainCode chain_code = 6;
-  payment.CryptoRechargeTxStatus status = 7;
-  int64 create_time_start = 8;
-  int64 create_time_end = 9;
+  common.PageReq page = 1;
+  string order_no = 2;
+  string coin = 3;
+  common.ChainCode chain_code = 4;
+  payment.CryptoRechargeTxStatus status = 5;
+  int64 create_time_start = 6;
+  int64 create_time_end = 7;
 }
 
 message ListMyCryptoRechargeTxsResp {
@@ -182,8 +179,8 @@ message ListMyCryptoRechargeTxsResp {
 
 // 我的链上充值交易详情
 message GetMyCryptoRechargeTxReq {
-  int64 id = 3;
-  string tx_hash = 4;
+  int64 id = 1;
+  string tx_hash = 2;
 }
 
 message GetMyCryptoRechargeTxResp {

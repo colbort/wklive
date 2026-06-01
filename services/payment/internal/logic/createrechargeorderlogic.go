@@ -41,6 +41,7 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 	if err != nil {
 		return nil, err
 	}
+	clientIP, _ := utils.GetClientIPFromMd(l.ctx)
 	now := utils.NowMillis()
 
 	// 生成订单号
@@ -108,7 +109,7 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 		Subject:      sql.NullString{String: in.Subject, Valid: in.Subject != ""},
 		Body:         sql.NullString{String: in.Body, Valid: in.Body != ""},
 		ClientType:   int64(in.ClientType),
-		ClientIp:     sql.NullString{String: in.ClientIp, Valid: in.ClientIp != ""},
+		ClientIp:     sql.NullString{String: clientIP, Valid: clientIP != ""},
 		Status:       int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PENDING),
 		CreateTimes:  now,
 		UpdateTimes:  now,

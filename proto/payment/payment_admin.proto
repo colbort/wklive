@@ -453,7 +453,7 @@ message ListWithdrawOrdersResp {
 }
 
 message GetWithdrawOrderReq {
-  string order_no = 2;
+  string order_no = 1;
 }
 
 message GetWithdrawOrderResp {

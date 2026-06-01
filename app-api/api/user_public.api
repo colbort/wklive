@@ -13,7 +13,6 @@ type RegisterReq {
 	confirmPassword string `json:"confirmPassword"`
 	inviteCode      string `json:"inviteCode,optional"`
 	source          string `json:"source,optional"`
-	registerIp      string `json:"registerIp,optional"`
 }
 
 type RegisterResp {
@@ -29,7 +28,6 @@ type LoginReq {
 	account    string `json:"account"`
 	password   string `json:"password"`
 	googleCode string `json:"googleCode,optional"`
-	loginIp    string `json:"loginIp,optional"`
 }
 
 type LoginResp {
@@ -42,7 +40,6 @@ type LoginResp {
 type GuestLoginReq {
 	deviceId    string `json:"deviceId"`
 	fingerprint string `json:"fingerprint"`
-	registerIp  string `json:"registerIp,optional"`
 	tenantCode  string `json:"tenantCode"`
 }
 

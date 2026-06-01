@@ -5,4 +5,5 @@ const (
 	CtxKeyUsername   string = "username"
 	CtxKeyTenantId   string = "x-tenant-id"
 	CtxKeyTenantCode string = "x-tenant-code"
+	CtxKeyClientIp   string = "x-client-ip"
 )

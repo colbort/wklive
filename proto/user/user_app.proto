@@ -20,7 +20,6 @@ message RegisterReq {
   string confirm_password = 7;
   string invite_code = 8;
   string source = 9;
-  string register_ip = 10;
 }
 
 message RegisterResp {
@@ -36,7 +35,6 @@ message LoginReq {
   string account = 3;
   string password = 4;
   string google_code = 5;
-  string login_ip = 6;
 }
 
 message LoginResp {
@@ -49,8 +47,7 @@ message LoginResp {
 message GuestLoginReq {
   string device_id = 1;
   string fingerprint = 2;
-  string register_ip = 3;
-  string tenant_code = 4;
+  string tenant_code = 3;
 }
 
 message GuestLogin {
@@ -85,17 +82,17 @@ message GetProfileResp {
 }
 
 message UpdateProfileReq {
-  string nickname = 2;
-  string avatar = 3;
-  string language = 4;
-  string timezone = 5;
-  string signature = 6;
-  user.Gender gender = 7;
-  int64 birthday = 8;
-  string country_code = 9;
-  string province = 10;
-  string city = 11;
-  string address = 12;
+  string nickname = 1;
+  string avatar = 2;
+  string language = 3;
+  string timezone = 4;
+  string signature = 5;
+  user.Gender gender = 6;
+  int64 birthday = 7;
+  string country_code = 8;
+  string province = 9;
+  string city = 10;
+  string address = 11;
 }
 
 message UpdateProfileResp {
@@ -104,9 +101,9 @@ message UpdateProfileResp {
 }
 
 message ChangeLoginPasswordReq {
-  string old_password = 2;
-  string new_password = 3;
-  string confirm_password = 4;
+  string old_password = 1;
+  string new_password = 2;
+  string confirm_password = 3;
 }
 
 message GetIdentityReq { }
@@ -117,20 +114,20 @@ message GetIdentityResp {
 }
 
 message SubmitIdentityReq {
-  string phone = 2;
-  string email = 3;
-  string real_name = 4;
-  user.Gender gender = 5;
-  int64 birthday = 6;
-  string country_code = 7;
-  string province = 8;
-  string city = 9;
-  string address = 10;
-  user.IdType id_type = 11;
-  string id_no = 12;
-  string front_image = 13;
-  string back_image = 14;
-  string handheld_image = 15;
+  string phone = 1;
+  string email = 2;
+  string real_name = 3;
+  user.Gender gender = 4;
+  int64 birthday = 5;
+  string country_code = 6;
+  string province = 7;
+  string city = 8;
+  string address = 9;
+  user.IdType id_type = 10;
+  string id_no = 11;
+  string front_image = 12;
+  string back_image = 13;
+  string handheld_image = 14;
 }
 
 message SubmitIdentityResp {
@@ -139,15 +136,15 @@ message SubmitIdentityResp {
 }
 
 message UpdateIdentityReq {
-  string phone = 2;
-  string email = 3;
-  string real_name = 4;
-  user.Gender gender = 5;
-  int64 birthday = 6;
-  string country_code = 7;
-  string province = 8;
-  string city = 9;
-  string address = 10;
+  string phone = 1;
+  string email = 2;
+  string real_name = 3;
+  user.Gender gender = 4;
+  int64 birthday = 5;
+  string country_code = 6;
+  string province = 7;
+  string city = 8;
+  string address = 9;
 }
 
 message UpdateIdentityResp {
@@ -163,14 +160,14 @@ message GetSecurityResp {
 }
 
 message SetPayPasswordReq {
-  string password = 2;
-  string confirm_password = 3;
+  string password = 1;
+  string confirm_password = 2;
 }
 
 message ChangePayPasswordReq {
-  string old_password = 2;
-  string new_password = 3;
-  string confirm_password = 4;
+  string old_password = 1;
+  string new_password = 2;
+  string confirm_password = 3;
 }
 
 message InitGoogle2FAReq { }
@@ -182,15 +179,15 @@ message InitGoogle2FAResp {
 }
 
 message EnableGoogle2FAReq {
-  string google_code = 2;
+  string google_code = 1;
 }
 
 message DisableGoogle2FAReq {
-  string google_code = 2;
+  string google_code = 1;
 }
 
 message ListBanksReq {
-  common.PageReq page = 2;
+  common.PageReq page = 1;
 }
 
 message ListBanksResp {
@@ -199,13 +196,13 @@ message ListBanksResp {
 }
 
 message AddBankReq {
-  string bank_name = 2;
-  string bank_code = 3;
-  string account_name = 4;
-  string account_no = 5;
-  string branch_name = 6;
-  string country_code = 7;
-  int64 is_default = 8;
+  string bank_name = 1;
+  string bank_code = 2;
+  string account_name = 3;
+  string account_no = 4;
+  string branch_name = 5;
+  string country_code = 6;
+  int64 is_default = 7;
 }
 
 message AddBankResp {
@@ -215,13 +212,13 @@ message AddBankResp {
 
 message UpdateBankReq {
   int64 id = 1;
-  string bank_name = 3;
-  string bank_code = 4;
-  string account_name = 5;
-  string account_no = 6;
-  string branch_name = 7;
-  string country_code = 8;
-  int64 is_default = 9;
+  string bank_name = 2;
+  string bank_code = 3;
+  string account_name = 4;
+  string account_no = 5;
+  string branch_name = 6;
+  string country_code = 7;
+  int64 is_default = 8;
 }
 
 message UpdateBankResp {

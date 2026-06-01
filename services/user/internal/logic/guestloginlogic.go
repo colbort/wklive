@@ -36,6 +36,7 @@ func NewGuestLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GuestL
 
 // 游客登了
 func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginResp, error) {
+	registerIP, _ := utils.GetClientIPFromMd(l.ctx)
 	tenant, err := l.svcCtx.SystemCli.SysTenantDetail(l.ctx, &system.SysTenantDetailReq{
 		TenantCode: &in.TenantCode,
 	})
@@ -63,7 +64,7 @@ func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginRe
 	}
 
 	if matched == nil && in.Fingerprint != "" {
-		matched, err = l.findMatchedGuestByFingerprint(tenant.Data.Id, in.Fingerprint, in.RegisterIp)
+		matched, err = l.findMatchedGuestByFingerprint(tenant.Data.Id, in.Fingerprint, registerIP)
 		if err != nil {
 			return nil, err
 		}
@@ -71,14 +72,14 @@ func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginRe
 
 	if matched != nil {
 		now := utils.NowMillis()
-		matched.LastLoginIp = sql.NullString{String: in.RegisterIp, Valid: in.RegisterIp != ""}
+		matched.LastLoginIp = sql.NullString{String: registerIP, Valid: registerIP != ""}
 		matched.LastLoginTime = now
 		matched.UpdateTimes = now
 		if matched.DeviceId == "" {
 			matched.DeviceId = fmt.Sprintf("%d", matched.Id)
 		}
 		_ = l.svcCtx.UserModel.Update(l.ctx, matched)
-		if err := l.saveFingerprint(tenant.Data.Id, matched.Id, matched.DeviceId, in.Fingerprint, in.RegisterIp, now); err != nil {
+		if err := l.saveFingerprint(tenant.Data.Id, matched.Id, matched.DeviceId, in.Fingerprint, registerIP, now); err != nil {
 			return nil, err
 		}
 
@@ -89,7 +90,7 @@ func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginRe
 		return resp, nil
 	}
 
-	err = l.checkGuestLimit(in.RegisterIp)
+	err = l.checkGuestLimit(registerIP)
 	if err != nil {
 		return nil, err
 	}
@@ -113,9 +114,9 @@ func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginRe
 		Signature:      sql.NullString{},
 		Source:         sql.NullString{String: "guest", Valid: true},
 		ReferrerUserId: sql.NullInt64{},
-		LastLoginIp:    sql.NullString{String: in.RegisterIp, Valid: in.RegisterIp != ""},
+		LastLoginIp:    sql.NullString{String: registerIP, Valid: registerIP != ""},
 		LastLoginTime:  now,
-		RegisterIp:     sql.NullString{String: in.RegisterIp, Valid: in.RegisterIp != ""},
+		RegisterIp:     sql.NullString{String: registerIP, Valid: registerIP != ""},
 		RegisterTime:   now,
 		IsGuest:        2,
 		IsRecharge:     0,
@@ -135,7 +136,7 @@ func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginRe
 		return nil, err
 	}
 	guest.Id = insertId
-	if err := l.saveFingerprint(tenant.Data.Id, guest.Id, guest.DeviceId, in.Fingerprint, in.RegisterIp, now); err != nil {
+	if err := l.saveFingerprint(tenant.Data.Id, guest.Id, guest.DeviceId, in.Fingerprint, registerIP, now); err != nil {
 		return nil, err
 	}
 

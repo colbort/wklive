@@ -22,13 +22,13 @@ func CreateCryptoRechargeOrderHandler(svcCtx *svc.ServiceContext) http.HandlerFu
 			return
 		}
 
-		req.ClientIp = utils.GetClientIP(r)
-		l := payment.NewCreateCryptoRechargeOrderLogic(r.Context(), svcCtx)
+		ctx := utils.ContextWithClientIP(r.Context(), utils.GetClientIP(r))
+		l := payment.NewCreateCryptoRechargeOrderLogic(ctx, svcCtx)
 		resp, err := l.CreateCryptoRechargeOrder(&req)
 		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+			httpx.ErrorCtx(ctx, w, err)
 		} else {
-			httpx.OkJsonCtx(r.Context(), w, resp)
+			httpx.OkJsonCtx(ctx, w, resp)
 		}
 	}
 }

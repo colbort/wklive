@@ -51,8 +51,8 @@ service TradeApp {
 message AppCommonResp { common.RespBase base = 1; }
 
 message GetSymbolListReq {
-  MarketType market_type = 2;
-  SymbolStatus status = 3;
+  MarketType market_type = 1;
+  SymbolStatus status = 2;
 }
 
 message GetSymbolListResp {
@@ -61,7 +61,7 @@ message GetSymbolListResp {
 }
 
 message GetSymbolDetailReq {
-  int64 symbol_id = 2;
+  int64 symbol_id = 1;
 }
 
 message GetSymbolDetailResp {
@@ -73,25 +73,25 @@ message GetSymbolDetailResp {
 }
 
 message PlaceOrderReq {
-  int64 symbol_id = 3;
-  MarketType market_type = 4;
-  TradeSide side = 5;
-  PositionSide position_side = 6;
-  OrderType order_type = 7;
-  TimeInForce time_in_force = 8;
-  string client_order_id = 9;
-  string price = 10;
-  string qty = 11;
-  string amount = 12;
-  int64 is_reduce_only = 13;
-  int64 is_close_only = 14;
-  string trigger_price = 15;
-  TriggerType trigger_type = 16;
-  MarginMode margin_mode = 17;
-  int64 leverage = 18;
-  string take_profit_price = 19;
-  string stop_loss_price = 20;
-  OrderSourceType order_source = 21;
+  int64 symbol_id = 1;
+  MarketType market_type = 2;
+  TradeSide side = 3;
+  PositionSide position_side = 4;
+  OrderType order_type = 5;
+  TimeInForce time_in_force = 6;
+  string client_order_id = 7;
+  string price = 8;
+  string qty = 9;
+  string amount = 10;
+  int64 is_reduce_only = 11;
+  int64 is_close_only = 12;
+  string trigger_price = 13;
+  TriggerType trigger_type = 14;
+  MarginMode margin_mode = 15;
+  int64 leverage = 16;
+  string take_profit_price = 17;
+  string stop_loss_price = 18;
+  OrderSourceType order_source = 19;
 }
 
 message PlaceOrderResp {
@@ -100,16 +100,16 @@ message PlaceOrderResp {
 }
 
 message CancelOrderReq {
-  int64 order_id = 3;
-  string order_no = 4;
-  string client_order_id = 5;
+  int64 order_id = 1;
+  string order_no = 2;
+  string client_order_id = 3;
 }
 
 message CancelAllOrdersReq {
-  MarketType market_type = 3;
-  int64 symbol_id = 4;
-  TradeSide side = 5;
-  PositionSide position_side = 6;
+  MarketType market_type = 1;
+  int64 symbol_id = 2;
+  TradeSide side = 3;
+  PositionSide position_side = 4;
 }
 
 message CancelAllOrdersResp {
@@ -118,12 +118,12 @@ message CancelAllOrdersResp {
 }
 
 message GetOrderListReq {
-  common.PageReq page = 3;
-  MarketType market_type = 4;
-  int64 symbol_id = 5;
-  OrderStatus status = 6;
-  TradeSide side = 7;
-  TimeRange time_range = 8;
+  common.PageReq page = 1;
+  MarketType market_type = 2;
+  int64 symbol_id = 3;
+  OrderStatus status = 4;
+  TradeSide side = 5;
+  TimeRange time_range = 6;
 }
 
 message GetOrderListResp {
@@ -132,8 +132,8 @@ message GetOrderListResp {
 }
 
 message GetOrderDetailReq {
-  int64 order_id = 3;
-  string order_no = 4;
+  int64 order_id = 1;
+  string order_no = 2;
 }
 
 message GetOrderDetailResp {
@@ -144,10 +144,10 @@ message GetOrderDetailResp {
 }
 
 message GetFillListReq {
-  common.PageReq page = 3;
-  MarketType market_type = 4;
-  int64 symbol_id = 5;
-  TimeRange time_range = 6;
+  common.PageReq page = 1;
+  MarketType market_type = 2;
+  int64 symbol_id = 3;
+  TimeRange time_range = 4;
 }
 
 message GetFillListResp {
@@ -156,8 +156,8 @@ message GetFillListResp {
 }
 
 message GetPositionListReq {
-  MarketType market_type = 3;
-  int64 symbol_id = 4;
+  MarketType market_type = 1;
+  int64 symbol_id = 2;
 }
 
 message GetPositionListResp {
@@ -166,8 +166,8 @@ message GetPositionListResp {
 }
 
 message GetMarginAccountListReq {
-  MarketType market_type = 3;
-  string margin_asset = 4;
+  MarketType market_type = 1;
+  string margin_asset = 2;
 }
 
 message GetMarginAccountListResp {
@@ -176,9 +176,9 @@ message GetMarginAccountListResp {
 }
 
 message GetLeverageConfigReq {
-  int64 symbol_id = 3;
-  MarketType market_type = 4;
-  MarginMode margin_mode = 5;
+  int64 symbol_id = 1;
+  MarketType market_type = 2;
+  MarginMode margin_mode = 3;
 }
 
 message GetLeverageConfigResp {
@@ -187,10 +187,10 @@ message GetLeverageConfigResp {
 }
 
 message SetLeverageReq {
-  int64 symbol_id = 3;
-  MarketType market_type = 4;
-  MarginMode margin_mode = 5;
-  PositionMode position_mode = 6;
-  int64 long_leverage = 7;
-  int64 short_leverage = 8;
+  int64 symbol_id = 1;
+  MarketType market_type = 2;
+  MarginMode margin_mode = 3;
+  PositionMode position_mode = 4;
+  int64 long_leverage = 5;
+  int64 short_leverage = 6;
 }

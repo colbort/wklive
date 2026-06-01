@@ -34,7 +34,6 @@ func (l *LoginLogic) Login(req *types.LoginReq) (*types.LoginResp, error) {
 		Account:    req.Account,
 		Password:   req.Password,
 		GoogleCode: req.GoogleCode,
-		LoginIp:    req.LoginIp,
 	})
 	if err != nil {
 		return nil, err

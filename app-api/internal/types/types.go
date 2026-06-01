@@ -536,7 +536,6 @@ type CreateCryptoRechargeOrderReq struct {
 	ChainCode      int64  `json:"chainCode"`
 	RechargeAmount int64  `json:"rechargeAmount"` // 单位：分
 	ClientType     int64  `json:"clientType"`     // 0未知 1APP 2H5 3WEB
-	ClientIp       string `json:"clientIp,optional"`
 	BizOrderNo     string `json:"bizOrderNo,optional"`
 }
 
@@ -553,7 +552,6 @@ type CreateRechargeOrderReq struct {
 	Subject        string `json:"subject,optional"`
 	Body           string `json:"body,optional"`
 	ClientType     int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
-	ClientIp       string `json:"clientIp,optional"`
 	BizOrderNo     string `json:"bizOrderNo,optional"`
 }
 
@@ -563,8 +561,7 @@ type CreateRechargeOrderResp struct {
 }
 
 type CreateWithdrawOrderReq struct {
-	ClientIp string `json:"clientIp,optional"` // 可选，服务端也可以通过上下文获取
-	Amount   int64  `json:"amount"`            // 单位：分
+	Amount   int64  `json:"amount"` // 单位：分
 	Currency string `json:"currency"`
 	Address  string `json:"address"` // 提现地址（钱包地址等）
 	BankId   int64  `json:"bankId"`  // 银行ID（如果是提现到银行卡）
@@ -880,7 +877,6 @@ type GuestLogin struct {
 type GuestLoginReq struct {
 	DeviceId    string `json:"deviceId"`
 	Fingerprint string `json:"fingerprint"`
-	RegisterIp  string `json:"registerIp,optional"`
 	TenantCode  string `json:"tenantCode"`
 }
 
@@ -1152,7 +1148,6 @@ type LoginReq struct {
 	Account    string `json:"account"`
 	Password   string `json:"password"`
 	GoogleCode string `json:"googleCode,optional"`
-	LoginIp    string `json:"loginIp,optional"`
 }
 
 type LoginResp struct {
@@ -1513,7 +1508,6 @@ type RegisterReq struct {
 	ConfirmPassword string `json:"confirmPassword"`
 	InviteCode      string `json:"inviteCode,optional"`
 	Source          string `json:"source,optional"`
-	RegisterIp      string `json:"registerIp,optional"`
 }
 
 type RegisterResp struct {
@@ -1705,16 +1699,6 @@ type TenantInfo struct {
 	TenantName   string `json:"tenantName"`
 	TenantStatus int32  `json:"tenantStatus"`
 	ExpireTime   int64  `json:"expireTime"`
-}
-
-type TenantJsonScope struct {
-	TenantId   int64  `json:"tenantId,optional"`
-	TenantCode string `json:"tenantCode,optional"`
-}
-
-type TenantScope struct {
-	TenantId   int64  `form:"tenantId,optional"`
-	TenantCode string `form:"tenantCode,optional"`
 }
 
 type TimeRange struct {
@@ -1988,10 +1972,6 @@ type UserDetail struct {
 	Identity UserIdentity `json:"identity,optional"`
 	Security UserSecurity `json:"security,optional"`
 	Banks    []UserBank   `json:"banks,optional"`
-}
-
-type UserIdReq struct {
-	UserId int64 `path:"userId"`
 }
 
 type UserIdentity struct {

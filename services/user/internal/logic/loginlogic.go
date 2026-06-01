@@ -33,6 +33,7 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 
 // 用户登录
 func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
+	loginIP, _ := utils.GetClientIPFromMd(l.ctx)
 	tenant, err := l.svcCtx.SystemCli.SysTenantDetail(l.ctx, &system.SysTenantDetailReq{
 		TenantCode: &in.TenantCode,
 	})
@@ -127,8 +128,8 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 	}
 
 	now := utils.NowMillis()
-	if in.LoginIp != "" {
-		tuser.LastLoginIp = sql.NullString{String: in.LoginIp, Valid: true}
+	if loginIP != "" {
+		tuser.LastLoginIp = sql.NullString{String: loginIP, Valid: true}
 	}
 	tuser.LastLoginTime = now
 	tuser.UpdateTimes = now

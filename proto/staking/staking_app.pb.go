@@ -25,9 +25,9 @@ const (
 // 产品列表
 type AppProductListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProductType   ProductType            `protobuf:"varint,2,opt,name=product_type,json=productType,proto3,enum=staking.ProductType" json:"product_type,omitempty"`
-	CoinSymbol    string                 `protobuf:"bytes,3,opt,name=coin_symbol,json=coinSymbol,proto3" json:"coin_symbol,omitempty"`
-	Page          *common.PageReq        `protobuf:"bytes,4,opt,name=page,proto3" json:"page,omitempty"`
+	ProductType   ProductType            `protobuf:"varint,1,opt,name=product_type,json=productType,proto3,enum=staking.ProductType" json:"product_type,omitempty"`
+	CoinSymbol    string                 `protobuf:"bytes,2,opt,name=coin_symbol,json=coinSymbol,proto3" json:"coin_symbol,omitempty"`
+	Page          *common.PageReq        `protobuf:"bytes,3,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -138,7 +138,7 @@ func (x *AppProductListResp) GetData() []*StakeProduct {
 // 产品详情
 type AppProductDetailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -235,10 +235,10 @@ func (x *AppProductDetailResp) GetData() *StakeProduct {
 // 创建订单
 type AppCreateOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProductId     int64                  `protobuf:"varint,3,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
-	StakeAmount   string                 `protobuf:"bytes,4,opt,name=stake_amount,json=stakeAmount,proto3" json:"stake_amount,omitempty"`
-	Source        SourceType             `protobuf:"varint,5,opt,name=source,proto3,enum=staking.SourceType" json:"source,omitempty"`
-	Remark        string                 `protobuf:"bytes,6,opt,name=remark,proto3" json:"remark,omitempty"`
+	ProductId     int64                  `protobuf:"varint,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	StakeAmount   string                 `protobuf:"bytes,2,opt,name=stake_amount,json=stakeAmount,proto3" json:"stake_amount,omitempty"`
+	Source        SourceType             `protobuf:"varint,3,opt,name=source,proto3,enum=staking.SourceType" json:"source,omitempty"`
+	Remark        string                 `protobuf:"bytes,4,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -364,9 +364,9 @@ func (x *AppCreateOrderResp) GetOrderNo() string {
 // 我的订单列表
 type AppMyOrderListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Status        OrderStatus            `protobuf:"varint,3,opt,name=status,proto3,enum=staking.OrderStatus" json:"status,omitempty"`
-	RedeemType    RedeemType             `protobuf:"varint,4,opt,name=redeem_type,json=redeemType,proto3,enum=staking.RedeemType" json:"redeem_type,omitempty"`
-	Page          *common.PageReq        `protobuf:"bytes,5,opt,name=page,proto3" json:"page,omitempty"`
+	Status        OrderStatus            `protobuf:"varint,1,opt,name=status,proto3,enum=staking.OrderStatus" json:"status,omitempty"`
+	RedeemType    RedeemType             `protobuf:"varint,2,opt,name=redeem_type,json=redeemType,proto3,enum=staking.RedeemType" json:"redeem_type,omitempty"`
+	Page          *common.PageReq        `protobuf:"bytes,3,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -477,7 +477,7 @@ func (x *AppMyOrderListResp) GetData() []*StakeOrder {
 // 我的订单详情
 type AppMyOrderDetailReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,3,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -574,9 +574,9 @@ func (x *AppMyOrderDetailResp) GetData() *StakeOrder {
 // 我的收益记录
 type AppMyRewardLogListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	OrderId       int64                  `protobuf:"varint,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
-	RewardType    RewardType             `protobuf:"varint,4,opt,name=reward_type,json=rewardType,proto3,enum=staking.RewardType" json:"reward_type,omitempty"`
-	Page          *common.PageReq        `protobuf:"bytes,5,opt,name=page,proto3" json:"page,omitempty"`
+	OrderId       int64                  `protobuf:"varint,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	RewardType    RewardType             `protobuf:"varint,2,opt,name=reward_type,json=rewardType,proto3,enum=staking.RewardType" json:"reward_type,omitempty"`
+	Page          *common.PageReq        `protobuf:"bytes,3,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -687,9 +687,9 @@ func (x *AppMyRewardLogListResp) GetData() []*StakeRewardLog {
 // 赎回
 type AppRedeemReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	OrderId       int64                  `protobuf:"varint,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
-	RedeemType    RedeemType             `protobuf:"varint,4,opt,name=redeem_type,json=redeemType,proto3,enum=staking.RedeemType" json:"redeem_type,omitempty"`
-	Remark        string                 `protobuf:"bytes,5,opt,name=remark,proto3" json:"remark,omitempty"`
+	OrderId       int64                  `protobuf:"varint,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	RedeemType    RedeemType             `protobuf:"varint,2,opt,name=redeem_type,json=redeemType,proto3,enum=staking.RedeemType" json:"redeem_type,omitempty"`
+	Remark        string                 `protobuf:"bytes,3,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -808,8 +808,8 @@ func (x *AppRedeemResp) GetRedeemNo() string {
 // 我的赎回记录
 type AppMyRedeemLogListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	OrderId       int64                  `protobuf:"varint,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
-	Page          *common.PageReq        `protobuf:"bytes,4,opt,name=page,proto3" json:"page,omitempty"`
+	OrderId       int64                  `protobuf:"varint,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	Page          *common.PageReq        `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -916,61 +916,61 @@ const file_proto_staking_staking_app_proto_rawDesc = "" +
 	"\n" +
 	"\x1fproto/staking/staking_app.proto\x12\astaking\x1a\x19proto/common/common.proto\x1a\x18proto/staking/enum.proto\x1a\x19proto/staking/model.proto\"\x92\x01\n" +
 	"\x11AppProductListReq\x127\n" +
-	"\fproduct_type\x18\x02 \x01(\x0e2\x14.staking.ProductTypeR\vproductType\x12\x1f\n" +
-	"\vcoin_symbol\x18\x03 \x01(\tR\n" +
+	"\fproduct_type\x18\x01 \x01(\x0e2\x14.staking.ProductTypeR\vproductType\x12\x1f\n" +
+	"\vcoin_symbol\x18\x02 \x01(\tR\n" +
 	"coinSymbol\x12#\n" +
-	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"e\n" +
+	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\"e\n" +
 	"\x12AppProductListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
 	"\x04data\x18\x02 \x03(\v2\x15.staking.StakeProductR\x04data\"%\n" +
 	"\x13AppProductDetailReq\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"g\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"g\n" +
 	"\x14AppProductDetailResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
 	"\x04data\x18\x02 \x01(\v2\x15.staking.StakeProductR\x04data\"\x9a\x01\n" +
 	"\x11AppCreateOrderReq\x12\x1d\n" +
 	"\n" +
-	"product_id\x18\x03 \x01(\x03R\tproductId\x12!\n" +
-	"\fstake_amount\x18\x04 \x01(\tR\vstakeAmount\x12+\n" +
-	"\x06source\x18\x05 \x01(\x0e2\x13.staking.SourceTypeR\x06source\x12\x16\n" +
-	"\x06remark\x18\x06 \x01(\tR\x06remark\"e\n" +
+	"product_id\x18\x01 \x01(\x03R\tproductId\x12!\n" +
+	"\fstake_amount\x18\x02 \x01(\tR\vstakeAmount\x12+\n" +
+	"\x06source\x18\x03 \x01(\x0e2\x13.staking.SourceTypeR\x06source\x12\x16\n" +
+	"\x06remark\x18\x04 \x01(\tR\x06remark\"e\n" +
 	"\x12AppCreateOrderResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\x12\x19\n" +
 	"\border_no\x18\x03 \x01(\tR\aorderNo\"\x9c\x01\n" +
 	"\x11AppMyOrderListReq\x12,\n" +
-	"\x06status\x18\x03 \x01(\x0e2\x14.staking.OrderStatusR\x06status\x124\n" +
-	"\vredeem_type\x18\x04 \x01(\x0e2\x13.staking.RedeemTypeR\n" +
+	"\x06status\x18\x01 \x01(\x0e2\x14.staking.OrderStatusR\x06status\x124\n" +
+	"\vredeem_type\x18\x02 \x01(\x0e2\x13.staking.RedeemTypeR\n" +
 	"redeemType\x12#\n" +
-	"\x04page\x18\x05 \x01(\v2\x0f.common.PageReqR\x04page\"c\n" +
+	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\"c\n" +
 	"\x12AppMyOrderListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
 	"\x04data\x18\x02 \x03(\v2\x13.staking.StakeOrderR\x04data\"%\n" +
 	"\x13AppMyOrderDetailReq\x12\x0e\n" +
-	"\x02id\x18\x03 \x01(\x03R\x02id\"e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"e\n" +
 	"\x14AppMyOrderDetailResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
 	"\x04data\x18\x02 \x01(\v2\x13.staking.StakeOrderR\x04data\"\x8d\x01\n" +
 	"\x15AppMyRewardLogListReq\x12\x19\n" +
-	"\border_id\x18\x03 \x01(\x03R\aorderId\x124\n" +
-	"\vreward_type\x18\x04 \x01(\x0e2\x13.staking.RewardTypeR\n" +
+	"\border_id\x18\x01 \x01(\x03R\aorderId\x124\n" +
+	"\vreward_type\x18\x02 \x01(\x0e2\x13.staking.RewardTypeR\n" +
 	"rewardType\x12#\n" +
-	"\x04page\x18\x05 \x01(\v2\x0f.common.PageReqR\x04page\"k\n" +
+	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\"k\n" +
 	"\x16AppMyRewardLogListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12+\n" +
 	"\x04data\x18\x02 \x03(\v2\x17.staking.StakeRewardLogR\x04data\"w\n" +
 	"\fAppRedeemReq\x12\x19\n" +
-	"\border_id\x18\x03 \x01(\x03R\aorderId\x124\n" +
-	"\vredeem_type\x18\x04 \x01(\x0e2\x13.staking.RedeemTypeR\n" +
+	"\border_id\x18\x01 \x01(\x03R\aorderId\x124\n" +
+	"\vredeem_type\x18\x02 \x01(\x0e2\x13.staking.RedeemTypeR\n" +
 	"redeemType\x12\x16\n" +
-	"\x06remark\x18\x05 \x01(\tR\x06remark\"l\n" +
+	"\x06remark\x18\x03 \x01(\tR\x06remark\"l\n" +
 	"\rAppRedeemResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x18\n" +
 	"\asuccess\x18\x02 \x01(\x03R\asuccess\x12\x1b\n" +
 	"\tredeem_no\x18\x03 \x01(\tR\bredeemNo\"W\n" +
 	"\x15AppMyRedeemLogListReq\x12\x19\n" +
-	"\border_id\x18\x03 \x01(\x03R\aorderId\x12#\n" +
-	"\x04page\x18\x04 \x01(\v2\x0f.common.PageReqR\x04page\"k\n" +
+	"\border_id\x18\x01 \x01(\x03R\aorderId\x12#\n" +
+	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\"k\n" +
 	"\x16AppMyRedeemLogListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12+\n" +
 	"\x04data\x18\x02 \x03(\v2\x17.staking.StakeRedeemLogR\x04data2\xe7\x04\n" +

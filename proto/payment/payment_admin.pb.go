@@ -4202,7 +4202,7 @@ func (x *ListWithdrawOrdersResp) GetData() []*WithdrawOrder {
 
 type GetWithdrawOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	OrderNo       string                 `protobuf:"bytes,2,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
+	OrderNo       string                 `protobuf:"bytes,1,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -6676,7 +6676,7 @@ const file_proto_payment_payment_admin_proto_rawDesc = "" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
 	"\x04data\x18\x02 \x03(\v2\x16.payment.WithdrawOrderR\x04data\"0\n" +
 	"\x13GetWithdrawOrderReq\x12\x19\n" +
-	"\border_no\x18\x02 \x01(\tR\aorderNo\"h\n" +
+	"\border_no\x18\x01 \x01(\tR\aorderNo\"h\n" +
 	"\x14GetWithdrawOrderResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
 	"\x04data\x18\x02 \x01(\v2\x16.payment.WithdrawOrderR\x04data\"\x81\x01\n" +

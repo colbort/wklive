@@ -24,17 +24,17 @@ message AdminLoginReq {
 
 message AdminLoginResp {
   common.RespBase base = 1;
-  string token = 3;
-  int64 exp = 4;
-  int64 user_id = 5;
-  string nickname = 6;
-  repeated int64 role_ids = 7;
-  int64 google2fa_enabled = 8;
-  int64 perms_ver = 9;
-  int64 tenant_id = 10;
-  system.UserType user_type = 11;
-  int64 is_owner = 12;
-  string avatar = 13;
+  string token = 2;
+  int64 exp = 3;
+  int64 user_id = 4;
+  string nickname = 5;
+  repeated int64 role_ids = 6;
+  int64 google2fa_enabled = 7;
+  int64 perms_ver = 8;
+  int64 tenant_id = 9;
+  system.UserType user_type = 10;
+  int64 is_owner = 11;
+  string avatar = 12;
 }
 
 message ProfileReq { int64 user_id = 1; }
@@ -111,8 +111,8 @@ message SysMenuTreeResp {
 message Google2FAInitReq { int64 user_id = 1; }
 message Google2FAInitResp {
   common.RespBase base = 1;
-  string secret = 3;
-  string otpauth_url = 4;
+  string secret = 2;
+  string otpauth_url = 3;
 }
 
 message Google2FABindReq {
@@ -160,13 +160,13 @@ message SysUserListReq {
 }
 message SysUserListResp {
   common.RespBase base = 1;
-  repeated SysUserItem data = 4;
+  repeated SysUserItem data = 2;
 }
 
 message SysUserDetailReq { int64 id = 1; }
 message SysUserDetailResp {
   common.RespBase base = 1;
-  SysUserItem data = 3;
+  SysUserItem data = 2;
 }
 
 message SysUserCreateReq {
@@ -224,7 +224,7 @@ message SysRoleListReq {
 }
 message SysRoleListResp {
   common.RespBase base = 1;
-  repeated SysRoleItem data = 4;
+  repeated SysRoleItem data = 2;
 }
 
 message SysRoleCreateReq {
@@ -251,9 +251,9 @@ message SysRoleGrantReq {
 message SysRoleGrantDetailReq { int64 role_id = 1; }
 message SysRoleGrantDetailResp {
   common.RespBase base = 1;
-  int64 role_id = 3;
-  repeated int64 menu_ids = 4;
-  repeated string perm_keys = 5;
+  int64 role_id = 2;
+  repeated int64 menu_ids = 3;
+  repeated string perm_keys = 4;
 }
 
 message SysPermItem {
@@ -265,7 +265,7 @@ message SysPermItem {
 
 message SysPermListResp {
   common.RespBase base = 1;
-  repeated SysPermItem data = 3;
+  repeated SysPermItem data = 2;
 }
 
 //////////////////////
@@ -282,7 +282,7 @@ message SysMenuCreateReq {
   int64 sort = 8;
   system.VisibleStatus visible = 9;
   system.CommonStatus status = 10;
-  string perms = 12;
+  string perms = 11;
 }
 message SysMenuUpdateReq {
   int64 id = 1;
@@ -309,7 +309,7 @@ message SysMenuListReq {
 }
 message SysMenuListResp {
   common.RespBase base = 1;
-  repeated SysMenuItem data = 4;
+  repeated SysMenuItem data = 2;
 }
 
 //////////////////////
@@ -332,7 +332,7 @@ message LoginLogListReq {
 }
 message LoginLogListResp {
   common.RespBase base = 1;
-  repeated LoginLogItem data = 4;
+  repeated LoginLogItem data = 2;
 }
 
 message OpLogItem {
@@ -356,7 +356,7 @@ message OpLogListReq {
 }
 message OpLogListResp {
   common.RespBase base = 1;
-  repeated OpLogItem data = 4;
+  repeated OpLogItem data = 2;
 }
 
 message SysConfigCreateReq {
@@ -392,7 +392,7 @@ message SysConfigListReq {
 }
 message SysConfigListResp {
   common.RespBase base = 1;
-  repeated SysConfigItem data = 4;
+  repeated SysConfigItem data = 2;
 }
 
 message SysConfigDetailReq {
@@ -403,13 +403,13 @@ message SysConfigDetailReq {
 
 message SysConfigDetailResp {
   common.RespBase base = 1;
-  SysConfigItem data = 3;
+  SysConfigItem data = 2;
 }
 
 message SysConfigByKeysReq { repeated string config_keys = 1; }
 message SysConfigByKeysResp {
   common.RespBase base = 1;
-  repeated SysConfigItem data = 3;
+  repeated SysConfigItem data = 2;
 }
 
 message LoginUserPermsReq { int64 user_id = 1; }
@@ -439,7 +439,7 @@ message SysCronJobListReq {
 }
 message SysCronJobListResp {
   common.RespBase base = 1;
-  repeated SysCronJobItem data = 4;
+  repeated SysCronJobItem data = 2;
 }
 
 message SysCronJobCreateReq {
@@ -498,12 +498,12 @@ message SysCronJobHander {
 
 message SysCronJobHandlersResp {
   common.RespBase base = 1;
-  repeated SysCronJobHander data = 3;
+  repeated SysCronJobHander data = 2;
 }
 
 message SysCronJobLogListResp {
   common.RespBase base = 1;
-  repeated SysCronJobLogItem data = 4;
+  repeated SysCronJobLogItem data = 2;
 }
 
 // 租户管理
@@ -536,7 +536,7 @@ message SysTenantListReq {
 }
 message SysTenantListResp {
   common.RespBase base = 1;
-  repeated SysTenantItem data = 4;
+  repeated SysTenantItem data = 2;
 }
 
 message SysTenantCreateReq {

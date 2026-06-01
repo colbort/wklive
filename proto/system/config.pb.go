@@ -595,7 +595,7 @@ type WithdrawConfig struct {
 	DailyAmountLimitPerUser       int64                  `protobuf:"varint,5,opt,name=daily_amount_limit_per_user,json=dailyAmountLimitPerUser,proto3" json:"daily_amount_limit_per_user,omitempty"`                   // 每人每天提现金额限制，单位：分
 	AllowedTimeRange              string                 `protobuf:"bytes,6,opt,name=allowed_time_range,json=allowedTimeRange,proto3" json:"allowed_time_range,omitempty"`                                             // 允许提现的时间段，例如：每天9:00-18:00，格式为"09:00-18:00"
 	PendingWithdrawalLimitPerUser int32                  `protobuf:"varint,7,opt,name=pending_withdrawal_limit_per_user,json=pendingWithdrawalLimitPerUser,proto3" json:"pending_withdrawal_limit_per_user,omitempty"` // 允许未审核在提现数量限制，单位：笔
-	FreeWithdrawTimesPerDay       int32                  `protobuf:"varint,13,opt,name=free_withdraw_times_per_day,json=freeWithdrawTimesPerDay,proto3" json:"free_withdraw_times_per_day,omitempty"`                  // 每日免费提现次数，0=没有免费提现
+	FreeWithdrawTimesPerDay       int32                  `protobuf:"varint,8,opt,name=free_withdraw_times_per_day,json=freeWithdrawTimesPerDay,proto3" json:"free_withdraw_times_per_day,omitempty"`                   // 每日免费提现次数，0=没有免费提现
 	unknownFields                 protoimpl.UnknownFields
 	sizeCache                     protoimpl.SizeCache
 }
@@ -756,7 +756,7 @@ const file_proto_system_config_proto_rawDesc = "" +
 	"\x1bdaily_amount_limit_per_user\x18\x05 \x01(\x03R\x17dailyAmountLimitPerUser\x12,\n" +
 	"\x12allowed_time_range\x18\x06 \x01(\tR\x10allowedTimeRange\x12H\n" +
 	"!pending_withdrawal_limit_per_user\x18\a \x01(\x05R\x1dpendingWithdrawalLimitPerUser\x12<\n" +
-	"\x1bfree_withdraw_times_per_day\x18\r \x01(\x05R\x17freeWithdrawTimesPerDayB\x1cZ\x1awklive/proto/system;systemb\x06proto3"
+	"\x1bfree_withdraw_times_per_day\x18\b \x01(\x05R\x17freeWithdrawTimesPerDayB\x1cZ\x1awklive/proto/system;systemb\x06proto3"
 
 var (
 	file_proto_system_config_proto_rawDescOnce sync.Once

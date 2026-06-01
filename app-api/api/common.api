@@ -34,17 +34,3 @@ type OptionsGroup {
 type IdReq {
 	id int64 `path:"id"`
 }
-
-type UserIdReq {
-	userId int64 `path:"userId"`
-}
-
-type TenantScope {
-	tenantId   int64  `form:"tenantId,optional"`
-	tenantCode string `form:"tenantCode,optional"`
-}
-
-type TenantJsonScope {
-	tenantId   int64  `json:"tenantId,optional"`
-	tenantCode string `json:"tenantCode,optional"`
-}

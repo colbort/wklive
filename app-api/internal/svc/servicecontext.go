@@ -52,7 +52,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		invoker grpc.UnaryInvoker,
 		opts ...grpc.CallOption,
 	) error {
-		pairs := make([]string, 0, 4)
+		pairs := make([]string, 0, 5)
 		if userId, err := utils.GetUserIdFromCtx(ctx); err == nil {
 			pairs = append(pairs, utils.CtxKeyUid, strconv.FormatInt(userId, 10))
 		}
@@ -64,6 +64,9 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		}
 		if tenantCode, err := utils.GetUsernameFromCtx(ctx); err == nil {
 			pairs = append(pairs, utils.CtxKeyTenantCode, tenantCode)
+		}
+		if clientIP, err := utils.GetClientIPFromCtx(ctx); err == nil {
+			pairs = append(pairs, utils.CtxKeyClientIp, clientIP)
 		}
 		if len(pairs) > 0 {
 			ctx = metadata.AppendToOutgoingContext(ctx, pairs...)

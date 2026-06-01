@@ -37,9 +37,9 @@ service AssetApp {
 }
 
 message ListAssetCoinConfigsReq {
-  WalletType wallet_type = 2;                  // 账户类型
-  AssetCoinOperationType operation_type = 3;   // 操作场景
-  AssetCoinType coin_type = 4;                 // 币种类型,0表示全部
+  WalletType wallet_type = 1;                  // 账户类型
+  AssetCoinOperationType operation_type = 2;   // 操作场景
+  AssetCoinType coin_type = 3;                 // 币种类型,0表示全部
 }
 
 message ListAssetCoinConfigsResp {
@@ -56,8 +56,8 @@ message GetMyAssetSummaryResp {
 }
 
 message ListMyAssetsReq {
-  WalletType wallet_type = 2; // 钱包类型,0表示全部
-  string coin = 3;            // 币种,空表示全部
+  WalletType wallet_type = 1; // 钱包类型,0表示全部
+  string coin = 2;            // 币种,空表示全部
 }
 
 message ListMyAssetsResp {
@@ -66,8 +66,8 @@ message ListMyAssetsResp {
 }
 
 message GetMyAssetReq {
-  WalletType wallet_type = 3; // 钱包类型
-  string coin = 4;            // 币种
+  WalletType wallet_type = 1; // 钱包类型
+  string coin = 2;            // 币种
 }
 
 message GetMyAssetResp {
@@ -76,12 +76,12 @@ message GetMyAssetResp {
 }
 
 message ListMyAssetFlowsReq {
-  WalletType wallet_type = 3;      // 钱包类型,0表示全部
-  string coin = 4;                 // 币种
-  BizType biz_type = 5;            // 业务类型,0表示全部
-  SceneType scene_type = 6;        // 业务场景,0表示全部
-  common.TimeRange time_range = 7; // 时间范围
-  common.PageReq page = 8;         // 分页
+  WalletType wallet_type = 1;      // 钱包类型,0表示全部
+  string coin = 2;                 // 币种
+  BizType biz_type = 3;            // 业务类型,0表示全部
+  SceneType scene_type = 4;        // 业务场景,0表示全部
+  common.TimeRange time_range = 5; // 时间范围
+  common.PageReq page = 6;         // 分页
 }
 
 message ListMyAssetFlowsResp {
@@ -90,10 +90,10 @@ message ListMyAssetFlowsResp {
 }
 
 message ListMyFreezesReq {
-  WalletType wallet_type = 3; // 钱包类型
-  string coin = 4;            // 币种
-  FreezeStatus status = 5;    // 冻结状态
-  common.PageReq page = 6;    // 分页
+  WalletType wallet_type = 1; // 钱包类型
+  string coin = 2;            // 币种
+  FreezeStatus status = 3;    // 冻结状态
+  common.PageReq page = 4;    // 分页
 }
 
 message ListMyFreezesResp {
@@ -102,10 +102,10 @@ message ListMyFreezesResp {
 }
 
 message ListMyLocksReq {
-  WalletType wallet_type = 3; // 钱包类型
-  string coin = 4;            // 币种
-  LockStatus status = 5;      // 锁仓状态
-  common.PageReq page = 6;    // 分页
+  WalletType wallet_type = 1; // 钱包类型
+  string coin = 2;            // 币种
+  LockStatus status = 3;      // 锁仓状态
+  common.PageReq page = 4;    // 分页
 }
 
 message ListMyLocksResp {
