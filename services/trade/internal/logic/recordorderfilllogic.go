@@ -146,13 +146,28 @@ func canApplyOrderFill(order *models.TTradeOrder, fill *models.TTradeFill) bool 
 	if order == nil || fill == nil {
 		return false
 	}
-	if order.Amount > 0 && (fill.Amount <= 0 || fill.Amount > math.Max(order.Amount-order.FilledAmount, 0)+orderMatchAmountEpsilon) {
+	if !canApplyOrderFillPrice(order, fill) {
 		return false
 	}
 	if order.Qty > 0 {
 		return fill.Qty > 0 && fill.Qty <= math.Max(order.Qty-order.FilledQty, 0)+orderFillEpsilon
 	}
-	return order.Amount > 0
+	return order.Amount > 0 &&
+		fill.Amount > 0 &&
+		fill.Amount <= math.Max(order.Amount-order.FilledAmount, 0)+orderMatchAmountEpsilon
+}
+
+func canApplyOrderFillPrice(order *models.TTradeOrder, fill *models.TTradeFill) bool {
+	if order == nil || fill == nil || order.OrderType != int64(trade.OrderType_ORDER_TYPE_LIMIT) || order.Price <= 0 || fill.Price <= 0 {
+		return true
+	}
+	if order.Side == int64(trade.TradeSide_TRADE_SIDE_BUY) {
+		return fill.Price <= order.Price+orderFillEpsilon
+	}
+	if order.Side == int64(trade.TradeSide_TRADE_SIDE_SELL) {
+		return fill.Price+orderFillEpsilon >= order.Price
+	}
+	return false
 }
 
 func tradeFillFromProto(fill *trade.TradeFill, now int64) (*models.TTradeFill, error) {
@@ -163,9 +178,9 @@ func tradeFillFromProto(fill *trade.TradeFill, now int64) (*models.TTradeFill, e
 	qty := mustParseFloat(fill.Qty)
 	amount := mustParseFloat(fill.Amount)
 	if amount <= 0 && price > 0 && qty > 0 {
-		amount = price * qty
+		amount = tradeMinorAmountAtPrice(price, qty)
 	}
-	if qty <= 0 && amount <= 0 {
+	if price <= 0 || qty <= 0 || amount <= 0 {
 		return nil, errInvalidOrderFill
 	}
 	createTimes := fill.CreateTimes
@@ -224,11 +239,11 @@ func applyFillToOrder(order *models.TTradeOrder, fill *models.TTradeFill, now in
 	if order.Qty > 0 && order.FilledQty > order.Qty && order.FilledQty-order.Qty <= orderFillEpsilon {
 		order.FilledQty = order.Qty
 	}
-	if order.Amount > 0 && order.FilledAmount > order.Amount && order.FilledAmount-order.Amount <= orderFillEpsilon {
+	if order.Amount > 0 && order.FilledAmount > order.Amount && order.FilledAmount-order.Amount <= orderMatchAmountEpsilon {
 		order.FilledAmount = order.Amount
 	}
 	if order.FilledQty > 0 && order.FilledAmount > 0 {
-		order.AvgPrice = order.FilledAmount / order.FilledQty
+		order.AvgPrice = fromTradeMinorAmount(order.FilledAmount) / order.FilledQty
 	}
 	order.Fee += fill.Fee
 	if fill.FeeAsset != "" {

@@ -45,6 +45,7 @@
     </el-card>
 
     <el-card shadow="never" class="table-card flow-table-card">
+      <!-- prettier-ignore -->
       <el-table
         v-loading="loading"
         :data="rows"
@@ -84,6 +85,13 @@
         <el-table-column :label="t('asset.changeAmount')" min-width="140" show-overflow-tooltip>
           <template #default="{ row }">
             {{ formatCentAmount(row.changeAmount) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="opType" :label="t('asset.opType')" min-width="130">
+          <template #default="{ row }">
+            <el-tag size="small" :type="opTypeTagType(row.opType)" effect="light">
+              {{ optionLabelWithFallback('opType', row.opType) }}
+            </el-tag>
           </template>
         </el-table-column>
         <el-table-column
@@ -141,7 +149,7 @@
           {{ formatCentAmount(detailData.changeAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.opType')">
-          {{ detailData.opType }}
+          {{ optionLabelWithFallback('opType', detailData.opType) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.bizType')">
           {{ optionLabel('bizType', detailData.bizType) }}
@@ -203,10 +211,27 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useOptions, usePagination } from '@/composables'
-import { assetService, type AssetFlow, type OptionGroup } from '@/services'
+import { assetService, type AssetFlow, type OptionGroup, type OptionItem } from '@/services'
 import { formatCentAmount, formatDate } from '@/utils'
+import { findOptionGroup, getOptionLabel } from '@/utils/options'
 
 const { t } = useI18n()
+
+const fallbackOptions: Record<string, OptionItem[]> = {
+  opType: [
+    { value: 0, code: 'ASSET_OP_TYPE_UNKNOWN' },
+    { value: 1, code: 'ASSET_OP_TYPE_ADD' },
+    { value: 2, code: 'ASSET_OP_TYPE_SUB' },
+    { value: 3, code: 'ASSET_OP_TYPE_FREEZE' },
+    { value: 4, code: 'ASSET_OP_TYPE_UNFREEZE' },
+    { value: 5, code: 'ASSET_OP_TYPE_LOCK' },
+    { value: 6, code: 'ASSET_OP_TYPE_UNLOCK' },
+    { value: 7, code: 'ASSET_OP_TYPE_FREEZE_DEDUCT' },
+    { value: 8, code: 'ASSET_OP_TYPE_LOCK_DEDUCT' },
+    { value: 9, code: 'ASSET_OP_TYPE_TRANSFER_IN' },
+    { value: 10, code: 'ASSET_OP_TYPE_TRANSFER_OUT' },
+  ],
+}
 
 const loading = ref(false)
 const rows = ref<AssetFlow[]>([])
@@ -228,6 +253,14 @@ const { optionItems, optionLabel } = useOptions(optionGroups)
 
 const walletTypeOptions = optionItems('walletType')
 const detailTitle = computed(() => `${t('asset.flows')}${t('asset.detail')}`)
+
+function optionLabelWithFallback(key: string, value?: number | string) {
+  if (value === undefined || value === null || value === '') return '-'
+  const option =
+    findOptionGroup(optionGroups.value, key).find((item) => String(item.value) === String(value)) ||
+    fallbackOptions[key]?.find((item) => String(item.value) === String(value))
+  return option ? getOptionLabel(t, option.code, option.value) : String(value)
+}
 
 async function loadOptions() {
   const res = await assetService.getOptions()
@@ -282,6 +315,27 @@ function handleNextPage() {
 function showDetail(row: AssetFlow) {
   detailData.value = row
   detailVisible.value = true
+}
+
+function opTypeTagType(opType?: number | string) {
+  switch (Number(opType)) {
+    case 1:
+    case 9:
+      return 'success'
+    case 2:
+    case 10:
+      return 'danger'
+    case 3:
+    case 5:
+      return 'warning'
+    case 4:
+    case 6:
+    case 7:
+    case 8:
+      return 'info'
+    default:
+      return ''
+  }
 }
 
 onMounted(loadList)

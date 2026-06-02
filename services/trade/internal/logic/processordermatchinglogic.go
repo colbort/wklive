@@ -107,60 +107,26 @@ func (l *ProcessOrderMatchingLogic) findNextOrderMatch(key models.TradeOrderMatc
 		return nil, err
 	}
 
-	for buyIdx, sellIdx := 0, 0; buyIdx < len(buys) && sellIdx < len(sells); {
-		buy := buys[buyIdx]
-		sell := sells[sellIdx]
-		price, ok := matchExecutionPrice(buy, sell)
-		if !ok {
-			buyIdx++
-			sellIdx++
-			continue
-		}
-		if postOnlyWouldTake(buy, sell) {
-			if isPostOnlyOrder(buy) && liquidityTypeForOrder(buy, sell) == trade.LiquidityType_LIQUIDITY_TYPE_TAKER {
-				buyIdx++
-			}
-			if isPostOnlyOrder(sell) && liquidityTypeForOrder(sell, buy) == trade.LiquidityType_LIQUIDITY_TYPE_TAKER {
-				sellIdx++
-			}
-			continue
-		}
-		buyQty := remainingMatchQty(buy, price)
-		sellQty := remainingMatchQty(sell, price)
-		switch {
-		case buyQty <= orderFillEpsilon:
-			buyIdx++
-			continue
-		case sellQty <= orderFillEpsilon:
-			sellIdx++
-			continue
-		}
+	return selectOrderMatchPlan(buys, sells), nil
+}
 
-		qty := math.Min(buyQty, sellQty)
-		if qty <= orderFillEpsilon {
-			return nil, nil
+func selectOrderMatchPlan(buys, sells []*models.TTradeOrder) *orderMatchPlan {
+	for _, buy := range buys {
+		for _, sell := range sells {
+			plan := buildOrderMatchPlan(buy, sell)
+			if plan == nil {
+				continue
+			}
+			if isFOKOrder(buy) && !canFullyFillFromBook(buy, sells) {
+				continue
+			}
+			if isFOKOrder(sell) && !canFullyFillFromBook(sell, buys) {
+				continue
+			}
+			return plan
 		}
-		if isFOKOrder(buy) && !canFullyFillFromBook(buy, sells) {
-			buyIdx++
-			continue
-		}
-		if isFOKOrder(sell) && !canFullyFillFromBook(sell, buys) {
-			sellIdx++
-			continue
-		}
-		amount := qty * price
-		if amount <= orderMatchAmountEpsilon {
-			return nil, nil
-		}
-		return &orderMatchPlan{
-			BuyOrder:  buy,
-			SellOrder: sell,
-			Price:     price,
-			Qty:       qty,
-			Amount:    amount,
-		}, nil
 	}
-	return nil, nil
+	return nil
 }
 
 func (l *ProcessOrderMatchingLogic) executeOrderMatch(key models.TradeOrderMatchKey, plan *orderMatchPlan) (bool, error) {
@@ -249,22 +215,33 @@ func normalizeLockedMatchPlan(buy, sell *models.TTradeOrder) (*orderMatchPlan, b
 	if buy == nil || sell == nil || !isMatchableOrderStatus(buy.Status) || !isMatchableOrderStatus(sell.Status) {
 		return nil, false
 	}
-	price, ok := matchExecutionPrice(buy, sell)
-	if !ok {
+	plan := buildOrderMatchPlan(buy, sell)
+	if plan == nil {
 		return nil, false
 	}
+	return plan, true
+}
+
+func buildOrderMatchPlan(buy, sell *models.TTradeOrder) *orderMatchPlan {
+	if buy == nil || sell == nil {
+		return nil
+	}
+	price, ok := matchExecutionPrice(buy, sell)
+	if !ok {
+		return nil
+	}
 	if postOnlyWouldTake(buy, sell) {
-		return nil, false
+		return nil
 	}
 	buyQty := remainingMatchQty(buy, price)
 	sellQty := remainingMatchQty(sell, price)
 	qty := math.Min(buyQty, sellQty)
 	if qty <= orderFillEpsilon {
-		return nil, false
+		return nil
 	}
-	amount := qty * price
+	amount := tradeMinorAmountAtPrice(price, qty)
 	if amount <= orderMatchAmountEpsilon {
-		return nil, false
+		return nil
 	}
 	return &orderMatchPlan{
 		BuyOrder:  buy,
@@ -272,7 +249,7 @@ func normalizeLockedMatchPlan(buy, sell *models.TTradeOrder) (*orderMatchPlan, b
 		Price:     price,
 		Qty:       qty,
 		Amount:    amount,
-	}, true
+	}
 }
 
 func (l *ProcessOrderMatchingLogic) buildFOKMatchPlans(ctx context.Context, orderModel models.TradeOrderModel, key models.TradeOrderMatchKey, focal *models.TTradeOrder) ([]*orderMatchPlan, bool, error) {
@@ -320,7 +297,7 @@ func (l *ProcessOrderMatchingLogic) buildFOKMatchPlans(ctx context.Context, orde
 		}
 
 		qty := math.Min(focalQty, oppositeQty)
-		amount := qty * price
+		amount := tradeMinorAmountAtPrice(price, qty)
 		if qty <= orderFillEpsilon || amount <= orderMatchAmountEpsilon {
 			continue
 		}
@@ -401,7 +378,7 @@ func remainingMatchQty(order *models.TTradeOrder, price float64) float64 {
 		return math.Max(order.Qty-order.FilledQty, 0)
 	}
 	if order.Amount > 0 && price > 0 {
-		return math.Max(order.Amount-order.FilledAmount, 0) / price
+		return tradeQtyFromMinorAmount(math.Max(order.Amount-order.FilledAmount, 0), price)
 	}
 	return 0
 }
@@ -470,7 +447,8 @@ func canFullyFillFromBook(order *models.TTradeOrder, opposites []*models.TTradeO
 		} else {
 			price, ok = matchExecutionPrice(opposite, order)
 		}
-		if !ok {
+		buy, sell := matchSides(order, opposite)
+		if !ok || postOnlyWouldTake(buy, sell) {
 			continue
 		}
 		focalQty := need.matchQty(price)
@@ -485,7 +463,7 @@ func canFullyFillFromBook(order *models.TTradeOrder, opposites []*models.TTradeO
 			continue
 		}
 		qty := math.Min(focalQty, oppositeQty)
-		need.consume(qty, qty*price)
+		need.consume(qty, tradeMinorAmountAtPrice(price, qty))
 		if need.filled() {
 			return true
 		}

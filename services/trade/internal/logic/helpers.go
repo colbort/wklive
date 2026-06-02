@@ -635,8 +635,29 @@ func orderCancelReason(operator string) string {
 
 const (
 	orderFillEpsilon                = 1e-9
+	tradeMinorAmountScale           = 100
 	immediateOrderExpireDelayMillis = int64(60 * 1000)
+	freezingOrderRecoverDelayMillis = int64(60 * 1000)
 )
+
+func toTradeMinorAmount(amount float64) float64 {
+	return amount * tradeMinorAmountScale
+}
+
+func fromTradeMinorAmount(amount float64) float64 {
+	return amount / tradeMinorAmountScale
+}
+
+func tradeMinorAmountAtPrice(price, qty float64) float64 {
+	return toTradeMinorAmount(price * qty)
+}
+
+func tradeQtyFromMinorAmount(amount, price float64) float64 {
+	if price <= 0 {
+		return 0
+	}
+	return fromTradeMinorAmount(amount) / price
+}
 
 func openOrderStatuses() []int64 {
 	return []int64{
@@ -675,6 +696,10 @@ func isMatchableOrderStatus(status int64) bool {
 
 func triggerWaitingOrderStatuses() []int64 {
 	return []int64{int64(trade.OrderStatus_ORDER_STATUS_TRIGGER_WAITING)}
+}
+
+func freezingOrderStatuses() []int64 {
+	return []int64{int64(trade.OrderStatus_ORDER_STATUS_FREEZING)}
 }
 
 func isTriggerWaitingOrderStatus(status int64) bool {
@@ -722,10 +747,32 @@ func shouldExpireOrder(order *models.TTradeOrder, now int64) bool {
 	default:
 		return false
 	}
+	activeAt := orderImmediateActiveAt(order)
+	if activeAt <= 0 {
+		return true
+	}
+	return now-activeAt >= immediateOrderExpireDelayMillis
+}
+
+func orderImmediateActiveAt(order *models.TTradeOrder) int64 {
+	if order == nil {
+		return 0
+	}
+	ext, err := parseOrderAssetExt(conv.NullStringValue(order.BizExt))
+	if err == nil && ext.TriggeredAt > 0 {
+		return ext.TriggeredAt
+	}
+	return order.CreateTimes
+}
+
+func shouldRecoverFreezingOrder(order *models.TTradeOrder, now int64) bool {
+	if order == nil || trade.OrderStatus(order.Status) != trade.OrderStatus_ORDER_STATUS_FREEZING {
+		return false
+	}
 	if order.CreateTimes <= 0 {
 		return true
 	}
-	return now-order.CreateTimes >= immediateOrderExpireDelayMillis
+	return now-order.CreateTimes >= freezingOrderRecoverDelayMillis
 }
 
 func orderExpireReason(order *models.TTradeOrder) string {
@@ -766,7 +813,7 @@ func spotFrozenAssetAndAmount(symbol *models.TTradeSymbol, side trade.TradeSide,
 		return "", 0
 	}
 	if side == trade.TradeSide_TRADE_SIDE_SELL {
-		return symbol.BaseAsset, qty
+		return symbol.BaseAsset, toTradeMinorAmount(qty)
 	}
 	return symbol.QuoteAsset, amount
 }
@@ -793,6 +840,46 @@ func isSupportedOrderType(orderType trade.OrderType) bool {
 	default:
 		return false
 	}
+}
+
+func isValidOrderPrice(orderType trade.OrderType, price float64) bool {
+	if orderType == trade.OrderType_ORDER_TYPE_LIMIT {
+		return price > 0
+	}
+	return true
+}
+
+func hasNegativeOrderInput(price, qty, amount, triggerPrice float64) bool {
+	return price < 0 || qty < 0 || amount < 0 || triggerPrice < 0
+}
+
+func isValidOrderTimeInForce(orderType trade.OrderType, timeInForce trade.TimeInForce) bool {
+	if orderType == trade.OrderType_ORDER_TYPE_MARKET && timeInForce == trade.TimeInForce_TIME_IN_FORCE_POST_ONLY {
+		return false
+	}
+	if isTriggerOrderType(orderType) && timeInForce == trade.TimeInForce_TIME_IN_FORCE_POST_ONLY {
+		return false
+	}
+	return true
+}
+
+func normalizeOrderTimeInForce(orderType trade.OrderType, timeInForce trade.TimeInForce, price float64) trade.TimeInForce {
+	switch orderType {
+	case trade.OrderType_ORDER_TYPE_MARKET:
+		if timeInForce == trade.TimeInForce_TIME_IN_FORCE_UNKNOWN ||
+			timeInForce == trade.TimeInForce_TIME_IN_FORCE_GTC {
+			return trade.TimeInForce_TIME_IN_FORCE_IOC
+		}
+	case trade.OrderType_ORDER_TYPE_LIMIT:
+		if timeInForce == trade.TimeInForce_TIME_IN_FORCE_UNKNOWN {
+			return trade.TimeInForce_TIME_IN_FORCE_GTC
+		}
+	default:
+		if isTriggerOrderType(orderType) && price > 0 && timeInForce == trade.TimeInForce_TIME_IN_FORCE_UNKNOWN {
+			return trade.TimeInForce_TIME_IN_FORCE_GTC
+		}
+	}
+	return timeInForce
 }
 
 func statusAfterFreeze(orderType trade.OrderType) int64 {

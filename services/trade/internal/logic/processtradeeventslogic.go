@@ -35,6 +35,9 @@ func (l *ProcessTradeEventsLogic) ProcessTradeEvents(in *trade.TradeTaskReq) (*t
 		if err := l.retryTradeEvents(in); err != nil {
 			return nil, err
 		}
+		if err := l.recoverFreezingOrders(in); err != nil {
+			return nil, err
+		}
 		if err := l.triggerWaitingOrders(in); err != nil {
 			return nil, err
 		}
@@ -90,6 +93,56 @@ func (l *ProcessTradeEventsLogic) retryTradeEvents(in *trade.TradeTaskReq) error
 			return nil
 		}
 	}
+}
+
+func (l *ProcessTradeEventsLogic) recoverFreezingOrders(in *trade.TradeTaskReq) error {
+	now := utils.NowMillis()
+	cursor := int64(0)
+	for {
+		orders, _, err := l.svcCtx.TradeOrderModel.FindPage(l.ctx, models.TradeOrderPageFilter{
+			TenantId: in.GetTenantId(),
+			Statuses: freezingOrderStatuses(),
+		}, cursor, 100)
+		if err != nil {
+			return err
+		}
+		if len(orders) == 0 {
+			return nil
+		}
+		for _, order := range orders {
+			cursor = order.Id
+			if _, err := l.rejectFreezingOrderIfNeeded(order.Id, now); err != nil {
+				return err
+			}
+		}
+		if len(orders) < 100 {
+			return nil
+		}
+	}
+}
+
+func (l *ProcessTradeEventsLogic) rejectFreezingOrderIfNeeded(orderID, now int64) (*models.TTradeOrder, error) {
+	var rejectedOrder *models.TTradeOrder
+	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.TradeOrderModel)
+		order, err := orderModel.FindOneForUpdate(ctx, orderID)
+		if err != nil {
+			return err
+		}
+		if !shouldRecoverFreezingOrder(order, now) {
+			return nil
+		}
+		order.Status = int64(trade.OrderStatus_ORDER_STATUS_REJECTED)
+		order.CancelReason = "rejected by freeze timeout"
+		order.UpdateTimes = now
+		if err := orderModel.Update(ctx, order); err != nil {
+			return err
+		}
+		rejectedOrder = order
+		return nil
+	})
+	return rejectedOrder, err
 }
 
 func (l *ProcessTradeEventsLogic) triggerWaitingOrders(in *trade.TradeTaskReq) error {
@@ -243,7 +296,7 @@ func (l *ProcessTradeEventsLogic) repairFrozenAssets(in *trade.TradeTaskReq) err
 		}
 		for _, order := range orders {
 			cursor = order.Id
-			if err := createTradeTaskEvent(l.ctx, l.svcCtx, order.TenantId, "FROZEN_ASSET_REPAIR_REQUIRED", "order", order.Id, order.UserId, order.SymbolId, order.MarketType, "frozen asset repair task"); err != nil {
+			if err := unfreezeRemainingOrderAsset(l.svcCtx, l.ctx, order, "trade frozen asset repair unfreeze"); err != nil {
 				return err
 			}
 		}

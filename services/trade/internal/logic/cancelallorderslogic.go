@@ -38,61 +38,71 @@ func (l *CancelAllOrdersLogic) CancelAllOrders(in *trade.CancelAllOrdersReq) (*t
 	if err != nil {
 		return nil, err
 	}
-	list, _, err := l.svcCtx.TradeOrderModel.FindPage(l.ctx, models.TradeOrderPageFilter{
-		TenantId:     tenantId,
-		UserId:       userId,
-		SymbolId:     in.SymbolId,
-		MarketType:   int64(in.MarketType),
-		Side:         int64(in.Side),
-		Statuses:     openOrderStatuses(),
-		PositionSide: int64(in.PositionSide),
-	}, 0, 100)
-	if err != nil && !errors.Is(err, models.ErrNotFound) {
-		return nil, err
-	}
 	affected := int64(0)
-	for _, item := range list {
-		var canceledOrder *models.TTradeOrder
-		if err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
-			conn := sqlx.NewSqlConnFromSession(session)
-			orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.TradeOrderModel)
-			cancelLogModel := models.NewTTradeCancelLogModel(conn, l.svcCtx.Config.CacheRedis).(models.TradeCancelLogModel)
-
-			locked, err := orderModel.FindOneForUpdate(ctx, item.Id)
-			if err != nil {
-				return err
-			}
-			if locked.TenantId != tenantId || locked.UserId != userId || !isOpenOrderStatus(locked.Status) {
-				return nil
-			}
-			locked.Status = int64(trade.OrderStatus_ORDER_STATUS_CANCELED)
-			locked.CancelReason = orderCancelReason("user")
-			locked.UpdateTimes = utils.NowMillis()
-			if err := orderModel.Update(ctx, locked); err != nil {
-				return err
-			}
-			_, err = cancelLogModel.Insert(ctx, &models.TTradeCancelLog{
-				TenantId:     locked.TenantId,
-				OrderId:      locked.Id,
-				OrderNo:      locked.OrderNo,
-				UserId:       locked.UserId,
-				CancelSource: int64(trade.CancelSource_CANCEL_SOURCE_USER),
-				CancelReason: locked.CancelReason,
-				CreateTimes:  utils.NowMillis(),
-			})
-			if err != nil {
-				return err
-			}
-			canceledOrder = locked
-			return nil
-		}); err != nil {
+	cursor := int64(0)
+	for {
+		list, _, err := l.svcCtx.TradeOrderModel.FindPage(l.ctx, models.TradeOrderPageFilter{
+			TenantId:     tenantId,
+			UserId:       userId,
+			SymbolId:     in.SymbolId,
+			MarketType:   int64(in.MarketType),
+			Side:         int64(in.Side),
+			Statuses:     openOrderStatuses(),
+			PositionSide: int64(in.PositionSide),
+		}, cursor, 100)
+		if err != nil && !errors.Is(err, models.ErrNotFound) {
 			return nil, err
 		}
-		if canceledOrder != nil {
-			if err = unfreezeRemainingOrderAsset(l.svcCtx, l.ctx, canceledOrder, "trade cancel all orders unfreeze"); err != nil {
+		if len(list) == 0 {
+			break
+		}
+		for _, item := range list {
+			cursor = item.Id
+			var canceledOrder *models.TTradeOrder
+			if err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+				conn := sqlx.NewSqlConnFromSession(session)
+				orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.TradeOrderModel)
+				cancelLogModel := models.NewTTradeCancelLogModel(conn, l.svcCtx.Config.CacheRedis).(models.TradeCancelLogModel)
+
+				locked, err := orderModel.FindOneForUpdate(ctx, item.Id)
+				if err != nil {
+					return err
+				}
+				if locked.TenantId != tenantId || locked.UserId != userId || !isOpenOrderStatus(locked.Status) {
+					return nil
+				}
+				locked.Status = int64(trade.OrderStatus_ORDER_STATUS_CANCELED)
+				locked.CancelReason = orderCancelReason("user")
+				locked.UpdateTimes = utils.NowMillis()
+				if err := orderModel.Update(ctx, locked); err != nil {
+					return err
+				}
+				_, err = cancelLogModel.Insert(ctx, &models.TTradeCancelLog{
+					TenantId:     locked.TenantId,
+					OrderId:      locked.Id,
+					OrderNo:      locked.OrderNo,
+					UserId:       locked.UserId,
+					CancelSource: int64(trade.CancelSource_CANCEL_SOURCE_USER),
+					CancelReason: locked.CancelReason,
+					CreateTimes:  utils.NowMillis(),
+				})
+				if err != nil {
+					return err
+				}
+				canceledOrder = locked
+				return nil
+			}); err != nil {
 				return nil, err
 			}
-			affected++
+			if canceledOrder != nil {
+				if err = unfreezeRemainingOrderAsset(l.svcCtx, l.ctx, canceledOrder, "trade cancel all orders unfreeze"); err != nil {
+					return nil, err
+				}
+				affected++
+			}
+		}
+		if len(list) < 100 {
+			break
 		}
 	}
 

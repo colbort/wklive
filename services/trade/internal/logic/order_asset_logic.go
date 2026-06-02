@@ -2,11 +2,8 @@ package logic
 
 import (
 	"context"
-	"errors"
 	"fmt"
-	"math"
 
-	"wklive/common/conv"
 	"wklive/proto/asset"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
@@ -86,44 +83,29 @@ func unfreezeOrderAsset(
 }
 
 func unfreezeRemainingOrderAsset(svcCtx *svc.ServiceContext, ctx context.Context, order *models.TTradeOrder, reason string) error {
-	if order == nil {
+	if order == nil || order.OrderNo == "" {
 		return nil
 	}
-	ext, err := parseOrderAssetExt(conv.NullStringValue(order.BizExt))
+
+	resp, err := svcCtx.AssetClient.UnfreezeAssetByBizNo(ctx, &asset.UnfreezeAssetByBizNoReq{
+		TenantId:      order.TenantId,
+		TargetBizType: asset.BizType_BIZ_TYPE_TRADE,
+		TargetBizNo:   order.OrderNo,
+		BizType:       asset.BizType_BIZ_TYPE_TRADE,
+		SceneType:     asset.SceneType_SCENE_TYPE_CANCEL_ORDER,
+		BizId:         order.Id,
+		BizNo:         order.OrderNo,
+		Remark:        reason,
+	})
 	if err != nil {
 		return err
 	}
-	if ext.FreezeNo == "" {
-		return nil
+	if resp == nil || resp.Base == nil {
+		return fmt.Errorf("asset unfreeze by biz no returned empty response")
 	}
-	amount, err := remainingFrozenAmount(svcCtx, ctx, order)
-	if err != nil {
-		return err
-	}
-	return unfreezeOrderAsset(svcCtx, ctx, order, ext.FreezeNo, amount, reason)
-}
-
-func remainingFrozenAmount(svcCtx *svc.ServiceContext, ctx context.Context, order *models.TTradeOrder) (float64, error) {
-	if order.MarketType == int64(trade.MarketType_MARKET_TYPE_SPOT) {
-		spot, err := svcCtx.TradeOrderSpotModel.FindOneByTenantIdOrderId(ctx, order.TenantId, order.Id)
-		if err != nil {
-			if errors.Is(err, models.ErrNotFound) {
-				return 0, nil
-			}
-			return 0, err
-		}
-		if order.Side == int64(trade.TradeSide_TRADE_SIDE_SELL) {
-			return math.Max(spot.FrozenAmount-order.FilledQty, 0), nil
-		}
-		return math.Max(spot.FrozenAmount-order.FilledAmount, 0), nil
+	if resp.Base.Code != 200 {
+		return fmt.Errorf("asset unfreeze by biz no failed: %s", resp.Base.Msg)
 	}
 
-	contract, err := svcCtx.TradeOrderContractModel.FindOneByTenantIdOrderId(ctx, order.TenantId, order.Id)
-	if err != nil {
-		if errors.Is(err, models.ErrNotFound) {
-			return 0, nil
-		}
-		return 0, err
-	}
-	return math.Max(contract.MarginAmount-order.FilledAmount, 0), nil
+	return nil
 }

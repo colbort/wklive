@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"database/sql"
 	"testing"
 
 	"wklive/proto/trade"
@@ -15,22 +16,22 @@ func TestOrderStatusAfterFill(t *testing.T) {
 	}{
 		{
 			name:  "no fill remains pending",
-			order: &models.TTradeOrder{Qty: 10, Amount: 100},
+			order: &models.TTradeOrder{Qty: 10, Amount: 10000},
 			want:  int64(trade.OrderStatus_ORDER_STATUS_PENDING),
 		},
 		{
 			name:  "partial by qty",
-			order: &models.TTradeOrder{Qty: 10, Amount: 100, FilledQty: 4, FilledAmount: 40},
+			order: &models.TTradeOrder{Qty: 10, Amount: 10000, FilledQty: 4, FilledAmount: 4000},
 			want:  int64(trade.OrderStatus_ORDER_STATUS_PART_FILLED),
 		},
 		{
 			name:  "filled by qty",
-			order: &models.TTradeOrder{Qty: 10, Amount: 100, FilledQty: 10, FilledAmount: 100},
+			order: &models.TTradeOrder{Qty: 10, Amount: 10000, FilledQty: 10, FilledAmount: 10000},
 			want:  int64(trade.OrderStatus_ORDER_STATUS_FILLED),
 		},
 		{
 			name:  "filled by amount when qty target missing",
-			order: &models.TTradeOrder{Amount: 100, FilledAmount: 100},
+			order: &models.TTradeOrder{Amount: 10000, FilledAmount: 10000},
 			want:  int64(trade.OrderStatus_ORDER_STATUS_FILLED),
 		},
 	}
@@ -97,6 +98,94 @@ func TestShouldExpireOrder(t *testing.T) {
 	}, now) {
 		t.Fatal("terminal order should not expire")
 	}
+
+	triggerExt, err := marshalOrderAssetExt(orderAssetExt{TriggeredAt: now})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if shouldExpireOrder(&models.TTradeOrder{
+		Status:      int64(trade.OrderStatus_ORDER_STATUS_PENDING),
+		TimeInForce: int64(trade.TimeInForce_TIME_IN_FORCE_IOC),
+		CreateTimes: now - immediateOrderExpireDelayMillis,
+		BizExt:      sql.NullString{String: triggerExt, Valid: true},
+	}, now) {
+		t.Fatal("freshly triggered IOC order should not expire by original create time")
+	}
+
+	oldTriggerExt, err := marshalOrderAssetExt(orderAssetExt{TriggeredAt: now - immediateOrderExpireDelayMillis})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !shouldExpireOrder(&models.TTradeOrder{
+		Status:      int64(trade.OrderStatus_ORDER_STATUS_PENDING),
+		TimeInForce: int64(trade.TimeInForce_TIME_IN_FORCE_IOC),
+		CreateTimes: now - immediateOrderExpireDelayMillis*2,
+		BizExt:      sql.NullString{String: oldTriggerExt, Valid: true},
+	}, now) {
+		t.Fatal("old triggered IOC order should expire by triggered time")
+	}
+}
+
+func TestShouldRecoverFreezingOrder(t *testing.T) {
+	now := int64(120_000)
+	if !shouldRecoverFreezingOrder(&models.TTradeOrder{
+		Status:      int64(trade.OrderStatus_ORDER_STATUS_FREEZING),
+		CreateTimes: now - freezingOrderRecoverDelayMillis,
+	}, now) {
+		t.Fatal("old freezing order should recover")
+	}
+	if shouldRecoverFreezingOrder(&models.TTradeOrder{
+		Status:      int64(trade.OrderStatus_ORDER_STATUS_FREEZING),
+		CreateTimes: now - freezingOrderRecoverDelayMillis + 1,
+	}, now) {
+		t.Fatal("new freezing order should not recover")
+	}
+	if shouldRecoverFreezingOrder(&models.TTradeOrder{
+		Status:      int64(trade.OrderStatus_ORDER_STATUS_PENDING),
+		CreateTimes: now - freezingOrderRecoverDelayMillis,
+	}, now) {
+		t.Fatal("non-freezing order should not recover")
+	}
+}
+
+func TestOrderInputGuards(t *testing.T) {
+	if isValidOrderPrice(trade.OrderType_ORDER_TYPE_LIMIT, 0) {
+		t.Fatal("limit order without price should be invalid")
+	}
+	if !hasNegativeOrderInput(0, 1, -1, 0) {
+		t.Fatal("negative order amount should be invalid")
+	}
+	if !isValidOrderPrice(trade.OrderType_ORDER_TYPE_MARKET, 0) {
+		t.Fatal("market order should not require user price")
+	}
+	if isValidOrderTimeInForce(trade.OrderType_ORDER_TYPE_MARKET, trade.TimeInForce_TIME_IN_FORCE_POST_ONLY) {
+		t.Fatal("market post-only should be invalid")
+	}
+	if got := normalizeOrderTimeInForce(trade.OrderType_ORDER_TYPE_LIMIT, trade.TimeInForce_TIME_IN_FORCE_UNKNOWN, 10); got != trade.TimeInForce_TIME_IN_FORCE_GTC {
+		t.Fatalf("limit default TIF = %v, want GTC", got)
+	}
+	if got := normalizeOrderTimeInForce(trade.OrderType_ORDER_TYPE_MARKET, trade.TimeInForce_TIME_IN_FORCE_GTC, 0); got != trade.TimeInForce_TIME_IN_FORCE_IOC {
+		t.Fatalf("market GTC should normalize to IOC, got %v", got)
+	}
+	if got := normalizeOrderTimeInForce(trade.OrderType_ORDER_TYPE_STOP_LOSS, trade.TimeInForce_TIME_IN_FORCE_UNKNOWN, 10); got != trade.TimeInForce_TIME_IN_FORCE_GTC {
+		t.Fatalf("triggered limit default TIF = %v, want GTC", got)
+	}
+}
+
+func TestOrderAmountPriceDistinguishesOrderType(t *testing.T) {
+	logic := &PlaceOrderLogic{}
+	if got, err := logic.orderAmountPrice(nil, trade.OrderType_ORDER_TYPE_LIMIT, 10, 0); err != nil || got != 10 {
+		t.Fatalf("limit amount price = %v, err = %v, want 10", got, err)
+	}
+	if got, err := logic.orderAmountPrice(nil, trade.OrderType_ORDER_TYPE_MARKET, 10, 0); err != nil || got != 0 {
+		t.Fatalf("market amount price = %v, err = %v, want market price lookup fallback 0", got, err)
+	}
+	if got, err := logic.orderAmountPrice(nil, trade.OrderType_ORDER_TYPE_TAKE_PROFIT, 11, 12); err != nil || got != 11 {
+		t.Fatalf("triggered limit amount price = %v, err = %v, want 11", got, err)
+	}
+	if got, err := logic.orderAmountPrice(nil, trade.OrderType_ORDER_TYPE_STOP_LOSS, 0, 12); err != nil || got != 0 {
+		t.Fatalf("triggered market amount price = %v, err = %v, want market price lookup fallback 0", got, err)
+	}
 }
 
 func TestMatchExecutionPrice(t *testing.T) {
@@ -148,8 +237,42 @@ func TestMatchExecutionPrice(t *testing.T) {
 	}
 }
 
+func TestSelectOrderMatchPlanSkipsMarketMarketPair(t *testing.T) {
+	buys := []*models.TTradeOrder{
+		{Id: 1, Side: int64(trade.TradeSide_TRADE_SIDE_BUY), OrderType: int64(trade.OrderType_ORDER_TYPE_MARKET), Qty: 1},
+	}
+	sells := []*models.TTradeOrder{
+		{Id: 2, Side: int64(trade.TradeSide_TRADE_SIDE_SELL), OrderType: int64(trade.OrderType_ORDER_TYPE_MARKET), Qty: 1},
+		{Id: 3, Side: int64(trade.TradeSide_TRADE_SIDE_SELL), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Price: 10, Qty: 1},
+	}
+	plan := selectOrderMatchPlan(buys, sells)
+	if plan == nil {
+		t.Fatal("market buy should match the sell limit behind a sell market order")
+	}
+	if plan.BuyOrder.Id != 1 || plan.SellOrder.Id != 3 || plan.Price != 10 {
+		t.Fatalf("selected plan = buy %d sell %d price %v, want buy 1 sell 3 price 10", plan.BuyOrder.Id, plan.SellOrder.Id, plan.Price)
+	}
+}
+
+func TestSelectOrderMatchPlanKeepsBookPriority(t *testing.T) {
+	buys := []*models.TTradeOrder{
+		{Id: 100, Side: int64(trade.TradeSide_TRADE_SIDE_BUY), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Price: 100, Qty: 1},
+		{Id: 1, Side: int64(trade.TradeSide_TRADE_SIDE_BUY), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Price: 99, Qty: 1},
+	}
+	sells := []*models.TTradeOrder{
+		{Id: 2, Side: int64(trade.TradeSide_TRADE_SIDE_SELL), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Price: 90, Qty: 1},
+	}
+	plan := selectOrderMatchPlan(buys, sells)
+	if plan == nil {
+		t.Fatal("crossed book should select a match")
+	}
+	if plan.BuyOrder.Id != 100 {
+		t.Fatalf("selected buy order = %d, want highest-priority buy 100", plan.BuyOrder.Id)
+	}
+}
+
 func TestRemainingMatchQty(t *testing.T) {
-	got := remainingMatchQty(&models.TTradeOrder{Amount: 100, FilledAmount: 25}, 5)
+	got := remainingMatchQty(&models.TTradeOrder{Amount: 10000, FilledAmount: 2500}, 5)
 	if got != 15 {
 		t.Fatalf("remainingMatchQty() = %v, want 15", got)
 	}
@@ -161,19 +284,29 @@ func TestRemainingMatchQty(t *testing.T) {
 }
 
 func TestCanApplyOrderFill(t *testing.T) {
-	qtyOrder := &models.TTradeOrder{Qty: 10, FilledQty: 4}
-	if !canApplyOrderFill(qtyOrder, &models.TTradeFill{Qty: 6, Amount: 60}) {
+	qtyOrder := &models.TTradeOrder{
+		OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT),
+		Side:      int64(trade.TradeSide_TRADE_SIDE_SELL),
+		Price:     10,
+		Qty:       10,
+		FilledQty: 4,
+		Amount:    10000,
+	}
+	if !canApplyOrderFill(qtyOrder, &models.TTradeFill{Price: 12, Qty: 6, Amount: 7200}) {
 		t.Fatal("remaining qty should be fillable")
 	}
-	if canApplyOrderFill(qtyOrder, &models.TTradeFill{Qty: 7, Amount: 70}) {
+	if canApplyOrderFill(qtyOrder, &models.TTradeFill{Price: 12, Qty: 7, Amount: 8400}) {
 		t.Fatal("fill should not exceed remaining qty")
 	}
+	if canApplyOrderFill(qtyOrder, &models.TTradeFill{Price: 9, Qty: 6, Amount: 5400}) {
+		t.Fatal("sell limit fill price should not be below order price")
+	}
 
-	amountOrder := &models.TTradeOrder{Qty: 10, FilledQty: 4, Amount: 100, FilledAmount: 40}
-	if !canApplyOrderFill(amountOrder, &models.TTradeFill{Qty: 3, Amount: 60}) {
+	amountOrder := &models.TTradeOrder{Amount: 10000, FilledAmount: 4000}
+	if !canApplyOrderFill(amountOrder, &models.TTradeFill{Qty: 3, Amount: 6000}) {
 		t.Fatal("remaining amount should be fillable")
 	}
-	if canApplyOrderFill(amountOrder, &models.TTradeFill{Qty: 3, Amount: 61}) {
+	if canApplyOrderFill(amountOrder, &models.TTradeFill{Qty: 3, Amount: 6100}) {
 		t.Fatal("fill should not exceed remaining amount")
 	}
 }
@@ -299,12 +432,29 @@ func TestCanFullyFillFromBook(t *testing.T) {
 	}
 }
 
+func TestCanFullyFillFromBookRespectsPostOnly(t *testing.T) {
+	order := &models.TTradeOrder{
+		Id:          1,
+		Side:        int64(trade.TradeSide_TRADE_SIDE_BUY),
+		OrderType:   int64(trade.OrderType_ORDER_TYPE_LIMIT),
+		TimeInForce: int64(trade.TimeInForce_TIME_IN_FORCE_FOK),
+		Price:       100,
+		Qty:         10,
+	}
+	opposites := []*models.TTradeOrder{
+		{Id: 2, Side: int64(trade.TradeSide_TRADE_SIDE_SELL), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), TimeInForce: int64(trade.TimeInForce_TIME_IN_FORCE_POST_ONLY), Price: 99, Qty: 10},
+	}
+	if canFullyFillFromBook(order, opposites) {
+		t.Fatal("post-only liquidity that would take should not satisfy FOK")
+	}
+}
+
 func TestCanFullyFillFromBookByAmount(t *testing.T) {
 	order := &models.TTradeOrder{
 		Side:      int64(trade.TradeSide_TRADE_SIDE_BUY),
 		OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT),
 		Price:     100,
-		Amount:    100,
+		Amount:    10000,
 	}
 	opposites := []*models.TTradeOrder{
 		{Side: int64(trade.TradeSide_TRADE_SIDE_SELL), OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Price: 10, Qty: 5},
@@ -324,5 +474,30 @@ func TestResidualExpireReason(t *testing.T) {
 	}
 	if got := residualExpireReason(&models.TTradeOrder{TimeInForce: int64(trade.TimeInForce_TIME_IN_FORCE_FOK)}, nil, nil); got == "" {
 		t.Fatal("FOK residual should expire")
+	}
+}
+
+func TestTradeFillFromProtoRequiresCompleteExecution(t *testing.T) {
+	if _, err := tradeFillFromProto(&trade.TradeFill{
+		TenantId: 1,
+		FillNo:   "FIL1",
+		OrderId:  1,
+		Qty:      "1",
+	}, 1); err == nil {
+		t.Fatal("fill without positive price and amount should be rejected")
+	}
+
+	fill, err := tradeFillFromProto(&trade.TradeFill{
+		TenantId: 1,
+		FillNo:   "FIL2",
+		OrderId:  1,
+		Price:    "10",
+		Qty:      "2",
+	}, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if fill.Amount != 2000 {
+		t.Fatalf("computed fill amount = %v, want 2000", fill.Amount)
 	}
 }

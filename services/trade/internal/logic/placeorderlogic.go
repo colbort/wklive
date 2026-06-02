@@ -67,15 +67,24 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 	if !isSupportedOrderType(orderType) {
 		return &trade.PlaceOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
-	if orderType == trade.OrderType_ORDER_TYPE_MARKET && timeInForce == trade.TimeInForce_TIME_IN_FORCE_UNKNOWN {
-		timeInForce = trade.TimeInForce_TIME_IN_FORCE_IOC
+	if hasNegativeOrderInput(price, qty, amount, triggerPrice) {
+		return &trade.PlaceOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
+	if !isValidOrderPrice(orderType, price) || !isValidOrderTimeInForce(orderType, timeInForce) {
+		return &trade.PlaceOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
+	timeInForce = normalizeOrderTimeInForce(orderType, timeInForce, price)
 	if amount == 0 {
-		if price > 0 && qty > 0 {
-			amount = price * qty
-		} else {
-			amount = qty
+		amountPrice, err := l.orderAmountPrice(symbol, orderType, price, triggerPrice)
+		if err != nil {
+			l.Errorf("place order resolve amount price failed, tenantId=%d userId=%d symbolId=%d orderType=%d price=%v triggerPrice=%v err=%v",
+				tenantId, userId, in.SymbolId, orderType, price, triggerPrice, err)
+			return &trade.PlaceOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 		}
+		if amountPrice <= 0 || qty <= 0 {
+			return &trade.PlaceOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		}
+		amount = tradeMinorAmountAtPrice(amountPrice, qty)
 	}
 	if qty <= 0 && amount <= 0 {
 		return &trade.PlaceOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ParamError, l.ctx))}, nil
@@ -253,6 +262,22 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 	}
 
 	return &trade.PlaceOrderResp{Base: helper.OkResp(), Order: orderToProto(order)}, nil
+}
+
+func (l *PlaceOrderLogic) orderAmountPrice(symbol *models.TTradeSymbol, orderType trade.OrderType, price, triggerPrice float64) (float64, error) {
+	switch {
+	case orderType == trade.OrderType_ORDER_TYPE_LIMIT:
+		return price, nil
+	case isTriggerOrderType(orderType) && price > 0:
+		return price, nil
+	case orderType == trade.OrderType_ORDER_TYPE_MARKET || isTriggerOrderType(orderType):
+		if symbol == nil {
+			return 0, nil
+		}
+		return l.svcCtx.LastPrice(l.ctx, symbol.Symbol)
+	default:
+		return 0, nil
+	}
 }
 
 func (l *PlaceOrderLogic) postOnlyWouldTake(tenantID, symbolID, marketType, side int64, price float64) (bool, error) {

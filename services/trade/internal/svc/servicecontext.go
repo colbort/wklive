@@ -2,7 +2,9 @@ package svc
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 	"wklive/services/trade/internal/config"
 	"wklive/services/trade/models"
@@ -88,4 +90,29 @@ func (s *ServiceContext) GenerateBizNo(ctx context.Context, prefix string) (stri
 
 	orderID := fmt.Sprintf("%s%s%06d", prefix, date, seq)
 	return orderID, nil
+}
+
+// 获取最新报价
+func (s *ServiceContext) LastPrice(ctx context.Context, symbol string) (float64, error) {
+	key := fmt.Sprintf("itick:quote:%s:%s:%s", "crypto", "BA", symbol)
+	data, err := s.Redis.GetCtx(ctx, key)
+	if err != nil {
+		return 0, err
+	}
+	if strings.TrimSpace(data) == "" {
+		return 0, fmt.Errorf("last price unavailable for symbol %s", symbol)
+	}
+
+	var quoteData struct {
+		Price float64 `json:"lastPrice"`
+	}
+	err = json.Unmarshal([]byte(data), &quoteData)
+	if err != nil {
+		return 0, fmt.Errorf("parse last price for symbol %s failed: %w", symbol, err)
+	}
+	if quoteData.Price <= 0 {
+		return 0, fmt.Errorf("last price unavailable for symbol %s", symbol)
+	}
+
+	return quoteData.Price, nil
 }

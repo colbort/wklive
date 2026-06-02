@@ -90,13 +90,19 @@ func (s *ServiceContext) LastPrice(ctx context.Context, symbol string) (float64,
 	if err != nil {
 		return 0, err
 	}
+	if strings.TrimSpace(data) == "" {
+		return 0, fmt.Errorf("last price unavailable for symbol %s", symbol)
+	}
 
 	var quoteData struct {
 		Price float64 `json:"lastPrice"`
 	}
 	err = json.Unmarshal([]byte(data), &quoteData)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("parse last price for symbol %s failed: %w", symbol, err)
+	}
+	if quoteData.Price <= 0 {
+		return 0, fmt.Errorf("last price unavailable for symbol %s", symbol)
 	}
 
 	return quoteData.Price, nil
