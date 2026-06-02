@@ -23,6 +23,12 @@ func NewTradeTaskServer(svcCtx *svc.ServiceContext) *TradeTaskServer {
 	}
 }
 
+// 订单撮合
+func (s *TradeTaskServer) ProcessOrderMatching(ctx context.Context, in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
+	l := logic.NewProcessOrderMatchingLogic(ctx, s.svcCtx)
+	return l.ProcessOrderMatching(in)
+}
+
 // 仓位处理（标记价格刷新/强平扫描/普通平仓）
 func (s *TradeTaskServer) ProcessPositions(ctx context.Context, in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
 	l := logic.NewProcessPositionsLogic(ctx, s.svcCtx)

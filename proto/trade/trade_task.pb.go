@@ -118,8 +118,9 @@ const file_proto_trade_trade_task_proto_rawDesc = "" +
 	"\fTradeTaskReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\"5\n" +
 	"\rTradeTaskResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base2\x93\x02\n" +
-	"\tTradeTask\x12=\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base2\xd6\x02\n" +
+	"\tTradeTask\x12A\n" +
+	"\x14ProcessOrderMatching\x12\x13.trade.TradeTaskReq\x1a\x14.trade.TradeTaskResp\x12=\n" +
 	"\x10ProcessPositions\x12\x13.trade.TradeTaskReq\x1a\x14.trade.TradeTaskResp\x12G\n" +
 	"\x1aProcessContractSettlements\x12\x13.trade.TradeTaskReq\x1a\x14.trade.TradeTaskResp\x12?\n" +
 	"\x12ProcessTradeEvents\x12\x13.trade.TradeTaskReq\x1a\x14.trade.TradeTaskResp\x12=\n" +
@@ -145,16 +146,18 @@ var file_proto_trade_trade_task_proto_goTypes = []any{
 }
 var file_proto_trade_trade_task_proto_depIdxs = []int32{
 	2, // 0: trade.TradeTaskResp.base:type_name -> common.RespBase
-	0, // 1: trade.TradeTask.ProcessPositions:input_type -> trade.TradeTaskReq
-	0, // 2: trade.TradeTask.ProcessContractSettlements:input_type -> trade.TradeTaskReq
-	0, // 3: trade.TradeTask.ProcessTradeEvents:input_type -> trade.TradeTaskReq
-	0, // 4: trade.TradeTask.ExpireRiskLimits:input_type -> trade.TradeTaskReq
-	1, // 5: trade.TradeTask.ProcessPositions:output_type -> trade.TradeTaskResp
-	1, // 6: trade.TradeTask.ProcessContractSettlements:output_type -> trade.TradeTaskResp
-	1, // 7: trade.TradeTask.ProcessTradeEvents:output_type -> trade.TradeTaskResp
-	1, // 8: trade.TradeTask.ExpireRiskLimits:output_type -> trade.TradeTaskResp
-	5, // [5:9] is the sub-list for method output_type
-	1, // [1:5] is the sub-list for method input_type
+	0, // 1: trade.TradeTask.ProcessOrderMatching:input_type -> trade.TradeTaskReq
+	0, // 2: trade.TradeTask.ProcessPositions:input_type -> trade.TradeTaskReq
+	0, // 3: trade.TradeTask.ProcessContractSettlements:input_type -> trade.TradeTaskReq
+	0, // 4: trade.TradeTask.ProcessTradeEvents:input_type -> trade.TradeTaskReq
+	0, // 5: trade.TradeTask.ExpireRiskLimits:input_type -> trade.TradeTaskReq
+	1, // 6: trade.TradeTask.ProcessOrderMatching:output_type -> trade.TradeTaskResp
+	1, // 7: trade.TradeTask.ProcessPositions:output_type -> trade.TradeTaskResp
+	1, // 8: trade.TradeTask.ProcessContractSettlements:output_type -> trade.TradeTaskResp
+	1, // 9: trade.TradeTask.ProcessTradeEvents:output_type -> trade.TradeTaskResp
+	1, // 10: trade.TradeTask.ExpireRiskLimits:output_type -> trade.TradeTaskResp
+	6, // [6:11] is the sub-list for method output_type
+	1, // [1:6] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
 	1, // [1:1] is the sub-list for extension extendee
 	0, // [0:1] is the sub-list for field type_name

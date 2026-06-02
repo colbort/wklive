@@ -3,8 +3,11 @@ package models
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"wklive/common/sqlutil"
+
+	"github.com/zeromicro/go-zero/core/stores/sqlc"
 )
 
 type TradeOrderPageFilter struct {
@@ -22,10 +25,20 @@ type TradeOrderPageFilter struct {
 	PositionSide    int64
 }
 
+type TradeOrderMatchKey struct {
+	TenantId   int64 `db:"tenant_id"`
+	SymbolId   int64 `db:"symbol_id"`
+	MarketType int64 `db:"market_type"`
+}
+
 type TradeOrderModel interface {
 	tTradeOrderModel
 	FindPage(ctx context.Context, filter TradeOrderPageFilter, cursor int64, limit int64) ([]*TTradeOrder, int64, error)
 	CountByStatuses(ctx context.Context, tenantId, userId uint64, marketType int64, statuses []int64) (int64, error)
+	FindMatchKeys(ctx context.Context, tenantId int64, statuses []int64, limit int64) ([]TradeOrderMatchKey, error)
+	FindOpenMatchOrders(ctx context.Context, tenantId, symbolId, marketType, side int64, statuses []int64, marketOrderType int64, limit int64) ([]*TTradeOrder, error)
+	FindOneForUpdate(ctx context.Context, id int64) (*TTradeOrder, error)
+	FindOneByTenantIdOrderNoForUpdate(ctx context.Context, tenantId int64, orderNo string) (*TTradeOrder, error)
 }
 
 func (m *defaultTTradeOrderModel) FindPage(ctx context.Context, filter TradeOrderPageFilter, cursor int64, limit int64) ([]*TTradeOrder, int64, error) {
@@ -93,6 +106,104 @@ func (m *defaultTTradeOrderModel) CountByStatuses(ctx context.Context, tenantId,
 		return 0, err
 	}
 	return total, nil
+}
+
+func (m *defaultTTradeOrderModel) FindMatchKeys(ctx context.Context, tenantId int64, statuses []int64, limit int64) ([]TradeOrderMatchKey, error) {
+	limit = sqlutil.NormalizeLimit(limit)
+	where, args := openOrderWhere(tenantId, 0, 0, 0, statuses)
+	sql := fmt.Sprintf("SELECT tenant_id, symbol_id, market_type FROM %s WHERE %s AND order_type IN (?, ?) GROUP BY tenant_id, symbol_id, market_type ORDER BY tenant_id ASC, symbol_id ASC, market_type ASC LIMIT ?", m.table, where)
+	args = append(args, 1, 2, limit)
+
+	var list []TradeOrderMatchKey
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, sql, args...); err != nil {
+		return nil, err
+	}
+	return list, nil
+}
+
+func (m *defaultTTradeOrderModel) FindOpenMatchOrders(ctx context.Context, tenantId, symbolId, marketType, side int64, statuses []int64, marketOrderType int64, limit int64) ([]*TTradeOrder, error) {
+	limit = sqlutil.NormalizeLimit(limit)
+	where, args := openOrderWhere(tenantId, symbolId, marketType, side, statuses)
+
+	priceOrder := "price ASC"
+	if side == 1 {
+		priceOrder = "price DESC"
+	}
+	sql := fmt.Sprintf(
+		"SELECT %s FROM %s WHERE %s AND order_type IN (?, ?) ORDER BY CASE WHEN order_type = ? THEN 0 ELSE 1 END ASC, %s, id ASC LIMIT ?",
+		tTradeOrderRows,
+		m.table,
+		where,
+		priceOrder,
+	)
+	args = append(args, 1, 2, marketOrderType, limit)
+
+	var list []*TTradeOrder
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, sql, args...); err != nil {
+		return nil, err
+	}
+	return list, nil
+}
+
+func (m *defaultTTradeOrderModel) FindOneForUpdate(ctx context.Context, id int64) (*TTradeOrder, error) {
+	var resp TTradeOrder
+	sql := fmt.Sprintf("SELECT %s FROM %s WHERE `id` = ? LIMIT 1 FOR UPDATE", tTradeOrderRows, m.table)
+	err := m.QueryRowNoCacheCtx(ctx, &resp, sql, id)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultTTradeOrderModel) FindOneByTenantIdOrderNoForUpdate(ctx context.Context, tenantId int64, orderNo string) (*TTradeOrder, error) {
+	var resp TTradeOrder
+	sql := fmt.Sprintf("SELECT %s FROM %s WHERE `tenant_id` = ? AND `order_no` = ? LIMIT 1 FOR UPDATE", tTradeOrderRows, m.table)
+	err := m.QueryRowNoCacheCtx(ctx, &resp, sql, tenantId, orderNo)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func openOrderWhere(tenantId, symbolId, marketType, side int64, statuses []int64) (string, []any) {
+	parts := make([]string, 0, 5)
+	args := make([]any, 0, 8)
+	if tenantId > 0 {
+		parts = append(parts, "tenant_id = ?")
+		args = append(args, tenantId)
+	}
+	if symbolId > 0 {
+		parts = append(parts, "symbol_id = ?")
+		args = append(args, symbolId)
+	}
+	if marketType > 0 {
+		parts = append(parts, "market_type = ?")
+		args = append(args, marketType)
+	}
+	if side > 0 {
+		parts = append(parts, "side = ?")
+		args = append(args, side)
+	}
+	if len(statuses) > 0 {
+		holders := make([]string, 0, len(statuses))
+		for _, status := range statuses {
+			holders = append(holders, "?")
+			args = append(args, status)
+		}
+		parts = append(parts, fmt.Sprintf("status IN (%s)", joinComma(holders)))
+	}
+	if len(parts) == 0 {
+		return "1=1", args
+	}
+	return strings.Join(parts, " AND "), args
 }
 
 func joinComma(items []string) string {

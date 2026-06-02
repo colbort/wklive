@@ -14,10 +14,15 @@ import (
 const tradeTaskRPCTimeout = 5 * time.Minute
 
 func init() {
+	cronx.Register("trade.ProcessOrderMatching", "订单撮合", runTradeProcessOrderMatching)
 	cronx.Register("trade.ProcessPositions", "仓位处理", runTradeProcessPositions)
 	cronx.Register("trade.ProcessContractSettlements", "合约结算处理", runTradeProcessContractSettlements)
 	cronx.Register("trade.ProcessTradeEvents", "交易事件处理", runTradeProcessTradeEvents)
 	cronx.Register("trade.ExpireRiskLimits", "风控限制过期恢复", runTradeExpireRiskLimits)
+}
+
+func runTradeProcessOrderMatching(ctx context.Context, job *models.SysJob) error {
+	return callTradeTask(ctx, job, "process order matching", global.TradeTaskCli.ProcessOrderMatching)
 }
 
 func runTradeProcessPositions(ctx context.Context, job *models.SysJob) error {

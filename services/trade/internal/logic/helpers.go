@@ -21,7 +21,11 @@ func mustParseFloat(v string) float64 {
 }
 
 type orderAssetExt struct {
-	FreezeNo string `json:"freezeNo,omitempty"`
+	FreezeNo          string `json:"freezeNo,omitempty"`
+	OriginalOrderType int64  `json:"originalOrderType,omitempty"`
+	TriggeredAt       int64  `json:"triggeredAt,omitempty"`
+	TriggerPrice      string `json:"triggerPrice,omitempty"`
+	TriggerSource     string `json:"triggerSource,omitempty"`
 }
 
 func symbolToProto(item *models.TTradeSymbol) *trade.TradeSymbol {
@@ -629,15 +633,114 @@ func orderCancelReason(operator string) string {
 	return fmt.Sprintf("canceled by %s", operator)
 }
 
+const (
+	orderFillEpsilon                = 1e-9
+	immediateOrderExpireDelayMillis = int64(60 * 1000)
+)
+
 func openOrderStatuses() []int64 {
+	return []int64{
+		int64(trade.OrderStatus_ORDER_STATUS_PENDING),
+		int64(trade.OrderStatus_ORDER_STATUS_PART_FILLED),
+		int64(trade.OrderStatus_ORDER_STATUS_TRIGGER_WAITING),
+	}
+}
+
+func isOpenOrderStatus(status int64) bool {
+	switch trade.OrderStatus(status) {
+	case trade.OrderStatus_ORDER_STATUS_PENDING,
+		trade.OrderStatus_ORDER_STATUS_PART_FILLED,
+		trade.OrderStatus_ORDER_STATUS_TRIGGER_WAITING:
+		return true
+	default:
+		return false
+	}
+}
+
+func matchableOrderStatuses() []int64 {
 	return []int64{
 		int64(trade.OrderStatus_ORDER_STATUS_PENDING),
 		int64(trade.OrderStatus_ORDER_STATUS_PART_FILLED),
 	}
 }
 
+func isMatchableOrderStatus(status int64) bool {
+	switch trade.OrderStatus(status) {
+	case trade.OrderStatus_ORDER_STATUS_PENDING, trade.OrderStatus_ORDER_STATUS_PART_FILLED:
+		return true
+	default:
+		return false
+	}
+}
+
+func triggerWaitingOrderStatuses() []int64 {
+	return []int64{int64(trade.OrderStatus_ORDER_STATUS_TRIGGER_WAITING)}
+}
+
+func isTriggerWaitingOrderStatus(status int64) bool {
+	return trade.OrderStatus(status) == trade.OrderStatus_ORDER_STATUS_TRIGGER_WAITING
+}
+
+func isTerminalOrderStatus(status int64) bool {
+	switch trade.OrderStatus(status) {
+	case trade.OrderStatus_ORDER_STATUS_FILLED,
+		trade.OrderStatus_ORDER_STATUS_CANCELED,
+		trade.OrderStatus_ORDER_STATUS_REJECTED,
+		trade.OrderStatus_ORDER_STATUS_EXPIRED:
+		return true
+	default:
+		return false
+	}
+}
+
+func orderStatusAfterFill(order *models.TTradeOrder) int64 {
+	if order == nil {
+		return int64(trade.OrderStatus_ORDER_STATUS_UNKNOWN)
+	}
+	if order.FilledQty <= 0 && order.FilledAmount <= 0 {
+		return int64(trade.OrderStatus_ORDER_STATUS_PENDING)
+	}
+	if reachedFillTarget(order.FilledQty, order.Qty) {
+		return int64(trade.OrderStatus_ORDER_STATUS_FILLED)
+	}
+	if order.Qty <= 0 && reachedFillTarget(order.FilledAmount, order.Amount) {
+		return int64(trade.OrderStatus_ORDER_STATUS_FILLED)
+	}
+	return int64(trade.OrderStatus_ORDER_STATUS_PART_FILLED)
+}
+
+func reachedFillTarget(filled, target float64) bool {
+	return target > 0 && filled+orderFillEpsilon >= target
+}
+
+func shouldExpireOrder(order *models.TTradeOrder, now int64) bool {
+	if order == nil || !isMatchableOrderStatus(order.Status) {
+		return false
+	}
+	switch trade.TimeInForce(order.TimeInForce) {
+	case trade.TimeInForce_TIME_IN_FORCE_IOC, trade.TimeInForce_TIME_IN_FORCE_FOK:
+	default:
+		return false
+	}
+	if order.CreateTimes <= 0 {
+		return true
+	}
+	return now-order.CreateTimes >= immediateOrderExpireDelayMillis
+}
+
+func orderExpireReason(order *models.TTradeOrder) string {
+	switch trade.TimeInForce(order.TimeInForce) {
+	case trade.TimeInForce_TIME_IN_FORCE_IOC:
+		return "expired by IOC"
+	case trade.TimeInForce_TIME_IN_FORCE_FOK:
+		return "expired by FOK"
+	default:
+		return "expired"
+	}
+}
+
 func marshalOrderAssetExt(ext orderAssetExt) (string, error) {
-	if ext.FreezeNo == "" {
+	if ext.FreezeNo == "" && ext.OriginalOrderType == 0 && ext.TriggeredAt == 0 && ext.TriggerPrice == "" && ext.TriggerSource == "" {
 		return "", nil
 	}
 	buf, err := json.Marshal(ext)
@@ -666,6 +769,86 @@ func spotFrozenAssetAndAmount(symbol *models.TTradeSymbol, side trade.TradeSide,
 		return symbol.BaseAsset, qty
 	}
 	return symbol.QuoteAsset, amount
+}
+
+func isTriggerOrderType(orderType trade.OrderType) bool {
+	switch orderType {
+	case trade.OrderType_ORDER_TYPE_CONDITIONAL,
+		trade.OrderType_ORDER_TYPE_TAKE_PROFIT,
+		trade.OrderType_ORDER_TYPE_STOP_LOSS:
+		return true
+	default:
+		return false
+	}
+}
+
+func isSupportedOrderType(orderType trade.OrderType) bool {
+	switch orderType {
+	case trade.OrderType_ORDER_TYPE_LIMIT,
+		trade.OrderType_ORDER_TYPE_MARKET,
+		trade.OrderType_ORDER_TYPE_CONDITIONAL,
+		trade.OrderType_ORDER_TYPE_TAKE_PROFIT,
+		trade.OrderType_ORDER_TYPE_STOP_LOSS:
+		return true
+	default:
+		return false
+	}
+}
+
+func statusAfterFreeze(orderType trade.OrderType) int64 {
+	if isTriggerOrderType(orderType) {
+		return int64(trade.OrderStatus_ORDER_STATUS_TRIGGER_WAITING)
+	}
+	return int64(trade.OrderStatus_ORDER_STATUS_PENDING)
+}
+
+func triggeredOrderType(order *models.TTradeOrder) int64 {
+	if order == nil {
+		return int64(trade.OrderType_ORDER_TYPE_UNKNOWN)
+	}
+	if order.Price > 0 {
+		return int64(trade.OrderType_ORDER_TYPE_LIMIT)
+	}
+	return int64(trade.OrderType_ORDER_TYPE_MARKET)
+}
+
+func triggeredTimeInForce(order *models.TTradeOrder) int64 {
+	if order == nil {
+		return int64(trade.TimeInForce_TIME_IN_FORCE_UNKNOWN)
+	}
+	if triggeredOrderType(order) == int64(trade.OrderType_ORDER_TYPE_MARKET) {
+		if order.TimeInForce == int64(trade.TimeInForce_TIME_IN_FORCE_UNKNOWN) ||
+			order.TimeInForce == int64(trade.TimeInForce_TIME_IN_FORCE_GTC) ||
+			order.TimeInForce == int64(trade.TimeInForce_TIME_IN_FORCE_POST_ONLY) {
+			return int64(trade.TimeInForce_TIME_IN_FORCE_IOC)
+		}
+	}
+	return order.TimeInForce
+}
+
+func shouldTriggerOrder(order *models.TTradeOrder, triggerPrice float64) bool {
+	if order == nil || !isTriggerWaitingOrderStatus(order.Status) || order.TriggerPrice <= 0 || triggerPrice <= 0 {
+		return false
+	}
+	switch trade.OrderType(order.OrderType) {
+	case trade.OrderType_ORDER_TYPE_TAKE_PROFIT:
+		if order.Side == int64(trade.TradeSide_TRADE_SIDE_BUY) {
+			return triggerPrice <= order.TriggerPrice+orderFillEpsilon
+		}
+		return triggerPrice+orderFillEpsilon >= order.TriggerPrice
+	case trade.OrderType_ORDER_TYPE_STOP_LOSS:
+		if order.Side == int64(trade.TradeSide_TRADE_SIDE_BUY) {
+			return triggerPrice+orderFillEpsilon >= order.TriggerPrice
+		}
+		return triggerPrice <= order.TriggerPrice+orderFillEpsilon
+	case trade.OrderType_ORDER_TYPE_CONDITIONAL:
+		if order.Side == int64(trade.TradeSide_TRADE_SIDE_BUY) {
+			return triggerPrice+orderFillEpsilon >= order.TriggerPrice
+		}
+		return triggerPrice <= order.TriggerPrice+orderFillEpsilon
+	default:
+		return false
+	}
 }
 
 func walletTypeForMarket(marketType trade.MarketType) asset.WalletType {

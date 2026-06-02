@@ -19,6 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	TradeTask_ProcessOrderMatching_FullMethodName       = "/trade.TradeTask/ProcessOrderMatching"
 	TradeTask_ProcessPositions_FullMethodName           = "/trade.TradeTask/ProcessPositions"
 	TradeTask_ProcessContractSettlements_FullMethodName = "/trade.TradeTask/ProcessContractSettlements"
 	TradeTask_ProcessTradeEvents_FullMethodName         = "/trade.TradeTask/ProcessTradeEvents"
@@ -33,6 +34,8 @@ const (
 // 定时任务
 // ====================
 type TradeTaskClient interface {
+	// 订单撮合
+	ProcessOrderMatching(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error)
 	// 仓位处理（标记价格刷新/强平扫描/普通平仓）
 	ProcessPositions(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error)
 	// 合约结算（资金费率/交割合约/秒合约）
@@ -49,6 +52,16 @@ type tradeTaskClient struct {
 
 func NewTradeTaskClient(cc grpc.ClientConnInterface) TradeTaskClient {
 	return &tradeTaskClient{cc}
+}
+
+func (c *tradeTaskClient) ProcessOrderMatching(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TradeTaskResp)
+	err := c.cc.Invoke(ctx, TradeTask_ProcessOrderMatching_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *tradeTaskClient) ProcessPositions(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error) {
@@ -99,6 +112,8 @@ func (c *tradeTaskClient) ExpireRiskLimits(ctx context.Context, in *TradeTaskReq
 // 定时任务
 // ====================
 type TradeTaskServer interface {
+	// 订单撮合
+	ProcessOrderMatching(context.Context, *TradeTaskReq) (*TradeTaskResp, error)
 	// 仓位处理（标记价格刷新/强平扫描/普通平仓）
 	ProcessPositions(context.Context, *TradeTaskReq) (*TradeTaskResp, error)
 	// 合约结算（资金费率/交割合约/秒合约）
@@ -117,6 +132,9 @@ type TradeTaskServer interface {
 // pointer dereference when methods are called.
 type UnimplementedTradeTaskServer struct{}
 
+func (UnimplementedTradeTaskServer) ProcessOrderMatching(context.Context, *TradeTaskReq) (*TradeTaskResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ProcessOrderMatching not implemented")
+}
 func (UnimplementedTradeTaskServer) ProcessPositions(context.Context, *TradeTaskReq) (*TradeTaskResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProcessPositions not implemented")
 }
@@ -148,6 +166,24 @@ func RegisterTradeTaskServer(s grpc.ServiceRegistrar, srv TradeTaskServer) {
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&TradeTask_ServiceDesc, srv)
+}
+
+func _TradeTask_ProcessOrderMatching_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TradeTaskReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeTaskServer).ProcessOrderMatching(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TradeTask_ProcessOrderMatching_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeTaskServer).ProcessOrderMatching(ctx, req.(*TradeTaskReq))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _TradeTask_ProcessPositions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -229,6 +265,10 @@ var TradeTask_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "trade.TradeTask",
 	HandlerType: (*TradeTaskServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ProcessOrderMatching",
+			Handler:    _TradeTask_ProcessOrderMatching_Handler,
+		},
 		{
 			MethodName: "ProcessPositions",
 			Handler:    _TradeTask_ProcessPositions_Handler,

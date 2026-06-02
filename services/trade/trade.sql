@@ -95,7 +95,7 @@ CREATE TABLE `t_trade_order` (
   `position_side` TINYINT NOT NULL DEFAULT 0 COMMENT '持仓方向：0无 1多 2空，现货一般为0',
   `order_type` TINYINT NOT NULL COMMENT '订单类型：1限价 2市价 3条件单 4止盈 5止损',
   `time_in_force` TINYINT NOT NULL DEFAULT 0 COMMENT '订单有效方式：0默认 1GTC 2IOC 3FOK 4PostOnly',
-  `status` TINYINT NOT NULL COMMENT '订单状态：1待成交 2部分成交 3已成交 4已撤单 5已拒单 6已过期',
+  `status` TINYINT NOT NULL COMMENT '订单状态：1待成交 2部分成交 3已成交 4已撤单 5已拒单 6已过期 7冻结中 8等待触发',
   `price` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '委托价格',
   `qty` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '委托数量',
   `amount` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '委托总额或名义价值',

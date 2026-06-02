@@ -5,6 +5,8 @@ import (
 	"fmt"
 
 	"wklive/common/sqlutil"
+
+	"github.com/zeromicro/go-zero/core/stores/sqlc"
 )
 
 type TradeFillPageFilter struct {
@@ -19,6 +21,7 @@ type TradeFillPageFilter struct {
 type TradeFillModel interface {
 	tTradeFillModel
 	FindPage(ctx context.Context, filter TradeFillPageFilter, cursor int64, limit int64) ([]*TTradeFill, int64, error)
+	FindLastPrice(ctx context.Context, tenantId, symbolId, marketType int64) (float64, error)
 }
 
 func (m *defaultTTradeFillModel) FindPage(ctx context.Context, filter TradeFillPageFilter, cursor int64, limit int64) ([]*TTradeFill, int64, error) {
@@ -54,4 +57,18 @@ func (m *defaultTTradeFillModel) FindPage(ctx context.Context, filter TradeFillP
 		return nil, 0, err
 	}
 	return list, total, nil
+}
+
+func (m *defaultTTradeFillModel) FindLastPrice(ctx context.Context, tenantId, symbolId, marketType int64) (float64, error) {
+	var price float64
+	sql := fmt.Sprintf("SELECT `price` FROM %s WHERE `tenant_id` = ? AND `symbol_id` = ? AND `market_type` = ? ORDER BY `match_time` DESC, `id` DESC LIMIT 1", m.table)
+	err := m.QueryRowNoCacheCtx(ctx, &price, sql, tenantId, symbolId, marketType)
+	switch err {
+	case nil:
+		return price, nil
+	case sqlc.ErrNotFound:
+		return 0, ErrNotFound
+	default:
+		return 0, err
+	}
 }

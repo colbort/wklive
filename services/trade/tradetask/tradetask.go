@@ -18,6 +18,8 @@ type (
 	TradeTaskResp = trade.TradeTaskResp
 
 	TradeTask interface {
+		// 订单撮合
+		ProcessOrderMatching(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error)
 		// 仓位处理（标记价格刷新/强平扫描/普通平仓）
 		ProcessPositions(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error)
 		// 合约结算（资金费率/交割合约/秒合约）
@@ -37,6 +39,12 @@ func NewTradeTask(cli zrpc.Client) TradeTask {
 	return &defaultTradeTask{
 		cli: cli,
 	}
+}
+
+// 订单撮合
+func (m *defaultTradeTask) ProcessOrderMatching(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error) {
+	client := trade.NewTradeTaskClient(m.cli.Conn())
+	return client.ProcessOrderMatching(ctx, in, opts...)
 }
 
 // 仓位处理（标记价格刷新/强平扫描/普通平仓）

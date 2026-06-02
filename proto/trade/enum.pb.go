@@ -400,13 +400,15 @@ func (TimeInForce) EnumDescriptor() ([]byte, []int) {
 type OrderStatus int32
 
 const (
-	OrderStatus_ORDER_STATUS_UNKNOWN     OrderStatus = 0
-	OrderStatus_ORDER_STATUS_PENDING     OrderStatus = 1
-	OrderStatus_ORDER_STATUS_PART_FILLED OrderStatus = 2
-	OrderStatus_ORDER_STATUS_FILLED      OrderStatus = 3
-	OrderStatus_ORDER_STATUS_CANCELED    OrderStatus = 4
-	OrderStatus_ORDER_STATUS_REJECTED    OrderStatus = 5
-	OrderStatus_ORDER_STATUS_EXPIRED     OrderStatus = 6
+	OrderStatus_ORDER_STATUS_UNKNOWN         OrderStatus = 0
+	OrderStatus_ORDER_STATUS_PENDING         OrderStatus = 1
+	OrderStatus_ORDER_STATUS_PART_FILLED     OrderStatus = 2
+	OrderStatus_ORDER_STATUS_FILLED          OrderStatus = 3
+	OrderStatus_ORDER_STATUS_CANCELED        OrderStatus = 4
+	OrderStatus_ORDER_STATUS_REJECTED        OrderStatus = 5
+	OrderStatus_ORDER_STATUS_EXPIRED         OrderStatus = 6
+	OrderStatus_ORDER_STATUS_FREEZING        OrderStatus = 7
+	OrderStatus_ORDER_STATUS_TRIGGER_WAITING OrderStatus = 8
 )
 
 // Enum value maps for OrderStatus.
@@ -419,15 +421,19 @@ var (
 		4: "ORDER_STATUS_CANCELED",
 		5: "ORDER_STATUS_REJECTED",
 		6: "ORDER_STATUS_EXPIRED",
+		7: "ORDER_STATUS_FREEZING",
+		8: "ORDER_STATUS_TRIGGER_WAITING",
 	}
 	OrderStatus_value = map[string]int32{
-		"ORDER_STATUS_UNKNOWN":     0,
-		"ORDER_STATUS_PENDING":     1,
-		"ORDER_STATUS_PART_FILLED": 2,
-		"ORDER_STATUS_FILLED":      3,
-		"ORDER_STATUS_CANCELED":    4,
-		"ORDER_STATUS_REJECTED":    5,
-		"ORDER_STATUS_EXPIRED":     6,
+		"ORDER_STATUS_UNKNOWN":         0,
+		"ORDER_STATUS_PENDING":         1,
+		"ORDER_STATUS_PART_FILLED":     2,
+		"ORDER_STATUS_FILLED":          3,
+		"ORDER_STATUS_CANCELED":        4,
+		"ORDER_STATUS_REJECTED":        5,
+		"ORDER_STATUS_EXPIRED":         6,
+		"ORDER_STATUS_FREEZING":        7,
+		"ORDER_STATUS_TRIGGER_WAITING": 8,
 	}
 )
 
@@ -1202,7 +1208,7 @@ const file_proto_trade_enum_proto_rawDesc = "" +
 	"\x11TIME_IN_FORCE_GTC\x10\x01\x12\x15\n" +
 	"\x11TIME_IN_FORCE_IOC\x10\x02\x12\x15\n" +
 	"\x11TIME_IN_FORCE_FOK\x10\x03\x12\x1b\n" +
-	"\x17TIME_IN_FORCE_POST_ONLY\x10\x04*\xc8\x01\n" +
+	"\x17TIME_IN_FORCE_POST_ONLY\x10\x04*\x85\x02\n" +
 	"\vOrderStatus\x12\x18\n" +
 	"\x14ORDER_STATUS_UNKNOWN\x10\x00\x12\x18\n" +
 	"\x14ORDER_STATUS_PENDING\x10\x01\x12\x1c\n" +
@@ -1210,7 +1216,9 @@ const file_proto_trade_enum_proto_rawDesc = "" +
 	"\x13ORDER_STATUS_FILLED\x10\x03\x12\x19\n" +
 	"\x15ORDER_STATUS_CANCELED\x10\x04\x12\x19\n" +
 	"\x15ORDER_STATUS_REJECTED\x10\x05\x12\x18\n" +
-	"\x14ORDER_STATUS_EXPIRED\x10\x06*V\n" +
+	"\x14ORDER_STATUS_EXPIRED\x10\x06\x12\x19\n" +
+	"\x15ORDER_STATUS_FREEZING\x10\a\x12 \n" +
+	"\x1cORDER_STATUS_TRIGGER_WAITING\x10\b*V\n" +
 	"\n" +
 	"MarginMode\x12\x17\n" +
 	"\x13MARGIN_MODE_UNKNOWN\x10\x00\x12\x15\n" +

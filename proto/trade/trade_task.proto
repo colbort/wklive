@@ -18,6 +18,8 @@ message TradeTaskResp {
 // 定时任务
 // ====================
 service TradeTask {
+  // 订单撮合
+  rpc ProcessOrderMatching(TradeTaskReq) returns (TradeTaskResp);
   // 仓位处理（标记价格刷新/强平扫描/普通平仓）
   rpc ProcessPositions(TradeTaskReq) returns (TradeTaskResp);
   // 合约结算（资金费率/交割合约/秒合约）
