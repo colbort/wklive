@@ -37,7 +37,7 @@ func (l *SysCronJobCreateLogic) SysCronJobCreate(in *system.SysCronJobCreateReq)
 		}, nil
 	}
 	job, err := l.svcCtx.JobModel.FindByInvokeTarget(l.ctx, in.InvokeTarget)
-	if err != nil {
+	if err != nil && err != models.ErrNotFound {
 		return &system.RespBase{
 			Base: helper.GetErrResp(500, err.Error()),
 		}, nil

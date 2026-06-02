@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 
 	"wklive/common/helper"
@@ -60,8 +59,8 @@ func (l *CreateTradeEventLogic) CreateTradeEvent(in *trade.CreateTradeEventReq) 
 			MaxRetryCount: int64(in.Event.MaxRetryCount),
 			NextRetryAt:   in.Event.NextRetryAt,
 			LastErrorMsg:  in.Event.LastErrorMsg,
-			Payload:       in.Event.Payload,
-			ExtData:       sql.NullString{String: in.Event.ExtData, Valid: in.Event.ExtData != ""},
+			Payload:       normalizeTradeEventJSON(in.Event.Payload),
+			ExtData:       nullableTradeEventJSON(in.Event.ExtData),
 			CreateTimes:   in.Event.CreateTimes,
 			UpdateTimes:   in.Event.UpdateTimes,
 		})

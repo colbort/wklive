@@ -2,9 +2,12 @@ package logic
 
 import (
 	"context"
+	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"wklive/common/helper"
@@ -140,6 +143,34 @@ func redisEvalOK(ret any) bool {
 	}
 }
 
+func normalizeTradeEventJSON(raw string) string {
+	value := strings.TrimSpace(raw)
+	if value == "" {
+		return "{}"
+	}
+	if json.Valid([]byte(value)) {
+		return value
+	}
+	data, err := json.Marshal(map[string]string{
+		"message": value,
+	})
+	if err != nil {
+		return "{}"
+	}
+	return string(data)
+}
+
+func nullableTradeEventJSON(raw string) sql.NullString {
+	value := strings.TrimSpace(raw)
+	if value == "" {
+		return sql.NullString{}
+	}
+	return sql.NullString{
+		String: normalizeTradeEventJSON(value),
+		Valid:  true,
+	}
+}
+
 func createTradeTaskEvent(ctx context.Context, svcCtx *svc.ServiceContext, tenantID int64, eventType, bizType string, bizID int64, userID, symbolID, marketType int64, payload string) error {
 	bizIDText := strconv.FormatInt(bizID, 10)
 	exists, _, err := svcCtx.BizTradeEventModel.FindPage(ctx, models.BizTradeEventPageFilter{
@@ -173,7 +204,7 @@ func createTradeTaskEvent(ctx context.Context, svcCtx *svc.ServiceContext, tenan
 		EventStatus:   int64(trade.EventStatus_EVENT_STATUS_PENDING),
 		MaxRetryCount: 3,
 		NextRetryAt:   now,
-		Payload:       payload,
+		Payload:       normalizeTradeEventJSON(payload),
 		CreateTimes:   now,
 		UpdateTimes:   now,
 	})

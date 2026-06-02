@@ -128,7 +128,7 @@ func (l *ProcessContractSettlementsLogic) disableExpiredSymbols(tenantID int64, 
 				EventStatus:   int64(trade.EventStatus_EVENT_STATUS_PENDING),
 				MaxRetryCount: 3,
 				NextRetryAt:   now,
-				Payload:       symbol.Symbol,
+				Payload:       normalizeTradeEventJSON(symbol.Symbol),
 				CreateTimes:   now,
 				UpdateTimes:   now,
 			}); err != nil {
