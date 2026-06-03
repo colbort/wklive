@@ -3,7 +3,7 @@
     <div class="page-header">
       <h2>{{ t('payment.tenantPlatforms') }}</h2>
       <div class="header-actions">
-        <el-button type="primary" @click="openDialog()">
+        <el-button v-perm="'payment:tenant-platform:add'" type="primary" @click="openDialog()">
           {{ t('payment.addTenantPlatform') }}
         </el-button>
         <el-button @click="loadList">
@@ -59,10 +59,20 @@
         <el-table-column prop="remark" :label="t('common.remark')" min-width="180" />
         <el-table-column :label="t('common.actions')" width="160">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">
+            <el-button
+              v-perm="'payment:tenant-platform:detail'"
+              link
+              type="primary"
+              @click="showDetail(row)"
+            >
               {{ t('common.detail') }}
             </el-button>
-            <el-button link type="primary" @click="openDialog(row)">
+            <el-button
+              v-perm="'payment:tenant-platform:update'"
+              link
+              type="primary"
+              @click="openDialog(row)"
+            >
               {{ t('common.edit') }}
             </el-button>
           </template>
@@ -134,7 +144,12 @@
         <el-button @click="dialogVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :disabled="submitDisabled" @click="submit">
+        <el-button
+          v-perm="form.id ? 'payment:tenant-platform:update' : 'payment:tenant-platform:add'"
+          type="primary"
+          :disabled="submitDisabled"
+          @click="submit"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>

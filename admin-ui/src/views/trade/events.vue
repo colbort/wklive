@@ -93,7 +93,9 @@
         </el-table-column>
 
         <el-table-column :label="t('trade.retryCount')" width="120" align="right">
-          <template #default="{ row }"> {{ row.retryCount }} / {{ row.maxRetryCount }} </template>
+          <template #default="{ row }">
+            {{ row.retryCount }} / {{ row.maxRetryCount }}
+          </template>
         </el-table-column>
 
         <el-table-column :label="t('trade.nextRetryAt')" min-width="170">
@@ -110,12 +112,22 @@
 
         <el-table-column :label="t('common.actions')" width="170" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">
+            <el-button
+              v-perm="'trade:event:detail'"
+              link
+              type="primary"
+              @click="showDetail(row)"
+            >
               <el-icon><View /></el-icon>
               {{ t('option.detail') }}
             </el-button>
 
-            <el-button link type="warning" @click="retryEvent(row)">
+            <el-button
+              v-perm="'trade:event:retry'"
+              link
+              type="warning"
+              @click="retryEvent(row)"
+            >
               <el-icon><RefreshRight /></el-icon>
               {{ t('trade.retry') }}
             </el-button>
@@ -141,8 +153,12 @@
         <div v-else class="detail-layout">
           <div class="detail-header">
             <div>
-              <div class="detail-title">{{ detailData.eventNo || '-' }}</div>
-              <div class="detail-subtitle">{{ getEventType(detailData) }}</div>
+              <div class="detail-title">
+                {{ detailData.eventNo || '-' }}
+              </div>
+              <div class="detail-subtitle">
+                {{ getEventType(detailData) }}
+              </div>
             </div>
             <el-tag :type="eventStatusTagType(detailData.eventStatus)" effect="light">
               {{ optionLabel('eventStatus', detailData.eventStatus) }}

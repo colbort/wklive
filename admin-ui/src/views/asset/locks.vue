@@ -6,7 +6,12 @@
         <el-button @click="loadList">
           {{ t('common.refresh') }}
         </el-button>
-        <el-button type="success" plain @click="openChangeDialog">
+        <el-button
+          v-perm="'asset:lock:unlock'"
+          type="success"
+          plain
+          @click="openChangeDialog"
+        >
           {{ t('asset.unlockAsset') }}
         </el-button>
       </div>
@@ -118,7 +123,12 @@
             <el-button link type="primary" @click="showDetail(row)">
               {{ t('asset.detail') }}
             </el-button>
-            <el-button link type="success" @click="prefillUnlock(row)">
+            <el-button
+              v-perm="'asset:lock:unlock'"
+              link
+              type="success"
+              @click="prefillUnlock(row)"
+            >
               {{ t('asset.unlockAsset') }}
             </el-button>
           </template>
@@ -158,7 +168,12 @@
         <el-button @click="changeVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitChange">
+        <el-button
+          v-perm="'asset:lock:unlock'"
+          type="primary"
+          :loading="submitLoading"
+          @click="submitChange"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>

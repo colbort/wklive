@@ -52,7 +52,12 @@
         <el-form-item :label="t('trade.operatorId')">
           <el-input-number v-model="leverageForm.operatorId" :min="0" :precision="0" />
         </el-form-item>
-        <el-button type="primary" :loading="submitLoading" @click="submitLeverage">
+        <el-button
+          v-perm="'trade:user-leverage-config:update'"
+          type="primary"
+          :loading="submitLoading"
+          @click="submitLeverage"
+        >
           {{ t('common.save') }}
         </el-button>
       </el-form>

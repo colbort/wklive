@@ -73,7 +73,12 @@
         <el-table-column prop="status" :label="t('common.status')" width="90" />
         <el-table-column :label="t('common.actions')" width="140" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">
+            <el-button
+              v-perm="'payment:crypto-recharge-tx:detail'"
+              link
+              type="primary"
+              @click="showDetail(row)"
+            >
               {{ t('common.detail') }}
             </el-button>
             <el-button link type="primary" @click="openDialog(row)">

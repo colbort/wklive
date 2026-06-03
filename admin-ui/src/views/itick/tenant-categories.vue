@@ -3,11 +3,20 @@
     <div class="page-header">
       <h2>{{ t('itick.tenantCategories') }}</h2>
       <div class="header-actions">
-        <el-button type="primary" :disabled="!queryParams.tenantId" @click="handleAdd">
+        <el-button
+          v-perm="'itick:tenant-category:add'"
+          type="primary"
+          :disabled="!queryParams.tenantId"
+          @click="handleAdd"
+        >
           <el-icon><Plus /></el-icon>
           {{ t('common.add') }}
         </el-button>
-        <el-button :disabled="!queryParams.tenantId" @click="openBatchDialog">
+        <el-button
+          v-perm="'itick:tenant-category:batchUpsert'"
+          :disabled="!queryParams.tenantId"
+          @click="openBatchDialog"
+        >
           <el-icon><EditPen /></el-icon>
           {{ t('itick.batchTenantCategories') }}
         </el-button>
@@ -133,10 +142,20 @@
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="180" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="handleDetail(row)">
+            <el-button
+              v-perm="'itick:tenant-category:detail'"
+              link
+              type="primary"
+              @click="handleDetail(row)"
+            >
               {{ t('common.detail') }}
             </el-button>
-            <el-button link type="primary" @click="handleEdit(row)">
+            <el-button
+              v-perm="'itick:tenant-category:update'"
+              link
+              type="primary"
+              @click="handleEdit(row)"
+            >
               {{ t('common.edit') }}
             </el-button>
           </template>
@@ -228,7 +247,12 @@
         <el-button @click="formDialogVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitForm">
+        <el-button
+          v-perm="formMode === 'add' ? 'itick:tenant-category:add' : 'itick:tenant-category:update'"
+          type="primary"
+          :loading="submitLoading"
+          @click="submitForm"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>
@@ -300,7 +324,12 @@
           <el-button @click="appendBatchRow">
             {{ t('common.add') }}
           </el-button>
-          <el-button type="primary" :loading="batchSubmitting" @click="submitBatch">
+          <el-button
+            v-perm="'itick:tenant-category:batchUpsert'"
+            type="primary"
+            :loading="batchSubmitting"
+            @click="submitBatch"
+          >
             {{ t('common.save') }}
           </el-button>
         </div>

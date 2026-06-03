@@ -612,7 +612,7 @@ onMounted(fetchCreateOptions)
         <el-button @click="fetchList">
           {{ t('common.refresh') }}
         </el-button>
-        <el-button type="primary" @click="openCreate">
+        <el-button v-perm="'users:user:add'" type="primary" @click="openCreate">
           {{ t('users.addUser') }}
         </el-button>
       </div>
@@ -735,34 +735,58 @@ onMounted(fetchCreateOptions)
 
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item @click="showDetail(row)">
+                  <el-dropdown-item v-perm="'users:user:detail'" @click="showDetail(row)">
                     {{ t('common.detail') }}
                   </el-dropdown-item>
-                  <el-dropdown-item @click="openEdit(row)">
+                  <el-dropdown-item v-perm="'users:user:update'" @click="openEdit(row)">
                     {{ t('common.edit') }}
                   </el-dropdown-item>
-                  <el-dropdown-item @click="updateSimpleValue(row, 'status')">
+                  <el-dropdown-item
+                    v-perm="'users:user:update:status'"
+                    @click="updateSimpleValue(row, 'status')"
+                  >
                     {{ t('users.modifyStatus') }}
                   </el-dropdown-item>
-                  <el-dropdown-item @click="updateSimpleValue(row, 'memberLevel')">
+                  <el-dropdown-item
+                    v-perm="'users:user:update:level'"
+                    @click="updateSimpleValue(row, 'memberLevel')"
+                  >
                     {{ t('users.modifyMemberLevel') }}
                   </el-dropdown-item>
-                  <el-dropdown-item @click="updateSimpleValue(row, 'riskLevel')">
+                  <el-dropdown-item
+                    v-perm="'users:user:update:risklevel'"
+                    @click="updateSimpleValue(row, 'riskLevel')"
+                  >
                     {{ t('users.modifyRiskLevel') }}
                   </el-dropdown-item>
-                  <el-dropdown-item @click="openPassword(row, 'login')">
+                  <el-dropdown-item
+                    v-perm="'users:user:reset:loginpwd'"
+                    @click="openPassword(row, 'login')"
+                  >
                     {{ t('users.resetLoginPassword') }}
                   </el-dropdown-item>
-                  <el-dropdown-item @click="openPassword(row, 'pay')">
+                  <el-dropdown-item
+                    v-perm="'users:user:reset:paypwd'"
+                    @click="openPassword(row, 'pay')"
+                  >
                     {{ t('users.resetPayPassword') }}
                   </el-dropdown-item>
-                  <el-dropdown-item @click="quickAction(row, 'unlock')">
+                  <el-dropdown-item
+                    v-perm="'users:user:unlock'"
+                    @click="quickAction(row, 'unlock')"
+                  >
                     {{ t('users.unlock') }}
                   </el-dropdown-item>
-                  <el-dropdown-item @click="quickAction(row, 'reset2fa')">
+                  <el-dropdown-item
+                    v-perm="'users:user:reset:google2fa'"
+                    @click="quickAction(row, 'reset2fa')"
+                  >
                     {{ t('users.reset2fa') }}
                   </el-dropdown-item>
-                  <el-dropdown-item @click="quickAction(row, 'delete')">
+                  <el-dropdown-item
+                    v-perm="'users:user:delete'"
+                    @click="quickAction(row, 'delete')"
+                  >
                     <span style="color: var(--el-color-danger)">{{ t('common.delete') }}</span>
                   </el-dropdown-item>
                 </el-dropdown-menu>
@@ -936,6 +960,7 @@ onMounted(fetchCreateOptions)
           {{ t('common.cancel') }}
         </el-button>
         <el-button
+          v-perm="isCreate ? 'users:user:add' : 'users:user:update'"
           type="primary"
           :loading="submitLoading"
           :disabled="!canSubmitCreate"
@@ -960,7 +985,12 @@ onMounted(fetchCreateOptions)
         <el-button @click="pwdVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitPassword">
+        <el-button
+          v-perm="pwdMode === 'login' ? 'users:user:reset:loginpwd' : 'users:user:reset:paypwd'"
+          type="primary"
+          :loading="submitLoading"
+          @click="submitPassword"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>

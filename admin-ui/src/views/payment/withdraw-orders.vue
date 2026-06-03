@@ -63,11 +63,17 @@
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="180">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">
+            <el-button
+              v-perm="'payment:withdraw-order:detail'"
+              link
+              type="primary"
+              @click="showDetail(row)"
+            >
               {{ t('common.detail') }}
             </el-button>
             <el-button
               v-if="canAudit(row)"
+              v-perm="'payment:withdraw-order:audit'"
               link
               type="warning"
               @click="openAudit(row)"
@@ -117,7 +123,7 @@
         <el-button @click="auditVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" @click="submitAudit">
+        <el-button v-perm="'payment:withdraw-order:audit'" type="primary" @click="submitAudit">
           {{ t('common.confirm') }}
         </el-button>
       </template>

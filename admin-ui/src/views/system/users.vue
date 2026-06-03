@@ -485,7 +485,7 @@ onMounted(async () => {
                     {{ t('perms.sys:user:google2fa') }}
                   </el-dropdown-item>
 
-                  <el-dropdown-item v-perm="'sys:user:update'" divided @click="onToggleStatus(row)">
+                  <el-dropdown-item v-perm="'sys:user:status'" divided @click="onToggleStatus(row)">
                     {{ row.status === 1 ? t('common.disable') : t('common.enable') }}
                   </el-dropdown-item>
 
@@ -560,7 +560,12 @@ onMounted(async () => {
         <el-button @click="editVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :loading="editFormLoading" @click="submitEdit">
+        <el-button
+          v-perm="editMode === 'create' ? 'sys:user:add' : 'sys:user:update'"
+          type="primary"
+          :loading="editFormLoading"
+          @click="submitEdit"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>
@@ -580,7 +585,12 @@ onMounted(async () => {
         <el-button @click="pwdVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :loading="pwdSubmitLoading" @click="submitResetPwd">
+        <el-button
+          v-perm="'sys:user:resetpwd'"
+          type="primary"
+          :loading="pwdSubmitLoading"
+          @click="submitResetPwd"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>
@@ -613,7 +623,12 @@ onMounted(async () => {
         <el-button @click="roleVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :loading="roleAssignLoading" @click="submitAssignRoles">
+        <el-button
+          v-perm="'sys:user:assignrole'"
+          type="primary"
+          :loading="roleAssignLoading"
+          @click="submitAssignRoles"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>

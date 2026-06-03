@@ -405,7 +405,7 @@ onMounted(fetchOptions)
         <el-button @click="fetchList">
           {{ t('common.refresh') }}
         </el-button>
-        <el-button type="primary" @click="openCreate">
+        <el-button v-perm="'users:user:bank:add'" type="primary" @click="openCreate">
           {{ t('users.addBank') }}
         </el-button>
       </div>
@@ -477,19 +477,44 @@ onMounted(fetchOptions)
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="260" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">
+            <el-button
+              v-perm="'users:user:bank:detail'"
+              link
+              type="primary"
+              @click="showDetail(row)"
+            >
               {{ t('common.detail') }}
             </el-button>
-            <el-button link type="primary" @click="openEdit(row)">
+            <el-button
+              v-perm="'users:user:bank:update'"
+              link
+              type="primary"
+              @click="openEdit(row)"
+            >
               {{ t('common.edit') }}
             </el-button>
-            <el-button link type="warning" @click="openStatus(row)">
+            <el-button
+              v-perm="'users:user:bank:update:status'"
+              link
+              type="warning"
+              @click="openStatus(row)"
+            >
               {{ t('users.status') }}
             </el-button>
-            <el-button link type="success" @click="setDefault(row)">
+            <el-button
+              v-perm="'users:user:bank:default'"
+              link
+              type="success"
+              @click="setDefault(row)"
+            >
               {{ t('users.setDefault') }}
             </el-button>
-            <el-button link type="danger" @click="remove(row)">
+            <el-button
+              v-perm="'users:user:bank:delete'"
+              link
+              type="danger"
+              @click="remove(row)"
+            >
               {{ t('common.delete') }}
             </el-button>
           </template>
@@ -603,6 +628,7 @@ onMounted(fetchOptions)
           {{ t('common.cancel') }}
         </el-button>
         <el-button
+          v-perm="form.id ? 'users:user:bank:update' : 'users:user:bank:add'"
           type="primary"
           :loading="submitLoading"
           :disabled="!canSubmitCreate"
@@ -630,7 +656,7 @@ onMounted(fetchOptions)
         <el-button @click="statusVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" @click="submitStatus">
+        <el-button v-perm="'users:user:bank:update:status'" type="primary" @click="submitStatus">
           {{ t('common.confirm') }}
         </el-button>
       </template>

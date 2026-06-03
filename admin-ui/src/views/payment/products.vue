@@ -28,7 +28,7 @@
           <el-button @click="resetProductQuery">
             {{ t('common.reset') }}
           </el-button>
-          <el-button type="primary" @click="openProductDialog()">
+          <el-button v-perm="'payment:product:add'" type="primary" @click="openProductDialog()">
             {{ t('payment.addProduct') }}
           </el-button>
         </el-form-item>
@@ -62,10 +62,20 @@
         />
         <el-table-column :label="t('common.actions')" width="160" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showProductDetail(row)">
+            <el-button
+              v-perm="'payment:product:detail'"
+              link
+              type="primary"
+              @click="showProductDetail(row)"
+            >
               {{ t('common.detail') }}
             </el-button>
-            <el-button link type="primary" @click="openProductDialog(row)">
+            <el-button
+              v-perm="'payment:product:update'"
+              link
+              type="primary"
+              @click="openProductDialog(row)"
+            >
               {{ t('common.edit') }}
             </el-button>
           </template>
@@ -143,6 +153,7 @@
           {{ t('common.cancel') }}
         </el-button>
         <el-button
+          v-perm="productForm.id ? 'payment:product:update' : 'payment:product:add'"
           type="primary"
           :loading="submitLoading"
           :disabled="isSubmitDisabled"

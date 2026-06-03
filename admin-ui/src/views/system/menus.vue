@@ -78,7 +78,7 @@
             <span class="card-title">{{ t('system.menus') }}</span>
           </div>
           <div class="toolbar-right">
-            <el-button type="primary" @click="handleAdd(0)">
+            <el-button v-perm="'sys:menu:add'" type="primary" @click="handleAdd(0)">
               {{ t('system.addMenu') }}
             </el-button>
             <el-button @click="getList">
@@ -172,16 +172,27 @@
           <template #default="{ row }">
             <el-button
               v-if="row.menuType !== 3"
+              v-perm="'sys:menu:add'"
               link
               type="primary"
               @click="handleAdd(row.id)"
             >
               {{ t('system.addChild') }}
             </el-button>
-            <el-button link type="primary" @click="handleEdit(row)">
+            <el-button
+              v-perm="'sys:menu:update'"
+              link
+              type="primary"
+              @click="handleEdit(row)"
+            >
               {{ t('common.edit') }}
             </el-button>
-            <el-button link type="danger" @click="handleDelete(row)">
+            <el-button
+              v-perm="'sys:menu:delete'"
+              link
+              type="danger"
+              @click="handleDelete(row)"
+            >
               {{ t('common.delete') }}
             </el-button>
           </template>
@@ -356,7 +367,12 @@
         <el-button @click="dialogVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="handleSubmit">
+        <el-button
+          v-perm="dialogType === 'add' ? 'sys:menu:add' : 'sys:menu:update'"
+          type="primary"
+          :loading="submitLoading"
+          @click="handleSubmit"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>

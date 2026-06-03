@@ -49,7 +49,12 @@
         <el-form-item :label="t('trade.operatorId')">
           <el-input-number v-model="symbolLimitForm.operatorId" :min="0" :precision="0" />
         </el-form-item>
-        <el-button type="primary" :loading="submitLoading" @click="submitSymbolLimit">
+        <el-button
+          v-perm="'trade:user-symbol-limit:update'"
+          type="primary"
+          :loading="submitLoading"
+          @click="submitSymbolLimit"
+        >
           {{ t('common.save') }}
         </el-button>
       </el-form>

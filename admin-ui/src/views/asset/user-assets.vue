@@ -6,16 +6,21 @@
         <el-button @click="loadList">
           {{ t('common.refresh') }}
         </el-button>
-        <el-button type="primary" @click="openChangeDialog('add')">
+        <el-button v-perm="'asset:user-asset:add'" type="primary" @click="openChangeDialog('add')">
           {{ t('asset.addAsset') }}
         </el-button>
-        <el-button type="warning" @click="openChangeDialog('sub')">
+        <el-button v-perm="'asset:user-asset:sub'" type="warning" @click="openChangeDialog('sub')">
           {{ t('asset.subAsset') }}
         </el-button>
-        <el-button type="primary" @click="openChangeDialog('freeze')">
+        <el-button v-perm="'asset:freeze:add'" type="primary" @click="openChangeDialog('freeze')">
           {{ t('asset.freezeAsset') }}
         </el-button>
-        <el-button type="primary" plain @click="openChangeDialog('lock')">
+        <el-button
+          v-perm="'asset:lock:add'"
+          type="primary"
+          plain
+          @click="openChangeDialog('lock')"
+        >
           {{ t('asset.lockAsset') }}
         </el-button>
       </div>
@@ -114,7 +119,12 @@
         />
         <el-table-column :label="t('common.actions')" width="120" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">
+            <el-button
+              v-perm="'asset:user-asset:detail'"
+              link
+              type="primary"
+              @click="showDetail(row)"
+            >
               {{ t('asset.detail') }}
             </el-button>
           </template>
@@ -167,7 +177,12 @@
         <el-button @click="changeVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitChange">
+        <el-button
+          v-perm="changePerm"
+          type="primary"
+          :loading="submitLoading"
+          @click="submitChange"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>
@@ -274,6 +289,15 @@ const changeTitle = computed(
       sub: t('asset.subAsset'),
       freeze: t('asset.freezeAsset'),
       lock: t('asset.lockAsset'),
+    })[changeMode.value],
+)
+const changePerm = computed(
+  () =>
+    ({
+      add: 'asset:user-asset:add',
+      sub: 'asset:user-asset:sub',
+      freeze: 'asset:freeze:add',
+      lock: 'asset:lock:add',
     })[changeMode.value],
 )
 

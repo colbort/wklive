@@ -330,12 +330,18 @@ onMounted(() => {
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="280" fixed="right">
           <template #default="{ row }">
-            <el-button type="primary" size="small" @click="handleRun(row)">
+            <el-button
+              v-perm="'sys:job:run'"
+              type="primary"
+              size="small"
+              @click="handleRun(row)"
+            >
               <el-icon><VideoPlay /></el-icon>
               {{ t('system.run') }}
             </el-button>
             <el-button
               v-if="row.status === 0"
+              v-perm="'sys:job:start'"
               type="success"
               size="small"
               @click="handleStart(row)"
@@ -345,6 +351,7 @@ onMounted(() => {
             </el-button>
             <el-button
               v-if="row.status === 1"
+              v-perm="'sys:job:stop'"
               type="warning"
               size="small"
               @click="handleStop(row)"
@@ -465,7 +472,12 @@ onMounted(() => {
           <el-button @click="dialogVisible = false">
             {{ t('common.cancel') }}
           </el-button>
-          <el-button type="primary" :loading="submitLoading" @click="handleSubmit">
+          <el-button
+            v-perm="isEdit ? 'sys:job:update' : 'sys:job:add'"
+            type="primary"
+            :loading="submitLoading"
+            @click="handleSubmit"
+          >
             {{ t('common.confirm') }}
           </el-button>
         </template>

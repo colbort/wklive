@@ -6,7 +6,11 @@
         <el-button @click="loadList">
           {{ t('common.refresh') }}
         </el-button>
-        <el-button type="primary" @click="openDialog()">
+        <el-button
+          v-perm="'payment:crypto-wallet-account:add'"
+          type="primary"
+          @click="openDialog()"
+        >
           {{ t('payment.addCryptoWalletAccount') }}
         </el-button>
       </div>
@@ -66,10 +70,20 @@
         /><el-table-column prop="status" :label="t('common.status')" width="80" />
         <el-table-column :label="t('common.actions')" width="140" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">
+            <el-button
+              v-perm="'payment:crypto-wallet-account:detail'"
+              link
+              type="primary"
+              @click="showDetail(row)"
+            >
               {{ t('common.detail') }}
             </el-button>
-            <el-button link type="primary" @click="openDialog(row)">
+            <el-button
+              v-perm="'payment:crypto-wallet-account:update'"
+              link
+              type="primary"
+              @click="openDialog(row)"
+            >
               {{ t('common.edit') }}
             </el-button>
           </template>
@@ -132,7 +146,13 @@
         <el-button @click="dialogVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" @click="submit">
+        <el-button
+          v-perm="
+            form.id ? 'payment:crypto-wallet-account:update' : 'payment:crypto-wallet-account:add'
+          "
+          type="primary"
+          @click="submit"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>

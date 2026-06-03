@@ -6,7 +6,12 @@
         <el-button @click="loadList">
           {{ t('common.refresh') }}
         </el-button>
-        <el-button type="success" plain @click="openChangeDialog">
+        <el-button
+          v-perm="'asset:freeze:unfreeze'"
+          type="success"
+          plain
+          @click="openChangeDialog"
+        >
           {{ t('asset.unfreezeAsset') }}
         </el-button>
       </div>
@@ -137,7 +142,12 @@
             <el-button link type="primary" @click="showDetail(row)">
               {{ t('asset.detail') }}
             </el-button>
-            <el-button link type="success" @click="prefillUnfreeze(row)">
+            <el-button
+              v-perm="'asset:freeze:unfreeze'"
+              link
+              type="success"
+              @click="prefillUnfreeze(row)"
+            >
               {{ t('asset.unfreezeAsset') }}
             </el-button>
           </template>
@@ -177,7 +187,12 @@
         <el-button @click="changeVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitChange">
+        <el-button
+          v-perm="'asset:freeze:unfreeze'"
+          type="primary"
+          :loading="submitLoading"
+          @click="submitChange"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>

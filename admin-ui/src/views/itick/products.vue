@@ -3,7 +3,7 @@
     <div class="page-header">
       <h2>{{ t('itick.products') }}</h2>
       <div class="header-actions">
-        <el-button type="primary" @click="handleAdd">
+        <el-button v-perm="'itick:product:add'" type="primary" @click="handleAdd">
           <el-icon><Plus /></el-icon>
           {{ t('common.add') }}
         </el-button>
@@ -163,10 +163,20 @@
 
         <el-table-column :label="t('common.actions')" width="180" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="handleDetail(row)">
+            <el-button
+              v-perm="'itick:product:detail'"
+              link
+              type="primary"
+              @click="handleDetail(row)"
+            >
               {{ t('itick.detail') }}
             </el-button>
-            <el-button link type="primary" @click="handleEdit(row)">
+            <el-button
+              v-perm="'itick:product:update'"
+              link
+              type="primary"
+              @click="handleEdit(row)"
+            >
               {{ t('common.edit') }}
             </el-button>
           </template>
@@ -398,7 +408,12 @@
         <el-button @click="formDialogVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitForm">
+        <el-button
+          v-perm="formMode === 'add' ? 'itick:product:add' : 'itick:product:update'"
+          type="primary"
+          :loading="submitLoading"
+          @click="submitForm"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>

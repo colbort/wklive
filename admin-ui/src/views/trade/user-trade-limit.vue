@@ -62,7 +62,12 @@
         <el-form-item :label="t('trade.operatorId')">
           <el-input-number v-model="tradeLimitForm.operatorId" :min="0" :precision="0" />
         </el-form-item>
-        <el-button type="primary" :loading="submitLoading" @click="submitTradeLimit">
+        <el-button
+          v-perm="'trade:user-trade-limit:update'"
+          type="primary"
+          :loading="submitLoading"
+          @click="submitTradeLimit"
+        >
           {{ t('common.save') }}
         </el-button>
       </el-form>

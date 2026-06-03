@@ -19,7 +19,11 @@
           <el-button type="primary" @click="loadRules">
             {{ t('common.search') }}
           </el-button>
-          <el-button type="primary" @click="openRuleDialog()">
+          <el-button
+            v-perm="'payment:tenant-channel-rule:add'"
+            type="primary"
+            @click="openRuleDialog()"
+          >
             {{ t('payment.addRule') }}
           </el-button>
         </el-form-item>
@@ -42,10 +46,20 @@
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="160">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showRuleDetail(row)">
+            <el-button
+              v-perm="'payment:tenant-channel-rule:detail'"
+              link
+              type="primary"
+              @click="showRuleDetail(row)"
+            >
               {{ t('common.detail') }}
             </el-button>
-            <el-button link type="primary" @click="openRuleDialog(row)">
+            <el-button
+              v-perm="'payment:tenant-channel-rule:update'"
+              link
+              type="primary"
+              @click="openRuleDialog(row)"
+            >
               {{ t('common.edit') }}
             </el-button>
           </template>
@@ -145,7 +159,14 @@
         <el-button @click="ruleDialogVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :disabled="ruleSubmitDisabled" @click="submitRule">
+        <el-button
+          v-perm="
+            ruleForm.id ? 'payment:tenant-channel-rule:update' : 'payment:tenant-channel-rule:add'
+          "
+          type="primary"
+          :disabled="ruleSubmitDisabled"
+          @click="submitRule"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>

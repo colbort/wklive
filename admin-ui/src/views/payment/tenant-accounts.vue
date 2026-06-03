@@ -3,7 +3,7 @@
     <div class="page-header">
       <h2>{{ t('payment.tenantAccounts') }}</h2>
       <div>
-        <el-button type="primary" @click="openDialog()">
+        <el-button v-perm="'payment:tenant-account:add'" type="primary" @click="openDialog()">
           {{ t('payment.addAccount') }}
         </el-button>
         <el-button @click="loadList">
@@ -53,10 +53,20 @@
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="160">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">
+            <el-button
+              v-perm="'payment:tenant-account:detail'"
+              link
+              type="primary"
+              @click="showDetail(row)"
+            >
               {{ t('common.detail') }}
             </el-button>
-            <el-button link type="primary" @click="openDialog(row)">
+            <el-button
+              v-perm="'payment:tenant-account:update'"
+              link
+              type="primary"
+              @click="openDialog(row)"
+            >
               {{ t('common.edit') }}
             </el-button>
           </template>
@@ -182,7 +192,12 @@
         <el-button @click="dialogVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :disabled="submitDisabled" @click="submit">
+        <el-button
+          v-perm="form.id ? 'payment:tenant-account:update' : 'payment:tenant-account:add'"
+          type="primary"
+          :disabled="submitDisabled"
+          @click="submit"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>

@@ -61,13 +61,28 @@
         <el-table-column :label="t('common.status')" prop="status" width="100" />
         <el-table-column :label="t('common.actions')" width="220" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">
+            <el-button
+              v-perm="'staking:order:detail'"
+              link
+              type="primary"
+              @click="showDetail(row)"
+            >
               {{ t('itick.detail') }}
             </el-button>
-            <el-button link type="success" @click="openRewardDialog(row)">
+            <el-button
+              v-perm="'staking:reward-log:manual'"
+              link
+              type="success"
+              @click="openRewardDialog(row)"
+            >
               {{ t('staking.manualReward') }}
             </el-button>
-            <el-button link type="danger" @click="openRedeemDialog(row)">
+            <el-button
+              v-perm="'staking:redeem-log:manual'"
+              link
+              type="danger"
+              @click="openRedeemDialog(row)"
+            >
               {{ t('staking.manualRedeem') }}
             </el-button>
           </template>
@@ -110,7 +125,12 @@
         <el-button @click="rewardVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitReward">
+        <el-button
+          v-perm="'staking:reward-log:manual'"
+          type="primary"
+          :loading="submitLoading"
+          @click="submitReward"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>
@@ -150,7 +170,12 @@
         <el-button @click="redeemVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitRedeem">
+        <el-button
+          v-perm="'staking:redeem-log:manual'"
+          type="primary"
+          :loading="submitLoading"
+          @click="submitRedeem"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>

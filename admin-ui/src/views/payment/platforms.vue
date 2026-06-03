@@ -36,7 +36,7 @@
           <el-button @click="resetPlatformQuery">
             {{ t('common.reset') }}
           </el-button>
-          <el-button type="primary" @click="openPlatformDialog()">
+          <el-button v-perm="'payment:platform:add'" type="primary" @click="openPlatformDialog()">
             {{ t('payment.addPlatform') }}
           </el-button>
         </el-form-item>
@@ -90,10 +90,20 @@
         />
         <el-table-column :label="t('common.actions')" width="160" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showPlatformDetail(row)">
+            <el-button
+              v-perm="'payment:platform:detail'"
+              link
+              type="primary"
+              @click="showPlatformDetail(row)"
+            >
               {{ t('common.detail') }}
             </el-button>
-            <el-button link type="primary" @click="openPlatformDialog(row)">
+            <el-button
+              v-perm="'payment:platform:update'"
+              link
+              type="primary"
+              @click="openPlatformDialog(row)"
+            >
               {{ t('common.edit') }}
             </el-button>
           </template>
@@ -194,7 +204,12 @@
         <el-button @click="platformDialogVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitPlatform">
+        <el-button
+          v-perm="platformForm.id ? 'payment:platform:update' : 'payment:platform:add'"
+          type="primary"
+          :loading="submitLoading"
+          @click="submitPlatform"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>

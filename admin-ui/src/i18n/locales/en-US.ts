@@ -592,6 +592,7 @@ export default {
     'sys:user:delete': 'Delete User',
     'sys:user:resetpwd': 'Reset Password',
     'sys:user:assignrole': 'Assign Roles',
+    'sys:user:status': 'Update User Status',
     'sys:user:google2fa': 'Google 2FA',
     'sys:user:2fa:init': 'Init',
     'sys:user:2fa:bind': 'Bind',
@@ -611,6 +612,12 @@ export default {
     'sys:job:add': 'Add Scheduled Task',
     'sys:job:update': 'Edit Scheduled Task',
     'sys:job:delete': 'Delete Scheduled Task',
+    'sys:job:run': 'Run Scheduled Task',
+    'sys:job:start': 'Start Scheduled Task',
+    'sys:job:stop': 'Stop Scheduled Task',
+    'sys:tenant:add': 'Add Tenant',
+    'sys:tenant:update': 'Edit Tenant',
+    'sys:tenant:delete': 'Delete Tenant',
   },
   menu: {
     // ===== User =====

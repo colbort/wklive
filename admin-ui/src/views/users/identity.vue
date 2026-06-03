@@ -294,7 +294,12 @@ onMounted(fetchOptions)
             <el-button link type="primary" @click="showDetail(row)">
               {{ t('common.detail') }}
             </el-button>
-            <el-button link type="success" @click="openReview(row)">
+            <el-button
+              v-perm="'users:user:identities:review'"
+              link
+              type="success"
+              @click="openReview(row)"
+            >
               {{ t('users.review') }}
             </el-button>
           </template>
@@ -335,7 +340,12 @@ onMounted(fetchOptions)
         <el-button @click="reviewVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitReview">
+        <el-button
+          v-perm="'users:user:identities:review'"
+          type="primary"
+          :loading="submitLoading"
+          @click="submitReview"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>

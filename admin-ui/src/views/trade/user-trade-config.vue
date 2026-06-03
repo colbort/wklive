@@ -53,7 +53,12 @@
             :inactive-value="0"
           />
         </el-form-item>
-        <el-button type="primary" :loading="submitLoading" @click="submitTradeConfig">
+        <el-button
+          v-perm="'trade:user-trade-config:update'"
+          type="primary"
+          :loading="submitLoading"
+          @click="submitTradeConfig"
+        >
           {{ t('common.save') }}
         </el-button>
       </el-form>

@@ -498,7 +498,12 @@ onMounted(async () => {
         <el-button @click="editVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :loading="editLoading" @click="submitEdit">
+        <el-button
+          v-perm="editIsUpdate ? 'sys:role:update' : 'sys:role:add'"
+          type="primary"
+          :loading="editLoading"
+          @click="submitEdit"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>
@@ -546,7 +551,12 @@ onMounted(async () => {
         <el-button @click="grantVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :disabled="grantReadonly" @click="submitGrant">
+        <el-button
+          v-perm="'sys:role:grant'"
+          type="primary"
+          :disabled="grantReadonly"
+          @click="submitGrant"
+        >
           {{ t('common.save') }}
         </el-button>
       </template>

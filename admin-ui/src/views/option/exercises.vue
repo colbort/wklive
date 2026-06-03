@@ -55,7 +55,12 @@
         <el-table-column :label="t('common.status')" prop="status" width="100" />
         <el-table-column :label="t('common.actions')" width="100" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">
+            <el-button
+              v-perm="'option:exercise:detail'"
+              link
+              type="primary"
+              @click="showDetail(row)"
+            >
               {{ t('option.detail') }}
             </el-button>
           </template>

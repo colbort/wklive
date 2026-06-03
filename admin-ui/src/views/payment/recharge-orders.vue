@@ -62,11 +62,17 @@
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="260" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">
+            <el-button
+              v-perm="'payment:recharge-order:detail'"
+              link
+              type="primary"
+              @click="showDetail(row)"
+            >
               {{ t('common.detail') }}
             </el-button>
             <el-button
               v-if="canClose(row)"
+              v-perm="'payment:recharge-order:close'"
               link
               type="warning"
               @click="closeOrder(row)"
@@ -75,6 +81,7 @@
             </el-button>
             <el-button
               v-if="canManualSuccess(row)"
+              v-perm="'payment:recharge-order:manual-success'"
               link
               type="success"
               @click="openManualSuccess(row)"
@@ -83,6 +90,7 @@
             </el-button>
             <el-button
               v-if="canRetryNotify(row)"
+              v-perm="'payment:recharge-order:retry-notify'"
               link
               type="primary"
               @click="retryNotify(row)"
@@ -133,7 +141,11 @@
         <el-button @click="manualVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" @click="submitManual">
+        <el-button
+          v-perm="'payment:recharge-order:manual-success'"
+          type="primary"
+          @click="submitManual"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>

@@ -6,7 +6,7 @@
         <el-button @click="loadCurrent">
           {{ t('common.refresh') }}
         </el-button>
-        <el-button type="primary" @click="openContractDialog()">
+        <el-button v-perm="'option:contract:add'" type="primary" @click="openContractDialog()">
           {{ t('option.createContract') }}
         </el-button>
       </div>
@@ -125,13 +125,28 @@
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="220" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">
+            <el-button
+              v-perm="'option:contract:detail'"
+              link
+              type="primary"
+              @click="showDetail(row)"
+            >
               {{ t('option.detail') }}
             </el-button>
-            <el-button link type="primary" @click="openContractDialog(row)">
+            <el-button
+              v-perm="'option:contract:update'"
+              link
+              type="primary"
+              @click="openContractDialog(row)"
+            >
               {{ t('option.editContract') }}
             </el-button>
-            <el-button link type="primary" @click="openMarketDialog(row)">
+            <el-button
+              v-perm="'option:market:update'"
+              link
+              type="primary"
+              @click="openMarketDialog(row)"
+            >
               {{ t('option.editMarket') }}
             </el-button>
           </template>
@@ -284,7 +299,12 @@
         <el-button @click="contractVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitContract">
+        <el-button
+          v-perm="contractForm.id ? 'option:contract:update' : 'option:contract:add'"
+          type="primary"
+          :loading="submitLoading"
+          @click="submitContract"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>
@@ -363,7 +383,12 @@
         <el-button @click="marketVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitMarket">
+        <el-button
+          v-perm="'option:market:update'"
+          type="primary"
+          :loading="submitLoading"
+          @click="submitMarket"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>

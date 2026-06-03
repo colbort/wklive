@@ -6,7 +6,7 @@
         <el-button @click="loadList">
           {{ t('common.refresh') }}
         </el-button>
-        <el-button type="primary" @click="openCreateDialog">
+        <el-button v-perm="'asset:config:add'" type="primary" @click="openCreateDialog">
           {{ t('asset.addCoinConfig') }}
         </el-button>
       </div>
@@ -182,13 +182,28 @@
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="190" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">
+            <el-button
+              v-perm="'asset:config:detail'"
+              link
+              type="primary"
+              @click="showDetail(row)"
+            >
               {{ t('common.detail') }}
             </el-button>
-            <el-button link type="primary" @click="openEditDialog(row)">
+            <el-button
+              v-perm="'asset:config:update'"
+              link
+              type="primary"
+              @click="openEditDialog(row)"
+            >
               {{ t('common.edit') }}
             </el-button>
-            <el-button link type="danger" @click="deleteRow(row)">
+            <el-button
+              v-perm="'asset:config:delete'"
+              link
+              type="danger"
+              @click="deleteRow(row)"
+            >
               {{ t('common.delete') }}
             </el-button>
           </template>
@@ -351,7 +366,12 @@
         <el-button @click="dialogVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitForm">
+        <el-button
+          v-perm="isEdit ? 'asset:config:update' : 'asset:config:add'"
+          type="primary"
+          :loading="submitLoading"
+          @click="submitForm"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>

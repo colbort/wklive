@@ -6,7 +6,7 @@
         <el-button @click="loadProducts">
           {{ t('common.refresh') }}
         </el-button>
-        <el-button type="primary" @click="openProductDialog()">
+        <el-button v-perm="'staking:product:add'" type="primary" @click="openProductDialog()">
           {{ t('staking.addProduct') }}
         </el-button>
       </div>
@@ -59,13 +59,28 @@
         <el-table-column :label="t('common.status')" prop="status" width="100" />
         <el-table-column :label="t('common.actions')" width="220" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">
+            <el-button
+              v-perm="'staking:product:detail'"
+              link
+              type="primary"
+              @click="showDetail(row)"
+            >
               {{ t('common.detail') }}
             </el-button>
-            <el-button link type="primary" @click="openProductDialog(row)">
+            <el-button
+              v-perm="'staking:product:update'"
+              link
+              type="primary"
+              @click="openProductDialog(row)"
+            >
               {{ t('common.edit') }}
             </el-button>
-            <el-button link type="warning" @click="changeStatus(row)">
+            <el-button
+              v-perm="'staking:product:update:status'"
+              link
+              type="warning"
+              @click="changeStatus(row)"
+            >
               {{ t('staking.statusAction') }}
             </el-button>
           </template>
@@ -198,7 +213,12 @@
         <el-button @click="productVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitProduct">
+        <el-button
+          v-perm="productForm.id ? 'staking:product:update' : 'staking:product:add'"
+          type="primary"
+          :loading="submitLoading"
+          @click="submitProduct"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>

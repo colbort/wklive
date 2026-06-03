@@ -6,7 +6,12 @@
         <el-button @click="loadCurrent">
           {{ t('common.refresh') }}
         </el-button>
-        <el-button type="primary" plain @click="openMarketDialog()">
+        <el-button
+          v-perm="'option:market:update'"
+          type="primary"
+          plain
+          @click="openMarketDialog()"
+        >
           {{ t('option.updateMarket') }}
         </el-button>
       </div>
@@ -60,7 +65,12 @@
         />
         <el-table-column :label="t('common.actions')" width="100" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">
+            <el-button
+              v-perm="'option:market:detail'"
+              link
+              type="primary"
+              @click="showDetail(row)"
+            >
               {{ t('option.detail') }}
             </el-button>
           </template>
@@ -142,7 +152,12 @@
         <el-button @click="marketVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitMarket">
+        <el-button
+          v-perm="'option:market:update'"
+          type="primary"
+          :loading="submitLoading"
+          @click="submitMarket"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>
@@ -256,7 +271,11 @@
         <el-button @click="detailVisible = false">
           {{ t('common.close') }}
         </el-button>
-        <el-button type="primary" @click="openMarketDialog(detailData || undefined)">
+        <el-button
+          v-perm="'option:market:update'"
+          type="primary"
+          @click="openMarketDialog(detailData || undefined)"
+        >
           {{ t('option.updateMarket') }}
         </el-button>
       </template>

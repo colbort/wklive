@@ -22,7 +22,11 @@
           <el-button type="primary" @click="loadChannels">
             {{ t('common.search') }}
           </el-button>
-          <el-button type="primary" @click="openChannelDialog()">
+          <el-button
+            v-perm="'payment:tenant-channel:add'"
+            type="primary"
+            @click="openChannelDialog()"
+          >
             {{ t('payment.addChannel') }}
           </el-button>
         </el-form-item>
@@ -51,10 +55,20 @@
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="160">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showChannelDetail(row)">
+            <el-button
+              v-perm="'payment:tenant-channel:detail'"
+              link
+              type="primary"
+              @click="showChannelDetail(row)"
+            >
               {{ t('common.detail') }}
             </el-button>
-            <el-button link type="primary" @click="openChannelDialog(row)">
+            <el-button
+              v-perm="'payment:tenant-channel:update'"
+              link
+              type="primary"
+              @click="openChannelDialog(row)"
+            >
               {{ t('common.edit') }}
             </el-button>
           </template>
@@ -196,7 +210,12 @@
         <el-button @click="channelDialogVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :disabled="channelSubmitDisabled" @click="submitChannel">
+        <el-button
+          v-perm="channelForm.id ? 'payment:tenant-channel:update' : 'payment:tenant-channel:add'"
+          type="primary"
+          :disabled="channelSubmitDisabled"
+          @click="submitChannel"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>

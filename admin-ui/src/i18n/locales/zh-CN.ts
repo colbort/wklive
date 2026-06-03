@@ -592,6 +592,7 @@ export default {
     'sys:user:delete': '删除用户',
     'sys:user:resetpwd': '重置密码',
     'sys:user:assignrole': '分配角色',
+    'sys:user:status': '修改用户状态',
     'sys:user:google2fa': 'Google2FA管理',
     'sys:user:2fa:init': '初始化',
     'sys:user:2fa:bind': '绑定',
@@ -611,6 +612,12 @@ export default {
     'sys:job:add': '新增定时任务',
     'sys:job:update': '编辑定时任务',
     'sys:job:delete': '删除定时任务',
+    'sys:job:run': '运行任务',
+    'sys:job:start': '启动任务',
+    'sys:job:stop': '停止任务',
+    'sys:tenant:add': '新增租户',
+    'sys:tenant:update': '编辑租户',
+    'sys:tenant:delete': '删除租户',
   },
   menu: {
     // ===== 用户 =====

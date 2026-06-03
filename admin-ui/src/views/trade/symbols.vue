@@ -7,7 +7,7 @@
           <el-icon><Refresh /></el-icon>
           {{ t('common.refresh') }}
         </el-button>
-        <el-button type="primary" @click="openSymbolDialog()">
+        <el-button v-perm="'trade:symbol:add'" type="primary" @click="openSymbolDialog()">
           <el-icon><Plus /></el-icon>
           {{ t('trade.addSymbol') }}
         </el-button>
@@ -15,7 +15,12 @@
     </div>
 
     <el-card shadow="never" class="query-card">
-      <el-form :model="query" inline label-width="90px" class="query-form">
+      <el-form
+        :model="query"
+        inline
+        label-width="90px"
+        class="query-form"
+      >
         <el-form-item :label="t('trade.tenantId')">
           <div class="query-field">
             <TenantSelect v-model="query.tenantId" include-system />
@@ -64,12 +69,12 @@
         <el-table-column prop="tenantId" :label="t('trade.tenantId')" width="100" />
 
         <el-table-column min-width="190" show-overflow-tooltip>
-          <template #header> {{ t('trade.symbol') }} / {{ t('trade.displaySymbol') }} </template>
+          <template #header>
+            {{ t('trade.symbol') }} / {{ t('trade.displaySymbol') }}
+          </template>
           <template #default="{ row }">
             <div class="symbol-cell">
-              <span class="symbol-code"
-                >{{ row.symbol || '-' }}/{{ row.displaySymbol || '-' }}</span
-              >
+              <span class="symbol-code">{{ row.symbol || '-' }}/{{ row.displaySymbol || '-' }}</span>
             </div>
           </template>
         </el-table-column>
@@ -135,17 +140,34 @@
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="260" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">
+            <el-button
+              v-perm="'trade:symbol:detail'"
+              link
+              type="primary"
+              @click="showDetail(row)"
+            >
               {{ t('option.detail') }}
             </el-button>
-            <el-button link type="primary" @click="openSymbolDialog(row)">
+            <el-button
+              v-perm="'trade:symbol:update'"
+              link
+              type="primary"
+              @click="openSymbolDialog(row)"
+            >
               {{ t('common.edit') }}
             </el-button>
-            <el-button v-if="isSpotMarket(row)" link type="primary" @click="openSpotDialog(row)">
+            <el-button
+              v-if="isSpotMarket(row)"
+              v-perm="'trade:symbol:spot-config'"
+              link
+              type="primary"
+              @click="openSpotDialog(row)"
+            >
               {{ t('trade.spotConfig') }}
             </el-button>
             <el-button
               v-if="isContractMarket(row)"
+              v-perm="'trade:symbol:contract-config'"
               link
               type="primary"
               @click="openContractDialog(row)"
@@ -154,6 +176,7 @@
             </el-button>
             <el-button
               v-if="isContractMarket(row)"
+              v-perm="'trade:symbol:leverage-config:update'"
               link
               type="primary"
               @click="openLeverageDialog(row)"
@@ -303,7 +326,12 @@
           </el-form-item>
 
           <el-form-item :label="t('trade.openTime')">
-            <el-date-picker v-model="symbolOpenTime" type="datetime" clearable class="full-width" />
+            <el-date-picker
+              v-model="symbolOpenTime"
+              type="datetime"
+              clearable
+              class="full-width"
+            />
           </el-form-item>
 
           <el-form-item :label="t('trade.closeTime')">
@@ -316,7 +344,12 @@
           </el-form-item>
 
           <el-form-item :label="t('common.sort')">
-            <el-input-number v-model="symbolForm.sort" :min="0" :precision="0" class="full-width" />
+            <el-input-number
+              v-model="symbolForm.sort"
+              :min="0"
+              :precision="0"
+              class="full-width"
+            />
           </el-form-item>
 
           <el-form-item :label="t('common.remark')" class="wide">
@@ -329,7 +362,12 @@
         <el-button @click="symbolVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitSymbol">
+        <el-button
+          v-perm="symbolForm.id ? 'trade:symbol:update' : 'trade:symbol:add'"
+          type="primary"
+          :loading="submitLoading"
+          @click="submitSymbol"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>
@@ -388,7 +426,12 @@
         <el-button @click="spotVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitSpotConfig">
+        <el-button
+          v-perm="'trade:symbol:spot-config'"
+          type="primary"
+          :loading="submitLoading"
+          @click="submitSpotConfig"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>
@@ -503,7 +546,12 @@
         <el-button @click="contractVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitContractConfig">
+        <el-button
+          v-perm="'trade:symbol:contract-config'"
+          type="primary"
+          :loading="submitLoading"
+          @click="submitContractConfig"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>
@@ -613,13 +661,23 @@
 
       <div class="dialog-subheader">
         <strong>{{ leverageSymbol?.displaySymbol || leverageSymbol?.symbol || '-' }}</strong>
-        <el-button size="small" :disabled="!canAddLeverageConfig" @click="newLeverageConfig()">
+        <el-button
+          v-perm="'trade:symbol:leverage-config:update'"
+          size="small"
+          :disabled="!canAddLeverageConfig"
+          @click="newLeverageConfig()"
+        >
           <el-icon><Plus /></el-icon>
           {{ t('common.add') }}
         </el-button>
       </div>
 
-      <el-table :data="leverageRows" size="small" border class="leverage-table">
+      <el-table
+        :data="leverageRows"
+        size="small"
+        border
+        class="leverage-table"
+      >
         <el-table-column :label="t('trade.marginMode')" width="130">
           <template #default="{ row }">
             {{ optionLabel('marginMode', row.marginMode) }}
@@ -631,10 +689,14 @@
           </template>
         </el-table-column>
         <el-table-column :label="t('trade.defaultLeverage')" width="130">
-          <template #default="{ row }"> {{ row.defaultLeverage }}X </template>
+          <template #default="{ row }">
+            {{ row.defaultLeverage }}X
+          </template>
         </el-table-column>
         <el-table-column :label="t('trade.maxLeverage')" width="120">
-          <template #default="{ row }"> {{ row.maxLeverage }}X </template>
+          <template #default="{ row }">
+            {{ row.maxLeverage }}X
+          </template>
         </el-table-column>
         <el-table-column :label="t('trade.status')" width="110">
           <template #default="{ row }">
@@ -645,7 +707,12 @@
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="90">
           <template #default="{ row }">
-            <el-button link type="primary" @click="editLeverageConfig(row)">
+            <el-button
+              v-perm="'trade:symbol:leverage-config:update'"
+              link
+              type="primary"
+              @click="editLeverageConfig(row)"
+            >
               {{ t('common.edit') }}
             </el-button>
           </template>
@@ -656,7 +723,12 @@
         <el-button @click="leverageVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="submitLeverageConfig">
+        <el-button
+          v-perm="'trade:symbol:leverage-config:update'"
+          type="primary"
+          :loading="submitLoading"
+          @click="submitLeverageConfig"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>

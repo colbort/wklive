@@ -269,7 +269,12 @@
         <el-button @click="dialogVisible = false">
           {{ t('common.cancel') }}
         </el-button>
-        <el-button type="primary" :loading="submitLoading" @click="handleSubmit">
+        <el-button
+          v-perm="isEdit ? 'sys:tenant:update' : 'sys:tenant:add'"
+          type="primary"
+          :loading="submitLoading"
+          @click="handleSubmit"
+        >
           {{ t('common.confirm') }}
         </el-button>
       </template>
