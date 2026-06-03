@@ -1,6 +1,6 @@
 <script setup lang='ts'>
 import type { ItickTenantProduct } from '@/types/itick'
-import type { DesktopStat } from './desktop-types'
+import type { DesktopStat } from './types'
 
 defineProps<{
   selectedProduct: ItickTenantProduct | null

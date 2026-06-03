@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
-import DesktopMarketTradeView from '@/components/markets/DesktopMarketTradeView.vue'
-import MarketChartView from '@/components/markets/MarketChartView.vue'
-import MarketQuotesView from '@/components/markets/MarketQuotesView.vue'
-import MarketTopTabs from '@/components/markets/MarketTopTabs.vue'
-import type { MarketTopTab, MarketTopTabItem } from '@/components/markets/types'
+import DesktopTradeView from '@/components/trades/desktop/TradeView.vue'
+import MarketChartView from '@/components/markets/mobile/ChartView.vue'
+import MarketQuotesView from '@/components/markets/mobile/QuotesView.vue'
+import MarketTopTabs from '@/components/markets/mobile/TopTabs.vue'
+import type { MarketTopTab, MarketTopTabItem } from '@/components/markets/mobile/types'
 import { getAccessToken } from '@/api/http'
 import { useDevice } from '@/composables/useDevice'
 import { useTradingDesk } from '@/composables/useTradingDesk'
@@ -142,7 +142,7 @@ watch([isDesktop, activeTopTab], () => {
     }"
     :aria-busy="loadingBootstrap"
   >
-    <DesktopMarketTradeView
+    <DesktopTradeView
       v-if="isDesktop"
       :selected-product="selectedProduct"
       :price-trend="priceTrend"

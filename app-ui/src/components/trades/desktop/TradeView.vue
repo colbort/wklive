@@ -14,14 +14,14 @@ import type {
   TradeSymbolLeverageConfig,
   TradeSymbolSpot,
 } from '@/types/trade'
-import DesktopTradeOrdersPanel from '@/components/trades/DesktopTradeOrdersPanel.vue'
-import DesktopTradeSubmitPanel from '@/components/trades/DesktopTradeSubmitPanel.vue'
+import DesktopMarketChartPanel from '@/components/markets/desktop/ChartPanel.vue'
+import DesktopMarketHeader from '@/components/markets/desktop/Header.vue'
+import DesktopMarketOrderbookPanel from '@/components/markets/desktop/OrderbookPanel.vue'
+import DesktopMarketProductsPanel from '@/components/markets/desktop/ProductsPanel.vue'
+import type { DesktopProductRow, DesktopStat } from '@/components/markets/desktop/types'
+import DesktopTradeOrdersPanel from '@/components/trades/desktop/OrdersPanel.vue'
+import DesktopTradeSubmitPanel from '@/components/trades/desktop/SubmitPanel.vue'
 import { useI18n } from '@/i18n'
-import DesktopMarketChartPanel from './DesktopMarketChartPanel.vue'
-import DesktopMarketHeader from './DesktopMarketHeader.vue'
-import DesktopMarketOrderbookPanel from './DesktopMarketOrderbookPanel.vue'
-import DesktopMarketProductsPanel from './DesktopMarketProductsPanel.vue'
-import type { DesktopProductRow, DesktopStat } from './desktop-types'
 
 type SubmitSide = 'buy' | 'sell'
 type TradeSymbolDetail = {

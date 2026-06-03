@@ -15,8 +15,8 @@ import {
   apiTradePlaceOrder,
   apiTradeSetLeverage,
 } from '@/api/trade'
-import DesktopMarketTradeView from '@/components/markets/DesktopMarketTradeView.vue'
-import MobileTradeView from '@/components/trades/MobileTradeView.vue'
+import DesktopTradeView from '@/components/trades/desktop/TradeView.vue'
+import MobileTradeView from '@/components/trades/mobile/TradeView.vue'
 import { useDevice } from '@/composables/useDevice'
 import { useTradingDesk } from '@/composables/useTradingDesk'
 import { t } from '@/i18n'
@@ -878,7 +878,7 @@ async function cancelTradeOrder(order: TradeOrder) {
 
 <template>
   <section class="trade-page" :aria-busy="loadingBootstrap">
-    <DesktopMarketTradeView
+    <DesktopTradeView
       v-if="isDesktop"
       :selected-product="selectedProduct"
       :price-trend="priceTrend"

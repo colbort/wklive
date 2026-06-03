@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import type { ItickTenantProduct } from '@/types/itick'
 import { useI18n } from '@/i18n'
-import type { DesktopProductRow } from './desktop-types'
+import type { DesktopProductRow } from './types'
 
 defineProps<{
   rows: DesktopProductRow[]

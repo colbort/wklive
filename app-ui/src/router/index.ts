@@ -1,9 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import AppShell from '@/layout/AppShell.vue'
-import HomeView from '@/views/HomeView.vue'
-import MarketsView from '@/views/MarketsView.vue'
-import TradesView from '@/views/TradesView.vue'
 import AssetRechargeView from '@/views/assets/RechargeView.vue'
 import AssetsView from '@/views/assets/AssetsView.vue'
 import AssetTransferView from '@/views/assets/TransferView.vue'
@@ -11,10 +8,13 @@ import AssetWithdrawView from '@/views/assets/WithdrawView.vue'
 import AuthForgotPasswordView from '@/views/auth/ForgotPasswordView.vue'
 import AuthLoginView from '@/views/auth/LoginView.vue'
 import AuthRegisterView from '@/views/auth/RegisterView.vue'
+import HomeView from '@/views/home/HomeView.vue'
+import MarketsView from '@/views/markets/MarketsView.vue'
 import BindAccountView from '@/views/profile/BindAccountView.vue'
 import ChangeSecurityPasswordView from '@/views/profile/ChangeSecurityPasswordView.vue'
 import ProfileView from '@/views/profile/ProfileView.vue'
 import SecuritySettingsView from '@/views/profile/SecuritySettingsView.vue'
+import TradesView from '@/views/trades/TradesView.vue'
 
 export const router = createRouter({
   history: createWebHistory(import.meta.env.VITE_ROUTER_BASE || '/'),

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import MobileMarketDepthPreview from '@/components/markets/MobileMarketDepthPreview.vue'
-import MobileMarketTradeHeader from '@/components/markets/MobileMarketTradeHeader.vue'
-import TradeOrdersPanel from '@/components/trades/TradeOrdersPanel.vue'
-import MobileTradeSubmitPanel from '@/components/trades/MobileTradeSubmitPanel.vue'
+import MobileTradeDepthPreview from '@/components/trades/mobile/DepthPreview.vue'
+import MobileTradeHeader from '@/components/trades/mobile/Header.vue'
+import TradeOrdersPanel from '@/components/trades/mobile/OrdersPanel.vue'
+import MobileTradeSubmitPanel from '@/components/trades/mobile/SubmitPanel.vue'
 import type {
   DepthPayload,
   ItickTenantCategory,
@@ -98,7 +98,7 @@ const emit = defineEmits<{
 
 <template>
   <div class="mobile-trade-view">
-    <MobileMarketTradeHeader
+    <MobileTradeHeader
       :categories="categories"
       :selected-category-type="selectedCategoryType"
       :selected-category="selectedCategory"
@@ -155,7 +155,7 @@ const emit = defineEmits<{
         @update:stop-loss-price="emit('update:stopLossPrice', $event)"
         @submit-order="emit('submit-order', $event)"
       />
-      <MobileMarketDepthPreview
+      <MobileTradeDepthPreview
         :selected-product="selectedProduct"
         :depth-snapshot="depthSnapshot"
         :selected-quote="selectedQuote"
