@@ -1,5 +1,6 @@
 <script setup lang='ts'>
 import type { ItickTenantProduct } from '@/types/itick'
+import { useI18n } from '@/i18n'
 import type { DesktopProductRow } from './desktop-types'
 
 defineProps<{
@@ -11,14 +12,16 @@ defineProps<{
 const emit = defineEmits<{
   (e: 'select-product', product: ItickTenantProduct): void
 }>()
+
+const { t } = useI18n()
 </script>
 
 <template>
   <aside class="desktop-products-panel">
     <header class="desktop-products-panel__head">
       <nav>
-        <button type="button">自选</button>
-        <button type="button" class="active">全部</button>
+        <button type="button">{{ t('market.favorite') }}</button>
+        <button type="button" class="active">{{ t('market.all') }}</button>
       </nav>
     </header>
 

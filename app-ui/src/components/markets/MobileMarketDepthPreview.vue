@@ -1,6 +1,7 @@
 <script setup lang='ts'>
 import { computed } from 'vue'
 
+import { useI18n } from '@/i18n'
 import type { DepthLevel, DepthPayload, ItickTenantProduct, QuotePayload, TickPayload } from '@/types/itick'
 
 const props = defineProps<{
@@ -10,6 +11,8 @@ const props = defineProps<{
   tickSnapshot: TickPayload[]
   placeholderPrice: string
 }>()
+
+const { t } = useI18n()
 
 const askRows = computed(() => props.depthSnapshot?.asks ?? [])
 const bidRows = computed(() => props.depthSnapshot?.bids ?? [])
@@ -48,8 +51,8 @@ function formatDepthVolume(level: DepthLevel) {
 <template>
   <aside class="order-book-preview">
     <header>
-      <span>价格<br />(USDT)</span>
-      <span>数量<br />({{ selectedProduct?.baseCoin || 'BTC' }})</span>
+      <span>{{ t('market.price') }}<br />(USDT)</span>
+      <span>{{ t('market.qty') }}<br />({{ selectedProduct?.baseCoin || 'BTC' }})</span>
     </header>
     <div class="depth-tools" aria-hidden="true">
       <i class="depth-tools__bid" />

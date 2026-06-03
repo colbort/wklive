@@ -1,19 +1,22 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 
+import { useI18n } from '@/i18n'
+
 const emit = defineEmits<{
   success: []
 }>()
 
+const { t } = useI18n()
 const progress = ref(0)
 const passed = ref(false)
 const failed = ref(false)
 
 const rotation = computed(() => 180 - progress.value * 1.8)
 const statusText = computed(() => {
-  if (passed.value) return '验证成功'
-  if (failed.value) return '验证失败'
-  return '待滑动验证'
+  if (passed.value) return t('captcha.passed')
+  if (failed.value) return t('captcha.failed')
+  return t('captcha.pending')
 })
 
 function complete() {
@@ -47,8 +50,8 @@ function validateOnRelease() {
 
 <template>
   <main class="rotate-captcha">
-    <h1>安全验证</h1>
-    <p>拖动滑块，使图片角度为正</p>
+    <h1>{{ t('captcha.title') }}</h1>
+    <p>{{ t('captcha.hint') }}</p>
     <div class="rotate-captcha__image" :style="{ transform: `rotate(${rotation}deg)` }" />
     <label
       class="rotate-captcha__slider"
@@ -61,7 +64,7 @@ function validateOnRelease() {
         min="0"
         max="100"
         step="1"
-        aria-label="拖动滑块完成安全验证"
+        :aria-label="t('captcha.slider')"
         @input="handleInput"
         @change="validateOnRelease"
       />

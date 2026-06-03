@@ -16,6 +16,7 @@ import type {
 } from '@/types/trade'
 import DesktopTradeOrdersPanel from '@/components/trades/DesktopTradeOrdersPanel.vue'
 import DesktopTradeSubmitPanel from '@/components/trades/DesktopTradeSubmitPanel.vue'
+import { useI18n } from '@/i18n'
 import DesktopMarketChartPanel from './DesktopMarketChartPanel.vue'
 import DesktopMarketHeader from './DesktopMarketHeader.vue'
 import DesktopMarketOrderbookPanel from './DesktopMarketOrderbookPanel.vue'
@@ -115,6 +116,8 @@ const emit = defineEmits<{
   (e: 'cancel-order', order: TradeOrder): void
   (e: 'refresh-orders'): void
 }>()
+
+const { t } = useI18n()
 </script>
 
 <template>
@@ -146,7 +149,7 @@ const emit = defineEmits<{
           <button
             type="button"
             class="desktop-products-toggle"
-            aria-label="展开或收起产品列表"
+            :aria-label="t('market.toggleProducts')"
             @click="emit('toggle-products')"
           >
             ☰
@@ -166,7 +169,7 @@ const emit = defineEmits<{
           <button
             type="button"
             class="desktop-products-toggle"
-            aria-label="展开或收起订单簿"
+            :aria-label="t('market.toggleOrderbook')"
             @click="emit('toggle-orderbook')"
           >
             ☰

@@ -9,15 +9,16 @@ import type { MarketTopTab, MarketTopTabItem } from '@/components/markets/types'
 import { getAccessToken } from '@/api/http'
 import { useDevice } from '@/composables/useDevice'
 import { useTradingDesk } from '@/composables/useTradingDesk'
+import { t } from '@/i18n'
 import type { ItickTenantProduct } from '@/types/itick'
+import { marketCategoryLabel } from '@/utils/marketCategory'
 
-// 市场页：手机端负责自选/行情/图表切换，桌面端承载市场与交易组合台。
 const { isDesktop } = useDevice()
 
 const topTabs: MarketTopTabItem[] = [
-  { key: 'watchlist', label: '自选' },
-  { key: 'markets', label: '行情' },
-  { key: 'chart', label: '图表' },
+  { key: 'watchlist', label: 'market.watchlist' },
+  { key: 'markets', label: 'market.quotes' },
+  { key: 'chart', label: 'market.chart' },
 ]
 
 const activeTopTab = ref<MarketTopTab>('markets')
@@ -180,7 +181,7 @@ watch([isDesktop, activeTopTab], () => {
         <MarketQuotesView
           :categories="categories"
           :selected-category-type="selectedCategoryType"
-          :selected-category-name="selectedCategory?.categoryName || ''"
+          :selected-category-name="marketCategoryLabel(selectedCategory)"
           :selected-category-code="selectedCategoryCode"
           :ws-state="wsState"
           :ws-error="wsError"
@@ -194,15 +195,15 @@ watch([isDesktop, activeTopTab], () => {
       </div>
 
       <div v-else-if="activeTopTab === 'watchlist'" class="markets-page__watchlist">
-        <div v-if="isLoggedIn" class="watchlist-empty">自选功能整理中</div>
-        <div v-else class="watchlist-empty">登录后可查看自选产品</div>
+        <div v-if="isLoggedIn" class="watchlist-empty">{{ t('market.watchlistPreparing') }}</div>
+        <div v-else class="watchlist-empty">{{ t('market.watchlistLogin') }}</div>
       </div>
 
       <div v-else class="markets-page__mobile markets-page__mobile--chart">
         <MarketChartView
           :products="products"
           :rows="marketRows"
-          :category-name="selectedCategory?.categoryName || ''"
+          :category-name="marketCategoryLabel(selectedCategory)"
           :selected-product-key="selectedProductKey"
           :selected-quote="selectedQuote"
           :kline-snapshot="klineSnapshot"

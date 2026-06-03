@@ -1,6 +1,7 @@
 <script setup lang='ts'>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 
+import { getLocale, useI18n } from '@/i18n'
 import type { Interval } from '@/types/core'
 import type { DepthPayload, ItickTenantProduct, KlinePayload, QuotePayload, TickPayload } from '@/types/itick'
 import type { MarketRow } from './types'
@@ -32,6 +33,7 @@ const swipeStartY = ref<number | null>(null)
 const switcherOpen = ref(false)
 const timeSheetOpen = ref(false)
 const activeDetailTab = ref<DetailTab>('market')
+const { t } = useI18n()
 const chartViewRef = ref<HTMLElement | null>(null)
 const detailTabsSentinelRef = ref<HTMLElement | null>(null)
 const detailTabsRef = ref<HTMLElement | null>(null)
@@ -136,16 +138,16 @@ const chartPriceMarks = computed(() => {
 const chartStats = computed(() => {
   const quote = props.selectedQuote
   return [
-    { label: '最高', value: formatChartPrice(quote?.high), accent: true },
-    { label: '今开', value: formatChartPrice(quote?.open) },
-    { label: '成交额', value: formatCompact(quote?.turnover) },
-    { label: '最低', value: formatChartPrice(quote?.low), accent: true },
-    { label: '昨收', value: formatChartPrice(quote?.open) },
-    { label: '成交量', value: formatCompact(quote?.volume) },
+    { label: t('market.high'), value: formatChartPrice(quote?.high), accent: true },
+    { label: t('market.openToday'), value: formatChartPrice(quote?.open) },
+    { label: t('market.turnover'), value: formatCompact(quote?.turnover) },
+    { label: t('market.low'), value: formatChartPrice(quote?.low), accent: true },
+    { label: t('market.prevClose'), value: formatChartPrice(quote?.open) },
+    { label: t('market.volume'), value: formatCompact(quote?.volume) },
   ]
 })
-const askRows = computed(() => props.depthSnapshot?.asks.slice(0, 6) ?? [])
-const bidRows = computed(() => props.depthSnapshot?.bids.slice(0, 6) ?? [])
+const askRows = computed(() => props.depthSnapshot?.asks ?? [])
+const bidRows = computed(() => props.depthSnapshot?.bids ?? [])
 const maxAskVolume = computed(() => Math.max(...askRows.value.map((item) => item.volume), 1))
 const maxBidVolume = computed(() => Math.max(...bidRows.value.map((item) => item.volume), 1))
 const tradeRows = computed(() =>
@@ -293,7 +295,7 @@ function trendClass(value: number) {
 function formatNumber(value?: number | null, digits = 2) {
   if (value === null || value === undefined || !Number.isFinite(value)) return '--'
 
-  return new Intl.NumberFormat('zh-CN', {
+  return new Intl.NumberFormat(getLocale(), {
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
   }).format(value)
@@ -314,7 +316,7 @@ function formatChartPrice(value?: number | null) {
 function formatCompact(value?: number | null) {
   if (value === null || value === undefined || !Number.isFinite(value)) return '--'
 
-  return new Intl.NumberFormat('zh-CN', {
+  return new Intl.NumberFormat(getLocale(), {
     notation: 'compact',
     maximumFractionDigits: 2,
   }).format(value)
@@ -327,7 +329,7 @@ function formatPercent(value: number) {
 function formatTime(ts: number) {
   if (!ts) return '--'
 
-  return new Intl.DateTimeFormat('zh-CN', {
+  return new Intl.DateTimeFormat(getLocale(), {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
@@ -349,7 +351,7 @@ function coinGlyph(product: ItickTenantProduct) {
         <em />
       </button>
 
-      <button type="button" class="star-button" aria-label="加入自选">☆</button>
+      <button type="button" class="star-button" :aria-label="t('market.addWatchlist')">☆</button>
     </div>
 
     <div class="chart-summary">
@@ -379,7 +381,7 @@ function coinGlyph(product: ItickTenantProduct) {
           :class="{ 'sub-tab--active': activeDetailTab === 'market' }"
           @click="activeDetailTab = 'market'"
         >
-          行情
+          {{ t('market.quotes') }}
         </button>
         <button
           type="button"
@@ -387,7 +389,7 @@ function coinGlyph(product: ItickTenantProduct) {
           :class="{ 'sub-tab--active': activeDetailTab === 'depth' }"
           @click="activeDetailTab = 'depth'"
         >
-          订单簿
+          {{ t('market.orderbook') }}
         </button>
         <button
           type="button"
@@ -395,7 +397,7 @@ function coinGlyph(product: ItickTenantProduct) {
           :class="{ 'sub-tab--active': activeDetailTab === 'trades' }"
           @click="activeDetailTab = 'trades'"
         >
-          最新成交
+          {{ t('market.latestTrades') }}
         </button>
       </div>
     </div>
@@ -432,15 +434,15 @@ function coinGlyph(product: ItickTenantProduct) {
       <div class="tool-row">
         <button type="button" class="tool-button">
           <span class="tool-button__icon">ƒx</span>
-          <span class="tool-button__label">指标</span>
+          <span class="tool-button__label">{{ t('market.indicator') }}</span>
         </button>
         <button type="button" class="tool-button">
           <span class="tool-button__icon">◉</span>
-          <span class="tool-button__label">时区</span>
+          <span class="tool-button__label">{{ t('market.timezone') }}</span>
         </button>
         <button type="button" class="tool-button">
           <span class="tool-button__icon">⚙</span>
-          <span class="tool-button__label">设置</span>
+          <span class="tool-button__label">{{ t('market.settings') }}</span>
         </button>
       </div>
 
@@ -471,7 +473,7 @@ function coinGlyph(product: ItickTenantProduct) {
           <strong class="ma-legend__ma60">MA60: 76,869.70</strong>
         </div>
 
-        <svg class="candle-chart" viewBox="0 0 520 240" role="img" aria-label="K线图">
+        <svg class="candle-chart" viewBox="0 0 520 240" role="img" :aria-label="t('market.candleChart')">
           <line x1="0" y1="58" x2="520" y2="58" class="grid-line" />
           <line x1="0" y1="120" x2="520" y2="120" class="grid-line" />
           <line x1="0" y1="182" x2="520" y2="182" class="grid-line" />
@@ -505,7 +507,7 @@ function coinGlyph(product: ItickTenantProduct) {
           <span v-for="mark in chartPriceMarks" :key="mark">{{ formatPrice(mark) }}</span>
         </div>
 
-        <div v-if="loadingKline" class="chart-loading">加载中...</div>
+        <div v-if="loadingKline" class="chart-loading">{{ t('common.loading') }}...</div>
       </div>
 
       <div class="volume-board" aria-hidden="true">
@@ -529,8 +531,8 @@ function coinGlyph(product: ItickTenantProduct) {
 
     <section v-else-if="activeDetailTab === 'depth'" class="depth-board">
       <header class="depth-board__head">
-        <span>价格<br />({{ selectedProduct?.quoteCoin || 'USDT' }})</span>
-        <span>数量<br />({{ selectedProduct?.baseCoin || selectedProduct?.symbol || '--' }})</span>
+        <span>{{ t('market.price') }}<br />({{ selectedProduct?.quoteCoin || 'USDT' }})</span>
+        <span>{{ t('market.qty') }}<br />({{ selectedProduct?.baseCoin || selectedProduct?.symbol || '--' }})</span>
       </header>
 
       <div class="depth-list depth-list--asks">
@@ -562,17 +564,17 @@ function coinGlyph(product: ItickTenantProduct) {
         </div>
       </div>
 
-      <p v-if="!askRows.length && !bidRows.length" class="detail-empty">等待订单簿推送</p>
+      <p v-if="!askRows.length && !bidRows.length" class="detail-empty">{{ t('market.waitingOrderbook') }}</p>
     </section>
 
     <section v-else class="trade-board">
       <header class="trade-board__head">
-        <span>价格({{ selectedProduct?.quoteCoin || 'USDT' }})</span>
-        <span>数量({{ selectedProduct?.baseCoin || selectedProduct?.symbol || '--' }})</span>
-        <span>时间</span>
+        <span>{{ t('market.price') }}({{ selectedProduct?.quoteCoin || 'USDT' }})</span>
+        <span>{{ t('market.qty') }}({{ selectedProduct?.baseCoin || selectedProduct?.symbol || '--' }})</span>
+        <span>{{ t('trade.time') }}</span>
       </header>
 
-      <div v-if="!tradeRows.length" class="detail-empty">等待最新成交推送</div>
+      <div v-if="!tradeRows.length" class="detail-empty">{{ t('market.waitingTrades') }}</div>
       <div
         v-for="(item, index) in tradeRows"
         v-else
@@ -593,8 +595,8 @@ function coinGlyph(product: ItickTenantProduct) {
         <span class="product-sheet__handle" />
 
         <header class="product-sheet__header">
-          <h3>{{ categoryName || '产品' }}</h3>
-          <button type="button" aria-label="关闭" @click="closeSwitcher">×</button>
+          <h3>{{ categoryName || t('market.product') }}</h3>
+          <button type="button" :aria-label="t('common.close')" @click="closeSwitcher">×</button>
         </header>
 
         <div class="product-sheet__rows">
@@ -614,13 +616,13 @@ function coinGlyph(product: ItickTenantProduct) {
             <strong>{{ row.quote ? formatPrice(row.quote.lastPrice) : '--' }}</strong>
             <span class="product-sheet-row__change">
               <em>{{ row.quote ? formatPrice(row.quote.lastPrice - row.quote.open) : '--' }}</em>
-              <small>{{ row.quote ? formatPercent(row.changeRate) : '等待' }}</small>
+              <small>{{ row.quote ? formatPercent(row.changeRate) : t('market.waiting') }}</small>
             </span>
           </button>
         </div>
 
         <div class="product-sheet__footer">
-          <span>共 {{ rows.length }} 个产品</span>
+          <span>{{ t('market.productCount', { count: rows.length }) }}</span>
         </div>
       </section>
     </div>

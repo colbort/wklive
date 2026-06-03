@@ -2,6 +2,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch, type ComputedRef } fr
 
 import { buildItickWsUrl } from '@/api/itick'
 import { getTenantCode } from '@/api/http'
+import { getLocale, t } from '@/i18n'
 import { useItickStore } from '@/stores/itick'
 import { useSystemStore } from '@/stores/system'
 import type { Interval } from '@/types/core'
@@ -146,18 +147,18 @@ export function useTradingDesk(options: {
   )
   const desktopStats = computed(() => [
     {
-      label: '24小时涨跌',
+      label: t('market.change24h'),
       value: selectedQuote.value
         ? `${formatPrice((selectedQuote.value.lastPrice - selectedQuote.value.open) || 0)}  ${formatPercent(getChangeRate(selectedQuote.value))}`
         : '--',
       down: getChangeRate(selectedQuote.value) < 0,
     },
-    { label: '今开', value: formatPrice(selectedQuote.value?.open) },
-    { label: '昨收', value: formatPrice(selectedQuote.value?.open) },
-    { label: '24小时最高价', value: formatPrice(selectedQuote.value?.high) },
-    { label: '24小时最低价', value: formatPrice(selectedQuote.value?.low) },
-    { label: '成交额', value: formatCompact(selectedQuote.value?.turnover) },
-    { label: '成交量', value: formatCompact(selectedQuote.value?.volume) },
+    { label: t('market.openToday'), value: formatPrice(selectedQuote.value?.open) },
+    { label: t('market.prevClose'), value: formatPrice(selectedQuote.value?.open) },
+    { label: t('market.high24h'), value: formatPrice(selectedQuote.value?.high) },
+    { label: t('market.low24h'), value: formatPrice(selectedQuote.value?.low) },
+    { label: t('market.turnover'), value: formatCompact(selectedQuote.value?.turnover) },
+    { label: t('market.volume'), value: formatCompact(selectedQuote.value?.volume) },
   ])
 
   watch(selectedCategoryType, async (categoryType) => {
@@ -353,7 +354,7 @@ export function useTradingDesk(options: {
 
     nextSocket.addEventListener('error', () => {
       if (socket !== nextSocket) return
-      wsError.value = '实时连接异常，正在尝试恢复。'
+      wsError.value = t('market.realtimeRecovering')
     })
 
     nextSocket.addEventListener('close', () => {
@@ -661,7 +662,7 @@ function getChangeRate(quote?: QuotePayload | null) {
 
 function formatNumber(value?: number | null, digits = 2) {
   if (value === null || value === undefined || !Number.isFinite(value)) return '--'
-  return new Intl.NumberFormat('zh-CN', {
+  return new Intl.NumberFormat(getLocale(), {
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
   }).format(value)
@@ -674,7 +675,7 @@ function formatPrice(value?: number | null) {
 
 function formatCompact(value?: number | null) {
   if (value === null || value === undefined || !Number.isFinite(value)) return '--'
-  return new Intl.NumberFormat('zh-CN', {
+  return new Intl.NumberFormat(getLocale(), {
     notation: 'compact',
     maximumFractionDigits: 2,
   }).format(value)

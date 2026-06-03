@@ -1,5 +1,7 @@
 <script setup lang='ts'>
+import { useI18n } from '@/i18n'
 import type { ItickTenantCategory, ItickTenantProduct, QuotePayload } from '@/types/itick'
+import { marketCategoryLabel } from '@/utils/marketCategory'
 
 type ProductSheetRow = {
   key: string
@@ -31,11 +33,13 @@ const emit = defineEmits<{
   (e: 'close-product-sheet'): void
   (e: 'select-product', product: ItickTenantProduct): void
 }>()
+
+const { t } = useI18n()
 </script>
 
 <template>
   <div class="mobile-market-trade-header">
-    <nav class="trade-categories" aria-label="交易分类">
+    <nav class="trade-categories" :aria-label="t('market.category')">
       <button
         v-for="category in categories"
         :key="category.id"
@@ -43,13 +47,13 @@ const emit = defineEmits<{
         :class="{ active: category.categoryType === selectedCategoryType }"
         @click="emit('select-category', category.categoryType)"
       >
-        {{ category.categoryName }}
+        {{ marketCategoryLabel(category) }}
       </button>
     </nav>
 
     <header class="trade-symbol">
       <button type="button" class="trade-symbol__main" @click="emit('open-product-menu')">
-        <strong>{{ selectedProduct?.symbol || '选择产品' }}</strong>
+        <strong>{{ selectedProduct?.symbol || t('market.selectProduct') }}</strong>
         <span />
       </button>
 
@@ -72,8 +76,8 @@ const emit = defineEmits<{
           <span class="product-sheet__handle" />
 
           <header class="product-sheet__header">
-            <h3>{{ selectedCategory?.categoryName || '产品' }}</h3>
-            <button type="button" aria-label="关闭" @click="emit('close-product-sheet')">×</button>
+            <h3>{{ marketCategoryLabel(selectedCategory) || t('market.product') }}</h3>
+            <button type="button" :aria-label="t('common.close')" @click="emit('close-product-sheet')">×</button>
           </header>
 
           <div class="product-sheet__rows">
@@ -93,13 +97,13 @@ const emit = defineEmits<{
               <strong>{{ row.price }}</strong>
               <span class="product-sheet-row__change">
                 <em>{{ row.change || '--' }}</em>
-                <small>{{ row.change || '等待' }}</small>
+                <small>{{ row.change || t('market.waiting') }}</small>
               </span>
             </button>
           </div>
 
           <div class="product-sheet__footer">
-            <span>共 {{ productSheetRows.length }} 个产品</span>
+            <span>{{ t('market.productCount', { count: productSheetRows.length }) }}</span>
           </div>
         </section>
       </div>

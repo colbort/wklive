@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from '@/i18n'
 
 const router = useRouter()
+const { t, toggleLocale } = useI18n()
 const account = ref('')
 const password = ref('')
 const confirmPassword = ref('')
@@ -31,15 +33,15 @@ function goBack() {
 function submitReset() {
   errorMessage.value = ''
   if (!account.value.trim()) {
-    errorMessage.value = '请输入邮箱或手机号'
+    errorMessage.value = t('auth.inputAccount')
     return
   }
   if (password.value.length < 8) {
-    errorMessage.value = '密码最少8个字符'
+    errorMessage.value = t('auth.passwordMin8')
     return
   }
   if (password.value !== confirmPassword.value) {
-    errorMessage.value = '两次输入的密码不一致'
+    errorMessage.value = t('security.passwordMismatch')
     return
   }
   showVerifySheet.value = true
@@ -49,38 +51,38 @@ function submitReset() {
 <template>
   <section class="auth-page">
     <header class="auth-topbar">
-      <button type="button" class="icon-button" aria-label="返回" @click="goBack">
+      <button type="button" class="icon-button" :aria-label="t('common.back')" @click="goBack">
         <span class="chevron-left" />
       </button>
       <div class="auth-topbar__right">
-        <button type="button" class="icon-button" aria-label="客服" @click="showVerifySheet = true">
+        <button type="button" class="icon-button" :aria-label="t('userMenu.customerService')" @click="showVerifySheet = true">
           <span class="headset-icon" />
         </button>
-        <button type="button" class="icon-button" aria-label="语言">
+        <button type="button" class="icon-button" :aria-label="t('common.language')" @click="toggleLocale">
           <span class="globe-icon" />
         </button>
       </div>
     </header>
 
     <main class="auth-content">
-      <h1>忘记密码</h1>
+      <h1>{{ t('auth.forgotTitle') }}</h1>
 
       <form class="auth-form" @submit.prevent="submitReset">
         <label class="auth-field">
-          <input v-model="account" placeholder="邮箱/手机号" autocomplete="username" />
+          <input v-model="account" :placeholder="t('auth.accountPlaceholder')" autocomplete="username" />
         </label>
 
         <label class="auth-field">
           <input
             v-model="password"
             :type="showPassword ? 'text' : 'password'"
-            placeholder="密码最少8个字符"
+            :placeholder="t('auth.passwordMin8')"
             autocomplete="new-password"
           />
           <button
             type="button"
             class="field-action"
-            aria-label="切换密码显示"
+            :aria-label="t('security.togglePassword')"
             @click="showPassword = !showPassword"
           >
             <span class="eye-off-icon" />
@@ -95,13 +97,13 @@ function submitReset() {
           <input
             v-model="confirmPassword"
             :type="showConfirmPassword ? 'text' : 'password'"
-            placeholder="请再次输入新密码"
+            :placeholder="t('auth.confirmNewPassword')"
             autocomplete="new-password"
           />
           <button
             type="button"
             class="field-action"
-            aria-label="切换密码显示"
+            :aria-label="t('security.togglePassword')"
             @click="showConfirmPassword = !showConfirmPassword"
           >
             <span class="eye-off-icon" />
@@ -110,20 +112,20 @@ function submitReset() {
 
         <p v-if="errorMessage" class="auth-error">{{ errorMessage }}</p>
 
-        <button type="submit" class="primary-button">找回密码</button>
-        <RouterLink to="/login" class="login-link">去登录</RouterLink>
+        <button type="submit" class="primary-button">{{ t('auth.retrievePassword') }}</button>
+        <RouterLink to="/login" class="login-link">{{ t('auth.goLogin') }}</RouterLink>
       </form>
     </main>
 
     <Transition name="sheet">
       <div v-if="showVerifySheet" class="sheet-layer" @click.self="showVerifySheet = false">
-        <section class="verify-sheet" role="dialog" aria-modal="true" aria-label="验证方式">
+        <section class="verify-sheet" role="dialog" aria-modal="true" :aria-label="t('auth.verifyMethod')">
           <i class="sheet-handle" />
-          <button type="button" class="sheet-close" aria-label="关闭" @click="showVerifySheet = false">
+          <button type="button" class="sheet-close" :aria-label="t('common.close')" @click="showVerifySheet = false">
             <span />
           </button>
-          <h2>验证方式</h2>
-          <button type="button" class="service-button">联系客服</button>
+          <h2>{{ t('auth.verifyMethod') }}</h2>
+          <button type="button" class="service-button">{{ t('auth.contactService') }}</button>
         </section>
       </div>
     </Transition>

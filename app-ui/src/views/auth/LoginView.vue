@@ -4,9 +4,11 @@ import { useRouter } from 'vue-router'
 
 import { getTenantCode } from '@/api/http'
 import { apiLogin } from '@/api/userPublic'
+import { useI18n } from '@/i18n'
 
 const LOGIN_TYPE_PHONE = 2
 const LOGIN_TYPE_EMAIL = 3
+const { t, toggleLocale } = useI18n()
 
 type EthereumProvider = {
   providers?: EthereumProvider[]
@@ -131,7 +133,9 @@ const pendingWallet = ref<WalletOption | null>(null)
 const walletRequestId = ref(0)
 const errorMessage = ref('')
 
-const accountPlaceholder = computed(() => (activeTab.value === 'email' ? '您的邮箱' : '手机号'))
+const accountPlaceholder = computed(() =>
+  activeTab.value === 'email' ? t('auth.yourEmail') : t('auth.phonePlaceholder'),
+)
 const loginType = computed(() => (activeTab.value === 'email' ? LOGIN_TYPE_EMAIL : LOGIN_TYPE_PHONE))
 const googleCodeValue = computed(() => googleCode.value.join(''))
 const shortWalletAddress = computed(() => {
@@ -173,7 +177,7 @@ const walletOptions = computed<WalletOption[]>(() => {
 
 const walletDefinitions: WalletDefinition[] = [
   { key: 'tronlink', name: 'TronLink', installUrl: 'https://www.tronlink.org/', chainType: 'tron', detect: () => false },
-  { key: 'brave', name: 'Brave 钱包', installUrl: 'https://brave.com/wallet/', chainType: 'evm', detect: (provider) => Boolean(provider.isBraveWallet) },
+  { key: 'brave', name: 'Brave Wallet', installUrl: 'https://brave.com/wallet/', chainType: 'evm', detect: (provider) => Boolean(provider.isBraveWallet) },
   { key: 'metamask', name: 'MetaMask', installUrl: 'https://metamask.io/download/', chainType: 'evm', detect: (provider) => Boolean(provider.isMetaMask && !provider.isBraveWallet) },
   { key: 'okx', name: 'OKX Wallet', installUrl: 'https://www.okx.com/web3', chainType: 'evm', detect: (provider) => Boolean(provider.isOkxWallet || provider === window.okxwallet) },
   { key: 'tokenpocket', name: 'TokenPocket', installUrl: 'https://www.tokenpocket.pro/', chainType: 'evm', detect: (provider) => Boolean(provider.isTokenPocket) },
@@ -293,15 +297,15 @@ async function submitLogin() {
   errorMessage.value = ''
   const tenantCode = getTenantCode()
   if (!tenantCode) {
-    errorMessage.value = '租户信息缺失'
+    errorMessage.value = t('profile.tenantMissing')
     return
   }
   if (!account.value.trim() || !password.value) {
-    errorMessage.value = '请输入账号和密码'
+    errorMessage.value = t('auth.inputAccountPassword')
     return
   }
   if (googleCodeValue.value.length > 0 && googleCodeValue.value.length < googleCode.value.length) {
-    errorMessage.value = '请输入完整的谷歌验证码'
+    errorMessage.value = t('auth.inputFullGoogleCode')
     focusGoogleCodeInput(googleCode.value.findIndex((digit) => !digit))
     return
   }
@@ -316,14 +320,14 @@ async function submitLogin() {
       googleCode: googleCodeValue.value || undefined,
     })
     if (res.code !== 0 && res.code !== 200) {
-      errorMessage.value = res.msg || '登录失败'
+      errorMessage.value = res.msg || t('profile.loginFailed')
       if (res.code === 2057) focusGoogleCodeInput(0)
       return
     }
     router.replace('/profile')
   } catch (error) {
     console.warn('login failed', error)
-    errorMessage.value = '登录失败'
+    errorMessage.value = t('profile.loginFailed')
   } finally {
     submitting.value = false
   }
@@ -469,7 +473,7 @@ async function connectWallet(selectedProvider?: EthereumProvider | null) {
 
   const provider = selectedProvider || (walletOptions.value.find((wallet) => wallet.installed && wallet.chainType === 'evm')?.provider as EthereumProvider | null) || null
   if (!provider) {
-    walletError.value = '当前浏览器没有检测到钱包，请在钱包 App 内打开'
+    walletError.value = t('auth.walletNotDetected')
     return
   }
 
@@ -479,7 +483,7 @@ async function connectWallet(selectedProvider?: EthereumProvider | null) {
     if (requestId !== walletRequestId.value) return
     const address = accounts?.[0]
     if (!address) {
-      walletError.value = '未获取到钱包地址'
+      walletError.value = t('auth.walletAddressMissing')
       return
     }
 
@@ -494,7 +498,9 @@ async function connectWallet(selectedProvider?: EthereumProvider | null) {
     pendingWallet.value = null
   } catch (error: any) {
     console.warn('connect wallet failed', error)
-    walletError.value = isUserRejectedWalletError(error) ? '已取消连接钱包' : '连接钱包失败'
+    walletError.value = isUserRejectedWalletError(error)
+      ? t('auth.walletCanceled')
+      : t('auth.walletConnectFailed')
   } finally {
     if (requestId === walletRequestId.value) walletConnecting.value = false
   }
@@ -519,7 +525,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
     const address = await waitForTronAddress()
     if (requestId !== walletRequestId.value) return
     if (!address) {
-      walletError.value = walletSheetOpen.value ? '连接超时，请在钱包确认后重试' : ''
+      walletError.value = walletSheetOpen.value ? t('auth.walletTimeout') : ''
       return
     }
 
@@ -535,7 +541,9 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
     pendingWallet.value = null
   } catch (error: any) {
     console.warn('connect tronlink failed', error)
-    walletError.value = isUserRejectedWalletError(error) ? '已取消连接钱包' : '连接 TronLink 失败'
+    walletError.value = isUserRejectedWalletError(error)
+      ? t('auth.walletCanceled')
+      : t('auth.tronConnectFailed')
   } finally {
     if (requestId === walletRequestId.value) walletConnecting.value = false
   }
@@ -545,18 +553,18 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 <template>
   <section class="auth-page">
     <header class="auth-topbar">
-      <button type="button" class="icon-button" aria-label="返回" @click="goBack">
+      <button type="button" class="icon-button" :aria-label="t('common.back')" @click="goBack">
         <span class="chevron-left" />
       </button>
-      <button type="button" class="icon-button" aria-label="语言">
+      <button type="button" class="icon-button" :aria-label="t('common.language')" @click="toggleLocale">
         <span class="globe-icon" />
       </button>
     </header>
 
     <main class="auth-content">
-      <h1>登录</h1>
+      <h1>{{ t('auth.loginTitle') }}</h1>
 
-      <div class="auth-tabs" role="tablist" aria-label="登录方式">
+      <div class="auth-tabs" role="tablist" :aria-label="t('auth.loginMethod')">
         <button
           type="button"
           :class="{ active: activeTab === 'email' }"
@@ -564,7 +572,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
           :aria-selected="activeTab === 'email'"
           @click="activeTab = 'email'"
         >
-          邮箱
+          {{ t('auth.email') }}
         </button>
         <button
           type="button"
@@ -573,7 +581,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
           :aria-selected="activeTab === 'phone'"
           @click="activeTab = 'phone'"
         >
-          手机
+          {{ t('auth.phone') }}
         </button>
       </div>
 
@@ -589,13 +597,13 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
           <input
             v-model="password"
             :type="showPassword ? 'text' : 'password'"
-            placeholder="请输入您的密码"
+            :placeholder="t('auth.passwordPlaceholder')"
             autocomplete="current-password"
           />
           <button
             type="button"
             class="field-action"
-            aria-label="切换密码显示"
+            :aria-label="t('security.togglePassword')"
             @click="showPassword = !showPassword"
           >
             <span class="eye-off-icon" />
@@ -603,8 +611,8 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
         </label>
 
         <div class="google-code-field">
-          <span>谷歌验证码</span>
-          <div class="google-code-boxes" aria-label="谷歌验证码">
+          <span>{{ t('auth.googleCode') }}</span>
+          <div class="google-code-boxes" :aria-label="t('auth.googleCode')">
             <input
               v-for="(_, index) in googleCode"
               :key="index"
@@ -613,7 +621,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
               inputmode="numeric"
               autocomplete="one-time-code"
               maxlength="1"
-              aria-label="谷歌验证码"
+              :aria-label="t('auth.googleCode')"
               @focus="selectGoogleCodeInput"
               @input="handleGoogleCodeInput(index, $event)"
               @keydown="handleGoogleCodeKeydown(index, $event)"
@@ -626,34 +634,34 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
           <label class="remember-control">
             <input v-model="remember" type="checkbox" />
             <span />
-            <em>记住账号和密码</em>
+            <em>{{ t('auth.remember') }}</em>
           </label>
-          <RouterLink to="/forgot-password">忘记密码</RouterLink>
+          <RouterLink to="/forgot-password">{{ t('auth.forgotPassword') }}</RouterLink>
         </div>
 
         <p v-if="errorMessage" class="auth-error">{{ errorMessage }}</p>
 
         <button type="submit" class="primary-button" :disabled="submitting">
-          {{ submitting ? '登录中' : '登录' }}
+          {{ submitting ? t('auth.loggingIn') : t('auth.loginTitle') }}
         </button>
       </form>
 
       <div class="quick-login">
         <div class="quick-login__divider">
           <span />
-          <strong>快捷登录</strong>
+          <strong>{{ t('auth.quickLogin') }}</strong>
           <span />
         </div>
         <button type="button" class="wallet-button" :disabled="walletConnecting" @click="openWalletSheet">
           <span class="wallet-icon" />
         </button>
-        <strong>{{ walletConnecting ? '连接中' : walletAddress ? shortWalletAddress : '连接钱包' }}</strong>
+        <strong>{{ walletConnecting ? t('auth.connecting') : walletAddress ? shortWalletAddress : t('auth.connectWallet') }}</strong>
         <p v-if="walletError" class="wallet-error">{{ walletError }}</p>
       </div>
 
       <p class="auth-switch">
-        没有账号吗
-        <button type="button" @click="router.push('/register')">去注册</button>
+        {{ t('auth.noAccount') }}
+        <button type="button" @click="router.push('/register')">{{ t('auth.goRegister') }}</button>
       </p>
     </main>
 
@@ -668,17 +676,17 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
             v-if="pendingWallet"
             type="button"
             class="wallet-sheet__back"
-            aria-label="返回"
+            :aria-label="t('common.back')"
             @click="backToWalletList"
           >
             ‹
           </button>
-          <button v-else type="button" class="wallet-sheet__help" aria-label="帮助">?</button>
+          <button v-else type="button" class="wallet-sheet__help" :aria-label="t('auth.help')">?</button>
           <strong>{{ pendingWallet ? pendingWallet.name : 'Connect Wallet' }}</strong>
           <button
             type="button"
             class="wallet-sheet__close"
-            aria-label="关闭"
+            :aria-label="t('common.close')"
             @click="closeWalletSheet"
           >
             ×
@@ -689,11 +697,11 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
           <span class="wallet-pending__icon" :class="`wallet-row__icon--${pendingWallet.key}`">
             {{ pendingWallet.name.slice(0, 1) }}
           </span>
-          <strong>Continue in {{ pendingWallet.name }}</strong>
-          <p>Accept connection request in the wallet</p>
+          <strong>{{ t('auth.continueInWallet', { wallet: pendingWallet.name }) }}</strong>
+          <p>{{ t('auth.acceptWalletRequest') }}</p>
           <button type="button" @click="retryPendingWallet">
             <span>↻</span>
-            Try again
+            {{ t('auth.tryAgain') }}
           </button>
         </div>
 
@@ -710,18 +718,18 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
               {{ wallet.name.slice(0, 1) }}
             </span>
             <span>{{ wallet.name }}</span>
-            <em :class="{ install: !wallet.installed }">{{ wallet.installed ? 'INSTALLED' : '安装' }}</em>
+            <em :class="{ install: !wallet.installed }">{{ wallet.installed ? t('auth.installed') : t('auth.install') }}</em>
           </button>
 
           <button type="button" class="wallet-search" disabled>
             <span class="wallet-search__icon" />
-            <span>Search Wallet</span>
-            <em>本地</em>
+            <span>{{ t('auth.searchWallet') }}</span>
+            <em>{{ t('auth.local') }}</em>
           </button>
         </div>
 
         <p v-if="walletError" class="wallet-sheet__error">{{ walletError }}</p>
-        <p class="wallet-sheet__hint">不使用 Reown，仅连接当前浏览器检测到的钱包。</p>
+        <p class="wallet-sheet__hint">{{ t('auth.walletHint') }}</p>
       </div>
     </div>
   </section>

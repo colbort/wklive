@@ -10,6 +10,7 @@ import AssetCoinPicker from '@/components/assets/AssetCoinPicker.vue'
 import AssetFlowLayout from '@/components/assets/AssetFlowLayout.vue'
 import AssetPrimaryButton from '@/components/assets/AssetPrimaryButton.vue'
 import { useOptions } from '@/composables/useOptions'
+import { useI18n } from '@/i18n'
 import type { AssetCoinConfig } from '@/types/asset'
 import type { CryptoRechargeAddress } from '@/types/payment'
 import {
@@ -20,6 +21,7 @@ import {
 
 const route = useRoute()
 const assetOptions = useOptions(apiGetAssetOptions)
+const { t } = useI18n()
 const coinConfigs = ref<AssetCoinConfig[]>([])
 const selectedConfig = ref<AssetCoinConfig | null>(null)
 const coinSheetVisible = ref(false)
@@ -134,7 +136,7 @@ function startAddressCountdown() {
     rechargeAddress.value = null
     qrImageUrl.value = ''
     copyTip.value = ''
-    pageError.value = '充值地址已过期，请重新获取地址'
+    pageError.value = t('assetFlow.expiredAddress')
     step.value = 'select'
   }, 1000)
 }
@@ -143,7 +145,7 @@ async function startRecharge() {
   pageError.value = ''
   copyTip.value = ''
   if (!selectedCoin.value || !selectedChainCode.value) {
-    pageError.value = '请选择支持充值的币种和网络'
+    pageError.value = t('assetFlow.selectRechargeCoinNetwork')
     return
   }
 
@@ -160,11 +162,11 @@ async function startRecharge() {
       startAddressCountdown()
       step.value = 'detail'
     } else {
-      pageError.value = resp.msg || '暂未获取到充值地址'
+      pageError.value = resp.msg || t('assetFlow.noRechargeAddress')
     }
   } catch (error) {
     console.warn('load crypto recharge address failed', error)
-    pageError.value = '充值地址获取失败，请稍后重试'
+    pageError.value = t('assetFlow.rechargeAddressLoadFailed')
   } finally {
     addressLoading.value = false
   }
@@ -186,10 +188,10 @@ async function copyText(text: string) {
   if (!text) return
   try {
     await navigator.clipboard.writeText(text)
-    copyTip.value = '复制成功'
+    copyTip.value = t('assetFlow.copySuccess')
   } catch (error) {
     console.warn('copy failed', error)
-    copyTip.value = '复制失败，请手动复制'
+    copyTip.value = t('assetFlow.copyFailed')
   }
 }
 
@@ -206,7 +208,9 @@ async function completeRecharge() {
   const rechargeAmountText = parseAssetDecimalToMinorText(amount.value, selectedDecimalPlaces.value)
   const rechargeAmount = Number(rechargeAmountText)
   if (!rechargeAmountText || rechargeAmount <= 0) {
-    pageError.value = `请输入有效充值金额，最多保留 ${selectedInputDecimalPlaces.value} 位小数`
+    pageError.value = t('assetFlow.invalidRechargeAmount', {
+      places: selectedInputDecimalPlaces.value,
+    })
     return
   }
 
@@ -225,13 +229,15 @@ async function completeRecharge() {
         qrImageUrl.value = await createQrDataUrl(resp.address.address)
       }
       stopAddressCountdown()
-      copyTip.value = resp.data?.orderNo ? `已提交：${resp.data.orderNo}` : '已提交，请等待链上确认'
+      copyTip.value = resp.data?.orderNo
+        ? t('assetFlow.submittedWithNo', { orderNo: resp.data.orderNo })
+        : t('assetFlow.submittedWaitConfirm')
     } else {
-      pageError.value = resp.msg || '提交失败，请稍后重试'
+      pageError.value = resp.msg || t('assetFlow.submitFailedLater')
     }
   } catch (error) {
     console.warn('create crypto recharge order failed', error)
-    pageError.value = '提交失败，请稍后重试'
+    pageError.value = t('assetFlow.submitFailedLater')
   } finally {
     submitLoading.value = false
   }
@@ -247,9 +253,9 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <AssetFlowLayout title="充值" :right-text="step === 'select' ? '资金记录' : undefined" narrow>
+  <AssetFlowLayout :title="t('assetFlow.recharge')" :right-text="step === 'select' ? t('assetFlow.records') : undefined" narrow>
     <template v-if="step === 'select'">
-      <h2>支付方式</h2>
+      <h2>{{ t('assetFlow.paymentMethod') }}</h2>
       <AssetCoinPicker
         :coin="selectedCoin"
         :config="selectedConfig || undefined"
@@ -261,7 +267,7 @@ onBeforeUnmount(() => {
       </p>
       <AssetPrimaryButton
         class="recharge-button"
-        :label="addressLoading ? '获取中' : '充值'"
+        :label="addressLoading ? t('assetFlow.getting') : t('assetFlow.recharge')"
         @click="startRecharge"
       />
     </template>
@@ -277,29 +283,29 @@ onBeforeUnmount(() => {
       </div>
 
       <div class="qr-card">
-        <img v-if="qrImageUrl" :src="qrImageUrl" alt="充值地址二维码" />
+        <img v-if="qrImageUrl" :src="qrImageUrl" :alt="t('assetFlow.qrAlt')" />
       </div>
 
       <div class="address-row">
         <strong>{{ rechargeAddress?.address }}</strong>
-        <button type="button" @click="copyText(rechargeAddress?.address || '')">复制</button>
+        <button type="button" @click="copyText(rechargeAddress?.address || '')">{{ t('common.copy') }}</button>
       </div>
       <p v-if="addressSecondsLeft > 0" class="address-countdown">
-        地址有效期 {{ addressCountdownText }}，超时后需重新获取
+        {{ t('assetFlow.addressExpires', { time: addressCountdownText }) }}
       </p>
       <div v-if="rechargeAddress?.memo" class="memo-row">
         <span>Memo / Tag</span>
         <strong>{{ rechargeAddress.memo }}</strong>
-        <button type="button" @click="copyText(rechargeAddress.memo)">复制</button>
+        <button type="button" @click="copyText(rechargeAddress.memo)">{{ t('common.copy') }}</button>
       </div>
 
       <div class="divider" />
 
       <section class="field-block">
-        <h2>付款凭证</h2>
+        <h2>{{ t('assetFlow.voucher') }}</h2>
         <button type="button" class="voucher-upload" @click="fileInputRef?.click()">
           <span>+</span>
-          <b>{{ voucherName || '上传付款凭证' }}</b>
+          <b>{{ voucherName || t('assetFlow.uploadVoucher') }}</b>
         </button>
         <input
           ref="fileInputRef"
@@ -311,7 +317,7 @@ onBeforeUnmount(() => {
       </section>
 
       <section class="field-block">
-        <h2>充值金额</h2>
+        <h2>{{ t('assetFlow.rechargeAmount') }}</h2>
         <label class="amount-input">
           <input v-model="amount" inputmode="decimal" />
           <span>{{ selectedCoin }}</span>
@@ -326,7 +332,7 @@ onBeforeUnmount(() => {
       </p>
       <AssetPrimaryButton
         class="complete-button"
-        :label="submitLoading ? '提交中' : '完成'"
+        :label="submitLoading ? t('common.submitting') : t('assetFlow.complete')"
         @click="completeRecharge"
       />
     </template>

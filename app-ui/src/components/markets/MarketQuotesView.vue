@@ -1,5 +1,7 @@
 <script setup lang='ts'>
+import { getLocale, useI18n } from '@/i18n'
 import type { ItickTenantCategory, ItickTenantProduct, ItickWsConnectionState } from '@/types/itick'
+import { marketCategoryCodeLabel, marketCategoryLabel } from '@/utils/marketCategory'
 import type { MarketRow } from './types'
 
 defineProps<{
@@ -20,10 +22,12 @@ const emit = defineEmits<{
   selectProduct: [product: ItickTenantProduct]
 }>()
 
+const { t } = useI18n()
+
 function formatNumber(value?: number | null, digits = 2) {
   if (value === null || value === undefined || !Number.isFinite(value)) return '--'
 
-  return new Intl.NumberFormat('zh-CN', {
+  return new Intl.NumberFormat(getLocale(), {
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
   }).format(value)
@@ -51,18 +55,18 @@ function formatPercent(value: number) {
         :class="{ 'category-tab--active': category.categoryType === selectedCategoryType }"
         @click="emit('selectCategory', category.categoryType)"
       >
-        {{ category.categoryName }}
+        {{ marketCategoryLabel(category) }}
       </button>
     </div>
 
     <div class="connection-row">
       <span class="connection-dot" :class="`connection-dot--${wsState}`" />
-      <span>{{ selectedCategoryName || '分类加载中' }}</span>
-      <strong>{{ wsError || selectedCategoryCode || '等待 categoryCode' }}</strong>
+      <span>{{ marketCategoryCodeLabel(selectedCategoryCode, selectedCategoryName) || t('market.categoryLoading') }}</span>
+      <strong>{{ wsError || selectedCategoryCode || t('market.waitingCategoryCode') }}</strong>
     </div>
 
-    <div v-if="loading" class="empty-state">正在加载行情...</div>
-    <div v-else-if="!rows.length" class="empty-state">当前分类暂无可见产品。</div>
+    <div v-if="loading" class="empty-state">{{ t('market.loadingQuotes') }}</div>
+    <div v-else-if="!rows.length" class="empty-state">{{ t('market.noVisibleProducts') }}</div>
 
     <template v-else>
       <button
@@ -87,7 +91,7 @@ function formatPercent(value: number) {
 
         <span class="quote-row__change">
           <strong>{{ row.quote ? formatPrice(row.quote.lastPrice - row.quote.open) : '--' }}</strong>
-          <em>{{ row.quote ? formatPercent(row.changeRate) : '等待' }}</em>
+          <em>{{ row.quote ? formatPercent(row.changeRate) : t('market.waiting') }}</em>
         </span>
       </button>
     </template>

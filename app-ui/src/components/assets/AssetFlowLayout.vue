@@ -1,5 +1,6 @@
 <script setup lang='ts'>
 import { useRouter } from 'vue-router'
+import { useI18n } from '@/i18n'
 
 defineProps<{
   title: string
@@ -8,12 +9,13 @@ defineProps<{
 }>()
 
 const router = useRouter()
+const { t } = useI18n()
 </script>
 
 <template>
   <section class="asset-flow-page" :class="{ 'asset-flow-page--narrow': narrow }">
     <header class="asset-flow-header" :class="{ 'asset-flow-header--plain-right': !rightText }">
-      <button type="button" class="asset-flow-back" aria-label="返回" @click="router.back()">‹</button>
+      <button type="button" class="asset-flow-back" :aria-label="t('common.back')" @click="router.back()">‹</button>
       <h1>{{ title }}</h1>
       <button v-if="rightText" type="button" class="asset-flow-link">{{ rightText }}</button>
       <span v-else />

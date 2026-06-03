@@ -12,6 +12,7 @@ import {
 } from '@/api/userPrivate'
 import { apiRegister } from '@/api/userPublic'
 import RotateCaptcha from '@/components/auth/RotateCaptcha.vue'
+import { useI18n } from '@/i18n'
 
 const REGISTER_TYPE_PHONE = 2
 const REGISTER_TYPE_EMAIL = 3
@@ -19,6 +20,7 @@ type IdentityFileKey = 'front' | 'back' | 'handheld'
 type CodeInputKind = 'email' | 'google'
 
 const router = useRouter()
+const { t, toggleLocale } = useI18n()
 const step = ref(1)
 const accountMode = ref<'email' | 'phone'>('email')
 const account = ref('')
@@ -49,11 +51,11 @@ const submitting = ref(false)
 const errorMessage = ref('')
 
 const steps = [
-  { index: 1, label: '创建账户' },
-  { index: 2, label: '资金密码' },
-  { index: 3, label: '验证码' },
-  { index: 4, label: '身份验证' },
-  { index: 5, label: '谷歌验证器' },
+  { index: 1, labelKey: 'auth.createAccount' },
+  { index: 2, labelKey: 'auth.payPassword' },
+  { index: 3, labelKey: 'auth.verifyCode' },
+  { index: 4, labelKey: 'auth.identityVerify' },
+  { index: 5, labelKey: 'auth.googleAuthenticator' },
 ]
 
 const passwordStrength = computed(() => {
@@ -65,7 +67,9 @@ const passwordStrength = computed(() => {
   return level
 })
 const payPasswordStrength = computed(() => (payPassword.value.length >= 6 ? 4 : payPassword.value.length ? 1 : 0))
-const accountPlaceholder = computed(() => (accountMode.value === 'email' ? '您的邮箱' : '手机号'))
+const accountPlaceholder = computed(() =>
+  accountMode.value === 'email' ? t('auth.yourEmail') : t('auth.phonePlaceholder'),
+)
 const codeValue = computed(() => emailCode.value.join(''))
 const googleCodeValue = computed(() => googleCode.value.join(''))
 
@@ -186,7 +190,7 @@ async function continueStep() {
     await submitPayPassword()
   } else if (step.value === 3) {
     if (codeValue.value.length !== 6) {
-      errorMessage.value = '请输入6位数代码'
+      errorMessage.value = t('auth.inputSixDigitCode')
       focusCodeInput('email', emailCode.value.findIndex((digit) => !digit))
       return
     }
@@ -201,23 +205,23 @@ async function continueStep() {
 async function submitRegister() {
   const tenantCode = getTenantCode()
   if (!tenantCode) {
-    errorMessage.value = '租户信息缺失'
+    errorMessage.value = t('profile.tenantMissing')
     return
   }
   if (!account.value.trim()) {
-    errorMessage.value = accountMode.value === 'email' ? '请输入邮箱' : '请输入手机号'
+    errorMessage.value = accountMode.value === 'email' ? t('security.inputEmail') : t('security.inputPhone')
     return
   }
   if (password.value.length < 8) {
-    errorMessage.value = '密码最少8个字符'
+    errorMessage.value = t('auth.passwordMin8')
     return
   }
   if (password.value !== confirmPassword.value) {
-    errorMessage.value = '两次输入的密码不一致'
+    errorMessage.value = t('security.passwordMismatch')
     return
   }
   if (!agreed.value) {
-    errorMessage.value = '请同意隐私政策和用户条款'
+    errorMessage.value = t('auth.agreeTermsRequired')
     return
   }
 
@@ -234,13 +238,13 @@ async function submitRegister() {
     }
     const res = await apiRegister(payload)
     if (res.code !== 0 && res.code !== 200) {
-      errorMessage.value = res.msg || '注册失败'
+      errorMessage.value = res.msg || t('auth.registerFailed')
       return
     }
     step.value = 2
   } catch (error) {
     console.warn('register failed', error)
-    errorMessage.value = '注册失败'
+    errorMessage.value = t('auth.registerFailed')
   } finally {
     submitting.value = false
   }
@@ -248,7 +252,7 @@ async function submitRegister() {
 
 async function submitPayPassword() {
   if (payPassword.value.length < 6) {
-    errorMessage.value = '请输入资金密码'
+    errorMessage.value = t('auth.inputPayPassword')
     return
   }
   submitting.value = true
@@ -258,13 +262,13 @@ async function submitPayPassword() {
       confirmPassword: payPassword.value,
     })
     if (res.code !== 0 && res.code !== 200) {
-      errorMessage.value = res.msg || '设置失败'
+      errorMessage.value = res.msg || t('auth.setFailed')
       return
     }
     step.value = 3
   } catch (error) {
     console.warn('set pay password failed', error)
-    errorMessage.value = '设置失败'
+    errorMessage.value = t('auth.setFailed')
   } finally {
     submitting.value = false
   }
@@ -272,7 +276,7 @@ async function submitPayPassword() {
 
 async function submitIdentity() {
   if (!identityName.value.trim() || !identityNo.value.trim()) {
-    errorMessage.value = '请输入身份信息'
+    errorMessage.value = t('auth.inputIdentityInfo')
     return
   }
   submitting.value = true
@@ -287,13 +291,13 @@ async function submitIdentity() {
       kycLevel: 1,
     })
     if (res.code !== 0 && res.code !== 200) {
-      errorMessage.value = res.msg || '提交失败'
+      errorMessage.value = res.msg || t('common.failed')
       return
     }
     step.value = 5
   } catch (error) {
     console.warn('submit identity failed', error)
-    errorMessage.value = '提交失败'
+    errorMessage.value = t('common.failed')
   } finally {
     submitting.value = false
   }
@@ -321,7 +325,7 @@ async function loadGoogle2FA() {
 
 async function submitGoogle2FA() {
   if (googleCodeValue.value.length !== 6) {
-    errorMessage.value = '请输入谷歌验证码'
+    errorMessage.value = t('auth.googleCode')
     focusCodeInput('google', googleCode.value.findIndex((digit) => !digit))
     return
   }
@@ -329,13 +333,13 @@ async function submitGoogle2FA() {
   try {
     const res = await apiEnableGoogle2FA({ googleCode: googleCodeValue.value })
     if (res.code !== 0 && res.code !== 200) {
-      errorMessage.value = res.msg || '绑定失败'
+      errorMessage.value = res.msg || t('auth.bindFailed')
       return
     }
     router.replace('/profile')
   } catch (error) {
     console.warn('enable google 2fa failed', error)
-    errorMessage.value = '绑定失败'
+    errorMessage.value = t('auth.bindFailed')
   } finally {
     submitting.value = false
   }
@@ -355,19 +359,27 @@ function markUpload(type: IdentityFileKey) {
 <template>
   <section class="register-page">
     <header class="register-topbar">
-      <button type="button" class="icon-button" aria-label="返回" @click="goBack">
+      <button type="button" class="icon-button" :aria-label="t('common.back')" @click="goBack">
         <span class="chevron-left" />
       </button>
-      <button v-if="showCaptcha" type="button" class="icon-button" aria-label="语言">
+      <button
+        v-if="showCaptcha"
+        type="button"
+        class="icon-button"
+        :aria-label="t('common.language')"
+        @click="toggleLocale"
+      >
         <span class="globe-icon" />
       </button>
-      <button v-else-if="step > 1" type="button" class="skip-button" @click="skipStep">跳过</button>
+      <button v-else-if="step > 1" type="button" class="skip-button" @click="skipStep">
+        {{ t('common.skip') }}
+      </button>
     </header>
 
     <RotateCaptcha v-if="showCaptcha" @success="completeCaptcha" />
 
     <main v-else class="register-content">
-      <nav class="register-steps" aria-label="注册步骤">
+      <nav class="register-steps" :aria-label="t('auth.registerSteps')">
         <div
           v-for="item in steps"
           :key="item.index"
@@ -375,26 +387,26 @@ function markUpload(type: IdentityFileKey) {
           :class="{ done: item.index < step, active: item.index === step }"
         >
           <span>{{ item.index < step ? '✓' : item.index }}</span>
-          <em>{{ item.label }}</em>
+          <em>{{ t(item.labelKey) }}</em>
         </div>
       </nav>
 
       <section v-if="step === 1" class="step-panel">
-        <h1>创建您的账户</h1>
-        <div class="auth-tabs" role="tablist" aria-label="注册方式">
+        <h1>{{ t('auth.createYourAccount') }}</h1>
+        <div class="auth-tabs" role="tablist" :aria-label="t('auth.registerMethod')">
           <button
             type="button"
             :class="{ active: accountMode === 'email' }"
             @click="accountMode = 'email'"
           >
-            邮箱
+            {{ t('auth.email') }}
           </button>
           <button
             type="button"
             :class="{ active: accountMode === 'phone' }"
             @click="accountMode = 'phone'"
           >
-            手机
+            {{ t('auth.phone') }}
           </button>
         </div>
 
@@ -406,7 +418,7 @@ function markUpload(type: IdentityFileKey) {
           <input
             v-model="password"
             :type="showPassword ? 'text' : 'password'"
-            placeholder="密码最少8个字符"
+            :placeholder="t('auth.passwordMin8')"
             autocomplete="new-password"
           />
           <button type="button" class="field-action" @click="showPassword = !showPassword">
@@ -420,7 +432,7 @@ function markUpload(type: IdentityFileKey) {
           <input
             v-model="confirmPassword"
             :type="showConfirmPassword ? 'text' : 'password'"
-            placeholder="确认新密码"
+            :placeholder="t('security.confirmNewPassword')"
             autocomplete="new-password"
           />
           <button
@@ -432,22 +444,22 @@ function markUpload(type: IdentityFileKey) {
           </button>
         </label>
         <label class="auth-field">
-          <input v-model="inviteCode" placeholder="请输入您的邀请码" />
+          <input v-model="inviteCode" :placeholder="t('auth.inviteCode')" />
         </label>
         <label class="agree-control">
           <input v-model="agreed" type="checkbox" />
           <span />
-          <em>我同意<b>隐私政策</b>和<b>用户条款</b></em>
+          <em>{{ t('auth.agreeTerms') }}<b>{{ t('auth.privacyPolicy') }}</b>{{ t('common.and') }}<b>{{ t('auth.userTerms') }}</b></em>
         </label>
       </section>
 
       <section v-else-if="step === 2" class="step-panel step-panel--loose">
-        <h1>资金密码设置</h1>
+        <h1>{{ t('auth.payPasswordSetting') }}</h1>
         <label class="auth-field">
           <input
             v-model="payPassword"
             :type="showPayPassword ? 'text' : 'password'"
-            placeholder="资金密码"
+            :placeholder="t('auth.payPassword')"
           />
           <button type="button" class="field-action" @click="showPayPassword = !showPayPassword">
             <span class="eye-off-icon" />
@@ -459,10 +471,10 @@ function markUpload(type: IdentityFileKey) {
       </section>
 
       <section v-else-if="step === 3" class="step-panel step-panel--loose">
-        <h1>电子邮件验证</h1>
-        <p>我们已将验证码发送至您的电子邮件</p>
+        <h1>{{ t('auth.emailVerifyTitle') }}</h1>
+        <p>{{ t('auth.emailVerifyHint') }}</p>
         <div class="code-head">
-          <strong>请输入6位数代码</strong>
+          <strong>{{ t('auth.inputSixDigitCode') }}</strong>
           <span>115s</span>
         </div>
         <div class="code-boxes">
@@ -483,54 +495,54 @@ function markUpload(type: IdentityFileKey) {
       </section>
 
       <section v-else-if="step === 4" class="step-panel identity-panel">
-        <h1>身份信息</h1>
+        <h1>{{ t('auth.identityInfo') }}</h1>
         <label class="auth-field required-field">
           <span>*</span>
-          <input v-model="identityName" placeholder="法定姓名" />
+          <input v-model="identityName" :placeholder="t('auth.legalName')" />
         </label>
         <label class="auth-field required-field">
           <span>*</span>
-          <input v-model="identityNo" placeholder="证件号码" />
+          <input v-model="identityNo" :placeholder="t('auth.idNumber')" />
         </label>
 
-        <h2>证件上传</h2>
-        <p>请上传证件，仅用于身份核实</p>
+        <h2>{{ t('auth.idUpload') }}</h2>
+        <p>{{ t('auth.idUploadHint') }}</p>
         <div class="upload-grid">
           <button type="button" @click="markUpload('front')">
             <i class="camera-dot" />
-            <strong>证件正面</strong>
+            <strong>{{ t('auth.idFront') }}</strong>
           </button>
           <button type="button" @click="markUpload('back')">
             <i class="camera-dot" />
-            <strong>证件反面</strong>
+            <strong>{{ t('auth.idBack') }}</strong>
           </button>
           <button type="button" @click="markUpload('handheld')">
             <i class="camera-dot" />
-            <strong>手持证件</strong>
+            <strong>{{ t('auth.idHandheld') }}</strong>
           </button>
         </div>
 
-        <h2>上传要求</h2>
-        <p>拍摄时确保身份证边框完整、字迹清晰、亮度均匀</p>
+        <h2>{{ t('auth.uploadRequirements') }}</h2>
+        <p>{{ t('auth.uploadRequirementsHint') }}</p>
         <div class="require-box">
-          <span><b>✓</b>标准拍摄</span>
-          <span><b>×</b>拍摄不全</span>
-          <span><b>×</b>拍摄模糊</span>
-          <span><b>×</b>闪光过度</span>
+          <span><b>✓</b>{{ t('auth.standardShot') }}</span>
+          <span><b>×</b>{{ t('auth.incompleteShot') }}</span>
+          <span><b>×</b>{{ t('auth.blurryShot') }}</span>
+          <span><b>×</b>{{ t('auth.overexposedShot') }}</span>
         </div>
       </section>
 
       <section v-else class="step-panel google-panel">
-        <h1>绑定谷歌验证器</h1>
-        <p>请备份您的密钥，以防丢失</p>
+        <h1>{{ t('auth.bindGoogleAuthenticator') }}</h1>
+        <p>{{ t('auth.backupSecretHint') }}</p>
         <div class="qr-card">
-          <img v-if="googleQr" :src="googleQr" alt="Google 2FA QR Code" />
+          <img v-if="googleQr" :src="googleQr" :alt="t('auth.googleQrAlt')" />
         </div>
         <div class="secret-card">
           <strong>{{ googleSecret || '' }}</strong>
-          <button type="button">复制</button>
+          <button type="button">{{ t('common.copy') }}</button>
         </div>
-        <h2>谷歌验证码</h2>
+        <h2>{{ t('auth.googleCode') }}</h2>
         <div class="code-boxes">
           <input
             v-for="(_, index) in googleCode"
@@ -550,11 +562,11 @@ function markUpload(type: IdentityFileKey) {
 
       <p v-if="errorMessage" class="auth-error">{{ errorMessage }}</p>
       <button type="button" class="primary-button" :disabled="submitting" @click="continueStep">
-        {{ step === 5 ? '绑定' : submitting ? '提交中' : '继续' }}
+        {{ step === 5 ? t('auth.bind') : submitting ? t('common.submitting') : t('common.continue') }}
       </button>
       <p v-if="step === 1" class="auth-switch">
-        有账号？
-        <button type="button" @click="router.push('/login')">去登录</button>
+        {{ t('auth.haveAccount') }}
+        <button type="button" @click="router.push('/login')">{{ t('auth.goLogin') }}</button>
       </p>
     </main>
   </section>

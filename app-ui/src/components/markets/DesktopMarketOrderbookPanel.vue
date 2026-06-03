@@ -1,5 +1,6 @@
 <script setup lang='ts'>
 import { computed, ref } from 'vue'
+import { getLocale, useI18n } from '@/i18n'
 import type { DepthPayload, QuotePayload, TickPayload } from '@/types/itick'
 
 const props = defineProps<{
@@ -9,6 +10,7 @@ const props = defineProps<{
 }>()
 
 const activeBookTab = ref<'book' | 'trades'>('book')
+const { t } = useI18n()
 const askRows = computed(() => props.depthSnapshot?.asks.slice(0, 10) ?? [])
 const bidRows = computed(() => props.depthSnapshot?.bids.slice(0, 10) ?? [])
 const maxAskVolume = computed(() => Math.max(...askRows.value.map((item) => item.volume), 1))
@@ -38,7 +40,7 @@ const tradeRows = computed(() =>
 
 function formatNumber(value?: number | null, digits = 2) {
   if (value === null || value === undefined || !Number.isFinite(value)) return '--'
-  return new Intl.NumberFormat('zh-CN', {
+  return new Intl.NumberFormat(getLocale(), {
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
   }).format(value)
@@ -51,7 +53,7 @@ function formatPrice(value?: number | null) {
 
 function formatTime(ts: number) {
   if (!ts) return '--'
-  return new Intl.DateTimeFormat('zh-CN', {
+  return new Intl.DateTimeFormat(getLocale(), {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
@@ -64,8 +66,8 @@ function formatTime(ts: number) {
   <aside class="desktop-orderbook-panel">
     <header class="desktop-orderbook-panel__header">
       <nav>
-        <button type="button" :class="{ active: activeBookTab === 'book' }" @click="activeBookTab = 'book'">订单簿</button>
-        <button type="button" :class="{ active: activeBookTab === 'trades' }" @click="activeBookTab = 'trades'">最新成交</button>
+        <button type="button" :class="{ active: activeBookTab === 'book' }" @click="activeBookTab = 'book'">{{ t('market.orderbook') }}</button>
+        <button type="button" :class="{ active: activeBookTab === 'trades' }" @click="activeBookTab = 'trades'">{{ t('market.latestTrades') }}</button>
       </nav>
     </header>
 
@@ -79,8 +81,8 @@ function formatTime(ts: number) {
       </div>
 
       <div class="desktop-orderbook-panel__columns">
-        <span>价格(USDT)</span>
-        <span>数量(BTC)</span>
+        <span>{{ t('market.price') }}(USDT)</span>
+        <span>{{ t('market.qty') }}(BTC)</span>
       </div>
 
       <div class="desktop-orderbook-panel__rows desktop-orderbook-panel__rows--asks">
@@ -107,9 +109,9 @@ function formatTime(ts: number) {
 
     <div v-else class="desktop-trades-panel">
       <header class="desktop-orderbook-panel__columns">
-        <span>价格(USDT)</span>
-        <span>数量(BTC)</span>
-        <span>时间</span>
+        <span>{{ t('market.price') }}(USDT)</span>
+        <span>{{ t('market.qty') }}(BTC)</span>
+        <span>{{ t('trade.time') }}</span>
       </header>
       <div class="desktop-trades-panel__rows">
         <p

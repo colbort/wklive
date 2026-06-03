@@ -6,29 +6,29 @@ import { getAccessToken } from '@/api/http'
 import { apiGetProfile, apiLogout } from '@/api/userPrivate'
 import { apiGetUserOptions, apiGuestLogin } from '@/api/userPublic'
 import { useOptions } from '@/composables/useOptions'
+import { useI18n } from '@/i18n'
 import { useTenantStore } from '@/stores/tenant'
 import type { UserProfile } from '@/types/user'
 
-// 用户页：负责游客登录、已登录资料展示和用户菜单入口。
 const guestMenuItems = [
-  { key: 'language', label: '语言', value: '中文简体', icon: '◎', flag: '🇨🇳' },
-  { key: 'service', label: '客服', icon: '♧' },
-  { key: 'download', label: 'APP下载', icon: '⇩' },
-  { key: 'whitepaper', label: '白皮书', icon: 'i' },
-  { key: 'company', label: '公司资质', icon: 'i' },
-  { key: 'regulation', label: '监管文件', icon: 'i' },
+  { key: 'language', labelKey: 'common.language', icon: '◎', flag: '🌐' },
+  { key: 'service', labelKey: 'userMenu.customerService', icon: '♧' },
+  { key: 'download', labelKey: 'userMenu.appDownload', icon: '⇩' },
+  { key: 'whitepaper', labelKey: 'nav.whitepaper', icon: 'i' },
+  { key: 'company', labelKey: 'nav.license', icon: 'i' },
+  { key: 'regulation', labelKey: 'nav.compliance', icon: 'i' },
 ]
 
 const userMenuItems = [
-  { key: 'language', label: '语言', value: '中文简体', icon: '◎', flag: '🇨🇳' },
-  { key: 'bank', label: '收款账号', icon: '▭' },
-  { key: 'security', label: '安全', icon: '盾' },
-  { key: 'service', label: '客服', icon: '♧' },
-  { key: 'download', label: 'APP下载', icon: '⇩' },
-  { key: 'whitepaper', label: '白皮书', icon: 'i' },
-  { key: 'company', label: '公司资质', icon: 'i' },
-  { key: 'regulation', label: '监管文件', icon: 'i' },
-  { key: 'logout', label: '退出登录', icon: '↪' },
+  { key: 'language', labelKey: 'common.language', icon: '◎', flag: '🌐' },
+  { key: 'bank', labelKey: 'userMenu.paymentAccount', icon: '▭' },
+  { key: 'security', labelKey: 'userMenu.security', icon: 'S' },
+  { key: 'service', labelKey: 'userMenu.customerService', icon: '♧' },
+  { key: 'download', labelKey: 'userMenu.appDownload', icon: '⇩' },
+  { key: 'whitepaper', labelKey: 'nav.whitepaper', icon: 'i' },
+  { key: 'company', labelKey: 'nav.license', icon: 'i' },
+  { key: 'regulation', labelKey: 'nav.compliance', icon: 'i' },
+  { key: 'logout', labelKey: 'common.logout', icon: '↪' },
 ]
 
 const profile = ref<UserProfile | null>(null)
@@ -39,6 +39,7 @@ const guestLoginError = ref('')
 const tenantStore = useTenantStore()
 const router = useRouter()
 const userOptions = useOptions(apiGetUserOptions)
+const { locale, t, toggleLocale } = useI18n()
 
 const userBase = computed(() => profile.value?.base ?? null)
 const userIdentity = computed(() => profile.value?.identity ?? null)
@@ -63,10 +64,11 @@ const menuItems = computed(() => {
 
   return [
     userMenuItems[0],
-    { key: 'identity', label: '实名认证', icon: '证' },
+    { key: 'identity', labelKey: 'userMenu.identity', icon: 'ID' },
     ...userMenuItems.slice(1),
   ]
 })
+const languageName = computed(() => (locale.value === 'zh-CN' ? t('common.zhCN') : t('common.enUS')))
 const displayName = computed(
   () => userBase.value?.nickname || userBase.value?.username || 'GUEST-6721',
 )
@@ -99,7 +101,7 @@ async function handleGuestLogin() {
   guestLoginError.value = ''
   tenantStore.hydrateFromEnv()
   if (!tenantStore.tenantCode) {
-    guestLoginError.value = '租户信息缺失'
+    guestLoginError.value = t('profile.tenantMissing')
     return
   }
 
@@ -107,14 +109,14 @@ async function handleGuestLogin() {
   try {
     const res = await apiGuestLogin({ tenantCode: tenantStore.tenantCode })
     if (res.code !== 0 && res.code !== 200) {
-      guestLoginError.value = res.msg || '登录失败'
+      guestLoginError.value = res.msg || t('profile.loginFailed')
       return
     }
     isLoggedIn.value = true
     await loadProfile()
   } catch (error) {
     console.warn('guest login failed', error)
-    guestLoginError.value = '登录失败'
+    guestLoginError.value = t('profile.loginFailed')
   } finally {
     loggingGuest.value = false
   }
@@ -123,6 +125,11 @@ async function handleGuestLogin() {
 async function handleMenuClick(key: string) {
   if (key === 'security') {
     router.push('/profile/security')
+    return
+  }
+
+  if (key === 'language') {
+    toggleLocale()
     return
   }
 
@@ -144,7 +151,7 @@ function goLogin() {
 <template>
   <section class="profile-page">
     <header class="profile-header">
-      <h1>用户中心</h1>
+      <h1>{{ t('profile.title') }}</h1>
     </header>
 
     <section v-if="isLoggedIn" class="profile-user" :aria-busy="loadingProfile">
@@ -158,11 +165,11 @@ function goLogin() {
       </div>
     </section>
 
-    <section v-else class="profile-hero" aria-label="账户">
+    <section v-else class="profile-hero" :aria-label="t('profile.account')">
       <div class="profile-hero__intro">
         <div>
-          <h2>欢迎使用本平台</h2>
-          <p>安全可靠，极速体验</p>
+          <h2>{{ t('profile.welcome') }}</h2>
+          <p>{{ t('profile.intro') }}</p>
         </div>
         <button
           type="button"
@@ -171,7 +178,7 @@ function goLogin() {
           :aria-busy="loggingGuest"
           @click="handleGuestLogin"
         >
-          <span>{{ loggingGuest ? '登录中' : '模拟用户登录' }}</span>
+          <span>{{ loggingGuest ? t('profile.loggingIn') : t('profile.guestLogin') }}</span>
           <i />
         </button>
       </div>
@@ -180,14 +187,16 @@ function goLogin() {
       </p>
 
       <div class="profile-actions">
-        <button type="button" class="profile-actions__login" @click="goLogin">登录</button>
+        <button type="button" class="profile-actions__login" @click="goLogin">
+          {{ t('common.login') }}
+        </button>
         <button type="button" class="profile-actions__register" @click="router.push('/register')">
-          注册
+          {{ t('common.register') }}
         </button>
       </div>
     </section>
 
-    <nav class="profile-menu" aria-label="用户中心菜单">
+    <nav class="profile-menu" :aria-label="t('profile.menuLabel')">
       <button
         v-for="item in menuItems"
         :key="item.key"
@@ -199,16 +208,16 @@ function goLogin() {
           class="profile-menu__icon"
           :class="{
             'profile-menu__icon--info': item.icon === 'i',
-            'profile-menu__icon--shield': item.icon === '盾',
+            'profile-menu__icon--shield': item.icon === 'S',
             'profile-menu__icon--bank': item.icon === '▭',
-            'profile-menu__icon--identity': item.icon === '证',
+            'profile-menu__icon--identity': item.icon === 'ID',
           }"
         >
           {{ item.icon }}
         </span>
-        <span class="profile-menu__label">{{ item.label }}</span>
+        <span class="profile-menu__label">{{ t(item.labelKey) }}</span>
         <span v-if="item.flag" class="profile-menu__flag">{{ item.flag }}</span>
-        <span v-if="item.value" class="profile-menu__value">{{ item.value }}</span>
+        <span v-if="item.key === 'language'" class="profile-menu__value">{{ languageName }}</span>
         <i class="profile-menu__arrow" />
       </button>
     </nav>

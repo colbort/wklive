@@ -3,6 +3,7 @@ import { computed } from 'vue'
 
 import { apiGetTradeOptions } from '@/api/trade'
 import { optionText, useOptions } from '@/composables/useOptions'
+import { useI18n } from '@/i18n'
 import type { ItickTenantProduct } from '@/types/itick'
 import type {
   TradeSymbol,
@@ -56,6 +57,7 @@ const emit = defineEmits<{
 const MARKET_TYPE_SPOT = 1
 const percentSteps = [0, 25, 50, 75, 100]
 const tradeOptions = useOptions(apiGetTradeOptions)
+const { t } = useI18n()
 const orderTypeOptions = computed(() => {
   const options = tradeOptions.getGroup('orderType').filter((option) => {
     return ['ORDER_TYPE_MARKET', 'ORDER_TYPE_LIMIT'].includes(option.code)
@@ -94,14 +96,16 @@ const selectedMarginMode = computed(() => {
 const conversionText = computed(() => {
   const contractSize = props.tradeSymbolDetail?.contract?.contractSize || ''
   if (isSpotTrade.value) return `1 ${baseAsset.value} = 1 ${baseAsset.value}`
-  return contractSize ? `1 手 = ${contractSize} ${baseAsset.value}` : `1 手 = 1 ${baseAsset.value}`
+  return contractSize
+    ? `1 ${t('trade.lot')} = ${contractSize} ${baseAsset.value}`
+    : `1 ${t('trade.lot')} = 1 ${baseAsset.value}`
 })
-const buyLabel = computed(() => (isSpotTrade.value ? '买入' : '买涨'))
-const sellLabel = computed(() => (isSpotTrade.value ? '卖出' : '买跌'))
+const buyLabel = computed(() => (isSpotTrade.value ? t('trade.buy') : t('trade.buyUp')))
+const sellLabel = computed(() => (isSpotTrade.value ? t('trade.sell') : t('trade.buyDown')))
 const unavailableText = computed(() => {
-  if (!props.isLoggedIn) return '请先登录后再交易'
-  if (props.tradeSymbolLoading) return '交易配置加载中'
-  if (!props.tradeAvailable) return '当前品种暂未开放交易'
+  if (!props.isLoggedIn) return t('trade.loginFirst')
+  if (props.tradeSymbolLoading) return t('trade.configLoading')
+  if (!props.tradeAvailable) return t('trade.unavailable')
   return ''
 })
 
@@ -146,7 +150,7 @@ function handlePercentBarPointer(event: PointerEvent) {
 
     <div class="desktop-order-panel__grid">
       <div>
-        <label>保证金模式</label>
+        <label>{{ t('trade.margin') }}{{ t('trade.mode') }}</label>
         <select
           :value="marginMode"
           :disabled="isSpotTrade"
@@ -158,7 +162,7 @@ function handlePercentBarPointer(event: PointerEvent) {
         </select>
       </div>
       <div>
-        <label>杠杆</label>
+        <label>{{ t('trade.leverage') }}</label>
         <select
           :value="leverage"
           :disabled="isSpotTrade"
@@ -170,23 +174,23 @@ function handlePercentBarPointer(event: PointerEvent) {
     </div>
 
     <label v-if="orderMode === 'limit'" class="desktop-order-panel__label">
-      价格 ({{ settleAsset }})
+      {{ t('trade.price') }} ({{ settleAsset }})
     </label>
     <div v-if="orderMode === 'limit'" class="trade-input trade-input--field">
       <input
         :value="tradePrice"
         inputmode="decimal"
-        :placeholder="`最小变动 ${selectedTradeSymbol?.priceTick || '--'}`"
+        :placeholder="`${selectedTradeSymbol?.priceTick || '--'}`"
         @input="emit('update:tradePrice', inputValue($event))"
       />
     </div>
 
-    <label class="desktop-order-panel__label"> 数量 ({{ baseAsset }}) </label>
+    <label class="desktop-order-panel__label"> {{ t('trade.qty') }} ({{ baseAsset }}) </label>
     <div class="trade-input trade-input--field">
       <input
         :value="tradeQty"
         inputmode="decimal"
-        :placeholder="`最小数量 ${selectedTradeSymbol?.minQty || '--'}`"
+        :placeholder="`${selectedTradeSymbol?.minQty || '--'}`"
         @input="emit('update:tradeQty', inputValue($event))"
       />
     </div>
@@ -218,19 +222,19 @@ function handlePercentBarPointer(event: PointerEvent) {
     </div>
 
     <div class="account-lines">
-      <span>可用</span><strong>{{ availableBalance }} {{ settleAsset }}</strong> <span>换算</span
-      ><strong>{{ conversionText }}</strong> <span>模式</span
+      <span>{{ t('trade.available') }}</span><strong>{{ availableBalance }} {{ settleAsset }}</strong> <span>{{ t('trade.conversion') }}</span
+      ><strong>{{ conversionText }}</strong> <span>{{ t('trade.mode') }}</span
       ><strong
         >{{ optionText(selectedMarginMode) }} /
-        {{ isSpotTrade ? '无杠杆' : `${leverage}X` }}</strong
+        {{ isSpotTrade ? t('trade.noLeverage') : `${leverage}X` }}</strong
       >
     </div>
 
-    <label class="checkbox-line"><i />止盈/止损</label>
+    <label class="checkbox-line"><i />{{ t('trade.tpSl') }}</label>
     <div class="account-lines">
-      <span>{{ isSpotTrade ? '可买' : '可开多' }}</span
-      ><strong>{{ longPositionQty }} {{ isSpotTrade ? baseAsset : '手' }}</strong>
-      <span>保证金</span><strong>{{ availableBalance }} {{ settleAsset }}</strong>
+      <span>{{ isSpotTrade ? t('trade.canBuy') : t('trade.canOpenLong') }}</span
+      ><strong>{{ longPositionQty }} {{ isSpotTrade ? baseAsset : t('trade.lot') }}</strong>
+      <span>{{ t('trade.margin') }}</span><strong>{{ availableBalance }} {{ settleAsset }}</strong>
     </div>
     <button
       class="wide-action wide-action--buy"
@@ -238,14 +242,14 @@ function handlePercentBarPointer(event: PointerEvent) {
       :disabled="submitDisabled"
       @click="emit('submit-order', 'buy')"
     >
-      {{ submittingSide === 'buy' ? '提交中' : buyLabel }}
+      {{ submittingSide === 'buy' ? t('common.submitting') : buyLabel }}
     </button>
 
-    <label class="checkbox-line"><i />止盈/止损</label>
+    <label class="checkbox-line"><i />{{ t('trade.tpSl') }}</label>
     <div class="account-lines">
-      <span>{{ isSpotTrade ? '可卖' : '可开空' }}</span
-      ><strong>{{ shortPositionQty }} {{ isSpotTrade ? baseAsset : '手' }}</strong>
-      <span>保证金</span><strong>{{ availableBalance }} {{ settleAsset }}</strong>
+      <span>{{ isSpotTrade ? t('trade.canSell') : t('trade.canOpenShort') }}</span
+      ><strong>{{ shortPositionQty }} {{ isSpotTrade ? baseAsset : t('trade.lot') }}</strong>
+      <span>{{ t('trade.margin') }}</span><strong>{{ availableBalance }} {{ settleAsset }}</strong>
     </div>
     <button
       class="wide-action wide-action--sell"
@@ -253,7 +257,7 @@ function handlePercentBarPointer(event: PointerEvent) {
       :disabled="submitDisabled"
       @click="emit('submit-order', 'sell')"
     >
-      {{ submittingSide === 'sell' ? '提交中' : sellLabel }}
+      {{ submittingSide === 'sell' ? t('common.submitting') : sellLabel }}
     </button>
 
     <p v-if="tradeError || unavailableText" class="order-message order-message--error">

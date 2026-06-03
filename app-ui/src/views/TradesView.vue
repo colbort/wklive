@@ -19,6 +19,7 @@ import DesktopMarketTradeView from '@/components/markets/DesktopMarketTradeView.
 import MobileTradeView from '@/components/trades/MobileTradeView.vue'
 import { useDevice } from '@/composables/useDevice'
 import { useTradingDesk } from '@/composables/useTradingDesk'
+import { t } from '@/i18n'
 import type { AssetCoinConfig } from '@/types/asset'
 import type {
   ContractLeverageConfig,
@@ -59,7 +60,6 @@ const ORDER_SOURCE_WEB = 2
 const SYMBOL_STATUS_ENABLED = 1
 const FALLBACK_LEVERAGE_VALUES = [1, 2, 5, 10, 20, 50, 75, 100, 125]
 
-// 交易页：手机端展示交易表单与订单列表，桌面端复用市场交易组合台。
 const route = useRoute()
 const { isDesktop } = useDevice()
 const detailVisible = computed(() => true)
@@ -127,12 +127,13 @@ const {
   tickLimit: 24,
 })
 const tradeKind = computed(() => {
-  const code =
-    `${selectedCategory.value?.categoryCode || ''} ${selectedCategory.value?.categoryName || ''}`.toLowerCase()
-  if (code.includes('stock') || code.includes('股票')) return 'stock'
-  if (code.includes('option') || code.includes('期权')) return 'option'
-  if (code.includes('forex') || code.includes('外汇')) return 'forex'
-  if (code.includes('commodity') || code.includes('大宗')) return 'commodity'
+  const code = String(selectedCategory.value?.categoryCode || '').toLowerCase()
+  if (code === 'stock') return 'stock'
+  if (code === 'option') return 'option'
+  if (code === 'forex') return 'forex'
+  if (code === 'future' || code === 'indices' || code === 'fund' || code === 'commodity') {
+    return 'commodity'
+  }
   return 'crypto'
 })
 const isLoggedIn = computed(() => Boolean(authToken.value))
@@ -548,14 +549,14 @@ async function saveUserLeverageConfig(nextLeverage: number) {
     if (requestId !== saveLeverageRequestId) return
 
     if (!isSuccessCode(resp.code)) {
-      tradeError.value = resp.msg || '杠杆设置失败'
+      tradeError.value = resp.msg || t('trade.leverageSetFailed')
       return
     }
     await loadUserLeverageConfig()
   } catch (error) {
     console.warn('set leverage failed', error)
     if (requestId === saveLeverageRequestId) {
-      tradeError.value = '杠杆设置失败'
+      tradeError.value = t('trade.leverageSetFailed')
     }
   }
 }
@@ -570,7 +571,7 @@ async function loadTradeSymbols() {
 
     if (!isSuccessCode(resp.code)) {
       tradeSymbols.value = []
-      tradeError.value = resp.msg || '交易对加载失败'
+      tradeError.value = resp.msg || t('trade.symbolLoadFailed')
       return
     }
 
@@ -579,7 +580,7 @@ async function loadTradeSymbols() {
     console.warn('load trade symbols failed', error)
     if (requestId === tradeSymbolsRequestId) {
       tradeSymbols.value = []
-      tradeError.value = '交易对加载失败'
+      tradeError.value = t('trade.symbolLoadFailed')
     }
   } finally {
     if (requestId === tradeSymbolsRequestId) {
@@ -598,7 +599,7 @@ async function loadTradeSymbolDetail(symbolId: number) {
 
     if (!isSuccessCode(resp.code)) {
       tradeSymbolDetail.value = null
-      tradeError.value = resp.msg || '交易对详情加载失败'
+      tradeError.value = resp.msg || t('trade.symbolDetailLoadFailed')
       return
     }
 
@@ -614,7 +615,7 @@ async function loadTradeSymbolDetail(symbolId: number) {
     console.warn('load trade symbol detail failed', error)
     if (requestId === tradeDetailRequestId) {
       tradeSymbolDetail.value = null
-      tradeError.value = '交易对详情加载失败'
+      tradeError.value = t('trade.symbolDetailLoadFailed')
     }
   } finally {
     if (requestId === tradeDetailRequestId) {
@@ -670,8 +671,8 @@ async function refreshTradeAccount() {
         tradeOrders.value = []
         ordersError.value =
           ordersResult.status === 'fulfilled'
-            ? ordersResult.value.msg || '委托加载失败'
-            : '委托加载失败'
+            ? ordersResult.value.msg || t('trade.ordersLoadFailed')
+            : t('trade.ordersLoadFailed')
       }
     }
 
@@ -691,7 +692,7 @@ async function refreshTradeAccount() {
     if (accountRequestId === tradeAccountRequestId) {
       if (ordersRequestId === tradeOrdersRequestId) {
         tradeOrders.value = []
-        ordersError.value = '委托加载失败'
+        ordersError.value = t('trade.ordersLoadFailed')
       }
       tradePositions.value = []
       marginAccounts.value = []
@@ -729,7 +730,7 @@ async function refreshTradeOrders() {
 
     if (!isSuccessCode(resp.code)) {
       if (!tradeOrders.value.length) {
-        ordersError.value = resp.msg || '委托加载失败'
+        ordersError.value = resp.msg || t('trade.ordersLoadFailed')
       }
       return
     }
@@ -739,7 +740,7 @@ async function refreshTradeOrders() {
     console.warn('refresh trade orders failed', error)
     if (requestId === tradeOrdersRequestId) {
       if (!tradeOrders.value.length) {
-        ordersError.value = '委托加载失败'
+        ordersError.value = t('trade.ordersLoadFailed')
       }
     }
   } finally {
@@ -758,26 +759,26 @@ async function submitTradeOrder(side: SubmitSide) {
 
   const symbol = selectedTradeSymbol.value
   if (!isLoggedIn.value) {
-    tradeError.value = '请先登录后再交易'
+    tradeError.value = t('trade.loginFirst')
     return
   }
   if (!symbol) {
     tradeError.value = loadingTradeSymbols.value
-      ? '交易对加载中，请稍后再试'
-      : '当前品种未配置交易接口'
+      ? t('trade.symbolLoadingRetry')
+      : t('trade.symbolNotConfigured')
     return
   }
 
   const qty = tradeQty.value.trim()
   if (!isPositiveDecimal(qty)) {
-    tradeError.value = '请输入有效数量'
+    tradeError.value = t('trade.inputValidQty')
     return
   }
 
   const isLimitOrder = orderMode.value === 'limit'
   const price = tradePrice.value.trim()
   if (isLimitOrder && !isPositiveDecimal(price)) {
-    tradeError.value = '请输入有效价格'
+    tradeError.value = t('trade.inputValidPrice')
     return
   }
 
@@ -804,14 +805,14 @@ async function submitTradeOrder(side: SubmitSide) {
     const stopLossPriceText = stopLossPrice.value.trim()
     if (takeProfitPriceText) {
       if (!isPositiveDecimal(takeProfitPriceText)) {
-        tradeError.value = '请输入有效止盈价'
+        tradeError.value = t('trade.inputValidTakeProfit')
         return
       }
       params.takeProfitPrice = takeProfitPriceText
     }
     if (stopLossPriceText) {
       if (!isPositiveDecimal(stopLossPriceText)) {
-        tradeError.value = '请输入有效止损价'
+        tradeError.value = t('trade.inputValidStopLoss')
         return
       }
       params.stopLossPrice = stopLossPriceText
@@ -822,17 +823,19 @@ async function submitTradeOrder(side: SubmitSide) {
   try {
     const resp = await apiTradePlaceOrder(params)
     if (!isSuccessCode(resp.code)) {
-      tradeError.value = resp.msg || '下单失败'
+      tradeError.value = resp.msg || t('trade.placeOrderFailed')
       return
     }
 
-    tradeMessage.value = resp.order?.orderNo ? `委托已提交：${resp.order.orderNo}` : '委托已提交'
+    tradeMessage.value = resp.order?.orderNo
+      ? t('trade.orderSubmittedWithNo', { orderNo: resp.order.orderNo })
+      : t('trade.orderSubmitted')
     tradeQty.value = ''
     tradePercent.value = 0
     await refreshTradeAccount()
   } catch (error) {
     console.warn('place trade order failed', error)
-    tradeError.value = '下单失败，请稍后重试'
+    tradeError.value = t('trade.placeOrderFailedLater')
   } finally {
     submittingSide.value = null
   }
@@ -843,7 +846,7 @@ async function cancelTradeOrder(order: TradeOrder) {
 
   syncAuthState()
   if (!isLoggedIn.value) {
-    ordersError.value = '请先登录'
+    ordersError.value = t('asset.loginFirst')
     return
   }
 
@@ -858,15 +861,15 @@ async function cancelTradeOrder(order: TradeOrder) {
     })
 
     if (!isSuccessCode(resp.code)) {
-      ordersError.value = resp.msg || '撤单失败'
+      ordersError.value = resp.msg || t('trade.cancelFailed')
       return
     }
 
-    tradeMessage.value = '撤单已提交'
+    tradeMessage.value = t('trade.cancelSubmitted')
     await refreshTradeAccount()
   } catch (error) {
     console.warn('cancel trade order failed', error)
-    ordersError.value = '撤单失败，请稍后重试'
+    ordersError.value = t('trade.cancelFailedLater')
   } finally {
     cancelingOrderId.value = null
   }

@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue'
 
 import AssetCoinIcon from '@/components/assets/AssetCoinIcon.vue'
+import { useI18n } from '@/i18n'
 import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
 import { formatAssetMinorAmount } from '@/utils/assetAmount'
 
@@ -29,6 +30,7 @@ const emit = defineEmits<{
 
 const query = ref('')
 const activeWalletType = ref(props.selectedWalletType)
+const { t } = useI18n()
 
 function coinKey(coin: string) {
   return String(coin || '').toUpperCase()
@@ -64,7 +66,7 @@ const coins = computed(() => {
           return {
             coin: config.coin,
             config,
-            amountLabel: '余额',
+            amountLabel: t('assetFlow.balance'),
             availableAmount: formatAssetMinorAmount(
               asset?.availableAmount || asset?.totalAmount || '0',
               config.decimalPlaces,
@@ -76,7 +78,7 @@ const coins = computed(() => {
           .map((asset) => ({
             coin: asset.coin,
             config: configMap.get(coinKey(asset.coin)),
-            amountLabel: '可用',
+            amountLabel: t('assetFlow.available'),
             availableAmount: formatAssetMinorAmount(
               asset.availableAmount || asset.totalAmount || '0',
               configMap.get(coinKey(asset.coin))?.decimalPlaces,
@@ -114,11 +116,11 @@ function selectCoin(coin: string) {
     <div v-if="modelValue" class="asset-select-overlay" role="presentation" @click.self="close">
       <section class="asset-select-sheet" role="dialog" aria-modal="true" :aria-label="title">
         <i class="asset-select-sheet__handle" />
-        <button type="button" class="asset-select-sheet__close" aria-label="关闭" @click="close">×</button>
+        <button type="button" class="asset-select-sheet__close" :aria-label="t('common.close')" @click="close">×</button>
         <h2>{{ title }}</h2>
 
         <div class="asset-select-group">
-          <h3>选择账户</h3>
+          <h3>{{ t('assetFlow.chooseAccount') }}</h3>
           <div class="asset-select-accounts">
             <button
               v-for="account in walletTypes"
@@ -133,10 +135,10 @@ function selectCoin(coin: string) {
         </div>
 
         <div class="asset-select-group">
-          <h3>选择币种</h3>
+          <h3>{{ t('assetFlow.chooseCoin') }}</h3>
           <label class="asset-select-search">
             <span>⌕</span>
-            <input v-model="query" placeholder="币种搜索" />
+            <input v-model="query" :placeholder="t('assetFlow.searchCoin')" />
           </label>
         </div>
 
@@ -153,7 +155,7 @@ function selectCoin(coin: string) {
             <span>{{ row.amountLabel }} <b>{{ row.availableAmount }}</b></span>
             <em v-if="activeWalletType === selectedWalletType && row.coin === selectedCoin">✓</em>
           </button>
-          <p v-if="!coins.length" class="asset-select-empty">暂无可选币种</p>
+          <p v-if="!coins.length" class="asset-select-empty">{{ t('assets.noCoins') }}</p>
         </div>
       </section>
     </div>

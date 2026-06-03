@@ -2,6 +2,7 @@
 import AssetCoinIcon from '@/components/assets/AssetCoinIcon.vue'
 import { apiGetAssetOptions } from '@/api/asset'
 import { useOptions } from '@/composables/useOptions'
+import { useI18n } from '@/i18n'
 import type { AssetCoinConfig } from '@/types/asset'
 
 const props = defineProps<{
@@ -18,6 +19,7 @@ const emit = defineEmits<{
 }>()
 
 const assetOptions = useOptions(apiGetAssetOptions)
+const { t } = useI18n()
 
 function closeSheet() {
   emit('update:modelValue', false)
@@ -60,12 +62,12 @@ function selectConfig(config: AssetCoinConfig) {
           <button
             type="button"
             class="asset-coin-sheet__close"
-            aria-label="关闭"
+            :aria-label="t('common.close')"
             @click="closeSheet"
           >
             ×
           </button>
-          <h2>{{ title || '币种选择' }}</h2>
+          <h2>{{ title || t('assetFlow.chooseCoin') }}</h2>
 
           <div class="asset-coin-sheet__list">
             <button
@@ -81,7 +83,7 @@ function selectConfig(config: AssetCoinConfig) {
               <small v-if="chainLabel(config)">{{ chainLabel(config) }}</small>
               <span v-if="isSelected(config)" class="asset-coin-sheet__check">✓</span>
             </button>
-            <p v-if="!props.configs.length" class="asset-coin-sheet__empty">暂无可选币种</p>
+            <p v-if="!props.configs.length" class="asset-coin-sheet__empty">{{ t('assets.noCoins') }}</p>
           </div>
         </section>
       </div>

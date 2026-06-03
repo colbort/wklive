@@ -1,6 +1,6 @@
 export type AppNavItem = {
   key: string
-  label: string
+  labelKey: string
   path: string
   icon: string
 }
@@ -16,23 +16,23 @@ export type DesktopNavChild = {
 
 export type DesktopNavItem = {
   key: string
-  label: string
+  labelKey: string
   path: string
   children?: DesktopNavChild[]
 }
 
 export const appNavigation: AppNavItem[] = [
-  { key: 'home', label: '首页', path: '/home', icon: '⌂' },
-  { key: 'markets', label: '市场', path: '/markets', icon: '⌁' },
-  { key: 'trade', label: '交易', path: '/trades', icon: '⇄' },
-  { key: 'wallet', label: '资产', path: '/assets', icon: '◇' },
-  { key: 'profile', label: '用户', path: '/profile', icon: '◉' },
+  { key: 'home', labelKey: 'nav.home', path: '/home', icon: '⌂' },
+  { key: 'markets', labelKey: 'nav.markets', path: '/markets', icon: '⌁' },
+  { key: 'trade', labelKey: 'nav.trade', path: '/trades', icon: '⇄' },
+  { key: 'wallet', labelKey: 'nav.wallet', path: '/assets', icon: '◇' },
+  { key: 'profile', labelKey: 'nav.profile', path: '/profile', icon: '◉' },
 ]
 
 export const desktopNavigation: DesktopNavItem[] = [
   {
     key: 'crypto',
-    label: '加密货币合约',
+    labelKey: 'nav.crypto',
     path: '/markets',
     children: [
       { key: 'btc', symbol: 'BTC/USDT', price: '77677.65', change: '-2.07%', direction: 'down', badge: '₿' },
@@ -45,7 +45,7 @@ export const desktopNavigation: DesktopNavItem[] = [
   },
   {
     key: 'stock',
-    label: '股票',
+    labelKey: 'nav.stock',
     path: '/markets',
     children: [
       { key: 'aapl', symbol: 'AAPL', price: '213.48', change: '+0.62%', direction: 'up', badge: 'A' },
@@ -56,7 +56,7 @@ export const desktopNavigation: DesktopNavItem[] = [
   },
   {
     key: 'forex',
-    label: '外汇',
+    labelKey: 'nav.forex',
     path: '/markets',
     children: [
       { key: 'eurusd', symbol: 'EUR/USD', price: '1.0726', change: '+0.14%', direction: 'up', badge: '€' },
@@ -67,7 +67,7 @@ export const desktopNavigation: DesktopNavItem[] = [
   },
   {
     key: 'commodity',
-    label: '大宗商品',
+    labelKey: 'nav.commodity',
     path: '/markets',
     children: [
       { key: 'gold', symbol: 'XAU/USD', price: '2338.40', change: '+0.38%', direction: 'up', badge: 'Au' },
@@ -78,7 +78,7 @@ export const desktopNavigation: DesktopNavItem[] = [
   },
   {
     key: 'option',
-    label: '期权合约',
+    labelKey: 'nav.option',
     path: '/markets',
     children: [
       { key: 'btc-call', symbol: 'BTC 90K CALL', price: '1280', change: '+4.16%', direction: 'up', badge: 'C' },
@@ -87,7 +87,7 @@ export const desktopNavigation: DesktopNavItem[] = [
       { key: 'eth-put', symbol: 'ETH 2.2K PUT', price: '88', change: '-0.65%', direction: 'down', badge: 'P' },
     ],
   },
-  { key: 'license', label: '公司资质', path: '/home' },
-  { key: 'whitepaper', label: '白皮书', path: '/home' },
-  { key: 'compliance', label: '监管文件', path: '/home' },
+  { key: 'license', labelKey: 'nav.license', path: '/home' },
+  { key: 'whitepaper', labelKey: 'nav.whitepaper', path: '/home' },
+  { key: 'compliance', labelKey: 'nav.compliance', path: '/home' },
 ]

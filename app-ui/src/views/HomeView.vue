@@ -1,49 +1,51 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 
-// 首页：承载平台品牌展示和从首页进入市场页的主入口。
+import { useI18n } from '@/i18n'
+
+const { locale, t, toggleLocale } = useI18n()
 const featureCards = [
   {
     icon: '⟆',
-    title: '深度流动性',
-    desc: '享受极低滑点，轻松完成大额交易',
+    titleKey: 'home.deepLiquidity',
+    descKey: 'home.deepLiquidityDesc',
   },
   {
     icon: '↗',
-    title: '专业级图表工具',
-    desc: '多维数据分析，精准把握市场趋势',
+    titleKey: 'home.proCharts',
+    descKey: 'home.proChartsDesc',
   },
   {
     icon: '$',
-    title: '超低费用结构',
-    desc: '节省成本，最大化您的收益',
+    titleKey: 'home.lowFees',
+    descKey: 'home.lowFeesDesc',
   },
 ]
 
 const strategyFeatures = [
   {
     icon: '✎',
-    title: '智能订单类型',
-    desc: '满足限价、止损、条件触发等复杂需求',
+    titleKey: 'home.smartOrders',
+    descKey: 'home.smartOrdersDesc',
   },
   {
     icon: '⇆',
-    title: '高级API交易',
-    desc: '毫秒级响应，机构级执行效率',
+    titleKey: 'home.apiTrading',
+    descKey: 'home.apiTradingDesc',
   },
 ]
 
 const footerColumns = [
   {
-    title: '产品',
-    links: ['股票', '外汇', '大宗商品', '加密货币', '期权合约'],
+    titleKey: 'home.products',
+    links: ['nav.stock', 'nav.forex', 'nav.commodity', 'nav.crypto', 'nav.option'],
   },
   {
-    title: '其他',
-    links: ['订单中心', '资产中心', '用户中心'],
+    titleKey: 'home.other',
+    links: ['userMenu.orderCenter', 'userMenu.myAssets', 'profile.title'],
   },
   {
-    title: '社交媒体&社区',
+    titleKey: 'home.community',
     links: ['Twitter', 'LinkedIn', 'Facebook', 'Telegram', 'YouTube'],
   },
 ]
@@ -54,12 +56,12 @@ const footerColumns = [
     <section class="ave-hero">
       <div class="ave-hero__copy">
         <h1>
-          <span class="ave-home__green">从股票到加密</span>，
+          <span class="ave-home__green">{{ t('home.heroPrefix') }}</span>
           <br />
-          一个平台全搞定
+          {{ t('home.heroSuffix') }}
         </h1>
-        <p>安心托付，交易致远</p>
-        <RouterLink to="/markets" class="ave-home__cta"> 开始交易 </RouterLink>
+        <p>{{ t('home.heroSub') }}</p>
+        <RouterLink to="/markets" class="ave-home__cta">{{ t('home.startTrading') }}</RouterLink>
       </div>
 
       <div class="ave-hero__visual">
@@ -76,34 +78,38 @@ const footerColumns = [
     </section>
 
     <section class="ave-section ave-section--feature">
-      <h2>更明智的<span class="ave-home__green">交易</span>，从这里开始</h2>
-      <p class="ave-section__sub">24小时交易，涨跌都能赚</p>
+      <h2>
+        {{ t('home.smartTradingPrefix') }}<span class="ave-home__green">{{ t('home.smartTradingEmphasis') }}</span>{{ t('home.smartTradingSuffix') }}
+      </h2>
+      <p class="ave-section__sub">{{ t('home.alwaysTrading') }}</p>
 
       <div class="ave-feature-grid">
-        <article v-for="item in featureCards" :key="item.title" class="ave-feature-card">
+        <article v-for="item in featureCards" :key="item.titleKey" class="ave-feature-card">
           <div class="ave-feature-card__icon">
             {{ item.icon }}
           </div>
           <div>
-            <h3>{{ item.title }}</h3>
-            <p>{{ item.desc }}</p>
+            <h3>{{ t(item.titleKey) }}</h3>
+            <p>{{ t(item.descKey) }}</p>
           </div>
         </article>
       </div>
     </section>
 
     <section class="ave-section ave-section--strategy">
-      <h2>高级功能支持<span class="ave-home__green">多样化</span>策略</h2>
-      <p class="ave-section__sub">从美股到比特币，投资从未如此简单</p>
+      <h2>
+        {{ t('home.strategyPrefix') }}<span class="ave-home__green">{{ t('home.strategyEmphasis') }}</span>{{ t('home.strategySuffix') }}
+      </h2>
+      <p class="ave-section__sub">{{ t('home.strategySub') }}</p>
 
       <div class="ave-strategy__top">
-        <article v-for="item in strategyFeatures" :key="item.title" class="ave-strategy__info">
+        <article v-for="item in strategyFeatures" :key="item.titleKey" class="ave-strategy__info">
           <div class="ave-strategy__icon">
             {{ item.icon }}
           </div>
           <div>
-            <h3>{{ item.title }}</h3>
-            <p>{{ item.desc }}</p>
+            <h3>{{ t(item.titleKey) }}</h3>
+            <p>{{ t(item.descKey) }}</p>
           </div>
         </article>
       </div>
@@ -153,15 +159,15 @@ const footerColumns = [
       <div class="ave-strategy__bottom">
         <article
           v-for="item in strategyFeatures"
-          :key="`${item.title}-mobile`"
+          :key="`${item.titleKey}-mobile`"
           class="ave-strategy__list-item"
         >
           <div class="ave-strategy__icon">
             {{ item.icon }}
           </div>
           <div>
-            <h3>{{ item.title }}</h3>
-            <p>{{ item.desc }}</p>
+            <h3>{{ t(item.titleKey) }}</h3>
+            <p>{{ t(item.descKey) }}</p>
           </div>
         </article>
       </div>
@@ -178,13 +184,15 @@ const footerColumns = [
           </div>
         </div>
 
-        <button class="ave-lang-switch">🌐 中文简体</button>
+        <button class="ave-lang-switch" type="button" @click="toggleLocale">
+          🌐 {{ locale === 'zh-CN' ? t('common.zhCN') : t('common.enUS') }}
+        </button>
       </div>
 
       <div class="ave-footer__grid">
         <article class="ave-download-card">
-          <h3>APP下载</h3>
-          <p>扫码下载手机客户端，随时随地交易</p>
+          <h3>{{ t('home.appDownload') }}</h3>
+          <p>{{ t('home.appDownloadDesc') }}</p>
           <div class="ave-download-card__codes">
             <div>
               <div class="ave-qr" />
@@ -198,16 +206,16 @@ const footerColumns = [
         </article>
 
         <div class="ave-footer__links">
-          <article v-for="column in footerColumns" :key="column.title" class="ave-footer__column">
-            <h4>{{ column.title }}</h4>
+          <article v-for="column in footerColumns" :key="column.titleKey" class="ave-footer__column">
+            <h4>{{ t(column.titleKey) }}</h4>
             <RouterLink v-for="item in column.links" :key="item" to="/home">
-              {{ item }}
+              {{ item.includes('.') ? t(item) : item }}
             </RouterLink>
           </article>
         </div>
       </div>
 
-      <p class="ave-footer__copyright">© 2025 AVE交易所. 保留所有权利 | Copyright © 2022-2026</p>
+      <p class="ave-footer__copyright">{{ t('home.copyright') }}</p>
     </section>
   </section>
 </template>

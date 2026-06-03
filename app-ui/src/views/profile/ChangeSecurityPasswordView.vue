@@ -3,11 +3,13 @@ import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { apiChangeLoginPassword, apiChangePayPassword, apiSetPayPassword } from '@/api/userPrivate'
+import { useI18n } from '@/i18n'
 
 type FieldKey = 'oldPassword' | 'newPassword' | 'confirmPassword'
 
 const route = useRoute()
 const router = useRouter()
+const { t } = useI18n()
 const oldPassword = ref('')
 const newPassword = ref('')
 const confirmPassword = ref('')
@@ -21,19 +23,21 @@ const visible = ref<Record<FieldKey, boolean>>({
 })
 
 const isPayPassword = computed(() => route.name === 'security-pay-password')
-const title = computed(() => (isPayPassword.value ? '修改交易密码' : '修改登录密码'))
+const title = computed(() =>
+  isPayPassword.value ? t('security.editTradePassword') : t('security.editLoginPassword'),
+)
 const fields = computed(() => {
   if (isPayPassword.value) {
     return [
-      { key: 'newPassword' as const, placeholder: '新交易密码', model: newPassword },
-      { key: 'confirmPassword' as const, placeholder: '确认新交易密码', model: confirmPassword },
+      { key: 'newPassword' as const, placeholder: t('security.newTradePassword'), model: newPassword },
+      { key: 'confirmPassword' as const, placeholder: t('security.confirmNewTradePassword'), model: confirmPassword },
     ]
   }
 
   return [
-    { key: 'oldPassword' as const, placeholder: '原密码', model: oldPassword },
-    { key: 'newPassword' as const, placeholder: '新密码', model: newPassword },
-    { key: 'confirmPassword' as const, placeholder: '确认新密码', model: confirmPassword },
+    { key: 'oldPassword' as const, placeholder: t('security.oldPassword'), model: oldPassword },
+    { key: 'newPassword' as const, placeholder: t('security.newPassword'), model: newPassword },
+    { key: 'confirmPassword' as const, placeholder: t('security.confirmNewPassword'), model: confirmPassword },
   ]
 })
 const passwordStrength = computed(() => {
@@ -63,15 +67,15 @@ async function submitPassword() {
   errorMessage.value = ''
   message.value = ''
   if (!isPayPassword.value && !oldPassword.value) {
-    errorMessage.value = '请输入原密码'
+    errorMessage.value = t('security.inputOldPassword')
     return
   }
   if (!newPassword.value || !confirmPassword.value) {
-    errorMessage.value = '请输入新密码'
+    errorMessage.value = t('security.inputNewPassword')
     return
   }
   if (newPassword.value !== confirmPassword.value) {
-    errorMessage.value = '两次输入的密码不一致'
+    errorMessage.value = t('security.passwordMismatch')
     return
   }
 
@@ -95,14 +99,14 @@ async function submitPassword() {
         })
 
     if (res.code !== 0 && res.code !== 200) {
-      errorMessage.value = res.msg || '修改失败'
+      errorMessage.value = res.msg || t('security.editFailed')
       return
     }
-    message.value = '修改成功'
+    message.value = t('security.editSuccess')
     window.setTimeout(() => router.replace('/profile/security'), 600)
   } catch (error) {
     console.warn('change password failed', error)
-    errorMessage.value = '修改失败'
+    errorMessage.value = t('security.editFailed')
   } finally {
     submitting.value = false
   }
@@ -112,7 +116,7 @@ async function submitPassword() {
 <template>
   <section class="password-page">
     <header class="password-header">
-      <button type="button" class="back-button" aria-label="返回" @click="router.back()">
+      <button type="button" class="back-button" :aria-label="t('common.back')" @click="router.back()">
         <span />
       </button>
       <h1>{{ title }}</h1>
@@ -131,7 +135,7 @@ async function submitPassword() {
           <button
             type="button"
             class="eye-button"
-            aria-label="切换密码显示"
+            :aria-label="t('security.togglePassword')"
             @click="visible[field.key] = !visible[field.key]"
           >
             <span />
@@ -146,7 +150,7 @@ async function submitPassword() {
       <p v-if="message" class="form-message">{{ message }}</p>
 
       <button type="submit" class="submit-button" :disabled="submitting">
-        {{ submitting ? '修改中' : '修改' }}
+        {{ submitting ? t('security.editing') : t('security.edit') }}
       </button>
     </form>
   </section>

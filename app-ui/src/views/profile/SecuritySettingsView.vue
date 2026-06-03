@@ -3,29 +3,31 @@ import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { apiGetProfile } from '@/api/userPrivate'
+import { useI18n } from '@/i18n'
 import type { UserProfile } from '@/types/user'
 
 const router = useRouter()
+const { t } = useI18n()
 const profile = ref<UserProfile | null>(null)
 
 const phoneLabel = computed(() => {
   const phone = profile.value?.identity?.phone || ''
-  if (!phone) return '手机绑定'
-  return `手机绑定 ${phone.slice(0, 3)}****${phone.slice(-4)}`
+  if (!phone) return t('security.phoneBind')
+  return `${t('security.phoneBind')} ${phone.slice(0, 3)}****${phone.slice(-4)}`
 })
 
 const emailLabel = computed(() => {
   const email = profile.value?.identity?.email || ''
-  if (!email) return '邮箱绑定'
+  if (!email) return t('security.emailBind')
   const [name, domain] = email.split('@')
-  if (!name || !domain) return '修改邮箱'
+  if (!name || !domain) return t('security.editEmail')
   const visibleName = name.length <= 2 ? `${name[0] || ''}*` : `${name.slice(0, 2)}***`
-  return `修改邮箱 ${visibleName}@${domain}`
+  return `${t('security.editEmail')} ${visibleName}@${domain}`
 })
 
 const rows = computed(() => [
-  { key: 'login-password', label: '修改登录密码' },
-  { key: 'pay-password', label: '修改资金密码' },
+  { key: 'login-password', label: t('security.editLoginPassword') },
+  { key: 'pay-password', label: t('security.editPayPassword') },
   { key: 'bind-phone', label: phoneLabel.value },
   { key: 'bind-email', label: emailLabel.value },
 ])
@@ -52,13 +54,13 @@ function handleRowClick(key: string) {
 <template>
   <section class="security-page">
     <header class="security-header">
-      <button type="button" class="back-button" aria-label="返回" @click="router.back()">
+      <button type="button" class="back-button" :aria-label="t('common.back')" @click="router.back()">
         <span />
       </button>
-      <h1>安全设置</h1>
+      <h1>{{ t('security.title') }}</h1>
     </header>
 
-    <nav class="security-list" aria-label="安全设置">
+    <nav class="security-list" :aria-label="t('security.title')">
       <button
         v-for="row in rows"
         :key="row.key"

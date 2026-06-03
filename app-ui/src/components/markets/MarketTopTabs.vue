@@ -1,4 +1,5 @@
 <script setup lang='ts'>
+import { useI18n } from '@/i18n'
 import type { MarketTopTab, MarketTopTabItem } from './types'
 
 defineProps<{
@@ -11,6 +12,8 @@ defineProps<{
 const emit = defineEmits<{
   change: [value: MarketTopTab]
 }>()
+
+const { t } = useI18n()
 </script>
 
 <template>
@@ -19,7 +22,7 @@ const emit = defineEmits<{
     :class="{ 'market-header--collapsed': collapsed || collapseProgress === 1 }"
     :style="`--market-top-collapse: ${collapseProgress || 0}`"
   >
-    <nav class="top-tabs" aria-label="市场视图">
+    <nav class="top-tabs" :aria-label="t('market.viewLabel')">
       <button
         v-for="tab in tabs"
         :key="tab.key"
@@ -28,11 +31,11 @@ const emit = defineEmits<{
         :class="{ 'top-tab--active': activeTab === tab.key }"
         @click="emit('change', tab.key)"
       >
-        {{ tab.label }}
+        {{ t(tab.label) }}
       </button>
     </nav>
 
-    <button type="button" class="search-button" aria-label="搜索">
+    <button type="button" class="search-button" :aria-label="t('common.search')">
       <span />
     </button>
   </header>

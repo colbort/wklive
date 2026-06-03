@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 
 import { apiGetTradeOptions } from '@/api/trade'
 import { optionText, useOptions } from '@/composables/useOptions'
+import { useI18n } from '@/i18n'
 import type { ItickTenantProduct } from '@/types/itick'
 import type {
   TradeSymbol,
@@ -74,6 +75,7 @@ const riskTakeProfitPercent = ref('')
 const riskStopLossPercent = ref('')
 const riskQty = ref('')
 const tradeOptions = useOptions(apiGetTradeOptions)
+const { t } = useI18n()
 const orderTypeOptions = computed(() => {
   const options = tradeOptions.getGroup('orderType').filter((option) => {
     return ['ORDER_TYPE_MARKET', 'ORDER_TYPE_LIMIT'].includes(option.code)
@@ -112,10 +114,12 @@ const selectedMarginMode = computed(() => {
 const conversionText = computed(() => {
   const contractSize = props.tradeSymbolDetail?.contract?.contractSize || ''
   if (isSpotTrade.value) return `1 ${baseAsset.value} = 1 ${baseAsset.value}`
-  return contractSize ? `1 手 = ${contractSize} ${baseAsset.value}` : `1 手 = 1 ${baseAsset.value}`
+  return contractSize
+    ? `1 ${t('trade.lot')} = ${contractSize} ${baseAsset.value}`
+    : `1 ${t('trade.lot')} = 1 ${baseAsset.value}`
 })
-const buyLabel = computed(() => (isSpotTrade.value ? '买入' : '买入开多'))
-const sellLabel = computed(() => (isSpotTrade.value ? '卖出' : '卖出开空'))
+const buyLabel = computed(() => (isSpotTrade.value ? t('trade.buy') : t('trade.buyLong')))
+const sellLabel = computed(() => (isSpotTrade.value ? t('trade.sell') : t('trade.sellShort')))
 const riskSettingsActive = computed(() => Boolean(props.takeProfitPrice || props.stopLossPrice))
 const riskTakeProfitReady = computed(
   () => riskTakeProfitEnabled.value && Boolean(validPositiveDecimal(riskTakeProfitPrice.value)),
@@ -135,9 +139,9 @@ const riskReferencePrice = computed(() => {
   return latestPrice && latestPrice > 0 ? latestPrice : null
 })
 const unavailableText = computed(() => {
-  if (!props.isLoggedIn) return '请先登录后再交易'
-  if (props.tradeSymbolLoading) return '交易配置加载中'
-  if (!props.tradeAvailable) return '当前品种暂未开放交易'
+  if (!props.isLoggedIn) return t('trade.loginFirst')
+  if (props.tradeSymbolLoading) return t('trade.configLoading')
+  if (!props.tradeAvailable) return t('trade.unavailable')
   return ''
 })
 
@@ -296,13 +300,13 @@ function confirmRiskSettings() {
   <section v-if="tradeKind === 'stock'" class="stock-panel">
     <div class="stock-alert">
       <span>!</span>
-      <strong>该品种休市中，期间暂停交易</strong>
+      <strong>{{ t('trade.marketClosed') }}</strong>
     </div>
 
     <div class="inner-tabs">
-      <button class="active" type="button">普通交易</button>
-      <button type="button">融资融券</button>
-      <button type="button">盘前</button>
+      <button class="active" type="button">{{ t('trade.normalTrade') }}</button>
+      <button type="button">{{ t('trade.marginTrading') }}</button>
+      <button type="button">{{ t('trade.premarketOrders') }}</button>
     </div>
 
     <div class="mode-switch compact">
@@ -317,24 +321,24 @@ function confirmRiskSettings() {
       </button>
     </div>
 
-    <div class="trade-input">数量</div>
+    <div class="trade-input">{{ t('trade.qty') }}</div>
     <div class="percent-bar"><i /></div>
     <div class="percent-labels">
       <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
     </div>
-    <button class="wide-action" type="button">登录/注册</button>
+    <button class="wide-action" type="button">{{ t('trade.loginRegister') }}</button>
   </section>
 
   <section v-else-if="tradeKind === 'option'" class="option-panel">
     <div class="mini-chart">
-      <svg viewBox="0 0 320 88" aria-label="走势">
+      <svg viewBox="0 0 320 88" :aria-label="t('trade.trend')">
         <path
           d="M0 50 C28 48 26 40 54 42 C88 47 82 28 119 25 C152 20 143 32 176 28 C218 26 199 64 231 63 C266 62 252 49 320 53"
         />
       </svg>
     </div>
 
-    <h3>时间</h3>
+    <h3>{{ t('trade.time') }}</h3>
     <div class="duration-grid">
       <button class="active" type="button"><strong>30S</strong><span>30%</span></button>
       <button type="button"><strong>60S</strong><span>40%</span></button>
@@ -344,15 +348,16 @@ function confirmRiskSettings() {
       <button type="button"><strong>360S</strong><span>80%</span></button>
     </div>
 
-    <h3>投资额</h3>
+    <h3>{{ t('trade.investmentAmount') }}</h3>
     <div class="trade-input split"><span>>=100</span><strong>USD</strong></div>
     <div class="percent-bar"><i /></div>
     <div class="percent-labels">
       <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
     </div>
-    <div class="buyable"><span>可买</span><strong>0 USD</strong></div>
+    <div class="buyable"><span>{{ t('trade.canBuy') }}</span><strong>0 USD</strong></div>
     <div class="dual-actions">
-      <button type="button">登录</button><button type="button">注册</button>
+      <button type="button">{{ t('auth.loginTitle') }}</button
+      ><button type="button">{{ t('auth.goRegister') }}</button>
     </div>
   </section>
 
@@ -393,7 +398,7 @@ function confirmRiskSettings() {
         <input
           :value="tradePrice"
           inputmode="decimal"
-          :placeholder="`价格(${settleAsset}) / 最小 ${selectedTradeSymbol?.priceTick || '--'}`"
+          :placeholder="`${t('trade.price')}(${settleAsset}) / ${selectedTradeSymbol?.priceTick || '--'}`"
           @input="emit('update:tradePrice', inputValue($event))"
         />
       </div>
@@ -402,7 +407,7 @@ function confirmRiskSettings() {
         <input
           :value="tradeQty"
           inputmode="decimal"
-          :placeholder="`数量(${baseAsset}) / 最小 ${selectedTradeSymbol?.minQty || '--'}`"
+          :placeholder="`${t('trade.qty')}(${baseAsset}) / ${selectedTradeSymbol?.minQty || '--'}`"
           @input="emit('update:tradeQty', inputValue($event))"
         />
       </div>
@@ -434,11 +439,11 @@ function confirmRiskSettings() {
       </div>
 
       <div class="account-lines">
-        <span>可用</span><strong>{{ availableBalance }} {{ settleAsset }}</strong> <span>换算</span
-        ><strong>{{ conversionText }}</strong> <span>模式</span
+        <span>{{ t('trade.available') }}</span><strong>{{ availableBalance }} {{ settleAsset }}</strong> <span>{{ t('trade.conversion') }}</span
+        ><strong>{{ conversionText }}</strong> <span>{{ t('trade.mode') }}</span
         ><strong
           >{{ optionText(selectedMarginMode) }} /
-          {{ isSpotTrade ? '无杠杆' : `${leverage}X` }}</strong
+          {{ isSpotTrade ? t('trade.noLeverage') : `${leverage}X` }}</strong
         >
       </div>
 
@@ -453,12 +458,12 @@ function confirmRiskSettings() {
             active: isRiskEntryActive('long'),
           }"
         />
-        止盈/止损
+        {{ t('trade.tpSl') }}
       </button>
       <div class="account-lines">
-        <span>{{ isSpotTrade ? '可买' : '可开多' }}</span
-        ><strong>{{ longPositionQty }} {{ isSpotTrade ? baseAsset : '手' }}</strong>
-        <span>保证金</span><strong>{{ availableBalance }} {{ settleAsset }}</strong>
+        <span>{{ isSpotTrade ? t('trade.canBuy') : t('trade.canOpenLong') }}</span
+        ><strong>{{ longPositionQty }} {{ isSpotTrade ? baseAsset : t('trade.lot') }}</strong>
+        <span>{{ t('trade.margin') }}</span><strong>{{ availableBalance }} {{ settleAsset }}</strong>
       </div>
       <button
         class="wide-action wide-action--buy"
@@ -466,7 +471,7 @@ function confirmRiskSettings() {
         :disabled="submitDisabled"
         @click="emit('submit-order', 'buy')"
       >
-        {{ submittingSide === 'buy' ? '提交中' : buyLabel }}
+        {{ submittingSide === 'buy' ? t('common.submitting') : buyLabel }}
       </button>
 
       <button
@@ -480,12 +485,12 @@ function confirmRiskSettings() {
             active: isRiskEntryActive('short'),
           }"
         />
-        止盈/止损
+        {{ t('trade.tpSl') }}
       </button>
       <div class="account-lines">
-        <span>{{ isSpotTrade ? '可卖' : '可开空' }}</span
-        ><strong>{{ shortPositionQty }} {{ isSpotTrade ? baseAsset : '手' }}</strong>
-        <span>保证金</span><strong>{{ availableBalance }} {{ settleAsset }}</strong>
+        <span>{{ isSpotTrade ? t('trade.canSell') : t('trade.canOpenShort') }}</span
+        ><strong>{{ shortPositionQty }} {{ isSpotTrade ? baseAsset : t('trade.lot') }}</strong>
+        <span>{{ t('trade.margin') }}</span><strong>{{ availableBalance }} {{ settleAsset }}</strong>
       </div>
       <button
         class="wide-action wide-action--sell"
@@ -493,7 +498,7 @@ function confirmRiskSettings() {
         :disabled="submitDisabled"
         @click="emit('submit-order', 'sell')"
       >
-        {{ submittingSide === 'sell' ? '提交中' : sellLabel }}
+        {{ submittingSide === 'sell' ? t('common.submitting') : sellLabel }}
       </button>
 
       <p v-if="tradeError || unavailableText" class="order-message order-message--error">
@@ -527,7 +532,7 @@ function confirmRiskSettings() {
           <button
             type="button"
             class="selection-sheet__close"
-            aria-label="关闭"
+            :aria-label="t('common.close')"
             @click="closeSelectionSheet"
           >
             <span />
@@ -536,10 +541,10 @@ function confirmRiskSettings() {
           <h2>
             {{
               selectionSheet === 'margin'
-                ? '保证金模式'
+                ? `${t('trade.margin')}${t('trade.mode')}`
                 : selectionSheet === 'leverage'
-                  ? '杠杆'
-                  : '止盈/止损'
+                  ? t('trade.leverage')
+                  : t('trade.tpSl')
             }}
           </h2>
 
@@ -571,14 +576,14 @@ function confirmRiskSettings() {
             <label class="risk-check-row">
               <input v-model="riskTakeProfitEnabled" type="checkbox" />
               <span />
-              <strong>止盈</strong>
+              <strong>{{ t('options.TRIGGER_KIND_TAKE_PROFIT') }}</strong>
             </label>
             <div v-if="riskTakeProfitEnabled" class="risk-input-grid">
               <label class="risk-field risk-field--wide">
                 <input
                   :value="riskTakeProfitPrice"
                   inputmode="decimal"
-                  placeholder="价格"
+                  :placeholder="t('trade.price')"
                   @input="updateRiskTakeProfitPrice(inputValue($event))"
                 />
                 <strong>{{ settleAsset }}</strong>
@@ -587,7 +592,7 @@ function confirmRiskSettings() {
                 <input
                   :value="riskTakeProfitPercent"
                   inputmode="decimal"
-                  placeholder="涨幅"
+                  :placeholder="t('trade.risePercent')"
                   @input="updateRiskTakeProfitPercent(inputValue($event))"
                 />
                 <strong>%</strong>
@@ -597,14 +602,14 @@ function confirmRiskSettings() {
             <label class="risk-check-row">
               <input v-model="riskStopLossEnabled" type="checkbox" />
               <span />
-              <strong>止损</strong>
+              <strong>{{ t('options.TRIGGER_KIND_STOP_LOSS') }}</strong>
             </label>
             <div v-if="riskStopLossEnabled" class="risk-input-grid">
               <label class="risk-field risk-field--wide">
                 <input
                   :value="riskStopLossPrice"
                   inputmode="decimal"
-                  placeholder="价格"
+                  :placeholder="t('trade.price')"
                   @input="updateRiskStopLossPrice(inputValue($event))"
                 />
                 <strong>{{ settleAsset }}</strong>
@@ -613,7 +618,7 @@ function confirmRiskSettings() {
                 <input
                   :value="riskStopLossPercent"
                   inputmode="decimal"
-                  placeholder="跌幅"
+                  :placeholder="t('trade.fallPercent')"
                   @input="updateRiskStopLossPercent(inputValue($event))"
                 />
                 <strong>%</strong>
@@ -622,8 +627,8 @@ function confirmRiskSettings() {
 
             <div class="risk-divider" />
             <label v-if="riskTakeProfitEnabled || riskStopLossEnabled" class="risk-qty">
-              <strong>数量</strong>
-              <input v-model="riskQty" inputmode="decimal" placeholder="止盈止损数量" />
+              <strong>{{ t('trade.qty') }}</strong>
+              <input v-model="riskQty" inputmode="decimal" :placeholder="t('trade.qty')" />
             </label>
 
             <button
@@ -632,7 +637,7 @@ function confirmRiskSettings() {
               :disabled="!riskCanConfirm"
               @click="confirmRiskSettings"
             >
-              确认
+              {{ t('common.submit') }}
             </button>
           </div>
         </section>

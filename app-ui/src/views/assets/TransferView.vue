@@ -13,6 +13,7 @@ import AssetFlowLayout from '@/components/assets/AssetFlowLayout.vue'
 import AssetPrimaryButton from '@/components/assets/AssetPrimaryButton.vue'
 import AssetTransferSelectSheet from '@/components/assets/AssetTransferSelectSheet.vue'
 import { optionText, useOptions } from '@/composables/useOptions'
+import { useI18n } from '@/i18n'
 import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
 import {
   compareDecimalText,
@@ -24,6 +25,7 @@ import {
 
 const route = useRoute()
 const assetOptions = useOptions(apiGetAssetOptions)
+const { t } = useI18n()
 const coinConfigs = ref<AssetCoinConfig[]>([])
 const assets = ref<AssetUserAsset[]>([])
 const amount = ref('')
@@ -58,7 +60,9 @@ const pickerWalletType = computed(() =>
   pickerTarget.value === 'to' ? toWalletType.value : fromWalletType.value,
 )
 const pickerCoin = computed(() => (pickerTarget.value === 'to' ? toCoin.value : fromCoin.value))
-const pickerTitle = computed(() => (pickerTarget.value === 'to' ? '选择转入账户' : '选择转出账户'))
+const pickerTitle = computed(() =>
+  pickerTarget.value === 'to' ? t('assetFlow.chooseToAccount') : t('assetFlow.chooseFromAccount'),
+)
 const pickerVisible = computed(() => Boolean(pickerTarget.value))
 const rawAvailableAmount = computed(() => {
   if (!fromCoin.value) return '0'
@@ -80,11 +84,11 @@ const walletTypes = computed(() => {
   return options.length
     ? options
     : [
-        { value: 1, label: '现金账户' },
-        { value: 2, label: '股票账户' },
-        { value: 3, label: '合约账户' },
-        { value: 4, label: '理财账户' },
-        { value: 5, label: '期权账户' },
+        { value: 1, label: t('options.WALLET_TYPE_SPOT') },
+        { value: 2, label: t('options.WALLET_TYPE_FUNDING') },
+        { value: 3, label: t('options.WALLET_TYPE_CONTRACT') },
+        { value: 4, label: t('options.WALLET_TYPE_EARN') },
+        { value: 5, label: t('options.WALLET_TYPE_OPTION') },
       ]
 })
 const fromAccountLabel = computed(() => accountLabel(fromWalletType.value))
@@ -93,11 +97,11 @@ const fromPlaceholder = computed(() => placeholderAccountLabel(fromWalletType.va
 const toPlaceholder = computed(() => placeholderAccountLabel(toWalletType.value))
 
 function accountLabel(walletType: number) {
-  return walletTypes.value.find((account) => account.value === walletType)?.label || '现金账户'
+  return walletTypes.value.find((account) => account.value === walletType)?.label || t('options.WALLET_TYPE_SPOT')
 }
 
 function placeholderAccountLabel(walletType: number) {
-  return walletTypes.value.find((account) => account.value !== walletType)?.label || '请选择账户'
+  return walletTypes.value.find((account) => account.value !== walletType)?.label || t('assetFlow.chooseAccount')
 }
 
 function firstOtherWalletType(walletType: number) {
@@ -126,14 +130,14 @@ function selectTransferAsset(payload: { walletType: number; coin: string }) {
   const coin = payload.coin
   if (pickerTarget.value === 'to') {
     if (isSameTransferCoin(payload.walletType, coin, fromWalletType.value, fromCoin.value)) {
-      pageError.value = '同一账户同一币种无需划转'
+      pageError.value = t('assetFlow.sameCoinNoNeedTransfer')
       return
     }
     toWalletType.value = payload.walletType
     toSelectedCoin.value = coin
   } else {
     if (isSameTransferCoin(payload.walletType, coin, toWalletType.value, toCoin.value)) {
-      pageError.value = '同一账户同一币种无需划转'
+      pageError.value = t('assetFlow.sameCoinNoNeedTransfer')
       return
     }
     fromWalletType.value = payload.walletType
@@ -175,19 +179,21 @@ async function submitTransfer() {
 
   const transferAmount = parseAssetDecimalToMinorText(amount.value, fromDecimalPlaces.value)
   if (!fromCoin.value || !toCoin.value) {
-    pageError.value = '请选择划转币种'
+    pageError.value = t('assetFlow.selectTransferCoin')
     return
   }
   if (isSameTransferCoin(fromWalletType.value, fromCoin.value, toWalletType.value, toCoin.value)) {
-    pageError.value = '同一账户同一币种无需划转'
+    pageError.value = t('assetFlow.sameCoinNoNeedTransfer')
     return
   }
   if (!transferAmount || transferAmount === '0') {
-    pageError.value = `请输入有效划转数量，最多保留 ${fromInputDecimalPlaces.value} 位小数`
+    pageError.value = t('assetFlow.invalidTransferAmount', {
+      places: fromInputDecimalPlaces.value,
+    })
     return
   }
   if (compareDecimalText(transferAmount, rawAvailableAmount.value) > 0) {
-    pageError.value = '可用余额不足'
+    pageError.value = t('assetFlow.insufficientBalance')
     return
   }
 
@@ -201,15 +207,15 @@ async function submitTransfer() {
       amount: transferAmount,
     })
     if (isSuccessCode(resp.code)) {
-      pageTip.value = '划转成功'
+      pageTip.value = t('assetFlow.transferSuccess')
       amount.value = ''
       await loadPageData()
     } else {
-      pageError.value = resp.msg || '划转失败，请稍后重试'
+      pageError.value = resp.msg || t('assetFlow.transferFailedLater')
     }
   } catch (error) {
     console.warn('transfer asset failed', error)
-    pageError.value = '划转失败，请稍后重试'
+    pageError.value = t('assetFlow.transferFailedLater')
   } finally {
     submitLoading.value = false
   }
@@ -233,13 +239,13 @@ onMounted(() => {
 </script>
 
 <template>
-  <AssetFlowLayout title="划转" narrow>
+  <AssetFlowLayout :title="t('assetFlow.transfer')" narrow>
     <section class="transfer-card">
       <label class="transfer-field">
         <span class="transfer-field__head">
-          <strong>转出</strong>
+          <strong>{{ t('assetFlow.transferFrom') }}</strong>
           <small v-if="fromCoin"
-            >可用 <b>{{ availableAmount }}</b> {{ fromCoin }}</small
+            >{{ t('assetFlow.available') }} <b>{{ availableAmount }}</b> {{ fromCoin }}</small
           >
         </span>
         <button type="button" class="transfer-picker" @click="openPicker('from')">
@@ -255,7 +261,7 @@ onMounted(() => {
       </label>
 
       <label class="transfer-field">
-        <span class="transfer-field__head"><strong>转入</strong></span>
+        <span class="transfer-field__head"><strong>{{ t('assetFlow.transferTo') }}</strong></span>
         <button type="button" class="transfer-picker" @click="openPicker('to')">
           <span>{{ toAccountLabel }}</span>
           <i />
@@ -270,7 +276,7 @@ onMounted(() => {
     </section>
 
     <label class="amount-field">
-      <span>划转数量</span>
+      <span>{{ t('assetFlow.transferAmount') }}</span>
       <span class="amount-input">
         <input v-model="amount" inputmode="decimal" />
         <strong v-if="fromCoin">{{ fromCoin }}</strong>
@@ -286,7 +292,7 @@ onMounted(() => {
 
     <AssetPrimaryButton
       class="transfer-button"
-      :label="submitLoading ? '划转中' : '划转'"
+      :label="submitLoading ? t('assetFlow.transfering') : t('assetFlow.transfer')"
       @click="submitTransfer"
     />
 

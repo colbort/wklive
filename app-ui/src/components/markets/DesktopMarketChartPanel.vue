@@ -1,5 +1,6 @@
 <script setup lang='ts'>
 import { computed, ref, watch } from 'vue'
+import { getLocale, useI18n } from '@/i18n'
 import type { Interval } from '@/types/core'
 import type { KlinePayload, QuotePayload } from '@/types/itick'
 
@@ -15,6 +16,7 @@ const emit = defineEmits<{
   (e: 'select-interval', interval: Interval): void
 }>()
 
+const { t } = useI18n()
 const CHART_VIEWBOX_WIDTH = 520
 const CHART_VIEWBOX_HEIGHT = 240
 const CHART_TOP = 12
@@ -301,7 +303,7 @@ const timeAxisMarks = computed(() => {
 
 function formatNumber(value?: number | null, digits = 2) {
   if (value === null || value === undefined || !Number.isFinite(value)) return '--'
-  return new Intl.NumberFormat('zh-CN', {
+  return new Intl.NumberFormat(getLocale(), {
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
   }).format(value)
@@ -330,7 +332,7 @@ function formatVolumeMetric(value?: number | null) {
 
 function formatKlineTime(ts?: number | null, withDate = false) {
   if (!ts) return '--'
-  return new Intl.DateTimeFormat('zh-CN', withDate ? {
+  return new Intl.DateTimeFormat(getLocale(), withDate ? {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -447,11 +449,11 @@ function handleMinuteSelect(event: Event) {
         </button>
       </div>
       <div class="desktop-chart-toolbar__actions">
-        <button type="button">指标</button>
-        <button type="button">时区</button>
-        <button type="button">设置</button>
-        <button type="button">截屏</button>
-        <button type="button">全屏</button>
+        <button type="button">{{ t('market.indicator') }}</button>
+        <button type="button">{{ t('market.timezone') }}</button>
+        <button type="button">{{ t('market.settings') }}</button>
+        <button type="button">{{ t('market.screenshot') }}</button>
+        <button type="button">{{ t('market.fullscreen') }}</button>
       </div>
     </div>
 
@@ -469,11 +471,11 @@ function handleMinuteSelect(event: Event) {
 
       <div class="desktop-chart-body__main">
         <div class="desktop-chart-metrics">
-          <span>开：{{ formatPrice(metricKline?.open ?? selectedQuote?.open) }}</span>
-          <span>高：{{ formatPrice(metricKline?.high ?? selectedQuote?.high) }}</span>
-          <span>低：{{ formatPrice(metricKline?.low ?? selectedQuote?.low) }}</span>
-          <span>收：{{ formatPrice(metricKline?.close ?? selectedQuote?.lastPrice) }}</span>
-          <span>成交量：{{ formatVolumeMetric(metricKline?.volume ?? selectedQuote?.volume) }}</span>
+          <span>{{ t('market.open') }}: {{ formatPrice(metricKline?.open ?? selectedQuote?.open) }}</span>
+          <span>{{ t('market.high') }}: {{ formatPrice(metricKline?.high ?? selectedQuote?.high) }}</span>
+          <span>{{ t('market.low') }}: {{ formatPrice(metricKline?.low ?? selectedQuote?.low) }}</span>
+          <span>{{ t('market.closePrice') }}: {{ formatPrice(metricKline?.close ?? selectedQuote?.lastPrice) }}</span>
+          <span>{{ t('market.volume') }}: {{ formatVolumeMetric(metricKline?.volume ?? selectedQuote?.volume) }}</span>
           <span class="desktop-chart-metrics__ma desktop-chart-metrics__ma--muted">MA(5,10,30,60)</span>
           <span class="desktop-chart-metrics__ma desktop-chart-metrics__ma--orange">MA5: {{ formatPrice(hoveredMa5 ?? priceMa5.at(-1) ?? null) }}</span>
           <span class="desktop-chart-metrics__ma desktop-chart-metrics__ma--violet">MA10: {{ formatPrice(hoveredMa10 ?? priceMa10.at(-1) ?? null) }}</span>
@@ -489,7 +491,7 @@ function handleMinuteSelect(event: Event) {
           @mouseleave="handleChartPointerUp(); clearHover()"
           @wheel="handleChartWheel"
         >
-          <svg class="desktop-candle-chart" viewBox="0 0 520 240" role="img" aria-label="K线图">
+          <svg class="desktop-candle-chart" viewBox="0 0 520 240" role="img" :aria-label="t('market.candleChart')">
             <line x1="0" y1="58" x2="520" y2="58" class="grid-line" />
             <line x1="0" y1="120" x2="520" y2="120" class="grid-line" />
             <line x1="0" y1="182" x2="520" y2="182" class="grid-line" />
@@ -537,7 +539,7 @@ function handleMinuteSelect(event: Event) {
             {{ hoverPriceLabel.label }}
           </div>
 
-          <div v-if="loadingKline" class="desktop-chart-loading">加载中...</div>
+          <div v-if="loadingKline" class="desktop-chart-loading">{{ t('common.loading') }}...</div>
         </div>
 
         <div class="desktop-chart-volume">
@@ -550,7 +552,7 @@ function handleMinuteSelect(event: Event) {
           </div>
 
         <div class="desktop-chart-volume__canvas" @mousemove="handleVolumeHover" @mouseleave="clearHover">
-            <svg class="desktop-volume-chart" viewBox="0 0 520 36" role="img" aria-label="成交量图">
+            <svg class="desktop-volume-chart" viewBox="0 0 520 36" role="img" :aria-label="t('market.volumeChart')">
               <line v-if="hoverCrosshair" :x1="hoverCrosshair.x" :x2="hoverCrosshair.x" y1="0" y2="36" class="crosshair-line" />
               <g v-for="bar in volumeBars" :key="bar.key">
                 <rect :x="bar.x - candleGeometry.bodyWidth / 2" :y="bar.y" :width="candleGeometry.bodyWidth" :height="bar.height" rx="1" :class="bar.up ? 'candle-up' : 'candle-down'" />

@@ -8,6 +8,7 @@ import { apiListVisibleCategories, apiListVisibleProducts } from '@/api/itick'
 import { getAccessToken, getTenantCode } from '@/api/http'
 import { apiGetProfile, apiLogout } from '@/api/userPrivate'
 import { useDevice } from '@/composables/useDevice'
+import { useI18n } from '@/i18n'
 import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
 import type { ItickTenantCategory, ItickTenantProduct } from '@/types/itick'
 import type { UserProfile } from '@/types/user'
@@ -16,6 +17,7 @@ import { formatAssetMinorAmount } from '@/utils/assetAmount'
 const route = useRoute()
 const router = useRouter()
 const { isDesktop } = useDevice()
+const { locale, t, toggleLocale } = useI18n()
 
 const pageTitle = computed(() => String(route.meta.title || 'AVE'))
 const showSiteHeader = computed(() => isDesktop.value || route.name === 'home')
@@ -30,10 +32,12 @@ const userAssetCoinConfigs = ref<AssetCoinConfig[]>([])
 const activeUserPanel = ref('')
 
 const desktopDocNav = [
-  { key: 'license', label: '公司资质', path: '/home' },
-  { key: 'whitepaper', label: '白皮书', path: '/home' },
-  { key: 'compliance', label: '监管文件', path: '/home' },
+  { key: 'license', labelKey: 'nav.license', path: '/home' },
+  { key: 'whitepaper', labelKey: 'nav.whitepaper', path: '/home' },
+  { key: 'compliance', labelKey: 'nav.compliance', path: '/home' },
 ]
+
+const languageLabel = computed(() => (locale.value === 'zh-CN' ? t('common.zhCN') : t('common.enUS')))
 
 const activeDesktopCategoryType = computed(() => {
   if (hoveredCategoryType.value !== null) return hoveredCategoryType.value
@@ -220,14 +224,22 @@ async function logout() {
           class="site-nav__entry"
         >
           <RouterLink :to="item.path" class="site-nav__item">
-            <span>{{ item.label }}</span>
+            <span>{{ t(item.labelKey) }}</span>
           </RouterLink>
         </div>
       </nav>
 
       <div class="site-header__actions">
-        <button class="site-action-circle">⌕</button>
-        <button v-if="!isDesktop" class="site-action-circle">🌐</button>
+        <button class="site-action-circle" :aria-label="t('common.search')">⌕</button>
+        <button
+          v-if="!isDesktop"
+          class="site-action-circle"
+          type="button"
+          :aria-label="t('common.language')"
+          @click="toggleLocale"
+        >
+          🌐
+        </button>
         <div v-if="isDesktop" class="site-user-area">
           <div class="site-user-chip">
             <div class="site-user-chip__avatar" />
@@ -251,50 +263,50 @@ async function logout() {
               <nav>
                 <RouterLink class="site-user-menu__row" to="/assets" @mouseenter="activeUserPanel = 'assets'">
                   <span>◉</span>
-                  <strong>我的资产</strong>
+                  <strong>{{ t('userMenu.myAssets') }}</strong>
                   <em>›</em>
                 </RouterLink>
                 <RouterLink class="site-user-menu__row" to="/assets" @mouseenter="activeUserPanel = ''">
                   <span>▣</span>
-                  <strong>充值</strong>
+                  <strong>{{ t('userMenu.recharge') }}</strong>
                 </RouterLink>
                 <RouterLink class="site-user-menu__row" to="/assets" @mouseenter="activeUserPanel = ''">
                   <span>▤</span>
-                  <strong>提现</strong>
+                  <strong>{{ t('userMenu.withdraw') }}</strong>
                 </RouterLink>
                 <RouterLink class="site-user-menu__row" to="/assets" @mouseenter="activeUserPanel = ''">
                   <span>⌘</span>
-                  <strong>划转</strong>
+                  <strong>{{ t('userMenu.transfer') }}</strong>
                 </RouterLink>
                 <RouterLink class="site-user-menu__row" to="/assets" @mouseenter="activeUserPanel = ''">
                   <span>▧</span>
-                  <strong>资金记录</strong>
+                  <strong>{{ t('userMenu.flows') }}</strong>
                 </RouterLink>
                 <RouterLink class="site-user-menu__row site-user-menu__row--split" to="/profile" @mouseenter="activeUserPanel = ''">
                   <span>◈</span>
-                  <strong>推荐朋友</strong>
+                  <strong>{{ t('userMenu.invite') }}</strong>
                 </RouterLink>
                 <RouterLink class="site-user-menu__row site-user-menu__row--split" to="/assets" @mouseenter="activeUserPanel = ''">
                   <span>▤</span>
-                  <strong>订单中心</strong>
+                  <strong>{{ t('userMenu.orderCenter') }}</strong>
                 </RouterLink>
                 <RouterLink class="site-user-menu__row site-user-menu__row--split" to="/profile" @mouseenter="activeUserPanel = ''">
                   <span>▰</span>
-                  <strong>收款帐户</strong>
+                  <strong>{{ t('userMenu.paymentAccount') }}</strong>
                 </RouterLink>
                 <RouterLink class="site-user-menu__row" to="/profile" @mouseenter="activeUserPanel = ''">
                   <span>◆</span>
-                  <strong>安全设置</strong>
+                  <strong>{{ t('userMenu.security') }}</strong>
                 </RouterLink>
                 <button class="site-user-menu__row" type="button" @mouseenter="activeUserPanel = ''" @click="logout">
                   <span>↪</span>
-                  <strong>退出登录</strong>
+                  <strong>{{ t('common.logout') }}</strong>
                 </button>
               </nav>
             </div>
 
             <aside v-if="activeUserPanel === 'assets'" class="site-user-assets">
-              <h3>现金账户</h3>
+              <h3>{{ t('userMenu.cashAccount') }}</h3>
               <div class="site-user-assets__list">
                 <div v-for="asset in desktopAssetPreview" :key="asset.id || asset.coin" class="site-user-assets__row">
                   <span>{{ asset.coin.slice(0, 1) }}</span>
@@ -306,7 +318,9 @@ async function logout() {
             </aside>
           </div>
         </div>
-        <button v-if="isDesktop" class="site-action-plain">☰</button>
+        <button v-if="isDesktop" class="site-action-plain" type="button" @click="toggleLocale">
+          🌐 {{ languageLabel }}
+        </button>
         <button class="site-action-circle site-action-circle--menu">☷</button>
       </div>
     </header>
@@ -325,7 +339,7 @@ async function logout() {
           :class="{ 'mobile-tabbar__item--active': route.path === item.path }"
         >
           <span class="mobile-tabbar__icon">{{ item.icon }}</span>
-          <span>{{ item.label }}</span>
+          <span>{{ t(item.labelKey) }}</span>
         </RouterLink>
       </nav>
     </div>

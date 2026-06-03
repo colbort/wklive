@@ -3,10 +3,12 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { apiGetProfile, apiUpdateIdentity } from '@/api/userPrivate'
+import { useI18n } from '@/i18n'
 import type { UserIdentity } from '@/types/user'
 
 const route = useRoute()
 const router = useRouter()
+const { t } = useI18n()
 const account = ref('')
 const identity = ref<UserIdentity | null>(null)
 const submitting = ref(false)
@@ -14,17 +16,20 @@ const message = ref('')
 const errorMessage = ref('')
 
 const isEmailMode = computed(() => route.name === 'security-bind-email')
-const accountTypeName = computed(() => (isEmailMode.value ? '邮箱' : '手机号'))
+const accountTypeName = computed(() => (isEmailMode.value ? t('security.email') : t('security.phone')))
 const pageTitle = computed(() => {
   const current = isEmailMode.value ? identity.value?.email : identity.value?.phone
-  return current ? `修改${accountTypeName.value}` : `${accountTypeName.value}绑定`
+  if (isEmailMode.value) return current ? t('security.editEmail') : t('security.bindEmail')
+  return current ? t('security.editPhone') : t('security.bindPhone')
 })
 const inputMode = computed(() => (isEmailMode.value ? 'email' : 'tel'))
 const autocomplete = computed(() => (isEmailMode.value ? 'email' : 'tel'))
-const placeholder = computed(() => `请输入${accountTypeName.value}`)
+const placeholder = computed(() => (isEmailMode.value ? t('security.inputEmail') : t('security.inputPhone')))
 const submitText = computed(() => {
-  if (submitting.value) return '提交中'
-  return `确认${identity.value && (isEmailMode.value ? identity.value.email : identity.value.phone) ? '修改' : '绑定'}`
+  if (submitting.value) return t('common.submitting')
+  return identity.value && (isEmailMode.value ? identity.value.email : identity.value.phone)
+    ? t('security.confirmEdit')
+    : t('security.confirmBind')
 })
 
 onMounted(loadIdentity)
@@ -42,12 +47,12 @@ async function loadIdentity() {
 }
 
 function validateAccount(value: string) {
-  if (!value) return `请输入${accountTypeName.value}`
+  if (!value) return isEmailMode.value ? t('security.inputEmail') : t('security.inputPhone')
   if (isEmailMode.value) {
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return '邮箱格式不正确'
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return t('security.invalidEmail')
     return ''
   }
-  if (!/^\+?\d{6,20}$/.test(value)) return '手机号格式不正确'
+  if (!/^\+?\d{6,20}$/.test(value)) return t('security.invalidPhone')
   return ''
 }
 
@@ -69,14 +74,14 @@ async function submitBindAccount() {
       isEmailMode.value ? { email: normalizedAccount } : { phone: normalizedAccount },
     )
     if (res.code !== 0 && res.code !== 200) {
-      errorMessage.value = res.msg || '提交失败'
+      errorMessage.value = res.msg || t('security.submitFailed')
       return
     }
-    message.value = '提交成功'
+    message.value = t('security.submitSuccess')
     window.setTimeout(() => router.replace('/profile/security'), 600)
   } catch (error) {
     console.warn('bind account failed', error)
-    errorMessage.value = '提交失败'
+    errorMessage.value = t('security.submitFailed')
   } finally {
     submitting.value = false
   }
@@ -86,7 +91,7 @@ async function submitBindAccount() {
 <template>
   <section class="bind-account-page">
     <header class="bind-account-header">
-      <button type="button" class="back-button" aria-label="返回" @click="router.back()">
+      <button type="button" class="back-button" :aria-label="t('common.back')" @click="router.back()">
         <span />
       </button>
       <h1>{{ pageTitle }}</h1>

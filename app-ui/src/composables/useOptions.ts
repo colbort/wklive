@@ -1,37 +1,17 @@
 import { computed, onMounted, ref } from 'vue'
 
 import type { OptionsGroup, OptionsItem, RespBase } from '@/types/api'
+import { t } from '@/i18n'
 
 type OptionsLoader = () => Promise<RespBase & { data: OptionsGroup[] }>
-
-const CODE_LABELS: Record<string, string> = {
-  WALLET_TYPE_SPOT: '现金账户',
-  WALLET_TYPE_FUNDING: '股票账户',
-  WALLET_TYPE_CONTRACT: '合约账户',
-  WALLET_TYPE_EARN: '理财账户',
-  WALLET_TYPE_OPTION: '期权账户',
-  ORDER_TYPE_LIMIT: '限价',
-  ORDER_TYPE_MARKET: '市价',
-  TRIGGER_KIND_NONE: '普通',
-  TRIGGER_KIND_CONDITIONAL: '条件单',
-  TRIGGER_KIND_TAKE_PROFIT: '止盈',
-  TRIGGER_KIND_STOP_LOSS: '止损',
-  MARGIN_MODE_CROSS: '全仓',
-  MARGIN_MODE_ISOLATED: '逐仓',
-  TRADE_SIDE_BUY: '买入',
-  TRADE_SIDE_SELL: '卖出',
-  COMMON_STATUS_ENABLED: '启用',
-  COMMON_STATUS_DISABLED: '禁用',
-  YES_NO_YES: '是',
-  YES_NO_NO: '否',
-}
 
 function isSuccessCode(code: number) {
   return code === 0 || code === 200
 }
 
 export function optionText(option: OptionsItem) {
-  if (CODE_LABELS[option.code]) return CODE_LABELS[option.code]
+  const localized = t(`options.${option.code}`)
+  if (localized !== `options.${option.code}`) return localized
 
   return option.code
     .replace(/^(WALLET_TYPE|ORDER_TYPE|TRIGGER_KIND|MARGIN_MODE|TRADE_SIDE|COMMON_STATUS|YES_NO)_/, '')
@@ -56,13 +36,13 @@ export function useOptions(loader: OptionsLoader) {
     try {
       const resp = await loader()
       if (!isSuccessCode(resp.code)) {
-        error.value = resp.msg || 'options 加载失败'
+        error.value = resp.msg || t('options.loadFailed')
         return
       }
       groups.value = resp.data || []
     } catch (err) {
       console.warn('load options failed', err)
-      error.value = 'options 加载失败'
+      error.value = t('options.loadFailed')
     } finally {
       loading.value = false
     }

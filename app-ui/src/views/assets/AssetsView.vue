@@ -6,10 +6,10 @@ import { apiGetAssetOptions, apiGetMyAssetSummary, apiListAssetCoinConfigs } fro
 import { getAccessToken } from '@/api/http'
 import { useDevice } from '@/composables/useDevice'
 import { optionText, useOptions } from '@/composables/useOptions'
+import { useI18n } from '@/i18n'
 import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
 import { DEFAULT_ASSET_DECIMAL_PLACES, formatAssetMinorAmount } from '@/utils/assetAmount'
 
-// 资产页：展示资产中心和订单中心的移动端占位结构。
 type AssetTopTab = 'assets' | 'orders' | 'profile'
 type AssetActionKey =
   | 'cryptoRecharge'
@@ -28,6 +28,7 @@ const ASSET_OPERATION_TYPES: Partial<Record<AssetActionKey, number>> = {
 const { isDesktop } = useDevice()
 const router = useRouter()
 const assetOptions = useOptions(apiGetAssetOptions)
+const { t } = useI18n()
 const activeTopTab = ref<AssetTopTab>('assets')
 const activeAssetAccount = ref('cash')
 const activeAssetAction = ref<AssetActionKey>('cryptoRecharge')
@@ -41,35 +42,35 @@ const selectedCoinConfig = ref<AssetCoinConfig | null>(null)
 
 const assetActions: Array<{
   key: AssetActionKey
-  label: string
+  labelKey: string
   icon: string
 }> = [
-  { key: 'cryptoRecharge', label: '加密货币充值', icon: '$' },
-  { key: 'bankRecharge', label: '银行卡充值', icon: '▣' },
-  { key: 'cryptoWithdraw', label: '加密货币提现', icon: '$' },
-  { key: 'bankWithdraw', label: '银行卡提现', icon: '▭' },
-  { key: 'transfer', label: '账户划转', icon: '⇄' },
-  { key: 'flows', label: '资金记录', icon: '▤' },
+  { key: 'cryptoRecharge', labelKey: 'assets.cryptoRecharge', icon: '$' },
+  { key: 'bankRecharge', labelKey: 'assets.bankRecharge', icon: '▣' },
+  { key: 'cryptoWithdraw', labelKey: 'assets.cryptoWithdraw', icon: '$' },
+  { key: 'bankWithdraw', labelKey: 'assets.bankWithdraw', icon: '▭' },
+  { key: 'transfer', labelKey: 'assets.transfer', icon: '⇄' },
+  { key: 'flows', labelKey: 'assets.flows', icon: '▤' },
 ]
 
 const fallbackAssetAccounts = [
-  { key: 'cash', label: '现金账户', walletType: 1 },
-  { key: 'stock', label: '股票账户', walletType: 2 },
-  { key: 'contract', label: '合约账户', walletType: 3 },
+  { key: 'cash', code: 'WALLET_TYPE_SPOT', walletType: 1 },
+  { key: 'stock', code: 'WALLET_TYPE_FUNDING', walletType: 2 },
+  { key: 'contract', code: 'WALLET_TYPE_CONTRACT', walletType: 3 },
 ]
 
 const orderScopes = [
-  { key: 'stock', label: '股票' },
-  { key: 'contract', label: '合约订单' },
-  { key: 'option', label: '期权合约' },
+  { key: 'stock', labelKey: 'assets.stock' },
+  { key: 'contract', labelKey: 'assets.contractOrders' },
+  { key: 'option', labelKey: 'assets.optionContract' },
 ]
 
-const orderTabs = ['当前持仓', '历史查询', '盘前订单']
+const orderTabs = ['assets.currentPosition', 'assets.history', 'assets.premarketOrders']
 
-const pageTabs: Array<{ key: AssetTopTab; label: string }> = [
-  { key: 'assets', label: '资产中心' },
-  { key: 'orders', label: '订单中心' },
-  { key: 'profile', label: '个人中心' },
+const pageTabs: Array<{ key: AssetTopTab; labelKey: string; shortLabelKey: string }> = [
+  { key: 'assets', labelKey: 'assets.assetCenter', shortLabelKey: 'assets.assets' },
+  { key: 'orders', labelKey: 'assets.orderCenter', shortLabelKey: 'assets.orders' },
+  { key: 'profile', labelKey: 'assets.profileCenter', shortLabelKey: 'assets.profile' },
 ]
 
 const assetAccounts = computed(() => {
@@ -82,7 +83,13 @@ const assetAccounts = computed(() => {
       walletType: option.value,
     }))
 
-  return walletTypeOptions.length ? walletTypeOptions : fallbackAssetAccounts
+  return walletTypeOptions.length
+    ? walletTypeOptions
+    : fallbackAssetAccounts.map((account) => ({
+        key: account.key,
+        label: t(`options.${account.code}`),
+        walletType: account.walletType,
+      }))
 })
 
 const activeWalletType = computed(() => {
@@ -95,7 +102,7 @@ const activeOperationType = computed(() => ASSET_OPERATION_TYPES[activeAssetActi
 const activeAccountLabel = computed(() => {
   return (
     assetAccounts.value.find((account) => account.key === activeAssetAccount.value)?.label ||
-    '现金账户'
+  t('options.WALLET_TYPE_SPOT')
   )
 })
 
@@ -213,7 +220,7 @@ async function loadCoinConfigs() {
   coinConfigsMessage.value = ''
 
   if (!getAccessToken()) {
-    coinConfigsMessage.value = '请先登录'
+    coinConfigsMessage.value = t('assets.loginFirst')
     return
   }
 
@@ -225,17 +232,17 @@ async function loadCoinConfigs() {
     })
 
     if (!isSuccessCode(resp.code)) {
-      coinConfigsMessage.value = resp.msg || '币种配置获取失败'
+      coinConfigsMessage.value = resp.msg || t('assets.coinConfigLoadFailed')
       return
     }
 
     coinConfigs.value = resp.data || []
     if (!coinConfigs.value.length) {
-      coinConfigsMessage.value = '暂无可用币种'
+      coinConfigsMessage.value = t('assets.noCoins')
     }
   } catch (error) {
     console.warn('list asset coin configs failed', error)
-    coinConfigsMessage.value = '币种配置获取失败'
+    coinConfigsMessage.value = t('assets.coinConfigLoadFailed')
   } finally {
     coinConfigsLoading.value = false
   }
@@ -266,7 +273,7 @@ onMounted(() => {
 
 <template>
   <section class="assets-page" :class="{ 'assets-page--desktop': isDesktop }">
-    <nav class="assets-top-tabs" aria-label="资产页面">
+    <nav class="assets-top-tabs" :aria-label="t('assets.pageLabel')">
       <button
         v-for="tab in isDesktop ? pageTabs : pageTabs.slice(0, 2)"
         :key="tab.key"
@@ -274,14 +281,14 @@ onMounted(() => {
         :class="{ active: activeTopTab === tab.key }"
         @click="activeTopTab = tab.key"
       >
-        {{ isDesktop ? tab.label : tab.label.replace('中心', '') }}
+        {{ isDesktop ? t(tab.labelKey) : t(tab.shortLabelKey) }}
       </button>
     </nav>
 
     <template v-if="activeTopTab === 'assets'">
       <div class="assets-center">
         <aside v-if="isDesktop" class="assets-sidebar">
-          <nav class="assets-account-card" aria-label="账户类型">
+          <nav class="assets-account-card" :aria-label="t('assets.accountLabel')">
             <button
               v-for="account in assetAccounts"
               :key="account.key"
@@ -293,7 +300,7 @@ onMounted(() => {
             </button>
           </nav>
 
-          <nav class="assets-action-card" aria-label="资产操作">
+          <nav class="assets-action-card" :aria-label="t('assets.actionLabel')">
             <button
               v-for="action in assetActions"
               :key="action.key"
@@ -301,7 +308,7 @@ onMounted(() => {
               :class="{ active: activeAssetAction === action.key }"
               @click="handleAssetAction(action.key)"
             >
-              {{ action.label }}
+              {{ t(action.labelKey) }}
             </button>
           </nav>
         </aside>
@@ -316,11 +323,11 @@ onMounted(() => {
               @click="handleAssetAction(action.key)"
             >
               <span>{{ action.icon }}</span>
-              <strong>{{ action.label }}</strong>
+              <strong>{{ t(action.labelKey) }}</strong>
             </button>
           </section>
 
-          <nav v-if="!isDesktop" class="assets-sub-tabs" aria-label="账户类型">
+          <nav v-if="!isDesktop" class="assets-sub-tabs" :aria-label="t('assets.accountLabel')">
             <button
               v-for="account in assetAccounts"
               :key="account.key"
@@ -339,7 +346,7 @@ onMounted(() => {
 
           <section class="asset-coin-configs" aria-live="polite">
             <div v-if="coinConfigsLoading || summaryLoading" class="asset-coin-configs__state">
-              加载中
+              {{ t('common.loading') }}
             </div>
             <div
               v-else-if="coinConfigsMessage && !displayedAssets.length"
@@ -378,7 +385,7 @@ onMounted(() => {
           </section>
 
           <div v-if="!getAccessToken()" class="asset-login-tip">
-            <span>登录</span>或<span>注册</span>查看资产
+            <span>{{ t('common.login') }}</span>/<span>{{ t('common.register') }}</span> {{ t('assets.viewAssets') }}
           </div>
         </section>
       </div>
@@ -389,17 +396,17 @@ onMounted(() => {
         role="presentation"
         @click.self="closeCoinActions"
       >
-        <section class="coin-action-sheet" role="dialog" aria-modal="true" aria-label="币种操作">
+        <section class="coin-action-sheet" role="dialog" aria-modal="true" :aria-label="t('assets.coinAction')">
           <button
             class="coin-action-sheet__close"
             type="button"
-            aria-label="关闭"
+            :aria-label="t('common.close')"
             @click="closeCoinActions"
           >
             ×
           </button>
           <i class="coin-action-sheet__handle" />
-          <h2>币种操作</h2>
+          <h2>{{ t('assets.coinAction') }}</h2>
           <span
             class="coin-action-sheet__coin"
             :style="{
@@ -422,7 +429,7 @@ onMounted(() => {
               @click="openAssetFlow('recharge')"
             >
               <span>⇣</span>
-              <strong>充值</strong>
+              <strong>{{ t('userMenu.recharge') }}</strong>
             </button>
             <button
               type="button"
@@ -430,7 +437,7 @@ onMounted(() => {
               @click="openAssetFlow('withdraw')"
             >
               <span>⇡</span>
-              <strong>提现</strong>
+              <strong>{{ t('userMenu.withdraw') }}</strong>
             </button>
             <button
               type="button"
@@ -438,7 +445,7 @@ onMounted(() => {
               @click="openAssetFlow('transfer', 'in')"
             >
               <span>↯</span>
-              <strong>转入</strong>
+              <strong>{{ t('assets.transferIn') }}</strong>
             </button>
             <button
               type="button"
@@ -446,7 +453,7 @@ onMounted(() => {
               @click="openAssetFlow('transfer', 'out')"
             >
               <span>↟</span>
-              <strong>转出</strong>
+              <strong>{{ t('assets.transferOut') }}</strong>
             </button>
           </div>
         </section>
@@ -454,7 +461,7 @@ onMounted(() => {
     </template>
 
     <template v-else-if="activeTopTab === 'orders'">
-      <nav class="assets-sub-tabs assets-sub-tabs--orders" aria-label="订单分类">
+      <nav class="assets-sub-tabs assets-sub-tabs--orders" :aria-label="t('assets.orderCategory')">
         <button
           v-for="scope in orderScopes"
           :key="scope.key"
@@ -462,29 +469,29 @@ onMounted(() => {
           :class="{ active: activeOrderScope === scope.key }"
           @click="activeOrderScope = scope.key"
         >
-          {{ scope.label }}
+          {{ t(scope.labelKey) }}
         </button>
       </nav>
 
-      <nav class="assets-order-tabs" aria-label="订单状态">
+      <nav class="assets-order-tabs" :aria-label="t('assets.orderStatus')">
         <button
           v-for="(tab, index) in orderTabs"
           :key="tab"
           type="button"
           :class="{ active: index === 0 }"
         >
-          {{ tab }}
+          {{ t(tab) }}
         </button>
       </nav>
 
       <div class="asset-login-tip asset-login-tip--orders">
-        <span>登录</span>或<span>注册</span>查看数据
+        <span>{{ t('common.login') }}</span>/<span>{{ t('common.register') }}</span> {{ t('assets.viewData') }}
       </div>
     </template>
 
     <template v-else>
       <div class="asset-login-tip asset-login-tip--orders">
-        <span>登录</span>或<span>注册</span>查看资料
+        <span>{{ t('common.login') }}</span>/<span>{{ t('common.register') }}</span> {{ t('assets.viewProfile') }}
       </div>
     </template>
   </section>

@@ -9,6 +9,7 @@ import AssetCoinPicker from '@/components/assets/AssetCoinPicker.vue'
 import AssetFlowLayout from '@/components/assets/AssetFlowLayout.vue'
 import AssetPrimaryButton from '@/components/assets/AssetPrimaryButton.vue'
 import { useOptions } from '@/composables/useOptions'
+import { useI18n } from '@/i18n'
 import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
 import {
   formatAssetDecimalAmount,
@@ -20,6 +21,7 @@ import {
 
 const route = useRoute()
 const assetOptions = useOptions(apiGetAssetOptions)
+const { t } = useI18n()
 const coinConfigs = ref<AssetCoinConfig[]>([])
 const assets = ref<AssetUserAsset[]>([])
 const amount = ref('')
@@ -117,15 +119,17 @@ async function submitWithdraw() {
   const withdrawAmountText = parseAssetDecimalToMinorText(amount.value, selectedDecimalPlaces.value)
   const withdrawAmount = Number(withdrawAmountText)
   if (!coin.value) {
-    pageError.value = '请选择提现币种'
+    pageError.value = t('assetFlow.selectWithdrawCoin')
     return
   }
   if (!address.value.trim()) {
-    pageError.value = '请输入提现地址'
+    pageError.value = t('assetFlow.inputWithdrawAddress')
     return
   }
   if (!withdrawAmountText || withdrawAmount <= 0) {
-    pageError.value = `请输入有效提现金额，最多保留 ${selectedInputDecimalPlaces.value} 位小数`
+    pageError.value = t('assetFlow.invalidWithdrawAmount', {
+      places: selectedInputDecimalPlaces.value,
+    })
     return
   }
 
@@ -139,16 +143,18 @@ async function submitWithdraw() {
       remark: selectedChain.value ? `chain:${selectedChain.value}` : '',
     })
     if (isSuccessCode(resp.code)) {
-      pageTip.value = resp.id ? `提现申请已提交：${resp.id}` : '提现申请已提交'
+      pageTip.value = resp.id
+        ? t('assetFlow.withdrawSubmittedWithId', { id: resp.id })
+        : t('assetFlow.withdrawSubmitted')
       amount.value = ''
       address.value = ''
       await loadPageData()
     } else {
-      pageError.value = resp.msg || '提现提交失败，请稍后重试'
+      pageError.value = resp.msg || t('assetFlow.withdrawFailedLater')
     }
   } catch (error) {
     console.warn('create withdraw order failed', error)
-    pageError.value = '提现提交失败，请稍后重试'
+    pageError.value = t('assetFlow.withdrawFailedLater')
   } finally {
     submitLoading.value = false
   }
@@ -160,11 +166,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <AssetFlowLayout title="提现" right-text="资金记录" narrow>
-    <button type="button" class="asset-type-pill">加密货币</button>
+  <AssetFlowLayout :title="t('assetFlow.withdraw')" :right-text="t('assetFlow.records')" narrow>
+    <button type="button" class="asset-type-pill">{{ t('assetFlow.crypto') }}</button>
 
     <label class="field-block">
-      <span>币种</span>
+      <span>{{ t('assetFlow.coin') }}</span>
       <AssetCoinPicker
         :coin="coin"
         :config="selectedConfig || undefined"
@@ -174,18 +180,18 @@ onMounted(() => {
     </label>
 
     <label class="field-block">
-      <span>提现地址</span>
+      <span>{{ t('assetFlow.withdrawAddress') }}</span>
       <span class="asset-input asset-input--address">
-        <input v-model="address" placeholder="选择或输入地址" />
+        <input v-model="address" :placeholder="t('assetFlow.addressPlaceholder')" />
         <i>▣</i>
       </span>
     </label>
 
     <label class="field-block">
       <span class="field-block__row">
-        <span>提现金额</span>
+        <span>{{ t('assetFlow.withdrawAmount') }}</span>
         <small
-          >可提现 <b>{{ availableAmount }}</b> {{ coin }}</small
+          >{{ t('assetFlow.withdrawable') }} <b>{{ availableAmount }}</b> {{ coin }}</small
         >
       </span>
       <input v-model="amount" class="asset-input" inputmode="decimal" />
@@ -193,11 +199,11 @@ onMounted(() => {
 
     <dl class="withdraw-summary">
       <div>
-        <dt>手续费</dt>
+        <dt>{{ t('assetFlow.fee') }}</dt>
         <dd>{{ feeAmount }} {{ coin }}</dd>
       </div>
       <div>
-        <dt>到账金额</dt>
+        <dt>{{ t('assetFlow.receivedAmount') }}</dt>
         <dd>{{ receivedAmount }} {{ coin }}</dd>
       </div>
     </dl>
@@ -209,7 +215,7 @@ onMounted(() => {
       {{ pageTip }}
     </p>
 
-    <AssetPrimaryButton :label="submitLoading ? '提交中' : '提现'" @click="submitWithdraw" />
+    <AssetPrimaryButton :label="submitLoading ? t('common.submitting') : t('assetFlow.withdraw')" @click="submitWithdraw" />
 
     <AssetCoinSelectSheet
       v-model="coinSheetVisible"

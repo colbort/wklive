@@ -1,6 +1,7 @@
 <script setup lang='ts'>
 import { computed, ref } from 'vue'
 
+import { useI18n } from '@/i18n'
 import type { TradeOrder, TradeSymbol } from '@/types/trade'
 
 type OrderTab = 'open' | 'history'
@@ -28,6 +29,7 @@ const emit = defineEmits<{
   (e: 'refresh'): void
 }>()
 
+const { locale, t } = useI18n()
 const activeTab = ref<OrderTab>('open')
 const openStatuses = new Set([1, 2])
 const filteredOrders = computed(() => {
@@ -38,33 +40,33 @@ const filteredOrders = computed(() => {
 })
 
 function orderSideText(order: TradeOrder) {
-  if (order.positionSide === 2) return '开多'
-  if (order.positionSide === 3) return '开空'
-  return order.side === 1 ? '买入' : '卖出'
+  if (order.positionSide === 2) return t('trade.openLong')
+  if (order.positionSide === 3) return t('trade.openShort')
+  return order.side === 1 ? t('trade.buy') : t('trade.sell')
 }
 
 function statusText(status: number) {
   const labels: Record<number, string> = {
-    1: '委托中',
-    2: '部分成交',
-    3: '已成交',
-    4: '已撤销',
-    5: '已拒绝',
-    6: '已过期',
+    1: t('trade.pending'),
+    2: t('trade.partiallyFilled'),
+    3: t('trade.filled'),
+    4: t('trade.canceled'),
+    5: t('trade.rejected'),
+    6: t('trade.expired'),
   }
-  return labels[status] || '未知'
+  return labels[status] || t('trade.unknown')
 }
 
 function orderTypeText(orderType: number) {
-  if (orderType === 1) return '限价'
-  if (orderType === 2) return '市价'
-  return '条件'
+  if (orderType === 1) return t('trade.limit')
+  if (orderType === 2) return t('trade.market')
+  return t('trade.conditional')
 }
 
 function formatTime(value: number) {
   if (!value) return '--'
   const ms = value > 9999999999 ? value : value * 1000
-  return new Date(ms).toLocaleString('zh-CN', {
+  return new Date(ms).toLocaleString(locale.value, {
     month: '2-digit',
     day: '2-digit',
     hour: '2-digit',
@@ -76,19 +78,19 @@ function formatTime(value: number) {
 <template>
   <section class="trade-orders-panel">
     <div class="trade-orders-panel__nav">
-      <button :class="{ active: activeTab === 'open' }" type="button" @click="activeTab = 'open'">当前委托</button>
-      <button :class="{ active: activeTab === 'history' }" type="button" @click="activeTab = 'history'">历史订单</button>
-      <button v-if="showPremarket" type="button">盘前订单</button>
-      <button class="trade-orders-panel__refresh" type="button" @click="emit('refresh')">刷新</button>
+      <button :class="{ active: activeTab === 'open' }" type="button" @click="activeTab = 'open'">{{ t('trade.openOrders') }}</button>
+      <button :class="{ active: activeTab === 'history' }" type="button" @click="activeTab = 'history'">{{ t('trade.historyOrders') }}</button>
+      <button v-if="showPremarket" type="button">{{ t('trade.premarketOrders') }}</button>
+      <button class="trade-orders-panel__refresh" type="button" @click="emit('refresh')">{{ t('trade.refresh') }}</button>
     </div>
 
     <p v-if="!isLoggedIn" class="trade-orders-panel__state trade-orders-panel__auth">
-      <span>登录</span>或<span>注册</span>查看数据
+      {{ t('trade.loginOrRegisterViewData') }}
     </p>
-    <p v-else-if="!selectedTradeSymbol" class="trade-orders-panel__state">当前品种暂未开放交易</p>
-    <p v-else-if="loading" class="trade-orders-panel__state">委托加载中</p>
+    <p v-else-if="!selectedTradeSymbol" class="trade-orders-panel__state">{{ t('trade.unavailable') }}</p>
+    <p v-else-if="loading" class="trade-orders-panel__state">{{ t('trade.orderLoading') }}</p>
     <p v-else-if="error" class="trade-orders-panel__state trade-orders-panel__state--error">{{ error }}</p>
-    <p v-else-if="!filteredOrders.length" class="trade-orders-panel__state">暂无数据</p>
+    <p v-else-if="!filteredOrders.length" class="trade-orders-panel__state">{{ t('common.none') }}</p>
 
     <ul v-else class="trade-orders-panel__list">
       <li v-for="order in filteredOrders" :key="order.id || order.orderNo" class="trade-orders-panel__item">
@@ -97,7 +99,7 @@ function formatTime(value: number) {
           <span>{{ orderSideText(order) }} / {{ orderTypeText(order.orderType) }}</span>
         </div>
         <div>
-          <strong>{{ order.price || '市价' }}</strong>
+          <strong>{{ order.price || t('trade.market') }}</strong>
           <span>{{ order.qty }} / {{ order.filledQty || '0' }}</span>
         </div>
         <div>
@@ -110,7 +112,7 @@ function formatTime(value: number) {
           :disabled="cancelingOrderId === order.id"
           @click="emit('cancel-order', order)"
         >
-          {{ cancelingOrderId === order.id ? '撤单中' : '撤单' }}
+          {{ cancelingOrderId === order.id ? t('trade.canceling') : t('trade.cancel') }}
         </button>
       </li>
     </ul>
