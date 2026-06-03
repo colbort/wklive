@@ -103,6 +103,12 @@
           </template>
         </el-table-column>
 
+        <el-table-column :label="t('trade.triggerKind')" width="120">
+          <template #default="{ row }">
+            {{ optionLabel('triggerKind', row.triggerKind) }}
+          </template>
+        </el-table-column>
+
         <el-table-column :label="t('trade.price')" min-width="120" align="right">
           <template #default="{ row }">
             {{ displayAmount(row.price) }}
@@ -210,6 +216,9 @@
           <el-descriptions :title="t('trade.orderParams')" :column="2" border>
             <el-descriptions-item :label="t('trade.orderType')">
               {{ optionLabel('orderType', detailData.orderType) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.triggerKind')">
+              {{ optionLabel('triggerKind', detailData.triggerKind) }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('trade.timeInForce')">
               {{ optionLabel('timeInForce', detailData.timeInForce) }}
@@ -325,9 +334,12 @@ const fallbackOptions: Record<string, OptionItem[]> = {
   orderType: [
     { value: 1, code: 'ORDER_TYPE_LIMIT' },
     { value: 2, code: 'ORDER_TYPE_MARKET' },
-    { value: 3, code: 'ORDER_TYPE_CONDITIONAL' },
-    { value: 4, code: 'ORDER_TYPE_TAKE_PROFIT' },
-    { value: 5, code: 'ORDER_TYPE_STOP_LOSS' },
+  ],
+  triggerKind: [
+    { value: 0, code: 'TRIGGER_KIND_NONE' },
+    { value: 1, code: 'TRIGGER_KIND_CONDITIONAL' },
+    { value: 2, code: 'TRIGGER_KIND_TAKE_PROFIT' },
+    { value: 3, code: 'TRIGGER_KIND_STOP_LOSS' },
   ],
   timeInForce: [
     { value: 1, code: 'TIME_IN_FORCE_GTC' },

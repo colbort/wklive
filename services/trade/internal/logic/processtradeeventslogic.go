@@ -142,7 +142,10 @@ func (l *ProcessTradeEventsLogic) rejectFreezingOrderIfNeeded(orderID, now int64
 		rejectedOrder = order
 		return nil
 	})
-	return rejectedOrder, err
+	if err != nil || rejectedOrder == nil {
+		return rejectedOrder, err
+	}
+	return rejectedOrder, removeOrderBookOrder(l.svcCtx, l.ctx, rejectedOrder)
 }
 
 func (l *ProcessTradeEventsLogic) triggerWaitingOrders(in *trade.TradeTaskReq) error {
@@ -188,7 +191,8 @@ func (l *ProcessTradeEventsLogic) triggerWaitingOrders(in *trade.TradeTaskReq) e
 }
 
 func (l *ProcessTradeEventsLogic) triggerOrderIfNeeded(orderID int64, triggerPrice float64, now int64) error {
-	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	var triggeredOrder *models.TTradeOrder
+	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.TradeOrderModel)
 		order, err := orderModel.FindOneForUpdate(ctx, orderID)
@@ -213,12 +217,20 @@ func (l *ProcessTradeEventsLogic) triggerOrderIfNeeded(orderID int64, triggerPri
 			return err
 		}
 		order.BizExt = sql.NullString{String: extValue, Valid: extValue != ""}
-		order.OrderType = triggeredOrderType(order)
+		order.OrderType = triggeredOrderExecutionType(order)
 		order.TimeInForce = triggeredTimeInForce(order)
 		order.Status = int64(trade.OrderStatus_ORDER_STATUS_PENDING)
 		order.UpdateTimes = now
-		return orderModel.Update(ctx, order)
+		if err := orderModel.Update(ctx, order); err != nil {
+			return err
+		}
+		triggeredOrder = order
+		return nil
 	})
+	if err != nil || triggeredOrder == nil {
+		return err
+	}
+	return cacheOrderBookOrder(l.svcCtx, l.ctx, triggeredOrder)
 }
 
 func (l *ProcessTradeEventsLogic) expireImmediateOrders(in *trade.TradeTaskReq) error {
@@ -242,6 +254,9 @@ func (l *ProcessTradeEventsLogic) expireImmediateOrders(in *trade.TradeTaskReq) 
 				return err
 			}
 			if expiredOrder != nil {
+				if err := removeOrderBookOrder(l.svcCtx, l.ctx, expiredOrder); err != nil {
+					return err
+				}
 				if err := unfreezeRemainingOrderAsset(l.svcCtx, l.ctx, expiredOrder, "trade expired order unfreeze"); err != nil {
 					return err
 				}
@@ -274,7 +289,10 @@ func (l *ProcessTradeEventsLogic) expireOrderIfNeeded(orderID, now int64) (*mode
 		expiredOrder = order
 		return nil
 	})
-	return expiredOrder, err
+	if err != nil || expiredOrder == nil {
+		return expiredOrder, err
+	}
+	return expiredOrder, removeOrderBookOrder(l.svcCtx, l.ctx, expiredOrder)
 }
 
 func (l *ProcessTradeEventsLogic) repairFrozenAssets(in *trade.TradeTaskReq) error {

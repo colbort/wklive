@@ -121,8 +121,12 @@
       "watchlist",
       "wechat",
       "wklive",
+      "Zadd",
       "zeromicro",
-      "zrpc"
+      "Zrange",
+      "Zrem",
+      "zrpc",
+      "zset"
     ]
   },
   "launch": {

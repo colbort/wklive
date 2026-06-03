@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"errors"
 	"math"
 
 	"wklive/common/conv"
@@ -80,34 +81,86 @@ func (l *ProcessOrderMatchingLogic) matchOrderBook(key models.TradeOrderMatchKey
 }
 
 func (l *ProcessOrderMatchingLogic) findNextOrderMatch(key models.TradeOrderMatchKey) (*orderMatchPlan, error) {
-	buys, err := l.svcCtx.TradeOrderModel.FindOpenMatchOrders(
-		l.ctx,
-		key.TenantId,
-		key.SymbolId,
-		key.MarketType,
-		int64(trade.TradeSide_TRADE_SIDE_BUY),
-		matchableOrderStatuses(),
-		int64(trade.OrderType_ORDER_TYPE_MARKET),
-		orderMatchBookDepth,
-	)
+	buys, err := l.findOpenMatchOrdersFromBook(key, int64(trade.TradeSide_TRADE_SIDE_BUY), orderMatchBookDepth)
 	if err != nil {
 		return nil, err
 	}
-	sells, err := l.svcCtx.TradeOrderModel.FindOpenMatchOrders(
-		l.ctx,
-		key.TenantId,
-		key.SymbolId,
-		key.MarketType,
-		int64(trade.TradeSide_TRADE_SIDE_SELL),
-		matchableOrderStatuses(),
-		int64(trade.OrderType_ORDER_TYPE_MARKET),
-		orderMatchBookDepth,
-	)
+	sells, err := l.findOpenMatchOrdersFromBook(key, int64(trade.TradeSide_TRADE_SIDE_SELL), orderMatchBookDepth)
 	if err != nil {
 		return nil, err
 	}
 
 	return selectOrderMatchPlan(buys, sells), nil
+}
+
+func (l *ProcessOrderMatchingLogic) findOpenMatchOrdersFromBook(key models.TradeOrderMatchKey, side, limit int64) ([]*models.TTradeOrder, error) {
+	orders, err := l.findOpenMatchOrdersFromCache(key, side, limit)
+	if err != nil {
+		l.Errorf("find match orders from redis book failed, tenantId=%d symbolId=%d marketType=%d side=%d err=%v",
+			key.TenantId, key.SymbolId, key.MarketType, side, err)
+	} else if len(orders) > 0 {
+		return orders, nil
+	}
+
+	orders, err = l.svcCtx.TradeOrderModel.FindOpenMatchOrders(
+		l.ctx,
+		key.TenantId,
+		key.SymbolId,
+		key.MarketType,
+		side,
+		matchableOrderStatuses(),
+		int64(trade.OrderType_ORDER_TYPE_MARKET),
+		limit,
+	)
+	if err != nil {
+		return nil, err
+	}
+	for _, order := range orders {
+		if err := cacheOrderBookOrder(l.svcCtx, l.ctx, order); err != nil {
+			l.Errorf("warm redis order book failed, orderId=%d err=%v", order.Id, err)
+		}
+	}
+	return orders, nil
+}
+
+func (l *ProcessOrderMatchingLogic) findOpenMatchOrdersFromCache(key models.TradeOrderMatchKey, side, limit int64) ([]*models.TTradeOrder, error) {
+	if l.svcCtx == nil || l.svcCtx.Redis == nil || limit <= 0 {
+		return nil, nil
+	}
+	cacheKey := orderBookKeyBySide(key.TenantId, key.SymbolId, key.MarketType, side)
+	scanLimit := limit * orderBookScanFactor
+	members, err := l.svcCtx.Redis.ZrangeCtx(l.ctx, cacheKey, 0, scanLimit-1)
+	if err != nil {
+		return nil, err
+	}
+	orders := make([]*models.TTradeOrder, 0, limit)
+	for _, member := range members {
+		orderID, err := orderBookMemberID(member)
+		if err != nil {
+			continue
+		}
+		order, err := l.svcCtx.TradeOrderModel.FindOne(l.ctx, orderID)
+		if errors.Is(err, models.ErrNotFound) {
+			if removeErr := removeOrderBookMember(l.svcCtx, l.ctx, cacheKey, orderID); removeErr != nil {
+				return nil, removeErr
+			}
+			continue
+		}
+		if err != nil {
+			return nil, err
+		}
+		if !sameMatchBook(order, key, side) || !isOrderBookOrder(order) {
+			if removeErr := removeOrderBookMember(l.svcCtx, l.ctx, cacheKey, orderID); removeErr != nil {
+				return nil, removeErr
+			}
+			continue
+		}
+		orders = append(orders, order)
+		if int64(len(orders)) >= limit {
+			break
+		}
+	}
+	return orders, nil
 }
 
 func selectOrderMatchPlan(buys, sells []*models.TTradeOrder) *orderMatchPlan {
@@ -144,6 +197,7 @@ func (l *ProcessOrderMatchingLogic) executeOrderMatch(key models.TradeOrderMatch
 
 	now := utils.NowMillis()
 	matched := false
+	matchedOrderIDs := make(map[int64]struct{})
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		fillModel := models.NewTTradeFillModel(conn, l.svcCtx.Config.CacheRedis).(models.TradeFillModel)
@@ -189,11 +243,21 @@ func (l *ProcessOrderMatchingLogic) executeOrderMatch(key models.TradeOrderMatch
 			if err := recordOrderFillWithModels(ctx, fillModel, orderModel, buildMatchFill(lockedPlan.SellOrder, sellFillNo, sellLiquidity, lockedPlan, sellFee, feeAssetForOrder(lockedPlan.SellOrder, symbol), now), now); err != nil {
 				return err
 			}
+			matchedOrderIDs[lockedPlan.BuyOrder.Id] = struct{}{}
+			matchedOrderIDs[lockedPlan.SellOrder.Id] = struct{}{}
 			matched = true
 		}
 		return nil
 	})
-	return matched, err
+	if err != nil || !matched {
+		return matched, err
+	}
+	for orderID := range matchedOrderIDs {
+		if syncErr := syncOrderBookCacheByID(l.svcCtx, l.ctx, orderID); syncErr != nil {
+			l.Errorf("sync redis order book after match failed, orderId=%d err=%v", orderID, syncErr)
+		}
+	}
+	return matched, nil
 }
 
 func (l *ProcessOrderMatchingLogic) normalizeLockedMatchPlans(ctx context.Context, orderModel models.TradeOrderModel, key models.TradeOrderMatchKey, buy, sell *models.TTradeOrder) ([]*orderMatchPlan, bool, error) {
@@ -403,10 +467,7 @@ func (n orderFillNeed) matchQty(price float64) float64 {
 	if n.byQty {
 		return n.remainingQty
 	}
-	if price <= 0 {
-		return 0
-	}
-	return n.remainingAmount / price
+	return tradeQtyFromMinorAmount(n.remainingAmount, price)
 }
 
 func (n *orderFillNeed) consume(qty, amount float64) {
@@ -536,6 +597,9 @@ func (l *ProcessOrderMatchingLogic) expireResidualImmediateOrders(key models.Tra
 			return err
 		}
 		if expiredOrder != nil {
+			if err := removeOrderBookOrder(l.svcCtx, l.ctx, expiredOrder); err != nil {
+				return err
+			}
 			if err := unfreezeRemainingOrderAsset(l.svcCtx, l.ctx, expiredOrder, "trade matching residual unfreeze"); err != nil {
 				return err
 			}
@@ -608,5 +672,8 @@ func (l *ProcessOrderMatchingLogic) expireOpenOrderNow(orderID int64, reason str
 		expiredOrder = order
 		return nil
 	})
-	return expiredOrder, err
+	if err != nil || expiredOrder == nil {
+		return expiredOrder, err
+	}
+	return expiredOrder, removeOrderBookOrder(l.svcCtx, l.ctx, expiredOrder)
 }

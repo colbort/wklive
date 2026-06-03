@@ -97,6 +97,9 @@ func (l *CancelOrderLogic) CancelOrder(in *trade.CancelOrderReq) (*trade.AppComm
 		return nil, err
 	}
 	if canceledOrder != nil {
+		if err = removeOrderBookOrder(l.svcCtx, l.ctx, canceledOrder); err != nil {
+			return nil, err
+		}
 		if err = unfreezeRemainingOrderAsset(l.svcCtx, l.ctx, canceledOrder, "trade cancel order unfreeze"); err != nil {
 			return nil, err
 		}

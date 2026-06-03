@@ -944,6 +944,7 @@ async function cancelTradeOrder(order: TradeOrder) {
       :placeholder-change="placeholderChange"
       :selected-quote="selectedQuote"
       :depth-snapshot="depthSnapshot"
+      :tick-snapshot="tickSnapshot"
       :product-menu-open="productMenuOpen"
       :product-sheet-rows="productSheetRows"
       :order-mode="orderMode"

@@ -1,22 +1,41 @@
 <script setup lang='ts'>
 import { computed } from 'vue'
 
-import type { DepthLevel, DepthPayload, ItickTenantProduct } from '@/types/itick'
+import type { DepthLevel, DepthPayload, ItickTenantProduct, QuotePayload, TickPayload } from '@/types/itick'
 
 const props = defineProps<{
   selectedProduct: ItickTenantProduct | null
   depthSnapshot: DepthPayload | null
+  selectedQuote: QuotePayload | null
+  tickSnapshot: TickPayload[]
   placeholderPrice: string
 }>()
 
 const askRows = computed(() => props.depthSnapshot?.asks ?? [])
 const bidRows = computed(() => props.depthSnapshot?.bids ?? [])
-const midPrice = computed(() => {
+const latestPrice = computed(() => props.tickSnapshot[0]?.lastPrice || props.selectedQuote?.lastPrice || null)
+const previousPrice = computed(() => {
+  return props.tickSnapshot[1]?.lastPrice || props.selectedQuote?.open || null
+})
+const fallbackMidPrice = computed(() => {
   if (props.placeholderPrice && props.placeholderPrice !== '--') return props.placeholderPrice
   return formatDepthNumber(bidRows.value[0]?.price ?? askRows.value[0]?.price)
 })
+const midPrice = computed(() => formatDepthNumber(latestPrice.value) || fallbackMidPrice.value)
+const previousMidPrice = computed(() => formatDepthNumber(previousPrice.value) || midPrice.value)
+const midDirection = computed<'up' | 'down' | 'flat'>(() => {
+  if (!latestPrice.value || !previousPrice.value) return 'flat'
+  if (latestPrice.value > previousPrice.value) return 'up'
+  if (latestPrice.value < previousPrice.value) return 'down'
+  return 'flat'
+})
+const midArrow = computed(() => {
+  if (midDirection.value === 'up') return '↑'
+  if (midDirection.value === 'down') return '↓'
+  return ''
+})
 
-function formatDepthNumber(value: number | undefined) {
+function formatDepthNumber(value: number | null | undefined) {
   if (!value || !Number.isFinite(value)) return '--'
   return Number(value.toFixed(8)).toString()
 }
@@ -46,9 +65,12 @@ function formatDepthVolume(level: DepthLevel) {
       </p>
       <p v-if="!askRows.length" class="empty-row"><span>--</span><strong>--</strong></p>
     </div>
-    <div class="mid-price">
-      <strong>{{ midPrice }} ↑</strong>
-      <span>{{ midPrice }}</span>
+    <div class="mid-price" :class="`mid-price--${midDirection}`">
+      <div>
+        <strong>{{ midPrice }} {{ midArrow }}</strong>
+        <span>{{ previousMidPrice }}</span>
+      </div>
+      <i aria-hidden="true" />
     </div>
     <div class="bids">
       <p
@@ -69,7 +91,8 @@ function formatDepthVolume(level: DepthLevel) {
 }
 
 .order-book-preview header,
-.order-book-preview p {
+.order-book-preview p,
+.mid-price {
   display: flex;
   justify-content: space-between;
   gap: 10px;
@@ -148,8 +171,16 @@ function formatDepthVolume(level: DepthLevel) {
 }
 
 .bids span,
-.mid-price {
+.mid-price--up {
   color: #0cd977;
+}
+
+.mid-price--down {
+  color: #ff574c;
+}
+
+.mid-price--flat {
+  color: #fff;
 }
 
 .bids p::after {
@@ -157,21 +188,30 @@ function formatDepthVolume(level: DepthLevel) {
 }
 
 .mid-price {
-  display: grid;
-  gap: 1px;
   margin: 10px 0 8px;
   font-weight: 700;
 }
 
+.mid-price div {
+  display: grid;
+  gap: 1px;
+}
+
 .mid-price strong {
-  color: #10e08a;
+  color: currentColor;
   font-size: 20px;
   line-height: 1;
+  text-align: left;
 }
 
 .mid-price span {
   color: #8f929d;
   font-size: 13px;
+  text-align: left;
+}
+
+.mid-price i {
+  min-width: 0;
 }
 
 @media (max-width: 390px) {

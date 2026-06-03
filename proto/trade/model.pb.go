@@ -996,6 +996,7 @@ type TradeOrder struct {
 	BizExt        string                 `protobuf:"bytes,27,opt,name=biz_ext,json=bizExt,proto3" json:"biz_ext,omitempty"`
 	CreateTimes   int64                  `protobuf:"varint,28,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes   int64                  `protobuf:"varint,29,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	TriggerKind   TriggerKind            `protobuf:"varint,30,opt,name=trigger_kind,json=triggerKind,proto3,enum=trade.TriggerKind" json:"trigger_kind,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1231,6 +1232,13 @@ func (x *TradeOrder) GetUpdateTimes() int64 {
 		return x.UpdateTimes
 	}
 	return 0
+}
+
+func (x *TradeOrder) GetTriggerKind() TriggerKind {
+	if x != nil {
+		return x.TriggerKind
+	}
+	return TriggerKind_TRIGGER_KIND_NONE
 }
 
 type TradeOrderSpot struct {
@@ -3676,7 +3684,7 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\x13reduce_only_enabled\x18\n" +
 	" \x01(\x03R\x11reduceOnlyEnabled\x12!\n" +
 	"\fcreate_times\x18\v \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\f \x01(\x03R\vupdateTimes\"\xf1\a\n" +
+	"\fupdate_times\x18\f \x01(\x03R\vupdateTimes\"\xa8\b\n" +
 	"\n" +
 	"TradeOrder\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
@@ -3711,7 +3719,8 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\rcancel_reason\x18\x1a \x01(\tR\fcancelReason\x12\x17\n" +
 	"\abiz_ext\x18\x1b \x01(\tR\x06bizExt\x12!\n" +
 	"\fcreate_times\x18\x1c \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x1d \x01(\x03R\vupdateTimes\"\xae\x02\n" +
+	"\fupdate_times\x18\x1d \x01(\x03R\vupdateTimes\x125\n" +
+	"\ftrigger_kind\x18\x1e \x01(\x0e2\x12.trade.TriggerKindR\vtriggerKind\"\xae\x02\n" +
 	"\x0eTradeOrderSpot\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
@@ -4057,12 +4066,13 @@ var file_proto_trade_model_proto_goTypes = []any{
 	(TimeInForce)(0),                  // 32: trade.TimeInForce
 	(OrderStatus)(0),                  // 33: trade.OrderStatus
 	(OrderSourceType)(0),              // 34: trade.OrderSourceType
-	(LiquidityType)(0),                // 35: trade.LiquidityType
-	(PositionActionType)(0),           // 36: trade.PositionActionType
-	(SourceType)(0),                   // 37: trade.SourceType
-	(RiskCheckType)(0),                // 38: trade.RiskCheckType
-	(RiskCheckResult)(0),              // 39: trade.RiskCheckResult
-	(EventStatus)(0),                  // 40: trade.EventStatus
+	(TriggerKind)(0),                  // 35: trade.TriggerKind
+	(LiquidityType)(0),                // 36: trade.LiquidityType
+	(PositionActionType)(0),           // 37: trade.PositionActionType
+	(SourceType)(0),                   // 38: trade.SourceType
+	(RiskCheckType)(0),                // 39: trade.RiskCheckType
+	(RiskCheckResult)(0),              // 40: trade.RiskCheckResult
+	(EventStatus)(0),                  // 41: trade.EventStatus
 }
 var file_proto_trade_model_proto_depIdxs = []int32{
 	24, // 0: trade.TradeSymbol.market_type:type_name -> trade.MarketType
@@ -4078,41 +4088,42 @@ var file_proto_trade_model_proto_depIdxs = []int32{
 	32, // 10: trade.TradeOrder.time_in_force:type_name -> trade.TimeInForce
 	33, // 11: trade.TradeOrder.status:type_name -> trade.OrderStatus
 	34, // 12: trade.TradeOrder.source:type_name -> trade.OrderSourceType
-	28, // 13: trade.TradeOrderContract.margin_mode:type_name -> trade.MarginMode
-	24, // 14: trade.TradeFill.market_type:type_name -> trade.MarketType
-	29, // 15: trade.TradeFill.side:type_name -> trade.TradeSide
-	30, // 16: trade.TradeFill.position_side:type_name -> trade.PositionSide
-	35, // 17: trade.TradeFill.liquidity_type:type_name -> trade.LiquidityType
-	24, // 18: trade.ContractPosition.market_type:type_name -> trade.MarketType
-	30, // 19: trade.ContractPosition.position_side:type_name -> trade.PositionSide
-	28, // 20: trade.ContractPosition.margin_mode:type_name -> trade.MarginMode
-	24, // 21: trade.ContractPositionHistory.market_type:type_name -> trade.MarketType
-	30, // 22: trade.ContractPositionHistory.position_side:type_name -> trade.PositionSide
-	36, // 23: trade.ContractPositionHistory.action_type:type_name -> trade.PositionActionType
-	37, // 24: trade.ContractPositionHistory.source:type_name -> trade.SourceType
-	24, // 25: trade.ContractMarginAccount.market_type:type_name -> trade.MarketType
-	24, // 26: trade.ContractLeverageConfig.market_type:type_name -> trade.MarketType
-	28, // 27: trade.ContractLeverageConfig.margin_mode:type_name -> trade.MarginMode
-	27, // 28: trade.ContractLeverageConfig.position_mode:type_name -> trade.PositionMode
-	37, // 29: trade.ContractLeverageConfig.source:type_name -> trade.SourceType
-	24, // 30: trade.TradeSymbolLeverageConfig.market_type:type_name -> trade.MarketType
-	28, // 31: trade.TradeSymbolLeverageConfig.margin_mode:type_name -> trade.MarginMode
-	24, // 32: trade.RiskUserTradeLimit.market_type:type_name -> trade.MarketType
-	37, // 33: trade.RiskUserTradeLimit.source:type_name -> trade.SourceType
-	24, // 34: trade.RiskUserSymbolLimit.market_type:type_name -> trade.MarketType
-	37, // 35: trade.RiskUserSymbolLimit.source:type_name -> trade.SourceType
-	24, // 36: trade.RiskOrderCheckLog.market_type:type_name -> trade.MarketType
-	38, // 37: trade.RiskOrderCheckLog.check_type:type_name -> trade.RiskCheckType
-	39, // 38: trade.RiskOrderCheckLog.check_result:type_name -> trade.RiskCheckResult
-	37, // 39: trade.RiskOrderCheckLog.source:type_name -> trade.SourceType
-	24, // 40: trade.BizTradeEvent.market_type:type_name -> trade.MarketType
-	37, // 41: trade.BizTradeEvent.source:type_name -> trade.SourceType
-	40, // 42: trade.BizTradeEvent.event_status:type_name -> trade.EventStatus
-	43, // [43:43] is the sub-list for method output_type
-	43, // [43:43] is the sub-list for method input_type
-	43, // [43:43] is the sub-list for extension type_name
-	43, // [43:43] is the sub-list for extension extendee
-	0,  // [0:43] is the sub-list for field type_name
+	35, // 13: trade.TradeOrder.trigger_kind:type_name -> trade.TriggerKind
+	28, // 14: trade.TradeOrderContract.margin_mode:type_name -> trade.MarginMode
+	24, // 15: trade.TradeFill.market_type:type_name -> trade.MarketType
+	29, // 16: trade.TradeFill.side:type_name -> trade.TradeSide
+	30, // 17: trade.TradeFill.position_side:type_name -> trade.PositionSide
+	36, // 18: trade.TradeFill.liquidity_type:type_name -> trade.LiquidityType
+	24, // 19: trade.ContractPosition.market_type:type_name -> trade.MarketType
+	30, // 20: trade.ContractPosition.position_side:type_name -> trade.PositionSide
+	28, // 21: trade.ContractPosition.margin_mode:type_name -> trade.MarginMode
+	24, // 22: trade.ContractPositionHistory.market_type:type_name -> trade.MarketType
+	30, // 23: trade.ContractPositionHistory.position_side:type_name -> trade.PositionSide
+	37, // 24: trade.ContractPositionHistory.action_type:type_name -> trade.PositionActionType
+	38, // 25: trade.ContractPositionHistory.source:type_name -> trade.SourceType
+	24, // 26: trade.ContractMarginAccount.market_type:type_name -> trade.MarketType
+	24, // 27: trade.ContractLeverageConfig.market_type:type_name -> trade.MarketType
+	28, // 28: trade.ContractLeverageConfig.margin_mode:type_name -> trade.MarginMode
+	27, // 29: trade.ContractLeverageConfig.position_mode:type_name -> trade.PositionMode
+	38, // 30: trade.ContractLeverageConfig.source:type_name -> trade.SourceType
+	24, // 31: trade.TradeSymbolLeverageConfig.market_type:type_name -> trade.MarketType
+	28, // 32: trade.TradeSymbolLeverageConfig.margin_mode:type_name -> trade.MarginMode
+	24, // 33: trade.RiskUserTradeLimit.market_type:type_name -> trade.MarketType
+	38, // 34: trade.RiskUserTradeLimit.source:type_name -> trade.SourceType
+	24, // 35: trade.RiskUserSymbolLimit.market_type:type_name -> trade.MarketType
+	38, // 36: trade.RiskUserSymbolLimit.source:type_name -> trade.SourceType
+	24, // 37: trade.RiskOrderCheckLog.market_type:type_name -> trade.MarketType
+	39, // 38: trade.RiskOrderCheckLog.check_type:type_name -> trade.RiskCheckType
+	40, // 39: trade.RiskOrderCheckLog.check_result:type_name -> trade.RiskCheckResult
+	38, // 40: trade.RiskOrderCheckLog.source:type_name -> trade.SourceType
+	24, // 41: trade.BizTradeEvent.market_type:type_name -> trade.MarketType
+	38, // 42: trade.BizTradeEvent.source:type_name -> trade.SourceType
+	41, // 43: trade.BizTradeEvent.event_status:type_name -> trade.EventStatus
+	44, // [44:44] is the sub-list for method output_type
+	44, // [44:44] is the sub-list for method input_type
+	44, // [44:44] is the sub-list for extension type_name
+	44, // [44:44] is the sub-list for extension extendee
+	0,  // [0:44] is the sub-list for field type_name
 }
 
 func init() { file_proto_trade_model_proto_init() }

@@ -158,33 +158,27 @@ func TestOrderInputGuards(t *testing.T) {
 	if !isValidOrderPrice(trade.OrderType_ORDER_TYPE_MARKET, 0) {
 		t.Fatal("market order should not require user price")
 	}
-	if isValidOrderTimeInForce(trade.OrderType_ORDER_TYPE_MARKET, trade.TimeInForce_TIME_IN_FORCE_POST_ONLY) {
+	if isValidOrderTimeInForce(trade.OrderType_ORDER_TYPE_MARKET, trade.TriggerKind_TRIGGER_KIND_NONE, trade.TimeInForce_TIME_IN_FORCE_POST_ONLY) {
 		t.Fatal("market post-only should be invalid")
 	}
-	if got := normalizeOrderTimeInForce(trade.OrderType_ORDER_TYPE_LIMIT, trade.TimeInForce_TIME_IN_FORCE_UNKNOWN, 10); got != trade.TimeInForce_TIME_IN_FORCE_GTC {
+	if got := normalizeOrderTimeInForce(trade.OrderType_ORDER_TYPE_LIMIT, trade.TimeInForce_TIME_IN_FORCE_UNKNOWN); got != trade.TimeInForce_TIME_IN_FORCE_GTC {
 		t.Fatalf("limit default TIF = %v, want GTC", got)
 	}
-	if got := normalizeOrderTimeInForce(trade.OrderType_ORDER_TYPE_MARKET, trade.TimeInForce_TIME_IN_FORCE_GTC, 0); got != trade.TimeInForce_TIME_IN_FORCE_IOC {
+	if got := normalizeOrderTimeInForce(trade.OrderType_ORDER_TYPE_MARKET, trade.TimeInForce_TIME_IN_FORCE_GTC); got != trade.TimeInForce_TIME_IN_FORCE_IOC {
 		t.Fatalf("market GTC should normalize to IOC, got %v", got)
 	}
-	if got := normalizeOrderTimeInForce(trade.OrderType_ORDER_TYPE_STOP_LOSS, trade.TimeInForce_TIME_IN_FORCE_UNKNOWN, 10); got != trade.TimeInForce_TIME_IN_FORCE_GTC {
-		t.Fatalf("triggered limit default TIF = %v, want GTC", got)
+	if isValidOrderTimeInForce(trade.OrderType_ORDER_TYPE_LIMIT, trade.TriggerKind_TRIGGER_KIND_STOP_LOSS, trade.TimeInForce_TIME_IN_FORCE_POST_ONLY) {
+		t.Fatal("trigger order post-only should be invalid")
 	}
 }
 
 func TestOrderAmountPriceDistinguishesOrderType(t *testing.T) {
 	logic := &PlaceOrderLogic{}
-	if got, err := logic.orderAmountPrice(nil, trade.OrderType_ORDER_TYPE_LIMIT, 10, 0); err != nil || got != 10 {
+	if got, err := logic.orderAmountPrice(nil, trade.OrderType_ORDER_TYPE_LIMIT, 10); err != nil || got != 10 {
 		t.Fatalf("limit amount price = %v, err = %v, want 10", got, err)
 	}
-	if got, err := logic.orderAmountPrice(nil, trade.OrderType_ORDER_TYPE_MARKET, 10, 0); err != nil || got != 0 {
+	if got, err := logic.orderAmountPrice(nil, trade.OrderType_ORDER_TYPE_MARKET, 10); err != nil || got != 0 {
 		t.Fatalf("market amount price = %v, err = %v, want market price lookup fallback 0", got, err)
-	}
-	if got, err := logic.orderAmountPrice(nil, trade.OrderType_ORDER_TYPE_TAKE_PROFIT, 11, 12); err != nil || got != 11 {
-		t.Fatalf("triggered limit amount price = %v, err = %v, want 11", got, err)
-	}
-	if got, err := logic.orderAmountPrice(nil, trade.OrderType_ORDER_TYPE_STOP_LOSS, 0, 12); err != nil || got != 0 {
-		t.Fatalf("triggered market amount price = %v, err = %v, want market price lookup fallback 0", got, err)
 	}
 }
 
@@ -283,6 +277,13 @@ func TestRemainingMatchQty(t *testing.T) {
 	}
 }
 
+func TestOrderFillNeedByAmountUsesMinorAmount(t *testing.T) {
+	need := orderFillNeed{remainingAmount: 10000}
+	if got := need.matchQty(20); got != 5 {
+		t.Fatalf("matchQty() = %v, want 5", got)
+	}
+}
+
 func TestCanApplyOrderFill(t *testing.T) {
 	qtyOrder := &models.TTradeOrder{
 		OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT),
@@ -334,31 +335,31 @@ func TestShouldTriggerOrder(t *testing.T) {
 	}{
 		{
 			name:  "sell take profit triggers upward",
-			order: models.TTradeOrder{Status: base.Status, TriggerPrice: base.TriggerPrice, OrderType: int64(trade.OrderType_ORDER_TYPE_TAKE_PROFIT), Side: int64(trade.TradeSide_TRADE_SIDE_SELL)},
+			order: models.TTradeOrder{Status: base.Status, TriggerPrice: base.TriggerPrice, TriggerKind: int64(trade.TriggerKind_TRIGGER_KIND_TAKE_PROFIT), Side: int64(trade.TradeSide_TRADE_SIDE_SELL)},
 			price: 101,
 			want:  true,
 		},
 		{
 			name:  "sell stop loss triggers downward",
-			order: models.TTradeOrder{Status: base.Status, TriggerPrice: base.TriggerPrice, OrderType: int64(trade.OrderType_ORDER_TYPE_STOP_LOSS), Side: int64(trade.TradeSide_TRADE_SIDE_SELL)},
+			order: models.TTradeOrder{Status: base.Status, TriggerPrice: base.TriggerPrice, TriggerKind: int64(trade.TriggerKind_TRIGGER_KIND_STOP_LOSS), Side: int64(trade.TradeSide_TRADE_SIDE_SELL)},
 			price: 99,
 			want:  true,
 		},
 		{
 			name:  "buy take profit triggers downward",
-			order: models.TTradeOrder{Status: base.Status, TriggerPrice: base.TriggerPrice, OrderType: int64(trade.OrderType_ORDER_TYPE_TAKE_PROFIT), Side: int64(trade.TradeSide_TRADE_SIDE_BUY)},
+			order: models.TTradeOrder{Status: base.Status, TriggerPrice: base.TriggerPrice, TriggerKind: int64(trade.TriggerKind_TRIGGER_KIND_TAKE_PROFIT), Side: int64(trade.TradeSide_TRADE_SIDE_BUY)},
 			price: 99,
 			want:  true,
 		},
 		{
 			name:  "buy stop loss triggers upward",
-			order: models.TTradeOrder{Status: base.Status, TriggerPrice: base.TriggerPrice, OrderType: int64(trade.OrderType_ORDER_TYPE_STOP_LOSS), Side: int64(trade.TradeSide_TRADE_SIDE_BUY)},
+			order: models.TTradeOrder{Status: base.Status, TriggerPrice: base.TriggerPrice, TriggerKind: int64(trade.TriggerKind_TRIGGER_KIND_STOP_LOSS), Side: int64(trade.TradeSide_TRADE_SIDE_BUY)},
 			price: 101,
 			want:  true,
 		},
 		{
 			name:  "non waiting order does not trigger",
-			order: models.TTradeOrder{Status: int64(trade.OrderStatus_ORDER_STATUS_PENDING), TriggerPrice: base.TriggerPrice, OrderType: int64(trade.OrderType_ORDER_TYPE_STOP_LOSS), Side: int64(trade.TradeSide_TRADE_SIDE_SELL)},
+			order: models.TTradeOrder{Status: int64(trade.OrderStatus_ORDER_STATUS_PENDING), TriggerPrice: base.TriggerPrice, TriggerKind: int64(trade.TriggerKind_TRIGGER_KIND_STOP_LOSS), Side: int64(trade.TradeSide_TRADE_SIDE_SELL)},
 			price: 99,
 			want:  false,
 		},
@@ -373,11 +374,14 @@ func TestShouldTriggerOrder(t *testing.T) {
 }
 
 func TestTriggeredOrderExecutionType(t *testing.T) {
-	if got := triggeredOrderType(&models.TTradeOrder{Price: 10}); got != int64(trade.OrderType_ORDER_TYPE_LIMIT) {
-		t.Fatalf("triggeredOrderType() = %d, want LIMIT", got)
+	if got := triggeredOrderExecutionType(&models.TTradeOrder{OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Price: 10}); got != int64(trade.OrderType_ORDER_TYPE_LIMIT) {
+		t.Fatalf("triggeredOrderExecutionType() = %d, want LIMIT", got)
 	}
-	if got := triggeredOrderType(&models.TTradeOrder{}); got != int64(trade.OrderType_ORDER_TYPE_MARKET) {
-		t.Fatalf("triggeredOrderType() = %d, want MARKET", got)
+	if got := triggeredOrderExecutionType(&models.TTradeOrder{OrderType: int64(trade.OrderType_ORDER_TYPE_MARKET)}); got != int64(trade.OrderType_ORDER_TYPE_MARKET) {
+		t.Fatalf("triggeredOrderExecutionType() = %d, want MARKET", got)
+	}
+	if got := triggeredOrderExecutionType(&models.TTradeOrder{OrderType: legacyOrderTypeStopLoss, Price: 10}); got != int64(trade.OrderType_ORDER_TYPE_LIMIT) {
+		t.Fatalf("legacy triggered order execution type = %d, want LIMIT", got)
 	}
 	if got := triggeredTimeInForce(&models.TTradeOrder{}); got != int64(trade.TimeInForce_TIME_IN_FORCE_IOC) {
 		t.Fatalf("triggeredTimeInForce() = %d, want IOC", got)
@@ -499,5 +503,61 @@ func TestTradeFillFromProtoRequiresCompleteExecution(t *testing.T) {
 	}
 	if fill.Amount != 2000 {
 		t.Fatalf("computed fill amount = %v, want 2000", fill.Amount)
+	}
+}
+
+func TestOrderBookKeyAndMember(t *testing.T) {
+	order := &models.TTradeOrder{
+		Id:         123,
+		TenantId:   7,
+		SymbolId:   4,
+		MarketType: int64(trade.MarketType_MARKET_TYPE_USDT_CONTRACT),
+		Side:       int64(trade.TradeSide_TRADE_SIDE_BUY),
+	}
+	if got, want := orderBookKey(order), "trade:book:7:3:4:buy"; got != want {
+		t.Fatalf("orderBookKey() = %q, want %q", got, want)
+	}
+	member := orderBookMember(order.Id)
+	if got, err := orderBookMemberID(member); err != nil || got != order.Id {
+		t.Fatalf("orderBookMemberID() = %d, err = %v, want %d", got, err, order.Id)
+	}
+}
+
+func TestOrderBookScorePriority(t *testing.T) {
+	marketBuy := &models.TTradeOrder{OrderType: int64(trade.OrderType_ORDER_TYPE_MARKET), Side: int64(trade.TradeSide_TRADE_SIDE_BUY)}
+	highBuy := &models.TTradeOrder{OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Side: int64(trade.TradeSide_TRADE_SIDE_BUY), Price: 101}
+	lowBuy := &models.TTradeOrder{OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Side: int64(trade.TradeSide_TRADE_SIDE_BUY), Price: 100}
+	lowSell := &models.TTradeOrder{OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Side: int64(trade.TradeSide_TRADE_SIDE_SELL), Price: 100}
+	highSell := &models.TTradeOrder{OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Side: int64(trade.TradeSide_TRADE_SIDE_SELL), Price: 101}
+
+	if !(orderBookScore(marketBuy) < orderBookScore(highBuy)) {
+		t.Fatal("market order should rank before limit orders")
+	}
+	if !(orderBookScore(highBuy) < orderBookScore(lowBuy)) {
+		t.Fatal("higher buy price should rank first in ascending zset order")
+	}
+	if !(orderBookScore(lowSell) < orderBookScore(highSell)) {
+		t.Fatal("lower sell price should rank first in ascending zset order")
+	}
+}
+
+func TestIsOrderBookOrder(t *testing.T) {
+	if !isOrderBookOrder(&models.TTradeOrder{
+		Status:    int64(trade.OrderStatus_ORDER_STATUS_PENDING),
+		OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT),
+	}) {
+		t.Fatal("pending limit order should enter order book")
+	}
+	if isOrderBookOrder(&models.TTradeOrder{
+		Status:    int64(trade.OrderStatus_ORDER_STATUS_TRIGGER_WAITING),
+		OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT),
+	}) {
+		t.Fatal("trigger waiting order should not enter order book")
+	}
+	if isOrderBookOrder(&models.TTradeOrder{
+		Status:    int64(trade.OrderStatus_ORDER_STATUS_PENDING),
+		OrderType: legacyOrderTypeStopLoss,
+	}) {
+		t.Fatal("untriggered stop order type should not enter order book")
 	}
 }

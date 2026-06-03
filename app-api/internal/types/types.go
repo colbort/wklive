@@ -1415,6 +1415,7 @@ type PlaceOrderReq struct {
 	IsCloseOnly     int64  `json:"isCloseOnly,optional"`  // 是否只平仓：0否 1是
 	TriggerPrice    string `json:"triggerPrice,optional"`
 	TriggerType     int64  `json:"triggerType,optional"`
+	TriggerKind     int64  `json:"triggerKind,optional"`
 	MarginMode      int64  `json:"marginMode,optional"`
 	Leverage        int64  `json:"leverage,optional"` // 杠杆倍数
 	TakeProfitPrice string `json:"takeProfitPrice,optional"`
@@ -1764,6 +1765,7 @@ type TradeOrder struct {
 	IsCloseOnly   int64  `json:"isCloseOnly"`  // 是否只平仓：0否 1是
 	TriggerPrice  string `json:"triggerPrice"`
 	TriggerType   int64  `json:"triggerType"` // 触发类型
+	TriggerKind   int64  `json:"triggerKind"` // 触发用途：0无 1条件单 2止盈 3止损
 	CancelReason  string `json:"cancelReason"`
 	BizExt        string `json:"bizExt"`
 	CreateTimes   int64  `json:"createTimes"`

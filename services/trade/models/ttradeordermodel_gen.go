@@ -53,9 +53,9 @@ type (
 		MarketType    int64          `db:"market_type"`     // 市场类型：1现货 2秒合约 3U本位 4币本位
 		Side          int64          `db:"side"`            // 买卖方向：1买 2卖
 		PositionSide  int64          `db:"position_side"`   // 持仓方向：0无 1多 2空，现货一般为0
-		OrderType     int64          `db:"order_type"`      // 订单类型：1限价 2市价 3条件单 4止盈 5止损
+		OrderType     int64          `db:"order_type"`      // 成交方式：1限价 2市价
 		TimeInForce   int64          `db:"time_in_force"`   // 订单有效方式：0默认 1GTC 2IOC 3FOK 4PostOnly
-		Status        int64          `db:"status"`          // 订单状态：1待成交 2部分成交 3已成交 4已撤单 5已拒单 6已过期
+		Status        int64          `db:"status"`          // 订单状态：1待成交 2部分成交 3已成交 4已撤单 5已拒单 6已过期 7冻结中 8等待触发
 		Price         float64        `db:"price"`           // 委托价格
 		Qty           float64        `db:"qty"`             // 委托数量
 		Amount        float64        `db:"amount"`          // 委托总额或名义价值
@@ -69,6 +69,7 @@ type (
 		IsCloseOnly   int64          `db:"is_close_only"`   // 是否只允许平仓：1是 0否
 		TriggerPrice  float64        `db:"trigger_price"`   // 触发价格，非条件单则为0
 		TriggerType   int64          `db:"trigger_type"`    // 触发价格类型：0无 1最新价 2标记价 3指数价
+		TriggerKind   int64          `db:"trigger_kind"`    // 触发用途：0无 1条件单 2止盈 3止损
 		CancelReason  string         `db:"cancel_reason"`   // 撤单原因或拒单原因
 		BizExt        sql.NullString `db:"biz_ext"`         // 业务扩展字段，JSON格式
 		CreateTimes   int64          `db:"create_times"`    // 创建时间，毫秒时间戳
@@ -161,8 +162,8 @@ func (m *defaultTTradeOrderModel) Insert(ctx context.Context, data *TTradeOrder)
 	tTradeOrderTenantIdOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTTradeOrderTenantIdOrderNoPrefix, data.TenantId, data.OrderNo)
 	tTradeOrderTenantIdUserIdClientOrderIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTTradeOrderTenantIdUserIdClientOrderIdPrefix, data.TenantId, data.UserId, data.ClientOrderId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeOrderRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderNo, data.ClientOrderId, data.UserId, data.SymbolId, data.MarketType, data.Side, data.PositionSide, data.OrderType, data.TimeInForce, data.Status, data.Price, data.Qty, data.Amount, data.FilledQty, data.FilledAmount, data.AvgPrice, data.Fee, data.FeeAsset, data.Source, data.IsReduceOnly, data.IsCloseOnly, data.TriggerPrice, data.TriggerType, data.CancelReason, data.BizExt, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeOrderRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderNo, data.ClientOrderId, data.UserId, data.SymbolId, data.MarketType, data.Side, data.PositionSide, data.OrderType, data.TimeInForce, data.Status, data.Price, data.Qty, data.Amount, data.FilledQty, data.FilledAmount, data.AvgPrice, data.Fee, data.FeeAsset, data.Source, data.IsReduceOnly, data.IsCloseOnly, data.TriggerPrice, data.TriggerType, data.TriggerKind, data.CancelReason, data.BizExt, data.CreateTimes, data.UpdateTimes)
 	}, tTradeOrderIdKey, tTradeOrderTenantIdOrderNoKey, tTradeOrderTenantIdUserIdClientOrderIdKey)
 	return ret, err
 }
@@ -178,7 +179,7 @@ func (m *defaultTTradeOrderModel) Update(ctx context.Context, newData *TTradeOrd
 	tTradeOrderTenantIdUserIdClientOrderIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTTradeOrderTenantIdUserIdClientOrderIdPrefix, data.TenantId, data.UserId, data.ClientOrderId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tTradeOrderRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderNo, newData.ClientOrderId, newData.UserId, newData.SymbolId, newData.MarketType, newData.Side, newData.PositionSide, newData.OrderType, newData.TimeInForce, newData.Status, newData.Price, newData.Qty, newData.Amount, newData.FilledQty, newData.FilledAmount, newData.AvgPrice, newData.Fee, newData.FeeAsset, newData.Source, newData.IsReduceOnly, newData.IsCloseOnly, newData.TriggerPrice, newData.TriggerType, newData.CancelReason, newData.BizExt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderNo, newData.ClientOrderId, newData.UserId, newData.SymbolId, newData.MarketType, newData.Side, newData.PositionSide, newData.OrderType, newData.TimeInForce, newData.Status, newData.Price, newData.Qty, newData.Amount, newData.FilledQty, newData.FilledAmount, newData.AvgPrice, newData.Fee, newData.FeeAsset, newData.Source, newData.IsReduceOnly, newData.IsCloseOnly, newData.TriggerPrice, newData.TriggerType, newData.TriggerKind, newData.CancelReason, newData.BizExt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tTradeOrderIdKey, tTradeOrderTenantIdOrderNoKey, tTradeOrderTenantIdUserIdClientOrderIdKey)
 	return err
 }

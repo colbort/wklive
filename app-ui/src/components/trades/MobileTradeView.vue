@@ -8,6 +8,7 @@ import type {
   ItickTenantCategory,
   ItickTenantProduct,
   QuotePayload,
+  TickPayload,
 } from '@/types/itick'
 import type {
   TradeOrder,
@@ -44,6 +45,7 @@ defineProps<{
   placeholderChange: string
   selectedQuote: QuotePayload | null
   depthSnapshot: DepthPayload | null
+  tickSnapshot: TickPayload[]
   productMenuOpen: boolean
   productSheetRows: ProductSheetRow[]
   orderMode: 'market' | 'limit'
@@ -156,6 +158,8 @@ const emit = defineEmits<{
       <MobileMarketDepthPreview
         :selected-product="selectedProduct"
         :depth-snapshot="depthSnapshot"
+        :selected-quote="selectedQuote"
+        :tick-snapshot="tickSnapshot"
         :placeholder-price="placeholderPrice"
       />
     </section>

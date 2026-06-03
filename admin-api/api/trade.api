@@ -102,6 +102,7 @@ type TradeOrder {
 	isCloseOnly   int64  `json:"isCloseOnly"`
 	triggerPrice  string `json:"triggerPrice"`
 	triggerType   int64  `json:"triggerType"`
+	triggerKind   int64  `json:"triggerKind"`
 	cancelReason  string `json:"cancelReason"`
 	bizExt        string `json:"bizExt"`
 	createTimes   int64  `json:"createTimes"`

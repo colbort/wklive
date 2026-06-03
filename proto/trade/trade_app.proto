@@ -92,6 +92,7 @@ message PlaceOrderReq {
   string take_profit_price = 17;
   string stop_loss_price = 18;
   OrderSourceType order_source = 19;
+  TriggerKind trigger_kind = 20;
 }
 
 message PlaceOrderResp {

@@ -60,6 +60,7 @@ const emit = defineEmits<{
 }>()
 
 const MARKET_TYPE_SPOT = 1
+const percentSteps = [0, 25, 50, 75, 100]
 type SelectionSheet = 'margin' | 'leverage' | 'risk' | null
 type RiskEntrySide = 'long' | 'short'
 const selectionSheet = ref<SelectionSheet>(null)
@@ -150,6 +151,18 @@ function inputValue(event: Event) {
 
 function inputNumber(event: Event) {
   return Number((event.target as HTMLInputElement).value)
+}
+
+function updateTradePercent(value: number) {
+  emit('update:tradePercent', value)
+}
+
+function handlePercentBarPointer(event: PointerEvent) {
+  const rect = (event.currentTarget as HTMLElement).getBoundingClientRect()
+  if (!rect.width) return
+
+  const ratio = Math.min(Math.max((event.clientX - rect.left) / rect.width, 0), 1)
+  updateTradePercent(Math.round((ratio * 100) / 25) * 25)
 }
 
 function parseDecimal(value: string | number | null | undefined) {
@@ -393,19 +406,31 @@ function confirmRiskSettings() {
           @input="emit('update:tradeQty', inputValue($event))"
         />
       </div>
-      <div class="percent-bar" :style="{ '--progress': `${tradePercent}%` }">
-        <input
-          class="percent-range"
-          type="range"
-          min="0"
-          max="100"
-          step="1"
-          :value="tradePercent"
-          @input="emit('update:tradePercent', inputNumber($event))"
+      <div
+        class="percent-bar"
+        :style="{ '--progress': `${tradePercent}%` }"
+        @pointerdown="handlePercentBarPointer"
+      >
+        <button
+          v-for="value in percentSteps"
+          :key="value"
+          class="percent-hit"
+          type="button"
+          :aria-label="`${value}%`"
+          @pointerdown.stop="updateTradePercent(value)"
+          @click.stop="updateTradePercent(value)"
         />
       </div>
       <div class="percent-labels">
-        <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
+        <button
+          v-for="value in percentSteps"
+          :key="value"
+          type="button"
+          :class="{ active: tradePercent === value }"
+          @click="updateTradePercent(value)"
+        >
+          {{ value }}%
+        </button>
       </div>
 
       <div class="account-lines">
@@ -1021,8 +1046,10 @@ function confirmRiskSettings() {
 
 .percent-bar {
   position: relative;
-  height: 14px;
-  margin-bottom: 8px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  height: 8px;
+  margin-bottom: 6px;
   border-radius: 999px;
   background:
     linear-gradient(90deg, #02b904 0 var(--progress, 0%), transparent var(--progress, 0%)),
@@ -1040,25 +1067,41 @@ function confirmRiskSettings() {
 
 .percent-bar i {
   display: block;
-  width: 14px;
-  height: 14px;
+  width: 8px;
+  height: 8px;
   border-radius: 999px;
   background: #02b904;
 }
 
-.percent-range {
-  position: absolute;
-  inset: -7px 0;
-  width: 100%;
-  opacity: 0;
+.percent-hit {
+  position: relative;
+  z-index: 1;
+  height: 28px;
+  margin: -10px 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
 }
 
 .percent-labels {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 18px;
+  margin-bottom: 14px;
   color: #8f929d;
   font-size: 13px;
+}
+
+.percent-labels button {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.percent-labels button.active {
+  color: #f6f7fb;
 }
 
 .account-lines {

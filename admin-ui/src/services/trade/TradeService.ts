@@ -161,6 +161,7 @@ export type TradeOrder = {
   isCloseOnly: number // 是否只平仓：0否 1是
   triggerPrice: string
   triggerType: number
+  triggerKind: number
   cancelReason: string
   bizExt: string
   createTimes: number // 创建时间

@@ -13,6 +13,19 @@ const askRows = computed(() => props.depthSnapshot?.asks.slice(0, 10) ?? [])
 const bidRows = computed(() => props.depthSnapshot?.bids.slice(0, 10) ?? [])
 const maxAskVolume = computed(() => Math.max(...askRows.value.map((item) => item.volume), 1))
 const maxBidVolume = computed(() => Math.max(...bidRows.value.map((item) => item.volume), 1))
+const latestPrice = computed(() => props.tickSnapshot[0]?.lastPrice || props.selectedQuote?.lastPrice || null)
+const previousPrice = computed(() => props.tickSnapshot[1]?.lastPrice || props.selectedQuote?.open || null)
+const midDirection = computed<'up' | 'down' | 'flat'>(() => {
+  if (!latestPrice.value || !previousPrice.value) return 'flat'
+  if (latestPrice.value > previousPrice.value) return 'up'
+  if (latestPrice.value < previousPrice.value) return 'down'
+  return 'flat'
+})
+const midArrow = computed(() => {
+  if (midDirection.value === 'up') return '↑'
+  if (midDirection.value === 'down') return '↓'
+  return ''
+})
 const tradeRows = computed(() =>
   props.tickSnapshot.map((item, index, list) => {
     const next = list[index + 1]
@@ -78,9 +91,9 @@ function formatTime(ts: number) {
         </p>
       </div>
 
-      <div class="desktop-orderbook-panel__mid">
-        <strong>{{ formatPrice(selectedQuote?.lastPrice) }} ↑</strong>
-        <span>{{ formatPrice(selectedQuote?.open) }}</span>
+      <div class="desktop-orderbook-panel__mid" :class="`desktop-orderbook-panel__mid--${midDirection}`">
+        <strong>{{ formatPrice(latestPrice) }} {{ midArrow }}</strong>
+        <span>{{ formatPrice(previousPrice) }}</span>
       </div>
 
       <div class="desktop-orderbook-panel__rows desktop-orderbook-panel__rows--bids">
@@ -237,8 +250,7 @@ function formatTime(ts: number) {
   font-weight: 500;
 }
 
-.desktop-orderbook-panel__rows--bids span,
-.desktop-orderbook-panel__mid strong {
+.desktop-orderbook-panel__rows--bids span {
   color: #13db7b;
 }
 
@@ -256,8 +268,21 @@ function formatTime(ts: number) {
 }
 
 .desktop-orderbook-panel__mid strong {
+  color: currentColor;
   font-size: 16px;
   font-weight: 700;
+}
+
+.desktop-orderbook-panel__mid--up {
+  color: #13db7b;
+}
+
+.desktop-orderbook-panel__mid--down {
+  color: #ff574c;
+}
+
+.desktop-orderbook-panel__mid--flat {
+  color: #fff;
 }
 
 .desktop-orderbook-panel__mid span {

@@ -133,6 +133,7 @@ message TradeOrder {
   string biz_ext = 27;
   int64 create_times = 28;
   int64 update_times = 29;
+  TriggerKind trigger_kind = 30;
 }
 
 message TradeOrderSpot {

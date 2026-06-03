@@ -87,6 +87,7 @@ export interface TradeOrder {
   isCloseOnly: number
   triggerPrice: string
   triggerType: number
+  triggerKind: number
   cancelReason: string
   bizExt: string
   createTimes: number
@@ -218,6 +219,7 @@ export interface PlaceOrderReq {
   isCloseOnly?: number
   triggerPrice?: string
   triggerType?: number
+  triggerKind?: number
   marginMode?: number
   leverage?: number
   takeProfitPrice?: string

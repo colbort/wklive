@@ -3758,6 +3758,7 @@ type TradeOrder struct {
 	IsCloseOnly   int64  `json:"isCloseOnly"`
 	TriggerPrice  string `json:"triggerPrice"`
 	TriggerType   int64  `json:"triggerType"`
+	TriggerKind   int64  `json:"triggerKind"`
 	CancelReason  string `json:"cancelReason"`
 	BizExt        string `json:"bizExt"`
 	CreateTimes   int64  `json:"createTimes"`

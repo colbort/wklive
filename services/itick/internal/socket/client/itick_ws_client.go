@@ -472,8 +472,8 @@ func (c *ItickWsClient) handleUpstreamEnvelope(ctx context.Context, env Upstream
 		bids := make([]*DepthLevel, 0)
 		_ = json.Unmarshal(d.A, &asks)
 		_ = json.Unmarshal(d.B, &bids)
-		asks = appendSyntheticDepthLevels(asks, true, 7)
-		bids = appendSyntheticDepthLevels(bids, false, 7)
+		asks = appendSyntheticDepthLevels(asks, true, 6)
+		bids = appendSyntheticDepthLevels(bids, false, 6)
 
 		payload := DepthPayload{
 			Asks: asks,

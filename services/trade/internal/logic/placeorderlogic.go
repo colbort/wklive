@@ -58,24 +58,27 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		}
 	}
 
+	orderType := in.OrderType
+	triggerKind := in.TriggerKind
+	timeInForce := in.TimeInForce
+
 	price := mustParseFloat(in.Price)
 	qty := mustParseFloat(in.Qty)
 	amount := mustParseFloat(in.Amount)
 	triggerPrice := mustParseFloat(in.TriggerPrice)
-	orderType := in.OrderType
-	timeInForce := in.TimeInForce
-	if !isSupportedOrderType(orderType) {
+	orderType, triggerKind = normalizeOrderTypeAndTriggerKind(orderType, triggerKind, price)
+	if !isSupportedOrderType(orderType) || !isSupportedTriggerKind(triggerKind) {
 		return &trade.PlaceOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	if hasNegativeOrderInput(price, qty, amount, triggerPrice) {
 		return &trade.PlaceOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
-	if !isValidOrderPrice(orderType, price) || !isValidOrderTimeInForce(orderType, timeInForce) {
+	if !isValidOrderPrice(orderType, price) || !isValidOrderTimeInForce(orderType, triggerKind, timeInForce) {
 		return &trade.PlaceOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
-	timeInForce = normalizeOrderTimeInForce(orderType, timeInForce, price)
+	timeInForce = normalizeOrderTimeInForce(orderType, timeInForce)
 	if amount == 0 {
-		amountPrice, err := l.orderAmountPrice(symbol, orderType, price, triggerPrice)
+		amountPrice, err := l.orderAmountPrice(symbol, orderType, price)
 		if err != nil {
 			l.Errorf("place order resolve amount price failed, tenantId=%d userId=%d symbolId=%d orderType=%d price=%v triggerPrice=%v err=%v",
 				tenantId, userId, in.SymbolId, orderType, price, triggerPrice, err)
@@ -86,10 +89,11 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		}
 		amount = tradeMinorAmountAtPrice(amountPrice, qty)
 	}
+
 	if qty <= 0 && amount <= 0 {
 		return &trade.PlaceOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
-	if isTriggerOrderType(orderType) && triggerPrice <= 0 {
+	if isTriggerKind(triggerKind) && triggerPrice <= 0 {
 		return &trade.PlaceOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	if timeInForce == trade.TimeInForce_TIME_IN_FORCE_POST_ONLY {
@@ -147,6 +151,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		IsCloseOnly:   in.IsCloseOnly,
 		TriggerPrice:  triggerPrice,
 		TriggerType:   int64(in.TriggerType),
+		TriggerKind:   int64(triggerKind),
 		BizExt:        sql.NullString{String: "", Valid: false},
 		CreateTimes:   now,
 		UpdateTimes:   now,
@@ -225,7 +230,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 	}
 	if freezeNo != "" {
 		ext := orderAssetExt{FreezeNo: freezeNo}
-		if isTriggerOrderType(orderType) {
+		if isTriggerKind(triggerKind) {
 			ext.OriginalOrderType = int64(orderType)
 			ext.TriggerPrice = fmt.Sprintf("%v", triggerPrice)
 		}
@@ -241,7 +246,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 			return nil, err
 		}
 		order.BizExt = sql.NullString{String: extValue, Valid: extValue != ""}
-		order.Status = statusAfterFreeze(orderType)
+		order.Status = statusAfterFreeze(triggerKind)
 		order.UpdateTimes = utils.NowMillis()
 		if err := l.svcCtx.TradeOrderModel.Update(l.ctx, order); err != nil {
 			if compensateErr := unfreezeOrderAsset(l.svcCtx, l.ctx, order, freezeNo, frozenAmount, "trade place order compensate unfreeze"); compensateErr != nil {
@@ -254,23 +259,24 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 			return nil, err
 		}
 	} else {
-		order.Status = statusAfterFreeze(orderType)
+		order.Status = statusAfterFreeze(triggerKind)
 		order.UpdateTimes = utils.NowMillis()
 		if err := l.svcCtx.TradeOrderModel.Update(l.ctx, order); err != nil {
 			return nil, err
 		}
 	}
+	if err := syncOrderBookCache(l.svcCtx, l.ctx, order); err != nil {
+		l.Errorf("sync redis order book after place order failed, orderId=%d err=%v", order.Id, err)
+	}
 
 	return &trade.PlaceOrderResp{Base: helper.OkResp(), Order: orderToProto(order)}, nil
 }
 
-func (l *PlaceOrderLogic) orderAmountPrice(symbol *models.TTradeSymbol, orderType trade.OrderType, price, triggerPrice float64) (float64, error) {
+func (l *PlaceOrderLogic) orderAmountPrice(symbol *models.TTradeSymbol, orderType trade.OrderType, price float64) (float64, error) {
 	switch {
 	case orderType == trade.OrderType_ORDER_TYPE_LIMIT:
 		return price, nil
-	case isTriggerOrderType(orderType) && price > 0:
-		return price, nil
-	case orderType == trade.OrderType_ORDER_TYPE_MARKET || isTriggerOrderType(orderType):
+	case orderType == trade.OrderType_ORDER_TYPE_MARKET:
 		if symbol == nil {
 			return 0, nil
 		}

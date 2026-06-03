@@ -154,6 +154,7 @@ func orderToProto(item *models.TTradeOrder) *trade.TradeOrder {
 		IsCloseOnly:   item.IsCloseOnly,
 		TriggerPrice:  conv.FloatString(item.TriggerPrice),
 		TriggerType:   item.TriggerType,
+		TriggerKind:   trade.TriggerKind(item.TriggerKind),
 		CancelReason:  item.CancelReason,
 		BizExt:        conv.NullStringValue(item.BizExt),
 		CreateTimes:   item.CreateTimes,
@@ -818,11 +819,37 @@ func spotFrozenAssetAndAmount(symbol *models.TTradeSymbol, side trade.TradeSide,
 	return symbol.QuoteAsset, amount
 }
 
-func isTriggerOrderType(orderType trade.OrderType) bool {
-	switch orderType {
-	case trade.OrderType_ORDER_TYPE_CONDITIONAL,
-		trade.OrderType_ORDER_TYPE_TAKE_PROFIT,
-		trade.OrderType_ORDER_TYPE_STOP_LOSS:
+const (
+	legacyOrderTypeConditional = 3
+	legacyOrderTypeTakeProfit  = 4
+	legacyOrderTypeStopLoss    = 5
+)
+
+func normalizeOrderTypeAndTriggerKind(orderType trade.OrderType, triggerKind trade.TriggerKind, price float64) (trade.OrderType, trade.TriggerKind) {
+	switch int32(orderType) {
+	case legacyOrderTypeConditional:
+		return executionOrderTypeFromPrice(price), trade.TriggerKind_TRIGGER_KIND_CONDITIONAL
+	case legacyOrderTypeTakeProfit:
+		return executionOrderTypeFromPrice(price), trade.TriggerKind_TRIGGER_KIND_TAKE_PROFIT
+	case legacyOrderTypeStopLoss:
+		return executionOrderTypeFromPrice(price), trade.TriggerKind_TRIGGER_KIND_STOP_LOSS
+	default:
+		return orderType, triggerKind
+	}
+}
+
+func executionOrderTypeFromPrice(price float64) trade.OrderType {
+	if price > 0 {
+		return trade.OrderType_ORDER_TYPE_LIMIT
+	}
+	return trade.OrderType_ORDER_TYPE_MARKET
+}
+
+func isTriggerKind(triggerKind trade.TriggerKind) bool {
+	switch triggerKind {
+	case trade.TriggerKind_TRIGGER_KIND_CONDITIONAL,
+		trade.TriggerKind_TRIGGER_KIND_TAKE_PROFIT,
+		trade.TriggerKind_TRIGGER_KIND_STOP_LOSS:
 		return true
 	default:
 		return false
@@ -832,10 +859,19 @@ func isTriggerOrderType(orderType trade.OrderType) bool {
 func isSupportedOrderType(orderType trade.OrderType) bool {
 	switch orderType {
 	case trade.OrderType_ORDER_TYPE_LIMIT,
-		trade.OrderType_ORDER_TYPE_MARKET,
-		trade.OrderType_ORDER_TYPE_CONDITIONAL,
-		trade.OrderType_ORDER_TYPE_TAKE_PROFIT,
-		trade.OrderType_ORDER_TYPE_STOP_LOSS:
+		trade.OrderType_ORDER_TYPE_MARKET:
+		return true
+	default:
+		return false
+	}
+}
+
+func isSupportedTriggerKind(triggerKind trade.TriggerKind) bool {
+	switch triggerKind {
+	case trade.TriggerKind_TRIGGER_KIND_NONE,
+		trade.TriggerKind_TRIGGER_KIND_CONDITIONAL,
+		trade.TriggerKind_TRIGGER_KIND_TAKE_PROFIT,
+		trade.TriggerKind_TRIGGER_KIND_STOP_LOSS:
 		return true
 	default:
 		return false
@@ -853,17 +889,17 @@ func hasNegativeOrderInput(price, qty, amount, triggerPrice float64) bool {
 	return price < 0 || qty < 0 || amount < 0 || triggerPrice < 0
 }
 
-func isValidOrderTimeInForce(orderType trade.OrderType, timeInForce trade.TimeInForce) bool {
+func isValidOrderTimeInForce(orderType trade.OrderType, triggerKind trade.TriggerKind, timeInForce trade.TimeInForce) bool {
 	if orderType == trade.OrderType_ORDER_TYPE_MARKET && timeInForce == trade.TimeInForce_TIME_IN_FORCE_POST_ONLY {
 		return false
 	}
-	if isTriggerOrderType(orderType) && timeInForce == trade.TimeInForce_TIME_IN_FORCE_POST_ONLY {
+	if isTriggerKind(triggerKind) && timeInForce == trade.TimeInForce_TIME_IN_FORCE_POST_ONLY {
 		return false
 	}
 	return true
 }
 
-func normalizeOrderTimeInForce(orderType trade.OrderType, timeInForce trade.TimeInForce, price float64) trade.TimeInForce {
+func normalizeOrderTimeInForce(orderType trade.OrderType, timeInForce trade.TimeInForce) trade.TimeInForce {
 	switch orderType {
 	case trade.OrderType_ORDER_TYPE_MARKET:
 		if timeInForce == trade.TimeInForce_TIME_IN_FORCE_UNKNOWN ||
@@ -874,24 +910,23 @@ func normalizeOrderTimeInForce(orderType trade.OrderType, timeInForce trade.Time
 		if timeInForce == trade.TimeInForce_TIME_IN_FORCE_UNKNOWN {
 			return trade.TimeInForce_TIME_IN_FORCE_GTC
 		}
-	default:
-		if isTriggerOrderType(orderType) && price > 0 && timeInForce == trade.TimeInForce_TIME_IN_FORCE_UNKNOWN {
-			return trade.TimeInForce_TIME_IN_FORCE_GTC
-		}
 	}
 	return timeInForce
 }
 
-func statusAfterFreeze(orderType trade.OrderType) int64 {
-	if isTriggerOrderType(orderType) {
+func statusAfterFreeze(triggerKind trade.TriggerKind) int64 {
+	if isTriggerKind(triggerKind) {
 		return int64(trade.OrderStatus_ORDER_STATUS_TRIGGER_WAITING)
 	}
 	return int64(trade.OrderStatus_ORDER_STATUS_PENDING)
 }
 
-func triggeredOrderType(order *models.TTradeOrder) int64 {
+func triggeredOrderExecutionType(order *models.TTradeOrder) int64 {
 	if order == nil {
 		return int64(trade.OrderType_ORDER_TYPE_UNKNOWN)
+	}
+	if order.OrderType == int64(trade.OrderType_ORDER_TYPE_LIMIT) || order.OrderType == int64(trade.OrderType_ORDER_TYPE_MARKET) {
+		return order.OrderType
 	}
 	if order.Price > 0 {
 		return int64(trade.OrderType_ORDER_TYPE_LIMIT)
@@ -903,7 +938,7 @@ func triggeredTimeInForce(order *models.TTradeOrder) int64 {
 	if order == nil {
 		return int64(trade.TimeInForce_TIME_IN_FORCE_UNKNOWN)
 	}
-	if triggeredOrderType(order) == int64(trade.OrderType_ORDER_TYPE_MARKET) {
+	if triggeredOrderExecutionType(order) == int64(trade.OrderType_ORDER_TYPE_MARKET) {
 		if order.TimeInForce == int64(trade.TimeInForce_TIME_IN_FORCE_UNKNOWN) ||
 			order.TimeInForce == int64(trade.TimeInForce_TIME_IN_FORCE_GTC) ||
 			order.TimeInForce == int64(trade.TimeInForce_TIME_IN_FORCE_POST_ONLY) {
@@ -913,22 +948,41 @@ func triggeredTimeInForce(order *models.TTradeOrder) int64 {
 	return order.TimeInForce
 }
 
+func triggerKindForOrder(order *models.TTradeOrder) trade.TriggerKind {
+	if order == nil {
+		return trade.TriggerKind_TRIGGER_KIND_NONE
+	}
+	if order.TriggerKind != 0 {
+		return trade.TriggerKind(order.TriggerKind)
+	}
+	switch order.OrderType {
+	case legacyOrderTypeConditional:
+		return trade.TriggerKind_TRIGGER_KIND_CONDITIONAL
+	case legacyOrderTypeTakeProfit:
+		return trade.TriggerKind_TRIGGER_KIND_TAKE_PROFIT
+	case legacyOrderTypeStopLoss:
+		return trade.TriggerKind_TRIGGER_KIND_STOP_LOSS
+	default:
+		return trade.TriggerKind_TRIGGER_KIND_NONE
+	}
+}
+
 func shouldTriggerOrder(order *models.TTradeOrder, triggerPrice float64) bool {
 	if order == nil || !isTriggerWaitingOrderStatus(order.Status) || order.TriggerPrice <= 0 || triggerPrice <= 0 {
 		return false
 	}
-	switch trade.OrderType(order.OrderType) {
-	case trade.OrderType_ORDER_TYPE_TAKE_PROFIT:
+	switch triggerKindForOrder(order) {
+	case trade.TriggerKind_TRIGGER_KIND_TAKE_PROFIT:
 		if order.Side == int64(trade.TradeSide_TRADE_SIDE_BUY) {
 			return triggerPrice <= order.TriggerPrice+orderFillEpsilon
 		}
 		return triggerPrice+orderFillEpsilon >= order.TriggerPrice
-	case trade.OrderType_ORDER_TYPE_STOP_LOSS:
+	case trade.TriggerKind_TRIGGER_KIND_STOP_LOSS:
 		if order.Side == int64(trade.TradeSide_TRADE_SIDE_BUY) {
 			return triggerPrice+orderFillEpsilon >= order.TriggerPrice
 		}
 		return triggerPrice <= order.TriggerPrice+orderFillEpsilon
-	case trade.OrderType_ORDER_TYPE_CONDITIONAL:
+	case trade.TriggerKind_TRIGGER_KIND_CONDITIONAL:
 		if order.Side == int64(trade.TradeSide_TRADE_SIDE_BUY) {
 			return triggerPrice+orderFillEpsilon >= order.TriggerPrice
 		}

@@ -1,12 +1,14 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"strings"
 
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/config"
+	"wklive/services/trade/internal/logic"
 	"wklive/services/trade/internal/server"
 	"wklive/services/trade/internal/svc"
 
@@ -35,6 +37,11 @@ func main() {
 	}
 
 	svcCtx := svc.NewServiceContext(c)
+	if restored, err := logic.RestoreOrderBookCache(context.Background(), svcCtx); err != nil {
+		fmt.Printf("Restore order book cache failed: %v\n", err)
+	} else {
+		fmt.Printf("Restored %d open orders into order book cache.\n", restored)
+	}
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		trade.RegisterTradeAdminServer(grpcServer, server.NewTradeAdminServer(svcCtx))

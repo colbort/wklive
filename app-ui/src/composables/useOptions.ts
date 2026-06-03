@@ -12,9 +12,10 @@ const CODE_LABELS: Record<string, string> = {
   WALLET_TYPE_OPTION: '期权账户',
   ORDER_TYPE_LIMIT: '限价',
   ORDER_TYPE_MARKET: '市价',
-  ORDER_TYPE_CONDITIONAL: '条件单',
-  ORDER_TYPE_TAKE_PROFIT: '止盈',
-  ORDER_TYPE_STOP_LOSS: '止损',
+  TRIGGER_KIND_NONE: '普通',
+  TRIGGER_KIND_CONDITIONAL: '条件单',
+  TRIGGER_KIND_TAKE_PROFIT: '止盈',
+  TRIGGER_KIND_STOP_LOSS: '止损',
   MARGIN_MODE_CROSS: '全仓',
   MARGIN_MODE_ISOLATED: '逐仓',
   TRADE_SIDE_BUY: '买入',
@@ -33,7 +34,7 @@ export function optionText(option: OptionsItem) {
   if (CODE_LABELS[option.code]) return CODE_LABELS[option.code]
 
   return option.code
-    .replace(/^(WALLET_TYPE|ORDER_TYPE|MARGIN_MODE|TRADE_SIDE|COMMON_STATUS|YES_NO)_/, '')
+    .replace(/^(WALLET_TYPE|ORDER_TYPE|TRIGGER_KIND|MARGIN_MODE|TRADE_SIDE|COMMON_STATUS|YES_NO)_/, '')
     .split('_')
     .filter(Boolean)
     .map((part) => part.slice(0, 1) + part.slice(1).toLowerCase())
