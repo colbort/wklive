@@ -8,8 +8,8 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/proto/common"
-	"wklive/proto/payment"
+
+	"wklive/app-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,21 +29,5 @@ func NewCreateCryptoRechargeOrderLogic(ctx context.Context, svcCtx *svc.ServiceC
 }
 
 func (l *CreateCryptoRechargeOrderLogic) CreateCryptoRechargeOrder(req *types.CreateCryptoRechargeOrderReq) (*types.CreateCryptoRechargeOrderResp, error) {
-	result, err := l.svcCtx.PaymentCli.CreateCryptoRechargeOrder(l.ctx, &payment.CreateCryptoRechargeOrderReq{
-		WalletType:     req.WalletType,
-		Coin:           req.Coin,
-		ChainCode:      common.ChainCode(req.ChainCode),
-		RechargeAmount: req.RechargeAmount,
-		ClientType:     payment.ClientType(req.ClientType),
-		BizOrderNo:     req.BizOrderNo,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &types.CreateCryptoRechargeOrderResp{
-		RespBase: respBase(result.Base),
-		Data:     rechargeOrderFromPB(result.Order),
-		Address:  cryptoRechargeAddressFromPB(result.Address),
-	}, nil
+	return logicutil.Proxy[types.CreateCryptoRechargeOrderResp](l.ctx, req, l.svcCtx.PaymentCli.CreateCryptoRechargeOrder)
 }

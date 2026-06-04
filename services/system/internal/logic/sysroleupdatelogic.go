@@ -32,7 +32,7 @@ func (l *SysRoleUpdateLogic) SysRoleUpdate(in *system.SysRoleUpdateReq) (*system
 	}
 	if one == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(400, i18n.Translate(i18n.RoleNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.RoleNotFound, i18n.Translate(i18n.RoleNotFound, l.ctx)),
 		}, nil
 	}
 

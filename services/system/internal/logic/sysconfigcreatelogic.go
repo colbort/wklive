@@ -38,12 +38,12 @@ func (l *SysConfigCreateLogic) SysConfigCreate(in *system.SysConfigCreateReq) (*
 	config, err := l.svcCtx.ConfigModel.FindOneByTenantIdConfigKey(l.ctx, in.TenantId, sql.NullString{String: in.ConfigKey, Valid: true})
 	if err != nil && err != models.ErrNotFound {
 		return &system.RespBase{
-			Base: helper.GetErrResp(500, err.Error()),
+			Base: helper.GetErrResp(i18n.InternalServerError, i18n.Translate(i18n.InternalServerError, l.ctx)),
 		}, nil
 	}
 	if config != nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(400, i18n.Translate(i18n.ConfigAlreadyExists, l.ctx)),
+			Base: helper.GetErrResp(i18n.ConfigAlreadyExists, i18n.Translate(i18n.ConfigAlreadyExists, l.ctx)),
 		}, nil
 	}
 	_, err = l.svcCtx.ConfigModel.Insert(l.ctx, &models.SysConfig{
@@ -56,7 +56,7 @@ func (l *SysConfigCreateLogic) SysConfigCreate(in *system.SysConfigCreateReq) (*
 	})
 	if err != nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(500, err.Error()),
+			Base: helper.GetErrResp(i18n.InternalServerError, i18n.Translate(i18n.InternalServerError, l.ctx)),
 		}, nil
 	}
 

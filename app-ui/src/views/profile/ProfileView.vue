@@ -108,7 +108,7 @@ async function handleGuestLogin() {
   loggingGuest.value = true
   try {
     const res = await apiGuestLogin({ tenantCode: tenantStore.tenantCode })
-    if (res.code !== 0 && res.code !== 200) {
+    if (res.code !== 200) {
       guestLoginError.value = res.msg || t('profile.loginFailed')
       return
     }

@@ -37,12 +37,12 @@ func (l *AppProductDetailLogic) AppProductDetail(in *staking.AppProductDetailReq
 	item, err := l.svcCtx.StakeProductModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &staking.AppProductDetailResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
+			return &staking.AppProductDetailResp{Base: helper.GetErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
 	if item.TenantId != tenantId || item.Status != int64(staking.ProductStatus_PRODUCT_STATUS_ENABLE) {
-		return &staking.AppProductDetailResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
+		return &staking.AppProductDetailResp{Base: helper.GetErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
 	}
 
 	return &staking.AppProductDetailResp{Base: helper.OkResp(), Data: productToProto(item)}, nil

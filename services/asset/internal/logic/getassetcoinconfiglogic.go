@@ -32,12 +32,12 @@ func (l *GetAssetCoinConfigLogic) GetAssetCoinConfig(in *asset.GetAssetCoinConfi
 	data, err := l.svcCtx.AssetCoinConfigModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &asset.AssetCoinConfigResp{Base: helper.GetErrResp(i18n.CodeNotFound, "asset coin config not found")}, nil
+			return &asset.AssetCoinConfigResp{Base: helper.GetErrResp(i18n.AssetCoinConfigNotFound, i18n.Translate(i18n.AssetCoinConfigNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
 	if in.TenantId != 0 && data.TenantId != in.TenantId {
-		return &asset.AssetCoinConfigResp{Base: helper.GetErrResp(i18n.CodeNotFound, "asset coin config not found")}, nil
+		return &asset.AssetCoinConfigResp{Base: helper.GetErrResp(i18n.AssetCoinConfigNotFound, i18n.Translate(i18n.AssetCoinConfigNotFound, l.ctx))}, nil
 	}
 
 	return &asset.AssetCoinConfigResp{Base: helper.OkResp(), Data: toAssetCoinConfigProto(data)}, nil

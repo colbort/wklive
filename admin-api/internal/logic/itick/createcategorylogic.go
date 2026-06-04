@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/itick"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,20 +29,5 @@ func NewCreateCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cr
 }
 
 func (l *CreateCategoryLogic) CreateCategory(req *types.CreateCategoryReq) (resp *types.RespBase, err error) {
-	result, err := l.svcCtx.ItickCli.CreateCategory(l.ctx, &itick.CreateCategoryReq{
-		CategoryType: itick.CategoryType(req.CategoryType),
-		CategoryName: req.CategoryName,
-		Enabled:      req.Enabled,
-		AppVisible:   req.AppVisible,
-		Sort:         req.Sort,
-		Icon:         req.Icon,
-		Remark:       req.Remark,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &types.RespBase{
-		Code: result.Base.Code,
-		Msg:  result.Base.Msg,
-	}, nil
+	return logicutil.Proxy[types.RespBase](l.ctx, req, l.svcCtx.ItickCli.CreateCategory)
 }

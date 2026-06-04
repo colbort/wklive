@@ -2,10 +2,10 @@ package logic
 
 import (
 	"context"
-	"fmt"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/svc"
@@ -38,7 +38,7 @@ func (l *AdminAddAssetLogic) AdminAddAsset(in *asset.AdminAddAssetReq) (*asset.A
 		return nil, err
 	}
 	if amount <= 0 {
-		err := fmt.Errorf("amount must be positive")
+		err := i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
 		l.Errorf("AdminAddAsset validate amount failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizNo=%s err=%v",
 			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizNo, err)
 		return nil, err

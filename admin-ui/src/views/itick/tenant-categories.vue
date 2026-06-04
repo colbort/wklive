@@ -85,9 +85,7 @@
 
     <el-card class="table-card" shadow="never">
       <el-table v-loading="loading" :data="list" stripe>
-        <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="tenantId" :label="t('common.tenantId')" width="100" />
-        <el-table-column prop="categoryId" :label="t('itick.category')" width="100" />
         <el-table-column :label="t('itick.categoryType')" width="120">
           <template #default="{ row }">
             {{ getOptionValueLabel(optionGroups, 'categoryType', row.categoryType, t) }}

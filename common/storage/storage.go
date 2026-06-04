@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"mime/multipart"
 
+	"wklive/common/i18n"
 	"wklive/common/storage/impl"
 )
 
@@ -29,7 +30,7 @@ var (
 // UploadFile is a convenience wrapper around NewUploader.
 // It keeps the old call signature while leveraging the interface-based implementation.
 func UploadFile(ctx context.Context, file multipart.File, header *multipart.FileHeader, cfg Config) (string, error) {
-	uploader, err := NewUploader(cfg)
+	uploader, err := NewUploader(ctx, cfg)
 	if err != nil {
 		return "", err
 	}
@@ -43,7 +44,7 @@ type Uploader interface {
 }
 
 // NewUploader creates an uploader for the configured provider.
-func NewUploader(cfg Config) (Uploader, error) {
+func NewUploader(ctx context.Context, cfg Config) (Uploader, error) {
 	switch cfg.OssType {
 	case OssTypeAliyun:
 		return impl.NewAliyunUploader(cfg.AliyunOss.Endpoint, cfg.AliyunOss.AccessKeyId, cfg.AliyunOss.AccessKeySecret, cfg.AliyunOss.BucketName)
@@ -52,7 +53,8 @@ func NewUploader(cfg Config) (Uploader, error) {
 	case OssTypeMinio:
 		return impl.NewMinioUploader(cfg.Minio.Endpoint, cfg.Minio.AccessKeyId, cfg.Minio.AccessKeySecret, cfg.Minio.BucketName)
 	default:
-		return nil, fmt.Errorf("%w: %d", ErrUnsupportedOssType, cfg.OssType)
+		fmt.Printf("不支持的对象存储类型 %s\n", cfg.OssType)
+		return nil, i18n.StatusError(ctx, i18n.InternalServerError)
 	}
 }
 

@@ -39,7 +39,7 @@ func (l *UpdateUserBaseLogic) UpdateUserBase(in *user.UpdateUserBaseReq) (*user.
 
 	if tuser == nil {
 		return &user.UpdateUserBaseResp{
-			Base: helper.GetErrResp(404, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 

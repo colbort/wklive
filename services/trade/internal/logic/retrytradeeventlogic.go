@@ -32,7 +32,7 @@ func NewRetryTradeEventLogic(ctx context.Context, svcCtx *svc.ServiceContext) *R
 func (l *RetryTradeEventLogic) RetryTradeEvent(in *trade.RetryTradeEventReq) (*trade.AdminCommonResp, error) {
 	item, err := l.svcCtx.BizTradeEventModel.FindOne(l.ctx, in.Id)
 	if errors.Is(err, models.ErrNotFound) || (err == nil && item.TenantId != in.TenantId) {
-		return &trade.AdminCommonResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.TradeNotFound, l.ctx))}, nil
+		return &trade.AdminCommonResp{Base: helper.GetErrResp(i18n.TradeNotFound, i18n.Translate(i18n.TradeNotFound, l.ctx))}, nil
 	}
 	if err != nil {
 		return nil, err

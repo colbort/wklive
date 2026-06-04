@@ -8,7 +8,8 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/proto/payment"
+
+	"wklive/app-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,17 +29,5 @@ func NewCancelMyRechargeOrderLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *CancelMyRechargeOrderLogic) CancelMyRechargeOrder(req *types.CancelMyRechargeOrderReq) (resp *types.RespBase, err error) {
-	result, err := l.svcCtx.PaymentCli.CancelMyRechargeOrder(l.ctx, &payment.CancelMyRechargeOrderReq{
-		OrderNo: req.OrderNo,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	resp = &types.RespBase{
-		Code: result.Base.Code,
-		Msg:  result.Base.Msg,
-	}
-
-	return
+	return logicutil.Proxy[types.RespBase](l.ctx, req, l.svcCtx.PaymentCli.CancelMyRechargeOrder)
 }

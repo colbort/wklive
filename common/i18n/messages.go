@@ -178,6 +178,48 @@ const (
 	CryptoRechargeAddressNotConfigured     = 2149
 	CryptoRechargeAddressInUse             = 2150
 	CryptoRechargeAddressExpired           = 2151
+	AmountMustBePositive                   = 2152
+	InsufficientAvailableBalance           = 2153
+	TransferCoinRequired                   = 2154
+	WalletTypeRequired                     = 2155
+	SameWalletCoinTransferNotNeeded        = 2156
+	InvalidExchangeRate                    = 2157
+	PostOnlyOrderWouldMatchImmediately     = 2158
+	RiskTradeDisabled                      = 2159
+	RiskOpenDisabled                       = 2160
+	RiskOrderQuantityBelowMinimum          = 2161
+	RiskOrderQuantityExceedsMaximum        = 2162
+	RiskOrderAmountBelowMinimum            = 2163
+	RiskOrderAmountExceedsMaximum          = 2164
+	AssetRequestProcessing                 = 2165
+	FreezeRecordNotFound                   = 2166
+	LockRecordNotFound                     = 2167
+	AssetTenantMismatch                    = 2168
+	FreezeRecordNotReleasable              = 2169
+	UnfreezeAmountExceedsFrozen            = 2170
+	AssetUnfreezeFailed                    = 2171
+	FreezeRecordUpdateFailed               = 2172
+	AmountMustNotBeNegative                = 2173
+	FreezeRecordNotDeductible              = 2174
+	DeductAmountExceedsFrozen              = 2175
+	DeductFrozenFailed                     = 2176
+	FreezeRecordDeductUpdateFailed         = 2177
+	DeductAmountExceedsLocked              = 2178
+	DeductLockedFailed                     = 2179
+	LockRecordUpdateFailed                 = 2180
+	UnlockAmountExceedsLocked              = 2181
+	AssetUnlockFailed                      = 2182
+	EuropeanOptionNotExpired               = 2183
+	OptionNotInTheMoney                    = 2184
+	RequestRequired                        = 2185
+	UnderlyingPriceMustBePositive          = 2186
+	CryptoWalletAccountNotFound            = 2187
+	CryptoRechargeTxNotFound               = 2188
+	CryptoRechargeAddressNotFound          = 2189
+	InvalidCryptoRechargeParams            = 2190
+	TenantOwnerRoleTemplateNotFound        = 2191
+	SyncTaskFailed                         = 2192
+	AssetCoinConfigNotFound                = 2193
 )
 
 // MessageMap 定义所有支持的错误消息翻译
@@ -625,6 +667,174 @@ var MessageMap = map[int32]map[Language]string{
 	CryptoRechargeAddressExpired: {
 		EN: "Recharge address has expired, please get a new address",
 		ZH: "充值地址已过期，请重新获取地址",
+	},
+	AmountMustBePositive: {
+		EN: "Amount must be greater than 0",
+		ZH: "金额必须大于 0",
+	},
+	InsufficientAvailableBalance: {
+		EN: "Insufficient available balance",
+		ZH: "可用余额不足",
+	},
+	TransferCoinRequired: {
+		EN: "Select transfer coins",
+		ZH: "请选择划转币种",
+	},
+	WalletTypeRequired: {
+		EN: "Select account type",
+		ZH: "请选择账户类型",
+	},
+	SameWalletCoinTransferNotNeeded: {
+		EN: "Same account and coin do not need a transfer",
+		ZH: "同一账户同一币种无需划转",
+	},
+	InvalidExchangeRate: {
+		EN: "Invalid exchange rate",
+		ZH: "汇率异常",
+	},
+	PostOnlyOrderWouldMatchImmediately: {
+		EN: "Post Only order would match immediately",
+		ZH: "Post Only 订单会立即成交",
+	},
+	RiskTradeDisabled: {
+		EN: "Trading is disabled",
+		ZH: "交易已被限制",
+	},
+	RiskOpenDisabled: {
+		EN: "Opening positions is disabled",
+		ZH: "开仓已被限制",
+	},
+	RiskOrderQuantityBelowMinimum: {
+		EN: "Order quantity is below the minimum",
+		ZH: "下单数量低于最小限制",
+	},
+	RiskOrderQuantityExceedsMaximum: {
+		EN: "Order quantity exceeds the maximum",
+		ZH: "下单数量超过最大限制",
+	},
+	RiskOrderAmountBelowMinimum: {
+		EN: "Order amount is below the minimum",
+		ZH: "下单金额低于最小限制",
+	},
+	RiskOrderAmountExceedsMaximum: {
+		EN: "Order amount exceeds the maximum",
+		ZH: "下单金额超过最大限制",
+	},
+	AssetRequestProcessing: {
+		EN: "Asset request is processing",
+		ZH: "资产请求处理中",
+	},
+	FreezeRecordNotFound: {
+		EN: "Freeze record not found",
+		ZH: "冻结记录不存在",
+	},
+	LockRecordNotFound: {
+		EN: "Lock record not found",
+		ZH: "锁仓记录不存在",
+	},
+	AssetTenantMismatch: {
+		EN: "Asset record tenant mismatch",
+		ZH: "资产记录租户不匹配",
+	},
+	FreezeRecordNotReleasable: {
+		EN: "Freeze record is not releasable",
+		ZH: "冻结记录不可解冻",
+	},
+	UnfreezeAmountExceedsFrozen: {
+		EN: "Unfreeze amount exceeds remaining frozen amount",
+		ZH: "解冻金额超过剩余冻结金额",
+	},
+	AssetUnfreezeFailed: {
+		EN: "Unfreeze failed",
+		ZH: "解冻失败",
+	},
+	FreezeRecordUpdateFailed: {
+		EN: "Freeze record update failed",
+		ZH: "冻结记录更新失败",
+	},
+	AmountMustNotBeNegative: {
+		EN: "Amount must not be negative",
+		ZH: "金额不能小于 0",
+	},
+	FreezeRecordNotDeductible: {
+		EN: "Freeze record is not deductible",
+		ZH: "冻结记录不可扣减",
+	},
+	DeductAmountExceedsFrozen: {
+		EN: "Deduct amount exceeds remaining frozen amount",
+		ZH: "扣减金额超过剩余冻结金额",
+	},
+	DeductFrozenFailed: {
+		EN: "Deduct frozen balance failed",
+		ZH: "扣减冻结余额失败",
+	},
+	FreezeRecordDeductUpdateFailed: {
+		EN: "Freeze record deduct update failed",
+		ZH: "冻结扣减记录更新失败",
+	},
+	DeductAmountExceedsLocked: {
+		EN: "Deduct amount exceeds locked amount",
+		ZH: "扣减金额超过锁仓金额",
+	},
+	DeductLockedFailed: {
+		EN: "Deduct locked balance failed",
+		ZH: "扣减锁仓余额失败",
+	},
+	LockRecordUpdateFailed: {
+		EN: "Lock record update failed",
+		ZH: "锁仓记录更新失败",
+	},
+	UnlockAmountExceedsLocked: {
+		EN: "Unlock amount exceeds locked amount",
+		ZH: "解锁金额超过锁仓金额",
+	},
+	AssetUnlockFailed: {
+		EN: "Unlock failed",
+		ZH: "解锁失败",
+	},
+	EuropeanOptionNotExpired: {
+		EN: "European options cannot be exercised before expiration",
+		ZH: "欧式期权未到期不能提前行权",
+	},
+	OptionNotInTheMoney: {
+		EN: "The option is not in the money and cannot be exercised",
+		ZH: "当前不是价内期权，不能行权",
+	},
+	RequestRequired: {
+		EN: "Request is required",
+		ZH: "请求不能为空",
+	},
+	UnderlyingPriceMustBePositive: {
+		EN: "underlying_price must be greater than 0",
+		ZH: "underlying_price 必须大于 0",
+	},
+	CryptoWalletAccountNotFound: {
+		EN: "Crypto wallet account not found",
+		ZH: "链上钱包账号不存在",
+	},
+	CryptoRechargeTxNotFound: {
+		EN: "Crypto recharge transaction not found",
+		ZH: "链上充值交易不存在",
+	},
+	CryptoRechargeAddressNotFound: {
+		EN: "Crypto recharge address not found",
+		ZH: "链上充值地址不存在",
+	},
+	InvalidCryptoRechargeParams: {
+		EN: "Invalid crypto recharge parameters",
+		ZH: "链上充值参数无效",
+	},
+	TenantOwnerRoleTemplateNotFound: {
+		EN: "Tenant owner role template not found",
+		ZH: "租户主账号角色模板不存在",
+	},
+	SyncTaskFailed: {
+		EN: "Sync task failed",
+		ZH: "同步任务执行失败",
+	},
+	AssetCoinConfigNotFound: {
+		EN: "Asset coin config not found",
+		ZH: "资产币种配置不存在",
 	},
 	UserSecurityInfoNotFound: {
 		EN: "User security information not found",

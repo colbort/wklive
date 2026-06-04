@@ -32,13 +32,13 @@ func NewSetSymbolLeverageConfigLogic(ctx context.Context, svcCtx *svc.ServiceCon
 func (l *SetSymbolLeverageConfigLogic) SetSymbolLeverageConfig(in *trade.SetSymbolLeverageConfigReq) (*trade.AdminCommonResp, error) {
 	symbol, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, in.SymbolId)
 	if errors.Is(err, models.ErrNotFound) || (err == nil && symbol.TenantId != in.TenantId) {
-		return &trade.AdminCommonResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
+		return &trade.AdminCommonResp{Base: helper.GetErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
 	}
 	if err != nil {
 		return nil, err
 	}
 	if !isContractMarket(in.MarketType) || symbol.MarketType != int64(in.MarketType) || in.MarginMode == trade.MarginMode_MARGIN_MODE_UNKNOWN {
-		return &trade.AdminCommonResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		return &trade.AdminCommonResp{Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 
 	now := utils.NowMillis()

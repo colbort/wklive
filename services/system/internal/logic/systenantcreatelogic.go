@@ -122,7 +122,7 @@ func (l *SysTenantCreateLogic) SysTenantCreate(in *system.SysTenantCreateReq) (*
 			return err
 		}
 		if len(templateRoleMenus) == 0 {
-			return errors.New("tenant_owner_role_template_not_found")
+			return i18n.StatusError(ctx, i18n.RoleNotFound)
 		}
 		for _, item := range templateRoleMenus {
 			if _, err = roleMenuModel.Insert(ctx, &models.SysRoleMenu{
@@ -172,7 +172,7 @@ func (l *SysTenantCreateLogic) SysTenantCreate(in *system.SysTenantCreateReq) (*
 	if err != nil {
 		if err.Error() == "tenant_owner_role_template_not_found" {
 			return &system.RespBase{
-				Base: helper.GetErrResp(400, "tenant owner role template not found"),
+				Base: helper.GetErrResp(i18n.TenantOwnerRoleTemplateNotFound, i18n.Translate(i18n.TenantOwnerRoleTemplateNotFound, l.ctx)),
 			}, nil
 		}
 		return nil, err
@@ -204,7 +204,7 @@ func (l *SysTenantCreateLogic) generateTenantCode() (string, error) {
 		}
 	}
 
-	return "", errors.New("tenant_code_generate_failed")
+	return "", i18n.StatusError(l.ctx, i18n.InternalServerError)
 }
 
 func randomAlphaNum(length int) (string, error) {

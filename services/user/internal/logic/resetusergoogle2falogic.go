@@ -37,7 +37,7 @@ func (l *ResetUserGoogle2FALogic) ResetUserGoogle2FA(in *user.ResetUserGoogle2FA
 
 	if userSecurity == nil {
 		return &user.AdminCommonResp{
-			Base: helper.GetErrResp(404, i18n.Translate(i18n.UserSecurityInfoNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.UserSecurityInfoNotFound, i18n.Translate(i18n.UserSecurityInfoNotFound, l.ctx)),
 		}, nil
 	}
 

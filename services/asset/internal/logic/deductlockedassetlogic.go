@@ -2,10 +2,10 @@ package logic
 
 import (
 	"context"
-	"fmt"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/svc"
@@ -38,7 +38,7 @@ func (l *DeductLockedAssetLogic) DeductLockedAsset(in *asset.DeductLockedAssetRe
 		return nil, err
 	}
 	if amount <= 0 {
-		err := fmt.Errorf("amount must be positive")
+		err := i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
 		l.Errorf("DeductLockedAsset validate amount failed, tenantId=%d lockNo=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
 			in.TenantId, in.LockNo, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err
@@ -51,13 +51,13 @@ func (l *DeductLockedAssetLogic) DeductLockedAsset(in *asset.DeductLockedAssetRe
 		return nil, err
 	}
 	if lock.TenantId != in.TenantId {
-		err := fmt.Errorf("tenant mismatch for lock record")
+		err := i18n.StatusError(l.ctx, i18n.AssetTenantMismatch)
 		l.Errorf("DeductLockedAsset tenant mismatch, tenantId=%d lockTenantId=%d lockNo=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
 			in.TenantId, lock.TenantId, in.LockNo, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err
 	}
 	if amount > lock.RemainAmount {
-		err := fmt.Errorf("deduct amount exceeds locked amount")
+		err := i18n.StatusError(l.ctx, i18n.DeductAmountExceedsLocked)
 		l.Errorf("DeductLockedAsset amount exceeds locked amount, tenantId=%d lockNo=%s amount=%s remainAmount=%v bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
 			in.TenantId, in.LockNo, in.Amount, lock.RemainAmount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err
@@ -81,7 +81,7 @@ func (l *DeductLockedAssetLogic) DeductLockedAsset(in *asset.DeductLockedAssetRe
 			return err
 		}
 		if !ok {
-			return fmt.Errorf("deduct locked balance failed")
+			return i18n.StatusError(ctx, i18n.DeductLockedFailed)
 		}
 
 		ok, err = assetLockModel.UpdateDeduct(ctx, lock.LockNo, amount, ts)
@@ -89,7 +89,7 @@ func (l *DeductLockedAssetLogic) DeductLockedAsset(in *asset.DeductLockedAssetRe
 			return err
 		}
 		if !ok {
-			return fmt.Errorf("lock record update failed")
+			return i18n.StatusError(ctx, i18n.LockRecordUpdateFailed)
 		}
 
 		after, err = userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, lock.TenantId, lock.UserId, lock.WalletType, lock.Coin)

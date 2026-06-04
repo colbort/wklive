@@ -3,16 +3,14 @@ package logic
 import (
 	"context"
 	"errors"
-	"fmt"
 	"math"
 
+	"wklive/common/i18n"
 	"wklive/proto/option"
 	"wklive/services/option/models"
 )
 
 const optionFloatEpsilon = 1e-9
-
-var errInsufficientPositionQuantity = errors.New("insufficient position quantity")
 
 func optionMultiplier(contract *models.TOptionContract) float64 {
 	if contract.Multiplier > 0 {
@@ -103,7 +101,7 @@ func applyTradeToOrder(order *models.TOptionOrder, contract *models.TOptionContr
 func updateOpenPosition(ctx context.Context, model models.OptionPositionModel, contract *models.TOptionContract, order *models.TOptionOrder, price, qty float64, now int64) error {
 	side := openPositionSide(order.Side)
 	if side == 0 {
-		return fmt.Errorf("invalid open order side: %d", order.Side)
+		return i18n.StatusError(ctx, i18n.ParamError)
 	}
 
 	pos, err := model.FindOneByTenantIdUserIdAccountIdContractIdSide(ctx, order.TenantId, order.UserId, order.AccountId, order.ContractId, side)
@@ -162,7 +160,7 @@ func updateOpenPosition(ctx context.Context, model models.OptionPositionModel, c
 func updateClosePosition(ctx context.Context, model models.OptionPositionModel, contract *models.TOptionContract, order *models.TOptionOrder, price, qty float64, now int64) error {
 	side := closePositionSide(order.Side)
 	if side == 0 {
-		return fmt.Errorf("invalid close order side: %d", order.Side)
+		return i18n.StatusError(ctx, i18n.ParamError)
 	}
 
 	pos, err := model.FindOneByTenantIdUserIdAccountIdContractIdSide(ctx, order.TenantId, order.UserId, order.AccountId, order.ContractId, side)
@@ -170,7 +168,7 @@ func updateClosePosition(ctx context.Context, model models.OptionPositionModel, 
 		return err
 	}
 	if pos.Status != int64(option.PositionStatus_POSITION_STATUS_HOLDING) {
-		return fmt.Errorf("position is not holding")
+		return i18n.StatusError(ctx, i18n.OperationNotAllowed)
 	}
 
 	reduceQty := minFloat64(qty, pos.PositionQty)
@@ -220,14 +218,14 @@ func freezeClosePosition(ctx context.Context, model models.OptionPositionModel, 
 
 	side := closePositionSide(order.Side)
 	if side == 0 {
-		return fmt.Errorf("invalid close order side: %d", order.Side)
+		return i18n.StatusError(ctx, i18n.ParamError)
 	}
 	pos, err := model.FindOneByTenantIdUserIdAccountIdContractIdSide(ctx, order.TenantId, order.UserId, order.AccountId, order.ContractId, side)
 	if err != nil {
 		return err
 	}
 	if pos.Status != int64(option.PositionStatus_POSITION_STATUS_HOLDING) || pos.AvailableQty+optionFloatEpsilon < order.Qty {
-		return errInsufficientPositionQuantity
+		return i18n.StatusError(ctx, i18n.QuantityFormatError)
 	}
 
 	pos.AvailableQty = normalizeZero(pos.AvailableQty - order.Qty)
@@ -243,7 +241,7 @@ func releaseClosePositionFrozenQty(ctx context.Context, model models.OptionPosit
 
 	side := closePositionSide(order.Side)
 	if side == 0 {
-		return fmt.Errorf("invalid close order side: %d", order.Side)
+		return i18n.StatusError(ctx, i18n.ParamError)
 	}
 	pos, err := model.FindOneByTenantIdUserIdAccountIdContractIdSide(ctx, order.TenantId, order.UserId, order.AccountId, order.ContractId, side)
 	if err != nil {

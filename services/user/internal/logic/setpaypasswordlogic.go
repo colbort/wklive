@@ -43,14 +43,14 @@ func (l *SetPayPasswordLogic) SetPayPassword(in *user.SetPayPasswordReq) (*user.
 
 	if tuser == nil {
 		return &user.AppCommonResp{
-			Base: helper.GetErrResp(404, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 
 	// 验证密码是否一致
 	if in.Password != in.ConfirmPassword {
 		return &user.AppCommonResp{
-			Base: helper.GetErrResp(400, i18n.Translate(i18n.PasswordsDoNotMatch, l.ctx)),
+			Base: helper.GetErrResp(i18n.PasswordsDoNotMatch, i18n.Translate(i18n.PasswordsDoNotMatch, l.ctx)),
 		}, nil
 	}
 

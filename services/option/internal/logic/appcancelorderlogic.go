@@ -44,15 +44,15 @@ func (l *AppCancelOrderLogic) AppCancelOrder(in *option.AppCancelOrderReq) (*opt
 	item, err := findOrderByNoOrID(l.ctx, l.svcCtx, tenantId, in.OrderId, in.OrderNo)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &option.AppCommonResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
+			return &option.AppCommonResp{Base: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
 	if item.UserId != userId || item.AccountId != in.AccountId {
-		return &option.AppCommonResp{Base: helper.GetErrResp(403, i18n.Translate(i18n.NoPermissionOperateOrder, l.ctx))}, nil
+		return &option.AppCommonResp{Base: helper.GetErrResp(i18n.NoPermissionOperateOrder, i18n.Translate(i18n.NoPermissionOperateOrder, l.ctx))}, nil
 	}
 	if item.Status != int64(option.OrderStatus_ORDER_STATUS_PENDING) && item.Status != int64(option.OrderStatus_ORDER_STATUS_PART_FILLED) {
-		return &option.AppCommonResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.CurrentStatusCannotCancel, l.ctx))}, nil
+		return &option.AppCommonResp{Base: helper.GetErrResp(i18n.CurrentStatusCannotCancel, i18n.Translate(i18n.CurrentStatusCannotCancel, l.ctx))}, nil
 	}
 
 	if item.MarginAmount > 0 {

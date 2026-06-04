@@ -2,10 +2,10 @@ package logic
 
 import (
 	"context"
-	"fmt"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/svc"
@@ -38,7 +38,7 @@ func (l *TransferAssetLogic) TransferAsset(in *asset.TransferAssetReq) (*asset.T
 		return nil, err
 	}
 	if amount <= 0 {
-		err := fmt.Errorf("amount must be positive")
+		err := i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
 		l.Errorf("TransferAsset validate amount failed, tenantId=%d userId=%d fromWalletType=%d toWalletType=%d coin=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
 			in.TenantId, in.UserId, in.FromWalletType, in.ToWalletType, in.Coin, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err
@@ -70,7 +70,7 @@ func (l *TransferAssetLogic) TransferAsset(in *asset.TransferAssetReq) (*asset.T
 		if ok, err := userAssetModel.SubAvailableAmount(ctx, in.TenantId, in.UserId, int64(in.FromWalletType), in.Coin, amount, ts); err != nil {
 			return err
 		} else if !ok {
-			return fmt.Errorf("insufficient available balance")
+			return i18n.StatusError(ctx, i18n.InsufficientAvailableBalance)
 		}
 
 		if beforeTo == nil {

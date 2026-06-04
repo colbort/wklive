@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/system"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,24 +29,5 @@ func NewSysMenuCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 }
 
 func (l *SysMenuCreateLogic) SysMenuCreate(req *types.SysMenuCreateReq) (resp *types.RespBase, err error) {
-	result, err := l.svcCtx.SystemCli.SysMenuCreate(l.ctx, &system.SysMenuCreateReq{
-		ParentId:  req.ParentId,
-		Name:      req.Name,
-		MenuType:  toMenuType(req.MenuType),
-		Method:    toRequestMethod(req.Method),
-		Path:      req.Path,
-		Component: req.Component,
-		Icon:      req.Icon,
-		Sort:      req.Sort,
-		Visible:   toVisibleStatus(req.Visible),
-		Status:    toCommonStatus(req.Status),
-		Perms:     req.Perms,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &types.RespBase{
-		Code: result.Base.Code,
-		Msg:  result.Base.Msg,
-	}, nil
+	return logicutil.Proxy[types.RespBase](l.ctx, req, l.svcCtx.SystemCli.SysMenuCreate)
 }

@@ -31,7 +31,7 @@ func NewGetSymbolDetailAdminLogic(ctx context.Context, svcCtx *svc.ServiceContex
 func (l *GetSymbolDetailAdminLogic) GetSymbolDetailAdmin(in *trade.GetSymbolDetailAdminReq) (*trade.GetSymbolDetailAdminResp, error) {
 	item, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, in.Id)
 	if errors.Is(err, models.ErrNotFound) || (err == nil && item.TenantId != in.TenantId) {
-		return &trade.GetSymbolDetailAdminResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
+		return &trade.GetSymbolDetailAdminResp{Base: helper.GetErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
 	}
 	if err != nil {
 		return nil, err

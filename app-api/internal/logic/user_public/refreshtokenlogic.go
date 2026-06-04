@@ -8,7 +8,8 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/proto/user"
+
+	"wklive/app-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,23 +29,5 @@ func NewRefreshTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Refr
 }
 
 func (l *RefreshTokenLogic) RefreshToken(req *types.RefreshTokenReq) (resp *types.RefreshTokenResp, err error) {
-	result, err := l.svcCtx.UserCli.RefreshToken(l.ctx, &user.RefreshTokenReq{
-		TenantCode:   req.TenantCode,
-		RefreshToken: req.RefreshToken,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &types.RefreshTokenResp{
-		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
-		},
-		Token: types.TokenInfo{
-			AccessToken:  result.Token.AccessToken,
-			RefreshToken: result.Token.RefreshToken,
-			ExpireTime:   result.Token.ExpireTime,
-		},
-	}, nil
+	return logicutil.Proxy[types.RefreshTokenResp](l.ctx, req, l.svcCtx.UserCli.RefreshToken)
 }

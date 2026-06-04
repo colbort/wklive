@@ -624,28 +624,28 @@ VALUES
 (406, 401, '同步任务状态', 3, 'GET', '/itick/sync-tasks/{taskNo}/status', 'itick:sync-task:status', '', '', 406),
 
 -- 产品管理 320
-(420, 400, '产品列表', 2, 'GET', '/itick/products', 'itick:product:list', 'itick/products', 'Goods', 320),
+(420, 400, '产品列表', 2, 'GET', '/itick/products', 'itick:product:list', 'itick/products', 'Goods', 420),
 (421, 420, '创建产品', 3, 'POST', '/itick/products', 'itick:product:add', '', '', 421),
 (422, 420, '更新产品', 3, 'PUT', '/itick/products', 'itick:product:update', '', '', 422),
 (423, 420, '获取产品详情', 3, 'GET', '/itick/products/{id}', 'itick:product:detail', '', '', 423),
 (424, 420, 'K线查看', 3, 'GET', '/itick/kline', 'itick:kline:view', '', '', 424),
 
 -- 租户产品类型管理 330
-(430, 400, '租户产品类型列表', 2, 'GET', '/itick/tenant-categories', 'itick:tenant-category:list', 'itick/tenant-categories', 'OfficeBuilding', 330),
+(430, 400, '租户产品类型列表', 2, 'GET', '/itick/tenant-categories', 'itick:tenant-category:list', 'itick/tenant-categories', 'OfficeBuilding', 430),
 (431, 430, '创建租户产品类型', 3, 'POST', '/itick/tenant-categories', 'itick:tenant-category:add', '', '', 431),
 (432, 430, '更新租户产品类型', 3, 'PUT', '/itick/tenant-categories', 'itick:tenant-category:update', '', '', 432),
 (433, 430, '批量更新租户产品类型', 3, 'POST', '/itick/tenant-categories/batch', 'itick:tenant-category:batchUpsert', '', '', 433),
 (434, 430, '获取租户产品类型详情', 3, 'GET', '/itick/tenant-categories/{id}', 'itick:tenant-category:detail', '', '', 434),
 
 -- 租户产品管理 350
-(450, 400, '租户产品列表', 2, 'GET', '/itick/tenant-products', 'itick:tenant-itick:list', 'itick/tenant-products', 'Grid', 350),
+(450, 400, '租户产品列表', 2, 'GET', '/itick/tenant-products', 'itick:tenant-itick:list', 'itick/tenant-products', 'Grid', 450),
 (451, 450, '创建租户产品', 3, 'POST', '/itick/tenant-products', 'itick:tenant-itick:add', '', '', 451),
 (452, 450, '更新租户产品', 3, 'PUT', '/itick/tenant-products', 'itick:tenant-itick:update', '', '', 452),
 (453, 450, '批量更新租户产品', 3, 'POST', '/itick/tenant-products/batch', 'itick:tenant-itick:batchUpsert', '', '', 453),
 (454, 450, '获取租户产品详情', 3, 'GET', '/itick/tenant-products/{id}', 'itick:tenant-itick:detail', '', '', 454),
 
 -- 初始化租户展示配置
-(470, 400, '初始化租户展示配置', 2, 'POST', '/itick/tenant-display/init', 'itick:tenant-display:init', 'itick/tenant-display-init', 'Setting', 370),
+(470, 400, '初始化租户展示配置', 2, 'POST', '/itick/tenant-display/init', 'itick:tenant-display:init', 'itick/tenant-display-init', 'Setting', 470),
 (480, 400, 'ITICK服务选项', 3, 'GET', '/itick/options', 'itick:options', '', '', 480);
 
 

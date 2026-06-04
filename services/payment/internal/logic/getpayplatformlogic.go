@@ -38,7 +38,7 @@ func (l *GetPayPlatformLogic) GetPayPlatform(in *payment.GetPayPlatformReq) (*pa
 
 	if platform == nil {
 		return &payment.GetPayPlatformResp{
-			Base: helper.GetErrResp(404, i18n.Translate(i18n.PlatformNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.PlatformNotFound, i18n.Translate(i18n.PlatformNotFound, l.ctx)),
 		}, nil
 	}
 

@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, ref, nextTick, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { setLocale, type Locale } from '@/i18n'
@@ -31,6 +31,7 @@ const cropperImage = ref<HTMLImageElement | null>(null)
 
 let cropper: Cropper | null = null
 let objectUrl = ''
+let clampingSelection = false
 
 function change(val: Locale) {
   setLocale(val)
@@ -97,7 +98,7 @@ function resetCropperState() {
   clearObjectUrl()
 }
 
-type Box = {
+type RectBox = {
   left: number
   top: number
   right: number
@@ -106,91 +107,121 @@ type Box = {
   height: number
 }
 
-function getRelativeBox(el: Element, relativeTo: Element): Box {
+type CropperSelectionChange = {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
+function getRelativeRect(el: Element, relativeTo: Element): RectBox {
   const rect = el.getBoundingClientRect()
   const baseRect = relativeTo.getBoundingClientRect()
-
   const left = rect.left - baseRect.left
   const top = rect.top - baseRect.top
-  const width = rect.width
-  const height = rect.height
 
   return {
     left,
     top,
-    right: left + width,
-    bottom: top + height,
-    width,
-    height,
+    right: left + rect.width,
+    bottom: top + rect.height,
+    width: rect.width,
+    height: rect.height,
   }
 }
 
-function boxContains(outer: Box, inner: Box) {
-  return (
-    inner.left >= outer.left &&
-    inner.top >= outer.top &&
-    inner.right <= outer.right &&
-    inner.bottom <= outer.bottom
+function clamp(value: number, min: number, max: number) {
+  if (max < min) return min
+  return Math.min(Math.max(value, min), max)
+}
+
+function clampSelectionToImage(
+  selection: CropperSelectionChange,
+  imageEl: Element,
+  canvasEl: Element,
+) {
+  const imageRect = getRelativeRect(imageEl, canvasEl)
+
+  if (!imageRect.width || !imageRect.height) return selection
+
+  const maxSize = Math.min(imageRect.width, imageRect.height)
+  const size = Math.min(selection.width, maxSize)
+  const x = clamp(selection.x, imageRect.left, imageRect.right - size)
+  const y = clamp(selection.y, imageRect.top, imageRect.bottom - size)
+
+  return {
+    x: Math.round(x),
+    y: Math.round(y),
+    width: Math.round(size),
+    height: Math.round(size),
+  }
+}
+
+function selectionChanged(a: CropperSelectionChange, b: CropperSelectionChange) {
+  return a.x !== b.x || a.y !== b.y || a.width !== b.width || a.height !== b.height
+}
+
+function keepSelectionInsideImage(selectionEl: any, imageEl: Element, canvasEl: Element) {
+  const next = clampSelectionToImage(
+    {
+      x: selectionEl.x,
+      y: selectionEl.y,
+      width: selectionEl.width,
+      height: selectionEl.height,
+    },
+    imageEl,
+    canvasEl,
   )
-}
 
-function fitImageToSelection(imageEl: any, selectionEl: any, canvasEl: any) {
-  const imageBox = getRelativeBox(imageEl, canvasEl)
-  const selectionBox = getRelativeBox(selectionEl, canvasEl)
-
-  if (!imageBox.width || !imageBox.height) return
-
-  const scaleX = selectionBox.width / imageBox.width
-  const scaleY = selectionBox.height / imageBox.height
-  const scale = Math.max(scaleX, scaleY)
-
-  if (scale > 1 && typeof imageEl.$scale === 'function') {
-    imageEl.$scale(scale)
+  if (selectionChanged(next, selectionEl)) {
+    selectionEl.$change(next.x, next.y, next.width, next.height, 1, true)
   }
 }
 
-function ensureImageCoversSelection(imageEl: any, selectionEl: any, canvasEl: any) {
-  // 先保证尺寸足够覆盖裁剪框
-  fitImageToSelection(imageEl, selectionEl, canvasEl)
+function createAvatarCanvasFromVisibleSelection(
+  imageSource: HTMLImageElement,
+  imageEl: Element,
+  selectionEl: Element,
+) {
+  const imageRect = imageEl.getBoundingClientRect()
+  const selectionRect = selectionEl.getBoundingClientRect()
+  const naturalWidth = imageSource.naturalWidth
+  const naturalHeight = imageSource.naturalHeight
 
-  const imageBox = getRelativeBox(imageEl, canvasEl)
-  const selectionBox = getRelativeBox(selectionEl, canvasEl)
-
-  let moveX = 0
-  let moveY = 0
-
-  if (imageBox.left > selectionBox.left) {
-    moveX = selectionBox.left - imageBox.left
-  } else if (imageBox.right < selectionBox.right) {
-    moveX = selectionBox.right - imageBox.right
+  if (!imageRect.width || !imageRect.height || !naturalWidth || !naturalHeight) {
+    return null
   }
 
-  if (imageBox.top > selectionBox.top) {
-    moveY = selectionBox.top - imageBox.top
-  } else if (imageBox.bottom < selectionBox.bottom) {
-    moveY = selectionBox.bottom - imageBox.bottom
-  }
+  const sourceX = ((selectionRect.left - imageRect.left) / imageRect.width) * naturalWidth
+  const sourceY = ((selectionRect.top - imageRect.top) / imageRect.height) * naturalHeight
+  const sourceWidth = (selectionRect.width / imageRect.width) * naturalWidth
+  const sourceHeight = (selectionRect.height / imageRect.height) * naturalHeight
 
-  if ((moveX !== 0 || moveY !== 0) && typeof imageEl.$move === 'function') {
-    imageEl.$move(moveX, moveY)
-  }
-}
+  const avatarCanvas = document.createElement('canvas')
+  avatarCanvas.width = 200
+  avatarCanvas.height = 200
 
-function canTransformKeepCover(imageEl: any, selectionEl: any, canvasEl: any, matrix: number[]) {
-  const clone = imageEl.cloneNode() as HTMLElement
-  clone.style.position = 'absolute'
-  clone.style.visibility = 'hidden'
-  clone.style.pointerEvents = 'none'
-  clone.style.transform = `matrix(${matrix.join(',')})`
+  const ctx = avatarCanvas.getContext('2d')
+  if (!ctx) return null
 
-  canvasEl.appendChild(clone)
+  ctx.save()
+  ctx.beginPath()
+  ctx.arc(100, 100, 100, 0, Math.PI * 2)
+  ctx.clip()
+  ctx.drawImage(
+    imageSource,
+    sourceX,
+    sourceY,
+    sourceWidth,
+    sourceHeight,
+    0,
+    0,
+    avatarCanvas.width,
+    avatarCanvas.height,
+  )
+  ctx.restore()
 
-  const imageBox = getRelativeBox(clone, canvasEl)
-  const selectionBox = getRelativeBox(selectionEl, canvasEl)
-
-  canvasEl.removeChild(clone)
-
-  return boxContains(imageBox, selectionBox)
+  return avatarCanvas
 }
 
 async function onAvatarClick() {
@@ -231,28 +262,30 @@ async function onAvatarClick() {
           <cropper-canvas background>
             <cropper-image
               rotatable="false"
-              scalable="false"
+              scalable
               skewable="false"
-              translatable
             ></cropper-image>
 
-            <cropper-shade hidden></cropper-shade>
+            <cropper-shade></cropper-shade>
 
             <cropper-selection
-              initial-coverage="1"
+              initial-coverage="0.56"
               aspect-ratio="1"
-              movable="false"
-              resizable="false"
+              movable
+              resizable
             >
-              <cropper-grid role="grid" covered></cropper-grid>
               <cropper-crosshair centered></cropper-crosshair>
-            </cropper-selection>
 
-            <cropper-handle
-              action="move"
-              plain
-              theme-color="rgba(64, 158, 255, 0.18)"
-            ></cropper-handle>
+              <cropper-handle action="move" plain></cropper-handle>
+              <cropper-handle action="n-resize"></cropper-handle>
+              <cropper-handle action="e-resize"></cropper-handle>
+              <cropper-handle action="s-resize"></cropper-handle>
+              <cropper-handle action="w-resize"></cropper-handle>
+              <cropper-handle action="ne-resize"></cropper-handle>
+              <cropper-handle action="nw-resize"></cropper-handle>
+              <cropper-handle action="se-resize"></cropper-handle>
+              <cropper-handle action="sw-resize"></cropper-handle>
+            </cropper-selection>
           </cropper-canvas>
         `,
       })
@@ -267,26 +300,25 @@ async function onAvatarClick() {
         await imageEl.$ready()
       }
 
-      // 初始化时保证图片完整覆盖裁剪框
-      requestAnimationFrame(() => {
-        ensureImageCoversSelection(imageEl, selectionEl, canvasEl)
-      })
+      selectionEl.addEventListener('change', (event: Event) => {
+        if (clampingSelection) return
 
-      // 拖动时边界检查：如果拖动后裁剪框会露空白，则阻止这次变换
-      imageEl.addEventListener('transform', (event: Event) => {
-        const e = event as CustomEvent<{ matrix: number[] }>
-        if (!e.detail?.matrix) return
+        const e = event as CustomEvent<CropperSelectionChange>
+        if (!e.detail) return
 
-        if (!canTransformKeepCover(imageEl, selectionEl, canvasEl, e.detail.matrix)) {
-          e.preventDefault()
-        }
-      })
+        const next = clampSelectionToImage(e.detail, imageEl, canvasEl)
+        if (!selectionChanged(next, e.detail)) return
 
-      // 交互结束后再次兜底修正
-      canvasEl.addEventListener('actionend', () => {
+        e.preventDefault()
         requestAnimationFrame(() => {
-          ensureImageCoversSelection(imageEl, selectionEl, canvasEl)
+          clampingSelection = true
+          selectionEl.$change(next.x, next.y, next.width, next.height, 1, true)
+          clampingSelection = false
         })
+      })
+
+      requestAnimationFrame(() => {
+        keepSelectionInsideImage(selectionEl, imageEl, canvasEl)
       })
     }
 
@@ -300,65 +332,57 @@ async function confirmCrop() {
   if (!cropper) return
 
   try {
-    const selection = cropper.getCropperSelection()
-    if (!selection) {
-      ElMessage.error(t('app.cropFailed'))
-    }
+    const imageEl = cropper.getCropperImage()
+    const selectionEl = cropper.getCropperSelection()
 
-    const canvas = await selection!.$toCanvas({
-      width: 200,
-      height: 200,
-    })
-
-    if (!canvas) {
+    if (!cropperImage.value || !imageEl || !selectionEl) {
       ElMessage.error(t('app.cropFailed'))
       return
     }
 
-    const ctx = canvas.getContext('2d')
-    if (ctx) {
-      ctx.globalCompositeOperation = 'destination-over'
-      ctx.fillStyle = '#ffffff'
-      ctx.fillRect(0, 0, canvas.width, canvas.height)
+    const avatarCanvas = createAvatarCanvasFromVisibleSelection(
+      cropperImage.value,
+      imageEl,
+      selectionEl,
+    )
+    if (!avatarCanvas) {
+      ElMessage.error(t('app.cropFailed'))
+      return
     }
 
-    canvas.toBlob(
-      async (blob: Blob | null) => {
-        if (!blob) {
-          ElMessage.error(t('app.cropFailed'))
-          return
+    avatarCanvas.toBlob(async (blob: Blob | null) => {
+      if (!blob) {
+        ElMessage.error(t('app.cropFailed'))
+        return
+      }
+
+      try {
+        const file = new File([blob], 'avatar.png', {
+          type: 'image/png',
+        })
+
+        const result = await uploadService.uploadAvatar(file)
+
+        if (result.code !== 200) {
+          throw new Error(result.msg || 'upload failed')
         }
 
-        try {
-          const file = new File([blob], 'avatar.jpg', {
-            type: 'image/jpeg',
+        if (auth.user && result.data?.url) {
+          apiUpdateProfile({ avatar: result.data.url }).catch((err) => {
+            logger.error('更新头像失败', err)
+            ElMessage.error(t('app.updateAvatarFailed'))
           })
-
-          const result = await uploadService.uploadAvatar(file)
-
-          if (result.code !== 200) {
-            throw new Error(result.msg || 'upload failed')
-          }
-
-          if (auth.user && result.data?.url) {
-            apiUpdateProfile({ avatar: result.data.url }).catch((err) => {
-              logger.error('更新头像失败', err)
-              ElMessage.error(t('app.updateAvatarFailed'))
-            })
-            auth.user.avatar = result.data.url
-          }
-
-          ElMessage.success(t('app.avatarUpdated'))
-          cropperDialogVisible.value = false
-          resetCropperState()
-        } catch (error) {
-          logger.error('头像上传失败', error)
-          ElMessage.error(t('app.avatarUploadFailed'))
+          auth.user.avatar = result.data.url
         }
-      },
-      'image/jpeg',
-      0.9,
-    )
+
+        ElMessage.success(t('app.avatarUpdated'))
+        cropperDialogVisible.value = false
+        resetCropperState()
+      } catch (error) {
+        logger.error('头像上传失败', error)
+        ElMessage.error(t('app.avatarUploadFailed'))
+      }
+    }, 'image/png')
   } catch (error) {
     logger.error(t('app.cropFailed'), error)
     ElMessage.error(t('app.cropFailed'))
@@ -455,7 +479,7 @@ onBeforeUnmount(() => {
   <el-dialog
     v-model="cropperDialogVisible"
     :title="t('app.cropAvatar')"
-    width="520px"
+    width="640px"
     :before-close="cancelCrop"
     :destroy-on-close="true"
     :close-on-click-modal="false"
@@ -532,8 +556,8 @@ onBeforeUnmount(() => {
 }
 
 .cropper-stage {
-  width: 360px;
-  height: 360px;
+  width: min(520px, 100%);
+  height: 440px;
   margin: 0 auto;
   overflow: hidden;
   border-radius: 8px;
@@ -548,15 +572,35 @@ onBeforeUnmount(() => {
 
 :deep(cropper-image) {
   display: block;
+  max-width: 100%;
+  max-height: 100%;
 }
 
 :deep(cropper-selection) {
-  border-radius: 0;
+  border: 2px solid #ff3b30;
+  border-radius: 50%;
+  background: transparent;
+  box-sizing: border-box;
 }
 
-:deep(cropper-grid),
-:deep(cropper-crosshair),
-:deep(cropper-handle) {
-  color: #409eff;
+:deep(cropper-shade) {
+  background: rgba(0, 0, 0, 0.24);
+}
+
+:deep(cropper-crosshair) {
+  color: rgba(255, 59, 48, 0.28);
+}
+
+:deep(cropper-handle[action='move']) {
+  background: transparent;
+}
+
+:deep(cropper-handle[action$='resize']) {
+  width: 12px;
+  height: 12px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #ff3b30;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.28);
 }
 </style>

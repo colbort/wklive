@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/payment"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,30 +29,5 @@ func NewGetPayProductLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Get
 }
 
 func (l *GetPayProductLogic) GetPayProduct(req *types.GetPayProductReq) (resp *types.GetPayProductResp, err error) {
-	result, err := l.svcCtx.PaymentCli.GetPayProduct(l.ctx, &payment.GetPayProductReq{
-		Id: req.Id,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	resp = &types.GetPayProductResp{
-		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
-		},
-		Data: types.PayProduct{
-			Id:          result.Data.Id,
-			PlatformId:  result.Data.PlatformId,
-			ProductCode: result.Data.ProductCode,
-			ProductName: result.Data.ProductName,
-			SceneType:   int64(result.Data.SceneType),
-			Currency:    result.Data.Currency,
-			Status:      int64(result.Data.Status),
-			Remark:      result.Data.Remark,
-			CreateTimes: result.Data.CreateTimes,
-			UpdateTimes: result.Data.UpdateTimes,
-		},
-	}
-	return resp, nil
+	return logicutil.Proxy[types.GetPayProductResp](l.ctx, req, l.svcCtx.PaymentCli.GetPayProduct)
 }

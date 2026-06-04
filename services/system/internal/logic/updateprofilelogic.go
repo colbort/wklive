@@ -2,7 +2,7 @@ package logic
 
 import (
 	"context"
-	"errors"
+
 	"github.com/zeromicro/go-zero/core/logx"
 	"golang.org/x/crypto/bcrypt"
 	"wklive/common/helper"
@@ -33,7 +33,7 @@ func (l *UpdateProfileLogic) UpdateProfile(in *system.UpdateProfileReq) (*system
 	}
 
 	if user == nil {
-		return nil, errors.New(i18n.Translate(i18n.UserNotFound, l.ctx))
+		return nil, i18n.StatusError(l.ctx, i18n.UserNotFound)
 	}
 	if in.Avatar != nil && *in.Avatar != "" {
 		user.Avatar = *in.Avatar

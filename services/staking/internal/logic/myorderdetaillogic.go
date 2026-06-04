@@ -41,15 +41,15 @@ func (l *MyOrderDetailLogic) MyOrderDetail(in *staking.AppMyOrderDetailReq) (*st
 	item, err := l.svcCtx.StakeOrderModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &staking.AppMyOrderDetailResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
+			return &staking.AppMyOrderDetailResp{Base: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
 	if item.TenantId != tenantId {
-		return &staking.AppMyOrderDetailResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
+		return &staking.AppMyOrderDetailResp{Base: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 	}
 	if item.UserId != userId {
-		return &staking.AppMyOrderDetailResp{Base: helper.GetErrResp(403, i18n.Translate(i18n.NoPermissionAccessOrder, l.ctx))}, nil
+		return &staking.AppMyOrderDetailResp{Base: helper.GetErrResp(i18n.NoPermissionAccessOrder, i18n.Translate(i18n.NoPermissionAccessOrder, l.ctx))}, nil
 	}
 
 	return &staking.AppMyOrderDetailResp{Base: helper.OkResp(), Data: orderToProto(item)}, nil

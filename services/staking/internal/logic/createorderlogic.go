@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"fmt"
 	"math"
 
 	"wklive/common/conv"
@@ -47,30 +46,30 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.AppCreateOrderReq) (*staking.
 		return nil, err
 	}
 	if product == nil || product.TenantId != tenantId {
-		return &staking.AppCreateOrderResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
+		return &staking.AppCreateOrderResp{Base: helper.GetErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
 	}
 	if product.Status != int64(staking.ProductStatus_PRODUCT_STATUS_ENABLE) {
-		return &staking.AppCreateOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.StakingProductUnavailable, l.ctx))}, nil
+		return &staking.AppCreateOrderResp{Base: helper.GetErrResp(i18n.StakingProductUnavailable, i18n.Translate(i18n.StakingProductUnavailable, l.ctx))}, nil
 	}
 
 	amount, err := conv.ParseFloatField(in.StakeAmount)
 	if err != nil || amount <= 0 {
-		return &staking.AppCreateOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.StakeAmountInvalid, l.ctx))}, nil
+		return &staking.AppCreateOrderResp{Base: helper.GetErrResp(i18n.StakeAmountInvalid, i18n.Translate(i18n.StakeAmountInvalid, l.ctx))}, nil
 	}
 	if product.MinAmount > 0 && amount < product.MinAmount {
-		return &staking.AppCreateOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.StakeAmountBelowMinimum, l.ctx))}, nil
+		return &staking.AppCreateOrderResp{Base: helper.GetErrResp(i18n.StakeAmountBelowMinimum, i18n.Translate(i18n.StakeAmountBelowMinimum, l.ctx))}, nil
 	}
 	if product.MaxAmount > 0 && amount > product.MaxAmount {
-		return &staking.AppCreateOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.StakeAmountAboveMaximum, l.ctx))}, nil
+		return &staking.AppCreateOrderResp{Base: helper.GetErrResp(i18n.StakeAmountAboveMaximum, i18n.Translate(i18n.StakeAmountAboveMaximum, l.ctx))}, nil
 	}
 	if product.StepAmount > 0 {
 		steps := amount / product.StepAmount
 		if math.Abs(steps-math.Round(steps)) > 1e-9 {
-			return &staking.AppCreateOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.StakeAmountStepInvalid, l.ctx))}, nil
+			return &staking.AppCreateOrderResp{Base: helper.GetErrResp(i18n.StakeAmountStepInvalid, i18n.Translate(i18n.StakeAmountStepInvalid, l.ctx))}, nil
 		}
 	}
 	if product.TotalAmount > 0 && product.StakedAmount+amount > product.TotalAmount+1e-9 {
-		return &staking.AppCreateOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ProductQuotaInsufficient, l.ctx))}, nil
+		return &staking.AppCreateOrderResp{Base: helper.GetErrResp(i18n.ProductQuotaInsufficient, i18n.Translate(i18n.ProductQuotaInsufficient, l.ctx))}, nil
 	}
 	if product.UserLimitAmount > 0 {
 		userStaked, err := l.svcCtx.StakeOrderModel.SumStakeAmountByStatuses(l.ctx, tenantId, userId, in.ProductId, activeOrderStatuses())
@@ -78,7 +77,7 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.AppCreateOrderReq) (*staking.
 			return nil, err
 		}
 		if userStaked+amount > product.UserLimitAmount+1e-9 {
-			return &staking.AppCreateOrderResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.UserStakeLimitExceeded, l.ctx))}, nil
+			return &staking.AppCreateOrderResp{Base: helper.GetErrResp(i18n.UserStakeLimitExceeded, i18n.Translate(i18n.UserStakeLimitExceeded, l.ctx))}, nil
 		}
 	}
 
@@ -156,7 +155,7 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.AppCreateOrderReq) (*staking.
 		if lockResp != nil && lockResp.Base != nil {
 			return &staking.AppCreateOrderResp{Base: lockResp.Base}, nil
 		}
-		return nil, fmt.Errorf("staking create order lock asset returned empty response")
+		return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
 	}
 
 	product.StakedAmount += amount

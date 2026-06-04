@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/itick"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,19 +29,5 @@ func NewInitTenantItickDisplayLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 func (l *InitTenantItickDisplayLogic) InitTenantItickDisplay(req *types.InitTenantItickDisplayReq) (resp *types.InitTenantItickDisplayResp, err error) {
-	result, err := l.svcCtx.ItickCli.InitTenantItickDisplay(l.ctx, &itick.InitTenantItickDisplayReq{
-		TenantId:  req.TenantId,
-		Overwrite: req.Overwrite,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &types.InitTenantItickDisplayResp{
-		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
-		},
-		CategoryCount: result.CategoryCount,
-		ProductCount:  result.ProductCount,
-	}, nil
+	return logicutil.Proxy[types.InitTenantItickDisplayResp](l.ctx, req, l.svcCtx.ItickCli.InitTenantItickDisplay)
 }

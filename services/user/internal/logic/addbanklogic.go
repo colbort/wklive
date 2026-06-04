@@ -42,7 +42,7 @@ func (l *AddBankLogic) AddBank(in *user.AddBankReq) (*user.AddBankResp, error) {
 
 	if tuser == nil {
 		return &user.AddBankResp{
-			Base: helper.GetErrResp(404, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 

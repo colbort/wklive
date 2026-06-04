@@ -3,7 +3,6 @@ package logic
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -42,12 +41,12 @@ func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryP
 	if err != nil {
 		logx.Errorf("find category failed, err=%v", err)
 		return &itick.SyncCategoryProductsResp{
-			Base: helper.GetErrResp(1, err.Error()),
+			Base: helper.GetErrResp(i18n.CategoryNotFound, i18n.Translate(i18n.CategoryNotFound, l.ctx)),
 		}, nil
 	}
 	if result == nil {
 		return &itick.SyncCategoryProductsResp{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.CategoryNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.CategoryNotFound, i18n.Translate(i18n.CategoryNotFound, l.ctx)),
 		}, nil
 	}
 
@@ -67,7 +66,7 @@ func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryP
 	if err != nil {
 		logx.Errorf("create sync task failed, err=%v", err)
 		return &itick.SyncCategoryProductsResp{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.SyncTaskCreateFailed, l.ctx)),
+			Base: helper.GetErrResp(i18n.SyncTaskCreateFailed, i18n.Translate(i18n.SyncTaskCreateFailed, l.ctx)),
 		}, nil
 	}
 
@@ -127,15 +126,15 @@ func (w *SyncCategoryProductsWorker) Run(taskNo string, in *itick.SyncCategoryPr
 func (w *SyncCategoryProductsWorker) doSync(in *itick.SyncCategoryProductsReq) error {
 	result, err := w.svcCtx.ItickCategoryModel.FindOne(w.ctx, in.Id)
 	if err != nil {
-		return fmt.Errorf("find category failed: %w", err)
+		return i18n.StatusError(w.ctx, i18n.InternalServerError)
 	}
 	if result == nil {
-		return errors.New(i18n.Translate(i18n.CategoryNotFound, w.ctx))
+		return i18n.StatusError(w.ctx, i18n.CategoryNotFound)
 	}
 
 	regions, err := w.getRegion(result.CategoryCode)
 	if err != nil {
-		return fmt.Errorf("get market failed: %w", err)
+		return i18n.StatusError(w.ctx, i18n.MarketRequired)
 	}
 
 	for _, market := range regions {
@@ -147,7 +146,7 @@ func (w *SyncCategoryProductsWorker) doSync(in *itick.SyncCategoryProductsReq) e
 			market,
 		)
 		if err != nil {
-			return fmt.Errorf("get symbol list failed, market=%s, err=%w", market, err)
+			return err
 		}
 
 		for _, item := range resp.Data {
@@ -212,25 +211,25 @@ func (w *SyncCategoryProductsWorker) getSymbolList(ctx context.Context, apiURL, 
 	market = strings.ToUpper(strings.TrimSpace(market))
 
 	if apiURL == "" {
-		return nil, fmt.Errorf("apiURL is required")
+		return nil, i18n.StatusError(ctx, i18n.APIURLIsRequired)
 	}
 	if token == "" {
-		return nil, fmt.Errorf("token is required")
+		return nil, i18n.StatusError(ctx, i18n.TokenRequired)
 	}
 	if category == "" {
-		return nil, fmt.Errorf("category is required")
+		return nil, i18n.StatusError(ctx, i18n.CategoryRequired)
 	}
 	if market == "" {
-		return nil, fmt.Errorf("market is required")
+		return nil, i18n.StatusError(ctx, i18n.MarketRequired)
 	}
 
 	if !utils.IsSupportedKlineCategory(category) {
-		return nil, fmt.Errorf("unsupported category: %s", category)
+		return nil, i18n.StatusError(ctx, i18n.CategoryNotFound)
 	}
 
 	base, err := url.Parse(apiURL)
 	if err != nil {
-		return nil, fmt.Errorf("invalid apiURL: %w", err)
+		return nil, i18n.StatusError(ctx, i18n.ParamError)
 	}
 
 	// 拼接 /symbol/list
@@ -248,7 +247,7 @@ func (w *SyncCategoryProductsWorker) getSymbolList(ctx context.Context, apiURL, 
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, base.String(), nil)
 	if err != nil {
-		return nil, err
+		return nil, i18n.StatusError(ctx, i18n.InternalServerError)
 	}
 	req.Header.Set("accept", "application/json")
 	req.Header.Set("token", token)
@@ -259,21 +258,21 @@ func (w *SyncCategoryProductsWorker) getSymbolList(ctx context.Context, apiURL, 
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("request itick symbol list failed: %w", err)
+		return nil, i18n.StatusError(ctx, i18n.ServiceUnavailable)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("itick returned non-200 status: %d", resp.StatusCode)
+		return nil, i18n.StatusError(ctx, i18n.ServiceUnavailable)
 	}
 
 	var out SymbolListResponse
 	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
-		return nil, fmt.Errorf("decode response failed: %w", err)
+		return nil, i18n.StatusError(ctx, i18n.InternalServerError)
 	}
 
 	if out.Code != 0 {
-		return &out, fmt.Errorf("itick business error: code=%d msg=%s", out.Code, out.Msg)
+		return &out, i18n.StatusError(ctx, i18n.ServiceUnavailable)
 	}
 
 	return &out, nil

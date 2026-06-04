@@ -38,14 +38,14 @@ func (l *UpdateUserBankLogic) UpdateUserBank(in *user.UpdateUserBankReq) (*user.
 
 	if bank == nil {
 		return &user.UpdateUserBankResp{
-			Base: helper.GetErrResp(404, i18n.Translate(i18n.BankCardNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.BankCardNotFound, i18n.Translate(i18n.BankCardNotFound, l.ctx)),
 		}, nil
 	}
 
 	// 验证银行卡是否属于该用户
 	if bank.UserId != in.UserId {
 		return &user.UpdateUserBankResp{
-			Base: helper.GetErrResp(403, i18n.Translate(i18n.NoPermissionModifyThisBankCard, l.ctx)),
+			Base: helper.GetErrResp(i18n.NoPermissionModifyThisBankCard, i18n.Translate(i18n.NoPermissionModifyThisBankCard, l.ctx)),
 		}, nil
 	}
 

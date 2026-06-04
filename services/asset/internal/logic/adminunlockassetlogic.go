@@ -2,10 +2,10 @@ package logic
 
 import (
 	"context"
-	"fmt"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/svc"
@@ -38,7 +38,7 @@ func (l *AdminUnlockAssetLogic) AdminUnlockAsset(in *asset.AdminUnlockAssetReq) 
 		return nil, err
 	}
 	if amount <= 0 {
-		err := fmt.Errorf("amount must be positive")
+		err := i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
 		l.Errorf("AdminUnlockAsset validate amount failed, tenantId=%d lockNo=%s amount=%s bizNo=%s err=%v",
 			in.TenantId, in.LockNo, in.Amount, in.BizNo, err)
 		return nil, err
@@ -51,13 +51,13 @@ func (l *AdminUnlockAssetLogic) AdminUnlockAsset(in *asset.AdminUnlockAssetReq) 
 		return nil, err
 	}
 	if lock.TenantId != in.TenantId {
-		err := fmt.Errorf("tenant mismatch for lock record")
+		err := i18n.StatusError(l.ctx, i18n.AssetTenantMismatch)
 		l.Errorf("AdminUnlockAsset tenant mismatch, tenantId=%d lockTenantId=%d lockNo=%s amount=%s bizNo=%s err=%v",
 			in.TenantId, lock.TenantId, in.LockNo, in.Amount, in.BizNo, err)
 		return nil, err
 	}
 	if amount > lock.RemainAmount {
-		err := fmt.Errorf("unlock amount exceeds locked amount")
+		err := i18n.StatusError(l.ctx, i18n.UnlockAmountExceedsLocked)
 		l.Errorf("AdminUnlockAsset amount exceeds locked amount, tenantId=%d lockNo=%s amount=%s remainAmount=%v bizNo=%s err=%v",
 			in.TenantId, in.LockNo, in.Amount, lock.RemainAmount, in.BizNo, err)
 		return nil, err
@@ -81,7 +81,7 @@ func (l *AdminUnlockAssetLogic) AdminUnlockAsset(in *asset.AdminUnlockAssetReq) 
 			return err
 		}
 		if !ok {
-			return fmt.Errorf("unlock failed")
+			return i18n.StatusError(ctx, i18n.AssetUnlockFailed)
 		}
 
 		ok, err = assetLockModel.UpdateUnlock(ctx, lock.LockNo, amount, ts)
@@ -89,7 +89,7 @@ func (l *AdminUnlockAssetLogic) AdminUnlockAsset(in *asset.AdminUnlockAssetReq) 
 			return err
 		}
 		if !ok {
-			return fmt.Errorf("lock record update failed")
+			return i18n.StatusError(ctx, i18n.LockRecordUpdateFailed)
 		}
 
 		after, err = userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, lock.TenantId, lock.UserId, lock.WalletType, lock.Coin)

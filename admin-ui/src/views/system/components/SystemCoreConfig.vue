@@ -22,7 +22,12 @@
           :preview-teleported="true"
         />
         <div>
-          <el-upload action="#" :auto-upload="false" :on-change="handleLogoSelect" accept="image/*">
+          <el-upload
+            action="#"
+            :auto-upload="false"
+            :on-change="handleLogoSelect"
+            accept="image/*"
+          >
             <el-button type="primary">
               {{ t('app.pleaseSelectImageFile') }}
             </el-button>
@@ -78,7 +83,7 @@
           :src="previewImageUrl"
           alt="Crop preview"
           @load="initCropper"
-        />
+        >
       </div>
 
       <template #footer>
@@ -95,7 +100,7 @@
   </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, ref, nextTick, watch, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
@@ -261,7 +266,7 @@ async function confirmCrop() {
 
     const res = await apiUploadAvatar(croppedFile)
 
-    if (res.code === 0 || res.code === 200) {
+    if (res.code === 200) {
       form.value.site_logo = res.data?.url || ''
       ElMessage.success(t('common.uploadSuccess') || 'Upload successful')
       resetCrop()

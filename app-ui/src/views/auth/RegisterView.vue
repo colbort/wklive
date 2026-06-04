@@ -237,7 +237,7 @@ async function submitRegister() {
       phone: accountMode.value === 'phone' ? account.value.trim() : undefined,
     }
     const res = await apiRegister(payload)
-    if (res.code !== 0 && res.code !== 200) {
+    if (res.code !== 200) {
       errorMessage.value = res.msg || t('auth.registerFailed')
       return
     }
@@ -261,7 +261,7 @@ async function submitPayPassword() {
       password: payPassword.value,
       confirmPassword: payPassword.value,
     })
-    if (res.code !== 0 && res.code !== 200) {
+    if (res.code !== 200) {
       errorMessage.value = res.msg || t('auth.setFailed')
       return
     }
@@ -290,7 +290,7 @@ async function submitIdentity() {
       handheldImage: identityFiles.value.handheld,
       kycLevel: 1,
     })
-    if (res.code !== 0 && res.code !== 200) {
+    if (res.code !== 200) {
       errorMessage.value = res.msg || t('common.failed')
       return
     }
@@ -307,7 +307,7 @@ async function loadGoogle2FA() {
   if (googleSecret.value || googleQr.value) return
   try {
     const res = await apiInitGoogle2FA()
-    if (res.code !== 0 && res.code !== 200) return
+    if (res.code !== 200) return
     googleSecret.value = res.secret || ''
     googleQr.value = res.qrCodeUrl || ''
     if (!googleQr.value && googleSecret.value) {
@@ -332,7 +332,7 @@ async function submitGoogle2FA() {
   submitting.value = true
   try {
     const res = await apiEnableGoogle2FA({ googleCode: googleCodeValue.value })
-    if (res.code !== 0 && res.code !== 200) {
+    if (res.code !== 200) {
       errorMessage.value = res.msg || t('auth.bindFailed')
       return
     }

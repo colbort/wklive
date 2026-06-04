@@ -43,12 +43,12 @@ func NewSyncKlinesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncKl
 func (l *SyncKlinesLogic) SyncKlines(in *itick.SyncKlinesReq) (*itick.SyncKlinesResp, error) {
 	if strings.TrimSpace(in.ApiUrl) == "" {
 		return &itick.SyncKlinesResp{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.ApiURLRequired, l.ctx)),
+			Base: helper.GetErrResp(i18n.ApiURLRequired, i18n.Translate(i18n.ApiURLRequired, l.ctx)),
 		}, nil
 	}
 	if strings.TrimSpace(in.ApiToken) == "" {
 		return &itick.SyncKlinesResp{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.ApiTokenRequired, l.ctx)),
+			Base: helper.GetErrResp(i18n.ApiTokenRequired, i18n.Translate(i18n.ApiTokenRequired, l.ctx)),
 		}, nil
 	}
 
@@ -63,13 +63,13 @@ func (l *SyncKlinesLogic) SyncKlines(in *itick.SyncKlinesReq) (*itick.SyncKlines
 	if err := distLock.Acquire(l.ctx, lockKey, lockValue, 30*time.Second); err != nil {
 		if errors.Is(err, utils.ErrLockNotAcquired) {
 			return &itick.SyncKlinesResp{
-				Base: helper.GetErrResp(1, i18n.Translate(i18n.SyncTaskAlreadyRunning, l.ctx)),
+				Base: helper.GetErrResp(i18n.SyncTaskAlreadyRunning, i18n.Translate(i18n.SyncTaskAlreadyRunning, l.ctx)),
 			}, nil
 		}
 
 		logx.Errorf("acquire lock failed, key=%s err=%v", lockKey, err)
 		return &itick.SyncKlinesResp{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.DistributedLockAcquireFailed, l.ctx)),
+			Base: helper.GetErrResp(i18n.DistributedLockAcquireFailed, i18n.Translate(i18n.DistributedLockAcquireFailed, l.ctx)),
 		}, nil
 	}
 
@@ -90,7 +90,7 @@ func (l *SyncKlinesLogic) SyncKlines(in *itick.SyncKlinesReq) (*itick.SyncKlines
 
 		logx.Errorf("create sync task failed, err=%v", err)
 		return &itick.SyncKlinesResp{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.SyncTaskCreateFailed, l.ctx)),
+			Base: helper.GetErrResp(i18n.SyncTaskCreateFailed, i18n.Translate(i18n.SyncTaskCreateFailed, l.ctx)),
 		}, nil
 	}
 
@@ -236,7 +236,7 @@ func (w *SyncKlinesWorker) doSync(in *itick.SyncKlinesReq) error {
 		if err != nil {
 			close(jobs)
 			wg.Wait()
-			return fmt.Errorf("find products failed: %w", err)
+			return i18n.StatusError(w.ctx, i18n.InternalServerError)
 		}
 		if len(products) == 0 {
 			break
@@ -278,7 +278,7 @@ func (w *SyncKlinesWorker) doSync(in *itick.SyncKlinesReq) error {
 func (w *SyncKlinesWorker) syncOneJob(apiURL, token string, job KlineJob) error {
 	interval := utils.KTypeToIntervalName(job.KType)
 	if interval == "" {
-		return fmt.Errorf("unknown kType: %d", job.KType)
+		return i18n.StatusError(w.ctx, i18n.ParamError)
 	}
 
 	progress, err := w.svcCtx.ItickKlineSyncProgressModel.FindOrCreate(
@@ -289,7 +289,7 @@ func (w *SyncKlinesWorker) syncOneJob(apiURL, token string, job KlineJob) error 
 		interval,
 	)
 	if err != nil {
-		return fmt.Errorf("find or create progress failed: %w", err)
+		return i18n.StatusError(w.ctx, i18n.InternalServerError)
 	}
 
 	now := cutils.NowMillis()
@@ -474,24 +474,24 @@ func (w *SyncKlinesWorker) getKlineFromItick(
 	symbol = strings.TrimSpace(symbol)
 
 	if apiURL == "" {
-		return nil, errors.New(i18n.Translate(i18n.APIURLIsRequired, ctx))
+		return nil, i18n.StatusError(ctx, i18n.APIURLIsRequired)
 	}
 	if token == "" {
-		return nil, errors.New(i18n.Translate(i18n.TokenRequired, ctx))
+		return nil, i18n.StatusError(ctx, i18n.TokenRequired)
 	}
 	if category == "" {
-		return nil, errors.New(i18n.Translate(i18n.CategoryRequired, ctx))
+		return nil, i18n.StatusError(ctx, i18n.CategoryRequired)
 	}
 	if market == "" {
-		return nil, errors.New(i18n.Translate(i18n.MarketRequired, ctx))
+		return nil, i18n.StatusError(ctx, i18n.MarketRequired)
 	}
 	if symbol == "" {
-		return nil, errors.New(i18n.Translate(i18n.SymbolRequired, ctx))
+		return nil, i18n.StatusError(ctx, i18n.SymbolRequired)
 	}
 
 	base, err := url.Parse(apiURL)
 	if err != nil {
-		return nil, fmt.Errorf("invalid apiURL: %w", err)
+		return nil, i18n.StatusError(ctx, i18n.ParamError)
 	}
 
 	base.Path = path.Join(strings.TrimRight(base.Path, "/"), fmt.Sprintf("/%s/kline", category))
@@ -508,7 +508,7 @@ func (w *SyncKlinesWorker) getKlineFromItick(
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, base.String(), nil)
 	if err != nil {
-		return nil, err
+		return nil, i18n.StatusError(ctx, i18n.InternalServerError)
 	}
 	req.Header.Set("accept", "application/json")
 	req.Header.Set("token", token)
@@ -516,27 +516,28 @@ func (w *SyncKlinesWorker) getKlineFromItick(
 	// 在真正发请求前限流
 	if w.itickLimiter != nil {
 		if err := w.itickLimiter.Wait(ctx); err != nil {
-			return nil, fmt.Errorf("itick rate limit wait failed: %w", err)
+			return nil, i18n.StatusError(ctx, i18n.ServiceUnavailable)
 		}
 	}
 
 	resp, err := w.httpClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("request itick kline failed: %w", err)
+		return nil, i18n.StatusError(ctx, i18n.ServiceUnavailable)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		raw, _ := io.ReadAll(resp.Body)
-		return nil, fmt.Errorf("itick returned non-200 status: %d body=%s", resp.StatusCode, string(raw))
+		logx.Errorf("itick returned non-200 status: %d body=%s", resp.StatusCode, string(raw))
+		return nil, i18n.StatusError(ctx, i18n.ServiceUnavailable)
 	}
 
 	var out ItickKlineResponse
 	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
-		return nil, fmt.Errorf("decode kline response failed: %w", err)
+		return nil, i18n.StatusError(ctx, i18n.InternalServerError)
 	}
 	if out.Code != 0 {
-		return &out, fmt.Errorf("itick business error: code=%d msg=%s", out.Code, out.Msg)
+		return &out, i18n.StatusError(ctx, i18n.ServiceUnavailable)
 	}
 
 	return &out, nil

@@ -44,7 +44,7 @@ func (l *SubmitIdentityLogic) SubmitIdentity(in *user.SubmitIdentityReq) (*user.
 
 	if tuser == nil {
 		return &user.SubmitIdentityResp{
-			Base: helper.GetErrResp(404, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 

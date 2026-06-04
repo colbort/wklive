@@ -8,7 +8,8 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/proto/user"
+
+	"wklive/app-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,36 +29,5 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 }
 
 func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterResp, err error) {
-	result, err := l.svcCtx.UserCli.Register(l.ctx, &user.RegisterReq{
-		TenantCode:      req.TenantCode,
-		RegisterType:    user.RegisterType(req.RegisterType),
-		Username:        req.Username,
-		Phone:           req.Phone,
-		Email:           req.Email,
-		Password:        req.Password,
-		ConfirmPassword: req.ConfirmPassword,
-		InviteCode:      req.InviteCode,
-		Source:          req.Source,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	resp = &types.RegisterResp{
-		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
-		},
-		UserId: result.UserId,
-		Token: types.TokenInfo{
-			AccessToken:  result.Token.AccessToken,
-			RefreshToken: result.Token.RefreshToken,
-			ExpireTime:   result.Token.ExpireTime,
-		},
-		Profile: types.UserProfile{
-			Identity: types.UserIdentity{},
-			Security: types.UserSecurity{},
-		},
-	}
-	return
+	return logicutil.Proxy[types.RegisterResp](l.ctx, req, l.svcCtx.UserCli.Register)
 }

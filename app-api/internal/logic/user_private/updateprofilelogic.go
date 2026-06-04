@@ -8,7 +8,8 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/proto/user"
+
+	"wklive/app-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,26 +29,5 @@ func NewUpdateProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upd
 }
 
 func (l *UpdateProfileLogic) UpdateProfile(req *types.UpdateProfileReq) (resp *types.UpdateProfileResp, err error) {
-	result, err := l.svcCtx.UserCli.UpdateProfile(l.ctx, &user.UpdateProfileReq{
-		Nickname:    req.Nickname,
-		Avatar:      req.Avatar,
-		Language:    req.Language,
-		Timezone:    req.Timezone,
-		Signature:   req.Signature,
-		Gender:      user.Gender(req.Gender),
-		Birthday:    req.Birthday,
-		CountryCode: req.CountryCode,
-		Province:    req.Province,
-		City:        req.City,
-		Address:     req.Address,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &types.UpdateProfileResp{
-		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
-		},
-	}, nil
+	return logicutil.Proxy[types.UpdateProfileResp](l.ctx, req, l.svcCtx.UserCli.UpdateProfile)
 }

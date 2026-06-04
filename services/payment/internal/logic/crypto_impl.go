@@ -7,6 +7,7 @@ import (
 
 	"wklive/common/conv"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/pageutil"
 	"wklive/common/utils"
 	"wklive/proto/common"
@@ -126,7 +127,7 @@ func updateCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, 
 		return nil, err
 	}
 	if in.TenantId > 0 && item.TenantId != in.TenantId {
-		return &payment.AdminCommonResp{Base: helper.GetErrResp(404, "crypto wallet account not found")}, nil
+		return &payment.AdminCommonResp{Base: helper.GetErrResp(i18n.CryptoWalletAccountNotFound, i18n.Translate(i18n.CryptoWalletAccountNotFound, ctx))}, nil
 	}
 	if in.AccountName != "" {
 		item.AccountName = in.AccountName
@@ -213,7 +214,7 @@ func updateCryptoRechargeTx(ctx context.Context, svcCtx *svc.ServiceContext, in 
 		return nil, err
 	}
 	if in.TenantId > 0 && item.TenantId != in.TenantId {
-		return &payment.AdminCommonResp{Base: helper.GetErrResp(404, "crypto recharge tx not found")}, nil
+		return &payment.AdminCommonResp{Base: helper.GetErrResp(i18n.CryptoRechargeTxNotFound, i18n.Translate(i18n.CryptoRechargeTxNotFound, ctx))}, nil
 	}
 	if in.OrderId > 0 {
 		item.OrderId = in.OrderId
@@ -301,7 +302,7 @@ func lastCryptoTxID(items []*models.TCryptoRechargeTx) int64 {
 }
 
 func cryptoNotFoundResp() *payment.AdminCommonResp {
-	return &payment.AdminCommonResp{Base: helper.GetErrResp(404, "not found")}
+	return &payment.AdminCommonResp{Base: helper.GetErrResp(i18n.NotFound, i18n.Translate(i18n.NotFound, context.Background()))}
 }
 
 func isNotFound(err error) bool {

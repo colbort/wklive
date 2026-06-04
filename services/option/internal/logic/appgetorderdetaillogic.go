@@ -40,12 +40,12 @@ func (l *AppGetOrderDetailLogic) AppGetOrderDetail(in *option.AppGetOrderDetailR
 	item, err := findOrderByNoOrID(l.ctx, l.svcCtx, tenantId, in.OrderId, in.OrderNo)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &option.AppGetOrderDetailResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
+			return &option.AppGetOrderDetailResp{Base: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
 	if item.UserId != userId || item.AccountId != in.AccountId {
-		return &option.AppGetOrderDetailResp{Base: helper.GetErrResp(403, i18n.Translate(i18n.NoPermissionViewOrder, l.ctx))}, nil
+		return &option.AppGetOrderDetailResp{Base: helper.GetErrResp(i18n.NoPermissionViewOrder, i18n.Translate(i18n.NoPermissionViewOrder, l.ctx))}, nil
 	}
 	data, err := buildOrderDetail(l.ctx, l.svcCtx, item)
 	if err != nil {

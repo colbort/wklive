@@ -30,7 +30,7 @@ func (l *AdminGetSettlementLogic) AdminGetSettlement(in *option.GetSettlementReq
 	item, err := findSettlementByNoOrID(l.ctx, l.svcCtx, in.TenantId, in.Id, in.SettlementNo)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &option.GetSettlementResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.SettlementRecordNotFound, l.ctx))}, nil
+			return &option.GetSettlementResp{Base: helper.GetErrResp(i18n.SettlementRecordNotFound, i18n.Translate(i18n.SettlementRecordNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}

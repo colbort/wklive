@@ -31,17 +31,17 @@ func (l *Google2FAEnableLogic) Google2FAEnable(in *system.Google2FAEnableReq) (*
 	}
 	if user == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 	if user.GoogleSecret == "" {
 		return &system.RespBase{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.Google2FANotInitialized, l.ctx)),
+			Base: helper.GetErrResp(i18n.Google2FANotInitialized, i18n.Translate(i18n.Google2FANotInitialized, l.ctx)),
 		}, nil
 	}
 	if !utils.VerifyGoogle2FACode(user.GoogleSecret, in.Code) {
 		return &system.RespBase{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.VerificationCodeInvalid, l.ctx)),
+			Base: helper.GetErrResp(i18n.VerificationCodeInvalid, i18n.Translate(i18n.VerificationCodeInvalid, l.ctx)),
 		}, nil
 	}
 

@@ -31,7 +31,7 @@ func (l *GetUserAssetDetailLogic) GetUserAssetDetail(in *asset.GetUserAssetDetai
 	item, err := l.svcCtx.UserAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(l.ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &asset.GetUserAssetDetailResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.AssetNotFound, l.ctx))}, nil
+			return &asset.GetUserAssetDetailResp{Base: helper.GetErrResp(i18n.AssetNotFound, i18n.Translate(i18n.AssetNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}

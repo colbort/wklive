@@ -86,7 +86,7 @@ async function fetchList() {
         cursor: pagination.cursor,
         limit: pagination.limit,
       })
-      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
+      if (res.code !== 200) throw new Error(res.msg)
       list.value = res.data || []
       updateFromResponse(res)
     } catch (error: unknown) {
@@ -99,7 +99,7 @@ async function fetchList() {
 async function fetchHandlers() {
   try {
     const res = await cronJobService.handlers()
-    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
+    if (res.code !== 200) throw new Error(res.msg)
     handlers.value = res.data || []
   } catch (error: unknown) {
     ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
@@ -109,7 +109,7 @@ async function fetchHandlers() {
 async function fetchOptions() {
   try {
     const res = await cronJobService.getOptions()
-    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
+    if (res.code !== 200) throw new Error(res.msg)
     optionGroups.value = res.data || []
   } catch (error: unknown) {
     ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
@@ -171,7 +171,7 @@ async function handleSubmit() {
         res = await cronJobService.create(formData as SysCronJobCreateReq)
       }
 
-      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
+      if (res.code !== 200) throw new Error(res.msg)
       ElMessage.success(isEdit.value ? t('common.updateSuccess') : t('common.createSuccess'))
       dialogVisible.value = false
       resetAndLoad(fetchList)
@@ -188,7 +188,7 @@ async function handleDelete(row: SysCronJobItem) {
   try {
     await confirm(`${t('common.confirmDelete')} - ${row.jobName}?`)
     const res = await cronJobService.delete(row.id)
-    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
+    if (res.code !== 200) throw new Error(res.msg)
     ElMessage.success(t('common.success'))
     fetchList()
   } catch (error: unknown) {
@@ -203,7 +203,7 @@ async function handleRun(row: SysCronJobItem) {
   try {
     await confirm(`${t('system.runTask')} - ${row.jobName}?`)
     const res = await cronJobService.run(row.id)
-    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
+    if (res.code !== 200) throw new Error(res.msg)
     ElMessage.success(t('common.success'))
   } catch (error: unknown) {
     if ((error instanceof Error ? error.message : '') !== 'cancel') {
@@ -216,7 +216,7 @@ async function handleRun(row: SysCronJobItem) {
 async function handleStart(row: SysCronJobItem) {
   try {
     const res = await cronJobService.start(row.id)
-    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
+    if (res.code !== 200) throw new Error(res.msg)
     ElMessage.success(t('common.success'))
     fetchList()
   } catch (error: unknown) {
@@ -228,7 +228,7 @@ async function handleStart(row: SysCronJobItem) {
 async function handleStop(row: SysCronJobItem) {
   try {
     const res = await cronJobService.stop(row.id)
-    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
+    if (res.code !== 200) throw new Error(res.msg)
     ElMessage.success(t('common.success'))
     fetchList()
   } catch (error: unknown) {

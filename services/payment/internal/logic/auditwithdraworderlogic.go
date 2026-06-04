@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
+
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -45,14 +45,14 @@ func (l *AuditWithdrawOrderLogic) AuditWithdrawOrder(in *payment.AuditWithdrawOr
 
 	if order == nil {
 		return &payment.AdminCommonResp{
-			Base: helper.GetErrResp(404, i18n.Translate(i18n.OrderNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx)),
 		}, nil
 	}
 
 	// 只有待审核状态的订单才能审核
 	if order.Status != int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PENDING) {
 		return &payment.AdminCommonResp{
-			Base: helper.GetErrResp(201, i18n.Translate(i18n.OnlyPendingReviewOrdersCanAudit, l.ctx)),
+			Base: helper.GetErrResp(i18n.OnlyPendingReviewOrdersCanAudit, i18n.Translate(i18n.OnlyPendingReviewOrdersCanAudit, l.ctx)),
 		}, nil
 	}
 
@@ -66,7 +66,7 @@ func (l *AuditWithdrawOrderLogic) AuditWithdrawOrder(in *payment.AuditWithdrawOr
 			return err
 		}
 		if current.Status != int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PENDING) {
-			return fmt.Errorf("only pending review orders can audit")
+			return i18n.StatusError(ctx, i18n.OnlyPendingReviewOrdersCanAudit)
 		}
 
 		if in.Approve == 1 {

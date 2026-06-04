@@ -42,7 +42,7 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 	}
 	if tenant == nil || tenant.Base.Code != 200 {
 		return &user.LoginResp{
-			Base: helper.GetErrResp(401, i18n.Translate(i18n.TenantNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.TenantNotFound, i18n.Translate(i18n.TenantNotFound, l.ctx)),
 		}, nil
 	}
 
@@ -79,19 +79,19 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 
 	if tuser == nil {
 		return &user.LoginResp{
-			Base: helper.GetErrResp(401, i18n.Translate(i18n.UserNotFoundOrPasswordIncorrect, l.ctx)),
+			Base: helper.GetErrResp(i18n.UserNotFoundOrPasswordIncorrect, i18n.Translate(i18n.UserNotFoundOrPasswordIncorrect, l.ctx)),
 		}, nil
 	}
 
 	if tuser.Status != 1 {
 		return &user.LoginResp{
-			Base: helper.GetErrResp(403, i18n.Translate(i18n.AccountDisabled, l.ctx)),
+			Base: helper.GetErrResp(i18n.AccountDisabled, i18n.Translate(i18n.AccountDisabled, l.ctx)),
 		}, nil
 	}
 
 	if bcrypt.CompareHashAndPassword([]byte(tuser.PasswordHash), []byte(in.Password)) != nil {
 		return &user.LoginResp{
-			Base: helper.GetErrResp(401, i18n.Translate(i18n.UserNotFoundOrPasswordIncorrect, l.ctx)),
+			Base: helper.GetErrResp(i18n.UserNotFoundOrPasswordIncorrect, i18n.Translate(i18n.UserNotFoundOrPasswordIncorrect, l.ctx)),
 		}, nil
 	}
 
@@ -102,12 +102,12 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 	if userSecurity != nil && userSecurity.GoogleEnabled == 1 {
 		if in.GoogleCode == "" {
 			return &user.LoginResp{
-				Base: helper.GetErrResp(400, i18n.Translate(i18n.Google2FACodeRequired, l.ctx)),
+				Base: helper.GetErrResp(i18n.Google2FACodeRequired, i18n.Translate(i18n.Google2FACodeRequired, l.ctx)),
 			}, nil
 		}
 		if !utils.VerifyGoogle2FACode(userSecurity.GoogleSecret.String, in.GoogleCode) {
 			return &user.LoginResp{
-				Base: helper.GetErrResp(400, i18n.Translate(i18n.Google2FACodeInvalid, l.ctx)),
+				Base: helper.GetErrResp(i18n.Google2FACodeInvalid, i18n.Translate(i18n.Google2FACodeInvalid, l.ctx)),
 			}, nil
 		}
 	}

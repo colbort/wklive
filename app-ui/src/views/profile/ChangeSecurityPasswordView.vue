@@ -98,7 +98,7 @@ async function submitPassword() {
           confirmPassword: confirmPassword.value,
         })
 
-    if (res.code !== 0 && res.code !== 200) {
+    if (res.code !== 200) {
       errorMessage.value = res.msg || t('security.editFailed')
       return
     }

@@ -8,7 +8,8 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/proto/user"
+
+	"wklive/app-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,14 +29,5 @@ func NewEnableGoogle2FALogic(ctx context.Context, svcCtx *svc.ServiceContext) *E
 }
 
 func (l *EnableGoogle2FALogic) EnableGoogle2FA(req *types.VerifyGoogle2FAReq) (resp *types.RespBase, err error) {
-	result, err := l.svcCtx.UserCli.EnableGoogle2FA(l.ctx, &user.EnableGoogle2FAReq{
-		GoogleCode: req.GoogleCode,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &types.RespBase{
-		Code: result.Base.Code,
-		Msg:  result.Base.Msg,
-	}, nil
+	return logicutil.Proxy[types.RespBase](l.ctx, req, l.svcCtx.UserCli.EnableGoogle2FA)
 }

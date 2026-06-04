@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/user"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,17 +29,5 @@ func NewResetLoginPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *ResetLoginPasswordLogic) ResetLoginPassword(req *types.ResetLoginPasswordReq) (resp *types.RespBase, err error) {
-	result, err := l.svcCtx.UserCli.ResetLoginPassword(l.ctx, &user.ResetLoginPasswordReq{
-		TenantId:    req.TenantId,
-		UserId:      req.UserId,
-		NewPassword: req.NewPassword,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &types.RespBase{
-		Code: result.Base.Code,
-		Msg:  result.Base.Msg,
-	}, nil
+	return logicutil.Proxy[types.RespBase](l.ctx, req, l.svcCtx.UserCli.ResetLoginPassword)
 }

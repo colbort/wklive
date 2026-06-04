@@ -33,12 +33,12 @@ func (l *ProductChangeStatusLogic) ProductChangeStatus(in *staking.AdminProductC
 	item, err := l.svcCtx.StakeProductModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &staking.AdminProductChangeStatusResp{Page: helper.GetErrResp(404, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
+			return &staking.AdminProductChangeStatusResp{Page: helper.GetErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
 	if item.TenantId != in.TenantId {
-		return &staking.AdminProductChangeStatusResp{Page: helper.GetErrResp(404, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
+		return &staking.AdminProductChangeStatusResp{Page: helper.GetErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
 	}
 
 	item.Status = int64(in.Status)

@@ -28,12 +28,12 @@ func (l *SysCronJobDeleteLogic) SysCronJobDelete(in *system.SysCronJobDeleteReq)
 	job, err := l.svcCtx.JobModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(500, err.Error()),
+			Base: helper.GetErrResp(i18n.InternalServerError, i18n.Translate(i18n.InternalServerError, l.ctx)),
 		}, nil
 	}
 	if job == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(400, i18n.Translate(i18n.CronJobNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.CronJobNotFound, i18n.Translate(i18n.CronJobNotFound, l.ctx)),
 		}, nil
 	}
 	// 先停止任务
@@ -44,7 +44,7 @@ func (l *SysCronJobDeleteLogic) SysCronJobDelete(in *system.SysCronJobDeleteReq)
 	err = l.svcCtx.JobModel.Delete(l.ctx, in.Id)
 	if err != nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(500, err.Error()),
+			Base: helper.GetErrResp(i18n.InternalServerError, i18n.Translate(i18n.InternalServerError, l.ctx)),
 		}, nil
 	}
 

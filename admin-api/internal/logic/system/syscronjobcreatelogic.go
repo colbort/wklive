@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/system"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,20 +29,5 @@ func NewSysCronJobCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *SysCronJobCreateLogic) SysCronJobCreate(req *types.SysCronJobCreateReq) (resp *types.RespBase, err error) {
-	result, err := l.svcCtx.SystemCli.SysCronJobCreate(l.ctx, &system.SysCronJobCreateReq{
-		JobName:        req.JobName,
-		JobGroup:       req.JobGroup,
-		InvokeTarget:   req.InvokeTarget,
-		CronExpression: req.CronExpression,
-		Status:         toJobStatus(req.Status),
-		Remark:         req.Remark,
-	})
-	if err != nil {
-		return nil, err
-	}
-	resp = &types.RespBase{
-		Code: result.Base.Code,
-		Msg:  result.Base.Msg,
-	}
-	return
+	return logicutil.Proxy[types.RespBase](l.ctx, req, l.svcCtx.SystemCli.SysCronJobCreate)
 }

@@ -43,7 +43,7 @@ func (l *UpdateIdentityLogic) UpdateIdentity(in *user.UpdateIdentityReq) (*user.
 
 	if tuser == nil {
 		return &user.UpdateIdentityResp{
-			Base: helper.GetErrResp(404, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 
@@ -101,7 +101,7 @@ func (l *UpdateIdentityLogic) UpdateIdentity(in *user.UpdateIdentityReq) (*user.
 			}
 		}
 	} else {
-		return nil, errors.New("用户未提交实名认证信息")
+		return nil, i18n.StatusError(l.ctx, i18n.UserIdentityInfoNotFound)
 	}
 
 	l.Logger.Infof("用户 %d 更新实名认证信息成功，状态为待审核", userId)

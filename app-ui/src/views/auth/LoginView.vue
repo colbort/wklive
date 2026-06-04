@@ -319,7 +319,7 @@ async function submitLogin() {
       password: password.value,
       googleCode: googleCodeValue.value || undefined,
     })
-    if (res.code !== 0 && res.code !== 200) {
+    if (res.code !== 200) {
       errorMessage.value = res.msg || t('profile.loginFailed')
       if (res.code === 2057) focusGoogleCodeInput(0)
       return

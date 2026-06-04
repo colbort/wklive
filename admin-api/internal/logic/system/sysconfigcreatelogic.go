@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/system"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,18 +29,5 @@ func NewSysConfigCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 }
 
 func (l *SysConfigCreateLogic) SysConfigCreate(req *types.SysConfigCreateReq) (resp *types.RespBase, err error) {
-	result, err := l.svcCtx.SystemCli.SysConfigCreate(l.ctx, &system.SysConfigCreateReq{
-		TenantId:    req.TenantId,
-		ConfigKey:   req.ConfigKey,
-		ConfigValue: req.ConfigValue,
-		Remark:      req.Remark,
-	})
-	if err != nil {
-		return nil, err
-	}
-	resp = &types.RespBase{
-		Code: result.Base.Code,
-		Msg:  result.Base.Msg,
-	}
-	return
+	return logicutil.Proxy[types.RespBase](l.ctx, req, l.svcCtx.SystemCli.SysConfigCreate)
 }

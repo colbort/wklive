@@ -8,8 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/common/utils"
-	"wklive/proto/system"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,21 +29,5 @@ func NewGoogle2FAInitLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Goo
 }
 
 func (l *Google2FAInitLogic) Google2FAInit(req *types.Google2FAInitReq) (resp *types.Google2FAInitResp, err error) {
-	result, err := l.svcCtx.SystemCli.Google2FAInit(l.ctx, &system.Google2FAInitReq{UserId: req.UserId})
-	if err != nil {
-		return nil, err
-	}
-	qrCode, _ := utils.GenerateGoogle2FAQRCodeDataURL(result.OtpauthUrl, 220)
-
-	return &types.Google2FAInitResp{
-		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
-		},
-		Data: types.Google2FAInit{
-			Secret:     result.Secret,
-			OtpauthUrl: result.OtpauthUrl,
-			QrCode:     qrCode,
-		},
-	}, nil
+	return logicutil.Proxy[types.Google2FAInitResp](l.ctx, req, l.svcCtx.SystemCli.Google2FAInit)
 }

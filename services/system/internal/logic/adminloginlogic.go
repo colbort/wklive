@@ -4,8 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"errors"
 	"time"
+
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -37,31 +37,31 @@ func (l *AdminLoginLogic) AdminLogin(in *system.AdminLoginReq) (*system.AdminLog
 	user, err := l.svcCtx.UserModel.FindOneByUsername(l.ctx, in.Username)
 	if err != nil {
 		if err == models.ErrNotFound {
-			return nil, errors.New(i18n.Translate(i18n.UserNotFound, l.ctx))
+			return nil, i18n.StatusError(l.ctx, i18n.UserNotFound)
 		}
 		return nil, err
 	}
 
 	if user == nil {
-		return nil, errors.New(i18n.Translate(i18n.UserNotFound, l.ctx))
+		return nil, i18n.StatusError(l.ctx, i18n.UserNotFound)
 	}
 
 	if user.Status != 1 {
-		return nil, errors.New(i18n.Translate(i18n.UserDisabledForLogin, l.ctx))
+		return nil, i18n.StatusError(l.ctx, i18n.UserDisabledForLogin)
 	}
 
 	if user.GoogleEnabled == 1 {
 		if in.GoogleCode == "" {
-			return nil, errors.New(i18n.Translate(i18n.Google2FACodeRequired, l.ctx))
+			return nil, i18n.StatusError(l.ctx, i18n.Google2FACodeRequired)
 		}
 		if user.GoogleSecret == "" || !utils.VerifyGoogle2FACode(user.GoogleSecret, in.GoogleCode) {
-			return nil, errors.New(i18n.Translate(i18n.Google2FACodeInvalid, l.ctx))
+			return nil, i18n.StatusError(l.ctx, i18n.Google2FACodeInvalid)
 		}
 	}
 
 	// 2️⃣ 校验密码（bcrypt）
 	if bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(in.Password)) != nil {
-		return nil, errors.New(i18n.Translate(i18n.PasswordIncorrect, l.ctx))
+		return nil, i18n.StatusError(l.ctx, i18n.PasswordIncorrect)
 	}
 
 	// 3️⃣ 更新登录时间

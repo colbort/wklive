@@ -3,7 +3,6 @@ package logic
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -47,13 +46,13 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 		return nil, err
 	}
 	if order == nil || order.TenantId != tenantId {
-		return &staking.AppRedeemResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
+		return &staking.AppRedeemResp{Base: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 	}
 	if order.UserId != userId {
-		return &staking.AppRedeemResp{Base: helper.GetErrResp(403, i18n.Translate(i18n.NoPermissionAccessOrder, l.ctx))}, nil
+		return &staking.AppRedeemResp{Base: helper.GetErrResp(i18n.NoPermissionAccessOrder, i18n.Translate(i18n.NoPermissionAccessOrder, l.ctx))}, nil
 	}
 	if order.Status == int64(staking.OrderStatus_ORDER_STATUS_REDEEMED) || order.Status == int64(staking.OrderStatus_ORDER_STATUS_EARLY_REDEEMED) || order.Status == int64(staking.OrderStatus_ORDER_STATUS_CANCELLED) {
-		return &staking.AppRedeemResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.StakingOrderCannotRedeem, l.ctx))}, nil
+		return &staking.AppRedeemResp{Base: helper.GetErrResp(i18n.StakingOrderCannotRedeem, i18n.Translate(i18n.StakingOrderCannotRedeem, l.ctx))}, nil
 	}
 
 	redeemType := in.RedeemType
@@ -65,7 +64,7 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 		}
 	}
 	if redeemType == staking.RedeemType_REDEEM_TYPE_EARLY && order.AllowEarlyRedeem != int64(staking.YesNo_YES_NO_YES) {
-		return &staking.AppRedeemResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.EarlyRedeemNotAllowed, l.ctx))}, nil
+		return &staking.AppRedeemResp{Base: helper.GetErrResp(i18n.EarlyRedeemNotAllowed, i18n.Translate(i18n.EarlyRedeemNotAllowed, l.ctx))}, nil
 	}
 
 	redeemAmount := order.StakeAmount
@@ -107,7 +106,7 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 			if resp != nil && resp.Base != nil {
 				return &staking.AppRedeemResp{Base: resp.Base}, nil
 			}
-			return nil, fmt.Errorf("staking redeem unlock asset returned empty response")
+			return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
 		}
 	}
 	if feeAmount > 0 {
@@ -133,7 +132,7 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 			if resp != nil && resp.Base != nil {
 				return &staking.AppRedeemResp{Base: resp.Base}, nil
 			}
-			return nil, fmt.Errorf("staking redeem deduct locked fee returned empty response")
+			return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
 		}
 	}
 	if rewardAmount > 0 {
@@ -160,7 +159,7 @@ func (l *RedeemLogic) Redeem(in *staking.AppRedeemReq) (*staking.AppRedeemResp, 
 			if resp != nil && resp.Base != nil {
 				return &staking.AppRedeemResp{Base: resp.Base}, nil
 			}
-			return nil, fmt.Errorf("staking redeem add reward returned empty response")
+			return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
 		}
 	}
 

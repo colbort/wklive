@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/payment"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,20 +29,5 @@ func NewOpenTenantPayPlatformLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *OpenTenantPayPlatformLogic) OpenTenantPayPlatform(req *types.OpenTenantPayPlatformReq) (resp *types.RespBase, err error) {
-	result, err := l.svcCtx.PaymentCli.OpenTenantPayPlatform(l.ctx, &payment.OpenTenantPayPlatformReq{
-		TenantId:   req.TenantId,
-		PlatformId: req.PlatformId,
-		Status:     payment.CommonStatus(req.Status),
-		OpenStatus: payment.OpenStatus(req.OpenStatus),
-		Remark:     req.Remark,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	resp = &types.RespBase{
-		Code: result.Base.Code,
-		Msg:  result.Base.Msg,
-	}
-	return resp, nil
+	return logicutil.Proxy[types.RespBase](l.ctx, req, l.svcCtx.PaymentCli.OpenTenantPayPlatform)
 }

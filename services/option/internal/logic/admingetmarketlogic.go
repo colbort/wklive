@@ -30,7 +30,7 @@ func (l *AdminGetMarketLogic) AdminGetMarket(in *option.GetMarketReq) (*option.G
 	item, err := l.svcCtx.OptionMarketModel.FindOneByTenantIdContractId(l.ctx, in.TenantId, in.ContractId)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &option.GetMarketResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.MarketNotFound, l.ctx))}, nil
+			return &option.GetMarketResp{Base: helper.GetErrResp(i18n.MarketNotFound, i18n.Translate(i18n.MarketNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}

@@ -31,7 +31,7 @@ func NewGetFillDetailAdminLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 func (l *GetFillDetailAdminLogic) GetFillDetailAdmin(in *trade.GetFillDetailAdminReq) (*trade.GetFillDetailAdminResp, error) {
 	item, err := l.svcCtx.TradeFillModel.FindOne(l.ctx, in.Id)
 	if errors.Is(err, models.ErrNotFound) || (err == nil && item.TenantId != in.TenantId) {
-		return &trade.GetFillDetailAdminResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.TradeNotFound, l.ctx))}, nil
+		return &trade.GetFillDetailAdminResp{Base: helper.GetErrResp(i18n.TradeNotFound, i18n.Translate(i18n.TradeNotFound, l.ctx))}, nil
 	}
 	if err != nil {
 		return nil, err

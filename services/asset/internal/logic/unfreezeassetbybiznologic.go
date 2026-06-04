@@ -2,11 +2,11 @@ package logic
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/svc"
 
@@ -36,7 +36,7 @@ func (l *UnfreezeAssetByBizNoLogic) UnfreezeAssetByBizNo(in *asset.UnfreezeAsset
 		return nil, err
 	}
 	if amount < 0 {
-		err := fmt.Errorf("amount must not be negative")
+		err := i18n.StatusError(l.ctx, i18n.AmountMustNotBeNegative)
 		l.Errorf("UnfreezeAssetByBizNo validate amount failed, tenantId=%d targetBizType=%d targetBizNo=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
 			in.TenantId, in.TargetBizType, in.TargetBizNo, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err

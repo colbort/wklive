@@ -37,13 +37,13 @@ func (l *SetDefaultUserBankLogic) SetDefaultUserBank(in *user.SetDefaultUserBank
 
 	if userBank == nil {
 		return &user.AdminCommonResp{
-			Base: helper.GetErrResp(404, i18n.Translate(i18n.BankCardNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.BankCardNotFound, i18n.Translate(i18n.BankCardNotFound, l.ctx)),
 		}, nil
 	}
 
 	if userBank.UserId != in.UserId {
 		return &user.AdminCommonResp{
-			Base: helper.GetErrResp(403, i18n.Translate(i18n.NoPermissionModify, l.ctx)),
+			Base: helper.GetErrResp(i18n.NoPermissionModify, i18n.Translate(i18n.NoPermissionModify, l.ctx)),
 		}, nil
 	}
 

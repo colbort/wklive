@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
@@ -33,14 +34,14 @@ func NewSyncMarketQuoteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 // 同步标的行情，更新对应期权合约行情和快照。
 func (l *SyncMarketQuoteLogic) SyncMarketQuote(in *option.SyncMarketQuoteReq) (*option.InternalCommonResp, error) {
 	if in == nil {
-		return &option.InternalCommonResp{Base: helper.GetErrResp(400, "request is required")}, nil
+		return &option.InternalCommonResp{Base: helper.GetErrResp(i18n.RequestRequired, i18n.Translate(i18n.RequestRequired, l.ctx))}, nil
 	}
 	symbol := strings.ToUpper(strings.TrimSpace(in.GetSymbol()))
 	if symbol == "" {
-		return &option.InternalCommonResp{Base: helper.GetErrResp(400, "symbol is required")}, nil
+		return &option.InternalCommonResp{Base: helper.GetErrResp(i18n.SymbolRequired, i18n.Translate(i18n.SymbolRequired, l.ctx))}, nil
 	}
 	if in.GetUnderlyingPrice() <= 0 {
-		return &option.InternalCommonResp{Base: helper.GetErrResp(400, "underlying_price must be greater than 0")}, nil
+		return &option.InternalCommonResp{Base: helper.GetErrResp(i18n.UnderlyingPriceMustBePositive, i18n.Translate(i18n.UnderlyingPriceMustBePositive, l.ctx))}, nil
 	}
 
 	now := time.Now().Unix()

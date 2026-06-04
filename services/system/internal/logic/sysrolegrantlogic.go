@@ -2,8 +2,7 @@ package logic
 
 import (
 	"context"
-	"errors"
-	"fmt"
+
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/system"
@@ -47,7 +46,7 @@ func (l *SysRoleGrantLogic) SysRoleGrant(in *system.SysRoleGrantReq) (*system.Re
 		return nil, err
 	}
 	if role == nil {
-		return nil, errors.New(i18n.Translate(i18n.RoleNotFound, l.ctx))
+		return nil, i18n.StatusError(l.ctx, i18n.RoleNotFound)
 	}
 
 	if len(menuIds) > 0 {
@@ -66,7 +65,8 @@ func (l *SysRoleGrantLogic) SysRoleGrant(in *system.SysRoleGrantReq) (*system.Re
 					missing = append(missing, id)
 				}
 			}
-			return nil, fmt.Errorf("%s: %v", i18n.Translate(i18n.MenuNotFound, l.ctx), missing)
+			l.Errorf("SysRoleGrant menus not found, roleId=%d missing=%v", in.RoleId, missing)
+			return nil, i18n.StatusError(l.ctx, i18n.MenuNotFound)
 		}
 	}
 

@@ -28,18 +28,18 @@ func (l *SysCronJobRunLogic) SysCronJobRun(in *system.SysCronJobRunReq) (*system
 	job, err := l.svcCtx.JobModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(500, err.Error()),
+			Base: helper.GetErrResp(i18n.InternalServerError, i18n.Translate(i18n.InternalServerError, l.ctx)),
 		}, nil
 	}
 	if job == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(400, i18n.Translate(i18n.CronJobNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.CronJobNotFound, i18n.Translate(i18n.CronJobNotFound, l.ctx)),
 		}, nil
 	}
 	err = l.svcCtx.Cron.RunOnce(job)
 	if err != nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(500, err.Error()),
+			Base: helper.GetErrResp(i18n.InternalServerError, i18n.Translate(i18n.InternalServerError, l.ctx)),
 		}, nil
 	}
 

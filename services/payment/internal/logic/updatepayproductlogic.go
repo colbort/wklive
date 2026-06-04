@@ -41,7 +41,7 @@ func (l *UpdatePayProductLogic) UpdatePayProduct(in *payment.UpdatePayProductReq
 
 	if product == nil {
 		return &payment.AdminCommonResp{
-			Base: helper.GetErrResp(404, i18n.Translate(i18n.ProductNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx)),
 		}, nil
 	}
 

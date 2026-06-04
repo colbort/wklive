@@ -5,7 +5,6 @@ package auth_private
 
 import (
 	"context"
-	"fmt"
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
@@ -34,11 +33,11 @@ func NewProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ProfileLo
 func (l *ProfileLogic) Profile(req *types.ProfileReq) (resp *types.ProfileResp, err error) {
 	userId, err := utils.GetUserIdFromCtx(l.ctx)
 	if err != nil {
-		return nil, fmt.Errorf("%s: %w", i18n.Translate(i18n.InternalServerError, l.ctx), err)
+		return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
 	}
 	out, err := l.svcCtx.SystemCli.GetProfile(l.ctx, &system.ProfileReq{UserId: userId})
 	if err != nil {
-		return nil, err
+		return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
 	}
 	resp = new(types.ProfileResp)
 	resp.Code = i18n.OK

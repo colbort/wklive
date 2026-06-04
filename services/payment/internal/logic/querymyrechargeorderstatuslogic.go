@@ -44,14 +44,14 @@ func (l *QueryMyRechargeOrderStatusLogic) QueryMyRechargeOrderStatus(in *payment
 
 	if order == nil {
 		return &payment.QueryMyRechargeOrderStatusResp{
-			Base: helper.GetErrResp(404, i18n.Translate(i18n.OrderNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx)),
 		}, nil
 	}
 
 	// Check permission
 	if order.UserId != userId || order.TenantId != tenantId {
 		return &payment.QueryMyRechargeOrderStatusResp{
-			Base: helper.GetErrResp(403, i18n.Translate(i18n.NoPermissionQueryOrder, l.ctx)),
+			Base: helper.GetErrResp(i18n.NoPermissionQueryOrder, i18n.Translate(i18n.NoPermissionQueryOrder, l.ctx)),
 		}, nil
 	}
 

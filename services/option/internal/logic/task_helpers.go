@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
@@ -20,8 +19,6 @@ const (
 	optionTaskLockRenewInterval = 10 * time.Second
 )
 
-var errOptionTaskLockNotAcquired = errors.New("option task lock not acquired")
-
 func okOptionTaskResp() *option.OptionTaskResp {
 	return &option.OptionTaskResp{Base: helper.OkResp()}
 }
@@ -36,14 +33,14 @@ func runOptionTaskWithLock(
 	lockValue := fmt.Sprintf("%d", time.Now().UnixNano())
 
 	if err := acquireOptionTaskLock(ctx, svcCtx.Redis, lockKey, lockValue); err != nil {
-		if errors.Is(err, errOptionTaskLockNotAcquired) {
+		if i18n.IsStatusError(err, i18n.SyncTaskAlreadyRunning) {
 			return &option.OptionTaskResp{
-				Base: helper.GetErrResp(1, i18n.Translate(i18n.SyncTaskAlreadyRunning, ctx)),
+				Base: helper.GetErrResp(i18n.SyncTaskAlreadyRunning, i18n.Translate(i18n.SyncTaskAlreadyRunning, ctx)),
 			}, nil
 		}
 		logx.Errorf("acquire option task lock failed, key=%s err=%v", lockKey, err)
 		return &option.OptionTaskResp{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.DistributedLockAcquireFailed, ctx)),
+			Base: helper.GetErrResp(i18n.DistributedLockAcquireFailed, i18n.Translate(i18n.DistributedLockAcquireFailed, ctx)),
 		}, nil
 	}
 
@@ -70,7 +67,7 @@ func acquireOptionTaskLock(ctx context.Context, rds *redis.Redis, key, value str
 		return err
 	}
 	if !ok {
-		return errOptionTaskLockNotAcquired
+		return i18n.StatusError(ctx, i18n.SyncTaskAlreadyRunning)
 	}
 	return nil
 }
@@ -105,7 +102,7 @@ end
 		return err
 	}
 	if !redisEvalOK(ret) {
-		return errOptionTaskLockNotAcquired
+		return i18n.StatusError(ctx, i18n.SyncTaskAlreadyRunning)
 	}
 	return nil
 }

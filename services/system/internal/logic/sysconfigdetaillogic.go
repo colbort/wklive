@@ -3,7 +3,7 @@ package logic
 import (
 	"context"
 	"database/sql"
-	"errors"
+
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/system"
@@ -37,7 +37,7 @@ func (l *SysConfigDetailLogic) SysConfigDetail(in *system.SysConfigDetailReq) (*
 	} else if in.ConfigKey != nil && in.ConfigKey.String() != "" {
 		config, err = l.svcCtx.ConfigModel.FindOneByTenantIdConfigKey(l.ctx, *in.TenantId, sql.NullString{String: in.ConfigKey.String(), Valid: true})
 	} else {
-		err = errors.New(i18n.Translate(i18n.InvalidQueryCondition, l.ctx))
+		err = i18n.StatusError(l.ctx, i18n.InvalidQueryCondition)
 	}
 	if err != nil {
 		return nil, err

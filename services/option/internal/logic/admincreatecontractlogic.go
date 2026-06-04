@@ -30,38 +30,38 @@ func NewAdminCreateContractLogic(ctx context.Context, svcCtx *svc.ServiceContext
 // 创建期权合约
 func (l *AdminCreateContractLogic) AdminCreateContract(in *option.CreateContractReq) (*option.CreateContractResp, error) {
 	if _, err := l.svcCtx.OptionContractModel.FindOneByTenantIdContractCode(l.ctx, in.TenantId, in.ContractCode); err == nil {
-		return &option.CreateContractResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ContractCodeAlreadyExists, l.ctx))}, nil
+		return &option.CreateContractResp{Base: helper.GetErrResp(i18n.ContractCodeAlreadyExists, i18n.Translate(i18n.ContractCodeAlreadyExists, l.ctx))}, nil
 	} else if !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 
 	strikePrice, err := conv.ParseFloatField(in.StrikePrice)
 	if err != nil {
-		return &option.CreateContractResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.StrikePriceFormatError, l.ctx))}, nil
+		return &option.CreateContractResp{Base: helper.GetErrResp(i18n.StrikePriceFormatError, i18n.Translate(i18n.StrikePriceFormatError, l.ctx))}, nil
 	}
 	contractUnit, err := conv.ParseFloatField(in.ContractUnit)
 	if err != nil {
-		return &option.CreateContractResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ContractUnitFormatError, l.ctx))}, nil
+		return &option.CreateContractResp{Base: helper.GetErrResp(i18n.ContractUnitFormatError, i18n.Translate(i18n.ContractUnitFormatError, l.ctx))}, nil
 	}
 	minOrderQty, err := conv.ParseFloatField(in.MinOrderQty)
 	if err != nil {
-		return &option.CreateContractResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.MinOrderQuantityFormatError, l.ctx))}, nil
+		return &option.CreateContractResp{Base: helper.GetErrResp(i18n.MinOrderQuantityFormatError, i18n.Translate(i18n.MinOrderQuantityFormatError, l.ctx))}, nil
 	}
 	maxOrderQty, err := conv.ParseFloatField(in.MaxOrderQty)
 	if err != nil {
-		return &option.CreateContractResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.MaxOrderQuantityFormatError, l.ctx))}, nil
+		return &option.CreateContractResp{Base: helper.GetErrResp(i18n.MaxOrderQuantityFormatError, i18n.Translate(i18n.MaxOrderQuantityFormatError, l.ctx))}, nil
 	}
 	priceTick, err := conv.ParseFloatField(in.PriceTick)
 	if err != nil {
-		return &option.CreateContractResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.PriceTickFormatError, l.ctx))}, nil
+		return &option.CreateContractResp{Base: helper.GetErrResp(i18n.PriceTickFormatError, i18n.Translate(i18n.PriceTickFormatError, l.ctx))}, nil
 	}
 	qtyStep, err := conv.ParseFloatField(in.QtyStep)
 	if err != nil {
-		return &option.CreateContractResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.QuantityStepFormatError, l.ctx))}, nil
+		return &option.CreateContractResp{Base: helper.GetErrResp(i18n.QuantityStepFormatError, i18n.Translate(i18n.QuantityStepFormatError, l.ctx))}, nil
 	}
 	multiplier, err := conv.ParseFloatField(in.Multiplier)
 	if err != nil {
-		return &option.CreateContractResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.MultiplierFormatError, l.ctx))}, nil
+		return &option.CreateContractResp{Base: helper.GetErrResp(i18n.MultiplierFormatError, i18n.Translate(i18n.MultiplierFormatError, l.ctx))}, nil
 	}
 
 	now := time.Now().Unix()

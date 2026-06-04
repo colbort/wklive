@@ -32,7 +32,7 @@ func (l *SysUserUpdateLogic) SysUserUpdate(in *system.SysUserUpdateReq) (*system
 	}
 	if one == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(400, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 	var data models.SysUser

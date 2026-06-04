@@ -41,7 +41,7 @@ async function fetchList() {
         cursor: pagination.cursor,
         limit: pagination.limit,
       })
-      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
+      if (res.code !== 200) throw new Error(res.msg)
       list_ref.value = res.data || []
       updateFromResponse(res)
     } catch (error: unknown) {

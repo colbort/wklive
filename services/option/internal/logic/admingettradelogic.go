@@ -30,7 +30,7 @@ func (l *AdminGetTradeLogic) AdminGetTrade(in *option.GetTradeReq) (*option.GetT
 	item, err := findTradeByNoOrID(l.ctx, l.svcCtx, in.TenantId, in.Id, in.TradeNo)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &option.GetTradeResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.TradeNotFound, l.ctx))}, nil
+			return &option.GetTradeResp{Base: helper.GetErrResp(i18n.TradeNotFound, i18n.Translate(i18n.TradeNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}

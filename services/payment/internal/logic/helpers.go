@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"wklive/common/conv"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/proto/common"
@@ -38,7 +39,7 @@ func rechargeTypeFromPlatform(item *models.TPayPlatform) payment.RechargeType {
 
 func markRechargeOrderSuccessAndCredit(ctx context.Context, svcCtx *svc.ServiceContext, order *models.TRechargeOrder, thirdTradeNo string, payAmount int64, remark string) error {
 	if order == nil {
-		return fmt.Errorf("recharge order is nil")
+		return i18n.StatusError(ctx, i18n.OrderNotFound)
 	}
 
 	return svcCtx.DB.TransactCtx(ctx, func(txCtx context.Context, session sqlx.Session) error {
@@ -54,7 +55,7 @@ func markRechargeOrderSuccessAndCredit(ctx context.Context, svcCtx *svc.ServiceC
 		}
 		if current.Status != int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PENDING) &&
 			current.Status != int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PAYING) {
-			return fmt.Errorf("only pending or paying recharge orders can be marked success")
+			return i18n.StatusError(txCtx, i18n.OnlyPendingPaymentOrdersCanMarkSuccess)
 		}
 
 		now := utils.NowMillis()
@@ -79,7 +80,7 @@ func markRechargeOrderSuccessAndCredit(ctx context.Context, svcCtx *svc.ServiceC
 
 func creditRechargeOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext, order *models.TRechargeOrder, remark string) error {
 	if order == nil {
-		return fmt.Errorf("recharge order is nil")
+		return i18n.StatusError(ctx, i18n.OrderNotFound)
 	}
 	amount := order.PayAmount
 	if amount <= 0 {
@@ -101,17 +102,17 @@ func creditRechargeOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext, o
 		return err
 	}
 	if resp == nil || resp.Base == nil {
-		return fmt.Errorf("asset add available returned empty response")
+		return i18n.StatusError(ctx, i18n.InternalServerError)
 	}
 	if resp.Base.Code != 200 {
-		return fmt.Errorf("asset add available failed: %s", resp.Base.Msg)
+		return i18n.StatusError(ctx, resp.Base.Code)
 	}
 	return nil
 }
 
 func freezeWithdrawOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext, order *models.TWithdrawOrder, remark string) error {
 	if order == nil {
-		return fmt.Errorf("withdraw order is nil")
+		return i18n.StatusError(ctx, i18n.OrderNotFound)
 	}
 	resp, err := svcCtx.AssetCli.FreezeAsset(ctx, &asset.FreezeAssetReq{
 		TenantId:   order.TenantId,
@@ -129,17 +130,17 @@ func freezeWithdrawOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext, o
 		return err
 	}
 	if resp == nil || resp.Base == nil {
-		return fmt.Errorf("asset freeze returned empty response")
+		return i18n.StatusError(ctx, i18n.InternalServerError)
 	}
 	if resp.Base.Code != 200 {
-		return fmt.Errorf("asset freeze failed: %s", resp.Base.Msg)
+		return i18n.StatusError(ctx, resp.Base.Code)
 	}
 	return nil
 }
 
 func deductWithdrawOrderFrozenAsset(ctx context.Context, svcCtx *svc.ServiceContext, order *models.TWithdrawOrder, remark string) error {
 	if order == nil {
-		return fmt.Errorf("withdraw order is nil")
+		return i18n.StatusError(ctx, i18n.OrderNotFound)
 	}
 	resp, err := svcCtx.AssetCli.DeductFrozenAssetByBizNo(ctx, &asset.DeductFrozenAssetByBizNoReq{
 		TenantId:      order.TenantId,
@@ -156,17 +157,17 @@ func deductWithdrawOrderFrozenAsset(ctx context.Context, svcCtx *svc.ServiceCont
 		return err
 	}
 	if resp == nil || resp.Base == nil {
-		return fmt.Errorf("asset deduct frozen returned empty response")
+		return i18n.StatusError(ctx, i18n.InternalServerError)
 	}
 	if resp.Base.Code != 200 {
-		return fmt.Errorf("asset deduct frozen failed: %s", resp.Base.Msg)
+		return i18n.StatusError(ctx, resp.Base.Code)
 	}
 	return nil
 }
 
 func unfreezeWithdrawOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext, order *models.TWithdrawOrder, remark string) error {
 	if order == nil {
-		return fmt.Errorf("withdraw order is nil")
+		return i18n.StatusError(ctx, i18n.OrderNotFound)
 	}
 	resp, err := svcCtx.AssetCli.UnfreezeAssetByBizNo(ctx, &asset.UnfreezeAssetByBizNoReq{
 		TenantId:      order.TenantId,
@@ -183,10 +184,10 @@ func unfreezeWithdrawOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext,
 		return err
 	}
 	if resp == nil || resp.Base == nil {
-		return fmt.Errorf("asset unfreeze returned empty response")
+		return i18n.StatusError(ctx, i18n.InternalServerError)
 	}
 	if resp.Base.Code != 200 {
-		return fmt.Errorf("asset unfreeze failed: %s", resp.Base.Msg)
+		return i18n.StatusError(ctx, resp.Base.Code)
 	}
 	return nil
 }

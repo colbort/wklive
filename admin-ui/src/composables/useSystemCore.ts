@@ -24,6 +24,8 @@ function normalizeSystemCore(data: Record<string, unknown>): SystemCoreState {
 }
 
 function joinAssetUrl(base: string, path: string) {
+  path = path.replace(/^\.\//, '/')
+
   if (base.endsWith('/') && path.startsWith('/')) {
     return `${base.slice(0, -1)}${path}`
   }

@@ -48,7 +48,7 @@ func (l *GetOrderDetailLogic) GetOrderDetail(in *trade.GetOrderDetailReq) (*trad
 		item, err = l.svcCtx.TradeOrderModel.FindOneByTenantIdOrderNo(l.ctx, tenantId, in.OrderNo)
 	}
 	if errors.Is(err, models.ErrNotFound) || (err == nil && (item.TenantId != tenantId || item.UserId != userId)) {
-		return &trade.GetOrderDetailResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
+		return &trade.GetOrderDetailResp{Base: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 	}
 	if err != nil {
 		return nil, err

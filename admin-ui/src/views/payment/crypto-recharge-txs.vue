@@ -299,7 +299,7 @@ async function submit() {
   const res = form.id
     ? await cryptoService.updateRechargeTx(form)
     : await cryptoService.createRechargeTx(form)
-  if (res.code === 200 || res.code === 0) {
+  if (res.code === 200) {
     ElMessage.success(t('common.success'))
     dialogVisible.value = false
     await loadList()

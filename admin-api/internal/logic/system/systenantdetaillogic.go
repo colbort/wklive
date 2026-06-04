@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/system"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,29 +29,5 @@ func NewSysTenantDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 }
 
 func (l *SysTenantDetailLogic) SysTenantDetail(req *types.SysTenantDetailReq) (resp *types.SysTenantDetailResp, err error) {
-	result, err := l.svcCtx.SystemCli.SysTenantDetail(l.ctx, &system.SysTenantDetailReq{
-		TenantId:   req.TenantId,
-		TenantCode: req.TenantCode,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &types.SysTenantDetailResp{
-		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
-		},
-		Data: types.SysTenantItem{
-			Id:           result.Data.Id,
-			TenantCode:   result.Data.TenantCode,
-			TenantName:   result.Data.TenantName,
-			Status:       fromCommonStatus(result.Data.Status),
-			ExpireTime:   result.Data.ExpireTime,
-			ContactName:  result.Data.ContactName,
-			ContactPhone: result.Data.ContactPhone,
-			Remark:       result.Data.Remark,
-			CreateTimes:  result.Data.CreateTimes,
-			UpdateTimes:  result.Data.UpdateTimes,
-		},
-	}, nil
+	return logicutil.Proxy[types.SysTenantDetailResp](l.ctx, req, l.svcCtx.SystemCli.SysTenantDetail)
 }

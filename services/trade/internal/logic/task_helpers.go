@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -26,8 +25,6 @@ const (
 	tradeTaskLockRenewInterval = 10 * time.Second
 )
 
-var errTradeTaskLockNotAcquired = errors.New("trade task lock not acquired")
-
 func okTradeTaskResp() *trade.TradeTaskResp {
 	return &trade.TradeTaskResp{Base: helper.OkResp()}
 }
@@ -42,14 +39,14 @@ func runTradeTaskWithLock(
 	lockValue := fmt.Sprintf("%d", time.Now().UnixNano())
 
 	if err := acquireTradeTaskLock(ctx, svcCtx.Redis, lockKey, lockValue); err != nil {
-		if errors.Is(err, errTradeTaskLockNotAcquired) {
+		if i18n.IsStatusError(err, i18n.SyncTaskAlreadyRunning) {
 			return &trade.TradeTaskResp{
-				Base: helper.GetErrResp(1, i18n.Translate(i18n.SyncTaskAlreadyRunning, ctx)),
+				Base: helper.GetErrResp(i18n.SyncTaskAlreadyRunning, i18n.Translate(i18n.SyncTaskAlreadyRunning, ctx)),
 			}, nil
 		}
 		logx.Errorf("acquire trade task lock failed, key=%s err=%v", lockKey, err)
 		return &trade.TradeTaskResp{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.DistributedLockAcquireFailed, ctx)),
+			Base: helper.GetErrResp(i18n.DistributedLockAcquireFailed, i18n.Translate(i18n.DistributedLockAcquireFailed, ctx)),
 		}, nil
 	}
 
@@ -76,7 +73,7 @@ func acquireTradeTaskLock(ctx context.Context, rds *redis.Redis, key, value stri
 		return err
 	}
 	if !ok {
-		return errTradeTaskLockNotAcquired
+		return i18n.StatusError(ctx, i18n.SyncTaskAlreadyRunning)
 	}
 	return nil
 }
@@ -111,7 +108,7 @@ end
 		return err
 	}
 	if !redisEvalOK(ret) {
-		return errTradeTaskLockNotAcquired
+		return i18n.StatusError(ctx, i18n.SyncTaskAlreadyRunning)
 	}
 	return nil
 }

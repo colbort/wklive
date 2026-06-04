@@ -53,22 +53,17 @@
             {{ getPlatformTypeLabel(row.platformType) }}
           </template>
         </el-table-column>
-        <el-table-column
-          prop="icon"
-          :label="t('common.icon')"
-          width="100"
-          align="center"
-        >
+        <!-- <el-table-column prop="icon" :label="t('common.icon')" width="100" align="center">
           <template #default="{ row }">
             <el-image
               v-if="row.icon"
-              :src="buildAssetUrl(row.icon)"
+              :src="resolveAssetUrl(row.icon)"
               class="platform-icon-preview"
               :preview-teleported="true"
             />
             <span v-else>-</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           prop="notifyUrl"
           :label="t('payment.notifyUrl')"
@@ -169,7 +164,7 @@
           <div class="platform-icon-upload">
             <el-image
               v-if="platformForm.icon"
-              :src="buildAssetUrl(platformForm.icon)"
+              :src="resolveAssetUrl(platformForm.icon)"
               class="platform-icon-preview"
               :preview-teleported="true"
             />
@@ -215,9 +210,43 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="detailVisible" :title="detailTitle" width="720px">
-      <PaymentDetailDescriptions :data="detailData" :option-groups="optionGroups" />
-    </el-dialog>
+    <el-drawer
+      v-model="detailVisible"
+      :title="detailTitle"
+      direction="rtl"
+      size="520px"
+    >
+      <div v-if="detailData" class="platform-detail">
+        <div class="detail-icon-panel">
+          <el-image
+            v-if="detailData.icon"
+            :src="resolveAssetUrl(detailData.icon)"
+            class="detail-icon-preview"
+            fit="contain"
+            :preview-src-list="[resolveAssetUrl(detailData.icon)]"
+            :preview-teleported="true"
+          />
+          <div v-else class="detail-icon-empty">
+            -
+          </div>
+          <div class="detail-icon-meta">
+            <div class="detail-icon-title">
+              {{ t('common.icon') }}
+            </div>
+            <div class="detail-icon-url">
+              {{ detailData.icon || '-' }}
+            </div>
+          </div>
+        </div>
+
+        <PaymentDetailDescriptions
+          :data="detailDisplayData"
+          :option-groups="optionGroups"
+          :columns="1"
+        />
+      </div>
+      <el-empty v-else :description="t('common.noData')" />
+    </el-drawer>
   </div>
 </template>
 
@@ -236,12 +265,13 @@ import {
 } from '@/services'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 import { apiUploadFile } from '@/api/system/upload'
-import { buildAssetUrl } from '@/utils/file-url'
+import { buildSystemAssetUrl, useSystemCore } from '@/composables/useSystemCore'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
   usePagination<number>(20)
+const { systemCore, loadSystemCore } = useSystemCore()
 
 const submitLoading = ref(false)
 const platformLoading = ref(false)
@@ -255,6 +285,12 @@ const selectedPlatformCode = ref('')
 const optionGroups = ref<OptionGroup[]>([])
 const platformTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'platformType'))
 const statusOptions = computed(() => findOptionGroup(optionGroups.value, 'status'))
+const detailDisplayData = computed(() => {
+  if (!detailData.value) return null
+
+  const { icon: _icon, ...rest } = detailData.value
+  return rest
+})
 
 const platformQuery = reactive({ platformCode: '', keyword: '', status: 0 })
 
@@ -332,6 +368,8 @@ const getPlatformTypeLabel = (value: number) => {
   return getOptionValueLabel(optionGroups.value, 'platformType', value, t)
 }
 
+const resolveAssetUrl = (url?: string) => buildSystemAssetUrl(systemCore.value.assetUrl, url)
+
 const handlePlatformIconSelect = async (uploadFile: UploadFile) => {
   if (!uploadFile.raw) return
 
@@ -348,7 +386,7 @@ const handlePlatformIconSelect = async (uploadFile: UploadFile) => {
   submitLoading.value = true
   try {
     const res = await apiUploadFile(uploadFile.raw)
-    if (res.code === 0 || res.code === 200) {
+    if (res.code === 200) {
       platformForm.icon = res.data?.url || ''
       ElMessage.success(t('common.uploadSuccess'))
       return
@@ -402,7 +440,7 @@ function handleNextPage() {
 }
 
 onMounted(async () => {
-  await Promise.all([loadPlatforms(), loadSupportedPlatforms(), loadOptions()])
+  await Promise.all([loadSystemCore(), loadPlatforms(), loadSupportedPlatforms(), loadOptions()])
 })
 </script>
 
@@ -424,5 +462,54 @@ onMounted(async () => {
   border-radius: 6px;
   object-fit: contain;
   background: var(--el-fill-color-light);
+}
+
+.platform-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.detail-icon-panel {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 16px;
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  background: var(--el-fill-color-extra-light);
+}
+
+.detail-icon-preview,
+.detail-icon-empty {
+  width: 96px;
+  height: 96px;
+  flex: 0 0 auto;
+  border: 1px solid var(--el-border-color);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.detail-icon-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--el-text-color-placeholder);
+}
+
+.detail-icon-meta {
+  min-width: 0;
+}
+
+.detail-icon-title {
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--el-text-color-primary);
+}
+
+.detail-icon-url {
+  color: var(--el-text-color-secondary);
+  word-break: break-all;
+  line-height: 1.5;
 }
 </style>

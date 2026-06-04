@@ -43,53 +43,53 @@ func (l *AppExerciseLogic) AppExercise(in *option.AppExerciseReq) (*option.AppEx
 	position, err := l.svcCtx.OptionPositionModel.FindOne(l.ctx, in.PositionId)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &option.AppExerciseResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.PositionNotFound, l.ctx))}, nil
+			return &option.AppExerciseResp{Base: helper.GetErrResp(i18n.PositionNotFound, i18n.Translate(i18n.PositionNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
 	if position.TenantId != tenantId || position.UserId != userId || position.AccountId != in.AccountId {
-		return &option.AppExerciseResp{Base: helper.GetErrResp(403, i18n.Translate(i18n.NoPermissionOperatePosition, l.ctx))}, nil
+		return &option.AppExerciseResp{Base: helper.GetErrResp(i18n.NoPermissionOperatePosition, i18n.Translate(i18n.NoPermissionOperatePosition, l.ctx))}, nil
 	}
 	if position.Side != int64(option.PositionSide_POSITION_SIDE_LONG) || position.Status != int64(option.PositionStatus_POSITION_STATUS_HOLDING) {
-		return &option.AppExerciseResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.NoPermissionOperatePosition, l.ctx))}, nil
+		return &option.AppExerciseResp{Base: helper.GetErrResp(i18n.NoPermissionOperatePosition, i18n.Translate(i18n.NoPermissionOperatePosition, l.ctx))}, nil
 	}
 	if in.ContractId != 0 && position.ContractId != in.ContractId {
-		return &option.AppExerciseResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ContractPositionMismatch, l.ctx))}, nil
+		return &option.AppExerciseResp{Base: helper.GetErrResp(i18n.ContractPositionMismatch, i18n.Translate(i18n.ContractPositionMismatch, l.ctx))}, nil
 	}
 
 	contract, err := l.svcCtx.OptionContractModel.FindOne(l.ctx, position.ContractId)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &option.AppExerciseResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
+			return &option.AppExerciseResp{Base: helper.GetErrResp(i18n.ContractNotFound, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
 
 	exerciseQty, err := conv.ParseFloatField(in.ExerciseQty)
 	if err != nil || exerciseQty <= 0 {
-		return &option.AppExerciseResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ExerciseQuantityFormatError, l.ctx))}, nil
+		return &option.AppExerciseResp{Base: helper.GetErrResp(i18n.ExerciseQuantityFormatError, i18n.Translate(i18n.ExerciseQuantityFormatError, l.ctx))}, nil
 	}
 	if position.ExerciseableQty+optionFloatEpsilon < exerciseQty {
-		return &option.AppExerciseResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ExercisableQuantityExceeded, l.ctx))}, nil
+		return &option.AppExerciseResp{Base: helper.GetErrResp(i18n.ExercisableQuantityExceeded, i18n.Translate(i18n.ExercisableQuantityExceeded, l.ctx))}, nil
 	}
 	if position.AvailableQty+optionFloatEpsilon < exerciseQty {
-		return &option.AppExerciseResp{Base: helper.GetErrResp(400, i18n.Translate(i18n.ExercisableQuantityExceeded, l.ctx))}, nil
+		return &option.AppExerciseResp{Base: helper.GetErrResp(i18n.ExercisableQuantityExceeded, i18n.Translate(i18n.ExercisableQuantityExceeded, l.ctx))}, nil
 	}
 	now := time.Now().Unix()
 	if contract.ExerciseStyle == int64(option.ExerciseStyle_EXERCISE_STYLE_EUROPEAN) && now < contract.ExpireTime {
-		return &option.AppExerciseResp{Base: helper.GetErrResp(400, "欧式期权未到期不能提前行权")}, nil
+		return &option.AppExerciseResp{Base: helper.GetErrResp(i18n.EuropeanOptionNotExpired, i18n.Translate(i18n.EuropeanOptionNotExpired, l.ctx))}, nil
 	}
 	market, err := l.svcCtx.OptionMarketModel.FindOneByTenantIdContractId(l.ctx, tenantId, contract.Id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &option.AppExerciseResp{Base: helper.GetErrResp(404, "期权行情不存在")}, nil
+			return &option.AppExerciseResp{Base: helper.GetErrResp(i18n.MarketNotFound, i18n.Translate(i18n.MarketNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
 	settlementPrice := market.UnderlyingPrice
 	profitAmount := optionSettlementPayoff(contract, settlementPrice, exerciseQty)
 	if profitAmount <= optionFloatEpsilon {
-		return &option.AppExerciseResp{Base: helper.GetErrResp(400, "当前不是价内期权，不能行权")}, nil
+		return &option.AppExerciseResp{Base: helper.GetErrResp(i18n.OptionNotInTheMoney, i18n.Translate(i18n.OptionNotInTheMoney, l.ctx))}, nil
 	}
 
 	exerciseNo, err := l.svcCtx.GenerateBizNo(l.ctx, "EX")

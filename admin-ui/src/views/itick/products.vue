@@ -745,7 +745,7 @@ const handleIconSelect = async (uploadFile: UploadFile) => {
   submitLoading.value = true
   try {
     const res = await apiUploadFile(uploadFile.raw)
-    if (res.code === 0 || res.code === 200) {
+    if (res.code === 200) {
       form.icon = res.data?.url || ''
       ElMessage.success(t('common.uploadSuccess'))
       return

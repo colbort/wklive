@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/system"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,11 +29,5 @@ func NewSysRoleDeleteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 }
 
 func (l *SysRoleDeleteLogic) SysRoleDelete(req *types.SysRoleDeleteReq) (resp *types.RespBase, err error) {
-	result, err := l.svcCtx.SystemCli.SysRoleDelete(l.ctx, &system.SysRoleDeleteReq{
-		Id: req.Id,
-	})
-	return &types.RespBase{
-		Code: result.Base.Code,
-		Msg:  result.Base.Msg,
-	}, err
+	return logicutil.Proxy[types.RespBase](l.ctx, req, l.svcCtx.SystemCli.SysRoleDelete)
 }

@@ -44,21 +44,21 @@ func (l *CancelMyRechargeOrderLogic) CancelMyRechargeOrder(in *payment.CancelMyR
 
 	if order == nil {
 		return &payment.AppCommonResp{
-			Base: helper.GetErrResp(404, i18n.Translate(i18n.OrderNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx)),
 		}, nil
 	}
 
 	// Check permission
 	if order.UserId != userId || order.TenantId != tenantId {
 		return &payment.AppCommonResp{
-			Base: helper.GetErrResp(403, i18n.Translate(i18n.NoPermissionCancelOrder, l.ctx)),
+			Base: helper.GetErrResp(i18n.NoPermissionCancelOrder, i18n.Translate(i18n.NoPermissionCancelOrder, l.ctx)),
 		}, nil
 	}
 
 	// Can only cancel unpaid orders
 	if order.Status != int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PENDING) {
 		return &payment.AppCommonResp{
-			Base: helper.GetErrResp(201, i18n.Translate(i18n.OnlyPendingPaymentOrdersCanCancel, l.ctx)),
+			Base: helper.GetErrResp(i18n.OnlyPendingPaymentOrdersCanCancel, i18n.Translate(i18n.OnlyPendingPaymentOrdersCanCancel, l.ctx)),
 		}, nil
 	}
 

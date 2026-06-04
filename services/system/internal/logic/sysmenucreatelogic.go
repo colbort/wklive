@@ -39,7 +39,7 @@ func (l *SysMenuCreateLogic) SysMenuCreate(in *system.SysMenuCreateReq) (*system
 		menu, err = l.svcCtx.MenuModel.FindOneByPerms(l.ctx, in.Perms)
 	default:
 		return &system.RespBase{
-			Base: helper.GetErrResp(400, i18n.Translate(i18n.InvalidMenuType, l.ctx)),
+			Base: helper.GetErrResp(i18n.InvalidMenuType, i18n.Translate(i18n.InvalidMenuType, l.ctx)),
 		}, nil
 	}
 	if err != nil && err != models.ErrNotFound {
@@ -47,7 +47,7 @@ func (l *SysMenuCreateLogic) SysMenuCreate(in *system.SysMenuCreateReq) (*system
 	}
 	if menu != nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(400, i18n.Translate(i18n.MenuAlreadyExists, l.ctx)),
+			Base: helper.GetErrResp(i18n.MenuAlreadyExists, i18n.Translate(i18n.MenuAlreadyExists, l.ctx)),
 		}, nil
 	}
 	_, err = l.svcCtx.MenuModel.Insert(l.ctx, &models.SysMenu{

@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/payment"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,17 +29,5 @@ func NewRetryNotifyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Retry
 }
 
 func (l *RetryNotifyLogic) RetryNotify(req *types.RetryNotifyReq) (resp *types.RespBase, err error) {
-	result, err := l.svcCtx.PaymentCli.RetryNotify(l.ctx, &payment.RetryNotifyReq{
-		TenantId: req.TenantId,
-		OrderNo:  req.OrderNo,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	resp = &types.RespBase{
-		Code: result.Base.Code,
-		Msg:  result.Base.Msg,
-	}
-	return resp, nil
+	return logicutil.Proxy[types.RespBase](l.ctx, req, l.svcCtx.PaymentCli.RetryNotify)
 }

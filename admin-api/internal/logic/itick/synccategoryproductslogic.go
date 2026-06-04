@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/itick"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,17 +29,5 @@ func NewSyncCategoryProductsLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 func (l *SyncCategoryProductsLogic) SyncCategoryProducts(req *types.SyncCategoryProductsReq) (resp *types.SyncCategoryProductsResp, err error) {
-	reuslt, err := l.svcCtx.ItickCli.SyncCategoryProducts(l.ctx, &itick.SyncCategoryProductsReq{
-		Id: req.Id,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &types.SyncCategoryProductsResp{
-		RespBase: types.RespBase{
-			Code: reuslt.Base.Code,
-			Msg:  reuslt.Base.Msg,
-		},
-		TaskNo: reuslt.TaskNo,
-	}, nil
+	return logicutil.Proxy[types.SyncCategoryProductsResp](l.ctx, req, l.svcCtx.ItickCli.SyncCategoryProducts)
 }

@@ -8,7 +8,8 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/proto/payment"
+
+	"wklive/app-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,43 +29,5 @@ func NewGetMyWithdrawOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *GetMyWithdrawOrderLogic) GetMyWithdrawOrder(req *types.GetMyWithdrawOrderReq) (resp *types.GetMyWithdrawOrderResp, err error) {
-	result, err := l.svcCtx.PaymentCli.GetMyWithdrawOrder(l.ctx, &payment.GetMyWithdrawOrderReq{
-		Id: req.Id,
-	})
-	if err != nil {
-		return nil, err
-	}
-	resp = &types.GetMyWithdrawOrderResp{
-		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
-		},
-		Data: types.WithdrawOrder{
-			Id:           result.Data.Id,
-			TenantId:     result.Data.TenantId,
-			UserId:       result.Data.UserId,
-			OrderNo:      result.Data.OrderNo,
-			BizOrderNo:   result.Data.BizOrderNo,
-			Currency:     result.Data.Currency,
-			Amount:       result.Data.Amount,
-			FeeAmount:    result.Data.FeeAmount,
-			ActualAmount: result.Data.ActualAmount,
-			ClientType:   int64(result.Data.ClientType),
-			ClientIp:     result.Data.ClientIp,
-			Status:       int64(result.Data.Status),
-			ThirdTradeNo: result.Data.ThirdTradeNo,
-			ThirdOrderNo: result.Data.ThirdOrderNo,
-			RequestData:  result.Data.RequestData,
-			ResponseData: result.Data.ResponseData,
-			NotifyData:   result.Data.NotifyData,
-			ProcessTime:  result.Data.ProcessTime,
-			NotifyTime:   result.Data.NotifyTime,
-			CloseTime:    result.Data.CloseTime,
-			Remark:       result.Data.Remark,
-			CreateTimes:  result.Data.CreateTimes,
-			UpdateTimes:  result.Data.UpdateTimes,
-		},
-	}
-
-	return
+	return logicutil.Proxy[types.GetMyWithdrawOrderResp](l.ctx, req, l.svcCtx.PaymentCli.GetMyWithdrawOrder)
 }

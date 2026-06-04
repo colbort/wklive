@@ -40,7 +40,7 @@ func (l *GetTenantPayPlatformLogic) GetTenantPayPlatform(in *payment.GetTenantPa
 
 	if tenantPlatform == nil {
 		return &payment.GetTenantPayPlatformResp{
-			Base: helper.GetErrResp(404, i18n.Translate(i18n.TenantPlatformNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.TenantPlatformNotFound, i18n.Translate(i18n.TenantPlatformNotFound, l.ctx)),
 		}, nil
 	}
 

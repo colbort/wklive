@@ -29,12 +29,12 @@ func NewAssignUserRolesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *A
 func (l *AssignUserRolesLogic) AssignUserRoles(in *system.AssignUserRolesReq) (*system.RespBase, error) {
 	if in.UserId <= 0 {
 		return &system.RespBase{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.UserIDInvalid, l.ctx)),
+			Base: helper.GetErrResp(i18n.UserIDInvalid, i18n.Translate(i18n.UserIDInvalid, l.ctx)),
 		}, nil
 	}
 	if len(in.RoleIds) == 0 {
 		return &system.RespBase{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.RoleSelectionRequired, l.ctx)),
+			Base: helper.GetErrResp(i18n.RoleSelectionRequired, i18n.Translate(i18n.RoleSelectionRequired, l.ctx)),
 		}, nil
 	}
 
@@ -44,7 +44,7 @@ func (l *AssignUserRolesLogic) AssignUserRoles(in *system.AssignUserRolesReq) (*
 	}
 	if user == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 
@@ -64,7 +64,7 @@ func (l *AssignUserRolesLogic) AssignUserRoles(in *system.AssignUserRolesReq) (*
 
 	if len(roleIds) == 0 {
 		return &system.RespBase{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.ValidRoleSelectionRequired, l.ctx)),
+			Base: helper.GetErrResp(i18n.ValidRoleSelectionRequired, i18n.Translate(i18n.ValidRoleSelectionRequired, l.ctx)),
 		}, nil
 	}
 
@@ -76,7 +76,7 @@ func (l *AssignUserRolesLogic) AssignUserRoles(in *system.AssignUserRolesReq) (*
 	}
 	if len(existRoleIds) != len(roleIds) {
 		return &system.RespBase{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.SomeRolesNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.SomeRolesNotFound, i18n.Translate(i18n.SomeRolesNotFound, l.ctx)),
 		}, nil
 	}
 

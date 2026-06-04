@@ -43,7 +43,7 @@ func (l *UpdateTenantPayAccountLogic) UpdateTenantPayAccount(in *payment.UpdateT
 
 	if account == nil {
 		return &payment.AdminCommonResp{
-			Base: helper.GetErrResp(404, i18n.Translate(i18n.TenantPayAccountNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.TenantPayAccountNotFound, i18n.Translate(i18n.TenantPayAccountNotFound, l.ctx)),
 		}, nil
 	}
 

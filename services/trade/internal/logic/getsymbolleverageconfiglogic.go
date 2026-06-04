@@ -39,7 +39,7 @@ func (l *GetSymbolLeverageConfigLogic) GetSymbolLeverageConfig(in *trade.GetSymb
 		item, err = l.svcCtx.SymbolLeverageCfgModel.FindOneByTenantIdSymbolIdMarketTypeMarginMode(l.ctx, in.TenantId, in.SymbolId, int64(in.MarketType), int64(in.MarginMode))
 	}
 	if errors.Is(err, models.ErrNotFound) || (err == nil && item.TenantId != in.TenantId) {
-		return &trade.GetSymbolLeverageConfigResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
+		return &trade.GetSymbolLeverageConfigResp{Base: helper.GetErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
 	}
 	if err != nil {
 		return nil, err

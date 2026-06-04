@@ -32,12 +32,12 @@ func (l *DeleteAssetCoinConfigLogic) DeleteAssetCoinConfig(in *asset.DeleteAsset
 	old, err := l.svcCtx.AssetCoinConfigModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &asset.DeleteAssetCoinConfigResp{Base: helper.GetErrResp(i18n.CodeNotFound, "asset coin config not found")}, nil
+			return &asset.DeleteAssetCoinConfigResp{Base: helper.GetErrResp(i18n.AssetCoinConfigNotFound, i18n.Translate(i18n.AssetCoinConfigNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
 	if in.TenantId != 0 && old.TenantId != in.TenantId {
-		return &asset.DeleteAssetCoinConfigResp{Base: helper.GetErrResp(i18n.CodeNotFound, "asset coin config not found")}, nil
+		return &asset.DeleteAssetCoinConfigResp{Base: helper.GetErrResp(i18n.AssetCoinConfigNotFound, i18n.Translate(i18n.AssetCoinConfigNotFound, l.ctx))}, nil
 	}
 
 	if err := l.svcCtx.AssetCoinConfigModel.Delete(l.ctx, in.Id); err != nil {

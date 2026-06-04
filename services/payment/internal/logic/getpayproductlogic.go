@@ -38,7 +38,7 @@ func (l *GetPayProductLogic) GetPayProduct(in *payment.GetPayProductReq) (*payme
 
 	if product == nil {
 		return &payment.GetPayProductResp{
-			Base: helper.GetErrResp(404, i18n.Translate(i18n.ProductNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx)),
 		}, nil
 	}
 

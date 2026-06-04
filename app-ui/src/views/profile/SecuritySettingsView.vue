@@ -37,7 +37,7 @@ onMounted(loadProfile)
 async function loadProfile() {
   try {
     const res = await apiGetProfile()
-    if (res.code === 0 || res.code === 200) profile.value = res.data
+    if (res.code === 200) profile.value = res.data
   } catch (error) {
     console.warn('load profile failed', error)
   }

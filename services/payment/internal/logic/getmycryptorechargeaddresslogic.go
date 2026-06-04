@@ -14,8 +14,6 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-var errCryptoRechargeAddressNotConfigured = errors.New("crypto recharge address not configured")
-
 type GetMyCryptoRechargeAddressLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
@@ -47,11 +45,11 @@ func (l *GetMyCryptoRechargeAddressLogic) GetMyCryptoRechargeAddress(in *payment
 		}
 		item, err = l.reserveAssignableAddress(tenantId, userId, in)
 		if err != nil {
-			if errors.Is(err, errCryptoRechargeAddressNotConfigured) {
-				return &payment.GetMyCryptoRechargeAddressResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.CryptoRechargeAddressNotConfigured, l.ctx))}, nil
+			if i18n.IsStatusError(err, i18n.CryptoRechargeAddressNotConfigured) {
+				return &payment.GetMyCryptoRechargeAddressResp{Base: helper.GetErrResp(i18n.CryptoRechargeAddressNotConfigured, i18n.Translate(i18n.CryptoRechargeAddressNotConfigured, l.ctx))}, nil
 			}
 			if errors.Is(err, models.ErrNotFound) {
-				return &payment.GetMyCryptoRechargeAddressResp{Base: helper.GetErrResp(201, i18n.Translate(i18n.CryptoRechargeAddressInUse, l.ctx))}, nil
+				return &payment.GetMyCryptoRechargeAddressResp{Base: helper.GetErrResp(i18n.CryptoRechargeAddressInUse, i18n.Translate(i18n.CryptoRechargeAddressInUse, l.ctx))}, nil
 			}
 			return nil, err
 		}
@@ -68,7 +66,7 @@ func (l *GetMyCryptoRechargeAddressLogic) GetMyCryptoRechargeAddress(in *payment
 			return nil, err
 		}
 		if !reservedByMe {
-			return &payment.GetMyCryptoRechargeAddressResp{Base: helper.GetErrResp(201, i18n.Translate(i18n.CryptoRechargeAddressInUse, l.ctx))}, nil
+			return &payment.GetMyCryptoRechargeAddressResp{Base: helper.GetErrResp(i18n.CryptoRechargeAddressInUse, i18n.Translate(i18n.CryptoRechargeAddressInUse, l.ctx))}, nil
 		}
 		refreshCryptoRechargeAddressReservation(l.ctx, l.svcCtx, item.Id)
 	}
@@ -88,7 +86,7 @@ func (l *GetMyCryptoRechargeAddressLogic) reserveAssignableAddress(tenantId, use
 			return nil, err
 		}
 		if !hasAddress {
-			return nil, errCryptoRechargeAddressNotConfigured
+			return nil, i18n.StatusError(l.ctx, i18n.CryptoRechargeAddressNotConfigured)
 		}
 		return nil, models.ErrNotFound
 	}

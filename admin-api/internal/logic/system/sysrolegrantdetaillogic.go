@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/system"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,22 +29,5 @@ func NewSysRoleGrantDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *SysRoleGrantDetailLogic) SysRoleGrantDetail(req *types.SysRoleGrantDetailReq) (resp *types.SysRoleGrantDetailResp, err error) {
-	reuslt, err := l.svcCtx.SystemCli.SysRoleGrantDetail(l.ctx, &system.SysRoleGrantDetailReq{
-		RoleId: req.Id,
-	})
-	if err != nil {
-		return nil, err
-	}
-	resp = &types.SysRoleGrantDetailResp{
-		RespBase: types.RespBase{
-			Code: reuslt.Base.Code,
-			Msg:  reuslt.Base.Msg,
-		},
-		Data: types.SysRoleGrantDetail{
-			RoleId:   reuslt.RoleId,
-			MenuIds:  reuslt.MenuIds,
-			PermKeys: reuslt.PermKeys,
-		},
-	}
-	return
+	return logicutil.Proxy[types.SysRoleGrantDetailResp](l.ctx, req, l.svcCtx.SystemCli.SysRoleGrantDetail)
 }

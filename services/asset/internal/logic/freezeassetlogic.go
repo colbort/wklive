@@ -2,10 +2,10 @@ package logic
 
 import (
 	"context"
-	"fmt"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/svc"
@@ -39,7 +39,7 @@ func (l *FreezeAssetLogic) FreezeAsset(in *asset.FreezeAssetReq) (*asset.FreezeA
 		return nil, err
 	}
 	if amount <= 0 {
-		err := fmt.Errorf("amount must be positive")
+		err := i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
 		l.Errorf("FreezeAsset validate amount failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
 			in.TenantId, in.UserId, walletType, in.Coin, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err
@@ -70,7 +70,7 @@ func (l *FreezeAssetLogic) FreezeAsset(in *asset.FreezeAssetReq) (*asset.FreezeA
 			return err
 		}
 		if !ok {
-			err := fmt.Errorf("insufficient available balance")
+			err := i18n.StatusError(ctx, i18n.InsufficientAvailableBalance)
 			l.Errorf("FreezeAsset freeze amount insufficient balance, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
 				in.TenantId, in.UserId, walletType, in.Coin, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 			return err

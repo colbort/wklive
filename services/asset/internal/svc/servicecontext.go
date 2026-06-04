@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 	"time"
+	"wklive/common/i18n"
 	"wklive/services/asset/internal/config"
 	"wklive/services/asset/models"
 
@@ -91,7 +92,7 @@ func (s *ServiceContext) LastPrice(ctx context.Context, symbol string) (float64,
 		return 0, err
 	}
 	if strings.TrimSpace(data) == "" {
-		return 0, fmt.Errorf("last price unavailable for symbol %s", symbol)
+		return 0, i18n.StatusError(ctx, i18n.InvalidExchangeRate)
 	}
 
 	var quoteData struct {
@@ -99,10 +100,10 @@ func (s *ServiceContext) LastPrice(ctx context.Context, symbol string) (float64,
 	}
 	err = json.Unmarshal([]byte(data), &quoteData)
 	if err != nil {
-		return 0, fmt.Errorf("parse last price for symbol %s failed: %w", symbol, err)
+		return 0, i18n.StatusError(ctx, i18n.InvalidExchangeRate)
 	}
 	if quoteData.Price <= 0 {
-		return 0, fmt.Errorf("last price unavailable for symbol %s", symbol)
+		return 0, i18n.StatusError(ctx, i18n.InvalidExchangeRate)
 	}
 
 	return quoteData.Price, nil

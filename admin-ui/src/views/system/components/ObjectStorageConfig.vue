@@ -169,7 +169,7 @@
   </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ObjectStorageConfig } from '@/services/system/ConfigService'
@@ -193,8 +193,7 @@ const form = computed({
   set: (value) => emit('update:modelValue', value),
 })
 
-function handleTabClick(_tab: unknown) {
-}
+function handleTabClick(_tab: unknown) {}
 </script>
 
 <style scoped>

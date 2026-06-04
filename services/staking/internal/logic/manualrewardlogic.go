@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"fmt"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -38,12 +37,12 @@ func (l *ManualRewardLogic) ManualReward(in *staking.AdminManualRewardReq) (*sta
 		return nil, err
 	}
 	if order == nil || order.TenantId != in.TenantId {
-		return &staking.AdminManualRewardResp{Page: helper.GetErrResp(404, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
+		return &staking.AdminManualRewardResp{Page: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 	}
 
 	rewardAmount, err := conv.ParseFloatField(in.RewardAmount)
 	if err != nil || rewardAmount <= 0 {
-		return &staking.AdminManualRewardResp{Page: helper.GetErrResp(400, i18n.Translate(i18n.RewardAmountInvalid, l.ctx))}, nil
+		return &staking.AdminManualRewardResp{Page: helper.GetErrResp(i18n.RewardAmountInvalid, i18n.Translate(i18n.RewardAmountInvalid, l.ctx))}, nil
 	}
 
 	now := utils.NowMillis()
@@ -70,7 +69,7 @@ func (l *ManualRewardLogic) ManualReward(in *staking.AdminManualRewardReq) (*sta
 		if resp != nil && resp.Base != nil {
 			return &staking.AdminManualRewardResp{Page: resp.Base}, nil
 		}
-		return nil, fmt.Errorf("staking manual reward add asset returned empty response")
+		return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
 	}
 
 	beforeReward := order.TotalReward

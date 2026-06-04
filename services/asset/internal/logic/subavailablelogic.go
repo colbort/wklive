@@ -2,10 +2,10 @@ package logic
 
 import (
 	"context"
-	"fmt"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/svc"
@@ -36,7 +36,7 @@ func (l *SubAvailableLogic) SubAvailable(in *asset.SubAvailableReq) (*asset.Chan
 		return nil, err
 	}
 	if amount <= 0 {
-		return nil, fmt.Errorf("amount must be positive")
+		return nil, i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
 	}
 
 	ts := utils.NowMillis()
@@ -56,7 +56,7 @@ func (l *SubAvailableLogic) SubAvailable(in *asset.SubAvailableReq) (*asset.Chan
 			return err
 		}
 		if !ok {
-			return fmt.Errorf("insufficient available balance")
+			return i18n.StatusError(ctx, i18n.InsufficientAvailableBalance)
 		}
 
 		after, err = userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin)

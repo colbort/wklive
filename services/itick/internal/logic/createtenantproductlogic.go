@@ -36,7 +36,7 @@ func (l *CreateTenantProductLogic) CreateTenantProduct(in *itick.CreateTenantPro
 	}
 	if product == nil {
 		return &itick.AdminCommonResp{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.ProductNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx)),
 		}, nil
 	}
 
@@ -46,7 +46,7 @@ func (l *CreateTenantProductLogic) CreateTenantProduct(in *itick.CreateTenantPro
 	}
 	if exist != nil {
 		return &itick.AdminCommonResp{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.ResourceAlreadyExists, l.ctx)),
+			Base: helper.GetErrResp(i18n.ResourceAlreadyExists, i18n.Translate(i18n.ResourceAlreadyExists, l.ctx)),
 		}, nil
 	}
 

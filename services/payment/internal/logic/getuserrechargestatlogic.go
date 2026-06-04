@@ -40,7 +40,7 @@ func (l *GetUserRechargeStatLogic) GetUserRechargeStat(in *payment.GetUserRechar
 
 	if stat == nil {
 		return &payment.GetUserRechargeStatResp{
-			Base: helper.GetErrResp(404, i18n.Translate(i18n.RechargeStatNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.RechargeStatNotFound, i18n.Translate(i18n.RechargeStatNotFound, l.ctx)),
 		}, nil
 	}
 

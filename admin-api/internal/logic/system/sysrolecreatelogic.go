@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/system"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,14 +29,5 @@ func NewSysRoleCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 }
 
 func (l *SysRoleCreateLogic) SysRoleCreate(req *types.SysRoleCreateReq) (resp *types.RespBase, err error) {
-	result, err := l.svcCtx.SystemCli.SysRoleCreate(l.ctx, &system.SysRoleCreateReq{
-		Name:   req.Name,
-		Code:   req.Code,
-		Status: toCommonStatus(req.Status),
-		Remark: req.Remark,
-	})
-	return &types.RespBase{
-		Code: result.Base.Code,
-		Msg:  result.Base.Msg,
-	}, err
+	return logicutil.Proxy[types.RespBase](l.ctx, req, l.svcCtx.SystemCli.SysRoleCreate)
 }

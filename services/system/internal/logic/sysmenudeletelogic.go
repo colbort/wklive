@@ -31,7 +31,7 @@ func (l *SysMenuDeleteLogic) SysMenuDelete(in *system.SysMenuDeleteReq) (*system
 	}
 	if menu == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(400, i18n.Translate(i18n.MenuNotFoundEN, l.ctx)),
+			Base: helper.GetErrResp(i18n.MenuNotFoundEN, i18n.Translate(i18n.MenuNotFoundEN, l.ctx)),
 		}, nil
 	}
 	err = l.svcCtx.MenuModel.Delete(l.ctx, in.Id)

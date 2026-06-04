@@ -6,6 +6,7 @@ import (
 	"math"
 
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
@@ -13,11 +14,6 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-)
-
-var (
-	errInvalidOrderFill = errors.New("invalid order fill")
-	errOrderNotOpen     = errors.New("order is not open")
 )
 
 type RecordOrderFillLogic struct {
@@ -46,14 +42,14 @@ func (l *RecordOrderFillLogic) RecordOrderFill(in *trade.RecordOrderFillReq) (*t
 		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis).(models.TradeOrderModel)
 		return recordOrderFillWithModels(ctx, fillModel, orderModel, in.Fill, now)
 	})
-	if errors.Is(err, errInvalidOrderFill) {
-		return &trade.InternalCommonResp{Base: helper.GetErrResp(400, errInvalidOrderFill.Error())}, nil
+	if i18n.IsStatusError(err, i18n.ParamError) {
+		return &trade.InternalCommonResp{Base: helper.GetErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	if errors.Is(err, models.ErrNotFound) {
-		return &trade.InternalCommonResp{Base: helper.GetErrResp(404, "order not found")}, nil
+		return &trade.InternalCommonResp{Base: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 	}
-	if errors.Is(err, errOrderNotOpen) {
-		return &trade.InternalCommonResp{Base: helper.GetErrResp(400, errOrderNotOpen.Error())}, nil
+	if i18n.IsStatusError(err, i18n.OperationNotAllowed) {
+		return &trade.InternalCommonResp{Base: helper.GetErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx))}, nil
 	}
 	if err != nil {
 		return nil, err
@@ -79,13 +75,13 @@ func recordOrderFillWithModels(ctx context.Context, fillModel models.TradeFillMo
 		return err
 	}
 	if !isMatchableOrderStatus(order.Status) {
-		return errOrderNotOpen
+		return i18n.StatusError(ctx, i18n.OperationNotAllowed)
 	}
 	if !fillMatchesOrder(order, fill) {
-		return errInvalidOrderFill
+		return i18n.StatusError(ctx, i18n.ParamError)
 	}
 	if !canApplyOrderFill(order, fill) {
-		return errInvalidOrderFill
+		return i18n.StatusError(ctx, i18n.ParamError)
 	}
 
 	if fill.OrderId <= 0 {
@@ -172,7 +168,7 @@ func canApplyOrderFillPrice(order *models.TTradeOrder, fill *models.TTradeFill) 
 
 func tradeFillFromProto(fill *trade.TradeFill, now int64) (*models.TTradeFill, error) {
 	if fill == nil || fill.TenantId <= 0 || fill.FillNo == "" || (fill.OrderId <= 0 && fill.OrderNo == "") {
-		return nil, errInvalidOrderFill
+		return nil, i18n.StatusError(context.Background(), i18n.ParamError)
 	}
 	price := mustParseFloat(fill.Price)
 	qty := mustParseFloat(fill.Qty)
@@ -181,7 +177,7 @@ func tradeFillFromProto(fill *trade.TradeFill, now int64) (*models.TTradeFill, e
 		amount = tradeMinorAmountAtPrice(price, qty)
 	}
 	if price <= 0 || qty <= 0 || amount <= 0 {
-		return nil, errInvalidOrderFill
+		return nil, i18n.StatusError(context.Background(), i18n.ParamError)
 	}
 	createTimes := fill.CreateTimes
 	if createTimes <= 0 {

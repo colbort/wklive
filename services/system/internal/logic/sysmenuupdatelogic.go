@@ -32,7 +32,7 @@ func (l *SysMenuUpdateLogic) SysMenuUpdate(in *system.SysMenuUpdateReq) (*system
 	}
 	if one == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(400, i18n.Translate(i18n.MenuNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.MenuNotFound, i18n.Translate(i18n.MenuNotFound, l.ctx)),
 		}, nil
 	}
 

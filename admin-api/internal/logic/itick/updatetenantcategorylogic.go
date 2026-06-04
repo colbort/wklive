@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/itick"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,19 +29,5 @@ func NewUpdateTenantCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 func (l *UpdateTenantCategoryLogic) UpdateTenantCategory(req *types.UpdateTenantCategoryReq) (resp *types.RespBase, err error) {
-	result, err := l.svcCtx.ItickCli.UpdateTenantCategory(l.ctx, &itick.UpdateTenantCategoryReq{
-		Id:         req.Id,
-		TenantId:   req.TenantId,
-		Enabled:    req.Enabled,
-		AppVisible: req.AppVisible,
-		Sort:       req.Sort,
-		Remark:     req.Remark,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &types.RespBase{
-		Code: result.Base.Code,
-		Msg:  result.Base.Msg,
-	}, nil
+	return logicutil.Proxy[types.RespBase](l.ctx, req, l.svcCtx.ItickCli.UpdateTenantCategory)
 }

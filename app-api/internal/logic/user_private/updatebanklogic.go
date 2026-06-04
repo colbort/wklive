@@ -8,7 +8,8 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/proto/user"
+
+	"wklive/app-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,38 +29,5 @@ func NewUpdateBankLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Update
 }
 
 func (l *UpdateBankLogic) UpdateBank(req *types.UpdateBankReq) (resp *types.UpdateBankResp, err error) {
-	result, err := l.svcCtx.UserCli.UpdateBank(l.ctx, &user.UpdateBankReq{
-		Id:          req.Id,
-		BankName:    req.BankName,
-		BankCode:    req.BankCode,
-		AccountName: req.AccountName,
-		AccountNo:   req.AccountNo,
-		BranchName:  req.BranchName,
-		CountryCode: req.CountryCode,
-		IsDefault:   req.IsDefault,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &types.UpdateBankResp{
-		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
-		},
-		Bank: types.UserBank{
-			Id:          result.Bank.Id,
-			TenantId:    result.Bank.TenantId,
-			UserId:      result.Bank.UserId,
-			BankName:    result.Bank.BankName,
-			BankCode:    result.Bank.BankCode,
-			AccountName: result.Bank.AccountName,
-			AccountNo:   result.Bank.AccountNo,
-			BranchName:  result.Bank.BranchName,
-			CountryCode: result.Bank.CountryCode,
-			IsDefault:   result.Bank.IsDefault,
-			Status:      int64(result.Bank.Status),
-			CreateTimes: result.Bank.CreateTimes,
-			UpdateTimes: result.Bank.UpdateTimes,
-		},
-	}, nil
+	return logicutil.Proxy[types.UpdateBankResp](l.ctx, req, l.svcCtx.UserCli.UpdateBank)
 }

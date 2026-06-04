@@ -2,8 +2,7 @@ package logic
 
 import (
 	"context"
-	"fmt"
-	"strings"
+
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -47,7 +46,7 @@ func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system
 	}
 	if one != nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(400, i18n.Translate(i18n.UsernameAlreadyExists, l.ctx)),
+			Base: helper.GetErrResp(i18n.UsernameAlreadyExists, i18n.Translate(i18n.UsernameAlreadyExists, l.ctx)),
 		}, nil
 	}
 
@@ -117,10 +116,10 @@ func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system
 				return err
 			}
 			if role == nil {
-				return fmt.Errorf("role_not_found:%d", rid)
+				return i18n.StatusError(ctx, i18n.RoleNotFound)
 			}
 			if role.TenantId != tenantId {
-				return fmt.Errorf("role_tenant_mismatch:%d", rid)
+				return i18n.StatusError(ctx, i18n.RoleNotFound)
 			}
 
 			_, err = userRoleModel.InsertCtx(ctx, session, &models.SysUserRole{
@@ -136,16 +135,6 @@ func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system
 	})
 
 	if err != nil {
-		if strings.HasPrefix(err.Error(), "role_not_found:") {
-			return &system.RespBase{
-				Base: helper.GetErrResp(400, i18n.Translate(i18n.RoleNotFound, l.ctx)),
-			}, nil
-		}
-		if strings.HasPrefix(err.Error(), "role_tenant_mismatch:") {
-			return &system.RespBase{
-				Base: helper.GetErrResp(400, i18n.Translate(i18n.RoleNotFound, l.ctx)),
-			}, nil
-		}
 		return nil, err
 	}
 	return &system.RespBase{

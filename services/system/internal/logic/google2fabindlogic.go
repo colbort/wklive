@@ -32,26 +32,26 @@ func (l *Google2FABindLogic) Google2FABind(in *system.Google2FABindReq) (*system
 	}
 	if user == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 	// 从 Redis 获取之前存储的 secret
 	secret, err := l.svcCtx.UserModel.GetGoogle2FASecret(l.ctx, user.Id)
 	if err != nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.Google2FASecretFetchFailed, l.ctx)+": "+err.Error()),
+			Base: helper.GetErrResp(i18n.Google2FASecretFetchFailed, i18n.Translate(i18n.Google2FASecretFetchFailed, l.ctx)+": "+err.Error()),
 		}, err
 	}
 
 	if secret == "" {
 		return &system.RespBase{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.Google2FASecretExpired, l.ctx)),
+			Base: helper.GetErrResp(i18n.Google2FASecretExpired, i18n.Translate(i18n.Google2FASecretExpired, l.ctx)),
 		}, nil
 	}
 
 	if !utils.VerifyGoogle2FACode(secret, in.Code) {
 		return &system.RespBase{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.VerificationCodeInvalid, l.ctx)),
+			Base: helper.GetErrResp(i18n.VerificationCodeInvalid, i18n.Translate(i18n.VerificationCodeInvalid, l.ctx)),
 		}, nil
 	}
 

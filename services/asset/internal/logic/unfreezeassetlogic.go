@@ -2,10 +2,10 @@ package logic
 
 import (
 	"context"
-	"fmt"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/svc"
@@ -38,7 +38,7 @@ func (l *UnfreezeAssetLogic) UnfreezeAsset(in *asset.UnfreezeAssetReq) (*asset.C
 		return nil, err
 	}
 	if amount <= 0 {
-		err := fmt.Errorf("amount must be positive")
+		err := i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
 		l.Errorf("UnfreezeAsset validate amount failed, tenantId=%d freezeNo=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
 			in.TenantId, in.FreezeNo, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err
@@ -57,13 +57,13 @@ func (l *UnfreezeAssetLogic) UnfreezeAsset(in *asset.UnfreezeAssetReq) (*asset.C
 			return err
 		}
 		if freeze.TenantId != in.TenantId {
-			return fmt.Errorf("tenant mismatch for freeze record")
+			return i18n.StatusError(ctx, i18n.AssetTenantMismatch)
 		}
 		if freeze.Status != 1 && freeze.Status != 2 {
-			return fmt.Errorf("freeze record is not releasable")
+			return i18n.StatusError(ctx, i18n.FreezeRecordNotReleasable)
 		}
 		if amount > freeze.RemainAmount {
-			return fmt.Errorf("unfreeze amount exceeds remaining frozen amount")
+			return i18n.StatusError(ctx, i18n.UnfreezeAmountExceedsFrozen)
 		}
 
 		before, err := userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, freeze.TenantId, freeze.UserId, freeze.WalletType, freeze.Coin)
@@ -76,7 +76,7 @@ func (l *UnfreezeAssetLogic) UnfreezeAsset(in *asset.UnfreezeAssetReq) (*asset.C
 			return err
 		}
 		if !ok {
-			return fmt.Errorf("unfreeze failed")
+			return i18n.StatusError(ctx, i18n.AssetUnfreezeFailed)
 		}
 
 		ok, err = assetFreezeModel.UpdateUnfreeze(ctx, freeze.FreezeNo, amount, ts)
@@ -84,7 +84,7 @@ func (l *UnfreezeAssetLogic) UnfreezeAsset(in *asset.UnfreezeAssetReq) (*asset.C
 			return err
 		}
 		if !ok {
-			return fmt.Errorf("freeze record update failed")
+			return i18n.StatusError(ctx, i18n.FreezeRecordUpdateFailed)
 		}
 
 		after, err = userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, freeze.TenantId, freeze.UserId, freeze.WalletType, freeze.Coin)

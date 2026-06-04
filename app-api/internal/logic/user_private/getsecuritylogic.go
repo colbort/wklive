@@ -8,7 +8,8 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/proto/user"
+
+	"wklive/app-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,27 +29,5 @@ func NewGetSecurityLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetSe
 }
 
 func (l *GetSecurityLogic) GetSecurity() (resp *types.GetSecurityResp, err error) {
-	result, err := l.svcCtx.UserCli.GetSecurity(l.ctx, &user.GetSecurityReq{})
-	if err != nil {
-		return nil, err
-	}
-	return &types.GetSecurityResp{
-		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
-		},
-		Data: types.UserSecurity{
-			Id:              result.Security.Id,
-			TenantId:        result.Security.TenantId,
-			UserId:          result.Security.UserId,
-			HasPayPassword:  result.Security.PayPasswordHash != "",
-			GoogleEnabled:   result.Security.GoogleEnabled,
-			LoginErrorCount: result.Security.LoginErrorCount,
-			PayErrorCount:   result.Security.PayErrorCount,
-			LockUntil:       result.Security.LockUntil,
-			RiskLevel:       int64(result.Security.RiskLevel.Number()),
-			CreateTimes:     result.Security.CreateTimes,
-			UpdateTimes:     result.Security.UpdateTimes,
-		},
-	}, nil
+	return logicutil.Proxy[types.GetSecurityResp](l.ctx, nil, l.svcCtx.UserCli.GetSecurity)
 }

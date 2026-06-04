@@ -30,7 +30,7 @@ func (l *Google2FAResetLogic) Google2FAReset(in *system.Google2FAResetReq) (*sys
 	}
 	if user == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 	user.GoogleSecret = ""

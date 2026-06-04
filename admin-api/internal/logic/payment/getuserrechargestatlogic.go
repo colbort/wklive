@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/payment"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,31 +29,5 @@ func NewGetUserRechargeStatLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *GetUserRechargeStatLogic) GetUserRechargeStat(req *types.GetUserRechargeStatReq) (resp *types.GetUserRechargeStatResp, err error) {
-	result, err := l.svcCtx.PaymentCli.GetUserRechargeStat(l.ctx, &payment.GetUserRechargeStatReq{
-		TenantId: req.TenantId,
-		UserId:   req.UserId,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &types.GetUserRechargeStatResp{
-		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
-		},
-		Data: types.UserRechargeStat{
-			Id:                 result.Data.Id,
-			TenantId:           result.Data.TenantId,
-			UserId:             result.Data.UserId,
-			SuccessOrderCount:  int64(result.Data.SuccessOrderCount),
-			SuccessTotalAmount: result.Data.SuccessTotalAmount,
-			TodaySuccessAmount: result.Data.TodaySuccessAmount,
-			TodaySuccessCount:  int64(result.Data.TodaySuccessCount),
-			FirstSuccessTime:   result.Data.FirstSuccessTime,
-			LastSuccessTime:    result.Data.LastSuccessTime,
-			CreateTimes:        result.Data.CreateTimes,
-			UpdateTimes:        result.Data.UpdateTimes,
-		},
-	}, nil
+	return logicutil.Proxy[types.GetUserRechargeStatResp](l.ctx, req, l.svcCtx.PaymentCli.GetUserRechargeStat)
 }

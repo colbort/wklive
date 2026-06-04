@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/user"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,48 +29,5 @@ func NewReviewUserIdentityLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *ReviewUserIdentityLogic) ReviewUserIdentity(req *types.ReviewUserIdentityReq) (resp *types.ReviewUserIdentityResp, err error) {
-	result, err := l.svcCtx.UserCli.ReviewUserIdentity(l.ctx, &user.ReviewUserIdentityReq{
-		TenantId:     req.TenantId,
-		UserId:       req.UserId,
-		VerifyStatus: user.VerifyStatus(req.VerifyStatus),
-		RejectReason: req.RejectReason,
-		VerifyBy:     req.VerifyBy,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &types.ReviewUserIdentityResp{
-		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
-		},
-		Identity: types.UserIdentity{
-			Id:            result.Identity.Id,
-			TenantId:      result.Identity.TenantId,
-			UserId:        result.Identity.UserId,
-			Phone:         result.Identity.Phone,
-			Email:         result.Identity.Email,
-			RealName:      result.Identity.RealName,
-			Gender:        int64(result.Identity.Gender),
-			Birthday:      result.Identity.Birthday,
-			CountryCode:   result.Identity.CountryCode,
-			Province:      result.Identity.Province,
-			City:          result.Identity.City,
-			Address:       result.Identity.Address,
-			IdType:        int64(result.Identity.IdType),
-			IdNo:          result.Identity.IdNo,
-			FrontImage:    result.Identity.FrontImage,
-			BackImage:     result.Identity.BackImage,
-			HandheldImage: result.Identity.HandheldImage,
-			KycLevel:      int64(result.Identity.KycLevel),
-			VerifyStatus:  int64(result.Identity.VerifyStatus),
-			RejectReason:  result.Identity.RejectReason,
-			SubmitTime:    result.Identity.SubmitTime,
-			VerifyTime:    result.Identity.VerifyTime,
-			VerifyBy:      result.Identity.VerifyBy,
-			CreateTimes:   result.Identity.CreateTimes,
-			UpdateTimes:   result.Identity.UpdateTimes,
-		},
-	}, nil
+	return logicutil.Proxy[types.ReviewUserIdentityResp](l.ctx, req, l.svcCtx.UserCli.ReviewUserIdentity)
 }

@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/system"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,17 +29,5 @@ func NewGoogle2FABindLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Goo
 }
 
 func (l *Google2FABindLogic) Google2FABind(req *types.Google2FABindReq) (resp *types.RespBase, err error) {
-	result, err := l.svcCtx.SystemCli.Google2FABind(l.ctx, &system.Google2FABindReq{
-		UserId: req.UserId,
-		Secret: req.Secret,
-		Code:   req.Code,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &types.RespBase{
-		Code: result.Base.Code,
-		Msg:  result.Base.Msg,
-	}, nil
+	return logicutil.Proxy[types.RespBase](l.ctx, req, l.svcCtx.SystemCli.Google2FABind)
 }

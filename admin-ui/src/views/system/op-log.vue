@@ -40,7 +40,7 @@ async function fetchList() {
         cursor: pagination.cursor,
         limit: pagination.limit,
       })
-      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
+      if (res.code !== 200) throw new Error(res.msg)
       list_ref.value = res.data || []
       updateFromResponse(res)
     } catch (error: unknown) {
@@ -52,7 +52,7 @@ async function fetchList() {
 async function fetchOptions() {
   try {
     const res = await logService.getOptions()
-    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg)
+    if (res.code !== 200) throw new Error(res.msg)
     optionGroups.value = res.data || []
   } catch (error: unknown) {
     ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))

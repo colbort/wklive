@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"wklive/common/i18n"
 	"wklive/proto/asset"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
@@ -38,10 +39,10 @@ func freezeOrderAsset(
 		return "", err
 	}
 	if resp == nil || resp.Base == nil {
-		return "", fmt.Errorf("asset freeze returned empty response")
+		return "", i18n.StatusError(ctx, i18n.InternalServerError)
 	}
 	if resp.Base.Code != 200 {
-		return "", fmt.Errorf("asset freeze failed: %s", resp.Base.Msg)
+		return "", i18n.StatusError(ctx, resp.Base.Code)
 	}
 
 	return resp.FreezeNo, nil
@@ -73,10 +74,10 @@ func unfreezeOrderAsset(
 		return err
 	}
 	if resp == nil || resp.Base == nil {
-		return fmt.Errorf("asset unfreeze returned empty response")
+		return i18n.StatusError(ctx, i18n.InternalServerError)
 	}
 	if resp.Base.Code != 200 {
-		return fmt.Errorf("asset unfreeze failed: %s", resp.Base.Msg)
+		return i18n.StatusError(ctx, resp.Base.Code)
 	}
 
 	return nil
@@ -101,10 +102,10 @@ func unfreezeRemainingOrderAsset(svcCtx *svc.ServiceContext, ctx context.Context
 		return err
 	}
 	if resp == nil || resp.Base == nil {
-		return fmt.Errorf("asset unfreeze by biz no returned empty response")
+		return i18n.StatusError(ctx, i18n.InternalServerError)
 	}
 	if resp.Base.Code != 200 {
-		return fmt.Errorf("asset unfreeze by biz no failed: %s", resp.Base.Msg)
+		return i18n.StatusError(ctx, resp.Base.Code)
 	}
 
 	return nil

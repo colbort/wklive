@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/itick"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,19 +29,5 @@ func NewCreateTenantProductLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *CreateTenantProductLogic) CreateTenantProduct(req *types.CreateTenantProductReq) (resp *types.RespBase, err error) {
-	result, err := l.svcCtx.ItickCli.CreateTenantProduct(l.ctx, &itick.CreateTenantProductReq{
-		TenantId:   req.TenantId,
-		ProductId:  req.ProductId,
-		Enabled:    req.Enabled,
-		AppVisible: req.AppVisible,
-		Sort:       req.Sort,
-		Remark:     req.Remark,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &types.RespBase{
-		Code: result.Base.Code,
-		Msg:  result.Base.Msg,
-	}, nil
+	return logicutil.Proxy[types.RespBase](l.ctx, req, l.svcCtx.ItickCli.CreateTenantProduct)
 }

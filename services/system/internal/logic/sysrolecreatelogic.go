@@ -2,7 +2,7 @@ package logic
 
 import (
 	"context"
-	"errors"
+
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/system"
@@ -32,7 +32,7 @@ func (l *SysRoleCreateLogic) SysRoleCreate(in *system.SysRoleCreateReq) (*system
 		return nil, err
 	}
 	if result != nil {
-		return nil, errors.New(i18n.Translate(i18n.RoleCodeAlreadyExists, l.ctx))
+		return nil, i18n.StatusError(l.ctx, i18n.RoleCodeAlreadyExists)
 	}
 	_, err = l.svcCtx.RoleModel.Insert(l.ctx, &models.SysRole{
 		Name:   in.Name,

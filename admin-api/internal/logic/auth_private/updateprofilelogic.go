@@ -5,7 +5,6 @@ package auth_private
 
 import (
 	"context"
-	"fmt"
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
@@ -33,7 +32,7 @@ func NewUpdateProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upd
 func (l *UpdateProfileLogic) UpdateProfile(req *types.UpdateProfileReq) (resp *types.RespBase, err error) {
 	userId, err := utils.GetUserIdFromCtx(l.ctx)
 	if err != nil {
-		return nil, fmt.Errorf("%s: %w", i18n.Translate(i18n.InternalServerError, l.ctx), err)
+		return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
 	}
 	result, err := l.svcCtx.SystemCli.UpdateProfile(l.ctx, &system.UpdateProfileReq{
 		Id:       userId,
@@ -42,7 +41,7 @@ func (l *UpdateProfileLogic) UpdateProfile(req *types.UpdateProfileReq) (resp *t
 		Password: &req.Password,
 	})
 	if err != nil {
-		return nil, err
+		return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
 	}
 	return &types.RespBase{
 		Code: result.Base.Code,

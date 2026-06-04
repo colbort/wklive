@@ -30,7 +30,7 @@ func (l *AdminGetExerciseLogic) AdminGetExercise(in *option.GetExerciseReq) (*op
 	item, err := findExerciseByNoOrID(l.ctx, l.svcCtx, in.TenantId, in.Id, in.ExerciseNo)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &option.GetExerciseResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.ExerciseRecordNotFound, l.ctx))}, nil
+			return &option.GetExerciseResp{Base: helper.GetErrResp(i18n.ExerciseRecordNotFound, i18n.Translate(i18n.ExerciseRecordNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}

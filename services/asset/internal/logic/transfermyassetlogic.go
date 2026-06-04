@@ -2,11 +2,11 @@ package logic
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/svc"
@@ -44,20 +44,20 @@ func (l *TransferMyAssetLogic) TransferMyAsset(in *asset.TransferMyAssetReq) (*a
 	fromCoin := strings.ToUpper(strings.TrimSpace(in.FromCoin))
 	toCoin := strings.ToUpper(strings.TrimSpace(in.ToCoin))
 	if fromCoin == "" || toCoin == "" {
-		return nil, fmt.Errorf("from coin and to coin are required")
+		return nil, i18n.StatusError(l.ctx, i18n.TransferCoinRequired)
 	}
 	if in.FromWalletType == asset.WalletType_WALLET_TYPE_UNKNOWN || in.ToWalletType == asset.WalletType_WALLET_TYPE_UNKNOWN {
-		return nil, fmt.Errorf("wallet type is required")
+		return nil, i18n.StatusError(l.ctx, i18n.WalletTypeRequired)
 	}
 	if in.FromWalletType == in.ToWalletType && fromCoin == toCoin {
-		return nil, fmt.Errorf("same wallet type and same coin does not need transfer")
+		return nil, i18n.StatusError(l.ctx, i18n.SameWalletCoinTransferNotNeeded)
 	}
 	fromAmount, err := conv.ParseFloatField(in.Amount)
 	if err != nil {
 		return nil, err
 	}
 	if fromAmount <= 0 {
-		return nil, fmt.Errorf("amount must be positive")
+		return nil, i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
 	}
 	toAmount, err := l.exchangeTransferAmount(fromCoin, toCoin, fromAmount)
 	if err != nil {
@@ -94,7 +94,7 @@ func (l *TransferMyAssetLogic) exchangeTransferAmount(fromCoin, toCoin string, f
 		return 0, err
 	}
 	if fromRate <= 0 || toRate <= 0 {
-		return 0, fmt.Errorf("invalid exchange rate")
+		return 0, i18n.StatusError(l.ctx, i18n.InvalidExchangeRate)
 	}
 
 	return fromAmount * fromRate / toRate, nil
@@ -106,7 +106,8 @@ func (l *TransferMyAssetLogic) usdtRate(coin string) (float64, error) {
 	}
 	rate, err := l.svcCtx.LastPrice(l.ctx, coin+"USDT")
 	if err != nil {
-		return 0, fmt.Errorf("get %s exchange rate failed: %w", coin, err)
+		l.Errorf("TransferMyAsset get exchange rate failed, coin=%s err=%v", coin, err)
+		return 0, err
 	}
 	return rate, nil
 }
@@ -139,7 +140,7 @@ func (l *TransferMyAssetLogic) transferAsset(tenantId, userId int64, fromWalletT
 		if ok, err := userAssetModel.SubAvailableAmount(ctx, tenantId, userId, int64(fromWalletType), fromCoin, fromAmount, ts); err != nil {
 			return err
 		} else if !ok {
-			return fmt.Errorf("insufficient available balance")
+			return i18n.StatusError(ctx, i18n.InsufficientAvailableBalance)
 		}
 
 		if beforeTo == nil {

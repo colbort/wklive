@@ -2,10 +2,10 @@ package logic
 
 import (
 	"context"
-	"fmt"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/svc"
@@ -38,7 +38,7 @@ func (l *DeductFrozenAssetLogic) DeductFrozenAsset(in *asset.DeductFrozenAssetRe
 		return nil, err
 	}
 	if amount <= 0 {
-		err := fmt.Errorf("amount must be positive")
+		err := i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
 		l.Errorf("DeductFrozenAsset validate amount failed, tenantId=%d freezeNo=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
 			in.TenantId, in.FreezeNo, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)
 		return nil, err
@@ -57,13 +57,13 @@ func (l *DeductFrozenAssetLogic) DeductFrozenAsset(in *asset.DeductFrozenAssetRe
 			return err
 		}
 		if freeze.TenantId != in.TenantId {
-			return fmt.Errorf("tenant mismatch for freeze record")
+			return i18n.StatusError(ctx, i18n.AssetTenantMismatch)
 		}
 		if freeze.Status != 1 && freeze.Status != 2 {
-			return fmt.Errorf("freeze record is not deductible")
+			return i18n.StatusError(ctx, i18n.FreezeRecordNotDeductible)
 		}
 		if amount > freeze.RemainAmount {
-			return fmt.Errorf("deduct amount exceeds remaining frozen amount")
+			return i18n.StatusError(ctx, i18n.DeductAmountExceedsFrozen)
 		}
 
 		before, err := userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, freeze.TenantId, freeze.UserId, freeze.WalletType, freeze.Coin)
@@ -76,7 +76,7 @@ func (l *DeductFrozenAssetLogic) DeductFrozenAsset(in *asset.DeductFrozenAssetRe
 			return err
 		}
 		if !ok {
-			return fmt.Errorf("deduct from frozen failed")
+			return i18n.StatusError(ctx, i18n.DeductFrozenFailed)
 		}
 
 		ok, err = assetFreezeModel.UpdateDeduct(ctx, freeze.FreezeNo, amount, ts)
@@ -84,7 +84,7 @@ func (l *DeductFrozenAssetLogic) DeductFrozenAsset(in *asset.DeductFrozenAssetRe
 			return err
 		}
 		if !ok {
-			return fmt.Errorf("freeze record deduct update failed")
+			return i18n.StatusError(ctx, i18n.FreezeRecordDeductUpdateFailed)
 		}
 
 		after, err = userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, freeze.TenantId, freeze.UserId, freeze.WalletType, freeze.Coin)

@@ -8,7 +8,8 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/proto/user"
+
+	"wklive/app-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,53 +29,5 @@ func NewSubmitIdentityLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Su
 }
 
 func (l *SubmitIdentityLogic) SubmitIdentity(req *types.SubmitIdentityReq) (resp *types.SubmitIdentityResp, err error) {
-	result, err := l.svcCtx.UserCli.SubmitIdentity(l.ctx, &user.SubmitIdentityReq{
-		Phone:         req.Phone,
-		Email:         req.Email,
-		RealName:      req.RealName,
-		Gender:        user.Gender(req.Gender),
-		Birthday:      req.Birthday,
-		CountryCode:   req.CountryCode,
-		Province:      req.Province,
-		City:          req.City,
-		Address:       req.Address,
-		IdType:        user.IdType(req.IdType),
-		IdNo:          req.IdNo,
-		FrontImage:    req.FrontImage,
-		BackImage:     req.BackImage,
-		HandheldImage: req.HandheldImage,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &types.SubmitIdentityResp{
-		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
-		},
-		Data: types.UserIdentity{
-			Id:            result.Identity.Id,
-			TenantId:      result.Identity.TenantId,
-			UserId:        result.Identity.UserId,
-			Phone:         result.Identity.Phone,
-			Email:         result.Identity.Email,
-			RealName:      result.Identity.RealName,
-			Gender:        int64(result.Identity.Gender),
-			Birthday:      result.Identity.Birthday,
-			CountryCode:   result.Identity.CountryCode,
-			Province:      result.Identity.Province,
-			City:          result.Identity.City,
-			Address:       result.Identity.Address,
-			IdType:        int64(result.Identity.IdType),
-			IdNo:          result.Identity.IdNo,
-			FrontImage:    result.Identity.FrontImage,
-			BackImage:     result.Identity.BackImage,
-			HandheldImage: result.Identity.HandheldImage,
-			KycLevel:      int64(result.Identity.KycLevel),
-			VerifyStatus:  int64(result.Identity.VerifyStatus),
-			RejectReason:  result.Identity.RejectReason,
-			SubmitTime:    result.Identity.SubmitTime,
-			VerifyTime:    result.Identity.VerifyTime,
-		},
-	}, nil
+	return logicutil.Proxy[types.SubmitIdentityResp](l.ctx, req, l.svcCtx.UserCli.SubmitIdentity)
 }

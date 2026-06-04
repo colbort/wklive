@@ -30,12 +30,12 @@ func (l *AdminGetPositionLogic) AdminGetPosition(in *option.GetPositionReq) (*op
 	item, err := l.svcCtx.OptionPositionModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &option.GetPositionResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.PositionNotFound, l.ctx))}, nil
+			return &option.GetPositionResp{Base: helper.GetErrResp(i18n.PositionNotFound, i18n.Translate(i18n.PositionNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
 	if in.TenantId != 0 && item.TenantId != in.TenantId {
-		return &option.GetPositionResp{Base: helper.GetErrResp(404, i18n.Translate(i18n.PositionNotFound, l.ctx))}, nil
+		return &option.GetPositionResp{Base: helper.GetErrResp(i18n.PositionNotFound, i18n.Translate(i18n.PositionNotFound, l.ctx))}, nil
 	}
 	data, err := buildPositionDetail(l.ctx, l.svcCtx, item)
 	if err != nil {

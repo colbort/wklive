@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/payment"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,29 +29,5 @@ func NewGetTenantPayPlatformLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 func (l *GetTenantPayPlatformLogic) GetTenantPayPlatform(req *types.GetTenantPayPlatformReq) (resp *types.GetTenantPayPlatformResp, err error) {
-	result, err := l.svcCtx.PaymentCli.GetTenantPayPlatform(l.ctx, &payment.GetTenantPayPlatformReq{
-		Id:       req.Id,
-		TenantId: req.TenantId,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	resp = &types.GetTenantPayPlatformResp{
-		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
-		},
-		Data: types.TenantPayPlatform{
-			Id:          result.Data.Id,
-			TenantId:    result.Data.TenantId,
-			PlatformId:  result.Data.PlatformId,
-			Status:      int64(result.Data.Status),
-			OpenStatus:  int64(result.Data.OpenStatus),
-			Remark:      result.Data.Remark,
-			CreateTimes: result.Data.CreateTimes,
-			UpdateTimes: result.Data.UpdateTimes,
-		},
-	}
-	return resp, nil
+	return logicutil.Proxy[types.GetTenantPayPlatformResp](l.ctx, req, l.svcCtx.PaymentCli.GetTenantPayPlatform)
 }

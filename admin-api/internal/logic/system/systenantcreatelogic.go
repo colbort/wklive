@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/system"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,21 +29,5 @@ func NewSysTenantCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 }
 
 func (l *SysTenantCreateLogic) SysTenantCreate(req *types.SysTenantCreateReq) (resp *types.RespBase, err error) {
-	result, err := l.svcCtx.SystemCli.SysTenantCreate(l.ctx, &system.SysTenantCreateReq{
-		Username:       req.Username,
-		TenantPassword: req.TenantPassword,
-		TenantName:     req.TenantName,
-		Status:         toCommonStatus(req.Status),
-		ExpireTime:     req.ExpireTime,
-		ContactName:    req.ContactName,
-		ContactPhone:   req.ContactPhone,
-		Remark:         req.Remark,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &types.RespBase{
-		Code: result.Base.Code,
-		Msg:  result.Base.Msg,
-	}, nil
+	return logicutil.Proxy[types.RespBase](l.ctx, req, l.svcCtx.SystemCli.SysTenantCreate)
 }

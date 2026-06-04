@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/user"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,16 +29,5 @@ func NewResetPayPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *ResetPayPasswordLogic) ResetPayPassword(req *types.ResetPayPasswordReq) (resp *types.RespBase, err error) {
-	result, err := l.svcCtx.UserCli.ResetPayPassword(l.ctx, &user.ResetPayPasswordReq{
-		TenantId: req.TenantId,
-		UserId:   req.UserId,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &types.RespBase{
-		Code: result.Base.Code,
-		Msg:  result.Base.Msg,
-	}, nil
+	return logicutil.Proxy[types.RespBase](l.ctx, req, l.svcCtx.UserCli.ResetPayPassword)
 }

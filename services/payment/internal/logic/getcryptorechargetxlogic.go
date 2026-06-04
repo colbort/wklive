@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
 
@@ -29,7 +30,7 @@ func (l *GetCryptoRechargeTxLogic) GetCryptoRechargeTx(in *payment.GetCryptoRech
 	item, err := l.svcCtx.CryptoRechargeTxModel.FindOneByIdOrHash(l.ctx, in.TenantId, in.Id, int64(in.ChainCode), in.TxHash)
 	if err != nil {
 		if isNotFound(err) {
-			return &payment.GetCryptoRechargeTxResp{Base: helper.GetErrResp(404, "crypto recharge tx not found")}, nil
+			return &payment.GetCryptoRechargeTxResp{Base: helper.GetErrResp(i18n.CryptoRechargeTxNotFound, i18n.Translate(i18n.CryptoRechargeTxNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}

@@ -40,7 +40,7 @@ func (l *GetWithdrawOrderLogic) GetWithdrawOrder(in *payment.GetWithdrawOrderReq
 
 	if order == nil {
 		return &payment.GetWithdrawOrderResp{
-			Base: helper.GetErrResp(404, i18n.Translate(i18n.OrderNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx)),
 		}, nil
 	}
 

@@ -34,7 +34,7 @@ func (l *GetTenantProductLogic) GetTenantProduct(in *itick.GetTenantProductReq) 
 	}
 	if item == nil || item.TenantId != in.TenantId {
 		return &itick.GetTenantProductResp{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.BusinessDataNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx)),
 		}, nil
 	}
 

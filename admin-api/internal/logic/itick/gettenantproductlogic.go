@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/itick"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,39 +29,5 @@ func NewGetTenantProductLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *GetTenantProductLogic) GetTenantProduct(req *types.GetTenantProductReq) (resp *types.GetTenantProductResp, err error) {
-	result, err := l.svcCtx.ItickCli.GetTenantProduct(l.ctx, &itick.GetTenantProductReq{
-		Id:       req.Id,
-		TenantId: req.TenantId,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &types.GetTenantProductResp{
-		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
-		},
-		Data: types.ItickTenantProduct{
-			Id:           result.Data.Id,
-			TenantId:     result.Data.TenantId,
-			TenantName:   result.Data.TenantName,
-			ProductId:    result.Data.ProductId,
-			Enabled:      result.Data.Enabled,
-			AppVisible:   result.Data.AppVisible,
-			Sort:         result.Data.Sort,
-			Remark:       result.Data.Remark,
-			CreateTimes:  result.Data.CreateTimes,
-			UpdateTimes:  result.Data.UpdateTimes,
-			CategoryType: int64(result.Data.CategoryType),
-			CategoryName: result.Data.CategoryName,
-			Market:       result.Data.Market,
-			Symbol:       result.Data.Symbol,
-			Code:         result.Data.Code,
-			Name:         result.Data.Name,
-			DisplayName:  result.Data.DisplayName,
-			BaseCoin:     result.Data.BaseCoin,
-			QuoteCoin:    result.Data.QuoteCoin,
-			Icon:         result.Data.Icon,
-		},
-	}, nil
+	return logicutil.Proxy[types.GetTenantProductResp](l.ctx, req, l.svcCtx.ItickCli.GetTenantProduct)
 }

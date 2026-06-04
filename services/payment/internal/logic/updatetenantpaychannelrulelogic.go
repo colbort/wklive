@@ -43,7 +43,7 @@ func (l *UpdateTenantPayChannelRuleLogic) UpdateTenantPayChannelRule(in *payment
 
 	if rule == nil {
 		return &payment.AdminCommonResp{
-			Base: helper.GetErrResp(404, i18n.Translate(i18n.ChannelRuleNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.ChannelRuleNotFound, i18n.Translate(i18n.ChannelRuleNotFound, l.ctx)),
 		}, nil
 	}
 

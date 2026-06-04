@@ -371,7 +371,7 @@ const formRules = {
 async function loadKeys() {
   try {
     const res = await configService.getKeys()
-    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'Failed to load keys')
+    if (res.code !== 200) throw new Error(res.msg || 'Failed to load keys')
     keys.value = res.data || []
   } catch (error: unknown) {
     ElMessage.error(error instanceof Error ? error.message : 'Failed to load keys')
@@ -388,7 +388,7 @@ async function fetchList() {
         cursor: pagination.cursor,
         limit: pagination.limit,
       })
-      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'list failed')
+      if (res.code !== 200) throw new Error(res.msg || 'list failed')
       list.value = res.data || []
       updateFromResponse(res)
     } catch (error: unknown) {
@@ -680,7 +680,7 @@ async function handleDelete(row: SysConfigItem) {
     })
 
     const res = await configService.delete(row.id)
-    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'delete failed')
+    if (res.code !== 200) throw new Error(res.msg || 'delete failed')
 
     ElMessage.success(t('common.deleteSuccess'))
     fetchList()
@@ -746,7 +746,7 @@ async function handleSubmit() {
     if (isEdit.value) {
       const { id, ...updateData } = formData
       const res = await configService.update(id, updateData)
-      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || t('common.updateFailed'))
+      if (res.code !== 200) throw new Error(res.msg || t('common.updateFailed'))
       ElMessage.success(t('common.updateSuccess'))
     } else {
       const data: SysConfigCreateReq = {
@@ -756,7 +756,7 @@ async function handleSubmit() {
         remark: formData.remark || undefined,
       }
       const res = await configService.create(data)
-      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || t('common.createFailed'))
+      if (res.code !== 200) throw new Error(res.msg || t('common.createFailed'))
       ElMessage.success(t('common.createSuccess'))
     }
 

@@ -35,7 +35,7 @@ func (l *GetProductLogic) GetProduct(in *itick.GetProductReq) (*itick.GetProduct
 	}
 	if result == nil {
 		return &itick.GetProductResp{
-			Base: helper.GetErrResp(404, i18n.Translate(i18n.NotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.NotFound, i18n.Translate(i18n.NotFound, l.ctx)),
 		}, nil
 	}
 	return &itick.GetProductResp{

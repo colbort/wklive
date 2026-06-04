@@ -37,7 +37,7 @@ func (l *ReviewUserIdentityLogic) ReviewUserIdentity(in *user.ReviewUserIdentity
 
 	if identity == nil {
 		return &user.ReviewUserIdentityResp{
-			Base: helper.GetErrResp(404, i18n.Translate(i18n.UserIdentityInfoNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.UserIdentityInfoNotFound, i18n.Translate(i18n.UserIdentityInfoNotFound, l.ctx)),
 		}, nil
 	}
 

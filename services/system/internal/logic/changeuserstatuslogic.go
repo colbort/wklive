@@ -31,13 +31,13 @@ func (l *ChangeUserStatusLogic) ChangeUserStatus(in *system.ChangeUserStatusReq)
 	}
 	if user == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 
 	if user.Status == commonStatusToModel(in.Status) {
 		return &system.RespBase{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.UserStatusUnchanged, l.ctx)),
+			Base: helper.GetErrResp(i18n.UserStatusUnchanged, i18n.Translate(i18n.UserStatusUnchanged, l.ctx)),
 		}, nil
 	}
 	user.Status = commonStatusToModel(in.Status)

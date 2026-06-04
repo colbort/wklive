@@ -77,7 +77,6 @@
 
     <el-card class="table-card" shadow="never">
       <el-table v-loading="loading" :data="list" stripe>
-        <el-table-column prop="id" label="ID" width="80" />
         <el-table-column :label="t('itick.categoryType')" width="120">
           <template #default="{ row }">
             {{ getOptionValueLabel(optionGroups, 'categoryType', row.categoryType, t) }}
@@ -558,7 +557,7 @@ const handleIconSelect = async (uploadFile: UploadFile) => {
   submitLoading.value = true
   try {
     const res = await apiUploadFile(uploadFile.raw)
-    if (res.code === 0 || res.code === 200) {
+    if (res.code === 200) {
       form.icon = res.data?.url || ''
       ElMessage.success(t('common.uploadSuccess'))
       return

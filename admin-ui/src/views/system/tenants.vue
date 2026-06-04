@@ -364,7 +364,7 @@ async function fetchList() {
         limit: pagination.limit,
       }
       const res = await tenantsService.getList(params)
-      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'list failed')
+      if (res.code !== 200) throw new Error(res.msg || 'list failed')
       list.value = res.data || []
       updateFromResponse(res)
     } catch (error: unknown) {
@@ -376,7 +376,7 @@ async function fetchList() {
 async function fetchOptions() {
   try {
     const res = await tenantsService.getOptions()
-    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'options failed')
+    if (res.code !== 200) throw new Error(res.msg || 'options failed')
     optionGroups.value = res.data || []
   } catch (error: unknown) {
     ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
@@ -440,7 +440,7 @@ async function handleDelete(row: SysTenantItem) {
     })
 
     const res = await tenantsService.delete(row.id)
-    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'delete failed')
+    if (res.code !== 200) throw new Error(res.msg || 'delete failed')
 
     ElMessage.success(t('common.deleteSuccess'))
     fetchList()
@@ -469,7 +469,7 @@ async function handleSubmit() {
         contactPhone: formData.contactPhone,
         remark: formData.remark || '',
       })
-      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || t('common.updateFailed'))
+      if (res.code !== 200) throw new Error(res.msg || t('common.updateFailed'))
       ElMessage.success(t('common.updateSuccess'))
     } else {
       const data: SysTenantCreateReq = {
@@ -483,7 +483,7 @@ async function handleSubmit() {
         remark: formData.remark || '',
       }
       const res = await tenantsService.create(data)
-      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || t('common.createFailed'))
+      if (res.code !== 200) throw new Error(res.msg || t('common.createFailed'))
       ElMessage.success(t('common.createSuccess'))
     }
 

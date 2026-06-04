@@ -37,12 +37,12 @@ func (l *UpdateUserLevelLogic) UpdateUserLevel(in *user.UpdateUserLevelReq) (*us
 
 	if tuser == nil {
 		return &user.AdminCommonResp{
-			Base: helper.GetErrResp(404, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 	if tuser.TenantId != in.TenantId {
 		return &user.AdminCommonResp{
-			Base: helper.GetErrResp(403, i18n.Translate(i18n.NoPermissionOperateThisUser, l.ctx)),
+			Base: helper.GetErrResp(i18n.NoPermissionOperateThisUser, i18n.Translate(i18n.NoPermissionOperateThisUser, l.ctx)),
 		}, nil
 	}
 

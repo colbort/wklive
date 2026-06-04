@@ -5,7 +5,8 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/proto/payment"
+
+	"wklive/app-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -25,16 +26,5 @@ func NewGetMyCryptoRechargeTxLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *GetMyCryptoRechargeTxLogic) GetMyCryptoRechargeTx(req *types.GetMyCryptoRechargeTxReq) (*types.GetMyCryptoRechargeTxResp, error) {
-	result, err := l.svcCtx.PaymentCli.GetMyCryptoRechargeTx(l.ctx, &payment.GetMyCryptoRechargeTxReq{
-		Id:     req.Id,
-		TxHash: req.TxHash,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &types.GetMyCryptoRechargeTxResp{
-		RespBase: respBase(result.Base),
-		Data:     cryptoRechargeTxFromPB(result.Data),
-	}, nil
+	return logicutil.Proxy[types.GetMyCryptoRechargeTxResp](l.ctx, req, l.svcCtx.PaymentCli.GetMyCryptoRechargeTx)
 }

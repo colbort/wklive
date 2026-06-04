@@ -34,7 +34,7 @@ func (l *UpdateCategoryLogic) UpdateCategory(in *itick.UpdateCategoryReq) (*itic
 	}
 	if item == nil {
 		return &itick.AdminCommonResp{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.CategoryNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.CategoryNotFound, i18n.Translate(i18n.CategoryNotFound, l.ctx)),
 		}, nil
 	}
 

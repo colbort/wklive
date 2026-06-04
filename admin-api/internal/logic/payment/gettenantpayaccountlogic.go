@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/payment"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,41 +29,5 @@ func NewGetTenantPayAccountLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *GetTenantPayAccountLogic) GetTenantPayAccount(req *types.GetTenantPayAccountReq) (resp *types.GetTenantPayAccountResp, err error) {
-	result, err := l.svcCtx.PaymentCli.GetTenantPayAccount(l.ctx, &payment.GetTenantPayAccountReq{
-		Id:       req.Id,
-		TenantId: req.TenantId,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	resp = &types.GetTenantPayAccountResp{
-		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
-		},
-		Data: types.TenantPayAccount{
-			Id:                  result.Data.Id,
-			TenantId:            result.Data.TenantId,
-			TenantPayPlatformId: result.Data.TenantPayPlatformId,
-			PlatformId:          result.Data.PlatformId,
-			AccountCode:         result.Data.AccountCode,
-			AccountName:         result.Data.AccountName,
-			AppId:               result.Data.AppId,
-			MerchantId:          result.Data.MerchantId,
-			MerchantName:        result.Data.MerchantName,
-			ApiKeyCipher:        result.Data.ApiKeyCipher,
-			ApiSecretCipher:     result.Data.ApiSecretCipher,
-			PrivateKeyCipher:    result.Data.PrivateKeyCipher,
-			PublicKey:           result.Data.PublicKey,
-			CertCipher:          result.Data.CertCipher,
-			ExtConfig:           result.Data.ExtConfig,
-			Status:              int64(result.Data.Status),
-			IsDefault:           result.Data.IsDefault,
-			Remark:              result.Data.Remark,
-			CreateTimes:         result.Data.CreateTimes,
-			UpdateTimes:         result.Data.UpdateTimes,
-		},
-	}
-	return resp, nil
+	return logicutil.Proxy[types.GetTenantPayAccountResp](l.ctx, req, l.svcCtx.PaymentCli.GetTenantPayAccount)
 }

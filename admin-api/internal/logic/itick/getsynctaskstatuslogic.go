@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/itick"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,19 +29,5 @@ func NewGetSyncTaskStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *GetSyncTaskStatusLogic) GetSyncTaskStatus(req *types.GetSyncTaskStatusReq) (resp *types.GetSyncTaskStatusResp, err error) {
-	result, err := l.svcCtx.ItickCli.GetSyncTaskStatus(l.ctx, &itick.GetSyncTaskStatusReq{
-		TaskNo: req.TaskNo,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &types.GetSyncTaskStatusResp{
-		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
-		},
-		TaskNo:  result.TaskNo,
-		Status:  result.Status,
-		Message: result.Message,
-	}, nil
+	return logicutil.Proxy[types.GetSyncTaskStatusResp](l.ctx, req, l.svcCtx.ItickCli.GetSyncTaskStatus)
 }

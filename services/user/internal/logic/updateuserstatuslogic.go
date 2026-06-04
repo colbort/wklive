@@ -37,7 +37,7 @@ func (l *UpdateUserStatusLogic) UpdateUserStatus(in *user.UpdateUserStatusReq) (
 
 	if tuser == nil {
 		return &user.AdminCommonResp{
-			Base: helper.GetErrResp(404, i18n.Translate(i18n.UserNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
 

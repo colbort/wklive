@@ -33,12 +33,12 @@ func (l *UpdateAssetCoinConfigLogic) UpdateAssetCoinConfig(in *asset.UpdateAsset
 	old, err := l.svcCtx.AssetCoinConfigModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &asset.AssetCoinConfigResp{Base: helper.GetErrResp(i18n.CodeNotFound, "asset coin config not found")}, nil
+			return &asset.AssetCoinConfigResp{Base: helper.GetErrResp(i18n.AssetCoinConfigNotFound, i18n.Translate(i18n.AssetCoinConfigNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
 	if in.TenantId != 0 && old.TenantId != in.TenantId {
-		return &asset.AssetCoinConfigResp{Base: helper.GetErrResp(i18n.CodeNotFound, "asset coin config not found")}, nil
+		return &asset.AssetCoinConfigResp{Base: helper.GetErrResp(i18n.AssetCoinConfigNotFound, i18n.Translate(i18n.AssetCoinConfigNotFound, l.ctx))}, nil
 	}
 
 	data := &models.TAssetCoinConfig{

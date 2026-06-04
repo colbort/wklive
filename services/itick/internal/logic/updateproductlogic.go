@@ -34,7 +34,7 @@ func (l *UpdateProductLogic) UpdateProduct(in *itick.UpdateProductReq) (*itick.A
 	}
 	if item == nil {
 		return &itick.AdminCommonResp{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.ProductNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx)),
 		}, nil
 	}
 

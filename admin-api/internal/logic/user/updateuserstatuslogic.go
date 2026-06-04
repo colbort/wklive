@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/user"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,18 +29,5 @@ func NewUpdateUserStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *UpdateUserStatusLogic) UpdateUserStatus(req *types.UpdateUserStatusReq) (resp *types.RespBase, err error) {
-	result, err := l.svcCtx.UserCli.UpdateUserStatus(l.ctx, &user.UpdateUserStatusReq{
-		TenantId: req.TenantId,
-		UserId:   req.UserId,
-		Status:   user.UserStatus(req.Status),
-		Remark:   req.Remark,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &types.RespBase{
-		Code: result.Base.Code,
-		Msg:  result.Base.Msg,
-	}, nil
+	return logicutil.Proxy[types.RespBase](l.ctx, req, l.svcCtx.UserCli.UpdateUserStatus)
 }

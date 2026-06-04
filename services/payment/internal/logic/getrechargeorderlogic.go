@@ -40,7 +40,7 @@ func (l *GetRechargeOrderLogic) GetRechargeOrder(in *payment.GetRechargeOrderReq
 
 	if order == nil {
 		return &payment.GetRechargeOrderResp{
-			Base: helper.GetErrResp(404, i18n.Translate(i18n.OrderNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx)),
 		}, nil
 	}
 

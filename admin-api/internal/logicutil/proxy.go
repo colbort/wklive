@@ -5,6 +5,18 @@ import (
 	"reflect"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+)
+
+const (
+	codeForbidden          int32 = 403
+	codeNotFound           int32 = 404
+	codeTooManyRequests    int32 = 429
+	codeServiceUnavailable int32 = 100000
+	codeSystemError        int32 = 100001
+	codeUnauthorized       int32 = 100002
+	codeBadRequest         int32 = 100003
 )
 
 func Proxy[Resp any, PReq any, PResp any](ctx context.Context, req any, call func(context.Context, *PReq, ...grpc.CallOption) (*PResp, error)) (*Resp, error) {
@@ -15,6 +27,10 @@ func Proxy[Resp any, PReq any, PResp any](ctx context.Context, req any, call fun
 
 	protoResp, err := call(ctx, protoReq)
 	if err != nil {
+		resp := new(Resp)
+		if setErrorResp(resp, err) {
+			return resp, nil
+		}
 		return nil, err
 	}
 
@@ -24,6 +40,69 @@ func Proxy[Resp any, PReq any, PResp any](ctx context.Context, req any, call fun
 	}
 
 	return resp, nil
+}
+
+func setErrorResp(resp any, err error) bool {
+	code, msg := rpcErrorCodeAndMessage(err)
+	v := reflect.ValueOf(resp)
+	if setRespCodeAndMsg(v, code, msg) {
+		return true
+	}
+
+	base, ok := findField(v, "RespBase")
+	if !ok {
+		base, ok = findField(v, "Base")
+	}
+	if !ok {
+		return false
+	}
+	if base.Kind() == reflect.Pointer {
+		if base.IsNil() {
+			base.Set(reflect.New(base.Type().Elem()))
+		}
+		base = base.Elem()
+	}
+	return setRespCodeAndMsg(base, code, msg)
+}
+
+func setRespCodeAndMsg(v reflect.Value, code int32, msg string) bool {
+	codeField, okCode := findField(v, "Code")
+	msgField, okMsg := findField(v, "Msg")
+	if !okCode || !okMsg || !codeField.CanSet() || !msgField.CanSet() {
+		return false
+	}
+	codeField.SetInt(int64(code))
+	msgField.SetString(msg)
+	return true
+}
+
+func rpcErrorCodeAndMessage(err error) (int32, string) {
+	st, ok := status.FromError(err)
+	if !ok {
+		return codeSystemError, err.Error()
+	}
+
+	code := int32(st.Code())
+	if code >= 1000 {
+		return code, st.Message()
+	}
+
+	switch st.Code() {
+	case codes.InvalidArgument, codes.FailedPrecondition, codes.OutOfRange:
+		return codeBadRequest, st.Message()
+	case codes.Unauthenticated:
+		return codeUnauthorized, st.Message()
+	case codes.PermissionDenied:
+		return codeForbidden, st.Message()
+	case codes.NotFound:
+		return codeNotFound, st.Message()
+	case codes.ResourceExhausted:
+		return codeTooManyRequests, st.Message()
+	case codes.DeadlineExceeded, codes.Unavailable:
+		return codeServiceUnavailable, st.Message()
+	default:
+		return codeSystemError, st.Message()
+	}
 }
 
 func copyValue(dst, src reflect.Value) error {

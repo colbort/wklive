@@ -2,7 +2,6 @@ package logic
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
@@ -21,8 +20,6 @@ const (
 	stakingTaskLockRenewInterval = 10 * time.Second
 )
 
-var errStakingTaskLockNotAcquired = errors.New("staking task lock not acquired")
-
 func okStakingTaskResp() *staking.StakingTaskResp {
 	return &staking.StakingTaskResp{Base: helper.OkResp()}
 }
@@ -37,14 +34,14 @@ func runStakingTaskWithLock(
 	lockValue := fmt.Sprintf("%d", time.Now().UnixNano())
 
 	if err := acquireStakingTaskLock(ctx, svcCtx.Redis, lockKey, lockValue); err != nil {
-		if errors.Is(err, errStakingTaskLockNotAcquired) {
+		if i18n.IsStatusError(err, i18n.SyncTaskAlreadyRunning) {
 			return &staking.StakingTaskResp{
-				Base: helper.GetErrResp(1, i18n.Translate(i18n.SyncTaskAlreadyRunning, ctx)),
+				Base: helper.GetErrResp(i18n.SyncTaskAlreadyRunning, i18n.Translate(i18n.SyncTaskAlreadyRunning, ctx)),
 			}, nil
 		}
 		logx.Errorf("acquire staking task lock failed, key=%s err=%v", lockKey, err)
 		return &staking.StakingTaskResp{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.DistributedLockAcquireFailed, ctx)),
+			Base: helper.GetErrResp(i18n.DistributedLockAcquireFailed, i18n.Translate(i18n.DistributedLockAcquireFailed, ctx)),
 		}, nil
 	}
 
@@ -71,7 +68,7 @@ func acquireStakingTaskLock(ctx context.Context, rds *redis.Redis, key, value st
 		return err
 	}
 	if !ok {
-		return errStakingTaskLockNotAcquired
+		return i18n.StatusError(ctx, i18n.SyncTaskAlreadyRunning)
 	}
 	return nil
 }
@@ -106,7 +103,7 @@ end
 		return err
 	}
 	if !redisEvalOK(ret) {
-		return errStakingTaskLockNotAcquired
+		return i18n.StatusError(ctx, i18n.SyncTaskAlreadyRunning)
 	}
 	return nil
 }

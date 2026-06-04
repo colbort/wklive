@@ -8,7 +8,8 @@ import (
 
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/system"
+
+	"wklive/admin-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,18 +29,5 @@ func NewSysRoleUpdateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 }
 
 func (l *SysRoleUpdateLogic) SysRoleUpdate(req *types.SysRoleUpdateReq) (resp *types.RespBase, err error) {
-	result, err := l.svcCtx.SystemCli.SysRoleUpdate(l.ctx, &system.SysRoleUpdateReq{
-		Id:     req.Id,
-		Name:   req.Name,
-		Status: toCommonStatus(req.Status),
-		Remark: req.Remark,
-	})
-	if err != nil {
-		return nil, err
-	}
-	resp = &types.RespBase{
-		Code: result.Base.Code,
-		Msg:  result.Base.Msg,
-	}
-	return
+	return logicutil.Proxy[types.RespBase](l.ctx, req, l.svcCtx.SystemCli.SysRoleUpdate)
 }

@@ -31,7 +31,7 @@ func (l *GetCategoryLogic) GetCategory(in *itick.GetCategoryReq) (*itick.GetCate
 	}
 	if result == nil {
 		return &itick.GetCategoryResp{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.BusinessDataNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx)),
 		}, nil
 	}
 	return &itick.GetCategoryResp{

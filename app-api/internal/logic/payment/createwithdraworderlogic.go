@@ -8,7 +8,8 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/proto/payment"
+
+	"wklive/app-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,24 +29,5 @@ func NewCreateWithdrawOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *CreateWithdrawOrderLogic) CreateWithdrawOrder(req *types.CreateWithdrawOrderReq) (resp *types.CreateWithdrawOrderResp, err error) {
-	result, err := l.svcCtx.PaymentCli.CreateWithdrawOrder(l.ctx, &payment.CreateWithdrawOrderReq{
-		Amount:   req.Amount,
-		Currency: req.Currency,
-		Address:  req.Address,
-		BankId:   req.BankId,
-		Remark:   req.Remark,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	resp = &types.CreateWithdrawOrderResp{
-		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
-		},
-		Id: result.Id,
-	}
-
-	return
+	return logicutil.Proxy[types.CreateWithdrawOrderResp](l.ctx, req, l.svcCtx.PaymentCli.CreateWithdrawOrder)
 }

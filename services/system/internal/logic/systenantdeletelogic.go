@@ -32,7 +32,7 @@ func (l *SysTenantDeleteLogic) SysTenantDelete(in *system.SysTenantDeleteReq) (*
 	tenant, err := l.svcCtx.TenantMode.FindOne(l.ctx, in.Id)
 	if errors.Is(err, models.ErrNotFound) || tenant == nil {
 		return &system.RespBase{
-			Base: helper.GetErrResp(400, i18n.Translate(i18n.TenantNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.TenantNotFound, i18n.Translate(i18n.TenantNotFound, l.ctx)),
 		}, nil
 	}
 	if err != nil {

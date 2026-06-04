@@ -8,7 +8,8 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/proto/user"
+
+	"wklive/app-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,81 +29,5 @@ func NewGetProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetPro
 }
 
 func (l *GetProfileLogic) GetProfile() (resp *types.GetProfileResp, err error) {
-	result, err := l.svcCtx.UserCli.GetProfile(l.ctx, &user.GetProfileReq{})
-	if err != nil {
-		return nil, err
-	}
-	return &types.GetProfileResp{
-		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
-		},
-		Data: types.UserProfile{
-			Base: types.UserBase{
-				Id:             result.Profile.Base.Id,
-				TenantId:       result.Profile.Base.TenantId,
-				UserNo:         result.Profile.Base.UserNo,
-				Username:       result.Profile.Base.Username,
-				Nickname:       result.Profile.Base.Nickname,
-				Avatar:         result.Profile.Base.Avatar,
-				Language:       result.Profile.Base.Language,
-				Timezone:       result.Profile.Base.Timezone,
-				InviteCode:     result.Profile.Base.InviteCode,
-				Signature:      result.Profile.Base.Signature,
-				RegisterType:   int64(result.Profile.Base.RegisterType),
-				Status:         int64(result.Profile.Base.Status),
-				MemberLevel:    int32(result.Profile.Base.MemberLevel),
-				Source:         result.Profile.Base.Source,
-				ReferrerUserId: result.Profile.Base.ReferrerUserId,
-				LastLoginIp:    result.Profile.Base.LastLoginIp,
-				LastLoginTime:  result.Profile.Base.LastLoginTime,
-				RegisterIp:     result.Profile.Base.RegisterIp,
-				RegisterTime:   result.Profile.Base.RegisterTime,
-				Remark:         result.Profile.Base.Remark,
-				CreateTimes:    result.Profile.Base.CreateTimes,
-				UpdateTimes:    result.Profile.Base.UpdateTimes,
-			},
-			Identity: types.UserIdentity{
-				Id:            result.Profile.Identity.Id,
-				TenantId:      result.Profile.Identity.TenantId,
-				UserId:        result.Profile.Identity.UserId,
-				Phone:         result.Profile.Identity.Phone,
-				Email:         result.Profile.Identity.Email,
-				RealName:      result.Profile.Identity.RealName,
-				Gender:        int64(result.Profile.Identity.Gender.Number()),
-				Birthday:      result.Profile.Identity.Birthday,
-				CountryCode:   result.Profile.Identity.CountryCode,
-				Province:      result.Profile.Identity.Province,
-				City:          result.Profile.Identity.City,
-				Address:       result.Profile.Identity.Address,
-				IdType:        int64(result.Profile.Identity.IdType.Number()),
-				IdNo:          result.Profile.Identity.IdNo,
-				FrontImage:    result.Profile.Identity.FrontImage,
-				BackImage:     result.Profile.Identity.BackImage,
-				HandheldImage: result.Profile.Identity.HandheldImage,
-				KycLevel:      int64(result.Profile.Identity.KycLevel.Number()),
-				VerifyStatus:  int64(result.Profile.Identity.VerifyStatus.Number()),
-				RejectReason:  result.Profile.Identity.RejectReason,
-				SubmitTime:    result.Profile.Identity.SubmitTime,
-				VerifyTime:    result.Profile.Identity.VerifyTime,
-				VerifyBy:      result.Profile.Identity.VerifyBy,
-				CreateTimes:   result.Profile.Identity.CreateTimes,
-				UpdateTimes:   result.Profile.Identity.UpdateTimes,
-			},
-			Security: types.UserSecurity{
-				Id:              result.Profile.Security.Id,
-				TenantId:        result.Profile.Security.TenantId,
-				UserId:          result.Profile.Security.UserId,
-				HasPayPassword:  result.Profile.Security.PayPasswordHash != "",
-				GoogleEnabled:   result.Profile.Security.GoogleEnabled,
-				LoginErrorCount: result.Profile.Security.LoginErrorCount,
-				PayErrorCount:   result.Profile.Security.PayErrorCount,
-				LockUntil:       result.Profile.Security.LockUntil,
-				RiskLevel:       int64(result.Profile.Security.RiskLevel),
-				CreateTimes:     result.Profile.Security.CreateTimes,
-				UpdateTimes:     result.Profile.Security.UpdateTimes,
-			},
-		},
-	}, nil
-
+	return logicutil.Proxy[types.GetProfileResp](l.ctx, nil, l.svcCtx.UserCli.GetProfile)
 }

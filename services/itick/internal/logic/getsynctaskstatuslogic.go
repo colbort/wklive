@@ -33,7 +33,7 @@ func (l *GetSyncTaskStatusLogic) GetSyncTaskStatus(in *itick.GetSyncTaskStatusRe
 	}
 	if item == nil {
 		return &itick.GetSyncTaskStatusResp{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.BusinessDataNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx)),
 		}, nil
 	}
 

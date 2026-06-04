@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
@@ -38,12 +39,12 @@ func (l *GetMyCryptoRechargeTxLogic) GetMyCryptoRechargeTx(in *payment.GetMyCryp
 	item, err := l.svcCtx.CryptoRechargeTxModel.FindOneByIdOrHash(l.ctx, tenantId, in.Id, 0, in.TxHash)
 	if err != nil {
 		if isNotFound(err) {
-			return &payment.GetMyCryptoRechargeTxResp{Base: helper.GetErrResp(404, "crypto recharge tx not found")}, nil
+			return &payment.GetMyCryptoRechargeTxResp{Base: helper.GetErrResp(i18n.CryptoRechargeTxNotFound, i18n.Translate(i18n.CryptoRechargeTxNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
 	if item.UserId != userId {
-		return &payment.GetMyCryptoRechargeTxResp{Base: helper.GetErrResp(403, "no permission")}, nil
+		return &payment.GetMyCryptoRechargeTxResp{Base: helper.GetErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx))}, nil
 	}
 	return &payment.GetMyCryptoRechargeTxResp{Base: helper.OkResp(), Data: toCryptoRechargeTxProto(item)}, nil
 }

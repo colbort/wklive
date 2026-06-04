@@ -58,14 +58,14 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 
 	if channel == nil {
 		return &payment.CreateRechargeOrderResp{
-			Base: helper.GetErrResp(404, i18n.Translate(i18n.PaymentChannelNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.PaymentChannelNotFound, i18n.Translate(i18n.PaymentChannelNotFound, l.ctx)),
 		}, nil
 	}
 
 	// 验证通道可用性
 	if channel.Status != 1 {
 		return &payment.CreateRechargeOrderResp{
-			Base: helper.GetErrResp(201, i18n.Translate(i18n.PaymentChannelUnavailable, l.ctx)),
+			Base: helper.GetErrResp(i18n.PaymentChannelUnavailable, i18n.Translate(i18n.PaymentChannelUnavailable, l.ctx)),
 		}, nil
 	}
 	platform, err := l.svcCtx.PayPlatformModel.FindOne(l.ctx, channel.PlatformId)
@@ -77,7 +77,7 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 	// 验证金额限制
 	if in.RechargeAmount < channel.SingleMinAmount || in.RechargeAmount > channel.SingleMaxAmount {
 		return &payment.CreateRechargeOrderResp{
-			Base: helper.GetErrResp(201, i18n.Translate(i18n.RechargeAmountOutOfLimit, l.ctx)),
+			Base: helper.GetErrResp(i18n.RechargeAmountOutOfLimit, i18n.Translate(i18n.RechargeAmountOutOfLimit, l.ctx)),
 		}, nil
 	}
 

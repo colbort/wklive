@@ -6,7 +6,6 @@ package auth_private
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"mime/multipart"
 	"strings"
 
@@ -78,7 +77,7 @@ func (l *UploadFileLogic) UploadFile(file multipart.File, header *multipart.File
 	}
 	url, err := storage.UploadFile(l.ctx, file, header, storageCfg)
 	if err != nil {
-		return nil, fmt.Errorf("%s: %w", i18n.Translate(i18n.InternalServerError, l.ctx), err)
+		return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
 	}
 
 	resp = &types.UploadFileResp{

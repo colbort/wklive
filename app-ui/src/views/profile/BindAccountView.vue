@@ -37,7 +37,7 @@ onMounted(loadIdentity)
 async function loadIdentity() {
   try {
     const res = await apiGetProfile()
-    if (res.code === 0 || res.code === 200) {
+    if (res.code === 200) {
       identity.value = res.data?.identity || null
       account.value = isEmailMode.value ? identity.value?.email || '' : identity.value?.phone || ''
     }
@@ -73,7 +73,7 @@ async function submitBindAccount() {
     const res = await apiUpdateIdentity(
       isEmailMode.value ? { email: normalizedAccount } : { phone: normalizedAccount },
     )
-    if (res.code !== 0 && res.code !== 200) {
+    if (res.code !== 200) {
       errorMessage.value = res.msg || t('security.submitFailed')
       return
     }

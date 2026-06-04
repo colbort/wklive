@@ -2,8 +2,8 @@ package logic
 
 import (
 	"context"
-	"errors"
 	"sort"
+
 	"wklive/common/i18n"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
@@ -34,7 +34,7 @@ func (l *GetProfileLogic) GetProfile(in *system.ProfileReq) (*system.ProfileResp
 		return nil, err
 	}
 	if u.Status != 1 {
-		return nil, errors.New(i18n.Translate(i18n.UserDisabled, l.ctx))
+		return nil, i18n.StatusError(l.ctx, i18n.UserDisabled)
 	}
 
 	// 2) roleIds

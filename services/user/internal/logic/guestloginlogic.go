@@ -45,13 +45,13 @@ func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginRe
 	}
 	if tenant == nil || tenant.Data == nil {
 		return &user.GuestLoginResp{
-			Base: helper.GetErrResp(401, i18n.Translate(i18n.TenantNotFound, l.ctx)),
+			Base: helper.GetErrResp(i18n.TenantNotFound, i18n.Translate(i18n.TenantNotFound, l.ctx)),
 		}, nil
 	}
 
 	if in.DeviceId == "" && in.Fingerprint == "" {
 		return &user.GuestLoginResp{
-			Base: helper.GetErrResp(201, i18n.Translate(i18n.PleaseSwitchDeviceToLogin, l.ctx)),
+			Base: helper.GetErrResp(i18n.PleaseSwitchDeviceToLogin, i18n.Translate(i18n.PleaseSwitchDeviceToLogin, l.ctx)),
 		}, nil
 	}
 
@@ -385,7 +385,7 @@ func (l *GuestLoginLogic) checkGuestLimit(ip string) error {
 
 	// 限制 2 次
 	if count > 2 {
-		return errors.New(i18n.Translate(i18n.RegistrationTooFrequentRetry, l.ctx))
+		return i18n.StatusError(l.ctx, i18n.RegistrationTooFrequentRetry)
 	}
 
 	return nil

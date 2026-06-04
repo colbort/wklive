@@ -19,7 +19,7 @@ export const useSystemStore = defineStore('system', () => {
     loading.value = true
     try {
       const res = await apiGetSystemCore()
-      if ((res.code === 0 || res.code === 200) && res.data) {
+      if (res.code === 200 && res.data) {
         systemCore.value = res.data
       }
       return systemCore.value

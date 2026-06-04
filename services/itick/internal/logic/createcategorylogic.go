@@ -36,7 +36,7 @@ func (l *CreateCategoryLogic) CreateCategory(in *itick.CreateCategoryReq) (*itic
 	}
 	if exist != nil {
 		return &itick.AdminCommonResp{
-			Base: helper.GetErrResp(1, i18n.Translate(i18n.ResourceAlreadyExists, l.ctx)),
+			Base: helper.GetErrResp(i18n.ResourceAlreadyExists, i18n.Translate(i18n.ResourceAlreadyExists, l.ctx)),
 		}, nil
 	}
 

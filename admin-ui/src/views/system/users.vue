@@ -34,7 +34,7 @@ const { form: queryForm } = useForm({
 async function fetchOptions() {
   try {
     const res = await userService.getOptions()
-    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'options failed')
+    if (res.code !== 200) throw new Error(res.msg || 'options failed')
     optionGroups.value = res.data || []
   } catch (error: unknown) {
     ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
@@ -50,7 +50,7 @@ async function fetchList() {
         cursor: pagination.cursor,
         limit: pagination.limit,
       })
-      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'list failed')
+      if (res.code !== 200) throw new Error(res.msg || 'list failed')
       list.value = res.data || []
       updateFromResponse(res)
     } catch (error: unknown) {
@@ -82,7 +82,7 @@ async function fetchRoles() {
   await withRoleLoading(async () => {
     try {
       const res = await roleService.getList({ cursor: undefined, limit: 9999, status: 1 })
-      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'role list failed')
+      if (res.code !== 200) throw new Error(res.msg || 'role list failed')
       roles.value = res.data || []
     } catch (error: unknown) {
       ElMessage.error(error instanceof Error ? error.message : t('common.loadFailed'))
@@ -141,7 +141,7 @@ async function submitEdit() {
           status: editForm.status,
           roleIds: editForm.roleIds,
         })
-        if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'create failed')
+        if (res.code !== 200) throw new Error(res.msg || 'create failed')
         ElMessage.success(t('common.success'))
       } else {
         const res = await userService.update(editForm.id, {
@@ -149,7 +149,7 @@ async function submitEdit() {
           status: editForm.status,
           roleIds: editForm.roleIds,
         })
-        if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'update failed')
+        if (res.code !== 200) throw new Error(res.msg || 'update failed')
         ElMessage.success(t('common.success'))
       }
       editVisible.value = false
@@ -166,7 +166,7 @@ async function onDelete(row: SysUserItem) {
   try {
     await confirm(t('common.confirmDeleteUser', { username: row.username }), { type: 'warning' })
     const res = await userService.delete(row.id)
-    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'delete failed')
+    if (res.code !== 200) throw new Error(res.msg || 'delete failed')
     ElMessage.success(t('common.success'))
     fetchList()
   } catch (error: unknown) {
@@ -179,7 +179,7 @@ async function onToggleStatus(row: SysUserItem) {
   try {
     const next = row.status === 1 ? 2 : 1
     const res = await userService.updateUserStatus(row.id, next)
-    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'status failed')
+    if (res.code !== 200) throw new Error(res.msg || 'status failed')
     ElMessage.success(t('common.success'))
     fetchList()
   } catch (error: unknown) {
@@ -208,7 +208,7 @@ async function submitResetPwd() {
         return
       }
       const res = await userService.resetPassword(pwdForm.id, pwdForm.password)
-      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'reset pwd failed')
+      if (res.code !== 200) throw new Error(res.msg || 'reset pwd failed')
       ElMessage.success(t('common.success'))
       pwdVisible.value = false
     } catch (error: unknown) {
@@ -234,7 +234,7 @@ async function submitAssignRoles() {
   await withRoleAssignLoading(async () => {
     try {
       const res = await userService.assignUserRoles(roleForm.userId, roleForm.roleIds)
-      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'assign roles failed')
+      if (res.code !== 200) throw new Error(res.msg || 'assign roles failed')
       ElMessage.success(t('common.success'))
       roleVisible.value = false
       fetchList()
@@ -273,7 +273,7 @@ async function doG2Init() {
   await withG2InitLoading(async () => {
     try {
       const res = await userService.initGoogle2FA(g2User.userId)
-      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'init failed')
+      if (res.code !== 200) throw new Error(res.msg || 'init failed')
       g2Init.secret = res.data?.secret || ''
       g2Init.otpauthUrl = res.data?.otpauthUrl || ''
       g2Init.qrCode = res.data?.qrCode || ''
@@ -291,7 +291,7 @@ async function doG2Bind() {
       return
     }
     const res = await userService.bindGoogle2FA(g2User.userId, g2Init.secret, g2Form.code)
-    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'bind failed')
+    if (res.code !== 200) throw new Error(res.msg || 'bind failed')
     ElMessage.success(t('common.success'))
     fetchList()
   } catch (error: unknown) {
@@ -333,7 +333,7 @@ async function doG2Enable() {
         return
       }
       const res = await userService.enableGoogle2FA(g2User.userId, g2Form.code)
-      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'enable failed')
+      if (res.code !== 200) throw new Error(res.msg || 'enable failed')
       ElMessage.success(t('common.success'))
       fetchList()
     } catch (error: unknown) {
@@ -346,7 +346,7 @@ async function doG2Disable() {
   await withG2DisableLoading(async () => {
     try {
       const res = await userService.disableGoogle2FA(g2User.userId, g2Form.code || undefined)
-      if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'disable failed')
+      if (res.code !== 200) throw new Error(res.msg || 'disable failed')
       ElMessage.success(t('common.success'))
       fetchList()
     } catch (error: unknown) {
@@ -359,7 +359,7 @@ async function doG2Reset() {
   try {
     await confirm(t('common.confirmReset2fa'), { type: 'warning' })
     const res = await userService.resetGoogle2FA(g2User.userId)
-    if (res.code !== 0 && res.code !== 200) throw new Error(res.msg || 'reset failed')
+    if (res.code !== 200) throw new Error(res.msg || 'reset failed')
     ElMessage.success(t('common.success'))
     fetchList()
   } catch (error: unknown) {

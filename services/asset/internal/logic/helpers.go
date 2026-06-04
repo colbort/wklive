@@ -2,8 +2,9 @@ package logic
 
 import (
 	"context"
-	"fmt"
+
 	"wklive/common/conv"
+	"wklive/common/i18n"
 	"wklive/proto/asset"
 	"wklive/proto/common"
 	"wklive/services/asset/internal/svc"
@@ -20,7 +21,7 @@ func prepareAssetIdempotent(ctx context.Context, model models.AssetIdempotentMod
 		case int64(asset.IdempotentStatus_IDEMPOTENT_STATUS_SUCCESS):
 			return true, nil
 		case int64(asset.IdempotentStatus_IDEMPOTENT_STATUS_PROCESSING):
-			return false, fmt.Errorf("asset request is processing")
+			return false, i18n.StatusError(ctx, i18n.AssetRequestProcessing)
 		}
 		record.Status = int64(asset.IdempotentStatus_IDEMPOTENT_STATUS_PROCESSING)
 		record.Remark = remark
@@ -524,7 +525,7 @@ func findFreezeByBizNo(ctx context.Context, svcCtx *svc.ServiceContext, tenantId
 		return nil, err
 	}
 	if len(list) == 0 {
-		return nil, fmt.Errorf("freeze record not found for bizNo=%s", bizNo)
+		return nil, i18n.StatusError(ctx, i18n.FreezeRecordNotFound)
 	}
 	return list[0], nil
 }
@@ -535,7 +536,7 @@ func findLockByBizNo(ctx context.Context, svcCtx *svc.ServiceContext, tenantId i
 		return nil, err
 	}
 	if len(list) == 0 {
-		return nil, fmt.Errorf("lock record not found for bizNo=%s", bizNo)
+		return nil, i18n.StatusError(ctx, i18n.LockRecordNotFound)
 	}
 	return list[0], nil
 }

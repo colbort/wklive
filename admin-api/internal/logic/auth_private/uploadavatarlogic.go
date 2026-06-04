@@ -86,7 +86,7 @@ func (l *UploadAvatarLogic) UploadAvatar(file multipart.File, header *multipart.
 			Data: struct {
 				Url string `json:"url"`
 			}{
-				Url: "/avatars/" + fname,
+				Url: filePath,
 			},
 		}, nil
 	}
@@ -110,7 +110,7 @@ func (l *UploadAvatarLogic) UploadAvatar(file multipart.File, header *multipart.
 		Data: struct {
 			Url string `json:"url"`
 		}{
-			Url: "/avatars/" + fname,
+			Url: filePath,
 		},
 	}, nil
 }

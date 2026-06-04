@@ -8,7 +8,8 @@ import (
 
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/proto/payment"
+
+	"wklive/app-api/internal/logicutil"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,53 +29,5 @@ func NewGetMyRechargeOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *GetMyRechargeOrderLogic) GetMyRechargeOrder(req *types.GetMyRechargeOrderReq) (resp *types.GetMyRechargeOrderResp, err error) {
-	result, err := l.svcCtx.PaymentCli.GetMyRechargeOrder(l.ctx, &payment.GetMyRechargeOrderReq{
-		OrderNo: req.OrderNo,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	resp = &types.GetMyRechargeOrderResp{
-		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
-		},
-		Data: types.RechargeOrder{
-			Id:           result.Order.Id,
-			TenantId:     result.Order.TenantId,
-			UserId:       result.Order.UserId,
-			OrderNo:      result.Order.OrderNo,
-			BizOrderNo:   result.Order.BizOrderNo,
-			PlatformId:   result.Order.PlatformId,
-			ProductId:    result.Order.ProductId,
-			AccountId:    result.Order.AccountId,
-			ChannelId:    result.Order.ChannelId,
-			Currency:     result.Order.Currency,
-			OrderAmount:  result.Order.OrderAmount,
-			PayAmount:    result.Order.PayAmount,
-			FeeAmount:    result.Order.FeeAmount,
-			Subject:      result.Order.Subject,
-			Body:         result.Order.Body,
-			ClientType:   int64(result.Order.ClientType),
-			ClientIp:     result.Order.ClientIp,
-			Status:       int64(result.Order.Status),
-			ThirdTradeNo: result.Order.ThirdTradeNo,
-			ThirdOrderNo: result.Order.ThirdOrderNo,
-			PayUrl:       result.Order.PayUrl,
-			QrContent:    result.Order.QrContent,
-			RequestData:  result.Order.RequestData,
-			ResponseData: result.Order.ResponseData,
-			NotifyData:   result.Order.NotifyData,
-			ExpireTime:   result.Order.ExpireTime,
-			PaidTime:     result.Order.PaidTime,
-			NotifyTime:   result.Order.NotifyTime,
-			CloseTime:    result.Order.CloseTime,
-			Remark:       result.Order.Remark,
-			CreateTimes:  result.Order.CreateTimes,
-			UpdateTimes:  result.Order.UpdateTimes,
-		},
-	}
-
-	return
+	return logicutil.Proxy[types.GetMyRechargeOrderResp](l.ctx, req, l.svcCtx.PaymentCli.GetMyRechargeOrder)
 }
