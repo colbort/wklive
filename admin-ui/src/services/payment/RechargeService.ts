@@ -48,6 +48,7 @@ export type RechargeOrder = {
   thirdOrderNo: string // 三方订单号
   payUrl: string // 支付链接
   qrContent: string // 二维码内容
+  voucherImage: string // 充值凭证图片
   requestData: string // 请求快照(JSON)
   responseData: string // 响应快照(JSON)
   notifyData: string // 回调数据(JSON)

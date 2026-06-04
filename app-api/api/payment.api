@@ -64,6 +64,7 @@ type RechargeOrder {
 	thirdOrderNo string `json:"thirdOrderNo"`
 	payUrl       string `json:"payUrl"`
 	qrContent    string `json:"qrContent"`
+	voucherImage string `json:"voucherImage"`
 	requestData  string `json:"requestData"`
 	responseData string `json:"responseData"`
 	notifyData   string `json:"notifyData"`
@@ -169,6 +170,7 @@ type CreateCryptoRechargeOrderReq {
 	rechargeAmount int64  `json:"rechargeAmount"` // 单位：分
 	clientType     int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
 	bizOrderNo     string `json:"bizOrderNo,optional"`
+	voucherImage   string `json:"voucherImage,optional"`
 }
 
 type CreateCryptoRechargeOrderData {
@@ -408,4 +410,3 @@ service app {
 	@handler GetMyCryptoRechargeTx
 	get /crypto/recharge/txs/:id (GetMyCryptoRechargeTxReq) returns (GetMyCryptoRechargeTxResp)
 }
-

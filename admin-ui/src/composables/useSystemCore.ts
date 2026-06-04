@@ -36,6 +36,7 @@ function joinAssetUrl(base: string, path: string) {
 }
 
 export function buildSystemAssetUrl(assetUrl: string, url?: string) {
+  console.info('buildSystemAssetUrl', { assetUrl, url })
   if (!url) return ''
   if (/^https?:\/\//i.test(url)) return url
   if (!assetUrl) return buildAssetUrl(url)

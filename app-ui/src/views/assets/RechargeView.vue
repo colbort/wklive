@@ -5,6 +5,7 @@ import QRCode from 'qrcode'
 
 import { apiGetAssetOptions, apiListAssetCoinConfigs } from '@/api/asset'
 import { apiCreateCryptoRechargeOrder, apiGetMyCryptoRechargeAddress } from '@/api/payment'
+import { apiUploadFile } from '@/api/upload'
 import AssetCoinSelectSheet from '@/components/assets/AssetCoinSelectSheet.vue'
 import AssetCoinPicker from '@/components/assets/AssetCoinPicker.vue'
 import AssetFlowLayout from '@/components/assets/AssetFlowLayout.vue'
@@ -31,6 +32,8 @@ const pageError = ref('')
 const copyTip = ref('')
 const amount = ref('')
 const voucherName = ref('')
+const voucherFile = ref<File | null>(null)
+const voucherPreviewUrl = ref('')
 const submitLoading = ref(false)
 const addressSecondsLeft = ref(0)
 const qrImageUrl = ref('')
@@ -197,7 +200,42 @@ async function copyText(text: string) {
 
 function handleVoucherChange(event: Event) {
   const input = event.target as HTMLInputElement
-  voucherName.value = input.files?.[0]?.name || ''
+  const file = input.files?.[0] || null
+  if (!file) {
+    clearVoucherPreview()
+    voucherFile.value = null
+    voucherName.value = ''
+    return
+  }
+  if (!file.type.startsWith('image/')) {
+    clearVoucherPreview()
+    voucherFile.value = null
+    voucherName.value = ''
+    input.value = ''
+    pageError.value = t('assetFlow.selectVoucherImage')
+    return
+  }
+  clearVoucherPreview()
+  voucherFile.value = file
+  voucherName.value = file.name
+  voucherPreviewUrl.value = URL.createObjectURL(file)
+  pageError.value = ''
+}
+
+function clearVoucherPreview() {
+  if (!voucherPreviewUrl.value) return
+  URL.revokeObjectURL(voucherPreviewUrl.value)
+  voucherPreviewUrl.value = ''
+}
+
+async function uploadVoucherImage() {
+  if (!voucherFile.value) return ''
+
+  const resp = await apiUploadFile(voucherFile.value)
+  if (!isSuccessCode(resp.code) || !resp.data?.url) {
+    throw new Error(resp.msg || t('assetFlow.uploadVoucherFailed'))
+  }
+  return resp.data.url
 }
 
 async function completeRecharge() {
@@ -213,15 +251,21 @@ async function completeRecharge() {
     })
     return
   }
+  if (!voucherFile.value) {
+    pageError.value = t('assetFlow.selectVoucherImage')
+    return
+  }
 
   submitLoading.value = true
   try {
+    const voucherImage = await uploadVoucherImage()
     const resp = await apiCreateCryptoRechargeOrder({
       walletType: walletType.value,
       coin: selectedCoin.value,
       chainCode: selectedChainCode.value,
       rechargeAmount,
       clientType: 2,
+      voucherImage,
     })
     if (isSuccessCode(resp.code)) {
       if (resp.data?.address) {
@@ -249,6 +293,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   stopAddressCountdown()
+  clearVoucherPreview()
 })
 </script>
 
@@ -312,14 +357,17 @@ onBeforeUnmount(() => {
       <section class="field-block">
         <h2>{{ t('assetFlow.voucher') }}</h2>
         <button type="button" class="voucher-upload" @click="fileInputRef?.click()">
-          <span>+</span>
-          <b>{{ voucherName || t('assetFlow.uploadVoucher') }}</b>
+          <span class="voucher-upload__thumb">
+            <img v-if="voucherPreviewUrl" :src="voucherPreviewUrl" :alt="t('assetFlow.voucher')" />
+            <b v-else>+</b>
+          </span>
+          <strong>{{ voucherPreviewUrl ? t('assetFlow.changeVoucher') : t('assetFlow.uploadVoucher') }}</strong>
         </button>
         <input
           ref="fileInputRef"
           class="file-input"
           type="file"
-          accept="image/*,.pdf"
+          accept="image/*"
           @change="handleVoucherChange"
         />
       </section>
@@ -504,24 +552,36 @@ h2 {
   text-align: left;
 }
 
-.voucher-upload span {
+.voucher-upload__thumb {
   display: grid;
   width: 78px;
   height: 78px;
   place-items: center;
+  overflow: hidden;
   border-radius: 18px;
   background: #292b36;
   color: #9b9da6;
+}
+
+.voucher-upload__thumb b {
   font-size: 40px;
   font-weight: 300;
   line-height: 1;
 }
 
-.voucher-upload b {
+.voucher-upload__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.voucher-upload strong {
   max-width: 180px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-size: 14px;
+  font-weight: 800;
 }
 
 .file-input {

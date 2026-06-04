@@ -537,6 +537,7 @@ type CreateCryptoRechargeOrderReq struct {
 	RechargeAmount int64  `json:"rechargeAmount"` // 单位：分
 	ClientType     int64  `json:"clientType"`     // 0未知 1APP 2H5 3WEB
 	BizOrderNo     string `json:"bizOrderNo,optional"`
+	VoucherImage   string `json:"voucherImage,optional"`
 }
 
 type CreateCryptoRechargeOrderResp struct {
@@ -1492,6 +1493,7 @@ type RechargeOrder struct {
 	ThirdOrderNo string `json:"thirdOrderNo"`
 	PayUrl       string `json:"payUrl"`
 	QrContent    string `json:"qrContent"`
+	VoucherImage string `json:"voucherImage"`
 	RequestData  string `json:"requestData"`
 	ResponseData string `json:"responseData"`
 	NotifyData   string `json:"notifyData"`
@@ -1937,6 +1939,18 @@ type UpdateProfileReq struct {
 type UpdateProfileResp struct {
 	RespBase
 	Data UserProfile `json:"data"`
+}
+
+type UploadFileData struct {
+	Url string `json:"url"`
+}
+
+type UploadFileReq struct {
+}
+
+type UploadFileResp struct {
+	RespBase
+	Data UploadFileData `json:"data"`
 }
 
 type UserAssetSummary struct {

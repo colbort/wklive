@@ -113,6 +113,17 @@
     </el-card>
 
     <el-drawer v-model="detailVisible" :title="t('payment.orderDetail')" size="720px">
+      <div v-if="detailVoucherImageUrl" class="voucher-preview-section">
+        <div class="voucher-preview-label">{{ t('payment.voucherImage') }}</div>
+        <el-image
+          class="voucher-preview"
+          :src="detailVoucherImageUrl"
+          fit="cover"
+          :preview-src-list="[detailVoucherImageUrl]"
+          :preview-teleported="true"
+          hide-on-click-modal
+        />
+      </div>
       <PaymentDetailDescriptions
         :data="detailDisplayData"
         :option-groups="optionGroups"
@@ -122,6 +133,16 @@
 
     <el-dialog v-model="manualVisible" :title="t('payment.manualMarkSuccess')" width="520px">
       <el-form label-width="110px">
+        <el-form-item v-if="currentVoucherImageUrl" :label="t('payment.voucherImage')">
+          <el-image
+            class="voucher-preview"
+            :src="currentVoucherImageUrl"
+            fit="cover"
+            :preview-src-list="[currentVoucherImageUrl]"
+            :preview-teleported="true"
+            hide-on-click-modal
+          />
+        </el-form-item>
         <el-form-item :label="t('payment.thirdTradeNo')">
           <el-input v-model="manualForm.thirdTradeNo" />
         </el-form-item>
@@ -157,6 +178,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
+import { buildSystemAssetUrl, useSystemCore } from '@/composables/useSystemCore'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { catalogService, rechargeService, type OptionGroup, type RechargeOrder } from '@/services'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
@@ -164,6 +186,7 @@ import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/op
 import { amountToCent, centToAmount, formatCentAmount, formatCentFields } from '@/utils/amount'
 
 const { t } = useI18n()
+const { systemCore, loadSystemCore } = useSystemCore()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
   usePagination<number>(20)
 
@@ -191,6 +214,9 @@ const CENT_AMOUNT_KEYS = new Set(['orderAmount', 'payAmount', 'feeAmount'])
 const detailDisplayData = computed(() => {
   return formatCentFields(detailData.value, CENT_AMOUNT_KEYS)
 })
+const resolveAssetUrl = (url?: string) => buildSystemAssetUrl(systemCore.value.assetUrl, url)
+const detailVoucherImageUrl = computed(() => resolveAssetUrl(detailData.value?.voucherImage))
+const currentVoucherImageUrl = computed(() => resolveAssetUrl(currentOrder.value?.voucherImage))
 
 const loadList = async () => {
   loading.value = true
@@ -283,6 +309,7 @@ function handleNextPage() {
 }
 
 onMounted(() => {
+  void loadSystemCore()
   void loadOptions()
   void loadList()
 })
@@ -291,5 +318,24 @@ onMounted(() => {
 <style scoped>
 .break-text {
   word-break: break-all;
+}
+
+.voucher-preview-section {
+  margin-bottom: 16px;
+}
+
+.voucher-preview-label {
+  margin-bottom: 8px;
+  color: #606266;
+  font-size: 14px;
+}
+
+.voucher-preview {
+  width: 120px;
+  height: 120px;
+  border: 1px solid #dcdfe6;
+  border-radius: 6px;
+  background: #f5f7fa;
+  cursor: zoom-in;
 }
 </style>

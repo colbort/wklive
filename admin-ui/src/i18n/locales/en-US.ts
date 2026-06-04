@@ -996,6 +996,7 @@ export default {
     accountVerifiedSuccess: 'Account verified',
     channelVerifiedSuccess: 'Channel verified',
     tenantPlatformVerifiedSuccess: 'Tenant platform verified',
+    voucherImage: 'Voucher Image',
     confirmCloseRechargeOrder: 'Confirm closing this order?',
     retryNotifySubmitted: 'Retry notify submitted',
     auditSuccess: 'Audit successful',

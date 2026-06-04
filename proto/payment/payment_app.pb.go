@@ -422,6 +422,7 @@ type CreateCryptoRechargeOrderReq struct {
 	RechargeAmount int64                  `protobuf:"varint,4,opt,name=recharge_amount,json=rechargeAmount,proto3" json:"recharge_amount,omitempty"` // 单位：分
 	ClientType     ClientType             `protobuf:"varint,5,opt,name=client_type,json=clientType,proto3,enum=payment.ClientType" json:"client_type,omitempty"`
 	BizOrderNo     string                 `protobuf:"bytes,6,opt,name=biz_order_no,json=bizOrderNo,proto3" json:"biz_order_no,omitempty"`
+	VoucherImage   string                 `protobuf:"bytes,7,opt,name=voucher_image,json=voucherImage,proto3" json:"voucher_image,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -494,6 +495,13 @@ func (x *CreateCryptoRechargeOrderReq) GetClientType() ClientType {
 func (x *CreateCryptoRechargeOrderReq) GetBizOrderNo() string {
 	if x != nil {
 		return x.BizOrderNo
+	}
+	return ""
+}
+
+func (x *CreateCryptoRechargeOrderReq) GetVoucherImage() string {
+	if x != nil {
+		return x.VoucherImage
 	}
 	return ""
 }
@@ -1809,7 +1817,7 @@ const file_proto_payment_payment_app_proto_rawDesc = "" +
 	"bizOrderNo\"k\n" +
 	"\x17CreateRechargeOrderResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
-	"\x04data\x18\x02 \x01(\v2\x16.payment.RechargeOrderR\x04data\"\x86\x02\n" +
+	"\x04data\x18\x02 \x01(\v2\x16.payment.RechargeOrderR\x04data\"\xab\x02\n" +
 	"\x1cCreateCryptoRechargeOrderReq\x12\x1f\n" +
 	"\vwallet_type\x18\x01 \x01(\x03R\n" +
 	"walletType\x12\x12\n" +
@@ -1820,7 +1828,8 @@ const file_proto_payment_payment_app_proto_rawDesc = "" +
 	"\vclient_type\x18\x05 \x01(\x0e2\x13.payment.ClientTypeR\n" +
 	"clientType\x12 \n" +
 	"\fbiz_order_no\x18\x06 \x01(\tR\n" +
-	"bizOrderNo\"\x81\x01\n" +
+	"bizOrderNo\x12#\n" +
+	"\rvoucher_image\x18\a \x01(\tR\fvoucherImage\"\x81\x01\n" +
 	"\x1dCreateCryptoRechargeOrderResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12:\n" +
 	"\x04data\x18\x02 \x01(\v2&.payment.CreateCryptoRechargeOrderDataR\x04data\"\x87\x01\n" +

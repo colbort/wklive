@@ -996,6 +996,7 @@ export default {
     accountVerifiedSuccess: '账号校验通过',
     channelVerifiedSuccess: '通道校验通过',
     tenantPlatformVerifiedSuccess: '开通平台校验通过',
+    voucherImage: '充值凭证',
     confirmCloseRechargeOrder: '确认关闭该订单？',
     retryNotifySubmitted: '已提交重试通知',
     auditSuccess: '审核成功',

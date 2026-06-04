@@ -32,10 +32,10 @@ func NewGetSystemCoreLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Get
 func (l *GetSystemCoreLogic) GetSystemCore() (resp *types.GetSystemCoreResp, err error) {
 	tenantId := int64(0)
 	key := system.SysConfigType_SYSTEM_CORE
-	cd, err := logicutil.Proxy[system.SysConfigDetailResp](l.ctx, &system.SysConfigDetailReq{
+	cd, err := l.svcCtx.SystemCli.SysConfigDetail(l.ctx, &system.SysConfigDetailReq{
 		TenantId:  &tenantId,
 		ConfigKey: &key,
-	}, l.svcCtx.SystemCli.SysConfigDetail)
+	})
 	if err != nil {
 		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
 	}
@@ -55,10 +55,10 @@ func (l *GetSystemCoreLogic) GetSystemCore() (resp *types.GetSystemCoreResp, err
 	}
 
 	key = system.SysConfigType_OBJECT_STORAGE
-	cd, err = logicutil.Proxy[system.SysConfigDetailResp](l.ctx, &system.SysConfigDetailReq{
+	cd, err = l.svcCtx.SystemCli.SysConfigDetail(l.ctx, &system.SysConfigDetailReq{
 		TenantId:  &tenantId,
 		ConfigKey: &key,
-	}, l.svcCtx.SystemCli.SysConfigDetail)
+	})
 	if err != nil {
 		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
 	}

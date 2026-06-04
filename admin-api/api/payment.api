@@ -158,6 +158,7 @@ type RechargeOrder {
 	thirdOrderNo string `json:"thirdOrderNo"`
 	payUrl       string `json:"payUrl"`
 	qrContent    string `json:"qrContent"`
+	voucherImage string `json:"voucherImage"`
 	requestData  string `json:"requestData"`
 	responseData string `json:"responseData"`
 	notifyData   string `json:"notifyData"`

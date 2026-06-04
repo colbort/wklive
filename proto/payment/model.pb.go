@@ -1138,17 +1138,18 @@ type RechargeOrder struct {
 	ThirdOrderNo  string                 `protobuf:"bytes,20,opt,name=third_order_no,json=thirdOrderNo,proto3" json:"third_order_no,omitempty"`                          // 三方订单号
 	PayUrl        string                 `protobuf:"bytes,21,opt,name=pay_url,json=payUrl,proto3" json:"pay_url,omitempty"`                                              // 支付链接
 	QrContent     string                 `protobuf:"bytes,22,opt,name=qr_content,json=qrContent,proto3" json:"qr_content,omitempty"`                                     // 二维码内容
-	RequestData   string                 `protobuf:"bytes,23,opt,name=request_data,json=requestData,proto3" json:"request_data,omitempty"`                               // 请求快照(JSON)
-	ResponseData  string                 `protobuf:"bytes,24,opt,name=response_data,json=responseData,proto3" json:"response_data,omitempty"`                            // 响应快照(JSON)
-	NotifyData    string                 `protobuf:"bytes,25,opt,name=notify_data,json=notifyData,proto3" json:"notify_data,omitempty"`                                  // 回调数据(JSON)
-	ExpireTime    int64                  `protobuf:"varint,26,opt,name=expire_time,json=expireTime,proto3" json:"expire_time,omitempty"`                                 // 过期时间
-	PaidTime      int64                  `protobuf:"varint,27,opt,name=paid_time,json=paidTime,proto3" json:"paid_time,omitempty"`                                       // 支付时间
-	NotifyTime    int64                  `protobuf:"varint,28,opt,name=notify_time,json=notifyTime,proto3" json:"notify_time,omitempty"`                                 // 回调时间
-	CloseTime     int64                  `protobuf:"varint,29,opt,name=close_time,json=closeTime,proto3" json:"close_time,omitempty"`                                    // 关闭时间
-	Remark        string                 `protobuf:"bytes,30,opt,name=remark,proto3" json:"remark,omitempty"`                                                            // 备注
-	CreateTimes   int64                  `protobuf:"varint,31,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                              // 创建时间
-	UpdateTimes   int64                  `protobuf:"varint,32,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                              // 更新时间
-	RechargeType  RechargeType           `protobuf:"varint,33,opt,name=recharge_type,json=rechargeType,proto3,enum=payment.RechargeType" json:"recharge_type,omitempty"` // 充值类型：1虚拟币 2三方充值 3银行卡 4人工充值 5其他
+	VoucherImage  string                 `protobuf:"bytes,23,opt,name=voucher_image,json=voucherImage,proto3" json:"voucher_image,omitempty"`                            // 充值凭证图片
+	RequestData   string                 `protobuf:"bytes,24,opt,name=request_data,json=requestData,proto3" json:"request_data,omitempty"`                               // 请求快照(JSON)
+	ResponseData  string                 `protobuf:"bytes,25,opt,name=response_data,json=responseData,proto3" json:"response_data,omitempty"`                            // 响应快照(JSON)
+	NotifyData    string                 `protobuf:"bytes,26,opt,name=notify_data,json=notifyData,proto3" json:"notify_data,omitempty"`                                  // 回调数据(JSON)
+	ExpireTime    int64                  `protobuf:"varint,27,opt,name=expire_time,json=expireTime,proto3" json:"expire_time,omitempty"`                                 // 过期时间
+	PaidTime      int64                  `protobuf:"varint,28,opt,name=paid_time,json=paidTime,proto3" json:"paid_time,omitempty"`                                       // 支付时间
+	NotifyTime    int64                  `protobuf:"varint,29,opt,name=notify_time,json=notifyTime,proto3" json:"notify_time,omitempty"`                                 // 回调时间
+	CloseTime     int64                  `protobuf:"varint,30,opt,name=close_time,json=closeTime,proto3" json:"close_time,omitempty"`                                    // 关闭时间
+	Remark        string                 `protobuf:"bytes,31,opt,name=remark,proto3" json:"remark,omitempty"`                                                            // 备注
+	CreateTimes   int64                  `protobuf:"varint,32,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                              // 创建时间
+	UpdateTimes   int64                  `protobuf:"varint,33,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                              // 更新时间
+	RechargeType  RechargeType           `protobuf:"varint,34,opt,name=recharge_type,json=rechargeType,proto3,enum=payment.RechargeType" json:"recharge_type,omitempty"` // 充值类型：1虚拟币 2三方充值 3银行卡 4人工充值 5其他
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1333,6 +1334,13 @@ func (x *RechargeOrder) GetPayUrl() string {
 func (x *RechargeOrder) GetQrContent() string {
 	if x != nil {
 		return x.QrContent
+	}
+	return ""
+}
+
+func (x *RechargeOrder) GetVoucherImage() string {
+	if x != nil {
+		return x.VoucherImage
 	}
 	return ""
 }
@@ -2571,7 +2579,7 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\x11last_success_time\x18\t \x01(\x03R\x0flastSuccessTime\x12!\n" +
 	"\fcreate_times\x18\n" +
 	" \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\v \x01(\x03R\vupdateTimes\"\xc4\b\n" +
+	"\fupdate_times\x18\v \x01(\x03R\vupdateTimes\"\xe9\b\n" +
 	"\rRechargeOrder\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -2604,22 +2612,23 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\x0ethird_order_no\x18\x14 \x01(\tR\fthirdOrderNo\x12\x17\n" +
 	"\apay_url\x18\x15 \x01(\tR\x06payUrl\x12\x1d\n" +
 	"\n" +
-	"qr_content\x18\x16 \x01(\tR\tqrContent\x12!\n" +
-	"\frequest_data\x18\x17 \x01(\tR\vrequestData\x12#\n" +
-	"\rresponse_data\x18\x18 \x01(\tR\fresponseData\x12\x1f\n" +
-	"\vnotify_data\x18\x19 \x01(\tR\n" +
+	"qr_content\x18\x16 \x01(\tR\tqrContent\x12#\n" +
+	"\rvoucher_image\x18\x17 \x01(\tR\fvoucherImage\x12!\n" +
+	"\frequest_data\x18\x18 \x01(\tR\vrequestData\x12#\n" +
+	"\rresponse_data\x18\x19 \x01(\tR\fresponseData\x12\x1f\n" +
+	"\vnotify_data\x18\x1a \x01(\tR\n" +
 	"notifyData\x12\x1f\n" +
-	"\vexpire_time\x18\x1a \x01(\x03R\n" +
+	"\vexpire_time\x18\x1b \x01(\x03R\n" +
 	"expireTime\x12\x1b\n" +
-	"\tpaid_time\x18\x1b \x01(\x03R\bpaidTime\x12\x1f\n" +
-	"\vnotify_time\x18\x1c \x01(\x03R\n" +
+	"\tpaid_time\x18\x1c \x01(\x03R\bpaidTime\x12\x1f\n" +
+	"\vnotify_time\x18\x1d \x01(\x03R\n" +
 	"notifyTime\x12\x1d\n" +
 	"\n" +
-	"close_time\x18\x1d \x01(\x03R\tcloseTime\x12\x16\n" +
-	"\x06remark\x18\x1e \x01(\tR\x06remark\x12!\n" +
-	"\fcreate_times\x18\x1f \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18  \x01(\x03R\vupdateTimes\x12:\n" +
-	"\rrecharge_type\x18! \x01(\x0e2\x15.payment.RechargeTypeR\frechargeType\"\xdb\x03\n" +
+	"close_time\x18\x1e \x01(\x03R\tcloseTime\x12\x16\n" +
+	"\x06remark\x18\x1f \x01(\tR\x06remark\x12!\n" +
+	"\fcreate_times\x18  \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18! \x01(\x03R\vupdateTimes\x12:\n" +
+	"\rrecharge_type\x18\" \x01(\x0e2\x15.payment.RechargeTypeR\frechargeType\"\xdb\x03\n" +
 	"\fPayNotifyLog\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +

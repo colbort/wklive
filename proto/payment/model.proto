@@ -156,17 +156,18 @@ message RechargeOrder {
   string third_order_no = 20;              // 三方订单号
   string pay_url = 21;                     // 支付链接
   string qr_content = 22;                  // 二维码内容
-  string request_data = 23;                // 请求快照(JSON)
-  string response_data = 24;               // 响应快照(JSON)
-  string notify_data = 25;                 // 回调数据(JSON)
-  int64 expire_time = 26;                  // 过期时间
-  int64 paid_time = 27;                    // 支付时间
-  int64 notify_time = 28;                  // 回调时间
-  int64 close_time = 29;                   // 关闭时间
-  string remark = 30;                      // 备注
-  int64 create_times = 31;                 // 创建时间
-  int64 update_times = 32;                 // 更新时间
-  payment.RechargeType recharge_type = 33; // 充值类型：1虚拟币 2三方充值 3银行卡 4人工充值 5其他
+  string voucher_image = 23;               // 充值凭证图片
+  string request_data = 24;                // 请求快照(JSON)
+  string response_data = 25;               // 响应快照(JSON)
+  string notify_data = 26;                 // 回调数据(JSON)
+  int64 expire_time = 27;                  // 过期时间
+  int64 paid_time = 28;                    // 支付时间
+  int64 notify_time = 29;                  // 回调时间
+  int64 close_time = 30;                   // 关闭时间
+  string remark = 31;                      // 备注
+  int64 create_times = 32;                 // 创建时间
+  int64 update_times = 33;                 // 更新时间
+  payment.RechargeType recharge_type = 34; // 充值类型：1虚拟币 2三方充值 3银行卡 4人工充值 5其他
 }
 
 message PayNotifyLog {

@@ -55,6 +55,7 @@ export interface RechargeOrder {
   thirdOrderNo: string
   payUrl: string
   qrContent: string
+  voucherImage: string
   requestData: string
   responseData: string
   notifyData: string
@@ -164,6 +165,7 @@ export interface CreateCryptoRechargeOrderReq {
   clientType: number
   clientIp?: string
   bizOrderNo?: string
+  voucherImage?: string
 }
 
 export interface GetMyRechargeOrderReq {

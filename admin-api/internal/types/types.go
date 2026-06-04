@@ -2820,6 +2820,7 @@ type RechargeOrder struct {
 	ThirdOrderNo string `json:"thirdOrderNo"`
 	PayUrl       string `json:"payUrl"`
 	QrContent    string `json:"qrContent"`
+	VoucherImage string `json:"voucherImage"`
 	RequestData  string `json:"requestData"`
 	ResponseData string `json:"responseData"`
 	NotifyData   string `json:"notifyData"`

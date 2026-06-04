@@ -181,6 +181,7 @@ CREATE TABLE `t_recharge_order` (
   `third_order_no` varchar(128) DEFAULT NULL COMMENT '三方订单号',
   `pay_url` text COMMENT '支付链接',
   `qr_content` text COMMENT '二维码内容',
+  `voucher_image` varchar(128) NOT NULL DEFAULT '' COMMENT '充值凭证图片',
   `request_data` json DEFAULT NULL COMMENT '请求快照',
   `response_data` json DEFAULT NULL COMMENT '响应快照',
   `notify_data` json DEFAULT NULL COMMENT '回调数据',

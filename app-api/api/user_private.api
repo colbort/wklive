@@ -27,6 +27,17 @@ type UpdateProfileResp {
 	data UserProfile `json:"data"`
 }
 
+type UploadFileReq {}
+
+type UploadFileData {
+	url string `json:"url"`
+}
+
+type UploadFileResp {
+	RespBase
+	data UploadFileData `json:"data"`
+}
+
 type ChangeLoginPasswordReq {
 	oldPassword     string `json:"oldPassword"`
 	newPassword     string `json:"newPassword"`
@@ -171,6 +182,9 @@ service app {
 	@handler UpdateProfile
 	put /profile (UpdateProfileReq) returns (UpdateProfileResp)
 
+	@handler UploadFile
+	post /upload/file (UploadFileReq) returns (UploadFileResp)
+
 	@handler GetIdentity
 	get /identity returns (GetIdentityResp)
 
@@ -232,4 +246,3 @@ service app {
 	@handler SetDefaultBank
 	put /banks/:id/default (SetDefaultBankReq) returns (RespBase)
 }
-

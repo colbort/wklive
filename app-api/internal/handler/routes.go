@@ -573,6 +573,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: user_private.UpdateProfileHandler(serverCtx),
 				},
 				{
+					Method:  http.MethodPost,
+					Path:    "/upload/file",
+					Handler: user_private.UploadFileHandler(serverCtx),
+				},
+				{
 					Method:  http.MethodGet,
 					Path:    "/security",
 					Handler: user_private.GetSecurityHandler(serverCtx),

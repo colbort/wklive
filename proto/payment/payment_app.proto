@@ -55,6 +55,7 @@ message CreateCryptoRechargeOrderReq {
   int64 recharge_amount = 4; // 单位：分
   payment.ClientType client_type = 5;
   string biz_order_no = 6;
+  string voucher_image = 7;
 }
 
 message CreateCryptoRechargeOrderResp {
