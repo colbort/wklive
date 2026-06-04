@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { apiGetProfile } from '@/api/userPrivate'
+import AppIcon from '@/components/common/AppIcon.vue'
 import { useI18n } from '@/i18n'
 import type { UserProfile } from '@/types/user'
 
@@ -55,7 +56,7 @@ function handleRowClick(key: string) {
   <section class="security-page">
     <header class="security-header">
       <button type="button" class="back-button" :aria-label="t('common.back')" @click="router.back()">
-        <span />
+        <AppIcon name="back" class="back-icon-svg" />
       </button>
       <h1>{{ t('security.title') }}</h1>
     </header>
@@ -116,12 +117,10 @@ function handleRowClick(key: string) {
   color: #fff;
 }
 
-.back-button span {
-  width: 15px;
-  height: 15px;
-  border-left: 3px solid currentColor;
-  border-bottom: 3px solid currentColor;
-  transform: rotate(45deg);
+.back-icon-svg {
+  width: 24px;
+  height: 24px;
+  transform: translateX(-1px);
 }
 
 .security-list {

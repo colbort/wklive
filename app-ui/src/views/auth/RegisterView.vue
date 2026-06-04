@@ -13,13 +13,14 @@ import {
 import { apiRegister } from '@/api/userPublic'
 import RotateCaptcha from '@/components/auth/RotateCaptcha.vue'
 import AppIcon from '@/components/common/AppIcon.vue'
+import CountryDialCodePicker from '@/components/common/CountryDialCodePicker.vue'
+import { countryDialCodes, type CountryDialCode } from '@/constants/countryDialCodes'
 import { useI18n } from '@/i18n'
 
 const REGISTER_TYPE_PHONE = 2
 const REGISTER_TYPE_EMAIL = 3
 type IdentityFileKey = 'front' | 'back' | 'handheld'
 type CodeInputKind = 'email' | 'google'
-
 const router = useRouter()
 const { t } = useI18n()
 const step = ref(1)
@@ -48,6 +49,7 @@ const showConfirmPassword = ref(false)
 const showPayPassword = ref(false)
 const showCaptcha = ref(true)
 const captchaPassed = ref(false)
+const selectedCountry = ref<CountryDialCode>(countryDialCodes.find((item) => item.dialCode === '+1') || countryDialCodes[0])
 const submitting = ref(false)
 const errorMessage = ref('')
 
@@ -241,7 +243,9 @@ async function submitRegister() {
       confirmPassword: confirmPassword.value,
       inviteCode: inviteCode.value.trim() || undefined,
       email: accountMode.value === 'email' ? account.value.trim() : undefined,
-      phone: accountMode.value === 'phone' ? account.value.trim() : undefined,
+      phone: accountMode.value === 'phone'
+        ? `${selectedCountry.value.dialCode}${account.value.trim().replace(/^\+/, '')}`
+        : undefined,
     }
     const res = await apiRegister(payload)
     if (res.code !== 200) {
@@ -370,7 +374,7 @@ function markUpload(type: IdentityFileKey) {
   <section class="register-page" :class="{ 'register-page--captcha': showCaptcha }">
     <header class="register-topbar">
       <button type="button" class="icon-button" :aria-label="t('common.back')" @click="goBack">
-        <span class="chevron-left" />
+        <AppIcon name="back" class="back-icon-svg" />
       </button>
       <button
         v-if="showCaptcha"
@@ -421,7 +425,7 @@ function markUpload(type: IdentityFileKey) {
         </div>
 
         <label class="auth-field">
-          <span v-if="accountMode === 'phone'" class="phone-prefix">+1 <i /></span>
+          <CountryDialCodePicker v-if="accountMode === 'phone'" v-model="selectedCountry" />
           <input v-model="account" :placeholder="accountPlaceholder" autocomplete="username" />
         </label>
         <label class="auth-field">
@@ -432,7 +436,7 @@ function markUpload(type: IdentityFileKey) {
             autocomplete="new-password"
           />
           <button type="button" class="field-action" @click="showPassword = !showPassword">
-            <span class="eye-off-icon" />
+            <AppIcon :name="showPassword ? 'eye' : 'eye-off'" class="field-action-svg" />
           </button>
         </label>
         <div class="strength-bars">
@@ -450,7 +454,7 @@ function markUpload(type: IdentityFileKey) {
             class="field-action"
             @click="showConfirmPassword = !showConfirmPassword"
           >
-            <span class="eye-off-icon" />
+            <AppIcon :name="showConfirmPassword ? 'eye' : 'eye-off'" class="field-action-svg" />
           </button>
         </label>
         <label class="auth-field">
@@ -458,7 +462,11 @@ function markUpload(type: IdentityFileKey) {
         </label>
         <label class="agree-control">
           <input v-model="agreed" type="checkbox" />
-          <span />
+          <span>
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              <path d="M3.25 8.1 6.45 11.2 12.8 4.8" />
+            </svg>
+          </span>
           <em
             >{{ t('auth.agreeTerms') }}<b>{{ t('auth.privacyPolicy') }}</b
             >{{ t('common.and') }}<b>{{ t('auth.userTerms') }}</b></em
@@ -584,6 +592,7 @@ function markUpload(type: IdentityFileKey) {
         <button type="button" @click="router.push('/login')">{{ t('auth.goLogin') }}</button>
       </p>
     </main>
+
   </section>
 </template>
 
@@ -663,6 +672,12 @@ function markUpload(type: IdentityFileKey) {
 .top-icon-svg {
   width: 28px;
   height: 28px;
+}
+
+.back-icon-svg {
+  width: 24px;
+  height: 24px;
+  transform: translateX(-1px);
 }
 
 .skip-button {
@@ -828,23 +843,6 @@ function markUpload(type: IdentityFileKey) {
   color: #8f9098;
 }
 
-.phone-prefix {
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-  color: #fff;
-  font-size: 22px;
-  font-weight: 800;
-}
-
-.phone-prefix i {
-  width: 10px;
-  height: 10px;
-  border-right: 2px solid #a5a7af;
-  border-bottom: 2px solid #a5a7af;
-  transform: rotate(45deg);
-}
-
 .field-action {
   display: inline-flex;
   width: 42px;
@@ -919,15 +917,30 @@ function markUpload(type: IdentityFileKey) {
 }
 
 .agree-control span {
+  display: grid;
   width: 30px;
   height: 30px;
+  place-items: center;
   border: 2px solid #00c313;
   border-radius: 8px;
 }
 
-.agree-control input:checked + span {
-  background: linear-gradient(135deg, transparent 44%, #00c313 45% 55%, transparent 56%) center /
-    18px 18px no-repeat;
+.agree-control span svg {
+  width: 70%;
+  height: 70%;
+  opacity: 0;
+}
+
+.agree-control span svg path {
+  fill: none;
+  stroke: #00c313;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.6;
+}
+
+.agree-control input:checked + span svg {
+  opacity: 1;
 }
 
 .agree-control em {
@@ -1282,7 +1295,6 @@ function markUpload(type: IdentityFileKey) {
   font-size: 19px;
 }
 
-.phone-prefix,
 .agree-control {
   font-size: 17px;
 }
@@ -1426,8 +1438,7 @@ function markUpload(type: IdentityFileKey) {
   }
 
   .agree-control,
-  .auth-switch,
-  .phone-prefix {
+  .auth-switch {
     font-size: 15px;
   }
 
@@ -1478,17 +1489,17 @@ function markUpload(type: IdentityFileKey) {
 
 @media (max-width: 959px) {
   .register-page {
-    padding: 14px 24px 28px;
+    padding: 14px 22px 28px;
   }
 
   .register-topbar {
-    margin: -14px -24px 0;
-    padding: 14px 24px 8px;
+    margin: -14px -22px 0;
+    padding: 14px 22px 8px;
   }
 
   .icon-button {
-    width: 42px;
-    height: 42px;
+    width: 38px;
+    height: 38px;
   }
 
   .chevron-left {
@@ -1505,13 +1516,13 @@ function markUpload(type: IdentityFileKey) {
   }
 
   .register-content {
-    padding-top: 20px;
+    padding-top: 34px;
   }
 
   .register-steps {
     align-items: start;
     gap: 3px;
-    margin-bottom: 34px;
+    margin-bottom: 42px;
   }
 
   .step-item {
@@ -1551,16 +1562,18 @@ function markUpload(type: IdentityFileKey) {
   }
 
   .step-panel {
-    gap: 18px;
+    gap: 22px;
   }
 
   .step-panel h1 {
-    font-size: 28px;
+    font-size: 25px;
+    font-weight: 800;
   }
 
   .auth-tabs button {
-    height: 40px;
-    font-size: 19px;
+    height: 52px;
+    font-size: 20px;
+    font-weight: 700;
   }
 
   .auth-tabs button.active::after {
@@ -1568,9 +1581,9 @@ function markUpload(type: IdentityFileKey) {
   }
 
   .auth-field {
-    min-height: 62px;
+    min-height: 58px;
     border-radius: 18px;
-    padding: 0 14px;
+    padding: 0 16px;
   }
 
   .auth-field input {
@@ -1578,14 +1591,14 @@ function markUpload(type: IdentityFileKey) {
   }
 
   .field-action {
-    width: 34px;
-    height: 34px;
+    width: 28px;
+    height: 28px;
+    padding: 0;
   }
 
-  .eye-off-icon {
-    width: 24px;
-    height: 14px;
-    border-width: 3px;
+  .field-action-svg {
+    width: 21px;
+    height: 21px;
   }
 
   .strength-bars {
@@ -1593,22 +1606,23 @@ function markUpload(type: IdentityFileKey) {
     margin: -10px 0 -4px 16px;
   }
 
-  .phone-prefix,
   .agree-control,
   .auth-switch {
     font-size: 15px;
   }
 
   .agree-control span {
-    width: 24px;
-    height: 24px;
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
   }
 
   .primary-button {
-    min-height: 66px;
-    margin-top: 16px;
+    min-height: 60px;
+    margin-top: 12px;
     border-radius: 33px;
-    font-size: 22px;
+    font-size: 20px;
+    font-weight: 800;
   }
 
   .register-page--captcha {
@@ -1628,6 +1642,17 @@ function markUpload(type: IdentityFileKey) {
   .register-page--captcha .top-icon-svg {
     width: 22px;
     height: 22px;
+  }
+
+  .register-page--captcha .back-icon-svg {
+    width: 23px;
+    height: 23px;
+  }
+}
+
+@media (min-width: 768px) {
+  .register-page {
+    max-width: 414px;
   }
 }
 </style>

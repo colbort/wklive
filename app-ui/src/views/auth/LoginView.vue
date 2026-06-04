@@ -5,6 +5,8 @@ import { useRouter } from 'vue-router'
 import { getTenantCode } from '@/api/http'
 import { apiLogin } from '@/api/userPublic'
 import AppIcon from '@/components/common/AppIcon.vue'
+import CountryDialCodePicker from '@/components/common/CountryDialCodePicker.vue'
+import { countryDialCodes, type CountryDialCode } from '@/constants/countryDialCodes'
 import { useI18n } from '@/i18n'
 
 const LOGIN_TYPE_PHONE = 2
@@ -134,6 +136,7 @@ const walletSheetOpen = ref(false)
 const pendingWallet = ref<WalletOption | null>(null)
 const walletRequestId = ref(0)
 const errorMessage = ref('')
+const selectedCountry = ref<CountryDialCode>(countryDialCodes.find((item) => item.dialCode === '+1') || countryDialCodes[0])
 
 const accountPlaceholder = computed(() =>
   activeTab.value === 'email' ? t('auth.yourEmail') : t('auth.phonePlaceholder'),
@@ -321,7 +324,9 @@ async function submitLogin() {
     const res = await apiLogin({
       tenantCode,
       loginType: loginType.value,
-      account: account.value.trim(),
+      account: activeTab.value === 'phone'
+        ? `${selectedCountry.value.dialCode}${account.value.trim().replace(/^\+/, '')}`
+        : account.value.trim(),
       password: password.value,
       googleCode: googleCodeValue.value || undefined,
     })
@@ -560,7 +565,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   <section class="auth-page">
     <header class="auth-topbar">
       <button type="button" class="icon-button" :aria-label="t('common.back')" @click="goBack">
-        <span class="chevron-left" />
+        <AppIcon name="back" class="back-icon-svg" />
       </button>
       <button type="button" class="icon-button" :aria-label="t('common.language')" @click="goLanguageSelect">
         <AppIcon name="globe" class="top-icon-svg" />
@@ -596,7 +601,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
           <span v-if="activeTab === 'email'" class="field-icon">
             <AppIcon name="mail" class="field-icon-svg" />
           </span>
-          <span v-else class="phone-prefix">+1 <i /></span>
+          <CountryDialCodePicker v-else v-model="selectedCountry" />
           <input v-model="account" :placeholder="accountPlaceholder" autocomplete="username" />
           <button
             type="button"
@@ -703,7 +708,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
             :aria-label="t('common.back')"
             @click="backToWalletList"
           >
-            ‹
+            <AppIcon name="back" class="wallet-sheet__back-icon" />
           </button>
           <button v-else type="button" class="wallet-sheet__help" :aria-label="t('auth.help')">?</button>
           <strong>{{ pendingWallet ? pendingWallet.name : 'Connect Wallet' }}</strong>
@@ -756,6 +761,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
         <p class="wallet-sheet__hint">{{ t('auth.walletHint') }}</p>
       </div>
     </div>
+
   </section>
 </template>
 
@@ -838,6 +844,12 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   height: 28px;
 }
 
+.back-icon-svg {
+  width: 24px;
+  height: 24px;
+  transform: translateX(-1px);
+}
+
 .auth-content {
   width: 100%;
   min-width: 0;
@@ -864,8 +876,8 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   border: 0;
   background: transparent;
   color: #8e9099;
-  font-size: 26px;
-  font-weight: 800;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .auth-tabs button.active {
@@ -998,23 +1010,6 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   border: 3px solid #fff;
   border-bottom: 0;
   border-radius: 12px 12px 0 0;
-}
-
-.phone-prefix {
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-  color: #fff;
-  font-size: 24px;
-  font-weight: 800;
-}
-
-.phone-prefix i {
-  width: 10px;
-  height: 10px;
-  border-right: 2px solid #a5a7af;
-  border-bottom: 2px solid #a5a7af;
-  transform: rotate(45deg);
 }
 
 .field-action {
@@ -1383,7 +1378,12 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 }
 
 .wallet-sheet__back {
-  font-size: 34px;
+  color: #fff;
+}
+
+.wallet-sheet__back-icon {
+  width: 24px;
+  height: 24px;
 }
 
 .wallet-sheet__back:disabled {
@@ -1716,737 +1716,6 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   text-align: center;
 }
 
-@media (max-width: 520px) {
-  .auth-page {
-    padding: 20px 26px 36px;
-  }
-
-  .auth-content {
-    padding-top: 92px;
-  }
-
-  .auth-content h1 {
-    margin-bottom: 66px;
-    font-size: 42px;
-  }
-
-  .auth-field,
-  .primary-button {
-    min-height: 84px;
-  }
-
-  .auth-field input,
-  .auth-tabs button {
-    font-size: 22px;
-  }
-
-  .remember-control em,
-  .auth-row a,
-  .auth-switch,
-  .phone-prefix {
-    font-size: 20px;
-  }
-}
-
-.auth-page {
-  padding: 18px 22px 30px;
-}
-
-.auth-topbar {
-  margin: -18px -22px 0;
-  padding: 18px 22px 10px;
-}
-
-.icon-button {
-  width: 46px;
-  height: 46px;
-}
-
-.chevron-left {
-  width: 16px;
-  height: 16px;
-  border-left-width: 3px;
-  border-bottom-width: 3px;
-}
-
-.globe-icon {
-  width: 24px;
-  height: 24px;
-  border-width: 3px;
-}
-
-.auth-content {
-  padding-top: 68px;
-}
-
-.auth-content h1 {
-  margin-bottom: 48px;
-  font-size: 38px;
-}
-
-.auth-tabs button {
-  height: 46px;
-  font-size: 21px;
-}
-
-.auth-form {
-  gap: 22px;
-  margin-top: 42px;
-}
-
-.auth-field {
-  min-height: 74px;
-  border-radius: 22px;
-  padding: 0 18px;
-}
-
-.auth-field input {
-  font-size: 20px;
-}
-
-.field-icon {
-  width: 44px;
-  height: 44px;
-}
-
-.phone-prefix,
-.remember-control em,
-.auth-row a,
-.auth-switch {
-  font-size: 18px;
-}
-
-.remember-control span {
-  width: 26px;
-  height: 26px;
-}
-
-.primary-button {
-  min-height: 76px;
-  margin-top: 36px;
-  border-radius: 38px;
-  font-size: 24px;
-}
-
-.quick-login {
-  gap: 14px;
-  margin-top: 38px;
-}
-
-.quick-login__divider strong,
-.quick-login > strong {
-  font-size: 20px;
-}
-
-.wallet-button {
-  width: 84px;
-  height: 84px;
-}
-
-.auth-switch {
-  margin-top: 30px;
-}
-
-@media (max-width: 390px) {
-  .auth-page {
-    padding: 16px 18px 28px;
-  }
-
-  .auth-topbar {
-    margin: -16px -18px 0;
-    padding: 16px 18px 8px;
-  }
-
-  .auth-content {
-    padding-top: 52px;
-  }
-
-  .auth-content h1 {
-    margin-bottom: 38px;
-    font-size: 32px;
-  }
-
-  .auth-form {
-    gap: 18px;
-    margin-top: 32px;
-  }
-
-  .auth-field {
-    min-height: 66px;
-    border-radius: 18px;
-    padding: 0 14px;
-  }
-
-  .auth-field input,
-  .auth-tabs button {
-    font-size: 18px;
-  }
-
-  .remember-control em,
-  .auth-row a,
-  .auth-switch,
-  .phone-prefix {
-    font-size: 16px;
-  }
-
-  .primary-button {
-    min-height: 68px;
-    margin-top: 26px;
-    font-size: 21px;
-  }
-
-  .quick-login {
-    margin-top: 30px;
-  }
-}
-
-@media (max-width: 959px) {
-  .auth-page {
-    padding: 14px 24px 28px;
-  }
-
-  .auth-topbar {
-    margin: -14px -24px 0;
-    padding: 14px 24px 8px;
-  }
-
-  .icon-button {
-    width: 42px;
-    height: 42px;
-  }
-
-  .chevron-left {
-    width: 15px;
-    height: 15px;
-    border-left-width: 3px;
-    border-bottom-width: 3px;
-  }
-
-  .globe-icon {
-    width: 22px;
-    height: 22px;
-    border-width: 3px;
-  }
-
-  .auth-content {
-    padding-top: 42px;
-  }
-
-  .auth-content h1 {
-    margin-bottom: 42px;
-    font-size: 34px;
-  }
-
-  .auth-tabs button {
-    height: 40px;
-    font-size: 19px;
-  }
-
-  .auth-tabs button.active::after {
-    height: 3px;
-  }
-
-  .auth-form {
-    gap: 18px;
-    margin-top: 34px;
-  }
-
-  .auth-field {
-    min-height: 62px;
-    border-radius: 18px;
-    padding: 0 14px;
-  }
-
-  .auth-field input {
-    font-size: 18px;
-  }
-
-  .field-icon {
-    width: 38px;
-    height: 38px;
-  }
-
-  .field-action {
-    width: 34px;
-    height: 34px;
-  }
-
-  .eye-off-icon {
-    width: 24px;
-    height: 14px;
-    border-width: 3px;
-  }
-
-  .phone-prefix,
-  .remember-control em,
-  .auth-row a,
-  .auth-switch {
-    font-size: 15px;
-  }
-
-  .remember-control span {
-    width: 24px;
-    height: 24px;
-    border-radius: 7px;
-  }
-
-  .primary-button {
-    min-height: 66px;
-    margin-top: 28px;
-    border-radius: 33px;
-    font-size: 22px;
-  }
-
-  .quick-login {
-    gap: 12px;
-    margin-top: 34px;
-  }
-
-  .quick-login__divider strong,
-  .quick-login > strong {
-    font-size: 18px;
-  }
-
-  .wallet-button {
-    width: 72px;
-    height: 72px;
-  }
-
-  .wallet-sheet {
-    max-height: 70dvh;
-    border-radius: 24px 24px 0 0;
-    padding: 22px 20px 20px;
-  }
-
-  .wallet-sheet__header {
-    grid-template-columns: 34px minmax(0, 1fr) 34px;
-    margin-bottom: 18px;
-  }
-
-  .wallet-sheet__header strong {
-    font-size: 20px;
-  }
-
-  .wallet-pending {
-    padding: 42px 10px 18px;
-  }
-
-  .wallet-pending__icon {
-    width: 78px;
-    height: 78px;
-    border-radius: 20px;
-    font-size: 30px;
-  }
-
-  .wallet-pending strong {
-    margin-top: 44px;
-    font-size: 21px;
-  }
-
-  .wallet-pending p {
-    margin: 12px 0 30px;
-    font-size: 17px;
-  }
-
-  .wallet-pending button {
-    min-height: 52px;
-    border-radius: 16px;
-    font-size: 18px;
-  }
-
-  .wallet-row,
-  .wallet-search {
-    grid-template-columns: 44px minmax(0, 1fr) auto;
-    gap: 12px;
-    padding: 11px 8px;
-  }
-
-  .wallet-row__icon,
-  .wallet-search__icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 10px;
-    font-size: 18px;
-  }
-
-  .wallet-row span:nth-child(2),
-  .wallet-search span:nth-child(2) {
-    font-size: 18px;
-  }
-
-  .wallet-row em,
-  .wallet-search em {
-    font-size: 12px;
-  }
-}
-
-@media (min-width: 768px) {
-  .auth-page,
-  .language-page {
-    max-width: 414px;
-    margin: 0 auto;
-  }
-}
-
-@media (max-width: 959px) {
-  .auth-page {
-    padding: 20px 22px 32px;
-    background: #0b0c15;
-  }
-
-  .auth-topbar {
-    margin: -20px -22px 0;
-    padding: 20px 22px 10px;
-    background: #0b0c15;
-  }
-
-  .icon-button {
-    width: 54px;
-    height: 54px;
-  }
-
-  .auth-content {
-    padding-top: 84px;
-  }
-
-  .auth-content h1 {
-    margin-bottom: 74px;
-    font-size: 44px;
-    font-weight: 900;
-  }
-
-  .auth-tabs button {
-    height: 58px;
-    font-size: 24px;
-    font-weight: 700;
-  }
-
-  .auth-tabs button.active::after {
-    height: 4px;
-  }
-
-  .auth-form {
-    gap: 28px;
-    margin-top: 60px;
-  }
-
-  .auth-field {
-    min-height: 74px;
-    border-radius: 22px;
-    background: #1f212c;
-    padding: 0 16px 0 18px;
-  }
-
-  .auth-field input {
-    font-size: 20px;
-    font-weight: 500;
-  }
-
-  .field-icon {
-    width: 46px;
-    height: 46px;
-  }
-
-  .auth-row {
-    margin-top: -4px;
-  }
-
-  .remember-control em,
-  .auth-row a {
-    font-size: 18px;
-    font-weight: 600;
-  }
-
-  .primary-button {
-    min-height: 74px;
-    margin-top: 58px;
-    border-radius: 999px;
-    font-size: 24px;
-  }
-
-  .quick-login {
-    gap: 16px;
-    margin-top: 54px;
-  }
-
-  .quick-login__divider strong,
-  .quick-login > strong {
-    font-size: 20px;
-  }
-
-  .wallet-button {
-    width: 86px;
-    height: 86px;
-  }
-
-  .auth-switch {
-    margin-top: 36px;
-    font-size: 18px;
-  }
-
-  .language-page {
-    padding: 22px 22px 48px;
-  }
-
-  .language-list {
-    gap: 14px;
-    margin-top: 72px;
-  }
-
-  .language-row {
-    min-height: 86px;
-    border-radius: 20px;
-  }
-}
-
-@media (max-width: 390px) {
-  .auth-content {
-    padding-top: 68px;
-  }
-
-  .auth-content h1 {
-    margin-bottom: 54px;
-    font-size: 38px;
-  }
-
-  .auth-form {
-    margin-top: 48px;
-  }
-
-  .primary-button {
-    margin-top: 42px;
-  }
-
-  .language-page {
-    padding: 20px 18px 42px;
-  }
-
-  .language-list {
-    gap: 12px;
-    margin-top: 58px;
-  }
-
-  .language-row {
-    min-height: 78px;
-    border-radius: 18px;
-  }
-}
-
-@media (max-width: 959px) {
-  .auth-page {
-    padding: 14px 22px 28px;
-  }
-
-  .auth-topbar {
-    margin: -14px -22px 0;
-    padding: 14px 22px 6px;
-  }
-
-  .icon-button {
-    width: 38px;
-    height: 38px;
-  }
-
-  .chevron-left {
-    width: 13px;
-    height: 13px;
-    border-left-width: 3px;
-    border-bottom-width: 3px;
-  }
-
-  .globe-icon {
-    width: 22px;
-    height: 22px;
-    border-width: 3px;
-  }
-
-  .globe-icon::before {
-    inset: 2px 6px;
-    border-left-width: 2px;
-    border-right-width: 2px;
-  }
-
-  .globe-icon::after {
-    top: 9px;
-    left: -2px;
-    right: -2px;
-    height: 2px;
-  }
-
-  .auth-content {
-    padding-top: 54px;
-  }
-
-  .auth-content h1 {
-    margin-bottom: 58px;
-    font-size: 30px;
-    font-weight: 800;
-    line-height: 1;
-  }
-
-  .auth-tabs button {
-    height: 52px;
-    font-size: 21px;
-    font-weight: 700;
-  }
-
-  .auth-tabs button.active::after {
-    height: 4px;
-  }
-
-  .auth-form {
-    gap: 24px;
-    margin-top: 34px;
-  }
-
-  .auth-field {
-    min-height: 58px;
-    border-radius: 18px;
-    padding: 0 14px;
-  }
-
-  .field-icon {
-    width: 34px;
-    height: 34px;
-  }
-
-  .auth-field input {
-    font-size: 17px;
-    font-weight: 500;
-  }
-
-  .mail-icon::before {
-    inset: 10px 8px 9px;
-    border-width: 2px;
-    border-radius: 1px;
-  }
-
-  .mail-icon::after {
-    top: 12px;
-    left: 9px;
-    width: 17px;
-    height: 12px;
-    border-left-width: 2px;
-    border-bottom-width: 2px;
-    transform: rotate(-45deg) skew(8deg, 8deg);
-  }
-
-  .lock-icon::before {
-    left: 9px;
-    right: 9px;
-    bottom: 8px;
-    height: 16px;
-    border-width: 2px;
-    border-radius: 1px;
-  }
-
-  .lock-icon::after {
-    top: 7px;
-    left: 11px;
-    width: 13px;
-    height: 16px;
-    border-width: 2px;
-    border-bottom: 0;
-  }
-
-  .field-action {
-    width: 32px;
-    height: 32px;
-  }
-
-  .eye-off-icon {
-    width: 20px;
-    height: 12px;
-    border-width: 2px;
-  }
-
-  .eye-off-icon::before {
-    top: 4px;
-    left: 8px;
-    width: 4px;
-    height: 4px;
-  }
-
-  .eye-off-icon::after {
-    top: -6px;
-    left: 9px;
-    width: 2px;
-    height: 26px;
-  }
-
-  .auth-row {
-    margin-top: 0;
-  }
-
-  .remember-control {
-    gap: 8px;
-  }
-
-  .remember-control span {
-    width: 18px;
-    height: 18px;
-    border-radius: 5px;
-  }
-
-  .remember-control em,
-  .auth-row a {
-    font-size: 16px;
-    font-weight: 600;
-  }
-
-  .primary-button {
-    min-height: 60px;
-    margin-top: 44px;
-    font-size: 20px;
-    font-weight: 800;
-  }
-
-  .quick-login {
-    gap: 14px;
-    margin-top: 38px;
-  }
-
-  .quick-login__divider {
-    gap: 16px;
-  }
-
-  .quick-login__divider strong,
-  .quick-login > strong {
-    font-size: 18px;
-    font-weight: 700;
-  }
-
-  .wallet-button {
-    width: 62px;
-    height: 62px;
-  }
-
-  .wallet-icon {
-    width: 30px;
-    height: 23px;
-  }
-
-  .wallet-icon::before {
-    top: -7px;
-    left: 7px;
-    width: 22px;
-    height: 14px;
-  }
-
-  .wallet-icon::after {
-    top: 9px;
-    right: 4px;
-    width: 6px;
-    height: 6px;
-  }
-
-  .auth-switch {
-    margin-top: 30px;
-    font-size: 16px;
-    font-weight: 600;
-  }
-}
-
 @media (max-width: 959px) {
   .auth-page {
     padding: 14px 22px 28px;
@@ -2474,6 +1743,11 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
     height: 22px;
   }
 
+  .back-icon-svg {
+    width: 23px;
+    height: 23px;
+  }
+
   .auth-content {
     padding-top: 44px;
   }
@@ -2487,8 +1761,12 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 
   .auth-tabs button {
     height: 52px;
-    font-size: 20px;
-    font-weight: 700;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .auth-tabs button.active::after {
+    height: 4px;
   }
 
   .auth-form {
@@ -2534,11 +1812,76 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
     font-weight: 500;
   }
 
+  .auth-row {
+    margin-top: 0;
+  }
+
+  .remember-control {
+    gap: 8px;
+  }
+
+  .remember-control span {
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+  }
+
+  .remember-control em,
+  .auth-row a {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
   .primary-button {
     min-height: 60px;
     margin-top: 44px;
     font-size: 20px;
     font-weight: 700;
+  }
+
+  .quick-login {
+    gap: 14px;
+    margin-top: 38px;
+  }
+
+  .quick-login__divider {
+    gap: 16px;
+  }
+
+  .quick-login__divider strong,
+  .quick-login > strong {
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .wallet-button {
+    width: 62px;
+    height: 62px;
+  }
+
+  .wallet-icon {
+    width: 30px;
+    height: 23px;
+  }
+
+  .wallet-icon::before {
+    top: -7px;
+    left: 7px;
+    width: 22px;
+    height: 14px;
+  }
+
+  .wallet-icon::after {
+    top: 9px;
+    right: 4px;
+    width: 6px;
+    height: 6px;
+  }
+
+  .auth-switch {
+    margin-top: 30px;
+    font-size: 16px;
+    font-weight: 600;
   }
 
 }

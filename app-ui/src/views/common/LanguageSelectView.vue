@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 
+import AppIcon from '@/components/common/AppIcon.vue'
 import { useI18n, type AppLocale } from '@/i18n'
 
 const router = useRouter()
@@ -38,7 +39,7 @@ function selectLanguage(option: { locale?: AppLocale }) {
   <section class="language-page">
     <header class="language-header">
       <button type="button" class="icon-button" :aria-label="t('common.back')" @click="goBack">
-        <span class="chevron-left" />
+        <AppIcon name="back" class="back-icon-svg" />
       </button>
       <h1>语言选择</h1>
       <span />
@@ -114,6 +115,12 @@ function selectLanguage(option: { locale?: AppLocale }) {
   border-left: 3px solid currentColor;
   border-bottom: 3px solid currentColor;
   transform: rotate(45deg);
+}
+
+.back-icon-svg {
+  width: 24px;
+  height: 24px;
+  transform: translateX(-1px);
 }
 
 .language-list {
@@ -208,6 +215,11 @@ function selectLanguage(option: { locale?: AppLocale }) {
     height: 13px;
     border-left-width: 3px;
     border-bottom-width: 3px;
+  }
+
+  .back-icon-svg {
+    width: 23px;
+    height: 23px;
   }
 
   .language-list {

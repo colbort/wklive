@@ -58,7 +58,7 @@ function submitReset() {
   <section class="auth-page">
     <header class="auth-topbar">
       <button type="button" class="icon-button" :aria-label="t('common.back')" @click="goBack">
-        <span class="chevron-left" />
+        <AppIcon name="back" class="back-icon-svg" />
       </button>
       <div class="auth-topbar__right">
         <button type="button" class="icon-button" :aria-label="t('userMenu.customerService')" @click="showVerifySheet = true">
@@ -632,6 +632,12 @@ function submitReset() {
   height: 28px;
 }
 
+.back-icon-svg {
+  width: 24px;
+  height: 24px;
+  transform: translateX(-1px);
+}
+
 @media (min-width: 768px) {
   .auth-page {
     max-width: 414px;
@@ -669,6 +675,11 @@ function submitReset() {
   .top-icon-svg {
     width: 22px;
     height: 22px;
+  }
+
+  .back-icon-svg {
+    width: 23px;
+    height: 23px;
   }
 
   .auth-content {

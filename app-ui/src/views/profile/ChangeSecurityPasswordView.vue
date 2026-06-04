@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { apiChangeLoginPassword, apiChangePayPassword, apiSetPayPassword } from '@/api/userPrivate'
+import AppIcon from '@/components/common/AppIcon.vue'
 import { useI18n } from '@/i18n'
 
 type FieldKey = 'oldPassword' | 'newPassword' | 'confirmPassword'
@@ -117,7 +118,7 @@ async function submitPassword() {
   <section class="password-page">
     <header class="password-header">
       <button type="button" class="back-button" :aria-label="t('common.back')" @click="router.back()">
-        <span />
+        <AppIcon name="back" class="back-icon-svg" />
       </button>
       <h1>{{ title }}</h1>
     </header>
@@ -196,12 +197,10 @@ async function submitPassword() {
   color: #fff;
 }
 
-.back-button span {
-  width: 15px;
-  height: 15px;
-  border-left: 3px solid currentColor;
-  border-bottom: 3px solid currentColor;
-  transform: rotate(45deg);
+.back-icon-svg {
+  width: 24px;
+  height: 24px;
+  transform: translateX(-1px);
 }
 
 .password-form {

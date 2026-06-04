@@ -3,6 +3,15 @@ import { computed, ref } from 'vue'
 
 import { useI18n } from '@/i18n'
 
+const captchaImages = [
+  new URL('../../../assets/checks/check1.webp', import.meta.url).href,
+  new URL('../../../assets/checks/check2.webp', import.meta.url).href,
+  new URL('../../../assets/checks/check3.webp', import.meta.url).href,
+  new URL('../../../assets/checks/check4.webp', import.meta.url).href,
+  new URL('../../../assets/checks/check5.webp', import.meta.url).href,
+  new URL('../../../assets/checks/check6.webp', import.meta.url).href,
+]
+
 const emit = defineEmits<{
   success: []
 }>()
@@ -11,16 +20,40 @@ const { t } = useI18n()
 const progress = ref(0)
 const passed = ref(false)
 const failed = ref(false)
+const targetAngle = ref(randomTargetAngle())
+const captchaImage = ref(randomCaptchaImage())
 
-const rotation = computed(() => 180 - progress.value * 1.8)
+const rotation = computed(() => normalizeAngle(targetAngle.value - progress.value * 3.6))
+const targetProgress = computed(() => targetAngle.value / 3.6)
 const statusText = computed(() => {
   if (passed.value) return t('captcha.passed')
   if (failed.value) return t('captcha.failed')
   return t('captcha.pending')
 })
 
+function randomTargetAngle() {
+  return 75 + Math.round(Math.random() * 210)
+}
+
+function randomCaptchaImage() {
+  return captchaImages[Math.floor(Math.random() * captchaImages.length)]
+}
+
+function normalizeAngle(value: number) {
+  const normalized = ((value % 360) + 360) % 360
+  return normalized > 180 ? normalized - 360 : normalized
+}
+
+function resetChallenge() {
+  progress.value = 0
+  passed.value = false
+  failed.value = false
+  targetAngle.value = randomTargetAngle()
+  captchaImage.value = randomCaptchaImage()
+}
+
 function complete() {
-  progress.value = 100
+  progress.value = targetProgress.value
   passed.value = true
   failed.value = false
   emit('success')
@@ -30,21 +63,18 @@ function handleInput(event: Event) {
   const value = Number((event.target as HTMLInputElement).value)
   progress.value = Number.isFinite(value) ? value : 0
   failed.value = false
-  if (progress.value >= 98) {
-    complete()
-  }
 }
 
 function validateOnRelease() {
   if (passed.value) return
 
-  if (progress.value >= 98) {
+  if (Math.abs(rotation.value) <= 8) {
     complete()
     return
   }
 
   failed.value = true
-  progress.value = 0
+  window.setTimeout(resetChallenge, 420)
 }
 </script>
 
@@ -52,7 +82,9 @@ function validateOnRelease() {
   <main class="rotate-captcha">
     <h1>{{ t('captcha.title') }}</h1>
     <p>{{ t('captcha.hint') }}</p>
-    <div class="rotate-captcha__image" :style="{ transform: `rotate(${rotation}deg)` }" />
+    <div class="rotate-captcha__image">
+      <img :src="captchaImage" alt="" :style="{ transform: `rotate(${rotation}deg)` }" />
+    </div>
     <label
       class="rotate-captcha__slider"
       :class="{ 'is-failed': failed, 'is-passed': passed }"
@@ -103,11 +135,17 @@ function validateOnRelease() {
   width: min(292px, 78vw);
   aspect-ratio: 1;
   margin: 38px 0 50px;
+  overflow: hidden;
   border: 14px solid #191b26;
   border-radius: 50%;
-  background:
-    linear-gradient(20deg, rgba(255, 255, 255, 0.28), transparent 34%),
-    linear-gradient(145deg, #9ec8d4 0 24%, #5f7f8f 25% 36%, #d7d6c8 37% 48%, #436448 49% 68%, #d89cc0 69% 100%);
+  background: #191b26;
+}
+
+.rotate-captcha__image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
   transition: transform 0.12s ease-out;
 }
 

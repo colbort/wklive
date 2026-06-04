@@ -1,5 +1,7 @@
 <script setup lang='ts'>
 import { useRouter } from 'vue-router'
+
+import AppIcon from '@/components/common/AppIcon.vue'
 import { useI18n } from '@/i18n'
 
 defineProps<{
@@ -16,7 +18,9 @@ const { t } = useI18n()
 <template>
   <section class="asset-flow-page" :class="{ 'asset-flow-page--narrow': narrow }">
     <header class="asset-flow-header" :class="{ 'asset-flow-header--plain-right': !rightText }">
-      <button type="button" class="asset-flow-back" :aria-label="t('common.back')" @click="router.back()">‹</button>
+      <button type="button" class="asset-flow-back" :aria-label="t('common.back')" @click="router.back()">
+        <AppIcon name="back" class="asset-flow-back__icon" />
+      </button>
       <h1>{{ title }}</h1>
       <button
         v-if="rightText"
@@ -78,8 +82,12 @@ button {
   place-items: center;
   border-radius: 50%;
   background: #242633;
-  font-size: 32px;
-  line-height: 0.6;
+}
+
+.asset-flow-back__icon {
+  width: 23px;
+  height: 23px;
+  transform: translateX(-1px);
 }
 
 .asset-flow-header h1 {
@@ -123,7 +131,11 @@ button {
   .asset-flow-back {
     width: 34px;
     height: 34px;
-    font-size: 28px;
+  }
+
+  .asset-flow-back__icon {
+    width: 22px;
+    height: 22px;
   }
 
   .asset-flow-header h1 {
