@@ -42,6 +42,7 @@ export interface RechargeOrder {
   productId: number
   accountId: number
   channelId: number
+  walletType: number
   currency: string
   orderAmount: number
   payAmount: number

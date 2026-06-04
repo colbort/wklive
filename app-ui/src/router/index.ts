@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import AppShell from '@/layout/AppShell.vue'
+import AssetFundRecordsView from '@/views/assets/FundRecordsView.vue'
+import AssetRechargeDetailView from '@/views/assets/RechargeDetailView.vue'
 import AssetRechargeView from '@/views/assets/RechargeView.vue'
 import AssetsView from '@/views/assets/AssetsView.vue'
 import AssetTransferView from '@/views/assets/TransferView.vue'
@@ -63,6 +65,18 @@ export const router = createRouter({
           name: 'asset-transfer',
           component: AssetTransferView,
           meta: { title: '划转', hideTabbar: true },
+        },
+        {
+          path: 'assets/flows',
+          name: 'asset-flows',
+          component: AssetFundRecordsView,
+          meta: { title: '资金记录', hideTabbar: true },
+        },
+        {
+          path: 'assets/recharge/detail/:orderNo',
+          name: 'asset-recharge-detail',
+          component: AssetRechargeDetailView,
+          meta: { title: '充值详情', hideTabbar: true },
         },
         { path: 'profile', name: 'profile', component: ProfileView, meta: { title: '我的' } },
         {

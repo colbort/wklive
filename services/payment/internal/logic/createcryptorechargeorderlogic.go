@@ -88,6 +88,7 @@ func (l *CreateCryptoRechargeOrderLogic) CreateCryptoRechargeOrder(in *payment.C
 		OrderNo:      orderNo,
 		BizOrderNo:   sql.NullString{String: in.BizOrderNo, Valid: in.BizOrderNo != ""},
 		RechargeType: int64(payment.RechargeType_RECHARGE_TYPE_CRYPTO),
+		WalletType:   in.WalletType,
 		Currency:     in.Coin,
 		OrderAmount:  in.RechargeAmount,
 		PayAmount:    in.RechargeAmount,

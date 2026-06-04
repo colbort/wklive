@@ -45,6 +45,19 @@ func (l *GetSystemCoreLogic) GetSystemCore() (resp *types.GetSystemCoreResp, err
 	if err != nil {
 		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
 	}
+	key = system.SysConfigType_OBJECT_STORAGE
+	cd, err = l.svcCtx.SystemCli.SysConfigDetail(l.ctx, &system.SysConfigDetailReq{
+		TenantId:  &tenantId,
+		ConfigKey: &key,
+	})
+	if err != nil {
+		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
+	}
+	var storage system.ObjectStorageConfig
+	err = json.Unmarshal([]byte(cd.Data.ConfigValue), &storage)
+	if err != nil {
+		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
+	}
 	result, err := l.svcCtx.ItickCli.GetKlineIntervals(l.ctx, &itick.AppEmpty{})
 	if err != nil {
 		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
@@ -61,6 +74,7 @@ func (l *GetSystemCoreLogic) GetSystemCore() (resp *types.GetSystemCoreResp, err
 		IsRegisterEnabled: config.IsRegisterEnabled,
 		IsGuestEnabled:    config.IsGuestEnabled,
 		IsCryptoEnabled:   config.IsCryptoEnabled,
+		AssetUrl:          objectStorageAssetUrl(&storage),
 		Intervals:         intervals,
 	}
 	return &types.GetSystemCoreResp{
@@ -70,4 +84,25 @@ func (l *GetSystemCoreLogic) GetSystemCore() (resp *types.GetSystemCoreResp, err
 		},
 		Data: data,
 	}, nil
+}
+
+func objectStorageAssetUrl(storage *system.ObjectStorageConfig) string {
+	if storage == nil {
+		return ""
+	}
+	switch storage.GetOssType() {
+	case 1:
+		if cfg := storage.GetAliyunOss(); cfg != nil {
+			return cfg.GetBucketUrl()
+		}
+	case 2:
+		if cfg := storage.GetTencentCos(); cfg != nil {
+			return cfg.GetBucketUrl()
+		}
+	case 3:
+		if cfg := storage.GetMinio(); cfg != nil {
+			return cfg.GetBucketUrl()
+		}
+	}
+	return storage.GetOssDomain()
 }

@@ -168,6 +168,7 @@ CREATE TABLE `t_recharge_order` (
   `account_id` bigint NOT NULL COMMENT '账号ID',
   `channel_id` bigint NOT NULL COMMENT '通道ID',
   `recharge_type` tinyint NOT NULL DEFAULT 0 COMMENT '充值类型：0未知 1虚拟币 2三方充值 3银行卡 4人工充值 5其他',
+  `wallet_type` tinyint NOT NULL DEFAULT 1 COMMENT '钱包类型:1现货 2资金 3合约 4理财 5期权',
   `currency` varchar(16) NOT NULL DEFAULT 'CNY' COMMENT '币种',
   `order_amount` bigint NOT NULL COMMENT '订单金额，单位分',
   `pay_amount` bigint NOT NULL DEFAULT 0 COMMENT '实际支付金额，单位分',

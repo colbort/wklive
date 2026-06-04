@@ -301,6 +301,7 @@ onBeforeUnmount(() => {
   <AssetFlowLayout
     :title="t('assetFlow.recharge')"
     :right-text="step === 'select' ? t('assetFlow.records') : undefined"
+    :right-to="{ name: 'asset-flows', query: { tab: 'recharge' } }"
     narrow
   >
     <template v-if="step === 'select'">

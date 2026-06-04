@@ -6,6 +6,7 @@ export interface Interval {
 }
 
 export interface SystemCore {
+  assetUrl?: string
   isCaptchaEnabled: boolean
   isRegisterEnabled: boolean
   isGuestEnabled: boolean

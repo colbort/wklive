@@ -145,6 +145,7 @@ type RechargeOrder {
 	accountId    int64  `json:"accountId"`
 	channelId    int64  `json:"channelId"`
 	rechargeType int64  `json:"rechargeType"` // 0未知 1虚拟币 2三方充值 3银行卡 4人工充值 5其他
+	walletType   int64  `json:"walletType"` // 钱包类型:1现货 2资金 3合约 4理财 5期权
 	currency     string `json:"currency"`
 	orderAmount  int64  `json:"orderAmount"`
 	payAmount    int64  `json:"payAmount"`
@@ -1218,4 +1219,3 @@ service admin {
 	@handler ListCryptoRechargeTxs
 	get /crypto-recharge-txs (ListCryptoRechargeTxsReq) returns (ListCryptoRechargeTxsResp)
 }
-

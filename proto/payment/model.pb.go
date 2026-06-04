@@ -1150,6 +1150,7 @@ type RechargeOrder struct {
 	CreateTimes   int64                  `protobuf:"varint,32,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                              // 创建时间
 	UpdateTimes   int64                  `protobuf:"varint,33,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                              // 更新时间
 	RechargeType  RechargeType           `protobuf:"varint,34,opt,name=recharge_type,json=rechargeType,proto3,enum=payment.RechargeType" json:"recharge_type,omitempty"` // 充值类型：1虚拟币 2三方充值 3银行卡 4人工充值 5其他
+	WalletType    int64                  `protobuf:"varint,35,opt,name=wallet_type,json=walletType,proto3" json:"wallet_type,omitempty"`                                 // 钱包类型:1现货 2资金 3合约 4理财 5期权
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1420,6 +1421,13 @@ func (x *RechargeOrder) GetRechargeType() RechargeType {
 		return x.RechargeType
 	}
 	return RechargeType_RECHARGE_TYPE_UNKNOWN
+}
+
+func (x *RechargeOrder) GetWalletType() int64 {
+	if x != nil {
+		return x.WalletType
+	}
+	return 0
 }
 
 type PayNotifyLog struct {
@@ -2579,7 +2587,7 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\x11last_success_time\x18\t \x01(\x03R\x0flastSuccessTime\x12!\n" +
 	"\fcreate_times\x18\n" +
 	" \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\v \x01(\x03R\vupdateTimes\"\xe9\b\n" +
+	"\fupdate_times\x18\v \x01(\x03R\vupdateTimes\"\x8a\t\n" +
 	"\rRechargeOrder\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -2628,7 +2636,9 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\x06remark\x18\x1f \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18  \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18! \x01(\x03R\vupdateTimes\x12:\n" +
-	"\rrecharge_type\x18\" \x01(\x0e2\x15.payment.RechargeTypeR\frechargeType\"\xdb\x03\n" +
+	"\rrecharge_type\x18\" \x01(\x0e2\x15.payment.RechargeTypeR\frechargeType\x12\x1f\n" +
+	"\vwallet_type\x18# \x01(\x03R\n" +
+	"walletType\"\xdb\x03\n" +
 	"\fPayNotifyLog\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +

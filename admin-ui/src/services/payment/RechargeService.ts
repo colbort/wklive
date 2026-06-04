@@ -35,6 +35,7 @@ export type RechargeOrder = {
   productId: number // 产品ID
   accountId: number // 账号ID
   channelId: number // 通道ID
+  walletType: number // 钱包类型:1现货 2资金 3合约 4理财 5期权
   currency: string // 币种
   orderAmount: number // 订单金额，单位分
   payAmount: number // 实际支付金额，单位分

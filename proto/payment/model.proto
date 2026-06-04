@@ -168,6 +168,7 @@ message RechargeOrder {
   int64 create_times = 32;                 // 创建时间
   int64 update_times = 33;                 // 更新时间
   payment.RechargeType recharge_type = 34; // 充值类型：1虚拟币 2三方充值 3银行卡 4人工充值 5其他
+  int64 wallet_type = 35;                  // 钱包类型:1现货 2资金 3合约 4理财 5期权
 }
 
 message PayNotifyLog {

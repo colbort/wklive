@@ -2807,6 +2807,7 @@ type RechargeOrder struct {
 	AccountId    int64  `json:"accountId"`
 	ChannelId    int64  `json:"channelId"`
 	RechargeType int64  `json:"rechargeType"` // 0未知 1虚拟币 2三方充值 3银行卡 4人工充值 5其他
+	WalletType   int64  `json:"walletType"`   // 钱包类型:1现货 2资金 3合约 4理财 5期权
 	Currency     string `json:"currency"`
 	OrderAmount  int64  `json:"orderAmount"`
 	PayAmount    int64  `json:"payAmount"`

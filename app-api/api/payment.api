@@ -51,6 +51,7 @@ type RechargeOrder {
 	productId    int64  `json:"productId"`
 	accountId    int64  `json:"accountId"`
 	channelId    int64  `json:"channelId"`
+	walletType   int64  `json:"walletType"` // 钱包类型:1现货 2资金 3合约 4理财 5期权
 	currency     string `json:"currency"`
 	orderAmount  int64  `json:"orderAmount"`
 	payAmount    int64  `json:"payAmount"`

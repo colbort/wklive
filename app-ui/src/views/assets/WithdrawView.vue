@@ -166,7 +166,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <AssetFlowLayout :title="t('assetFlow.withdraw')" :right-text="t('assetFlow.records')" narrow>
+  <AssetFlowLayout
+    :title="t('assetFlow.withdraw')"
+    :right-text="t('assetFlow.records')"
+    :right-to="{ name: 'asset-flows', query: { tab: 'withdraw' } }"
+    narrow
+  >
     <button type="button" class="asset-type-pill">{{ t('assetFlow.crypto') }}</button>
 
     <label class="field-block">

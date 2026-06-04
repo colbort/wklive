@@ -6,6 +6,7 @@ import (
 	"wklive/admin-api/internal/logicutil"
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/asset"
 	"wklive/proto/common"
 	"wklive/proto/payment"
 
@@ -53,6 +54,7 @@ func (l *GetPaymentOptionsLogic) GetPaymentOptions() (resp *types.GetPaymentOpti
 			logicutil.EnumGroup("cryptoRechargeAddressStatus", "链上充值地址状态", payment.CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_UNKNOWN.Descriptor()),
 			logicutil.EnumGroup("cryptoRechargeTxStatus", "链上充值交易状态", payment.CryptoRechargeTxStatus_CRYPTO_RECHARGE_TX_STATUS_UNKNOWN.Descriptor()),
 			logicutil.EnumGroup("chainCode", "链类型", common.ChainCode_CHAIN_CODE_UNKNOWN.Descriptor()),
+			logicutil.EnumGroup("walletType", "钱包类型", asset.WalletType_WALLET_TYPE_UNKNOWN.Descriptor()),
 		},
 	}, nil
 }

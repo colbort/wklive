@@ -1480,6 +1480,7 @@ type RechargeOrder struct {
 	ProductId    int64  `json:"productId"`
 	AccountId    int64  `json:"accountId"`
 	ChannelId    int64  `json:"channelId"`
+	WalletType   int64  `json:"walletType"` // 钱包类型:1现货 2资金 3合约 4理财 5期权
 	Currency     string `json:"currency"`
 	OrderAmount  int64  `json:"orderAmount"`
 	PayAmount    int64  `json:"payAmount"`
@@ -1712,6 +1713,7 @@ type SystemCore struct {
 	IsRegisterEnabled bool       `json:"isRegisterEnabled"` // 是否开启注册
 	IsGuestEnabled    bool       `json:"isGuestEnabled"`    // 是否允许游客登录
 	IsCryptoEnabled   bool       `json:"isCryptoEnabled"`   // 是否加密接口提交数据
+	AssetUrl          string     `json:"assetUrl,optional"` // 对象存储访问地址
 	Intervals         []Interval `json:"intervals"`         // kline 支持粒度
 }
 

@@ -3,7 +3,6 @@ package logic
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -193,16 +192,10 @@ func unfreezeWithdrawOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext,
 }
 
 func rechargeOrderWalletType(order *models.TRechargeOrder) asset.WalletType {
-	if order == nil || order.RequestData.String == "" {
+	if order == nil || order.WalletType <= 0 {
 		return asset.WalletType_WALLET_TYPE_SPOT
 	}
-	var requestData struct {
-		WalletType int64 `json:"walletType"`
-	}
-	if err := json.Unmarshal([]byte(order.RequestData.String), &requestData); err != nil || requestData.WalletType <= 0 {
-		return asset.WalletType_WALLET_TYPE_SPOT
-	}
-	return asset.WalletType(requestData.WalletType)
+	return asset.WalletType(order.WalletType)
 }
 
 func toPayPlatformProto(item *models.TPayPlatform) *payment.PayPlatform {
@@ -391,6 +384,7 @@ func toRechargeOrderProto(item *models.TRechargeOrder) *payment.RechargeOrder {
 		AccountId:    item.AccountId,
 		ChannelId:    item.ChannelId,
 		RechargeType: payment.RechargeType(item.RechargeType),
+		WalletType:   item.WalletType,
 		Currency:     item.Currency,
 		OrderAmount:  item.OrderAmount,
 		PayAmount:    item.PayAmount,

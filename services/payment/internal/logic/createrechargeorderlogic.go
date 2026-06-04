@@ -102,6 +102,7 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 		AccountId:    channel.AccountId,
 		ChannelId:    in.ChannelId,
 		RechargeType: int64(rechargeType),
+		WalletType:   1,
 		Currency:     in.Currency,
 		OrderAmount:  in.RechargeAmount,
 		PayAmount:    in.RechargeAmount,

@@ -54,6 +54,7 @@ type (
 		AccountId    int64          `db:"account_id"`     // 账号ID
 		ChannelId    int64          `db:"channel_id"`     // 通道ID
 		RechargeType int64          `db:"recharge_type"`  // 充值类型：0未知 1虚拟币 2三方充值 3银行卡 4人工充值 5其他
+		WalletType   int64          `db:"wallet_type"`    // 钱包类型:1现货 2资金 3合约 4理财 5期权
 		Currency     string         `db:"currency"`       // 币种
 		OrderAmount  int64          `db:"order_amount"`   // 订单金额，单位分
 		PayAmount    int64          `db:"pay_amount"`     // 实际支付金额，单位分
@@ -166,8 +167,8 @@ func (m *defaultTRechargeOrderModel) Insert(ctx context.Context, data *TRecharge
 	tRechargeOrderOrderNoKey := fmt.Sprintf("%s%v", cacheTRechargeOrderOrderNoPrefix, data.OrderNo)
 	tRechargeOrderTenantIdBizOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTRechargeOrderTenantIdBizOrderNoPrefix, data.TenantId, data.BizOrderNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tRechargeOrderRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.OrderNo, data.BizOrderNo, data.PlatformId, data.ProductId, data.AccountId, data.ChannelId, data.RechargeType, data.Currency, data.OrderAmount, data.PayAmount, data.FeeAmount, data.Subject, data.Body, data.ClientType, data.ClientIp, data.Status, data.ThirdTradeNo, data.ThirdOrderNo, data.PayUrl, data.QrContent, data.VoucherImage, data.RequestData, data.ResponseData, data.NotifyData, data.ExpireTime, data.PaidTime, data.NotifyTime, data.CloseTime, data.Remark, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tRechargeOrderRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.OrderNo, data.BizOrderNo, data.PlatformId, data.ProductId, data.AccountId, data.ChannelId, data.RechargeType, data.WalletType, data.Currency, data.OrderAmount, data.PayAmount, data.FeeAmount, data.Subject, data.Body, data.ClientType, data.ClientIp, data.Status, data.ThirdTradeNo, data.ThirdOrderNo, data.PayUrl, data.QrContent, data.VoucherImage, data.RequestData, data.ResponseData, data.NotifyData, data.ExpireTime, data.PaidTime, data.NotifyTime, data.CloseTime, data.Remark, data.CreateTimes, data.UpdateTimes)
 	}, tRechargeOrderIdKey, tRechargeOrderOrderNoKey, tRechargeOrderTenantIdBizOrderNoKey)
 	return ret, err
 }
@@ -183,7 +184,7 @@ func (m *defaultTRechargeOrderModel) Update(ctx context.Context, newData *TRecha
 	tRechargeOrderTenantIdBizOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTRechargeOrderTenantIdBizOrderNoPrefix, data.TenantId, data.BizOrderNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tRechargeOrderRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.OrderNo, newData.BizOrderNo, newData.PlatformId, newData.ProductId, newData.AccountId, newData.ChannelId, newData.RechargeType, newData.Currency, newData.OrderAmount, newData.PayAmount, newData.FeeAmount, newData.Subject, newData.Body, newData.ClientType, newData.ClientIp, newData.Status, newData.ThirdTradeNo, newData.ThirdOrderNo, newData.PayUrl, newData.QrContent, newData.VoucherImage, newData.RequestData, newData.ResponseData, newData.NotifyData, newData.ExpireTime, newData.PaidTime, newData.NotifyTime, newData.CloseTime, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.OrderNo, newData.BizOrderNo, newData.PlatformId, newData.ProductId, newData.AccountId, newData.ChannelId, newData.RechargeType, newData.WalletType, newData.Currency, newData.OrderAmount, newData.PayAmount, newData.FeeAmount, newData.Subject, newData.Body, newData.ClientType, newData.ClientIp, newData.Status, newData.ThirdTradeNo, newData.ThirdOrderNo, newData.PayUrl, newData.QrContent, newData.VoucherImage, newData.RequestData, newData.ResponseData, newData.NotifyData, newData.ExpireTime, newData.PaidTime, newData.NotifyTime, newData.CloseTime, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tRechargeOrderIdKey, tRechargeOrderOrderNoKey, tRechargeOrderTenantIdBizOrderNoKey)
 	return err
 }
