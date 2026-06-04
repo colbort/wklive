@@ -39,7 +39,7 @@ const guestLoginError = ref('')
 const tenantStore = useTenantStore()
 const router = useRouter()
 const userOptions = useOptions(apiGetUserOptions)
-const { locale, t, toggleLocale } = useI18n()
+const { locale, t } = useI18n()
 
 const userBase = computed(() => profile.value?.user ?? null)
 const userIdentity = computed(() => profile.value?.identity ?? null)
@@ -129,7 +129,7 @@ async function handleMenuClick(key: string) {
   }
 
   if (key === 'language') {
-    toggleLocale()
+    router.push('/language')
     return
   }
 

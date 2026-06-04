@@ -79,11 +79,7 @@ message RefreshTokenReq {
 
 message RefreshTokenResp {
   common.RespBase base = 1;
-  RefreshTokenData data = 2;
-}
-
-message RefreshTokenData {
-  common.TokenInfo token = 1;
+  common.TokenInfo data = 2;
 }
 
 message GetProfileReq { }

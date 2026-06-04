@@ -17,6 +17,7 @@ export default {
     skip: '跳过',
     copy: '复制',
     copied: '已复制',
+    clear: '清除',
     failed: '失败',
     none: '暂无数据',
     and: '和',

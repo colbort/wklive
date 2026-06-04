@@ -12,6 +12,7 @@ import {
 } from '@/api/userPrivate'
 import { apiRegister } from '@/api/userPublic'
 import RotateCaptcha from '@/components/auth/RotateCaptcha.vue'
+import AppIcon from '@/components/common/AppIcon.vue'
 import { useI18n } from '@/i18n'
 
 const REGISTER_TYPE_PHONE = 2
@@ -20,7 +21,7 @@ type IdentityFileKey = 'front' | 'back' | 'handheld'
 type CodeInputKind = 'email' | 'google'
 
 const router = useRouter()
-const { t, toggleLocale } = useI18n()
+const { t } = useI18n()
 const step = ref(1)
 const accountMode = ref<'email' | 'phone'>('email')
 const account = ref('')
@@ -366,7 +367,7 @@ function markUpload(type: IdentityFileKey) {
 </script>
 
 <template>
-  <section class="register-page">
+  <section class="register-page" :class="{ 'register-page--captcha': showCaptcha }">
     <header class="register-topbar">
       <button type="button" class="icon-button" :aria-label="t('common.back')" @click="goBack">
         <span class="chevron-left" />
@@ -376,9 +377,9 @@ function markUpload(type: IdentityFileKey) {
         type="button"
         class="icon-button"
         :aria-label="t('common.language')"
-        @click="toggleLocale"
+        @click="router.push('/language')"
       >
-        <span class="globe-icon" />
+        <AppIcon name="globe" class="top-icon-svg" />
       </button>
       <button v-else-if="step > 1" type="button" class="skip-button" @click="skipStep">
         {{ t('common.skip') }}
@@ -657,6 +658,11 @@ function markUpload(type: IdentityFileKey) {
   height: 3px;
   border: 0;
   background: currentColor;
+}
+
+.top-icon-svg {
+  width: 28px;
+  height: 28px;
 }
 
 .skip-button {
@@ -1603,6 +1609,25 @@ function markUpload(type: IdentityFileKey) {
     margin-top: 16px;
     border-radius: 33px;
     font-size: 22px;
+  }
+
+  .register-page--captcha {
+    padding: 14px 22px 28px;
+  }
+
+  .register-page--captcha .register-topbar {
+    margin: -14px -22px 0;
+    padding: 14px 22px 6px;
+  }
+
+  .register-page--captcha .icon-button {
+    width: 38px;
+    height: 38px;
+  }
+
+  .register-page--captcha .top-icon-svg {
+    width: 22px;
+    height: 22px;
   }
 }
 </style>

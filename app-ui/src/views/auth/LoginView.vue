@@ -4,11 +4,12 @@ import { useRouter } from 'vue-router'
 
 import { getTenantCode } from '@/api/http'
 import { apiLogin } from '@/api/userPublic'
+import AppIcon from '@/components/common/AppIcon.vue'
 import { useI18n } from '@/i18n'
 
 const LOGIN_TYPE_PHONE = 2
 const LOGIN_TYPE_EMAIL = 3
-const { t, toggleLocale } = useI18n()
+const { t } = useI18n()
 
 type EthereumProvider = {
   providers?: EthereumProvider[]
@@ -122,6 +123,7 @@ const account = ref('')
 const password = ref('')
 const remember = ref(false)
 const showPassword = ref(false)
+const googleCodeVisible = false
 const googleCode = ref<string[]>(Array(6).fill(''))
 const googleCodeInputs = ref<HTMLInputElement[]>([])
 const submitting = ref(false)
@@ -215,6 +217,10 @@ function goBack() {
     return
   }
   router.push('/profile')
+}
+
+function goLanguageSelect() {
+  router.push('/language')
 }
 
 function setGoogleCodeInputRef(element: unknown, index: number) {
@@ -556,8 +562,8 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
       <button type="button" class="icon-button" :aria-label="t('common.back')" @click="goBack">
         <span class="chevron-left" />
       </button>
-      <button type="button" class="icon-button" :aria-label="t('common.language')" @click="toggleLocale">
-        <span class="globe-icon" />
+      <button type="button" class="icon-button" :aria-label="t('common.language')" @click="goLanguageSelect">
+        <AppIcon name="globe" class="top-icon-svg" />
       </button>
     </header>
 
@@ -587,13 +593,27 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 
       <form class="auth-form" @submit.prevent="submitLogin">
         <label class="auth-field">
-          <span v-if="activeTab === 'email'" class="field-icon mail-icon" />
+          <span v-if="activeTab === 'email'" class="field-icon">
+            <AppIcon name="mail" class="field-icon-svg" />
+          </span>
           <span v-else class="phone-prefix">+1 <i /></span>
           <input v-model="account" :placeholder="accountPlaceholder" autocomplete="username" />
+          <button
+            type="button"
+            class="field-action"
+            :class="{ 'field-action--hidden': !account }"
+            :aria-label="t('common.clear')"
+            :tabindex="account ? 0 : -1"
+            @click="account = ''"
+          >
+            <AppIcon name="close-circle" class="field-action-svg" />
+          </button>
         </label>
 
         <label class="auth-field">
-          <span class="field-icon lock-icon" />
+          <span class="field-icon">
+            <AppIcon name="lock" class="field-icon-svg" />
+          </span>
           <input
             v-model="password"
             :type="showPassword ? 'text' : 'password'"
@@ -606,11 +626,11 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
             :aria-label="t('security.togglePassword')"
             @click="showPassword = !showPassword"
           >
-            <span class="eye-off-icon" />
+            <AppIcon :name="showPassword ? 'eye' : 'eye-off'" class="field-action-svg" />
           </button>
         </label>
 
-        <div class="google-code-field">
+        <div v-if="googleCodeVisible" class="google-code-field">
           <span>{{ t('auth.googleCode') }}</span>
           <div class="google-code-boxes" :aria-label="t('auth.googleCode')">
             <input
@@ -633,7 +653,11 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
         <div class="auth-row">
           <label class="remember-control">
             <input v-model="remember" type="checkbox" />
-            <span />
+            <span>
+              <svg viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M3.25 8.1 6.45 11.2 12.8 4.8" />
+              </svg>
+            </span>
             <em>{{ t('auth.remember') }}</em>
           </label>
           <RouterLink to="/forgot-password">{{ t('auth.forgotPassword') }}</RouterLink>
@@ -807,6 +831,11 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   height: 3px;
   border: 0;
   background: currentColor;
+}
+
+.top-icon-svg {
+  width: 28px;
+  height: 28px;
 }
 
 .auth-content {
@@ -999,6 +1028,16 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   color: #9b9ca4;
 }
 
+.field-action--hidden {
+  pointer-events: none;
+  opacity: 0;
+}
+
+.field-action-svg {
+  width: 28px;
+  height: 28px;
+}
+
 .eye-off-icon {
   position: relative;
   width: 28px;
@@ -1050,15 +1089,36 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 }
 
 .remember-control span {
+  display: grid;
+  position: relative;
   width: 30px;
   height: 30px;
+  place-items: center;
   border: 2px solid #6d707d;
   border-radius: 8px;
 }
 
+.remember-control span svg {
+  width: 70%;
+  height: 70%;
+  opacity: 0;
+}
+
+.remember-control span svg path {
+  fill: none;
+  stroke: #00c313;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.6;
+}
+
 .remember-control input:checked + span {
   border-color: #00c313;
-  background: #00c313;
+  background: transparent;
+}
+
+.remember-control input:checked + span svg {
+  opacity: 1;
 }
 
 .remember-control em,
@@ -1188,6 +1248,87 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   background: transparent;
   color: #00c313;
   font: inherit;
+}
+
+.language-page {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  overflow-y: auto;
+  background: #0b0c15;
+  padding: 22px 22px 48px;
+  color: #fff;
+}
+
+.language-header {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr) 54px;
+  align-items: center;
+  min-width: 0;
+}
+
+.language-header h2 {
+  overflow: hidden;
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.language-list {
+  display: grid;
+  gap: 14px;
+  margin-top: 72px;
+}
+
+.language-row {
+  display: grid;
+  min-height: 86px;
+  grid-template-columns: 54px minmax(0, 1fr) 34px;
+  align-items: center;
+  gap: 14px;
+  border: 0;
+  border-radius: 20px;
+  background: #1d1f2a;
+  padding: 0 20px 0 24px;
+  color: #fff;
+  text-align: left;
+}
+
+.language-flag {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 50%;
+  font-size: 38px;
+  line-height: 1;
+}
+
+.language-row strong {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 22px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.language-row i {
+  display: block;
+  width: 28px;
+  height: 28px;
+  border: 2px solid #3a3d49;
+  border-radius: 50%;
+}
+
+.language-row--active i {
+  border: 4px solid #00c313;
+  box-shadow: inset 0 0 0 5px #1d1f2a;
 }
 
 .wallet-sheet-layer {
@@ -1937,5 +2078,468 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   .wallet-search em {
     font-size: 12px;
   }
+}
+
+@media (min-width: 768px) {
+  .auth-page,
+  .language-page {
+    max-width: 414px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 959px) {
+  .auth-page {
+    padding: 20px 22px 32px;
+    background: #0b0c15;
+  }
+
+  .auth-topbar {
+    margin: -20px -22px 0;
+    padding: 20px 22px 10px;
+    background: #0b0c15;
+  }
+
+  .icon-button {
+    width: 54px;
+    height: 54px;
+  }
+
+  .auth-content {
+    padding-top: 84px;
+  }
+
+  .auth-content h1 {
+    margin-bottom: 74px;
+    font-size: 44px;
+    font-weight: 900;
+  }
+
+  .auth-tabs button {
+    height: 58px;
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  .auth-tabs button.active::after {
+    height: 4px;
+  }
+
+  .auth-form {
+    gap: 28px;
+    margin-top: 60px;
+  }
+
+  .auth-field {
+    min-height: 74px;
+    border-radius: 22px;
+    background: #1f212c;
+    padding: 0 16px 0 18px;
+  }
+
+  .auth-field input {
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  .field-icon {
+    width: 46px;
+    height: 46px;
+  }
+
+  .auth-row {
+    margin-top: -4px;
+  }
+
+  .remember-control em,
+  .auth-row a {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .primary-button {
+    min-height: 74px;
+    margin-top: 58px;
+    border-radius: 999px;
+    font-size: 24px;
+  }
+
+  .quick-login {
+    gap: 16px;
+    margin-top: 54px;
+  }
+
+  .quick-login__divider strong,
+  .quick-login > strong {
+    font-size: 20px;
+  }
+
+  .wallet-button {
+    width: 86px;
+    height: 86px;
+  }
+
+  .auth-switch {
+    margin-top: 36px;
+    font-size: 18px;
+  }
+
+  .language-page {
+    padding: 22px 22px 48px;
+  }
+
+  .language-list {
+    gap: 14px;
+    margin-top: 72px;
+  }
+
+  .language-row {
+    min-height: 86px;
+    border-radius: 20px;
+  }
+}
+
+@media (max-width: 390px) {
+  .auth-content {
+    padding-top: 68px;
+  }
+
+  .auth-content h1 {
+    margin-bottom: 54px;
+    font-size: 38px;
+  }
+
+  .auth-form {
+    margin-top: 48px;
+  }
+
+  .primary-button {
+    margin-top: 42px;
+  }
+
+  .language-page {
+    padding: 20px 18px 42px;
+  }
+
+  .language-list {
+    gap: 12px;
+    margin-top: 58px;
+  }
+
+  .language-row {
+    min-height: 78px;
+    border-radius: 18px;
+  }
+}
+
+@media (max-width: 959px) {
+  .auth-page {
+    padding: 14px 22px 28px;
+  }
+
+  .auth-topbar {
+    margin: -14px -22px 0;
+    padding: 14px 22px 6px;
+  }
+
+  .icon-button {
+    width: 38px;
+    height: 38px;
+  }
+
+  .chevron-left {
+    width: 13px;
+    height: 13px;
+    border-left-width: 3px;
+    border-bottom-width: 3px;
+  }
+
+  .globe-icon {
+    width: 22px;
+    height: 22px;
+    border-width: 3px;
+  }
+
+  .globe-icon::before {
+    inset: 2px 6px;
+    border-left-width: 2px;
+    border-right-width: 2px;
+  }
+
+  .globe-icon::after {
+    top: 9px;
+    left: -2px;
+    right: -2px;
+    height: 2px;
+  }
+
+  .auth-content {
+    padding-top: 54px;
+  }
+
+  .auth-content h1 {
+    margin-bottom: 58px;
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .auth-tabs button {
+    height: 52px;
+    font-size: 21px;
+    font-weight: 700;
+  }
+
+  .auth-tabs button.active::after {
+    height: 4px;
+  }
+
+  .auth-form {
+    gap: 24px;
+    margin-top: 34px;
+  }
+
+  .auth-field {
+    min-height: 58px;
+    border-radius: 18px;
+    padding: 0 14px;
+  }
+
+  .field-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .auth-field input {
+    font-size: 17px;
+    font-weight: 500;
+  }
+
+  .mail-icon::before {
+    inset: 10px 8px 9px;
+    border-width: 2px;
+    border-radius: 1px;
+  }
+
+  .mail-icon::after {
+    top: 12px;
+    left: 9px;
+    width: 17px;
+    height: 12px;
+    border-left-width: 2px;
+    border-bottom-width: 2px;
+    transform: rotate(-45deg) skew(8deg, 8deg);
+  }
+
+  .lock-icon::before {
+    left: 9px;
+    right: 9px;
+    bottom: 8px;
+    height: 16px;
+    border-width: 2px;
+    border-radius: 1px;
+  }
+
+  .lock-icon::after {
+    top: 7px;
+    left: 11px;
+    width: 13px;
+    height: 16px;
+    border-width: 2px;
+    border-bottom: 0;
+  }
+
+  .field-action {
+    width: 32px;
+    height: 32px;
+  }
+
+  .eye-off-icon {
+    width: 20px;
+    height: 12px;
+    border-width: 2px;
+  }
+
+  .eye-off-icon::before {
+    top: 4px;
+    left: 8px;
+    width: 4px;
+    height: 4px;
+  }
+
+  .eye-off-icon::after {
+    top: -6px;
+    left: 9px;
+    width: 2px;
+    height: 26px;
+  }
+
+  .auth-row {
+    margin-top: 0;
+  }
+
+  .remember-control {
+    gap: 8px;
+  }
+
+  .remember-control span {
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+  }
+
+  .remember-control em,
+  .auth-row a {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .primary-button {
+    min-height: 60px;
+    margin-top: 44px;
+    font-size: 20px;
+    font-weight: 800;
+  }
+
+  .quick-login {
+    gap: 14px;
+    margin-top: 38px;
+  }
+
+  .quick-login__divider {
+    gap: 16px;
+  }
+
+  .quick-login__divider strong,
+  .quick-login > strong {
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .wallet-button {
+    width: 62px;
+    height: 62px;
+  }
+
+  .wallet-icon {
+    width: 30px;
+    height: 23px;
+  }
+
+  .wallet-icon::before {
+    top: -7px;
+    left: 7px;
+    width: 22px;
+    height: 14px;
+  }
+
+  .wallet-icon::after {
+    top: 9px;
+    right: 4px;
+    width: 6px;
+    height: 6px;
+  }
+
+  .auth-switch {
+    margin-top: 30px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+}
+
+@media (max-width: 959px) {
+  .auth-page {
+    padding: 14px 22px 28px;
+  }
+
+  .auth-topbar {
+    margin: -14px -22px 0;
+    padding: 14px 22px 4px;
+  }
+
+  .icon-button {
+    width: 38px;
+    height: 38px;
+  }
+
+  .chevron-left {
+    width: 13px;
+    height: 13px;
+    border-left-width: 3px;
+    border-bottom-width: 3px;
+  }
+
+  .top-icon-svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .auth-content {
+    padding-top: 44px;
+  }
+
+  .auth-content h1 {
+    margin-bottom: 58px;
+    font-size: 31px;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .auth-tabs button {
+    height: 52px;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .auth-form {
+    gap: 24px;
+    margin-top: 36px;
+  }
+
+  .auth-field {
+    min-height: 58px;
+    gap: 12px;
+    border-radius: 18px;
+    padding: 0 12px;
+  }
+
+  .field-icon {
+    display: inline-flex;
+    width: 34px;
+    height: 34px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .field-icon-svg {
+    width: 21px;
+    height: 21px;
+    color: #fff;
+  }
+
+  .field-action {
+    width: 28px;
+    height: 28px;
+    margin-left: 2px;
+    padding: 0;
+  }
+
+  .field-action-svg {
+    width: 21px;
+    height: 21px;
+  }
+
+  .auth-field input {
+    font-size: 17px;
+    font-weight: 500;
+  }
+
+  .primary-button {
+    min-height: 60px;
+    margin-top: 44px;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
 }
 </style>

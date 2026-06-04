@@ -10,6 +10,7 @@ import AssetWithdrawView from '@/views/assets/WithdrawView.vue'
 import AuthForgotPasswordView from '@/views/auth/ForgotPasswordView.vue'
 import AuthLoginView from '@/views/auth/LoginView.vue'
 import AuthRegisterView from '@/views/auth/RegisterView.vue'
+import LanguageSelectView from '@/views/common/LanguageSelectView.vue'
 import HomeView from '@/views/home/HomeView.vue'
 import MarketsView from '@/views/markets/MarketsView.vue'
 import BindAccountView from '@/views/profile/BindAccountView.vue'
@@ -38,6 +39,12 @@ export const router = createRouter({
       name: 'register',
       component: AuthRegisterView,
       meta: { title: '注册' },
+    },
+    {
+      path: '/language',
+      name: 'language-select',
+      component: LanguageSelectView,
+      meta: { title: '语言选择', hideTabbar: true },
     },
     {
       path: '/',

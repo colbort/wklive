@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
+
+import AppIcon from '@/components/common/AppIcon.vue'
 import { useI18n } from '@/i18n'
 
 const router = useRouter()
-const { t, toggleLocale } = useI18n()
+const { t } = useI18n()
 const account = ref('')
 const password = ref('')
 const confirmPassword = ref('')
@@ -28,6 +30,10 @@ function goBack() {
     return
   }
   router.push('/login')
+}
+
+function goLanguageSelect() {
+  router.push('/language')
 }
 
 function submitReset() {
@@ -56,10 +62,10 @@ function submitReset() {
       </button>
       <div class="auth-topbar__right">
         <button type="button" class="icon-button" :aria-label="t('userMenu.customerService')" @click="showVerifySheet = true">
-          <span class="headset-icon" />
+          <AppIcon name="headset" class="top-icon-svg" />
         </button>
-        <button type="button" class="icon-button" :aria-label="t('common.language')" @click="toggleLocale">
-          <span class="globe-icon" />
+        <button type="button" class="icon-button" :aria-label="t('common.language')" @click="goLanguageSelect">
+          <AppIcon name="globe" class="top-icon-svg" />
         </button>
       </div>
     </header>
@@ -85,7 +91,7 @@ function submitReset() {
             :aria-label="t('security.togglePassword')"
             @click="showPassword = !showPassword"
           >
-            <span class="eye-off-icon" />
+            <AppIcon :name="showPassword ? 'eye' : 'eye-off'" class="field-action-svg" />
           </button>
         </label>
 
@@ -106,7 +112,7 @@ function submitReset() {
             :aria-label="t('security.togglePassword')"
             @click="showConfirmPassword = !showConfirmPassword"
           >
-            <span class="eye-off-icon" />
+            <AppIcon :name="showConfirmPassword ? 'eye' : 'eye-off'" class="field-action-svg" />
           </button>
         </label>
 
@@ -617,6 +623,115 @@ function submitReset() {
   .primary-button {
     min-height: 68px;
     font-size: 21px;
+  }
+}
+
+.top-icon-svg,
+.field-action-svg {
+  width: 28px;
+  height: 28px;
+}
+
+@media (min-width: 768px) {
+  .auth-page {
+    max-width: 414px;
+  }
+}
+
+@media (max-width: 959px) {
+  .auth-page {
+    padding: 16px 22px 28px;
+    background: #0b0c15;
+  }
+
+  .auth-topbar {
+    margin: -16px -22px 0;
+    padding: 16px 22px 6px;
+    background: #0b0c15;
+  }
+
+  .auth-topbar__right {
+    gap: 12px;
+  }
+
+  .icon-button {
+    width: 38px;
+    height: 38px;
+  }
+
+  .chevron-left {
+    width: 13px;
+    height: 13px;
+    border-left-width: 3px;
+    border-bottom-width: 3px;
+  }
+
+  .top-icon-svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .auth-content {
+    padding-top: 44px;
+  }
+
+  .auth-content h1 {
+    margin-bottom: 74px;
+    font-size: 25px;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .auth-form {
+    gap: 24px;
+  }
+
+  .auth-field {
+    min-height: 58px;
+    border-radius: 18px;
+    background: #1f212c;
+    padding: 0 14px;
+  }
+
+  .auth-field input {
+    font-size: 17px;
+    font-weight: 500;
+  }
+
+  .field-action {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+  }
+
+  .field-action-svg {
+    width: 21px;
+    height: 21px;
+  }
+
+  .strength-bars {
+    width: 128px;
+    gap: 5px;
+    margin: -20px 0 -2px 8px;
+  }
+
+  .strength-bars span {
+    height: 4px;
+    border-radius: 4px;
+  }
+
+  .primary-button {
+    min-height: 60px;
+    margin-top: 34px;
+    border-radius: 999px;
+    font-size: 20px;
+    font-weight: 800;
+  }
+
+  .login-link {
+    margin-top: -4px;
+    font-size: 18px;
+    font-weight: 700;
   }
 }
 </style>

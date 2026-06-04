@@ -201,4 +201,53 @@ function validateOnRelease() {
     margin: 34px 0 46px;
   }
 }
+
+@media (max-width: 959px) {
+  .rotate-captcha {
+    padding-top: 28px;
+  }
+
+  .rotate-captcha h1 {
+    font-size: 30px;
+    font-weight: 800;
+  }
+
+  .rotate-captcha p {
+    margin-top: 18px;
+    font-size: 17px;
+    font-weight: 700;
+  }
+
+  .rotate-captcha__image {
+    width: min(230px, 62vw);
+    margin: 38px 0 62px;
+    border-width: 10px;
+  }
+
+  .rotate-captcha__slider {
+    height: 48px;
+    border-radius: 24px;
+  }
+
+  .rotate-captcha__slider::before {
+    width: calc((100% - 48px) * var(--captcha-progress, 0) + 48px);
+  }
+
+  .rotate-captcha__slider.is-failed::before {
+    width: 48px;
+  }
+
+  .rotate-captcha__slider span {
+    left: calc((100% - 48px) * var(--captcha-progress, 0));
+    width: 48px;
+    height: 48px;
+    font-size: 28px;
+  }
+
+  .rotate-captcha strong {
+    margin-top: 36px;
+    font-size: 18px;
+    font-weight: 700;
+  }
+}
 </style>

@@ -17,6 +17,7 @@ export default {
     skip: 'Skip',
     copy: 'Copy',
     copied: 'Copied',
+    clear: 'Clear',
     failed: 'Failed',
     none: 'No data',
     and: ' and ',

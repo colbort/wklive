@@ -297,11 +297,19 @@ button {
   padding-top: 0;
 }
 
+.fund-record-layout {
+  overflow-x: clip;
+}
+
 .record-tabs {
+  position: sticky;
+  top: 54px;
+  z-index: 29;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  margin: 18px -18px 0;
+  margin: 0 -18px;
   border-bottom: 1px solid #1f212b;
+  background: #0b0c15;
 }
 
 .record-tabs button {
@@ -579,7 +587,7 @@ button {
 
 @media (max-width: 390px) {
   .record-tabs {
-    margin-top: 16px;
+    top: 50px;
     margin-right: -14px;
     margin-left: -14px;
   }

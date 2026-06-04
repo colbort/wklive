@@ -66,8 +66,6 @@ func (l *RefreshTokenLogic) RefreshToken(in *user.RefreshTokenReq) (*user.Refres
 
 	return &user.RefreshTokenResp{
 		Base: helper.OkResp(),
-		Data: &user.RefreshTokenData{
-			Token: token,
-		},
+		Data: token,
 	}, nil
 }
