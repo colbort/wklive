@@ -101,11 +101,13 @@ func (l *AdminLoginLogic) AdminLogin(in *system.AdminLoginReq) (*system.AdminLog
 	}
 
 	return &system.AdminLoginResp{
-		Base:             helper.OkResp(),
-		Token:            token,
-		UserId:           user.Id,
-		Nickname:         user.Nickname,
-		Google2FaEnabled: user.GoogleEnabled,
-		PermsVer:         user.PermsVer,
+		Base: helper.OkResp(),
+		Data: &system.AdminLoginData{
+			Token:            token,
+			UserId:           user.Id,
+			Nickname:         user.Nickname,
+			Google2FaEnabled: user.GoogleEnabled,
+			PermsVer:         user.PermsVer,
+		},
 	}, nil
 }

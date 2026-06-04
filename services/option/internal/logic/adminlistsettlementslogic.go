@@ -54,6 +54,5 @@ func (l *AdminListSettlementsLogic) AdminListSettlements(in *option.ListSettleme
 	return &option.ListSettlementsResp{
 		Base: pageutil.Base(cursor, limit, len(items), total, lastID),
 		Data: data,
-		Page: pageutil.Output(in.Page, limit),
 	}, nil
 }

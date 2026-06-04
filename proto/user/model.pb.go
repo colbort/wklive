@@ -651,7 +651,7 @@ func (x *UserSecurity) GetUpdateTimes() int64 {
 
 type UserProfile struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *UserBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	User          *UserBase              `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
 	Identity      *UserIdentity          `protobuf:"bytes,2,opt,name=identity,proto3" json:"identity,omitempty"`
 	Security      *UserSecurity          `protobuf:"bytes,3,opt,name=security,proto3" json:"security,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -688,9 +688,9 @@ func (*UserProfile) Descriptor() ([]byte, []int) {
 	return file_proto_user_model_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *UserProfile) GetBase() *UserBase {
+func (x *UserProfile) GetUser() *UserBase {
 	if x != nil {
-		return x.Base
+		return x.User
 	}
 	return nil
 }
@@ -711,7 +711,7 @@ func (x *UserProfile) GetSecurity() *UserSecurity {
 
 type UserDetail struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *UserBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	User          *UserBase              `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
 	Identity      *UserIdentity          `protobuf:"bytes,2,opt,name=identity,proto3" json:"identity,omitempty"`
 	Security      *UserSecurity          `protobuf:"bytes,3,opt,name=security,proto3" json:"security,omitempty"`
 	Banks         []*UserBankItem        `protobuf:"bytes,4,rep,name=banks,proto3" json:"banks,omitempty"`
@@ -749,9 +749,9 @@ func (*UserDetail) Descriptor() ([]byte, []int) {
 	return file_proto_user_model_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *UserDetail) GetBase() *UserBase {
+func (x *UserDetail) GetUser() *UserBase {
 	if x != nil {
-		return x.Base
+		return x.User
 	}
 	return nil
 }
@@ -1499,12 +1499,12 @@ const file_proto_user_model_proto_rawDesc = "" +
 	"\fcreate_times\x18\v \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\f \x01(\x03R\vupdateTimes\"\x91\x01\n" +
 	"\vUserProfile\x12\"\n" +
-	"\x04base\x18\x01 \x01(\v2\x0e.user.UserBaseR\x04base\x12.\n" +
+	"\x04user\x18\x01 \x01(\v2\x0e.user.UserBaseR\x04user\x12.\n" +
 	"\bidentity\x18\x02 \x01(\v2\x12.user.UserIdentityR\bidentity\x12.\n" +
 	"\bsecurity\x18\x03 \x01(\v2\x12.user.UserSecurityR\bsecurity\"\xba\x01\n" +
 	"\n" +
 	"UserDetail\x12\"\n" +
-	"\x04base\x18\x01 \x01(\v2\x0e.user.UserBaseR\x04base\x12.\n" +
+	"\x04user\x18\x01 \x01(\v2\x0e.user.UserBaseR\x04user\x12.\n" +
 	"\bidentity\x18\x02 \x01(\v2\x12.user.UserIdentityR\bidentity\x12.\n" +
 	"\bsecurity\x18\x03 \x01(\v2\x12.user.UserSecurityR\bsecurity\x12(\n" +
 	"\x05banks\x18\x04 \x03(\v2\x12.user.UserBankItemR\x05banks\"\x89\a\n" +
@@ -1630,10 +1630,10 @@ var file_proto_user_model_proto_depIdxs = []int32{
 	12, // 4: user.UserIdentity.kyc_level:type_name -> user.KycLevel
 	13, // 5: user.UserIdentity.verify_status:type_name -> user.VerifyStatus
 	14, // 6: user.UserSecurity.risk_level:type_name -> user.RiskLevel
-	0,  // 7: user.UserProfile.base:type_name -> user.UserBase
+	0,  // 7: user.UserProfile.user:type_name -> user.UserBase
 	1,  // 8: user.UserProfile.identity:type_name -> user.UserIdentity
 	2,  // 9: user.UserProfile.security:type_name -> user.UserSecurity
-	0,  // 10: user.UserDetail.base:type_name -> user.UserBase
+	0,  // 10: user.UserDetail.user:type_name -> user.UserBase
 	1,  // 11: user.UserDetail.identity:type_name -> user.UserIdentity
 	2,  // 12: user.UserDetail.security:type_name -> user.UserSecurity
 	7,  // 13: user.UserDetail.banks:type_name -> user.UserBankItem

@@ -215,14 +215,11 @@ func (x *GetSymbolDetailReq) GetSymbolId() int64 {
 }
 
 type GetSymbolDetailResp struct {
-	state           protoimpl.MessageState       `protogen:"open.v1"`
-	Base            *common.RespBase             `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Symbol          *TradeSymbol                 `protobuf:"bytes,2,opt,name=symbol,proto3" json:"symbol,omitempty"`
-	Spot            *TradeSymbolSpot             `protobuf:"bytes,3,opt,name=spot,proto3" json:"spot,omitempty"`
-	Contract        *TradeSymbolContract         `protobuf:"bytes,4,opt,name=contract,proto3" json:"contract,omitempty"`
-	LeverageConfigs []*TradeSymbolLeverageConfig `protobuf:"bytes,5,rep,name=leverage_configs,json=leverageConfigs,proto3" json:"leverage_configs,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          *GetSymbolDetailData   `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetSymbolDetailResp) Reset() {
@@ -262,28 +259,75 @@ func (x *GetSymbolDetailResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *GetSymbolDetailResp) GetSymbol() *TradeSymbol {
+func (x *GetSymbolDetailResp) GetData() *GetSymbolDetailData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type GetSymbolDetailData struct {
+	state           protoimpl.MessageState       `protogen:"open.v1"`
+	Symbol          *TradeSymbol                 `protobuf:"bytes,1,opt,name=symbol,proto3" json:"symbol,omitempty"`
+	Spot            *TradeSymbolSpot             `protobuf:"bytes,2,opt,name=spot,proto3" json:"spot,omitempty"`
+	Contract        *TradeSymbolContract         `protobuf:"bytes,3,opt,name=contract,proto3" json:"contract,omitempty"`
+	LeverageConfigs []*TradeSymbolLeverageConfig `protobuf:"bytes,4,rep,name=leverage_configs,json=leverageConfigs,proto3" json:"leverage_configs,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *GetSymbolDetailData) Reset() {
+	*x = GetSymbolDetailData{}
+	mi := &file_proto_trade_trade_app_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetSymbolDetailData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSymbolDetailData) ProtoMessage() {}
+
+func (x *GetSymbolDetailData) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_trade_app_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSymbolDetailData.ProtoReflect.Descriptor instead.
+func (*GetSymbolDetailData) Descriptor() ([]byte, []int) {
+	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *GetSymbolDetailData) GetSymbol() *TradeSymbol {
 	if x != nil {
 		return x.Symbol
 	}
 	return nil
 }
 
-func (x *GetSymbolDetailResp) GetSpot() *TradeSymbolSpot {
+func (x *GetSymbolDetailData) GetSpot() *TradeSymbolSpot {
 	if x != nil {
 		return x.Spot
 	}
 	return nil
 }
 
-func (x *GetSymbolDetailResp) GetContract() *TradeSymbolContract {
+func (x *GetSymbolDetailData) GetContract() *TradeSymbolContract {
 	if x != nil {
 		return x.Contract
 	}
 	return nil
 }
 
-func (x *GetSymbolDetailResp) GetLeverageConfigs() []*TradeSymbolLeverageConfig {
+func (x *GetSymbolDetailData) GetLeverageConfigs() []*TradeSymbolLeverageConfig {
 	if x != nil {
 		return x.LeverageConfigs
 	}
@@ -318,7 +362,7 @@ type PlaceOrderReq struct {
 
 func (x *PlaceOrderReq) Reset() {
 	*x = PlaceOrderReq{}
-	mi := &file_proto_trade_trade_app_proto_msgTypes[5]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -330,7 +374,7 @@ func (x *PlaceOrderReq) String() string {
 func (*PlaceOrderReq) ProtoMessage() {}
 
 func (x *PlaceOrderReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_app_proto_msgTypes[5]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -343,7 +387,7 @@ func (x *PlaceOrderReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PlaceOrderReq.ProtoReflect.Descriptor instead.
 func (*PlaceOrderReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{5}
+	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *PlaceOrderReq) GetSymbolId() int64 {
@@ -489,14 +533,14 @@ func (x *PlaceOrderReq) GetTriggerKind() TriggerKind {
 type PlaceOrderResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Order         *TradeOrder            `protobuf:"bytes,2,opt,name=order,proto3" json:"order,omitempty"`
+	Data          *TradeOrder            `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *PlaceOrderResp) Reset() {
 	*x = PlaceOrderResp{}
-	mi := &file_proto_trade_trade_app_proto_msgTypes[6]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -508,7 +552,7 @@ func (x *PlaceOrderResp) String() string {
 func (*PlaceOrderResp) ProtoMessage() {}
 
 func (x *PlaceOrderResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_app_proto_msgTypes[6]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -521,7 +565,7 @@ func (x *PlaceOrderResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PlaceOrderResp.ProtoReflect.Descriptor instead.
 func (*PlaceOrderResp) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{6}
+	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *PlaceOrderResp) GetBase() *common.RespBase {
@@ -531,9 +575,9 @@ func (x *PlaceOrderResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *PlaceOrderResp) GetOrder() *TradeOrder {
+func (x *PlaceOrderResp) GetData() *TradeOrder {
 	if x != nil {
-		return x.Order
+		return x.Data
 	}
 	return nil
 }
@@ -549,7 +593,7 @@ type CancelOrderReq struct {
 
 func (x *CancelOrderReq) Reset() {
 	*x = CancelOrderReq{}
-	mi := &file_proto_trade_trade_app_proto_msgTypes[7]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -561,7 +605,7 @@ func (x *CancelOrderReq) String() string {
 func (*CancelOrderReq) ProtoMessage() {}
 
 func (x *CancelOrderReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_app_proto_msgTypes[7]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -574,7 +618,7 @@ func (x *CancelOrderReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CancelOrderReq.ProtoReflect.Descriptor instead.
 func (*CancelOrderReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{7}
+	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *CancelOrderReq) GetOrderId() int64 {
@@ -610,7 +654,7 @@ type CancelAllOrdersReq struct {
 
 func (x *CancelAllOrdersReq) Reset() {
 	*x = CancelAllOrdersReq{}
-	mi := &file_proto_trade_trade_app_proto_msgTypes[8]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -622,7 +666,7 @@ func (x *CancelAllOrdersReq) String() string {
 func (*CancelAllOrdersReq) ProtoMessage() {}
 
 func (x *CancelAllOrdersReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_app_proto_msgTypes[8]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -635,7 +679,7 @@ func (x *CancelAllOrdersReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CancelAllOrdersReq.ProtoReflect.Descriptor instead.
 func (*CancelAllOrdersReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{8}
+	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *CancelAllOrdersReq) GetMarketType() MarketType {
@@ -669,14 +713,14 @@ func (x *CancelAllOrdersReq) GetPositionSide() PositionSide {
 type CancelAllOrdersResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	AffectedCount int64                  `protobuf:"varint,2,opt,name=affected_count,json=affectedCount,proto3" json:"affected_count,omitempty"`
+	Data          int64                  `protobuf:"varint,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CancelAllOrdersResp) Reset() {
 	*x = CancelAllOrdersResp{}
-	mi := &file_proto_trade_trade_app_proto_msgTypes[9]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -688,7 +732,7 @@ func (x *CancelAllOrdersResp) String() string {
 func (*CancelAllOrdersResp) ProtoMessage() {}
 
 func (x *CancelAllOrdersResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_app_proto_msgTypes[9]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -701,7 +745,7 @@ func (x *CancelAllOrdersResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CancelAllOrdersResp.ProtoReflect.Descriptor instead.
 func (*CancelAllOrdersResp) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{9}
+	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *CancelAllOrdersResp) GetBase() *common.RespBase {
@@ -711,9 +755,9 @@ func (x *CancelAllOrdersResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *CancelAllOrdersResp) GetAffectedCount() int64 {
+func (x *CancelAllOrdersResp) GetData() int64 {
 	if x != nil {
-		return x.AffectedCount
+		return x.Data
 	}
 	return 0
 }
@@ -732,7 +776,7 @@ type GetOrderListReq struct {
 
 func (x *GetOrderListReq) Reset() {
 	*x = GetOrderListReq{}
-	mi := &file_proto_trade_trade_app_proto_msgTypes[10]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -744,7 +788,7 @@ func (x *GetOrderListReq) String() string {
 func (*GetOrderListReq) ProtoMessage() {}
 
 func (x *GetOrderListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_app_proto_msgTypes[10]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -757,7 +801,7 @@ func (x *GetOrderListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetOrderListReq.ProtoReflect.Descriptor instead.
 func (*GetOrderListReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{10}
+	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *GetOrderListReq) GetPage() *common.PageReq {
@@ -812,7 +856,7 @@ type GetOrderListResp struct {
 
 func (x *GetOrderListResp) Reset() {
 	*x = GetOrderListResp{}
-	mi := &file_proto_trade_trade_app_proto_msgTypes[11]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -824,7 +868,7 @@ func (x *GetOrderListResp) String() string {
 func (*GetOrderListResp) ProtoMessage() {}
 
 func (x *GetOrderListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_app_proto_msgTypes[11]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -837,7 +881,7 @@ func (x *GetOrderListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetOrderListResp.ProtoReflect.Descriptor instead.
 func (*GetOrderListResp) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{11}
+	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *GetOrderListResp) GetBase() *common.RespBase {
@@ -864,7 +908,7 @@ type GetOrderDetailReq struct {
 
 func (x *GetOrderDetailReq) Reset() {
 	*x = GetOrderDetailReq{}
-	mi := &file_proto_trade_trade_app_proto_msgTypes[12]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -876,7 +920,7 @@ func (x *GetOrderDetailReq) String() string {
 func (*GetOrderDetailReq) ProtoMessage() {}
 
 func (x *GetOrderDetailReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_app_proto_msgTypes[12]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -889,7 +933,7 @@ func (x *GetOrderDetailReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetOrderDetailReq.ProtoReflect.Descriptor instead.
 func (*GetOrderDetailReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{12}
+	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *GetOrderDetailReq) GetOrderId() int64 {
@@ -909,16 +953,14 @@ func (x *GetOrderDetailReq) GetOrderNo() string {
 type GetOrderDetailResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Order         *TradeOrder            `protobuf:"bytes,2,opt,name=order,proto3" json:"order,omitempty"`
-	Spot          *TradeOrderSpot        `protobuf:"bytes,3,opt,name=spot,proto3" json:"spot,omitempty"`
-	Contract      *TradeOrderContract    `protobuf:"bytes,4,opt,name=contract,proto3" json:"contract,omitempty"`
+	Data          *GetOrderDetailData    `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetOrderDetailResp) Reset() {
 	*x = GetOrderDetailResp{}
-	mi := &file_proto_trade_trade_app_proto_msgTypes[13]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -930,7 +972,7 @@ func (x *GetOrderDetailResp) String() string {
 func (*GetOrderDetailResp) ProtoMessage() {}
 
 func (x *GetOrderDetailResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_app_proto_msgTypes[13]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -943,7 +985,7 @@ func (x *GetOrderDetailResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetOrderDetailResp.ProtoReflect.Descriptor instead.
 func (*GetOrderDetailResp) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{13}
+	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *GetOrderDetailResp) GetBase() *common.RespBase {
@@ -953,21 +995,67 @@ func (x *GetOrderDetailResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *GetOrderDetailResp) GetOrder() *TradeOrder {
+func (x *GetOrderDetailResp) GetData() *GetOrderDetailData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type GetOrderDetailData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Order         *TradeOrder            `protobuf:"bytes,1,opt,name=order,proto3" json:"order,omitempty"`
+	Spot          *TradeOrderSpot        `protobuf:"bytes,2,opt,name=spot,proto3" json:"spot,omitempty"`
+	Contract      *TradeOrderContract    `protobuf:"bytes,3,opt,name=contract,proto3" json:"contract,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetOrderDetailData) Reset() {
+	*x = GetOrderDetailData{}
+	mi := &file_proto_trade_trade_app_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetOrderDetailData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetOrderDetailData) ProtoMessage() {}
+
+func (x *GetOrderDetailData) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_trade_app_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetOrderDetailData.ProtoReflect.Descriptor instead.
+func (*GetOrderDetailData) Descriptor() ([]byte, []int) {
+	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *GetOrderDetailData) GetOrder() *TradeOrder {
 	if x != nil {
 		return x.Order
 	}
 	return nil
 }
 
-func (x *GetOrderDetailResp) GetSpot() *TradeOrderSpot {
+func (x *GetOrderDetailData) GetSpot() *TradeOrderSpot {
 	if x != nil {
 		return x.Spot
 	}
 	return nil
 }
 
-func (x *GetOrderDetailResp) GetContract() *TradeOrderContract {
+func (x *GetOrderDetailData) GetContract() *TradeOrderContract {
 	if x != nil {
 		return x.Contract
 	}
@@ -986,7 +1074,7 @@ type GetFillListReq struct {
 
 func (x *GetFillListReq) Reset() {
 	*x = GetFillListReq{}
-	mi := &file_proto_trade_trade_app_proto_msgTypes[14]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -998,7 +1086,7 @@ func (x *GetFillListReq) String() string {
 func (*GetFillListReq) ProtoMessage() {}
 
 func (x *GetFillListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_app_proto_msgTypes[14]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1011,7 +1099,7 @@ func (x *GetFillListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetFillListReq.ProtoReflect.Descriptor instead.
 func (*GetFillListReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{14}
+	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *GetFillListReq) GetPage() *common.PageReq {
@@ -1052,7 +1140,7 @@ type GetFillListResp struct {
 
 func (x *GetFillListResp) Reset() {
 	*x = GetFillListResp{}
-	mi := &file_proto_trade_trade_app_proto_msgTypes[15]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1064,7 +1152,7 @@ func (x *GetFillListResp) String() string {
 func (*GetFillListResp) ProtoMessage() {}
 
 func (x *GetFillListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_app_proto_msgTypes[15]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1077,7 +1165,7 @@ func (x *GetFillListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetFillListResp.ProtoReflect.Descriptor instead.
 func (*GetFillListResp) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{15}
+	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *GetFillListResp) GetBase() *common.RespBase {
@@ -1104,7 +1192,7 @@ type GetPositionListReq struct {
 
 func (x *GetPositionListReq) Reset() {
 	*x = GetPositionListReq{}
-	mi := &file_proto_trade_trade_app_proto_msgTypes[16]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1116,7 +1204,7 @@ func (x *GetPositionListReq) String() string {
 func (*GetPositionListReq) ProtoMessage() {}
 
 func (x *GetPositionListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_app_proto_msgTypes[16]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1129,7 +1217,7 @@ func (x *GetPositionListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPositionListReq.ProtoReflect.Descriptor instead.
 func (*GetPositionListReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{16}
+	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *GetPositionListReq) GetMarketType() MarketType {
@@ -1156,7 +1244,7 @@ type GetPositionListResp struct {
 
 func (x *GetPositionListResp) Reset() {
 	*x = GetPositionListResp{}
-	mi := &file_proto_trade_trade_app_proto_msgTypes[17]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1168,7 +1256,7 @@ func (x *GetPositionListResp) String() string {
 func (*GetPositionListResp) ProtoMessage() {}
 
 func (x *GetPositionListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_app_proto_msgTypes[17]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1181,7 +1269,7 @@ func (x *GetPositionListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPositionListResp.ProtoReflect.Descriptor instead.
 func (*GetPositionListResp) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{17}
+	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *GetPositionListResp) GetBase() *common.RespBase {
@@ -1208,7 +1296,7 @@ type GetMarginAccountListReq struct {
 
 func (x *GetMarginAccountListReq) Reset() {
 	*x = GetMarginAccountListReq{}
-	mi := &file_proto_trade_trade_app_proto_msgTypes[18]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1220,7 +1308,7 @@ func (x *GetMarginAccountListReq) String() string {
 func (*GetMarginAccountListReq) ProtoMessage() {}
 
 func (x *GetMarginAccountListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_app_proto_msgTypes[18]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1233,7 +1321,7 @@ func (x *GetMarginAccountListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMarginAccountListReq.ProtoReflect.Descriptor instead.
 func (*GetMarginAccountListReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{18}
+	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *GetMarginAccountListReq) GetMarketType() MarketType {
@@ -1260,7 +1348,7 @@ type GetMarginAccountListResp struct {
 
 func (x *GetMarginAccountListResp) Reset() {
 	*x = GetMarginAccountListResp{}
-	mi := &file_proto_trade_trade_app_proto_msgTypes[19]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1272,7 +1360,7 @@ func (x *GetMarginAccountListResp) String() string {
 func (*GetMarginAccountListResp) ProtoMessage() {}
 
 func (x *GetMarginAccountListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_app_proto_msgTypes[19]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1285,7 +1373,7 @@ func (x *GetMarginAccountListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMarginAccountListResp.ProtoReflect.Descriptor instead.
 func (*GetMarginAccountListResp) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{19}
+	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *GetMarginAccountListResp) GetBase() *common.RespBase {
@@ -1313,7 +1401,7 @@ type GetLeverageConfigReq struct {
 
 func (x *GetLeverageConfigReq) Reset() {
 	*x = GetLeverageConfigReq{}
-	mi := &file_proto_trade_trade_app_proto_msgTypes[20]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1325,7 +1413,7 @@ func (x *GetLeverageConfigReq) String() string {
 func (*GetLeverageConfigReq) ProtoMessage() {}
 
 func (x *GetLeverageConfigReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_app_proto_msgTypes[20]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1338,7 +1426,7 @@ func (x *GetLeverageConfigReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetLeverageConfigReq.ProtoReflect.Descriptor instead.
 func (*GetLeverageConfigReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{20}
+	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *GetLeverageConfigReq) GetSymbolId() int64 {
@@ -1372,7 +1460,7 @@ type GetLeverageConfigResp struct {
 
 func (x *GetLeverageConfigResp) Reset() {
 	*x = GetLeverageConfigResp{}
-	mi := &file_proto_trade_trade_app_proto_msgTypes[21]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1384,7 +1472,7 @@ func (x *GetLeverageConfigResp) String() string {
 func (*GetLeverageConfigResp) ProtoMessage() {}
 
 func (x *GetLeverageConfigResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_app_proto_msgTypes[21]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1397,7 +1485,7 @@ func (x *GetLeverageConfigResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetLeverageConfigResp.ProtoReflect.Descriptor instead.
 func (*GetLeverageConfigResp) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{21}
+	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *GetLeverageConfigResp) GetBase() *common.RespBase {
@@ -1428,7 +1516,7 @@ type SetLeverageReq struct {
 
 func (x *SetLeverageReq) Reset() {
 	*x = SetLeverageReq{}
-	mi := &file_proto_trade_trade_app_proto_msgTypes[22]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1440,7 +1528,7 @@ func (x *SetLeverageReq) String() string {
 func (*SetLeverageReq) ProtoMessage() {}
 
 func (x *SetLeverageReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_app_proto_msgTypes[22]
+	mi := &file_proto_trade_trade_app_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1453,7 +1541,7 @@ func (x *SetLeverageReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetLeverageReq.ProtoReflect.Descriptor instead.
 func (*SetLeverageReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{22}
+	return file_proto_trade_trade_app_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *SetLeverageReq) GetSymbolId() int64 {
@@ -1513,13 +1601,15 @@ const file_proto_trade_trade_app_proto_rawDesc = "" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
 	"\x04data\x18\x02 \x03(\v2\x12.trade.TradeSymbolR\x04data\"1\n" +
 	"\x12GetSymbolDetailReq\x12\x1b\n" +
-	"\tsymbol_id\x18\x01 \x01(\x03R\bsymbolId\"\x98\x02\n" +
+	"\tsymbol_id\x18\x01 \x01(\x03R\bsymbolId\"k\n" +
 	"\x13GetSymbolDetailResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
-	"\x06symbol\x18\x02 \x01(\v2\x12.trade.TradeSymbolR\x06symbol\x12*\n" +
-	"\x04spot\x18\x03 \x01(\v2\x16.trade.TradeSymbolSpotR\x04spot\x126\n" +
-	"\bcontract\x18\x04 \x01(\v2\x1a.trade.TradeSymbolContractR\bcontract\x12K\n" +
-	"\x10leverage_configs\x18\x05 \x03(\v2 .trade.TradeSymbolLeverageConfigR\x0fleverageConfigs\"\xcd\x06\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
+	"\x04data\x18\x02 \x01(\v2\x1a.trade.GetSymbolDetailDataR\x04data\"\xf2\x01\n" +
+	"\x13GetSymbolDetailData\x12*\n" +
+	"\x06symbol\x18\x01 \x01(\v2\x12.trade.TradeSymbolR\x06symbol\x12*\n" +
+	"\x04spot\x18\x02 \x01(\v2\x16.trade.TradeSymbolSpotR\x04spot\x126\n" +
+	"\bcontract\x18\x03 \x01(\v2\x1a.trade.TradeSymbolContractR\bcontract\x12K\n" +
+	"\x10leverage_configs\x18\x04 \x03(\v2 .trade.TradeSymbolLeverageConfigR\x0fleverageConfigs\"\xcd\x06\n" +
 	"\rPlaceOrderReq\x12\x1b\n" +
 	"\tsymbol_id\x18\x01 \x01(\x03R\bsymbolId\x122\n" +
 	"\vmarket_type\x18\x02 \x01(\x0e2\x11.trade.MarketTypeR\n" +
@@ -1544,10 +1634,10 @@ const file_proto_trade_trade_app_proto_rawDesc = "" +
 	"\x11take_profit_price\x18\x11 \x01(\tR\x0ftakeProfitPrice\x12&\n" +
 	"\x0fstop_loss_price\x18\x12 \x01(\tR\rstopLossPrice\x129\n" +
 	"\forder_source\x18\x13 \x01(\x0e2\x16.trade.OrderSourceTypeR\vorderSource\x125\n" +
-	"\ftrigger_kind\x18\x14 \x01(\x0e2\x12.trade.TriggerKindR\vtriggerKind\"_\n" +
+	"\ftrigger_kind\x18\x14 \x01(\x0e2\x12.trade.TriggerKindR\vtriggerKind\"]\n" +
 	"\x0ePlaceOrderResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
-	"\x05order\x18\x02 \x01(\v2\x11.trade.TradeOrderR\x05order\"n\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12%\n" +
+	"\x04data\x18\x02 \x01(\v2\x11.trade.TradeOrderR\x04data\"n\n" +
 	"\x0eCancelOrderReq\x12\x19\n" +
 	"\border_id\x18\x01 \x01(\x03R\aorderId\x12\x19\n" +
 	"\border_no\x18\x02 \x01(\tR\aorderNo\x12&\n" +
@@ -1557,10 +1647,10 @@ const file_proto_trade_trade_app_proto_rawDesc = "" +
 	"marketType\x12\x1b\n" +
 	"\tsymbol_id\x18\x02 \x01(\x03R\bsymbolId\x12$\n" +
 	"\x04side\x18\x03 \x01(\x0e2\x10.trade.TradeSideR\x04side\x128\n" +
-	"\rposition_side\x18\x04 \x01(\x0e2\x13.trade.PositionSideR\fpositionSide\"b\n" +
+	"\rposition_side\x18\x04 \x01(\x0e2\x13.trade.PositionSideR\fpositionSide\"O\n" +
 	"\x13CancelAllOrdersResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12%\n" +
-	"\x0eaffected_count\x18\x02 \x01(\x03R\raffectedCount\"\x8a\x02\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x12\n" +
+	"\x04data\x18\x02 \x01(\x03R\x04data\"\x8a\x02\n" +
 	"\x0fGetOrderListReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x122\n" +
 	"\vmarket_type\x18\x02 \x01(\x0e2\x11.trade.MarketTypeR\n" +
@@ -1575,12 +1665,14 @@ const file_proto_trade_trade_app_proto_rawDesc = "" +
 	"\x04data\x18\x02 \x03(\v2\x11.trade.TradeOrderR\x04data\"I\n" +
 	"\x11GetOrderDetailReq\x12\x19\n" +
 	"\border_id\x18\x01 \x01(\x03R\aorderId\x12\x19\n" +
-	"\border_no\x18\x02 \x01(\tR\aorderNo\"\xc5\x01\n" +
+	"\border_no\x18\x02 \x01(\tR\aorderNo\"i\n" +
 	"\x12GetOrderDetailResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
-	"\x05order\x18\x02 \x01(\v2\x11.trade.TradeOrderR\x05order\x12)\n" +
-	"\x04spot\x18\x03 \x01(\v2\x15.trade.TradeOrderSpotR\x04spot\x125\n" +
-	"\bcontract\x18\x04 \x01(\v2\x19.trade.TradeOrderContractR\bcontract\"\xb7\x01\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
+	"\x04data\x18\x02 \x01(\v2\x19.trade.GetOrderDetailDataR\x04data\"\x9f\x01\n" +
+	"\x12GetOrderDetailData\x12'\n" +
+	"\x05order\x18\x01 \x01(\v2\x11.trade.TradeOrderR\x05order\x12)\n" +
+	"\x04spot\x18\x02 \x01(\v2\x15.trade.TradeOrderSpotR\x04spot\x125\n" +
+	"\bcontract\x18\x03 \x01(\v2\x19.trade.TradeOrderContractR\bcontract\"\xb7\x01\n" +
 	"\x0eGetFillListReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x122\n" +
 	"\vmarket_type\x18\x02 \x01(\x0e2\x11.trade.MarketTypeR\n" +
@@ -1650,142 +1742,146 @@ func file_proto_trade_trade_app_proto_rawDescGZIP() []byte {
 	return file_proto_trade_trade_app_proto_rawDescData
 }
 
-var file_proto_trade_trade_app_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
+var file_proto_trade_trade_app_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
 var file_proto_trade_trade_app_proto_goTypes = []any{
 	(*AppCommonResp)(nil),             // 0: trade.AppCommonResp
 	(*GetSymbolListReq)(nil),          // 1: trade.GetSymbolListReq
 	(*GetSymbolListResp)(nil),         // 2: trade.GetSymbolListResp
 	(*GetSymbolDetailReq)(nil),        // 3: trade.GetSymbolDetailReq
 	(*GetSymbolDetailResp)(nil),       // 4: trade.GetSymbolDetailResp
-	(*PlaceOrderReq)(nil),             // 5: trade.PlaceOrderReq
-	(*PlaceOrderResp)(nil),            // 6: trade.PlaceOrderResp
-	(*CancelOrderReq)(nil),            // 7: trade.CancelOrderReq
-	(*CancelAllOrdersReq)(nil),        // 8: trade.CancelAllOrdersReq
-	(*CancelAllOrdersResp)(nil),       // 9: trade.CancelAllOrdersResp
-	(*GetOrderListReq)(nil),           // 10: trade.GetOrderListReq
-	(*GetOrderListResp)(nil),          // 11: trade.GetOrderListResp
-	(*GetOrderDetailReq)(nil),         // 12: trade.GetOrderDetailReq
-	(*GetOrderDetailResp)(nil),        // 13: trade.GetOrderDetailResp
-	(*GetFillListReq)(nil),            // 14: trade.GetFillListReq
-	(*GetFillListResp)(nil),           // 15: trade.GetFillListResp
-	(*GetPositionListReq)(nil),        // 16: trade.GetPositionListReq
-	(*GetPositionListResp)(nil),       // 17: trade.GetPositionListResp
-	(*GetMarginAccountListReq)(nil),   // 18: trade.GetMarginAccountListReq
-	(*GetMarginAccountListResp)(nil),  // 19: trade.GetMarginAccountListResp
-	(*GetLeverageConfigReq)(nil),      // 20: trade.GetLeverageConfigReq
-	(*GetLeverageConfigResp)(nil),     // 21: trade.GetLeverageConfigResp
-	(*SetLeverageReq)(nil),            // 22: trade.SetLeverageReq
-	(*common.RespBase)(nil),           // 23: common.RespBase
-	(MarketType)(0),                   // 24: trade.MarketType
-	(SymbolStatus)(0),                 // 25: trade.SymbolStatus
-	(*TradeSymbol)(nil),               // 26: trade.TradeSymbol
-	(*TradeSymbolSpot)(nil),           // 27: trade.TradeSymbolSpot
-	(*TradeSymbolContract)(nil),       // 28: trade.TradeSymbolContract
-	(*TradeSymbolLeverageConfig)(nil), // 29: trade.TradeSymbolLeverageConfig
-	(TradeSide)(0),                    // 30: trade.TradeSide
-	(PositionSide)(0),                 // 31: trade.PositionSide
-	(OrderType)(0),                    // 32: trade.OrderType
-	(TimeInForce)(0),                  // 33: trade.TimeInForce
-	(TriggerType)(0),                  // 34: trade.TriggerType
-	(MarginMode)(0),                   // 35: trade.MarginMode
-	(OrderSourceType)(0),              // 36: trade.OrderSourceType
-	(TriggerKind)(0),                  // 37: trade.TriggerKind
-	(*TradeOrder)(nil),                // 38: trade.TradeOrder
-	(*common.PageReq)(nil),            // 39: common.PageReq
-	(OrderStatus)(0),                  // 40: trade.OrderStatus
-	(*TimeRange)(nil),                 // 41: trade.TimeRange
-	(*TradeOrderSpot)(nil),            // 42: trade.TradeOrderSpot
-	(*TradeOrderContract)(nil),        // 43: trade.TradeOrderContract
-	(*TradeFill)(nil),                 // 44: trade.TradeFill
-	(*ContractPosition)(nil),          // 45: trade.ContractPosition
-	(*ContractMarginAccount)(nil),     // 46: trade.ContractMarginAccount
-	(*ContractLeverageConfig)(nil),    // 47: trade.ContractLeverageConfig
-	(PositionMode)(0),                 // 48: trade.PositionMode
+	(*GetSymbolDetailData)(nil),       // 5: trade.GetSymbolDetailData
+	(*PlaceOrderReq)(nil),             // 6: trade.PlaceOrderReq
+	(*PlaceOrderResp)(nil),            // 7: trade.PlaceOrderResp
+	(*CancelOrderReq)(nil),            // 8: trade.CancelOrderReq
+	(*CancelAllOrdersReq)(nil),        // 9: trade.CancelAllOrdersReq
+	(*CancelAllOrdersResp)(nil),       // 10: trade.CancelAllOrdersResp
+	(*GetOrderListReq)(nil),           // 11: trade.GetOrderListReq
+	(*GetOrderListResp)(nil),          // 12: trade.GetOrderListResp
+	(*GetOrderDetailReq)(nil),         // 13: trade.GetOrderDetailReq
+	(*GetOrderDetailResp)(nil),        // 14: trade.GetOrderDetailResp
+	(*GetOrderDetailData)(nil),        // 15: trade.GetOrderDetailData
+	(*GetFillListReq)(nil),            // 16: trade.GetFillListReq
+	(*GetFillListResp)(nil),           // 17: trade.GetFillListResp
+	(*GetPositionListReq)(nil),        // 18: trade.GetPositionListReq
+	(*GetPositionListResp)(nil),       // 19: trade.GetPositionListResp
+	(*GetMarginAccountListReq)(nil),   // 20: trade.GetMarginAccountListReq
+	(*GetMarginAccountListResp)(nil),  // 21: trade.GetMarginAccountListResp
+	(*GetLeverageConfigReq)(nil),      // 22: trade.GetLeverageConfigReq
+	(*GetLeverageConfigResp)(nil),     // 23: trade.GetLeverageConfigResp
+	(*SetLeverageReq)(nil),            // 24: trade.SetLeverageReq
+	(*common.RespBase)(nil),           // 25: common.RespBase
+	(MarketType)(0),                   // 26: trade.MarketType
+	(SymbolStatus)(0),                 // 27: trade.SymbolStatus
+	(*TradeSymbol)(nil),               // 28: trade.TradeSymbol
+	(*TradeSymbolSpot)(nil),           // 29: trade.TradeSymbolSpot
+	(*TradeSymbolContract)(nil),       // 30: trade.TradeSymbolContract
+	(*TradeSymbolLeverageConfig)(nil), // 31: trade.TradeSymbolLeverageConfig
+	(TradeSide)(0),                    // 32: trade.TradeSide
+	(PositionSide)(0),                 // 33: trade.PositionSide
+	(OrderType)(0),                    // 34: trade.OrderType
+	(TimeInForce)(0),                  // 35: trade.TimeInForce
+	(TriggerType)(0),                  // 36: trade.TriggerType
+	(MarginMode)(0),                   // 37: trade.MarginMode
+	(OrderSourceType)(0),              // 38: trade.OrderSourceType
+	(TriggerKind)(0),                  // 39: trade.TriggerKind
+	(*TradeOrder)(nil),                // 40: trade.TradeOrder
+	(*common.PageReq)(nil),            // 41: common.PageReq
+	(OrderStatus)(0),                  // 42: trade.OrderStatus
+	(*TimeRange)(nil),                 // 43: trade.TimeRange
+	(*TradeOrderSpot)(nil),            // 44: trade.TradeOrderSpot
+	(*TradeOrderContract)(nil),        // 45: trade.TradeOrderContract
+	(*TradeFill)(nil),                 // 46: trade.TradeFill
+	(*ContractPosition)(nil),          // 47: trade.ContractPosition
+	(*ContractMarginAccount)(nil),     // 48: trade.ContractMarginAccount
+	(*ContractLeverageConfig)(nil),    // 49: trade.ContractLeverageConfig
+	(PositionMode)(0),                 // 50: trade.PositionMode
 }
 var file_proto_trade_trade_app_proto_depIdxs = []int32{
-	23, // 0: trade.AppCommonResp.base:type_name -> common.RespBase
-	24, // 1: trade.GetSymbolListReq.market_type:type_name -> trade.MarketType
-	25, // 2: trade.GetSymbolListReq.status:type_name -> trade.SymbolStatus
-	23, // 3: trade.GetSymbolListResp.base:type_name -> common.RespBase
-	26, // 4: trade.GetSymbolListResp.data:type_name -> trade.TradeSymbol
-	23, // 5: trade.GetSymbolDetailResp.base:type_name -> common.RespBase
-	26, // 6: trade.GetSymbolDetailResp.symbol:type_name -> trade.TradeSymbol
-	27, // 7: trade.GetSymbolDetailResp.spot:type_name -> trade.TradeSymbolSpot
-	28, // 8: trade.GetSymbolDetailResp.contract:type_name -> trade.TradeSymbolContract
-	29, // 9: trade.GetSymbolDetailResp.leverage_configs:type_name -> trade.TradeSymbolLeverageConfig
-	24, // 10: trade.PlaceOrderReq.market_type:type_name -> trade.MarketType
-	30, // 11: trade.PlaceOrderReq.side:type_name -> trade.TradeSide
-	31, // 12: trade.PlaceOrderReq.position_side:type_name -> trade.PositionSide
-	32, // 13: trade.PlaceOrderReq.order_type:type_name -> trade.OrderType
-	33, // 14: trade.PlaceOrderReq.time_in_force:type_name -> trade.TimeInForce
-	34, // 15: trade.PlaceOrderReq.trigger_type:type_name -> trade.TriggerType
-	35, // 16: trade.PlaceOrderReq.margin_mode:type_name -> trade.MarginMode
-	36, // 17: trade.PlaceOrderReq.order_source:type_name -> trade.OrderSourceType
-	37, // 18: trade.PlaceOrderReq.trigger_kind:type_name -> trade.TriggerKind
-	23, // 19: trade.PlaceOrderResp.base:type_name -> common.RespBase
-	38, // 20: trade.PlaceOrderResp.order:type_name -> trade.TradeOrder
-	24, // 21: trade.CancelAllOrdersReq.market_type:type_name -> trade.MarketType
-	30, // 22: trade.CancelAllOrdersReq.side:type_name -> trade.TradeSide
-	31, // 23: trade.CancelAllOrdersReq.position_side:type_name -> trade.PositionSide
-	23, // 24: trade.CancelAllOrdersResp.base:type_name -> common.RespBase
-	39, // 25: trade.GetOrderListReq.page:type_name -> common.PageReq
-	24, // 26: trade.GetOrderListReq.market_type:type_name -> trade.MarketType
-	40, // 27: trade.GetOrderListReq.status:type_name -> trade.OrderStatus
-	30, // 28: trade.GetOrderListReq.side:type_name -> trade.TradeSide
-	41, // 29: trade.GetOrderListReq.time_range:type_name -> trade.TimeRange
-	23, // 30: trade.GetOrderListResp.base:type_name -> common.RespBase
-	38, // 31: trade.GetOrderListResp.data:type_name -> trade.TradeOrder
-	23, // 32: trade.GetOrderDetailResp.base:type_name -> common.RespBase
-	38, // 33: trade.GetOrderDetailResp.order:type_name -> trade.TradeOrder
-	42, // 34: trade.GetOrderDetailResp.spot:type_name -> trade.TradeOrderSpot
-	43, // 35: trade.GetOrderDetailResp.contract:type_name -> trade.TradeOrderContract
-	39, // 36: trade.GetFillListReq.page:type_name -> common.PageReq
-	24, // 37: trade.GetFillListReq.market_type:type_name -> trade.MarketType
-	41, // 38: trade.GetFillListReq.time_range:type_name -> trade.TimeRange
-	23, // 39: trade.GetFillListResp.base:type_name -> common.RespBase
-	44, // 40: trade.GetFillListResp.data:type_name -> trade.TradeFill
-	24, // 41: trade.GetPositionListReq.market_type:type_name -> trade.MarketType
-	23, // 42: trade.GetPositionListResp.base:type_name -> common.RespBase
-	45, // 43: trade.GetPositionListResp.data:type_name -> trade.ContractPosition
-	24, // 44: trade.GetMarginAccountListReq.market_type:type_name -> trade.MarketType
-	23, // 45: trade.GetMarginAccountListResp.base:type_name -> common.RespBase
-	46, // 46: trade.GetMarginAccountListResp.data:type_name -> trade.ContractMarginAccount
-	24, // 47: trade.GetLeverageConfigReq.market_type:type_name -> trade.MarketType
-	35, // 48: trade.GetLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
-	23, // 49: trade.GetLeverageConfigResp.base:type_name -> common.RespBase
-	47, // 50: trade.GetLeverageConfigResp.data:type_name -> trade.ContractLeverageConfig
-	24, // 51: trade.SetLeverageReq.market_type:type_name -> trade.MarketType
-	35, // 52: trade.SetLeverageReq.margin_mode:type_name -> trade.MarginMode
-	48, // 53: trade.SetLeverageReq.position_mode:type_name -> trade.PositionMode
-	1,  // 54: trade.TradeApp.GetSymbolList:input_type -> trade.GetSymbolListReq
-	3,  // 55: trade.TradeApp.GetSymbolDetail:input_type -> trade.GetSymbolDetailReq
-	5,  // 56: trade.TradeApp.PlaceOrder:input_type -> trade.PlaceOrderReq
-	7,  // 57: trade.TradeApp.CancelOrder:input_type -> trade.CancelOrderReq
-	8,  // 58: trade.TradeApp.CancelAllOrders:input_type -> trade.CancelAllOrdersReq
-	10, // 59: trade.TradeApp.GetOrderList:input_type -> trade.GetOrderListReq
-	12, // 60: trade.TradeApp.GetOrderDetail:input_type -> trade.GetOrderDetailReq
-	14, // 61: trade.TradeApp.GetFillList:input_type -> trade.GetFillListReq
-	16, // 62: trade.TradeApp.GetPositionList:input_type -> trade.GetPositionListReq
-	18, // 63: trade.TradeApp.GetMarginAccountList:input_type -> trade.GetMarginAccountListReq
-	20, // 64: trade.TradeApp.GetLeverageConfig:input_type -> trade.GetLeverageConfigReq
-	22, // 65: trade.TradeApp.SetLeverage:input_type -> trade.SetLeverageReq
-	2,  // 66: trade.TradeApp.GetSymbolList:output_type -> trade.GetSymbolListResp
-	4,  // 67: trade.TradeApp.GetSymbolDetail:output_type -> trade.GetSymbolDetailResp
-	6,  // 68: trade.TradeApp.PlaceOrder:output_type -> trade.PlaceOrderResp
-	0,  // 69: trade.TradeApp.CancelOrder:output_type -> trade.AppCommonResp
-	9,  // 70: trade.TradeApp.CancelAllOrders:output_type -> trade.CancelAllOrdersResp
-	11, // 71: trade.TradeApp.GetOrderList:output_type -> trade.GetOrderListResp
-	13, // 72: trade.TradeApp.GetOrderDetail:output_type -> trade.GetOrderDetailResp
-	15, // 73: trade.TradeApp.GetFillList:output_type -> trade.GetFillListResp
-	17, // 74: trade.TradeApp.GetPositionList:output_type -> trade.GetPositionListResp
-	19, // 75: trade.TradeApp.GetMarginAccountList:output_type -> trade.GetMarginAccountListResp
-	21, // 76: trade.TradeApp.GetLeverageConfig:output_type -> trade.GetLeverageConfigResp
-	0,  // 77: trade.TradeApp.SetLeverage:output_type -> trade.AppCommonResp
-	66, // [66:78] is the sub-list for method output_type
-	54, // [54:66] is the sub-list for method input_type
-	54, // [54:54] is the sub-list for extension type_name
-	54, // [54:54] is the sub-list for extension extendee
-	0,  // [0:54] is the sub-list for field type_name
+	25, // 0: trade.AppCommonResp.base:type_name -> common.RespBase
+	26, // 1: trade.GetSymbolListReq.market_type:type_name -> trade.MarketType
+	27, // 2: trade.GetSymbolListReq.status:type_name -> trade.SymbolStatus
+	25, // 3: trade.GetSymbolListResp.base:type_name -> common.RespBase
+	28, // 4: trade.GetSymbolListResp.data:type_name -> trade.TradeSymbol
+	25, // 5: trade.GetSymbolDetailResp.base:type_name -> common.RespBase
+	5,  // 6: trade.GetSymbolDetailResp.data:type_name -> trade.GetSymbolDetailData
+	28, // 7: trade.GetSymbolDetailData.symbol:type_name -> trade.TradeSymbol
+	29, // 8: trade.GetSymbolDetailData.spot:type_name -> trade.TradeSymbolSpot
+	30, // 9: trade.GetSymbolDetailData.contract:type_name -> trade.TradeSymbolContract
+	31, // 10: trade.GetSymbolDetailData.leverage_configs:type_name -> trade.TradeSymbolLeverageConfig
+	26, // 11: trade.PlaceOrderReq.market_type:type_name -> trade.MarketType
+	32, // 12: trade.PlaceOrderReq.side:type_name -> trade.TradeSide
+	33, // 13: trade.PlaceOrderReq.position_side:type_name -> trade.PositionSide
+	34, // 14: trade.PlaceOrderReq.order_type:type_name -> trade.OrderType
+	35, // 15: trade.PlaceOrderReq.time_in_force:type_name -> trade.TimeInForce
+	36, // 16: trade.PlaceOrderReq.trigger_type:type_name -> trade.TriggerType
+	37, // 17: trade.PlaceOrderReq.margin_mode:type_name -> trade.MarginMode
+	38, // 18: trade.PlaceOrderReq.order_source:type_name -> trade.OrderSourceType
+	39, // 19: trade.PlaceOrderReq.trigger_kind:type_name -> trade.TriggerKind
+	25, // 20: trade.PlaceOrderResp.base:type_name -> common.RespBase
+	40, // 21: trade.PlaceOrderResp.data:type_name -> trade.TradeOrder
+	26, // 22: trade.CancelAllOrdersReq.market_type:type_name -> trade.MarketType
+	32, // 23: trade.CancelAllOrdersReq.side:type_name -> trade.TradeSide
+	33, // 24: trade.CancelAllOrdersReq.position_side:type_name -> trade.PositionSide
+	25, // 25: trade.CancelAllOrdersResp.base:type_name -> common.RespBase
+	41, // 26: trade.GetOrderListReq.page:type_name -> common.PageReq
+	26, // 27: trade.GetOrderListReq.market_type:type_name -> trade.MarketType
+	42, // 28: trade.GetOrderListReq.status:type_name -> trade.OrderStatus
+	32, // 29: trade.GetOrderListReq.side:type_name -> trade.TradeSide
+	43, // 30: trade.GetOrderListReq.time_range:type_name -> trade.TimeRange
+	25, // 31: trade.GetOrderListResp.base:type_name -> common.RespBase
+	40, // 32: trade.GetOrderListResp.data:type_name -> trade.TradeOrder
+	25, // 33: trade.GetOrderDetailResp.base:type_name -> common.RespBase
+	15, // 34: trade.GetOrderDetailResp.data:type_name -> trade.GetOrderDetailData
+	40, // 35: trade.GetOrderDetailData.order:type_name -> trade.TradeOrder
+	44, // 36: trade.GetOrderDetailData.spot:type_name -> trade.TradeOrderSpot
+	45, // 37: trade.GetOrderDetailData.contract:type_name -> trade.TradeOrderContract
+	41, // 38: trade.GetFillListReq.page:type_name -> common.PageReq
+	26, // 39: trade.GetFillListReq.market_type:type_name -> trade.MarketType
+	43, // 40: trade.GetFillListReq.time_range:type_name -> trade.TimeRange
+	25, // 41: trade.GetFillListResp.base:type_name -> common.RespBase
+	46, // 42: trade.GetFillListResp.data:type_name -> trade.TradeFill
+	26, // 43: trade.GetPositionListReq.market_type:type_name -> trade.MarketType
+	25, // 44: trade.GetPositionListResp.base:type_name -> common.RespBase
+	47, // 45: trade.GetPositionListResp.data:type_name -> trade.ContractPosition
+	26, // 46: trade.GetMarginAccountListReq.market_type:type_name -> trade.MarketType
+	25, // 47: trade.GetMarginAccountListResp.base:type_name -> common.RespBase
+	48, // 48: trade.GetMarginAccountListResp.data:type_name -> trade.ContractMarginAccount
+	26, // 49: trade.GetLeverageConfigReq.market_type:type_name -> trade.MarketType
+	37, // 50: trade.GetLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
+	25, // 51: trade.GetLeverageConfigResp.base:type_name -> common.RespBase
+	49, // 52: trade.GetLeverageConfigResp.data:type_name -> trade.ContractLeverageConfig
+	26, // 53: trade.SetLeverageReq.market_type:type_name -> trade.MarketType
+	37, // 54: trade.SetLeverageReq.margin_mode:type_name -> trade.MarginMode
+	50, // 55: trade.SetLeverageReq.position_mode:type_name -> trade.PositionMode
+	1,  // 56: trade.TradeApp.GetSymbolList:input_type -> trade.GetSymbolListReq
+	3,  // 57: trade.TradeApp.GetSymbolDetail:input_type -> trade.GetSymbolDetailReq
+	6,  // 58: trade.TradeApp.PlaceOrder:input_type -> trade.PlaceOrderReq
+	8,  // 59: trade.TradeApp.CancelOrder:input_type -> trade.CancelOrderReq
+	9,  // 60: trade.TradeApp.CancelAllOrders:input_type -> trade.CancelAllOrdersReq
+	11, // 61: trade.TradeApp.GetOrderList:input_type -> trade.GetOrderListReq
+	13, // 62: trade.TradeApp.GetOrderDetail:input_type -> trade.GetOrderDetailReq
+	16, // 63: trade.TradeApp.GetFillList:input_type -> trade.GetFillListReq
+	18, // 64: trade.TradeApp.GetPositionList:input_type -> trade.GetPositionListReq
+	20, // 65: trade.TradeApp.GetMarginAccountList:input_type -> trade.GetMarginAccountListReq
+	22, // 66: trade.TradeApp.GetLeverageConfig:input_type -> trade.GetLeverageConfigReq
+	24, // 67: trade.TradeApp.SetLeverage:input_type -> trade.SetLeverageReq
+	2,  // 68: trade.TradeApp.GetSymbolList:output_type -> trade.GetSymbolListResp
+	4,  // 69: trade.TradeApp.GetSymbolDetail:output_type -> trade.GetSymbolDetailResp
+	7,  // 70: trade.TradeApp.PlaceOrder:output_type -> trade.PlaceOrderResp
+	0,  // 71: trade.TradeApp.CancelOrder:output_type -> trade.AppCommonResp
+	10, // 72: trade.TradeApp.CancelAllOrders:output_type -> trade.CancelAllOrdersResp
+	12, // 73: trade.TradeApp.GetOrderList:output_type -> trade.GetOrderListResp
+	14, // 74: trade.TradeApp.GetOrderDetail:output_type -> trade.GetOrderDetailResp
+	17, // 75: trade.TradeApp.GetFillList:output_type -> trade.GetFillListResp
+	19, // 76: trade.TradeApp.GetPositionList:output_type -> trade.GetPositionListResp
+	21, // 77: trade.TradeApp.GetMarginAccountList:output_type -> trade.GetMarginAccountListResp
+	23, // 78: trade.TradeApp.GetLeverageConfig:output_type -> trade.GetLeverageConfigResp
+	0,  // 79: trade.TradeApp.SetLeverage:output_type -> trade.AppCommonResp
+	68, // [68:80] is the sub-list for method output_type
+	56, // [56:68] is the sub-list for method input_type
+	56, // [56:56] is the sub-list for extension type_name
+	56, // [56:56] is the sub-list for extension extendee
+	0,  // [0:56] is the sub-list for field type_name
 }
 
 func init() { file_proto_trade_trade_app_proto_init() }
@@ -1801,7 +1897,7 @@ func file_proto_trade_trade_app_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_trade_trade_app_proto_rawDesc), len(file_proto_trade_trade_app_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   23,
+			NumMessages:   25,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

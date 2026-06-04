@@ -46,7 +46,7 @@ func (l *GetMyRechargeStatLogic) GetMyRechargeStat(in *payment.GetMyRechargeStat
 		// Return default stat if not found
 		return &payment.GetMyRechargeStatResp{
 			Base: helper.OkResp(),
-			Stat: &payment.UserRechargeStat{
+			Data: &payment.UserRechargeStat{
 				TenantId: tenantId,
 				UserId:   userId,
 			},
@@ -55,6 +55,6 @@ func (l *GetMyRechargeStatLogic) GetMyRechargeStat(in *payment.GetMyRechargeStat
 
 	return &payment.GetMyRechargeStatResp{
 		Base: helper.OkResp(),
-		Stat: toUserRechargeStatProto(stat),
+		Data: toUserRechargeStatProto(stat),
 	}, nil
 }

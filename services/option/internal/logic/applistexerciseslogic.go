@@ -65,6 +65,5 @@ func (l *AppListExercisesLogic) AppListExercises(in *option.AppListExercisesReq)
 	return &option.AppListExercisesResp{
 		Base: pageutil.Base(cursor, limit, len(items), total, lastID),
 		Data: data,
-		Page: pageutil.Output(in.Page, limit),
 	}, nil
 }

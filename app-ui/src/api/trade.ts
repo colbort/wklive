@@ -29,24 +29,30 @@ export function apiGetTradeOptions(): Promise<RespBase & { data: OptionsGroup[] 
   return http.get('/trade/options').then((res) => res.data)
 }
 
-export function apiTradeGetSymbolList(params: GetSymbolListReq): Promise<RespBase & { data: TradeSymbol[] }> {
+export function apiTradeGetSymbolList(
+  params: GetSymbolListReq,
+): Promise<RespBase & { data: TradeSymbol[] }> {
   return http.get('/trade/symbols', { params: compactParams(params) }).then((res) => res.data)
 }
 
-export function apiTradeGetSymbolDetail(
-  params: GetSymbolDetailReq,
-): Promise<
+export function apiTradeGetSymbolDetail(params: GetSymbolDetailReq): Promise<
   RespBase & {
-    symbol: TradeSymbol
-    spot: TradeSymbolSpot
-    contract: TradeSymbolContract
-    leverageConfigs: TradeSymbolLeverageConfig[]
+    data: {
+      symbol: TradeSymbol
+      spot: TradeSymbolSpot
+      contract: TradeSymbolContract
+      leverageConfigs: TradeSymbolLeverageConfig[]
+    }
   }
 > {
-  return http.get('/trade/symbols/detail', { params: compactParams(params) }).then((res) => res.data)
+  return http
+    .get('/trade/symbols/detail', { params: compactParams(params) })
+    .then((res) => res.data)
 }
 
-export function apiTradePlaceOrder(params: PlaceOrderReq): Promise<RespBase & { order: TradeOrder }> {
+export function apiTradePlaceOrder(
+  params: PlaceOrderReq,
+): Promise<RespBase & { data: TradeOrder }> {
   return http.post('/trade/orders', params).then((res) => res.data)
 }
 
@@ -56,21 +62,27 @@ export function apiTradeCancelOrder(params: CancelOrderReq): Promise<RespBase> {
 
 export function apiTradeCancelAllOrders(
   params: CancelAllOrdersReq,
-): Promise<RespBase & { affectedCount: number }> {
+): Promise<RespBase & { data: number }> {
   return http.post('/trade/orders/cancel-all', params).then((res) => res.data)
 }
 
-export function apiTradeGetOrderList(params: GetOrderListReq): Promise<RespBase & { data: TradeOrder[] }> {
+export function apiTradeGetOrderList(
+  params: GetOrderListReq,
+): Promise<RespBase & { data: TradeOrder[] }> {
   return http.get('/trade/orders', { params: compactParams(params) }).then((res) => res.data)
 }
 
 export function apiTradeGetOrderDetail(
   params: GetOrderDetailReq,
-): Promise<RespBase & { order: TradeOrder; spot: TradeSymbolSpot; contract: TradeSymbolContract }> {
+): Promise<
+  RespBase & { data: { order: TradeOrder; spot: TradeSymbolSpot; contract: TradeSymbolContract } }
+> {
   return http.get('/trade/orders/detail', { params: compactParams(params) }).then((res) => res.data)
 }
 
-export function apiTradeGetFillList(params: GetFillListReq): Promise<RespBase & { data: TradeFill[] }> {
+export function apiTradeGetFillList(
+  params: GetFillListReq,
+): Promise<RespBase & { data: TradeFill[] }> {
   return http.get('/trade/fills', { params: compactParams(params) }).then((res) => res.data)
 }
 
@@ -83,13 +95,17 @@ export function apiTradeGetPositionList(
 export function apiTradeGetMarginAccountList(
   params: GetMarginAccountListReq,
 ): Promise<RespBase & { data: ContractMarginAccount[] }> {
-  return http.get('/trade/margin-accounts', { params: compactParams(params) }).then((res) => res.data)
+  return http
+    .get('/trade/margin-accounts', { params: compactParams(params) })
+    .then((res) => res.data)
 }
 
 export function apiTradeGetLeverageConfig(
   params: GetLeverageConfigReq,
 ): Promise<RespBase & { data: ContractLeverageConfig }> {
-  return http.get('/trade/leverage-config', { params: compactParams(params) }).then((res) => res.data)
+  return http
+    .get('/trade/leverage-config', { params: compactParams(params) })
+    .then((res) => res.data)
 }
 
 export function apiTradeSetLeverage(params: SetLeverageReq): Promise<RespBase> {

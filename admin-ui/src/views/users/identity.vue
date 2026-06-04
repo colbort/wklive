@@ -355,63 +355,63 @@ onMounted(fetchOptions)
       <el-tabs v-if="detailData" type="border-card">
         <!-- 用户基础信息标签页 -->
         <el-tab-pane :label="t('users.baseInfo')">
-          <el-descriptions v-if="detailData.base" :column="2" border>
+          <el-descriptions v-if="detailData.user" :column="2" border>
             <el-descriptions-item :label="t('common.id')" width="150px">
-              {{ detailData.base.id }}
+              {{ detailData.user.id }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('common.tenantId')">
-              {{ detailData.base.tenantId }}
+              {{ detailData.user.tenantId }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('users.userNo')">
-              {{ detailData.base.userNo }}
+              {{ detailData.user.userNo }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('users.username')">
-              {{ detailData.base.username }}
+              {{ detailData.user.username }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('users.nickname')">
-              {{ detailData.base.nickname || '--' }}
+              {{ detailData.user.nickname || '--' }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('users.language')">
-              {{ detailData.base.language || '--' }}
+              {{ detailData.user.language || '--' }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('users.timezone')">
-              {{ detailData.base.timezone || '--' }}
+              {{ detailData.user.timezone || '--' }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('users.inviteCode')">
-              {{ detailData.base.inviteCode || '--' }}
+              {{ detailData.user.inviteCode || '--' }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('common.status')">
-              {{ detailData.base.status }}
+              {{ detailData.user.status }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('users.memberLevel')">
-              {{ detailData.base.memberLevel }}
+              {{ detailData.user.memberLevel }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('users.registerType')">
-              {{ detailData.base.registerType }}
+              {{ detailData.user.registerType }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('users.source')">
-              {{ detailData.base.source || '--' }}
+              {{ detailData.user.source || '--' }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('users.referrerUserId')">
-              {{ detailData.base.referrerUserId || '--' }}
+              {{ detailData.user.referrerUserId || '--' }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('users.lastLoginIp')">
-              {{ detailData.base.lastLoginIp || '--' }}
+              {{ detailData.user.lastLoginIp || '--' }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('users.lastLoginTime')">
-              {{ formatDate(detailData.base.lastLoginTime) }}
+              {{ formatDate(detailData.user.lastLoginTime) }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('users.registerIp')">
-              {{ detailData.base.registerIp || '--' }}
+              {{ detailData.user.registerIp || '--' }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('users.registerTime')">
-              {{ formatDate(detailData.base.registerTime) }}
+              {{ formatDate(detailData.user.registerTime) }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('common.createTimes')">
-              {{ formatDate(detailData.base.createTimes) }}
+              {{ formatDate(detailData.user.createTimes) }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('common.updateTimes')">
-              {{ formatDate(detailData.base.updateTimes) }}
+              {{ formatDate(detailData.user.updateTimes) }}
             </el-descriptions-item>
           </el-descriptions>
         </el-tab-pane>

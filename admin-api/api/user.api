@@ -83,7 +83,7 @@ type UserSecurity {
 }
 
 type UserDetail {
-	base     UserBase       `json:"base"`
+	user     UserBase       `json:"user"`
 	identity UserIdentity   `json:"identity"`
 	security UserSecurity   `json:"security"`
 	banks    []UserBankItem `json:"banks"`
@@ -187,7 +187,7 @@ type CreateUserReq {
 
 type CreateUserResp {
 	RespBase
-	userId int64 `json:"userId"`
+	data int64 `json:"data"`
 }
 
 type CheckUserReferrerReq {
@@ -201,10 +201,14 @@ type UserReferrerInfo {
 	inviteCode string `json:"inviteCode,optional"`
 }
 
+type CheckUserReferrerData {
+	exists   bool             `json:"exists"`
+	referrer UserReferrerInfo `json:"referrer,optional"`
+}
+
 type CheckUserReferrerResp {
 	RespBase
-	exists bool             `json:"exists"`
-	data   UserReferrerInfo `json:"data,optional"`
+	data CheckUserReferrerData `json:"data"`
 }
 
 type GetUserOptionsResp {
@@ -213,12 +217,12 @@ type GetUserOptionsResp {
 }
 
 type GetUserDetailReq {
-	userId   int64 `path:"userId"`
+	userId int64 `path:"userId"`
 }
 
 type GetUserDetailResp {
 	RespBase
-	detail UserDetail `json:"detail"`
+	data UserDetail `json:"data"`
 }
 
 type ListUsersReq {
@@ -264,7 +268,7 @@ type UpdateUserBaseReq {
 
 type UpdateUserBaseResp {
 	RespBase
-	detail UserDetail `json:"detail"`
+	data UserDetail `json:"data"`
 }
 
 type UpdateUserStatusReq {
@@ -315,7 +319,7 @@ type GetUserSecurityReq {
 
 type GetUserSecurityResp {
 	RespBase
-	security UserSecurity `json:"security"`
+	data UserSecurity `json:"data"`
 }
 
 type ResetUserGoogle2FAReq {
@@ -354,7 +358,7 @@ type ReviewUserIdentityReq {
 
 type ReviewUserIdentityResp {
 	RespBase
-	identity UserIdentity `json:"identity"`
+	data UserIdentity `json:"data"`
 }
 
 type ListUserBanksReq {
@@ -377,7 +381,7 @@ type GetUserBankReq {
 
 type GetUserBankResp {
 	RespBase
-	bank UserBankItem `json:"bank"`
+	data UserBankItem `json:"data"`
 }
 
 type AddUserBankReq {
@@ -395,7 +399,7 @@ type AddUserBankReq {
 
 type AddUserBankResp {
 	RespBase
-	bank UserBankItem `json:"bank"`
+	data UserBankItem `json:"data"`
 }
 
 type UpdateUserBankReq {
@@ -414,7 +418,7 @@ type UpdateUserBankReq {
 
 type UpdateUserBankResp {
 	RespBase
-	bank UserBankItem `json:"bank"`
+	data UserBankItem `json:"data"`
 }
 
 type DeleteUserBankReq {

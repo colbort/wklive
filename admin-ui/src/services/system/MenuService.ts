@@ -14,6 +14,12 @@ import type { OptionGroup } from '@/services'
 
 export type MenuNode = { id: number; name: string; children?: MenuNode[] }
 export type PermItem = { key: string; name: string; group?: string }
+export type Menu = SysMenuItem
+export type Permission = PermItem
+export type MenuQueryParams = SysMenuListReq
+export type CreateMenuRequest = SysMenuCreateReq
+export type UpdateMenuRequest = SysMenuUpdateReq
+export type SysMenuListResp = SysMenuItem[]
 
 export type SysMenuCreateReq = {
   parentId: number

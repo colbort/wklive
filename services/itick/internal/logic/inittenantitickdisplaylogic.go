@@ -113,8 +113,10 @@ func (l *InitTenantItickDisplayLogic) InitTenantItickDisplay(in *itick.InitTenan
 	// }
 
 	return &itick.InitTenantItickDisplayResp{
-		Base:          helper.OkResp(),
-		CategoryCount: categoryCount,
-		ProductCount:  productCount,
+		Base: helper.OkResp(),
+		Data: &itick.InitTenantItickDisplayData{
+			CategoryCount: categoryCount,
+			ProductCount:  productCount,
+		},
 	}, nil
 }

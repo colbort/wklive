@@ -25,8 +25,8 @@ export function apiGetUserOptions(): Promise<RespBase & { data: OptionsGroup[] }
 export function apiRegister(params: RegisterReq): Promise<RespBase & RegisterResp> {
   return http.post('/user/register', params).then((res) => {
     const data = res.data
-    if (data.token?.accessToken) setAccessToken(data.token.accessToken)
-    if (data.token?.refreshToken) setRefreshToken(data.token.refreshToken)
+    if (data.data?.token?.accessToken) setAccessToken(data.data.token.accessToken)
+    if (data.data?.token?.refreshToken) setRefreshToken(data.data.token.refreshToken)
     if (params.tenantCode) setTenantCode(params.tenantCode)
     return data
   })
@@ -35,14 +35,16 @@ export function apiRegister(params: RegisterReq): Promise<RespBase & RegisterRes
 export function apiLogin(params: LoginReq): Promise<RespBase & LoginResp> {
   return http.post('/user/login', params).then((res) => {
     const data = res.data
-    if (data.token?.accessToken) setAccessToken(data.token.accessToken)
-    if (data.token?.refreshToken) setRefreshToken(data.token.refreshToken)
+    if (data.data?.token?.accessToken) setAccessToken(data.data.token.accessToken)
+    if (data.data?.token?.refreshToken) setRefreshToken(data.data.token.refreshToken)
     if (params.tenantCode) setTenantCode(params.tenantCode)
     return data
   })
 }
 
-export function apiGuestLogin(params: Partial<GuestLoginReq> & Pick<GuestLoginReq, 'tenantCode'>): Promise<RespBase & { data: GuestLoginData }> {
+export function apiGuestLogin(
+  params: Partial<GuestLoginReq> & Pick<GuestLoginReq, 'tenantCode'>,
+): Promise<RespBase & { data: GuestLoginData }> {
   const guestFingerprint = collectGuestFingerprint()
   const payload: GuestLoginReq = {
     ...params,
@@ -67,8 +69,8 @@ export function apiGuestLogin(params: Partial<GuestLoginReq> & Pick<GuestLoginRe
 export function apiRefreshToken(params: RefreshTokenReq): Promise<RespBase & RefreshTokenResp> {
   return http.post('/user/refresh-token', params).then((res) => {
     const data = res.data
-    if (data.token?.accessToken) setAccessToken(data.token.accessToken)
-    if (data.token?.refreshToken) setRefreshToken(data.token.refreshToken)
+    if (data.data?.accessToken) setAccessToken(data.data.accessToken)
+    if (data.data?.refreshToken) setRefreshToken(data.data.refreshToken)
     if (params.tenantCode) setTenantCode(params.tenantCode)
     return data
   })

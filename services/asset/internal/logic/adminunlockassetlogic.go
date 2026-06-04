@@ -109,5 +109,5 @@ func (l *AdminUnlockAssetLogic) AdminUnlockAsset(in *asset.AdminUnlockAssetReq) 
 		return nil, err
 	}
 
-	return &asset.AdminChangeAssetResp{Base: helper.OkResp(), BizNo: in.BizNo, Asset: toUserAssetProto(after)}, nil
+	return &asset.AdminChangeAssetResp{Base: helper.OkResp(), Data: &asset.AdminChangeAssetData{BizNo: in.BizNo, Asset: toUserAssetProto(after)}}, nil
 }

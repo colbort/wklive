@@ -55,9 +55,7 @@ export type SyncCategoryProductsReq = {
   id: number
 }
 
-export type SyncCategoryProductsResp = {
-  taskNo: string
-}
+export type SyncCategoryProductsResp = string
 
 // ===== ITICK服务 =====
 

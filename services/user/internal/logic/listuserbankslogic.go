@@ -73,6 +73,6 @@ func (l *ListUserBanksLogic) ListUserBanks(in *user.ListUserBanksReq) (*user.Lis
 
 	return &user.ListUserBanksResp{
 		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(items), total, lastID),
-		List: data,
+		Data: data,
 	}, nil
 }

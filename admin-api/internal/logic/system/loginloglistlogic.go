@@ -6,10 +6,10 @@ package system
 import (
 	"context"
 
+	"wklive/admin-api/internal/logicutil"
+
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/common"
-	"wklive/proto/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,40 +29,5 @@ func NewLoginLogListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Logi
 }
 
 func (l *LoginLogListLogic) LoginLogList(req *types.LoginLogListReq) (resp *types.LoginLogListResp, err error) {
-	result, err := l.svcCtx.SystemCli.LoginLogList(l.ctx, &system.LoginLogListReq{
-		Page: &common.PageReq{
-			Cursor: req.Cursor,
-			Limit:  req.Limit,
-		},
-		Username: req.Username,
-		Success:  req.Success,
-	})
-	if err != nil {
-		return nil, err
-	}
-	data := make([]types.LoginLogItem, 0)
-	for _, item := range result.Data {
-		data = append(data, types.LoginLogItem{
-			Id:       item.Id,
-			UserId:   item.UserId,
-			Username: item.Username,
-			Ip:       item.Ip,
-			Ua:       item.Ua,
-			Success:  item.Success,
-			Msg:      item.Msg,
-			LoginAt:  item.LoginAt,
-		})
-	}
-	return &types.LoginLogListResp{
-		RespBase: types.RespBase{
-			Code:       result.Base.Code,
-			Msg:        result.Base.Msg,
-			Total:      result.Base.Total,
-			HasNext:    result.Base.HasNext,
-			HasPrev:    result.Base.HasPrev,
-			NextCursor: result.Base.NextCursor,
-			PrevCursor: result.Base.PrevCursor,
-		},
-		Data: data,
-	}, nil
+	return logicutil.Proxy[types.LoginLogListResp](l.ctx, req, l.svcCtx.SystemCli.LoginLogList)
 }

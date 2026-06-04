@@ -33,16 +33,19 @@ func (l *LoginLogic) Login(req *types.LoginReq, ip string) (resp *types.LoginRes
 		Password:   req.Password,
 		GoogleCode: req.GoogleCode,
 		Ip:         ip,
-		Ua:         "",
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	resp = new(types.LoginResp)
-	resp.Code = result.Base.Code
-	resp.Msg = result.Base.Msg
-	resp.Data.Token = result.Token
-	resp.Data.Exp = result.Exp
-	return
+	return &types.LoginResp{
+		RespBase: types.RespBase{
+			Code: result.GetBase().GetCode(),
+			Msg:  result.GetBase().GetMsg(),
+		},
+		Data: types.LoginData{
+			Token: result.GetData().GetToken(),
+			Exp:   result.GetData().GetExp(),
+		},
+	}, nil
 }

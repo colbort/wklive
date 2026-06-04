@@ -121,8 +121,7 @@ type CryptoRechargeTx {
 // request / response
 // ====================
 // 当前用户累计充值统计
-type GetMyRechargeStatReq {
-}
+type GetMyRechargeStatReq {}
 
 type GetMyRechargeStatResp {
 	RespBase
@@ -172,15 +171,19 @@ type CreateCryptoRechargeOrderReq {
 	bizOrderNo     string `json:"bizOrderNo,optional"`
 }
 
+type CreateCryptoRechargeOrderData {
+	order   RechargeOrder         `json:"order"`
+	address CryptoRechargeAddress `json:"address"`
+}
+
 type CreateCryptoRechargeOrderResp {
 	RespBase
-	data    RechargeOrder         `json:"data"`
-	address CryptoRechargeAddress `json:"address"`
+	data CreateCryptoRechargeOrderData `json:"data"`
 }
 
 // 查询我的订单详情
 type GetMyRechargeOrderReq {
-	orderNo  string `path:"orderNo"`
+	orderNo string `path:"orderNo"`
 }
 
 type GetMyRechargeOrderResp {
@@ -205,12 +208,12 @@ type ListMyRechargeOrdersResp {
 
 // 取消未支付订单
 type CancelMyRechargeOrderReq {
-	orderNo  string `path:"orderNo"`
+	orderNo string `path:"orderNo"`
 }
 
 // 轮询订单状态
 type QueryMyRechargeOrderStatusReq {
-	orderNo  string `path:"orderNo"`
+	orderNo string `path:"orderNo"`
 }
 
 type QueryMyRechargeOrderStatusResp {
@@ -261,8 +264,8 @@ type ListMyCryptoRechargeTxsResp {
 
 // 我的链上充值交易详情
 type GetMyCryptoRechargeTxReq {
-	id       int64  `path:"id"`
-	txHash   string `form:"txHash,optional"`
+	id     int64  `path:"id"`
+	txHash string `form:"txHash,optional"`
 }
 
 type GetMyCryptoRechargeTxResp {
@@ -307,13 +310,13 @@ type CreateWithdrawOrderReq {
 
 type CreateWithdrawOrderResp {
 	RespBase
-	id int64 `json:"id"`
+	data int64 `json:"data"`
 }
 
 // 获取提现订单列表
 type ListMyWithdrawOrdersReq {
 	PageReq
-	status   int64 `form:"status,optional"` // 0未知 1待处理 2处理中 3成功 4失败
+	status int64 `form:"status,optional"` // 0未知 1待处理 2处理中 3成功 4失败
 }
 
 type ListMyWithdrawOrdersResp {
@@ -336,8 +339,8 @@ type GetPaymentOptionsResp {
 }
 
 @server (
-	prefix: /app/payment
-	group:  payment
+	prefix:     /app/payment
+	group:      payment
 	middleware: PublicRateLimit
 )
 service app {
@@ -346,9 +349,9 @@ service app {
 }
 
 @server (
-	prefix: /app/payment
-	group:  payment
-	jwt:    Jwt
+	prefix:     /app/payment
+	group:      payment
+	jwt:        Jwt
 	middleware: UserRateLimit
 )
 service app {
@@ -375,9 +378,9 @@ service app {
 }
 
 @server (
-	prefix: /app/payment
-	group:  payment
-	jwt:    Jwt
+	prefix:     /app/payment
+	group:      payment
+	jwt:        Jwt
 	middleware: SensitiveRateLimit
 )
 service app {
@@ -405,3 +408,4 @@ service app {
 	@handler GetMyCryptoRechargeTx
 	get /crypto/recharge/txs/:id (GetMyCryptoRechargeTxReq) returns (GetMyCryptoRechargeTxResp)
 }
+

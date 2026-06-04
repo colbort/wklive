@@ -54,7 +54,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 			return nil, err
 		}
 		if exists != nil {
-			return &trade.PlaceOrderResp{Base: helper.OkResp(), Order: orderToProto(exists)}, nil
+			return &trade.PlaceOrderResp{Base: helper.OkResp(), Data: orderToProto(exists)}, nil
 		}
 	}
 
@@ -269,7 +269,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		l.Errorf("sync redis order book after place order failed, orderId=%d err=%v", order.Id, err)
 	}
 
-	return &trade.PlaceOrderResp{Base: helper.OkResp(), Order: orderToProto(order)}, nil
+	return &trade.PlaceOrderResp{Base: helper.OkResp(), Data: orderToProto(order)}, nil
 }
 
 func (l *PlaceOrderLogic) orderAmountPrice(symbol *models.TTradeSymbol, orderType trade.OrderType, price float64) (float64, error) {

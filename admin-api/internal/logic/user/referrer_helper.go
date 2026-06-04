@@ -26,10 +26,10 @@ func resolveReferrerByInviteCode(svcCtx *svc.ServiceContext, ctx context.Context
 		if err != nil {
 			return nil, err
 		}
-		if result.Base.Code != 200 || len(result.List) == 0 {
+		if result.Base.Code != 200 || len(result.Data) == 0 {
 			return nil, nil
 		}
-		return result.List[0], nil
+		return result.Data[0], nil
 	}
 
 	result, err := svcCtx.UserCli.ListUsers(ctx, &user.ListUsersReq{
@@ -43,9 +43,9 @@ func resolveReferrerByInviteCode(svcCtx *svc.ServiceContext, ctx context.Context
 	if err != nil {
 		return nil, err
 	}
-	if result.Base.Code != 200 || len(result.List) == 0 {
+	if result.Base.Code != 200 || len(result.Data) == 0 {
 		return nil, nil
 	}
 
-	return result.List[0], nil
+	return result.Data[0], nil
 }

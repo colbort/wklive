@@ -173,18 +173,22 @@ type SyncCategoryProductsReq {
 
 type SyncCategoryProductsResp {
 	RespBase
-	taskNo string `json:"taskNo"`
+	data string `json:"data"`
 }
 
 type GetSyncTaskStatusReq {
 	taskNo string `json:"taskNo"`
 }
 
-type GetSyncTaskStatusResp {
-	RespBase
+type GetSyncTaskStatusData {
 	taskNo  string `json:"taskNo"`
 	status  int32  `json:"status"` // 0进行中 1成功 2失败
 	message string `json:"message"`
+}
+
+type GetSyncTaskStatusResp {
+	RespBase
+	data GetSyncTaskStatusData `json:"data"`
 }
 
 // ====================
@@ -386,10 +390,14 @@ type InitTenantItickDisplayReq {
 	overwrite int64 `json:"overwrite"` // 是否覆盖已有配置
 }
 
-type InitTenantItickDisplayResp {
-	RespBase
+type InitTenantItickDisplayData {
 	categoryCount int64 `json:"categoryCount"`
 	productCount  int64 `json:"productCount"`
+}
+
+type InitTenantItickDisplayResp {
+	RespBase
+	data InitTenantItickDisplayData `json:"data"`
 }
 
 type GetItickOptionsResp {

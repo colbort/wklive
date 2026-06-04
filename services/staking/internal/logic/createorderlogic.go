@@ -196,5 +196,11 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.AppCreateOrderReq) (*staking.
 		return nil, err
 	}
 
-	return &staking.AppCreateOrderResp{Base: helper.OkResp(), Id: id, OrderNo: orderNo}, nil
+	return &staking.AppCreateOrderResp{
+		Base: helper.OkResp(),
+		Data: &staking.AppCreateOrderData{
+			Id:      id,
+			OrderNo: orderNo,
+		},
+	}, nil
 }

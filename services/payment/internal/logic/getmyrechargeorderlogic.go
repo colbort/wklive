@@ -56,7 +56,7 @@ func (l *GetMyRechargeOrderLogic) GetMyRechargeOrder(in *payment.GetMyRechargeOr
 	}
 
 	return &payment.GetMyRechargeOrderResp{
-		Base:  helper.OkResp(),
-		Order: toRechargeOrderProto(order),
+		Base: helper.OkResp(),
+		Data: toRechargeOrderProto(order),
 	}, nil
 }

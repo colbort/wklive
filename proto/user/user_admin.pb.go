@@ -241,7 +241,7 @@ func (x *CreateUserReq) GetRemark() string {
 type CreateUserResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Data          int64                  `protobuf:"varint,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -283,9 +283,9 @@ func (x *CreateUserResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *CreateUserResp) GetUserId() int64 {
+func (x *CreateUserResp) GetData() int64 {
 	if x != nil {
-		return x.UserId
+		return x.Data
 	}
 	return 0
 }
@@ -337,7 +337,7 @@ func (x *GetUserDetailReq) GetUserId() int64 {
 type GetUserDetailResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Detail        *UserDetail            `protobuf:"bytes,2,opt,name=detail,proto3" json:"detail,omitempty"`
+	Data          *UserDetail            `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -379,9 +379,9 @@ func (x *GetUserDetailResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *GetUserDetailResp) GetDetail() *UserDetail {
+func (x *GetUserDetailResp) GetData() *UserDetail {
 	if x != nil {
-		return x.Detail
+		return x.Data
 	}
 	return nil
 }
@@ -553,7 +553,7 @@ func (x *ListUsersReq) GetRegisterTimeEnd() int64 {
 type ListUsersResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	List          []*UserItem            `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
+	Data          []*UserItem            `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -595,9 +595,9 @@ func (x *ListUsersResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *ListUsersResp) GetList() []*UserItem {
+func (x *ListUsersResp) GetData() []*UserItem {
 	if x != nil {
-		return x.List
+		return x.Data
 	}
 	return nil
 }
@@ -745,7 +745,7 @@ func (x *UpdateUserBaseReq) GetEmail() string {
 type UpdateUserBaseResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Detail        *UserDetail            `protobuf:"bytes,2,opt,name=detail,proto3" json:"detail,omitempty"`
+	Data          *UserDetail            `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -787,9 +787,9 @@ func (x *UpdateUserBaseResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *UpdateUserBaseResp) GetDetail() *UserDetail {
+func (x *UpdateUserBaseResp) GetData() *UserDetail {
 	if x != nil {
-		return x.Detail
+		return x.Data
 	}
 	return nil
 }
@@ -1261,7 +1261,7 @@ func (x *GetUserSecurityReq) GetUserId() int64 {
 type GetUserSecurityResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Security      *UserSecurity          `protobuf:"bytes,2,opt,name=security,proto3" json:"security,omitempty"`
+	Data          *UserSecurity          `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1303,9 +1303,9 @@ func (x *GetUserSecurityResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *GetUserSecurityResp) GetSecurity() *UserSecurity {
+func (x *GetUserSecurityResp) GetData() *UserSecurity {
 	if x != nil {
-		return x.Security
+		return x.Data
 	}
 	return nil
 }
@@ -1505,7 +1505,7 @@ func (x *ListUserIdentitiesReq) GetIdType() IdType {
 type ListUserIdentitiesResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	List          []*UserIdentityItem    `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
+	Data          []*UserIdentityItem    `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1547,9 +1547,9 @@ func (x *ListUserIdentitiesResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *ListUserIdentitiesResp) GetList() []*UserIdentityItem {
+func (x *ListUserIdentitiesResp) GetData() []*UserIdentityItem {
 	if x != nil {
-		return x.List
+		return x.Data
 	}
 	return nil
 }
@@ -1633,7 +1633,7 @@ func (x *ReviewUserIdentityReq) GetVerifyBy() int64 {
 type ReviewUserIdentityResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Identity      *UserIdentity          `protobuf:"bytes,2,opt,name=identity,proto3" json:"identity,omitempty"`
+	Data          *UserIdentity          `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1675,9 +1675,9 @@ func (x *ReviewUserIdentityResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *ReviewUserIdentityResp) GetIdentity() *UserIdentity {
+func (x *ReviewUserIdentityResp) GetData() *UserIdentity {
 	if x != nil {
-		return x.Identity
+		return x.Data
 	}
 	return nil
 }
@@ -1761,7 +1761,7 @@ func (x *ListUserBanksReq) GetStatus() BankStatus {
 type ListUserBanksResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	List          []*UserBankItem        `protobuf:"bytes,2,rep,name=list,proto3" json:"list,omitempty"`
+	Data          []*UserBankItem        `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1803,9 +1803,9 @@ func (x *ListUserBanksResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *ListUserBanksResp) GetList() []*UserBankItem {
+func (x *ListUserBanksResp) GetData() []*UserBankItem {
 	if x != nil {
-		return x.List
+		return x.Data
 	}
 	return nil
 }
@@ -1865,7 +1865,7 @@ func (x *GetUserBankReq) GetId() int64 {
 type GetUserBankResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Bank          *UserBankItem          `protobuf:"bytes,2,opt,name=bank,proto3" json:"bank,omitempty"`
+	Data          *UserBankItem          `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1907,9 +1907,9 @@ func (x *GetUserBankResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *GetUserBankResp) GetBank() *UserBankItem {
+func (x *GetUserBankResp) GetData() *UserBankItem {
 	if x != nil {
-		return x.Bank
+		return x.Data
 	}
 	return nil
 }
@@ -2033,7 +2033,7 @@ func (x *AddUserBankReq) GetStatus() BankStatus {
 type AddUserBankResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Bank          *UserBankItem          `protobuf:"bytes,2,opt,name=bank,proto3" json:"bank,omitempty"`
+	Data          *UserBankItem          `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2075,9 +2075,9 @@ func (x *AddUserBankResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *AddUserBankResp) GetBank() *UserBankItem {
+func (x *AddUserBankResp) GetData() *UserBankItem {
 	if x != nil {
-		return x.Bank
+		return x.Data
 	}
 	return nil
 }
@@ -2209,7 +2209,7 @@ func (x *UpdateUserBankReq) GetStatus() BankStatus {
 type UpdateUserBankResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Bank          *UserBankItem          `protobuf:"bytes,2,opt,name=bank,proto3" json:"bank,omitempty"`
+	Data          *UserBankItem          `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2251,9 +2251,9 @@ func (x *UpdateUserBankResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *UpdateUserBankResp) GetBank() *UserBankItem {
+func (x *UpdateUserBankResp) GetData() *UserBankItem {
 	if x != nil {
-		return x.Bank
+		return x.Data
 	}
 	return nil
 }
@@ -2457,15 +2457,15 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	"\tsignature\x18\x0e \x01(\tR\tsignature\x12\x16\n" +
 	"\x06source\x18\x0f \x01(\tR\x06source\x12(\n" +
 	"\x10referrer_user_id\x18\x10 \x01(\x03R\x0ereferrerUserId\x12\x16\n" +
-	"\x06remark\x18\x11 \x01(\tR\x06remark\"O\n" +
+	"\x06remark\x18\x11 \x01(\tR\x06remark\"J\n" +
 	"\x0eCreateUserResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\"+\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x12\n" +
+	"\x04data\x18\x02 \x01(\x03R\x04data\"+\n" +
 	"\x10GetUserDetailReq\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"c\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"_\n" +
 	"\x11GetUserDetailResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12(\n" +
-	"\x06detail\x18\x02 \x01(\v2\x10.user.UserDetailR\x06detail\"\xb5\x04\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12$\n" +
+	"\x04data\x18\x02 \x01(\v2\x10.user.UserDetailR\x04data\"\xb5\x04\n" +
 	"\fListUsersReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
@@ -2488,7 +2488,7 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	"\x11register_time_end\x18\x10 \x01(\x03R\x0fregisterTimeEnd\"Y\n" +
 	"\rListUsersResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\"\n" +
-	"\x04list\x18\x02 \x03(\v2\x0e.user.UserItemR\x04list\"\xf5\x02\n" +
+	"\x04data\x18\x02 \x03(\v2\x0e.user.UserItemR\x04data\"\xf5\x02\n" +
 	"\x11UpdateUserBaseReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1a\n" +
@@ -2503,10 +2503,10 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	" \x01(\x03R\x0ereferrerUserId\x12\x16\n" +
 	"\x06remark\x18\v \x01(\tR\x06remark\x12\x14\n" +
 	"\x05phone\x18\f \x01(\tR\x05phone\x12\x14\n" +
-	"\x05email\x18\r \x01(\tR\x05email\"d\n" +
+	"\x05email\x18\r \x01(\tR\x05email\"`\n" +
 	"\x12UpdateUserBaseResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12(\n" +
-	"\x06detail\x18\x02 \x01(\v2\x10.user.UserDetailR\x06detail\"\x8d\x01\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12$\n" +
+	"\x04data\x18\x02 \x01(\v2\x10.user.UserDetailR\x04data\"\x8d\x01\n" +
 	"\x13UpdateUserStatusReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12(\n" +
@@ -2537,10 +2537,10 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\"J\n" +
 	"\x12GetUserSecurityReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\"k\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\"c\n" +
 	"\x13GetUserSecurityResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
-	"\bsecurity\x18\x02 \x01(\v2\x12.user.UserSecurityR\bsecurity\"M\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
+	"\x04data\x18\x02 \x01(\v2\x12.user.UserSecurityR\x04data\"M\n" +
 	"\x15ResetUserGoogle2FAReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\"\xb8\x03\n" +
@@ -2562,16 +2562,16 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	"\aid_type\x18\r \x01(\x0e2\f.user.IdTypeR\x06idType\"j\n" +
 	"\x16ListUserIdentitiesResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
-	"\x04list\x18\x02 \x03(\v2\x16.user.UserIdentityItemR\x04list\"\xc8\x01\n" +
+	"\x04data\x18\x02 \x03(\v2\x16.user.UserIdentityItemR\x04data\"\xc8\x01\n" +
 	"\x15ReviewUserIdentityReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x127\n" +
 	"\rverify_status\x18\x03 \x01(\x0e2\x12.user.VerifyStatusR\fverifyStatus\x12#\n" +
 	"\rreject_reason\x18\x04 \x01(\tR\frejectReason\x12\x1b\n" +
-	"\tverify_by\x18\x05 \x01(\x03R\bverifyBy\"n\n" +
+	"\tverify_by\x18\x05 \x01(\x03R\bverifyBy\"f\n" +
 	"\x16ReviewUserIdentityResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
-	"\bidentity\x18\x02 \x01(\v2\x12.user.UserIdentityR\bidentity\"\xb1\x01\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
+	"\x04data\x18\x02 \x01(\v2\x12.user.UserIdentityR\x04data\"\xb1\x01\n" +
 	"\x10ListUserBanksReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -2580,13 +2580,13 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	"\x06status\x18\x05 \x01(\x0e2\x10.user.BankStatusR\x06status\"a\n" +
 	"\x11ListUserBanksResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
-	"\x04list\x18\x02 \x03(\v2\x12.user.UserBankItemR\x04list\"=\n" +
+	"\x04data\x18\x02 \x03(\v2\x12.user.UserBankItemR\x04data\"=\n" +
 	"\x0eGetUserBankReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\"_\n" +
 	"\x0fGetUserBankResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
-	"\x04bank\x18\x02 \x01(\v2\x12.user.UserBankItemR\x04bank\"\xcf\x02\n" +
+	"\x04data\x18\x02 \x01(\v2\x12.user.UserBankItemR\x04data\"\xcf\x02\n" +
 	"\x0eAddUserBankReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x1b\n" +
@@ -2604,7 +2604,7 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	" \x01(\x0e2\x10.user.BankStatusR\x06status\"_\n" +
 	"\x0fAddUserBankResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
-	"\x04bank\x18\x02 \x01(\v2\x12.user.UserBankItemR\x04bank\"\xe2\x02\n" +
+	"\x04data\x18\x02 \x01(\v2\x12.user.UserBankItemR\x04data\"\xe2\x02\n" +
 	"\x11UpdateUserBankReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\x12\x17\n" +
@@ -2623,7 +2623,7 @@ const file_proto_user_user_admin_proto_rawDesc = "" +
 	"\x06status\x18\v \x01(\x0e2\x10.user.BankStatusR\x06status\"b\n" +
 	"\x12UpdateUserBankResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
-	"\x04bank\x18\x02 \x01(\v2\x12.user.UserBankItemR\x04bank\"@\n" +
+	"\x04data\x18\x02 \x01(\v2\x12.user.UserBankItemR\x04data\"@\n" +
 	"\x11DeleteUserBankReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\"p\n" +
@@ -2732,40 +2732,40 @@ var file_proto_user_user_admin_proto_depIdxs = []int32{
 	36, // 2: user.CreateUserReq.status:type_name -> user.UserStatus
 	34, // 3: user.CreateUserResp.base:type_name -> common.RespBase
 	34, // 4: user.GetUserDetailResp.base:type_name -> common.RespBase
-	37, // 5: user.GetUserDetailResp.detail:type_name -> user.UserDetail
+	37, // 5: user.GetUserDetailResp.data:type_name -> user.UserDetail
 	38, // 6: user.ListUsersReq.page:type_name -> common.PageReq
 	36, // 7: user.ListUsersReq.status:type_name -> user.UserStatus
 	39, // 8: user.ListUsersReq.verify_status:type_name -> user.VerifyStatus
 	40, // 9: user.ListUsersReq.kyc_level:type_name -> user.KycLevel
 	34, // 10: user.ListUsersResp.base:type_name -> common.RespBase
-	41, // 11: user.ListUsersResp.list:type_name -> user.UserItem
+	41, // 11: user.ListUsersResp.data:type_name -> user.UserItem
 	34, // 12: user.UpdateUserBaseResp.base:type_name -> common.RespBase
-	37, // 13: user.UpdateUserBaseResp.detail:type_name -> user.UserDetail
+	37, // 13: user.UpdateUserBaseResp.data:type_name -> user.UserDetail
 	36, // 14: user.UpdateUserStatusReq.status:type_name -> user.UserStatus
 	42, // 15: user.UpdateRiskLevelReq.risk_level:type_name -> user.RiskLevel
 	34, // 16: user.GetUserSecurityResp.base:type_name -> common.RespBase
-	43, // 17: user.GetUserSecurityResp.security:type_name -> user.UserSecurity
+	43, // 17: user.GetUserSecurityResp.data:type_name -> user.UserSecurity
 	38, // 18: user.ListUserIdentitiesReq.page:type_name -> common.PageReq
 	39, // 19: user.ListUserIdentitiesReq.verify_status:type_name -> user.VerifyStatus
 	40, // 20: user.ListUserIdentitiesReq.kyc_level:type_name -> user.KycLevel
 	44, // 21: user.ListUserIdentitiesReq.id_type:type_name -> user.IdType
 	34, // 22: user.ListUserIdentitiesResp.base:type_name -> common.RespBase
-	45, // 23: user.ListUserIdentitiesResp.list:type_name -> user.UserIdentityItem
+	45, // 23: user.ListUserIdentitiesResp.data:type_name -> user.UserIdentityItem
 	39, // 24: user.ReviewUserIdentityReq.verify_status:type_name -> user.VerifyStatus
 	34, // 25: user.ReviewUserIdentityResp.base:type_name -> common.RespBase
-	46, // 26: user.ReviewUserIdentityResp.identity:type_name -> user.UserIdentity
+	46, // 26: user.ReviewUserIdentityResp.data:type_name -> user.UserIdentity
 	38, // 27: user.ListUserBanksReq.page:type_name -> common.PageReq
 	47, // 28: user.ListUserBanksReq.status:type_name -> user.BankStatus
 	34, // 29: user.ListUserBanksResp.base:type_name -> common.RespBase
-	48, // 30: user.ListUserBanksResp.list:type_name -> user.UserBankItem
+	48, // 30: user.ListUserBanksResp.data:type_name -> user.UserBankItem
 	34, // 31: user.GetUserBankResp.base:type_name -> common.RespBase
-	48, // 32: user.GetUserBankResp.bank:type_name -> user.UserBankItem
+	48, // 32: user.GetUserBankResp.data:type_name -> user.UserBankItem
 	47, // 33: user.AddUserBankReq.status:type_name -> user.BankStatus
 	34, // 34: user.AddUserBankResp.base:type_name -> common.RespBase
-	48, // 35: user.AddUserBankResp.bank:type_name -> user.UserBankItem
+	48, // 35: user.AddUserBankResp.data:type_name -> user.UserBankItem
 	47, // 36: user.UpdateUserBankReq.status:type_name -> user.BankStatus
 	34, // 37: user.UpdateUserBankResp.base:type_name -> common.RespBase
-	48, // 38: user.UpdateUserBankResp.bank:type_name -> user.UserBankItem
+	48, // 38: user.UpdateUserBankResp.data:type_name -> user.UserBankItem
 	47, // 39: user.UpdateUserBankStatusReq.status:type_name -> user.BankStatus
 	1,  // 40: user.UserAdmin.CreateUser:input_type -> user.CreateUserReq
 	3,  // 41: user.UserAdmin.GetUserDetail:input_type -> user.GetUserDetailReq

@@ -304,8 +304,7 @@ func (x *AppCreateOrderReq) GetRemark() string {
 type AppCreateOrderResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
-	OrderNo       string                 `protobuf:"bytes,3,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
+	Data          *AppCreateOrderData    `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -347,14 +346,59 @@ func (x *AppCreateOrderResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *AppCreateOrderResp) GetId() int64 {
+func (x *AppCreateOrderResp) GetData() *AppCreateOrderData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type AppCreateOrderData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	OrderNo       string                 `protobuf:"bytes,2,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AppCreateOrderData) Reset() {
+	*x = AppCreateOrderData{}
+	mi := &file_proto_staking_staking_app_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AppCreateOrderData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AppCreateOrderData) ProtoMessage() {}
+
+func (x *AppCreateOrderData) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_staking_staking_app_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AppCreateOrderData.ProtoReflect.Descriptor instead.
+func (*AppCreateOrderData) Descriptor() ([]byte, []int) {
+	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *AppCreateOrderData) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *AppCreateOrderResp) GetOrderNo() string {
+func (x *AppCreateOrderData) GetOrderNo() string {
 	if x != nil {
 		return x.OrderNo
 	}
@@ -373,7 +417,7 @@ type AppMyOrderListReq struct {
 
 func (x *AppMyOrderListReq) Reset() {
 	*x = AppMyOrderListReq{}
-	mi := &file_proto_staking_staking_app_proto_msgTypes[6]
+	mi := &file_proto_staking_staking_app_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -385,7 +429,7 @@ func (x *AppMyOrderListReq) String() string {
 func (*AppMyOrderListReq) ProtoMessage() {}
 
 func (x *AppMyOrderListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_staking_staking_app_proto_msgTypes[6]
+	mi := &file_proto_staking_staking_app_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -398,7 +442,7 @@ func (x *AppMyOrderListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppMyOrderListReq.ProtoReflect.Descriptor instead.
 func (*AppMyOrderListReq) Descriptor() ([]byte, []int) {
-	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{6}
+	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *AppMyOrderListReq) GetStatus() OrderStatus {
@@ -432,7 +476,7 @@ type AppMyOrderListResp struct {
 
 func (x *AppMyOrderListResp) Reset() {
 	*x = AppMyOrderListResp{}
-	mi := &file_proto_staking_staking_app_proto_msgTypes[7]
+	mi := &file_proto_staking_staking_app_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -444,7 +488,7 @@ func (x *AppMyOrderListResp) String() string {
 func (*AppMyOrderListResp) ProtoMessage() {}
 
 func (x *AppMyOrderListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_staking_staking_app_proto_msgTypes[7]
+	mi := &file_proto_staking_staking_app_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -457,7 +501,7 @@ func (x *AppMyOrderListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppMyOrderListResp.ProtoReflect.Descriptor instead.
 func (*AppMyOrderListResp) Descriptor() ([]byte, []int) {
-	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{7}
+	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *AppMyOrderListResp) GetBase() *common.RespBase {
@@ -484,7 +528,7 @@ type AppMyOrderDetailReq struct {
 
 func (x *AppMyOrderDetailReq) Reset() {
 	*x = AppMyOrderDetailReq{}
-	mi := &file_proto_staking_staking_app_proto_msgTypes[8]
+	mi := &file_proto_staking_staking_app_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -496,7 +540,7 @@ func (x *AppMyOrderDetailReq) String() string {
 func (*AppMyOrderDetailReq) ProtoMessage() {}
 
 func (x *AppMyOrderDetailReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_staking_staking_app_proto_msgTypes[8]
+	mi := &file_proto_staking_staking_app_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -509,7 +553,7 @@ func (x *AppMyOrderDetailReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppMyOrderDetailReq.ProtoReflect.Descriptor instead.
 func (*AppMyOrderDetailReq) Descriptor() ([]byte, []int) {
-	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{8}
+	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *AppMyOrderDetailReq) GetId() int64 {
@@ -529,7 +573,7 @@ type AppMyOrderDetailResp struct {
 
 func (x *AppMyOrderDetailResp) Reset() {
 	*x = AppMyOrderDetailResp{}
-	mi := &file_proto_staking_staking_app_proto_msgTypes[9]
+	mi := &file_proto_staking_staking_app_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -541,7 +585,7 @@ func (x *AppMyOrderDetailResp) String() string {
 func (*AppMyOrderDetailResp) ProtoMessage() {}
 
 func (x *AppMyOrderDetailResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_staking_staking_app_proto_msgTypes[9]
+	mi := &file_proto_staking_staking_app_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -554,7 +598,7 @@ func (x *AppMyOrderDetailResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppMyOrderDetailResp.ProtoReflect.Descriptor instead.
 func (*AppMyOrderDetailResp) Descriptor() ([]byte, []int) {
-	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{9}
+	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *AppMyOrderDetailResp) GetBase() *common.RespBase {
@@ -583,7 +627,7 @@ type AppMyRewardLogListReq struct {
 
 func (x *AppMyRewardLogListReq) Reset() {
 	*x = AppMyRewardLogListReq{}
-	mi := &file_proto_staking_staking_app_proto_msgTypes[10]
+	mi := &file_proto_staking_staking_app_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -595,7 +639,7 @@ func (x *AppMyRewardLogListReq) String() string {
 func (*AppMyRewardLogListReq) ProtoMessage() {}
 
 func (x *AppMyRewardLogListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_staking_staking_app_proto_msgTypes[10]
+	mi := &file_proto_staking_staking_app_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -608,7 +652,7 @@ func (x *AppMyRewardLogListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppMyRewardLogListReq.ProtoReflect.Descriptor instead.
 func (*AppMyRewardLogListReq) Descriptor() ([]byte, []int) {
-	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{10}
+	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *AppMyRewardLogListReq) GetOrderId() int64 {
@@ -642,7 +686,7 @@ type AppMyRewardLogListResp struct {
 
 func (x *AppMyRewardLogListResp) Reset() {
 	*x = AppMyRewardLogListResp{}
-	mi := &file_proto_staking_staking_app_proto_msgTypes[11]
+	mi := &file_proto_staking_staking_app_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -654,7 +698,7 @@ func (x *AppMyRewardLogListResp) String() string {
 func (*AppMyRewardLogListResp) ProtoMessage() {}
 
 func (x *AppMyRewardLogListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_staking_staking_app_proto_msgTypes[11]
+	mi := &file_proto_staking_staking_app_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -667,7 +711,7 @@ func (x *AppMyRewardLogListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppMyRewardLogListResp.ProtoReflect.Descriptor instead.
 func (*AppMyRewardLogListResp) Descriptor() ([]byte, []int) {
-	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{11}
+	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *AppMyRewardLogListResp) GetBase() *common.RespBase {
@@ -696,7 +740,7 @@ type AppRedeemReq struct {
 
 func (x *AppRedeemReq) Reset() {
 	*x = AppRedeemReq{}
-	mi := &file_proto_staking_staking_app_proto_msgTypes[12]
+	mi := &file_proto_staking_staking_app_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -708,7 +752,7 @@ func (x *AppRedeemReq) String() string {
 func (*AppRedeemReq) ProtoMessage() {}
 
 func (x *AppRedeemReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_staking_staking_app_proto_msgTypes[12]
+	mi := &file_proto_staking_staking_app_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -721,7 +765,7 @@ func (x *AppRedeemReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppRedeemReq.ProtoReflect.Descriptor instead.
 func (*AppRedeemReq) Descriptor() ([]byte, []int) {
-	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{12}
+	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *AppRedeemReq) GetOrderId() int64 {
@@ -748,15 +792,14 @@ func (x *AppRedeemReq) GetRemark() string {
 type AppRedeemResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Success       int64                  `protobuf:"varint,2,opt,name=success,proto3" json:"success,omitempty"`
-	RedeemNo      string                 `protobuf:"bytes,3,opt,name=redeem_no,json=redeemNo,proto3" json:"redeem_no,omitempty"`
+	Data          *AppRedeemData         `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *AppRedeemResp) Reset() {
 	*x = AppRedeemResp{}
-	mi := &file_proto_staking_staking_app_proto_msgTypes[13]
+	mi := &file_proto_staking_staking_app_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -768,7 +811,7 @@ func (x *AppRedeemResp) String() string {
 func (*AppRedeemResp) ProtoMessage() {}
 
 func (x *AppRedeemResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_staking_staking_app_proto_msgTypes[13]
+	mi := &file_proto_staking_staking_app_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -781,7 +824,7 @@ func (x *AppRedeemResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppRedeemResp.ProtoReflect.Descriptor instead.
 func (*AppRedeemResp) Descriptor() ([]byte, []int) {
-	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{13}
+	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *AppRedeemResp) GetBase() *common.RespBase {
@@ -791,14 +834,59 @@ func (x *AppRedeemResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *AppRedeemResp) GetSuccess() int64 {
+func (x *AppRedeemResp) GetData() *AppRedeemData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type AppRedeemData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       int64                  `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	RedeemNo      string                 `protobuf:"bytes,2,opt,name=redeem_no,json=redeemNo,proto3" json:"redeem_no,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AppRedeemData) Reset() {
+	*x = AppRedeemData{}
+	mi := &file_proto_staking_staking_app_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AppRedeemData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AppRedeemData) ProtoMessage() {}
+
+func (x *AppRedeemData) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_staking_staking_app_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AppRedeemData.ProtoReflect.Descriptor instead.
+func (*AppRedeemData) Descriptor() ([]byte, []int) {
+	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *AppRedeemData) GetSuccess() int64 {
 	if x != nil {
 		return x.Success
 	}
 	return 0
 }
 
-func (x *AppRedeemResp) GetRedeemNo() string {
+func (x *AppRedeemData) GetRedeemNo() string {
 	if x != nil {
 		return x.RedeemNo
 	}
@@ -816,7 +904,7 @@ type AppMyRedeemLogListReq struct {
 
 func (x *AppMyRedeemLogListReq) Reset() {
 	*x = AppMyRedeemLogListReq{}
-	mi := &file_proto_staking_staking_app_proto_msgTypes[14]
+	mi := &file_proto_staking_staking_app_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -828,7 +916,7 @@ func (x *AppMyRedeemLogListReq) String() string {
 func (*AppMyRedeemLogListReq) ProtoMessage() {}
 
 func (x *AppMyRedeemLogListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_staking_staking_app_proto_msgTypes[14]
+	mi := &file_proto_staking_staking_app_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -841,7 +929,7 @@ func (x *AppMyRedeemLogListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppMyRedeemLogListReq.ProtoReflect.Descriptor instead.
 func (*AppMyRedeemLogListReq) Descriptor() ([]byte, []int) {
-	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{14}
+	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *AppMyRedeemLogListReq) GetOrderId() int64 {
@@ -868,7 +956,7 @@ type AppMyRedeemLogListResp struct {
 
 func (x *AppMyRedeemLogListResp) Reset() {
 	*x = AppMyRedeemLogListResp{}
-	mi := &file_proto_staking_staking_app_proto_msgTypes[15]
+	mi := &file_proto_staking_staking_app_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -880,7 +968,7 @@ func (x *AppMyRedeemLogListResp) String() string {
 func (*AppMyRedeemLogListResp) ProtoMessage() {}
 
 func (x *AppMyRedeemLogListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_staking_staking_app_proto_msgTypes[15]
+	mi := &file_proto_staking_staking_app_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -893,7 +981,7 @@ func (x *AppMyRedeemLogListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppMyRedeemLogListResp.ProtoReflect.Descriptor instead.
 func (*AppMyRedeemLogListResp) Descriptor() ([]byte, []int) {
-	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{15}
+	return file_proto_staking_staking_app_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *AppMyRedeemLogListResp) GetBase() *common.RespBase {
@@ -933,11 +1021,13 @@ const file_proto_staking_staking_app_proto_rawDesc = "" +
 	"product_id\x18\x01 \x01(\x03R\tproductId\x12!\n" +
 	"\fstake_amount\x18\x02 \x01(\tR\vstakeAmount\x12+\n" +
 	"\x06source\x18\x03 \x01(\x0e2\x13.staking.SourceTypeR\x06source\x12\x16\n" +
-	"\x06remark\x18\x04 \x01(\tR\x06remark\"e\n" +
+	"\x06remark\x18\x04 \x01(\tR\x06remark\"k\n" +
 	"\x12AppCreateOrderResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\x12\x19\n" +
-	"\border_no\x18\x03 \x01(\tR\aorderNo\"\x9c\x01\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12/\n" +
+	"\x04data\x18\x02 \x01(\v2\x1b.staking.AppCreateOrderDataR\x04data\"?\n" +
+	"\x12AppCreateOrderData\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
+	"\border_no\x18\x02 \x01(\tR\aorderNo\"\x9c\x01\n" +
 	"\x11AppMyOrderListReq\x12,\n" +
 	"\x06status\x18\x01 \x01(\x0e2\x14.staking.OrderStatusR\x06status\x124\n" +
 	"\vredeem_type\x18\x02 \x01(\x0e2\x13.staking.RedeemTypeR\n" +
@@ -963,11 +1053,13 @@ const file_proto_staking_staking_app_proto_rawDesc = "" +
 	"\border_id\x18\x01 \x01(\x03R\aorderId\x124\n" +
 	"\vredeem_type\x18\x02 \x01(\x0e2\x13.staking.RedeemTypeR\n" +
 	"redeemType\x12\x16\n" +
-	"\x06remark\x18\x03 \x01(\tR\x06remark\"l\n" +
+	"\x06remark\x18\x03 \x01(\tR\x06remark\"a\n" +
 	"\rAppRedeemResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x18\n" +
-	"\asuccess\x18\x02 \x01(\x03R\asuccess\x12\x1b\n" +
-	"\tredeem_no\x18\x03 \x01(\tR\bredeemNo\"W\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
+	"\x04data\x18\x02 \x01(\v2\x16.staking.AppRedeemDataR\x04data\"F\n" +
+	"\rAppRedeemData\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\x03R\asuccess\x12\x1b\n" +
+	"\tredeem_no\x18\x02 \x01(\tR\bredeemNo\"W\n" +
 	"\x15AppMyRedeemLogListReq\x12\x19\n" +
 	"\border_id\x18\x01 \x01(\x03R\aorderId\x12#\n" +
 	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\"k\n" +
@@ -997,7 +1089,7 @@ func file_proto_staking_staking_app_proto_rawDescGZIP() []byte {
 	return file_proto_staking_staking_app_proto_rawDescData
 }
 
-var file_proto_staking_staking_app_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_proto_staking_staking_app_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_proto_staking_staking_app_proto_goTypes = []any{
 	(*AppProductListReq)(nil),      // 0: staking.AppProductListReq
 	(*AppProductListResp)(nil),     // 1: staking.AppProductListResp
@@ -1005,74 +1097,78 @@ var file_proto_staking_staking_app_proto_goTypes = []any{
 	(*AppProductDetailResp)(nil),   // 3: staking.AppProductDetailResp
 	(*AppCreateOrderReq)(nil),      // 4: staking.AppCreateOrderReq
 	(*AppCreateOrderResp)(nil),     // 5: staking.AppCreateOrderResp
-	(*AppMyOrderListReq)(nil),      // 6: staking.AppMyOrderListReq
-	(*AppMyOrderListResp)(nil),     // 7: staking.AppMyOrderListResp
-	(*AppMyOrderDetailReq)(nil),    // 8: staking.AppMyOrderDetailReq
-	(*AppMyOrderDetailResp)(nil),   // 9: staking.AppMyOrderDetailResp
-	(*AppMyRewardLogListReq)(nil),  // 10: staking.AppMyRewardLogListReq
-	(*AppMyRewardLogListResp)(nil), // 11: staking.AppMyRewardLogListResp
-	(*AppRedeemReq)(nil),           // 12: staking.AppRedeemReq
-	(*AppRedeemResp)(nil),          // 13: staking.AppRedeemResp
-	(*AppMyRedeemLogListReq)(nil),  // 14: staking.AppMyRedeemLogListReq
-	(*AppMyRedeemLogListResp)(nil), // 15: staking.AppMyRedeemLogListResp
-	(ProductType)(0),               // 16: staking.ProductType
-	(*common.PageReq)(nil),         // 17: common.PageReq
-	(*common.RespBase)(nil),        // 18: common.RespBase
-	(*StakeProduct)(nil),           // 19: staking.StakeProduct
-	(SourceType)(0),                // 20: staking.SourceType
-	(OrderStatus)(0),               // 21: staking.OrderStatus
-	(RedeemType)(0),                // 22: staking.RedeemType
-	(*StakeOrder)(nil),             // 23: staking.StakeOrder
-	(RewardType)(0),                // 24: staking.RewardType
-	(*StakeRewardLog)(nil),         // 25: staking.StakeRewardLog
-	(*StakeRedeemLog)(nil),         // 26: staking.StakeRedeemLog
+	(*AppCreateOrderData)(nil),     // 6: staking.AppCreateOrderData
+	(*AppMyOrderListReq)(nil),      // 7: staking.AppMyOrderListReq
+	(*AppMyOrderListResp)(nil),     // 8: staking.AppMyOrderListResp
+	(*AppMyOrderDetailReq)(nil),    // 9: staking.AppMyOrderDetailReq
+	(*AppMyOrderDetailResp)(nil),   // 10: staking.AppMyOrderDetailResp
+	(*AppMyRewardLogListReq)(nil),  // 11: staking.AppMyRewardLogListReq
+	(*AppMyRewardLogListResp)(nil), // 12: staking.AppMyRewardLogListResp
+	(*AppRedeemReq)(nil),           // 13: staking.AppRedeemReq
+	(*AppRedeemResp)(nil),          // 14: staking.AppRedeemResp
+	(*AppRedeemData)(nil),          // 15: staking.AppRedeemData
+	(*AppMyRedeemLogListReq)(nil),  // 16: staking.AppMyRedeemLogListReq
+	(*AppMyRedeemLogListResp)(nil), // 17: staking.AppMyRedeemLogListResp
+	(ProductType)(0),               // 18: staking.ProductType
+	(*common.PageReq)(nil),         // 19: common.PageReq
+	(*common.RespBase)(nil),        // 20: common.RespBase
+	(*StakeProduct)(nil),           // 21: staking.StakeProduct
+	(SourceType)(0),                // 22: staking.SourceType
+	(OrderStatus)(0),               // 23: staking.OrderStatus
+	(RedeemType)(0),                // 24: staking.RedeemType
+	(*StakeOrder)(nil),             // 25: staking.StakeOrder
+	(RewardType)(0),                // 26: staking.RewardType
+	(*StakeRewardLog)(nil),         // 27: staking.StakeRewardLog
+	(*StakeRedeemLog)(nil),         // 28: staking.StakeRedeemLog
 }
 var file_proto_staking_staking_app_proto_depIdxs = []int32{
-	16, // 0: staking.AppProductListReq.product_type:type_name -> staking.ProductType
-	17, // 1: staking.AppProductListReq.page:type_name -> common.PageReq
-	18, // 2: staking.AppProductListResp.base:type_name -> common.RespBase
-	19, // 3: staking.AppProductListResp.data:type_name -> staking.StakeProduct
-	18, // 4: staking.AppProductDetailResp.base:type_name -> common.RespBase
-	19, // 5: staking.AppProductDetailResp.data:type_name -> staking.StakeProduct
-	20, // 6: staking.AppCreateOrderReq.source:type_name -> staking.SourceType
-	18, // 7: staking.AppCreateOrderResp.base:type_name -> common.RespBase
-	21, // 8: staking.AppMyOrderListReq.status:type_name -> staking.OrderStatus
-	22, // 9: staking.AppMyOrderListReq.redeem_type:type_name -> staking.RedeemType
-	17, // 10: staking.AppMyOrderListReq.page:type_name -> common.PageReq
-	18, // 11: staking.AppMyOrderListResp.base:type_name -> common.RespBase
-	23, // 12: staking.AppMyOrderListResp.data:type_name -> staking.StakeOrder
-	18, // 13: staking.AppMyOrderDetailResp.base:type_name -> common.RespBase
-	23, // 14: staking.AppMyOrderDetailResp.data:type_name -> staking.StakeOrder
-	24, // 15: staking.AppMyRewardLogListReq.reward_type:type_name -> staking.RewardType
-	17, // 16: staking.AppMyRewardLogListReq.page:type_name -> common.PageReq
-	18, // 17: staking.AppMyRewardLogListResp.base:type_name -> common.RespBase
-	25, // 18: staking.AppMyRewardLogListResp.data:type_name -> staking.StakeRewardLog
-	22, // 19: staking.AppRedeemReq.redeem_type:type_name -> staking.RedeemType
-	18, // 20: staking.AppRedeemResp.base:type_name -> common.RespBase
-	17, // 21: staking.AppMyRedeemLogListReq.page:type_name -> common.PageReq
-	18, // 22: staking.AppMyRedeemLogListResp.base:type_name -> common.RespBase
-	26, // 23: staking.AppMyRedeemLogListResp.data:type_name -> staking.StakeRedeemLog
-	0,  // 24: staking.StakingApp.AppProductList:input_type -> staking.AppProductListReq
-	2,  // 25: staking.StakingApp.AppProductDetail:input_type -> staking.AppProductDetailReq
-	4,  // 26: staking.StakingApp.CreateOrder:input_type -> staking.AppCreateOrderReq
-	6,  // 27: staking.StakingApp.MyOrderList:input_type -> staking.AppMyOrderListReq
-	8,  // 28: staking.StakingApp.MyOrderDetail:input_type -> staking.AppMyOrderDetailReq
-	10, // 29: staking.StakingApp.MyRewardLogList:input_type -> staking.AppMyRewardLogListReq
-	12, // 30: staking.StakingApp.Redeem:input_type -> staking.AppRedeemReq
-	14, // 31: staking.StakingApp.MyRedeemLogList:input_type -> staking.AppMyRedeemLogListReq
-	1,  // 32: staking.StakingApp.AppProductList:output_type -> staking.AppProductListResp
-	3,  // 33: staking.StakingApp.AppProductDetail:output_type -> staking.AppProductDetailResp
-	5,  // 34: staking.StakingApp.CreateOrder:output_type -> staking.AppCreateOrderResp
-	7,  // 35: staking.StakingApp.MyOrderList:output_type -> staking.AppMyOrderListResp
-	9,  // 36: staking.StakingApp.MyOrderDetail:output_type -> staking.AppMyOrderDetailResp
-	11, // 37: staking.StakingApp.MyRewardLogList:output_type -> staking.AppMyRewardLogListResp
-	13, // 38: staking.StakingApp.Redeem:output_type -> staking.AppRedeemResp
-	15, // 39: staking.StakingApp.MyRedeemLogList:output_type -> staking.AppMyRedeemLogListResp
-	32, // [32:40] is the sub-list for method output_type
-	24, // [24:32] is the sub-list for method input_type
-	24, // [24:24] is the sub-list for extension type_name
-	24, // [24:24] is the sub-list for extension extendee
-	0,  // [0:24] is the sub-list for field type_name
+	18, // 0: staking.AppProductListReq.product_type:type_name -> staking.ProductType
+	19, // 1: staking.AppProductListReq.page:type_name -> common.PageReq
+	20, // 2: staking.AppProductListResp.base:type_name -> common.RespBase
+	21, // 3: staking.AppProductListResp.data:type_name -> staking.StakeProduct
+	20, // 4: staking.AppProductDetailResp.base:type_name -> common.RespBase
+	21, // 5: staking.AppProductDetailResp.data:type_name -> staking.StakeProduct
+	22, // 6: staking.AppCreateOrderReq.source:type_name -> staking.SourceType
+	20, // 7: staking.AppCreateOrderResp.base:type_name -> common.RespBase
+	6,  // 8: staking.AppCreateOrderResp.data:type_name -> staking.AppCreateOrderData
+	23, // 9: staking.AppMyOrderListReq.status:type_name -> staking.OrderStatus
+	24, // 10: staking.AppMyOrderListReq.redeem_type:type_name -> staking.RedeemType
+	19, // 11: staking.AppMyOrderListReq.page:type_name -> common.PageReq
+	20, // 12: staking.AppMyOrderListResp.base:type_name -> common.RespBase
+	25, // 13: staking.AppMyOrderListResp.data:type_name -> staking.StakeOrder
+	20, // 14: staking.AppMyOrderDetailResp.base:type_name -> common.RespBase
+	25, // 15: staking.AppMyOrderDetailResp.data:type_name -> staking.StakeOrder
+	26, // 16: staking.AppMyRewardLogListReq.reward_type:type_name -> staking.RewardType
+	19, // 17: staking.AppMyRewardLogListReq.page:type_name -> common.PageReq
+	20, // 18: staking.AppMyRewardLogListResp.base:type_name -> common.RespBase
+	27, // 19: staking.AppMyRewardLogListResp.data:type_name -> staking.StakeRewardLog
+	24, // 20: staking.AppRedeemReq.redeem_type:type_name -> staking.RedeemType
+	20, // 21: staking.AppRedeemResp.base:type_name -> common.RespBase
+	15, // 22: staking.AppRedeemResp.data:type_name -> staking.AppRedeemData
+	19, // 23: staking.AppMyRedeemLogListReq.page:type_name -> common.PageReq
+	20, // 24: staking.AppMyRedeemLogListResp.base:type_name -> common.RespBase
+	28, // 25: staking.AppMyRedeemLogListResp.data:type_name -> staking.StakeRedeemLog
+	0,  // 26: staking.StakingApp.AppProductList:input_type -> staking.AppProductListReq
+	2,  // 27: staking.StakingApp.AppProductDetail:input_type -> staking.AppProductDetailReq
+	4,  // 28: staking.StakingApp.CreateOrder:input_type -> staking.AppCreateOrderReq
+	7,  // 29: staking.StakingApp.MyOrderList:input_type -> staking.AppMyOrderListReq
+	9,  // 30: staking.StakingApp.MyOrderDetail:input_type -> staking.AppMyOrderDetailReq
+	11, // 31: staking.StakingApp.MyRewardLogList:input_type -> staking.AppMyRewardLogListReq
+	13, // 32: staking.StakingApp.Redeem:input_type -> staking.AppRedeemReq
+	16, // 33: staking.StakingApp.MyRedeemLogList:input_type -> staking.AppMyRedeemLogListReq
+	1,  // 34: staking.StakingApp.AppProductList:output_type -> staking.AppProductListResp
+	3,  // 35: staking.StakingApp.AppProductDetail:output_type -> staking.AppProductDetailResp
+	5,  // 36: staking.StakingApp.CreateOrder:output_type -> staking.AppCreateOrderResp
+	8,  // 37: staking.StakingApp.MyOrderList:output_type -> staking.AppMyOrderListResp
+	10, // 38: staking.StakingApp.MyOrderDetail:output_type -> staking.AppMyOrderDetailResp
+	12, // 39: staking.StakingApp.MyRewardLogList:output_type -> staking.AppMyRewardLogListResp
+	14, // 40: staking.StakingApp.Redeem:output_type -> staking.AppRedeemResp
+	17, // 41: staking.StakingApp.MyRedeemLogList:output_type -> staking.AppMyRedeemLogListResp
+	34, // [34:42] is the sub-list for method output_type
+	26, // [26:34] is the sub-list for method input_type
+	26, // [26:26] is the sub-list for extension type_name
+	26, // [26:26] is the sub-list for extension extendee
+	0,  // [0:26] is the sub-list for field type_name
 }
 
 func init() { file_proto_staking_staking_app_proto_init() }
@@ -1088,7 +1184,7 @@ func file_proto_staking_staking_app_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_staking_staking_app_proto_rawDesc), len(file_proto_staking_staking_app_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   16,
+			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

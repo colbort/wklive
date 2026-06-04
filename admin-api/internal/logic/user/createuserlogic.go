@@ -7,6 +7,7 @@ import (
 	"context"
 	"strings"
 
+	"wklive/admin-api/internal/logicutil"
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
 	"wklive/proto/system"
@@ -62,7 +63,7 @@ func (l *CreateUserLogic) CreateUser(req *types.CreateUserReq) (resp *types.Crea
 		referrerUserId = referrer.Id
 	}
 
-	result, err := l.svcCtx.UserCli.CreateUser(l.ctx, &user.CreateUserReq{
+	protoReq := &user.CreateUserReq{
 		TenantCode:     req.TenantCode,
 		Username:       req.Username,
 		Nickname:       req.Nickname,
@@ -80,16 +81,6 @@ func (l *CreateUserLogic) CreateUser(req *types.CreateUserReq) (resp *types.Crea
 		Source:         req.Source,
 		ReferrerUserId: referrerUserId,
 		Remark:         req.Remark,
-	})
-	if err != nil {
-		return nil, err
 	}
-
-	return &types.CreateUserResp{
-		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
-		},
-		UserId: result.UserId,
-	}, nil
+	return logicutil.Proxy[types.CreateUserResp](l.ctx, protoReq, l.svcCtx.UserCli.CreateUser)
 }

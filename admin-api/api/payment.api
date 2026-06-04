@@ -187,20 +187,20 @@ type PayNotifyLog {
 }
 
 type CryptoRechargeAddress {
-	id             int64  `json:"id"`
-	tenantId       int64  `json:"tenantId"`
-	userId         int64  `json:"userId"`
-	walletType     int64  `json:"walletType"`
-	coin           string `json:"coin"`
-	chainCode      int64  `json:"chainCode"`
-	address        string `json:"address"`
-	memo           string `json:"memo"`
-	addressSource  int64  `json:"addressSource"`
-	addressType    int64  `json:"addressType"`
-	status         int64  `json:"status"`
-	lastUsedTime   int64  `json:"lastUsedTime"`
-	createTimes    int64  `json:"createTimes"`
-	updateTimes    int64  `json:"updateTimes"`
+	id            int64  `json:"id"`
+	tenantId      int64  `json:"tenantId"`
+	userId        int64  `json:"userId"`
+	walletType    int64  `json:"walletType"`
+	coin          string `json:"coin"`
+	chainCode     int64  `json:"chainCode"`
+	address       string `json:"address"`
+	memo          string `json:"memo"`
+	addressSource int64  `json:"addressSource"`
+	addressType   int64  `json:"addressType"`
+	status        int64  `json:"status"`
+	lastUsedTime  int64  `json:"lastUsedTime"`
+	createTimes   int64  `json:"createTimes"`
+	updateTimes   int64  `json:"updateTimes"`
 }
 
 type CryptoWalletAccount {
@@ -776,7 +776,7 @@ type ListWithdrawOrdersResp {
 }
 
 type GetWithdrawOrderReq {
-	orderNo  string `path:"orderNo"`
+	orderNo string `path:"orderNo"`
 }
 
 type GetWithdrawOrderResp {
@@ -1217,3 +1217,4 @@ service admin {
 	@handler ListCryptoRechargeTxs
 	get /crypto-recharge-txs (ListCryptoRechargeTxsReq) returns (ListCryptoRechargeTxsResp)
 }
+

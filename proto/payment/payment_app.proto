@@ -16,7 +16,7 @@ message GetMyRechargeStatReq {
 
 message GetMyRechargeStatResp {
   common.RespBase base = 1;
-  payment.UserRechargeStat stat = 2;
+  payment.UserRechargeStat data = 2;
 }
 
 // 获取当前登录用户在指定充值场景下可用的充值通道
@@ -28,7 +28,7 @@ message ListAvailableRechargeChannelsReq {
 
 message ListAvailableRechargeChannelsResp {
   common.RespBase base = 1;
-  repeated payment.VisiblePayChannel list = 2;
+  repeated payment.VisiblePayChannel data = 2;
 }
 
 // 创建充值订单
@@ -44,7 +44,7 @@ message CreateRechargeOrderReq {
 
 message CreateRechargeOrderResp {
   common.RespBase base = 1;
-  payment.RechargeOrder order = 2;
+  payment.RechargeOrder data = 2;
 }
 
 // 创建链上充值订单
@@ -59,8 +59,12 @@ message CreateCryptoRechargeOrderReq {
 
 message CreateCryptoRechargeOrderResp {
   common.RespBase base = 1;
-  payment.RechargeOrder order = 2;
-  payment.CryptoRechargeAddress address = 3;
+  CreateCryptoRechargeOrderData data = 2;
+}
+
+message CreateCryptoRechargeOrderData {
+  payment.RechargeOrder order = 1;
+  payment.CryptoRechargeAddress address = 2;
 }
 
 // 查询我的订单详情
@@ -70,7 +74,7 @@ message GetMyRechargeOrderReq {
 
 message GetMyRechargeOrderResp {
   common.RespBase base = 1;
-  payment.RechargeOrder order = 2;
+  payment.RechargeOrder data = 2;
 }
 
 // 查询我的充值订单列表
@@ -84,7 +88,7 @@ message ListMyRechargeOrdersReq {
 
 message ListMyRechargeOrdersResp {
   common.RespBase base = 1;
-  repeated payment.RechargeOrder list = 2;
+  repeated payment.RechargeOrder data = 2;
 }
 
 // 取消未支付订单
@@ -99,7 +103,7 @@ message QueryMyRechargeOrderStatusReq {
 
 message QueryMyRechargeOrderStatusResp {
   common.RespBase base = 1;
-  payment.RechargeOrder order = 2;
+  payment.RechargeOrder data = 2;
 }
 
 // 提现
@@ -113,7 +117,7 @@ message CreateWithdrawOrderReq {
 
 message CreateWithdrawOrderResp {
   common.RespBase base = 1;
-  int64 id = 2;
+  int64 data = 2;
 }
 
 // 获取提现订单列表

@@ -15,11 +15,15 @@ type RegisterReq {
 	source          string `json:"source,optional"`
 }
 
-type RegisterResp {
-	RespBase
+type RegisterData {
 	userId  int64       `json:"userId"`
 	token   TokenInfo   `json:"token"`
 	profile UserProfile `json:"profile"`
+}
+
+type RegisterResp {
+	RespBase
+	data RegisterData `json:"data"`
 }
 
 type LoginReq {
@@ -30,11 +34,15 @@ type LoginReq {
 	googleCode string `json:"googleCode,optional"`
 }
 
-type LoginResp {
-	RespBase
+type LoginData {
 	userId  int64       `json:"userId"`
 	token   TokenInfo   `json:"token"`
 	profile UserProfile `json:"profile"`
+}
+
+type LoginResp {
+	RespBase
+	data LoginData `json:"data"`
 }
 
 type GuestLoginReq {
@@ -45,7 +53,7 @@ type GuestLoginReq {
 
 type GuestLogin {
 	token    string `json:"token"`
-	userId      string `json:"userId"`
+	userId   string `json:"userId"`
 	deviceId string `json:"deviceId"`
 	isNew    bool   `json:"isNew"`
 	username string `json:"username"`
@@ -63,7 +71,7 @@ type RefreshTokenReq {
 
 type RefreshTokenResp {
 	RespBase
-	token TokenInfo `json:"token"`
+	data TokenInfo `json:"data"`
 }
 
 type GetUserOptionsResp {
@@ -72,8 +80,8 @@ type GetUserOptionsResp {
 }
 
 @server (
-	prefix: /app/user
-	group:  user_public
+	prefix:     /app/user
+	group:      user_public
 	middleware: PublicRateLimit
 )
 service app {
@@ -82,8 +90,8 @@ service app {
 }
 
 @server (
-	prefix: /app/user
-	group:  user_public
+	prefix:     /app/user
+	group:      user_public
 	middleware: GuestSensitiveRateLimit
 )
 service app {
@@ -98,11 +106,12 @@ service app {
 }
 
 @server (
-	prefix: /app/user
-	group:  user_public
+	prefix:     /app/user
+	group:      user_public
 	middleware: RefreshTokenRateLimit
 )
 service app {
 	@handler RefreshToken
 	post /refresh-token (RefreshTokenReq) returns (RefreshTokenResp)
 }
+

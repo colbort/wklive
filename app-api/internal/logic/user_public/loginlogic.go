@@ -47,20 +47,24 @@ func (l *LoginLogic) Login(req *types.LoginReq) (*types.LoginResp, error) {
 			},
 		}, nil
 	} else {
+		data := result.Data
+		token := data.GetToken()
 		return &types.LoginResp{
 			RespBase: types.RespBase{
 				Code: result.Base.Code,
 				Msg:  result.Base.Msg,
 			},
-			UserId: result.UserId,
-			Token: types.TokenInfo{
-				AccessToken:  result.Token.AccessToken,
-				RefreshToken: result.Token.RefreshToken,
-				ExpireTime:   result.Token.ExpireTime,
-			},
-			Profile: types.UserProfile{
-				Identity: types.UserIdentity{},
-				Security: types.UserSecurity{},
+			Data: types.LoginData{
+				UserId: data.GetUserId(),
+				Token: types.TokenInfo{
+					AccessToken:  token.GetAccessToken(),
+					RefreshToken: token.GetRefreshToken(),
+					ExpireTime:   token.GetExpireTime(),
+				},
+				Profile: types.UserProfile{
+					Identity: types.UserIdentity{},
+					Security: types.UserSecurity{},
+				},
 			},
 		}, nil
 	}

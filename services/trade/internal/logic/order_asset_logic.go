@@ -45,7 +45,7 @@ func freezeOrderAsset(
 		return "", i18n.StatusError(ctx, resp.Base.Code)
 	}
 
-	return resp.FreezeNo, nil
+	return resp.GetData().GetFreezeNo(), nil
 }
 
 func unfreezeOrderAsset(

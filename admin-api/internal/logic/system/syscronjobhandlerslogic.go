@@ -6,9 +6,9 @@ package system
 import (
 	"context"
 
+	"wklive/admin-api/internal/logicutil"
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,23 +28,5 @@ func NewSysCronJobHandlersLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *SysCronJobHandlersLogic) SysCronJobHandlers() (resp *types.SysCronJobHandlersResp, err error) {
-	result, err := l.svcCtx.SystemCli.SysCronJobHandlers(l.ctx, &system.Empty{})
-	if err != nil {
-		return nil, err
-	}
-	data := make([]types.SysCronJobHandler, 0)
-	for _, item := range result.Data {
-		data = append(data, types.SysCronJobHandler{
-			InvokeTarget: item.InvokeTarget,
-			JobName:      item.JobName,
-		})
-	}
-	resp = &types.SysCronJobHandlersResp{
-		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
-		},
-		Data: data,
-	}
-	return
+	return logicutil.Proxy[types.SysCronJobHandlersResp](l.ctx, nil, l.svcCtx.SystemCli.SysCronJobHandlers)
 }

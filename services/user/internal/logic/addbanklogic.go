@@ -80,7 +80,7 @@ func (l *AddBankLogic) AddBank(in *user.AddBankReq) (*user.AddBankResp, error) {
 
 	return &user.AddBankResp{
 		Base: helper.OkResp(),
-		Bank: toUserBankItemProto(bank),
+		Data: toUserBankItemProto(bank),
 	}, nil
 }
 

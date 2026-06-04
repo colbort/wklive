@@ -81,13 +81,13 @@ message UserSecurity {
 }
 
 message UserProfile {
-  user.UserBase base = 1;
+  user.UserBase user = 1;
   user.UserIdentity identity = 2;
   user.UserSecurity security = 3;
 }
 
 message UserDetail {
-  user.UserBase base = 1;
+  user.UserBase user = 1;
   user.UserIdentity identity = 2;
   user.UserSecurity security = 3;
   repeated user.UserBankItem banks = 4;

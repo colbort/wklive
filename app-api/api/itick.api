@@ -23,8 +23,8 @@ type ItickProduct {
 	categoryType int64  `json:"categoryType"`
 	categoryCode string `json:"categoryCode"`
 	categoryName string `json:"categoryName"`
-	market       string `json:"market"` // 
-	symbol       string `json:"symbol"` // 
+	market       string `json:"market"` //
+	symbol       string `json:"symbol"` //
 	code         string `json:"code"` // 第三方原始 code
 	name         string `json:"name"`
 	displayName  string `json:"displayName"`
@@ -206,7 +206,7 @@ type BatchGetQuoteResp {
 	data []Quote `json:"data"`
 }
 
-type WsItickReq{
+type WsItickReq {
 	id string `path:"id"`
 }
 
@@ -239,8 +239,8 @@ type GetItickOptionsResp {
 }
 
 @server (
-	prefix: /app/itick
-	group:  itick
+	prefix:     /app/itick
+	group:      itick
 	middleware: PublicRateLimit
 )
 service app {
@@ -270,3 +270,4 @@ service app {
 	@handler TickWsHandler
 	get /ws/:id (WsItickReq)
 }
+

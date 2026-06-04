@@ -31,19 +31,21 @@ export function apiOptionGetOptions(): Promise<RespBase & { data: OptionsGroup[]
 
 export function apiOptionListContracts(
   params: AppListContractsReq,
-): Promise<RespBase & { list: OptionContractDetail[] }> {
+): Promise<RespBase & { data: OptionContractDetail[] }> {
   return http.get('/option/contracts', { params: compactParams(params) }).then((res) => res.data)
 }
 
 export function apiOptionGetContractDetail(
   params: AppGetContractDetailReq,
 ): Promise<RespBase & { data: OptionContractDetail }> {
-  return http.get('/option/contracts/detail', { params: compactParams(params) }).then((res) => res.data)
+  return http
+    .get('/option/contracts/detail', { params: compactParams(params) })
+    .then((res) => res.data)
 }
 
 export function apiOptionPlaceOrder(
   params: AppPlaceOrderReq,
-): Promise<RespBase & { orderNo: string; orderId: number }> {
+): Promise<RespBase & { data: { orderNo: string; orderId: number } }> {
   return http.post('/option/orders', params).then((res) => res.data)
 }
 
@@ -54,57 +56,67 @@ export function apiOptionCancelOrder(params: AppCancelOrderReq): Promise<RespBas
 export function apiOptionGetOrderDetail(
   params: AppGetOrderDetailReq,
 ): Promise<RespBase & { data: OptionOrderDetail }> {
-  return http.get('/option/orders/detail', { params: compactParams(params) }).then((res) => res.data)
+  return http
+    .get('/option/orders/detail', { params: compactParams(params) })
+    .then((res) => res.data)
 }
 
 export function apiOptionListCurrentOrders(
   params: AppListCurrentOrdersReq,
-): Promise<RespBase & { list: OptionOrderDetail[] }> {
-  return http.get('/option/orders/current', { params: compactParams(params) }).then((res) => res.data)
+): Promise<RespBase & { data: OptionOrderDetail[] }> {
+  return http
+    .get('/option/orders/current', { params: compactParams(params) })
+    .then((res) => res.data)
 }
 
 export function apiOptionListHistoryOrders(
   params: AppListHistoryOrdersReq,
-): Promise<RespBase & { list: OptionOrderDetail[] }> {
-  return http.get('/option/orders/history', { params: compactParams(params) }).then((res) => res.data)
+): Promise<RespBase & { data: OptionOrderDetail[] }> {
+  return http
+    .get('/option/orders/history', { params: compactParams(params) })
+    .then((res) => res.data)
 }
 
 export function apiOptionListTrades(
   params: AppListTradesReq,
-): Promise<RespBase & { list: OptionTradeDetail[] }> {
+): Promise<RespBase & { data: OptionTradeDetail[] }> {
   return http.get('/option/trades', { params: compactParams(params) }).then((res) => res.data)
 }
 
 export function apiOptionListPositions(
   params: AppListPositionsReq,
-): Promise<RespBase & { list: OptionPositionDetail[] }> {
+): Promise<RespBase & { data: OptionPositionDetail[] }> {
   return http.get('/option/positions', { params: compactParams(params) }).then((res) => res.data)
 }
 
 export function apiOptionGetPositionDetail(
   params: AppGetPositionDetailReq,
 ): Promise<RespBase & { data: OptionPositionDetail }> {
-  return http.get('/option/positions/detail', { params: compactParams(params) }).then((res) => res.data)
+  return http
+    .get('/option/positions/detail', { params: compactParams(params) })
+    .then((res) => res.data)
 }
 
 export function apiOptionExercise(
   params: AppExerciseReq,
-): Promise<RespBase & { exerciseNo: string; exerciseId: number }> {
+): Promise<RespBase & { data: { exerciseNo: string; exerciseId: number } }> {
   return http.post('/option/exercise', params).then((res) => res.data)
 }
 
 export function apiOptionListExercises(
   params: AppListExercisesReq,
-): Promise<RespBase & { list: OptionExerciseDetail[] }> {
+): Promise<RespBase & { data: OptionExerciseDetail[] }> {
   return http.get('/option/exercises', { params: compactParams(params) }).then((res) => res.data)
 }
 
 export function apiOptionListAccounts(
   params: AppListAccountsReq,
-): Promise<RespBase & { list: OptionAccount[] }> {
+): Promise<RespBase & { data: OptionAccount[] }> {
   return http.get('/option/accounts', { params: compactParams(params) }).then((res) => res.data)
 }
 
-export function apiOptionListBills(params: AppListBillsReq): Promise<RespBase & { list: OptionBill[] }> {
+export function apiOptionListBills(
+  params: AppListBillsReq,
+): Promise<RespBase & { data: OptionBill[] }> {
   return http.get('/option/bills', { params: compactParams(params) }).then((res) => res.data)
 }

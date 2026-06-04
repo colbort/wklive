@@ -90,5 +90,5 @@ func (l *LockAssetLogic) LockAsset(in *asset.LockAssetReq) (*asset.LockAssetResp
 		return nil, err
 	}
 
-	return &asset.LockAssetResp{Base: helper.OkResp(), LockNo: lock.LockNo, Asset: toUserAssetProto(after)}, nil
+	return &asset.LockAssetResp{Base: helper.OkResp(), Data: &asset.LockAssetData{LockNo: lock.LockNo, Asset: toUserAssetProto(after)}}, nil
 }

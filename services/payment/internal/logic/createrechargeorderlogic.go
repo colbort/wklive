@@ -160,7 +160,7 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 	}
 
 	return &payment.CreateRechargeOrderResp{
-		Base:  helper.OkResp(),
-		Order: toRechargeOrderProto(rechargeOrder),
+		Base: helper.OkResp(),
+		Data: toRechargeOrderProto(rechargeOrder),
 	}, nil
 }

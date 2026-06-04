@@ -136,9 +136,11 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 	_ = l.svcCtx.UserModel.Update(l.ctx, tuser)
 
 	return &user.LoginResp{
-		Base:    helper.OkResp(),
-		UserId:  tuser.Id,
-		Token:   token,
-		Profile: toUserProfileProto(tuser, nil, userSecurity),
+		Base: helper.OkResp(),
+		Data: &user.LoginData{
+			UserId:  tuser.Id,
+			Token:   token,
+			Profile: toUserProfileProto(tuser, nil, userSecurity),
+		},
 	}, nil
 }

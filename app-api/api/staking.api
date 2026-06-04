@@ -37,7 +37,7 @@ type StakeOrder {
 	id               int64  `json:"id"` // 主键ID
 	tenantId         int64  `json:"tenantId"` // 租户ID
 	orderNo          string `json:"orderNo"` // 订单号
-	userId              int64  `json:"userId"`
+	userId           int64  `json:"userId"`
 	productId        int64  `json:"productId"`
 	productNo        string `json:"productNo"`
 	productName      string `json:"productName"`
@@ -79,7 +79,7 @@ type StakeRewardLog {
 	tenantId         int64  `json:"tenantId"`
 	orderId          int64  `json:"orderId"`
 	orderNo          string `json:"orderNo"`
-	userId              int64  `json:"userId"`
+	userId           int64  `json:"userId"`
 	productId        int64  `json:"productId"`
 	productName      string `json:"productName"`
 	coinSymbol       string `json:"coinSymbol"`
@@ -102,7 +102,7 @@ type StakeRedeemLog {
 	tenantId     int64  `json:"tenantId"`
 	orderId      int64  `json:"orderId"`
 	orderNo      string `json:"orderNo"`
-	userId          int64  `json:"userId"`
+	userId       int64  `json:"userId"`
 	productId    int64  `json:"productId"`
 	redeemNo     string `json:"redeemNo"`
 	redeemType   int64  `json:"redeemType"`
@@ -132,7 +132,7 @@ type AppProductListResp {
 }
 
 type AppProductDetailReq {
-	id       int64 `form:"id"`
+	id int64 `form:"id"`
 }
 
 type AppProductDetailResp {
@@ -147,10 +147,14 @@ type AppCreateOrderReq {
 	remark      string `json:"remark,optional"`
 }
 
-type AppCreateOrderResp {
-	RespBase
+type AppCreateOrderData {
 	id      int64  `json:"id"`
 	orderNo string `json:"orderNo"`
+}
+
+type AppCreateOrderResp {
+	RespBase
+	data AppCreateOrderData `json:"data"`
 }
 
 type AppMyOrderListReq {
@@ -165,7 +169,7 @@ type AppMyOrderListResp {
 }
 
 type AppMyOrderDetailReq {
-	id       int64 `form:"id"`
+	id int64 `form:"id"`
 }
 
 type AppMyOrderDetailResp {
@@ -190,15 +194,19 @@ type AppRedeemReq {
 	remark     string `json:"remark,optional"`
 }
 
-type AppRedeemResp {
-	RespBase
+type AppRedeemData {
 	success  int64  `json:"success"` // 是否成功：0否 1是
 	redeemNo string `json:"redeemNo"` // 赎回单号
 }
 
+type AppRedeemResp {
+	RespBase
+	data AppRedeemData `json:"data"`
+}
+
 type AppMyRedeemLogListReq {
 	PageReq
-	orderId  int64 `form:"orderId,optional"`
+	orderId int64 `form:"orderId,optional"`
 }
 
 type AppMyRedeemLogListResp {
@@ -212,8 +220,8 @@ type GetStakingOptionsResp {
 }
 
 @server (
-	prefix: /app/staking
-	group:  staking
+	prefix:     /app/staking
+	group:      staking
 	middleware: PublicRateLimit
 )
 service app {
@@ -228,9 +236,9 @@ service app {
 }
 
 @server (
-	prefix: /app/staking
-	group:  staking
-	jwt:    Jwt
+	prefix:     /app/staking
+	group:      staking
+	jwt:        Jwt
 	middleware: UserRateLimit
 )
 service app {
@@ -248,9 +256,9 @@ service app {
 }
 
 @server (
-	prefix: /app/staking
-	group:  staking
-	jwt:    Jwt
+	prefix:     /app/staking
+	group:      staking
+	jwt:        Jwt
 	middleware: SensitiveRateLimit
 )
 service app {
@@ -260,3 +268,4 @@ service app {
 	@handler Redeem
 	post /redeem (AppRedeemReq) returns (AppRedeemResp)
 }
+

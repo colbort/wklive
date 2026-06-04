@@ -49,6 +49,12 @@ export function t(path: string, params?: Params) {
   return message.replace(/\{(\w+)\}/g, (_, key: string) => String(params[key] ?? `{${key}}`))
 }
 
+export function translateApiError(code: number | string | null | undefined, fallback = '') {
+  const numericCode = Number(code)
+  const path = Number.isFinite(numericCode) ? `apiErrors.${numericCode}` : ''
+  return (path && (resolveMessage(path, state.locale) || resolveMessage(path, 'zh-CN'))) || fallback
+}
+
 export function setLocale(locale: AppLocale) {
   state.locale = locale
   localStorage.setItem(STORAGE_KEY, locale)
@@ -69,6 +75,7 @@ export function createI18n() {
     t,
     setLocale,
     toggleLocale,
+    translateApiError,
   }
 
   return {
@@ -87,6 +94,7 @@ export function useI18n() {
       t,
       setLocale,
       toggleLocale,
+      translateApiError,
     }
   )
 }
@@ -96,4 +104,5 @@ const i18nApi = {
   t,
   setLocale,
   toggleLocale,
+  translateApiError,
 }

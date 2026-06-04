@@ -74,9 +74,11 @@ func (l *TransferMyAssetLogic) TransferMyAsset(in *asset.TransferMyAssetReq) (*a
 	}
 
 	return &asset.TransferMyAssetResp{
-		Base:      result.GetBase(),
-		FromAsset: result.GetFromAsset(),
-		ToAsset:   result.GetToAsset(),
+		Base: result.GetBase(),
+		Data: &asset.TransferMyAssetData{
+			FromAsset: result.GetData().GetFromAsset(),
+			ToAsset:   result.GetData().GetToAsset(),
+		},
 	}, nil
 }
 
@@ -190,5 +192,5 @@ func (l *TransferMyAssetLogic) transferAsset(tenantId, userId int64, fromWalletT
 		return nil, err
 	}
 
-	return &asset.TransferMyAssetResp{Base: helper.OkResp(), FromAsset: toUserAssetProto(afterFrom), ToAsset: toUserAssetProto(afterTo)}, nil
+	return &asset.TransferMyAssetResp{Base: helper.OkResp(), Data: &asset.TransferMyAssetData{FromAsset: toUserAssetProto(afterFrom), ToAsset: toUserAssetProto(afterTo)}}, nil
 }

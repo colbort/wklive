@@ -50,8 +50,10 @@ func (l *Google2FAInitLogic) Google2FAInit(in *system.Google2FAInitReq) (*system
 		}, err
 	}
 	return &system.Google2FAInitResp{
-		Base:       helper.OkResp(),
-		Secret:     secret,
-		OtpauthUrl: otpauthURL,
+		Base: helper.OkResp(),
+		Data: &system.Google2FAInitData{
+			Secret:     secret,
+			OtpauthUrl: otpauthURL,
+		},
 	}, nil
 }

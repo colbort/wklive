@@ -75,8 +75,12 @@ message AppCreateOrderReq {
 
 message AppCreateOrderResp {
   common.RespBase base = 1;
-  int64 id = 2;
-  string order_no = 3;
+  AppCreateOrderData data = 2;
+}
+
+message AppCreateOrderData {
+  int64 id = 1;
+  string order_no = 2;
 }
 
 // 我的订单列表
@@ -122,8 +126,12 @@ message AppRedeemReq {
 
 message AppRedeemResp {
   common.RespBase base = 1;
-  int64 success = 2;
-  string redeem_no = 3;
+  AppRedeemData data = 2;
+}
+
+message AppRedeemData {
+  int64 success = 1;
+  string redeem_no = 2;
 }
 
 // 我的赎回记录

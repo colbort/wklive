@@ -6,10 +6,10 @@ package system
 import (
 	"context"
 
+	"wklive/admin-api/internal/logicutil"
+
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/common"
-	"wklive/proto/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,39 +29,5 @@ func NewSysConfigListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 }
 
 func (l *SysConfigListLogic) SysConfigList(req *types.SysConfigListReq) (resp *types.SysConfigListResp, err error) {
-	result, err := l.svcCtx.SystemCli.SysConfigList(l.ctx, &system.SysConfigListReq{
-		Page: &common.PageReq{
-			Cursor: req.Cursor,
-			Limit:  req.Limit,
-		},
-		Keyword:  req.Keyword,
-		TenantId: req.TenantId,
-	})
-	if err != nil {
-		return nil, err
-	}
-	resp = &types.SysConfigListResp{
-		RespBase: types.RespBase{
-			Code:       result.Base.Code,
-			Msg:        result.Base.Msg,
-			Total:      result.Base.Total,
-			HasNext:    result.Base.HasNext,
-			HasPrev:    result.Base.HasPrev,
-			NextCursor: result.Base.NextCursor,
-			PrevCursor: result.Base.PrevCursor,
-		},
-		Data: make([]types.SysConfigItem, len(result.Data)),
-	}
-	for i, v := range result.Data {
-		resp.Data[i] = types.SysConfigItem{
-			Id:          v.Id,
-			TenantId:    v.TenantId,
-			ConfigKey:   v.ConfigKey,
-			ConfigValue: v.ConfigValue,
-			Remark:      v.Remark,
-			CreateTimes: v.CreateTimes,
-			UpdateTimes: v.UpdateTimes,
-		}
-	}
-	return
+	return logicutil.Proxy[types.SysConfigListResp](l.ctx, req, l.svcCtx.SystemCli.SysConfigList)
 }

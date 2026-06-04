@@ -29,15 +29,19 @@ export function apiListAssetCoinConfigs(
   return http.get('/asset/coin-configs', { params: compactParams(params) }).then((res) => res.data)
 }
 
-export function apiGetMyAssetSummary(params: GetMyAssetSummaryReq): Promise<RespBase & { data: UserAssetSummary }> {
+export function apiGetMyAssetSummary(
+  params: GetMyAssetSummaryReq,
+): Promise<RespBase & { data: UserAssetSummary }> {
   return http.get('/asset/summary', { params: compactParams(params) }).then((res) => res.data)
 }
 
-export function apiListMyAssets(params: ListMyAssetsReq): Promise<RespBase & { data: AssetUserAsset[] }> {
+export function apiListMyAssets(
+  params: ListMyAssetsReq,
+): Promise<RespBase & { data: AssetUserAsset[] }> {
   return http.get('/asset/assets', { params: compactParams(params) }).then((res) => res.data)
 }
 
-export function apiGetMyAsset(params: GetMyAssetReq): Promise<RespBase & { asset: AssetUserAsset }> {
+export function apiGetMyAsset(params: GetMyAssetReq): Promise<RespBase & { data: AssetUserAsset }> {
   return http.get('/asset/assets/detail', { params: compactParams(params) }).then((res) => res.data)
 }
 
@@ -47,7 +51,9 @@ export function apiListMyAssetFlows(
   return http.get('/asset/flows', { params: compactParams(params) }).then((res) => res.data)
 }
 
-export function apiListMyFreezes(params: ListMyFreezesReq): Promise<RespBase & { data: AssetFreeze[] }> {
+export function apiListMyFreezes(
+  params: ListMyFreezesReq,
+): Promise<RespBase & { data: AssetFreeze[] }> {
   return http.get('/asset/freezes', { params: compactParams(params) }).then((res) => res.data)
 }
 
@@ -57,6 +63,6 @@ export function apiListMyLocks(params: ListMyLocksReq): Promise<RespBase & { dat
 
 export function apiTransferMyAsset(
   params: TransferMyAssetReq,
-): Promise<RespBase & TransferMyAssetResp> {
+): Promise<RespBase & { data: TransferMyAssetResp }> {
   return http.post('/asset/transfer', params).then((res) => res.data)
 }

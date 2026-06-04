@@ -173,7 +173,7 @@ async function verifyUser() {
     if (!checkCode(res.code)) throw new Error(res.msg || t('users.queryUserFailed'))
 
     const data = res.detail || res.data
-    const base = data?.base
+    const base = data?.user
     userChecked.value = true
     userExists.value = Boolean(base?.id)
     userCheckName.value = base?.username || ''

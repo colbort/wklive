@@ -60,7 +60,7 @@ type OptionOrder {
 	id               int64  `json:"id"` // 主键ID
 	tenantId         int64  `json:"tenantId"` // 租户ID
 	orderNo          string `json:"orderNo"` // 订单号
-	userId              int64  `json:"userId"`
+	userId           int64  `json:"userId"`
 	accountId        int64  `json:"accountId"`
 	contractId       int64  `json:"contractId"`
 	underlyingSymbol string `json:"underlyingSymbol"`
@@ -116,7 +116,7 @@ type OptionTrade {
 type OptionPosition {
 	id                int64  `json:"id"`
 	tenantId          int64  `json:"tenantId"`
-	userId               int64  `json:"userId"`
+	userId            int64  `json:"userId"`
 	accountId         int64  `json:"accountId"`
 	contractId        int64  `json:"contractId"`
 	underlyingSymbol  string `json:"underlyingSymbol"`
@@ -142,7 +142,7 @@ type OptionExercise {
 	id              int64  `json:"id"`
 	tenantId        int64  `json:"tenantId"`
 	exerciseNo      string `json:"exerciseNo"`
-	userId             int64  `json:"userId"`
+	userId          int64  `json:"userId"`
 	accountId       int64  `json:"accountId"`
 	contractId      int64  `json:"contractId"`
 	positionId      int64  `json:"positionId"`
@@ -165,7 +165,7 @@ type OptionExercise {
 type OptionAccount {
 	id               int64  `json:"id"`
 	tenantId         int64  `json:"tenantId"`
-	userId              int64  `json:"userId"`
+	userId           int64  `json:"userId"`
 	accountId        int64  `json:"accountId"`
 	marginCoin       string `json:"marginCoin"`
 	balance          string `json:"balance"`
@@ -184,7 +184,7 @@ type OptionAccount {
 type OptionBill {
 	id            int64  `json:"id"`
 	tenantId      int64  `json:"tenantId"`
-	userId           int64  `json:"userId"`
+	userId        int64  `json:"userId"`
 	accountId     int64  `json:"accountId"`
 	bizNo         string `json:"bizNo"`
 	refType       int64  `json:"refType"`
@@ -230,8 +230,8 @@ type AppCommonResp {
 type AppListContractsReq {
 	PageReq
 	underlyingSymbol string `form:"underlyingSymbol,optional"` // 标的符号
-	optionType       int64 `form:"optionType,optional"` // 期权类型
-	status           int64 `form:"status,optional"` // 状态
+	optionType       int64  `form:"optionType,optional"` // 期权类型
+	status           int64  `form:"status,optional"` // 状态
 }
 
 type AppListContractsResp {
@@ -249,22 +249,26 @@ type AppGetContractDetailResp {
 }
 
 type AppPlaceOrderReq {
-	accountId     int64  `json:"accountId"` // 账户ID
-	contractId    int64  `json:"contractId"` // 合约ID
-	side          int64  `json:"side"`
-	positionEffect int64 `json:"positionEffect"`
-	orderType     int64  `json:"orderType"`
-	price         string `json:"price"`
-	qty           string `json:"qty"`
-	clientOrderId string `json:"clientOrderId,optional"` // 客户端订单号
-	reduceOnly    int64  `json:"reduceOnly,optional"` // 是否只减仓
-	mmp           int64  `json:"mmp,optional"` // 是否做市商保护
+	accountId      int64  `json:"accountId"` // 账户ID
+	contractId     int64  `json:"contractId"` // 合约ID
+	side           int64  `json:"side"`
+	positionEffect int64  `json:"positionEffect"`
+	orderType      int64  `json:"orderType"`
+	price          string `json:"price"`
+	qty            string `json:"qty"`
+	clientOrderId  string `json:"clientOrderId,optional"` // 客户端订单号
+	reduceOnly     int64  `json:"reduceOnly,optional"` // 是否只减仓
+	mmp            int64  `json:"mmp,optional"` // 是否做市商保护
+}
+
+type AppPlaceOrderData {
+	orderNo string `json:"orderNo"`
+	orderId int64  `json:"orderId"`
 }
 
 type AppPlaceOrderResp {
 	RespBase
-	orderNo string `json:"orderNo"`
-	orderId int64  `json:"orderId"`
+	data AppPlaceOrderData `json:"data"`
 }
 
 type AppCancelOrderReq {
@@ -294,7 +298,6 @@ type AppListCurrentOrdersReq {
 type AppListCurrentOrdersResp {
 	RespBase
 	data []OptionOrderDetail `json:"data"`
-	page PageReq             `json:"page"`
 }
 
 type AppListHistoryOrdersReq {
@@ -308,7 +311,6 @@ type AppListHistoryOrdersReq {
 type AppListHistoryOrdersResp {
 	RespBase
 	data []OptionOrderDetail `json:"data"`
-	page PageReq             `json:"page"`
 }
 
 type AppListTradesReq {
@@ -321,7 +323,6 @@ type AppListTradesReq {
 type AppListTradesResp {
 	RespBase
 	data []OptionTradeDetail `json:"data"`
-	page PageReq             `json:"page"`
 }
 
 type AppListPositionsReq {
@@ -333,7 +334,6 @@ type AppListPositionsReq {
 type AppListPositionsResp {
 	RespBase
 	data []OptionPositionDetail `json:"data"`
-	page PageReq                `json:"page"`
 }
 
 type AppGetPositionDetailReq {
@@ -353,10 +353,14 @@ type AppExerciseReq {
 	exerciseQty string `json:"exerciseQty"`
 }
 
-type AppExerciseResp {
-	RespBase
+type AppExerciseData {
 	exerciseNo string `json:"exerciseNo"`
 	exerciseId int64  `json:"exerciseId"`
+}
+
+type AppExerciseResp {
+	RespBase
+	data AppExerciseData `json:"data"`
 }
 
 type AppListExercisesReq {
@@ -370,7 +374,6 @@ type AppListExercisesReq {
 type AppListExercisesResp {
 	RespBase
 	data []OptionExerciseDetail `json:"data"`
-	page PageReq                `json:"page"`
 }
 
 type AppListAccountsReq {
@@ -392,7 +395,6 @@ type AppListBillsReq {
 type AppListBillsResp {
 	RespBase
 	data []OptionBill `json:"data"`
-	page PageReq      `json:"page"`
 }
 
 type GetOptionOptionsResp {
@@ -401,8 +403,8 @@ type GetOptionOptionsResp {
 }
 
 @server (
-	prefix: /app/option
-	group:  option
+	prefix:     /app/option
+	group:      option
 	middleware: PublicRateLimit
 )
 service app {
@@ -417,9 +419,9 @@ service app {
 }
 
 @server (
-	prefix: /app/option
-	group:  option
-	jwt:    Jwt
+	prefix:     /app/option
+	group:      option
+	jwt:        Jwt
 	middleware: UserRateLimit
 )
 service app {
@@ -452,9 +454,9 @@ service app {
 }
 
 @server (
-	prefix: /app/option
-	group:  option
-	jwt:    Jwt
+	prefix:     /app/option
+	group:      option
+	jwt:        Jwt
 	middleware: SensitiveRateLimit
 )
 service app {
@@ -467,3 +469,4 @@ service app {
 	@handler AppExercise
 	post /exercise (AppExerciseReq) returns (AppExerciseResp)
 }
+

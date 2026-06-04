@@ -37,7 +37,7 @@ func (l *GetSymbolDetailAdminLogic) GetSymbolDetailAdmin(req *types.GetSymbolDet
 
 	tenantId := req.TenantId
 	if tenantId == 0 {
-		tenantId = resp.Data.TenantId
+		tenantId = resp.Data.Symbol.TenantId
 	}
 	ctx := context.WithValue(l.ctx, utils.CtxKeyTenantId, tenantId)
 	detail, err := l.svcCtx.TradeAppCli.GetSymbolDetail(ctx, &trade.GetSymbolDetailReq{
@@ -49,11 +49,11 @@ func (l *GetSymbolDetailAdminLogic) GetSymbolDetailAdmin(req *types.GetSymbolDet
 	if detail == nil {
 		return resp, nil
 	}
-	if detail.GetSpot() != nil {
-		resp.Spot = tradeSymbolSpotToTypes(detail.GetSpot())
+	if detail.GetData().GetSpot() != nil {
+		resp.Data.Spot = tradeSymbolSpotToTypes(detail.GetData().GetSpot())
 	}
-	if detail.GetContract() != nil {
-		resp.Contract = tradeSymbolContractToTypes(detail.GetContract())
+	if detail.GetData().GetContract() != nil {
+		resp.Data.Contract = tradeSymbolContractToTypes(detail.GetData().GetContract())
 	}
 	return resp, nil
 }

@@ -49,6 +49,5 @@ func (l *AdminListMarketSnapshotsLogic) AdminListMarketSnapshots(in *option.List
 	return &option.ListMarketSnapshotsResp{
 		Base: pageutil.Base(cursor, limit, len(items), total, lastID),
 		Data: data,
-		Page: pageutil.Output(in.Page, limit),
 	}, nil
 }

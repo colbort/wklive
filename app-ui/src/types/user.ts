@@ -97,13 +97,13 @@ export interface UserBank {
 }
 
 export interface UserProfile {
-  base: UserBase
+  user: UserBase
   identity?: UserIdentity
   security?: UserSecurity
 }
 
 export interface UserDetail {
-  base: UserBase
+  user: UserBase
   identity?: UserIdentity
   security?: UserSecurity
   banks?: UserBank[]

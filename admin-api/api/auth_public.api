@@ -17,12 +17,14 @@ type LoginReq {
 	googleCode string `json:"googleCode,optional"`
 }
 
+type LoginData {
+	token string `json:"token"`
+	exp   int64  `json:"exp"`
+}
+
 type LoginResp {
 	RespBase
-	data {
-		token string `json:"token"`
-		exp   int64  `json:"exp"`
-	} `json:"data"`
+	data LoginData `json:"data"`
 }
 
 @server (

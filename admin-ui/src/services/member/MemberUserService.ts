@@ -111,6 +111,7 @@ export type UserBankItem = {
   id: number // 主键ID
   tenantId: number // 租户ID
   userId: number // 用户ID
+  username?: string // 用户名
   bankName: string // 银行名称
   bankCode: string // 银行编码
   accountName: string // 开户名
@@ -124,7 +125,7 @@ export type UserBankItem = {
 }
 
 export type UserDetail = {
-  base: UserBase // 用户基础信息
+  user: UserBase // 用户基础信息
   identity: UserIdentity // 实名信息
   security: UserSecurity // 安全信息
   banks: UserBankItem[] // 银行卡列表
@@ -259,14 +260,17 @@ export type UpdateMemberUserRiskLevelReq = {
   riskLevel: number // 风控等级
 }
 
-export type CheckUserReferrerResp = MemberRespBase<{
+export type UserReferrerInfo = {
   userId: number
   username: string
   nickname: string
   inviteCode: string
-}> & {
-  exists: boolean
 }
+
+export type CheckUserReferrerResp = MemberRespBase<{
+  exists: boolean
+  referrer?: UserReferrerInfo
+}>
 
 export type ListMemberUserIdentitiesReq = {
   cursor?: number // 游标

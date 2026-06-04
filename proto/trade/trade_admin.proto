@@ -188,8 +188,12 @@ message GetSymbolDetailAdminReq {
 
 message GetSymbolDetailAdminResp {
   common.RespBase base = 1;
-  TradeSymbol data = 2;
-  repeated TradeSymbolLeverageConfig leverage_configs = 3;
+  GetSymbolDetailAdminData data = 2;
+}
+
+message GetSymbolDetailAdminData {
+  TradeSymbol data = 1;
+  repeated TradeSymbolLeverageConfig leverage_configs = 2;
 }
 
 message SetSpotSymbolConfigReq {

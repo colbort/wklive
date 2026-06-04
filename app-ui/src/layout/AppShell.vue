@@ -50,7 +50,7 @@ const activeDesktopCategoryType = computed(() => {
   return desktopCategories.value[0]?.categoryType ?? null
 })
 
-const userBase = computed(() => profile.value?.base ?? null)
+const userBase = computed(() => profile.value?.user ?? null)
 const displayName = computed(() => userBase.value?.nickname || userBase.value?.username || 'GUEST-8437')
 const displayUserId = computed(() => userBase.value?.id || 50596163)
 const desktopAssetPreview = computed(() => userAssets.value.filter((asset) => asset.walletType === 1).slice(0, 8))

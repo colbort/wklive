@@ -151,8 +151,10 @@ func (l *CreateCryptoRechargeOrderLogic) CreateCryptoRechargeOrder(in *payment.C
 	releaseCryptoRechargeAddress(l.ctx, l.svcCtx, addressItem.Id)
 
 	return &payment.CreateCryptoRechargeOrderResp{
-		Base:    helper.OkResp(),
-		Order:   toRechargeOrderProto(rechargeOrder),
-		Address: toCryptoRechargeAddressProto(addressItem),
+		Base: helper.OkResp(),
+		Data: &payment.CreateCryptoRechargeOrderData{
+			Order:   toRechargeOrderProto(rechargeOrder),
+			Address: toCryptoRechargeAddressProto(addressItem),
+		},
 	}, nil
 }

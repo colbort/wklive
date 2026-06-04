@@ -95,8 +95,12 @@ message AppPlaceOrderReq {
 
 message AppPlaceOrderResp {
   common.RespBase base = 1;
-  string order_no = 2;
-  int64 order_id = 3;
+  AppPlaceOrderData data = 2;
+}
+
+message AppPlaceOrderData {
+  string order_no = 1;
+  int64 order_id = 2;
 }
 
 message AppCancelOrderReq {
@@ -126,7 +130,6 @@ message AppListCurrentOrdersReq {
 message AppListCurrentOrdersResp {
   common.RespBase base = 1;
   repeated OptionOrderDetail data = 2;
-  common.PageReq page = 3;
 }
 
 message AppListHistoryOrdersReq {
@@ -140,7 +143,6 @@ message AppListHistoryOrdersReq {
 message AppListHistoryOrdersResp {
   common.RespBase base = 1;
   repeated OptionOrderDetail data = 2;
-  common.PageReq page = 3;
 }
 
 message AppListTradesReq {
@@ -153,7 +155,6 @@ message AppListTradesReq {
 message AppListTradesResp {
   common.RespBase base = 1;
   repeated OptionTradeDetail data = 2;
-  common.PageReq page = 3;
 }
 
 message AppListPositionsReq {
@@ -165,7 +166,6 @@ message AppListPositionsReq {
 message AppListPositionsResp {
   common.RespBase base = 1;
   repeated OptionPositionDetail data = 2;
-  common.PageReq page = 3;
 }
 
 message AppGetPositionDetailReq {
@@ -187,8 +187,12 @@ message AppExerciseReq {
 
 message AppExerciseResp {
   common.RespBase base = 1;
-  string exercise_no = 2;
-  int64 exercise_id = 3;
+  AppExerciseData data = 2;
+}
+
+message AppExerciseData {
+  string exercise_no = 1;
+  int64 exercise_id = 2;
 }
 
 message AppListExercisesReq {
@@ -202,7 +206,6 @@ message AppListExercisesReq {
 message AppListExercisesResp {
   common.RespBase base = 1;
   repeated OptionExerciseDetail data = 2;
-  common.PageReq page = 3;
 }
 
 message AppListAccountsReq {
@@ -224,5 +227,4 @@ message AppListBillsReq {
 message AppListBillsResp {
   common.RespBase base = 1;
   repeated OptionBill data = 2;
-  common.PageReq page = 3;
 }

@@ -55,7 +55,7 @@ func (l *GetUserDetailLogic) GetUserDetail(in *user.GetUserDetailReq) (*user.Get
 		return nil, err
 	}
 	return &user.GetUserDetailResp{
-		Base:   helper.OkResp(),
-		Detail: toUserDetailProto(tuser, identity, security, userBanks),
+		Base: helper.OkResp(),
+		Data: toUserDetailProto(tuser, identity, security, userBanks),
 	}, nil
 }

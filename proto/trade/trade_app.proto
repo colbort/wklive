@@ -66,10 +66,14 @@ message GetSymbolDetailReq {
 
 message GetSymbolDetailResp {
   common.RespBase base = 1;
-  TradeSymbol symbol = 2;
-  TradeSymbolSpot spot = 3;
-  TradeSymbolContract contract = 4;
-  repeated TradeSymbolLeverageConfig leverage_configs = 5;
+  GetSymbolDetailData data = 2;
+}
+
+message GetSymbolDetailData {
+  TradeSymbol symbol = 1;
+  TradeSymbolSpot spot = 2;
+  TradeSymbolContract contract = 3;
+  repeated TradeSymbolLeverageConfig leverage_configs = 4;
 }
 
 message PlaceOrderReq {
@@ -97,7 +101,7 @@ message PlaceOrderReq {
 
 message PlaceOrderResp {
   common.RespBase base = 1;
-  TradeOrder order = 2;
+  TradeOrder data = 2;
 }
 
 message CancelOrderReq {
@@ -115,7 +119,7 @@ message CancelAllOrdersReq {
 
 message CancelAllOrdersResp {
   common.RespBase base = 1;
-  int64 affected_count = 2;
+  int64 data = 2;
 }
 
 message GetOrderListReq {
@@ -139,9 +143,13 @@ message GetOrderDetailReq {
 
 message GetOrderDetailResp {
   common.RespBase base = 1;
-  TradeOrder order = 2;
-  TradeOrderSpot spot = 3;
-  TradeOrderContract contract = 4;
+  GetOrderDetailData data = 2;
+}
+
+message GetOrderDetailData {
+  TradeOrder order = 1;
+  TradeOrderSpot spot = 2;
+  TradeOrderContract contract = 3;
 }
 
 message GetFillListReq {

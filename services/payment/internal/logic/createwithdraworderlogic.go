@@ -115,6 +115,6 @@ func (l *CreateWithdrawOrderLogic) CreateWithdrawOrder(in *payment.CreateWithdra
 
 	return &payment.CreateWithdrawOrderResp{
 		Base: helper.OkResp(),
-		Id:   id,
+		Data: id,
 	}, nil
 }

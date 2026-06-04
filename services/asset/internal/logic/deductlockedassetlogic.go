@@ -109,5 +109,5 @@ func (l *DeductLockedAssetLogic) DeductLockedAsset(in *asset.DeductLockedAssetRe
 		return nil, err
 	}
 
-	return &asset.ChangeAssetResp{Base: helper.OkResp(), BizNo: in.BizNo, Asset: toUserAssetProto(after)}, nil
+	return &asset.ChangeAssetResp{Base: helper.OkResp(), Data: &asset.ChangeAssetData{BizNo: in.BizNo, Asset: toUserAssetProto(after)}}, nil
 }

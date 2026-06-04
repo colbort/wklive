@@ -45,5 +45,5 @@ func (l *GetMyAssetLogic) GetMyAsset(in *asset.GetMyAssetReq) (*asset.GetMyAsset
 		return nil, err
 	}
 
-	return &asset.GetMyAssetResp{Base: helper.OkResp(), Asset: toUserAssetProto(item)}, nil
+	return &asset.GetMyAssetResp{Base: helper.OkResp(), Data: toUserAssetProto(item)}, nil
 }

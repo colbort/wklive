@@ -94,8 +94,12 @@ message FreezeAssetReq {
 
 message FreezeAssetResp {
   common.RespBase base = 1;
-  string freeze_no = 2;
-  UserAsset asset = 3;
+  FreezeAssetData data = 2;
+}
+
+message FreezeAssetData {
+  string freeze_no = 1;
+  UserAsset asset = 2;
 }
 
 message UnfreezeAssetReq {
@@ -161,8 +165,12 @@ message LockAssetReq {
 
 message LockAssetResp {
   common.RespBase base = 1;
-  string lock_no = 2;
-  UserAsset asset = 3;
+  LockAssetData data = 2;
+}
+
+message LockAssetData {
+  string lock_no = 1;
+  UserAsset asset = 2;
 }
 
 message UnlockAssetReq {
@@ -227,12 +235,20 @@ message TransferAssetReq {
 
 message TransferAssetResp {
   common.RespBase base = 1;
-  UserAsset from_asset = 2;
-  UserAsset to_asset = 3;
+  TransferAssetData data = 2;
+}
+
+message TransferAssetData {
+  UserAsset from_asset = 1;
+  UserAsset to_asset = 2;
 }
 
 message ChangeAssetResp {
   common.RespBase base = 1;
-  string biz_no = 2;
-  UserAsset asset = 3;
+  ChangeAssetData data = 2;
+}
+
+message ChangeAssetData {
+  string biz_no = 1;
+  UserAsset asset = 2;
 }

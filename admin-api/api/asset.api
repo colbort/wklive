@@ -332,10 +332,14 @@ type AdminUnlockAssetReq {
 	operatorId int64  `json:"operatorId"`
 }
 
-type AdminChangeAssetResp {
-	RespBase
+type AdminChangeAssetData {
 	bizNo string         `json:"bizNo"`
 	asset AssetUserAsset `json:"asset"`
+}
+
+type AdminChangeAssetResp {
+	RespBase
+	data AdminChangeAssetData `json:"data"`
 }
 
 type GetAssetOptionsResp {
@@ -400,3 +404,4 @@ service admin {
 	@handler AdminUnlockAsset
 	post /unlock (AdminUnlockAssetReq) returns (AdminChangeAssetResp)
 }
+

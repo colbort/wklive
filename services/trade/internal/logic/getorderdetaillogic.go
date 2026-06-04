@@ -54,20 +54,25 @@ func (l *GetOrderDetailLogic) GetOrderDetail(in *trade.GetOrderDetailReq) (*trad
 		return nil, err
 	}
 
-	resp := &trade.GetOrderDetailResp{Base: helper.OkResp(), Order: orderToProto(item)}
+	resp := &trade.GetOrderDetailResp{
+		Base: helper.OkResp(),
+		Data: &trade.GetOrderDetailData{
+			Order: orderToProto(item),
+		},
+	}
 	spot, err := l.svcCtx.TradeOrderSpotModel.FindOneByTenantIdOrderId(l.ctx, tenantId, item.Id)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 	if spot != nil {
-		resp.Spot = orderSpotToProto(spot)
+		resp.Data.Spot = orderSpotToProto(spot)
 	}
 	contractCfg, err := l.svcCtx.TradeOrderContractModel.FindOneByTenantIdOrderId(l.ctx, tenantId, item.Id)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 	if contractCfg != nil {
-		resp.Contract = orderContractToProto(contractCfg)
+		resp.Data.Contract = orderContractToProto(contractCfg)
 	}
 
 	return resp, nil

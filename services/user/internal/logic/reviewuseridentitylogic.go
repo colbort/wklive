@@ -60,7 +60,7 @@ func (l *ReviewUserIdentityLogic) ReviewUserIdentity(in *user.ReviewUserIdentity
 	l.Logger.Infof("管理员 %d 审核用户 %d 实名信息，状态：%d", in.VerifyBy, in.UserId, in.VerifyStatus)
 
 	return &user.ReviewUserIdentityResp{
-		Base:     helper.OkResp(),
-		Identity: toUserIdentityProto(identity),
+		Base: helper.OkResp(),
+		Data: toUserIdentityProto(identity),
 	}, nil
 }

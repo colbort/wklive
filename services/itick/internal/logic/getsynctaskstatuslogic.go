@@ -38,9 +38,11 @@ func (l *GetSyncTaskStatusLogic) GetSyncTaskStatus(in *itick.GetSyncTaskStatusRe
 	}
 
 	return &itick.GetSyncTaskStatusResp{
-		Base:    helper.OkResp(),
-		TaskNo:  item.TaskNo,
-		Status:  int32(item.Status),
-		Message: item.Message,
+		Base: helper.OkResp(),
+		Data: &itick.GetSyncTaskStatusData{
+			TaskNo:  item.TaskNo,
+			Status:  int32(item.Status),
+			Message: item.Message,
+		},
 	}, nil
 }

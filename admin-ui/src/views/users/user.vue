@@ -266,10 +266,10 @@ async function verifyReferrer() {
   referrerChecking.value = true
   try {
     const res = await memberUserService.checkReferrer(referrerInviteCode)
-    if (!checkCode(res.code) || !res.exists) {
+    if (!checkCode(res.code) || !res.data?.exists) {
       throw new Error(res.msg || t('users.referrerNotFound'))
     }
-    const info = res.data
+    const info = res.data?.referrer
     referrerChecked.value = true
     referrerExists.value = true
     referrerDisplay.value = info?.nickname
@@ -370,38 +370,38 @@ async function openEdit(row: UserItem) {
   }
   const data = (res.detail || res.data) as UserDetail
   Object.assign(editForm, {
-    userId: data.base.id,
-    tenantId: data.base.tenantId,
-    username: data.base.username,
-    nickname: data.base.nickname,
-    avatar: data.base.avatar,
+    userId: data.user.id,
+    tenantId: data.user.tenantId,
+    username: data.user.username,
+    nickname: data.user.nickname,
+    avatar: data.user.avatar,
     phone: data.identity.phone,
     email: data.identity.email,
     password: '',
-    registerType: data.base.registerType,
-    status: data.base.status,
-    memberLevel: data.base.memberLevel,
-    language: data.base.language,
-    timezone: data.base.timezone,
-    inviteCode: data.base.inviteCode,
-    signature: data.base.signature,
-    source: data.base.source,
-    referrerUserId: data.base.referrerUserId,
+    registerType: data.user.registerType,
+    status: data.user.status,
+    memberLevel: data.user.memberLevel,
+    language: data.user.language,
+    timezone: data.user.timezone,
+    inviteCode: data.user.inviteCode,
+    signature: data.user.signature,
+    source: data.user.source,
+    referrerUserId: data.user.referrerUserId,
     referrerInviteCode: '',
-    remark: data.base.remark,
+    remark: data.user.remark,
   })
   resetReferrerCheck()
-  if (Number(data.base.referrerUserId || 0) > 0) {
+  if (Number(data.user.referrerUserId || 0) > 0) {
     try {
-      const referrerRes = await memberUserService.getDetail(Number(data.base.referrerUserId))
+      const referrerRes = await memberUserService.getDetail(Number(data.user.referrerUserId))
       if (checkCode(referrerRes.code)) {
         const referrerDetail = (referrerRes.detail || referrerRes.data) as UserDetail
-        editForm.referrerInviteCode = referrerDetail.base.inviteCode || ''
+        editForm.referrerInviteCode = referrerDetail.user.inviteCode || ''
         referrerChecked.value = true
         referrerExists.value = true
-        referrerDisplay.value = referrerDetail.base.nickname
-          ? `${referrerDetail.base.username} (${referrerDetail.base.nickname})`
-          : referrerDetail.base.username
+        referrerDisplay.value = referrerDetail.user.nickname
+          ? `${referrerDetail.user.username} (${referrerDetail.user.nickname})`
+          : referrerDetail.user.username
       }
     } catch {
       resetReferrerCheck()

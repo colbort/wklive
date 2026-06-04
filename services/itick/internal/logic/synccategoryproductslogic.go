@@ -83,8 +83,8 @@ func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *itick.SyncCategoryP
 	}(taskNo, reqCopy)
 
 	return &itick.SyncCategoryProductsResp{
-		Base:   helper.OkResp(),
-		TaskNo: taskNo,
+		Base: helper.OkResp(),
+		Data: taskNo,
 	}, nil
 }
 

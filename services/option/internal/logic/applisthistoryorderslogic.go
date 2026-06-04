@@ -74,6 +74,5 @@ func (l *AppListHistoryOrdersLogic) AppListHistoryOrders(in *option.AppListHisto
 	return &option.AppListHistoryOrdersResp{
 		Base: pageutil.Base(cursor, limit, len(items), total, lastID),
 		Data: data,
-		Page: pageutil.Output(in.Page, limit),
 	}, nil
 }

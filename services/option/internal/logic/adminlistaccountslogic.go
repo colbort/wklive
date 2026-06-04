@@ -49,6 +49,5 @@ func (l *AdminListAccountsLogic) AdminListAccounts(in *option.ListAccountsReq) (
 	return &option.ListAccountsResp{
 		Base: pageutil.Base(cursor, limit, len(items), total, lastID),
 		Data: data,
-		Page: pageutil.Output(in.Page, limit),
 	}, nil
 }

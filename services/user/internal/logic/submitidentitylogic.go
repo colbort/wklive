@@ -162,7 +162,7 @@ func (l *SubmitIdentityLogic) SubmitIdentity(in *user.SubmitIdentityReq) (*user.
 	}
 
 	return &user.SubmitIdentityResp{
-		Base:     helper.OkResp(),
-		Identity: toUserIdentityProto(identity),
+		Base: helper.OkResp(),
+		Data: toUserIdentityProto(identity),
 	}, nil
 }

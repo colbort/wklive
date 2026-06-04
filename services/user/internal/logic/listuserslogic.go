@@ -52,7 +52,7 @@ func (l *ListUsersLogic) ListUsers(in *user.ListUsersReq) (*user.ListUsersResp, 
 
 	return &user.ListUsersResp{
 		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(items), total, lastID),
-		List: data,
+		Data: data,
 	}, nil
 }
 

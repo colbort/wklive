@@ -34,10 +34,8 @@ export function apiMemberUserDetail(userId: number): Promise<MemberRespBase<User
   return get<UserDetail>(`/admin/member/users/${userId}`)
 }
 
-export function apiMemberUserCreate(
-  data: CreateMemberUserReq,
-): Promise<MemberRespBase<{ userId: number }>> {
-  return post<{ userId: number }>('/admin/member/users', data)
+export function apiMemberUserCreate(data: CreateMemberUserReq): Promise<MemberRespBase<number>> {
+  return post<number>('/admin/member/users', data)
 }
 
 export function apiMemberUserCheckReferrer(inviteCode: string): Promise<CheckUserReferrerResp> {

@@ -21,6 +21,8 @@ export type SysRole = {
   isSuper?: boolean // 可选：如果后端有的话
 }
 
+export type Role = SysRole
+
 export type RoleListResp = {
   list: SysRole[]
   total: number

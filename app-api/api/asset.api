@@ -136,8 +136,7 @@ type ListAssetCoinConfigsResp {
 	data []AssetCoinConfig `json:"data"`
 }
 
-type GetMyAssetSummaryReq {
-}
+type GetMyAssetSummaryReq {}
 
 type GetMyAssetSummaryResp {
 	RespBase
@@ -161,7 +160,7 @@ type GetMyAssetReq {
 
 type GetMyAssetResp {
 	RespBase
-	asset AssetUserAsset `json:"asset"`
+	data AssetUserAsset `json:"data"`
 }
 
 type ListMyAssetFlowsReq {
@@ -180,9 +179,9 @@ type ListMyAssetFlowsResp {
 
 type ListMyFreezesReq {
 	PageReq
-	walletType int64 `form:"walletType"` // 钱包类型
+	walletType int64  `form:"walletType"` // 钱包类型
 	coin       string `form:"coin,optional"` // 币种
-	status     int64 `form:"status,optional"` // 状态
+	status     int64  `form:"status,optional"` // 状态
 }
 
 type ListMyFreezesResp {
@@ -192,9 +191,9 @@ type ListMyFreezesResp {
 
 type ListMyLocksReq {
 	PageReq
-	walletType int64 `form:"walletType"` // 钱包类型
+	walletType int64  `form:"walletType"` // 钱包类型
 	coin       string `form:"coin,optional"` // 币种
-	status     int64 `form:"status,optional"` // 状态
+	status     int64  `form:"status,optional"` // 状态
 }
 
 type ListMyLocksResp {
@@ -211,10 +210,14 @@ type TransferMyAssetReq {
 	remark         string `json:"remark,optional"` // 备注
 }
 
-type TransferMyAssetResp {
-	RespBase
+type TransferMyAssetData {
 	fromAsset AssetUserAsset `json:"fromAsset"` // 转出账户资产
 	toAsset   AssetUserAsset `json:"toAsset"` // 转入账户资产
+}
+
+type TransferMyAssetResp {
+	RespBase
+	data TransferMyAssetData `json:"data"`
 }
 
 type GetAssetOptionsResp {
@@ -223,8 +226,8 @@ type GetAssetOptionsResp {
 }
 
 @server (
-	prefix: /app/asset
-	group:  asset
+	prefix:     /app/asset
+	group:      asset
 	middleware: PublicRateLimit
 )
 service app {
@@ -261,12 +264,13 @@ service app {
 }
 
 @server (
-	prefix: /app/asset
-	group:  asset
-	jwt:    Jwt
+	prefix:     /app/asset
+	group:      asset
+	jwt:        Jwt
 	middleware: SensitiveRateLimit
 )
 service app {
 	@handler TransferMyAsset
 	post /transfer (TransferMyAssetReq) returns (TransferMyAssetResp)
 }
+

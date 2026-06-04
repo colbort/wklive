@@ -93,6 +93,11 @@ export interface WithdrawOrder {
   updateTimes: number
 }
 
+export interface CryptoRechargeOrderData {
+  order: RechargeOrder
+  address: CryptoRechargeAddress
+}
+
 export interface CryptoRechargeAddress {
   id: number
   tenantId: number
@@ -132,8 +137,7 @@ export interface CryptoRechargeTx {
   updateTimes: number
 }
 
-export interface GetMyRechargeStatReq {
-}
+export interface GetMyRechargeStatReq {}
 
 export interface ListAvailableRechargeChannelsReq {
   rechargeAmount: number

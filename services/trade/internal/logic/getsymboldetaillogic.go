@@ -43,29 +43,31 @@ func (l *GetSymbolDetailLogic) GetSymbolDetail(in *trade.GetSymbolDetailReq) (*t
 	}
 
 	resp := &trade.GetSymbolDetailResp{
-		Base:   helper.OkResp(),
-		Symbol: symbolToProto(item),
+		Base: helper.OkResp(),
+		Data: &trade.GetSymbolDetailData{
+			Symbol: symbolToProto(item),
+		},
 	}
 	spot, err := l.svcCtx.TradeSymbolSpotModel.FindOneByTenantIdSymbolId(l.ctx, tenantId, in.SymbolId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 	if spot != nil {
-		resp.Spot = spotSymbolToProto(spot)
+		resp.Data.Spot = spotSymbolToProto(spot)
 	}
 	contractCfg, err := l.svcCtx.TradeSymbolContractModel.FindOneByTenantIdSymbolId(l.ctx, tenantId, in.SymbolId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 	if contractCfg != nil {
-		resp.Contract = contractSymbolToProto(contractCfg)
+		resp.Data.Contract = contractSymbolToProto(contractCfg)
 	}
 	configs, _, err := l.svcCtx.SymbolLeverageCfgModel.FindPage(l.ctx, tenantId, in.SymbolId, item.MarketType, 0, 1, 0, 100)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 	for _, cfg := range configs {
-		resp.LeverageConfigs = append(resp.LeverageConfigs, symbolLeverageConfigToProto(cfg))
+		resp.Data.LeverageConfigs = append(resp.Data.LeverageConfigs, symbolLeverageConfigToProto(cfg))
 	}
 	return resp, nil
 }

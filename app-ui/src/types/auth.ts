@@ -13,10 +13,14 @@ export interface RegisterReq {
   registerIp?: string
 }
 
-export interface RegisterResp {
+export interface RegisterData {
   userId: number
   token: TokenInfo
   profile: UserProfile
+}
+
+export interface RegisterResp {
+  data: RegisterData
 }
 
 export interface LoginReq {
@@ -28,10 +32,14 @@ export interface LoginReq {
   loginIp?: string
 }
 
-export interface LoginResp {
+export interface LoginData {
   userId: number
   token: TokenInfo
   profile: UserProfile
+}
+
+export interface LoginResp {
+  data: LoginData
 }
 
 export interface GuestLoginReq {
@@ -55,7 +63,7 @@ export interface RefreshTokenReq {
 }
 
 export interface RefreshTokenResp {
-  token: TokenInfo
+  data: TokenInfo
 }
 
 export interface WsTickTopic {
@@ -143,8 +151,10 @@ export interface ChangePayPasswordReq {
 }
 
 export interface InitGoogle2FAResp {
-  secret: string
-  qrCodeUrl: string
+  data: {
+    secret: string
+    qrCodeUrl: string
+  }
 }
 
 export interface VerifyGoogle2FAReq {
@@ -179,7 +189,7 @@ export interface SetDefaultBankReq {
 }
 
 export interface UpdateProfileResp {
-  profile: UserProfile
+  data: UserProfile
 }
 
 export interface SubmitIdentityResp {
@@ -191,11 +201,11 @@ export interface UpdateIdentityResp {
 }
 
 export interface AddBankResp {
-  bank: UserBank
+  data: UserBank
 }
 
 export interface UpdateBankResp {
-  bank: UserBank
+  data: UserBank
 }
 
 export interface GetProfileResp {

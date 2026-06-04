@@ -72,7 +72,7 @@ message GetMyAssetReq {
 
 message GetMyAssetResp {
   common.RespBase base = 1;
-  UserAsset asset = 2; // 用户资产
+  UserAsset data = 2;
 }
 
 message ListMyAssetFlowsReq {
@@ -124,6 +124,10 @@ message TransferMyAssetReq {
 
 message TransferMyAssetResp {
   common.RespBase base = 1;
-  UserAsset from_asset = 2; // 转出账户资产
-  UserAsset to_asset = 3;   // 转入账户资产
+  TransferMyAssetData data = 2;
+}
+
+message TransferMyAssetData {
+  UserAsset from_asset = 1;
+  UserAsset to_asset = 2;
 }

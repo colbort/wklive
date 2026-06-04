@@ -18,7 +18,7 @@ type AddUserBankReq struct {
 
 type AddUserBankResp struct {
 	RespBase
-	Bank UserBankItem `json:"bank"`
+	Data UserBankItem `json:"data"`
 }
 
 type AdminAddAssetReq struct {
@@ -32,10 +32,14 @@ type AdminAddAssetReq struct {
 	OperatorId int64  `json:"operatorId"`
 }
 
-type AdminChangeAssetResp struct {
-	RespBase
+type AdminChangeAssetData struct {
 	BizNo string         `json:"bizNo"`
 	Asset AssetUserAsset `json:"asset"`
+}
+
+type AdminChangeAssetResp struct {
+	RespBase
+	Data AdminChangeAssetData `json:"data"`
 }
 
 type AdminCommonResp struct {
@@ -64,6 +68,11 @@ type AdminLockAssetReq struct {
 	OperatorId int64  `json:"operatorId"`
 }
 
+type AdminManualRedeemData struct {
+	Success  int64  `json:"success"`
+	RedeemNo string `json:"redeemNo"`
+}
+
 type AdminManualRedeemReq struct {
 	TenantId     int64  `json:"tenantId"`
 	OrderId      int64  `json:"orderId"`
@@ -78,8 +87,7 @@ type AdminManualRedeemReq struct {
 
 type AdminManualRedeemResp struct {
 	RespBase
-	Success  int64  `json:"success"`
-	RedeemNo string `json:"redeemNo"`
+	Data AdminManualRedeemData `json:"data"`
 }
 
 type AdminManualRewardReq struct {
@@ -459,14 +467,18 @@ type ChangeUserStatusReq struct {
 	Status int64 `json:"status"` // 1启用 0禁用
 }
 
+type CheckUserReferrerData struct {
+	Exists   bool             `json:"exists"`
+	Referrer UserReferrerInfo `json:"referrer,optional"`
+}
+
 type CheckUserReferrerReq struct {
 	InviteCode string `form:"inviteCode"`
 }
 
 type CheckUserReferrerResp struct {
 	RespBase
-	Exists bool             `json:"exists"`
-	Data   UserReferrerInfo `json:"data,optional"`
+	Data CheckUserReferrerData `json:"data"`
 }
 
 type CloseRechargeOrderReq struct {
@@ -631,7 +643,7 @@ type CreateContractReq struct {
 
 type CreateContractResp struct {
 	RespBase
-	Id int64 `json:"id"`
+	Data int64 `json:"data"`
 }
 
 type CreateCryptoRechargeAddressReq struct {
@@ -848,7 +860,7 @@ type CreateUserReq struct {
 
 type CreateUserResp struct {
 	RespBase
-	UserId int64 `json:"userId"`
+	Data int64 `json:"data"`
 }
 
 type CryptoRechargeAddress struct {
@@ -1326,6 +1338,13 @@ type GetStakingOptionsResp struct {
 	Data []OptionsGroup `json:"data"`
 }
 
+type GetSymbolDetailAdminData struct {
+	Symbol          TradeSymbol                 `json:"symbol"`
+	Spot            TradeSymbolSpot             `json:"spot,optional"`
+	Contract        TradeSymbolContract         `json:"contract,optional"`
+	LeverageConfigs []TradeSymbolLeverageConfig `json:"leverageConfigs,optional"`
+}
+
 type GetSymbolDetailAdminReq struct {
 	TenantId int64 `form:"tenantId,optional"`
 	Id       int64 `form:"id"`
@@ -1333,10 +1352,7 @@ type GetSymbolDetailAdminReq struct {
 
 type GetSymbolDetailAdminResp struct {
 	RespBase
-	Data            TradeSymbol                 `json:"data"`
-	Spot            TradeSymbolSpot             `json:"spot,optional"`
-	Contract        TradeSymbolContract         `json:"contract,optional"`
-	LeverageConfigs []TradeSymbolLeverageConfig `json:"leverageConfigs,optional"`
+	Data GetSymbolDetailAdminData `json:"data"`
 }
 
 type GetSymbolLeverageConfigListReq struct {
@@ -1379,15 +1395,19 @@ type GetSymbolListAdminResp struct {
 	Data []TradeSymbol `json:"data"`
 }
 
+type GetSyncTaskStatusData struct {
+	TaskNo  string `json:"taskNo"`
+	Status  int32  `json:"status"` // 0进行中 1成功 2失败
+	Message string `json:"message"`
+}
+
 type GetSyncTaskStatusReq struct {
 	TaskNo string `json:"taskNo"`
 }
 
 type GetSyncTaskStatusResp struct {
 	RespBase
-	TaskNo  string `json:"taskNo"`
-	Status  int32  `json:"status"` // 0进行中 1成功 2失败
-	Message string `json:"message"`
+	Data GetSyncTaskStatusData `json:"data"`
 }
 
 type GetSystemCore struct {
@@ -1526,7 +1546,7 @@ type GetUserBankReq struct {
 
 type GetUserBankResp struct {
 	RespBase
-	Bank UserBankItem `json:"bank"`
+	Data UserBankItem `json:"data"`
 }
 
 type GetUserDetailReq struct {
@@ -1535,7 +1555,7 @@ type GetUserDetailReq struct {
 
 type GetUserDetailResp struct {
 	RespBase
-	Detail UserDetail `json:"detail"`
+	Data UserDetail `json:"data"`
 }
 
 type GetUserLeverageConfigReq struct {
@@ -1573,7 +1593,7 @@ type GetUserSecurityReq struct {
 
 type GetUserSecurityResp struct {
 	RespBase
-	Security UserSecurity `json:"security"`
+	Data UserSecurity `json:"data"`
 }
 
 type GetUserSymbolLimitReq struct {
@@ -1665,6 +1685,11 @@ type Google2FAResetReq struct {
 	UserId int64 `json:"userId"`
 }
 
+type InitTenantItickDisplayData struct {
+	CategoryCount int64 `json:"categoryCount"`
+	ProductCount  int64 `json:"productCount"`
+}
+
 type InitTenantItickDisplayReq struct {
 	TenantId  int64 `json:"tenantId"`
 	Overwrite int64 `json:"overwrite"` // 是否覆盖已有配置
@@ -1672,8 +1697,7 @@ type InitTenantItickDisplayReq struct {
 
 type InitTenantItickDisplayResp struct {
 	RespBase
-	CategoryCount int64 `json:"categoryCount"`
-	ProductCount  int64 `json:"productCount"`
+	Data InitTenantItickDisplayData `json:"data"`
 }
 
 type ItickCategory struct {
@@ -1776,7 +1800,6 @@ type ListAccountsReq struct {
 type ListAccountsResp struct {
 	RespBase
 	Data []OptionAccount `json:"data"`
-	Page PageReq         `json:"page"`
 }
 
 type ListBillsReq struct {
@@ -1791,7 +1814,6 @@ type ListBillsReq struct {
 type ListBillsResp struct {
 	RespBase
 	Data []OptionBill `json:"data"`
-	Page PageReq      `json:"page"`
 }
 
 type ListCategoriesReq struct {
@@ -1820,7 +1842,6 @@ type ListContractsReq struct {
 type ListContractsResp struct {
 	RespBase
 	Data []OptionContractDetail `json:"data"`
-	Page PageReq                `json:"page"`
 }
 
 type ListCryptoRechargeAddressesReq struct {
@@ -1886,7 +1907,6 @@ type ListExercisesReq struct {
 type ListExercisesResp struct {
 	RespBase
 	Data []OptionExerciseDetail `json:"data"`
-	Page PageReq                `json:"page"`
 }
 
 type ListMarketSnapshotsReq struct {
@@ -1899,7 +1919,6 @@ type ListMarketSnapshotsReq struct {
 type ListMarketSnapshotsResp struct {
 	RespBase
 	Data []OptionMarketSnapshot `json:"data"`
-	Page PageReq                `json:"page"`
 }
 
 type ListOrdersReq struct {
@@ -1920,7 +1939,6 @@ type ListOrdersReq struct {
 type ListOrdersResp struct {
 	RespBase
 	Data []OptionOrderDetail `json:"data"`
-	Page PageReq             `json:"page"`
 }
 
 type ListPayPlatformsReq struct {
@@ -1962,7 +1980,6 @@ type ListPositionsReq struct {
 type ListPositionsResp struct {
 	RespBase
 	Data []OptionPositionDetail `json:"data"`
-	Page PageReq                `json:"page"`
 }
 
 type ListProductsReq struct {
@@ -2031,7 +2048,6 @@ type ListSettlementsReq struct {
 type ListSettlementsResp struct {
 	RespBase
 	Data []OptionSettlementDetail `json:"data"`
-	Page PageReq                  `json:"page"`
 }
 
 type ListTenantCategoriesReq struct {
@@ -2129,7 +2145,6 @@ type ListTradesReq struct {
 type ListTradesResp struct {
 	RespBase
 	Data []OptionTradeDetail `json:"data"`
-	Page PageReq             `json:"page"`
 }
 
 type ListUserBanksReq struct {
@@ -2233,6 +2248,11 @@ type ListWithdrawOrdersResp struct {
 	Data []WithdrawOrder `json:"data"`
 }
 
+type LoginData struct {
+	Token string `json:"token"`
+	Exp   int64  `json:"exp"`
+}
+
 type LoginLogItem struct {
 	Id       int64  `json:"id"`
 	UserId   int64  `json:"userId"`
@@ -2263,10 +2283,7 @@ type LoginReq struct {
 
 type LoginResp struct {
 	RespBase
-	Data struct {
-		Token string `json:"token"`
-		Exp   int64  `json:"exp"`
-	} `json:"data"`
+	Data LoginData `json:"data"`
 }
 
 type ManualMarkRechargeOrderSuccessReq struct {
@@ -2742,16 +2759,18 @@ type PayProduct struct {
 	UpdateTimes int64  `json:"updateTimes"`
 }
 
+type ProfileData struct {
+	User  ProfileUser `json:"user"`
+	Menus []MenuNode  `json:"menus"`
+	Perms []string    `json:"perms"`
+}
+
 type ProfileReq struct {
 }
 
 type ProfileResp struct {
 	RespBase
-	Data struct {
-		User  ProfileUser `json:"user"`
-		Menus []MenuNode  `json:"menus"`
-		Perms []string    `json:"perms"`
-	} `json:"data"`
+	Data ProfileData `json:"data"`
 }
 
 type ProfileUser struct {
@@ -2869,7 +2888,7 @@ type ReviewUserIdentityReq struct {
 
 type ReviewUserIdentityResp struct {
 	RespBase
-	Identity UserIdentity `json:"identity"`
+	Data UserIdentity `json:"data"`
 }
 
 type RiskOrderCheckLog struct {
@@ -3192,7 +3211,7 @@ type SyncCategoryProductsReq struct {
 
 type SyncCategoryProductsResp struct {
 	RespBase
-	TaskNo string `json:"taskNo"`
+	Data string `json:"data"`
 }
 
 type SysConfigCreateReq struct {
@@ -4145,7 +4164,7 @@ type UpdateUserBankReq struct {
 
 type UpdateUserBankResp struct {
 	RespBase
-	Bank UserBankItem `json:"bank"`
+	Data UserBankItem `json:"data"`
 }
 
 type UpdateUserBankStatusReq struct {
@@ -4173,7 +4192,7 @@ type UpdateUserBaseReq struct {
 
 type UpdateUserBaseResp struct {
 	RespBase
-	Detail UserDetail `json:"detail"`
+	Data UserDetail `json:"data"`
 }
 
 type UpdateUserLevelReq struct {
@@ -4189,14 +4208,16 @@ type UpdateUserStatusReq struct {
 	Remark   string `json:"remark,optional"`
 }
 
+type UploadFileData struct {
+	Url string `json:"url"`
+}
+
 type UploadFileReq struct {
 }
 
 type UploadFileResp struct {
 	RespBase
-	Data struct {
-		Url string `json:"url"`
-	} `json:"data"`
+	Data UploadFileData `json:"data"`
 }
 
 type UserBankItem struct {
@@ -4247,7 +4268,7 @@ type UserBase struct {
 }
 
 type UserDetail struct {
-	Base     UserBase       `json:"base"`
+	User     UserBase       `json:"user"`
 	Identity UserIdentity   `json:"identity"`
 	Security UserSecurity   `json:"security"`
 	Banks    []UserBankItem `json:"banks"`

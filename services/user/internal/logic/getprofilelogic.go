@@ -58,7 +58,7 @@ func (l *GetProfileLogic) GetProfile(in *user.GetProfileReq) (*user.GetProfileRe
 	}
 
 	return &user.GetProfileResp{
-		Base:    helper.OkResp(),
-		Profile: toUserProfileProto(tuser, identity, security),
+		Base: helper.OkResp(),
+		Data: toUserProfileProto(tuser, identity, security),
 	}, nil
 }

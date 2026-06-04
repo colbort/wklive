@@ -285,6 +285,10 @@ message AdminUnlockAssetReq {
 
 message AdminChangeAssetResp {
   common.RespBase base = 1;
-  string biz_no = 2;   // 业务单号
-  UserAsset asset = 3; // 最新资产
+  AdminChangeAssetData data = 2;
+}
+
+message AdminChangeAssetData {
+  string biz_no = 1;
+  UserAsset asset = 2;
 }

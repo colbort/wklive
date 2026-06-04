@@ -48,7 +48,7 @@ type UserIdentity {
 	email         string `json:"email,optional"`
 	realName      string `json:"realName,optional"`
 	gender        int64  `json:"gender,optional"`
-	birthday      int64 `json:"birthday,optional"`
+	birthday      int64  `json:"birthday,optional"`
 	countryCode   string `json:"countryCode,optional"`
 	province      string `json:"province,optional"`
 	city          string `json:"city,optional"`
@@ -73,7 +73,7 @@ type UserSecurity {
 	tenantId        int64 `json:"tenantId"`
 	userId          int64 `json:"userId"`
 	hasPayPassword  bool  `json:"hasPayPassword"`
-	googleEnabled   int64  `json:"googleEnabled"`
+	googleEnabled   int64 `json:"googleEnabled"`
 	loginErrorCount int64 `json:"loginErrorCount"`
 	payErrorCount   int64 `json:"payErrorCount"`
 	lockUntil       int64 `json:"lockUntil,optional"`
@@ -83,29 +83,29 @@ type UserSecurity {
 }
 
 type UserBank {
-	id              int64  `json:"id"`
-	tenantId        int64  `json:"tenantId"`
-	userId          int64  `json:"userId"`
-	bankName        string `json:"bankName"`
-	bankCode        string `json:"bankCode,optional"`
-	accountName     string `json:"accountName"`
-	accountNo       string `json:"accountNo"`
-	branchName      string `json:"branchName,optional"`
-	countryCode     string `json:"countryCode,optional"`
-	isDefault       int64   `json:"isDefault"`
-	status          int64  `json:"status"`
-	createTimes     int64  `json:"createTimes,optional"`
-	updateTimes     int64  `json:"updateTimes,optional"`
+	id          int64  `json:"id"`
+	tenantId    int64  `json:"tenantId"`
+	userId      int64  `json:"userId"`
+	bankName    string `json:"bankName"`
+	bankCode    string `json:"bankCode,optional"`
+	accountName string `json:"accountName"`
+	accountNo   string `json:"accountNo"`
+	branchName  string `json:"branchName,optional"`
+	countryCode string `json:"countryCode,optional"`
+	isDefault   int64  `json:"isDefault"`
+	status      int64  `json:"status"`
+	createTimes int64  `json:"createTimes,optional"`
+	updateTimes int64  `json:"updateTimes,optional"`
 }
 
 type UserProfile {
-	base     UserBase     `json:"base"`
+	user     UserBase     `json:"user"`
 	identity UserIdentity `json:"identity,optional"`
 	security UserSecurity `json:"security,optional"`
 }
 
 type UserDetail {
-	base     UserBase     `json:"base"`
+	user     UserBase     `json:"user"`
 	identity UserIdentity `json:"identity,optional"`
 	security UserSecurity `json:"security,optional"`
 	banks    []UserBank   `json:"banks,optional"`
@@ -162,3 +162,4 @@ type UserBankListItem {
 	createTimes int64  `json:"createTimes,optional"`
 	updateTimes int64  `json:"updateTimes,optional"`
 }
+

@@ -653,5 +653,6 @@ service admin {
 	get /tenants (SysTenantListReq) returns (SysTenantListResp)
 
 	@handler SysTenantDetail
-	get /tenant/detail (SysTenantDetailReq) returns (SysTenantDetailResp) 
+	get /tenant/detail (SysTenantDetailReq) returns (SysTenantDetailResp)
 }
+

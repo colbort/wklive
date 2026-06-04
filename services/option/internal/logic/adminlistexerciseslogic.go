@@ -57,6 +57,5 @@ func (l *AdminListExercisesLogic) AdminListExercises(in *option.ListExercisesReq
 	return &option.ListExercisesResp{
 		Base: pageutil.Base(cursor, limit, len(items), total, lastID),
 		Data: data,
-		Page: pageutil.Output(in.Page, limit),
 	}, nil
 }

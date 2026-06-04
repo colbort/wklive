@@ -41,7 +41,7 @@ const router = useRouter()
 const userOptions = useOptions(apiGetUserOptions)
 const { locale, t, toggleLocale } = useI18n()
 
-const userBase = computed(() => profile.value?.base ?? null)
+const userBase = computed(() => profile.value?.user ?? null)
 const userIdentity = computed(() => profile.value?.identity ?? null)
 const verifyStatusOptions = computed(() => userOptions.getGroup('verifyStatus'))
 const pendingVerifyStatus = computed(

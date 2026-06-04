@@ -37,7 +37,7 @@ func (l *CheckUserReferrerLogic) CheckUserReferrer(req *types.CheckUserReferrerR
 				Code: 404,
 				Msg:  "推荐人不存在",
 			},
-			Exists: false,
+			Data: types.CheckUserReferrerData{Exists: false},
 		}, nil
 	}
 
@@ -46,13 +46,15 @@ func (l *CheckUserReferrerLogic) CheckUserReferrer(req *types.CheckUserReferrerR
 			Code: 200,
 			Msg:  "success",
 		},
-		Exists: true,
-	}
-	resp.Data = types.UserReferrerInfo{
-		UserId:     referrer.Id,
-		Username:   referrer.Username,
-		Nickname:   referrer.Nickname,
-		InviteCode: referrer.InviteCode,
+		Data: types.CheckUserReferrerData{
+			Exists: true,
+			Referrer: types.UserReferrerInfo{
+				UserId:     referrer.Id,
+				Username:   referrer.Username,
+				Nickname:   referrer.Nickname,
+				InviteCode: referrer.InviteCode,
+			},
+		},
 	}
 
 	return resp, nil

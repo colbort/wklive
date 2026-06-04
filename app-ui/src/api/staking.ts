@@ -29,12 +29,14 @@ export function apiStakingListProducts(
 export function apiStakingGetProduct(
   params: AppProductDetailReq,
 ): Promise<RespBase & { data: StakeProduct }> {
-  return http.get('/staking/products/detail', { params: compactParams(params) }).then((res) => res.data)
+  return http
+    .get('/staking/products/detail', { params: compactParams(params) })
+    .then((res) => res.data)
 }
 
 export function apiStakingCreateOrder(
   params: AppCreateOrderReq,
-): Promise<RespBase & { id: number; orderNo: string }> {
+): Promise<RespBase & { data: { id: number; orderNo: string } }> {
   return http.post('/staking/orders', params).then((res) => res.data)
 }
 
@@ -47,23 +49,29 @@ export function apiStakingListMyOrders(
 export function apiStakingGetMyOrder(
   params: AppMyOrderDetailReq,
 ): Promise<RespBase & { data: StakeOrder }> {
-  return http.get('/staking/my/orders/detail', { params: compactParams(params) }).then((res) => res.data)
+  return http
+    .get('/staking/my/orders/detail', { params: compactParams(params) })
+    .then((res) => res.data)
 }
 
 export function apiStakingListMyRewardLogs(
   params: AppMyRewardLogListReq,
 ): Promise<RespBase & { data: StakeRewardLog[] }> {
-  return http.get('/staking/my/reward-logs', { params: compactParams(params) }).then((res) => res.data)
+  return http
+    .get('/staking/my/reward-logs', { params: compactParams(params) })
+    .then((res) => res.data)
 }
 
 export function apiStakingRedeem(
   params: AppRedeemReq,
-): Promise<RespBase & { success: number; redeemNo: string }> {
+): Promise<RespBase & { data: { success: number; redeemNo: string } }> {
   return http.post('/staking/redeem', params).then((res) => res.data)
 }
 
 export function apiStakingListMyRedeemLogs(
   params: AppMyRedeemLogListReq,
 ): Promise<RespBase & { data: StakeRedeemLog[] }> {
-  return http.get('/staking/my/redeem-logs', { params: compactParams(params) }).then((res) => res.data)
+  return http
+    .get('/staking/my/redeem-logs', { params: compactParams(params) })
+    .then((res) => res.data)
 }

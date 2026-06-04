@@ -24,9 +24,13 @@ message RegisterReq {
 
 message RegisterResp {
   common.RespBase base = 1;
-  int64 user_id = 2;
-  common.TokenInfo token = 3;
-  user.UserProfile profile = 4;
+  RegisterData data = 2;
+}
+
+message RegisterData {
+  int64 user_id = 1;
+  common.TokenInfo token = 2;
+  user.UserProfile profile = 3;
 }
 
 message LoginReq {
@@ -39,9 +43,13 @@ message LoginReq {
 
 message LoginResp {
   common.RespBase base = 1;
-  int64 user_id = 2;
-  common.TokenInfo token = 3;
-  user.UserProfile profile = 4;
+  LoginData data = 2;
+}
+
+message LoginData {
+  int64 user_id = 1;
+  common.TokenInfo token = 2;
+  user.UserProfile profile = 3;
 }
 
 message GuestLoginReq {
@@ -71,14 +79,18 @@ message RefreshTokenReq {
 
 message RefreshTokenResp {
   common.RespBase base = 1;
-  common.TokenInfo token = 2;
+  RefreshTokenData data = 2;
+}
+
+message RefreshTokenData {
+  common.TokenInfo token = 1;
 }
 
 message GetProfileReq { }
 
 message GetProfileResp {
   common.RespBase base = 1;
-  user.UserProfile profile = 2;
+  user.UserProfile data = 2;
 }
 
 message UpdateProfileReq {
@@ -97,7 +109,7 @@ message UpdateProfileReq {
 
 message UpdateProfileResp {
   common.RespBase base = 1;
-  user.UserProfile profile = 2;
+  user.UserProfile data = 2;
 }
 
 message ChangeLoginPasswordReq {
@@ -110,7 +122,7 @@ message GetIdentityReq { }
 
 message GetIdentityResp {
   common.RespBase base = 1;
-  user.UserIdentity identity = 2;
+  user.UserIdentity data = 2;
 }
 
 message SubmitIdentityReq {
@@ -132,7 +144,7 @@ message SubmitIdentityReq {
 
 message SubmitIdentityResp {
   common.RespBase base = 1;
-  user.UserIdentity identity = 2;
+  user.UserIdentity data = 2;
 }
 
 message UpdateIdentityReq {
@@ -149,14 +161,14 @@ message UpdateIdentityReq {
 
 message UpdateIdentityResp {
   common.RespBase base = 1;
-  user.UserIdentity identity = 2;
+  user.UserIdentity data = 2;
 }
 
 message GetSecurityReq { }
 
 message GetSecurityResp {
   common.RespBase base = 1;
-  user.UserSecurity security = 2;
+  user.UserSecurity data = 2;
 }
 
 message SetPayPasswordReq {
@@ -174,8 +186,12 @@ message InitGoogle2FAReq { }
 
 message InitGoogle2FAResp {
   common.RespBase base = 1;
-  string secret = 2;
-  string qr_code_url = 3;
+  InitGoogle2FAData data = 2;
+}
+
+message InitGoogle2FAData {
+  string secret = 1;
+  string qr_code_url = 2;
 }
 
 message EnableGoogle2FAReq {
@@ -192,7 +208,7 @@ message ListBanksReq {
 
 message ListBanksResp {
   common.RespBase base = 1;
-  repeated user.UserBankItem list = 2;
+  repeated user.UserBankItem data = 2;
 }
 
 message AddBankReq {
@@ -207,7 +223,7 @@ message AddBankReq {
 
 message AddBankResp {
   common.RespBase base = 1;
-  user.UserBankItem bank = 2;
+  user.UserBankItem data = 2;
 }
 
 message UpdateBankReq {
@@ -223,7 +239,7 @@ message UpdateBankReq {
 
 message UpdateBankResp {
   common.RespBase base = 1;
-  user.UserBankItem bank = 2;
+  user.UserBankItem data = 2;
 }
 
 message DeleteBankReq {

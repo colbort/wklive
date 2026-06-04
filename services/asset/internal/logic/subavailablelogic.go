@@ -74,5 +74,5 @@ func (l *SubAvailableLogic) SubAvailable(in *asset.SubAvailableReq) (*asset.Chan
 		return nil, err
 	}
 
-	return &asset.ChangeAssetResp{Base: helper.OkResp(), BizNo: in.BizNo, Asset: toUserAssetProto(after)}, nil
+	return &asset.ChangeAssetResp{Base: helper.OkResp(), Data: &asset.ChangeAssetData{BizNo: in.BizNo, Asset: toUserAssetProto(after)}}, nil
 }

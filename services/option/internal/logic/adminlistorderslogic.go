@@ -61,6 +61,5 @@ func (l *AdminListOrdersLogic) AdminListOrders(in *option.ListOrdersReq) (*optio
 	return &option.ListOrdersResp{
 		Base: pageutil.Base(cursor, limit, len(items), total, lastID),
 		Data: data,
-		Page: pageutil.Output(in.Page, limit),
 	}, nil
 }

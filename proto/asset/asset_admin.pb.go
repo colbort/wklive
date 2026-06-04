@@ -2065,8 +2065,7 @@ func (x *AdminUnlockAssetReq) GetOperatorId() int64 {
 type AdminChangeAssetResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	BizNo         string                 `protobuf:"bytes,2,opt,name=biz_no,json=bizNo,proto3" json:"biz_no,omitempty"` // 业务单号
-	Asset         *UserAsset             `protobuf:"bytes,3,opt,name=asset,proto3" json:"asset,omitempty"`              // 最新资产
+	Data          *AdminChangeAssetData  `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2108,14 +2107,59 @@ func (x *AdminChangeAssetResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *AdminChangeAssetResp) GetBizNo() string {
+func (x *AdminChangeAssetResp) GetData() *AdminChangeAssetData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type AdminChangeAssetData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BizNo         string                 `protobuf:"bytes,1,opt,name=biz_no,json=bizNo,proto3" json:"biz_no,omitempty"`
+	Asset         *UserAsset             `protobuf:"bytes,2,opt,name=asset,proto3" json:"asset,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdminChangeAssetData) Reset() {
+	*x = AdminChangeAssetData{}
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminChangeAssetData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminChangeAssetData) ProtoMessage() {}
+
+func (x *AdminChangeAssetData) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_asset_asset_admin_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminChangeAssetData.ProtoReflect.Descriptor instead.
+func (*AdminChangeAssetData) Descriptor() ([]byte, []int) {
+	return file_proto_asset_asset_admin_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *AdminChangeAssetData) GetBizNo() string {
 	if x != nil {
 		return x.BizNo
 	}
 	return ""
 }
 
-func (x *AdminChangeAssetResp) GetAsset() *UserAsset {
+func (x *AdminChangeAssetData) GetAsset() *UserAsset {
 	if x != nil {
 		return x.Asset
 	}
@@ -2326,11 +2370,13 @@ const file_proto_asset_asset_admin_proto_rawDesc = "" +
 	"\x06biz_no\x18\x04 \x01(\tR\x05bizNo\x12\x16\n" +
 	"\x06remark\x18\x05 \x01(\tR\x06remark\x12\x1f\n" +
 	"\voperator_id\x18\x06 \x01(\x03R\n" +
-	"operatorId\"{\n" +
+	"operatorId\"m\n" +
 	"\x14AdminChangeAssetResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x15\n" +
-	"\x06biz_no\x18\x02 \x01(\tR\x05bizNo\x12&\n" +
-	"\x05asset\x18\x03 \x01(\v2\x10.asset.UserAssetR\x05asset2\xf4\t\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12/\n" +
+	"\x04data\x18\x02 \x01(\v2\x1b.asset.AdminChangeAssetDataR\x04data\"U\n" +
+	"\x14AdminChangeAssetData\x12\x15\n" +
+	"\x06biz_no\x18\x01 \x01(\tR\x05bizNo\x12&\n" +
+	"\x05asset\x18\x02 \x01(\v2\x10.asset.UserAssetR\x05asset2\xf4\t\n" +
 	"\n" +
 	"AssetAdmin\x12T\n" +
 	"\x15CreateAssetCoinConfig\x12\x1f.asset.CreateAssetCoinConfigReq\x1a\x1a.asset.AssetCoinConfigResp\x12T\n" +
@@ -2362,7 +2408,7 @@ func file_proto_asset_asset_admin_proto_rawDescGZIP() []byte {
 	return file_proto_asset_asset_admin_proto_rawDescData
 }
 
-var file_proto_asset_asset_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
+var file_proto_asset_asset_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
 var file_proto_asset_asset_admin_proto_goTypes = []any{
 	(*CreateAssetCoinConfigReq)(nil),  // 0: asset.CreateAssetCoinConfigReq
 	(*UpdateAssetCoinConfigReq)(nil),  // 1: asset.UpdateAssetCoinConfigReq
@@ -2389,125 +2435,127 @@ var file_proto_asset_asset_admin_proto_goTypes = []any{
 	(*AdminLockAssetReq)(nil),         // 22: asset.AdminLockAssetReq
 	(*AdminUnlockAssetReq)(nil),       // 23: asset.AdminUnlockAssetReq
 	(*AdminChangeAssetResp)(nil),      // 24: asset.AdminChangeAssetResp
-	(WalletType)(0),                   // 25: asset.WalletType
-	(AssetCoinType)(0),                // 26: asset.AssetCoinType
-	(common.ChainCode)(0),             // 27: common.ChainCode
-	(AssetCoinSwitch)(0),              // 28: asset.AssetCoinSwitch
-	(AssetStatus)(0),                  // 29: asset.AssetStatus
-	(*common.PageReq)(nil),            // 30: common.PageReq
-	(*common.RespBase)(nil),           // 31: common.RespBase
-	(*AssetCoinConfig)(nil),           // 32: asset.AssetCoinConfig
-	(*UserAsset)(nil),                 // 33: asset.UserAsset
-	(BizType)(0),                      // 34: asset.BizType
-	(SceneType)(0),                    // 35: asset.SceneType
-	(*common.TimeRange)(nil),          // 36: common.TimeRange
-	(*AssetFlow)(nil),                 // 37: asset.AssetFlow
-	(FreezeStatus)(0),                 // 38: asset.FreezeStatus
-	(*AssetFreeze)(nil),               // 39: asset.AssetFreeze
-	(LockStatus)(0),                   // 40: asset.LockStatus
-	(*AssetLock)(nil),                 // 41: asset.AssetLock
+	(*AdminChangeAssetData)(nil),      // 25: asset.AdminChangeAssetData
+	(WalletType)(0),                   // 26: asset.WalletType
+	(AssetCoinType)(0),                // 27: asset.AssetCoinType
+	(common.ChainCode)(0),             // 28: common.ChainCode
+	(AssetCoinSwitch)(0),              // 29: asset.AssetCoinSwitch
+	(AssetStatus)(0),                  // 30: asset.AssetStatus
+	(*common.PageReq)(nil),            // 31: common.PageReq
+	(*common.RespBase)(nil),           // 32: common.RespBase
+	(*AssetCoinConfig)(nil),           // 33: asset.AssetCoinConfig
+	(*UserAsset)(nil),                 // 34: asset.UserAsset
+	(BizType)(0),                      // 35: asset.BizType
+	(SceneType)(0),                    // 36: asset.SceneType
+	(*common.TimeRange)(nil),          // 37: common.TimeRange
+	(*AssetFlow)(nil),                 // 38: asset.AssetFlow
+	(FreezeStatus)(0),                 // 39: asset.FreezeStatus
+	(*AssetFreeze)(nil),               // 40: asset.AssetFreeze
+	(LockStatus)(0),                   // 41: asset.LockStatus
+	(*AssetLock)(nil),                 // 42: asset.AssetLock
 }
 var file_proto_asset_asset_admin_proto_depIdxs = []int32{
-	25, // 0: asset.CreateAssetCoinConfigReq.wallet_type:type_name -> asset.WalletType
-	26, // 1: asset.CreateAssetCoinConfigReq.coin_type:type_name -> asset.AssetCoinType
-	27, // 2: asset.CreateAssetCoinConfigReq.chain_code:type_name -> common.ChainCode
-	28, // 3: asset.CreateAssetCoinConfigReq.app_visible:type_name -> asset.AssetCoinSwitch
-	28, // 4: asset.CreateAssetCoinConfigReq.recharge_enabled:type_name -> asset.AssetCoinSwitch
-	28, // 5: asset.CreateAssetCoinConfigReq.withdraw_enabled:type_name -> asset.AssetCoinSwitch
-	28, // 6: asset.CreateAssetCoinConfigReq.transfer_enabled:type_name -> asset.AssetCoinSwitch
-	29, // 7: asset.CreateAssetCoinConfigReq.status:type_name -> asset.AssetStatus
-	25, // 8: asset.UpdateAssetCoinConfigReq.wallet_type:type_name -> asset.WalletType
-	26, // 9: asset.UpdateAssetCoinConfigReq.coin_type:type_name -> asset.AssetCoinType
-	27, // 10: asset.UpdateAssetCoinConfigReq.chain_code:type_name -> common.ChainCode
-	28, // 11: asset.UpdateAssetCoinConfigReq.app_visible:type_name -> asset.AssetCoinSwitch
-	28, // 12: asset.UpdateAssetCoinConfigReq.recharge_enabled:type_name -> asset.AssetCoinSwitch
-	28, // 13: asset.UpdateAssetCoinConfigReq.withdraw_enabled:type_name -> asset.AssetCoinSwitch
-	28, // 14: asset.UpdateAssetCoinConfigReq.transfer_enabled:type_name -> asset.AssetCoinSwitch
-	29, // 15: asset.UpdateAssetCoinConfigReq.status:type_name -> asset.AssetStatus
-	25, // 16: asset.PageAssetCoinConfigsReq.wallet_type:type_name -> asset.WalletType
-	26, // 17: asset.PageAssetCoinConfigsReq.coin_type:type_name -> asset.AssetCoinType
-	28, // 18: asset.PageAssetCoinConfigsReq.app_visible:type_name -> asset.AssetCoinSwitch
-	28, // 19: asset.PageAssetCoinConfigsReq.recharge_enabled:type_name -> asset.AssetCoinSwitch
-	28, // 20: asset.PageAssetCoinConfigsReq.withdraw_enabled:type_name -> asset.AssetCoinSwitch
-	28, // 21: asset.PageAssetCoinConfigsReq.transfer_enabled:type_name -> asset.AssetCoinSwitch
-	29, // 22: asset.PageAssetCoinConfigsReq.status:type_name -> asset.AssetStatus
-	30, // 23: asset.PageAssetCoinConfigsReq.page:type_name -> common.PageReq
-	27, // 24: asset.PageAssetCoinConfigsReq.chain_code:type_name -> common.ChainCode
-	31, // 25: asset.AssetCoinConfigResp.base:type_name -> common.RespBase
-	32, // 26: asset.AssetCoinConfigResp.data:type_name -> asset.AssetCoinConfig
-	31, // 27: asset.PageAssetCoinConfigsResp.base:type_name -> common.RespBase
-	32, // 28: asset.PageAssetCoinConfigsResp.data:type_name -> asset.AssetCoinConfig
-	31, // 29: asset.DeleteAssetCoinConfigResp.base:type_name -> common.RespBase
-	25, // 30: asset.PageUserAssetsReq.wallet_type:type_name -> asset.WalletType
-	29, // 31: asset.PageUserAssetsReq.status:type_name -> asset.AssetStatus
-	30, // 32: asset.PageUserAssetsReq.page:type_name -> common.PageReq
-	31, // 33: asset.PageUserAssetsResp.base:type_name -> common.RespBase
-	33, // 34: asset.PageUserAssetsResp.data:type_name -> asset.UserAsset
-	25, // 35: asset.GetUserAssetDetailReq.wallet_type:type_name -> asset.WalletType
-	31, // 36: asset.GetUserAssetDetailResp.base:type_name -> common.RespBase
-	33, // 37: asset.GetUserAssetDetailResp.data:type_name -> asset.UserAsset
-	25, // 38: asset.PageAssetFlowsReq.wallet_type:type_name -> asset.WalletType
-	34, // 39: asset.PageAssetFlowsReq.biz_type:type_name -> asset.BizType
-	35, // 40: asset.PageAssetFlowsReq.scene_type:type_name -> asset.SceneType
-	36, // 41: asset.PageAssetFlowsReq.time_range:type_name -> common.TimeRange
-	30, // 42: asset.PageAssetFlowsReq.page:type_name -> common.PageReq
-	31, // 43: asset.PageAssetFlowsResp.base:type_name -> common.RespBase
-	37, // 44: asset.PageAssetFlowsResp.data:type_name -> asset.AssetFlow
-	25, // 45: asset.PageAssetFreezesReq.wallet_type:type_name -> asset.WalletType
-	34, // 46: asset.PageAssetFreezesReq.biz_type:type_name -> asset.BizType
-	38, // 47: asset.PageAssetFreezesReq.status:type_name -> asset.FreezeStatus
-	30, // 48: asset.PageAssetFreezesReq.page:type_name -> common.PageReq
-	31, // 49: asset.PageAssetFreezesResp.base:type_name -> common.RespBase
-	39, // 50: asset.PageAssetFreezesResp.data:type_name -> asset.AssetFreeze
-	25, // 51: asset.PageAssetLocksReq.wallet_type:type_name -> asset.WalletType
-	34, // 52: asset.PageAssetLocksReq.biz_type:type_name -> asset.BizType
-	40, // 53: asset.PageAssetLocksReq.status:type_name -> asset.LockStatus
-	30, // 54: asset.PageAssetLocksReq.page:type_name -> common.PageReq
-	31, // 55: asset.PageAssetLocksResp.base:type_name -> common.RespBase
-	41, // 56: asset.PageAssetLocksResp.data:type_name -> asset.AssetLock
-	25, // 57: asset.AdminAddAssetReq.wallet_type:type_name -> asset.WalletType
-	25, // 58: asset.AdminSubAssetReq.wallet_type:type_name -> asset.WalletType
-	25, // 59: asset.AdminFreezeAssetReq.wallet_type:type_name -> asset.WalletType
-	25, // 60: asset.AdminLockAssetReq.wallet_type:type_name -> asset.WalletType
-	31, // 61: asset.AdminChangeAssetResp.base:type_name -> common.RespBase
-	33, // 62: asset.AdminChangeAssetResp.asset:type_name -> asset.UserAsset
-	0,  // 63: asset.AssetAdmin.CreateAssetCoinConfig:input_type -> asset.CreateAssetCoinConfigReq
-	1,  // 64: asset.AssetAdmin.UpdateAssetCoinConfig:input_type -> asset.UpdateAssetCoinConfigReq
-	2,  // 65: asset.AssetAdmin.DeleteAssetCoinConfig:input_type -> asset.DeleteAssetCoinConfigReq
-	3,  // 66: asset.AssetAdmin.GetAssetCoinConfig:input_type -> asset.GetAssetCoinConfigReq
-	4,  // 67: asset.AssetAdmin.PageAssetCoinConfigs:input_type -> asset.PageAssetCoinConfigsReq
-	8,  // 68: asset.AssetAdmin.PageUserAssets:input_type -> asset.PageUserAssetsReq
-	10, // 69: asset.AssetAdmin.GetUserAssetDetail:input_type -> asset.GetUserAssetDetailReq
-	12, // 70: asset.AssetAdmin.PageAssetFlows:input_type -> asset.PageAssetFlowsReq
-	14, // 71: asset.AssetAdmin.PageAssetFreezes:input_type -> asset.PageAssetFreezesReq
-	16, // 72: asset.AssetAdmin.PageAssetLocks:input_type -> asset.PageAssetLocksReq
-	18, // 73: asset.AssetAdmin.AdminAddAsset:input_type -> asset.AdminAddAssetReq
-	19, // 74: asset.AssetAdmin.AdminSubAsset:input_type -> asset.AdminSubAssetReq
-	20, // 75: asset.AssetAdmin.AdminFreezeAsset:input_type -> asset.AdminFreezeAssetReq
-	21, // 76: asset.AssetAdmin.AdminUnfreezeAsset:input_type -> asset.AdminUnfreezeAssetReq
-	22, // 77: asset.AssetAdmin.AdminLockAsset:input_type -> asset.AdminLockAssetReq
-	23, // 78: asset.AssetAdmin.AdminUnlockAsset:input_type -> asset.AdminUnlockAssetReq
-	5,  // 79: asset.AssetAdmin.CreateAssetCoinConfig:output_type -> asset.AssetCoinConfigResp
-	5,  // 80: asset.AssetAdmin.UpdateAssetCoinConfig:output_type -> asset.AssetCoinConfigResp
-	7,  // 81: asset.AssetAdmin.DeleteAssetCoinConfig:output_type -> asset.DeleteAssetCoinConfigResp
-	5,  // 82: asset.AssetAdmin.GetAssetCoinConfig:output_type -> asset.AssetCoinConfigResp
-	6,  // 83: asset.AssetAdmin.PageAssetCoinConfigs:output_type -> asset.PageAssetCoinConfigsResp
-	9,  // 84: asset.AssetAdmin.PageUserAssets:output_type -> asset.PageUserAssetsResp
-	11, // 85: asset.AssetAdmin.GetUserAssetDetail:output_type -> asset.GetUserAssetDetailResp
-	13, // 86: asset.AssetAdmin.PageAssetFlows:output_type -> asset.PageAssetFlowsResp
-	15, // 87: asset.AssetAdmin.PageAssetFreezes:output_type -> asset.PageAssetFreezesResp
-	17, // 88: asset.AssetAdmin.PageAssetLocks:output_type -> asset.PageAssetLocksResp
-	24, // 89: asset.AssetAdmin.AdminAddAsset:output_type -> asset.AdminChangeAssetResp
-	24, // 90: asset.AssetAdmin.AdminSubAsset:output_type -> asset.AdminChangeAssetResp
-	24, // 91: asset.AssetAdmin.AdminFreezeAsset:output_type -> asset.AdminChangeAssetResp
-	24, // 92: asset.AssetAdmin.AdminUnfreezeAsset:output_type -> asset.AdminChangeAssetResp
-	24, // 93: asset.AssetAdmin.AdminLockAsset:output_type -> asset.AdminChangeAssetResp
-	24, // 94: asset.AssetAdmin.AdminUnlockAsset:output_type -> asset.AdminChangeAssetResp
-	79, // [79:95] is the sub-list for method output_type
-	63, // [63:79] is the sub-list for method input_type
-	63, // [63:63] is the sub-list for extension type_name
-	63, // [63:63] is the sub-list for extension extendee
-	0,  // [0:63] is the sub-list for field type_name
+	26, // 0: asset.CreateAssetCoinConfigReq.wallet_type:type_name -> asset.WalletType
+	27, // 1: asset.CreateAssetCoinConfigReq.coin_type:type_name -> asset.AssetCoinType
+	28, // 2: asset.CreateAssetCoinConfigReq.chain_code:type_name -> common.ChainCode
+	29, // 3: asset.CreateAssetCoinConfigReq.app_visible:type_name -> asset.AssetCoinSwitch
+	29, // 4: asset.CreateAssetCoinConfigReq.recharge_enabled:type_name -> asset.AssetCoinSwitch
+	29, // 5: asset.CreateAssetCoinConfigReq.withdraw_enabled:type_name -> asset.AssetCoinSwitch
+	29, // 6: asset.CreateAssetCoinConfigReq.transfer_enabled:type_name -> asset.AssetCoinSwitch
+	30, // 7: asset.CreateAssetCoinConfigReq.status:type_name -> asset.AssetStatus
+	26, // 8: asset.UpdateAssetCoinConfigReq.wallet_type:type_name -> asset.WalletType
+	27, // 9: asset.UpdateAssetCoinConfigReq.coin_type:type_name -> asset.AssetCoinType
+	28, // 10: asset.UpdateAssetCoinConfigReq.chain_code:type_name -> common.ChainCode
+	29, // 11: asset.UpdateAssetCoinConfigReq.app_visible:type_name -> asset.AssetCoinSwitch
+	29, // 12: asset.UpdateAssetCoinConfigReq.recharge_enabled:type_name -> asset.AssetCoinSwitch
+	29, // 13: asset.UpdateAssetCoinConfigReq.withdraw_enabled:type_name -> asset.AssetCoinSwitch
+	29, // 14: asset.UpdateAssetCoinConfigReq.transfer_enabled:type_name -> asset.AssetCoinSwitch
+	30, // 15: asset.UpdateAssetCoinConfigReq.status:type_name -> asset.AssetStatus
+	26, // 16: asset.PageAssetCoinConfigsReq.wallet_type:type_name -> asset.WalletType
+	27, // 17: asset.PageAssetCoinConfigsReq.coin_type:type_name -> asset.AssetCoinType
+	29, // 18: asset.PageAssetCoinConfigsReq.app_visible:type_name -> asset.AssetCoinSwitch
+	29, // 19: asset.PageAssetCoinConfigsReq.recharge_enabled:type_name -> asset.AssetCoinSwitch
+	29, // 20: asset.PageAssetCoinConfigsReq.withdraw_enabled:type_name -> asset.AssetCoinSwitch
+	29, // 21: asset.PageAssetCoinConfigsReq.transfer_enabled:type_name -> asset.AssetCoinSwitch
+	30, // 22: asset.PageAssetCoinConfigsReq.status:type_name -> asset.AssetStatus
+	31, // 23: asset.PageAssetCoinConfigsReq.page:type_name -> common.PageReq
+	28, // 24: asset.PageAssetCoinConfigsReq.chain_code:type_name -> common.ChainCode
+	32, // 25: asset.AssetCoinConfigResp.base:type_name -> common.RespBase
+	33, // 26: asset.AssetCoinConfigResp.data:type_name -> asset.AssetCoinConfig
+	32, // 27: asset.PageAssetCoinConfigsResp.base:type_name -> common.RespBase
+	33, // 28: asset.PageAssetCoinConfigsResp.data:type_name -> asset.AssetCoinConfig
+	32, // 29: asset.DeleteAssetCoinConfigResp.base:type_name -> common.RespBase
+	26, // 30: asset.PageUserAssetsReq.wallet_type:type_name -> asset.WalletType
+	30, // 31: asset.PageUserAssetsReq.status:type_name -> asset.AssetStatus
+	31, // 32: asset.PageUserAssetsReq.page:type_name -> common.PageReq
+	32, // 33: asset.PageUserAssetsResp.base:type_name -> common.RespBase
+	34, // 34: asset.PageUserAssetsResp.data:type_name -> asset.UserAsset
+	26, // 35: asset.GetUserAssetDetailReq.wallet_type:type_name -> asset.WalletType
+	32, // 36: asset.GetUserAssetDetailResp.base:type_name -> common.RespBase
+	34, // 37: asset.GetUserAssetDetailResp.data:type_name -> asset.UserAsset
+	26, // 38: asset.PageAssetFlowsReq.wallet_type:type_name -> asset.WalletType
+	35, // 39: asset.PageAssetFlowsReq.biz_type:type_name -> asset.BizType
+	36, // 40: asset.PageAssetFlowsReq.scene_type:type_name -> asset.SceneType
+	37, // 41: asset.PageAssetFlowsReq.time_range:type_name -> common.TimeRange
+	31, // 42: asset.PageAssetFlowsReq.page:type_name -> common.PageReq
+	32, // 43: asset.PageAssetFlowsResp.base:type_name -> common.RespBase
+	38, // 44: asset.PageAssetFlowsResp.data:type_name -> asset.AssetFlow
+	26, // 45: asset.PageAssetFreezesReq.wallet_type:type_name -> asset.WalletType
+	35, // 46: asset.PageAssetFreezesReq.biz_type:type_name -> asset.BizType
+	39, // 47: asset.PageAssetFreezesReq.status:type_name -> asset.FreezeStatus
+	31, // 48: asset.PageAssetFreezesReq.page:type_name -> common.PageReq
+	32, // 49: asset.PageAssetFreezesResp.base:type_name -> common.RespBase
+	40, // 50: asset.PageAssetFreezesResp.data:type_name -> asset.AssetFreeze
+	26, // 51: asset.PageAssetLocksReq.wallet_type:type_name -> asset.WalletType
+	35, // 52: asset.PageAssetLocksReq.biz_type:type_name -> asset.BizType
+	41, // 53: asset.PageAssetLocksReq.status:type_name -> asset.LockStatus
+	31, // 54: asset.PageAssetLocksReq.page:type_name -> common.PageReq
+	32, // 55: asset.PageAssetLocksResp.base:type_name -> common.RespBase
+	42, // 56: asset.PageAssetLocksResp.data:type_name -> asset.AssetLock
+	26, // 57: asset.AdminAddAssetReq.wallet_type:type_name -> asset.WalletType
+	26, // 58: asset.AdminSubAssetReq.wallet_type:type_name -> asset.WalletType
+	26, // 59: asset.AdminFreezeAssetReq.wallet_type:type_name -> asset.WalletType
+	26, // 60: asset.AdminLockAssetReq.wallet_type:type_name -> asset.WalletType
+	32, // 61: asset.AdminChangeAssetResp.base:type_name -> common.RespBase
+	25, // 62: asset.AdminChangeAssetResp.data:type_name -> asset.AdminChangeAssetData
+	34, // 63: asset.AdminChangeAssetData.asset:type_name -> asset.UserAsset
+	0,  // 64: asset.AssetAdmin.CreateAssetCoinConfig:input_type -> asset.CreateAssetCoinConfigReq
+	1,  // 65: asset.AssetAdmin.UpdateAssetCoinConfig:input_type -> asset.UpdateAssetCoinConfigReq
+	2,  // 66: asset.AssetAdmin.DeleteAssetCoinConfig:input_type -> asset.DeleteAssetCoinConfigReq
+	3,  // 67: asset.AssetAdmin.GetAssetCoinConfig:input_type -> asset.GetAssetCoinConfigReq
+	4,  // 68: asset.AssetAdmin.PageAssetCoinConfigs:input_type -> asset.PageAssetCoinConfigsReq
+	8,  // 69: asset.AssetAdmin.PageUserAssets:input_type -> asset.PageUserAssetsReq
+	10, // 70: asset.AssetAdmin.GetUserAssetDetail:input_type -> asset.GetUserAssetDetailReq
+	12, // 71: asset.AssetAdmin.PageAssetFlows:input_type -> asset.PageAssetFlowsReq
+	14, // 72: asset.AssetAdmin.PageAssetFreezes:input_type -> asset.PageAssetFreezesReq
+	16, // 73: asset.AssetAdmin.PageAssetLocks:input_type -> asset.PageAssetLocksReq
+	18, // 74: asset.AssetAdmin.AdminAddAsset:input_type -> asset.AdminAddAssetReq
+	19, // 75: asset.AssetAdmin.AdminSubAsset:input_type -> asset.AdminSubAssetReq
+	20, // 76: asset.AssetAdmin.AdminFreezeAsset:input_type -> asset.AdminFreezeAssetReq
+	21, // 77: asset.AssetAdmin.AdminUnfreezeAsset:input_type -> asset.AdminUnfreezeAssetReq
+	22, // 78: asset.AssetAdmin.AdminLockAsset:input_type -> asset.AdminLockAssetReq
+	23, // 79: asset.AssetAdmin.AdminUnlockAsset:input_type -> asset.AdminUnlockAssetReq
+	5,  // 80: asset.AssetAdmin.CreateAssetCoinConfig:output_type -> asset.AssetCoinConfigResp
+	5,  // 81: asset.AssetAdmin.UpdateAssetCoinConfig:output_type -> asset.AssetCoinConfigResp
+	7,  // 82: asset.AssetAdmin.DeleteAssetCoinConfig:output_type -> asset.DeleteAssetCoinConfigResp
+	5,  // 83: asset.AssetAdmin.GetAssetCoinConfig:output_type -> asset.AssetCoinConfigResp
+	6,  // 84: asset.AssetAdmin.PageAssetCoinConfigs:output_type -> asset.PageAssetCoinConfigsResp
+	9,  // 85: asset.AssetAdmin.PageUserAssets:output_type -> asset.PageUserAssetsResp
+	11, // 86: asset.AssetAdmin.GetUserAssetDetail:output_type -> asset.GetUserAssetDetailResp
+	13, // 87: asset.AssetAdmin.PageAssetFlows:output_type -> asset.PageAssetFlowsResp
+	15, // 88: asset.AssetAdmin.PageAssetFreezes:output_type -> asset.PageAssetFreezesResp
+	17, // 89: asset.AssetAdmin.PageAssetLocks:output_type -> asset.PageAssetLocksResp
+	24, // 90: asset.AssetAdmin.AdminAddAsset:output_type -> asset.AdminChangeAssetResp
+	24, // 91: asset.AssetAdmin.AdminSubAsset:output_type -> asset.AdminChangeAssetResp
+	24, // 92: asset.AssetAdmin.AdminFreezeAsset:output_type -> asset.AdminChangeAssetResp
+	24, // 93: asset.AssetAdmin.AdminUnfreezeAsset:output_type -> asset.AdminChangeAssetResp
+	24, // 94: asset.AssetAdmin.AdminLockAsset:output_type -> asset.AdminChangeAssetResp
+	24, // 95: asset.AssetAdmin.AdminUnlockAsset:output_type -> asset.AdminChangeAssetResp
+	80, // [80:96] is the sub-list for method output_type
+	64, // [64:80] is the sub-list for method input_type
+	64, // [64:64] is the sub-list for extension type_name
+	64, // [64:64] is the sub-list for extension extendee
+	0,  // [0:64] is the sub-list for field type_name
 }
 
 func init() { file_proto_asset_asset_admin_proto_init() }
@@ -2523,7 +2571,7 @@ func file_proto_asset_asset_admin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_asset_asset_admin_proto_rawDesc), len(file_proto_asset_asset_admin_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   25,
+			NumMessages:   26,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

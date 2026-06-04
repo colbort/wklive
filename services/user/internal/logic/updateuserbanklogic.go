@@ -90,6 +90,6 @@ func (l *UpdateUserBankLogic) UpdateUserBank(in *user.UpdateUserBankReq) (*user.
 
 	return &user.UpdateUserBankResp{
 		Base: helper.OkResp(),
-		Bank: toUserBankItemProto(bank),
+		Data: toUserBankItemProto(bank),
 	}, nil
 }

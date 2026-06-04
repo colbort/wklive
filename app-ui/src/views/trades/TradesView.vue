@@ -157,7 +157,10 @@ const selectedTradeSettleConfig = computed(() => {
   const settleAsset = selectedTradeSettleAsset.value.toUpperCase()
   return (
     assetCoinConfigs.value.find((config) => {
-      return config.walletType === selectedTradeWalletType.value && config.coin.toUpperCase() === settleAsset
+      return (
+        config.walletType === selectedTradeWalletType.value &&
+        config.coin.toUpperCase() === settleAsset
+      )
     }) ||
     assetCoinConfigs.value.find((config) => config.coin.toUpperCase() === settleAsset) ||
     null
@@ -420,7 +423,10 @@ function assetConfigForCoin(coin: string) {
   const normalizedCoin = coin.toUpperCase()
   return (
     assetCoinConfigs.value.find((config) => {
-      return config.walletType === selectedTradeWalletType.value && config.coin.toUpperCase() === normalizedCoin
+      return (
+        config.walletType === selectedTradeWalletType.value &&
+        config.coin.toUpperCase() === normalizedCoin
+      )
     }) ||
     assetCoinConfigs.value.find((config) => config.coin.toUpperCase() === normalizedCoin) ||
     null
@@ -604,10 +610,10 @@ async function loadTradeSymbolDetail(symbolId: number) {
     }
 
     tradeSymbolDetail.value = {
-      symbol: resp.symbol || selectedTradeSymbol.value,
-      spot: resp.spot || null,
-      contract: resp.contract || null,
-      leverageConfigs: resp.leverageConfigs || [],
+      symbol: resp.data?.symbol || selectedTradeSymbol.value,
+      spot: resp.data?.spot || null,
+      contract: resp.data?.contract || null,
+      leverageConfigs: resp.data?.leverageConfigs || [],
     }
     leverage.value = defaultTradeLeverage()
     void loadUserLeverageConfig()
@@ -827,8 +833,8 @@ async function submitTradeOrder(side: SubmitSide) {
       return
     }
 
-    tradeMessage.value = resp.order?.orderNo
-      ? t('trade.orderSubmittedWithNo', { orderNo: resp.order.orderNo })
+    tradeMessage.value = resp.data?.orderNo
+      ? t('trade.orderSubmittedWithNo', { orderNo: resp.data.orderNo })
       : t('trade.orderSubmitted')
     tradeQty.value = ''
     tradePercent.value = 0

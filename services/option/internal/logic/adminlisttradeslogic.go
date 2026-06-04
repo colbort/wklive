@@ -55,6 +55,5 @@ func (l *AdminListTradesLogic) AdminListTrades(in *option.ListTradesReq) (*optio
 	return &option.ListTradesResp{
 		Base: pageutil.Base(cursor, limit, len(items), total, lastID),
 		Data: data,
-		Page: pageutil.Output(in.Page, limit),
 	}, nil
 }

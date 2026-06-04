@@ -281,6 +281,7 @@ export type {
   TradeSymbolSpot,
   TradeSymbolContract,
   TradeSymbolLeverageConfig,
+  TradeSymbolDetailData,
   TradeSymbolDetailResp,
   TradeUserConfig,
   TradeOrder,

@@ -15,7 +15,7 @@ type AddBankReq struct {
 
 type AddBankResp struct {
 	RespBase
-	Bank UserBank `json:"bank"`
+	Data UserBank `json:"data"`
 }
 
 type AppCancelOrderReq struct {
@@ -28,6 +28,11 @@ type AppCommonResp struct {
 	RespBase
 }
 
+type AppCreateOrderData struct {
+	Id      int64  `json:"id"`
+	OrderNo string `json:"orderNo"`
+}
+
 type AppCreateOrderReq struct {
 	ProductId   int64  `json:"productId"`
 	StakeAmount string `json:"stakeAmount"`
@@ -37,8 +42,12 @@ type AppCreateOrderReq struct {
 
 type AppCreateOrderResp struct {
 	RespBase
-	Id      int64  `json:"id"`
-	OrderNo string `json:"orderNo"`
+	Data AppCreateOrderData `json:"data"`
+}
+
+type AppExerciseData struct {
+	ExerciseNo string `json:"exerciseNo"`
+	ExerciseId int64  `json:"exerciseId"`
 }
 
 type AppExerciseReq struct {
@@ -50,8 +59,7 @@ type AppExerciseReq struct {
 
 type AppExerciseResp struct {
 	RespBase
-	ExerciseNo string `json:"exerciseNo"`
-	ExerciseId int64  `json:"exerciseId"`
+	Data AppExerciseData `json:"data"`
 }
 
 type AppGetContractDetailReq struct {
@@ -103,7 +111,6 @@ type AppListBillsReq struct {
 type AppListBillsResp struct {
 	RespBase
 	Data []OptionBill `json:"data"`
-	Page PageReq      `json:"page"`
 }
 
 type AppListContractsReq struct {
@@ -128,7 +135,6 @@ type AppListCurrentOrdersReq struct {
 type AppListCurrentOrdersResp struct {
 	RespBase
 	Data []OptionOrderDetail `json:"data"`
-	Page PageReq             `json:"page"`
 }
 
 type AppListExercisesReq struct {
@@ -142,7 +148,6 @@ type AppListExercisesReq struct {
 type AppListExercisesResp struct {
 	RespBase
 	Data []OptionExerciseDetail `json:"data"`
-	Page PageReq                `json:"page"`
 }
 
 type AppListHistoryOrdersReq struct {
@@ -156,7 +161,6 @@ type AppListHistoryOrdersReq struct {
 type AppListHistoryOrdersResp struct {
 	RespBase
 	Data []OptionOrderDetail `json:"data"`
-	Page PageReq             `json:"page"`
 }
 
 type AppListPositionsReq struct {
@@ -168,7 +172,6 @@ type AppListPositionsReq struct {
 type AppListPositionsResp struct {
 	RespBase
 	Data []OptionPositionDetail `json:"data"`
-	Page PageReq                `json:"page"`
 }
 
 type AppListTradesReq struct {
@@ -181,7 +184,6 @@ type AppListTradesReq struct {
 type AppListTradesResp struct {
 	RespBase
 	Data []OptionTradeDetail `json:"data"`
-	Page PageReq             `json:"page"`
 }
 
 type AppMyOrderDetailReq struct {
@@ -225,6 +227,11 @@ type AppMyRewardLogListResp struct {
 	Data []StakeRewardLog `json:"data"`
 }
 
+type AppPlaceOrderData struct {
+	OrderNo string `json:"orderNo"`
+	OrderId int64  `json:"orderId"`
+}
+
 type AppPlaceOrderReq struct {
 	AccountId      int64  `json:"accountId"`  // 账户ID
 	ContractId     int64  `json:"contractId"` // 合约ID
@@ -240,8 +247,7 @@ type AppPlaceOrderReq struct {
 
 type AppPlaceOrderResp struct {
 	RespBase
-	OrderNo string `json:"orderNo"`
-	OrderId int64  `json:"orderId"`
+	Data AppPlaceOrderData `json:"data"`
 }
 
 type AppProductDetailReq struct {
@@ -264,6 +270,11 @@ type AppProductListResp struct {
 	Data []StakeProduct `json:"data"`
 }
 
+type AppRedeemData struct {
+	Success  int64  `json:"success"`  // 是否成功：0否 1是
+	RedeemNo string `json:"redeemNo"` // 赎回单号
+}
+
 type AppRedeemReq struct {
 	OrderId    int64  `json:"orderId"`
 	RedeemType int64  `json:"redeemType"`
@@ -272,8 +283,7 @@ type AppRedeemReq struct {
 
 type AppRedeemResp struct {
 	RespBase
-	Success  int64  `json:"success"`  // 是否成功：0否 1是
-	RedeemNo string `json:"redeemNo"` // 赎回单号
+	Data AppRedeemData `json:"data"`
 }
 
 type AssetCoinConfig struct {
@@ -389,21 +399,6 @@ type AssetUserAsset struct {
 	UpdateTimes     int64  `json:"updateTimes"`     // 更新时间
 }
 
-type TransferMyAssetReq struct {
-	FromWalletType int64  `json:"fromWalletType"`  // 转出钱包类型
-	ToWalletType   int64  `json:"toWalletType"`    // 转入钱包类型
-	FromCoin       string `json:"fromCoin"`        // 转出币种
-	ToCoin         string `json:"toCoin"`          // 转入币种
-	Amount         string `json:"amount"`          // 划转金额，单位：分
-	Remark         string `json:"remark,optional"` // 备注
-}
-
-type TransferMyAssetResp struct {
-	RespBase
-	FromAsset AssetUserAsset `json:"fromAsset"` // 转出账户资产
-	ToAsset   AssetUserAsset `json:"toAsset"`   // 转入账户资产
-}
-
 type AvailableRechargeChannel struct {
 	ChannelId              int64  `json:"channelId"`
 	ChannelCode            string `json:"channelCode"`
@@ -442,7 +437,7 @@ type CancelAllOrdersReq struct {
 
 type CancelAllOrdersResp struct {
 	RespBase
-	AffectedCount int64 `json:"affectedCount"` // 影响订单数
+	Data int64 `json:"data"` // 影响订单数
 }
 
 type CancelMyRechargeOrderReq struct {
@@ -530,6 +525,11 @@ type ContractPosition struct {
 	UpdateTimes      int64  `json:"updateTimes"`
 }
 
+type CreateCryptoRechargeOrderData struct {
+	Order   RechargeOrder         `json:"order"`
+	Address CryptoRechargeAddress `json:"address"`
+}
+
 type CreateCryptoRechargeOrderReq struct {
 	WalletType     int64  `json:"walletType"`
 	Coin           string `json:"coin"`
@@ -541,8 +541,7 @@ type CreateCryptoRechargeOrderReq struct {
 
 type CreateCryptoRechargeOrderResp struct {
 	RespBase
-	Data    RechargeOrder         `json:"data"`
-	Address CryptoRechargeAddress `json:"address"`
+	Data CreateCryptoRechargeOrderData `json:"data"`
 }
 
 type CreateRechargeOrderReq struct {
@@ -570,7 +569,7 @@ type CreateWithdrawOrderReq struct {
 
 type CreateWithdrawOrderResp struct {
 	RespBase
-	Id int64 `json:"id"`
+	Data int64 `json:"data"`
 }
 
 type CryptoRechargeAddress struct {
@@ -699,7 +698,7 @@ type GetMyAssetReq struct {
 
 type GetMyAssetResp struct {
 	RespBase
-	Asset AssetUserAsset `json:"asset"`
+	Data AssetUserAsset `json:"data"`
 }
 
 type GetMyAssetSummaryReq struct {
@@ -762,6 +761,12 @@ type GetOptionOptionsResp struct {
 	Data []OptionsGroup `json:"data"`
 }
 
+type GetOrderDetailData struct {
+	Order    TradeOrder          `json:"order"`
+	Spot     TradeSymbolSpot     `json:"spot"`
+	Contract TradeSymbolContract `json:"contract"`
+}
+
 type GetOrderDetailReq struct {
 	OrderId int64  `form:"orderId,optional"`
 	OrderNo string `form:"orderNo,optional"`
@@ -769,9 +774,7 @@ type GetOrderDetailReq struct {
 
 type GetOrderDetailResp struct {
 	RespBase
-	Order    TradeOrder          `json:"order"`
-	Spot     TradeSymbolSpot     `json:"spot"`
-	Contract TradeSymbolContract `json:"contract"`
+	Data GetOrderDetailData `json:"data"`
 }
 
 type GetOrderListReq struct {
@@ -829,16 +832,20 @@ type GetStakingOptionsResp struct {
 	Data []OptionsGroup `json:"data"`
 }
 
+type GetSymbolDetailData struct {
+	Symbol          TradeSymbol                 `json:"symbol"`
+	Spot            TradeSymbolSpot             `json:"spot"`
+	Contract        TradeSymbolContract         `json:"contract"`
+	LeverageConfigs []TradeSymbolLeverageConfig `json:"leverageConfigs"`
+}
+
 type GetSymbolDetailReq struct {
 	SymbolId int64 `form:"symbolId"` // 交易对ID
 }
 
 type GetSymbolDetailResp struct {
 	RespBase
-	Symbol          TradeSymbol                 `json:"symbol"`
-	Spot            TradeSymbolSpot             `json:"spot"`
-	Contract        TradeSymbolContract         `json:"contract"`
-	LeverageConfigs []TradeSymbolLeverageConfig `json:"leverageConfigs"`
+	Data GetSymbolDetailData `json:"data"`
 }
 
 type GetSymbolListReq struct {
@@ -889,10 +896,14 @@ type IdReq struct {
 	Id int64 `path:"id"`
 }
 
-type InitGoogle2FAResp struct {
-	RespBase
+type InitGoogle2FAData struct {
 	Secret    string `json:"secret"`
 	QrCodeUrl string `json:"qrCodeUrl"`
+}
+
+type InitGoogle2FAResp struct {
+	RespBase
+	Data InitGoogle2FAData `json:"data"`
 }
 
 type Interval struct {
@@ -1142,6 +1153,12 @@ type ListVisibleProductsResp struct {
 	Data []ItickTenantProduct `json:"data"`
 }
 
+type LoginData struct {
+	UserId  int64       `json:"userId"`
+	Token   TokenInfo   `json:"token"`
+	Profile UserProfile `json:"profile"`
+}
+
 type LoginReq struct {
 	TenantCode string `json:"tenantCode"`
 	LoginType  int64  `json:"loginType"`
@@ -1152,9 +1169,7 @@ type LoginReq struct {
 
 type LoginResp struct {
 	RespBase
-	UserId  int64       `json:"userId"`
-	Token   TokenInfo   `json:"token"`
-	Profile UserProfile `json:"profile"`
+	Data LoginData `json:"data"`
 }
 
 type MarketSymbol struct {
@@ -1425,7 +1440,7 @@ type PlaceOrderReq struct {
 
 type PlaceOrderResp struct {
 	RespBase
-	Order TradeOrder `json:"order"`
+	Data TradeOrder `json:"data"`
 }
 
 type QueryMyRechargeOrderStatusReq struct {
@@ -1496,7 +1511,13 @@ type RefreshTokenReq struct {
 
 type RefreshTokenResp struct {
 	RespBase
-	Token TokenInfo `json:"token"`
+	Data TokenInfo `json:"data"`
+}
+
+type RegisterData struct {
+	UserId  int64       `json:"userId"`
+	Token   TokenInfo   `json:"token"`
+	Profile UserProfile `json:"profile"`
 }
 
 type RegisterReq struct {
@@ -1513,9 +1534,7 @@ type RegisterReq struct {
 
 type RegisterResp struct {
 	RespBase
-	UserId  int64       `json:"userId"`
-	Token   TokenInfo   `json:"token"`
-	Profile UserProfile `json:"profile"`
+	Data RegisterData `json:"data"`
 }
 
 type RespBase struct {
@@ -1849,6 +1868,25 @@ type TradeSymbolSpot struct {
 	UpdateTimes  int64  `json:"updateTimes"`
 }
 
+type TransferMyAssetData struct {
+	FromAsset AssetUserAsset `json:"fromAsset"` // 转出账户资产
+	ToAsset   AssetUserAsset `json:"toAsset"`   // 转入账户资产
+}
+
+type TransferMyAssetReq struct {
+	FromWalletType int64  `json:"fromWalletType"`  // 转出钱包类型
+	ToWalletType   int64  `json:"toWalletType"`    // 转入钱包类型
+	FromCoin       string `json:"fromCoin"`        // 转出币种
+	ToCoin         string `json:"toCoin"`          // 转入币种
+	Amount         string `json:"amount"`          // 划转金额，单位：分
+	Remark         string `json:"remark,optional"` // 备注
+}
+
+type TransferMyAssetResp struct {
+	RespBase
+	Data TransferMyAssetData `json:"data"`
+}
+
 type UpdateBankReq struct {
 	Id          int64  `path:"id"`
 	BankName    string `json:"bankName"`
@@ -1862,7 +1900,7 @@ type UpdateBankReq struct {
 
 type UpdateBankResp struct {
 	RespBase
-	Bank UserBank `json:"bank"`
+	Data UserBank `json:"data"`
 }
 
 type UpdateIdentityReq struct {
@@ -1898,7 +1936,7 @@ type UpdateProfileReq struct {
 
 type UpdateProfileResp struct {
 	RespBase
-	Profile UserProfile `json:"profile"`
+	Data UserProfile `json:"data"`
 }
 
 type UserAssetSummary struct {
@@ -1970,7 +2008,7 @@ type UserBase struct {
 }
 
 type UserDetail struct {
-	Base     UserBase     `json:"base"`
+	User     UserBase     `json:"user"`
 	Identity UserIdentity `json:"identity,optional"`
 	Security UserSecurity `json:"security,optional"`
 	Banks    []UserBank   `json:"banks,optional"`
@@ -2041,7 +2079,7 @@ type UserListItem struct {
 }
 
 type UserProfile struct {
-	Base     UserBase     `json:"base"`
+	User     UserBase     `json:"user"`
 	Identity UserIdentity `json:"identity,optional"`
 	Security UserSecurity `json:"security,optional"`
 }

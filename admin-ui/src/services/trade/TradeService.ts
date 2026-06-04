@@ -114,11 +114,14 @@ export type TradeSymbolLeverageConfig = {
   updateTimes: number
 }
 
-export type TradeSymbolDetailResp = RespBase<TradeSymbol> & {
+export type TradeSymbolDetailData = {
+  symbol: TradeSymbol
   spot?: TradeSymbolSpot
   contract?: TradeSymbolContract
   leverageConfigs?: TradeSymbolLeverageConfig[]
 }
+
+export type TradeSymbolDetailResp = RespBase<TradeSymbolDetailData>
 
 export type TradeUserConfig = {
   id: number

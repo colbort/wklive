@@ -24,17 +24,21 @@ message AdminLoginReq {
 
 message AdminLoginResp {
   common.RespBase base = 1;
-  string token = 2;
-  int64 exp = 3;
-  int64 user_id = 4;
-  string nickname = 5;
-  repeated int64 role_ids = 6;
-  int64 google2fa_enabled = 7;
-  int64 perms_ver = 8;
-  int64 tenant_id = 9;
-  system.UserType user_type = 10;
-  int64 is_owner = 11;
-  string avatar = 12;
+  AdminLoginData data = 2;
+}
+
+message AdminLoginData {
+  string token = 1;
+  int64 exp = 2;
+  int64 user_id = 3;
+  string nickname = 4;
+  repeated int64 role_ids = 5;
+  int64 google2fa_enabled = 6;
+  int64 perms_ver = 7;
+  int64 tenant_id = 8;
+  system.UserType user_type = 9;
+  int64 is_owner = 10;
+  string avatar = 11;
 }
 
 message ProfileReq { int64 user_id = 1; }
@@ -111,8 +115,12 @@ message SysMenuTreeResp {
 message Google2FAInitReq { int64 user_id = 1; }
 message Google2FAInitResp {
   common.RespBase base = 1;
-  string secret = 2;
-  string otpauth_url = 3;
+  Google2FAInitData data = 2;
+}
+
+message Google2FAInitData {
+  string secret = 1;
+  string otpauth_url = 2;
 }
 
 message Google2FABindReq {
@@ -251,9 +259,13 @@ message SysRoleGrantReq {
 message SysRoleGrantDetailReq { int64 role_id = 1; }
 message SysRoleGrantDetailResp {
   common.RespBase base = 1;
-  int64 role_id = 2;
-  repeated int64 menu_ids = 3;
-  repeated string perm_keys = 4;
+  SysRoleGrantDetailData data = 2;
+}
+
+message SysRoleGrantDetailData {
+  int64 role_id = 1;
+  repeated int64 menu_ids = 2;
+  repeated string perm_keys = 3;
 }
 
 message SysPermItem {

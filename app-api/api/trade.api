@@ -215,12 +215,16 @@ type GetSymbolDetailReq {
 	symbolId int64 `form:"symbolId"` // 交易对ID
 }
 
-type GetSymbolDetailResp {
-	RespBase
+type GetSymbolDetailData {
 	symbol          TradeSymbol                 `json:"symbol"`
 	spot            TradeSymbolSpot             `json:"spot"`
 	contract        TradeSymbolContract         `json:"contract"`
 	leverageConfigs []TradeSymbolLeverageConfig `json:"leverageConfigs"`
+}
+
+type GetSymbolDetailResp {
+	RespBase
+	data GetSymbolDetailData `json:"data"`
 }
 
 type PlaceOrderReq {
@@ -248,7 +252,7 @@ type PlaceOrderReq {
 
 type PlaceOrderResp {
 	RespBase
-	order TradeOrder `json:"order"`
+	data TradeOrder `json:"data"`
 }
 
 type CancelOrderReq {
@@ -266,7 +270,7 @@ type CancelAllOrdersReq {
 
 type CancelAllOrdersResp {
 	RespBase
-	affectedCount int64 `json:"affectedCount"` // 影响订单数
+	data int64 `json:"data"` // 影响订单数
 }
 
 type GetOrderListReq {
@@ -284,15 +288,19 @@ type GetOrderListResp {
 }
 
 type GetOrderDetailReq {
-	orderId  int64  `form:"orderId,optional"`
-	orderNo  string `form:"orderNo,optional"`
+	orderId int64  `form:"orderId,optional"`
+	orderNo string `form:"orderNo,optional"`
+}
+
+type GetOrderDetailData {
+	order    TradeOrder          `json:"order"`
+	spot     TradeSymbolSpot     `json:"spot"`
+	contract TradeSymbolContract `json:"contract"`
 }
 
 type GetOrderDetailResp {
 	RespBase
-	order TradeOrder `json:"order"`
-	spot  TradeSymbolSpot `json:"spot"`
-	contract TradeSymbolContract `json:"contract"`
+	data GetOrderDetailData `json:"data"`
 }
 
 type GetFillListReq {
@@ -339,10 +347,10 @@ type GetLeverageConfigResp {
 }
 
 type SetLeverageReq {
-	symbolId      int64  `json:"symbolId"` // 交易对ID
-	marketType    int64  `json:"marketType"`
-	marginMode    int64  `json:"marginMode"`
-	positionMode  int64  `json:"positionMode"`
+	symbolId      int64 `json:"symbolId"` // 交易对ID
+	marketType    int64 `json:"marketType"`
+	marginMode    int64 `json:"marginMode"`
+	positionMode  int64 `json:"positionMode"`
 	longLeverage  int64 `json:"longLeverage"` // 多头杠杆
 	shortLeverage int64 `json:"shortLeverage"` // 空头杠杆
 }
@@ -353,8 +361,8 @@ type GetTradeOptionsResp {
 }
 
 @server (
-	prefix: /app/trade
-	group:  trade
+	prefix:     /app/trade
+	group:      trade
 	middleware: PublicRateLimit
 )
 service app {
@@ -369,9 +377,9 @@ service app {
 }
 
 @server (
-	prefix: /app/trade
-	group:  trade
-	jwt:    Jwt
+	prefix:     /app/trade
+	group:      trade
+	jwt:        Jwt
 	middleware: UserRateLimit
 )
 service app {
@@ -395,9 +403,9 @@ service app {
 }
 
 @server (
-	prefix: /app/trade
-	group:  trade
-	jwt:    Jwt
+	prefix:     /app/trade
+	group:      trade
+	jwt:        Jwt
 	middleware: SensitiveRateLimit
 )
 service app {
@@ -413,3 +421,4 @@ service app {
 	@handler SetLeverage
 	post /leverage (SetLeverageReq) returns (TradeAppCommonResp)
 }
+

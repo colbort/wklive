@@ -43,10 +43,12 @@ func (l *SysRoleGrantDetailLogic) SysRoleGrantDetail(in *system.SysRoleGrantDeta
 	}
 
 	return &system.SysRoleGrantDetailResp{
-		Base:     helper.OkResp(),
-		RoleId:   in.RoleId,
-		MenuIds:  menuIds,
-		PermKeys: permKeys,
+		Base: helper.OkResp(),
+		Data: &system.SysRoleGrantDetailData{
+			RoleId:   in.RoleId,
+			MenuIds:  menuIds,
+			PermKeys: permKeys,
+		},
 	}, nil
 }
 

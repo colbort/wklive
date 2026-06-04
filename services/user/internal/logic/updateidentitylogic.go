@@ -107,7 +107,7 @@ func (l *UpdateIdentityLogic) UpdateIdentity(in *user.UpdateIdentityReq) (*user.
 	l.Logger.Infof("用户 %d 更新实名认证信息成功，状态为待审核", userId)
 
 	return &user.UpdateIdentityResp{
-		Base:     helper.OkResp(),
-		Identity: toUserIdentityProto(identity),
+		Base: helper.OkResp(),
+		Data: toUserIdentityProto(identity),
 	}, nil
 }

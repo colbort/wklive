@@ -122,5 +122,5 @@ func (l *TransferAssetLogic) TransferAsset(in *asset.TransferAssetReq) (*asset.T
 		return nil, err
 	}
 
-	return &asset.TransferAssetResp{Base: helper.OkResp(), FromAsset: toUserAssetProto(afterFrom), ToAsset: toUserAssetProto(afterTo)}, nil
+	return &asset.TransferAssetResp{Base: helper.OkResp(), Data: &asset.TransferAssetData{FromAsset: toUserAssetProto(afterFrom), ToAsset: toUserAssetProto(afterTo)}}, nil
 }

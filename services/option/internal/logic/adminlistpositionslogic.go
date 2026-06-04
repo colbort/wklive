@@ -55,6 +55,5 @@ func (l *AdminListPositionsLogic) AdminListPositions(in *option.ListPositionsReq
 	return &option.ListPositionsResp{
 		Base: pageutil.Base(cursor, limit, len(items), total, lastID),
 		Data: data,
-		Page: pageutil.Output(in.Page, limit),
 	}, nil
 }

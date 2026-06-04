@@ -42,6 +42,7 @@ import type {
   TradeFill,
   TradeOrder,
   TradeSymbol,
+  TradeSymbolDetailData,
   TradeSymbolDetailResp,
   TradeSymbolLeverageConfig,
   TradeUserConfig,
@@ -55,7 +56,7 @@ export function apiTradeListSymbols(
 }
 
 export function apiTradeGetSymbol(params: GetSymbolDetailAdminReq): Promise<TradeSymbolDetailResp> {
-  return get<TradeSymbol>('/admin/trade/symbols/detail', params)
+  return get<TradeSymbolDetailData>('/admin/trade/symbols/detail', params)
 }
 
 export function apiTradeCreateSymbol(params: CreateSymbolReq): Promise<RespBase> {

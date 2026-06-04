@@ -6,10 +6,10 @@ package payment
 import (
 	"context"
 
+	"wklive/app-api/internal/logicutil"
+
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/proto/common"
-	"wklive/proto/payment"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,56 +29,5 @@ func NewListMyWithdrawOrdersLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 func (l *ListMyWithdrawOrdersLogic) ListMyWithdrawOrders(req *types.ListMyWithdrawOrdersReq) (resp *types.ListMyWithdrawOrdersResp, err error) {
-	result, err := l.svcCtx.PaymentCli.ListMyWithdrawOrders(l.ctx, &payment.ListMyWithdrawOrdersReq{
-		Page: &common.PageReq{
-			Cursor: req.Cursor,
-			Limit:  req.Limit,
-		},
-		Status: payment.PayOrderStatus(req.Status),
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	resp = &types.ListMyWithdrawOrdersResp{
-		RespBase: types.RespBase{
-			Code:       result.Base.Code,
-			Msg:        result.Base.Msg,
-			Total:      result.Base.Total,
-			HasNext:    result.Base.HasNext,
-			HasPrev:    result.Base.HasPrev,
-			NextCursor: result.Base.NextCursor,
-			PrevCursor: result.Base.PrevCursor,
-		},
-		Data: make([]types.WithdrawOrder, 0, len(result.Data)),
-	}
-	for _, item := range result.Data {
-		resp.Data = append(resp.Data, types.WithdrawOrder{
-			Id:           item.Id,
-			TenantId:     item.TenantId,
-			UserId:       item.UserId,
-			OrderNo:      item.OrderNo,
-			BizOrderNo:   item.BizOrderNo,
-			Currency:     item.Currency,
-			Amount:       item.Amount,
-			FeeAmount:    item.FeeAmount,
-			ActualAmount: item.ActualAmount,
-			ClientType:   int64(item.ClientType),
-			ClientIp:     item.ClientIp,
-			Status:       int64(item.Status),
-			ThirdTradeNo: item.ThirdTradeNo,
-			ThirdOrderNo: item.ThirdOrderNo,
-			RequestData:  item.RequestData,
-			ResponseData: item.ResponseData,
-			NotifyData:   item.NotifyData,
-			ProcessTime:  item.ProcessTime,
-			NotifyTime:   item.NotifyTime,
-			CloseTime:    item.CloseTime,
-			Remark:       item.Remark,
-			CreateTimes:  item.CreateTimes,
-			UpdateTimes:  item.UpdateTimes,
-		})
-	}
-
-	return
+	return logicutil.Proxy[types.ListMyWithdrawOrdersResp](l.ctx, req, l.svcCtx.PaymentCli.ListMyWithdrawOrders)
 }

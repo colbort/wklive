@@ -224,13 +224,13 @@ async function completeRecharge() {
       clientType: 2,
     })
     if (isSuccessCode(resp.code)) {
-      if (resp.address) {
-        rechargeAddress.value = resp.address
-        qrImageUrl.value = await createQrDataUrl(resp.address.address)
+      if (resp.data?.address) {
+        rechargeAddress.value = resp.data.address
+        qrImageUrl.value = await createQrDataUrl(resp.data.address.address)
       }
       stopAddressCountdown()
-      copyTip.value = resp.data?.orderNo
-        ? t('assetFlow.submittedWithNo', { orderNo: resp.data.orderNo })
+      copyTip.value = resp.data?.order?.orderNo
+        ? t('assetFlow.submittedWithNo', { orderNo: resp.data.order.orderNo })
         : t('assetFlow.submittedWaitConfirm')
     } else {
       pageError.value = resp.msg || t('assetFlow.submitFailedLater')
@@ -253,7 +253,11 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <AssetFlowLayout :title="t('assetFlow.recharge')" :right-text="step === 'select' ? t('assetFlow.records') : undefined" narrow>
+  <AssetFlowLayout
+    :title="t('assetFlow.recharge')"
+    :right-text="step === 'select' ? t('assetFlow.records') : undefined"
+    narrow
+  >
     <template v-if="step === 'select'">
       <h2>{{ t('assetFlow.paymentMethod') }}</h2>
       <AssetCoinPicker
@@ -288,7 +292,9 @@ onBeforeUnmount(() => {
 
       <div class="address-row">
         <strong>{{ rechargeAddress?.address }}</strong>
-        <button type="button" @click="copyText(rechargeAddress?.address || '')">{{ t('common.copy') }}</button>
+        <button type="button" @click="copyText(rechargeAddress?.address || '')">
+          {{ t('common.copy') }}
+        </button>
       </div>
       <p v-if="addressSecondsLeft > 0" class="address-countdown">
         {{ t('assetFlow.addressExpires', { time: addressCountdownText }) }}
@@ -296,7 +302,9 @@ onBeforeUnmount(() => {
       <div v-if="rechargeAddress?.memo" class="memo-row">
         <span>Memo / Tag</span>
         <strong>{{ rechargeAddress.memo }}</strong>
-        <button type="button" @click="copyText(rechargeAddress.memo)">{{ t('common.copy') }}</button>
+        <button type="button" @click="copyText(rechargeAddress.memo)">
+          {{ t('common.copy') }}
+        </button>
       </div>
 
       <div class="divider" />

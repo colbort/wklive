@@ -90,8 +90,10 @@ func (l *InitGoogle2FALogic) InitGoogle2FA(in *user.InitGoogle2FAReq) (*user.Ini
 	l.Logger.Infof("用户 %d 初始化Google 2FA成功", userId)
 
 	return &user.InitGoogle2FAResp{
-		Base:      helper.OkResp(),
-		Secret:    secret,
-		QrCodeUrl: qrCodeUrl,
+		Base: helper.OkResp(),
+		Data: &user.InitGoogle2FAData{
+			Secret:    secret,
+			QrCodeUrl: qrCodeUrl,
+		},
 	}, nil
 }

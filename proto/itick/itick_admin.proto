@@ -57,16 +57,20 @@ message SyncCategoryProductsReq { int64 id = 1; }
 
 message SyncCategoryProductsResp {
   common.RespBase base = 1;
-  string task_no = 2;
+  string data = 2;
 }
 
 message GetSyncTaskStatusReq { string task_no = 1; }
 
 message GetSyncTaskStatusResp {
   common.RespBase base = 1;
-  string task_no = 2;
-  int32 status = 3;
-  string message = 4;
+  GetSyncTaskStatusData data = 2;
+}
+
+message GetSyncTaskStatusData {
+  string task_no = 1;
+  int32 status = 2;
+  string message = 3;
 }
 
 // ====================
@@ -274,8 +278,12 @@ message InitTenantItickDisplayReq {
 
 message InitTenantItickDisplayResp {
   common.RespBase base = 1;
-  int64 category_count = 2;
-  int64 product_count = 3;
+  InitTenantItickDisplayData data = 2;
+}
+
+message InitTenantItickDisplayData {
+  int64 category_count = 1;
+  int64 product_count = 2;
 }
 
 // ====================

@@ -6,10 +6,10 @@ package system
 import (
 	"context"
 
+	"wklive/admin-api/internal/logicutil"
+
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/common"
-	"wklive/proto/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,44 +29,5 @@ func NewOpLogListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OpLogLi
 }
 
 func (l *OpLogListLogic) OpLogList(req *types.OpLogListReq) (resp *types.OpLogListResp, err error) {
-	result, err := l.svcCtx.SystemCli.OpLogList(l.ctx, &system.OpLogListReq{
-		Page: &common.PageReq{
-			Cursor: req.Cursor,
-			Limit:  req.Limit,
-		},
-		Username: req.Username,
-		Method:   toRequestMethod(req.Method),
-		Path:     req.Path,
-	})
-	if err != nil {
-		return nil, err
-	}
-	data := make([]types.OpLogItem, 0)
-	for _, item := range result.Data {
-		data = append(data, types.OpLogItem{
-			Id:          item.Id,
-			UserId:      item.UserId,
-			Username:    item.Username,
-			Method:      fromRequestMethod(item.Method),
-			Path:        item.Path,
-			Req:         item.Req,
-			Resp:        item.Resp,
-			Ip:          item.Ip,
-			CostMs:      item.CostMs,
-			CreateTimes: item.CreateTimes,
-			UpdateTimes: item.UpdateTimes,
-		})
-	}
-	return &types.OpLogListResp{
-		RespBase: types.RespBase{
-			Code:       result.Base.Code,
-			Msg:        result.Base.Msg,
-			Total:      result.Base.Total,
-			HasNext:    result.Base.HasNext,
-			HasPrev:    result.Base.HasPrev,
-			NextCursor: result.Base.NextCursor,
-			PrevCursor: result.Base.PrevCursor,
-		},
-		Data: data,
-	}, nil
+	return logicutil.Proxy[types.OpLogListResp](l.ctx, req, l.svcCtx.SystemCli.OpLogList)
 }

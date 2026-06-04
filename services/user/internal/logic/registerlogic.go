@@ -209,9 +209,11 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 	}
 
 	return &user.RegisterResp{
-		Base:    helper.OkResp(),
-		UserId:  userId,
-		Token:   token,
-		Profile: &user.UserProfile{},
+		Base: helper.OkResp(),
+		Data: &user.RegisterData{
+			UserId:  userId,
+			Token:   token,
+			Profile: &user.UserProfile{},
+		},
 	}, nil
 }

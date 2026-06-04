@@ -65,7 +65,9 @@ func (l *RefreshTokenLogic) RefreshToken(in *user.RefreshTokenReq) (*user.Refres
 	l.Logger.Infof("用户 %d 刷新Token成功", tuser.Id)
 
 	return &user.RefreshTokenResp{
-		Base:  helper.OkResp(),
-		Token: token,
+		Base: helper.OkResp(),
+		Data: &user.RefreshTokenData{
+			Token: token,
+		},
 	}, nil
 }

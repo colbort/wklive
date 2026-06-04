@@ -54,6 +54,6 @@ func (l *ListMyRechargeOrdersLogic) ListMyRechargeOrders(in *payment.ListMyRecha
 
 	return &payment.ListMyRechargeOrdersResp{
 		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(items), total, lastID),
-		List: data,
+		Data: data,
 	}, nil
 }

@@ -25,22 +25,26 @@ type MenuNode {
 	children  []MenuNode `json:"children,optional"`
 }
 
+type ProfileData {
+	user  ProfileUser `json:"user"`
+	menus []MenuNode  `json:"menus"`
+	perms []string    `json:"perms"`
+}
+
 type ProfileResp {
 	RespBase
-	data {
-		user  ProfileUser `json:"user"`
-		menus []MenuNode  `json:"menus"`
-		perms []string    `json:"perms"`
-	} `json:"data"`
+	data ProfileData `json:"data"`
 }
 
 type UploadFileReq {}
 
+type UploadFileData {
+	url string `json:"url"`
+}
+
 type UploadFileResp {
 	RespBase
-	Data {
-		Url string `json:"url"`
-	} `json:"data"`
+	data UploadFileData `json:"data"`
 }
 
 type UpdateProfileReq {

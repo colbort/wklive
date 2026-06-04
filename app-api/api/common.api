@@ -34,3 +34,4 @@ type OptionsGroup {
 type IdReq {
 	id int64 `path:"id"`
 }
+

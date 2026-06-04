@@ -6,10 +6,10 @@ package user_private
 import (
 	"context"
 
+	"wklive/app-api/internal/logicutil"
+
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-	"wklive/proto/common"
-	"wklive/proto/user"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,43 +29,5 @@ func NewListBanksLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListBan
 }
 
 func (l *ListBanksLogic) ListBanks(req *types.ListBanksReq) (resp *types.ListBanksResp, err error) {
-	result, err := l.svcCtx.UserCli.ListBanks(l.ctx, &user.ListBanksReq{
-		Page: &common.PageReq{
-			Cursor: req.Cursor,
-			Limit:  req.Limit,
-		},
-	})
-	if err != nil {
-		return nil, err
-	}
-	data := make([]types.UserBank, len(result.List))
-	for i, bank := range result.List {
-		data[i] = types.UserBank{
-			Id:          bank.Id,
-			TenantId:    bank.TenantId,
-			UserId:      bank.UserId,
-			BankName:    bank.BankName,
-			BankCode:    bank.BankCode,
-			AccountName: bank.AccountName,
-			AccountNo:   bank.AccountNo,
-			BranchName:  bank.BranchName,
-			CountryCode: bank.CountryCode,
-			IsDefault:   bank.IsDefault,
-			Status:      int64(bank.Status),
-			CreateTimes: bank.CreateTimes,
-			UpdateTimes: bank.UpdateTimes,
-		}
-	}
-	return &types.ListBanksResp{
-		RespBase: types.RespBase{
-			Code:       result.Base.Code,
-			Msg:        result.Base.Msg,
-			Total:      result.Base.Total,
-			HasNext:    result.Base.HasNext,
-			HasPrev:    result.Base.HasPrev,
-			NextCursor: result.Base.NextCursor,
-			PrevCursor: result.Base.PrevCursor,
-		},
-		Data: data,
-	}, nil
+	return logicutil.Proxy[types.ListBanksResp](l.ctx, req, l.svcCtx.UserCli.ListBanks)
 }

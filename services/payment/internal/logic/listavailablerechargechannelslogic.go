@@ -45,6 +45,6 @@ func (l *ListAvailableRechargeChannelsLogic) ListAvailableRechargeChannels(in *p
 
 	return &payment.ListAvailableRechargeChannelsResp{
 		Base: helper.OkResp(),
-		List: data,
+		Data: data,
 	}, nil
 }

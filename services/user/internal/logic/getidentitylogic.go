@@ -52,7 +52,7 @@ func (l *GetIdentityLogic) GetIdentity(in *user.GetIdentityReq) (*user.GetIdenti
 	}
 
 	return &user.GetIdentityResp{
-		Base:     helper.OkResp(),
-		Identity: toUserIdentityProto(identity),
+		Base: helper.OkResp(),
+		Data: toUserIdentityProto(identity),
 	}, nil
 }

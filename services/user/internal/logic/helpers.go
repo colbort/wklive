@@ -204,7 +204,7 @@ func toUserBankItemListProto(items []*models.TUserBank) []*user.UserBankItem {
 
 func toUserProfileProto(tuser *models.TUser, identity *models.TUserIdentity, security *models.TUserSecurity) *user.UserProfile {
 	return &user.UserProfile{
-		Base:     toUserBaseProto(tuser),
+		User:     toUserBaseProto(tuser),
 		Identity: toUserIdentityProto(identity),
 		Security: toUserSecurityProto(security),
 	}
@@ -212,7 +212,7 @@ func toUserProfileProto(tuser *models.TUser, identity *models.TUserIdentity, sec
 
 func toUserDetailProto(tuser *models.TUser, identity *models.TUserIdentity, security *models.TUserSecurity, banks []*models.TUserBank) *user.UserDetail {
 	return &user.UserDetail{
-		Base:     toUserBaseProto(tuser),
+		User:     toUserBaseProto(tuser),
 		Identity: toUserIdentityProto(identity),
 		Security: toUserSecurityProto(security),
 		Banks:    toUserBankItemListProto(banks),

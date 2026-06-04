@@ -60,6 +60,5 @@ func (l *AppListBillsLogic) AppListBills(in *option.AppListBillsReq) (*option.Ap
 	return &option.AppListBillsResp{
 		Base: pageutil.Base(cursor, limit, len(items), total, lastID),
 		Data: data,
-		Page: pageutil.Output(in.Page, limit),
 	}, nil
 }

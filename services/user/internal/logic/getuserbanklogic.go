@@ -42,6 +42,6 @@ func (l *GetUserBankLogic) GetUserBank(in *user.GetUserBankReq) (*user.GetUserBa
 
 	return &user.GetUserBankResp{
 		Base: helper.OkResp(),
-		Bank: toUserBankItemProto(bank),
+		Data: toUserBankItemProto(bank),
 	}, nil
 }

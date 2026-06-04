@@ -8,6 +8,7 @@ import type {
   CreateRechargeOrderReq,
   CreateWithdrawOrderReq,
   CryptoRechargeAddress,
+  CryptoRechargeOrderData,
   CryptoRechargeTx,
   GetMyCryptoRechargeAddressReq,
   GetMyCryptoRechargeTxReq,
@@ -32,7 +33,9 @@ export function apiGetPaymentOptions(): Promise<RespBase & { data: OptionsGroup[
 export function apiGetMyRechargeStat(
   params: GetMyRechargeStatReq,
 ): Promise<RespBase & { data: UserRechargeStat }> {
-  return http.get('/payment/recharge/stat', { params: compactParams(params) }).then((res) => res.data)
+  return http
+    .get('/payment/recharge/stat', { params: compactParams(params) })
+    .then((res) => res.data)
 }
 
 export function apiListAvailableRechargeChannels(
@@ -49,7 +52,7 @@ export function apiCreateRechargeOrder(
 
 export function apiCreateCryptoRechargeOrder(
   params: CreateCryptoRechargeOrderReq,
-): Promise<RespBase & { data: RechargeOrder; address: CryptoRechargeAddress }> {
+): Promise<RespBase & { data: CryptoRechargeOrderData }> {
   return http.post('/payment/crypto/recharge/orders', params).then((res) => res.data)
 }
 
@@ -64,7 +67,9 @@ export function apiGetMyRechargeOrder(
 export function apiListMyRechargeOrders(
   params: ListMyRechargeOrdersReq,
 ): Promise<RespBase & { data: RechargeOrder[] }> {
-  return http.get('/payment/recharge/orders', { params: compactParams(params) }).then((res) => res.data)
+  return http
+    .get('/payment/recharge/orders', { params: compactParams(params) })
+    .then((res) => res.data)
 }
 
 export function apiCancelMyRechargeOrder(params: CancelMyRechargeOrderReq): Promise<RespBase> {
@@ -100,7 +105,9 @@ export function apiListMyCryptoRechargeAddresses(
 export function apiListMyCryptoRechargeTxs(
   params: ListMyCryptoRechargeTxsReq,
 ): Promise<RespBase & { data: CryptoRechargeTx[] }> {
-  return http.get('/payment/crypto/recharge/txs', { params: compactParams(params) }).then((res) => res.data)
+  return http
+    .get('/payment/crypto/recharge/txs', { params: compactParams(params) })
+    .then((res) => res.data)
 }
 
 export function apiGetMyCryptoRechargeTx(
@@ -115,14 +122,16 @@ export function apiGetMyCryptoRechargeTx(
 
 export function apiCreateWithdrawOrder(
   params: CreateWithdrawOrderReq,
-): Promise<RespBase & { id: number }> {
+): Promise<RespBase & { data: number }> {
   return http.post('/payment/withdraw/orders', params).then((res) => res.data)
 }
 
 export function apiListMyWithdrawOrders(
   params: ListMyWithdrawOrdersReq,
 ): Promise<RespBase & { data: WithdrawOrder[] }> {
-  return http.get('/payment/withdraw/orders', { params: compactParams(params) }).then((res) => res.data)
+  return http
+    .get('/payment/withdraw/orders', { params: compactParams(params) })
+    .then((res) => res.data)
 }
 
 export function apiGetMyWithdrawOrder(

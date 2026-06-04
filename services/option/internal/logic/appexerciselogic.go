@@ -160,5 +160,5 @@ func (l *AppExerciseLogic) AppExercise(in *option.AppExerciseReq) (*option.AppEx
 		return nil, err
 	}
 
-	return &option.AppExerciseResp{Base: helper.OkResp(), ExerciseNo: item.ExerciseNo, ExerciseId: id}, nil
+	return &option.AppExerciseResp{Base: helper.OkResp(), Data: &option.AppExerciseData{ExerciseNo: item.ExerciseNo, ExerciseId: id}}, nil
 }

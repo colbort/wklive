@@ -58,7 +58,7 @@ func (l *GetSecurityLogic) GetSecurity(in *user.GetSecurityReq) (*user.GetSecuri
 	}
 
 	return &user.GetSecurityResp{
-		Base:     helper.OkResp(),
-		Security: toUserSecurityProto(security),
+		Base: helper.OkResp(),
+		Data: toUserSecurityProto(security),
 	}, nil
 }

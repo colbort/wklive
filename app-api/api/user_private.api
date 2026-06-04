@@ -15,7 +15,7 @@ type UpdateProfileReq {
 	timezone    string `json:"timezone,optional"`
 	signature   string `json:"signature,optional"`
 	gender      int64  `json:"gender,optional"`
-	birthday    int64 `json:"birthday,optional"`
+	birthday    int64  `json:"birthday,optional"`
 	countryCode string `json:"countryCode,optional"`
 	province    string `json:"province,optional"`
 	city        string `json:"city,optional"`
@@ -24,7 +24,7 @@ type UpdateProfileReq {
 
 type UpdateProfileResp {
 	RespBase
-	profile UserProfile `json:"profile"`
+	data UserProfile `json:"data"`
 }
 
 type ChangeLoginPasswordReq {
@@ -43,7 +43,7 @@ type SubmitIdentityReq {
 	email         string `json:"email,optional"`
 	realName      string `json:"realName"`
 	gender        int64  `json:"gender,optional"`
-	birthday      int64 `json:"birthday,optional"`
+	birthday      int64  `json:"birthday,optional"`
 	countryCode   string `json:"countryCode,optional"`
 	province      string `json:"province,optional"`
 	city          string `json:"city,optional"`
@@ -61,15 +61,15 @@ type SubmitIdentityResp {
 }
 
 type UpdateIdentityReq {
-	phone         string `json:"phone,optional"`
-	email         string `json:"email,optional"`
-	realName      string `json:"realName,optional"`	
-	gender        int64  `json:"gender,optional"`
-	birthday      int64 `json:"birthday,optional"`
-	countryCode   string `json:"countryCode,optional"`
-	province      string `json:"province,optional"`
-	city          string `json:"city,optional"`
-	address       string `json:"address,optional"`
+	phone       string `json:"phone,optional"`
+	email       string `json:"email,optional"`
+	realName    string `json:"realName,optional"`
+	gender      int64  `json:"gender,optional"`
+	birthday    int64  `json:"birthday,optional"`
+	countryCode string `json:"countryCode,optional"`
+	province    string `json:"province,optional"`
+	city        string `json:"city,optional"`
+	address     string `json:"address,optional"`
 }
 
 type UpdateIdentityResp {
@@ -93,10 +93,14 @@ type ChangePayPasswordReq {
 	confirmPassword string `json:"confirmPassword"`
 }
 
-type InitGoogle2FAResp {
-	RespBase
+type InitGoogle2FAData {
 	secret    string `json:"secret"`
 	qrCodeUrl string `json:"qrCodeUrl"`
+}
+
+type InitGoogle2FAResp {
+	RespBase
+	data InitGoogle2FAData `json:"data"`
 }
 
 type VerifyGoogle2FAReq {
@@ -124,7 +128,7 @@ type AddBankReq {
 
 type AddBankResp {
 	RespBase
-	bank UserBank `json:"bank"`
+	data UserBank `json:"data"`
 }
 
 type UpdateBankReq {
@@ -140,7 +144,7 @@ type UpdateBankReq {
 
 type UpdateBankResp {
 	RespBase
-	bank UserBank `json:"bank"`
+	data UserBank `json:"data"`
 }
 
 type DeleteBankReq {
@@ -152,9 +156,9 @@ type SetDefaultBankReq {
 }
 
 @server (
-	prefix: /app/user
-	group:  user_private
-	jwt:    Jwt
+	prefix:     /app/user
+	group:      user_private
+	jwt:        Jwt
 	middleware: UserRateLimit
 )
 service app {
@@ -187,9 +191,9 @@ service app {
 }
 
 @server (
-	prefix: /app/user
-	group:  user_private
-	jwt:    Jwt
+	prefix:     /app/user
+	group:      user_private
+	jwt:        Jwt
 	middleware: SensitiveRateLimit
 )
 service app {
@@ -210,9 +214,9 @@ service app {
 }
 
 @server (
-	prefix: /app/user
-	group:  user_private
-	jwt:    Jwt
+	prefix:     /app/user
+	group:      user_private
+	jwt:        Jwt
 	middleware: SensitiveRateLimit
 )
 service app {
@@ -228,3 +232,4 @@ service app {
 	@handler SetDefaultBank
 	put /banks/:id/default (SetDefaultBankReq) returns (RespBase)
 }
+

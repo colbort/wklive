@@ -131,8 +131,8 @@ func (l *UpdateProfileLogic) buildUpdateProfileResp(tuser *models.TUser, _ *mode
 	}
 
 	return &user.UpdateProfileResp{
-		Base:    helper.OkResp(),
-		Profile: toUserProfileProto(tuser, identity, security),
+		Base: helper.OkResp(),
+		Data: toUserProfileProto(tuser, identity, security),
 	}, nil
 }
 

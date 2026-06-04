@@ -32,7 +32,7 @@ message CreateUserReq {
 
 message CreateUserResp {
   common.RespBase base = 1;
-  int64 user_id = 2;
+  int64 data = 2;
 }
 
 message GetUserDetailReq {
@@ -41,7 +41,7 @@ message GetUserDetailReq {
 
 message GetUserDetailResp {
   common.RespBase base = 1;
-  user.UserDetail detail = 2;
+  user.UserDetail data = 2;
 }
 
 message ListUsersReq {
@@ -65,7 +65,7 @@ message ListUsersReq {
 
 message ListUsersResp {
   common.RespBase base = 1;
-  repeated user.UserItem list = 2;
+  repeated user.UserItem data = 2;
 }
 
 message UpdateUserBaseReq {
@@ -86,7 +86,7 @@ message UpdateUserBaseReq {
 
 message UpdateUserBaseResp {
   common.RespBase base = 1;
-  user.UserDetail detail = 2;
+  user.UserDetail data = 2;
 }
 
 message UpdateUserStatusReq {
@@ -137,7 +137,7 @@ message GetUserSecurityReq {
 
 message GetUserSecurityResp {
   common.RespBase base = 1;
-  user.UserSecurity security = 2;
+  user.UserSecurity data = 2;
 }
 
 message ResetUserGoogle2FAReq {
@@ -163,7 +163,7 @@ message ListUserIdentitiesReq {
 
 message ListUserIdentitiesResp {
   common.RespBase base = 1;
-  repeated user.UserIdentityItem list = 2;
+  repeated user.UserIdentityItem data = 2;
 }
 
 message ReviewUserIdentityReq {
@@ -176,7 +176,7 @@ message ReviewUserIdentityReq {
 
 message ReviewUserIdentityResp {
   common.RespBase base = 1;
-  user.UserIdentity identity = 2;
+  user.UserIdentity data = 2;
 }
 
 message ListUserBanksReq {
@@ -189,7 +189,7 @@ message ListUserBanksReq {
 
 message ListUserBanksResp {
   common.RespBase base = 1;
-  repeated user.UserBankItem list = 2;
+  repeated user.UserBankItem data = 2;
 }
 
 message GetUserBankReq {
@@ -199,7 +199,7 @@ message GetUserBankReq {
 
 message GetUserBankResp {
   common.RespBase base = 1;
-  user.UserBankItem bank = 2;
+  user.UserBankItem data = 2;
 }
 
 message AddUserBankReq {
@@ -217,7 +217,7 @@ message AddUserBankReq {
 
 message AddUserBankResp {
   common.RespBase base = 1;
-  user.UserBankItem bank = 2;
+  user.UserBankItem data = 2;
 }
 
 message UpdateUserBankReq {
@@ -236,7 +236,7 @@ message UpdateUserBankReq {
 
 message UpdateUserBankResp {
   common.RespBase base = 1;
-  user.UserBankItem bank = 2;
+  user.UserBankItem data = 2;
 }
 
 message DeleteUserBankReq {

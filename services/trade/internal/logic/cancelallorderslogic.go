@@ -109,5 +109,5 @@ func (l *CancelAllOrdersLogic) CancelAllOrders(in *trade.CancelAllOrdersReq) (*t
 		}
 	}
 
-	return &trade.CancelAllOrdersResp{Base: helper.OkResp(), AffectedCount: affected}, nil
+	return &trade.CancelAllOrdersResp{Base: helper.OkResp(), Data: affected}, nil
 }

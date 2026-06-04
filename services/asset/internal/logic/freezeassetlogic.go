@@ -104,5 +104,5 @@ func (l *FreezeAssetLogic) FreezeAsset(in *asset.FreezeAssetReq) (*asset.FreezeA
 		return nil, err
 	}
 
-	return &asset.FreezeAssetResp{Base: helper.OkResp(), FreezeNo: freeze.FreezeNo, Asset: toUserAssetProto(after)}, nil
+	return &asset.FreezeAssetResp{Base: helper.OkResp(), Data: &asset.FreezeAssetData{FreezeNo: freeze.FreezeNo, Asset: toUserAssetProto(after)}}, nil
 }

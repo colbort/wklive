@@ -6,10 +6,10 @@ package payment
 import (
 	"context"
 
+	"wklive/admin-api/internal/logicutil"
+
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/common"
-	"wklive/proto/payment"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,47 +29,5 @@ func NewListUserRechargeStatsLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *ListUserRechargeStatsLogic) ListUserRechargeStats(req *types.ListUserRechargeStatsReq) (resp *types.ListUserRechargeStatsResp, err error) {
-	result, err := l.svcCtx.PaymentCli.ListUserRechargeStats(l.ctx, &payment.ListUserRechargeStatsReq{
-		Page: &common.PageReq{
-			Cursor: req.Cursor,
-			Limit:  req.Limit,
-		},
-		TenantId:              req.TenantId,
-		UserId:                req.UserId,
-		SuccessTotalAmountMin: req.SuccessTotalAmountMin,
-		SuccessTotalAmountMax: req.SuccessTotalAmountMax,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	data := make([]types.UserRechargeStat, len(result.Data))
-	for i, item := range result.Data {
-		data[i] = types.UserRechargeStat{
-			Id:                 item.Id,
-			TenantId:           item.TenantId,
-			UserId:             item.UserId,
-			SuccessOrderCount:  int64(item.SuccessOrderCount),
-			SuccessTotalAmount: item.SuccessTotalAmount,
-			TodaySuccessAmount: item.TodaySuccessAmount,
-			TodaySuccessCount:  int64(item.TodaySuccessCount),
-			FirstSuccessTime:   item.FirstSuccessTime,
-			LastSuccessTime:    item.LastSuccessTime,
-			CreateTimes:        item.CreateTimes,
-			UpdateTimes:        item.UpdateTimes,
-		}
-	}
-
-	return &types.ListUserRechargeStatsResp{
-		RespBase: types.RespBase{
-			Code:       result.Base.Code,
-			Msg:        result.Base.Msg,
-			Total:      result.Base.Total,
-			HasNext:    result.Base.HasNext,
-			HasPrev:    result.Base.HasPrev,
-			NextCursor: result.Base.NextCursor,
-			PrevCursor: result.Base.PrevCursor,
-		},
-		Data: data,
-	}, nil
+	return logicutil.Proxy[types.ListUserRechargeStatsResp](l.ctx, req, l.svcCtx.PaymentCli.ListUserRechargeStats)
 }

@@ -83,7 +83,7 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 			return nil, err
 		}
 		if exists != nil {
-			return &option.AppPlaceOrderResp{Base: helper.GetErrResp(i18n.ClientOrderIDAlreadyExists, i18n.Translate(i18n.ClientOrderIDAlreadyExists, l.ctx)), OrderNo: exists.OrderNo, OrderId: exists.Id}, nil
+			return &option.AppPlaceOrderResp{Base: helper.GetErrResp(i18n.ClientOrderIDAlreadyExists, i18n.Translate(i18n.ClientOrderIDAlreadyExists, l.ctx)), Data: &option.AppPlaceOrderData{OrderNo: exists.OrderNo, OrderId: exists.Id}}, nil
 		}
 	}
 
@@ -141,10 +141,10 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 	})
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return &option.AppPlaceOrderResp{Base: helper.GetErrResp(i18n.PositionNotFound, i18n.Translate(i18n.PositionNotFound, l.ctx)), OrderNo: order.OrderNo, OrderId: id}, nil
+			return &option.AppPlaceOrderResp{Base: helper.GetErrResp(i18n.PositionNotFound, i18n.Translate(i18n.PositionNotFound, l.ctx)), Data: &option.AppPlaceOrderData{OrderNo: order.OrderNo, OrderId: id}}, nil
 		}
 		if i18n.IsStatusError(err, i18n.QuantityFormatError) {
-			return &option.AppPlaceOrderResp{Base: helper.GetErrResp(i18n.QuantityFormatError, i18n.Translate(i18n.QuantityFormatError, l.ctx)), OrderNo: order.OrderNo, OrderId: id}, nil
+			return &option.AppPlaceOrderResp{Base: helper.GetErrResp(i18n.QuantityFormatError, i18n.Translate(i18n.QuantityFormatError, l.ctx)), Data: &option.AppPlaceOrderData{OrderNo: order.OrderNo, OrderId: id}}, nil
 		}
 		return nil, err
 	}
@@ -181,7 +181,7 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 				l.Errorf("update rejected option order failed, orderNo=%s err=%v", order.OrderNo, updateErr)
 			}
 			if resp != nil && resp.Base != nil {
-				return &option.AppPlaceOrderResp{Base: resp.Base, OrderNo: order.OrderNo, OrderId: id}, nil
+				return &option.AppPlaceOrderResp{Base: resp.Base, Data: &option.AppPlaceOrderData{OrderNo: order.OrderNo, OrderId: id}}, nil
 			}
 			return nil, err
 		}
@@ -191,5 +191,5 @@ func (l *AppPlaceOrderLogic) AppPlaceOrder(in *option.AppPlaceOrderReq) (*option
 		return nil, err
 	}
 
-	return &option.AppPlaceOrderResp{Base: helper.OkResp(), OrderNo: order.OrderNo, OrderId: id}, nil
+	return &option.AppPlaceOrderResp{Base: helper.OkResp(), Data: &option.AppPlaceOrderData{OrderNo: order.OrderNo, OrderId: id}}, nil
 }

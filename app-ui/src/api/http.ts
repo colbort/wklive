@@ -1,5 +1,7 @@
 import axios, { type AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
 
+import { translateApiError } from '@/i18n'
+
 const ACCESS_TOKEN_KEY = 'app_access_token'
 const REFRESH_TOKEN_KEY = 'app_refresh_token'
 const TENANT_ID_KEY = 'app_tenant_id'
@@ -163,6 +165,19 @@ function getResponseCode(data: unknown) {
   return Number(data.code)
 }
 
+function translateResponseMessage(data: unknown) {
+  if (!isPlainObject(data)) return
+
+  const code = getResponseCode(data)
+  if (code === undefined || code === 200 || code === 0) return
+
+  const fallback = typeof data.msg === 'string' ? data.msg : ''
+  const message = translateApiError(code, fallback)
+  if (message) {
+    data.msg = message
+  }
+}
+
 function readTokenPayload(data: unknown) {
   if (!isPlainObject(data)) return null
 
@@ -223,6 +238,8 @@ async function retryWithRefreshedToken(config?: InternalAxiosRequestConfig) {
 
 http.interceptors.response.use(
   (response: AxiosResponse) => {
+    translateResponseMessage(response.data)
+
     if (getResponseCode(response.data) === 401) {
       return retryWithRefreshedToken(response.config)
     }

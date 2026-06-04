@@ -66,7 +66,9 @@ const passwordStrength = computed(() => {
   if (password.value.length >= 12) level += 1
   return level
 })
-const payPasswordStrength = computed(() => (payPassword.value.length >= 6 ? 4 : payPassword.value.length ? 1 : 0))
+const payPasswordStrength = computed(() =>
+  payPassword.value.length >= 6 ? 4 : payPassword.value.length ? 1 : 0,
+)
 const accountPlaceholder = computed(() =>
   accountMode.value === 'email' ? t('auth.yourEmail') : t('auth.phonePlaceholder'),
 )
@@ -191,7 +193,10 @@ async function continueStep() {
   } else if (step.value === 3) {
     if (codeValue.value.length !== 6) {
       errorMessage.value = t('auth.inputSixDigitCode')
-      focusCodeInput('email', emailCode.value.findIndex((digit) => !digit))
+      focusCodeInput(
+        'email',
+        emailCode.value.findIndex((digit) => !digit),
+      )
       return
     }
     step.value = 4
@@ -209,7 +214,8 @@ async function submitRegister() {
     return
   }
   if (!account.value.trim()) {
-    errorMessage.value = accountMode.value === 'email' ? t('security.inputEmail') : t('security.inputPhone')
+    errorMessage.value =
+      accountMode.value === 'email' ? t('security.inputEmail') : t('security.inputPhone')
     return
   }
   if (password.value.length < 8) {
@@ -308,8 +314,8 @@ async function loadGoogle2FA() {
   try {
     const res = await apiInitGoogle2FA()
     if (res.code !== 200) return
-    googleSecret.value = res.secret || ''
-    googleQr.value = res.qrCodeUrl || ''
+    googleSecret.value = res.data?.secret || ''
+    googleQr.value = res.data?.qrCodeUrl || ''
     if (!googleQr.value && googleSecret.value) {
       googleQr.value = await QRCode.toDataURL(googleSecret.value, {
         errorCorrectionLevel: 'M',
@@ -326,7 +332,10 @@ async function loadGoogle2FA() {
 async function submitGoogle2FA() {
   if (googleCodeValue.value.length !== 6) {
     errorMessage.value = t('auth.googleCode')
-    focusCodeInput('google', googleCode.value.findIndex((digit) => !digit))
+    focusCodeInput(
+      'google',
+      googleCode.value.findIndex((digit) => !digit),
+    )
     return
   }
   submitting.value = true
@@ -449,7 +458,10 @@ function markUpload(type: IdentityFileKey) {
         <label class="agree-control">
           <input v-model="agreed" type="checkbox" />
           <span />
-          <em>{{ t('auth.agreeTerms') }}<b>{{ t('auth.privacyPolicy') }}</b>{{ t('common.and') }}<b>{{ t('auth.userTerms') }}</b></em>
+          <em
+            >{{ t('auth.agreeTerms') }}<b>{{ t('auth.privacyPolicy') }}</b
+            >{{ t('common.and') }}<b>{{ t('auth.userTerms') }}</b></em
+          >
         </label>
       </section>
 
@@ -562,7 +574,9 @@ function markUpload(type: IdentityFileKey) {
 
       <p v-if="errorMessage" class="auth-error">{{ errorMessage }}</p>
       <button type="button" class="primary-button" :disabled="submitting" @click="continueStep">
-        {{ step === 5 ? t('auth.bind') : submitting ? t('common.submitting') : t('common.continue') }}
+        {{
+          step === 5 ? t('auth.bind') : submitting ? t('common.submitting') : t('common.continue')
+        }}
       </button>
       <p v-if="step === 1" class="auth-switch">
         {{ t('auth.haveAccount') }}
@@ -1161,7 +1175,6 @@ function markUpload(type: IdentityFileKey) {
   .code-boxes input {
     border-radius: 20px;
   }
-
 }
 
 .register-page {
@@ -1455,7 +1468,6 @@ function markUpload(type: IdentityFileKey) {
   .secret-card button {
     min-width: 92px;
   }
-
 }
 
 @media (max-width: 959px) {

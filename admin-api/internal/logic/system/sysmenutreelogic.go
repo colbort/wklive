@@ -6,9 +6,10 @@ package system
 import (
 	"context"
 
+	"wklive/admin-api/internal/logicutil"
+
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/proto/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,35 +29,5 @@ func NewSysMenuTreeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SysMe
 }
 
 func (l *SysMenuTreeLogic) SysMenuTree(req *types.SysMenuTreeReq) (resp *types.SysMenuTreeResp, err error) {
-	result, err := l.svcCtx.SystemCli.GetMenuTree(l.ctx, &system.SysMenuTreeReq{
-		TenantId: req.TenantId,
-	})
-	if err != nil {
-		return nil, err
-	}
-	data := make([]types.SysMenuItem, 0)
-	for _, item := range result.Data {
-		data = append(data, types.SysMenuItem{
-			Id:        item.Id,
-			ParentId:  item.ParentId,
-			Name:      item.Name,
-			MenuType:  fromMenuType(item.MenuType),
-			Method:    fromRequestMethod(item.Method),
-			Icon:      item.Icon,
-			Path:      item.Path,
-			Component: item.Component,
-			Sort:      item.Sort,
-			Visible:   fromVisibleStatus(item.Visible),
-			Status:    fromCommonStatus(item.Status),
-			Perms:     item.Perms,
-		})
-	}
-	resp = &types.SysMenuTreeResp{
-		RespBase: types.RespBase{
-			Code: result.Base.Code,
-			Msg:  result.Base.Msg,
-		},
-		Data: data,
-	}
-	return resp, nil
+	return logicutil.Proxy[types.SysMenuTreeResp](l.ctx, req, l.svcCtx.SystemCli.GetMenuTree)
 }

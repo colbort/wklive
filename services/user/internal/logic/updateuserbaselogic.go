@@ -122,7 +122,7 @@ func (l *UpdateUserBaseLogic) UpdateUserBase(in *user.UpdateUserBaseReq) (*user.
 	userDetailResp := toUserDetailProto(tuser, identity, security, nil)
 
 	return &user.UpdateUserBaseResp{
-		Base:   helper.OkResp(),
-		Detail: userDetailResp,
+		Base: helper.OkResp(),
+		Data: userDetailResp,
 	}, nil
 }

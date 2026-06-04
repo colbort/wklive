@@ -143,8 +143,8 @@ async function submitWithdraw() {
       remark: selectedChain.value ? `chain:${selectedChain.value}` : '',
     })
     if (isSuccessCode(resp.code)) {
-      pageTip.value = resp.id
-        ? t('assetFlow.withdrawSubmittedWithId', { id: resp.id })
+      pageTip.value = resp.data
+        ? t('assetFlow.withdrawSubmittedWithId', { id: resp.data })
         : t('assetFlow.withdrawSubmitted')
       amount.value = ''
       address.value = ''
@@ -215,7 +215,10 @@ onMounted(() => {
       {{ pageTip }}
     </p>
 
-    <AssetPrimaryButton :label="submitLoading ? t('common.submitting') : t('assetFlow.withdraw')" @click="submitWithdraw" />
+    <AssetPrimaryButton
+      :label="submitLoading ? t('common.submitting') : t('assetFlow.withdraw')"
+      @click="submitWithdraw"
+    />
 
     <AssetCoinSelectSheet
       v-model="coinSheetVisible"

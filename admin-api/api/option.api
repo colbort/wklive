@@ -78,7 +78,7 @@ type OptionOrder {
 	id               int64  `json:"id"`
 	tenantId         int64  `json:"tenantId"`
 	orderNo          string `json:"orderNo"`
-	userId              int64  `json:"userId"`
+	userId           int64  `json:"userId"`
 	accountId        int64  `json:"accountId"`
 	contractId       int64  `json:"contractId"`
 	underlyingSymbol string `json:"underlyingSymbol"`
@@ -134,7 +134,7 @@ type OptionTrade {
 type OptionPosition {
 	id                int64  `json:"id"`
 	tenantId          int64  `json:"tenantId"`
-	userId               int64  `json:"userId"`
+	userId            int64  `json:"userId"`
 	accountId         int64  `json:"accountId"`
 	contractId        int64  `json:"contractId"`
 	underlyingSymbol  string `json:"underlyingSymbol"`
@@ -160,7 +160,7 @@ type OptionExercise {
 	id              int64  `json:"id"`
 	tenantId        int64  `json:"tenantId"`
 	exerciseNo      string `json:"exerciseNo"`
-	userId             int64  `json:"userId"`
+	userId          int64  `json:"userId"`
 	accountId       int64  `json:"accountId"`
 	contractId      int64  `json:"contractId"`
 	positionId      int64  `json:"positionId"`
@@ -202,7 +202,7 @@ type OptionSettlement {
 type OptionAccount {
 	id               int64  `json:"id"`
 	tenantId         int64  `json:"tenantId"`
-	userId              int64  `json:"userId"`
+	userId           int64  `json:"userId"`
 	accountId        int64  `json:"accountId"`
 	marginCoin       string `json:"marginCoin"`
 	balance          string `json:"balance"`
@@ -221,7 +221,7 @@ type OptionAccount {
 type OptionBill {
 	id            int64  `json:"id"`
 	tenantId      int64  `json:"tenantId"`
-	userId           int64  `json:"userId"`
+	userId        int64  `json:"userId"`
 	accountId     int64  `json:"accountId"`
 	bizNo         string `json:"bizNo"`
 	refType       int64  `json:"refType"`
@@ -292,7 +292,7 @@ type CreateContractReq {
 
 type CreateContractResp {
 	RespBase
-	id int64 `json:"id"`
+	data int64 `json:"data"`
 }
 
 type UpdateContractReq {
@@ -351,7 +351,6 @@ type ListContractsReq {
 type ListContractsResp {
 	RespBase
 	data []OptionContractDetail `json:"data"`
-	page PageReq                `json:"page"`
 }
 
 type UpdateMarketReq {
@@ -396,7 +395,6 @@ type ListMarketSnapshotsReq {
 type ListMarketSnapshotsResp {
 	RespBase
 	data []OptionMarketSnapshot `json:"data"`
-	page PageReq                `json:"page"`
 }
 
 type GetOrderReq {
@@ -413,7 +411,7 @@ type GetOrderResp {
 type ListOrdersReq {
 	PageReq
 	tenantId         int64     `form:"tenantId,optional"`
-	userId              int64     `form:"userId,optional"`
+	userId           int64     `form:"userId,optional"`
 	accountId        int64     `form:"accountId,optional"`
 	contractId       int64     `form:"contractId,optional"`
 	underlyingSymbol string    `form:"underlyingSymbol,optional"`
@@ -428,7 +426,6 @@ type ListOrdersReq {
 type ListOrdersResp {
 	RespBase
 	data []OptionOrderDetail `json:"data"`
-	page PageReq             `json:"page"`
 }
 
 type GetTradeReq {
@@ -446,7 +443,7 @@ type ListTradesReq {
 	PageReq
 	tenantId       int64     `form:"tenantId,optional"`
 	contractId     int64     `form:"contractId,optional"`
-	userId            int64     `form:"userId,optional"`
+	userId         int64     `form:"userId,optional"`
 	tradeNo        string    `form:"tradeNo,optional"`
 	tradeTimeRange TimeRange `form:"tradeTimeRange,optional"`
 }
@@ -454,7 +451,6 @@ type ListTradesReq {
 type ListTradesResp {
 	RespBase
 	data []OptionTradeDetail `json:"data"`
-	page PageReq             `json:"page"`
 }
 
 type GetPositionReq {
@@ -471,7 +467,7 @@ type GetPositionResp {
 type ListPositionsReq {
 	PageReq
 	tenantId   int64 `form:"tenantId,optional"`
-	userId        int64 `form:"userId,optional"`
+	userId     int64 `form:"userId,optional"`
 	accountId  int64 `form:"accountId,optional"`
 	contractId int64 `form:"contractId,optional"`
 	status     int64 `form:"status,optional"`
@@ -480,7 +476,6 @@ type ListPositionsReq {
 type ListPositionsResp {
 	RespBase
 	data []OptionPositionDetail `json:"data"`
-	page PageReq                `json:"page"`
 }
 
 type GetExerciseReq {
@@ -497,7 +492,7 @@ type GetExerciseResp {
 type ListExercisesReq {
 	PageReq
 	tenantId          int64     `form:"tenantId,optional"`
-	userId               int64     `form:"userId,optional"`
+	userId            int64     `form:"userId,optional"`
 	accountId         int64     `form:"accountId,optional"`
 	contractId        int64     `form:"contractId,optional"`
 	status            int64     `form:"status,optional"`
@@ -507,7 +502,6 @@ type ListExercisesReq {
 type ListExercisesResp {
 	RespBase
 	data []OptionExerciseDetail `json:"data"`
-	page PageReq                `json:"page"`
 }
 
 type GetSettlementReq {
@@ -532,13 +526,12 @@ type ListSettlementsReq {
 type ListSettlementsResp {
 	RespBase
 	data []OptionSettlementDetail `json:"data"`
-	page PageReq                  `json:"page"`
 }
 
 type GetAccountReq {
 	tenantId  int64 `form:"tenantId,optional"`
 	id        int64 `form:"id,optional"`
-	userId       int64 `form:"userId,optional"`
+	userId    int64 `form:"userId,optional"`
 	accountId int64 `form:"accountId,optional"`
 }
 
@@ -550,7 +543,7 @@ type GetAccountResp {
 type ListAccountsReq {
 	PageReq
 	tenantId   int64  `form:"tenantId,optional"`
-	userId        int64  `form:"userId,optional"`
+	userId     int64  `form:"userId,optional"`
 	accountId  int64  `form:"accountId,optional"`
 	marginCoin string `form:"marginCoin,optional"`
 	status     int64  `form:"status,optional"`
@@ -559,7 +552,6 @@ type ListAccountsReq {
 type ListAccountsResp {
 	RespBase
 	data []OptionAccount `json:"data"`
-	page PageReq         `json:"page"`
 }
 
 type GetBillReq {
@@ -576,7 +568,7 @@ type GetBillResp {
 type ListBillsReq {
 	PageReq
 	tenantId        int64     `form:"tenantId,optional"`
-	userId             int64     `form:"userId,optional"`
+	userId          int64     `form:"userId,optional"`
 	accountId       int64     `form:"accountId,optional"`
 	refType         int64     `form:"refType,optional"`
 	createTimeRange TimeRange `form:"createTimeRange,optional"`
@@ -585,7 +577,6 @@ type ListBillsReq {
 type ListBillsResp {
 	RespBase
 	data []OptionBill `json:"data"`
-	page PageReq      `json:"page"`
 }
 
 type GetOptionOptionsResp {

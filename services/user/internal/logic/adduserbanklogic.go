@@ -76,6 +76,6 @@ func (l *AddUserBankLogic) AddUserBank(in *user.AddUserBankReq) (*user.AddUserBa
 
 	return &user.AddUserBankResp{
 		Base: helper.OkResp(),
-		Bank: toUserBankItemProto(bank),
+		Data: toUserBankItemProto(bank),
 	}, nil
 }

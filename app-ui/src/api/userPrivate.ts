@@ -37,8 +37,8 @@ export function apiLogout(): Promise<RespBase> {
 export function apiGetProfile(): Promise<RespBase & GetProfileResp> {
   return http.get<RespBase & GetProfileResp>('/user/profile').then((res) => {
     const data = res.data
-    console.log('User profile:', data.data.base)
-    setTenantId(data.data?.base.tenantId ?? '')
+    console.log('User profile:', data.data.user)
+    setTenantId(data.data?.user.tenantId ?? '')
     return data
   })
 }

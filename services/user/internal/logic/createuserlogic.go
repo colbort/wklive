@@ -126,8 +126,8 @@ func (l *CreateUserLogic) CreateUser(in *user.CreateUserReq) (*user.CreateUserRe
 	l.Logger.Infof("管理员创建用户成功，用户ID：%d，用户名：%s", userId, in.Username)
 
 	return &user.CreateUserResp{
-		Base:   helper.OkResp(),
-		UserId: userId,
+		Base: helper.OkResp(),
+		Data: userId,
 	}, nil
 }
 
