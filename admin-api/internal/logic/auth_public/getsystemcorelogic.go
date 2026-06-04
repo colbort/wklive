@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 
+	"wklive/admin-api/internal/logicutil"
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
 	"wklive/proto/system"
@@ -31,32 +32,48 @@ func NewGetSystemCoreLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Get
 func (l *GetSystemCoreLogic) GetSystemCore() (resp *types.GetSystemCoreResp, err error) {
 	tenantId := int64(0)
 	key := system.SysConfigType_SYSTEM_CORE
-	cd, err := l.svcCtx.SystemCli.SysConfigDetail(l.ctx, &system.SysConfigDetailReq{
+	cd, err := logicutil.Proxy[system.SysConfigDetailResp](l.ctx, &system.SysConfigDetailReq{
 		TenantId:  &tenantId,
 		ConfigKey: &key,
-	})
+	}, l.svcCtx.SystemCli.SysConfigDetail)
 	if err != nil {
-		return nil, err
+		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
+	}
+	if cd.GetBase().GetCode() != 200 || cd.GetData() == nil {
+		return &types.GetSystemCoreResp{
+			RespBase: types.RespBase{
+				Code: cd.GetBase().GetCode(),
+				Msg:  cd.GetBase().GetMsg(),
+			},
+		}, nil
 	}
 
 	var core system.SystemCore
 	err = json.Unmarshal([]byte(cd.Data.ConfigValue), &core)
 	if err != nil {
-		return nil, err
+		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
 	}
 
 	key = system.SysConfigType_OBJECT_STORAGE
-	cd, err = l.svcCtx.SystemCli.SysConfigDetail(l.ctx, &system.SysConfigDetailReq{
+	cd, err = logicutil.Proxy[system.SysConfigDetailResp](l.ctx, &system.SysConfigDetailReq{
 		TenantId:  &tenantId,
 		ConfigKey: &key,
-	})
+	}, l.svcCtx.SystemCli.SysConfigDetail)
 	if err != nil {
-		return nil, err
+		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
+	}
+	if cd.GetBase().GetCode() != 200 || cd.GetData() == nil {
+		return &types.GetSystemCoreResp{
+			RespBase: types.RespBase{
+				Code: cd.GetBase().GetCode(),
+				Msg:  cd.GetBase().GetMsg(),
+			},
+		}, nil
 	}
 	var storage system.ObjectStorageConfig
 	err = json.Unmarshal([]byte(cd.Data.ConfigValue), &storage)
 	if err != nil {
-		return nil, err
+		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
 	}
 	assetUrl := ""
 	switch storage.OssType {

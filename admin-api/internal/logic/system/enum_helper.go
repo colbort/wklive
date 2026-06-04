@@ -3,65 +3,65 @@ package system
 import (
 	"strings"
 
-	pbsystem "wklive/proto/system"
+	"wklive/proto/system"
 )
 
-func toCommonStatus(v int64) pbsystem.CommonStatus {
-	return pbsystem.CommonStatus(v)
+func toCommonStatus(v int64) system.CommonStatus {
+	return system.CommonStatus(v)
 }
 
-func fromCommonStatus(v pbsystem.CommonStatus) int64 {
+func fromCommonStatus(v system.CommonStatus) int64 {
 	return int64(v)
 }
 
-func toMenuType(v int64) pbsystem.MenuType {
-	return pbsystem.MenuType(v)
+func toMenuType(v int64) system.MenuType {
+	return system.MenuType(v)
 }
 
-func fromMenuType(v pbsystem.MenuType) int64 {
+func fromMenuType(v system.MenuType) int64 {
 	return int64(v)
 }
 
-func toVisibleStatus(v int64) pbsystem.VisibleStatus {
-	return pbsystem.VisibleStatus(v)
+func toVisibleStatus(v int64) system.VisibleStatus {
+	return system.VisibleStatus(v)
 }
 
-func fromVisibleStatus(v pbsystem.VisibleStatus) int64 {
+func fromVisibleStatus(v system.VisibleStatus) int64 {
 	return int64(v)
 }
 
-func toJobStatus(v int64) pbsystem.JobStatus {
-	return pbsystem.JobStatus(v)
+func toJobStatus(v int64) system.JobStatus {
+	return system.JobStatus(v)
 }
 
-func fromJobStatus(v pbsystem.JobStatus) int64 {
+func fromJobStatus(v system.JobStatus) int64 {
 	return int64(v)
 }
 
-func toRequestMethod(v string) pbsystem.RequestMethod {
+func toRequestMethod(v string) system.RequestMethod {
 	switch strings.ToUpper(strings.TrimSpace(v)) {
 	case "GET":
-		return pbsystem.RequestMethod_REQUEST_METHOD_GET
+		return system.RequestMethod_REQUEST_METHOD_GET
 	case "POST":
-		return pbsystem.RequestMethod_REQUEST_METHOD_POST
+		return system.RequestMethod_REQUEST_METHOD_POST
 	case "PUT":
-		return pbsystem.RequestMethod_REQUEST_METHOD_PUT
+		return system.RequestMethod_REQUEST_METHOD_PUT
 	case "DELETE":
-		return pbsystem.RequestMethod_REQUEST_METHOD_DELETE
+		return system.RequestMethod_REQUEST_METHOD_DELETE
 	default:
-		return pbsystem.RequestMethod_REQUEST_METHOD_UNKNOWN
+		return system.RequestMethod_REQUEST_METHOD_UNKNOWN
 	}
 }
 
-func fromRequestMethod(v pbsystem.RequestMethod) string {
+func fromRequestMethod(v system.RequestMethod) string {
 	switch v {
-	case pbsystem.RequestMethod_REQUEST_METHOD_GET:
+	case system.RequestMethod_REQUEST_METHOD_GET:
 		return "GET"
-	case pbsystem.RequestMethod_REQUEST_METHOD_POST:
+	case system.RequestMethod_REQUEST_METHOD_POST:
 		return "POST"
-	case pbsystem.RequestMethod_REQUEST_METHOD_PUT:
+	case system.RequestMethod_REQUEST_METHOD_PUT:
 		return "PUT"
-	case pbsystem.RequestMethod_REQUEST_METHOD_DELETE:
+	case system.RequestMethod_REQUEST_METHOD_DELETE:
 		return "DELETE"
 	default:
 		return ""

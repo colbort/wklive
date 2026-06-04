@@ -6,6 +6,7 @@ package user_public
 import (
 	"context"
 
+	"wklive/app-api/internal/logicutil"
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
 	"wklive/proto/user"
@@ -36,7 +37,7 @@ func (l *LoginLogic) Login(req *types.LoginReq) (*types.LoginResp, error) {
 		GoogleCode: req.GoogleCode,
 	})
 	if err != nil {
-		return nil, err
+		return logicutil.SystemErrorResp[types.LoginResp](l.ctx, err)
 	}
 
 	if result.Base.Code != 200 {

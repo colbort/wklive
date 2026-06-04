@@ -14,6 +14,7 @@ import (
 )
 
 type (
+	AdminLoginData         = system.AdminLoginData
 	AdminLoginReq          = system.AdminLoginReq
 	AdminLoginResp         = system.AdminLoginResp
 	AssignUserRolesReq     = system.AssignUserRolesReq
@@ -22,6 +23,7 @@ type (
 	Google2FABindReq       = system.Google2FABindReq
 	Google2FADisableReq    = system.Google2FADisableReq
 	Google2FAEnableReq     = system.Google2FAEnableReq
+	Google2FAInitData      = system.Google2FAInitData
 	Google2FAInitReq       = system.Google2FAInitReq
 	Google2FAInitResp      = system.Google2FAInitResp
 	Google2FAResetReq      = system.Google2FAResetReq
@@ -33,7 +35,6 @@ type (
 	OpLogItem              = system.OpLogItem
 	OpLogListReq           = system.OpLogListReq
 	OpLogListResp          = system.OpLogListResp
-	ProfileReq             = system.ProfileReq
 	ProfileResp            = system.ProfileResp
 	ProfileUser            = system.ProfileUser
 	ResetUserPwdReq        = system.ResetUserPwdReq
@@ -75,6 +76,7 @@ type (
 	SysPermListResp        = system.SysPermListResp
 	SysRoleCreateReq       = system.SysRoleCreateReq
 	SysRoleDeleteReq       = system.SysRoleDeleteReq
+	SysRoleGrantDetailData = system.SysRoleGrantDetailData
 	SysRoleGrantDetailReq  = system.SysRoleGrantDetailReq
 	SysRoleGrantDetailResp = system.SysRoleGrantDetailResp
 	SysRoleGrantReq        = system.SysRoleGrantReq
@@ -104,7 +106,7 @@ type (
 		// P0
 		AdminLogin(ctx context.Context, in *AdminLoginReq, opts ...grpc.CallOption) (*AdminLoginResp, error)
 		// 获取当前用户信息
-		GetProfile(ctx context.Context, in *ProfileReq, opts ...grpc.CallOption) (*ProfileResp, error)
+		GetProfile(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ProfileResp, error)
 		// 修改头像，密码，昵称
 		UpdateProfile(ctx context.Context, in *UpdateProfileReq, opts ...grpc.CallOption) (*RespBase, error)
 		// 2FA
@@ -223,7 +225,7 @@ func (m *defaultSystem) AdminLogin(ctx context.Context, in *AdminLoginReq, opts 
 }
 
 // 获取当前用户信息
-func (m *defaultSystem) GetProfile(ctx context.Context, in *ProfileReq, opts ...grpc.CallOption) (*ProfileResp, error) {
+func (m *defaultSystem) GetProfile(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ProfileResp, error) {
 	client := system.NewSystemClient(m.cli.Conn())
 	return client.GetProfile(ctx, in, opts...)
 }

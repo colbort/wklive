@@ -41,8 +41,6 @@ message AdminLoginData {
   string avatar = 11;
 }
 
-message ProfileReq { int64 user_id = 1; }
-
 message ProfileUser {
   int64 id = 1;
   string username = 2;
@@ -68,11 +66,16 @@ message SysMenuNode {
   repeated SysMenuNode children = 12;
 }
 
-message ProfileResp {
+message ProfileData {
   ProfileUser user = 1;
   repeated SysMenuNode menus = 2;
   repeated string perms = 3;
   repeated int64 role_ids = 4;
+}
+
+message ProfileResp {
+  common.RespBase base = 1;
+  ProfileData data = 2;
 }
 
 message UpdateProfileReq {
@@ -589,7 +592,7 @@ service System {
   // P0
   rpc AdminLogin(AdminLoginReq) returns (AdminLoginResp);
   // 获取当前用户信息
-  rpc GetProfile(ProfileReq) returns (ProfileResp);
+  rpc GetProfile(Empty) returns (ProfileResp);
   // 修改头像，密码，昵称
   rpc UpdateProfile(UpdateProfileReq) returns (RespBase);
 

@@ -30,7 +30,7 @@ func (s *SystemServer) AdminLogin(ctx context.Context, in *system.AdminLoginReq)
 }
 
 // 获取当前用户信息
-func (s *SystemServer) GetProfile(ctx context.Context, in *system.ProfileReq) (*system.ProfileResp, error) {
+func (s *SystemServer) GetProfile(ctx context.Context, in *system.Empty) (*system.ProfileResp, error) {
 	l := logic.NewGetProfileLogic(ctx, s.svcCtx)
 	return l.GetProfile(in)
 }

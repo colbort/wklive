@@ -2765,9 +2765,6 @@ type ProfileData struct {
 	Perms []string    `json:"perms"`
 }
 
-type ProfileReq struct {
-}
-
 type ProfileResp struct {
 	RespBase
 	Data ProfileData `json:"data"`
@@ -3423,8 +3420,8 @@ type SysMenuUpdateReq struct {
 }
 
 type SysPermItem struct {
-	Key  string `json:"key"`  // 唯一权限标识（如 sys:role:add）
-	Name string `json:"name"` // 展示名称（如 新增角色）
+	PermKey string `json:"key"`  // 唯一权限标识（如 sys:role:add）
+	Name    string `json:"name"` // 展示名称（如 新增角色）
 }
 
 type SysPermListResp struct {

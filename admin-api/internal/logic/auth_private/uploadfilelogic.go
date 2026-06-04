@@ -9,6 +9,7 @@ import (
 	"mime/multipart"
 	"strings"
 
+	"wklive/admin-api/internal/logicutil"
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
 	"wklive/common/i18n"
@@ -60,24 +61,24 @@ func (l *UploadFileLogic) UploadFile(file multipart.File, header *multipart.File
 		ConfigKey: &key,
 	})
 	if err != nil {
-		return nil, err
+		return logicutil.SystemErrorResp[types.UploadFileResp](l.ctx, err)
 	}
 
 	var config system.ObjectStorageConfig
 	err = json.Unmarshal([]byte(cd.Data.ConfigValue), &config)
 	if err != nil {
-		return nil, err
+		return logicutil.SystemErrorResp[types.UploadFileResp](l.ctx, err)
 	}
 
 	// Convert proto config into the common storage config type.
 	var storageCfg storage.Config
 	err = copier.Copy(&storageCfg, &config)
 	if err != nil {
-		return nil, err
+		return logicutil.SystemErrorResp[types.UploadFileResp](l.ctx, err)
 	}
 	url, err := storage.UploadFile(l.ctx, file, header, storageCfg)
 	if err != nil {
-		return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
+		return logicutil.SystemErrorResp[types.UploadFileResp](l.ctx, err)
 	}
 
 	resp = &types.UploadFileResp{

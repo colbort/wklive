@@ -4,7 +4,9 @@ import (
 	"context"
 	"sort"
 
+	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
@@ -27,9 +29,13 @@ func NewGetProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetPro
 }
 
 // 获取当前用户信息
-func (l *GetProfileLogic) GetProfile(in *system.ProfileReq) (*system.ProfileResp, error) {
+func (l *GetProfileLogic) GetProfile(in *system.Empty) (*system.ProfileResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
+	}
 	// 1) user info
-	u, err := l.svcCtx.UserModel.FindOne(l.ctx, in.UserId)
+	u, err := l.svcCtx.UserModel.FindOne(l.ctx, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -38,26 +44,13 @@ func (l *GetProfileLogic) GetProfile(in *system.ProfileReq) (*system.ProfileResp
 	}
 
 	// 2) roleIds
-	roleIds, err := l.svcCtx.UserRoleModel.FindRoleIdsByUserId(l.ctx, in.UserId)
+	roleIds, err := l.svcCtx.UserRoleModel.FindRoleIdsByUserId(l.ctx, userId)
 	if err != nil {
 		return nil, err
 	}
 	if len(roleIds) == 0 {
 		// 没角色：只返回首页/空菜单
-		return &system.ProfileResp{
-			User: &system.ProfileUser{
-				Id:       u.Id,
-				Username: u.Username,
-				Nickname: u.Nickname,
-				Avatar:   u.Avatar,
-				TenantId: u.TenantId,
-				UserType: system.UserType(u.UserType),
-				IsOwner:  u.IsOwner,
-			},
-			Menus:   []*system.SysMenuNode{},
-			Perms:   []string{},
-			RoleIds: []int64{},
-		}, nil
+		return profileResp(u, []*system.SysMenuNode{}, []string{}, []int64{}), nil
 	}
 
 	// 3) menuIds
@@ -66,20 +59,7 @@ func (l *GetProfileLogic) GetProfile(in *system.ProfileReq) (*system.ProfileResp
 		return nil, err
 	}
 	if len(menuIds) == 0 {
-		return &system.ProfileResp{
-			User: &system.ProfileUser{
-				Id:       u.Id,
-				Username: u.Username,
-				Nickname: u.Nickname,
-				Avatar:   u.Avatar,
-				TenantId: u.TenantId,
-				UserType: system.UserType(u.UserType),
-				IsOwner:  u.IsOwner,
-			},
-			Menus:   []*system.SysMenuNode{},
-			Perms:   []string{},
-			RoleIds: roleIds,
-		}, nil
+		return profileResp(u, []*system.SysMenuNode{}, []string{}, roleIds), nil
 	}
 
 	// 4) menus flat
@@ -91,20 +71,27 @@ func (l *GetProfileLogic) GetProfile(in *system.ProfileReq) (*system.ProfileResp
 	// 5) build tree + perms
 	tree, perms := buildMenuTreeAndPerms(menus)
 
+	return profileResp(u, tree, perms, roleIds), nil
+}
+
+func profileResp(u *models.SysUser, menus []*system.SysMenuNode, perms []string, roleIds []int64) *system.ProfileResp {
 	return &system.ProfileResp{
-		User: &system.ProfileUser{
-			Id:       u.Id,
-			Username: u.Username,
-			Nickname: u.Nickname,
-			Avatar:   u.Avatar,
-			TenantId: u.TenantId,                  // 所属租户ID：0=系统侧，>0=租户ID
-			UserType: system.UserType(u.UserType), // 用户类型：1系统管理员 2租户主账号 3租户管理员
-			IsOwner:  u.IsOwner,                   // 是否租户主账号：1是 0否
+		Base: helper.OkResp(),
+		Data: &system.ProfileData{
+			User: &system.ProfileUser{
+				Id:       u.Id,
+				Username: u.Username,
+				Nickname: u.Nickname,
+				Avatar:   u.Avatar,
+				TenantId: u.TenantId,
+				UserType: system.UserType(u.UserType),
+				IsOwner:  u.IsOwner,
+			},
+			Menus:   menus,
+			Perms:   perms,
+			RoleIds: roleIds,
 		},
-		Menus:   tree,
-		Perms:   perms,
-		RoleIds: roleIds,
-	}, nil
+	}
 }
 
 func buildMenuTreeAndPerms(rows []*models.SysMenu) ([]*system.SysMenuNode, []string) {

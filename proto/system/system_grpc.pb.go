@@ -83,7 +83,7 @@ type SystemClient interface {
 	// P0
 	AdminLogin(ctx context.Context, in *AdminLoginReq, opts ...grpc.CallOption) (*AdminLoginResp, error)
 	// 获取当前用户信息
-	GetProfile(ctx context.Context, in *ProfileReq, opts ...grpc.CallOption) (*ProfileResp, error)
+	GetProfile(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ProfileResp, error)
 	// 修改头像，密码，昵称
 	UpdateProfile(ctx context.Context, in *UpdateProfileReq, opts ...grpc.CallOption) (*RespBase, error)
 	// 2FA
@@ -202,7 +202,7 @@ func (c *systemClient) AdminLogin(ctx context.Context, in *AdminLoginReq, opts .
 	return out, nil
 }
 
-func (c *systemClient) GetProfile(ctx context.Context, in *ProfileReq, opts ...grpc.CallOption) (*ProfileResp, error) {
+func (c *systemClient) GetProfile(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ProfileResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ProfileResp)
 	err := c.cc.Invoke(ctx, System_GetProfile_FullMethodName, in, out, cOpts...)
@@ -713,7 +713,7 @@ type SystemServer interface {
 	// P0
 	AdminLogin(context.Context, *AdminLoginReq) (*AdminLoginResp, error)
 	// 获取当前用户信息
-	GetProfile(context.Context, *ProfileReq) (*ProfileResp, error)
+	GetProfile(context.Context, *Empty) (*ProfileResp, error)
 	// 修改头像，密码，昵称
 	UpdateProfile(context.Context, *UpdateProfileReq) (*RespBase, error)
 	// 2FA
@@ -825,7 +825,7 @@ type UnimplementedSystemServer struct{}
 func (UnimplementedSystemServer) AdminLogin(context.Context, *AdminLoginReq) (*AdminLoginResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method AdminLogin not implemented")
 }
-func (UnimplementedSystemServer) GetProfile(context.Context, *ProfileReq) (*ProfileResp, error) {
+func (UnimplementedSystemServer) GetProfile(context.Context, *Empty) (*ProfileResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetProfile not implemented")
 }
 func (UnimplementedSystemServer) UpdateProfile(context.Context, *UpdateProfileReq) (*RespBase, error) {
@@ -1015,7 +1015,7 @@ func _System_AdminLogin_Handler(srv interface{}, ctx context.Context, dec func(i
 }
 
 func _System_GetProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ProfileReq)
+	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1027,7 +1027,7 @@ func _System_GetProfile_Handler(srv interface{}, ctx context.Context, dec func(i
 		FullMethod: System_GetProfile_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).GetProfile(ctx, req.(*ProfileReq))
+		return srv.(SystemServer).GetProfile(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }

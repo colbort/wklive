@@ -4,6 +4,7 @@ import (
 	"context"
 	"reflect"
 
+	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -22,24 +23,60 @@ const (
 func Proxy[Resp any, PReq any, PResp any](ctx context.Context, req any, call func(context.Context, *PReq, ...grpc.CallOption) (*PResp, error)) (*Resp, error) {
 	protoReq := new(PReq)
 	if err := copyValue(reflect.ValueOf(protoReq), reflect.ValueOf(req)); err != nil {
-		return nil, err
+		return SystemErrorResp[Resp](ctx, err)
 	}
 
 	protoResp, err := call(ctx, protoReq)
 	if err != nil {
 		resp := new(Resp)
+		code, _ := rpcErrorCodeAndMessage(err)
+		if code == codeSystemError {
+			logx.WithContext(ctx).Errorf("proxy rpc system error: %v", err)
+		}
 		if setErrorResp(resp, err) {
 			return resp, nil
 		}
-		return nil, err
+		return SystemErrorResp[Resp](ctx, err)
 	}
 
 	resp := new(Resp)
 	if err := copyValue(reflect.ValueOf(resp), reflect.ValueOf(protoResp)); err != nil {
-		return nil, err
+		return SystemErrorResp[Resp](ctx, err)
 	}
 
 	return resp, nil
+}
+
+func SystemErrorResp[Resp any](ctx context.Context, err error) (*Resp, error) {
+	logx.WithContext(ctx).Errorf("logic system error: %v", err)
+
+	resp := new(Resp)
+	if setSystemErrorResp(resp, err) {
+		return resp, nil
+	}
+	return resp, nil
+}
+
+func setSystemErrorResp(resp any, err error) bool {
+	v := reflect.ValueOf(resp)
+	if setRespCodeAndMsg(v, codeSystemError, err.Error()) {
+		return true
+	}
+
+	base, ok := findField(v, "RespBase")
+	if !ok {
+		base, ok = findField(v, "Base")
+	}
+	if !ok {
+		return false
+	}
+	if base.Kind() == reflect.Pointer {
+		if base.IsNil() {
+			base.Set(reflect.New(base.Type().Elem()))
+		}
+		base = base.Elem()
+	}
+	return setRespCodeAndMsg(base, codeSystemError, err.Error())
 }
 
 func setErrorResp(resp any, err error) bool {

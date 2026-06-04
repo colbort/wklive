@@ -35,7 +35,7 @@ func (l *CreateUserLogic) CreateUser(req *types.CreateUserReq) (resp *types.Crea
 		TenantCode: &req.TenantCode,
 	})
 	if err != nil {
-		return nil, err
+		return logicutil.SystemErrorResp[types.CreateUserResp](l.ctx, err)
 	}
 	if tenant.Base.Code != 200 || tenant.Data == nil {
 		return &types.CreateUserResp{
@@ -50,7 +50,7 @@ func (l *CreateUserLogic) CreateUser(req *types.CreateUserReq) (resp *types.Crea
 	if strings.TrimSpace(req.ReferrerInviteCode) != "" {
 		referrer, err := resolveReferrerByInviteCode(l.svcCtx, l.ctx, tenant.Data.Id, req.ReferrerInviteCode)
 		if err != nil {
-			return nil, err
+			return logicutil.SystemErrorResp[types.CreateUserResp](l.ctx, err)
 		}
 		if referrer == nil {
 			return &types.CreateUserResp{

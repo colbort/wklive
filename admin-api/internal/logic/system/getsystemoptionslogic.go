@@ -6,7 +6,7 @@ import (
 	"wklive/admin-api/internal/logicutil"
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	pbsystem "wklive/proto/system"
+	"wklive/proto/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,12 +29,12 @@ func (l *GetSystemOptionsLogic) GetSystemOptions() (resp *types.GetSystemOptions
 	return &types.GetSystemOptionsResp{
 		RespBase: types.RespBase{Code: 200, Msg: "success"},
 		Data: []types.OptionsGroup{
-			logicutil.EnumGroup("sysConfigType", "系统配置类型", pbsystem.SysConfigType_UNKNOWN.Descriptor()),
-			logicutil.EnumGroup("status", "状态", pbsystem.CommonStatus_COMMON_STATUS_UNKNOWN.Descriptor()),
-			logicutil.EnumGroup("menuType", "菜单类型", pbsystem.MenuType_MENU_TYPE_UNKNOWN.Descriptor()),
-			logicutil.EnumGroup("visible", "可见状态", pbsystem.VisibleStatus_VISIBLE_STATUS_UNKNOWN.Descriptor()),
-			logicutil.EnumGroup("method", "请求方法", pbsystem.RequestMethod_REQUEST_METHOD_UNKNOWN.Descriptor()),
-			logicutil.EnumGroup("jobStatus", "任务状态", pbsystem.JobStatus_JOB_STATUS_DISABLED.Descriptor()),
+			logicutil.EnumGroup("sysConfigType", "系统配置类型", system.SysConfigType_UNKNOWN.Descriptor()),
+			logicutil.EnumGroup("status", "状态", system.CommonStatus_COMMON_STATUS_UNKNOWN.Descriptor()),
+			logicutil.EnumGroup("menuType", "菜单类型", system.MenuType_MENU_TYPE_UNKNOWN.Descriptor()),
+			logicutil.EnumGroup("visible", "可见状态", system.VisibleStatus_VISIBLE_STATUS_UNKNOWN.Descriptor()),
+			logicutil.EnumGroup("method", "请求方法", system.RequestMethod_REQUEST_METHOD_UNKNOWN.Descriptor()),
+			logicutil.EnumGroup("jobStatus", "任务状态", system.JobStatus_JOB_STATUS_DISABLED.Descriptor()),
 		},
 	}, nil
 }

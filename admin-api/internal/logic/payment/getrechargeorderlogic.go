@@ -29,9 +29,5 @@ func NewGetRechargeOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *GetRechargeOrderLogic) GetRechargeOrder(req *types.GetRechargeOrderReq) (resp *types.GetRechargeOrderResp, err error) {
-	return logicutil.Proxy[types.GetRechargeOrderResp](l.ctx, req, l.
-		svcCtx.
-		PaymentCli.
-		GetRechargeOrder,
-	)
+	return logicutil.Proxy[types.GetRechargeOrderResp](l.ctx, req, l.svcCtx.PaymentCli.GetRechargeOrder)
 }

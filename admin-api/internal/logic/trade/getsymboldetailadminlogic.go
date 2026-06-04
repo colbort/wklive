@@ -5,6 +5,7 @@ package trade
 
 import (
 	"context"
+	"errors"
 
 	"wklive/admin-api/internal/logicutil"
 	"wklive/admin-api/internal/svc"
@@ -32,7 +33,13 @@ func NewGetSymbolDetailAdminLogic(ctx context.Context, svcCtx *svc.ServiceContex
 func (l *GetSymbolDetailAdminLogic) GetSymbolDetailAdmin(req *types.GetSymbolDetailAdminReq) (resp *types.GetSymbolDetailAdminResp, err error) {
 	resp, err = logicutil.Proxy[types.GetSymbolDetailAdminResp](l.ctx, req, l.svcCtx.TradeCli.GetSymbolDetailAdmin)
 	if err != nil || resp == nil || resp.Code != 200 {
-		return resp, err
+		if err != nil {
+			return logicutil.SystemErrorResp[types.GetSymbolDetailAdminResp](l.ctx, err)
+		}
+		if resp == nil {
+			return logicutil.SystemErrorResp[types.GetSymbolDetailAdminResp](l.ctx, errors.New("empty symbol detail response"))
+		}
+		return resp, nil
 	}
 
 	tenantId := req.TenantId
@@ -40,13 +47,16 @@ func (l *GetSymbolDetailAdminLogic) GetSymbolDetailAdmin(req *types.GetSymbolDet
 		tenantId = resp.Data.Symbol.TenantId
 	}
 	ctx := context.WithValue(l.ctx, utils.CtxKeyTenantId, tenantId)
-	detail, err := l.svcCtx.TradeAppCli.GetSymbolDetail(ctx, &trade.GetSymbolDetailReq{
-		SymbolId: req.Id,
-	})
-	if err != nil {
-		return nil, err
-	}
-	if detail == nil {
+	detail, err := logicutil.Proxy[trade.GetSymbolDetailResp](ctx, &types.GetSymbolDetailAdminReq{Id: req.Id}, l.svcCtx.TradeAppCli.GetSymbolDetail)
+	if err != nil || detail == nil || detail.Base.Code != 200 {
+		if err != nil {
+			return logicutil.SystemErrorResp[types.GetSymbolDetailAdminResp](l.ctx, err)
+		}
+		if detail == nil {
+			return logicutil.SystemErrorResp[types.GetSymbolDetailAdminResp](l.ctx, errors.New("empty app symbol detail response"))
+		}
+		resp.Code = detail.GetBase().GetCode()
+		resp.Msg = detail.GetBase().GetMsg()
 		return resp, nil
 	}
 	if detail.GetData().GetSpot() != nil {

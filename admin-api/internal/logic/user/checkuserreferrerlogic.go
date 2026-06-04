@@ -4,6 +4,7 @@ import (
 	"context"
 	"strings"
 
+	"wklive/admin-api/internal/logicutil"
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
 
@@ -28,7 +29,7 @@ func (l *CheckUserReferrerLogic) CheckUserReferrer(req *types.CheckUserReferrerR
 	inviteCode := strings.TrimSpace(req.InviteCode)
 	referrer, err := resolveReferrerByInviteCode(l.svcCtx, l.ctx, 0, inviteCode)
 	if err != nil {
-		return nil, err
+		return logicutil.SystemErrorResp[types.CheckUserReferrerResp](l.ctx, err)
 	}
 
 	if referrer == nil {

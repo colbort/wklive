@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 
+	"wklive/app-api/internal/logicutil"
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
 	"wklive/proto/itick"
@@ -37,16 +38,16 @@ func (l *GetSystemCoreLogic) GetSystemCore() (resp *types.GetSystemCoreResp, err
 		ConfigKey: &key,
 	})
 	if err != nil {
-		return nil, err
+		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
 	}
 	var config system.SystemCore
 	err = json.Unmarshal([]byte(cd.Data.ConfigValue), &config)
 	if err != nil {
-		return nil, err
+		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
 	}
 	result, err := l.svcCtx.ItickCli.GetKlineIntervals(l.ctx, &itick.AppEmpty{})
 	if err != nil {
-		return nil, err
+		return logicutil.SystemErrorResp[types.GetSystemCoreResp](l.ctx, err)
 	}
 	intervals := make([]types.Interval, 0)
 	for _, item := range result.Data {

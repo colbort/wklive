@@ -6,22 +6,16 @@ package auth_private
 import (
 	"net/http"
 
-	"github.com/zeromicro/go-zero/rest/httpx"
 	"wklive/admin-api/internal/logic/auth_private"
 	"wklive/admin-api/internal/svc"
-	"wklive/admin-api/internal/types"
+
+	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
 func ProfileHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.ProfileReq
-		if err := httpx.Parse(r, &req); err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
-			return
-		}
-
 		l := auth_private.NewProfileLogic(r.Context(), svcCtx)
-		resp, err := l.Profile(&req)
+		resp, err := l.Profile()
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

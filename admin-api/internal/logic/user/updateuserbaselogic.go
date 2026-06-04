@@ -34,7 +34,7 @@ func (l *UpdateUserBaseLogic) UpdateUserBase(req *types.UpdateUserBaseReq) (resp
 	if strings.TrimSpace(req.ReferrerInviteCode) != "" {
 		referrer, err := resolveReferrerByInviteCode(l.svcCtx, l.ctx, req.TenantId, req.ReferrerInviteCode)
 		if err != nil {
-			return nil, err
+			return logicutil.SystemErrorResp[types.UpdateUserBaseResp](l.ctx, err)
 		}
 		if referrer == nil {
 			return &types.UpdateUserBaseResp{

@@ -6,13 +6,11 @@ package auth_private
 import (
 	"context"
 
+	"wklive/admin-api/internal/logicutil"
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
-	"wklive/common/i18n"
-	"wklive/common/utils"
 	"wklive/proto/system"
 
-	"github.com/jinzhu/copier"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -30,20 +28,6 @@ func NewProfileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ProfileLo
 	}
 }
 
-func (l *ProfileLogic) Profile(req *types.ProfileReq) (resp *types.ProfileResp, err error) {
-	userId, err := utils.GetUserIdFromCtx(l.ctx)
-	if err != nil {
-		return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
-	}
-	out, err := l.svcCtx.SystemCli.GetProfile(l.ctx, &system.ProfileReq{UserId: userId})
-	if err != nil {
-		return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
-	}
-	resp = new(types.ProfileResp)
-	resp.Code = i18n.OK
-	resp.Msg = i18n.Translate(i18n.OK, l.ctx)
-	_ = copier.Copy(&resp.Data.User, &out.User)
-	_ = copier.Copy(&resp.Data.Menus, &out.Menus)
-	_ = copier.Copy(&resp.Data.Perms, &out.Perms)
-	return resp, nil
+func (l *ProfileLogic) Profile() (resp *types.ProfileResp, err error) {
+	return logicutil.Proxy[types.ProfileResp](l.ctx, &system.Empty{}, l.svcCtx.SystemCli.GetProfile)
 }

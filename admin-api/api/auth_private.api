@@ -1,5 +1,3 @@
-type ProfileReq {}
-
 type ProfileUser {
 	id       int64  `json:"id"`
 	username string `json:"username"`
@@ -60,7 +58,7 @@ type UpdateProfileReq {
 )
 service admin {
 	@handler Profile
-	get /auth/profile (ProfileReq) returns (ProfileResp)
+	get /auth/profile returns (ProfileResp)
 
 	// 下面的两个文件上传接口，之生成一次，之后不再生成所以需要注释掉
 	// @handler UploadAvatar

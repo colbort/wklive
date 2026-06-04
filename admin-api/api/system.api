@@ -156,8 +156,8 @@ type SysRoleGrantDetail {
 }
 
 type SysPermItem {
-	Key  string `json:"key"` // 唯一权限标识（如 sys:role:add）
-	Name string `json:"name"` // 展示名称（如 新增角色）
+	PermKey string `json:"key"` // 唯一权限标识（如 sys:role:add）
+	Name    string `json:"name"` // 展示名称（如 新增角色）
 }
 
 type SysPermListResp {

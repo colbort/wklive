@@ -6,6 +6,7 @@ package user_public
 import (
 	"context"
 
+	"wklive/app-api/internal/logicutil"
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
 	"wklive/proto/user"
@@ -34,7 +35,7 @@ func (l *GuestLoginLogic) GuestLogin(req *types.GuestLoginReq) (resp *types.Gues
 		TenantCode:  req.TenantCode,
 	})
 	if err != nil {
-		return nil, err
+		return logicutil.SystemErrorResp[types.GuestLoginResp](l.ctx, err)
 	}
 	data := types.GuestLogin{}
 	if result.Data != nil {
