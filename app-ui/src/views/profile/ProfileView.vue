@@ -4,31 +4,50 @@ import { useRouter } from 'vue-router'
 
 import { getAccessToken } from '@/api/http'
 import { apiGetProfile, apiLogout } from '@/api/userPrivate'
-import { apiGetUserOptions, apiGuestLogin } from '@/api/userPublic'
-import { useOptions } from '@/composables/useOptions'
+import { apiGuestLogin } from '@/api/userPublic'
+import AppIcon from '@/components/common/AppIcon.vue'
 import { useI18n } from '@/i18n'
 import { useTenantStore } from '@/stores/tenant'
 import type { UserProfile } from '@/types/user'
 
-const guestMenuItems = [
-  { key: 'language', labelKey: 'common.language', icon: '◎', flag: '🌐' },
-  { key: 'service', labelKey: 'userMenu.customerService', icon: '♧' },
-  { key: 'download', labelKey: 'userMenu.appDownload', icon: '⇩' },
-  { key: 'whitepaper', labelKey: 'nav.whitepaper', icon: 'i' },
-  { key: 'company', labelKey: 'nav.license', icon: 'i' },
-  { key: 'regulation', labelKey: 'nav.compliance', icon: 'i' },
+type ProfileMenuIcon =
+  | 'globe'
+  | 'id-card'
+  | 'credit-card'
+  | 'shield-check'
+  | 'headset'
+  | 'cloud-download'
+  | 'info-circle'
+  | 'user-plus'
+  | 'logout'
+
+interface ProfileMenuItem {
+  key: string
+  labelKey: string
+  icon: ProfileMenuIcon
+}
+
+const guestMenuItems: ProfileMenuItem[] = [
+  { key: 'language', labelKey: 'common.language', icon: 'globe' },
+  { key: 'service', labelKey: 'userMenu.customerService', icon: 'headset' },
+  { key: 'download', labelKey: 'userMenu.appDownload', icon: 'cloud-download' },
+  { key: 'whitepaper', labelKey: 'nav.whitepaper', icon: 'info-circle' },
+  { key: 'company', labelKey: 'nav.license', icon: 'info-circle' },
+  { key: 'regulation', labelKey: 'nav.compliance', icon: 'info-circle' },
 ]
 
-const userMenuItems = [
-  { key: 'language', labelKey: 'common.language', icon: '◎', flag: '🌐' },
-  { key: 'bank', labelKey: 'userMenu.paymentAccount', icon: '▭' },
-  { key: 'security', labelKey: 'userMenu.security', icon: 'S' },
-  { key: 'service', labelKey: 'userMenu.customerService', icon: '♧' },
-  { key: 'download', labelKey: 'userMenu.appDownload', icon: '⇩' },
-  { key: 'whitepaper', labelKey: 'nav.whitepaper', icon: 'i' },
-  { key: 'company', labelKey: 'nav.license', icon: 'i' },
-  { key: 'regulation', labelKey: 'nav.compliance', icon: 'i' },
-  { key: 'logout', labelKey: 'common.logout', icon: '↪' },
+const userMenuItems: ProfileMenuItem[] = [
+  { key: 'language', labelKey: 'common.language', icon: 'globe' },
+  { key: 'identity', labelKey: 'userMenu.identity', icon: 'id-card' },
+  { key: 'bank', labelKey: 'userMenu.paymentAccount', icon: 'credit-card' },
+  { key: 'security', labelKey: 'userMenu.security', icon: 'shield-check' },
+  { key: 'invite', labelKey: 'userMenu.invite', icon: 'user-plus' },
+  { key: 'service', labelKey: 'userMenu.customerService', icon: 'headset' },
+  { key: 'download', labelKey: 'userMenu.appDownload', icon: 'cloud-download' },
+  { key: 'whitepaper', labelKey: 'nav.whitepaper', icon: 'info-circle' },
+  { key: 'company', labelKey: 'nav.license', icon: 'info-circle' },
+  { key: 'regulation', labelKey: 'nav.compliance', icon: 'info-circle' },
+  { key: 'logout', labelKey: 'common.logout', icon: 'logout' },
 ]
 
 const profile = ref<UserProfile | null>(null)
@@ -38,39 +57,17 @@ const loggingGuest = ref(false)
 const guestLoginError = ref('')
 const tenantStore = useTenantStore()
 const router = useRouter()
-const userOptions = useOptions(apiGetUserOptions)
 const { locale, t } = useI18n()
 
 const userBase = computed(() => profile.value?.user ?? null)
-const userIdentity = computed(() => profile.value?.identity ?? null)
-const verifyStatusOptions = computed(() => userOptions.getGroup('verifyStatus'))
-const pendingVerifyStatus = computed(
-  () => verifyStatusOptions.value.find((item) => item.code === 'VERIFY_STATUS_PENDING')?.value,
-)
-const approvedVerifyStatus = computed(
-  () => verifyStatusOptions.value.find((item) => item.code === 'VERIFY_STATUS_APPROVED')?.value,
-)
-const shouldShowIdentityEntry = computed(
-  () =>
-    isLoggedIn.value &&
-    Boolean(profile.value) &&
-    verifyStatusOptions.value.length > 0 &&
-    userIdentity.value?.verifyStatus !== pendingVerifyStatus.value &&
-    userIdentity.value?.verifyStatus !== approvedVerifyStatus.value,
-)
-const menuItems = computed(() => {
+const menuItems = computed<ProfileMenuItem[]>(() => {
   if (!isLoggedIn.value) return guestMenuItems
-  if (!shouldShowIdentityEntry.value) return userMenuItems
-
-  return [
-    userMenuItems[0],
-    { key: 'identity', labelKey: 'userMenu.identity', icon: 'ID' },
-    ...userMenuItems.slice(1),
-  ]
+  return userMenuItems
 })
 const languageName = computed(() =>
   locale.value === 'zh-CN' ? t('common.zhCN') : t('common.enUS'),
 )
+const languageFlag = computed(() => (locale.value === 'zh-CN' ? '🇨🇳' : '🇺🇸'))
 const displayName = computed(
   () => userBase.value?.nickname || userBase.value?.username || 'GUEST-6721',
 )
@@ -158,7 +155,7 @@ function goLogin() {
 
     <section v-if="isLoggedIn" class="profile-user" :aria-busy="loadingProfile">
       <div class="profile-avatar" :class="{ 'profile-avatar--image': avatarUrl }">
-        <img v-if="avatarUrl" :src="avatarUrl" alt="">
+        <img v-if="avatarUrl" :src="avatarUrl" alt="" />
         <span v-else />
       </div>
       <div class="profile-user__info">
@@ -206,19 +203,11 @@ function goLogin() {
         class="profile-menu__item"
         @click="handleMenuClick(item.key)"
       >
-        <span
-          class="profile-menu__icon"
-          :class="{
-            'profile-menu__icon--info': item.icon === 'i',
-            'profile-menu__icon--shield': item.icon === 'S',
-            'profile-menu__icon--bank': item.icon === '▭',
-            'profile-menu__icon--identity': item.icon === 'ID',
-          }"
-        >
-          {{ item.icon }}
+        <span class="profile-menu__icon">
+          <AppIcon :name="item.icon" class="profile-menu__icon-svg" />
         </span>
         <span class="profile-menu__label">{{ t(item.labelKey) }}</span>
-        <span v-if="item.flag" class="profile-menu__flag">{{ item.flag }}</span>
+        <span v-if="item.key === 'language'" class="profile-menu__flag">{{ languageFlag }}</span>
         <span v-if="item.key === 'language'" class="profile-menu__value">{{ languageName }}</span>
         <i class="profile-menu__arrow" />
       </button>
@@ -422,89 +411,18 @@ function goLogin() {
 }
 
 .profile-menu__icon {
-  display: grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
   color: #fff;
-  font-size: 18px;
   line-height: 1;
 }
 
-.profile-menu__icon--info {
-  border: 2px solid currentColor;
-  border-radius: 999px;
-  font-size: 15px;
-  font-weight: 700;
-  font-family: Georgia, serif;
-}
-
-.profile-menu__icon--bank {
-  position: relative;
-  color: transparent;
-}
-
-.profile-menu__icon--bank::before,
-.profile-menu__icon--bank::after {
-  position: absolute;
-  content: '';
-}
-
-.profile-menu__icon--bank::before {
-  inset: 5px 2px 7px;
-  border: 2px solid #fff;
-  border-radius: 2px;
-}
-
-.profile-menu__icon--bank::after {
-  left: 7px;
-  right: 7px;
-  bottom: 12px;
-  height: 2px;
-  background: #fff;
-  box-shadow: 0 7px 0 #fff;
-}
-
-.profile-menu__icon--identity {
-  position: relative;
-  color: transparent;
-}
-
-.profile-menu__icon--identity::before,
-.profile-menu__icon--identity::after {
-  position: absolute;
-  content: '';
-}
-
-.profile-menu__icon--identity::before {
-  inset: 4px 1px;
-  border: 2px solid #fff;
-  border-radius: 4px;
-}
-
-.profile-menu__icon--identity::after {
-  top: 11px;
-  left: 7px;
-  width: 8px;
-  height: 8px;
-  border: 2px solid #fff;
-  border-radius: 999px;
-  box-shadow:
-    14px 0 0 -1px #fff,
-    14px 8px 0 -1px #fff,
-    0 13px 0 2px #1b1d27,
-    0 13px 0 4px #fff;
-}
-
-.profile-menu__icon--shield {
-  width: 24px;
-  height: 24px;
-  color: transparent;
-  background: linear-gradient(135deg, transparent 42%, #fff 43% 52%, transparent 53%) center / 15px
-    15px no-repeat;
-  clip-path: polygon(50% 4%, 86% 18%, 86% 52%, 50% 96%, 14% 52%, 14% 18%);
-  outline: 2px solid #fff;
-  outline-offset: -5px;
+.profile-menu__icon-svg {
+  width: 25px;
+  height: 25px;
 }
 
 .profile-menu__label {
@@ -613,15 +531,9 @@ function goLogin() {
   .profile-menu__icon {
     width: 23px;
     height: 23px;
-    font-size: 17px;
   }
 
-  .profile-menu__icon--info {
-    border-width: 2px;
-    font-size: 15px;
-  }
-
-  .profile-menu__icon--shield {
+  .profile-menu__icon-svg {
     width: 23px;
     height: 23px;
   }

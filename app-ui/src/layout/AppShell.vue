@@ -1,9 +1,10 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 
-import { appNavigation } from '@/config/navigation'
 import { apiGetMyAssetSummary, apiListAssetCoinConfigs } from '@/api/asset'
+import AppIcon from '@/components/common/AppIcon.vue'
+import { appNavigation } from '@/config/navigation'
 import { apiListVisibleCategories, apiListVisibleProducts } from '@/api/itick'
 import { getAccessToken, getTenantCode } from '@/api/http'
 import { apiGetProfile, apiLogout } from '@/api/userPrivate'
@@ -37,7 +38,9 @@ const desktopDocNav = [
   { key: 'compliance', labelKey: 'nav.compliance', path: '/home' },
 ]
 
-const languageLabel = computed(() => (locale.value === 'zh-CN' ? t('common.zhCN') : t('common.enUS')))
+const languageLabel = computed(() =>
+  locale.value === 'zh-CN' ? t('common.zhCN') : t('common.enUS'),
+)
 
 const activeDesktopCategoryType = computed(() => {
   if (hoveredCategoryType.value !== null) return hoveredCategoryType.value
@@ -51,9 +54,13 @@ const activeDesktopCategoryType = computed(() => {
 })
 
 const userBase = computed(() => profile.value?.user ?? null)
-const displayName = computed(() => userBase.value?.nickname || userBase.value?.username || 'GUEST-8437')
+const displayName = computed(
+  () => userBase.value?.nickname || userBase.value?.username || 'GUEST-8437',
+)
 const displayUserId = computed(() => userBase.value?.id || 50596163)
-const desktopAssetPreview = computed(() => userAssets.value.filter((asset) => asset.walletType === 1).slice(0, 8))
+const desktopAssetPreview = computed(() =>
+  userAssets.value.filter((asset) => asset.walletType === 1).slice(0, 8),
+)
 const desktopAssetConfigMap = computed(
   () => new Map(userAssetCoinConfigs.value.map((config) => [config.coin, config])),
 )
@@ -142,7 +149,10 @@ function coinGlyph(product: ItickTenantProduct) {
 
 function desktopAssetAmount(asset: AssetUserAsset) {
   const config = desktopAssetConfigMap.value.get(asset.coin)
-  return formatAssetMinorAmount(asset.availableAmount || asset.totalAmount || '0', config?.decimalPlaces)
+  return formatAssetMinorAmount(
+    asset.availableAmount || asset.totalAmount || '0',
+    config?.decimalPlaces,
+  )
 }
 
 function openDesktopProduct(category: ItickTenantCategory, product: ItickTenantProduct) {
@@ -184,7 +194,9 @@ async function logout() {
           v-for="category in desktopCategories"
           :key="category.id"
           class="site-nav__entry"
-          :class="{ 'site-nav__entry--active': category.categoryType === activeDesktopCategoryType }"
+          :class="{
+            'site-nav__entry--active': category.categoryType === activeDesktopCategoryType,
+          }"
           @mouseenter="handleDesktopCategoryEnter(category)"
         >
           <RouterLink
@@ -218,11 +230,7 @@ async function logout() {
           </div>
         </div>
 
-        <div
-          v-for="item in desktopDocNav"
-          :key="item.key"
-          class="site-nav__entry"
-        >
+        <div v-for="item in desktopDocNav" :key="item.key" class="site-nav__entry">
           <RouterLink :to="item.path" class="site-nav__item">
             <span>{{ t(item.labelKey) }}</span>
           </RouterLink>
@@ -261,44 +269,85 @@ async function logout() {
               </header>
 
               <nav>
-                <RouterLink class="site-user-menu__row" to="/assets" @mouseenter="activeUserPanel = 'assets'">
+                <RouterLink
+                  class="site-user-menu__row"
+                  to="/assets"
+                  @mouseenter="activeUserPanel = 'assets'"
+                >
                   <span>◉</span>
                   <strong>{{ t('userMenu.myAssets') }}</strong>
                   <em>›</em>
                 </RouterLink>
-                <RouterLink class="site-user-menu__row" to="/assets" @mouseenter="activeUserPanel = ''">
+                <RouterLink
+                  class="site-user-menu__row"
+                  to="/assets"
+                  @mouseenter="activeUserPanel = ''"
+                >
                   <span>▣</span>
                   <strong>{{ t('userMenu.recharge') }}</strong>
                 </RouterLink>
-                <RouterLink class="site-user-menu__row" to="/assets" @mouseenter="activeUserPanel = ''">
+                <RouterLink
+                  class="site-user-menu__row"
+                  to="/assets"
+                  @mouseenter="activeUserPanel = ''"
+                >
                   <span>▤</span>
                   <strong>{{ t('userMenu.withdraw') }}</strong>
                 </RouterLink>
-                <RouterLink class="site-user-menu__row" to="/assets" @mouseenter="activeUserPanel = ''">
+                <RouterLink
+                  class="site-user-menu__row"
+                  to="/assets"
+                  @mouseenter="activeUserPanel = ''"
+                >
                   <span>⌘</span>
                   <strong>{{ t('userMenu.transfer') }}</strong>
                 </RouterLink>
-                <RouterLink class="site-user-menu__row" to="/assets" @mouseenter="activeUserPanel = ''">
+                <RouterLink
+                  class="site-user-menu__row"
+                  to="/assets"
+                  @mouseenter="activeUserPanel = ''"
+                >
                   <span>▧</span>
                   <strong>{{ t('userMenu.flows') }}</strong>
                 </RouterLink>
-                <RouterLink class="site-user-menu__row site-user-menu__row--split" to="/profile" @mouseenter="activeUserPanel = ''">
+                <RouterLink
+                  class="site-user-menu__row site-user-menu__row--split"
+                  to="/profile"
+                  @mouseenter="activeUserPanel = ''"
+                >
                   <span>◈</span>
                   <strong>{{ t('userMenu.invite') }}</strong>
                 </RouterLink>
-                <RouterLink class="site-user-menu__row site-user-menu__row--split" to="/assets" @mouseenter="activeUserPanel = ''">
+                <RouterLink
+                  class="site-user-menu__row site-user-menu__row--split"
+                  to="/assets"
+                  @mouseenter="activeUserPanel = ''"
+                >
                   <span>▤</span>
                   <strong>{{ t('userMenu.orderCenter') }}</strong>
                 </RouterLink>
-                <RouterLink class="site-user-menu__row site-user-menu__row--split" to="/profile" @mouseenter="activeUserPanel = ''">
+                <RouterLink
+                  class="site-user-menu__row site-user-menu__row--split"
+                  to="/profile"
+                  @mouseenter="activeUserPanel = ''"
+                >
                   <span>▰</span>
                   <strong>{{ t('userMenu.paymentAccount') }}</strong>
                 </RouterLink>
-                <RouterLink class="site-user-menu__row" to="/profile" @mouseenter="activeUserPanel = ''">
+                <RouterLink
+                  class="site-user-menu__row"
+                  to="/profile"
+                  @mouseenter="activeUserPanel = ''"
+                >
                   <span>◆</span>
                   <strong>{{ t('userMenu.security') }}</strong>
                 </RouterLink>
-                <button class="site-user-menu__row" type="button" @mouseenter="activeUserPanel = ''" @click="logout">
+                <button
+                  class="site-user-menu__row"
+                  type="button"
+                  @mouseenter="activeUserPanel = ''"
+                  @click="logout"
+                >
                   <span>↪</span>
                   <strong>{{ t('common.logout') }}</strong>
                 </button>
@@ -308,7 +357,11 @@ async function logout() {
             <aside v-if="activeUserPanel === 'assets'" class="site-user-assets">
               <h3>{{ t('userMenu.cashAccount') }}</h3>
               <div class="site-user-assets__list">
-                <div v-for="asset in desktopAssetPreview" :key="asset.id || asset.coin" class="site-user-assets__row">
+                <div
+                  v-for="asset in desktopAssetPreview"
+                  :key="asset.id || asset.coin"
+                  class="site-user-assets__row"
+                >
                   <span>{{ asset.coin.slice(0, 1) }}</span>
                   <strong>{{ asset.coin }}</strong>
                   <em>{{ desktopAssetAmount(asset) }}</em>
@@ -336,9 +389,14 @@ async function logout() {
           :key="item.key"
           :to="item.path"
           class="mobile-tabbar__item"
-          :class="{ 'mobile-tabbar__item--active': route.path === item.path }"
+          :class="[
+            `mobile-tabbar__item--${item.key}`,
+            { 'mobile-tabbar__item--active': route.path === item.path },
+          ]"
         >
-          <span class="mobile-tabbar__icon">{{ item.icon }}</span>
+          <span class="mobile-tabbar__icon">
+            <AppIcon :name="item.icon" class="mobile-tabbar__icon-svg" />
+          </span>
           <span>{{ t(item.labelKey) }}</span>
         </RouterLink>
       </nav>

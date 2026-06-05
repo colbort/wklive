@@ -41,11 +41,7 @@ body,
 }
 
 body {
-  font-family:
-    "Avenir Next",
-    "PingFang SC",
-    "Segoe UI",
-    sans-serif;
+  font-family: 'Avenir Next', 'PingFang SC', 'Segoe UI', sans-serif;
   background:
     radial-gradient(circle at 12% 18%, rgba(55, 72, 60, 0.24), transparent 26%),
     linear-gradient(180deg, #0d0f18 0%, #0d1018 100%);
@@ -205,7 +201,10 @@ button {
   visibility: hidden;
   pointer-events: none;
   transform: translateY(10px);
-  transition: opacity 180ms ease, transform 180ms ease, visibility 180ms ease;
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease,
+    visibility 180ms ease;
 }
 
 .site-nav__entry:hover .site-nav__dropdown,
@@ -687,16 +686,66 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 30px;
-  border-radius: 9px;
+  width: 25.75px;
+  height: 25.75px;
+  border-radius: 10px;
   background: transparent;
   color: currentColor;
-  font-size: 24px;
   line-height: 1;
 }
 
+.mobile-tabbar__icon-svg {
+  width: 25.75px;
+  height: 25.75px;
+}
+
 .mobile-tabbar__item--active .mobile-tabbar__icon {
+  background: var(--accent-strong);
+  color: #08110a;
+}
+
+.mobile-tabbar__item--active.mobile-tabbar__item--trade .app-icon__nav-frame,
+.mobile-tabbar__item--active.mobile-tabbar__item--wallet .app-icon__nav-frame,
+.mobile-tabbar__item--active.mobile-tabbar__item--profile .app-icon__nav-frame {
+  opacity: 0;
+}
+
+.mobile-tabbar__item--active.mobile-tabbar__item--trade .app-icon--nav-trade {
+  transform: translate(-0.9px, -0.9px) scale(0.82);
+  transform-origin: center;
+}
+
+.mobile-tabbar__item--active.mobile-tabbar__item--wallet .app-icon--nav-assets {
+  transform: translate(-0.9px, -0.9px) scale(0.82);
+  transform-origin: center;
+}
+
+.mobile-tabbar__item--active.mobile-tabbar__item--profile .app-icon--nav-profile {
+  transform: translate(-1.25px, -1.25px) scale(0.82);
+  transform-origin: center;
+}
+
+.mobile-tabbar__item--active.mobile-tabbar__item--markets .mobile-tabbar__icon {
+  background: transparent;
+  color: var(--accent-strong);
+}
+
+.mobile-tabbar__item--active.mobile-tabbar__item--markets
+  .app-icon--nav-market
+  > path:not(.app-icon__nav-active-shape) {
+  display: none;
+}
+
+.mobile-tabbar__item--active.mobile-tabbar__item--markets .app-icon__nav-active-shape {
+  display: block;
+}
+
+.mobile-tabbar__item--active.mobile-tabbar__item--markets .mobile-tabbar__icon-svg {
+  overflow: visible;
+}
+
+.mobile-tabbar__item--active.mobile-tabbar__item--home .mobile-tabbar__icon {
+  background: transparent;
   color: var(--accent-strong);
 }
 
@@ -821,7 +870,10 @@ button {
   visibility: hidden;
   pointer-events: none;
   transform: translateY(10px);
-  transition: opacity 180ms ease, transform 180ms ease, visibility 180ms ease;
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease,
+    visibility 180ms ease;
 }
 
 .site-user-menu__main {
