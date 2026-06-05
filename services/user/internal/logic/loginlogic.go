@@ -34,8 +34,14 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 // 用户登录
 func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 	loginIP, _ := utils.GetClientIPFromMd(l.ctx)
+	tenantCode, err := utils.GetTenantCodeFromMd(l.ctx)
+	if err != nil || tenantCode == "" {
+		return &user.LoginResp{
+			Base: helper.GetErrResp(i18n.InvalidRequest, i18n.Translate(i18n.InvalidRequest, l.ctx)),
+		}, nil
+	}
 	tenant, err := l.svcCtx.SystemCli.SysTenantDetail(l.ctx, &system.SysTenantDetailReq{
-		TenantCode: &in.TenantCode,
+		TenantCode: &tenantCode,
 	})
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
@@ -71,7 +77,7 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 			}
 		}
 	case user.LoginType_LOGIN_TYPE_USERNAME:
-		tuser, err = l.svcCtx.UserModel.FindByUsername(l.ctx, in.TenantCode, in.Account)
+		tuser, err = l.svcCtx.UserModel.FindByUsername(l.ctx, tenantCode, in.Account)
 		if err != nil && !errors.Is(err, models.ErrNotFound) {
 			return nil, err
 		}

@@ -136,7 +136,6 @@ type ItickTenantProduct {
 // }
 type ListVisibleCategoriesReq {
 	PageReq
-	tenantCode string `form:"tenantCode"`
 }
 
 type ListVisibleCategoriesResp {
@@ -150,7 +149,6 @@ type ListVisibleProductsReq {
 	categoryCode string `form:"categoryCode,optional"`
 	market       string `form:"market,optional"`
 	keyword      string `json:"keyword,optional"`
-	tenantCode   string `form:"tenantCode"`
 }
 
 type ListVisibleProductsResp {
@@ -270,4 +268,3 @@ service app {
 	@handler TickWsHandler
 	get /ws/:id (WsItickReq)
 }
-

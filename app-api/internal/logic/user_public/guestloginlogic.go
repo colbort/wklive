@@ -32,7 +32,6 @@ func (l *GuestLoginLogic) GuestLogin(req *types.GuestLoginReq) (resp *types.Gues
 	result, err := l.svcCtx.UserCli.GuestLogin(l.ctx, &user.GuestLoginReq{
 		DeviceId:    req.DeviceId,
 		Fingerprint: req.Fingerprint,
-		TenantCode:  req.TenantCode,
 	})
 	if err != nil {
 		return logicutil.SystemErrorResp[types.GuestLoginResp](l.ctx, err)

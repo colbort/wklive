@@ -104,7 +104,6 @@ func (x *AppCommonResp) GetBase() *common.RespBase {
 
 type ListVisibleCategoriesReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantCode    string                 `protobuf:"bytes,1,opt,name=tenant_code,json=tenantCode,proto3" json:"tenant_code,omitempty"`
 	Page          *common.PageReq        `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -138,13 +137,6 @@ func (x *ListVisibleCategoriesReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ListVisibleCategoriesReq.ProtoReflect.Descriptor instead.
 func (*ListVisibleCategoriesReq) Descriptor() ([]byte, []int) {
 	return file_proto_itick_itick_app_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *ListVisibleCategoriesReq) GetTenantCode() string {
-	if x != nil {
-		return x.TenantCode
-	}
-	return ""
 }
 
 func (x *ListVisibleCategoriesReq) GetPage() *common.PageReq {
@@ -211,7 +203,6 @@ type ListVisibleProductsReq struct {
 	CategoryType  CategoryType           `protobuf:"varint,1,opt,name=category_type,json=categoryType,proto3,enum=itick.CategoryType" json:"category_type,omitempty"`
 	Market        string                 `protobuf:"bytes,2,opt,name=market,proto3" json:"market,omitempty"`
 	Keyword       string                 `protobuf:"bytes,3,opt,name=keyword,proto3" json:"keyword,omitempty"`
-	TenantCode    string                 `protobuf:"bytes,4,opt,name=tenant_code,json=tenantCode,proto3" json:"tenant_code,omitempty"`
 	Page          *common.PageReq        `protobuf:"bytes,5,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -264,13 +255,6 @@ func (x *ListVisibleProductsReq) GetMarket() string {
 func (x *ListVisibleProductsReq) GetKeyword() string {
 	if x != nil {
 		return x.Keyword
-	}
-	return ""
-}
-
-func (x *ListVisibleProductsReq) GetTenantCode() string {
-	if x != nil {
-		return x.TenantCode
 	}
 	return ""
 }
@@ -1062,20 +1046,16 @@ const file_proto_itick_itick_app_proto_rawDesc = "" +
 	"\n" +
 	"\bAppEmpty\"5\n" +
 	"\rAppCommonResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"`\n" +
-	"\x18ListVisibleCategoriesReq\x12\x1f\n" +
-	"\vtenant_code\x18\x01 \x01(\tR\n" +
-	"tenantCode\x12#\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"?\n" +
+	"\x18ListVisibleCategoriesReq\x12#\n" +
 	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\"q\n" +
 	"\x19ListVisibleCategoriesResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
-	"\x04data\x18\x02 \x03(\v2\x1a.itick.ItickTenantCategoryR\x04data\"\xca\x01\n" +
+	"\x04data\x18\x02 \x03(\v2\x1a.itick.ItickTenantCategoryR\x04data\"\xa9\x01\n" +
 	"\x16ListVisibleProductsReq\x128\n" +
 	"\rcategory_type\x18\x01 \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12\x16\n" +
 	"\x06market\x18\x02 \x01(\tR\x06market\x12\x18\n" +
-	"\akeyword\x18\x03 \x01(\tR\akeyword\x12\x1f\n" +
-	"\vtenant_code\x18\x04 \x01(\tR\n" +
-	"tenantCode\x12#\n" +
+	"\akeyword\x18\x03 \x01(\tR\akeyword\x12#\n" +
 	"\x04page\x18\x05 \x01(\v2\x0f.common.PageReqR\x04page\"n\n" +
 	"\x17ListVisibleProductsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +

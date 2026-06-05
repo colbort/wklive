@@ -38,7 +38,12 @@ function selectLanguage(option: { locale?: AppLocale }) {
 <template>
   <section class="language-page">
     <header class="language-header">
-      <button type="button" class="icon-button" :aria-label="t('common.back')" @click="goBack">
+      <button
+        type="button"
+        class="icon-button"
+        :aria-label="t('common.back')"
+        @click="goBack"
+      >
         <AppIcon name="back" class="back-icon-svg" />
       </button>
       <h1>语言选择</h1>

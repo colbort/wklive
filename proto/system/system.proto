@@ -427,6 +427,57 @@ message SysConfigByKeysResp {
   repeated SysConfigItem data = 2;
 }
 
+message SendVerificationCodeReq {
+  int64 tenant_id = 1;
+  system.VerificationCodeChannel channel = 2;
+  string email = 3;
+  string phone = 4;
+  system.VerificationCodeScene scene = 5;
+}
+
+message TestVerificationCodeReq {
+  int64 tenant_id = 1;
+  system.VerificationCodeChannel channel = 2;
+  string email = 3;
+  string phone = 4;
+  system.VerificationCodeScene scene = 5;
+}
+
+message VerificationCodeRecordItem {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  system.VerificationCodeChannel channel = 3;
+  string target = 4;
+  system.VerificationCodeScene scene = 5;
+  string code = 6;
+  system.VerificationCodeStatus status = 7;
+  string provider = 8;
+  string error_message = 9;
+  int64 create_times = 10;
+  int64 update_times = 11;
+}
+
+message VerificationCodeRecordListReq {
+  common.PageReq page = 1;
+  int64 tenant_id = 2;
+  system.VerificationCodeChannel channel = 3;
+  string target = 4;
+  system.VerificationCodeScene scene = 5;
+  system.VerificationCodeStatus status = 6;
+}
+
+message VerificationCodeRecordListResp {
+  common.RespBase base = 1;
+  repeated VerificationCodeRecordItem data = 2;
+}
+
+message VerificationCodeRecordDetailReq { int64 id = 1; }
+
+message VerificationCodeRecordDetailResp {
+  common.RespBase base = 1;
+  VerificationCodeRecordItem data = 2;
+}
+
 message LoginUserPermsReq { int64 user_id = 1; }
 message LoginUserPermsResp { repeated string perms = 1; }
 
@@ -665,6 +716,16 @@ service System {
   rpc SysConfigDetail(SysConfigDetailReq) returns (SysConfigDetailResp);
   // 获取系统配置根据keys
   rpc SysConfigByKeys(SysConfigByKeysReq) returns (SysConfigByKeysResp);
+  // 发送验证码
+  rpc SendVerificationCode(SendVerificationCodeReq) returns (RespBase);
+  // 测试发送验证码
+  rpc TestVerificationCode(TestVerificationCodeReq) returns (RespBase);
+  // 验证码发送记录
+  rpc VerificationCodeRecordList(VerificationCodeRecordListReq)
+      returns (VerificationCodeRecordListResp);
+  // 验证码发送记录详情
+  rpc VerificationCodeRecordDetail(VerificationCodeRecordDetailReq)
+      returns (VerificationCodeRecordDetailResp);
   // 获取登录用户的权限列表
   rpc LoginUserPerms(LoginUserPermsReq) returns (LoginUserPermsResp);
   // 系统定时任务列表

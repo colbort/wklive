@@ -982,6 +982,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/users/status",
 				Handler: system.ChangeUserStatusHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/verification-codes",
+				Handler: system.VerificationCodeRecordListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/verification-codes/:id",
+				Handler: system.VerificationCodeRecordDetailHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/verification-codes/test",
+				Handler: system.TestVerificationCodeHandler(serverCtx),
+			},
 		},
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
 		rest.WithPrefix("/admin/system"),

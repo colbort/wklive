@@ -118,6 +118,27 @@ export type WithdrawConfig = {
   freeWithdrawTimesPerDay: number // 每日免费提现次数，0=没有免费提现
 }
 
+export type EmailConfig = {
+  enabled: boolean
+  smtp_host: string
+  smtp_port: number
+  username: string
+  password: string
+  from_email: string
+  from_name: string
+  subject_template: string
+  body_template: string
+}
+
+export type PhoneConfig = {
+  enabled: boolean
+  provider: string
+  endpoint: string
+  method: string
+  headers_json: string
+  body_template: string
+}
+
 // ===== 系统配置服务 =====
 
 export class ConfigService implements BaseService {

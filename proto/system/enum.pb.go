@@ -30,6 +30,8 @@ const (
 	SysConfigType_ITICK_CONFIG    SysConfigType = 3 // ITICK配置
 	SysConfigType_RECHARGE_CONFIG SysConfigType = 4 // 充值配置
 	SysConfigType_WITHDRAW_CONFIG SysConfigType = 5 // 提现配置
+	SysConfigType_EMAIL_CONFIG    SysConfigType = 6 // 邮件配置
+	SysConfigType_PHONE_CONFIG    SysConfigType = 7 // 手机短信配置
 )
 
 // Enum value maps for SysConfigType.
@@ -41,6 +43,8 @@ var (
 		3: "ITICK_CONFIG",
 		4: "RECHARGE_CONFIG",
 		5: "WITHDRAW_CONFIG",
+		6: "EMAIL_CONFIG",
+		7: "PHONE_CONFIG",
 	}
 	SysConfigType_value = map[string]int32{
 		"UNKNOWN":         0,
@@ -49,6 +53,8 @@ var (
 		"ITICK_CONFIG":    3,
 		"RECHARGE_CONFIG": 4,
 		"WITHDRAW_CONFIG": 5,
+		"EMAIL_CONFIG":    6,
+		"PHONE_CONFIG":    7,
 	}
 )
 
@@ -382,18 +388,185 @@ func (UserType) EnumDescriptor() ([]byte, []int) {
 	return file_proto_system_enum_proto_rawDescGZIP(), []int{6}
 }
 
+type VerificationCodeChannel int32
+
+const (
+	VerificationCodeChannel_VERIFICATION_CODE_CHANNEL_UNKNOWN VerificationCodeChannel = 0
+	VerificationCodeChannel_VERIFICATION_CODE_CHANNEL_EMAIL   VerificationCodeChannel = 1 // 邮箱
+	VerificationCodeChannel_VERIFICATION_CODE_CHANNEL_PHONE   VerificationCodeChannel = 2 // 手机短信
+)
+
+// Enum value maps for VerificationCodeChannel.
+var (
+	VerificationCodeChannel_name = map[int32]string{
+		0: "VERIFICATION_CODE_CHANNEL_UNKNOWN",
+		1: "VERIFICATION_CODE_CHANNEL_EMAIL",
+		2: "VERIFICATION_CODE_CHANNEL_PHONE",
+	}
+	VerificationCodeChannel_value = map[string]int32{
+		"VERIFICATION_CODE_CHANNEL_UNKNOWN": 0,
+		"VERIFICATION_CODE_CHANNEL_EMAIL":   1,
+		"VERIFICATION_CODE_CHANNEL_PHONE":   2,
+	}
+)
+
+func (x VerificationCodeChannel) Enum() *VerificationCodeChannel {
+	p := new(VerificationCodeChannel)
+	*p = x
+	return p
+}
+
+func (x VerificationCodeChannel) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (VerificationCodeChannel) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_system_enum_proto_enumTypes[7].Descriptor()
+}
+
+func (VerificationCodeChannel) Type() protoreflect.EnumType {
+	return &file_proto_system_enum_proto_enumTypes[7]
+}
+
+func (x VerificationCodeChannel) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use VerificationCodeChannel.Descriptor instead.
+func (VerificationCodeChannel) EnumDescriptor() ([]byte, []int) {
+	return file_proto_system_enum_proto_rawDescGZIP(), []int{7}
+}
+
+type VerificationCodeScene int32
+
+const (
+	VerificationCodeScene_VERIFICATION_CODE_SCENE_UNKNOWN         VerificationCodeScene = 0
+	VerificationCodeScene_VERIFICATION_CODE_SCENE_REGISTER        VerificationCodeScene = 1   // 注册
+	VerificationCodeScene_VERIFICATION_CODE_SCENE_LOGIN           VerificationCodeScene = 2   // 登录
+	VerificationCodeScene_VERIFICATION_CODE_SCENE_RESET_PASSWORD  VerificationCodeScene = 3   // 重置密码
+	VerificationCodeScene_VERIFICATION_CODE_SCENE_BIND_EMAIL      VerificationCodeScene = 4   // 绑定邮箱
+	VerificationCodeScene_VERIFICATION_CODE_SCENE_BIND_PHONE      VerificationCodeScene = 5   // 绑定手机
+	VerificationCodeScene_VERIFICATION_CODE_SCENE_CHANGE_PASSWORD VerificationCodeScene = 6   // 修改密码
+	VerificationCodeScene_VERIFICATION_CODE_SCENE_WITHDRAW        VerificationCodeScene = 7   // 提现
+	VerificationCodeScene_VERIFICATION_CODE_SCENE_TEST            VerificationCodeScene = 100 // 测试发送
+)
+
+// Enum value maps for VerificationCodeScene.
+var (
+	VerificationCodeScene_name = map[int32]string{
+		0:   "VERIFICATION_CODE_SCENE_UNKNOWN",
+		1:   "VERIFICATION_CODE_SCENE_REGISTER",
+		2:   "VERIFICATION_CODE_SCENE_LOGIN",
+		3:   "VERIFICATION_CODE_SCENE_RESET_PASSWORD",
+		4:   "VERIFICATION_CODE_SCENE_BIND_EMAIL",
+		5:   "VERIFICATION_CODE_SCENE_BIND_PHONE",
+		6:   "VERIFICATION_CODE_SCENE_CHANGE_PASSWORD",
+		7:   "VERIFICATION_CODE_SCENE_WITHDRAW",
+		100: "VERIFICATION_CODE_SCENE_TEST",
+	}
+	VerificationCodeScene_value = map[string]int32{
+		"VERIFICATION_CODE_SCENE_UNKNOWN":         0,
+		"VERIFICATION_CODE_SCENE_REGISTER":        1,
+		"VERIFICATION_CODE_SCENE_LOGIN":           2,
+		"VERIFICATION_CODE_SCENE_RESET_PASSWORD":  3,
+		"VERIFICATION_CODE_SCENE_BIND_EMAIL":      4,
+		"VERIFICATION_CODE_SCENE_BIND_PHONE":      5,
+		"VERIFICATION_CODE_SCENE_CHANGE_PASSWORD": 6,
+		"VERIFICATION_CODE_SCENE_WITHDRAW":        7,
+		"VERIFICATION_CODE_SCENE_TEST":            100,
+	}
+)
+
+func (x VerificationCodeScene) Enum() *VerificationCodeScene {
+	p := new(VerificationCodeScene)
+	*p = x
+	return p
+}
+
+func (x VerificationCodeScene) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (VerificationCodeScene) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_system_enum_proto_enumTypes[8].Descriptor()
+}
+
+func (VerificationCodeScene) Type() protoreflect.EnumType {
+	return &file_proto_system_enum_proto_enumTypes[8]
+}
+
+func (x VerificationCodeScene) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use VerificationCodeScene.Descriptor instead.
+func (VerificationCodeScene) EnumDescriptor() ([]byte, []int) {
+	return file_proto_system_enum_proto_rawDescGZIP(), []int{8}
+}
+
+type VerificationCodeStatus int32
+
+const (
+	VerificationCodeStatus_VERIFICATION_CODE_STATUS_UNKNOWN VerificationCodeStatus = 0
+	VerificationCodeStatus_VERIFICATION_CODE_STATUS_SUCCESS VerificationCodeStatus = 1 // 发送成功
+	VerificationCodeStatus_VERIFICATION_CODE_STATUS_FAILED  VerificationCodeStatus = 2 // 发送失败
+)
+
+// Enum value maps for VerificationCodeStatus.
+var (
+	VerificationCodeStatus_name = map[int32]string{
+		0: "VERIFICATION_CODE_STATUS_UNKNOWN",
+		1: "VERIFICATION_CODE_STATUS_SUCCESS",
+		2: "VERIFICATION_CODE_STATUS_FAILED",
+	}
+	VerificationCodeStatus_value = map[string]int32{
+		"VERIFICATION_CODE_STATUS_UNKNOWN": 0,
+		"VERIFICATION_CODE_STATUS_SUCCESS": 1,
+		"VERIFICATION_CODE_STATUS_FAILED":  2,
+	}
+)
+
+func (x VerificationCodeStatus) Enum() *VerificationCodeStatus {
+	p := new(VerificationCodeStatus)
+	*p = x
+	return p
+}
+
+func (x VerificationCodeStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (VerificationCodeStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_system_enum_proto_enumTypes[9].Descriptor()
+}
+
+func (VerificationCodeStatus) Type() protoreflect.EnumType {
+	return &file_proto_system_enum_proto_enumTypes[9]
+}
+
+func (x VerificationCodeStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use VerificationCodeStatus.Descriptor instead.
+func (VerificationCodeStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_system_enum_proto_rawDescGZIP(), []int{9}
+}
+
 var File_proto_system_enum_proto protoreflect.FileDescriptor
 
 const file_proto_system_enum_proto_rawDesc = "" +
 	"\n" +
-	"\x17proto/system/enum.proto\x12\x06system*}\n" +
+	"\x17proto/system/enum.proto\x12\x06system*\xa1\x01\n" +
 	"\rSysConfigType\x12\v\n" +
 	"\aUNKNOWN\x10\x00\x12\x0f\n" +
 	"\vSYSTEM_CORE\x10\x01\x12\x12\n" +
 	"\x0eOBJECT_STORAGE\x10\x02\x12\x10\n" +
 	"\fITICK_CONFIG\x10\x03\x12\x13\n" +
 	"\x0fRECHARGE_CONFIG\x10\x04\x12\x13\n" +
-	"\x0fWITHDRAW_CONFIG\x10\x05*`\n" +
+	"\x0fWITHDRAW_CONFIG\x10\x05\x12\x10\n" +
+	"\fEMAIL_CONFIG\x10\x06\x12\x10\n" +
+	"\fPHONE_CONFIG\x10\a*`\n" +
 	"\fCommonStatus\x12\x19\n" +
 	"\x15COMMON_STATUS_UNKNOWN\x10\x00\x12\x19\n" +
 	"\x15COMMON_STATUS_ENABLED\x10\x01\x12\x1a\n" +
@@ -420,7 +593,25 @@ const file_proto_system_enum_proto_rawDesc = "" +
 	"\x11USER_TYPE_UNKNOWN\x10\x00\x12\x1a\n" +
 	"\x16USER_TYPE_SYSTEM_ADMIN\x10\x01\x12\x1a\n" +
 	"\x16USER_TYPE_TENANT_OWNER\x10\x02\x12\x1a\n" +
-	"\x16USER_TYPE_TENANT_ADMIN\x10\x03B\x1cZ\x1awklive/proto/system;systemb\x06proto3"
+	"\x16USER_TYPE_TENANT_ADMIN\x10\x03*\x8a\x01\n" +
+	"\x17VerificationCodeChannel\x12%\n" +
+	"!VERIFICATION_CODE_CHANNEL_UNKNOWN\x10\x00\x12#\n" +
+	"\x1fVERIFICATION_CODE_CHANNEL_EMAIL\x10\x01\x12#\n" +
+	"\x1fVERIFICATION_CODE_CHANNEL_PHONE\x10\x02*\xf6\x02\n" +
+	"\x15VerificationCodeScene\x12#\n" +
+	"\x1fVERIFICATION_CODE_SCENE_UNKNOWN\x10\x00\x12$\n" +
+	" VERIFICATION_CODE_SCENE_REGISTER\x10\x01\x12!\n" +
+	"\x1dVERIFICATION_CODE_SCENE_LOGIN\x10\x02\x12*\n" +
+	"&VERIFICATION_CODE_SCENE_RESET_PASSWORD\x10\x03\x12&\n" +
+	"\"VERIFICATION_CODE_SCENE_BIND_EMAIL\x10\x04\x12&\n" +
+	"\"VERIFICATION_CODE_SCENE_BIND_PHONE\x10\x05\x12+\n" +
+	"'VERIFICATION_CODE_SCENE_CHANGE_PASSWORD\x10\x06\x12$\n" +
+	" VERIFICATION_CODE_SCENE_WITHDRAW\x10\a\x12 \n" +
+	"\x1cVERIFICATION_CODE_SCENE_TEST\x10d*\x89\x01\n" +
+	"\x16VerificationCodeStatus\x12$\n" +
+	" VERIFICATION_CODE_STATUS_UNKNOWN\x10\x00\x12$\n" +
+	" VERIFICATION_CODE_STATUS_SUCCESS\x10\x01\x12#\n" +
+	"\x1fVERIFICATION_CODE_STATUS_FAILED\x10\x02B\x1cZ\x1awklive/proto/system;systemb\x06proto3"
 
 var (
 	file_proto_system_enum_proto_rawDescOnce sync.Once
@@ -434,15 +625,18 @@ func file_proto_system_enum_proto_rawDescGZIP() []byte {
 	return file_proto_system_enum_proto_rawDescData
 }
 
-var file_proto_system_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 7)
+var file_proto_system_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 10)
 var file_proto_system_enum_proto_goTypes = []any{
-	(SysConfigType)(0), // 0: system.SysConfigType
-	(CommonStatus)(0),  // 1: system.CommonStatus
-	(MenuType)(0),      // 2: system.MenuType
-	(VisibleStatus)(0), // 3: system.VisibleStatus
-	(RequestMethod)(0), // 4: system.RequestMethod
-	(JobStatus)(0),     // 5: system.JobStatus
-	(UserType)(0),      // 6: system.UserType
+	(SysConfigType)(0),           // 0: system.SysConfigType
+	(CommonStatus)(0),            // 1: system.CommonStatus
+	(MenuType)(0),                // 2: system.MenuType
+	(VisibleStatus)(0),           // 3: system.VisibleStatus
+	(RequestMethod)(0),           // 4: system.RequestMethod
+	(JobStatus)(0),               // 5: system.JobStatus
+	(UserType)(0),                // 6: system.UserType
+	(VerificationCodeChannel)(0), // 7: system.VerificationCodeChannel
+	(VerificationCodeScene)(0),   // 8: system.VerificationCodeScene
+	(VerificationCodeStatus)(0),  // 9: system.VerificationCodeStatus
 }
 var file_proto_system_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -462,7 +656,7 @@ func file_proto_system_enum_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_system_enum_proto_rawDesc), len(file_proto_system_enum_proto_rawDesc)),
-			NumEnums:      7,
+			NumEnums:      10,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

@@ -57,14 +57,29 @@ function submitReset() {
 <template>
   <section class="auth-page">
     <header class="auth-topbar">
-      <button type="button" class="icon-button" :aria-label="t('common.back')" @click="goBack">
+      <button
+        type="button"
+        class="icon-button"
+        :aria-label="t('common.back')"
+        @click="goBack"
+      >
         <AppIcon name="back" class="back-icon-svg" />
       </button>
       <div class="auth-topbar__right">
-        <button type="button" class="icon-button" :aria-label="t('userMenu.customerService')" @click="showVerifySheet = true">
+        <button
+          type="button"
+          class="icon-button"
+          :aria-label="t('userMenu.customerService')"
+          @click="showVerifySheet = true"
+        >
           <AppIcon name="headset" class="top-icon-svg" />
         </button>
-        <button type="button" class="icon-button" :aria-label="t('common.language')" @click="goLanguageSelect">
+        <button
+          type="button"
+          class="icon-button"
+          :aria-label="t('common.language')"
+          @click="goLanguageSelect"
+        >
           <AppIcon name="globe" class="top-icon-svg" />
         </button>
       </div>
@@ -75,7 +90,11 @@ function submitReset() {
 
       <form class="auth-form" @submit.prevent="submitReset">
         <label class="auth-field">
-          <input v-model="account" :placeholder="t('auth.accountPlaceholder')" autocomplete="username" />
+          <input
+            v-model="account"
+            :placeholder="t('auth.accountPlaceholder')"
+            autocomplete="username"
+          >
         </label>
 
         <label class="auth-field">
@@ -84,7 +103,7 @@ function submitReset() {
             :type="showPassword ? 'text' : 'password'"
             :placeholder="t('auth.passwordMin8')"
             autocomplete="new-password"
-          />
+          >
           <button
             type="button"
             class="field-action"
@@ -105,7 +124,7 @@ function submitReset() {
             :type="showConfirmPassword ? 'text' : 'password'"
             :placeholder="t('auth.confirmNewPassword')"
             autocomplete="new-password"
-          />
+          >
           <button
             type="button"
             class="field-action"
@@ -116,22 +135,40 @@ function submitReset() {
           </button>
         </label>
 
-        <p v-if="errorMessage" class="auth-error">{{ errorMessage }}</p>
+        <p v-if="errorMessage" class="auth-error">
+          {{ errorMessage }}
+        </p>
 
-        <button type="submit" class="primary-button">{{ t('auth.retrievePassword') }}</button>
-        <RouterLink to="/login" class="login-link">{{ t('auth.goLogin') }}</RouterLink>
+        <button type="submit" class="primary-button">
+          {{ t('auth.retrievePassword') }}
+        </button>
+        <RouterLink to="/login" class="login-link">
+          {{ t('auth.goLogin') }}
+        </RouterLink>
       </form>
     </main>
 
     <Transition name="sheet">
       <div v-if="showVerifySheet" class="sheet-layer" @click.self="showVerifySheet = false">
-        <section class="verify-sheet" role="dialog" aria-modal="true" :aria-label="t('auth.verifyMethod')">
+        <section
+          class="verify-sheet"
+          role="dialog"
+          aria-modal="true"
+          :aria-label="t('auth.verifyMethod')"
+        >
           <i class="sheet-handle" />
-          <button type="button" class="sheet-close" :aria-label="t('common.close')" @click="showVerifySheet = false">
+          <button
+            type="button"
+            class="sheet-close"
+            :aria-label="t('common.close')"
+            @click="showVerifySheet = false"
+          >
             <span />
           </button>
           <h2>{{ t('auth.verifyMethod') }}</h2>
-          <button type="button" class="service-button">{{ t('auth.contactService') }}</button>
+          <button type="button" class="service-button">
+            {{ t('auth.contactService') }}
+          </button>
         </section>
       </div>
     </Transition>

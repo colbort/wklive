@@ -77,3 +77,24 @@ message WithdrawConfig {
   int32 pending_withdrawal_limit_per_user = 7; // 允许未审核在提现数量限制，单位：笔
   int32 free_withdraw_times_per_day = 8; // 每日免费提现次数，0=没有免费提现
 }
+
+message EmailConfig {
+  bool enabled = 1; // 是否启用邮件验证码
+  string smtp_host = 2; // SMTP 主机
+  int32 smtp_port = 3; // SMTP 端口
+  string username = 4; // SMTP 用户名
+  string password = 5; // SMTP 密码
+  string from_email = 6; // 发件邮箱
+  string from_name = 7; // 发件名称
+  string subject_template = 8; // 标题模板，支持 {{code}} {{scene}}
+  string body_template = 9; // 内容模板，支持 {{code}} {{scene}}
+}
+
+message PhoneConfig {
+  bool enabled = 1; // 是否启用短信验证码
+  string provider = 2; // 短信服务商标识
+  string endpoint = 3; // HTTP 网关地址
+  string method = 4; // HTTP 方法，默认 POST
+  string headers_json = 5; // HTTP headers JSON，例如 {"Authorization":"Bearer xxx"}
+  string body_template = 6; // 请求体模板，支持 {{phone}} {{code}} {{scene}}
+}

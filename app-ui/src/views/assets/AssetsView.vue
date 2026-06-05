@@ -102,7 +102,7 @@ const activeOperationType = computed(() => ASSET_OPERATION_TYPES[activeAssetActi
 const activeAccountLabel = computed(() => {
   return (
     assetAccounts.value.find((account) => account.key === activeAssetAccount.value)?.label ||
-  t('options.WALLET_TYPE_SPOT')
+    t('options.WALLET_TYPE_SPOT')
   )
 })
 
@@ -372,7 +372,7 @@ onMounted(() => {
                     v-if="item.config.iconUrl"
                     :src="item.config.iconUrl"
                     :alt="coinConfigName(item.config)"
-                  />
+                  >
                   <span v-else>{{ coinConfigIconText(item.config) }}</span>
                 </span>
                 <span class="asset-coin-row__main">
@@ -396,7 +396,12 @@ onMounted(() => {
         role="presentation"
         @click.self="closeCoinActions"
       >
-        <section class="coin-action-sheet" role="dialog" aria-modal="true" :aria-label="t('assets.coinAction')">
+        <section
+          class="coin-action-sheet"
+          role="dialog"
+          aria-modal="true"
+          :aria-label="t('assets.coinAction')"
+        >
           <button
             class="coin-action-sheet__close"
             type="button"
@@ -417,7 +422,7 @@ onMounted(() => {
               v-if="selectedCoinConfig.iconUrl"
               :src="selectedCoinConfig.iconUrl"
               :alt="coinConfigName(selectedCoinConfig)"
-            />
+            >
             <span v-else>{{ coinConfigIconText(selectedCoinConfig) }}</span>
           </span>
           <strong>{{ selectedCoinConfig.coin }}</strong>

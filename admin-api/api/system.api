@@ -324,6 +324,51 @@ type SysConfigListResp {
 	data []SysConfigItem `json:"data"`
 }
 
+type TestVerificationCodeReq {
+	tenantId int64  `json:"tenantId,optional"`
+	channel  int64  `json:"channel" validate:"required"` // 1邮箱 2手机短信
+	email    string `json:"email,optional"`
+	phone    string `json:"phone,optional"`
+	scene    int64  `json:"scene,optional"` // 业务场景
+}
+
+type VerificationCodeRecordItem {
+	id           int64  `json:"id"`
+	tenantId     int64  `json:"tenantId"`
+	channel      int64  `json:"channel"`
+	target       string `json:"target"`
+	scene        int64  `json:"scene"`
+	code         string `json:"code"`
+	status       int64  `json:"status"` // 1成功 2失败
+	provider     string `json:"provider,optional"`
+	errorMessage string `json:"errorMessage,optional"`
+	createTimes  int64  `json:"createTimes"`
+	updateTimes  int64  `json:"updateTimes"`
+}
+
+type VerificationCodeRecordListReq {
+	PageReq
+	tenantId int64  `form:"tenantId,optional"`
+	channel  int64  `form:"channel,optional"` // 1邮箱 2手机短信
+	target   string `form:"target,optional"`
+	scene    int64  `form:"scene,optional"` // 业务场景
+	status   int64  `form:"status,optional"` // 1成功 2失败
+}
+
+type VerificationCodeRecordListResp {
+	RespBase
+	data []VerificationCodeRecordItem `json:"data"`
+}
+
+type VerificationCodeRecordDetailReq {
+	id int64 `path:"id" validate:"required"`
+}
+
+type VerificationCodeRecordDetailResp {
+	RespBase
+	data VerificationCodeRecordItem `json:"data"`
+}
+
 // 系统定时任务
 type SysCronJobItem {
 	id             int64  `json:"id"`
@@ -603,6 +648,16 @@ service admin {
 	@handler SysConfigDelete
 	delete /configs/:id (SysConfigDeleteReq) returns (RespBase)
 
+	// --- 验证码 ---
+	@handler TestVerificationCode
+	post /verification-codes/test (TestVerificationCodeReq) returns (RespBase)
+
+	@handler VerificationCodeRecordList
+	get /verification-codes (VerificationCodeRecordListReq) returns (VerificationCodeRecordListResp)
+
+	@handler VerificationCodeRecordDetail
+	get /verification-codes/:id (VerificationCodeRecordDetailReq) returns (VerificationCodeRecordDetailResp)
+
 	// 系统定时任务列表
 	@handler SysCronJobList
 	get /jobs (SysCronJobListReq) returns (SysCronJobListResp)
@@ -655,4 +710,3 @@ service admin {
 	@handler SysTenantDetail
 	get /tenant/detail (SysTenantDetailReq) returns (SysTenantDetailResp)
 }
-

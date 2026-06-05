@@ -140,8 +140,9 @@
     <el-dialog
       v-model="dialogVisible"
       :title="isEdit ? t('common.edit') : t('common.add')"
-      width="600px"
+      width="860px"
       :close-on-click-modal="false"
+      class="sys-config-dialog"
     >
       <el-form
         ref="formRef"
@@ -205,6 +206,14 @@
           <WithdrawConfigComponent v-model="withdrawConfigForm" />
         </template>
 
+        <template v-else-if="formData.configKey === 'EMAIL_CONFIG'">
+          <EmailConfigComponent v-model="emailConfigForm" />
+        </template>
+
+        <template v-else-if="formData.configKey === 'PHONE_CONFIG'">
+          <PhoneConfigComponent v-model="phoneConfigForm" />
+        </template>
+
         <template v-else>
           <el-form-item :label="t('system.configValue')" prop="configValue">
             <el-input
@@ -247,6 +256,8 @@ import type {
   ItickConfig,
   RechargeConfig,
   WithdrawConfig,
+  EmailConfig,
+  PhoneConfig,
 } from '@/services/system/ConfigService'
 import { usePagination } from '@/composables/usePagination'
 import { useLoading } from '@/composables/useLoading'
@@ -257,6 +268,8 @@ import ObjectStorageConfigComponent from './components/ObjectStorageConfig.vue'
 import ItickConfigComponent from './components/ItickConfig.vue'
 import RechargeConfigComponent from './components/RechargeConfig.vue'
 import WithdrawConfigComponent from './components/WithdrawConfig.vue'
+import EmailConfigComponent from './components/EmailConfig.vue'
+import PhoneConfigComponent from './components/PhoneConfig.vue'
 import { getOptionLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 
@@ -356,6 +369,27 @@ const withdrawConfigForm = ref<WithdrawConfig>({
   allowedTimeRange: '',
   pendingWithdrawalLimitPerUser: 0,
   freeWithdrawTimesPerDay: 0,
+})
+
+const emailConfigForm = ref<EmailConfig>({
+  enabled: false,
+  smtp_host: '',
+  smtp_port: 587,
+  username: '',
+  password: '',
+  from_email: '',
+  from_name: '',
+  subject_template: 'Verification code',
+  body_template: 'Your verification code is {{code}}',
+})
+
+const phoneConfigForm = ref<PhoneConfig>({
+  enabled: false,
+  provider: '',
+  endpoint: '',
+  method: 'POST',
+  headers_json: '{}',
+  body_template: '{"phone":"{{phone}}","code":"{{code}}","scene":"{{scene}}"}',
 })
 
 const configNumber = (data: Record<string, unknown>, camelKey: string, snakeKey: string) =>
@@ -458,6 +492,25 @@ function resetTypeForms() {
     pendingWithdrawalLimitPerUser: 0,
     freeWithdrawTimesPerDay: 0,
   }
+  emailConfigForm.value = {
+    enabled: false,
+    smtp_host: '',
+    smtp_port: 587,
+    username: '',
+    password: '',
+    from_email: '',
+    from_name: '',
+    subject_template: 'Verification code',
+    body_template: 'Your verification code is {{code}}',
+  }
+  phoneConfigForm.value = {
+    enabled: false,
+    provider: '',
+    endpoint: '',
+    method: 'POST',
+    headers_json: '{}',
+    body_template: '{"phone":"{{phone}}","code":"{{code}}","scene":"{{scene}}"}',
+  }
 }
 
 function handleConfigKeyChange(value: string) {
@@ -522,6 +575,29 @@ function handleConfigKeyChange(value: string) {
       allowedTimeRange: '',
       pendingWithdrawalLimitPerUser: 0,
       freeWithdrawTimesPerDay: 0,
+    }
+    formData.configValue = ''
+  } else if (value === 'EMAIL_CONFIG') {
+    emailConfigForm.value = {
+      enabled: false,
+      smtp_host: '',
+      smtp_port: 587,
+      username: '',
+      password: '',
+      from_email: '',
+      from_name: '',
+      subject_template: 'Verification code',
+      body_template: 'Your verification code is {{code}}',
+    }
+    formData.configValue = ''
+  } else if (value === 'PHONE_CONFIG') {
+    phoneConfigForm.value = {
+      enabled: false,
+      provider: '',
+      endpoint: '',
+      method: 'POST',
+      headers_json: '{}',
+      body_template: '{"phone":"{{phone}}","code":"{{code}}","scene":"{{scene}}"}',
     }
     formData.configValue = ''
   }
@@ -663,6 +739,38 @@ function handleEdit(row: SysConfigItem) {
         freeWithdrawTimesPerDay: 0,
       }
     }
+  } else if (row.configKey === 'EMAIL_CONFIG') {
+    try {
+      const parsed = JSON.parse(row.configValue || '{}')
+      emailConfigForm.value = {
+        enabled: Boolean(parsed.enabled),
+        smtp_host: parsed.smtp_host || '',
+        smtp_port: Number(parsed.smtp_port || 587),
+        username: parsed.username || '',
+        password: parsed.password || '',
+        from_email: parsed.from_email || '',
+        from_name: parsed.from_name || '',
+        subject_template: parsed.subject_template || 'Verification code',
+        body_template: parsed.body_template || 'Your verification code is {{code}}',
+      }
+    } catch {
+      resetTypeForms()
+    }
+  } else if (row.configKey === 'PHONE_CONFIG') {
+    try {
+      const parsed = JSON.parse(row.configValue || '{}')
+      phoneConfigForm.value = {
+        enabled: Boolean(parsed.enabled),
+        provider: parsed.provider || '',
+        endpoint: parsed.endpoint || '',
+        method: parsed.method || 'POST',
+        headers_json: parsed.headers_json || '{}',
+        body_template:
+          parsed.body_template || '{"phone":"{{phone}}","code":"{{code}}","scene":"{{scene}}"}',
+      }
+    } catch {
+      resetTypeForms()
+    }
   } else {
     formData.configValue = row.configValue
   }
@@ -741,6 +849,25 @@ async function handleSubmit() {
       formData.configValue = JSON.stringify(rechargeConfigForm.value)
     } else if (formData.configKey === 'WITHDRAW_CONFIG') {
       formData.configValue = JSON.stringify(withdrawConfigForm.value)
+    } else if (formData.configKey === 'EMAIL_CONFIG') {
+      if (emailConfigForm.value.enabled) {
+        if (
+          !emailConfigForm.value.smtp_host ||
+          !emailConfigForm.value.smtp_port ||
+          !emailConfigForm.value.from_email
+        ) {
+          throw new Error(t('validation.required'))
+        }
+      }
+      formData.configValue = JSON.stringify(emailConfigForm.value)
+    } else if (formData.configKey === 'PHONE_CONFIG') {
+      if (phoneConfigForm.value.enabled && !phoneConfigForm.value.endpoint) {
+        throw new Error(t('validation.required'))
+      }
+      if (phoneConfigForm.value.headers_json) {
+        JSON.parse(phoneConfigForm.value.headers_json)
+      }
+      formData.configValue = JSON.stringify(phoneConfigForm.value)
     }
 
     if (isEdit.value) {
@@ -828,5 +955,13 @@ onMounted(() => {
   word-break: break-all !important;
   overflow-wrap: anywhere !important;
   line-height: 1.5;
+}
+
+.sys-config-dialog {
+  max-width: calc(100vw - 48px);
+}
+
+.sys-config-dialog .el-dialog__body {
+  overflow-x: hidden;
 }
 </style>

@@ -17,7 +17,6 @@ message AppCommonResp { common.RespBase base = 1; }
 // ====================
 
 message ListVisibleCategoriesReq {
-  string tenant_code = 1;
   common.PageReq page = 2;
 }
 
@@ -30,7 +29,6 @@ message ListVisibleProductsReq {
   itick.CategoryType category_type = 1;
   string market = 2;
   string keyword = 3;
-  string tenant_code = 4;
   common.PageReq page = 5;
 }
 

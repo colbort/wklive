@@ -9,6 +9,7 @@ export { UploadService, uploadService } from './system/UploadService'
 export { ConfigService, configService } from './system/ConfigService'
 export { CronJobService, cronJobService } from './system/CronJobService'
 export { TenantsService, tenantsService } from './system/TenantsService'
+export { VerificationCodeService, verificationCodeService } from './system/VerificationCodeService'
 export { CategoriesService, categoriesService } from './itick/CategoriesService'
 export { ProductsService, productsService } from './itick/ProductsService'
 export { TenantCategoriesService, tenantCategoriesService } from './itick/TenantCategoriesService'
@@ -101,6 +102,11 @@ export type {
   SysTenantUpdateReq,
   SysTenantDetailReq,
 } from './system/TenantsService'
+export type {
+  TestVerificationCodeReq,
+  VerificationCodeRecordItem,
+  VerificationCodeRecordListReq,
+} from './system/VerificationCodeService'
 
 export type {
   ListCategoriesReq,

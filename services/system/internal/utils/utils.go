@@ -22,6 +22,12 @@ func CheckConfig(key string, value string) error {
 	case system.SysConfigType_WITHDRAW_CONFIG.String():
 		var withdrawConfig system.WithdrawConfig
 		return json.Unmarshal([]byte(value), &withdrawConfig)
+	case system.SysConfigType_EMAIL_CONFIG.String():
+		var emailConfig system.EmailConfig
+		return json.Unmarshal([]byte(value), &emailConfig)
+	case system.SysConfigType_PHONE_CONFIG.String():
+		var phoneConfig system.PhoneConfig
+		return json.Unmarshal([]byte(value), &phoneConfig)
 	default:
 		return nil
 	}

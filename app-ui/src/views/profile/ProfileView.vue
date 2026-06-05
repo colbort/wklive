@@ -68,7 +68,9 @@ const menuItems = computed(() => {
     ...userMenuItems.slice(1),
   ]
 })
-const languageName = computed(() => (locale.value === 'zh-CN' ? t('common.zhCN') : t('common.enUS')))
+const languageName = computed(() =>
+  locale.value === 'zh-CN' ? t('common.zhCN') : t('common.enUS'),
+)
 const displayName = computed(
   () => userBase.value?.nickname || userBase.value?.username || 'GUEST-6721',
 )
@@ -156,7 +158,7 @@ function goLogin() {
 
     <section v-if="isLoggedIn" class="profile-user" :aria-busy="loadingProfile">
       <div class="profile-avatar" :class="{ 'profile-avatar--image': avatarUrl }">
-        <img v-if="avatarUrl" :src="avatarUrl" alt="" />
+        <img v-if="avatarUrl" :src="avatarUrl" alt="">
         <span v-else />
       </div>
       <div class="profile-user__info">

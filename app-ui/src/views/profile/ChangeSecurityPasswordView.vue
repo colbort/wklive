@@ -30,15 +30,27 @@ const title = computed(() =>
 const fields = computed(() => {
   if (isPayPassword.value) {
     return [
-      { key: 'newPassword' as const, placeholder: t('security.newTradePassword'), model: newPassword },
-      { key: 'confirmPassword' as const, placeholder: t('security.confirmNewTradePassword'), model: confirmPassword },
+      {
+        key: 'newPassword' as const,
+        placeholder: t('security.newTradePassword'),
+        model: newPassword,
+      },
+      {
+        key: 'confirmPassword' as const,
+        placeholder: t('security.confirmNewTradePassword'),
+        model: confirmPassword,
+      },
     ]
   }
 
   return [
     { key: 'oldPassword' as const, placeholder: t('security.oldPassword'), model: oldPassword },
     { key: 'newPassword' as const, placeholder: t('security.newPassword'), model: newPassword },
-    { key: 'confirmPassword' as const, placeholder: t('security.confirmNewPassword'), model: confirmPassword },
+    {
+      key: 'confirmPassword' as const,
+      placeholder: t('security.confirmNewPassword'),
+      model: confirmPassword,
+    },
   ]
 })
 const passwordStrength = computed(() => {
@@ -117,7 +129,12 @@ async function submitPassword() {
 <template>
   <section class="password-page">
     <header class="password-header">
-      <button type="button" class="back-button" :aria-label="t('common.back')" @click="router.back()">
+      <button
+        type="button"
+        class="back-button"
+        :aria-label="t('common.back')"
+        @click="router.back()"
+      >
         <AppIcon name="back" class="back-icon-svg" />
       </button>
       <h1>{{ title }}</h1>
@@ -132,7 +149,7 @@ async function submitPassword() {
             :placeholder="field.placeholder"
             autocomplete="new-password"
             @input="updateField(field.key, ($event.target as HTMLInputElement).value)"
-          />
+          >
           <button
             type="button"
             class="eye-button"
@@ -147,8 +164,12 @@ async function submitPassword() {
         </div>
       </template>
 
-      <p v-if="errorMessage" class="form-message form-message--error">{{ errorMessage }}</p>
-      <p v-if="message" class="form-message">{{ message }}</p>
+      <p v-if="errorMessage" class="form-message form-message--error">
+        {{ errorMessage }}
+      </p>
+      <p v-if="message" class="form-message">
+        {{ message }}
+      </p>
 
       <button type="submit" class="submit-button" :disabled="submitting">
         {{ submitting ? t('security.editing') : t('security.edit') }}

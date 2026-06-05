@@ -297,6 +297,9 @@ export default {
     googleQrAlt: '谷歌验证二维码',
     bind: '绑定',
     haveAccount: '有账号？',
+    sendingVerificationCode: '发送中',
+    resendVerificationCode: '重新发送',
+    verificationCodeSendFailed: '验证码发送失败',
   },
   options: {
     WALLET_TYPE_SPOT: '现金账户',

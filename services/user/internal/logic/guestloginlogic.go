@@ -37,8 +37,14 @@ func NewGuestLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GuestL
 // 游客登了
 func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginResp, error) {
 	registerIP, _ := utils.GetClientIPFromMd(l.ctx)
+	tenantCode, err := utils.GetTenantCodeFromMd(l.ctx)
+	if err != nil || tenantCode == "" {
+		return &user.GuestLoginResp{
+			Base: helper.GetErrResp(i18n.InvalidRequest, i18n.Translate(i18n.InvalidRequest, l.ctx)),
+		}, nil
+	}
 	tenant, err := l.svcCtx.SystemCli.SysTenantDetail(l.ctx, &system.SysTenantDetailReq{
-		TenantCode: &in.TenantCode,
+		TenantCode: &tenantCode,
 	})
 	if err != nil {
 		return nil, err

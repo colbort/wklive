@@ -114,7 +114,9 @@
 
     <el-drawer v-model="detailVisible" :title="t('payment.orderDetail')" size="720px">
       <div v-if="detailVoucherImageUrl" class="voucher-preview-section">
-        <div class="voucher-preview-label">{{ t('payment.voucherImage') }}</div>
+        <div class="voucher-preview-label">
+          {{ t('payment.voucherImage') }}
+        </div>
         <el-image
           class="voucher-preview"
           :src="detailVoucherImageUrl"

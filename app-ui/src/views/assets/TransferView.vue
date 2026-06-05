@@ -52,7 +52,9 @@ const toConfig = computed(() =>
     (config) => config.walletType === toWalletType.value && config.coin === toCoin.value,
   ),
 )
-const fromDecimalPlaces = computed(() => normalizeAssetDecimalPlaces(fromConfig.value?.decimalPlaces))
+const fromDecimalPlaces = computed(() =>
+  normalizeAssetDecimalPlaces(fromConfig.value?.decimalPlaces),
+)
 const fromInputDecimalPlaces = computed(() =>
   normalizeAssetInputDecimalPlaces(fromConfig.value?.decimalPlaces),
 )
@@ -97,11 +99,17 @@ const fromPlaceholder = computed(() => placeholderAccountLabel(fromWalletType.va
 const toPlaceholder = computed(() => placeholderAccountLabel(toWalletType.value))
 
 function accountLabel(walletType: number) {
-  return walletTypes.value.find((account) => account.value === walletType)?.label || t('options.WALLET_TYPE_SPOT')
+  return (
+    walletTypes.value.find((account) => account.value === walletType)?.label ||
+    t('options.WALLET_TYPE_SPOT')
+  )
 }
 
 function placeholderAccountLabel(walletType: number) {
-  return walletTypes.value.find((account) => account.value !== walletType)?.label || t('assetFlow.chooseAccount')
+  return (
+    walletTypes.value.find((account) => account.value !== walletType)?.label ||
+    t('assetFlow.chooseAccount')
+  )
 }
 
 function firstOtherWalletType(walletType: number) {
@@ -116,7 +124,12 @@ function coinKey(coin: string) {
   return String(coin || '').toUpperCase()
 }
 
-function isSameTransferCoin(walletType: number, coin: string, targetWalletType: number, targetCoin: string) {
+function isSameTransferCoin(
+  walletType: number,
+  coin: string,
+  targetWalletType: number,
+  targetCoin: string,
+) {
   return walletType === targetWalletType && Boolean(coin) && coinKey(coin) === coinKey(targetCoin)
 }
 
@@ -244,9 +257,7 @@ onMounted(() => {
       <label class="transfer-field">
         <span class="transfer-field__head">
           <strong>{{ t('assetFlow.transferFrom') }}</strong>
-          <small v-if="fromCoin"
-            >{{ t('assetFlow.available') }} <b>{{ availableAmount }}</b> {{ fromCoin }}</small
-          >
+          <small v-if="fromCoin">{{ t('assetFlow.available') }} <b>{{ availableAmount }}</b> {{ fromCoin }}</small>
         </span>
         <button type="button" class="transfer-picker" @click="openPicker('from')">
           <span>{{ fromAccountLabel }}</span>
@@ -278,7 +289,7 @@ onMounted(() => {
     <label class="amount-field">
       <span>{{ t('assetFlow.transferAmount') }}</span>
       <span class="amount-input">
-        <input v-model="amount" inputmode="decimal" />
+        <input v-model="amount" inputmode="decimal">
         <strong v-if="fromCoin">{{ fromCoin }}</strong>
       </span>
     </label>

@@ -5,7 +5,10 @@ import (
 	"sort"
 	"strings"
 
+	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/itick"
 	"wklive/proto/system"
 	"wklive/services/itick/internal/svc"
@@ -29,8 +32,14 @@ func NewListVisibleProductsLogic(ctx context.Context, svcCtx *svc.ServiceContext
 
 // 获取允许显示的产品
 func (l *ListVisibleProductsLogic) ListVisibleProducts(in *itick.ListVisibleProductsReq) (*itick.ListVisibleProductsResp, error) {
+	tenantCode, err := utils.GetTenantCodeFromMd(l.ctx)
+	if err != nil || tenantCode == "" {
+		return &itick.ListVisibleProductsResp{
+			Base: helper.GetErrResp(i18n.InvalidRequest, i18n.Translate(i18n.InvalidRequest, l.ctx)),
+		}, nil
+	}
 	detail, err := l.svcCtx.SystemCli.SysTenantDetail(l.ctx, &system.SysTenantDetailReq{
-		TenantCode: &in.TenantCode,
+		TenantCode: &tenantCode,
 	})
 	if err != nil {
 		return nil, err

@@ -573,14 +573,14 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: user_private.UpdateProfileHandler(serverCtx),
 				},
 				{
-					Method:  http.MethodPost,
-					Path:    "/upload/file",
-					Handler: user_private.UploadFileHandler(serverCtx),
-				},
-				{
 					Method:  http.MethodGet,
 					Path:    "/security",
 					Handler: user_private.GetSecurityHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/upload/file",
+					Handler: user_private.UploadFileHandler(serverCtx),
 				},
 			}...,
 		),
@@ -685,6 +685,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/register",
 					Handler: user_public.RegisterHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/verification-code/send",
+					Handler: user_public.SendVerificationCodeHandler(serverCtx),
 				},
 			}...,
 		),

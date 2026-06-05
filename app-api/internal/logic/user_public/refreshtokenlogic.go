@@ -6,10 +6,10 @@ package user_public
 import (
 	"context"
 
+	"wklive/app-api/internal/logicutil"
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-
-	"wklive/app-api/internal/logicutil"
+	"wklive/proto/user"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,5 +29,7 @@ func NewRefreshTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Refr
 }
 
 func (l *RefreshTokenLogic) RefreshToken(req *types.RefreshTokenReq) (resp *types.RefreshTokenResp, err error) {
-	return logicutil.Proxy[types.RefreshTokenResp](l.ctx, req, l.svcCtx.UserCli.RefreshToken)
+	return logicutil.Proxy[types.RefreshTokenResp](l.ctx, &user.RefreshTokenReq{
+		RefreshToken: req.RefreshToken,
+	}, l.svcCtx.UserCli.RefreshToken)
 }

@@ -239,6 +239,30 @@ func (s *SystemServer) SysConfigByKeys(ctx context.Context, in *system.SysConfig
 	return l.SysConfigByKeys(in)
 }
 
+// 发送验证码
+func (s *SystemServer) SendVerificationCode(ctx context.Context, in *system.SendVerificationCodeReq) (*system.RespBase, error) {
+	l := logic.NewSendVerificationCodeLogic(ctx, s.svcCtx)
+	return l.SendVerificationCode(in)
+}
+
+// 测试发送验证码
+func (s *SystemServer) TestVerificationCode(ctx context.Context, in *system.TestVerificationCodeReq) (*system.RespBase, error) {
+	l := logic.NewTestVerificationCodeLogic(ctx, s.svcCtx)
+	return l.TestVerificationCode(in)
+}
+
+// 验证码发送记录
+func (s *SystemServer) VerificationCodeRecordList(ctx context.Context, in *system.VerificationCodeRecordListReq) (*system.VerificationCodeRecordListResp, error) {
+	l := logic.NewVerificationCodeRecordListLogic(ctx, s.svcCtx)
+	return l.VerificationCodeRecordList(in)
+}
+
+// 验证码发送记录详情
+func (s *SystemServer) VerificationCodeRecordDetail(ctx context.Context, in *system.VerificationCodeRecordDetailReq) (*system.VerificationCodeRecordDetailResp, error) {
+	l := logic.NewVerificationCodeRecordDetailLogic(ctx, s.svcCtx)
+	return l.VerificationCodeRecordDetail(in)
+}
+
 // 获取登录用户的权限列表
 func (s *SystemServer) LoginUserPerms(ctx context.Context, in *system.LoginUserPermsReq) (*system.LoginUserPermsResp, error) {
 	l := logic.NewLoginUserPermsLogic(ctx, s.svcCtx)

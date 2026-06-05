@@ -35,6 +35,9 @@ func (l *GetSystemOptionsLogic) GetSystemOptions() (resp *types.GetSystemOptions
 			logicutil.EnumGroup("visible", "可见状态", system.VisibleStatus_VISIBLE_STATUS_UNKNOWN.Descriptor()),
 			logicutil.EnumGroup("method", "请求方法", system.RequestMethod_REQUEST_METHOD_UNKNOWN.Descriptor()),
 			logicutil.EnumGroup("jobStatus", "任务状态", system.JobStatus_JOB_STATUS_DISABLED.Descriptor()),
+			logicutil.EnumGroup("verificationCodeChannel", "验证码渠道", system.VerificationCodeChannel_VERIFICATION_CODE_CHANNEL_UNKNOWN.Descriptor()),
+			logicutil.EnumGroup("verificationCodeScene", "验证码业务场景", system.VerificationCodeScene_VERIFICATION_CODE_SCENE_UNKNOWN.Descriptor()),
+			logicutil.EnumGroup("verificationCodeStatus", "验证码发送状态", system.VerificationCodeStatus_VERIFICATION_CODE_STATUS_UNKNOWN.Descriptor()),
 		},
 	}, nil
 }

@@ -297,6 +297,9 @@ export default {
     googleQrAlt: 'Google 2FA QR code',
     bind: 'Bind',
     haveAccount: 'Have an account?',
+    sendingVerificationCode: 'Sending',
+    resendVerificationCode: 'Resend',
+    verificationCodeSendFailed: 'Failed to send code',
   },
   options: {
     WALLET_TYPE_SPOT: 'Cash',

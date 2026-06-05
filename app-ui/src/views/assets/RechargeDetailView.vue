@@ -22,7 +22,9 @@ const loading = ref(false)
 const pageError = ref('')
 
 const orderNo = computed(() => String(route.params.orderNo || ''))
-const requestSnapshot = computed<Record<string, unknown>>(() => parseJsonObject(order.value?.requestData))
+const requestSnapshot = computed<Record<string, unknown>>(() =>
+  parseJsonObject(order.value?.requestData),
+)
 const chainCode = computed(() => Number(requestSnapshot.value.chainCode || 0))
 const coinConfig = computed(() => {
   return (
@@ -101,12 +103,7 @@ function parseJsonObject(value?: string) {
 }
 
 function coinIconText() {
-  return (
-    coinConfig.value?.iconText ||
-    coinConfig.value?.symbol ||
-    order.value?.currency ||
-    '?'
-  )
+  return (coinConfig.value?.iconText || coinConfig.value?.symbol || order.value?.currency || '?')
     .slice(0, 3)
     .toUpperCase()
 }
@@ -167,8 +164,12 @@ onMounted(() => {
 
 <template>
   <AssetFlowLayout class="recharge-detail-layout" :title="t('assetFlow.rechargeDetail')" narrow>
-    <p v-if="pageError" class="detail-state detail-state--error">{{ pageError }}</p>
-    <p v-else-if="loading" class="detail-state">{{ t('common.loading') }}</p>
+    <p v-if="pageError" class="detail-state detail-state--error">
+      {{ pageError }}
+    </p>
+    <p v-else-if="loading" class="detail-state">
+      {{ t('common.loading') }}
+    </p>
 
     <section v-else-if="order" class="recharge-detail-card">
       <header class="detail-head">
@@ -176,7 +177,7 @@ onMounted(() => {
           class="detail-coin-icon"
           :style="{ backgroundColor: coinConfig?.iconBgColor || '#16ad77' }"
         >
-          <img v-if="coinConfig?.iconUrl" :src="coinConfig.iconUrl" :alt="order.currency" />
+          <img v-if="coinConfig?.iconUrl" :src="coinConfig.iconUrl" :alt="order.currency">
           <span v-else>{{ coinIconText() }}</span>
         </span>
         <strong>{{ order.currency }}</strong>
@@ -197,7 +198,9 @@ onMounted(() => {
         </div>
         <div>
           <dt>{{ t('assetFlow.rechargeAddress') }}</dt>
-          <dd class="detail-break">{{ rechargeAddress || '-' }}</dd>
+          <dd class="detail-break">
+            {{ rechargeAddress || '-' }}
+          </dd>
         </div>
         <div>
           <dt>{{ t('assetFlow.voucher') }}</dt>
@@ -207,7 +210,7 @@ onMounted(() => {
               class="voucher-image"
               :src="voucherImageUrl"
               :alt="t('assetFlow.voucher')"
-            />
+            >
             <span v-else>-</span>
           </dd>
         </div>

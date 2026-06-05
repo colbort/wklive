@@ -6,10 +6,10 @@ package user_public
 import (
 	"context"
 
+	"wklive/app-api/internal/logicutil"
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
-
-	"wklive/app-api/internal/logicutil"
+	"wklive/proto/user"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,5 +29,14 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 }
 
 func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterResp, err error) {
-	return logicutil.Proxy[types.RegisterResp](l.ctx, req, l.svcCtx.UserCli.Register)
+	return logicutil.Proxy[types.RegisterResp](l.ctx, &user.RegisterReq{
+		RegisterType:    user.RegisterType(req.RegisterType),
+		Username:        req.Username,
+		Phone:           req.Phone,
+		Email:           req.Email,
+		Password:        req.Password,
+		ConfirmPassword: req.ConfirmPassword,
+		InviteCode:      req.InviteCode,
+		Source:          req.Source,
+	}, l.svcCtx.UserCli.Register)
 }

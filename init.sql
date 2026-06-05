@@ -279,7 +279,10 @@ INSERT INTO `sys_role_menu` (`tenant_id`, `role_id`, `menu_id`) VALUES
 (0, 1, 11002),
 (0, 1, 11003),
 (0, 1, 11004),
-(0, 1, 11005);
+(0, 1, 11005),
+(0, 1, 11100),
+(0, 1, 11101),
+(0, 1, 11102);
 
 INSERT INTO sys_role_menu (tenant_id, role_id, menu_id) VALUES
 -- 用户管理
@@ -494,7 +497,10 @@ INSERT INTO sys_role_menu (tenant_id, role_id, menu_id) VALUES
 (0, 2, 10206),
 (0, 2, 10300),
 (0, 2, 10304),
-(0, 2, 11005);
+(0, 2, 11005),
+(0, 2, 11100),
+(0, 2, 11101),
+(0, 2, 11102);
 
 
 
@@ -845,3 +851,10 @@ VALUES
 (11003, 11000, '删除租户', 3, 'DELETE', '/system/tenants/{id}', 'sys:tenant:delete', 11003),
 (11004, 11000, '获取租户详情', 3, 'GET', '/system/tenant/detail', 'sys:tenant:detail', 11004),
 (11005, 10000, '系统服务选项', 3, 'GET', '/system/options', 'sys:options', 11005);
+
+INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, component, icon, sort)
+VALUES (11100, 10000, '验证码记录', 2, 'GET', '/system/verification-codes', 'sys:verification-code:list', 'system/verification-codes', 'Message', 11100);
+INSERT INTO sys_menu (id, parent_id, name, menu_type, method, path, perms, sort)
+VALUES
+(11101, 11100, '验证码详情', 3, 'GET', '/system/verification-codes/records/{id}', 'sys:verification-code:detail', 11101),
+(11102, 11100, '测试发送验证码', 3, 'POST', '/system/verification-codes/test', 'sys:verification-code:test', 11102);

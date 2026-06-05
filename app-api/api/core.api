@@ -38,3 +38,4 @@ service app {
 	@handler GetSystemCore
 	get /system/core returns (GetSystemCoreResp)
 }
+

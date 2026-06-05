@@ -333,7 +333,7 @@ onBeforeUnmount(() => {
       </div>
 
       <div class="qr-card">
-        <img v-if="qrImageUrl" :src="qrImageUrl" :alt="t('assetFlow.qrAlt')" />
+        <img v-if="qrImageUrl" :src="qrImageUrl" :alt="t('assetFlow.qrAlt')">
       </div>
 
       <div class="address-row">
@@ -359,10 +359,12 @@ onBeforeUnmount(() => {
         <h2>{{ t('assetFlow.voucher') }}</h2>
         <button type="button" class="voucher-upload" @click="fileInputRef?.click()">
           <span class="voucher-upload__thumb">
-            <img v-if="voucherPreviewUrl" :src="voucherPreviewUrl" :alt="t('assetFlow.voucher')" />
+            <img v-if="voucherPreviewUrl" :src="voucherPreviewUrl" :alt="t('assetFlow.voucher')">
             <b v-else>+</b>
           </span>
-          <strong>{{ voucherPreviewUrl ? t('assetFlow.changeVoucher') : t('assetFlow.uploadVoucher') }}</strong>
+          <strong>{{
+            voucherPreviewUrl ? t('assetFlow.changeVoucher') : t('assetFlow.uploadVoucher')
+          }}</strong>
         </button>
         <input
           ref="fileInputRef"
@@ -370,13 +372,13 @@ onBeforeUnmount(() => {
           type="file"
           accept="image/*"
           @change="handleVoucherChange"
-        />
+        >
       </section>
 
       <section class="field-block">
         <h2>{{ t('assetFlow.rechargeAmount') }}</h2>
         <label class="amount-input">
-          <input v-model="amount" inputmode="decimal" />
+          <input v-model="amount" inputmode="decimal">
           <span>{{ selectedCoin }}</span>
         </label>
       </section>

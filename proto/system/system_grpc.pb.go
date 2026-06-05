@@ -19,57 +19,61 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	System_AdminLogin_FullMethodName         = "/system.System/AdminLogin"
-	System_GetProfile_FullMethodName         = "/system.System/GetProfile"
-	System_UpdateProfile_FullMethodName      = "/system.System/UpdateProfile"
-	System_Google2FAInit_FullMethodName      = "/system.System/Google2FAInit"
-	System_Google2FABind_FullMethodName      = "/system.System/Google2FABind"
-	System_Google2FAEnable_FullMethodName    = "/system.System/Google2FAEnable"
-	System_Google2FADisable_FullMethodName   = "/system.System/Google2FADisable"
-	System_Google2FAReset_FullMethodName     = "/system.System/Google2FAReset"
-	System_SysUserList_FullMethodName        = "/system.System/SysUserList"
-	System_SysUserDetail_FullMethodName      = "/system.System/SysUserDetail"
-	System_SysUserCreate_FullMethodName      = "/system.System/SysUserCreate"
-	System_SysUserUpdate_FullMethodName      = "/system.System/SysUserUpdate"
-	System_SysUserDelete_FullMethodName      = "/system.System/SysUserDelete"
-	System_ChangeUserStatus_FullMethodName   = "/system.System/ChangeUserStatus"
-	System_ResetUserPwd_FullMethodName       = "/system.System/ResetUserPwd"
-	System_AssignUserRoles_FullMethodName    = "/system.System/AssignUserRoles"
-	System_SysRoleList_FullMethodName        = "/system.System/SysRoleList"
-	System_SysRoleCreate_FullMethodName      = "/system.System/SysRoleCreate"
-	System_SysRoleUpdate_FullMethodName      = "/system.System/SysRoleUpdate"
-	System_SysRoleDelete_FullMethodName      = "/system.System/SysRoleDelete"
-	System_SysRoleGrant_FullMethodName       = "/system.System/SysRoleGrant"
-	System_SysRoleGrantDetail_FullMethodName = "/system.System/SysRoleGrantDetail"
-	System_SysPermList_FullMethodName        = "/system.System/SysPermList"
-	System_GetMenuTree_FullMethodName        = "/system.System/GetMenuTree"
-	System_SysMenuCreate_FullMethodName      = "/system.System/SysMenuCreate"
-	System_SysMenuUpdate_FullMethodName      = "/system.System/SysMenuUpdate"
-	System_SysMenuDelete_FullMethodName      = "/system.System/SysMenuDelete"
-	System_SysMenuList_FullMethodName        = "/system.System/SysMenuList"
-	System_LoginLogList_FullMethodName       = "/system.System/LoginLogList"
-	System_OpLogList_FullMethodName          = "/system.System/OpLogList"
-	System_SysConfigCreate_FullMethodName    = "/system.System/SysConfigCreate"
-	System_SysConfigUpdate_FullMethodName    = "/system.System/SysConfigUpdate"
-	System_SysConfigDelete_FullMethodName    = "/system.System/SysConfigDelete"
-	System_SysConfigList_FullMethodName      = "/system.System/SysConfigList"
-	System_SysConfigDetail_FullMethodName    = "/system.System/SysConfigDetail"
-	System_SysConfigByKeys_FullMethodName    = "/system.System/SysConfigByKeys"
-	System_LoginUserPerms_FullMethodName     = "/system.System/LoginUserPerms"
-	System_SysCronJobList_FullMethodName     = "/system.System/SysCronJobList"
-	System_SysCronJobCreate_FullMethodName   = "/system.System/SysCronJobCreate"
-	System_SysCronJobUpdate_FullMethodName   = "/system.System/SysCronJobUpdate"
-	System_SysCronJobDelete_FullMethodName   = "/system.System/SysCronJobDelete"
-	System_SysCronJobRun_FullMethodName      = "/system.System/SysCronJobRun"
-	System_SysCronJobStart_FullMethodName    = "/system.System/SysCronJobStart"
-	System_SysCronJobStop_FullMethodName     = "/system.System/SysCronJobStop"
-	System_SysCronJobHandlers_FullMethodName = "/system.System/SysCronJobHandlers"
-	System_SysCronJobLogList_FullMethodName  = "/system.System/SysCronJobLogList"
-	System_SysTenantCreate_FullMethodName    = "/system.System/SysTenantCreate"
-	System_SysTenantUpdate_FullMethodName    = "/system.System/SysTenantUpdate"
-	System_SysTenantDelete_FullMethodName    = "/system.System/SysTenantDelete"
-	System_SysTenantList_FullMethodName      = "/system.System/SysTenantList"
-	System_SysTenantDetail_FullMethodName    = "/system.System/SysTenantDetail"
+	System_AdminLogin_FullMethodName                   = "/system.System/AdminLogin"
+	System_GetProfile_FullMethodName                   = "/system.System/GetProfile"
+	System_UpdateProfile_FullMethodName                = "/system.System/UpdateProfile"
+	System_Google2FAInit_FullMethodName                = "/system.System/Google2FAInit"
+	System_Google2FABind_FullMethodName                = "/system.System/Google2FABind"
+	System_Google2FAEnable_FullMethodName              = "/system.System/Google2FAEnable"
+	System_Google2FADisable_FullMethodName             = "/system.System/Google2FADisable"
+	System_Google2FAReset_FullMethodName               = "/system.System/Google2FAReset"
+	System_SysUserList_FullMethodName                  = "/system.System/SysUserList"
+	System_SysUserDetail_FullMethodName                = "/system.System/SysUserDetail"
+	System_SysUserCreate_FullMethodName                = "/system.System/SysUserCreate"
+	System_SysUserUpdate_FullMethodName                = "/system.System/SysUserUpdate"
+	System_SysUserDelete_FullMethodName                = "/system.System/SysUserDelete"
+	System_ChangeUserStatus_FullMethodName             = "/system.System/ChangeUserStatus"
+	System_ResetUserPwd_FullMethodName                 = "/system.System/ResetUserPwd"
+	System_AssignUserRoles_FullMethodName              = "/system.System/AssignUserRoles"
+	System_SysRoleList_FullMethodName                  = "/system.System/SysRoleList"
+	System_SysRoleCreate_FullMethodName                = "/system.System/SysRoleCreate"
+	System_SysRoleUpdate_FullMethodName                = "/system.System/SysRoleUpdate"
+	System_SysRoleDelete_FullMethodName                = "/system.System/SysRoleDelete"
+	System_SysRoleGrant_FullMethodName                 = "/system.System/SysRoleGrant"
+	System_SysRoleGrantDetail_FullMethodName           = "/system.System/SysRoleGrantDetail"
+	System_SysPermList_FullMethodName                  = "/system.System/SysPermList"
+	System_GetMenuTree_FullMethodName                  = "/system.System/GetMenuTree"
+	System_SysMenuCreate_FullMethodName                = "/system.System/SysMenuCreate"
+	System_SysMenuUpdate_FullMethodName                = "/system.System/SysMenuUpdate"
+	System_SysMenuDelete_FullMethodName                = "/system.System/SysMenuDelete"
+	System_SysMenuList_FullMethodName                  = "/system.System/SysMenuList"
+	System_LoginLogList_FullMethodName                 = "/system.System/LoginLogList"
+	System_OpLogList_FullMethodName                    = "/system.System/OpLogList"
+	System_SysConfigCreate_FullMethodName              = "/system.System/SysConfigCreate"
+	System_SysConfigUpdate_FullMethodName              = "/system.System/SysConfigUpdate"
+	System_SysConfigDelete_FullMethodName              = "/system.System/SysConfigDelete"
+	System_SysConfigList_FullMethodName                = "/system.System/SysConfigList"
+	System_SysConfigDetail_FullMethodName              = "/system.System/SysConfigDetail"
+	System_SysConfigByKeys_FullMethodName              = "/system.System/SysConfigByKeys"
+	System_SendVerificationCode_FullMethodName         = "/system.System/SendVerificationCode"
+	System_TestVerificationCode_FullMethodName         = "/system.System/TestVerificationCode"
+	System_VerificationCodeRecordList_FullMethodName   = "/system.System/VerificationCodeRecordList"
+	System_VerificationCodeRecordDetail_FullMethodName = "/system.System/VerificationCodeRecordDetail"
+	System_LoginUserPerms_FullMethodName               = "/system.System/LoginUserPerms"
+	System_SysCronJobList_FullMethodName               = "/system.System/SysCronJobList"
+	System_SysCronJobCreate_FullMethodName             = "/system.System/SysCronJobCreate"
+	System_SysCronJobUpdate_FullMethodName             = "/system.System/SysCronJobUpdate"
+	System_SysCronJobDelete_FullMethodName             = "/system.System/SysCronJobDelete"
+	System_SysCronJobRun_FullMethodName                = "/system.System/SysCronJobRun"
+	System_SysCronJobStart_FullMethodName              = "/system.System/SysCronJobStart"
+	System_SysCronJobStop_FullMethodName               = "/system.System/SysCronJobStop"
+	System_SysCronJobHandlers_FullMethodName           = "/system.System/SysCronJobHandlers"
+	System_SysCronJobLogList_FullMethodName            = "/system.System/SysCronJobLogList"
+	System_SysTenantCreate_FullMethodName              = "/system.System/SysTenantCreate"
+	System_SysTenantUpdate_FullMethodName              = "/system.System/SysTenantUpdate"
+	System_SysTenantDelete_FullMethodName              = "/system.System/SysTenantDelete"
+	System_SysTenantList_FullMethodName                = "/system.System/SysTenantList"
+	System_SysTenantDetail_FullMethodName              = "/system.System/SysTenantDetail"
 )
 
 // SystemClient is the client API for System service.
@@ -152,6 +156,14 @@ type SystemClient interface {
 	SysConfigDetail(ctx context.Context, in *SysConfigDetailReq, opts ...grpc.CallOption) (*SysConfigDetailResp, error)
 	// 获取系统配置根据keys
 	SysConfigByKeys(ctx context.Context, in *SysConfigByKeysReq, opts ...grpc.CallOption) (*SysConfigByKeysResp, error)
+	// 发送验证码
+	SendVerificationCode(ctx context.Context, in *SendVerificationCodeReq, opts ...grpc.CallOption) (*RespBase, error)
+	// 测试发送验证码
+	TestVerificationCode(ctx context.Context, in *TestVerificationCodeReq, opts ...grpc.CallOption) (*RespBase, error)
+	// 验证码发送记录
+	VerificationCodeRecordList(ctx context.Context, in *VerificationCodeRecordListReq, opts ...grpc.CallOption) (*VerificationCodeRecordListResp, error)
+	// 验证码发送记录详情
+	VerificationCodeRecordDetail(ctx context.Context, in *VerificationCodeRecordDetailReq, opts ...grpc.CallOption) (*VerificationCodeRecordDetailResp, error)
 	// 获取登录用户的权限列表
 	LoginUserPerms(ctx context.Context, in *LoginUserPermsReq, opts ...grpc.CallOption) (*LoginUserPermsResp, error)
 	// 系统定时任务列表
@@ -552,6 +564,46 @@ func (c *systemClient) SysConfigByKeys(ctx context.Context, in *SysConfigByKeysR
 	return out, nil
 }
 
+func (c *systemClient) SendVerificationCode(ctx context.Context, in *SendVerificationCodeReq, opts ...grpc.CallOption) (*RespBase, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespBase)
+	err := c.cc.Invoke(ctx, System_SendVerificationCode_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) TestVerificationCode(ctx context.Context, in *TestVerificationCodeReq, opts ...grpc.CallOption) (*RespBase, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespBase)
+	err := c.cc.Invoke(ctx, System_TestVerificationCode_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) VerificationCodeRecordList(ctx context.Context, in *VerificationCodeRecordListReq, opts ...grpc.CallOption) (*VerificationCodeRecordListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(VerificationCodeRecordListResp)
+	err := c.cc.Invoke(ctx, System_VerificationCodeRecordList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *systemClient) VerificationCodeRecordDetail(ctx context.Context, in *VerificationCodeRecordDetailReq, opts ...grpc.CallOption) (*VerificationCodeRecordDetailResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(VerificationCodeRecordDetailResp)
+	err := c.cc.Invoke(ctx, System_VerificationCodeRecordDetail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *systemClient) LoginUserPerms(ctx context.Context, in *LoginUserPermsReq, opts ...grpc.CallOption) (*LoginUserPermsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(LoginUserPermsResp)
@@ -782,6 +834,14 @@ type SystemServer interface {
 	SysConfigDetail(context.Context, *SysConfigDetailReq) (*SysConfigDetailResp, error)
 	// 获取系统配置根据keys
 	SysConfigByKeys(context.Context, *SysConfigByKeysReq) (*SysConfigByKeysResp, error)
+	// 发送验证码
+	SendVerificationCode(context.Context, *SendVerificationCodeReq) (*RespBase, error)
+	// 测试发送验证码
+	TestVerificationCode(context.Context, *TestVerificationCodeReq) (*RespBase, error)
+	// 验证码发送记录
+	VerificationCodeRecordList(context.Context, *VerificationCodeRecordListReq) (*VerificationCodeRecordListResp, error)
+	// 验证码发送记录详情
+	VerificationCodeRecordDetail(context.Context, *VerificationCodeRecordDetailReq) (*VerificationCodeRecordDetailResp, error)
 	// 获取登录用户的权限列表
 	LoginUserPerms(context.Context, *LoginUserPermsReq) (*LoginUserPermsResp, error)
 	// 系统定时任务列表
@@ -929,6 +989,18 @@ func (UnimplementedSystemServer) SysConfigDetail(context.Context, *SysConfigDeta
 }
 func (UnimplementedSystemServer) SysConfigByKeys(context.Context, *SysConfigByKeysReq) (*SysConfigByKeysResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysConfigByKeys not implemented")
+}
+func (UnimplementedSystemServer) SendVerificationCode(context.Context, *SendVerificationCodeReq) (*RespBase, error) {
+	return nil, status.Error(codes.Unimplemented, "method SendVerificationCode not implemented")
+}
+func (UnimplementedSystemServer) TestVerificationCode(context.Context, *TestVerificationCodeReq) (*RespBase, error) {
+	return nil, status.Error(codes.Unimplemented, "method TestVerificationCode not implemented")
+}
+func (UnimplementedSystemServer) VerificationCodeRecordList(context.Context, *VerificationCodeRecordListReq) (*VerificationCodeRecordListResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method VerificationCodeRecordList not implemented")
+}
+func (UnimplementedSystemServer) VerificationCodeRecordDetail(context.Context, *VerificationCodeRecordDetailReq) (*VerificationCodeRecordDetailResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method VerificationCodeRecordDetail not implemented")
 }
 func (UnimplementedSystemServer) LoginUserPerms(context.Context, *LoginUserPermsReq) (*LoginUserPermsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method LoginUserPerms not implemented")
@@ -1644,6 +1716,78 @@ func _System_SysConfigByKeys_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _System_SendVerificationCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendVerificationCodeReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).SendVerificationCode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_SendVerificationCode_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).SendVerificationCode(ctx, req.(*SendVerificationCodeReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_TestVerificationCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TestVerificationCodeReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).TestVerificationCode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_TestVerificationCode_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).TestVerificationCode(ctx, req.(*TestVerificationCodeReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_VerificationCodeRecordList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VerificationCodeRecordListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).VerificationCodeRecordList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_VerificationCodeRecordList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).VerificationCodeRecordList(ctx, req.(*VerificationCodeRecordListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _System_VerificationCodeRecordDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VerificationCodeRecordDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SystemServer).VerificationCodeRecordDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: System_VerificationCodeRecordDetail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SystemServer).VerificationCodeRecordDetail(ctx, req.(*VerificationCodeRecordDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _System_LoginUserPerms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LoginUserPermsReq)
 	if err := dec(in); err != nil {
@@ -2064,6 +2208,22 @@ var System_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SysConfigByKeys",
 			Handler:    _System_SysConfigByKeys_Handler,
+		},
+		{
+			MethodName: "SendVerificationCode",
+			Handler:    _System_SendVerificationCode_Handler,
+		},
+		{
+			MethodName: "TestVerificationCode",
+			Handler:    _System_TestVerificationCode_Handler,
+		},
+		{
+			MethodName: "VerificationCodeRecordList",
+			Handler:    _System_VerificationCodeRecordList_Handler,
+		},
+		{
+			MethodName: "VerificationCodeRecordDetail",
+			Handler:    _System_VerificationCodeRecordDetail_Handler,
 		},
 		{
 			MethodName: "LoginUserPerms",

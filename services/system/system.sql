@@ -240,6 +240,28 @@ CREATE TABLE sys_config (
   UNIQUE KEY uk_config_key(tenant_id, config_key)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系统配置';
 
+-- =============================
+-- 验证码发送记录
+-- =============================
+DROP TABLE IF EXISTS sys_verification_code_record;
+CREATE TABLE sys_verification_code_record (
+  id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  tenant_id BIGINT NOT NULL DEFAULT 0 COMMENT '所属租户ID：0=系统侧，>0=租户ID',
+  channel TINYINT NOT NULL DEFAULT 0 COMMENT '发送渠道：1邮箱 2手机短信',
+  target VARCHAR(128) NOT NULL DEFAULT '' COMMENT '发送目标：邮箱或手机号',
+  scene SMALLINT NOT NULL DEFAULT 0 COMMENT '业务场景：1注册 2登录 3重置密码 4绑定邮箱 5绑定手机 6修改密码 7提现 100测试',
+  code VARCHAR(16) NOT NULL DEFAULT '' COMMENT '验证码',
+  status TINYINT NOT NULL DEFAULT 0 COMMENT '发送状态：1成功 2失败',
+  provider VARCHAR(64) DEFAULT NULL COMMENT '服务商',
+  error_message VARCHAR(512) DEFAULT NULL COMMENT '失败原因',
+  create_times BIGINT NOT NULL DEFAULT 0,
+  update_times BIGINT NOT NULL DEFAULT 0,
+  PRIMARY KEY (id),
+  KEY idx_tenant_channel_target (tenant_id, channel, target),
+  KEY idx_scene_status (scene, status),
+  KEY idx_create_times (create_times)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='验证码发送记录';
+
 
 -- =============================
 -- 定时任务表

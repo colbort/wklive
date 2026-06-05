@@ -9,6 +9,7 @@ import type {
   RefreshTokenResp,
   RegisterReq,
   RegisterResp,
+  SendVerificationCodeReq,
 } from '@/types/auth'
 import {
   collectGuestFingerprint,
@@ -74,4 +75,8 @@ export function apiRefreshToken(params: RefreshTokenReq): Promise<RespBase & Ref
     if (params.tenantCode) setTenantCode(params.tenantCode)
     return data
   })
+}
+
+export function apiSendVerificationCode(params: SendVerificationCodeReq): Promise<RespBase> {
+  return http.post('/user/verification-code/send', params).then((res) => res.data)
 }

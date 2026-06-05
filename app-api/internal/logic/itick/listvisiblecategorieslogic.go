@@ -9,6 +9,8 @@ import (
 	"wklive/app-api/internal/logicutil"
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
+	"wklive/proto/common"
+	"wklive/proto/itick"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,5 +30,10 @@ func NewListVisibleCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *ListVisibleCategoriesLogic) ListVisibleCategories(req *types.ListVisibleCategoriesReq) (resp *types.ListVisibleCategoriesResp, err error) {
-	return logicutil.Proxy[types.ListVisibleCategoriesResp](l.ctx, req, l.svcCtx.ItickCli.ListVisibleCategories)
+	return logicutil.Proxy[types.ListVisibleCategoriesResp](l.ctx, &itick.ListVisibleCategoriesReq{
+		Page: &common.PageReq{
+			Cursor: req.Cursor,
+			Limit:  req.Limit,
+		},
+	}, l.svcCtx.ItickCli.ListVisibleCategories)
 }

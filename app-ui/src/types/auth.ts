@@ -1,5 +1,17 @@
 import type { TokenInfo, UserBank, UserIdentity, UserProfile, UserSecurity } from '@/types/user'
 
+export const VERIFICATION_CODE_CHANNEL_EMAIL = 1
+export const VERIFICATION_CODE_CHANNEL_PHONE = 2
+export const VERIFICATION_CODE_SCENE_UNKNOWN = 0
+export const VERIFICATION_CODE_SCENE_REGISTER = 1
+export const VERIFICATION_CODE_SCENE_LOGIN = 2
+export const VERIFICATION_CODE_SCENE_RESET_PASSWORD = 3
+export const VERIFICATION_CODE_SCENE_BIND_EMAIL = 4
+export const VERIFICATION_CODE_SCENE_BIND_PHONE = 5
+export const VERIFICATION_CODE_SCENE_CHANGE_PASSWORD = 6
+export const VERIFICATION_CODE_SCENE_WITHDRAW = 7
+export const VERIFICATION_CODE_SCENE_TEST = 100
+
 export interface RegisterReq {
   tenantCode: string
   registerType: number
@@ -64,6 +76,13 @@ export interface RefreshTokenReq {
 
 export interface RefreshTokenResp {
   data: TokenInfo
+}
+
+export interface SendVerificationCodeReq {
+  channel: number
+  email?: string
+  phone?: string
+  scene: number
 }
 
 export interface WsTickTopic {

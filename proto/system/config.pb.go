@@ -686,6 +686,198 @@ func (x *WithdrawConfig) GetFreeWithdrawTimesPerDay() int32 {
 	return 0
 }
 
+type EmailConfig struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Enabled         bool                   `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`                                       // 是否启用邮件验证码
+	SmtpHost        string                 `protobuf:"bytes,2,opt,name=smtp_host,json=smtpHost,proto3" json:"smtp_host,omitempty"`                      // SMTP 主机
+	SmtpPort        int32                  `protobuf:"varint,3,opt,name=smtp_port,json=smtpPort,proto3" json:"smtp_port,omitempty"`                     // SMTP 端口
+	Username        string                 `protobuf:"bytes,4,opt,name=username,proto3" json:"username,omitempty"`                                      // SMTP 用户名
+	Password        string                 `protobuf:"bytes,5,opt,name=password,proto3" json:"password,omitempty"`                                      // SMTP 密码
+	FromEmail       string                 `protobuf:"bytes,6,opt,name=from_email,json=fromEmail,proto3" json:"from_email,omitempty"`                   // 发件邮箱
+	FromName        string                 `protobuf:"bytes,7,opt,name=from_name,json=fromName,proto3" json:"from_name,omitempty"`                      // 发件名称
+	SubjectTemplate string                 `protobuf:"bytes,8,opt,name=subject_template,json=subjectTemplate,proto3" json:"subject_template,omitempty"` // 标题模板，支持 {{code}} {{scene}}
+	BodyTemplate    string                 `protobuf:"bytes,9,opt,name=body_template,json=bodyTemplate,proto3" json:"body_template,omitempty"`          // 内容模板，支持 {{code}} {{scene}}
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *EmailConfig) Reset() {
+	*x = EmailConfig{}
+	mi := &file_proto_system_config_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EmailConfig) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EmailConfig) ProtoMessage() {}
+
+func (x *EmailConfig) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_system_config_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EmailConfig.ProtoReflect.Descriptor instead.
+func (*EmailConfig) Descriptor() ([]byte, []int) {
+	return file_proto_system_config_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *EmailConfig) GetEnabled() bool {
+	if x != nil {
+		return x.Enabled
+	}
+	return false
+}
+
+func (x *EmailConfig) GetSmtpHost() string {
+	if x != nil {
+		return x.SmtpHost
+	}
+	return ""
+}
+
+func (x *EmailConfig) GetSmtpPort() int32 {
+	if x != nil {
+		return x.SmtpPort
+	}
+	return 0
+}
+
+func (x *EmailConfig) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
+}
+
+func (x *EmailConfig) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
+func (x *EmailConfig) GetFromEmail() string {
+	if x != nil {
+		return x.FromEmail
+	}
+	return ""
+}
+
+func (x *EmailConfig) GetFromName() string {
+	if x != nil {
+		return x.FromName
+	}
+	return ""
+}
+
+func (x *EmailConfig) GetSubjectTemplate() string {
+	if x != nil {
+		return x.SubjectTemplate
+	}
+	return ""
+}
+
+func (x *EmailConfig) GetBodyTemplate() string {
+	if x != nil {
+		return x.BodyTemplate
+	}
+	return ""
+}
+
+type PhoneConfig struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Enabled       bool                   `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`                              // 是否启用短信验证码
+	Provider      string                 `protobuf:"bytes,2,opt,name=provider,proto3" json:"provider,omitempty"`                             // 短信服务商标识
+	Endpoint      string                 `protobuf:"bytes,3,opt,name=endpoint,proto3" json:"endpoint,omitempty"`                             // HTTP 网关地址
+	Method        string                 `protobuf:"bytes,4,opt,name=method,proto3" json:"method,omitempty"`                                 // HTTP 方法，默认 POST
+	HeadersJson   string                 `protobuf:"bytes,5,opt,name=headers_json,json=headersJson,proto3" json:"headers_json,omitempty"`    // HTTP headers JSON，例如 {"Authorization":"Bearer xxx"}
+	BodyTemplate  string                 `protobuf:"bytes,6,opt,name=body_template,json=bodyTemplate,proto3" json:"body_template,omitempty"` // 请求体模板，支持 {{phone}} {{code}} {{scene}}
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PhoneConfig) Reset() {
+	*x = PhoneConfig{}
+	mi := &file_proto_system_config_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PhoneConfig) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PhoneConfig) ProtoMessage() {}
+
+func (x *PhoneConfig) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_system_config_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PhoneConfig.ProtoReflect.Descriptor instead.
+func (*PhoneConfig) Descriptor() ([]byte, []int) {
+	return file_proto_system_config_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *PhoneConfig) GetEnabled() bool {
+	if x != nil {
+		return x.Enabled
+	}
+	return false
+}
+
+func (x *PhoneConfig) GetProvider() string {
+	if x != nil {
+		return x.Provider
+	}
+	return ""
+}
+
+func (x *PhoneConfig) GetEndpoint() string {
+	if x != nil {
+		return x.Endpoint
+	}
+	return ""
+}
+
+func (x *PhoneConfig) GetMethod() string {
+	if x != nil {
+		return x.Method
+	}
+	return ""
+}
+
+func (x *PhoneConfig) GetHeadersJson() string {
+	if x != nil {
+		return x.HeadersJson
+	}
+	return ""
+}
+
+func (x *PhoneConfig) GetBodyTemplate() string {
+	if x != nil {
+		return x.BodyTemplate
+	}
+	return ""
+}
+
 var File_proto_system_config_proto protoreflect.FileDescriptor
 
 const file_proto_system_config_proto_rawDesc = "" +
@@ -756,7 +948,25 @@ const file_proto_system_config_proto_rawDesc = "" +
 	"\x1bdaily_amount_limit_per_user\x18\x05 \x01(\x03R\x17dailyAmountLimitPerUser\x12,\n" +
 	"\x12allowed_time_range\x18\x06 \x01(\tR\x10allowedTimeRange\x12H\n" +
 	"!pending_withdrawal_limit_per_user\x18\a \x01(\x05R\x1dpendingWithdrawalLimitPerUser\x12<\n" +
-	"\x1bfree_withdraw_times_per_day\x18\b \x01(\x05R\x17freeWithdrawTimesPerDayB\x1cZ\x1awklive/proto/system;systemb\x06proto3"
+	"\x1bfree_withdraw_times_per_day\x18\b \x01(\x05R\x17freeWithdrawTimesPerDay\"\xa5\x02\n" +
+	"\vEmailConfig\x12\x18\n" +
+	"\aenabled\x18\x01 \x01(\bR\aenabled\x12\x1b\n" +
+	"\tsmtp_host\x18\x02 \x01(\tR\bsmtpHost\x12\x1b\n" +
+	"\tsmtp_port\x18\x03 \x01(\x05R\bsmtpPort\x12\x1a\n" +
+	"\busername\x18\x04 \x01(\tR\busername\x12\x1a\n" +
+	"\bpassword\x18\x05 \x01(\tR\bpassword\x12\x1d\n" +
+	"\n" +
+	"from_email\x18\x06 \x01(\tR\tfromEmail\x12\x1b\n" +
+	"\tfrom_name\x18\a \x01(\tR\bfromName\x12)\n" +
+	"\x10subject_template\x18\b \x01(\tR\x0fsubjectTemplate\x12#\n" +
+	"\rbody_template\x18\t \x01(\tR\fbodyTemplate\"\xbf\x01\n" +
+	"\vPhoneConfig\x12\x18\n" +
+	"\aenabled\x18\x01 \x01(\bR\aenabled\x12\x1a\n" +
+	"\bprovider\x18\x02 \x01(\tR\bprovider\x12\x1a\n" +
+	"\bendpoint\x18\x03 \x01(\tR\bendpoint\x12\x16\n" +
+	"\x06method\x18\x04 \x01(\tR\x06method\x12!\n" +
+	"\fheaders_json\x18\x05 \x01(\tR\vheadersJson\x12#\n" +
+	"\rbody_template\x18\x06 \x01(\tR\fbodyTemplateB\x1cZ\x1awklive/proto/system;systemb\x06proto3"
 
 var (
 	file_proto_system_config_proto_rawDescOnce sync.Once
@@ -770,7 +980,7 @@ func file_proto_system_config_proto_rawDescGZIP() []byte {
 	return file_proto_system_config_proto_rawDescData
 }
 
-var file_proto_system_config_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_proto_system_config_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_proto_system_config_proto_goTypes = []any{
 	(*Interval)(nil),            // 0: system.Interval
 	(*SystemCore)(nil),          // 1: system.SystemCore
@@ -781,6 +991,8 @@ var file_proto_system_config_proto_goTypes = []any{
 	(*ItickConfig)(nil),         // 6: system.ItickConfig
 	(*RechargeConfig)(nil),      // 7: system.RechargeConfig
 	(*WithdrawConfig)(nil),      // 8: system.WithdrawConfig
+	(*EmailConfig)(nil),         // 9: system.EmailConfig
+	(*PhoneConfig)(nil),         // 10: system.PhoneConfig
 }
 var file_proto_system_config_proto_depIdxs = []int32{
 	2, // 0: system.ObjectStorageConfig.aliyun_oss:type_name -> system.AliyunOssConfig
@@ -804,7 +1016,7 @@ func file_proto_system_config_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_system_config_proto_rawDesc), len(file_proto_system_config_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

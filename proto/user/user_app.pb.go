@@ -68,7 +68,6 @@ func (x *AppCommonResp) GetBase() *common.RespBase {
 
 type RegisterReq struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	TenantCode      string                 `protobuf:"bytes,1,opt,name=tenant_code,json=tenantCode,proto3" json:"tenant_code,omitempty"`
 	RegisterType    RegisterType           `protobuf:"varint,2,opt,name=register_type,json=registerType,proto3,enum=user.RegisterType" json:"register_type,omitempty"`
 	Username        string                 `protobuf:"bytes,3,opt,name=username,proto3" json:"username,omitempty"`
 	Phone           string                 `protobuf:"bytes,4,opt,name=phone,proto3" json:"phone,omitempty"`
@@ -109,13 +108,6 @@ func (x *RegisterReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use RegisterReq.ProtoReflect.Descriptor instead.
 func (*RegisterReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_app_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *RegisterReq) GetTenantCode() string {
-	if x != nil {
-		return x.TenantCode
-	}
-	return ""
 }
 
 func (x *RegisterReq) GetRegisterType() RegisterType {
@@ -288,7 +280,6 @@ func (x *RegisterData) GetProfile() *UserProfile {
 
 type LoginReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantCode    string                 `protobuf:"bytes,1,opt,name=tenant_code,json=tenantCode,proto3" json:"tenant_code,omitempty"`
 	LoginType     LoginType              `protobuf:"varint,2,opt,name=login_type,json=loginType,proto3,enum=user.LoginType" json:"login_type,omitempty"`
 	Account       string                 `protobuf:"bytes,3,opt,name=account,proto3" json:"account,omitempty"`
 	Password      string                 `protobuf:"bytes,4,opt,name=password,proto3" json:"password,omitempty"`
@@ -325,13 +316,6 @@ func (x *LoginReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use LoginReq.ProtoReflect.Descriptor instead.
 func (*LoginReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_app_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *LoginReq) GetTenantCode() string {
-	if x != nil {
-		return x.TenantCode
-	}
-	return ""
 }
 
 func (x *LoginReq) GetLoginType() LoginType {
@@ -478,7 +462,6 @@ type GuestLoginReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DeviceId      string                 `protobuf:"bytes,1,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
 	Fingerprint   string                 `protobuf:"bytes,2,opt,name=fingerprint,proto3" json:"fingerprint,omitempty"`
-	TenantCode    string                 `protobuf:"bytes,3,opt,name=tenant_code,json=tenantCode,proto3" json:"tenant_code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -523,13 +506,6 @@ func (x *GuestLoginReq) GetDeviceId() string {
 func (x *GuestLoginReq) GetFingerprint() string {
 	if x != nil {
 		return x.Fingerprint
-	}
-	return ""
-}
-
-func (x *GuestLoginReq) GetTenantCode() string {
-	if x != nil {
-		return x.TenantCode
 	}
 	return ""
 }
@@ -692,7 +668,6 @@ func (*LogoutReq) Descriptor() ([]byte, []int) {
 
 type RefreshTokenReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantCode    string                 `protobuf:"bytes,1,opt,name=tenant_code,json=tenantCode,proto3" json:"tenant_code,omitempty"`
 	RefreshToken  string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -726,13 +701,6 @@ func (x *RefreshTokenReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use RefreshTokenReq.ProtoReflect.Descriptor instead.
 func (*RefreshTokenReq) Descriptor() ([]byte, []int) {
 	return file_proto_user_user_app_proto_rawDescGZIP(), []int{11}
-}
-
-func (x *RefreshTokenReq) GetTenantCode() string {
-	if x != nil {
-		return x.TenantCode
-	}
-	return ""
 }
 
 func (x *RefreshTokenReq) GetRefreshToken() string {
@@ -2480,10 +2448,8 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\n" +
 	"\x19proto/user/user_app.proto\x12\x04user\x1a\x19proto/common/common.proto\x1a\x15proto/user/enum.proto\x1a\x16proto/user/model.proto\"5\n" +
 	"\rAppCommonResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\xaf\x02\n" +
-	"\vRegisterReq\x12\x1f\n" +
-	"\vtenant_code\x18\x01 \x01(\tR\n" +
-	"tenantCode\x127\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\x8e\x02\n" +
+	"\vRegisterReq\x127\n" +
 	"\rregister_type\x18\x02 \x01(\x0e2\x12.user.RegisterTypeR\fregisterType\x12\x1a\n" +
 	"\busername\x18\x03 \x01(\tR\busername\x12\x14\n" +
 	"\x05phone\x18\x04 \x01(\tR\x05phone\x12\x14\n" +
@@ -2499,10 +2465,8 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\fRegisterData\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12'\n" +
 	"\x05token\x18\x02 \x01(\v2\x11.common.TokenInfoR\x05token\x12+\n" +
-	"\aprofile\x18\x03 \x01(\v2\x11.user.UserProfileR\aprofile\"\xb2\x01\n" +
-	"\bLoginReq\x12\x1f\n" +
-	"\vtenant_code\x18\x01 \x01(\tR\n" +
-	"tenantCode\x12.\n" +
+	"\aprofile\x18\x03 \x01(\v2\x11.user.UserProfileR\aprofile\"\x91\x01\n" +
+	"\bLoginReq\x12.\n" +
 	"\n" +
 	"login_type\x18\x02 \x01(\x0e2\x0f.user.LoginTypeR\tloginType\x12\x18\n" +
 	"\aaccount\x18\x03 \x01(\tR\aaccount\x12\x1a\n" +
@@ -2515,12 +2479,10 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\tLoginData\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12'\n" +
 	"\x05token\x18\x02 \x01(\v2\x11.common.TokenInfoR\x05token\x12+\n" +
-	"\aprofile\x18\x03 \x01(\v2\x11.user.UserProfileR\aprofile\"o\n" +
+	"\aprofile\x18\x03 \x01(\v2\x11.user.UserProfileR\aprofile\"N\n" +
 	"\rGuestLoginReq\x12\x1b\n" +
 	"\tdevice_id\x18\x01 \x01(\tR\bdeviceId\x12 \n" +
-	"\vfingerprint\x18\x02 \x01(\tR\vfingerprint\x12\x1f\n" +
-	"\vtenant_code\x18\x03 \x01(\tR\n" +
-	"tenantCode\"n\n" +
+	"\vfingerprint\x18\x02 \x01(\tR\vfingerprint\"n\n" +
 	"\n" +
 	"GuestLogin\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\x12\x17\n" +
@@ -2530,10 +2492,8 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\x0eGuestLoginResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12$\n" +
 	"\x04data\x18\x02 \x01(\v2\x10.user.GuestLoginR\x04data\"\v\n" +
-	"\tLogoutReq\"W\n" +
-	"\x0fRefreshTokenReq\x12\x1f\n" +
-	"\vtenant_code\x18\x01 \x01(\tR\n" +
-	"tenantCode\x12#\n" +
+	"\tLogoutReq\"6\n" +
+	"\x0fRefreshTokenReq\x12#\n" +
 	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"_\n" +
 	"\x10RefreshTokenResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12%\n" +

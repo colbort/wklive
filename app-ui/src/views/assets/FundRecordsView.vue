@@ -3,7 +3,11 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { apiGetAssetOptions, apiListAssetCoinConfigs } from '@/api/asset'
-import { apiGetPaymentOptions, apiListMyRechargeOrders, apiListMyWithdrawOrders } from '@/api/payment'
+import {
+  apiGetPaymentOptions,
+  apiListMyRechargeOrders,
+  apiListMyWithdrawOrders,
+} from '@/api/payment'
 import AssetFlowLayout from '@/components/assets/AssetFlowLayout.vue'
 import { useOptions } from '@/composables/useOptions'
 import { useI18n } from '@/i18n'
@@ -236,8 +240,12 @@ onMounted(() => {
       </button>
     </div>
 
-    <p v-if="pageError" class="records-state records-state--error">{{ pageError }}</p>
-    <p v-else-if="loading" class="records-state">{{ t('common.loading') }}</p>
+    <p v-if="pageError" class="records-state records-state--error">
+      {{ pageError }}
+    </p>
+    <p v-else-if="loading" class="records-state">
+      {{ t('common.loading') }}
+    </p>
 
     <section v-else-if="visibleRecords.length" class="record-list">
       <article
@@ -252,21 +260,24 @@ onMounted(() => {
             v-if="configForCoin(record.currency)?.iconUrl"
             :src="configForCoin(record.currency)?.iconUrl"
             :alt="record.currency"
-          />
+          >
           <span v-else>{{ coinIconText(record.currency) }}</span>
         </span>
         <div class="record-main">
           <div class="record-title-group">
             <strong>{{ record.currency }}</strong>
             <span>
-              {{ record.title }}{{ t('assetFlow.accountSeparator') }}<b>{{ record.accountLabel }}</b>
+              {{ record.title }}{{ t('assetFlow.accountSeparator')
+              }}<b>{{ record.accountLabel }}</b>
             </span>
           </div>
           <span class="record-time">{{ formatRecordTime(record.time) }}</span>
         </div>
         <aside class="record-side">
           <b>{{ formatRecordAmount(record.amount, record.currency) }}</b>
-          <span class="record-status" :class="statusClass(record.statusValue)">{{ record.status }}</span>
+          <span class="record-status" :class="statusClass(record.statusValue)">{{
+            record.status
+          }}</span>
         </aside>
       </article>
     </section>
@@ -332,7 +343,7 @@ button {
   height: 4px;
   border-radius: 999px;
   background: #00c70a;
-  content: "";
+  content: '';
   transform: translateX(-50%);
 }
 
@@ -545,7 +556,7 @@ button {
   height: 20px;
   border-radius: 0 0 18px 18px;
   background: linear-gradient(90deg, #252734, #181a24);
-  content: "";
+  content: '';
 }
 
 .empty-records__paper i {
@@ -580,7 +591,7 @@ button {
   height: 9px;
   border-radius: 999px;
   background: #00b908;
-  content: "";
+  content: '';
   transform: rotate(45deg);
   transform-origin: left center;
 }

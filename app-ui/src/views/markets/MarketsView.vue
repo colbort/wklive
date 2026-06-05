@@ -112,7 +112,9 @@ function bindMobileScrollContainer() {
   mobileScrollContainer =
     (marketsPageRef.value?.closest('.page-content') as HTMLElement | null) ||
     document.querySelector<HTMLElement>('.page-content')
-  mobileScrollContainer?.addEventListener('scroll', requestMobileTabsCollapseUpdate, { passive: true })
+  mobileScrollContainer?.addEventListener('scroll', requestMobileTabsCollapseUpdate, {
+    passive: true,
+  })
   window.addEventListener('scroll', requestMobileTabsCollapseUpdate, { passive: true })
   window.addEventListener('resize', requestMobileTabsCollapseUpdate, { passive: true })
   updateMobileTabsCollapse()
@@ -195,8 +197,12 @@ watch([isDesktop, activeTopTab], () => {
       </div>
 
       <div v-else-if="activeTopTab === 'watchlist'" class="markets-page__watchlist">
-        <div v-if="isLoggedIn" class="watchlist-empty">{{ t('market.watchlistPreparing') }}</div>
-        <div v-else class="watchlist-empty">{{ t('market.watchlistLogin') }}</div>
+        <div v-if="isLoggedIn" class="watchlist-empty">
+          {{ t('market.watchlistPreparing') }}
+        </div>
+        <div v-else class="watchlist-empty">
+          {{ t('market.watchlistLogin') }}
+        </div>
       </div>
 
       <div v-else class="markets-page__mobile markets-page__mobile--chart">

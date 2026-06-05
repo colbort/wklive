@@ -3712,6 +3712,14 @@ type TenantScope struct {
 	TenantCode string `form:"tenantCode,optional"`
 }
 
+type TestVerificationCodeReq struct {
+	TenantId int64  `json:"tenantId,optional"`
+	Channel  int64  `json:"channel" validate:"required"` // 1邮箱 2手机短信
+	Email    string `json:"email,optional"`
+	Phone    string `json:"phone,optional"`
+	Scene    int64  `json:"scene,optional"` // 业务场景
+}
+
 type TimeRange struct {
 	StartTime int64 `form:"startTime,optional"`
 	EndTime   int64 `form:"endTime,optional"`
@@ -4394,6 +4402,43 @@ type UserSecurity struct {
 	RiskLevel       int64  `json:"riskLevel"`       // 风控等级：0正常 1关注 2高风险
 	CreateTimes     int64  `json:"createTimes"`     // 创建时间
 	UpdateTimes     int64  `json:"updateTimes"`     // 更新时间
+}
+
+type VerificationCodeRecordDetailReq struct {
+	Id int64 `path:"id" validate:"required"`
+}
+
+type VerificationCodeRecordDetailResp struct {
+	RespBase
+	Data VerificationCodeRecordItem `json:"data"`
+}
+
+type VerificationCodeRecordItem struct {
+	Id           int64  `json:"id"`
+	TenantId     int64  `json:"tenantId"`
+	Channel      int64  `json:"channel"`
+	Target       string `json:"target"`
+	Scene        int64  `json:"scene"`
+	Code         string `json:"code"`
+	Status       int64  `json:"status"` // 1成功 2失败
+	Provider     string `json:"provider,optional"`
+	ErrorMessage string `json:"errorMessage,optional"`
+	CreateTimes  int64  `json:"createTimes"`
+	UpdateTimes  int64  `json:"updateTimes"`
+}
+
+type VerificationCodeRecordListReq struct {
+	PageReq
+	TenantId int64  `form:"tenantId,optional"`
+	Channel  int64  `form:"channel,optional"` // 1邮箱 2手机短信
+	Target   string `form:"target,optional"`
+	Scene    int64  `form:"scene,optional"`  // 业务场景
+	Status   int64  `form:"status,optional"` // 1成功 2失败
+}
+
+type VerificationCodeRecordListResp struct {
+	RespBase
+	Data []VerificationCodeRecordItem `json:"data"`
 }
 
 type WithdrawOrder struct {

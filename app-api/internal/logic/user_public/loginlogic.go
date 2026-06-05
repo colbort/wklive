@@ -30,7 +30,6 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 
 func (l *LoginLogic) Login(req *types.LoginReq) (*types.LoginResp, error) {
 	result, err := l.svcCtx.UserCli.Login(l.ctx, &user.LoginReq{
-		TenantCode: req.TenantCode,
 		LoginType:  user.LoginType(req.LoginType),
 		Account:    req.Account,
 		Password:   req.Password,

@@ -885,7 +885,6 @@ type GuestLogin struct {
 type GuestLoginReq struct {
 	DeviceId    string `json:"deviceId"`
 	Fingerprint string `json:"fingerprint"`
-	TenantCode  string `json:"tenantCode"`
 }
 
 type GuestLoginResp struct {
@@ -1132,7 +1131,6 @@ type ListMyWithdrawOrdersResp struct {
 
 type ListVisibleCategoriesReq struct {
 	PageReq
-	TenantCode string `form:"tenantCode"`
 }
 
 type ListVisibleCategoriesResp struct {
@@ -1146,7 +1144,6 @@ type ListVisibleProductsReq struct {
 	CategoryCode string `form:"categoryCode,optional"`
 	Market       string `form:"market,optional"`
 	Keyword      string `json:"keyword,optional"`
-	TenantCode   string `form:"tenantCode"`
 }
 
 type ListVisibleProductsResp struct {
@@ -1161,7 +1158,6 @@ type LoginData struct {
 }
 
 type LoginReq struct {
-	TenantCode string `json:"tenantCode"`
 	LoginType  int64  `json:"loginType"`
 	Account    string `json:"account"`
 	Password   string `json:"password"`
@@ -1508,7 +1504,6 @@ type RechargeOrder struct {
 }
 
 type RefreshTokenReq struct {
-	TenantCode   string `json:"tenantCode,optional"`
 	RefreshToken string `json:"refreshToken"`
 }
 
@@ -1524,7 +1519,6 @@ type RegisterData struct {
 }
 
 type RegisterReq struct {
-	TenantCode      string `json:"tenantCode"`
 	RegisterType    int64  `json:"registerType"`
 	Username        string `json:"username,optional"`
 	Phone           string `json:"phone,optional"`
@@ -1548,6 +1542,13 @@ type RespBase struct {
 	HasPrev    bool   `json:"hasPrev,optional"`
 	NextCursor int64  `json:"nextCursor,optional"`
 	PrevCursor int64  `json:"prevCursor,optional"`
+}
+
+type SendVerificationCodeReq struct {
+	Channel int64  `json:"channel" validate:"required"` // 1邮箱 2手机短信
+	Email   string `json:"email,optional"`
+	Phone   string `json:"phone,optional"`
+	Scene   int64  `json:"scene" validate:"required"` // 业务场景
 }
 
 type SetDefaultBankReq struct {

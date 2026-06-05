@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import QRCode from 'qrcode'
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, nextTick, onUnmounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { getTenantCode } from '@/api/http'
@@ -10,12 +10,17 @@ import {
   apiSetPayPassword,
   apiSubmitIdentity,
 } from '@/api/userPrivate'
-import { apiRegister } from '@/api/userPublic'
+import { apiRegister, apiSendVerificationCode } from '@/api/userPublic'
 import RotateCaptcha from '@/components/auth/RotateCaptcha.vue'
 import AppIcon from '@/components/common/AppIcon.vue'
 import CountryDialCodePicker from '@/components/common/CountryDialCodePicker.vue'
 import { countryDialCodes, type CountryDialCode } from '@/constants/countryDialCodes'
 import { useI18n } from '@/i18n'
+import {
+  VERIFICATION_CODE_CHANNEL_EMAIL,
+  VERIFICATION_CODE_CHANNEL_PHONE,
+  VERIFICATION_CODE_SCENE_REGISTER,
+} from '@/types/auth'
 
 const REGISTER_TYPE_PHONE = 2
 const REGISTER_TYPE_EMAIL = 3
@@ -49,8 +54,13 @@ const showConfirmPassword = ref(false)
 const showPayPassword = ref(false)
 const showCaptcha = ref(true)
 const captchaPassed = ref(false)
-const selectedCountry = ref<CountryDialCode>(countryDialCodes.find((item) => item.dialCode === '+1') || countryDialCodes[0])
+const selectedCountry = ref<CountryDialCode>(
+  countryDialCodes.find((item) => item.dialCode === '+1') || countryDialCodes[0],
+)
+const emailCodeCountdown = ref(0)
+let emailCodeTimer: number | undefined
 const submitting = ref(false)
+const sendingCode = ref(false)
 const errorMessage = ref('')
 
 const steps = [
@@ -79,9 +89,16 @@ const codeValue = computed(() => emailCode.value.join(''))
 const googleCodeValue = computed(() => googleCode.value.join(''))
 
 watch(step, (value) => {
+  if (value === 3) {
+    sendVerificationCode()
+  }
   if (value === 5) {
     loadGoogle2FA()
   }
+})
+
+onUnmounted(() => {
+  stopEmailCodeCountdown()
 })
 
 function goBack() {
@@ -187,6 +204,65 @@ function handleCodePaste(kind: CodeInputKind, index: number, event: ClipboardEve
   applyCodeDigits(kind, index, event.clipboardData?.getData('text') || '')
 }
 
+function stopEmailCodeCountdown() {
+  if (!emailCodeTimer) return
+  window.clearInterval(emailCodeTimer)
+  emailCodeTimer = undefined
+}
+
+function startEmailCodeCountdown(seconds = 115) {
+  stopEmailCodeCountdown()
+  emailCodeCountdown.value = seconds
+  emailCodeTimer = window.setInterval(() => {
+    emailCodeCountdown.value -= 1
+    if (emailCodeCountdown.value <= 0) {
+      emailCodeCountdown.value = 0
+      stopEmailCodeCountdown()
+    }
+  }, 1000)
+}
+
+function normalizedAccount() {
+  const value = account.value.trim()
+  if (accountMode.value === 'email') return value
+  return `${selectedCountry.value.dialCode}${value.replace(/^\+/, '')}`
+}
+
+async function sendVerificationCode() {
+  if (emailCodeCountdown.value > 0 || sendingCode.value) return
+  const target = normalizedAccount()
+  if (!target) {
+    errorMessage.value =
+      accountMode.value === 'email' ? t('security.inputEmail') : t('security.inputPhone')
+    return
+  }
+
+  sendingCode.value = true
+  errorMessage.value = ''
+  emailCode.value = Array(6).fill('')
+  try {
+    const res = await apiSendVerificationCode({
+      channel:
+        accountMode.value === 'email'
+          ? VERIFICATION_CODE_CHANNEL_EMAIL
+          : VERIFICATION_CODE_CHANNEL_PHONE,
+      email: accountMode.value === 'email' ? target : undefined,
+      phone: accountMode.value === 'phone' ? target : undefined,
+      scene: VERIFICATION_CODE_SCENE_REGISTER,
+    })
+    if (res.code !== 200) {
+      errorMessage.value = res.msg || t('auth.verificationCodeSendFailed')
+      return
+    }
+    startEmailCodeCountdown()
+  } catch (error) {
+    console.warn('send verification code failed', error)
+    errorMessage.value = t('auth.verificationCodeSendFailed')
+  } finally {
+    sendingCode.value = false
+  }
+}
+
 async function continueStep() {
   errorMessage.value = ''
   if (step.value === 1) {
@@ -242,10 +318,8 @@ async function submitRegister() {
       password: password.value,
       confirmPassword: confirmPassword.value,
       inviteCode: inviteCode.value.trim() || undefined,
-      email: accountMode.value === 'email' ? account.value.trim() : undefined,
-      phone: accountMode.value === 'phone'
-        ? `${selectedCountry.value.dialCode}${account.value.trim().replace(/^\+/, '')}`
-        : undefined,
+      email: accountMode.value === 'email' ? normalizedAccount() : undefined,
+      phone: accountMode.value === 'phone' ? normalizedAccount() : undefined,
     }
     const res = await apiRegister(payload)
     if (res.code !== 200) {
@@ -373,7 +447,12 @@ function markUpload(type: IdentityFileKey) {
 <template>
   <section class="register-page" :class="{ 'register-page--captcha': showCaptcha }">
     <header class="register-topbar">
-      <button type="button" class="icon-button" :aria-label="t('common.back')" @click="goBack">
+      <button
+        type="button"
+        class="icon-button"
+        :aria-label="t('common.back')"
+        @click="goBack"
+      >
         <AppIcon name="back" class="back-icon-svg" />
       </button>
       <button
@@ -385,7 +464,12 @@ function markUpload(type: IdentityFileKey) {
       >
         <AppIcon name="globe" class="top-icon-svg" />
       </button>
-      <button v-else-if="step > 1" type="button" class="skip-button" @click="skipStep">
+      <button
+        v-else-if="step > 1"
+        type="button"
+        class="skip-button"
+        @click="skipStep"
+      >
         {{ t('common.skip') }}
       </button>
     </header>
@@ -400,7 +484,26 @@ function markUpload(type: IdentityFileKey) {
           class="step-item"
           :class="{ done: item.index < step, active: item.index === step }"
         >
-          <span>{{ item.index < step ? '✓' : item.index }}</span>
+          <span>
+            <svg
+              v-if="item.index < step"
+              class="step-status-svg step-status-svg--done"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <polyline points="6 12.5 10.2 16.5 18 7.5" />
+            </svg>
+            <svg
+              v-else-if="item.index === step"
+              class="step-status-svg step-status-svg--active"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="10.8" />
+              <circle cx="12" cy="12" r="1.8" />
+            </svg>
+            <template v-else>{{ item.index }}</template>
+          </span>
           <em>{{ t(item.labelKey) }}</em>
         </div>
       </nav>
@@ -426,7 +529,17 @@ function markUpload(type: IdentityFileKey) {
 
         <label class="auth-field">
           <CountryDialCodePicker v-if="accountMode === 'phone'" v-model="selectedCountry" />
-          <input v-model="account" :placeholder="accountPlaceholder" autocomplete="username" />
+          <input v-model="account" :placeholder="accountPlaceholder" autocomplete="username">
+          <button
+            type="button"
+            class="field-action"
+            :class="{ 'field-action--hidden': !account }"
+            :aria-label="t('common.clear')"
+            :tabindex="account ? 0 : -1"
+            @click="account = ''"
+          >
+            <AppIcon name="close-circle" class="field-action-svg" />
+          </button>
         </label>
         <label class="auth-field">
           <input
@@ -434,7 +547,7 @@ function markUpload(type: IdentityFileKey) {
             :type="showPassword ? 'text' : 'password'"
             :placeholder="t('auth.passwordMin8')"
             autocomplete="new-password"
-          />
+          >
           <button type="button" class="field-action" @click="showPassword = !showPassword">
             <AppIcon :name="showPassword ? 'eye' : 'eye-off'" class="field-action-svg" />
           </button>
@@ -448,7 +561,7 @@ function markUpload(type: IdentityFileKey) {
             :type="showConfirmPassword ? 'text' : 'password'"
             :placeholder="t('security.confirmNewPassword')"
             autocomplete="new-password"
-          />
+          >
           <button
             type="button"
             class="field-action"
@@ -458,19 +571,16 @@ function markUpload(type: IdentityFileKey) {
           </button>
         </label>
         <label class="auth-field">
-          <input v-model="inviteCode" :placeholder="t('auth.inviteCode')" />
+          <input v-model="inviteCode" :placeholder="t('auth.inviteCode')">
         </label>
         <label class="agree-control">
-          <input v-model="agreed" type="checkbox" />
+          <input v-model="agreed" type="checkbox">
           <span>
             <svg viewBox="0 0 16 16" aria-hidden="true">
               <path d="M3.25 8.1 6.45 11.2 12.8 4.8" />
             </svg>
           </span>
-          <em
-            >{{ t('auth.agreeTerms') }}<b>{{ t('auth.privacyPolicy') }}</b
-            >{{ t('common.and') }}<b>{{ t('auth.userTerms') }}</b></em
-          >
+          <em>{{ t('auth.agreeTerms') }}<b>{{ t('auth.privacyPolicy') }}</b>{{ t('common.and') }}<b>{{ t('auth.userTerms') }}</b></em>
         </label>
       </section>
 
@@ -481,9 +591,9 @@ function markUpload(type: IdentityFileKey) {
             v-model="payPassword"
             :type="showPayPassword ? 'text' : 'password'"
             :placeholder="t('auth.payPassword')"
-          />
+          >
           <button type="button" class="field-action" @click="showPayPassword = !showPayPassword">
-            <span class="eye-off-icon" />
+            <AppIcon :name="showPayPassword ? 'eye' : 'eye-off'" class="field-action-svg" />
           </button>
         </label>
         <div class="strength-bars">
@@ -491,12 +601,25 @@ function markUpload(type: IdentityFileKey) {
         </div>
       </section>
 
-      <section v-else-if="step === 3" class="step-panel step-panel--loose">
+      <section v-else-if="step === 3" class="step-panel step-panel--loose verify-panel">
         <h1>{{ t('auth.emailVerifyTitle') }}</h1>
         <p>{{ t('auth.emailVerifyHint') }}</p>
         <div class="code-head">
           <strong>{{ t('auth.inputSixDigitCode') }}</strong>
-          <span>115s</span>
+          <button
+            type="button"
+            class="code-send-button"
+            :disabled="sendingCode || emailCodeCountdown > 0"
+            @click="sendVerificationCode"
+          >
+            {{
+              sendingCode
+                ? t('auth.sendingVerificationCode')
+                : emailCodeCountdown > 0
+                  ? `${emailCodeCountdown}s`
+                  : t('auth.resendVerificationCode')
+            }}
+          </button>
         </div>
         <div class="code-boxes">
           <input
@@ -511,7 +634,7 @@ function markUpload(type: IdentityFileKey) {
             @input="handleCodeInput('email', index, $event)"
             @keydown="handleCodeKeydown('email', index, $event)"
             @paste="handleCodePaste('email', index, $event)"
-          />
+          >
         </div>
       </section>
 
@@ -519,11 +642,11 @@ function markUpload(type: IdentityFileKey) {
         <h1>{{ t('auth.identityInfo') }}</h1>
         <label class="auth-field required-field">
           <span>*</span>
-          <input v-model="identityName" :placeholder="t('auth.legalName')" />
+          <input v-model="identityName" :placeholder="t('auth.legalName')">
         </label>
         <label class="auth-field required-field">
           <span>*</span>
-          <input v-model="identityNo" :placeholder="t('auth.idNumber')" />
+          <input v-model="identityNo" :placeholder="t('auth.idNumber')">
         </label>
 
         <h2>{{ t('auth.idUpload') }}</h2>
@@ -557,11 +680,13 @@ function markUpload(type: IdentityFileKey) {
         <h1>{{ t('auth.bindGoogleAuthenticator') }}</h1>
         <p>{{ t('auth.backupSecretHint') }}</p>
         <div class="qr-card">
-          <img v-if="googleQr" :src="googleQr" :alt="t('auth.googleQrAlt')" />
+          <img v-if="googleQr" :src="googleQr" :alt="t('auth.googleQrAlt')">
         </div>
         <div class="secret-card">
           <strong>{{ googleSecret || '' }}</strong>
-          <button type="button">{{ t('common.copy') }}</button>
+          <button type="button">
+            {{ t('common.copy') }}
+          </button>
         </div>
         <h2>{{ t('auth.googleCode') }}</h2>
         <div class="code-boxes">
@@ -577,22 +702,30 @@ function markUpload(type: IdentityFileKey) {
             @input="handleCodeInput('google', index, $event)"
             @keydown="handleCodeKeydown('google', index, $event)"
             @paste="handleCodePaste('google', index, $event)"
-          />
+          >
         </div>
       </section>
 
-      <p v-if="errorMessage" class="auth-error">{{ errorMessage }}</p>
-      <button type="button" class="primary-button" :disabled="submitting" @click="continueStep">
+      <p v-if="errorMessage" class="auth-error">
+        {{ errorMessage }}
+      </p>
+      <button
+        type="button"
+        class="primary-button"
+        :disabled="submitting"
+        @click="continueStep"
+      >
         {{
           step === 5 ? t('auth.bind') : submitting ? t('common.submitting') : t('common.continue')
         }}
       </button>
       <p v-if="step === 1" class="auth-switch">
         {{ t('auth.haveAccount') }}
-        <button type="button" @click="router.push('/login')">{{ t('auth.goLogin') }}</button>
+        <button type="button" @click="router.push('/login')">
+          {{ t('auth.goLogin') }}
+        </button>
       </p>
     </main>
-
   </section>
 </template>
 
@@ -736,22 +869,35 @@ function markUpload(type: IdentityFileKey) {
 }
 
 .step-item.active span {
-  border: 8px solid #f2fff2;
-  background: #00c313;
+  background: #f2fff2;
   color: transparent;
-}
-
-.step-item.active span::after {
-  content: '';
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #fff;
 }
 
 .step-item.done span {
   background: #00c313;
-  font-size: 26px;
+  font-size: 0;
+}
+
+.step-status-svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
+.step-status-svg--done {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.step-status-svg--active {
+  fill: #00c313;
+}
+
+.step-status-svg--active circle:last-child {
+  fill: #fff;
 }
 
 .step-item em {
@@ -852,6 +998,16 @@ function markUpload(type: IdentityFileKey) {
   border: 0;
   background: transparent;
   color: #9b9ca4;
+}
+
+.field-action--hidden {
+  pointer-events: none;
+  opacity: 0;
+}
+
+.field-action-svg {
+  width: 28px;
+  height: 28px;
 }
 
 .eye-off-icon {
@@ -1004,8 +1160,9 @@ function markUpload(type: IdentityFileKey) {
   font-weight: 900;
 }
 
-.code-head span {
+.code-send-button {
   min-width: 188px;
+  border: 0;
   border-radius: 42px;
   background: #20212b;
   padding: 26px;
@@ -1013,6 +1170,10 @@ function markUpload(type: IdentityFileKey) {
   text-align: center;
   font-size: 26px;
   font-weight: 900;
+}
+
+.code-send-button:disabled {
+  opacity: 0.75;
 }
 
 .code-boxes {
@@ -1224,7 +1385,8 @@ function markUpload(type: IdentityFileKey) {
 }
 
 .skip-button {
-  font-size: 21px;
+  font-size: 20px;
+  font-weight: 700;
 }
 
 .register-content {
@@ -1253,11 +1415,20 @@ function markUpload(type: IdentityFileKey) {
 }
 
 .step-item.active span {
-  border-width: 6px;
+  border: 0;
 }
 
 .step-item.done span {
-  font-size: 20px;
+  font-size: 0;
+}
+
+.step-status-svg {
+  width: 15px;
+  height: 15px;
+}
+
+.step-status-svg--done {
+  stroke-width: 2.1;
 }
 
 .step-item em {
@@ -1321,7 +1492,7 @@ function markUpload(type: IdentityFileKey) {
   font-size: 22px;
 }
 
-.code-head span {
+.code-send-button {
   min-width: 140px;
   border-radius: 32px;
   padding: 18px;
@@ -1415,7 +1586,7 @@ function markUpload(type: IdentityFileKey) {
   }
 
   .step-item.active span {
-    border-width: 5px;
+    border: 0;
   }
 
   .step-item em {
@@ -1452,7 +1623,7 @@ function markUpload(type: IdentityFileKey) {
     flex-direction: column;
   }
 
-  .code-head span {
+  .code-send-button {
     min-width: 128px;
     padding: 14px 20px;
   }
@@ -1543,20 +1714,24 @@ function markUpload(type: IdentityFileKey) {
   }
 
   .step-item.active span {
-    border-width: 5px;
-  }
-
-  .step-item.active span::after {
-    width: 6px;
-    height: 6px;
+    border: 0;
   }
 
   .step-item.done span {
-    font-size: 18px;
+    font-size: 0;
+  }
+
+  .step-status-svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .step-status-svg--done {
+    stroke-width: 2;
   }
 
   .step-item em {
-    font-size: 10px;
+    font-size: 14px;
     line-height: 1.1;
     white-space: normal;
   }
@@ -1567,6 +1742,31 @@ function markUpload(type: IdentityFileKey) {
 
   .step-panel h1 {
     font-size: 25px;
+    font-weight: 800;
+  }
+
+  .verify-panel p {
+    margin: -8px 0 30px;
+    font-size: 15px;
+    line-height: 1.35;
+    font-weight: 700;
+  }
+
+  .verify-panel .code-head {
+    margin-top: 0;
+  }
+
+  .verify-panel .code-head strong {
+    font-size: 18px;
+    line-height: 1.2;
+    font-weight: 800;
+  }
+
+  .verify-panel .code-send-button {
+    min-width: 94px;
+    border-radius: 24px;
+    padding: 14px 18px;
+    font-size: 18px;
     font-weight: 800;
   }
 

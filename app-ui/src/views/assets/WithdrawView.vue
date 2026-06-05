@@ -172,7 +172,9 @@ onMounted(() => {
     :right-to="{ name: 'asset-flows', query: { tab: 'withdraw' } }"
     narrow
   >
-    <button type="button" class="asset-type-pill">{{ t('assetFlow.crypto') }}</button>
+    <button type="button" class="asset-type-pill">
+      {{ t('assetFlow.crypto') }}
+    </button>
 
     <label class="field-block">
       <span>{{ t('assetFlow.coin') }}</span>
@@ -187,7 +189,7 @@ onMounted(() => {
     <label class="field-block">
       <span>{{ t('assetFlow.withdrawAddress') }}</span>
       <span class="asset-input asset-input--address">
-        <input v-model="address" :placeholder="t('assetFlow.addressPlaceholder')" />
+        <input v-model="address" :placeholder="t('assetFlow.addressPlaceholder')">
         <i>▣</i>
       </span>
     </label>
@@ -195,11 +197,9 @@ onMounted(() => {
     <label class="field-block">
       <span class="field-block__row">
         <span>{{ t('assetFlow.withdrawAmount') }}</span>
-        <small
-          >{{ t('assetFlow.withdrawable') }} <b>{{ availableAmount }}</b> {{ coin }}</small
-        >
+        <small>{{ t('assetFlow.withdrawable') }} <b>{{ availableAmount }}</b> {{ coin }}</small>
       </span>
-      <input v-model="amount" class="asset-input" inputmode="decimal" />
+      <input v-model="amount" class="asset-input" inputmode="decimal">
     </label>
 
     <dl class="withdraw-summary">

@@ -17,7 +17,9 @@ const message = ref('')
 const errorMessage = ref('')
 
 const isEmailMode = computed(() => route.name === 'security-bind-email')
-const accountTypeName = computed(() => (isEmailMode.value ? t('security.email') : t('security.phone')))
+const accountTypeName = computed(() =>
+  isEmailMode.value ? t('security.email') : t('security.phone'),
+)
 const pageTitle = computed(() => {
   const current = isEmailMode.value ? identity.value?.email : identity.value?.phone
   if (isEmailMode.value) return current ? t('security.editEmail') : t('security.bindEmail')
@@ -25,7 +27,9 @@ const pageTitle = computed(() => {
 })
 const inputMode = computed(() => (isEmailMode.value ? 'email' : 'tel'))
 const autocomplete = computed(() => (isEmailMode.value ? 'email' : 'tel'))
-const placeholder = computed(() => (isEmailMode.value ? t('security.inputEmail') : t('security.inputPhone')))
+const placeholder = computed(() =>
+  isEmailMode.value ? t('security.inputEmail') : t('security.inputPhone'),
+)
 const submitText = computed(() => {
   if (submitting.value) return t('common.submitting')
   return identity.value && (isEmailMode.value ? identity.value.email : identity.value.phone)
@@ -92,7 +96,12 @@ async function submitBindAccount() {
 <template>
   <section class="bind-account-page">
     <header class="bind-account-header">
-      <button type="button" class="back-button" :aria-label="t('common.back')" @click="router.back()">
+      <button
+        type="button"
+        class="back-button"
+        :aria-label="t('common.back')"
+        @click="router.back()"
+      >
         <AppIcon name="back" class="back-icon-svg" />
       </button>
       <h1>{{ pageTitle }}</h1>
@@ -106,11 +115,15 @@ async function submitBindAccount() {
           :inputmode="inputMode"
           :autocomplete="autocomplete"
           :placeholder="placeholder"
-        />
+        >
       </label>
 
-      <p v-if="errorMessage" class="form-message form-message--error">{{ errorMessage }}</p>
-      <p v-if="message" class="form-message">{{ message }}</p>
+      <p v-if="errorMessage" class="form-message form-message--error">
+        {{ errorMessage }}
+      </p>
+      <p v-if="message" class="form-message">
+        {{ message }}
+      </p>
 
       <button type="submit" class="submit-button" :disabled="submitting">
         {{ submitText }}

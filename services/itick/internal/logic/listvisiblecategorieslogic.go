@@ -4,7 +4,10 @@ import (
 	"context"
 	"sort"
 
+	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/itick"
 	"wklive/proto/system"
 	"wklive/services/itick/internal/svc"
@@ -29,8 +32,14 @@ func NewListVisibleCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceConte
 
 // 获取允许显示的产品类型
 func (l *ListVisibleCategoriesLogic) ListVisibleCategories(in *itick.ListVisibleCategoriesReq) (*itick.ListVisibleCategoriesResp, error) {
+	tenantCode, err := utils.GetTenantCodeFromMd(l.ctx)
+	if err != nil || tenantCode == "" {
+		return &itick.ListVisibleCategoriesResp{
+			Base: helper.GetErrResp(i18n.InvalidRequest, i18n.Translate(i18n.InvalidRequest, l.ctx)),
+		}, nil
+	}
 	detail, err := l.svcCtx.SystemCli.SysTenantDetail(l.ctx, &system.SysTenantDetailReq{
-		TenantCode: &in.TenantCode,
+		TenantCode: &tenantCode,
 	})
 	if err != nil {
 		return nil, err

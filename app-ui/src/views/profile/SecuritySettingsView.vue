@@ -55,7 +55,12 @@ function handleRowClick(key: string) {
 <template>
   <section class="security-page">
     <header class="security-header">
-      <button type="button" class="back-button" :aria-label="t('common.back')" @click="router.back()">
+      <button
+        type="button"
+        class="back-button"
+        :aria-label="t('common.back')"
+        @click="router.back()"
+      >
         <AppIcon name="back" class="back-icon-svg" />
       </button>
       <h1>{{ t('security.title') }}</h1>

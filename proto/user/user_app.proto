@@ -11,7 +11,6 @@ option go_package = "wklive/proto/user;user";
 message AppCommonResp { common.RespBase base = 1; }
 
 message RegisterReq {
-  string tenant_code = 1;
   user.RegisterType register_type = 2;
   string username = 3;
   string phone = 4;
@@ -34,7 +33,6 @@ message RegisterData {
 }
 
 message LoginReq {
-  string tenant_code = 1;
   user.LoginType login_type = 2;
   string account = 3;
   string password = 4;
@@ -55,7 +53,6 @@ message LoginData {
 message GuestLoginReq {
   string device_id = 1;
   string fingerprint = 2;
-  string tenant_code = 3;
 }
 
 message GuestLogin {
@@ -73,7 +70,6 @@ message GuestLoginResp {
 message LogoutReq { }
 
 message RefreshTokenReq {
-  string tenant_code = 1;
   string refresh_token = 2;
 }
 

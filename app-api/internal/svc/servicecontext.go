@@ -62,7 +62,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		if tenantId, err := utils.GetTenantIdFromCtx(ctx); err == nil {
 			pairs = append(pairs, utils.CtxKeyTenantId, fmt.Sprintf("%d", tenantId))
 		}
-		if tenantCode, err := utils.GetUsernameFromCtx(ctx); err == nil {
+		if tenantCode, err := utils.GetTenantCodeFromCtx(ctx); err == nil {
 			pairs = append(pairs, utils.CtxKeyTenantCode, tenantCode)
 		}
 		if clientIP, err := utils.GetClientIPFromCtx(ctx); err == nil {

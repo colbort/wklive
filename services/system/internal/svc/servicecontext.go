@@ -18,21 +18,22 @@ import (
 )
 
 type ServiceContext struct {
-	Config        config.Config
-	DB            sqlx.SqlConn
-	Cache         cache.Cache
-	Cron          *cronx.CronManager
-	UserModel     models.UserModel
-	RoleModel     models.RoleModel
-	MenuModel     models.MenuModel
-	UserRoleModel models.UserRoleModel
-	RoleMenuModel models.RoleMenuModel
-	LoginLogModel models.LoginLogModel
-	OpLogModel    models.OpLogModel
-	ConfigModel   models.ConfigModel
-	JobModel      models.JobModel
-	JobLogModel   models.JobLogModel
-	TenantMode    models.TenantModel
+	Config                      config.Config
+	DB                          sqlx.SqlConn
+	Cache                       cache.Cache
+	Cron                        *cronx.CronManager
+	UserModel                   models.UserModel
+	RoleModel                   models.RoleModel
+	MenuModel                   models.MenuModel
+	UserRoleModel               models.UserRoleModel
+	RoleMenuModel               models.RoleMenuModel
+	LoginLogModel               models.LoginLogModel
+	OpLogModel                  models.OpLogModel
+	ConfigModel                 models.ConfigModel
+	VerificationCodeRecordModel models.VerificationCodeRecordModel
+	JobModel                    models.JobModel
+	JobLogModel                 models.JobLogModel
+	TenantMode                  models.TenantModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -48,20 +49,21 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	cron.LoadRegisteredHandlers()
 	cron.StartScheduler()
 	return &ServiceContext{
-		Config:        c,
-		DB:            conn,
-		Cache:         cache.New(c.CacheRedis, syncx.NewSingleFlight(), cache.NewStat(""), redis.Nil),
-		Cron:          cron,
-		UserModel:     models.NewSysUserModel(conn, c.CacheRedis).(models.UserModel),
-		RoleModel:     models.NewSysRoleModel(conn, c.CacheRedis).(models.RoleModel),
-		MenuModel:     models.NewSysMenuModel(conn, c.CacheRedis).(models.MenuModel),
-		UserRoleModel: models.NewSysUserRoleModel(conn, c.CacheRedis).(models.UserRoleModel),
-		RoleMenuModel: models.NewSysRoleMenuModel(conn, c.CacheRedis).(models.RoleMenuModel),
-		LoginLogModel: models.NewSysLoginLogModel(conn, c.CacheRedis).(models.LoginLogModel),
-		OpLogModel:    models.NewSysOpLogModel(conn, c.CacheRedis).(models.OpLogModel),
-		ConfigModel:   global.ConfigModel,
-		JobModel:      models.NewSysJobModel(conn, c.CacheRedis).(models.JobModel),
-		JobLogModel:   jobLogModel,
-		TenantMode:    models.NewSysTenantModel(conn, c.CacheRedis).(models.TenantModel),
+		Config:                      c,
+		DB:                          conn,
+		Cache:                       cache.New(c.CacheRedis, syncx.NewSingleFlight(), cache.NewStat(""), redis.Nil),
+		Cron:                        cron,
+		UserModel:                   models.NewSysUserModel(conn, c.CacheRedis).(models.UserModel),
+		RoleModel:                   models.NewSysRoleModel(conn, c.CacheRedis).(models.RoleModel),
+		MenuModel:                   models.NewSysMenuModel(conn, c.CacheRedis).(models.MenuModel),
+		UserRoleModel:               models.NewSysUserRoleModel(conn, c.CacheRedis).(models.UserRoleModel),
+		RoleMenuModel:               models.NewSysRoleMenuModel(conn, c.CacheRedis).(models.RoleMenuModel),
+		LoginLogModel:               models.NewSysLoginLogModel(conn, c.CacheRedis).(models.LoginLogModel),
+		OpLogModel:                  models.NewSysOpLogModel(conn, c.CacheRedis).(models.OpLogModel),
+		ConfigModel:                 global.ConfigModel,
+		VerificationCodeRecordModel: models.NewSysVerificationCodeRecordModel(conn, c.CacheRedis).(models.VerificationCodeRecordModel),
+		JobModel:                    models.NewSysJobModel(conn, c.CacheRedis).(models.JobModel),
+		JobLogModel:                 jobLogModel,
+		TenantMode:                  models.NewSysTenantModel(conn, c.CacheRedis).(models.TenantModel),
 	}
 }

@@ -179,7 +179,12 @@
       :title="formMode === 'add' ? t('itick.addCategory') : t('itick.editCategory')"
       width="620px"
     >
-      <el-form ref="formRef" :model="form" :rules="rules" label-width="100px">
+      <el-form
+        ref="formRef"
+        :model="form"
+        :rules="rules"
+        label-width="100px"
+      >
         <el-form-item
           v-if="formMode === 'add'"
           :label="t('itick.categoryType')"

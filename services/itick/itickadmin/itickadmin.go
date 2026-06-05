@@ -27,12 +27,14 @@ type (
 	GetProductKlineResp            = itick.GetProductKlineResp
 	GetProductReq                  = itick.GetProductReq
 	GetProductResp                 = itick.GetProductResp
+	GetSyncTaskStatusData          = itick.GetSyncTaskStatusData
 	GetSyncTaskStatusReq           = itick.GetSyncTaskStatusReq
 	GetSyncTaskStatusResp          = itick.GetSyncTaskStatusResp
 	GetTenantCategoryReq           = itick.GetTenantCategoryReq
 	GetTenantCategoryResp          = itick.GetTenantCategoryResp
 	GetTenantProductReq            = itick.GetTenantProductReq
 	GetTenantProductResp           = itick.GetTenantProductResp
+	InitTenantItickDisplayData     = itick.InitTenantItickDisplayData
 	InitTenantItickDisplayReq      = itick.InitTenantItickDisplayReq
 	InitTenantItickDisplayResp     = itick.InitTenantItickDisplayResp
 	ListCategoriesReq              = itick.ListCategoriesReq

@@ -224,6 +224,11 @@ func copyStruct(dst, src reflect.Value) {
 
 		if dstField, ok := findField(dst, targetName); ok {
 			_ = copyValue(dstField, srcField)
+			continue
+		}
+
+		if sf.Name == "Base" {
+			_ = copyValue(dst, srcField)
 		}
 	}
 

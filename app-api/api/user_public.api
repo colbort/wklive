@@ -4,7 +4,6 @@ import "common.api"
 import "user_types.api"
 
 type RegisterReq {
-	tenantCode      string `json:"tenantCode"`
 	registerType    int64  `json:"registerType"`
 	username        string `json:"username,optional"`
 	phone           string `json:"phone,optional"`
@@ -27,7 +26,6 @@ type RegisterResp {
 }
 
 type LoginReq {
-	tenantCode string `json:"tenantCode"`
 	loginType  int64  `json:"loginType"`
 	account    string `json:"account"`
 	password   string `json:"password"`
@@ -48,7 +46,6 @@ type LoginResp {
 type GuestLoginReq {
 	deviceId    string `json:"deviceId"`
 	fingerprint string `json:"fingerprint"`
-	tenantCode  string `json:"tenantCode"`
 }
 
 type GuestLogin {
@@ -65,13 +62,19 @@ type GuestLoginResp {
 }
 
 type RefreshTokenReq {
-	tenantCode   string `json:"tenantCode,optional"`
 	refreshToken string `json:"refreshToken"`
 }
 
 type RefreshTokenResp {
 	RespBase
 	data TokenInfo `json:"data"`
+}
+
+type SendVerificationCodeReq {
+	channel int64  `json:"channel" validate:"required"` // 1邮箱 2手机短信
+	email   string `json:"email,optional"`
+	phone   string `json:"phone,optional"`
+	scene   int64  `json:"scene" validate:"required"` // 业务场景
 }
 
 type GetUserOptionsResp {
@@ -103,6 +106,9 @@ service app {
 
 	@handler GuestLogin
 	post /guest-login (GuestLoginReq) returns (GuestLoginResp)
+
+	@handler SendVerificationCode
+	post /verification-code/send (SendVerificationCodeReq) returns (RespBase)
 }
 
 @server (
@@ -114,4 +120,3 @@ service app {
 	@handler RefreshToken
 	post /refresh-token (RefreshTokenReq) returns (RefreshTokenResp)
 }
-

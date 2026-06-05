@@ -15,7 +15,12 @@
     </div>
 
     <el-card shadow="never" class="query-card">
-      <el-form :model="query" inline label-width="90px" class="query-form">
+      <el-form
+        :model="query"
+        inline
+        label-width="90px"
+        class="query-form"
+      >
         <el-form-item :label="t('trade.tenantId')">
           <div class="query-field">
             <TenantSelect v-model="query.tenantId" include-system />
@@ -64,12 +69,12 @@
         <el-table-column prop="tenantId" :label="t('trade.tenantId')" width="100" />
 
         <el-table-column min-width="190" show-overflow-tooltip>
-          <template #header> {{ t('trade.symbol') }} / {{ t('trade.displaySymbol') }} </template>
+          <template #header>
+            {{ t('trade.symbol') }} / {{ t('trade.displaySymbol') }}
+          </template>
           <template #default="{ row }">
             <div class="symbol-cell">
-              <span class="symbol-code"
-                >{{ row.symbol || '-' }}/{{ row.displaySymbol || '-' }}</span
-              >
+              <span class="symbol-code">{{ row.symbol || '-' }}/{{ row.displaySymbol || '-' }}</span>
             </div>
           </template>
         </el-table-column>
@@ -135,7 +140,12 @@
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="260" fixed="right">
           <template #default="{ row }">
-            <el-button v-perm="'trade:symbol:detail'" link type="primary" @click="showDetail(row)">
+            <el-button
+              v-perm="'trade:symbol:detail'"
+              link
+              type="primary"
+              @click="showDetail(row)"
+            >
               {{ t('option.detail') }}
             </el-button>
             <el-button
@@ -316,7 +326,12 @@
           </el-form-item>
 
           <el-form-item :label="t('trade.openTime')">
-            <el-date-picker v-model="symbolOpenTime" type="datetime" clearable class="full-width" />
+            <el-date-picker
+              v-model="symbolOpenTime"
+              type="datetime"
+              clearable
+              class="full-width"
+            />
           </el-form-item>
 
           <el-form-item :label="t('trade.closeTime')">
@@ -329,7 +344,12 @@
           </el-form-item>
 
           <el-form-item :label="t('common.sort')">
-            <el-input-number v-model="symbolForm.sort" :min="0" :precision="0" class="full-width" />
+            <el-input-number
+              v-model="symbolForm.sort"
+              :min="0"
+              :precision="0"
+              class="full-width"
+            />
           </el-form-item>
 
           <el-form-item :label="t('common.remark')" class="wide">
@@ -652,7 +672,12 @@
         </el-button>
       </div>
 
-      <el-table :data="leverageRows" size="small" border class="leverage-table">
+      <el-table
+        :data="leverageRows"
+        size="small"
+        border
+        class="leverage-table"
+      >
         <el-table-column :label="t('trade.marginMode')" width="130">
           <template #default="{ row }">
             {{ optionLabel('marginMode', row.marginMode) }}
@@ -664,10 +689,14 @@
           </template>
         </el-table-column>
         <el-table-column :label="t('trade.defaultLeverage')" width="130">
-          <template #default="{ row }"> {{ row.defaultLeverage }}X </template>
+          <template #default="{ row }">
+            {{ row.defaultLeverage }}X
+          </template>
         </el-table-column>
         <el-table-column :label="t('trade.maxLeverage')" width="120">
-          <template #default="{ row }"> {{ row.maxLeverage }}X </template>
+          <template #default="{ row }">
+            {{ row.maxLeverage }}X
+          </template>
         </el-table-column>
         <el-table-column :label="t('trade.status')" width="110">
           <template #default="{ row }">

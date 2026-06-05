@@ -57,11 +57,13 @@ const footerColumns = [
       <div class="ave-hero__copy">
         <h1>
           <span class="ave-home__green">{{ t('home.heroPrefix') }}</span>
-          <br />
+          <br>
           {{ t('home.heroSuffix') }}
         </h1>
         <p>{{ t('home.heroSub') }}</p>
-        <RouterLink to="/markets" class="ave-home__cta">{{ t('home.startTrading') }}</RouterLink>
+        <RouterLink to="/markets" class="ave-home__cta">
+          {{ t('home.startTrading') }}
+        </RouterLink>
       </div>
 
       <div class="ave-hero__visual">
@@ -79,9 +81,12 @@ const footerColumns = [
 
     <section class="ave-section ave-section--feature">
       <h2>
-        {{ t('home.smartTradingPrefix') }}<span class="ave-home__green">{{ t('home.smartTradingEmphasis') }}</span>{{ t('home.smartTradingSuffix') }}
+        {{ t('home.smartTradingPrefix')
+        }}<span class="ave-home__green">{{ t('home.smartTradingEmphasis') }}</span>{{ t('home.smartTradingSuffix') }}
       </h2>
-      <p class="ave-section__sub">{{ t('home.alwaysTrading') }}</p>
+      <p class="ave-section__sub">
+        {{ t('home.alwaysTrading') }}
+      </p>
 
       <div class="ave-feature-grid">
         <article v-for="item in featureCards" :key="item.titleKey" class="ave-feature-card">
@@ -98,9 +103,12 @@ const footerColumns = [
 
     <section class="ave-section ave-section--strategy">
       <h2>
-        {{ t('home.strategyPrefix') }}<span class="ave-home__green">{{ t('home.strategyEmphasis') }}</span>{{ t('home.strategySuffix') }}
+        {{ t('home.strategyPrefix')
+        }}<span class="ave-home__green">{{ t('home.strategyEmphasis') }}</span>{{ t('home.strategySuffix') }}
       </h2>
-      <p class="ave-section__sub">{{ t('home.strategySub') }}</p>
+      <p class="ave-section__sub">
+        {{ t('home.strategySub') }}
+      </p>
 
       <div class="ave-strategy__top">
         <article v-for="item in strategyFeatures" :key="item.titleKey" class="ave-strategy__info">
@@ -118,7 +126,9 @@ const footerColumns = [
         <div class="ave-strategy__line" />
         <div class="ave-phone ave-phone--left">
           <div class="ave-phone__screen">
-            <div class="ave-phone__title">Transact</div>
+            <div class="ave-phone__title">
+              Transact
+            </div>
             <div class="ave-phone__chart" />
             <div class="ave-phone__rows">
               <span />
@@ -132,7 +142,9 @@ const footerColumns = [
 
         <div class="ave-phone ave-phone--right">
           <div class="ave-phone__screen">
-            <div class="ave-phone__title">BTC/USDT</div>
+            <div class="ave-phone__title">
+              BTC/USDT
+            </div>
             <div class="ave-phone__tabs">
               <span class="active">15min</span>
               <span>30min</span>
@@ -143,14 +155,22 @@ const footerColumns = [
               <div class="ave-phone__field short" />
             </div>
             <div class="ave-phone__actions">
-              <button class="green">Buy the rise</button>
-              <button class="red">Buy the fall</button>
+              <button class="green">
+                Buy the rise
+              </button>
+              <button class="red">
+                Buy the fall
+              </button>
             </div>
           </div>
         </div>
 
-        <div class="ave-badge ave-badge--btc">₿</div>
-        <div class="ave-badge ave-badge--usdt">₮</div>
+        <div class="ave-badge ave-badge--btc">
+          ₿
+        </div>
+        <div class="ave-badge ave-badge--usdt">
+          ₮
+        </div>
         <div class="ave-strategy__panel">
           <div class="ave-strategy__panel-image" />
         </div>
@@ -206,7 +226,11 @@ const footerColumns = [
         </article>
 
         <div class="ave-footer__links">
-          <article v-for="column in footerColumns" :key="column.titleKey" class="ave-footer__column">
+          <article
+            v-for="column in footerColumns"
+            :key="column.titleKey"
+            class="ave-footer__column"
+          >
             <h4>{{ t(column.titleKey) }}</h4>
             <RouterLink v-for="item in column.links" :key="item" to="/home">
               {{ item.includes('.') ? t(item) : item }}
@@ -215,7 +239,9 @@ const footerColumns = [
         </div>
       </div>
 
-      <p class="ave-footer__copyright">{{ t('home.copyright') }}</p>
+      <p class="ave-footer__copyright">
+        {{ t('home.copyright') }}
+      </p>
     </section>
   </section>
 </template>
