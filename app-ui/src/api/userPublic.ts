@@ -13,6 +13,7 @@ import type {
 } from '@/types/auth'
 import {
   collectGuestFingerprint,
+  createGuestFingerprintHash,
   getGuestDeviceId,
   setGuestDeviceId,
   setGuestId,
@@ -24,7 +25,20 @@ export function apiGetUserOptions(): Promise<RespBase & { data: OptionsGroup[] }
 }
 
 export function apiRegister(params: RegisterReq): Promise<RespBase & RegisterResp> {
-  return http.post('/user/register', params).then((res) => {
+  const guestFingerprint = collectGuestFingerprint()
+  const fingerprint = params.fingerprint || JSON.stringify(guestFingerprint)
+  const deviceId =
+    params.deviceId || getGuestDeviceId() || `web_${createGuestFingerprintHash(guestFingerprint)}`
+
+  if (!params.deviceId && deviceId) setGuestDeviceId(deviceId)
+
+  const payload: RegisterReq = {
+    ...params,
+    deviceId,
+    fingerprint,
+  }
+
+  return http.post('/user/register', payload).then((res) => {
     const data = res.data
     if (data.data?.token?.accessToken) setAccessToken(data.data.token.accessToken)
     if (data.data?.token?.refreshToken) setRefreshToken(data.data.token.refreshToken)

@@ -23,6 +23,8 @@ export interface RegisterReq {
   inviteCode?: string
   source?: string
   registerIp?: string
+  deviceId?: string
+  fingerprint?: string
 }
 
 export interface RegisterData {

@@ -102,6 +102,10 @@ func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginRe
 	}
 
 	userNo := l.svcCtx.Node.Generate().Int64()
+	inviteCode, err := l.svcCtx.GenerateInviteCode(l.ctx, tenant.Data.Id)
+	if err != nil {
+		return nil, err
+	}
 	deviceId := fmt.Sprintf("%d", userNo)
 	now := utils.NowMillis()
 	guest := &models.TUser{
@@ -116,7 +120,7 @@ func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginRe
 		MemberLevel:    0,
 		Language:       sql.NullString{},
 		Timezone:       sql.NullString{},
-		InviteCode:     sql.NullString{},
+		InviteCode:     sql.NullString{String: inviteCode, Valid: true},
 		Signature:      sql.NullString{},
 		Source:         sql.NullString{String: "guest", Valid: true},
 		ReferrerUserId: sql.NullInt64{},
@@ -127,7 +131,7 @@ func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginRe
 		IsGuest:        2,
 		IsRecharge:     0,
 		DeviceId:       deviceId,
-		Fingerprint:    sql.NullString{String: "", Valid: true},
+		Fingerprint:    sql.NullString{String: in.Fingerprint, Valid: true},
 		Remark:         sql.NullString{},
 		Deleted:        0,
 		CreateTimes:    now,

@@ -7,3 +7,5 @@ Etcd:
 Jwt:
   AccessSecret: "your_access_secret"
   AccessExpire: 3600
+Register:
+  UsernameNoRechargeLimit: 7

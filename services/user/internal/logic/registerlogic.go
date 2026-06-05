@@ -2,12 +2,10 @@ package logic
 
 import (
 	"context"
-	"crypto/rand"
 	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"math/big"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -97,7 +95,11 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 		if err != nil {
 			return nil, err
 		}
-		if count > 7 {
+		limit := l.svcCtx.Config.Register.UsernameNoRechargeLimit
+		if limit <= 0 {
+			limit = 7
+		}
+		if count > limit {
 			return &user.RegisterResp{
 				Base: helper.GetErrResp(i18n.RegistrationTooFrequent, i18n.Translate(i18n.RegistrationTooFrequent, l.ctx)),
 			}, nil
@@ -105,7 +107,9 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 		tuser, err = l.svcCtx.UserModel.FindByUsername(l.ctx, tenantCode, in.Username)
 		// 如果是用户名密码注册的 必须要邀请码，同一个 邀请码 的最近 一周内超过7个注册的用户如果没有一个充值的不给注册，直到 有用户充值
 	case user.RegisterType_REGISTER_TYPE_GUEST:
-
+		return &user.RegisterResp{
+			Base: helper.GetErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx)),
+		}, nil
 	}
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, nil
@@ -134,7 +138,7 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 	}
 	passwordHash := string(hashedPassword)
 	userNo := l.svcCtx.Node.Generate().Int64()
-	inviteCode, err := l.generateInviteCode(tenant.Data.Id)
+	inviteCode, err := l.svcCtx.GenerateInviteCode(l.ctx, tenant.Data.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -162,8 +166,8 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 		RegisterTime:   now,
 		IsGuest:        1,
 		IsRecharge:     0,
-		DeviceId:       "",
-		Fingerprint:    sql.NullString{String: "", Valid: true},
+		DeviceId:       in.DeviceId,
+		Fingerprint:    sql.NullString{String: in.Fingerprint, Valid: in.Fingerprint != ""},
 		Remark:         sql.NullString{String: "", Valid: true},
 		Deleted:        0,
 		CreateTimes:    now,
@@ -228,45 +232,4 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 			Profile: &user.UserProfile{},
 		},
 	}, nil
-}
-
-func (l *RegisterLogic) generateInviteCode(tenantId int64) (string, error) {
-	const (
-		codeLength = 6
-		maxRetries = 12
-		alphabet   = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
-	)
-
-	for i := 0; i < maxRetries; i++ {
-		code, err := randomInviteCode(codeLength, alphabet)
-		if err != nil {
-			return "", err
-		}
-
-		_, err = l.svcCtx.UserModel.FindOneByTenantIdInviteCode(l.ctx, tenantId, sql.NullString{
-			String: code,
-			Valid:  true,
-		})
-		if errors.Is(err, models.ErrNotFound) {
-			return code, nil
-		}
-		if err != nil {
-			return "", err
-		}
-	}
-
-	return "", fmt.Errorf("failed to generate unique invite code")
-}
-
-func randomInviteCode(length int, alphabet string) (string, error) {
-	code := make([]byte, length)
-	max := big.NewInt(int64(len(alphabet)))
-	for i := range code {
-		n, err := rand.Int(rand.Reader, max)
-		if err != nil {
-			return "", err
-		}
-		code[i] = alphabet[n.Int64()]
-	}
-	return string(code), nil
 }

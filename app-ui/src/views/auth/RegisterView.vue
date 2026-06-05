@@ -447,12 +447,7 @@ function markUpload(type: IdentityFileKey) {
 <template>
   <section class="register-page" :class="{ 'register-page--captcha': showCaptcha }">
     <header class="register-topbar">
-      <button
-        type="button"
-        class="icon-button"
-        :aria-label="t('common.back')"
-        @click="goBack"
-      >
+      <button type="button" class="icon-button" :aria-label="t('common.back')" @click="goBack">
         <AppIcon name="back" class="back-icon-svg" />
       </button>
       <button
@@ -464,12 +459,7 @@ function markUpload(type: IdentityFileKey) {
       >
         <AppIcon name="globe" class="top-icon-svg" />
       </button>
-      <button
-        v-else-if="step > 1"
-        type="button"
-        class="skip-button"
-        @click="skipStep"
-      >
+      <button v-else-if="step > 1" type="button" class="skip-button" @click="skipStep">
         {{ t('common.skip') }}
       </button>
     </header>
@@ -529,7 +519,7 @@ function markUpload(type: IdentityFileKey) {
 
         <label class="auth-field">
           <CountryDialCodePicker v-if="accountMode === 'phone'" v-model="selectedCountry" />
-          <input v-model="account" :placeholder="accountPlaceholder" autocomplete="username">
+          <input v-model="account" :placeholder="accountPlaceholder" autocomplete="username" />
           <button
             type="button"
             class="field-action"
@@ -547,7 +537,7 @@ function markUpload(type: IdentityFileKey) {
             :type="showPassword ? 'text' : 'password'"
             :placeholder="t('auth.passwordMin8')"
             autocomplete="new-password"
-          >
+          />
           <button type="button" class="field-action" @click="showPassword = !showPassword">
             <AppIcon :name="showPassword ? 'eye' : 'eye-off'" class="field-action-svg" />
           </button>
@@ -561,7 +551,7 @@ function markUpload(type: IdentityFileKey) {
             :type="showConfirmPassword ? 'text' : 'password'"
             :placeholder="t('security.confirmNewPassword')"
             autocomplete="new-password"
-          >
+          />
           <button
             type="button"
             class="field-action"
@@ -571,16 +561,19 @@ function markUpload(type: IdentityFileKey) {
           </button>
         </label>
         <label class="auth-field">
-          <input v-model="inviteCode" :placeholder="t('auth.inviteCode')">
+          <input v-model="inviteCode" :placeholder="t('auth.inviteCode')" />
         </label>
         <label class="agree-control">
-          <input v-model="agreed" type="checkbox">
+          <input v-model="agreed" type="checkbox" />
           <span>
             <svg viewBox="0 0 16 16" aria-hidden="true">
               <path d="M3.25 8.1 6.45 11.2 12.8 4.8" />
             </svg>
           </span>
-          <em>{{ t('auth.agreeTerms') }}<b>{{ t('auth.privacyPolicy') }}</b>{{ t('common.and') }}<b>{{ t('auth.userTerms') }}</b></em>
+          <em
+            >{{ t('auth.agreeTerms') }}<b>{{ t('auth.privacyPolicy') }}</b
+            >{{ t('common.and') }}<b>{{ t('auth.userTerms') }}</b></em
+          >
         </label>
       </section>
 
@@ -591,7 +584,7 @@ function markUpload(type: IdentityFileKey) {
             v-model="payPassword"
             :type="showPayPassword ? 'text' : 'password'"
             :placeholder="t('auth.payPassword')"
-          >
+          />
           <button type="button" class="field-action" @click="showPayPassword = !showPayPassword">
             <AppIcon :name="showPayPassword ? 'eye' : 'eye-off'" class="field-action-svg" />
           </button>
@@ -634,7 +627,7 @@ function markUpload(type: IdentityFileKey) {
             @input="handleCodeInput('email', index, $event)"
             @keydown="handleCodeKeydown('email', index, $event)"
             @paste="handleCodePaste('email', index, $event)"
-          >
+          />
         </div>
       </section>
 
@@ -642,25 +635,41 @@ function markUpload(type: IdentityFileKey) {
         <h1>{{ t('auth.identityInfo') }}</h1>
         <label class="auth-field required-field">
           <span>*</span>
-          <input v-model="identityName" :placeholder="t('auth.legalName')">
+          <input v-model="identityName" :placeholder="t('auth.legalName')" />
         </label>
         <label class="auth-field required-field">
           <span>*</span>
-          <input v-model="identityNo" :placeholder="t('auth.idNumber')">
+          <input v-model="identityNo" :placeholder="t('auth.idNumber')" />
         </label>
 
         <h2>{{ t('auth.idUpload') }}</h2>
         <p>{{ t('auth.idUploadHint') }}</p>
         <div class="upload-grid">
           <button type="button" @click="markUpload('front')">
+            <span class="upload-card-art upload-card-art--front" aria-hidden="true">
+              <i />
+              <i />
+              <i />
+              <b />
+            </span>
             <i class="camera-dot" />
             <strong>{{ t('auth.idFront') }}</strong>
           </button>
           <button type="button" @click="markUpload('back')">
+            <span class="upload-card-art upload-card-art--back" aria-hidden="true">
+              <i />
+              <i />
+              <b />
+            </span>
             <i class="camera-dot" />
             <strong>{{ t('auth.idBack') }}</strong>
           </button>
           <button type="button" @click="markUpload('handheld')">
+            <span class="upload-card-art upload-card-art--handheld" aria-hidden="true">
+              <i />
+              <i />
+              <b />
+            </span>
             <i class="camera-dot" />
             <strong>{{ t('auth.idHandheld') }}</strong>
           </button>
@@ -669,10 +678,22 @@ function markUpload(type: IdentityFileKey) {
         <h2>{{ t('auth.uploadRequirements') }}</h2>
         <p>{{ t('auth.uploadRequirementsHint') }}</p>
         <div class="require-box">
-          <span><b>✓</b>{{ t('auth.standardShot') }}</span>
-          <span><b>×</b>{{ t('auth.incompleteShot') }}</span>
-          <span><b>×</b>{{ t('auth.blurryShot') }}</span>
-          <span><b>×</b>{{ t('auth.overexposedShot') }}</span>
+          <span>
+            <i class="require-thumb require-thumb--ok" aria-hidden="true" />
+            <b>✓</b>{{ t('auth.standardShot') }}
+          </span>
+          <span>
+            <i class="require-thumb require-thumb--cut" aria-hidden="true" />
+            <b>×</b>{{ t('auth.incompleteShot') }}
+          </span>
+          <span>
+            <i class="require-thumb require-thumb--blur" aria-hidden="true" />
+            <b>×</b>{{ t('auth.blurryShot') }}
+          </span>
+          <span>
+            <i class="require-thumb require-thumb--flash" aria-hidden="true" />
+            <b>×</b>{{ t('auth.overexposedShot') }}
+          </span>
         </div>
       </section>
 
@@ -680,7 +701,7 @@ function markUpload(type: IdentityFileKey) {
         <h1>{{ t('auth.bindGoogleAuthenticator') }}</h1>
         <p>{{ t('auth.backupSecretHint') }}</p>
         <div class="qr-card">
-          <img v-if="googleQr" :src="googleQr" :alt="t('auth.googleQrAlt')">
+          <img v-if="googleQr" :src="googleQr" :alt="t('auth.googleQrAlt')" />
         </div>
         <div class="secret-card">
           <strong>{{ googleSecret || '' }}</strong>
@@ -702,7 +723,7 @@ function markUpload(type: IdentityFileKey) {
             @input="handleCodeInput('google', index, $event)"
             @keydown="handleCodeKeydown('google', index, $event)"
             @paste="handleCodePaste('google', index, $event)"
-          >
+          />
         </div>
       </section>
 
@@ -712,6 +733,7 @@ function markUpload(type: IdentityFileKey) {
       <button
         type="button"
         class="primary-button"
+        :class="{ 'primary-button--identity': step === 4 }"
         :disabled="submitting"
         @click="continueStep"
       >
@@ -1205,6 +1227,49 @@ function markUpload(type: IdentityFileKey) {
   font-weight: 900;
 }
 
+.identity-panel {
+  gap: 18px;
+}
+
+.identity-panel h1 {
+  font-size: 26px;
+  font-weight: 900;
+}
+
+.identity-panel h2 {
+  margin: 14px 0 -8px;
+  font-size: 24px;
+  line-height: 1.2;
+}
+
+.identity-panel p {
+  margin: -8px 0 0;
+  font-size: 16px;
+  line-height: 1.35;
+  font-weight: 800;
+}
+
+.identity-panel .auth-field {
+  min-height: 74px;
+  border-radius: 22px;
+  padding: 0 22px;
+}
+
+.identity-panel .auth-field input {
+  font-size: 20px;
+}
+
+.identity-panel .required-field > span {
+  font-size: 18px;
+}
+
+.primary-button--identity {
+  min-height: 76px;
+  margin-top: 24px;
+  border-radius: 38px;
+  font-size: 24px;
+}
+
 .upload-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1252,6 +1317,135 @@ function markUpload(type: IdentityFileKey) {
   font-size: 24px;
 }
 
+.upload-card-art {
+  position: absolute;
+  inset: 18px 18px 30px;
+  opacity: 0.42;
+}
+
+.upload-card-art i,
+.upload-card-art b {
+  position: absolute;
+  display: block;
+  border-radius: 6px;
+  background: #7c7d76;
+}
+
+.upload-card-art--front i:nth-child(1) {
+  top: 18px;
+  left: 8px;
+  width: 10px;
+  height: 10px;
+}
+
+.upload-card-art--front i:nth-child(2) {
+  top: 18px;
+  left: 24px;
+  width: 10px;
+  height: 10px;
+}
+
+.upload-card-art--front i:nth-child(3) {
+  top: 18px;
+  left: 40px;
+  width: 10px;
+  height: 10px;
+}
+
+.upload-card-art--front b {
+  right: 10px;
+  bottom: 8px;
+  width: 42px;
+  height: 52px;
+  border-radius: 50% 50% 22px 22px;
+}
+
+.upload-card-art--front::before,
+.upload-card-art--front::after,
+.upload-card-art--back::before,
+.upload-card-art--back::after {
+  content: '';
+  position: absolute;
+  left: 8px;
+  height: 8px;
+  border-radius: 8px;
+  background: #7c7d76;
+}
+
+.upload-card-art--front::before {
+  top: 42px;
+  width: 76px;
+}
+
+.upload-card-art--front::after {
+  bottom: 10px;
+  width: 128px;
+}
+
+.upload-card-art--back i:nth-child(1) {
+  top: 28px;
+  left: 48px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+}
+
+.upload-card-art--back i:nth-child(2),
+.upload-card-art--back b {
+  right: 8px;
+  height: 8px;
+  border-radius: 8px;
+}
+
+.upload-card-art--back i:nth-child(2) {
+  top: 26px;
+  width: 68px;
+}
+
+.upload-card-art--back b {
+  bottom: 14px;
+  width: 128px;
+}
+
+.upload-card-art--back::before {
+  bottom: 34px;
+  width: 118px;
+}
+
+.upload-card-art--back::after {
+  display: none;
+}
+
+.upload-card-art--handheld {
+  inset: 8px 20px 18px;
+}
+
+.upload-card-art--handheld i:nth-child(1) {
+  top: 2px;
+  left: 50%;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  transform: translateX(-50%);
+}
+
+.upload-card-art--handheld i:nth-child(2) {
+  right: 12px;
+  bottom: 2px;
+  left: 12px;
+  height: 76px;
+  border-radius: 50% 50% 12px 12px;
+}
+
+.upload-card-art--handheld b {
+  bottom: 18px;
+  left: 50%;
+  width: 58px;
+  height: 42px;
+  border-radius: 6px;
+  transform: translateX(-50%);
+}
+
 .require-box {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1262,9 +1456,15 @@ function markUpload(type: IdentityFileKey) {
 }
 
 .require-box span {
+  display: grid;
+  min-width: 0;
+  justify-items: center;
+  gap: 8px;
   color: #8f9098;
   font-size: 17px;
   font-weight: 900;
+  line-height: 1.1;
+  text-align: center;
 }
 
 .require-box b {
@@ -1274,6 +1474,58 @@ function markUpload(type: IdentityFileKey) {
 
 .require-box span:not(:first-child) b {
   color: #ff5c4d;
+}
+
+.require-thumb {
+  position: relative;
+  display: block;
+  width: 76px;
+  height: 46px;
+  border-radius: 12px;
+  background: #454650;
+  overflow: hidden;
+}
+
+.require-thumb::before,
+.require-thumb::after {
+  content: '';
+  position: absolute;
+  border-radius: 4px;
+  background: #8b8c8e;
+}
+
+.require-thumb::before {
+  top: 13px;
+  left: 12px;
+  width: 32px;
+  height: 6px;
+}
+
+.require-thumb::after {
+  right: 11px;
+  bottom: 10px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+.require-thumb--cut {
+  transform: scaleX(0.78);
+  transform-origin: left center;
+}
+
+.require-thumb--blur {
+  filter: blur(1.5px);
+  opacity: 0.72;
+}
+
+.require-thumb--flash::after {
+  inset: 0;
+  width: auto;
+  height: auto;
+  border-radius: 12px;
+  background: linear-gradient(100deg, transparent 18%, #fff 54%, transparent 80%);
+  opacity: 0.78;
 }
 
 .qr-card {
@@ -1517,6 +1769,47 @@ function markUpload(type: IdentityFileKey) {
   border-radius: 18px;
 }
 
+.identity-panel {
+  gap: 16px;
+}
+
+.identity-panel h1 {
+  font-size: 24px;
+}
+
+.identity-panel h2 {
+  margin: 12px 0 -8px;
+  font-size: 22px;
+}
+
+.identity-panel p {
+  margin: -8px 0 0;
+  font-size: 15px;
+}
+
+.identity-panel .auth-field {
+  min-height: 58px;
+  border-radius: 18px;
+  padding: 0 18px;
+}
+
+.identity-panel .auth-field input {
+  font-size: 17px;
+}
+
+.identity-panel .upload-grid {
+  gap: 14px;
+}
+
+.identity-panel .upload-grid button {
+  min-height: 112px;
+  border-radius: 18px;
+}
+
+.identity-panel .upload-grid button:nth-child(3) {
+  grid-column: 1 / 2;
+}
+
 .upload-grid strong {
   bottom: 16px;
   font-size: 18px;
@@ -1527,8 +1820,36 @@ function markUpload(type: IdentityFileKey) {
   padding: 16px;
 }
 
+.identity-panel .require-box {
+  gap: 10px;
+  border-radius: 18px;
+  padding: 12px 14px 11px;
+}
+
 .require-box span {
   font-size: 13px;
+}
+
+.identity-panel .require-box span {
+  gap: 6px;
+  font-size: 12px;
+}
+
+.identity-panel .require-thumb {
+  width: 62px;
+  height: 38px;
+  border-radius: 10px;
+}
+
+.identity-panel .require-thumb--flash::after {
+  border-radius: 10px;
+}
+
+.primary-button--identity {
+  min-height: 60px;
+  margin-top: 18px;
+  border-radius: 30px;
+  font-size: 20px;
 }
 
 .qr-card {
@@ -1638,6 +1959,21 @@ function markUpload(type: IdentityFileKey) {
 
   .require-box {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .identity-panel .require-box {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+    padding: 10px;
+  }
+
+  .identity-panel .require-box span {
+    font-size: 11px;
+  }
+
+  .identity-panel .require-thumb {
+    width: 52px;
+    height: 32px;
   }
 
   .qr-card {
@@ -1847,6 +2183,80 @@ function markUpload(type: IdentityFileKey) {
   .register-page--captcha .back-icon-svg {
     width: 23px;
     height: 23px;
+  }
+
+  .identity-panel {
+    gap: 16px;
+  }
+
+  .identity-panel h1 {
+    font-size: 24px;
+    font-weight: 800;
+  }
+
+  .identity-panel h2 {
+    margin: 12px 0 -8px;
+    font-size: 22px;
+    font-weight: 900;
+  }
+
+  .identity-panel p {
+    margin: -8px 0 0;
+    font-size: 15px;
+    line-height: 1.35;
+  }
+
+  .identity-panel .auth-field {
+    min-height: 58px;
+    border-radius: 18px;
+    padding: 0 18px;
+  }
+
+  .identity-panel .auth-field input {
+    font-size: 17px;
+  }
+
+  .identity-panel .upload-grid {
+    gap: 14px;
+  }
+
+  .identity-panel .upload-grid button {
+    min-height: 112px;
+    border-radius: 18px;
+  }
+
+  .identity-panel .upload-grid button:nth-child(3) {
+    grid-column: 1 / 2;
+  }
+
+  .identity-panel .upload-grid strong {
+    bottom: 16px;
+    font-size: 18px;
+  }
+
+  .identity-panel .require-box {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    border-radius: 18px;
+    padding: 12px 14px 11px;
+  }
+
+  .identity-panel .require-box span {
+    gap: 6px;
+    font-size: 12px;
+  }
+
+  .identity-panel .require-thumb {
+    width: 62px;
+    height: 38px;
+    border-radius: 10px;
+  }
+
+  .primary-button--identity {
+    min-height: 60px;
+    margin-top: 18px;
+    border-radius: 30px;
+    font-size: 20px;
   }
 }
 

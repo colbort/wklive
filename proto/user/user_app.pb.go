@@ -76,6 +76,8 @@ type RegisterReq struct {
 	ConfirmPassword string                 `protobuf:"bytes,7,opt,name=confirm_password,json=confirmPassword,proto3" json:"confirm_password,omitempty"`
 	InviteCode      string                 `protobuf:"bytes,8,opt,name=invite_code,json=inviteCode,proto3" json:"invite_code,omitempty"`
 	Source          string                 `protobuf:"bytes,9,opt,name=source,proto3" json:"source,omitempty"`
+	DeviceId        string                 `protobuf:"bytes,10,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
+	Fingerprint     string                 `protobuf:"bytes,11,opt,name=fingerprint,proto3" json:"fingerprint,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -162,6 +164,20 @@ func (x *RegisterReq) GetInviteCode() string {
 func (x *RegisterReq) GetSource() string {
 	if x != nil {
 		return x.Source
+	}
+	return ""
+}
+
+func (x *RegisterReq) GetDeviceId() string {
+	if x != nil {
+		return x.DeviceId
+	}
+	return ""
+}
+
+func (x *RegisterReq) GetFingerprint() string {
+	if x != nil {
+		return x.Fingerprint
 	}
 	return ""
 }
@@ -2448,7 +2464,7 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\n" +
 	"\x19proto/user/user_app.proto\x12\x04user\x1a\x19proto/common/common.proto\x1a\x15proto/user/enum.proto\x1a\x16proto/user/model.proto\"5\n" +
 	"\rAppCommonResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\x8e\x02\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\xcd\x02\n" +
 	"\vRegisterReq\x127\n" +
 	"\rregister_type\x18\x02 \x01(\x0e2\x12.user.RegisterTypeR\fregisterType\x12\x1a\n" +
 	"\busername\x18\x03 \x01(\tR\busername\x12\x14\n" +
@@ -2458,7 +2474,10 @@ const file_proto_user_user_app_proto_rawDesc = "" +
 	"\x10confirm_password\x18\a \x01(\tR\x0fconfirmPassword\x12\x1f\n" +
 	"\vinvite_code\x18\b \x01(\tR\n" +
 	"inviteCode\x12\x16\n" +
-	"\x06source\x18\t \x01(\tR\x06source\"\\\n" +
+	"\x06source\x18\t \x01(\tR\x06source\x12\x1b\n" +
+	"\tdevice_id\x18\n" +
+	" \x01(\tR\bdeviceId\x12 \n" +
+	"\vfingerprint\x18\v \x01(\tR\vfingerprint\"\\\n" +
 	"\fRegisterResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
 	"\x04data\x18\x02 \x01(\v2\x12.user.RegisterDataR\x04data\"}\n" +

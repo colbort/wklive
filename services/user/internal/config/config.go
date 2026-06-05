@@ -15,5 +15,8 @@ type Config struct {
 		AccessSecret string
 		AccessExpire int64
 	} `json:"Jwt" yaml:"Jwt"`
+	Register struct {
+		UsernameNoRechargeLimit int64
+	} `json:"Register" yaml:"Register"`
 	SystemRpc zrpc.RpcClientConf
 }

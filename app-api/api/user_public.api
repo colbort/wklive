@@ -12,6 +12,8 @@ type RegisterReq {
 	confirmPassword string `json:"confirmPassword"`
 	inviteCode      string `json:"inviteCode,optional"`
 	source          string `json:"source,optional"`
+	deviceId        string `json:"deviceId"`
+	fingerprint     string `json:"fingerprint"`
 }
 
 type RegisterData {
@@ -44,8 +46,8 @@ type LoginResp {
 }
 
 type GuestLoginReq {
-	deviceId    string `json:"deviceId"`
-	fingerprint string `json:"fingerprint"`
+	deviceId        string `json:"deviceId"`
+	fingerprint     string `json:"fingerprint"`
 }
 
 type GuestLogin {

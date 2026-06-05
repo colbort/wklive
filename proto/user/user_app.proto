@@ -19,6 +19,8 @@ message RegisterReq {
   string confirm_password = 7;
   string invite_code = 8;
   string source = 9;
+  string device_id = 10;
+  string fingerprint = 11;
 }
 
 message RegisterResp {

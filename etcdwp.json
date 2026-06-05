@@ -20,7 +20,7 @@
     "key" : "\/wklive\/itick-rpc\/config"
   },
   {
-    "value" : "Name: option.rpc\nListenOn: 0.0.0.0:8085\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: option.rpc\n\nRedis:\n  Host: 127.0.0.1:6379\n  Type: node\n  Pass:\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: asset.rpc   ",
+    "value" : "Name: option.rpc\nListenOn: 0.0.0.0:8085\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: option.rpc\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: asset.rpc   ",
     "key" : "\/wklive\/option-rpc\/config"
   },
   {
@@ -28,7 +28,7 @@
     "key" : "\/wklive\/payment-rpc\/config"
   },
   {
-    "value" : "Name: staking.rpc\nListenOn: 0.0.0.0:8086\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: staking.rpc\n\nRedis:\n  Host: 127.0.0.1:6379\n  Type: node\n  Pass:\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: asset.rpc   ",
+    "value" : "Name: staking.rpc\nListenOn: 0.0.0.0:8086\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: staking.rpc\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: asset.rpc   ",
     "key" : "\/wklive\/staking-rpc\/config"
   },
   {
@@ -36,11 +36,43 @@
     "key" : "\/wklive\/system-rpc\/config"
   },
   {
-    "value" : "Name: trade.rpc\nListenOn: 0.0.0.0:8087\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: trade.rpc\n\nRedis:\n  Host: 127.0.0.1:6379\n  Type: node\n  Pass:\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: asset.rpc   ",
+    "value" : "Name: trade.rpc\nListenOn: 0.0.0.0:8087\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: trade.rpc\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: asset.rpc   ",
     "key" : "\/wklive\/trade-rpc\/config"
   },
   {
-    "value" : "Name: user.rpc\nListenOn: 0.0.0.0:8081\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: user.rpc\n\nSystemRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: system.rpc   ",
+    "value" : "Name: user.rpc\nListenOn: 0.0.0.0:8081\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: user.rpc\n\nRegister:\n  UsernameNoRechargeLimit: 7\n\nSystemRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: system.rpc   ",
     "key" : "\/wklive\/user-rpc\/config"
+  },
+  {
+    "value" : "192.168.10.202:8084",
+    "key" : "asset.rpc\/7587895315504215302"
+  },
+  {
+    "value" : "192.168.10.202:8082",
+    "key" : "itick.rpc\/7587895315504216141"
+  },
+  {
+    "value" : "192.168.10.202:8085",
+    "key" : "option.rpc\/7587895315504215320"
+  },
+  {
+    "value" : "192.168.10.202:8083",
+    "key" : "payment.rpc\/7587895315504215326"
+  },
+  {
+    "value" : "192.168.10.202:8086",
+    "key" : "staking.rpc\/7587895315504215314"
+  },
+  {
+    "value" : "192.168.10.202:8080",
+    "key" : "system.rpc\/7587895315504216158"
+  },
+  {
+    "value" : "192.168.10.202:8087",
+    "key" : "trade.rpc\/7587895315504215308"
+  },
+  {
+    "value" : "192.168.10.202:8081",
+    "key" : "user.rpc\/7587895315504216147"
   }
 ]

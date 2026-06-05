@@ -38,5 +38,7 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRe
 		ConfirmPassword: req.ConfirmPassword,
 		InviteCode:      req.InviteCode,
 		Source:          req.Source,
+		DeviceId:        req.DeviceId,
+		Fingerprint:     req.Fingerprint,
 	}, l.svcCtx.UserCli.Register)
 }

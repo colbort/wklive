@@ -1527,6 +1527,8 @@ type RegisterReq struct {
 	ConfirmPassword string `json:"confirmPassword"`
 	InviteCode      string `json:"inviteCode,optional"`
 	Source          string `json:"source,optional"`
+	DeviceId        string `json:"deviceId"`
+	Fingerprint     string `json:"fingerprint"`
 }
 
 type RegisterResp struct {
