@@ -700,53 +700,29 @@ button {
 }
 
 .mobile-tabbar__item--active .mobile-tabbar__icon {
-  background: var(--accent-strong);
-  color: #08110a;
-}
-
-.mobile-tabbar__item--active.mobile-tabbar__item--trade .app-icon__nav-frame,
-.mobile-tabbar__item--active.mobile-tabbar__item--wallet .app-icon__nav-frame,
-.mobile-tabbar__item--active.mobile-tabbar__item--profile .app-icon__nav-frame {
-  opacity: 0;
-}
-
-.mobile-tabbar__item--active.mobile-tabbar__item--trade .app-icon--nav-trade {
-  transform: translate(-0.9px, -0.9px) scale(0.82);
-  transform-origin: center;
-}
-
-.mobile-tabbar__item--active.mobile-tabbar__item--wallet .app-icon--nav-assets {
-  transform: translate(-0.9px, -0.9px) scale(0.82);
-  transform-origin: center;
-}
-
-.mobile-tabbar__item--active.mobile-tabbar__item--profile .app-icon--nav-profile {
-  transform: translate(-1.25px, -1.25px) scale(0.82);
-  transform-origin: center;
-}
-
-.mobile-tabbar__item--active.mobile-tabbar__item--markets .mobile-tabbar__icon {
   background: transparent;
   color: var(--accent-strong);
 }
 
-.mobile-tabbar__item--active.mobile-tabbar__item--markets
-  .app-icon--nav-market
-  > path:not(.app-icon__nav-active-shape) {
+.mobile-tabbar__item--active
+  .mobile-tabbar__icon-svg
+  > path:not(.app-icon__nav-active-shape):not(.app-icon__nav-symbol) {
   display: none;
 }
 
-.mobile-tabbar__item--active.mobile-tabbar__item--markets .app-icon__nav-active-shape {
+.mobile-tabbar__item--active .mobile-tabbar__icon-svg .app-icon__nav-active-shape {
   display: block;
 }
 
-.mobile-tabbar__item--active.mobile-tabbar__item--markets .mobile-tabbar__icon-svg {
-  overflow: visible;
+.mobile-tabbar__item--active .mobile-tabbar__icon-svg .app-icon__nav-symbol {
+  display: block;
+  fill: #08110a;
 }
 
-.mobile-tabbar__item--active.mobile-tabbar__item--home .mobile-tabbar__icon {
-  background: transparent;
-  color: var(--accent-strong);
+.mobile-tabbar__item--active.mobile-tabbar__item--markets
+  .mobile-tabbar__icon-svg
+  .app-icon__nav-symbol {
+  display: none;
 }
 
 .site-action-circle,
