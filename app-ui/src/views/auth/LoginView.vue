@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, ref } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { getTenantCode } from '@/api/http'
@@ -11,6 +11,7 @@ import { useI18n } from '@/i18n'
 
 const LOGIN_TYPE_PHONE = 2
 const LOGIN_TYPE_EMAIL = 3
+const REMEMBER_LOGIN_STORAGE_KEY = 'app_login_remembered_credentials'
 const { t } = useI18n()
 
 type EthereumProvider = {
@@ -85,6 +86,18 @@ type WalletDefinition = {
   installUrl: string
   chainType: 'evm' | 'tron'
   detect: (provider: EthereumProvider) => boolean
+}
+
+type WalletErrorLike = {
+  code?: number | string
+  message?: string
+}
+
+type RememberedLoginCredentials = {
+  activeTab: 'email' | 'phone'
+  account: string
+  password: string
+  dialCode?: string
 }
 
 declare global {
@@ -412,6 +425,79 @@ const walletDefinitions: WalletDefinition[] = [
   },
 ]
 
+onMounted(() => {
+  restoreRememberedLogin()
+})
+
+watch(remember, (value) => {
+  if (!value) clearRememberedLogin()
+})
+
+function getRememberedLogin(): RememberedLoginCredentials | null {
+  try {
+    const raw = localStorage.getItem(REMEMBER_LOGIN_STORAGE_KEY)
+    if (!raw) return null
+
+    const data = JSON.parse(raw) as Partial<RememberedLoginCredentials>
+    if (
+      (data.activeTab !== 'email' && data.activeTab !== 'phone') ||
+      typeof data.account !== 'string' ||
+      typeof data.password !== 'string'
+    ) {
+      return null
+    }
+
+    return {
+      activeTab: data.activeTab,
+      account: data.account,
+      password: data.password,
+      dialCode: typeof data.dialCode === 'string' ? data.dialCode : undefined,
+    }
+  } catch {
+    return null
+  }
+}
+
+function restoreRememberedLogin() {
+  const credentials = getRememberedLogin()
+  if (!credentials) return
+
+  activeTab.value = credentials.activeTab
+  account.value = credentials.account
+  password.value = credentials.password
+  remember.value = true
+
+  if (credentials.dialCode) {
+    selectedCountry.value =
+      countryDialCodes.find((item) => item.dialCode === credentials.dialCode) ||
+      selectedCountry.value
+  }
+}
+
+function saveRememberedLogin() {
+  try {
+    localStorage.setItem(
+      REMEMBER_LOGIN_STORAGE_KEY,
+      JSON.stringify({
+        activeTab: activeTab.value,
+        account: account.value.trim(),
+        password: password.value,
+        dialCode: activeTab.value === 'phone' ? selectedCountry.value.dialCode : undefined,
+      } satisfies RememberedLoginCredentials),
+    )
+  } catch {
+    // Ignore storage failures so login still works in restricted browser modes.
+  }
+}
+
+function clearRememberedLogin() {
+  try {
+    localStorage.removeItem(REMEMBER_LOGIN_STORAGE_KEY)
+  } catch {
+    // Ignore storage failures so login state is not affected.
+  }
+}
+
 function goBack() {
   if (window.history.length > 1) {
     router.back()
@@ -534,6 +620,11 @@ async function submitLogin() {
       if (res.code === 2057) focusGoogleCodeInput(0)
       return
     }
+    if (remember.value) {
+      saveRememberedLogin()
+    } else {
+      clearRememberedLogin()
+    }
     router.replace('/profile')
   } catch (error) {
     console.warn('login failed', error)
@@ -638,23 +729,35 @@ function retryPendingWallet() {
   handleWalletSelected(pendingWallet.value)
 }
 
-function isUserRejectedWalletError(error: any) {
-  const message = String(error?.message || '').toLowerCase()
+function toWalletError(error: unknown): WalletErrorLike {
+  if (!error || typeof error !== 'object') return {}
+  const record = error as Record<string, unknown>
+  return {
+    code:
+      typeof record.code === 'number' || typeof record.code === 'string' ? record.code : undefined,
+    message: typeof record.message === 'string' ? record.message : undefined,
+  }
+}
+
+function isUserRejectedWalletError(error: unknown) {
+  const walletError = toWalletError(error)
+  const message = String(walletError.message || '').toLowerCase()
   return (
-    error?.code === 4001 ||
-    error?.code === '4001' ||
+    walletError.code === 4001 ||
+    walletError.code === '4001' ||
     message.includes('user rejected') ||
     message.includes('user denied') ||
     message.includes('cancel')
   )
 }
 
-function isDefiniteWalletError(error: any) {
-  const message = String(error?.message || '').toLowerCase()
+function isDefiniteWalletError(error: unknown) {
+  const walletError = toWalletError(error)
+  const message = String(walletError.message || '').toLowerCase()
   if (isUserRejectedWalletError(error)) return true
   return (
-    error?.code === -32002 ||
-    error?.code === '-32002' ||
+    walletError.code === -32002 ||
+    walletError.code === '-32002' ||
     message.includes('already pending') ||
     message.includes('invalid transaction') ||
     message.includes('unsupported') ||
@@ -720,7 +823,7 @@ async function connectWallet(selectedProvider?: EthereumProvider | null) {
     if (requestId !== walletRequestId.value) return
     walletSheetOpen.value = false
     pendingWallet.value = null
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.warn('connect wallet failed', error)
     walletError.value = isUserRejectedWalletError(error)
       ? t('auth.walletCanceled')
@@ -740,7 +843,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   walletConnecting.value = true
   try {
     if (selectedProvider?.request) {
-      await selectedProvider.request({ method: 'tron_requestAccounts' }).catch((error: any) => {
+      await selectedProvider.request({ method: 'tron_requestAccounts' }).catch((error: unknown) => {
         if (isDefiniteWalletError(error)) throw error
         console.warn('tronlink request pending', error)
       })
@@ -763,7 +866,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
     if (requestId !== walletRequestId.value) return
     walletSheetOpen.value = false
     pendingWallet.value = null
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.warn('connect tronlink failed', error)
     walletError.value = isUserRejectedWalletError(error)
       ? t('auth.walletCanceled')

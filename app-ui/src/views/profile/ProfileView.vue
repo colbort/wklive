@@ -155,7 +155,7 @@ function goLogin() {
 
     <section v-if="isLoggedIn" class="profile-user" :aria-busy="loadingProfile">
       <div class="profile-avatar" :class="{ 'profile-avatar--image': avatarUrl }">
-        <img v-if="avatarUrl" :src="avatarUrl" alt="" />
+        <img v-if="avatarUrl" :src="avatarUrl" alt="">
         <span v-else />
       </div>
       <div class="profile-user__info">

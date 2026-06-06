@@ -447,7 +447,12 @@ function markUpload(type: IdentityFileKey) {
 <template>
   <section class="register-page" :class="{ 'register-page--captcha': showCaptcha }">
     <header class="register-topbar">
-      <button type="button" class="icon-button" :aria-label="t('common.back')" @click="goBack">
+      <button
+        type="button"
+        class="icon-button"
+        :aria-label="t('common.back')"
+        @click="goBack"
+      >
         <AppIcon name="back" class="back-icon-svg" />
       </button>
       <button
@@ -459,7 +464,12 @@ function markUpload(type: IdentityFileKey) {
       >
         <AppIcon name="globe" class="top-icon-svg" />
       </button>
-      <button v-else-if="step > 1" type="button" class="skip-button" @click="skipStep">
+      <button
+        v-else-if="step > 1"
+        type="button"
+        class="skip-button"
+        @click="skipStep"
+      >
         {{ t('common.skip') }}
       </button>
     </header>
@@ -519,7 +529,7 @@ function markUpload(type: IdentityFileKey) {
 
         <label class="auth-field">
           <CountryDialCodePicker v-if="accountMode === 'phone'" v-model="selectedCountry" />
-          <input v-model="account" :placeholder="accountPlaceholder" autocomplete="username" />
+          <input v-model="account" :placeholder="accountPlaceholder" autocomplete="username">
           <button
             type="button"
             class="field-action"
@@ -537,7 +547,7 @@ function markUpload(type: IdentityFileKey) {
             :type="showPassword ? 'text' : 'password'"
             :placeholder="t('auth.passwordMin8')"
             autocomplete="new-password"
-          />
+          >
           <button type="button" class="field-action" @click="showPassword = !showPassword">
             <AppIcon :name="showPassword ? 'eye' : 'eye-off'" class="field-action-svg" />
           </button>
@@ -551,7 +561,7 @@ function markUpload(type: IdentityFileKey) {
             :type="showConfirmPassword ? 'text' : 'password'"
             :placeholder="t('security.confirmNewPassword')"
             autocomplete="new-password"
-          />
+          >
           <button
             type="button"
             class="field-action"
@@ -561,19 +571,16 @@ function markUpload(type: IdentityFileKey) {
           </button>
         </label>
         <label class="auth-field">
-          <input v-model="inviteCode" :placeholder="t('auth.inviteCode')" />
+          <input v-model="inviteCode" :placeholder="t('auth.inviteCode')">
         </label>
         <label class="agree-control">
-          <input v-model="agreed" type="checkbox" />
+          <input v-model="agreed" type="checkbox">
           <span>
             <svg viewBox="0 0 16 16" aria-hidden="true">
               <path d="M3.25 8.1 6.45 11.2 12.8 4.8" />
             </svg>
           </span>
-          <em
-            >{{ t('auth.agreeTerms') }}<b>{{ t('auth.privacyPolicy') }}</b
-            >{{ t('common.and') }}<b>{{ t('auth.userTerms') }}</b></em
-          >
+          <em>{{ t('auth.agreeTerms') }}<b>{{ t('auth.privacyPolicy') }}</b>{{ t('common.and') }}<b>{{ t('auth.userTerms') }}</b></em>
         </label>
       </section>
 
@@ -584,7 +591,7 @@ function markUpload(type: IdentityFileKey) {
             v-model="payPassword"
             :type="showPayPassword ? 'text' : 'password'"
             :placeholder="t('auth.payPassword')"
-          />
+          >
           <button type="button" class="field-action" @click="showPayPassword = !showPayPassword">
             <AppIcon :name="showPayPassword ? 'eye' : 'eye-off'" class="field-action-svg" />
           </button>
@@ -627,7 +634,7 @@ function markUpload(type: IdentityFileKey) {
             @input="handleCodeInput('email', index, $event)"
             @keydown="handleCodeKeydown('email', index, $event)"
             @paste="handleCodePaste('email', index, $event)"
-          />
+          >
         </div>
       </section>
 
@@ -635,11 +642,11 @@ function markUpload(type: IdentityFileKey) {
         <h1>{{ t('auth.identityInfo') }}</h1>
         <label class="auth-field required-field">
           <span>*</span>
-          <input v-model="identityName" :placeholder="t('auth.legalName')" />
+          <input v-model="identityName" :placeholder="t('auth.legalName')">
         </label>
         <label class="auth-field required-field">
           <span>*</span>
-          <input v-model="identityNo" :placeholder="t('auth.idNumber')" />
+          <input v-model="identityNo" :placeholder="t('auth.idNumber')">
         </label>
 
         <h2>{{ t('auth.idUpload') }}</h2>
@@ -701,7 +708,7 @@ function markUpload(type: IdentityFileKey) {
         <h1>{{ t('auth.bindGoogleAuthenticator') }}</h1>
         <p>{{ t('auth.backupSecretHint') }}</p>
         <div class="qr-card">
-          <img v-if="googleQr" :src="googleQr" :alt="t('auth.googleQrAlt')" />
+          <img v-if="googleQr" :src="googleQr" :alt="t('auth.googleQrAlt')">
         </div>
         <div class="secret-card">
           <strong>{{ googleSecret || '' }}</strong>
@@ -723,7 +730,7 @@ function markUpload(type: IdentityFileKey) {
             @input="handleCodeInput('google', index, $event)"
             @keydown="handleCodeKeydown('google', index, $event)"
             @paste="handleCodePaste('google', index, $event)"
-          />
+          >
         </div>
       </section>
 
