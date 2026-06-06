@@ -4,7 +4,6 @@ import { useRouter } from 'vue-router'
 
 import { apiGetAssetOptions, apiGetMyAssetSummary, apiListAssetCoinConfigs } from '@/api/asset'
 import { getAccessToken } from '@/api/http'
-import { useDevice } from '@/composables/useDevice'
 import { optionText, useOptions } from '@/composables/useOptions'
 import { useI18n } from '@/i18n'
 import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
@@ -25,7 +24,6 @@ const ASSET_OPERATION_TYPES: Partial<Record<AssetActionKey, number>> = {
   transfer: 3,
 }
 
-const { isDesktop } = useDevice()
 const router = useRouter()
 const assetOptions = useOptions(apiGetAssetOptions)
 const { t } = useI18n()
@@ -174,7 +172,6 @@ function activeCoinConfig() {
 }
 
 function openCoinActions(config: AssetCoinConfig) {
-  if (isDesktop.value) return
   selectedCoinConfig.value = config
 }
 
@@ -288,49 +285,23 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="assets-page" :class="{ 'assets-page--desktop': isDesktop }">
+  <section class="assets-page">
     <nav class="assets-top-tabs" :aria-label="t('assets.pageLabel')">
       <button
-        v-for="tab in isDesktop ? pageTabs : pageTabs.slice(0, 2)"
+        v-for="tab in pageTabs.slice(0, 2)"
         :key="tab.key"
         type="button"
         :class="{ active: activeTopTab === tab.key }"
         @click="activeTopTab = tab.key"
       >
-        {{ isDesktop ? t(tab.labelKey) : t(tab.shortLabelKey) }}
+        {{ t(tab.shortLabelKey) }}
       </button>
     </nav>
 
     <template v-if="activeTopTab === 'assets'">
       <div class="assets-center">
-        <aside v-if="isDesktop" class="assets-sidebar">
-          <nav class="assets-account-card" :aria-label="t('assets.accountLabel')">
-            <button
-              v-for="account in assetAccounts"
-              :key="account.key"
-              type="button"
-              :class="{ active: activeAssetAccount === account.key }"
-              @click="activeAssetAccount = account.key"
-            >
-              {{ account.label }}
-            </button>
-          </nav>
-
-          <nav class="assets-action-card" :aria-label="t('assets.actionLabel')">
-            <button
-              v-for="action in assetActions"
-              :key="action.key"
-              type="button"
-              :class="{ active: activeAssetAction === action.key }"
-              @click="handleAssetAction(action.key)"
-            >
-              {{ t(action.labelKey) }}
-            </button>
-          </nav>
-        </aside>
-
         <section class="assets-main-panel">
-          <section v-if="!isDesktop" class="asset-actions">
+          <section class="asset-actions">
             <button
               v-for="action in assetActions"
               :key="action.key"
@@ -343,7 +314,7 @@ onMounted(() => {
             </button>
           </section>
 
-          <nav v-if="!isDesktop" class="assets-sub-tabs" :aria-label="t('assets.accountLabel')">
+          <nav class="assets-sub-tabs" :aria-label="t('assets.accountLabel')">
             <button
               v-for="account in assetAccounts"
               :key="account.key"
@@ -393,7 +364,6 @@ onMounted(() => {
                 </span>
                 <span class="asset-coin-row__main">
                   <strong>{{ item.config.coin }}</strong>
-                  <small v-if="isDesktop">{{ coinConfigName(item.config) }}</small>
                 </span>
                 <span class="asset-coin-row__meta">{{ item.amount }}</span>
               </button>
@@ -526,12 +496,6 @@ onMounted(() => {
   color: #f6f7fb;
 }
 
-.assets-page--desktop {
-  min-height: calc(100dvh - 76px);
-  padding: 0 0 80px;
-  background: #171a23;
-}
-
 button {
   border: 0;
   background: transparent;
@@ -559,15 +523,6 @@ button {
   background: #0b0c15;
 }
 
-.assets-page--desktop .assets-top-tabs {
-  justify-content: center;
-  gap: 88px;
-  margin: 0;
-  padding: 28px 24px 0;
-  min-height: 90px;
-  border-bottom: 1px solid #2a2d38;
-}
-
 .assets-top-tabs button {
   flex: 0 0 auto;
   color: #8f929d;
@@ -582,80 +537,8 @@ button {
   font-weight: 600;
 }
 
-.assets-page--desktop .assets-top-tabs button {
-  font-size: 20px;
-  padding-bottom: 26px;
-}
-
-.assets-page--desktop .assets-top-tabs button.active {
-  font-size: 20px;
-}
-
-.assets-page--desktop .assets-top-tabs button.active::after {
-  position: absolute;
-  right: 36px;
-  bottom: 0;
-  left: 36px;
-  height: 3px;
-  border-radius: 999px;
-  background: #02b904;
-  content: '';
-}
-
 .assets-center {
   width: 100%;
-}
-
-.assets-page--desktop .assets-center {
-  display: grid;
-  grid-template-columns: 306px minmax(0, 1fr);
-  gap: 42px;
-  max-width: 1640px;
-  margin: 0 auto;
-  padding: 56px 48px 0;
-}
-
-.assets-sidebar {
-  display: grid;
-  align-content: start;
-  gap: 14px;
-}
-
-.assets-account-card,
-.assets-action-card {
-  display: grid;
-  overflow: hidden;
-  border-radius: 24px;
-  background: #272a34;
-}
-
-.assets-account-card button,
-.assets-action-card button {
-  min-height: 72px;
-  color: #fff;
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.assets-account-card button {
-  position: relative;
-}
-
-.assets-account-card button.active,
-.assets-action-card button.active {
-  background: #3d404b;
-  color: #02b904;
-}
-
-.assets-account-card button.active::before {
-  position: absolute;
-  top: 22px;
-  bottom: 22px;
-  left: 0;
-  width: 12px;
-  border-radius: 0 999px 999px 0;
-  background: #02b904;
-  content: '';
 }
 
 .asset-actions {
@@ -712,14 +595,6 @@ button {
   display: none;
 }
 
-.assets-page--desktop .asset-list-head {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 56px;
-  border-bottom: 1px solid #2a2d38;
-}
-
 .asset-list-head h2 {
   margin: 0;
   font-size: 20px;
@@ -732,11 +607,6 @@ button {
 .asset-coin-configs {
   margin: 18px -16px 0;
   border-bottom: 1px solid #242633;
-}
-
-.assets-page--desktop .asset-coin-configs {
-  margin: 34px 0 0;
-  border-bottom: 0;
 }
 
 .asset-coin-configs__state {
@@ -752,10 +622,6 @@ button {
   gap: 0;
 }
 
-.assets-page--desktop .asset-coin-list {
-  gap: 14px;
-}
-
 .asset-coin-row {
   display: grid;
   grid-template-columns: 44px minmax(0, 1fr) auto;
@@ -765,21 +631,6 @@ button {
   padding: 10px 24px;
   border-top: 1px solid #242633;
   text-align: left;
-}
-
-.assets-page--desktop .asset-coin-row {
-  grid-template-columns: 210px minmax(0, 1fr) auto;
-  gap: 38px;
-  min-height: 72px;
-  overflow: hidden;
-  border: 0;
-  border-radius: 16px;
-  background: #282b35;
-  font-size: 16px;
-}
-
-.assets-page--desktop .asset-coin-row__icon {
-  margin-left: 0;
 }
 
 .asset-coin-row__icon {
@@ -806,15 +657,6 @@ button {
   gap: 4px;
 }
 
-.assets-page--desktop .asset-coin-row__main {
-  display: flex;
-  align-items: center;
-  min-height: 72px;
-  margin: -12px 0 -12px -38px;
-  padding-left: 72px;
-  background: #454852;
-}
-
 .asset-coin-row__main strong {
   overflow: hidden;
   color: #f6f7fb;
@@ -822,10 +664,6 @@ button {
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.assets-page--desktop .asset-coin-row__main strong {
-  font-size: 17px;
 }
 
 .asset-coin-row__main small,
@@ -854,14 +692,6 @@ button {
 
 .assets-sub-tabs::-webkit-scrollbar {
   display: none;
-}
-
-.assets-page--desktop .assets-sub-tabs--orders,
-.assets-page--desktop .assets-order-tabs,
-.assets-page--desktop .asset-login-tip--orders {
-  max-width: 1200px;
-  margin-right: auto;
-  margin-left: auto;
 }
 
 .assets-sub-tabs--orders {

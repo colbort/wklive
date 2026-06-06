@@ -190,13 +190,7 @@ function selectLanguage(option: { locale?: AppLocale }) {
   background: #00c313;
 }
 
-@media (min-width: 768px) {
-  .language-page {
-    max-width: 414px;
-  }
-}
-
-@media (max-width: 959px) {
+@media (min-width: 0) {
   .language-page {
     padding: 14px 22px 48px;
   }

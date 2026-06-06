@@ -514,7 +514,7 @@ export default {
     trustEmphasis: 'all-in-one exchange',
     trustSub: 'Chosen by millions of users worldwide',
     simpleExperience: 'Simple trading experience',
-    simpleExperienceDesc: 'Desktop and mobile support for easy crypto trading anywhere',
+    simpleExperienceDesc: 'Full platform support for easy crypto trading anywhere',
     assetSecurity: 'Asset security, fully protected',
     assetSecurityDesc: '300M USDT user protection fund for industry-leading safeguards',
     proSupport: 'Professional support around the clock',

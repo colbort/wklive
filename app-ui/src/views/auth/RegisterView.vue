@@ -2001,7 +2001,7 @@ function markUpload(type: IdentityFileKey) {
   }
 }
 
-@media (max-width: 959px) {
+@media (min-width: 0) {
   .register-page {
     padding: 14px 22px 28px;
   }
@@ -2267,9 +2267,4 @@ function markUpload(type: IdentityFileKey) {
   }
 }
 
-@media (min-width: 768px) {
-  .register-page {
-    max-width: 414px;
-  }
-}
 </style>

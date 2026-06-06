@@ -53,6 +53,11 @@ const { t } = useI18n()
   color: #f8f8fb;
 }
 
+.asset-flow-page--narrow {
+  max-width: 414px;
+  margin: 0 auto;
+}
+
 button {
   border: 0;
   background: transparent;
@@ -157,12 +162,4 @@ button {
   }
 }
 
-@media (min-width: 768px) {
-  .asset-flow-page--narrow {
-    max-width: 430px;
-    height: calc(100dvh - 76px);
-    min-height: calc(100dvh - 76px);
-    margin: 0 auto;
-  }
-}
 </style>

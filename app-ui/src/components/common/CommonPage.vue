@@ -224,8 +224,9 @@ function onRightClick() {
 
 <style scoped>
 .page-414 {
-  width: 414px;
+  width: min(100%, 414px);
   height: 100vh;
+  height: 100dvh;
   margin: 0 auto;
   background: #0b0d16;
   color: #ffffff;

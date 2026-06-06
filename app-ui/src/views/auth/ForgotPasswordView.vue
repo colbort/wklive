@@ -675,13 +675,7 @@ function submitReset() {
   transform: translateX(-1px);
 }
 
-@media (min-width: 768px) {
-  .auth-page {
-    max-width: 414px;
-  }
-}
-
-@media (max-width: 959px) {
+@media (min-width: 0) {
   .auth-page {
     padding: 16px 22px 28px;
     background: #0b0c15;

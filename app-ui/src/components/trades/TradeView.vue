@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import MobileTradeDepthPreview from '@/components/trades/mobile/DepthPreview.vue'
-import MobileTradeHeader from '@/components/trades/mobile/Header.vue'
-import TradeOrdersPanel from '@/components/trades/mobile/OrdersPanel.vue'
-import MobileTradeSubmitPanel from '@/components/trades/mobile/SubmitPanel.vue'
+import TradeDepthPreview from '@/components/trades/DepthPreview.vue'
+import TradeHeader from '@/components/trades/Header.vue'
+import TradeOrdersPanel from '@/components/trades/OrdersPanel.vue'
+import TradeSubmitPanel from '@/components/trades/SubmitPanel.vue'
 import type {
   DepthPayload,
   ItickTenantCategory,
@@ -98,7 +98,7 @@ const emit = defineEmits<{
 
 <template>
   <div class="mobile-trade-view">
-    <MobileTradeHeader
+    <TradeHeader
       :categories="categories"
       :selected-category-type="selectedCategoryType"
       :selected-category="selectedCategory"
@@ -119,7 +119,7 @@ const emit = defineEmits<{
     />
 
     <section v-if="tradeKind === 'crypto'" class="mobile-contract-layout">
-      <MobileTradeSubmitPanel
+      <TradeSubmitPanel
         :selected-product="selectedProduct"
         :trade-kind="tradeKind"
         :order-mode="orderMode"
@@ -155,7 +155,7 @@ const emit = defineEmits<{
         @update:stop-loss-price="emit('update:stopLossPrice', $event)"
         @submit-order="emit('submit-order', $event)"
       />
-      <MobileTradeDepthPreview
+      <TradeDepthPreview
         :selected-product="selectedProduct"
         :depth-snapshot="depthSnapshot"
         :selected-quote="selectedQuote"
@@ -164,7 +164,7 @@ const emit = defineEmits<{
       />
     </section>
 
-    <MobileTradeSubmitPanel
+    <TradeSubmitPanel
       v-else
       :selected-product="selectedProduct"
       :trade-kind="tradeKind"

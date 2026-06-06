@@ -2076,7 +2076,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   text-align: center;
 }
 
-@media (max-width: 959px) {
+@media (min-width: 0) {
   .auth-page {
     padding: 14px 22px 28px;
   }

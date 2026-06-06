@@ -101,7 +101,7 @@ function getDeviceType(userAgent = '', maxTouchPoints = 0, screenWidth = 0) {
   if (/ipad|tablet/.test(ua)) return 'tablet'
   if (/iphone|android.+mobile|mobile/.test(ua)) return 'mobile'
   if (/android/.test(ua) && maxTouchPoints > 0 && screenWidth <= 1024) return 'tablet'
-  return 'desktop'
+  return 'web'
 }
 
 function parseUserAgentInfo(userAgent = '') {

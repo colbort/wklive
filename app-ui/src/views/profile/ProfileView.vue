@@ -457,12 +457,6 @@ function goLogin() {
   white-space: nowrap;
 }
 
-@media (max-width: 959px) {
-  .profile-page {
-    max-width: none;
-  }
-}
-
 @media (max-width: 520px) {
   .profile-page {
     padding: 10px 16px calc(88px + env(safe-area-inset-bottom));

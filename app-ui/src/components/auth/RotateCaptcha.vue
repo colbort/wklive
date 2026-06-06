@@ -240,7 +240,7 @@ function validateOnRelease() {
   }
 }
 
-@media (max-width: 959px) {
+@media (min-width: 0) {
   .rotate-captcha {
     padding-top: 28px;
   }

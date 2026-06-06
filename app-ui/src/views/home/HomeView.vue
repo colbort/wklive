@@ -279,8 +279,7 @@ const trustFeatures = [
 .ave-hero__portal {
   position: absolute;
   left: 50%;
-  width: 414px;
-  max-width: none;
+  width: min(100vw, 414px);
   transform: translateX(-50%);
 }
 
@@ -306,8 +305,7 @@ const trustFeatures = [
 
 .ave-section__phones {
   display: block;
-  width: 414px;
-  max-width: none;
+  width: min(100vw, 414px);
   margin: 32px 0 20px 50%;
   transform: translateX(-50%);
 }
@@ -387,8 +385,7 @@ const trustFeatures = [
   left: 50%;
   top: 0;
   z-index: 2;
-  width: 414px;
-  max-width: none;
+  width: min(100vw, 414px);
   transform: translateX(-50%);
 }
 
@@ -435,8 +432,7 @@ const trustFeatures = [
 
 .ave-contract__phones {
   display: block;
-  width: 414px;
-  max-width: none;
+  width: min(100vw, 414px);
   margin: 30px 0 24px 50%;
   transform: translateX(-50%);
 }
@@ -521,19 +517,8 @@ const trustFeatures = [
 
 .ave-reward__image {
   display: block;
-  width: 414px;
-  max-width: none;
+  width: min(100vw, 414px);
   margin: 40px 0 0 50%;
   transform: translateX(-50%);
-}
-
-@media (min-width: 900px) {
-  .ave-home {
-    border-inline: 1px solid rgba(255, 255, 255, 0.04);
-  }
-
-  .ave-hero {
-    min-height: 682px;
-  }
 }
 </style>

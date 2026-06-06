@@ -1,198 +1,35 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
-import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
+import { computed } from 'vue'
+import { RouterLink, RouterView, useRoute } from 'vue-router'
 
-import { apiGetMyAssetSummary, apiListAssetCoinConfigs } from '@/api/asset'
 import AppIcon from '@/components/common/AppIcon.vue'
 import { appNavigation } from '@/config/navigation'
-import { apiListVisibleCategories, apiListVisibleProducts } from '@/api/itick'
-import { getAccessToken, getTenantCode } from '@/api/http'
-import { apiGetProfile, apiLogout } from '@/api/userPrivate'
-import { useDevice } from '@/composables/useDevice'
 import { useI18n } from '@/i18n'
-import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
-import type { ItickTenantCategory, ItickTenantProduct } from '@/types/itick'
-import type { UserProfile } from '@/types/user'
-import { formatAssetMinorAmount } from '@/utils/assetAmount'
 
 const route = useRoute()
-const router = useRouter()
-const { isDesktop } = useDevice()
-const { locale, t, toggleLocale } = useI18n()
+const { t, toggleLocale } = useI18n()
 
 const pageTitle = computed(() => String(route.meta.title || 'AVE'))
 const isHomeRoute = computed(() => route.name === 'home')
-const showSiteHeader = computed(() => isDesktop.value || route.name === 'home')
-const mobileTabbarOverride = computed(() => {
+const showSiteHeader = computed(() => isHomeRoute.value)
+const tabbarOverride = computed(() => {
   const value = Array.isArray(route.query.tabbar) ? route.query.tabbar[0] : route.query.tabbar
   if (value === '1' || value === 'true' || value === 'show') return true
   if (value === '0' || value === 'false' || value === 'hide') return false
   return null
 })
-const showMobileTabbar = computed(() => {
-  if (isDesktop.value) return false
-  if (mobileTabbarOverride.value !== null) return mobileTabbarOverride.value
+const showTabbar = computed(() => {
+  if (tabbarOverride.value !== null) return tabbarOverride.value
   return !route.meta.hideTabbar
 })
-
-const desktopCategories = ref<ItickTenantCategory[]>([])
-const desktopProductsMap = ref<Record<number, ItickTenantProduct[]>>({})
-const hoveredCategoryType = ref<number | null>(null)
-const profile = ref<UserProfile | null>(null)
-const userAssets = ref<AssetUserAsset[]>([])
-const userAssetCoinConfigs = ref<AssetCoinConfig[]>([])
-const activeUserPanel = ref('')
-
-const desktopDocNav = [
-  { key: 'license', labelKey: 'nav.license', path: '/home' },
-  { key: 'whitepaper', labelKey: 'nav.whitepaper', path: '/home' },
-  { key: 'compliance', labelKey: 'nav.compliance', path: '/home' },
-]
-
-const languageLabel = computed(() =>
-  locale.value === 'zh-CN' ? t('common.zhCN') : t('common.enUS'),
-)
-
-const activeDesktopCategoryType = computed(() => {
-  if (hoveredCategoryType.value !== null) return hoveredCategoryType.value
-
-  const queryCategoryType = Number(route.query.categoryType)
-  if (Number.isFinite(queryCategoryType) && queryCategoryType > 0) {
-    return queryCategoryType
-  }
-
-  return desktopCategories.value[0]?.categoryType ?? null
-})
-
-const userBase = computed(() => profile.value?.user ?? null)
-const displayName = computed(
-  () => userBase.value?.nickname || userBase.value?.username || 'GUEST-8437',
-)
-const displayUserId = computed(() => userBase.value?.id || 50596163)
-const desktopAssetPreview = computed(() =>
-  userAssets.value.filter((asset) => asset.walletType === 1).slice(0, 8),
-)
-const desktopAssetConfigMap = computed(
-  () => new Map(userAssetCoinConfigs.value.map((config) => [config.coin, config])),
-)
-
-onMounted(async () => {
-  if (isDesktop.value) {
-    await ensureDesktopCategories()
-    await ensureDesktopUserData()
-  }
-})
-
-watch(isDesktop, async (desktop) => {
-  if (!desktop) return
-  await ensureDesktopCategories()
-  await ensureDesktopUserData()
-})
-
-async function ensureDesktopUserData() {
-  if (!getAccessToken()) return
-
-  try {
-    const [profileResp, assetResp, configResp] = await Promise.all([
-      apiGetProfile(),
-      apiGetMyAssetSummary({}),
-      apiListAssetCoinConfigs({ walletType: 1, operationType: 0 }),
-    ])
-    if (profileResp.code === 0 || profileResp.code === 200) {
-      profile.value = profileResp.data
-    }
-    if (assetResp.code === 0 || assetResp.code === 200) {
-      userAssets.value = assetResp.data?.assets || []
-    }
-    if (configResp.code === 0 || configResp.code === 200) {
-      userAssetCoinConfigs.value = configResp.data || []
-    }
-  } catch (error) {
-    console.warn('load desktop user data failed', error)
-  }
-}
-
-async function ensureDesktopCategories() {
-  if (desktopCategories.value.length) return
-
-  const tenantCode = getTenantCode()
-  const res = await apiListVisibleCategories({
-    tenantCode,
-    limit: 20,
-  })
-  desktopCategories.value = res.data || []
-
-  if (desktopCategories.value[0]) {
-    await ensureDesktopProducts(desktopCategories.value[0])
-  }
-}
-
-async function ensureDesktopProducts(category: ItickTenantCategory) {
-  if (desktopProductsMap.value[category.categoryType]?.length) return
-
-  const tenantCode = getTenantCode()
-  const res = await apiListVisibleProducts({
-    tenantCode,
-    categoryType: category.categoryType,
-    categoryCode: category.categoryCode,
-    limit: 8,
-  })
-
-  desktopProductsMap.value = {
-    ...desktopProductsMap.value,
-    [category.categoryType]: res.data || [],
-  }
-}
-
-async function handleDesktopCategoryEnter(category: ItickTenantCategory) {
-  hoveredCategoryType.value = category.categoryType
-  await ensureDesktopProducts(category)
-}
-
-function handleDesktopNavLeave() {
-  hoveredCategoryType.value = null
-}
-
-function coinGlyph(product: ItickTenantProduct) {
-  const coin = product.baseCoin || product.symbol.slice(0, 3) || product.displayName
-  return coin.slice(0, 1).toUpperCase()
-}
-
-function desktopAssetAmount(asset: AssetUserAsset) {
-  const config = desktopAssetConfigMap.value.get(asset.coin)
-  return formatAssetMinorAmount(
-    asset.availableAmount || asset.totalAmount || '0',
-    config?.decimalPlaces,
-  )
-}
-
-function openDesktopProduct(category: ItickTenantCategory, product: ItickTenantProduct) {
-  router.push({
-    path: '/trades',
-    query: {
-      categoryType: String(category.categoryType),
-      categoryCode: category.categoryCode,
-      market: product.market,
-      symbol: product.symbol,
-    },
-  })
-}
-
-async function logout() {
-  await apiLogout()
-  profile.value = null
-  userAssets.value = []
-  router.push('/profile')
-}
 </script>
 
 <template>
   <div
     class="app-shell"
     :class="{
-      'app-shell--desktop': isDesktop,
       'app-shell--home': isHomeRoute,
-      'app-shell--mobile-tabbar-visible': showMobileTabbar,
+      'app-shell--tabbar-visible': showTabbar,
     }"
   >
     <div class="app-shell__aurora app-shell__aurora--left" />
@@ -203,208 +40,23 @@ async function logout() {
         <span class="site-brand__mark">A</span>
         <div>
           <strong>AVE</strong>
-          <p v-if="!isDesktop && !isHomeRoute">
+          <p v-if="!isHomeRoute">
             {{ pageTitle }}
           </p>
         </div>
       </RouterLink>
-
-      <nav v-if="isDesktop" class="site-nav" @mouseleave="handleDesktopNavLeave">
-        <div
-          v-for="category in desktopCategories"
-          :key="category.id"
-          class="site-nav__entry"
-          :class="{
-            'site-nav__entry--active': category.categoryType === activeDesktopCategoryType,
-          }"
-          @mouseenter="handleDesktopCategoryEnter(category)"
-        >
-          <RouterLink
-            :to="{
-              path: '/trades',
-              query: {
-                categoryType: String(category.categoryType),
-                categoryCode: category.categoryCode,
-              },
-            }"
-            class="site-nav__item"
-          >
-            <span>{{ category.categoryName }}</span>
-          </RouterLink>
-
-          <div v-if="desktopProductsMap[category.categoryType]?.length" class="site-nav__dropdown">
-            <div class="site-nav__dropdown-inner">
-              <button
-                v-for="product in desktopProductsMap[category.categoryType]"
-                :key="`${product.market}-${product.symbol}`"
-                type="button"
-                class="site-nav__market-row"
-                @click="openDesktopProduct(category, product)"
-              >
-                <span class="site-nav__market-badge">{{ coinGlyph(product) }}</span>
-                <strong>{{ product.symbol }}</strong>
-                <em>{{ product.displayName || product.name || product.market }}</em>
-                <small>{{ product.market }}</small>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div v-for="item in desktopDocNav" :key="item.key" class="site-nav__entry">
-          <RouterLink :to="item.path" class="site-nav__item">
-            <span>{{ t(item.labelKey) }}</span>
-          </RouterLink>
-        </div>
-      </nav>
 
       <div class="site-header__actions">
         <button class="site-action-circle" :aria-label="t('common.search')">
           ⌕
         </button>
         <button
-          v-if="!isDesktop"
           class="site-action-circle"
           type="button"
           :aria-label="t('common.language')"
           @click="toggleLocale"
         >
           🌐
-        </button>
-        <div v-if="isDesktop" class="site-user-area">
-          <div class="site-user-chip">
-            <div class="site-user-chip__avatar" />
-            <div>
-              <strong>{{ displayName }}</strong>
-              <span>ID:{{ displayUserId }}</span>
-            </div>
-            <i class="site-user-chip__bars" />
-          </div>
-
-          <div class="site-user-menu">
-            <div class="site-user-menu__main">
-              <header class="site-user-menu__head">
-                <div class="site-user-chip__avatar" />
-                <div>
-                  <strong>{{ displayName }}</strong>
-                  <span>ID:{{ displayUserId }}</span>
-                </div>
-              </header>
-
-              <nav>
-                <RouterLink
-                  class="site-user-menu__row"
-                  to="/assets"
-                  @mouseenter="activeUserPanel = 'assets'"
-                >
-                  <span>◉</span>
-                  <strong>{{ t('userMenu.myAssets') }}</strong>
-                  <em>›</em>
-                </RouterLink>
-                <RouterLink
-                  class="site-user-menu__row"
-                  to="/assets"
-                  @mouseenter="activeUserPanel = ''"
-                >
-                  <span>▣</span>
-                  <strong>{{ t('userMenu.recharge') }}</strong>
-                </RouterLink>
-                <RouterLink
-                  class="site-user-menu__row"
-                  to="/assets"
-                  @mouseenter="activeUserPanel = ''"
-                >
-                  <span>▤</span>
-                  <strong>{{ t('userMenu.withdraw') }}</strong>
-                </RouterLink>
-                <RouterLink
-                  class="site-user-menu__row"
-                  to="/assets"
-                  @mouseenter="activeUserPanel = ''"
-                >
-                  <span>⌘</span>
-                  <strong>{{ t('userMenu.transfer') }}</strong>
-                </RouterLink>
-                <RouterLink
-                  class="site-user-menu__row"
-                  to="/assets"
-                  @mouseenter="activeUserPanel = ''"
-                >
-                  <span>▧</span>
-                  <strong>{{ t('userMenu.flows') }}</strong>
-                </RouterLink>
-                <RouterLink
-                  class="site-user-menu__row site-user-menu__row--split"
-                  to="/profile"
-                  @mouseenter="activeUserPanel = ''"
-                >
-                  <span>◈</span>
-                  <strong>{{ t('userMenu.invite') }}</strong>
-                </RouterLink>
-                <RouterLink
-                  class="site-user-menu__row site-user-menu__row--split"
-                  to="/assets"
-                  @mouseenter="activeUserPanel = ''"
-                >
-                  <span>▤</span>
-                  <strong>{{ t('userMenu.orderCenter') }}</strong>
-                </RouterLink>
-                <RouterLink
-                  class="site-user-menu__row site-user-menu__row--split"
-                  to="/profile"
-                  @mouseenter="activeUserPanel = ''"
-                >
-                  <span>▰</span>
-                  <strong>{{ t('userMenu.paymentAccount') }}</strong>
-                </RouterLink>
-                <RouterLink
-                  class="site-user-menu__row"
-                  to="/profile"
-                  @mouseenter="activeUserPanel = ''"
-                >
-                  <span>◆</span>
-                  <strong>{{ t('userMenu.security') }}</strong>
-                </RouterLink>
-                <button
-                  class="site-user-menu__row"
-                  type="button"
-                  @mouseenter="activeUserPanel = ''"
-                  @click="logout"
-                >
-                  <span>↪</span>
-                  <strong>{{ t('common.logout') }}</strong>
-                </button>
-              </nav>
-            </div>
-
-            <aside v-if="activeUserPanel === 'assets'" class="site-user-assets">
-              <h3>{{ t('userMenu.cashAccount') }}</h3>
-              <div class="site-user-assets__list">
-                <div
-                  v-for="asset in desktopAssetPreview"
-                  :key="asset.id || asset.coin"
-                  class="site-user-assets__row"
-                >
-                  <span>{{ asset.coin.slice(0, 1) }}</span>
-                  <strong>{{ asset.coin }}</strong>
-                  <em>{{ desktopAssetAmount(asset) }}</em>
-                </div>
-                <RouterLink class="site-user-assets__more" to="/assets">
-                  more+
-                </RouterLink>
-              </div>
-            </aside>
-          </div>
-        </div>
-        <button
-          v-if="isDesktop"
-          class="site-action-plain"
-          type="button"
-          @click="toggleLocale"
-        >
-          🌐 {{ languageLabel }}
-        </button>
-        <button class="site-action-circle site-action-circle--menu">
-          ☷
         </button>
       </div>
     </header>
@@ -414,19 +66,19 @@ async function logout() {
         <RouterView />
       </main>
 
-      <nav v-if="showMobileTabbar" class="mobile-tabbar">
+      <nav v-if="showTabbar" class="app-tabbar">
         <RouterLink
           v-for="item in appNavigation"
           :key="item.key"
           :to="item.path"
-          class="mobile-tabbar__item"
+          class="app-tabbar__item"
           :class="[
-            `mobile-tabbar__item--${item.key}`,
-            { 'mobile-tabbar__item--active': route.path === item.path },
+            `app-tabbar__item--${item.key}`,
+            { 'app-tabbar__item--active': route.path === item.path },
           ]"
         >
-          <span class="mobile-tabbar__icon">
-            <AppIcon :name="item.icon" class="mobile-tabbar__icon-svg" />
+          <span class="app-tabbar__icon">
+            <AppIcon :name="item.icon" class="app-tabbar__icon-svg" />
           </span>
           <span>{{ t(item.labelKey) }}</span>
         </RouterLink>

@@ -15,9 +15,7 @@ import {
   apiTradePlaceOrder,
   apiTradeSetLeverage,
 } from '@/api/trade'
-import DesktopTradeView from '@/components/trades/desktop/TradeView.vue'
-import MobileTradeView from '@/components/trades/mobile/TradeView.vue'
-import { useDevice } from '@/composables/useDevice'
+import TradeView from '@/components/trades/TradeView.vue'
 import { useTradingDesk } from '@/composables/useTradingDesk'
 import { t } from '@/i18n'
 import type { AssetCoinConfig } from '@/types/asset'
@@ -61,12 +59,9 @@ const SYMBOL_STATUS_ENABLED = 1
 const FALLBACK_LEVERAGE_VALUES = [1, 2, 5, 10, 20, 50, 75, 100, 125]
 
 const route = useRoute()
-const { isDesktop } = useDevice()
 const detailVisible = computed(() => true)
 const orderMode = ref<'market' | 'limit'>('market')
 const productMenuOpen = ref(false)
-const desktopProductsExpanded = ref(false)
-const desktopOrderbookExpanded = ref(true)
 const authToken = ref(getAccessToken())
 const tradeSymbols = ref<TradeSymbol[]>([])
 const tradeSymbolDetail = ref<TradeSymbolDetail | null>(null)
@@ -101,25 +96,18 @@ let assetCoinConfigsRequestId = 0
 const {
   selectedCategoryType,
   selectedProductKey,
-  selectedIntervalName,
   loadingBootstrap,
-  loadingKline,
   depthSnapshot,
   tickSnapshot,
-  klineSnapshot,
   categories,
-  intervals,
   selectedCategory,
   selectedProduct,
   selectedQuote,
   placeholderPrice,
   placeholderChange,
   priceTrend,
-  desktopProductRows,
   productSheetRows,
-  desktopStats,
   selectProduct,
-  selectInterval,
   coinGlyph,
   productKey,
 } = useTradingDesk({
@@ -329,14 +317,6 @@ onBeforeUnmount(() => {
 
 function closeProductSheet() {
   productMenuOpen.value = false
-}
-
-function toggleDesktopProducts() {
-  desktopProductsExpanded.value = !desktopProductsExpanded.value
-}
-
-function toggleDesktopOrderbook() {
-  desktopOrderbookExpanded.value = !desktopOrderbookExpanded.value
 }
 
 function syncAuthState() {
@@ -884,64 +864,7 @@ async function cancelTradeOrder(order: TradeOrder) {
 
 <template>
   <section class="trade-page" :aria-busy="loadingBootstrap">
-    <DesktopTradeView
-      v-if="isDesktop"
-      :selected-product="selectedProduct"
-      :price-trend="priceTrend"
-      :placeholder-price="placeholderPrice"
-      :desktop-stats="desktopStats"
-      :desktop-product-rows="desktopProductRows"
-      :selected-product-key="selectedProductKey"
-      :desktop-products-expanded="desktopProductsExpanded"
-      :desktop-orderbook-expanded="desktopOrderbookExpanded"
-      :selected-quote="selectedQuote"
-      :depth-snapshot="depthSnapshot"
-      :tick-snapshot="tickSnapshot"
-      :kline-snapshot="klineSnapshot"
-      :intervals="intervals"
-      :selected-interval-name="selectedIntervalName"
-      :loading-kline="loadingKline"
-      :order-mode="orderMode"
-      :selected-trade-symbol="displaySelectedTradeSymbol"
-      :trade-symbol-detail="tradeSymbolDetail"
-      :trade-symbol-loading="loadingTradeSymbols || loadingTradeDetail"
-      :is-logged-in="isLoggedIn"
-      :trade-available="tradeAvailable"
-      :trade-price="tradePrice"
-      :trade-qty="tradeQty"
-      :trade-percent="tradePercent"
-      :margin-mode="marginMode"
-      :leverage="leverage"
-      :max-leverage="maxTradeLeverage"
-      :leverage-values="tradeLeverageValues"
-      :settle-asset="selectedTradeSettleAsset"
-      :available-balance="availableBalance"
-      :long-position-qty="longPositionQty"
-      :short-position-qty="shortPositionQty"
-      :trade-message="tradeMessage"
-      :trade-error="tradeError"
-      :submitting-side="submittingSide"
-      :trade-orders="displayTradeOrders"
-      :orders-loading="loadingTradeOrders"
-      :orders-error="ordersError"
-      :canceling-order-id="cancelingOrderId"
-      :coin-glyph="coinGlyph"
-      @toggle-products="toggleDesktopProducts"
-      @toggle-orderbook="toggleDesktopOrderbook"
-      @select-product="selectProduct"
-      @select-interval="selectInterval"
-      @update:order-mode="orderMode = $event"
-      @update:trade-price="tradePrice = $event"
-      @update:trade-qty="tradeQty = $event"
-      @update:trade-percent="tradePercent = $event"
-      @update:margin-mode="updateMarginMode"
-      @update:leverage="updateLeverage"
-      @submit-order="submitTradeOrder"
-      @cancel-order="cancelTradeOrder"
-      @refresh-orders="refreshTradeOrders"
-    />
-    <MobileTradeView
-      v-else
+    <TradeView
       :categories="categories"
       :selected-category-type="selectedCategoryType"
       :selected-category="selectedCategory"

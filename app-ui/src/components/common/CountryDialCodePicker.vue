@@ -263,7 +263,7 @@ function selectCountry(country: CountryDialCode) {
   transform: translateY(100%);
 }
 
-@media (max-width: 959px) {
+@media (min-width: 0) {
   .phone-prefix svg {
     width: 14px;
     height: 14px;

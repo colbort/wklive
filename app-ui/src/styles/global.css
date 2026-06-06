@@ -11,6 +11,7 @@
   --gold: #f3c66d;
   --danger: #ff6b7a;
   --shadow: 0 24px 80px rgba(2, 7, 17, 0.45);
+  --app-width: 414px;
 }
 
 * {
@@ -59,13 +60,18 @@ button {
 }
 
 .app-shell {
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  width: min(100%, var(--app-width));
   min-width: 0;
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  margin: 0 auto;
   position: relative;
   isolation: isolate;
-  overflow-x: clip;
+  overflow: hidden;
+  background: #0b0c15;
 }
 
 .app-shell::before {
@@ -108,10 +114,14 @@ button {
   position: sticky;
   top: 0;
   z-index: 20;
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+  width: 100%;
+  max-width: var(--app-width);
+  margin: 0 auto;
   padding: 8px 18px;
   background: rgba(12, 14, 24, 0.94);
   backdrop-filter: blur(20px);
@@ -126,7 +136,7 @@ button {
 }
 
 .site-brand__mark,
-.mobile-tabbar__icon {
+.app-tabbar__icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -384,19 +394,28 @@ button {
 }
 
 .app-main {
+  flex: 1;
   display: flex;
   flex-direction: column;
   width: 100%;
   min-width: 0;
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: auto;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .page-content {
+  flex: 1;
   width: 100%;
   min-width: 0;
+  height: auto;
+  min-height: 0;
   margin: 0 auto;
-  padding: 0 0 110px;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-x: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 .landing-page {
@@ -642,17 +661,18 @@ button {
   color: var(--danger);
 }
 
-.mobile-tabbar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
+.app-tabbar {
+  position: relative;
+  left: auto;
+  right: auto;
+  bottom: auto;
   z-index: 70;
   display: grid;
+  flex: none;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 2px;
   width: 100%;
-  max-width: 100%;
+  max-width: var(--app-width);
   min-height: 84px;
   padding: 10px 14px max(10px, env(safe-area-inset-bottom));
   border-radius: 20px 20px 0 0;
@@ -663,7 +683,7 @@ button {
   box-shadow: 0 -8px 26px rgba(5, 8, 18, 0.28);
 }
 
-.mobile-tabbar__item {
+.app-tabbar__item {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -677,18 +697,18 @@ button {
   font-weight: 500;
 }
 
-.mobile-tabbar__item span:last-child {
+.app-tabbar__item span:last-child {
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.mobile-tabbar__item--active {
+.app-tabbar__item--active {
   color: var(--accent-strong);
 }
 
-.mobile-tabbar__icon {
+.app-tabbar__icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -700,33 +720,33 @@ button {
   line-height: 1;
 }
 
-.mobile-tabbar__icon-svg {
+.app-tabbar__icon-svg {
   width: 25.75px;
   height: 25.75px;
 }
 
-.mobile-tabbar__item--active .mobile-tabbar__icon {
+.app-tabbar__item--active .app-tabbar__icon {
   background: transparent;
   color: var(--accent-strong);
 }
 
-.mobile-tabbar__item--active
-  .mobile-tabbar__icon-svg
+.app-tabbar__item--active
+  .app-tabbar__icon-svg
   > path:not(.app-icon__nav-active-shape):not(.app-icon__nav-symbol) {
   display: none;
 }
 
-.mobile-tabbar__item--active .mobile-tabbar__icon-svg .app-icon__nav-active-shape {
+.app-tabbar__item--active .app-tabbar__icon-svg .app-icon__nav-active-shape {
   display: block;
 }
 
-.mobile-tabbar__item--active .mobile-tabbar__icon-svg .app-icon__nav-symbol {
+.app-tabbar__item--active .app-tabbar__icon-svg .app-icon__nav-symbol {
   display: block;
   fill: #08110a;
 }
 
-.mobile-tabbar__item--active.mobile-tabbar__item--markets
-  .mobile-tabbar__icon-svg
+.app-tabbar__item--active.app-tabbar__item--markets
+  .app-tabbar__icon-svg
   .app-icon__nav-symbol {
   display: none;
 }
@@ -981,17 +1001,7 @@ button {
   text-align: center;
 }
 
-@media (min-width: 960px) {
-  .page-grid > .panel-card {
-    grid-column: span 4;
-  }
-
-  .panel-card--wide {
-    grid-column: span 12 !important;
-  }
-}
-
-@media (max-width: 959px) {
+@media (min-width: 0) {
   html,
   body,
   #app {
@@ -1011,13 +1021,19 @@ button {
   .app-main,
   .page-content {
     width: 100%;
-    max-width: 100%;
+    max-width: var(--app-width);
   }
 
-  .app-shell,
-  .app-main {
+  .app-shell {
     height: 100vh;
     height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .app-main {
+    flex: 1;
+    height: auto;
     min-height: 0;
     overflow: hidden;
   }
@@ -1033,11 +1049,11 @@ button {
     -webkit-overflow-scrolling: touch;
   }
 
-  .app-shell--mobile-tabbar-visible .page-content {
+  .app-shell--tabbar-visible .page-content {
     padding-bottom: 0;
   }
 
-  .mobile-tabbar {
+  .app-tabbar {
     position: relative;
     left: auto;
     right: auto;
@@ -1091,8 +1107,8 @@ button {
     padding: max(14px, env(safe-area-inset-top, 14px)) 22px 14px;
   }
 
-  .app-shell--home:not(.app-shell--desktop) .site-header {
-    width: min(100%, 414px);
+  .app-shell--home .site-header {
+    width: 100%;
     min-height: 72px;
     margin: 0 auto;
     padding: max(10px, env(safe-area-inset-top, 10px)) 20px 10px;
@@ -1108,7 +1124,7 @@ button {
     border-bottom: 0;
   }
 
-  .app-shell--home:not(.app-shell--desktop) .site-brand {
+  .app-shell--home .site-brand {
     gap: 10px;
   }
 
@@ -1121,29 +1137,29 @@ button {
     height: 52px;
   }
 
-  .app-shell--home:not(.app-shell--desktop) .site-brand strong {
+  .app-shell--home .site-brand strong {
     font-size: 30px;
     line-height: 1;
   }
 
-  .app-shell--home:not(.app-shell--desktop) .site-brand__mark {
+  .app-shell--home .site-brand__mark {
     width: 46px;
     height: 46px;
     border-radius: 0;
   }
 
-  .app-shell--home:not(.app-shell--desktop) .site-header__actions {
+  .app-shell--home .site-header__actions {
     gap: 10px;
   }
 
-  .app-shell--home:not(.app-shell--desktop) .site-action-circle {
+  .app-shell--home .site-action-circle {
     width: 42px;
     height: 42px;
     background: rgba(29, 32, 44, 0.9);
     font-size: 21px;
   }
 
-  .app-shell--home:not(.app-shell--desktop) .site-action-circle--menu {
+  .app-shell--home .site-action-circle--menu {
     display: none;
   }
 
@@ -1152,7 +1168,7 @@ button {
     display: none;
   }
 
-  .app-shell--mobile-tabbar-visible .page-content {
+  .app-shell--tabbar-visible .page-content {
     padding-bottom: 0;
   }
 }
@@ -1172,12 +1188,12 @@ button {
     height: 44px;
   }
 
-  .mobile-tabbar {
+  .app-tabbar {
     padding-right: 8px;
     padding-left: 8px;
   }
 
-  .mobile-tabbar__item {
+  .app-tabbar__item {
     font-size: 10px;
   }
 }

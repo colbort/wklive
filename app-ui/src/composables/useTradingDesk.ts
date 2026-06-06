@@ -106,20 +106,6 @@ export function useTradingDesk(options: {
       }
     }),
   )
-  const desktopProductRows = computed(() =>
-    products.value.map((product) => {
-      const quote = quoteMap.value[productKey(product)] ?? null
-      const changeRate = getChangeRate(quote)
-
-      return {
-        key: productKey(product),
-        product,
-        price: quote ? formatPrice(quote.lastPrice) : '--',
-        change: quote ? formatPercent(changeRate) : '--',
-        direction: (quote ? (changeRate > 0 ? 'up' : changeRate < 0 ? 'down' : 'flat') : 'flat') as 'up' | 'down' | 'flat',
-      }
-    }),
-  )
   const productSheetRows = computed(() =>
     products.value.map((product) => {
       const key = productKey(product)
@@ -145,22 +131,6 @@ export function useTradingDesk(options: {
       }
     }),
   )
-  const desktopStats = computed(() => [
-    {
-      label: t('market.change24h'),
-      value: selectedQuote.value
-        ? `${formatPrice((selectedQuote.value.lastPrice - selectedQuote.value.open) || 0)}  ${formatPercent(getChangeRate(selectedQuote.value))}`
-        : '--',
-      down: getChangeRate(selectedQuote.value) < 0,
-    },
-    { label: t('market.openToday'), value: formatPrice(selectedQuote.value?.open) },
-    { label: t('market.prevClose'), value: formatPrice(selectedQuote.value?.open) },
-    { label: t('market.high24h'), value: formatPrice(selectedQuote.value?.high) },
-    { label: t('market.low24h'), value: formatPrice(selectedQuote.value?.low) },
-    { label: t('market.turnover'), value: formatCompact(selectedQuote.value?.turnover) },
-    { label: t('market.volume'), value: formatCompact(selectedQuote.value?.volume) },
-  ])
-
   watch(selectedCategoryType, async (categoryType) => {
     if (categoryType === null) return
     await loadProducts(categoryType)
@@ -548,9 +518,7 @@ export function useTradingDesk(options: {
     placeholderChange,
     priceTrend,
     marketRows,
-    desktopProductRows,
     productSheetRows,
-    desktopStats,
     initialize,
     loadPreviousKlinePage,
     selectCategory,
