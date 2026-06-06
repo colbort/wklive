@@ -12,7 +12,7 @@
     "./types/*": "./src/types/*.ts",
     "./utils/*": "./src/utils/*.ts"
   },
-  "peerDependencies": {
+  "dependencies": {
     "axios": "^1.7.0"
   },
   "devDependencies": {

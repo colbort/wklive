@@ -20,6 +20,8 @@ import SecuritySettingsView from '@/views/profile/SecuritySettingsView.vue'
 import TradesView from '@/views/trades/TradesView.vue'
 import Test1 from '@/views/dev/Test1.vue'
 import Test2 from '@/views/dev/Test2.vue'
+import Test3 from '@/views/dev/Test3.vue'
+import Test4 from '@/views/dev/Test4.vue'
 
 export const router = createRouter({
   history: createWebHistory(import.meta.env.VITE_ROUTER_BASE || '/'),
@@ -129,6 +131,18 @@ export const router = createRouter({
           name: 'test2',
           component: Test2,
           meta: { title: '测试页面2', hideTabbar: true },
+        },
+        {
+          path: 'test3',
+          name: 'test3',
+          component: Test3,
+          meta: { title: '测试页面3', hideTabbar: true },
+        },
+        {
+          path: 'test4',
+          name: 'test4',
+          component: Test4,
+          meta: { title: '测试页面4', hideTabbar: true },
         },
       ],
     },

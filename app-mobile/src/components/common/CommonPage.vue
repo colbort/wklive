@@ -1,9 +1,36 @@
 <template>
-  <div class="page-414">
-    <!-- 有 custom：tabbar + custom 一起滚动 -->
-    <template v-if="hasCustom">
-      <div class="scroll-view">
-        <header class="header-bar">
+  <div
+    class="page-414"
+    :style="pageStyle"
+  >
+    <!--
+      滚动头部模式：
+      有二级菜单 或 有 custom 时使用
+      tabbar 跟随内容滚动，二级菜单 sticky 吸顶
+    -->
+    <template v-if="scrollHeader">
+      <div class="scroll-view full-scroll">
+        <!-- 自定义 tabbar -->
+        <div
+          v-if="$slots.tabbar"
+          class="tabbar-wrap"
+        >
+          <slot
+            name="tabbar"
+            :title="title"
+            :show-back="showBack"
+            :right-text="rightText"
+            :right-icon="rightIcon"
+            :on-back="onBack"
+            :on-right-click="onRightClick"
+          />
+        </div>
+
+        <!-- 默认 tabbar -->
+        <header
+          v-else
+          class="header-bar"
+        >
           <button
             v-if="showBack"
             type="button"
@@ -30,7 +57,7 @@
               class="right-icon"
               :src="rightIcon"
               alt=""
-            />
+            >
 
             <span v-else class="right-text">
               {{ rightText }}
@@ -38,14 +65,18 @@
           </button>
         </header>
 
-        <div class="custom-area">
+        <!-- 自定义区域：有才显示 -->
+        <div
+          v-if="$slots.custom"
+          class="custom-area"
+        >
           <slot name="custom" />
         </div>
 
+        <!-- 二级菜单：sticky 吸顶 -->
         <div
           v-if="menus.length"
-          class="sub-menu"
-          :style="{ top: '0px' }"
+          class="sub-menu sticky-sub-menu"
         >
           <div
             v-for="item in menus"
@@ -64,9 +95,32 @@
       </div>
     </template>
 
-    <!-- 没有 custom：tabbar 固定顶部 -->
+    <!--
+      只有 tabbar：
+      tabbar 固定顶部，content 滚动
+    -->
     <template v-else>
-      <header class="header-bar fixed-header">
+      <!-- 自定义 tabbar 固定顶部 -->
+      <div
+        v-if="$slots.tabbar"
+        class="fixed-header custom-tabbar-wrap"
+      >
+        <slot
+          name="tabbar"
+          :title="title"
+          :show-back="showBack"
+          :right-text="rightText"
+          :right-icon="rightIcon"
+          :on-back="onBack"
+          :on-right-click="onRightClick"
+        />
+      </div>
+
+      <!-- 默认 tabbar 固定顶部 -->
+      <header
+        v-else
+        class="header-bar fixed-header"
+      >
         <button
           v-if="showBack"
           type="button"
@@ -93,7 +147,7 @@
             class="right-icon"
             :src="rightIcon"
             alt=""
-          />
+          >
 
           <span v-else class="right-text">
             {{ rightText }}
@@ -101,23 +155,7 @@
         </button>
       </header>
 
-      <div class="scroll-view no-custom">
-        <div
-          v-if="menus.length"
-          class="sub-menu"
-          :style="{ top: `${navHeight}px` }"
-        >
-          <div
-            v-for="item in menus"
-            :key="item.value"
-            class="sub-menu-item"
-            :class="{ active: item.value === currentKey }"
-            @click="changeMenu(item.value)"
-          >
-            {{ item.label }}
-          </div>
-        </div>
-
+      <div class="scroll-view fixed-body-scroll">
         <main class="content">
           <slot :active-key="currentKey" />
         </main>
@@ -176,10 +214,24 @@ const emit = defineEmits([
 
 const slots = useSlots()
 
-const hasCustom = computed(() => !!slots.custom)
+const pageStyle = computed(() => {
+  return {
+    '--nav-height': `${props.navHeight}px`,
+  }
+})
 
 const hasRight = computed(() => {
   return !!slots.right || !!props.rightIcon || !!props.rightText
+})
+
+/**
+ * 关键逻辑：
+ * 有二级菜单：tabbar 跟内容一起滚动，二级菜单 sticky 吸顶
+ * 有 custom：tabbar + custom 一起滚动
+ * 没菜单没 custom：只有 tabbar，tabbar 固定
+ */
+const scrollHeader = computed(() => {
+  return props.menus.length > 0 || !!slots.custom
 })
 
 const currentKey = ref(
@@ -200,6 +252,8 @@ watch(
   value => {
     if (!currentKey.value && value?.length) {
       currentKey.value = value[0].value
+      emit('update:modelValue', value[0].value)
+      emit('menu-change', value[0].value)
     }
   },
   {
@@ -208,6 +262,8 @@ watch(
 )
 
 function changeMenu(value) {
+  if (value === currentKey.value) return
+
   currentKey.value = value
   emit('update:modelValue', value)
   emit('menu-change', value)
@@ -242,9 +298,8 @@ function onRightClick() {
     sans-serif;
 }
 
-/* 滚动容器 */
+/* 通用滚动容器 */
 .scroll-view {
-  height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
   box-sizing: border-box;
@@ -257,15 +312,24 @@ function onRightClick() {
   height: 0;
 }
 
-/* 没有 custom 时，内容避开顶部 tabbar */
-.scroll-view.no-custom {
-  padding-top: 58px;
+/* 有二级菜单 / 有 custom 时，整个页面滚动 */
+.full-scroll {
+  height: 100%;
 }
 
-/* 顶部导航 */
+/* 只有 tabbar 时，content 从 tabbar 下方开始滚动 */
+.fixed-body-scroll {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--nav-height);
+  bottom: 0;
+}
+
+/* 默认 tabbar */
 .header-bar {
   width: 100%;
-  height: 58px;
+  height: var(--nav-height);
   background: #0b0d16;
   position: relative;
   z-index: 40;
@@ -273,12 +337,32 @@ function onRightClick() {
   flex-shrink: 0;
 }
 
-/* 没有 custom 时，固定在 page-414 内部顶部 */
+/* 自定义 tabbar 外层 */
+.tabbar-wrap {
+  width: 100%;
+  height: var(--nav-height);
+  background: #0b0d16;
+  position: relative;
+  z-index: 40;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+/* 只有 tabbar 时固定顶部 */
 .fixed-header {
   position: absolute;
   top: 0;
   left: 0;
+  width: 100%;
+  height: var(--nav-height);
+  background: #0b0d16;
   transform: none;
+  z-index: 90;
+}
+
+/* 自定义 tabbar 固定外层 */
+.custom-tabbar-wrap {
+  box-sizing: border-box;
 }
 
 /* 左侧返回按钮 */
@@ -287,7 +371,7 @@ function onRightClick() {
   left: 24px;
   top: 0;
   width: 44px;
-  height: 58px;
+  height: var(--nav-height);
   border: none;
   outline: none;
   padding: 0;
@@ -304,7 +388,6 @@ function onRightClick() {
   -webkit-appearance: none;
 }
 
-/* 返回图标 */
 .back-icon-svg {
   width: 24px;
   height: 24px;
@@ -318,7 +401,7 @@ function onRightClick() {
   left: 100px;
   right: 100px;
   top: 0;
-  height: 58px;
+  height: var(--nav-height);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -339,7 +422,7 @@ function onRightClick() {
   top: 0;
   min-width: 44px;
   max-width: 120px;
-  height: 58px;
+  height: var(--nav-height);
   border: none;
   outline: none;
   padding: 0;
@@ -381,19 +464,23 @@ function onRightClick() {
 /* 二级菜单 */
 .sub-menu {
   width: 100%;
-  height: 58px;
+  height: var(--nav-height);
   background: #1b1e29;
   display: flex;
   align-items: center;
-  position: sticky;
-  z-index: 30;
   box-sizing: border-box;
 }
 
-/* 二级菜单 item */
+/* 二级菜单吸顶 */
+.sticky-sub-menu {
+  position: sticky;
+  top: 0;
+  z-index: 80;
+}
+
 .sub-menu-item {
   flex: 1;
-  height: 58px;
+  height: var(--nav-height);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -422,7 +509,7 @@ function onRightClick() {
 
 /* 内容区域 */
 .content {
-  min-height: calc(100vh - 58px);
+  min-height: calc(100vh - var(--nav-height));
   background: #0b0d16;
   box-sizing: border-box;
   padding: 0;

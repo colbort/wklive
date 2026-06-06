@@ -17,8 +17,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@wklive/api": ["../app-packages/src/index.ts"],
-      "@wklive/api/*": ["../app-packages/src/*"],
-      "axios": ["./node_modules/axios/index.d.ts"]
+      "@wklive/api/*": ["../app-packages/src/*"]
     }
   },
   "include": [

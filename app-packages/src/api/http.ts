@@ -1,13 +1,4 @@
-// @ts-ignore
-import axios from 'axios'
-
-type AxiosError = any
-type AxiosResponse<T = any> = {
-  data: T
-  config?: any
-  [key: string]: any
-}
-type InternalAxiosRequestConfig = Record<string, any>
+import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios'
 
 const ACCESS_TOKEN_KEY = 'app_access_token'
 const REFRESH_TOKEN_KEY = 'app_refresh_token'
@@ -176,7 +167,7 @@ function stripUserTenantScope(value: unknown): unknown {
   )
 }
 
-http.interceptors.request.use((config: { headers: { [x: string]: string; Authorization: string }; params: unknown; url: string | undefined; data: unknown }) => {
+http.interceptors.request.use((config) => {
   const accessToken = getAccessToken()
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`
@@ -283,7 +274,7 @@ async function retryWithRefreshedToken(config?: InternalAxiosRequestConfig) {
 }
 
 http.interceptors.response.use(
-  (response: AxiosResponse) => {
+  (response) => {
     translateResponseMessage(response.data)
 
     if (getResponseCode(response.data) === 401) {

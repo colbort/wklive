@@ -50,6 +50,8 @@ const userMenuItems: ProfileMenuItem[] = [
   { key: 'logout', labelKey: 'common.logout', icon: 'logout' },
   { key: 'test1', labelKey: 'userMenu.test1', icon: 'info-circle' },
   { key: 'test2', labelKey: 'userMenu.test2', icon: 'info-circle' },
+  { key: 'test3', labelKey: 'userMenu.test3', icon: 'info-circle' },
+  { key: 'test4', labelKey: 'userMenu.test4', icon: 'info-circle' },
 ]
 
 const profile = ref<UserProfile | null>(null)
@@ -141,6 +143,16 @@ async function handleMenuClick(key: string) {
 
   if (key === 'test2') {
     router.push('/test2')
+    return
+  }
+
+  if (key === 'test3') {
+    router.push('/test3')
+    return
+  }
+
+  if (key === 'test4') {
+    router.push('/test4')
     return
   }
 
