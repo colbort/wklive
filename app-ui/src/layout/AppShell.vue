@@ -21,6 +21,7 @@ const { isDesktop } = useDevice()
 const { locale, t, toggleLocale } = useI18n()
 
 const pageTitle = computed(() => String(route.meta.title || 'AVE'))
+const isHomeRoute = computed(() => route.name === 'home')
 const showSiteHeader = computed(() => isDesktop.value || route.name === 'home')
 const showMobileTabbar = computed(() => !isDesktop.value && !route.meta.hideTabbar)
 
@@ -176,7 +177,10 @@ async function logout() {
 </script>
 
 <template>
-  <div class="app-shell" :class="{ 'app-shell--desktop': isDesktop }">
+  <div
+    class="app-shell"
+    :class="{ 'app-shell--desktop': isDesktop, 'app-shell--home': isHomeRoute }"
+  >
     <div class="app-shell__aurora app-shell__aurora--left" />
     <div class="app-shell__aurora app-shell__aurora--right" />
 
@@ -185,7 +189,9 @@ async function logout() {
         <span class="site-brand__mark">A</span>
         <div>
           <strong>AVE</strong>
-          <p v-if="!isDesktop">{{ pageTitle }}</p>
+          <p v-if="!isDesktop && !isHomeRoute">
+            {{ pageTitle }}
+          </p>
         </div>
       </RouterLink>
 
@@ -238,7 +244,9 @@ async function logout() {
       </nav>
 
       <div class="site-header__actions">
-        <button class="site-action-circle" :aria-label="t('common.search')">⌕</button>
+        <button class="site-action-circle" :aria-label="t('common.search')">
+          ⌕
+        </button>
         <button
           v-if="!isDesktop"
           class="site-action-circle"
@@ -366,15 +374,24 @@ async function logout() {
                   <strong>{{ asset.coin }}</strong>
                   <em>{{ desktopAssetAmount(asset) }}</em>
                 </div>
-                <RouterLink class="site-user-assets__more" to="/assets">more+</RouterLink>
+                <RouterLink class="site-user-assets__more" to="/assets">
+                  more+
+                </RouterLink>
               </div>
             </aside>
           </div>
         </div>
-        <button v-if="isDesktop" class="site-action-plain" type="button" @click="toggleLocale">
+        <button
+          v-if="isDesktop"
+          class="site-action-plain"
+          type="button"
+          @click="toggleLocale"
+        >
           🌐 {{ languageLabel }}
         </button>
-        <button class="site-action-circle site-action-circle--menu">☷</button>
+        <button class="site-action-circle site-action-circle--menu">
+          ☷
+        </button>
       </div>
     </header>
 

@@ -139,6 +139,12 @@ button {
   font-size: 19px;
 }
 
+.site-brand__mark {
+  background: url('../../assets/favicon.png') center / contain no-repeat;
+  color: transparent;
+  font-size: 0;
+}
+
 .site-brand strong {
   display: block;
   font-size: 18px;
@@ -1072,6 +1078,27 @@ button {
     padding: max(14px, env(safe-area-inset-top, 14px)) 22px 14px;
   }
 
+  .app-shell--home:not(.app-shell--desktop) .site-header {
+    width: min(100%, 414px);
+    min-height: 72px;
+    margin: 0 auto;
+    padding: max(10px, env(safe-area-inset-top, 10px)) 20px 10px;
+    background:
+      linear-gradient(rgba(124, 146, 170, 0.08) 2px, transparent 2px),
+      linear-gradient(90deg, rgba(124, 146, 170, 0.08) 2px, transparent 2px),
+      rgba(10, 13, 22, 0.96);
+    background-size:
+      104px 104px,
+      104px 104px,
+      auto;
+    backdrop-filter: none;
+    border-bottom: 0;
+  }
+
+  .app-shell--home:not(.app-shell--desktop) .site-brand {
+    gap: 10px;
+  }
+
   .site-brand strong {
     font-size: 30px;
   }
@@ -1079,6 +1106,32 @@ button {
   .site-brand__mark {
     width: 52px;
     height: 52px;
+  }
+
+  .app-shell--home:not(.app-shell--desktop) .site-brand strong {
+    font-size: 30px;
+    line-height: 1;
+  }
+
+  .app-shell--home:not(.app-shell--desktop) .site-brand__mark {
+    width: 46px;
+    height: 46px;
+    border-radius: 0;
+  }
+
+  .app-shell--home:not(.app-shell--desktop) .site-header__actions {
+    gap: 10px;
+  }
+
+  .app-shell--home:not(.app-shell--desktop) .site-action-circle {
+    width: 42px;
+    height: 42px;
+    background: rgba(29, 32, 44, 0.9);
+    font-size: 21px;
+  }
+
+  .app-shell--home:not(.app-shell--desktop) .site-action-circle--menu {
+    display: none;
   }
 
   .site-user-chip,

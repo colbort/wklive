@@ -1,22 +1,37 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 
+import boxIconSimple from '../../../assets/home/icon1.png'
+import boxIconShield from '../../../assets/home/icon2.png'
+import boxIconSupport from '../../../assets/home/icon3.png'
+import boxIconOrders from '../../../assets/home/icon4.png'
+import boxIconApi from '../../../assets/home/icon5.png'
+import heroPortalImage from '../../../assets/home/img1.png'
+import smartPhonesImage from '../../../assets/home/img2.png'
+import strategyOrdersImage from '../../../assets/home/img3.png'
+import strategyChartImage from '../../../assets/home/img4.png'
+import contractPhonesImage from '../../../assets/home/img5.png'
+import rewardImage from '../../../assets/home/img6.png'
+import featureIconLiquidity from '../../../assets/home/svg1.svg'
+import featureIconCharts from '../../../assets/home/svg2.svg'
+import featureIconFees from '../../../assets/home/svg3.svg'
 import { useI18n } from '@/i18n'
 
-const { locale, t, toggleLocale } = useI18n()
+const { t } = useI18n()
+
 const featureCards = [
   {
-    icon: '⟆',
+    icon: featureIconLiquidity,
     titleKey: 'home.deepLiquidity',
     descKey: 'home.deepLiquidityDesc',
   },
   {
-    icon: '↗',
+    icon: featureIconCharts,
     titleKey: 'home.proCharts',
     descKey: 'home.proChartsDesc',
   },
   {
-    icon: '$',
+    icon: featureIconFees,
     titleKey: 'home.lowFees',
     descKey: 'home.lowFeesDesc',
   },
@@ -24,29 +39,51 @@ const featureCards = [
 
 const strategyFeatures = [
   {
-    icon: '✎',
+    icon: boxIconOrders,
     titleKey: 'home.smartOrders',
     descKey: 'home.smartOrdersDesc',
   },
   {
-    icon: '⇆',
+    icon: boxIconApi,
     titleKey: 'home.apiTrading',
     descKey: 'home.apiTradingDesc',
   },
 ]
 
-const footerColumns = [
+const contractFeatures = [
   {
-    titleKey: 'home.products',
-    links: ['nav.stock', 'nav.forex', 'nav.commodity', 'nav.crypto', 'nav.option'],
+    titleKey: 'home.noExpiry',
+    descKey: 'home.noExpiryDesc',
   },
   {
-    titleKey: 'home.other',
-    links: ['userMenu.orderCenter', 'userMenu.myAssets', 'profile.title'],
+    titleKey: 'home.globalTrading',
+    descKey: 'home.globalTradingDesc',
   },
   {
-    titleKey: 'home.community',
-    links: ['Twitter', 'LinkedIn', 'Facebook', 'Telegram', 'YouTube'],
+    titleKey: 'home.twoWayTrading',
+    descKey: 'home.twoWayTradingDesc',
+  },
+  {
+    titleKey: 'home.lowSlippage',
+    descKey: 'home.lowSlippageDesc',
+  },
+]
+
+const trustFeatures = [
+  {
+    icon: boxIconSimple,
+    titleKey: 'home.simpleExperience',
+    descKey: 'home.simpleExperienceDesc',
+  },
+  {
+    icon: boxIconShield,
+    titleKey: 'home.assetSecurity',
+    descKey: 'home.assetSecurityDesc',
+  },
+  {
+    icon: boxIconSupport,
+    titleKey: 'home.proSupport',
+    descKey: 'home.proSupportDesc',
   },
 ]
 </script>
@@ -56,43 +93,28 @@ const footerColumns = [
     <section class="ave-hero">
       <div class="ave-hero__copy">
         <h1>
-          <span class="ave-home__green">{{ t('home.heroPrefix') }}</span>
-          <br>
+          <span>{{ t('home.heroPrefix') }}</span>
           {{ t('home.heroSuffix') }}
         </h1>
         <p>{{ t('home.heroSub') }}</p>
-        <RouterLink to="/markets" class="ave-home__cta">
+        <RouterLink to="/markets" class="ave-home__cta ave-hero__cta">
           {{ t('home.startTrading') }}
         </RouterLink>
       </div>
 
-      <div class="ave-hero__visual">
-        <div class="ave-portal">
-          <div class="ave-portal__ring" />
-          <div class="ave-portal__inner" />
-          <span class="ave-coin ave-coin--btc">₿</span>
-          <span class="ave-coin ave-coin--usdt">₮</span>
-          <span class="ave-coin ave-coin--spiral">◎</span>
-          <div class="ave-portal__base ave-portal__base--top" />
-          <div class="ave-portal__base ave-portal__base--bottom" />
-        </div>
-      </div>
+      <img class="ave-hero__portal" :src="heroPortalImage" alt="">
     </section>
 
-    <section class="ave-section ave-section--feature">
+    <section class="ave-section ave-section--smart">
       <h2>
-        {{ t('home.smartTradingPrefix')
-        }}<span class="ave-home__green">{{ t('home.smartTradingEmphasis') }}</span>{{ t('home.smartTradingSuffix') }}
+        {{ t('home.smartTradingPrefix') }}<span>{{ t('home.smartTradingEmphasis') }}</span>{{ t('home.smartTradingSuffix') }}
       </h2>
-      <p class="ave-section__sub">
-        {{ t('home.alwaysTrading') }}
-      </p>
+      <p>{{ t('home.alwaysTrading') }}</p>
+      <img class="ave-section__phones" :src="smartPhonesImage" alt="">
 
-      <div class="ave-feature-grid">
+      <div class="ave-feature-list">
         <article v-for="item in featureCards" :key="item.titleKey" class="ave-feature-card">
-          <div class="ave-feature-card__icon">
-            {{ item.icon }}
-          </div>
+          <img :src="item.icon" alt="">
           <div>
             <h3>{{ t(item.titleKey) }}</h3>
             <p>{{ t(item.descKey) }}</p>
@@ -103,88 +125,18 @@ const footerColumns = [
 
     <section class="ave-section ave-section--strategy">
       <h2>
-        {{ t('home.strategyPrefix')
-        }}<span class="ave-home__green">{{ t('home.strategyEmphasis') }}</span>{{ t('home.strategySuffix') }}
+        {{ t('home.strategyPrefix') }}<span>{{ t('home.strategyEmphasis') }}</span>{{ t('home.strategySuffix') }}
       </h2>
-      <p class="ave-section__sub">
-        {{ t('home.strategySub') }}
-      </p>
+      <p>{{ t('home.strategySub') }}</p>
 
-      <div class="ave-strategy__top">
-        <article v-for="item in strategyFeatures" :key="item.titleKey" class="ave-strategy__info">
-          <div class="ave-strategy__icon">
-            {{ item.icon }}
-          </div>
-          <div>
-            <h3>{{ t(item.titleKey) }}</h3>
-            <p>{{ t(item.descKey) }}</p>
-          </div>
-        </article>
+      <div class="ave-strategy-scene">
+        <img class="ave-strategy-scene__orders" :src="strategyOrdersImage" alt="">
+        <img class="ave-strategy-scene__chart" :src="strategyChartImage" alt="">
       </div>
 
-      <div class="ave-strategy__scene">
-        <div class="ave-strategy__line" />
-        <div class="ave-phone ave-phone--left">
-          <div class="ave-phone__screen">
-            <div class="ave-phone__title">
-              Transact
-            </div>
-            <div class="ave-phone__chart" />
-            <div class="ave-phone__rows">
-              <span />
-              <span />
-              <span />
-              <span />
-            </div>
-            <button>Buy</button>
-          </div>
-        </div>
-
-        <div class="ave-phone ave-phone--right">
-          <div class="ave-phone__screen">
-            <div class="ave-phone__title">
-              BTC/USDT
-            </div>
-            <div class="ave-phone__tabs">
-              <span class="active">15min</span>
-              <span>30min</span>
-              <span>60min</span>
-            </div>
-            <div class="ave-phone__trade-card">
-              <div class="ave-phone__field" />
-              <div class="ave-phone__field short" />
-            </div>
-            <div class="ave-phone__actions">
-              <button class="green">
-                Buy the rise
-              </button>
-              <button class="red">
-                Buy the fall
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="ave-badge ave-badge--btc">
-          ₿
-        </div>
-        <div class="ave-badge ave-badge--usdt">
-          ₮
-        </div>
-        <div class="ave-strategy__panel">
-          <div class="ave-strategy__panel-image" />
-        </div>
-      </div>
-
-      <div class="ave-strategy__bottom">
-        <article
-          v-for="item in strategyFeatures"
-          :key="`${item.titleKey}-mobile`"
-          class="ave-strategy__list-item"
-        >
-          <div class="ave-strategy__icon">
-            {{ item.icon }}
-          </div>
+      <div class="ave-flat-list">
+        <article v-for="item in strategyFeatures" :key="item.titleKey" class="ave-flat-item">
+          <img :src="item.icon" alt="">
           <div>
             <h3>{{ t(item.titleKey) }}</h3>
             <p>{{ t(item.descKey) }}</p>
@@ -193,99 +145,84 @@ const footerColumns = [
       </div>
     </section>
 
-    <section class="ave-footer">
-      <div class="ave-footer__divider" />
+    <section class="ave-section ave-section--contract">
+      <h2>{{ t('home.contractTitle') }}</h2>
+      <img class="ave-contract__phones" :src="contractPhonesImage" alt="">
 
-      <div class="ave-footer__head">
-        <div class="site-brand site-brand--footer">
-          <span class="site-brand__mark">A</span>
+      <div class="ave-toggle-card">
+        <article v-for="item in contractFeatures" :key="item.titleKey" class="ave-toggle-item">
+          <span class="ave-toggle-item__switch" />
           <div>
-            <strong>AVE</strong>
-          </div>
-        </div>
-
-        <button class="ave-lang-switch" type="button" @click="toggleLocale">
-          🌐 {{ locale === 'zh-CN' ? t('common.zhCN') : t('common.enUS') }}
-        </button>
-      </div>
-
-      <div class="ave-footer__grid">
-        <article class="ave-download-card">
-          <h3>{{ t('home.appDownload') }}</h3>
-          <p>{{ t('home.appDownloadDesc') }}</p>
-          <div class="ave-download-card__codes">
-            <div>
-              <div class="ave-qr" />
-              <span>IOS</span>
-            </div>
-            <div>
-              <div class="ave-qr" />
-              <span>Android</span>
-            </div>
+            <h3>{{ t(item.titleKey) }}</h3>
+            <p>{{ t(item.descKey) }}</p>
           </div>
         </article>
-
-        <div class="ave-footer__links">
-          <article
-            v-for="column in footerColumns"
-            :key="column.titleKey"
-            class="ave-footer__column"
-          >
-            <h4>{{ t(column.titleKey) }}</h4>
-            <RouterLink v-for="item in column.links" :key="item" to="/home">
-              {{ item.includes('.') ? t(item) : item }}
-            </RouterLink>
-          </article>
-        </div>
       </div>
+    </section>
 
-      <p class="ave-footer__copyright">
-        {{ t('home.copyright') }}
-      </p>
+    <section class="ave-section ave-section--trust">
+      <h2>
+        {{ t('home.trustPrefix') }}<span>{{ t('home.trustEmphasis') }}</span>
+      </h2>
+      <p>{{ t('home.trustSub') }}</p>
+
+      <div class="ave-trust-card">
+        <article v-for="item in trustFeatures" :key="item.titleKey" class="ave-trust-item">
+          <img :src="item.icon" alt="">
+          <div>
+            <h3>{{ t(item.titleKey) }}</h3>
+            <p>{{ t(item.descKey) }}</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="ave-reward">
+      <h2>{{ t('home.rewardTitle') }}</h2>
+      <p>{{ t('home.rewardSub') }}</p>
+      <RouterLink to="/markets" class="ave-home__cta">
+        {{ t('home.startTrading') }}
+      </RouterLink>
+      <img class="ave-reward__image" :src="rewardImage" alt="">
     </section>
   </section>
 </template>
 
 <style scoped>
 .ave-home {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+  --home-green: #00b90f;
+  --home-bg: #0b0e18;
+  --home-muted: rgba(255, 255, 255, 0.55);
+  width: min(100%, 414px);
+  margin: 0 auto;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 18% 2%, rgba(78, 92, 78, 0.28), transparent 24rem),
+    linear-gradient(rgba(124, 146, 170, 0.08) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(124, 146, 170, 0.08) 2px, transparent 2px), var(--home-bg);
+  background-size:
+    auto,
+    206px 206px,
+    206px 206px,
+    auto;
+  color: #fff;
 }
 
-.ave-home__green {
-  color: #08c200;
+.ave-home span {
+  color: var(--home-green);
 }
 
 .ave-hero,
 .ave-section,
-.ave-footer {
+.ave-reward {
   position: relative;
-  overflow: hidden;
-  border-radius: 0 0 28px 28px;
-  background:
-    linear-gradient(
-      90deg,
-      rgba(47, 57, 52, 0.56) 0%,
-      rgba(18, 21, 31, 0.12) 24%,
-      rgba(14, 16, 27, 0) 55%
-    ),
-    linear-gradient(rgba(120, 167, 216, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(120, 167, 216, 0.08) 1px, transparent 1px),
-    linear-gradient(180deg, #0d0f1a 0%, #10131c 100%);
-  background-size:
-    auto,
-    100% 206px,
-    206px 100%,
-    auto;
+  padding-inline: 20px;
 }
 
 .ave-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(420px, 0.92fr);
-  align-items: center;
-  min-height: 980px;
-  padding: 180px 72px 110px;
+  min-height: 682px;
+  padding-top: 46px;
+  text-align: center;
 }
 
 .ave-hero__copy {
@@ -293,872 +230,310 @@ const footerColumns = [
   z-index: 2;
 }
 
-.ave-hero__copy h1 {
+.ave-hero h1,
+.ave-section h2,
+.ave-reward h2 {
   margin: 0;
-  font-size: clamp(74px, 6.2vw, 108px);
-  line-height: 1.08;
+  color: #fff;
   font-weight: 800;
-  letter-spacing: -0.04em;
+  letter-spacing: 0;
 }
 
-.ave-hero__copy p {
-  margin: 38px 0 0;
-  color: #f5f7fb;
-  font-size: clamp(28px, 2vw, 42px);
+.ave-hero h1 {
+  display: grid;
+  gap: 2px;
+  font-size: clamp(38px, 10vw, 42px);
+  line-height: 1.1;
+}
+
+.ave-hero p {
+  margin: 22px 0 0;
+  color: #fff;
+  font-size: clamp(20px, 5.4vw, 23px);
+  font-weight: 700;
 }
 
 .ave-home__cta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 292px;
-  height: 102px;
-  margin-top: 76px;
+  width: 154px;
+  height: 50px;
+  margin-top: 24px;
   border-radius: 999px;
-  background: #0ab300;
+  background: var(--home-green);
   color: #fff;
-  font-size: 34px;
+  font-size: 24px;
   font-weight: 700;
+  line-height: 1;
 }
 
-.ave-hero__visual {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.ave-hero__cta {
+  width: 154px;
+  height: 50px;
+  max-width: 68vw;
+  margin-top: 24px;
+  font-size: 24px;
 }
 
-.ave-portal {
-  position: relative;
-  width: min(100%, 760px);
-  aspect-ratio: 1 / 1;
-}
-
-.ave-portal__ring {
+.ave-hero__portal {
   position: absolute;
-  inset: 12% 8% 10% 14%;
-  border-radius: 50%;
-  border: 24px solid #f0f0ef;
-  box-shadow:
-    inset 0 0 0 10px #d8ece2,
-    0 0 0 2px rgba(255, 255, 255, 0.18);
-}
-
-.ave-portal__inner {
-  position: absolute;
-  inset: 24% 20% 18% 26%;
-  border-radius: 50%;
-  background:
-    radial-gradient(
-      circle at 68% 66%,
-      rgba(33, 255, 127, 0.95),
-      rgba(17, 106, 52, 0.15) 18%,
-      transparent 28%
-    ),
-    radial-gradient(circle at 36% 38%, rgba(55, 255, 151, 0.34), transparent 18%),
-    radial-gradient(circle at 55% 60%, rgba(16, 255, 117, 0.12), transparent 55%),
-    linear-gradient(135deg, #08140d, #0a3a1e 48%, #18c85e 100%);
-  box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.45);
-}
-
-.ave-portal::before,
-.ave-portal::after {
-  content: '';
-  position: absolute;
-  border-radius: 50%;
-  border: 2px solid rgba(15, 161, 62, 0.12);
-}
-
-.ave-portal::before {
-  inset: 2% 0 0 10%;
-}
-
-.ave-portal::after {
-  inset: 10% -6% -8% 6%;
-}
-
-.ave-coin,
-.ave-badge {
-  position: absolute;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: #f1f2f3;
-  color: #12b93b;
-  font-weight: 800;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
-}
-
-.ave-coin--btc {
-  right: 16%;
-  top: 44%;
-  width: 118px;
-  height: 118px;
-  font-size: 66px;
-}
-
-.ave-coin--usdt {
-  left: 18%;
-  top: 54%;
-  width: 86px;
-  height: 86px;
-  font-size: 44px;
-}
-
-.ave-coin--spiral {
-  left: 2%;
-  bottom: 18%;
-  width: 104px;
-  height: 104px;
-  font-size: 54px;
-}
-
-.ave-portal__base {
-  position: absolute;
-  background: #f3f3f2;
-  border: 2px solid rgba(0, 0, 0, 0.16);
-}
-
-.ave-portal__base--top {
-  right: 14%;
-  bottom: 9%;
-  width: 240px;
-  height: 66px;
-  transform: skew(-26deg);
-}
-
-.ave-portal__base--bottom {
-  right: 26%;
-  bottom: 2%;
-  width: 230px;
-  height: 38px;
-  transform: skew(-26deg);
+  left: 50%;
+  width: 414px;
+  max-width: none;
+  transform: translateX(-50%);
 }
 
 .ave-section {
-  padding: 110px 56px 80px;
-}
-
-.ave-section h2 {
-  margin: 0;
+  padding-top: 34px;
   text-align: center;
-  font-size: clamp(56px, 4vw, 84px);
-  font-weight: 800;
-  line-height: 1.18;
 }
 
-.ave-section__sub {
-  margin: 26px 0 0;
-  text-align: center;
-  color: #8f919b;
-  font-size: clamp(22px, 1.7vw, 30px);
-  font-weight: 600;
+.ave-section h2,
+.ave-reward h2 {
+  font-size: clamp(28px, 7.8vw, 32px);
+  line-height: 1.22;
 }
 
-.ave-feature-grid {
+.ave-section > p,
+.ave-reward > p {
+  margin: 12px 0 0;
+  color: var(--home-muted);
+  font-size: clamp(16px, 4.3vw, 18px);
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.ave-section__phones {
+  display: block;
+  width: 414px;
+  max-width: none;
+  margin: 32px 0 20px 50%;
+  transform: translateX(-50%);
+}
+
+.ave-feature-list,
+.ave-flat-list,
+.ave-trust-card,
+.ave-toggle-card {
+  border: 2px solid rgba(143, 146, 160, 0.5);
+  background: linear-gradient(135deg, rgba(40, 43, 55, 0.8), rgba(21, 24, 34, 0.72));
+  box-shadow: inset 0 0 80px rgba(255, 255, 255, 0.02);
+}
+
+.ave-feature-list {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 26px;
-  margin-top: 86px;
+  gap: 18px;
+  margin-top: 18px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .ave-feature-card {
   display: flex;
-  gap: 26px;
   align-items: center;
-  min-height: 230px;
-  padding: 36px 32px;
-  border-radius: 34px;
-  border: 2px solid rgba(121, 124, 140, 0.5);
-  background: linear-gradient(180deg, rgba(38, 40, 51, 0.82), rgba(28, 30, 41, 0.76));
+  gap: 16px;
+  min-height: 94px;
+  padding: 14px 22px;
+  text-align: left;
+  border: 2px solid rgba(143, 146, 160, 0.5);
+  border-radius: 20px;
+  background:
+    linear-gradient(90deg, rgba(50, 53, 66, 0.78), rgba(24, 27, 38, 0.72)),
+    url('../../../assets/home/boxbg.png') center / cover no-repeat;
 }
 
-.ave-feature-card__icon,
-.ave-strategy__icon {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  color: #08c200;
-}
-
-.ave-feature-card__icon {
-  width: 104px;
-  height: 104px;
-  font-size: 66px;
+.ave-feature-card img {
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
 }
 
 .ave-feature-card h3,
-.ave-strategy__info h3,
-.ave-strategy__list-item h3 {
-  margin: 0 0 16px;
-  font-size: clamp(28px, 2vw, 40px);
-  font-weight: 700;
+.ave-flat-item h3,
+.ave-toggle-item h3,
+.ave-trust-item h3 {
+  margin: 0 0 8px;
+  color: #fff;
+  font-size: clamp(20px, 5.2vw, 22px);
+  font-weight: 800;
+  line-height: 1.18;
 }
 
 .ave-feature-card p,
-.ave-strategy__info p,
-.ave-strategy__list-item p {
+.ave-flat-item p,
+.ave-toggle-item p,
+.ave-trust-item p {
   margin: 0;
-  color: #9b9da6;
-  font-size: clamp(18px, 1.4vw, 28px);
-  line-height: 1.6;
-  font-weight: 600;
+  color: var(--home-muted);
+  font-size: clamp(14px, 3.9vw, 16px);
+  font-weight: 700;
+  line-height: 1.42;
 }
 
 .ave-section--strategy {
-  padding-bottom: 110px;
+  padding-top: 56px;
 }
 
-.ave-strategy__top {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 42px;
-  margin-top: 88px;
-}
-
-.ave-strategy__info {
-  display: flex;
-  align-items: center;
-  gap: 26px;
-  padding: 0 12px;
-}
-
-.ave-strategy__icon {
-  width: 112px;
-  height: 112px;
-  background: rgba(38, 40, 51, 0.92);
-  border: 2px solid rgba(121, 124, 140, 0.34);
-  font-size: 58px;
-}
-
-.ave-strategy__scene {
+.ave-strategy-scene {
   position: relative;
-  min-height: 900px;
-  margin-top: 44px;
-}
-
-.ave-strategy__line {
-  position: absolute;
-  left: -8%;
-  right: -8%;
-  top: 36%;
-  height: 420px;
-  border-top: 4px solid rgba(8, 194, 0, 0.9);
-  border-bottom: 4px solid transparent;
-  border-radius: 50%;
-  transform: rotate(-8deg);
-  opacity: 0.82;
-}
-
-.ave-phone {
-  position: absolute;
-  width: 290px;
-  height: 592px;
-  padding: 18px;
-  border-radius: 48px;
-  background: linear-gradient(180deg, #23252d, #0d1018);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.38);
-}
-
-.ave-phone--left {
-  left: 8%;
-  bottom: 90px;
-  transform: rotate(-14deg);
-}
-
-.ave-phone--right {
-  left: 34%;
-  top: 50px;
-  transform: rotate(7deg);
-}
-
-.ave-phone__screen {
-  height: 100%;
-  padding: 18px;
-  border-radius: 34px;
-  background: linear-gradient(180deg, rgba(18, 22, 32, 0.96), rgba(14, 17, 24, 0.98));
-}
-
-.ave-phone__title {
-  color: #f5f7fb;
-  font-size: 28px;
-  font-weight: 700;
-}
-
-.ave-phone__chart {
-  height: 150px;
-  margin-top: 22px;
-  border-radius: 22px;
-  background:
-    linear-gradient(
-      180deg,
-      transparent 0 56%,
-      rgba(31, 255, 109, 0.3) 56% 58%,
-      transparent 58% 100%
-    ),
-    linear-gradient(135deg, rgba(31, 255, 109, 0.08), rgba(255, 255, 255, 0.02));
-}
-
-.ave-phone__rows {
-  display: grid;
-  gap: 14px;
-  margin-top: 20px;
-}
-
-.ave-phone__rows span,
-.ave-phone__field {
-  height: 38px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.ave-phone button {
-  width: 100%;
-  height: 54px;
+  min-height: 388px;
   margin-top: 24px;
-  border: 0;
-  border-radius: 16px;
-  background: #16d45a;
-  color: #fff;
-  font-size: 22px;
-  font-weight: 700;
 }
 
-.ave-phone__tabs {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  margin-top: 18px;
-}
-
-.ave-phone__tabs span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 40px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.06);
-  color: #a4a7b1;
-  font-size: 14px;
-}
-
-.ave-phone__tabs span.active {
-  background: rgba(8, 194, 0, 0.18);
-  color: #18dc55;
-}
-
-.ave-phone__trade-card {
-  display: grid;
-  gap: 12px;
-  margin-top: 22px;
-}
-
-.ave-phone__field.short {
-  width: 50%;
-}
-
-.ave-phone__actions {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: 22px;
-}
-
-.ave-phone__actions button {
-  margin-top: 0;
-  font-size: 16px;
-}
-
-.ave-phone__actions .green {
-  background: #16d45a;
-}
-
-.ave-phone__actions .red {
-  background: #ff614e;
-}
-
-.ave-badge {
-  width: 100px;
-  height: 100px;
-  background: #08b800;
-  color: #041108;
-  font-size: 62px;
-}
-
-.ave-badge--btc {
-  left: 14%;
-  top: 58%;
-}
-
-.ave-badge--usdt {
-  left: 42%;
-  top: 47%;
-}
-
-.ave-strategy__panel {
+.ave-strategy-scene__orders {
   position: absolute;
-  left: 8%;
-  bottom: 130px;
-  width: 440px;
-  padding: 18px;
-  border-radius: 40px;
-  border: 2px solid rgba(121, 124, 140, 0.34);
-  background: linear-gradient(180deg, rgba(34, 37, 47, 0.82), rgba(27, 29, 39, 0.84));
+  left: 50%;
+  top: 0;
+  z-index: 2;
+  width: 414px;
+  max-width: none;
+  transform: translateX(-50%);
 }
 
-.ave-strategy__panel-image {
-  aspect-ratio: 1.55 / 1;
-  border-radius: 28px;
-  background:
-    radial-gradient(circle at 68% 42%, rgba(7, 255, 115, 0.3), transparent 18%),
-    radial-gradient(circle at 35% 38%, rgba(255, 255, 255, 0.18), transparent 10%),
-    linear-gradient(180deg, rgba(6, 9, 13, 0.34), rgba(7, 9, 14, 0.14)),
-    linear-gradient(135deg, #040608, #10361e 60%, #0b0d12 100%);
+.ave-strategy-scene__chart {
+  position: absolute;
+  left: 7%;
+  bottom: -30px;
+  z-index: 1;
+  width: 236px;
 }
 
-.ave-strategy__bottom {
-  display: none;
-}
-
-.ave-footer {
-  padding: 0 56px 28px;
-}
-
-.ave-footer__divider {
-  height: 8px;
-  margin: 0 -56px 54px;
-  background: linear-gradient(90deg, #5f6ea6 0 52%, #b4b7de 52% 100%);
-}
-
-.ave-footer__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.site-brand--footer {
-  transform: scale(1.06);
-  transform-origin: left center;
-}
-
-.ave-lang-switch {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  height: 56px;
-  padding: 0 18px;
+.ave-flat-list {
+  display: grid;
+  gap: 0;
+  margin-top: 50px;
   border: 0;
-  border-radius: 28px;
-  background: rgba(30, 33, 44, 0.92);
-  color: #f5f7fb;
-  font-size: 18px;
+  background: transparent;
 }
 
-.ave-footer__grid {
-  display: grid;
-  grid-template-columns: 460px minmax(0, 1fr);
-  gap: 70px;
-  margin-top: 54px;
-}
-
-.ave-download-card {
-  padding: 36px;
-  border-radius: 28px;
-  background: rgba(30, 33, 44, 0.92);
-}
-
-.ave-download-card h3 {
-  margin: 0;
-  font-size: 28px;
-}
-
-.ave-download-card p {
-  margin: 28px 0 0;
-  color: #dfe1e7;
-  font-size: 20px;
-  line-height: 1.7;
-}
-
-.ave-download-card__codes {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
-  margin-top: 32px;
-  text-align: center;
-}
-
-.ave-download-card__codes span {
-  display: block;
-  margin-top: 14px;
-  font-size: 20px;
-  font-weight: 600;
-}
-
-.ave-qr {
-  aspect-ratio: 1;
-  border-radius: 18px;
-  background:
-    linear-gradient(
-      90deg,
-      #000 12%,
-      transparent 12% 16%,
-      #000 16% 20%,
-      transparent 20% 28%,
-      #000 28% 34%,
-      transparent 34% 100%
-    ),
-    linear-gradient(
-      #000 12%,
-      transparent 12% 16%,
-      #000 16% 20%,
-      transparent 20% 28%,
-      #000 28% 34%,
-      transparent 34% 100%
-    ),
-    #fff;
-}
-
-.ave-footer__links {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 34px;
-  padding-top: 8px;
-}
-
-.ave-footer__column {
+.ave-flat-item,
+.ave-trust-item {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  align-items: center;
+  gap: 14px;
+  padding: 22px 4px;
+  text-align: left;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.ave-footer__column h4 {
-  margin: 0 0 18px;
-  font-size: 28px;
+.ave-flat-item:first-child {
+  border-top: 0;
 }
 
-.ave-footer__column a {
-  color: #e8eaf0;
+.ave-flat-item img,
+.ave-trust-item img {
+  flex: 0 0 auto;
+  width: 58px;
+  height: 58px;
+}
+
+.ave-section--contract {
+  padding-top: 52px;
+}
+
+.ave-contract__phones {
+  display: block;
+  width: 414px;
+  max-width: none;
+  margin: 30px 0 24px 50%;
+  transform: translateX(-50%);
+}
+
+.ave-toggle-card {
+  display: grid;
+  gap: 0;
+  padding: 16px 20px;
+  border-radius: 20px;
+  text-align: left;
+}
+
+.ave-toggle-item {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  padding: 18px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ave-toggle-item:first-child {
+  border-top: 0;
+}
+
+.ave-toggle-item__switch {
+  position: relative;
+  width: 28px;
+  height: 18px;
+  margin-top: 4px;
+  border-radius: 999px;
+  background: var(--home-green);
+}
+
+.ave-toggle-item__switch::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.ave-section--trust {
+  padding-top: 56px;
+}
+
+.ave-trust-card {
+  display: grid;
+  gap: 0;
+  margin-top: 32px;
+  padding: 14px 20px;
+  border-radius: 20px;
+}
+
+.ave-trust-item {
+  padding: 22px 0;
+}
+
+.ave-trust-item:first-child {
+  border-top: 0;
+}
+
+.ave-reward {
+  padding-top: 58px;
+  padding-bottom: calc(120px + env(safe-area-inset-bottom));
+  text-align: center;
+}
+
+.ave-reward h2 {
+  max-width: 11ch;
+  margin-inline: auto;
+  font-size: clamp(34px, 9.4vw, 39px);
+}
+
+.ave-reward > p {
+  color: #fff;
   font-size: 20px;
 }
 
-.ave-footer__copyright {
-  margin: 54px 0 0;
-  padding-top: 18px;
-  border-top: 1px solid rgba(121, 124, 140, 0.18);
-  text-align: center;
-  color: #888b97;
-  font-size: 16px;
+.ave-reward__image {
+  display: block;
+  width: 414px;
+  max-width: none;
+  margin: 40px 0 0 50%;
+  transform: translateX(-50%);
 }
 
-@media (max-width: 959px) {
-  .ave-hero,
-  .ave-section,
-  .ave-footer {
-    border-radius: 0;
+@media (min-width: 900px) {
+  .ave-home {
+    border-inline: 1px solid rgba(255, 255, 255, 0.04);
   }
 
   .ave-hero {
-    grid-template-columns: 1fr;
-    min-height: auto;
-    padding: 132px 22px 48px;
-  }
-
-  .ave-hero__copy {
-    order: 1;
-    text-align: center;
-  }
-
-  .ave-hero__copy h1 {
-    font-size: clamp(42px, 9.4vw, 72px);
-    line-height: 1.1;
-  }
-
-  .ave-hero__copy p {
-    margin-top: 26px;
-    font-size: 26px;
-  }
-
-  .ave-home__cta {
-    min-width: 0;
-    width: 282px;
-    height: 92px;
-    margin-top: 34px;
-    font-size: 28px;
-  }
-
-  .ave-hero__visual {
-    order: 2;
-    margin-top: 40px;
-  }
-
-  .ave-portal {
-    width: 100%;
-    max-width: 560px;
-    aspect-ratio: 0.96 / 1;
-  }
-
-  .ave-portal__ring {
-    inset: 10% 4% 14% 13%;
-    border-width: 18px;
-  }
-
-  .ave-portal__inner {
-    inset: 22% 14% 22% 22%;
-  }
-
-  .ave-coin--btc {
-    width: 86px;
-    height: 86px;
-    font-size: 46px;
-  }
-
-  .ave-coin--usdt,
-  .ave-coin--spiral {
-    width: 68px;
-    height: 68px;
-    font-size: 34px;
-  }
-
-  .ave-portal__base--top {
-    right: 15%;
-    width: 180px;
-    height: 48px;
-  }
-
-  .ave-portal__base--bottom {
-    right: 32%;
-    width: 152px;
-    height: 26px;
-  }
-
-  .ave-section {
-    padding: 62px 22px 32px;
-  }
-
-  .ave-section h2 {
-    font-size: clamp(30px, 7.8vw, 52px);
-  }
-
-  .ave-section__sub {
-    margin-top: 18px;
-    font-size: 18px;
-  }
-
-  .ave-feature-grid {
-    grid-template-columns: 1fr;
-    gap: 18px;
-    margin-top: 40px;
-  }
-
-  .ave-feature-card {
-    min-height: 0;
-    padding: 24px 20px;
-    border-radius: 22px;
-    gap: 16px;
-  }
-
-  .ave-feature-card__icon,
-  .ave-strategy__icon {
-    width: 72px;
-    height: 72px;
-    font-size: 38px;
-  }
-
-  .ave-feature-card h3,
-  .ave-strategy__info h3,
-  .ave-strategy__list-item h3 {
-    margin-bottom: 10px;
-    font-size: 24px;
-  }
-
-  .ave-feature-card p,
-  .ave-strategy__info p,
-  .ave-strategy__list-item p {
-    font-size: 16px;
-  }
-
-  .ave-strategy__top {
-    display: none;
-  }
-
-  .ave-section--strategy {
-    padding-bottom: 44px;
-  }
-
-  .ave-strategy__scene {
-    min-height: 760px;
-    margin-top: 34px;
-  }
-
-  .ave-strategy__line {
-    top: 32%;
-    left: -42%;
-    right: -42%;
-    height: 300px;
-    transform: rotate(2deg);
-  }
-
-  .ave-phone {
-    width: 180px;
-    height: 372px;
-    padding: 12px;
-    border-radius: 28px;
-  }
-
-  .ave-phone--left {
-    left: 6%;
-    top: 120px;
-    bottom: auto;
-  }
-
-  .ave-phone--right {
-    left: 44%;
-    top: 36px;
-  }
-
-  .ave-phone__screen {
-    padding: 12px;
-    border-radius: 22px;
-  }
-
-  .ave-phone__title {
-    font-size: 18px;
-  }
-
-  .ave-phone__chart {
-    height: 88px;
-    margin-top: 14px;
-  }
-
-  .ave-phone__rows {
-    gap: 9px;
-    margin-top: 14px;
-  }
-
-  .ave-phone__rows span,
-  .ave-phone__field {
-    height: 22px;
-  }
-
-  .ave-phone button {
-    height: 34px;
-    margin-top: 14px;
-    border-radius: 10px;
-    font-size: 14px;
-  }
-
-  .ave-phone__tabs {
-    gap: 8px;
-    margin-top: 12px;
-  }
-
-  .ave-phone__tabs span {
-    height: 26px;
-    border-radius: 10px;
-    font-size: 10px;
-  }
-
-  .ave-phone__actions {
-    gap: 8px;
-    margin-top: 14px;
-  }
-
-  .ave-phone__actions button {
-    font-size: 10px;
-  }
-
-  .ave-badge {
-    width: 70px;
-    height: 70px;
-    font-size: 42px;
-  }
-
-  .ave-badge--btc {
-    left: 64%;
-    top: 56%;
-  }
-
-  .ave-badge--usdt {
-    left: 80%;
-    top: 24%;
-  }
-
-  .ave-strategy__panel {
-    left: 10%;
-    right: 10%;
-    bottom: 136px;
-    width: auto;
-    padding: 14px;
-    border-radius: 26px;
-  }
-
-  .ave-strategy__bottom {
-    display: grid;
-    gap: 0;
-    margin-top: 34px;
-  }
-
-  .ave-strategy__list-item {
-    display: flex;
-    gap: 16px;
-    align-items: center;
-    padding: 24px 0;
-    border-top: 1px solid rgba(121, 124, 140, 0.18);
-  }
-
-  .ave-strategy__list-item:first-child {
-    border-top: 0;
-  }
-
-  .ave-footer {
-    padding: 0 22px 22px;
-  }
-
-  .ave-footer__divider {
-    margin: 0 -22px 28px;
-  }
-
-  .ave-footer__head {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .ave-footer__grid {
-    grid-template-columns: 1fr;
-    gap: 30px;
-    margin-top: 28px;
-  }
-
-  .ave-download-card {
-    padding: 22px;
-  }
-
-  .ave-download-card h3,
-  .ave-footer__column h4 {
-    font-size: 24px;
-  }
-
-  .ave-download-card p,
-  .ave-footer__column a,
-  .ave-download-card__codes span {
-    font-size: 16px;
-  }
-
-  .ave-footer__links {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-
-  .ave-footer__column {
-    gap: 14px;
-  }
-
-  .ave-footer__copyright {
-    margin-top: 30px;
-    font-size: 13px;
+    min-height: 682px;
   }
 }
 </style>
