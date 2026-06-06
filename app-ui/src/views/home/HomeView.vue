@@ -97,7 +97,7 @@ const trustFeatures = [
           {{ t('home.heroSuffix') }}
         </h1>
         <p>{{ t('home.heroSub') }}</p>
-        <RouterLink to="/markets" class="ave-home__cta ave-hero__cta">
+        <RouterLink to="/trades" class="ave-home__cta ave-hero__cta">
           {{ t('home.startTrading') }}
         </RouterLink>
       </div>
@@ -180,7 +180,7 @@ const trustFeatures = [
     <section class="ave-reward">
       <h2>{{ t('home.rewardTitle') }}</h2>
       <p>{{ t('home.rewardSub') }}</p>
-      <RouterLink to="/markets" class="ave-home__cta">
+      <RouterLink to="/trades" class="ave-home__cta">
         {{ t('home.startTrading') }}
       </RouterLink>
       <img class="ave-reward__image" :src="rewardImage" alt="">
