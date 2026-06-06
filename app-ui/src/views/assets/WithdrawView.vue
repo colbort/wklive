@@ -26,6 +26,10 @@ const coinConfigs = ref<AssetCoinConfig[]>([])
 const assets = ref<AssetUserAsset[]>([])
 const amount = ref('')
 const address = ref('')
+const bankName = ref('')
+const bankAccountName = ref('')
+const bankAccountNo = ref('')
+const bankBranchName = ref('')
 const submitLoading = ref(false)
 const pageError = ref('')
 const pageTip = ref('')
@@ -33,6 +37,7 @@ const selectedConfig = ref<AssetCoinConfig | null>(null)
 const coinSheetVisible = ref(false)
 
 const walletType = computed(() => Number(route.query.walletType || 1))
+const isBankWithdraw = computed(() => route.query.method === 'bank')
 const routeCoin = computed(() => String(route.query.coin || 'USDT'))
 const coin = computed(() => selectedConfig.value?.coin || routeCoin.value)
 const selectedDecimalPlaces = computed(() =>
@@ -60,6 +65,7 @@ const receivedAmount = computed(() => {
   if (!amount.value.trim()) return formatAssetDecimalAmount('0', selectedDecimalPlaces.value)
   return formatAssetDecimalAmount(amount.value, selectedDecimalPlaces.value)
 })
+const withdrawTargetCurrency = computed(() => (isBankWithdraw.value ? 'USD' : coin.value))
 
 function isSuccessCode(code: number) {
   return code === 0 || code === 200
@@ -122,7 +128,8 @@ async function submitWithdraw() {
     pageError.value = t('assetFlow.selectWithdrawCoin')
     return
   }
-  if (!address.value.trim()) {
+  const withdrawAddress = isBankWithdraw.value ? bankAccountNo.value.trim() : address.value.trim()
+  if (!withdrawAddress) {
     pageError.value = t('assetFlow.inputWithdrawAddress')
     return
   }
@@ -133,14 +140,23 @@ async function submitWithdraw() {
     return
   }
 
+  if (isBankWithdraw.value && !bankName.value.trim()) {
+    pageError.value = t('assetFlow.inputBankName')
+    return
+  }
+
   submitLoading.value = true
   try {
     const resp = await apiCreateWithdrawOrder({
       amount: withdrawAmount,
       currency: coin.value,
-      address: address.value.trim(),
+      address: withdrawAddress,
       bankId: 0,
-      remark: selectedChain.value ? `chain:${selectedChain.value}` : '',
+      remark: isBankWithdraw.value
+        ? `bank:${bankName.value.trim()};accountName:${bankAccountName.value.trim()};branch:${bankBranchName.value.trim()};target:${withdrawTargetCurrency.value}`
+        : selectedChain.value
+          ? `chain:${selectedChain.value}`
+          : '',
     })
     if (isSuccessCode(resp.code)) {
       pageTip.value = resp.data
@@ -148,6 +164,10 @@ async function submitWithdraw() {
         : t('assetFlow.withdrawSubmitted')
       amount.value = ''
       address.value = ''
+      bankName.value = ''
+      bankAccountName.value = ''
+      bankAccountNo.value = ''
+      bankBranchName.value = ''
       await loadPageData()
     } else {
       pageError.value = resp.msg || t('assetFlow.withdrawFailedLater')
@@ -173,45 +193,117 @@ onMounted(() => {
     narrow
   >
     <button type="button" class="asset-type-pill">
-      {{ t('assetFlow.crypto') }}
+      {{ isBankWithdraw ? t('assetFlow.bankCard') : t('assetFlow.crypto') }}
     </button>
 
-    <label class="field-block">
-      <span>{{ t('assetFlow.coin') }}</span>
-      <AssetCoinPicker
-        :coin="coin"
-        :config="selectedConfig || undefined"
-        :chain="selectedChain"
-        @click="coinSheetVisible = true"
-      />
-    </label>
+    <template v-if="isBankWithdraw">
+      <label class="field-block">
+        <span class="field-block__row">
+          <span>{{ t('assetFlow.withdrawAmount') }}</span>
+          <small>{{ t('assetFlow.withdrawable') }} <b>{{ availableAmount }}</b> {{ coin }}</small>
+        </span>
+        <span class="asset-input asset-input--unit">
+          <input
+            v-model="amount"
+            :placeholder="t('assetFlow.amountPlaceholder')"
+            inputmode="decimal"
+          >
+          <i>{{ coin }}</i>
+        </span>
+      </label>
 
-    <label class="field-block">
-      <span>{{ t('assetFlow.withdrawAddress') }}</span>
-      <span class="asset-input asset-input--address">
-        <input v-model="address" :placeholder="t('assetFlow.addressPlaceholder')">
-        <i>▣</i>
-      </span>
-    </label>
-
-    <label class="field-block">
-      <span class="field-block__row">
-        <span>{{ t('assetFlow.withdrawAmount') }}</span>
-        <small>{{ t('assetFlow.withdrawable') }} <b>{{ availableAmount }}</b> {{ coin }}</small>
-      </span>
-      <input v-model="amount" class="asset-input" inputmode="decimal">
-    </label>
-
-    <dl class="withdraw-summary">
-      <div>
-        <dt>{{ t('assetFlow.fee') }}</dt>
-        <dd>{{ feeAmount }} {{ coin }}</dd>
+      <div class="bank-currency-grid">
+        <label class="field-block">
+          <span>{{ t('assetFlow.withdrawCoin') }}</span>
+          <span class="bank-select-box">
+            <span class="bank-select-box__coin">₮</span>
+            <strong>{{ coin }}</strong>
+            <i>›</i>
+          </span>
+        </label>
+        <label class="field-block">
+          <span>{{ t('assetFlow.arrivalCurrency') }}</span>
+          <span class="bank-select-box">
+            <span class="bank-select-box__flag">🇺🇸</span>
+            <strong>{{ withdrawTargetCurrency }}</strong>
+            <i>›</i>
+          </span>
+        </label>
       </div>
-      <div>
-        <dt>{{ t('assetFlow.receivedAmount') }}</dt>
-        <dd>{{ receivedAmount }} {{ coin }}</dd>
-      </div>
-    </dl>
+
+      <div class="bank-withdraw-divider" />
+
+      <label class="field-block">
+        <span>{{ t('assetFlow.bankName') }}</span>
+        <input v-model="bankName" class="asset-input" :placeholder="t('assetFlow.inputEllipsis')">
+      </label>
+
+      <label class="field-block">
+        <span>{{ t('assetFlow.payeeName') }}</span>
+        <input
+          v-model="bankAccountName"
+          class="asset-input"
+          :placeholder="t('assetFlow.identityUnverified')"
+        >
+      </label>
+
+      <label class="field-block">
+        <span>{{ t('assetFlow.bankCardNo') }}</span>
+        <input
+          v-model="bankAccountNo"
+          class="asset-input"
+          :placeholder="t('assetFlow.inputEllipsis')"
+        >
+      </label>
+
+      <label class="field-block">
+        <span>{{ t('assetFlow.openingBank') }}</span>
+        <input
+          v-model="bankBranchName"
+          class="asset-input"
+          :placeholder="t('assetFlow.inputEllipsis')"
+        >
+      </label>
+    </template>
+
+    <template v-else>
+      <label class="field-block">
+        <span>{{ t('assetFlow.coin') }}</span>
+        <AssetCoinPicker
+          :coin="coin"
+          :config="selectedConfig || undefined"
+          :chain="selectedChain"
+          @click="coinSheetVisible = true"
+        />
+      </label>
+
+      <label class="field-block">
+        <span>{{ t('assetFlow.withdrawAddress') }}</span>
+        <span class="asset-input asset-input--address">
+          <input v-model="address" :placeholder="t('assetFlow.addressPlaceholder')">
+          <i>▣</i>
+        </span>
+      </label>
+
+      <label class="field-block">
+        <span class="field-block__row">
+          <span>{{ t('assetFlow.withdrawAmount') }}</span>
+          <small>{{ t('assetFlow.withdrawable') }} <b>{{ availableAmount }}</b> {{ coin }}</small>
+        </span>
+        <input v-model="amount" class="asset-input" inputmode="decimal">
+      </label>
+
+      <dl class="withdraw-summary">
+        <div>
+          <dt>{{ t('assetFlow.fee') }}</dt>
+          <dd>{{ feeAmount }} {{ coin }}</dd>
+        </div>
+        <div>
+          <dt>{{ t('assetFlow.receivedAmount') }}</dt>
+          <dd>{{ receivedAmount }} {{ coin }}</dd>
+        </div>
+      </dl>
+    </template>
 
     <p v-if="pageError" class="state-text state-text--error">
       {{ pageError }}
@@ -288,6 +380,24 @@ input {
   background: #292b36;
 }
 
+.asset-input--unit {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.asset-input--unit input {
+  min-width: 0;
+  outline: 0;
+}
+
+.asset-input--unit i {
+  color: #c9cbd3;
+  font-style: normal;
+  font-weight: 800;
+}
+
 .asset-input--address {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 28px;
@@ -307,6 +417,71 @@ input {
 .asset-input::placeholder,
 .asset-input--address input::placeholder {
   color: #8f929d;
+}
+
+.bank-currency-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.bank-currency-grid .field-block {
+  margin-bottom: 0;
+}
+
+.bank-select-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 58px;
+  padding: 0 12px;
+  border-radius: 14px;
+  background: #292b36;
+}
+
+.bank-select-box strong {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  font-size: 20px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bank-select-box i {
+  color: #9699a2;
+  font-size: 24px;
+  font-style: normal;
+}
+
+.bank-select-box__coin,
+.bank-select-box__flag {
+  display: inline-grid;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.bank-select-box__coin {
+  background: linear-gradient(135deg, #21b78c, #129f75);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.bank-select-box__flag {
+  font-size: 27px;
+  line-height: 1;
+}
+
+.bank-withdraw-divider {
+  height: 1px;
+  margin: 8px 0 24px;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .withdraw-summary {

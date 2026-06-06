@@ -48,6 +48,8 @@ const userMenuItems: ProfileMenuItem[] = [
   { key: 'company', labelKey: 'nav.license', icon: 'info-circle' },
   { key: 'regulation', labelKey: 'nav.compliance', icon: 'info-circle' },
   { key: 'logout', labelKey: 'common.logout', icon: 'logout' },
+  { key: 'test1', labelKey: 'userMenu.test1', icon: 'info-circle' },
+  { key: 'test2', labelKey: 'userMenu.test2', icon: 'info-circle' },
 ]
 
 const profile = ref<UserProfile | null>(null)
@@ -129,6 +131,16 @@ async function handleMenuClick(key: string) {
 
   if (key === 'language') {
     router.push('/language')
+    return
+  }
+
+  if (key === 'test1') {
+    router.push('/test1')
+    return
+  }
+
+  if (key === 'test2') {
+    router.push('/test2')
     return
   }
 

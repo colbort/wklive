@@ -18,6 +18,8 @@ import ChangeSecurityPasswordView from '@/views/profile/ChangeSecurityPasswordVi
 import ProfileView from '@/views/profile/ProfileView.vue'
 import SecuritySettingsView from '@/views/profile/SecuritySettingsView.vue'
 import TradesView from '@/views/trades/TradesView.vue'
+import Test1 from '@/views/Test1.vue'
+import Test2 from '@/views/Test2.vue'
 
 export const router = createRouter({
   history: createWebHistory(import.meta.env.VITE_ROUTER_BASE || '/'),
@@ -115,6 +117,18 @@ export const router = createRouter({
           name: 'security-bind-email',
           component: BindAccountView,
           meta: { title: '邮箱绑定', hideTabbar: true },
+        },
+        {
+          path: 'test1',
+          name: 'test1',
+          component: Test1,
+          meta: { title: '测试页面1', hideTabbar: true },
+        },
+        {
+          path: 'test2',
+          name: 'test2',
+          component: Test2,
+          meta: { title: '测试页面2', hideTabbar: true },
         },
       ],
     },

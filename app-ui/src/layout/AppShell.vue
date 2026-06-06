@@ -23,7 +23,17 @@ const { locale, t, toggleLocale } = useI18n()
 const pageTitle = computed(() => String(route.meta.title || 'AVE'))
 const isHomeRoute = computed(() => route.name === 'home')
 const showSiteHeader = computed(() => isDesktop.value || route.name === 'home')
-const showMobileTabbar = computed(() => !isDesktop.value && !route.meta.hideTabbar)
+const mobileTabbarOverride = computed(() => {
+  const value = Array.isArray(route.query.tabbar) ? route.query.tabbar[0] : route.query.tabbar
+  if (value === '1' || value === 'true' || value === 'show') return true
+  if (value === '0' || value === 'false' || value === 'hide') return false
+  return null
+})
+const showMobileTabbar = computed(() => {
+  if (isDesktop.value) return false
+  if (mobileTabbarOverride.value !== null) return mobileTabbarOverride.value
+  return !route.meta.hideTabbar
+})
 
 const desktopCategories = ref<ItickTenantCategory[]>([])
 const desktopProductsMap = ref<Record<number, ItickTenantProduct[]>>({})
@@ -179,7 +189,11 @@ async function logout() {
 <template>
   <div
     class="app-shell"
-    :class="{ 'app-shell--desktop': isDesktop, 'app-shell--home': isHomeRoute }"
+    :class="{
+      'app-shell--desktop': isDesktop,
+      'app-shell--home': isHomeRoute,
+      'app-shell--mobile-tabbar-visible': showMobileTabbar,
+    }"
   >
     <div class="app-shell__aurora app-shell__aurora--left" />
     <div class="app-shell__aurora app-shell__aurora--right" />

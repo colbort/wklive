@@ -1024,12 +1024,25 @@ button {
 
   .page-content {
     flex: 1;
-    height: 100%;
+    height: auto;
     min-height: 0;
+    padding-bottom: 0;
     overflow-x: hidden;
     overflow-y: auto;
     overscroll-behavior-x: none;
     -webkit-overflow-scrolling: touch;
+  }
+
+  .app-shell--mobile-tabbar-visible .page-content {
+    padding-bottom: 0;
+  }
+
+  .mobile-tabbar {
+    position: relative;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    flex: none;
   }
 
   .home-page,
@@ -1139,8 +1152,8 @@ button {
     display: none;
   }
 
-  .page-content {
-    padding-bottom: calc(92px + env(safe-area-inset-bottom));
+  .app-shell--mobile-tabbar-visible .page-content {
+    padding-bottom: 0;
   }
 }
 

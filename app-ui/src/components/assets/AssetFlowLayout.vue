@@ -41,11 +41,14 @@ const { t } = useI18n()
 
 <style scoped>
 .asset-flow-page {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   max-width: 100%;
-  min-height: 100dvh;
-  overflow-x: hidden;
-  padding: 10px 18px 28px;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 18px 28px;
   background: #0b0c15;
   color: #f8f8fb;
 }
@@ -61,12 +64,13 @@ button {
   position: sticky;
   top: 0;
   z-index: 30;
+  flex: none;
   display: grid;
   grid-template-columns: 36px minmax(0, 1fr) minmax(0, 80px);
   align-items: center;
-  min-height: 36px;
+  min-height: 64px;
   min-width: 0;
-  margin: -10px -18px 0;
+  margin: 0 -18px;
   padding: 10px 18px 8px;
   background: #0b0c15;
 }
@@ -110,17 +114,23 @@ button {
 .asset-flow-body {
   width: 100%;
   min-width: 0;
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
   padding-top: 20px;
+  padding-bottom: 28px;
+  -webkit-overflow-scrolling: touch;
 }
 
 @media (max-width: 390px) {
   .asset-flow-page {
-    padding: 8px 14px 24px;
+    padding: 0 14px 24px;
   }
 
   .asset-flow-header {
     grid-template-columns: 34px minmax(0, 1fr) minmax(0, 70px);
-    margin: -8px -14px 0;
+    margin: 0 -14px;
     padding: 8px 14px 8px;
   }
 
@@ -150,6 +160,7 @@ button {
 @media (min-width: 768px) {
   .asset-flow-page--narrow {
     max-width: 430px;
+    height: calc(100dvh - 76px);
     min-height: calc(100dvh - 76px);
     margin: 0 auto;
   }

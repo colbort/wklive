@@ -249,6 +249,22 @@ async function loadCoinConfigs() {
 }
 
 function handleAssetAction(key: AssetActionKey) {
+  if (key === 'flows') {
+    router.push('/assets/flows')
+    return
+  }
+  if (key === 'bankWithdraw') {
+    router.push({
+      path: '/assets/withdraw',
+      query: {
+        method: 'bank',
+        coin: 'USDT',
+        walletType: String(activeWalletType.value),
+      },
+    })
+    return
+  }
+
   selectAssetAction(key)
   if (key === 'cryptoRecharge') openAssetFlow('recharge')
   if (key === 'cryptoWithdraw') openAssetFlow('withdraw')
@@ -536,7 +552,7 @@ button {
   position: sticky;
   top: 0;
   z-index: 25;
-  margin-bottom: 30px;
+  /* margin-bottom: 10px; */
   margin-right: -16px;
   margin-left: -16px;
   padding: 14px 16px 12px;
