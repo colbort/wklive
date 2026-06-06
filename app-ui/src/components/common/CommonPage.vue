@@ -256,58 +256,66 @@ function onRightClick() {
   height: 0;
 }
 
-/* 没有 custom 时，内容避开固定 tabbar */
+/* 没有 custom 时，内容避开顶部 tabbar */
 .scroll-view.no-custom {
   padding-top: 58px;
 }
 
 /* 顶部导航 */
 .header-bar {
-  width: 414px;
+  width: 100%;
   height: 58px;
   background: #0b0d16;
   position: relative;
   z-index: 40;
   box-sizing: border-box;
+  flex-shrink: 0;
 }
 
-/* 固定顶部 */
+/* 没有 custom 时，固定在 page-414 内部顶部 */
 .fixed-header {
-  position: fixed;
+  position: absolute;
   top: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  transform: none;
 }
 
 /* 左侧返回按钮 */
 .header-left {
   position: absolute;
-  left: 0;
+  left: 24px;
   top: 0;
-  width: 88px;
+  width: 44px;
   height: 58px;
   border: none;
   outline: none;
+  padding: 0;
+  margin: 0;
   background: transparent;
   color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 0 0 0 20px;
   box-sizing: border-box;
-  font-size: 38px;
-  line-height: 1;
   cursor: pointer;
   user-select: none;
   appearance: none;
   -webkit-appearance: none;
 }
 
+/* 返回图标 */
+.back-icon-svg {
+  width: 24px;
+  height: 24px;
+  display: block;
+  color: #ffffff;
+}
+
 /* 标题永远居中 */
 .header-title {
   position: absolute;
-  left: 96px;
-  right: 96px;
+  left: 100px;
+  right: 100px;
   top: 0;
   height: 58px;
   display: flex;
@@ -315,7 +323,7 @@ function onRightClick() {
   justify-content: center;
   color: #ffffff;
   font-size: 22px;
-  font-weight: 700;
+  font-weight: 800;
   text-align: center;
   overflow: hidden;
   white-space: nowrap;
@@ -326,22 +334,23 @@ function onRightClick() {
 /* 右侧按钮，可没有 */
 .header-right {
   position: absolute;
-  right: 0;
+  right: 24px;
   top: 0;
-  min-width: 88px;
-  max-width: 128px;
+  min-width: 44px;
+  max-width: 120px;
   height: 58px;
   border: none;
   outline: none;
+  padding: 0;
+  margin: 0;
   background: transparent;
   color: #21ff00;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: 0 20px 0 0;
   box-sizing: border-box;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   user-select: none;
   appearance: none;
@@ -370,6 +379,7 @@ function onRightClick() {
 
 /* 二级菜单 */
 .sub-menu {
+  width: 100%;
   height: 58px;
   background: #1b1e29;
   display: flex;
@@ -379,6 +389,7 @@ function onRightClick() {
   box-sizing: border-box;
 }
 
+/* 二级菜单 item */
 .sub-menu-item {
   flex: 1;
   height: 58px;
