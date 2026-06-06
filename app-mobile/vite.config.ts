@@ -12,6 +12,8 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
+        '@wklive/api': path.resolve(__dirname, '../app-packages/src'),
+        axios: path.resolve(__dirname, './node_modules/axios/index.js'),
       },
     },
     define: {

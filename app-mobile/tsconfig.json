@@ -15,8 +15,17 @@
     "types": ["vite/client"],
     "ignoreDeprecations": "5.0",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@wklive/api": ["../app-packages/src/index.ts"],
+      "@wklive/api/*": ["../app-packages/src/*"],
+      "axios": ["./node_modules/axios/index.d.ts"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "../app-packages/src/**/*.ts"
+  ]
 }
