@@ -3,8 +3,24 @@ import { computed } from 'vue'
 import { RouterLink, RouterView, useRoute } from 'vue-router'
 
 import AppIcon from '@/components/common/AppIcon.vue'
-import { appNavigation } from '@/config/navigation'
 import { useI18n } from '@/i18n'
+
+type AppNavIcon = 'nav-home' | 'nav-market' | 'nav-trade' | 'nav-assets' | 'nav-profile'
+
+type AppNavItem = {
+  key: string
+  labelKey: string
+  path: string
+  icon: AppNavIcon
+}
+
+const appNavigation: AppNavItem[] = [
+  { key: 'home', labelKey: 'nav.home', path: '/home', icon: 'nav-home' },
+  { key: 'markets', labelKey: 'nav.markets', path: '/markets', icon: 'nav-market' },
+  { key: 'trade', labelKey: 'nav.trade', path: '/trades', icon: 'nav-trade' },
+  { key: 'wallet', labelKey: 'nav.wallet', path: '/assets', icon: 'nav-assets' },
+  { key: 'profile', labelKey: 'nav.profile', path: '/profile', icon: 'nav-profile' },
+]
 
 const route = useRoute()
 const { t, toggleLocale } = useI18n()
@@ -48,7 +64,7 @@ const showTabbar = computed(() => {
 
       <div class="site-header__actions">
         <button class="site-action-circle" :aria-label="t('common.search')">
-          ⌕
+          <AppIcon name="search" class="site-action-circle__icon" />
         </button>
         <button
           class="site-action-circle"

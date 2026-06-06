@@ -18,8 +18,8 @@ import ChangeSecurityPasswordView from '@/views/profile/ChangeSecurityPasswordVi
 import ProfileView from '@/views/profile/ProfileView.vue'
 import SecuritySettingsView from '@/views/profile/SecuritySettingsView.vue'
 import TradesView from '@/views/trades/TradesView.vue'
-import Test1 from '@/views/Test1.vue'
-import Test2 from '@/views/Test2.vue'
+import Test1 from '@/views/dev/Test1.vue'
+import Test2 from '@/views/dev/Test2.vue'
 
 export const router = createRouter({
   history: createWebHistory(import.meta.env.VITE_ROUTER_BASE || '/'),

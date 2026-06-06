@@ -13,8 +13,8 @@
       "name": "app-api"
     },
     {
-      "path": "app-ui",
-      "name": "app-ui"
+      "path": "app-mobile",
+      "name": "app-mobile"
     },
     {
       "path": "services",
@@ -54,7 +54,7 @@
     "editor.fontSize": 10,
     "editor.formatOnSave": false,
     "i18n-ally.localesPaths": [
-      "./admin-ui/src/i18n/locales",
+      "./app-mobile/src/i18n/locales",
     ],
     "deepseek.apiKey": "sk-cee964113b8a4461ae44aba3d4c8107d",
     "deepseek.provider": "deepseek",

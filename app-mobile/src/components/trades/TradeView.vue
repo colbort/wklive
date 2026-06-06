@@ -97,7 +97,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="mobile-trade-view">
+  <div class="trade-view">
     <TradeHeader
       :categories="categories"
       :selected-category-type="selectedCategoryType"
@@ -118,7 +118,7 @@ const emit = defineEmits<{
       @select-product="emit('select-product', $event)"
     />
 
-    <section v-if="tradeKind === 'crypto'" class="mobile-contract-layout">
+    <section v-if="tradeKind === 'crypto'" class="contract-layout">
       <TradeSubmitPanel
         :selected-product="selectedProduct"
         :trade-kind="tradeKind"
@@ -217,19 +217,19 @@ const emit = defineEmits<{
 </template>
 
 <style scoped>
-.mobile-trade-view {
+.trade-view {
   min-width: 0;
   max-width: 100%;
   overflow-x: hidden;
 }
 
 @media (max-width: 767px) {
-  .mobile-trade-view {
+  .trade-view {
     padding-top: 50px;
   }
 }
 
-.mobile-contract-layout {
+.contract-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(112px, 0.9fr);
   gap: 12px;
@@ -238,7 +238,7 @@ const emit = defineEmits<{
 }
 
 @media (max-width: 340px) {
-  .mobile-contract-layout {
+  .contract-layout {
     grid-template-columns: 1fr;
   }
 }

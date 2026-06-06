@@ -1069,7 +1069,7 @@ button {
   .asset-flow-page,
   .chart-view,
   .quotes-view,
-  .mobile-trade-view {
+  .trade-view {
     width: 100%;
     max-width: 100%;
     min-width: 0;
@@ -1084,7 +1084,7 @@ button {
   .asset-flow-page *,
   .chart-view *,
   .quotes-view *,
-  .mobile-trade-view * {
+  .trade-view * {
     min-width: 0;
   }
 

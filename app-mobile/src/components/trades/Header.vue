@@ -38,7 +38,7 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <div class="mobile-market-trade-header">
+  <div class="trade-header">
     <nav class="trade-categories" :aria-label="t('market.category')">
       <button
         v-for="category in categories"
@@ -112,7 +112,7 @@ const { t } = useI18n()
 </template>
 
 <style scoped>
-.mobile-market-trade-header {
+.trade-header {
   max-width: calc(100% + 36px);
   margin: 0 -18px 8px;
   padding: 0 18px 1px;
@@ -207,7 +207,7 @@ const { t } = useI18n()
     padding-left: 14px;
   }
 
-  .mobile-market-trade-header {
+  .trade-header {
     max-width: calc(100% + 28px);
     margin-right: -14px;
     margin-left: -14px;

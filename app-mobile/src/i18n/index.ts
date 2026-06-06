@@ -11,7 +11,7 @@ export const locales = {
 export type AppLocale = keyof typeof locales
 export type MessageSchema = typeof zhCN
 
-const STORAGE_KEY = 'app-ui-locale'
+const STORAGE_KEY = 'app-mobile-locale'
 const I18N_KEY = Symbol('app-i18n')
 
 type Params = Record<string, string | number>

@@ -19,12 +19,12 @@ const topTabs: MarketTopTabItem[] = [
 
 const activeTopTab = ref<MarketTopTab>('markets')
 const marketsPageRef = ref<HTMLElement | null>(null)
-const mobileTabsCollapsed = ref(false)
-const mobileTabsCollapseProgress = ref(0)
-let mobileScrollContainer: HTMLElement | null = null
+const tabsCollapsed = ref(false)
+const tabsCollapseProgress = ref(0)
+let scrollContainer: HTMLElement | null = null
 let collapseRaf = 0
 
-const mobileTopTabsHeight = 88
+const topTabsHeight = 88
 
 const detailVisible = computed(() => activeTopTab.value === 'chart')
 const isLoggedIn = computed(() => Boolean(getAccessToken()))
@@ -61,55 +61,55 @@ function openProductChart(product: ItickTenantProduct) {
   activeTopTab.value = 'chart'
 }
 
-function updateMobileTabsCollapse() {
+function updateTabsCollapse() {
   collapseRaf = 0
 
   if (activeTopTab.value !== 'markets') {
-    mobileTabsCollapseProgress.value = 0
-    mobileTabsCollapsed.value = false
+    tabsCollapseProgress.value = 0
+    tabsCollapsed.value = false
     return
   }
 
   const pageRect = marketsPageRef.value?.getBoundingClientRect()
-  const scrollRect = mobileScrollContainer?.getBoundingClientRect()
-  const scrollTop = mobileScrollContainer?.scrollTop || 0
+  const scrollRect = scrollContainer?.getBoundingClientRect()
+  const scrollTop = scrollContainer?.scrollTop || 0
   const pageOffset = pageRect && scrollRect ? pageRect.top - scrollRect.top : -scrollTop
   const pageScroll = Math.max(0, -pageOffset, scrollTop)
-  const progress = Math.min(pageScroll / mobileTopTabsHeight, 1)
+  const progress = Math.min(pageScroll / topTabsHeight, 1)
 
-  mobileTabsCollapseProgress.value = progress
-  mobileTabsCollapsed.value = progress >= 1
+  tabsCollapseProgress.value = progress
+  tabsCollapsed.value = progress >= 1
 }
 
-function requestMobileTabsCollapseUpdate() {
+function requestTabsCollapseUpdate() {
   if (collapseRaf) return
-  collapseRaf = window.requestAnimationFrame(updateMobileTabsCollapse)
+  collapseRaf = window.requestAnimationFrame(updateTabsCollapse)
 }
 
-function bindMobileScrollContainer() {
-  mobileScrollContainer?.removeEventListener('scroll', requestMobileTabsCollapseUpdate)
-  mobileScrollContainer =
+function bindScrollContainer() {
+  scrollContainer?.removeEventListener('scroll', requestTabsCollapseUpdate)
+  scrollContainer =
     (marketsPageRef.value?.closest('.page-content') as HTMLElement | null) ||
     document.querySelector<HTMLElement>('.page-content')
-  mobileScrollContainer?.addEventListener('scroll', requestMobileTabsCollapseUpdate, {
+  scrollContainer?.addEventListener('scroll', requestTabsCollapseUpdate, {
     passive: true,
   })
-  window.addEventListener('scroll', requestMobileTabsCollapseUpdate, { passive: true })
-  window.addEventListener('resize', requestMobileTabsCollapseUpdate, { passive: true })
-  updateMobileTabsCollapse()
+  window.addEventListener('scroll', requestTabsCollapseUpdate, { passive: true })
+  window.addEventListener('resize', requestTabsCollapseUpdate, { passive: true })
+  updateTabsCollapse()
 }
 
-onMounted(bindMobileScrollContainer)
+onMounted(bindScrollContainer)
 
 onBeforeUnmount(() => {
-  mobileScrollContainer?.removeEventListener('scroll', requestMobileTabsCollapseUpdate)
-  window.removeEventListener('scroll', requestMobileTabsCollapseUpdate)
-  window.removeEventListener('resize', requestMobileTabsCollapseUpdate)
+  scrollContainer?.removeEventListener('scroll', requestTabsCollapseUpdate)
+  window.removeEventListener('scroll', requestTabsCollapseUpdate)
+  window.removeEventListener('resize', requestTabsCollapseUpdate)
   if (collapseRaf) window.cancelAnimationFrame(collapseRaf)
 })
 
 watch(activeTopTab, () => {
-  updateMobileTabsCollapse()
+  updateTabsCollapse()
 })
 </script>
 
@@ -118,7 +118,7 @@ watch(activeTopTab, () => {
     ref="marketsPageRef"
     class="markets-page"
     :class="{
-      'markets-page--tabs-collapsed': mobileTabsCollapsed,
+      'markets-page--tabs-collapsed': tabsCollapsed,
       'markets-page--chart': activeTopTab === 'chart',
     }"
     :aria-busy="loadingBootstrap"
@@ -126,12 +126,12 @@ watch(activeTopTab, () => {
     <MarketTopTabs
       :tabs="topTabs"
       :active-tab="activeTopTab"
-      :collapsed="mobileTabsCollapsed"
-      :collapse-progress="mobileTabsCollapseProgress"
+      :collapsed="tabsCollapsed"
+      :collapse-progress="tabsCollapseProgress"
       @change="activeTopTab = $event"
     />
 
-    <div v-if="activeTopTab === 'markets'" class="markets-page__mobile">
+    <div v-if="activeTopTab === 'markets'" class="markets-page__content">
       <MarketQuotesView
         :categories="categories"
         :selected-category-type="selectedCategoryType"
@@ -142,7 +142,7 @@ watch(activeTopTab, () => {
         :loading="loadingBootstrap"
         :rows="marketRows"
         :selected-product-key="selectedProductKey"
-        :category-pinned="mobileTabsCollapsed"
+        :category-pinned="tabsCollapsed"
         @select-category="selectCategory"
         @select-product="openProductChart"
       />
@@ -157,7 +157,7 @@ watch(activeTopTab, () => {
       </div>
     </div>
 
-    <div v-else class="markets-page__mobile markets-page__mobile--chart">
+    <div v-else class="markets-page__content markets-page__content--chart">
       <MarketChartView
         :products="products"
         :rows="marketRows"
@@ -188,7 +188,7 @@ watch(activeTopTab, () => {
   color: #f6f7fb;
 }
 
-.markets-page__mobile {
+.markets-page__content {
   min-height: calc(100dvh - 72px);
 }
 
@@ -210,7 +210,7 @@ watch(activeTopTab, () => {
     padding: 0 0 calc(96px + env(safe-area-inset-bottom));
   }
 
-  .markets-page__mobile {
+  .markets-page__content {
     min-height: 100%;
   }
 

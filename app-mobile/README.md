@@ -1,6 +1,6 @@
-# app-ui
+# app-mobile
 
-`app-ui` 是面向 C 端的 Web 项目，采用一个项目同时支持手机端和 PC 端。
+`app-mobile` 是面向 C 端的 Web 项目，采用一个项目同时支持手机端和 PC 端。
 
 ## 技术栈
 

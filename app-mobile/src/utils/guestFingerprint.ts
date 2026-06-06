@@ -78,15 +78,15 @@ function getStorageSupport() {
 
   try {
     localStorageSupported = typeof window.localStorage !== 'undefined'
-  } catch {}
+  } catch { /* empty */ }
 
   try {
     sessionStorageSupported = typeof window.sessionStorage !== 'undefined'
-  } catch {}
+  } catch { /* empty */ }
 
   try {
     indexedDBSupported = typeof window.indexedDB !== 'undefined'
-  } catch {}
+  } catch { /* empty */ }
 
   return {
     localStorageSupported,
@@ -188,13 +188,13 @@ export function getGuestDeviceId() {
 export function setGuestDeviceId(deviceId: string) {
   try {
     localStorage.setItem('guest_device_id', deviceId || '')
-  } catch {}
+  } catch { /* empty */ }
 }
 
 export function setGuestId(guestId: string) {
   try {
     localStorage.setItem('guest_id', guestId || '')
-  } catch {}
+  } catch { /* empty */ }
 }
 
 export function getGuestToken() {
@@ -208,7 +208,7 @@ export function getGuestToken() {
 export function setGuestToken(token: string) {
   try {
     localStorage.setItem('guest_token', token || '')
-  } catch {}
+  } catch { /* empty */ }
 }
 
 export function collectGuestFingerprint(): GuestFingerprint {
