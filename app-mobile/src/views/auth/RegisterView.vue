@@ -974,13 +974,15 @@ function markUpload(type: IdentityFileKey) {
   height: 60px;
   border: 0;
   background: transparent;
-  color: #8e9099;
-  font-size: 26px;
-  font-weight: 900;
+  color: var(--menu-color);
+  font-size: var(--menu-font-size);
+  font-weight: var(--menu-font-weight);
 }
 
 .auth-tabs button.active {
-  color: #00c313;
+  color: var(--menu-active-color);
+  font-size: var(--menu-active-font-size);
+  font-weight: var(--menu-active-font-weight);
 }
 
 .auth-tabs button.active::after {
@@ -1602,8 +1604,7 @@ function markUpload(type: IdentityFileKey) {
     min-height: 84px;
   }
 
-  .auth-field input,
-  .auth-tabs button {
+  .auth-field input {
     font-size: 21px;
   }
 
@@ -1712,7 +1713,6 @@ function markUpload(type: IdentityFileKey) {
 
 .auth-tabs button {
   height: 46px;
-  font-size: 21px;
 }
 
 .auth-field {
@@ -1931,8 +1931,7 @@ function markUpload(type: IdentityFileKey) {
     padding: 0 14px;
   }
 
-  .auth-field input,
-  .auth-tabs button {
+  .auth-field input {
     font-size: 17px;
   }
 
@@ -2115,8 +2114,6 @@ function markUpload(type: IdentityFileKey) {
 
   .auth-tabs button {
     height: 52px;
-    font-size: 20px;
-    font-weight: 700;
   }
 
   .auth-tabs button.active::after {

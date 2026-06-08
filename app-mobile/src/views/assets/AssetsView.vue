@@ -506,16 +506,16 @@ button {
 .assets-page-tabbar button {
   position: relative;
   flex: 0 0 auto;
-  color: #8f929d;
-  font-size: 16px;
-  font-weight: 700;
+  color: var(--menu-color);
+  font-size: var(--menu-font-size);
+  font-weight: var(--menu-font-weight);
   white-space: nowrap;
 }
 
 .assets-page-tabbar button.active {
-  color: #fff;
-  font-size: 17px;
-  font-weight: 800;
+  color: var(--menu-active-color);
+  font-size: var(--menu-active-font-size);
+  font-weight: var(--menu-active-font-weight);
 }
 
 .assets-center {
@@ -591,15 +591,16 @@ button {
 :deep(.sub-menu-item) {
   flex: 0 0 auto;
   justify-content: flex-start;
-  color: #8f929d;
-  font-size: 16px;
-  font-weight: 700;
+  color: var(--menu-color);
+  font-size: var(--menu-font-size);
+  font-weight: var(--menu-font-weight);
   white-space: nowrap;
 }
 
 :deep(.sub-menu-item.active) {
-  color: #fff;
-  font-weight: 800;
+  color: var(--menu-active-color);
+  font-size: var(--menu-active-font-size);
+  font-weight: var(--menu-active-font-weight);
 }
 
 :deep(.sub-menu-item.active::after) {
@@ -722,16 +723,17 @@ button {
   position: relative;
   flex: 0 0 auto;
   padding: 0 0 12px;
-  color: #8f929d;
-  font-size: 16px;
-  font-weight: 500;
+  color: var(--menu-color);
+  font-size: var(--menu-font-size);
+  font-weight: var(--menu-font-weight);
   white-space: nowrap;
 }
 
 .assets-sub-tabs button.active,
 .assets-order-tabs button.active {
-  color: #fff;
-  font-weight: 600;
+  color: var(--menu-active-color);
+  font-size: var(--menu-active-font-size);
+  font-weight: var(--menu-active-font-weight);
 }
 
 .assets-sub-tabs button.active::after,

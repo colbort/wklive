@@ -506,17 +506,18 @@ function onRightClick() {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 15px;
-  color: #9ca1ad;
-  font-weight: 600;
+  color: var(--menu-color);
+  font-size: var(--menu-font-size);
+  font-weight: var(--menu-font-weight);
   position: relative;
   cursor: pointer;
   user-select: none;
 }
 
 .sub-menu-item.active {
-  color: #21ff00;
-  font-weight: 700;
+  color: var(--menu-active-color);
+  font-size: var(--menu-active-font-size);
+  font-weight: var(--menu-active-font-weight);
 }
 
 .sub-menu-item.active::after {

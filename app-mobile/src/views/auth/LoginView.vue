@@ -1237,13 +1237,15 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   height: 54px;
   border: 0;
   background: transparent;
-  color: #8e9099;
-  font-size: 14px;
-  font-weight: 500;
+  color: var(--menu-color);
+  font-size: var(--menu-font-size);
+  font-weight: var(--menu-font-weight);
 }
 
 .auth-tabs button.active {
-  color: #00c313;
+  color: var(--menu-active-color);
+  font-size: var(--menu-active-font-size);
+  font-weight: var(--menu-active-font-weight);
 }
 
 .auth-tabs button.active::after {
@@ -2106,8 +2108,6 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 
   .auth-tabs button {
     height: 52px;
-    font-size: 16px;
-    font-weight: 500;
   }
 
   .auth-tabs button.active::after {

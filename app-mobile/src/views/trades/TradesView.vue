@@ -978,17 +978,17 @@ async function cancelTradeOrder(order: TradeOrder) {
   flex: 0 0 auto;
   border: 0;
   background: transparent;
-  color: #8f929d;
+  color: var(--menu-color);
   font: inherit;
-  font-size: 15px;
-  font-weight: 500;
+  font-size: var(--menu-font-size);
+  font-weight: var(--menu-font-weight);
   white-space: nowrap;
 }
 
 .trade-category-tabbar__item--active {
-  color: #fff;
-  font-size: 17px;
-  font-weight: 600;
+  color: var(--menu-active-color);
+  font-size: var(--menu-active-font-size);
+  font-weight: var(--menu-active-font-weight);
 }
 
 .trade-category-tabbar__item--active::after {
@@ -1007,14 +1007,6 @@ async function cancelTradeOrder(order: TradeOrder) {
     gap: 18px;
     padding-right: 14px;
     padding-left: 14px;
-  }
-
-  .trade-category-tabbar__item {
-    font-size: 14px;
-  }
-
-  .trade-category-tabbar__item--active {
-    font-size: 16px;
   }
 }
 </style>

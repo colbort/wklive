@@ -87,15 +87,16 @@ const { t } = useI18n()
 .top-tab {
   position: relative;
   padding: 4px 0 9px;
-  color: #8f929d;
-  font-size: 19px;
-  font-weight: 400;
+  color: var(--menu-color);
+  font-size: var(--menu-font-size);
+  font-weight: var(--menu-font-weight);
   line-height: 1.2;
 }
 
 .top-tab--active {
-  color: #ffffff;
-  font-weight: 500;
+  color: var(--menu-active-color);
+  font-size: var(--menu-active-font-size);
+  font-weight: var(--menu-active-font-weight);
 }
 
 .top-tab--active::after {
@@ -145,10 +146,6 @@ const { t } = useI18n()
 
   .top-tabs {
     gap: 24px;
-  }
-
-  .top-tab {
-    font-size: 18px;
   }
 
   .search-button {

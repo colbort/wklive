@@ -347,13 +347,15 @@ button {
 :deep(.sub-menu-item) {
   height: 76px;
   justify-content: center;
-  color: #777985;
-  font-size: 21px;
-  font-weight: 800;
+  color: var(--menu-color);
+  font-size: var(--menu-font-size);
+  font-weight: var(--menu-font-weight);
 }
 
 :deep(.sub-menu-item.active) {
-  color: #fff;
+  color: var(--menu-active-color);
+  font-size: var(--menu-active-font-size);
+  font-weight: var(--menu-active-font-weight);
 }
 
 :deep(.sub-menu-item.active::after) {

@@ -12,6 +12,12 @@
   --danger: #ff6b7a;
   --shadow: 0 24px 80px rgba(2, 7, 17, 0.45);
   --app-width: 414px;
+  --menu-color: rgb(136 136 136 / 1);
+  --menu-font-size: .30rm;
+  --menu-font-weight: 400;
+  --menu-active-color: rgb(255 255 255);
+  --menu-active-font-size: .36rm;
+  --menu-active-font-weight: 600;
 }
 
 * {
@@ -39,6 +45,10 @@ body,
   width: 100%;
   min-width: 0;
   min-height: 100%;
+}
+
+html {
+  font-size: 20px;
 }
 
 body {
