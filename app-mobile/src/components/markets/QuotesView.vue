@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { getLocale, useI18n } from '@/i18n'
+import { useI18n } from '@/i18n'
 import type { ItickTenantCategory, ItickTenantProduct, ItickWsConnectionState } from '@/types/itick'
 import { marketCategoryCodeLabel, marketCategoryLabel } from '@/utils/marketCategory'
+import QuoteRow from './QuoteRow.vue'
 import type { MarketRow } from './types'
 
 defineProps<{
@@ -23,29 +24,6 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
-
-function formatNumber(value?: number | null, digits = 2) {
-  if (value === null || value === undefined || !Number.isFinite(value)) return '--'
-
-  return new Intl.NumberFormat(getLocale(), {
-    minimumFractionDigits: digits,
-    maximumFractionDigits: digits,
-  }).format(value)
-}
-
-function formatPrice(value?: number | null) {
-  if (value === null || value === undefined || !Number.isFinite(value)) return '--'
-
-  return formatNumber(value, Math.abs(value) >= 1 ? 4 : 8)
-}
-
-function formatPercent(value: number) {
-  return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`
-}
-
-function productIconText(product: ItickTenantProduct) {
-  return (product.baseCoin || product.symbol || product.code || '?').slice(0, 2).toUpperCase()
-}
 </script>
 
 <template>
@@ -70,7 +48,7 @@ function productIconText(product: ItickTenantProduct) {
       <span class="connection-dot" :class="`connection-dot--${wsState}`" />
       <span>{{
         marketCategoryCodeLabel(selectedCategoryCode, selectedCategoryName) ||
-          t('market.categoryLoading')
+        t('market.categoryLoading')
       }}</span>
       <strong>{{ wsError || selectedCategoryCode || t('market.waitingCategoryCode') }}</strong>
     </div>
@@ -83,37 +61,16 @@ function productIconText(product: ItickTenantProduct) {
     </div>
 
     <template v-else>
-      <button
+      <QuoteRow
         v-for="row in rows"
         :key="row.key"
-        type="button"
-        class="quote-row"
-        :class="{
-          'quote-row--active': row.key === selectedProductKey,
-          'quote-row--down': row.direction === 'down',
-        }"
-        @click="emit('selectProduct', row.product)"
-      >
-        <span class="quote-row__icon">
-          <img v-if="row.product.icon" :src="row.product.icon" :alt="row.product.symbol">
-          <span v-else>{{ productIconText(row.product) }}</span>
-        </span>
-
-        <span class="quote-row__name">
-          <strong>{{ row.product.symbol }}</strong>
-        </span>
-
-        <strong class="quote-row__price">
-          {{ row.quote ? formatPrice(row.quote.lastPrice) : '--' }}
-        </strong>
-
-        <span class="quote-row__change">
-          <strong>{{
-            row.quote ? formatPrice(row.quote.lastPrice - row.quote.open) : '--'
-          }}</strong>
-          <em>{{ row.quote ? formatPercent(row.changeRate) : t('market.waiting') }}</em>
-        </span>
-      </button>
+        :product="row.product"
+        :quote="row.quote"
+        :change-rate="row.changeRate"
+        :direction="row.direction"
+        :active="row.key === selectedProductKey"
+        @select="emit('selectProduct', $event)"
+      />
     </template>
   </section>
 </template>
@@ -222,133 +179,12 @@ function productIconText(product: ItickTenantProduct) {
   background: #e45656;
 }
 
-.quote-row {
-  display: grid;
-  grid-template-columns: 55px minmax(0, 1fr) minmax(88px, 0.42fr) minmax(76px, 0.36fr);
-  align-items: center;
-  column-gap: 6px;
-  width: calc(100% - 36px);
-  min-height: 86px;
-  margin: 0 18px;
-  padding: 15px 0;
-  border: 0;
-  border-bottom: 1px solid var(--divider);
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-  font: inherit;
-  text-align: left;
-}
-
 @media (max-width: 390px) {
   .category-strip {
     gap: 24px;
     padding-right: 22px;
     padding-left: 22px;
   }
-
-  .quote-row {
-    grid-template-columns: 55px minmax(0, 1fr) minmax(76px, 0.42fr) minmax(68px, 0.36fr);
-    column-gap: 5px;
-    width: calc(100% - 32px);
-    min-height: 80px;
-    margin: 0 16px;
-  }
-
-  .quote-row__price,
-  .quote-row__change strong {
-    font-size: 0.76rem;
-  }
-
-  .quote-row__change em {
-    font-size: 0.6rem;
-  }
-}
-
-.quote-row__icon {
-  display: grid;
-  width: 55px;
-  height: 55px;
-  place-items: center;
-  overflow: hidden;
-  border-radius: 50%;
-  background: #202631;
-  color: #fff;
-  font-size: 0.72rem;
-  font-weight: 700;
-}
-
-.quote-row__icon img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.quote-row__name {
-  display: grid;
-  min-width: 0;
-}
-
-.quote-row__name strong {
-  overflow: hidden;
-  color: var(--text);
-  font-size: 0.9rem;
-  font-weight: 600;
-  line-height: 1.12;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.quote-row__price {
-  overflow: hidden;
-  color: var(--success);
-  font-size: 0.86rem;
-  font-weight: 600;
-  text-align: right;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.quote-row__change {
-  display: grid;
-  gap: 6px;
-  justify-items: end;
-}
-
-.quote-row__change strong {
-  overflow: hidden;
-  max-width: 100%;
-  color: var(--success);
-  font-size: 0.82rem;
-  font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.quote-row__change em {
-  min-width: 54px;
-  padding: 4px 8px;
-  border-radius: 999px;
-  background: var(--success);
-  color: #fff;
-  font-size: 0.64rem;
-  font-style: normal;
-  font-weight: 600;
-  text-align: center;
-}
-
-.quote-row--down .quote-row__price,
-.quote-row--down .quote-row__change strong {
-  color: #ff4f43;
-}
-
-.quote-row--down .quote-row__change em {
-  background: #ff4f43;
-  color: #fff;
-}
-
-.quote-row--active {
-  background: rgba(255, 255, 255, 0.015);
 }
 
 .empty-state {

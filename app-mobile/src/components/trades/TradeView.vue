@@ -72,7 +72,6 @@ defineProps<{
   ordersLoading: boolean
   ordersError: string
   cancelingOrderId: number | null
-  coinGlyph: (product: ItickTenantProduct) => string
 }>()
 
 const emit = defineEmits<{
@@ -105,7 +104,6 @@ const emit = defineEmits<{
       :placeholder-change="placeholderChange"
       :product-menu-open="productMenuOpen"
       :product-sheet-rows="productSheetRows"
-      :coin-glyph="coinGlyph"
       @open-product-menu="emit('open-product-menu')"
       @close-product-sheet="emit('close-product-sheet')"
       @select-product="emit('select-product', $event)"

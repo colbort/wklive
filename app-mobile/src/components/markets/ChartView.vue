@@ -11,6 +11,7 @@ import type {
   QuotePayload,
   TickPayload,
 } from '@/types/itick'
+import QuoteRow from './QuoteRow.vue'
 import type { MarketRow } from './types'
 
 type DetailTab = 'market' | 'depth' | 'trades'
@@ -344,10 +345,6 @@ function formatTime(ts: number) {
   }).format(ts)
 }
 
-function coinGlyph(product: ItickTenantProduct) {
-  const coin = product.baseCoin || product.symbol.slice(0, 3)
-  return coin.slice(0, 1).toUpperCase()
-}
 </script>
 
 <template>
@@ -681,25 +678,17 @@ function coinGlyph(product: ItickTenantProduct) {
       @close="closeSwitcher"
     >
       <div class="product-sheet__rows">
-        <button
+        <QuoteRow
           v-for="row in rows"
           :key="row.key"
-          type="button"
-          class="product-sheet-row"
-          :class="{
-            'product-sheet-row--active': row.key === selectedProductKey,
-            'product-sheet-row--down': row.direction === 'down',
-          }"
-          @click="selectProductRow(row)"
-        >
-          <span class="product-sheet-row__coin">{{ coinGlyph(row.product) }}</span>
-          <span class="product-sheet-row__symbol">{{ row.product.symbol }}</span>
-          <strong>{{ row.quote ? formatPrice(row.quote.lastPrice) : '--' }}</strong>
-          <span class="product-sheet-row__change">
-            <em>{{ row.quote ? formatPrice(row.quote.lastPrice - row.quote.open) : '--' }}</em>
-            <small>{{ row.quote ? formatPercent(row.changeRate) : t('market.waiting') }}</small>
-          </span>
-        </button>
+          :product="row.product"
+          :quote="row.quote"
+          :change-rate="row.changeRate"
+          :direction="row.direction"
+          :active="row.key === selectedProductKey"
+          variant="sheet"
+          @select="selectProductRow(row)"
+        />
       </div>
 
       <template #footer>
@@ -1480,116 +1469,6 @@ function coinGlyph(product: ItickTenantProduct) {
 
 .product-sheet__rows {
   display: grid;
-}
-
-.product-sheet-row {
-  display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) minmax(0, 72px) minmax(0, 64px);
-  align-items: center;
-  column-gap: 10px;
-  width: 100%;
-  min-width: 0;
-  min-height: 96px;
-  padding: 12px 0;
-  border: 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.product-sheet-row__coin {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 999px;
-  background: linear-gradient(145deg, #4099ff, #67c2ff);
-  color: var(--text);
-  font-size: 1.05rem;
-  font-weight: 500;
-}
-
-.product-sheet-row:nth-child(4n + 2) .product-sheet-row__coin {
-  background: linear-gradient(145deg, #e9ddc9, #fff2d8);
-  color: #b8346c;
-}
-
-.product-sheet-row:nth-child(4n + 3) .product-sheet-row__coin {
-  background: linear-gradient(145deg, #2186dd, #2e9fff);
-}
-
-.product-sheet-row:nth-child(4n + 4) .product-sheet-row__coin {
-  background: linear-gradient(145deg, #0e52ff, #3888ff);
-}
-
-.product-sheet-row__symbol {
-  overflow: hidden;
-  color: var(--text);
-  font-size: 1rem;
-  font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.product-sheet-row strong {
-  min-width: 0;
-  overflow: hidden;
-  color: #09d676;
-  font-size: 0.8rem;
-  font-weight: 500;
-  text-align: right;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.product-sheet-row__change {
-  display: grid;
-  justify-items: end;
-  gap: 6px;
-  min-width: 0;
-  overflow: hidden;
-}
-
-.product-sheet-row__change em {
-  max-width: 100%;
-  overflow: hidden;
-  color: #09d676;
-  font-size: 0.75rem;
-  font-style: normal;
-  font-weight: 500;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.product-sheet-row__change small {
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  padding: 5px 9px;
-  overflow: hidden;
-  border-radius: 14px;
-  background: #06d171;
-  color: var(--text);
-  font-size: 0.65rem;
-  text-align: center;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.product-sheet-row--down strong,
-.product-sheet-row--down .product-sheet-row__change em {
-  color: #ff5148;
-}
-
-.product-sheet-row--down .product-sheet-row__change small {
-  background: #ff4438;
-}
-
-.product-sheet-row--active {
-  background: rgba(255, 255, 255, 0.025);
 }
 
 .product-sheet__footer {

@@ -118,6 +118,8 @@ export function useTradingDesk(options: {
         key,
         product,
         price: quote ? formatPrice(quote.lastPrice) : '--',
+        changeValue: quote && changeValue !== null ? formatPrice(changeValue) : '',
+        changePercent: quote ? formatPercent(changeRate) : '',
         change: quote && changeValue !== null ? `${formatPrice(changeValue)} ${formatPercent(changeRate)}` : '',
         direction: (quote
           ? changeRate > 0

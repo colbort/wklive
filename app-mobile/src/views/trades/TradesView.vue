@@ -110,7 +110,6 @@ const {
   priceTrend,
   productSheetRows,
   selectProduct,
-  coinGlyph,
   productKey,
 } = useTradingDesk({
   detailVisible,
@@ -922,7 +921,6 @@ async function cancelTradeOrder(order: TradeOrder) {
         :orders-loading="loadingTradeOrders"
         :orders-error="ordersError"
         :canceling-order-id="cancelingOrderId"
-        :coin-glyph="coinGlyph"
         @open-product-menu="productMenuOpen = true"
         @close-product-sheet="closeProductSheet"
         @select-product="selectProduct"
