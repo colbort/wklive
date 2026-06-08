@@ -217,7 +217,7 @@ onMounted(() => {
   <CommonPage
     class="fund-record-layout"
     :title="t('assetFlow.records')"
-    :nav-height="76"
+    :nav-height="66"
     :menus="recordMenus"
     :model-value="activeTab"
     @back="router.back()"

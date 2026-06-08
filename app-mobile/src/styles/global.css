@@ -785,9 +785,22 @@ button {
   min-width: 0;
   padding: 2px;
   border-radius: 14px;
+  background: transparent;
+  outline: none;
+  box-shadow: none;
   color: rgba(243, 247, 254, 0.58);
   font-size: .65rem;
   font-weight: 500;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app-tabbar__item:hover,
+.app-tabbar__item:active,
+.app-tabbar__item:focus,
+.app-tabbar__item:focus-visible {
+  background: transparent;
+  outline: none;
+  box-shadow: none;
 }
 
 .app-tabbar__item span:last-child {

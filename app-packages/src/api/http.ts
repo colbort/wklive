@@ -20,6 +20,21 @@ export type ApiClientConfig = {
   translateApiError?: ApiErrorTranslator
 }
 
+export type TokenInfo = {
+  accessToken: string
+  refreshToken: string
+  expireTime?: number
+}
+
+type ApiRespBase = {
+  code?: number | string
+  msg?: string
+}
+
+type RefreshTokenResp = ApiRespBase & {
+  data?: Partial<TokenInfo>
+}
+
 const viteEnv = import.meta.env as Record<string, string | undefined>
 
 const apiClientConfig: ApiClientConfig = {
@@ -167,32 +182,6 @@ function stripUserTenantScope(value: unknown): unknown {
   )
 }
 
-http.interceptors.request.use((config) => {
-  const accessToken = getAccessToken()
-  if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`
-  }
-
-  const tenantId = getTenantId()
-  const tenantCode = getTenantCode()
-  if (tenantId) {
-    config.headers['x-tenant-id'] = tenantId
-  }
-  if (tenantCode) {
-    config.headers['x-tenant-code'] = tenantCode
-  }
-
-  if (isPlainObject(config.params)) {
-    config.params = stripUserTenantScope(appendTenantScope({ ...config.params }, config.url))
-  }
-
-  if (isPlainObject(config.data)) {
-    config.data = stripUserTenantScope(appendTenantScope({ ...config.data }, config.url))
-  }
-
-  return config
-})
-
 function isRefreshTokenRequest(url?: string) {
   return Boolean(url?.startsWith('/user/refresh-token'))
 }
@@ -215,17 +204,77 @@ function translateResponseMessage(data: unknown) {
   }
 }
 
-function readTokenPayload(data: unknown) {
+function hasTokenFields(value: unknown): value is Partial<TokenInfo> {
+  return (
+    isPlainObject(value) &&
+    (typeof value.accessToken === 'string' || typeof value.refreshToken === 'string')
+  )
+}
+
+function readTokenPayload(data: unknown): Partial<TokenInfo> | null {
   if (!isPlainObject(data)) return null
 
-  const directToken = data.token
-  if (isPlainObject(directToken)) return directToken
+  const refreshTokenResp = data as RefreshTokenResp
+  if (hasTokenFields(refreshTokenResp.data)) return refreshTokenResp.data
 
-  const nestedData = data.data
-  if (isPlainObject(nestedData) && isPlainObject(nestedData.token)) return nestedData.token
-
-  return null
+  return hasTokenFields(data) ? data : null
 }
+
+function setAuthorizationHeader(config: InternalAxiosRequestConfig, accessToken: string) {
+  config.headers = config.headers || {}
+
+  const headers = config.headers as InternalAxiosRequestConfig['headers'] & {
+    set?: (name: string, value: string) => void
+  }
+
+  if (typeof headers.set === 'function') {
+    headers.set('Authorization', `Bearer ${accessToken}`)
+    return
+  }
+
+  headers.Authorization = `Bearer ${accessToken}`
+}
+
+function setRequestHeader(config: InternalAxiosRequestConfig, name: string, value: string) {
+  config.headers = config.headers || {}
+
+  const headers = config.headers as InternalAxiosRequestConfig['headers'] & {
+    set?: (headerName: string, headerValue: string) => void
+  }
+
+  if (typeof headers.set === 'function') {
+    headers.set(name, value)
+    return
+  }
+
+  headers[name] = value
+}
+
+http.interceptors.request.use((config) => {
+  const accessToken = getAccessToken()
+  if (accessToken) {
+    setAuthorizationHeader(config, accessToken)
+  }
+
+  const tenantId = getTenantId()
+  const tenantCode = getTenantCode()
+  if (tenantId) {
+    setRequestHeader(config, 'x-tenant-id', tenantId)
+  }
+  if (tenantCode) {
+    setRequestHeader(config, 'x-tenant-code', tenantCode)
+  }
+
+  if (isPlainObject(config.params)) {
+    config.params = stripUserTenantScope(appendTenantScope({ ...config.params }, config.url))
+  }
+
+  if (isPlainObject(config.data)) {
+    config.data = stripUserTenantScope(appendTenantScope({ ...config.data }, config.url))
+  }
+
+  return config
+})
 
 function refreshAccessToken() {
   if (!refreshTokenTask) {
@@ -268,8 +317,7 @@ async function retryWithRefreshedToken(config?: InternalAxiosRequestConfig) {
     return Promise.reject(new Error('Unauthorized'))
   }
 
-  originalConfig.headers = originalConfig.headers || {}
-  originalConfig.headers.Authorization = `Bearer ${accessToken}`
+  setAuthorizationHeader(originalConfig, accessToken)
   return http(originalConfig)
 }
 

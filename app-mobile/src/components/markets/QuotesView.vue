@@ -255,10 +255,6 @@ function formatPercent(value: number) {
     margin: 0 22px;
   }
 
-  .quote-row__price {
-    font-size: 0.75rem;
-  }
-
   .quote-row__change strong,
   .quote-row__change em {
     font-size: 0.6rem;
@@ -299,8 +295,8 @@ function formatPercent(value: number) {
 .quote-row__price {
   overflow: hidden;
   color: var(--muted);
-  font-size: 0.85rem;
-  font-weight: 700;
+  font-size: 0.75rem;
+  font-weight: 400;
   text-align: right;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -317,7 +313,7 @@ function formatPercent(value: number) {
   max-width: 100%;
   color: var(--muted);
   font-size: 0.85rem;
-  font-weight: 700;
+  font-weight: 500;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -334,7 +330,7 @@ function formatPercent(value: number) {
   text-align: center;
 }
 
-.quote-row--down .quote-row__price,
+.quote-row--down,
 .quote-row--down .quote-row__change strong {
   color: var(--muted);
 }

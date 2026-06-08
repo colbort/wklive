@@ -245,6 +245,20 @@ function changeLanguage() {
   align-items: center;
   min-width: 0;
   gap: 8px;
+  background: transparent;
+  outline: none;
+  box-shadow: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ave-home-brand:hover,
+.ave-home-brand:active,
+.ave-home-brand:focus,
+.ave-home-brand:focus-visible {
+  background: transparent;
+  outline: none;
+  box-shadow: none;
 }
 
 .ave-home-brand__mark {
@@ -252,6 +266,7 @@ function changeLanguage() {
   width: 42px;
   height: 42px;
   background: url('../../../assets/favicon.png') center / contain no-repeat;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .ave-home-brand strong {
@@ -259,6 +274,10 @@ function changeLanguage() {
   font-size: 1.35rem;
   font-weight: 800;
   line-height: 1;
+  background: transparent;
+  outline: none;
+  box-shadow: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .ave-home-tabbar__actions {
