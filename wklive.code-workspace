@@ -21,6 +21,10 @@
       "name": "app-mobile"
     },
     {
+      "path": "app-web",
+      "name": "app-web"
+    },
+    {
       "path": "services",
       "name": "services"
     },
