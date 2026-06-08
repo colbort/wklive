@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue'
 
 import AssetCoinIcon from '@/components/assets/AssetCoinIcon.vue'
+import BottomDrawer from '@/components/common/BottomDrawer.vue'
 import { useI18n } from '@/i18n'
 import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
 import { formatAssetMinorAmount } from '@/utils/assetAmount'
@@ -112,54 +113,53 @@ function selectCoin(coin: string) {
 </script>
 
 <template>
-  <Teleport to="body">
-    <div v-if="modelValue" class="asset-select-overlay" role="presentation" @click.self="close">
-      <section class="asset-select-sheet" role="dialog" aria-modal="true" :aria-label="title">
-        <i class="asset-select-sheet__handle" />
-        <button type="button" class="asset-select-sheet__close" :aria-label="t('common.close')" @click="close">×</button>
-        <h2>{{ title }}</h2>
-
-        <div class="asset-select-group">
-          <h3>{{ t('assetFlow.chooseAccount') }}</h3>
-          <div class="asset-select-accounts">
-            <button
-              v-for="account in walletTypes"
-              :key="account.value"
-              type="button"
-              :class="{ active: activeWalletType === account.value }"
-              @click="activeWalletType = account.value"
-            >
-              {{ account.label }}
-            </button>
-          </div>
-        </div>
-
-        <div class="asset-select-group">
-          <h3>{{ t('assetFlow.chooseCoin') }}</h3>
-          <label class="asset-select-search">
-            <span>⌕</span>
-            <input v-model="query" :placeholder="t('assetFlow.searchCoin')" />
-          </label>
-        </div>
-
-        <div class="asset-select-list">
-          <button
-            v-for="row in coins"
-            :key="`${activeWalletType}-${row.coin}`"
-            type="button"
-            class="asset-select-row"
-            @click="selectCoin(row.coin)"
-          >
-            <AssetCoinIcon :coin="row.coin" :config="row.config" />
-            <strong>{{ row.coin }}</strong>
-            <span>{{ row.amountLabel }} <b>{{ row.availableAmount }}</b></span>
-            <em v-if="activeWalletType === selectedWalletType && row.coin === selectedCoin">✓</em>
-          </button>
-          <p v-if="!coins.length" class="asset-select-empty">{{ t('assets.noCoins') }}</p>
-        </div>
-      </section>
+  <BottomDrawer
+    :model-value="modelValue"
+    :title="title"
+    :close-label="t('common.close')"
+    max-height="84dvh"
+    :z-index="110"
+    @update:model-value="emit('update:modelValue', $event)"
+  >
+    <div class="asset-select-group">
+      <h3>{{ t('assetFlow.chooseAccount') }}</h3>
+      <div class="asset-select-accounts">
+        <button
+          v-for="account in walletTypes"
+          :key="account.value"
+          type="button"
+          :class="{ active: activeWalletType === account.value }"
+          @click="activeWalletType = account.value"
+        >
+          {{ account.label }}
+        </button>
+      </div>
     </div>
-  </Teleport>
+
+    <div class="asset-select-group">
+      <h3>{{ t('assetFlow.chooseCoin') }}</h3>
+      <label class="asset-select-search">
+        <span>⌕</span>
+        <input v-model="query" :placeholder="t('assetFlow.searchCoin')" />
+      </label>
+    </div>
+
+    <div class="asset-select-list">
+      <button
+        v-for="row in coins"
+        :key="`${activeWalletType}-${row.coin}`"
+        type="button"
+        class="asset-select-row"
+        @click="selectCoin(row.coin)"
+      >
+        <AssetCoinIcon :coin="row.coin" :config="row.config" />
+        <strong>{{ row.coin }}</strong>
+        <span>{{ row.amountLabel }} <b>{{ row.availableAmount }}</b></span>
+        <em v-if="activeWalletType === selectedWalletType && row.coin === selectedCoin">✓</em>
+      </button>
+      <p v-if="!coins.length" class="asset-select-empty">{{ t('assets.noCoins') }}</p>
+    </div>
+  </BottomDrawer>
 </template>
 
 <style scoped>
@@ -169,50 +169,6 @@ input {
   background: transparent;
   color: inherit;
   font: inherit;
-}
-
-.asset-select-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 110;
-  display: grid;
-  align-items: end;
-  background: rgba(0, 0, 0, 0.66);
-  backdrop-filter: blur(12px);
-}
-
-.asset-select-sheet {
-  position: relative;
-  max-height: 84dvh;
-  overflow: hidden auto;
-  padding: 16px 26px calc(18px + env(safe-area-inset-bottom));
-  border-radius: 24px 24px 0 0;
-  background: #262832;
-  color: #fff;
-}
-
-.asset-select-sheet__handle {
-  display: block;
-  width: 42px;
-  height: 5px;
-  margin: 4px auto 24px;
-  border-radius: 999px;
-  background: #a2a3aa;
-}
-
-.asset-select-sheet__close {
-  position: absolute;
-  top: 28px;
-  right: 28px;
-  font-size: 32px;
-  line-height: 1;
-}
-
-.asset-select-sheet h2 {
-  margin: 0 0 34px;
-  font-size: 22px;
-  font-weight: 800;
-  text-align: center;
 }
 
 .asset-select-group {

@@ -164,9 +164,25 @@
   </div>
 </template>
 
-<script setup>
-import { computed, ref, useSlots, watch } from 'vue'
+<script setup lang="ts">
+import { computed, ref, useSlots, watch, type PropType } from 'vue'
 import AppIcon from '@/components/common/AppIcon.vue'
+
+type MenuValue = string | number
+
+type MenuItem = {
+  label: string
+  value: MenuValue
+}
+
+type TabbarSlotProps = {
+  title: string
+  showBack: boolean
+  rightText: string
+  rightIcon: string
+  onBack: () => void
+  onRightClick: () => void
+}
 
 const props = defineProps({
   title: {
@@ -190,12 +206,12 @@ const props = defineProps({
   },
 
   menus: {
-    type: Array,
+    type: Array as PropType<MenuItem[]>,
     default: () => [],
   },
 
   modelValue: {
-    type: [String, Number],
+    type: [String, Number] as PropType<MenuValue>,
     default: '',
   },
 
@@ -205,12 +221,19 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits([
-  'update:modelValue',
-  'back',
-  'right-click',
-  'menu-change',
-])
+defineSlots<{
+  tabbar?: (props: TabbarSlotProps) => unknown
+  right?: () => unknown
+  custom?: () => unknown
+  default?: (props: { activeKey: MenuValue }) => unknown
+}>()
+
+const emit = defineEmits<{
+  'update:modelValue': [value: MenuValue]
+  back: []
+  'right-click': []
+  'menu-change': [value: MenuValue]
+}>()
 
 const slots = useSlots()
 
@@ -261,7 +284,7 @@ watch(
   },
 )
 
-function changeMenu(value) {
+function changeMenu(value: MenuValue) {
   if (value === currentKey.value) return
 
   currentKey.value = value
@@ -281,8 +304,7 @@ function onRightClick() {
 <style scoped>
 .page-414 {
   width: min(100%, 414px);
-  height: 100vh;
-  height: 100dvh;
+  height: 100%;
   margin: 0 auto;
   background: #0b0d16;
   color: #ffffff;

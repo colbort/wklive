@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 
 import { apiGetAssetOptions, apiGetMyAssetSummary, apiListAssetCoinConfigs } from '@/api/asset'
 import { getAccessToken } from '@/api/http'
+import BottomDrawer from '@/components/common/BottomDrawer.vue'
 import { optionText, useOptions } from '@/composables/useOptions'
 import { useI18n } from '@/i18n'
 import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
@@ -376,28 +377,15 @@ onMounted(() => {
         </section>
       </div>
 
-      <div
-        v-if="selectedCoinConfig"
-        class="coin-action-overlay"
-        role="presentation"
-        @click.self="closeCoinActions"
+      <BottomDrawer
+        :model-value="Boolean(selectedCoinConfig)"
+        :title="t('assets.coinAction')"
+        :close-label="t('common.close')"
+        max-height="68dvh"
+        :z-index="90"
+        @update:model-value="value => { if (!value) closeCoinActions() }"
       >
-        <section
-          class="coin-action-sheet"
-          role="dialog"
-          aria-modal="true"
-          :aria-label="t('assets.coinAction')"
-        >
-          <button
-            class="coin-action-sheet__close"
-            type="button"
-            :aria-label="t('common.close')"
-            @click="closeCoinActions"
-          >
-            ×
-          </button>
-          <i class="coin-action-sheet__handle" />
-          <h2>{{ t('assets.coinAction') }}</h2>
+        <div v-if="selectedCoinConfig" class="coin-action-sheet">
           <span
             class="coin-action-sheet__coin"
             :style="{
@@ -447,8 +435,8 @@ onMounted(() => {
               <strong>{{ t('assets.transferOut') }}</strong>
             </button>
           </div>
-        </section>
-      </div>
+        </div>
+      </BottomDrawer>
     </template>
 
     <template v-else-if="activeTopTab === 'orders'">
@@ -749,48 +737,12 @@ button {
   color: #02b904;
 }
 
-.coin-action-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 90;
-  display: grid;
-  align-items: end;
-  background: rgba(0, 0, 0, 0.68);
-  backdrop-filter: blur(12px);
-}
-
 .coin-action-sheet {
-  position: relative;
   display: grid;
   justify-items: center;
   width: 100%;
   min-height: 356px;
-  padding: 14px 22px calc(22px + env(safe-area-inset-bottom));
-  border-radius: 24px 24px 0 0;
-  background: #262832;
-  box-shadow: 0 -18px 60px rgba(0, 0, 0, 0.38);
-}
-
-.coin-action-sheet__handle {
-  width: 46px;
-  height: 5px;
-  border-radius: 999px;
-  background: #a0a1a8;
-}
-
-.coin-action-sheet__close {
-  position: absolute;
-  top: 22px;
-  right: 28px;
-  border: 0;
-  color: #fff;
-  font-size: 34px;
-  line-height: 1;
-}
-
-.coin-action-sheet h2 {
-  margin: 22px 0 20px;
-  font-size: 22px;
+  padding-top: 10px;
 }
 
 .coin-action-sheet__coin {

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import AssetCoinIcon from '@/components/assets/AssetCoinIcon.vue'
+import BottomDrawer from '@/components/common/BottomDrawer.vue'
 import { apiGetAssetOptions } from '@/api/asset'
 import { useOptions } from '@/composables/useOptions'
 import { useI18n } from '@/i18n'
@@ -54,41 +55,30 @@ function selectConfig(config: AssetCoinConfig) {
 </script>
 
 <template>
-  <Teleport to="body">
-    <Transition name="asset-coin-sheet">
-      <div v-if="modelValue" class="asset-coin-sheet" @click.self="closeSheet">
-        <section class="asset-coin-sheet__panel" role="dialog" aria-modal="true">
-          <span class="asset-coin-sheet__handle" />
-          <button
-            type="button"
-            class="asset-coin-sheet__close"
-            :aria-label="t('common.close')"
-            @click="closeSheet"
-          >
-            ×
-          </button>
-          <h2>{{ title || t('assetFlow.chooseCoin') }}</h2>
-
-          <div class="asset-coin-sheet__list">
-            <button
-              v-for="config in props.configs"
-              :key="`${config.id}-${config.coin}-${config.chainCode}`"
-              type="button"
-              class="asset-coin-sheet__item"
-              :class="{ 'is-active': isSelected(config) }"
-              @click="selectConfig(config)"
-            >
-              <AssetCoinIcon :coin="config.coin" :config="config" />
-              <strong>{{ config.coin }}</strong>
-              <small v-if="chainLabel(config)">{{ chainLabel(config) }}</small>
-              <span v-if="isSelected(config)" class="asset-coin-sheet__check">✓</span>
-            </button>
-            <p v-if="!props.configs.length" class="asset-coin-sheet__empty">{{ t('assets.noCoins') }}</p>
-          </div>
-        </section>
-      </div>
-    </Transition>
-  </Teleport>
+  <BottomDrawer
+    :model-value="modelValue"
+    :title="title || t('assetFlow.chooseCoin')"
+    :close-label="t('common.close')"
+    max-height="68dvh"
+    @update:model-value="emit('update:modelValue', $event)"
+  >
+    <div class="asset-coin-sheet__list">
+      <button
+        v-for="config in props.configs"
+        :key="`${config.id}-${config.coin}-${config.chainCode}`"
+        type="button"
+        class="asset-coin-sheet__item"
+        :class="{ 'is-active': isSelected(config) }"
+        @click="selectConfig(config)"
+      >
+        <AssetCoinIcon :coin="config.coin" :config="config" />
+        <strong>{{ config.coin }}</strong>
+        <small v-if="chainLabel(config)">{{ chainLabel(config) }}</small>
+        <span v-if="isSelected(config)" class="asset-coin-sheet__check">✓</span>
+      </button>
+      <p v-if="!props.configs.length" class="asset-coin-sheet__empty">{{ t('assets.noCoins') }}</p>
+    </div>
+  </BottomDrawer>
 </template>
 
 <style scoped>
@@ -99,59 +89,9 @@ button {
   font: inherit;
 }
 
-.asset-coin-sheet {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: flex;
-  align-items: flex-end;
-  background: rgba(0, 0, 0, 0.58);
-  backdrop-filter: blur(8px);
-  overflow-x: hidden;
-}
-
-.asset-coin-sheet__panel {
-  position: relative;
-  width: 100%;
-  max-height: 68dvh;
-  overflow: hidden auto;
-  border-radius: 24px 24px 0 0;
-  background: #24252d;
-  padding: 38px 0 16px;
-  color: #fff;
-}
-
-.asset-coin-sheet__handle {
-  position: absolute;
-  top: 14px;
-  left: 50%;
-  width: 34px;
-  height: 4px;
-  border-radius: 999px;
-  background: #a8a9af;
-  transform: translateX(-50%);
-}
-
-.asset-coin-sheet__close {
-  position: absolute;
-  top: 22px;
-  right: 28px;
-  width: 32px;
-  height: 32px;
-  color: #fff;
-  font-size: 34px;
-  line-height: 28px;
-}
-
-.asset-coin-sheet h2 {
-  margin: 0 0 28px;
-  text-align: center;
-  font-size: 18px;
-  font-weight: 800;
-}
-
 .asset-coin-sheet__list {
   display: grid;
+  margin: 0 -22px;
 }
 
 .asset-coin-sheet__item {
@@ -198,20 +138,9 @@ button {
 }
 
 @media (max-width: 390px) {
-  .asset-coin-sheet__panel {
-    max-height: 74dvh;
-    border-radius: 22px 22px 0 0;
-    padding-top: 34px;
-  }
-
   .asset-coin-sheet__item {
     min-height: 48px;
     padding: 0 20px;
-  }
-
-  .asset-coin-sheet h2 {
-    margin-bottom: 20px;
-    font-size: 17px;
   }
 }
 
@@ -222,23 +151,4 @@ button {
   text-align: center;
 }
 
-.asset-coin-sheet-enter-active,
-.asset-coin-sheet-leave-active {
-  transition: opacity 0.18s ease;
-}
-
-.asset-coin-sheet-enter-active .asset-coin-sheet__panel,
-.asset-coin-sheet-leave-active .asset-coin-sheet__panel {
-  transition: transform 0.18s ease;
-}
-
-.asset-coin-sheet-enter-from,
-.asset-coin-sheet-leave-to {
-  opacity: 0;
-}
-
-.asset-coin-sheet-enter-from .asset-coin-sheet__panel,
-.asset-coin-sheet-leave-to .asset-coin-sheet__panel {
-  transform: translateY(18px);
-}
 </style>

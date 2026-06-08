@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 
+import AppIcon from '@/components/common/AppIcon.vue'
+import CommonPage from '@/components/common/CommonPage.vue'
 import boxIconSimple from '../../../assets/home/icon1.png'
 import boxIconShield from '../../../assets/home/icon2.png'
 import boxIconSupport from '../../../assets/home/icon3.png'
@@ -17,7 +19,7 @@ import featureIconCharts from '../../../assets/home/svg2.svg'
 import featureIconFees from '../../../assets/home/svg3.svg'
 import { useI18n } from '@/i18n'
 
-const { t } = useI18n()
+const { t, toggleLocale } = useI18n()
 
 const featureCards = [
   {
@@ -89,106 +91,200 @@ const trustFeatures = [
 </script>
 
 <template>
-  <section class="ave-home">
-    <section class="ave-hero">
-      <div class="ave-hero__copy">
-        <h1>
-          <span>{{ t('home.heroPrefix') }}</span>
-          {{ t('home.heroSuffix') }}
-        </h1>
-        <p>{{ t('home.heroSub') }}</p>
-        <RouterLink to="/trades" class="ave-home__cta ave-hero__cta">
-          {{ t('home.startTrading') }}
+  <CommonPage
+    :show-back="false"
+    :nav-height="72"
+  >
+    <template #tabbar>
+      <header class="ave-home-tabbar">
+        <RouterLink to="/home" class="ave-home-brand">
+          <span class="ave-home-brand__mark" />
+          <strong>AVE</strong>
         </RouterLink>
-      </div>
 
-      <img class="ave-hero__portal" :src="heroPortalImage" alt="">
-    </section>
+        <div class="ave-home-tabbar__actions">
+          <button class="ave-home-action" type="button" :aria-label="t('common.search')">
+            <AppIcon name="search" class="ave-home-action__icon" />
+          </button>
+          <button
+            class="ave-home-action"
+            type="button"
+            :aria-label="t('common.language')"
+            @click="toggleLocale"
+          >
+            🌐
+          </button>
+        </div>
+      </header>
+    </template>
 
-    <section class="ave-section ave-section--smart">
-      <h2>
-        {{ t('home.smartTradingPrefix') }}<span>{{ t('home.smartTradingEmphasis') }}</span>{{ t('home.smartTradingSuffix') }}
-      </h2>
-      <p>{{ t('home.alwaysTrading') }}</p>
-      <img class="ave-section__phones" :src="smartPhonesImage" alt="">
-
-      <div class="ave-feature-list">
-        <article v-for="item in featureCards" :key="item.titleKey" class="ave-feature-card">
-          <img :src="item.icon" alt="">
-          <div>
-            <h3>{{ t(item.titleKey) }}</h3>
-            <p>{{ t(item.descKey) }}</p>
+    <template #default>
+      <section class="ave-home">
+        <section class="ave-hero">
+          <div class="ave-hero__copy">
+            <h1>
+              <span>{{ t('home.heroPrefix') }}</span>
+              {{ t('home.heroSuffix') }}
+            </h1>
+            <p>{{ t('home.heroSub') }}</p>
+            <RouterLink to="/trades" class="ave-home__cta ave-hero__cta">
+              {{ t('home.startTrading') }}
+            </RouterLink>
           </div>
-        </article>
-      </div>
-    </section>
 
-    <section class="ave-section ave-section--strategy">
-      <h2>
-        {{ t('home.strategyPrefix') }}<span>{{ t('home.strategyEmphasis') }}</span>{{ t('home.strategySuffix') }}
-      </h2>
-      <p>{{ t('home.strategySub') }}</p>
+          <img class="ave-hero__portal" :src="heroPortalImage" alt="">
+        </section>
 
-      <div class="ave-strategy-scene">
-        <img class="ave-strategy-scene__orders" :src="strategyOrdersImage" alt="">
-        <img class="ave-strategy-scene__chart" :src="strategyChartImage" alt="">
-      </div>
+        <section class="ave-section ave-section--smart">
+          <h2>
+            {{ t('home.smartTradingPrefix') }}<span>{{ t('home.smartTradingEmphasis') }}</span>{{ t('home.smartTradingSuffix') }}
+          </h2>
+          <p>{{ t('home.alwaysTrading') }}</p>
+          <img class="ave-section__phones" :src="smartPhonesImage" alt="">
 
-      <div class="ave-flat-list">
-        <article v-for="item in strategyFeatures" :key="item.titleKey" class="ave-flat-item">
-          <img :src="item.icon" alt="">
-          <div>
-            <h3>{{ t(item.titleKey) }}</h3>
-            <p>{{ t(item.descKey) }}</p>
+          <div class="ave-feature-list">
+            <article v-for="item in featureCards" :key="item.titleKey" class="ave-feature-card">
+              <img :src="item.icon" alt="">
+              <div>
+                <h3>{{ t(item.titleKey) }}</h3>
+                <p>{{ t(item.descKey) }}</p>
+              </div>
+            </article>
           </div>
-        </article>
-      </div>
-    </section>
+        </section>
 
-    <section class="ave-section ave-section--contract">
-      <h2>{{ t('home.contractTitle') }}</h2>
-      <img class="ave-contract__phones" :src="contractPhonesImage" alt="">
+        <section class="ave-section ave-section--strategy">
+          <h2>
+            {{ t('home.strategyPrefix') }}<span>{{ t('home.strategyEmphasis') }}</span>{{ t('home.strategySuffix') }}
+          </h2>
+          <p>{{ t('home.strategySub') }}</p>
 
-      <div class="ave-toggle-card">
-        <article v-for="item in contractFeatures" :key="item.titleKey" class="ave-toggle-item">
-          <span class="ave-toggle-item__switch" />
-          <div>
-            <h3>{{ t(item.titleKey) }}</h3>
-            <p>{{ t(item.descKey) }}</p>
+          <div class="ave-strategy-scene">
+            <img class="ave-strategy-scene__orders" :src="strategyOrdersImage" alt="">
+            <img class="ave-strategy-scene__chart" :src="strategyChartImage" alt="">
           </div>
-        </article>
-      </div>
-    </section>
 
-    <section class="ave-section ave-section--trust">
-      <h2>
-        {{ t('home.trustPrefix') }}<span>{{ t('home.trustEmphasis') }}</span>
-      </h2>
-      <p>{{ t('home.trustSub') }}</p>
-
-      <div class="ave-trust-card">
-        <article v-for="item in trustFeatures" :key="item.titleKey" class="ave-trust-item">
-          <img :src="item.icon" alt="">
-          <div>
-            <h3>{{ t(item.titleKey) }}</h3>
-            <p>{{ t(item.descKey) }}</p>
+          <div class="ave-flat-list">
+            <article v-for="item in strategyFeatures" :key="item.titleKey" class="ave-flat-item">
+              <img :src="item.icon" alt="">
+              <div>
+                <h3>{{ t(item.titleKey) }}</h3>
+                <p>{{ t(item.descKey) }}</p>
+              </div>
+            </article>
           </div>
-        </article>
-      </div>
-    </section>
+        </section>
 
-    <section class="ave-reward">
-      <h2>{{ t('home.rewardTitle') }}</h2>
-      <p>{{ t('home.rewardSub') }}</p>
-      <RouterLink to="/trades" class="ave-home__cta">
-        {{ t('home.startTrading') }}
-      </RouterLink>
-      <img class="ave-reward__image" :src="rewardImage" alt="">
-    </section>
-  </section>
+        <section class="ave-section ave-section--contract">
+          <h2>{{ t('home.contractTitle') }}</h2>
+          <img class="ave-contract__phones" :src="contractPhonesImage" alt="">
+
+          <div class="ave-toggle-card">
+            <article v-for="item in contractFeatures" :key="item.titleKey" class="ave-toggle-item">
+              <span class="ave-toggle-item__switch" />
+              <div>
+                <h3>{{ t(item.titleKey) }}</h3>
+                <p>{{ t(item.descKey) }}</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="ave-section ave-section--trust">
+          <h2>
+            {{ t('home.trustPrefix') }}<span>{{ t('home.trustEmphasis') }}</span>
+          </h2>
+          <p>{{ t('home.trustSub') }}</p>
+
+          <div class="ave-trust-card">
+            <article v-for="item in trustFeatures" :key="item.titleKey" class="ave-trust-item">
+              <img :src="item.icon" alt="">
+              <div>
+                <h3>{{ t(item.titleKey) }}</h3>
+                <p>{{ t(item.descKey) }}</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="ave-reward">
+          <h2>{{ t('home.rewardTitle') }}</h2>
+          <p>{{ t('home.rewardSub') }}</p>
+          <RouterLink to="/trades" class="ave-home__cta">
+            {{ t('home.startTrading') }}
+          </RouterLink>
+          <img class="ave-reward__image" :src="rewardImage" alt="">
+        </section>
+      </section>
+    </template>
+  </CommonPage>
 </template>
 
 <style scoped>
+.ave-home-tabbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 72px;
+  padding: 10px 20px;
+  background:
+    linear-gradient(rgba(124, 146, 170, 0.08) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(124, 146, 170, 0.08) 2px, transparent 2px),
+    rgba(10, 13, 22, 0.96);
+  background-size:
+    104px 104px,
+    104px 104px,
+    auto;
+  box-sizing: border-box;
+}
+
+.ave-home-brand {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  gap: 10px;
+}
+
+.ave-home-brand__mark {
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
+  background: url('../../../assets/favicon.png') center / contain no-repeat;
+}
+
+.ave-home-brand strong {
+  color: #fff;
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.ave-home-tabbar__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+}
+
+.ave-home-action {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(29, 32, 44, 0.9);
+  color: #fff;
+  font: inherit;
+  font-size: 21px;
+}
+
+.ave-home-action__icon {
+  width: 24px;
+  height: 24px;
+}
+
 .ave-home {
   --home-green: #00b90f;
   --home-bg: #0b0e18;

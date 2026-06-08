@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 
 import { apiGetTradeOptions } from '@/api/trade'
+import BottomDrawer from '@/components/common/BottomDrawer.vue'
 import { optionText, useOptions } from '@/composables/useOptions'
 import { useI18n } from '@/i18n'
 import type { ItickTenantProduct } from '@/types/itick'
@@ -153,10 +154,6 @@ function inputValue(event: Event) {
   return (event.target as HTMLInputElement).value
 }
 
-function inputNumber(event: Event) {
-  return Number((event.target as HTMLInputElement).value)
-}
-
 function updateTradePercent(value: number) {
   emit('update:tradePercent', value)
 }
@@ -252,6 +249,12 @@ function updateRiskStopLossPercent(value: string) {
 function isRiskEntryActive(side: RiskEntrySide) {
   return riskSettingsActive.value && riskEntrySide.value === side
 }
+
+const selectionSheetTitle = computed(() => {
+  if (selectionSheet.value === 'margin') return `${t('trade.margin')}${t('trade.mode')}`
+  if (selectionSheet.value === 'leverage') return t('trade.leverage')
+  return t('trade.tpSl')
+})
 
 function openSelectionSheet(type: Exclude<SelectionSheet, null>, side?: RiskEntrySide) {
   if (isSpotTrade.value) return
@@ -356,8 +359,8 @@ function confirmRiskSettings() {
     </div>
     <div class="buyable"><span>{{ t('trade.canBuy') }}</span><strong>0 USD</strong></div>
     <div class="dual-actions">
-      <button type="button">{{ t('auth.loginTitle') }}</button
-      ><button type="button">{{ t('auth.goRegister') }}</button>
+      <button type="button">{{ t('auth.loginTitle') }}</button>
+      <button type="button">{{ t('auth.goRegister') }}</button>
     </div>
   </section>
 
@@ -439,12 +442,11 @@ function confirmRiskSettings() {
       </div>
 
       <div class="account-lines">
-        <span>{{ t('trade.available') }}</span><strong>{{ availableBalance }} {{ settleAsset }}</strong> <span>{{ t('trade.conversion') }}</span
-        ><strong>{{ conversionText }}</strong> <span>{{ t('trade.mode') }}</span
-        ><strong
-          >{{ optionText(selectedMarginMode) }} /
-          {{ isSpotTrade ? t('trade.noLeverage') : `${leverage}X` }}</strong
-        >
+        <span>{{ t('trade.available') }}</span>
+        <strong>{{ availableBalance }} {{ settleAsset }}</strong>
+        <span>{{ t('trade.conversion') }}</span><strong>{{ conversionText }}</strong>
+        <span>{{ t('trade.mode') }}</span>
+        <strong>{{ optionText(selectedMarginMode) }} / {{ isSpotTrade ? t('trade.noLeverage') : `${leverage}X` }}</strong>
       </div>
 
       <button
@@ -461,8 +463,8 @@ function confirmRiskSettings() {
         {{ t('trade.tpSl') }}
       </button>
       <div class="account-lines">
-        <span>{{ isSpotTrade ? t('trade.canBuy') : t('trade.canOpenLong') }}</span
-        ><strong>{{ longPositionQty }} {{ isSpotTrade ? baseAsset : t('trade.lot') }}</strong>
+        <span>{{ isSpotTrade ? t('trade.canBuy') : t('trade.canOpenLong') }}</span>
+        <strong>{{ longPositionQty }} {{ isSpotTrade ? baseAsset : t('trade.lot') }}</strong>
         <span>{{ t('trade.margin') }}</span><strong>{{ availableBalance }} {{ settleAsset }}</strong>
       </div>
       <button
@@ -488,8 +490,8 @@ function confirmRiskSettings() {
         {{ t('trade.tpSl') }}
       </button>
       <div class="account-lines">
-        <span>{{ isSpotTrade ? t('trade.canSell') : t('trade.canOpenShort') }}</span
-        ><strong>{{ shortPositionQty }} {{ isSpotTrade ? baseAsset : t('trade.lot') }}</strong>
+        <span>{{ isSpotTrade ? t('trade.canSell') : t('trade.canOpenShort') }}</span>
+        <strong>{{ shortPositionQty }} {{ isSpotTrade ? baseAsset : t('trade.lot') }}</strong>
         <span>{{ t('trade.margin') }}</span><strong>{{ availableBalance }} {{ settleAsset }}</strong>
       </div>
       <button
@@ -507,142 +509,120 @@ function confirmRiskSettings() {
       <p v-else-if="tradeMessage" class="order-message">{{ tradeMessage }}</p>
     </div>
 
-    <Teleport to="body">
+    <BottomDrawer
+      :model-value="Boolean(selectionSheet)"
+      :title="selectionSheetTitle"
+      :close-label="t('common.close')"
+      :max-height="selectionSheet === 'risk' ? '88dvh' : '72dvh'"
+      :z-index="80"
+      @update:model-value="value => { if (!value) closeSelectionSheet() }"
+    >
       <div
-        v-if="selectionSheet"
-        class="selection-sheet-backdrop"
-        role="presentation"
-        @click.self="closeSelectionSheet"
+        class="selection-sheet-content"
+        :class="[
+          `selection-sheet-content--${selectionSheet || 'none'}`,
+          {
+            'selection-sheet-content--risk-active':
+              selectionSheet === 'risk' && (riskTakeProfitEnabled || riskStopLossEnabled),
+            'selection-sheet-content--risk-full':
+              selectionSheet === 'risk' && riskTakeProfitEnabled && riskStopLossEnabled,
+          },
+        ]"
       >
-        <section
-          class="selection-sheet"
-          :class="[
-            `selection-sheet--${selectionSheet}`,
-            {
-              'selection-sheet--risk-active':
-                selectionSheet === 'risk' && (riskTakeProfitEnabled || riskStopLossEnabled),
-              'selection-sheet--risk-full':
-                selectionSheet === 'risk' && riskTakeProfitEnabled && riskStopLossEnabled,
-            },
-          ]"
-          role="dialog"
-          aria-modal="true"
-        >
-          <span class="selection-sheet__handle" />
+        <div v-if="selectionSheet === 'margin'" class="margin-mode-list">
+          <button
+            v-for="option in marginModeOptions"
+            :key="option.value"
+            type="button"
+            :class="{ active: option.value === marginMode }"
+            @click="selectMarginMode(option.value)"
+          >
+            {{ optionText(option) }}
+          </button>
+        </div>
+
+        <div v-else-if="selectionSheet === 'leverage'" class="leverage-grid">
+          <button
+            v-for="value in leverageValues"
+            :key="value"
+            type="button"
+            :class="{ active: value === leverage }"
+            @click="selectLeverage(value)"
+          >
+            {{ value }}X
+          </button>
+        </div>
+
+        <div v-else-if="selectionSheet === 'risk'" class="risk-sheet-body">
+          <label class="risk-check-row">
+            <input v-model="riskTakeProfitEnabled" type="checkbox" />
+            <span />
+            <strong>{{ t('options.TRIGGER_KIND_TAKE_PROFIT') }}</strong>
+          </label>
+          <div v-if="riskTakeProfitEnabled" class="risk-input-grid">
+            <label class="risk-field risk-field--wide">
+              <input
+                :value="riskTakeProfitPrice"
+                inputmode="decimal"
+                :placeholder="t('trade.price')"
+                @input="updateRiskTakeProfitPrice(inputValue($event))"
+              >
+              <strong>{{ settleAsset }}</strong>
+            </label>
+            <label class="risk-field">
+              <input
+                :value="riskTakeProfitPercent"
+                inputmode="decimal"
+                :placeholder="t('trade.risePercent')"
+                @input="updateRiskTakeProfitPercent(inputValue($event))"
+              >
+              <strong>%</strong>
+            </label>
+          </div>
+
+          <label class="risk-check-row">
+            <input v-model="riskStopLossEnabled" type="checkbox" />
+            <span />
+            <strong>{{ t('options.TRIGGER_KIND_STOP_LOSS') }}</strong>
+          </label>
+          <div v-if="riskStopLossEnabled" class="risk-input-grid">
+            <label class="risk-field risk-field--wide">
+              <input
+                :value="riskStopLossPrice"
+                inputmode="decimal"
+                :placeholder="t('trade.price')"
+                @input="updateRiskStopLossPrice(inputValue($event))"
+              >
+              <strong>{{ settleAsset }}</strong>
+            </label>
+            <label class="risk-field">
+              <input
+                :value="riskStopLossPercent"
+                inputmode="decimal"
+                :placeholder="t('trade.fallPercent')"
+                @input="updateRiskStopLossPercent(inputValue($event))"
+              >
+              <strong>%</strong>
+            </label>
+          </div>
+
+          <div class="risk-divider" />
+          <label v-if="riskTakeProfitEnabled || riskStopLossEnabled" class="risk-qty">
+            <strong>{{ t('trade.qty') }}</strong>
+            <input v-model="riskQty" inputmode="decimal" :placeholder="t('trade.qty')" />
+          </label>
+
           <button
             type="button"
-            class="selection-sheet__close"
-            :aria-label="t('common.close')"
-            @click="closeSelectionSheet"
+            class="risk-confirm"
+            :disabled="!riskCanConfirm"
+            @click="confirmRiskSettings"
           >
-            <span />
+            {{ t('common.submit') }}
           </button>
-
-          <h2>
-            {{
-              selectionSheet === 'margin'
-                ? `${t('trade.margin')}${t('trade.mode')}`
-                : selectionSheet === 'leverage'
-                  ? t('trade.leverage')
-                  : t('trade.tpSl')
-            }}
-          </h2>
-
-          <div v-if="selectionSheet === 'margin'" class="margin-mode-list">
-            <button
-              v-for="option in marginModeOptions"
-              :key="option.value"
-              type="button"
-              :class="{ active: option.value === marginMode }"
-              @click="selectMarginMode(option.value)"
-            >
-              {{ optionText(option) }}
-            </button>
-          </div>
-
-          <div v-else-if="selectionSheet === 'leverage'" class="leverage-grid">
-            <button
-              v-for="value in leverageValues"
-              :key="value"
-              type="button"
-              :class="{ active: value === leverage }"
-              @click="selectLeverage(value)"
-            >
-              {{ value }}X
-            </button>
-          </div>
-
-          <div v-else class="risk-sheet-body">
-            <label class="risk-check-row">
-              <input v-model="riskTakeProfitEnabled" type="checkbox" />
-              <span />
-              <strong>{{ t('options.TRIGGER_KIND_TAKE_PROFIT') }}</strong>
-            </label>
-            <div v-if="riskTakeProfitEnabled" class="risk-input-grid">
-              <label class="risk-field risk-field--wide">
-                <input
-                  :value="riskTakeProfitPrice"
-                  inputmode="decimal"
-                  :placeholder="t('trade.price')"
-                  @input="updateRiskTakeProfitPrice(inputValue($event))"
-                />
-                <strong>{{ settleAsset }}</strong>
-              </label>
-              <label class="risk-field">
-                <input
-                  :value="riskTakeProfitPercent"
-                  inputmode="decimal"
-                  :placeholder="t('trade.risePercent')"
-                  @input="updateRiskTakeProfitPercent(inputValue($event))"
-                />
-                <strong>%</strong>
-              </label>
-            </div>
-
-            <label class="risk-check-row">
-              <input v-model="riskStopLossEnabled" type="checkbox" />
-              <span />
-              <strong>{{ t('options.TRIGGER_KIND_STOP_LOSS') }}</strong>
-            </label>
-            <div v-if="riskStopLossEnabled" class="risk-input-grid">
-              <label class="risk-field risk-field--wide">
-                <input
-                  :value="riskStopLossPrice"
-                  inputmode="decimal"
-                  :placeholder="t('trade.price')"
-                  @input="updateRiskStopLossPrice(inputValue($event))"
-                />
-                <strong>{{ settleAsset }}</strong>
-              </label>
-              <label class="risk-field">
-                <input
-                  :value="riskStopLossPercent"
-                  inputmode="decimal"
-                  :placeholder="t('trade.fallPercent')"
-                  @input="updateRiskStopLossPercent(inputValue($event))"
-                />
-                <strong>%</strong>
-              </label>
-            </div>
-
-            <div class="risk-divider" />
-            <label v-if="riskTakeProfitEnabled || riskStopLossEnabled" class="risk-qty">
-              <strong>{{ t('trade.qty') }}</strong>
-              <input v-model="riskQty" inputmode="decimal" :placeholder="t('trade.qty')" />
-            </label>
-
-            <button
-              type="button"
-              class="risk-confirm"
-              :disabled="!riskCanConfirm"
-              @click="confirmRiskSettings"
-            >
-              {{ t('common.submit') }}
-            </button>
-          </div>
-        </section>
+        </div>
       </div>
-    </Teleport>
+    </BottomDrawer>
   </section>
 </template>
 
@@ -735,123 +715,6 @@ function confirmRiskSettings() {
 
 .picker-trigger:disabled::after {
   opacity: 0.45;
-}
-
-.selection-sheet-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 80;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  background: rgba(2, 3, 8, 0.58);
-  backdrop-filter: blur(7px);
-}
-
-.selection-sheet {
-  position: relative;
-  width: min(calc(100% - clamp(12px, 3vw, 22px)), 680px);
-  max-width: 680px;
-  min-height: min(88dvh, clamp(324px, 31dvh, 460px));
-  max-height: 88dvh;
-  overflow-y: auto;
-  padding: clamp(68px, 9.7vw, 74px) clamp(28px, 4.8vw, 34px) clamp(42px, 6.8vw, 52px);
-  border-radius: clamp(28px, 4.4vw, 32px) clamp(28px, 4.4vw, 32px) 0 0;
-  background: #24242d;
-  box-shadow: 0 -18px 52px rgba(0, 0, 0, 0.28);
-}
-
-.selection-sheet--leverage {
-  min-height: min(88dvh, clamp(390px, 35.2dvh, 528px));
-}
-
-.selection-sheet--risk {
-  width: 100%;
-  max-width: none;
-  height: auto;
-  min-height: 0;
-  max-height: none;
-  overflow: visible;
-  padding-top: clamp(60px, 8.8vw, 66px);
-  padding-right: clamp(24px, 4vw, 30px);
-  padding-bottom: clamp(34px, 5.5vw, 42px);
-  padding-left: clamp(24px, 4vw, 30px);
-}
-
-.selection-sheet--risk-active {
-  height: auto;
-  min-height: 0;
-}
-
-.selection-sheet--risk-full {
-  height: auto;
-  min-height: 0;
-}
-
-.selection-sheet__handle {
-  position: absolute;
-  top: clamp(14px, 2vw, 16px);
-  left: 50%;
-  width: clamp(58px, 8.2vw, 60px);
-  height: 6px;
-  border-radius: 999px;
-  background: #a8a8ad;
-  transform: translateX(-50%);
-}
-
-.selection-sheet__close {
-  position: absolute;
-  top: clamp(28px, 4vw, 32px);
-  right: clamp(28px, 5.4vw, 40px);
-  display: grid;
-  place-items: center;
-  width: clamp(38px, 5.8vw, 42px);
-  height: clamp(38px, 5.8vw, 42px);
-  border: 0;
-  background: transparent;
-}
-
-.selection-sheet--risk .selection-sheet__close {
-  top: clamp(30px, 4.4vw, 34px);
-  right: clamp(28px, 4.6vw, 34px);
-}
-
-.selection-sheet__close span {
-  display: none;
-}
-
-.selection-sheet__close::before,
-.selection-sheet__close::after {
-  position: absolute;
-  display: block;
-  width: clamp(25px, 4.2vw, 30px);
-  height: 3px;
-  border-radius: 999px;
-  background: #fff;
-  content: '';
-}
-
-.selection-sheet__close::before {
-  transform: rotate(45deg);
-}
-
-.selection-sheet__close::after {
-  transform: rotate(-45deg);
-}
-
-.selection-sheet h2 {
-  margin: 0 0 clamp(44px, 6.8vw, 50px);
-  color: #fff;
-  font-size: clamp(24px, 4.2vw, 30px);
-  font-weight: 800;
-  line-height: 1.2;
-  text-align: center;
-}
-
-.selection-sheet--risk h2 {
-  margin-bottom: clamp(46px, 6.4vw, 50px);
-  font-size: clamp(22px, 3.3vw, 24px);
-  font-weight: 700;
 }
 
 .margin-mode-list {

@@ -1,6 +1,7 @@
 <script setup lang='ts'>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 
+import BottomDrawer from '@/components/common/BottomDrawer.vue'
 import { getLocale, useI18n } from '@/i18n'
 import type { Interval } from '@/types/core'
 import type { DepthPayload, ItickTenantProduct, KlinePayload, QuotePayload, TickPayload } from '@/types/itick'
@@ -588,62 +589,60 @@ function coinGlyph(product: ItickTenantProduct) {
       </div>
     </section>
 
-    <div v-if="switcherOpen" class="product-sheet-overlay" @click.self="closeSwitcher">
-      <section
-        class="product-sheet"
-      >
-        <span class="product-sheet__handle" />
+    <BottomDrawer
+      v-model="switcherOpen"
+      :title="categoryName || t('market.product')"
+      max-height="68dvh"
+      @close="closeSwitcher"
+    >
+      <div class="product-sheet__rows">
+        <button
+          v-for="row in rows"
+          :key="row.key"
+          type="button"
+          class="product-sheet-row"
+          :class="{
+            'product-sheet-row--active': row.key === selectedProductKey,
+            'product-sheet-row--down': row.direction === 'down',
+          }"
+          @click="selectProductRow(row)"
+        >
+          <span class="product-sheet-row__coin">{{ coinGlyph(row.product) }}</span>
+          <span class="product-sheet-row__symbol">{{ row.product.symbol }}</span>
+          <strong>{{ row.quote ? formatPrice(row.quote.lastPrice) : '--' }}</strong>
+          <span class="product-sheet-row__change">
+            <em>{{ row.quote ? formatPrice(row.quote.lastPrice - row.quote.open) : '--' }}</em>
+            <small>{{ row.quote ? formatPercent(row.changeRate) : t('market.waiting') }}</small>
+          </span>
+        </button>
+      </div>
 
-        <header class="product-sheet__header">
-          <h3>{{ categoryName || t('market.product') }}</h3>
-          <button type="button" :aria-label="t('common.close')" @click="closeSwitcher">×</button>
-        </header>
-
-        <div class="product-sheet__rows">
-          <button
-            v-for="row in rows"
-            :key="row.key"
-            type="button"
-            class="product-sheet-row"
-            :class="{
-              'product-sheet-row--active': row.key === selectedProductKey,
-              'product-sheet-row--down': row.direction === 'down',
-            }"
-            @click="selectProductRow(row)"
-          >
-            <span class="product-sheet-row__coin">{{ coinGlyph(row.product) }}</span>
-            <span class="product-sheet-row__symbol">{{ row.product.symbol }}</span>
-            <strong>{{ row.quote ? formatPrice(row.quote.lastPrice) : '--' }}</strong>
-            <span class="product-sheet-row__change">
-              <em>{{ row.quote ? formatPrice(row.quote.lastPrice - row.quote.open) : '--' }}</em>
-              <small>{{ row.quote ? formatPercent(row.changeRate) : t('market.waiting') }}</small>
-            </span>
-          </button>
-        </div>
-
+      <template #footer>
         <div class="product-sheet__footer">
           <span>{{ t('market.productCount', { count: rows.length }) }}</span>
         </div>
-      </section>
-    </div>
+      </template>
+    </BottomDrawer>
 
-    <div v-if="timeSheetOpen" class="product-sheet-overlay" @click.self="closeTimeSheet">
-      <section class="time-sheet">
-        <span class="time-sheet__handle" />
-        <div class="time-sheet__rows">
-          <button
-            v-for="item in minuteIntervals"
-            :key="item.name"
-            type="button"
-            class="time-sheet__item"
-            :class="{ 'time-sheet__item--active': item.name === selectedIntervalName }"
-            @click="selectTimeInterval(item)"
-          >
-            {{ item.name }}
-          </button>
-        </div>
-      </section>
-    </div>
+    <BottomDrawer
+      v-model="timeSheetOpen"
+      :show-close="false"
+      max-height="68dvh"
+      @close="closeTimeSheet"
+    >
+      <div class="time-sheet__rows">
+        <button
+          v-for="item in minuteIntervals"
+          :key="item.name"
+          type="button"
+          class="time-sheet__item"
+          :class="{ 'time-sheet__item--active': item.name === selectedIntervalName }"
+          @click="selectTimeInterval(item)"
+        >
+          {{ item.name }}
+        </button>
+      </div>
+    </BottomDrawer>
   </section>
 </template>
 
@@ -949,35 +948,10 @@ function coinGlyph(product: ItickTenantProduct) {
   color: currentColor;
 }
 
-.time-sheet {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  width: min(100%, 640px);
-  max-height: 68dvh;
-  padding: 14px 16px 30px;
-  overflow: hidden;
-  border-radius: 28px 28px 0 0;
-  background: #16171f;
-  color: #f6f7fb;
-  box-shadow: 0 -24px 70px rgba(0, 0, 0, 0.42);
-  touch-action: pan-y;
-  max-width: 100%;
-}
-
-.time-sheet__handle {
-  display: block;
-  width: 54px;
-  height: 6px;
-  margin: 0 auto 16px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.18);
-}
-
 .time-sheet__rows {
   display: grid;
   gap: 12px;
-  overflow: hidden;
+  padding: 0 0 12px;
 }
 
 .time-sheet__item {
@@ -1414,78 +1388,8 @@ function coinGlyph(product: ItickTenantProduct) {
   font-size: 14px;
 }
 
-.product-sheet-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 80;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding: 0;
-  background: rgba(3, 4, 10, 0.68);
-  backdrop-filter: blur(7px);
-}
-
-.product-sheet {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  width: min(100%, 640px);
-  max-height: 68dvh;
-  padding: 22px 22px 26px;
-  overflow: hidden;
-  border-radius: 28px 28px 0 0;
-  background: #22232c;
-  color: #f6f7fb;
-  box-shadow: 0 -24px 70px rgba(0, 0, 0, 0.42);
-  touch-action: pan-y;
-  max-width: 100%;
-}
-
-.product-sheet__handle {
-  display: block;
-  width: 54px;
-  height: 6px;
-  margin: 0 auto 22px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.52);
-}
-
-.product-sheet__header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 42px;
-  margin-bottom: 10px;
-}
-
-.product-sheet__header h3 {
-  margin: 0;
-  color: #fff;
-  font-size: 22px;
-  font-weight: 500;
-}
-
-.product-sheet__header button {
-  position: absolute;
-  top: 42px;
-  right: 24px;
-  border: 0;
-  background: transparent;
-  color: #fff;
-  font-size: 31px;
-  line-height: 1;
-  cursor: pointer;
-}
-
 .product-sheet__rows {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-  touch-action: pan-y;
+  display: grid;
 }
 
 .product-sheet-row {

@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 import AppIcon from '@/components/common/AppIcon.vue'
+import BottomDrawer from '@/components/common/BottomDrawer.vue'
 import { useI18n } from '@/i18n'
 
 const router = useRouter()
@@ -148,30 +149,20 @@ function submitReset() {
       </form>
     </main>
 
-    <Transition name="sheet">
-      <div v-if="showVerifySheet" class="sheet-layer" @click.self="showVerifySheet = false">
-        <section
-          class="verify-sheet"
-          role="dialog"
-          aria-modal="true"
-          :aria-label="t('auth.verifyMethod')"
-        >
-          <i class="sheet-handle" />
-          <button
-            type="button"
-            class="sheet-close"
-            :aria-label="t('common.close')"
-            @click="showVerifySheet = false"
-          >
-            <span />
-          </button>
-          <h2>{{ t('auth.verifyMethod') }}</h2>
-          <button type="button" class="service-button">
-            {{ t('auth.contactService') }}
-          </button>
-        </section>
+    <BottomDrawer
+      v-model="showVerifySheet"
+      :title="t('auth.verifyMethod')"
+      :aria-label="t('auth.verifyMethod')"
+      :close-label="t('common.close')"
+      max-height="88dvh"
+      :z-index="30"
+    >
+      <div class="verify-sheet">
+        <button type="button" class="service-button">
+          {{ t('auth.contactService') }}
+        </button>
       </div>
-    </Transition>
+    </BottomDrawer>
   </section>
 </template>
 
@@ -410,76 +401,9 @@ function submitReset() {
   text-decoration: none;
 }
 
-.sheet-layer {
-  position: fixed;
-  inset: 0;
-  z-index: 30;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.62);
-  backdrop-filter: blur(10px);
-}
-
 .verify-sheet {
-  position: relative;
-  width: min(100%, 760px);
-  max-height: 88dvh;
-  overflow-x: hidden;
-  overflow-y: auto;
   min-height: 390px;
-  border-radius: 32px 32px 0 0;
-  background: #25262f;
-  padding: 76px 28px 42px;
-}
-
-.sheet-handle {
-  position: absolute;
-  top: 18px;
-  left: 50%;
-  width: 58px;
-  height: 7px;
-  border-radius: 8px;
-  background: #a8a9ae;
-  transform: translateX(-50%);
-}
-
-.sheet-close {
-  position: absolute;
-  top: 42px;
-  right: 30px;
-  width: 42px;
-  height: 42px;
-  border: 0;
-  background: transparent;
-  color: #fff;
-}
-
-.sheet-close span::before,
-.sheet-close span::after {
-  content: '';
-  position: absolute;
-  top: 20px;
-  left: 6px;
-  width: 30px;
-  height: 3px;
-  background: currentColor;
-}
-
-.sheet-close span::before {
-  transform: rotate(45deg);
-}
-
-.sheet-close span::after {
-  transform: rotate(-45deg);
-}
-
-.verify-sheet h2 {
-  margin: 0 0 70px;
-  text-align: center;
-  font-size: 30px;
-  line-height: 1;
-  font-weight: 900;
+  padding-top: 46px;
 }
 
 .service-button {
@@ -491,26 +415,6 @@ function submitReset() {
   color: #fff;
   font-size: 28px;
   font-weight: 900;
-}
-
-.sheet-enter-active,
-.sheet-leave-active {
-  transition: opacity 0.18s ease;
-}
-
-.sheet-enter-active .verify-sheet,
-.sheet-leave-active .verify-sheet {
-  transition: transform 0.18s ease;
-}
-
-.sheet-enter-from,
-.sheet-leave-to {
-  opacity: 0;
-}
-
-.sheet-enter-from .verify-sheet,
-.sheet-leave-to .verify-sheet {
-  transform: translateY(100%);
 }
 
 @media (max-width: 520px) {
@@ -610,12 +514,7 @@ function submitReset() {
 
 .verify-sheet {
   min-height: 310px;
-  padding: 58px 22px 32px;
-}
-
-.verify-sheet h2 {
-  margin-bottom: 46px;
-  font-size: 24px;
+  padding-top: 30px;
 }
 
 .service-button {

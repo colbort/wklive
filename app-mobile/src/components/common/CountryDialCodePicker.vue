@@ -2,6 +2,7 @@
 import { computed, nextTick, ref } from 'vue'
 
 import AppIcon from '@/components/common/AppIcon.vue'
+import BottomDrawer from '@/components/common/BottomDrawer.vue'
 import { countryDialCodes, type CountryDialCode } from '@/constants/countryDialCodes'
 import { useI18n } from '@/i18n'
 
@@ -63,41 +64,35 @@ function selectCountry(country: CountryDialCode) {
     <AppIcon name="chevron-down" />
   </button>
 
-  <Teleport to="body">
-    <Transition name="country-sheet">
-      <div v-if="open" class="country-sheet-layer" @click.self="closeSheet">
-        <section class="country-sheet" role="dialog" aria-modal="true" aria-label="区号选择">
-          <i class="country-sheet__handle" />
-          <button
-            type="button"
-            class="country-sheet__close"
-            :aria-label="t('common.close')"
-            @click="closeSheet"
-          >
-            <AppIcon name="close" />
-          </button>
-          <h2>区号选择</h2>
-          <label class="country-search">
-            <AppIcon name="search" />
-            <input v-model="search" placeholder="输入区号" inputmode="search" />
-          </label>
-          <div ref="listRef" class="country-list">
-            <button
-              v-for="country in filteredCountries"
-              :key="getCountryKey(country)"
-              type="button"
-              class="country-row"
-              :class="{ 'country-row--selected': isSelected(country) }"
-              @click="selectCountry(country)"
-            >
-              <span>{{ country.name }} {{ country.dialCode }}</span>
-              <b v-if="isSelected(country)">✓</b>
-            </button>
-          </div>
-        </section>
+  <BottomDrawer
+    v-model="open"
+    title="区号选择"
+    aria-label="区号选择"
+    :close-label="t('common.close')"
+    max-height="82dvh"
+    :z-index="90"
+    @close="closeSheet"
+  >
+    <div class="country-sheet-body">
+      <label class="country-search">
+        <AppIcon name="search" />
+        <input v-model="search" placeholder="输入区号" inputmode="search">
+      </label>
+      <div ref="listRef" class="country-list">
+        <button
+          v-for="country in filteredCountries"
+          :key="getCountryKey(country)"
+          type="button"
+          class="country-row"
+          :class="{ 'country-row--selected': isSelected(country) }"
+          @click="selectCountry(country)"
+        >
+          <span>{{ country.name }} {{ country.dialCode }}</span>
+          <b v-if="isSelected(country)">✓</b>
+        </button>
       </div>
-    </Transition>
-  </Teleport>
+    </div>
+  </BottomDrawer>
 </template>
 
 <style scoped>
@@ -119,65 +114,10 @@ function selectCountry(country: CountryDialCode) {
   color: #9a9ca6;
 }
 
-.country-sheet-layer {
-  position: fixed;
-  inset: 0;
-  z-index: 90;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.58);
-  backdrop-filter: blur(12px);
-}
-
-.country-sheet {
-  position: relative;
+.country-sheet-body {
   display: grid;
-  grid-template-rows: auto auto minmax(0, 1fr);
-  width: min(100%, 414px);
-  max-height: min(82dvh, 720px);
-  overflow: hidden;
-  border-radius: 26px 26px 0 0;
-  background: #262731;
-  padding: 36px 28px 28px;
-  color: #fff;
-}
-
-.country-sheet__handle {
-  position: absolute;
-  top: 13px;
-  left: 50%;
-  width: 38px;
-  height: 4px;
-  border-radius: 999px;
-  background: #a2a3a9;
-  transform: translateX(-50%);
-}
-
-.country-sheet__close {
-  position: absolute;
-  top: 20px;
-  right: 22px;
-  display: inline-flex;
-  width: 34px;
-  height: 34px;
-  align-items: center;
-  justify-content: center;
-  border: 0;
-  background: transparent;
-  color: #fff;
-}
-
-.country-sheet__close svg {
-  width: 26px;
-  height: 26px;
-}
-
-.country-sheet h2 {
-  margin: 0 0 22px;
-  text-align: center;
-  font-size: 21px;
-  font-weight: 700;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: 0;
 }
 
 .country-search {
@@ -212,6 +152,7 @@ function selectCountry(country: CountryDialCode) {
 
 .country-list {
   min-height: 0;
+  max-height: calc(82dvh - 170px);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   margin-top: 26px;
@@ -241,26 +182,6 @@ function selectCountry(country: CountryDialCode) {
   color: #00c819;
   font-size: 18px;
   font-weight: 900;
-}
-
-.country-sheet-enter-active,
-.country-sheet-leave-active {
-  transition: opacity 0.18s ease;
-}
-
-.country-sheet-enter-active .country-sheet,
-.country-sheet-leave-active .country-sheet {
-  transition: transform 0.18s ease;
-}
-
-.country-sheet-enter-from,
-.country-sheet-leave-to {
-  opacity: 0;
-}
-
-.country-sheet-enter-from .country-sheet,
-.country-sheet-leave-to .country-sheet {
-  transform: translateY(100%);
 }
 
 @media (min-width: 0) {

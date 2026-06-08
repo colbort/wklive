@@ -23,11 +23,9 @@ const appNavigation: AppNavItem[] = [
 ]
 
 const route = useRoute()
-const { t, toggleLocale } = useI18n()
+const { t } = useI18n()
 
-const pageTitle = computed(() => String(route.meta.title || 'AVE'))
 const isHomeRoute = computed(() => route.name === 'home')
-const showSiteHeader = computed(() => isHomeRoute.value)
 const tabbarOverride = computed(() => {
   const value = Array.isArray(route.query.tabbar) ? route.query.tabbar[0] : route.query.tabbar
   if (value === '1' || value === 'true' || value === 'show') return true
@@ -50,32 +48,6 @@ const showTabbar = computed(() => {
   >
     <div class="app-shell__aurora app-shell__aurora--left" />
     <div class="app-shell__aurora app-shell__aurora--right" />
-
-    <header v-if="showSiteHeader" class="site-header">
-      <RouterLink to="/home" class="site-brand">
-        <span class="site-brand__mark">A</span>
-        <div>
-          <strong>AVE</strong>
-          <p v-if="!isHomeRoute">
-            {{ pageTitle }}
-          </p>
-        </div>
-      </RouterLink>
-
-      <div class="site-header__actions">
-        <button class="site-action-circle" :aria-label="t('common.search')">
-          <AppIcon name="search" class="site-action-circle__icon" />
-        </button>
-        <button
-          class="site-action-circle"
-          type="button"
-          :aria-label="t('common.language')"
-          @click="toggleLocale"
-        >
-          🌐
-        </button>
-      </div>
-    </header>
 
     <div class="app-main">
       <main class="page-content">

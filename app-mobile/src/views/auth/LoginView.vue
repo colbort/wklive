@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router'
 import { getTenantCode } from '@/api/http'
 import { apiLogin } from '@/api/userPublic'
 import AppIcon from '@/components/common/AppIcon.vue'
+import BottomDrawer from '@/components/common/BottomDrawer.vue'
 import CountryDialCodePicker from '@/components/common/CountryDialCodePicker.vue'
 import { countryDialCodes, type CountryDialCode } from '@/constants/countryDialCodes'
 import { useI18n } from '@/i18n'
@@ -1039,13 +1040,16 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
       </p>
     </main>
 
-    <div v-if="walletSheetOpen" class="wallet-sheet-layer" @click.self="closeWalletSheet">
-      <div
-        class="wallet-sheet"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Connect Wallet"
-      >
+    <BottomDrawer
+      v-model="walletSheetOpen"
+      aria-label="Connect Wallet"
+      :show-handle="false"
+      :show-close="false"
+      max-height="78dvh"
+      :z-index="80"
+      @close="closeWalletSheet"
+    >
+      <template #header>
         <header class="wallet-sheet__header">
           <button
             v-if="pendingWallet"
@@ -1074,52 +1078,52 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
             ×
           </button>
         </header>
+      </template>
 
-        <div v-if="pendingWallet" class="wallet-pending">
-          <span class="wallet-pending__icon" :class="`wallet-row__icon--${pendingWallet.key}`">
-            {{ pendingWallet.name.slice(0, 1) }}
-          </span>
-          <strong>{{ t('auth.continueInWallet', { wallet: pendingWallet.name }) }}</strong>
-          <p>{{ t('auth.acceptWalletRequest') }}</p>
-          <button type="button" @click="retryPendingWallet">
-            <span>↻</span>
-            {{ t('auth.tryAgain') }}
-          </button>
-        </div>
-
-        <div v-else class="wallet-list">
-          <button
-            v-for="wallet in walletOptions"
-            :key="wallet.key"
-            type="button"
-            class="wallet-row"
-            :disabled="walletConnecting"
-            @click="handleWalletSelected(wallet)"
-          >
-            <span class="wallet-row__icon" :class="`wallet-row__icon--${wallet.key}`">
-              {{ wallet.name.slice(0, 1) }}
-            </span>
-            <span>{{ wallet.name }}</span>
-            <em :class="{ install: !wallet.installed }">{{
-              wallet.installed ? t('auth.installed') : t('auth.install')
-            }}</em>
-          </button>
-
-          <button type="button" class="wallet-search" disabled>
-            <span class="wallet-search__icon" />
-            <span>{{ t('auth.searchWallet') }}</span>
-            <em>{{ t('auth.local') }}</em>
-          </button>
-        </div>
-
-        <p v-if="walletError" class="wallet-sheet__error">
-          {{ walletError }}
-        </p>
-        <p class="wallet-sheet__hint">
-          {{ t('auth.walletHint') }}
-        </p>
+      <div v-if="pendingWallet" class="wallet-pending">
+        <span class="wallet-pending__icon" :class="`wallet-row__icon--${pendingWallet.key}`">
+          {{ pendingWallet.name.slice(0, 1) }}
+        </span>
+        <strong>{{ t('auth.continueInWallet', { wallet: pendingWallet.name }) }}</strong>
+        <p>{{ t('auth.acceptWalletRequest') }}</p>
+        <button type="button" @click="retryPendingWallet">
+          <span>↻</span>
+          {{ t('auth.tryAgain') }}
+        </button>
       </div>
-    </div>
+
+      <div v-else class="wallet-list">
+        <button
+          v-for="wallet in walletOptions"
+          :key="wallet.key"
+          type="button"
+          class="wallet-row"
+          :disabled="walletConnecting"
+          @click="handleWalletSelected(wallet)"
+        >
+          <span class="wallet-row__icon" :class="`wallet-row__icon--${wallet.key}`">
+            {{ wallet.name.slice(0, 1) }}
+          </span>
+          <span>{{ wallet.name }}</span>
+          <em :class="{ install: !wallet.installed }">{{
+            wallet.installed ? t('auth.installed') : t('auth.install')
+          }}</em>
+        </button>
+
+        <button type="button" class="wallet-search" disabled>
+          <span class="wallet-search__icon" />
+          <span>{{ t('auth.searchWallet') }}</span>
+          <em>{{ t('auth.local') }}</em>
+        </button>
+      </div>
+
+      <p v-if="walletError" class="wallet-sheet__error">
+        {{ walletError }}
+      </p>
+      <p class="wallet-sheet__hint">
+        {{ t('auth.walletHint') }}
+      </p>
+    </BottomDrawer>
   </section>
 </template>
 
@@ -1684,29 +1688,6 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 .language-row--active i {
   border: 4px solid #00c313;
   box-shadow: inset 0 0 0 5px #1d1f2a;
-}
-
-.wallet-sheet-layer {
-  position: fixed;
-  inset: 0;
-  z-index: 80;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.68);
-  backdrop-filter: blur(8px);
-}
-
-.wallet-sheet {
-  width: min(100%, 720px);
-  max-height: min(78dvh, 560px);
-  overflow-y: auto;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 28px 28px 0 0;
-  background: #202020;
-  padding: 28px 28px 24px;
-  color: #fff;
-  box-shadow: 0 -18px 40px rgba(0, 0, 0, 0.35);
 }
 
 .wallet-sheet__header {
