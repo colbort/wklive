@@ -224,9 +224,9 @@ function productIconText(product: ItickTenantProduct) {
 
 .quote-row {
   display: grid;
-  grid-template-columns: 54px minmax(0, 1fr) minmax(88px, 0.42fr) minmax(76px, 0.36fr);
+  grid-template-columns: 55px minmax(0, 1fr) minmax(88px, 0.42fr) minmax(76px, 0.36fr);
   align-items: center;
-  column-gap: 8px;
+  column-gap: 6px;
   width: calc(100% - 36px);
   min-height: 86px;
   margin: 0 18px;
@@ -248,8 +248,8 @@ function productIconText(product: ItickTenantProduct) {
   }
 
   .quote-row {
-    grid-template-columns: 48px minmax(0, 1fr) minmax(76px, 0.42fr) minmax(68px, 0.36fr);
-    column-gap: 6px;
+    grid-template-columns: 55px minmax(0, 1fr) minmax(76px, 0.42fr) minmax(68px, 0.36fr);
+    column-gap: 5px;
     width: calc(100% - 32px);
     min-height: 80px;
     margin: 0 16px;
@@ -267,8 +267,8 @@ function productIconText(product: ItickTenantProduct) {
 
 .quote-row__icon {
   display: grid;
-  width: 45px;
-  height: 45px;
+  width: 55px;
+  height: 55px;
   place-items: center;
   overflow: hidden;
   border-radius: 50%;
