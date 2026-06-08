@@ -250,6 +250,10 @@ async function loadCoinConfigs() {
 }
 
 function handleAssetAction(key: AssetActionKey) {
+  if (!getAccessToken()) {
+    router.push('/login')
+    return
+  }
   if (key === 'flows') {
     router.push('/assets/flows')
     return
@@ -267,7 +271,7 @@ function handleAssetAction(key: AssetActionKey) {
   }
 
   selectAssetAction(key)
-  if (key === 'cryptoRecharge') openAssetFlow('recharge')
+  if (key === 'cryptoRecharge' || key === 'bankRecharge') openAssetFlow('recharge')
   if (key === 'cryptoWithdraw') openAssetFlow('withdraw')
   if (key === 'transfer') openAssetFlow('transfer')
 }
@@ -291,7 +295,7 @@ onMounted(() => {
 <template>
   <CommonPage
     :show-back="false"
-    :nav-height="76"
+    :nav-height="64"
     :menus="pageMenus"
     :model-value="activeAssetAccount"
     @update:model-value="activeAssetAccount = String($event)"
@@ -480,8 +484,8 @@ onMounted(() => {
 
 <style scoped>
 .assets-page {
-  min-height: calc(100dvh - 76px);
-  padding: 18px 16px 96px;
+  min-height: calc(100dvh - 64px);
+  padding: 12px 16px 96px;
   background: var(--page-bg);
   color: var(--text);
 }
@@ -504,7 +508,7 @@ button:not(.app-menu__item) {
 .assets-page-tabbar {
   display: flex;
   align-items: center;
-  height: var(--menu-bar-height);
+  height: 3.2rem;
   gap: var(--menu-gap-lg);
   padding: 0 var(--menu-padding-x);
   background: var(--page-bg);
@@ -613,8 +617,7 @@ button:not(.app-menu__item) {
 }
 
 .asset-coin-configs {
-  margin: 18px -16px 0;
-  border-bottom: 1px solid var(--border-soft);
+  margin: 10px -16px 0;
 }
 
 .asset-coin-configs__state {
@@ -689,7 +692,7 @@ button:not(.app-menu__item) {
 
 .assets-sub-tabs {
   margin: 0 -16px;
-  padding: 0 16px;
+  padding: 0 16px 0.25rem;
   border-bottom: 1px solid var(--border-soft);
   flex-wrap: nowrap;
   overflow-x: auto;
@@ -710,7 +713,7 @@ button:not(.app-menu__item) {
 .assets-order-tabs button {
   position: relative;
   flex: 0 0 auto;
-  padding: 0 0 0.6rem;
+  padding: 0 0 0.35rem;
   white-space: nowrap;
 }
 

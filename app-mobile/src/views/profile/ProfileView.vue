@@ -396,25 +396,31 @@ function goLogin() {
   border-bottom: 2px solid #8b8e99;
 }
 
+.profile-menu__arrow {
+  grid-column: 5;
+  justify-self: end;
+}
+
 .profile-actions {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 18px;
+  gap: 12px;
 }
 
-.profile-actions button {
+.profile-actions > button {
   min-height: 52px;
   border-radius: 999px;
-  font-size: 0.85rem;
-  font-weight: 700;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
-.profile-actions__login {
-  background: #242631;
+.profile-actions > .profile-actions__login {
+  background: #272832;
 }
 
-.profile-actions__register {
-  background: var(--accent);
+.profile-actions > .profile-actions__register {
+  background: #04b900;
 }
 
 .profile-menu {
@@ -424,7 +430,7 @@ function goLogin() {
 
 .profile-menu__item {
   display: grid;
-  grid-template-columns: 30px minmax(0, 1fr) auto auto 11px;
+  grid-template-columns: 30px minmax(0, 1fr) 24px minmax(0, 76px) 14px;
   align-items: center;
   gap: 10px;
   min-height: 54px;
@@ -435,6 +441,7 @@ function goLogin() {
 }
 
 .profile-menu__icon {
+  grid-column: 1;
   display: inline-flex;
   width: 28px;
   height: 28px;
@@ -450,6 +457,7 @@ function goLogin() {
 }
 
 .profile-menu__label {
+  grid-column: 2;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -459,13 +467,20 @@ function goLogin() {
 }
 
 .profile-menu__flag {
+  grid-column: 3;
+  display: inline-flex;
+  justify-content: center;
   font-size: 1.1rem;
   line-height: 1;
 }
 
 .profile-menu__value {
+  grid-column: 4;
+  overflow: hidden;
   color: #f7f8fb;
   font-size: 0.8rem;
+  text-align: right;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -526,12 +541,7 @@ function goLogin() {
   }
 
   .profile-actions {
-    gap: 16px;
-  }
-
-  .profile-actions button {
-    min-height: 50px;
-    font-size: 0.8rem;
+    gap: 12px;
   }
 
   .profile-menu {
@@ -539,7 +549,7 @@ function goLogin() {
   }
 
   .profile-menu__item {
-    grid-template-columns: 28px minmax(0, 1fr) auto auto 10px;
+    grid-template-columns: 28px minmax(0, 1fr) 22px minmax(0, 72px) 14px;
     gap: 9px;
     min-height: 52px;
     padding: 0 16px;
