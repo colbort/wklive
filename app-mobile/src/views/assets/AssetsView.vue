@@ -483,7 +483,7 @@ onMounted(() => {
   color: var(--text);
 }
 
-button {
+button:not(.app-menu__item) {
   border: 0;
   background: transparent;
   color: inherit;

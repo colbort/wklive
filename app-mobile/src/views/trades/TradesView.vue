@@ -981,7 +981,6 @@ async function cancelTradeOrder(order: TradeOrder) {
   flex: 0 0 auto;
   border: 0;
   background: transparent;
-  font: inherit;
   white-space: nowrap;
 }
 

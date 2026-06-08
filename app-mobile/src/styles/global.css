@@ -109,6 +109,12 @@ button {
   font-weight: var(--menu-font-weight);
 }
 
+.app-menu__item {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
 :is(
   .sub-menu-item.active,
   .app-menu__item--active,
