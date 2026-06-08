@@ -15,7 +15,7 @@ function coinIconText() {
 
 <template>
   <span class="asset-coin-icon" :style="{ backgroundColor: config?.iconBgColor || '#16ad77' }">
-    <img v-if="config?.iconUrl" :src="config.iconUrl" :alt="coin" />
+    <img v-if="config?.iconUrl" :src="config.iconUrl" :alt="coin">
     <span v-else>{{ coinIconText() }}</span>
   </span>
 </template>

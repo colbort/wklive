@@ -74,7 +74,7 @@ function goBack() {
 }
 
 function onSave() {
-  console.log('保存')
+  console.warn('保存')
 }
 </script>
 

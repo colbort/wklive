@@ -75,7 +75,7 @@ function goBack() {
 }
 
 function onSave() {
-  console.log('点击右侧按钮')
+  console.warn('点击右侧按钮')
 }
 </script>
 

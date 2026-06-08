@@ -83,7 +83,7 @@ function validateOnRelease() {
     <h1>{{ t('captcha.title') }}</h1>
     <p>{{ t('captcha.hint') }}</p>
     <div class="rotate-captcha__image">
-      <img :src="captchaImage" alt="" :style="{ transform: `rotate(${rotation}deg)` }" />
+      <img :src="captchaImage" alt="" :style="{ transform: `rotate(${rotation}deg)` }">
     </div>
     <label
       class="rotate-captcha__slider"
@@ -99,7 +99,7 @@ function validateOnRelease() {
         :aria-label="t('captcha.slider')"
         @input="handleInput"
         @change="validateOnRelease"
-      />
+      >
       <span>→</span>
     </label>
     <strong :class="{ 'is-failed': failed, 'is-passed': passed }">{{ statusText }}</strong>

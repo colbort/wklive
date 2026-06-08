@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 
 import AppIcon from '@/components/common/AppIcon.vue'
 import CommonPage from '@/components/common/CommonPage.vue'
@@ -19,7 +19,8 @@ import featureIconCharts from '../../../assets/home/svg2.svg'
 import featureIconFees from '../../../assets/home/svg3.svg'
 import { useI18n } from '@/i18n'
 
-const { t, toggleLocale } = useI18n()
+const { t } = useI18n()
+const router = useRouter()
 
 const featureCards = [
   {
@@ -88,6 +89,10 @@ const trustFeatures = [
     descKey: 'home.proSupportDesc',
   },
 ]
+
+function changeLanguage() {
+  router.push('/language')
+}
 </script>
 
 <template>
@@ -107,9 +112,9 @@ const trustFeatures = [
             class="ave-home-action"
             type="button"
             :aria-label="t('common.language')"
-            @click="toggleLocale"
+            @click="changeLanguage()"
           >
-            🌐
+            <AppIcon name="globe" class="ave-home-action__icon" />
           </button>
         </div>
       </header>
@@ -273,7 +278,7 @@ const trustFeatures = [
   background: rgba(29, 32, 44, 0.9);
   color: var(--text);
   font: inherit;
-  font-size: .95rem;
+  font-size: 0.95rem;
 }
 
 .ave-home-action__icon {
@@ -341,7 +346,7 @@ const trustFeatures = [
 .ave-hero p {
   margin: 18px 0 0;
   color: var(--text);
-  font-size: clamp(.9rem, 4.8vw, 1.02rem);
+  font-size: clamp(0.9rem, 4.8vw, 1.02rem);
   font-weight: 700;
 }
 
@@ -390,7 +395,7 @@ const trustFeatures = [
 .ave-reward > p {
   margin: 10px 0 0;
   color: var(--home-muted);
-  font-size: clamp(.72rem, 3.9vw, .82rem);
+  font-size: clamp(0.72rem, 3.9vw, 0.82rem);
   font-weight: 700;
   line-height: 1.45;
 }
@@ -446,7 +451,7 @@ const trustFeatures = [
 .ave-trust-item h3 {
   margin: 0 0 6px;
   color: var(--text);
-  font-size: clamp(.9rem, 4.7vw, 1rem);
+  font-size: clamp(0.9rem, 4.7vw, 1rem);
   font-weight: 800;
   line-height: 1.18;
 }
@@ -457,7 +462,7 @@ const trustFeatures = [
 .ave-trust-item p {
   margin: 0;
   color: var(--home-muted);
-  font-size: clamp(.62rem, 3.5vw, .72rem);
+  font-size: clamp(0.62rem, 3.5vw, 0.72rem);
   font-weight: 700;
   line-height: 1.42;
 }
@@ -604,7 +609,7 @@ const trustFeatures = [
 
 .ave-reward > p {
   color: var(--text);
-  font-size: .9rem;
+  font-size: 0.9rem;
 }
 
 .ave-reward__image {

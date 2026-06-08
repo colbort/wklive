@@ -69,7 +69,9 @@ function closeFromBackdrop(enabled: boolean) {
 
           <slot v-if="$slots.header" name="header" :close="close" />
           <header v-else-if="title || showClose" class="bottom-drawer__header">
-            <h2 v-if="title">{{ title }}</h2>
+            <h2 v-if="title">
+              {{ title }}
+            </h2>
             <button
               v-if="showClose"
               type="button"

@@ -145,7 +145,7 @@ function selectCoin(coin: string) {
       <h3>{{ t('assetFlow.chooseCoin') }}</h3>
       <label class="asset-select-search">
         <span>⌕</span>
-        <input v-model="query" :placeholder="t('assetFlow.searchCoin')" />
+        <input v-model="query" :placeholder="t('assetFlow.searchCoin')">
       </label>
     </div>
 
@@ -159,12 +159,12 @@ function selectCoin(coin: string) {
       >
         <AssetCoinIcon :coin="row.coin" :config="row.config" />
         <strong>{{ row.coin }}</strong>
-        <span
-          >{{ row.amountLabel }} <b>{{ row.availableAmount }}</b></span
-        >
+        <span>{{ row.amountLabel }} <b>{{ row.availableAmount }}</b></span>
         <em v-if="activeWalletType === selectedWalletType && row.coin === selectedCoin">✓</em>
       </button>
-      <p v-if="!coins.length" class="asset-select-empty">{{ t('assets.noCoins') }}</p>
+      <p v-if="!coins.length" class="asset-select-empty">
+        {{ t('assets.noCoins') }}
+      </p>
     </div>
   </BottomDrawer>
 </template>

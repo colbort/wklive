@@ -59,8 +59,8 @@ function formatDepthVolume(level: DepthLevel) {
 <template>
   <aside class="order-book-preview">
     <header>
-      <span>{{ t('market.price') }}<br />(USDT)</span>
-      <span>{{ t('market.qty') }}<br />({{ selectedProduct?.baseCoin || 'BTC' }})</span>
+      <span>{{ t('market.price') }}<br>(USDT)</span>
+      <span>{{ t('market.qty') }}<br>({{ selectedProduct?.baseCoin || 'BTC' }})</span>
     </header>
     <div class="depth-tools" aria-hidden="true">
       <i class="depth-tools__bid" />
@@ -69,10 +69,11 @@ function formatDepthVolume(level: DepthLevel) {
     </div>
     <div class="asks">
       <p v-for="level in askRows" :key="`ask-${level.price}-${level.volume}`">
-        <span>{{ formatDepthNumber(level.price) }}</span
-        ><strong>{{ formatDepthVolume(level) }}</strong>
+        <span>{{ formatDepthNumber(level.price) }}</span><strong>{{ formatDepthVolume(level) }}</strong>
       </p>
-      <p v-if="!askRows.length" class="empty-row"><span>--</span><strong>--</strong></p>
+      <p v-if="!askRows.length" class="empty-row">
+        <span>--</span><strong>--</strong>
+      </p>
     </div>
     <div class="mid-price" :class="`mid-price--${midDirection}`">
       <div>
@@ -83,10 +84,11 @@ function formatDepthVolume(level: DepthLevel) {
     </div>
     <div class="bids">
       <p v-for="level in bidRows" :key="`bid-${level.price}-${level.volume}`">
-        <span>{{ formatDepthNumber(level.price) }}</span
-        ><strong>{{ formatDepthVolume(level) }}</strong>
+        <span>{{ formatDepthNumber(level.price) }}</span><strong>{{ formatDepthVolume(level) }}</strong>
       </p>
-      <p v-if="!bidRows.length" class="empty-row"><span>--</span><strong>--</strong></p>
+      <p v-if="!bidRows.length" class="empty-row">
+        <span>--</span><strong>--</strong>
+      </p>
     </div>
   </aside>
 </template>

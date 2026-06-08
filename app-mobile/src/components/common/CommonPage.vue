@@ -22,7 +22,12 @@
 
         <!-- 默认 tabbar -->
         <header v-else class="header-bar">
-          <button v-if="showBack" type="button" class="header-left" @click="onBack">
+          <button
+            v-if="showBack"
+            type="button"
+            class="header-left"
+            @click="onBack"
+          >
             <AppIcon name="back" class="back-icon-svg" />
           </button>
 
@@ -30,10 +35,20 @@
             {{ title }}
           </div>
 
-          <button v-if="hasRight" type="button" class="header-right" @click="onRightClick">
+          <button
+            v-if="hasRight"
+            type="button"
+            class="header-right"
+            @click="onRightClick"
+          >
             <slot v-if="$slots.right" name="right" />
 
-            <img v-else-if="rightIcon" class="right-icon" :src="rightIcon" alt="" />
+            <img
+              v-else-if="rightIcon"
+              class="right-icon"
+              :src="rightIcon"
+              alt=""
+            >
 
             <span v-else class="right-text">
               {{ rightText }}
@@ -85,7 +100,12 @@
 
       <!-- 默认 tabbar 固定顶部 -->
       <header v-else class="header-bar fixed-header">
-        <button v-if="showBack" type="button" class="header-left" @click="onBack">
+        <button
+          v-if="showBack"
+          type="button"
+          class="header-left"
+          @click="onBack"
+        >
           <AppIcon name="back" class="back-icon-svg" />
         </button>
 
@@ -93,10 +113,20 @@
           {{ title }}
         </div>
 
-        <button v-if="hasRight" type="button" class="header-right" @click="onRightClick">
+        <button
+          v-if="hasRight"
+          type="button"
+          class="header-right"
+          @click="onRightClick"
+        >
           <slot v-if="$slots.right" name="right" />
 
-          <img v-else-if="rightIcon" class="right-icon" :src="rightIcon" alt="" />
+          <img
+            v-else-if="rightIcon"
+            class="right-icon"
+            :src="rightIcon"
+            alt=""
+          >
 
           <span v-else class="right-text">
             {{ rightText }}

@@ -5,7 +5,9 @@ defineProps<{
 </script>
 
 <template>
-  <button type="button" class="asset-primary-button">{{ label }}</button>
+  <button type="button" class="asset-primary-button">
+    {{ label }}
+  </button>
 </template>
 
 <style scoped>

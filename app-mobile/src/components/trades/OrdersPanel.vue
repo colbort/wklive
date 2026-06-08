@@ -92,7 +92,9 @@ function formatTime(value: number) {
       >
         {{ t('trade.historyOrders') }}
       </button>
-      <button v-if="showPremarket" type="button">{{ t('trade.premarketOrders') }}</button>
+      <button v-if="showPremarket" type="button">
+        {{ t('trade.premarketOrders') }}
+      </button>
       <button class="trade-orders-panel__refresh" type="button" @click="emit('refresh')">
         {{ t('trade.refresh') }}
       </button>
@@ -102,7 +104,9 @@ function formatTime(value: number) {
     <p v-else-if="!selectedTradeSymbol" class="trade-orders-panel__state">
       {{ t('trade.unavailable') }}
     </p>
-    <p v-else-if="loading" class="trade-orders-panel__state">{{ t('trade.orderLoading') }}</p>
+    <p v-else-if="loading" class="trade-orders-panel__state">
+      {{ t('trade.orderLoading') }}
+    </p>
     <p v-else-if="error" class="trade-orders-panel__state trade-orders-panel__state--error">
       {{ error }}
     </p>

@@ -747,7 +747,6 @@ async function submitTradeOrder(side: SubmitSide) {
 
   const symbol = selectedTradeSymbol.value
   if (!isLoggedIn.value) {
-    tradeError.value = t('trade.loginFirst')
     return
   }
   if (!symbol) {
@@ -834,7 +833,6 @@ async function cancelTradeOrder(order: TradeOrder) {
 
   syncAuthState()
   if (!isLoggedIn.value) {
-    ordersError.value = t('asset.loginFirst')
     return
   }
 

@@ -15,6 +15,7 @@ const STORAGE_KEY = 'app-mobile-locale'
 const I18N_KEY = Symbol('app-i18n')
 
 type Params = Record<string, string | number>
+type I18nApi = ReturnType<typeof createI18nApi>
 
 const state = reactive({
   locale: getInitialLocale(),
@@ -69,15 +70,18 @@ export function toggleLocale() {
   setLocale(state.locale === 'zh-CN' ? 'en-US' : 'zh-CN')
 }
 
-export function createI18n() {
-  const api = {
+function createI18nApi() {
+  return {
     locale: computed(() => state.locale),
     t,
     setLocale,
     toggleLocale,
     translateApiError,
   }
+}
 
+export function createI18n() {
+  const api = createI18nApi()
   return {
     install(app: App) {
       document.documentElement.lang = state.locale
@@ -88,21 +92,5 @@ export function createI18n() {
 }
 
 export function useI18n() {
-  return (
-    inject<typeof i18nApi>(I18N_KEY) || {
-      locale: computed(() => state.locale),
-      t,
-      setLocale,
-      toggleLocale,
-      translateApiError,
-    }
-  )
-}
-
-const i18nApi = {
-  locale: computed(() => state.locale),
-  t,
-  setLocale,
-  toggleLocale,
-  translateApiError,
+  return inject<I18nApi>(I18N_KEY) || createI18nApi()
 }

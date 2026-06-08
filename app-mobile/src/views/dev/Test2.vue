@@ -31,7 +31,7 @@ function goBack() {
 }
 
 function onMore() {
-  console.log('更多')
+  console.warn('更多')
 }
 </script>
 

@@ -66,13 +66,17 @@ function formatPercent(value: number) {
       <span class="connection-dot" :class="`connection-dot--${wsState}`" />
       <span>{{
         marketCategoryCodeLabel(selectedCategoryCode, selectedCategoryName) ||
-        t('market.categoryLoading')
+          t('market.categoryLoading')
       }}</span>
       <strong>{{ wsError || selectedCategoryCode || t('market.waitingCategoryCode') }}</strong>
     </div>
 
-    <div v-if="loading" class="empty-state">{{ t('market.loadingQuotes') }}</div>
-    <div v-else-if="!rows.length" class="empty-state">{{ t('market.noVisibleProducts') }}</div>
+    <div v-if="loading" class="empty-state">
+      {{ t('market.loadingQuotes') }}
+    </div>
+    <div v-else-if="!rows.length" class="empty-state">
+      {{ t('market.noVisibleProducts') }}
+    </div>
 
     <template v-else>
       <button

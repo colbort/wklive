@@ -26,15 +26,15 @@ const route = useRoute()
 const { t } = useI18n()
 
 const isHomeRoute = computed(() => route.name === 'home')
-const tabbarOverride = computed(() => {
+const bottomNavOverride = computed(() => {
   const value = Array.isArray(route.query.tabbar) ? route.query.tabbar[0] : route.query.tabbar
   if (value === '1' || value === 'true' || value === 'show') return true
   if (value === '0' || value === 'false' || value === 'hide') return false
   return null
 })
-const showTabbar = computed(() => {
-  if (tabbarOverride.value !== null) return tabbarOverride.value
-  return !route.meta.hideTabbar
+const showBottomNav = computed(() => {
+  if (bottomNavOverride.value !== null) return bottomNavOverride.value
+  return !route.meta.hideBottomNav
 })
 </script>
 
@@ -43,7 +43,7 @@ const showTabbar = computed(() => {
     class="app-shell"
     :class="{
       'app-shell--home': isHomeRoute,
-      'app-shell--tabbar-visible': showTabbar,
+      'app-shell--tabbar-visible': showBottomNav,
     }"
   >
     <div class="app-shell__aurora app-shell__aurora--left" />
@@ -54,7 +54,7 @@ const showTabbar = computed(() => {
         <RouterView />
       </main>
 
-      <nav v-if="showTabbar" class="app-tabbar">
+      <nav v-if="showBottomNav" class="app-tabbar">
         <RouterLink
           v-for="item in appNavigation"
           :key="item.key"

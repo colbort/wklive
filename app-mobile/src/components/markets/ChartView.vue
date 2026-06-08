@@ -362,7 +362,9 @@ function coinGlyph(product: ItickTenantProduct) {
         <em />
       </button>
 
-      <button type="button" class="star-button" :aria-label="t('market.addWatchlist')">☆</button>
+      <button type="button" class="star-button" :aria-label="t('market.addWatchlist')">
+        <AppIcon name="star" class="star-icon-svg" />
+      </button>
     </div>
 
     <div class="chart-summary">
@@ -483,9 +485,15 @@ function coinGlyph(product: ItickTenantProduct) {
 
         <div class="ma-legend" aria-hidden="true">
           <span>MA(5,10,30,60)</span>
-          <button type="button">◉</button>
-          <button type="button">⚙</button>
-          <button type="button">×</button>
+          <button type="button">
+            ◉
+          </button>
+          <button type="button">
+            ⚙
+          </button>
+          <button type="button">
+            ×
+          </button>
           <strong class="ma-legend__ma5">MA5: 75,900.94</strong>
           <strong class="ma-legend__ma10">MA10: 75,909.73</strong>
           <strong class="ma-legend__ma30">MA30: 76,533.68</strong>
@@ -498,11 +506,41 @@ function coinGlyph(product: ItickTenantProduct) {
           role="img"
           :aria-label="t('market.candleChart')"
         >
-          <line x1="0" y1="58" x2="520" y2="58" class="grid-line" />
-          <line x1="0" y1="120" x2="520" y2="120" class="grid-line" />
-          <line x1="0" y1="182" x2="520" y2="182" class="grid-line" />
-          <line x1="170" y1="0" x2="170" y2="240" class="grid-line" />
-          <line x1="340" y1="0" x2="340" y2="240" class="grid-line" />
+          <line
+            x1="0"
+            y1="58"
+            x2="520"
+            y2="58"
+            class="grid-line"
+          />
+          <line
+            x1="0"
+            y1="120"
+            x2="520"
+            y2="120"
+            class="grid-line"
+          />
+          <line
+            x1="0"
+            y1="182"
+            x2="520"
+            y2="182"
+            class="grid-line"
+          />
+          <line
+            x1="170"
+            y1="0"
+            x2="170"
+            y2="240"
+            class="grid-line"
+          />
+          <line
+            x1="340"
+            y1="0"
+            x2="340"
+            y2="240"
+            class="grid-line"
+          />
 
           <polyline
             v-if="chartLinePoints"
@@ -545,7 +583,9 @@ function coinGlyph(product: ItickTenantProduct) {
           <span v-for="mark in chartPriceMarks" :key="mark">{{ formatPrice(mark) }}</span>
         </div>
 
-        <div v-if="loadingKline" class="chart-loading">{{ t('common.loading') }}...</div>
+        <div v-if="loadingKline" class="chart-loading">
+          {{ t('common.loading') }}...
+        </div>
       </div>
 
       <div class="volume-board" aria-hidden="true">
@@ -569,12 +609,10 @@ function coinGlyph(product: ItickTenantProduct) {
 
     <section v-else-if="activeDetailTab === 'depth'" class="depth-board">
       <header class="depth-board__head">
-        <span>{{ t('market.price') }}<br />({{ selectedProduct?.quoteCoin || 'USDT' }})</span>
-        <span
-          >{{ t('market.qty') }}<br />({{
-            selectedProduct?.baseCoin || selectedProduct?.symbol || '--'
-          }})</span
-        >
+        <span>{{ t('market.price') }}<br>({{ selectedProduct?.quoteCoin || 'USDT' }})</span>
+        <span>{{ t('market.qty') }}<br>({{
+          selectedProduct?.baseCoin || selectedProduct?.symbol || '--'
+        }})</span>
       </header>
 
       <div class="depth-list depth-list--asks">
@@ -614,15 +652,15 @@ function coinGlyph(product: ItickTenantProduct) {
     <section v-else class="trade-board">
       <header class="trade-board__head">
         <span>{{ t('market.price') }}({{ selectedProduct?.quoteCoin || 'USDT' }})</span>
-        <span
-          >{{ t('market.qty') }}({{
-            selectedProduct?.baseCoin || selectedProduct?.symbol || '--'
-          }})</span
-        >
+        <span>{{ t('market.qty') }}({{
+          selectedProduct?.baseCoin || selectedProduct?.symbol || '--'
+        }})</span>
         <span>{{ t('trade.time') }}</span>
       </header>
 
-      <div v-if="!tradeRows.length" class="detail-empty">{{ t('market.waitingTrades') }}</div>
+      <div v-if="!tradeRows.length" class="detail-empty">
+        {{ t('market.waitingTrades') }}
+      </div>
       <div
         v-for="(item, index) in tradeRows"
         v-else

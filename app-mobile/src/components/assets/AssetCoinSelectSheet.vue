@@ -76,7 +76,9 @@ function selectConfig(config: AssetCoinConfig) {
         <small v-if="chainLabel(config)">{{ chainLabel(config) }}</small>
         <span v-if="isSelected(config)" class="asset-coin-sheet__check">✓</span>
       </button>
-      <p v-if="!props.configs.length" class="asset-coin-sheet__empty">{{ t('assets.noCoins') }}</p>
+      <p v-if="!props.configs.length" class="asset-coin-sheet__empty">
+        {{ t('assets.noCoins') }}
+      </p>
     </div>
   </BottomDrawer>
 </template>

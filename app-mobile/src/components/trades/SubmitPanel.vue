@@ -140,7 +140,7 @@ const riskReferencePrice = computed(() => {
   return latestPrice && latestPrice > 0 ? latestPrice : null
 })
 const unavailableText = computed(() => {
-  if (!props.isLoggedIn) return t('trade.loginFirst')
+  if (!props.isLoggedIn) return ''
   if (props.tradeSymbolLoading) return t('trade.configLoading')
   if (!props.tradeAvailable) return t('trade.unavailable')
   return ''
@@ -307,9 +307,15 @@ function confirmRiskSettings() {
     </div>
 
     <div class="inner-tabs">
-      <button class="active" type="button">{{ t('trade.normalTrade') }}</button>
-      <button type="button">{{ t('trade.marginTrading') }}</button>
-      <button type="button">{{ t('trade.premarketOrders') }}</button>
+      <button class="active" type="button">
+        {{ t('trade.normalTrade') }}
+      </button>
+      <button type="button">
+        {{ t('trade.marginTrading') }}
+      </button>
+      <button type="button">
+        {{ t('trade.premarketOrders') }}
+      </button>
     </div>
 
     <div class="mode-switch compact">
@@ -324,12 +330,18 @@ function confirmRiskSettings() {
       </button>
     </div>
 
-    <div class="trade-input">{{ t('trade.qty') }}</div>
-    <div class="percent-bar"><i /></div>
+    <div class="trade-input">
+      {{ t('trade.qty') }}
+    </div>
+    <div class="percent-bar">
+      <i />
+    </div>
     <div class="percent-labels">
       <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
     </div>
-    <button class="wide-action" type="button">{{ t('trade.loginRegister') }}</button>
+    <button class="wide-action" type="button">
+      {{ t('trade.loginRegister') }}
+    </button>
   </section>
 
   <section v-else-if="tradeKind === 'option'" class="option-panel">
@@ -343,27 +355,46 @@ function confirmRiskSettings() {
 
     <h3>{{ t('trade.time') }}</h3>
     <div class="duration-grid">
-      <button class="active" type="button"><strong>30S</strong><span>30%</span></button>
-      <button type="button"><strong>60S</strong><span>40%</span></button>
-      <button type="button"><strong>90S</strong><span>50%</span></button>
-      <button type="button"><strong>120S</strong><span>60%</span></button>
-      <button type="button"><strong>180S</strong><span>70%</span></button>
-      <button type="button"><strong>360S</strong><span>80%</span></button>
+      <button class="active" type="button">
+        <strong>30S</strong><span>30%</span>
+      </button>
+      <button type="button">
+        <strong>60S</strong><span>40%</span>
+      </button>
+      <button type="button">
+        <strong>90S</strong><span>50%</span>
+      </button>
+      <button type="button">
+        <strong>120S</strong><span>60%</span>
+      </button>
+      <button type="button">
+        <strong>180S</strong><span>70%</span>
+      </button>
+      <button type="button">
+        <strong>360S</strong><span>80%</span>
+      </button>
     </div>
 
     <h3>{{ t('trade.investmentAmount') }}</h3>
-    <div class="trade-input split"><span>>=100</span><strong>USD</strong></div>
-    <div class="percent-bar"><i /></div>
+    <div class="trade-input split">
+      <span>>=100</span><strong>USD</strong>
+    </div>
+    <div class="percent-bar">
+      <i />
+    </div>
     <div class="percent-labels">
       <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
     </div>
     <div class="buyable">
-      <span>{{ t('trade.canBuy') }}</span
-      ><strong>0 USD</strong>
+      <span>{{ t('trade.canBuy') }}</span><strong>0 USD</strong>
     </div>
     <div class="dual-actions">
-      <button type="button">{{ t('auth.loginTitle') }}</button>
-      <button type="button">{{ t('auth.goRegister') }}</button>
+      <button type="button">
+        {{ t('auth.loginTitle') }}
+      </button>
+      <button type="button">
+        {{ t('auth.goRegister') }}
+      </button>
     </div>
   </section>
 
@@ -406,7 +437,7 @@ function confirmRiskSettings() {
           inputmode="decimal"
           :placeholder="`${t('trade.price')}(${settleAsset}) / ${selectedTradeSymbol?.priceTick || '--'}`"
           @input="emit('update:tradePrice', inputValue($event))"
-        />
+        >
       </div>
 
       <div class="trade-input trade-input--field">
@@ -415,7 +446,7 @@ function confirmRiskSettings() {
           inputmode="decimal"
           :placeholder="`${t('trade.qty')}(${baseAsset}) / ${selectedTradeSymbol?.minQty || '--'}`"
           @input="emit('update:tradeQty', inputValue($event))"
-        />
+        >
       </div>
       <div
         class="percent-bar"
@@ -447,13 +478,10 @@ function confirmRiskSettings() {
       <div class="account-lines">
         <span>{{ t('trade.available') }}</span>
         <strong>{{ availableBalance }} {{ settleAsset }}</strong>
-        <span>{{ t('trade.conversion') }}</span
-        ><strong>{{ conversionText }}</strong>
+        <span>{{ t('trade.conversion') }}</span><strong>{{ conversionText }}</strong>
         <span>{{ t('trade.mode') }}</span>
-        <strong
-          >{{ optionText(selectedMarginMode) }} /
-          {{ isSpotTrade ? t('trade.noLeverage') : `${leverage}X` }}</strong
-        >
+        <strong>{{ optionText(selectedMarginMode) }} /
+          {{ isSpotTrade ? t('trade.noLeverage') : `${leverage}X` }}</strong>
       </div>
 
       <button
@@ -472,8 +500,7 @@ function confirmRiskSettings() {
       <div class="account-lines">
         <span>{{ isSpotTrade ? t('trade.canBuy') : t('trade.canOpenLong') }}</span>
         <strong>{{ longPositionQty }} {{ isSpotTrade ? baseAsset : t('trade.lot') }}</strong>
-        <span>{{ t('trade.margin') }}</span
-        ><strong>{{ availableBalance }} {{ settleAsset }}</strong>
+        <span>{{ t('trade.margin') }}</span><strong>{{ availableBalance }} {{ settleAsset }}</strong>
       </div>
       <button
         class="wide-action wide-action--buy"
@@ -500,8 +527,7 @@ function confirmRiskSettings() {
       <div class="account-lines">
         <span>{{ isSpotTrade ? t('trade.canSell') : t('trade.canOpenShort') }}</span>
         <strong>{{ shortPositionQty }} {{ isSpotTrade ? baseAsset : t('trade.lot') }}</strong>
-        <span>{{ t('trade.margin') }}</span
-        ><strong>{{ availableBalance }} {{ settleAsset }}</strong>
+        <span>{{ t('trade.margin') }}</span><strong>{{ availableBalance }} {{ settleAsset }}</strong>
       </div>
       <button
         class="wide-action wide-action--sell"
@@ -515,7 +541,9 @@ function confirmRiskSettings() {
       <p v-if="tradeError || unavailableText" class="order-message order-message--error">
         {{ tradeError || unavailableText }}
       </p>
-      <p v-else-if="tradeMessage" class="order-message">{{ tradeMessage }}</p>
+      <p v-else-if="tradeMessage" class="order-message">
+        {{ tradeMessage }}
+      </p>
     </div>
 
     <BottomDrawer
@@ -568,7 +596,7 @@ function confirmRiskSettings() {
 
         <div v-else-if="selectionSheet === 'risk'" class="risk-sheet-body">
           <label class="risk-check-row">
-            <input v-model="riskTakeProfitEnabled" type="checkbox" />
+            <input v-model="riskTakeProfitEnabled" type="checkbox">
             <span />
             <strong>{{ t('options.TRIGGER_KIND_TAKE_PROFIT') }}</strong>
           </label>
@@ -579,7 +607,7 @@ function confirmRiskSettings() {
                 inputmode="decimal"
                 :placeholder="t('trade.price')"
                 @input="updateRiskTakeProfitPrice(inputValue($event))"
-              />
+              >
               <strong>{{ settleAsset }}</strong>
             </label>
             <label class="risk-field">
@@ -588,13 +616,13 @@ function confirmRiskSettings() {
                 inputmode="decimal"
                 :placeholder="t('trade.risePercent')"
                 @input="updateRiskTakeProfitPercent(inputValue($event))"
-              />
+              >
               <strong>%</strong>
             </label>
           </div>
 
           <label class="risk-check-row">
-            <input v-model="riskStopLossEnabled" type="checkbox" />
+            <input v-model="riskStopLossEnabled" type="checkbox">
             <span />
             <strong>{{ t('options.TRIGGER_KIND_STOP_LOSS') }}</strong>
           </label>
@@ -605,7 +633,7 @@ function confirmRiskSettings() {
                 inputmode="decimal"
                 :placeholder="t('trade.price')"
                 @input="updateRiskStopLossPrice(inputValue($event))"
-              />
+              >
               <strong>{{ settleAsset }}</strong>
             </label>
             <label class="risk-field">
@@ -614,7 +642,7 @@ function confirmRiskSettings() {
                 inputmode="decimal"
                 :placeholder="t('trade.fallPercent')"
                 @input="updateRiskStopLossPercent(inputValue($event))"
-              />
+              >
               <strong>%</strong>
             </label>
           </div>
@@ -622,7 +650,7 @@ function confirmRiskSettings() {
           <div class="risk-divider" />
           <label v-if="riskTakeProfitEnabled || riskStopLossEnabled" class="risk-qty">
             <strong>{{ t('trade.qty') }}</strong>
-            <input v-model="riskQty" inputmode="decimal" :placeholder="t('trade.qty')" />
+            <input v-model="riskQty" inputmode="decimal" :placeholder="t('trade.qty')">
           </label>
 
           <button

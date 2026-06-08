@@ -50,7 +50,7 @@ const { t } = useI18n()
   min-width: 0;
   margin: 0;
   color: var(--muted);
-  font-size: .75rem;
+  font-size: 0.75rem;
   font-weight: 700;
   line-height: 1.25;
   white-space: nowrap;

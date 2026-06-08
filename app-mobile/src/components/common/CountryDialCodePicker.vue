@@ -76,7 +76,7 @@ function selectCountry(country: CountryDialCode) {
     <div class="country-sheet-body">
       <label class="country-search">
         <AppIcon name="search" />
-        <input v-model="search" placeholder="输入区号" inputmode="search" />
+        <input v-model="search" placeholder="输入区号" inputmode="search">
       </label>
       <div ref="listRef" class="country-list">
         <button
