@@ -158,22 +158,13 @@ function formatPercent(value: number) {
   transform: translateX(-50%);
 }
 
-.category-tab,
-.quote-row {
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-}
-
-.quote-row {
-  color: inherit;
-  font: inherit;
-}
-
 .category-tab {
   position: relative;
   flex: 0 0 auto;
   padding: 0 0 16px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
   line-height: 1.2;
   white-space: nowrap;
 }
@@ -232,7 +223,12 @@ function formatPercent(value: number) {
   min-height: 72px;
   margin: 0 28px;
   padding: 13px 0;
+  border: 0;
   border-bottom: 1px solid var(--divider);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
   text-align: left;
 }
 
@@ -241,10 +237,6 @@ function formatPercent(value: number) {
     gap: 24px;
     padding-right: 22px;
     padding-left: 22px;
-  }
-
-  .category-tab {
-    font-size: 0.85rem;
   }
 
   .quote-row {
@@ -258,11 +250,6 @@ function formatPercent(value: number) {
   .quote-row__change strong,
   .quote-row__change em {
     font-size: 0.6rem;
-  }
-
-  .quote-row__change em {
-    min-width: 0;
-    padding: 0;
   }
 }
 
