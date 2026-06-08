@@ -25,6 +25,8 @@ const DEFAULT_K_TYPE = 1
 const KLINE_LIMIT = 180
 const PING_INTERVAL_MS = 20000
 const RECONNECT_DELAY_MS = 2500
+const DEPTH_CACHE_PREFIX = 'itick:last-depth:v1'
+const QUOTE_CACHE_PREFIX = 'itick:last-quote:v1'
 
 export function useTradingDesk(options: {
   detailVisible: ComputedRef<boolean>
@@ -68,14 +70,19 @@ export function useTradingDesk(options: {
   )
   const selectedCategoryCode = computed(() => selectedCategory.value?.categoryCode || '')
   const selectedProduct = computed(
-    () => products.value.find((item) => productKey(item) === selectedProductKey.value) ?? products.value[0] ?? null,
+    () =>
+      products.value.find((item) => productKey(item) === selectedProductKey.value) ??
+      products.value[0] ??
+      null,
   )
   const selectedQuote = computed(() => {
     const product = selectedProduct.value
-    return product ? quoteMap.value[productKey(product)] ?? null : null
+    return product ? (quoteMap.value[productKey(product)] ?? null) : null
   })
   const selectedInterval = computed(() => {
-    return intervals.value.find((item) => item.name === selectedIntervalName.value) ?? intervals.value[0]
+    return (
+      intervals.value.find((item) => item.name === selectedIntervalName.value) ?? intervals.value[0]
+    )
   })
   const placeholderPrice = computed(() => {
     const value = selectedQuote.value?.lastPrice
@@ -102,7 +109,8 @@ export function useTradingDesk(options: {
         product,
         quote,
         changeRate,
-        direction: changeRate > 0 ? ('up' as const) : changeRate < 0 ? ('down' as const) : ('flat' as const),
+        direction:
+          changeRate > 0 ? ('up' as const) : changeRate < 0 ? ('down' as const) : ('flat' as const),
       }
     }),
   )
@@ -120,7 +128,10 @@ export function useTradingDesk(options: {
         price: quote ? formatPrice(quote.lastPrice) : '--',
         changeValue: quote && changeValue !== null ? formatPrice(changeValue) : '',
         changePercent: quote ? formatPercent(changeRate) : '',
-        change: quote && changeValue !== null ? `${formatPrice(changeValue)} ${formatPercent(changeRate)}` : '',
+        change:
+          quote && changeValue !== null
+            ? `${formatPrice(changeValue)} ${formatPercent(changeRate)}`
+            : '',
         direction: (quote
           ? changeRate > 0
             ? 'up'
@@ -138,35 +149,48 @@ export function useTradingDesk(options: {
     await loadProducts(categoryType)
   })
 
-  watch(products, (list) => {
-    if (!list.length) {
-      selectedProductKey.value = ''
-      quoteMap.value = {}
-      depthSnapshot.value = null
-      tickSnapshot.value = []
-      klineSnapshot.value = []
+  watch(
+    products,
+    (list) => {
+      if (!list.length) {
+        selectedProductKey.value = ''
+        quoteMap.value = {}
+        depthSnapshot.value = null
+        tickSnapshot.value = []
+        klineSnapshot.value = []
+        queueSocketRefresh()
+        return
+      }
+
+      quoteMap.value = {
+        ...readCachedQuoteMap(list.map(productKey)),
+        ...quoteMap.value,
+      }
+
+      const hasSelected = list.some((item) => productKey(item) === selectedProductKey.value)
+      if (!hasSelected) {
+        selectedProductKey.value = productKey(list[0])
+      }
+
       queueSocketRefresh()
-      return
-    }
+    },
+    { deep: true },
+  )
 
-    const hasSelected = list.some((item) => productKey(item) === selectedProductKey.value)
-    if (!hasSelected) {
-      selectedProductKey.value = productKey(list[0])
-    }
-
-    queueSocketRefresh()
-  }, { deep: true })
-
-  watch(intervals, (list) => {
-    if (!list.length) return
-    const hasSelected = list.some((item) => item.name === selectedIntervalName.value)
-    if (!hasSelected) {
-      selectedIntervalName.value = list[0].name
-    }
-  }, { immediate: true })
+  watch(
+    intervals,
+    (list) => {
+      if (!list.length) return
+      const hasSelected = list.some((item) => item.name === selectedIntervalName.value)
+      if (!hasSelected) {
+        selectedIntervalName.value = list[0].name
+      }
+    },
+    { immediate: true },
+  )
 
   watch(selectedProductKey, async () => {
-    depthSnapshot.value = null
+    depthSnapshot.value = readCachedDepthSnapshot(selectedProductKey.value)
     tickSnapshot.value = []
     klineSnapshot.value = []
     if (options.detailVisible.value) {
@@ -182,12 +206,16 @@ export function useTradingDesk(options: {
     queueSocketRefresh()
   })
 
-  watch(options.detailVisible, async (visible) => {
-    queueSocketRefresh()
-    if (visible && selectedProduct.value && !klineSnapshot.value.length) {
-      await loadSelectedKlinePage(Date.now(), true)
-    }
-  }, { immediate: true })
+  watch(
+    options.detailVisible,
+    async (visible) => {
+      queueSocketRefresh()
+      if (visible && selectedProduct.value && !klineSnapshot.value.length) {
+        await loadSelectedKlinePage(Date.now(), true)
+      }
+    },
+    { immediate: true },
+  )
 
   onMounted(async () => {
     await initialize()
@@ -435,25 +463,36 @@ export function useTradingDesk(options: {
       const currentKey = selectedProduct.value ? productKey(selectedProduct.value) : ''
 
       switch (message.topic) {
-        case 'quote':
+        case 'quote': {
+          const quote = normalizeQuotePayload(message.payload)
           quoteMap.value = {
             ...quoteMap.value,
-            [targetKey]: normalizeQuotePayload(message.payload),
+            [targetKey]: quote,
           }
+          writeCachedQuoteSnapshot(targetKey, quote)
           break
+        }
         case 'tick':
           if (targetKey === currentKey) {
-            tickSnapshot.value = [normalizeTickPayload(message.payload), ...tickSnapshot.value].slice(0, tickLimit)
+            tickSnapshot.value = [
+              normalizeTickPayload(message.payload),
+              ...tickSnapshot.value,
+            ].slice(0, tickLimit)
           }
           break
         case 'depth':
           if (targetKey === currentKey) {
-            depthSnapshot.value = normalizeDepthPayload(message.payload)
+            const snapshot = normalizeDepthPayload(message.payload)
+            depthSnapshot.value = snapshot
+            writeCachedDepthSnapshot(targetKey, snapshot)
           }
           break
         case 'kline':
           if (targetKey === currentKey && viewingLatestKlinePage.value) {
-            const kline = normalizeKlinePayload(message.payload, message.interval || DEFAULT_INTERVAL)
+            const kline = normalizeKlinePayload(
+              message.payload,
+              message.interval || DEFAULT_INTERVAL,
+            )
             klineSnapshot.value = mergeKlines(klineSnapshot.value, kline)
           }
           break
@@ -486,7 +525,13 @@ export function useTradingDesk(options: {
   function dedupeTopics(items: ItickWsTopicConfig[]) {
     const seen = new Set<string>()
     return items.filter((item) => {
-      const key = [item.topic, item.categoryCode, item.market, item.symbol, item.interval || ''].join('::')
+      const key = [
+        item.topic,
+        item.categoryCode,
+        item.market,
+        item.symbol,
+        item.interval || '',
+      ].join('::')
       if (seen.has(key)) return false
       seen.add(key)
       return true
@@ -544,6 +589,46 @@ function normalizeQuotePayload(payload: unknown): QuotePayload {
   }
 }
 
+function quoteCacheKey(productKeyValue: string) {
+  return `${QUOTE_CACHE_PREFIX}:${productKeyValue}`
+}
+
+function readCachedQuoteMap(productKeyValues: string[]): Record<string, QuotePayload> {
+  return productKeyValues.reduce<Record<string, QuotePayload>>((result, productKeyValue) => {
+    const quote = readCachedQuoteSnapshot(productKeyValue)
+    if (quote) {
+      result[productKeyValue] = quote
+    }
+    return result
+  }, {})
+}
+
+function readCachedQuoteSnapshot(productKeyValue: string): QuotePayload | null {
+  if (!productKeyValue || typeof localStorage === 'undefined') return null
+
+  try {
+    const raw = localStorage.getItem(quoteCacheKey(productKeyValue))
+    if (!raw) return null
+
+    const quote = normalizeQuotePayload(JSON.parse(raw))
+    if (!quote.lastPrice && !quote.open && !quote.ts) return null
+    return quote
+  } catch {
+    return null
+  }
+}
+
+function writeCachedQuoteSnapshot(productKeyValue: string, quote: QuotePayload) {
+  if (!productKeyValue || typeof localStorage === 'undefined') return
+  if (!quote.lastPrice && !quote.open && !quote.ts) return
+
+  try {
+    localStorage.setItem(quoteCacheKey(productKeyValue), JSON.stringify(quote))
+  } catch {
+    // Storage can be unavailable in private mode; realtime data should still render.
+  }
+}
+
 function normalizeTickPayload(payload: unknown): TickPayload {
   const data = asRecord(payload)
   return {
@@ -558,6 +643,37 @@ function normalizeDepthPayload(payload: unknown): DepthPayload {
   return {
     asks: normalizeDepthLevels(data.asks ?? data.Asks ?? data.ASKS),
     bids: normalizeDepthLevels(data.bids ?? data.Bids ?? data.BIDS),
+  }
+}
+
+function depthCacheKey(productKeyValue: string) {
+  return `${DEPTH_CACHE_PREFIX}:${productKeyValue}`
+}
+
+function readCachedDepthSnapshot(productKeyValue: string): DepthPayload | null {
+  if (!productKeyValue || typeof localStorage === 'undefined') return null
+
+  try {
+    const raw = localStorage.getItem(depthCacheKey(productKeyValue))
+    if (!raw) return null
+
+    const data = asRecord(JSON.parse(raw))
+    const snapshot = normalizeDepthPayload(data)
+    if (!snapshot.asks.length && !snapshot.bids.length) return null
+    return snapshot
+  } catch {
+    return null
+  }
+}
+
+function writeCachedDepthSnapshot(productKeyValue: string, snapshot: DepthPayload) {
+  if (!productKeyValue || typeof localStorage === 'undefined') return
+  if (!snapshot.asks.length && !snapshot.bids.length) return
+
+  try {
+    localStorage.setItem(depthCacheKey(productKeyValue), JSON.stringify(snapshot))
+  } catch {
+    // Storage can be unavailable in private mode; realtime data should still render.
   }
 }
 
@@ -599,7 +715,17 @@ function mergeKlines(current: KlinePayload[], latest: KlinePayload) {
     .slice(0, KLINE_LIMIT)
 }
 
-function normalizeKlineList(items: Array<{ open: number; high: number; low: number; close: number; volume: number; turnover: number; ts: number }>) {
+function normalizeKlineList(
+  items: Array<{
+    open: number
+    high: number
+    low: number
+    close: number
+    volume: number
+    turnover: number
+    ts: number
+  }>,
+) {
   return items
     .map((item) => ({
       interval: DEFAULT_INTERVAL,
@@ -641,14 +767,6 @@ function formatNumber(value?: number | null, digits = 2) {
 function formatPrice(value?: number | null) {
   if (value === null || value === undefined || !Number.isFinite(value)) return '--'
   return formatNumber(value, Math.abs(value) >= 1 ? 4 : 8)
-}
-
-function formatCompact(value?: number | null) {
-  if (value === null || value === undefined || !Number.isFinite(value)) return '--'
-  return new Intl.NumberFormat(getLocale(), {
-    notation: 'compact',
-    maximumFractionDigits: 2,
-  }).format(value)
 }
 
 function formatPercent(value: number) {
