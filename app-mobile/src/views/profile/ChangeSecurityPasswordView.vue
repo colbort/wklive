@@ -181,7 +181,7 @@ async function submitPassword() {
 <style scoped>
 .password-page {
   width: 100%;
-  max-width: 680px;
+  max-width: 100%;
   min-height: 100dvh;
   margin: 0 auto;
   padding: 18px 36px;

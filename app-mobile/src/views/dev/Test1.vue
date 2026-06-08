@@ -27,11 +27,7 @@
           菜单一内容
         </div>
 
-        <div
-          v-for="i in 30"
-          :key="i"
-          class="list-item"
-        >
+        <div v-for="i in 30" :key="i" class="list-item">
           <span>菜单一内容 {{ i }}</span>
           <span class="arrow">›</span>
         </div>
@@ -42,11 +38,7 @@
           菜单二内容
         </div>
 
-        <div
-          v-for="i in 30"
-          :key="i"
-          class="list-item"
-        >
+        <div v-for="i in 30" :key="i" class="list-item">
           <span>菜单二内容 {{ i }}</span>
           <span class="arrow">›</span>
         </div>
@@ -57,11 +49,7 @@
           菜单三内容
         </div>
 
-        <div
-          v-for="i in 30"
-          :key="i"
-          class="list-item"
-        >
+        <div v-for="i in 30" :key="i" class="list-item">
           <span>菜单三内容 {{ i }}</span>
           <span class="arrow">›</span>
         </div>

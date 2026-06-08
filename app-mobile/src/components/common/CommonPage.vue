@@ -303,7 +303,7 @@ function onRightClick() {
 
 <style scoped>
 .page-414 {
-  width: min(100%, 414px);
+  width: min(100%, var(--app-width, 414px));
   height: 100%;
   margin: 0 auto;
   background: #0b0d16;

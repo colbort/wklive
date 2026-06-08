@@ -13,11 +13,7 @@
             内容列表
           </div>
 
-          <div
-            v-for="i in 50"
-            :key="i"
-            class="list-item"
-          >
+          <div v-for="i in 50" :key="i" class="list-item">
             <span>content 内容 {{ i }}</span>
             <span class="arrow">›</span>
           </div>

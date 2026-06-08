@@ -1611,12 +1611,16 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 
 .language-page {
   position: fixed;
-  inset: 0;
+  top: 0;
+  bottom: 0;
+  left: 50%;
   z-index: 90;
+  width: min(100%, var(--app-width, 414px));
   overflow-y: auto;
   background: #0b0c15;
   padding: 22px 22px 48px;
   color: #fff;
+  transform: translateX(-50%);
 }
 
 .language-header {

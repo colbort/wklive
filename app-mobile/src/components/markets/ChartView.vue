@@ -803,11 +803,12 @@ function coinGlyph(product: ItickTenantProduct) {
 .chart-sticky-tabs--pinned {
   position: fixed;
   top: 0;
-  left: 0;
-  right: 0;
+  left: 50%;
+  right: auto;
   z-index: 90;
-  width: 100%;
+  width: min(100%, var(--app-width, 414px));
   box-sizing: border-box;
+  transform: translateX(-50%);
 }
 
 .sub-tabs {

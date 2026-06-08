@@ -122,18 +122,20 @@ const { t } = useI18n()
 .trade-categories {
   position: fixed;
   top: 0;
-  right: 0;
-  left: 0;
+  right: auto;
+  left: 50%;
   z-index: 25;
   display: flex;
   flex-wrap: nowrap;
   gap: 20px;
-  max-width: 100%;
+  width: min(100%, var(--app-width, 414px));
+  max-width: var(--app-width, 414px);
   padding: 10px 22px 8px;
   overflow-x: auto;
   overflow-y: hidden;
   margin-bottom: 0;
   background: #0b0c15;
+  transform: translateX(-50%);
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
 }

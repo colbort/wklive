@@ -3,11 +3,7 @@
     <!-- 只有自定义 tabbar -->
     <template #tabbar>
       <div class="custom-tabbar">
-        <button
-          type="button"
-          class="tabbar-left"
-          @click="goBack"
-        >
+        <button type="button" class="tabbar-left" @click="goBack">
           取消
         </button>
 
@@ -15,11 +11,7 @@
           只有自定义标题栏
         </div>
 
-        <button
-          type="button"
-          class="tabbar-right"
-          @click="onMore"
-        >
+        <button type="button" class="tabbar-right" @click="onMore">
           更多
         </button>
       </div>
@@ -31,11 +23,7 @@
           内容列表
         </div>
 
-        <div
-          v-for="i in 50"
-          :key="i"
-          class="list-item"
-        >
+        <div v-for="i in 50" :key="i" class="list-item">
           <span>content 内容 {{ i }}</span>
           <span class="arrow">›</span>
         </div>

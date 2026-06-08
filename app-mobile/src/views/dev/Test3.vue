@@ -1,17 +1,9 @@
 <template>
-  <CommonPage
-    v-model="activeMenu"
-    :menus="menus"
-    @back="goBack"
-  >
+  <CommonPage v-model="activeMenu" :menus="menus" @back="goBack">
     <!-- 自定义 tabbar -->
     <template #tabbar="{ onBack }">
       <div class="custom-tabbar">
-        <button
-          type="button"
-          class="tabbar-left"
-          @click="onBack"
-        >
+        <button type="button" class="tabbar-left" @click="onBack">
           返回
         </button>
 
@@ -19,11 +11,7 @@
           自定义Tabbar
         </div>
 
-        <button
-          type="button"
-          class="tabbar-right"
-          @click="onSave"
-        >
+        <button type="button" class="tabbar-right" @click="onSave">
           保存
         </button>
       </div>
@@ -37,11 +25,7 @@
             菜单一内容
           </div>
 
-          <div
-            v-for="i in 30"
-            :key="i"
-            class="list-item"
-          >
+          <div v-for="i in 30" :key="i" class="list-item">
             <span>菜单一内容 {{ i }}</span>
             <span class="arrow">›</span>
           </div>
@@ -52,11 +36,7 @@
             菜单二内容
           </div>
 
-          <div
-            v-for="i in 30"
-            :key="i"
-            class="list-item"
-          >
+          <div v-for="i in 30" :key="i" class="list-item">
             <span>菜单二内容 {{ i }}</span>
             <span class="arrow">›</span>
           </div>
@@ -67,11 +47,7 @@
             菜单三内容
           </div>
 
-          <div
-            v-for="i in 30"
-            :key="i"
-            class="list-item"
-          >
+          <div v-for="i in 30" :key="i" class="list-item">
             <span>菜单三内容 {{ i }}</span>
             <span class="arrow">›</span>
           </div>

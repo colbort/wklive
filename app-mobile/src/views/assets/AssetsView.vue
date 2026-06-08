@@ -383,7 +383,11 @@ onMounted(() => {
         :close-label="t('common.close')"
         max-height="68dvh"
         :z-index="90"
-        @update:model-value="value => { if (!value) closeCoinActions() }"
+        @update:model-value="
+          (value) => {
+            if (!value) closeCoinActions()
+          }
+        "
       >
         <div v-if="selectedCoinConfig" class="coin-action-sheet">
           <span

@@ -2266,5 +2266,4 @@ function markUpload(type: IdentityFileKey) {
     font-size: 20px;
   }
 }
-
 </style>

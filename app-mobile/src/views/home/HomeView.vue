@@ -91,10 +91,7 @@ const trustFeatures = [
 </script>
 
 <template>
-  <CommonPage
-    :show-back="false"
-    :nav-height="72"
-  >
+  <CommonPage :show-back="false" :nav-height="72">
     <template #tabbar>
       <header class="ave-home-tabbar">
         <RouterLink to="/home" class="ave-home-brand">
@@ -230,8 +227,7 @@ const trustFeatures = [
   padding: 10px 20px;
   background:
     linear-gradient(rgba(124, 146, 170, 0.08) 2px, transparent 2px),
-    linear-gradient(90deg, rgba(124, 146, 170, 0.08) 2px, transparent 2px),
-    rgba(10, 13, 22, 0.96);
+    linear-gradient(90deg, rgba(124, 146, 170, 0.08) 2px, transparent 2px), rgba(10, 13, 22, 0.96);
   background-size:
     104px 104px,
     104px 104px,
@@ -289,7 +285,7 @@ const trustFeatures = [
   --home-green: #00b90f;
   --home-bg: #0b0e18;
   --home-muted: rgba(255, 255, 255, 0.55);
-  width: min(100%, 414px);
+  width: min(100%, var(--app-width, 414px));
   margin: 0 auto;
   overflow: hidden;
   background:
@@ -375,7 +371,7 @@ const trustFeatures = [
 .ave-hero__portal {
   position: absolute;
   left: 50%;
-  width: min(100vw, 414px);
+  width: min(100%, var(--app-width, 414px));
   transform: translateX(-50%);
 }
 
@@ -401,7 +397,7 @@ const trustFeatures = [
 
 .ave-section__phones {
   display: block;
-  width: min(100vw, 414px);
+  width: min(100%, var(--app-width, 414px));
   margin: 32px 0 20px 50%;
   transform: translateX(-50%);
 }
@@ -481,14 +477,14 @@ const trustFeatures = [
   left: 50%;
   top: 0;
   z-index: 2;
-  width: min(100vw, 414px);
+  width: min(100%, var(--app-width, 414px));
   transform: translateX(-50%);
 }
 
 .ave-strategy-scene__chart {
   position: absolute;
   left: 7%;
-  bottom: -30px;
+  bottom: -10px;
   z-index: 1;
   width: 236px;
 }
@@ -528,7 +524,7 @@ const trustFeatures = [
 
 .ave-contract__phones {
   display: block;
-  width: min(100vw, 414px);
+  width: min(100%, var(--app-width, 414px));
   margin: 30px 0 24px 50%;
   transform: translateX(-50%);
 }
@@ -613,7 +609,7 @@ const trustFeatures = [
 
 .ave-reward__image {
   display: block;
-  width: min(100vw, 414px);
+  width: min(100%, var(--app-width, 414px));
   margin: 40px 0 0 50%;
   transform: translateX(-50%);
 }

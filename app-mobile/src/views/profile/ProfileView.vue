@@ -242,7 +242,7 @@ function goLogin() {
 <style scoped>
 .profile-page {
   width: 100%;
-  max-width: 680px;
+  max-width: 100%;
   min-height: 100%;
   margin: 0 auto;
   padding: 10px 24px calc(88px + env(safe-area-inset-bottom));

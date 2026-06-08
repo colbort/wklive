@@ -54,7 +54,7 @@ const { t } = useI18n()
 }
 
 .asset-flow-page--narrow {
-  max-width: 414px;
+  max-width: var(--app-width, 414px);
   margin: 0 auto;
 }
 

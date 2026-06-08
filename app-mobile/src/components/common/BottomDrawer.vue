@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import AppIcon from './AppIcon.vue'
+
 withDefaults(defineProps<{
   modelValue: boolean
   title?: string
@@ -83,7 +85,7 @@ function closeFromBackdrop(enabled: boolean) {
               :aria-label="closeLabel"
               @click="close"
             >
-              ×
+              <AppIcon name="close" class="bottom-drawer__close-icon" />
             </button>
           </header>
 
@@ -123,7 +125,7 @@ function closeFromBackdrop(enabled: boolean) {
   position: relative;
   display: flex;
   flex-direction: column;
-  width: min(100%, 414px);
+  width: min(100%, var(--app-width, 414px));
   max-height: var(--bottom-drawer-max-height);
   padding: 22px 22px calc(18px + env(safe-area-inset-bottom));
   overflow: hidden;

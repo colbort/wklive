@@ -139,7 +139,11 @@ function formatPercent(value: number) {
 .quotes-view--category-pinned .category-strip {
   position: fixed;
   top: 0;
+  left: 50%;
+  right: auto;
   z-index: 80;
+  width: min(100%, var(--app-width, 414px));
+  transform: translateX(-50%);
 }
 
 .category-tab,
