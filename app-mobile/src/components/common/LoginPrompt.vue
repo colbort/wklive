@@ -50,7 +50,7 @@ const { t } = useI18n()
   margin: 0;
   border-bottom: 1px solid var(--border-soft);
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.7rem;
   font-weight: 600;
 }
 
@@ -59,7 +59,7 @@ const { t } = useI18n()
   justify-items: center;
   gap: 22px;
   padding-top: 22px;
-  font-size: 14px;
+  font-size: 0.7rem;
   font-weight: 700;
 }
 
@@ -75,7 +75,7 @@ const { t } = useI18n()
 
 .login-prompt__actions strong {
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.7rem;
   font-weight: 700;
 }
 </style>

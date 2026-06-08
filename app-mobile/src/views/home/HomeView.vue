@@ -251,7 +251,7 @@ const trustFeatures = [
 
 .ave-home-brand strong {
   color: var(--text);
-  font-size: 30px;
+  font-size: 1.5rem;
   font-weight: 800;
   line-height: 1;
 }
@@ -273,7 +273,7 @@ const trustFeatures = [
   background: rgba(29, 32, 44, 0.9);
   color: var(--text);
   font: inherit;
-  font-size: 21px;
+  font-size: 1.05rem;
 }
 
 .ave-home-action__icon {
@@ -334,14 +334,14 @@ const trustFeatures = [
 .ave-hero h1 {
   display: grid;
   gap: 2px;
-  font-size: clamp(38px, 10vw, 42px);
+  font-size: clamp(1.9rem, 10vw, 2.1rem);
   line-height: 1.1;
 }
 
 .ave-hero p {
   margin: 22px 0 0;
   color: var(--text);
-  font-size: clamp(20px, 5.4vw, 23px);
+  font-size: clamp(1rem, 5.4vw, 1.15rem);
   font-weight: 700;
 }
 
@@ -355,7 +355,7 @@ const trustFeatures = [
   border-radius: 999px;
   background: var(--home-green);
   color: var(--text);
-  font-size: 24px;
+  font-size: 1.2rem;
   font-weight: 700;
   line-height: 1;
 }
@@ -365,7 +365,7 @@ const trustFeatures = [
   height: 50px;
   max-width: 68vw;
   margin-top: 24px;
-  font-size: 24px;
+  font-size: 1.2rem;
 }
 
 .ave-hero__portal {
@@ -382,7 +382,7 @@ const trustFeatures = [
 
 .ave-section h2,
 .ave-reward h2 {
-  font-size: clamp(28px, 7.8vw, 32px);
+  font-size: clamp(1.4rem, 7.8vw, 1.6rem);
   line-height: 1.22;
 }
 
@@ -390,7 +390,7 @@ const trustFeatures = [
 .ave-reward > p {
   margin: 12px 0 0;
   color: var(--home-muted);
-  font-size: clamp(16px, 4.3vw, 18px);
+  font-size: clamp(0.8rem, 4.3vw, 0.9rem);
   font-weight: 700;
   line-height: 1.45;
 }
@@ -446,7 +446,7 @@ const trustFeatures = [
 .ave-trust-item h3 {
   margin: 0 0 8px;
   color: var(--text);
-  font-size: clamp(20px, 5.2vw, 22px);
+  font-size: clamp(1rem, 5.2vw, 1.1rem);
   font-weight: 800;
   line-height: 1.18;
 }
@@ -457,7 +457,7 @@ const trustFeatures = [
 .ave-trust-item p {
   margin: 0;
   color: var(--home-muted);
-  font-size: clamp(14px, 3.9vw, 16px);
+  font-size: clamp(0.7rem, 3.9vw, 0.8rem);
   font-weight: 700;
   line-height: 1.42;
 }
@@ -599,12 +599,12 @@ const trustFeatures = [
 .ave-reward h2 {
   max-width: 11ch;
   margin-inline: auto;
-  font-size: clamp(34px, 9.4vw, 39px);
+  font-size: clamp(1.7rem, 9.4vw, 1.95rem);
 }
 
 .ave-reward > p {
   color: var(--text);
-  font-size: 20px;
+  font-size: 1rem;
 }
 
 .ave-reward__image {

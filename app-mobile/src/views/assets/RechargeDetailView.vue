@@ -258,14 +258,14 @@ onMounted(() => {
 }
 
 :deep(.header-title) {
-  font-size: 18px;
+  font-size: 0.9rem;
   font-weight: 800;
 }
 
 .detail-state {
   margin: 72px 0 0;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.7rem;
   font-weight: 800;
   text-align: center;
 }
@@ -300,7 +300,7 @@ onMounted(() => {
   overflow: hidden;
   border-radius: 50%;
   color: var(--text);
-  font-size: 12px;
+  font-size: 0.6rem;
   font-weight: 700;
 }
 
@@ -314,7 +314,7 @@ onMounted(() => {
   min-width: 0;
   overflow: hidden;
   color: var(--text);
-  font-size: 16px;
+  font-size: 0.8rem;
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -327,7 +327,7 @@ onMounted(() => {
   border-radius: 6px;
   background: #444650;
   color: var(--text);
-  font-size: 14px;
+  font-size: 0.7rem;
   font-weight: 600;
   line-height: 1.1;
   text-overflow: ellipsis;
@@ -338,7 +338,7 @@ onMounted(() => {
   justify-self: end;
   padding: 3px 8px;
   border-radius: 999px;
-  font-size: 13px;
+  font-size: 0.65rem;
   font-weight: 700;
 }
 
@@ -378,7 +378,7 @@ onMounted(() => {
 .detail-list dt,
 .detail-list dd {
   margin: 0;
-  font-size: 15px;
+  font-size: 0.75rem;
   font-weight: 600;
   line-height: 1.45;
 }
@@ -421,16 +421,16 @@ onMounted(() => {
   .detail-coin-icon {
     width: 40px;
     height: 40px;
-    font-size: 11px;
+    font-size: 0.55rem;
   }
 
   .detail-head strong {
-    font-size: 15px;
+    font-size: 0.75rem;
   }
 
   .detail-head small,
   .detail-status {
-    font-size: 12px;
+    font-size: 0.6rem;
   }
 
   .detail-list {
@@ -445,7 +445,7 @@ onMounted(() => {
 
   .detail-list dt,
   .detail-list dd {
-    font-size: 14px;
+    font-size: 0.7rem;
   }
 }
 </style>

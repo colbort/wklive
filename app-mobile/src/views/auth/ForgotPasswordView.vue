@@ -280,7 +280,7 @@ function submitReset() {
 
 .auth-content h1 {
   margin: 0 0 78px;
-  font-size: 42px;
+  font-size: 2.1rem;
   line-height: 1;
   font-weight: 900;
   letter-spacing: 0;
@@ -308,7 +308,7 @@ function submitReset() {
   outline: 0;
   background: transparent;
   color: var(--text);
-  font-size: 24px;
+  font-size: 1.2rem;
   font-weight: 800;
 }
 
@@ -378,7 +378,7 @@ function submitReset() {
 .auth-error {
   margin: -14px 0 0;
   color: #ff6666;
-  font-size: 16px;
+  font-size: 0.8rem;
   font-weight: 700;
 }
 
@@ -389,14 +389,14 @@ function submitReset() {
   border-radius: 50px;
   background: #00c313;
   color: var(--text);
-  font-size: 30px;
+  font-size: 1.5rem;
   font-weight: 900;
 }
 
 .login-link {
   justify-self: center;
   color: #00c313;
-  font-size: 26px;
+  font-size: 1.3rem;
   font-weight: 900;
   text-decoration: none;
 }
@@ -413,7 +413,7 @@ function submitReset() {
   border-radius: 48px;
   background: #464750;
   color: var(--text);
-  font-size: 28px;
+  font-size: 1.4rem;
   font-weight: 900;
 }
 
@@ -427,7 +427,7 @@ function submitReset() {
   }
 
   .auth-content h1 {
-    font-size: 38px;
+    font-size: 1.9rem;
   }
 
   .auth-field,
@@ -436,7 +436,7 @@ function submitReset() {
   }
 
   .auth-field input {
-    font-size: 21px;
+    font-size: 1.05rem;
   }
 }
 
@@ -479,7 +479,7 @@ function submitReset() {
 
 .auth-content h1 {
   margin-bottom: 52px;
-  font-size: 34px;
+  font-size: 1.7rem;
 }
 
 .auth-form {
@@ -493,7 +493,7 @@ function submitReset() {
 }
 
 .auth-field input {
-  font-size: 19px;
+  font-size: 0.95rem;
 }
 
 .strength-bars {
@@ -505,11 +505,11 @@ function submitReset() {
   min-height: 76px;
   margin-top: 22px;
   border-radius: 38px;
-  font-size: 24px;
+  font-size: 1.2rem;
 }
 
 .login-link {
-  font-size: 20px;
+  font-size: 1rem;
 }
 
 .verify-sheet {
@@ -520,7 +520,7 @@ function submitReset() {
 .service-button {
   min-height: 74px;
   border-radius: 37px;
-  font-size: 22px;
+  font-size: 1.1rem;
 }
 
 @media (max-width: 390px) {
@@ -539,7 +539,7 @@ function submitReset() {
 
   .auth-content h1 {
     margin-bottom: 42px;
-    font-size: 30px;
+    font-size: 1.5rem;
   }
 
   .auth-form {
@@ -553,12 +553,12 @@ function submitReset() {
   }
 
   .auth-field input {
-    font-size: 17px;
+    font-size: 0.85rem;
   }
 
   .primary-button {
     min-height: 68px;
-    font-size: 21px;
+    font-size: 1.05rem;
   }
 }
 
@@ -618,7 +618,7 @@ function submitReset() {
 
   .auth-content h1 {
     margin-bottom: 74px;
-    font-size: 25px;
+    font-size: 1.25rem;
     font-weight: 800;
     line-height: 1;
   }
@@ -635,7 +635,7 @@ function submitReset() {
   }
 
   .auth-field input {
-    font-size: 17px;
+    font-size: 0.85rem;
     font-weight: 500;
   }
 
@@ -665,13 +665,13 @@ function submitReset() {
     min-height: 60px;
     margin-top: 34px;
     border-radius: 999px;
-    font-size: 20px;
+    font-size: 1rem;
     font-weight: 800;
   }
 
   .login-link {
     margin-top: -4px;
-    font-size: 18px;
+    font-size: 0.9rem;
     font-weight: 700;
   }
 }

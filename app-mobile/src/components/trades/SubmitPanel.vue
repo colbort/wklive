@@ -357,7 +357,10 @@ function confirmRiskSettings() {
     <div class="percent-labels">
       <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
     </div>
-    <div class="buyable"><span>{{ t('trade.canBuy') }}</span><strong>0 USD</strong></div>
+    <div class="buyable">
+      <span>{{ t('trade.canBuy') }}</span
+      ><strong>0 USD</strong>
+    </div>
     <div class="dual-actions">
       <button type="button">{{ t('auth.loginTitle') }}</button>
       <button type="button">{{ t('auth.goRegister') }}</button>
@@ -444,9 +447,13 @@ function confirmRiskSettings() {
       <div class="account-lines">
         <span>{{ t('trade.available') }}</span>
         <strong>{{ availableBalance }} {{ settleAsset }}</strong>
-        <span>{{ t('trade.conversion') }}</span><strong>{{ conversionText }}</strong>
+        <span>{{ t('trade.conversion') }}</span
+        ><strong>{{ conversionText }}</strong>
         <span>{{ t('trade.mode') }}</span>
-        <strong>{{ optionText(selectedMarginMode) }} / {{ isSpotTrade ? t('trade.noLeverage') : `${leverage}X` }}</strong>
+        <strong
+          >{{ optionText(selectedMarginMode) }} /
+          {{ isSpotTrade ? t('trade.noLeverage') : `${leverage}X` }}</strong
+        >
       </div>
 
       <button
@@ -465,7 +472,8 @@ function confirmRiskSettings() {
       <div class="account-lines">
         <span>{{ isSpotTrade ? t('trade.canBuy') : t('trade.canOpenLong') }}</span>
         <strong>{{ longPositionQty }} {{ isSpotTrade ? baseAsset : t('trade.lot') }}</strong>
-        <span>{{ t('trade.margin') }}</span><strong>{{ availableBalance }} {{ settleAsset }}</strong>
+        <span>{{ t('trade.margin') }}</span
+        ><strong>{{ availableBalance }} {{ settleAsset }}</strong>
       </div>
       <button
         class="wide-action wide-action--buy"
@@ -492,7 +500,8 @@ function confirmRiskSettings() {
       <div class="account-lines">
         <span>{{ isSpotTrade ? t('trade.canSell') : t('trade.canOpenShort') }}</span>
         <strong>{{ shortPositionQty }} {{ isSpotTrade ? baseAsset : t('trade.lot') }}</strong>
-        <span>{{ t('trade.margin') }}</span><strong>{{ availableBalance }} {{ settleAsset }}</strong>
+        <span>{{ t('trade.margin') }}</span
+        ><strong>{{ availableBalance }} {{ settleAsset }}</strong>
       </div>
       <button
         class="wide-action wide-action--sell"
@@ -515,7 +524,11 @@ function confirmRiskSettings() {
       :close-label="t('common.close')"
       :max-height="selectionSheet === 'risk' ? '88dvh' : '72dvh'"
       :z-index="80"
-      @update:model-value="value => { if (!value) closeSelectionSheet() }"
+      @update:model-value="
+        (value) => {
+          if (!value) closeSelectionSheet()
+        }
+      "
     >
       <div
         class="selection-sheet-content"
@@ -566,7 +579,7 @@ function confirmRiskSettings() {
                 inputmode="decimal"
                 :placeholder="t('trade.price')"
                 @input="updateRiskTakeProfitPrice(inputValue($event))"
-              >
+              />
               <strong>{{ settleAsset }}</strong>
             </label>
             <label class="risk-field">
@@ -575,7 +588,7 @@ function confirmRiskSettings() {
                 inputmode="decimal"
                 :placeholder="t('trade.risePercent')"
                 @input="updateRiskTakeProfitPercent(inputValue($event))"
-              >
+              />
               <strong>%</strong>
             </label>
           </div>
@@ -592,7 +605,7 @@ function confirmRiskSettings() {
                 inputmode="decimal"
                 :placeholder="t('trade.price')"
                 @input="updateRiskStopLossPrice(inputValue($event))"
-              >
+              />
               <strong>{{ settleAsset }}</strong>
             </label>
             <label class="risk-field">
@@ -601,7 +614,7 @@ function confirmRiskSettings() {
                 inputmode="decimal"
                 :placeholder="t('trade.fallPercent')"
                 @input="updateRiskStopLossPercent(inputValue($event))"
-              >
+              />
               <strong>%</strong>
             </label>
           </div>
@@ -657,7 +670,7 @@ function confirmRiskSettings() {
 
 .mode-switch button {
   color: var(--muted);
-  font-size: 16px;
+  font-size: 0.8rem;
   font-weight: 600;
 }
 
@@ -691,7 +704,7 @@ function confirmRiskSettings() {
 .form-row input {
   border: 0;
   outline: 0;
-  font-size: 16px;
+  font-size: 0.8rem;
 }
 
 .picker-trigger {
@@ -730,7 +743,7 @@ function confirmRiskSettings() {
   background: #3d3e47;
   color: var(--text);
   font: inherit;
-  font-size: clamp(21px, 3.9vw, 28px);
+  font-size: clamp(1.05rem, 3.9vw, 1.4rem);
   font-weight: 800;
 }
 
@@ -761,7 +774,7 @@ function confirmRiskSettings() {
   align-items: center;
   gap: 12px;
   color: var(--text);
-  font-size: clamp(18px, 2.9vw, 20px);
+  font-size: clamp(0.9rem, 2.9vw, 1rem);
   font-weight: 700;
 }
 
@@ -822,7 +835,7 @@ function confirmRiskSettings() {
   background: transparent;
   color: var(--text);
   font: inherit;
-  font-size: clamp(17px, 2.8vw, 20px);
+  font-size: clamp(0.85rem, 2.8vw, 1rem);
   font-weight: 600;
 }
 
@@ -834,7 +847,7 @@ function confirmRiskSettings() {
 .risk-field strong {
   margin-left: clamp(8px, 1.8vw, 12px);
   color: var(--text);
-  font-size: clamp(17px, 2.8vw, 20px);
+  font-size: clamp(0.85rem, 2.8vw, 1rem);
   font-weight: 700;
 }
 
@@ -847,7 +860,7 @@ function confirmRiskSettings() {
   display: grid;
   gap: clamp(16px, 2.6vw, 18px);
   color: var(--text);
-  font-size: clamp(18px, 2.9vw, 20px);
+  font-size: clamp(0.9rem, 2.9vw, 1rem);
   font-weight: 700;
 }
 
@@ -866,7 +879,7 @@ function confirmRiskSettings() {
   background: var(--accent);
   color: var(--text);
   font: inherit;
-  font-size: clamp(19px, 2.9vw, 21px);
+  font-size: clamp(0.95rem, 2.9vw, 1.05rem);
   font-weight: 700;
 }
 
@@ -886,7 +899,7 @@ function confirmRiskSettings() {
   align-items: center;
   margin-bottom: 12px;
   color: var(--muted);
-  font-size: 16px;
+  font-size: 0.8rem;
 }
 
 .trade-input--field input {
@@ -956,7 +969,7 @@ function confirmRiskSettings() {
   justify-content: space-between;
   margin-bottom: 14px;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 0.65rem;
 }
 
 .percent-labels button {
@@ -978,7 +991,7 @@ function confirmRiskSettings() {
   gap: 7px 12px;
   margin-bottom: 14px;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 0.65rem;
 }
 
 .account-lines strong {
@@ -993,7 +1006,7 @@ function confirmRiskSettings() {
   margin: 7px 0 14px;
   padding: 0;
   color: var(--text);
-  font-size: 15px;
+  font-size: 0.75rem;
   font-weight: 600;
 }
 
@@ -1037,7 +1050,7 @@ function confirmRiskSettings() {
   border-radius: 12px;
   background: #181b25;
   color: var(--text);
-  font-size: 15px;
+  font-size: 0.75rem;
   font-weight: 700;
 }
 
@@ -1062,7 +1075,7 @@ function confirmRiskSettings() {
 .order-message {
   margin: -4px 0 12px;
   color: #10d27a;
-  font-size: 13px;
+  font-size: 0.65rem;
   line-height: 1.45;
 }
 
@@ -1097,7 +1110,7 @@ function confirmRiskSettings() {
 }
 
 .stock-alert strong {
-  font-size: 15px;
+  font-size: 0.75rem;
   font-weight: 500;
 }
 
@@ -1110,7 +1123,7 @@ function confirmRiskSettings() {
 .inner-tabs button {
   position: relative;
   color: var(--muted);
-  font-size: 17px;
+  font-size: 0.85rem;
 }
 
 .inner-tabs button.active {
@@ -1130,7 +1143,7 @@ function confirmRiskSettings() {
 
 .option-panel h3 {
   margin: 24px 0 14px;
-  font-size: 17px;
+  font-size: 0.85rem;
   font-weight: 500;
 }
 
@@ -1176,12 +1189,12 @@ function confirmRiskSettings() {
 }
 
 .duration-grid strong {
-  font-size: 19px;
+  font-size: 0.95rem;
   font-weight: 600;
 }
 
 .duration-grid span {
-  font-size: 13px;
+  font-size: 0.65rem;
 }
 
 .buyable {
@@ -1189,7 +1202,7 @@ function confirmRiskSettings() {
   grid-template-columns: 1fr auto;
   margin-bottom: 22px;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.7rem;
 }
 
 .buyable strong {
@@ -1207,7 +1220,7 @@ function confirmRiskSettings() {
   .form-row select,
   .form-row input,
   .trade-input {
-    font-size: 14px;
+    font-size: 0.7rem;
   }
 
   .form-row {
@@ -1222,11 +1235,11 @@ function confirmRiskSettings() {
 
   .percent-labels,
   .account-lines {
-    font-size: 12px;
+    font-size: 0.6rem;
   }
 
   .risk-trigger {
-    font-size: 14px;
+    font-size: 0.7rem;
   }
 }
 </style>

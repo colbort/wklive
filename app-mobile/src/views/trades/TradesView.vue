@@ -865,10 +865,7 @@ async function cancelTradeOrder(order: TradeOrder) {
 </script>
 
 <template>
-  <CommonPage
-    :show-back="false"
-    :nav-height="50"
-  >
+  <CommonPage :show-back="false" :nav-height="50">
     <template #tabbar>
       <nav class="trade-category-tabbar" :aria-label="t('market.category')">
         <button
@@ -964,7 +961,7 @@ async function cancelTradeOrder(order: TradeOrder) {
   gap: var(--menu-gap);
   width: 100%;
   height: 2.5rem;
-  padding: .5rem var(--menu-padding-x) .4rem;
+  padding: 0.5rem var(--menu-padding-x) 0.4rem;
   overflow-x: auto;
   overflow-y: hidden;
   background: var(--page-bg);
@@ -986,9 +983,9 @@ async function cancelTradeOrder(order: TradeOrder) {
 
 .trade-category-tabbar__item--active::after {
   position: absolute;
-  right: .1rem;
-  bottom: -.4rem;
-  left: .1rem;
+  right: 0.1rem;
+  bottom: -0.4rem;
+  left: 0.1rem;
   content: '';
 }
 

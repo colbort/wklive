@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, ref } from 'vue'
 
 import LoginPrompt from '@/components/common/LoginPrompt.vue'
@@ -7,23 +7,26 @@ import type { TradeOrder, TradeSymbol } from '@/types/trade'
 
 type OrderTab = 'open' | 'history'
 
-const props = withDefaults(defineProps<{
-  showPremarket?: boolean
-  orders?: TradeOrder[]
-  loading?: boolean
-  error?: string
-  isLoggedIn?: boolean
-  selectedTradeSymbol?: TradeSymbol | null
-  cancelingOrderId?: number | null
-}>(), {
-  showPremarket: false,
-  orders: () => [],
-  loading: false,
-  error: '',
-  isLoggedIn: false,
-  selectedTradeSymbol: null,
-  cancelingOrderId: null,
-})
+const props = withDefaults(
+  defineProps<{
+    showPremarket?: boolean
+    orders?: TradeOrder[]
+    loading?: boolean
+    error?: string
+    isLoggedIn?: boolean
+    selectedTradeSymbol?: TradeSymbol | null
+    cancelingOrderId?: number | null
+  }>(),
+  {
+    showPremarket: false,
+    orders: () => [],
+    loading: false,
+    error: '',
+    isLoggedIn: false,
+    selectedTradeSymbol: null,
+    cancelingOrderId: null,
+  },
+)
 
 const emit = defineEmits<{
   (e: 'cancel-order', order: TradeOrder): void
@@ -79,22 +82,44 @@ function formatTime(value: number) {
 <template>
   <section class="trade-orders-panel">
     <div class="trade-orders-panel__nav">
-      <button :class="{ active: activeTab === 'open' }" type="button" @click="activeTab = 'open'">{{ t('trade.openOrders') }}</button>
-      <button :class="{ active: activeTab === 'history' }" type="button" @click="activeTab = 'history'">{{ t('trade.historyOrders') }}</button>
+      <button :class="{ active: activeTab === 'open' }" type="button" @click="activeTab = 'open'">
+        {{ t('trade.openOrders') }}
+      </button>
+      <button
+        :class="{ active: activeTab === 'history' }"
+        type="button"
+        @click="activeTab = 'history'"
+      >
+        {{ t('trade.historyOrders') }}
+      </button>
       <button v-if="showPremarket" type="button">{{ t('trade.premarketOrders') }}</button>
-      <button class="trade-orders-panel__refresh" type="button" @click="emit('refresh')">{{ t('trade.refresh') }}</button>
+      <button class="trade-orders-panel__refresh" type="button" @click="emit('refresh')">
+        {{ t('trade.refresh') }}
+      </button>
     </div>
 
     <LoginPrompt v-if="!isLoggedIn" :action-text="t('assets.viewData')" compact />
-    <p v-else-if="!selectedTradeSymbol" class="trade-orders-panel__state">{{ t('trade.unavailable') }}</p>
+    <p v-else-if="!selectedTradeSymbol" class="trade-orders-panel__state">
+      {{ t('trade.unavailable') }}
+    </p>
     <p v-else-if="loading" class="trade-orders-panel__state">{{ t('trade.orderLoading') }}</p>
-    <p v-else-if="error" class="trade-orders-panel__state trade-orders-panel__state--error">{{ error }}</p>
-    <p v-else-if="!filteredOrders.length" class="trade-orders-panel__state">{{ t('common.none') }}</p>
+    <p v-else-if="error" class="trade-orders-panel__state trade-orders-panel__state--error">
+      {{ error }}
+    </p>
+    <p v-else-if="!filteredOrders.length" class="trade-orders-panel__state">
+      {{ t('common.none') }}
+    </p>
 
     <ul v-else class="trade-orders-panel__list">
-      <li v-for="order in filteredOrders" :key="order.id || order.orderNo" class="trade-orders-panel__item">
+      <li
+        v-for="order in filteredOrders"
+        :key="order.id || order.orderNo"
+        class="trade-orders-panel__item"
+      >
         <div>
-          <strong>{{ selectedTradeSymbol?.displaySymbol || selectedTradeSymbol?.symbol || '--' }}</strong>
+          <strong>{{
+            selectedTradeSymbol?.displaySymbol || selectedTradeSymbol?.symbol || '--'
+          }}</strong>
           <span>{{ orderSideText(order) }} / {{ orderTypeText(order.orderType) }}</span>
         </div>
         <div>
@@ -134,13 +159,13 @@ button {
   background: transparent;
   color: var(--muted);
   font: inherit;
-  font-size: 17px;
+  font-size: 0.85rem;
   font-weight: 700;
 }
 
 .trade-orders-panel__refresh {
   margin-left: auto;
-  font-size: 14px;
+  font-size: 0.7rem;
 }
 
 button.active {
@@ -164,7 +189,7 @@ button.active::after {
   margin: 0;
   place-items: center;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.7rem;
 }
 
 .trade-orders-panel__state--error {
@@ -205,19 +230,19 @@ button.active::after {
 
 .trade-orders-panel__item strong {
   color: var(--text);
-  font-size: 13px;
+  font-size: 0.65rem;
   font-weight: 600;
 }
 
 .trade-orders-panel__item span {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 0.6rem;
 }
 
 .trade-orders-panel__item button {
   padding: 0;
   color: var(--accent);
-  font-size: 13px;
+  font-size: 0.65rem;
 }
 
 .trade-orders-panel__item button:disabled {
@@ -230,7 +255,7 @@ button.active::after {
   }
 
   button {
-    font-size: 15px;
+    font-size: 0.75rem;
   }
 
   .trade-orders-panel__item {

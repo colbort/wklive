@@ -94,7 +94,7 @@ function selectLanguage(option: { locale?: AppLocale }) {
 .language-header h1 {
   overflow: hidden;
   margin: 0;
-  font-size: 28px;
+  font-size: 1.4rem;
   font-weight: 800;
   line-height: 1.2;
   text-align: center;
@@ -155,14 +155,14 @@ function selectLanguage(option: { locale?: AppLocale }) {
   place-items: center;
   overflow: hidden;
   border-radius: 50%;
-  font-size: 38px;
+  font-size: 1.9rem;
   line-height: 1;
 }
 
 .language-row strong {
   min-width: 0;
   overflow: hidden;
-  font-size: 22px;
+  font-size: 1.1rem;
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -200,7 +200,7 @@ function selectLanguage(option: { locale?: AppLocale }) {
   }
 
   .language-header h1 {
-    font-size: 25px;
+    font-size: 1.25rem;
     font-weight: 800;
   }
 
@@ -237,11 +237,11 @@ function selectLanguage(option: { locale?: AppLocale }) {
   .language-flag {
     width: 32px;
     height: 32px;
-    font-size: 30px;
+    font-size: 1.5rem;
   }
 
   .language-row strong {
-    font-size: 18px;
+    font-size: 0.9rem;
     font-weight: 500;
   }
 

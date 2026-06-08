@@ -10,6 +10,9 @@ defineProps<{
     | 'eye-off'
     | 'close-circle'
     | 'search'
+    | 'pause'
+    | 'star'
+    | 'chevron-up'
     | 'close'
     | 'chevron-down'
     | 'id-card'
@@ -69,6 +72,20 @@ defineProps<{
 
     <template v-else-if="name === 'search'">
       <path d="M10.75 18.5a7.25 7.25 0 1 0 0-14.5 7.25 7.25 0 0 0 0 14.5ZM16 16l4 4" />
+    </template>
+
+    <template v-else-if="name === 'pause'">
+      <path class="app-icon__solid" d="M7 5h3.5v14H7V5Zm6.5 0H17v14h-3.5V5Z" />
+    </template>
+
+    <template v-else-if="name === 'star'">
+      <path
+        d="m12 3.5 2.55 5.16 5.7.83-4.12 4.02.97 5.68L12 16.5l-5.1 2.69.97-5.68-4.12-4.02 5.7-.83L12 3.5Z"
+      />
+    </template>
+
+    <template v-else-if="name === 'chevron-up'">
+      <path d="m6.5 15 5.5-5.5 5.5 5.5" />
     </template>
 
     <template v-else-if="name === 'close'">
@@ -260,6 +277,11 @@ path {
 .app-icon__fill {
   fill: #c5c8d0;
   stroke: #c5c8d0;
+}
+
+.app-icon__solid {
+  fill: currentColor;
+  stroke: none;
 }
 
 .app-icon__cut {

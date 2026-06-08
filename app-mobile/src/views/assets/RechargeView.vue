@@ -308,95 +308,99 @@ onBeforeUnmount(() => {
   >
     <section class="asset-flow-content">
       <template v-if="step === 'select'">
-      <h2>{{ t('assetFlow.paymentMethod') }}</h2>
-      <AssetCoinPicker
-        :coin="selectedCoin"
-        :config="selectedConfig || undefined"
-        :chain="selectedChain"
-        @click="coinSheetVisible = true"
-      />
-      <p v-if="pageError" class="state-text state-text--error">
-        {{ pageError }}
-      </p>
-      <AssetPrimaryButton
-        class="recharge-button"
-        :label="addressLoading ? t('assetFlow.getting') : t('assetFlow.recharge')"
-        @click="startRecharge"
-      />
-      </template>
-
-      <template v-else>
-      <div class="detail-coin">
+        <h2>{{ t('assetFlow.paymentMethod') }}</h2>
         <AssetCoinPicker
           :coin="selectedCoin"
           :config="selectedConfig || undefined"
           :chain="selectedChain"
           @click="coinSheetVisible = true"
         />
-      </div>
+        <p v-if="pageError" class="state-text state-text--error">
+          {{ pageError }}
+        </p>
+        <AssetPrimaryButton
+          class="recharge-button"
+          :label="addressLoading ? t('assetFlow.getting') : t('assetFlow.recharge')"
+          @click="startRecharge"
+        />
+      </template>
 
-      <div class="qr-card">
-        <img v-if="qrImageUrl" :src="qrImageUrl" :alt="t('assetFlow.qrAlt')">
-      </div>
+      <template v-else>
+        <div class="detail-coin">
+          <AssetCoinPicker
+            :coin="selectedCoin"
+            :config="selectedConfig || undefined"
+            :chain="selectedChain"
+            @click="coinSheetVisible = true"
+          />
+        </div>
 
-      <div class="address-row">
-        <strong>{{ rechargeAddress?.address }}</strong>
-        <button type="button" @click="copyText(rechargeAddress?.address || '')">
-          {{ t('common.copy') }}
-        </button>
-      </div>
-      <p v-if="addressSecondsLeft > 0" class="address-countdown">
-        {{ t('assetFlow.addressExpires', { time: addressCountdownText }) }}
-      </p>
-      <div v-if="rechargeAddress?.memo" class="memo-row">
-        <span>Memo / Tag</span>
-        <strong>{{ rechargeAddress.memo }}</strong>
-        <button type="button" @click="copyText(rechargeAddress.memo)">
-          {{ t('common.copy') }}
-        </button>
-      </div>
+        <div class="qr-card">
+          <img v-if="qrImageUrl" :src="qrImageUrl" :alt="t('assetFlow.qrAlt')">
+        </div>
 
-      <div class="divider" />
+        <div class="address-row">
+          <strong>{{ rechargeAddress?.address }}</strong>
+          <button type="button" @click="copyText(rechargeAddress?.address || '')">
+            {{ t('common.copy') }}
+          </button>
+        </div>
+        <p v-if="addressSecondsLeft > 0" class="address-countdown">
+          {{ t('assetFlow.addressExpires', { time: addressCountdownText }) }}
+        </p>
+        <div v-if="rechargeAddress?.memo" class="memo-row">
+          <span>Memo / Tag</span>
+          <strong>{{ rechargeAddress.memo }}</strong>
+          <button type="button" @click="copyText(rechargeAddress.memo)">
+            {{ t('common.copy') }}
+          </button>
+        </div>
 
-      <section class="field-block">
-        <h2>{{ t('assetFlow.voucher') }}</h2>
-        <button type="button" class="voucher-upload" @click="fileInputRef?.click()">
-          <span class="voucher-upload__thumb">
-            <img v-if="voucherPreviewUrl" :src="voucherPreviewUrl" :alt="t('assetFlow.voucher')">
-            <b v-else>+</b>
-          </span>
-          <strong>{{
-            voucherPreviewUrl ? t('assetFlow.changeVoucher') : t('assetFlow.uploadVoucher')
-          }}</strong>
-        </button>
-        <input
-          ref="fileInputRef"
-          class="file-input"
-          type="file"
-          accept="image/*"
-          @change="handleVoucherChange"
-        >
-      </section>
+        <div class="divider" />
 
-      <section class="field-block">
-        <h2>{{ t('assetFlow.rechargeAmount') }}</h2>
-        <label class="amount-input">
-          <input v-model="amount" inputmode="decimal">
-          <span>{{ selectedCoin }}</span>
-        </label>
-      </section>
+        <section class="field-block">
+          <h2>{{ t('assetFlow.voucher') }}</h2>
+          <button type="button" class="voucher-upload" @click="fileInputRef?.click()">
+            <span class="voucher-upload__thumb">
+              <img
+                v-if="voucherPreviewUrl"
+                :src="voucherPreviewUrl"
+                :alt="t('assetFlow.voucher')"
+              >
+              <b v-else>+</b>
+            </span>
+            <strong>{{
+              voucherPreviewUrl ? t('assetFlow.changeVoucher') : t('assetFlow.uploadVoucher')
+            }}</strong>
+          </button>
+          <input
+            ref="fileInputRef"
+            class="file-input"
+            type="file"
+            accept="image/*"
+            @change="handleVoucherChange"
+          >
+        </section>
 
-      <p v-if="pageError" class="state-text state-text--error">
-        {{ pageError }}
-      </p>
-      <p v-if="copyTip" class="copy-tip">
-        {{ copyTip }}
-      </p>
-      <AssetPrimaryButton
-        class="complete-button"
-        :label="submitLoading ? t('common.submitting') : t('assetFlow.complete')"
-        @click="completeRecharge"
-      />
+        <section class="field-block">
+          <h2>{{ t('assetFlow.rechargeAmount') }}</h2>
+          <label class="amount-input">
+            <input v-model="amount" inputmode="decimal">
+            <span>{{ selectedCoin }}</span>
+          </label>
+        </section>
+
+        <p v-if="pageError" class="state-text state-text--error">
+          {{ pageError }}
+        </p>
+        <p v-if="copyTip" class="copy-tip">
+          {{ copyTip }}
+        </p>
+        <AssetPrimaryButton
+          class="complete-button"
+          :label="submitLoading ? t('common.submitting') : t('assetFlow.complete')"
+          @click="completeRecharge"
+        />
       </template>
     </section>
 
@@ -441,19 +445,19 @@ input {
 }
 
 :deep(.header-title) {
-  font-size: 18px;
+  font-size: 0.9rem;
   font-weight: 800;
 }
 
 :deep(.header-right) {
   right: 18px;
   color: var(--text);
-  font-size: 14px;
+  font-size: 0.7rem;
 }
 
 h2 {
   margin: 0 0 12px;
-  font-size: 14px;
+  font-size: 0.7rem;
   font-weight: 700;
 }
 
@@ -465,13 +469,13 @@ h2 {
 .complete-button {
   min-height: 48px;
   border-radius: 14px;
-  font-size: 16px;
+  font-size: 0.8rem;
 }
 
 .state-text {
   margin: 14px 0 0;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 0.65rem;
   line-height: 1.6;
 }
 
@@ -496,7 +500,7 @@ h2 {
 }
 
 .detail-coin :deep(.asset-picker strong) {
-  font-size: 15px;
+  font-size: 0.75rem;
 }
 
 .qr-card {
@@ -532,7 +536,7 @@ h2 {
   flex: 1;
   overflow-wrap: anywhere;
   color: var(--text);
-  font-size: 14px;
+  font-size: 0.7rem;
   line-height: 1.35;
 }
 
@@ -544,14 +548,14 @@ h2 {
   border: 1px solid var(--accent);
   border-radius: 999px;
   color: var(--accent);
-  font-size: 14px;
+  font-size: 0.7rem;
   font-weight: 800;
 }
 
 .address-countdown {
   margin: 10px 0 0;
   color: var(--warning);
-  font-size: 12px;
+  font-size: 0.6rem;
   font-weight: 800;
   text-align: center;
 }
@@ -567,7 +571,7 @@ h2 {
 .memo-row span {
   grid-column: 1 / -1;
   color: var(--warning);
-  font-size: 12px;
+  font-size: 0.6rem;
   font-weight: 800;
 }
 
@@ -586,7 +590,7 @@ h2 {
   align-items: center;
   gap: 16px;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.7rem;
   font-weight: 800;
   text-align: left;
 }
@@ -603,7 +607,7 @@ h2 {
 }
 
 .voucher-upload__thumb b {
-  font-size: 40px;
+  font-size: 2rem;
   font-weight: 300;
   line-height: 1;
 }
@@ -619,7 +623,7 @@ h2 {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 14px;
+  font-size: 0.7rem;
   font-weight: 800;
 }
 
@@ -635,19 +639,19 @@ h2 {
 .amount-input input {
   min-width: 0;
   flex: 1;
-  font-size: 20px;
+  font-size: 1rem;
   font-weight: 800;
 }
 
 .amount-input span {
-  font-size: 15px;
+  font-size: 0.75rem;
   font-weight: 800;
 }
 
 .copy-tip {
   margin: -8px 0 18px;
   color: var(--accent);
-  font-size: 13px;
+  font-size: 0.65rem;
   font-weight: 800;
   text-align: center;
 }

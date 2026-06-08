@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import type { AssetCoinConfig } from '@/types/asset'
 
 const props = defineProps<{
@@ -7,7 +7,9 @@ const props = defineProps<{
 }>()
 
 function coinIconText() {
-  return (props.config?.iconText || props.config?.symbol || props.coin || '?').slice(0, 3).toUpperCase()
+  return (props.config?.iconText || props.config?.symbol || props.coin || '?')
+    .slice(0, 3)
+    .toUpperCase()
 }
 </script>
 
@@ -27,7 +29,7 @@ function coinIconText() {
   overflow: hidden;
   border-radius: 50%;
   color: var(--text);
-  font-size: 9px;
+  font-size: 0.45rem;
   font-weight: 800;
 }
 

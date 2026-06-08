@@ -1,6 +1,7 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import { useI18n } from '@/i18n'
 import type { MarketTopTab, MarketTopTabItem } from './types'
+import AppIcon from '../common/AppIcon.vue'
 
 defineProps<{
   tabs: MarketTopTabItem[]
@@ -37,10 +38,7 @@ const { t } = useI18n()
         {{ t(tab.label) }}
       </button>
     </nav>
-
-    <button type="button" class="search-button" :aria-label="t('common.search')">
-      <span />
-    </button>
+    <AppIcon name="search" class="search-button" />
   </header>
 </template>
 
@@ -53,9 +51,7 @@ const { t } = useI18n()
   box-sizing: border-box;
   max-height: calc(74px * (1 - var(--market-top-collapse, 0)));
   overflow: hidden;
-  padding:
-    calc(16px * (1 - var(--market-top-collapse, 0)))
-    28px
+  padding: calc(16px * (1 - var(--market-top-collapse, 0))) 28px
     calc(8px * (1 - var(--market-top-collapse, 0)));
   min-height: calc(64px * (1 - var(--market-top-collapse, 0)));
   background: var(--page-bg);
@@ -86,48 +82,21 @@ const { t } = useI18n()
 
 .top-tab {
   position: relative;
-  padding: .2rem 0 .45rem;
+  padding: 0.2rem 0 0.45rem;
   line-height: 1.2;
 }
 
 .top-tab--active::after {
   position: absolute;
-  right: .15rem;
+  right: 0.15rem;
   bottom: 0;
-  left: .15rem;
+  left: 0.15rem;
   content: '';
 }
 
 .search-button {
-  display: grid;
-  flex: 0 0 auto;
-  place-items: center;
-  width: 46px;
-  height: 46px;
-  border: 0;
-  border-radius: 999px;
-  background: #242631;
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
-}
-
-.search-button span {
-  width: 17px;
-  height: 17px;
-  border: 2px solid #fff;
-  border-radius: 999px;
-}
-
-.search-button span::after {
-  display: block;
-  width: 8px;
-  height: 2px;
-  margin: 13px 0 0 13px;
-  transform: rotate(45deg);
-  border-radius: 999px;
-  background: #fff;
-  content: '';
+  width: 24px;
+  height: 24px;
 }
 
 @media (max-width: 390px) {
@@ -138,11 +107,6 @@ const { t } = useI18n()
 
   .top-tabs {
     gap: var(--menu-gap);
-  }
-
-  .search-button {
-    width: 44px;
-    height: 44px;
   }
 }
 </style>

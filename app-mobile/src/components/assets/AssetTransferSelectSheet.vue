@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 
 import AssetCoinIcon from '@/components/assets/AssetCoinIcon.vue'
@@ -7,22 +7,25 @@ import { useI18n } from '@/i18n'
 import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
 import { formatAssetMinorAmount } from '@/utils/assetAmount'
 
-const props = withDefaults(defineProps<{
-  title: string
-  modelValue: boolean
-  source?: 'assets' | 'configs'
-  excludedWalletType?: number
-  excludedCoin?: string
-  walletTypes: Array<{ value: number; label: string }>
-  selectedWalletType: number
-  selectedCoin: string
-  assets: AssetUserAsset[]
-  configs: AssetCoinConfig[]
-}>(), {
-  source: 'assets',
-  excludedWalletType: 0,
-  excludedCoin: '',
-})
+const props = withDefaults(
+  defineProps<{
+    title: string
+    modelValue: boolean
+    source?: 'assets' | 'configs'
+    excludedWalletType?: number
+    excludedCoin?: string
+    walletTypes: Array<{ value: number; label: string }>
+    selectedWalletType: number
+    selectedCoin: string
+    assets: AssetUserAsset[]
+    configs: AssetCoinConfig[]
+  }>(),
+  {
+    source: 'assets',
+    excludedWalletType: 0,
+    excludedCoin: '',
+  },
+)
 
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
@@ -46,7 +49,9 @@ function isExcludedCoin(coin: string) {
 }
 
 const coins = computed(() => {
-  const enabledConfigs = props.configs.filter((config) => config.walletType === activeWalletType.value)
+  const enabledConfigs = props.configs.filter(
+    (config) => config.walletType === activeWalletType.value,
+  )
   const configMap = new Map<string, AssetCoinConfig>()
   enabledConfigs.forEach((config) => {
     const key = coinKey(config.coin)
@@ -154,7 +159,9 @@ function selectCoin(coin: string) {
       >
         <AssetCoinIcon :coin="row.coin" :config="row.config" />
         <strong>{{ row.coin }}</strong>
-        <span>{{ row.amountLabel }} <b>{{ row.availableAmount }}</b></span>
+        <span
+          >{{ row.amountLabel }} <b>{{ row.availableAmount }}</b></span
+        >
         <em v-if="activeWalletType === selectedWalletType && row.coin === selectedCoin">✓</em>
       </button>
       <p v-if="!coins.length" class="asset-select-empty">{{ t('assets.noCoins') }}</p>
@@ -179,7 +186,7 @@ input {
 
 .asset-select-group h3 {
   margin: 0;
-  font-size: 17px;
+  font-size: 0.85rem;
   font-weight: 800;
 }
 
@@ -193,7 +200,7 @@ input {
   min-height: 54px;
   border-radius: 18px;
   background: #41434d;
-  font-size: 18px;
+  font-size: 0.9rem;
   font-weight: 800;
 }
 
@@ -213,13 +220,13 @@ input {
 
 .asset-select-search span {
   color: var(--text);
-  font-size: 26px;
+  font-size: 1.3rem;
 }
 
 .asset-select-search input {
   min-width: 0;
   outline: 0;
-  font-size: 17px;
+  font-size: 0.85rem;
 }
 
 .asset-select-search input::placeholder {
@@ -243,21 +250,21 @@ input {
 }
 
 .asset-select-row strong {
-  font-size: 18px;
+  font-size: 0.9rem;
 }
 
 .asset-select-row span {
   color: var(--text);
-  font-size: 15px;
+  font-size: 0.75rem;
 }
 
 .asset-select-row b {
-  font-size: 19px;
+  font-size: 0.95rem;
 }
 
 .asset-select-row em {
   color: var(--accent);
-  font-size: 22px;
+  font-size: 1.1rem;
   font-style: normal;
   font-weight: 800;
   text-align: right;
@@ -266,7 +273,7 @@ input {
 .asset-select-empty {
   margin: 26px;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.7rem;
   text-align: center;
 }
 </style>

@@ -1,26 +1,29 @@
 <script setup lang="ts">
 import AppIcon from './AppIcon.vue'
 
-withDefaults(defineProps<{
-  modelValue: boolean
-  title?: string
-  ariaLabel?: string
-  showClose?: boolean
-  showHandle?: boolean
-  closeOnBackdrop?: boolean
-  closeLabel?: string
-  maxHeight?: string
-  zIndex?: number
-}>(), {
-  title: '',
-  ariaLabel: '',
-  showClose: true,
-  showHandle: true,
-  closeOnBackdrop: true,
-  closeLabel: '关闭',
-  maxHeight: '72dvh',
-  zIndex: 1000,
-})
+withDefaults(
+  defineProps<{
+    modelValue: boolean
+    title?: string
+    ariaLabel?: string
+    showClose?: boolean
+    showHandle?: boolean
+    closeOnBackdrop?: boolean
+    closeLabel?: string
+    maxHeight?: string
+    zIndex?: number
+  }>(),
+  {
+    title: '',
+    ariaLabel: '',
+    showClose: true,
+    showHandle: true,
+    closeOnBackdrop: true,
+    closeLabel: '关闭',
+    maxHeight: '72dvh',
+    zIndex: 1000,
+  },
+)
 
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
@@ -62,21 +65,10 @@ function closeFromBackdrop(enabled: boolean) {
           aria-modal="true"
           :aria-label="ariaLabel || title"
         >
-          <span
-            v-if="showHandle"
-            class="bottom-drawer__handle"
-            aria-hidden="true"
-          />
+          <span v-if="showHandle" class="bottom-drawer__handle" aria-hidden="true" />
 
-          <slot
-            v-if="$slots.header"
-            name="header"
-            :close="close"
-          />
-          <header
-            v-else-if="title || showClose"
-            class="bottom-drawer__header"
-          >
+          <slot v-if="$slots.header" name="header" :close="close" />
+          <header v-else-if="title || showClose" class="bottom-drawer__header">
             <h2 v-if="title">{{ title }}</h2>
             <button
               v-if="showClose"
@@ -93,14 +85,8 @@ function closeFromBackdrop(enabled: boolean) {
             <slot :close="close" />
           </div>
 
-          <footer
-            v-if="$slots.footer"
-            class="bottom-drawer__footer"
-          >
-            <slot
-              name="footer"
-              :close="close"
-            />
+          <footer v-if="$slots.footer" class="bottom-drawer__footer">
+            <slot name="footer" :close="close" />
           </footer>
         </section>
       </div>
@@ -127,7 +113,7 @@ function closeFromBackdrop(enabled: boolean) {
   flex-direction: column;
   width: min(100%, var(--app-width, 414px));
   max-height: var(--bottom-drawer-max-height);
-  padding: 22px 22px calc(18px + env(safe-area-inset-bottom));
+  padding: 12px 22px calc(18px + env(safe-area-inset-bottom));
   overflow: hidden;
   border-radius: 28px 28px 0 0;
   background: var(--sheet-bg);
@@ -142,7 +128,7 @@ function closeFromBackdrop(enabled: boolean) {
   flex: 0 0 auto;
   width: 54px;
   height: 5px;
-  margin: 0 auto 22px;
+  margin: 0 auto 12px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.52);
 }
@@ -154,13 +140,12 @@ function closeFromBackdrop(enabled: boolean) {
   justify-content: center;
   flex: 0 0 auto;
   min-height: 42px;
-  margin-bottom: 10px;
 }
 
 .bottom-drawer__header h2 {
   margin: 0;
   color: var(--text);
-  font-size: 22px;
+  font-size: 1.1rem;
   font-weight: 700;
   line-height: 1.2;
   text-align: center;
@@ -177,7 +162,7 @@ function closeFromBackdrop(enabled: boolean) {
   background: transparent;
   color: var(--text);
   font: inherit;
-  font-size: 31px;
+  font-size: 1.55rem;
   line-height: 1;
   cursor: pointer;
 }

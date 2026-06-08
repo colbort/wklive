@@ -105,7 +105,7 @@ function handleRowClick(key: string) {
 .security-header h1 {
   margin: 0;
   text-align: center;
-  font-size: 24px;
+  font-size: 1.2rem;
   font-weight: 800;
   letter-spacing: 0;
 }
@@ -149,7 +149,7 @@ function handleRowClick(key: string) {
 .security-row span {
   min-width: 0;
   overflow: hidden;
-  font-size: 19px;
+  font-size: 0.95rem;
   font-weight: 800;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -176,7 +176,7 @@ function handleRowClick(key: string) {
   }
 
   .security-header h1 {
-    font-size: 22px;
+    font-size: 1.1rem;
   }
 
   .back-button {
@@ -195,7 +195,7 @@ function handleRowClick(key: string) {
   }
 
   .security-row span {
-    font-size: 17px;
+    font-size: 0.85rem;
   }
 }
 </style>

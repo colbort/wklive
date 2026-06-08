@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import AssetCoinIcon from '@/components/assets/AssetCoinIcon.vue'
 import type { AssetCoinConfig } from '@/types/asset'
 
@@ -46,7 +46,7 @@ button {
 .asset-picker strong {
   min-width: 0;
   overflow: hidden;
-  font-size: 16px;
+  font-size: 0.8rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -58,7 +58,7 @@ button {
   border-radius: 999px;
   background: #4a4c58;
   color: var(--text);
-  font-size: 10px;
+  font-size: 0.5rem;
   font-weight: 800;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -67,7 +67,7 @@ button {
 .asset-picker__arrow {
   justify-self: end;
   color: var(--muted);
-  font-size: 24px;
+  font-size: 1.2rem;
 }
 
 @media (max-width: 390px) {
@@ -80,7 +80,7 @@ button {
   }
 
   .asset-picker strong {
-    font-size: 15px;
+    font-size: 0.75rem;
   }
 }
 </style>

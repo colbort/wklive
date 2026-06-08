@@ -1,5 +1,6 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import BottomDrawer from '@/components/common/BottomDrawer.vue'
+import AppIcon from '@/components/common/AppIcon.vue'
 import { useI18n } from '@/i18n'
 import type { ItickTenantCategory, ItickTenantProduct } from '@/types/itick'
 import { marketCategoryLabel } from '@/utils/marketCategory'
@@ -51,9 +52,15 @@ const { t } = useI18n()
       </div>
 
       <div class="trade-symbol__icons">
-        <button type="button">▮▮</button>
-        <button type="button">☆</button>
-        <button type="button">⌃</button>
+        <button type="button" :aria-label="t('trade.pause')">
+          <AppIcon name="pause" class="trade-symbol__icon" />
+        </button>
+        <button type="button" :aria-label="t('market.addWatchlist')">
+          <AppIcon name="star" class="trade-symbol__icon" />
+        </button>
+        <button type="button" :aria-label="t('common.collapse')">
+          <AppIcon name="chevron-up" class="trade-symbol__icon" />
+        </button>
       </div>
 
       <BottomDrawer
@@ -62,7 +69,11 @@ const { t } = useI18n()
         :close-label="t('common.close')"
         max-height="68dvh"
         :z-index="80"
-        @update:model-value="value => { if (!value) emit('close-product-sheet') }"
+        @update:model-value="
+          (value) => {
+            if (!value) emit('close-product-sheet')
+          }
+        "
       >
         <div class="product-sheet__rows">
           <button
@@ -99,7 +110,7 @@ const { t } = useI18n()
 <style scoped>
 .trade-header {
   max-width: calc(100% + 36px);
-  margin: 0 -18px 8px;
+  margin: 10px -18px 8px;
   padding: 0 18px 1px;
 }
 
@@ -132,8 +143,8 @@ const { t } = useI18n()
 .trade-symbol__main strong {
   min-width: 0;
   overflow: hidden;
-  font-size: 17px;
-  font-weight: 500;
+  font-size: 1rem;
+  font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -155,14 +166,6 @@ const { t } = useI18n()
     padding-left: 14px;
   }
 
-  .trade-symbol__icons {
-    gap: 8px;
-  }
-
-  .trade-symbol__icons button {
-    font-size: 20px;
-  }
-
   .product-sheet-row {
     grid-template-columns: 36px minmax(0, 1fr) minmax(0, 62px) minmax(0, 58px);
     min-height: 76px;
@@ -172,29 +175,29 @@ const { t } = useI18n()
   .product-sheet-row__coin {
     width: 34px;
     height: 34px;
-    font-size: 17px;
+    font-size: 0.85rem;
   }
 
   .product-sheet-row__symbol,
   .product-sheet-row strong,
   .product-sheet-row__change em {
-    font-size: 14px;
+    font-size: 1rem;
   }
 
   .product-sheet-row__change small {
     padding: 4px 6px;
-    font-size: 11px;
+    font-size: 0.55rem;
   }
 }
 
 .trade-symbol__sub {
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.7rem;
 }
 
 .trade-symbol__quote {
   color: var(--success);
-  font-size: 14px;
+  font-size: 0.7rem;
 }
 
 .trade-symbol__quote.down {
@@ -210,16 +213,34 @@ const { t } = useI18n()
 }
 
 .trade-symbol__icons {
+  gap: 8px;
   grid-column: 2;
   grid-row: 1 / span 2;
   display: flex;
-  align-items: start;
-  gap: 14px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 18px;
+  min-height: 1.7rem;
+  padding-top: 0.15rem;
 }
 
 .trade-symbol__icons button {
+  display: grid;
+  width: 1.35rem;
+  height: 1.35rem;
+  place-items: center;
+  padding: 0;
   color: var(--text);
-  font-size: 25px;
+}
+
+.trade-symbol__icon {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.trade-symbol__icons button:first-child .trade-symbol__icon {
+  width: 1.08rem;
+  height: 1.08rem;
 }
 
 .product-sheet__rows {
@@ -248,7 +269,7 @@ const { t } = useI18n()
   border-radius: 999px;
   background: linear-gradient(145deg, #4099ff, #67c2ff);
   color: var(--text);
-  font-size: 21px;
+  font-size: 1.05rem;
   font-weight: 500;
 }
 
@@ -268,8 +289,8 @@ const { t } = useI18n()
 .product-sheet-row__symbol {
   overflow: hidden;
   color: var(--text);
-  font-size: 17px;
-  font-weight: 500;
+  font-size: 1rem;
+  font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -278,7 +299,7 @@ const { t } = useI18n()
   min-width: 0;
   overflow: hidden;
   color: #09d676;
-  font-size: 16px;
+  font-size: 0.8rem;
   font-weight: 500;
   text-align: right;
   text-overflow: ellipsis;
@@ -297,7 +318,7 @@ const { t } = useI18n()
   max-width: 100%;
   overflow: hidden;
   color: #09d676;
-  font-size: 15px;
+  font-size: 0.75rem;
   font-style: normal;
   font-weight: 500;
   text-overflow: ellipsis;
@@ -313,7 +334,7 @@ const { t } = useI18n()
   border-radius: 14px;
   background: #06d171;
   color: var(--text);
-  font-size: 13px;
+  font-size: 0.65rem;
   text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -338,6 +359,6 @@ const { t } = useI18n()
   min-height: 26px;
   padding-top: 12px;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.7rem;
 }
 </style>

@@ -442,7 +442,10 @@ onMounted(() => {
       </template>
 
       <template v-else-if="activeTopTab === 'orders'">
-        <nav class="assets-sub-tabs assets-sub-tabs--orders" :aria-label="t('assets.orderCategory')">
+        <nav
+          class="assets-sub-tabs assets-sub-tabs--orders"
+          :aria-label="t('assets.orderCategory')"
+        >
           <button
             v-for="scope in orderScopes"
             :key="scope.key"
@@ -559,11 +562,11 @@ button:not(.app-menu__item) {
   border: 2px solid var(--accent);
   border-radius: var(--radius-sm);
   color: var(--accent);
-  font-size: 18px;
+  font-size: 0.9rem;
 }
 
 .asset-actions strong {
-  font-size: 14px;
+  font-size: 0.7rem;
   font-weight: 500;
 }
 
@@ -590,9 +593,9 @@ button:not(.app-menu__item) {
 }
 
 :deep(.sub-menu-item.active::after) {
-  right: .4rem;
+  right: 0.4rem;
   bottom: 0;
-  left: .4rem;
+  left: 0.4rem;
   width: auto;
 }
 
@@ -602,7 +605,7 @@ button:not(.app-menu__item) {
 
 .asset-list-head h2 {
   margin: 0;
-  font-size: 20px;
+  font-size: 1rem;
 }
 
 .asset-list-head span {
@@ -619,7 +622,7 @@ button:not(.app-menu__item) {
   display: grid;
   place-items: center;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 0.65rem;
 }
 
 .asset-coin-list {
@@ -646,7 +649,7 @@ button:not(.app-menu__item) {
   overflow: hidden;
   border-radius: 50%;
   color: var(--text);
-  font-size: 11px;
+  font-size: 0.55rem;
   font-weight: 700;
 }
 
@@ -665,7 +668,7 @@ button:not(.app-menu__item) {
 .asset-coin-row__main strong {
   overflow: hidden;
   color: var(--text);
-  font-size: 14px;
+  font-size: 0.7rem;
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -674,13 +677,13 @@ button:not(.app-menu__item) {
 .asset-coin-row__main small,
 .asset-coin-row__meta {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 0.6rem;
 }
 
 .asset-coin-row__meta {
   white-space: nowrap;
   color: var(--text);
-  font-size: 15px;
+  font-size: 0.75rem;
   font-weight: 700;
 }
 
@@ -707,16 +710,16 @@ button:not(.app-menu__item) {
 .assets-order-tabs button {
   position: relative;
   flex: 0 0 auto;
-  padding: 0 0 .6rem;
+  padding: 0 0 0.6rem;
   white-space: nowrap;
 }
 
 .assets-sub-tabs button.active::after,
 .assets-order-tabs button.active::after {
   position: absolute;
-  right: .4rem;
+  right: 0.4rem;
   bottom: 0;
-  left: .4rem;
+  left: 0.4rem;
   content: '';
 }
 
@@ -742,7 +745,7 @@ button:not(.app-menu__item) {
   overflow: hidden;
   border-radius: 50%;
   color: var(--text);
-  font-size: 18px;
+  font-size: 0.9rem;
   font-weight: 800;
 }
 
@@ -754,7 +757,7 @@ button:not(.app-menu__item) {
 
 .coin-action-sheet > strong {
   margin: 12px 0 24px;
-  font-size: 20px;
+  font-size: 1rem;
 }
 
 .coin-action-sheet__grid {
@@ -782,12 +785,12 @@ button:not(.app-menu__item) {
   border-radius: 16px;
   background: var(--info);
   color: #071018;
-  font-size: 26px;
+  font-size: 1.3rem;
   font-weight: 800;
 }
 
 .coin-action strong {
-  font-size: 18px;
+  font-size: 0.9rem;
 }
 
 .coin-action--recharge {
@@ -852,11 +855,11 @@ button:not(.app-menu__item) {
     width: 30px;
     height: 30px;
     border-radius: 10px;
-    font-size: 16px;
+    font-size: 0.8rem;
   }
 
   .asset-actions strong {
-    font-size: 13px;
+    font-size: 0.65rem;
   }
 
   .assets-sub-tabs,
@@ -891,11 +894,11 @@ button:not(.app-menu__item) {
     width: 36px;
     height: 36px;
     border-radius: 12px;
-    font-size: 22px;
+    font-size: 1.1rem;
   }
 
   .coin-action strong {
-    font-size: 14px;
+    font-size: 0.7rem;
   }
 }
 </style>

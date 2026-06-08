@@ -100,7 +100,7 @@ function onSave() {
   margin: 0;
   background: transparent;
   color: var(--accent);
-  font-size: 15px;
+  font-size: 0.75rem;
   font-weight: 800;
   cursor: pointer;
 }
@@ -117,7 +117,7 @@ function onSave() {
   flex: 1;
   text-align: center;
   color: var(--text);
-  font-size: 22px;
+  font-size: 1.1rem;
   font-weight: 800;
   overflow: hidden;
   white-space: nowrap;
@@ -131,7 +131,7 @@ function onSave() {
 
 .section-title {
   margin-bottom: 16px;
-  font-size: 22px;
+  font-size: 1.1rem;
   font-weight: 800;
   color: var(--text);
 }
@@ -146,13 +146,13 @@ function onSave() {
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-  font-size: 18px;
+  font-size: 0.9rem;
   font-weight: 700;
   color: var(--text);
 }
 
 .arrow {
-  font-size: 40px;
+  font-size: 2rem;
   line-height: 1;
   color: var(--muted);
   font-weight: 300;

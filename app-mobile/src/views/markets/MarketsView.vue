@@ -200,7 +200,7 @@ watch(activeTopTab, () => {
 
 .watchlist-empty {
   color: var(--muted);
-  font-size: 15px;
+  font-size: 0.75rem;
 }
 
 @media (min-width: 0) {

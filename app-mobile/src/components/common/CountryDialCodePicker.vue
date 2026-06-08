@@ -76,7 +76,7 @@ function selectCountry(country: CountryDialCode) {
     <div class="country-sheet-body">
       <label class="country-search">
         <AppIcon name="search" />
-        <input v-model="search" placeholder="输入区号" inputmode="search">
+        <input v-model="search" placeholder="输入区号" inputmode="search" />
       </label>
       <div ref="listRef" class="country-list">
         <button
@@ -104,7 +104,7 @@ function selectCountry(country: CountryDialCode) {
   border: 0;
   background: transparent;
   color: var(--text);
-  font-size: 18px;
+  font-size: 0.9rem;
   font-weight: 600;
 }
 
@@ -142,7 +142,7 @@ function selectCountry(country: CountryDialCode) {
   outline: 0;
   background: transparent;
   color: var(--text);
-  font-size: 16px;
+  font-size: 0.8rem;
   font-weight: 600;
 }
 
@@ -169,7 +169,7 @@ function selectCountry(country: CountryDialCode) {
   border-bottom: 1px solid #1d1f28;
   background: transparent;
   color: var(--text);
-  font-size: 16px;
+  font-size: 0.8rem;
   font-weight: 500;
   text-align: left;
 }
@@ -180,7 +180,7 @@ function selectCountry(country: CountryDialCode) {
 
 .country-row b {
   color: #00c819;
-  font-size: 18px;
+  font-size: 0.9rem;
   font-weight: 900;
 }
 

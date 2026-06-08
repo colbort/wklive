@@ -238,7 +238,11 @@ onMounted(() => {
 
         <label class="field-block">
           <span>{{ t('assetFlow.bankName') }}</span>
-          <input v-model="bankName" class="asset-input" :placeholder="t('assetFlow.inputEllipsis')">
+          <input
+            v-model="bankName"
+            class="asset-input"
+            :placeholder="t('assetFlow.inputEllipsis')"
+          >
         </label>
 
         <label class="field-block">
@@ -362,14 +366,14 @@ input {
 }
 
 :deep(.header-title) {
-  font-size: 18px;
+  font-size: 0.9rem;
   font-weight: 800;
 }
 
 :deep(.header-right) {
   right: 18px;
   color: var(--text);
-  font-size: 14px;
+  font-size: 0.7rem;
 }
 
 .asset-type-pill {
@@ -378,7 +382,7 @@ input {
   margin-bottom: 22px;
   border-radius: 999px;
   background: var(--accent);
-  font-size: 15px;
+  font-size: 0.75rem;
   font-weight: 800;
 }
 
@@ -386,7 +390,7 @@ input {
   display: grid;
   gap: 9px;
   margin-bottom: 18px;
-  font-size: 15px;
+  font-size: 0.75rem;
   font-weight: 700;
 }
 
@@ -399,7 +403,7 @@ input {
 
 .field-block small {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 0.6rem;
   font-weight: 700;
 }
 
@@ -480,14 +484,14 @@ input {
   min-width: 0;
   flex: 1;
   overflow: hidden;
-  font-size: 20px;
+  font-size: 1rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .bank-select-box i {
   color: var(--muted);
-  font-size: 24px;
+  font-size: 1.2rem;
   font-style: normal;
 }
 
@@ -505,12 +509,12 @@ input {
 .bank-select-box__coin {
   background: linear-gradient(135deg, #21b78c, #129f75);
   color: var(--text);
-  font-size: 18px;
+  font-size: 0.9rem;
   font-weight: 900;
 }
 
 .bank-select-box__flag {
-  font-size: 27px;
+  font-size: 1.35rem;
   line-height: 1;
 }
 
@@ -534,19 +538,19 @@ input {
 
 .withdraw-summary dt {
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.7rem;
   font-weight: 700;
 }
 
 .withdraw-summary dd {
   margin: 0;
-  font-size: 14px;
+  font-size: 0.7rem;
   font-weight: 800;
 }
 
 .state-text {
   margin: -10px 0 16px;
-  font-size: 13px;
+  font-size: 0.65rem;
   font-weight: 800;
   line-height: 1.5;
   text-align: center;

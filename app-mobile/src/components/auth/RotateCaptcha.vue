@@ -118,7 +118,7 @@ function validateOnRelease() {
 .rotate-captcha h1 {
   margin: 0;
   color: var(--text);
-  font-size: 30px;
+  font-size: 1.5rem;
   line-height: 1.15;
   font-weight: 900;
   letter-spacing: 0;
@@ -127,7 +127,7 @@ function validateOnRelease() {
 .rotate-captcha p {
   margin: 22px 0 0;
   color: #8f9098;
-  font-size: 17px;
+  font-size: 0.85rem;
   font-weight: 800;
 }
 
@@ -202,14 +202,14 @@ function validateOnRelease() {
   border-radius: 50%;
   background: #fff;
   color: #111;
-  font-size: 34px;
+  font-size: 1.7rem;
   transition: left 0.08s ease-out;
 }
 
 .rotate-captcha strong {
   margin-top: 38px;
   color: #8f9098;
-  font-size: 22px;
+  font-size: 1.1rem;
   font-weight: 900;
 }
 
@@ -227,11 +227,11 @@ function validateOnRelease() {
   }
 
   .rotate-captcha h1 {
-    font-size: 26px;
+    font-size: 1.3rem;
   }
 
   .rotate-captcha p {
-    font-size: 15px;
+    font-size: 0.75rem;
   }
 
   .rotate-captcha__image {
@@ -246,13 +246,13 @@ function validateOnRelease() {
   }
 
   .rotate-captcha h1 {
-    font-size: 30px;
+    font-size: 1.5rem;
     font-weight: 800;
   }
 
   .rotate-captcha p {
     margin-top: 18px;
-    font-size: 17px;
+    font-size: 0.85rem;
     font-weight: 700;
   }
 
@@ -279,12 +279,12 @@ function validateOnRelease() {
     left: calc((100% - 48px) * var(--captcha-progress, 0));
     width: 48px;
     height: 48px;
-    font-size: 28px;
+    font-size: 1.4rem;
   }
 
   .rotate-captcha strong {
     margin-top: 36px;
-    font-size: 18px;
+    font-size: 0.9rem;
     font-weight: 700;
   }
 }

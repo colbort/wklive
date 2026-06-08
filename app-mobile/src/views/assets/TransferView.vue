@@ -253,11 +253,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <CommonPage
-    :title="t('assetFlow.transfer')"
-    :nav-height="76"
-    @back="router.back()"
-  >
+  <CommonPage :title="t('assetFlow.transfer')" :nav-height="76" @back="router.back()">
     <section class="asset-flow-content">
       <section class="transfer-card">
         <label class="transfer-field">
@@ -362,7 +358,7 @@ input {
 }
 
 :deep(.header-title) {
-  font-size: 18px;
+  font-size: 0.9rem;
   font-weight: 800;
 }
 
@@ -388,13 +384,13 @@ input {
 
 .transfer-field__head strong,
 .amount-field > span:first-child {
-  font-size: 15px;
+  font-size: 0.75rem;
   font-weight: 800;
 }
 
 .transfer-field__head small {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 0.6rem;
   font-weight: 700;
 }
 
@@ -416,7 +412,7 @@ input {
 }
 
 .transfer-picker > span:first-child {
-  font-size: 15px;
+  font-size: 0.75rem;
   font-weight: 800;
 }
 
@@ -429,7 +425,7 @@ input {
 .transfer-picker em {
   overflow: hidden;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.7rem;
   font-style: normal;
   font-weight: 700;
   text-overflow: ellipsis;
@@ -438,7 +434,7 @@ input {
 
 .transfer-picker b {
   color: #c1c3ca;
-  font-size: 15px;
+  font-size: 0.75rem;
 }
 
 .transfer-picker__coin {
@@ -450,7 +446,7 @@ input {
 
 .transfer-picker__coin strong {
   overflow: hidden;
-  font-size: 15px;
+  font-size: 0.75rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -477,7 +473,7 @@ input {
 }
 
 .amount-input strong {
-  font-size: 15px;
+  font-size: 0.75rem;
 }
 
 .transfer-button {
@@ -486,7 +482,7 @@ input {
 
 .state-text {
   margin: 14px 0 0;
-  font-size: 13px;
+  font-size: 0.65rem;
   font-weight: 700;
 }
 

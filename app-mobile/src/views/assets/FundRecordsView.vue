@@ -332,7 +332,7 @@ button {
 }
 
 :deep(.header-title) {
-  font-size: 20px;
+  font-size: 1rem;
   font-weight: 800;
 }
 
@@ -367,7 +367,7 @@ button {
   border: 1px solid #282a34;
   border-radius: 999px;
   color: var(--muted);
-  font-size: 16px;
+  font-size: 0.8rem;
   font-weight: 900;
 }
 
@@ -380,7 +380,7 @@ button {
 .records-state {
   margin: 76px 0 0;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.7rem;
   font-weight: 800;
   text-align: center;
 }
@@ -421,7 +421,7 @@ button {
   overflow: hidden;
   border-radius: 50%;
   color: var(--text);
-  font-size: 12px;
+  font-size: 0.6rem;
   font-weight: 700;
   margin-top: 1px;
 }
@@ -449,7 +449,7 @@ button {
 .record-side b {
   display: block;
   color: var(--text);
-  font-size: 16px;
+  font-size: 0.8rem;
   font-weight: 500;
   line-height: 1.15;
 }
@@ -461,7 +461,7 @@ button {
   overflow: hidden;
   margin-top: 0;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.7rem;
   font-weight: 500;
   line-height: 1.25;
   text-overflow: ellipsis;
@@ -502,7 +502,7 @@ button {
   min-height: 28px;
   padding: 0 10px;
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 0.7rem;
   font-weight: 700;
 }
 
@@ -535,7 +535,7 @@ button {
 
 .empty-records p {
   margin: 24px 0 0;
-  font-size: 16px;
+  font-size: 0.8rem;
   font-weight: 900;
 }
 
@@ -607,7 +607,7 @@ button {
   .withdraw-type-tabs button {
     min-width: 104px;
     min-height: 56px;
-    font-size: 15px;
+    font-size: 0.75rem;
   }
 
   .record-list {
@@ -629,22 +629,22 @@ button {
     flex-basis: 40px;
     width: 40px;
     height: 40px;
-    font-size: 11px;
+    font-size: 0.55rem;
   }
 
   .record-main strong,
   .record-side b {
-    font-size: 15px;
+    font-size: 0.75rem;
   }
 
   .record-main span {
-    font-size: 12px;
+    font-size: 0.6rem;
   }
 
   .record-status {
     min-height: 26px;
     padding: 0 9px;
-    font-size: 13px;
+    font-size: 0.65rem;
   }
 
   .record-side b {

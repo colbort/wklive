@@ -1220,7 +1220,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 
 .auth-content h1 {
   margin: 0 0 76px;
-  font-size: 48px;
+  font-size: 2.4rem;
   line-height: 1;
   font-weight: 900;
   letter-spacing: 0;
@@ -1270,7 +1270,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   outline: 0;
   background: transparent;
   color: var(--text);
-  font-size: 26px;
+  font-size: 1.3rem;
   font-weight: 800;
 }
 
@@ -1285,7 +1285,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 
 .google-code-field > span {
   color: #8f9098;
-  font-size: 20px;
+  font-size: 1rem;
   font-weight: 800;
 }
 
@@ -1304,7 +1304,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   outline: 2px solid transparent;
   background: #20212b;
   color: var(--text);
-  font-size: 28px;
+  font-size: 1.4rem;
   font-weight: 900;
   text-align: center;
   transition:
@@ -1474,7 +1474,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 .remember-control em,
 .auth-row a {
   color: var(--text);
-  font-size: 24px;
+  font-size: 1.2rem;
   font-style: normal;
   font-weight: 800;
   text-decoration: none;
@@ -1483,7 +1483,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 .auth-error {
   margin: -12px 0 0;
   color: #ff6666;
-  font-size: 16px;
+  font-size: 0.8rem;
   font-weight: 700;
 }
 
@@ -1494,7 +1494,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   border-radius: 50px;
   background: #00c313;
   color: var(--text);
-  font-size: 30px;
+  font-size: 1.5rem;
   font-weight: 900;
 }
 
@@ -1525,7 +1525,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 
 .quick-login__divider strong,
 .quick-login > strong {
-  font-size: 26px;
+  font-size: 1.3rem;
   font-weight: 900;
 }
 
@@ -1549,7 +1549,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   max-width: 100%;
   margin: -8px 0 0;
   color: #ff6b5f;
-  font-size: 16px;
+  font-size: 0.8rem;
   font-weight: 700;
   text-align: center;
 }
@@ -1589,7 +1589,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   margin: 46px 0 0;
   text-align: center;
   color: #8f9098;
-  font-size: 24px;
+  font-size: 1.2rem;
   font-weight: 800;
 }
 
@@ -1624,7 +1624,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 .language-header h2 {
   overflow: hidden;
   margin: 0;
-  font-size: 28px;
+  font-size: 1.4rem;
   font-weight: 800;
   line-height: 1.2;
   text-align: center;
@@ -1659,14 +1659,14 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   place-items: center;
   overflow: hidden;
   border-radius: 50%;
-  font-size: 38px;
+  font-size: 1.9rem;
   line-height: 1;
 }
 
 .language-row strong {
   min-width: 0;
   overflow: hidden;
-  font-size: 22px;
+  font-size: 1.1rem;
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1694,7 +1694,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 
 .wallet-sheet__header strong {
   text-align: center;
-  font-size: 24px;
+  font-size: 1.2rem;
   font-weight: 800;
 }
 
@@ -1709,7 +1709,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   border: 0;
   background: transparent;
   color: var(--text);
-  font-size: 28px;
+  font-size: 1.4rem;
   line-height: 1;
 }
 
@@ -1731,7 +1731,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   height: 28px;
   border: 2px solid currentColor;
   border-radius: 50%;
-  font-size: 16px;
+  font-size: 0.8rem;
   font-weight: 800;
 }
 
@@ -1756,7 +1756,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   justify-content: center;
   border-radius: 24px;
   color: var(--text);
-  font-size: 38px;
+  font-size: 1.9rem;
   font-weight: 900;
 }
 
@@ -1780,14 +1780,14 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 .wallet-pending strong {
   margin-top: 54px;
   color: var(--text);
-  font-size: 26px;
+  font-size: 1.3rem;
   font-weight: 800;
 }
 
 .wallet-pending p {
   margin: 16px 0 38px;
   color: #9d9d9d;
-  font-size: 22px;
+  font-size: 1.1rem;
   font-weight: 700;
 }
 
@@ -1802,7 +1802,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   background: transparent;
   padding: 0 30px;
   color: var(--text);
-  font-size: 22px;
+  font-size: 1.1rem;
   font-weight: 700;
 }
 
@@ -1811,7 +1811,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 }
 
 .wallet-pending button span {
-  font-size: 22px;
+  font-size: 1.1rem;
 }
 
 .wallet-row,
@@ -1842,7 +1842,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 .wallet-search span:nth-child(2) {
   overflow: hidden;
   min-width: 0;
-  font-size: 24px;
+  font-size: 1.2rem;
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1854,7 +1854,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   background: rgba(38, 169, 106, 0.18);
   padding: 5px 8px;
   color: #35c686;
-  font-size: 16px;
+  font-size: 0.8rem;
   font-style: normal;
   font-weight: 700;
 }
@@ -1874,7 +1874,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   border-radius: 12px;
   background: #2b2b2b;
   color: var(--text);
-  font-size: 22px;
+  font-size: 1.1rem;
   font-weight: 900;
 }
 
@@ -2039,7 +2039,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 .wallet-sheet__error {
   margin: 16px 0 0;
   color: #ff6b5f;
-  font-size: 15px;
+  font-size: 0.75rem;
   font-weight: 700;
   text-align: center;
 }
@@ -2047,7 +2047,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 .wallet-sheet__hint {
   margin: 18px 0 0;
   color: #9b9b9b;
-  font-size: 14px;
+  font-size: 0.7rem;
   font-weight: 600;
   text-align: center;
 }
@@ -2090,7 +2090,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 
   .auth-content h1 {
     margin-bottom: 58px;
-    font-size: 31px;
+    font-size: 1.55rem;
     font-weight: 800;
     line-height: 1;
   }
@@ -2142,7 +2142,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
   }
 
   .auth-field input {
-    font-size: 17px;
+    font-size: 0.85rem;
     font-weight: 500;
   }
 
@@ -2162,14 +2162,14 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 
   .remember-control em,
   .auth-row a {
-    font-size: 16px;
+    font-size: 0.8rem;
     font-weight: 600;
   }
 
   .primary-button {
     min-height: 60px;
     margin-top: 44px;
-    font-size: 20px;
+    font-size: 1rem;
     font-weight: 700;
   }
 
@@ -2184,7 +2184,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 
   .quick-login__divider strong,
   .quick-login > strong {
-    font-size: 18px;
+    font-size: 0.9rem;
     font-weight: 700;
   }
 
@@ -2214,7 +2214,7 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 
   .auth-switch {
     margin-top: 30px;
-    font-size: 16px;
+    font-size: 0.8rem;
     font-weight: 600;
   }
 }

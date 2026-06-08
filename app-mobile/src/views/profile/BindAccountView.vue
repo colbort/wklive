@@ -155,7 +155,7 @@ async function submitBindAccount() {
 .bind-account-header h1 {
   margin: 0;
   text-align: center;
-  font-size: 24px;
+  font-size: 1.2rem;
   font-weight: 800;
   letter-spacing: 0;
 }
@@ -190,7 +190,7 @@ async function submitBindAccount() {
 
 .bind-account-field span {
   color: #a0a3ad;
-  font-size: 15px;
+  font-size: 0.75rem;
   font-weight: 700;
 }
 
@@ -203,7 +203,7 @@ async function submitBindAccount() {
   background: #1b1d27;
   color: var(--text);
   padding: 0 22px;
-  font-size: 19px;
+  font-size: 0.95rem;
   font-weight: 700;
 }
 
@@ -218,7 +218,7 @@ async function submitBindAccount() {
 .form-message {
   margin: -4px 0 0;
   color: #00c313;
-  font-size: 14px;
+  font-size: 0.7rem;
   font-weight: 700;
 }
 
@@ -233,7 +233,7 @@ async function submitBindAccount() {
   border-radius: 999px;
   background: #00c313;
   color: var(--text);
-  font-size: 22px;
+  font-size: 1.1rem;
   font-weight: 900;
 }
 
@@ -253,7 +253,7 @@ async function submitBindAccount() {
   }
 
   .bind-account-header h1 {
-    font-size: 22px;
+    font-size: 1.1rem;
   }
 
   .back-button {
@@ -265,7 +265,7 @@ async function submitBindAccount() {
   .submit-button {
     min-height: 64px;
     border-radius: 20px;
-    font-size: 18px;
+    font-size: 0.9rem;
   }
 }
 </style>

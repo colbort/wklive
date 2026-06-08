@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 defineProps<{
   label: string
 }>()
@@ -17,7 +17,7 @@ defineProps<{
   background: var(--accent);
   color: var(--text);
   font: inherit;
-  font-size: 18px;
+  font-size: 0.9rem;
   font-weight: 800;
 }
 </style>

@@ -1,8 +1,14 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed } from 'vue'
 
 import { useI18n } from '@/i18n'
-import type { DepthLevel, DepthPayload, ItickTenantProduct, QuotePayload, TickPayload } from '@/types/itick'
+import type {
+  DepthLevel,
+  DepthPayload,
+  ItickTenantProduct,
+  QuotePayload,
+  TickPayload,
+} from '@/types/itick'
 
 const props = defineProps<{
   selectedProduct: ItickTenantProduct | null
@@ -16,7 +22,9 @@ const { t } = useI18n()
 
 const askRows = computed(() => props.depthSnapshot?.asks ?? [])
 const bidRows = computed(() => props.depthSnapshot?.bids ?? [])
-const latestPrice = computed(() => props.tickSnapshot[0]?.lastPrice || props.selectedQuote?.lastPrice || null)
+const latestPrice = computed(
+  () => props.tickSnapshot[0]?.lastPrice || props.selectedQuote?.lastPrice || null,
+)
 const previousPrice = computed(() => {
   return props.tickSnapshot[1]?.lastPrice || props.selectedQuote?.open || null
 })
@@ -60,11 +68,9 @@ function formatDepthVolume(level: DepthLevel) {
       <i class="depth-tools__ask" />
     </div>
     <div class="asks">
-      <p
-        v-for="level in askRows"
-        :key="`ask-${level.price}-${level.volume}`"
-      >
-        <span>{{ formatDepthNumber(level.price) }}</span><strong>{{ formatDepthVolume(level) }}</strong>
+      <p v-for="level in askRows" :key="`ask-${level.price}-${level.volume}`">
+        <span>{{ formatDepthNumber(level.price) }}</span
+        ><strong>{{ formatDepthVolume(level) }}</strong>
       </p>
       <p v-if="!askRows.length" class="empty-row"><span>--</span><strong>--</strong></p>
     </div>
@@ -76,11 +82,9 @@ function formatDepthVolume(level: DepthLevel) {
       <i aria-hidden="true" />
     </div>
     <div class="bids">
-      <p
-        v-for="level in bidRows"
-        :key="`bid-${level.price}-${level.volume}`"
-      >
-        <span>{{ formatDepthNumber(level.price) }}</span><strong>{{ formatDepthVolume(level) }}</strong>
+      <p v-for="level in bidRows" :key="`bid-${level.price}-${level.volume}`">
+        <span>{{ formatDepthNumber(level.price) }}</span
+        ><strong>{{ formatDepthVolume(level) }}</strong>
       </p>
       <p v-if="!bidRows.length" class="empty-row"><span>--</span><strong>--</strong></p>
     </div>
@@ -106,7 +110,7 @@ function formatDepthVolume(level: DepthLevel) {
   margin-bottom: 10px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   color: var(--muted);
-  font-size: 12px;
+  font-size: 0.6rem;
   line-height: 1.15;
   text-align: right;
 }
@@ -139,7 +143,7 @@ function formatDepthVolume(level: DepthLevel) {
   padding: 1px 6px;
   margin: 0;
   overflow: hidden;
-  font-size: 13px;
+  font-size: 0.65rem;
   font-weight: 700;
   line-height: 20px;
 }
@@ -202,14 +206,14 @@ function formatDepthVolume(level: DepthLevel) {
 
 .mid-price strong {
   color: currentColor;
-  font-size: 20px;
+  font-size: 1rem;
   line-height: 1;
   text-align: left;
 }
 
 .mid-price span {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 0.65rem;
   text-align: left;
 }
 
@@ -219,19 +223,19 @@ function formatDepthVolume(level: DepthLevel) {
 
 @media (max-width: 390px) {
   .order-book-preview header {
-    font-size: 11px;
+    font-size: 0.55rem;
   }
 
   .order-book-preview p {
     min-height: 20px;
     padding-right: 4px;
     padding-left: 4px;
-    font-size: 11px;
+    font-size: 0.55rem;
     line-height: 18px;
   }
 
   .mid-price strong {
-    font-size: 17px;
+    font-size: 0.85rem;
   }
 }
 </style>

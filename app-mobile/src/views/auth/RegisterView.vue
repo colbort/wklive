@@ -846,7 +846,7 @@ function markUpload(type: IdentityFileKey) {
   border: 0;
   background: transparent;
   color: var(--text);
-  font-size: 26px;
+  font-size: 1.3rem;
   font-weight: 900;
 }
 
@@ -894,7 +894,7 @@ function markUpload(type: IdentityFileKey) {
   border-radius: 50%;
   background: #666973;
   color: var(--text);
-  font-size: 20px;
+  font-size: 1rem;
 }
 
 .step-item.active span {
@@ -931,7 +931,7 @@ function markUpload(type: IdentityFileKey) {
 
 .step-item em {
   font-style: normal;
-  font-size: 18px;
+  font-size: 0.9rem;
   line-height: 1.15;
   text-align: center;
   word-break: keep-all;
@@ -950,7 +950,7 @@ function markUpload(type: IdentityFileKey) {
 
 .step-panel h1 {
   margin: 0;
-  font-size: 38px;
+  font-size: 1.9rem;
   line-height: 1.15;
   font-weight: 900;
   letter-spacing: 0;
@@ -959,7 +959,7 @@ function markUpload(type: IdentityFileKey) {
 .step-panel p {
   margin: -16px 0 14px;
   color: #8f9098;
-  font-size: 22px;
+  font-size: 1.1rem;
   font-weight: 800;
 }
 
@@ -1001,7 +1001,7 @@ function markUpload(type: IdentityFileKey) {
   outline: 0;
   background: transparent;
   color: var(--text);
-  font-size: 24px;
+  font-size: 1.2rem;
   font-weight: 800;
 }
 
@@ -1083,7 +1083,7 @@ function markUpload(type: IdentityFileKey) {
   align-items: center;
   gap: 14px;
   color: #8f9098;
-  font-size: 24px;
+  font-size: 1.2rem;
   font-weight: 800;
 }
 
@@ -1136,7 +1136,7 @@ function markUpload(type: IdentityFileKey) {
   border-radius: 50px;
   background: #00c313;
   color: var(--text);
-  font-size: 30px;
+  font-size: 1.5rem;
   font-weight: 900;
 }
 
@@ -1147,7 +1147,7 @@ function markUpload(type: IdentityFileKey) {
 .auth-error {
   margin: 14px 0 -10px;
   color: #ff6666;
-  font-size: 16px;
+  font-size: 0.8rem;
   font-weight: 700;
 }
 
@@ -1155,7 +1155,7 @@ function markUpload(type: IdentityFileKey) {
   margin: 28px 0 0;
   text-align: center;
   color: #8f9098;
-  font-size: 20px;
+  font-size: 1rem;
   font-weight: 800;
 }
 
@@ -1176,7 +1176,7 @@ function markUpload(type: IdentityFileKey) {
 .code-head strong,
 .google-panel h2,
 .identity-panel h2 {
-  font-size: 28px;
+  font-size: 1.4rem;
   font-weight: 900;
 }
 
@@ -1188,7 +1188,7 @@ function markUpload(type: IdentityFileKey) {
   padding: 26px;
   color: #00c313;
   text-align: center;
-  font-size: 26px;
+  font-size: 1.3rem;
   font-weight: 900;
 }
 
@@ -1211,7 +1211,7 @@ function markUpload(type: IdentityFileKey) {
   background: #2a2b35;
   color: var(--text);
   text-align: center;
-  font-size: 32px;
+  font-size: 1.6rem;
   font-weight: 900;
 }
 
@@ -1221,7 +1221,7 @@ function markUpload(type: IdentityFileKey) {
 
 .required-field > span {
   color: #ff4b43;
-  font-size: 24px;
+  font-size: 1.2rem;
   font-weight: 900;
 }
 
@@ -1230,19 +1230,19 @@ function markUpload(type: IdentityFileKey) {
 }
 
 .identity-panel h1 {
-  font-size: 26px;
+  font-size: 1.3rem;
   font-weight: 900;
 }
 
 .identity-panel h2 {
   margin: 14px 0 -8px;
-  font-size: 24px;
+  font-size: 1.2rem;
   line-height: 1.2;
 }
 
 .identity-panel p {
   margin: -8px 0 0;
-  font-size: 16px;
+  font-size: 0.8rem;
   line-height: 1.35;
   font-weight: 800;
 }
@@ -1254,18 +1254,18 @@ function markUpload(type: IdentityFileKey) {
 }
 
 .identity-panel .auth-field input {
-  font-size: 20px;
+  font-size: 1rem;
 }
 
 .identity-panel .required-field > span {
-  font-size: 18px;
+  font-size: 0.9rem;
 }
 
 .primary-button--identity {
   min-height: 76px;
   margin-top: 24px;
   border-radius: 38px;
-  font-size: 24px;
+  font-size: 1.2rem;
 }
 
 .upload-grid {
@@ -1312,7 +1312,7 @@ function markUpload(type: IdentityFileKey) {
   right: 0;
   bottom: 24px;
   left: 0;
-  font-size: 24px;
+  font-size: 1.2rem;
 }
 
 .upload-card-art {
@@ -1459,7 +1459,7 @@ function markUpload(type: IdentityFileKey) {
   justify-items: center;
   gap: 8px;
   color: #8f9098;
-  font-size: 17px;
+  font-size: 0.85rem;
   font-weight: 900;
   line-height: 1.1;
   text-align: center;
@@ -1559,7 +1559,7 @@ function markUpload(type: IdentityFileKey) {
   min-width: 0;
   overflow: hidden;
   color: var(--text);
-  font-size: 25px;
+  font-size: 1.25rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1571,7 +1571,7 @@ function markUpload(type: IdentityFileKey) {
   border-radius: 22px;
   background: #00c313;
   color: var(--text);
-  font-size: 26px;
+  font-size: 1.3rem;
   font-weight: 900;
 }
 
@@ -1585,7 +1585,7 @@ function markUpload(type: IdentityFileKey) {
   }
 
   .step-item em {
-    font-size: 13px;
+    font-size: 0.65rem;
   }
 
   .auth-field,
@@ -1594,7 +1594,7 @@ function markUpload(type: IdentityFileKey) {
   }
 
   .auth-field input {
-    font-size: 21px;
+    font-size: 1.05rem;
   }
 
   .code-boxes {
@@ -1634,7 +1634,7 @@ function markUpload(type: IdentityFileKey) {
 }
 
 .skip-button {
-  font-size: 20px;
+  font-size: 1rem;
   font-weight: 700;
 }
 
@@ -1660,7 +1660,7 @@ function markUpload(type: IdentityFileKey) {
 .step-item span {
   width: 28px;
   height: 28px;
-  font-size: 16px;
+  font-size: 0.8rem;
 }
 
 .step-item.active span {
@@ -1681,7 +1681,7 @@ function markUpload(type: IdentityFileKey) {
 }
 
 .step-item em {
-  font-size: 13px;
+  font-size: 0.65rem;
 }
 
 .step-panel {
@@ -1693,11 +1693,11 @@ function markUpload(type: IdentityFileKey) {
 }
 
 .step-panel h1 {
-  font-size: 30px;
+  font-size: 1.5rem;
 }
 
 .step-panel p {
-  font-size: 17px;
+  font-size: 0.85rem;
 }
 
 .auth-tabs button {
@@ -1711,11 +1711,11 @@ function markUpload(type: IdentityFileKey) {
 }
 
 .auth-field input {
-  font-size: 19px;
+  font-size: 0.95rem;
 }
 
 .agree-control {
-  font-size: 17px;
+  font-size: 0.85rem;
 }
 
 .strength-bars {
@@ -1727,7 +1727,7 @@ function markUpload(type: IdentityFileKey) {
   min-height: 76px;
   margin-top: 22px;
   border-radius: 38px;
-  font-size: 24px;
+  font-size: 1.2rem;
 }
 
 .code-head {
@@ -1737,14 +1737,14 @@ function markUpload(type: IdentityFileKey) {
 .code-head strong,
 .google-panel h2,
 .identity-panel h2 {
-  font-size: 22px;
+  font-size: 1.1rem;
 }
 
 .code-send-button {
   min-width: 140px;
   border-radius: 32px;
   padding: 18px;
-  font-size: 21px;
+  font-size: 1.05rem;
 }
 
 .code-boxes {
@@ -1753,7 +1753,7 @@ function markUpload(type: IdentityFileKey) {
 
 .code-boxes input {
   border-radius: 20px;
-  font-size: 25px;
+  font-size: 1.25rem;
 }
 
 .upload-grid {
@@ -1770,17 +1770,17 @@ function markUpload(type: IdentityFileKey) {
 }
 
 .identity-panel h1 {
-  font-size: 24px;
+  font-size: 1.2rem;
 }
 
 .identity-panel h2 {
   margin: 12px 0 -8px;
-  font-size: 22px;
+  font-size: 1.1rem;
 }
 
 .identity-panel p {
   margin: -8px 0 0;
-  font-size: 15px;
+  font-size: 0.75rem;
 }
 
 .identity-panel .auth-field {
@@ -1790,7 +1790,7 @@ function markUpload(type: IdentityFileKey) {
 }
 
 .identity-panel .auth-field input {
-  font-size: 17px;
+  font-size: 0.85rem;
 }
 
 .identity-panel .upload-grid {
@@ -1808,7 +1808,7 @@ function markUpload(type: IdentityFileKey) {
 
 .upload-grid strong {
   bottom: 16px;
-  font-size: 18px;
+  font-size: 0.9rem;
 }
 
 .require-box {
@@ -1823,12 +1823,12 @@ function markUpload(type: IdentityFileKey) {
 }
 
 .require-box span {
-  font-size: 13px;
+  font-size: 0.65rem;
 }
 
 .identity-panel .require-box span {
   gap: 6px;
-  font-size: 12px;
+  font-size: 0.6rem;
 }
 
 .identity-panel .require-thumb {
@@ -1845,7 +1845,7 @@ function markUpload(type: IdentityFileKey) {
   min-height: 60px;
   margin-top: 18px;
   border-radius: 30px;
-  font-size: 20px;
+  font-size: 1rem;
 }
 
 .qr-card {
@@ -1864,13 +1864,13 @@ function markUpload(type: IdentityFileKey) {
 }
 
 .secret-card strong {
-  font-size: 20px;
+  font-size: 1rem;
 }
 
 .secret-card button {
   min-width: 112px;
   border-radius: 18px;
-  font-size: 21px;
+  font-size: 1.05rem;
 }
 
 @media (max-width: 390px) {
@@ -1894,7 +1894,7 @@ function markUpload(type: IdentityFileKey) {
   .step-item span {
     width: 24px;
     height: 24px;
-    font-size: 14px;
+    font-size: 0.7rem;
   }
 
   .step-item:not(:last-child)::after {
@@ -1907,11 +1907,11 @@ function markUpload(type: IdentityFileKey) {
   }
 
   .step-item em {
-    font-size: 11px;
+    font-size: 0.55rem;
   }
 
   .step-panel h1 {
-    font-size: 26px;
+    font-size: 1.3rem;
   }
 
   .auth-field {
@@ -1921,17 +1921,17 @@ function markUpload(type: IdentityFileKey) {
   }
 
   .auth-field input {
-    font-size: 17px;
+    font-size: 0.85rem;
   }
 
   .agree-control,
   .auth-switch {
-    font-size: 15px;
+    font-size: 0.75rem;
   }
 
   .primary-button {
     min-height: 68px;
-    font-size: 21px;
+    font-size: 1.05rem;
   }
 
   .code-head {
@@ -1963,7 +1963,7 @@ function markUpload(type: IdentityFileKey) {
   }
 
   .identity-panel .require-box span {
-    font-size: 11px;
+    font-size: 0.55rem;
   }
 
   .identity-panel .require-thumb {
@@ -2041,7 +2041,7 @@ function markUpload(type: IdentityFileKey) {
   .step-item span {
     width: 24px;
     height: 24px;
-    font-size: 13px;
+    font-size: 0.65rem;
   }
 
   .step-item.active span {
@@ -2062,7 +2062,7 @@ function markUpload(type: IdentityFileKey) {
   }
 
   .step-item em {
-    font-size: 14px;
+    font-size: 0.7rem;
     line-height: 1.1;
     white-space: normal;
   }
@@ -2072,13 +2072,13 @@ function markUpload(type: IdentityFileKey) {
   }
 
   .step-panel h1 {
-    font-size: 25px;
+    font-size: 1.25rem;
     font-weight: 800;
   }
 
   .verify-panel p {
     margin: -8px 0 30px;
-    font-size: 15px;
+    font-size: 0.75rem;
     line-height: 1.35;
     font-weight: 700;
   }
@@ -2088,7 +2088,7 @@ function markUpload(type: IdentityFileKey) {
   }
 
   .verify-panel .code-head strong {
-    font-size: 18px;
+    font-size: 0.9rem;
     line-height: 1.2;
     font-weight: 800;
   }
@@ -2097,7 +2097,7 @@ function markUpload(type: IdentityFileKey) {
     min-width: 94px;
     border-radius: 24px;
     padding: 14px 18px;
-    font-size: 18px;
+    font-size: 0.9rem;
     font-weight: 800;
   }
 
@@ -2116,7 +2116,7 @@ function markUpload(type: IdentityFileKey) {
   }
 
   .auth-field input {
-    font-size: 17px;
+    font-size: 0.85rem;
   }
 
   .field-action {
@@ -2137,7 +2137,7 @@ function markUpload(type: IdentityFileKey) {
 
   .agree-control,
   .auth-switch {
-    font-size: 15px;
+    font-size: 0.75rem;
   }
 
   .agree-control span {
@@ -2150,7 +2150,7 @@ function markUpload(type: IdentityFileKey) {
     min-height: 60px;
     margin-top: 12px;
     border-radius: 33px;
-    font-size: 20px;
+    font-size: 1rem;
     font-weight: 800;
   }
 
@@ -2183,19 +2183,19 @@ function markUpload(type: IdentityFileKey) {
   }
 
   .identity-panel h1 {
-    font-size: 24px;
+    font-size: 1.2rem;
     font-weight: 800;
   }
 
   .identity-panel h2 {
     margin: 12px 0 -8px;
-    font-size: 22px;
+    font-size: 1.1rem;
     font-weight: 900;
   }
 
   .identity-panel p {
     margin: -8px 0 0;
-    font-size: 15px;
+    font-size: 0.75rem;
     line-height: 1.35;
   }
 
@@ -2206,7 +2206,7 @@ function markUpload(type: IdentityFileKey) {
   }
 
   .identity-panel .auth-field input {
-    font-size: 17px;
+    font-size: 0.85rem;
   }
 
   .identity-panel .upload-grid {
@@ -2224,7 +2224,7 @@ function markUpload(type: IdentityFileKey) {
 
   .identity-panel .upload-grid strong {
     bottom: 16px;
-    font-size: 18px;
+    font-size: 0.9rem;
   }
 
   .identity-panel .require-box {
@@ -2236,7 +2236,7 @@ function markUpload(type: IdentityFileKey) {
 
   .identity-panel .require-box span {
     gap: 6px;
-    font-size: 12px;
+    font-size: 0.6rem;
   }
 
   .identity-panel .require-thumb {
@@ -2249,7 +2249,7 @@ function markUpload(type: IdentityFileKey) {
     min-height: 60px;
     margin-top: 18px;
     border-radius: 30px;
-    font-size: 20px;
+    font-size: 1rem;
   }
 }
 </style>

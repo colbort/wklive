@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="page-414"
-    :style="pageStyle"
-  >
+  <div class="page-414" :style="pageStyle">
     <!--
       滚动头部模式：
       有二级菜单 或 有 custom 时使用
@@ -11,10 +8,7 @@
     <template v-if="scrollHeader">
       <div class="scroll-view full-scroll">
         <!-- 自定义 tabbar -->
-        <div
-          v-if="$slots.tabbar"
-          class="tabbar-wrap"
-        >
+        <div v-if="$slots.tabbar" class="tabbar-wrap">
           <slot
             name="tabbar"
             :title="title"
@@ -27,16 +21,8 @@
         </div>
 
         <!-- 默认 tabbar -->
-        <header
-          v-else
-          class="header-bar"
-        >
-          <button
-            v-if="showBack"
-            type="button"
-            class="header-left"
-            @click="onBack"
-          >
+        <header v-else class="header-bar">
+          <button v-if="showBack" type="button" class="header-left" @click="onBack">
             <AppIcon name="back" class="back-icon-svg" />
           </button>
 
@@ -44,20 +30,10 @@
             {{ title }}
           </div>
 
-          <button
-            v-if="hasRight"
-            type="button"
-            class="header-right"
-            @click="onRightClick"
-          >
+          <button v-if="hasRight" type="button" class="header-right" @click="onRightClick">
             <slot v-if="$slots.right" name="right" />
 
-            <img
-              v-else-if="rightIcon"
-              class="right-icon"
-              :src="rightIcon"
-              alt=""
-            >
+            <img v-else-if="rightIcon" class="right-icon" :src="rightIcon" alt="" />
 
             <span v-else class="right-text">
               {{ rightText }}
@@ -66,18 +42,12 @@
         </header>
 
         <!-- 自定义区域：有才显示 -->
-        <div
-          v-if="$slots.custom"
-          class="custom-area"
-        >
+        <div v-if="$slots.custom" class="custom-area">
           <slot name="custom" />
         </div>
 
         <!-- 二级菜单：sticky 吸顶 -->
-        <div
-          v-if="menus.length"
-          class="sub-menu sticky-sub-menu"
-        >
+        <div v-if="menus.length" class="sub-menu sticky-sub-menu">
           <div
             v-for="item in menus"
             :key="item.value"
@@ -101,10 +71,7 @@
     -->
     <template v-else>
       <!-- 自定义 tabbar 固定顶部 -->
-      <div
-        v-if="$slots.tabbar"
-        class="fixed-header custom-tabbar-wrap"
-      >
+      <div v-if="$slots.tabbar" class="fixed-header custom-tabbar-wrap">
         <slot
           name="tabbar"
           :title="title"
@@ -117,16 +84,8 @@
       </div>
 
       <!-- 默认 tabbar 固定顶部 -->
-      <header
-        v-else
-        class="header-bar fixed-header"
-      >
-        <button
-          v-if="showBack"
-          type="button"
-          class="header-left"
-          @click="onBack"
-        >
+      <header v-else class="header-bar fixed-header">
+        <button v-if="showBack" type="button" class="header-left" @click="onBack">
           <AppIcon name="back" class="back-icon-svg" />
         </button>
 
@@ -134,20 +93,10 @@
           {{ title }}
         </div>
 
-        <button
-          v-if="hasRight"
-          type="button"
-          class="header-right"
-          @click="onRightClick"
-        >
+        <button v-if="hasRight" type="button" class="header-right" @click="onRightClick">
           <slot v-if="$slots.right" name="right" />
 
-          <img
-            v-else-if="rightIcon"
-            class="right-icon"
-            :src="rightIcon"
-            alt=""
-          >
+          <img v-else-if="rightIcon" class="right-icon" :src="rightIcon" alt="" />
 
           <span v-else class="right-text">
             {{ rightText }}
@@ -257,13 +206,11 @@ const scrollHeader = computed(() => {
   return props.menus.length > 0 || !!slots.custom
 })
 
-const currentKey = ref(
-  props.modelValue || props.menus?.[0]?.value || '',
-)
+const currentKey = ref(props.modelValue || props.menus?.[0]?.value || '')
 
 watch(
   () => props.modelValue,
-  value => {
+  (value) => {
     if (value !== currentKey.value) {
       currentKey.value = value
     }
@@ -272,7 +219,7 @@ watch(
 
 watch(
   () => props.menus,
-  value => {
+  (value) => {
     if (!currentKey.value && value?.length) {
       currentKey.value = value[0].value
       emit('update:modelValue', value[0].value)
@@ -312,12 +259,7 @@ function onRightClick() {
   overflow: hidden;
   box-sizing: border-box;
   font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "PingFang SC",
-    "Microsoft YaHei",
-    Arial,
-    sans-serif;
+    -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
 }
 
 /* 通用滚动容器 */
@@ -428,7 +370,7 @@ function onRightClick() {
   align-items: center;
   justify-content: center;
   color: var(--text);
-  font-size: 22px;
+  font-size: 1.1rem;
   font-weight: 800;
   text-align: center;
   overflow: hidden;
@@ -455,7 +397,7 @@ function onRightClick() {
   align-items: center;
   justify-content: flex-end;
   box-sizing: border-box;
-  font-size: 15px;
+  font-size: 0.75rem;
   font-weight: 800;
   cursor: pointer;
   user-select: none;
@@ -514,7 +456,7 @@ function onRightClick() {
 .sub-menu-item.active::after {
   content: '';
   position: absolute;
-  bottom: .4rem;
+  bottom: 0.4rem;
   width: 1.2rem;
 }
 

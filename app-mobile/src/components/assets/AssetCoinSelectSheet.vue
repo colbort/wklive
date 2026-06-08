@@ -111,7 +111,7 @@ button {
 .asset-coin-sheet__item strong {
   min-width: 0;
   overflow: hidden;
-  font-size: 16px;
+  font-size: 0.8rem;
   font-weight: 800;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -124,7 +124,7 @@ button {
   border-radius: 999px;
   background: #4a4c58;
   color: var(--text);
-  font-size: 11px;
+  font-size: 0.55rem;
   font-weight: 800;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -133,7 +133,7 @@ button {
 .asset-coin-sheet__check {
   justify-self: end;
   color: var(--accent);
-  font-size: 20px;
+  font-size: 1rem;
   font-weight: 900;
 }
 
@@ -147,8 +147,7 @@ button {
 .asset-coin-sheet__empty {
   margin: 12px 28px 22px;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.7rem;
   text-align: center;
 }
-
 </style>

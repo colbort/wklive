@@ -48,7 +48,7 @@ function onMore() {
 
 .card-title {
   margin-bottom: 16px;
-  font-size: 20px;
+  font-size: 1rem;
   font-weight: 800;
   color: var(--text);
 }
@@ -63,13 +63,13 @@ function onMore() {
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-  font-size: 18px;
+  font-size: 0.9rem;
   font-weight: 700;
   color: var(--text);
 }
 
 .arrow {
-  font-size: 40px;
+  font-size: 2rem;
   line-height: 1;
   color: var(--muted);
   font-weight: 300;

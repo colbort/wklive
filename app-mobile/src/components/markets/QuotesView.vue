@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import { getLocale, useI18n } from '@/i18n'
 import type { ItickTenantCategory, ItickTenantProduct, ItickWsConnectionState } from '@/types/itick'
 import { marketCategoryCodeLabel, marketCategoryLabel } from '@/utils/marketCategory'
@@ -64,7 +64,10 @@ function formatPercent(value: number) {
 
     <div class="connection-row">
       <span class="connection-dot" :class="`connection-dot--${wsState}`" />
-      <span>{{ marketCategoryCodeLabel(selectedCategoryCode, selectedCategoryName) || t('market.categoryLoading') }}</span>
+      <span>{{
+        marketCategoryCodeLabel(selectedCategoryCode, selectedCategoryName) ||
+        t('market.categoryLoading')
+      }}</span>
       <strong>{{ wsError || selectedCategoryCode || t('market.waitingCategoryCode') }}</strong>
     </div>
 
@@ -93,7 +96,9 @@ function formatPercent(value: number) {
         </strong>
 
         <span class="quote-row__change">
-          <strong>{{ row.quote ? formatPrice(row.quote.lastPrice - row.quote.open) : '--' }}</strong>
+          <strong>{{
+            row.quote ? formatPrice(row.quote.lastPrice - row.quote.open) : '--'
+          }}</strong>
           <em>{{ row.quote ? formatPercent(row.changeRate) : t('market.waiting') }}</em>
         </span>
       </button>
@@ -127,7 +132,7 @@ function formatPercent(value: number) {
   gap: 30px;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 18px 28px 0;
+  padding: 0px 28px 0;
   border-bottom: 1px solid var(--divider);
   background: var(--page-bg);
   scrollbar-width: none;
@@ -183,7 +188,7 @@ function formatPercent(value: number) {
   gap: 8px;
   padding: 10px 18px 0;
   color: #818691;
-  font-size: 12px;
+  font-size: 0.6rem;
 }
 
 .connection-row strong {
@@ -235,7 +240,7 @@ function formatPercent(value: number) {
   }
 
   .category-tab {
-    font-size: 17px;
+    font-size: 0.85rem;
   }
 
   .quote-row {
@@ -246,14 +251,13 @@ function formatPercent(value: number) {
     margin: 0 22px;
   }
 
-  .quote-row__name strong,
   .quote-row__price {
-    font-size: 15px;
+    font-size: 0.75rem;
   }
 
   .quote-row__change strong,
   .quote-row__change em {
-    font-size: 12px;
+    font-size: 0.6rem;
   }
 
   .quote-row__change em {
@@ -271,8 +275,8 @@ function formatPercent(value: number) {
 .quote-row__name strong {
   overflow: hidden;
   color: var(--text);
-  font-size: 22px;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 600;
   line-height: 1.08;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -281,7 +285,7 @@ function formatPercent(value: number) {
 .quote-row__name small {
   overflow: hidden;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.7rem;
   font-weight: 600;
   line-height: 1.2;
   text-overflow: ellipsis;
@@ -291,7 +295,7 @@ function formatPercent(value: number) {
 .quote-row__price {
   overflow: hidden;
   color: var(--muted);
-  font-size: 17px;
+  font-size: 0.85rem;
   font-weight: 700;
   text-align: right;
   text-overflow: ellipsis;
@@ -308,7 +312,7 @@ function formatPercent(value: number) {
   overflow: hidden;
   max-width: 100%;
   color: var(--muted);
-  font-size: 17px;
+  font-size: 0.85rem;
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -320,7 +324,7 @@ function formatPercent(value: number) {
   border-radius: 0;
   background: transparent;
   color: var(--accent);
-  font-size: 13px;
+  font-size: 0.65rem;
   font-style: normal;
   font-weight: 500;
   text-align: center;
@@ -345,7 +349,7 @@ function formatPercent(value: number) {
   min-height: 260px;
   padding: 32px 18px;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.7rem;
   text-align: center;
 }
 </style>

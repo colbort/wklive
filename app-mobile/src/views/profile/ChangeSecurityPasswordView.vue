@@ -201,7 +201,7 @@ async function submitPassword() {
 .password-header h1 {
   margin: 0;
   text-align: center;
-  font-size: 24px;
+  font-size: 1.2rem;
   font-weight: 900;
   letter-spacing: 0;
 }
@@ -245,7 +245,7 @@ async function submitPassword() {
   outline: 0;
   background: transparent;
   color: var(--text);
-  font-size: 20px;
+  font-size: 1rem;
   font-weight: 800;
 }
 
@@ -314,7 +314,7 @@ async function submitPassword() {
 .form-message {
   margin: -6px 0 0;
   color: #00c313;
-  font-size: 14px;
+  font-size: 0.7rem;
   font-weight: 700;
 }
 
@@ -329,7 +329,7 @@ async function submitPassword() {
   border-radius: 999px;
   background: #00bd09;
   color: var(--text);
-  font-size: 24px;
+  font-size: 1.2rem;
   font-weight: 900;
 }
 
@@ -349,7 +349,7 @@ async function submitPassword() {
   }
 
   .password-header h1 {
-    font-size: 22px;
+    font-size: 1.1rem;
   }
 
   .back-button {
@@ -368,7 +368,7 @@ async function submitPassword() {
   }
 
   .password-field input {
-    font-size: 18px;
+    font-size: 0.9rem;
   }
 
   .strength-bars {
@@ -378,7 +378,7 @@ async function submitPassword() {
 
   .submit-button {
     min-height: 68px;
-    font-size: 22px;
+    font-size: 1.1rem;
   }
 }
 </style>

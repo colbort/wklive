@@ -1,10 +1,16 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 
 import BottomDrawer from '@/components/common/BottomDrawer.vue'
 import { getLocale, useI18n } from '@/i18n'
 import type { Interval } from '@/types/core'
-import type { DepthPayload, ItickTenantProduct, KlinePayload, QuotePayload, TickPayload } from '@/types/itick'
+import type {
+  DepthPayload,
+  ItickTenantProduct,
+  KlinePayload,
+  QuotePayload,
+  TickPayload,
+} from '@/types/itick'
 import type { MarketRow } from './types'
 
 type DetailTab = 'market' | 'depth' | 'trades'
@@ -345,7 +351,11 @@ function coinGlyph(product: ItickTenantProduct) {
 </script>
 
 <template>
-  <section ref="chartViewRef" class="chart-view" :class="{ 'chart-view--tabs-pinned': detailTabsPinned }">
+  <section
+    ref="chartViewRef"
+    class="chart-view"
+    :class="{ 'chart-view--tabs-pinned': detailTabsPinned }"
+  >
     <div class="chart-switcher">
       <button type="button" class="symbol-switch" @click="openSwitcher">
         <span>{{ selectedDisplaySymbol }}</span>
@@ -361,7 +371,11 @@ function coinGlyph(product: ItickTenantProduct) {
           {{ selectedQuote ? formatChartPrice(selectedQuote.lastPrice) : '--' }}
         </strong>
         <span :class="selectedTrendClass">
-          {{ selectedQuote ? `${selectedChangeValue >= 0 ? '+' : ''}${formatChartPrice(selectedChangeValue)}  ${formatPercent(selectedPriceChange)}` : '--' }}
+          {{
+            selectedQuote
+              ? `${selectedChangeValue >= 0 ? '+' : ''}${formatChartPrice(selectedChangeValue)}  ${formatPercent(selectedPriceChange)}`
+              : '--'
+          }}
         </span>
       </div>
 
@@ -374,7 +388,11 @@ function coinGlyph(product: ItickTenantProduct) {
     </div>
 
     <span ref="detailTabsSentinelRef" class="chart-tabs-sentinel" aria-hidden="true" />
-    <div ref="detailTabsRef" class="chart-sticky-tabs" :class="{ 'chart-sticky-tabs--pinned': detailTabsPinned }">
+    <div
+      ref="detailTabsRef"
+      class="chart-sticky-tabs"
+      :class="{ 'chart-sticky-tabs--pinned': detailTabsPinned }"
+    >
       <div class="sub-tabs">
         <button
           type="button"
@@ -474,16 +492,35 @@ function coinGlyph(product: ItickTenantProduct) {
           <strong class="ma-legend__ma60">MA60: 76,869.70</strong>
         </div>
 
-        <svg class="candle-chart" viewBox="0 0 520 240" role="img" :aria-label="t('market.candleChart')">
+        <svg
+          class="candle-chart"
+          viewBox="0 0 520 240"
+          role="img"
+          :aria-label="t('market.candleChart')"
+        >
           <line x1="0" y1="58" x2="520" y2="58" class="grid-line" />
           <line x1="0" y1="120" x2="520" y2="120" class="grid-line" />
           <line x1="0" y1="182" x2="520" y2="182" class="grid-line" />
           <line x1="170" y1="0" x2="170" y2="240" class="grid-line" />
           <line x1="340" y1="0" x2="340" y2="240" class="grid-line" />
 
-          <polyline v-if="chartLinePoints" :points="chartLinePoints" class="ma-line ma-line--yellow" />
-          <polyline v-if="chartLinePoints" :points="chartLinePoints" class="ma-line ma-line--blue" transform="translate(0, 12)" />
-          <polyline v-if="chartLinePoints" :points="chartLinePoints" class="ma-line ma-line--pink" transform="translate(0, -20)" />
+          <polyline
+            v-if="chartLinePoints"
+            :points="chartLinePoints"
+            class="ma-line ma-line--yellow"
+          />
+          <polyline
+            v-if="chartLinePoints"
+            :points="chartLinePoints"
+            class="ma-line ma-line--blue"
+            transform="translate(0, 12)"
+          />
+          <polyline
+            v-if="chartLinePoints"
+            :points="chartLinePoints"
+            class="ma-line ma-line--pink"
+            transform="translate(0, -20)"
+          />
 
           <g v-for="candle in chartCandles" :key="candle.key">
             <line
@@ -533,7 +570,11 @@ function coinGlyph(product: ItickTenantProduct) {
     <section v-else-if="activeDetailTab === 'depth'" class="depth-board">
       <header class="depth-board__head">
         <span>{{ t('market.price') }}<br />({{ selectedProduct?.quoteCoin || 'USDT' }})</span>
-        <span>{{ t('market.qty') }}<br />({{ selectedProduct?.baseCoin || selectedProduct?.symbol || '--' }})</span>
+        <span
+          >{{ t('market.qty') }}<br />({{
+            selectedProduct?.baseCoin || selectedProduct?.symbol || '--'
+          }})</span
+        >
       </header>
 
       <div class="depth-list depth-list--asks">
@@ -565,13 +606,19 @@ function coinGlyph(product: ItickTenantProduct) {
         </div>
       </div>
 
-      <p v-if="!askRows.length && !bidRows.length" class="detail-empty">{{ t('market.waitingOrderbook') }}</p>
+      <p v-if="!askRows.length && !bidRows.length" class="detail-empty">
+        {{ t('market.waitingOrderbook') }}
+      </p>
     </section>
 
     <section v-else class="trade-board">
       <header class="trade-board__head">
         <span>{{ t('market.price') }}({{ selectedProduct?.quoteCoin || 'USDT' }})</span>
-        <span>{{ t('market.qty') }}({{ selectedProduct?.baseCoin || selectedProduct?.symbol || '--' }})</span>
+        <span
+          >{{ t('market.qty') }}({{
+            selectedProduct?.baseCoin || selectedProduct?.symbol || '--'
+          }})</span
+        >
         <span>{{ t('trade.time') }}</span>
       </header>
 
@@ -689,7 +736,7 @@ function coinGlyph(product: ItickTenantProduct) {
   background: transparent;
   color: var(--text);
   font: inherit;
-  font-size: 19px;
+  font-size: 0.95rem;
   font-weight: 500;
   cursor: pointer;
 }
@@ -706,7 +753,7 @@ function coinGlyph(product: ItickTenantProduct) {
   border: 0;
   background: transparent;
   color: var(--text);
-  font-size: 30px;
+  font-size: 1.5rem;
   font-weight: 300;
   line-height: 1;
   cursor: pointer;
@@ -731,7 +778,7 @@ function coinGlyph(product: ItickTenantProduct) {
 .chart-summary__price {
   overflow: hidden;
   color: var(--success);
-  font-size: 30px;
+  font-size: 1.5rem;
   font-weight: 500;
   line-height: 1;
   display: block;
@@ -742,7 +789,7 @@ function coinGlyph(product: ItickTenantProduct) {
 
 .chart-summary span {
   overflow: hidden;
-  font-size: 17px;
+  font-size: 0.85rem;
   font-weight: 500;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -760,12 +807,12 @@ function coinGlyph(product: ItickTenantProduct) {
   display: grid;
   gap: 5px;
   min-width: 0;
-  font-size: 14px;
+  font-size: 0.7rem;
 }
 
 .chart-stats em {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 0.6rem;
   font-weight: 400;
   line-height: 1;
   white-space: nowrap;
@@ -774,7 +821,7 @@ function coinGlyph(product: ItickTenantProduct) {
 .chart-stats strong {
   overflow: hidden;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 0.65rem;
   font-weight: 500;
   line-height: 1.08;
   text-overflow: ellipsis;
@@ -831,7 +878,7 @@ function coinGlyph(product: ItickTenantProduct) {
   position: relative;
   padding: 12px 0 13px;
   color: var(--muted);
-  font-size: 19px;
+  font-size: 0.95rem;
   font-weight: 500;
 }
 
@@ -876,7 +923,7 @@ function coinGlyph(product: ItickTenantProduct) {
   border-radius: 999px;
   background: #161923;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.7rem;
   font-weight: 400;
   white-space: nowrap;
 }
@@ -908,7 +955,7 @@ function coinGlyph(product: ItickTenantProduct) {
   border-right: 1px solid #252733;
   background: var(--page-bg);
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.7rem;
   font-weight: 400;
   padding: 0;
 }
@@ -918,12 +965,12 @@ function coinGlyph(product: ItickTenantProduct) {
 }
 
 .tool-button__icon {
-  font-size: 18px;
+  font-size: 0.9rem;
   line-height: 1;
 }
 
 .tool-button__label {
-  font-size: 14px;
+  font-size: 0.7rem;
 }
 
 .time-selector {
@@ -935,7 +982,7 @@ function coinGlyph(product: ItickTenantProduct) {
   border-radius: 999px;
   background: #161923;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.7rem;
   font-weight: 400;
 }
 
@@ -945,7 +992,7 @@ function coinGlyph(product: ItickTenantProduct) {
 
 .interval-pill__arrow {
   margin-left: 6px;
-  font-size: 16px;
+  font-size: 0.8rem;
   color: currentColor;
 }
 
@@ -964,7 +1011,7 @@ function coinGlyph(product: ItickTenantProduct) {
   background: #1b1d27;
   color: #d3d7df;
   text-align: center;
-  font-size: 16px;
+  font-size: 0.8rem;
   font-weight: 500;
 }
 
@@ -1015,7 +1062,9 @@ function coinGlyph(product: ItickTenantProduct) {
 
 .chart-tool--line::before {
   top: 16px;
-  box-shadow: 0 0 0 4px var(--page-bg), 0 0 0 5px currentColor;
+  box-shadow:
+    0 0 0 4px var(--page-bg),
+    0 0 0 5px currentColor;
 }
 
 .chart-tool--trend::before {
@@ -1046,7 +1095,9 @@ function coinGlyph(product: ItickTenantProduct) {
 
 .chart-tool--rays::before {
   top: 8px;
-  box-shadow: 0 10px 0 currentColor, 0 20px 0 currentColor;
+  box-shadow:
+    0 10px 0 currentColor,
+    0 20px 0 currentColor;
 }
 
 .chart-tool--mesh::before {
@@ -1086,7 +1137,7 @@ function coinGlyph(product: ItickTenantProduct) {
   gap: 6px 12px;
   align-items: center;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 0.6rem;
   font-weight: 400;
   line-height: 1.2;
   pointer-events: none;
@@ -1166,7 +1217,7 @@ function coinGlyph(product: ItickTenantProduct) {
   gap: 82px;
   padding: 58px 6px 0 8px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 0.6rem;
   font-weight: 500;
 }
 
@@ -1179,7 +1230,7 @@ function coinGlyph(product: ItickTenantProduct) {
   border-radius: 999px;
   background: rgba(25, 27, 37, 0.92);
   color: var(--text);
-  font-size: 12px;
+  font-size: 0.6rem;
   font-weight: 500;
 }
 
@@ -1204,7 +1255,7 @@ function coinGlyph(product: ItickTenantProduct) {
   gap: 8px 18px;
   padding: 12px 18px 0 16px;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 0.65rem;
 }
 
 .volume-labels strong {
@@ -1252,7 +1303,7 @@ function coinGlyph(product: ItickTenantProduct) {
   padding: 10px 0 12px;
   border-bottom: 1px solid var(--border-soft);
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.7rem;
   line-height: 1.25;
 }
 
@@ -1273,7 +1324,7 @@ function coinGlyph(product: ItickTenantProduct) {
   align-items: center;
   min-height: 28px;
   overflow: hidden;
-  font-size: 16px;
+  font-size: 0.8rem;
 }
 
 .depth-row i {
@@ -1321,13 +1372,13 @@ function coinGlyph(product: ItickTenantProduct) {
 }
 
 .depth-mid strong {
-  font-size: 26px;
+  font-size: 1.3rem;
   font-weight: 500;
 }
 
 .depth-mid span {
   color: var(--muted);
-  font-size: 18px;
+  font-size: 0.9rem;
 }
 
 .trade-board {
@@ -1343,7 +1394,7 @@ function coinGlyph(product: ItickTenantProduct) {
   gap: 12px;
   padding: 14px 0 12px;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.7rem;
 }
 
 .trade-board__head span:nth-child(2),
@@ -1358,7 +1409,7 @@ function coinGlyph(product: ItickTenantProduct) {
   align-items: center;
   min-height: 34px;
   color: var(--text);
-  font-size: 15px;
+  font-size: 0.75rem;
 }
 
 .trade-row span,
@@ -1386,7 +1437,7 @@ function coinGlyph(product: ItickTenantProduct) {
   min-height: 240px;
   margin: 0;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.7rem;
 }
 
 .product-sheet__rows {
@@ -1419,7 +1470,7 @@ function coinGlyph(product: ItickTenantProduct) {
   border-radius: 999px;
   background: linear-gradient(145deg, #4099ff, #67c2ff);
   color: var(--text);
-  font-size: 21px;
+  font-size: 1.05rem;
   font-weight: 500;
 }
 
@@ -1439,8 +1490,8 @@ function coinGlyph(product: ItickTenantProduct) {
 .product-sheet-row__symbol {
   overflow: hidden;
   color: var(--text);
-  font-size: 17px;
-  font-weight: 500;
+  font-size: 1rem;
+  font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1449,7 +1500,7 @@ function coinGlyph(product: ItickTenantProduct) {
   min-width: 0;
   overflow: hidden;
   color: #09d676;
-  font-size: 16px;
+  font-size: 0.8rem;
   font-weight: 500;
   text-align: right;
   text-overflow: ellipsis;
@@ -1468,7 +1519,7 @@ function coinGlyph(product: ItickTenantProduct) {
   max-width: 100%;
   overflow: hidden;
   color: #09d676;
-  font-size: 15px;
+  font-size: 0.75rem;
   font-style: normal;
   font-weight: 500;
   text-overflow: ellipsis;
@@ -1484,7 +1535,7 @@ function coinGlyph(product: ItickTenantProduct) {
   border-radius: 14px;
   background: #06d171;
   color: var(--text);
-  font-size: 13px;
+  font-size: 0.65rem;
   text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1509,6 +1560,6 @@ function coinGlyph(product: ItickTenantProduct) {
   min-height: 26px;
   padding-top: 12px;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 0.7rem;
 }
 </style>

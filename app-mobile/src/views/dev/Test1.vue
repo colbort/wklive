@@ -93,7 +93,7 @@ function onSave() {
 }
 
 .banner-title {
-  font-size: 24px;
+  font-size: 1.2rem;
   font-weight: 800;
   color: var(--text);
 }
@@ -101,7 +101,7 @@ function onSave() {
 .banner-desc {
   margin-top: 12px;
   padding: 0 28px;
-  font-size: 14px;
+  font-size: 0.7rem;
   line-height: 22px;
   color: var(--muted);
   text-align: center;
@@ -114,7 +114,7 @@ function onSave() {
 
 .card-title {
   margin-bottom: 16px;
-  font-size: 20px;
+  font-size: 1rem;
   font-weight: 800;
   color: var(--text);
 }
@@ -129,13 +129,13 @@ function onSave() {
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-  font-size: 18px;
+  font-size: 0.9rem;
   font-weight: 700;
   color: var(--text);
 }
 
 .arrow {
-  font-size: 40px;
+  font-size: 2rem;
   line-height: 1;
   color: var(--muted);
   font-weight: 300;

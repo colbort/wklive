@@ -266,7 +266,7 @@ function goLogin() {
 
 .profile-header h1 {
   margin: 0;
-  font-size: 22px;
+  font-size: 1.1rem;
   font-weight: 500;
   letter-spacing: 0;
 }
@@ -320,7 +320,7 @@ function goLogin() {
   margin: 0 0 5px;
   overflow: hidden;
   color: var(--text);
-  font-size: 18px;
+  font-size: 0.9rem;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-overflow: ellipsis;
@@ -330,7 +330,7 @@ function goLogin() {
 .profile-user__info p {
   margin: 0;
   color: #9396a1;
-  font-size: 14px;
+  font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.04em;
 }
@@ -344,7 +344,7 @@ function goLogin() {
 
 .profile-hero h2 {
   margin: 0 0 12px;
-  font-size: 24px;
+  font-size: 1.2rem;
   font-weight: 700;
   line-height: 1.15;
 }
@@ -352,14 +352,14 @@ function goLogin() {
 .profile-hero p {
   margin: 0;
   color: #9b9daa;
-  font-size: 17px;
+  font-size: 0.85rem;
   font-weight: 700;
 }
 
 .profile-hero__error {
   margin: -18px 0 0;
   color: var(--danger);
-  font-size: 16px;
+  font-size: 0.8rem;
   font-weight: 600;
 }
 
@@ -378,7 +378,7 @@ function goLogin() {
   gap: 10px;
   flex: none;
   color: #04c704;
-  font-size: 16px;
+  font-size: 0.8rem;
   font-weight: 500;
 }
 
@@ -405,7 +405,7 @@ function goLogin() {
 .profile-actions button {
   min-height: 52px;
   border-radius: 999px;
-  font-size: 17px;
+  font-size: 0.85rem;
   font-weight: 700;
 }
 
@@ -454,18 +454,18 @@ function goLogin() {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 17px;
+  font-size: 0.85rem;
   font-weight: 500;
 }
 
 .profile-menu__flag {
-  font-size: 22px;
+  font-size: 1.1rem;
   line-height: 1;
 }
 
 .profile-menu__value {
   color: #f7f8fb;
-  font-size: 16px;
+  font-size: 0.8rem;
   white-space: nowrap;
 }
 
@@ -480,7 +480,7 @@ function goLogin() {
   }
 
   .profile-header h1 {
-    font-size: 21px;
+    font-size: 1.05rem;
   }
 
   .profile-hero {
@@ -501,11 +501,11 @@ function goLogin() {
 
   .profile-user__info h2 {
     margin-bottom: 5px;
-    font-size: 17px;
+    font-size: 0.85rem;
   }
 
   .profile-user__info p {
-    font-size: 13px;
+    font-size: 0.65rem;
   }
 
   .profile-hero__intro {
@@ -513,16 +513,16 @@ function goLogin() {
   }
 
   .profile-hero h2 {
-    font-size: 22px;
+    font-size: 1.1rem;
   }
 
   .profile-hero p {
-    font-size: 16px;
+    font-size: 0.8rem;
   }
 
   .profile-demo {
     gap: 8px;
-    font-size: 15px;
+    font-size: 0.75rem;
   }
 
   .profile-actions {
@@ -531,7 +531,7 @@ function goLogin() {
 
   .profile-actions button {
     min-height: 50px;
-    font-size: 16px;
+    font-size: 0.8rem;
   }
 
   .profile-menu {
@@ -557,15 +557,15 @@ function goLogin() {
   }
 
   .profile-menu__label {
-    font-size: 16px;
+    font-size: 0.8rem;
   }
 
   .profile-menu__flag {
-    font-size: 24px;
+    font-size: 1.2rem;
   }
 
   .profile-menu__value {
-    font-size: 18px;
+    font-size: 0.9rem;
   }
 }
 </style>

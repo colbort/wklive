@@ -24,10 +24,10 @@
   --border-soft: #242633;
   --divider: #20222d;
   --menu-color: rgb(136 136 136 / 1);
-  --menu-font-size: max(.3rem, 15px);
+  --menu-font-size: .75rem;
   --menu-font-weight: 300;
   --menu-active-color: rgb(255 255 255);
-  --menu-active-font-size: max(.36rem, 18px);
+  --menu-active-font-size: .9rem;
   --menu-active-font-weight: 400;
   --menu-bar-height: 3.8rem;
   --menu-gap: 1.2rem;
@@ -69,7 +69,7 @@ body,
 }
 
 html {
-  font-size: 20px;
+  font-size: 1.25rem;
 }
 
 body {
@@ -228,7 +228,7 @@ button {
   background: linear-gradient(135deg, #27c9c0, #7a51d8);
   color: #091019;
   font-weight: 700;
-  font-size: 19px;
+  font-size: .95rem;
 }
 
 .site-brand__mark {
@@ -239,14 +239,14 @@ button {
 
 .site-brand strong {
   display: block;
-  font-size: 18px;
+  font-size: .9rem;
   letter-spacing: -0.04em;
 }
 
 .site-brand p {
   margin: 2px 0 0;
   color: var(--muted);
-  font-size: 12px;
+  font-size: .6rem;
 }
 
 .site-nav {
@@ -272,7 +272,7 @@ button {
   display: inline-flex;
   align-items: center;
   color: rgba(243, 247, 254, 0.96);
-  font-size: 12px;
+  font-size: .6rem;
   font-weight: 600;
   transition: 180ms ease;
   border-left: 1px solid rgba(255, 255, 255, 0.06);
@@ -345,12 +345,12 @@ button {
 }
 
 .site-nav__market-row strong {
-  font-size: 18px;
+  font-size: .9rem;
 }
 
 .site-nav__market-row em {
   font-style: normal;
-  font-size: 18px;
+  font-size: .9rem;
   font-weight: 700;
 }
 
@@ -359,7 +359,7 @@ button {
   padding: 8px 10px;
   border-radius: 12px;
   text-align: center;
-  font-size: 14px;
+  font-size: .7rem;
   font-weight: 700;
   color: var(--text);
   background: #2e313e;
@@ -391,7 +391,7 @@ button {
   border-radius: 999px;
   background: linear-gradient(135deg, #ffb52c, #ff8a00);
   color: var(--text);
-  font-size: 28px;
+  font-size: 1.4rem;
   font-weight: 800;
 }
 
@@ -426,13 +426,13 @@ button {
 .site-action-circle--menu {
   width: 42px;
   height: 42px;
-  font-size: 18px;
+  font-size: .9rem;
 }
 
 .site-action-plain {
   min-width: 32px;
   min-height: 32px;
-  font-size: 20px;
+  font-size: 1rem;
 }
 
 .site-user-chip {
@@ -446,11 +446,11 @@ button {
 }
 
 .site-user-chip strong {
-  font-size: 13px;
+  font-size: .65rem;
 }
 
 .site-user-chip span {
-  font-size: 11px;
+  font-size: .55rem;
 }
 
 .header-cta,
@@ -527,7 +527,7 @@ button {
 .hero-card__eyebrow,
 .profile-card__label {
   margin: 0 0 8px;
-  font-size: 12px;
+  font-size: .6rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--gold);
@@ -570,7 +570,7 @@ button {
 .landing-hero__panel strong {
   display: block;
   margin-bottom: 6px;
-  font-size: 28px;
+  font-size: 1.4rem;
   color: var(--accent-strong);
 }
 
@@ -715,7 +715,7 @@ button {
 }
 
 .asset-hero strong {
-  font-size: 28px;
+  font-size: 1.4rem;
 }
 
 .asset-hero__actions {
@@ -782,7 +782,7 @@ button {
   padding: 2px;
   border-radius: 14px;
   color: rgba(243, 247, 254, 0.58);
-  font-size: 13px;
+  font-size: .65rem;
   font-weight: 500;
 }
 
@@ -855,7 +855,7 @@ button {
   height: 50px;
   border-radius: 50%;
   background: rgba(36, 39, 49, 0.92);
-  font-size: 24px;
+  font-size: 1.2rem;
 }
 
 .site-action-circle--menu {
@@ -867,7 +867,7 @@ button {
   width: 44px;
   height: 44px;
   background: transparent;
-  font-size: 24px;
+  font-size: 1.2rem;
 }
 
 .site-user-chip {
@@ -908,14 +908,14 @@ button {
 
 .site-user-chip strong {
   display: block;
-  font-size: 14px;
+  font-size: .7rem;
 }
 
 .site-user-chip span {
   display: block;
   margin-top: 2px;
   color: #858893;
-  font-size: 11px;
+  font-size: .55rem;
 }
 
 .site-user-chip__bars {
@@ -981,14 +981,14 @@ button {
 
 .site-user-menu__head strong {
   display: block;
-  font-size: 16px;
+  font-size: .8rem;
 }
 
 .site-user-menu__head span {
   display: block;
   margin-top: 6px;
   color: #858893;
-  font-size: 13px;
+  font-size: .65rem;
 }
 
 .site-user-menu__row {
@@ -1015,17 +1015,17 @@ button {
 }
 
 .site-user-menu__row span {
-  font-size: 22px;
+  font-size: 1.1rem;
 }
 
 .site-user-menu__row strong {
-  font-size: 15px;
+  font-size: .75rem;
   font-weight: 700;
 }
 
 .site-user-menu__row em {
   font-style: normal;
-  font-size: 24px;
+  font-size: 1.2rem;
 }
 
 .site-user-assets {
@@ -1036,7 +1036,7 @@ button {
 
 .site-user-assets h3 {
   margin: 0 0 18px;
-  font-size: 18px;
+  font-size: .9rem;
 }
 
 .site-user-assets__list {
@@ -1074,7 +1074,7 @@ button {
 .site-user-assets__row strong,
 .site-user-assets__row em {
   color: var(--text);
-  font-size: 16px;
+  font-size: .8rem;
   font-style: normal;
   font-weight: 700;
 }
@@ -1218,7 +1218,7 @@ button {
   }
 
   .site-brand strong {
-    font-size: 30px;
+    font-size: 1.5rem;
   }
 
   .site-brand__mark {
@@ -1227,7 +1227,7 @@ button {
   }
 
   .app-shell--home .site-brand strong {
-    font-size: 30px;
+    font-size: 1.5rem;
     line-height: 1;
   }
 
@@ -1245,7 +1245,7 @@ button {
     width: 42px;
     height: 42px;
     background: rgba(29, 32, 44, 0.9);
-    font-size: 21px;
+    font-size: 1.05rem;
   }
 
   .app-shell--home .site-action-circle--menu {
@@ -1269,7 +1269,7 @@ button {
   }
 
   .site-brand strong {
-    font-size: 24px;
+    font-size: 1.2rem;
   }
 
   .site-brand__mark {
@@ -1283,6 +1283,6 @@ button {
   }
 
   .app-tabbar__item {
-    font-size: 10px;
+    font-size: .5rem;
   }
 }
