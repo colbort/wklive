@@ -1,4 +1,4 @@
-import { http } from './http'
+import { authHttp, http } from './http'
 import { compactParams } from './utils'
 import type { OptionsGroup, RespBase } from '../types/api'
 import type {
@@ -16,14 +16,18 @@ import type {
   StakeRewardLog,
 } from '../types/staking'
 
-export function apiGetStakingOptions(): Promise<RespBase & { data: OptionsGroup[] }> {
+export function apiGetStakingOptions(): Promise<
+  RespBase & { data: OptionsGroup[] }
+> {
   return http.get('/staking/options').then((res: { data: any }) => res.data)
 }
 
 export function apiStakingListProducts(
   params: AppProductListReq,
 ): Promise<RespBase & { data: StakeProduct[] }> {
-  return http.get('/staking/products', { params: compactParams(params) }).then((res: { data: any }) => res.data)
+  return http
+    .get('/staking/products', { params: compactParams(params) })
+    .then((res: { data: any }) => res.data)
 }
 
 export function apiStakingGetProduct(
@@ -37,19 +41,23 @@ export function apiStakingGetProduct(
 export function apiStakingCreateOrder(
   params: AppCreateOrderReq,
 ): Promise<RespBase & { data: { id: number; orderNo: string } }> {
-  return http.post('/staking/orders', params).then((res: { data: any }) => res.data)
+  return authHttp
+    .post('/staking/orders', params)
+    .then((res: { data: any }) => res.data)
 }
 
 export function apiStakingListMyOrders(
   params: AppMyOrderListReq,
 ): Promise<RespBase & { data: StakeOrder[] }> {
-  return http.get('/staking/my/orders', { params: compactParams(params) }).then((res: { data: any }) => res.data)
+  return authHttp
+    .get('/staking/my/orders', { params: compactParams(params) })
+    .then((res: { data: any }) => res.data)
 }
 
 export function apiStakingGetMyOrder(
   params: AppMyOrderDetailReq,
 ): Promise<RespBase & { data: StakeOrder }> {
-  return http
+  return authHttp
     .get('/staking/my/orders/detail', { params: compactParams(params) })
     .then((res: { data: any }) => res.data)
 }
@@ -57,7 +65,7 @@ export function apiStakingGetMyOrder(
 export function apiStakingListMyRewardLogs(
   params: AppMyRewardLogListReq,
 ): Promise<RespBase & { data: StakeRewardLog[] }> {
-  return http
+  return authHttp
     .get('/staking/my/reward-logs', { params: compactParams(params) })
     .then((res: { data: any }) => res.data)
 }
@@ -65,13 +73,15 @@ export function apiStakingListMyRewardLogs(
 export function apiStakingRedeem(
   params: AppRedeemReq,
 ): Promise<RespBase & { data: { success: number; redeemNo: string } }> {
-  return http.post('/staking/redeem', params).then((res: { data: any }) => res.data)
+  return authHttp
+    .post('/staking/redeem', params)
+    .then((res: { data: any }) => res.data)
 }
 
 export function apiStakingListMyRedeemLogs(
   params: AppMyRedeemLogListReq,
 ): Promise<RespBase & { data: StakeRedeemLog[] }> {
-  return http
+  return authHttp
     .get('/staking/my/redeem-logs', { params: compactParams(params) })
     .then((res: { data: any }) => res.data)
 }

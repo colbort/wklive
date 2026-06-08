@@ -1,4 +1,8 @@
-import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios'
+import axios, {
+  type AxiosError,
+  type AxiosResponse,
+  type InternalAxiosRequestConfig,
+} from 'axios'
 
 const ACCESS_TOKEN_KEY = 'app_access_token'
 const REFRESH_TOKEN_KEY = 'app_refresh_token'
@@ -58,7 +62,9 @@ export function getApiBaseUrl() {
 }
 
 export function getApiBasePath() {
-  return normalizeLeadingSlash(apiClientConfig.apiBasePath || DEFAULT_API_BASE_PATH)
+  return normalizeLeadingSlash(
+    apiClientConfig.apiBasePath || DEFAULT_API_BASE_PATH,
+  )
 }
 
 function resolveApiBaseURL() {
@@ -76,15 +82,28 @@ export const http = axios.create({
   timeout: 10000,
 })
 
+export const authHttp = axios.create({
+  baseURL: resolveApiBaseURL(),
+  timeout: 10000,
+})
+
 const refreshHttp = axios.create({
   baseURL: resolveApiBaseURL(),
   timeout: 10000,
 })
 
+export class AuthRequiredError extends Error {
+  constructor() {
+    super('Unauthorized')
+    this.name = 'AuthRequiredError'
+  }
+}
+
 export function configureApiClient(config: ApiClientConfig) {
   Object.assign(apiClientConfig, config)
   const baseURL = resolveApiBaseURL()
   http.defaults.baseURL = baseURL
+  authHttp.defaults.baseURL = baseURL
   refreshHttp.defaults.baseURL = baseURL
 }
 
@@ -119,7 +138,9 @@ export function clearRefreshToken() {
 }
 
 export function getTenantCode() {
-  return localStorage.getItem(TENANT_CODE_KEY) || apiClientConfig.tenantCode || ''
+  return (
+    localStorage.getItem(TENANT_CODE_KEY) || apiClientConfig.tenantCode || ''
+  )
 }
 
 export function getTenantId() {
@@ -198,7 +219,8 @@ function translateResponseMessage(data: unknown) {
   if (code === undefined || code === 200 || code === 0) return
 
   const fallback = typeof data.msg === 'string' ? data.msg : ''
-  const message = apiClientConfig.translateApiError?.(code, fallback) || fallback
+  const message =
+    apiClientConfig.translateApiError?.(code, fallback) || fallback
   if (message) {
     data.msg = message
   }
@@ -207,7 +229,8 @@ function translateResponseMessage(data: unknown) {
 function hasTokenFields(value: unknown): value is Partial<TokenInfo> {
   return (
     isPlainObject(value) &&
-    (typeof value.accessToken === 'string' || typeof value.refreshToken === 'string')
+    (typeof value.accessToken === 'string' ||
+      typeof value.refreshToken === 'string')
   )
 }
 
@@ -220,7 +243,10 @@ function readTokenPayload(data: unknown): Partial<TokenInfo> | null {
   return hasTokenFields(data) ? data : null
 }
 
-function setAuthorizationHeader(config: InternalAxiosRequestConfig, accessToken: string) {
+function setAuthorizationHeader(
+  config: InternalAxiosRequestConfig,
+  accessToken: string,
+) {
   config.headers = config.headers || {}
 
   const headers = config.headers as InternalAxiosRequestConfig['headers'] & {
@@ -235,7 +261,11 @@ function setAuthorizationHeader(config: InternalAxiosRequestConfig, accessToken:
   headers.Authorization = `Bearer ${accessToken}`
 }
 
-function setRequestHeader(config: InternalAxiosRequestConfig, name: string, value: string) {
+function setRequestHeader(
+  config: InternalAxiosRequestConfig,
+  name: string,
+  value: string,
+) {
   config.headers = config.headers || {}
 
   const headers = config.headers as InternalAxiosRequestConfig['headers'] & {
@@ -250,7 +280,7 @@ function setRequestHeader(config: InternalAxiosRequestConfig, name: string, valu
   headers[name] = value
 }
 
-http.interceptors.request.use((config) => {
+function prepareRequestConfig(config: InternalAxiosRequestConfig) {
   const accessToken = getAccessToken()
   if (accessToken) {
     setAuthorizationHeader(config, accessToken)
@@ -266,14 +296,35 @@ http.interceptors.request.use((config) => {
   }
 
   if (isPlainObject(config.params)) {
-    config.params = stripUserTenantScope(appendTenantScope({ ...config.params }, config.url))
+    config.params = stripUserTenantScope(
+      appendTenantScope({ ...config.params }, config.url),
+    )
   }
 
   if (isPlainObject(config.data)) {
-    config.data = stripUserTenantScope(appendTenantScope({ ...config.data }, config.url))
+    config.data = stripUserTenantScope(
+      appendTenantScope({ ...config.data }, config.url),
+    )
   }
 
   return config
+}
+
+http.interceptors.request.use(prepareRequestConfig)
+
+authHttp.interceptors.request.use(async (config) => {
+  if (!getAccessToken() && !getRefreshToken()) {
+    return Promise.reject(new AuthRequiredError())
+  }
+
+  if (!getAccessToken()) {
+    const accessToken = await refreshAccessToken()
+    if (!accessToken) {
+      return Promise.reject(new AuthRequiredError())
+    }
+  }
+
+  return prepareRequestConfig(config)
 })
 
 function refreshAccessToken() {
@@ -288,8 +339,10 @@ function refreshAccessToken() {
         ...(tenantCode ? { tenantCode } : {}),
       })
       const token = readTokenPayload(res.data)
-      const accessToken = typeof token?.accessToken === 'string' ? token.accessToken : ''
-      const nextRefreshToken = typeof token?.refreshToken === 'string' ? token.refreshToken : ''
+      const accessToken =
+        typeof token?.accessToken === 'string' ? token.accessToken : ''
+      const nextRefreshToken =
+        typeof token?.refreshToken === 'string' ? token.refreshToken : ''
 
       if (!accessToken) return null
       setAccessToken(accessToken)
@@ -305,7 +358,11 @@ function refreshAccessToken() {
 
 async function retryWithRefreshedToken(config?: InternalAxiosRequestConfig) {
   const originalConfig = config as RetryableRequestConfig | undefined
-  if (!originalConfig || originalConfig._retry || isRefreshTokenRequest(originalConfig.url)) {
+  if (
+    !originalConfig ||
+    originalConfig._retry ||
+    isRefreshTokenRequest(originalConfig.url)
+  ) {
     clearAuthTokens()
     return Promise.reject(new Error('Unauthorized'))
   }
@@ -321,19 +378,21 @@ async function retryWithRefreshedToken(config?: InternalAxiosRequestConfig) {
   return http(originalConfig)
 }
 
-http.interceptors.response.use(
-  (response) => {
-    translateResponseMessage(response.data)
+function handleApiResponse(response: AxiosResponse) {
+  translateResponseMessage(response.data)
 
-    if (getResponseCode(response.data) === 401) {
-      return retryWithRefreshedToken(response.config)
-    }
-    return response
-  },
-  (error: AxiosError) => {
-    if (error.response?.status === 401) {
-      return retryWithRefreshedToken(error.config)
-    }
-    return Promise.reject(error)
-  },
-)
+  if (getResponseCode(response.data) === 401) {
+    return retryWithRefreshedToken(response.config)
+  }
+  return response
+}
+
+function handleApiError(error: AxiosError) {
+  if (error.response?.status === 401) {
+    return retryWithRefreshedToken(error.config)
+  }
+  return Promise.reject(error)
+}
+
+http.interceptors.response.use(handleApiResponse, handleApiError)
+authHttp.interceptors.response.use(handleApiResponse, handleApiError)
