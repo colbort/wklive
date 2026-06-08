@@ -21,6 +21,7 @@ export default {
     failed: '失败',
     none: '暂无数据',
     and: '和',
+    or: '或',
   },
   nav: {
     home: '首页',

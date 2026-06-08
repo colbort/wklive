@@ -224,7 +224,7 @@ const trustFeatures = [
   justify-content: space-between;
   width: 100%;
   height: 72px;
-  padding: 10px 20px;
+  padding: 8px 18px;
   background:
     linear-gradient(rgba(124, 146, 170, 0.08) 2px, transparent 2px),
     linear-gradient(90deg, rgba(124, 146, 170, 0.08) 2px, transparent 2px), rgba(10, 13, 22, 0.96);
@@ -239,19 +239,19 @@ const trustFeatures = [
   display: inline-flex;
   align-items: center;
   min-width: 0;
-  gap: 10px;
+  gap: 8px;
 }
 
 .ave-home-brand__mark {
   flex: 0 0 auto;
-  width: 46px;
-  height: 46px;
+  width: 42px;
+  height: 42px;
   background: url('../../../assets/favicon.png') center / contain no-repeat;
 }
 
 .ave-home-brand strong {
   color: var(--text);
-  font-size: 1.5rem;
+  font-size: 1.35rem;
   font-weight: 800;
   line-height: 1;
 }
@@ -259,26 +259,26 @@ const trustFeatures = [
 .ave-home-tabbar__actions {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex: none;
 }
 
 .ave-home-action {
   display: grid;
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 38px;
   place-items: center;
   border: 0;
   border-radius: 50%;
   background: rgba(29, 32, 44, 0.9);
   color: var(--text);
   font: inherit;
-  font-size: 1.05rem;
+  font-size: .95rem;
 }
 
 .ave-home-action__icon {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
 }
 
 .ave-home {
@@ -308,12 +308,12 @@ const trustFeatures = [
 .ave-section,
 .ave-reward {
   position: relative;
-  padding-inline: 20px;
+  padding-inline: 18px;
 }
 
 .ave-hero {
-  min-height: 682px;
-  padding-top: 46px;
+  min-height: 650px;
+  padding-top: 38px;
   text-align: center;
 }
 
@@ -333,15 +333,15 @@ const trustFeatures = [
 
 .ave-hero h1 {
   display: grid;
-  gap: 2px;
-  font-size: clamp(1.9rem, 10vw, 2.1rem);
+  gap: 1px;
+  font-size: clamp(1.7rem, 9vw, 1.9rem);
   line-height: 1.1;
 }
 
 .ave-hero p {
-  margin: 22px 0 0;
+  margin: 18px 0 0;
   color: var(--text);
-  font-size: clamp(1rem, 5.4vw, 1.15rem);
+  font-size: clamp(.9rem, 4.8vw, 1.02rem);
   font-weight: 700;
 }
 
@@ -349,23 +349,23 @@ const trustFeatures = [
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 154px;
-  height: 50px;
-  margin-top: 24px;
+  width: 140px;
+  height: 44px;
+  margin-top: 20px;
   border-radius: 999px;
   background: var(--home-green);
   color: var(--text);
-  font-size: 1.2rem;
+  font-size: 1.05rem;
   font-weight: 700;
   line-height: 1;
 }
 
 .ave-hero__cta {
-  width: 154px;
-  height: 50px;
+  width: 140px;
+  height: 44px;
   max-width: 68vw;
-  margin-top: 24px;
-  font-size: 1.2rem;
+  margin-top: 20px;
+  font-size: 1.05rem;
 }
 
 .ave-hero__portal {
@@ -376,21 +376,21 @@ const trustFeatures = [
 }
 
 .ave-section {
-  padding-top: 34px;
+  padding-top: 28px;
   text-align: center;
 }
 
 .ave-section h2,
 .ave-reward h2 {
-  font-size: clamp(1.4rem, 7.8vw, 1.6rem);
+  font-size: clamp(1.25rem, 7vw, 1.42rem);
   line-height: 1.22;
 }
 
 .ave-section > p,
 .ave-reward > p {
-  margin: 12px 0 0;
+  margin: 10px 0 0;
   color: var(--home-muted);
-  font-size: clamp(0.8rem, 4.3vw, 0.9rem);
+  font-size: clamp(.72rem, 3.9vw, .82rem);
   font-weight: 700;
   line-height: 1.45;
 }
@@ -398,7 +398,7 @@ const trustFeatures = [
 .ave-section__phones {
   display: block;
   width: min(100%, var(--app-width, 414px));
-  margin: 32px 0 20px 50%;
+  margin: 28px 0 16px 50%;
   transform: translateX(-50%);
 }
 
@@ -406,15 +406,15 @@ const trustFeatures = [
 .ave-flat-list,
 .ave-trust-card,
 .ave-toggle-card {
-  border: 2px solid rgba(143, 146, 160, 0.5);
+  border: 1px solid rgba(143, 146, 160, 0.5);
   background: linear-gradient(135deg, rgba(40, 43, 55, 0.8), rgba(21, 24, 34, 0.72));
   box-shadow: inset 0 0 80px rgba(255, 255, 255, 0.02);
 }
 
 .ave-feature-list {
   display: grid;
-  gap: 18px;
-  margin-top: 18px;
+  gap: 14px;
+  margin-top: 14px;
   border: 0;
   background: transparent;
   box-shadow: none;
@@ -423,12 +423,12 @@ const trustFeatures = [
 .ave-feature-card {
   display: flex;
   align-items: center;
-  gap: 16px;
-  min-height: 94px;
-  padding: 14px 22px;
+  gap: 14px;
+  min-height: 84px;
+  padding: 12px 18px;
   text-align: left;
-  border: 2px solid rgba(143, 146, 160, 0.5);
-  border-radius: 20px;
+  border: 1px solid rgba(143, 146, 160, 0.5);
+  border-radius: 16px;
   background:
     linear-gradient(90deg, rgba(50, 53, 66, 0.78), rgba(24, 27, 38, 0.72)),
     url('../../../assets/home/boxbg.png') center / cover no-repeat;
@@ -436,17 +436,17 @@ const trustFeatures = [
 
 .ave-feature-card img {
   flex: 0 0 auto;
-  width: 46px;
-  height: 46px;
+  width: 42px;
+  height: 42px;
 }
 
 .ave-feature-card h3,
 .ave-flat-item h3,
 .ave-toggle-item h3,
 .ave-trust-item h3 {
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   color: var(--text);
-  font-size: clamp(1rem, 5.2vw, 1.1rem);
+  font-size: clamp(.9rem, 4.7vw, 1rem);
   font-weight: 800;
   line-height: 1.18;
 }
@@ -457,19 +457,19 @@ const trustFeatures = [
 .ave-trust-item p {
   margin: 0;
   color: var(--home-muted);
-  font-size: clamp(0.7rem, 3.9vw, 0.8rem);
+  font-size: clamp(.62rem, 3.5vw, .72rem);
   font-weight: 700;
   line-height: 1.42;
 }
 
 .ave-section--strategy {
-  padding-top: 56px;
+  padding-top: 48px;
 }
 
 .ave-strategy-scene {
   position: relative;
-  min-height: 388px;
-  margin-top: 24px;
+  min-height: 360px;
+  margin-top: 20px;
 }
 
 .ave-strategy-scene__orders {
@@ -484,15 +484,15 @@ const trustFeatures = [
 .ave-strategy-scene__chart {
   position: absolute;
   left: 7%;
-  bottom: -10px;
+  bottom: -8px;
   z-index: 1;
-  width: 236px;
+  width: 218px;
 }
 
 .ave-flat-list {
   display: grid;
   gap: 0;
-  margin-top: 50px;
+  margin-top: 42px;
   border: 0;
   background: transparent;
 }
@@ -501,8 +501,8 @@ const trustFeatures = [
 .ave-trust-item {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 22px 4px;
+  gap: 12px;
+  padding: 18px 2px;
   text-align: left;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -514,35 +514,35 @@ const trustFeatures = [
 .ave-flat-item img,
 .ave-trust-item img {
   flex: 0 0 auto;
-  width: 58px;
-  height: 58px;
+  width: 52px;
+  height: 52px;
 }
 
 .ave-section--contract {
-  padding-top: 52px;
+  padding-top: 44px;
 }
 
 .ave-contract__phones {
   display: block;
   width: min(100%, var(--app-width, 414px));
-  margin: 30px 0 24px 50%;
+  margin: 26px 0 20px 50%;
   transform: translateX(-50%);
 }
 
 .ave-toggle-card {
   display: grid;
   gap: 0;
-  padding: 16px 20px;
-  border-radius: 20px;
+  padding: 14px 18px;
+  border-radius: 16px;
   text-align: left;
 }
 
 .ave-toggle-item {
   display: grid;
-  grid-template-columns: 34px minmax(0, 1fr);
-  gap: 14px;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 12px;
   align-items: start;
-  padding: 18px 0;
+  padding: 15px 0;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -552,9 +552,9 @@ const trustFeatures = [
 
 .ave-toggle-item__switch {
   position: relative;
-  width: 28px;
-  height: 18px;
-  margin-top: 4px;
+  width: 25px;
+  height: 16px;
+  margin-top: 3px;
   border-radius: 999px;
   background: var(--home-green);
 }
@@ -564,26 +564,26 @@ const trustFeatures = [
   position: absolute;
   top: 0;
   right: 0;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: #fff;
 }
 
 .ave-section--trust {
-  padding-top: 56px;
+  padding-top: 48px;
 }
 
 .ave-trust-card {
   display: grid;
   gap: 0;
-  margin-top: 32px;
-  padding: 14px 20px;
-  border-radius: 20px;
+  margin-top: 26px;
+  padding: 12px 18px;
+  border-radius: 16px;
 }
 
 .ave-trust-item {
-  padding: 22px 0;
+  padding: 18px 0;
 }
 
 .ave-trust-item:first-child {
@@ -591,26 +591,26 @@ const trustFeatures = [
 }
 
 .ave-reward {
-  padding-top: 58px;
-  padding-bottom: calc(120px + env(safe-area-inset-bottom));
+  padding-top: 50px;
+  padding-bottom: calc(108px + env(safe-area-inset-bottom));
   text-align: center;
 }
 
 .ave-reward h2 {
   max-width: 11ch;
   margin-inline: auto;
-  font-size: clamp(1.7rem, 9.4vw, 1.95rem);
+  font-size: clamp(1.5rem, 8.4vw, 1.72rem);
 }
 
 .ave-reward > p {
   color: var(--text);
-  font-size: 1rem;
+  font-size: .9rem;
 }
 
 .ave-reward__image {
   display: block;
   width: min(100%, var(--app-width, 414px));
-  margin: 40px 0 0 50%;
+  margin: 34px 0 0 50%;
   transform: translateX(-50%);
 }
 </style>

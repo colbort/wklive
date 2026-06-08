@@ -21,6 +21,7 @@ export default {
     failed: 'Failed',
     none: 'No data',
     and: ' and ',
+    or: ' or ',
   },
   nav: {
     home: 'Home',

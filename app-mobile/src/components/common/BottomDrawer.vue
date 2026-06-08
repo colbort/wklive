@@ -113,7 +113,7 @@ function closeFromBackdrop(enabled: boolean) {
   flex-direction: column;
   width: min(100%, var(--app-width, 414px));
   max-height: var(--bottom-drawer-max-height);
-  padding: 12px 22px calc(18px + env(safe-area-inset-bottom));
+  padding: 16px 22px calc(18px + env(safe-area-inset-bottom));
   overflow: hidden;
   border-radius: 28px 28px 0 0;
   background: var(--sheet-bg);
@@ -128,7 +128,7 @@ function closeFromBackdrop(enabled: boolean) {
   flex: 0 0 auto;
   width: 54px;
   height: 5px;
-  margin: 0 auto 12px;
+  margin: 0 auto 18px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.52);
 }
@@ -140,6 +140,7 @@ function closeFromBackdrop(enabled: boolean) {
   justify-content: center;
   flex: 0 0 auto;
   min-height: 42px;
+  margin-bottom: 10px;
 }
 
 .bottom-drawer__header h2 {

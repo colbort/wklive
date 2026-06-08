@@ -16,51 +16,44 @@ const { t } = useI18n()
       'login-prompt--compact': compact,
     }"
   >
-    <p>{{ t('assets.loginFirst') }}</p>
-    <div class="login-prompt__actions">
+    <p class="login-prompt__line">
       <RouterLink class="login-prompt__link" to="/login">
         {{ t('common.login') }}
       </RouterLink>
-      <i>/</i>
+      <span>{{ t('common.or') }}</span>
       <RouterLink class="login-prompt__link" to="/register">
         {{ t('common.register') }}
       </RouterLink>
       <strong v-if="actionText">{{ actionText }}</strong>
-    </div>
+    </p>
   </section>
 </template>
 
 <style scoped>
 .login-prompt {
-  display: grid;
-  align-content: start;
-  min-height: 210px;
+  display: flex;
+  min-height: 180px;
+  align-items: center;
+  justify-content: center;
   color: var(--muted);
   text-align: center;
 }
 
 .login-prompt--compact {
-  min-height: 160px;
+  min-height: 140px;
 }
 
-.login-prompt p {
-  display: grid;
-  min-height: 92px;
-  place-items: center;
+.login-prompt__line {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  min-width: 0;
   margin: 0;
-  border-bottom: 1px solid var(--border-soft);
   color: var(--muted);
-  font-size: 0.7rem;
-  font-weight: 600;
-}
-
-.login-prompt__actions {
-  display: grid;
-  justify-items: center;
-  gap: 22px;
-  padding-top: 22px;
-  font-size: 0.7rem;
+  font-size: .75rem;
   font-weight: 700;
+  line-height: 1.25;
+  white-space: nowrap;
 }
 
 .login-prompt__link {
@@ -68,14 +61,12 @@ const { t } = useI18n()
   text-decoration: none;
 }
 
-.login-prompt__actions i {
+.login-prompt__line span {
   color: var(--muted);
-  font-style: normal;
 }
 
-.login-prompt__actions strong {
+.login-prompt__line strong {
   color: var(--muted);
-  font-size: 0.7rem;
-  font-weight: 700;
+  font: inherit;
 }
 </style>
